@@ -1,3 +1,7 @@
+1999-07-31	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: correct few typos and obsolete statements.
+
 1999-06-25	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document xfer:eta-terse.

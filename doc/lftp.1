@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "25 Jun 1999"
+.TH lftp 1 "31 Jul 1999"
 .SH NAME
 lftp \- Sophisticated ftp program
 .SH SYNTAX
@@ -61,13 +61,14 @@ lftp \- Sophisticated ftp program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 2.0.2.
+This man page documents lftp version 2.0.3.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a program that allows sophisticated ftp connection to
 other hosts. If \fIhost\fR is specified then lftp will connect to that
 host otherwise a connection has to be established with the open
-command..PP
+command.
+.PP
 \fBlftp\fR is quite a powerful ftp client. It uses GNU readline to
 read commands. It uses shell-like command syntax allowing you to
 launch several commands in parallel in the background (&).
@@ -524,7 +525,7 @@ There is also a systemwide startup file in
 .PP
 .B lftp
 has the following settable variables (you can also use
-`set' to see all variables and their values):
+`set -a' to see all variables and their values):
 .TP
 .BR bmk:save-passwords \ (bool)
 save plain text passwords in ~/.lftp/bookmarks on `bookmark add' command.
@@ -579,7 +580,7 @@ the username of the user you are logged in as
 the URL of the remote site (e.g., ftp://g437.ub.gu.se/home/james/src/lftp)
 .TP
 .B \ev
-the version of \fBlftp\fP (e.g., 0.13.0)
+the version of \fBlftp\fP (e.g., 2.0.3)
 .TP
 .B \ew
 the current working directory at the remote site
@@ -642,14 +643,17 @@ skey/opie is not available, assume failed login. Off by default.
 .BR ftp:sync-mode \ (bool)
 if set lftp will send one command at a time and wait for
 response. This might be useful if you are using a buggy ftp server or
-router.
+router. When it is off, lftp sends a pack of commands and waits for
+responses - it speeds up operation when round trip time is significant.
+Unfortunately it does not work with all ftp servers and some routers have
+troubles with it, so it is on by default.
 .TP
 .BR ftp:verify-address \ (bool)
 verify that data connection comes from the network address of control
 connection peer. This can possibly prevent data connection spoofing
 which can lead to data corruption. Unfortunately, this can fail
-for sertain ftp servers with several network interfaces, just disable
-this check for those.
+for sertain ftp servers with several network interfaces and
+that do not set outgoing address on data socket, so it is disabled by default.
 .TP
 .BR ftp:verify-port \ (bool)
 verify that data connection has port 20 (ftp-data) on its remote end.
@@ -661,10 +665,10 @@ to set proper port on data connection, thus this check is off by default.
 specifies http proxy. It is used when lftp works over http protocol.
 .TP
 .BR net:idle \ (seconds)
-disconnect from ftp server after that number of idle seconds.
+disconnect from server after that number of idle seconds.
 .TP
-.BR net:limit-rate \ (bytes per second)
-timit transfer rate on data connection. 0 means unlimited.
+.BR net:limit-rate \ (bytes " " per " " second)
+limit transfer rate on data connection. 0 means unlimited.
 .TP
 .BR net:limit-max \ (bytes)
 limit accumulating of limit-rate in time. 0 means unlimited.
@@ -707,18 +711,20 @@ set one variable several times for different closures, and thus
 you can get a particular settings for particular state. The closure
 is to be specified after variable name separated with slash `/'.
 .P
-The closure for `ftp:' domain variables is currently just the host
+
+The closure for `dns:', `ftp:', `http:' domain variables is currently
+just the host
 name as you specify it in the `open' command. For other variables it
 is not currently used. See examples in the sample
 .IR lftp.conf .
 
 .B Lftp
-can speed up ftp operations by sending several commands at once
-and then checking all the responses. Sometimes this does not work,
-thus synchronous mode is the default. You can try to turn synchronous
-mode off and see if it works for you. It is known that some network
-software dealing with address translation works incorrectly in the
-case of several FTP commands in one network packet.
+can speed up ftp operations by sending several commands at once and
+then checking all the responses. See ftp:sync-mode variable. Sometimes
+this does not work, thus synchronous mode is the default. You can try
+to turn synchronous mode off and see if it works for you. It is known
+that some network software dealing with address translation works
+incorrectly in the case of several FTP commands in one network packet.
 
 .PP
 RFC959 says: ``The user-process sending another command before the
