@@ -1,3 +1,12 @@
+Version 2.2.2 - 2000-04-29
+
+* added http:cookie setting.
+* italian and german translations updated.
+* fixed handling of http timeout - don't always disable ranges.
+* fixed handling of old (0.9) http servers reply.
+* fixed stall problem with `glob' command.
+* really fixed handling of ^Z during `cd' command.
+
 Version 2.2.1a - 2000-04-20
 
 * Use http:user-agent for hftp, this fixes hftp core dump.

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
-"POT-Creation-Date: 2000-04-20 15:08+0400\n"
+"POT-Creation-Date: 2000-04-29 21:25+0400\n"
 "PO-Revision-Date: 2000-01-13 KST\n"
 "Last-Translator: Dojip Kim <greendrm@kamsi.yonsei.ac.kr>\n"
 "Language-Team: \n"
@@ -39,33 +39,33 @@ msgstr "`%s' 모호한 명령어.\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "cd 성공, cwd=%s\n"
 
-#: src/CmdExec.cc:464 src/CmdExec.cc:523
+#: src/CmdExec.cc:464 src/CmdExec.cc:524
 msgid "Interrupt"
 msgstr "인터럽트"
 
-#: src/CmdExec.cc:575
+#: src/CmdExec.cc:576
 msgid "Warning: discarding incomplete command\n"
 msgstr "경고: 불완전한 명령어 무시\n"
 
-#: src/CmdExec.cc:657
+#: src/CmdExec.cc:658
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\t내장 실행 `%s' [%s]\n"
 
-#: src/CmdExec.cc:665
+#: src/CmdExec.cc:666
 msgid "Now executing:"
 msgstr ""
 
-#: src/CmdExec.cc:673
+#: src/CmdExec.cc:674
 msgid "\tCommands queued:\n"
 msgstr "\t명령어 대기:\n"
 
-#: src/CmdExec.cc:697
+#: src/CmdExec.cc:698
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\t작업 [%d]의 종료를 기다립니다\n"
 
-#: src/CmdExec.cc:701
+#: src/CmdExec.cc:702
 #, c-format
 msgid "\tRunning\n"
 msgstr "\t실행중\n"
@@ -285,7 +285,7 @@ msgstr "잘못된 시간 양식입니다. 양식은 <time><unit> 입니다, 예. 2h30m."
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "잘못된 시간 양식입니다. 양식은 <time><unit> 입니다, 예. 2h30m."
 
-#: src/Http.cc:1151 src/Resolver.cc:191 src/ftpclass.cc:2991
+#: src/Http.cc:1164 src/Resolver.cc:191 src/ftpclass.cc:2991
 msgid "Resolving host address..."
 msgstr "호스트 주소를 찾습니다..."
 
@@ -1309,7 +1309,7 @@ msgstr "`알수 없는' 보면, 로그인에 실패한 듯 합니다"
 msgid "assuming failed host name lookup"
 msgstr "호스트 이름을 찾는데 실패한 듯 합니다"
 
-#: src/Http.cc:529 src/ftpclass.cc:913
+#: src/Http.cc:537 src/ftpclass.cc:913
 msgid "Closing idle connection"
 msgstr "사용하지 않는 접속을 끊습니다"
 
@@ -1363,7 +1363,7 @@ msgstr "패시브(passive) 모드 끔"
 msgid "Sending commands..."
 msgstr "명령어 전송중..."
 
-#: src/Http.cc:1162 src/ftpclass.cc:2983 src/ftpclass.cc:3003
+#: src/Http.cc:1175 src/ftpclass.cc:2983 src/ftpclass.cc:3003
 #: src/ftpclass.cc:3010
 msgid "Waiting for response..."
 msgstr "응답을 기다립니다..."
@@ -1372,7 +1372,7 @@ msgstr "응답을 기다립니다..."
 msgid "Connection idle"
 msgstr "사용하지 않는 접속"
 
-#: src/Http.cc:1157 src/ftpclass.cc:2998
+#: src/Http.cc:1170 src/ftpclass.cc:2998
 msgid "Connecting..."
 msgstr "접속중..."
 
@@ -1396,11 +1396,11 @@ msgstr "전송 완료를 기다립니다"
 msgid "Waiting for data connection..."
 msgstr "접속을 기다리는 중..."
 
-#: src/Http.cc:1160 src/ftpclass.cc:3017
+#: src/Http.cc:1173 src/ftpclass.cc:3017
 msgid "Sending data"
 msgstr "자료 보내는 중"
 
-#: src/Http.cc:1165 src/ftpclass.cc:3019
+#: src/Http.cc:1178 src/ftpclass.cc:3019
 msgid "Receiving data"
 msgstr "자료 받는 중"
 
@@ -1489,11 +1489,11 @@ msgstr "%s 성공, %d director$y|ies$ 삭제했습니다\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s 성공, %d file$|s$ 삭제했습니다\n"
 
-#: src/Http.cc:993 src/Http.cc:1013
+#: src/Http.cc:1006 src/Http.cc:1026
 msgid "chunked format violated"
 msgstr "쓰지 않는 양식이 문제가 됩니다"
 
-#: src/Http.cc:1163
+#: src/Http.cc:1176
 msgid "Fetching headers..."
 msgstr "헤더를 읽고 있는중.."
 

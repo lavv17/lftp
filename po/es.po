@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.2\n"
-"POT-Creation-Date: 2000-04-20 15:08+0400\n"
+"POT-Creation-Date: 2000-04-29 21:25+0400\n"
 "PO-Revision-Date: 1999-10-09 21:45-0300\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -36,33 +36,33 @@ msgstr "Orden ambigua `%s'.\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, dir actual=%s\n"
 
-#: src/CmdExec.cc:464 src/CmdExec.cc:523
+#: src/CmdExec.cc:464 src/CmdExec.cc:524
 msgid "Interrupt"
 msgstr "Interrupción"
 
-#: src/CmdExec.cc:575
+#: src/CmdExec.cc:576
 msgid "Warning: discarding incomplete command\n"
 msgstr "Aviso: descartando orden incompleta\n"
 
-#: src/CmdExec.cc:657
+#: src/CmdExec.cc:658
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tEjecutando primitiva `%s' [%s]\n"
 
-#: src/CmdExec.cc:665
+#: src/CmdExec.cc:666
 msgid "Now executing:"
 msgstr ""
 
-#: src/CmdExec.cc:673
+#: src/CmdExec.cc:674
 msgid "\tCommands queued:\n"
 msgstr "\tComandos encolados:\n"
 
-#: src/CmdExec.cc:697
+#: src/CmdExec.cc:698
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\tEsperando que termine la tarea [%d]\n"
 
-#: src/CmdExec.cc:701
+#: src/CmdExec.cc:702
 #, c-format
 msgid "\tRunning\n"
 msgstr "\tEjecutando\n"
@@ -281,7 +281,7 @@ msgstr "Formato de tiempo inválido, debe ser <tiempo><unidad>, p.ej. 2h30m."
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Formato del rango inválido. El formato es mín-máx, p.ej. 10-20."
 
-#: src/Http.cc:1151 src/Resolver.cc:191 src/ftpclass.cc:2991
+#: src/Http.cc:1164 src/Resolver.cc:191 src/ftpclass.cc:2991
 msgid "Resolving host address..."
 msgstr "Resolviendo dirección del servidor..."
 
@@ -1336,7 +1336,7 @@ msgstr "Vi `unknown', asumiendo identificación fallida"
 msgid "assuming failed host name lookup"
 msgstr "asumiendo falla en la búsqueda del nombre de servidor"
 
-#: src/Http.cc:529 src/ftpclass.cc:913
+#: src/Http.cc:537 src/ftpclass.cc:913
 msgid "Closing idle connection"
 msgstr "Cerrando conexión ociosa"
 
@@ -1389,7 +1389,7 @@ msgstr "Conectando modo pasivo"
 msgid "Sending commands..."
 msgstr "Enviando comandos..."
 
-#: src/Http.cc:1162 src/ftpclass.cc:2983 src/ftpclass.cc:3003
+#: src/Http.cc:1175 src/ftpclass.cc:2983 src/ftpclass.cc:3003
 #: src/ftpclass.cc:3010
 msgid "Waiting for response..."
 msgstr "Esperando respuesta..."
@@ -1398,7 +1398,7 @@ msgstr "Esperando respuesta..."
 msgid "Connection idle"
 msgstr "Conexión ociosa"
 
-#: src/Http.cc:1157 src/ftpclass.cc:2998
+#: src/Http.cc:1170 src/ftpclass.cc:2998
 msgid "Connecting..."
 msgstr "Conectándose..."
 
@@ -1422,11 +1422,11 @@ msgstr "Esperando que finalice la transferencia"
 msgid "Waiting for data connection..."
 msgstr "Esperando la conexión de datos..."
 
-#: src/Http.cc:1160 src/ftpclass.cc:3017
+#: src/Http.cc:1173 src/ftpclass.cc:3017
 msgid "Sending data"
 msgstr "Enviando datos"
 
-#: src/Http.cc:1165 src/ftpclass.cc:3019
+#: src/Http.cc:1178 src/ftpclass.cc:3019
 msgid "Receiving data"
 msgstr "Recibiendo datos"
 
@@ -1515,11 +1515,11 @@ msgstr "%s ok, %d directorio$|s$ borrado$|s$\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d fichero$|s$ borrado$|s$\n"
 
-#: src/Http.cc:993 src/Http.cc:1013
+#: src/Http.cc:1006 src/Http.cc:1026
 msgid "chunked format violated"
 msgstr "formato `chunked' violado"
 
-#: src/Http.cc:1163
+#: src/Http.cc:1176
 msgid "Fetching headers..."
 msgstr "Trayendo encabezados..."
 

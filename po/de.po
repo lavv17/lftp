@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Lftp 2.1.3\n"
-"POT-Creation-Date: 2000-04-20 15:08+0400\n"
+"POT-Creation-Date: 2000-04-29 21:25+0400\n"
 "PO-Revision-Date: 2000-04-27 02:06+02:00\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: German <de@li.org>\n"
@@ -38,33 +38,33 @@ msgstr "Mehrdeutiger Befehl `%s'.\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "Verzeichniswechsel ok, cwd=%s\n"
 
-#: src/CmdExec.cc:464 src/CmdExec.cc:523
+#: src/CmdExec.cc:464 src/CmdExec.cc:524
 msgid "Interrupt"
 msgstr "Abbruch"
 
-#: src/CmdExec.cc:575
+#: src/CmdExec.cc:576
 msgid "Warning: discarding incomplete command\n"
 msgstr "Warnung: unvollständiger Befehl verworfen\n"
 
-#: src/CmdExec.cc:657
+#: src/CmdExec.cc:658
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tEingebautes`%s' wird ausgeführt [%s]\n"
 
-#: src/CmdExec.cc:665
+#: src/CmdExec.cc:666
 msgid "Now executing:"
 msgstr "Momentan läuft:"
 
-#: src/CmdExec.cc:673
+#: src/CmdExec.cc:674
 msgid "\tCommands queued:\n"
 msgstr "        Befehle in Warteschlange:\n"
 
-#: src/CmdExec.cc:697
+#: src/CmdExec.cc:698
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\t Warte auf Beendigung von Job [%d]\n"
 
-#: src/CmdExec.cc:701
+#: src/CmdExec.cc:702
 #, c-format
 msgid "\tRunning\n"
 msgstr "\tWird ausgeführt\n"
@@ -286,7 +286,7 @@ msgstr "Ungültige Zeitangabe. Das Format ist <Zeit><Einheit> - z.B. 2h30m."
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Ungültige Angabe der Spanne. Das Format ist min-max - z.B. 10-20."
 
-#: src/Http.cc:1151 src/Resolver.cc:191 src/ftpclass.cc:2991
+#: src/Http.cc:1164 src/Resolver.cc:191 src/ftpclass.cc:2991
 msgid "Resolving host address..."
 msgstr "Löse Hostadresse auf..."
 
@@ -482,7 +482,8 @@ msgid ""
 msgstr ""
 "Verwendung: find [verzeichnis]\n"
 "Gibt den Inhalt des angegebenen oder des aktuellen Verzeichnisses rekursiv\n"
-"aus. Verzeichnisse werden in der Liste durch einen angehängten Schrägstrich \n"
+"aus. Verzeichnisse werden in der Liste durch einen angehängten Schrägstrich "
+"\n"
 "(/) gekennzeichnet. Man kann die Ausgabe dieses Befehls umleiten.\n"
 
 #: src/commands.cc:162
@@ -498,8 +499,10 @@ msgid ""
 " -a  use ascii mode (binary is the default)\n"
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
-"Nichtlokale Datei <nldatei> holen und es als lokale Datei <ldatei> speichern.\n"
-" -o <ldatei> gibt den Namen der lokalen Datei an (Vorgabe - Name der nldatei)\n"
+"Nichtlokale Datei <nldatei> holen und es als lokale Datei <ldatei> "
+"speichern.\n"
+" -o <ldatei> gibt den Namen der lokalen Datei an (Vorgabe - Name der "
+"nldatei)\n"
 " -c continue, nach Abbruch an alter Stelle fortfahren\n"
 " -E Dateien auf dem Server nach erfolgreicher Übertragung löschen. \n"
 " -a ascii / Textmodus verwenden (Binärmodus ist der Standardwert)\n"
@@ -519,7 +522,8 @@ msgid ""
 msgstr ""
 "Verwendung: glob [OPTS] befehl argumente\n"
 "Platzhalter (Joker) ausfüllen und angegebenen Befehl ausführen.\n"
-"Optionen können die Joker auf Verzeichnisse, Dateien oder beides erstrecken.\n"
+"Optionen können die Joker auf Verzeichnisse, Dateien oder beides "
+"erstrecken.\n"
 "Die Unterscheidung der Typen ist ungenau und hängt vom Server ab.\n"
 "Wenn keine Unterscheidung getroffen werden kann, wird ein  Eintrag im \n"
 "Zweifel in die Liste aufgenommen.\n"
@@ -677,8 +681,10 @@ msgstr ""
 "                        nicht herunterladen\n"
 " -L, --dereference      symbolische Links als Files herunterladen\n"
 " -N, --newer-than DATEI nur Dateien die neuer sind als DATEI herunterladen\n"
-" -i RA, --include RA    zum regulären Ausdruck passende Dateien einschließen\n"
-" -x RA, --exclude RA    zum regulären Ausdruck passende Dateien ausschließen\n"
+" -i RA, --include RA    zum regulären Ausdruck passende Dateien "
+"einschließen\n"
+" -x RA, --exclude RA    zum regulären Ausdruck passende Dateien "
+"ausschließen\n"
 "                        RA sind erweiterte reguläre Ausdrücke (Joker)\n"
 " -t Nx, --time-prec Nx  Zeitpräzision auf N Sekunden (x=s), Minuten (x=m)\n"
 "                        Stunden (x=h) oder Tage (x=d) setzen\n"
@@ -688,7 +694,8 @@ msgstr ""
 "\n"
 "Gibt man -R an, so ist das erste Verzeichnis lokal und das andere auf dem \n"
 "Host.\n"
-"Wird das zweite Verzeichnis nicht angegeben, wird die Namenswurzel(basename)\n"
+"Wird das zweite Verzeichnis nicht angegeben, wird die "
+"Namenswurzel(basename)\n"
 "des ersten Verzeichnisses verwendet.\n"
 "Werden beide Verzeichnisse weggelassen, so werden das aktuelle lokale und\n"
 "nichtlokale Verzeichnis verwendet.\n"
@@ -1354,7 +1361,7 @@ msgstr "`Unknown' empfangen, gehe von fehlgeschlagenem Login aus"
 msgid "assuming failed host name lookup"
 msgstr "nehme fehlgeschlagene Auflösung des Hostnamens an"
 
-#: src/Http.cc:529 src/ftpclass.cc:913
+#: src/Http.cc:537 src/ftpclass.cc:913
 msgid "Closing idle connection"
 msgstr "Schließe unbenutzte Verbindung"
 
@@ -1407,7 +1414,7 @@ msgstr "Schalte Passivmodus ein"
 msgid "Sending commands..."
 msgstr "Schicke Befehle"
 
-#: src/Http.cc:1162 src/ftpclass.cc:2983 src/ftpclass.cc:3003
+#: src/Http.cc:1175 src/ftpclass.cc:2983 src/ftpclass.cc:3003
 #: src/ftpclass.cc:3010
 msgid "Waiting for response..."
 msgstr "Warte auf Antwort"
@@ -1416,7 +1423,7 @@ msgstr "Warte auf Antwort"
 msgid "Connection idle"
 msgstr "Verbindung ruht"
 
-#: src/Http.cc:1157 src/ftpclass.cc:2998
+#: src/Http.cc:1170 src/ftpclass.cc:2998
 msgid "Connecting..."
 msgstr "Verbinde..."
 
@@ -1440,11 +1447,11 @@ msgstr "Warte auf Übertragungsende"
 msgid "Waiting for data connection..."
 msgstr "Warte auf Datenverbindung"
 
-#: src/Http.cc:1160 src/ftpclass.cc:3017
+#: src/Http.cc:1173 src/ftpclass.cc:3017
 msgid "Sending data"
 msgstr "Sende Daten"
 
-#: src/Http.cc:1165 src/ftpclass.cc:3019
+#: src/Http.cc:1178 src/ftpclass.cc:3019
 msgid "Receiving data"
 msgstr "Empfange Daten"
 
@@ -1533,11 +1540,11 @@ msgstr "%s OK, %d Verzeichnis$|se$ gelöscht\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s OK, %d Datei$|en$ gelöscht\n"
 
-#: src/Http.cc:993 src/Http.cc:1013
+#: src/Http.cc:1006 src/Http.cc:1026
 msgid "chunked format violated"
 msgstr "Blockformatierung verletzt"
 
-#: src/Http.cc:1163
+#: src/Http.cc:1176
 msgid "Fetching headers..."
 msgstr "Hole Kopfzeilen..."
 

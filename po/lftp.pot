@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2000-04-20 15:22+0400\n"
+"POT-Creation-Date: 2000-04-29 21:25+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,33 +39,33 @@ msgstr ""
 msgid "cd ok, cwd=%s\n"
 msgstr ""
 
-#: src/CmdExec.cc:464 src/CmdExec.cc:523
+#: src/CmdExec.cc:464 src/CmdExec.cc:524
 msgid "Interrupt"
 msgstr ""
 
-#: src/CmdExec.cc:575
+#: src/CmdExec.cc:576
 msgid "Warning: discarding incomplete command\n"
 msgstr ""
 
-#: src/CmdExec.cc:657
+#: src/CmdExec.cc:658
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr ""
 
-#: src/CmdExec.cc:665
+#: src/CmdExec.cc:666
 msgid "Now executing:"
 msgstr ""
 
-#: src/CmdExec.cc:673
+#: src/CmdExec.cc:674
 msgid "\tCommands queued:\n"
 msgstr ""
 
-#: src/CmdExec.cc:697
+#: src/CmdExec.cc:698
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr ""
 
-#: src/CmdExec.cc:701
+#: src/CmdExec.cc:702
 #, c-format
 msgid "\tRunning\n"
 msgstr ""
@@ -283,7 +283,7 @@ msgstr ""
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr ""
 
-#: src/Http.cc:1151 src/Resolver.cc:191 src/ftpclass.cc:2991
+#: src/Http.cc:1164 src/Resolver.cc:191 src/ftpclass.cc:2991
 msgid "Resolving host address..."
 msgstr ""
 
@@ -1149,7 +1149,7 @@ msgstr ""
 msgid "assuming failed host name lookup"
 msgstr ""
 
-#: src/Http.cc:529 src/ftpclass.cc:913
+#: src/Http.cc:537 src/ftpclass.cc:913
 msgid "Closing idle connection"
 msgstr ""
 
@@ -1202,7 +1202,7 @@ msgstr ""
 msgid "Sending commands..."
 msgstr ""
 
-#: src/Http.cc:1162 src/ftpclass.cc:2983 src/ftpclass.cc:3003
+#: src/Http.cc:1175 src/ftpclass.cc:2983 src/ftpclass.cc:3003
 #: src/ftpclass.cc:3010
 msgid "Waiting for response..."
 msgstr ""
@@ -1211,7 +1211,7 @@ msgstr ""
 msgid "Connection idle"
 msgstr ""
 
-#: src/Http.cc:1157 src/ftpclass.cc:2998
+#: src/Http.cc:1170 src/ftpclass.cc:2998
 msgid "Connecting..."
 msgstr ""
 
@@ -1235,11 +1235,11 @@ msgstr ""
 msgid "Waiting for data connection..."
 msgstr ""
 
-#: src/Http.cc:1160 src/ftpclass.cc:3017
+#: src/Http.cc:1173 src/ftpclass.cc:3017
 msgid "Sending data"
 msgstr ""
 
-#: src/Http.cc:1165 src/ftpclass.cc:3019
+#: src/Http.cc:1178 src/ftpclass.cc:3019
 msgid "Receiving data"
 msgstr ""
 
@@ -1328,11 +1328,11 @@ msgstr ""
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr ""
 
-#: src/Http.cc:993 src/Http.cc:1013
+#: src/Http.cc:1006 src/Http.cc:1026
 msgid "chunked format violated"
 msgstr ""
 
-#: src/Http.cc:1163
+#: src/Http.cc:1176
 msgid "Fetching headers..."
 msgstr ""
 
