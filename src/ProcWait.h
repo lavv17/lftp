@@ -65,6 +65,8 @@ public:
    static void SIGCHLD_handler(int);
 
    static void Signal(bool yes);
+
+   static void DeleteAll();
 };
 
 #endif /* PROCWAIT_H */

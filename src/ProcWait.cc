@@ -156,3 +156,10 @@ void ProcWait::Signal(bool yes)
    else
       SignalHook::Block(SIGCHLD);
 }
+
+void ProcWait::DeleteAll()
+{
+   Signal(false);
+   while(chain)
+      Delete(chain);
+}

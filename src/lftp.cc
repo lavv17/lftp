@@ -371,6 +371,7 @@ int   main(int argc,char **argv)
    SMTask::Delete(top_exec);
    SessionPool::ClearAll();
    LsCache::Flush();
+   ProcWait::DeleteAll();
 
    int task_count=SMTask::TaskCount();
    if(task_count>3)
