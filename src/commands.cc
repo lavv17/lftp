@@ -1316,13 +1316,15 @@ CMD(mirror)
       int len,len1=strlen(s1);            \
       if(!s)		                  \
       {			                  \
-	 s=(char*)xmalloc(a=len1+1);      \
+	 s=(char*)xmalloc(a = len1+1);    \
       	 strcpy(s,s1);	                  \
       }			                  \
-      else if(a<(len=strlen(s))+1+len1+1) \
+      else				  \
       {					  \
-	 s=(char*)xrealloc(s,a=len+1+len1+1); \
-	 strcat(s,"|");			  \
+	 len=strlen(s);		       	  \
+	 if(a < len+1+len1+1)		  \
+	    s=(char*)xrealloc(s, a = len+1+len1+1); \
+	 if(s[0]) strcat(s,"|");	  \
 	 strcat(s,s1);			  \
       }					  \
    } /* END OF APPEND_STRING */
@@ -1338,7 +1340,7 @@ CMD(mirror)
    const char *newer_than=0;
 
    args->rewind();
-   while((opt=args->getopt_long("esi:x:t:nrpcRvN:",mirror_opts,0))!=EOF)
+   while((opt=args->getopt_long("esi:x:t:nrpcRvN:L",mirror_opts,0))!=EOF)
    {
       switch(opt)
       {

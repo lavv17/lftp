@@ -218,6 +218,11 @@ int   Ftp::RestCheck(int act,int exp)
 	 return COPY_FAILED;
       return(state);
    }
+   if(act/100==4)
+   {
+      // strange, but possible
+      return -1;
+   }
    real_pos=pos;  // REST successful
    return state;
 }

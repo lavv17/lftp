@@ -134,7 +134,12 @@ int FtpListInfo::Do()
 	 if(file->defined & file->TYPE)
 	 {
 	    if(file->filetype==file->SYMLINK && follow_symlinks)
+	    {
 	       file->filetype=file->NORMAL;
+	       file->defined &= ~(file->SIZE|file->SYMLINK_DEF|file->MODE|file->DATE_UNPREC);
+	       cur->get_size=true;
+	       cur->get_time=true;
+	    }
 
 	    if(file->filetype==file->SYMLINK)
 	    {

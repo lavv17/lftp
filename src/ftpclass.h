@@ -46,7 +46,7 @@ class Ftp : public FileAccess
       WAITING_STATE,	   // we're waiting for a response with data
       ACCEPTING_STATE,	   // we're waiting for an incoming data connection
       DATA_OPEN_STATE,	   // data connection is open, for read or write
-      FATAL_STATE,	   // fatal error occured (e.g. REST not implemented)
+      FATAL_STATE,	   // fatal error occured (e.g. command not implemented)
       NO_FILE_STATE,	   // file access is impossible - no such file
       NO_HOST_STATE,	   // host not found or not specified
       STORE_FAILED_STATE,  // STOR failed - you have to reput

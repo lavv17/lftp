@@ -64,7 +64,7 @@ int FtpCopy::Do()
       if(res<0)
 	 dst_size=0;
       else
-	 dst_size=(info.size<0?-2:info.size);
+	 dst_size=(info.size<0?0:info.size);
       dst->Close();
 
    pre_WAIT:
