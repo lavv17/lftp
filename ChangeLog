@@ -1,6 +1,7 @@
 1999-07-04	lav
 
 	* configure.in: check for res_search.
+	* acconfig.h: add HAVE_RES_SEARCH
 
 1999-06-27	lav
 

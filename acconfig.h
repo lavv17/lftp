@@ -94,6 +94,8 @@
 
 #undef HAVE_DLOPEN
 
+#undef HAVE_RES_SEARCH
+
 /* Define to `int' if <sys/socket.h> doesn't define.  */
 #undef socklen_t
 
