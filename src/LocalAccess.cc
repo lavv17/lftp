@@ -500,9 +500,9 @@ bool LocalAccess::SameLocationAs(FileAccess *fa)
    return !xstrcmp(cwd,o->cwd);
 }
 
-ListInfo *LocalAccess::MakeListInfo()
+ListInfo *LocalAccess::MakeListInfo(const char *path)
 {
-   return new LocalListInfo(cwd);
+   return new LocalListInfo(this,path);
 }
 
 int LocalListInfo::Do()
@@ -510,6 +510,7 @@ int LocalListInfo::Do()
    if(done)
       return STALL;
 
+   const char *dir=session->GetCwd();
    DIR *d=opendir(dir);
    struct dirent *f;
 
@@ -532,7 +533,7 @@ int LocalListInfo::Do()
    }
    closedir(d);
 
-   result->Exclude(path,rxc_exclude,rxc_include);
+   result->Exclude(exclude_prefix,rxc_exclude,rxc_include);
 
    result->rewind();
    for(FileInfo *file=result->curr(); file!=0; file=result->next())
@@ -547,6 +548,15 @@ int LocalListInfo::Do()
    return MOVED;
 }
 
+#include "Glob.h"
+class LocalGlob : public Glob
+{
+   const char *cwd;
+public:
+   LocalGlob(const char *cwd,const char *pattern);
+   const char *Status() { return "..."; }
+   int Do();
+};
 Glob *LocalAccess::MakeGlob(const char *pattern)
 {
    xfree(file);

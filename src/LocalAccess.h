@@ -57,25 +57,15 @@ public:
 
    static void ClassInit();
 
-   ListInfo *MakeListInfo();
+   ListInfo *MakeListInfo(const char *path);
    Glob	    *MakeGlob(const char *pattern);
    DirList  *MakeDirList(ArgV *a);
 };
 
 class LocalListInfo : public ListInfo
 {
-   const char *dir;
 public:
-   LocalListInfo(const char *d) { dir=d; }
-   const char *Status() { return "..."; }
-   int Do();
-};
-
-class LocalGlob : public Glob
-{
-   const char *cwd;
-public:
-   LocalGlob(const char *cwd,const char *pattern);
+   LocalListInfo(FileAccess *s,const char *d) : ListInfo(s,d) {}
    const char *Status() { return "..."; }
    int Do();
 };

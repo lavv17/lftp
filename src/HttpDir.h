@@ -29,8 +29,8 @@ class HttpListInfo : public GenericParseListInfo
 {
    FileSet *Parse(const char *buf,int len);
 public:
-   HttpListInfo(Http *session)
-      : GenericParseListInfo(session)
+   HttpListInfo(Http *session,const char *path)
+      : GenericParseListInfo(session,path)
       {
 	 get_time_for_dirs=false;
       }
@@ -72,15 +72,6 @@ public:
 
    void Suspend();
    void Resume();
-};
-
-class HttpGlob : public GenericParseGlob
-{
-   FileSet *Parse(const char *buf,int len);
-   GenericParseGlob *MakeUpDirGlob();
-public:
-   HttpGlob(FileAccess *s,const char *n_pattern)
-      : GenericParseGlob(s,n_pattern) {}
 };
 
 #endif//HTTPDIR_H

@@ -543,159 +543,6 @@ int NetAccess::CountConnections()
 }
 
 
-// GenericParseGlob implementation
-GenericParseGlob::GenericParseGlob(FileAccess *s,const char *n_pattern)
-   : Glob(n_pattern)
-{
-   curr_dir=0;
-   dir_list=0;
-   dir_index=0;
-   updir_glob=0;
-   ubuf=0;
-
-   session=s;
-   dir=xstrdup(pattern);
-   char *slash=strrchr(dir,'/');
-   if(!slash)
-      dir[0]=0;	  // current directory
-   else if(slash>dir)
-      *slash=0;	  // non-root directory
-   else
-      dir[1]=0;	  // root directory
-
-   if(done)
-      return;
-}
-
-GenericParseGlob::~GenericParseGlob()
-{
-   Delete(updir_glob);
-   Delete(ubuf);
-   xfree(dir);
-}
-
-int GenericParseGlob::Do()
-{
-   int   m=STALL;
-
-   if(done)
-      return m;
-
-   if(dir[0] && !updir_glob && !dir_list)
-   {
-      updir_glob=MakeUpDirGlob();
-      updir_glob->DirectoriesOnly();
-   }
-
-   if(updir_glob && !dir_list)
-   {
-      if(updir_glob->Error())
-      {
-	 SetError(updir_glob->ErrorText());
-	 return MOVED;
-      }
-      if(!updir_glob->Done())
-	 return m;
-      dir_list=updir_glob->GetResult();
-      dir_index=0;
-      m=MOVED;
-   }
-
-   if(!ubuf)
-   {
-      curr_dir=0;
-      if(dir_list && (*dir_list)[dir_index])
-	 curr_dir=(*dir_list)[dir_index]->name;
-      else if(dir_index==0)
-	 curr_dir=dir;
-      if(curr_dir==0) // all done
-      {
-	 done=true;
-	 return MOVED;
-      }
-
-      const char *cache_buffer=0;
-      int cache_buffer_size=0;
-      if(use_cache && LsCache::Find(session,curr_dir,FA::LONG_LIST,
-				    &cache_buffer,&cache_buffer_size))
-      {
-	 ubuf=new Buffer();
-	 ubuf->Put(cache_buffer,cache_buffer_size);
-	 ubuf->PutEOF();
-      }
-      else
-      {
-	 session->Open(curr_dir,FA::LONG_LIST);
-	 session->UseCache(use_cache);
-	 session->RereadManual();
-	 ubuf=new IOBufferFileAccess(session);
-	 if(LsCache::IsEnabled())
-	    ubuf->Save(LsCache::SizeLimit());
-      }
-      m=MOVED;
-   }
-
-   if(ubuf->Error())
-   {
-      SetError(ubuf->ErrorText());
-      Delete(ubuf);
-      ubuf=0;
-      return MOVED;
-   }
-
-   if(!ubuf->Eof())
-   {
-      if(session->GetRealPos()==0 && session->GetPos()>0)
-      {
-	 session->SeekReal();
-	 ubuf->Empty();
-	 return MOVED;
-      }
-      return m;
-   }
-
-   LsCache::Add(session,curr_dir,FA::LONG_LIST,ubuf);
-
-   // now we have all the index in ubuf; parse it.
-   const char *b;
-   int len;
-   ubuf->Get(&b,&len);
-
-   FileSet *set=Parse(b,len);
-
-   Delete(ubuf);
-   ubuf=0;
-
-   set->rewind();
-   for(FileInfo *f=set->curr(); f; f=set->next())
-   {
-      f->SetName(dir_file(curr_dir,f->name));
-      add(f);
-   }
-
-   delete set;
-
-   dir_index++;
-   m=MOVED;
-
-   return m;
-}
-
-const char *GenericParseGlob::Status()
-{
-   if(updir_glob && !dir_list)
-      return updir_glob->Status();
-
-   static char s[256];
-   if(ubuf && !ubuf->Eof() && session->IsOpen())
-   {
-      sprintf(s,_("Getting file list (%lld) [%s]"),
-		     (long long)session->GetPos(),session->CurrentStatus());
-      return s;
-   }
-   return "";
-}
-
 // GenericParseListInfo implementation
 int GenericParseListInfo::Do()
 {
@@ -775,7 +622,7 @@ int GenericParseListInfo::Do()
 
       result->ExcludeDots();
       if(rxc_exclude || rxc_include)
-	 result->Exclude(path,rxc_exclude,rxc_include);
+	 result->Exclude(exclude_prefix,rxc_exclude,rxc_include);
 
       get_info_cnt=result->get_fnum();
       if(get_info_cnt==0)
@@ -867,10 +714,9 @@ int GenericParseListInfo::Do()
    return m;
 }
 
-GenericParseListInfo::GenericParseListInfo(FileAccess *s)
+GenericParseListInfo::GenericParseListInfo(FileAccess *s,const char *p)
+   : ListInfo(s,p)
 {
-   session=s;
-
    get_info=0;
    get_info_cnt=0;
 
@@ -884,7 +730,6 @@ GenericParseListInfo::GenericParseListInfo(FileAccess *s)
 
 GenericParseListInfo::~GenericParseListInfo()
 {
-   session->Close();
    xfree(get_info);
    Delete(ubuf);
 }

@@ -49,7 +49,7 @@ void  FileInfo::Merge(const FileInfo& f)
    int dif=(~defined)&f.defined;
    if(dif&MODE)
       SetMode(f.mode);
-   if(dif&DATE || f.date_prec<date_prec)
+   if(dif&DATE || (defined&DATE && f.defined&DATE && f.date_prec<date_prec))
       SetDate(f.date,f.date_prec);
    if(dif&TYPE)
       SetType(f.filetype);
@@ -136,24 +136,6 @@ void FileSet::Merge(const FileSet *set)
       {
 	 Add(new FileInfo(*set->files[i]));
       }
-   }
-}
-
-void FileSet::Merge(char **list)
-{
-   if(list==0)
-      return;
-
-   int j;
-   for( ; *list; list++)
-   {
-      for(j=0; j<fnum; j++)
-      {
-      	 if(!strcmp(files[j]->name,*list))
-	    break;
-      }
-      if(j==fnum)
-	 Add(new FileInfo(*list));
    }
 }
 

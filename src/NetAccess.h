@@ -143,34 +143,9 @@ public:
    void Reconfig(const char *name,const char *c);
 };
 
-class GenericParseGlob : public Glob
-{
-protected:
-   FileAccess *session;
-   char	 *dir;
-   const char *curr_dir;
-   FileSet *dir_list;
-   int   dir_index;
-   GenericParseGlob *updir_glob;
-
-   Buffer *ubuf;
-
-   virtual FileSet *Parse(const char *buf,int len)=0;
-   virtual GenericParseGlob *MakeUpDirGlob()=0;
-
-public:
-   int	 Do();
-   const char *Status();
-
-   GenericParseGlob(FileAccess *s,const char *n_pattern);
-   virtual ~GenericParseGlob();
-};
-
 class GenericParseListInfo : public ListInfo
 {
 protected:
-   FileAccess *session;
-
    FA::fileinfo *get_info;
    int get_info_cnt;
 
@@ -183,7 +158,7 @@ protected:
    virtual FileSet *Parse(const char *buf,int len)=0;
 
 public:
-   GenericParseListInfo(FileAccess *session);
+   GenericParseListInfo(FileAccess *session,const char *path);
    virtual ~GenericParseListInfo();
    int Do();
    const char *Status();

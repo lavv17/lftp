@@ -370,7 +370,7 @@ public:
    void Cleanup();
    void CleanupThis();
 
-   ListInfo *MakeListInfo();
+   ListInfo *MakeListInfo(const char *path);
    Glob *MakeGlob(const char *pattern);
    DirList *MakeDirList(ArgV *args);
 

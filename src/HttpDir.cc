@@ -237,6 +237,8 @@ public:
    char user[32];
    char group[32];
    int nlink;
+   time_t date;
+   int date_prec;
 
    void clear();
    bool validate();
@@ -267,6 +269,8 @@ void file_info::clear()
    user[0]=0;
    group[0]=0;
    nlink=0;
+   date=NO_DATE;
+   date_prec=-1;
 }
 bool file_info::validate()
 {
@@ -984,6 +988,8 @@ parse_url_again:
 	 if(m>=0)
 	    fi->SetMode(m);
       }
+      if(info.date_prec!=-1 && info.date!=NO_DATE)
+	 fi->SetDate(info.date,info.date_prec);
 
       set->Add(fi);
    }
@@ -1150,28 +1156,6 @@ void HttpDirList::Resume()
       ubuf->Resume();
 }
 
-
-// HttpGlob implementation
-GenericParseGlob *HttpGlob::MakeUpDirGlob()
-{
-   return new HttpGlob(session,dir);
-}
-FileSet *HttpGlob::Parse(const char *b,int len)
-{
-   FileSet *set=new FileSet;
-   ParsedURL prefix(session->GetFileURL(curr_dir));
-   char *base_href=0;
-   for(;;)
-   {
-      int n=parse_html(b,len,true,0,set,0,&prefix,&base_href);
-      if(n==0)
-	 break;
-      b+=n;
-      len-=n;
-   }
-   xfree(base_href);
-   return set;
-}
 
 // HttpListInfo implementation
 FileSet *HttpListInfo::Parse(const char *b,int len)

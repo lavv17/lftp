@@ -1,3 +1,23 @@
+2001-12-05  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.h: include Glob.h.
+	* DummyProto.h, DummyProto.cc: little optimization; new MakeListInfo.
+	* FileAccess.cc, FileAccess.h: ListInfo takes path; move Glob to
+	  separate file.
+	* Glob.cc, Glob.h: new files; new GenericGlob class uses ListInfo.
+	* FileSet.cc, FileSet.h: fix date copying; remove unused method.
+	* mgetJob.cc, FileSetOutput.cc: include Glob.h.
+	* Fish.cc, Fish.h: use GenericGlob; new ListInfo ctor.
+	* FtpListInfo.h: new ListInfo ctor.
+	* GetFileInfo.cc, GetFileInfo.h: new ListInfo ctor; path renamed.
+	* Http.cc, Http.h: new ListInfo ctor.
+	* HttpDir.cc, HttpDir.h: prepare for date filling; use GenericGlob.
+	* LocalAccess.cc, LocalAccess.h: new ListInfo ctor.
+	* Makefile.am: adjust for added/removed files.
+	* NetAccess.cc, NetAccess.h: remove GenericParseGlob class; new ListInfo ctor.
+	* ftpclass.cc, ftpclass.h: new ListInfo ctor.
+	* FtpGlob.cc, FtpGlob.h: removed files.
+
 2001-12-04  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* NetAccess.cc, NetAccess.h: improve GenericParseListInfo so that

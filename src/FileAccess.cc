@@ -33,10 +33,6 @@
 #include <errno.h>
 #include "ascii_ctype.h"
 #include <fcntl.h>
-/* Our autoconf test will switch to lib/fnmatch.c if the local fnmatch
- * isn't GNU, so this should be OK. */
-#define _GNU_SOURCE
-#include <fnmatch.h>
 #include "LsCache.h"
 #include "xalloca.h"
 #include "log.h"
@@ -911,7 +907,7 @@ void FileAccess::UseCache(bool) {}
 bool FileAccess::NeedSizeDateBeforehand() { return false; }
 void FileAccess::Cleanup() {}
 void FileAccess::CleanupThis() {}
-ListInfo *FileAccess::MakeListInfo() { return 0; }
+ListInfo *FileAccess::MakeListInfo(const char *path) { return 0; }
 Glob *FileAccess::MakeGlob(const char *pattern) { return 0; }
 DirList *FileAccess::MakeDirList(ArgV *a) { if(a) delete a; return 0; }
 
@@ -1042,217 +1038,42 @@ void FileAccessOperation::SetError(const char *e)
 
 
 // ListInfo implementation
-ListInfo::ListInfo()
+ListInfo::ListInfo(FileAccess *s,const char *p)
 {
+   session=s;
+   saved_cwd=0;
    result=0;
 
    rxc_exclude=0;
    rxc_include=0;
-   path=0;
+   exclude_prefix=0;
 
    need=0;
 
    follow_symlinks=false;
+
+   if(session && p)
+   {
+      saved_cwd=xstrdup(session->GetCwd());
+      session->Chdir(p,false);
+   }
 }
 
 ListInfo::~ListInfo()
 {
-   if(result)
-      delete result;
+   if(session)
+      session->Close();
+   if(session && saved_cwd)
+      session->SetCwd(saved_cwd);
+   delete result;
+   xfree(saved_cwd);
 }
 
 void ListInfo::SetExclude(const char *p,regex_t *x,regex_t *i)
 {
    rxc_exclude=x;
    rxc_include=i;
-   path=p;
-}
-
-// Glob implementation
-Glob::~Glob()
-{
-   xfree(pattern);
-}
-
-Glob::Glob(const char *p)
-{
-   pattern=xstrdup(p);
-   dirs_only=false;
-   files_only=false;
-   match_period=true;
-   inhibit_tilde=true;
-   casefold=false;
-
-   if(pattern[0]=='~')
-   {
-      char *slash=strchr(pattern,'/');
-      if(slash)
-      {
-	 *slash=0;
-	 inhibit_tilde=HasWildcards(pattern);
-	 *slash='/';
-      }
-      else
-	 inhibit_tilde=HasWildcards(pattern);;
-   }
-   if(pattern[0] && !HasWildcards(pattern))
-   {
-      // no need to glob, just unquote
-      char *u=alloca_strdup(pattern);
-      UnquoteWildcards(u);
-      add(new FileInfo(u));
-      done=true;
-   }
-}
-
-void Glob::add_force(const FileInfo *info)
-{
-   // insert new file name into list
-   list.Add(new FileInfo(*info));
-}
-void Glob::add(const FileInfo *info)
-{
-   if(info->defined&info->TYPE)
-   {
-      if(dirs_only && info->filetype==info->NORMAL)
-	 return;   // note that symlinks can point to directories,
-		   // so skip normal files only.
-      if(files_only && info->filetype==info->DIRECTORY)
-	 return;
-   }
-
-   char *s=info->name;
-   if(s==0)
-      return;
-
-   int flags=FNM_PATHNAME;
-   if(match_period)
-      flags|=FNM_PERIOD;
-
-   if(casefold)
-      flags|=FNM_CASEFOLD;
-
-   if(pattern[0]!=0
-   && fnmatch(pattern, s, flags)!=0)
-      return; // unmatched
-
-   if(s[0]=='~' && inhibit_tilde)
-   {
-      char *new_name=alloca_strdup2(s,2);
-      strcpy(new_name,"./");
-      strcat(new_name,s);
-      FileInfo new_info(*info);
-      new_info.SetName(new_name);
-      add_force(&new_info);
-   }
-   else
-   {
-      add_force(info);
-   }
-}
-
-bool Glob::HasWildcards(const char *s)
-{
-   while(*s)
-   {
-      switch(*s)
-      {
-      case '\\':
-	 if(s[1])
-	    s++;
-	 break;
-      case '*':
-      case '[':
-      case ']':
-      case '?':
-	 return true;
-      }
-      s++;
-   }
-   return false;
-}
-
-void Glob::UnquoteWildcards(char *s)
-{
-   char *store=s;
-   for(;;)
-   {
-      if(*s=='\\')
-      {
-	 if(s[1]=='*'
-	 || s[1]=='['
-	 || s[1]==']'
-	 || s[1]=='?'
-	 || s[1]=='\\')
-	    s++;
-      }
-      *store=*s;
-      if(*s==0)
-	 break;
-      s++;
-      store++;
-   }
-}
-
-int NoGlob::Do()
-{
-   if(!done)
-   {
-      if(!HasWildcards(pattern))
-      {
-	 char *p=alloca_strdup(pattern);
-	 UnquoteWildcards(p);
-	 add(new FileInfo(p));
-      }
-      done=true;
-      return MOVED;
-   }
-   return STALL;
-}
-NoGlob::NoGlob(const char *p) : Glob(p)
-{
-}
-
-GlobURL::GlobURL(FileAccess *s,const char *p)
-{
-   session=s;
-   reuse=false;
-   glob=0;
-   url_prefix=xstrdup(p);
-   url_prefix[url::path_index(p)]=0;
-
-   ParsedURL p_url(p,true);
-   if(p_url.proto && p_url.path)
-   {
-      session=FA::New(&p_url);
-      if(session)
-      {
-	 glob=session->MakeGlob(p_url.path);
-	 reuse=true;
-      }
-   }
-   else
-   {
-      glob=session->MakeGlob(p);
-   }
-   if(!glob)
-      glob=new NoGlob(p);
-}
-GlobURL::~GlobURL()
-{
-   SMTask::Delete(glob);
-   if(session && reuse)
-      SessionPool::Reuse(session);
-   xfree(url_prefix);
-}
-FileSet *GlobURL::GetResult()
-{
-   FileSet &list=*glob->GetResult();
-   if(!reuse)
-      return &list;
-   for(int i=0; list[i]; i++)
-      list[i]->SetName(url_file(url_prefix,list[i]->name));
-   return &list;
+   exclude_prefix=p;
 }
 
 #include "modconfig.h"

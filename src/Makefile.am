@@ -48,9 +48,9 @@ libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  FtpListInfo.cc FtpListInfo.h ftp-opie.c md5.c md5.h log.h log.cc\
  buffer.cc buffer.h url.cc url.h StatusLine.cc StatusLine.h plural.c plural.h\
  misc.h misc.cc Http.cc Http.h fg.cc fg.h module.cc module.h modconfig.h\
- resource.cc DummyProto.cc DummyProto.h FtpGlob.cc FtpGlob.h FtpDirList.cc\
+ resource.cc DummyProto.cc DummyProto.h FtpDirList.cc\
  FtpDirList.h ArgV.cc ArgV.h HttpDir.cc HttpDir.h ascii_ctype.h\
- NetAccess.cc NetAccess.h Speedometer.cc\
+ NetAccess.cc NetAccess.h Speedometer.cc Glob.cc Glob.h\
  Speedometer.h lftp_ssl.cc lftp_ssl.h netrc.cc netrc.h buffer_ssl.cc\
  buffer_ssl.h Fish.cc Fish.h ColumnOutput.cc ColumnOutput.h FileSetOutput.cc \
  FileSetOutput.h PtyShell.cc PtyShell.h lftp_pty.c lftp_pty.h \

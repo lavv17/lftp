@@ -28,9 +28,8 @@
 
 class GetFileInfo: public ListInfo
 {
-   FileAccess *session;
    ListInfo *li;
-   
+
    /* file or dir we're listing: */
    char *dir;
 
@@ -38,9 +37,9 @@ class GetFileInfo: public ListInfo
    char *realdir;
 
    char *origdir;
-   
+
    bool showdir;
-   
+
    enum state_t { CHANGE_DIR, CHANGING_DIR, GETTING_LIST, DONE } state;
    /* whether we've tried to cd to the whole dir (treating it as a dir): */
    bool tried_dir;

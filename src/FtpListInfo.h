@@ -33,7 +33,7 @@ class FtpListInfo : public GenericParseListInfo
    FileSet *ParseShortList(const char *buf,int len);
 public:
    virtual FileSet *Parse(const char *buf,int len);
-   FtpListInfo(FileAccess *session) : GenericParseListInfo(session) {}
+   FtpListInfo(FileAccess *session,const char *path) : GenericParseListInfo(session,path) {}
 };
 
 #endif//FTPLISTINFO_H

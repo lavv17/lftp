@@ -36,7 +36,7 @@
 #include "xalloca.h"
 #include "url.h"
 #include "FtpListInfo.h"
-#include "FtpGlob.h"
+#include "Glob.h"
 #include "FtpDirList.h"
 #include "log.h"
 #include "FileCopyFtp.h"
@@ -3818,13 +3818,13 @@ void Ftp::SetError(int ec,const char *e)
    super::SetError(ec,e);
 }
 
-ListInfo *Ftp::MakeListInfo()
+ListInfo *Ftp::MakeListInfo(const char *path)
 {
-   return new FtpListInfo(this);
+   return new FtpListInfo(this,path);
 }
 Glob *Ftp::MakeGlob(const char *pattern)
 {
-   return new FtpGlob(this,pattern);
+   return new GenericGlob(this,pattern);
 }
 DirList *Ftp::MakeDirList(ArgV *args)
 {

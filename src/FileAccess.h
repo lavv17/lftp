@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2000 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2001 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -213,6 +213,7 @@ public:
    virtual void	Rename(const char *rfile,const char *to);
    virtual void Mkdir(const char *rfile,bool allpath=false);
    virtual void Chdir(const char *dir,bool verify=true);
+   void SetCwd(const char *dir) { xfree(cwd); cwd=xstrdup(dir); }
    void Remove(const char *rfile)    { Open(rfile,REMOVE); }
    void RemoveDir(const char *dir)  { Open(dir,REMOVE_DIR); }
    void Chmod(const char *file,int m);
@@ -284,7 +285,7 @@ public:
    virtual void CleanupThis();
    void CleanupAll();
       // ^^ close idle connections, etc.
-   virtual ListInfo *MakeListInfo();
+   virtual ListInfo *MakeListInfo(const char *path=0);
    virtual Glob *MakeGlob(const char *pattern);
    virtual DirList *MakeDirList(ArgV *a);
 
@@ -363,64 +364,16 @@ public:
    void UseCache(bool y=true) { use_cache=y; }
 };
 
-class Glob : public FileAccessOperation
-{
-protected:
-   char  *pattern;
-   FileSet list;
-   bool	 dirs_only;
-   bool	 files_only;
-   bool	 match_period;
-   bool	 inhibit_tilde;
-   bool	 casefold;
-   void	 add(const FileInfo *info);
-   void	 add_force(const FileInfo *info);
-   virtual ~Glob();
-public:
-   const char *GetPattern() { return pattern; }
-   FileSet *GetResult() { return &list; }
-   Glob(const char *p);
-   void DirectoriesOnly() { dirs_only=true; }
-   void FilesOnly() { files_only=true; }
-   void NoMatchPeriod() { match_period=false; }
-   void NoInhibitTilde() { inhibit_tilde=false; }
-   void CaseFold() { casefold=true; }
-
-   static bool HasWildcards(const char *);
-   static void UnquoteWildcards(char *);
-};
-class NoGlob : public Glob
-{
-public:
-   NoGlob(const char *p);
-   const char *Status() { return ""; }
-   int Do();
-};
-
-class GlobURL
-{
-   FileAccess *session;
-   bool reuse;
-   char *url_prefix;
-public:
-   Glob *glob;
-   GlobURL(FileAccess *s,const char *p);
-   ~GlobURL();
-   FileSet *GetResult();
-   bool Done()  { return glob->Done(); }
-   bool Error() { return glob->Error(); }
-   const char *ErrorText() { return glob->ErrorText(); }
-   const char *Status() { return glob->Status(); }
-};
-
 #include "FileSet.h"
 
 class ListInfo : public FileAccessOperation
 {
 protected:
+   FileAccess *session;
+   char *saved_cwd;
    FileSet *result;
 
-   const char *path;
+   const char *exclude_prefix;
    regex_t *rxc_exclude;
    regex_t *rxc_include;
 
@@ -430,7 +383,7 @@ protected:
    virtual ~ListInfo();
 
 public:
-   ListInfo();
+   ListInfo(FileAccess *session,const char *path);
 
    virtual void SetExclude(const char *p,regex_t *x,regex_t *i);
 

@@ -31,6 +31,7 @@
 #include "alias.h"
 #include "history.h"
 #include "bookmark.h"
+#include "Glob.h"
 
 class QueueFeeder;
 

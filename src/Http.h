@@ -152,7 +152,7 @@ public:
 
    DirList *MakeDirList(ArgV *a);
    Glob *MakeGlob(const char *pattern);
-   ListInfo *MakeListInfo();
+   ListInfo *MakeListInfo(const char *path);
 
    void UseCache(bool use) { no_cache_this=!use; }
 

@@ -24,6 +24,7 @@
 #define MGETJOB_H
 
 #include "GetJob.h"
+#include "Glob.h"
 
 class mgetJob : public GetJob
 {

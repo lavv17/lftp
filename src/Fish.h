@@ -144,7 +144,7 @@ public:
 
    DirList *MakeDirList(ArgV *args);
    Glob *MakeGlob(const char *pattern);
-   ListInfo *MakeListInfo();
+   ListInfo *MakeListInfo(const char *p);
 
    static const char *shell_encode(const char *);
    void DontEncodeFile() { encode_file=false; }
@@ -174,21 +174,12 @@ public:
    void Resume();
 };
 
-class FishGlob : public GenericParseGlob
-{
-   FileSet *Parse(const char *buf,int len);
-   GenericParseGlob *MakeUpDirGlob();
-public:
-   FishGlob(FileAccess *s,const char *n_pattern)
-      : GenericParseGlob(s,n_pattern) {}
-};
-
 class FishListInfo : public GenericParseListInfo
 {
    FileSet *Parse(const char *buf,int len);
 public:
-   FishListInfo(Fish *session)
-      : GenericParseListInfo(session)
+   FishListInfo(Fish *session,const char *path)
+      : GenericParseListInfo(session,path)
       {
 	 can_get_prec_time=false;
       }

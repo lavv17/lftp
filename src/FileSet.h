@@ -141,7 +141,6 @@ public:
 
    void	 Add(FileInfo *);
    void	 Merge(const FileSet *);
-   void	 Merge(char **);   // file list
    void	 SubtractSame(const FileSet *,int ignore);
    void	 SubtractAny(const FileSet *);
    void  SubtractOlderThan(time_t t);

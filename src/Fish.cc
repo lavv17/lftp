@@ -1147,13 +1147,14 @@ DirList *Fish::MakeDirList(ArgV *args)
 {
    return new FishDirList(args,this);
 }
+#include "Glob.h"
 Glob *Fish::MakeGlob(const char *pattern)
 {
-   return new FishGlob(this,pattern);
+   return new GenericGlob(this,pattern);
 }
-ListInfo *Fish::MakeListInfo()
+ListInfo *Fish::MakeListInfo(const char *p)
 {
-   return new FishListInfo(this);
+   return new FishListInfo(this,p);
 }
 
 #undef super
@@ -1393,16 +1394,6 @@ static FileSet *ls_to_FileSet(const char *b,int len)
       set->Add(f);
    }
    return set;
-}
-
-// FishGlob implementation
-GenericParseGlob *FishGlob::MakeUpDirGlob()
-{
-   return new FishGlob(session,dir);
-}
-FileSet *FishGlob::Parse(const char *b,int len)
-{
-   return ls_to_FileSet(b,len);
 }
 
 // FishListInfo implementation

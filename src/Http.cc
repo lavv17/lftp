@@ -1674,13 +1674,14 @@ DirList *Http::MakeDirList(ArgV *args)
 {
    return new HttpDirList(args,this);
 }
+#include "Glob.h"
 Glob *Http::MakeGlob(const char *pattern)
 {
-   return new HttpGlob(this,pattern);
+   return new GenericGlob(this,pattern);
 }
-ListInfo *Http::MakeListInfo()
+ListInfo *Http::MakeListInfo(const char *path)
 {
-   return new HttpListInfo(this);
+   return new HttpListInfo(this,path);
 }
 
 bool Http::CookieClosureMatch(const char *closure_c,

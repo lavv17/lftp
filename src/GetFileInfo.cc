@@ -6,8 +6,8 @@
 #include "misc.h"
 
 GetFileInfo::GetFileInfo(FileAccess *a, const char *_dir, bool _showdir)
+   : ListInfo(a,0)
 {
-   session=a;
    dir=xstrdup(_dir? _dir:"");
    showdir=_showdir;
    state=CHANGE_DIR;
@@ -104,7 +104,7 @@ int GetFileInfo::Do()
       li->UseCache(use_cache);
       li->NoNeed(FileInfo::ALL_INFO); /* clear need */
       li->Need(need);
-      SetExclude(path, rxc_exclude, rxc_include);
+      SetExclude(exclude_prefix, rxc_exclude, rxc_include);
       state=GETTING_LIST;
       return MOVED;
 
