@@ -1,3 +1,13 @@
+Version 2.3.9 - 2001-03-22
+
+* new setting module:path, path to look for modules.
+* new setting http:referer to send Referer: header, `.' expands to current
+  directory URL.
+* new setting hftp:use-type to disable `;type=' url suffix.
+* terminal status line support (Glenn F. Maynard <glenn@zewt.org>)
+* fixed mirror exclude/include options for hftp and http.
+* ignore certain file locking errors, don't print messages.
+
 Version 2.3.8 - 2001-02-16
 
 * miscellaneous improvements.

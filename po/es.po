@@ -4,97 +4,97 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2.1\n"
-"POT-Creation-Date: 2001-02-14 12:46+0300\n"
+"POT-Creation-Date: 2001-03-22 13:20+0300\n"
 "PO-Revision-Date: 2000-08-26 00:01-0300\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/CmdExec.cc:75
+#: src/CmdExec.cc:78
 #, c-format
 msgid "Warning: getcwd() failed: %s\n"
 msgstr "Aviso: falló getcwd(): %s\n"
 
-#: src/CmdExec.cc:97
+#: src/CmdExec.cc:100
 #, c-format
 msgid "Warning: chdir(%s) failed: %s\n"
 msgstr "Aviso: falló chdir(%s): %s\n"
 
 #. can't run further commands in wrong directory
-#: src/CmdExec.cc:100
+#: src/CmdExec.cc:103
 msgid "No directory to execute commands in - terminating\n"
 msgstr "No hay directorio en el que ejecutar las órdenes - terminando\n"
 
-#: src/CmdExec.cc:206
+#: src/CmdExec.cc:209
 #, c-format
 msgid "Unknown command `%s'.\n"
 msgstr "Orden desconocida `%s'.\n"
 
-#: src/CmdExec.cc:208
+#: src/CmdExec.cc:211
 #, c-format
 msgid "Ambiguous command `%s'.\n"
 msgstr "Orden ambigua `%s'.\n"
 
-#: src/CmdExec.cc:225
+#: src/CmdExec.cc:228
 #, c-format
 msgid "Module for command `%s' did not register the command.\n"
 msgstr "El módulo para la orden `%s' no registro esa orden.\n"
 
-#: src/CmdExec.cc:362
+#: src/CmdExec.cc:365
 #, c-format
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, dir actual=%s\n"
 
-#: src/CmdExec.cc:382 src/MirrorJob.cc:536
+#: src/CmdExec.cc:385 src/MirrorJob.cc:536
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: se recibió redirección a `%s'\n"
 
-#: src/CmdExec.cc:385 src/FileCopy.cc:959
+#: src/CmdExec.cc:388 src/FileCopy.cc:959
 msgid "Too many redirections"
 msgstr "Demasiadas redirecciones"
 
-#: src/CmdExec.cc:500 src/CmdExec.cc:562
+#: src/CmdExec.cc:503 src/CmdExec.cc:565
 msgid "Interrupt"
 msgstr "Interrupción"
 
-#: src/CmdExec.cc:615
+#: src/CmdExec.cc:626
 msgid "Warning: discarding incomplete command\n"
 msgstr "Aviso: descartando orden incompleta\n"
 
-#: src/CmdExec.cc:705
+#: src/CmdExec.cc:716
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tEjecutando primitiva `%s' [%s]\n"
 
-#: src/CmdExec.cc:713
+#: src/CmdExec.cc:724
 msgid "Now executing:"
 msgstr "Ejecutando ahora:"
 
-#: src/CmdExec.cc:726
+#: src/CmdExec.cc:737
 msgid "\tCommands queued:\n"
 msgstr "\tComandos encolados:\n"
 
-#: src/CmdExec.cc:750
+#: src/CmdExec.cc:761
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\tEsperando que termine la tarea [%d]\n"
 
-#: src/CmdExec.cc:755
+#: src/CmdExec.cc:766
 msgid "\tWaiting for termination of jobs: "
 msgstr "\tEsperando la finalización de las siguientes tareas: "
 
-#: src/CmdExec.cc:765
+#: src/CmdExec.cc:776
 #, c-format
 msgid "\tRunning\n"
 msgstr "\tEjecutando\n"
 
-#: src/CmdExec.cc:769
+#: src/CmdExec.cc:780
 msgid "\tWaiting for command\n"
 msgstr "\tEsperando orden\n"
 
-#: src/CmdExec.cc:1301
+#: src/CmdExec.cc:1318
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: la orden `%s' no fue compilada dentro del binario.\n"
@@ -148,12 +148,12 @@ msgstr "Archivo movido: %s"
 msgid "File moved to `%s'"
 msgstr "Archivo movido a `%s'"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:1337
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:1341
 #, c-format
 msgid "Getting directory contents (%lld)"
 msgstr "Obteniendo el contenido del directorio (%lld)"
 
-#: src/FtpListInfo.cc:240 src/HttpDir.cc:1343
+#: src/FtpListInfo.cc:240 src/HttpDir.cc:1347
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "Obteniendo información sobre los archivos (%d%%)"
@@ -163,7 +163,7 @@ msgstr "Obteniendo información sobre los archivos (%d%%)"
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr "%s: %s: el archivo ya existe y xfer:clobber no está definido\n"
 
-#: src/Job.cc:337
+#: src/Job.cc:336
 #, c-format
 msgid "[%d] Done (%s)"
 msgstr "[%d] Hecho (%s)"
@@ -175,6 +175,11 @@ msgstr "El caché está encendido"
 #: src/LsCache.cc:157
 msgid "Cache is off"
 msgstr "El caché está apagado"
+
+#: src/LsCache.cc:163
+#, c-format
+msgid "%ld $#l#byte|bytes$ cached"
+msgstr "%ld byte$#l#|s$ cacheados"
 
 #: src/LsCache.cc:166
 msgid ", no size limit"
@@ -188,6 +193,16 @@ msgstr ", tamaño máximo %ld\n"
 #: src/LsCache.cc:171
 msgid "Cache entries do not expire"
 msgstr "Las entradas del caché no expiran"
+
+#: src/LsCache.cc:173
+#, c-format
+msgid "Cache entries expire in %ld $#l#second|seconds$\n"
+msgstr "Las entradas del caché expiran en %ld segundo$#l#|s$\n"
+
+#: src/LsCache.cc:178
+#, c-format
+msgid "Cache entries expire in %ld $#l#minute|minutes$\n"
+msgstr "Las entradas del caché expiran en %ld minuto$#l#|s$\n"
 
 # Is it possible to use the $|$ construct twice for the same data?
 #: src/MirrorJob.cc:85
@@ -332,7 +347,7 @@ msgstr ""
 msgid "dns cache hit\n"
 msgstr "acierto en el cache dns\n"
 
-#: src/Http.cc:1528 src/Resolver.cc:193 src/ftpclass.cc:3414
+#: src/Http.cc:1537 src/Resolver.cc:193 src/ftpclass.cc:3414
 msgid "Resolving host address..."
 msgstr "Resolviendo dirección del servidor..."
 
@@ -774,11 +789,12 @@ msgid "module name [args]"
 msgstr "module nombre [args]"
 
 #: src/commands.cc:247
+#, fuzzy
 msgid ""
 "Load module (shared object). The module should contain function\n"
 "   void module_init(int argc,const char *const *argv)\n"
 "If name contains a slash, then the module is searched in current\n"
-"directory, otherwise in PKGLIBDIR.\n"
+"directory, otherwise in directories specified by setting module:path.\n"
 msgstr ""
 "Inserta módulo (objeto compartido). El módulo debe contener la función\n"
 "   void module_init(int argc,const char *const *argv)\n"
@@ -1461,11 +1477,11 @@ msgstr "asumiendo falla en la búsqueda del nombre de servidor"
 msgid "cannot parse EPSV response"
 msgstr "no se pudo interpretar la respuesta EPSV"
 
-#: src/Http.cc:744 src/ftpclass.cc:1022
+#: src/Http.cc:753 src/ftpclass.cc:1022
 msgid "Closing idle connection"
 msgstr "Cerrando conexión ociosa"
 
-#: src/Http.cc:872 src/ftpclass.cc:1101
+#: src/Http.cc:881 src/ftpclass.cc:1101
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "no se pudo crear un socket de la familia %d de direcciones"
@@ -1491,7 +1507,7 @@ msgstr "Desconectando modo pasivo"
 msgid "Timeout - reconnecting"
 msgstr "Tiempo fuera - reconectando"
 
-#: src/Http.cc:951 src/ftpclass.cc:2209
+#: src/Http.cc:960 src/ftpclass.cc:2209
 msgid "Peer closed connection"
 msgstr "El otro extremo cerró la conexión"
 
@@ -1536,16 +1552,16 @@ msgstr ""
 msgid "Sending commands..."
 msgstr "Enviando comandos..."
 
-#: src/Http.cc:1541 src/ftpclass.cc:3406 src/ftpclass.cc:3431
+#: src/Http.cc:1550 src/ftpclass.cc:3406 src/ftpclass.cc:3431
 #: src/ftpclass.cc:3438
 msgid "Waiting for response..."
 msgstr "Esperando respuesta..."
 
-#: src/Http.cc:1536 src/ftpclass.cc:3407
+#: src/Http.cc:1545 src/ftpclass.cc:3407
 msgid "Connection idle"
 msgstr "Conexión ociosa"
 
-#: src/Http.cc:1534 src/ftpclass.cc:3420
+#: src/Http.cc:1543 src/ftpclass.cc:3420
 msgid "Connecting..."
 msgstr "Conectándose..."
 
@@ -1577,11 +1593,11 @@ msgstr "Esperando que finalice la transferencia"
 msgid "Waiting for data connection..."
 msgstr "Esperando la conexión de datos..."
 
-#: src/Http.cc:1539 src/ftpclass.cc:3445
+#: src/Http.cc:1548 src/ftpclass.cc:3445
 msgid "Sending data"
 msgstr "Enviando datos"
 
-#: src/Http.cc:1544 src/ftpclass.cc:3447
+#: src/Http.cc:1553 src/ftpclass.cc:3447
 msgid "Receiving data"
 msgstr "Recibiendo datos"
 
@@ -1617,6 +1633,16 @@ msgstr "%s: no se encontraron archivos\n"
 msgid "%s ok, `%s' created\n"
 msgstr "%s ok, `%s' creado\n"
 
+#: src/mkdirJob.cc:128 src/rmJob.cc:44
+#, c-format
+msgid "%s failed for %d of %d director$y|ies$\n"
+msgstr "%s falló para %d de %d directorio$|s$\n"
+
+#: src/mkdirJob.cc:131
+#, c-format
+msgid "%s ok, %d director$y|ies$ created\n"
+msgstr "%s ok, %d directorio$|s$ creado$|s$\n"
+
 #: src/mvJob.cc:72
 #, c-format
 msgid "rename successful\n"
@@ -1646,6 +1672,21 @@ msgstr "=1"
 msgid "%s ok, `%s' removed\n"
 msgstr "%s ok, `%s' borrado\n"
 
+#: src/rmJob.cc:47
+#, c-format
+msgid "%s failed for %d of %d file$|s$\n"
+msgstr "%s falló para %d de %d archivo$|s$\n"
+
+#: src/rmJob.cc:53
+#, c-format
+msgid "%s ok, %d director$y|ies$ removed\n"
+msgstr "%s ok, %d directorio$|s$ borrado$|s$\n"
+
+#: src/rmJob.cc:56
+#, c-format
+msgid "%s ok, %d file$|s$ removed\n"
+msgstr "%s ok, %d archivo$|s$ borrado$|s$\n"
+
 #: src/Http.cc:161
 msgid "Closing HTTP connection"
 msgstr "Cerrando conexión HTTP"
@@ -1655,59 +1696,54 @@ msgid "POST method failed"
 msgstr "falló el método POST"
 
 #. problem here: hftp cannot work without proxy
-#: src/Http.cc:823
+#: src/Http.cc:832
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr "ftp no funciona sobre http sin usar un proxy, configure hftp:proxy."
 
-#: src/Http.cc:892
-#, c-format
-msgid "connect: %s"
-msgstr "connect: %s"
-
-#: src/Http.cc:962
+#: src/Http.cc:971
 msgid "Sending request..."
 msgstr "Enviando requerimiento..."
 
 #. eof
-#: src/Http.cc:1000
+#: src/Http.cc:1009
 msgid "Hit EOF while fetching headers"
 msgstr "Encontré EOF mientras traía encabezados"
 
 # Esto no se internacionaliza.
 #. should never happen
-#: src/Http.cc:1062
+#: src/Http.cc:1071
 msgid "Success, but did nothing??"
 msgstr ""
 
-#: src/Http.cc:1096
+#: src/Http.cc:1105
 msgid "Could not parse HTTP status line"
 msgstr "No se pudo interpretar la línea de estado HTTP"
 
-#: src/Http.cc:1190
+#: src/Http.cc:1199
 msgid "Receiving body..."
 msgstr "Recibiendo cuerpo..."
 
-#: src/Http.cc:1326
+#: src/Http.cc:1335
 msgid "Hit EOF"
 msgstr "Encontré EOF"
 
-#: src/Http.cc:1329
+#: src/Http.cc:1338
 msgid "Received not enough data, retrying"
 msgstr "No se recibió suficiente, reintentando"
 
-#: src/Http.cc:1337
+#: src/Http.cc:1346
 msgid "Received all"
 msgstr "Se recibió todo"
 
-#: src/Http.cc:1342
+#: src/Http.cc:1351
 msgid "Received all (total)"
 msgstr "Se recibió todo (total)"
 
-#: src/Http.cc:1363 src/Http.cc:1384
+#: src/Http.cc:1372 src/Http.cc:1393
 msgid "chunked format violated"
 msgstr "formato `chunked' violado"
 
-#: src/Http.cc:1542
+#: src/Http.cc:1551
 msgid "Fetching headers..."
 msgstr "Trayendo encabezados..."
 
@@ -1762,6 +1798,26 @@ msgstr "Obteniendo lista de archivos (%lld) [%s]"
 #, c-format
 msgid "`%s' at %lld %s%s%s%s"
 msgstr "`%s' en %lld %s%s%s%s"
+
+#: src/CopyJob.cc:220
+#, c-format
+msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
+msgstr "%lld byte$#ll#|s$ transferidos en %ld segundo$#l#|s$."
+
+#: src/CopyJob.cc:232
+#, c-format
+msgid "%lld $#ll#byte|bytes$ transferred\n"
+msgstr "%lld byte$#l#|s$ transferidos.\n"
+
+#: src/CopyJob.cc:239
+#, c-format
+msgid "Transfer of %d of %d $file|files$ failed\n"
+msgstr "Falló la transferencia de %d de %d archivo$|s$.\n"
+
+#: src/CopyJob.cc:245
+#, c-format
+msgid "Total %d $file|files$ transferred\n"
+msgstr "%d archivo$|s$ transferido$|s$ en total.\n"
 
 #: src/FileCopy.cc:144
 msgid "copy: put is broken\n"
@@ -1927,50 +1983,17 @@ msgstr ""
 msgid "%s: argument required. "
 msgstr "%s: se requiere un argumento. "
 
-#: src/module.cc:160
+#: src/module.cc:181
 #, c-format
 msgid "depend module `%s': %s\n"
 msgstr ""
 
-#: src/module.cc:190
+#: src/module.cc:211
 msgid "modules are not supported on this system"
 msgstr "este sistema no soporta el uso de módulos"
 
-#~ msgid "%ld $#l#byte|bytes$ cached"
-#~ msgstr "%ld byte$#l#|s$ cacheados"
-
-#~ msgid "Cache entries expire in %ld $#l#second|seconds$\n"
-#~ msgstr "Las entradas del caché expiran en %ld segundo$#l#|s$\n"
-
-#~ msgid "Cache entries expire in %ld $#l#minute|minutes$\n"
-#~ msgstr "Las entradas del caché expiran en %ld minuto$#l#|s$\n"
-
-#~ msgid "%s failed for %d of %d director$y|ies$\n"
-#~ msgstr "%s falló para %d de %d directorio$|s$\n"
-
-#~ msgid "%s ok, %d director$y|ies$ created\n"
-#~ msgstr "%s ok, %d directorio$|s$ creado$|s$\n"
-
-#~ msgid "%s failed for %d of %d file$|s$\n"
-#~ msgstr "%s falló para %d de %d archivo$|s$\n"
-
-#~ msgid "%s ok, %d director$y|ies$ removed\n"
-#~ msgstr "%s ok, %d directorio$|s$ borrado$|s$\n"
-
-#~ msgid "%s ok, %d file$|s$ removed\n"
-#~ msgstr "%s ok, %d archivo$|s$ borrado$|s$\n"
-
-#~ msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
-#~ msgstr "%lld byte$#ll#|s$ transferidos en %ld segundo$#l#|s$."
-
-#~ msgid "%lld $#ll#byte|bytes$ transferred\n"
-#~ msgstr "%lld byte$#l#|s$ transferidos.\n"
-
-#~ msgid "Transfer of %d of %d $file|files$ failed\n"
-#~ msgstr "Falló la transferencia de %d de %d archivo$|s$.\n"
-
-#~ msgid "Total %d $file|files$ transferred\n"
-#~ msgstr "%d archivo$|s$ transferido$|s$ en total.\n"
+#~ msgid "connect: %s"
+#~ msgstr "connect: %s"
 
 #~ msgid "%s: cannot get current directory\n"
 #~ msgstr "%s: no se pudo obtener el directorio actual\n"

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
-"POT-Creation-Date: 2001-02-14 12:46+0300\n"
+"POT-Creation-Date: 2001-03-22 13:20+0300\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -14,92 +14,92 @@ msgstr ""
 "Content-Type: text/plain; charset=gb2312\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/CmdExec.cc:75
+#: src/CmdExec.cc:78
 #, c-format
 msgid "Warning: getcwd() failed: %s\n"
 msgstr "警告: getcwd() 失败: %s\n"
 
-#: src/CmdExec.cc:97
+#: src/CmdExec.cc:100
 #, c-format
 msgid "Warning: chdir(%s) failed: %s\n"
 msgstr "警告: chdir(%s) 失败: %s\n"
 
 #. can't run further commands in wrong directory
-#: src/CmdExec.cc:100
+#: src/CmdExec.cc:103
 msgid "No directory to execute commands in - terminating\n"
 msgstr ""
 
-#: src/CmdExec.cc:206
+#: src/CmdExec.cc:209
 #, c-format
 msgid "Unknown command `%s'.\n"
 msgstr "未知命令 `%s'.\n"
 
-#: src/CmdExec.cc:208
+#: src/CmdExec.cc:211
 #, c-format
 msgid "Ambiguous command `%s'.\n"
 msgstr "不明确的命令 `%s'.\n"
 
-#: src/CmdExec.cc:225
+#: src/CmdExec.cc:228
 #, c-format
 msgid "Module for command `%s' did not register the command.\n"
 msgstr ""
 
-#: src/CmdExec.cc:362
+#: src/CmdExec.cc:365
 #, c-format
 msgid "cd ok, cwd=%s\n"
 msgstr "cd 成功, 当前目录=%s\n"
 
-#: src/CmdExec.cc:382 src/MirrorJob.cc:536
+#: src/CmdExec.cc:385 src/MirrorJob.cc:536
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
 
-#: src/CmdExec.cc:385 src/FileCopy.cc:959
+#: src/CmdExec.cc:388 src/FileCopy.cc:959
 msgid "Too many redirections"
 msgstr ""
 
-#: src/CmdExec.cc:500 src/CmdExec.cc:562
+#: src/CmdExec.cc:503 src/CmdExec.cc:565
 msgid "Interrupt"
 msgstr "中断"
 
-#: src/CmdExec.cc:615
+#: src/CmdExec.cc:626
 msgid "Warning: discarding incomplete command\n"
 msgstr "警告: 放弃未完成的命令\n"
 
-#: src/CmdExec.cc:705
+#: src/CmdExec.cc:716
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\t执行内建的 `%s' [%s]\n"
 
-#: src/CmdExec.cc:713
+#: src/CmdExec.cc:724
 msgid "Now executing:"
 msgstr ""
 
-#: src/CmdExec.cc:726
+#: src/CmdExec.cc:737
 msgid "\tCommands queued:\n"
 msgstr ""
 
-#: src/CmdExec.cc:750
+#: src/CmdExec.cc:761
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\t等待任务 [%d] 中止\n"
 
-#: src/CmdExec.cc:755
+#: src/CmdExec.cc:766
 #, fuzzy
 msgid "\tWaiting for termination of jobs: "
 msgstr "等待过滤器中止"
 
-#: src/CmdExec.cc:765
+#: src/CmdExec.cc:776
 #, c-format
 msgid "\tRunning\n"
 msgstr "\t正在运行\n"
 
-#: src/CmdExec.cc:769
+#: src/CmdExec.cc:780
 #, fuzzy
 msgid "\tWaiting for command\n"
 msgstr "parse: 缺少过滤器命令\n"
 
-#: src/CmdExec.cc:1301
+#: src/CmdExec.cc:1318
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr ""
@@ -153,12 +153,12 @@ msgstr ""
 msgid "File moved to `%s'"
 msgstr ""
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:1337
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:1341
 #, fuzzy, c-format
 msgid "Getting directory contents (%lld)"
 msgstr "正在读取目录内容 (%ld)"
 
-#: src/FtpListInfo.cc:240 src/HttpDir.cc:1343
+#: src/FtpListInfo.cc:240 src/HttpDir.cc:1347
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "正在读取文件信息 (%d%%)"
@@ -168,7 +168,7 @@ msgstr "正在读取文件信息 (%d%%)"
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr ""
 
-#: src/Job.cc:337
+#: src/Job.cc:336
 #, c-format
 msgid "[%d] Done (%s)"
 msgstr "[%d] 完成 (%s)"
@@ -180,6 +180,11 @@ msgstr "缓冲打开了"
 #: src/LsCache.cc:157
 msgid "Cache is off"
 msgstr "缓冲关闭了"
+
+#: src/LsCache.cc:163
+#, c-format
+msgid "%ld $#l#byte|bytes$ cached"
+msgstr "缓冲了 %ld 字节"
 
 #: src/LsCache.cc:166
 msgid ", no size limit"
@@ -193,6 +198,16 @@ msgstr ", 最大为 %ld\n"
 #: src/LsCache.cc:171
 msgid "Cache entries do not expire"
 msgstr "缓冲条目不过期"
+
+#: src/LsCache.cc:173
+#, c-format
+msgid "Cache entries expire in %ld $#l#second|seconds$\n"
+msgstr "缓冲条目在 %ld 秒内过期\n"
+
+#: src/LsCache.cc:178
+#, c-format
+msgid "Cache entries expire in %ld $#l#minute|minutes$\n"
+msgstr "缓冲条目在 %ld 分钟内过期\n"
 
 #: src/MirrorJob.cc:85
 #, c-format
@@ -336,7 +351,7 @@ msgstr ""
 msgid "dns cache hit\n"
 msgstr ""
 
-#: src/Http.cc:1528 src/Resolver.cc:193 src/ftpclass.cc:3414
+#: src/Http.cc:1537 src/Resolver.cc:193 src/ftpclass.cc:3414
 msgid "Resolving host address..."
 msgstr "正在解析主机地址..."
 
@@ -747,11 +762,12 @@ msgid "module name [args]"
 msgstr "module name [args]"
 
 #: src/commands.cc:247
+#, fuzzy
 msgid ""
 "Load module (shared object). The module should contain function\n"
 "   void module_init(int argc,const char *const *argv)\n"
 "If name contains a slash, then the module is searched in current\n"
-"directory, otherwise in PKGLIBDIR.\n"
+"directory, otherwise in directories specified by setting module:path.\n"
 msgstr ""
 "装载模块 (共享对象). 模块应该包含函数\n"
 "   void module_init(int argc,const char *const *argv)\n"
@@ -1416,11 +1432,11 @@ msgstr "名字查询失败"
 msgid "cannot parse EPSV response"
 msgstr ""
 
-#: src/Http.cc:744 src/ftpclass.cc:1022
+#: src/Http.cc:753 src/ftpclass.cc:1022
 msgid "Closing idle connection"
 msgstr "关闭发呆的连接"
 
-#: src/Http.cc:872 src/ftpclass.cc:1101
+#: src/Http.cc:881 src/ftpclass.cc:1101
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr ""
@@ -1447,7 +1463,7 @@ msgstr "正在关闭被动模式"
 msgid "Timeout - reconnecting"
 msgstr "超时 - 重新连接"
 
-#: src/Http.cc:951 src/ftpclass.cc:2209
+#: src/Http.cc:960 src/ftpclass.cc:2209
 msgid "Peer closed connection"
 msgstr "对端关闭连接"
 
@@ -1492,16 +1508,16 @@ msgstr ""
 msgid "Sending commands..."
 msgstr "正在发送命令..."
 
-#: src/Http.cc:1541 src/ftpclass.cc:3406 src/ftpclass.cc:3431
+#: src/Http.cc:1550 src/ftpclass.cc:3406 src/ftpclass.cc:3431
 #: src/ftpclass.cc:3438
 msgid "Waiting for response..."
 msgstr "正等待应答..."
 
-#: src/Http.cc:1536 src/ftpclass.cc:3407
+#: src/Http.cc:1545 src/ftpclass.cc:3407
 msgid "Connection idle"
 msgstr "连接空闲"
 
-#: src/Http.cc:1534 src/ftpclass.cc:3420
+#: src/Http.cc:1543 src/ftpclass.cc:3420
 msgid "Connecting..."
 msgstr "正在连接..."
 
@@ -1534,11 +1550,11 @@ msgstr "正等待传输完成"
 msgid "Waiting for data connection..."
 msgstr "正等待数据连接..."
 
-#: src/Http.cc:1539 src/ftpclass.cc:3445
+#: src/Http.cc:1548 src/ftpclass.cc:3445
 msgid "Sending data"
 msgstr "正发送数据"
 
-#: src/Http.cc:1544 src/ftpclass.cc:3447
+#: src/Http.cc:1553 src/ftpclass.cc:3447
 msgid "Receiving data"
 msgstr "正接收数据"
 
@@ -1574,6 +1590,16 @@ msgstr "%s: 没有找到文件\n"
 msgid "%s ok, `%s' created\n"
 msgstr "%s 成功, 建立 `%s'\n"
 
+#: src/mkdirJob.cc:128 src/rmJob.cc:44
+#, fuzzy, c-format
+msgid "%s failed for %d of %d director$y|ies$\n"
+msgstr "%s 失败, %d/%d 个目录\n"
+
+#: src/mkdirJob.cc:131
+#, c-format
+msgid "%s ok, %d director$y|ies$ created\n"
+msgstr "%s 成功, 建立 %d 个目录\n"
+
 #: src/mvJob.cc:72
 #, c-format
 msgid "rename successful\n"
@@ -1603,6 +1629,21 @@ msgstr ""
 msgid "%s ok, `%s' removed\n"
 msgstr "%s 成功, 删除 `%s'\n"
 
+#: src/rmJob.cc:47
+#, fuzzy, c-format
+msgid "%s failed for %d of %d file$|s$\n"
+msgstr "%s 失败, %d/%d 个文件\n"
+
+#: src/rmJob.cc:53
+#, c-format
+msgid "%s ok, %d director$y|ies$ removed\n"
+msgstr "%s 成功, 删除 %d 个目录\n"
+
+#: src/rmJob.cc:56
+#, c-format
+msgid "%s ok, %d file$|s$ removed\n"
+msgstr "%s 成功, 删除 %d 个文件\n"
+
 #: src/Http.cc:161
 #, fuzzy
 msgid "Closing HTTP connection"
@@ -1613,62 +1654,57 @@ msgid "POST method failed"
 msgstr ""
 
 #. problem here: hftp cannot work without proxy
-#: src/Http.cc:823
+#: src/Http.cc:832
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 
-#: src/Http.cc:892
-#, c-format
-msgid "connect: %s"
-msgstr ""
-
-#: src/Http.cc:962
+#: src/Http.cc:971
 #, fuzzy
 msgid "Sending request..."
 msgstr "正在发送命令..."
 
 #. eof
-#: src/Http.cc:1000
+#: src/Http.cc:1009
 #, fuzzy
 msgid "Hit EOF while fetching headers"
 msgstr "正在取得头..."
 
 #. should never happen
-#: src/Http.cc:1062
+#: src/Http.cc:1071
 msgid "Success, but did nothing??"
 msgstr ""
 
-#: src/Http.cc:1096
+#: src/Http.cc:1105
 msgid "Could not parse HTTP status line"
 msgstr ""
 
-#: src/Http.cc:1190
+#: src/Http.cc:1199
 #, fuzzy
 msgid "Receiving body..."
 msgstr "正接收数据"
 
-#: src/Http.cc:1326
+#: src/Http.cc:1335
 msgid "Hit EOF"
 msgstr ""
 
-#: src/Http.cc:1329
+#: src/Http.cc:1338
 msgid "Received not enough data, retrying"
 msgstr ""
 
-#: src/Http.cc:1337
+#: src/Http.cc:1346
 #, fuzzy
 msgid "Received all"
 msgstr "正接收数据"
 
-#: src/Http.cc:1342
+#: src/Http.cc:1351
 msgid "Received all (total)"
 msgstr ""
 
-#: src/Http.cc:1363 src/Http.cc:1384
+#: src/Http.cc:1372 src/Http.cc:1393
 msgid "chunked format violated"
 msgstr "块格式冲突"
 
-#: src/Http.cc:1542
+#: src/Http.cc:1551
 msgid "Fetching headers..."
 msgstr "正在取得头..."
 
@@ -1723,6 +1759,26 @@ msgstr "正在获取文件列表 (%ld) [%s]"
 #, fuzzy, c-format
 msgid "`%s' at %lld %s%s%s%s"
 msgstr "`%s' 在 %lu %s%s%s[%s]"
+
+#: src/CopyJob.cc:220
+#, fuzzy, c-format
+msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
+msgstr "%ld 字节, 在 %ld 秒中传输完毕 (%g 字节/秒)\n"
+
+#: src/CopyJob.cc:232
+#, fuzzy, c-format
+msgid "%lld $#ll#byte|bytes$ transferred\n"
+msgstr "传输 %ld 字节\n"
+
+#: src/CopyJob.cc:239
+#, c-format
+msgid "Transfer of %d of %d $file|files$ failed\n"
+msgstr "传输 %d/%d 文件失败\n"
+
+#: src/CopyJob.cc:245
+#, c-format
+msgid "Total %d $file|files$ transferred\n"
+msgstr "总共传输 %d 个文件\n"
 
 #: src/FileCopy.cc:144
 msgid "copy: put is broken\n"
@@ -1890,54 +1946,14 @@ msgstr ""
 msgid "%s: argument required. "
 msgstr "%s: 需要参数. "
 
-#: src/module.cc:160
+#: src/module.cc:181
 #, c-format
 msgid "depend module `%s': %s\n"
 msgstr ""
 
-#: src/module.cc:190
+#: src/module.cc:211
 msgid "modules are not supported on this system"
 msgstr ""
-
-#~ msgid "%ld $#l#byte|bytes$ cached"
-#~ msgstr "缓冲了 %ld 字节"
-
-#~ msgid "Cache entries expire in %ld $#l#second|seconds$\n"
-#~ msgstr "缓冲条目在 %ld 秒内过期\n"
-
-#~ msgid "Cache entries expire in %ld $#l#minute|minutes$\n"
-#~ msgstr "缓冲条目在 %ld 分钟内过期\n"
-
-#, fuzzy
-#~ msgid "%s failed for %d of %d director$y|ies$\n"
-#~ msgstr "%s 失败, %d/%d 个目录\n"
-
-#~ msgid "%s ok, %d director$y|ies$ created\n"
-#~ msgstr "%s 成功, 建立 %d 个目录\n"
-
-#, fuzzy
-#~ msgid "%s failed for %d of %d file$|s$\n"
-#~ msgstr "%s 失败, %d/%d 个文件\n"
-
-#~ msgid "%s ok, %d director$y|ies$ removed\n"
-#~ msgstr "%s 成功, 删除 %d 个目录\n"
-
-#~ msgid "%s ok, %d file$|s$ removed\n"
-#~ msgstr "%s 成功, 删除 %d 个文件\n"
-
-#, fuzzy
-#~ msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
-#~ msgstr "%ld 字节, 在 %ld 秒中传输完毕 (%g 字节/秒)\n"
-
-#, fuzzy
-#~ msgid "%lld $#ll#byte|bytes$ transferred\n"
-#~ msgstr "传输 %ld 字节\n"
-
-#~ msgid "Transfer of %d of %d $file|files$ failed\n"
-#~ msgstr "传输 %d/%d 文件失败\n"
-
-#~ msgid "Total %d $file|files$ transferred\n"
-#~ msgstr "总共传输 %d 个文件\n"
 
 #, fuzzy
 #~ msgid "%s: cannot get current directory\n"
