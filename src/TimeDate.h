@@ -82,15 +82,19 @@ class TimeDate : public Time
    void set_local_time();
 
 public:
-   TimeDate() : Time() { local_time_unix=0; }
+   TimeDate() { local_time_unix=0; }
+   TimeDate(time_t s,int ms=0) : Time(s,ms) { local_time_unix=0; }
 
    operator const struct tm *() { set_local_time(); return &local_time; }
-   int Year();
-   int Month();
-   int DayOfMonth();
-   int Hour();
-   int Minute();
-   int Second();
+   int Year()	     { set_local_time(); return local_time.tm_year+1900; }
+   int Month()	     { set_local_time(); return local_time.tm_mon+1; }
+   int DayOfMonth()  { set_local_time(); return local_time.tm_mday; }
+   int Hour()	     { set_local_time(); return local_time.tm_hour; }
+   int Minute()	     { set_local_time(); return local_time.tm_min; }
+   int Second()	     { set_local_time(); return local_time.tm_sec; }
+
+   // returns static string.
+   const char *IsoDateTime();
 };
 
 // maybe it is better to make it double.

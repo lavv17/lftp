@@ -76,35 +76,12 @@ void TimeDate::set_local_time()
    time_t t=UnixTime();
    local_time=*localtime(&t);
 }
-int TimeDate::Year()
+const char *TimeDate::IsoDateTime()
 {
+   static char buf[21];
    set_local_time();
-   return local_time.tm_year+1900;
-}
-int TimeDate::Month()
-{
-   set_local_time();
-   return local_time.tm_mon+1;
-}
-int TimeDate::DayOfMonth()
-{
-   set_local_time();
-   return local_time.tm_mday;
-}
-int TimeDate::Hour()
-{
-   set_local_time();
-   return local_time.tm_hour;
-}
-int TimeDate::Minute()
-{
-   set_local_time();
-   return local_time.tm_min;
-}
-int TimeDate::Second()
-{
-   set_local_time();
-   return local_time.tm_sec;
+   strftime(buf,sizeof(buf),"%Y-%m-%d %H:%M",&local_time);
+   return buf;
 }
 int TimeDiff::MilliSeconds() const
 {
