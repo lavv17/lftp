@@ -18,6 +18,8 @@ dnl Checks for programs.
 AC_PROG_CC
 AC_PROG_CXX
 
+AC_SYS_LARGEFILE
+
 AC_ARG_WITH(debug,
 [  --with-debug            enable debug info],
 [   with_debug=$withval;   ],
@@ -109,7 +111,6 @@ if test "`uname`" = Linux; then
    2.2.*|2.0.*)	  enable_largefile=no;;
    esac
 fi
-AC_SYS_LARGEFILE
 
 AC_PROG_YACC
 
