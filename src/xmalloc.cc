@@ -89,7 +89,7 @@ void xfree(void *p)
 char *xstrdup(const char *s,int spare)
 {
    if(!s)
-      return 0;
+      return (char*)xmalloc(spare);
 #ifdef MEM_DEBUG
    printf("xstrdup \"%s\"\n",s);
 #endif

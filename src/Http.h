@@ -60,6 +60,7 @@ class Http : public NetAccess
    int status_code;
    void HandleHeaderLine(const char *name,const char *value);
    void GetBetterConnection(int level,int count);
+   void SetCookie(const char *val);
 
    int sock;
    void Disconnect();

@@ -587,6 +587,9 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 	 seen_ranges_bytes=true;
       return;
    }
+   if(!strcasecmp(name,"Set-Cookie")
+   && !hftp && (bool)Query("set-cookies",hostname))
+      SetCookie(value);
 }
 
 static const char *find_eol(const char *str,int len)
@@ -1394,6 +1397,81 @@ ListInfo *Http::MakeListInfo()
    return new HttpListInfo(this);
 }
 
+void Http::SetCookie(const char *value_const)
+{
+   char *value=alloca_strdup(value_const);
+   const char *old=Query("cookie",hostname);
+   char *c=string_alloca(strlen(value)+xstrlen(old)+3);
+   strcpy(c,old?old:"");
+
+   for(char *entry=strtok(value,";"); entry; entry=strtok(0,";"))
+   {
+      if(*entry==' ')
+	 entry++;
+      if(*entry==0)
+	 break;
+      if(!strncmp(entry,"path=",5)
+      || !strncmp(entry,"domain=",7)
+      || !strncmp(entry,"expires=",8)
+      || (!strncmp(entry,"secure",6)
+	  && (entry[6]==' ' || entry[6]==0 || entry[6]==';')))
+	 continue; // filter out path= domain= expires= secure
+
+      char *c_name=entry;
+      char *c_value=strchr(entry,'=');
+      if(c_value)
+	 *c_value++=0;
+      else
+	 c_value=c_name, c_name=0;
+      int c_name_len=xstrlen(c_name);
+
+      char *scan=c;
+      for(;;)
+      {
+	 while(*scan==' ') scan++;
+	 if(*scan==0)
+	    break;
+
+	 char *semicolon=strchr(scan,';');
+	 char *eq=strchr(scan,'=');
+	 if(semicolon && eq>semicolon)
+	    eq=0;
+	 if((eq==0 && c_name==0)
+	 || (eq-scan==c_name_len && !strncmp(scan,c_name,c_name_len)))
+	 {
+	    // remove old cookie.
+	    const char *m=semicolon?semicolon+1:"";
+	    while(*m==' ') m++;
+	    if(*m==0)
+	    {
+	       while(scan>c && scan[-1]==' ')
+		  scan--;
+	       if(scan>c && scan[-1]==';')
+		  scan--;
+	       *scan=0;
+	    }
+	    else
+	       memmove(scan,m,strlen(m)+1);
+	    break;
+	 }
+	 if(!semicolon)
+	    break;
+	 scan=semicolon+1;
+      }
+
+      // append cookie.
+      int c_len=strlen(c);
+      while(c_len>0 && c[c_len-1]==' ')
+	 c[--c_len]=0;  // trim
+      if(c_len>0 && c[c_len-1]!=';')
+	 c[c_len++]=';', c[c_len++]=' ';
+      if(c_name)
+	 sprintf(c+c_len,"%s=%s",c_name,c_value);
+      else
+	 strcpy(c+c_len,c_value);
+   }
+   ResMgr::Set("http:cookie",hostname,c);
+}
 
 #undef super
 #define super Http
