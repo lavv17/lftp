@@ -102,7 +102,7 @@ void CopyJob::ShowRunStatus(StatusLine *s)
    if(no_status)
       return;
 
-   s->Show(Status(s, false));
+   s->Show("%s", Status(s, false));
 }
 void CopyJob::PrintStatus(int v)
 {
