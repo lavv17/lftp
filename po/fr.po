@@ -6,13 +6,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
 "POT-Creation-Date: 2002-12-26 08:51+0300\n"
-"PO-Revision-Date: 2002-03-03 23:34GMT\n"
-"Last-Translator: Nicolas Noble <nicolas@nobis-crew.org>\n"
-"Language-Team: French <fr@li.org>\n"
+"PO-Revision-Date: 2003-02-20 08:48GMT\n"
+"Last-Translator: Noble Nicolas <nicolas@nobis-crew.org>\n"
+"Language-Team: Français <fr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 0.8\n"
+"X-Generator: KBabel 0.9.5\n"
 
 #: src/CmdExec.cc:89
 #, c-format
@@ -63,7 +63,7 @@ msgstr "\tExécution de la commande interne `%s' [%s]\n"
 
 #: src/CmdExec.cc:728
 msgid "Queue is stopped."
-msgstr ""
+msgstr "La queue est stoppée."
 
 #: src/CmdExec.cc:732
 msgid "Now executing:"
@@ -318,18 +318,16 @@ msgid "Invalid IPv4 numeric address"
 msgstr "Adresse numérique IPv4 invalide"
 
 #: src/ResMgr.cc:795
-#, fuzzy
 msgid "Invalid IPv6 numeric address"
-msgstr "Adresse numérique IPv4 invalide"
+msgstr "Adresse numérique IPv6 invalide"
 
 #: src/ResMgr.cc:855
 msgid "no closure defined for this setting"
 msgstr "aucune restriction pour ce paramètre"
 
 #: src/ResMgr.cc:868
-#, fuzzy
 msgid "invalid pair of numbers"
-msgstr "nombre invalide"
+msgstr "paire de nombre invalide"
 
 #: src/Resolver.cc:184 src/Resolver.cc:226 src/ftpclass.cc:3657
 #: src/Http.cc:1645
@@ -862,7 +860,6 @@ msgid "mirror [OPTS] [remote [local]]"
 msgstr "mirror [OPTS] [distant [local]]"
 
 #: src/commands.cc:308
-#, fuzzy
 msgid ""
 "\n"
 "Mirror specified remote directory to local directory\n"
@@ -898,6 +895,8 @@ msgstr ""
 " -e, --delete           efface les fichiers non présents sur le site\n"
 " -s, --allow-suid       duplique aussi les bits suid/sgid\n"
 "     --allow-chown      duplique aussi les propriétaires\n"
+"     --ignore-time      ignore l'heure pour décider ou non du "
+"téléchargement\n"
 " -n, --only-newer       télécharge uniquement les nouveaux fichiers\n"
 " -r, --no-recursion     ne rentre pas dans les sous-répertoires\n"
 " -p, --no-perms         ne définit pas les permissions de fichier\n"
@@ -1412,7 +1411,7 @@ msgstr "%s: -n: Nombre attendu. "
 
 #: src/commands.cc:1071
 msgid "Created a stopped queue.\n"
-msgstr ""
+msgstr "Créé une queue stoppée.\n"
 
 #: src/commands.cc:1115 src/commands.cc:1145
 #, c-format
@@ -1567,8 +1566,7 @@ msgstr "%s: `expire' attendu\n"
 
 #: src/commands.cc:2267
 #, c-format
-msgid ""
-"%s: %s - no such cached session. Use `scache' to look at session list.\n"
+msgid "%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr "%s: %s - pas de telle session cachée. Utilisez `scache'\n"
 
 #: src/commands.cc:2284
@@ -1594,14 +1592,12 @@ msgstr "%s est un alias pour `%s'\n"
 #: src/commands.cc:2306
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
-msgstr ""
-"Commande inconnue `%s'. Utilisez `help' pour voir la liste des commandes.\n"
+msgstr "Commande inconnue `%s'. Utilisez `help' pour voir la liste des commandes.\n"
 
 #: src/commands.cc:2308
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
-msgstr ""
-"Commande ambiguë `%s'. Utilisez `help' pour voir la liste des commandes.\n"
+msgstr "Commande ambiguë `%s'. Utilisez `help' pour voir la liste des commandes.\n"
 
 #: src/commands.cc:2359
 #, c-format
@@ -1609,10 +1605,8 @@ msgid "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 msgstr "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 
 #: src/commands.cc:2361
-msgid ""
-"This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
-msgstr ""
-"Ceci est un logiciel libre SANS GARANTIE. Voir COPYING pour les détails.\n"
+msgid "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
+msgstr "Ceci est un logiciel libre SANS GARANTIE. Voir COPYING pour les détails.\n"
 
 #: src/commands.cc:2363
 #, c-format
@@ -1711,8 +1705,7 @@ msgstr "La réponse du serveur est de la forme ftp:retry-530, recommence"
 
 #: src/ftpclass.cc:435
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
-msgstr ""
-"La réponse du serveur est de la forme ftp:retry-530-anonymous, recommence"
+msgstr "La réponse du serveur est de la forme ftp:retry-530-anonymous, recommence"
 
 #: src/ftpclass.cc:459
 msgid "Account is required, set ftp:acct variable"
@@ -1961,8 +1954,7 @@ msgstr "échec de la méthode POST"
 
 #: src/Http.cc:867
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
-msgstr ""
-"ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
+msgstr "ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
 
 #: src/Http.cc:1010
 msgid "Sending request..."
@@ -2042,12 +2034,12 @@ msgstr "Impossible de changer le mode de `%s' en %04o (%s).\n"
 #: src/ChmodJob.cc:80
 #, c-format
 msgid "Mode of `%s' changed to %04o (%s).\n"
-msgstr ""
+msgstr "Le mode de `%s' a été changé en %04o (%s).\n"
 
 #: src/ChmodJob.cc:85
 #, c-format
 msgid "Failed to change mode of `%s' because no old mode is available.\n"
-msgstr ""
+msgstr "Impossible de changer le mode de `%s' car il n'y a pas d'ancien mode.\n"
 
 #: src/CopyJob.cc:78
 #, c-format
@@ -2150,7 +2142,7 @@ msgstr "**** FXP: abandon, retour à la copie brute\n"
 
 #: src/FileCopyFtp.cc:96
 msgid "ftp:fxp-force is set but FXP is not available"
-msgstr ""
+msgstr "ftp:fxp-force est actif mais l'FXP n'est pas disponible"
 
 #: src/FileCopyFtp.cc:108
 msgid "**** FXP: trying to reverse ftp:fxp-passive-source\n"
@@ -2226,22 +2218,3 @@ msgstr "dépendance du module `%s': %s\n"
 msgid "modules are not supported on this system"
 msgstr "les modules ne sont pas supportés sur ce système"
 
-#, fuzzy
-#~ msgid "%s: %s: %s\n"
-#~ msgstr "%s: erreur à l'écriture de %s: %s\n"
-
-#~ msgid "Query of variable `%s' failed: %s\n"
-#~ msgstr "L'interrogation de la variable `%s' a échoué: %s\n"
-
-#~ msgid ""
-#~ "Enter date, or blank line to exit.\n"
-#~ "\t> "
-#~ msgstr ""
-#~ "Entrez la date ou une ligne vierge pour quitter.\n"
-#~ "\t> "
-
-#~ msgid "Bad format - couldn't convert.\n"
-#~ msgstr "Mauvais format - n'a pu convertir.\n"
-
-#~ msgid "%s: Invalid number for size\n"
-#~ msgstr "%s: Nombre invalide pour la taille\n"
