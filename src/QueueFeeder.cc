@@ -27,18 +27,19 @@
 #include <fnmatch.h>
 
 #include "QueueFeeder.h"
+#include "plural.h"
 
 const char *QueueFeeder::NextCmd(CmdExec *exec, const char *)
 {
    if(jobs == NULL) return NULL;
-  
+
    /* denext the first job */
    QueueJob *job = grab_job(0);
 
    int bufsize = 1;
    buffer = (char *) xrealloc(buffer, bufsize);
    buffer[0] = 0;
-   
+
    if(cur_pwd == NULL || strcmp(cur_pwd, job->pwd)) {
       bufsize += strlen(job->pwd)*2 + 	/* quote safety */
 	         7;			/* 'cd ""; ' */
@@ -75,7 +76,7 @@ const char *QueueFeeder::NextCmd(CmdExec *exec, const char *)
    return buffer;
 }
 
-void QueueFeeder::QueueCmd(const char *cmd, const char *pwd, const char *lpwd, int pos)
+void QueueFeeder::QueueCmd(const char *cmd, const char *pwd, const char *lpwd, int pos, int v)
 {
    QueueJob *job = new QueueJob;
    job->cmd = xstrdup(cmd);
@@ -87,45 +88,139 @@ void QueueFeeder::QueueCmd(const char *cmd, const char *pwd, const char *lpwd, i
       job->cmd[strlen(job->cmd)-1] = 0;
 
    insert_jobs(job, jobs, lastjob, pos != -1? get_job(pos): NULL);
+   PrintJobs(job, v, _("Added job$|s$"));
 }
-   
-bool QueueFeeder::DelJob(int from)
+
+/* verbose:
+ * 0, quiet
+ * 1, interactive
+ * 2, verbose (print changes of pwd and lpwd)
+ * PrintRequeue, output to requeue
+ */
+void QueueFeeder::PrintJobs(const QueueJob *job, int v, const char *plur) const
+{
+   if(v < 1)
+      return;
+
+   const char *pwd = 0, *lpwd = 0;
+   if(v == PrintRequeue)
+   {
+      for(const QueueJob *j = job; j; j=j->next)
+      {
+	 if(!pwd || strcmp(pwd, job->pwd))
+	 {
+	    printf("cd \"%s\" &\n", CmdExec::unquote(job->pwd));
+	    pwd = job->pwd;
+	 }
+
+	 if(!lpwd || strcmp(lpwd, job->lpwd))
+	 {
+	    printf("lcd \"%s\" &\n", CmdExec::unquote(job->lpwd));
+	    lpwd = job->lpwd;
+	 }
+
+	 printf("queue \"%s\"\n", CmdExec::unquote(j->cmd));
+      }
+      return;
+   }
+
+   bool one = !job->next;
+   if(!one)
+      printf("%s:\n", plural(plur,2));
+
+   pwd = cur_pwd;
+   lpwd = cur_lpwd;
+
+   int n = 1;
+   for(const QueueJob *j = job; j; j=j->next)
+   {
+      /* Print pwd/lpwd changes when v >= 2.  (This only happens when there's
+       * more than one.) */
+      if(v > 2 && (!pwd || strcmp(pwd, job->pwd)))
+      {
+	 printf("\tcd \"%s\"\n", CmdExec::unquote(job->pwd));
+	 pwd = job->pwd;
+      }
+
+      if(v > 2 && (!lpwd || strcmp(lpwd, job->lpwd)))
+      {
+	 printf("\tlcd \"%s\"\n", CmdExec::unquote(job->lpwd));
+	 lpwd = job->lpwd;
+      }
+
+      if(one)
+	 printf("%s: ", plural(plur,1));
+      else
+	 printf("\t%2d. ",n++);
+
+      printf("%s\n", j->cmd);
+   }
+}
+
+bool QueueFeeder::DelJob(int from, int v)
 {
    QueueJob *job = grab_job(from);
-   if(!job) return false;
+   if(!job)
+   {
+      if(v > 0)
+      {
+	 if(from == -1 || !jobs)
+	    printf(_("No queued jobs.\n"));
+	 else
+	    printf(_("No queued job #%i.\n"), from+1);
+      }
+      return false;
+   }
+
+   PrintJobs(job, v, _("Deleted job$|s$"));
+
    FreeList(job);
    return true;
 }
 
-bool QueueFeeder::DelJob(const char *cmd)
+bool QueueFeeder::DelJob(const char *cmd, int v)
 {
    QueueJob *job = grab_job(cmd);
-   if(!job) return false;
+   if(!job)
+   {
+      if(v > 0)
+      {
+	 if(!jobs)
+	    printf(_("No queued jobs.\n"));
+	 else
+	    printf(_("No queued jobs match \"%s\".\n"), cmd);
+      }
+      return false;
+   }
+
+   PrintJobs(job, v, _("Deleted job$|s$"));
+
    FreeList(job);
    return true;
 }
 
 /* When moving, grab the insertion pointer *before* pulling out things to
  * move, since doing so will change offsets.  (Note that "to == -1" means
- * "move to the end", not "before the last entry".) 
+ * "move to the end", not "before the last entry".)
  */
-bool QueueFeeder::MoveJob(int from, int to)
+bool QueueFeeder::MoveJob(int from, int to, int v)
 {
    /* Safety: make sure we don't try to move an item before itself. */
    if(from == to) return false;
-   
+
    QueueJob *before = to != -1? get_job(to): NULL;
-   
+
    QueueJob *job = grab_job(from);
    if(job == NULL) return false;
 
+   PrintJobs(job, v, _("Moved job$|s$"));
    assert(job != before);
 
    insert_jobs(job, jobs, lastjob, before);
    return true;
 }
 
-bool QueueFeeder::MoveJob(const char *cmd, int to)
+bool QueueFeeder::MoveJob(const char *cmd, int to, int v)
 {
    QueueJob *before = to != -1? get_job(to): NULL;
 
@@ -135,6 +230,8 @@ bool QueueFeeder::MoveJob(const char *cmd, int to)
 
    QueueJob *job = grab_job(cmd);
    if(job == NULL) return false;
+
+   PrintJobs(job, v, _("Moved job$|s$"));
 
    insert_jobs(job, jobs, lastjob, before);
    return true;
@@ -181,21 +278,30 @@ QueueFeeder::QueueJob *QueueFeeder::grab_job(const char *cmd)
    QueueJob *j = jobs, *head = NULL, *tail = NULL;
 
    while(j) {
-      QueueJob *next = j->next;
+      QueueJob *match = get_next_match(cmd, j);
+      if(!match) break;
+      j = match->next;
 
-      if(!fnmatch(cmd, j->cmd,FNM_CASEFOLD))  {
-	 /* matches */
-	 unlink_job(j);
-	 insert_jobs(j, head, tail, NULL);
-      }
- 
-      j = next;
+      /* matches */
+      unlink_job(match);
+      insert_jobs(match, head, tail, NULL);
    }
 
    return head;
 }
 
-/* insert a list of jobs before "before", or at the end if before is NULL. 
+QueueFeeder::QueueJob *QueueFeeder::get_next_match(const char *cmd, QueueJob *j)
+{
+   while(j) {
+      if(!fnmatch(cmd, j->cmd,FNM_CASEFOLD))
+	 return j;
+
+      j = j->next;
+   }
+   return 0;
+}
+
+/* insert a list of jobs before "before", or at the end if before is NULL.
  * If before is not NULL, it must be contained between lst_head and lst_tail. */
 void QueueFeeder::insert_jobs(QueueJob *job,
       			      QueueJob *&lst_head,
@@ -256,7 +362,13 @@ void QueueFeeder::PrintStatus(int v) const
 {
    if(jobs == NULL)
       return;
-   
+
+   if(v == PrintRequeue)
+   {
+      PrintJobs(jobs, v, "");
+      return;
+   }
+
    printf(_("\tCommands queued:\n"));
 
    int n = 1;
@@ -268,13 +380,7 @@ void QueueFeeder::PrintStatus(int v) const
 	 printf("\t%2d. ...\n",n);
 	 break;
       }
-      /* Print pwd/lpwd changes when v >= 2.  Ideally, we should
-       * quote these commands, too; but I really don't want to
-       * add another 15 lines of code to this function, and this
-       * output isn't all that useful for copying and pasting anyway
-       * due to formatting.  I'll do it if someone requests it (or
-       * we get better strings ...)
-       */
+      /* Print pwd/lpwd changes when v >= 2. */
       if(v >= 2 && (!pwd || strcmp(pwd, job->pwd)))
 	 printf("\t    cd %s\n", job->pwd);
       if(v >= 2 && (!lpwd || strcmp(lpwd, job->lpwd)))

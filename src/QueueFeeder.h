@@ -50,6 +50,10 @@ class QueueFeeder : public CmdFeeder
     * that match the cmd: */
    QueueJob *grab_job(const char *cmd);
 
+   /* get the next job in j that matches cmd (including j) */
+   static QueueJob *get_next_match(const char *cmd, QueueJob *j);
+   void PrintJobs(const QueueJob *job, int v, const char *plur) const;
+
    void insert_jobs(QueueJob *job,
 		   QueueJob *&lst_head, QueueJob *&lst_tail,
 		   QueueJob *before);
@@ -60,16 +64,17 @@ public:
    const char *NextCmd(CmdExec *exec,const char *prompt);
 
    /* Add a command to the queue at a given position; a 0 position inserts at the end. */
-   void QueueCmd(const char *cmd, const char *pwd, const char *lpwd, int pos = 0);
+   void QueueCmd(const char *cmd, const char *pwd, const char *lpwd, int pos = 0, int verbose = 0);
 
    /* delete jobs (by index or wildcard expr) */
-   bool DelJob(int from);
-   bool DelJob(const char *cmd);
+   bool DelJob(int from, int v = 0);
+   bool DelJob(const char *cmd, int v = 0);
 
    /* move one or more jobs (by index or wildcard expr). */
-   bool MoveJob(int from, int to);
-   bool MoveJob(const char *cmd, int to);
+   bool MoveJob(int from, int to, int v = 0);
+   bool MoveJob(const char *cmd, int to, int v = 0);
 
+   enum { PrintRequeue = 9999 };
    void PrintStatus(int v) const;
 
    QueueFeeder(const char *pwd, const char *lpwd):

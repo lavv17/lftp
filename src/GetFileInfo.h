@@ -45,11 +45,13 @@ class GetFileInfo: public ListInfo
 
    bool showdir;
 
-   enum state_t { INITIAL, CHANGE_DIR, CHANGING_DIR, GETTING_LIST, DONE } state;
+   enum state_t { INITIAL, CHANGE_DIR, CHANGING_DIR, GETTING_LIST, GETTING_INFO_ARRAY, DONE } state;
    /* whether we've tried to cd to the whole dir (treating it as a dir): */
    bool tried_dir;
    /* and whether we've tried to cd to the basename (treating it as a file): */
    bool tried_file;
+   /* and the last-ditch GetArrayInfo */
+   bool tried_array;
    /* whether we found out the file type from cache */
    bool from_cache;
    /* whether the given path was a file or directory. */
@@ -59,6 +61,7 @@ class GetFileInfo: public ListInfo
 
    char *saved_error_text;
 
+   FA::fileinfo get_info;
 public:
    GetFileInfo(FileAccess *a, const char *path, bool showdir);
    virtual ~GetFileInfo();

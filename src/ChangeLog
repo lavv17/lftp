@@ -1,3 +1,12 @@
+2001-12-19  Glenn Maynard <g_ld@zewt.org>
+
+	* GetFileInfo.cc, GetFileInfo.h: Use GetArrayInfo as a last-ditch effort
+	  to get information.  Add most (hopefully all) branches of the basic
+	  logic.  (It doesn't list cases where cache is wrong--that can happen
+	  just about anywhere.)
+	* CmdExec.cc, CmdExec.h: unquote, static buffer.
+	* commands.cc, QueueFeeder.cc, QueueFeeder.h: give queue feedback.
+
 2001-12-18  Glenn Maynard <g_ld@zewt.org>
 
 	* module.cc: change XXX to TODO.

@@ -386,6 +386,12 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "       queue --move|-m <index or wildcard expression> [index]\n\n"
 	 "Move the given items before the given queue index, or to the end if no\n"
 	 "destination is given.\n"
+	 "\n"
+	 "Options:\n"
+	 " -q                  Be quiet.\n"
+	 " -v                  Be verbose.\n"
+	 " -Q                  Output in a format that can be used to re-queue.\n"
+	 "                     Useful with --delete.\n"
 	 )},
    {"quit",    cmd_exit,   0,"exit"},
    {"quote",   cmd_ls,	   N_("quote <cmd>"),
@@ -963,6 +969,9 @@ Job *CmdExec::builtin_queue()
    {
       {"move",required_argument,0,'m'},
       {"delete",no_argument,0,'d'},
+      {"quiet",no_argument,0,'q'},
+      {"verbose",no_argument,0,'v'},
+      {"queue",required_argument,0,'Q'},
       {0,0,0,0}
    };
    enum { ins, del, move } mode = ins;
@@ -970,13 +979,14 @@ Job *CmdExec::builtin_queue()
    const char *arg = NULL;
    /* position to insert at (ins only) */
    int pos = -1; /* default to the end */
+   int verbose = -1; /* default */
 
    args->rewind();
    int opt;
 
    exit_code=1; // more failure exits than success exits, so set success explicitely
 
-   while((opt=args->getopt_long("+dm:n:w",queue_options,0))!=EOF)
+   while((opt=args->getopt_long("+dm:n:qvQw",queue_options,0))!=EOF)
    {
       switch(opt)
       {
@@ -999,11 +1009,31 @@ Job *CmdExec::builtin_queue()
 	 mode = del;
 	 break;
 
+      case 'q':
+	 verbose = 0;
+	 break;
+
+      case 'v':
+	 verbose = 2;
+	 break;
+
+      case 'Q':
+	 verbose = QueueFeeder::PrintRequeue;
+	 break;
+
       case '?':
 	 err:
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
 	 return 0;
       }
+   }
+
+   if(verbose == -1)
+   {
+      if(mode == ins || mode == move)
+	 verbose = 0;
+      else
+	 verbose = 1;
    }
 
    const int args_remaining = args->count() - args->getindex();
@@ -1020,7 +1050,7 @@ Job *CmdExec::builtin_queue()
 	 else
 		 cmd=args->CombineQuoted(args->getindex());
 
-	 queue->has_queue->QueueCmd(cmd, session->GetCwd(), cwd, pos);
+	 queue->has_queue->QueueCmd(cmd, session->GetCwd(), cwd, pos, verbose);
 	 xfree(cmd);
 
 	 last_bg=queue->jobno;
@@ -1045,11 +1075,11 @@ Job *CmdExec::builtin_queue()
 	 }
 
 	 if(!arg)
-	    queue->has_queue->DelJob(-1); /* delete the last job */
+	    queue->has_queue->DelJob(-1, verbose); /* delete the last job */
 	 else if(isdigit(arg[0]))
-	    queue->has_queue->DelJob(atoi(arg)-1);
+	    queue->has_queue->DelJob(atoi(arg)-1, verbose);
 	 else
-	    queue->has_queue->DelJob(arg);
+	    queue->has_queue->DelJob(arg, verbose);
 
 	 exit_code=0;
       }
@@ -1075,11 +1105,11 @@ Job *CmdExec::builtin_queue()
 	 }
 
 	 if(isdigit(arg[0])) {
-	    queue->has_queue->MoveJob(atoi(arg)-1, to);
+	    queue->has_queue->MoveJob(atoi(arg)-1, to, verbose);
 	    break;
 	 }
 
-	 queue->has_queue->MoveJob(arg, to);
+	 queue->has_queue->MoveJob(arg, to, verbose);
 	 exit_code=0;
       }
       break;
@@ -1088,6 +1118,7 @@ Job *CmdExec::builtin_queue()
    return 0;
 }
 
+#if 0
 Job *CmdExec::builtin_queue_edit()
 {
    CmdExec *queue=GetQueue();
@@ -1139,6 +1170,7 @@ Job *CmdExec::builtin_queue_edit()
 
    return 0;
 }
+#endif
 
 // below are only non-builtin commands
 #define args	  (parent->args)

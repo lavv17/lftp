@@ -145,6 +145,7 @@ public:
    void PrependCmd(const char *c);
    void ExecParsed(ArgV *a,FDStream *o=0,bool b=false);
    static void unquote(char *buf,const char *str);
+   static char *unquote(const char *str);
    static bool needs_quotation(const char *buf);
    void FeedQuoted(const char *c);
    void AtExit();

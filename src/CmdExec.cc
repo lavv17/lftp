@@ -1056,6 +1056,18 @@ void CmdExec::unquote(char *buf,const char *str)
    *buf=0;
 }
 
+char *CmdExec::unquote(const char *str)
+{
+   static char *ret = 0;
+   if(ret)
+      xfree(ret);
+   ret=(char *)xmalloc(strlen(str)*2+1);
+
+   unquote(ret, str);
+
+   return ret;
+}
+
 bool CmdExec::needs_quotation(const char *buf)
 {
    while(*buf)
