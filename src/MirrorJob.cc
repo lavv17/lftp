@@ -489,8 +489,7 @@ void MirrorJob::HandleChdir(FileAccess * &session, int &redirections)
 	 // cd to another url.
 	 const char *loc_c=session->GetNewLocation();
 	 int max_redirections=ResMgr::Query("xfer:max-redirections",0);
-	 if(loc_c && loc_c[0] && max_redirections>0
-	 && loc_c[strlen(loc_c)-1]=='/')
+	 if(loc_c && max_redirections>0 && last_char(loc_c)=='/')
 	 {
 	    if(++redirections>max_redirections)
 	       goto cd_err_normal;
@@ -1390,8 +1389,7 @@ CMD(mirror)
 	    }
 	    target_dir=alloca_strdup(target_url.path);
 	 }
-	 if(target_dir[0] && target_dir[strlen(target_dir)-1]=='/'
-	 && basename_ptr(target_dir)[0]!='/')
+	 if(last_char(target_dir)=='/' && basename_ptr(target_dir)[0]!='/')
 	 {
 	    // user wants source dir name appended.
 	    const char *base=basename_ptr(source_dir);

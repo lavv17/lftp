@@ -340,7 +340,7 @@ void Http::SendMethod(const char *method,const char *efile)
       if(!xstrcmp(referer,"."))
       {
 	 referer=GetConnectURL(NO_USER+NO_PASSWORD);
-	 if(referer[0] && referer[strlen(referer)-1]!='/')
+	 if(last_char(referer)!='/')
 	    slash="/";
       }
       if(referer && referer[0])
@@ -1336,7 +1336,7 @@ int Http::Do()
 	       sprintf(err,"%s (%s)",status+status_consumed,file);
 	    else
 	       sprintf(err,"%s (%s%s)",status+status_consumed,cwd,
-		  (cwd[0] && cwd[strlen(cwd)-1]=='/')?"":"/");
+				       (last_char(cwd)=='/')?"":"/");
 	 }
 	 state=RECEIVING_BODY;
 	 SetError(code,err);

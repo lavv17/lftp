@@ -816,3 +816,9 @@ char *dirname_modify(char *ret)
       *slash=0;
    return ret;
 }
+
+char last_char(const char *str)
+{
+   int len=strlen(str);
+   return str[len-(len>0)];
+}

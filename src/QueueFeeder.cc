@@ -28,6 +28,7 @@
 
 #include "QueueFeeder.h"
 #include "plural.h"
+#include "misc.h"
 
 const char *QueueFeeder::NextCmd(CmdExec *exec, const char *)
 {
@@ -84,7 +85,7 @@ void QueueFeeder::QueueCmd(const char *cmd, const char *pwd, const char *lpwd, i
    job->lpwd = xstrdup(lpwd);
 
    /* we never want a newline at the end: */
-   if(job->cmd[strlen(job->cmd)-1] == '\n')
+   if(last_char(job->cmd) == '\n')
       job->cmd[strlen(job->cmd)-1] = 0;
 
    insert_jobs(job, jobs, lastjob, pos != -1? get_job(pos): NULL);

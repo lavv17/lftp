@@ -303,9 +303,6 @@ void LsCache::SetDirectory(FileAccess *p_loc, const char *path, bool dir)
 
 int LsCache::IsDirectory(FileAccess *p_loc,const char *dir_c)
 {
-   if(*dir_c && dir_c[strlen(dir_c)-1] == '/')
-      return 1;
-
    char *origdir = alloca_strdup(p_loc->GetCwd());
    p_loc->Chdir(dir_c, false);
 

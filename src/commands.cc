@@ -2490,7 +2490,7 @@ CMD(bookmark)
 	    char *a=string_alloca(strlen(value)*3+2);
 	    // encode some more characters, special to CmdExec parser.
 	    url::encode_string(value,a,"&;|\"'\\");
-	    if(value[0] && value[strlen(value)-1]!='/')
+	    if(value[0] && last_char(value)!='/')
 	       strcat(a,"/");
 	    value=a;
 	 }
@@ -2975,17 +2975,16 @@ CMD(get1)
    }
    else
    {
-      if(dst[strlen(dst)-1]=='/')
+      if(last_char(dst)=='/' && basename_ptr(dst)[0]!='/')
       {
-	 const char *slash=strrchr(src,'/');
-	 if(slash)
-	    slash++;
-	 else
-	    slash=src;
-	 char *dst1=string_alloca(strlen(dst)+strlen(slash)+1);
-	 strcpy(dst1,dst);
-	 strcat(dst1,slash);
-	 dst=dst1;
+	 const char *bn=basename_ptr(src);
+	 if(bn[0]!='/')
+	 {
+	    char *dst1=string_alloca(strlen(dst)+strlen(bn)+1);
+	    strcpy(dst1,dst);
+	    strcat(dst1,bn);
+	    dst=dst1;
+	 }
       }
    }
 

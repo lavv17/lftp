@@ -139,7 +139,12 @@ int GetFileInfo::Do()
 
       if(use_cache)
       {
-	 switch(LsCache::IsDirectory(session,dir))
+	 int is_dir=-1;
+	 if(last_char(dir)=='/')
+	    is_dir=1;
+	 else
+	    is_dir=LsCache::IsDirectory(session,dir);
+	 switch(is_dir)
 	 {
 	 case 0:
 	    tried_dir = true; /* it's a file */

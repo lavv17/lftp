@@ -1,3 +1,11 @@
+2004-04-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* misc.h, misc.cc: (last_char) new utility function.
+	* CmdExec.cc, FileAccess.cc, Http.cc, MirrorJob.cc, QueueFeeder.cc,
+	  commands.cc, lftp.cc: use last_char.
+	* LsCache.cc: don't treat trailing slash as existing directory inidication.
+	* GetFileInfo.cc: check for trailing slash here instead of LsCache.cc.
+
 2004-04-14  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* resource.cc: don't enable mlsd by default.

@@ -663,7 +663,7 @@ void FileAccess::Chdir(const char *path,bool verify)
    {
       if(cwd && cwd[0])
       {
-	 if(cwd[strlen(cwd)-1]=='/')
+	 if(last_char(cwd)=='/')
 	    sprintf(newcwd,"%s%s",cwd,path);
 	 else
 	    sprintf(newcwd,"%s/%s",cwd,path);

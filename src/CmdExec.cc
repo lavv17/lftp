@@ -386,8 +386,7 @@ int CmdExec::Do()
 	       // cd to another url.
 	       const char *loc_c=session->GetNewLocation();
 	       int max_redirections=ResMgr::Query("xfer:max-redirections",0);
-	       if(loc_c && loc_c[0] && max_redirections>0
-	       && loc_c[strlen(loc_c)-1]=='/')
+	       if(loc_c && max_redirections>0 && last_char(loc_c)=='/')
 	       {
 		  eprintf(_("%s: received redirection to `%s'\n"),"cd",loc_c);
 		  if(++redirections>max_redirections)
@@ -623,7 +622,7 @@ try_get_cmd:
 	 {
 	    if(next_cmd && *next_cmd && partial_cmd)
 	    {
-	       if(next_cmd[strlen(next_cmd)-1]!='\n')
+	       if(last_char(next_cmd)!='\n')
 	       {
 		  // missing EOL on last line, add it
 		  FeedCmd("\n");

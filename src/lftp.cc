@@ -48,6 +48,7 @@
 #include "IdNameCache.h"
 #include "LocalDir.h"
 #include "ConnectionSlot.h"
+#include "misc.h"
 
 #include "confpaths.h"
 
@@ -219,8 +220,7 @@ public:
 
       ::completion_shell=0;
 
-      if(cmd_buf &&
-	    (*cmd_buf==0 || cmd_buf[strlen(cmd_buf)-1]!='\n'))
+      if(cmd_buf && last_char(cmd_buf)!='\n')
       {
 	 exec->Timeout(0);
 	 add_newline=true;
