@@ -813,13 +813,18 @@ int Http::Do()
 
       if(!H_20X(status_code))
       {
-	 char *err=(char*)alloca(strlen(status)+strlen(file)+xstrlen(location)+20);
+	 char *err=(char*)alloca(strlen(status)+strlen(file)+strlen(cwd)+xstrlen(location)+20);
 
 	 if(H_REDIRECTED(status_code))
 	    sprintf(err,"%s (%s -> %s)",status+status_consumed,file,
 				    location?location:"nowhere");
 	 else
-	    sprintf(err,"%s (%s)",status+status_consumed,file);
+	 {
+	    if(file && file[0])
+	       sprintf(err,"%s (%s)",status+status_consumed,file);
+	    else
+	       sprintf(err,"%s (%s/)",status+status_consumed,cwd);
+	 }
 	 Disconnect();
 	 SetError(NO_FILE,err);
 	 return MOVED;

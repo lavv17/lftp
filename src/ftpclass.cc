@@ -260,6 +260,12 @@ int   Ftp::NoFileCheck(int act,int exp)
 int   Ftp::TransferCheck(int act,int exp)
 {
    (void)exp;
+   if(act==225 || act==226) // data connection is still open or ABOR worked.
+   {
+      AbortedClose();
+      DataClose();
+   }
+
    if(mode==CLOSED || RespQueueSize()>1)
       return state;
    if(act==RESP_NO_FILE && mode==LIST)

@@ -1,3 +1,8 @@
+1999-08-25  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: handle 225 and 226 replies in TransferCheck.
+	* Http.cc: use cwd in error message if file=="".
+
 1999-08-24  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: reset try_time on certain failures: greeting, user,
