@@ -694,6 +694,9 @@ limit accumulating of unused limit-rate. 0 means unlimited.
 .TP
 .BR net:limit-total-rate \ (bytes " " per " " second)
 limit transfer rate of all connections in sum. 0 means unlimited.
+Note that sockets have receive buffers on them, this can lead to network
+link load higher than this rate limit just after transfer beginning. You
+can try to set net:socket-buffer to relatively small value to avoid this.
 .TP
 .BR net:limit-total-max \ (bytes)
 limit accumulating of unused limit-total-rate. 0 means unlimited.
