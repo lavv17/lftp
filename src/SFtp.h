@@ -66,12 +66,6 @@ enum packet_type {
    SSH_FXP_EXTENDED =200,
    SSH_FXP_EXTENDED_REPLY=201
 };
-static bool is_valid_reply(int p)
-{
-   return p==SSH_FXP_VERSION
-      || p>=101 && p<=105
-      || p==SSH_FXP_EXTENDED_REPLY;
-}
 
 #define SSH_FILEXFER_ATTR_SIZE         0x00000001
 #define SSH_FILEXFER_ATTR_UIDGID       0x00000002  // used in protocol v3
@@ -117,10 +111,6 @@ enum sftp_status_t {
    SSH_FX_WRITE_PROTECT      =12,
    SSH_FX_NO_MEDIA           =13
 };
-static bool is_valid_status(int s)
-{
-   return s>=SSH_FX_OK && s<=SSH_FX_OP_UNSUPPORTED;
-}
 
    enum state_t
    {
@@ -181,6 +171,12 @@ static bool is_valid_status(int s)
    };
    class Packet
    {
+      static bool is_valid_reply(int p)
+      {
+	 return p==SSH_FXP_VERSION
+	    || p>=101 && p<=105
+	    || p==SSH_FXP_EXTENDED_REPLY;
+      }
    protected:
       int length;
       int unpacked;

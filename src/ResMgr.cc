@@ -867,7 +867,7 @@ const char *ResMgr::CharsetValidate(char **value)
 {
    if(!**value)
       return 0;
-   iconv_t ic=iconv_open(*value,"char");
+   iconv_t ic=iconv_open(*value,*value);
    if(ic==(iconv_t)-1)
       return _("this encoding is not supported");
    iconv_close(ic);

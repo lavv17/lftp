@@ -247,8 +247,11 @@ void DirectedBuffer::SetTranslation(const char *enc,bool translit)
    backend_translate=0;
    if(!enc)
       return;
-   const char *from_code=(mode==GET?enc:"char");
-   const char *to_code  =(mode==GET?"char":enc);
+   const char *local_code=ResMgr::Query("file:charset",0);
+   if(!local_code || !*local_code)
+      local_code="char";
+   const char *from_code=(mode==GET?enc:local_code);
+   const char *to_code  =(mode==GET?local_code:enc);
    if(translit)
    {
       const char *add="//TRANSLIT";

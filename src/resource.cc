@@ -273,6 +273,9 @@ static ResDecl
    res_sftp_conn_prog("sftp:connect-program","ssh -ax",0,0),
    res_sftp_srv_prog ("sftp:server-program","sftp",0,0);
 
+static ResDecl
+   res_file_charset  ("file:charset",  "",   ResMgr::CharsetValidate,ResMgr::NoClosure);
+
 #ifdef USE_SSL
 static ResDecl
    res_ssl_ca_file    ("ssl:ca-file",  "", ResMgr::FileReadable,ResMgr::NoClosure),
@@ -305,6 +308,10 @@ static ResDecl
 
 static ResDecl
    res_dir_colors ("color:dir-colors",   "",   0,ResMgr::NoClosure);
+
+#ifdef HAVE_LANGINFO_H
+# include <langinfo.h>
+#endif
 
 void ResMgr::ClassInit()
 {
@@ -369,4 +376,10 @@ void ResMgr::ClassInit()
       dir_colors=getenv("ZLS_COLORS"); /* zsh */
    if(dir_colors)
       Set("color:dir-colors",0,dir_colors);
+
+#if defined(HAVE_NL_LANGINFO) && defined(CODESET)
+   char *cs=nl_langinfo(CODESET);
+   if(cs)
+      Set("file:charset",0,cs);
+#endif
 }
