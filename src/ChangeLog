@@ -1,3 +1,7 @@
+2001-12-19  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* QueueFeeder.cc: pass correct job count to plural().
+
 2001-12-19  Glenn Maynard <g_ld@zewt.org>
 
 	* GetFileInfo.cc, GetFileInfo.h: Use GetArrayInfo as a last-ditch effort

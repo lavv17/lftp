@@ -124,9 +124,12 @@ void QueueFeeder::PrintJobs(const QueueJob *job, int v, const char *plur) const
       return;
    }
 
-   bool one = !job->next;
-   if(!one)
-      printf("%s:\n", plural(plur,2));
+   int job_count=0;
+   for(const QueueJob *j = job; j; j=j->next)
+      job_count++;
+
+   if(job_count>1)
+      printf("%s:\n", plural(plur,job_count));
 
    pwd = cur_pwd;
    lpwd = cur_lpwd;
@@ -148,8 +151,8 @@ void QueueFeeder::PrintJobs(const QueueJob *job, int v, const char *plur) const
 	 lpwd = job->lpwd;
       }
 
-      if(one)
-	 printf("%s: ", plural(plur,1));
+      if(job_count==1)
+	 printf("%s: ", plural(plur,job_count));
       else
 	 printf("\t%2d. ",n++);
 
