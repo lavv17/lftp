@@ -1141,6 +1141,7 @@ int   Ftp::Do()
 	 sprintf(str1,"DELE %s\n",file);
 	 break;
       case(QUOTE_CMD):
+	 real_pos=0;
 	 sprintf(str1,"%s\n",file);
 	 break;
       case(RENAME):
@@ -2199,8 +2200,20 @@ int   Ftp::Read(void *buf,int size)
       }
       if(result_size<size)
 	 size=result_size;
+      if(norest_manual && real_pos==0 && pos>0)
+	 return DO_AGAIN;
+      if(real_pos<pos)
+      {
+	 int skip=pos-real_pos;
+	 if(skip>result_size)
+	    skip=result_size;
+	 size=skip;
+      }
       memcpy(buf,result,size);
       memmove(result,result+size,result_size-=size);
+      if(real_pos==pos)
+	 pos+=size;
+      real_pos+=size;
       return(size);
    }
 

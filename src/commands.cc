@@ -42,7 +42,6 @@
 #include "mkdirJob.h"
 #include "rmJob.h"
 #include "SysCmdJob.h"
-#include "QuoteJob.h"
 #include "mvJob.h"
 #include "pgetJob.h"
 #include "FtpCopy.h"
@@ -79,9 +78,9 @@ CMD(exit);  CMD(get);    CMD(help);    CMD(jobs);
 CMD(kill);  CMD(lcd);    CMD(ls);
 CMD(open);  CMD(pwd);    CMD(set);
 CMD(shell); CMD(source); CMD(user);    CMD(rm);
-CMD(wait);  CMD(site);   CMD(subsh);   CMD(mirror);
+CMD(wait);  CMD(subsh);   CMD(mirror);
 CMD(mv);    CMD(cat);    CMD(cache);
-CMD(mkdir); CMD(quote);  CMD(scache);  CMD(mrm);
+CMD(mkdir); CMD(scache); CMD(mrm);
 CMD(ver);   CMD(close);  CMD(bookmark);CMD(lftp);
 CMD(echo);  CMD(suspend);CMD(ftpcopy); CMD(sleep);
 CMD(at);    CMD(find);   CMD(command); CMD(module);
@@ -268,7 +267,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Print current remote directory\n")},
    {"queue",   cmd_queue,  0,0},
    {"quit",    cmd_exit,   0,"exit"},
-   {"quote",   cmd_quote,  N_("quote <cmd>"),
+   {"quote",   cmd_ls,	   N_("quote <cmd>"),
 	 N_("Send the command uninterpreted. Use with caution - it can lead to\n"
 	 "unknown remote state and thus will cause reconnect. You cannot\n"
 	 "be sure that any change of remote state because of quoted command\n"
@@ -298,7 +297,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    	 " -a  list all settings, including default values\n"
 	 " -d  list only default values, not necessary current ones\n")},
    {"shell",   cmd_shell,  0,"!"},
-   {"site",    cmd_site,   N_("site <site_cmd>"),
+   {"site",    cmd_ls,	   N_("site <site_cmd>"),
 	 N_("Execute site command <site_cmd> and output the result\n"
 	 "You can redirect its output\n")},
    {"sleep",   cmd_sleep, 0,
@@ -808,13 +807,28 @@ CMD(lcd)
 
 CMD(ls)
 {
-   char *a=args->Combine(1);
    bool nlist=false;
    bool re=false;
-   if(strstr(args->a0(),"nlist"))
+   int mode=FA::LIST;
+   const char *op=args->a0();
+   if(strstr(op,"nlist"))
       nlist=true;
-   if(!strncmp(args->a0(),"re",2))
+   if(!strncmp(op,"re",2))
       re=true;
+   if(!strcmp(op,"quote") || !strcmp(op,"site"))
+   {
+      if(args->count()<=1)
+      {
+	 eprintf(_("Usage: %s <cmd>\n"),op);
+	 return 0;
+      }
+      nlist=true;
+      mode=FA::QUOTE_CMD;
+      if(!strcmp(op,"site"))
+	 args->insarg(1,"SITE");
+   }
+
+   char *a=args->Combine(1);
 
    if(!nlist && args->count()==1)
       args->Append(parent->var_ls);
@@ -823,7 +837,7 @@ CMD(ls)
    if(!nlist)
       src_peer=new FileCopyPeerDirList(Clone(),args);
    else
-      src_peer=new FileCopyPeerFA(Clone(),a,FA::LIST);
+      src_peer=new FileCopyPeerFA(Clone(),a,mode);
 
    if(re)
       src_peer->NoCache();
@@ -836,13 +850,13 @@ CMD(ls)
    if(nlist)
       c->Ascii();
 
-   CopyJob *j=new CopyJob(c,a,args->a0());
+   CopyJob *j=new CopyJob(c,a,op);
    if(!output || output->usesfd(1))
       j->NoStatus();
    xfree(a);
    output=0;
    if(!nlist)
-      args=0;
+      args=0;  // `ls' consumes args itself.
 
    return j;
 }
@@ -1500,37 +1514,6 @@ CMD(wait)
       return 0;
    }
    j->parent=0;
-   return j;
-}
-
-CMD(quote)
-{
-   if(args->count()<=1)
-   {
-      eprintf(_("Usage: %s <raw_cmd>\n"),args->a0());
-      return 0;
-   }
-   Job *j=new QuoteJob(Clone(),args->a0(),args->Combine(1),
-      output?output:new FDStream(1,"<stdout>"));
-   output=0;
-   return j;
-}
-
-CMD(site)
-{
-   if(args->count()<=1)
-   {
-      // xgettext:c-format
-      eprintf(_("Usage: site <site_cmd>\n"));
-      return 0;
-   }
-   char *cmd=args->Combine(1);
-   cmd=(char*)xrealloc(cmd,strlen(cmd)+6);
-   memmove(cmd+5,cmd,strlen(cmd)+1);
-   memcpy(cmd,"SITE ",5);
-   Job *j=new QuoteJob(Clone(),args->a0(),cmd,
-      output?output:new FDStream(1,"<stdout>"));
-   output=0;
    return j;
 }
 

@@ -102,7 +102,7 @@ public:
    bool Done();
 
    void Ascii() { ascii=true; }
-   virtual void NoCache() { Save(0); use_cache=false; }
+   virtual void NoCache() { use_cache=false; }
 
    virtual const char *GetStatus() { return 0; }
    virtual bool NeedSizeDateBeforehand() { return false; }

@@ -1,3 +1,13 @@
+1999-12-28  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CopyJob.h: put back FDStream for stdout creation.
+	* FileCopy.h: no cache does not mean `don't save to cache'.
+	* commands.cc: redo quote and site commands.
+	* ftpclass.cc: advance pos in QUOTE_CMD mode.
+	* Makefile.am: remove QuoteJob.{cc,h}, XferJob.{cc,h}
+	  (XferJob is dead - long live FileCopy)
+	* parsecmd.cc: handle ? specially.
+
 1999-12-27  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CopyJob.cc, CopyJob.h: add op member for CopyJob.
@@ -29,6 +39,7 @@
 	* url.h: (is_url) new method.
 	* complete.cc: use GlobURL.
 	* FileCopy.cc: don't open session if seek_pos>=size.
+	* pgetJob.cc: correct accounting.
 
 1999-12-26  Alexander V. Lukyanov  <lav@yars.free.net>
 

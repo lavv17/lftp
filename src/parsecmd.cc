@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-1999 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+
+/* $Id$ */
 
 #include <config.h>
 #include <fcntl.h>
@@ -180,6 +182,13 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
 	 while(*line==' ' || *line=='\t')
 	    line++;
 	 goto cmd_end;
+      }
+
+      if(args->count()==0 && *line=='?')
+      {
+	 line++;
+	 args->Append("?");
+	 continue;
       }
 
       // loop for one argument
