@@ -1083,7 +1083,7 @@ int   Ftp::Do()
          break;
       case(STORE):
          type=FTP_TYPE_I;
-	 if((bool)Query("rest-stor",hostname))
+	 if(!(bool)Query("rest-stor",hostname))
 	    real_pos=0;	// some old servers don't handle REST/STOR properly.
          sprintf(str1,"STOR %s\n",file);
          break;
@@ -1191,7 +1191,7 @@ int   Ftp::Do()
 	    bool sent=false;
 	    if(array_for_info[i].get_time && mdtm_supported)
 	    {
-	       sprintf(s,"MDTM %s\n",array_for_info[i].file);
+	       sprintf(s,"MDTM %s\n",ExpandTildeStatic(array_for_info[i].file));
 	       SendCmd(s);
 	       AddResp(RESP_RESULT_HERE,INITIAL_STATE,CHECK_MDTM);
 	       sent=true;
@@ -1202,7 +1202,7 @@ int   Ftp::Do()
 	    }
 	    if(array_for_info[i].get_size && size_supported)
 	    {
-	       sprintf(s,"SIZE %s\n",array_for_info[i].file);
+	       sprintf(s,"SIZE %s\n",ExpandTildeStatic(array_for_info[i].file));
 	       SendCmd(s);
 	       AddResp(RESP_RESULT_HERE,INITIAL_STATE,CHECK_SIZE);
 	       sent=true;
@@ -1541,6 +1541,8 @@ int   Ftp::Do()
    }
 
    pre_WAITING_STATE:
+      if(copy_mode!=COPY_NONE)
+	 retries=0;  // it is enough to get here in copying.
       state=WAITING_STATE;
       m=MOVED;
    case(WAITING_STATE):
@@ -1869,7 +1871,12 @@ void  Ftp::Disconnect()
       NextPeer();
 
    if(copy_mode!=COPY_NONE)
-      state=COPY_FAILED;
+   {
+      if(copy_addr_valid)
+	 state=COPY_FAILED;
+      else
+	 state=INITIAL_STATE;
+   }
    else if(mode==STORE && (flags&IO_FLAG))
       state=STORE_FAILED_STATE;
    else
@@ -2307,6 +2314,8 @@ int   Ftp::Write(const void *buf,int size)
       if(size>allowed)
 	 size=allowed;
    }
+   if(size==0)
+      return 0;
    res=write(data_sock,buf,size);
    if(res==-1)
    {
