@@ -35,7 +35,9 @@
 
 #include <netinet/in.h>
 #ifdef HAVE_ARPA_NAMESER_H
+# define class _class // workaround for FreeBSD 3.2.
 # include <arpa/nameser.h>
+# undef class
 #endif
 #ifdef HAVE_RESOLV_H
 # include <resolv.h>

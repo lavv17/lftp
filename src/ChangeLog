@@ -1,5 +1,6 @@
 2000-04-14  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* Resolver.cc: workaround for `class' in nameser.h (freebsd3.2).
 	* ftpclass.cc: (TransferCheck) fix wrong error handling in passive
 	  STORE mode, it lead to infinite loops.
 
