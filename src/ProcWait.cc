@@ -26,6 +26,8 @@
 #include "ProcWait.h"
 #include "SignalHook.h"
 
+ProcWait *ProcWait::chain=0;
+
 int ProcWait::Do()
 {
    int m=STALL;
@@ -49,21 +51,29 @@ int ProcWait::Do()
    }
    if(res==pid)
    {
-      if(WIFSTOPPED(info))
+      if(handle_info(info))
       {
-	 SignalHook::IncreaseCount(SIGTSTP);
-      }
-      else
-      {
-	 status=TERMINATED;
-	 term_info=info;
 	 m=MOVED;
 	 goto final;
       }
    }
-   // FIXME: smart SIGCHLD handling...
-   block+=TimeOut(200);
+   block+=TimeOut(500); // check from time to time, in case SIGCHLD fails
    return m;
+}
+
+bool ProcWait::handle_info(int info)
+{
+   if(WIFSTOPPED(info))
+   {
+      SignalHook::IncreaseCount(SIGTSTP);
+      return false;
+   }
+   else
+   {
+      status=TERMINATED;
+      term_info=info;
+      return true;
+   }
 }
 
 int ProcWait::Kill(int sig)
@@ -86,4 +96,38 @@ ProcWait::ProcWait(pid_t p)
    status=RUNNING;
    term_info=-1;
    saved_errno=0;
+
+   next=chain;
+   chain=this;
+}
+
+ProcWait::~ProcWait()
+{
+   for(ProcWait **scan=&chain; *scan; scan=&(*scan)->next)
+   {
+      if(*scan==this)
+      {
+	 *scan=next;
+	 return;
+      }
+   }
+}
+
+void ProcWait::SIGCHLD_handler(int sig)
+{
+   (void)sig;
+   int info;
+   pid_t pp=waitpid(-1,&info,WUNTRACED);
+   if(pp==-1)
+      return;
+   for(ProcWait *scan=chain; scan; scan=scan->next)
+   {
+      if(scan->pid==pp)
+      {
+	 scan->handle_info(info);
+	 return;
+      }
+   }
+   // no WaitProc for the pid. Probably the process died too fast,
+   // but next waitpid should take care of it.
 }
