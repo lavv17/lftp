@@ -1394,7 +1394,7 @@ int   Ftp::Do()
       }
 
 #ifdef USE_SSL
-      if(conn->control_ssl)
+      if(conn->ssl_is_activated())
       {
 	 conn->SendCmd("PBSZ 0");
 	 expect->Push(Expect::IGNORE);
@@ -1473,7 +1473,7 @@ int   Ftp::Do()
 	 }
       }
 #ifdef USE_SSL
-      if(conn->control_ssl)
+      if(conn->ssl_is_activated())
       {
 	 char want_prot='P';
 	 if(mode==LIST || mode==LONG_LIST || mode==MP_LIST)
@@ -2061,7 +2061,7 @@ int   Ftp::Do()
       Delete(conn->data_iobuf);
       conn->data_iobuf=0;
 #ifdef USE_SSL
-      if(conn->prot=='P')
+      if(conn->ssl_is_activated() && conn->prot=='P')
       {
 	 conn->data_ssl=lftp_ssl_new(conn->data_sock,hostname);
 	 // share session id between control and data connections.
@@ -2282,7 +2282,7 @@ system_error:
 #ifdef USE_SSL
 void Ftp::SendAuth(const char *auth)
 {
-   if(conn->auth_sent || conn->control_ssl)
+   if(conn->auth_sent || conn->ssl_is_activated())
       return;
    if(!conn->auth_supported)
    {
@@ -2658,7 +2658,7 @@ void Ftp::SendUrgentCmd(const char *cmd)
    static const char pre_cmd[]={TELNET_IAC,TELNET_IP,TELNET_IAC,TELNET_DM};
 
 #ifdef USE_SSL
-   if(conn->control_ssl)
+   if(conn->ssl_is_activated())
    {
       // no way to send urgent data over ssl, send normally.
       conn->telnet_layer_send->Buffer::Put(pre_cmd,4);
@@ -3425,6 +3425,8 @@ void Ftp::CheckFEAT(char *reply)
    conn->rest_supported=false;
 #ifdef USE_SSL
    conn->auth_supported=false;
+   xfree(conn->auth_args_supported);
+   conn->auth_args_supported=0;
 #endif
 
    char *scan=strchr(reply,'\n');
@@ -3461,8 +3463,15 @@ void Ftp::CheckFEAT(char *reply)
       else if(!strncasecmp(f,"AUTH ",5))
       {
 	 conn->auth_supported=true;
-	 xfree(conn->auth_args_supported);
-	 conn->auth_args_supported=xstrdup(f+5);
+	 if(!conn->auth_args_supported)
+	    conn->auth_args_supported=xstrdup(f+5);
+	 else
+	 {
+	    conn->auth_args_supported=(char*)xrealloc(conn->auth_args_supported,
+		  strlen(conn->auth_args_supported)+1+strlen(f+5)+1);
+	    strcat(conn->auth_args_supported,";");
+	    strcat(conn->auth_args_supported,f+5);
+	 }
       }
 #endif // USE_SSL
    }
@@ -3765,6 +3774,7 @@ void Ftp::CheckResp(int act)
       {
 	 if(QueryBool("ssl-force",hostname))
 	    SetError(LOGIN_FAILED,_("ftp:ssl-force is set and server does not support or allow SSL"));
+	 conn->prot='C';
       }
       break;
    case Expect::PROT:

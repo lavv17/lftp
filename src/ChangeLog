@@ -1,3 +1,8 @@
+2004-04-28  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: accept multiple AUTH lines in FEAT reply; check if
+	  ssl is activavted before trying to make protected data connection.
+
 2004-04-22  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileSet.cc, FileSet.h: add UNKNOWN file type; handle Door type.
