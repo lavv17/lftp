@@ -384,20 +384,20 @@ const char *FileAccess::GetFileURL(const char *f,int flags)
    sprintf(url,"%s://",proto);
    if(user)
    {
-      url::encode_string(user,url+strlen(url),"/:@"URL_UNSAFE);
+      url::encode_string(user,url+strlen(url),URL_USER_UNSAFE);
       if(pass && (flags&WITH_PASSWORD))
       {
 	 strcat(url,":");
-	 url::encode_string(pass,url+strlen(url),"/:@"URL_UNSAFE);
+	 url::encode_string(pass,url+strlen(url),URL_PASS_UNSAFE);
       }
       strcat(url,"@");
    }
    if(hostname)
-      url::encode_string(hostname,url+strlen(url),"/:"URL_UNSAFE);
+      url::encode_string(hostname,url+strlen(url),URL_HOST_UNSAFE);
    if(portname)
    {
       strcat(url,":");
-      url::encode_string(portname,url+strlen(url),"/"URL_UNSAFE);
+      url::encode_string(portname,url+strlen(url),URL_PORT_UNSAFE);
    }
    if(strcmp(f,"~") && !(flags&NO_PATH))
    {
@@ -504,9 +504,27 @@ void  FileAccess::ExpandTildeInCWD()
 	 expand_tilde(&cwd,home);
       if(real_cwd)
 	 expand_tilde(&real_cwd,home);
-      if(mode==CHANGE_DIR && file)
+      if(file)
 	 expand_tilde(&file,home);
+      if(file1)
+	 expand_tilde(&file1,home);
    }
+}
+
+const char *FileAccess::ExpandTildeStatic(const char *s)
+{
+   if(!home || !(s[0]=='~' && (s[1]=='/' || s[1]==0)))
+      return s;
+
+   static char *buf=0;
+   static int buf_len=0;
+
+   int len=strlen(s)+1;
+   if(len>buf_len)
+      buf=(char*)xrealloc(buf,buf_len=len);
+   strcpy(buf,s);
+   expand_tilde(&buf,home);
+   return buf;
 }
 
 static inline
@@ -802,6 +820,18 @@ void FileAccess::CleanupAll()
 {
    for(FileAccess *o=chain; o!=0; o=o->next)
       o->CleanupThis();
+}
+
+FileAccess *FileAccess::New(const ParsedURL *u)
+{
+   FileAccess *s=New(u->proto);
+   if(!s)
+      return 0;
+   s->Connect(u->host,u->port);
+   if(u->user)
+      s->Login(u->user,u->pass);
+   // path?
+   return s;
 }
 
 // FileAccess::Protocol implementation
