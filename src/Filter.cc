@@ -35,6 +35,10 @@
 #include "ArgV.h"
 #include "misc.h"
 
+#ifndef O_BINARY
+# define O_BINARY 0
+#endif
+
 FDStream::FDStream(int new_fd,const char *new_name)
 {
    fd=new_fd;
@@ -340,7 +344,7 @@ int   FileStream::getfd()
 {
    if(fd!=-1 || error())
       return fd;
-   fd=open(full_name,mode|O_NONBLOCK,0664);
+   fd=open(full_name,mode|O_NONBLOCK|O_BINARY,0664);
    if(fd==-1)
    {
       MakeErrorText();

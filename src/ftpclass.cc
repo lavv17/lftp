@@ -1632,7 +1632,7 @@ int   Ftp::Do()
 
    case(DATA_OPEN_STATE):
    {
-      if(RespQueueIsEmpty())
+      if(RespQueueIsEmpty() && data_sock!=-1)
       {
 	 // When ftp server has sent "Transfer complete" it is idle,
 	 // but the data can be still unsent in server side kernel buffer.
@@ -2054,9 +2054,6 @@ void Ftp::AbortedClose()
 
 void  Ftp::Disconnect()
 {
-   if(control_sock==-1)
-      return;  // already disconnected.
-
    /* protect against re-entering from FlushSendQueue */
    static bool disconnect_in_progress=false;
    if(disconnect_in_progress)
