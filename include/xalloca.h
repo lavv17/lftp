@@ -38,7 +38,7 @@ extern "C" {
  #pragma alloca
 #  else
 #   ifndef alloca /* predefined by HP cc +Olibcalls */
-char *alloca ();
+char *alloca (size_t);
 #   endif
 #  endif
 # endif

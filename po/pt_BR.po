@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
-"POT-Creation-Date: 2000-04-29 21:25+0400\n"
+"POT-Creation-Date: 2000-06-09 03:12+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -107,12 +107,12 @@ msgstr "Falha na conexão"
 msgid "Operation not supported"
 msgstr "Operação não suportada"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:1272
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:1312
 #, c-format
 msgid "Getting directory contents (%ld)"
 msgstr "Buscando conteúdo do diretório (%ld)"
 
-#: src/FtpListInfo.cc:239 src/HttpDir.cc:1277
+#: src/FtpListInfo.cc:239 src/HttpDir.cc:1317
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "Buscando informações dos arquivos (%d%%)"
@@ -282,7 +282,7 @@ msgstr ""
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr ""
 
-#: src/Http.cc:1164 src/Resolver.cc:191 src/ftpclass.cc:2991
+#: src/Http.cc:1189 src/Resolver.cc:191 src/ftpclass.cc:2991
 msgid "Resolving host address..."
 msgstr ""
 
@@ -1244,7 +1244,7 @@ msgstr ""
 msgid "assuming failed host name lookup"
 msgstr ""
 
-#: src/Http.cc:537 src/ftpclass.cc:913
+#: src/Http.cc:562 src/ftpclass.cc:913
 msgid "Closing idle connection"
 msgstr ""
 
@@ -1297,7 +1297,7 @@ msgstr ""
 msgid "Sending commands..."
 msgstr ""
 
-#: src/Http.cc:1175 src/ftpclass.cc:2983 src/ftpclass.cc:3003
+#: src/Http.cc:1200 src/ftpclass.cc:2983 src/ftpclass.cc:3003
 #: src/ftpclass.cc:3010
 msgid "Waiting for response..."
 msgstr ""
@@ -1306,7 +1306,7 @@ msgstr ""
 msgid "Connection idle"
 msgstr ""
 
-#: src/Http.cc:1170 src/ftpclass.cc:2998
+#: src/Http.cc:1195 src/ftpclass.cc:2998
 msgid "Connecting..."
 msgstr ""
 
@@ -1330,11 +1330,11 @@ msgstr ""
 msgid "Waiting for data connection..."
 msgstr ""
 
-#: src/Http.cc:1173 src/ftpclass.cc:3017
+#: src/Http.cc:1198 src/ftpclass.cc:3017
 msgid "Sending data"
 msgstr ""
 
-#: src/Http.cc:1178 src/ftpclass.cc:3019
+#: src/Http.cc:1203 src/ftpclass.cc:3019
 msgid "Receiving data"
 msgstr ""
 
@@ -1424,11 +1424,11 @@ msgstr ""
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s: nenhum arquivo encontrado\n"
 
-#: src/Http.cc:1006 src/Http.cc:1026
+#: src/Http.cc:1031 src/Http.cc:1051
 msgid "chunked format violated"
 msgstr ""
 
-#: src/Http.cc:1176
+#: src/Http.cc:1201
 msgid "Fetching headers..."
 msgstr ""
 
@@ -1437,7 +1437,7 @@ msgstr ""
 msgid "Proxy protocol unsupported"
 msgstr ""
 
-#: src/HttpDir.cc:892 src/HttpDir.cc:1075
+#: src/HttpDir.cc:932 src/HttpDir.cc:1115
 #, fuzzy, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "\tExecutando comando embutido `%s' [%s]\n"
