@@ -24,7 +24,7 @@
 #include "alias.h"
 #include "xmalloc.h"
 #include "xalloca.h"
-#include <string.h>
+#include "xstring.h"
 
 CmdExec::parse_result CmdExec::parse_one_cmd()
 {

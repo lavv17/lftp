@@ -26,7 +26,7 @@
 #include <assert.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <string.h>
+#include "xstring.h"
 #include <ctype.h>
 #include "xalloca.h"
 

@@ -26,7 +26,7 @@
 #include "SMTask.h"
 #include "Filter.h"
 #include "fg.h"
-#include <string.h>
+#include "xstring.h"
 
 class Buffer : public SMTask
 {

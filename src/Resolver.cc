@@ -26,7 +26,7 @@
 #include "SignalHook.h"
 #include <errno.h>
 #include <unistd.h>
-#include <string.h>
+#include "xstring.h"
 #include <stdio.h>
 #include <time.h>
 #include "xmalloc.h"

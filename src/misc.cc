@@ -22,7 +22,7 @@
 
 #include <config.h>
 #include "xmalloc.h"
-#include <string.h>
+#include "xstring.h"
 #include <stdio.h>
 #include <pwd.h>
 #include <unistd.h>

@@ -26,12 +26,9 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <unistd.h>
-#include <string.h>
-#include <signal.h>
 #include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <ctype.h>
+#include <sys/stat.h> // for mkdir()
+#include "xstring.h"
 #include <fcntl.h>
 #ifdef HAVE_LOCALE_H
 # include <locale.h>
@@ -51,10 +48,10 @@
 
 #include "confpaths.h"
 
-extern "C" {
+CDECL_BEGIN
 #include "readline/readline.h"
 #include "readline/history.h"
-}
+CDECL_END
 
 int   remote_completion=0;
 
