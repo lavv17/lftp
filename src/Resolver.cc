@@ -319,12 +319,22 @@ void Resolver::AddAddress(int family,const char *address,int len)
    switch(family)
    {
    case AF_INET:
+      if(sizeof(add->in.sin_addr) != len)
+      {
+         addr_num--;
+         return;
+      }
       memcpy(&add->in.sin_addr,address,len);
       add->in.sin_port=port_number;
       break;
 
 #if INET6
    case AF_INET6:
+      if(sizeof(add->in6.sin6_addr) != len)
+      {
+         addr_num--;
+         return;
+      }
       memcpy(&add->in6.sin6_addr,address,len);
       add->in6.sin6_port=port_number;
       break;
