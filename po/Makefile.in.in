@@ -9,20 +9,22 @@
 PACKAGE = @PACKAGE@
 VERSION = @VERSION@
 
+# These two variables depend on the location of this directory.
+subdir = po
+top_builddir = ..
+
 SHELL = /bin/sh
 @SET_MAKE@
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
-top_builddir = ..
 VPATH = @srcdir@
 
 prefix = @prefix@
 exec_prefix = @exec_prefix@
 datadir = @datadir@
-localedir = @LOCALE_DIR@
+localedir = $(datadir)/locale
 gettextsrcdir = $(datadir)/gettext/po
-subdir = po
 
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -83,7 +85,6 @@ $(srcdir)/$(PACKAGE).pot: $(POTFILES) $(srcdir)/POTFILES.in
 	$(XGETTEXT) --default-domain=$(PACKAGE) --directory=$(top_srcdir) \
 	  --add-comments --keyword=_ --keyword=N_ \
 	  --files-from=$(srcdir)/POTFILES.in \
-	  --c++ --keyword=plural \
 	&& test ! -f $(PACKAGE).po \
 	   || ( rm -f $(srcdir)/$(PACKAGE).pot \
 		&& mv $(PACKAGE).po $(srcdir)/$(PACKAGE).pot )
@@ -152,7 +153,7 @@ maintainer-clean: distclean
 	@echo "it deletes files that may require special tools to rebuild."
 	rm -f $(GMOFILES)
 
-distdir = ../$(PACKAGE)-$(VERSION)/$(subdir)
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
 dist distdir:
 	$(MAKE) update-po
 	@$(MAKE) dist2
@@ -160,7 +161,8 @@ dist distdir:
 dist2: $(DISTFILES)
 	dists="$(DISTFILES)"; \
 	for file in $$dists; do \
-	  cp -p $(srcdir)/$$file $(distdir); \
+	  if test -f $$file; then dir=.; else dir=$(srcdir); fi; \
+	  cp -p $$dir/$$file $(distdir); \
 	done
 
 update-po: Makefile
@@ -184,21 +186,8 @@ update-po: Makefile
 update-gmo: Makefile $(GMOFILES)
 	@:
 
-POTFILES: POTFILES.in
-	( if test 'x$(srcdir)' != 'x.'; then \
-	    posrcprefix='$(top_srcdir)/'; \
-	  else \
-	    posrcprefix="../"; \
-	  fi; \
-	  rm -f $@-t $@ \
-	    && (sed -e '/^#/d' -e '/^[ 	]*$$/d' \
-		    -e "s@.*@	$$posrcprefix& \\\\@" < $(srcdir)/$@.in \
-		| sed -e '$$s/\\$$//') > $@-t \
-	    && chmod a-w $@-t \
-	    && mv $@-t $@ )
-
-Makefile: Makefile.in.in ../config.status POTFILES
-	cd .. \
+Makefile: Makefile.in.in $(top_builddir)/config.status POTFILES.in
+	cd $(top_builddir) \
 	  && CONFIG_FILES=$(subdir)/$@.in CONFIG_HEADERS= \
 	       $(SHELL) ./config.status
 
