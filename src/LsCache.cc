@@ -29,7 +29,7 @@
 LsCache *LsCache::chain=0;
 bool	 LsCache::use=true;
 long	 LsCache::sizelimit=1024*1024;
-time_t	 LsCache::ttl=60*60;  // time to live = 60 minutes
+TimeInterval LsCache::ttl("60m");  // time to live = 60 minutes
 LsCache::ExpireHelper LsCache::expire_helper;
 
 void LsCache::CheckSize()
@@ -164,14 +164,14 @@ void LsCache::List()
    else
       printf(_(", maximum size %ld\n"),sizelimit);
 
-   if(ttl==0)
+   if(ttl.IsInfty() || ttl.Seconds()==0)
       puts(_("Cache entries do not expire"));
-   else if(ttl<60)
+   else if(ttl.Seconds()<60)
       printf(plural("Cache entries expire in %ld $#l#second|seconds$\n",
-		     long(ttl)),long(ttl));
+		     long(ttl.Seconds())),long(ttl.Seconds()));
    else
    {
-      long ttl_min=(long)(ttl+30)/60;
+      long ttl_min=(long)(ttl.Seconds()+30)/60;
       printf(plural("Cache entries expire in %ld $#l#minute|minutes$\n",
 		     ttl_min),ttl_min);
    }
@@ -179,15 +179,15 @@ void LsCache::List()
 
 int LsCache::ExpireHelper::Do()
 {
-   if(ttl==0)
+   if(ttl.IsInfty() || ttl.Seconds()==0)
       return STALL;
    time_t ct=time(0);
-   if(!expiring || expiring->timestamp+ttl <= ct)
+   if(!expiring || expiring->timestamp+ttl.Seconds() <= ct)
    {
       LsCache **scan=&LsCache::chain;
       while(*scan)
       {
-	 if((*scan)->timestamp+ttl <= ct)
+	 if((*scan)->timestamp+ttl.Seconds() <= ct)
 	 {
 	    LsCache *tmp=*scan;
 	    *scan=tmp->next;
@@ -201,7 +201,10 @@ int LsCache::ExpireHelper::Do()
       if(!expiring)
 	 return STALL;
    }
-   block+=TimeOut(expiring->timestamp+ttl-ct);
+   time_t t_out=expiring->timestamp+ttl.Seconds()-ct;
+   if(t_out>1024)
+      t_out=1024;
+   Timeout(t_out*1000);
    return STALL;
 }
 

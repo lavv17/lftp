@@ -42,7 +42,7 @@ class LsCache
    static LsCache *chain;
    static bool use;
    static long sizelimit;
-   static time_t ttl;
+   static TimeInterval ttl;
 
    class ExpireHelper;
    friend class LsCache::ExpireHelper;
@@ -84,7 +84,7 @@ public:
    static bool IsEnabled() { return use; }
    static void SetSizeLimit(long l) { sizelimit=l; }
    static long SizeLimit() { return sizelimit; }
-   static void SetExpire(time_t t) { ttl=t; }
+   static void SetExpire(const TimeInterval &t) { ttl=t; }
 
    ~LsCache();
 

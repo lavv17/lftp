@@ -1593,10 +1593,10 @@ CMD(cache)  // cache control
 	 exit_code=1;
 	 return 0;
       }
-      time_t exp=decode_delay(op);
-      if(exp==-1)
+      TimeInterval exp(op);
+      if(exp.Error())
       {
-	 eprintf(_("%s: Invalid expire period (use Ns - in sec, Nm - in min, Nh - in hours)\n"),args->a0());
+	 eprintf("%s: %s: %s.\n",args->a0(),op,exp.ErrorText());
 	 exit_code=1;
 	 return 0;
       }
