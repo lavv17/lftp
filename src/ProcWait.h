@@ -62,6 +62,8 @@ public:
    ~ProcWait();
 
    static void SIGCHLD_handler(int);
+
+   static void Signal(bool yes);
 };
 
 #endif /* PROCWAIT_H */

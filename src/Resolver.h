@@ -26,6 +26,7 @@
 #include "ProcWait.h"
 #include <netinet/in.h>
 #include <netdb.h>
+#include <string.h>
 
 class Resolver : public SMTask
 {

@@ -46,7 +46,7 @@ public:
    virtual void setmtime(time_t) {}
    virtual bool can_setmtime() { return false; }
    virtual void remove_if_empty() {}
-   virtual bool Done() { return 1; }
+   virtual bool Done() { return true; }
    virtual bool usesfd(int fd) { return this->fd==fd; }
    virtual void Kill(int=SIGTERM) {}
    virtual pid_t GetProcGroup() { return 0; }
@@ -60,6 +60,8 @@ class OutputFilter : public FDStream
    FDStream *second;
 
    char *oldcwd;
+
+   bool closed;
 
    void Init();
 

@@ -39,6 +39,7 @@
 #endif
 
 #include "xmalloc.h"
+#include "ListInfo.h"
 
 class FileAccess : public SMTask
 {
@@ -164,6 +165,7 @@ public:
    void SeekReal() { pos=GetRealPos(); }
 
    const char *GetCwd() { return cwd; }
+   const char *GetFile() { return file; }
 
    virtual int Do() = 0;
    virtual int Done() = 0;
@@ -204,7 +206,7 @@ public:
    const char *StrError(int err);
    virtual void Cleanup(bool all=false) { (void)all; }
       // close idle connections, etc.
-   virtual class ListInfo *MakeListInfo() { return 0; }
+   virtual ListInfo *MakeListInfo() { return 0; }
 };
 
 // cache of used sessions
