@@ -1,3 +1,8 @@
+2000-08-24  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.h, Fish.h: fix last comma in enum.
+	* ResMgr.h: make ResMgr::Resource public.
+
 2000-08-23  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileCopy.cc: fix Seek of FileCopyPeerFDStream. This fixes

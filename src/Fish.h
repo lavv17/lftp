@@ -75,7 +75,7 @@ class Fish : public NetAccess
       EXPECT_CWD,
       EXPECT_DIR,
       EXPECT_RETR_SIZE,
-      EXPECT_RETR,
+      EXPECT_RETR
    };
 
    void PushExpect(expect_t);

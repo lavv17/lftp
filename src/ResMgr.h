@@ -32,10 +32,12 @@ typedef const char *ResValValid(char **value);
 typedef const char *ResClValid(char **closure);
 
 class ResValue;
+class ResDecl;
 
 class ResMgr
 {
    friend class ResDecl;
+public:
    class Resource
    {
       friend class ResMgr;
@@ -63,6 +65,7 @@ class ResMgr
       }
    };
 
+private:
    static Resource *chain;
    static ResDecl *type_chain;
 

@@ -96,9 +96,9 @@ class Ftp : public NetAccess
       CHECK_USER_PROXY,	// check response for USER sent to proxy
       CHECK_PASS,	// check response for PASS
       CHECK_PASS_PROXY,	// check response for PASS sent to proxy
-      CHECK_TRANSFER,	// generic check for transfer
+      CHECK_TRANSFER	// generic check for transfer
 #ifdef USE_SSL
-      CHECK_AUTH_TLS,
+      ,CHECK_AUTH_TLS,
       CHECK_PROT_P
 #endif
    };
