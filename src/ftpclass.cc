@@ -1002,6 +1002,12 @@ void  Ftp::GetBetterConnection(int level,int count)
    }
 }
 
+void  Ftp::HandleTimeout()
+{
+   quit_sent=true;
+   super::HandleTimeout();
+}
+
 int   Ftp::Do()
 {
    char	 *str=(char*)alloca(xstrlen(cwd)+xstrlen(hostname)+xstrlen(proxy)+256);
@@ -1829,9 +1835,7 @@ int   Ftp::Do()
 	    // prevent infinite NOOP's
 	    if(nop_offset==pos && nop_count*nop_interval>=timeout)
 	    {
-	       DebugPrint("**** ",_("Timeout - reconnecting"),0);
-	       quit_sent=true;
-	       Disconnect();
+	       HandleTimeout();
 	       return MOVED;
 	    }
 	    if(nop_time!=0)

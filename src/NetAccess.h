@@ -88,6 +88,8 @@ protected:
    bool ReconnectAllowed();
    bool NextTry();   // returns false if max-retries exceeded.
 
+   virtual void HandleTimeout();
+
 public:
    const char *GetProto() { return "net"; }
 

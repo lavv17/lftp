@@ -151,6 +151,8 @@ class Ftp : public NetAccess
 
    void	 InitFtp();
 
+   void	 HandleTimeout();
+
    int   control_sock;
    int   data_sock;
    int	 aborted_data_sock;

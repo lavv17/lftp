@@ -258,13 +258,18 @@ bool NetAccess::NoProxy(const char *hostname)
    return false;
 }
 
+void NetAccess::HandleTimeout()
+{
+   DebugPrint("**** ",_("Timeout - reconnecting"),0);
+   Disconnect();
+   event_time=now;
+}
+
 bool NetAccess::CheckTimeout()
 {
    if(now-event_time>=timeout)
    {
-      DebugPrint("**** ",_("Timeout - reconnecting"),0);
-      Disconnect();
-      event_time=now;
+      HandleTimeout();
       return(true);
    }
    TimeoutS(timeout-(now-event_time));

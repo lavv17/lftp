@@ -62,6 +62,7 @@
 #include "module.h"
 #include "getopt.h"
 #include "FileCopy.h"
+#include "DummyProto.h"
 
 #include "confpaths.h"
 
@@ -641,7 +642,7 @@ Job *CmdExec::builtin_open()
 
    if(!no_bm && host && (bm=lftp_bookmarks.Lookup(host))!=0)
    {
-      char *cmd=string_alloca(5+3+3+xstrlen(user)+1+xstrlen(pass)+3+xstrlen(port)+strlen(bm)+4+1);
+      char *cmd=string_alloca(5+3+3+xstrlen(user)*2+1+xstrlen(pass)*2+3+xstrlen(port)*2+strlen(bm)*2+6+1);
       strcpy(cmd,"open -B ");
       if(user)
       {
@@ -660,7 +661,9 @@ Job *CmdExec::builtin_open()
 	 unquote(cmd+strlen(cmd),port);
 	 strcat(cmd,"\" ");
       }
+
       strcat(cmd,bm);
+
       if(background)
 	 strcat(cmd," &\n");
       strcat(cmd,";\n");
@@ -669,7 +672,7 @@ Job *CmdExec::builtin_open()
    }
    else
    {
-      if(host)
+      if(host && host[0])
       {
 	 url=new ParsedURL(host);
 
@@ -726,7 +729,11 @@ Job *CmdExec::builtin_open()
 	    }
 	 }
       }
-      if(host)
+      else if(host && !host[0])
+      {
+	 ChangeSession(new DummyProto);
+      }
+      if(host && host[0])
 	 session->Connect(host,port);
       if(user)
       {
@@ -743,7 +750,7 @@ Job *CmdExec::builtin_open()
 	    session->InsecurePassword(insecure && !no_bm);
 	 }
       }
-      if(host)
+      if(host && host[0])
       {
 	 if(verify_host && !background)
 	 {
@@ -1964,11 +1971,8 @@ CMD(bookmark)
 	       strcat(a,"/");
 	    value=a;
 	 }
-	 if(value==0 || value[0]==0)   // cannot add empty bookmark
-	 {
-	    eprintf(_("%s: cannot add empty bookmark\n"),args->a0());
-	    return 0;
-	 }
+	 if(value==0 || value[0]==0)
+	    value="\"\"";
 	 if(strchr(key,' ') || strchr(key,'\t'))
 	 {
 	    eprintf(_("%s: spaces in bookmark name are not allowed\n"),args->a0());

@@ -1,3 +1,12 @@
+2001-05-04  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* NetAccess.cc, NetAccess.h: (HandleTimeout) new function.
+	* ftpclass.cc, ftpclass.h: redefine HandleTimeout to set quit_sent
+	  (fixes non-fatal deadlock).
+	* commands.cc: allow open "" and empty bookmarks.
+	* resource.cc: don't use user name in anon-pass (suggested by
+	  Eduardo Perez Ureta <eperez@dei.inf.uc3m.es>).
+
 2001-04-17  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* MirrorJob.cc, mkdirJob.cc, StatusLine.cc: fix overflows.

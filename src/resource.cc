@@ -76,6 +76,7 @@ static const char *HttpProxyValidate(char **p)
    return 0;
 }
 
+#if 0
 static const char *FtpDefaultAnonPass()
 {
    static char *pass=0;
@@ -90,6 +91,7 @@ static const char *FtpDefaultAnonPass()
 
    return pass;
 }
+#endif
 
 static const char *PutOrPost(char **s)
 {
@@ -144,7 +146,7 @@ const char *OrderValidate(char **s)
 // Static array of objects is wrongly initialized by IRIX CC and Unixware c++.
 // So here goes list of arbitrarily named objects, they are not refered by name.
 static ResDecl
-   ResDecl00 ("ftp:anon-pass",		  "-lftp@",0,0),
+   ResDecl00 ("ftp:anon-pass",		  "lftp@",0,0),
    ResDecl01 ("ftp:anon-user",		  "anonymous",0,0),
    ResDecl01a("ftp:auto-sync-mode",	  "",	   ResMgr::ERegExpValidate,0),
    ResDecl01b("ftp:bind-data-socket",	  "yes",   ResMgr::BoolValidate,0),
@@ -231,9 +233,6 @@ static ResDecl
 
 void ResMgr::ClassInit()
 {
-   // make anon-pass visible
-   Set("ftp:anon-pass",0,FtpDefaultAnonPass());
-
    // inherit http proxy from environment
    const char *http_proxy=getenv("http_proxy");
    if(http_proxy)
