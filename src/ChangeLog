@@ -1,3 +1,7 @@
+2001-01-03  jfaith <jfaith@cemsys.com>
+
+	* resource.cc: (OrderValidate) fix off by one xmalloc bug.
+
 2001-12-14  Albert Chin-A-Young <lftp-devel@thewrittenword.com>
 
 	* FtpDirList.h: compilation fix.
