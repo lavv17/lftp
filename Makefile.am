@@ -20,12 +20,12 @@ uninstall-local:
 dist-hook:
 	@echo $(PACKAGE).spec updating...
 	@rm -f $(distdir)/$(PACKAGE).spec
-	@sed "s/%define version .*/%define version $(VERSION)/" \
+	@-sed "s/%define version .*/%define version $(VERSION)/" \
 	    $(srcdir)/$(PACKAGE).spec > $(distdir)/$(PACKAGE).spec && \
 	    cp $(distdir)/$(PACKAGE).spec $(srcdir)/$(PACKAGE).spec
 	@echo $(PACKAGE).lsm updating...
 	@rm -f $(distdir)/$(PACKAGE).lsm
-	@SIZE=`$(AMTAR) chof - $(distdir) | GZIP=$(GZIP_ENV) gzip -c | wc -c`; SIZE=`expr \( $$SIZE + 512 \) / 1024`; echo Size: $$SIZE kB; \
+	@-SIZE=`$(AMTAR) chof - $(distdir) | GZIP=$(GZIP_ENV) gzip -c | wc -c`; SIZE=`expr \( $$SIZE + 512 \) / 1024`; echo Size: $$SIZE kB; \
 	 DATE=`date +%Y-%m-%d`; echo Date: $$DATE; \
 	 sed -e "s/Version:	.*/Version:	$(VERSION)/" \
 	     -e "s/[0-9]* kB $(PACKAGE)-.*\.tar\.gz/$$SIZE kB $(PACKAGE)-$(VERSION).tar.gz/" \
