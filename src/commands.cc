@@ -1391,10 +1391,6 @@ CMD(cls)
    bool re=false;
 
    OutputJob *out=new OutputJob(output, args->a0());
-//   OutputJob *out=new OutputJob("testfile", args->a0());
-//   OutputJob *out=new OutputJob("file:testfile", args->a0());
-//   OutputJob *out=new OutputJob("ftp://localhost/incoming/testing", args->a0());
-
    output=0;
 
    FileSetOutput fso;
