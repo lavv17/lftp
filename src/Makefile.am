@@ -24,7 +24,7 @@ proto_http_la_SOURCES = Http.cc Http.h HttpDir.cc HttpDir.h
 proto_file_la_SOURCES = LocalAccess.cc LocalAccess.h
 proto_fish_la_SOURCES = Fish.cc Fish.h PtyShell.cc PtyShell.h lftp_pty.c lftp_pty.h
 cmd_mirror_la_SOURCES = MirrorJob.cc MirrorJob.h
-cmd_sleep_la_SOURCES  = SleepJob.cc SleepJob.h getdate.c getdate.y getdate.h
+cmd_sleep_la_SOURCES  = SleepJob.cc SleepJob.h getdate.y getdate.h
 libnetwork_la_SOURCES = NetAccess.cc NetAccess.h Resolver.cc Resolver.h\
  lftp_ssl.cc lftp_ssl.h buffer_ssl.cc buffer_ssl.h
 
