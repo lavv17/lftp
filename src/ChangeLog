@@ -1,3 +1,7 @@
+2003-04-15  AIDA Shinra <shinra@j10n.org>
+
+	* HttpDir.cc: fix bug with unterminated string; add wwwoffle support.
+
 2003-04-08  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc: fixes for --script (bug reported by Olaf Kaehler

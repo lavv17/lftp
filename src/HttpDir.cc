@@ -536,6 +536,50 @@ static bool try_squid_ftp(file_info &info,const char *str,char *str_with_tags)
    return true;
 }
 
+static bool try_wwwoffle_ftp(file_info &info,const char *buf,
+   const char *ext,const char **info_string,int *info_string_len)
+{
+   info.clear();
+
+   //   Perms Nlnk user [group] size Mon DD (YYYY or hh:mm)
+   int perms_code;
+   char year_or_time[6];
+   int consumed;
+
+   int n=sscanf(buf,"%11s %d %31s %31s %lld %3s %2d %5s%n",info.perms,&info.nlink,
+	       info.user,info.group,&info.size,info.month_name,&info.day,
+	       year_or_time,&consumed);
+   if(n==4) // bsd-like listing without group?
+   {
+      info.group[0]=0;
+      n=sscanf(buf,"%11s %d %31s %lld %3s %2d %5s%n",info.perms,&info.nlink,
+	    info.user,&info.size,info.month_name,&info.day,year_or_time,&consumed);
+   }
+   if(n>=7 && -1!=(perms_code=parse_perms(info.perms+1))
+   && -1!=(info.month=parse_month(info.month_name))
+   && -1!=parse_year_or_time(year_or_time,&info.year,&info.hour,&info.minute))
+   {
+      sprintf(info.size_str,"%lld",info.size);
+      if(info.perms[0]=='d')
+	 info.is_directory=true;
+      else if(info.perms[0]=='l')
+      {
+	 info.is_sym_link=true;
+	 char *p=strstr(ext,"-&gt; ");
+	 if(p)
+	 {
+	    info.sym_link=xstrdup(p+6);
+	    info.free_sym_link=true;
+	 }
+      }
+      *info_string=buf;
+      *info_string_len=consumed;
+      debug("wwwoffle ftp over http proxy listing matched");
+      return true;
+   }
+   return false;
+}
+
 
 // this procedure is highly inefficient in some cases,
 // esp. when it has to return for more data many times.
@@ -804,6 +848,11 @@ parse_url_again:
 	    strcpy(link_target,".");
 	    link_len=1;
 	 }
+	 if(link_target[0]=='.' && link_target[1]=='/')
+	 {
+	    link_len-=2;
+	    memmove(link_target,link_target+2,link_len+1);
+	 }
       }
       else
       {
@@ -839,7 +888,7 @@ parse_url_again:
    if(list && show_in_list)
    {
       const char *more1;
-      char *str,*str_with_tags;
+      char *str,*str_with_tags, *str2;
       char *line_add=(char*)alloca(link_len+128+2*1024);
       const char *info_string=0;
       int         info_string_len=0;
@@ -903,12 +952,23 @@ parse_url_again:
 	 skip_len=eol-buf+eol_len;
 	 goto got_info;
       }
-      if(try_mini_proxy(info,buf)		&& info.validate()) goto got_info;
-      if(try_apache_unixlike(info,buf,more,more1,&info_string,&info_string_len)
+      if(try_mini_proxy(info,str)		&& info.validate()) goto got_info;
+      if(try_apache_unixlike(info,str,more,more1,&info_string,&info_string_len)
       && info.validate())
 	 goto got_info;
       if(try_roxen(info,str)			&& info.validate()) goto got_info;
       if(try_squid_ftp(info,str,str_with_tags) && info.validate())
+      {
+	 // skip rest of line, because there may be href to link target.
+	 skip_len=eol-buf+eol_len;
+	 goto got_info;
+      }
+      // wwwoffle
+      str2=string_alloca(less-buf+1);
+      memcpy(str2,buf,less-buf);
+      str2[less-buf]=0;
+      if(try_wwwoffle_ftp(info,str2,str,&info_string,&info_string_len)
+      && info.validate())
       {
 	 // skip rest of line, because there may be href to link target.
 	 skip_len=eol-buf+eol_len;
