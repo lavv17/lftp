@@ -2,9 +2,13 @@
 
 	* commands.cc: help update; support get -a for ascii mode;
 	  don't use ascii mode for zcat and zmore.
-	* CopyJob.cc, CopyJob.h: ascii support in CopyJobEnv.
-	* FileCopy.cc: init can_seek0.
+	* CopyJob.cc, CopyJob.h: ascii support in CopyJobEnv; add SetDate and
+	  SetSize methods.
+	* FileCopy.cc, FileCopy.h: init can_seek0; add FileCopyPeerFA::NewGet,
+	  NewPut methods.
 	* MirrorJob.cc: use CopyJob.
+	* commands.cc: use NewPut.
+	* url.cc: allocate enough memory for file: urls.
 
 1999-12-25  Alexander V. Lukyanov  <lav@yars.free.net>
 

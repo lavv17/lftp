@@ -32,7 +32,7 @@
 
 ParsedURL::ParsedURL(const char *url,bool proto_required)
 {
-   memory=(char*)xmalloc(strlen(url)*2+1);
+   memory=(char*)xmalloc(strlen(url)*2+20+1);
    strcpy(memory,url);
 
    proto=0;

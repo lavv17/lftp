@@ -2064,8 +2064,7 @@ CMD(get1)
    src_peer=FileCopyPeerFA::New(Clone(),src,FA::RETRIEVE,true);
 
    if(dst_url.proto==0)
-      dst_peer=new FileCopyPeerFDStream(new FileStream(dst,O_WRONLY|O_CREAT
-				    |(cont?0:O_TRUNC)),FileCopyPeer::PUT);
+      dst_peer=FileCopyPeerFDStream::NewPut(dst,cont);
    else
       dst_peer=new FileCopyPeerFA(&dst_url,FA::STORE);
 
