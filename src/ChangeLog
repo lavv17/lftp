@@ -1,3 +1,9 @@
+2004-04-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: send ACCT before FEAT after login.
+	* OutputJob.cc: don't disable writing when there are data pending,
+	  this fixes spinning in cls|less.
+
 2004-04-07  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: fixed coredump when ftp:proxy does not have a protocol

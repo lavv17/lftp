@@ -311,6 +311,10 @@ bool OutputJob::ShowStatusLine(StatusLine *s)
       return true;
    }
 
+   /* Don't disable write if there are data to be written in buffer */
+   if(output->GetCopy()->WriteAllowed() && output->GetCopy()->WritePending())
+      return false;
+
    /* There hasn't been output in a while.  Stop the output again,
     * so the FileCopy will clear the StatusLine when there's more data. */
    output->GetCopy()->AllowWrite(false);
