@@ -272,7 +272,10 @@ bool FileAccess::SameLocationAs(FileAccess *fa)
 const char *FileAccess::GetConnectURL(int flags)
 {
    int len=1;
-   len+=strlen(GetProto())+strlen("://");
+   const char *proto=GetProto();
+   if(proto[0]==0)
+      return "";
+   len+=strlen(proto)+strlen("://");
    if(user)
    {
       len+=strlen(user)*3+1;
@@ -286,7 +289,7 @@ const char *FileAccess::GetConnectURL(int flags)
    if(cwd)
       len+=1+strlen(cwd)*3;
    url=(char*)xrealloc(url,len);
-   sprintf(url,"%s://",GetProto());
+   sprintf(url,"%s://",proto);
    if(user)
    {
       url::encode_string(user,url+strlen(url));

@@ -990,13 +990,18 @@ CMD(open)
 	    cwd_history.Set(session,session->GetCwd());
 
 	    FileAccess *new_session=0;
-	    if(uc.proto && strcmp(uc.proto,session->GetProto()))
+	    // get session with specified protocol if protocol differs
+	    if(uc.proto && strcmp(uc.proto,session->GetProto())
+	    || session->GetProto()[0]==0) // or if current session is dummy
 	    {
-	       new_session=Protocol::NewSession(uc.proto);
+	       const char *p=uc.proto;
+	       if(!p)
+		  p="ftp";
+	       new_session=Protocol::NewSession(p);
 	       if(!new_session)
 	       {
 		  eprintf(N_("%s: %s - not supported protocol\n"),
-			   args->getarg(0),uc.proto);
+			   args->getarg(0),p);
 		  return 0;
 	       }
 	    }

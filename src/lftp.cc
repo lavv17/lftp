@@ -45,6 +45,7 @@
 #include "GetPass.h"
 #include "history.h"
 #include "log.h"
+#include "DummyProto.h"
 
 #include "confpaths.h"
 
@@ -258,7 +259,7 @@ int   main(int argc,char **argv)
 
    const char  *home=getenv("HOME")?:".";
 
-   CmdExec *top_exec=new CmdExec(new Ftp());
+   CmdExec *top_exec=new CmdExec(new DummyProto());
    top_exec->jobno=-1;
    top_exec->status_line=new StatusLine(1);
    Log::global=new Log(top_exec->status_line);

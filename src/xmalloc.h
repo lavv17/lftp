@@ -44,7 +44,9 @@ static inline char *xstrdup(const char *s)
 static inline void *xmemdup(const void *m,int len)
 {
    if(!m) return 0;
-   return memcpy(xmalloc(len),m,len);
+   void *buf=xmalloc(len);
+   memcpy(buf,m,len);
+   return buf;
 }
 static inline void xfree(void *p)
 {
