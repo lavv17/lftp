@@ -757,6 +757,7 @@ void  Ftp::GetBetterConnection(int level)
 	 set_real_cwd(o->real_cwd);
 	 o->set_real_cwd(0);
       	 o->Disconnect();
+	 return;
       }
    }
 }
@@ -1629,11 +1630,26 @@ void  Ftp::ReceiveResp()
 
 void  Ftp::DataAbort()
 {
-   if(control_sock==-1)
+   if(control_sock==-1 || state==CONNECTING_STATE)
       return;
 
    if(data_sock==-1 && copy_mode==COPY_NONE)
-      return;
+      return; // nothing to abort
+
+   if(copy_mode!=COPY_NONE)
+   {
+      if(RespQueueIsEmpty())
+	 return; // the transfer seems to be finished
+      if(!copy_addr_valid)
+	 return; // data connection cannot be established at this time
+   }
+
+   // if the socket was not connected or transfer completed
+   // then ABOR is not needed
+   if(data_sock!=-1
+   && (state==ACCEPTING_STATE || state==DATASOCKET_CONNECTING_STATE
+      || RespQueueIsEmpty()))
+	 return;
 
    FlushSendQueue(/*all=*/true);
    /* Send ABOR command, don't care of result */
@@ -1952,16 +1968,14 @@ read_again:
       if(res==0)
       {
       we_have_eof:
+	 DataClose();
 	 if(RespQueueIsEmpty())
 	 {
 	    SwitchToState(EOF_STATE);
 	    return(0);
 	 }
 	 else
-	 {
-	    DataClose();
 	    return DO_AGAIN;
-	 }
       }
       retries=0;
       real_pos+=res;
@@ -2057,8 +2071,7 @@ void  Ftp::SwitchToState(automate_state ns)
 {
    if(ns==state)
       return;
-   if(copy_mode!=COPY_NONE && copy_passive && copy_addr_valid)
-      ns=COPY_FAILED;
+
    switch(ns)
    {
    case(INITIAL_STATE):
