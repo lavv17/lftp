@@ -10,6 +10,7 @@
 	* CmdExec.cc, CopyJob.cc, FindJob.cc, MirrorJob.cc, SleepJob.cc,
 	  commands.cc, mgetJob.cc, pgetJob.cc: use it.
 	* lftpget: -u is obsolete.
+	* MirrorJob.cc: set use_cache in child MirrorJob.
 
 2000-03-23  Alexander V. Lukyanov  <lav@yars.free.net>
 
