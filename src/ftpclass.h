@@ -77,7 +77,7 @@ class Ftp : public NetAccess
       RESP_LOGIN_FAILED=530
    };
 
-   enum check_case_t
+   enum expect_t
    {
       CHECK_NONE,	// no special check
       CHECK_IGNORE,	// ignore response
@@ -130,6 +130,7 @@ class Ftp : public NetAccess
       bool fixed_pasv;	  // had to fix PASV address.
       bool translation_activated;
       bool proxy_is_http; // true when connection was established via http proxy.
+      bool may_show_password;
 
       int multiline_code; // the code of multiline response.
       int sync_wait;	  // number of commands in flight.
@@ -178,35 +179,59 @@ class Ftp : public NetAccess
       void SendCmd2(const char *cmd,const char *f);
       void SendCmd2(const char *cmd,int v);
       void SendCmdF(const char *fmt,...) PRINTF_LIKE(2,3);
+      int FlushSendQueueOneCmd();
    };
 
    Connection *conn;
 
-   struct expected_response;
-   friend struct Ftp::expected_response;
-   struct expected_response
+   struct Expect
    {
-      int   expect;
-      check_case_t check_case;
-      char  *path;
+      expect_t check_case;
+      char *arg;
+      Expect *next;
+
+      Expect(expect_t e,const char *a=0)
+	 {
+	    check_case=e;
+	    arg=xstrdup(a);
+	 }
+      Expect(expect_t e,char c)
+	 {
+	    check_case=e;
+	    arg=(char*)xmalloc(2);
+	    arg[0]=c;
+	    arg[1]=0;
+	 }
+      ~Expect()
+	 {
+	    xfree(arg);
+	 }
    };
-   expected_response *RespQueue;
-   int	 RQ_alloc;   // memory allocated
+   class ExpectQueue
+   {
+      Expect *first; // next to expect
+      Expect **last;  // for appending
+      int count;
 
-   int	 RQ_head;
-   int	 RQ_tail;
+   public:
+      ExpectQueue();
+      ~ExpectQueue();
 
-   void  AddResp(int exp,check_case_t ck=CHECK_NONE);
-   void  SetRespPath(const char *p);
+      void Push(Expect *e);
+      void Push(expect_t e) { Push(new Expect(e)); }
+      Expect *Pop();
+      Expect *FindLastCWD();
+      int Count() { return count; }
+      bool IsEmpty() { return count==0; }
+      bool Has(expect_t);
+      bool FirstIs(expect_t);
+      void Close();
+   };
+
+   ExpectQueue *expect;
+
    void  CheckResp(int resp);
    int	 ReplyLogPriority(int code);
-   void  PopResp();
-   void	 EmptyRespQueue();
-   void	 CloseRespQueue(); // treat responses on Close()
-   int   RespQueueIsEmpty() { return RQ_head==RQ_tail; }
-   int	 RespQueueSize() { return RQ_tail-RQ_head; }
-   expected_response *FindLastCWD();
-   bool	 RespQueueHas(check_case_t cc);
 
    void	 RestCheck(int);
    void  NoFileCheck(int);
@@ -217,7 +242,7 @@ class Ftp : public NetAccess
    void	 proxy_NoPassReqCheck(int);
    void	 CheckFEAT(char *reply);
    char *ExtractPWD();
-   void  SendCWD(const char *path,check_case_t c);
+   void  SendCWD(const char *path,expect_t c,const char *arg=0);
    void	 CatchDATE(int);
    void	 CatchDATE_opt(int);
    void	 CatchSIZE(int);
@@ -473,15 +498,15 @@ public:
    void CopyAllowStore()
       {
 	 conn->SendCmd2("STOR",file);
-	 AddResp(RESP_TRANSFER_OK,CHECK_TRANSFER);
+	 expect->Push(new Expect(CHECK_TRANSFER));
 	 copy_allow_store=true;
       }
    bool CopyStoreAllowed() { return copy_allow_store; }
    bool CopyIsReadyForStore()
       {
 	 if(copy_mode==COPY_SOURCE)
-	    return copy_addr_valid && RespQueueSize()==1;
-	 return state==WAITING_STATE && RespQueueSize()==0;
+	    return copy_addr_valid && expect->FirstIs(CHECK_TRANSFER);
+	 return state==WAITING_STATE && expect->IsEmpty();
       }
 };
 
