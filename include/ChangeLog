@@ -1,3 +1,7 @@
+2004-06-09	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* xstring.h: fixed DECL checks.
+
 2004-06-03	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* xstring.h: use new DECL defines (reported by Michael Schloh

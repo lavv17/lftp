@@ -121,4 +121,22 @@ CDECL char *strtok_r(char *str, const char *sep, char **lasts);
 # define PRINTF_LIKE(n,m)
 #endif
 
+#ifdef TRIO_REPLACE_STDIO
+# undef HAVE_PRINTF
+# undef HAVE_VPRINTF
+# undef HAVE_FPRINTF
+# undef HAVE_VFPRINTF
+# undef HAVE_SPRINTF
+# undef HAVE_VSPRINTF
+# undef HAVE_SNPRINTF
+# undef HAVE_VSNPRINTF
+# undef HAVE_SCANF
+# undef HAVE_VSCANF
+# undef HAVE_FSCANF
+# undef HAVE_VFSCANF
+# undef HAVE_SSCANF
+# undef HAVE_VSSCANF
+# include "trio.h"
+#endif
+
 #endif /* POST_CONFIG_H */

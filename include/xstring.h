@@ -48,12 +48,12 @@
 
 #include <stdarg.h>
 
-#ifndef HAVE_DECL_STRCASECMP
+#if !HAVE_DECL_STRCASECMP
 CDECL int strcasecmp(const char *s1,const char *s2);
 CDECL int strncasecmp(const char *s1,const char *s2,size_t n);
 #endif
 
-#ifndef HAVE_DECL_VSNPRINTF
+#if !HAVE_DECL_VSNPRINTF
 CDECL int vsnprintf(char *,size_t,const char *,va_list);
 #endif
 
