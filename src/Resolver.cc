@@ -486,7 +486,7 @@ void Resolver::LookupSRV_RR()
 	    return;
       }
       time(&try_time);
-      len=res_search(srv_name, C_IN, T_SRV, (u_char*)answer, sizeof(answer));
+      len=res_search(srv_name, C_IN, T_SRV, answer, sizeof(answer));
       if(len>=0)
 	 break;
 #ifdef HAVE_H_ERRNO
