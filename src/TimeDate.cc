@@ -22,7 +22,7 @@
 #include "TimeDate.h"
 #include "misc.h"
 
-void time_touple::normalize()
+void time_tuple::normalize()
 {
    if(msec>=1000 || msec<=-1000)
    {
@@ -35,7 +35,7 @@ void time_touple::normalize()
       sec-=1;
    }
 }
-void time_touple::add(const time_touple &o)
+void time_tuple::add(const time_tuple &o)
 {
    sec+=o.sec;
    msec+=o.msec;
@@ -44,7 +44,7 @@ void time_touple::add(const time_touple &o)
    else if(msec<=-1000)
       msec+=1000,sec--;
 }
-void time_touple::sub(const time_touple &o)
+void time_tuple::sub(const time_tuple &o)
 {
    sec-=o.sec;
    msec-=o.msec;
@@ -53,11 +53,11 @@ void time_touple::sub(const time_touple &o)
    else if(msec<=-1000)
       msec+=1000,sec--;
 }
-bool time_touple::lt(const time_touple &o) const
+bool time_tuple::lt(const time_tuple &o) const
 {
    return sec<o.sec || (sec==o.sec && msec<o.msec);
 }
-double time_touple::to_double() const
+double time_tuple::to_double() const
 {
    return sec+msec/1000.;
 }

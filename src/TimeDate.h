@@ -29,7 +29,7 @@
 
 #include "xmalloc.h"
 
-class time_touple
+class time_tuple
 {
    time_t sec;
    int msec;
@@ -38,17 +38,17 @@ protected:
    time_t get_seconds()   const { return sec; }
    int get_milliseconds() const { return msec; }
    void normalize();
-   void add(const time_touple &);
-   void sub(const time_touple &);
+   void add(const time_tuple &);
+   void sub(const time_tuple &);
    void set(time_t s,int ms) { sec=s; msec=ms; normalize(); }
-   void set(const time_touple &o) { sec=o.sec; msec=o.msec; }
-   bool lt(const time_touple &) const;
+   void set(const time_tuple &o) { sec=o.sec; msec=o.msec; }
+   bool lt(const time_tuple &) const;
    double to_double() const;
 };
 
 class TimeDiff;
 
-class Time : public time_touple
+class Time : public time_tuple
 {
 public:
    Time() { SetToCurrentTime(); }
@@ -98,7 +98,7 @@ public:
 };
 
 // maybe it is better to make it double.
-class TimeDiff : public time_touple
+class TimeDiff : public time_tuple
 {
 public:
    TimeDiff() {}
