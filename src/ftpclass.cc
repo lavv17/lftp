@@ -1998,6 +1998,9 @@ void  Ftp::DataAbort()
    // don't close it now, wait for ABOR result
    aborted_data_sock=data_sock;
    data_sock=-1;
+
+   if((bool)Query("web-mode"))
+      Disconnect();
 }
 
 void Ftp::ControlClose()
@@ -2077,6 +2080,8 @@ void  Ftp::DataClose()
       DebugPrint("---- ",_("Closing data socket"),7);
       close(data_sock);
       data_sock=-1;
+      if((bool)Query("web-mode"))
+	 Disconnect();
    }
    nop_time=0;
    nop_offset=0;
