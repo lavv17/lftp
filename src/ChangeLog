@@ -1,3 +1,8 @@
+2004-12-01  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: add debug message about EOF on data socket.
+	* NetAccess.cc: initialize reconnect_interval_current properly.
+
 2004-11-26  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.cc: suspend/resume pty buffers too.

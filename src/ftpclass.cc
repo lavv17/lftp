@@ -2220,6 +2220,7 @@ int   Ftp::Do()
 	 }
 	 if(conn->data_iobuf->Size()==0 && conn->data_iobuf->Eof())
 	 {
+	    DebugPrint("---- ","Got EOF on data connection",9);
 	    DataClose();
 	    if(expect->IsEmpty())
 	    {
