@@ -151,6 +151,12 @@ class Ftp : public NetAccess
       void SetControlConnectionTranslation(const char *cs);
 
       void CloseDataConnection();
+
+      void Send(const char *cmd,int len);
+      void SendCmd(const char *cmd);
+      void SendCmd2(const char *cmd,const char *f);
+      void SendCmd2(const char *cmd,int v);
+      void SendCmdF(const char *fmt,...) PRINTF_LIKE(2,3);
    };
 
    Connection *conn;
@@ -251,10 +257,6 @@ private:
 
    void	 SwitchToState(automate_state);
 
-   void	 Send(const char *cmd,int len);
-   void  SendCmd(const char *cmd);
-   void  SendCmd2(const char *cmd,const char *f);
-   void  SendCmd2(const char *cmd,int v);
    void  SendUrgentCmd(const char *cmd);
    int	 FlushSendQueueOneCmd();
    int	 FlushSendQueue(bool all=false);
@@ -474,7 +476,7 @@ public:
    bool IsCopyPassive() { return copy_passive; }
    void CopyAllowStore()
       {
-	 SendCmd2("STOR",file);
+	 conn->SendCmd2("STOR",file);
 	 AddResp(RESP_TRANSFER_OK,CHECK_TRANSFER);
 	 copy_allow_store=true;
       }

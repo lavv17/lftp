@@ -601,7 +601,7 @@ char *Ftp::ExtractPWD()
 
 void Ftp::SendCWD(const char *path,check_case_t c)
 {
-   SendCmd2("CWD",path);
+   conn->SendCmd2("CWD",path);
    AddResp(RESP_CWD_RMD_DELE_OK,c);
    SetRespPath(path);
 }
@@ -1302,7 +1302,7 @@ int   Ftp::Do()
       try_feat_after_login=false;
       if(use_feat)
       {
-	 SendCmd("FEAT");
+	 conn->SendCmd("FEAT");
 	 AddResp(211,CHECK_FEAT);
       }
 
@@ -1348,7 +1348,7 @@ int   Ftp::Do()
 		  old_auth,auth);
 	    }
 	 }
-	 SendCmd2("AUTH",auth);
+	 conn->SendCmd2("AUTH",auth);
 	 AddResp(234,CHECK_AUTH_TLS);
 	 if(!strcmp(auth,"TLS")
 	 || !strcmp(auth,"TLS-C"))
@@ -1372,9 +1372,9 @@ int   Ftp::Do()
       	 if(proxy_user && proxy_pass)
 	 {
 	    AddResp(RESP_PASS_REQ,CHECK_USER_PROXY);
-	    SendCmd2("USER",proxy_user);
+	    conn->SendCmd2("USER",proxy_user);
 	    AddResp(RESP_LOGGED_IN,CHECK_PASS_PROXY);
-	    SendCmd2("PASS",proxy_pass);
+	    conn->SendCmd2("PASS",proxy_pass);
 	 }
       }
 
@@ -1383,7 +1383,7 @@ int   Ftp::Do()
 
       ignore_pass=false;
       AddResp(RESP_PASS_REQ,CHECK_USER);
-      SendCmd2("USER",user_to_use);
+      conn->SendCmd2("USER",user_to_use);
 
       state=USER_RESP_WAITING_STATE;
       m=MOVED;
@@ -1407,12 +1407,12 @@ int   Ftp::Do()
 	 if(allow_skey && skey_pass)
 	    pass_to_use=skey_pass;
 	 AddResp(RESP_LOGGED_IN,CHECK_PASS);
-	 SendCmd2("PASS",pass_to_use);
+	 conn->SendCmd2("PASS",pass_to_use);
       }
 
       if(try_feat_after_login)
       {
-	 SendCmd("FEAT");
+	 conn->SendCmd("FEAT");
 	 AddResp(211,CHECK_FEAT);
       }
       SendAcct();
@@ -1422,14 +1422,14 @@ int   Ftp::Do()
       if(!home_auto)
       {
 	 // if we don't yet know the home location, try to get it
-	 SendCmd("PWD");
+	 conn->SendCmd("PWD");
 	 AddResp(RESP_PWD_MKD_OK,CHECK_PWD);
       }
 
 #ifdef USE_SSL
       if(conn->control_ssl)
       {
-	 SendCmd("PBSZ 0");
+	 conn->SendCmd("PBSZ 0");
 	 AddResp(0,CHECK_IGNORE);
       }
 #endif // USE_SSL
@@ -1503,7 +1503,7 @@ int   Ftp::Do()
 	    want_prot="C";
 	 if(*want_prot!=conn->prot)
 	 {
-	    SendCmd2("PROT",want_prot);
+	    conn->SendCmd2("PROT",want_prot);
 	    AddResp(200,CHECK_PROT);
 	 }
       }
@@ -1750,18 +1750,18 @@ int   Ftp::Do()
 	 type=FTP_TYPE_A;
       if(old_type!=type)
       {
-	 SendCmd2("TYPE",type==FTP_TYPE_I?"I":"A");
+	 conn->SendCmd2("TYPE",type==FTP_TYPE_I?"I":"A");
 	 AddResp(RESP_TYPE_OK);
       }
 
       if(opt_size && size_supported && file[0] && use_size)
       {
-	 SendCmd2("SIZE",file);
+	 conn->SendCmd2("SIZE",file);
 	 AddResp(RESP_RESULT_HERE,CHECK_SIZE_OPT);
       }
       if(opt_date && mdtm_supported && file[0] && use_mdtm)
       {
-	 SendCmd2("MDTM",file);
+	 conn->SendCmd2("MDTM",file);
 	 AddResp(RESP_RESULT_HERE,CHECK_MDTM_OPT);
       }
 
@@ -1784,7 +1784,7 @@ int   Ftp::Do()
 		  *sl=0;
 		  if(strcmp(file,".") && strcmp(file,".."))
 		  {
-		     SendCmd2("MKD",file);
+		     conn->SendCmd2("MKD",file);
 		     AddResp(0,CHECK_IGNORE);
 		  }
 		  *sl='/';
@@ -1794,9 +1794,9 @@ int   Ftp::Do()
 	 }
 
 	 if(append_file)
-	    SendCmd2(command,file);
+	    conn->SendCmd2(command,file);
 	 else
-	    SendCmd(command);
+	    conn->SendCmd(command);
 
 	 if(mode==REMOVE_DIR || mode==REMOVE)
 	    AddResp(RESP_CWD_RMD_DELE_OK,CHECK_FILE_ACCESS);
@@ -1832,7 +1832,7 @@ int   Ftp::Do()
 	    strcat(s, command);
 	    strcat(s, " ");
 	    strcat(s, file);
-	    SendCmd(s);
+	    conn->SendCmd(s);
 	    AddResp(200,CHECK_PRET);
 	 }
 	 if(conn->peer_sa.sa.sa_family==AF_INET)
@@ -1840,7 +1840,7 @@ int   Ftp::Do()
 #if INET6
 	 ipv4_pasv:
 #endif
-	    SendCmd("PASV");
+	    conn->SendCmd("PASV");
 	    AddResp(227,CHECK_PASV);
 	    pasv_state=PASV_NO_ADDRESS_YET;
 	 }
@@ -1850,7 +1850,7 @@ int   Ftp::Do()
 	    if(conn->peer_sa.sa.sa_family==AF_INET6
 	    && IN6_IS_ADDR_V4MAPPED(&conn->peer_sa.in6.sin6_addr))
 	       goto ipv4_pasv;
-	    SendCmd("EPSV");
+	    conn->SendCmd("EPSV");
 	    AddResp(229,CHECK_EPSV);
 	    pasv_state=PASV_NO_ADDRESS_YET;
 #else
@@ -1877,8 +1877,7 @@ int   Ftp::Do()
 	       if(inet_aton(port_ipv4,&fake_ip))
 		  a=(unsigned char*)&fake_ip;
 	    }
-	    sprintf(str,"PORT %d,%d,%d,%d,%d,%d",a[0],a[1],a[2],a[3],p[0],p[1]);
-	    SendCmd(str);
+	    conn->SendCmdF("PORT %d,%d,%d,%d,%d,%d",a[0],a[1],a[2],a[3],p[0],p[1]);
 	    AddResp(RESP_PORT_OK,CHECK_PORT);
 	 }
 	 else
@@ -1891,7 +1890,7 @@ int   Ftp::Do()
 	       p=(unsigned char*)&data_sa.in6.sin6_port;
 	       goto ipv4_port;
 	    }
-	    SendCmd2("EPRT",encode_eprt(&data_sa));
+	    conn->SendCmd2("EPRT",encode_eprt(&data_sa));
 	    AddResp(RESP_PORT_OK,CHECK_PORT);
 #else
 	    Fatal(_("unsupported network protocol"));
@@ -1904,17 +1903,16 @@ int   Ftp::Do()
       if(real_pos==-1 || last_rest!=real_pos)
       {
          rest_pos=(real_pos!=-1?real_pos:pos);
-	 sprintf(str,"REST %lld",(long long)rest_pos);
-	 real_pos=-1;
-	 SendCmd(str);
+	 conn->SendCmdF("REST %lld",(long long)rest_pos);
 	 AddResp(RESP_REST_OK,CHECK_REST);
+	 real_pos=-1;
       }
       if(copy_mode!=COPY_DEST || copy_allow_store)
       {
 	 if(append_file)
-	    SendCmd2(command,file);
+	    conn->SendCmd2(command,file);
 	 else
-	    SendCmd(command);
+	    conn->SendCmd(command);
 	 AddResp(RESP_TRANSFER_OK,CHECK_TRANSFER);
       }
       m=MOVED;
@@ -2117,7 +2115,7 @@ int   Ftp::Do()
 	    if(nop_time!=0)
 	    {
 	       nop_count++;
-	       SendCmd("NOOP");
+	       conn->SendCmd("NOOP");
 	       AddResp(0,CHECK_IGNORE);
 	    }
 	    nop_time=now;
@@ -2292,7 +2290,7 @@ void Ftp::SendSiteIdle()
 {
    if(!QueryBool("use-site-idle"))
       return;
-   SendCmd2("SITE IDLE",idle);
+   conn->SendCmd2("SITE IDLE",idle);
    AddResp(0,CHECK_IGNORE);
 }
 void Ftp::SendUTimeRequest()
@@ -2306,7 +2304,7 @@ void Ftp::SendUTimeRequest()
       time_t n=now;
       strftime(d,sizeof(d)-1,"%Y%m%d%H%M%S",gmtime(&n));
       sprintf(c,"SITE UTIME %s %s %s %s UTC",file,d,d,d);
-      SendCmd(c);
+      conn->SendCmd(c);
       AddResp(200,CHECK_SITE_UTIME);
    }
    else if(QueryBool("use-mdtm-overloaded"))
@@ -2314,7 +2312,7 @@ void Ftp::SendUTimeRequest()
       char *c=string_alloca(5+14+1);
       time_t n=now;
       strftime(c,19,"MDTM %Y%m%d%H%M%S",gmtime(&n));
-      SendCmd2(c,file);
+      conn->SendCmd2(c,file);
       AddResp(0,CHECK_IGNORE);
    }
 }
@@ -2336,7 +2334,7 @@ void Ftp::SendAcct()
    const char *acct=QueryStringWithUserAtHost("acct");
    if(!acct)
       return;
-   SendCmd2("ACCT",acct);
+   conn->SendCmd2("ACCT",acct);
    AddResp(0,CHECK_IGNORE);
 }
 void Ftp::SendSiteGroup()
@@ -2344,7 +2342,7 @@ void Ftp::SendSiteGroup()
    const char *group=QueryStringWithUserAtHost("site-group");
    if(!group)
       return;
-   SendCmd2("SITE GROUP",group);
+   conn->SendCmd2("SITE GROUP",group);
    AddResp(0,CHECK_IGNORE);
 }
 
@@ -2355,7 +2353,7 @@ void Ftp::SendArrayInfoRequests()
       bool sent=false;
       if(array_for_info[i].get_time && mdtm_supported && use_mdtm)
       {
-	 SendCmd2("MDTM",ExpandTildeStatic(array_for_info[i].file));
+	 conn->SendCmd2("MDTM",ExpandTildeStatic(array_for_info[i].file));
 	 AddResp(RESP_RESULT_HERE,CHECK_MDTM);
 	 sent=true;
       }
@@ -2365,7 +2363,7 @@ void Ftp::SendArrayInfoRequests()
       }
       if(array_for_info[i].get_size && size_supported && use_size)
       {
-	 SendCmd2("SIZE",ExpandTildeStatic(array_for_info[i].file));
+	 conn->SendCmd2("SIZE",ExpandTildeStatic(array_for_info[i].file));
 	 AddResp(RESP_RESULT_HERE,CHECK_SIZE);
 	 sent=true;
       }
@@ -2619,7 +2617,7 @@ void Ftp::SendUrgentCmd(const char *cmd)
 {
    if(!use_telnet_iac || !conn->telnet_layer_send)
    {
-      SendCmd(cmd);
+      conn->SendCmd(cmd);
       return;
    }
 
@@ -2646,7 +2644,7 @@ void Ftp::SendUrgentCmd(const char *cmd)
       send(conn->control_sock,pre_cmd+1,3,0);
       fcntl(conn->control_sock,F_SETFL,fl);
    }
-   SendCmd(cmd);
+   conn->SendCmd(cmd);
 }
 
 void  Ftp::DataAbort()
@@ -2758,7 +2756,7 @@ void  Ftp::Disconnect()
    if(conn && state!=CONNECTING_STATE && !conn->quit_sent
    && RespQueueSize()<2 && QueryBool("use-quit",hostname))
    {
-      SendCmd("QUIT");
+      conn->SendCmd("QUIT");
       AddResp(221);
       conn->quit_sent=true;
       goto out;
@@ -2902,42 +2900,52 @@ int  Ftp::FlushSendQueue(bool all)
    return m;
 }
 
-void  Ftp::Send(const char *buf,int len)
+void  Ftp::Connection::Send(const char *buf,int len)
 {
    while(len>0)
    {
       char ch=*buf++;
       len--;
-      if(ch=='\377' && use_telnet_iac) // double chr(255) as in telnet protocol
-      	 conn->send_cmd_buffer->Put("\377",1);
-      conn->send_cmd_buffer->Put(&ch,1);
+      if(ch=='\377' && telnet_layer_send) // double chr(255) as in telnet protocol
+      	 send_cmd_buffer->Put("\377",1);
+      send_cmd_buffer->Put(&ch,1);
       if(ch=='\r')
-	 conn->send_cmd_buffer->Put("",1); // RFC2640
+	 send_cmd_buffer->Put("",1); // RFC2640
    }
 }
 
-void  Ftp::SendCmd(const char *cmd)
+void  Ftp::Connection::SendCmd(const char *cmd)
 {
    Send(cmd,strlen(cmd));
-   conn->send_cmd_buffer->Put("\r\n",2);
+   send_cmd_buffer->Put("\r\n",2);
 }
 
-void Ftp::SendCmd2(const char *cmd,const char *f)
+void Ftp::Connection::SendCmd2(const char *cmd,const char *f)
 {
    if(cmd && cmd[0])
    {
       Send(cmd,strlen(cmd));
-      conn->send_cmd_buffer->Put(" ",1);
+      send_cmd_buffer->Put(" ",1);
    }
    Send(f,strlen(f));
-   conn->send_cmd_buffer->Put("\r\n",2);
+   send_cmd_buffer->Put("\r\n",2);
 }
 
-void Ftp::SendCmd2(const char *cmd,int v)
+void Ftp::Connection::SendCmd2(const char *cmd,int v)
 {
    char buf[32];
    sprintf(buf,"%d",v);
    SendCmd2(cmd,buf);
+}
+
+void Ftp::Connection::SendCmdF(const char *f,...)
+{
+   va_list v;
+   va_start(v,f);
+   char *s=xvasprintf(f,v);
+   va_end(v);
+   SendCmd(s);
+   xfree(s);
 }
 
 int   Ftp::SendEOT()
@@ -3330,7 +3338,7 @@ void Ftp::CheckFEAT(char *reply)
 	 utf8_supported=true;
 	 conn->SetControlConnectionTranslation("UTF-8");
 	 // some non-RFC2640 servers require this command.
-	 SendCmd("OPTS UTF8 ON");
+	 conn->SendCmd("OPTS UTF8 ON");
 	 AddResp(0,CHECK_IGNORE);
       }
       else if(!strncasecmp(f,"LANG ",5))
@@ -3338,9 +3346,9 @@ void Ftp::CheckFEAT(char *reply)
 	 lang_supported=true;
 	 const char *lang_to_use=Query("lang",hostname);
 	 if(lang_to_use && lang_to_use[0])
-	    SendCmd2("LANG",lang_to_use);
+	    conn->SendCmd2("LANG",lang_to_use);
 	 else
-	    SendCmd("LANG");
+	    conn->SendCmd("LANG");
 	 AddResp(200,CHECK_IGNORE);
       }
       else if(!strcasecmp(f,"PRET"))
@@ -3596,7 +3604,7 @@ void Ftp::CheckResp(int act)
    case CHECK_RNFR:
       if(is3XX(act))
       {
-	 SendCmd2("RNTO",file1);
+	 conn->SendCmd2("RNTO",file1);
 	 AddResp(250,CHECK_FILE_ACCESS);
       	 break;
       }
