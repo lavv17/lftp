@@ -27,6 +27,7 @@
 #include <sys/stat.h>
 #include <utime.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "misc.h"
 #include "ResMgr.h"
 
@@ -450,6 +451,58 @@ FileInfo::FileInfo(const FileInfo &fi)
    date=fi.date;
    size=fi.size;
 }
+
+#ifndef S_ISLNK
+# define S_ISLNK(mode) (S_IFLNK==(mode&S_IFMT))
+#endif
+
+void FileInfo::LocalFile(const char *name, bool follow_symlinks)
+{
+   SetName(name);
+   struct stat st;
+   if(lstat(name,&st)==-1)
+      return;
+
+check_again:
+   FileInfo::type t;
+   if(S_ISDIR(st.st_mode))
+      t=FileInfo::DIRECTORY;
+   else if(S_ISREG(st.st_mode))
+      t=FileInfo::NORMAL;
+#ifdef HAVE_LSTAT
+   else if(S_ISLNK(st.st_mode))
+   {
+      if(follow_symlinks)
+      {
+	 if(stat(name,&st)!=-1)
+	    goto check_again;
+	 // dangling symlink, don't follow it.
+      }
+      t=FileInfo::SYMLINK;
+   }
+#endif
+   else
+      return;   // ignore other type files
+
+   SetSize(st.st_size);
+   SetDate(st.st_mtime);
+   SetMode(st.st_mode&07777);
+   SetType(t);
+
+#ifdef HAVE_LSTAT
+   if(t==SYMLINK)
+   {
+      char *buf=(char*)alloca(st.st_size+1);
+      int res=readlink(name,buf,st.st_size);
+      if(res!=-1)
+      {
+	 buf[res]=0;
+	 SetSymlink(buf);
+      }
+   }
+#endif /* HAVE_LSTAT */
+}
+
 FileInfo::~FileInfo()
 {
    xfree(name);

@@ -37,6 +37,7 @@
 #include "xmalloc.h"
 
 #include "ResMgr.h"
+#include "misc.h"
 #include "StatusLine.h"
 
 int  StatusLine::GetWidth()
@@ -122,75 +123,19 @@ void StatusLine::WriteTitle(const char *s, int fd) const
    if(!(bool)ResMgr::Query("cmd:set-term-status", getenv("TERM")))
       return;
 
-   const char *scan=ResMgr::Query("cmd:term-status", getenv("TERM"));
-   char ch;
-   char str[3];
-   const char *to_add;
+   subst_t subst[] = {
+      { 'a', "\007" },
+      { 'e', "\033" },
+      { 'n', "\n" },
+      { 's', "lftp" },
+      { 'v', VERSION },
 
-   for(;;)
-   {
-      ch=*scan++;
-      if(ch==0)
-	 break;
-
-      if(ch=='\\' && *scan && *scan!='\\')
-      {
-	 ch=*scan++;
-	 switch(ch)
-	 {
-	 case'0':case'1':case'2':case'3':case'4':case'5':case'6':case'7':
-	 {
-	    unsigned len;
-	    unsigned code;
-	    scan--;
-	    sscanf(scan,"%3o%n",&code,&len);
-	    ch=code;
-	    scan+=len;
-	    str[0]=ch;
-	    str[1]=0;
-	    to_add=str;
-	    break;
-	 }
-	 case 'a':
-	    to_add="\007";
-	    break;
-	 case 'e':
-	    to_add="\033";
-	    break;
-	 case 'n':
- 	    to_add="\n";
- 	    break;
-	 case 's':
- 	    to_add="lftp";
- 	    break;
-	 case 'T':
- 	    to_add=s;
- 	    break;
- 	 case 'v':
-	    to_add=VERSION;
-	    break;
-	 default:
-	    str[0]='\\';
-	    str[1]=ch;
-	    str[2]=0;
-	    to_add=str;
-	    break;
-	 }
-      }
-      else
-      {
-	 if(ch=='\\' && *scan=='\\')
-	    scan++;
-	 str[0]=ch;
-	 str[1]=0;
-	 to_add=str;
-      }
-
-      if(to_add==0)
-	 continue;
-
-      write(fd, to_add, strlen(to_add));
-   }
+      { 'T', s },
+      { 0, "" }
+   };
+   char *disp = Subst(ResMgr::Query("cmd:term-status", getenv("TERM")), subst);
+   write(fd, disp, strlen(disp));
+   xfree(disp);
 }
 
 void StatusLine::update(char *newstr)

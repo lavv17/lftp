@@ -1,0 +1,30 @@
+#!/usr/bin/perl
+# Copyright (c) 2001 Alexander V. Lukyanov <lav@yars.free.net>
+# See COPYING file (GNU GPL) for complete licence.
+
+# This script converts netscape-style cookies to lftp set commands.
+
+$file="$ENV{HOME}/.netscape/cookies";
+$file=$ARGV[0] if defined $ARGV[0];
+
+open COOKIES,"<$file" or die;
+while(<COOKIES>)
+{
+   chomp;
+   next if /^#/ or /^$/;
+   s/"/\\"/g;
+   s/ /%20/g;
+   ($domain,undef,$path,$secure_bool,$expires,$name,$value)=split /\t/;
+   $secure='';
+   $secure=';secure' if $secure_bool eq TRUE;
+   $domain="*$domain" if $domain =~ /^\./;
+   $path='' if $path eq '/';
+   $path=";path=$path" if $path ne '';
+   $value="=$value" if $name ne '';
+   $cookie{"$domain$path$secure"}.=" $name$value";
+}
+foreach(sort keys %cookie)
+{
+   $cookie{$_}=~s/^ //;
+   print "set http:cookie/$_ \"$cookie{$_}\"\n";
+}

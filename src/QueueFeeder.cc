@@ -279,9 +279,9 @@ void QueueFeeder::PrintStatus(int v) const
        * due to formatting.  I'll do it if someone requests it (or
        * we get better strings ...)
        */
-      if(v >= 2 && (!cur_pwd || strcmp(cur_pwd, job->pwd)))
+      if(v >= 2 && (!pwd || strcmp(pwd, job->pwd)))
 	 printf("\t    cd %s\n", job->pwd);
-      if(v >= 2 && (!cur_lpwd || strcmp(cur_lpwd, job->lpwd)))
+      if(v >= 2 && (!lpwd || strcmp(lpwd, job->lpwd)))
 	 printf("\t    lcd %s\n", job->lpwd);
       pwd = job->pwd;
       lpwd = job->lpwd;

@@ -45,7 +45,7 @@ protected:
 	    xfree(key);
 	    xfree(value);
 	 }
-      int KeyCompare(const char *s)
+      int KeyCompare(const char *s) const
 	 {
 	    return strcmp(s,key);
 	 }
@@ -59,7 +59,7 @@ protected:
 	 *p=to_free->next;
 	 delete to_free;
       }
-   Pair **LookupPair(const char *key);
+   Pair **LookupPair(const char *key) const;
 
    int Lock(int fd,int type);
 
@@ -70,7 +70,7 @@ protected:
 public:
    void Add(const char *id,const char *value);
    void Remove(const char *id);
-   const char *Lookup(const char *id);
+   const char *Lookup(const char *id) const;
    void Empty()
       {
 	 while(chain)
@@ -85,13 +85,13 @@ public:
       {
 	 current=chain;
       }
-   const char *CurrentKey()
+   const char *CurrentKey() const
       {
 	 if(!current)
 	    return 0;
 	 return current->key;
       }
-   const char *CurrentValue()
+   const char *CurrentValue() const
       {
 	 if(!current)
 	    return 0;

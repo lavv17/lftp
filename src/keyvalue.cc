@@ -206,19 +206,19 @@ void KeyValueDB::Remove(const char *key)
       Purge(p);
 }
 
-KeyValueDB::Pair **KeyValueDB::LookupPair(const char *key)
+KeyValueDB::Pair **KeyValueDB::LookupPair(const char *key) const
 {
-   for(Pair **p=&chain; *p; p=&(*p)->next)
+   for(const Pair * const*p=&chain; *p; p=&(*p)->next)
    {
       if((*p)->KeyCompare(key)==0)
-	 return p;
+	 return const_cast<KeyValueDB::Pair **>(p);
    }
    return 0;
 }
 
-const char *KeyValueDB::Lookup(const char *key)
+const char *KeyValueDB::Lookup(const char *key) const
 {
-   Pair **p=LookupPair(key);
+   const Pair * const*p=LookupPair(key);
    return p ? (*p)->value : 0;
 }
 

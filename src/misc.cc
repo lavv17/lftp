@@ -30,6 +30,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <time.h>
+#include <ctype.h>
 #ifdef TM_IN_SYS_TIME
 # include <sys/time.h>
 #endif
@@ -472,3 +473,106 @@ bool re_match(const char *line,const char *a,int flags)
    regfree(&re);
    return res;
 }
+
+char *Subst(const char *txt, const subst_t *s)
+{
+   char *buf=0;
+   int buf_size=256;
+
+   if(buf==0)
+      buf=(char*)xmalloc(buf_size);
+
+   char *store=buf;
+
+   char str[3];
+
+   *store=0;
+   while(*txt)
+   {
+      char ch = *txt++;
+      const char *to_add = NULL;
+      if(ch=='\\' && *txt && *txt!='\\')
+      {
+	 ch=*txt++;
+	 if(isdigit(ch) && ch != '8' && ch != '9') {
+	    unsigned len;
+	    unsigned code;
+	    txt--;
+	    sscanf(txt,"%3o%n",&code,&len);
+	    ch=code;
+	    txt+=len;
+	    str[0]=ch;
+	    str[1]=0;
+	    to_add=str;
+	 } else {
+	    for(int i = 0; s[i].from; i++) {
+	       if(s[i].from != ch) continue;
+	       to_add=s[i].to;
+	       if(!to_add) to_add = "";
+	    }
+	    if(!to_add) {
+	       str[0]='\\';
+	       str[1]=ch;
+	       str[2]=0;
+	       to_add=str;
+	    }
+	 }
+      }
+      else
+      {
+	 if(ch=='\\' && *txt=='\\')
+	    txt++;
+	 str[0]=ch;
+	 str[1]=0;
+	 to_add=str;
+      }
+
+      if(to_add==0)
+	 continue;
+
+      int store_index=store-buf;
+      int need=store_index+strlen(to_add)+1;
+      if(buf_size<need)
+      {
+	 while(buf_size<need)
+	    buf_size*=2;
+	 buf=(char*)xrealloc(buf,buf_size);
+	 store=buf+store_index;
+      }
+
+      strcpy(store,to_add);
+      store+=strlen(to_add);
+   }
+   return(buf);
+}
+
+/* if we put escape-handling, etc. in here, the main parser
+ * could possibly use it */
+char **tokenize(const char *str, int *argc)
+{
+   char *buf = xstrdup(str);
+   char **argv = NULL;
+   int _argc;
+   if(!argc) argc = &_argc;
+   *argc = 0;
+
+   for(int i = 0; buf[i]; ) {
+      (*argc)++;
+      argv = (char **) xrealloc(argv, sizeof(char *) * (*argc+1));
+      argv[*argc-1] = buf+i;
+
+      while(buf[i] && buf[i] != ' ') i++;
+      buf[i++] = 0;
+   }
+
+   argv[*argc] = NULL;
+   return argv;
+}
+
+void tokenize_free(char **argv)
+{
+   if(!argv) return;
+   xfree(argv[0]);
+   xfree(argv);
+}
+

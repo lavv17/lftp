@@ -40,9 +40,21 @@ public:
    int Do() { SetError(p->StrError(FA::NO_HOST)); return STALL; }
    const char *Status() { return ""; }
 };
+class DummyListInfo : public ListInfo
+{
+   FA *p;
+public:
+   DummyListInfo(FA *p1) : ListInfo(), p(p1) { }
+   int Do() { SetError(p->StrError(FA::NO_HOST)); return STALL; }
+   const char *Status() { return ""; }
+};
 DirList *DummyProto::MakeDirList(ArgV *a)
 {
    return new DummyDirList(this,a);
+}
+ListInfo *DummyProto::MakeListInfo()
+{
+   return new DummyListInfo(this);
 }
 
 
@@ -72,3 +84,8 @@ DirList *DummyNoProto::MakeDirList(ArgV *a)
 {
    return new DummyDirList(this,a);
 }
+ListInfo *DummyNoProto::MakeListInfo()
+{
+   return new DummyListInfo(this);
+}
+	

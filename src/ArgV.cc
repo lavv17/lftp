@@ -24,7 +24,18 @@
 
 #include "getopt.h"
 #include "xmalloc.h"
+#include "misc.h"
 #include "ArgV.h"
+
+ArgV::ArgV(const char *a0, const char *args)
+{
+   int argc;
+   char **argv = tokenize(args, &argc);
+   Init(argc,argv);
+   tokenize_free(argv);
+
+   insarg(0, a0);
+}
 
 void ArgV::GetRoom(int n)
 {

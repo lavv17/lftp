@@ -485,11 +485,6 @@ ListInfo *LocalAccess::MakeListInfo()
    return new LocalListInfo(cwd);
 }
 
-
-#ifndef S_ISLNK
-# define S_ISLNK(mode) (S_IFLNK==(mode&S_IFMT))
-#endif
-
 int LocalListInfo::Do()
 {
    if(done)
@@ -525,49 +520,7 @@ int LocalListInfo::Do()
    for(FileInfo *file=result->curr(); file!=0; file=result->next())
    {
       const char *name=dir_file(dir,file->name);
-
-      struct stat st;
-      if(lstat(name,&st)==-1)
-	 continue;
-
-check_again:
-      FileInfo::type t;
-      if(S_ISDIR(st.st_mode))
-	 t=FileInfo::DIRECTORY;
-      else if(S_ISREG(st.st_mode))
-	 t=FileInfo::NORMAL;
-#ifdef HAVE_LSTAT
-      else if(S_ISLNK(st.st_mode))
-      {
-	 if(follow_symlinks)
-	 {
-	    if(stat(name,&st)!=-1)
-	       goto check_again;
-	    // dangling symlink, don't follow it.
-	 }
-	 t=FileInfo::SYMLINK;
-      }
-#endif
-      else
-	 continue;   // ignore other type files
-
-      file->SetSize(st.st_size);
-      file->SetDate(st.st_mtime);
-      file->SetMode(st.st_mode&07777);
-      file->SetType(t);
-
-#ifdef HAVE_LSTAT
-      if(t==file->SYMLINK)
-      {
-	 char *buf=(char*)alloca(st.st_size+1);
-	 int res=readlink(name,buf,st.st_size);
-	 if(res!=-1)
-	 {
-	    buf[res]=0;
-	    file->SetSymlink(buf);
-      	 }
-      }
-#endif /* HAVE_LSTAT */
+      file->LocalFile(name, follow_symlinks);
    }
 
    done=true;

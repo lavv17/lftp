@@ -29,6 +29,11 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 
+#ifdef HAVE_TERMIOS_H
+#include <termios.h>
+#endif
+#include <sys/ioctl.h>
+
 #include "Filter.h"
 #include "xmalloc.h"
 #include "SignalHook.h"
@@ -69,11 +74,32 @@ FDStream::~FDStream()
    xfree(error_text);
 };
 
+
+bool FDStream::isatty() const
+{
+   return ::isatty(fd);
+}
+
+unsigned FDStream::width() const
+{
+   if(!isatty()) return 0;
+#ifdef TIOCGWINSZ
+   struct winsize sz;
+   sz.ws_col=sz.ws_row=0;
+   if(ioctl(fd, TIOCGWINSZ, &sz) == -1)
+      return 80;
+   return sz.ws_col;
+#else /* !TIOCGWINSZ */
+   return 80;
+#endif
+}
+
 void OutputFilter::Parent(int *p)
 {
    close(p[0]);
    fd=p[1];
 }
+
 void InputFilter::Parent(int *p)
 {
    close(p[1]);

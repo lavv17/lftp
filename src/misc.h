@@ -23,6 +23,10 @@
 #ifndef MISC_H
 #define MISC_H
 
+#include <stdio.h>
+#include <sys/types.h>
+#include <time.h>
+
 // expands tilde; returns pointer to static data
 const char *expand_home_relative(const char *);
 
@@ -74,5 +78,14 @@ int guess_year(int month,int day,int hour=0,int minute=0);
 time_t mktime_from_utc(struct tm *);
 
 bool re_match(const char *line,const char *a,int flags=0);
+
+struct subst_t {
+   char from;
+   const char *to;
+};
+
+char *Subst(const char *txt, const subst_t *s);
+char **tokenize(const char *str, int *argc = NULL);
+void tokenize_free(char **argv);
 
 #endif // MISC_H

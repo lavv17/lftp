@@ -37,6 +37,7 @@ public:
    int StoreStatus();
    void Reconfig(const char *) {}
 
+   ListInfo *MakeListInfo();
    DirList *MakeDirList(ArgV *);
 };
 
@@ -57,6 +58,7 @@ public:
    void Reconfig(const char *) {}
    const char *StrError(int err);
 
+   ListInfo *MakeListInfo();
    DirList *MakeDirList(ArgV *);
 };
 

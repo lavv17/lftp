@@ -75,6 +75,8 @@ public:
 
    void SetName(const char *n);
    FileInfo(const char *n) { Init(); SetName(n); }
+   void LocalFile(const char *name, bool follow_symlinks);
+
    void SetMode(mode_t m) { mode=m; defined|=MODE; }
    void SetDate(time_t t) { date=t; defined|=DATE; defined&=~DATE_UNPREC; }
    void SetDateUnprec(time_t t)

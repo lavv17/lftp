@@ -1,3 +1,34 @@
+2001-10-03  Glenn F. Maynard <g_ld@zewt.org>
+
+	* ArgV.cc, ArgV.h, CmdExec.cc, DummyProto.cc, DummyProto.h,
+	FileAccess.cc, FileAccess.h, FileSet.cc, FileSet.h, Filter.cc,
+	Filter.h, Http.cc, LocalAccess.cc, QueueFeeder.cc, StatusLine.cc,
+	keyvalue.cc, keyvalue.h, misc.cc, misc.h:
+
+	New ArgV constructor, to take a string and tokenize it.
+	misc.cc code to do the real work.  (This could possibly be improved
+	to make it usable for the main tokenizer.)
+
+	misc.cc code to do \x, etc. substitution, and code elsewhere to use
+	this.  (This would have been the third time this could would have been
+	duplicated, so I merged it.)
+
+	DummyNoProto for MakeListInfo, same as MakeDirList.
+
+	Option for Glob to ignore case.
+
+	isatty() and width() for FDStream.  (isatty() could be done away with,
+	as it doesn't really save any code being a 1-liner; width() is more
+	functional.)
+
+	Move make-FileInfo-from-local-file into FileInfo::LocalFile().
+
+	Dumb QueueFeeder bugfix (of my own bug, of course.)
+
+	Made a bunch of KeyValue functions const.  (Not completely correctly:
+	when returning a member value like those do, there really should be both
+	a const and non-const version ...)
+
 2001-10-02  Aaron Schrab <aaron@schrab.com>
 
 	* Fish.cc, Http.cc, log.cc: move va_end so that it is called always.

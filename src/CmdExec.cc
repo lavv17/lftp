@@ -48,6 +48,8 @@ static ResDecl
    res_prompt		   ("cmd:prompt",	"lftp> ",0,0),
    res_default_title	   ("cmd:default-title","lftp \\h:\\w",0,0),
    res_default_ls	   ("cmd:ls-default",	"",0,0),
+   res_default_cls	   ("cmd:cls-default",	"-F",0,0),
+   res_default_comp_cls	   ("cmd:cls-completion-default", "-FB",0,0),
    res_csh_history	   ("cmd:csh-history",	"off",ResMgr::BoolValidate,ResMgr::NoClosure),
    res_verify_path	   ("cmd:verify-path",	"yes",ResMgr::BoolValidate,0),
    res_verify_host	   ("cmd:verify-host",	"yes",ResMgr::BoolValidate,0),
@@ -849,136 +851,59 @@ CmdExec::~CmdExec()
 
 char *CmdExec::FormatPrompt(const char *scan)
 {
-   static char *prompt=0;
-   static int prompt_size=256;
-
-   if(prompt==0)
-      prompt=(char*)xmalloc(prompt_size);
-
-   char *store=prompt;
-
-   char ch;
-   char str[3];
-   const char *to_add;
-   static char *buf=0;
-
-   *store=0;
-   for(;;)
+   const char *cwd=session->GetCwd();
+   if(cwd==0 || cwd[0]==0)
+      cwd="~";
    {
-      ch=*scan++;
-      if(ch==0)
-	 break;
-
-      if(ch=='\\' && *scan && *scan!='\\')
+      const char *home=session->GetHome();
+      if(home && strcmp(home,"/") && !strncmp(cwd,home,strlen(home))
+	    && (cwd[strlen(home)]=='/' || cwd[strlen(home)]==0))
       {
-	 ch=*scan++;
-	 switch(ch)
-	 {
-	 case'0':case'1':case'2':case'3':case'4':case'5':case'6':case'7':
-	 {
-	    unsigned len;
-	    unsigned code;
-	    scan--;
-	    sscanf(scan,"%3o%n",&code,&len);
-	    ch=code;
-	    scan+=len;
-	    str[0]=ch;
-	    str[1]=0;
-	    to_add=str;
-	    break;
-	 }
-	 case 'a':
-	    to_add="\007";
-	    break;
-	 case 'e':
-	    to_add="\033";
-	    break;
-	 case 'h':
-	    to_add=session->GetHostName();
-	    break;
-	 case 'n':
- 	    to_add="\n";
- 	    break;
-	 case 's':
- 	    to_add="lftp";
- 	    break;
-	 case 'u':
-	    to_add=session->GetUser();
-	    break;
-	 case '@': // @ if non-default user
-	    to_add=session->GetUser()?"@":"";
-	    break;
-	 case 'U':
-	    to_add=session->GetConnectURL();
-	    break;
- 	 case 'v':
-	    to_add=VERSION;
-	    break;
-	 case 'w': // working directory
-	 {
-	    to_add=session->GetCwd();
-            if(to_add==0 || to_add[0]==0)
-               to_add="~";
-	    const char *home=session->GetHome();
-	    if(home && strcmp(home,"/") && !strncmp(to_add,home,strlen(home))
-	    && (to_add[strlen(home)]=='/' || to_add[strlen(home)]==0))
-	    {
-	       buf=(char*)xrealloc(buf,strlen(to_add)-strlen(home)+2);
-	       sprintf(buf,"~%s",to_add+strlen(home));
-	       to_add=buf;
-	    }
-	    break;
-	 }
- 	 case 'W': // working directory basename
-	 {
-	    to_add=session->GetCwd();
-            if(to_add==0 || to_add[0]==0)
-               to_add="~";
- 	    const char *p=strrchr(to_add,'/');
-	    if(p && p>to_add)
-	       to_add=p+1;
- 	    break;
- 	 }
-	 case '[':
-	 case ']':
-	    str[0]='\001';
-	    str[1]=(ch=='[')?RL_PROMPT_START_IGNORE:RL_PROMPT_END_IGNORE;
-	    str[2]='\0';
-	    to_add=str;
-	    break;
-	 default:
-	    str[0]='\\';
-	    str[1]=ch;
-	    str[2]=0;
-	    to_add=str;
-	    break;
-	 }
+	 static char *cwdbuf=0;
+	 cwdbuf=(char*)xrealloc(cwdbuf,strlen(cwd)-strlen(home)+2);
+	 sprintf(cwdbuf,"~%s",cwd+strlen(home));
+	 cwd=cwdbuf;
       }
-      else
-      {
-	 if(ch=='\\' && *scan=='\\')
-	    scan++;
-	 str[0]=ch;
-	 str[1]=0;
-	 to_add=str;
-      }
-
-      if(to_add==0)
-	 continue;
-
-      int store_index=store-prompt;
-      int need=store_index+strlen(to_add)+1;
-      if(prompt_size<need)
-      {
-	 while(prompt_size<need)
-	    prompt_size*=2;
-	 prompt=(char*)xrealloc(prompt,prompt_size);
-	 store=prompt+store_index;
-      }
-
-      strcpy(store,to_add);
-      store+=strlen(to_add);
    }
+   const char *cwdb=session->GetCwd();
+   cwdb=session->GetCwd();
+   if(cwdb==0 || cwdb[0]==0)
+      cwdb="~";
+   const char *p=strrchr(cwdb,'/');
+   if(p && p>cwdb)
+      cwdb=p+1;
+
+   char StartIgn[3], EndIgn[3];
+   /* bash adds the extra \001 too, don't know why */
+   StartIgn[0] = '\001';
+   StartIgn[1] = RL_PROMPT_START_IGNORE;
+   StartIgn[2] = 0;
+   EndIgn[0] = '\001';
+   EndIgn[1] = RL_PROMPT_END_IGNORE;
+   EndIgn[2] = 0;
+
+   subst_t subst[] = {
+      { 'a', "\007" },
+      { 'e', "\033" },
+      { 'n', "\n" },
+      { 's', "lftp" },
+      { 'v', VERSION },
+
+      { 'h', session->GetHostName() },
+      { 'u', session->GetUser() },
+ // @ if non-default user
+      { '@', session->GetUser()?"@":"" },
+      { 'U', session->GetConnectURL() },
+      { 'w', cwd },
+      { 'W', cwdb },
+      { '[', StartIgn },
+      { ']', EndIgn },
+      { 0, "" }
+   };
+   static char *prompt=0;
+   xfree(prompt);
+   prompt = Subst(scan, subst);
+
    return(prompt);
 }
 
@@ -1376,4 +1301,3 @@ CmdExec  *CmdExec::GetQueue(bool create)
 
    return queue;
 }
-

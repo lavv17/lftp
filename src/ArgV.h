@@ -36,6 +36,7 @@ class ArgV
 public:
    ArgV() { Init(0,0); }
    ArgV(const char *a0) { Init(1,&a0); }
+   ArgV(const char *a0, const char *args);
    void Empty();
    void Append(const char *);
    ArgV(const ArgV& a) { Init(a.c,a.v); }

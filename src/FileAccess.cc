@@ -33,6 +33,9 @@
 #include <errno.h>
 #include "ascii_ctype.h"
 #include <fcntl.h>
+/* Our autoconf test will switch to lib/fnmatch.c if the local fnmatch
+ * isn't GNU, so this should be OK. */
+#define _GNU_SOURCE
 #include <fnmatch.h>
 #include "LsCache.h"
 #include "xalloca.h"
@@ -1079,6 +1082,7 @@ Glob::Glob(const char *p)
    files_only=false;
    match_period=true;
    inhibit_tilde=true;
+   casefold=false;
 
    if(pattern[0]=='~')
    {
@@ -1125,6 +1129,9 @@ void Glob::add(const FileInfo *info)
    int flags=FNM_PATHNAME;
    if(match_period)
       flags|=FNM_PERIOD;
+
+   if(casefold)
+      flags|=FNM_CASEFOLD;
 
    if(pattern[0]!=0
    && fnmatch(pattern, s, flags)!=0)

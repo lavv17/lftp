@@ -1702,10 +1702,12 @@ bool Http::CookieClosureMatch(const char *closure_c,
       char *slash=strchr(scan,';');
       if(!slash)
 	 break;
-      *slash=0;
-      if(!strncmp(slash+1,"path=",5))
-	 path=slash+1+5;
-      else if(!strncmp(slash+1,"secure",6) && (slash[7]==';' || slash[7]==0))
+      *slash++=0;
+      while(*slash && *slash==' ')
+	 slash++;
+      if(!strncmp(slash,"path=",5))
+	 path=slash+5;
+      else if(!strncmp(slash,"secure",6) && (slash[6]==';' || slash[6]==0))
       {
 	 if(!https)
 	    return false;
