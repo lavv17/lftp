@@ -306,6 +306,7 @@ int   main(int argc,char **argv)
 #endif
 
    setlocale (LC_ALL, "");
+   setlocale (LC_NUMERIC, "C");
    bindtextdomain (PACKAGE, LOCALEDIR);
    textdomain (PACKAGE);
 
