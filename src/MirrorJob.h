@@ -112,7 +112,8 @@ public:
       NO_PERMS=16,
       CONTINUE=32,
       REVERSE=64,
-      REPORT_NOT_DELETED=128
+      REPORT_NOT_DELETED=128,
+      RETR_SYMLINKS=256
    };
 
    void SetFlags(int f,int v)

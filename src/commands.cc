@@ -898,8 +898,14 @@ CMD(lftp)
       SetInteractive(isatty(0));
       FeedCmd("||exit\n");   // if the command fails, quit
    }
-   args->setarg(0,"open");
-   return do_open();
+
+   if(!cmd)
+   {
+      /* if no lftp-specific options were found, call open */
+      args->setarg(0,"open");
+      return do_open();
+   }
+   return 0;
 }
 
 CMD(open)
@@ -1292,6 +1298,7 @@ CMD(mirror)
       {"reverse",no_argument,0,'R'},
       {"verbose",optional_argument,0,'v'},
       {"newer-than",required_argument,0,'N'},
+      {"dereference",no_argument,0,'L'},
       {0}
    };
 
@@ -1370,6 +1377,9 @@ CMD(mirror)
 	 break;
       case('R'):
 	 flags|=MirrorJob::REVERSE;
+	 break;
+      case('L'):
+	 flags|=MirrorJob::RETR_SYMLINKS;
 	 break;
       case('v'):
 	 if(optarg)
@@ -1764,7 +1774,7 @@ CMD(bookmark)
    }
    else if(!strcmp(op,"edit"))
    {
-      PrependCmd("shell \"${EDITOR:-vi} $HOME/.lftp/bookmarks\"\n");
+      PrependCmd("shell \"/bin/sh -c \\\"exec ${EDITOR:-vi} $HOME/.lftp/bookmarks\\\"\"\n");
    }
    else if(!strcmp(op,"import"))
    {
@@ -1839,11 +1849,14 @@ CMD(sleep)
    return new SleepJob(time(0)+delay);
 }
 
-#include "parsetime-i.h"
+extern "C" {
+#include "getdate.h"
+}
 CMD(at)
 {
    int count=1;
    int cmd_start=0;
+   int date_len=0;
    for(;;)
    {
       char *arg=args->getnext();
@@ -1854,15 +1867,23 @@ CMD(at)
 	 cmd_start=count+1;
 	 break;
       }
+      date_len+=strlen(arg)+1;
       count++;
    }
 
+#if 0
    char **av=(char**)xmemdup(args->GetV(),(count+1)*sizeof(char**));
    av[count]=0;
    time_t when=parsetime(count-1,av+1);
    xfree(av);
+#endif
+   char *date=args->Combine(1);
+   date[date_len]=0;
+   time_t now=time(0);
+   time_t when=get_date(date,&now);
+   xfree(date);
 
-   if(when==0)
+   if(when==0 || when==(time_t)-1)
       return 0;
 
    char *cmd = cmd_start ? args->Combine(cmd_start) : 0;

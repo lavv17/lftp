@@ -391,6 +391,8 @@ int   MirrorJob::Do()
       	 return MOVED;
       }
       list_info->Need(FileInfo::ALL_INFO);
+      if(flags&RETR_SYMLINKS)
+	 list_info->FollowSymlinks();
 
       list_info->SetExclude(remote_relative_dir,
 		     rx_exclude?&rxc_exclude:0,rx_include?&rxc_include:0);
@@ -420,6 +422,8 @@ int   MirrorJob::Do()
       remote_set->ExcludeDots(); // don't need .. and .
 
       list_info=new LocalListInfo(local_dir);
+      if(flags&RETR_SYMLINKS)
+	 list_info->FollowSymlinks();
       list_info->SetExclude(local_relative_dir,
 		     rx_exclude?&rxc_exclude:0,rx_include?&rxc_include:0);
 

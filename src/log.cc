@@ -43,9 +43,15 @@ void Log::Write(int l,const char *s)
       return;
    if(output==-1)
       return;
-   if(tty && tcgetpgrp(output)!=getpgrp())
-      return;
-   if(sl)
+   if(tty)
+   {
+      pid_t pg=tcgetpgrp(output);
+      if(pg==(pid_t)-1)
+      	 tty=false;
+      else if(pg!=getpgrp())
+	 return;
+   }
+   if(sl && tty)
       sl->Show("");
    write(output,s,strlen(s));
    block+=NoWait();

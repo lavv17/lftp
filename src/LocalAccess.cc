@@ -417,6 +417,7 @@ int LocalListInfo::Do()
       if(lstat(name,&st)==-1)
 	 continue;
 
+check_again:
       FileInfo::type t;
       if(S_ISDIR(st.st_mode))
 	 t=FileInfo::DIRECTORY;
@@ -424,7 +425,15 @@ int LocalListInfo::Do()
 	 t=FileInfo::NORMAL;
 #ifdef HAVE_LSTAT
       else if(S_ISLNK(st.st_mode))
+      {
+	 if(follow_symlinks)
+	 {
+	    if(stat(name,&st)==-1)
+	       continue;
+	    goto check_again;
+	 }
 	 t=FileInfo::SYMLINK;
+      }
 #endif
       else
 	 continue;   // ignore other type files
