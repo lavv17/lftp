@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Lftp 2.1.3\n"
-"POT-Creation-Date: 2000-04-29 21:25+0400\n"
-"PO-Revision-Date: 2000-04-27 02:06+02:00\n"
+"POT-Creation-Date: 2000-05-20 21:53+0400\n"
+"PO-Revision-Date: 2000-05-24 00:16+02:00\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -64,56 +64,60 @@ msgstr "        Befehle in Warteschlange:\n"
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\t Warte auf Beendigung von Job [%d]\n"
 
-#: src/CmdExec.cc:702
+#: src/CmdExec.cc:704
 #, c-format
 msgid "\tRunning\n"
 msgstr "\tWird ausgeführt\n"
 
-#: src/FileAccess.cc:220
+#: src/CmdExec.cc:708
+msgid "\tWaiting for command\n"
+msgstr "        Warte auf Befehl\n"
+
+#: src/FileAccess.cc:223
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "Socket Fehler (%s) - erneutes Verbinden"
 
-#: src/FileAccess.cc:311
+#: src/FileAccess.cc:313
 #, c-format
 msgid "Access failed: %s"
 msgstr "Zugriff nicht möglich: %s"
 
-#: src/FileAccess.cc:314
+#: src/FileAccess.cc:316
 msgid "File cannot be accessed"
 msgstr "Dateizugriff nicht möglich"
 
-#: src/FileAccess.cc:316 src/ftpclass.cc:2986 src/ftpclass.cc:2996
+#: src/FileAccess.cc:318 src/ftpclass.cc:3019 src/ftpclass.cc:3029
 msgid "Not connected"
 msgstr "Keine Verbindung"
 
-#: src/FileAccess.cc:322
+#: src/FileAccess.cc:324
 #, c-format
 msgid "Fatal error: %s"
 msgstr "Fataler Fehler: %s"
 
-#: src/FileAccess.cc:325
+#: src/FileAccess.cc:327
 msgid "Fatal error"
 msgstr "Fataler Fehler"
 
-#: src/FileAccess.cc:327
+#: src/FileAccess.cc:329
 msgid "Store failed - you have to reput"
 msgstr "Speichern fehlgeschlagen - erneutes Hochladen notwendig"
 
-#: src/FileAccess.cc:329 src/ftpclass.cc:3028
+#: src/FileAccess.cc:331 src/ftpclass.cc:3061
 msgid "Login failed"
 msgstr "Login fehlgeschlagen"
 
-#: src/FileAccess.cc:331
+#: src/FileAccess.cc:333
 msgid "Operation not supported"
 msgstr "Operation wird nicht unterstützt"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:1272
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:1311
 #, c-format
 msgid "Getting directory contents (%ld)"
 msgstr "Lese Verzeichnis (%ld) aus"
 
-#: src/FtpListInfo.cc:239 src/HttpDir.cc:1277
+#: src/FtpListInfo.cc:239 src/HttpDir.cc:1316
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "Lese Dateiinformationen (%d%%)"
@@ -286,7 +290,7 @@ msgstr "Ungültige Zeitangabe. Das Format ist <Zeit><Einheit> - z.B. 2h30m."
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Ungültige Angabe der Spanne. Das Format ist min-max - z.B. 10-20."
 
-#: src/Http.cc:1164 src/Resolver.cc:191 src/ftpclass.cc:2991
+#: src/Http.cc:1315 src/Resolver.cc:191 src/ftpclass.cc:3024
 msgid "Resolving host address..."
 msgstr "Löse Hostadresse auf..."
 
@@ -1361,101 +1365,101 @@ msgstr "`Unknown' empfangen, gehe von fehlgeschlagenem Login aus"
 msgid "assuming failed host name lookup"
 msgstr "nehme fehlgeschlagene Auflösung des Hostnamens an"
 
-#: src/Http.cc:537 src/ftpclass.cc:913
+#: src/Http.cc:661 src/ftpclass.cc:915
 msgid "Closing idle connection"
 msgstr "Schließe unbenutzte Verbindung"
 
-#: src/ftpclass.cc:1109
+#: src/ftpclass.cc:1123
 msgid "SITE CHMOD is not supported by this site"
 msgstr "SITE CHMOD wird von dieser Gegenstelle nicht unterstützt"
 
-#: src/ftpclass.cc:1597
+#: src/ftpclass.cc:1611
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "Verbinde Daten socket mit (%s) Port %u"
 
-#: src/ftpclass.cc:1646
+#: src/ftpclass.cc:1660
 msgid "Timeout - reconnecting"
 msgstr "Zeitablauf - neu verbinden"
 
-#: src/ftpclass.cc:1928
+#: src/Http.cc:794 src/ftpclass.cc:1944
 msgid "Peer closed connection"
 msgstr "Gegenüber hat Verbindung beendet"
 
-#: src/ftpclass.cc:2040
+#: src/ftpclass.cc:2061
 msgid "Closing control socket"
 msgstr "Schließe den Kontroll - Socket"
 
-#: src/ftpclass.cc:2107
+#: src/ftpclass.cc:2134
 msgid "Closing data socket"
 msgstr "Schließe den Daten Socket"
 
-#: src/ftpclass.cc:2757
+#: src/ftpclass.cc:2787
 msgid "saw file size in response"
 msgstr "Dateigröße in Antwort empfangen"
 
-#: src/ftpclass.cc:2766
+#: src/ftpclass.cc:2797
 msgid "remote end closes connection"
 msgstr "Gegenüber schließt Verbindung "
 
-#: src/ftpclass.cc:2772
+#: src/ftpclass.cc:2805
 msgid "extra server response"
 msgstr "zusätzliche Server Antwort"
 
-#: src/ftpclass.cc:2893
+#: src/ftpclass.cc:2926
 msgid "Switching passive mode off"
 msgstr "Schalte Passivmodus ab"
 
-#: src/ftpclass.cc:2908
+#: src/ftpclass.cc:2941
 msgid "Switching passive mode on"
 msgstr "Schalte Passivmodus ein"
 
-#: src/ftpclass.cc:2981
+#: src/ftpclass.cc:3014
 msgid "Sending commands..."
 msgstr "Schicke Befehle"
 
-#: src/Http.cc:1175 src/ftpclass.cc:2983 src/ftpclass.cc:3003
-#: src/ftpclass.cc:3010
+#: src/Http.cc:1328 src/ftpclass.cc:3016 src/ftpclass.cc:3036
+#: src/ftpclass.cc:3043
 msgid "Waiting for response..."
 msgstr "Warte auf Antwort"
 
-#: src/ftpclass.cc:2984
+#: src/Http.cc:1323 src/ftpclass.cc:3017
 msgid "Connection idle"
 msgstr "Verbindung ruht"
 
-#: src/Http.cc:1170 src/ftpclass.cc:2998
+#: src/Http.cc:1321 src/ftpclass.cc:3031
 msgid "Connecting..."
 msgstr "Verbinde..."
 
-#: src/ftpclass.cc:3000
+#: src/ftpclass.cc:3033
 msgid "Logging in..."
 msgstr "Logge ein..."
 
-#: src/ftpclass.cc:3004
+#: src/ftpclass.cc:3037
 msgid "Making data connection..."
 msgstr "Stelle Datenverbindung her..."
 
-#: src/ftpclass.cc:3006
+#: src/ftpclass.cc:3039
 msgid "Changing remote directory..."
 msgstr "Wechsle nichtlokales Verzeichnis"
 
-#: src/ftpclass.cc:3009 src/ftpclass.cc:3021
+#: src/ftpclass.cc:3042 src/ftpclass.cc:3054
 msgid "Waiting for transfer to complete"
 msgstr "Warte auf Übertragungsende"
 
-#: src/ftpclass.cc:3012
+#: src/ftpclass.cc:3045
 msgid "Waiting for data connection..."
 msgstr "Warte auf Datenverbindung"
 
-#: src/Http.cc:1173 src/ftpclass.cc:3017
+#: src/Http.cc:1326 src/ftpclass.cc:3050
 msgid "Sending data"
 msgstr "Sende Daten"
 
-#: src/Http.cc:1178 src/ftpclass.cc:3019
+#: src/Http.cc:1331 src/ftpclass.cc:3052
 msgid "Receiving data"
 msgstr "Empfange Daten"
 
-#: src/ftpclass.cc:3023
+#: src/ftpclass.cc:3056
 msgid "Fatal protocol error occured"
 msgstr "Fataler Protokollfehler"
 
@@ -1540,11 +1544,15 @@ msgstr "%s OK, %d Verzeichnis$|se$ gelöscht\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s OK, %d Datei$|en$ gelöscht\n"
 
-#: src/Http.cc:1006 src/Http.cc:1026
+#: src/Http.cc:156
+msgid "Closing HTTP connection"
+msgstr "Schließe HTTP - Verbindung"
+
+#: src/Http.cc:1150 src/Http.cc:1171
 msgid "chunked format violated"
 msgstr "Blockformatierung verletzt"
 
-#: src/Http.cc:1176
+#: src/Http.cc:1329
 msgid "Fetching headers..."
 msgstr "Hole Kopfzeilen..."
 
@@ -1553,7 +1561,7 @@ msgstr "Hole Kopfzeilen..."
 msgid "Proxy protocol unsupported"
 msgstr "Proxy Protokoll wird nicht unterstützt"
 
-#: src/HttpDir.cc:892 src/HttpDir.cc:1075
+#: src/HttpDir.cc:931 src/HttpDir.cc:1114
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "Hole Dateiliste (%ld) [%s]"
@@ -1578,6 +1586,6 @@ msgstr "Übertragung von %d der %d $Datei|Dateien fehlgeschlagen\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Insgesamt %d $Datei|Dateien$ übertragen\n"
 
-#: src/FileCopy.cc:1047
+#: src/FileCopy.cc:1062
 msgid "file name missed in URL"
 msgstr "Dateiname fehlt in der URL"
