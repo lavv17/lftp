@@ -256,6 +256,11 @@ void LocalAccess::fill_array_info()
 	 f->size=st.st_size;
 	 f->time=st.st_mtime;
       }
+      else
+      {
+	 f->size=-1L;
+	 f->time=(time_t)-1;
+      }
    }
 }
 
