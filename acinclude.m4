@@ -47,7 +47,7 @@ AC_DEFUN(CXX_DYNAMIC_INITIALIZERS,
       int a=f();
       int main()
       {
-	 exit(1-a);
+	 return(1-a);
       }
    ],
    [cxx_dynamic_init=yes],
@@ -127,7 +127,7 @@ AC_DEFUN(LFTP_FUNC_POLL,
 	       int main()
 	       {
 		  struct pollfd pfd={5,POLLOUT}; /* fd 5 is config.log */
-		  exit(!(poll(0,0,0)==0 && poll(&pfd,1,0)==1));
+		  return(!(poll(0,0,0)==0 && poll(&pfd,1,0)==1));
 	       }
 	    ],
 	    [lftp_cv_func_poll_works=yes;],
@@ -148,7 +148,7 @@ AC_DEFUN(LFTP_PROG_CXXLINK,
       CXX="$CC"
       AC_LANG_SAVE
       AC_LANG_CPLUSPLUS
-      AC_TRY_COMPILE([],[char *a=new char[10]; exit(0);],
+      AC_TRY_COMPILE([],[char *a=new char[10];],
 	 [],[CXX="$old_CXX";])
       AC_LANG_RESTORE
    fi
