@@ -1,3 +1,8 @@
+2001-11-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* StringPool.cc, StringPool.h: new files. String cache implemented.
+	* FileSet.cc, FileSet.h: use them.
+
 2001-11-13  Glenn Maynard <g_ld@zewt.org>
 
 	* FileSet.cc, FileSet.h, FileSetOutput.cc, FileSetOutput.h,

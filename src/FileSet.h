@@ -42,7 +42,7 @@ public:
    time_t   date;
    off_t    size;
    void	    *data;
-   char     *user, *group;
+   const char *user, *group;
    int      nlinks;
 
    enum	 type

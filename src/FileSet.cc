@@ -37,6 +37,7 @@
 
 #include "misc.h"
 #include "ResMgr.h"
+#include "StringPool.h"
 
 void  FileInfo::Merge(const FileInfo& f)
 {
@@ -69,8 +70,7 @@ void FileInfo::SetUser(const char *u)
 {
    if(u==user)
       return;
-   xfree(user);
-   user=xstrdup(u);
+   user=StringPool::Get(u);
    defined|=USER;
 }
 
@@ -78,8 +78,7 @@ void FileInfo::SetGroup(const char *g)
 {
    if(g==group)
       return;
-   xfree(group);
-   group=xstrdup(g);
+   group=StringPool::Get(g);
    defined|=GROUP;
 }
 
@@ -569,8 +568,8 @@ FileInfo::FileInfo(const FileInfo &fi)
    Init();
    name=xstrdup(fi.name);
    symlink=xstrdup(fi.symlink);
-   user=xstrdup(fi.user);
-   group=xstrdup(fi.group);
+   user=fi.user;
+   group=fi.group;
    defined=fi.defined;
    filetype=fi.filetype;
    mode=fi.mode;
@@ -656,8 +655,6 @@ FileInfo::~FileInfo()
    xfree(name);
    xfree(symlink);
    xfree(data);
-   xfree(user);
-   xfree(group);
 }
 
 int FileSet::Have() const
