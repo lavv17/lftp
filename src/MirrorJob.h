@@ -54,7 +54,6 @@ class MirrorJob : public Job
       GETTING_LIST_INFO,
       WAITING_FOR_TRANSFER,
       WAITING_FOR_SUBMIRROR,
-      WAITING_FOR_MKDIR_BEFORE_SUBMIRROR,
       TARGET_REMOVE_OLD,
       TARGET_CHMOD,
       DONE
@@ -79,6 +78,7 @@ class MirrorJob : public Job
    void	 HandleFile(int);
 
    bool cont_this; // try to continue transfer of current file.
+   bool create_target_dir;
 
    ListInfo *source_list_info;
    ListInfo *target_list_info;
@@ -88,10 +88,16 @@ class MirrorJob : public Job
    char	 *target_dir;
    char	 *target_relative_dir;
 
-   int	 tot_files,new_files,mod_files,del_files;
-   int	 dirs,del_dirs;
-   int	 tot_symlinks,new_symlinks,mod_symlinks,del_symlinks;
-   int	 error_count;
+   struct Statistics
+   {
+      int tot_files,new_files,mod_files,del_files;
+      int dirs,del_dirs;
+      int tot_symlinks,new_symlinks,mod_symlinks,del_symlinks;
+      int error_count;
+      Statistics();
+      void Add(const Statistics &);
+   };
+   Statistics stats;
 
    int	 flags;
 
@@ -162,7 +168,7 @@ public:
    void	 ShowRunStatus(StatusLine *);
    void	 PrintStatus(int v);
    void	 SayFinal() { PrintStatus(-1); }
-   int	 ExitCode() { return error_count; }
+   int	 ExitCode() { return stats.error_count; }
 
    const char *SetInclude(const char *s)
       {

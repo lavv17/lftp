@@ -55,7 +55,6 @@ void  MirrorJob::PrintStatus(int v)
    case(DONE):
    case(WAITING_FOR_TRANSFER):
    case(WAITING_FOR_SUBMIRROR):
-   case(WAITING_FOR_MKDIR_BEFORE_SUBMIRROR):
    case(TARGET_REMOVE_OLD):
    case(TARGET_CHMOD):
       break;
@@ -89,24 +88,24 @@ void  MirrorJob::PrintStatus(int v)
    return;
 
 final:
-   if(dirs>0)
+   if(stats.dirs>0)
       printf(plural("%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n",
-		     dirs,tot_files,tot_symlinks),
-	 tab,dirs,tot_files,tot_symlinks);
-   if(new_files || new_symlinks)
+		     stats.dirs,stats.tot_files,stats.tot_symlinks),
+	 tab,stats.dirs,stats.tot_files,stats.tot_symlinks);
+   if(stats.new_files || stats.new_symlinks)
       printf(plural("%sNew: %d file$|s$, %d symlink$|s$\n",
-		     new_files,new_symlinks),
-	 tab,new_files,new_symlinks);
-   if(mod_files || mod_symlinks)
+		     stats.new_files,stats.new_symlinks),
+	 tab,stats.new_files,stats.new_symlinks);
+   if(stats.mod_files || stats.mod_symlinks)
       printf(plural("%sModified: %d file$|s$, %d symlink$|s$\n",
-		     mod_files,mod_symlinks),
-	 tab,mod_files,mod_symlinks);
-   if(del_dirs || del_files || del_symlinks)
+		     stats.mod_files,stats.mod_symlinks),
+	 tab,stats.mod_files,stats.mod_symlinks);
+   if(stats.del_dirs || stats.del_files || stats.del_symlinks)
       printf(plural(flags&DELETE ?
 	       "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 	      :"%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n",
-	      del_dirs,del_files,del_symlinks),
-	 tab,del_dirs,del_files,del_symlinks);
+	      stats.del_dirs,stats.del_files,stats.del_symlinks),
+	 tab,stats.del_dirs,stats.del_files,stats.del_symlinks);
    return;
 }
 
@@ -121,7 +120,6 @@ void  MirrorJob::ShowRunStatus(StatusLine *s)
    // these have a sub-job
    case(WAITING_FOR_TRANSFER):
    case(WAITING_FOR_SUBMIRROR):
-   case(WAITING_FOR_MKDIR_BEFORE_SUBMIRROR):
    case(TARGET_REMOVE_OLD):
    case(TARGET_CHMOD):
       Job::ShowRunStatus(s);
@@ -161,7 +159,6 @@ void  MirrorJob::ShowRunStatus(StatusLine *s)
 
 void  MirrorJob::HandleFile(int how)
 {
-   ArgV *args;
    int	 res;
    struct stat st;
 
@@ -216,10 +213,10 @@ void  MirrorJob::HandleFile(int how)
 			dir_file(target_relative_dir,file->name));
 	       remove_target=true;
 	    }
-	    mod_files++;
+	    stats.mod_files++;
 	 }
 	 else
-	    new_files++;
+	    stats.new_files++;
 
 	 Report(_("Transferring file `%s'"),
 		  dir_file(source_relative_dir,file->name));
@@ -269,12 +266,19 @@ void  MirrorJob::HandleFile(int how)
       try_recurse:
 	 if(how!=1 || (flags&NO_RECURSION))
 	    goto skip;
+	 bool create_target_dir=true;
+	 FileInfo *old=target_set->FindByName(file->name);
+	 if(old && old->defined&old->TYPE && old->filetype==old->DIRECTORY)
+	    create_target_dir=false;
 	 if(target_is_local)
 	 {
 	    if(lstat(target_name,&st)!=-1)
 	    {
 	       if(S_ISDIR(st.st_mode))
+	       {
 		  chmod(target_name,st.st_mode|0700);
+		  create_target_dir=false;
+	       }
 	       else
 	       {
 		  Report(_("Removing old local file `%s'"),
@@ -284,28 +288,9 @@ void  MirrorJob::HandleFile(int how)
 		     eprintf("mirror: remove(%s): %s\n",target_name,strerror(errno));
 		     goto skip;
 		  }
+		  create_target_dir=true;
 	       }
 	    }
-	 }
-	 if(!dir_made)
-	 {
-	    FileInfo *f=target_set->FindByName(file->name);
-	    if(f==0)
-	    {
-	       Report(_("Making directory `%s'"),
-			dir_file(target_relative_dir,file->name));
-	       args=new ArgV("mkdir");
-	       args->Append("--");
-	       args->Append(file->name);
-	       Job *j=new mkdirJob(target_session->Clone(),args);
-	       j->SetParentFg(this);
-	       j->cmdline=args->Combine();
-	       AddWaiting(j);
-	    }
-	    else
-	       dir_made=true;
-	    state=WAITING_FOR_MKDIR_BEFORE_SUBMIRROR;
-	    break;
 	 }
 
 	 // launch sub-mirror
@@ -332,11 +317,10 @@ void  MirrorJob::HandleFile(int how)
 	 mj->newer_than=newer_than;
 	 mj->parallel=parallel;
 	 mj->remove_source_files=remove_source_files;
+	 mj->create_target_dir=create_target_dir;
 
 	 if(verbose_report>=3)
 	    Report(_("Mirroring directory `%s'"),mj->target_relative_dir);
-
-	 dir_made=false;   // for next directory
 
 	 break;
       }
@@ -357,7 +341,7 @@ void  MirrorJob::HandleFile(int how)
 	    {
 	       Report(_("Removing old local file `%s'"),
 			dir_file(target_relative_dir,file->name));
-	       mod_symlinks++;
+	       stats.mod_symlinks++;
 	       if(remove(target_name)==-1)
 	       {
 		  eprintf("mirror: remove(%s): %s\n",target_name,strerror(errno));
@@ -366,7 +350,7 @@ void  MirrorJob::HandleFile(int how)
 	    }
 	    else
 	    {
-	       new_symlinks++;
+	       stats.new_symlinks++;
 	    }
 	    Report(_("Making symbolic link `%s' to `%s'"),
 		     dir_file(target_relative_dir,file->name),file->symlink);
@@ -400,7 +384,7 @@ skip:
 
 void  MirrorJob::InitSets(FileSet *source,FileSet *dest)
 {
-   source->Count(NULL,&tot_files,&tot_symlinks,&tot_files);
+   source->Count(NULL,&stats.tot_files,&stats.tot_symlinks,&stats.tot_files);
 
    to_rm=new FileSet(dest);
    to_rm->SubtractAny(source);
@@ -466,7 +450,7 @@ void MirrorJob::HandleChdir(FileAccess * &session, int &redirections)
       }
    cd_err_normal:
       eprintf("mirror: %s\n",session->StrError(res));
-      error_count++;
+      stats.error_count++;
       state=DONE;
       source_session->Close();
       target_session->Close();
@@ -504,7 +488,7 @@ void MirrorJob::HandleListInfo(ListInfo * &list_info, FileSet * &set)
    if(list_info->Error())
    {
       eprintf("mirror: %s\n",list_info->ErrorText());
-      error_count++;
+      stats.error_count++;
       state=DONE;
       Delete(source_list_info);
       source_list_info=0;
@@ -528,8 +512,11 @@ int   MirrorJob::Do()
    switch(state)
    {
    case(INITIAL_STATE):
-
-      target_session->Mkdir(target_dir,true);
+      if(!create_target_dir || !strcmp(target_dir,".") || !strcmp(target_dir,".."))
+	 goto pre_CHANGING_DIR;
+      if(target_relative_dir)
+	 Report(_("Making directory `%s'"),target_relative_dir);
+      target_session->Mkdir(target_dir);
       state=MAKE_TARGET_DIR;
       m=MOVED;
    case(MAKE_TARGET_DIR):
@@ -538,6 +525,7 @@ int   MirrorJob::Do()
 	 return m;
       target_session->Close();
 
+   pre_CHANGING_DIR:
       source_session->Chdir(source_dir);
       target_session->Chdir(target_dir);
       source_redirections=0;
@@ -580,7 +568,7 @@ int   MirrorJob::Do()
 	 return m;
 
       // now we have both local and remote file sets.
-      dirs++;
+      stats.dirs++;
 
       InitSets(source_set,target_set);
 
@@ -594,7 +582,7 @@ int   MirrorJob::Do()
       if(j)
       {
 	 if(j->ExitCode()!=0)
-	    error_count++;
+	    stats.error_count++;
 	 RemoveWaiting(j);
 	 Delete(j);
       }
@@ -615,41 +603,12 @@ int   MirrorJob::Do()
       }
       return m;
 
-   case(WAITING_FOR_MKDIR_BEFORE_SUBMIRROR):
-      j=FindDoneAwaitedJob();
-      if(j==0 && waiting_num>0)
-	 return m;
-      if(j)
-      {
-	 if(j->ExitCode()==0)
-	    dir_made=true;
-	 RemoveWaiting(j);
-	 Delete(j);
-	 if(!dir_made)
-	    to_transfer->next();
-      }
-      state=WAITING_FOR_SUBMIRROR;
-      return MOVED;
-
    case(WAITING_FOR_SUBMIRROR):
       j=FindDoneAwaitedJob();
       if(j==0 && waiting_num>0)
 	 return m;
       if(j)
       {
-	 MirrorJob &mj=*(MirrorJob*)j; // we are sure it is a MirrorJob
-	 tot_files+=mj.tot_files;
-	 new_files+=mj.new_files;
-	 mod_files+=mj.mod_files;
-	 del_files+=mj.del_files;
-	 tot_symlinks+=mj.tot_symlinks;
-	 new_symlinks+=mj.new_symlinks;
-	 mod_symlinks+=mj.mod_symlinks;
-	 del_symlinks+=mj.del_symlinks;
-	 dirs+=mj.dirs;
-	 del_dirs+=mj.del_dirs;
-	 error_count+=mj.error_count;
-
 	 to_transfer->next();
 	 RemoveWaiting(j);
 	 Delete(j);
@@ -659,7 +618,7 @@ int   MirrorJob::Do()
 	 file=to_transfer->curr();
       	 if(!file)
 	 {
-	    to_rm->Count(&del_dirs,&del_files,&del_symlinks,&del_files);
+	    to_rm->Count(&stats.del_dirs,&stats.del_files,&stats.del_symlinks,&stats.del_files);
 	    to_rm->rewind();
 	    state=TARGET_REMOVE_OLD;
 	    return MOVED;
@@ -798,13 +757,9 @@ MirrorJob::MirrorJob(FileAccess *source,FileAccess *target,
    new_files_set=old_files_set=0;
    file=0;
    cont_this=false;
+   create_target_dir=true;
    source_list_info=0;
    target_list_info=0;
-
-   tot_files=new_files=mod_files=del_files=
-   tot_symlinks=new_symlinks=mod_symlinks=del_symlinks=0;
-   dirs=0; del_dirs=0;
-   error_count=0;
 
    flags=0;
 
@@ -860,6 +815,8 @@ MirrorJob::~MirrorJob()
    }
    if(script && script_needs_closing)
       fclose(script);
+   if(parent_mirror)
+      parent_mirror->stats.Add(stats);
 }
 
 const char *MirrorJob::SetRX(const char *s,char **rx,regex_t *rxc)
@@ -931,6 +888,41 @@ void MirrorJob::SetNewerThan(const char *f)
    newer_than=st.st_mtime;
 }
 
+mode_t MirrorJob::get_mode_mask()
+{
+   mode_t mode_mask=0;
+   if(!(flags&ALLOW_SUID))
+      mode_mask|=S_ISUID|S_ISGID;
+   if(!(flags&NO_UMASK))
+   {
+      mode_t u=umask(022); // get+set
+      umask(u);	    // retore
+      mode_mask|=u;
+   }
+   return mode_mask;
+}
+
+MirrorJob::Statistics::Statistics()
+{
+   tot_files=new_files=mod_files=del_files=
+   tot_symlinks=new_symlinks=mod_symlinks=del_symlinks=
+   dirs=del_dirs=
+   error_count=0;
+}
+void MirrorJob::Statistics::Add(const Statistics &s)
+{
+   tot_files   +=s.tot_files;
+   new_files   +=s.new_files;
+   mod_files   +=s.mod_files;
+   del_files   +=s.del_files;
+   tot_symlinks+=s.tot_symlinks;
+   new_symlinks+=s.new_symlinks;
+   mod_symlinks+=s.mod_symlinks;
+   del_symlinks+=s.del_symlinks;
+   dirs        +=s.dirs;
+   del_dirs    +=s.del_dirs;
+   error_count +=s.error_count;
+}
 
 CMD(mirror)
 {
@@ -1164,20 +1156,6 @@ err_out:
    SMTask::Delete(j);
    return 0;
 #undef args
-}
-
-mode_t MirrorJob::get_mode_mask()
-{
-   mode_t mode_mask=0;
-   if(!(flags&ALLOW_SUID))
-      mode_mask|=S_ISUID|S_ISGID;
-   if(!(flags&NO_UMASK))
-   {
-      mode_t u=umask(022); // get+set
-      umask(u);	    // retore
-      mode_mask|=u;
-   }
-   return mode_mask;
 }
 
 #include "modconfig.h"

@@ -3,7 +3,9 @@
 	* FileCopy.cc, FileCopy.h: (RemoveTargetFirst) new method; do it.
 	* MirrorJob.cc, MirrorJob.h: use RemoveTargetFirst; mirror -P
 	  works again; fix NULL dereference in PrintStatus; don't derive
-	  from SessionJob - use source_session member instead.
+	  from SessionJob - use source_session member instead;
+	  do mkdir in child mirror; new Statistics struct; add statistics
+	  to parent mirror in child mirror's dtor.
 	* TimeDate.h: rearrange inline functions to help compiler.
 
 2001-12-05  Alexander V. Lukyanov <lav@yars.free.net>
