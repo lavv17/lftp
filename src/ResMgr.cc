@@ -143,14 +143,14 @@ const char *ResMgr::Set(const char *name,const char *cclosure,const char *cvalue
 	 free(to_free);
 	 free(closure);
       }
-      SMTask::ReconfigAll();
+      SMTask::ReconfigAll(name);
    }
    else
    {
       if(value)
       {
 	 chain=new Resource(chain,type,closure,value);
-	 SMTask::ReconfigAll();
+	 SMTask::ReconfigAll(name);
       }
       else
 	 free(closure);
