@@ -91,8 +91,6 @@ protected:
    char  *user;
    char  *pass;
    bool	 pass_open;
-   char	 *group;
-   char	 *gpass;
 
    char	 *home;
    const char *default_cwd;
@@ -191,7 +189,6 @@ public:
    virtual void AnonymousLogin();
 
    virtual void Login(const char *u,const char *p);
-   virtual void GroupLogin(const char *g,const char *p);
 
    virtual void Open(const char *file,int mode,off_t pos=0);
    void SetFileURL(const char *u) { xfree(file_url); file_url=xstrdup(u); }

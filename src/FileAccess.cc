@@ -54,7 +54,6 @@ void FileAccess::Init()
    home=0;
    portname=0;
    hostname=0;
-   group=gpass=0;
    user=pass=0;
    pass_open=false;
 
@@ -109,10 +108,6 @@ FileAccess::FileAccess(const FileAccess *fa)
    xfree(pass);
    pass=xstrdup(fa->pass);
    pass_open=fa->pass_open;
-   xfree(group);
-   group=xstrdup(fa->group);
-   xfree(gpass);
-   gpass=xstrdup(fa->gpass);
    xfree(hostname);
    hostname=xstrdup(fa->hostname);
    xfree(portname);
@@ -130,8 +125,6 @@ FileAccess::~FileAccess()
    xfree(home);
    xfree(user);
    xfree(pass);
-   xfree(group);
-   xfree(gpass);
    xfree(hostname);
    xfree(portname);
    xfree(url);
@@ -517,23 +510,12 @@ void FileAccess::SetPasswordGlobal(const char *p)
    }
 }
 
-void FileAccess::GroupLogin(const char *group,const char *pass)
-{
-   Disconnect();
-   xfree(this->group);
-   this->group=xstrdup(group);
-   xfree(this->gpass);
-   this->gpass=xstrdup(pass);
-}
-
 void FileAccess::AnonymousLogin()
 {
    Disconnect();
    xfree(user); user=0;
    xfree(pass); pass=0;
    pass_open=false;
-   xfree(group); group=0;
-   xfree(gpass); gpass=0;
    xfree(cwd);
    cwd=xstrdup(default_cwd);
    xfree(home);  home=0;

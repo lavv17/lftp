@@ -1273,8 +1273,6 @@ int   Ftp::Do()
       SendSiteGroup();
       SendSiteIdle();
 
-      // FIXME: site group/site gpass
-
       if(!home)
       {
 	 // if we don't yet know the home location, try to get it
@@ -3551,17 +3549,15 @@ bool  Ftp::SameSiteAs(FileAccess *fa)
    if(!SameProtoAs(fa))
       return false;
    Ftp *o=(Ftp*)fa;
-   return(!xstrcmp(hostname,o->hostname) && !xstrcmp(portname,o->portname)
+   return(!xstrcasecmp(hostname,o->hostname) && !xstrcmp(portname,o->portname)
    && !xstrcmp(user,o->user) && !xstrcmp(pass,o->pass)
-   && !xstrcmp(group,o->group) && !xstrcmp(gpass,o->gpass)
    && ftps==o->ftps);
 }
 
 bool  Ftp::SameConnection(const Ftp *o)
 {
-   if(!strcmp(hostname,o->hostname) && !xstrcmp(portname,o->portname)
+   if(!strcasecmp(hostname,o->hostname) && !xstrcmp(portname,o->portname)
    && !xstrcmp(user,o->user) && !xstrcmp(pass,o->pass)
-   && !xstrcmp(group,o->group) && !xstrcmp(gpass,o->gpass)
    && (user || !xstrcmp(anon_user,o->anon_user))
    && (pass || !xstrcmp(anon_pass,o->anon_pass))
    && ftps==o->ftps)
