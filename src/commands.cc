@@ -2104,7 +2104,7 @@ CMD(mv)
 }
 
 const char *const cache_subcmd[]={
-   "status","flush","on","off","size","expire","dump",
+   "status","flush","on","off","size","expire",
    NULL
 };
 
@@ -2133,8 +2133,6 @@ CMD(cache)  // cache control
    exit_code=0;
    if(!op || !strcasecmp(op,"status"))
       LsCache::List();
-   else if(!strcasecmp(op,"dump"))
-      LsCache::Dump();
    else if(!strcasecmp(op,"flush"))
       LsCache::Flush();
    else if(!strcasecmp(op,"on"))
