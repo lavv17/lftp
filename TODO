@@ -62,3 +62,5 @@ currently; some need other work to be done.
 
  * in Glob and FileInfo: set a flag that if REST does not work to report
    an error, and in case of such error restart from beginning.
+
+ * total-rate-limit/max. (Un)RegisterNetworkTransfer, class RateLimit.
