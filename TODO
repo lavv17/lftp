@@ -1,0 +1,34 @@
+* The items with a question mark are questionable. I'm not sure whether they
+  are really needed. If you think it is a good feature do it yourself :) or
+  at least tell me what you think.
+
+
+ * complete group/gpass and ACCT (does anyone need it?)
+
+?* save command history (to different files for diff hosts?)
+
+ * Http-style proxy support for ftp.
+   Maybe as a new protocol: hftp?
+
+?* document variables in on-line help
+
+ * mirror --config <file.cf>
+
+?* a way to not preserve timestamps.
+
+?* eval -f "foo $1 $2; ls $@" a1 a2 a3
+
+ * parent->GrabOutput GrabFD? to disable status line
+
+ * ftpcopy glob, multiple files
+
+-* progress indicator for ftpcopy
+
+ * glob each directory component in FtpGlob
+-  problem: have to assume server does globbing and support backslash-quotes,
+   or that it does neither
+
+ * update process title
+ * at-exit-bg
+
+ * HttpListInfo
