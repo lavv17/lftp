@@ -236,4 +236,14 @@ CDECL void SOCKSinit(const char *);
 #define random() ((long)(rand()/(RAND_MAX+1.0)*2147483648.0))
 #endif
 
+#ifndef HAVE_INET_ATON
+# define inet_aton(host,addr) ((addr->s_addr=inet_addr(host))!=-1)
+#endif
+
+/* Tell the compiler when a conditional or integer expression is
+   almost always true or almost always false.  */
+#ifndef HAVE_BUILTIN_EXPECT
+# define __builtin_expect(expr, val) (expr)
+#endif
+
 #endif /* CONFIG_H */

@@ -1,3 +1,9 @@
+Version 2.4.1 - 2001-08-08
+
+* translation updates.
+* fixed a coredump due to incorrect memory allocation.
+* compilation fixes.
+
 Version 2.4.0 - 2001-07-30
 
 * fish protocol support (over plain ssh connection).

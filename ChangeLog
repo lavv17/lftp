@@ -1,3 +1,8 @@
+2001-08-07	lav
+
+	* acconfig.h: define inet_aton if needed.
+	* configure.in: check for inet_aton.
+
 2001-07-24	Glenn F. Maynard <g_ld@zewt.org>
 
 	* configure.in: don't optimize code for debugging.

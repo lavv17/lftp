@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
-"POT-Creation-Date: 2001-07-30 18:39+0400\n"
+"POT-Creation-Date: 2001-08-08 11:05+0400\n"
 "PO-Revision-Date: 2000-09-27 14:22+09:00\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -111,7 +111,7 @@ msgstr "アクセス失敗: %s"
 msgid "File cannot be accessed"
 msgstr "ファイルにアクセスできません"
 
-#: src/FileAccess.cc:318 src/ftpclass.cc:3460 src/ftpclass.cc:3469
+#: src/FileAccess.cc:318 src/ftpclass.cc:3461 src/ftpclass.cc:3470
 msgid "Not connected"
 msgstr "接続されていません"
 
@@ -354,7 +354,7 @@ msgstr "この設定では終止が定義されていません"
 msgid "dns cache hit\n"
 msgstr "DNS キャッシュがヒットしました\n"
 
-#: src/Http.cc:1591 src/Resolver.cc:185 src/ftpclass.cc:3465
+#: src/Http.cc:1591 src/Resolver.cc:185 src/ftpclass.cc:3466
 msgid "Resolving host address..."
 msgstr "ホストアドレスを解決しています..."
 
@@ -1556,107 +1556,107 @@ msgstr "サポートされていないネットワークプロトコルです"
 msgid "Connecting data socket to (%s) port %u"
 msgstr "データソケットを (%s) のポート %u に接続中"
 
-#: src/ftpclass.cc:1829 src/ftpclass.cc:3348
+#: src/ftpclass.cc:1829 src/ftpclass.cc:3349
 msgid "Switching passive mode off"
 msgstr "パッシヴモードをオフに切り替えました"
 
-#: src/Http.cc:985 src/ftpclass.cc:2270
+#: src/Http.cc:985 src/ftpclass.cc:2271
 msgid "Peer closed connection"
 msgstr "ピアが接続を閉じました"
 
-#: src/ftpclass.cc:2297
+#: src/ftpclass.cc:2298
 msgid "Persist and retry"
 msgstr "持続的に再試行します"
 
-#: src/ftpclass.cc:2394
+#: src/ftpclass.cc:2395
 msgid "Closing control socket"
 msgstr "コントロールソケットを閉じています"
 
-#: src/ftpclass.cc:2475
+#: src/ftpclass.cc:2476
 msgid "Closing data socket"
 msgstr "データソケットを閉じています"
 
-#: src/ftpclass.cc:3193
+#: src/ftpclass.cc:3194
 msgid "saw file size in response"
 msgstr "レスポンス中にファイルサイズがありました"
 
-#: src/ftpclass.cc:3204
+#: src/ftpclass.cc:3205
 msgid "remote end closes connection"
 msgstr "リモートエンドが接続を閉じました"
 
-#: src/ftpclass.cc:3212
+#: src/ftpclass.cc:3213
 msgid "extra server response"
 msgstr "余分なサーバレスポンスです"
 
-#: src/ftpclass.cc:3224 src/ftpclass.cc:3249
+#: src/ftpclass.cc:3225 src/ftpclass.cc:3250
 msgid "Turning on sync-mode"
 msgstr "sync モードを有効にしました"
 
-#: src/ftpclass.cc:3365
+#: src/ftpclass.cc:3366
 msgid "Switching passive mode on"
 msgstr "パッシヴモードをオンに切り替えました"
 
-#: src/ftpclass.cc:3416
+#: src/ftpclass.cc:3417
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force がセットされていますが、サーバは SSL をサポートあるいは許可して"
 "いません"
 
-#: src/ftpclass.cc:3455
+#: src/ftpclass.cc:3456
 msgid "Sending commands..."
 msgstr "コマンドを送信中..."
 
-#: src/Http.cc:1606 src/ftpclass.cc:3457 src/ftpclass.cc:3482
-#: src/ftpclass.cc:3494
+#: src/Http.cc:1606 src/ftpclass.cc:3458 src/ftpclass.cc:3483
+#: src/ftpclass.cc:3495
 msgid "Waiting for response..."
 msgstr "応答を待っています..."
 
-#: src/Http.cc:1599 src/ftpclass.cc:3458
+#: src/Http.cc:1599 src/ftpclass.cc:3459
 msgid "Connection idle"
 msgstr "接続アイドル"
 
-#: src/Http.cc:1597 src/Http.cc:1604 src/ftpclass.cc:3471
+#: src/Http.cc:1597 src/Http.cc:1604 src/ftpclass.cc:3472
 msgid "Connecting..."
 msgstr "接続中..."
 
-#: src/ftpclass.cc:3475
+#: src/ftpclass.cc:3476
 msgid "TLS negotiation..."
 msgstr "TLS ネゴシエーション..."
 
-#: src/ftpclass.cc:3477
+#: src/ftpclass.cc:3478
 msgid "Connected"
 msgstr "接続しました"
 
-#: src/ftpclass.cc:3479
+#: src/ftpclass.cc:3480
 msgid "Logging in..."
 msgstr "ログインしています..."
 
-#: src/ftpclass.cc:3483
+#: src/ftpclass.cc:3484
 msgid "Making data connection..."
 msgstr "データ接続を確立中..."
 
-#: src/ftpclass.cc:3485
+#: src/ftpclass.cc:3486
 msgid "Changing remote directory..."
 msgstr "リモートディレクトリを変更中..."
 
-#: src/ftpclass.cc:3490
+#: src/ftpclass.cc:3491
 #, fuzzy
 msgid "Waiting for other copy peer..."
 msgstr "応答を待っています..."
 
-#: src/ftpclass.cc:3493 src/ftpclass.cc:3505
+#: src/ftpclass.cc:3494 src/ftpclass.cc:3506
 msgid "Waiting for transfer to complete"
 msgstr "送受信の完了を待っています"
 
-#: src/ftpclass.cc:3496
+#: src/ftpclass.cc:3497
 msgid "Waiting for data connection..."
 msgstr "データ接続を待っています..."
 
-#: src/Http.cc:1602 src/ftpclass.cc:3501
+#: src/Http.cc:1602 src/ftpclass.cc:3502
 msgid "Sending data"
 msgstr "データ送信中"
 
-#: src/Http.cc:1609 src/ftpclass.cc:3503
+#: src/Http.cc:1609 src/ftpclass.cc:3504
 msgid "Receiving data"
 msgstr "データ受信中"
 

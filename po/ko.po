@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
-"POT-Creation-Date: 2001-07-30 18:39+0400\n"
+"POT-Creation-Date: 2001-08-08 11:05+0400\n"
 "PO-Revision-Date: 2001-05-27 KST\n"
 "Last-Translator: Dojip Kim <greendrm@greendrm.com>\n"
 "Language-Team: \n"
@@ -111,7 +111,7 @@ msgstr "접속 실패: %s"
 msgid "File cannot be accessed"
 msgstr "파일을 읽을 수 없습니다"
 
-#: src/FileAccess.cc:318 src/ftpclass.cc:3460 src/ftpclass.cc:3469
+#: src/FileAccess.cc:318 src/ftpclass.cc:3461 src/ftpclass.cc:3470
 msgid "Not connected"
 msgstr "접속되지 않았습니다"
 
@@ -347,7 +347,7 @@ msgstr "이 설정에 대한 종결이 정의되어 있지 않습니다"
 msgid "dns cache hit\n"
 msgstr "dns 캐시 일치\n"
 
-#: src/Http.cc:1591 src/Resolver.cc:185 src/ftpclass.cc:3465
+#: src/Http.cc:1591 src/Resolver.cc:185 src/ftpclass.cc:3466
 msgid "Resolving host address..."
 msgstr "호스트 주소를 찾습니다..."
 
@@ -1511,106 +1511,106 @@ msgstr "지원하지 않는 네트워크 프로토콜입니다"
 msgid "Connecting data socket to (%s) port %u"
 msgstr "(%s) 포트 %u에 자료 소켓을 연결합니다"
 
-#: src/ftpclass.cc:1829 src/ftpclass.cc:3348
+#: src/ftpclass.cc:1829 src/ftpclass.cc:3349
 msgid "Switching passive mode off"
 msgstr "패시브(passive) 모드 끔"
 
-#: src/Http.cc:985 src/ftpclass.cc:2270
+#: src/Http.cc:985 src/ftpclass.cc:2271
 msgid "Peer closed connection"
 msgstr "접속이 끊겼습니다"
 
-#: src/ftpclass.cc:2297
+#: src/ftpclass.cc:2298
 msgid "Persist and retry"
 msgstr "계속 재시도함"
 
-#: src/ftpclass.cc:2394
+#: src/ftpclass.cc:2395
 msgid "Closing control socket"
 msgstr "제어 소켓 닫음"
 
-#: src/ftpclass.cc:2475
+#: src/ftpclass.cc:2476
 msgid "Closing data socket"
 msgstr "데이터 소켓 닫음"
 
-#: src/ftpclass.cc:3193
+#: src/ftpclass.cc:3194
 msgid "saw file size in response"
 msgstr "응답에서 파일 크기를 봅니다"
 
-#: src/ftpclass.cc:3204
+#: src/ftpclass.cc:3205
 msgid "remote end closes connection"
 msgstr "원거리 끝이 접속을 끊습니다"
 
-#: src/ftpclass.cc:3212
+#: src/ftpclass.cc:3213
 msgid "extra server response"
 msgstr "임시 서버 응답"
 
-#: src/ftpclass.cc:3224 src/ftpclass.cc:3249
+#: src/ftpclass.cc:3225 src/ftpclass.cc:3250
 msgid "Turning on sync-mode"
 msgstr "동기 모드로 전환"
 
-#: src/ftpclass.cc:3365
+#: src/ftpclass.cc:3366
 msgid "Switching passive mode on"
 msgstr "패시브(passive) 모드로 전환"
 
-#: src/ftpclass.cc:3416
+#: src/ftpclass.cc:3417
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force가 설정되어있지만 서버가 지원하지 않거나 SSL을 허용하지 않음"
 
-#: src/ftpclass.cc:3455
+#: src/ftpclass.cc:3456
 msgid "Sending commands..."
 msgstr "명령어 전송중..."
 
-#: src/Http.cc:1606 src/ftpclass.cc:3457 src/ftpclass.cc:3482
-#: src/ftpclass.cc:3494
+#: src/Http.cc:1606 src/ftpclass.cc:3458 src/ftpclass.cc:3483
+#: src/ftpclass.cc:3495
 msgid "Waiting for response..."
 msgstr "응답을 기다립니다..."
 
-#: src/Http.cc:1599 src/ftpclass.cc:3458
+#: src/Http.cc:1599 src/ftpclass.cc:3459
 msgid "Connection idle"
 msgstr "사용하지 않는 접속"
 
-#: src/Http.cc:1597 src/Http.cc:1604 src/ftpclass.cc:3471
+#: src/Http.cc:1597 src/Http.cc:1604 src/ftpclass.cc:3472
 msgid "Connecting..."
 msgstr "접속중..."
 
-#: src/ftpclass.cc:3475
+#: src/ftpclass.cc:3476
 msgid "TLS negotiation..."
 msgstr "TLS 협상중..."
 
-#: src/ftpclass.cc:3477
+#: src/ftpclass.cc:3478
 msgid "Connected"
 msgstr "접속되었음"
 
-#: src/ftpclass.cc:3479
+#: src/ftpclass.cc:3480
 msgid "Logging in..."
 msgstr "로그인 중..."
 
-#: src/ftpclass.cc:3483
+#: src/ftpclass.cc:3484
 msgid "Making data connection..."
 msgstr "접속 하는 중..."
 
-#: src/ftpclass.cc:3485
+#: src/ftpclass.cc:3486
 msgid "Changing remote directory..."
 msgstr "원거리 디렉토리 변경중..."
 
-#: src/ftpclass.cc:3490
+#: src/ftpclass.cc:3491
 #, fuzzy
 msgid "Waiting for other copy peer..."
 msgstr "응답을 기다립니다..."
 
-#: src/ftpclass.cc:3493 src/ftpclass.cc:3505
+#: src/ftpclass.cc:3494 src/ftpclass.cc:3506
 msgid "Waiting for transfer to complete"
 msgstr "전송 완료를 기다립니다"
 
-#: src/ftpclass.cc:3496
+#: src/ftpclass.cc:3497
 msgid "Waiting for data connection..."
 msgstr "접속을 기다리는 중..."
 
-#: src/Http.cc:1602 src/ftpclass.cc:3501
+#: src/Http.cc:1602 src/ftpclass.cc:3502
 msgid "Sending data"
 msgstr "자료 보내는 중"
 
-#: src/Http.cc:1609 src/ftpclass.cc:3503
+#: src/Http.cc:1609 src/ftpclass.cc:3504
 msgid "Receiving data"
 msgstr "자료 받는 중"
 
