@@ -263,6 +263,7 @@ int   Ftp::NoPassReqCheck(int act,int exp) // for USER command
    }
    if(act/100==5)
    {
+      // proxy interprets USER as user@host, so we check for host name validity
       if(proxy && (strstr(line,"host") || strstr(line,"resolve")))
       {
 	 DebugPrint("---- ",_("assuming failed host name lookup"),9);
@@ -273,9 +274,10 @@ int   Ftp::NoPassReqCheck(int act,int exp) // for USER command
       }
       return(LOGIN_FAILED_STATE);
    }
-   if(act==331 && allow_skey && user && pass)
+   if(act==331 && allow_skey && user && pass && result)
    {
       skey_pass=xstrdup(make_skey_reply());
+      free(result); result=0; result_size=0;
       if(force_skey && skey_pass==0)
       {
 	 // FIXME
@@ -833,7 +835,7 @@ int   Ftp::Do()
 
       ignore_pass=false;
       sprintf(str,"USER %s\n",user_to_use);
-      AddResp(RESP_PASS_REQ,INITIAL_STATE,&NoPassReqCheck);
+      AddResp(RESP_PASS_REQ,INITIAL_STATE,&NoPassReqCheck,allow_skey);
       SendCmd(str);
 
       state=USER_RESP_WAITING_STATE;
@@ -2302,6 +2304,7 @@ extern "C"
 const char *Ftp::make_skey_reply()
 {
    static const char * const skey_head[] = {
+      "S/Key MD5 ",
       "s/key ",
       "opiekey ",
       "otp-md5 ",
@@ -2313,13 +2316,15 @@ const char *Ftp::make_skey_reply()
    {
       if(skey_head[i]==0)
 	 return 0;
-      cp=strstr(line,skey_head[i]);
+      cp=strstr(result,skey_head[i]);
       if(cp)
       {
 	 cp+=strlen(skey_head[i]);
 	 break;
       }
    }
+
+   DebugPrint("---- ","found s/key substring",9);
 
    int skey_sequence=0;
    while ('0'<=*cp && *cp<='9')
