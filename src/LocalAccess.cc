@@ -71,8 +71,7 @@ LocalAccess::LocalAccess(const LocalAccess *o) : FileAccess(o)
 }
 LocalAccess::~LocalAccess()
 {
-   if(stream)
-      delete stream;
+   delete stream;
 }
 
 void LocalAccess::errno_handle()
@@ -160,7 +159,16 @@ int LocalAccess::Do()
       Block(stream->getfd(),POLLIN);
       return m;
    case(CHANGE_DIR):
-      if(access(file,X_OK)==-1)
+   {
+      LocalDirectory old_cwd;
+      old_cwd.SetFromCWD();
+      const char *err=old_cwd.Chdir();
+      if(err)
+      {
+	 SetError(NO_FILE,err);
+	 return MOVED;
+      }
+      if(chdir(file)==-1)
       {
 	 errno_handle();
 	 error_code=NO_FILE;
@@ -169,9 +177,11 @@ int LocalAccess::Do()
       {
 	 xfree(cwd);
 	 cwd=xstrdup(file);
+	 old_cwd.Chdir();
       }
       done=true;
       return MOVED;
+   }
    case(REMOVE): {
       const char *f=dir_file(cwd,file);
       Log::global->Format(5,"---- remove(%s)\n",f);
@@ -339,11 +349,12 @@ read_again:
 
    if(res<0)
    {
-      if(NonFatalError(errno))
+      if(stream->NonFatalError(errno))
 	 return DO_AGAIN;
       saved_errno=errno;
       return SEE_ERRNO;
    }
+   stream->clear_status();
    if(res==0)
       return res; // eof
 
@@ -440,11 +451,12 @@ int LocalAccess::Write(const void *vbuf,int len)
    int res=write(fd,buf,len);
    if(res<0)
    {
-      if(NonFatalError(errno))
+      if(stream->NonFatalError(errno))
 	 return DO_AGAIN;
       saved_errno=errno;
       return SEE_ERRNO;
    }
+   stream->clear_status();
 
    if(res==len)
       res+=skip_cr;
@@ -480,12 +492,16 @@ void LocalAccess::Close()
 {
    done=false;
    error_code=OK;
-   if(stream)
-   {
-      delete stream;
-      stream=0;
-   }
+   delete stream;
+   stream=0;
    FileAccess::Close();
+}
+
+const char *LocalAccess::CurrentStatus()
+{
+   if(stream && stream->status)
+      return stream->status;
+   return "";
 }
 
 bool LocalAccess::SameLocationAs(FileAccess *fa)

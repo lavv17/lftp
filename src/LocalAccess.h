@@ -55,6 +55,8 @@ public:
    int Done();
    void Close();
 
+   const char *CurrentStatus();
+
    static void ClassInit();
 
    ListInfo *MakeListInfo(const char *path);

@@ -1,6 +1,8 @@
 2001-01-10  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CatJob.cc, CatJob.h: use DontFailIfBroken.
+	* LocalAccess.cc: (CurrentStatus) implemented; use stream->status;
+	  use chdir to verify directories.
 
 2001-01-10  Glenn Maynard <g_ld@zewt.org>
 
