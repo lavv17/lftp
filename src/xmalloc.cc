@@ -1,0 +1,67 @@
+/*
+ * lftp and utils
+ *
+ * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+/* $Id$ */
+
+#include <config.h>
+#include <stdio.h>
+#include "xmalloc.h"
+
+static void memory_error_and_abort(char *fname,size_t size)
+{
+   fprintf(stderr,"%s: out of virtual memory when trying to get %lu bytes\n",
+	 fname,(long)size);
+   exit(2);
+}
+
+void *xmalloc (size_t bytes)
+{
+   if(bytes==0)
+      return 0;
+   void *temp=(void*)malloc(bytes);
+   if(temp==0)
+      memory_error_and_abort("xmalloc",bytes);
+#ifdef MEM_DEBUG
+   printf("xmalloc %p %lu\n",temp,(long)bytes);
+#endif
+   return(temp);
+}
+
+void *xrealloc(void *pointer,size_t bytes)
+{
+   void *temp;
+   if(pointer==0 && bytes==0)
+      return 0;
+   if(bytes==0)
+   {
+      free(pointer);
+      return 0;
+   }
+   if(pointer==0)
+      temp=(void*)malloc(bytes);
+   else
+      temp=(void*)realloc(pointer,bytes);
+   if(temp==0)
+      memory_error_and_abort ("xrealloc",bytes);
+#ifdef MEM_DEBUG
+   printf("xrealloc %p %lu\n",temp,(long)bytes);
+#endif
+   return(temp);
+}
