@@ -89,9 +89,14 @@ class Speedometer : public SMTask
    time_t last_second;
    time_t last_bytes;
    time_t start;
+   static char buf[];
 public:
    Speedometer(int p);
    float Get();
+   const char *GetStr();
+   const char *GetStrS();
+   const char *GetETAStr(long s);
+   const char *GetETAStrS(long s);
    bool Valid();
    void Add(int bytes);
    int Do();
@@ -122,6 +127,10 @@ class FileCopy : public SMTask
    Speedometer *rate_for_eta;
    int put_buf;
 
+   time_t start_time;
+   time_t end_time;
+   long bytes_count;
+
 public:
    long GetPos();
    int  GetPercentDone();
@@ -132,6 +141,8 @@ public:
    const char *GetETAStr();
    const char *GetStatus();
    FgData *GetFgData(bool fg);
+   long GetBytesCount() { return bytes_count; }
+   time_t GetTimeSpent();
 
    bool Done() { return state==ALL_DONE; }
    bool Error() { return error_text!=0; }

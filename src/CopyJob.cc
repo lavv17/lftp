@@ -77,3 +77,14 @@ CopyJob::~CopyJob()
    if(c) delete c;
    xfree(name);
 }
+
+CopyJob *CopyJob::NewEcho(const char *str,int len,FDStream *o)
+{
+   if(o==0)
+      o=new FDStream(1,"<stdout>");
+   return new CopyJob(new FileCopy(
+	 new FileCopyPeerString(str,len),
+	 new FileCopyPeerFDStream(o,FileCopyPeer::PUT),
+	 false
+      ),o->name);
+}

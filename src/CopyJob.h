@@ -45,6 +45,12 @@ public:
    int ExitCode();
 
    void ShowRunStatus(StatusLine *s);
+
+   static CopyJob *NewGet(FileAccess *f,const char *src,const char *dst);
+   static CopyJob *NewPut(FileAccess *f,const char *src,const char *dst);
+   static CopyJob *NewEcho(const char *str,int len,FDStream *o);
+   static CopyJob *NewEcho(const char *str,FDStream *o)
+      { return NewEcho(str,strlen(str),o); }
 };
 
 #endif // COPYJOB_H

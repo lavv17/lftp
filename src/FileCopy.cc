@@ -94,6 +94,7 @@ int FileCopy::Do()
 	 get->Seek(put->GetRealPos());
       get->Resume();
    pre_DO_COPY:
+      start_time=now;
       state=DO_COPY;
       m=MOVED;
       /* fallthrough */
@@ -130,6 +131,7 @@ int FileCopy::Do()
 	    }
 	    debug((9,"copy: put rolled back to %ld, seeking get accordingly\n",
 		     put->GetRealPos()));
+	    debug((10,"copy: get position was %ld\n",get->GetRealPos()));
 	    get->Seek(put->GetRealPos());
 	    return MOVED;
 	 }
@@ -146,6 +148,7 @@ int FileCopy::Do()
 		  return m;
 	       debug((9,"copy: skipping %d bytes on get to adjust to put\n",skip));
 	       get->Skip(skip);
+	       bytes_count+=skip;
 	       return MOVED;
 	    }
 	    debug((9,"copy: get rolled back to %ld, seeking put accordingly\n",
@@ -176,6 +179,7 @@ int FileCopy::Do()
 
       put->Put(b,s);
       get->Skip(s);
+      bytes_count+=s;
 
       put_buf=put->Buffered();
       rate_add-=put_buf-s;
@@ -197,6 +201,7 @@ int FileCopy::Do()
       debug((9,"copy: put confirmed store\n"));
       state=GET_DONE_WAIT;
       m=MOVED;
+      end_time=now;
       delete put; put=0;
       /* fallthrough */
    case(GET_DONE_WAIT):
@@ -236,6 +241,9 @@ void FileCopy::Init()
    rate        =new Speedometer((int)rate_period.Query(0));
    rate_for_eta=new Speedometer((int)eta_period.Query(0));
    put_buf=0;
+   bytes_count=0;
+   start_time=0;
+   end_time=0;
 }
 
 FileCopy::FileCopy(FileCopyPeer *s,FileCopyPeer *d,bool c)
@@ -295,108 +303,13 @@ float FileCopy::GetRate()
 }
 const char *FileCopy::GetRateStr()
 {
-   float r=GetRate();
-   if(r<1)
-      return "";
-   static char buf[40];
-   if(r<1024)
-      sprintf(buf,_("%.0fb/s "),r);
-   else if(r<1024*1024)
-      sprintf(buf,_("%.1fK/s "),r/1024.);
-   else
-      sprintf(buf,_("%.2fM/s "),r/1024./1024.);
-   return buf;
+   return rate->GetStrS();
 }
 const char *FileCopy::GetETAStr()
 {
-   static char buf[40];
-   buf[0]=0;
-
-   long eta=GetETA();
-   if(eta<0)
+   if(GetETA()<0)
       return "";
-
-   long eta2=0;
-   long ueta=0;
-   long ueta2=0;
-   char letter=0;
-   char letter2=0;
-
-   // for translator: only first letter matters
-   const char day_c=_("day")[0];
-   const char hour_c=_("hour")[0];
-   const char minute_c=_("minute")[0];
-   const char second_c=_("second")[0];
-
-   const char *tr_eta=_("eta:");
-
-   if((bool)res_eta_terse.Query(0))
-   {
-      if(eta>=DAY)
-      {
-	 ueta=(eta+DAY/2)/DAY;
-	 eta2=eta-ueta*DAY;
-	 letter=day_c;
-	 if(ueta<10)
-	 {
-	    letter2=hour_c;
-	    ueta2=((eta2<0?eta2+DAY:eta2)+HOUR/2)/HOUR;
-	    if(ueta2>0 && eta2<0)
-	       ueta--;
-	 }
-      }
-      else if(eta>=HOUR)
-      {
-	 ueta=(eta+HOUR/2)/HOUR;
-	 eta2=eta-ueta*HOUR;
-	 letter=hour_c;
-	 if(ueta<10)
-	 {
-	    letter2=minute_c;
-	    ueta2=((eta2<0?eta2+HOUR:eta2)+MINUTE/2)/MINUTE;
-	    if(ueta2>0 && eta2<0)
-	       ueta--;
-	 }
-      }
-      else if(eta>=MINUTE)
-      {
-	 ueta=(eta+MINUTE/2)/MINUTE;
-	 letter=minute_c;
-      }
-      else
-      {
-	 ueta=eta;
-	 letter=second_c;
-      }
-      if(letter2 && ueta2>0)
-	 sprintf(buf,"%s%ld%c%ld%c ",tr_eta,ueta,letter,ueta2,letter2);
-      else
-	 sprintf(buf,"%s%ld%c ",tr_eta,ueta,letter);
-   }
-   else // verbose eta (by Ben Winslow)
-   {
-      long unit;
-      strcpy(buf, tr_eta);
-
-      if(eta>=DAY)
-      {
-	 unit=eta/DAY;
-	 sprintf(buf+strlen(buf), "%ld%c", unit, day_c);
-      }
-      if(eta>=HOUR)
-      {
-	 unit=(eta/HOUR)%24;
-	 sprintf(buf+strlen(buf), "%ld%c", unit, hour_c);
-      }
-      if(eta>=MINUTE)
-      {
-	 unit=(eta/MINUTE)%60;
-	 sprintf(buf+strlen(buf), "%ld%c", unit, minute_c);
-      }
-      unit=eta%60;
-      sprintf(buf+strlen(buf), "%ld%c ", unit, second_c);
-   }
-   return buf;
+   return rate_for_eta->GetETAStrS(get->GetSize()-GetPos());
 }
 
 long FileCopy::GetETA()
@@ -420,6 +333,13 @@ const char *FileCopy::GetStatus()
    else
       return "";
    return buf;
+}
+
+time_t FileCopy::GetTimeSpent()
+{
+   if(start_time==0 || end_time==0 || end_time<start_time)
+      return 0;
+   return end_time-start_time;
 }
 
 FgData *FileCopy::GetFgData(bool fg)
@@ -975,6 +895,8 @@ FileCopyPeerString::FileCopyPeerString(const char *s, int len)
    if(len==-1)
       len=strlen(s);
    Put(s,len);
+   eof=true;
+   pos=0;
 }
 FileCopyPeerString::~FileCopyPeerString()
 {
@@ -983,11 +905,13 @@ void FileCopyPeerString::Seek(long new_pos)
 {
    assert(new_pos!=FILE_END);
    UnSkip(pos-new_pos);
+   super::Seek(new_pos);
 }
 
 // Speedometer
 #undef super
 #define super SMTask
+char Speedometer::buf[40];
 Speedometer::Speedometer(int c)
 {
    period=c;
@@ -1025,4 +949,123 @@ void Speedometer::Add(int b)
    last_second=now;
    if(b>0)
       last_bytes=now;
+}
+const char *Speedometer::GetStr()
+{
+   buf[0]=0;
+   float r=Get();
+   if(r<1)
+      return "";
+   if(r<1024)
+      sprintf(buf,_("%.0fb/s "),r);
+   else if(r<1024*1024)
+      sprintf(buf,_("%.1fK/s "),r/1024.);
+   else
+      sprintf(buf,_("%.2fM/s "),r/1024./1024.);
+   return buf;
+}
+const char *Speedometer::GetETAStr(long size)
+{
+   buf[0]=0;
+
+   if(!Valid() || Get()<1)
+      return buf;
+
+   long eta=long(size/Get()+.5);
+
+   long eta2=0;
+   long ueta=0;
+   long ueta2=0;
+   char letter=0;
+   char letter2=0;
+
+   // for translator: only first letter matters
+   const char day_c=_("day")[0];
+   const char hour_c=_("hour")[0];
+   const char minute_c=_("minute")[0];
+   const char second_c=_("second")[0];
+
+   const char *tr_eta=_("eta:");
+
+   if((bool)res_eta_terse.Query(0))
+   {
+      if(eta>=DAY)
+      {
+	 ueta=(eta+DAY/2)/DAY;
+	 eta2=eta-ueta*DAY;
+	 letter=day_c;
+	 if(ueta<10)
+	 {
+	    letter2=hour_c;
+	    ueta2=((eta2<0?eta2+DAY:eta2)+HOUR/2)/HOUR;
+	    if(ueta2>0 && eta2<0)
+	       ueta--;
+	 }
+      }
+      else if(eta>=HOUR)
+      {
+	 ueta=(eta+HOUR/2)/HOUR;
+	 eta2=eta-ueta*HOUR;
+	 letter=hour_c;
+	 if(ueta<10)
+	 {
+	    letter2=minute_c;
+	    ueta2=((eta2<0?eta2+HOUR:eta2)+MINUTE/2)/MINUTE;
+	    if(ueta2>0 && eta2<0)
+	       ueta--;
+	 }
+      }
+      else if(eta>=MINUTE)
+      {
+	 ueta=(eta+MINUTE/2)/MINUTE;
+	 letter=minute_c;
+      }
+      else
+      {
+	 ueta=eta;
+	 letter=second_c;
+      }
+      if(letter2 && ueta2>0)
+	 sprintf(buf,"%s%ld%c%ld%c",tr_eta,ueta,letter,ueta2,letter2);
+      else
+	 sprintf(buf,"%s%ld%c",tr_eta,ueta,letter);
+   }
+   else // verbose eta (by Ben Winslow)
+   {
+      long unit;
+      strcpy(buf, tr_eta);
+
+      if(eta>=DAY)
+      {
+	 unit=eta/DAY;
+	 sprintf(buf+strlen(buf), "%ld%c", unit, day_c);
+      }
+      if(eta>=HOUR)
+      {
+	 unit=(eta/HOUR)%24;
+	 sprintf(buf+strlen(buf), "%ld%c", unit, hour_c);
+      }
+      if(eta>=MINUTE)
+      {
+	 unit=(eta/MINUTE)%60;
+	 sprintf(buf+strlen(buf), "%ld%c", unit, minute_c);
+      }
+      unit=eta%60;
+      sprintf(buf+strlen(buf), "%ld%c", unit, second_c);
+   }
+   return buf;
+}
+const char *Speedometer::GetStrS()
+{
+   GetStr();
+   if(buf[0])
+      strcat(buf," ");
+   return buf;
+}
+const char *Speedometer::GetETAStrS(long s)
+{
+   GetETAStr(s);
+   if(buf[0])
+      strcat(buf," ");
+   return buf;
 }

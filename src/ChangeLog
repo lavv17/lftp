@@ -1,3 +1,13 @@
+1999-12-20  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CopyJob.cc, CopyJob.h: add methods for creating different copiers:
+	  NewGet, NewPut, NewEcho.
+	* commands.cc: use CopyJob::NewEcho.
+	* FileCopy.cc, FileCopy.h: new methods in Speedometer: GetStr, GetStrS,
+	  GetETAStr, GetETAStrS; use them in FileCopy; add bytes_count,
+	  start_time, end_time for accounting; fix FileCopyPeerString.
+	* NetAccess.cc: little fix in ReconnectAllowed.
+
 1999-12-19  Alexander V. Lukyanov  <lav@yars.free.net>
 
         * HttpDir.cc: decode &amp; and similar; don't accept ~ for ListInfo.
