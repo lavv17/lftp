@@ -68,7 +68,7 @@ static void base64_encode (const char *s, char *store, int length);
 #define H_REDIRECTED(x) (((x) == 301) || ((x) == 302))
 #define H_EMPTY(x)	(((x) == 204) || ((x) == 205))
 #define H_CONTINUE(x)	((x) == 100)
-
+#define H_REQUESTED_RANGE_NOT_SATISFIABLE(x) ((x) == 416)
 
 void Http::Init()
 {
@@ -146,6 +146,7 @@ void Http::MoveConnectionHere(Http *o)
    sock=o->sock; o->sock=-1;
    rate_limit=o->rate_limit; o->rate_limit=0;
    last_method=o->last_method; o->last_method=0;
+   event_time=o->event_time;
    state=CONNECTED;
    o->Disconnect();
 }
@@ -226,8 +227,6 @@ void Http::Close()
       // can reuse the connection.
       state=CONNECTED;
       ResetRequestData();
-      idle_start=now;
-      TimeoutS(idle);
       delete rate_limit;
       rate_limit=0;
    }
@@ -610,6 +609,14 @@ void Http::HandleHeaderLine(const char *name,const char *value)
    if(!strcasecmp(name,"Content-range"))
    {
       long long first,last,fsize;
+      if(H_REQUESTED_RANGE_NOT_SATISFIABLE(status_code))
+      {
+	 if(sscanf(value,"%*[^/]/%lld",&fsize)!=1)
+	    return;
+	 if(opt_size && H_20X(status_code))
+	    *opt_size=fsize;
+	 return;
+      }
       if(sscanf(value,"%*s %lld-%lld/%lld",&first,&last,&fsize)!=3)
 	 return;
       real_pos=first;
@@ -1172,6 +1179,13 @@ int Http::Do()
 	 // check if it is redirection to the same server
 	 // or to directory instead of file.
 	 // FIXME.
+      }
+
+      if(H_REQUESTED_RANGE_NOT_SATISFIABLE(status_code))
+      {
+	 // file is smaller than requested
+	 state=DONE;
+	 return MOVED;
       }
 
       if(!H_20X(status_code))
