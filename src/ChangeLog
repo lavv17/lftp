@@ -1,3 +1,9 @@
+2000-12-01  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* resource.cc: hftp:use-authorization.
+	* Http.cc: send port in Host: header; hftp:use-authorization new
+	  setting.
+
 2000-11-27  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileAccess.cc, FileAccess.h, Http.cc, ftpclass.cc, ftpclass.h,

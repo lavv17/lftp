@@ -273,14 +273,8 @@ void Http::Send(const char *format,...)
 
 void Http::SendMethod(const char *method,const char *efile)
 {
-   char *ehost=string_alloca(xstrlen(user)*3+1+strlen(hostname)*3+1+xstrlen(portname)*3+1);
-   ehost[0]=0;
-   if(hftp && user)
-   {
-      url::encode_string(user,ehost,URL_USER_UNSAFE);
-      strcat(ehost,"@");
-   }
-   url::encode_string(hostname,ehost+strlen(ehost),URL_HOST_UNSAFE);
+   char *ehost=string_alloca(strlen(hostname)*3+1+xstrlen(portname)*3+1);
+   url::encode_string(hostname,ehost,URL_HOST_UNSAFE);
    if(portname)
    {
       strcat(ehost,":");
@@ -340,7 +334,7 @@ void Http::SendAuth()
 {
    if(proxy && proxy_user && proxy_pass)
       SendBasicAuth("Proxy-Authorization",proxy_user,proxy_pass);
-   if(user && pass)
+   if(user && pass && !(hftp && !(bool)Query("use-authorization",proxy)))
       SendBasicAuth("Authorization",user,pass);
 }
 
@@ -391,6 +385,11 @@ void Http::SendRequest(const char *connection,const char *f)
 	 {
 	    strcpy(pfile,"ftp://");
 	    url::encode_string(user,pfile+strlen(pfile),URL_USER_UNSAFE);
+	    if(!(bool)Query("use-authorization",proxy))
+	    {
+	       strcat(pfile,":");
+	       url::encode_string(pass,pfile+strlen(pfile),URL_PASS_UNSAFE);
+	    }
 	    strcat(pfile,"@");
 	    url::encode_string(hostname,pfile+strlen(pfile),URL_HOST_UNSAFE);
 	    goto add_path;

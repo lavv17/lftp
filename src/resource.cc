@@ -134,6 +134,7 @@ static ResDecl
    ResDecl20 ("ftp:web-mode",		  "off",   ResMgr::BoolValidate,0),
    ResDecl21 ("hftp:cache",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl22 ("hftp:proxy",		  "",	   HttpProxyValidate,0),
+   ResDecl22a("hftp:use-authorization",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl23 ("hftp:use-head",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl24a("http:accept",		  "*/*",   0,0),
    ResDecl24b("http:accept-language",	  "",	   0,0),
