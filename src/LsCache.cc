@@ -100,6 +100,15 @@ void LsCache::Add(FileAccess *p_loc,const char *a,int m,const char *d,int l)
    return;
 }
 
+void LsCache::Add(FileAccess *p_loc,const char *a,int m,const Buffer *ubuf)
+{
+   const char *cache_buffer;
+   int cache_buffer_size;
+   ubuf->GetSaved(&cache_buffer,&cache_buffer_size);
+   if(cache_buffer && cache_buffer_size>0)
+      LsCache::Add(p_loc,a,m,cache_buffer,cache_buffer_size);
+}
+
 int LsCache::Find(FileAccess *p_loc,const char *a,int m,char **d,int *l)
 {
    if(!use)

@@ -40,35 +40,62 @@ void Buffer::Get(const char **buf,int *size)
    *size=in_buffer;
 }
 
+void Buffer::GetSaved(const char **buf,int *size) const
+{
+   if(!save)
+   {
+      *size=0;
+      *buf=0;
+      return;
+   }
+   *buf=buffer;
+   *size=buffer_ptr+in_buffer;
+}
+
 void Buffer::Allocate(int size)
 {
-   if(in_buffer==0)
+   if(in_buffer==0 && !save)
       buffer_ptr=0;
 
-   if(buffer_allocated<in_buffer+size)
+   int in_buffer_real=in_buffer;
+   if(save)
+      in_buffer_real+=buffer_ptr;
+
+   if(buffer_allocated<in_buffer_real+size)
    {
-      buffer_allocated=(in_buffer+size+(BUFFER_INC-1)) & ~(BUFFER_INC-1);
+      buffer_allocated=(in_buffer_real+size+(BUFFER_INC-1)) & ~(BUFFER_INC-1);
       buffer=(char*)xrealloc(buffer,buffer_allocated);
    }
    // could be round-robin, but this is easier
-   if(buffer_ptr+in_buffer+size>buffer_allocated)
+   if(!save && buffer_ptr+in_buffer+size>buffer_allocated)
    {
       memmove(buffer,buffer+buffer_ptr,in_buffer);
       buffer_ptr=0;
    }
 }
 
+void Buffer::SaveMaxCheck(int size)
+{
+   if(save && buffer_ptr+size>save_max)
+      save=false;
+}
+
 void Buffer::Put(const char *buf,int size)
 {
-   if(in_buffer==0)
+   SaveMaxCheck(size);
+
+   if(in_buffer==0 && !save)
    {
       buffer_ptr=0;
 
-      int res=Put_LL(buf,size);
-      if(res>=0)
+      if(size>=1024)
       {
-	 buf+=res;
-	 size-=res;
+	 int res=Put_LL(buf,size);
+	 if(res>=0)
+	 {
+	    buf+=res;
+	    size-=res;
+	 }
       }
    }
 
@@ -104,6 +131,8 @@ Buffer::Buffer()
    buffer_ptr=0;
    eof=false;
    broken=false;
+   save=false;
+   save_max=0;
 }
 Buffer::~Buffer()
 {
@@ -239,6 +268,7 @@ int FileInputBuffer::Do()
    if(res>0)
    {
       in_buffer+=res;
+      SaveMaxCheck(0);
       event_time=now;
       return MOVED;
    }

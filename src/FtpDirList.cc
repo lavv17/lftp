@@ -47,7 +47,6 @@ int FtpDirList::Do()
       if(use_cache && LsCache::Find(session,pattern,FA::LONG_LIST,
 				    &cache_buffer,&cache_buffer_size))
       {
-	 from_cache=true;
 	 ubuf=new Buffer();
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
@@ -57,42 +56,39 @@ int FtpDirList::Do()
       {
 	 session->Open(pattern,FA::LONG_LIST);
 	 ubuf=new FileInputBuffer(session);
+	 if(LsCache::IsEnabled())
+	    ubuf->Save(LsCache::SizeLimit());
       }
    }
 
    const char *b;
    int len;
    ubuf->Get(&b,&len);
-   if(ubuf->Eof() && (len==upos || (len==0 && !cache_on))) // eof
+   if(b==0) // eof
    {
       buf->PutEOF();
-      if(!from_cache && cache_on)
+      
+      const char *cache_buffer;
+      int cache_buffer_size;
+      ubuf->GetSaved(&cache_buffer,&cache_buffer_size);
+      if(cache_buffer && cache_buffer_size>0)
       {
-	 const char *cache_buffer;
-	 int cache_buffer_size;
-	 ubuf->Get(&cache_buffer,&cache_buffer_size);
-	 if(cache_buffer && cache_buffer_size>0)
-	 {
-	    LsCache::Add(session,pattern,FA::LONG_LIST,
-			   cache_buffer,cache_buffer_size);
-	 }
+	 LsCache::Add(session,pattern,FA::LONG_LIST,
+		      cache_buffer,cache_buffer_size);
       }
+
       return MOVED;
    }
+   
    int m=STALL;
-   if(cache_on) {
-      b+=upos;
-      len-=upos;
-   }
+
    while(len>0)
    {
       const char *cr=(const char *)memchr(b,'\r',len);
       if(!cr)
       {
 	 buf->Put(b,len);
-	 upos+=len;
-	 if (!cache_on)
-	    ubuf->Skip(len);
+	 ubuf->Skip(len);
 	 m=MOVED;
 	 break;
       }
@@ -101,9 +97,7 @@ int FtpDirList::Do()
 	 if(cr-b>0)
 	 {
 	    buf->Put(b,cr-b);
-	    upos+=(cr-b);
-	    if (!cache_on)
-	       ubuf->Skip(cr-b);
+	    ubuf->Skip(cr-b);
 	    m=MOVED;
 	    len-=cr-b;
 	    b=cr;
@@ -115,9 +109,7 @@ int FtpDirList::Do()
 	    buf->Put(b,1);
 	    m=MOVED;
 	 }
-	 upos++;
-	 if (!cache_on)
-	    ubuf->Skip(1);
+	 ubuf->Skip(1);
 	 b++,len--;
       }
    }
@@ -134,9 +126,6 @@ FtpDirList::FtpDirList(ArgV *a,FileAccess *fa)
 {
    session=fa;
    ubuf=0;
-   upos=0;
-   from_cache=false;
-   cache_on=LsCache::IsCacheOn();
    pattern=args->Combine(1);
 }
 

@@ -314,9 +314,21 @@ parse_url_again:
       }
    }
 
+   char *type=strstr(link_target,";type=");
+   if(type && type[6] && !type[7])
+   {
+      type[0]=0;
+      if(!all_links || all_links->FindByName(link_target))
+	 return tag_len;
+      type[0]=';';
+   }
+
    bool show_in_list=true;
    if(icon && link_target[0]=='/')
       show_in_list=false;  // makes apache listings look better.
+
+   int skip_len=tag_len;
+   char *sym_link=0;
 
    if(list && show_in_list)
    {
@@ -324,8 +336,9 @@ parse_url_again:
       char month_name[32];
       char size_str[32];
       const char *more1;
+      char *str;
       int n;
-      char *line_add=(char*)alloca(link_len+128);
+      char *line_add=(char*)alloca(link_len+128+2*1024);
       bool data_available=false;
 
       if(!a_href)
@@ -338,36 +351,93 @@ parse_url_again:
       {
 	 if(eof)
 	    goto add_file;
-	 return less-buf;  // not full line yet
+	 if(end-more>2*1024) // too long line
+	    goto add_file;
+	 return less-buf;  // no full line yet
       }
 
       more1=more;
+   find_a_end:
       for(;;)
       {
 	 more1++;
 	 more1=find_char(more1,eol-more1,'>');
 	 if(!more1)
 	    goto add_file;
-	 if(more1[-1]!='.')   // apache bug?
+	 if(!strncasecmp(more1-3,"</a",3))
 	    break;
       }
 
-      n=sscanf(more1+1,"%2d-%3s-%4d %2d:%2d %30s",
-		     &day,month_name,&year,&hour,&minute,size_str);
+      // little workaround for squid's ftp listings
+      if(more1[1]==' ' && eol-more1>more-less+10
+      && !strncmp(more1+2,less,more-less+1))
+      {
+	 more1=more1+2+(more-less);
+	 goto find_a_end;
+      }
+      if(more1[1]==' ')
+	 more1++;
+      while(more1+1+2<eol && more1[1]=='.' && more1[2]==' ')
+	 more1+=2;
+
+      // the buffer is not null-terminated, so we need this
+      str=string_alloca(eol-more1);
+      memcpy(str,more1+1,eol-more1-1);
+      str[eol-more1-1]=0;
+
+      // usual apache listing: DD-Mon-YYYY hh:mm size
+      n=sscanf(str,"%2d-%3s-%4d %2d:%2d %30s",
+		    &day,month_name,&year,&hour,&minute,size_str);
       if(n!=6)
       {
-	 n=sscanf(more1+1,"%30s %2d-%3s-%4d",size_str,&day,month_name,&year);
-	 if(n!=4)
-	    goto add_file;
 	 hour=0;
 	 minute=0;
+	 // unusual apache listing: size DD-Mon-YYYY
+	 n=sscanf(str,"%30s %2d-%3s-%4d",size_str,&day,month_name,&year);
+	 if(n!=4)
+	 {
+	    strcpy(size_str,"-");
+	    char year_or_time[6];
+	    // squid's ftp listing: Mon DD (YYYY or hh:mm) [size]
+	    n=sscanf(str,"%3s %2d %5s %30s",month_name,&day,year_or_time,size_str);
+	    if(n<3)
+	       goto add_file;
+	    if(!is_ascii_digit(size_str[0]))
+	       strcpy(size_str,"-");
+	    if(year_or_time[2]==':')
+	    {
+	       sscanf(year_or_time,"%2d:%2d",&hour,&minute);
+	       year=-1;
+	    }
+	    else
+	       sscanf(year_or_time,"%d",&year);
+	    // skip rest of line, because there may be href to link target.
+	    skip_len=eol-buf+1;
+
+	    char *ptr=strstr(str," -> <A HREF=\"");
+	    if(ptr)
+	    {
+	       sym_link=ptr+13;
+	       ptr=strchr(sym_link,'"');
+	       if(!ptr)
+		  sym_link=0;
+	       else
+	       {
+		  *ptr=0;
+		  url::decode_string(sym_link);
+	       }
+	    }
+	 }
       }
 
-      // y2000 problem :)
-      if(year<37)
-	 year+=2000;
-      else if(year<100)
-	 year+=1900;
+      if(year!=-1)
+      {
+	 // server's y2000 problem :)
+	 if(year<37)
+	    year+=2000;
+	 else if(year<100)
+	    year+=1900;
+      }
 
       data_available=true;
 
@@ -376,10 +446,23 @@ parse_url_again:
       {
 	 month=parse_month(month_name);
 	 if(month>=0)
+	 {
 	    sprintf(month_name,"%02d",month+1);
-	 sprintf(line_add,"%s  %10s  %04d-%s-%02d %02d:%02d  %s\n",
-	    is_directory?"drwxr-xr-x":"-rw-r--r--",
+	    if(year==-1)
+	    {
+	       time_t curr=time(0);
+	       struct tm &now=*localtime(&curr);
+	       year=now.tm_year+1900;
+	       if(month*64+day>now.tm_mon*64+now.tm_mday)
+		  year--;
+	    }
+	 }
+	 sprintf(line_add,"%s  %10s  %04d-%s-%02d %02d:%02d  %s",
+	    is_directory?"drwxr-xr-x":(sym_link?"lrwxrwxrwx":"-rw-r--r--"),
 	    size_str,year,month_name,day,hour,minute,link_target);
+	 if(sym_link)
+	    sprintf(line_add+strlen(line_add)," -> %s",sym_link);
+	 strcat(line_add,"\n");
       }
       else
       {
@@ -407,11 +490,15 @@ parse_url_again:
 
       FileInfo *fi=new FileInfo;
       fi->SetName(link_target);
-      fi->SetType(is_directory ? fi->DIRECTORY : fi->NORMAL);
+      if(sym_link)
+	 fi->SetSymlink(sym_link);
+      else
+	 fi->SetType(is_directory ? fi->DIRECTORY : fi->NORMAL);
+
       set->Add(fi);
    }
 
-   return tag_len;
+   return skip_len;
 }
 
 
@@ -451,7 +538,6 @@ int HttpDirList::Do()
       if(use_cache && LsCache::Find(session,curr,mode,
 				    &cache_buffer,&cache_buffer_size))
       {
-	 from_cache=true;
 	 ubuf=new Buffer();
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
@@ -462,6 +548,8 @@ int HttpDirList::Do()
 	 session->Open(curr,mode);
 	 session->UseCache(use_cache);
 	 ubuf=new FileInputBuffer(session);
+	 if(LsCache::IsEnabled())
+	    ubuf->Save(LsCache::SizeLimit());
       }
       if(curr_url)
 	 delete curr_url;
@@ -478,32 +566,21 @@ int HttpDirList::Do()
    const char *b;
    int len;
    ubuf->Get(&b,&len);
-   if(ubuf->Eof() && len==upos) // eof
+   if(b==0) // eof
    {
-      if(!from_cache)
-      {
-	 const char *cache_buffer;
-	 int cache_buffer_size;
-	 ubuf->Get(&cache_buffer,&cache_buffer_size);
-	 if(cache_buffer && cache_buffer_size>0)
-	 {
-	    LsCache::Add(session,curr,mode,
-			   cache_buffer,cache_buffer_size);
-	 }
-      }
+      LsCache::Add(session,curr,mode,ubuf);
+
       delete ubuf;
       ubuf=0;
-      upos=0;
       return MOVED;
    }
+
    int m=STALL;
-   b+=upos;
-   len-=upos;
 
    int n=parse_html(b,len,ubuf->Eof(),buf,0,&all_links,curr_url,&base_href);
    if(n>0)
    {
-      upos+=n;
+      ubuf->Skip(n);
       m=MOVED;
    }
 
@@ -520,8 +597,6 @@ HttpDirList::HttpDirList(ArgV *a,FileAccess *fa)
 {
    session=fa;
    ubuf=0;
-   upos=0;
-   from_cache=false;
    mode=FA::LONG_LIST;
    args->rewind();
    if(args->count()<2)
@@ -583,7 +658,6 @@ HttpGlob::HttpGlob(FileAccess *s,const char *n_pattern)
    dir_index=0;
    updir_glob=0;
    ubuf=0;
-   from_cache=false;
 
    session=s;
    dir=xstrdup(pattern);
@@ -659,7 +733,6 @@ int HttpGlob::Do()
       if(use_cache && LsCache::Find(session,curr_dir,FA::LONG_LIST,
 				    &cache_buffer,&cache_buffer_size))
       {
-	 from_cache=true;
 	 ubuf=new Buffer();
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
@@ -670,6 +743,8 @@ int HttpGlob::Do()
 	 session->Open(curr_dir,FA::LONG_LIST);
 	 session->UseCache(use_cache);
 	 ubuf=new FileInputBuffer(session);
+	 if(LsCache::IsEnabled())
+	    ubuf->Save(LsCache::SizeLimit());
       }
       m=MOVED;
    }
@@ -703,17 +778,8 @@ int HttpGlob::Do()
    }
    xfree(base_href);
 
-   if(!from_cache)
-   {
-      const char *cache_buffer;
-      int cache_buffer_size;
-      ubuf->Get(&cache_buffer,&cache_buffer_size);
-      if(cache_buffer && cache_buffer_size>0)
-      {
-	 LsCache::Add(session,curr_dir,FA::LONG_LIST,
-			cache_buffer,cache_buffer_size);
-      }
-   }
+   LsCache::Add(session,curr_dir,FA::LONG_LIST,ubuf);
+
    delete ubuf;
    ubuf=0;
 
@@ -768,7 +834,6 @@ int HttpListInfo::Do()
       if(use_cache && LsCache::Find(session,"",FA::LONG_LIST,
 				    &cache_buffer,&cache_buffer_size))
       {
-	 from_cache=true;
 	 ubuf=new Buffer();
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
@@ -779,6 +844,8 @@ int HttpListInfo::Do()
 	 session->Open("",FA::LONG_LIST);
 	 session->UseCache(use_cache);
 	 ubuf=new FileInputBuffer(session);
+	 if(LsCache::IsEnabled())
+	    ubuf->Save(LsCache::SizeLimit());
       }
       m=MOVED;
    }
@@ -813,17 +880,8 @@ int HttpListInfo::Do()
       }
       xfree(base_href);
 
-      if(!from_cache)
-      {
-	 const char *cache_buffer;
-	 int cache_buffer_size;
-	 ubuf->Get(&cache_buffer,&cache_buffer_size);
-	 if(cache_buffer && cache_buffer_size>0)
-	 {
-	    LsCache::Add(session,"",FA::LONG_LIST,
-			   cache_buffer,cache_buffer_size);
-	 }
-      }
+      LsCache::Add(session,"",FA::LONG_LIST,ubuf);
+
       delete ubuf;
       ubuf=0;
       m=MOVED;
@@ -848,9 +906,23 @@ int HttpListInfo::Do()
 
 	 if(file->defined & file->TYPE)
 	 {
-	    if(file->filetype==file->DIRECTORY)
+	    if(file->filetype==file->SYMLINK && follow_symlinks)
 	    {
-	       continue; // FIXME: directories need slash.
+	       file->filetype=file->NORMAL;
+	       file->defined &= ~(file->SIZE|file->SYMLINK_DEF|file->MODE|file->DATE_UNPREC);
+	       cur->get_size=true;
+	       cur->get_time=true;
+	    }
+
+	    if(file->filetype==file->SYMLINK)
+	    {
+	       // don't need these for symlinks
+	       cur->get_size=false;
+	       cur->get_time=false;
+	    }
+	    else if(file->filetype==file->DIRECTORY)
+	    {
+	       continue; // FIXME: directories need slash in GetInfoArray.
 #if 0
 	       // don't need size for directories
 	       cur->get_size=false;
