@@ -190,9 +190,8 @@ enum completion_type
    STRING_ARRAY, NO_COMPLETION
 };
 
-static completion_type cmd_completion_type(int start)
+static completion_type cmd_completion_type(const char *cmd,int start)
 {
-   const char *cmd=rl_line_buffer;
    const char *w=find_word(cmd);
 
    if(w-cmd == start) // first word is command
@@ -282,6 +281,7 @@ static completion_type cmd_completion_type(int start)
    bool was_o=false;
    bool was_N=false;
    bool second=false;
+   int second_start=-1;
    for(int i=start; i>4; i--)
    {
       if(!isspace(rl_line_buffer[i-1]))
@@ -299,10 +299,11 @@ static completion_type cmd_completion_type(int start)
    }
    w=find_word(cmd);
    while(*w && !isspace(*w))
-      w++;
+      w++;  // FIXME: handle quotations.
    if(*w)
    {
       w=find_word(w);
+      second_start=w-cmd;
       if(w-cmd==start)	// we complete second word
 	 second=true;
    }
@@ -336,12 +337,18 @@ static completion_type cmd_completion_type(int start)
 	 return REMOTE_FILE;
    }
    if(!strcmp(buf,"glob")
-   || !strcmp(buf,"command"))
+   || !strcmp(buf,"command")
+   || !strcmp(buf,"queue"))
    {
       if(second)
 	 return COMMAND;
       else
-	 return REMOTE_FILE;  // FIXME: it would be better to check argv[1].
+      {
+	 // FIXME: infinite alias expansion is possible.
+	 if(second_start>0 && start>second_start && (int)strlen(cmd)>second_start)
+	    return cmd_completion_type(cmd+second_start,start-second_start);
+	 return REMOTE_FILE;
+      }
    }
    if(!strcmp(buf,"cache"))
    {
@@ -406,7 +413,7 @@ static char **lftp_completion (char *text,int start,int end)
    shell_cmd=false;
    quote_glob=false;
 
-   completion_type type=cmd_completion_type(start);
+   completion_type type=cmd_completion_type(rl_line_buffer,start);
 
    len=end-start;
 
