@@ -47,8 +47,8 @@
 lftp \- Sophisticated ftp program
 .SH SYNTAX
 .B lftp
-[\fB-d\fR] [\fB-e \fIcmd\fR] [\fB-p \fIport\fR]
-[\fB-u \fIuser\fR[\fB,\fIpass\fR]] [\fIsite\fR]
+[\fB\-d\fR] [\fB\-e \fIcmd\fR] [\fB\-p \fIport\fR]
+[\fB\-u \fIuser\fR[\fB,\fIpass\fR]] [\fIsite\fR]
 .br
 .B lftp \-f
 .I script_file
@@ -644,9 +644,10 @@ sets passive ftp mode. This can be useful if you are behind a firewall
 or a dumb masquerading router.
 .TP
 .BR ftp:proxy \ (string)
-specifies ftp proxy to use. The format currently is `proxy_host:port'.
+specifies ftp proxy to use.
 To disable proxy set this to empty string. Note that it is an ftp proxy which
-uses ftp protocol, not ftp over http.
+uses ftp protocol, not ftp over http. Default value is taken from environment
+variable \fBftp_proxy\fP if it starts with ``ftp://''.
 .TP
 .BR ftp:rest-list \ (bool)
 allow usage of REST command before LIST command. This might be useful for
@@ -680,8 +681,22 @@ This can possibly prevent data connection spoofing by users of remote
 host. Unfortunately, too many windows and even unix ftp servers forget
 to set proper port on data connection, thus this check is off by default.
 .TP
-.BR http:proxy
+.BR hftp:cache \ (bool)
+allow server/proxy side caching for ftp-over-http protocol.
+.TP
+.BR hftp:proxy \ (string)
+specifies http proxy for ftp-over-http protocol (hftp). The protocol hftp
+cannot work without http proxy, obviously.
+Default value is taken from environment
+variable \fBftp_proxy\fP if it starts with ``http://'', otherwise from
+environment variable \fBhttp_proxy\fP.
+.TP
+.BR http:cache \ (bool)
+allow server/proxy side caching.
+.TP
+.BR http:proxy \ (string)
 specifies http proxy. It is used when lftp works over http protocol.
+Default value is taken from environment variable \fBhttp_proxy\fP.
 .TP
 .BR net:idle \ (seconds)
 disconnect from server after that number of idle seconds.
@@ -799,6 +814,11 @@ Used by the \fB!\fR command to determine the shell to run.
 .IP "\fBPAGER\fP"
 This should be the name of the pager to use.  It's used by the
 \fBmore\fR and \fBzmore\fR commands.
+.IP "\fBhttp_proxy\fP"
+Used to set initial http:proxy and hftp:proxy variables.
+.IP "\fBftp_proxy\fP"
+Used to set initial ftp:proxy or hftp:proxy variables, depending
+on URL protocol used in this environment variable.
 
 .SH FILES
 .TP
