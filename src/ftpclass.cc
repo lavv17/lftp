@@ -280,6 +280,11 @@ void Ftp::NoFileCheck(int act)
       SetError(NO_FILE,all_lines);
       return;
    }
+   if(copy_mode!=COPY_NONE)
+   {
+      copy_failed=true;
+      return;
+   }
    DataClose();
    state=EOF_STATE;
    eof=false;
@@ -366,7 +371,7 @@ void Ftp::TransferCheck(int act)
 	 real_pos=pos=p;
       return;
    }
-   if(copy_mode!=COPY_NONE && act==425)
+   if(copy_mode!=COPY_NONE && is4XX(act))
    {
       copy_passive=!copy_passive;
       copy_failed=true;
@@ -1859,7 +1864,7 @@ int   Ftp::Do()
 	 ipv4_pasv:
 #endif
 #ifdef USE_SSL
-	    if(copy_mode!=COPY_NONE && conn->prot=='P' && !conn->sscn_on)
+	    if(copy_mode!=COPY_NONE && conn->prot=='P' && !conn->sscn_on && copy_ssl_connect)
 	       conn->SendCmd("CPSV"); // same as PASV, but server does SSL_connect
 	    else
 #endif // note the following statement
