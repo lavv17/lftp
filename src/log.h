@@ -32,6 +32,10 @@ class Log : public SMTask
    int output;
    bool need_close_output;
    bool tty;
+   bool show_pid;
+   bool show_time;
+   bool show_context;
+   bool at_line_start;
    typedef void (*tty_cb_t)();
    tty_cb_t tty_cb;
 
@@ -76,6 +80,10 @@ public:
    Log() { Init(); }
 
    int Do();
+
+   void ShowPID(bool yes=true) { show_pid=yes; }
+   void ShowTime(bool yes=true) { show_time=yes; }
+   void ShowContext(bool yes=true) { show_context=yes; }
 };
 
 #endif // LOG_H

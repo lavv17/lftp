@@ -284,6 +284,9 @@ static void move_to_background()
 	    if(fd!=1 && fd!=2)
 	       close(fd);
 	 }
+	 Log::global->ShowPID();
+	 Log::global->ShowTime();
+	 Log::global->ShowContext();
       }
       close(0);	  // close stdin.
       open("/dev/null",O_RDONLY); // reopen it, just in case.

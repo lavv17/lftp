@@ -955,6 +955,7 @@ Ftp::Ftp(const Ftp *f) : super(f)
 
 Ftp::~Ftp()
 {
+   Enter();
    Close();
    Disconnect();
    if(control_sock!=-1)
@@ -978,6 +979,7 @@ Ftp::~Ftp()
 #ifdef USE_SSL
    xfree(auth_args_supported);
 #endif
+   Leave();
 }
 
 bool Ftp::AbsolutePath(const char *s)
@@ -2124,11 +2126,20 @@ int   Ftp::Do()
 	    data_iobuf->Suspend();
 	    m=MOVED;
 	 }
-	 else
+	 else if(data_iobuf->IsSuspended())
 	 {
 	    data_iobuf->Resume();
-	    if(data_iobuf->Size()>0 || (data_iobuf->Size()==0 && data_iobuf->Eof()))
+	    if(data_iobuf->Size()>0)
 	       m=MOVED;
+	 }
+	 if(data_iobuf->Size()==0 && data_iobuf->Eof())
+	 {
+	    DataClose();
+	    if(RespQueueIsEmpty())
+	    {
+	       eof=true;
+	       m=MOVED;
+	    }
 	 }
       }
 
@@ -3115,14 +3126,11 @@ int   Ftp::Read(void *buf,int size)
       return(size);
    }
 
-   if(state!=DATA_OPEN_STATE)
+   if(state!=DATA_OPEN_STATE || data_sock==-1)
       return DO_AGAIN;
 
-   if(data_sock==-1)
-      goto we_have_eof;
-
    if(RespQueueSize()>1 && real_pos==-1)
-      return(DO_AGAIN);
+      return DO_AGAIN;
 
    {
       assert(rate_limit!=0);
@@ -3138,18 +3146,6 @@ int   Ftp::Read(void *buf,int size)
    const char *b;
    int s;
    data_iobuf->Get(&b,&s);
-   if(!b)
-   {
-   we_have_eof:
-      DataClose();
-      if(RespQueueIsEmpty())
-      {
-	 eof=true;
-	 return(0);
-      }
-      else
-	 return DO_AGAIN;
-   }
    if(s==0)
       return DO_AGAIN;
    if(size>s)

@@ -145,40 +145,9 @@ void  FileAccess::DebugPrint(const char *prefix,const char *str,int level)
 {
    if(!Log::global)
       return;
-
-   char *msg=(char*)alloca(xstrlen(hostname)+strlen(prefix)+strlen(str)+25);
-
-   do
-   {
-      if(Log::global->IsTTY())
-	 strcpy(msg,prefix);
-      else
-      {
-	 sprintf(msg,"[%d] ",(int)getpid());
-	 if(hostname)
-	 {
-	    strcat(msg,hostname);
-	    strcat(msg," ");
-	 }
-	 strcat(msg,prefix);
-      }
-
-      int msglen=strlen(msg);
-      while(*str && *str!='\n')
-      {
-	 if(!(*str=='\r' && (str[1]=='\n' || str[1]=='\0')))
-	    msg[msglen++]=*str;
-	 str++;
-      }
-      msg[msglen++]='\n';
-      msg[msglen]=0;
-
-      Log::global->Write(level,msg);
-
-      if(!*str++)
-         break;
-   }
-   while(*str);
+   char *buf=string_alloca(strlen(prefix)+strlen(str)+2);
+   sprintf(buf,"%s%s\n",prefix,str);
+   Log::global->Write(level,buf);
 }
 
 int   FileAccess::Poll(int fd,int ev)
@@ -936,7 +905,11 @@ DirList::~DirList()
 void FileAccess::CleanupAll()
 {
    for(FileAccess *o=chain; o!=0; o=o->next)
+   {
+      Enter(o);
       o->CleanupThis();
+      Leave(o);
+   }
 }
 
 FileAccess *FileAccess::NextSameSite(FA *scan)

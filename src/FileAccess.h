@@ -345,6 +345,8 @@ public:
    time_t GetTryTime() { return try_time; }
    void SetTryTime(time_t t);
 
+   const char *GetLogContext() { return hostname; }
+
    static void ClassInit();
 };
 

@@ -29,13 +29,14 @@ class SMTask
    virtual int Do() = 0;
 
    SMTask *next;
+   SMTask *prev_current;   // stack of running tasks
 
    static SMTask *chain;
    static SMTask *sched_scan;
    static PollVec sched_total;
 
 protected:
-   bool	 running;
+   int	 running;
    bool	 suspended;
    bool	 deleting;
 
@@ -68,6 +69,8 @@ public:
    virtual void Reconfig(const char *name=0) {};
    static void ReconfigAll(const char *name);
 
+   virtual const char *GetLogContext() { return 0; }
+
    SMTask();
 
    static void Delete(SMTask *);
@@ -76,6 +79,11 @@ public:
    static void RollAll(int max_time);
 
    static SMTask *current;
+
+   static void Enter(SMTask *);
+   static void Leave(SMTask *);
+   void Enter() { Enter(this); }
+   void Leave() { Leave(this); }
 
    static int TaskCount();
    static bool NonFatalError(int err);

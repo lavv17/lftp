@@ -39,6 +39,10 @@ void Log::Init()
    enabled=false;
    level=0;
    tty=false;
+   show_pid=true;
+   show_time=true;
+   show_context=true;
+   at_line_start=true;
 }
 
 void Log::Write(int l,const char *s)
@@ -46,6 +50,8 @@ void Log::Write(int l,const char *s)
    if(!enabled || l>level)
       return;
    if(output==-1)
+      return;
+   if(!*s)
       return;
    if(tty)
    {
@@ -55,9 +61,37 @@ void Log::Write(int l,const char *s)
       else if(pg!=getpgrp())
 	 return;
    }
-   if(tty_cb && tty)
-      tty_cb();
-   write(output,s,strlen(s));
+   if(at_line_start)
+   {
+      if(tty_cb && tty)
+	 tty_cb();
+      if(show_pid)
+      {
+	 char *pid=string_alloca(15);
+	 pid[14]=0;
+	 snprintf(pid,14,"[%ld] ",(long)getpid());
+	 write(output,pid,strlen(pid));
+      }
+      if(show_time)
+      {
+	 time_t t=now;
+	 char *ts=string_alloca(21);
+	 strftime(ts,21,"%Y-%m-%d %H:%M:%S ",localtime(&t));
+	 write(output,ts,21);
+      }
+      if(show_context)
+      {
+	 const char *ctx=current->GetLogContext();
+	 if(ctx)
+	 {
+	    write(output,ctx,strlen(ctx));
+	    write(output," ",1);
+	 }
+      }
+   }
+   int len=strlen(s);
+   write(output,s,len);
+   at_line_start=(s[len-1]=='\n');
 }
 
 int Log::Do()

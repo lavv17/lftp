@@ -101,6 +101,7 @@ public:
 	    const char *pr=0);
 
    void Reconfig(const char *name=0);
+   const char *GetLogContext() { return hostname; }
 };
 
 class ResolverCache

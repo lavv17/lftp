@@ -1820,9 +1820,12 @@ CMD(debug)
    char	 *debug_file_name=0;
    int 	 fd=-1;
    bool  enabled=true;
+   bool	 show_pid=false;
+   bool	 show_time=false;
+   bool	 show_context=false;
 
    int opt;
-   while((opt=args->getopt("o:"))!=EOF)
+   while((opt=args->getopt("o:ptc"))!=EOF)
    {
       switch(opt)
       {
@@ -1838,6 +1841,15 @@ CMD(debug)
 	 }
 	 fcntl(fd,F_SETFL,O_NONBLOCK);
 	 fcntl(fd,F_SETFD,FD_CLOEXEC);
+	 break;
+      case 'p':
+	 show_pid=true;
+	 break;
+      case 't':
+	 show_time=true;
+	 break;
+      case 'c':
+	 show_context=true;
 	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),op);
@@ -1874,6 +1886,9 @@ CMD(debug)
    else
       Log::global->Disable();
 
+   Log::global->ShowPID(show_pid);
+   Log::global->ShowTime(show_time);
+   Log::global->ShowContext(show_context);
 
 #if 0
    if(interactive)
@@ -2884,8 +2899,8 @@ CMD(get1)
    static struct option get1_options[]=
    {
       {"ascii",no_argument,0,'a'},
-      {"source-region",required_argument,0,'r'},
-      {"target-region",required_argument,0,'R'},
+      {"source-region",required_argument,0,256+'r'},
+      {"target-region",required_argument,0,256+'R'},
       {"continue",no_argument,0,'c'},
       {"output",required_argument,0,'o'},
       {"remove-source-later",no_argument,0,'E'},
@@ -2897,6 +2912,9 @@ CMD(get1)
    const char *dst=0;
    bool cont=false;
    bool ascii=false;
+   long long source_region_begin=0,source_region_end=FILE_END;
+   long long target_region_begin=0,target_region_end=FILE_END;
+   int n,p;
 
    args->rewind();
    while((opt=args->getopt_long("arco:",get1_options,0))!=EOF)
@@ -2912,8 +2930,23 @@ CMD(get1)
       case 'o':
 	 dst=optarg;
 	 break;
-      case 'r':
-	 // FIXME
+      case 256+'r':
+	 source_region_end=FILE_END;
+	 n=sscanf(optarg,"%lld%n-%lld",&source_region_begin,&p,&source_region_end);
+	 if(n<1 || (n==1 && (optarg[p] && (optarg[p]!='-' || optarg[p+1]))))
+	 {
+	    eprintf("%s\n",_("Invalid range format. Format is min-max, e.g. 10-20."));
+	    goto usage;
+	 }
+	 break;
+      case 256+'R':
+	 target_region_end=FILE_END;
+	 n=sscanf(optarg,"%lld%n-%lld",&target_region_begin,&p,&target_region_end);
+	 if(n<1 || (n==1 && (optarg[p] && (optarg[p]!='-' || optarg[p+1]))))
+	 {
+	    eprintf("%s\n",_("Invalid range format. Format is min-max, e.g. 10-20."));
+	    goto usage;
+	 }
 	 break;
       case '?':
       usage:
@@ -2976,11 +3009,15 @@ CMD(get1)
    FileCopyPeer *dst_peer=0;
 
    src_peer=FileCopyPeerFA::New(session->Clone(),src,FA::RETRIEVE,true);
+   if(!cont && (source_region_begin>0 || source_region_end!=FILE_END))
+      src_peer->SetRange(source_region_begin,source_region_end);
 
    if(dst_url.proto==0)
-      dst_peer=FileCopyPeerFDStream::NewPut(dst,cont);
+      dst_peer=FileCopyPeerFDStream::NewPut(dst,cont||target_region_begin>0);
    else
       dst_peer=new FileCopyPeerFA(&dst_url,FA::STORE);
+   if(!cont && (target_region_begin>0 || target_region_end!=FILE_END))
+      dst_peer->SetRange(target_region_begin,target_region_end);
 
    FileCopy *c=FileCopy::New(src_peer,dst_peer,cont);
 

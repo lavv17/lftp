@@ -55,8 +55,9 @@ SMTask::SMTask()
       chain=this;
    }
    suspended=false;
-   running=false;
+   running=0;
    deleting=false;
+   prev_current=0;
    task_count++;
 #ifdef TASK_DEBUG
    printf("new SMTask %p (count=%d)\n",this,task_count);
@@ -73,8 +74,7 @@ SMTask::~SMTask()
 #endif
    task_count--;
    assert(!running);
-   if(this==sched_scan)
-      sched_scan=0;
+   assert(this!=sched_scan);
    // remove from the chain
    SMTask **scan=&chain;
    while(*scan)
@@ -99,15 +99,34 @@ void SMTask::Delete(SMTask *task)
       delete task;
 }
 
+void SMTask::Enter(SMTask *task)
+{
+   task->running++;
+   task->prev_current=current;
+   current=task;
+}
+void SMTask::Leave(SMTask *task)
+{
+   if(current!=task)
+   {
+      fprintf(stderr,"BUG: Leave() called with non-current task\n");
+      return;
+   }
+   assert(task->running);
+   current=task->prev_current;
+   task->prev_current=0;
+   task->running--;
+}
+
 int SMTask::Roll(SMTask *task)
 {
    int m=STALL;
    if(task->running)
       return m;
-   task->running=true;
+   Enter(task);
    while(!task->deleting && task->Do()==MOVED)
       m=MOVED;
-   task->running=false;
+   Leave(task);
    return m;
 }
 
@@ -121,7 +140,6 @@ void SMTask::RollAll(int max_time)
 
 void SMTask::Schedule()
 {
-   SMTask *old_current=current;
    assert(!current || current->running);
 
    for(sched_scan=chain; sched_scan; sched_scan=sched_scan->next)
@@ -146,36 +164,30 @@ void SMTask::Schedule()
       }
       if(repeat)
 	 sched_scan->block.SetTimeout(0); // little optimization
+
       int res=STALL;
-      current=sched_scan;
-      if(!current->deleting)
-      {
-	 current->running=true;
+
+      Enter(sched_scan);		  // mark it current and running.
+      SMTask *sched_current=current;	  // remember what we ran.
+      if(!current->deleting)		  // let it run unless it is dying.
 	 res=current->Do();
-	 current->running=false;
-      }
-#if 0
-      if(res==MOVED)
-	 printf("MOVED: %p\n",current);
-      if(!repeat && current->block.GetTimeout()==0)
-	 printf("timeout==0: %p\n",current);
-#endif
-      if(!sched_scan)
+      if(!sched_scan)			  // nested Schedule can clear sched_scan.
       	 sched_scan=current;
-      sched_scan=sched_scan->next;
-      if(current->deleting)
+      sched_scan=sched_scan->next;	  // move to a next task.
+      Leave(current);			  // unmark it running and change current.
+
+      if(sched_current->deleting)
       {
-	 delete current;
+	 delete sched_current;		  // delete it if it's dying.
 	 res=MOVED;
       }
       if(res==MOVED)
 	 repeat=true;
-      current=0;
    }
    if(repeat)
    {
       sched_total.SetTimeout(0);
-      goto out;
+      return;
    }
 
    // now collect all wake up conditions; excluding suspended and
@@ -188,9 +200,6 @@ void SMTask::Schedule()
       && !sched_scan->running)
 	 sched_total.Merge(sched_scan->block);
    }
-out:
-   current=old_current;
-   return;
 }
 
 void SMTask::ReconfigAll(const char *name)
@@ -218,13 +227,11 @@ int SMTaskInit::Do()
 }
 SMTaskInit::SMTaskInit()
 {
-   running=true;
-   current=this;
+   Enter();
 }
 SMTaskInit::~SMTaskInit()
 {
-   running=false;
-   current=0;
+   Leave();
 }
 
 int SMTask::TaskCount()

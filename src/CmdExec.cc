@@ -272,8 +272,7 @@ void CmdExec::SuspendJob(Job *j)
 
 void CmdExec::ExecParsed(ArgV *a,FDStream *o,bool b)
 {
-   bool old_running=running;
-   running=true; // disable reentering
+   Enter();
 
    if(args)
       delete args;
@@ -287,7 +286,7 @@ void CmdExec::ExecParsed(ArgV *a,FDStream *o,bool b)
    condition=COND_ANY;
    exec_parsed_command();
 
-   running=old_running;
+   Leave();
 }
 
 bool CmdExec::Idle()

@@ -1,6 +1,19 @@
 2004-02-04  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.cc: (SkipHome) fix it to skip / too; handle ~.
+	* SMTask.h, SMTask.cc: (Enter, Leave) new methods; now a task can
+	  be run nested many times (int running); Schedule optimizations.
+	* CmdExec.cc: use Enter/Leave.
+	* log.cc, log.h: add support for pid, time and context log prefixes.
+	* lftp.cc: enable pid, time and context on exit to bg.
+	* ftpclass.cc: move DataClose from Read to Do; use Enter/Leave to
+	  show proper context.
+	* FileAccess.cc: modify DebugPrint to use prefixes of Log class;
+	  use Enter/Leave in CleanupAll.
+	* FileAccess.h: (GetLogContext) new method, use hostname as context.
+	* commands.cc: add -t -c -p options for debug command; add range
+	  options for get1.
+	* Resolver.h: add GetLogContext method.
 
 2004-01-28  Alexander V. Lukyanov <lav@yars.free.net>
 
