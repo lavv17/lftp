@@ -291,8 +291,6 @@ public:
 
    const char *CurrentStatus();
 
-   int	 ChdirStatus();
-
    int	 Done();
 
    enum flag_mask

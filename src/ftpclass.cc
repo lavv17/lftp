@@ -2157,26 +2157,6 @@ int   Ftp::Block()
    }
 }
 
-int   Ftp::ChdirStatus()
-{
-   int res=StateToError();
-   if(res!=OK)
-      return(res);
-
-   if(mode!=CHANGE_DIR)
-      return(OK);
-
-   res=Read(NULL,0);
-   if(res==DO_AGAIN)
-      return(IN_PROGRESS);
-
-   if(res==0)
-      res=OK;
-
-   Close();
-   return(res);
-}
-
 void  Ftp::AddResp(int exp,int fail, int (Ftp::*ck)(int,int),bool log)
 {
    int newtail=RQ_tail+1;

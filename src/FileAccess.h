@@ -149,7 +149,7 @@ public:
 
    virtual void	Rename(const char *file,const char *to);
    virtual void Mkdir(const char *file,bool allpath=false);
-   virtual void Chdir(const char *dir);
+   virtual void Chdir(const char *dir,bool verify=true);
    void Remove(const char *file)    { Open(file,REMOVE); }
    void RemoveDir(const char *dir)  { Open(dir,REMOVE_DIR); }
 

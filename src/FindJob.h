@@ -52,6 +52,9 @@ class FindJob : public SessionJob
    void Down(const char *d);
    void Push(FileSet *f);
 
+   bool depth_first;
+   bool depth_done;
+
    enum state_t { INIT, CD, INFO, LOOP, WAIT, DONE };
    state_t state;
 

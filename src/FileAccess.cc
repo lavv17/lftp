@@ -382,7 +382,7 @@ int last_element_is_doubledot(char *path,char *end)
         || (end>path+2 && !strncmp(end-3,"/..",3)));
 }
 
-void FileAccess::Chdir(const char *path)
+void FileAccess::Chdir(const char *path,bool verify)
 {
    char	 *newcwd=(char*)alloca(strlen(cwd)+strlen(path)+2);
    int	 prefix_size=0;
@@ -490,7 +490,13 @@ void FileAccess::Chdir(const char *path)
       if((*out++=*in++)=='\0')
 	 break;
    }
-   Open(newcwd,CHANGE_DIR);
+   if(verify)
+      Open(newcwd,CHANGE_DIR);
+   else
+   {
+      xfree(cwd);
+      cwd=xstrdup(newcwd);
+   }
 }
 
 

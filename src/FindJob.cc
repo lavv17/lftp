@@ -30,6 +30,7 @@ int FindJob::Do()
    int m=STALL;
    int res;
    prf_res pres;
+
    switch(state)
    {
    case INIT:
@@ -39,7 +40,7 @@ int FindJob::Do()
 	 const char *cd_dir=dir;
 	 if(stack_ptr>=0)
 	    cd_dir=dir_file(dir_file(start_dir,top.path),dir);
-	 session->Chdir(cd_dir);
+	 session->Chdir(cd_dir,false);
       }
       state=CD;
       m=MOVED;
@@ -95,6 +96,20 @@ int FindJob::Do()
 	 Up();
 	 return MOVED;
       }
+      // at this point either is true:
+      // 1. we just process another file (!depth_done)
+      // 2. we just returned from a subdir (depth_done)
+      if(depth_first && !depth_done)
+      {
+	 FileInfo *f=top.fset->curr();
+	 if((f->defined&f->TYPE) && f->filetype==f->DIRECTORY)
+	 {
+	    Down(f->name);
+	    return MOVED;
+	 }
+      }
+      depth_done=false;
+
       pres=ProcessFile(top.path,top.fset->curr());
       switch(pres)
       {
@@ -111,8 +126,19 @@ int FindJob::Do()
       case(PRF_OK):
 	 break;
       }
+   post_WAIT:
+      if(!depth_first)
+      {
+	 FileInfo *f=top.fset->curr();
+	 if((f->defined&f->TYPE) && f->filetype==f->DIRECTORY)
+	 {
+	    top.fset->next();
+	    Down(f->name);
+	    return MOVED;
+	 }
+      }
       top.fset->next();
-      return MOVED; // state might have changed inside ProcessFile
+      return MOVED;
 
    case WAIT:
       if(!waiting->Done())
@@ -120,7 +146,8 @@ int FindJob::Do()
       delete waiting;
       waiting=0;
       state=LOOP;
-      return MOVED;
+      m=MOVED;
+      goto post_WAIT;
 
    case DONE:
       return m;
@@ -140,6 +167,7 @@ void FindJob::Up()
    delete stack[stack_ptr--];
    if(stack_ptr==-1)
       goto done;
+   depth_done=true;
    state=LOOP;
 }
 
@@ -183,11 +211,6 @@ void FindJob::Down(const char *p)
 
 FindJob::prf_res FindJob::ProcessFile(const char *d,const FileInfo *f)
 {
-   if(f->defined&f->TYPE)
-   {
-      if(f->filetype==f->DIRECTORY)
-	 Down(f->name);
-   }
    return PRF_OK;
 }
 
@@ -204,6 +227,9 @@ void FindJob::Init()
    stack=0;
 
    show_sl=true;
+
+   depth_first=false; // useful for rm -r
+   depth_done=false;
 
    state=INIT;
 }
