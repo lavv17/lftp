@@ -84,6 +84,7 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 #endif
 
 #define super FileAccess
+#define peer_sa (peer[peer_curr])
 
 static const char *ProxyValidate(char **p)
 {
@@ -165,41 +166,104 @@ static bool NotSerious(int e)
    return false;
 }
 
-bool Ftp::data_address_ok(struct sockaddr *dp)
+#if INET6
+
+struct eprt_proto_match
 {
-   struct sockaddr d;
-   struct sockaddr c;
+   int proto;
+   int eprt_proto;
+};
+static const eprt_proto_match eprt_proto[]=
+{
+   { AF_INET,  1 },
+   { AF_INET6, 2 },
+   { -1, -1 }
+};
+
+const char *Ftp::encode_eprt(sockaddr_u *a)
+{
+   char host[NI_MAXHOST];
+   char serv[NI_MAXSERV];
+   static char *eprt=0;
+
+   int proto=-1;
+   for(const eprt_proto_match *p=eprt_proto; p->proto!=-1; p++)
+   {
+      if(a->sa.sa_family==p->proto)
+      {
+	 proto=p->eprt_proto;
+	 break;
+      }
+   }
+   if(proto==-1)
+      return 0;
+
+   if(getnameinfo(&a->sa, sizeof(*a), host, sizeof(host), serv, sizeof(serv),
+      NI_NUMERICHOST | NI_NUMERICSERV) < 0)
+   {
+      return 0;
+   }
+   eprt=(char*)xrealloc(eprt,20+strlen(host)+strlen(serv));
+   sprintf(eprt, "|%d|%s|%s|", proto, host, serv);
+   return eprt;
+}
+#endif
+
+bool Ftp::data_address_ok(sockaddr_u *dp,bool verify_this_data_port)
+{
+   sockaddr_u d;
+   sockaddr_u c;
    socklen_t len;
    len=sizeof(d);
    if(dp)
-      memcpy(&d,dp,len);
-   else if(getpeername(data_sock,&d,&len)==-1)
+      d=*dp;
+   else if(getpeername(data_sock,&d.sa,&len)==-1)
    {
       perror("getpeername(data_sock)");
       return false;
    }
    len=sizeof(c);
-   if(getpeername(control_sock,&c,&len)==-1)
+   if(getpeername(control_sock,&c.sa,&len)==-1)
    {
       perror("getpeername(control_sock)");
       return false;
    }
-   if(d.sa_family!=c.sa_family)
-      return false;
-   if(d.sa_family==AF_INET)
+
+#if INET6
+   if(d.sa.sa_family==AF_INET && c.sa.sa_family==AF_INET6
+      && IN6_IS_ADDR_V4MAPPED(&c.in6.sin6_addr))
    {
-      struct sockaddr_in *dp=(struct sockaddr_in*)&d;
-      struct sockaddr_in *cp=(struct sockaddr_in*)&c;
-      if(memcmp(&dp->sin_addr,&cp->sin_addr,sizeof(dp->sin_addr)))
+      if(memcmp(&d.in.in_addr,&c.in6.sin6_addr.s6_addr32[3],4))
 	 goto address_mismatch;
-      if(dp->sin_port!=htons(FTP_DATA_PORT))
+      if(d.in.sin_port!=htons(FTP_DATA_PORT))
+	 goto wrong_port;
+   }
+#endif
+
+   if(d.sa.sa_family!=c.sa.sa_family)
+      return false;
+   if(d.sa.sa_family==AF_INET)
+   {
+      if(memcmp(&d.in.sin_addr,&c.in.sin_addr,sizeof(d.in.sin_addr)))
+	 goto address_mismatch;
+      if(d.in.sin_port!=htons(FTP_DATA_PORT))
 	 goto wrong_port;
       return true;
    }
+#if INET6
+   if(d.sa.sa_family==AF_INET6)
+   {
+      if(!IN6_ARE_ADDR_EQUAL(&d.in6.sin6_addr,&c.in6.sin6_addr))
+	 goto address_mismatch;
+      if(d.in6.sin6_port!=htons(FTP_DATA_PORT))
+         goto wrong_port;
+      return true;
+   }
+#endif
    return true;
 
 wrong_port:
-   if(!verify_data_port)
+   if(!verify_this_data_port || !verify_data_port)
       return true;
    DebugPrint("**** ",_("Data connection peer has wrong port number"),0);
    return false;
@@ -410,20 +474,8 @@ char *Ftp::ExtractPWD()
    return pwd;
 }
 
-int   Ftp::PASV_Catch(int act,int)
+int   Ftp::Handle_PASV()
 {
-   if(act/100==5)
-   {
-   sw_off:
-      DebugPrint("---- ",_("Switching passive mode off"));
-      SetFlag(PASSIVE_MODE,0);
-      return(INITIAL_STATE);
-   }
-   if(act/100!=2)
-      return(-1);
-   if(strlen(line)<=4)
-      goto sw_off;
-
    unsigned a0,a1,a2,a3,p0,p1;
    /*
     * Extract address. RFC1123 says:
@@ -432,28 +484,72 @@ int   Ftp::PASV_Catch(int act,int)
    for(char *b=line+4; ; b++)
    {
       if(*b==0)
-	 goto sw_off;
+	 return INITIAL_STATE;
       if(!isdigit((unsigned char)*b))
 	 continue;
       if(sscanf(b,"%u,%u,%u,%u,%u,%u",&a0,&a1,&a2,&a3,&p0,&p1)==6)
          break;
    }
-   data_sa.sin_family=AF_INET;
    unsigned char *a,*p;
-   a=(unsigned char*)&data_sa.sin_addr;
-   p=(unsigned char*)&data_sa.sin_port;
+   data_sa.sa.sa_family=peer_sa.sa.sa_family;
+   if(data_sa.sa.sa_family==AF_INET)
+   {
+      a=(unsigned char*)&data_sa.in.sin_addr;
+      p=(unsigned char*)&data_sa.in.sin_port;
+   }
+#if INET6
+   else if(data_sa.sa.sa_family==AF_INET6)
+   {
+      a=((unsigned char*)&data_sa.in6.sin6_addr)+12;
+      a[-1]=a[-2]=0xff; // V4MAPPED
+      p=(unsigned char*)&data_sa.in6.sin6_port;
+   }
+#endif
+   else
+      return INITIAL_STATE;
+
    if(a0==0 && a1==0 && a2==0 && a3==0)
    {
       // broken server, try to fix up
-      struct sockaddr_in *c=&peer_sa;
-      memcpy(a,&c->sin_addr,sizeof(c->sin_addr));
+      if(data_sa.sa.sa_family==AF_INET)
+	 memcpy(a,&peer_sa.in.sin_addr,sizeof(peer_sa.in.sin_addr));
+#if INET6
+      else if(data_sa.in.sin_family==AF_INET6)	// peer_sa should be V4MAPPED
+	 memcpy(a,&peer_sa.in6.sin6_addr.s6_addr[12],4);
+#endif
    }
    else
    {
       a[0]=a0; a[1]=a1; a[2]=a2; a[3]=a3;
    }
    p[0]=p0; p[1]=p1;
-   addr_received=1;
+   return state;
+}
+
+int   Ftp::Handle_EPSV()
+{
+   char delim=line[4];
+   char format[]="||%*[^|]|%u|";
+   unsigned port;
+
+   for(char *p=format; *p; p++)
+      if(*p=='|')
+	 *p=delim;
+
+   if(sscanf(line+4,format,&port)!=1)
+      return INITIAL_STATE;
+
+   socklen_t len=sizeof(data_sa);
+   getpeername(control_sock,&data_sa.sa,&len);
+   if(data_sa.sa.sa_family==AF_INET)
+      data_sa.in.sin_port=htons(port);
+#if INET6
+   else if(data_sa.sa.sa_family==AF_INET6)
+      data_sa.in6.sin6_port=htons(port);
+#endif
+   else
+      return INITIAL_STATE;
+
    return state;
 }
 
@@ -600,6 +696,12 @@ void Ftp::InitFtp()
    bytes_pool_max=0;
    bytes_pool_time=now;
 
+   peer=0;
+   peer_num=0;
+   peer_curr=0;
+
+   memset(&data_sa,0,sizeof(data_sa));
+
    Reconfig();
 }
 Ftp::Ftp() : super()
@@ -612,9 +714,11 @@ Ftp::Ftp(const Ftp *f) : super(f)
 
    if(f->state!=NO_HOST_STATE)
       state=INITIAL_STATE;
-   if(!relookup_always)
+   if(!relookup_always && f->lookup_done)
    {
-      memcpy(&peer_sa,&f->peer_sa,sizeof(peer_sa));
+      peer=(sockaddr_u*)xmemdup(f->peer,f->peer_num*sizeof(*peer));
+      peer_num=f->peer_num;
+      peer_curr=f->peer_curr;
       lookup_done=f->lookup_done;
    }
    flags=f->flags&MODES_MASK;
@@ -624,6 +728,8 @@ Ftp::~Ftp()
 {
    Close();
    Disconnect();
+
+   xfree(peer);
 
    xfree(anon_user); anon_user=0;
    xfree(anon_pass); anon_pass=0;
@@ -696,13 +802,19 @@ void  Ftp::GetBetterConnection(int level)
 	 {
 	    if(lookup_done && !o->lookup_done)
 	    {
+	       xfree(o->peer);
+	       o->peer=(sockaddr_u*)xmemdup(peer,peer_num*sizeof(*peer));
+	       o->peer_num=peer_num;
+	       o->peer_curr=peer_curr;
 	       o->lookup_done=true;
-	       o->peer_sa=peer_sa;
 	    }
 	    else if(o->lookup_done && !lookup_done)
 	    {
+	       xfree(peer);
+	       peer=(sockaddr_u*)xmemdup(o->peer,o->peer_num*sizeof(*o->peer));
+	       peer_num=o->peer_num;
+	       peer_curr=o->peer_curr;
 	       lookup_done=true;
-	       peer_sa=o->peer_sa;
 	    }
 	 }
 
@@ -805,6 +917,23 @@ int   Ftp::Do()
       if(port_to_connect==0)
 	 port_to_connect=FTPPORT;
 
+      if(lookup_done && peer)
+      {
+	 if(peer_curr>=peer_num)
+	 {
+	    if(relookup_always && !proxy)
+	    {
+	       xfree(peer);
+	       peer=0;
+	       lookup_done=false;
+	    }
+	    else
+	    {
+	       peer_curr=0;
+	    }
+	 }
+      }
+
       if(!lookup_done)
       {
 	 if(!resolver)
@@ -824,7 +953,11 @@ int   Ftp::Do()
 	    return(MOVED);
 	 }
 
-	 resolver->GetResult(&peer_sa);
+	 xfree(peer);
+	 peer=(sockaddr_u*)xmalloc(resolver->GetResultSize());
+	 peer_num=resolver->GetResultNum();
+	 resolver->GetResult(peer);
+	 peer_curr=0;
 
 	 delete resolver;
 	 resolver=0;
@@ -844,14 +977,15 @@ int   Ftp::Do()
 
       if(max_retries>0 && retries>=max_retries)
       {
-	 xfree(last_error_resp);
-	 last_error_resp=xstrdup(_("max-retries exceeded"));
-	 SwitchToState(FATAL_STATE);
+	 Fatal(_("max-retries exceeded"));
       	 return MOVED;
       }
       retries++;
 
-      control_sock=socket(PF_INET,SOCK_STREAM,IPPROTO_TCP);
+      assert(peer!=0);
+      assert(peer_curr<peer_num);
+
+      control_sock=socket(peer_sa.sa.sa_family,SOCK_STREAM,IPPROTO_TCP);
       if(control_sock==-1)
 	 goto system_error;
       SetKeepAlive(control_sock);
@@ -860,16 +994,16 @@ int   Ftp::Do()
       fcntl(control_sock,F_SETFL,O_NONBLOCK);
       fcntl(control_sock,F_SETFD,FD_CLOEXEC);
 
-      a=(unsigned char*)&peer_sa.sin_addr;
-      sprintf(str,_("Connecting to %s%s (%d.%d.%d.%d) port %u"),proxy?"proxy ":"",
-	    host_to_connect,a[0],a[1],a[2],a[3],ntohs(peer_sa.sin_port));
-      DebugPrint("---- ",str,0);
+      if(peer_sa.sa.sa_family==AF_INET)
+      {
+	 a=(unsigned char*)&peer_sa.in.sin_addr;
+	 sprintf(str,_("Connecting to %s%s (%d.%d.%d.%d) port %u"),proxy?"proxy ":"",
+	       host_to_connect,a[0],a[1],a[2],a[3],ntohs(peer_sa.in.sin_port));
+	 DebugPrint("---- ",str,0);
+      }
 
-      res=connect(control_sock,(struct sockaddr*)&peer_sa,sizeof(peer_sa));
+      res=connect(control_sock,&peer_sa.sa,sizeof(peer_sa));
       UpdateNow(); // if non-blocking don't work
-
-      if(relookup_always && !proxy)
-	 lookup_done=false;
 
       if(res==-1
 #ifdef EINPROGRESS
@@ -1030,7 +1164,7 @@ int   Ftp::Do()
       if(copy_mode==COPY_NONE
       && (mode==RETRIEVE || mode==STORE || mode==LIST || mode==LONG_LIST))
       {
-	 data_sock=socket(PF_INET,SOCK_STREAM,IPPROTO_TCP);
+	 data_sock=socket(peer_sa.sa.sa_family,SOCK_STREAM,IPPROTO_TCP);
 	 if(data_sock==-1)
 	    goto system_error;
 	 fcntl(data_sock,F_SETFL,O_NONBLOCK);
@@ -1198,28 +1332,79 @@ int   Ftp::Do()
       if((flags&PASSIVE_MODE)
       || (copy_mode!=COPY_NONE && copy_passive))
       {
-	 SendCmd("PASV");
-	 AddResp(227,INITIAL_STATE,CHECK_PASV);
-	 addr_received=0;
+	 if(peer_sa.sa.sa_family==AF_INET)
+	 {
+	    goto ipv4_pasv;   // make it used
+	 ipv4_pasv:
+	    SendCmd("PASV");
+	    AddResp(227,INITIAL_STATE,CHECK_PASV);
+	    addr_received=0;
+	 }
+	 else
+	 {
+#if INET6
+	    if(peer_sa.sa.sa_family==AF_INET6
+	    && IN6_IS_ADDR_V4MAPPED(&peer_sa.in6.sin6_addr))
+	       goto ipv4_pasv;
+	    SendCmd("EPSV");
+	    AddResp(229,INITIAL_STATE,CHECK_EPSV);
+#else
+	    Fatal("unsupported network protocol");
+	    return MOVED;
+#endif
+	 }
       }
       else
       {
-	 addr_len=sizeof(struct sockaddr);
+	 addr_len=sizeof(data_sa);
 	 if(copy_mode!=COPY_NONE)
-	    memcpy(&data_sa,&copy_addr,addr_len);
+	    data_sa=copy_addr;
 	 else
 	 {
-	    getsockname(control_sock,(struct sockaddr*)&data_sa,&addr_len);
-	    data_sa.sin_port=0;
-	    bind(data_sock,(struct sockaddr*)&data_sa,addr_len);
+	    getsockname(control_sock,&data_sa.sa,&addr_len);
+	    if(data_sa.sa.sa_family==AF_INET)
+	       data_sa.in.sin_port=0;
+#if INET6
+	    else if(data_sa.sa.sa_family==AF_INET6)
+	       data_sa.in6.sin6_port=0;
+#endif
+	    else
+	    {
+	       Fatal("unsupported network protocol");
+	       return MOVED;
+	    }
+	    bind(data_sock,&data_sa.sa,addr_len);
 	    listen(data_sock,1);
-	    getsockname(data_sock,(struct sockaddr*)&data_sa,&addr_len);
+	    getsockname(data_sock,&data_sa.sa,&addr_len);
 	 }
-	 a=(unsigned char*)&data_sa.sin_addr;
-	 p=(unsigned char*)&data_sa.sin_port;
-	 sprintf(str,"PORT %d,%d,%d,%d,%d,%d\n",a[0],a[1],a[2],a[3],p[0],p[1]);
-	 SendCmd(str);
-	 AddResp(RESP_PORT_OK,INITIAL_STATE);
+	 if(data_sa.sa.sa_family==AF_INET)
+	 {
+	    a=(unsigned char*)&data_sa.in.sin_addr;
+	    p=(unsigned char*)&data_sa.in.sin_port;
+	    goto ipv4_port;   // make it used
+	 ipv4_port:
+	    sprintf(str,"PORT %d,%d,%d,%d,%d,%d\n",a[0],a[1],a[2],a[3],p[0],p[1]);
+	    SendCmd(str);
+	    AddResp(RESP_PORT_OK,INITIAL_STATE);
+	 }
+	 else
+	 {
+#if INET6
+	    if(data_sa.sa.sa_family==AF_INET6
+	       && IN6_IS_ADDR_V4MAPPED(&data_sa.in6.sin6_addr))
+	    {
+	       a=((unsigned char*)&data_sa.in6.sin6_addr)+12;
+	       p=(unsigned char*)&data_sa.in6.sin6_port;
+	       goto ipv4_port;
+	    }
+	    sprintf(str,"EPRT %s\n",encode_eprt(&data_sa));
+	    SendCmd(str);
+	    AddResp(RESP_PORT_OK,INITIAL_STATE);
+#else
+	    Fatal("unsupported network protocol");
+	    return MOVED;
+#endif
+	 }
       }
       if(real_pos==-1)
       {
@@ -1306,7 +1491,7 @@ int   Ftp::Do()
 
       if(addr_received==1)
       {
-	 if(!data_address_ok((struct sockaddr*)&data_sa))
+	 if(!data_address_ok(&data_sa,/*port_verify*/false))
 	 {
 	    Disconnect();
 	    return MOVED;
@@ -1319,10 +1504,15 @@ int   Ftp::Do()
 	    copy_addr_valid=true;
 	    goto pre_WAITING_STATE;
 	 }
-	 a=(unsigned char*)&data_sa.sin_addr;
-	 sprintf(str,_("Connecting data socket to (%d.%d.%d.%d) port %u"),
-			      a[0],a[1],a[2],a[3],ntohs(data_sa.sin_port));
-	 DebugPrint("---- ",str,3);
+
+	 if(data_sa.sa.sa_family==AF_INET)
+	 {
+	    a=(unsigned char*)&data_sa.in.sin_addr;
+	    sprintf(str,_("Connecting data socket to (%d.%d.%d.%d) port %u"),
+				 a[0],a[1],a[2],a[3],ntohs(data_sa.in.sin_port));
+	    DebugPrint("---- ",str,3);
+	 }
+
 	 res=connect(data_sock,(struct sockaddr*)&data_sa,sizeof(data_sa));
 	 UpdateNow(); // if non-blocking don't work
 
@@ -1749,6 +1939,13 @@ void  Ftp::Disconnect()
    ControlClose();
    AbortedClose();
 
+   if(state==CONNECTING_STATE || state==INITIAL_STATE)
+   {
+      peer_curr++; // try next address
+      if(peer_curr<peer_num)
+	 try_time=0; // try next address immediately
+   }
+
    if(copy_mode!=COPY_NONE)
       state=COPY_FAILED;
    else if(mode==STORE && (flags&IO_FLAG))
@@ -1945,8 +2142,8 @@ void  Ftp::Close()
       switch(state)
       {
       case(ACCEPTING_STATE):
-      case(CONNECTING_STATE):
       case(DATASOCKET_CONNECTING_STATE):
+      case(CONNECTING_STATE):
       case(USER_RESP_WAITING_STATE):
 	 Disconnect();
 	 break;
@@ -1995,6 +2192,8 @@ void Ftp::CloseRespQueue()
       case(CHECK_PASS):
       case(CHECK_PASS_PROXY):
       case(CHECK_READY):
+      case(CHECK_ABOR):
+      case(CHECK_CWD_STALE):
 	 break;
       case(CHECK_CWD_CURR):
       case(CHECK_CWD):
@@ -2005,7 +2204,17 @@ void Ftp::CloseRespQueue()
 	 }
 	 RespQueue[i].check_case=CHECK_CWD_STALE;
 	 break;
-      default:
+      case(CHECK_NONE):
+      case(CHECK_REST):
+      case(CHECK_SIZE):
+      case(CHECK_SIZE_OPT):
+      case(CHECK_MDTM):
+      case(CHECK_MDTM_OPT):
+      case(CHECK_PASV):
+      case(CHECK_EPSV):
+      case(CHECK_FILE_ACCESS):
+      case(CHECK_RNFR):
+      case(CHECK_TRANSFER):
 	 RespQueue[i].check_case=CHECK_IGNORE;
 	 break;
       }
@@ -2265,6 +2474,13 @@ void  Ftp::SwitchToState(automate_state ns)
       state=ns;
 }
 
+void Ftp::Fatal(const char *msg)
+{
+   xfree(last_error_resp);
+   last_error_resp=xstrdup(msg);
+   SwitchToState(FATAL_STATE);
+}
+
 int   Ftp::DataReady()
 {
    int	 res;
@@ -2453,8 +2669,30 @@ int   Ftp::CheckResp(int act)
    file_access:
       new_state=NoFileCheck(act,exp);
       break;
+
    case CHECK_PASV:
-      new_state=PASV_Catch(act,exp);
+   case CHECK_EPSV:
+      memset(&data_sa,0,sizeof(data_sa));
+      if(strlen(line)<=4)
+	 goto passive_off;
+      if(match)
+      {
+	 if(cc==CHECK_PASV)
+	    new_state=Handle_PASV();
+	 else // cc==CHECK_EPSV
+	    new_state=Handle_EPSV();
+
+	 if(new_state==INITIAL_STATE)
+	    goto passive_off;
+	 addr_received=1;
+      }
+      if(act/100==5)
+      {
+      passive_off:
+	 DebugPrint("---- ",_("Switching passive mode off"));
+	 SetFlag(PASSIVE_MODE,0);
+	 new_state=INITIAL_STATE;
+      }
       break;
 
    case CHECK_PWD:

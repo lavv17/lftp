@@ -129,8 +129,24 @@ void  PollVec::Block() const
    int i;
 
    for(i=0,scan=chain; scan; scan=scan->next)
+   {
       if(scan->wait_type==Waiting::POLLFD)
-	 pfd[i++]=scan->pfd;
+      {
+	 int j;
+	 for(j=0; j<i; j++)
+	 {
+	    if(pfd[j].fd==scan->pfd.fd)
+	    {
+	       // merge two pollfd's (workaround for some systems)
+	       pfd[j].events|=scan->pfd.events;
+	       nfd--;
+	       break;
+	    }
+	 }
+	 if(j>=i)
+	    pfd[i++]=scan->pfd;
+      }
+   }
 
    poll(pfd,nfd,cur_timeout);
    return;

@@ -261,7 +261,7 @@ class Ftp : public FileAccess
    void	 SetSocketMaxseg(int sock);
    static void SetKeepAlive(int sock);
 
-   bool data_address_ok(struct sockaddr *dp=0);
+   bool data_address_ok(sockaddr_u *d=0,bool verify_this_data_port=true);
 
    enum copy_mode_t { COPY_NONE, COPY_SOURCE, COPY_DEST };
    copy_mode_t copy_mode;
@@ -280,6 +280,8 @@ class Ftp : public FileAccess
    time_t bytes_pool_time;
 
    const char *encode_eprt(sockaddr_u *);
+
+   void Fatal(const char *);
 
 public:
    static void ClassInit();
