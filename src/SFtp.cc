@@ -163,7 +163,7 @@ int SFtp::Do()
       const char *init=Query("server-program",hostname);
       const char *prog=Query("connect-program",hostname);
       if(!prog || !prog[0])
-	 prog="ssh -ax";
+	 prog="ssh -a -x";
       char *a=alloca_strdup(prog);
       ArgV *cmd=new ArgV;
       for(a=strtok(a," "); a; a=strtok(0," "))

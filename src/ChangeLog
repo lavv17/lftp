@@ -1,3 +1,8 @@
+2005-01-21  Thomas Glanzmann <sithglan@stud.uni-erlangen.de>
+
+	* SFtp.cc, Fish.cc, resource.cc: change connect-program to work with
+	  Solaris 9 ssh.
+
 2005-01-21  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Fish.cc: make reget more efficient by using larger block size and
