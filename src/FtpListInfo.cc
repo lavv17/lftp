@@ -800,7 +800,9 @@ FileInfo *ParseFtpLongList_MLSD(char *line,int *err,const char *)
       }
       if(!strncasecmp(tok,"Size=",5))
       {
-	 size=atoll(tok+5);
+	 long long size_ll;
+	 if(sscanf(tok+5,"%lld",&size_ll)==1)
+	    size=size_ll;
 	 continue;
       }
       if(!strncasecmp(tok,"Perm=",5))
