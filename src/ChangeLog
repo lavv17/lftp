@@ -1,6 +1,13 @@
+2001-06-07  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h: NO_USER new GetFileURL option.
+	* Http.cc: don't put user name in Referer.
+
 2001-06-04  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* commands.cc: fix `debug 9 -o log'.
+	* ftpclass.cc: handle Serv-U reply to STAT command.
+	* Fish.cc: some more work.
 
 2001-06-01  Alexander V. Lukyanov  <lav@yars.free.net>
 
