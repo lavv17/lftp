@@ -39,6 +39,8 @@ public:
    LocalAccess(const LocalAccess *);
    ~LocalAccess();
 
+   void Connect(const char *host,const char *port);
+
    const char *GetProto() { return "file"; }
    FileAccess *Clone() { return new LocalAccess(this); }
    static FileAccess *New() { return new LocalAccess(); }

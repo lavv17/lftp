@@ -28,17 +28,22 @@
 class mgetJob : public GetJob
 {
    GlobURL *rg;
+   class mkdirJob *mkdir_job;
+   ArgV *mkdir_args;
+   int mkdir_base_arg;
    ArgV *m_args;
+
+   bool	 make_dirs;
+
+   void LocalGlob(const char *p);
 
 public:
    int	 Do();
    void	 PrintStatus(int);
    void	 ShowRunStatus(StatusLine *s);
 
-   mgetJob(FileAccess *session,ArgV *args);
+   mgetJob(FileAccess *session,ArgV *args,bool c,bool md);
    ~mgetJob();
-
-   bool	 make_dirs;
 };
 
 #endif // MGETJOB_H

@@ -33,8 +33,12 @@ protected:
    bool delete_files;
    char *backup_file;
    FDStream *local;
+   bool reverse;
 
    void RemoveBackupFile();
+
+   FileCopyPeer *NoProtoSrc(const char *src);
+   FileCopyPeer *NoProtoDst(const char *dst);
 
 public:
    GetJob(FileAccess *s,ArgV *a,bool c=false);
@@ -43,6 +47,7 @@ public:
    int	 Do();
 
    void DeleteFiles() { delete_files=true; }
+   void Reverse() { reverse=true; } // put
 };
 
 #endif /* GETJOB_H */

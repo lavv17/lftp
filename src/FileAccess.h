@@ -354,6 +354,11 @@ public:
    Glob *glob;
    GlobURL(FileAccess *s,const char *p);
    ~GlobURL();
+   char **GetResult();
+   bool Done()  { return glob->Done(); }
+   bool Error() { return glob->Error(); }
+   const char *ErrorText() { return glob->ErrorText(); }
+   const char *Status() { return glob->Status(); }
 };
 
 #include "FileSet.h"

@@ -52,6 +52,13 @@ void LocalAccess::Init()
    stream=0;
    xfree(home);
    home=xstrdup(getenv("HOME"));
+   xfree(hostname);
+   hostname=xstrdup("localhost");
+}
+
+void LocalAccess::Connect(const char *host,const char *port)
+{
+   // ignore.
 }
 
 LocalAccess::LocalAccess() : FileAccess()

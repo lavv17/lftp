@@ -378,7 +378,8 @@ const char *FileAccess::GetFileURL(const char *f,int flags)
       len+=strlen(hostname)*3;
    if(portname)
       len+=1+strlen(portname)*3;
-   f=dir_file(cwd?cwd:"~",f);
+   if(!f || (f[0]!='/' && f[0]!='~'))
+      f=dir_file(cwd?cwd:"~",f);
    len+=1+strlen(f)*3;
    url=(char*)xrealloc(url,len);
    sprintf(url,"%s://",proto);
@@ -1087,4 +1088,19 @@ GlobURL::~GlobURL()
       delete glob;
    if(session && reuse)
       SessionPool::Reuse(session);
+}
+char **GlobURL::GetResult()
+{
+   char **list=glob->GetResult();
+   if(!list)
+      return 0;
+   if(!reuse)
+      return list;
+   for(int i=0; list[i]; i++)
+   {
+      const char *n=session->GetFileURL(list[i]);
+      list[i]=(char*)xrealloc(list[i],strlen(n)+1);
+      strcpy(list[i],n);
+   }
+   return list;
 }

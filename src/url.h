@@ -54,6 +54,12 @@ public:
    static char *encode_string(const char *,char *buf=0,const char *u=URL_UNSAFE);
    // reverse; done in-place.
    static void decode_string(char *);
+
+   static bool is_url(const char *p)
+      {
+	 ParsedURL url(p,true);
+	 return url.proto!=0;
+      }
 };
 
 #endif//URL_H

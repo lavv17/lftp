@@ -435,9 +435,7 @@ int CmdExec::Do()
 	       exec_parsed_command();
 	       return MOVED;
 	    }
-	    glob=session->MakeGlob(pat);
-	    if(!glob)
-	       glob=new NoGlob(pat);
+	    glob=new GlobURL(session,pat);
 	    m=MOVED;
 	 }
 	 break;

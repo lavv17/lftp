@@ -51,22 +51,74 @@ int   GetJob::Do()
    return m;
 }
 
+FileCopyPeer *GetJob::NoProtoSrc(const char *src)
+{
+   if(reverse)
+      return FileCopyPeerFDStream::NewGet(src);
+
+   FileCopyPeerFA *s=new FileCopyPeerFA(session,src,FA::RETRIEVE);
+   s->DontReuseSession();
+   return s;
+}
+FileCopyPeer *GetJob::NoProtoDst(const char *dst)
+{
+   if(reverse)
+   {
+      FileCopyPeerFA *s=new FileCopyPeerFA(session,dst,FA::STORE);
+      s->DontReuseSession();
+      return s;
+   }
+
+   int flags=O_WRONLY|O_CREAT|(cont?0:O_TRUNC);
+   const char *f=(cwd && dst[0]!='/') ? dir_file(cwd,dst) : dst;
+   if(!cont)
+   {
+      /* rename old file if exists and size>0 */
+      struct stat st;
+      if(stat(f,&st)!=-1)
+      {
+	 if(st.st_size>0)
+	 {
+	    if(!(bool)res_clobber.Query(0))
+	    {
+	       eprintf(_("%s: %s: file already exists and xfer:clobber is unset\n"),op,dst);
+	       errors++;
+	       count++;
+	       return 0;
+	    }
+	    backup_file=(char*)xmalloc(strlen(f)+2);
+	    strcpy(backup_file,f);
+	    strcat(backup_file,"~");
+	    if(rename(f,backup_file)!=0)
+	    {
+	       xfree(backup_file);
+	       backup_file=0;
+	    }
+	 }
+      }
+   }
+   local=new FileStream(f,flags); // local is for pget.
+   FileCopyPeerFDStream *p=new FileCopyPeerFDStream(local,FileCopyPeer::PUT);
+   p->DontDeleteStream();
+   return p;
+}
+
 void GetJob::NextFile()
 {
 try_next:
-   if(!args)
-      return;
    if(backup_file)
    {
       xfree(backup_file);
       backup_file=0;
    }
-
    if(local)
    {
       delete local;
       local=0;
    }
+
+   if(!args)
+      return;
 
    const char *src=args->getnext();
    const char *dst=args->getnext();
@@ -83,49 +135,15 @@ try_next:
    FileCopyPeer *dst_peer=0;
 
    if(dst_url.proto==0)
-   {
-      int flags=O_WRONLY|O_CREAT|(cont?0:O_TRUNC);
-      const char *f=(cwd && dst[0]!='/') ? dir_file(cwd,dst) : dst;
-      if(!cont)
-      {
-	 /* rename old file if exists and size>0 */
-	 struct stat st;
-	 if(stat(f,&st)!=-1)
-	 {
-	    if(st.st_size>0)
-	    {
-	       if(!(bool)res_clobber.Query(0))
-	       {
-		  eprintf(_("%s: %s: file already exists and xfer:clobber is unset\n"),op,dst);
-		  errors++;
-		  count++;
-		  goto try_next;
-	       }
-	       backup_file=(char*)xmalloc(strlen(f)+2);
-	       strcpy(backup_file,f);
-	       strcat(backup_file,"~");
-	       if(rename(f,backup_file)!=0)
-	       {
-		  xfree(backup_file);
-		  backup_file=0;
-	       }
-	    }
-	 }
-      }
-      local=new FileStream(f,flags); // local is for pget.
-      FileCopyPeerFDStream *p=new FileCopyPeerFDStream(local,FileCopyPeer::PUT);
-      p->DontDeleteStream();
-      dst_peer=p;
-   }
+      dst_peer=NoProtoDst(dst);
    else
       dst_peer=new FileCopyPeerFA(&dst_url,FA::STORE);
 
+   if(!dst_peer)
+      goto try_next;
+
    if(src_url.proto==0)
-   {
-      FileCopyPeerFA *s=new FileCopyPeerFA(session,src,FA::RETRIEVE);
-      s->DontReuseSession();
-      src_peer=s;
-   }
+      src_peer=NoProtoSrc(src);
    else
       src_peer=new FileCopyPeerFA(&src_url,FA::RETRIEVE);
 
@@ -153,6 +171,7 @@ GetJob::GetJob(FileAccess *s,ArgV *a,bool c)
    delete_files=false;
    backup_file=0;
    local=0;
+   reverse=false;
 }
 GetJob::~GetJob()
 {

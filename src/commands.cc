@@ -36,12 +36,10 @@
 
 #include "CmdExec.h"
 #include "GetJob.h"
-#include "PutJob.h"
 #include "CatJob.h"
 #include "LsJob.h"
 #include "LsCache.h"
 #include "mgetJob.h"
-#include "mputJob.h"
 #include "mkdirJob.h"
 #include "rmJob.h"
 #include "SysCmdJob.h"
@@ -79,11 +77,11 @@ History	 cwd_history;
 
 CMD(alias); CMD(anon);   CMD(cd);      CMD(debug);
 CMD(exit);  CMD(get);    CMD(help);    CMD(jobs);
-CMD(kill);  CMD(lcd);    CMD(ls);      CMD(mget);
-CMD(open);  CMD(pwd);    CMD(put);     CMD(set);
+CMD(kill);  CMD(lcd);    CMD(ls);
+CMD(open);  CMD(pwd);    CMD(set);
 CMD(shell); CMD(source); CMD(user);    CMD(rm);
 CMD(wait);  CMD(site);   CMD(subsh);   CMD(mirror);
-CMD(mput);  CMD(mv);	 CMD(cat);     CMD(cache);
+CMD(mv);    CMD(cat);    CMD(cache);
 CMD(mkdir); CMD(quote);  CMD(scache);  CMD(mrm);
 CMD(ver);   CMD(close);  CMD(bookmark);CMD(lftp);
 CMD(echo);  CMD(suspend);CMD(ftpcopy); CMD(sleep);
@@ -194,12 +192,13 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "or via pipe to external command.\n"
 	 "By default, ls output is cached, to see new listing use `rels' or\n"
 	 "`cache flush'.\n")},
-   {"mget",    cmd_mget,   N_("mget [-c] [-d] [-e] <files>"),
+   {"mget",    cmd_get,	   N_("mget [OPTS] <files>"),
 	 N_("Gets selected files with expanded wildcards\n"
 	 " -c  continue, reget\n"
 	 " -d  create directories the same as in file names and get the\n"
 	 "     files into them instead of current directory\n"
-	 " -e  delete remote files after successful transfer\n")},
+	 " -e  delete remote files after successful transfer\n"
+	 " -a  use ascii mode (binary is the default)\n")},
    {"mirror",  cmd_mirror, N_("mirror [OPTS] [remote [local]]"),
 	 N_("\nMirror specified remote directory to local directory\n\n"
 	 " -c, --continue         continue a mirror job if possible\n"
@@ -234,11 +233,13 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "directory, otherwise in PKGLIBDIR.\n")},
    {"more",    cmd_cat,    N_("more <files>"),
 	 N_("Same as `cat <files> | more'. if PAGER is set, it is used as filter\n")},
-   {"mput",    cmd_mput,   N_("mput [-c] [-d] <files>"),
+   {"mput",    cmd_get,	   N_("mput [OPTS] <files>"),
 	 N_("Upload files with wildcard expansion\n"
 	 " -c  continue, reput\n"
 	 " -d  create directories the same as in file names and put the\n"
-	 "     files into them instead of current directory\n")},
+	 "     files into them instead of current directory\n"
+	 " -e  delete remote files after successful transfer (dangerous)\n"
+	 " -a  use ascii mode (binary is the default)\n")},
    {"mrm",     cmd_mrm,    N_("mrm <files>"),
 	 N_("Removes specified files with wildcard expansion\n")},
    {"mv",      cmd_mv,	    N_("mv <file1> <file2>"),
@@ -257,11 +258,13 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "have to transfer the file ASAP, or some other user may go mad :)\n"
 	 "\nOptions:\n"
 	 " -n <maxconn>  set maximum number of connections (default 5)\n")},
-   {"put",     cmd_put,    N_("put [-c] <lfile> [-o <rfile>]"),
+   {"put",     cmd_get,    N_("put [OPTS] <lfile> [-o <rfile>]"),
 	 N_("Upload <lfile> with remote name <rfile>.\n"
 	 " -o <rfile> specifies remote file name (default - basename of lfile)\n"
 	 " -c  continue, reput\n"
-	 "     it requires permission to overwrite remote files\n")},
+	 "     it requires permission to overwrite remote files\n"
+	 " -e  delete local files after successful transfer (dangerous)\n"
+	 " -a  use ascii mode (binary is the default)\n")},
    {"pwd",     cmd_pwd,    "pwd",
 	 N_("Print current remote directory\n")},
    {"queue",   cmd_queue,  0,0},
@@ -278,7 +281,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"renlist", cmd_ls,	    N_("renlist [<args>]"),
 	 N_("Same as `nlist', but don't look in cache\n")},
    {"repeat",  cmd_repeat},
-   {"reput",   cmd_put,    N_("reput <lfile> [-o <rfile>]"),
+   {"reput",   cmd_get,    N_("reput <lfile> [-o <rfile>]"),
 	 N_("Same as `put -c'\n")},
    {"rm",      cmd_rm,	    N_("rm [-r] <files>"),
 	 N_("Remove remote files\n"
@@ -311,8 +314,9 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Use specified info for remote login\n")},
    {"version", cmd_ver,    "version",
 	 N_("Shows lftp version\n")},
-   {"wait",    cmd_wait,   N_("wait <jobno>"),
-	 N_("Wait for specified job to terminate.\n")},
+   {"wait",    cmd_wait,   N_("wait [<jobno>]"),
+	 N_("Wait for specified job to terminate. If jobno is omitted, wait\n"
+	 "for last backgrounded job.\n")},
    {"zcat",    cmd_cat,    N_("zcat <files>"),
 	 N_("Same as cat, but filter each file through zcat\n")},
    {"zmore",   cmd_cat,    N_("zmore <files>"),
@@ -415,8 +419,7 @@ Job *CmdExec::builtin_cd()
 
    const char *dir=args->getarg(1);
 
-   char c;
-   if(sscanf(dir,"%*[a-z]://%*[^/]%c",&c)==1)
+   if(url::is_url(dir))
       return builtin_open();
 
    if(!strcmp(dir,"-"))
@@ -733,9 +736,7 @@ Job *CmdExec::builtin_glob()
       args->rewind();
       return cmd_command(this);
    }
-   glob=session->MakeGlob(pat);
-   if(!glob)
-      glob=new NoGlob(pat);
+   glob=new GlobURL(session,pat);
    builtin=BUILTIN_GLOB;
    return this;
 }
@@ -867,6 +868,9 @@ CMD(get)
    int n_conn=0;
    bool del=false;
    bool ascii=false;
+   bool glob=false;
+   bool make_dirs=false;
+   bool reverse=false;
 
    args->rewind();
    if(!strncmp(op,"re",2))
@@ -878,6 +882,21 @@ CMD(get)
    {
       opts="+n:u";
       n_conn=-1;
+   }
+   else if(!strcmp(op,"put") || !strcmp(op,"reput"))
+   {
+      reverse=true;
+   }
+   else if(!strcmp(op,"mget"))
+   {
+      glob=true;
+      opts="+cead";
+   }
+   else if(!strcmp(op,"mput"))
+   {
+      glob=true;
+      opts="+cead";
+      reverse=true;
    }
    while((opt=args->getopt(opts))!=EOF)
    {
@@ -900,25 +919,48 @@ CMD(get)
       case('a'):
 	 ascii=true;
 	 break;
+      case('d'):
+	 make_dirs=true;
+	 break;
       case('?'):
       err:
 	 eprintf(_("Try `help %s' for more information.\n"),op);
+	 delete get_args;
 	 return 0;
       }
+   }
+   if(glob)
+   {
+      if(args->getcurr()==0)
+      {
+      file_name_missed:
+	 // xgettext:c-format
+	 eprintf(_("File name missed. "));
+	 goto err;
+      }
+      delete get_args;
+      // remove options
+      while(args->getindex()>1)
+	 args->delarg(1);
+      mgetJob *j=new mgetJob(Clone(),args,cont,make_dirs);
+      if(reverse)
+	 j->Reverse();
+      if(del)
+	 j->DeleteFiles();
+      if(ascii)
+	 j->Ascii();
+      args=0;
+      return j;
    }
    args->back();
    const char *a=args->getnext();
    const char *a1;
    if(a==0)
-   {
-      // xgettext:c-format
-      eprintf(_("File name missed. "));
-      goto err;
-   }
+      goto file_name_missed;
    while(a)
    {
       get_args->Append(a);
-      ParsedURL url(a);
+      ParsedURL url(a,true);
       a1=0;
       if(url.proto && url.path)
 	 a1=basename_ptr(url.path);
@@ -930,19 +972,30 @@ CMD(get)
 	 a=args->getnext();
 	 if(a)
 	 {
-	    a=expand_home_relative(a);
-	    struct stat st;
-	    int res=stat(a,&st);
-	    if(res!=-1 && S_ISDIR(st.st_mode))
+	    ParsedURL url1(a,true);
+	    if(url1.proto==0 && !reverse)
 	    {
-	       char *comb=string_alloca(strlen(a)+strlen(a1)+2);
-	       sprintf(comb,"%s/%s",a,a1);
-	       get_args->Append(comb);
+	       a=expand_home_relative(a);
+	       struct stat st;
+	       int res=stat(a,&st);
+	       if(res!=-1 && S_ISDIR(st.st_mode))
+	       {
+		  char *comb=string_alloca(strlen(a)+strlen(a1)+2);
+		  sprintf(comb,"%s/%s",a,a1);
+		  a=comb;
+	       }
 	    }
 	    else
 	    {
-	       get_args->Append(a);
+	       if(a[0] && a[strlen(a)-1]=='/')
+	       {
+		  char *dst1=string_alloca(strlen(a)+strlen(a1)+1);
+		  strcpy(dst1,a);
+		  strcat(dst1,a1);
+		  a=dst1;
+	       }
 	    }
+	    get_args->Append(a);
 	 }
 	 else
 	    get_args->Append(a1);
@@ -959,6 +1012,8 @@ CMD(get)
 	 j->DeleteFiles();
       if(ascii)
 	 j->Ascii();
+      if(reverse)
+	 j->Reverse();
       return j;
    }
    else
@@ -968,79 +1023,6 @@ CMD(get)
 	 j->SetMaxConn(n_conn);
       return j;
    }
-}
-
-CMD(put)
-{
-   int opt;
-   bool cont=false;
-   const char *opts="+c";
-   const char *op=args->a0();
-   ArgV	 *get_args=new ArgV(op);
-
-   args->rewind();
-   if(!strncmp(op,"re",2))
-   {
-      cont=true;
-      opts="+";
-   }
-   while((opt=args->getopt(opts))!=EOF)
-   {
-      switch(opt)
-      {
-      case('c'):
-	 cont=true;
-	 break;
-      case('?'):
-      err:
-	 eprintf(_("Try `help %s' for more information.\n"),op);
-	 return 0;
-      }
-   }
-   args->back();
-   const char *a=args->getnext();
-   const char *a1;
-   if(a==0)
-   {
-      // xgettext:c-format
-      eprintf(_("File name missed. "));
-      goto err;
-   }
-   while(a)
-   {
-      a=expand_home_relative(a);
-      get_args->Append(a);
-      a1=basename_ptr(a);
-      a=args->getnext();
-      if(a && !strcmp(a,"-o"))
-      {
-	 a=args->getnext();
-	 if(a)
-	    get_args->Append(a);
-	 else
-	    get_args->Append(a1);
-	 a=args->getnext();
-      }
-      else
-	 get_args->Append(a1);
-   }
-
-   PutJob *j=new PutJob(Clone(),get_args,cont);
-   return j;
-}
-
-CMD(mget)
-{
-   Job *j=new mgetJob(Clone(),args);
-   args=0;
-   return j;
-}
-
-CMD(mput)
-{
-   Job *j=new mputJob(Clone(),args);
-   args=0;
-   return j;
 }
 
 CMD(shell)

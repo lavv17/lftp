@@ -120,7 +120,7 @@ private:
    char *old_cwd;
    char *old_lcwd;
 
-   Glob *glob;
+   GlobURL *glob;
    ArgV *args_glob;
 
    static CmdExec *chain;

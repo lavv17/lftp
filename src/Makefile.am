@@ -36,9 +36,9 @@ libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
 libjobs_a_SOURCES = Job.cc Job.h XferJob.cc XferJob.h CmdExec.cc CmdExec.h\
  commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\
  QuoteJob.cc QuoteJob.h parsecmd.cc MirrorJob.cc MirrorJob.h\
- mputJob.cc mputJob.h mvJob.cc mvJob.h alias.cc alias.h netrc.cc netrc.h\
+ mvJob.cc mvJob.h alias.cc alias.h netrc.cc netrc.h\
  bookmark.cc bookmark.h CatJob.cc CatJob.h GetJob.cc GetJob.h\
- PutJob.cc PutJob.h LsJob.cc LsJob.h FileXfer.cc FileXfer.h\
+ LsJob.cc LsJob.h \
  mkdirJob.cc mkdirJob.h pgetJob.cc pgetJob.h FileFeeder.cc FileFeeder.h\
  keyvalue.cc keyvalue.h history.cc history.h FtpCopy.cc FtpCopy.h\
  SleepJob.cc SleepJob.h getdate.y getdate.h FindJob.cc FindJob.h\

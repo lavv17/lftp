@@ -105,7 +105,8 @@ int   FtpGlob::Do()
    {
       if(updir_glob->Error())
       {
-// 	 ...
+	 done=true;
+	 return MOVED;
       }
       if(!updir_glob->Done())
 	 return m;
@@ -123,7 +124,10 @@ int   FtpGlob::Do()
    if(!li)
    {
    create_li:
-      f->Chdir(dir_file(base_dir,dir),false);
+      const char *c=dir;
+      if(c[0]!='/' && c[0]!='~')
+	 c=dir_file(base_dir,c);
+      f->Chdir(c,false);
       li=f->MakeListInfo();
       li->UseCache(use_cache);
    }
