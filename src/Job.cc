@@ -292,7 +292,7 @@ SessionJob::~SessionJob()
 
 void SessionJob::PrintStatus(int v)
 {
-   if(v<2)
+   if(v<2 || !session)
       return;
    const char *url=session->GetConnectURL();
    if(url)
