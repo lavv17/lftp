@@ -496,7 +496,7 @@ int XferJob::TryWrite(FDStream *f)
    }
 
    // fd should be non-blocking.
-   res=write(fd,buffer,to_write);
+   int res=write(fd,buffer,to_write);
    if(res==-1)
    {
       if(errno==EAGAIN || errno==EINTR)
