@@ -169,7 +169,7 @@ bool Ftp::data_address_ok(struct sockaddr *dp)
 {
    struct sockaddr d;
    struct sockaddr c;
-   ADDRLEN_TYPE len;
+   socklen_t len;
    len=sizeof(d);
    if(dp)
       memcpy(&d,dp,len);
@@ -767,7 +767,7 @@ int   Ftp::Do()
    char	 *str1=(char*)alloca(xstrlen(file)+20);
    char	 *str2=(char*)alloca(xstrlen(file)+20);
    int   res;
-   ADDRLEN_TYPE addr_len;
+   socklen_t addr_len;
    unsigned char *a;
    unsigned char *p;
    automate_state oldstate;
@@ -2906,10 +2906,13 @@ void Ftp::BytesReset()
 int Ftp::Buffered()
 {
 #ifdef TIOCOUTQ
+   // Unfortunately, this is not precise. Is there any other way to know
+   // amount of data buffered on socket? OTOH, nothing should break if
+   // we say there are more buffered data than actually are.
    if(state!=DATA_OPEN_STATE || data_sock==-1 || mode!=STORE)
       return 0;
    int buffer=0;
-   int len=sizeof(buffer);
+   socklen_t len=sizeof(buffer);
    if(getsockopt(data_sock,SOL_SOCKET,SO_SNDBUF,&buffer,&len)==-1)
       return 0;
    int avail=buffer;
@@ -2917,7 +2920,11 @@ int Ftp::Buffered()
       return 0;
    if(avail>buffer)
       return 0; // something wrong
-   return buffer-avail;
+   buffer-=avail;
+   buffer=buffer*5/6; // approx...
+   if(pos>=0 && buffer>pos)
+      buffer=pos;
+   return buffer;
 #else
    return 0;
 #endif

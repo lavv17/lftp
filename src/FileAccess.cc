@@ -145,7 +145,7 @@ int   FileAccess::CheckHangup(struct pollfd *pfd,int num)
    {
       char  str[256];
       int   s_errno=0;
-      ADDRLEN_TYPE len;
+      socklen_t len;
 
       errno=0;
 
