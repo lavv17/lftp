@@ -26,7 +26,7 @@
 #include "SignalHook.h"
 #include <errno.h>
 #include <unistd.h>
-#include <stdio.h>
+#include "trio.h"
 #include <time.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -204,6 +204,7 @@ int   Resolver::Do()
 	    close(0);	// no input will be needed.
 	    close(pipe_to_child[0]);
 	    pipe_to_child[0]=-1;
+	    buf=new IOBufferFDStream(new FDStream(pipe_to_child[1],"<pipe-out>"),IOBuffer::PUT);
 	    DoGethostbyname();
 	    _exit(0);
 	 }
@@ -817,9 +818,6 @@ void Resolver::DoGethostbyname()
 
    if(!use_fork && deleting)
       return;
-
-   if(!buf)
-      buf=new IOBufferFDStream(new FDStream(pipe_to_child[1],"<pipe-out>"),IOBuffer::PUT);
 
    if(addr_num==0)
    {
