@@ -197,14 +197,15 @@ void Http::Close()
    if(mode==CLOSED)
       return;
    if(sock!=-1 && keep_alive && (keep_alive_max>1 || keep_alive_max==-1)
-   && mode!=STORE && !recv_buf->Eof() && state==RECEIVING_BODY)
+   && mode!=STORE && !recv_buf->Eof() && (state==RECEIVING_BODY || state==DONE))
    {
       recv_buf->Resume();
       Roll(recv_buf);
       if(xstrcmp(last_method,"HEAD"))
       {
 	 // check if all data are in buffer
-	 bytes_received+=recv_buf->Size();
+	 if(!chunked)	// chunked is a bit complex, so don't handle it
+	    bytes_received+=recv_buf->Size();
 	 if(!(body_size>=0 && bytes_received==body_size))
 	    goto disconnect;
       }
@@ -1149,7 +1150,7 @@ int Http::Do()
 	       sprintf(err,"%s (%s%s)",status+status_consumed,cwd,
 		  (cwd[0] && cwd[strlen(cwd)-1]=='/')?"":"/");
 	 }
-	 Disconnect();
+	 state=RECEIVING_BODY;
 	 SetError(code,err);
 	 return MOVED;
       }
@@ -1728,6 +1729,7 @@ void Http::SetCookie(const char *value_const)
    char *value=alloca_strdup(value_const);
    const char *domain=hostname;
    const char *path=0;
+   bool secure=false;
 
    for(char *entry=strtok(value,";"); entry; entry=strtok(0,";"))
    {
@@ -1735,10 +1737,16 @@ void Http::SetCookie(const char *value_const)
 	 entry++;
       if(*entry==0)
 	 break;
-      if(!strncasecmp(entry,"expires=",8)
-      || (!strncasecmp(entry,"secure",6)
-	  && (entry[6]==' ' || entry[6]==0 || entry[6]==';')))
-	 continue; // filter out path= expires= secure
+
+      if(!strncasecmp(entry,"expires=",8))
+	 continue; // not used yet
+
+      if(!strncasecmp(entry,"secure",6)
+      && (entry[6]==' ' || entry[6]==0 || entry[6]==';'))
+      {
+	 secure=true;
+	 continue;
+      }
 
       if(!strncasecmp(entry,"path=",5))
       {
@@ -1761,14 +1769,15 @@ void Http::SetCookie(const char *value_const)
       }
    }
 
-   char *closure=string_alloca(strlen(domain)+1+xstrlen(path)+1);
+   char *closure=string_alloca(strlen(domain)+xstrlen(path)+32);
    strcpy(closure,domain);
    if(path && path[0])
    {
-      if(path[0]!='/')
-	 strcat(closure,"/");
+      strcat(closure,";path=");
       strcat(closure,path);
    }
+   if(secure)
+      strcat(closure,";secure");
 
    const char *old=Query("cookie",closure);
 
