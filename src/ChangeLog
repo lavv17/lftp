@@ -1,5 +1,9 @@
 1999-09-30  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* commands.cc: remove _() from "%s: %s\n".
+
+1999-09-30  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* FileAccess.cc, FileAccess.h, ftpclass.cc, ftpclass.h, commands.cc:
 	  (CleanupAll, CleanupThis) new methods; use it in cmd_close.
 

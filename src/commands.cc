@@ -1397,7 +1397,7 @@ CMD(set)
 
    if(msg)
    {
-      eprintf(_("%s: %s.\n"),val,msg);
+      eprintf("%s: %s.\n",val,msg);
       xfree(val);
       return 0;
    }
