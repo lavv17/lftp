@@ -1,19 +1,20 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Free Software Foundation, Inc.
-# Moritz Moeller-Herrmann <mmh@gmx.net>, 1999
+# LFTP -  deutsche Übersetzung
+# Korrekturen, KRITIK SEHR willkommen
+# COPYRIGHT:
+# Moritz Moeller-Herrmann <mmh@gmx.net>, 1999,2000
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Lftp 2.1.3\n"
 "POT-Creation-Date: 2000-09-29 11:51+0400\n"
-"PO-Revision-Date: 2000-08-22 11:06CET\n"
-"Last-Translator: Moritz Moeller-Herrmann "
-"<moritz@hippokrates.jura.uni-mannheim.de>\n"
+"PO-Revision-Date: 2000-10-01 17:51MEZ\n"
+"Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO 8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 0.5.2\n"
+"<moritz@hippokrates.jura.uni-mannheim.de>\n"
+"X-Generator: KBabel 0.5.5\n"
 
 #: src/CmdExec.cc:75
 #, c-format
@@ -28,7 +29,7 @@ msgstr "Warnung: chdir(%s) fehlgeschlagen: %s\n"
 #. can't run further commands in wrong directory
 #: src/CmdExec.cc:100
 msgid "No directory to execute commands in - terminating\n"
-msgstr ""
+msgstr "Verzeichnis zum Ausführen der Befehle existiert nicht - Beende\n"
 
 #: src/CmdExec.cc:206
 #, c-format
@@ -43,7 +44,7 @@ msgstr "Mehrdeutiger Befehl `%s'.\n"
 #: src/CmdExec.cc:225
 #, c-format
 msgid "Module for command `%s' did not register the command.\n"
-msgstr ""
+msgstr "Das Modul für den Befehl `%s` hat den Befehl nicht registriert.\n"
 
 #: src/CmdExec.cc:362
 #, c-format
@@ -51,9 +52,9 @@ msgid "cd ok, cwd=%s\n"
 msgstr "Verzeichniswechsel ok, cwd=%s\n"
 
 #: src/CmdExec.cc:382 src/MirrorJob.cc:530
-#, fuzzy, c-format
+#, c-format
 msgid "%s: received redirection to `%s'\n"
-msgstr "copy: Umleitung nach `%s' empfangen\n"
+msgstr "%s: Umleitung nach `%s' empfangen\n"
 
 #: src/CmdExec.cc:385 src/FileCopy.cc:959
 msgid "Too many redirections"
@@ -101,7 +102,7 @@ msgstr "\tWarten auf Befehl\n"
 #: src/CmdExec.cc:1301
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
-msgstr ""
+msgstr "%s: Befehl `%s` wurde nicht mitkompiliert.\n"
 
 #: src/FileAccess.cc:228
 #, c-format
@@ -272,6 +273,8 @@ msgstr "Erzeuge symbolische Verknüpfung `%s' nach `%s'"
 #: src/MirrorJob.cc:467
 msgid "mirror: cannot create `file:' access object, installation error?\n"
 msgstr ""
+"mirror: Konnte `Datei` nicht anlegen: Zugriffsobjekt,\n"
+"Fehler bei der Installation?\n"
 
 #: src/MirrorJob.cc:564
 #, c-format
@@ -331,7 +334,7 @@ msgstr "Unzulässige Gleitkommazahl"
 #: src/ResMgr.cc:447
 #, c-format
 msgid "Query of variable `%s' failed: %s\n"
-msgstr ""
+msgstr "Abfrage der Variabe `%s' fehgeschlagen: %s\n"
 
 #: src/ResMgr.cc:538
 msgid "Invalid time unit letter, only [smhd] are allowed."
@@ -351,7 +354,7 @@ msgstr "kein Gültigkeitsbereich (closure) für diese Einstellung definiert"
 
 #: src/Resolver.cc:166
 msgid "dns cache hit\n"
-msgstr ""
+msgstr "dns-Zwischenspeicher Treffer\n"
 
 #: src/Http.cc:1509 src/Resolver.cc:193 src/ftpclass.cc:3398
 msgid "Resolving host address..."
@@ -373,16 +376,16 @@ msgstr "unbekannte Adress Familie `%s'"
 
 #: src/Resolver.cc:774
 msgid "Host name lookup failure"
-msgstr ""
+msgstr "Nachschlagen des Hostnamen fehlgeschlagen"
 
 #: src/Resolver.cc:806
-#, fuzzy, c-format
+#, c-format
 msgid "no such %s service"
-msgstr "keine derartige Variable"
+msgstr "kein derartiger %s Dienst"
 
 #: src/Resolver.cc:831
 msgid "No address found"
-msgstr ""
+msgstr "Keine Adresse gefunden"
 
 #: src/SysCmdJob.cc:78
 #, c-format
@@ -935,16 +938,14 @@ msgstr ""
 "    gespeichert werden sollen.\n"
 
 #: src/commands.cc:288
-#, fuzzy
 msgid ""
 "Print current remote URL.\n"
 " -p  show password\n"
 msgstr ""
-"Momentane URL (Internetadresse) der Gegenstelle (des Servers) ausgeben\n"
-" -u   Passwort zeigen\n"
+"Drucke momentane URL der Ggenstelle.\n"
+" -p  Passwort zeigen\n"
 
 #: src/commands.cc:291
-#, fuzzy
 msgid ""
 "Usage: queue <command>\n"
 "Add the command to queue for current site. Each site has its own\n"
@@ -955,6 +956,7 @@ msgstr ""
 "Den Befehl in die Warteschlange für die momentane Gegenstelle einreihen.\n"
 "Jede Gegenstelle hat ihre eigene Befehlswarteschlange. \n"
 "Man kann einen laufenden Job in die Warteschlange einreihen, indem man\n"
+"`queue wait <jobnr.>' verwendet.\n"
 
 #: src/commands.cc:296
 msgid "quote <cmd>"
@@ -1110,13 +1112,12 @@ msgid "user <user|URL> [<pass>]"
 msgstr "user <user|URL> [<passwt>]"
 
 #: src/commands.cc:342
-#, fuzzy
 msgid ""
 "Use specified info for remote login. If you specify URL, the password\n"
 "will be cached for future usage.\n"
 msgstr ""
-"Angegebene Info für das Einloggen verwenden. Wurde eine URL angegeben, \n"
-"so wird das Passwort für spätere Verwendung zwischengespeichert."
+"Angegebene Info für das Einloggen verwenden. Wird eine URL angegeben,\n"
+"so wird das Passwort für spätere Verwendung zwischengespeichert.\n"
 
 #: src/commands.cc:345
 msgid "Shows lftp version\n"
@@ -1423,9 +1424,8 @@ msgid "Usage: %s module [args...]\n"
 msgstr "Benutzung: %s module [argumente..]\n"
 
 #: src/LocalAccess.cc:599 src/commands.cc:2078
-#, fuzzy
 msgid "cannot get current directory"
-msgstr "Wechsle nichtlokales Verzeichnis"
+msgstr "Kann aktelles Verzeichnis nicht feststellen"
 
 #: src/commands.cc:2095
 #, c-format
@@ -1451,9 +1451,8 @@ msgid "Data connection peer has mismatching address"
 msgstr "Data connection peer hat nicht übereinstimmende Adresse"
 
 #: src/ftpclass.cc:265 src/ftpclass.cc:301
-#, fuzzy
 msgid "Switching to NOREST mode"
-msgstr "Schalte Passivmodus ein"
+msgstr "Schalte NOREST - Modus ein"
 
 #: src/ftpclass.cc:378
 msgid "Saw `Login incorrect', assume failed login"
@@ -1470,10 +1469,11 @@ msgstr "nehme fehlgeschlagene Auflösung des Hostnamens an"
 #: src/ftpclass.cc:448
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
 msgstr ""
+"ftp:skey-force ist gesetzt und Gegenstelle unterstützt weder OPIE noch S/KEY"
 
 #: src/ftpclass.cc:662
 msgid "cannot parse EPSV response"
-msgstr ""
+msgstr "Kann EPSV Antwort nicht auswerten"
 
 #: src/Http.cc:732 src/ftpclass.cc:1006
 msgid "Closing idle connection"
@@ -1482,16 +1482,15 @@ msgstr "Schließe unbenutzte Verbindung"
 #: src/Http.cc:860 src/ftpclass.cc:1083
 #, c-format
 msgid "cannot create socket of address family %d"
-msgstr ""
+msgstr "Kann kein Socket für die Adressfamilie %d anlegen"
 
 #: src/ftpclass.cc:1260
 msgid "SITE CHMOD is not supported by this site"
 msgstr "SITE CHMOD wird von dieser Gegenstelle nicht unterstützt"
 
 #: src/ftpclass.cc:1607 src/ftpclass.cc:1640
-#, fuzzy
 msgid "unsupported network protocol"
-msgstr " - Protokoll nicht unterstützt"
+msgstr "nicht unterstütztes Netzwerkprotokoll"
 
 #: src/ftpclass.cc:1749
 #, c-format
@@ -1512,7 +1511,7 @@ msgstr "Gegenüber hat Verbindung beendet"
 
 #: src/ftpclass.cc:2222
 msgid "Persist and retry"
-msgstr ""
+msgstr "Verbleibe und versuche es weiter"
 
 #: src/ftpclass.cc:2319
 msgid "Closing control socket"
@@ -1536,7 +1535,7 @@ msgstr "zusätzliche Server Antwort"
 
 #: src/ftpclass.cc:3159 src/ftpclass.cc:3184
 msgid "Turning on sync-mode"
-msgstr ""
+msgstr "sync - Modus eingeschaltet"
 
 #: src/ftpclass.cc:3298
 msgid "Switching passive mode on"
@@ -1545,6 +1544,7 @@ msgstr "Schalte Passivmodus ein"
 #: src/ftpclass.cc:3349
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
+"ftp:ssl-force ist gesetzt und Gegenstelle unterstützt oder erlaubt kein SSL"
 
 #: src/ftpclass.cc:3388
 msgid "Sending commands..."
@@ -1632,9 +1632,9 @@ msgid "%s ok, `%s' created\n"
 msgstr "%s OK, `%s' erzeugt\n"
 
 #: src/mkdirJob.cc:128 src/rmJob.cc:44
-#, fuzzy, c-format
+#, c-format
 msgid "%s failed for %d of %d director$y|ies$\n"
-msgstr "%s gescheitert für %d von %d Verzeichnissen\n"
+msgstr "%s gescheitert für %d von %d Verzeichnis$|sen$\n"
 
 #: src/mkdirJob.cc:131
 #, c-format
@@ -1657,7 +1657,7 @@ msgstr "parse: Dateiname für Umleitung fehlt\n"
 #: src/pgetJob.cc:176
 #, c-format
 msgid "`%s', got %lld of %lld (%d%%) %s%s"
-msgstr ""
+msgstr "`%s', empfange %lld von %lld (%d%%) %s %s"
 
 #. This is the rule for plural form choice (last condition can be omitted)
 #. Operators: = > < ! | %
@@ -1671,7 +1671,7 @@ msgid "%s ok, `%s' removed\n"
 msgstr "%s OK, `%s' gelöscht\n"
 
 #: src/rmJob.cc:47
-#, fuzzy, c-format
+#, c-format
 msgid "%s failed for %d of %d file$|s$\n"
 msgstr "%s fehlgeschlagen bei %d von %d Dateien\n"
 
@@ -1691,59 +1691,55 @@ msgstr "Schließe HTTP-Verbindung"
 
 #: src/Http.cc:168
 msgid "POST method failed"
-msgstr ""
+msgstr "POST - Methode fehlgeschlagen"
 
 #. problem here: hftp cannot work without proxy
 #: src/Http.cc:811
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
-msgstr ""
+msgstr "FTP über HTTP funktioniert nur mit Proxy, hftp:proxy Option angeben."
 
 #: src/Http.cc:880
 #, c-format
 msgid "connect: %s"
-msgstr ""
+msgstr "Verbinde: %s"
 
 #: src/Http.cc:947
-#, fuzzy
 msgid "Sending request..."
-msgstr "Schicke Befehle"
+msgstr "Schicke Anforderung..."
 
 #. eof
 #: src/Http.cc:985
-#, fuzzy
 msgid "Hit EOF while fetching headers"
-msgstr "Hole Kopfzeilen..."
+msgstr "Dateiende beim Lesen der Kopfzeilen erhalten"
 
 #. should never happen
 #: src/Http.cc:1040
 msgid "Success, but did nothing??"
-msgstr ""
+msgstr "Erfolg, aber nichts passiert??"
 
 #: src/Http.cc:1074
 msgid "Could not parse HTTP status line"
-msgstr ""
+msgstr "Konnte HTTP Statusabzeige nicht auswerten"
 
 #: src/Http.cc:1172
-#, fuzzy
 msgid "Receiving body..."
-msgstr "Empfange Daten"
+msgstr "Empfange BODY"
 
 #: src/Http.cc:1307
 msgid "Hit EOF"
-msgstr ""
+msgstr "Dateiende (EOF) angetroffen"
 
 #: src/Http.cc:1310
 msgid "Received not enough data, retrying"
-msgstr ""
+msgstr "Nicht genug Daten erhalten, neuer Versuch"
 
 #: src/Http.cc:1318
-#, fuzzy
 msgid "Received all"
-msgstr "Empfange Daten"
+msgstr "alles empfangen"
 
 #: src/Http.cc:1323
 msgid "Received all (total)"
-msgstr ""
+msgstr "Alles empfangen (insgesamt)"
 
 #: src/Http.cc:1344 src/Http.cc:1365
 msgid "chunked format violated"
@@ -1759,7 +1755,7 @@ msgstr "Proxy Protokoll wird nicht unterstützt"
 
 #: src/resource.cc:54
 msgid "ftp:proxy password: "
-msgstr ""
+msgstr "ftp:proxy Paßwort:"
 
 #: src/resource.cc:97
 msgid "only PUT and POST values allowed"
@@ -1767,32 +1763,33 @@ msgstr "nur PUT und POST Werte sind zulässig"
 
 #: src/HttpDir.cc:587
 msgid "apache listing matched"
-msgstr ""
+msgstr "Apache Aufistung übereinstimmend"
 
 #: src/HttpDir.cc:597
 msgid "unusual apache listing matched"
-msgstr ""
+msgstr "ungewöhnliche Apache Auflistung übereinstimmend"
 
 #: src/HttpDir.cc:614
 msgid "Netscape-Proxy 2.53 listing matched"
-msgstr ""
+msgstr "Netscape-Proxy 2.53 Auflistung übereinstimmend"
 
 #: src/HttpDir.cc:624
 msgid "Netscape-Proxy 2.53 listing matched (dir/symlink)"
 msgstr ""
+"Netscape-Proxy 2.53 Auflistung übereinstimmend (Verzeichnis/Verknüpfung)"
 
 #. no symlinks here.
 #: src/HttpDir.cc:632
 msgid "squid EPLF listing matched"
-msgstr ""
+msgstr "squid EPLF Auflistung übereinstimmend"
 
 #: src/HttpDir.cc:654
 msgid "Mini-Proxy web server listing matched"
-msgstr ""
+msgstr "Mini-Proxy Webserver Auflistung übereinstimmend."
 
 #: src/HttpDir.cc:694
 msgid "apache ftp over http proxy listing matched"
-msgstr ""
+msgstr "Apache ftp über http Proxy Auflistung übereinstimmend"
 
 #: src/FtpDirList.cc:223 src/FtpSplitList.cc:174 src/HttpDir.cc:961
 #: src/HttpDir.cc:1147
@@ -1803,12 +1800,12 @@ msgstr "Hole Dateiliste (%lld) [%s]"
 #: src/CopyJob.cc:65
 #, c-format
 msgid "`%s' at %lld %s%s%s%s"
-msgstr ""
+msgstr "`%s' bei %lld %s%s%s%s"
 
 #: src/CopyJob.cc:220
-#, fuzzy, c-format
+#, c-format
 msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
-msgstr "%lld $#l#Byte|Bytes$ in %ld $#l#Sekunde|Sekunden$ übertragen"
+msgstr "%lld $#1l#Byte|Bytes$ in %ld $#l#Sekunde|Sekunden$ übertragen"
 
 #: src/CopyJob.cc:232
 #, c-format
@@ -1827,58 +1824,57 @@ msgstr "Insgesamt %d $Datei|Dateien$ übertragen\n"
 
 #: src/FileCopy.cc:144
 msgid "copy: put is broken\n"
-msgstr ""
+msgstr "copy: put funktioniert nicht\n"
 
 #: src/FileCopy.cc:158
-#, fuzzy
 msgid "seek failed"
-msgstr "Login fehlgeschlagen"
+msgstr "Suche erfolglos"
 
 #. we lose... How about a large buffer?
 #: src/FileCopy.cc:180
 msgid "cannot seek on data source"
-msgstr ""
+msgstr "Kann Datenquelle nicht durchsuchen"
 
 #: src/FileCopy.cc:183
 #, c-format
 msgid "copy: put rolled back to %lld, seeking get accordingly\n"
-msgstr ""
+msgstr "copy: put kehrte zu %lld zurück, suche entsprechendes get\n"
 
 #: src/FileCopy.cc:185
 #, c-format
 msgid "copy: get position was %lld\n"
-msgstr ""
+msgstr "copy: get Position war %lld\n"
 
 #. simulate eof, as we have already have the whole file.
 #: src/FileCopy.cc:196
 msgid "copy: all data received, but get rolled back\n"
-msgstr ""
+msgstr "copy: Alle Daten empfangen, aber get wurde zurückgesetzt\n"
 
 #: src/FileCopy.cc:212
 #, c-format
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
-msgstr ""
+msgstr "copy: get wurde zurückgesetzt zu %lld, suche dementsprechendes put\n"
 
 #: src/FileCopy.cc:223
 msgid "copy: get hit eof\n"
-msgstr ""
+msgstr "copy: get traf ein Dateiende(EOF)\n"
 
 #: src/FileCopy.cc:296
 msgid "copy: get reached range limit\n"
-msgstr ""
+msgstr "copy: get erreichte die Reichweitegrenze\n"
 
 #: src/FileCopy.cc:318
 msgid "copy: put confirmed store\n"
-msgstr ""
+msgstr "copy: put bestätigte die Speicherung\n"
 
 #: src/FileCopy.cc:340
 msgid "copy: get is finished - all done\n"
-msgstr ""
+msgstr "copy: get ist fertig -- alles erledigt\n"
 
 #: src/FileCopy.cc:844
 #, c-format
 msgid "copy src: seek past eof (seek_pos=%lld, size=%lld)\n"
-msgstr ""
+msgstr "copy src: suche über Dateiende hinaus (seek_pos=%lld, size=%lld)\n"
 
 #: src/FileCopy.cc:956
 #, c-format
@@ -1893,117 +1889,107 @@ msgstr "Dateiname fehlt in der URL"
 #: src/Speedometer.cc:86
 #, c-format
 msgid "%.0fb/s"
-msgstr ""
+msgstr "%.0fb/s"
 
 #. for translator: This is 'kilobyte per second'
 #: src/Speedometer.cc:89
 #, c-format
 msgid "%.1fK/s"
-msgstr ""
+msgstr "%.1fK/s"
 
 #. for translator: This is 'Megabyte per second'
 #: src/Speedometer.cc:92
 #, c-format
 msgid "%.2fM/s"
-msgstr ""
+msgstr "%.2fM/s"
 
 #. for translator: only first letter matters
 #: src/Speedometer.cc:118
 msgid "day"
-msgstr ""
+msgstr "Tag"
 
 #: src/Speedometer.cc:119
 msgid "hour"
-msgstr ""
+msgstr "Stunde"
 
 #: src/Speedometer.cc:120
 msgid "minute"
-msgstr ""
+msgstr "Minute"
 
 #: src/Speedometer.cc:121
 msgid "second"
-msgstr ""
+msgstr "Sekunde"
 
 #: src/Speedometer.cc:123
 msgid "eta:"
-msgstr ""
+msgstr "ca. fertig:"
 
 #. both ways failed. Fall back to normal copying.
 #: src/FileCopyFtp.cc:77
 msgid "**** FXP: giving up, reverting to plain copy\n"
-msgstr ""
+msgstr "**** FXP: gebe auf, kehre zu einfachem copy zurück\n"
 
 #: src/FileCopyFtp.cc:90
 msgid "**** FXP: trying to reverse ftp:fxp-passive-source\n"
-msgstr ""
+msgstr "**** FXP: Versuche ftp:fxp-passive-source umzukehren\n"
 
 #: src/Filter.cc:134
 msgid "chain output error"
-msgstr ""
+msgstr "chain Ausgabefehler"
 
 #: src/Filter.cc:149
-#, fuzzy, c-format
+#, c-format
 msgid "pipe() failed: %s"
-msgstr "execlp(%s) fehlgeschlagen: %s\n"
+msgstr "pip() fehlgeschlagen: %s"
 
 #: src/Filter.cc:170
-#, fuzzy, c-format
+#, c-format
 msgid "chdir(%s) failed: %s\n"
-msgstr "Warnung: chdir(%s) fehlgeschlagen: %s\n"
+msgstr "chdir(%s) fehlgeschlagen: %s\n"
 
 #: src/Filter.cc:178
-#, fuzzy, c-format
+#, c-format
 msgid "execl(/bin/sh) failed: %s\n"
-msgstr "execlp(%s) fehlgeschlagen: %s\n"
+msgstr "execl(/bin/sh) fehlgeschlagen: %s\n"
 
 #: src/NetAccess.cc:208
-#, fuzzy, c-format
+#, c-format
 msgid "Connecting to %s%s (%s) port %u"
-msgstr "Verbinde Daten socket mit (%s) Port %u"
+msgstr "Verbinde mit %s%s (%s) Port %u"
 
 #: src/NetAccess.cc:485
-#, fuzzy
 msgid "Connections limit reached"
-msgstr "Verbindung ruht"
+msgstr "Zahl der Verbindungen hat Grenze erreicht"
 
 #: src/NetAccess.cc:489
 msgid "Delaying before reconnect"
-msgstr ""
+msgstr "Pausiere vor erneuter Verbindung"
 
 #: src/NetAccess.cc:500
 msgid "max-retries exceeded"
-msgstr ""
+msgstr "max-retries überschritten"
 
 #. dead lock
 #: src/PollVec.cc:98
 #, c-format
 msgid "%s: BUG - deadlock detected\n"
-msgstr ""
+msgstr "%s: Fehler - Schleife (deadlock) entdeckt\n"
 
 #: src/SleepJob.cc:113
 #, c-format
 msgid "\tRepeat count: %d\n"
-msgstr ""
+msgstr "\tWiederhole Zählung: %d\n"
 
 #: src/SleepJob.cc:126
-#, fuzzy, c-format
+#, c-format
 msgid "%s: argument required. "
-msgstr "%s: Name des Lesezeichens notwendig\n"
+msgstr "%s: Argument vorgeschrieben. "
 
 #: src/module.cc:160
 #, c-format
 msgid "depend module `%s': %s\n"
-msgstr ""
+msgstr "Vorraussetzung Modul `%s': %s\n"
 
 #: src/module.cc:190
-#, fuzzy
 msgid "modules are not supported on this system"
-msgstr "SITE CHMOD wird von dieser Gegenstelle nicht unterstützt"
-
-#, fuzzy
-#~ msgid "%s: cannot get current directory\n"
-#~ msgstr "%s: - kein derartiger Job\n"
-
-#, fuzzy
-#~ msgid "cd: received redirection to `%s'\n"
-#~ msgstr "copy: Umleitung nach `%s' empfangen\n"
+msgstr "Module sind auf diesem System nicht verwendbar"
