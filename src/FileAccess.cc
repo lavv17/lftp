@@ -601,7 +601,7 @@ void FileAccess::OptimizePath(char *path)
    if(path[0]=='/')
    {
       prefix_size=1;
-      if(path[1]=='/' && path[2] && path[2]!='/')
+      if(path[1]=='/' && (!path[2] || path[2]!='/'))
 	 prefix_size=2;
    }
    else if(path[0]=='~')
@@ -685,50 +685,16 @@ void FileAccess::OptimizePath(char *path)
 
 void FileAccess::Chdir(const char *path,bool verify)
 {
-   char	 *newcwd=(char*)alloca(strlen(cwd)+strlen(path)+2);
-   int	 prefix_size=0;
-
    ExpandTildeInCWD();
 
-   if(cwd[0]=='/')
-   {
-      prefix_size=1;
-      if(cwd[1]=='/' && cwd[2] && cwd[2]!='/')
-	 prefix_size=2;
-   }
-   else if(cwd[0]=='~')
-   {
-      prefix_size=1;
-      while(cwd[prefix_size]!='/' && cwd[prefix_size]!='\0')
-	 prefix_size++;
-   }
-   else
-   {
-      // handle VMS and DOS devices.
-      prefix_size=device_prefix_len(cwd);
-   }
-
-   int dev_prefix=0;
+   char	 *newcwd=(char*)alloca(strlen(cwd)+strlen(path)+2);
 
    if(path[0]=='/')
-   {
       strcpy(newcwd,path);
-      prefix_size=1;
-      if(path[1]=='/' && path[2] && path[2]!='/')
-	 prefix_size=2;
-   }
    else if(path[0]=='~')
-   {
       strcpy(newcwd,path);
-      prefix_size=1;
-      while(newcwd[prefix_size]!='/' && newcwd[prefix_size]!='\0')
-	 prefix_size++;
-   }
-   else if((dev_prefix=device_prefix_len(path))>0)
-   {
+   else if(device_prefix_len(path)>0)
       strcpy(newcwd,path);
-      prefix_size=dev_prefix;
-   }
    else
    {
       if(cwd[0])
