@@ -126,20 +126,25 @@ int pgetJob::Do()
 	 no_parallel=true;
 	 break;
       }
-      total_xferred+=MIN(chunks[i]->GetPos(),chunks[i]->limit)-chunks[i]->start;
-      if(total_eta!=-2)
-      {
-	 long eta=chunks[i]->GetETA();
-	 if(eta<0)
-	    total_eta=-2;
-	 else if(eta>total_eta)
-	    total_eta=eta;	// total eta is the maximum.
-      }
-
       if(!chunks[i]->Done())
       {
+	 if(chunks[i]->GetPos()>=chunks[i]->start)
+	    total_xferred+=MIN(chunks[i]->GetPos(),chunks[i]->limit)
+			   -chunks[i]->start;
+	 if(total_eta!=-2)
+	 {
+	    long eta=chunks[i]->GetETA();
+	    if(eta<0)
+	       total_eta=-2;
+	    else if(eta>total_eta)
+	       total_eta=eta;	// total eta is the maximum.
+	 }
 	 total_xfer_rate+=chunks[i]->GetRate();
 	 chunks_done=false;
+      }
+      else  // done
+      {
+	 total_xferred+=chunks[i]->limit-chunks[i]->start;
       }
    }
 
@@ -222,7 +227,10 @@ void pgetJob::free_chunks()
    if(chunks)
    {
       for(int i=0; i<num_of_chunks; i++)
+      {
+	 bytes+=chunks[i]->GetBytesCount();
 	 delete chunks[i];
+      }
       free(chunks);
       chunks=0;
    }
