@@ -717,6 +717,7 @@ Job *CmdExec::builtin_glob()
    {
       delete args_glob;
       args_glob=0;
+      args->rewind();
       return cmd_command(this);
    }
    glob=session->MakeGlob(pat);

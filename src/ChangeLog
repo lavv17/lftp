@@ -1,3 +1,8 @@
+1999-07-15  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* commands.cc: (glob) rewind args before calling original command.
+	  (fixes coredump for mrm without args)
+
 1999-07-12  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Resolver.cc: don't search for SRV RR if address is numeric.
