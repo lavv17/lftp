@@ -25,6 +25,7 @@
 
 #include "NetAccess.h"
 #include "StatusLine.h"
+#include "PtyShell.h"
 
 class Fish : public NetAccess
 {
@@ -32,6 +33,7 @@ class Fish : public NetAccess
    {
       DISCONNECTED,
       CONNECTING,
+      CONNECTING_1,
       CONNECTED,
       FILE_RECV,
       FILE_SEND,
@@ -40,6 +42,7 @@ class Fish : public NetAccess
    };
 
    state_t state;
+   bool received_greeting;
 
    void Init();
 
@@ -52,8 +55,7 @@ class Fish : public NetAccess
    IOBuffer *recv_buf;
    bool recv_buf_suspended;
 
-   OutputFilter *filter_out;  // used in connecting
-   int pipe_in[2];	      // used in connecting
+   PtyShell *ssh;
 
    void Disconnect();
    int IsConnected()

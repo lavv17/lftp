@@ -34,6 +34,7 @@
 #include "LsCache.h"
 #include "misc.h"
 #include "log.h"
+#include "ArgV.h"
 
 #define super NetAccess
 
@@ -151,69 +152,55 @@ int Fish::Do()
       if(!NextTry())
 	 return MOVED;
 
-      if(pipe(pipe_in)==-1)
-      {
-	 if(errno==EMFILE || errno==ENFILE)
-	 {
-	    TimeoutS(1);
-	    return m;
-	 }
-	 SetError(SEE_ERRNO,"pipe()");
-	 return MOVED;
-      }
-      NonBlock(pipe_in[0]);
-      CloseOnExec(pipe_in[0]);
-      CloseOnExec(pipe_in[1]);
-
-      const char *init="\"echo FISH:;/bin/bash\"";
-      char *cmd=string_alloca(xstrlen(hostname)*2+xstrlen(portname)*2
-			      +xstrlen(user)*2+128);
-      strcpy(cmd,"ssh");
+      const char *init="echo FISH:;/bin/bash";
+      ArgV *cmd=new ArgV("ssh");
+      cmd->Add("-x");	// don't forward X11
+      cmd->Add("-a");	// don't forward AuthAgent.
       if(user)
       {
-	 strcat(cmd," -l ");
-	 strcat(cmd,shell_encode(user));
+	 cmd->Add("-l");
+	 cmd->Add(user);
       }
       if(portname)
       {
-	 strcat(cmd," -p ");
-	 strcat(cmd,shell_encode(portname));
+	 cmd->Add("-p");
+	 cmd->Add(portname);
       }
-      strcat(cmd," ");
-      strcat(cmd,shell_encode(hostname));
-      strcat(cmd," ");
-      strcat(cmd,init);
-      Log::global->Format(9,"---- %s (%s)\n",_("Running ssh..."),cmd);
-      filter_out=new OutputFilter(cmd,pipe_in[1]);
-      filter_out->StderrToStdout();
+      cmd->Add(hostname);
+      cmd->Add(init);
+      char *cmd_str=cmd->Combine(0);
+      Log::global->Format(9,"---- %s (%s)\n",_("Running ssh..."),cmd_str);
+      xfree(cmd_str);
+      ssh=new PtyShell(cmd);
       state=CONNECTING;
       event_time=now;
       m=MOVED;
    }
    case CONNECTING:
-      fd=filter_out->getfd();
+      fd=ssh->getfd();
       if(fd==-1)
       {
-	 if(filter_out->error())
+	 if(ssh->error())
 	 {
-	    SetError(FATAL,filter_out->error_text);
+	    SetError(FATAL,ssh->error_text);
 	    return MOVED;
 	 }
 	 TimeoutS(1);
 	 return m;
       }
-      filter_out->Kill(SIGCONT);
-      send_buf=new IOBufferFDStream(filter_out,IOBuffer::PUT);
-      filter_out=0;
-      recv_buf=new IOBufferFDStream(new FDStream(pipe_in[0],"pipe in"),IOBuffer::GET);
-      close(pipe_in[1]);
-      pipe_in[1]=-1;
-      state=CONNECTED;
+      ssh->Kill(SIGCONT);
+      send_buf=new IOBufferFDStream(ssh,IOBuffer::PUT);
+      ssh=0;
+      recv_buf=new IOBufferFDStream(new FDStream(fd,"pseudo-tty"),IOBuffer::GET);
       set_real_cwd("~");
+      state=CONNECTING_1;
       m=MOVED;
 
+   case CONNECTING_1:
+      if(!received_greeting)
+	 return m;
       Send("#FISH\n"
-	   "echo;start_fish_server;"
+	   "exec 2>&1;echo;start_fish_server;"
 	   "TZ=GMT;export TZ;LC_ALL=C;export LC_ALL;"
 	   "echo '### 200'\n");
       PushExpect(EXPECT_FISH);
@@ -226,6 +213,9 @@ int Fish::Do()
 	      "pwd; echo '### 200'\n");
 	 PushExpect(EXPECT_PWD);
       }
+      state=CONNECTED;
+      m=MOVED;
+
    case CONNECTED:
       if(mode==CLOSED)
 	 return m;
@@ -315,8 +305,6 @@ void Fish::MoveConnectionHere(Fish *o)
 {
    send_buf=o->send_buf; o->send_buf=0;
    recv_buf=o->recv_buf; o->recv_buf=0;
-   pipe_in[0]=o->pipe_in[0]; o->pipe_in[0]=-1;
-   pipe_in[1]=o->pipe_in[1]; o->pipe_in[1]=-1;
    rate_limit=o->rate_limit; o->rate_limit=0;
    path_queue=o->path_queue; o->path_queue=0;
    path_queue_len=o->path_queue_len; o->path_queue_len=0;
@@ -337,20 +325,13 @@ void Fish::Disconnect()
       DebugPrint("---- ",_("Disconnecting"),9);
    Delete(send_buf); send_buf=0;
    Delete(recv_buf); recv_buf=0;
-   if(pipe_in[0]!=-1)
-      close(pipe_in[0]);
-   pipe_in[0]=-1;
-   if(pipe_in[1]!=-1)
-      close(pipe_in[1]);
-   pipe_in[1]=-1;
-   if(filter_out)
-      delete filter_out;
-   filter_out=0;
+   delete ssh; ssh=0;
    EmptyRespQueue();
    EmptyPathQueue();
    state=DISCONNECTED;
    if(mode==STORE)
       SetError(STORE_FAILED,0);
+   received_greeting=false;
 }
 
 void Fish::EmptyPathQueue()
@@ -366,8 +347,7 @@ void Fish::Init()
    send_buf=0;
    recv_buf=0;
    recv_buf_suspended=false;
-   pipe_in[0]=pipe_in[1]=-1;
-   filter_out=0;
+   ssh=0;
    max_send=0;
    line=0;
    message=0;
@@ -377,6 +357,7 @@ void Fish::Init()
    eof=false;
    path_queue=0;
    path_queue_len=0;
+   received_greeting=false;
 }
 
 Fish::Fish()
@@ -416,6 +397,7 @@ void Fish::Close()
       break;
    case(FILE_RECV):
    case(CONNECTING):
+   case(CONNECTING_1):
       Disconnect();
    }
 //    if(!RespQueueIsEmpty())
@@ -649,6 +631,29 @@ int Fish::HandleReplies()
    const char *eol=(const char*)memchr(b,'\n',s);
    if(!eol)
    {
+      if(state==CONNECTING_1)
+      {
+	 const char *p="password: ";
+	 const char *y="(yes/no)? ";
+	 if(!strncasecmp(b+s-strlen(p),p,strlen(p)))
+	 {
+	    if(!pass)
+	    {
+	       SetError(LOGIN_FAILED,"Password required");
+	       return MOVED;
+	    }
+	    recv_buf->Put("XXXX");
+	    send_buf->Put(pass);
+	    send_buf->Put("\n");
+	    return m;
+	 }
+	 if(!strncasecmp(b+s-strlen(y),y,strlen(y)))
+	 {
+	    recv_buf->Put("yes\n");
+	    send_buf->Put("yes\n");
+	    return m;
+	 }
+      }
       if(recv_buf->Eof() || recv_buf->Error())
 	 goto hup;
       return m;
@@ -667,6 +672,11 @@ int Fish::HandleReplies()
    DebugPrint("<--- ",line,ReplyLogPriority(code));
    if(code==-1)
    {
+      if(!received_greeting && !strcmp(line,"FISH:"))
+      {
+	 received_greeting=true;
+	 return m;
+      }
       if(message==0)
 	 message=xstrdup(line);
       else
@@ -695,7 +705,7 @@ int Fish::HandleReplies()
    {
    case EXPECT_FISH:
    case EXPECT_VER:
-      // nothing (yet).
+      /* nothing yet */
       break;;
    case EXPECT_PWD:
       if(!message)
@@ -1063,10 +1073,9 @@ const char *Fish::CurrentStatus()
    case DISCONNECTED:
       return _("Not connected");
    case CONNECTING:
+   case CONNECTING_1:
       return _("Connecting...");
    case CONNECTED:
-      if(!RespQueueIsEmpty() && RespQueue[RQ_head]==EXPECT_FISH)
-	 return _("Connecting...");
       return _("Connected");
    case WAITING:
       return _("Waiting for response...");

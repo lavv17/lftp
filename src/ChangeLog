@@ -1,9 +1,15 @@
 2001-10-12  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* Fish.cc, Fish.h: use PtyShell; answer ssh questions about (yes/no)
+	  and password.
+	* StatusLine.cc: (Show) check timer even if newstr is equal to to_be_shown.
+	* PtyShell.cc, PtyShell.h, lftp_pty.cc, lftp_pty.h: new files.
+	* ArgV.h: (Add) alias to Append.
 	* complete.cc: add > to remote completion status.
 	* ftpclass.cc: don't add ./ to CWD in extreme case when PWD is not
 	  absolute.
 	* misc.cc: (dir_file) don't return NULL if possible.
+	* Time.cc, Time.h: (ms) fixed integer overflow.
 
 2001-10-10  Glenn F. Maynard <g_ld@zewt.org>
 
