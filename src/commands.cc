@@ -703,6 +703,7 @@ Job *CmdExec::builtin_lftp()
       /* if no lftp-specific options were found, call open */
       return builtin_open();
    }
+   exit_code=0;
    return 0;
 }
 

@@ -859,7 +859,7 @@ void Ftp::CatchSIZE_opt(int act)
    }
 
    if(size<1)
-      size=NO_SIZE;
+      return;
 
    entity_size=size;
 
