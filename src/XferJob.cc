@@ -80,32 +80,56 @@ char *XferJob::CurrETA(float rate,long offs)
    if(size>0 && size>=offs && CanShowRate(rate))
    {
       long eta=(long)((size-offs) / rate + 0.5);
-      char letter;
+      long eta2=0;
+      long ueta=0;
+      long ueta2=0;
+      char letter=0;
+      char letter2=0;
 
       if(eta>=DAY)
       {
-	 eta=(eta+DAY/2)/DAY;
+	 ueta=(eta+DAY/2)/DAY;
+	 eta2=eta-ueta*DAY;
 	 // for translator: only first letter matters
 	 letter=_("day")[0];
+	 if(ueta<10)
+	 {
+	    letter2=_("hour")[0];
+	    ueta2=((eta2<0?eta2+DAY:eta2)+HOUR/2)/HOUR;
+	    if(ueta2>0 && eta2<0)
+	       ueta--;
+	 }
       }
       else if(eta>=HOUR)
       {
-	 eta=(eta+HOUR/2)/HOUR;
+	 ueta=(eta+HOUR/2)/HOUR;
+	 eta2=eta-ueta*HOUR;
 	 // for translator: only first letter matters
 	 letter=_("hour")[0];
+	 if(ueta<10)
+	 {
+	    letter2=_("minute")[0];
+	    ueta2=((eta2<0?eta2+HOUR:eta2)+MINUTE/2)/MINUTE;
+	    if(ueta2>0 && eta2<0)
+	       ueta--;
+	 }
       }
       else if(eta>=MINUTE)
       {
-	 eta=(eta+MINUTE/2)/MINUTE;
+	 ueta=(eta+MINUTE/2)/MINUTE;
 	 // for translator: only first letter matters
 	 letter=_("minute")[0];
       }
       else
       {
+	 ueta=eta;
 	 // for translator: only first letter matters
 	 letter=_("second")[0];
       }
-      sprintf(eta_str,_("eta:%ld%c "),eta,letter);
+      if(letter2 && ueta2>0)
+	 sprintf(eta_str,_("eta:%ld%c%ld%c "),ueta,letter,ueta2,letter2);
+      else
+	 sprintf(eta_str,_("eta:%ld%c "),ueta,letter);
    }
    return eta_str;
 }
