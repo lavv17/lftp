@@ -186,7 +186,7 @@ void FileSet::Sort(sort_e newsort, bool casefold)
       Unsort();
       return;
    }
-   
+
    if(files_sort == files) {
       files_sort=(FileInfo**)xmalloc(fnum*sizeof(FileInfo *));
       for(int i=0; i < fnum; i++)
@@ -200,8 +200,8 @@ void FileSet::Sort(sort_e newsort, bool casefold)
 
    switch(newsort) {
    case BYNAME: qsort(files_sort, fnum, sizeof(FileInfo *), sort_name); break;
-   case BYSIZE: qsort(files_sort, fnum, sizeof(FileInfo *), sort_size); break; 
-   case DIRSFIRST: qsort(files_sort, fnum, sizeof(FileInfo *), sort_dirs); break; 
+   case BYSIZE: qsort(files_sort, fnum, sizeof(FileInfo *), sort_size); break;
+   case DIRSFIRST: qsort(files_sort, fnum, sizeof(FileInfo *), sort_dirs); break;
    }
 }
 
@@ -391,7 +391,7 @@ FileInfo *FileSet::FindByName(const char *name) const
 
    if(n < fnum && !strcmp(files[n]->name,name))
       return files[n];
-   
+
    return 0;
 }
 
@@ -535,7 +535,9 @@ FileInfo::FileInfo(const FileInfo &fi)
 
 void FileInfo::LocalFile(const char *name, bool follow_symlinks)
 {
-   SetName(name);
+   if(!this->name)
+      SetName(name);
+
    struct stat st;
    if(lstat(name,&st)==-1)
       return;
