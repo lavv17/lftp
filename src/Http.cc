@@ -157,9 +157,9 @@ void Http::Disconnect()
    }
    last_method=0;
    ResetRequestData();
-   state=DISCONNECTED;
    if(mode==STORE && state!=DONE && !Error())
       SetError(STORE_FAILED,0);
+   state=DISCONNECTED;
 }
 
 void Http::ResetRequestData()

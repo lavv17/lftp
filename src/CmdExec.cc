@@ -734,7 +734,6 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
    SaveCWD();
 
    var_ls=xstrdup("");
-   var_prompt=xstrdup("lftp> ");
    remote_completion=false;
    long_running=0;
    csh_history=false;
@@ -806,7 +805,7 @@ char *CmdExec::MakePrompt()
 
    char *store=prompt;
 
-   char *scan=var_prompt;
+   const char *scan=res_prompt.Query(getenv("TERM"));
    char ch;
    char str[3];
    const char *to_add;
@@ -953,8 +952,6 @@ void CmdExec::Reconfig(const char *name)
    csh_history = res_csh_history.Query(0);
    xfree(var_ls);
    var_ls=xstrdup(res_default_ls.Query(c));
-   xfree(var_prompt);
-   var_prompt=xstrdup(res_prompt.Query(c));
    verify_path=res_verify_path.Query(c);
    verify_host=res_verify_host.Query(c);
    verbose=res_verbose.Query(0);

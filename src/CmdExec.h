@@ -171,7 +171,6 @@ public:
    static const char *GetFullCommandName(const char *);
 
    char	 *var_ls;
-   char	 *var_prompt;
    bool	 remote_completion;
    int	 long_running;
    bool	 csh_history;
