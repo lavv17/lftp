@@ -4,6 +4,7 @@
 	* FileSet.cc, FileSet.h: (EstimateMemory) new method.
 	* LsCache.cc, LsCache.h: cache FileSet along with listing.
 	* SFtp.cc, SFtp.h: more work. All is working now.
+	* ConnectionSlot.cc, ConnectionSlot.h: outline ctor/dtor to avoid warning.
 
 2003-11-20  Alexander V. Lukyanov <lav@yars.free.net>
 

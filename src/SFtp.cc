@@ -31,6 +31,7 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <iconv.h>
 
 #define max_buf 0x10000
 
@@ -479,11 +480,47 @@ SFtp::unpack_status_t SFtp::UnpackPacket(Buffer *b,SFtp::Packet **p)
    case SSH_FXP_DATA:
       pp=new Reply_DATA();
       break;
+   case SSH_FXP_INIT:
+   case SSH_FXP_OPEN:
+   case SSH_FXP_CLOSE:
+   case SSH_FXP_READ:
+   case SSH_FXP_WRITE:
+   case SSH_FXP_LSTAT:
+   case SSH_FXP_FSTAT:
+   case SSH_FXP_SETSTAT:
+   case SSH_FXP_FSETSTAT:
+   case SSH_FXP_OPENDIR:
+   case SSH_FXP_READDIR:
+   case SSH_FXP_REMOVE:
+   case SSH_FXP_MKDIR:
+   case SSH_FXP_RMDIR:
+   case SSH_FXP_REALPATH:
+   case SSH_FXP_STAT:
+   case SSH_FXP_RENAME:
+   case SSH_FXP_READLINK:
+   case SSH_FXP_SYMLINK:
+   case SSH_FXP_EXTENDED:
+      DebugPrint("**** ","request in reply??",0);
+      return UNPACK_WRONG_FORMAT;
+   case SSH_FXP_EXTENDED_REPLY:
+      DebugPrint("**** ","unexpected SSH_FXP_EXTENDED_REPLY",0);
+      return UNPACK_WRONG_FORMAT;
    }
    res=pp->Unpack(b);
    if(res!=UNPACK_SUCCESS)
    {
-      // FIXME: log error
+      switch(res)
+      {
+      case UNPACK_PREMATURE_EOF:
+	 DebugPrint("**** ","premature eof",0);
+	 break;
+      case UNPACK_WRONG_FORMAT:
+	 DebugPrint("**** ","wrong packet format",0);
+	 break;
+      case UNPACK_NO_DATA_YET:
+      case UNPACK_SUCCESS:
+	 ;
+      }
       probe.DropData(b);
       delete *p;
       *p=0;
@@ -1640,33 +1677,74 @@ void SFtp::Request_WRITE::Pack(Buffer *b)
    b->Put(data,len);
 }
 
+static char *iconv_buf=0;
+static int iconv_buf_size=0;
+static iconv_t lc_to_utf8_iconv;
+static bool lc_to_utf8_iconv_opened=false;
+static iconv_t utf8_to_lc_iconv;
+static bool utf8_to_lc_iconv_opened=false;
+
 const char *SFtp::utf8_to_lc(const char *s)
 {
-   static char *buf=0;
-   static int buf_size=0;
-
    if(protocol_version<4)
       return s;
 
-   //FIXME
-   return s;
+   if(!utf8_to_lc_iconv_opened)
+   {
+      utf8_to_lc_iconv=iconv_open("char//TRANSLIT","UTF-8");
+      utf8_to_lc_iconv_opened=true;
+   }
+   if(utf8_to_lc_iconv==(iconv_t)(-1))
+      return s;
+
+   int len=strlen(s);
+   if(iconv_buf_size<len+1)
+      iconv_buf=(char*)xrealloc(iconv_buf,iconv_buf_size=len+1);
+
+   const char *conv_in=s;
+   char *conv_out=iconv_buf;
+   size_t conv_in_len=len;
+   size_t conv_out_len=iconv_buf_size;
+   iconv(utf8_to_lc_iconv,0,0,0,0); // reset iconv state
+   size_t res=iconv(utf8_to_lc_iconv,&conv_in,&conv_in_len,&conv_out,&conv_out_len);
+   if(res==(size_t)-1)
+      return s;	  // cannot convert
+   *conv_out=0;
+   return iconv_buf;
 }
 const char *SFtp::lc_to_utf8(const char *s)
 {
-   static char *buf=0;
-   static int buf_size=0;
-
    if(protocol_version<4)
       return s;
 
-   //FIXME
-   return s;
+   if(!lc_to_utf8_iconv_opened)
+   {
+      lc_to_utf8_iconv=iconv_open("UTF-8","char");
+      lc_to_utf8_iconv_opened=true;
+   }
+   if(lc_to_utf8_iconv==(iconv_t)(-1))
+      return s;
+
+   int len=strlen(s);
+   if(iconv_buf_size<len+1)
+      iconv_buf=(char*)xrealloc(iconv_buf,iconv_buf_size=len+1);
+
+   const char *conv_in=s;
+   char *conv_out=iconv_buf;
+   size_t conv_in_len=len;
+   size_t conv_out_len=iconv_buf_size;
+   iconv(lc_to_utf8_iconv,0,0,0,0); // reset iconv state
+   size_t res=iconv(lc_to_utf8_iconv,&conv_in,&conv_in_len,&conv_out,&conv_out_len);
+   if(res==(size_t)-1)
+      return s;	  // cannot convert
+   *conv_out=0;
+   return iconv_buf;
 }
 
 FileInfo *SFtp::MakeFileInfo(const NameAttrs *na)
 {
    const FileAttrs *a=&na->attrs;
-   FileInfo *fi=new FileInfo(na->name);
+   FileInfo *fi=new FileInfo(utf8_to_lc(na->name));
    switch(a->type)
    {
    case SSH_FILEXFER_TYPE_REGULAR:  fi->SetType(fi->NORMAL);    break;
@@ -1688,8 +1766,8 @@ FileInfo *SFtp::MakeFileInfo(const NameAttrs *na)
    }
    if(a->flags&SSH_FILEXFER_ATTR_OWNERGROUP)
    {
-      fi->SetUser(a->owner);
-      fi->SetGroup(a->group);
+      fi->SetUser (utf8_to_lc(a->owner));
+      fi->SetGroup(utf8_to_lc(a->group));
    }
    if(a->flags&SSH_FILEXFER_ATTR_PERMISSIONS)
       fi->SetMode(a->permissions&S_IAMB);
