@@ -681,6 +681,7 @@ Ftp::pasv_state_t Ftp::Handle_PASV()
    p[0]=p0; p[1]=p1;
 
    if((a0==0 && a1==0 && a2==0 && a3==0)
+   || QueryBool("ignore-pasv-address",hostname)
    || (QueryBool("fix-pasv-address",hostname) && !conn->proxy_is_http
        && (InPrivateNetwork(&conn->data_sa) != InPrivateNetwork(&conn->peer_sa)
 	  || IsLoopback(&conn->data_sa) != IsLoopback(&conn->peer_sa))))

@@ -5,6 +5,7 @@
 	  of methods.
 	* misc.cc, misc.h: (strip_trailing_slashes) new function.
 	* mvJob.cc: append basename of target ends with a slash.
+	* ftpclass.cc, resource.cc: (ftp:ignore-pasv-address) new setting.
 
 2005-03-01  Alexander V. Lukyanov <lav@yars.free.net>
 
