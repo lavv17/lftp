@@ -1,6 +1,7 @@
 2000-07-21  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CopyJob.cc: fix duplicate error messages.
+	* commands.cc: help update: mirror -P, exit bg.
 
 2000-07-20  Alexander V. Lukyanov  <lav@yars.free.net>
 

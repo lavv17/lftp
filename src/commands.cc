@@ -149,10 +149,11 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Set debug level to given value or turn debug off completely.\n"
 	 " -o <file>  redirect debug output to the file.\n")},
    {"echo",    cmd_echo,   0},
-   {"exit",    cmd_exit,   N_("exit [<code>]"),
+   {"exit",    cmd_exit,   N_("exit [<code>|bg]"),
 	 N_("exit - exit from lftp or move to background if jobs are active\n\n"
 	 "If no jobs active, the code is passed to operating system as lftp\n"
-	 "termination status. If omitted, exit code of last command is used.\n")},
+	 "termination status. If omitted, exit code of last command is used.\n"
+	 "`bg' forces moving to background if cmd:move-background is false.\n")},
    {"fg",      cmd_wait,   0,"wait"},
    {"find",    cmd_find,0,
 	 N_("Usage: find [directory]\n"
@@ -223,6 +224,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -R, --reverse          reverse mirror (put files)\n"
 	 " -L, --dereference      download symbolic links as files\n"
 	 " -N, --newer-than FILE  download only files newer than the file\n"
+	 " -P, --parallel[=N]     download N files in parallel\n"
 	 " -i RX, --include RX    include matching files\n"
 	 " -x RX, --exclude RX    exclude matching files\n"
 	 "                        RX is extended regular expression\n"
