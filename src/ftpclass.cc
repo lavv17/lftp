@@ -2743,8 +2743,6 @@ void Ftp::ControlClose()
 
 void  Ftp::DisconnectNow()
 {
-   if(!conn)
-      return;
    DataClose();
    ControlClose();
    state=INITIAL_STATE;
@@ -2756,17 +2754,17 @@ void  Ftp::Disconnect()
    if(!conn)
       return;
 
-   /* protect against re-entering from FlushSendQueue */
-   static bool disconnect_in_progress=false;
-   if(disconnect_in_progress)
-      return;
-   disconnect_in_progress=true;
-
    if(conn->quit_sent)
    {
       DisconnectNow();
       return;
    }
+
+   /* protect against re-entering from FlushSendQueue */
+   static bool disconnect_in_progress=false;
+   if(disconnect_in_progress)
+      return;
+   disconnect_in_progress=true;
 
    bool no_greeting=(!expect->IsEmpty() && expect->FirstIs(Expect::READY));
 
@@ -2838,19 +2836,17 @@ void Ftp::Connection::CloseAbortedDataConnection()
 
 void  Ftp::DataClose()
 {
+   delete rate_limit;
+   rate_limit=0;
+   nop_time=0;
+   nop_offset=0;
+   nop_count=0;
+
    if(!conn)
       return;
    if(conn->data_sock!=-1 && QueryBool("web-mode"))
       disconnect_on_close=true;
    conn->CloseDataConnection();
-   nop_time=0;
-   nop_offset=0;
-   nop_count=0;
-   if(rate_limit)
-   {
-      delete rate_limit;
-      rate_limit=0;
-   }
    if(state==DATA_OPEN_STATE || state==DATASOCKET_CONNECTING_STATE)
       state=WAITING_STATE;
 }
