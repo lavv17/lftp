@@ -28,6 +28,7 @@
 #include "ArgV.h"
 #include "LsCache.h"
 #include "misc.h"
+#include <ctype.h>
 
 static const char *find_char(const char *buf,int len,char ch)
 {
@@ -480,6 +481,10 @@ parse_url_again:
 	 else if(year<100)
 	    year+=1900;
       }
+
+      if(day<1 || day>31 || hour<0 || hour>23 || minute<0 || minute>59
+      || !isalnum((unsigned char)month_name[0]))
+	 goto add_file;	// invalid data
 
       data_available=true;
 

@@ -1,3 +1,7 @@
+1999-10-11  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* HttpDir.cc: check file info for validity.
+
 1999-10-10  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* GetJob.cc: don't open local file early if !cont.
