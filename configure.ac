@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.53)
-AC_INIT([lftp], [2.6.7], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [2.6.8], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
 AM_CONFIG_HEADER(include/config.h)
@@ -147,7 +147,7 @@ AC_ARG_WITH(socks,
 [  with_socks=no;	])
 if test x$with_socks = xyes; then
    AC_DEFINE(SOCKS4, 1, [define if you are building with SOCKS support])
-   AC_CHECK_LIB(socks, Rconnect, [SOCKSLIBS=-lsocks],
+   AC_CHECK_LIB(socks, main, [SOCKSLIBS=-lsocks],
       [AC_MSG_ERROR(cannot find -lsocks library)])
 fi
 AC_ARG_WITH(socks5,
@@ -156,7 +156,7 @@ AC_ARG_WITH(socks5,
 [  with_socks5=no;	])
 if test x$with_socks5 = xyes; then
    AC_DEFINE(SOCKS5, 1, [define if you are building with SOCKSv5 support])
-   AC_CHECK_LIB(socks5, Rconnect, [SOCKSLIBS=-lsocks5],
+   AC_CHECK_LIB(socks5, main, [SOCKSLIBS=-lsocks5],
       [AC_MSG_ERROR(cannot find -lsocks5 library)])
 fi
 AC_ARG_WITH(socksdante,
@@ -165,11 +165,11 @@ AC_ARG_WITH(socksdante,
 [  with_socksdante=no;	])
 if test x$with_socksdante = xyes; then
    AC_DEFINE(SOCKS_DANTE, 1, [define if you are building with SOCKS-Dante support])
-   AC_CHECK_LIB(socks, Rconnect, [SOCKSLIBS=-lsocks],
+   AC_CHECK_LIB(socks, main, [SOCKSLIBS=-lsocks],
       [AC_MSG_ERROR(cannot find -lsocks library)])
 fi
 LIBS="$LIBS $SOCKSLIBS"
-if test "$SOCKSLIBS" = "-lsocks"; then
+if test -n "$SOCKSLIBS"; then
    AC_CHECK_FUNCS([Rpoll])
    if test "$ac_cv_func_Rpoll" != yes; then
       lftp_cv_func_poll_works=no

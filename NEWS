@@ -1,3 +1,11 @@
+Version 2.6.8 - 2003-10-10
+
+* better multibyte character support.
+* experimental ftp protocol command PRET added; new setting ftp:use-pret.
+* unblock SIGCLD signal when running external programs.
+* fixed included readline compilation.
+* fixed compilation with socks.
+
 Version 2.6.7 - 2003-08-29
 
 * new settings ftp:use-size, ftp:use-mdtm, ftp:use-telnet-iac.
