@@ -1,3 +1,10 @@
+2000-03-16  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ResMgr.cc: call srandom if range is full.
+	* ftpclass.cc: don't fail if port not available, but rather wait
+	  and retry.
+	* commands.cc: (command) handle args->count()==1.
+
 2000-03-15  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h: disallow filenames with NL;

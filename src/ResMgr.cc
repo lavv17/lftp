@@ -562,15 +562,15 @@ CDECL void srandom(unsigned seed);
 
 int Range::Random()
 {
-   if(full)
-      return random();
-
    static bool init=false;
    if(!init)
    {
       srandom(time(NULL)+getpid());
       init=true;
    }
+
+   if(full)
+      return random();
 
    // interval [0;1)
    double mult=random()/2147483648.0;

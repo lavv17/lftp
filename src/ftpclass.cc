@@ -1403,10 +1403,10 @@ int   Ftp::Do()
 
 	    for(int t=0; ; t++)
 	    {
-	       if(t>=10) // Fail after 10 tries
+	       if(t>=10)
 	       {
-		  Fatal("could not allocate port from ftp:port-range set");
-		  return MOVED;
+		  TimeoutS(10);	 // retry later.
+		  return m;
 	       }
 	       if(t==9)
 		  ReuseAddress(data_sock);   // try to reuse address.

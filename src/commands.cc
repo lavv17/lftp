@@ -1984,6 +1984,11 @@ CMD(find)
 
 CMD(command)
 {
+   if(args->count()<2)
+   {
+      eprintf(_("Usage: %s command args...\n"),args->a0());
+      return 0;
+   }
    args->delarg(0);
    return parent->builtin_restart();
 }
