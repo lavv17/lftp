@@ -65,6 +65,7 @@ void ColumnOutput::addf(const char *fmt, const char *color, ...)
    char *str = xvasprintf(fmt, v);
    va_end(v);
    add(str, color);
+   xfree(str);
 }
 
 void ColumnOutput::append()

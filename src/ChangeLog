@@ -1,3 +1,12 @@
+2001-11-19  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.cc: don't set LC_NUMERIC. It breaks default float settings
+	  on certain locales.
+
+2001-11-13  Glenn Maynard <g_ld@zewt.org>
+
+	* ColumnOutput.cc: (addf) fix memory leak.
+
 2001-11-12  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* resource.cc: remove NoClosure from net:connection-limit. Reported
