@@ -184,6 +184,7 @@ class Ftp : public NetAccess
    void	 SwitchToState(automate_state);
 
    void  SendCmd(const char *cmd);
+   void  SendCmd2(const char *cmd,const char *f);
    void  SendUrgentCmd(const char *cmd);
    int	 FlushSendQueue(bool all=false);
 
@@ -258,6 +259,9 @@ private:
    bool	copy_connection_open;
    bool copy_allow_store;
 
+   bool use_stat;
+   int  stat_interval;
+
    const char *encode_eprt(sockaddr_u *);
 
 public:
@@ -270,7 +274,7 @@ public:
    const char *GetProto() { return "ftp"; }
 
    FileAccess *Clone() { return new Ftp(this); }
-   static FileAccess *New() { return new Ftp(); }
+   static FileAccess *New();
 
    bool	 SameLocationAs(FileAccess *);
    bool	 SameSiteAs(FileAccess *);
@@ -353,9 +357,7 @@ public:
    bool IsCopyPassive() { return copy_passive; }
    void CopyAllowStore()
       {
-	 char *str=string_alloca(5+strlen(file)+2);
-         sprintf(str,"STOR %s\n",file);
-	 SendCmd(str);
+	 SendCmd2("STOR",file);
 	 AddResp(RESP_TRANSFER_OK,STORE_FAILED_STATE,CHECK_TRANSFER);
 	 copy_allow_store=true;
       }
