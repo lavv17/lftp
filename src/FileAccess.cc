@@ -428,7 +428,8 @@ const char *FileAccess::GetFileURL(const char *f,int flags)
    ParsedURL u("");
 
    u.proto=(char*)proto;
-   u.user=user;
+   if(!(flags&NO_USER))
+      u.user=user;
    if((pass_open || (flags&WITH_PASSWORD)) && !(flags&NO_PASSWORD))
       u.pass=pass;
    u.host=hostname;

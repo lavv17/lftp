@@ -330,7 +330,7 @@ void Http::SendMethod(const char *method,const char *efile)
       const char *slash="";
       if(!xstrcmp(referer,"."))
       {
-	 referer=GetConnectURL();
+	 referer=GetConnectURL(NO_USER+NO_PASSWORD);
 	 if(referer[0] && referer[strlen(referer)-1]!='/')
 	    slash="/";
       }
