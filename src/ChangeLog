@@ -1,3 +1,12 @@
+2001-12-18  Glenn Maynard <g_ld@zewt.org>
+
+	* module.cc: change XXX to TODO.
+	* buffer.cc buffer.h: add GetPos() and vFormat.
+	* FileCopy.cc: FileCopyPeer can_seek and can_seek0 default to off;
+	  enable it in the derived classes.
+	* FileCopy.h: Allow re-disabling AllowWrite and finding out if a
+	  FileCopy is line-buffered.
+
 2001-12-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc, FileCopy.h, Filter.cc, Filter.h: an attempt to

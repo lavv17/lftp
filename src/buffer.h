@@ -28,6 +28,8 @@
 #include "fg.h"
 #include "xstring.h"
 
+#include <stdarg.h>
+
 #define GET_BUFSIZE 0x4000
 
 class Speedometer;
@@ -81,6 +83,7 @@ public:
    void Put(const char *buf,int size);
    void Put(const char *buf) { Put(buf,strlen(buf)); }
    void Format(const char *f,...) PRINTF_LIKE(2,3);
+   void vFormat(const char *f, va_list v);
    void PutEOF() { eof=true; PutEOF_LL(); }
 
    // useful for cache.
@@ -89,6 +92,7 @@ public:
    void SaveRollback(int p);
 
    void SetPos(off_t p) { pos=p; }
+   off_t GetPos() const { return pos; }
 
    void SetSpeedometer(Speedometer *s) { rate=s; }
    const char *GetRateStrS();

@@ -22,6 +22,7 @@
 #include "buffer.h"
 #include "xmalloc.h"
 #include "FileAccess.h"
+#include "misc.h"
 #ifdef NEED_TRIO
 #include "trio.h"
 #define vsnprintf trio_vsnprintf
@@ -134,13 +135,21 @@ void Buffer::Put(const char *buf,int size)
 void Buffer::Format(const char *f,...)
 {
    va_list v;
+   va_start(v,f);
+   vFormat(f, v);
+   va_end(v);
+}
+
+void Buffer::vFormat(const char *f, va_list v)
+{
    int size=64;
    for(;;)
    {
       Allocate(size);
-      va_start(v,f);
+      va_list tmp;
+      VA_COPY(tmp,v);
       int res=vsnprintf(buffer+buffer_ptr+in_buffer, size, f, v);
-      va_end(v);
+      va_end(tmp);
       if(res>=0 && res<size)
       {
 	 in_buffer+=res;

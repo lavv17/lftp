@@ -641,8 +641,8 @@ FileCopyPeer::FileCopyPeer(direction m)
    e_size=NO_SIZE;
    date=NO_DATE_YET;
    seek_pos=0;
-   can_seek=true;
-   can_seek0=true;
+   can_seek=false;
+   can_seek0=false;
    date_set=false;
    do_set_date=true;
    ascii=false;
@@ -1084,6 +1084,8 @@ void FileCopyPeerFA::Init()
    try_time=0;
    retries=0;
    redirections=0;
+   can_seek=true;
+   can_seek0=true;
 }
 
 FileCopyPeerFA::FileCopyPeerFA(FileAccess *s,const char *f,int m)
@@ -1554,6 +1556,8 @@ FileCopyPeerString::FileCopyPeerString(const char *s, int len)
    Put(s,len);
    eof=true;
    pos=0;
+   can_seek=true;
+   can_seek0=true;
 }
 FileCopyPeerString::~FileCopyPeerString()
 {

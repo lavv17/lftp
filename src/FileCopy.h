@@ -123,7 +123,7 @@ public:
    virtual void Fg() {}
    virtual void Bg() {}
 
-   void AllowWrite() { write_allowed=true; }
+   void AllowWrite(bool y=true) { write_allowed=y; }
    bool WriteAllowed() { return write_allowed; }
    bool WritePending() { return mode==PUT && Size()>0; }
 
@@ -220,6 +220,7 @@ public:
    void RemoveSourceLater() { remove_source_later=true; }
    void RemoveTargetFirst() { remove_target_first=true; put->Resume(); put->RemoveFile(); }
    void LineBuffered(int size=0x1000);
+   bool IsLineBuffered() const { return line_buffer; }
 
    FileCopy(FileCopyPeer *src,FileCopyPeer *dst,bool cont);
    void Init();
@@ -235,7 +236,7 @@ public:
    static FileCopy *New(FileCopyPeer *src,FileCopyPeer *dst,bool cont);
    static FileCopy *(*fxp_create)(FileCopyPeer *src,FileCopyPeer *dst,bool cont);
 
-   void AllowWrite() { put->AllowWrite(); }
+   void AllowWrite(bool y=true) { if(put) put->AllowWrite(y); }
    bool WriteAllowed() { return !put || put->WriteAllowed(); }
    bool WritePending() { return put && put->WritePending(); }
 };
