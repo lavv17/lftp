@@ -698,8 +698,15 @@ void CmdExec::PrintStatus(int v)
       printf(_("\tWaiting for job [%d] to terminate\n"),waiting->jobno);
       return;
    }
-   // xgettext:c-format
-   printf(_("\tRunning\n"));
+   if(next_cmd && next_cmd[0])
+   {
+      // xgettext:c-format
+      printf(_("\tRunning\n"));
+   }
+   else if(feeder)
+   {
+      printf(_("\tWaiting for command\n"));
+   }
 }
 
 CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
