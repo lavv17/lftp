@@ -52,6 +52,7 @@
 #include "SleepJob.h"
 #include "FindJob.h"
 #include "ChmodJob.h"
+#include "CopyJob.h"
 
 #include "misc.h"
 #include "alias.h"
@@ -65,6 +66,7 @@
 #include "log.h"
 #include "module.h"
 #include "getopt.h"
+#include "FileCopy.h"
 
 #include "confpaths.h"
 
@@ -87,7 +89,7 @@ CMD(ver);   CMD(close);  CMD(bookmark);CMD(lftp);
 CMD(echo);  CMD(suspend);CMD(ftpcopy); CMD(sleep);
 CMD(at);    CMD(find);   CMD(command); CMD(module);
 CMD(lpwd);  CMD(glob);	 CMD(chmod);   CMD(queue);
-CMD(repeat);
+CMD(repeat);CMD(get1);
 
 #ifdef MODULE_CMD_MIRROR
 # define cmd_mirror 0
@@ -163,6 +165,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -c  continue, reget\n"
 	 " -e  delete remote files after successful transfer\n"
 	 " -u  try to recognize URLs\n")},
+   {"get1",    cmd_get1,   0,0},
    {"glob",    cmd_glob,   0,0},
    {"help",    cmd_help,   N_("help [<cmd>]"),
 	 N_("Print help for command <cmd>, or list of available commands\n")},
@@ -1967,4 +1970,102 @@ CMD(chmod)
 CMD(queue)
 {
    return parent->builtin_queue();
+}
+
+CMD(get1)
+{
+   static struct option get1_options[]=
+   {
+      {"ascii",no_argument,0,'a'},
+      {"region",required_argument,0,'r'},
+      {"continue",no_argument,0,'c'},
+      {"output",required_argument,0,'o'},
+      {0,0,0,0}
+   };
+   int c;
+   char *src=0;
+   char *dst=0;
+   bool cont=false;
+   bool ascii=false;
+
+   args->rewind();
+   while((c=args->getopt_long("arco:",get1_options,0))!=EOF)
+   {
+      switch(c)
+      {
+      case 'c':
+	 cont=true;
+	 break;
+      case 'a':
+	 ascii=true;
+	 break;
+      case 'o':
+	 dst=optarg;
+	 break;
+      case 'r':
+	 // FIXME
+	 break;
+      case '?':
+	 // FIXME
+	 return 0;
+      }
+   }
+   src=args->getcurr();
+
+   if(dst==0 || dst[0]==0)
+   {
+retry:
+      dst=strrchr(src,'/');
+      if(dst)
+      {
+	 if(dst[1]==0 && dst>src)
+	 {
+	    *dst=0;
+	    goto retry;
+	 }
+	 dst++;
+      }
+      else
+	 dst=src;
+   }
+   else
+   {
+      if(dst[strlen(dst)-1]=='/')
+      {
+	 char *slash=strrchr(src,'/');
+	 if(slash)
+	    slash++;
+	 else
+	    slash=src;
+	 char *dst1=string_alloca(strlen(dst)+strlen(slash)+1);
+	 strcpy(dst1,dst);
+	 strcat(dst1,slash);
+	 dst=dst1;
+      }
+   }
+
+   ParsedURL src_url(src,true);
+   ParsedURL dst_url(dst,true);
+
+   if(dst_url.proto==0)
+   {
+      // check if dst is a directory.
+      // FIXME.
+   }
+
+   FileCopyPeer *src_peer=0;
+   FileCopyPeer *dst_peer=0;
+
+   if(src_url.proto==0)
+      src_peer=new FileCopyPeerFA(Clone(),src,FA::RETRIEVE);
+   else
+      src_peer=new FileCopyPeerFA(&src_url,FA::RETRIEVE);
+
+   if(dst_url.proto==0)
+      dst_peer=new FileCopyPeerFDStream(new FileStream(dst,O_WRONLY|O_CREAT
+				    |(cont?0:O_TRUNC)),FileCopyPeer::PUT);
+   else
+      dst_peer=new FileCopyPeerFA(&dst_url,FA::STORE);
+
+   return new CopyJob(new FileCopy(src_peer,dst_peer,cont),src);
 }
