@@ -711,42 +711,49 @@ char *xasprintf(const char *format, ...)
 
 static char *mem_crlf(const char *buf, int s)
 {
-   while(buf && s) {
-      char *cr=(char *)memchr(buf,'\r',s);
+   if(!buf)
+      return 0;
+   while(s>1)
+   {
+      const char *cr=(const char*)memchr(buf,'\r',s);
+      if(!cr)
+	 return 0;
+      if(cr+1>=buf+s)  // out of buffer
+	 return 0;
 
-      if(!cr || cr == buf+s-1)
-	 return NULL;
+      if(cr[1]=='\n')
+	 return (char*)cr;
 
-      if(cr[1] == '\n') return cr;
-      s -= (cr-buf)+1;
-      buf += (cr-buf)+1;
+      s-=cr+1-buf;
+      buf=cr+1;
    }
-
-   return NULL;
+   return 0;
 }
 
 /* convert \r\n -> \n in buf; return new size; be efficient for large strings */
 int crlf_to_lf(char *buf, int s)
 {
-   int retsiz = s;
+   char *store;
+   store=mem_crlf(buf,s);
+   if(!store)
+      return s;
 
-   char *startpos;
-   startpos = mem_crlf(buf, s);
-   if(!startpos) return retsiz;
+   int retsize=s-1;
+   s-=store+1-buf;
+   buf=store+1;
 
-   char *append = startpos;
-   while(startpos+1 < buf + s)
+   while(s>1)
    {
-      char *nextpos = mem_crlf(startpos+1, s - (startpos+1 - buf));
+      char *crlf=mem_crlf(buf,s);
+      if(!crlf)
+	 break;
 
-      if(nextpos == 0) nextpos = buf + s - 1; /* EOS */
-      memmove(append, startpos+1, nextpos-startpos);
-      append += nextpos-startpos-1;
-
-      startpos=nextpos;
-      retsiz--;
+      memmove(store, buf, crlf-buf);
+      store+=crlf-buf;
+      retsize--;
+      s-=crlf+1-buf;
+      buf=crlf+1;
    }
-
-   return retsiz;
+   memmove(store,buf,s);
+   return retsize;
 }
-

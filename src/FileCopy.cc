@@ -861,7 +861,8 @@ void FileCopyPeerFA::OpenSession()
 	 Allocate(s);
 	 memmove(buffer+buffer_ptr,b,s);
       #ifndef NATIVE_CRLF
-	 if(ascii) s = crlf_to_lf(buffer+buffer_ptr, s);
+	 if(ascii)
+	    s=crlf_to_lf(buffer+buffer_ptr,s);
       #endif	 // NATIVE_CRLF
 	 in_buffer=s;
 	 pos=seek_pos;
@@ -1277,37 +1278,39 @@ int FileCopyPeerFDStream::Do()
       }
       if(!write_allowed)
 	 return m;
-      while(in_buffer > 0) {
+      while(in_buffer>0)
+      {
 	 int res=Put_LL(buffer+buffer_ptr,in_buffer);
 	 if(res>0)
 	 {
 	    in_buffer-=res;
 	    buffer_ptr+=res;
-	    m = MOVED;
+	    m=MOVED;
 	 }
 	 if(res<0)
 	    return MOVED;
-	 if(res == 0)
+	 if(res==0)
 	    break;
       }
       break;
 
    case GET:
-      while(in_buffer < GET_BUFSIZE) {
-	 if(eof)
-	    return MOVED;
+      if(eof)
+	 return m;
+      while(in_buffer<GET_BUFSIZE)
+      {
 	 int res=Get_LL(GET_BUFSIZE);
 	 if(res>0)
 	 {
 	    in_buffer+=res;
 	    SaveMaxCheck(0);
-	    m = MOVED;
+	    m=MOVED;
 	 }
 	 if(res<0)
 	    return MOVED;
 	 if(eof)
 	    return MOVED;
-	 if(res == 0)
+	 if(res==0)
 	    break;
       }
       break;

@@ -218,6 +218,7 @@ int FtpListInfo::Do()
    }
    // can't happen
    abort();
+   return m;
 }
 
 const char *FtpListInfo::Status()

@@ -1,3 +1,9 @@
+2001-10-27  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FtpDirList.cc: clean up; style.
+	* FileCopy.cc: style; restore eof behaviour.
+	* misc.cc: rewrite mem_crlf and crlf_to_lf to make them more clear.
+
 2001-10-27  Glenn Maynard <g_ld@zewt.org>
 
 	* FileCopy.cc, FtpDirList.cc, FtpDirList.h, misc.cc, misc.h:

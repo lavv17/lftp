@@ -38,8 +38,10 @@
 
 int FtpDirList::Do()
 {
+   int m=STALL;
+
    if(done)
-      return STALL;
+      return m;
 
    if(buf->Eof())
    {
@@ -86,33 +88,30 @@ int FtpDirList::Do()
       return MOVED;
    }
 
-   int m=STALL;
-
    while(len>0)
    {
       const char *eol=find_char(b,len,'\n');
       if(!eol && !ubuf->Eof() && len<0x1000)
 	 return m;
-      int line_len=len;
-      char *eplf = NULL;
       if(eol)
       {
-	 line_len=eol+1-b;
-
-	 eplf = EPLF(b, eol-b);
+	 int line_len=eol+1-b;
+	 // check if the line is in EPLF format and rewrite it.
+	 char *eplf = EPLF(b, eol-b);
+	 if(eplf) {
+	    buf->Put(eplf);
+	    xfree(eplf);
+	 } else
+	    buf->Put(b,line_len);
+	 ubuf->Skip(line_len);
       }
-
-      if(eplf) {
-	 /* put the new string instead */
-	 buf->Put(eplf,strlen(eplf));
-	 xfree(eplf);
-      } else
-         buf->Put(b,line_len);
-
-      ubuf->Skip(line_len);
-      len -= line_len;
-      b += line_len;
-
+      else
+      {
+	 // too long line of missing \n on last line.
+	 buf->Put(b,len);
+	 ubuf->Skip(len);
+      }
+      ubuf->Get(&b,&len);
       m=MOVED;
    }
 
@@ -166,8 +165,10 @@ void FtpDirList::Resume()
 char *FtpDirList::EPLF(const char *b, int linelen)
 {
    // check for EPLF listing
-   if(linelen <= 1) return NULL;
-   if(b[0]!='+')  return NULL;
+   if(linelen<2)
+      return NULL;
+   if(b[0]!='+')
+      return NULL;
 
    const char *scan=b+1;
    int scan_len=linelen-1;
@@ -227,7 +228,8 @@ char *FtpDirList::EPLF(const char *b, int linelen)
       else
 	 break;
    }
-   if(!name || name_len == 0) return NULL;
+   if(!name || name_len == 0)
+      return NULL;
 
    // ok, this is EPLF. Format new string.
    char *line_add=(char *) xmalloc(80+name_len);
