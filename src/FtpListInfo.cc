@@ -655,12 +655,131 @@ FileInfo *ParseFtpLongList_OS2(const char *line_c,int *err)
    return new FileInfo(fi);
 }
 
+static
+FileInfo *ParseFtpLongList_MacWebStar(const char *line_c,int *err)
+{
+   char	 *line=alloca_strdup(line_c);
+   int 	 len=strlen(line);
+
+   if(len==0)
+      return 0;
+   char *t = FIRST_TOKEN;
+   if(t==0)
+      ERR;
+
+   FileInfo fi;
+   switch(t[0])
+   {
+   case('l'):  // symlink
+      fi.SetType(fi.SYMLINK);
+      break;
+   case('d'):  // directory
+      fi.SetType(fi.DIRECTORY);
+      break;
+   case('-'):  // plain file
+      fi.SetType(fi.NORMAL);
+      break;
+   case('b'): // block
+   case('c'): // char
+   case('p'): // pipe
+   case('s'): // sock
+      return 0;  // ignore
+   default:
+      ERR;
+   }
+   mode_t mode=parse_perms(t+1);
+   if(mode==(mode_t)-1)
+      ERR;
+   // permissions are meaningless here.
+
+   // "folder" or 0
+   t = NEXT_TOKEN;
+   if(!t)
+      ERR;
+
+   if(strcmp(t,"folder"))
+   {
+      // size?
+      t = NEXT_TOKEN;
+      if(!t)
+	 ERR;
+      // size
+      t = NEXT_TOKEN;
+      if(!t)
+	 ERR;
+      if(isdigit((unsigned char)*t))
+	 fi.SetSize(atol(t));
+      else
+	 ERR;
+   }
+   else
+   {
+      // ??
+      t = NEXT_TOKEN;
+      if(!t)
+	 ERR;
+   }
+
+   // month
+   t = NEXT_TOKEN;
+   if(!t)
+      ERR;
+
+   struct tm date;
+   memset(&date,0,sizeof(date));
+
+   date.tm_mon=parse_month(t);
+   if(date.tm_mon==-1)
+      ERR;
+
+   const char *day_of_month = NEXT_TOKEN;
+   if(!day_of_month)
+      ERR;
+   date.tm_mday=atoi(day_of_month);
+
+   // time or year
+   t = NEXT_TOKEN;
+   if(!t)
+      ERR;
+   if(parse_year_or_time(t,&date.tm_year,&date.tm_hour,&date.tm_min)==-1)
+      ERR;
+
+   date.tm_isdst=-1;
+   date.tm_sec=0;
+
+   fi.SetDateUnprec(mktime(&date));
+
+   char *name=strtok(NULL,"");
+   if(!name)
+      ERR;
+
+   // no symlinks on Mac, but anyway.
+   if(fi.filetype==fi.SYMLINK)
+   {
+      char *arrow=name;
+      while((arrow=strstr(arrow," -> "))!=0)
+      {
+	 if(arrow!=name && arrow[4]!=0)
+	 {
+	    *arrow=0;
+	    fi.SetSymlink(arrow+4);
+	    break;
+	 }
+	 arrow++;
+      }
+   }
+   fi.SetName(name);
+
+   return new FileInfo(fi);
+}
+
 typedef FileInfo *(*ListParser)(const char *line,int *err);
 static ListParser list_parsers[]={
    ParseFtpLongList_UNIX,
    ParseFtpLongList_NT,
    ParseFtpLongList_EPLF,
    ParseFtpLongList_OS2,
+   ParseFtpLongList_MacWebStar,
    0
 };
 

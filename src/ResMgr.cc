@@ -587,27 +587,29 @@ ResDecl::~ResDecl()
       }
    }
 
-   // remove all resources of this type
-   bool modified=false;
-   ResMgr::Resource **scan=&ResMgr::chain;
-   while(*scan)
    {
-      if((*scan)->type==this)
+      // remove all resources of this type
+      bool modified=false;
+      ResMgr::Resource **scan=&ResMgr::chain;
+      while(*scan)
       {
-	 ResMgr::Resource *to_free=*scan;
-	 *scan=(*scan)->next;
-	 delete to_free;
-	 modified=true;
+	 if((*scan)->type==this)
+	 {
+	    ResMgr::Resource *to_free=*scan;
+	    *scan=(*scan)->next;
+	    delete to_free;
+	    modified=true;
+	 }
+	 else
+	 {
+	    scan=&(*scan)->next;
+	 }
       }
-      else
-      {
-	 scan=&(*scan)->next;
-      }
-   }
 #if 0 // this makes trouble at exit.
-   if(modified)
-      SMTask::ReconfigAll(this->name);
+      if(modified)
+	 SMTask::ReconfigAll(this->name);
 #endif
+   }
 }
 
 #define MINUTE (60)

@@ -1,3 +1,8 @@
+2001-07-14  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ResMgr.cc: make it compile with irix compiler.
+	* FtpListInfo.cc: add MacWebStar parser.
+
 2001-07-09  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Http.cc: make it work without ssl.
