@@ -826,7 +826,7 @@ void  Ftp::GetBetterConnection(int level,int count)
    {
       if(o==this)
 	 continue;
-      if(o->control_sock==-1)
+      if(o->control_sock==-1 || o->state==CONNECTING_STATE)
 	 continue;
       if(!SameConnection(o))
 	 continue;
