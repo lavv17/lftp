@@ -146,16 +146,19 @@ const char *OrderValidate(char **s)
 // Static array of objects is wrongly initialized by IRIX CC and Unixware c++.
 // So here goes list of arbitrarily named objects, they are not refered by name.
 static ResDecl
-   ResDecl00 ("ftp:anon-pass",		  "lftp@",0,0),
+   ResDecl00a("ftp:acct",		  "",	   0,0),
+   ResDecl00 ("ftp:anon-pass",		  "lftp@", 0,0),
    ResDecl01 ("ftp:anon-user",		  "anonymous",0,0),
    ResDecl01a("ftp:auto-sync-mode",	  "",	   ResMgr::ERegExpValidate,0),
    ResDecl01b("ftp:bind-data-socket",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl01c("ftp:fix-pasv-address",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl02 ("ftp:fxp-passive-source",	  "no",	   ResMgr::BoolValidate,ResMgr::NoClosure),
+   ResDecl02a("ftp:site-group",		  "",	   0,0),
    ResDecl03 ("ftp:list-options",	  "",	   0,0),
    ResDecl04 ("ftp:nop-interval",	  "120",   ResMgr::UNumberValidate,0),
    ResDecl05 ("ftp:passive-mode",	  "on",    ResMgr::BoolValidate,0),
    ResDecl06 ("ftp:port-range",		  "full",  ResMgr::RangeValidate,0),
+   ResDecl06a("ftp:port-ipv4",		  "",	   ResMgr::IPv4AddrValidate,0),
    ResDecl07 ("ftp:proxy",		  "",	   FtpProxyValidate,0),
    ResDecl08 ("ftp:rest-list",		  "no",	   ResMgr::BoolValidate,0),
    ResDecl09 ("ftp:rest-stor",		  "yes",   ResMgr::BoolValidate,0),

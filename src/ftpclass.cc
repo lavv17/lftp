@@ -24,6 +24,8 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -404,13 +406,21 @@ void Ftp::LoginCheck(int act)
       return;
    }
 
-   if(!is2XX(act))
+   if(!is2XX(act) && !is3XX(act))
    {
    retry:
       Disconnect();
       NextPeer();
       if(peer_curr==0)
 	 try_time=now;	// count the reconnect-interval from this moment
+   }
+   if(is3XX(act))
+   {
+      if(!QueryStringWithUserAtHost("acct"))
+      {
+	 Disconnect();
+	 SetError(LOGIN_FAILED,_("Account is required, set ftp:acct variable"));
+      }
    }
 }
 
@@ -1259,6 +1269,8 @@ int   Ftp::Do()
 	 SendCmd2("PASS",pass_to_use);
       }
 
+      SendAcct();
+      SendSiteGroup();
       SendSiteIdle();
 
       // FIXME: site group/site gpass
@@ -1651,6 +1663,13 @@ int   Ftp::Do()
 #if INET6
 	 ipv4_port:
 #endif
+	    const char *port_ipv4=Query("port-ipv4",hostname);
+	    struct in_addr fake_ip;
+	    if(port_ipv4 && port_ipv4[0])
+	    {
+	       if(inet_aton(port_ipv4,&fake_ip))
+		  a=(unsigned char*)&fake_ip;
+	    }
 	    sprintf(str,"PORT %d,%d,%d,%d,%d,%d\n",a[0],a[1],a[2],a[3],p[0],p[1]);
 	    SendCmd(str);
 	    AddResp(RESP_PORT_OK,CHECK_PORT);
@@ -1996,6 +2015,33 @@ void Ftp::SendSiteIdle()
    if(!(bool)Query("use-site-idle"))
       return;
    SendCmd2("SITE IDLE",idle);
+   AddResp(0,CHECK_IGNORE);
+}
+const char *Ftp::QueryStringWithUserAtHost(const char *var)
+{
+   char *closure=string_alloca(xstrlen(user)+1+xstrlen(hostname)+1);
+   sprintf(closure,"%s@%s",user,hostname);
+   const char *val=Query(var,closure);
+   if(!val || !val[0])
+      val=Query(var,hostname);
+   if(!val || !val[0])
+      return 0;
+   return val;
+}
+void Ftp::SendAcct()
+{
+   const char *acct=QueryStringWithUserAtHost("acct");
+   if(!acct)
+      return;
+   SendCmd2("ACCT",acct);
+   AddResp(0,CHECK_IGNORE);
+}
+void Ftp::SendSiteGroup()
+{
+   const char *group=QueryStringWithUserAtHost("site-group");
+   if(!group)
+      return;
+   SendCmd2("SITE GROUP",group);
    AddResp(0,CHECK_IGNORE);
 }
 

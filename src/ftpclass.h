@@ -210,6 +210,10 @@ private:
    int	 FlushSendQueue(bool all=false);
    void	 SendArrayInfoRequests();
    void	 SendSiteIdle();
+   void	 SendAcct();
+   void	 SendSiteGroup();
+
+   const char *QueryStringWithUserAtHost(const char *);
 
    int	 ReceiveResp();
 	 // If a response is received, it checks it for accordance with
