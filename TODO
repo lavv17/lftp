@@ -93,3 +93,5 @@ currently; some need other work to be done.
    unneeded characters, e.g. `?'. Use the class as location in FileAccess.
 
  * a setting to make commands quiet (cmd:quiet? or cmd:verbose with int value)
+
+ * handle "" in PWD reply.
