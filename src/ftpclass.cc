@@ -1604,7 +1604,7 @@ int   Ftp::Do()
 	    m=MOVED;
 	 }
 	 else
-	    TimeoutS(now-stat_time-2);
+	    TimeoutS(stat_time+2-now);
       }
 
       // store mode is special - the data can be buffered

@@ -352,6 +352,7 @@ public:
    bool CopyFailed() { return state==COPY_FAILED; }
    bool RestartFailed() { return flags&NOREST_MODE; }
    bool IsPassive() { return flags&PASSIVE_MODE; }
+   void SetPos(long p) { pos=real_pos=p; }
 };
 
 #endif /* FTPCLASS_H */

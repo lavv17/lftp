@@ -1,3 +1,7 @@
+2000-01-12  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h, FileCopyFtp.cc: fixes for FXP.
+
 2000-01-11  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* NetAccess.cc: cast off const for solaris 2.5.1.

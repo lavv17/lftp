@@ -98,8 +98,10 @@ int FileCopyFtp::Do()
    if(add>0)
       RateAdd(add);
 
-   get->SetPos(ftp_dst->GetPos());
-   put->SetPos(ftp_dst->GetPos());
+   long pos=ftp_dst->GetPos();
+   ftp_src->SetPos(pos);
+   get->SetPos(pos);
+   put->SetPos(pos);
 
    return m;
 }
