@@ -1178,7 +1178,7 @@ int   Ftp::Do()
 	 return MOVED;
 
       peer_sa=peer[peer_curr];
-      control_sock=socket(peer_sa.sa.sa_family,SOCK_STREAM,IPPROTO_TCP);
+      control_sock=SocketCreateTCP(peer_sa.sa.sa_family);
       if(control_sock==-1)
       {
 	 if(peer_curr+1<peer_num)
@@ -1443,7 +1443,7 @@ int   Ftp::Do()
       && (mode==RETRIEVE || mode==STORE || mode==LIST || mode==LONG_LIST))
       {
 	 assert(data_sock==-1);
-	 data_sock=socket(peer_sa.sa.sa_family,SOCK_STREAM,IPPROTO_TCP);
+	 data_sock=SocketCreateTCP(peer_sa.sa.sa_family);
 	 if(data_sock==-1)
 	 {
 	    sprintf(str,"socket(data): %s",strerror(errno));

@@ -99,6 +99,9 @@ public:
    static const char *RangeValidate(char **value);
    static const char *ERegExpValidate(char **value);
    static const char *IPv4AddrValidate(char **value);
+#if INET6
+   static const char *IPv6AddrValidate(char **value);
+#endif
    static const char *UNumberPairValidate(char **value);
    static const char *FileReadable(char **value);
    static const char *DirReadable(char **value);

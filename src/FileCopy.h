@@ -45,6 +45,7 @@ class FileCopyPeer : public Buffer
 protected:
    bool want_size;
    bool want_date;
+   bool start_transfer;
    off_t size;
    off_t e_size;
    time_t date;
@@ -130,6 +131,9 @@ public:
    bool WritePending() { return mode==PUT && Size()>0; }
 
    bool FileRemoved() { return file_removed; }
+
+   void DontStartTransferYet() { start_transfer=false; }
+   void StartTransfer() { start_transfer=true; }
 };
 
 class FileCopy : public SMTask

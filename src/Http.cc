@@ -896,7 +896,7 @@ int Http::Do()
       if(!NextTry())
       	 return MOVED;
 
-      sock=socket(peer[peer_curr].sa.sa_family,SOCK_STREAM,IPPROTO_TCP);
+      sock=SocketCreateTCP(peer[peer_curr].sa.sa_family);
       if(sock==-1)
       {
 	 if(peer_curr+1<peer_num)

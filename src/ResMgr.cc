@@ -785,6 +785,18 @@ const char *ResMgr::IPv4AddrValidate(char **value)
    return 0;
 }
 
+#if INET6
+const char *ResMgr::IPv6AddrValidate(char **value)
+{
+   if(!**value)
+      return 0;
+   struct in6_addr addr;
+   if(!inet_pton(AF_INET6,*value,&addr))
+      return _("Invalid IPv6 numeric address");
+   return 0;
+}
+#endif
+
 const char *ResMgr::FileReadable(char **value)
 {
    if(!**value)

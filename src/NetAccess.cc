@@ -25,6 +25,8 @@
 #include <errno.h>
 #include <assert.h>
 #include <math.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include "NetAccess.h"
 #include "log.h"
 #include "url.h"
@@ -192,6 +194,41 @@ socklen_t NetAccess::SocketAddrLen(const sockaddr_u *u)
    return sizeof(*u);
 }
 
+int NetAccess::SocketCreate(int af,int type,int proto)
+{
+   int s=socket(af,type,proto);
+   if(s<0)
+      return s;
+   const char *b=0;
+   sockaddr_u bind_addr;
+   memset(&bind_addr,0,sizeof(bind_addr));
+   bind_addr.in.sin_family=af;
+   if(af==AF_INET)
+   {
+      b=ResMgr::Query("net:socket-bind-ipv4",hostname);
+      if(!(b && b[0] && inet_aton(b,&bind_addr.in.sin_addr)))
+	 b=0;
+   }
+#if INET6
+   else if(af==AF_INET6)
+   {
+      b=ResMgr::Query("net:socket-bind-ipv6",hostname);
+      if(!(b && b[0] && inet_pton(af,b,&bind_addr.in6.sin6_addr)))
+	 b=0;
+   }
+#endif
+   if(b)
+   {
+      int res=bind(s,&bind_addr.sa,sizeof(bind_addr.sa));
+      if(res==-1)
+	 Log::global->Format(0,"**** bind(socket, %s): %s\n",b,strerror(errno));
+   }
+   return s;
+}
+int NetAccess::SocketCreateTCP(int af)
+{
+   return SocketCreate(af,SOCK_STREAM,IPPROTO_TCP);
+}
 int NetAccess::SocketConnect(int fd,const sockaddr_u *u)
 {
    // some systems have wrong connect() prototype, so we have to cast off const.

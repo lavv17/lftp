@@ -1,3 +1,12 @@
+2002-12-25  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* resource.cc: new settings net:socket-bind-ipv4 and net:socket-bind-ipv6.
+	* ResMgr.cc, ResMgr.h: new method IPv6AddrValidate.
+	* NetAccess.cc, NetAccess.h: new methods SocketCreate and SocketCreateTCP.
+	* ftpclass.cc, Http.cc: use SocketCreateTCP.
+	* FileCopy.cc, FileCopy.h: get size before starting a continuation
+	  transfer and don't start the transfer if not needed.
+
 2002-12-19  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* NetAccess.cc: check set!=NULL.

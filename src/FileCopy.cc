@@ -76,11 +76,12 @@ int FileCopy::Do()
       if(remove_target_first && !put->FileRemoved())
 	 return m;
       remove_target_first=false;
-      if(put->NeedSizeDateBeforehand())
+      if(put->NeedSizeDateBeforehand() || (cont && put->CanSeek()))
       {
 	 if(get->GetSize()==NO_SIZE_YET || get->GetDate()==NO_DATE_YET)
 	 {
 	    put->Suspend();
+	    get->DontStartTransferYet();
 	    get->Resume();
 	    get->WantSize();
 	    if(put->NeedDate())
@@ -126,6 +127,7 @@ int FileCopy::Do()
 	 get->Seek(put->GetRealPos());
       get->Resume();
    pre_DO_COPY:
+      get->StartTransfer();
       RateReset();
       state=DO_COPY;
       m=MOVED;
@@ -649,6 +651,7 @@ FileCopyPeer::FileCopyPeer(direction m)
    mode=m;
    want_size=false;
    want_date=false;
+   start_transfer=true;
    size=NO_SIZE_YET;
    e_size=NO_SIZE;
    date=NO_DATE_YET;
@@ -696,32 +699,33 @@ int FileCopyPeerFA::Do()
 
    if(Done() || Error())
       return m;
+   if(want_size && (mode==PUT || !start_transfer))
+   {
+      if(session->IsClosed())
+      {
+	 info.file=file;
+	 info.get_size=true;
+	 info.get_time=want_date;
+	 session->GetInfoArray(&info,1);
+	 m=MOVED;
+      }
+      res=session->Done();
+      if(res==FA::IN_PROGRESS)
+	 return m;
+      if(res<0)
+      {
+	 session->Close();
+	 SetSize(NO_SIZE);
+	 return MOVED;
+      }
+      SetSize(info.size);
+      SetDate(info.time);
+      session->Close();
+      return MOVED;
+   }
    switch(mode)
    {
    case PUT:
-      if(want_size)
-      {
-	 if(session->IsClosed())
-	 {
-	    info.file=file;
-	    info.get_size=true;
-	    info.get_time=false;
-	    session->GetInfoArray(&info,1);
-	    m=MOVED;
-	 }
-	 res=session->Done();
-	 if(res==FA::IN_PROGRESS)
-	    return m;
-	 if(res<0)
-	 {
-	    session->Close();
-	    SetSize(NO_SIZE);
-	    return MOVED;
-	 }
-	 SetSize(info.size);
-	 session->Close();
-	 m=MOVED;
-      }
       if(fxp)
       {
 	 if(eof)

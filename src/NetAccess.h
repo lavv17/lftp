@@ -69,6 +69,8 @@ protected:
    static int SocketPort(const sockaddr_u *u);
    static socklen_t SocketAddrLen(const sockaddr_u *u);
    static int SocketConnect(int fd,const sockaddr_u *u);
+   int SocketCreate(int,int,int);
+   int SocketCreateTCP(int);
 
    char	 *proxy;
    char	 *proxy_port;
