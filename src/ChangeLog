@@ -1,3 +1,10 @@
+2001-06-19  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* resource.cc: new settings ftp:port-ipv4, ftp:acct, ftp:site-group.
+	* ftpclass.cc, ftpclass.h: support for ACCT, SITE GROUP,
+	  and for ftp:port-ipv4.
+	* ResMgr.cc, ResMgr.h: IPv4AddrValidate new validator.
+
 2001-06-18  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Http.cc: handle 416 reply code.

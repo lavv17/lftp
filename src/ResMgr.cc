@@ -26,6 +26,10 @@
 #include <ctype.h>
 #include <unistd.h>
 #include <math.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 extern "C" {
 #include <regex.h>
 }
@@ -737,6 +741,16 @@ const char *ResMgr::ERegExpValidate(char **s)
       return err_msg;
    }
    regfree(&re);
+   return 0;
+}
+
+const char *ResMgr::IPv4AddrValidate(char **value)
+{
+   if(!**value)
+      return 0;
+   struct in_addr addr;
+   if(!inet_aton(*value,&addr))
+      return _("Invalid IPv4 numeric address");
    return 0;
 }
 
