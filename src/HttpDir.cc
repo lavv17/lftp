@@ -28,6 +28,7 @@
 #include "ArgV.h"
 #include "LsCache.h"
 #include "misc.h"
+#include "log.h"
 #include <ctype.h>
 
 static bool token_eq(const char *buf,int len,const char *token)
@@ -96,6 +97,12 @@ void remove_tags(char *buf)
       char *less=strchr(buf,'<');
       if(!less)
 	 break;
+      if(token_eq(less+1,strlen(less+1),"a"))
+      {
+	 // don't allow anchors to be skipped.
+      	 *less=0;
+	 break;
+      }
       char *more=strchr(less+1,'>');
       if(!more)
 	 break;
@@ -206,6 +213,8 @@ static void decode_amps(char *s)
    }
 }
 
+#define debug(str) Log::global->Format(10,"* %s\n",str)
+
 static int parse_html(const char *buf,int len,bool eof,Buffer *list,
       FileSet *set,FileSet *all_links,ParsedURL *prefix,char **base_href,
       LsOptions *lsopt=0)
@@ -287,6 +296,8 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
    if(tag_scan->tag==0)
       return tag_len;	// not interesting
 
+   bool hftp=(prefix && !xstrcmp(prefix->proto,"hftp"));
+
    // ok, found the target.
 
    decode_amps(link_target);  // decode all &amp; and similar
@@ -296,7 +307,20 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
       if(base_href)
       {
 	 xfree(*base_href);
-	 *base_href=xstrdup(link_target);
+	 *base_href=xstrdup(link_target,+2);
+	 if(hftp)
+	 {
+	    // workaround apache proxy bugs.
+	    char *t=strstr(*base_href,";type=");
+	    if(t && t[6] && t[7]=='/' && t[8]==0)
+	       *t=0;
+	    char *p=*base_href+url::path_index(*base_href);
+	    if(p[0]=='/' && p[1]=='/')
+      	    {
+	       memmove(p+4,p+2,strlen(p+2)+1);
+	       memcpy(p+1,"%2F",3);
+	    }
+	 }
       }
       return tag_len;
    }
@@ -358,11 +382,7 @@ parse_url_again:
       if(!prefix)
 	 return tag_len;	// no way
 
-      const char *pproto=prefix->proto;
-      if(!xstrcmp(pproto,"hftp"))
-	 pproto++;
-
-      if(xstrcmp(link_url.proto,pproto)
+      if(xstrcmp(link_url.proto,prefix->proto+hftp)
       || xstrcmp(link_url.host,prefix->host)
       || xstrcmp(link_url.user,prefix->user)
       || xstrcmp(link_url.port,prefix->port))
@@ -399,16 +419,23 @@ parse_url_again:
    else
       strcpy(link_target,link_url.path);
 
+   if(link_target[0]=='/' && link_target[1]=='/' && hftp)
+   {
+      // workaround for apache proxy.
+      link_target++;
+   }
+
    int link_len=strlen(link_target);
    bool is_directory=(link_len>0 && link_target[link_len-1]=='/');
    if(is_directory && link_len>1)
       link_target[--link_len]=0;
 
-   if(prefix && prefix->path)
+   if(prefix)
    {
       const char *p_path=prefix->path;
+      if(p_path==0)
+	 p_path="~";
       int p_len=strlen(p_path);
-
       if(p_len==1 && p_path[0]=='/' && link_target[0]=='/')
       {
 	 if(link_len>1)
@@ -472,7 +499,7 @@ parse_url_again:
       char size_str[32]="";
       char perms[10]="";
       const char *more1;
-      char *str;
+      char *str,*str_with_tags;
       int n;
       char *line_add=(char*)alloca(link_len+128+2*1024);
       bool data_available=false;
@@ -526,20 +553,27 @@ parse_url_again:
       str=string_alloca(eol-more1);
       memcpy(str,more1+1,eol-more1-1);
       str[eol-more1-1]=0;
+      str_with_tags=alloca_strdup(str);
       remove_tags(str);
 
       // usual apache listing: DD-Mon-YYYY hh:mm size
       n=sscanf(str,"%2d-%3s-%4d %2d:%2d %30s",
 		    &day,month_name,&year,&hour,&minute,size_str);
       if(n==6)
+      {
+	 debug("apache listing matched");
 	 goto got_info;
+      }
 
       hour=0;
       minute=0;
       // unusual apache listing: size DD-Mon-YYYY
-      n=sscanf(str,"%30s %2d-%3s-%4d",size_str,&day,month_name,&year);
-      if(n==4)
+      n=sscanf(str,"%30s %2d-%3s-%d",size_str,&day,month_name,&year);
+      if(n==4 && (size_str[0]=='-' || is_ascii_digit(size_str[0])))
+      {
+	 debug("unusual apache listing matched");
 	 goto got_info;
+      }
 
       char size_unit[7];
       long size;
@@ -554,6 +588,7 @@ parse_url_again:
 	    sprintf(size_str,"%ld",size);
 	 else
 	    sprintf(size_str,"%ld%s",size,size_unit);
+	 debug("Netscape-Proxy 2.53 listing matched");
 	 goto got_info;
       }
       n=sscanf(str,"%3s %3s %d %2d:%2d:%2d %4d %s",
@@ -563,6 +598,7 @@ parse_url_again:
 	 strcpy(size_str,"-");
 	 if(!is_directory)
 	    is_sym_link=true;
+	 debug("Netscape-Proxy 2.53 listing matched (dir/symlink)");
 	 goto got_info;
       }
       if(n==8) // maybe squid's EPLF listing.
@@ -570,6 +606,7 @@ parse_url_again:
 	 // skip rest of line, because there may be href to link target.
 	 skip_len=eol-buf+eol_len;
 	 // no symlinks here.
+	 debug("squid EPLF listing matched");
 	 goto got_info;
       }
 
@@ -591,6 +628,7 @@ parse_url_again:
 	    strcpy(size_str,"-");
 	 }
 	 month--;
+	 debug("Mini-Proxy web server listing matched");
 	 goto got_info;
       }
 
@@ -624,6 +662,7 @@ parse_url_again:
 	 }
 	 info_string=buf;
 	 info_string_len=consumed;
+	 debug("apache ftp over http proxy listing matched");
 	 goto got_info;
       }
       perms[0]=0;
@@ -643,7 +682,7 @@ parse_url_again:
       skip_len=eol-buf+eol_len;
 
       char *ptr;
-      ptr=strstr(str," -> <A HREF=\"");
+      ptr=strstr(str_with_tags," -> <A HREF=\"");
       if(ptr)
       {
 	 is_sym_link=true;
@@ -657,6 +696,7 @@ parse_url_again:
 	    url::decode_string(sym_link);
 	 }
       }
+      debug("squid ftp listing matched");
 
    got_info:
       if(year!=-1)

@@ -86,7 +86,7 @@ void xfree(void *p)
    free(p);
 }
 
-char *xstrdup(const char *s)
+char *xstrdup(const char *s,int spare)
 {
    if(!s)
       return 0;
@@ -94,7 +94,7 @@ char *xstrdup(const char *s)
    printf("xstrdup \"%s\"\n",s);
 #endif
    int len=strlen(s)+1;
-   char *mem=(char*)xmalloc(len);
+   char *mem=(char*)xmalloc(len+spare);
    memcpy(mem,s,len);
    return mem;
 }
