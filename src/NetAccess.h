@@ -38,7 +38,6 @@ protected:
    void	 NextPeer();
 
    int	 max_retries;
-   int	 retries;
 
    int	 idle;
    time_t idle_start;
@@ -100,10 +99,6 @@ public:
 
    void Connect(const char *,const char *);
    void ConnectVerify();
-
-   int GetRetries() { return retries; }
-   void SetRetries(int r) { retries=r; }
-   time_t GetTryTime() { return try_time; }
 
    void Close();
 

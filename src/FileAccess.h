@@ -115,6 +115,7 @@ protected:
    time_t   try_time;
    time_t   event_time;
    void BumpEventTime(time_t t);
+   int	 retries;
 
    fileinfo *array_for_info;
    int	 array_ptr;
@@ -313,6 +314,12 @@ public:
 	 priority=p;
 	 current->Timeout(0);
       }
+
+   // not pretty (FIXME)
+   int GetRetries() { return retries; }
+   void SetRetries(int r) { retries=r; }
+   time_t GetTryTime() { return try_time; }
+   void SetTryTime(time_t t) { try_time=t; }
 };
 
 class FileAccessOperation : public SMTask

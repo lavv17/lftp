@@ -67,6 +67,7 @@ void FileAccess::Init()
    pos=0;
    mode=CLOSED;
    try_time=0;
+   retries=0;
    time(&event_time);
    opt_date=0;
    opt_size=0;
@@ -259,7 +260,6 @@ void  FileAccess::Open(const char *fn,int mode,long offs)
    pos=offs;
    this->mode=mode;
    mkdir_p=false;
-   try_time=0;
    Timeout(0);
 
    switch((open_mode)mode)

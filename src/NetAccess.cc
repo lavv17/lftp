@@ -37,7 +37,6 @@ void NetAccess::Init()
    idle=0;
    idle_start=now;
    max_retries=0;
-   retries=0;
    socket_buffer=0;
    socket_maxseg=0;
 

@@ -244,6 +244,9 @@ class FileCopyPeerFA : public FileCopyPeer
    bool reuse_later;
    bool fxp;   // FXP (ftp<=>ftp copy) active
 
+   time_t try_time;
+   int retries;
+
 protected:
    ~FileCopyPeerFA();
 

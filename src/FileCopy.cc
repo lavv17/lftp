@@ -748,6 +748,8 @@ int FileCopyPeerFA::Do()
 		  return m;
 	       if(res==FA::STORE_FAILED)
 	       {
+		  try_time=session->GetTryTime();
+		  retries=session->GetRetries();
 		  session->Close();
 		  if(can_seek && seek_pos>0)
 		     Seek(FILE_END);
@@ -887,6 +889,8 @@ void FileCopyPeerFA::OpenSession()
    session->SetFileURL(orig_url);
    if(mode==PUT)
    {
+      session->SetTryTime(try_time);
+      session->SetRetries(retries);
       if(e_size!=NO_SIZE && e_size!=NO_SIZE_YET)
 	 session->SetSize(e_size);
       if(date!=NO_DATE && date!=NO_DATE_YET)
@@ -968,6 +972,8 @@ int FileCopyPeerFA::Put_LL(const char *buf,int len)
 	 return 0;
       if(res==FA::STORE_FAILED)
       {
+	 try_time=session->GetTryTime();
+	 retries=session->GetRetries();
 	 session->Close();
 	 if(can_seek && seek_pos>0)
 	    Seek(FILE_END);
@@ -1022,6 +1028,8 @@ FileCopyPeerFA::FileCopyPeerFA(FileAccess *s,const char *f,int m)
    reuse_later=true;
    orig_url=0;
    fxp=false;
+   try_time=0;
+   retries=0;
    if(FAmode==FA::LIST || FAmode==FA::LONG_LIST)
       Save(LsCache::SizeLimit());
 }
@@ -1047,6 +1055,8 @@ FileCopyPeerFA::FileCopyPeerFA(ParsedURL *u,int m)
    orig_url=u->orig_url;
    u->orig_url=0;
    fxp=false;
+   try_time=0;
+   retries=0;
    if(!file)
    {
       SetError(_("file name missed in URL"));
