@@ -1,3 +1,12 @@
+2001-06-04  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* commands.cc: fix `debug 9 -o log'.
+
+2001-06-01  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.cc, Http.h: implement Cleanup and CleanupThis methods.
+	* ftpclass.cc, ftpclass.h: get rid of ftp_chain and ftp_next.
+
 2001-05-30  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Resolver.cc: fix a memory leak in use-fork=no mode.

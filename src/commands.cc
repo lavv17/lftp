@@ -1363,13 +1363,13 @@ CMD(debug)
    char *a=args->getcurr();
    if(a)
    {
-      if(!strcasecmp(args->getarg(1),"off"))
+      if(!strcasecmp(a,"off"))
       {
 	 enabled=false;
       }
       else
       {
-	 new_dlevel=atoi(args->getarg(1));
+	 new_dlevel=atoi(a);
 	 if(new_dlevel<0)
 	    new_dlevel=0;
 	 enabled=true;
