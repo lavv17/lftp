@@ -4045,7 +4045,7 @@ void Ftp::SetError(int ec,const char *e)
 	    if(e[1])
 	       *store++=' ';
 	    e++;
-	    if(!strncmp(e,prefix,4))
+	    if(!strncmp(e,prefix,3) && (e[3]=='-' || e[3]==' '))
 	       e+=4;
 	 }
 	 else
