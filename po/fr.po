@@ -49,9 +49,8 @@ msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, cwd=%s\n"
 
 #: src/CmdExec.cc:382 src/MirrorJob.cc:529
-#, fuzzy, c-format
 msgid "%s: received redirection to `%s'\n"
-msgstr "copy: reçu une redirection vers `%s'\n"
+msgstr "%s: reçu une redirection vers `%s'\n"
 
 #: src/CmdExec.cc:385 src/FileCopy.cc:959
 msgid "Too many redirections"
@@ -1788,9 +1787,8 @@ msgid "`%s' at %lld %s%s%s%s"
 msgstr "`%s' à %lld %s%s%s%s"
 
 #: src/CopyJob.cc:220
-#, fuzzy, c-format
 msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
-msgstr "%lld octet$#l# transféré|s transférés$ en %ld seconde$#l#|s$"
+msgstr "%lld octet$#ll# transféré|s transférés$ en %ld seconde$#l#|s$"
 
 #: src/CopyJob.cc:232
 #, c-format
