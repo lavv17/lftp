@@ -24,6 +24,7 @@
 #define FTPGLOB_H
 
 #include "FileAccess.h"
+#include "Speedometer.h"
 
 class FtpSplitList : public Glob
 {
@@ -46,6 +47,8 @@ class FtpSplitList : public Glob
 
    void Init(FileAccess *session,FA::open_mode n_mode);
 
+   Speedometer *rate;
+
 public:
    int	 Do();
    const char *Status();
@@ -53,6 +56,9 @@ public:
    FtpSplitList(FileAccess *session,
 	    FileAccess::open_mode n_mode=FileAccess::LIST);
    virtual ~FtpSplitList();
+
+   bool RateValid() { return rate->Valid(); }
+   const char *GetRateStr() { return rate->GetStr(); }
 };
 
 #endif

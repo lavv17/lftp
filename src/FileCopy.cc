@@ -343,8 +343,8 @@ void FileCopy::Init()
    max_buf=0x10000;
    cont=false;
    error_text=0;
-   rate        =new Speedometer((int)rate_period.Query(0));
-   rate_for_eta=new Speedometer((int)eta_period.Query(0));
+   rate        =new Speedometer("xfer:rate-period");
+   rate_for_eta=new Speedometer("xfer:eta-period");
    put_buf=0;
    bytes_count=0;
    start_time=0;
@@ -402,10 +402,6 @@ void FileCopy::Resume()
 
 void FileCopy::Reconfig(const char *s)
 {
-   if(rate)
-      rate->SetPeriod(ResMgr::Query("xfer:rate-period",0));
-   if(rate_for_eta)
-      rate_for_eta->SetPeriod(ResMgr::Query("xfer:eta-period",0));
 }
 
 void FileCopy::SetError(const char *str)

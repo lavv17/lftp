@@ -70,8 +70,6 @@ void  MirrorJob::PrintStatus(int v)
 
 void  MirrorJob::ShowRunStatus(StatusLine *s)
 {
-   const char *status;
-
    switch(state)
    {
    case(INITIAL_STATE):
@@ -98,9 +96,7 @@ void  MirrorJob::ShowRunStatus(StatusLine *s)
       break;
 
    case(GETTING_LIST_INFO):
-      status=list_info->Status();
-      if(status[0])
-	 s->Show("%s [%s]",status,session->CurrentStatus());
+      s->Show(list_info->Status());
       break;
    }
 }

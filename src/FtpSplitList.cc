@@ -44,6 +44,7 @@ void FtpSplitList::Init(FileAccess *session,FA::open_mode n_mode)
    from_cache=false;
    state=INITIAL;
    ptr=buf;
+   rate=new Speedometer();
 }
 
 FtpSplitList::FtpSplitList(FileAccess *session,FA::open_mode n_mode)
@@ -57,6 +58,7 @@ FtpSplitList::~FtpSplitList()
    if(f)
       f->Close();
    xfree(buf);
+   Delete(rate);
 }
 
 int   FtpSplitList::Do()
@@ -125,6 +127,7 @@ int   FtpSplitList::Do()
 	 state=DONE;
 	 return MOVED;
       }
+      rate->Add(res);
       int offs=ptr-buf;
       buf=(char*)xrealloc(buf,inbuf+res);
       ptr=buf+offs;

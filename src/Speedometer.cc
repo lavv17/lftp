@@ -33,14 +33,16 @@
 char Speedometer::buf_rate[40];
 char Speedometer::buf_eta[40];
 
-Speedometer::Speedometer(int c)
+Speedometer::Speedometer(const char *p)
 {
-   period=c;
+   period=15;
    rate=0;
    last_second=now;
    start=now;
    last_bytes=0;
    terse=true;
+   period_resource=p;
+   Reconfig(0);
 }
 bool Speedometer::Valid()
 {
@@ -216,4 +218,5 @@ ResDecl res_eta_terse("xfer:eta-terse",  "yes",ResMgr::BoolValidate,0);
 void Speedometer::Reconfig(const char *n)
 {
    terse=res_eta_terse.Query(0);
+   SetPeriod(ResMgr::Query(period_resource,0));
 }

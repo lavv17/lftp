@@ -1,5 +1,26 @@
+2000-02-01  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CopyJob.h: add GetETAStrSFromTime.
+	* FileCopy.cc, FileCopy.h: split off Speedometer;
+	  add GetETAStrSFromTime; pass reource name to Speedometer.
+	* pgetJob.cc: call cp->GetETAStrSFromTime.
+	* commands.cc: set old path before cd, so that after `open url'
+	  `cd -' works.
+	* Speedometer.cc, Speedometer.h: new files; accept resource name
+	  instead of period.
+	* ProcWait.cc: don't change state to ERROR at all (because process
+	  can still run after waitpid fails)
+	* FtpListInfo.cc: more verbose status.
+	* FtpSplitList.cc, FtpSplitList.h: measure rate.
+	* MirrorJob.cc: show only li->Status().
+
 2000-01-31  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* FileAccess.h, FileAccess.cc: add NO_PASSWORD option for GetFileURL.
+	* history.cc: use NO_PASSWORD; encode paths in cwd_history.
+	* NetAccess.cc, NetAccess.h: (ReconnectInterval, DelayingMessage) new
+	  methods.
+	* ftpclass.cc, Http.cc: use DelayingMessage.
 	* CmdExec.cc: show job number for queue's current job.
 	* complete.cc: improve completion for queue command.
 	* commands.cc: improve help for queue.

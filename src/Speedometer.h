@@ -33,10 +33,11 @@ class Speedometer : public SMTask
    time_t last_bytes;
    time_t start;
    bool terse;
+   const char *period_resource;
    static char buf_eta[];
    static char buf_rate[];
 public:
-   Speedometer(int p);
+   Speedometer(const char *p="xfer:rate-period");
    float Get();
    static const char *GetStr(float r);
    const char *GetStr() { return GetStr(Get()); }
@@ -50,6 +51,7 @@ public:
    void Add(int bytes);
    void Reset();
    void SetPeriod(int p) { period=p; }
+   void SetPeriodName(const char *p) { period_resource=p; Reconfig(0); }
    void SetTerseETA(bool t) { terse=t; }
    int Do();
    void Reconfig(const char *s);
