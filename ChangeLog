@@ -1,3 +1,7 @@
+2005-03-01  lav
+
+	* configure.ac: check for netinet/in_systm.h, netinet/ip.h.
+
 2005-01-21	lav
 
 	* configure.ac: check for declaration of dn_expand.

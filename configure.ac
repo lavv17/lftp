@@ -283,6 +283,7 @@ AC_HEADER_TIME
 AC_CHECK_HEADERS(fcntl.h sys/time.h errno.h stdlib.h varargs.h dirent.h\
  termios.h termio.h sys/select.h sys/poll.h sys/stropts.h string.h memory.h\
  strings.h sys/ioctl.h dlfcn.h arpa/inet.h arpa/nameser.h netinet/in.h netinet/tcp.h\
+ netinet/in_systm.h netinet/ip.h\
  resolv.h langinfo.h endian.h regex.h locale.h expat.h,,,[
 #include <sys/types.h>
 #ifdef HAVE_ARPA_NAMESER_H
@@ -290,6 +291,9 @@ AC_CHECK_HEADERS(fcntl.h sys/time.h errno.h stdlib.h varargs.h dirent.h\
 #endif
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
+#endif
+#ifdef HAVE_NETINET_IN_SYSTM_H
+# include <netinet/in_systm.h>
 #endif
 ])
 
