@@ -764,7 +764,7 @@ int   Ftp::Do()
    char	 *str =(char*)alloca(xstrlen(cwd)+xstrlen(hostname)+xstrlen(proxy)+256);
    char	 *str1=(char*)alloca(xstrlen(file)+20);
    char	 *str2=(char*)alloca(xstrlen(file)+20);
-   int   old_type,res;
+   int   res;
    ADDRLEN_TYPE addr_len;
    unsigned char *a;
    unsigned char *p;
@@ -996,6 +996,7 @@ int   Ftp::Do()
 
 
    case CWD_CWD_WAITING_STATE:
+   {
       FlushSendQueue();
       ReceiveResp();
       if(state!=CWD_CWD_WAITING_STATE)
@@ -1018,7 +1019,7 @@ int   Ftp::Do()
 	 SetSocketBuffer(data_sock);
       }
 
-      old_type=type;
+      int old_type=type;
       if((flags&NOREST_MODE) || pos==0)
 	 real_pos=0;
       else
@@ -1217,7 +1218,7 @@ int   Ftp::Do()
       	 goto datasocket_connecting_state;
       }
       state=ACCEPTING_STATE;
-
+   }
    case(ACCEPTING_STATE):
       FlushSendQueue();
       ReceiveResp();
@@ -1238,6 +1239,7 @@ int   Ftp::Do()
 	    goto usual_return;
 	 if(NotSerious(errno))
 	 {
+	    DebugPrint("**** ",strerror(errno));
 	    Disconnect();
 	    return MOVED;
 	 }
@@ -1546,6 +1548,7 @@ void  Ftp::ReceiveResp()
 		  return;
 	       if(NotSerious(errno))
 	       {
+		  DebugPrint("**** ",strerror(errno));
 		  Disconnect();
 		  return;
 	       }
@@ -1668,6 +1671,7 @@ void  Ftp::FlushSendQueue()
 	    return;
 	 if(NotSerious(errno) || errno==EPIPE)
 	 {
+	    DebugPrint("**** ",strerror(errno));
 	    Disconnect();
 	    return;
 	 }
@@ -1875,6 +1879,7 @@ read_again:
 	    return DO_AGAIN;
 	 if(NotSerious(errno))
 	 {
+	    DebugPrint("**** ",strerror(errno));
 	    Disconnect();
 	    return DO_AGAIN;
 	 }
@@ -1949,6 +1954,7 @@ int   Ftp::Write(const void *buf,int size)
 	 return DO_AGAIN;
       if(NotSerious(errno) || errno==EPIPE)
       {
+	 DebugPrint("**** ",strerror(errno));
 	 Disconnect();
 	 return DO_AGAIN;
       }
@@ -2146,6 +2152,8 @@ int   Ftp::CheckResp(int act)
    if(RespQueueIsEmpty())
    {
       DebugPrint("**** ",_("extra server response"));
+      if(act/100==2) // some buggy servers send several 226 replies
+	 return -1;  // ignore them.
       return(INITIAL_STATE);
    }
 
