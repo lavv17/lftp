@@ -1,9 +1,10 @@
-Version 2.1.5 - 1999-12-2?
+Version 2.1.5 - 2000-01-09
 
 * fixed &amp; and others handling in http links.
 * fixed sending of port to http proxy.
 * don't send queued command after 1xx reply in sync mode.
 * fixed `mget -e': session was Close()'d too early.
+* fixed connect() problem on NetBSD 1.4P
 
 Version 2.1.4 - 1999-10-23
 

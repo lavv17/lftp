@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 1999-10-22 19:30+0400\n"
+"POT-Creation-Date: 2000-01-09 03:22+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -84,7 +84,7 @@ msgstr ""
 msgid "File cannot be accessed"
 msgstr ""
 
-#: src/FileAccess.cc:301 src/ftpclass.cc:2545 src/ftpclass.cc:2555
+#: src/FileAccess.cc:301 src/ftpclass.cc:2542 src/ftpclass.cc:2552
 msgid "Not connected"
 msgstr ""
 
@@ -101,7 +101,7 @@ msgstr ""
 msgid "Store failed - you have to reput"
 msgstr ""
 
-#: src/FileAccess.cc:314 src/ftpclass.cc:2587
+#: src/FileAccess.cc:314 src/ftpclass.cc:2584
 msgid "Login failed"
 msgstr ""
 
@@ -109,22 +109,22 @@ msgstr ""
 msgid "Operation not supported"
 msgstr ""
 
-#: src/FtpListInfo.cc:226 src/HttpDir.cc:1150
+#: src/FtpListInfo.cc:226 src/HttpDir.cc:1181
 #, c-format
 msgid "Getting directory contents (%ld)"
 msgstr ""
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:1155
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:1186
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr ""
 
-#: src/GetJob.cc:68
+#: src/GetJob.cc:72
 #, c-format
 msgid "remote rm(%s) - %s\n"
 msgstr ""
 
-#: src/GetJob.cc:164
+#: src/GetJob.cc:168
 #, c-format
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr ""
@@ -274,7 +274,7 @@ msgstr ""
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr ""
 
-#: src/Http.cc:1108 src/Resolver.cc:184 src/ftpclass.cc:2550
+#: src/Http.cc:1113 src/Resolver.cc:184 src/ftpclass.cc:2547
 msgid "Resolving host address..."
 msgstr ""
 
@@ -1149,101 +1149,101 @@ msgstr ""
 msgid "assuming failed host name lookup"
 msgstr ""
 
-#: src/Http.cc:501 src/ftpclass.cc:743
+#: src/Http.cc:506 src/ftpclass.cc:743
 msgid "Closing idle connection"
 msgstr ""
 
-#: src/Http.cc:555 src/ftpclass.cc:795
+#: src/Http.cc:560 src/ftpclass.cc:795
 msgid "max-retries exceeded"
 msgstr ""
 
-#: src/ftpclass.cc:1350
+#: src/ftpclass.cc:1348
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr ""
 
-#: src/Http.cc:132 src/ftpclass.cc:1401
+#: src/Http.cc:132 src/ftpclass.cc:1397
 msgid "Timeout - reconnecting"
 msgstr ""
 
-#: src/ftpclass.cc:1662
+#: src/ftpclass.cc:1659
 msgid "Peer closed connection"
 msgstr ""
 
-#: src/ftpclass.cc:1735
+#: src/ftpclass.cc:1732
 msgid "Closing control socket"
 msgstr ""
 
-#: src/ftpclass.cc:1804
+#: src/ftpclass.cc:1801
 msgid "Closing data socket"
 msgstr ""
 
-#: src/ftpclass.cc:2351
+#: src/ftpclass.cc:2348
 msgid "saw file size in response"
 msgstr ""
 
-#: src/ftpclass.cc:2360
+#: src/ftpclass.cc:2357
 msgid "remote end closes connection"
 msgstr ""
 
-#: src/ftpclass.cc:2366
+#: src/ftpclass.cc:2363
 msgid "extra server response"
 msgstr ""
 
-#: src/ftpclass.cc:2465
+#: src/ftpclass.cc:2462
 msgid "Switching passive mode off"
 msgstr ""
 
-#: src/ftpclass.cc:2540
+#: src/ftpclass.cc:2537
 msgid "Sending commands..."
 msgstr ""
 
-#: src/Http.cc:1119 src/ftpclass.cc:2542 src/ftpclass.cc:2562
-#: src/ftpclass.cc:2569
+#: src/Http.cc:1124 src/ftpclass.cc:2539 src/ftpclass.cc:2559
+#: src/ftpclass.cc:2566
 msgid "Waiting for response..."
 msgstr ""
 
-#: src/ftpclass.cc:2543
+#: src/ftpclass.cc:2540
 msgid "Connection idle"
 msgstr ""
 
-#: src/Http.cc:1110 src/ftpclass.cc:2552
+#: src/Http.cc:1115 src/ftpclass.cc:2549
 msgid "Delaying before reconnect"
 msgstr ""
 
-#: src/Http.cc:1114 src/ftpclass.cc:2557
+#: src/Http.cc:1119 src/ftpclass.cc:2554
 msgid "Connecting..."
 msgstr ""
 
-#: src/ftpclass.cc:2559
+#: src/ftpclass.cc:2556
 msgid "Logging in..."
 msgstr ""
 
-#: src/ftpclass.cc:2563
+#: src/ftpclass.cc:2560
 msgid "Making data connection..."
 msgstr ""
 
-#: src/ftpclass.cc:2565
+#: src/ftpclass.cc:2562
 msgid "Changing remote directory..."
 msgstr ""
 
-#: src/ftpclass.cc:2568 src/ftpclass.cc:2580
+#: src/ftpclass.cc:2565 src/ftpclass.cc:2577
 msgid "Waiting for transfer to complete"
 msgstr ""
 
-#: src/ftpclass.cc:2571
+#: src/ftpclass.cc:2568
 msgid "Waiting for data connection..."
 msgstr ""
 
-#: src/Http.cc:1117 src/ftpclass.cc:2576
+#: src/Http.cc:1122 src/ftpclass.cc:2573
 msgid "Sending data"
 msgstr ""
 
-#: src/Http.cc:1122 src/ftpclass.cc:2578
+#: src/Http.cc:1127 src/ftpclass.cc:2575
 msgid "Receiving data"
 msgstr ""
 
-#: src/ftpclass.cc:2582
+#: src/ftpclass.cc:2579
 msgid "Fatal protocol error occured"
 msgstr ""
 
@@ -1390,11 +1390,11 @@ msgstr ""
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr ""
 
-#: src/Http.cc:955 src/Http.cc:975
+#: src/Http.cc:958 src/Http.cc:978
 msgid "chunked format violated"
 msgstr ""
 
-#: src/Http.cc:1120
+#: src/Http.cc:1125
 msgid "Fetching headers..."
 msgstr ""
 
@@ -1403,7 +1403,7 @@ msgstr ""
 msgid "Proxy protocol unsupported"
 msgstr ""
 
-#: src/FtpGlob.cc:258 src/HttpDir.cc:774 src/HttpDir.cc:951
+#: src/FtpGlob.cc:258 src/HttpDir.cc:805 src/HttpDir.cc:982
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr ""

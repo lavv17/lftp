@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp\n"
-"POT-Creation-Date: 1999-10-22 19:30+0400\n"
+"POT-Creation-Date: 2000-01-09 03:22+0300\n"
 "PO-Revision-Date: 1999-06-08 15:27+02:00\n"
 "Last-Translator: Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -83,7 +83,7 @@ msgstr "Brak dostêpu: %s"
 msgid "File cannot be accessed"
 msgstr "Brak dostêpu do pliku"
 
-#: src/FileAccess.cc:301 src/ftpclass.cc:2545 src/ftpclass.cc:2555
+#: src/FileAccess.cc:301 src/ftpclass.cc:2542 src/ftpclass.cc:2552
 msgid "Not connected"
 msgstr "Brak po³±czenia"
 
@@ -100,7 +100,7 @@ msgstr "B³±d krytyczny"
 msgid "Store failed - you have to reput"
 msgstr "Zapis siê nie powiód³ - musisz u¿yæ reput"
 
-#: src/FileAccess.cc:314 src/ftpclass.cc:2587
+#: src/FileAccess.cc:314 src/ftpclass.cc:2584
 msgid "Login failed"
 msgstr "Logowanie nie uda³o siê"
 
@@ -108,22 +108,22 @@ msgstr "Logowanie nie uda³o siê"
 msgid "Operation not supported"
 msgstr "Operacja jest niedostêpna"
 
-#: src/FtpListInfo.cc:226 src/HttpDir.cc:1150
+#: src/FtpListInfo.cc:226 src/HttpDir.cc:1181
 #, c-format
 msgid "Getting directory contents (%ld)"
 msgstr "Pobieranie informacji o zawarto¶ci katalogu (%ld)"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:1155
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:1186
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "Pobieranie informcji o plikach (%d%%)"
 
-#: src/GetJob.cc:68
+#: src/GetJob.cc:72
 #, c-format
 msgid "remote rm(%s) - %s\n"
 msgstr "zdalne rm(%s) - %s\n"
 
-#: src/GetJob.cc:164
+#: src/GetJob.cc:168
 #, c-format
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr ""
@@ -285,7 +285,7 @@ msgstr ""
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr ""
 
-#: src/Http.cc:1108 src/Resolver.cc:184 src/ftpclass.cc:2550
+#: src/Http.cc:1113 src/Resolver.cc:184 src/ftpclass.cc:2547
 msgid "Resolving host address..."
 msgstr "Uzyskiwanie adresu hosta..."
 
@@ -1314,101 +1314,101 @@ msgstr "Pojawi³o siê `unknown', przypuszczalnie logowanie nie powiod³o siê"
 msgid "assuming failed host name lookup"
 msgstr "przypuszalnie nie powiod³o siê wyszukiwanie IP hosta"
 
-#: src/Http.cc:501 src/ftpclass.cc:743
+#: src/Http.cc:506 src/ftpclass.cc:743
 msgid "Closing idle connection"
 msgstr "Zamykanie bezczynnego po³±czenia"
 
-#: src/Http.cc:555 src/ftpclass.cc:795
+#: src/Http.cc:560 src/ftpclass.cc:795
 msgid "max-retries exceeded"
 msgstr "przekroczona maksymalna liczba prób"
 
-#: src/ftpclass.cc:1350
+#: src/ftpclass.cc:1348
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "£±cznie siê (data socket) z (%s) port %u"
 
-#: src/Http.cc:132 src/ftpclass.cc:1401
+#: src/Http.cc:132 src/ftpclass.cc:1397
 msgid "Timeout - reconnecting"
 msgstr "Przekroczony limit czasu - ³±czê siê ponownie"
 
-#: src/ftpclass.cc:1662
+#: src/ftpclass.cc:1659
 msgid "Peer closed connection"
 msgstr "Komputer po drugiej stronie zamkn±³ po³±czenie"
 
-#: src/ftpclass.cc:1735
+#: src/ftpclass.cc:1732
 msgid "Closing control socket"
 msgstr "Zamykanie control socket"
 
-#: src/ftpclass.cc:1804
+#: src/ftpclass.cc:1801
 msgid "Closing data socket"
 msgstr "Zamykam gniazdo danych"
 
-#: src/ftpclass.cc:2351
+#: src/ftpclass.cc:2348
 msgid "saw file size in response"
 msgstr "w odpowiedzi pojawi³ siê rozmiar pliku"
 
-#: src/ftpclass.cc:2360
+#: src/ftpclass.cc:2357
 msgid "remote end closes connection"
 msgstr "komputer po drugiej stronie zamkn±³ po³±czenie"
 
-#: src/ftpclass.cc:2366
+#: src/ftpclass.cc:2363
 msgid "extra server response"
 msgstr "dodatkowa odpowied¼ serwera"
 
-#: src/ftpclass.cc:2465
+#: src/ftpclass.cc:2462
 msgid "Switching passive mode off"
 msgstr "Wy³±czam tryb pasywny"
 
-#: src/ftpclass.cc:2540
+#: src/ftpclass.cc:2537
 msgid "Sending commands..."
 msgstr "Wysy³anie komend..."
 
-#: src/Http.cc:1119 src/ftpclass.cc:2542 src/ftpclass.cc:2562
-#: src/ftpclass.cc:2569
+#: src/Http.cc:1124 src/ftpclass.cc:2539 src/ftpclass.cc:2559
+#: src/ftpclass.cc:2566
 msgid "Waiting for response..."
 msgstr "Czekanie na odpowied¼..."
 
-#: src/ftpclass.cc:2543
+#: src/ftpclass.cc:2540
 msgid "Connection idle"
 msgstr "Po³±czenie bezczynne"
 
-#: src/Http.cc:1110 src/ftpclass.cc:2552
+#: src/Http.cc:1115 src/ftpclass.cc:2549
 msgid "Delaying before reconnect"
 msgstr "Przerwa przed ponownym po³±czeniem"
 
-#: src/Http.cc:1114 src/ftpclass.cc:2557
+#: src/Http.cc:1119 src/ftpclass.cc:2554
 msgid "Connecting..."
 msgstr "£±czenie siê..."
 
-#: src/ftpclass.cc:2559
+#: src/ftpclass.cc:2556
 msgid "Logging in..."
 msgstr "Logowanie siê..."
 
-#: src/ftpclass.cc:2563
+#: src/ftpclass.cc:2560
 msgid "Making data connection..."
 msgstr "Ustanawianie po³±czenie dla danych..."
 
-#: src/ftpclass.cc:2565
+#: src/ftpclass.cc:2562
 msgid "Changing remote directory..."
 msgstr "Zmiana zdalnego katalogu..."
 
-#: src/ftpclass.cc:2568 src/ftpclass.cc:2580
+#: src/ftpclass.cc:2565 src/ftpclass.cc:2577
 msgid "Waiting for transfer to complete"
 msgstr "Oczekiwanie na zakoñczenie transferu"
 
-#: src/ftpclass.cc:2571
+#: src/ftpclass.cc:2568
 msgid "Waiting for data connection..."
 msgstr "Czekam na po³±czenie dla danych..."
 
-#: src/Http.cc:1117 src/ftpclass.cc:2576
+#: src/Http.cc:1122 src/ftpclass.cc:2573
 msgid "Sending data"
 msgstr "Wysy³am dane"
 
-#: src/Http.cc:1122 src/ftpclass.cc:2578
+#: src/Http.cc:1127 src/ftpclass.cc:2575
 msgid "Receiving data"
 msgstr "Otrzymujê dane"
 
-#: src/ftpclass.cc:2582
+#: src/ftpclass.cc:2579
 msgid "Fatal protocol error occured"
 msgstr "Wyst±pi³ b³±d krytyczny protoko³u"
 
@@ -1567,11 +1567,11 @@ msgstr "%s ok, %d katalog$|i|ów$ usuniêto\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d plik$|i|ów$ usuniêto\n"
 
-#: src/Http.cc:955 src/Http.cc:975
+#: src/Http.cc:958 src/Http.cc:978
 msgid "chunked format violated"
 msgstr "naruszony format"
 
-#: src/Http.cc:1120
+#: src/Http.cc:1125
 msgid "Fetching headers..."
 msgstr "Przesy³am nag³ówki..."
 
@@ -1580,7 +1580,7 @@ msgstr "Przesy³am nag³ówki..."
 msgid "Proxy protocol unsupported"
 msgstr "Brak wsparcia dla protoko³u proxy"
 
-#: src/FtpGlob.cc:258 src/HttpDir.cc:774 src/HttpDir.cc:951
+#: src/FtpGlob.cc:258 src/HttpDir.cc:805 src/HttpDir.cc:982
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "Pobieranie listy plików (%ld) [%s]"

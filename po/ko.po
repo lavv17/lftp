@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
-"POT-Creation-Date: 1999-10-22 19:30+0400\n"
+"POT-Creation-Date: 2000-01-09 03:22+0300\n"
 "PO-Revision-Date: 1999-10-20 \n"
 "Last-Translator: Dojip Kim <greendrm@kamsi.yonsei.ac.kr>\n"
 "Language-Team: \n"
@@ -84,7 +84,7 @@ msgstr "접속 실패: %s"
 msgid "File cannot be accessed"
 msgstr "파일을 읽을 수 없습니다"
 
-#: src/FileAccess.cc:301 src/ftpclass.cc:2545 src/ftpclass.cc:2555
+#: src/FileAccess.cc:301 src/ftpclass.cc:2542 src/ftpclass.cc:2552
 msgid "Not connected"
 msgstr "접속되지 않았습니다"
 
@@ -101,7 +101,7 @@ msgstr "치명적 오류"
 msgid "Store failed - you have to reput"
 msgstr "저장 실패 - 재입력하십시오"
 
-#: src/FileAccess.cc:314 src/ftpclass.cc:2587
+#: src/FileAccess.cc:314 src/ftpclass.cc:2584
 msgid "Login failed"
 msgstr "로그인 실패"
 
@@ -109,22 +109,22 @@ msgstr "로그인 실패"
 msgid "Operation not supported"
 msgstr "지원되지 않는 오퍼레이션입니다"
 
-#: src/FtpListInfo.cc:226 src/HttpDir.cc:1150
+#: src/FtpListInfo.cc:226 src/HttpDir.cc:1181
 #, c-format
 msgid "Getting directory contents (%ld)"
 msgstr "디렉토리 내용을 가져오는 중 (%ld)"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:1155
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:1186
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "파일 정보를 가져오는 중 (%d%%)"
 
-#: src/GetJob.cc:68
+#: src/GetJob.cc:72
 #, c-format
 msgid "remote rm(%s) - %s\n"
 msgstr "원거리 rm(%s) -%s\n"
 
-#: src/GetJob.cc:164
+#: src/GetJob.cc:168
 #, c-format
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr "%s: %s: 파일이 이미 존재하며 xfer: clobber가 설정되어 있지 않습니다\n"
@@ -274,7 +274,7 @@ msgstr "잘못된 시간 단위입니다, [smhd] 만 허용합니다."
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "잘못된 시간 양식입니다. 양식은 <time><unit> 입니다, 예. 2h30m."
 
-#: src/Http.cc:1108 src/Resolver.cc:184 src/ftpclass.cc:2550
+#: src/Http.cc:1113 src/Resolver.cc:184 src/ftpclass.cc:2547
 msgid "Resolving host address..."
 msgstr "호스트 주소를 찾습니다..."
 
@@ -1215,101 +1215,101 @@ msgstr "`알수 없는' 보면, 로그인에 실패한 듯 합니다"
 msgid "assuming failed host name lookup"
 msgstr "호스트 이름을 찾는데 실패한 듯 합니다"
 
-#: src/Http.cc:501 src/ftpclass.cc:743
+#: src/Http.cc:506 src/ftpclass.cc:743
 msgid "Closing idle connection"
 msgstr "놀고 있는 접속 닫습니다"
 
-#: src/Http.cc:555 src/ftpclass.cc:795
+#: src/Http.cc:560 src/ftpclass.cc:795
 msgid "max-retries exceeded"
 msgstr "최대-재시도를 초과했습니다"
 
-#: src/ftpclass.cc:1350
+#: src/ftpclass.cc:1348
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "(%s) 포트 %u에 자료 소켓을 연결합니다"
 
-#: src/Http.cc:132 src/ftpclass.cc:1401
+#: src/Http.cc:132 src/ftpclass.cc:1397
 msgid "Timeout - reconnecting"
 msgstr "시간초과 - 재접속"
 
-#: src/ftpclass.cc:1662
+#: src/ftpclass.cc:1659
 msgid "Peer closed connection"
 msgstr "접속이 끊긴 듯 합니다"
 
-#: src/ftpclass.cc:1735
+#: src/ftpclass.cc:1732
 msgid "Closing control socket"
 msgstr "제어 소켓 받음"
 
-#: src/ftpclass.cc:1804
+#: src/ftpclass.cc:1801
 msgid "Closing data socket"
 msgstr "데이터 소켓 닫음"
 
-#: src/ftpclass.cc:2351
+#: src/ftpclass.cc:2348
 msgid "saw file size in response"
 msgstr "응답에서 파일 크기를 봅니다"
 
-#: src/ftpclass.cc:2360
+#: src/ftpclass.cc:2357
 msgid "remote end closes connection"
 msgstr "원거리 끝이 접속을 끊습니다"
 
-#: src/ftpclass.cc:2366
+#: src/ftpclass.cc:2363
 msgid "extra server response"
 msgstr "임시 서버 응답"
 
-#: src/ftpclass.cc:2465
+#: src/ftpclass.cc:2462
 msgid "Switching passive mode off"
 msgstr "패시브(passive) 모드 끔"
 
-#: src/ftpclass.cc:2540
+#: src/ftpclass.cc:2537
 msgid "Sending commands..."
 msgstr "명령어 전송중..."
 
-#: src/Http.cc:1119 src/ftpclass.cc:2542 src/ftpclass.cc:2562
-#: src/ftpclass.cc:2569
+#: src/Http.cc:1124 src/ftpclass.cc:2539 src/ftpclass.cc:2559
+#: src/ftpclass.cc:2566
 msgid "Waiting for response..."
 msgstr "응답을 기다립니다..."
 
-#: src/ftpclass.cc:2543
+#: src/ftpclass.cc:2540
 msgid "Connection idle"
 msgstr "접속 놀고 있어요"
 
-#: src/Http.cc:1110 src/ftpclass.cc:2552
+#: src/Http.cc:1115 src/ftpclass.cc:2549
 msgid "Delaying before reconnect"
 msgstr "재접속하기 위하여 기다립니다"
 
-#: src/Http.cc:1114 src/ftpclass.cc:2557
+#: src/Http.cc:1119 src/ftpclass.cc:2554
 msgid "Connecting..."
 msgstr "접속중..."
 
-#: src/ftpclass.cc:2559
+#: src/ftpclass.cc:2556
 msgid "Logging in..."
 msgstr "로그인 중..."
 
-#: src/ftpclass.cc:2563
+#: src/ftpclass.cc:2560
 msgid "Making data connection..."
 msgstr "접속 하는 중..."
 
-#: src/ftpclass.cc:2565
+#: src/ftpclass.cc:2562
 msgid "Changing remote directory..."
 msgstr "원거리 디렉토리 변경중..."
 
-#: src/ftpclass.cc:2568 src/ftpclass.cc:2580
+#: src/ftpclass.cc:2565 src/ftpclass.cc:2577
 msgid "Waiting for transfer to complete"
 msgstr "전송 완료를 기다립니다"
 
-#: src/ftpclass.cc:2571
+#: src/ftpclass.cc:2568
 msgid "Waiting for data connection..."
 msgstr "접속을 기다는 중..."
 
-#: src/Http.cc:1117 src/ftpclass.cc:2576
+#: src/Http.cc:1122 src/ftpclass.cc:2573
 msgid "Sending data"
 msgstr "자료 보내는 중"
 
-#: src/Http.cc:1122 src/ftpclass.cc:2578
+#: src/Http.cc:1127 src/ftpclass.cc:2575
 msgid "Receiving data"
 msgstr "자료 받는 중"
 
-#: src/ftpclass.cc:2582
+#: src/ftpclass.cc:2579
 msgid "Fatal protocol error occured"
 msgstr "치명적인 전송규약 오류가 발생했습니다"
 
@@ -1456,11 +1456,11 @@ msgstr "%s 성공, %d director$y|ies$ 삭제했습니다\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s 성공, %d file$|s$ 삭제했습니다\n"
 
-#: src/Http.cc:955 src/Http.cc:975
+#: src/Http.cc:958 src/Http.cc:978
 msgid "chunked format violated"
 msgstr "쓰지 않는 양식이 문제가 됩니다"
 
-#: src/Http.cc:1120
+#: src/Http.cc:1125
 msgid "Fetching headers..."
 msgstr "헤더를 읽고 있어어..."
 
@@ -1469,7 +1469,7 @@ msgstr "헤더를 읽고 있어어..."
 msgid "Proxy protocol unsupported"
 msgstr "프락시 전송규약을 지원하지 않습니다"
 
-#: src/FtpGlob.cc:258 src/HttpDir.cc:774 src/HttpDir.cc:951
+#: src/FtpGlob.cc:258 src/HttpDir.cc:805 src/HttpDir.cc:982
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "파일 목록을 가져옵니다 (%ld) [%s]"
