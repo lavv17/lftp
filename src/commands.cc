@@ -823,7 +823,7 @@ Job *CmdExec::builtin_queue()
    if(queue==0)
    {
       queue=new CmdExec(session->Clone());
-      queue->parent=this;
+      queue->SetParentFg(this,false);
       queue->AllocJobno();
       const char *url=session->GetConnectURL(FA::NO_PATH);
       queue->cmdline=(char*)xmalloc(9+strlen(url));
@@ -1602,6 +1602,7 @@ CMD(wait)
       return 0;
    }
    j->parent=0;
+   j->Bg();
    return j;
 }
 

@@ -83,7 +83,7 @@ int SleepJob::Do()
 	 {
 	    exec=new CmdExec(session);
 	    session=0;
-	    exec->parent=this;
+	    exec->SetParentFg(this);
 	    exec->SetCWD(saved_cwd);
 	    exec->AllocJobno();
 	    exec->cmdline=(char*)xmalloc(3+strlen(cmd));

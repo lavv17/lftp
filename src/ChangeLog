@@ -1,3 +1,10 @@
+2000-03-24  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Job.h: (SetParentFg) new method.
+	* CmdExec.cc, CopyJob.cc, FindJob.cc, MirrorJob.cc, SleepJob.cc,
+	  commands.cc, mgetJob.cc, pgetJob.cc: use it.
+	* lftpget: -u is obsolete.
+
 2000-03-23  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Speedometer.cc: cast to int to avoid ambiguity on HP/UX.

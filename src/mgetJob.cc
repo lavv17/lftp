@@ -172,7 +172,7 @@ int mgetJob::Do()
 	    mkdir_job=new mkdirJob(Clone(),mkdir_args);
 	    mkdir_job->BeQuiet();
 	    waiting=mkdir_job;
-	    waiting->parent=this;
+	    waiting->SetParentFg(this);
 	    waiting->cmdline=mkdir_args->Combine();
 	    // don't delete mkdir_args; -- mkdirJob does it
 	    mkdir_args=0;

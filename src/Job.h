@@ -40,7 +40,6 @@ class Job : public SMTask
    static Job *chain;
 
 protected:
-   void SetParent(Job *j) { parent=j; }
    bool fg;
    FgData *fg_data;
 
@@ -50,6 +49,14 @@ public:
    int	 jobno;
    Job	 *parent;
    Job	 *waiting;
+
+   void SetParent(Job *j) { parent=j; }
+   void SetParentFg(Job *j, bool f=true)
+      {
+	 SetParent(j);
+	 if(j->fg && f)
+	    Fg();
+      }
 
    void	 AllocJobno();
 

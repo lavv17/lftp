@@ -179,7 +179,7 @@ void  MirrorJob::HandleFile(int how)
 		  }
 	       }
 	       waiting=new rmJob(Clone(),args);
-	       waiting->parent=this;
+	       waiting->SetParentFg(this);
 	       waiting->cmdline=args->Combine();
 	       mod_files++;
 	    }
@@ -255,7 +255,7 @@ void  MirrorJob::HandleFile(int how)
 	 if(file->defined&file->SIZE)
 	    cp->SetSize(file->size);
 	 waiting=cp;
-	 waiting->parent=this;
+	 waiting->SetParentFg(this);
 	 waiting->cmdline=(char*)xmalloc(10+strlen(file->name));
 	 sprintf(waiting->cmdline,"\\get %s",file->name);
 	 break;
@@ -280,7 +280,7 @@ void  MirrorJob::HandleFile(int how)
 		  args->Append("--");
 		  args->Append(file->name);
 		  waiting=new mkdirJob(Clone(),args);
-		  waiting->parent=this;
+		  waiting->SetParentFg(this);
 		  waiting->cmdline=args->Combine();
 	       }
 	       else
@@ -319,7 +319,7 @@ void  MirrorJob::HandleFile(int how)
 	 MirrorJob *mj=new MirrorJob(Clone(),local_name,remote_name);
 	 mj->parent_mirror=this;
 	 waiting=mj;
-	 waiting->parent=this;
+	 waiting->SetParentFg(this);
 	 waiting->cmdline=(char*)xmalloc(strlen("\\mirror")+1+
 					 strlen(file->name)+1);
 	 sprintf(waiting->cmdline,"\\mirror %s",file->name);
@@ -327,6 +327,7 @@ void  MirrorJob::HandleFile(int how)
 	 // inherit flags and other things
 	 mj->SetFlags(flags,1);
 	 mj->SetPrec(prec);
+	 mj->UseCache(use_cache);
 
 	 if(rx_include)	mj->SetInclude(rx_include);
 	 if(rx_exclude)	mj->SetExclude(rx_exclude);
@@ -593,7 +594,7 @@ int   MirrorJob::Do()
       CopyJob *cp=
 	 new CopyJob(FileCopy::New(src_peer,dst_peer,false),file->name,"mirror");
       waiting=cp;
-      waiting->parent=this;
+      waiting->SetParentFg(this);
       waiting->cmdline=(char*)xmalloc(10+strlen(file->name));
       sprintf(waiting->cmdline,"\\put %s",file->name);
       state=WAITING_FOR_SUBGET;
@@ -675,7 +676,7 @@ int   MirrorJob::Do()
 		     to_rm->next();
 		  }
 		  waiting=new rmJob(Clone(),args);
-		  waiting->parent=this;
+		  waiting->SetParentFg(this);
 		  waiting->cmdline=args->Combine();
 	       }
 	       else if(flags&REPORT_NOT_DELETED)
@@ -778,7 +779,7 @@ int   MirrorJob::Do()
 	 a->Append(fi->name);
 	 ChmodJob *cj=new ChmodJob(Clone(),fi->mode,a);
 	 waiting=cj;
-	 waiting->parent=this;
+	 waiting->SetParentFg(this);
 	 waiting->cmdline=a->Combine();
 	 cj->BeQuiet();   // chmod is not supported on all servers; be quiet.
 

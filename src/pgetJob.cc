@@ -97,7 +97,7 @@ int pgetJob::Do()
 	 if(!s)
 	    s=session->Clone();
 	 chunks[i]=NewChunk(s,name,local,curr_offs-chunk_size,curr_offs);
-	 chunks[i]->parent=this;
+	 chunks[i]->SetParentFg(this,false);
 	 chunks[i]->cmdline=(char*)xmalloc(7+2*20+1);
 	 sprintf(chunks[i]->cmdline,"\\chunk %ld-%ld",
 				    curr_offs-chunk_size,curr_offs-1);

@@ -189,10 +189,8 @@ void CopyJobEnv::SetCopier(FileCopy *c,const char *n)
    if(ascii)
       c->Ascii();
    cp=new CopyJob(c,n,op);
-   cp->parent=this;
+   cp->SetParentFg(this);
    waiting=cp;
-   if(fg)
-      cp->Fg();
 }
 
 void CopyJobEnv::SayFinalWithPrefix(const char *p)

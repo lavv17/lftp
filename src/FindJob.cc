@@ -374,10 +374,8 @@ FinderJob::prf_res FinderJob_Cmd::ProcessFile(const char *d,const FileInfo *f)
    s->Chdir(dir_file(start_dir,d),false);
 
    CmdExec *exec=new CmdExec(s);
-   exec->parent=this;
+   exec->SetParentFg(this);
    exec->SetCWD(saved_cwd);
-   if(fg)
-      exec->Fg();
 
    char *file=f->name;
 
@@ -459,9 +457,7 @@ void FinderJob_Cmd::Finish()
 	 /* remove the specified directory at the last */
 	 session->Chdir(init_dir,false); // to leave the directory
 	 CmdExec *exec=new CmdExec(session->Clone());
-	 exec->parent=this;
-	 if(fg)
-	    exec->Fg();
+	 exec->SetParentFg(this);
 	 exec->FeedCmd("rmdir ");
 	 if(quiet)
 	    exec->FeedCmd("-f ");

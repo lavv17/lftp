@@ -240,7 +240,6 @@ restart:
       }
       if(waiting)
       {
-	 waiting->parent=this;
 	 if(waiting->jobno<0)
 	    waiting->AllocJobno();
 	 if(cmd && waiting->cmdline==0)
@@ -248,8 +247,7 @@ restart:
 	    waiting->cmdline=cmd;
 	    cmd=0;
       	 }
-	 if(fg && !background)
-	    waiting->Fg();
+	 waiting->SetParentFg(this,!background);
       }
       if(background)
       {
