@@ -91,3 +91,5 @@ void ConnectionSlot::Cleanup()
 {
    lftp_slots.Empty();
 }
+ConnectionSlot::ConnectionSlot() : KeyValueDB() {}
+ConnectionSlot::~ConnectionSlot() {}

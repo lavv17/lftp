@@ -53,6 +53,8 @@ public:
    static char *Format();
    char *FormatThis();
    static void Cleanup();
+   ConnectionSlot();
+   ~ConnectionSlot();
 };
 
 #endif
