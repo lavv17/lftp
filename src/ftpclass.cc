@@ -236,7 +236,7 @@ address_mismatch:
 
 void Ftp::RestCheck(int act)
 {
-   if(is2XX(act))
+   if(is2XX(act) || is3XX(act))
    {
       real_pos=pos;  // REST successful
       last_rest=pos;
