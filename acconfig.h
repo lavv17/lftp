@@ -227,5 +227,6 @@ CDECL void SOCKSinit(const char *);
 #endif
 
 #define E_RETRY(e) ((e)==EAGAIN || (e)==EWOULDBLOCK || (e)==EINTR)
+#define E_LOCK_IGNORE(e) ((e)==EINVAL || (e)==ENOLCK)
 
 #endif /* CONFIG_H */
