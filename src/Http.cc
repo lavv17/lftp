@@ -197,7 +197,8 @@ void Http::SendMethod(const char *method,const char *efile)
       method="GET";
    Send("%s %s HTTP/1.1\r\n",method,efile);
    Send("Host: %s\r\n",ehost);
-   Send("User-Agent: %s\r\n",user_agent);
+   if(user_agent && user_agent[0])
+      Send("User-Agent: %s\r\n",user_agent);
    Send("Accept: */*\r\n");
 }
 
@@ -386,6 +387,12 @@ add_path:
    {
       Send("Pragma: no-cache\r\n"); // for HTTP/1.0 compatibility
       Send("Cache-Control: no-cache\r\n");
+   }
+   if(!hftp)
+   {
+      const char *cookie=Query("cookie",hostname);
+      if(cookie && cookie[0])
+	 Send("Cookie: %s\r\n",cookie);
    }
    if(mode==ARRAY_INFO && !use_head)
       connection="close";
