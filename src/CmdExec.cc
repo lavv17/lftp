@@ -775,6 +775,8 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
 
    saved_session=0;
 
+   builtin=BUILTIN_NONE;
+
    Reconfig();
 }
 
