@@ -109,6 +109,9 @@ public:
    FgData *GetFgData(bool fg);
 
    time_t EventTime();
+
+   void Suspend();
+   void Resume();
 };
 
 #endif // BUFFER_H

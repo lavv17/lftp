@@ -46,12 +46,19 @@ char *XferJob::Percent()
    return p;
 }
 
+bool XferJob::CanShowRate(float rate)
+{
+   return(now-start_time>3 && now-last_bytes<30 && rate>1);
+}
+
 char *XferJob::CurrRate(float rate)
 {
    static char speed[40];
    speed[0]=0;
-   if(now-start_time>3 && now-last_bytes<30 && rate!=0)
+   rate_shown=false;
+   if(CanShowRate(rate))
    {
+      rate_shown=true;
       if(rate<1024)
 	 sprintf(speed,_("%.0fb/s "),rate);
       else if(rate<1024*1024)
@@ -70,7 +77,7 @@ char *XferJob::CurrETA(float rate,long offs)
 {
    static char eta_str[20];
    eta_str[0]=0;
-   if(size>0 && rate>1 && now-last_bytes<30 && now-start_time>3 && size>=offs)
+   if(size>0 && size>=offs && CanShowRate(rate))
    {
       long eta=(long)((size-offs) / rate + 0.5);
       char letter;
@@ -287,6 +294,7 @@ XferJob::XferJob(FileAccess *f) : SessionJob(f)
    non_strict_urls=false;
    url=0;
    session_buffered=0;
+   rate_shown=false;
 }
 
 XferJob::~XferJob()
@@ -377,7 +385,8 @@ void  XferJob::RateDrain()
    if(!session || session->IsOpen())
    {
       CountBytes(0);
-      block+=TimeOut(1000);
+      if(rate_shown)
+	 block+=TimeOut(1000);
    }
    else
    {

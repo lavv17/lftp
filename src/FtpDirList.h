@@ -35,6 +35,9 @@ public:
    ~FtpDirList();
    const char *Status();
    int Do();
+
+   void Suspend();
+   void Resume();
 };
 
 #endif//FTPDIRLIST_H

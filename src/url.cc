@@ -147,11 +147,9 @@ void url::decode_string(char *p)
 
 /* encode_string was taken from wget-1.5.2 and slightly modified */
 
-# define URL_UNSAFE " <>\"%{}|\\^[]`\033"
-
 /* Encodes the unsafe characters (listed in URL_UNSAFE) in a given
    string, returning a malloc-ed %XX encoded string.  */
-char *url::encode_string (const char *s,char *res)
+char *url::encode_string (const char *s,char *res,const char *unsafe)
 {
   char *p;
   int i;
@@ -160,14 +158,14 @@ char *url::encode_string (const char *s,char *res)
   {
      const char *b = s;
      for (i = 0; *s; s++, i++)
-       if (strchr (URL_UNSAFE, *s))
+       if (strchr (unsafe, *s))
 	 i += 2; /* Two more characters (hex digits) */
      res = (char *)xmalloc (i + 1);
      s = b;
   }
   for (p = res; *s; s++)
   {
-    if (strchr (URL_UNSAFE, *s))
+    if (strchr (unsafe, *s))
       {
 	const unsigned char c = *s;
 	*p++ = '%';

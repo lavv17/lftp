@@ -91,6 +91,9 @@ protected:
    char *CurrETA(float rate,long offs);
    char *CurrETA() { return CurrETA(minute_xfer_rate,Offset()); }
 
+   bool CanShowRate(float rate);
+   bool rate_shown;
+
 public:
    long	 bytes_transferred;
 

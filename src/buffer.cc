@@ -209,6 +209,8 @@ time_t FileOutputBuffer::EventTime()
 }
 
 // FileInputBuffer implementation
+#undef super
+#define super Buffer
 FileInputBuffer::FileInputBuffer(FDStream *i)
 {
    in=i;
@@ -331,4 +333,17 @@ time_t FileInputBuffer::EventTime()
    if(suspended)
       return now;
    return event_time;
+}
+
+void FileInputBuffer::Suspend()
+{
+   if(in_FA)
+      in_FA->Suspend();
+   super::Suspend();
+}
+void FileInputBuffer::Resume()
+{
+   super::Resume();
+   if(in_FA)
+      in_FA->Resume();
 }

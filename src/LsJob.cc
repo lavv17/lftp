@@ -94,6 +94,7 @@ int   LsJob::Do()
 	       goto try_write;
 	    }
 	 }
+	 dl->Resume();
 	 const char *tmpbuf=0;
 	 dl->Get(&tmpbuf,&res);
 	 if(tmpbuf==0)

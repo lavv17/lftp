@@ -370,18 +370,18 @@ const char *FileAccess::GetConnectURL(int flags)
    sprintf(url,"%s://",proto);
    if(user)
    {
-      url::encode_string(user,url+strlen(url));
+      url::encode_string(user,url+strlen(url),"/:@"URL_UNSAFE);
       if(pass && (flags&WITH_PASSWORD))
       {
 	 strcat(url,":");
-	 url::encode_string(pass,url+strlen(url));
+	 url::encode_string(pass,url+strlen(url),"/:@"URL_UNSAFE);
       }
       strcat(url,"@");
    }
    if(hostname)
-      url::encode_string(hostname,url+strlen(url));
+      url::encode_string(hostname,url+strlen(url),"/:"URL_UNSAFE);
    if(portname)
-      sprintf(url+strlen(url),":%s",portname);
+      url::encode_string(portname,url+strlen(url),"/"URL_UNSAFE);
    if(cwd && strcmp(cwd,"~") && !(flags&NO_CWD))
    {
       if(cwd[0]!='/') // e.g. ~/path

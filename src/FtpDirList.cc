@@ -26,6 +26,8 @@
 #include "FtpDirList.h"
 #include "LsCache.h"
 
+#define super DirList
+
 int FtpDirList::Do()
 {
    if(done)
@@ -135,4 +137,17 @@ FtpDirList::~FtpDirList()
 const char *FtpDirList::Status()
 {
    return "FtpDirList";	// FIXME
+}
+
+void FtpDirList::Suspend()
+{
+   if(ubuf)
+      ubuf->Suspend();
+   super::Suspend();
+}
+void FtpDirList::Resume()
+{
+   super::Resume();
+   if(ubuf)
+      ubuf->Resume();
 }
