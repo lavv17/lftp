@@ -759,7 +759,7 @@ int Fish::HandleReplies()
 	    if(opt_size)
 	       *opt_size=entity_size;
 	 }
-	 if(fi->defined&(fi->DATE|fi->DATE_UNPREC))
+	 if(fi->defined&fi->DATE)
 	 {
 	    entity_date=fi->date;
 	    if(opt_date)
@@ -775,7 +775,7 @@ int Fish::HandleReplies()
 	 array_for_info[array_ptr].size=fi->size;
       else
 	 array_for_info[array_ptr].size=NO_SIZE;
-      if(fi && fi->defined&(fi->DATE|fi->DATE_UNPREC))
+      if(fi && fi->defined&fi->DATE)
 	 array_for_info[array_ptr].time=fi->date;
       else
 	 array_for_info[array_ptr].time=NO_DATE;
@@ -1283,6 +1283,7 @@ static FileInfo *ls_to_FileInfo(char *line)
    char *sym_link=0;
    long long size;
    int n;
+   int prec=0;
 
    n=sscanf(line,"%11s %d %31s %31s %lld %3s %2d %5s%n",perms,&n_links,
 	 user,group,&size,month_name,&day,year_or_time,&consumed);
@@ -1329,6 +1330,11 @@ static FileInfo *ls_to_FileInfo(char *line)
 	 sprintf(month_name,"%02d",month+1);
 	 if(year==-1)
 	    year=guess_year(month,day,hour,minute,SMTask::now);
+	 else
+	 {
+	    hour=12;
+	    prec=12*60*60;
+	 }
       }
 
       FileInfo *fi=new FileInfo;
@@ -1351,7 +1357,7 @@ static FileInfo *ls_to_FileInfo(char *line)
 	 date.tm_isdst=-1;
 	 date.tm_sec=0;
 
-	 fi->SetDateUnprec(mktime_from_utc(&date));
+	 fi->SetDate(mktime_from_utc(&date),prec);
       }
 
       fi->SetSize(size);

@@ -40,6 +40,7 @@ public:
    char	    *name;
    mode_t   mode;
    time_t   date;
+   int	    date_prec;
    off_t    size;
    void	    *data;
    const char *user, *group;
@@ -59,13 +60,15 @@ public:
    enum defined_bits
    {
       NAME=001,MODE=002,DATE=004,TYPE=010,SYMLINK_DEF=020,
-      DATE_UNPREC=040,SIZE=0100,USER=0200,GROUP=0400,NLINKS=01000,
+      SIZE=0100,USER=0200,GROUP=0400,NLINKS=01000,
 
       IGNORE_SIZE_IF_OLDER=02000, // for ignore mask
       IGNORE_DATE_IF_OLDER=04000, // for ignore mask
 
-      ALL_INFO=NAME|MODE|DATE|TYPE|SYMLINK_DEF|DATE_UNPREC|SIZE|USER|GROUP|NLINKS
+      ALL_INFO=NAME|MODE|DATE|TYPE|SYMLINK_DEF|SIZE|USER|GROUP|NLINKS
    };
+
+   int rank;
 
    ~FileInfo();
    void Init();
@@ -82,13 +85,7 @@ public:
    void LocalFile(const char *name, bool follow_symlinks);
 
    void SetMode(mode_t m) { mode=m; defined|=MODE; }
-   void SetDate(time_t t) { date=t; defined|=DATE; defined&=~DATE_UNPREC; }
-   void SetDateUnprec(time_t t)
-      {
-	 if(defined&DATE) return;
-	 if(t==(time_t)-1) return;
-	 date=t; defined|=DATE_UNPREC;
-      }
+   void SetDate(time_t t,int prec) { date=t; defined|=DATE; date_prec=prec; }
    void SetType(type t) { filetype=t; defined|=TYPE; }
    void SetSymlink(const char *s) { xfree(symlink); symlink=xstrdup(s);
       filetype=SYMLINK; defined|=TYPE|SYMLINK_DEF; }
@@ -97,8 +94,7 @@ public:
 
    void	 Merge(const FileInfo&);
 
-   bool	 SameAs(const FileInfo *,
-	    const TimeInterval *prec,const TimeInterval *loose_prec,int ignore);
+   bool	 SameAs(const FileInfo *,int ignore);
    bool	 OlderThan(time_t t);
 
    void	 SetAssociatedData(void *d,int len)
@@ -108,13 +104,16 @@ public:
       }
    void  *GetAssociatedData() { return data; }
 
+   void SetRank(int r) { rank=r; }
+   int GetRank() const { return rank; }
+
    operator const char *() { return name; }
 };
 
 class FileSet
 {
 public:
-   enum sort_e { BYNAME, BYSIZE, DIRSFIRST };
+   enum sort_e { BYNAME, BYSIZE, DIRSFIRST, BYRANK };
 
 private:
    FileInfo **files;
@@ -146,13 +145,13 @@ public:
    void	 Add(FileInfo *);
    void	 Merge(const FileSet *);
    void	 Merge(char **);   // file list
-   void	 SubtractSame(const FileSet *,
-	    const TimeInterval *prec,const TimeInterval *loose_prec,int ignore);
+   void	 SubtractSame(const FileSet *,int ignore);
    void	 SubtractAny(const FileSet *);
    void  SubtractOlderThan(time_t t);
    void  SubtractNotIn(const FileSet *);
    void  Sort(sort_e newsort, bool casefold=false);
    void  Unsort();
+   void	 SortByPatternList(const char *list_c);
 
    void	 Exclude(const char *prefix,regex_t *exclude,regex_t *include);
    void  Exclude(const char *prefix,const char *exclude,const char *include);
@@ -177,11 +176,11 @@ public:
       if(f)
 	 f->SetSize(size);
    }
-   void  SetDate(const char *name,time_t date)
+   void  SetDate(const char *name,time_t date,int prec)
    {
       FileInfo *f=FindByName(name);
       if(f)
-	 f->SetDate(date);
+	 f->SetDate(date,prec);
    }
 
    /* add a path to all files */

@@ -47,14 +47,18 @@ void  FileInfo::Merge(const FileInfo& f)
    int dif=(~defined)&f.defined;
    if(dif&MODE)
       SetMode(f.mode);
-   if(dif&DATE)
-      SetDate(f.date);
-   if(dif&DATE_UNPREC && !(defined&DATE))
-      SetDateUnprec(f.date);
+   if(dif&DATE || f.date_prec<date_prec)
+      SetDate(f.date,f.date_prec);
    if(dif&TYPE)
       SetType(f.filetype);
    if(dif&SYMLINK)
       SetSymlink(f.symlink);
+   if(dif&USER)
+      SetUser(f.user);
+   if(dif&GROUP)
+      SetGroup(f.group);
+   if(dif&NLINKS)
+      SetNlink(f.nlinks);
 }
 
 void FileInfo::SetName(const char *n)
@@ -205,6 +209,15 @@ static int sort_dirs(const void *s1, const void *s2)
    return 0;
 }
 
+static int sort_rank(const void *s1, const void *s2)
+{
+   const FileInfo *p1 = *(const FileInfo **) s1;
+   const FileInfo *p2 = *(const FileInfo **) s2;
+   if(p1->GetRank()==p2->GetRank())
+      return sort_name(s1,s2);
+   return p1->GetRank()<p2->GetRank() ? -1 : 1;
+}
+
 /* files_sort is an alias of files when sort == NAME (since
  * files is always sorted by name), and an independant array
  * of pointers (pointing to the same data) otherwise. */
@@ -230,6 +243,7 @@ void FileSet::Sort(sort_e newsort, bool casefold)
    case BYNAME: qsort(files_sort, fnum, sizeof(FileInfo *), sort_name); break;
    case BYSIZE: qsort(files_sort, fnum, sizeof(FileInfo *), sort_size); break;
    case DIRSFIRST: qsort(files_sort, fnum, sizeof(FileInfo *), sort_dirs); break;
+   case BYRANK: qsort(files_sort, fnum, sizeof(FileInfo *), sort_rank); break;
    }
 }
 
@@ -259,13 +273,12 @@ FileSet::~FileSet()
    Empty();
 }
 
-void FileSet::SubtractSame(const FileSet *set,
-      const TimeInterval *prec,const TimeInterval *loose_prec,int ignore)
+void FileSet::SubtractSame(const FileSet *set,int ignore)
 {
    for(int i=0; i<fnum; i++)
    {
       FileInfo *f=set->FindByName(files[i]->name);
-      if(f && files[i]->SameAs(f,prec,loose_prec,ignore))
+      if(f && files[i]->SameAs(f,ignore))
 	 Sub(i--);
    }
 }
@@ -311,8 +324,7 @@ void FileSet::ExcludeDots()
    }
 }
 
-bool  FileInfo::SameAs(const FileInfo *fi,
-	 const TimeInterval *prec,const TimeInterval *loose_prec,int ignore)
+bool  FileInfo::SameAs(const FileInfo *fi,int ignore)
 {
    if(defined&NAME && fi->defined&NAME)
       if(strcmp(name,fi->name))
@@ -328,31 +340,20 @@ bool  FileInfo::SameAs(const FileInfo *fi,
    if(defined&SYMLINK_DEF && fi->defined&SYMLINK_DEF)
       return (strcmp(symlink,fi->symlink)==0);
 
-   if(defined&(DATE|DATE_UNPREC) && fi->defined&(DATE|DATE_UNPREC)
-   && !(ignore&DATE))
+   if(defined&DATE && fi->defined&DATE && !(ignore&DATE))
    {
-      time_t p;
-      bool inf;
-      if((defined&DATE_UNPREC) || (fi->defined&DATE_UNPREC))
-      {
-	 p=loose_prec->Seconds();
-	 inf=loose_prec->IsInfty();
-      }
-      else
-      {
-	 p=prec->Seconds();
-	 inf=prec->IsInfty();
-      }
+      time_t p=date_prec;
+      if(p<fi->date_prec)
+	 p=fi->date_prec;
       if(!(ignore&IGNORE_DATE_IF_OLDER && date<fi->date)
-      && (!inf && labs((long)date-(long)(fi->date))>p))
+      && labs((long)date-(long)(fi->date))>p)
 	 return false;
    }
 
    if(defined&SIZE && fi->defined&SIZE && !(ignore&SIZE))
    {
-      if(!(ignore&IGNORE_SIZE_IF_OLDER
-      && defined&(DATE|DATE_UNPREC) && fi->defined&(DATE|DATE_UNPREC)
-      && date<fi->date)
+      if(!(ignore&IGNORE_SIZE_IF_OLDER && defined&DATE && fi->defined&DATE
+	   && date<fi->date)
       && (size!=fi->size))
 	 return false;
    }
@@ -362,7 +363,7 @@ bool  FileInfo::SameAs(const FileInfo *fi,
 
 bool  FileInfo::OlderThan(time_t t)
 {
-   return ((defined&(DATE|DATE_UNPREC)) && date<t);
+   return ((defined&DATE) && date<t);
 }
 
 void FileSet::Count(int *d,int *f,int *s,int *o)
@@ -464,7 +465,7 @@ void FileSet::LocalRemove(const char *dir)
    for(int i=0; i<fnum; i++)
    {
       file=files[i];
-      if(file->defined & (file->DATE|file->DATE_UNPREC))
+      if(file->defined & file->DATE)
       {
 	 const char *local_name=dir_file(dir,file->name);
 
@@ -492,7 +493,7 @@ void FileSet::LocalUtime(const char *dir,bool only_dirs)
    for(int i=0; i<fnum; i++)
    {
       file=files[i];
-      if(file->defined & (file->DATE|file->DATE_UNPREC))
+      if(file->defined & file->DATE)
       {
 	 if(!(file->defined & file->TYPE))
 	    continue;
@@ -561,6 +562,7 @@ void FileInfo::Init()
    symlink=0;
    data=0;
    user=0; group=0;
+   rank=0;
 }
 
 FileInfo::FileInfo(const FileInfo &fi)
@@ -574,6 +576,7 @@ FileInfo::FileInfo(const FileInfo &fi)
    filetype=fi.filetype;
    mode=fi.mode;
    date=fi.date;
+   date_prec=fi.date_prec;
    size=fi.size;
    nlinks=fi.nlinks;
 }
@@ -613,7 +616,7 @@ check_again:
       return;   // ignore other type files
 
    SetSize(st.st_size);
-   SetDate(st.st_mtime);
+   SetDate(st.st_mtime,0);
    SetMode(st.st_mode&07777);
    SetType(t);
    SetNlink(st.st_nlink);
@@ -665,4 +668,18 @@ int FileSet::Have() const
       bits |= files[i]->defined;
 
    return bits;
+}
+
+void FileSet::SortByPatternList(const char *list_c)
+{
+   const int max_rank=1000000;
+   for(int i=0; i<fnum; i++)
+      files[i]->SetRank(max_rank);
+   char *list=alloca_strdup(list_c);
+   int rank=0;
+   for(char *p=strtok(list," "); p; p=strtok(0," "), rank++)
+      for(int i=0; i<fnum; i++)
+	 if(files[i]->GetRank()==max_rank && !fnmatch(p,files[i]->name,0))
+	    files[i]->SetRank(rank);
+   Sort(BYRANK);
 }

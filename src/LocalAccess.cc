@@ -249,8 +249,8 @@ int LocalAccess::Do()
 	 struct stat st;
 	 if(fstat(stream->getfd(),&st)==-1)
 	 {
-	    if(opt_size) *opt_size=-1L;
-	    if(opt_date) *opt_date=(time_t)-1;
+	    if(opt_size) *opt_size=NO_SIZE;
+	    if(opt_date) *opt_date=NO_DATE;
 	 }
 	 else
 	 {
@@ -288,8 +288,8 @@ void LocalAccess::fill_array_info()
       }
       else
       {
-	 f->size=-1L;
-	 f->time=(time_t)-1;
+	 f->size=NO_SIZE;
+	 f->time=NO_DATE;
       }
    }
 }
@@ -438,16 +438,20 @@ int LocalAccess::Write(const void *vbuf,int len)
 
 int LocalAccess::StoreStatus()
 {
-   if(stream)
+   if(!stream)
+      return IN_PROGRESS;
+   if(stream->getfd()==-1)
    {
-      delete stream;
-      stream=0;
-      if(entity_date!=(time_t)-1)
-      {
-	 static struct utimbuf ut;
-	 ut.actime=ut.modtime=entity_date;
-	 utime(dir_file(cwd,file),&ut);
-      }
+      if(stream->error())
+	 SetError(NO_FILE,stream->error_text);
+   }
+   delete stream;
+   stream=0;
+   if(error_code==OK && entity_date!=NO_DATE)
+   {
+      static struct utimbuf ut;
+      ut.actime=ut.modtime=entity_date;
+      utime(dir_file(cwd,file),&ut);
    }
 
    if(error_code<0)

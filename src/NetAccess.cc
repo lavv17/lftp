@@ -778,9 +778,9 @@ int GenericParseListInfo::Do()
       result->rewind();
       for(file=result->curr(); file!=0; file=result->next())
       {
-	 cur->get_size = !(file->defined & file->SIZE) && need_size;
-	 cur->get_time = !(file->defined & file->DATE) && need_time
-	       && (!(file->defined & file->DATE_UNPREC) || can_get_prec_time);
+	 cur->get_size = need_size && !(file->defined & file->SIZE);
+	 cur->get_time = need_time && (!(file->defined & file->DATE)
+				 || (file->date_prec>0 && can_get_prec_time));
 	 cur->file=0;
 
 	 if(file->defined & file->TYPE)
@@ -788,7 +788,7 @@ int GenericParseListInfo::Do()
 	    if(file->filetype==file->SYMLINK && follow_symlinks)
 	    {
 	       file->filetype=file->NORMAL;
-	       file->defined &= ~(file->SIZE|file->SYMLINK_DEF|file->MODE|file->DATE_UNPREC);
+	       file->defined &= ~(file->SIZE|file->SYMLINK_DEF|file->MODE|file->DATE);
 	       cur->get_size=true;
 	       cur->get_time=true;
 	    }
@@ -842,7 +842,7 @@ int GenericParseListInfo::Do()
       for(cur=get_info; get_info_cnt-->0; cur++)
       {
 	 if(cur->time!=(time_t)-1)
-	    result->SetDate(cur->file,cur->time);
+	    result->SetDate(cur->file,cur->time,0);
 	 if(cur->size!=-1)
 	    result->SetSize(cur->file,cur->size);
       }

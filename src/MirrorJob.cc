@@ -168,9 +168,9 @@ void  MirrorJob::HandleFile(int how)
 	    {
 	       if((flags&CONTINUE)
 	       && (old->defined&file->TYPE) && old->filetype==old->NORMAL
-	       && (file->defined&(file->DATE|file->DATE_UNPREC))
-	       && (old->defined&(old->DATE|old->DATE_UNPREC))
-	       && file->date + prec.Seconds() < old->date
+	       && (file->defined&file->DATE)
+	       && (old->defined&old->DATE)
+	       && file->date + file->date_prec < old->date - old->date_prec
 	       && (file->defined&file->SIZE) && (old->defined&old->SIZE)
 	       && file->size >= old->size)
 	       {
@@ -217,8 +217,8 @@ void  MirrorJob::HandleFile(int how)
 	       goto skip;  // the file has changed after mirror start
 
 	    if((flags&CONTINUE) && S_ISREG(st.st_mode)
-	    && (file->defined&(file->DATE|file->DATE_UNPREC))
-	    && file->date + prec.Seconds() < st.st_mtime
+	    && (file->defined&file->DATE)
+	    && file->date + file->date_prec < st.st_mtime
 	    && (file->defined&file->SIZE) && file->size >= st.st_size)
 	    {
 	       cont_this=true;
@@ -274,7 +274,7 @@ void  MirrorJob::HandleFile(int how)
 	    c->RemoveSourceLater();
 	 CopyJob *cp=
 	    new CopyJob(c,file->name,"mirror");
-	 if(file->defined&(file->DATE|file->DATE_UNPREC))
+	 if(file->defined&file->DATE)
 	    cp->SetDate(file->date);
 	 if(file->defined&file->SIZE)
 	    cp->SetSize(file->size);
@@ -356,7 +356,6 @@ void  MirrorJob::HandleFile(int how)
 
 	 // inherit flags and other things
 	 mj->SetFlags(flags,1);
-	 mj->SetPrec(prec,loose_prec);
 	 mj->UseCache(use_cache);
 
 	 if(rx_include)	mj->SetInclude(rx_include);
@@ -453,7 +452,7 @@ void  MirrorJob::InitSets(FileSet *source,FileSet *dest)
       ignore|=FileInfo::IGNORE_SIZE_IF_OLDER|FileInfo::IGNORE_DATE_IF_OLDER;
    if(flags&REVERSE)
       ignore|=FileInfo::IGNORE_DATE_IF_OLDER;
-   to_transfer->SubtractSame(dest,&prec,&loose_prec,ignore);
+   to_transfer->SubtractSame(dest,ignore);
 
    same->SubtractAny(to_transfer);
 
@@ -464,6 +463,9 @@ void  MirrorJob::InitSets(FileSet *source,FileSet *dest)
    new_files_set->SubtractAny(dest);
    old_files_set=new FileSet(dest);
    old_files_set->SubtractNotIn(to_transfer);
+
+   to_transfer->SortByPatternList(ResMgr::Query(
+      flags&REVERSE?"mirror:order-upload":"mirror:order-download",0));
 }
 
 int   MirrorJob::Do()
@@ -899,7 +901,7 @@ int   MirrorJob::Do()
 }
 
 MirrorJob::MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_remote_dir)
-   : SessionJob(f), prec("0"), loose_prec("0")
+   : SessionJob(f)
 {
    verbose_report=0;
    parent_mirror=0;
@@ -1062,8 +1064,6 @@ CMD(mirror)
       {"allow-suid",no_argument,0,'s'},
       {"include",required_argument,0,'i'},
       {"exclude",required_argument,0,'x'},
-      {"time-prec",required_argument,0,'t'},
-      {"loose-time-prec",required_argument,0,'T'},
       {"only-newer",no_argument,0,'n'},
       {"no-recursion",no_argument,0,'r'},
       {"no-perms",no_argument,0,'p'},
@@ -1112,8 +1112,6 @@ CMD(mirror)
    if(exclude)
       exclude[0]=0;
 
-   TimeInterval prec      ((const char*)ResMgr::Query("mirror:time-precision",0));
-   TimeInterval loose_prec((const char*)ResMgr::Query("mirror:loose-time-precision",0));
    bool	 create_remote_dir=false;
    int	 verbose=0;
    const char *newer_than=0;
@@ -1121,7 +1119,7 @@ CMD(mirror)
    int	 parallel=0;
 
    args->rewind();
-   while((opt=args->getopt_long("esi:x:t:T:nrpcRvN:LP",mirror_opts,0))!=EOF)
+   while((opt=args->getopt_long("esi:x:nrpcRvN:LP",mirror_opts,0))!=EOF)
    {
       switch(opt)
       {
@@ -1143,22 +1141,6 @@ CMD(mirror)
       case('c'):
 	 flags|=MirrorJob::CONTINUE;
 	 break;
-      case('t'):
-      case('T'):
-      {
-	 TimeInterval p(optarg);
-	 if(p.Error())
-	 {
-	    parent->eprintf("%s: %s: %s\n",args->a0(),optarg,p.ErrorText());
-	    parent->eprintf(_("Try `help %s' for more information.\n"),args->a0());
-	    return 0;
-	 }
-	 if(opt=='t')
-	    prec=p;
-	 else
-	    loose_prec=p;
-	 break;
-      }
       case('x'):
 	 APPEND_STRING(exclude,exclude_alloc,optarg);
 	 break;
@@ -1294,7 +1276,6 @@ CMD(mirror)
    if(exclude && exclude[0] && (err=j->SetExclude(exclude)))
       goto err_out;
 
-   j->SetPrec(prec,loose_prec);
    if(newer_than)
       j->SetNewerThan(newer_than);
    j->UseCache(use_cache);

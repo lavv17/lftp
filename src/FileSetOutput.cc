@@ -130,7 +130,7 @@ void FileSetOutput::print(FileSet &fs, Buffer *o) const
        * slow.  If someone actually wants that (to get dates on servers with
        * unparsable dates, or more accurate dates), it wouldn't be
        * difficult.  If we did this, we could also support --full-time. */
-      if((mode & DATE) && (have & (f->DATE_UNPREC|f->DATE))) {
+      if((mode & DATE) && (have & f->DATE)) {
 	 /* Consider a time to be recent if it is within the past six
 	  * months.  A Gregorian year has 365.2425 * 24 * 60 * 60 ==
 	  * 31556952 seconds on the average.  Write this value as an
@@ -147,7 +147,7 @@ void FileSetOutput::print(FileSet &fs, Buffer *o) const
 	 const char *fmt = long_time_format[recent];
 	 struct tm *when_local;
 	 char *dt;
-	 if ((f->defined&(f->DATE_UNPREC|f->DATE))
+	 if ((f->defined&f->DATE)
 	 && (when_local = localtime (&f->date))) {
 	    dt = xstrftime(fmt, when_local);
 	 } else {

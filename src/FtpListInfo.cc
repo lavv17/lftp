@@ -149,7 +149,7 @@ int FtpListInfo::Do()
 	    if(file->filetype==file->SYMLINK && follow_symlinks)
 	    {
 	       file->filetype=file->NORMAL;
-	       file->defined &= ~(file->SIZE|file->SYMLINK_DEF|file->MODE|file->DATE_UNPREC);
+	       file->defined &= ~(file->SIZE|file->SYMLINK_DEF|file->MODE|file->DATE);
 	       cur->get_size=true;
 	       cur->get_time=true;
 	    }
@@ -200,7 +200,7 @@ int FtpListInfo::Do()
       for(cur=get_info; get_info_cnt-->0; cur++)
       {
 	 if(cur->time!=(time_t)-1)
-	    result->SetDate(cur->file,cur->time);
+	    result->SetDate(cur->file,cur->time,0);
 	 if(cur->size!=-1)
 	    result->SetSize(cur->file,cur->size);
       }
@@ -364,6 +364,7 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
    if(!t)
       ERR;
    date.tm_hour=date.tm_min=0;
+   int prec=30;
    if(strlen(t)==5)
    {
       sscanf(t,"%2d:%2d",&date.tm_hour,&date.tm_min);
@@ -377,12 +378,13 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
       /* We don't know the hour.  Set it to something other than 0, or
        * DST -1 will end up changing the date. */
       date.tm_hour = 12;
+      prec=12*60*60;
    }
 
    date.tm_isdst=-1;
-   date.tm_sec=0;
+   date.tm_sec=30;
 
-   fi.SetDateUnprec(mktime_from_tz(&date,tz));
+   fi.SetDate(mktime_from_tz(&date,tz),prec);
 
    char *name=strtok(NULL,"");
    if(!name)
@@ -458,14 +460,14 @@ FileInfo *ParseFtpLongList_NT(const char *line_c,int *err,const char *tz)
 	 hour=0;
    }
    struct tm tms;
-   tms.tm_sec=0;	   /* seconds after the minute [0, 61]  */
+   tms.tm_sec=30;	   /* seconds after the minute [0, 61]  */
    tms.tm_min=minute;      /* minutes after the hour [0, 59] */
    tms.tm_hour=hour;	   /* hour since midnight [0, 23] */
    tms.tm_mday=day;	   /* day of the month [1, 31] */
    tms.tm_mon=month-1;     /* months since January [0, 11] */
    tms.tm_year=year-1900;  /* years since 1900 */
    tms.tm_isdst=-1;
-   fi.SetDateUnprec(mktime_from_tz(&tms,tz));
+   fi.SetDate(mktime_from_tz(&tms,tz),30);
 
    long long size;
    if(!strcmp(t,"<DIR>"))
@@ -583,7 +585,7 @@ FileInfo *ParseFtpLongList_EPLF(const char *line,int *err,const char *)
    if(size!=NO_SIZE)
       fi->SetSize(size);
    if(date!=NO_DATE)
-      fi->SetDate(date);
+      fi->SetDate(date,0);
    if(type_known)
    {
       if(dir)
@@ -647,14 +649,14 @@ FileInfo *ParseFtpLongList_OS2(const char *line_c,int *err,const char *tz)
       ERR;
 
    struct tm tms;
-   tms.tm_sec=0;	   /* seconds after the minute [0, 61]  */
+   tms.tm_sec=30;	   /* seconds after the minute [0, 61]  */
    tms.tm_min=minute;      /* minutes after the hour [0, 59] */
    tms.tm_hour=hour;	   /* hour since midnight [0, 23] */
    tms.tm_mday=day;	   /* day of the month [1, 31] */
    tms.tm_mon=month-1;     /* months since January [0, 11] */
    tms.tm_year=year-1900;  /* years since 1900 */
    tms.tm_isdst=-1;
-   fi.SetDateUnprec(mktime_from_tz(&tms,tz));
+   fi.SetDate(mktime_from_tz(&tms,tz),30);
 
    t=strtok(NULL,"");
    if(t==0)
@@ -762,9 +764,18 @@ FileInfo *ParseFtpLongList_MacWebStar(const char *line_c,int *err,const char *tz
       ERR;
 
    date.tm_isdst=-1;
-   date.tm_sec=0;
+   date.tm_sec=30;
+   int prec=30;
 
-   fi.SetDateUnprec(mktime_from_tz(&date,tz));
+   if(date.tm_year==-1)
+      date.tm_year=guess_year(date.tm_mon,date.tm_mday,date.tm_hour,date.tm_min,SMTask::now) - 1900;
+   else
+   {
+      date.tm_hour=12;
+      prec=12*60*60;
+   }
+
+   fi.SetDate(mktime_from_tz(&date,tz),prec);
 
    char *name=strtok(NULL,"");
    if(!name)

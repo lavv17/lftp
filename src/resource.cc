@@ -238,8 +238,8 @@ static ResDecl
    ResDecl43 ("net:timeout",		  "300",   ResMgr::UNumberValidate,0),
    ResDecl44 ("net:connection-limit",	  "0",	   ResMgr::UNumberValidate,0),
    ResDecl45 ("net:connection-takeover",  "yes",   ResMgr::BoolValidate,0),
-   ResDecl46 ("mirror:time-precision",	  "1s",    ResMgr::TimeIntervalValidate,ResMgr::NoClosure),
-   ResDecl47 ("mirror:loose-time-precision","24h", ResMgr::TimeIntervalValidate,ResMgr::NoClosure);
+   ResDecl47 ("mirror:order-download",	  "",	   0,ResMgr::NoClosure),
+   ResDecl48 ("mirror:order-upload",	  "*.sfv *.sig *.md5* *.sum", 0,ResMgr::NoClosure);
 
 #if INET6
 # define DEFAULT_ORDER "inet inet6"
