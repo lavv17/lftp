@@ -364,3 +364,9 @@ int Job::AcceptSig(int s)
    }
    return WANTDIE;
 }
+
+void Job::ShowRunStatus(StatusLine *sl)
+{
+   if(waiting)
+      waiting->ShowRunStatus(sl);
+}

@@ -1,3 +1,8 @@
+1999-08-17  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Job.cc, Job.h: provide useful default ShowRunStatus method.
+	  (e.g. helps `at' command)
+
 1999-08-16  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ArgV.cc, ArgV.h: make several methods const.
