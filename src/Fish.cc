@@ -1361,6 +1361,10 @@ static FileInfo *ls_to_FileInfo(char *line)
       }
 
       fi->SetSize(size);
+      fi->SetUser(user);
+      fi->SetGroup(group);
+      fi->SetNlink(n_links);
+      fi->SetMode(perms_code);
 
       return fi;
    }
