@@ -95,7 +95,8 @@ static ResDecl
    res_nop_interval	("ftp:nop-interval",   "120",ResMgr::UNumberValidate,0),
    res_idle		("ftp:idle",	       "180",ResMgr::UNumberValidate,0),
    res_max_retries	("ftp:max-retries",    "0",  ResMgr::UNumberValidate,0),
-   res_allow_skey	("ftp:allow-skey",     "no", ResMgr::BoolValidate,0);
+   res_allow_skey	("ftp:allow-skey",     "yes",ResMgr::BoolValidate,0),
+   res_force_skey	("ftp:force-skey",     "no", ResMgr::BoolValidate,0);
 
 void  Ftp::ClassInit()
 {
@@ -272,8 +273,15 @@ int   Ftp::NoPassReqCheck(int act,int exp) // for USER command
       }
       return(LOGIN_FAILED_STATE);
    }
-   if(allow_skey && user && pass)
-      skey_pass=xstrdup(make_skey_reply(line,pass));
+   if(act==331 && allow_skey && user && pass)
+   {
+      skey_pass=xstrdup(make_skey_reply());
+      if(force_skey && skey_pass==0)
+      {
+	 // FIXME
+	 return(LOGIN_FAILED_STATE);
+      }
+   }
    if(act/100==3)
       return state;
    return(-1);
@@ -509,7 +517,8 @@ void Ftp::InitFtp()
    retries=0;
    target_cwd=0;
    skey_pass=0;
-   allow_skey=false;
+   allow_skey=true;
+   force_skey=false;
 
    RespQueue=0;
    RQ_alloc=0;
@@ -832,7 +841,8 @@ int   Ftp::Do()
    }
 
    case(USER_RESP_WAITING_STATE):
-      if(((flags&SYNC_MODE) || allow_skey) && !RespQueueIsEmpty())
+      if(((flags&SYNC_MODE) || (user && pass && allow_skey))
+      && !RespQueueIsEmpty())
       {
 	 FlushSendQueue();
 	 ReceiveResp();
@@ -2258,6 +2268,7 @@ void Ftp::Reconfig()
       nop_interval=30;
    relookup_always=ResMgr::str2bool(ResQuery(res_relookup_always));
    allow_skey=ResMgr::str2bool(ResQuery(res_allow_skey));
+   force_skey=ResMgr::str2bool(ResQuery(res_force_skey));
 
    SetProxy(ResQuery(res_proxy));
 
@@ -2288,37 +2299,34 @@ ListInfo *Ftp::MakeListInfo()
 extern "C"
    const char *calculate_skey_response (int, const char *, const char *);
 
-const char *Ftp::make_skey_reply(const char *respline,const char *pass)
+const char *Ftp::make_skey_reply()
 {
-  static const char * const skey_head[] = {
-    "331 s/key ",
-    "331 opiekey ",
-    0
-  };
-  int i;
+   static const char * const skey_head[] = {
+      "s/key ",
+      "opiekey ",
+      "otp-md5 ",
+      0
+   };
 
-  for (i = 0; skey_head[i]; i++)
-    {
-      if (strncmp (skey_head[i], respline, strlen (skey_head[i])) == 0)
-	break;
-    }
-  if (skey_head[i])
-    {
-      const char *cp;
-      int skey_sequence = 0;
+   const char *cp;
+   for(int i=0; ; i++)
+   {
+      if(skey_head[i]==0)
+	 return 0;
+      cp=strstr(line,skey_head[i]);
+      if(cp)
+      {
+	 cp+=strlen(skey_head[i]);
+	 break;
+      }
+   }
 
-      for (cp = respline + strlen (skey_head[i]);
-	   '0' <= *cp && *cp <= '9';
-	   cp++)
-	{
-	  skey_sequence = skey_sequence * 10 + *cp - '0';
-	}
-      if (*cp == ' ')
-	cp++;
-      else
-        return 0;
+   int skey_sequence=0;
+   while ('0'<=*cp && *cp<='9')
+      skey_sequence = skey_sequence*10 + (*(cp++) - '0');
 
-      return calculate_skey_response (skey_sequence, cp, pass);
-    }
-  return 0;
+   if(*cp!=' ')
+      return 0;
+
+   return calculate_skey_response(skey_sequence,cp+1,pass);
 }

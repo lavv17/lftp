@@ -217,7 +217,8 @@ class Ftp : public FileAccess
 
    char *skey_pass;
    bool allow_skey;
-   const char *make_skey_reply(const char *line,const char *pass);
+   bool force_skey;
+   const char *make_skey_reply();
 
 public:
    static void ClassInit();
