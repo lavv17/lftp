@@ -192,6 +192,7 @@ class Ftp : public FileAccess
    bool	 relookup_always:1;
    bool	 wait_flush:1;	// wait until all responces come
    bool	 ignore_pass:1;	// logged in just with user
+   bool  verify_data_address:1;
 
    void	 GetBetterConnection(int level);
    bool  SameConnection(const Ftp *o);
@@ -216,6 +217,8 @@ class Ftp : public FileAccess
    bool allow_skey;
    bool force_skey;
    const char *make_skey_reply();
+
+   bool data_address_ok();
 
 public:
    static void ClassInit();

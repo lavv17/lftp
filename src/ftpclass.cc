@@ -67,6 +67,7 @@ enum {TYPE_A,TYPE_I};
 
 #define FTPUSER "anonymous"
 #define FTPPORT 21
+#define FTP_DATA_PORT 20
 
 #define super FileAccess
 
@@ -100,7 +101,8 @@ static ResDecl
    res_allow_skey	("ftp:allow-skey",     "yes",ResMgr::BoolValidate,0),
    res_force_skey	("ftp:force-skey",     "no", ResMgr::BoolValidate,0),
    res_anon_user	("ftp:anon-user",      "anonymous",0,0),
-   res_anon_pass	("ftp:anon-pass",      0,    0,0);
+   res_anon_pass	("ftp:anon-pass",      0,    0,0),
+   res_address_verify	("ftp:address-verify", "yes",ResMgr::BoolValidate,0);
 
 void  Ftp::ClassInit()
 {
@@ -145,6 +147,37 @@ static bool NotSerious(int e)
    return false;
 }
 
+bool Ftp::data_address_ok()
+{
+   struct sockaddr d;
+   struct sockaddr c;
+   ADDRLEN_TYPE len;
+   len=sizeof(d);
+   getpeername(data_sock,&d,&len);
+   len=sizeof(c);
+   getpeername(control_sock,&c,&len);
+   if(d.sa_family!=c.sa_family)
+      return false;
+   if(d.sa_family==AF_INET)
+   {
+      struct sockaddr_in *dp=(struct sockaddr_in*)&d;
+      struct sockaddr_in *cp=(struct sockaddr_in*)&c;
+      if(dp->sin_port!=htons(FTP_DATA_PORT))
+	 goto wrong_port;
+      if(memcmp(&dp->sin_addr,&cp->sin_addr,sizeof(dp->sin_addr)))
+	 goto address_mismatch;
+      return true;
+   }
+   return true;
+
+wrong_port:
+   DebugPrint(_("Data connection peer has wrong port number"),0);
+   return false;
+
+address_mismatch:
+   DebugPrint(_("Data connection peer has mismatching address"),0);
+   return false;
+}
 
 /* Procedures for checking for a special answers */
 
@@ -527,6 +560,7 @@ void Ftp::InitFtp()
    skey_pass=0;
    allow_skey=true;
    force_skey=false;
+   verify_data_address=true;
 
    RespQueue=0;
    RQ_alloc=0;
@@ -1170,6 +1204,13 @@ int   Ftp::Do()
 
       state=DATA_OPEN_STATE;
       m=MOVED;
+
+      if(verify_data_address && !data_address_ok())
+      {
+	 Disconnect();
+	 return MOVED;
+      }
+
       goto data_open_state;
 
    case(DATASOCKET_CONNECTING_STATE):
@@ -2327,6 +2368,7 @@ void Ftp::Reconfig()
    relookup_always = res_relookup_always.Query(c);
    allow_skey = res_allow_skey.Query(c);
    force_skey = res_force_skey.Query(c);
+   verify_data_address = res_address_verify.Query(c);
 
    xfree(anon_user);
    anon_user=xstrdup(res_anon_user.Query(c));
