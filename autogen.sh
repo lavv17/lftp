@@ -46,17 +46,6 @@ grep "^AM_GNU_GETTEXT" $srcdir/configure.in >/dev/null && {
   }
 }
 
-if [ -r po/jp.po ]; then
-  (cd po && gcc -s ./ujis2sjis.c -o ./ujis2sjis && \
-   ./ujis2sjis < ja.po > ja_JP.SJIS.po) \
-   < /dev/null > /dev/null 2>&1 || {
-  echo
-  echo "**Error**: Problem with preparing Japanse \`sjis' translation"
-  echo "Check if \`po/ujis2sjis.c' is compilling fine."
-  DIE=1
-}
-fi
-
 (automake --version) < /dev/null > /dev/null 2>&1 || {
   echo
   echo "**Error**: You must have \`automake' installed to compile $PKG_NAME."
@@ -122,6 +111,7 @@ do
 	  echo "Running gettextize...  Ignore non-fatal messages."
 	  echo "no" | gettextize --force --copy
 	  patch -p0 < gettext.diff || exit 1
+	  mv -f po/ChangeLog~ po/ChangeLog
 	  echo "Making $dr/aclocal.m4 writable ..."
 	  test -r $dr/aclocal.m4 && chmod u+w $dr/aclocal.m4
         fi
