@@ -234,7 +234,7 @@ void  MirrorJob::HandleFile(int how)
 	    }
 	    else if(res==-1) // other error
 	    {
-	       eprintf("mirror: mkdir(%s): %s\n",strerror(errno));
+	       eprintf("mirror: mkdir(%s): %s\n",local_name,strerror(errno));
 	       goto skip;
 	    }
 	 }

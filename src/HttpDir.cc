@@ -135,7 +135,11 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
    }
 
    // ok, it is good relative link
-   strcpy(link_target,link_url.path);
+   if(link_url.path==0)
+      strcpy(link_target,"/");
+   else
+      strcpy(link_target,link_url.path);
+
    int link_len=strlen(link_target);
    bool is_directory=(link_len>0 && link_target[link_len-1]=='/');
    if(is_directory && link_len>1)

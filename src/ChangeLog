@@ -1,3 +1,8 @@
+1999-06-19  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* HttpDir.cc: prevent coredump on url.path==0.
+	* MirrorJob.cc: add missing eprintf argument.
+
 1999-06-15  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* resource.cc: set http:proxy to getenv(http_proxy) initially.
