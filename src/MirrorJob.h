@@ -36,7 +36,6 @@ class MirrorJob : public Job
       CHANGING_DIR,
       GETTING_LIST_INFO,
       WAITING_FOR_TRANSFER,
-      WAITING_FOR_SUBMIRROR,
       TARGET_REMOVE_OLD,
       TARGET_CHMOD,
       DONE

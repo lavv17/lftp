@@ -55,7 +55,6 @@ void  MirrorJob::PrintStatus(int v)
    case(INITIAL_STATE):
    case(DONE):
    case(WAITING_FOR_TRANSFER):
-   case(WAITING_FOR_SUBMIRROR):
    case(TARGET_REMOVE_OLD):
    case(TARGET_CHMOD):
       break;
@@ -120,7 +119,6 @@ void  MirrorJob::ShowRunStatus(StatusLine *s)
 
    // these have a sub-job
    case(WAITING_FOR_TRANSFER):
-   case(WAITING_FOR_SUBMIRROR):
    case(TARGET_REMOVE_OLD):
    case(TARGET_CHMOD):
       Job::ShowRunStatus(s);
