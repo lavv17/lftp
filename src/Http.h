@@ -58,6 +58,7 @@ class Http : public NetAccess
    const char *last_method;
    bool post;
    char *post_data;
+   void DirFile(char *path_base,const char *ecwd,const char *efile);
    void SendAuth();
    void SendCacheControl();
    void SendBasicAuth(const char *tag,const char *auth);

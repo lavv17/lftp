@@ -61,7 +61,7 @@ static time_t http_atotm (const char *time_string);
 #define H_PARTIAL(x)    ((x) == 206)
 #define H_REDIRECTED(x) (((x) == 301) || ((x) == 302))
 #define H_EMPTY(x)	(((x) == 204) || ((x) == 205))
-#define H_CONTINUE(x)	((x) == 100)
+#define H_CONTINUE(x)	((x) == 100 || (x) == 102)
 #define H_REQUESTED_RANGE_NOT_SATISFIABLE(x) ((x) == 416)
 
 void Http::Init()
@@ -413,7 +413,6 @@ bool Http::ModeSupported()
    {
    case CLOSED:
    case QUOTE_CMD:
-   case RENAME:
    case LIST:
    case MP_LIST:
    case CHANGE_MODE:
@@ -427,9 +426,33 @@ bool Http::ModeSupported()
    case REMOVE_DIR:
    case REMOVE:
    case LONG_LIST:
+   case RENAME:
       return true;
    }
    abort(); // should not happen
+}
+
+void Http::DirFile(char *path_base,const char *ecwd,const char *efile)
+{
+   if(efile[0]=='/')
+      strcpy(path_base,efile);
+   else if(efile[0]=='~')
+      sprintf(path_base,"/%s",efile);
+   else if(cwd[0]==0 || ((cwd[0]=='/' || (!hftp && cwd[0]=='~')) && cwd[1]==0))
+      sprintf(path_base,"/%s",efile);
+   else if(cwd[0]=='~')
+      sprintf(path_base,"/%s/%s",ecwd,efile);
+   else
+      sprintf(path_base,"%s/%s",ecwd,efile);
+
+   if(path_base[1]=='~' && path_base[2]=='/')
+      memmove(path_base,path_base+2,strlen(path_base+2)+1);
+   else if(hftp && path_base[1]!='~')
+   {
+      // root directory in ftp urls needs special encoding. (/%2Fpath)
+      memmove(path_base+4,path_base+1,strlen(path_base+1)+1);
+      memcpy(path_base+1,"%2F",3);
+   }
 }
 
 void Http::SendRequest(const char *connection,const char *f)
@@ -442,7 +465,7 @@ void Http::SendRequest(const char *connection,const char *f)
 
    char *pfile=string_alloca(4+3+xstrlen(user)*6+3+xstrlen(pass)*3+1+
 			      strlen(hostname)*3+1+xstrlen(portname)*3+1+
-			      strlen(cwd)*3+1+strlen(efile)+1+6+1);
+			      strlen(ecwd)+1+strlen(efile)+1+6+1);
 
    if(proxy && !https)
    {
@@ -473,27 +496,7 @@ void Http::SendRequest(const char *connection,const char *f)
    }
 
    char *path_base=pfile+strlen(pfile);
-
-   if(efile[0]=='/')
-      strcpy(path_base,efile);
-   else if(efile[0]=='~')
-      sprintf(path_base,"/%s",efile);
-   else if(cwd[0]==0 || ((cwd[0]=='/' || (!hftp && cwd[0]=='~')) && cwd[1]==0))
-      sprintf(path_base,"/%s",efile);
-   else if(cwd[0]=='~')
-      sprintf(path_base,"/%s/%s",ecwd,efile);
-   else
-      sprintf(path_base,"%s/%s",ecwd,efile);
-
-   if(path_base[1]=='~' && path_base[2]=='/')
-      memmove(path_base,path_base+2,strlen(path_base+2)+1);
-   else if(hftp && path_base[1]!='~')
-   {
-      // root directory in ftp urls needs special encoding. (/%2Fpath)
-      memmove(path_base+4,path_base+1,strlen(path_base+1)+1);
-      memcpy(path_base+1,"%2F",3);
-   }
-
+   DirFile(path_base,ecwd,efile);
    efile=pfile;
    efile_len=strlen(efile);
 
@@ -512,7 +515,6 @@ void Http::SendRequest(const char *connection,const char *f)
 	 entity_size=xstrlen(post_data);
 	 goto send_post;
       }
-   case RENAME:
    case LIST:
    case MP_LIST:
    case CHANGE_MODE:
@@ -566,7 +568,7 @@ void Http::SendRequest(const char *connection,const char *f)
 	 goto retrieve;
       else if(mode==MAKE_DIR)
       {
-	 SendMethod("PUT",efile);   // hope it would work
+	 SendMethod("MKCOL",efile);
 	 Send("Content-length: 0\r\n");
 	 pos=entity_size=0;
       }
@@ -575,11 +577,23 @@ void Http::SendRequest(const char *connection,const char *f)
    case(REMOVE):
    case(REMOVE_DIR):
       SendMethod("DELETE",efile);
+      if(mode==REMOVE)
+	 Send("Depth: 0\r\n"); // deny directory removal
       break;
 
    case ARRAY_INFO:
       SendMethod("HEAD",efile);
       break;
+
+   case RENAME:
+      {
+	 SendMethod("MOVE",efile);
+	 char *efile1=string_alloca(strlen(file1)*3+1);
+	 url::encode_string(file1,efile1,URL_PATH_UNSAFE);
+	 char *pfile1=string_alloca(strlen(ecwd)+1+strlen(efile1)+1+6+1);
+	 DirFile(pfile1,ecwd,efile1);
+	 Send("Destination: %s\r\n",pfile1);
+      }
    }
    SendAuth();
    if(no_cache || no_cache_this)
