@@ -31,6 +31,13 @@
 #include "confpaths.h"
 #include "xalloca.h"
 
+#ifdef RTLD_NOW
+# define DLOPEN_FLAGS RTLD_NOW
+#else
+/* SunOS4 manual says it is reserved and must be 1 */
+# define DLOPEN_FLAGS 1
+#endif
+
 typedef void (*init_t)(int,const char*const*);
 
 void *module_load(const char *path,int argc,const char *const *argv)
@@ -50,7 +57,7 @@ void *module_load(const char *path,int argc,const char *const *argv)
       if(len>3 && strcmp(fullpath+len-3,".so"))
 	 strcat(fullpath,".so");
    }
-   map=dlopen(fullpath,RTLD_NOW);
+   map=dlopen(fullpath,DLOPEN_FLAGS);
    if(map==0)
       return 0;
    init=(init_t)dlsym(map,"module_init");
