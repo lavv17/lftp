@@ -850,20 +850,10 @@ CMD(get)
       eprintf(_("File name missed. "));
       goto err;
    }
-   if(!use_urls)
-      use_urls=ResMgr::Query("xfer:use-urls",0);
    while(a)
    {
       get_args->Append(a);
-      ParsedURL url(a);
-      a1=0;
-      if(use_urls)
-      {
-	 if(url.proto && url.path)
-	    a1=basename_ptr(url.path);
-      }
-      if(a1==0)
-	 a1=basename_ptr(a);
+      a1=basename_ptr(a);
       a=args->getnext();
       if(a && !strcmp(a,"-o"))
       {
@@ -1869,18 +1859,7 @@ CMD(at)
    if(when==0 || when==(time_t)-1)
       return 0;
 
-   char *cmd=0;
-   if(cmd_start)
-   {
-      // two cases:
-      //  1. at time -- "cmd; cmd..." (one argument)
-      //  2. at time -- shell "cmd; cmd..." (several args)
-      if(cmd_start==args->count()-1)
-	 cmd=args->Combine(cmd_start);
-      else
-	 cmd=args->CombineQuoted(cmd_start);
-   }
-
+   char *cmd = cmd_start ? args->Combine(cmd_start) : 0;
    FileAccess *s = cmd ? Clone() : 0;
    return new SleepJob(when, s, cmd);
 }

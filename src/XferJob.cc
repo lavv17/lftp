@@ -169,13 +169,16 @@ void  XferJob::ShowRunStatus(StatusLine *s)
    if(!print_run_status)
       return;
    if(Done())
+   {
+      s->Show("");
       return;
+   }
 
    const char *st=session->CurrentStatus();
 
    if(curr && session->IsOpen())
    {
-      int w=s->GetWidthDelayed()-40;
+      int w=s->GetWidth()-40;
       if(w<=0)
 	 return;
       const char *n=curr;

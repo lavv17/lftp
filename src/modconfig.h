@@ -1,5 +1,5 @@
 #ifdef WITH_MODULES
-# define MODULE_PROTO_FTP  1
+/*# define MODULE_PROTO_FTP  1*/
 # define MODULE_PROTO_HTTP 1
 # define MODULE_PROTO_FILE 1
 # define MODULE_CMD_MIRROR 1

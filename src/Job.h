@@ -57,7 +57,7 @@ public:
    virtual int	  Done()=0;
    virtual int	  ExitCode() { return 0; }
    virtual int	  Do()=0;
-   virtual int	  AcceptSig(int);
+   virtual int	  AcceptSig(int) { return WANTDIE; }
    virtual void	  Bg();
    virtual void	  Fg();
 

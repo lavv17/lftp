@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "06 Aug 1999"
+.TH lftp 1 "25 Jun 1999"
 .SH NAME
 lftp \- Sophisticated ftp program
 .SH SYNTAX
@@ -61,14 +61,13 @@ lftp \- Sophisticated ftp program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 2.0.4.
+This man page documents lftp version 2.0.2.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a program that allows sophisticated ftp connection to
 other hosts. If \fIhost\fR is specified then lftp will connect to that
 host otherwise a connection has to be established with the open
-command.
-.PP
+command..PP
 \fBlftp\fR is quite a powerful ftp client. It uses GNU readline to
 read commands. It uses shell-like command syntax allowing you to
 launch several commands in parallel in the background (&).
@@ -520,13 +519,12 @@ You can place aliases
 and `set' commands there. Some people prefer to see full protocol
 debug, use `debug' to turn the debug on.
 .PP
-There is also a system-wide startup file in
+There is also a systemwide startup file in
 .IR /etc/lftp.conf .
-It can be in different directory, see FILES section.
 .PP
 .B lftp
 has the following settable variables (you can also use
-`set -a' to see all variables and their values):
+`set' to see all variables and their values):
 .TP
 .BR bmk:save-passwords \ (bool)
 save plain text passwords in ~/.lftp/bookmarks on `bookmark add' command.
@@ -581,7 +579,7 @@ the username of the user you are logged in as
 the URL of the remote site (e.g., ftp://g437.ub.gu.se/home/james/src/lftp)
 .TP
 .B \ev
-the version of \fBlftp\fP (e.g., 2.0.3)
+the version of \fBlftp\fP (e.g., 0.13.0)
 .TP
 .B \ew
 the current working directory at the remote site
@@ -634,10 +632,6 @@ specifies ftp proxy to use. The format currently is `proxy_host:port'.
 To disable proxy set this to empty string. Note that it is an ftp proxy which
 uses ftp protocol, not ftp over http.
 .TP
-.BR ftp:rest-list \ (bool)
-allow usage of REST command before LIST command. This might be useful for
-large directories, but some ftp servers silently ignore REST before LIST.
-.TP
 .BR ftp:skey-allow \ (bool)
 allow sending skey/opie reply if server appears to support it. On by default.
 .TP
@@ -648,17 +642,14 @@ skey/opie is not available, assume failed login. Off by default.
 .BR ftp:sync-mode \ (bool)
 if set lftp will send one command at a time and wait for
 response. This might be useful if you are using a buggy ftp server or
-router. When it is off, lftp sends a pack of commands and waits for
-responses - it speeds up operation when round trip time is significant.
-Unfortunately it does not work with all ftp servers and some routers have
-troubles with it, so it is on by default.
+router.
 .TP
 .BR ftp:verify-address \ (bool)
 verify that data connection comes from the network address of control
 connection peer. This can possibly prevent data connection spoofing
 which can lead to data corruption. Unfortunately, this can fail
-for sertain ftp servers with several network interfaces and
-that do not set outgoing address on data socket, so it is disabled by default.
+for sertain ftp servers with several network interfaces, just disable
+this check for those.
 .TP
 .BR ftp:verify-port \ (bool)
 verify that data connection has port 20 (ftp-data) on its remote end.
@@ -670,10 +661,10 @@ to set proper port on data connection, thus this check is off by default.
 specifies http proxy. It is used when lftp works over http protocol.
 .TP
 .BR net:idle \ (seconds)
-disconnect from server after that number of idle seconds.
+disconnect from ftp server after that number of idle seconds.
 .TP
-.BR net:limit-rate \ (bytes " " per " " second)
-limit transfer rate on data connection. 0 means unlimited.
+.BR net:limit-rate \ (bytes per second)
+timit transfer rate on data connection. 0 means unlimited.
 .TP
 .BR net:limit-max \ (bytes)
 limit accumulating of limit-rate in time. 0 means unlimited.
@@ -706,6 +697,8 @@ show terse ETA (only high order parts). Default is true.
 .TP
 .BR xfer:use-urls \ (bool)
 recognize URLs by default in commands get, cat, mget, zcat, zmore.
+If you additionally use -u option, then non-strict URLs will be recognized
+(i.e. ftp.somehost.com/path/to/file).
 
 .PP
 The name of variables can be abbreviated unless it becomes
@@ -714,20 +707,18 @@ set one variable several times for different closures, and thus
 you can get a particular settings for particular state. The closure
 is to be specified after variable name separated with slash `/'.
 .P
-
-The closure for `dns:', `ftp:', `http:' domain variables is currently
-just the host
+The closure for `ftp:' domain variables is currently just the host
 name as you specify it in the `open' command. For other variables it
 is not currently used. See examples in the sample
 .IR lftp.conf .
 
 .B Lftp
-can speed up ftp operations by sending several commands at once and
-then checking all the responses. See ftp:sync-mode variable. Sometimes
-this does not work, thus synchronous mode is the default. You can try
-to turn synchronous mode off and see if it works for you. It is known
-that some network software dealing with address translation works
-incorrectly in the case of several FTP commands in one network packet.
+can speed up ftp operations by sending several commands at once
+and then checking all the responses. Sometimes this does not work,
+thus synchronous mode is the default. You can try to turn synchronous
+mode off and see if it works for you. It is known that some network
+software dealing with address translation works incorrectly in the
+case of several FTP commands in one network packet.
 
 .PP
 RFC959 says: ``The user-process sending another command before the
@@ -776,10 +767,7 @@ This should be the name of the pager to use.  It's used by the
 .SH FILES
 .TP
 .I "/etc/lftp.conf"
-system-wide startup file. Actual location depends on \-\-sysconfdir
-configure option. It is \fI/etc\fR when prefix is \fI/usr\fR,
-\fI/usr/local/etc\fR by default.
-
+system-wide startup file
 .TP
 .I "~/.lftp/rc," "~/.lftprc"
 These files are executed on lftp startup after \fI/etc/lftp.conf\fR.

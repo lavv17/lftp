@@ -56,9 +56,3 @@ currently; some need other work to be done.
  * make debug output to clear/redraw prompt.
 
  * safety: options for permanent backup, maybe complain instead of overwriting.
-
- * mirror: add settings like mirror:default-time-prec. make default 0?.
-
- * ascii mode?
-
- * intelligently squeeze file name in status line.

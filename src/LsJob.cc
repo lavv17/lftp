@@ -229,7 +229,7 @@ void LsJob::NoCache()
    }
    if(from_cache)
    {
-      session->Open(arg,mode);
+      session->Open(arg,FA::LONG_LIST);
       if(cache_buffer)
       {
 	 xfree(cache_buffer);
@@ -246,7 +246,10 @@ void  LsJob::ShowRunStatus(StatusLine *s)
    if(!print_run_status)
       return;
    if(Done())
+   {
+      s->Show("");
       return;
+   }
 
    if(!dl)
       super::ShowRunStatus(s);
