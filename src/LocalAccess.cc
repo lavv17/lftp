@@ -230,6 +230,22 @@ int LocalAccess::Do()
 	 return m;
       }
       stream->Kill(SIGCONT);
+      if(opt_size || opt_date)
+      {
+	 struct stat st;
+	 if(fstat(stream->getfd(),&st)==-1)
+	 {
+	    if(opt_size) *opt_size=-1L;
+	    if(opt_date) *opt_date=(time_t)-1;
+	 }
+	 else
+	 {
+	    if(opt_size) *opt_size=st.st_size;
+	    if(opt_date) *opt_date=st.st_mtime;
+	 }
+	 opt_size=0;
+	 opt_date=0;
+      }
       block+=PollVec(stream->getfd(),(mode==STORE?POLLOUT:POLLIN));
       return m;
 
@@ -255,6 +271,11 @@ void LocalAccess::fill_array_info()
       {
 	 f->size=st.st_size;
 	 f->time=st.st_mtime;
+      }
+      else
+      {
+	 f->size=-1L;
+	 f->time=(time_t)-1;
       }
    }
 }
