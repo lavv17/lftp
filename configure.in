@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.52)
 AC_INIT(src/ftpclass.cc)
-AM_INIT_AUTOMAKE(lftp, pre2.4.6)
+AM_INIT_AUTOMAKE(lftp, 2.4.6)
 AM_CONFIG_HEADER(include/config.h)
 
 dnl Default AC_C_INLINE does not know about C++
@@ -25,6 +25,11 @@ AC_ARG_WITH(debug,
 [   with_debug=$withval;   ],
 [   with_debug=no;	   ])
 
+AC_ARG_WITH(profiling,
+[  --with-profiling        enable profiling],
+[   with_profiling=$withval;   ],
+[   with_profiling=no;	   ])
+
 if test x$with_debug = xno; then
    if test x$DEFAULT_CFLAGS = xyes; then
       CFLAGS="`echo $CFLAGS | sed 's/-g//'`"
@@ -38,7 +43,8 @@ if test x$with_debug = xno; then
 	 CXXFLAGS=-O
       fi
    fi
-   if test x$DEFAULT_LDFLAGS = xyes; then
+   # don't strip when profiling
+   if test x$DEFAULT_LDFLAGS = xyes -a x$with_profiling != xyes; then
       case "`uname -s`" in
       Darwin)  ;;
       *)       LDFLAGS="$LDFLAGS -s";;
@@ -54,6 +60,16 @@ if test x$with_debug = xyes; then
    if test x$DEFAULT_CXXFLAGS = xyes; then
       CXXFLAGS="`echo $CXXFLAGS | sed 's/-O[[0-9]]\?//'`"
    fi
+fi
+
+if test x$with_profiling = xyes; then
+   CFLAGS="$CFLAGS -pg"
+   CXXFLAGS="$CXXFLAGS -pg"
+   # profiling requires debugging, too, but don't nuke -O
+#   if test x$with_debug != xyes; then
+#      CFLAGS="$CFLAGS -g"
+#      CXXFLAGS="$CXXFLAGS -g"
+#   fi
 fi
 
 if test x$GCC = xyes; then

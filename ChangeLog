@@ -1,3 +1,7 @@
+2001-10-27	Glenn Maynard <glenn@zewt.org>
+
+	* configure.in: add --with-profiling
+
 2001-10-22	Glenn Maynard <glenn@zewt.org>
 
 	* acconfig.h: define dgettext and dcgettext when nls is disabled.
