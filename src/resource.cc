@@ -205,6 +205,7 @@ static ResDecl
    ResDecl15e("ftp:use-hftp",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl15b("ftp:use-mdtm",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl15d("ftp:use-mdtm-overloaded",  "no",	   ResMgr::BoolValidate,0),
+   ResDecl15f("ftp:use-mlsd",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl15c("ftp:use-pret",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl15a("ftp:use-site-chmod",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl16a("ftp:use-site-idle",	  "no",    ResMgr::BoolValidate,0),

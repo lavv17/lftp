@@ -30,8 +30,9 @@
 #include <ctype.h>
 #include "misc.h"
 #include "ftpclass.h"
+#include "ascii_ctype.h"
 
-#define number_of_parsers 5
+#define number_of_parsers 6
 
 FileSet *FtpListInfo::Parse(const char *buf,int len)
 {
@@ -450,7 +451,6 @@ first character of field is type:
  up - permissions in octal
  \t - file name follows.
 */
-static
 FileInfo *ParseFtpLongList_EPLF(char *line,int *err,const char *)
 {
    int len=strlen(line);
@@ -521,7 +521,7 @@ FileInfo *ParseFtpLongList_EPLF(char *line,int *err,const char *)
       else
 	 break;
    }
-   if(name==0 && type_known)
+   if(name==0)
       ERR;
 
    fi=new FileInfo(name);
@@ -737,10 +737,97 @@ FileInfo *ParseFtpLongList_MacWebStar(char *line,int *err,const char *tz)
    return fi;
 }
 
+/*
+Type=cdir;Modify=20021029173810;Perm=el;Unique=BP8AAjJufAA; /
+Type=pdir;Modify=20021029173810;Perm=el;Unique=BP8AAjJufAA; ..
+Type=dir;Modify=20010118144705;Perm=e;Unique=BP8AAjNufAA; bin
+Type=dir;Modify=19981021003019;Perm=el;Unique=BP8AAlhufAA; pub
+Type=file;Size=12303;Modify=19970124132601;Perm=r;Unique=BP8AAo9ufAA; mailserv.FAQ
+*/
+FileInfo *ParseFtpLongList_MLSD(char *line,int *err,const char *)
+{
+   FileInfo *fi=0;
+
+   const char *name=0;
+   off_t size=NO_SIZE;
+   time_t date=NO_DATE;
+   bool dir=false;
+   bool type_known=false;
+   int perms=-1;
+
+   for(char *tok=strtok(line,";"); tok; tok=strtok(0,";"))
+   {
+      if(tok[0]==' ')
+      {
+	 name=tok+1;
+	 break;
+      }
+      if(!strcasecmp(tok,"Type=cdir")
+      || !strcasecmp(tok,"Type=pdir")
+      || !strcasecmp(tok,"Type=dir"))
+      {
+	 dir=true;
+	 type_known=true;
+	 continue;
+      }
+      if(!strcasecmp(tok,"Type=file"))
+      {
+	 dir=false;
+	 type_known=true;
+      }
+      if(!strncasecmp(tok,"Modify=",7))
+      {
+	 date=Ftp::ConvertFtpDate(tok+7);
+	 continue;
+      }
+      if(!strncasecmp(tok,"Size=",5))
+      {
+	 size=atoll(tok+5);
+	 continue;
+      }
+      if(!strncasecmp(tok,"Perm=",5))
+      {
+	 perms=0;
+	 for(tok+=5; *tok; tok++)
+	 {
+	    switch(to_ascii_lower(*tok))
+	    {
+	    case 'e': perms|=0111; break;
+	    case 'l': perms|=0444; break;
+	    case 'r': perms|=0444; break;
+	    case 'c': perms|=0200; break;
+	    case 'w': perms|=0200; break;
+	    }
+	 }
+	 continue;
+      }
+   }
+   if(name==0 || !type_known)
+      ERR;
+
+   fi=new FileInfo(name);
+   if(size!=NO_SIZE)
+      fi->SetSize(size);
+   if(date!=NO_DATE)
+      fi->SetDate(date,0);
+   if(type_known)
+   {
+      if(dir)
+	 fi->SetType(fi->DIRECTORY);
+      else
+	 fi->SetType(fi->NORMAL);
+   }
+   if(perms!=-1)
+      fi->SetMode(perms);
+
+   return fi;
+}
+
 Ftp::FtpLineParser Ftp::line_parsers[number_of_parsers+1]={
    ParseFtpLongList_UNIX,
    ParseFtpLongList_NT,
    ParseFtpLongList_EPLF,
+   ParseFtpLongList_MLSD,
    ParseFtpLongList_OS2,
    ParseFtpLongList_MacWebStar,
    0

@@ -879,6 +879,8 @@ Ftp::Connection::Connection()
    pret_supported=false;
    utf8_supported=false;
    lang_supported=false;
+   mlst_supported=false;
+   mlst_attr_supported=0;
 
    proxy_is_http=false;
    may_show_password=false;
@@ -914,6 +916,7 @@ void Ftp::InitFtp()
    use_size=true;
    use_telnet_iac=true;
    use_pret=true;
+   use_mlsd=false;
 
    anon_pass=0;
    anon_user=0;	  // will be set by Reconfig()
@@ -958,6 +961,7 @@ Ftp::Connection::~Connection()
    Delete(control_send);
    Delete(control_recv);
    delete send_cmd_buffer;
+   xfree(mlst_attr_supported);
 #ifdef USE_SSL
    xfree(auth_args_supported);
 #endif
@@ -1637,12 +1641,17 @@ int   Ftp::Do()
          want_type='A';
          if(!rest_list)
 	    real_pos=0;	// some ftp servers do not do REST/LIST.
-	 command="LIST";
-	 if(list_options && list_options[0])
+	 if(conn->mlst_supported && use_mlsd)
+	    command="MLSD";
+	 else
 	 {
-	    char *c=string_alloca(5+strlen(list_options)+1);
-	    sprintf(c,"LIST %s",list_options);
-	    command=c;
+	    command="LIST";
+	    if(list_options && list_options[0])
+	    {
+	       char *c=string_alloca(5+strlen(list_options)+1);
+	       sprintf(c,"LIST %s",list_options);
+	       command=c;
+	    }
 	 }
 	 if(file && file[0])
 	    append_file=true;
@@ -2831,12 +2840,12 @@ int Ftp::Connection::FlushSendQueueOneCmd()
    send_cmd_buffer->Get(&send_cmd_ptr,&send_cmd_count);
 
    if(send_cmd_count==0)
-      return SMTask::STALL;
+      return 0;
 
    const char *cmd_begin=send_cmd_ptr;
    const char *line_end=(const char*)memchr(send_cmd_ptr,'\n',send_cmd_count);
    if(!line_end)
-      return SMTask::STALL;
+      return 0;
 
    int to_write=line_end+1-send_cmd_ptr;
    control_send->Put(send_cmd_ptr,to_write);
@@ -2868,7 +2877,7 @@ int Ftp::Connection::FlushSendQueueOneCmd()
 	    Log::global->Format(log_level,"%c",*s?*s:'!');
       }
    }
-   return SMTask::MOVED;
+   return 1;
 }
 
 int  Ftp::FlushSendQueue(bool all)
@@ -2892,9 +2901,9 @@ int  Ftp::FlushSendQueue(bool all)
    while(conn->sync_wait<=0 || all || !(flags&SYNC_MODE))
    {
       int res=conn->FlushSendQueueOneCmd();
-      if(res==STALL)
+      if(!res)
 	 break;
-      m|=res;
+      m|=MOVED;
    }
 
    if(m==MOVED)
@@ -3345,6 +3354,12 @@ void Ftp::CheckFEAT(char *reply)
 	 conn->size_supported=true;
       else if(!strncasecmp(f,"REST ",5))
 	 conn->rest_supported=true;
+      else if(!strncasecmp(f,"MLST ",5))
+      {
+	 conn->mlst_supported=true;
+	 xfree(conn->mlst_attr_supported);
+	 conn->mlst_attr_supported=xstrdup(f+5);
+      }
 #ifdef USE_SSL
       else if(!strncasecmp(f,"AUTH ",5))
       {
@@ -3910,6 +3925,7 @@ void Ftp::Reconfig(const char *name)
    use_size = QueryBool("use-size",c);
    use_pret = QueryBool("use-pret",c);
    use_feat = QueryBool("use-feat",c);
+   use_mlsd = QueryBool("use-mlsd",c);
 
    use_telnet_iac = QueryBool("use-telnet-iac",c);
 

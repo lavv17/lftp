@@ -30,7 +30,10 @@ class FtpDirList : public DirList
    char *pattern;
 
    bool TryEPLF(const char *line,int len);
+   bool TryMLSD(const char *line,int len);
    bool TryColor(const char *line,int len);
+
+   void FormatGeneric(class FileInfo *);
 
 public:
    FtpDirList(ArgV *a,FileAccess *fa);

@@ -129,6 +129,7 @@ class Ftp : public NetAccess
       bool pret_supported;
       bool utf8_supported;
       bool lang_supported;
+      bool mlst_supported;
       off_t last_rest;	// last successful REST position.
       off_t rest_pos;	// the number sent with REST command.
 
@@ -140,6 +141,8 @@ class Ftp : public NetAccess
       bool auth_supported;
       char *auth_args_supported;
 #endif
+
+      char *mlst_attr_supported;
 
       Connection();
       ~Connection();
@@ -363,6 +366,7 @@ private:
    bool use_size;
    bool use_pret;
    bool use_feat;
+   bool use_mlsd;
 
    bool use_telnet_iac;
 

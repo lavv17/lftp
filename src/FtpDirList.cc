@@ -28,6 +28,7 @@
 #include "ArgV.h"
 #include "misc.h"
 #include "DirColors.h"
+#include "ftpclass.h"
 
 #include <sys/types.h>
 #include <time.h>
@@ -89,7 +90,9 @@ int FtpDirList::Do()
       if(eol)
       {
 	 int line_len=eol+1-b;
-	 if(!TryEPLF(b, eol-b) && !TryColor(b, eol-b))
+	 if(!TryEPLF(b, eol-b)
+	 && !TryMLSD(b, eol-b)
+	 && !TryColor(b, eol-b))
 	    buf->Put(b,line_len);
 	 ubuf->Skip(line_len);
       }
@@ -150,103 +153,54 @@ void FtpDirList::Resume()
       ubuf->Resume();
 }
 
-bool FtpDirList::TryEPLF(const char *b, int linelen)
+void FtpDirList::FormatGeneric(FileInfo *fi)
 {
-   // check for EPLF listing
-   if(linelen<2)
-      return false;
-   if(b[0]!='+')
-      return false;
-
-   const char *scan=b+1;
-   int scan_len=linelen-1;
-
-   char *name=0;
-   off_t size=NO_SIZE;
-   time_t date=NO_DATE;
-   bool dir=false;
-   int perms=-1;
-   long long size_ll;
-   long date_l;
-   while(scan && scan_len>0)
-   {
-      switch(*scan)
-      {
-      case '\t':  // the rest is file name.
-	 if(scan_len<2)
-	    return false;
-	 name=string_alloca(scan_len);
-	 strncpy(name,scan+1,scan_len-1);
-	 name[scan_len-1]=0;
-	 if(scan_len>2 && name[scan_len-2]=='\r')
-	    name[scan_len-2]=0;
-	 if(name[0]==0)
-	    return false;
-	 scan=0;
-	 break;
-      case 's':
-	 if(1 != sscanf(scan+1,"%lld",&size_ll))
-	    break;
-	 size = size_ll;
-	 break;
-      case 'm':
-	 if(1 != sscanf(scan+1,"%ld",&date_l))
-	    break;
-	 date = date_l;
-	 break;
-      case '/':
-	 dir=true;
-	 break;
-      case 'r':
-	 dir=false;
-	 break;
-      case 'i':
-	 break;
-      case 'u':
-	 if(scan[1]=='p')  // permissions.
-	    sscanf(scan+2,"%o",&perms);
-	 break;
-      default:
-	 name=0;
-	 scan=0;
-	 break;
-      }
-      if(scan==0 || scan_len==0)
-	 break;
-      const char *comma=find_char(scan,scan_len,',');
-      if(comma)
-      {
-	 scan_len-=comma+1-scan;
-	 scan=comma+1;
-      }
-      else
-	 break;
-   }
-   if(!name)
-      return false;
-
-   // ok, this is EPLF. Format new string.
-   if(perms==-1)
-      perms=(dir?0755:0644);
+   bool dir=(fi->defined&fi->TYPE) && fi->filetype==fi->DIRECTORY;
+   if(!(fi->defined&fi->MODE))
+      fi->mode=(dir?0755:0644);
    char size_str[32];
-   if(size==NO_SIZE)
-      strcpy(size_str,"-");
+   if(fi->defined&fi->SIZE)
+      sprintf(size_str,"%lld",(long long)fi->size);
    else
-      sprintf(size_str,"%lld",(long long)size);
+      strcpy(size_str,"-");
    const char *date_str="-";
-   if(date!=NO_DATE)
-      date_str=TimeDate(date).IsoDateTime();
+   if(fi->defined&fi->DATE)
+      date_str=TimeDate(fi->date).IsoDateTime();
 
    buf->Format("%c%s  %10s  %16s  ",
-	 dir ? 'd':'-', format_perms(perms), size_str, date_str);
+	 dir ? 'd':'-', format_perms(fi->mode), size_str, date_str);
 
    if(color)
       DirColors::GetInstance()->
-	 PutColored(buf,name,dir?FileInfo::DIRECTORY:FileInfo::NORMAL);
+	 PutColored(buf,fi->name,fi->filetype);
    else
-      buf->Put(name);
+      buf->Put(fi->name);
 
    buf->Put("\r\n");
+   delete fi;
+}
+
+FileInfo *ParseFtpLongList_EPLF(char *line,int *err,const char *);
+
+bool FtpDirList::TryEPLF(const char *line_c, int len)
+{
+   // check for EPLF listing
+   if(len<2)
+      return false;
+   if(line_c[0]!='+')
+      return false;
+
+   char *line=string_alloca(len+1);
+   strncpy(line,line_c,len);
+   line[len]=0;
+
+   int err=0;
+   FileInfo *fi=ParseFtpLongList_EPLF(line,&err,0);
+   if(!fi)
+      return false;
+
+   // ok, this is EPLF. Format new string.
+   FormatGeneric(fi);
    return true;
 }
 
@@ -305,4 +259,21 @@ bool FtpDirList::TryColor(const char *line_c,int len)
       return true;
    }
    return false;
+}
+
+FileInfo *ParseFtpLongList_MLSD(char *line,int *err,const char *);
+
+bool FtpDirList::TryMLSD(const char *line_c,int len)
+{
+   char *line=string_alloca(len+1);
+   strncpy(line,line_c,len);
+   line[len]=0;
+
+   int err=0;
+   FileInfo *fi=ParseFtpLongList_MLSD(line,&err,0);
+   if(!fi)
+      return false;
+
+   FormatGeneric(fi);
+   return true;
 }

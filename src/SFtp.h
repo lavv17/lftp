@@ -237,15 +237,25 @@ enum sftp_status_t {
    protected:
       int string_len;
       char *string;
-      PacketSTRING(packet_type t,const char *s=0,int l=-1) : Packet(t)
+      PacketSTRING(packet_type t) : Packet(t)
+	 {
+	    string_len=0;
+	    string=0;
+	    length=4;
+	 }
+      PacketSTRING(packet_type t,const char *s,int l=-1) : Packet(t)
 	 {
 	    if(l==-1)
-	       l=xstrlen(s);
+	       l=strlen(s);
 	    string_len=l;
 	    string=(char*)xmalloc(l+1);
 	    memcpy(string,s,l);
 	    string[l]=0;
 	    length+=4+l;
+	 }
+      ~PacketSTRING()
+	 {
+	    xfree(string);
 	 }
       unpack_status_t Unpack(Buffer *b)
 	 {

@@ -405,6 +405,8 @@ void SFtp::Packet::PackString(Buffer *b,const char *str,int len)
 }
 SFtp::unpack_status_t SFtp::Packet::UnpackString(Buffer *b,int *offset,int limit,char **str_out,int *len_out)
 {
+   assert(str_out && *str_out==0);
+
    if(limit-*offset<4)
       return b->Eof()?UNPACK_PREMATURE_EOF:UNPACK_NO_DATA_YET;
 
@@ -2010,3 +2012,11 @@ const char *SFtpListInfo::Status()
    }
    return "";
 }
+
+#include "modconfig.h"
+#ifdef MODULE_PROTO_SFTP
+void module_init()
+{
+   SFtp::ClassInit();
+}
+#endif

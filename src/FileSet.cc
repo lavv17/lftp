@@ -42,6 +42,11 @@
 #include "IdNameCache.h"
 #include "PatternSet.h"
 
+#define NO_SIZE	     (-1L)
+#define NO_SIZE_YET  (-2L)
+#define NO_DATE	     ((time_t)-1L)
+#define NO_DATE_YET  ((time_t)-2L)
+
 void  FileInfo::Merge(const FileInfo& f)
 {
    if(strcmp(name,f.name))
@@ -621,6 +626,12 @@ void FileSet::SubtractCurr()
 
 void FileInfo::Init()
 {
+   filetype=NORMAL;
+   mode=(mode_t)-1;
+   date=NO_DATE;
+   date_prec=0;
+   size=NO_SIZE;
+   nlinks=0;
    name=0;
    defined=0;
    symlink=0;
