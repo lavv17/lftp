@@ -2,6 +2,9 @@
 
 	* StringPool.cc, StringPool.h: new files. String cache implemented.
 	* FileSet.cc, FileSet.h: use them.
+	* ColumnOutput.cc, DirColors.cc, DirColors.h, FileSetOutput.cc,
+	  FileSetOutput.h, Makefile.am, lftp.cc, resource.cc: move LS_COLORS
+	  parsing and storing into separate class DirColors; use it.
 
 2001-11-13  Glenn Maynard <g_ld@zewt.org>
 

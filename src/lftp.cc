@@ -47,6 +47,7 @@
 #include "DummyProto.h"
 #include "ResMgr.h"
 #include "LsCache.h"
+#include "DirColors.h"
 
 #include "confpaths.h"
 
@@ -374,6 +375,7 @@ int   main(int argc,char **argv)
    SessionPool::ClearAll();
    LsCache::Flush();
    ProcWait::DeleteAll();
+   DirColors::DeleteInstance();
 
    int task_count=SMTask::TaskCount();
    if(task_count>3)

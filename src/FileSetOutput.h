@@ -8,7 +8,6 @@
 #include "GetFileInfo.h"
 
 class FileSetOutput {
-   const char *FileInfoColor(const FileInfo &fi, KeyValueDB &col) const;
    const char *FileInfoSuffix(const FileInfo &fi) const;
 
 public:

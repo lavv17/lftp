@@ -34,11 +34,9 @@
 #include "ColumnOutput.h"
 #include "ResMgr.h"
 #include "misc.h"
+#include "DirColors.h"
 
 ResDecl res_color	("color:use-color",		"auto",ResMgr::TriBoolValidate,ResMgr::NoClosure);
-ResDecl res_color_begin	("color:term-color-begin",	"\\e[", 0, 0);
-ResDecl res_color_end	("color:term-color-end",	"m", 0, 0);
-ResDecl res_color_reset	("color:term-color-reset",	"\\e[0m", 0, 0);
 
 ColumnOutput::ColumnOutput()
 {
@@ -160,15 +158,6 @@ void ColumnOutput::print(Buffer *o, unsigned width, bool color) const
 {
    if(!lst_cnt) return; /* we have nothing to display */
 
-   subst_t subst[] = {
-      { 'e', "\033" },
-      { 0, "" }
-   };
-
-   char *color_pref = Subst(res_color_begin.Query(getenv("TERM")), subst);
-   char *color_suf = Subst(res_color_end.Query(getenv("TERM")), subst);
-   char *color_reset = Subst(res_color_reset.Query(getenv("TERM")), subst);
-
    int cols;
    int *col_arr, *ws_arr;
 
@@ -177,6 +166,11 @@ void ColumnOutput::print(Buffer *o, unsigned width, bool color) const
    /* Calculate the number of rows that will be in each column except possibly
     * for a short column on the right. */
    int rows = lst_cnt / cols + (lst_cnt % cols != 0);
+
+   DirColors *dc=DirColors::GetInstance();
+   const char *color_pref =dc->Lookup(".lc");
+   const char *color_suf  =dc->Lookup(".rc");
+   const char *color_reset=dc->Lookup(".ec");
 
    for (int row = 0; row < rows; row++) {
       int col = 0;
@@ -200,10 +194,6 @@ void ColumnOutput::print(Buffer *o, unsigned width, bool color) const
 
    xfree(ws_arr);
    xfree(col_arr);
-
-   xfree(color_pref);
-   xfree(color_suf);
-   xfree(color_reset);
 }
 
 datum::datum(): names(0), colors(0), num(0), ws(0), curwidth(0) { }

@@ -259,6 +259,9 @@ static ResDecl
 static ResDecl
    fish_shell  ("fish:shell", "/bin/sh",  0,0);
 
+static ResDecl
+   res_dir_colors ("color:dir-colors",   "",   0,ResMgr::NoClosure);
+
 void ResMgr::ClassInit()
 {
    // inherit http proxy from environment
@@ -306,4 +309,10 @@ void ResMgr::ClassInit()
    const char *module_path=getenv("LFTP_MODULE_PATH");
    if(module_path)
       Set("module:path",0,module_path);
+
+   const char *dir_colors=getenv("LS_COLORS");
+   if(!dir_colors)
+      dir_colors=getenv("ZLS_COLORS"); /* zsh */
+   if(dir_colors)
+      Set("color:dir-colors",0,dir_colors);
 }
