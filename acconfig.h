@@ -113,6 +113,8 @@
 
 #undef HAVE_STRPTIME_DECL
 
+#undef HAVE_RANDOM_DECL
+
 /* Define to `int' if <sys/socket.h> doesn't define.  */
 #undef socklen_t
 
