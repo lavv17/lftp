@@ -1,3 +1,8 @@
+2004-08-12	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:proxy-auth-joined, http:authorization and
+	  http:cache-control.
+
 2004-05-24	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document ftp:ssl-protect-{list,fxp}.

@@ -982,6 +982,11 @@ requires authentication, specify user name and password in the URL.
 If ftp:proxy starts with http://, hftp (ftp over http proxy) is used instead
 of ftp automatically.
 .TP
+.BR ftp:proxy-auth-joined \ (bool)
+when true, lftp sends ``user@proxy_user@ftp.example.org'' as user name to proxy,
+and ``password@proxy_password'' as password. When false, it first sends 
+proxy user and proxy password and then ``user@ftp.example.org'' and password.
+.TP
 .BR ftp:rest-list \ (bool)
 allow usage of REST command before LIST command. This might be useful for
 large directories, but some ftp servers silently ignore REST before LIST.
@@ -1148,8 +1153,15 @@ Some broken proxies don't handle it correctly. Default is on.
 .BR "http:accept, http:accept-charset, http:accept-language" " (string)"
 specify corresponding HTTP request headers.
 .TP
+.BR http:authorization \ (string)
+the authorization to use by default, when no user is specified. The format
+is ``user:password''. Default is empty which means no authorization.
+.TP
 .BR http:cache \ (bool)
 allow server/proxy side caching.
+.TP
+.BR http:cache-control \ (string)
+specify corresponding HTTP request header.
 .TP
 .BR http:cookie \ (string)
 send this cookie to server. A closure is useful here:
