@@ -1,3 +1,8 @@
+2004-06-03	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* xstring.h: use new DECL defines (reported by Michael Schloh
+	  von Bennewitz <michael.schloh@cw.com>).
+
 2003-12-17	albert chin <china@thewrittenword.com>
 
 	* xalloca.h: tweak for aix.
