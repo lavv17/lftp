@@ -104,6 +104,7 @@ void remove_tags(char *buf)
    }
 }
 
+#if 0 // unused
 static
 const char *strncasestr(const char *buf,int len,const char *str)
 {
@@ -117,31 +118,39 @@ const char *strncasestr(const char *buf,int len,const char *str)
    }
    return 0;
 }
+#endif
 
 static
 const char *find_eol(const char *buf,int len,bool eof,int *eol_size)
 {
    const char *real_eol=find_char(buf,len,'\n');
-   const char *less=find_char(buf,len,'<');
+   // check if the tag after eol is <TD> or </TD>
+   while(real_eol)
+   {
+      const char *scan=real_eol+1;
+      while(scan<buf+len && is_ascii_space(*scan))
+	 scan++;  // skip space
+      if(scan<buf+len && *scan!='<')
+	 break;
+      if(scan+5>buf+len)
+      {
+	 if(!eof)
+	    real_eol=0;
+	 break;
+      }
+      if(strncasecmp(scan,"<td>",4) && strncasecmp(scan,"</td>",5))
+	 break;
+      real_eol=find_char(scan,len-(scan-buf),'\n');
+   }
+   const char *less=find_char(buf,len,'<');;
    const char *more=0;
    if(less)
    {
       more=find_char(less+1,len-(less+1-buf),'>');
-      if(more && !token_eq(less+1,len-(less+1-buf),"tr"))
+      if(more && !token_eq(less+1,len-(less+1-buf),"br")
+      && !token_eq(less+1,len-(less+1-buf),"/tr"))
       {
-	 // now only </tr> can finish the line, treat table row as a line.
-	 less=strncasestr(more+1,len-(more+1-buf),"</tr>");
-	 if(less==0)
-	 {
-	    *eol_size=0;
-	    return 0;
-	 }
-	 *eol_size=5;
-	 return less;
-      }
-      if(more && !token_eq(less+1,len-(less+1-buf),"br"))
-      {
-	 // if the tag is finished and not BR, ignore it.
+	 // if the tag is finished and not BR nor /TR, ignore it.
 	 less=0;
 	 more=0;
       }
@@ -152,7 +161,7 @@ const char *find_eol(const char *buf,int len,bool eof,int *eol_size)
    // real_eol not found?
    if(!real_eol)
    {
-      // BR found?
+      // BR or /TR found?
       if(less && more)
       {
 	 *eol_size=more-less+1;
