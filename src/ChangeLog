@@ -7,6 +7,8 @@
 	  (Connection::AbortDataConnection, CloseAbortedDataConnection) new methods;
 	  use DisconnectNow instead of setting quit_sent.
 	* SFtp.h: make enums public so that it compiles with sun compiler.
+	* SFtp.cc, SFtp.h: move stuff around, make some friends/publics to make
+	  it compile with sun compiler.
 
 2004-04-04  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -172,7 +172,6 @@ public:
       UNPACK_PREMATURE_EOF=-2,
       UNPACK_NO_DATA_YET=1
    };
-private:
    class Packet
    {
       static bool is_valid_reply(int p)
@@ -216,6 +215,7 @@ private:
       static unpack_status_t UnpackString(Buffer *b,int *offset,int limit,char **str_out,int *len_out=0);
       static void PackString(Buffer *b,const char *str,int len=-1);
    };
+private:
    unpack_status_t UnpackPacket(Buffer *,Packet **);
    class PacketUINT32 : public Packet
    {
@@ -338,28 +338,30 @@ private:
 	 }
       const char *GetName() { return string; }
    };
-   struct ExtFileAttr
-   {
-      char *extended_type;
-      char *extended_data;
-      ExtFileAttr() { extended_type=extended_data=0; }
-      ~ExtFileAttr() { xfree(extended_type); xfree(extended_data); }
-      unpack_status_t Unpack(Buffer *b,int *offset,int limit);
-      void Pack(Buffer *b);
-   };
-   struct FileACE
-   {
-      unsigned ace_type;
-      unsigned ace_flag;
-      unsigned ace_mask;
-      char     *who;
-      FileACE() { ace_type=ace_flag=ace_mask=0; who=0; }
-      ~FileACE() { xfree(who); }
-      unpack_status_t Unpack(Buffer *b,int *offset,int limit);
-      void Pack(Buffer *b);
-   };
+public:
    struct FileAttrs
    {
+      struct ExtFileAttr
+      {
+	 char *extended_type;
+	 char *extended_data;
+	 ExtFileAttr() { extended_type=extended_data=0; }
+	 ~ExtFileAttr() { xfree(extended_type); xfree(extended_data); }
+	 unpack_status_t Unpack(Buffer *b,int *offset,int limit);
+	 void Pack(Buffer *b);
+      };
+      struct FileACE
+      {
+	 unsigned ace_type;
+	 unsigned ace_flag;
+	 unsigned ace_mask;
+	 char     *who;
+	 FileACE() { ace_type=ace_flag=ace_mask=0; who=0; }
+	 ~FileACE() { xfree(who); }
+	 unpack_status_t Unpack(Buffer *b,int *offset,int limit);
+	 void Pack(Buffer *b);
+      };
+
       unsigned flags;
       int      type;		    // v4
       off_t    size;		    // present only if flag SIZE
@@ -407,6 +409,7 @@ private:
       ~NameAttrs() { xfree(name); xfree(longname); }
       unpack_status_t Unpack(Buffer *b,int *offset,int limit,int proto_version);
    };
+private:
    class Reply_NAME : public Packet
    {
       int protocol_version;
@@ -595,22 +598,24 @@ private:
 	 }
    };
 
-   enum expect_t
-   {
-      EXPECT_HOME_PATH,
-      EXPECT_VERSION,
-      EXPECT_CWD,
-      EXPECT_HANDLE,
-      EXPECT_HANDLE_STALE,
-      EXPECT_DATA,
-      EXPECT_INFO,
-      EXPECT_DEFAULT,
-      EXPECT_WRITE_STATUS,
-      EXPECT_IGNORE
-   };
-
+   struct Expect;
+   friend struct SFtp::Expect; // grant access to Packet.
    struct Expect
    {
+      enum expect_t
+      {
+	 HOME_PATH,
+	 FXP_VERSION,
+	 CWD,
+	 HANDLE,
+	 HANDLE_STALE,
+	 DATA,
+	 INFO,
+	 DEFAULT,
+	 WRITE_STATUS,
+	 IGNORE
+      };
+
       Packet *request;
       Packet *reply;
       Expect *next;
@@ -625,7 +630,7 @@ private:
    int HandlePty();
    void HandleExpect(Expect *);
    void CloseExpectQueue();
-   void CloseHandle(expect_t e);
+   void CloseHandle(Expect::expect_t e);
    int ReplyLogPriority(int);
 
    int expect_queue_size;
@@ -652,7 +657,7 @@ private:
    bool	 eof;
 
    void	 SendRequest();
-   void	 SendRequest(Packet *req,expect_t exp,int i=0);
+   void	 SendRequest(Packet *req,Expect::expect_t exp,int i=0);
    void	 SendRequestGeneric(int type);
    void	 RequestMoreData();
    off_t request_pos;

@@ -230,7 +230,7 @@ int SFtp::Do()
    case CONNECTING_1:
       if(!received_greeting)
 	 return m;
-      SendRequest(new Request_INIT(Query("protocol-version",hostname)),EXPECT_VERSION);
+      SendRequest(new Request_INIT(Query("protocol-version",hostname)),Expect::FXP_VERSION);
       state=CONNECTING_2;
       return MOVED;
 
@@ -238,7 +238,7 @@ int SFtp::Do()
       if(protocol_version==0)
 	 return m;
       if(home_auto==0)
-	 SendRequest(new Request_REALPATH("."),EXPECT_HOME_PATH);
+	 SendRequest(new Request_REALPATH("."),Expect::HOME_PATH);
       state=CONNECTED;
       m=MOVED;
 
@@ -281,15 +281,15 @@ int SFtp::Do()
 	 Request_FSETSTAT *req=new Request_FSETSTAT(handle,handle_len,protocol_version);
 	 req->attrs.mtime=entity_date;
 	 req->attrs.flags|=SSH_FILEXFER_ATTR_MODIFYTIME;
-	 SendRequest(req,EXPECT_IGNORE);
-	 CloseHandle(EXPECT_DEFAULT);
+	 SendRequest(req,Expect::IGNORE);
+	 CloseHandle(Expect::DEFAULT);
 	 state=WAITING;
 	 m=MOVED;
 	 break;
       }
       if(RespQueueSize()>max_packets_in_flight)
 	 return m;
-      SendRequest(new Request_WRITE(handle,handle_len,request_pos,b,s),EXPECT_WRITE_STATUS);
+      SendRequest(new Request_WRITE(handle,handle_len,request_pos,b,s),Expect::WRITE_STATUS);
       file_buf->Skip(s);
       request_pos+=s;
       m=MOVED;
@@ -553,7 +553,7 @@ SFtp::unpack_status_t SFtp::UnpackPacket(Buffer *b,SFtp::Packet **p)
    return res;
 }
 
-void SFtp::SendRequest(Packet *request,expect_t tag,int i)
+void SFtp::SendRequest(Packet *request,Expect::expect_t tag,int i)
 {
    request->SetID(ssh_id++);
    request->ComputeLength();
@@ -591,23 +591,23 @@ void SFtp::SendRequest()
    switch((open_mode)mode)
    {
    case CHANGE_DIR:
-      SendRequest(new Request_STAT(lc_to_utf8(file),0,protocol_version),EXPECT_CWD);
-      SendRequest(new Request_STAT(lc_to_utf8(dir_file(file,".")),0,protocol_version),EXPECT_CWD);
+      SendRequest(new Request_STAT(lc_to_utf8(file),0,protocol_version),Expect::CWD);
+      SendRequest(new Request_STAT(lc_to_utf8(dir_file(file,".")),0,protocol_version),Expect::CWD);
       state=WAITING;
       break;
    case RETRIEVE:
       SendRequest(new Request_OPEN(WirePath(file),
-			SSH_FXF_READ,protocol_version),EXPECT_HANDLE);
+			SSH_FXF_READ,protocol_version),Expect::HANDLE);
       state=WAITING;
       break;
    case LIST:
    case LONG_LIST:
-      SendRequest(new Request_OPENDIR(WirePath(file)),EXPECT_HANDLE);
+      SendRequest(new Request_OPENDIR(WirePath(file)),Expect::HANDLE);
       state=WAITING;
       break;
    case STORE:
       SendRequest(new Request_OPEN(WirePath(file),
-			SSH_FXF_WRITE|SSH_FXF_CREAT,protocol_version),EXPECT_HANDLE);
+			SSH_FXF_WRITE|SSH_FXF_CREAT,protocol_version),Expect::HANDLE);
       state=WAITING;
       break;
    case ARRAY_INFO:
@@ -622,7 +622,7 @@ void SFtp::SendRequest()
       }
       char *file1_wire_path=alloca_strdup(WirePath(file1));
       SendRequest(new Request_RENAME(WirePath(file),
-				     file1_wire_path),EXPECT_DEFAULT);
+				     file1_wire_path),Expect::DEFAULT);
       state=WAITING;
       break;
    }
@@ -631,20 +631,20 @@ void SFtp::SendRequest()
       Request_SETSTAT *req=new Request_SETSTAT(WirePath(file),protocol_version);
       req->attrs.permissions=chmod_mode;
       req->attrs.flags|=SSH_FILEXFER_ATTR_PERMISSIONS;
-      SendRequest(req,EXPECT_DEFAULT);
+      SendRequest(req,Expect::DEFAULT);
       state=WAITING;
       break;
    }
    case MAKE_DIR:
-      SendRequest(new Request_MKDIR(WirePath(file),protocol_version),EXPECT_DEFAULT);
+      SendRequest(new Request_MKDIR(WirePath(file),protocol_version),Expect::DEFAULT);
       state=WAITING;
       break;
    case REMOVE_DIR:
-      SendRequest(new Request_RMDIR(WirePath(file)),EXPECT_DEFAULT);
+      SendRequest(new Request_RMDIR(WirePath(file)),Expect::DEFAULT);
       state=WAITING;
       break;
    case REMOVE:
-      SendRequest(new Request_REMOVE(WirePath(file)),EXPECT_DEFAULT);
+      SendRequest(new Request_REMOVE(WirePath(file)),Expect::DEFAULT);
       state=WAITING;
       break;
    case QUOTE_CMD:
@@ -664,14 +664,14 @@ void SFtp::SendArrayInfoRequests()
       SendRequest(new Request_STAT(lc_to_utf8(dir_file(cwd,
 	       array_for_info[array_ptr].file)),
 	 SSH_FILEXFER_ATTR_SIZE|SSH_FILEXFER_ATTR_MODIFYTIME,
-	 protocol_version),EXPECT_INFO,array_ptr);
+	 protocol_version),Expect::INFO,array_ptr);
       array_ptr++;
    }
    if(RespQueueIsEmpty())
       state=DONE;
 }
 
-void SFtp::CloseHandle(expect_t c)
+void SFtp::CloseHandle(Expect::expect_t c)
 {
    if(handle)
    {
@@ -701,7 +701,7 @@ void SFtp::Close()
    eof=false;
    delete file_buf; file_buf=0;
    delete file_set; file_set=0;
-   CloseHandle(EXPECT_IGNORE);
+   CloseHandle(Expect::IGNORE);
    super::Close();
    // don't need these out-of-order packets anymore
    while(ooo_chain)
@@ -770,7 +770,7 @@ void SFtp::HandleExpect(Expect *e)
    Packet *reply=e->reply;
    switch(e->tag)
    {
-   case EXPECT_VERSION:
+   case Expect::FXP_VERSION:
       if(reply->TypeIs(SSH_FXP_VERSION))
       {
 	 protocol_version=((Reply_VERSION*)reply)->GetVersion();
@@ -789,7 +789,7 @@ void SFtp::HandleExpect(Expect *e)
 	 SetError(FATAL,"cannot negotiate protocol version");
       }
       break;
-   case EXPECT_HOME_PATH:
+   case Expect::HOME_PATH:
       if(reply->TypeIs(SSH_FXP_NAME))
       {
 	 Reply_NAME *r=(Reply_NAME*)reply;
@@ -805,7 +805,7 @@ void SFtp::HandleExpect(Expect *e)
 	 }
       }
       break;
-   case EXPECT_CWD:
+   case Expect::CWD:
       if(reply->TypeIs(SSH_FXP_ATTRS))
       {
 	 const FileAttrs *a=((Reply_ATTRS*)reply)->GetAttrs();
@@ -826,7 +826,7 @@ void SFtp::HandleExpect(Expect *e)
       else
 	 SetError(NO_FILE,reply);
       break;
-   case EXPECT_HANDLE:
+   case Expect::HANDLE:
       if(reply->TypeIs(SSH_FXP_HANDLE))
       {
 	 handle=((Reply_HANDLE*)reply)->GetHandle(&handle_len);
@@ -841,30 +841,30 @@ void SFtp::HandleExpect(Expect *e)
 	 if(mode==RETRIEVE)
 	    SendRequest(new Request_FSTAT(handle,handle_len,
 	       SSH_FILEXFER_ATTR_SIZE|SSH_FILEXFER_ATTR_MODIFYTIME|SSH_FILEXFER_ATTR_PERMISSIONS,
-	       protocol_version),EXPECT_INFO);
+	       protocol_version),Expect::INFO);
 	 else if(mode==STORE)
 	 {
 	    // truncate the file at write position.
 	    Request_FSETSTAT *req=new Request_FSETSTAT(handle,handle_len,protocol_version);
 	    req->attrs.size=pos;
 	    req->attrs.flags|=SSH_FILEXFER_ATTR_SIZE;
-	    SendRequest(req,EXPECT_IGNORE);
+	    SendRequest(req,Expect::IGNORE);
 	 }
       }
       else
 	 SetError(NO_FILE,reply);
       break;
-   case EXPECT_HANDLE_STALE:
+   case Expect::HANDLE_STALE:
       if(reply->TypeIs(SSH_FXP_HANDLE))
       {
 	 // close the handle immediately.
 	 int h_len;
 	 char *handle=((Reply_HANDLE*)reply)->GetHandle(&h_len);
-	 SendRequest(new Request_CLOSE(handle,h_len),EXPECT_IGNORE);
+	 SendRequest(new Request_CLOSE(handle,h_len),Expect::IGNORE);
 	 xfree(handle);
       }
       break;
-   case EXPECT_DATA:
+   case Expect::DATA:
       if(reply->TypeIs(SSH_FXP_DATA))
       {
 	 Request_READ *r=(Request_READ*)e->request;
@@ -939,7 +939,7 @@ void SFtp::HandleExpect(Expect *e)
 	 SetError(NO_FILE,reply);
       }
       break;
-   case EXPECT_INFO:
+   case Expect::INFO:
       if(reply->TypeIs(SSH_FXP_ATTRS))
       {
 	 const FileAttrs *a=((Reply_ATTRS*)reply)->GetAttrs();
@@ -966,7 +966,7 @@ void SFtp::HandleExpect(Expect *e)
       else
 	 SetError(NO_FILE,reply);
       break;
-   case EXPECT_WRITE_STATUS:
+   case Expect::WRITE_STATUS:
       if(reply->TypeIs(SSH_FXP_STATUS))
       {
 	 if(((Reply_STATUS*)reply)->GetCode()==SSH_FX_OK)
@@ -974,7 +974,7 @@ void SFtp::HandleExpect(Expect *e)
       }
       SetError(NO_FILE,reply);
       break;
-   case EXPECT_DEFAULT:
+   case Expect::DEFAULT:
       if(reply->TypeIs(SSH_FXP_STATUS))
       {
 	 if(((Reply_STATUS*)reply)->GetCode()==SSH_FX_OK)
@@ -985,7 +985,7 @@ void SFtp::HandleExpect(Expect *e)
       }
       SetError(NO_FILE,reply);
       break;
-   case EXPECT_IGNORE:
+   case Expect::IGNORE:
       break;
    }
    delete e;
@@ -995,10 +995,10 @@ void SFtp::RequestMoreData()
 {
    if(mode==RETRIEVE) {
       int req_len=size_read;
-      SendRequest(new Request_READ(handle,handle_len,request_pos,req_len),EXPECT_DATA);
+      SendRequest(new Request_READ(handle,handle_len,request_pos,req_len),Expect::DATA);
       request_pos+=req_len;
    } else if(mode==LIST || mode==LONG_LIST) {
-      SendRequest(new Request_READDIR(handle,handle_len),EXPECT_DATA);
+      SendRequest(new Request_READDIR(handle,handle_len),Expect::DATA);
    }
 }
 
@@ -1115,20 +1115,20 @@ void SFtp::CloseExpectQueue()
    {
       switch(e->tag)
       {
-      case EXPECT_IGNORE:
-      case EXPECT_HANDLE_STALE:
-      case EXPECT_HOME_PATH:
-      case EXPECT_VERSION:
+      case Expect::IGNORE:
+      case Expect::HANDLE_STALE:
+      case Expect::HOME_PATH:
+      case Expect::FXP_VERSION:
 	 break;
-      case EXPECT_CWD:
-      case EXPECT_INFO:
-      case EXPECT_DEFAULT:
-      case EXPECT_DATA:
-      case EXPECT_WRITE_STATUS:
-	 e->tag=EXPECT_IGNORE;
+      case Expect::CWD:
+      case Expect::INFO:
+      case Expect::DEFAULT:
+      case Expect::DATA:
+      case Expect::WRITE_STATUS:
+	 e->tag=Expect::IGNORE;
 	 break;
-      case EXPECT_HANDLE:
-	 e->tag=EXPECT_HANDLE_STALE;
+      case Expect::HANDLE:
+	 e->tag=Expect::HANDLE_STALE;
 	 break;
       }
    }
@@ -1674,14 +1674,14 @@ int SFtp::FileAttrs::ComputeLength(int protocol_version)
    return b.Size();
 }
 
-SFtp::unpack_status_t SFtp::FileACE::Unpack(Buffer *b,int *offset,int limit)
+SFtp::unpack_status_t SFtp::FileAttrs::FileACE::Unpack(Buffer *b,int *offset,int limit)
 {
    UNPACK32(ace_type);
    UNPACK32(ace_flag);
    UNPACK32(ace_mask);
    return Packet::UnpackString(b,offset,limit,&who);
 }
-void SFtp::FileACE::Pack(Buffer *b)
+void SFtp::FileAttrs::FileACE::Pack(Buffer *b)
 {
    PACK32(ace_type);
    PACK32(ace_flag);
@@ -1689,7 +1689,7 @@ void SFtp::FileACE::Pack(Buffer *b)
    Packet::PackString(b,who);
 }
 
-SFtp::unpack_status_t SFtp::ExtFileAttr::Unpack(Buffer *b,int *offset,int limit)
+SFtp::unpack_status_t SFtp::FileAttrs::ExtFileAttr::Unpack(Buffer *b,int *offset,int limit)
 {
    unpack_status_t res;
    res=Packet::UnpackString(b,offset,limit,&extended_type);
@@ -1700,7 +1700,7 @@ SFtp::unpack_status_t SFtp::ExtFileAttr::Unpack(Buffer *b,int *offset,int limit)
       return res;
    return UNPACK_SUCCESS;
 }
-void SFtp::ExtFileAttr::Pack(Buffer *b)
+void SFtp::FileAttrs::ExtFileAttr::Pack(Buffer *b)
 {
    Packet::PackString(b,extended_type);
    Packet::PackString(b,extended_data);
