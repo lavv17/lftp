@@ -1,3 +1,7 @@
+Version 2.1.9 - 2000-02-22
+
+* fixed command `mv'. It was broken for a year.
+
 Version 2.1.8 - 2000-02-18
 
 * fixed a stupid bug in PWD reply extraction.

@@ -4,9 +4,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 2.0.1\n"
-"POT-Creation-Date: 2000-02-18 14:37+0300\n"
-"PO-Revision-Date: 1999-07-11 13:02+02:00\n"
+"Project-Id-Version: lftp 2.1.9\n"
+"POT-Creation-Date: 2000-02-22 15:38+0300\n"
+"PO-Revision-Date: 2000-02-24 21:36+01:00\n"
 "Last-Translator: Giovanni Bortolozzo <borto@pluto.linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -57,7 +57,7 @@ msgstr "\tEsecuzione del comando interno `%s' [%s]\n"
 
 #: src/CmdExec.cc:660
 msgid "\tCommands queued:\n"
-msgstr ""
+msgstr "\tComandi in coda:\n"
 
 #: src/CmdExec.cc:679
 #, c-format
@@ -126,7 +126,7 @@ msgstr "rm(%s) remoto - %s\n"
 #: src/GetJob.cc:168
 #, c-format
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
-msgstr ""
+msgstr "%s: %s: il file esiste già e xfer:clobber non è impostato\n"
 
 #: src/Job.cc:222
 #, c-format
@@ -267,11 +267,11 @@ msgstr "numero non valido"
 
 #: src/ResMgr.cc:489
 msgid "Invalid time unit letter, only [smhd] are allowed."
-msgstr ""
+msgstr "Lettera per l'unità di tempo non valida. Sono permesse solo [smhd]"
 
 #: src/ResMgr.cc:497
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
-msgstr ""
+msgstr "Formato temporale non valido. Formato è <tempo><unità>, e.g. 2h30m."
 
 #: src/Http.cc:1113 src/Resolver.cc:184 src/ftpclass.cc:2551
 msgid "Resolving host address..."
@@ -1578,28 +1578,3 @@ msgstr "Protocollo di proxy non supportato"
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "Scarico la lista dei file (%ld) [%s]"
-
-#, fuzzy
-#~ msgid "%s: %s.\n"
-#~ msgstr "Uso: %s\n"
-
-#~ msgid "%s: %s - invalid time precision\n"
-#~ msgstr "%s: %s - precisione temporale non valida\n"
-
-#~ msgid ""
-#~ "%s: Invalid expire period (use Ns - in sec, Nm - in min, Nh - in hours)\n"
-#~ msgstr ""
-#~ "%s: Periodo di scadenza non valido (usare Ns - in sec, Nm - in min, \n"
-#~ "\tNh - in ore)\n"
-
-#~ msgid "Connecting to %s%s (%s) port %u"
-#~ msgstr "Connessione in corso a %s%s (%s) porta %u"
-
-#~ msgid "%s: argument required. "
-#~ msgstr "%s: serve un argomento. "
-
-#~ msgid "%s: invalid delay. "
-#~ msgstr "%s: ritardo non valido. "
-
-#~ msgid "Timeout - trying sync mode (is it windoze?)"
-#~ msgstr "Timeout - provo il modo sysnc (è winsozz?)"
