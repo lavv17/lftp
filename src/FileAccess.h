@@ -136,7 +136,7 @@ public:
    const char  *GetUser() { return user; }
    int	 GetPort() { return port; }
    virtual const char *GetConnectURL(int flags=0);
-   enum { NO_CWD=1 };
+   enum { NO_CWD=1,WITH_PASSWORD=2 };
 
    virtual void Connect(const char *,int) {}
    virtual void ConnectVerify() {}

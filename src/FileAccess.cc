@@ -286,7 +286,11 @@ const char *FileAccess::GetConnectURL(int flags)
    int len=1;
    len+=strlen(GetProto())+strlen("://");
    if(user)
+   {
       len+=strlen(user)+1;
+      if(pass)
+	 len+=strlen(pass)+1;
+   }
    if(hostname)
       len+=strlen(hostname);
    if(port!=0)
@@ -296,7 +300,15 @@ const char *FileAccess::GetConnectURL(int flags)
    url=(char*)xrealloc(url,len);
    sprintf(url,"%s://",GetProto());
    if(user)
-      sprintf(url+strlen(url),"%s@",user);
+   {
+      strcat(url,user);
+      if(pass && (flags&WITH_PASSWORD))
+      {
+	 strcat(url,":");
+	 strcat(url,pass);
+      }
+      strcat(url,"@");
+   }
    if(hostname)
       sprintf(url+strlen(url),"%s",hostname);
    if(port!=0)
