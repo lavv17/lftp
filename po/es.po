@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2.1\n"
-"POT-Creation-Date: 2000-12-22 17:07+0300\n"
+"POT-Creation-Date: 2001-01-02 12:45+0300\n"
 "PO-Revision-Date: 2000-08-26 00:01-0300\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -1380,8 +1380,8 @@ msgstr "Orden ambigua `%s'. Use `help' para ver las órdenes disponibles.\n"
 
 #: src/commands.cc:1872
 #, c-format
-msgid "Lftp | Version %s | Copyright (c) 1996-2000 Alexander V. Lukyanov\n"
-msgstr "Lftp | Versión %s | Copyright (c) 1996-2000 Alexander V. Lukyanov\n"
+msgid "Lftp | Version %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"
+msgstr "Lftp | Versión %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"
 
 #: src/commands.cc:1874
 msgid ""

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2000-12-22 17:07+0300\n"
+"POT-Creation-Date: 2001-01-02 12:45+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1175,7 +1175,7 @@ msgstr ""
 
 #: src/commands.cc:1872
 #, c-format
-msgid "Lftp | Version %s | Copyright (c) 1996-2000 Alexander V. Lukyanov\n"
+msgid "Lftp | Version %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"
 msgstr ""
 
 #: src/commands.cc:1874

@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2000 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2001 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1869,7 +1869,7 @@ CMD(help)
 CMD(ver)
 {
    printf(
-      _("Lftp | Version %s | Copyright (c) 1996-2000 Alexander V. Lukyanov\n"),VERSION);
+      _("Lftp | Version %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"),VERSION);
    printf(
       _("This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"));
    printf(

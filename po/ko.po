@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
-"POT-Creation-Date: 2000-12-22 17:07+0300\n"
+"POT-Creation-Date: 2001-01-02 12:45+0300\n"
 "PO-Revision-Date: 2000-01-13 KST\n"
 "Last-Translator: Dojip Kim <greendrm@kamsi.yonsei.ac.kr>\n"
 "Language-Team: \n"
@@ -1338,7 +1338,7 @@ msgstr ""
 
 #: src/commands.cc:1872
 #, fuzzy, c-format
-msgid "Lftp | Version %s | Copyright (c) 1996-2000 Alexander V. Lukyanov\n"
+msgid "Lftp | Version %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"
 msgstr "Lftp | 버전 %s | 저작권 (C) 1996-1999 Alexander V. Lukyanov\n"
 
 #: src/commands.cc:1874

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Lftp 2.1.3\n"
-"POT-Creation-Date: 2000-12-22 17:07+0300\n"
+"POT-Creation-Date: 2001-01-02 12:45+0300\n"
 "PO-Revision-Date: 2000-10-01 17:51MEZ\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: deutsch <de@li.org>\n"
@@ -1399,8 +1399,8 @@ msgstr "Zweideutiger Befehl »%s«. »help« zeigt alle verfügbaren Befehle. \n"
 
 #: src/commands.cc:1872
 #, c-format
-msgid "Lftp | Version %s | Copyright (c) 1996-2000 Alexander V. Lukyanov\n"
-msgstr "Lftp | Version %s | Copyright (c) 1996-2000 Alexander V. Lukyanov\n"
+msgid "Lftp | Version %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"
+msgstr "Lftp | Version %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"
 
 #: src/commands.cc:1874
 msgid ""

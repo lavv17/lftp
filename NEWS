@@ -1,4 +1,4 @@
-Version 2.3.6 - 2000-12-29
+Version 2.3.6 - 2001-01-02
 
 * new setting cmd:save-cwd-history.
 * new setting ftp:fix-pasv-address, don't fix PASV address by default.

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2\n"
-"POT-Creation-Date: 2000-12-22 17:07+0300\n"
+"POT-Creation-Date: 2001-01-02 12:45+0300\n"
 "PO-Revision-Date: 2000-09-07 09:36+08:00\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -1121,24 +1121,20 @@ msgid "Same as more, but filter each file through zcat\n"
 msgstr "То же, что и more, но фильтровать каждый файл через программу zcat\n"
 
 #: src/commands.cc:353
-#, fuzzy
 msgid "bzcat <files>"
-msgstr "zcat <файлы>"
+msgstr "bzcat <файлы>"
 
 #: src/commands.cc:354
-#, fuzzy
 msgid "Same as cat, but filter each file through bzcat\n"
-msgstr "То же, что и cat, но фильтровать каждый файл через программу zcat\n"
+msgstr "То же, что и cat, но фильтровать каждый файл через программу bzcat\n"
 
 #: src/commands.cc:355
-#, fuzzy
 msgid "bzmore <files>"
-msgstr "zmore <файлы>"
+msgstr "bzmore <файлы>"
 
 #: src/commands.cc:356
-#, fuzzy
 msgid "Same as more, but filter each file through bzcat\n"
-msgstr "То же, что и more, но фильтровать каждый файл через программу zcat\n"
+msgstr "То же, что и more, но фильтровать каждый файл через программу bzcat\n"
 
 #: src/commands.cc:405
 #, c-format
@@ -1368,8 +1364,8 @@ msgstr ""
 
 #: src/commands.cc:1872
 #, c-format
-msgid "Lftp | Version %s | Copyright (c) 1996-2000 Alexander V. Lukyanov\n"
-msgstr "Lftp | Версия %s | Copyright (c) 1996-2000 Александр В. Лукьянов\n"
+msgid "Lftp | Version %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"
+msgstr "Lftp | Версия %s | Copyright (c) 1996-2001 Александр В. Лукьянов\n"
 
 #: src/commands.cc:1874
 msgid ""
