@@ -1173,7 +1173,18 @@ CMD(ls)
 
    FileCopyPeer *src_peer=0;
    if(!nlist)
-      src_peer=new FileCopyPeerDirList(Clone(),args);
+   {
+      FileCopyPeerDirList *dir_list=new FileCopyPeerDirList(Clone(),args);
+
+      src_peer=dir_list;
+      ResValue color=ResMgr::Query("color:use-color",0);
+      bool use;
+      if(!strcasecmp(color,"auto"))
+	 use=!output && isatty(1);
+      else
+	 use=color.to_bool();
+      dir_list->UseColor(use);
+   }
    else
       src_peer=new FileCopyPeerFA(Clone(),a,mode);
 

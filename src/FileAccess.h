@@ -456,12 +456,15 @@ class DirList : public FileAccessOperation
 protected:
    Buffer *buf;
    ArgV *args;
+   bool color;
+
    ~DirList();
 public:
    DirList(ArgV *a)
       {
 	 buf=new Buffer();
 	 args=a;
+	 color=false;
       }
 
    virtual int Do() = 0;
@@ -471,6 +474,7 @@ public:
    bool Eof() { return buf->Eof();  }
    void Get(const char **b,int *size) { buf->Get(b,size); }
    void Skip(int len) { buf->Skip(len); }
+   void UseColor(bool c=true) { color=c; }
 };
 
 

@@ -353,6 +353,7 @@ public:
    void Fg() { session->SetPriority(1); }
    void Bg() { session->SetPriority(0); }
    const char *GetStatus() { return session->CurrentStatus(); }
+   void UseColor(bool c=true) { if(dl) dl->UseColor(c); }
 };
 
 #endif

@@ -27,6 +27,7 @@
 #include "LsCache.h"
 #include "ArgV.h"
 #include "misc.h"
+#include "DirColors.h"
 
 #include <sys/types.h>
 #include <time.h>
@@ -96,12 +97,7 @@ int FtpDirList::Do()
       if(eol)
       {
 	 int line_len=eol+1-b;
-	 // check if the line is in EPLF format and rewrite it.
-	 char *eplf = EPLF(b, eol-b);
-	 if(eplf) {
-	    buf->Put(eplf);
-	    xfree(eplf);
-	 } else
+	 if(!TryEPLF(b, eol-b) && !TryColor(b, eol-b))
 	    buf->Put(b,line_len);
 	 ubuf->Skip(line_len);
       }
@@ -162,19 +158,18 @@ void FtpDirList::Resume()
       ubuf->Resume();
 }
 
-char *FtpDirList::EPLF(const char *b, int linelen)
+bool FtpDirList::TryEPLF(const char *b, int linelen)
 {
    // check for EPLF listing
    if(linelen<2)
-      return NULL;
+      return false;
    if(b[0]!='+')
-      return NULL;
+      return false;
 
    const char *scan=b+1;
    int scan_len=linelen-1;
 
-   const char *name=0;
-   int name_len=0;
+   char *name=0;
    off_t size=NO_SIZE;
    time_t date=NO_DATE;
    bool dir=false;
@@ -186,8 +181,15 @@ char *FtpDirList::EPLF(const char *b, int linelen)
       switch(*scan)
       {
       case '\t':  // the rest is file name.
-	 name=scan+1;
-	 name_len=scan_len-1;
+	 if(scan_len<2)
+	    return false;
+	 name=string_alloca(scan_len);
+	 strncpy(name,scan+1,scan_len-1);
+	 name[scan_len-1]=0;
+	 if(scan_len>2 && name[scan_len-2]=='\r')
+	    name[scan_len-2]=0;
+	 if(name[0]==0)
+	    return false;
 	 scan=0;
 	 break;
       case 's':
@@ -228,11 +230,10 @@ char *FtpDirList::EPLF(const char *b, int linelen)
       else
 	 break;
    }
-   if(!name || name_len == 0)
-      return NULL;
+   if(!name)
+      return false;
 
    // ok, this is EPLF. Format new string.
-   char *line_add=(char *) xmalloc(80+name_len);
    if(perms==-1)
       perms=(dir?0755:0644);
    char size_str[32];
@@ -244,9 +245,72 @@ char *FtpDirList::EPLF(const char *b, int linelen)
    if(date!=NO_DATE)
       date_str=TimeDate(date).IsoDateTime();
 
-   sprintf(line_add, "%c%s  %10s  %16s  %.*s\n",
-	 dir ? 'd':'-', format_perms(perms), size_str,
-	 date_str, name_len, name);
+   buf->Format("%c%s  %10s  %16s  ",
+	 dir ? 'd':'-', format_perms(perms), size_str, date_str);
 
-   return line_add;
+   if(color)
+      DirColors::GetInstance()->
+	 PutColored(buf,name,dir?FileInfo::DIRECTORY:FileInfo::NORMAL);
+   else
+      buf->Put(name);
+
+   buf->Put("\r\n");
+   return true;
+}
+
+bool FtpDirList::TryColor(const char *line_c,int len)
+{
+   if(!color)
+      return false;
+
+   char *line=string_alloca(len+1);
+   strncpy(line,line_c,len);
+   line[len]=0;
+   if(len>0 && line[len-1]=='\r')
+      line[len-1]=0;
+
+   char year_or_time[6];
+   char perms[12],user[32],group[32],month_name[4];
+   int nlink,day,year,hour,minute;
+   long long size;
+   int consumed=0;
+
+   int n=sscanf(line,"%11s %d %31s %31s %lld %3s %2d %5s%n",perms,&nlink,
+	       user,group,&size,month_name,&day,year_or_time,&consumed);
+   if(n==4) // bsd-like listing without group?
+   {
+      group[0]=0;
+      n=sscanf(line,"%11s %d %31s %lld %3s %2d %5s%n",perms,&nlink,
+	    user,&size,month_name,&day,year_or_time,&consumed);
+   }
+   if(consumed>0 && -1!=(parse_perms(perms+1))
+   && -1!=(parse_month(month_name))
+   && -1!=parse_year_or_time(year_or_time,&year,&hour,&minute)
+   && strlen(line+consumed)>1);
+   {
+      // good.
+      int type=-1;
+      int name_start=consumed+1;
+      int name_len=strlen(line+name_start);
+      if(perms[0]=='d')
+	 type=FileInfo::DIRECTORY;
+      else if(perms[0]=='l')
+      {
+	 type=FileInfo::SYMLINK;
+	 const char *str=strstr(line+name_start+1," -> ");
+	 if(str)
+	    name_len=str-(line+name_start);
+      }
+      else if(perms[0]=='-')
+	 type=FileInfo::NORMAL;
+      buf->Put(line,consumed+1);
+      char *name=string_alloca(name_len+1);
+      strncpy(name,line+name_start,name_len);
+      name[name_len]=0;
+      DirColors::GetInstance()->PutColored(buf,name,type);
+      buf->Put(line+name_start+name_len);
+      buf->Put("\r\n");
+      return true;
+   }
+   return false;
 }

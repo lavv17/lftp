@@ -22,6 +22,7 @@
 #include "DirColors.h"
 #include "ResMgr.h"
 #include "FileSet.h"
+#include "buffer.h"
 
 DirColors *DirColors::instance;
 
@@ -339,28 +340,25 @@ DirColors::DirColors()
    Reconfig(resource);
 }
 
-const char *DirColors::GetColor(const FileInfo *fi)
+const char *DirColors::GetColor(const char *name,int type)
 {
    const char *ret=0;
-   if(fi->defined&fi->TYPE)
+   if(type==FileInfo::DIRECTORY)
    {
-      if(fi->filetype==FileInfo::DIRECTORY)
-      {
-	 ret=Lookup(".di");
-	 if(ret)
-	    return ret;
-      }
-      else if(fi->filetype==FileInfo::SYMLINK)
-      {
-	 ret=Lookup(".ln");
-	 if(ret)
-	    return ret;
-      }
-      else
-	 ret=Lookup(".fi");
+      ret=Lookup(".di");
+      if(ret)
+	 return ret;
    }
+   else if(type==FileInfo::SYMLINK)
+   {
+      ret=Lookup(".ln");
+      if(ret)
+	 return ret;
+   }
+   else if(type==FileInfo::NORMAL)
+      ret=Lookup(".fi");
 
-   const char *ext = strrchr(fi->name, '.');
+   const char *ext = strrchr(name, '.');
    if(ext && *++ext)
    {
       const char *l=Lookup(ext);
@@ -369,6 +367,33 @@ const char *DirColors::GetColor(const FileInfo *fi)
    }
 
    return ret?ret:"";
+}
+
+const char *DirColors::GetColor(const FileInfo *fi)
+{
+   return GetColor(fi->name,fi->defined&fi->TYPE?fi->filetype:-1);
+}
+
+void DirColors::PutColored(Buffer *buf,const char *name,int type)
+{
+   const char *color=GetColor(name,type);
+   const char *lc=Lookup(".lc");
+   const char *rc=Lookup(".rc");
+   if(!color || !*color || !lc || !rc)
+   {
+      buf->Put(name);
+      return;
+   }
+   buf->Put(lc);
+   buf->Put(color);
+   buf->Put(rc);
+   buf->Put(name);
+   PutReset(buf);
+}
+void DirColors::PutReset(Buffer *buf)
+{
+   const char *reset=Lookup(".ec");
+   buf->Put(reset);
 }
 
 void DirColors::Reconfig(const char *name)

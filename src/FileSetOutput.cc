@@ -115,7 +115,8 @@ void FileSetOutput::print(FileSet &fs, Buffer *o) const
 
       if((mode & SIZE) && (have&FileInfo::SIZE)) {
 	 char sz[128];
-	 if((f->filetype == FileInfo::NORMAL || !size_filesonly)) {
+	 if((f->filetype == FileInfo::NORMAL || !size_filesonly)
+	 && (f->defined&f->SIZE)) {
 	    char buffer[128];
 	    sprintf(sz, "%8s ",
 	       human_readable_inexact (f->size, buffer, 1,

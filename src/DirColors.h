@@ -25,6 +25,7 @@
 #include "keyvalue.h"
 
 class FileInfo;
+class Buffer;
 
 class DirColors : public SMTask, public KeyValueDB
 {
@@ -40,6 +41,9 @@ public:
    DirColors();
 
    const char *GetColor(const FileInfo *);
+   const char *GetColor(const char *,int);
+   void PutColored(Buffer *buf,const char *name,int type);
+   void PutReset(Buffer *buf);
 
    static DirColors *GetInstance()
       {
