@@ -32,6 +32,7 @@
 #include "rmJob.h"
 #include "mkdirJob.h"
 #include "PutJob.h"
+#include "ChmodJob.h"
 #include "misc.h"
 #include "xalloca.h"
 #include "plural.h"
@@ -85,6 +86,7 @@ void  MirrorJob::ShowRunStatus(StatusLine *s)
    case(WAITING_FOR_RM_BEFORE_PUT):
    case(WAITING_FOR_MKDIR_BEFORE_SUBMIRROR):
    case(REMOTE_REMOVE_OLD):
+   case(REMOTE_CHMOD):
       if(waiting && !waiting->Done())
 	 waiting->ShowRunStatus(s);
       break;
@@ -341,6 +343,7 @@ int   MirrorJob::Do()
 {
    int	 res;
    int	 m=STALL;
+   FileInfo *fi;
 
    switch(state)
    {
@@ -564,8 +567,6 @@ int   MirrorJob::Do()
 		  waiting=new rmJob(Clone(),args);
 		  waiting->parent=this;
 		  waiting->cmdline=args->Combine();
-		  state=REMOTE_REMOVE_OLD;
-		  return MOVED;
 	       }
 	       else if(flags&REPORT_NOT_DELETED)
 	       {
@@ -575,9 +576,10 @@ int   MirrorJob::Do()
 			      dir_file(remote_relative_dir,file->name));
 		  }
 	       }
-	       state=DONE;
+	       state=REMOTE_REMOVE_OLD;
 	       return MOVED;
 	    }
+	    // else not REVERSE
 	    if(flags&DELETE)
 	    {
 	       while((file=to_rm->curr())!=0)
@@ -629,12 +631,43 @@ int   MirrorJob::Do()
       return m;
 
    case(REMOTE_REMOVE_OLD):
+      if(!waiting)
+	 goto pre_REMOTE_CHMOD;
       if(waiting->Done())
       {
 	 delete waiting;
 	 waiting=0;
 	 state=DONE;
-	 return MOVED;
+	 m=MOVED;
+	 goto pre_REMOTE_CHMOD;
+      }
+      return m;
+
+   pre_REMOTE_CHMOD:
+      to_transfer->rewind();
+      goto remote_chmod_next;
+   case(REMOTE_CHMOD):
+      if(waiting->Done())
+      {
+	 delete waiting;
+	 waiting=0;
+
+      remote_chmod_next:
+	 fi=to_transfer->curr();
+	 if(!fi)
+	 {
+	    state=DONE;
+	    return MOVED;
+	 }
+	 to_transfer->next();
+	 if(!(fi->defined&fi->MODE))
+	    goto remote_chmod_next;
+	 ArgV *a=new ArgV("chmod");
+	 a->Append(fi->name);
+	 waiting=new ChmodJob(Clone(),fi->mode,a);
+	 waiting->parent=this;
+	 waiting->cmdline=a->Combine();
+	 m=MOVED;
       }
       return m;
    }

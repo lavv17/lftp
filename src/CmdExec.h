@@ -109,18 +109,23 @@ private:
       BUILTIN_NONE,
       BUILTIN_OPEN,
       BUILTIN_CD,
-      BUILTIN_EXEC_RESTART
+      BUILTIN_EXEC_RESTART,
+      BUILTIN_GLOB
    }
       builtin;
 
    char *old_cwd;
    char *old_lcwd;
 
+   Glob *glob;
+   ArgV *args_glob;
+
 public:
    void FeedCmd(const char *c);
    void PrependCmd(const char *c);
    void ExecParsed(ArgV *a,FDStream *o=0,bool b=false);
-   void unquote(char *buf,const char *str);
+   static void unquote(char *buf,const char *str);
+   static bool needs_quotation(const char *buf);
    void FeedQuoted(const char *c);
    void AtExit();
 
@@ -179,7 +184,8 @@ public:
    Job *builtin_open();
    Job *builtin_exit();
    Job *builtin_lftp();
-   Job *builtin_command();
+   Job *builtin_restart();
+   Job *builtin_glob();
 
    Job *default_cmd();
 

@@ -21,38 +21,19 @@
 #ifndef RMJOB_H
 #define RMJOB_H
 
-#include "Job.h"
-#include "StatusLine.h"
-#include "ArgV.h"
-#include <stdio.h>
+#include "TreatFileJob.h"
 
-class rmJob : public SessionJob
+class rmJob : public TreatFileJob
 {
-   ArgV	 *args;
-   char	 *curr,*first;
-   int	 failed,file_count;
-   bool	 quiet;
-   bool	 opt_p;
-   bool  done;
+   void TreatCurrent();
 
 protected:
    FA::open_mode mode;
 
 public:
-   int	 Do();
-   int	 Done() { return done; }
-   int	 ExitCode() { return failed; }
-
-   void	 PrintStatus(int);
-   void	 ShowRunStatus(StatusLine *);
    void	 SayFinal();
 
    rmJob(FileAccess *session,ArgV *a);
-   ~rmJob();
-
-   void	 BeQuiet() { quiet=true; }
-
-   void	 AddFile(const char *f) { args->Append(f); }
 };
 
 class rmdirJob : public rmJob

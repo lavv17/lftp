@@ -125,6 +125,19 @@ void ArgV::delarg(int n)
       c--;
    }
 }
+void ArgV::insarg(int n,const char *s)
+{
+   if(n==count())
+      Append(s);
+   else
+   {
+      v=(char**)xrealloc(v,sizeof(*v)*(c+2));
+      // copy with trailing null pointer
+      memmove(v+n+1,v+n,(count()-n+1)*sizeof(*v));
+      c++;
+      v[n]=xstrdup(s);
+   }
+}
 
 int ArgV::getopt_long(const char *opts,const struct option *lopts,int *lind)
 {

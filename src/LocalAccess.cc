@@ -195,6 +195,14 @@ int LocalAccess::Do()
       }
       done=true;
       return MOVED;
+   case(CHANGE_MODE):
+      if(chmod(dir_file(cwd,file),chmod_mode)==-1)
+      {
+	 errno_handle();
+	 error_code=NO_FILE;
+      }
+      done=true;
+      return MOVED;
 
    case(RETRIEVE):
    case(STORE):

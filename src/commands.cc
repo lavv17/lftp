@@ -32,7 +32,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <termios.h>
+// #include <termios.h>
+#include <assert.h>
 
 #include "CmdExec.h"
 #include "GetJob.h"
@@ -44,7 +45,6 @@
 #include "mputJob.h"
 #include "mkdirJob.h"
 #include "rmJob.h"
-#include "mrmJob.h"
 #include "SysCmdJob.h"
 #include "QuoteJob.h"
 #include "mvJob.h"
@@ -52,6 +52,7 @@
 #include "FtpCopy.h"
 #include "SleepJob.h"
 #include "FindJob.h"
+#include "ChmodJob.h"
 
 #include "misc.h"
 #include "alias.h"
@@ -86,7 +87,7 @@ CMD(mkdir); CMD(quote);  CMD(scache);  CMD(mrm);
 CMD(ver);   CMD(close);  CMD(bookmark);CMD(lftp);
 CMD(echo);  CMD(suspend);CMD(ftpcopy); CMD(sleep);
 CMD(at);    CMD(find);   CMD(command); CMD(module);
-CMD(lpwd);
+CMD(lpwd);  CMD(glob);	 CMD(chmod);
 
 #ifdef MODULE_CMD_MIRROR
 # define cmd_mirror 0
@@ -134,6 +135,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "is stored as `-'. You can do `cd -' to change the directory back.\n"
 	 "The previous directory for each site is also stored on disk, so you can\n"
 	 "do `open site; cd -' even after lftp restart.\n")},
+   {"chmod",   cmd_chmod,   N_("chmod mode file..."), 0},
    {"close",   cmd_close,   "close [-a]",
 	 N_("Close idle connections. By default only with current server.\n"
 	 " -a  close idle connections with all servers\n")},
@@ -156,6 +158,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -c  continue, reget\n"
 	 " -e  delete remote files after successful transfer\n"
 	 " -u  try to recognize URLs\n")},
+   {"glob",    cmd_glob,   0,0},
    {"help",    cmd_help,   N_("help [<cmd>]"),
 	 N_("Print help for command <cmd>, or list of available commands\n")},
    {"jobs",    cmd_jobs,   "jobs [-v]",
@@ -683,10 +686,34 @@ Job *CmdExec::builtin_open()
    return 0;
 }
 
-Job *CmdExec::builtin_command()
+Job *CmdExec::builtin_restart()
 {
-   args->delarg(0);
    builtin=BUILTIN_EXEC_RESTART;
+   return this;
+}
+
+Job *CmdExec::builtin_glob()
+{
+   if(args->count()<2)
+   {
+      eprintf(_("Usage: %s command args...\n"),args->a0());
+      return 0;
+   }
+   assert(args_glob==0 && glob==0);
+   args_glob=new ArgV();
+   args->rewind();
+   args_glob->Append(args->getnext());
+   const char *pat=args->getnext();
+   if(!pat)
+   {
+      delete args_glob;
+      args_glob=0;
+      return cmd_command(this);
+   }
+   glob=session->MakeGlob(pat);
+   if(!glob)
+      glob=new NoGlob(pat);
+   builtin=BUILTIN_GLOB;
    return this;
 }
 
@@ -709,10 +736,8 @@ CMD(ls)
    int mode=FA::LONG_LIST;
    if(strstr(args->a0(),"nlist"))
       mode=FA::LIST;
-#if 0
    if(mode==FA::LONG_LIST && args->count()==1)
       args->Append(parent->var_ls);
-#endif
    LsJob *j=new LsJob(Clone(),output,args,mode);
    if(!strncmp(args->a0(),"re",2))
       j->NoCache();
@@ -956,9 +981,9 @@ CMD(shell)
 
 CMD(mrm)
 {
-   Job *j=new mrmJob(Clone(),args);
-   args=0;
-   return j;
+   args->setarg(0,"glob");
+   args->insarg(1,"rm");
+   return parent->builtin_restart();
 }
 CMD(rm)
 {
@@ -1835,7 +1860,8 @@ CMD(find)
 
 CMD(command)
 {
-   return parent->builtin_command();
+   args->delarg(0);
+   return parent->builtin_restart();
 }
 
 CMD(module)
@@ -1867,4 +1893,28 @@ CMD(lpwd)
    printf("%s\n",parent->cwd);
    exit_code=0;
    return 0;
+}
+
+CMD(glob)
+{
+   return parent->builtin_glob();
+}
+
+CMD(chmod)
+{
+   if(args->count()<3)
+   {
+      eprintf(_("Usage: %s mode file...\n"),args->a0());
+      return 0;
+   }
+   int m;
+   if(sscanf(args->getarg(1),"%o",&m)!=1)
+   {
+      eprintf(_("%s: %s - not an octal number\n"),args->a0(),args->getarg(1));
+      return 0;
+   }
+   args->delarg(1);
+   Job *j=new ChmodJob(Clone(),m,args);
+   args=0;
+   return j;
 }
