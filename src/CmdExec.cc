@@ -656,6 +656,8 @@ void CmdExec::PrintStatus(int v)
 	 if(v==0)
 	 {
 	    waiting->PrintStatus(v);
+	    if(waiting->waiting && waiting->waiting->cmdline==0)
+	       waiting->waiting->PrintStatus(v); // mostly for CopyJobEnv.
 	    return;
 	 }
       }

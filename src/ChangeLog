@@ -1,3 +1,7 @@
+2000-02-06  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CmdExec.cc: (PrintStatus) special case for CopyJobEnv in queue mode.
+
 2000-02-04  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ProcWait.cc: if waitpid fails, check pid existence.
