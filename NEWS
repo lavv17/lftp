@@ -1,4 +1,4 @@
-Version 2.3.3 - 2000-0?-??
+Version 2.3.3 - 2000-10-01
 
 * fixed `ls|head'.
 * new setting ftp:bind-data-socket (bool) to disable binding of local end
