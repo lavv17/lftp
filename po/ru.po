@@ -1,14 +1,14 @@
 # Russian translation for lftp
-# Copyright (C) 1998 Alexander V. Lukyanov <lav@yars.free.net>
+# Copyright (C) 1998,2000 Alexander V. Lukyanov <lav@yars.free.net>
 # Copyright (C) 1999 Const Kaplinsky <const@ce.cctpu.edu.ru>
 # You may modify and redistribute this file according to GNU GPL (see COPYING).
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2\n"
-"POT-Creation-Date: 2000-09-07 19:38+0400\n"
-"PO-Revision-Date: 1999-09-29 09:36+08:00\n"
-"Last-Translator: Const Kaplinsky <const@ce.cctpu.edu.ru>\n"
+"POT-Creation-Date: 2000-09-07 20:28+0400\n"
+"PO-Revision-Date: 2000-09-07 09:36+08:00\n"
+"Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=koi8-r\n"
@@ -217,9 +217,9 @@ msgid "Making remote directory `%s'"
 msgstr "Создание на сервере каталога `%s'"
 
 #: src/MirrorJob.cc:359
-#, fuzzy, c-format
+#, c-format
 msgid "Mirroring directory `%s'"
-msgstr "Создание на сервере каталога `%s'"
+msgstr "Копирование каталога `%s'"
 
 #: src/MirrorJob.cc:394
 #, c-format
@@ -242,9 +242,9 @@ msgid "Old local file `%s' is not removed"
 msgstr "Старый локальный файл `%s' не удален"
 
 #: src/MirrorJob.cc:749
-#, fuzzy, c-format
+#, c-format
 msgid "Removing old remote directory `%s'"
-msgstr "Удаление с сервера старого файла `%s'"
+msgstr "Удаление с сервера старого каталога `%s'"
 
 #: src/MirrorJob.cc:768
 #, c-format
@@ -289,9 +289,8 @@ msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "Неверный формат времени. Формат: <время><единицы>, например 2h30m."
 
 #: src/ResMgr.cc:541
-#, fuzzy
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
-msgstr "Неверный формат времени. Формат: <время><единицы>, например 2h30m."
+msgstr "Неверный формат диапазона. Формат: минимум-максимум, например 10-20."
 
 #: src/Http.cc:1193 src/Resolver.cc:193 src/ftpclass.cc:2991
 msgid "Resolving host address..."
@@ -413,13 +412,12 @@ msgid "cat [-b] <files>"
 msgstr "cat [-b] <файлы>"
 
 #: src/commands.cc:135
-#, fuzzy
 msgid ""
 "cat - output remote files to stdout (can be redirected)\n"
 " -b  use binary mode (ascii is the default)\n"
 msgstr ""
 "cat - вывести содержимое файлов на сервере на стандартный вывод\n"
-" -u  распознавать строки URL\n"
+" -b  использовать бинарный режим (режим ascii по умолчанию)\n"
 
 #: src/commands.cc:137
 msgid "cd <rdir>"
@@ -495,7 +493,6 @@ msgid "get [OPTS] <rfile> [-o <lfile>]"
 msgstr "get [КЛЮЧИ] <файл> [-o <лок.файл>]"
 
 #: src/commands.cc:163
-#, fuzzy
 msgid ""
 "Retrieve remote file <rfile> and store it to local file <lfile>.\n"
 " -o <lfile> specifies local file name (default - basename of rfile)\n"
@@ -508,8 +505,9 @@ msgstr ""
 " -o <лок.файл> указывает имя локального файла\n"
 "     (по умолчанию - имя файла на сервере без каталога)\n"
 " -c  возобновить получение файла (reget)\n"
-" -e  удалить файлы на сервере после успешного получения\n"
-" -u  распознавать строки URL\n"
+" -E  удалить файлы на сервере после успешного получения\n"
+" -a  использовать режим ascii (бинарный режим по умолчанию)\n"
+" -O <база> указывает базовый каталог или URL, куда класть полученные файлы\n"
 
 #: src/commands.cc:171
 msgid ""
@@ -607,7 +605,6 @@ msgid "mget [OPTS] <files>"
 msgstr "mget [КЛЮЧИ] <файлы>"
 
 #: src/commands.cc:207
-#, fuzzy
 msgid ""
 "Gets selected files with expanded wildcards\n"
 " -c  continue, reget\n"
@@ -621,14 +618,15 @@ msgstr ""
 " -c  возобновить получение (reget)\n"
 " -d  создавать каталоги в соответствии с именами файлов\n"
 "     и сохранять файлы в этих каталогах вместо текущего\n"
-" -e  удалить файлы на сервере после успешного получения\n"
+" -E  удалить файлы на сервере после успешного получения\n"
+" -a  использовать режим ascii (бинарный режим по умолчанию)\n"
+" -O <база> указывает базовый каталог или URL, куда класть полученные файлы\n"
 
 #: src/commands.cc:214
 msgid "mirror [OPTS] [remote [local]]"
 msgstr "mirror [КЛЮЧИ] [<откуда> [<куда>]]"
 
 #: src/commands.cc:215
-#, fuzzy
 msgid ""
 "\n"
 "Mirror specified remote directory to local directory\n"
@@ -680,8 +678,12 @@ msgstr ""
 "                        RX - расширенное регулярное выражение\n"
 " -t Nx, --time-prec Nx  установить точность времени в N секунд (x=s),\n"
 "                        N минут (x=m), N часов (x=h) или N дней (x=d)\n"
-"                        значение по умолчанию - 12 часов\n"
+"                        значение по умолчанию - mirror:time-precision\n"
+" -T Nx, --loose-time-prec  установить точность времени для неточной "
+"информации\n"
+"                        значение по умолчанию - mirror:loose-time-precision\n"
 " -v, --verbose          выводить подробную информацию\n"
+"     --use-cache        использовать кэшированное содержимое каталогов\n"
 "\n"
 "При использовании -R первый каталог - локальный, второй - каталог на "
 "сервере.\n"
@@ -732,7 +734,6 @@ msgid "mput [OPTS] <files>"
 msgstr "mput [КЛЮЧИ] <файлы>"
 
 #: src/commands.cc:252
-#, fuzzy
 msgid ""
 "Upload files with wildcard expansion\n"
 " -c  continue, reput\n"
@@ -746,7 +747,10 @@ msgstr ""
 " -c  возобновить получение (reget)\n"
 " -d  создавать каталоги в соответствии с именами файлов\n"
 "     и сохранять файлы в этих каталогах вместо текущего\n"
-" -e  удалить файлы на сервере после успешного получения\n"
+" -E  удалить файлы на сервере после успешного получения\n"
+" -E  удалить локальные файлы после успешной передачи (опасно)\n"
+" -a  использовать режим ascii (бинарный режим по умолчанию)\n"
+" -O <база> указывает базовый каталог или URL, куда класть переданные файлы\n"
 
 #: src/commands.cc:259
 msgid "mrm <files>"
@@ -795,7 +799,6 @@ msgid "pget [OPTS] <rfile> [-o <lfile>]"
 msgstr "pget [КЛЮЧИ] <файл> [-o <лок.файл>]"
 
 #: src/commands.cc:272
-#, fuzzy
 msgid ""
 "Gets the specified file using several connections. This can speed up "
 "transfer,\n"
@@ -815,14 +818,12 @@ msgstr ""
 "Ключи:\n"
 " -n <кол-во>   максимальное количество одновременных соединений\n"
 "               (по умолчанию 5)\n"
-" -u            распознавать строки URL\n"
 
 #: src/commands.cc:277
 msgid "put [OPTS] <lfile> [-o <rfile>]"
 msgstr "put [КЛЮЧИ] <лок.файл> [-o <файл>]"
 
 #: src/commands.cc:278
-#, fuzzy
 msgid ""
 "Upload <lfile> with remote name <rfile>.\n"
 " -o <rfile> specifies remote file name (default - basename of lfile)\n"
@@ -837,13 +838,17 @@ msgstr ""
 "     (по умолчанию - имя локального файла без каталога)\n"
 " -c  возобновить пересылку (reput)\n"
 "     этот ключ требует полномочий на замещение файлов на сервере\n"
+" -E  удалить локальные файлы после успешной передачи (опасно)\n"
+" -a  использовать режим ascii (бинарный режим по умолчанию)\n"
+" -O <база> указывает базовый каталог или URL, куда класть переданные файлы\n"
 
 #: src/commands.cc:286
-#, fuzzy
 msgid ""
 "Print current remote URL.\n"
-" -u  show password\n"
-msgstr "Вывести текущий каталог на сервере\n"
+" -p  show password\n"
+msgstr ""
+"Вывести текущий URL сервера.\n"
+" -p  показывать пароль\n"
 
 #: src/commands.cc:289
 msgid ""
@@ -912,7 +917,6 @@ msgid "rm [-r] [-f] <files>"
 msgstr "rm [-r] [-f] <файлы>"
 
 #: src/commands.cc:312
-#, fuzzy
 msgid ""
 "Remove remote files\n"
 " -r  recursive directory removal, be careful\n"
@@ -920,6 +924,7 @@ msgid ""
 msgstr ""
 "Удалить указанные <файлы> на сервере\n"
 " -r  рекурсивное удаление каталогов (пользуйтесь с осторожностью)\n"
+" -f  работать тихо\n"
 
 #: src/commands.cc:315
 msgid "rmdir [-f] <dirs>"
@@ -1283,9 +1288,9 @@ msgid "%s: cannot add empty bookmark\n"
 msgstr "%s: невозможно добавить пустую закладку\n"
 
 #: src/commands.cc:1918
-#, fuzzy, c-format
+#, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
-msgstr "%s: требуется указать имя закладки\n"
+msgstr "%s: пробелы в имени закладки не разрешаются\n"
 
 #: src/commands.cc:1931
 #, c-format
@@ -1557,9 +1562,8 @@ msgid "Total %d $file|files$ transferred\n"
 msgstr "Всего перемещено: %d $файл|файла|файлов$\n"
 
 #: src/FileCopy.cc:1047
-#, fuzzy
 msgid "file name missed in URL"
-msgstr "Пропущено имя файла. "
+msgstr "пропущено имя файла в URL"
 
 #: src/Speedometer.cc:85
 #, c-format

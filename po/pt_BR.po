@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
-"POT-Creation-Date: 2000-09-07 19:38+0400\n"
+"POT-Creation-Date: 2000-09-07 20:28+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -781,7 +781,7 @@ msgstr ""
 #: src/commands.cc:286
 msgid ""
 "Print current remote URL.\n"
-" -u  show password\n"
+" -p  show password\n"
 msgstr ""
 
 #: src/commands.cc:289

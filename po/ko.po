@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
-"POT-Creation-Date: 2000-09-07 19:38+0400\n"
+"POT-Creation-Date: 2000-09-07 20:28+0400\n"
 "PO-Revision-Date: 2000-01-13 KST\n"
 "Last-Translator: Dojip Kim <greendrm@kamsi.yonsei.ac.kr>\n"
 "Language-Team: \n"
@@ -825,7 +825,7 @@ msgstr ""
 #, fuzzy
 msgid ""
 "Print current remote URL.\n"
-" -u  show password\n"
+" -p  show password\n"
 msgstr "현재의 원거리 디렉토리를 보여줍니다\n"
 
 #: src/commands.cc:289

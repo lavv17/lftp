@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Lftp 2.1.3\n"
-"POT-Creation-Date: 2000-09-07 19:38+0400\n"
+"POT-Creation-Date: 2000-09-07 20:28+0400\n"
 "PO-Revision-Date: 2000-08-06 05:10+02:00\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: German <de@li.org>\n"
@@ -860,10 +860,10 @@ msgstr ""
 #: src/commands.cc:286
 msgid ""
 "Print current remote URL.\n"
-" -u  show password\n"
+" -p  show password\n"
 msgstr ""
 "Momentane URL (Internetadresse) der Gegenstelle (des Servers) ausgeben\n"
-" -u   Passwort zeigen\n"
+" -p   Passwort zeigen\n"
 
 #: src/commands.cc:289
 msgid ""

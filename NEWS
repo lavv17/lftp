@@ -2,6 +2,7 @@ Version 2.2.6 - 2000-09-07
 
 * compile fix for AIX (Gombas Gabor).
 * reformat EPLF even if modification time if absent (Matthias Andree).
+* russian translation updated (Alexander Lukyanov).
 * deutsch translation updated (Moritz Moeller-Herrmann).
 * french translation included (Nicolas Noble).
 
