@@ -3,4 +3,5 @@
 # define MODULE_PROTO_HTTP 1
 # define MODULE_PROTO_FILE 1
 # define MODULE_CMD_MIRROR 1
+# define MODULE_CMD_SLEEP  1
 #endif

@@ -84,7 +84,7 @@ uninstall-local:
 	    rm -f $(DESTDIR)$(pkglibdir)/$$p; \
 	done
 
-MODULEFLAGS=$(PIC_FLAG) -shared -DMODULE
+MODULEFLAGS=$(PIC_FLAG) -shared -nostdlib -DMODULE
 CXXMODLINK=$(CXXCOMPILE) $(LDFLAGS) $(MODULEFLAGS)
 proto-http.so: Http.cc HttpDir.cc
 	@-rm -f $@
@@ -96,5 +96,8 @@ proto-ftp.so: ftpclass.cc FtpListInfo.cc FtpGlob.cc FtpDirList.cc md5.c ftp-opie
 	@-rm -f $@
 	$(CXXMODLINK) $^ -o $@
 cmd-mirror.so: MirrorJob.cc
+	@-rm -f $@
+	$(CXXMODLINK) $^ -o $@
+cmd-sleep.so: SleepJob.cc getdate.c
 	@-rm -f $@
 	$(CXXMODLINK) $^ -o $@

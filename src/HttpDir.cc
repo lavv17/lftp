@@ -327,6 +327,9 @@ parse_url_again:
    if(icon && link_target[0]=='/')
       show_in_list=false;  // makes apache listings look better.
 
+   int skip_len=tag_len;
+   char *sym_link=0;
+
    if(list && show_in_list)
    {
       int year,month,day,hour,minute;
@@ -335,7 +338,7 @@ parse_url_again:
       const char *more1;
       char *str;
       int n;
-      char *line_add=(char*)alloca(link_len+128);
+      char *line_add=(char*)alloca(link_len+128+2*1024);
       bool data_available=false;
 
       if(!a_href)
@@ -399,6 +402,8 @@ parse_url_again:
 	    n=sscanf(str,"%3s %2d %5s %30s",month_name,&day,year_or_time,size_str);
 	    if(n<3)
 	       goto add_file;
+	    if(!is_ascii_digit(size_str[0]))
+	       strcpy(size_str,"-");
 	    if(year_or_time[2]==':')
 	    {
 	       sscanf(year_or_time,"%2d:%2d",&hour,&minute);
@@ -406,6 +411,22 @@ parse_url_again:
 	    }
 	    else
 	       sscanf(year_or_time,"%d",&year);
+	    // skip rest of line, because there may be href to link target.
+	    skip_len=eol-buf+1;
+
+	    char *ptr=strstr(str," -> <A HREF=\"");
+	    if(ptr)
+	    {
+	       sym_link=ptr+13;
+	       ptr=strchr(sym_link,'"');
+	       if(!ptr)
+		  sym_link=0;
+	       else
+	       {
+		  *ptr=0;
+		  url::decode_string(sym_link);
+	       }
+	    }
 	 }
       }
 
@@ -436,9 +457,12 @@ parse_url_again:
 		  year--;
 	    }
 	 }
-	 sprintf(line_add,"%s  %10s  %04d-%s-%02d %02d:%02d  %s\n",
-	    is_directory?"drwxr-xr-x":"-rw-r--r--",
+	 sprintf(line_add,"%s  %10s  %04d-%s-%02d %02d:%02d  %s",
+	    is_directory?"drwxr-xr-x":(sym_link?"lrwxrwxrwx":"-rw-r--r--"),
 	    size_str,year,month_name,day,hour,minute,link_target);
+	 if(sym_link)
+	    sprintf(line_add+strlen(line_add)," -> %s",sym_link);
+	 strcat(line_add,"\n");
       }
       else
       {
@@ -466,11 +490,15 @@ parse_url_again:
 
       FileInfo *fi=new FileInfo;
       fi->SetName(link_target);
-      fi->SetType(is_directory ? fi->DIRECTORY : fi->NORMAL);
+      if(sym_link)
+	 fi->SetSymlink(sym_link);
+      else
+	 fi->SetType(is_directory ? fi->DIRECTORY : fi->NORMAL);
+
       set->Add(fi);
    }
 
-   return tag_len;
+   return skip_len;
 }
 
 

@@ -91,6 +91,10 @@ CMD(lpwd);  CMD(glob);	 CMD(chmod);   CMD(queue);
 #ifdef MODULE_CMD_MIRROR
 # define cmd_mirror 0
 #endif
+#ifdef MODULE_CMD_SLEEP
+# define cmd_sleep 0
+# define cmd_at    0
+#endif
 
 const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 {
@@ -751,7 +755,7 @@ Job *CmdExec::builtin_queue()
 
       assert(FindQueue()==queue);
    }
-   
+
    if(xstrcmp(queue->queue_cwd,session->GetCwd()))
    {
       ArgV cd("cd");
@@ -772,9 +776,9 @@ Job *CmdExec::builtin_queue()
       xfree(queue->queue_lcwd);
       queue->queue_lcwd=xstrdup(cwd);
    }
-   
+
    queue->FeedArgV(args,1);
-   
+
    exit_code=0;
 
    return 0;
@@ -1862,79 +1866,6 @@ CMD(ftpcopy)
    Job *j=new FtpCopy(args,session);
    args=0;
    return j;
-}
-
-CMD(sleep)
-{
-   char *op=args->a0();
-   if(args->count()!=2)
-   {
-      eprintf(_("%s: argument required. "),op);
-   err:
-      eprintf(_("Try `help %s' for more information.\n"),op);
-      return 0;
-   }
-   char *t=args->getarg(1);
-   time_t delay=decode_delay(t);
-   if(delay==(time_t)-1)
-   {
-      eprintf(_("%s: invalid delay. "),op);
-      goto err;
-   }
-   return new SleepJob(time(0)+delay);
-}
-
-extern "C" {
-#include "getdate.h"
-}
-CMD(at)
-{
-   int count=1;
-   int cmd_start=0;
-   int date_len=0;
-   for(;;)
-   {
-      char *arg=args->getnext();
-      if(arg==0)
-	 break;
-      if(!strcmp(arg,"--"))
-      {
-	 cmd_start=count+1;
-	 break;
-      }
-      date_len+=strlen(arg)+1;
-      count++;
-   }
-
-#if 0
-   char **av=(char**)xmemdup(args->GetV(),(count+1)*sizeof(char**));
-   av[count]=0;
-   time_t when=parsetime(count-1,av+1);
-   xfree(av);
-#endif
-   char *date=args->Combine(1);
-   date[date_len]=0;
-   time_t now=time(0);
-   time_t when=get_date(date,&now);
-   xfree(date);
-
-   if(when==0 || when==(time_t)-1)
-      return 0;
-
-   char *cmd=0;
-   if(cmd_start)
-   {
-      // two cases:
-      //  1. at time -- "cmd; cmd..." (one argument)
-      //  2. at time -- shell "cmd; cmd..." (several args)
-      if(cmd_start==args->count()-1)
-	 cmd=args->Combine(cmd_start);
-      else
-	 cmd=args->CombineQuoted(cmd_start);
-   }
-
-   FileAccess *s = cmd ? Clone() : 0;
-   return new SleepJob(when, s, cmd);
 }
 
 CMD(find)
