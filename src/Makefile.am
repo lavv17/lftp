@@ -74,7 +74,7 @@ libjobs_a_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
 
 lftp_LDFLAGS = -export-dynamic $(LFTP_SSL_LDFLAGS)
 lftp_LDADD = libjobs.a libtasks.a $(MODULES_LA_STATIC) $(READLINE) \
-	$(top_builddir)/lib/liblib.a $(LFTP_SSL_LIBS) $(INTLLIBS)
+	$(top_builddir)/lib/liblib.a $(LFTP_SSL_LIBS) $(LTLIBINTL)
 lftp_DEPENDENCIES = libjobs.a libtasks.a $(READLINE_DEPEND) \
 	$(top_builddir)/lib/liblib.a $(MODULES_LA_STATIC)
 
