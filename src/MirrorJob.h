@@ -39,6 +39,7 @@ class MirrorJob : public Job
       WAITING_FOR_TRANSFER,
       TARGET_REMOVE_OLD,
       TARGET_CHMOD,
+      FINISHING,
       DONE
    };
    state_t state;

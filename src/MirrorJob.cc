@@ -53,6 +53,7 @@ void  MirrorJob::PrintStatus(int v)
    switch(state)
    {
    case(INITIAL_STATE):
+   case(FINISHING):
    case(DONE):
    case(WAITING_FOR_TRANSFER):
    case(TARGET_REMOVE_OLD):
@@ -122,6 +123,7 @@ void  MirrorJob::ShowRunStatus(StatusLine *s)
    case(WAITING_FOR_TRANSFER):
    case(TARGET_REMOVE_OLD):
    case(TARGET_CHMOD):
+   case(FINISHING):
    case(DONE):
       Job::ShowRunStatus(s);
       break;
@@ -447,7 +449,7 @@ void MirrorJob::HandleChdir(FileAccess * &session, int &redirections)
       eprintf("mirror: %s\n",session->StrError(res));
       stats.error_count++;
       transfer_count-=root_transfer_count;
-      state=DONE;
+      state=FINISHING;
       source_session->Close();
       target_session->Close();
       return;
@@ -463,7 +465,7 @@ void MirrorJob::HandleListInfoCreation(FileAccess * &session,ListInfo * &list_in
       eprintf(_("mirror: protocol `%s' is not suitable for mirror\n"),
 	       session->GetProto());
       transfer_count-=root_transfer_count;
-      state=DONE;
+      state=FINISHING;
       return;
    }
    list_info->UseCache(use_cache);
@@ -486,7 +488,7 @@ void MirrorJob::HandleListInfo(ListInfo * &list_info, FileSet * &set)
       eprintf("mirror: %s\n",list_info->ErrorText());
       stats.error_count++;
       transfer_count-=root_transfer_count;
-      state=DONE;
+      state=FINISHING;
       Delete(source_list_info);
       source_list_info=0;
       Delete(target_list_info);
@@ -656,7 +658,7 @@ int   MirrorJob::Do()
 
    pre_TARGET_CHMOD:
       if(flags&NO_PERMS)
-	 goto pre_DONE;
+	 goto pre_FINISHING;
 
       to_transfer->rewind();
       state=TARGET_CHMOD;
@@ -674,7 +676,7 @@ int   MirrorJob::Do()
       {
 	 file=to_transfer->curr();
 	 if(!file)
-	    goto pre_DONE;
+	    goto pre_FINISHING;
 	 to_transfer->next();
 	 if(!(file->defined&file->MODE))
 	    continue;
@@ -691,7 +693,7 @@ int   MirrorJob::Do()
       }
       break;
 
-   pre_DONE:
+   pre_FINISHING:
       if(target_is_local)     // FIXME
       {
 	 to_transfer->LocalUtime(target_dir,/*only_dirs=*/true);
@@ -702,21 +704,26 @@ int   MirrorJob::Do()
 	 if(flags&ALLOW_CHOWN)
 	    same->LocalChown(target_dir);
       }
-      if(waiting_num==0)
-	 transfer_count++; // parent mirror will decrement it.
-      state=DONE;
+      state=FINISHING;
       m=MOVED;
-   case(DONE):
+   case(FINISHING):
       j=FindDoneAwaitedJob();
       if(j)
       {
 	 RemoveWaiting(j);
 	 Delete(j);
 	 transfer_count--;
-	 if(waiting_num==0)
-	    transfer_count++; // parent mirror will decrement it.
 	 m=MOVED;
       }
+
+      if(waiting_num==0)
+      {
+	 transfer_count++; // parent mirror will decrement it.
+	 state=DONE;
+	 m=MOVED;
+      }
+
+   case(DONE):
       break;
    }
    // give direct parent priority over grand-parents.
