@@ -158,32 +158,46 @@ void  MirrorJob::HandleFile(int how)
       case(FileInfo::NORMAL):
       {
       try_get:
-	 bool cont_this=false;
+	 cont_this=false;
 	 if(how!=0)
 	    goto skip;
 	 if(flags&REVERSE)
 	 {
-	    if(remote_set->FindByName(file->name)!=0)
+	    FileInfo *old=remote_set->FindByName(file->name);
+	    if(old)
 	    {
-	       Report(_("Removing old remote file `%s'"),
-			dir_file(remote_relative_dir,file->name));
-	       args=new ArgV("rm");
-	       args->Append(file->name);
-	       if(script)
+	       if((flags&CONTINUE)
+	       && (old->defined&file->TYPE) && old->filetype==old->NORMAL
+	       && (file->defined&(file->DATE|file->DATE_UNPREC))
+	       && (old->defined&(old->DATE|old->DATE_UNPREC))
+	       && file->date + prec.Seconds() < old->date
+	       && (file->defined&file->SIZE) && (old->defined&old->SIZE)
+	       && file->size >= old->size)
 	       {
-		  char *cmd=args->CombineQuoted();
-		  fprintf(script,"%s",cmd);
-		  xfree(cmd);
-		  if(script_only)
-		  {
-		     delete args;
-		     goto skip;
-		  }
+		  cont_this=true;
 	       }
-	       Job *j=new rmJob(Clone(),args);
-	       j->SetParentFg(this);
-	       j->cmdline=args->Combine();
-	       AddWaiting(j);
+	       else
+	       {
+		  Report(_("Removing old remote file `%s'"),
+			   dir_file(remote_relative_dir,file->name));
+		  args=new ArgV("rm");
+		  args->Append(file->name);
+		  if(script)
+		  {
+		     char *cmd=args->CombineQuoted();
+		     fprintf(script,"%s",cmd);
+		     xfree(cmd);
+		     if(script_only)
+		     {
+			delete args;
+			goto skip;
+		     }
+		  }
+		  Job *j=new rmJob(Clone(),args);
+		  j->SetParentFg(this);
+		  j->cmdline=args->Combine();
+		  AddWaiting(j);
+	       }
 	       mod_files++;
 	    }
 	    else
@@ -638,6 +652,8 @@ int   MirrorJob::Do()
       if(script)
       {
 	 args=new ArgV("put1");
+	 if(cont_this)
+	    args->Append("-c");
 	 args->Append(local_name);
 	 args->Append("-o");
 	 args->Append(file->name);
@@ -655,7 +671,7 @@ int   MirrorJob::Do()
       FileCopyPeer *src_peer=
 	 FileCopyPeerFDStream::NewGet(local_name);
 
-      FileCopy *c=FileCopy::New(src_peer,dst_peer,false);
+      FileCopy *c=FileCopy::New(src_peer,dst_peer,cont_this);
       if(remove_source_files)
 	 c->RemoveSourceLater();
       CopyJob *cp=
@@ -897,6 +913,7 @@ MirrorJob::MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_rem
    remote_set=local_set=0;
    new_files_set=old_files_set=0;
    file=0;
+   cont_this=false;
    list_info=0;
    local_session=0;
 

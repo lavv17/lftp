@@ -1,3 +1,8 @@
+2001-05-24  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* MirrorJob.cc, MirrorJob.h: support `mirror -R -c'.
+	* resource.cc: some more patterns for retry-530.
+
 2001-05-15  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* resource.cc: new settings ftp:retry-530 and ftp:retry-530-anonymous.

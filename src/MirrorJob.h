@@ -74,6 +74,8 @@ class MirrorJob : public SessionJob
    FileInfo *file;
    void	 HandleFile(int);
 
+   bool cont_this; // try to continue transfer of current file.
+
    ListInfo *list_info;
    FileAccess *local_session;
 

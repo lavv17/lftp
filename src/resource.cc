@@ -176,7 +176,7 @@ static ResDecl
    ResDecl18 ("ftp:verify-address",	  "no",    ResMgr::BoolValidate,0),
    ResDecl19 ("ftp:verify-port",	  "no",    ResMgr::BoolValidate,0),
    ResDecl20 ("ftp:web-mode",		  "off",   ResMgr::BoolValidate,0),
-#define RETRY_530 "too many|overloaded|try later"
+#define RETRY_530 "too many|overloaded|try (again |back )?later|is restricted to|maximum number|number of connect"
    ResDecl20a("ftp:retry-530",		  RETRY_530,			ResMgr::ERegExpValidate,0),
    ResDecl20b("ftp:retry-530-anonymous",  "Login incorrect|"RETRY_530,	ResMgr::ERegExpValidate,0),
    ResDecl21 ("hftp:cache",		  "yes",   ResMgr::BoolValidate,0),
