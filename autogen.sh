@@ -138,6 +138,8 @@ do
       automake --add-missing --gnu $am_opt
       echo "Running autoconf ..."
       autoconf
+      echo "Running autoconf in " readline* ...
+      (cd readline* && autoconf && autoheader)
     )
   fi
 done
