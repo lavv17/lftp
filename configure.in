@@ -27,16 +27,6 @@ if test x$ac_cv_lib_fl_yywrap = xno; then
    AC_DEFINE(NEED_YYWRAP)
 fi
 
-AC_CHECK_PROG(AR, ar, ar)
-dnl Set default for ARFLAGS, since autoconf does not have a macro for it.
-dnl This allows people to set it when running configure or make
-test -n "$ARFLAGS" || ARFLAGS="cr"
-AC_SUBST(AR)
-AC_SUBST(ARFLAGS)
-
-MAKE_SHELL=/bin/sh
-AC_SUBST(MAKE_SHELL)
-
 
 ALL_LINGUAS="es ru it pt_BR pl de zh_CN ko"
 AM_GNU_GETTEXT
