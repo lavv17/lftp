@@ -83,7 +83,6 @@ if test x$GXX = xyes; then
 fi
 
 AC_PROG_LIBTOOL
-dnl AC_PROG_RANLIB
 
 ## get the values out of libtool
 eval `grep '^wl=' libtool`
