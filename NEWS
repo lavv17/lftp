@@ -1,3 +1,9 @@
+Version 2.4.7 - 2001-11-??
+
+* fixed coredump in `mget -E', introduced in 2.4.6.
+* speed-optimized directory listing parsing.
+* fixed EPLF listings.
+
 Version 2.4.6 - 2001-10-30
 
 * new setting ftp:timezone to select time zone of file listings.
