@@ -25,6 +25,12 @@
 #include "SMTask.h"
 #include "buffer.h"
 
+#define NO_SIZE	     (-1L)
+#define NO_SIZE_YET  (-2L)
+#define NO_DATE	     ((time_t)-1L)
+#define NO_DATE_YET  ((time_t)-2L)
+#define FILE_END     (-1L)
+
 class FileCopyPeer : public Buffer
 {
    bool want_size;
@@ -34,30 +40,34 @@ class FileCopyPeer : public Buffer
 
    long seek_pos;
 
+   enum mode_t { GET, PUT } mode;
+
 public:
-   virtual bool CanSeek() { return true; }
-   virtual void Seek(long offs) { seek_pos=offs; }
+   virtual bool CanSeek() { return true; } // ???
+   virtual void Seek(long offs) { seek_pos=offs; Empty(); eof=false; }
    virtual long GetRealPos() = 0;
    virtual long Buffered() { return in_buffer; }
+   virtual bool IOReady() { return true; }
 
-   virtual void WantDate() { want_date=true; }
-   virtual void WantSize() { want_size=true; }
+   virtual void WantDate() { want_date=true; date=NO_DATE_YET; }
+   virtual void WantSize() { want_size=true; size=NO_SIZE_YET; }
    time_t GetDate() { return date; }
    long   GetSize() { return size; }
 
    void SetDate(time_t d) { date=d; }
    void SetSize(long s)   { size=s; }
 
-   FileCopyPeer();
+   FileCopyPeer(mode_t m);
    ~FileCopyPeer();
 };
 
 class FileCopy : public SMTask
 {
-   FileCopyPeer *Source;
-   FileCopyPeer *Dest;
+   FileCopyPeer *get;
+   FileCopyPeer *put;
 
    int max_buf;
+   bool cont;
 
 public:
    long GetPos();
@@ -78,17 +88,21 @@ public:
 class FileCopyPeerFA : public FileCopyPeer
 {
    char *file;
-   int mode;
+   int FAmode;
    FileAccess *session;
    bool can_seek;
+   bool date_set;
 
    int Get_LL(int size);
+   int Put_LL(const char *buf,int size);
 
 public:
    FileCopyPeerFA(FileAccess *s,const char *f,int m);
    ~FileCopyPeerFA();
    int Do();
    bool Done();
+   bool IOReady()    { return session->IOReady(); }
+   long GetRealPos() { return session->GetRealPos(); }
 
    long Buffered() { return in_buffer+session->Buffered(); }
 
@@ -100,7 +114,10 @@ class FileCopyPeerFDStream : public FileCopyPeer
 {
    FDStream *stream;
    bool can_seek;
+   bool date_set;
+   long real_pos;
 
+   int Get_LL(int size);
    int Put_LL(const char *buf,int size);
 
 public:
@@ -108,6 +125,8 @@ public:
    ~FileCopyPeerFDStream();
    int Do();
    bool Done();
+   bool IOReady() { return stream->getfd()!=-1; }
+   long GetRealPos() { return real_pos; }
    FgData *GetFgData(bool fg);
 };
 
