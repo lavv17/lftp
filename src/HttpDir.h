@@ -53,8 +53,6 @@ class HttpDirList : public DirList
    const char *curr;
    ParsedURL *curr_url;
    FileSet all_links;
-   int mode;
-   char *base_href;
 
 public:
    HttpDirList(ArgV *a,FileAccess *fa);

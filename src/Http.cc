@@ -94,14 +94,15 @@ void Http::Init()
    chunked=false;
    chunk_size=-1;
    chunk_pos=0;
-
-   no_cache_this=false;
-   no_cache=false;
 }
 
 Http::Http() : super()
 {
    Init();
+   xfree(home);
+   home=xstrdup("/");
+   xfree(cwd);
+   cwd=xstrdup(default_cwd);
    Reconfig();
 }
 Http::Http(const Http *f) : super(f)
@@ -208,7 +209,6 @@ void Http::Close()
    retries=0;
    Disconnect();
    array_send=0;
-   no_cache_this=false;
    super::Close();
 }
 
@@ -230,8 +230,6 @@ void Http::SendMethod(const char *method,const char *efile)
 {
    Send("%s %s HTTP/1.1\r\n",method,efile);
    Send("Host: %s\r\n",url::encode_string(hostname));
-   Send("User-Agent: %s/%s\r\n","lftp",VERSION);
-   Send("Accept: */*\r\n");
 }
 
 
@@ -364,11 +362,7 @@ void Http::SendRequest(const char *connection,const char *f)
       break;
    }
    SendAuth();
-   if(no_cache || no_cache_this)
-   {
-      Send("Pragma: no-cache\r\n"); // for HTTP/1.0 compatibility
-      Send("Cache-Control: no-cache\r\n");
-   }
+//    Send("Accept: */*\r\n");
    if(mode!=ARRAY_INFO || connection)
       Send("Connection: %s\r\n",connection?connection:"close");
    Send("\r\n");
@@ -498,10 +492,6 @@ int Http::Do()
       Timeout((idle_start+idle-now)*1000);
    }
 
-   if(home==0)
-      home=xstrdup("/");
-   ExpandTildeInCWD();
-
    switch(state)
    {
    case DISCONNECTED:
@@ -516,11 +506,8 @@ int Http::Do()
       {
 	 if(resolver==0)
 	 {
-	    if(proxy)
-	       resolver=new Resolver(proxy,proxy_port);
-	    else
-	       resolver=new Resolver(hostname,portname,
-				    HTTP_DEFAULT_PORT,"http","tcp");
+	    resolver=new Resolver(proxy?proxy:hostname,
+			proxy?proxy_port:(portname?portname:HTTP_DEFAULT_PORT));
 	    ClearPeer();
 	 }
 	 if(!resolver->Done())
@@ -584,7 +571,7 @@ int Http::Do()
       DebugPrint("---- ",str,0);
 #endif
 
-      DebugPrint("---- ","Connecting...",2);
+      DebugPrint("---- ","Connecting...",9);
       res=connect(sock,&peer[peer_curr].sa,sizeof(*peer));
       UpdateNow(); // if non-blocking don't work
 
@@ -977,12 +964,11 @@ int Http::Read(void *buf,int size)
 	 return DO_AGAIN;
       if(real_pos<pos)
       {
-	 long to_skip=pos-real_pos;
+	 int to_skip=pos-real_pos;
 	 if(to_skip>size1)
 	    to_skip=size1;
 	 recv_buf->Skip(to_skip);
 	 real_pos+=to_skip;
-	 bytes_received+=to_skip;
 	 if(chunked)
 	    chunk_pos+=to_skip;
 	 goto get_again;
@@ -1128,8 +1114,6 @@ void Http::Reconfig()
    socket_maxseg = Query("socket-maxseg",c);
 
    SetProxy(Query("proxy",c));
-
-   no_cache = !(bool)Query("cache",c);
 
    if(sock!=-1)
       SetSocketBuffer(sock,socket_buffer);

@@ -55,63 +55,14 @@ static int parse_month(const char *m)
    return -1;
 }
 
-static bool find_value(const char *scan,const char *more,const char *name,char *store)
-{
-   for(;;)
-   {
-      while(is_ascii_space(*scan))
-	 scan++;
-      if(scan>=more)
-	 return false;
-
-      if(!is_ascii_alnum(*scan))
-      {
-	 scan++;
-	 continue;
-      }
-
-      bool match=token_eq(scan,more-scan,name);
-
-      while(is_ascii_alnum(*scan))
-	 scan++;
-      if(scan>=more)
-	 return false;
-
-      if(*scan!='=')
-	 continue;
-
-      scan++;
-      char quote=0;
-      if(*scan=='"' || *scan=='\'')
-	 quote=*scan++;
-
-      while(scan<more && (quote ? *scan!=quote : !is_ascii_space(*scan)))
-      {
-	 if(match)
-	    *store++=*scan;
-	 scan++;
-      }
-      if(match)
-      {
-	 *store=0;
-	 return true;
-      }
-      if(scan>=more)
-	 return false;
-      if(quote)
-	 scan++;  // skip closing quotation mark.
-   }
-   return false;
-}
 
 static int parse_html(const char *buf,int len,bool eof,Buffer *list,
-      FileSet *set,FileSet *all_links,ParsedURL *prefix,char **base_href)
+      FileSet *set,FileSet *all_links,ParsedURL *prefix)
 {
    const char *end=buf+len;
    const char *less=find_char(buf,len,'<');
    if(less==0)
       return len;
-   // FIXME: a > sign can be inside quoted value. (?)
    const char *more=find_char(less+1,end-less-1,'>');
    if(more==0)
    {
@@ -123,92 +74,31 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
    int tag_len=more-buf+1;
    if(more-less<3)
       return tag_len;   // too small
+   if(!token_eq(less+1,end-less-1,"a"))
+      return tag_len;   // not interesting
+   const char *scan=less+2;
+   while(is_ascii_space(*scan))
+      scan++;
+   assert(scan<end);
+   if(!token_eq(scan,end-scan,"href"))
+      return tag_len;   // not interesting
+   scan+=4;
+   while(is_ascii_space(*scan))
+      scan++;
+   assert(scan<end);
+   if(*scan!='=')
+      return tag_len;	// syntax error
+   scan++;
+   char quote=0;
+   if(*scan=='"' || *scan=='\'')
+      quote=*scan++;
 
-   int max_link_len=more-less+1+2;
-   if(base_href && *base_href)
-      max_link_len+=strlen(*base_href)+1;
-   char *link_target=(char*)alloca(max_link_len);
-
-   static const struct tag_link
-	 { const char *tag, *link; }
-      tag_list[]={
-      /* taken from wget-1.5.3: */
-      /* NULL-terminated list of tags and modifiers someone would want to
-	 follow -- feel free to edit to suit your needs: */
-	 { "a", "href" },
-	 { "img", "src" },
-	 { "img", "href" },
-	 { "body", "background" },
-	 { "frame", "src" },
-	 { "iframe", "src" },
-	 { "fig", "src" },
-	 { "overlay", "src" },
-	 { "applet", "code" },
-	 { "script", "src" },
-	 { "embed", "src" },
-	 { "bgsound", "src" },
-	 { "area", "href" },
-	 { "img", "lowsrc" },
-	 { "input", "src" },
-	 { "layer", "src" },
-	 { "table", "background"},
-	 { "th", "background"},
-	 { "td", "background"},
-	 /* Tags below this line are treated specially.  */
-	 { "base", "href" },
-	 { "meta", "content" },
-	 { NULL, NULL }
-      };
-
-   // FIXME: a tag can have many links.
-   const struct tag_link *tag_scan;
-   for(tag_scan=tag_list; tag_scan->tag; tag_scan++)
-   {
-      if(token_eq(less+1,end-less-1,tag_scan->tag))
-      {
-	 if(find_value(less+1+strlen(tag_scan->tag),more,
-			tag_scan->link,link_target))
-	    break;
-      }
-   }
-   if(tag_scan->tag==0)
-      return tag_len;	// not interesting
-
+   char *link_target=(char*)alloca(more-scan+1+2);
+   char *store=link_target;
+   while(scan<more && (quote ? *scan!=quote : !is_ascii_space(*scan)))
+      *store++=*scan++;
+   *store=0;
    // ok, found the target.
-
-   if(!strcasecmp(tag_scan->tag,"base"))
-   {
-      if(base_href)
-      {
-	 xfree(*base_href);
-	 *base_href=xstrdup(link_target);
-      }
-      return tag_len;
-   }
-   if(!strcasecmp(tag_scan->tag,"meta"))
-   {
-      // skip 0; URL=
-      while(*link_target && is_ascii_digit(*link_target))
-	 link_target++;
-      if(*link_target!=';')
-	 return tag_len;
-      link_target++;
-      while(*link_target && is_ascii_space(*link_target))
-	 link_target++;
-      if(strncasecmp(link_target,"URL=",4))
-	 return tag_len;
-      link_target+=4;
-   }
-
-   bool icon=false;
-   if(!strcasecmp(tag_scan->tag,"img")
-   && !strcasecmp(tag_scan->link,"src"))
-      icon=true;
-
-   bool a_href=false;
-   if(!strcasecmp(tag_scan->tag,"a")
-   && !strcasecmp(tag_scan->link,"href"))
-      a_href=true;
 
    // check if the target is a relative and not a cgi
    if(strchr(link_target,'?'))
@@ -219,9 +109,6 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
    if(*link_target==0)
       return tag_len;	// no target ?
 
-   bool base_href_applied=false;
-
-parse_url_again:
    ParsedURL link_url(link_target,/*proto_required=*/true);
    if(link_url.proto)
    {
@@ -245,26 +132,10 @@ parse_url_again:
 	    break;
 	 scan_link++;
       }
-      if(*link_target!='/' && base_href && *base_href && !base_href_applied)
-      {
-	 char *base_end=strrchr(*base_href,'/');
-	 if(base_end)
-	 {
-	    memmove(link_target+(base_end-*base_href+1),link_target,
-	       strlen(link_target)+1);
-	    memcpy(link_target,*base_href,(base_end-*base_href+1));
-	    base_href_applied=true;
-	    goto parse_url_again;
-	 }
-      }
    }
 
    // ok, it is good relative link
-   if(link_url.path==0)
-      strcpy(link_target,"/");
-   else
-      strcpy(link_target,link_url.path);
-
+   strcpy(link_target,link_url.path);
    int link_len=strlen(link_target);
    bool is_directory=(link_len>0 && link_target[link_len-1]=='/');
    if(is_directory && link_len>1)
@@ -277,12 +148,9 @@ parse_url_again:
 
       if(p_len==1 && p_path[0]=='/' && link_target[0]=='/')
       {
-	 if(link_len>1)
-	 {
-	    // strip leading slash
-	    link_len--;
-	    memmove(link_target,link_target+1,link_len+1);
-	 }
+	 // strip leading slash
+	 link_len--;
+	 memmove(link_target,link_target+1,link_len+1);
       }
       else if(p_len>0 && !strncmp(link_target,p_path,p_len))
       {
@@ -314,11 +182,7 @@ parse_url_again:
       }
    }
 
-   bool show_in_list=true;
-   if(icon && link_target[0]=='/')
-      show_in_list=false;  // makes apache listings look better.
-
-   if(list && show_in_list)
+   if(list)
    {
       int year,month,day,hour,minute;
       char month_name[32];
@@ -327,13 +191,8 @@ parse_url_again:
       int n;
       char *line_add=(char*)alloca(link_len+128);
       bool data_available=false;
-
-      if(!a_href)
-	 goto add_file;	// only <a href> tags can have useful info.
-
       // try to extract file information
-      const char *eol;
-      eol=find_char(more+1,end-more-1,'\n');
+      const char *eol=find_char(more+1,end-more-1,'\n');
       if(!eol)
       {
 	 if(eof)
@@ -355,13 +214,7 @@ parse_url_again:
       n=sscanf(more1+1,"%2d-%3s-%4d %2d:%2d %30s",
 		     &day,month_name,&year,&hour,&minute,size_str);
       if(n!=6)
-      {
-	 n=sscanf(more1+1,"%30s %2d-%3s-%4d",size_str,&day,month_name,&year);
-	 if(n!=4)
-	    goto add_file;
-	 hour=0;
-	 minute=0;
-      }
+	 goto add_file;
 
       // y2000 problem :)
       if(year<37)
@@ -448,7 +301,7 @@ int HttpDirList::Do()
 
       char *cache_buffer=0;
       int cache_buffer_size=0;
-      if(use_cache && LsCache::Find(session,curr,mode,
+      if(use_cache && LsCache::Find(session,curr,FA::LONG_LIST,
 				    &cache_buffer,&cache_buffer_size))
       {
 	 from_cache=true;
@@ -459,20 +312,12 @@ int HttpDirList::Do()
       }
       else
       {
-	 session->Open(curr,mode);
-	 session->UseCache(use_cache);
+	 session->Open(curr,FA::LONG_LIST);
 	 ubuf=new FileInputBuffer(session);
       }
       if(curr_url)
 	 delete curr_url;
       curr_url=new ParsedURL(session->GetFileURL(curr));
-      if(mode==FA::RETRIEVE)
-      {
-	 // strip file name, directory remains.
-	 char *slash=strrchr(curr_url->path,'/');
-	 if(slash && slash>curr_url->path)
-	    *slash=0;
-      }
    }
 
    const char *b;
@@ -487,7 +332,7 @@ int HttpDirList::Do()
 	 ubuf->Get(&cache_buffer,&cache_buffer_size);
 	 if(cache_buffer && cache_buffer_size>0)
 	 {
-	    LsCache::Add(session,curr,mode,
+	    LsCache::Add(session,curr,FA::LONG_LIST,
 			   cache_buffer,cache_buffer_size);
 	 }
       }
@@ -500,7 +345,7 @@ int HttpDirList::Do()
    b+=upos;
    len-=upos;
 
-   int n=parse_html(b,len,ubuf->Eof(),buf,0,&all_links,curr_url,&base_href);
+   int n=parse_html(b,len,ubuf->Eof(),buf,0,&all_links,curr_url);
    if(n>0)
    {
       upos+=n;
@@ -522,18 +367,11 @@ HttpDirList::HttpDirList(ArgV *a,FileAccess *fa)
    ubuf=0;
    upos=0;
    from_cache=false;
-   mode=FA::LONG_LIST;
-   args->rewind();
    if(args->count()<2)
       args->Append("");
-   else if(args->count()>2 && !strcmp(args->getarg(1),"-f"))
-   {
-      args->delarg(1);	// del -f
-      mode=FA::RETRIEVE;
-   }
+   args->rewind();
    curr=0;
    curr_url=0;
-   base_href=0;
 }
 
 HttpDirList::~HttpDirList()
@@ -541,7 +379,6 @@ HttpDirList::~HttpDirList()
    delete ubuf;
    if(curr_url)
       delete curr_url;
-   xfree(base_href);
 }
 
 const char *HttpDirList::Status()
@@ -668,7 +505,6 @@ int HttpGlob::Do()
       else
       {
 	 session->Open(curr_dir,FA::LONG_LIST);
-	 session->UseCache(use_cache);
 	 ubuf=new FileInputBuffer(session);
       }
       m=MOVED;
@@ -692,16 +528,14 @@ int HttpGlob::Do()
 
    FileSet set;
    ParsedURL prefix(session->GetFileURL(curr_dir));
-   char *base_href=0;
    for(;;)
    {
-      int n=parse_html(b,len,true,0,&set,0,&prefix,&base_href);
+      int n=parse_html(b,len,true,0,&set,0,&prefix);
       if(n==0)
 	 break;
       b+=n;
       len-=n;
    }
-   xfree(base_href);
 
    if(!from_cache)
    {
@@ -777,7 +611,6 @@ int HttpListInfo::Do()
       else
       {
 	 session->Open("",FA::LONG_LIST);
-	 session->UseCache(use_cache);
 	 ubuf=new FileInputBuffer(session);
       }
       m=MOVED;
@@ -802,16 +635,14 @@ int HttpListInfo::Do()
 
       result=new FileSet;
       ParsedURL prefix(session->GetConnectURL());
-      char *base_href=0;
       for(;;)
       {
-	 int n=parse_html(b,len,true,0,result,0,&prefix,&base_href);
+	 int n=parse_html(b,len,true,0,result,0,&prefix);
 	 if(n==0)
 	    break;
 	 b+=n;
 	 len-=n;
       }
-      xfree(base_href);
 
       if(!from_cache)
       {

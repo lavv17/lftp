@@ -242,7 +242,6 @@ static completion_type cmd_completion_type(int start)
    || !strcmp(buf,"more")
    || !strcmp(buf,"mrm")
    || !strcmp(buf,"mv")
-   || !strcmp(buf,"nlist")
    || !strcmp(buf,"rm")
    || !strcmp(buf,"rmdir")
    || !strcmp(buf,"zcat")
@@ -337,11 +336,8 @@ static bool force_remote=false;
    region of TEXT that contains the word to complete.  We can use the
    entire line in case we want to do some simple parsing.  Return the
    array of matches, or NULL if there aren't any. */
-static char **lftp_completion (char *text,int start,int end)
+char **lftp_completion (char *text,int start,int end)
 {
-   if(start>end)  // workaround for a bug in readline
-      start=end;
-
    Glob *rg=0;
 
    rl_completion_append_character=' ';
@@ -451,7 +447,7 @@ enum { COMPLETE_DQUOTE,COMPLETE_SQUOTE,COMPLETE_BSQUOTE };
 
 /* Return a new string which is the single-quoted version of STRING.
    Used by alias and trap, among others. */
-static char *
+char *
 single_quote (char *string)
 {
   register int c;
@@ -480,7 +476,7 @@ single_quote (char *string)
 }
 
 /* Quote STRING using double quotes.  Return a new string. */
-static char *
+char *
 double_quote (char *string)
 {
   register int c;
@@ -515,7 +511,7 @@ double_quote (char *string)
 
 /* Quote special characters in STRING using backslashes.  Return a new
    string. */
-static char *
+char *
 backslash_quote (char *string)
 {
   int c;
@@ -559,8 +555,7 @@ backslash_quote (char *string)
   return (result);
 }
 
-#if 0 // no need yet
-static int
+int
 contains_shell_metas (char *string)
 {
   char *s;
@@ -589,7 +584,6 @@ contains_shell_metas (char *string)
 
   return (0);
 }
-#endif //0
 
 /* Filename quoting for completion. */
 /* A function to strip quotes that are not protected by backquotes.  It
@@ -747,7 +741,7 @@ bash_quote_filename (char *s, int rtype, char *qcp)
   return ret;
 }
 
-static int skip_double_quoted(char *s, int i)
+int skip_double_quoted(char *s, int i)
 {
    while(s[i] && s[i]!='"')
    {
@@ -815,7 +809,6 @@ int   lftp_rl_getc(FILE *file)
 	 return EOF;
       if(res!=r.NOCHAR)
 	 return res;
-      lftp_rl_redisplay_maybe();
       SMTask::Block();
       if(SignalHook::GetCount(SIGINT)>0)
       {

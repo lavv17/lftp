@@ -40,14 +40,11 @@ class StatusLine : public SMTask
    char to_be_shown[0x800];
    bool update_delayed;
    void update(char *);
-   int LastWidth;
 
 public:
    int GetWidth();
-   int GetWidthDelayed() { return LastWidth; }
    void Show(const char *f,...) PRINTF_LIKE(2,3);
    void WriteLine(const char *f,...) PRINTF_LIKE(2,3);
-   void Clear();
 
    int getfd() { return fd; }
 

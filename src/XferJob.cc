@@ -26,6 +26,7 @@
 #include <unistd.h>
 #include <assert.h>
 #include <ctype.h>
+#include <netdb.h>
 
 #include "xmalloc.h"
 
@@ -34,8 +35,7 @@
 #include "ResMgr.h"
 
 static ResDecl
-   res_use_urls	  ("xfer:use-urls",    "no", ResMgr::BoolValidate,0),
-   res_eta_terse  ("xfer:eta-terse",   "yes",ResMgr::BoolValidate,0);
+   res_use_urls	("xfer:use-urls",      "no", ResMgr::BoolValidate,0);
 
 char *XferJob::Percent()
 {
@@ -80,86 +80,32 @@ char *XferJob::CurrETA(float rate,long offs)
    if(size>0 && size>=offs && CanShowRate(rate))
    {
       long eta=(long)((size-offs) / rate + 0.5);
-      long eta2=0;
-      long ueta=0;
-      long ueta2=0;
-      char letter=0;
-      char letter2=0;
+      char letter;
 
-      // for translator: only first letter matters
-      const char day_c=_("day")[0];
-      const char hour_c=_("hour")[0];
-      const char minute_c=_("minute")[0];
-      const char second_c=_("second")[0];
-
-      const char *tr_eta=_("eta:");
-
-      if((bool)res_eta_terse.Query(0))
+      if(eta>=DAY)
       {
-	 if(eta>=DAY)
-	 {
-	    ueta=(eta+DAY/2)/DAY;
-	    eta2=eta-ueta*DAY;
-	    letter=day_c;
-	    if(ueta<10)
-	    {
-	       letter2=hour_c;
-	       ueta2=((eta2<0?eta2+DAY:eta2)+HOUR/2)/HOUR;
-	       if(ueta2>0 && eta2<0)
-		  ueta--;
-	    }
-	 }
-	 else if(eta>=HOUR)
-	 {
-	    ueta=(eta+HOUR/2)/HOUR;
-	    eta2=eta-ueta*HOUR;
-	    letter=hour_c;
-	    if(ueta<10)
-	    {
-	       letter2=minute_c;
-	       ueta2=((eta2<0?eta2+HOUR:eta2)+MINUTE/2)/MINUTE;
-	       if(ueta2>0 && eta2<0)
-		  ueta--;
-	    }
-	 }
-	 else if(eta>=MINUTE)
-	 {
-	    ueta=(eta+MINUTE/2)/MINUTE;
-	    letter=minute_c;
-	 }
-	 else
-	 {
-	    ueta=eta;
-	    letter=second_c;
-	 }
-	 if(letter2 && ueta2>0)
-	    sprintf(eta_str,"%s%ld%c%ld%c ",tr_eta,ueta,letter,ueta2,letter2);
-	 else
-	    sprintf(eta_str,"%s%ld%c ",tr_eta,ueta,letter);
+	 eta=(eta+DAY/2)/DAY;
+	 // for translator: only first letter matters
+	 letter=_("day")[0];
       }
-      else // verbose eta (by Ben Winslow)
+      else if(eta>=HOUR)
       {
-	 long unit;
-	 strcpy(eta_str, tr_eta);
-
-	 if(eta>=DAY)
-	 {
-	    unit=eta/DAY;
-	    sprintf(eta_str+strlen(eta_str), "%ld%c", unit, day_c);
-	 }
-	 if(eta>=HOUR)
-	 {
-	    unit=(eta/HOUR)%24;
-	    sprintf(eta_str+strlen(eta_str), "%ld%c", unit, hour_c);
-	 }
-	 if(eta>=MINUTE)
-	 {
-	    unit=(eta/MINUTE)%60;
-	    sprintf(eta_str+strlen(eta_str), "%ld%c", unit, minute_c);
-	 }
-	 unit=eta%60;
-	 sprintf(eta_str+strlen(eta_str), "%ld%c ", unit, second_c);
+	 eta=(eta+HOUR/2)/HOUR;
+	 // for translator: only first letter matters
+	 letter=_("hour")[0];
       }
+      else if(eta>=MINUTE)
+      {
+	 eta=(eta+MINUTE/2)/MINUTE;
+	 // for translator: only first letter matters
+	 letter=_("minute")[0];
+      }
+      else
+      {
+	 // for translator: only first letter matters
+	 letter=_("second")[0];
+      }
+      sprintf(eta_str,_("eta:%ld%c "),eta,letter);
    }
    return eta_str;
 }
@@ -169,13 +115,16 @@ void  XferJob::ShowRunStatus(StatusLine *s)
    if(!print_run_status)
       return;
    if(Done())
+   {
+      s->Show("");
       return;
+   }
 
    const char *st=session->CurrentStatus();
 
    if(curr && session->IsOpen())
    {
-      int w=s->GetWidthDelayed()-40;
+      int w=s->GetWidth()-40;
       if(w<=0)
 	 return;
       const char *n=curr;

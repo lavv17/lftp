@@ -86,7 +86,9 @@ void  TreatFileJob::PrintStatus(int v)
 
 void  TreatFileJob::ShowRunStatus(StatusLine *s)
 {
-   if(curr && !Done())
+   if(Done() || !curr)
+      s->Show("");
+   else
       s->Show("%s `%s' [%s]",op,curr,session->CurrentStatus());
 }
 

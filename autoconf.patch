@@ -1,0 +1,16 @@
+Index: acgeneral.m4
+===================================================================
+RCS file: /cvs/autoconf/autoconf/acgeneral.m4,v
+retrieving revision 1.244
+diff -u -r1.244 acgeneral.m4
+--- acgeneral.m4	1999/02/21 17:40:22	1.244
++++ acgeneral.m4	1999/02/23 20:28:51
+@@ -2421,7 +2421,7 @@
+ 
+ cat >> $CONFIG_STATUS <<\EOF
+ srcdir=$ac_given_srcdir
+-while test -n "$ac_sources"; do
++while test -n "`echo $ac_sources`"; do
+   set $ac_dests; ac_dest=[$]1; shift; ac_dests=[$]*
+   set $ac_sources; ac_source=[$]1; shift; ac_sources=[$]*
+ 

@@ -1,11 +1,10 @@
 localedir = $(datadir)/locale
 
 bin_PROGRAMS = lftp ftpget
-bin_SCRIPTS = lftpget
 
 pkgdata_SCRIPTS = import-ncftp import-netscape
 
-EXTRA_DIST = $(pkgdata_SCRIPTS) $(bin_SCRIPTS) example1.cc example2.cc
+EXTRA_DIST = $(pkgdata_SCRIPTS) example*.cc
 
 lftp_SOURCES = lftp.cc complete.h complete.cc lftp_rl.c lftp_rl.h
 ftpget_SOURCES = ftpget.cc
@@ -44,7 +43,6 @@ libjobs_a_SOURCES = Job.cc Job.h XferJob.cc XferJob.h CmdExec.cc CmdExec.h\
 
 lftp_LDFLAGS = $(EXPORT_DYNAMIC)
 lftp_LDADD = libjobs.a libtasks.a @READLINE@ @READLINE_SUPPLIB@ $(top_builddir)/lib/liblib.a @INTLLIBS@ @SOCKSLIBS@
-lftp_DEPENDENCIES = libjobs.a libtasks.a @READLINE_DEPEND@ $(top_builddir)/lib/liblib.a
 ftpget_LDFLAGS = $(EXPORT_DYNAMIC)
 ftpget_LDADD = libjobs.a libtasks.a $(top_builddir)/lib/liblib.a @INTLLIBS@ @SOCKSLIBS@
 
