@@ -163,7 +163,12 @@ CDECL const char *strerror(int);
 # define bind	     Rbind
 # define accept	     Raccept
 # define listen	     Rlisten
-// select, poll ?
+/* select, poll ? */
+#endif
+
+#ifdef __linux__
+/* to get prototype for strptime, we need this */
+# define __USE_XOPEN 1
 #endif
 
 #endif /* CONFIG_H */
