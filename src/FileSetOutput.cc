@@ -1,6 +1,6 @@
 /* lftp and utils
  *
- * Copyright (c) 2001 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 2001-2002 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * Portions from GNU fileutils.
  *
@@ -452,4 +452,3 @@ void clsJob::PrintStatus(int v)
 	 printf("\t`%s' %s\n", curr, stat);
    }
 }
-

@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 2000-2001 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 2000-2002 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

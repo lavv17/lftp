@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2001 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2002 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -805,7 +805,7 @@ static void init_terminfo()
    static bool initted = false;
    if(initted) return;
    initted = true;
-   
+
    if(setupterm(NULL, 1, NULL) == ERR)
       terminfo_ok = false;
 }
@@ -828,4 +828,3 @@ const char *get_string_term_cap(const char *terminfo_cap, const char *tcap_cap)
 
    return NULL;
 }
-
