@@ -1,5 +1,12 @@
 1999-08-16  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* ArgV.cc, ArgV.h: make several methods const.
+	* CmdExec.cc, CmdExec.h, commands.cc: chain all CmdExec's; allow
+	  several queues to exist; (FindQueue) new method; (FeedArgV) new
+	  method; synchronize cwd's of queue and main CmdExec.
+
+1999-08-16  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* commands.cc: (cmd_queue) print usage; set exit_code.
 
 1999-08-12  Alexander V. Lukyanov  <lav@yars.free.net>

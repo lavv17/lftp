@@ -52,7 +52,7 @@ static ResDecl
    res_verbose		   ("cmd:verbose",	"no", ResMgr::BoolValidate,0);
 
 CmdExec	 *CmdExec::cwd_owner=0;
-CmdExec	 *CmdExec::queue=0;
+CmdExec	 *CmdExec::chain=0;
 
 void  CmdExec::SetCWD(const char *c)
 {
@@ -653,7 +653,7 @@ void CmdExec::PrintStatus(int v)
       free(s);
       return;
    }
-   if(queue==this)
+   if(is_queue)
    {
       if(!(next_cmd && next_cmd[0]))
 	 return;
@@ -685,6 +685,10 @@ void CmdExec::PrintStatus(int v)
 
 CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
 {
+   // add this to chain
+   next=chain;
+   chain=this;
+
    cmd=0;
    args=0;
    waiting=0;
@@ -724,12 +728,24 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
 
    glob=0;
    args_glob=0;
+   
+   is_queue=false;
+   queue_cwd=0;
+   queue_lcwd=0;
 }
 
 CmdExec::~CmdExec()
 {
-   if(this==queue)
-      queue=0;
+   // remove this from chain.
+   for(CmdExec **scan=&chain; *scan; scan=&(*scan)->next)
+   {
+      if(this==*scan)
+      {
+	 *scan=(*scan)->next;
+	 break;
+      }
+   }
+   
    free_used_aliases();
    xfree(cmd);
    if(args)
@@ -746,6 +762,9 @@ CmdExec::~CmdExec()
       delete glob;
    if(args_glob)
       delete args_glob;
+      
+   xfree(queue_cwd);
+   xfree(queue_lcwd);
 }
 
 char *CmdExec::MakePrompt()
@@ -1022,7 +1041,7 @@ void CmdExec::FeedQuoted(const char *c)
 }
 
 // implementation is here because it depends on CmdExec.
-char *ArgV::CombineQuoted(int start)
+char *ArgV::CombineQuoted(int start) const
 {
    int	 i;
    char  *res;
@@ -1150,4 +1169,30 @@ Job *CmdExec::default_cmd()
    eprintf("%s: command `%s' is not compiled in.\n",op,op);
    return 0;
 #endif
+}
+
+void CmdExec::FeedArgV(const ArgV *args,int start)
+{
+   char *cmd;
+   
+   if(start+1==args->count())
+      cmd=args->Combine(start);
+   else
+      cmd=args->CombineQuoted(start);
+      
+   FeedCmd(cmd);
+   FeedCmd("\n");
+   xfree(cmd);
+}
+
+CmdExec *CmdExec::FindQueue()
+{
+   for(CmdExec *scan=chain; scan; scan=scan->next)
+   {
+      if(scan->is_queue
+      && !strcmp(this->session->GetConnectURL(FA::NO_PATH),
+	         scan->session->GetConnectURL(FA::NO_PATH)))
+	 return scan;
+   }
+   return 0;
 }

@@ -123,10 +123,17 @@ private:
    Glob *glob;
    ArgV *args_glob;
 
-   static CmdExec *queue;
+   static CmdExec *chain;
+   CmdExec *next;
+   
+   bool is_queue;
+   char *queue_cwd;
+   char *queue_lcwd;
+   CmdExec *FindQueue();
 
 public:
    void FeedCmd(const char *c);
+   void FeedArgV(const ArgV *,int start=0);
    void PrependCmd(const char *c);
    void ExecParsed(ArgV *a,FDStream *o=0,bool b=false);
    static void unquote(char *buf,const char *str);

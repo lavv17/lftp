@@ -736,24 +736,44 @@ Job *CmdExec::builtin_queue()
       return 0;
    }
 
+   CmdExec *queue=FindQueue();
    if(queue==0)
    {
       queue=new CmdExec(session->Clone());
       queue->parent=this;
       queue->AllocJobno();
-      queue->cmdline=xstrdup("queue");
+      const char *url=session->GetConnectURL(FA::NO_PATH);
+      queue->cmdline=(char*)xmalloc(9+strlen(url));
+      sprintf(queue->cmdline,"queue (%s)",url);
+      queue->is_queue=true;
+      queue->queue_cwd=xstrdup(session->GetCwd());
+      queue->queue_lcwd=xstrdup(cwd);
+
+      assert(FindQueue()==queue);
    }
    
-   char *cmd=0;
-   if(args->count()==2)
-      cmd=args->Combine(1);
-   else
-      cmd=args->CombineQuoted(1);
-   
-   queue->FeedCmd(cmd);
-   queue->FeedCmd("\n");
+   if(xstrcmp(queue->queue_cwd,session->GetCwd()))
+   {
+      ArgV cd("cd");
+      cd.Append(session->GetCwd());
+      cd.Append("&");
+      queue->FeedArgV(&cd);
 
-   xfree(cmd);
+      xfree(queue->queue_cwd);
+      queue->queue_cwd=xstrdup(session->GetCwd());
+   }
+   if(xstrcmp(queue->queue_lcwd,cwd))
+   {
+      ArgV cd("lcd");
+      cd.Append(cwd);
+      cd.Append("&");
+      queue->FeedArgV(&cd);
+
+      xfree(queue->queue_lcwd);
+      queue->queue_lcwd=xstrdup(cwd);
+   }
+   
+   queue->FeedArgV(args,1);
    
    exit_code=0;
 
