@@ -27,24 +27,16 @@
 
 class pgetJob : public GetJob
 {
-   class ChunkXfer : public XferJob
+   class ChunkXfer : public CopyJob
    {
       friend class pgetJob;
 
       long start;
       long limit;
-      char *error_text;
-      bool error:1;
-      bool done:1;
-      bool no_parallel:1;
-      FDStream *local;
 
-      ChunkXfer(FileAccess *session,const char *remote,FDStream *local,
-	        long start,long limit);
+      ChunkXfer(FileCopy *c,const char *remote,long start,long limit);
       ~ChunkXfer();
 
-      int Do();
-      int Done() { return done; }
       void PrintStatus(int);
    };
 
@@ -58,6 +50,8 @@ class pgetJob : public GetJob
    bool chunks_done:1;
 
    void free_chunks();
+
+   long total_eta;
 
 protected:
    void	 NextFile();
@@ -77,11 +71,14 @@ public:
       total_xfer_rate=0;
       no_parallel=false;
       max_chunks=5;
-      need_seek=true; // seek before writing
+      total_eta=-1;
    }
    ~pgetJob();
 
    void SetMaxConn(int n) { max_chunks=n; }
+
+   pgetJob::ChunkXfer *pgetJob::NewChunk(FileAccess *session,const char *remote,
+					  FDStream *local,long start,long limit);
 };
 
 #endif//PGETJOB_H

@@ -346,6 +346,15 @@ public:
    int Do();
 };
 
+class GlobURL
+{
+   FileAccess *session;
+   bool reuse;
+public:
+   Glob *glob;
+   GlobURL(FileAccess *s,const char *p);
+   ~GlobURL();
+};
 
 #include "FileSet.h"
 

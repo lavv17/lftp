@@ -46,6 +46,7 @@ public:
    virtual void setmtime(time_t) {}
    virtual bool can_setmtime() { return false; }
    virtual void remove_if_empty() {}
+   virtual void remove() {}
    virtual bool Done() { return true; }
    virtual bool usesfd(int n_fd) { return fd==n_fd; }
    virtual void Kill(int=SIGTERM) {}
@@ -113,6 +114,7 @@ public:
    void setmtime(time_t t);
    bool can_setmtime() { return true; }
    void remove_if_empty();
+   void remove();
    int getfd();
    bool can_seek();
 };

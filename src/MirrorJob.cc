@@ -212,8 +212,8 @@ void  MirrorJob::HandleFile(int how)
 	 }
 	 args->Append(local_name);
 	 gj=new GetJob(Clone(),args,cont_this);
-	 if(file->defined&(file->DATE|file->DATE_UNPREC))
-	    gj->SetTime(file->date);
+// 	 if(file->defined&(file->DATE|file->DATE_UNPREC))   FIXME
+// 	    gj->SetTime(file->date);
 #if 0
 	 if(file->defined&file->SIZE)
 	    gj->SetSize(file->size);

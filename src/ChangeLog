@@ -1,7 +1,16 @@
+1999-12-25  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CatJob.cc, ChangeLog, CopyJob.cc, CopyJob.h, FileAccess.cc,
+	  FileAccess.h, FileCopy.cc, FileCopy.h, Filter.cc, Filter.h,
+	  GetJob.cc, GetJob.h, MirrorJob.cc, commands.cc, mgetJob.cc,
+	  mgetJob.h, pgetJob.cc, pgetJob.h: lots of changes - get, mget, pget
+	  now work with new FileCopyEnv class.
+
 1999-12-24  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileCopy.cc: support ascii conversion.
 	* commands.cc: ignore -u for compatibility.
+	* CmdExec.cc: beware of stale pointers, use job number instead.
 
 1999-12-22  Alexander V. Lukyanov  <lav@yars.free.net>
 

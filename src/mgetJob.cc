@@ -24,12 +24,14 @@
 #include <fcntl.h>
 #include "mgetJob.h"
 #include "misc.h"
+#include "ArgV.h"
+#include "url.h"
 
 void mgetJob::ShowRunStatus(StatusLine *s)
 {
    if(rg)
    {
-      s->Show(rg->Status());
+      s->Show(rg->glob->Status());
       return;
    }
    GetJob::ShowRunStatus(s);
@@ -39,121 +41,88 @@ void mgetJob::PrintStatus(int v)
    if(rg)
    {
       SessionJob::PrintStatus(v);
-      printf("\t%s\n",rg->Status());
+      printf("\t%s\n",rg->glob->Status());
       return;
    }
    GetJob::PrintStatus(v);
 }
 
-mgetJob::mgetJob(FileAccess *session,ArgV *args) : GetJob(session,new ArgV(args->a0()))
+mgetJob::mgetJob(FileAccess *session,ArgV *a) : GetJob(session,new ArgV(a->a0()))
 {
    rg=0;
    make_dirs=false;
-
-   this->args=args;
-
-   args->rewind();
-   int opt;
-   while((opt=args->getopt("+cde"))!=EOF)
-   {
-      switch(opt)
-      {
-      case('c'):
-	 cont=true;
-	 break;
-      case('d'):
-	 make_dirs=true;
-	 break;
-      case('e'):
-	 delete_files=true;
-	 break;
-      case('?'):
-      print_usage:
-	 printf(_("Usage: %s [-c] [-d] [-e] pattern ...\n"),args->getarg(0));
-	 return;
-      }
-   }
-   args->back();
-   char *p=args->getnext();
-   if(!p)
-      goto print_usage;
-
-   rg=session->MakeGlob(p);
-   if(!rg)
-      rg=new NoGlob(p);
-   while(rg->Do()==MOVED);
+   m_args=a;
+   m_args->rewind();
 }
 
 int mgetJob::Do()
 {
-   char **files;
-   char **i;
-
    int m=STALL;
 
-   if(!rg)
+   if(!m_args)
       return GetJob::Do();
 
-   if(!rg->Done())
+   if(!rg)
+   {
+   next:
+      if(rg) { delete rg; rg=0; }
+      char *p=m_args->getnext();
+      if(!p)
+      {
+	 delete m_args;
+	 m_args=0;
+	 return MOVED;
+      }
+      rg=new GlobURL(session,p);
+      m=MOVED;
+   }
+
+   if(rg->glob->Error())
+   {
+      fprintf(stderr,"rglob: %s\n",rg->glob->ErrorText());
+      goto next;
+   }
+
+   if(!rg->glob->Done())
       return m;
 
    m=MOVED;
 
-   if(rg->Error())
-   {
-      fprintf(stderr,"rglob: %s\n",rg->ErrorText());
-      goto next;
-   }
-
-   files=rg->GetResult();
+   char **files=rg->glob->GetResult();
    if(!files)
    {
-      fprintf(stderr,_("%s: no files found\n"),rg->GetPattern());
+      fprintf(stderr,_("%s: no files found\n"),rg->glob->GetPattern());
       goto next;
    }
-   for(i=files; *i; i++)
+   while(*files)
    {
-      char *nl=strrchr(*i,'/');
+      char *nl=strrchr(*files,'/');
       char *local_name;
       if(!nl)
-	 local_name=*i;
+	 local_name=*files;
       else
       {
 	 if(make_dirs)
 	 {
 	    *nl=0;
-	    create_directories(*i);
+	    create_directories(*files);
 	    *nl='/';
-	    local_name=*i;
+	    local_name=*files;
 	 }
 	 else
 	    local_name=nl+1;
       }
-      AddFile(*i,local_name);
+      args->Append(*files);
+      args->Append(local_name);
+      files++;
    }
-
-next:
-   delete rg;
-   rg=0;
-
-   char *p=args->getnext();
-   if(!p)
-   {
-      delete args;
-      args=0;
-      return MOVED;
-   }
-
-   rg=session->MakeGlob(p);
-   if(!rg)
-      rg=new NoGlob(p);
-   while(rg->Do()==MOVED);
-
-   return MOVED;
+   goto next;
 }
 
 mgetJob::~mgetJob()
 {
    if(rg)
       delete rg;
+   if(m_args)
+      delete m_args;
 }

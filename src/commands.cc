@@ -608,8 +608,8 @@ Job *CmdExec::builtin_open()
 	       new_session=FileAccess::New(p);
 	       if(!new_session)
 	       {
-		  eprintf(N_("%s: %s - not supported protocol\n"),
-			   args->getarg(0),p);
+		  eprintf("%s: %s%s",args->a0(),p,
+			   _(" - not supported protocol\n"));
 		  return 0;
 	       }
 	    }
@@ -862,7 +862,6 @@ CMD(cat)
 CMD(get)
 {
    int opt;
-   bool use_urls=false;
    bool cont=false;
    const char *opts="+ceu";
    const char *op=args->a0();
@@ -899,9 +898,6 @@ CMD(get)
       case('e'):
 	 del=true;
 	 break;
-      case('u'):
-	 use_urls=true;
-	 break;
       case('?'):
       err:
 	 eprintf(_("Try `help %s' for more information.\n"),op);
@@ -917,18 +913,13 @@ CMD(get)
       eprintf(_("File name missed. "));
       goto err;
    }
-   if(!use_urls)
-      use_urls=ResMgr::Query("xfer:use-urls",0);
    while(a)
    {
       get_args->Append(a);
       ParsedURL url(a);
       a1=0;
-      if(use_urls)
-      {
-	 if(url.proto && url.path)
-	    a1=basename_ptr(url.path);
-      }
+      if(url.proto && url.path)
+	 a1=basename_ptr(url.path);
       if(a1==0)
 	 a1=basename_ptr(a);
       a=args->getnext();
@@ -964,8 +955,6 @@ CMD(get)
       GetJob *j=new GetJob(Clone(),get_args,cont);
       if(del)
 	 j->DeleteFiles();
-      if(use_urls)
-	 j->UseURLs();
       return j;
    }
    else
@@ -973,8 +962,6 @@ CMD(get)
       pgetJob *j=new pgetJob(Clone(),get_args);
       if(n_conn!=-1)
 	 j->SetMaxConn(n_conn);
-      if(use_urls)
-	 j->UseURLs();
       return j;
    }
 }
@@ -1987,16 +1974,16 @@ CMD(get1)
       {"output",required_argument,0,'o'},
       {0,0,0,0}
    };
-   int c;
-   char *src=0;
-   char *dst=0;
+   int opt;
+   const char *src=0;
+   const char *dst=0;
    bool cont=false;
    bool ascii=false;
 
    args->rewind();
-   while((c=args->getopt_long("arco:",get1_options,0))!=EOF)
+   while((opt=args->getopt_long("arco:",get1_options,0))!=EOF)
    {
-      switch(c)
+      switch(opt)
       {
       case 'c':
 	 cont=true;
@@ -2012,35 +1999,25 @@ CMD(get1)
 	 break;
       case '?':
       usage:
-	 // FIXME
+	 eprintf(_("Usage: %s [OPTS] file\n"),args->a0());
 	 return 0;
       }
    }
    src=args->getcurr();
    if(src==0)
       goto usage;
+   if(args->getnext()!=0)
+      goto usage;
 
    if(dst==0 || dst[0]==0)
    {
-retry:
-      dst=strrchr(src,'/');
-      if(dst)
-      {
-	 if(dst[1]==0 && dst>src)
-	 {
-	    *dst=0;
-	    goto retry;
-	 }
-	 dst++;
-      }
-      else
-	 dst=src;
+      dst=basename_ptr(src);
    }
    else
    {
       if(dst[strlen(dst)-1]=='/')
       {
-	 char *slash=strrchr(src,'/');
+	 const char *slash=strrchr(src,'/');
 	 if(slash)
 	    slash++;
 	 else
@@ -2052,22 +2029,35 @@ retry:
       }
    }
 
-   ParsedURL src_url(src,true);
    ParsedURL dst_url(dst,true);
 
    if(dst_url.proto==0)
    {
+      dst=expand_home_relative(dst);
       // check if dst is a directory.
-      // FIXME.
+      struct stat st;
+      if(stat(dst,&st)!=-1)
+      {
+	 if(S_ISDIR(st.st_mode))
+	 {
+	    const char *slash=strrchr(src,'/');
+	    if(slash)
+	       slash++;
+	    else
+	       slash=src;
+	    char *dst1=string_alloca(strlen(dst)+strlen(slash)+2);
+	    strcpy(dst1,dst);
+	    strcat(dst1,"/");
+	    strcat(dst1,slash);
+	    dst=dst1;
+	 }
+      }
    }
 
    FileCopyPeer *src_peer=0;
    FileCopyPeer *dst_peer=0;
 
-   if(src_url.proto==0)
-      src_peer=new FileCopyPeerFA(Clone(),src,FA::RETRIEVE);
-   else
-      src_peer=new FileCopyPeerFA(&src_url,FA::RETRIEVE);
+   src_peer=FileCopyPeerFA::New(Clone(),src,FA::RETRIEVE,true);
 
    if(dst_url.proto==0)
       dst_peer=new FileCopyPeerFDStream(new FileStream(dst,O_WRONLY|O_CREAT
@@ -2075,11 +2065,10 @@ retry:
    else
       dst_peer=new FileCopyPeerFA(&dst_url,FA::STORE);
 
-   if(ascii)
-   {
-      src_peer->Ascii();
-      dst_peer->Ascii();
-   }
+   FileCopy *c=new FileCopy(src_peer,dst_peer,cont);
 
-   return new CopyJob(new FileCopy(src_peer,dst_peer,cont),src);
+   if(ascii)
+      c->Ascii();
+
+   return new CopyJob(c,src);
 }

@@ -30,108 +30,24 @@
 
 #include "GetJob.h"
 #include "misc.h"
+#include "ArgV.h"
+#include "url.h"
 
 ResDecl res_clobber("xfer:clobber","yes",ResMgr::BoolValidate,0);
 
+#define super CopyJobEnv
+
 int   GetJob::Do()
 {
-   RateDrain();
-
    int m=STALL;
-   int res;
 
-   if(deleting)
-      goto handle_deleting;
-
-   if(!curr && args)
-      NextFile();
-
-   if(Done())
-      return m;
-
-   if(in_buffer==0 && got_eof)
+   if(cp && cp->Done() && !cp->Error())
    {
-      session->Close();
       // now we can delete old file, since there is new one
       RemoveBackupFile();
-      if(delete_files)
-      {
-	 if(!deleting)
-	 {
-	    deleting=true;
-	    session->Open(curr,FA::REMOVE);
-	    m=MOVED;
-	 }
-      handle_deleting:
-	 res=session->Done();
-	 if(res<=0)
-	 {
-	    deleting=false;
-	    m=MOVED;
-	    if(res<0)
-	       eprintf(_("remote rm(%s) - %s\n"),curr,session->StrError(res));
-	 }
-	 if(deleting)
-	    return m;
-      }
-      if(file_time>=0)
-	 local->setmtime(file_time);
-      NextFile();
+   }
+   if(super::Do()==MOVED)
       m=MOVED;
-      return m;
-   }
-   if(!got_eof)
-   {
-      if(session->IsClosed())
-      {
-	 if(cont)
-	 {
-	    // need to get current file size.
-	    // ensure the file is opened.
-	    if(local->getfd()==-1)
-	    {
-	       if(!local->error())
-	       {
-		  block+=TimeOut(1000);
-		  return m;
-	       }
-	       fprintf(stderr,"%s: %s\n",op,local->error_text);
-	       failed++;
-	       NextFile();
-	       return MOVED;
-	    }
-	    offset=local->getsize_and_seek_end();
-	    if(offset<0)
-	       offset=0;
-	 }
-	 m=MOVED;
-	 session->Open(curr,session->RETRIEVE,offset);
-      	 if(file_time==(time_t)-2)
-	 {
-	    session->WantDate(&file_time);
-	 }
-	 session->WantSize(&size);
-      }
-      res=TryRead(session);
-      if(res<0 && res!=FA::DO_AGAIN)
-      {
-	 local->remove_if_empty();
-	 NextFile();
-	 return MOVED;
-      }
-      else if(res>=0)
-	 m=MOVED;
-   }
-
-   res=TryWrite(local);
-   if(res<0)
-   {
-      NextFile();
-      return MOVED;
-   }
-   if(res>0)
-      m=MOVED;
-
    return m;
 }
 
@@ -140,61 +56,107 @@ void GetJob::NextFile()
 try_next:
    if(!args)
       return;
+   if(backup_file)
+   {
+      xfree(backup_file);
+      backup_file=0;
+   }
+
    if(local)
    {
       delete local;
       local=0;
    }
-   char *r=args->getnext();
-   char *l=args->getnext();
-   if(!r || !l)
+
+   const char *src=args->getnext();
+   const char *dst=args->getnext();
+   if(!src || !dst)
    {
-      XferJob::NextFile(0);
+      SetCopier(0,0);
       return;
    }
-   int flags=O_WRONLY|O_CREAT|(cont?0:O_TRUNC);
-   const char *f=(saved_cwd && l[0]!='/') ? dir_file(saved_cwd,l) : l;
-   made_backup=false;
-   if(!cont)
+
+   ParsedURL src_url(src,true);
+   ParsedURL dst_url(dst,true);
+
+   FileCopyPeer *src_peer=0;
+   FileCopyPeer *dst_peer=0;
+
+   if(dst_url.proto==0)
    {
-      /* rename old file if exists */
-      struct stat st;
-      if(stat(f,&st)!=-1)
+      int flags=O_WRONLY|O_CREAT|(cont?0:O_TRUNC);
+      const char *f=(cwd && dst[0]!='/') ? dir_file(cwd,dst) : dst;
+      if(!cont)
       {
-	 if(st.st_size>0)
+	 /* rename old file if exists and size>0 */
+	 struct stat st;
+	 if(stat(f,&st)!=-1)
 	 {
-	    if(!(bool)res_clobber.Query(0))
+	    if(st.st_size>0)
 	    {
-	       eprintf(_("%s: %s: file already exists and xfer:clobber is unset\n"),op,l);
-	       failed++;
-	       goto try_next;
+	       if(!(bool)res_clobber.Query(0))
+	       {
+		  eprintf(_("%s: %s: file already exists and xfer:clobber is unset\n"),op,dst);
+		  errors++;
+		  count++;
+		  goto try_next;
+	       }
+	       backup_file=(char*)xmalloc(strlen(f)+2);
+	       strcpy(backup_file,f);
+	       strcat(backup_file,"~");
+	       if(rename(f,backup_file)!=0)
+	       {
+		  xfree(backup_file);
+		  backup_file=0;
+	       }
 	    }
-	    char *b=(char*)alloca(strlen(f)+2);
-	    strcpy(b,f);
-	    strcat(b,"~");
-	    if(rename(f,b)==0)
-	       made_backup=true;
 	 }
       }
+      local=new FileStream(f,flags); // local is for pget.
+      FileCopyPeerFDStream *p=new FileCopyPeerFDStream(local,FileCopyPeer::PUT);
+      p->DontDeleteStream();
+      dst_peer=p;
    }
-   local=new FileStream(f,flags);
-   XferJob::NextFile(r);
-   file_time=(time_t)-2;
-   if(set_file_time!=(time_t)-1)
+   else
+      dst_peer=new FileCopyPeerFA(&dst_url,FA::STORE);
+
+   if(src_url.proto==0)
    {
-      file_time=set_file_time;
-      set_file_time=(time_t)-1;
+      FileCopyPeerFA *s=new FileCopyPeerFA(session,src,FA::RETRIEVE);
+      s->DontReuseSession();
+      src_peer=s;
    }
+   else
+      src_peer=new FileCopyPeerFA(&src_url,FA::RETRIEVE);
+
+   FileCopy *c=new FileCopy(src_peer,dst_peer,cont);
+
+   if(delete_files)
+      c->RemoveSourceLater();
+
+   SetCopier(c,src);
 }
 
 void GetJob::RemoveBackupFile()
 {
-   if(made_backup)
+   if(backup_file)
    {
-      FileStream *f=(FileStream*)local; // we are sure it is FileStream
-      char *b=(char*)alloca(strlen(f->full_name)+2);
-      strcpy(b,f->full_name);
-      strcat(b,"~");
-      remove(b);
+      remove(backup_file);
+      xfree(backup_file);
+      backup_file=0;
    }
+}
+
+GetJob::GetJob(FileAccess *s,ArgV *a,bool c)
+   : CopyJobEnv(s,a,c)
+{
+   delete_files=false;
+   backup_file=0;
+   local=0;
+}
+GetJob::~GetJob()
+{
+   xfree(backup_file);
+   if(local)
+      delete local;
 }

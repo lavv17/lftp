@@ -44,6 +44,9 @@ public:
    int Done();
    int ExitCode();
 
+   void Suspend() { c->Suspend(); Job::Suspend(); }
+   void Resume() { Job::Resume(); c->Resume(); }
+
    int AcceptSig(int sig);
    pid_t GetProcGroup() { return c?c->GetProcGroup():0; }
 
@@ -52,9 +55,18 @@ public:
    long GetTimeSpent() { return c->GetTimeSpent(); }
    int  GetTimeSpentMilli() { return c->GetTimeSpentMilli(); }
    long GetBytesCount() { return c->GetBytesCount(); }
+   long GetSize() { return c->GetSize(); }
+   long GetPos()  { return c->GetPos(); }
+   float GetRate() { return c->GetRate(); }
+   long GetETA() { return c->GetETA(); }
+   void SetRange(long s,long lim) { c->SetRange(s,lim); }
+   FileCopyPeer *GetPut() { return c->put; }
 
    void ShowRunStatus(StatusLine *s);
    void	PrintStatus(int);
+
+   const char *GetName() { return name; }
+   const char *SqueezeName(int w);
 
    static CopyJob *NewGet(FileAccess *f,const char *src,const char *dst);
    static CopyJob *NewPut(FileAccess *f,const char *src,const char *dst);
@@ -75,7 +87,8 @@ protected:
    float time_spent;
    const char *op;
    bool no_status;
-
+   char *cwd;
+   bool cont;
    ArgV *args;
 
    virtual void NextFile() = 0;
@@ -89,7 +102,7 @@ public:
 
    int AcceptSig(int sig);
 
-   CopyJobEnv(FileAccess *s,ArgV *a);
+   CopyJobEnv(FileAccess *s,ArgV *a,bool c=false);
    ~CopyJobEnv();
 
    void SayFinal();

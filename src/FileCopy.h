@@ -44,19 +44,26 @@ protected:
 
    long seek_pos;
    bool can_seek;
+   bool can_seek0;
    bool date_set;
    bool do_set_date;
+   bool removing;
 
    bool ascii;
 
 public:
    enum direction { GET, PUT };
 
+   long range_start; // NOTE: ranges are implemented only partially.
+   long range_limit;
+
 protected:
    enum direction mode;
 
 public:
    bool CanSeek() { return can_seek; }
+   bool CanSeek0() { return can_seek0; }
+   bool CanSeek(long p) { return p==0 ? CanSeek0() : CanSeek(); }
    long GetSeekPos() { return seek_pos; }
    virtual void Seek(long offs) { seek_pos=offs; Empty(); eof=false; broken=false; }
    virtual long GetRealPos() { return pos; }
@@ -75,6 +82,8 @@ public:
    void DontCopyDate() { do_set_date=false; }
    bool NeedDate() { return do_set_date; }
 
+   void SetRange(long s,long lim) { range_start=s; range_limit=lim; }
+
    FileCopyPeer(direction m);
    ~FileCopyPeer();
 
@@ -87,6 +96,9 @@ public:
 
    virtual pid_t GetProcGroup() { return 0; }
    virtual void Kill(int sig) {}
+
+   virtual void RemoveFile() {}
+   virtual void NeedSeek() {} // fd is shared, seek before access.
 };
 
 class Speedometer : public SMTask
@@ -101,20 +113,28 @@ class Speedometer : public SMTask
 public:
    Speedometer(int p);
    float Get();
-   const char *GetStr();
-   const char *GetStrS();
-   const char *GetETAStr(long s);
-   const char *GetETAStrS(long s);
+   static const char *GetStr(float r);
+   const char *GetStr() { return GetStr(Get()); }
+   static const char *GetStrS(float r);
+   const char *GetStrS() { return GetStrS(Get()); }
+   const char *GetETAStrFromSize(long s);
+   const char *GetETAStrSFromSize(long s);
+   static const char *GetETAStrFromTime(long t);
+   static const char *GetETAStrSFromTime(long t);
    bool Valid();
    void Add(int bytes);
+   void Reset();
+   void SetPeriod(int p) { period=p; }
    int Do();
 };
 
 class FileCopy : public SMTask
 {
+public:
    FileCopyPeer *get;
    FileCopyPeer *put;
 
+private:
    enum state_t
       {
 	 INITIAL,
@@ -141,13 +161,19 @@ class FileCopy : public SMTask
    int end_time_ms;
    long bytes_count;
 
+   bool fail_if_cannot_seek;
+   bool remove_source_later;
+
 public:
    long GetPos();
+   long GetSize();
    int  GetPercentDone();
    const char *GetPercentDoneStr();
    float GetRate();
    const char *GetRateStr();
-   long GetETA();
+   long GetBytesRemaining();
+   long GetETA() { return GetETA(GetBytesRemaining()); }
+   long GetETA(long b);
    const char *GetETAStr();
    const char *GetStatus();
    FgData *GetFgData(bool fg);
@@ -157,18 +183,27 @@ public:
    time_t GetTimeSpent();
    int GetTimeSpentMilli();
 
+   void SetDate(time_t t) { get->SetDate(t); }
+   void SetSize(long   s) { get->SetSize(s); }
+
    bool Done() { return state==ALL_DONE; }
    bool Error() { return error_text!=0; }
    const char *ErrorText() { return error_text; }
    void SetError(const char *str);
 
    void DontCopyDate() { put->DontCopyDate(); }
+   void Ascii() { get->Ascii(); put->Ascii(); }
+   void FailIfCannotSeek() { fail_if_cannot_seek=true; }
+   void SetRange(long s,long lim) { get->SetRange(s,lim); put->SetRange(s,lim); }
+   void RemoveSourceLater() { remove_source_later=true; }
 
    FileCopy(FileCopyPeer *src,FileCopyPeer *dst,bool cont);
    ~FileCopy();
    void Init();
 
    int Do();
+   void Suspend();
+   void Resume();
 };
 
 class FileCopyPeerFA : public FileCopyPeer
@@ -204,6 +239,9 @@ public:
    const char *GetStatus() { return session->CurrentStatus(); }
 
    bool NeedSizeDateBeforehand() { return session->NeedSizeDateBeforehand(); }
+   void RemoveFile();
+
+   static FileCopyPeerFA *New(FA *s,const char *url,int m,bool reuse=false);
 };
 
 class FileCopyPeerFDStream : public FileCopyPeer
@@ -218,6 +256,7 @@ class FileCopyPeerFDStream : public FileCopyPeer
 
    bool delete_stream;
    bool create_fg_data;
+   bool need_seek;
 
 public:
    FileCopyPeerFDStream(FDStream *o,direction m);
@@ -232,6 +271,9 @@ public:
 
    void DontDeleteStream() { delete_stream=false; }
    void DontCreateFgData() { create_fg_data=false; }
+   void NeedSeek() { need_seek=true; }
+   void RemoveFile();
+   void SetBase(long b) { seek_base=b; }
 };
 
 class FileCopyPeerString : public FileCopyPeer

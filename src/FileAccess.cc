@@ -1057,3 +1057,34 @@ NoGlob::NoGlob(const char *p) : Glob(p)
    add(p1);
    xfree(p1);
 }
+
+GlobURL::GlobURL(FileAccess *s,const char *p)
+{
+   session=s;
+   reuse=false;
+   glob=0;
+
+   ParsedURL p_url(p,true);
+   if(p_url.proto && p_url.path)
+   {
+      session=FA::New(&p_url);
+      if(session)
+      {
+	 glob=session->MakeGlob(p_url.path);
+	 reuse=true;
+      }
+   }
+   else
+   {
+      glob=session->MakeGlob(p);
+   }
+   if(!glob)
+      glob=new NoGlob(p);
+}
+GlobURL::~GlobURL()
+{
+   if(glob)
+      delete glob;
+   if(session && reuse)
+      SessionPool::Reuse(session);
+}

@@ -24,6 +24,7 @@
 #include "CopyJob.h"
 #include "ArgV.h"
 #include "plural.h"
+#include "misc.h"
 
 int CopyJob::Do()
 {
@@ -55,6 +56,12 @@ int CopyJob::ExitCode()
    return 0;
 }
 
+const char *CopyJob::SqueezeName(int w)
+{
+   // FIXME
+   return name;
+}
+
 void CopyJob::ShowRunStatus(StatusLine *s)
 {
    if(no_status)
@@ -62,7 +69,8 @@ void CopyJob::ShowRunStatus(StatusLine *s)
    if(c->Done() || c->Error())
       return;
 
-   s->Show(_("`%s' at %lu %s%s%s%s"),name,c->GetPos(),
+   s->Show(_("`%s' at %lu %s%s%s%s"),
+      SqueezeName(s->GetWidthDelayed()-40),c->GetPos(),
       c->GetPercentDoneStr(),c->GetRateStr(),
       c->GetETAStr(),c->GetStatus());
 }
@@ -117,7 +125,7 @@ CopyJob *CopyJob::NewEcho(const char *str,int len,FDStream *o)
 }
 
 // CopyJobEnv
-CopyJobEnv::CopyJobEnv(FileAccess *s,ArgV *a)
+CopyJobEnv::CopyJobEnv(FileAccess *s,ArgV *a,bool cont1)
    : SessionJob(s)
 {
    args=a;
@@ -130,11 +138,15 @@ CopyJobEnv::CopyJobEnv(FileAccess *s,ArgV *a)
    bytes=0;
    time_spent=0;
    no_status=false;
+   cont=cont1;
+   cwd=xgetcwd();
 }
 CopyJobEnv::~CopyJobEnv()
 {
+   SetCopier(0,0);
    if(args)
       delete args;
+   xfree(cwd);
 }
 int CopyJobEnv::Do()
 {
@@ -190,8 +202,8 @@ void CopyJobEnv::SayFinal()
       {
 	 printf(plural("%ld $#l#byte|bytes$ transferred"
 			" in %ld $#l#second|seconds$ (%g bytes/s)\n",
-			bytes,long(time_spent)),
-			bytes,long(time_spent),bytes/time_spent);
+			bytes,long(time_spent+.5)),
+			bytes,long(time_spent+.5),bytes/time_spent);
       }
       else
       {

@@ -33,11 +33,14 @@
 #include "misc.h"
 
 #define skip_threshold 0x1000
-#define debug(a) Log::global->Format a
+#define debug(a) //Log::global->Format a
 
 ResDecl rate_period  ("xfer:rate-period","15", ResMgr::UNumberValidate,0);
 ResDecl eta_period   ("xfer:eta-period", "120",ResMgr::UNumberValidate,0);
 ResDecl res_eta_terse("xfer:eta-terse",  "yes",ResMgr::BoolValidate,0);
+
+// FileCopy
+#define super SMTask
 
 int FileCopy::Do()
 {
@@ -81,7 +84,13 @@ int FileCopy::Do()
       if(cont && put->CanSeek())
 	 put->Seek(FILE_END);
       else
+      {
+	 if(put->range_start>0 && put->CanSeek())
+	    put->Seek(put->range_start);
+	 if(get->range_start>0 && get->CanSeek())
+	    get->Seek(get->range_start);
 	 goto pre_DO_COPY;
+      }
 
       get->Suspend();
       put->Resume();
@@ -100,6 +109,8 @@ int FileCopy::Do()
    pre_DO_COPY:
       start_time=now;
       start_time_ms=now_ms;
+      rate->Reset();
+      rate_for_eta->Reset();
       state=DO_COPY;
       m=MOVED;
       /* fallthrough */
@@ -123,12 +134,19 @@ int FileCopy::Do()
 	 return m;
       }
       get->Resume();
+      if(fail_if_cannot_seek && (get->GetRealPos()<get->range_start
+			      || put->GetRealPos()<put->range_start
+			      || get->GetRealPos()!=put->GetRealPos()))
+      {
+	 SetError("seek failed");
+	 return MOVED;
+      }
       /* check if positions are correct */
       if(get->GetRealPos()!=put->GetRealPos())
       {
 	 if(put->GetRealPos()<get->GetRealPos())
 	 {
-	    if(!get->CanSeek())
+	    if(!get->CanSeek(put->GetRealPos()))
 	    {
 	       // we lose... How about a large buffer?
 	       SetError("cannot seek on data source");
@@ -143,7 +161,7 @@ int FileCopy::Do()
 	 else // put->GetRealPos() > get->GetRealPos()
 	 {
 	    int skip=put->GetRealPos()-get->GetRealPos();
-	    if(!put->CanSeek() || skip<skip_threshold)
+	    if(!put->CanSeek(get->GetRealPos()) || skip<skip_threshold)
 	    {
 	       // we have to skip some data
 	       get->Get(&b,&s);
@@ -168,6 +186,7 @@ int FileCopy::Do()
       if(b==0) // eof
       {
 	 debug((9,"copy: get hit eof\n"));
+      eof:
 	 put->SetDate(get->GetDate());
 	 put->PutEOF();
 	 get->Suspend();
@@ -182,6 +201,9 @@ int FileCopy::Do()
       }
       rate_add=put_buf;
 
+      if(get->range_limit!=FILE_END && get->range_limit<get->GetRealPos()+s)
+	 s=get->range_limit-get->GetRealPos();
+
       put->Put(b,s);
       get->Skip(s);
       bytes_count+=s;
@@ -190,6 +212,12 @@ int FileCopy::Do()
       rate_add-=put_buf-s;
       rate->Add(rate_add);
       rate_for_eta->Add(rate_add);
+
+      if(get->range_limit!=FILE_END && get->range_limit<=get->GetRealPos())
+      {
+	 debug((9,"copy: get reached range limit\n"));
+	 goto eof;
+      }
       return MOVED;
 
    case(CONFIRM_WAIT):
@@ -204,6 +232,9 @@ int FileCopy::Do()
       if(!put->Done())
 	 return m;
       debug((9,"copy: put confirmed store\n"));
+      get->Empty();
+      get->PutEOF();
+      get->Resume();
       state=GET_DONE_WAIT;
       m=MOVED;
       end_time=now;
@@ -213,6 +244,11 @@ int FileCopy::Do()
    case(GET_DONE_WAIT):
       if(get->Error())
 	 goto get_error;
+      if(remove_source_later)
+      {
+	 get->RemoveFile();
+	 remove_source_later=false;
+      }
       if(!get->Done())
 	 return m;
       debug((9,"copy: get is finished - all done\n"));
@@ -252,6 +288,8 @@ void FileCopy::Init()
    start_time_ms=0;
    end_time=0;
    end_time_ms=0;
+   fail_if_cannot_seek=false;
+   remove_source_later=false;
 }
 
 FileCopy::FileCopy(FileCopyPeer *s,FileCopyPeer *d,bool c)
@@ -266,6 +304,27 @@ FileCopy::~FileCopy()
    if(get) delete get;
    if(put) delete put;
 }
+void FileCopy::Suspend()
+{
+   if(get) get->Suspend();
+   if(put) put->Suspend();
+   super::Suspend();
+}
+void FileCopy::Resume()
+{
+   super::Resume();
+   if(state!=PUT_WAIT)
+   {
+      if(get && !(put && put->Size()>=max_buf))
+	 get->Resume();
+   }
+   if(state!=GET_INFO_WAIT)
+   {
+      if(put)
+	 put->Resume();
+   }
+}
+
 void FileCopy::SetError(const char *str)
 {
    xfree(error_text);
@@ -281,6 +340,13 @@ long FileCopy::GetPos()
    if(get)
       return get->GetRealPos();
    return 0;
+}
+
+long FileCopy::GetSize()
+{
+   if(get)
+      return get->GetSize();
+   return NO_SIZE;
 }
 
 int FileCopy::GetPercentDone()
@@ -313,25 +379,41 @@ const char *FileCopy::GetRateStr()
 {
    return rate->GetStrS();
 }
+long FileCopy::GetBytesRemaining()
+{
+   if(!get)
+      return 0;
+   if(get->range_limit==FILE_END)
+   {
+      long size=get->GetSize();
+      if(size<=0 || size<get->GetRealPos() || !rate_for_eta->Valid())
+	 return -1;
+      return(size-GetPos());
+   }
+   return get->range_limit-GetPos();
+}
 const char *FileCopy::GetETAStr()
 {
-   if(GetETA()<0)
+   long b=GetBytesRemaining();
+   if(b<0)
       return "";
-   return rate_for_eta->GetETAStrS(get->GetSize()-GetPos());
+   return rate_for_eta->GetETAStrSFromSize(b);
 }
-
-long FileCopy::GetETA()
+long FileCopy::GetETA(long b)
 {
-   long size=get->GetSize();
-   if(size<=0 || size<get->GetRealPos() || !rate_for_eta->Valid())
+   if(b<0 || !rate_for_eta->Valid())
       return -1;
-   return (long)((size-GetPos()) / rate_for_eta->Get() + 0.5);
+   return (long)(b / rate_for_eta->Get() + 0.5);
 }
 const char *FileCopy::GetStatus()
 {
    static char buf[256];
-   const char *get_st=get->GetStatus();
-   const char *put_st=put->GetStatus();
+   const char *get_st=0;
+   if(get)
+      get_st=get->GetStatus();
+   const char *put_st=0;
+   if(put)
+      put_st=put->GetStatus();
    if(get_st && get_st[0] && put_st && put_st[0])
       sprintf(buf,"[%s->%s]",get_st,put_st);
    else if(get_st && get_st[0])
@@ -413,8 +495,13 @@ bool FileCopyPeer::Done()
       return true;
    if(eof && in_buffer==0)
    {
+      if(removing)
+	 return false;
       if(mode==PUT)
-	 return date_set;
+      {
+	 if(do_set_date && !date_set)
+	    return false;
+      }
       return true;
    }
    return false;
@@ -433,6 +520,9 @@ FileCopyPeer::FileCopyPeer(direction m)
    date_set=false;
    do_set_date=true;
    ascii=false;
+   range_start=0;
+   range_limit=FILE_END;
+   removing=false;
    Suspend();  // don't do anything too early
 }
 FileCopyPeer::~FileCopyPeer()
@@ -446,6 +536,20 @@ int FileCopyPeerFA::Do()
 {
    int m=STALL;
    int res;
+
+   if(removing)
+   {
+      res=session->Done();
+      if(res<=0)
+      {
+	 removing=false;
+	 session->Close();
+	 m=MOVED;
+      }
+      else
+	 return m;
+   }
+
    if(Done() || Error())
       return STALL;
    switch(mode)
@@ -594,6 +698,12 @@ void FileCopyPeerFA::OpenSession()
       session->WantDate(&date);
 }
 
+void FileCopyPeerFA::RemoveFile()
+{
+   session->Open(file,FA::REMOVE);
+   removing=true;
+}
+
 int FileCopyPeerFA::Get_LL(int len)
 {
    int res=0;
@@ -694,10 +804,13 @@ FileCopyPeerFA::FileCopyPeerFA(FileAccess *s,const char *f,int m)
 }
 FileCopyPeerFA::~FileCopyPeerFA()
 {
-   session->Close();
+   if(session)
+   {
+      session->Close();
+      if(reuse_later)
+	 SessionPool::Reuse(session);
+   }
    xfree(file);
-   if(reuse_later && session)
-      SessionPool::Reuse(session);
 }
 
 FileCopyPeerFA::FileCopyPeerFA(ParsedURL *u,int m)
@@ -709,8 +822,27 @@ FileCopyPeerFA::FileCopyPeerFA(ParsedURL *u,int m)
    reuse_later=true;
    if(!session)
    {
-      SetError("no session"); // FIXME
+      const char *e=_(" - not supported protocol");
+      char *m=string_alloca(strlen(e)+strlen(u->proto)+1);
+      strcpy(m,u->proto);
+      strcat(m,e);
+      SetError(m);
    }
+   else if(!file)
+   {
+      SetError(_("file name missed in URL"));
+   }
+}
+
+FileCopyPeerFA *FileCopyPeerFA::New(FileAccess *s,const char *url,int m,bool reuse)
+{
+   ParsedURL u(url,true);
+   if(u.proto)
+      return new FileCopyPeerFA(&u,m);
+   FileCopyPeerFA *peer=new FileCopyPeerFA(s,url,m);
+   if(!reuse)
+      peer->DontReuseSession();
+   return peer;
 }
 
 // FileCopyPeerFDStream
@@ -723,13 +855,14 @@ FileCopyPeerFDStream::FileCopyPeerFDStream(FDStream *o,direction m)
    seek_base=0;
    delete_stream=true;
    create_fg_data=true;
-   can_seek=stream->can_seek();
+   can_seek = can_seek0 = stream->can_seek();
    if(can_seek && stream->fd!=-1)
    {
       seek_base=lseek(stream->fd,0,SEEK_CUR);
       if(seek_base==-1)
       {
 	 can_seek=false;
+	 can_seek0=false;
 	 seek_base=0;
       }
    }
@@ -837,6 +970,7 @@ void FileCopyPeerFDStream::Seek(long new_pos)
       // it is possible to read file to determine right position,
       // but it is costly.
       can_seek=false;
+      // can_seek0 is still true.
       return;
    }
 #endif
@@ -849,6 +983,7 @@ void FileCopyPeerFDStream::Seek(long new_pos)
       if(new_pos==-1)
       {
 	 can_seek=false;
+	 can_seek0=false;
 	 return;
       }
       SetSize(new_pos);
@@ -863,6 +998,7 @@ void FileCopyPeerFDStream::Seek(long new_pos)
       if(lseek(getfd(),new_pos+seek_base,SEEK_SET)==-1)
       {
 	 can_seek=false;
+	 can_seek0=false;
 	 return;
       }
       pos=new_pos;
@@ -898,6 +1034,9 @@ int FileCopyPeerFDStream::Get_LL(int len)
    else
 #endif
       Allocate(len);
+
+   if(need_seek)  // this does not combine with ascii.
+      lseek(fd,seek_base+pos,SEEK_SET);
 
    res=read(fd,buffer+buffer_ptr+in_buffer,len);
    if(res==-1)
@@ -976,6 +1115,9 @@ int FileCopyPeerFDStream::Put_LL(const char *buf,int len)
    if(len==0)
       return skip_cr;
 
+   if(need_seek)  // this does not combine with ascii.
+      lseek(fd,seek_base+pos-in_buffer,SEEK_SET);
+
    int res=write(fd,buf,len);
    if(res<0)
    {
@@ -999,6 +1141,12 @@ FgData *FileCopyPeerFDStream::GetFgData(bool fg)
    if(stream->GetProcGroup())
       return new FgData(stream->GetProcGroup(),fg);
    return 0;
+}
+
+void FileCopyPeerFDStream::RemoveFile()
+{
+   stream->remove();
+   removing=false;   // it is instant.
 }
 
 // FileCopyPeerString
@@ -1066,10 +1214,9 @@ void Speedometer::Add(int b)
    if(b>0)
       last_bytes=now;
 }
-const char *Speedometer::GetStr()
+const char *Speedometer::GetStr(float r)
 {
    buf_rate[0]=0;
-   float r=Get();
    if(r<1)
       return "";
    if(r<1024)
@@ -1080,14 +1227,21 @@ const char *Speedometer::GetStr()
       sprintf(buf_rate,_("%.2fM/s"),r/1024./1024.);
    return buf_rate;
 }
-const char *Speedometer::GetETAStr(long size)
+const char *Speedometer::GetETAStrFromSize(long size)
 {
    buf_eta[0]=0;
 
    if(!Valid() || Get()<1)
       return buf_eta;
 
-   long eta=long(size/Get()+.5);
+   return GetETAStrFromTime(long(size/Get()+.5));
+}
+const char *Speedometer::GetETAStrFromTime(long eta)
+{
+   buf_eta[0]=0;
+
+   if(eta<0)
+      return buf_eta;
 
    long eta2=0;
    long ueta=0;
@@ -1171,17 +1325,31 @@ const char *Speedometer::GetETAStr(long size)
    }
    return buf_eta;
 }
-const char *Speedometer::GetStrS()
+const char *Speedometer::GetStrS(float r)
 {
-   GetStr();
+   GetStr(r);
    if(buf_rate[0])
       strcat(buf_rate," ");
    return buf_rate;
 }
-const char *Speedometer::GetETAStrS(long s)
+const char *Speedometer::GetETAStrSFromSize(long s)
 {
-   GetETAStr(s);
+   GetETAStrFromSize(s);
    if(buf_eta[0])
       strcat(buf_eta," ");
    return buf_eta;
+}
+const char *Speedometer::GetETAStrSFromTime(long s)
+{
+   GetETAStrFromTime(s);
+   if(buf_eta[0])
+      strcat(buf_eta," ");
+   return buf_eta;
+}
+void Speedometer::Reset()
+{
+   start=now;
+   last_second=now;
+   rate=0;
+   last_bytes=0;
 }

@@ -23,34 +23,26 @@
 #ifndef GETJOB_H
 #define GETJOB_H
 
-#include "FileXfer.h"
+#include "CopyJob.h"
 
-class GetJob : public FileXfer
+class GetJob : public CopyJobEnv
 {
 protected:
    void	 NextFile();
 
-   time_t set_file_time;
-   time_t file_time;
-   bool delete_files:1;
-   bool	deleting:1;
-   bool made_backup:1;
+   bool delete_files;
+   char *backup_file;
+   FDStream *local;
 
    void RemoveBackupFile();
 
 public:
+   GetJob(FileAccess *s,ArgV *a,bool c=false);
+   ~GetJob();
+
    int	 Do();
 
-   void SetTime(time_t t) { set_file_time=t; }
    void DeleteFiles() { delete_files=true; }
-
-   GetJob(FileAccess *s,ArgV *args,bool cont=false)
-      : FileXfer(s,args,cont)
-   {
-      set_file_time=(time_t)-1;
-      file_time=(time_t)-2;
-      delete_files=deleting=made_backup=false;
-   }
 };
 
 #endif /* GETJOB_H */

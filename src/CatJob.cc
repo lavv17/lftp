@@ -80,7 +80,9 @@ void CatJob::NextFile()
    FileCopyPeerFDStream *dst_peer=0;
    if(for_each)
    {
-      dst_peer=new FileCopyPeerFDStream(new OutputFilter(for_each,global),FileCopyPeer::PUT);
+      OutputFilter *out=new OutputFilter(for_each,global);
+      out->SetCwd(cwd);
+      dst_peer=new FileCopyPeerFDStream(out,FileCopyPeer::PUT);
       dst_peer->DontCreateFgData();
    }
    else
@@ -89,14 +91,10 @@ void CatJob::NextFile()
       dst_peer->DontDeleteStream();
    }
 
-   if(ascii)
-   {
-      src_peer->Ascii();
-      dst_peer->Ascii();
-   }
-
    FileCopy *copier=new FileCopy(src_peer,dst_peer,false);
    copier->DontCopyDate();
+   if(ascii)
+      copier->Ascii();
    SetCopier(copier,src);
 
    if(no_status)

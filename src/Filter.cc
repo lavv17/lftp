@@ -305,6 +305,10 @@ FileStream::~FileStream()
       close(fd);
    fd=-1;
 }
+void FileStream::remove()
+{
+   ::remove(full_name);
+}
 void FileStream::remove_if_empty()
 {
    if(!full_name)
@@ -312,7 +316,7 @@ void FileStream::remove_if_empty()
    struct stat st;
    int res=stat(full_name,&st);
    if(res!=-1 && st.st_size==0)
-      remove(full_name);
+      remove();
 }
 
 int   FileStream::getfd()

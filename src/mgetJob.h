@@ -27,12 +27,11 @@
 
 class mgetJob : public GetJob
 {
-   Glob *rg;
-   ArgV *args;
+   GlobURL *rg;
+   ArgV *m_args;
 
 public:
    int	 Do();
-   int	 Done() { return(rg==0 && GetJob::Done()); }
    void	 PrintStatus(int);
    void	 ShowRunStatus(StatusLine *s);
 
