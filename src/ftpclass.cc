@@ -1328,11 +1328,84 @@ int   Ftp::Do()
 	    DebugPrint("**** ",str,0);
 	    goto system_error;
 	 }
-   	 NonBlock(data_sock);
+	 NonBlock(data_sock);
 	 CloseOnExec(data_sock);
 	 KeepAlive(data_sock);
 	 SetSocketBuffer(data_sock);
 	 SetSocketMaxseg(data_sock);
+
+	 if(flags&PASSIVE_MODE)
+	 {
+	    // connect should come from the same address, else server can refuse.
+	    addr_len=sizeof(data_sa);
+	    getsockname(control_sock,&data_sa.sa,&addr_len);
+	    if(data_sa.sa.sa_family==AF_INET)
+	       data_sa.in.sin_port=0;
+   #if INET6
+	    else if(data_sa.sa.sa_family==AF_INET6)
+	       data_sa.in6.sin6_port=0;
+   #endif
+	    if(bind(data_sock,&data_sa.sa,addr_len)<0)
+	    {
+	       sprintf(str,"bind(data_sock): %s",strerror(errno));
+	       DebugPrint("**** ",str,0);
+	    }
+	 }
+	 else // !PASSIVE_MODE
+	 {
+	    addr_len=sizeof(data_sa);
+	    if(copy_mode!=COPY_NONE)
+	       data_sa=copy_addr;
+	    else
+	    {
+	       getsockname(control_sock,&data_sa.sa,&addr_len);
+
+	       Range range(Query("port-range"));
+
+	       for(int t=0; ; t++)
+	       {
+		  if(t>=10)
+		  {
+		     close(data_sock);
+		     data_sock=-1;
+		     TimeoutS(10);	 // retry later.
+		     return m;
+		  }
+		  if(t==9)
+		     ReuseAddress(data_sock);   // try to reuse address.
+
+		  int port=0;
+		  if(!range.IsFull())
+		     port=range.Random();
+
+		  if(data_sa.sa.sa_family==AF_INET)
+		     data_sa.in.sin_port=htons(port);
+   #if INET6
+		  else if(data_sa.sa.sa_family==AF_INET6)
+		     data_sa.in6.sin6_port=htons(port);
+   #endif
+		  else
+		  {
+		     Fatal("unsupported network protocol");
+		     return MOVED;
+		  }
+
+		  if(bind(data_sock,&data_sa.sa,addr_len)==0)
+		     break;
+
+		  // Fail unless socket was already taken
+		  if(errno!=EINVAL && errno!=EADDRINUSE)
+		  {
+		     sprintf(str,"bind: %s",strerror(errno));
+		     DebugPrint("**** ",str,0);
+		     goto system_error;
+		  }
+	       }
+	       // get the allocated port
+	       getsockname(data_sock,&data_sa.sa,&addr_len);
+	       listen(data_sock,1);
+	    }
+	 }
       }
 
       int old_type=type;
@@ -1508,8 +1581,9 @@ int   Ftp::Do()
       {
 	 if(peer_sa.sa.sa_family==AF_INET)
 	 {
-	    goto ipv4_pasv;   // make it used
+#if INET6
 	 ipv4_pasv:
+#endif
 	    SendCmd("PASV");
 	    AddResp(227,CHECK_PASV);
 	    addr_received=0;
@@ -1530,62 +1604,15 @@ int   Ftp::Do()
       }
       else
       {
-	 addr_len=sizeof(data_sa);
 	 if(copy_mode!=COPY_NONE)
 	    data_sa=copy_addr;
-	 else
-	 {
-	    getsockname(control_sock,&data_sa.sa,&addr_len);
-
-	    Range range(Query("port-range"));
-
-	    for(int t=0; ; t++)
-	    {
-	       if(t>=10)
-	       {
-		  TimeoutS(10);	 // retry later.
-		  return m;
-	       }
-	       if(t==9)
-		  ReuseAddress(data_sock);   // try to reuse address.
-
-	       int port=0;
-	       if(!range.IsFull())
-		  port=range.Random();
-
-	       if(data_sa.sa.sa_family==AF_INET)
-	          data_sa.in.sin_port=htons(port);
-#if INET6
-	       else if(data_sa.sa.sa_family==AF_INET6)
-	          data_sa.in6.sin6_port=htons(port);
-#endif
-	       else
-	       {
-	          Fatal(_("unsupported network protocol"));
-	          return MOVED;
-	       }
-
-	       if(bind(data_sock,&data_sa.sa,addr_len)==0)
-		  break;
-
-	       // Fail unless socket was already taken
-	       if(errno!=EINVAL && errno!=EADDRINUSE)
-	       {
-		  sprintf(str,"bind: %s",strerror(errno));
-		  DebugPrint("**** ",str,0);
-		  goto system_error;
-	       }
- 	    }
-	    // get the port allocated
-	    getsockname(data_sock,&data_sa.sa,&addr_len);
-	    listen(data_sock,1);
-	 }
 	 if(data_sa.sa.sa_family==AF_INET)
 	 {
 	    a=(unsigned char*)&data_sa.in.sin_addr;
 	    p=(unsigned char*)&data_sa.in.sin_port;
-	    goto ipv4_port;   // make it used
+#if INET6
 	 ipv4_port:
+#endif
 	    sprintf(str,"PORT %d,%d,%d,%d,%d,%d\n",a[0],a[1],a[2],a[3],p[0],p[1]);
 	    SendCmd(str);
 	    AddResp(RESP_PORT_OK,CHECK_PORT);
