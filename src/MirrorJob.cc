@@ -721,7 +721,7 @@ void MirrorJob::va_Report(const char *fmt,va_list v)
       return;
    }
 
-   if((verbose_report && fg) || !isatty(fileno(stdout)))
+   if(verbose_report && (fg || !isatty(fileno(stdout))))
    {
       vfprintf(stdout,fmt,v);
       printf("\n");

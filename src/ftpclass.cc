@@ -529,7 +529,7 @@ int   Ftp::Handle_PASV()
 int   Ftp::Handle_EPSV()
 {
    char delim;
-   char *format=alloca_strdup("||%*[^|]|%u|");
+   char *format=alloca_strdup("|||%u|");
    unsigned port;
    char *c;
 
@@ -542,7 +542,10 @@ int   Ftp::Handle_EPSV()
 	 *p=delim;
 
    if(sscanf(c,format,&port)!=1)
+   {
+      DebugPrint("**** ","cannot parse EPSV response");
       return INITIAL_STATE;
+   }
 
    socklen_t len=sizeof(data_sa);
    getpeername(control_sock,&data_sa.sa,&len);
