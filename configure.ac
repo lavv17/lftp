@@ -162,12 +162,15 @@ if test x$with_socksdante = xyes; then
    AC_CHECK_LIB(socks, main, [SOCKSLIBS=-lsocks],
       [AC_MSG_ERROR(cannot find -lsocks library)])
 fi
-LIBS="$LIBS $SOCKSLIBS"
+AC_SUBST(SOCKSLIBS)
 if test -n "$SOCKSLIBS"; then
+   old_LIBS="$LIBS"
+   LIBS="$LIBS $SOCKSLIBS"
    AC_CHECK_FUNCS([Rpoll])
    if test "$ac_cv_func_Rpoll" != yes; then
       lftp_cv_func_poll_works=no
    fi
+   LIBS="$old_LIBS"
 fi
 
 AC_ARG_WITH(modules,
