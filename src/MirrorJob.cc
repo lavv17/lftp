@@ -1282,7 +1282,8 @@ CMD(mirror)
 	    }
 	    target_dir=alloca_strdup(target_url.path);
 	 }
-	 if(target_dir[0] && target_dir[strlen(target_dir)-1]=='/')
+	 if(target_dir[0] && target_dir[strlen(target_dir)-1]=='/'
+	 && basename_ptr(target_dir)[0]!='/')
 	 {
 	    // user wants source dir name appended.
 	    const char *base=basename_ptr(source_dir);

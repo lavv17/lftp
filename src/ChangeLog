@@ -1,6 +1,7 @@
 2003-12-01  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: fix possible freed memory access.
+	* MirrorJob.cc: don't append basename of source to / destination.
 
 2003-11-26  Alexander V. Lukyanov <lav@yars.free.net>
 
