@@ -167,8 +167,8 @@ public:
       {
 	 switch(sscanf(s,"%d%*c%d",&a,&b))
 	 {
-	 case 0: a=b=0; break;
-	 case 1: b=a; break;
+	 case 0: a=0;
+	 case 1: b=a;
 	 }
       }
 };
