@@ -383,6 +383,7 @@ static completion_type cmd_completion_type(const char *cmd,int start)
    bool was_o=false;
    bool was_N=false;
    bool was_O=false;
+   bool was_R=false;
    bool second=false;
    int second_start=-1;
    for(int i=start; i>4; i--)
@@ -397,6 +398,11 @@ static completion_type cmd_completion_type(const char *cmd,int start)
       if(!strncmp(rl_line_buffer+i-3,"-N",2) && isspace(rl_line_buffer[i-4]))
       {
 	 was_N=true;
+	 break;
+      }
+      if(!strncmp(rl_line_buffer+i-3,"-R",2) && isspace(rl_line_buffer[i-4]))
+      {
+	 was_R=true;
 	 break;
       }
       if(i-14 >= 0 && !strncmp(rl_line_buffer+i-13, "--newer-than",12) && isspace(rl_line_buffer[i-14]))
@@ -442,7 +448,9 @@ static completion_type cmd_completion_type(const char *cmd,int start)
 	 return REMOTE_DIR;
    if(!strcmp(buf,"mirror"))
    {
-      // FIXME: guess -R and take arg number into account.
+      // FIXME: guess -R better and take arg number into account.
+      if(was_R)
+	 return LOCAL_DIR;
       if(!was_N)
 	 return REMOTE_DIR;
    }

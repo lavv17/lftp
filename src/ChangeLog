@@ -1,3 +1,7 @@
+2004-10-04  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* complete.cc: rough mirror -R handling.
+
 2004-09-27  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Http.cc: don't send empty Cache-Control.
