@@ -267,18 +267,20 @@ const char *FileAccess::StrError(int err)
    static char *str=0;
    static unsigned str_allocated=0;
 
+   // note to translators: several errors should not be displayed to user;
+   // so no need to translate them.
    switch(err)
    {
    case(IN_PROGRESS):
-      return(_("Operation is in progress"));
+      return("Operation is in progress");
    case(OK):
-      return(_("Error 0"));
+      return("Error 0");
    case(SEE_ERRNO):
       return(strerror(saved_errno));
    case(LOOKUP_ERROR):
       return(last_error_resp);
    case(NOT_OPEN):   // Actually this means an error in application
-      return(_("Class is not Open()ed"));
+      return("Class is not Open()ed");
    case(NO_FILE):
       if(last_error_resp)
       {
