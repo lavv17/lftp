@@ -226,9 +226,14 @@ void CopyJobEnv::SayFinalWithPrefix(const char *p)
       if(time_spent>=1)
       {
 	 printf(plural("%ld $#l#byte|bytes$ transferred"
-			" in %ld $#l#second|seconds$ (%g bytes/s)\n",
+			" in %ld $#l#second|seconds$",
 			bytes,long(time_spent+.5)),
-			bytes,long(time_spent+.5),bytes/time_spent);
+			bytes,long(time_spent+.5));
+	 double rate=bytes/time_spent;
+	 if(rate>=1)
+	    printf(" (%s)\n",Speedometer::GetStr(rate));
+	 else
+	    printf("\n");
       }
       else
       {
