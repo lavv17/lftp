@@ -288,6 +288,22 @@ time_sep	: ':'
 
 %%
 
+/* Converts struct tm to time_t, assuming the data in tm is UTC rather
+   than local timezone (mktime assumes the latter).
+
+   Contributed by Roger Beeman <beeman@cisco.com>, with the help of
+   Mark Baushke <mdb@cisco.com> and the rest of the Gurus at CISCO.  */
+static time_t
+mktime_from_utc (struct tm *t)
+{
+  time_t tl, tb;
+
+  tl = mktime (t);
+  if (tl == -1)
+    return -1;
+  tb = mktime (gmtime (&tl));
+  return (tl <= tb ? (tl + (tl - tb)) : (tl - (tb - tl)));
+}
 
 time_t parsetime(int, char **);
 
@@ -303,13 +319,10 @@ parsetime(int argc, char **argv)
     exectm.tm_isdst = -1;
     time_only = 0;
     if (yyparse() == 0) {
-	exectime = mktime(&exectm);
-	if (isgmt) {
-	    exectime += timezone;
-	    if (daylight) {
-		exectime -= 3600;
-	    }
-	}
+	if (isgmt)
+	    exectime = mktime_from_utc(&exectm);
+	else
+	    exectime = mktime(&exectm);
 	if (time_only && (currtime > exectime)) {
 	    exectime += 24*3600;
 	}
