@@ -1,6 +1,6 @@
 2003-07-15  Alexander V. Lukyanov <lav@yars.free.net>
 
-	* ftpclass.cc, ftpclass.h: add ftp:use-telnet-iac setting.
+	* ftpclass.cc, ftpclass.h, resource.cc: add ftp:use-telnet-iac setting.
 
 2003-07-10  Alexander V. Lukyanov <lav@yars.free.net>
 
