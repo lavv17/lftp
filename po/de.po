@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lftp 1.2.4\n"
 "POT-Creation-Date: 1999-07-11 23:30+0400\n"
-"PO-Revision-Date: 1999-06-03 00:59+02:00\n"
+"PO-Revision-Date: 1999-07-15 00:17+02:00\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -105,9 +105,9 @@ msgid "Operation not supported"
 msgstr "Operation wird nicht unterstützt"
 
 #: src/FtpListInfo.cc:226 src/HttpDir.cc:905
-#, fuzzy, c-format
+#, c-format
 msgid "Getting directory contents (%ld)"
-msgstr "Lese Verzeichnis (%d) aus"
+msgstr "Lese Verzeichnis (%ld) aus"
 
 #: src/FtpListInfo.cc:230 src/HttpDir.cc:910
 #, c-format
@@ -977,6 +977,10 @@ msgid ""
 "followed by unit specifier: d - days, h - hours, m - minutes, s - seconds.\n"
 "By default time is assumed to be seconds.\n"
 msgstr ""
+"Verwendung: sleep <Zeitdauer>[Zeiteinheit]\n"
+"Schalfe für die angegebene Zeitdauer. Das Zeitargument kann mit der Angabe \n"
+"einer Einheit ergänzt werden: d - Tage, h - Stunden, m - Minuten, s - Sekunden.\n"
+"Ohne Angabe wird die Zeitangabe als Sekunden interpretiert.\n"
 
 #: src/commands.cc:298
 msgid "source <file>"
@@ -1597,10 +1601,3 @@ msgstr "Proxy Protokoll wird nicht unterstützt"
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "Hole Dateiliste (%ld) [%s]"
-
-#, fuzzy
-#~ msgid "eta:%ld%c%ld%c "
-#~ msgstr "übrig(ca.):%ld%c "
-
-#~ msgid "eta:%ld%c "
-#~ msgstr "übrig(ca.):%ld%c "
