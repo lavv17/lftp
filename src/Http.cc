@@ -570,6 +570,7 @@ void Http::SendRequest(const char *connection,const char *f)
       {
 	 SendMethod("PUT",efile);   // hope it would work
 	 Send("Content-length: 0\r\n");
+	 pos=entity_size=0;
       }
       break;
 
@@ -635,7 +636,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       if(1!=sscanf(value,"%lld",&bs))
 	 return;
       body_size=bs;
-      if(pos==0 && mode!=STORE)
+      if(pos==0 && mode!=STORE && mode!=MAKE_DIR)
 	 entity_size=body_size;
       if(pos==0 && opt_size && H_20X(status_code))
 	 *opt_size=body_size;
@@ -666,7 +667,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 	 last=fsize-first-1;
       if(body_size<0)
 	 body_size=last-first+1;
-      if(mode!=STORE)
+      if(mode!=STORE && mode!=MAKE_DIR)
 	 entity_size=fsize;
       if(opt_size && H_20X(status_code))
 	 *opt_size=fsize;
@@ -1196,7 +1197,7 @@ int Http::Do()
 		  }
 		  return MOVED;
 	       }
-	       else if(mode==STORE)
+	       else if(mode==STORE || mode==MAKE_DIR)
 	       {
 		  if((sent_eot || pos==entity_size) && H_20X(status_code))
 		  {
@@ -1403,7 +1404,7 @@ int Http::Do()
       rate_limit=new RateLimit(hostname);
       if(real_pos<0) // assume Range: did not work
       {
-	 if(mode!=STORE && body_size>=0)
+	 if(mode!=STORE && mode!=MAKE_DIR && body_size>=0)
 	 {
 	    entity_size=body_size;
 	    if(opt_size && H_20X(status_code))
