@@ -1,3 +1,10 @@
+Version 2.4.9 - 2002-01-??
+
+* use trio library if system's printf is broken with %lld.
+* fixed coredump if service is unknown.
+* fixed keep-alive for http/1.1.
+* fixed uploading in ssl enabled ftp when data connection is protected.
+
 Version 2.4.8 - 2001-12-04
 
 * fixed rm and rmdir - they were actually interchanged in 2.4.7.

@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.52)
 AC_INIT(src/ftpclass.cc)
-AM_INIT_AUTOMAKE(lftp, 2.4.8)
+AM_INIT_AUTOMAKE(lftp, pre2.4.9)
 AM_CONFIG_HEADER(include/config.h)
 
 dnl Default AC_C_INLINE does not know about C++
@@ -269,11 +269,7 @@ AC_CHECK_FUNC(strerror, AC_DEFINE(HAVE_STRERROR),[
       #include <errno.h>
       #endif]))])
 
-# See if the system has vsnprintf and replace if not
-AC_CHECK_FUNC(vsnprintf, ,[
-  AC_DEFINE_UNQUOTED(NEED_TRIO, 1,
-    [Define if we need the trio replacement *printf() functions])
-  LIBOBJS="$LIBOBJS strio.o trio.o trionan.o"])
+LFTP_NEED_TRIO
 
 # See if we have h_errno (the test is here so we can use -lresolv if necessary).
 AC_CACHE_CHECK([for h_errno], inetutils_cv_var_h_errno,
