@@ -1,3 +1,7 @@
+2000-08-13  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.cc: (MergeCookies) null-terminate cookie properly.
+
 2000-08-06  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h: support for ssl (AUTH TLS).

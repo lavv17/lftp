@@ -1638,7 +1638,9 @@ bool Http::CookieClosureMatch(const char *closure_c,
 void Http::CookieMerge(char **all_p,const char *cookie_c)
 {
    char *all=*all_p;
-   all=*all_p=(char*)xrealloc(all,xstrlen(all)+2+xstrlen(cookie_c)+1);
+   int all_len=xstrlen(all);
+   all=*all_p=(char*)xrealloc(all,all_len+2+xstrlen(cookie_c)+1);
+   all[all_len]=0;   // in case the buffer is freshly allocated.
 
    char *value=alloca_strdup(cookie_c);
 
