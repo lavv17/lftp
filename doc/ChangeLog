@@ -1,3 +1,7 @@
+1999-06-25	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document xfer:eta-terse.
+
 1999-06-14	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document symbolic link handling on mirror -R.

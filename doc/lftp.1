@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "02 Jun 1999"
+.TH lftp 1 "25 Jun 1999"
 .SH NAME
 lftp \- Sophisticated ftp program
 .SH SYNTAX
@@ -61,7 +61,7 @@ lftp \- Sophisticated ftp program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 2.0.
+This man page documents lftp version 2.0.1.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a program that allows sophisticated ftp connection to
@@ -687,6 +687,9 @@ this option, but linux does.
 .TP
 .BR net:timeout \ (seconds)
 sets the network protocol timeout.
+.TP
+.BR xfer:eta-terse \ (bool)
+show terse ETA (only high order parts). Default is true.
 .TP
 .BR xfer:use-urls \ (bool)
 recognize URLs by default in commands get, cat, mget, zcat, zmore.
