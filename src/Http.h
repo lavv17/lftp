@@ -56,8 +56,8 @@ class Http : public NetAccess
    bool recv_buf_suspended;
    void SendMethod(const char *,const char *);
    const char *last_method;
-   bool post;
-   char *post_data;
+   enum { HTTP_NONE=0, HTTP_POST, HTTP_MOVE, HTTP_COPY } special;
+   char *special_data;
    void DirFile(char *path_base,const char *ecwd,const char *efile);
    void SendAuth();
    void SendCacheControl();

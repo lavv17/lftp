@@ -104,8 +104,8 @@ void Http::Init()
    use_head=true;
 
    user_agent=0;
-   post_data=0;
-   post=false;
+   special_data=0;
+   special=HTTP_NONE;
 }
 
 Http::Http() : super()
@@ -233,9 +233,9 @@ void Http::Close()
    array_send=0;
    no_cache_this=false;
    no_ranges=false;
-   post=false;
-   xfree(post_data);
-   post_data=0;
+   special=HTTP_NONE;
+   xfree(special_data);
+   special_data=0;
    super::Close();
 }
 
@@ -259,6 +259,8 @@ void Http::Send(const char *format,...)
       }
       max_send*=2;
    }
+
+Log::global->Format(
 
    DebugPrint("---> ",str,5);
    send_buf->Put(str);
@@ -517,12 +519,24 @@ void Http::SendRequest(const char *connection,const char *f)
    {
    case CLOSED:
    case CONNECT_VERIFY:
+      abort(); // cannot happen
+
    case QUOTE_CMD:
-      if(post)
+      switch(special)
       {
-	 entity_size=xstrlen(post_data);
+      case HTTP_POST:
+	 entity_size=xstrlen(special_data);
 	 goto send_post;
+      case HTTP_MOVE:
+      case HTTP_COPY:
+	 SendMethod(special==HTTP_MOVE?"MOVE":"COPY",efile);
+	 Send("Destination: %s\r\n",special_data);
+	 break;
+      case HTTP_NONE:
+	 abort(); // cannot happen
       }
+      break;
+
    case LIST:
    case CHANGE_MODE:
       abort(); // unsupported
@@ -623,10 +637,10 @@ void Http::SendRequest(const char *connection,const char *f)
    if(mode!=ARRAY_INFO || connection)
       Send("Connection: %s\r\n",connection?connection:"close");
    Send("\r\n");
-   if(post)
+   if(special==HTTP_POST)
    {
-      if(post_data)
-	 Send("%s",post_data);
+      if(special_data)
+	 Send("%s",special_data);
       entity_size=NO_SIZE;
    }
    else if(mode==MP_LIST)
@@ -914,14 +928,25 @@ int Http::Do()
 	 state=DONE;
 	 return MOVED;
       }
-      if(!hftp && mode==QUOTE_CMD && !post)
+      if(!hftp && mode==QUOTE_CMD && !special)
       {
       handle_quote_cmd:
 	 if(file && !strncasecmp(file,"Set-Cookie ",11))
 	    SetCookie(file+11);
 	 else if(file && !strncasecmp(file,"POST ",5))
+	    special=HTTP_POST;
+	 else if(file && !strncasecmp(file,"COPY ",5))
+	    special=HTTP_COPY;
+	 else if(file && !strncasecmp(file,"MOVE ",5))
+	    special=HTTP_MOVE;
+	 else
 	 {
-	    // POST encoded_path data
+	    SetError(NOT_SUPP,0);
+	    return MOVED;
+	 }
+	 if(special)
+	 {
+	    // METHOD encoded_path data
 	    const char *scan=file+5;
 	    while(*scan==' ')
 	       scan++;
@@ -950,21 +975,15 @@ int Http::Do()
 	    scan=strchr(scan,' ');
 	    while(scan && *scan==' ')
 	       scan++;
-	    post=true;
-	    post_data=xstrdup(scan);
+	    special_data=xstrdup(scan);
 	    xfree(file_url);
 	    file_url=path;
-	    return MOVED;
-	 }
-	 else
-	 {
-	    SetError(NOT_SUPP,0);
 	    return MOVED;
 	 }
 	 state=DONE;
 	 return MOVED;
       }
-      if(!post && !ModeSupported())
+      if(!special && !ModeSupported())
       {
 	 SetError(NOT_SUPP);
 	 return MOVED;
@@ -1102,7 +1121,7 @@ int Http::Do()
       if(mode==CONNECT_VERIFY)
 	 return MOVED;
 
-      if(mode==QUOTE_CMD && !post)
+      if(mode==QUOTE_CMD && !special)
 	 goto handle_quote_cmd;
       if(recv_buf->Eof())
       {
@@ -1112,7 +1131,7 @@ int Http::Do()
       }
       if(mode==CLOSED)
 	 return m;
-      if(!post && !ModeSupported())
+      if(!special && !ModeSupported())
       {
 	 SetError(NOT_SUPP);
 	 return MOVED;
@@ -1143,7 +1162,7 @@ int Http::Do()
    case RECEIVING_HEADER:
       if(send_buf->Error() || recv_buf->Error())
       {
-	 if((mode==STORE || post) && status_code && !H_20X(status_code))
+	 if((mode==STORE || special) && status_code && !H_20X(status_code))
 	    goto pre_RECEIVING_BODY;   // assume error.
       handle_buf_error:
 	 if(send_buf->Error())
