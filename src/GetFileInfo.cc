@@ -1,5 +1,4 @@
 #include <config.h>
-#include <errno.h>
 #include <assert.h>
 
 #include "GetFileInfo.h"
@@ -75,10 +74,7 @@ int GetFileInfo::Do()
       state=CHANGE_DIR;
       m=MOVED;
 
-      if(showdir)
-	 tried_dir=true;
-      /* if we're not showing directories, try to skip tests we don't need */
-      if(use_cache && !showdir)
+      if(use_cache)
       {
 	 switch(LsCache::IsDirectory(session,dir))
 	 {
@@ -101,12 +97,11 @@ int GetFileInfo::Do()
 	 /* We tried both; no luck.  Fail. */
 	 SetError(saved_error_text);
 	 state=DONE;
-
 	 return MOVED;
       }
 
       const char *cd_path;
-      if(!tried_dir)
+      if(!tried_dir && (tried_file || !showdir))
       {
 	 /* First, try to treat the path as a directory. */
 	 tried_dir=true;
@@ -137,7 +132,6 @@ int GetFileInfo::Do()
       res=session->Done();
       if(res==FA::IN_PROGRESS)
 	 return m;
-      session->Close();
 
       if(res<0)
       {
@@ -146,9 +140,11 @@ int GetFileInfo::Do()
 	  * path. */
 	 if(!saved_error_text)
 	    saved_error_text = xstrdup(session->StrError(res));
+	 session->Close();
 	 state=CHANGE_DIR;
 	 return MOVED;
       }
+      session->Close();
 
       if(!was_directory)
       {
@@ -213,22 +209,18 @@ int GetFileInfo::Do()
 	 const FileInfo *file = result->FindByName(verify_fn);
 
 	 if(!file) {
-	    /* The file doesn't exist; fail. */
-	    char *buf = xasprintf("%s: %s", dir, strerror(ENOENT));
-	    SetError(buf);
-	    xfree(buf);
 	    delete result; result=0;
-	    goto done;
+	    tried_file=true;
+	    state=CHANGE_DIR;
+	    return MOVED;
 	 }
 
 	 /* If we're not listing directories as files, and the file is a
 	  * directory, we should have been able to Chdir into it to begin
 	  * with.  We probably got Access Denied.  Fail. */
 	 if(!showdir && (file->defined&file->TYPE) && file->filetype==FileInfo::DIRECTORY) {
-	    char *buf = xasprintf("%s: %s", dir, strerror(EACCES));
-	    SetError(buf);
-	    xfree(buf);
 	    delete result; result=0;
+	    SetError(saved_error_text);
 	    goto done;
 	 }
 
@@ -260,7 +252,7 @@ done:
 	 if(prepend_path)
 	    result->PrependPath(path_to_prefix);
 	 done=true;
-	 session->Chdir(origdir, false);
+	 session->SetCwd(origdir);
 	 m=MOVED;
       }
       return m;
