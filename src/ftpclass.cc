@@ -1422,7 +1422,10 @@ int   Ftp::Do()
 	 goto usual_return;
 
       if(now<retry_time)
+      {
+	 TimeoutS(retry_time-now);
 	 goto usual_return;
+      }
       retry_time=0;
 
       if(real_cwd==0)
@@ -1582,9 +1585,16 @@ int   Ftp::Do()
 		  // Fail unless socket was already taken
 		  if(errno!=EINVAL && errno!=EADDRINUSE)
 		  {
-		     sprintf(str,"bind: %s",strerror(errno));
-		     DebugPrint("**** ",str,0);
-		     goto system_error;
+		     Log::global->Format(0,"**** bind(data_sock): %s\n",strerror(errno));
+		     close(conn->data_sock);
+		     conn->data_sock=-1;
+		     if(NonFatalError(errno))
+		     {
+			TimeoutS(1);
+			return m;
+		     }
+		     SetError(SEE_ERRNO,"Cannot bind data socket for ftp:port-range");
+		     return MOVED;
 		  }
 	       }
 	       // get the allocated port
@@ -2229,7 +2239,10 @@ notimeout_return:
 
 system_error:
    if(NonFatalError(errno))
+   {
+      TimeoutS(1);
       return m;
+   }
    conn->quit_sent=true;
    Disconnect();
    SetError(SEE_ERRNO,0);
