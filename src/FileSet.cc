@@ -73,8 +73,10 @@ void FileInfo::SetName(const char *n)
 {
    if(n==name)
       return;
+   // in case of n being tail of name, dup it first
+   char *n1=xstrdup(n);
    xfree(name);
-   name=xstrdup(n);
+   name=n1;
    defined|=NAME;
 }
 

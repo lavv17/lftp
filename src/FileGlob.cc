@@ -311,7 +311,12 @@ int GenericGlob::Do()
 	 set->rewind();
 	 for(FileInfo *info=set->curr(); info!=NULL; info=set->next())
 	 {
-	    info->SetName(dir_file(curr_dir,info->name));
+	    const char *name=info->name;
+	    if(name[0]=='.' && name[1]=='/')
+	       name+=2;
+	    if(curr_dir && curr_dir[0])
+	       name=dir_file(curr_dir,name);
+	    info->SetName(name);
 	    add(info);
 	 }
 	 delete set;

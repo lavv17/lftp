@@ -982,8 +982,6 @@ void SFtp::HandleExpect(Expect *e)
 	 if(opt_date)
 	    *opt_date=entity_date;
       }
-      else
-	 SetError(NO_FILE,reply);
       break;
    case Expect::WRITE_STATUS:
       if(reply->TypeIs(SSH_FXP_STATUS))
