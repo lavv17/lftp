@@ -1,6 +1,9 @@
 * ftp over http proxy support via hftp:// notation.
 * new command `queue' to queue commands for sequential execution.
-* fixed unlimited memory usage on `ls -R'.
+* improved completion of file names with wildcards.
+* debug output now clears and redraws the prompt.
+* fixed unlimited memory usage on `ls -R' when the listing is too large to be
+  cached.
 
 Version 2.0.4 - 1999-08-11
 
