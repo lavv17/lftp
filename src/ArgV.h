@@ -40,8 +40,8 @@ public:
    ArgV(int new_c,const char * const *new_v) { Init(new_c,new_v); }
    ~ArgV() { Empty(); }
 
-   char *Combine(int start_index=0);
-   char *CombineQuoted(int start_index=0);
+   char *Combine(int start_index=0) const;
+   char *CombineQuoted(int start_index=0) const;
 
    int getopt_long(const char *opts,const struct option *lopts,int *lind);
    int getopt(const char *opts)
@@ -52,21 +52,21 @@ public:
    void rewind();
    char *getnext();
 
-   char *getarg(int n)
+   char *getarg(int n) const
       {
 	 if(n>=c)
 	    return 0;
 	 return v[n];
       }
-   char *getcurr() { return ind<c?getarg(ind):0; }
-   int getindex() { return ind; }
+   char *getcurr() const { return ind<c?getarg(ind):0; }
+   int getindex() const { return ind; }
    void setarg(int n,const char *s);
    void delarg(int n);
    void insarg(int n,const char *s);
-   char *a0() { return getarg(0); }
+   char *a0() const { return getarg(0); }
    void back();
-   int count() { return c; }
-   char **GetV() { return v; }
+   int count() const { return c; }
+   char **GetV() const { return v; }
 };
 
 #endif//ARGV_H

@@ -69,7 +69,7 @@ void ArgV::back()
       ind--;
 }
 
-char *ArgV::Combine(int start)
+char *ArgV::Combine(int start) const
 {
    int	 i;
    char  *res;
