@@ -1,6 +1,8 @@
 2000-01-12  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h, FileCopyFtp.cc: fixes for FXP.
+	* FileCopy.cc: don't set pos to FILE_END; don't try to figure out
+	  position in fxp mode;
 
 2000-01-11  Alexander V. Lukyanov  <lav@yars.free.net>
 

@@ -768,7 +768,8 @@ void FileCopyPeerFA::Seek(long new_pos)
    session->Close();
    if(seek_pos==FILE_END)
       WantSize();
-   pos=new_pos;
+   else
+      pos=new_pos;
 }
 
 void FileCopyPeerFA::OpenSession()
@@ -917,7 +918,7 @@ int FileCopyPeerFA::Put_LL(const char *buf,int len)
 
 long FileCopyPeerFA::GetRealPos()
 {
-   if(session->OpenMode()!=FAmode)
+   if(session->OpenMode()!=FAmode || fxp)
       return pos;
    if(mode==PUT)
    {
