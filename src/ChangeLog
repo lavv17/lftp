@@ -2,6 +2,7 @@
 
 	* StatusLine.cc: fix for terminals with am and with no xenl (a space
 	  could be written in last column).
+	* Http.cc: limit non-absolute Location handling to POST method.
 
 2002-05-13  Michail Litvak <mci@owl.openwall.com
 

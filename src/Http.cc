@@ -1209,20 +1209,20 @@ int Http::Do()
 
 	 if(H_REDIRECTED(status_code))
 	 {
-	    if(location && !url::is_url(location))
+	    if(location && !url::is_url(location)
+	    && mode==QUOTE_CMD && !strncasecmp(file,"POST ",5))
 	    {
 	       const char *the_file=file;
-	       if(mode==QUOTE_CMD && !strncasecmp(file,"POST ",5))
-	       {
-		  const char *scan=file+5;
-		  while(*scan==' ')
-		     scan++;
-		  char *the_post_file=alloca_strdup(scan);
-		  char *space=strchr(the_post_file,' ');
-		  if(space)
-		     *space=0;
-		  the_file=the_post_file;
-	       }
+
+	       const char *scan=file+5;
+	       while(*scan==' ')
+		  scan++;
+	       char *the_post_file=alloca_strdup(scan);
+	       char *space=strchr(the_post_file,' ');
+	       if(space)
+		  *space=0;
+	       the_file=the_post_file;
+
 	       char *new_location=alloca_strdup2(GetConnectURL(),
 				    strlen(the_file)+strlen(location));
 	       int p_ind=url::path_index(new_location);
