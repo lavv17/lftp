@@ -1,7 +1,8 @@
 2000-05-01  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Http.cc: support http:put-method; don't use locale for sending
-	  Last-Modified header line; add \n to Last-Modified line.
+	  Last-Modified header line; add \n to Last-Modified line;
+	  don't use keep-alive for PUT; fix coredump on ^C on PUT.
 	* resource.cc: add http:put-method.
 	* misc.cc, misc.h: export month_names.
 

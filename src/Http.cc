@@ -157,10 +157,9 @@ void Http::Disconnect()
    }
    last_method=0;
    ResetRequestData();
+   state=DISCONNECTED;
    if(mode==STORE && state!=DONE && !Error())
       SetError(STORE_FAILED,0);
-   else
-      state=DISCONNECTED;
 }
 
 void Http::ResetRequestData()
@@ -446,7 +445,7 @@ add_path:
    }
    if(mode==ARRAY_INFO && !use_head)
       connection="close";
-   else
+   else if(mode!=STORE)
       connection="keep-alive";
    if(mode!=ARRAY_INFO || connection)
       Send("Connection: %s\r\n",connection?connection:"close");
@@ -470,7 +469,7 @@ void Http::SendArrayInfoRequest()
    }
    while(array_send-array_ptr<m && array_send<array_cnt)
    {
-      SendRequest(array_send==array_cnt-1 ? "close" : "keep-alive",
+      SendRequest(array_send==array_cnt-1 ? 0 : "keep-alive",
 	 array_for_info[array_send].file);
       array_send++;
    }
