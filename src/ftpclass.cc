@@ -2020,7 +2020,7 @@ void Ftp::SendSiteIdle()
 const char *Ftp::QueryStringWithUserAtHost(const char *var)
 {
    char *closure=string_alloca(xstrlen(user)+1+xstrlen(hostname)+1);
-   sprintf(closure,"%s@%s",user,hostname);
+   sprintf(closure,"%s@%s",user?user:"anonymous",hostname);
    const char *val=Query(var,closure);
    if(!val || !val[0])
       val=Query(var,hostname);
