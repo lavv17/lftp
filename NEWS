@@ -8,10 +8,9 @@ Version 2.2.0 - 2000-??-??
 * new settings xfer:eta-period and xfer:rate-period for calculation of eta
   and current rate.
 * ascii mode transfers - `get -a', `put -a' etc.
-* number of connections to the same site can now be limited using the setting
-  `net:connection-limit'. Background FTP connections being in use can still
-  be used for foreground operations if the setting `net:connection-takeover'
-  is set to `yes' (default).
+* new settings net:connection-limit and net:connection-takeover to limit
+  number of connections to the same site and allow take-over of background
+  connections being used to do foreground operations.
 * new setting ftp:use-abor. (default: yes) If set to no, lftp does not send
   ABOR command but closes data connection immediately.
 * new settings net:reconnect-interval-multiplier and net:reconnect-interval-max,
@@ -52,6 +51,8 @@ Version 2.2.0 - 2000-??-??
 * mirror --use-cache to allow mirror to use directory listing cache.
 * check file names in ftp listings for slashes, don't use file names with
   slashes.
+* ftp REST bug workaround - send REST 0 if last REST was >0.
+* ftp server's 19100 in MDTM bug workaround.
 * fixed completion and file name globbing for wu-ftpd-2.6.0. A long standing
   bug with multiple path component globbing over ftp has also been fixed.
 
