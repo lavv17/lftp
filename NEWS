@@ -1,4 +1,4 @@
-Version 2.6.5 - 2003-02-27
+Version 2.6.5 - 2003-02-28
 
 * new mirror options --log=<file> and --script=<file> to produce lftp commands
   equivalent to the actions done (log) or to be done (script) by mirror.
@@ -15,6 +15,7 @@ Version 2.6.5 - 2003-02-27
 * fixed slot handling in non-interactive mode.
 * fixed large file support in cat command.
 * fixed dante socks compilation (now lftp does not use poll with dante).
+* fixed data connection abort with ssl connection to wu-ftpd.
 
 Version 2.6.4 - 2002-12-26
 

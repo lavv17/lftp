@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.3.9\n"
-"POT-Creation-Date: 2003-02-27 18:32+0300\n"
+"POT-Creation-Date: 2003-02-28 10:14+0300\n"
 "PO-Revision-Date: 2001-04-22 06:01+0800\n"
 "Last-Translator: Abel Cheung <maddog@linux.org.hk>\n"
 "Language-Team: Traditional Chinese <zh-l10n@linux.org.tw>\n"
@@ -105,7 +105,7 @@ msgstr "存取失敗: %s"
 msgid "File cannot be accessed"
 msgstr "不能存取檔案"
 
-#: src/FileAccess.cc:322 src/ftpclass.cc:3662 src/ftpclass.cc:3671
+#: src/FileAccess.cc:322 src/ftpclass.cc:3667 src/ftpclass.cc:3676
 msgid "Not connected"
 msgstr "並未連線"
 
@@ -330,7 +330,7 @@ msgstr "此設定值並沒有定義 closure"
 msgid "invalid pair of numbers"
 msgstr "不正確的數字"
 
-#: src/Resolver.cc:184 src/Resolver.cc:226 src/ftpclass.cc:3667
+#: src/Resolver.cc:184 src/Resolver.cc:226 src/ftpclass.cc:3672
 #: src/Http.cc:1645
 msgid "Resolving host address..."
 msgstr "正在解析主機地址..."
@@ -1639,7 +1639,7 @@ msgstr "不受支援的網絡協定"
 msgid "Connecting data socket to (%s) port %u"
 msgstr "連接資料 socket 到 (%s) 連接埠 %u"
 
-#: src/ftpclass.cc:1916 src/ftpclass.cc:3533
+#: src/ftpclass.cc:1916 src/ftpclass.cc:3538
 msgid "Switching passive mode off"
 msgstr "關閉了 passive 模式"
 
@@ -1651,104 +1651,104 @@ msgstr "對方節點關閉了連線"
 msgid "Persist and retry"
 msgstr "繼續重試"
 
-#: src/ftpclass.cc:2524
+#: src/ftpclass.cc:2529
 msgid "Closing control socket"
 msgstr "正在關閉控制 socket"
 
-#: src/ftpclass.cc:2608
+#: src/ftpclass.cc:2613
 msgid "Closing data socket"
 msgstr "正在關閉資料 socket"
 
-#: src/ftpclass.cc:3367
+#: src/ftpclass.cc:3372
 msgid "saw file size in response"
 msgstr "回應包括檔案的大小"
 
-#: src/ftpclass.cc:3378
+#: src/ftpclass.cc:3383
 #, fuzzy
 msgid "remote end closed connection"
 msgstr "遠端終止了連線"
 
-#: src/ftpclass.cc:3386
+#: src/ftpclass.cc:3391
 msgid "extra server response"
 msgstr "額外的伺服器回應"
 
-#: src/ftpclass.cc:3399 src/ftpclass.cc:3428
+#: src/ftpclass.cc:3404 src/ftpclass.cc:3433
 msgid "Turning on sync-mode"
 msgstr "啟動 sync-mode"
 
-#: src/ftpclass.cc:3550
+#: src/ftpclass.cc:3555
 msgid "Switching passive mode on"
 msgstr "開啟 passive 模式"
 
-#: src/ftpclass.cc:3617
+#: src/ftpclass.cc:3622
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr "已設定 ftp:ssl-force 但伺服器不支援/不使用 SSL"
 
-#: src/ftpclass.cc:3657
+#: src/ftpclass.cc:3662
 msgid "Sending commands..."
 msgstr "正在送出指令..."
 
-#: src/ftpclass.cc:3659 src/ftpclass.cc:3684 src/ftpclass.cc:3697
+#: src/ftpclass.cc:3664 src/ftpclass.cc:3689 src/ftpclass.cc:3702
 #: src/Http.cc:1660
 msgid "Waiting for response..."
 msgstr "正在等待回應..."
 
-#: src/ftpclass.cc:3660 src/Http.cc:1653
+#: src/ftpclass.cc:3665 src/Http.cc:1653
 msgid "Connection idle"
 msgstr "連線閒置了"
 
-#: src/ftpclass.cc:3673 src/Http.cc:1651 src/Http.cc:1658
+#: src/ftpclass.cc:3678 src/Http.cc:1651 src/Http.cc:1658
 msgid "Connecting..."
 msgstr "正在連線..."
 
-#: src/ftpclass.cc:3677
+#: src/ftpclass.cc:3682
 msgid "TLS negotiation..."
 msgstr "使用 TLS 協定通訊中…"
 
-#: src/ftpclass.cc:3679
+#: src/ftpclass.cc:3684
 msgid "Connected"
 msgstr "已經連接"
 
-#: src/ftpclass.cc:3681
+#: src/ftpclass.cc:3686
 msgid "Logging in..."
 msgstr "正在登入..."
 
-#: src/ftpclass.cc:3685
+#: src/ftpclass.cc:3690
 msgid "Making data connection..."
 msgstr "正在建立資料傳送的連線..."
 
-#: src/ftpclass.cc:3688
+#: src/ftpclass.cc:3693
 msgid "Changing remote directory..."
 msgstr "改變遠端目錄..."
 
-#: src/ftpclass.cc:3694
+#: src/ftpclass.cc:3699
 #, fuzzy
 msgid "Waiting for other copy peer..."
 msgstr "正在等待回應..."
 
-#: src/ftpclass.cc:3696 src/ftpclass.cc:3717
+#: src/ftpclass.cc:3701 src/ftpclass.cc:3722
 msgid "Waiting for transfer to complete"
 msgstr "等待傳送完成"
 
-#: src/ftpclass.cc:3699
+#: src/ftpclass.cc:3704
 msgid "Waiting for data connection..."
 msgstr "等待資料傳送的連線..."
 
-#: src/ftpclass.cc:3705
+#: src/ftpclass.cc:3710
 #, fuzzy
 msgid "Sending data/TLS"
 msgstr "正在傳送資料"
 
-#: src/ftpclass.cc:3707
+#: src/ftpclass.cc:3712
 #, fuzzy
 msgid "Receiving data/TLS"
 msgstr "正在接收資料"
 
-#: src/ftpclass.cc:3713 src/Http.cc:1656
+#: src/ftpclass.cc:3718 src/Http.cc:1656
 msgid "Sending data"
 msgstr "正在傳送資料"
 
-#: src/ftpclass.cc:3715 src/Http.cc:1663
+#: src/ftpclass.cc:3720 src/Http.cc:1663
 msgid "Receiving data"
 msgstr "正在接收資料"
 

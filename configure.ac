@@ -318,6 +318,7 @@ AC_FUNC_UTIME_NULL
 AC_FUNC_GETPGRP
 AC_FUNC_VPRINTF
 AC_FUNC_FNMATCH
+LFTP_GNU_FNMATCH
 AC_HEADER_STAT
 LFTP_FUNC_POLL
 LFTP_FUNC_SSCANF_CONST
@@ -360,7 +361,7 @@ if test x$ac_cv_func_glob = xno; then
    AC_LIBOBJ(glob)
    AC_CONFIG_LINKS([include/glob.h:lib/glob.h])
 fi
-if test x$ac_cv_func_fnmatch_works = xno; then
+if test x$ac_cv_func_fnmatch_works = xno -o x$lftp_cv_gnu_fnmatch = xno; then
    AC_LIBOBJ(fnmatch)
    AC_CONFIG_LINKS([include/fnmatch.h:lib/fnmatch.h])
    AC_DEFINE_UNQUOTED(fnmatch, rpl_fnmatch, [Define to rpl_fnmatch if system fnmatch does not work])
