@@ -1,3 +1,8 @@
+2000-02-19  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileCopy.cc: count Buffered() change even when input buffer is empty.
+	* Speedometer.cc: protect from rate<0.
+
 2000-02-17  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: workaround server's y2k bug in MDTM.

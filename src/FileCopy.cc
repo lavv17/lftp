@@ -225,15 +225,20 @@ int FileCopy::Do()
 	 state=CONFIRM_WAIT;
 	 return MOVED;
       }
+
+      rate_add=put_buf;
+
       if(s==0)
       {
+	 put_buf=put->Buffered();
+	 rate_add-=put_buf;
+	 RateAdd(rate_add);
+
 	 if(put->Size()==0)
 	    put->Suspend();
 	 return m;
       }
       m=MOVED;
-
-      rate_add=put_buf;
 
       if(get->range_limit!=FILE_END && get->range_limit<get->GetRealPos()+s)
 	 s=get->range_limit-get->GetRealPos();

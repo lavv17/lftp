@@ -73,6 +73,8 @@ void Speedometer::Add(int b)
    last_second=now;
    if(b>0)
       last_bytes=now;
+   if(rate<0)
+      rate=0;
 }
 const char *Speedometer::GetStr(float r)
 {
