@@ -1,0 +1,19 @@
+The following people contributed to lftp in various ways: testing,
+suggesting useful improvements, sending patches. Listed in abc order.
+
+Andy Eskilsson <x-aes@telelogic.se> for testing and suggestions.
+Bozo Dragojevic <bozzo@hermes.si> for testing with an ftp proxy, patch.
+Christoph Lameter <clameter@debian.org> for initial man pages
+Edward Grimm <tgape@bigfoot.com> for testing and suggestions.
+Hugo Van den Berg <hbe@cypres.nl> for tip about quote command, patch.
+Igor Vinokurov <igor@zynaps.ru> for suggestions.
+James Troup <J.J.Troup@comp.brad.ac.uk> for documentation update, other patches.
+Matt E Richards <v2matt@btv.ibm.com> for a fix.
+Michael Handler <handler@sub-rosa.com>
+Nicolas Lichtmaier <nick@Feedback.com.ar> for i18n, Debian package maintenace.
+Sam Steingold <sds@usa.net>
+Serge Bezzubov <gray@yars.free.net> for extensive testing.
+Uhus <uhus@cnit.uniyar.ac.ru> for testing and suggestions.
+bash developers for pieces of code and example of how to use readline.
+
+Thanks to all who wrote to me about lftp.
