@@ -1,3 +1,11 @@
+Version 3.0.8 - 2004-08-14
+
+* made http:cache-control host specific; added hftp:cache-control.
+* fixed sftp and fish protocols working with FreeBSD servers.
+* fixed transfer of zero length files when modification time is not known.
+* fixed put over fish protocol when source file grows.
+* fixed a core dump in FXP transfer mode.
+
 Version 3.0.7 - 2004-08-09
 
 * slow-start in sftp implemented.
