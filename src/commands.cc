@@ -1576,8 +1576,12 @@ CMD(bookmark)
 
    if(!strcmp(op,"list"))
    {
-      lftp_bookmarks.List();
-      exit_code=0;
+      char *list=lftp_bookmarks.Format();
+      if(!output)
+	 output=new FDStream(1,"<stdout>");
+      Job *j=new CatJob(output,list,strlen(list));
+      output=0;
+      return j;
    }
    else if(!strcmp(op,"add"))
    {
