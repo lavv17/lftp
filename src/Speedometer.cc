@@ -68,7 +68,7 @@ void Speedometer::Add(int b)
       last_second=now;
    if(now-start<div)
       div=now-start+1;
-   rate*=pow(double(div-1)/div,now-last_second);
+   rate*=pow(double(div-1)/div,int(now-last_second));
    rate+=b/div;
    last_second=now;
    if(b>0)

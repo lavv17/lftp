@@ -1,3 +1,7 @@
+2000-03-23  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Speedometer.cc: cast to int to avoid ambiguity on HP/UX.
+
 2000-03-22  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CmdExec.cc, LsCache.cc, commands.cc: don't call macro alloca_strdup
