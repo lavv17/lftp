@@ -369,6 +369,9 @@ FileCopy::~FileCopy()
    Delete(get);
    Delete(put);
    Delete(line_buffer);
+   xfree(error_text);
+   Delete(rate);
+   Delete(rate_for_eta);
 }
 FileCopy *FileCopy::New(FileCopyPeer *s,FileCopyPeer *d,bool c)
 {
@@ -819,6 +822,7 @@ void FileCopyPeerFA::OpenSession()
 	 Save(0);
 	 Allocate(s);
 	 memmove(buffer+buffer_ptr,b,s);
+	 xfree(b);
       #ifndef NATIVE_CRLF
 	 if(ascii)
 	 {
