@@ -7,7 +7,7 @@
 	* NetAccess.cc: (DelayingMessage) use current->Timeout.
 	* PollVec.h: add GetTimeout for debugging.
 	* Speedometer.cc: use current->Timeout.
-	* StatusLine: use TimeoutS.
+	* StatusLine.cc: use TimeoutS.
 
 2000-02-06  Alexander V. Lukyanov  <lav@yars.free.net>
 
