@@ -404,6 +404,32 @@ const char *ResMgr::BoolValidate(char **value)
    return 0;
 }
 
+const char *ResMgr::TriBoolValidate(char **value)
+{
+   if(!BoolValidate(value))
+      return 0;
+
+   /* not bool */
+   char *v=*value;
+   const char *newval=0;
+
+   switch(v[0])
+   {
+   case 'a':   newval="auto";	 break;
+   case 'A':   newval="Auto";	 break;
+   default:
+      return _("invalid boolean/auto value");
+   }
+   
+   if(strcmp(v,newval))
+   {
+      xfree(v);
+      *value=xstrdup(newval);
+   }
+
+   return 0;
+}
+
 const char *ResMgr::NumberValidate(char **value)
 {
    char *v=*value;

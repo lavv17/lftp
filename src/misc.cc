@@ -31,6 +31,12 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <ctype.h>
+#include <sys/ioctl.h>
+
+#ifdef HAVE_TERMIOS_H
+#include <termios.h>
+#endif
+
 #ifdef TM_IN_SYS_TIME
 # include <sys/time.h>
 #endif
@@ -255,6 +261,23 @@ void  truncate_file_tree(const char *dir)
    default: // parent
       (new ProcWait(pid))->Auto();  // don't wait for termination
    }
+}
+
+int fd_width(int fd)
+{
+   if(fd == -1) return -1;
+   if(!isatty(fd)) return 0;
+
+#ifdef TIOCGWINSZ
+   struct winsize sz;
+   sz.ws_col=sz.ws_row=0;
+   ioctl(fd,TIOCGWINSZ,&sz);
+   if(sz.ws_col==0)
+      sz.ws_col=80;
+   return(sz.ws_col);
+#else /* !TIOCGWINSZ */
+   return 80;
+#endif
 }
 
 char *xgetcwd()
@@ -558,13 +581,14 @@ char **tokenize(const char *str, int *argc)
 
    for(int i = 0; buf[i]; ) {
       (*argc)++;
-      argv = (char **) xrealloc(argv, sizeof(char *) * (*argc+1));
+      argv = (char **) xrealloc(argv, sizeof(char *) * (*argc));
       argv[*argc-1] = buf+i;
 
       while(buf[i] && buf[i] != ' ') i++;
-      buf[i++] = 0;
+      if(buf[i] == ' ') buf[i++] = 0;
    }
 
+   argv = (char **) xrealloc(argv, sizeof(char *) * (*argc+1));
    argv[*argc] = NULL;
    return argv;
 }

@@ -28,6 +28,9 @@
 #include <utime.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/stat.h>
+#include <assert.h>
+
 #include "misc.h"
 #include "ResMgr.h"
 
@@ -61,6 +64,7 @@ void FileInfo::SetName(const char *n)
 
 void FileSet::Add(FileInfo *fi)
 {
+   assert(!sorted);
    if(!(fi->defined & fi->NAME))
    {
       delete fi;
@@ -73,13 +77,14 @@ void FileSet::Add(FileInfo *fi)
       delete fi;
       return;
    }
-   files=(FileInfo**)xrealloc(files,(++fnum)*sizeof(*files));
+   files=files_sort=(FileInfo**)xrealloc(files,(++fnum)*sizeof(*files));
    memmove(files+pos+1, files+pos, sizeof(*files)*(fnum-pos-1));
    files[pos]=fi;
 }
 
 void FileSet::Sub(int i)
 {
+   assert(!sorted);
    if(i>=fnum)
       abort();
    delete files[i];
@@ -130,16 +135,84 @@ void FileSet::Merge(char **list)
    }
 }
 
+/* we don't copy the sort state--nothing needs it, and it'd
+ * be a bit of a pain to implement. */
 FileSet::FileSet(FileSet const *set)
 {
    ind=set->ind;
    fnum=set->fnum;
+   sorted = false;
    if(fnum==0)
-      files=0;
+      files=files_sort=0;
    else
-      files=(FileInfo**)xmalloc(fnum*sizeof(*files));
+      files=files_sort=(FileInfo**)xmalloc(fnum*sizeof(*files));
    for(int i=0; i<fnum; i++)
       files[i]=new FileInfo(*(set->files[i]));
+}
+
+static int (*compare)(const char *s1, const char *s2);
+
+static int sort_name(const void *s1, const void *s2)
+{
+   const FileInfo *p1 = *(const FileInfo **) s1;
+   const FileInfo *p2 = *(const FileInfo **) s2;
+   return compare(p1->name, p2->name);
+}
+
+static int sort_size(const void *s1, const void *s2)
+{
+   const FileInfo *p1 = *(const FileInfo **) s1;
+   const FileInfo *p2 = *(const FileInfo **) s2;
+   if(p1->size > p2->size) return -1;
+   if(p1->size < p2->size) return 1;
+   return 0;
+}
+
+static int sort_dirs(const void *s1, const void *s2)
+{
+   const FileInfo *p1 = *(const FileInfo **) s1;
+   const FileInfo *p2 = *(const FileInfo **) s2;
+   if(p1->filetype == FileInfo::DIRECTORY && !p2->filetype == FileInfo::DIRECTORY) return -1;
+   if(!p1->filetype == FileInfo::DIRECTORY && p2->filetype == FileInfo::DIRECTORY) return 1;
+   return 0;
+}
+
+/* files_sort is an alias of files when sort == NAME (since
+ * files is always sorted by name), and an independant array
+ * of pointers (pointing to the same data) otherwise. */
+void FileSet::Sort(sort_e newsort, bool casefold)
+{
+   if(newsort == BYNAME && !casefold) {
+      Unsort();
+      return;
+   }
+   
+   if(files_sort == files) {
+      files_sort=(FileInfo**)xmalloc(fnum*sizeof(FileInfo *));
+      for(int i=0; i < fnum; i++)
+	 files_sort[i] = files[i];
+   }
+
+   sorted = true;
+
+   if(casefold) compare = strcasecmp;
+   else compare = strcmp;
+
+   switch(newsort) {
+   case BYNAME: qsort(files_sort, fnum, sizeof(FileInfo *), sort_name); break;
+   case BYSIZE: qsort(files_sort, fnum, sizeof(FileInfo *), sort_size); break; 
+   case DIRSFIRST: qsort(files_sort, fnum, sizeof(FileInfo *), sort_dirs); break; 
+   }
+}
+
+/* Remove the current sort, allowing new entries to be added.
+ * (Nothing uses this ... */
+void FileSet::Unsort()
+{
+   if(!sorted) return;
+   xfree(files_sort);
+   files_sort = files;
+   sorted = false;
 }
 
 void FileSet::Empty()
@@ -314,11 +387,11 @@ int FileSet::FindGEIndByName(const char *name) const
 
 FileInfo *FileSet::FindByName(const char *name) const
 {
-   for(int i=0; i<fnum; i++)
-   {
-      if(!strcmp(files[i]->name,name))
-	 return files[i];
-   }
+   int n = FindGEIndByName(name);
+
+   if(n < fnum && !strcmp(files[n]->name,name))
+      return files[n];
+   
    return 0;
 }
 
@@ -417,11 +490,15 @@ void FileSet::LocalChmod(const char *dir,mode_t mask)
    }
 }
 
+FileInfo * FileSet::operator[](int i) const
+{
+   if(i >= fnum) return 0;
+   return files_sort[i];
+}
+
 FileInfo *FileSet::curr()
 {
-   if(ind<fnum)
-      return files[ind];
-   return 0;
+   return (*this)[ind];
 }
 FileInfo *FileSet::next()
 {

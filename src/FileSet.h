@@ -108,17 +108,27 @@ public:
 
 class FileSet
 {
+public:
+   enum sort_e { BYNAME, BYSIZE, DIRSFIRST };
+
+private:
    FileInfo **files;
+
+   /* Alternate pointers when sort != NAME: */
+   FileInfo **files_sort;
+
    int	 fnum;
 
    int	 ind;
 
    void	 Sub(int);
+   bool sorted;
 
 public:
    FileSet()
    {
-      files=0;
+      files=files_sort=0;
+      sorted = false;
       fnum=0;
       ind=0;
    }
@@ -136,6 +146,8 @@ public:
    void	 SubtractAny(const FileSet *);
    void  SubtractOlderThan(time_t t);
    void  SubtractNotIn(const FileSet *);
+   void  Sort(sort_e newsort, bool casefold);
+   void  Unsort();
 
    void	 Exclude(const char *prefix,regex_t *exclude,regex_t *include);
    void	 ExcludeDots();
@@ -166,7 +178,7 @@ public:
 	 f->SetDate(date);
    }
 
-   FileInfo * operator[](int i) const { return i<fnum?files[i]:0; }
+   FileInfo * operator[](int i) const;
 };
 
 #endif // FILESET_H

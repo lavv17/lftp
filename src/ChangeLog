@@ -1,3 +1,42 @@
+2001-10-05  Glenn F. Maynard <g_ld@zewt.org>
+
+	* CmdExec.cc, ColumnOutput.cc, ColumnOutput.h, FileSet.cc, FileSet.h,
+	FileSetOutput.cc, FileSetOutput.h, Filter.cc, Filter.h, Makefile.am,
+	ResMgr.cc, ResMgr.h, commands.cc, misc.cc, misc.h:
+
+	ColumnOutput.{cc,h}: column display, originally from FileUtils.  I've
+	cleaned it up substantially, generalized color support, class-ized it
+	and some other stuff.
+
+	Moved FDStream::width() to misc.cc; nuked isatty().
+
+	tokenize() bugfixes.
+
+	Added TriBoolValidate; Bool with a third ("Auto").  Feel free to think
+	of a better name.
+
+	Don't give ls's job a blank name; results in unsightly empty `' in
+	status.
+
+	Add sorting to FileSets.  A second array of pointers (aliasing the main
+	list) is created when the list is sorted; the list can't be modified if
+	the list is sorted (so we don't have to keep track of how the list is
+	sorted.)  Multiple-level sorting is possible (sort by name then
+	directories-first, for example.)  This method doesn't have to touch much
+	of FileSet and keeps the binary-search-insert intact.  (If needed, it
+	could be made to allow adds after sorting by simply dumping new entries
+	on the end of the sorted list, so new entries aren't sorted.)
+
+	FileSet::operator[] uses the sorted list, if available.
+
+	FindByName uses FindGEIndByName, making that function O(log n) rather
+	than O(n).
+
+	A bunch of static, very cut-and-paste code from FileUtils.cc for parsing
+	LS_COLORS.
+
+	FileSetPrint class.
+
 2001-10-03  Glenn F. Maynard <g_ld@zewt.org>
 
 	* ArgV.cc, ArgV.h, CmdExec.cc, DummyProto.cc, DummyProto.h,

@@ -55,6 +55,9 @@ int   create_directories(char *);
 // rm -rf
 void  truncate_file_tree(const char *dir);
 
+/* returns file descriptor terminal width; -1 on error, 0 on N/A */
+int fd_width(int fd);
+
 // returns malloc'ed cwd no matter how long it is
 // returns 0 on error.
 char *xgetcwd();

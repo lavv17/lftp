@@ -90,6 +90,7 @@ public:
    static char **Generator(void);
 
    static const char *BoolValidate(char **value);
+   static const char *TriBoolValidate(char **value);
    static const char *NumberValidate(char **value);
    static const char *UNumberValidate(char **value);
    static const char *FloatValidate(char **value);

@@ -48,8 +48,6 @@ static ResDecl
    res_prompt		   ("cmd:prompt",	"lftp> ",0,0),
    res_default_title	   ("cmd:default-title","lftp \\h:\\w",0,0),
    res_default_ls	   ("cmd:ls-default",	"",0,0),
-   res_default_cls	   ("cmd:cls-default",	"-F",0,0),
-   res_default_comp_cls	   ("cmd:cls-completion-default", "-FB",0,0),
    res_csh_history	   ("cmd:csh-history",	"off",ResMgr::BoolValidate,ResMgr::NoClosure),
    res_verify_path	   ("cmd:verify-path",	"yes",ResMgr::BoolValidate,0),
    res_verify_host	   ("cmd:verify-host",	"yes",ResMgr::BoolValidate,0),

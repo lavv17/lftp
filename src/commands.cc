@@ -65,6 +65,7 @@
 #include "DummyProto.h"
 #include "QueueFeeder.h"
 #include "lftp_rl.h"
+#include "FileSetOutput.h"
 
 #include "confpaths.h"
 
@@ -77,7 +78,7 @@ History	 cwd_history;
 
 CMD(alias); CMD(anon);   CMD(cd);      CMD(debug);
 CMD(exit);  CMD(get);    CMD(help);    CMD(jobs);
-CMD(kill);  CMD(lcd);    CMD(ls);
+CMD(kill);  CMD(lcd);    CMD(ls);      CMD(cls);
 CMD(open);  CMD(pwd);    CMD(set);
 CMD(shell); CMD(source); CMD(user);    CMD(rm);
 CMD(wait);  CMD(subsh);  CMD(mirror);
@@ -146,6 +147,49 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"close",   cmd_close,   "close [-a]",
 	 N_("Close idle connections. By default only with current server.\n"
 	 " -a  close idle connections with all servers\n")},
+   {"cls",     cmd_cls,     N_("cls [opts] [path/][wildcards]..."),
+	 N_("List remote files. You can redirect output of this command to file\n"
+	    "or via pipe to external command.\n"
+	    "\n"
+	    /* note: I've tried to keep options which are likely to be always
+	     * turned on (via cmd:cls-default, etc) capital, to leave lowercase
+	     * available for options more commonly used manually.  -s/-S is an
+	     * exception; they both seem to be options used manually, so I made
+	     * them align with GNU ls options. */
+	    " -B, --basename       - show basename of files only\n"
+	    " -F, --classify       - append indicator (one of /@) to entries\n"
+	    " -l, --long           - use a long listing format\n"
+//	    " -q, --quiet          - don't show status\n"
+	    " -s, --size           - print size of each file\n"
+	    "     --filesize       - if printing size, only print size for files\n"
+	    " -i, --nocase         - case-insensitive pattern matching\n"
+	    " -I, --sortnocase     - sort names case-insensitively\n"
+	    " -D, --dirsfirst      - list directories first\n"
+	    "     --sort=OPT       - \"name\", \"size\"\n"
+	    " -S                   - sort by file size\n"
+	    "\n"
+	    "By default, ls output is cached, to see new listing use `recls' or\n"
+	    "`cache flush'.\n"
+	    "\n"
+	    "The variables cls-default and cls-completion-default can be used to\n"
+	    "specify defaults for cls listings and completion listings, respectively.\n"
+	    "For example, to make completion listings show file sizes, set\n"
+	    "cls-completion-default to \"-s\".\n"
+	    "\n"
+	    /* FIXME: poorly worded. another explanation of --filesize: if a person
+	     * wants to only see file sizes for files (not dirs) when he uses -s,
+	     * add --filesize; it won't have any effect unless -s is also used, so
+	     * it can be enabled all the time. (that's also poorly worded, and too
+	     * long.) */
+	    "Tips: Use --filesize and -D to pack the listing better.  If you don't\n"
+	    "always want to see file sizes, --filesize in cls-default will affect the\n"
+	    "-s flag on the commandline as well.  All flags work in\n"
+	    "cls-completion-default.  -i in cls-completion-default makes filename"
+	    "completion case-insensitive."
+	    "\n"
+	    "Usage note: directory names must have a trailing slash; \"cls pub/\" to\n"
+	    "be recognized as a directory.\n"
+	   )},
    {"connect", cmd_open,   0,"open"},
    {"command", cmd_command},
    {"debug",   cmd_debug,  N_("debug [<level>|off] [-o <file>]"),
@@ -320,6 +364,8 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "unknown remote state and thus will cause reconnect. You cannot\n"
 	 "be sure that any change of remote state because of quoted command\n"
 	 "is solid - it can be reset by reconnect at any time.\n")},
+   {"recls",    cmd_cls,   N_("recls [<args>]"),
+	 N_("Same as `cls', but don't look in cache\n")},
    {"reget",   cmd_get,    N_("reget [OPTS] <rfile> [-o <lfile>]"),
 	 N_("Same as `get -c'\n")},
    {"rels",    cmd_ls,	    N_("rels [<args>]"),
@@ -1096,7 +1142,7 @@ CMD(ls)
 	 args->insarg(1,"SITE");
    }
 
-   char *a=args->Combine(1);
+   char *a=args->Combine(0);
 
    if(!nlist && args->count()==1 && parent->var_ls && parent->var_ls[0])
       args->Append(parent->var_ls);
@@ -1125,6 +1171,135 @@ CMD(ls)
    output=0;
    if(!nlist)
       args=0;  // `ls' consumes args itself.
+
+   return j;
+}
+
+/* this seems to belong here more than in FileSetOutput.cc ... */
+const char *FileSetOutput::parse_argv(ArgV *a)
+{
+   static struct option cls_options[] = {
+      {"basename",no_argument,0,'B'},
+      {"classify",no_argument,0,'F'},
+      {"long",no_argument,0,'l'},
+      {"quiet",no_argument,0,'q'},
+      {"size", no_argument,0,'s'},	/* show size */
+      {"filesize", no_argument,0,0},	/*           for files only */
+      {"nocase", no_argument,0,'i'},
+      {"sortnocase", no_argument,0,'I'},
+      {"dirsfirst", no_argument,0,'D'},
+
+      {"sort", required_argument,0, 0},
+      {0, no_argument, 0, 'S'}, // sort by size
+      {0,0,0,0}
+   };
+
+   a->rewind();
+   int opt, longopt;
+   while((opt=a->getopt_long(":BFilqsDIS", cls_options, &longopt))!=EOF)
+   {
+      switch(opt) {
+      case 0:
+	 if(!strcmp(cls_options[longopt].name, "sort")) {
+	    if(!strcasecmp(optarg, "name")) sort = FileSet::BYNAME;
+	    else if(!strcasecmp(optarg, "size")) sort = FileSet::BYSIZE;
+	    else return _("invalid argument for `--sort'");
+	 } else if(!strcmp(cls_options[longopt].name, "filesize")) {
+	    size_filesonly = true;
+	 }
+	 break;
+      case('B'):
+	 basenames = true;
+         break;
+      case('l'):
+	 long_list();
+         break;
+      case('i'):
+	 patterns_casefold = true;
+         break;
+      case('F'):
+         classify=true;
+         break;
+      case('q'):
+	 quiet = true;
+         break;
+      case('s'):
+	 mode |= FileSetOutput::SIZE;
+         break;
+      case('D'):
+	 sort_dirs_first = true;
+	 break;
+      case('I'):
+	 sort_casefold = true;
+	 break;
+      case('S'): 
+	 sort = FileSet::BYSIZE;
+	 break;
+
+      default:
+	 /* silly getopt won't give us its error instead of printing it, oh well.
+	  * we only need to never print errors for completion and validation; for
+	  * cls itself we could do it, but that'd be a special case ... */
+	 return _("invalid option");
+      }
+   }
+
+   while(a->getindex()>1)
+      a->delarg(1);
+   a->rewind();
+
+   return NULL;
+}
+
+CMD(cls)
+{
+   exit_code=0;
+		     
+   const char *op=args->a0();
+   bool re=false;
+
+   if(!output) output=new FDStream(1,"<stdout>");
+
+   FileSetOutput fso;
+   fso.config(output);
+
+   if(!strncmp(op,"re",2)) re=true;
+
+   if(const char *err = fso.parse_argv(args)) {
+      if(strcmp(err, "ERR"))
+	      eprintf(_("%s: %s.\n"), op, err);
+      eprintf(_("Try `help %s' for more information.\n"),op);
+      return 0;
+   }
+
+
+   ArgV arg("", ResMgr::Query("cmd:cls-default", 0));
+   fso.parse_argv(&arg);
+
+   fso.quiet = true;
+
+   char *a=args->Combine(0);
+
+   FileCopyPeer *src_peer=0;
+   src_peer=new FileCopyPeerCLS(Clone(), args, fso);
+   args = 0;
+
+   if(re)
+      src_peer->NoCache();
+   src_peer->SetDate(NO_DATE);
+   src_peer->SetSize(NO_SIZE);
+   FileCopyPeer *dst_peer=new FileCopyPeerFDStream(output,FileCopyPeer::PUT);
+
+   FileCopy *c=FileCopy::New(src_peer,dst_peer,false);
+   c->DontCopyDate();
+   c->LineBuffered();
+   c->Ascii();
+
+   CopyJob *j=new CopyJob(c,a,op);
+   if(fso.quiet) j->NoStatus();
+
+   xfree(a);
+   output=0;
 
    return j;
 }

@@ -55,8 +55,6 @@ public:
    virtual pid_t GetProcGroup() { return 0; }
    virtual bool broken() { return false; }
    virtual bool can_seek() { return false; }
-   virtual bool isatty() const;
-   virtual unsigned width() const; /* 0 = N/A */
 };
 
 class OutputFilter : public FDStream
