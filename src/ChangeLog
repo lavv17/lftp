@@ -1,3 +1,7 @@
+2003-12-01  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: fix possible freed memory access.
+
 2003-11-26  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopyFtp.cc: add ftps to acceptable fxp protocols.

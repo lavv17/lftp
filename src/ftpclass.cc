@@ -968,7 +968,7 @@ Ftp::Ftp(const Ftp *f) : super(f)
 
    state=INITIAL_STATE;
    flags=f->flags&MODES_MASK;
-   xfree(home_auto);
+   xfree(home_auto); home_auto=0;
    home_auto=xstrdup(f->home_auto);
 }
 
