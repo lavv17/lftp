@@ -55,6 +55,26 @@ Version 2.2.0 - 2000-??-??
 * fixed completion and file name globbing for wu-ftpd-2.6.0. A long standing
   bug with multiple path component globbing over ftp has also been fixed.
 
+Version 2.1.9 - 2000-02-22
+
+* fixed command `mv'. It was broken for a year.
+
+Version 2.1.8 - 2000-02-18
+
+* fixed a stupid bug in PWD reply extraction.
+
+Version 2.1.7 - 2000-02-14
+
+* fixed assertion failure in ftpclass.cc.
+* fixed handling of PWD reply when it does not include a quoted path.
+* `mirror -R' now checks time stamps again.
+
+Version 2.1.6 - 2000-01-13
+
+* fixed html parser spinning on & in file names when no sequence matches.
+* fixed compilation on Solaris2.5.1.
+* korean translation updated.
+
 Version 2.1.5 - 2000-01-09
 
 * fixed &amp; and others handling in http links.
