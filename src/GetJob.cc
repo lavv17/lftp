@@ -47,6 +47,15 @@ int   GetJob::Do()
    if(in_buffer==0 && got_eof)
    {
       session->Close();
+      if(made_backup)
+      {
+	 // now we can delete old file, since there is new one
+	 FileStream *f=(FileStream*)local; // we are sure it is FileStream
+	 char *b=(char*)alloca(strlen(f->full_name)+2);
+	 strcpy(b,f->full_name);
+	 strcat(b,"~");
+	 remove(b);
+      }
       if(delete_files)
       {
 	 if(!deleting)
@@ -143,6 +152,7 @@ void GetJob::NextFile()
    }
    int flags=O_WRONLY|O_CREAT|(cont?0:O_TRUNC);
    const char *f=(saved_cwd && l[0]!='/') ? dir_file(saved_cwd,l) : l;
+   made_backup=false;
    if(!cont)
    {
       /* rename old file if exists */
@@ -154,7 +164,8 @@ void GetJob::NextFile()
 	    char *b=(char*)alloca(strlen(f)+2);
 	    strcpy(b,f);
 	    strcat(b,"~");
-	    rename(f,b);
+	    if(rename(f,b)==0)
+	       made_backup=true;
 	 }
       }
    }
