@@ -2,6 +2,7 @@ Version 2.3.0 - 2000-??-??
 
 * full http keep-alive support.
 * new settings http:put-method (PUT or POST), http:put-content-type.
+* new setting xfer:max-redirections for http redirections following.
 * automatic cookie accepting (off by default). New setting http:set-cookies.
 * two http specific quote commands: `quote set-cookie' and `quote post'.
   (e.g. `quote set-cookie var=value' or `quote post /cgi-bin/script.cgi
@@ -9,9 +10,12 @@ Version 2.3.0 - 2000-??-??
 * send encoded path in http protocol as it was entered by user in URL.
   (e.g. `get http://www.server.net/abc.cgi?arg=cba -o cba')
 * new settings http:accept, http:accept-charset, http:accept-language.
+* new setting cmd:move-background to disable automatic moving to background;
+  `exit bg' forces moving to background.
+* `wait all' waits for termination of all jobs.
 * show QUIT reply in debug output.
 * new setting ftp:use-quit.
-* new setting net:persist-retries
+* new setting net:persist-retries (ignore this number of hard errors).
 * large file (>2G) support added.
 * add workarounds for hftp over apache proxy.
 * use getaddrinfo when gethostbyname2 is unavailable.
