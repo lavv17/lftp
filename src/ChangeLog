@@ -1,3 +1,8 @@
+2001-10-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* PtyShell.cc: fix warnings.
+	* Fish.cc: improve status.
+
 2001-10-12  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* url.cc: optimize user/password extraction using strrchr.

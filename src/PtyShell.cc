@@ -104,9 +104,10 @@ int PtyShell::getfd()
 	    _exit(1);
 	 }
       }
-      putenv("LC_ALL=C");
-      putenv("LANG=C");
-      putenv("LANGUAGE=C");
+      /* force the messages to be in english */
+      putenv((char*)"LC_ALL=C");
+      putenv((char*)"LANG=C");
+      putenv((char*)"LANGUAGE=C");
       if(a)
 	 execvp(a->a0(),a->GetV());
       execl("/bin/sh","sh","-c",name,NULL);

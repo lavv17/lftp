@@ -1071,6 +1071,8 @@ const char *Fish::CurrentStatus()
    switch(state)
    {
    case DISCONNECTED:
+      if(!ReconnectAllowed())
+	 return DelayingMessage();
       return _("Not connected");
    case CONNECTING:
    case CONNECTING_1:
