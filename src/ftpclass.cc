@@ -2376,7 +2376,8 @@ void  Ftp::DataAbort()
 
    CloseRespQueue();
 
-   if(!(bool)Query("use-abor",hostname) || control_ssl)
+   if(!(bool)Query("use-abor",hostname) || control_ssl
+   || RespQueueSize()>1)
    {
       if(copy_mode==COPY_NONE
       && !((flags&PASSIVE_MODE) && addr_received<2))
@@ -2785,6 +2786,7 @@ void Ftp::CloseRespQueue()
       case(CHECK_CWD_STALE):
       case(CHECK_PASV):
       case(CHECK_EPSV):
+      case(CHECK_TRANSFER_CLOSED):
 #ifdef USE_SSL
       case(CHECK_AUTH_TLS):
       case(CHECK_PROT):
@@ -2808,8 +2810,10 @@ void Ftp::CloseRespQueue()
       case(CHECK_PORT):
       case(CHECK_FILE_ACCESS):
       case(CHECK_RNFR):
-      case(CHECK_TRANSFER):
 	 RespQueue[i].check_case=CHECK_IGNORE;
+	 break;
+      case(CHECK_TRANSFER):
+	 RespQueue[i].check_case=CHECK_TRANSFER_CLOSED;
 	 break;
       }
       if(cc!=CHECK_USER)
@@ -3447,6 +3451,16 @@ void Ftp::CheckResp(int act)
 
    case CHECK_TRANSFER:
       TransferCheck(act);
+      break;
+
+   case CHECK_TRANSFER_CLOSED:
+      if(strstr(line,"ABOR")
+      && RespQueueSize()>=2 && RespQueue[RQ_head+1].check_case==CHECK_ABOR)
+      {
+	 DebugPrint("**** ","server bug: 426 reply missed",1);
+	 PopResp();
+	 AbortedClose();
+      }
       break;
 
 #ifdef USE_SSL
