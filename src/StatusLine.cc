@@ -234,7 +234,8 @@ void StatusLine::update(const char *const *newstr,int newstr_height)
 	 wpos--;  // FIXME: assumption - space width is 1
       }
 
-      write(fd,newstr[curr_line],end-newstr[curr_line]);
+      if(end-newstr[curr_line]>0)
+	 write(fd,newstr[curr_line],end-newstr[curr_line]);
 
       const char *shown_curr=(curr_line>=shown.Count()?"":shown[curr_line]);
       int dif=strlen(shown_curr)-(end-newstr[curr_line])+2;
