@@ -6,6 +6,7 @@
 	* FtpDirList.cc, FtpListInfo.cc: recognize permissions in EPLF listing.
 	* misc.cc, misc.h: (format_perms) new function.
 	* ftpclass.cc: treat cat "" as raw LIST.
+	* resource.cc: make passive mode the default.
 
 2000-03-17  Alexander V. Lukyanov  <lav@yars.free.net>
 
