@@ -1140,24 +1140,20 @@ msgid "Same as more, but filter each file through zcat\n"
 msgstr "Même chose que more, mais filtre chaque fichier à travers zcat\n"
 
 #: src/commands.cc:353
-#, fuzzy
 msgid "bzcat <files>"
-msgstr "zcat <fichiers>"
+msgstr "bzcat <fichiers>"
 
 #: src/commands.cc:354
-#, fuzzy
 msgid "Same as cat, but filter each file through bzcat\n"
-msgstr "Même chose que cat, mais filtre chaque fichier à travers zcat\n"
+msgstr "Même chose que cat, mais filtre chaque fichier à travers bzcat\n"
 
 #: src/commands.cc:355
-#, fuzzy
 msgid "bzmore <files>"
-msgstr "zmore <fichiers>"
+msgstr "bzmore <fichiers>"
 
 #: src/commands.cc:356
-#, fuzzy
 msgid "Same as more, but filter each file through bzcat\n"
-msgstr "Même chose que more, mais filtre chaque fichier à travers zcat\n"
+msgstr "Même chose que more, mais filtre chaque fichier à travers bzcat\n"
 
 #: src/commands.cc:405
 #, c-format
