@@ -964,11 +964,12 @@ int Http::Read(void *buf,int size)
 	 return DO_AGAIN;
       if(real_pos<pos)
       {
-	 int to_skip=pos-real_pos;
+	 long to_skip=pos-real_pos;
 	 if(to_skip>size1)
 	    to_skip=size1;
 	 recv_buf->Skip(to_skip);
 	 real_pos+=to_skip;
+	 bytes_received+=to_skip;
 	 if(chunked)
 	    chunk_pos+=to_skip;
 	 goto get_again;

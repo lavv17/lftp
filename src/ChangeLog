@@ -1,3 +1,8 @@
+1999-06-23  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.cc: fix never-ending-transfer problem with servers
+	  not supporintg ranges.
+
 1999-06-22  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* HttpDir.cc, HttpDir.h: extract link target from <frame src=;
