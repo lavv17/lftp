@@ -1,3 +1,8 @@
+2004-10-28  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc, MirrorJob.h: add --no-symlinks option.
+	* Http.cc: fixed Cache-Control combination - use comma instead of space.
+
 2004-10-21  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc: fixed file removing with --delete-first option;

@@ -402,7 +402,7 @@ void Http::SendCacheControl()
    if(cc_setting)
    {
       if(cc[0])
-	 strcat(cc," ");
+	 strcat(cc,",");
       strcat(cc,cc_setting);
    }
    if(*cc)

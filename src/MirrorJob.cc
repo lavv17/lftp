@@ -380,6 +380,9 @@ void  MirrorJob::HandleFile(FileInfo *file)
       }
       case(FileInfo::SYMLINK):
       {
+	 if(!(flags&NO_SYMLINKS))
+	    goto skip;
+
 	 if(!target_is_local)
 	 {
 	    // can't create symlink remotely (FIXME?)
@@ -1185,6 +1188,7 @@ CMD(mirror)
       {"dry-run",   optional_argument,0,256+'S'},
       {"delete-first",no_argument,0,256+'e'},
       {"use-pget-n",optional_argument,0,256+'p'},
+      {"no-symlinks",no_argument,0,256+'y'},
       {0}
    };
 
@@ -1334,6 +1338,9 @@ CMD(mirror)
 	 break;
       case(256+'e'):
 	 flags|=MirrorJob::REMOVE_FIRST|MirrorJob::DELETE;
+	 break;
+      case(256+'y'):
+	 flags|=MirrorJob::NO_SYMLINKS;
 	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
