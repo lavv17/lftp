@@ -704,6 +704,7 @@ void Ftp::InitFtp()
    copy_done=false;
    copy_connection_open=false;
    stat_time=0;
+   copy_allow_store=false;
 
    memset(&data_sa,0,sizeof(data_sa));
 
@@ -1375,9 +1376,12 @@ int   Ftp::Do()
 	 SendCmd(str);
 	 AddResp(RESP_REST_OK,INITIAL_STATE,CHECK_REST);
       }
-      SendCmd(str1);
-      AddResp(RESP_TRANSFER_OK,mode==STORE?STORE_FAILED_STATE:INITIAL_STATE,CHECK_TRANSFER);
-
+      if(copy_mode!=COPY_DEST || copy_allow_store)
+      {
+	 SendCmd(str1);
+	 AddResp(RESP_TRANSFER_OK,mode==STORE?STORE_FAILED_STATE:INITIAL_STATE,
+		  CHECK_TRANSFER);
+      }
       m=MOVED;
       if(copy_mode!=COPY_NONE && !copy_passive)
 	 goto pre_WAITING_STATE;
@@ -1450,7 +1454,8 @@ int   Ftp::Do()
 
       if(addr_received==1)
       {
-	 if(!data_address_ok(&data_sa,/*port_verify*/false))
+	 if(copy_mode==COPY_NONE
+	 && !data_address_ok(&data_sa,/*port_verify*/false))
 	 {
 	    Disconnect();
 	    return MOVED;
@@ -1585,6 +1590,9 @@ int   Ftp::Do()
       // more work to do?
       if(RespQueueIsEmpty() && mode==ARRAY_INFO && array_ptr<array_cnt)
 	 goto array_info_send_more;
+
+      if(copy_mode==COPY_DEST && !copy_allow_store)
+	 goto notimeout_return;
 
       if(!was_empty && RespQueueIsEmpty())
       {
@@ -1871,7 +1879,7 @@ void  Ftp::DataAbort()
 
    // if transfer has been completed then ABOR is not needed
    if(data_sock!=-1 && RespQueueIsEmpty())
-	 return;
+      return;
 
    if(!(bool)Query("use-abor",hostname))
    {
@@ -2169,6 +2177,7 @@ void  Ftp::Close()
    copy_done=false;
    copy_connection_open=false;
    stat_time=0;
+   copy_allow_store=false;
    CloseRespQueue();
    super::Close();
 }
@@ -2207,6 +2216,7 @@ void Ftp::CloseRespQueue()
       case(CHECK_MDTM_OPT):
       case(CHECK_PASV):
       case(CHECK_EPSV):
+      case(CHECK_PORT):
       case(CHECK_FILE_ACCESS):
       case(CHECK_RNFR):
       case(CHECK_TRANSFER):
@@ -2992,6 +3002,9 @@ int   Ftp::Done()
 	 return(OK);
       return(IN_PROGRESS);
    }
+
+   if(copy_mode==COPY_DEST && !copy_allow_store)
+      return(IN_PROGRESS);
 
    if(mode==CHANGE_DIR || mode==RENAME
    || mode==MAKE_DIR || mode==REMOVE_DIR || mode==REMOVE || mode==CHANGE_MODE

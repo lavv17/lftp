@@ -2,12 +2,15 @@
 
 	* ftpclass.cc, ftpclass.h, FileCopyFtp.cc: fixes for FXP.
 	* FileCopy.cc: don't set pos to FILE_END; don't try to figure out
-	  position in fxp mode; don't try to fake eof in PUT mode.
+	  position in fxp mode; don't try to fake eof in PUT mode;
+	  (RateReset) new method.
 	* FileCopy.h: (SetFXP) accept argument.
 	* FileCopyFtp.cc, FileCopyFtp.h: allow switching passive_source;
-	  revert to plain copy if both cases fail.
+	  revert to plain copy if both cases fail; call RateReset; allow
+	  store when necessary.
 	* ftpclass.cc, ftpclass.h: check PORT reply, switch copy_passive
-	  if it fails.
+	  if it fails; add support for delayed STOR in copy mode; don't
+	  check data address in copy mode.
 
 2000-01-11  Alexander V. Lukyanov  <lav@yars.free.net>
 

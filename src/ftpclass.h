@@ -27,7 +27,6 @@
 #include <time.h>
 
 #include "NetAccess.h"
-/*#include "ResMgr.h"*/
 
 class Ftp : public NetAccess
 {
@@ -260,7 +259,7 @@ private:
    bool copy_passive;
    bool	copy_done;
    bool	copy_connection_open;
-   friend class FtpCopy;
+   bool copy_allow_store;
 
    const char *encode_eprt(sockaddr_u *);
 
@@ -355,6 +354,21 @@ public:
    bool IsPassive() { return flags&PASSIVE_MODE; }
    void SetPos(long p) { pos=real_pos=p; }
    bool IsCopyPassive() { return copy_passive; }
+   void CopyAllowStore()
+      {
+	 char *str=string_alloca(5+strlen(file)+2);
+         sprintf(str,"STOR %s\n",file);
+	 SendCmd(str);
+	 AddResp(RESP_TRANSFER_OK,STORE_FAILED_STATE,CHECK_TRANSFER);
+	 copy_allow_store=true;
+      }
+   bool CopyStoreAllowed() { return copy_allow_store; }
+   bool CopyIsReadyForStore()
+      {
+	 if(copy_mode==COPY_SOURCE)
+	    return copy_addr_valid && RespQueueSize()==1;
+	 return state==WAITING_STATE && RespQueueSize()==0;
+      }
 };
 
 #endif /* FTPCLASS_H */

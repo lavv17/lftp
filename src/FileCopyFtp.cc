@@ -77,9 +77,11 @@ int FileCopyFtp::Do()
 	       pos=0;
 	    get->Seek(pos);
 	    put->Seek(pos);
+	    RateReset();
 	    return MOVED;
 	 }
 	 passive_source=new_ps;
+	 RateReset();
       }
       src_retries=ftp_src->GetRetries();
       dst_retries=ftp_dst->GetRetries();
@@ -113,6 +115,14 @@ int FileCopyFtp::Do()
    // exchange copy address
    if(ftp_dst->SetCopyAddress(ftp_src) || ftp_src->SetCopyAddress(ftp_dst))
       m=MOVED;
+
+   if(!ftp_dst->CopyStoreAllowed()
+   && ftp_src->CopyIsReadyForStore() && ftp_dst->CopyIsReadyForStore())
+   {
+      ftp_dst->CopyAllowStore();
+      m=MOVED;
+      RateReset();
+   }
 
    long add=ftp_dst->GetPos()-put->GetRealPos();
    if(add>0)
