@@ -814,24 +814,28 @@ void Ftp::CatchSIZE(int act)
    if(!array_for_info)
       return;
 
+   long long size=NO_SIZE;
+
    if(is2XX(act))
    {
       if(strlen(line)>4 && is_ascii_digit(line[4]))
-	 array_for_info[array_ptr].size=atol(line+4);
-      else
-	 array_for_info[array_ptr].size=-1;
+	 sscanf(line+4,"%lld",&size);
    }
    else	if(is5XX(act))
    {
       if(act==500 || act==502)
 	 size_supported=false;
-      array_for_info[array_ptr].size=-1;
    }
    else
    {
       Disconnect();
       return;
    }
+
+   if(size<1)
+      size=NO_SIZE;
+
+   array_for_info[array_ptr].size=size;
 
    array_for_info[array_ptr].get_size=false;
    if(!array_for_info[array_ptr].get_time)
@@ -842,16 +846,23 @@ void Ftp::CatchSIZE(int act)
 }
 void Ftp::CatchSIZE_opt(int act)
 {
+   long long size=NO_SIZE;
+
    if(is2XX(act) && strlen(line)>4 && is_ascii_digit(line[4]))
    {
-      entity_size=atol(line+4);
+      sscanf(line+4,"%lld",&size);
    }
    else
    {
       if(act==500 || act==502)
 	 size_supported=false;
-      entity_size=NO_SIZE;
    }
+
+   if(size<1)
+      size=NO_SIZE;
+
+   entity_size=size;
+
    if(opt_size)
    {
       *opt_size=entity_size;
@@ -2028,9 +2039,8 @@ int   Ftp::Do()
 	    TimeoutS(stat_time+stat_interval-now);
       }
 
-      // store mode is special - the data can be buffered
-      // so is COPY_* - no data connection at all.
-      if(mode==STORE || copy_mode!=COPY_NONE)
+      // FXP is special - no data connection at all.
+      if(copy_mode!=COPY_NONE)
 	 goto notimeout_return;
 
       goto usual_return;

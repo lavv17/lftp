@@ -1,3 +1,8 @@
+2003-03-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: use net:timeout when draining data socket on upload;
+	  ignore 0 size reported by SIZE (for sunsolve.sun.com).
+
 2003-02-28  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: close data connection when sending ABOR over ssl.
