@@ -168,6 +168,8 @@ protected:
    char *error;
    int error_code;
    char *location;
+   char *suggested_filename;
+   void SetSuggestedFileName(const char *fn);
 
    FileAccess *next;
    static FileAccess *chain;
@@ -295,6 +297,7 @@ public:
    static bool NotSerious(int err);
 
    const char *GetNewLocation() { return location; }
+   const char *GetSuggestedFileName() { return suggested_filename; }
 
    void Reconfig(const char *);
 

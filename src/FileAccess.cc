@@ -31,6 +31,7 @@
 # include <netinet/tcp.h>
 #endif
 #include <errno.h>
+#include <ctype.h>
 #include "ascii_ctype.h"
 #include <fcntl.h>
 #include "LsCache.h"
@@ -750,6 +751,29 @@ void FileAccess::Fatal(const char *e)
    SetError(FATAL,e);
 }
 
+void FileAccess::SetSuggestedFileName(const char *fn)
+{
+   xfree(suggested_filename);
+   suggested_filename=0;
+   if(fn==0)
+      return;
+
+   // don't allow subdirectories.
+   char *slash=strchr(fn,'/');
+   if(slash)
+      return;
+   slash=strchr(fn,'\\');
+   if(slash)
+      return;
+   for(int i=0; fn[i]; i++)
+   {
+      // don't allow control chars.
+      if(iscntrl((unsigned char)fn[i]))
+	 return;
+   }
+   if(!*fn)
+      return;
+}
 
 FileAccess *SessionPool::pool[pool_size];
 

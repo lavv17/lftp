@@ -344,9 +344,9 @@ void Http::SendMethod(const char *method,const char *efile)
 void Http::SendBasicAuth(const char *tag,const char *user,const char *pass)
 {
    /* Basic scheme */
-   char *buf=(char*)alloca(strlen(user)+1+strlen(pass)+1);
+   char *buf=string_alloca(strlen(user)+1+strlen(pass)+1);
    sprintf(buf,"%s:%s",user,pass);
-   char *buf64=(char*)alloca(base64_length(strlen(buf))+1);
+   char *buf64=string_alloca(base64_length(strlen(buf))+1);
    base64_encode(buf,buf64,strlen(buf));
    Send("%s: Basic %s\r\n",tag,buf64);
 }
@@ -391,7 +391,7 @@ void Http::SendRequest(const char *connection,const char *f)
    url::encode_string(cwd,ecwd,URL_PATH_UNSAFE);
    int efile_len;
 
-   char *pfile=(char*)alloca(4+3+xstrlen(user)*6+3+xstrlen(pass)*3+1+
+   char *pfile=string_alloca(4+3+xstrlen(user)*6+3+xstrlen(pass)*3+1+
 			      strlen(hostname)*3+1+xstrlen(portname)*3+1+
 			      strlen(cwd)*3+1+strlen(efile)+1+6+1);
 
@@ -681,9 +681,37 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 	 seen_ranges_bytes=true;
       return;
    }
-   if(!strcasecmp(name,"Set-Cookie")
-   && !hftp && QueryBool("set-cookies",hostname))
-      SetCookie(value);
+   if(!strcasecmp(name,"Set-Cookie"))
+   {
+      if(!hftp && QueryBool("set-cookies",hostname))
+	 SetCookie(value);
+      return;
+   }
+   if(!strcasecmp(name,"Content-Disposition"))
+   {
+      char *filename=strstr(value,"filename=");
+      if(!filename)
+	 return;
+      if(*filename=='"')
+      {
+	 filename++;
+	 char *filename1=string_alloca(strlen(filename));
+	 while(*filename && *filename!='"')
+	 {
+	    if(*filename=='\\' && filename[1])
+	       filename++;
+	    *filename1++=*filename++;
+	 }
+	 filename=filename1;
+      }
+      else
+      {
+	 int end=strcspn(filename,"()<>@,;:\\\"/[]?={} \t");
+	 filename[end]=0;
+      }
+      SetSuggestedFileName(filename);
+      return;
+   }
 }
 
 static const char *find_eol(const char *str,int len)
@@ -1213,7 +1241,7 @@ int Http::Do()
 
       if(!H_20X(status_code))
       {
-	 char *err=(char*)alloca(strlen(status)+strlen(file)+strlen(cwd)+xstrlen(location)+20);
+	 char *err=string_alloca(strlen(status)+strlen(file)+strlen(cwd)+xstrlen(location)+20);
 	 int code=NO_FILE;
 
 	 if(H_REDIRECTED(status_code))
