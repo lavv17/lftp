@@ -1184,6 +1184,10 @@ int   Ftp::Do()
 	       AddResp(RESP_RESULT_HERE,INITIAL_STATE,CHECK_MDTM);
 	       sent=true;
 	    }
+	    else
+	    {
+	       array_for_info[i].time=(time_t)-1;
+	    }
 	    if(array_for_info[i].get_size && size_supported)
 	    {
 	       sprintf(s,"SIZE %s\n",array_for_info[i].file);
@@ -1191,12 +1195,16 @@ int   Ftp::Do()
 	       AddResp(RESP_RESULT_HERE,INITIAL_STATE,CHECK_SIZE);
 	       sent=true;
 	    }
+	    else
+	    {
+	       array_for_info[i].size=-1;
+	    }
 	    if(!sent)
 	    {
 	       if(i==array_ptr)
-		  array_ptr++;
+		  array_ptr++;	 // if it is first one, just skip it.
 	       else
-		  break;
+		  break;	 // otherwise, wait until it is first.
 	    }
 	 }
 	 goto pre_WAITING_STATE;

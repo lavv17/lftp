@@ -457,6 +457,7 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err)
 	    fi.SetSymlink(arrow+4);
 	    break;
 	 }
+	 arrow++;
       }
    }
    fi.SetName(name);
