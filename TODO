@@ -54,8 +54,6 @@ currently; some need other work to be done.
    of course, implement commands using two sessions where possible.
    ?? then proto-file will not be a module, that is it will be always loaded.
 
- * make debug output to clear/redraw prompt.
-
  * safety: options for permanent backup, maybe complain instead of overwriting.
 
  * mirror: add settings like mirror:default-time-prec. make default 0?.
@@ -66,11 +64,7 @@ currently; some need other work to be done.
 
  * `repeat' command, e.g. repeat "at tomorrow -- mirror"
 
-+* Cache DNS data inside Resolver class.
-
  * parallel get's in mirror, mget
  * make a command get1 to get single file with extra options.
-
- * mirror should not overwrite files which appeared after mirror start.
 
  * open inet6,host
