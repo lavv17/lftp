@@ -57,9 +57,9 @@ $list && { cmd="ls"; ok=true; }
 for f
 do
    case "$f" in
-   "*[\"\\]*")
+   "*[\"'\\]*")
       # need to quote
-      f="`echo "$f" | sed 's/\([\\\"]\)/\\\1/g'`"
+      f="`echo "$f" | sed 's/\([\\\"'\'']\)/\\\1/g'`"
       ;;
    esac
    cmd="$cmd \"$f\""

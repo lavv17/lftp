@@ -1,6 +1,7 @@
 2002-02-24  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: flip copy_passive on any 425 reply.
+	* ftpget: fix ' quoting.
 
 2002-02-15  Alexander V. Lukyanov <lav@yars.free.net>
 
