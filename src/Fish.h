@@ -162,7 +162,7 @@ public:
 class FishDirList : public DirList
 {
    FileAccess *session;
-   Buffer *ubuf;
+   IOBuffer *ubuf;
    char *pattern;
 
 public:

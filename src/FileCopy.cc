@@ -414,7 +414,7 @@ FileCopy::~FileCopy()
 {
    Delete(get);
    Delete(put);
-   Delete(line_buffer);
+   delete line_buffer;
    xfree(error_text);
    Delete(rate);
    Delete(rate_for_eta);
@@ -655,9 +655,8 @@ bool FileCopyPeer::Done()
    return false;
 }
 
-FileCopyPeer::FileCopyPeer(direction m)
+FileCopyPeer::FileCopyPeer(dir_t m) : IOBuffer(m)
 {
-   mode=m;
    want_size=false;
    want_date=false;
    start_transfer=true;
@@ -1179,7 +1178,7 @@ FileCopyPeerFA *FileCopyPeerFA::New(FileAccess *s,const char *url,int m,bool reu
 // FileCopyPeerFDStream
 #undef super
 #define super FileCopyPeer
-FileCopyPeerFDStream::FileCopyPeerFDStream(FDStream *o,direction m)
+FileCopyPeerFDStream::FileCopyPeerFDStream(FDStream *o,dir_t m)
    : FileCopyPeer(m)
 {
    if(o==0 && m==PUT)

@@ -119,7 +119,7 @@ public:
 
 class FinderJob_List : public FinderJob
 {
-   Buffer *buf;
+   IOBuffer *buf;
    ArgV *args;
 protected:
    prf_res ProcessFile(const char *d,const FileInfo *fi);

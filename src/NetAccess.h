@@ -161,7 +161,7 @@ protected:
    int get_info_cnt;
 
    int mode;
-   Buffer *ubuf;
+   IOBuffer *ubuf;
 
    bool get_time_for_dirs;
    bool can_get_prec_time;

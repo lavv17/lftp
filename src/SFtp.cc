@@ -332,7 +332,7 @@ void SFtp::Disconnect()
    Delete(recv_buf); recv_buf=0;
    Delete(pty_send_buf); pty_send_buf=0;
    Delete(pty_recv_buf); pty_recv_buf=0;
-   Delete(file_buf); file_buf=0;
+   delete file_buf; file_buf=0;
    delete ssh; ssh=0;
    EmptyRespQueue();
    state=DISCONNECTED;
@@ -341,6 +341,8 @@ void SFtp::Disconnect()
    received_greeting=false;
    protocol_version=0;
    ssh_id=0;
+   xfree(home_auto); home_auto=0;
+   home_auto=xstrdup(FindHomeAuto());
 }
 
 void SFtp::Init()
@@ -551,8 +553,8 @@ void SFtp::SendRequest()
    switch((open_mode)mode)
    {
    case CHANGE_DIR:
-      SendRequest(new Request_STAT(lc_to_utf8(file)),EXPECT_CWD);
-      SendRequest(new Request_STAT(lc_to_utf8(dir_file(file,"."))),EXPECT_CWD);
+      SendRequest(new Request_STAT(lc_to_utf8(file),0,protocol_version),EXPECT_CWD);
+      SendRequest(new Request_STAT(lc_to_utf8(dir_file(file,".")),0,protocol_version),EXPECT_CWD);
       state=WAITING;
       break;
    case RETRIEVE:
@@ -622,7 +624,9 @@ void SFtp::SendArrayInfoRequests()
    while(array_ptr<array_cnt && RespQueueSize()<max_packets_in_flight)
    {
       SendRequest(new Request_STAT(lc_to_utf8(dir_file(cwd,
-	       array_for_info[array_ptr].file))),EXPECT_INFO,array_ptr);
+	       array_for_info[array_ptr].file)),
+	 SSH_FILEXFER_ATTR_SIZE|SSH_FILEXFER_ATTR_MODIFYTIME,
+	 protocol_version),EXPECT_INFO,array_ptr);
       array_ptr++;
    }
    if(RespQueueIsEmpty())
@@ -657,7 +661,7 @@ void SFtp::Close()
    CloseExpectQueue();
    state=(recv_buf?CONNECTED:DISCONNECTED);
    eof=false;
-   Delete(file_buf); file_buf=0;
+   delete file_buf; file_buf=0;
    delete file_set; file_set=0;
    CloseHandle(EXPECT_IGNORE);
    super::Close();
@@ -790,7 +794,9 @@ void SFtp::HandleExpect(Expect *e)
 	 Log::global->Format(9," (%d)\n",handle_len);
 	 request_pos=real_pos=pos;
 	 if(mode==RETRIEVE)
-	    SendRequest(new Request_FSTAT(handle,handle_len),EXPECT_INFO);
+	    SendRequest(new Request_FSTAT(handle,handle_len,
+	       SSH_FILEXFER_ATTR_SIZE|SSH_FILEXFER_ATTR_MODIFYTIME|SSH_FILEXFER_ATTR_PERMISSIONS,
+	       protocol_version),EXPECT_INFO);
 	 else if(mode==STORE)
 	 {
 	    // truncate the file at write position.
@@ -876,7 +882,8 @@ void SFtp::HandleExpect(Expect *e)
 	 {
 	    if(((Reply_STATUS*)reply)->GetCode()==SSH_FX_EOF)
 	    {
-	       Log::global->Write(9,"---- eof\n");
+	       if(!eof)
+		  Log::global->Write(9,"---- eof\n");
 	       eof=true;
 	       state=DONE;
 	       if(file_buf)
@@ -979,7 +986,7 @@ int SFtp::HandleReplies()
 	 Disconnect();
 	 return MOVED;
       }
-      if(recv_buf->Eof())
+      if(recv_buf->Eof() && pty_recv_buf->Size()==0)
       {
 	 DebugPrint("**** ",_("Peer closed connection"),0);
 	 Disconnect();
@@ -1613,6 +1620,12 @@ void SFtp::FileAttrs::Pack(Buffer *b,int protocol_version)
 	 extended_attrs[i].Pack(b);
    }
 }
+int SFtp::FileAttrs::ComputeLength(int protocol_version)
+{
+   Buffer b;
+   Pack(&b,protocol_version);
+   return b.Size();
+}
 
 SFtp::unpack_status_t SFtp::FileACE::Unpack(Buffer *b,int *offset,int limit)
 {
@@ -1811,7 +1824,7 @@ int SFtpDirList::Do()
       if(use_cache && LsCache::Find(session,dir,FA::LONG_LIST,
 				    &cache_buffer,&cache_buffer_size,&fset))
       {
-	 ubuf=new Buffer();
+	 ubuf=new IOBuffer(IOBuffer::GET);
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
 	 fset=new FileSet(fset);
@@ -1948,7 +1961,7 @@ int SFtpListInfo::Do()
       if(use_cache && LsCache::Find(session,"",FA::LONG_LIST,
 				    &cache_buffer,&cache_buffer_size,&result))
       {
-	 ubuf=new Buffer();
+	 ubuf=new IOBuffer(IOBuffer::GET);
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
 	 result=new FileSet(result);

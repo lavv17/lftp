@@ -36,7 +36,7 @@
 
 class Speedometer;
 
-class Buffer : public SMTask
+class Buffer
 {
 protected:
    char *error_text;
@@ -66,11 +66,7 @@ protected:
 
    void SaveMaxCheck(int addsize);
 
-   virtual ~Buffer();
-
 public:
-   virtual int Do();
-   virtual bool Done() { return in_buffer==0; }
    bool Error() { return error_text!=0; }
    bool ErrorFatal() { return error_fatal; }
    void SetError(const char *e,bool fatal=false);
@@ -121,15 +117,11 @@ public:
 
    void Empty();
 
-   virtual FgData *GetFgData(bool) { return 0; }
-
-   virtual time_t EventTime() { return now; }
-   virtual const char *Status() { return ""; }
-
    Buffer();
+   virtual ~Buffer();
 };
 
-class IOBuffer : public Buffer
+class IOBuffer : public Buffer, public SMTask
 {
 public:
    enum dir_t { GET, PUT };
@@ -144,16 +136,20 @@ public:
 	 event_time=now;
 	 mode=m;
       }
-   time_t EventTime()
+   virtual time_t EventTime()
       {
 	 if(suspended)
 	    return now;
 	 return event_time;
       }
-   bool Done()
+   virtual bool Done()
       {
 	 return(broken || Error() || (eof && (mode==GET || in_buffer==0)));
       }
+   int Do() { return STALL; }
+
+   virtual FgData *GetFgData(bool) { return 0; }
+   virtual const char *Status() { return ""; }
 };
 
 class IOBufferFDStream : public IOBuffer

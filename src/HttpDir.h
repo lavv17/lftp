@@ -41,7 +41,7 @@ class ParsedURL;
 class HttpDirList : public DirList
 {
    FileAccess *session;
-   Buffer *ubuf;
+   IOBuffer *ubuf;
    const char *curr;
    ParsedURL *curr_url;
    FileSet all_links;

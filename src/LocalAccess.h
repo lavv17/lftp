@@ -74,6 +74,7 @@ public:
 
 class LocalDirList : public DirList
 {
+   IOBuffer *ubuf;
    FgData *fg_data;
 public:
    LocalDirList(ArgV *a,const char *cwd);

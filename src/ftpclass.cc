@@ -3886,7 +3886,7 @@ void Ftp::ResetLocationData()
    mdtm_supported=true;
    size_supported=true;
    site_chmod_supported=true;
-   xfree(home_auto);
+   xfree(home_auto); home_auto=0;
    home_auto=xstrdup(FindHomeAuto());
    Reconfig(0);
    state=INITIAL_STATE;

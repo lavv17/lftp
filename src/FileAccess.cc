@@ -932,7 +932,7 @@ DirList *FileAccess::MakeDirList(ArgV *a) { if(a) delete a; return 0; }
 
 DirList::~DirList()
 {
-   Delete(buf);
+   delete buf;
    if(args)
       delete args;
 }

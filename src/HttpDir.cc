@@ -1201,7 +1201,7 @@ int HttpDirList::Do()
       if(use_cache && LsCache::Find(session,curr,mode,
 				    &cache_buffer,&cache_buffer_size))
       {
-	 ubuf=new Buffer();
+	 ubuf=new IOBuffer(IOBuffer::GET);
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
       }

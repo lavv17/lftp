@@ -24,7 +24,7 @@
 
 class FinderJob_Du : public FinderJob
 {
-   Buffer *buf;
+   IOBuffer *buf;
 
    /* We keep traversing deeper than this, but we never print a total
     * past this. */
@@ -38,7 +38,7 @@ class FinderJob_Du : public FinderJob
    bool success;
 
    long long tot_size;
-	
+
    void Init(const char *d);
 
    struct stack {

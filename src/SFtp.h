@@ -291,10 +291,36 @@ static bool is_valid_status(int s)
    public:
       Request_REALPATH(const char *p) : PacketSTRING(SSH_FXP_REALPATH,p) {}
    };
-   class Request_STAT : public PacketSTRING
+   class Request_FSTAT : public PacketSTRING
+   {
+      unsigned flags;
+      int protocol_version;
+   public:
+      Request_FSTAT(const char *h,int len,unsigned f,int pv) : PacketSTRING(SSH_FXP_FSTAT,h,len)
+	 {
+	    flags=f;
+	    protocol_version=pv;
+	 }
+      void ComputeLength()
+	 {
+	    PacketSTRING::ComputeLength();
+	    if(protocol_version>=4)
+	       length+=4;
+	 }
+      void Pack(Buffer *b)
+	 {
+	    PacketSTRING::Pack(b);
+	    if(protocol_version>=4)
+	       b->PackUINT32BE(flags);
+	 }
+   };
+   class Request_STAT : public Request_FSTAT
    {
    public:
-      Request_STAT(const char *p) : PacketSTRING(SSH_FXP_STAT,p) {}
+      Request_STAT(const char *p,unsigned f,int pv) : Request_FSTAT(p,strlen(p),f,pv)
+	 {
+	    type=SSH_FXP_STAT;
+	 }
       const char *GetName() { return string; }
    };
    struct ExtFileAttr
@@ -355,14 +381,7 @@ static bool is_valid_status(int s)
       }
       unpack_status_t Unpack(Buffer *b,int *offset,int limit,int proto_version);
       void Pack(Buffer *b,int proto_version);
-      int ComputeLength(int v)
-	 {
-	    Buffer *b=new Buffer;
-	    Pack(b,v);
-	    int size=b->Size();
-	    Delete(b);
-	    return size;
-	 }
+      int ComputeLength(int v);
    };
    struct NameAttrs
    {
@@ -399,13 +418,17 @@ static bool is_valid_status(int s)
       unpack_status_t Unpack(Buffer *b);
       const FileAttrs *GetAttrs() { return &attrs; }
    };
-   class Request_FSETSTAT : public PacketSTRING
+   class PacketSTRING_ATTRS : public PacketSTRING
    {
+   protected:
       int protocol_version;
    public:
       FileAttrs attrs;
-      Request_FSETSTAT(const char *h,int h_len,int pv)
-       : PacketSTRING(SSH_FXP_FSETSTAT,h,h_len) { protocol_version=pv; }
+      PacketSTRING_ATTRS(packet_type type,const char *s,int len,int pv)
+       : PacketSTRING(type,s,len)
+	 {
+	    protocol_version=pv;
+	 }
       void ComputeLength()
 	 {
 	    PacketSTRING::ComputeLength();
@@ -417,50 +440,29 @@ static bool is_valid_status(int s)
 	    attrs.Pack(b,protocol_version);
 	 }
    };
-   class RequestNAMEATTRS : public Packet
+   class Request_FSETSTAT : public PacketSTRING_ATTRS
    {
-   protected:
-      int protocol_version;
-      char *filename;
    public:
-      FileAttrs attrs;
-      RequestNAMEATTRS(packet_type type,const char *fn,int pv) : Packet(type)
-	 {
-	    filename=xstrdup(fn);
-	    protocol_version=pv;
-	 }
-      ~RequestNAMEATTRS() { xfree(filename); }
-      void ComputeLength()
-	 {
-	    Packet::ComputeLength();
-	    length+=4+strlen(filename)+attrs.ComputeLength(protocol_version);
-	 }
-      void Pack(Buffer *b)
-	 {
-	    Packet::Pack(b);
-	    Packet::PackString(b,filename);
-	    attrs.Pack(b,protocol_version);
-	 }
+      Request_FSETSTAT(const char *h,int h_len,int pv)
+       : PacketSTRING_ATTRS(SSH_FXP_FSETSTAT,h,h_len,pv) {}
    };
-   class Request_OPEN : public RequestNAMEATTRS
+   class Request_OPEN : public PacketSTRING_ATTRS
    {
-      int protocol_version;
       unsigned pflags;
    public:
-      FileAttrs attrs;
-      Request_OPEN(const char *fn,unsigned fl,int pv) : RequestNAMEATTRS(SSH_FXP_OPEN,fn,pv)
+      Request_OPEN(const char *fn,unsigned fl,int pv)
+       : PacketSTRING_ATTRS(SSH_FXP_OPEN,fn,strlen(fn),pv)
 	 {
 	    pflags=fl;
 	 }
       void ComputeLength()
 	 {
-	    RequestNAMEATTRS::ComputeLength();
+	    PacketSTRING_ATTRS::ComputeLength();
 	    length+=4;
 	 }
       void Pack(Buffer *b)
 	 {
-	    Packet::Pack(b);
-	    Packet::PackString(b,filename);
+	    PacketSTRING::Pack(b);
 	    b->PackUINT32BE(pflags);
 	    attrs.Pack(b,protocol_version);
 	 }
@@ -481,11 +483,6 @@ static bool is_valid_status(int s)
    {
    public:
       Request_CLOSE(const char *h,int len) : PacketSTRING(SSH_FXP_CLOSE,h,len) {}
-   };
-   class Request_FSTAT : public PacketSTRING
-   {
-   public:
-      Request_FSTAT(const char *h,int len) : PacketSTRING(SSH_FXP_FSTAT,h,len) {}
    };
    class Request_OPENDIR : public PacketSTRING
    {
@@ -538,15 +535,17 @@ static bool is_valid_status(int s)
       void ComputeLength() { PacketSTRING::ComputeLength(); length+=8+4+len; }
       void Pack(Buffer *b);
    };
-   class Request_MKDIR : public RequestNAMEATTRS
+   class Request_MKDIR : public PacketSTRING_ATTRS
    {
    public:
-      Request_MKDIR(const char *fn,int pv) : RequestNAMEATTRS(SSH_FXP_MKDIR,fn,pv) {}
+      Request_MKDIR(const char *fn,int pv)
+       : PacketSTRING_ATTRS(SSH_FXP_MKDIR,fn,strlen(fn),pv) {}
    };
-   class Request_SETSTAT : public RequestNAMEATTRS
+   class Request_SETSTAT : public PacketSTRING_ATTRS
    {
    public:
-      Request_SETSTAT(const char *fn,int pv) : RequestNAMEATTRS(SSH_FXP_SETSTAT,fn,pv) {}
+      Request_SETSTAT(const char *fn,int pv)
+       : PacketSTRING_ATTRS(SSH_FXP_SETSTAT,fn,strlen(fn),pv) {}
    };
    class Request_RMDIR : public PacketSTRING
    {
@@ -698,7 +697,7 @@ public:
 class SFtpDirList : public DirList
 {
    FileAccess *session;
-   Buffer *ubuf;
+   IOBuffer *ubuf;
    const char *dir;
    bool use_file_set;
    FileSet *fset;
@@ -716,7 +715,7 @@ public:
 
 class SFtpListInfo : public ListInfo
 {
-   Buffer *ubuf;
+   IOBuffer *ubuf;
 public:
    SFtpListInfo(SFtp *session,const char *dir)
       : ListInfo(session,dir)

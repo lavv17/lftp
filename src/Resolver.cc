@@ -227,7 +227,7 @@ int   Resolver::Do()
       if(!buf)
       {
 	 Log::global->Format(4,"---- %s\n",_("Resolving host address..."));
-	 buf=new Buffer();
+	 buf=new IOBuffer(IOBuffer::GET);
 	 DoGethostbyname();
 	 if(deleting)
 	    return MOVED;

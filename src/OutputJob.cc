@@ -268,7 +268,7 @@ OutputJob::~OutputJob()
    delete output_fd;
    SessionPool::Reuse(fa);
    xfree(fa_path);
-   Delete(tmp_buf);
+   delete tmp_buf;
 
    xfree(a0);
    xfree(filter);
@@ -532,7 +532,7 @@ void OutputJob::Put(const char *buf,int size)
 	 Put(b,s);
       if(saved_buf->Eof())
 	 PutEOF();
-      Delete(saved_buf);
+      delete saved_buf;
    }
 
    update_timer.SetResource("cmd:status-interval",0);

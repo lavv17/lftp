@@ -41,7 +41,7 @@
 
 #define FILE_END     (-1L)
 
-class FileCopyPeer : public Buffer
+class FileCopyPeer : public IOBuffer
 {
 protected:
    bool want_size;
@@ -67,14 +67,10 @@ protected:
    bool write_allowed;
 
 public:
-   enum direction { GET, PUT };
-
    off_t range_start; // NOTE: ranges are implemented only partially. (FIXME)
    off_t range_limit;
 
 protected:
-   enum direction mode;
-
    ~FileCopyPeer();
 
 public:
@@ -101,7 +97,7 @@ public:
 
    void SetRange(off_t s,off_t lim) { range_start=s; range_limit=lim; }
 
-   FileCopyPeer(direction m);
+   FileCopyPeer(dir_t m);
 
    bool Done();
 
@@ -331,7 +327,7 @@ protected:
    ~FileCopyPeerFDStream();
 
 public:
-   FileCopyPeerFDStream(FDStream *o,direction m);
+   FileCopyPeerFDStream(FDStream *o,dir_t m);
    int Do();
    bool IOReady();
    void Seek(off_t new_pos);

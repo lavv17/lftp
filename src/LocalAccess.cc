@@ -656,8 +656,7 @@ LocalDirList::LocalDirList(ArgV *a,const char *cwd)
    a->insarg(1,"-l");
    InputFilter *f=new InputFilter(a);
    f->SetCwd(cwd);
-   Delete(buf);
-   buf=new IOBufferFDStream(f,IOBuffer::GET);
+   ubuf=new IOBufferFDStream(f,IOBuffer::GET);
 }
 int LocalDirList::Do()
 {
@@ -670,19 +669,31 @@ int LocalDirList::Do()
       return MOVED;
    }
 
-   if(buf->Error())
+   if(ubuf->Error())
    {
-      SetError(buf->ErrorText());
+      SetError(ubuf->ErrorText());
       return MOVED;
    }
    if(!fg_data)
-      fg_data=buf->GetFgData(false);
-   return STALL;
+      fg_data=ubuf->GetFgData(false);
+   const char *b;
+   int len;
+   ubuf->Get(&b,&len);
+   if(b==0) // eof
+   {
+      buf->PutEOF();
+      return MOVED;
+   }
+   if(len==0)
+      return STALL;
+   buf->Put(b,len);
+   ubuf->Skip(len);
+   return MOVED;
 }
 LocalDirList::~LocalDirList()
 {
-   if(fg_data)
-      delete fg_data;
+   delete fg_data;
+   Delete(ubuf);
 }
 
 #include "modconfig.h"

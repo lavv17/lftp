@@ -54,7 +54,7 @@ class Resolver : public SMTask
 
    int pipe_to_child[2];
    ProcWait *w;
-   Buffer *buf;
+   IOBuffer *buf;
    int timeout;
 
    time_t start_time;

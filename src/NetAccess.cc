@@ -66,7 +66,7 @@ void NetAccess::Init()
    connection_limit=0;	// no limit.
    connection_takeover=false;
 
-   home_auto=0;
+   home_auto=xstrdup(FindHomeAuto());
 
    Reconfig(0);
 }
@@ -635,7 +635,7 @@ int GenericParseListInfo::Do()
       if(use_cache && LsCache::Find(session,"",mode,
 				    &cache_buffer,&cache_buffer_size))
       {
-	 ubuf=new Buffer();
+	 ubuf=new IOBuffer(IOBuffer::GET);
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
       }

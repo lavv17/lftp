@@ -185,11 +185,6 @@ void Buffer::Empty()
       save=true;
 }
 
-int Buffer::Do()
-{
-   return STALL;
-}
-
 Buffer::Buffer()
 {
    error_text=0;

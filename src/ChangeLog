@@ -1,3 +1,20 @@
+2003-12-01  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* buffer.cc, buffer.h: move SMTask to IOBuffer.
+	* FileAccess.cc, OutputJob.cc: Delete -> delete for Buffer.
+	* FileCopy.cc, FileCopy.h: use IOBuffer as base class for FileCopyPeer.
+	* FindJob.h, FindJobDu.h, Fish.cc, Fish.h, FtpDirList.cc, FtpDirList.h,
+	  HttpDir.h, LocalAccess.cc, LocalAccess.h, Resolver.cc, Resolver.h:
+	  use IOBuffer.
+	* NetAccess.cc, NetAccess.h: use IOBuffer; FindHomeAuto in ctor.
+	* SFtp.cc, SFtp.h: fixed FSTAT request (protocol_version was duplicated);
+	  fixed STAT/FSTAT for protocol v4 - add flags field.
+
+2003-12-01  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: fix possible freed memory access.
+	* MirrorJob.cc: don't append basename of source to / destination.
+
 2003-11-26  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopyFtp.cc: add ftps to acceptable fxp protocols.
