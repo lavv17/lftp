@@ -1,3 +1,7 @@
+1999-09-30  Albert Chin-A-Young <china@thewrittenword.com>
+
+	* module.c: fix // comment
+
 1999-09-29  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ResMgr.h: include time.h for time_t.
