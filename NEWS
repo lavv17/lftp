@@ -1,3 +1,11 @@
+Version 3.0.11 - 2004-11-03
+
+* new mirror option --no-symlinks.
+* implemented transfer continue in fish protocol (thanks to Loic Le Loarer).
+* improved completion for aliases.
+* fixed file removing in mirror --delete-first.
+* fixed FXP transfer mode (broken in 3.0.7).
+
 Version 3.0.10 - 2004-10-20
 
 * better mirror -R completion added.

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-10-20 22:54+0400\n"
+"POT-Creation-Date: 2004-11-03 17:16+0300\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -40,7 +40,7 @@ msgstr ""
 msgid "cd ok, cwd=%s\n"
 msgstr "cd 成功, 当前目录=%s\n"
 
-#: src/CmdExec.cc:391 src/MirrorJob.cc:498
+#: src/CmdExec.cc:391 src/MirrorJob.cc:501
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
@@ -216,7 +216,7 @@ msgstr "%s删除: %d 个目录, %d 个文件, %d 个符号链接\n"
 msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%s要删除: %d 个目录, %d 个文件, %d 个符号链接\n"
 
-#: src/MirrorJob.cc:232 src/MirrorJob.cc:825
+#: src/MirrorJob.cc:232 src/MirrorJob.cc:832
 #, fuzzy, c-format
 msgid "Removing old file `%s'"
 msgstr "正在删除本地文件 `%s'"
@@ -226,7 +226,7 @@ msgstr "正在删除本地文件 `%s'"
 msgid "Transferring file `%s'"
 msgstr "上传本地文件 '%s'"
 
-#: src/MirrorJob.cc:331 src/MirrorJob.cc:409 src/MirrorJob.cc:631
+#: src/MirrorJob.cc:331 src/MirrorJob.cc:412 src/MirrorJob.cc:634
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "正在删除本地文件 `%s'"
@@ -236,32 +236,32 @@ msgstr "正在删除本地文件 `%s'"
 msgid "Mirroring directory `%s'"
 msgstr "建立远程目录 `%s'"
 
-#: src/MirrorJob.cc:422
+#: src/MirrorJob.cc:425
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "建立符号链接 `%s' 指向 `%s'"
 
-#: src/MirrorJob.cc:551
+#: src/MirrorJob.cc:554
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "镜像: 协议 `%s' 不适合进行镜像\n"
 
-#: src/MirrorJob.cc:649
+#: src/MirrorJob.cc:652
 #, fuzzy, c-format
 msgid "Making directory `%s'"
 msgstr "建立远程目录 `%s'"
 
-#: src/MirrorJob.cc:787
+#: src/MirrorJob.cc:794
 #, fuzzy, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "没有删除旧的本地文件 `%s'"
 
-#: src/MirrorJob.cc:790
+#: src/MirrorJob.cc:797
 #, fuzzy, c-format
 msgid "Old file `%s' is not removed"
 msgstr "没有删除旧的本地文件 `%s'"
 
-#: src/MirrorJob.cc:820
+#: src/MirrorJob.cc:827
 #, fuzzy, c-format
 msgid "Removing old directory `%s'"
 msgstr "删除旧的远程文件 `%s'"
@@ -271,7 +271,7 @@ msgstr "删除旧的远程文件 `%s'"
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1343 src/commands.cc:976 src/commands.cc:1064
+#: src/MirrorJob.cc:1346 src/commands.cc:976 src/commands.cc:1064
 #: src/commands.cc:1450 src/commands.cc:1484 src/commands.cc:1583
 #: src/commands.cc:1871 src/commands.cc:2067 src/commands.cc:2240
 #: src/commands.cc:2247 src/commands.cc:2429 src/commands.cc:2456
@@ -281,7 +281,7 @@ msgstr ""
 msgid "Try `help %s' for more information.\n"
 msgstr "请用 `help %s' 或得更多的信息.\n"
 
-#: src/MirrorJob.cc:1377 src/MirrorJob.cc:1393 src/commands.cc:841
+#: src/MirrorJob.cc:1380 src/MirrorJob.cc:1396 src/commands.cc:841
 #: src/commands.cc:1962 src/DummyProto.cc:73
 #, fuzzy
 msgid " - not supported protocol"
