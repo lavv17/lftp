@@ -241,6 +241,8 @@ void Ftp::RestCheck(int act)
       return;
    if(is5XX(act))
    {
+      if(act==RESP_NOT_IMPLEMENTED || act==RESP_NOT_UNDERSTOOD)
+	 rest_supported=false;
       DebugPrint("---- ",_("Switching to NOREST mode"),2);
       flags|=NOREST_MODE;
       if(mode==STORE)
@@ -900,6 +902,7 @@ void Ftp::InitFtp()
    vms_path=false;
    mdtm_supported=true;
    size_supported=true;
+   rest_supported=true;
    site_chmod_supported=true;
    site_utime_supported=true;
    pret_supported=false;
@@ -1201,6 +1204,7 @@ int   Ftp::Do()
       // to a different server in fact.
       size_supported=true;
       mdtm_supported=true;
+      rest_supported=true;
       site_chmod_supported=true;
       site_utime_supported=true;
       translation_activated=false;
@@ -1490,6 +1494,9 @@ int   Ftp::Do()
 	 eof=true;
 	 goto pre_WAITING_STATE; // simulate eof.
       }
+
+      if(!rest_supported)
+	 flags|=NOREST_MODE;
 
       if(mode==STORE && (flags&NOREST_MODE) && pos>0)
 	 pos=0;
@@ -3199,6 +3206,7 @@ void  Ftp::MoveConnectionHere(Ftp *o)
 
    size_supported=o->size_supported;
    mdtm_supported=o->mdtm_supported;
+   rest_supported=o->rest_supported;
    site_chmod_supported=o->site_chmod_supported;
    site_utime_supported=o->site_utime_supported;
    pret_supported=o->pret_supported;
@@ -3220,6 +3228,7 @@ void Ftp::CheckFEAT(char *reply)
    pret_supported=false;
    mdtm_supported=false;
    size_supported=false;
+   rest_supported=false;
 #ifdef USE_SSL
    auth_supported=false;
 #endif
@@ -3260,6 +3269,8 @@ void Ftp::CheckFEAT(char *reply)
 	 mdtm_supported=true;
       else if(!strcasecmp(f,"SIZE"))
 	 size_supported=true;
+      else if(!strncasecmp(f,"REST ",5))
+	 rest_supported=true;
 #ifdef USE_SSL
       else if(!strncasecmp(f,"AUTH ",5))
       {
@@ -3804,6 +3815,7 @@ void Ftp::ResetLocationData()
    vms_path=false;
    mdtm_supported=true;
    size_supported=true;
+   rest_supported=true;
    site_chmod_supported=true;
    site_utime_supported=true;
    utf8_supported=false;

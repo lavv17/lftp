@@ -267,6 +267,7 @@ private:
    bool  vms_path;
    bool  mdtm_supported;
    bool  size_supported;
+   bool  rest_supported;
    bool  site_chmod_supported;
    bool  site_utime_supported;
    bool	 pret_supported;

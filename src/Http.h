@@ -116,6 +116,8 @@ class Http : public NetAccess
 
    const char *user_agent;
 
+   char *entity_content_type;
+
 protected:
    bool hftp;  // ftp over http proxy.
    bool https; // secure http

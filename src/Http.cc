@@ -83,6 +83,7 @@ void Http::Init()
    proto_version=0x10;
    sent_eot=false;
    last_method=0;
+   entity_content_type=0;
 
    default_cwd="/";
 
@@ -197,6 +198,8 @@ void Http::ResetRequestData()
    chunk_pos=0;
    chunked_trailer=false;
    seen_ranges_bytes=false;
+   xfree(entity_content_type);
+   entity_content_type=0;
 }
 
 void Http::Close()
@@ -704,6 +707,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       const char *filename=strstr(value,"filename=");
       if(!filename)
 	 return;
+      filename+=9;
       if(*filename=='"')
       {
 	 filename++;
@@ -725,6 +729,12 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       }
       SetSuggestedFileName(filename);
       return;
+   }
+   if(!strcasecmp(name,"Content-Type"))
+   {
+      xfree(entity_content_type);
+      entity_content_type=xstrdup(value);
+//       const char *cs=strstr(value,"charset=");
    }
 }
 

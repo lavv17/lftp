@@ -1,3 +1,8 @@
+2004-01-19  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc, Http.h: extract content-type (not used yet).
+	* ftpclass.cc, ftpclass.h: add rest_supported flag.
+
 2004-01-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ResMgr.cc: better charset test.
