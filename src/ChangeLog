@@ -1,5 +1,11 @@
 1999-08-05  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* ArgV.h, CmdExec.cc: (ArgV::CombineQuoted) new method.
+	* commands.cc: fix `at' command to quote the command to execute.
+	* lftp.cc: use CombineQuoted.
+
+1999-08-05  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* FtpListInfo.cc: fix NT listing parser for the case of file name
 	  with spaces.
 

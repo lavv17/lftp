@@ -1859,7 +1859,18 @@ CMD(at)
    if(when==0 || when==(time_t)-1)
       return 0;
 
-   char *cmd = cmd_start ? args->Combine(cmd_start) : 0;
+   char *cmd=0;
+   if(cmd_start)
+   {
+      // two cases:
+      //  1. at time -- "cmd; cmd..." (one argument)
+      //  2. at time -- shell "cmd; cmd..." (several args)
+      if(cmd_start==args->count()-1)
+	 cmd=args->Combine(cmd_start);
+      else
+	 cmd=args->CombineQuoted(cmd_start);
+   }
+
    FileAccess *s = cmd ? Clone() : 0;
    return new SleepJob(when, s, cmd);
 }

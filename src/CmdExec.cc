@@ -991,6 +991,45 @@ void CmdExec::FeedQuoted(const char *c)
    FeedCmd(buf);
 }
 
+// implementation is here because it depends on CmdExec.
+char *ArgV::CombineQuoted(int start)
+{
+   int	 i;
+   char  *res;
+   char	 *store,*arg;
+   int	 len=0;
+
+   for(i=start; i<c; i++)
+      len+=strlen(v[i])*2+3;
+
+   if(len==0)
+      return(xstrdup(""));
+
+   res=(char*)xmalloc(len);
+
+   store=res;
+   for(i=start; i<c; i++)
+   {
+      arg=v[i];
+      if(CmdExec::needs_quotation(arg))
+      {
+	 *store++='"';
+	 CmdExec::unquote(store,arg);
+	 store+=strlen(store);
+	 *store++='"';
+      }
+      else
+      {
+	 strcpy(store,arg);
+	 store+=strlen(store);
+      }
+      *store++=' ';
+   }
+   store[-1]=0;
+
+   return(res);
+}
+
 const char *CmdExec::GetFullCommandName(const char *cmd)
 {
    const CmdExec::cmd_rec *c;
