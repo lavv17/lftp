@@ -1,6 +1,7 @@
 1999-08-11  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* lftpget: options -c -v -d.
+	* Http.cc: change level of Connecting message.
 
 1999-08-10  Alexander V. Lukyanov  <lav@yars.free.net>
 

@@ -584,7 +584,7 @@ int Http::Do()
       DebugPrint("---- ",str,0);
 #endif
 
-      DebugPrint("---- ","Connecting...",9);
+      DebugPrint("---- ","Connecting...",2);
       res=connect(sock,&peer[peer_curr].sa,sizeof(*peer));
       UpdateNow(); // if non-blocking don't work
 
