@@ -281,6 +281,7 @@ private:
    void	 SendAcct();
    void	 SendSiteGroup();
    void	 SendUTimeRequest();
+   void SendAuth(const char *auth);
 
    const char *QueryStringWithUserAtHost(const char *);
 

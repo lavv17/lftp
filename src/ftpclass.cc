@@ -1175,8 +1175,6 @@ int   Ftp::Do()
       if(!ReconnectAllowed())
 	 return m;
 
-      conn->proxy_is_http=ProxyIsHttp();
-
       if(ftps)
 	 m|=Resolve(FTPS_DEFAULT_PORT,"ftps","tcp");
       else
@@ -1192,6 +1190,8 @@ int   Ftp::Do()
 
       assert(!conn);
       conn=new Connection();
+
+      conn->proxy_is_http=ProxyIsHttp();
 
       conn->peer_sa=peer[peer_curr];
       conn->control_sock=SocketCreateTCP(conn->peer_sa.sa.sa_family);
@@ -1307,44 +1307,10 @@ int   Ftp::Do()
 	 return m;
 
 #ifdef USE_SSL
-      if(conn->auth_supported && !conn->auth_sent && !conn->control_ssl && !ftps && (!proxy || conn->proxy_is_http)
-      && QueryBool((user && pass)?"ssl-allow":"ssl-allow-anonymous",hostname))
-      {
-	 const char *auth=Query("ssl-auth",hostname);
-	 if(conn->auth_args_supported)
-	 {
-	    char *a=alloca_strdup(conn->auth_args_supported);
-	    bool saw_ssl=false;
-	    bool saw_tls=false;
-	    for(a=strtok(a,";"); a; a=strtok(0,";"))
-	    {
-	       if(!strcasecmp(a,auth))
-		  break;
-	       if(!strcasecmp(a,"SSL"))
-		  saw_ssl=true;
-	       else if(!strcasecmp(a,"TLS"))
-		  saw_tls=true;
-	    }
-	    if(!a)
-	    {
-	       const char *old_auth=auth;
-	       if(saw_tls)
-		  auth="TLS";
-	       else if(saw_ssl)
-		  auth="SSL";
-	       Log::global->Format(1,
-		  "**** AUTH %s is not supported, using AUTH %s instead\n",
-		  old_auth,auth);
-	    }
-	 }
-	 conn->SendCmd2("AUTH",auth);
-	 AddResp(234,CHECK_AUTH_TLS);
-	 if(!strcmp(auth,"TLS")
-	 || !strcmp(auth,"TLS-C"))
-	    conn->prot='C';
-	 else
-	    conn->prot='P';
-      }
+      if(QueryBool((user && pass)?"ssl-allow":"ssl-allow-anonymous",hostname)
+      && !ftps && (!proxy || conn->proxy_is_http))
+	 SendAuth(Query("ssl-auth",hostname));
+
       if(conn->auth_sent && !RespQueueIsEmpty())
 	 goto usual_return;
 #endif
@@ -2269,6 +2235,45 @@ system_error:
    return MOVED;
 }
 
+void Ftp::SendAuth(const char *auth)
+{
+   if(!conn->auth_supported || conn->auth_sent || conn->control_ssl)
+      return;
+
+   if(conn->auth_args_supported)
+   {
+      char *a=alloca_strdup(conn->auth_args_supported);
+      bool saw_ssl=false;
+      bool saw_tls=false;
+      for(a=strtok(a,";"); a; a=strtok(0,";"))
+      {
+	 if(!strcasecmp(a,auth))
+	    break;
+	 if(!strcasecmp(a,"SSL"))
+	    saw_ssl=true;
+	 else if(!strcasecmp(a,"TLS"))
+	    saw_tls=true;
+      }
+      if(!a)
+      {
+	 const char *old_auth=auth;
+	 if(saw_tls)
+	    auth="TLS";
+	 else if(saw_ssl)
+	    auth="SSL";
+	 Log::global->Format(1,
+	    "**** AUTH %s is not supported, using AUTH %s instead\n",
+	    old_auth,auth);
+      }
+   }
+   conn->SendCmd2("AUTH",auth);
+   AddResp(234,CHECK_AUTH_TLS);
+   if(!strcmp(auth,"TLS")
+   || !strcmp(auth,"TLS-C"))
+      conn->prot='C';
+   else
+      conn->prot='P';
+}
 void Ftp::SendSiteIdle()
 {
    if(!QueryBool("use-site-idle"))
