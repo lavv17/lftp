@@ -537,3 +537,13 @@ void Job::lftpMovesToBackground_ToAll()
    for(Job *scan=chain; scan; scan=scan->next)
       scan->lftpMovesToBackground();
 }
+
+bool Job::CheckForWaitLoop(Job *parent)
+{
+   if(parent==this)
+      return true;
+   for(int i=0; i<waiting_num; i++)
+      if(waiting[i]->CheckForWaitLoop(parent))
+	 return true;
+   return false;
+}

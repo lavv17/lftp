@@ -1,3 +1,8 @@
+2001-01-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Job.cc, Job.h: (CheckForWaitLoop) new method.
+	* commands.cc: (wait) use it.
+
 2001-01-04  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* LocalDir.cc, LocalDir.h: new files.

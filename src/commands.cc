@@ -2117,6 +2117,11 @@ CMD(wait)
       eprintf(_("%s: some other job waits for job %d\n"),op,n);
       return 0;
    }
+   if(j->Job::CheckForWaitLoop(parent))
+   {
+      eprintf(_("%s: wait loop detected\n"),op,n);
+      return 0;
+   }
    j->parent=0;
    j->Bg();
    return j;

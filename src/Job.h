@@ -87,6 +87,7 @@ public:
    Job *FindAnyChild();
    bool WaitsFor(Job *);
    static Job *FindWhoWaitsFor(Job *);
+   bool CheckForWaitLoop(Job *parent);
    int NumAwaitedJobs() { return waiting_num; }
    Job *FindDoneAwaitedJob();
    void WaitForAllChildren();
