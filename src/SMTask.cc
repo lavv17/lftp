@@ -134,6 +134,7 @@ void SMTask::Schedule()
 
 void SMTask::ReconfigAll()
 {
+   UpdateNow();
    for(SMTask *scan=chain; scan; scan=scan->next)
       scan->Reconfig();
    sched_total+=NoWait();  // for new values handling

@@ -176,7 +176,7 @@ public:
 static void sig_term(int sig)
 {
    time_t t=time(0);
-   printf(_("[%lu] Terminated by signal %d. %s\n"),(unsigned long)getpid(),sig,ctime(&t));
+   printf(_("[%lu] Terminated by signal %d. %s"),(unsigned long)getpid(),sig,ctime(&t));
    exit(1);
 }
 

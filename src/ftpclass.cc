@@ -2766,6 +2766,7 @@ void Ftp::Reconfig()
    socket_maxseg = res_socket_maxseg.Query(c);
    bytes_pool_rate = res_limit_rate.Query(c);
    bytes_pool_max  = res_limit_max.Query(c);
+   BytesReset(); // to cut bytes_pool.
 
    xfree(anon_user);
    anon_user=xstrdup(res_anon_user.Query(c));
@@ -2872,7 +2873,7 @@ int Ftp::BytesAllowed()
 
       // prevent overflow
       if((LARGE-bytes_pool)/dif < bytes_pool_rate)
-	 bytes_pool = bytes_pool_max;
+	 bytes_pool = bytes_pool_max>0 ? bytes_pool_max : LARGE;
       else
 	 bytes_pool += dif*bytes_pool_rate;
 
