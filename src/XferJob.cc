@@ -33,6 +33,7 @@
 #include "XferJob.h"
 #include "ProtoList.h"
 #include "rglob.h"
+#include "plural.h"
 
 static ResDecl
    res_use_urls	("xfer:use-urls",      "no", ResMgr::BoolValidate,0);
@@ -104,16 +105,29 @@ void  XferJob::SayFinal()
    {
       if(end_time>start_time+1)
       {
-	 printf(_("%ld bytes transferred in %ld seconds (%g bytes/s)\n"),
-	    bytes_transferred,(long)(end_time-start_time),xfer_rate());
+	 long sec=end_time-start_time;
+	 printf(plural("%ld $byte|bytes$ transferred"
+			" in %ld $second|seconds$ (%g bytes/s)\n",
+			int(bytes_transferred%100),int(sec%100)),
+	    bytes_transferred,sec,xfer_rate());
       }
       else
-	 printf(_("%ld bytes transferred\n"),bytes_transferred);
+      {
+	 printf(plural("%ld $byte|bytes$ transferred\n",
+			int(bytes_transferred%100)),
+	    bytes_transferred);
+      }
    }
    if(failed>0)
-      printf(_("Transfer of %d of %d files failed\n"),failed,file_count);
+   {
+      printf(plural("Transfer of %d of %d $file|files$ failed\n",file_count),
+	 failed,file_count);
+   }
    else if(file_count>1)
-      printf(_("%d files total\n"),file_count);
+   {
+      printf(plural("Total %d $file|files$ transferred\n",file_count),
+	 file_count);
+   }
 }
 
 void  XferJob::PrintStatus(int verbose)
@@ -132,13 +146,14 @@ void  XferJob::PrintStatus(int verbose)
       if(failed>0)
       {
 	 putchar('\t');
-	 printf(_("Transfer of %d of %d files failed\n"),failed,file_count);
+	 printf(plural("Transfer of %d of %d $file|files$ failed\n",file_count),
+	    failed,file_count);
       }
       else if(file_count>1)
       {
       	 putchar('\t');
-	 printf(_("%d files tranferred"),file_count);
-	 putchar('\n');
+	 printf(plural("Total %d $file|files$ transferred\n",file_count),
+	    file_count);
       }
       if(end_time>start_time)
       {
