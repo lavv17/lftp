@@ -46,6 +46,7 @@
 #include "log.h"
 #include "DummyProto.h"
 #include "ResMgr.h"
+#include "LsCache.h"
 
 #include "confpaths.h"
 
@@ -307,7 +308,7 @@ int   main(int argc,char **argv)
    hook_signals();
 
    top_exec=new CmdExec(new DummyProto());
-   top_exec->status_line=new StatusLine(1);
+   top_exec->SetStatusLine(new StatusLine(1));
    Log::global->SetCB(tty_clear);
 
    source_if_exist(top_exec,SYSCONFDIR"/lftp.conf");
@@ -356,7 +357,15 @@ int   main(int argc,char **argv)
       top_exec->SetInteractive(false);
       move_to_background();
    }
+   top_exec->KillAll();
    int exit_code=top_exec->ExitCode();
-   SMTask::DeleteAll();
+   SMTask::Delete(top_exec);
+   SessionPool::ClearAll();
+   LsCache::Flush();
+
+   int task_count=SMTask::TaskCount();
+   if(task_count>3)
+      printf("WARNING: task_count=%d\n",task_count);
+
    return exit_code;
 }

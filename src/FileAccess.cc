@@ -850,6 +850,18 @@ FileAccess *SessionPool::Walk(int *n,const char *proto)
    return 0;
 }
 
+void SessionPool::ClearAll()
+{
+   for(int n=0; n<pool_size; n++)
+   {
+      if(pool[n])
+      {
+	 SMTask::Delete(pool[n]);
+	 pool[n]=0;
+      }
+   }
+}
+
 bool FileAccess::NotSerious(int e)
 {
    switch(e)

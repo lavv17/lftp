@@ -529,8 +529,10 @@ ResDecl::~ResDecl()
 	 scan=&(*scan)->next;
       }
    }
+#if 0 // this makes trouble at exit.
    if(modified)
       SMTask::ReconfigAll(this->name);
+#endif
 }
 
 #define MINUTE (60)

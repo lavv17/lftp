@@ -14,7 +14,7 @@ lftp_SOURCES = lftp.cc complete.h complete.cc lftp_rl.c lftp_rl.h
 
 noinst_LIBRARIES = libtasks.a libjobs.a
 
-EXTRA_LTLIBRARIES = proto-ftp.la proto-http.la proto-file.la cmd-mirror.la cmd-sleep.la proto-fish.la libnetwork.la
+EXTRA_LTLIBRARIES = libnetwork.la proto-ftp.la proto-http.la proto-file.la cmd-mirror.la cmd-sleep.la proto-fish.la
 pkgverlib_LTLIBRARIES = $(MODULES_LA)
 
 proto_ftp_la_SOURCES  = ftpclass.cc FtpListInfo.cc FtpGlob.cc FtpDirList.cc\
@@ -35,9 +35,9 @@ cmd_sleep_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
 libnetwork_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir) $(SSL_LDFLAGS)
 libnetwork_la_LIBADD  = $(SOCKSLIBS) $(SSL_LIBS)
 
-proto_ftp_la_LIBADD  = libnetwork.la
-proto_http_la_LIBADD = libnetwork.la
-proto_fish_la_LIBADD = libnetwork.la
+proto_ftp_la_LIBADD  = -L$(DESTDIR)$(pkgverlibdir) libnetwork.la
+proto_http_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) libnetwork.la
+proto_fish_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) libnetwork.la
 
 libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  ProcWait.h ftpclass.cc ftpclass.h GetPass.cc GetPass.h\
@@ -51,7 +51,8 @@ libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  resource.cc DummyProto.cc DummyProto.h FtpGlob.cc FtpGlob.h FtpDirList.cc\
  FtpDirList.h ArgV.cc ArgV.h HttpDir.cc HttpDir.h ascii_ctype.h\
  NetAccess.cc NetAccess.h FtpSplitList.h FtpSplitList.cc Speedometer.cc\
- Speedometer.h lftp_ssl.cc lftp_ssl.h netrc.cc netrc.h buffer_ssl.cc
+ Speedometer.h lftp_ssl.cc lftp_ssl.h netrc.cc netrc.h buffer_ssl.cc\
+ buffer_ssl.h
 #Fish.cc Fish.h
 
 libjobs_a_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
@@ -81,7 +82,11 @@ DISTCLEANFILES = confpaths.h
 INCLUDES = -I$(top_srcdir)/include $(SSL_CPPFLAGS)
 
 # These files can be linked to ../include by configure, but not always.
-OMIT_DEPENDENCIES = readline.h keymaps.h chardefs.h tilde.h \
+OMIT_DEPENDENCIES = readline.h keymaps.h chardefs.h tilde.h rltypedefs.h\
 	history.h libintl.hregex.h glob.h fnmatch.h poll.h rlstdc.h
 
 lftp.o commands.o module.o: confpaths.h
+
+# libtool does not strip modules, do it here.
+install-exec-local:
+	-case " $(LDFLAGS) " in *" -s "*) $(STRIP) $(pkgverlibdir)/*.so 2>/dev/null || true;; esac

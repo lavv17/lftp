@@ -75,6 +75,8 @@ public:
    static void DeleteAll();
 
    static SMTask *current;
+
+   static int TaskCount();
 };
 
 class SMTaskInit : public SMTask

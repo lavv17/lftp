@@ -230,3 +230,11 @@ SMTaskInit::~SMTaskInit()
    running=false;
    current=0;
 }
+
+int SMTask::TaskCount()
+{
+   int count=0;
+   for(SMTask *scan=chain; scan; scan=scan->next)
+      count++;
+   return count;
+}

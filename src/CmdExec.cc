@@ -870,6 +870,8 @@ CmdExec::~CmdExec()
    xfree(queue_lcwd);
 
    Reuse(saved_session);
+
+   Delete(status_line);
 }
 
 char *CmdExec::FormatPrompt(const char *scan)

@@ -1,3 +1,13 @@
+2001-05-10  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CmdExec.cc: delete status_line in dtor.
+	* CmdExec.h: SetStatusLine new method.
+	* FileAccess.cc, FileAccess.h: SessionPool:ClearAll new method.
+	* Makefile.am: fix rpm build, add buffer_ssl.h to sources; strip modules.
+	* ResMgr.cc: don't call ReconfigAll in ResDecl dtor.
+	* SMTask.cc, SMTask.h: TaskCount new method.
+	* lftp.cc: delete most tasks, print warning if some extra left.
+
 2001-05-04  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* NetAccess.cc, NetAccess.h: (HandleTimeout) new function.

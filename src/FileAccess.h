@@ -481,6 +481,8 @@ public:
 
    // start with n==0, then increase n; returns 0 when no more
    static FileAccess *Walk(int *n,const char *proto);
+
+   static void ClearAll();
 };
 
 #endif /* FILEACCESS_H */

@@ -202,6 +202,11 @@ public:
 	 top_level=true;
 	 Reconfig(0);
       }
+   void SetStatusLine(StatusLine *s)
+      {
+	 Delete(status_line);
+	 status_line=s;
+      }
 
    static void RegisterCommand(const char *name,cmd_creator_t creator,
       const char *short_name=0,const char *long_name=0);
