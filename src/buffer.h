@@ -174,6 +174,7 @@ public:
 
    virtual FgData *GetFgData(bool) { return 0; }
    virtual const char *Status() { return ""; }
+   virtual int Buffered() { return Size(); }
 };
 
 class IOBufferFDStream : public IOBuffer

@@ -29,6 +29,15 @@
 // IOBufferSSL implementation
 #undef super
 #define super IOBuffer
+
+bool IOBufferSSL::IsFatal(int res)
+{
+   if(SSL_get_error(ssl,res)==SSL_ERROR_SYSCALL
+   && (ERR_get_error()==0 || TemporaryNetworkError(errno)))
+      return false;
+   return true;
+}
+
 int IOBufferSSL::Do()
 {
    if(Done() || Error())
@@ -52,8 +61,7 @@ int IOBufferSSL::Do()
 	    return STALL;
 	 else // error
 	 {
-	    SetError(lftp_ssl_strerror("SSL connect"),
-		     errno?!TemporaryNetworkError(errno):true);
+	    SetError(lftp_ssl_strerror("SSL connect"),IsFatal(res));
 	    return MOVED;
 	 }
       }
@@ -119,8 +127,7 @@ int IOBufferSSL::Get_LL(int size)
 	 return 0;
       else // error
       {
-	 SetError(lftp_ssl_strerror("SSL read"),
-		  errno?!TemporaryNetworkError(errno):true);
+	 SetError(lftp_ssl_strerror("SSL read"),IsFatal(res));
 	 return -1;
       }
    }
@@ -146,8 +153,7 @@ int IOBufferSSL::Put_LL(const char *buf,int size)
 	 return 0;
       else // error
       {
-	 SetError(lftp_ssl_strerror("SSL write"),
-		  errno?!TemporaryNetworkError(errno):true);
+	 SetError(lftp_ssl_strerror("SSL write"),IsFatal(res));
 	 return -1;
       }
    }

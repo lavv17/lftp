@@ -1,3 +1,16 @@
+2003-12-22  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc, Http.h: add Buffered method; allow storing in https mode;
+	  use NO_DATE and NO_SIZE constants.
+	* NetAccess.cc, NetAccess.h: move SocketBuffered here from ftpclass.cc.
+	* SFtp.cc: more precise Buffered method.
+	* buffer.cc: add Buffered method.
+	* buffer_ssl.cc: add ErrorFatal method.
+	* ftpclass.cc, ftpclass.h: read/write through buffer;
+	  use NetAccess::SocketBuffered; follow RFC2640; FEAT, LANG, UTF8
+	  support;
+	* resource.cc: new settings ftp:use-feat, ftp:use-lang.
+
 2003-12-19  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* LocalAccess.cc: (StoreStatus) return OK when not opened for storing.

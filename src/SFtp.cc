@@ -1208,7 +1208,7 @@ int SFtp::Buffered()
 {
    if(file_buf==0)
       return 0;
-   return file_buf->Size();
+   return file_buf->Size()+send_buf->Size()*size_write/(size_write+20);
 }
 int SFtp::StoreStatus()
 {

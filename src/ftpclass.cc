@@ -33,7 +33,6 @@
 #include "ftpclass.h"
 #include "xstring.h"
 #include "xmalloc.h"
-#include "xalloca.h"
 #include "url.h"
 #include "FtpListInfo.h"
 #include "FileGlob.h"
@@ -41,6 +40,7 @@
 #include "log.h"
 #include "FileCopyFtp.h"
 #include "LsCache.h"
+#include "buffer_ssl.h"
 
 #include "ascii_ctype.h"
 #include "misc.h"
@@ -62,13 +62,6 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 # include <fcntl.h>
 #endif
 
-#ifdef HAVE_SYS_IOCTL_H
-# include <sys/ioctl.h>
-#endif
-#ifdef HAVE_TERMIOS_H
-# include <termios.h>
-#endif
-
 CDECL_BEGIN
 #include <regex.h>
 CDECL_END
@@ -86,6 +79,7 @@ CDECL int inet_aton(const char *,struct in_addr *);
 const bool Ftp::ftps=false;
 #endif
 
+#define max_buf 0x10000
 
 #define FTP_DEFAULT_PORT "ftp"
 #define FTPS_DEFAULT_PORT "990"
@@ -102,32 +96,6 @@ const bool Ftp::ftps=false;
 
 #define debug(a) Log::global->Format a
 
-#ifdef TIOCOUTQ
-static bool TIOCOUTQ_returns_free_space;
-static bool TIOCOUTQ_works;
-static void test_TIOCOUTQ()
-{
-   int sock=socket(PF_INET,SOCK_STREAM,IPPROTO_TCP);
-   if(sock==-1)
-      return;
-   int avail=-1;
-   socklen_t len=sizeof(avail);
-   if(getsockopt(sock,SOL_SOCKET,SO_SNDBUF,(char*)&avail,&len)==-1)
-      avail=-1;
-   int buf=-1;
-   if(ioctl(sock,TIOCOUTQ,&buf)==-1)
-      buf=-1;
-   if(buf>=0 && avail>0 && (buf==0 || buf==avail))
-   {
-      TIOCOUTQ_works=true;
-      TIOCOUTQ_returns_free_space=(buf==avail);
-   }
-   close(sock);
-}
-#else
-# define test_TIOCOUTQ()
-#endif
-
 FileAccess *Ftp::New() { return new Ftp(); }
 
 void  Ftp::ClassInit()
@@ -139,8 +107,6 @@ void  Ftp::ClassInit()
 #ifdef USE_SSL
    Register("ftps",FtpS::New);
 #endif
-
-   test_TIOCOUTQ();
 }
 
 
@@ -585,6 +551,16 @@ static void normalize_path_vms(char *path)
 
 char *Ftp::ExtractPWD()
 {
+   // drop \0 according to RFC2640
+   for(int i=0; i<line_len; i++)
+   {
+      if(line[i]==0)
+      {
+	 memmove(line+i,line+i+1,line_len-i);
+	 line_len--;
+      }
+   }
+
    char *pwd=string_alloca(strlen(line)+1);
 
    const char *scan=strchr(line,'"');
@@ -876,42 +852,40 @@ void Ftp::InitFtp()
    UpdateNow();
 
    control_sock=-1;
+   control_recv=control_send=0;
    data_sock=-1;
+   data_iobuf=0;
    aborted_data_sock=-1;
    quit_sent=false;
    fixed_pasv=false;
 
 #ifdef USE_SSL
    control_ssl=0;
-   control_ssl_connected=false;
    data_ssl=0;
-   data_ssl_connected=false;
    prot='C';	  // current protection scheme 'C'lear or 'P'rivate
    ftps=false;	  // ssl and prot='P' by default (port 990)
-   auth_tls_sent=false;
+   auth_sent=false;
+   auth_supported=true;
+   auth_args_supported=0;
 #endif
 
    nop_time=0;
    nop_count=0;
    nop_offset=0;
-   resp=0;
-   resp_size=0;
-   resp_alloc=0;
    sync_wait=0;
    line=0;
+   line_len=0;
    all_lines=0;
    eof=false;
    type=FTP_TYPE_A;
    send_cmd_buffer=0;
-   send_cmd_alloc=0;
-   send_cmd_count=0;
-   send_cmd_ptr=0;
    result=NULL;
    result_size=0;
    state=INITIAL_STATE;
    flags=SYNC_MODE;
    wait_flush=false;
    ignore_pass=false;
+   try_feat_after_login=false;
    skey_pass=0;
    allow_skey=true;
    force_skey=false;
@@ -930,7 +904,9 @@ void Ftp::InitFtp()
    mdtm_supported=true;
    size_supported=true;
    site_chmod_supported=true;
-   pret_supported=true;
+   pret_supported=false;
+   utf8_supported=false;
+   lang_supported=false;
    last_rest=0;
    rest_pos=0;
 
@@ -979,18 +955,20 @@ Ftp::~Ftp()
       ReceiveResp();
    }
    Disconnect();
+   delete send_cmd_buffer;
 
    xfree(anon_user);
    xfree(anon_pass);
    xfree(list_options);
    xfree(line);
    xfree(all_lines);
-   xfree(resp);
 
    xfree(RespQueue);
-   xfree(send_cmd_buffer);
-
    xfree(skey_pass);
+
+#ifdef USE_SSL
+   xfree(auth_args_supported);
+#endif
 }
 
 bool Ftp::AbsolutePath(const char *s)
@@ -1164,6 +1142,9 @@ int   Ftp::Do()
       if(!NextTry())
 	 return MOVED;
 
+      if(send_cmd_buffer==0)
+	 send_cmd_buffer=new Buffer;
+
       peer_sa=peer[peer_curr];
       control_sock=SocketCreateTCP(peer_sa.sa.sa_family);
       if(control_sock==-1)
@@ -1237,32 +1218,30 @@ int   Ftp::Do()
 #ifdef USE_SSL
       if(proxy?!strncmp(proxy,"ftps://",7):ftps)
       {
-	 control_ssl=lftp_ssl_new(control_sock,hostname);
-	 control_ssl_connected=false;
+	 MakeSSLBuffers();
 	 prot='P';
       }
+      else // note the following block
 #endif
+      {
+	 control_send=new IOBufferFDStream(
+	       new FDStream(control_sock,"control-socket"),IOBuffer::PUT);
+	 control_recv=new IOBufferFDStream(
+	       new FDStream(control_sock,"control-socket"),IOBuffer::GET);
+      }
 
       state=CONNECTED_STATE;
       m=MOVED;
       sync_wait=1; // we need to wait for RESP_READY
       AddResp(RESP_READY,CHECK_READY);
 
-#ifdef USE_SSL
-      if(!ftps && !proxy && QueryBool("ssl-allow",hostname) &&
-		   ((user && pass) || QueryBool("ssl-allow-anonymous",hostname)))
+      try_feat_after_login=false;
+      if(use_feat)
       {
-	 const char *auth=Query("ssl-auth",hostname);
-	 SendCmd2("AUTH",auth);
-	 AddResp(234,CHECK_AUTH_TLS);
-	 auth_tls_sent=true;
-	 if(!strcmp(auth,"TLS")
-	 || !strcmp(auth,"TLS-C"))
-	    prot='C';
-	 else
-	    prot='P';
+	 SendCmd("FEAT");
+	 AddResp(211,CHECK_FEAT);
       }
-#endif
+
       /* fallthrough */
    case CONNECTED_STATE:
    {
@@ -1271,8 +1250,50 @@ int   Ftp::Do()
       if(state!=CONNECTED_STATE || Error())
 	 return MOVED;
 
+      if(RespQueueHas(CHECK_FEAT))
+	 return m;
+
 #ifdef USE_SSL
-      if(auth_tls_sent && !RespQueueIsEmpty())
+      if(auth_supported && !auth_sent && !control_ssl && !ftps && !proxy
+      && QueryBool((user && pass)?"ssl-allow":"ssl-allow-anonymous",hostname))
+      {
+	 const char *auth=Query("ssl-auth",hostname);
+	 if(auth_args_supported)
+	 {
+	    char *a=alloca_strdup(auth_args_supported);
+	    bool saw_ssl=false;
+	    bool saw_tls=false;
+	    for(a=strtok(a,";"); a; a=strtok(0,";"))
+	    {
+	       if(!strcasecmp(a,auth))
+		  break;
+	       if(!strcasecmp(a,"SSL"))
+		  saw_ssl=true;
+	       else if(!strcasecmp(a,"TLS"))
+		  saw_tls=true;
+	    }
+	    if(!a)
+	    {
+	       const char *old_auth=auth;
+	       if(saw_tls)
+		  auth="TLS";
+	       else if(saw_ssl)
+		  auth="SSL";
+	       Log::global->Format(1,
+		  "**** AUTH %s is not supported, using AUTH %s instead\n",
+		  old_auth,auth);
+	    }
+	 }
+	 SendCmd2("AUTH",auth);
+	 AddResp(234,CHECK_AUTH_TLS);
+	 auth_sent=true;
+	 if(!strcmp(auth,"TLS")
+	 || !strcmp(auth,"TLS-C"))
+	    prot='C';
+	 else
+	    prot='P';
+      }
+      if(auth_sent && !RespQueueIsEmpty())
 	 goto usual_return;
 #endif
 
@@ -1326,6 +1347,11 @@ int   Ftp::Do()
 	 SendCmd2("PASS",pass_to_use);
       }
 
+      if(try_feat_after_login)
+      {
+	 SendCmd("FEAT");
+	 AddResp(211,CHECK_FEAT);
+      }
       SendAcct();
       SendSiteGroup();
       SendSiteIdle();
@@ -1355,6 +1381,9 @@ int   Ftp::Do()
       m|=ReceiveResp();
       if(state!=EOF_STATE || Error())
 	 return MOVED;
+
+      if(RespQueueHas(CHECK_FEAT))
+	 return m;
 
       if(mode==CONNECT_VERIFY)
 	 goto notimeout_return;
@@ -1772,7 +1801,7 @@ int   Ftp::Do()
 	       if(inet_aton(port_ipv4,&fake_ip))
 		  a=(unsigned char*)&fake_ip;
 	    }
-	    sprintf(str,"PORT %d,%d,%d,%d,%d,%d\n",a[0],a[1],a[2],a[3],p[0],p[1]);
+	    sprintf(str,"PORT %d,%d,%d,%d,%d,%d",a[0],a[1],a[2],a[3],p[0],p[1]);
 	    SendCmd(str);
 	    AddResp(RESP_PORT_OK,CHECK_PORT);
 	 }
@@ -1799,7 +1828,7 @@ int   Ftp::Do()
       if(real_pos==-1 || last_rest!=real_pos)
       {
          rest_pos=(real_pos!=-1?real_pos:pos);
-	 sprintf(str,"REST %lld\n",(long long)rest_pos);
+	 sprintf(str,"REST %lld",(long long)rest_pos);
 	 real_pos=-1;
 	 SendCmd(str);
 	 AddResp(RESP_REST_OK,CHECK_REST);
@@ -1946,9 +1975,21 @@ int   Ftp::Do()
 	 data_ssl=lftp_ssl_new(data_sock,hostname);
 	 // share session id between control and data connections.
 	 SSL_copy_session_id(data_ssl,control_ssl);
-	 data_ssl_connected=false;
+
+	 IOBuffer::dir_t dir=(mode==STORE?IOBuffer::PUT:IOBuffer::GET);
+	 IOBufferSSL *ssl_buf=new IOBufferSSL(data_ssl,dir,hostname);
+	 ssl_buf->DoConnect();
+	 ssl_buf->CloseLater();
+	 data_iobuf=ssl_buf;
       }
+      else  // note the following block
 #endif
+      {
+	 IOBuffer::dir_t dir=(mode==STORE?IOBuffer::PUT:IOBuffer::GET);
+	 data_iobuf=new IOBufferFDStream(new FDStream(data_sock,"data-socket"),dir);
+      }
+      if(utf8_supported && (mode==LIST || mode==LONG_LIST))
+	 data_iobuf->SetTranslation("UTF-8",true);
 
    case(DATA_OPEN_STATE):
    {
@@ -1984,6 +2025,39 @@ int   Ftp::Do()
 
       m|=FlushSendQueue();
       m|=ReceiveResp();
+
+      if(state!=oldstate || Error())
+         return MOVED;
+
+      BumpEventTime(data_iobuf->EventTime());
+      if(data_iobuf->Error())
+      {
+	 DebugPrint("**** ",data_iobuf->ErrorText(),0);
+	 if(data_iobuf->ErrorFatal())
+	    SetError(FATAL,data_iobuf->ErrorText());
+	 quit_sent=true;
+	 Disconnect();
+	 return MOVED;
+      }
+      if(mode!=STORE)
+      {
+	 if(data_iobuf->Size()>=rate_limit->BytesAllowedToGet())
+	 {
+	    data_iobuf->Suspend();
+	    Timeout(1000);
+	 }
+	 else if(data_iobuf->Size()>=max_buf)
+	 {
+	    data_iobuf->Suspend();
+	    m=MOVED;
+	 }
+	 else
+	 {
+	    data_iobuf->Resume();
+	    if(data_iobuf->Size()>0 || (data_iobuf->Size()==0 && data_iobuf->Eof()))
+	       m=MOVED;
+	 }
+      }
 
       if(state!=oldstate || Error())
          return MOVED;
@@ -2056,13 +2130,6 @@ usual_return:
 notimeout_return:
    if(m==MOVED)
       return MOVED;
-#ifdef USE_SSL
-   if(data_ssl)
-   {
-      BlockOnSSL(data_ssl);
-   }
-   else
-#endif
    if(data_sock!=-1)
    {
       if(state==ACCEPTING_STATE)
@@ -2072,42 +2139,11 @@ notimeout_return:
 	 if(addr_received==2) // that is connect in progress
 	    Block(data_sock,POLLOUT);
       }
-      else if(state==DATA_OPEN_STATE)
-      {
-	 assert(rate_limit!=0);
-	 int bytes_allowed = rate_limit->BytesAllowed(
-			      mode==STORE?rate_limit->PUT:rate_limit->GET);
-	 /* If we have sent REST command and have not received the response yet
-	  * (real_pos==-1), then don't allow to read/write the data
-	  * since REST can fail. */
-	 if(real_pos!=-1 && bytes_allowed>0) // and we are allowed to xfer
-	    Block(data_sock,(mode==STORE?POLLOUT:POLLIN));
-	 if(bytes_allowed==0)
-	    TimeoutS(1);
-      }
-      else
-      {
-	 // should not get here
-	 abort();
-      }
    }
-#ifdef USE_SSL
-   if(control_ssl)
-   {
-      BlockOnSSL(control_ssl);
-   }
-   else
-#endif
    if(control_sock!=-1)
    {
       if(state==CONNECTING_STATE)
 	 Block(control_sock,POLLOUT);
-      else
-      {
-	 Block(control_sock,POLLIN);
-	 if(send_cmd_count>0 && ((flags&SYNC_MODE)==0 || sync_wait==0))
-	    Block(control_sock,POLLOUT);
-      }
    }
    return m;
 
@@ -2249,162 +2285,102 @@ void Ftp::BlockOnSSL(SSL *ssl)
 
 int  Ftp::ReceiveResp()
 {
-   char  *store;
-   char  *nl;
-   int   code;
-   int	 m=STALL;
-   int	 res;
+   int m=STALL;
 
-   if(control_sock==-1)
+   if(!control_recv)
       return m;
 
-   for(;;)
+   BumpEventTime(control_recv->EventTime());
+   if(control_recv->Error())
    {
-      for(;;)
+      DebugPrint("**** ",control_recv->ErrorText(),0);
+      if(control_recv->ErrorFatal())
+	 SetError(FATAL,control_recv->ErrorText());
+      quit_sent=true;
+      Disconnect();
+      return MOVED;
+   }
+
+   for(;;)  // handle all lines in buffer, one line per loop
+   {
+      if(!control_recv)
+	 return m;
+
+      const char *resp;
+      int resp_size;
+      control_recv->Get(&resp,&resp_size);
+      if(resp==0) // eof
       {
-	 if(resp_alloc-resp_size<256)
-	    resp=(char*)xrealloc(resp,resp_alloc+=1024);
-
-	 store=resp+resp_size;
-	 *store=0;
-	 nl=strchr(resp,'\n');
-	 if(nl!=NULL)
-	 {
-	    m=MOVED;
-
-	    *nl=0;
-	    xfree(line);
-	    line=xstrdup(resp);
-	    memmove(resp,nl+1,strlen(nl+1)+1);
-	    resp_size-=nl-resp+1;
-	    if(nl-resp>0 && line[nl-resp-1]=='\r')
-	       line[nl-resp-1]=0;
-
-	    code=0;
-
-	    if(strlen(line)>=3 && is_ascii_digit(line[0])
-	    && is_ascii_digit(line[1]) && is_ascii_digit(line[2]))
-	       code=atoi(line);
-
-	    DebugPrint("<--- ",line,
-		  ReplyLogPriority(multiline_code?multiline_code:code));
-	    if(!RespQueueIsEmpty() && RespQueue[RQ_head].log_resp)
-	    {
-	       LogResp(line);
-	       LogResp("\n");
-	    }
-
-	    int all_lines_len=xstrlen(all_lines);
-	    if(multiline_code==0 || all_lines_len==0)
-	       all_lines_len=-1; // not continuation
-	    all_lines=(char*)xrealloc(all_lines,all_lines_len+1+strlen(line)+1);
-	    if(all_lines_len>0)
-	       all_lines[all_lines_len]='\n';
-	    strcpy(all_lines+all_lines_len+1,line);
-
-	    if(code==0)
-	       continue;
-
-	    if(line[3]=='-')
-	    {
-	       if(multiline_code==0)
-		  multiline_code=code;
-	       continue;
-	    }
-	    if(multiline_code)
-	    {
-	       if(multiline_code!=code || line[3]!=' ')
-		  continue;   // Multiline response can terminate only with
-			      // the same code as it started with.
-			      // The space is required.
-	       multiline_code=0;
-	    }
-	    if(sync_wait>0 && code/100!=1)
-	       sync_wait--; // clear the flag to send next command
-	    break;
-	 }
-	 else
-	 {
-#ifdef USE_SSL
-	    if(control_ssl)
-	    {
-	       if(!control_ssl_connected)
-	       {
-		  errno=0;
-		  res=lftp_ssl_connect(control_ssl,hostname);
-		  if(res<=0)
-		  {
-		     if(BIO_sock_should_retry(res))
-		     {
-			BlockOnSSL(control_ssl);
-			return m;
-		     }
-		     else if (SSL_want_x509_lookup(control_ssl))
-			return m;
-		     else // error
-		     {
-			if(errno && TemporaryNetworkError(errno))
-			   Disconnect();
-			else
-			   SetError(FATAL,lftp_ssl_strerror("SSL connect"));
-			return MOVED;
-		     }
-		  }
-		  control_ssl_connected=true;
-	       }
-	       errno=0;
-	       res=SSL_read(control_ssl,resp+resp_size,resp_alloc-resp_size-1);
-	       if(res<0)
-	       {
-		  if(BIO_sock_should_retry(res))
-		  {
-		     BlockOnSSL(control_ssl);
-		     return m;
-		  }
-		  if(NotSerious(errno))
-		     DebugPrint("**** ",strerror(errno),0);
-		  else
-		     SetError(SEE_ERRNO,"SSL_read(control_ssl)");
-		  quit_sent=true;
-		  Disconnect();
-		  return MOVED;
-	       }
-	    }
-	    else  // note the following block
-#endif // USE_SSL
-	    {
-	       res=read(control_sock,resp+resp_size,resp_alloc-resp_size-1);
-	       if(res==-1)
-	       {
-		  if(NonFatalError(errno))
-		     return m;
-		  if(NotSerious(errno))
-		     DebugPrint("**** ",strerror(errno),0);
-		  else
-		     SetError(SEE_ERRNO,"read(control_socket)");
-		  quit_sent=true;
-		  Disconnect();
-		  return MOVED;
-	       }
-	    }
-	    if(res==0)
-	    {
-	       DebugPrint("**** ",_("Peer closed connection"),0);
-	       quit_sent=true;
-	       Disconnect();
-	       return MOVED;
-	    }
-
-	    // workaround for \0 characters in response
-	    for(int i=0; i<res; i++)
-	       if(resp[resp_size+i]==0)
-		  resp[resp_size+i]='!';
-
-	    event_time=now;
-	    resp_size+=res;
-	    m=MOVED;
-	 }
+	 DebugPrint("**** ",_("Peer closed connection"),0);
+	 quit_sent=true;
+	 Disconnect();
+	 return MOVED;
       }
+      const char *nl=(const char*)memchr(resp,'\n',resp_size);
+      if(!nl)
+      {
+	 if(control_recv->Eof())
+	    nl=resp+resp_size;
+	 else
+	    return m;
+      }
+      m=MOVED;
+
+      xfree(line);
+      line_len=nl-resp;
+      line=(char*)xmalloc(line_len+1);
+      memcpy(line,resp,line_len);
+      line[line_len]=0;
+      control_recv->Skip(line_len+1);
+      if(line_len>0 && line[line_len-1]=='\r')
+	 line[--line_len]=0;
+      for(char *scan=line+line_len-1; scan>=line; scan--)
+      {
+	 if(*scan=='\0')
+	    *scan='!';
+      }
+
+      int code=0;
+
+      if(strlen(line)>=3 && is_ascii_digit(line[0])
+      && is_ascii_digit(line[1]) && is_ascii_digit(line[2]))
+	 code=atoi(line);
+
+      DebugPrint("<--- ",line,
+	    ReplyLogPriority(multiline_code?multiline_code:code));
+      if(!RespQueueIsEmpty() && RespQueue[RQ_head].log_resp)
+      {
+	 LogResp(line);
+	 LogResp("\n");
+      }
+
+      int all_lines_len=xstrlen(all_lines);
+      if(multiline_code==0 || all_lines_len==0)
+	 all_lines_len=-1; // not continuation
+      all_lines=(char*)xrealloc(all_lines,all_lines_len+1+strlen(line)+1);
+      if(all_lines_len>0)
+	 all_lines[all_lines_len]='\n';
+      strcpy(all_lines+all_lines_len+1,line);
+
+      if(code==0)
+	 continue;
+
+      if(line[3]=='-')
+      {
+	 if(multiline_code==0)
+	    multiline_code=code;
+	 continue;
+      }
+      if(multiline_code)
+      {
+	 if(multiline_code!=code || line[3]!=' ')
+	    continue;   // Multiline response can terminate only with
+			// the same code as it started with.
+			// The space is required.
+	 multiline_code=0;
+      }
+      if(sync_wait>0 && code/100!=1)
+	 sync_wait--; // clear the flag to send next command
 
       CheckResp(code);
       m=MOVED;
@@ -2420,9 +2396,6 @@ int  Ftp::ReceiveResp()
 	    return m;
 	 }
       }
-
-      if(resp_size==0)
-	 return m;
    }
    return m;
 }
@@ -2440,6 +2413,10 @@ void Ftp::SendUrgentCmd(const char *cmd)
    int fl=fcntl(control_sock,F_GETFL);
    fcntl(control_sock,F_SETFL,fl&~O_NONBLOCK);
    FlushSendQueue(/*all=*/true);
+   if(!control_send)
+      return;
+   if(control_send->Size()>0)
+      Roll(control_send);
 #ifdef USE_SSL
    if(control_ssl)
    {
@@ -2516,6 +2493,11 @@ void  Ftp::DataAbort()
    // don't close it now, wait for ABOR result
    aborted_data_sock=data_sock;
    data_sock=-1;
+   if(data_iobuf)
+   {
+      Delete(data_iobuf);
+      data_iobuf=0;
+   }
 
    // ABOR over SSL connection does not always work,
    // closing data socket should help it.
@@ -2531,22 +2513,21 @@ void Ftp::ControlClose()
 #ifdef USE_SSL
    if(control_ssl)
    {
-      SSL_free(control_ssl);
-      control_ssl=0;
-      control_ssl_connected=false;
+      control_ssl=0; // it should be freed by IOBufferSSL
       prot='C';	  // current protection scheme 'C'lear or 'P'rivate
-      auth_tls_sent=false;
+      auth_sent=false;
    }
 #endif
+   Delete(control_send); control_send=0;
+   Delete(control_recv); control_recv=0;
+   delete send_cmd_buffer; send_cmd_buffer=0;
    if(control_sock!=-1)
    {
       DebugPrint("---- ",_("Closing control socket"),7);
       close(control_sock);
       control_sock=-1;
    }
-   resp_size=0;
    EmptyRespQueue();
-   EmptySendQueue();
    quit_sent=false;
 }
 
@@ -2608,21 +2589,13 @@ out:
 void  Ftp::EmptySendQueue()
 {
    sync_wait=0;
-   xfree(send_cmd_buffer);
-   send_cmd_buffer=send_cmd_ptr=0;
-   send_cmd_alloc=send_cmd_count=0;
+   if(send_cmd_buffer)
+      send_cmd_buffer->Empty();
 }
 
 void  Ftp::DataClose()
 {
-#ifdef USE_SSL
-   if(data_ssl)
-   {
-      SSL_free(data_ssl);
-      data_ssl=0;
-      data_ssl_connected=false;
-   }
-#endif
+   Delete(data_iobuf); data_iobuf=0;
    if(data_sock>=0)
    {
       DebugPrint("---- ",_("Closing data socket"),7);
@@ -2647,94 +2620,58 @@ void  Ftp::DataClose()
 
 int  Ftp::FlushSendQueue(bool all)
 {
-   int res;
    int m=STALL;
 
-   char *cmd_begin=send_cmd_ptr;
+   if(!control_send)
+      return m;
+
+   BumpEventTime(control_send->EventTime());
+   if(control_send->Error())
+   {
+      DebugPrint("**** ",control_send->ErrorText(),0);
+      if(control_send->ErrorFatal())
+	 SetError(FATAL,control_send->ErrorText());
+      quit_sent=true;
+      Disconnect();
+      return MOVED;
+   }
+
+   const char *send_cmd_ptr;
+   int send_cmd_count;
+   send_cmd_buffer->Get(&send_cmd_ptr,&send_cmd_count);
+
+   const char *cmd_begin=send_cmd_ptr;
 
    while(send_cmd_count>0 && (all || (flags&SYNC_MODE)==0 || sync_wait==0))
    {
-      int to_write=send_cmd_count;
-
-      char *line_end=(char*)memchr(send_cmd_ptr,'\n',send_cmd_count);
-      if(line_end==NULL)
+      const char *line_end=(const char*)memchr(send_cmd_ptr,'\n',send_cmd_count);
+      if(!line_end)
 	 return m;
-      to_write=line_end+1-send_cmd_ptr;
+      int to_write=line_end+1-send_cmd_ptr;
 
-#ifdef USE_SSL
-      if(control_ssl)
-      {
-	 if(!control_ssl_connected)
-	 {
-	    errno=0;
-	    res=lftp_ssl_connect(control_ssl,hostname);
-	    if(res<=0)
-	    {
-	       if(BIO_sock_should_retry(res))
-	       {
-		  BlockOnSSL(control_ssl);
-		  return m;
-	       }
-	       else if (SSL_want_x509_lookup(control_ssl))
-		  return m;
-	       else // error
-	       {
-		  if(errno && TemporaryNetworkError(errno))
-		     Disconnect();
-		  else
-		     SetError(FATAL,lftp_ssl_strerror("SSL connect"));
-		  return MOVED;
-	       }
-	    }
-	    control_ssl_connected=true;
-	 }
-	 res=SSL_write(control_ssl,send_cmd_ptr,to_write);
-	 if(res<=0)
-	 {
-	    if(BIO_sock_should_retry(res))
-	    {
-	       BlockOnSSL(control_ssl);
-	       return m;
-	    }
-	    if(NotSerious(errno))
-	       DebugPrint("**** ",strerror(errno),0);
-	    else
-	       SetError(SEE_ERRNO,"SSL_write(control_ssl)");
-	    quit_sent=true;
-	    Disconnect();
-	    return MOVED;
-	 }
-      }
-      else  // note the following block
-#endif // USE_SSL
-      {
-	 res=write(control_sock,send_cmd_ptr,to_write);
-	 if(res==0)
-	    return m;
-	 if(res==-1)
-	 {
-	    if(NonFatalError(errno))
-	       return m;
-	    if(NotSerious(errno) || errno==EPIPE)
-	       DebugPrint("**** ",strerror(errno),0);
-	    else
-	       SetError(SEE_ERRNO,"write(control_socket)");
-	    quit_sent=true;
-	    Disconnect();
-	    return MOVED;
-	 }
-      }
-      send_cmd_count-=res;
-      send_cmd_ptr+=res;
-      event_time=now;
+      control_send->Put(send_cmd_ptr,to_write);
+
+      send_cmd_count-=to_write;
+      send_cmd_ptr+=to_write;
 
       sync_wait++;
    }
-   // FIXME: \0 in commands can make logging fail.
    if(send_cmd_ptr>cmd_begin)
    {
-      send_cmd_ptr[-1]=0;
-      char *p=strstr(cmd_begin,"PASS ");
+      send_cmd_buffer->Skip(send_cmd_ptr-cmd_begin);
+      Roll(control_send);
+      m=MOVED;
+
+      char *buf=string_alloca(send_cmd_ptr-cmd_begin+1);
+      memcpy(buf,cmd_begin,send_cmd_ptr-cmd_begin);
+      buf[send_cmd_ptr-cmd_begin]=0;
+      for(char *scan=buf+(send_cmd_ptr-cmd_begin)-1; scan>=buf; scan--)
+      {
+	 if(*scan=='\0')
+	    *scan='!';
+      }
+
+      char *p=strstr(buf,"PASS ");
 
       bool may_show = (skey_pass!=0) || (user==0) || pass_open;
       if(proxy && proxy_user) // can't distinguish here
@@ -2742,10 +2679,10 @@ int  Ftp::FlushSendQueue(bool all)
       if(p && !may_show)
       {
 	 // try to hide password
-	 if(p>cmd_begin)
+	 if(p>buf)
 	 {
 	    p[-1]=0;
-	    DebugPrint("---> ",cmd_begin,5);
+	    DebugPrint("---> ",buf,5);
 	 }
 	 DebugPrint("---> ","PASS XXXX",5);
 	 char *eol=strchr(p,'\n');
@@ -2757,70 +2694,41 @@ int  Ftp::FlushSendQueue(bool all)
       }
       else
       {
-	 DebugPrint("---> ",cmd_begin,5);
+	 DebugPrint("---> ",buf,5);
       }
    }
    return m;
 }
 
-void  Ftp::SendCmd(const char *cmd,int len)
+void  Ftp::Send(const char *buf,int len)
 {
-   if(len==-1)
-      len=strlen(cmd);
-   char ch,prev_ch;
-   if(send_cmd_count==0)
-      send_cmd_ptr=send_cmd_buffer;
-   prev_ch=0;
    while(len>0)
    {
-      ch=*cmd++;
+      char ch=*buf++;
       len--;
-      if(send_cmd_ptr-send_cmd_buffer+send_cmd_count+1>=send_cmd_alloc)
-      {
-	 if(send_cmd_ptr-send_cmd_buffer<2)
-	 {
-	    int shift=send_cmd_ptr-send_cmd_buffer;
-	    if(send_cmd_alloc==0)
-	       send_cmd_alloc=0x80;
-	    send_cmd_buffer=(char*)xrealloc(send_cmd_buffer,send_cmd_alloc*=2);
-	    send_cmd_ptr=send_cmd_buffer+shift;
-	 }
-	 memmove(send_cmd_buffer,send_cmd_ptr,send_cmd_count);
-	 send_cmd_ptr=send_cmd_buffer;
-      }
-      if(ch=='\n' && prev_ch!='\r')
-      {
-	 ch='\r';
-	 cmd--;
-	 len++;
-      }
-      else if(ch=='\377' && use_telnet_iac) // double chr(255) as in telnet protocol
-      	 send_cmd_ptr[send_cmd_count++]='\377';
-      send_cmd_ptr[send_cmd_count++]=prev_ch=ch;
-      if(len==0 && ch!='\n')
-      {
-	 cmd="\n";
-	 len=1;
-      }
+      if(ch=='\377' && use_telnet_iac) // double chr(255) as in telnet protocol
+      	 send_cmd_buffer->Put("\377",1);
+      send_cmd_buffer->Put(&ch,1);
+      if(ch=='\r')
+	 send_cmd_buffer->Put("",1); // RFC2640
    }
+}
+
+void  Ftp::SendCmd(const char *cmd)
+{
+   Send(cmd,strlen(cmd));
+   send_cmd_buffer->Put("\r\n",2);
 }
 
 void Ftp::SendCmd2(const char *cmd,const char *f)
 {
-   char *s=string_alloca(strlen(cmd)+1+strlen(f)+2);
-   strcpy(s,cmd);
-   char *store=s+strlen(s);
-   if(store>s)
-      *store++=' ';
-   while(*f)
+   if(cmd && cmd[0])
    {
-      if(*f=='\n')
-	 *store++='\0';
-      else
-	 *store++=*f;
-      f++;
+      Send(cmd,strlen(cmd));
+      send_cmd_buffer->Put(" ",1);
    }
-   SendCmd(s,store-s);
+   Send(f,strlen(f));
+   send_cmd_buffer->Put("\r\n",2);
 }
 
 void Ftp::SendCmd2(const char *cmd,int v)
@@ -2836,6 +2744,12 @@ int   Ftp::SendEOT()
       return(OK); /* nothing to do */
 
    if(state!=DATA_OPEN_STATE)
+      return(DO_AGAIN);
+
+   if(!data_iobuf->Eof())
+      data_iobuf->PutEOF();
+
+   if(data_iobuf->Size()>0)
       return(DO_AGAIN);
 
    DataClose();
@@ -2921,6 +2835,7 @@ void Ftp::CloseRespQueue()
       case(CHECK_PASV):
       case(CHECK_EPSV):
       case(CHECK_TRANSFER_CLOSED):
+      case(CHECK_FEAT):
 #ifdef USE_SSL
       case(CHECK_AUTH_TLS):
       case(CHECK_PROT):
@@ -2982,7 +2897,7 @@ bool  Ftp::IOReady()
 
 int   Ftp::Read(void *buf,int size)
 {
-   int res,shift;
+   int shift;
 
    Resume();
    if(Error())
@@ -3021,7 +2936,6 @@ int   Ftp::Read(void *buf,int size)
       return(size);
    }
 
-read_again:
    if(state!=DATA_OPEN_STATE)
       return DO_AGAIN;
 
@@ -3041,86 +2955,11 @@ read_again:
    }
    if(norest_manual && real_pos==0 && pos>0)
       return DO_AGAIN;
-#ifdef USE_SSL
-   if(data_ssl)
-   {
-      if(!data_ssl_connected)
-      {
-	 errno=0;
-	 res=lftp_ssl_connect(data_ssl,hostname);
-	 if(res<=0)
-	 {
-	    if(BIO_sock_should_retry(res))
-	    {
-	       BlockOnSSL(control_ssl);
-	       return DO_AGAIN;
-	    }
-	    else if (SSL_want_x509_lookup(data_ssl))
-	       return DO_AGAIN;
-	    else // error
-	    {
-	       if(SSL_get_error(data_ssl,res)==SSL_ERROR_SYSCALL)
-	       {
-		  if(ERR_get_error()==0)
-		     goto we_have_eof;
-		  if(NotSerious(errno))
-		  {
-		     Disconnect();
-		     return DO_AGAIN;
-		  }
-	       }
-	       SetError(FATAL,lftp_ssl_strerror("SSL connect"));
-	       return error_code;
-	    }
-	 }
-	 data_ssl_connected=true;
-      }
-      res=SSL_read(data_ssl,(char*)buf,size);
-      if(res<0)
-      {
-	 if(BIO_sock_should_retry(res))
-	 {
-	    BlockOnSSL(control_ssl);
-	    return DO_AGAIN;
-	 }
-	 if(NotSerious(errno))
-	    DebugPrint("**** ",strerror(errno),0);
-	 else
-	    SetError(SEE_ERRNO,"SSL_read(data_ssl)");
-	 quit_sent=true;
-	 Disconnect();
-	 return(error_code);
-      }
-   }
-   else  // note the following block
-#endif // USE_SSL
-   {
-      res=read(data_sock,buf,size);
-      if(res==-1)
-      {
-	 if(NonFatalError(errno))
-	    return DO_AGAIN;
-	 if(NotSerious(errno))
-	 {
-	    if(errno==ECONNRESET && mode==LIST && real_pos==0)
-	    {
-	       // workaround for some proftpd servers.
-	       DebugPrint("**** ",strerror(errno),0);
-	       goto we_have_eof;
-	    }
-	    DebugPrint("**** ",strerror(errno),0);
-	    quit_sent=true;
-	    Disconnect();
-	    return DO_AGAIN;
-	 }
-	 SetError(SEE_ERRNO,"read(data_socket)");
-	 quit_sent=true;
-	 Disconnect();
-	 return(error_code);
-      }
-   }
-   event_time=now;
-   if(res==0)
+
+   const char *b;
+   int s;
+   data_iobuf->Get(&b,&s);
+   if(!b)
    {
    we_have_eof:
       DataClose();
@@ -3132,21 +2971,28 @@ read_again:
       else
 	 return DO_AGAIN;
    }
+   if(s==0)
+      return DO_AGAIN;
+   if(size>s)
+      size=s;
+   memcpy(buf,b,size);
+   data_iobuf->Skip(size);
+
    retries=0;
    persist_retries=0;
    assert(rate_limit!=0);
-   rate_limit->BytesGot(res);
-   real_pos+=res;
+   rate_limit->BytesGot(size);
+   real_pos+=size;
    if(real_pos<=pos)
-      goto read_again;
+      return DO_AGAIN;
    flags|=IO_FLAG;
-   if((shift=pos+res-real_pos)>0)
+   if((shift=pos+size-real_pos)>0)
    {
       memmove(buf,(char*)buf+shift,size-shift);
-      res-=shift;
+      size-=shift;
    }
-   pos+=res;
-   return(res);
+   pos+=size;
+   return(size);
 }
 
 /*
@@ -3160,8 +3006,6 @@ read_again:
 */
 int   Ftp::Write(const void *buf,int size)
 {
-   int res;
-
    if(mode!=STORE)
       return(0);
 
@@ -3169,7 +3013,7 @@ int   Ftp::Write(const void *buf,int size)
    if(Error())
       return(error_code);
 
-   if(state!=DATA_OPEN_STATE || (RespQueueSize()>1 && real_pos==-1))
+   if(state!=DATA_OPEN_STATE || (RespQueueSize()>1 && real_pos==-1) || !data_iobuf)
       return DO_AGAIN;
 
    {
@@ -3180,86 +3024,27 @@ int   Ftp::Write(const void *buf,int size)
       if(size>allowed)
 	 size=allowed;
    }
-   if(size==0)
+   if(size+data_iobuf->Size()>=max_buf)
+      size=max_buf-data_iobuf->Size();
+   if(size<=0)
       return 0;
-#ifdef USE_SSL
-   if(data_ssl)
+
+   data_iobuf->Put((const char*)buf,size);
+
+   if(retries+persist_retries>0
+   && data_iobuf->GetPos()-data_iobuf->Size()>Buffered()+0x1000)
    {
-      if(!data_ssl_connected)
-      {
-	 errno=0;
-	 res=lftp_ssl_connect(data_ssl,hostname);
-	 if(res<0)
-	 {
-	    if(BIO_sock_should_retry(res))
-	    {
-	       BlockOnSSL(control_ssl);
-	       return DO_AGAIN;
-	    }
-	    else if (SSL_want_x509_lookup(data_ssl))
-	       return DO_AGAIN;
-	    else // error
-	    {
-	       if(SSL_get_error(data_ssl,res)==SSL_ERROR_SYSCALL)
-	       {
-		  if(ERR_get_error()==0 || errno==0 || NotSerious(errno))
-		  {
-		     Disconnect();
-		     return DO_AGAIN;
-		  }
-	       }
-	       SetError(FATAL,lftp_ssl_strerror("SSL connect"));
-	       return error_code;
-	    }
-	 }
-	 data_ssl_connected=true;
-      }
-      res=SSL_write(data_ssl,(char*)buf,size);
-      if(res<=0)
-      {
-	 if(BIO_sock_should_retry(res))
-	 {
-	    BlockOnSSL(control_ssl);
-	    return DO_AGAIN;
-	 }
-	 DebugPrint("**** ",strerror(errno),0);
-	 if(!NotSerious(errno))
-	    SetError(SEE_ERRNO,"SSL_write(data_ssl)");
-	 quit_sent=true;
-	 Disconnect();
-	 return(error_code);
-      }
+      // reset retry count if some data were actually written to server.
+      retries=0;
+      persist_retries=0;
    }
-   else  // note the following block
-#endif // USE_SSL
-   {
-      res=write(data_sock,buf,size);
-      if(res==-1)
-      {
-	 if(NonFatalError(errno))
-	    return DO_AGAIN;
-	 if(NotSerious(errno) || errno==EPIPE)
-	 {
-	    DebugPrint("**** ",strerror(errno),0);
-	    quit_sent=true;
-	    Disconnect();
-	    return DO_AGAIN;
-	 }
-	 SetError(SEE_ERRNO,"write(data_socket)");
-	 quit_sent=true;
-	 Disconnect();
-	 return(error_code);
-      }
-   }
-   event_time=now;
-   retries=0;
-   persist_retries=0;
+
    assert(rate_limit!=0);
-   rate_limit->BytesPut(res);
-   pos+=res;
-   real_pos+=res;
+   rate_limit->BytesPut(size);
+   pos+=size;
+   real_pos+=size;
    flags|=IO_FLAG;
-   return(res);
+   return(size);
 }
 
 int   Ftp::StoreStatus()
@@ -3328,14 +3113,8 @@ void  Ftp::MoveConnectionHere(Ftp *o)
 
    CloseRespQueue(); // we need not handle other session's replies.
 
-   sync_wait=o->sync_wait;
-   send_cmd_buffer=o->send_cmd_buffer;
-   send_cmd_ptr=o->send_cmd_ptr;
-   send_cmd_alloc=o->send_cmd_alloc;
-   send_cmd_count=o->send_cmd_count;
-
-   o->send_cmd_buffer=0;
-   o->EmptySendQueue();
+   sync_wait=o->sync_wait; o->sync_wait=0;
+   send_cmd_buffer=o->send_cmd_buffer; o->send_cmd_buffer=0;
 
    o->state=INITIAL_STATE;
    assert(control_sock==-1);
@@ -3350,18 +3129,24 @@ void  Ftp::MoveConnectionHere(Ftp *o)
    type=o->type;
    event_time=o->event_time;
 
+   control_send=o->control_send; o->control_send=0;
+   control_recv=o->control_recv; o->control_recv=0;
+
 #ifdef USE_SSL
    control_ssl=o->control_ssl;
    o->control_ssl=0;
-   control_ssl_connected=o->control_ssl_connected;
    prot=o->prot;
-   auth_tls_sent=o->auth_tls_sent;
+   auth_sent=o->auth_sent;
+   auth_supported=o->auth_supported;
+   auth_args_supported=o->auth_args_supported; o->auth_args_supported=0;
 #endif
 
    size_supported=o->size_supported;
    mdtm_supported=o->mdtm_supported;
    site_chmod_supported=o->site_chmod_supported;
    pret_supported=o->pret_supported;
+   utf8_supported=o->utf8_supported;
+   lang_supported=o->lang_supported;
    last_rest=o->last_rest;
 
    if(!home)
@@ -3371,6 +3156,62 @@ void  Ftp::MoveConnectionHere(Ftp *o)
    o->set_real_cwd(0);
    o->Disconnect();
    state=EOF_STATE;
+}
+
+void Ftp::CheckFEAT(char *reply)
+{
+   pret_supported=false;
+   mdtm_supported=false;
+   size_supported=false;
+#ifdef USE_SSL
+   auth_supported=false;
+#endif
+
+   char *scan=strchr(reply,'\n');
+   if(scan)
+      scan++;
+   if(!scan || !*scan)
+      return;
+
+   for(char *f=strtok(scan,"\r\n"); f; f=strtok(0,"\r\n"))
+   {
+      if(!strncmp(f,"211 ",4))
+	 break;	  // last line
+      if(*f==' ')
+	 f++;
+      if(!strcasecmp(f,"UTF8"))
+      {
+	 utf8_supported=true;
+	 control_send->SetTranslation("UTF-8",false);
+	 control_recv->SetTranslation("UTF-8",true);
+	 SendCmd("OPTS UTF8 ON");
+	 AddResp(0,CHECK_IGNORE);
+      }
+      else if(!strncasecmp(f,"LANG ",5))
+      {
+	 lang_supported=true;
+	 const char *lang_to_use=Query("lang",hostname);
+	 if(lang_to_use && lang_to_use[0])
+	    SendCmd2("LANG",lang_to_use);
+	 else
+	    SendCmd("LANG");
+	 AddResp(200,CHECK_IGNORE);
+      }
+      else if(!strcasecmp(f,"PRET"))
+	 pret_supported=true;
+      else if(!strcasecmp(f,"MDTM"))
+	 mdtm_supported=true;
+      else if(!strcasecmp(f,"SIZE"))
+	 size_supported=true;
+#ifdef USE_SSL
+      else if(!strncasecmp(f,"AUTH ",5))
+      {
+	 auth_supported=true;
+	 xfree(auth_args_supported);
+	 auth_args_supported=xstrdup(f+5);
+      }
+#endif // USE_SSL
+   }
 }
 
 void Ftp::CheckResp(int act)
@@ -3638,13 +3479,19 @@ void Ftp::CheckResp(int act)
 	 AbortedClose();
       }
       break;
+   case CHECK_FEAT:
+      if(act==530)
+	 try_feat_after_login=true;
+      if(!is2XX(act))
+	 break;
+      CheckFEAT(all_lines);
+      break;
 
 #ifdef USE_SSL
    case CHECK_AUTH_TLS:
       if(is2XX(act))
       {
-	 control_ssl=lftp_ssl_new(control_sock);
-	 control_ssl_connected=false;
+	 MakeSSLBuffers();
       }
       else
       {
@@ -3688,7 +3535,7 @@ const char *Ftp::CurrentStatus()
    case(EOF_STATE):
       if(control_sock!=-1)
       {
-	 if(send_cmd_count>0)
+	 if(send_cmd_buffer->Size()>0)
 	    return(_("Sending commands..."));
 	 if(!RespQueueIsEmpty())
 	    return(_("Waiting for response..."));
@@ -3708,7 +3555,7 @@ const char *Ftp::CurrentStatus()
       return(_("Connecting..."));
    case(CONNECTED_STATE):
 #ifdef USE_SSL
-      if(auth_tls_sent)
+      if(auth_sent)
 	 return _("TLS negotiation...");
 #endif
       return _("Connected");
@@ -3886,6 +3733,14 @@ void Ftp::ResetLocationData()
    mdtm_supported=true;
    size_supported=true;
    site_chmod_supported=true;
+   utf8_supported=false;
+   lang_supported=false;
+   pret_supported=false;
+#ifdef USE_SSL
+   auth_supported=true;
+   xfree(auth_args_supported);
+   auth_args_supported=0;
+#endif
    xfree(home_auto); home_auto=0;
    home_auto=xstrdup(FindHomeAuto());
    Reconfig(0);
@@ -3925,6 +3780,7 @@ void Ftp::Reconfig(const char *name)
    use_mdtm = QueryBool("use-mdtm",c);
    use_size = QueryBool("use-size",c);
    use_pret = QueryBool("use-pret",c);
+   use_feat = QueryBool("use-feat",c);
 
    use_telnet_iac = QueryBool("use-telnet-iac",c);
 
@@ -4068,36 +3924,11 @@ const char *Ftp::make_skey_reply()
 
 int Ftp::Buffered()
 {
-#ifdef TIOCOUTQ
-   if(!TIOCOUTQ_works)
+   if(!data_iobuf)
       return 0;
    if(state!=DATA_OPEN_STATE || data_sock==-1 || mode!=STORE)
       return 0;
-   int buffer=0;
-   if(TIOCOUTQ_returns_free_space)
-   {
-      socklen_t len=sizeof(buffer);
-      if(getsockopt(data_sock,SOL_SOCKET,SO_SNDBUF,(char*)&buffer,&len)==-1)
-	 return 0;
-      int avail=buffer;
-      if(ioctl(data_sock,TIOCOUTQ,&avail)==-1)
-	 return 0;
-      if(avail>buffer)
-	 return 0; // something wrong
-      buffer-=avail;
-      buffer=buffer*3/4; // approx...
-   }
-   else
-   {
-      if(ioctl(data_sock,TIOCOUTQ,&buffer)==-1)
-	 return 0;
-   }
-   if(pos>=0 && buffer>pos)
-      buffer=pos;
-   return buffer;
-#else
-   return 0;
-#endif
+   return data_iobuf->Size()+SocketBuffered(data_sock);
 }
 
 const char *Ftp::ProtocolSubstitution(const char *host)
@@ -4129,6 +3960,20 @@ FtpS::FtpS(const FtpS *o) : super(o)
    Reconfig(0);
 }
 FileAccess *FtpS::New(){ return new FtpS();}
+
+void Ftp::MakeSSLBuffers()
+{
+   Delete(control_send);
+   Delete(control_recv);
+
+   control_ssl=lftp_ssl_new(control_sock,hostname);
+   IOBufferSSL *send_ssl=new IOBufferSSL(control_ssl,IOBufferSSL::PUT,hostname);
+   IOBufferSSL *recv_ssl=new IOBufferSSL(control_ssl,IOBufferSSL::GET,hostname);
+   send_ssl->DoConnect();
+   recv_ssl->CloseLater();
+   control_send=send_ssl;
+   control_recv=recv_ssl;
+}
 #endif
 
 #include "modconfig.h"

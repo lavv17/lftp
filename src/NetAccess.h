@@ -54,17 +54,18 @@ protected:
    int	 connection_limit;
    bool	 connection_takeover;
 
+   class RateLimit *rate_limit;
+
    int	 socket_buffer;
    int	 socket_maxseg;
    void	 SetSocketBuffer(int sock);
    void	 SetSocketMaxseg(int sock);
+
    static void KeepAlive(int sock);
    static void ReuseAddress(int sock);
    static void SetSocketBuffer(int sock,int val);
    static void SetSocketMaxseg(int sock,int val);
-
-   class RateLimit *rate_limit;
-
+   static int SocketBuffered(int sock);
    static const char *SocketNumericAddress(const sockaddr_u *u);
    static int SocketPort(const sockaddr_u *u);
    static socklen_t SocketAddrLen(const sockaddr_u *u);

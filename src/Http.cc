@@ -501,7 +501,7 @@ void Http::SendRequest(const char *connection,const char *f)
       else if(pos>0)
 	 Send("Range: bytes=%lld-%lld/%lld\r\n",(long long)pos,
 		     (long long)(entity_size-1),(long long)entity_size);
-      if(entity_date!=(time_t)-1)
+      if(entity_date!=NO_DATE)
       {
 	 char d[256];
 	 static const char weekday_names[][4]={
@@ -566,6 +566,8 @@ void Http::SendRequest(const char *connection,const char *f)
    chunk_pos=0;
    chunked_trailer=false;
    no_ranges=false;
+
+   send_buf->SetPos(0);
 }
 
 void Http::SendArrayInfoRequest()
@@ -1127,9 +1129,9 @@ int Http::Do()
 		  status=0;
 		  status_code=0;
 		  if(array_for_info[array_ptr].get_time)
-		     array_for_info[array_ptr].time=(time_t)-1;
+		     array_for_info[array_ptr].time=NO_DATE;
 		  if(array_for_info[array_ptr].get_size)
-		     array_for_info[array_ptr].size=-1;
+		     array_for_info[array_ptr].size=NO_SIZE;
 		  if(++array_ptr>=array_cnt)
 		  {
 		     state=DONE;
@@ -1588,6 +1590,13 @@ int Http::Done()
    return IN_PROGRESS;
 }
 
+int Http::Buffered()
+{
+   if(mode!=STORE || !send_buf)
+      return 0;
+   return send_buf->Size()+SocketBuffered(sock);
+}
+
 int Http::Write(const void *buf,int size)
 {
    if(mode!=STORE)
@@ -1608,28 +1617,19 @@ int Http::Write(const void *buf,int size)
       if(size>allowed)
 	 size=allowed;
    }
-   if(size==0)
+   if(size+send_buf->Size()>=max_buf)
+      size=max_buf-send_buf->Size();
+   if(size<=0)
       return 0;
-   int res=write(sock,buf,size);
-   if(res==-1)
-   {
-      if(NonFatalError(errno))
-	 return DO_AGAIN;
-      if(NotSerious(errno) || errno==EPIPE)
-      {
-	 DebugPrint("**** ",strerror(errno),0);
-	 Disconnect();
-	 return error_code;
-      }
-      SetError(SEE_ERRNO,0);
-      Disconnect();
-      return error_code;
-   }
-   retries=0;
-   rate_limit->BytesPut(res);
-   pos+=res;
-   real_pos+=res;
-   return(res);
+
+   send_buf->Put((const char*)buf,size);
+
+   if(retries>0 && send_buf->GetPos()-send_buf->Size()>Buffered()+0x1000)
+      retries=0;
+   rate_limit->BytesPut(size);
+   pos+=size;
+   real_pos+=size;
+   return(size);
 }
 
 int Http::SendEOT()

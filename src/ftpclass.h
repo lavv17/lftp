@@ -95,7 +95,8 @@ class Ftp : public NetAccess
       CHECK_PASS,	// check response for PASS
       CHECK_PASS_PROXY,	// check response for PASS sent to proxy
       CHECK_TRANSFER,	// generic check for transfer
-      CHECK_TRANSFER_CLOSED // check for transfer complete when Close()d.
+      CHECK_TRANSFER_CLOSED, // check for transfer complete when Close()d.
+      CHECK_FEAT	// check response for FEAT
 #ifdef USE_SSL
       ,CHECK_AUTH_TLS,
       CHECK_PROT
@@ -141,6 +142,7 @@ class Ftp : public NetAccess
    void	 NoPassReqCheck(int);
    void	 proxy_LoginCheck(int);
    void	 proxy_NoPassReqCheck(int);
+   void	 CheckFEAT(char *reply);
    char *ExtractPWD();
    void  SendCWD(const char *path,check_case_t c);
    void	 CatchDATE(int);
@@ -158,7 +160,11 @@ class Ftp : public NetAccess
    void	 HandleTimeout();
 
    int   control_sock;
+   IOBuffer *control_recv;
+   IOBuffer *control_send;
+   Buffer *send_cmd_buffer; // holds unsent commands.
    int   data_sock;
+   IOBuffer *data_iobuf;
    int	 aborted_data_sock;
    sockaddr_u peer_sa;
    bool	 quit_sent;
@@ -166,15 +172,15 @@ class Ftp : public NetAccess
 
 #ifdef USE_SSL
    SSL	 *control_ssl;
-   bool	 control_ssl_connected;
    SSL	 *data_ssl;
    bool	 data_ssl_connected;
    char	 prot;	  // current data protection scheme 'C'lear or 'P'rivate
    void	 BlockOnSSL(SSL*);
+   void	 MakeSSLBuffers();
 protected:
    bool	 ftps;	  // ssl and prot='P' by default (port 990)
 private:
-   bool	 auth_tls_sent;
+   bool	 auth_sent;
 #else
    static const bool ftps; // for convenience
 #endif
@@ -185,10 +191,8 @@ private:
    /* address for data accepting */
    sockaddr_u   data_sa;
 
-   char  *resp;
-   int   resp_size;
-   int	 resp_alloc;
    char  *line;
+   int	 line_len;
    char  *all_lines;
 
    bool	 eof;
@@ -211,7 +215,8 @@ private:
 
    void	 SwitchToState(automate_state);
 
-   void  SendCmd(const char *cmd,int len=-1);
+   void	 Send(const char *cmd,int len);
+   void  SendCmd(const char *cmd);
    void  SendCmd2(const char *cmd,const char *f);
    void  SendCmd2(const char *cmd,int v);
    void  SendUrgentCmd(const char *cmd);
@@ -228,11 +233,6 @@ private:
 	 // response_queue and switch to a state if necessary
 
    bool	 AbsolutePath(const char *p);
-
-   char	 *send_cmd_buffer;
-   int   send_cmd_count;   // in buffer
-   int	 send_cmd_alloc;   // total allocated
-   char  *send_cmd_ptr;	   // start
 
    void EmptySendQueue();
 
@@ -253,6 +253,12 @@ private:
    bool  size_supported;
    bool  site_chmod_supported;
    bool	 pret_supported;
+   bool	 utf8_supported;
+   bool	 lang_supported;
+#ifdef USE_SSL
+   bool	 auth_supported;
+   char	 *auth_args_supported;
+#endif
    off_t last_rest;	// last successful REST position.
    off_t rest_pos;	// the number sent with REST command.
 
@@ -262,6 +268,7 @@ private:
 
    bool	 wait_flush;	// wait until all responces come
    bool	 ignore_pass;	// logged in just with user
+   bool	 try_feat_after_login;
    bool  verify_data_address;
    bool  verify_data_port;
    bool	 rest_list;
@@ -303,6 +310,7 @@ private:
    bool use_mdtm;
    bool use_size;
    bool use_pret;
+   bool use_feat;
 
    bool use_telnet_iac;
 

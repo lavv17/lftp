@@ -39,6 +39,8 @@ class IOBufferSSL : public IOBuffer
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
 
+   bool IsFatal(int res);
+
 protected:
    ~IOBufferSSL();
 

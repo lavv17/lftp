@@ -27,7 +27,16 @@
 #include <math.h>
 #include <sys/types.h>
 #include <netinet/in.h>
+#ifdef HAVE_NETINET_TCP_H
+# include <netinet/tcp.h>
+#endif
 #include <arpa/inet.h>
+#ifdef HAVE_SYS_IOCTL_H
+# include <sys/ioctl.h>
+#endif
+#ifdef HAVE_TERMIOS_H
+# include <termios.h>
+#endif
 #include "NetAccess.h"
 #include "log.h"
 #include "url.h"
@@ -151,7 +160,6 @@ void NetAccess::SetSocketMaxseg(int sock,int socket_maxseg)
       Log::global->Format(1,"setsockopt(TCP_MAXSEG,%d): %s\n",socket_maxseg,strerror(errno));
 #endif
 }
-
 void  NetAccess::SetSocketBuffer(int sock)
 {
    SetSocketBuffer(sock,socket_buffer);
@@ -247,6 +255,62 @@ int NetAccess::SocketConnect(int fd,const sockaddr_u *u)
    if(res!=-1)
       UpdateNow(); // if non-blocking doesn't work
    return res;
+}
+
+#ifdef TIOCOUTQ
+static bool TIOCOUTQ_returns_free_space;
+static bool TIOCOUTQ_works;
+static bool TIOCOUTQ_tested;
+static void test_TIOCOUTQ()
+{
+   int sock=socket(PF_INET,SOCK_STREAM,IPPROTO_TCP);
+   if(sock==-1)
+      return;
+   int avail=-1;
+   socklen_t len=sizeof(avail);
+   if(getsockopt(sock,SOL_SOCKET,SO_SNDBUF,(char*)&avail,&len)==-1)
+      avail=-1;
+   int buf=-1;
+   if(ioctl(sock,TIOCOUTQ,&buf)==-1)
+      buf=-1;
+   if(buf>=0 && avail>0 && (buf==0 || buf==avail))
+   {
+      TIOCOUTQ_works=true;
+      TIOCOUTQ_returns_free_space=(buf==avail);
+   }
+   close(sock);
+}
+#endif
+int NetAccess::SocketBuffered(int sock)
+{
+#ifdef TIOCOUTQ
+   if(!TIOCOUTQ_tested)
+      test_TIOCOUTQ();
+   if(!TIOCOUTQ_works)
+      return 0;
+   int buffer=0;
+   if(TIOCOUTQ_returns_free_space)
+   {
+      socklen_t len=sizeof(buffer);
+      if(getsockopt(sock,SOL_SOCKET,SO_SNDBUF,(char*)&buffer,&len)==-1)
+	 return 0;
+      int avail=buffer;
+      if(ioctl(sock,TIOCOUTQ,&avail)==-1)
+	 return 0;
+      if(avail>buffer)
+	 return 0; // something wrong
+      buffer-=avail;
+      buffer=buffer*3/4; // approx...
+   }
+   else
+   {
+      if(ioctl(sock,TIOCOUTQ,&buffer)==-1)
+	 return 0;
+   }
+   return buffer;
+#else
+   return 0;
+#endif
 }
 
 void NetAccess::SayConnectingTo()
