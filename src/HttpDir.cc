@@ -177,8 +177,15 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,FileSet *set
       }
    }
 
-   if(set && find_char(link_target,link_len,'/')==0)
+   if(set && link_target[0]!='/')
    {
+      char *slash=strchr(link_target,'/');
+      if(slash)
+      {
+	 *slash=0;
+	 is_directory=true;
+      }
+
       FileInfo *fi=new FileInfo;
       fi->SetName(link_target);
       fi->SetType(is_directory ? fi->DIRECTORY : fi->NORMAL);
