@@ -379,6 +379,31 @@ bool ResMgr::Resource::ClosureMatch(const char *cl_data)
    return 0==fnmatch(closure,cl_data,FNM_PATHNAME);
 }
 
+const char *ResMgr::QueryNext(const char *name,const char **closure,Resource **ptr)
+{
+   ResDecl *type;
+   // find type of given variable
+   const char *msg=FindVar(name,&type);
+   if(msg)
+      return 0;
+
+   if(*ptr==0)
+      *ptr=chain;
+   else
+      *ptr=(*ptr)->next;
+
+   while(*ptr)
+   {
+      if((*ptr)->type==type)
+      {
+	 *closure=(*ptr)->closure;
+	 return (*ptr)->value;
+      }
+      *ptr=(*ptr)->next;
+   }
+   return 0;
+}
+
 const char *ResMgr::SimpleQuery(const char *name,const char *closure)
 {
    const char *msg;
@@ -389,15 +414,15 @@ const char *ResMgr::SimpleQuery(const char *name,const char *closure)
    if(msg)
       return 0;
 
-   Resource **scan;
+   Resource *scan;
    // find the value
-   for(scan=&chain; *scan; scan=&(*scan)->next)
-      if((*scan)->type==type && (*scan)->ClosureMatch(closure))
+   for(scan=chain; scan; scan=scan->next)
+      if(scan->type==type && scan->ClosureMatch(closure))
 	 break;
 
    // if found
-   if(*scan)
-      return (*scan)->value;
+   if(scan)
+      return scan->value;
 
    return 0;
 }

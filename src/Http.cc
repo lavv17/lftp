@@ -29,12 +29,14 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <time.h>
+#include <fnmatch.h>
 #include "Http.h"
 #include "ResMgr.h"
 #include "log.h"
 #include "url.h"
 #include "HttpDir.h"
 #include "misc.h"
+#include "lftp_ssl.h"
 
 #include "ascii_ctype.h"
 
@@ -96,6 +98,7 @@ void Http::Init()
    no_cache=false;
 
    hftp=false;
+   https=false;
    use_head=true;
 
    user_agent=0;
@@ -501,9 +504,10 @@ add_path:
    }
    if(!hftp)
    {
-      const char *cookie=Query("cookie",hostname);
+      char *cookie=MakeCookie(hostname,efile+(proxy?url::path_index(efile):0));
       if(cookie && cookie[0])
 	 Send("Cookie: %s\r\n",cookie);
+      xfree(cookie);
 
       const char *content_type=0;
       if(!strcmp(last_method,"PUT"))
@@ -703,30 +707,6 @@ void Http::GetBetterConnection(int level,int count)
    }
 }
 
-#ifdef USE_SSL
-static SSL *NewSSL(int fd)
-{
-   static SSL_CTX *ssl_ctx=0;
-
-   if(!ssl_ctx)
-   {
-#if SSLEAY_VERSION_NUMBER < 0x0800
-      ssl_ctx=SSL_CTX_new();
-      X509_set_default_verify_paths(ssl_ctx->cert);
-#else
-      SSLeay_add_ssl_algorithms();
-      ssl_ctx=SSL_CTX_new(SSLv23_client_method());
-      SSL_CTX_set_options(ssl_ctx, SSL_OP_ALL);
-      SSL_CTX_set_default_verify_paths(ssl_ctx);
-#endif /* SSLEAY_VERSION_NUMBER < 0x0800 */
-   }
-
-   SSL *ssl=SSL_new(ssl_ctx);
-   SSL_set_fd(ssl,fd);
-   return ssl;
-}
-#endif
-
 int Http::Do()
 {
    int m=STALL;
@@ -923,7 +903,7 @@ int Http::Do()
 #ifdef USE_SSL
       if(proxy?!strncmp(proxy,"https://",8):https)
       {
-	 SSL *ssl=NewSSL(sock);
+	 SSL *ssl=lftp_ssl_new(sock);
 	 IOBufferSSL *send_buf_ssl=new IOBufferSSL(ssl,IOBuffer::PUT);
 	 IOBufferSSL *recv_buf_ssl=new IOBufferSSL(ssl,IOBuffer::GET);
 	 send_buf_ssl->DoConnect();
@@ -1617,13 +1597,46 @@ ListInfo *Http::MakeListInfo()
    return new HttpListInfo(this);
 }
 
-void Http::SetCookie(const char *value_const)
+bool Http::CookieClosureMatch(const char *closure_c,
+			      const char *hostname,const char *efile)
 {
-   char *value=alloca_strdup(value_const);
-   const char *old=Query("cookie",hostname);
-   char *c=string_alloca(strlen(value)+xstrlen(old)+3);
-   strcpy(c,old?old:"");
-   const char *domain=hostname;
+   if(!closure_c)
+      return true;
+   char *closure=alloca_strdup2(closure_c,1);
+   char *path=0;
+
+   scan=closure;
+   for(;;)
+   {
+      char *slash=strchr(scan,';');
+      if(!slash)
+	 break;
+      *slash=0;
+      if(!strncmp(slash+1,"path=",5))
+	 path=slash+1+5;
+      else if(!strncmp(slasl+1,"secure",6) && (slash[7]==';' || slash[7]==0))
+      {
+	 if(!https)
+	    return false;
+      }
+   }
+   if(closure[0] && 0!=fnmatch(closure,hostname,FNM_PATHNAME))
+      return false;
+   if(!path)
+      return true;
+   int path_len=strlen(path);
+   if(!strncmp(efile,path,path_len)
+   && (efile[path_len]==0 || efile[path_len]=='/'))
+      return true;
+   return false;
+}
+
+void Http::CookieMerge(char **all_p,const char *cookie_c)
+{
+   char *all=*all_p;
+   all=*all_p=(char*)xrealloc(all,xstrlen(all)+2+xstrlen(cookie_c)+1);
+
+   char *value=alloca_strdup(cookie_c);
 
    for(char *entry=strtok(value,";"); entry; entry=strtok(0,";"))
    {
@@ -1633,23 +1646,10 @@ void Http::SetCookie(const char *value_const)
 	 break;
       if(!strncasecmp(entry,"path=",5)
       || !strncasecmp(entry,"expires=",8)
+      || !strncasecmp(entry,"domain=",7)
       || (!strncasecmp(entry,"secure",6)
 	  && (entry[6]==' ' || entry[6]==0 || entry[6]==';')))
-	 continue; // filter out path= expires= secure
-
-      if(!strncasecmp(entry,"domain=",7))
-      {
-	 char *new_domain=alloca_strdup(entry+6);
-	 if(new_domain[1]=='.')
-	    new_domain[0]='*';
-	 else
-	    new_domain++;
-	 char *end=strchr(new_domain,';');
-	 if(end)
-	    *end=0;
-	 domain=new_domain;
-	 continue;
-      }
+	 continue; // filter out path= expires= domain= secure
 
       char *c_name=entry;
       char *c_value=strchr(entry,'=');
@@ -1659,7 +1659,7 @@ void Http::SetCookie(const char *value_const)
 	 c_value=c_name, c_name=0;
       int c_name_len=xstrlen(c_name);
 
-      char *scan=c;
+      char *scan=all;
       for(;;)
       {
 	 while(*scan==' ') scan++;
@@ -1678,9 +1678,9 @@ void Http::SetCookie(const char *value_const)
 	    while(*m==' ') m++;
 	    if(*m==0)
 	    {
-	       while(scan>c && scan[-1]==' ')
+	       while(scan>all && scan[-1]==' ')
 		  scan--;
-	       if(scan>c && scan[-1]==';')
+	       if(scan>all && scan[-1]==';')
 		  scan--;
 	       *scan=0;
 	    }
@@ -1694,17 +1694,90 @@ void Http::SetCookie(const char *value_const)
       }
 
       // append cookie.
-      int c_len=strlen(c);
-      while(c_len>0 && c[c_len-1]==' ')
-	 c[--c_len]=0;  // trim
-      if(c_len>0 && c[c_len-1]!=';')
-	 c[c_len++]=';', c[c_len++]=' ';
+      int c_len=strlen(all);
+      while(c_len>0 && all[c_len-1]==' ')
+	 all[--c_len]=0;  // trim
+      if(c_len>0 && all[c_len-1]!=';')
+	 all[c_len++]=';', all[c_len++]=' ';  // append '; '
       if(c_name)
-	 sprintf(c+c_len,"%s=%s",c_name,c_value);
+	 sprintf(all+c_len,"%s=%s",c_name,c_value);
       else
-	 strcpy(c+c_len,c_value);
+	 strcpy(all+c_len,c_value);
    }
-   ResMgr::Set("http:cookie",domain,c);
+}
+
+char *Http::MakeCookie(const char *hostname,const char *efile)
+{
+   ResMgr::Resource *scan=0;
+   const char *closure;
+   char *all_cookies=0;
+   for(;;)
+   {
+      const char *cookie=ResMgr::QueryNext("http:cookie",&closure,&scan);
+      if(cookie==0)
+	 break;
+      if(!CookieClosureMatch(closure,hostname,efile))
+	 continue;
+      CookieMerge(&all_cookies,cookie);
+   }
+   return all_cookies;
+}
+
+void Http::SetCookie(const char *value_const)
+{
+   char *value=alloca_strdup(value_const);
+   const char *domain=hostname;
+   const char *path=0;
+
+   for(char *entry=strtok(value,";"); entry; entry=strtok(0,";"))
+   {
+      if(*entry==' ')
+	 entry++;
+      if(*entry==0)
+	 break;
+      if(!strncasecmp(entry,"expires=",8)
+      || (!strncasecmp(entry,"secure",6)
+	  && (entry[6]==' ' || entry[6]==0 || entry[6]==';')))
+	 continue; // filter out path= expires= secure
+
+      if(!strncasecmp(entry,"path=",5))
+      {
+	 path=alloca_strdup(entry+5);
+      	 continue;
+      }
+
+      if(!strncasecmp(entry,"domain=",7))
+      {
+	 char *new_domain=alloca_strdup(entry+6);
+	 if(new_domain[1]=='.')
+	    new_domain[0]='*';
+	 else
+	    new_domain++;
+	 char *end=strchr(new_domain,';');
+	 if(end)
+	    *end=0;
+	 domain=new_domain;
+	 continue;
+      }
+   }
+
+   char *closure=string_alloca(strlen(domain)+1+xstrlen(path)+1);
+   strcpy(closure,domain);
+   if(path && path[0])
+   {
+      if(path[0]!='/')
+	 strcat(closure,"/");
+      strcat(closure,path);
+   }
+
+   const char *old=Query("cookie",closure);
+
+   char *c=xstrdup(old,2+strlen(value_const));
+   CookieMerge(&c,value_const);
+
+   ResMgr::Set("http:cookie",closure,c);
+
+   xfree(c);
 }
 
 #ifdef USE_SSL

@@ -22,6 +22,7 @@
 #include "buffer.h"
 #include "xmalloc.h"
 #include "FileAccess.h"
+#include "lftp_ssl.h"
 
 #define BUFFER_INC (8*1024) // should be power of 2
 
@@ -181,6 +182,7 @@ void Buffer::SetError(const char *e)
    xfree(error_text);
    error_text=xstrdup(e);
 }
+#if 0
 void Buffer::SetError2(const char *e1,const char *e2)
 {
    xfree(error_text);
@@ -190,6 +192,7 @@ void Buffer::SetError2(const char *e1,const char *e2)
    strcpy(error_text,e1);
    strcat(error_text,e2);
 }
+#endif
 
 // IOBufferFDStream implementation
 #include <fcntl.h>
@@ -423,7 +426,7 @@ int IOBufferSSL::Do()
 	    return STALL;
 	 else // error
 	 {
-	    SetError2("SSL connect: ",ERR_error_string(ERR_get_error(),NULL));
+	    SetError(lftp_ssl_strerror("SSL connect"));
 	    return MOVED;
 	 }
       }
@@ -488,7 +491,7 @@ int IOBufferSSL::Get_LL(int size)
 	 return 0;
       else // error
       {
-	 SetError2("SSL read: ",ERR_error_string(ERR_get_error(),NULL));
+	 SetError(lftp_ssl_strerror("SSL read"));
 	 return -1;
       }
    }
@@ -511,7 +514,7 @@ int IOBufferSSL::Put_LL(const char *buf,int size)
 	 return 0;
       else // error
       {
-	 SetError2("SSL write: ",ERR_error_string(ERR_get_error(),NULL));
+	 SetError(lftp_ssl_strerror("SSL write"));
 	 return -1;
       }
    }

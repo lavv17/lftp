@@ -22,5 +22,6 @@
 #define LFTP_SSL_H
 
 SSL *lftp_ssl_new(int fd);
+const char *lftp_ssl_strerror(const char *s);
 
 #endif//LFTP_SSL_H

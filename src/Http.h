@@ -64,6 +64,9 @@ class Http : public NetAccess
    void HandleHeaderLine(const char *name,const char *value);
    void GetBetterConnection(int level,int count);
    void SetCookie(const char *val);
+   char *MakeCookie(const char *host,const char *path);
+   void CookieMerge(char **c,const char *add);
+   bool CookieClosureMatch(const char *closure,const char *host,const char *path);
 
    int sock;
    void Disconnect();

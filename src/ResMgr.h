@@ -67,6 +67,7 @@ class ResMgr
    static ResDecl *type_chain;
 
 public:
+   static const char *QueryNext(const char *name,const char **closure,Resource **ptr);
    static const char *SimpleQuery(const char *name,const char *closure);
    static ResValue Query(const char *name,const char *closure);
 

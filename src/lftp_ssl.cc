@@ -23,7 +23,9 @@
 #ifdef USE_SSL
 #include <openssl/ssl.h>
 #include <openssl/rand.h>
+#include <openssl/err.h>
 #include "lftp_ssl.h"
+#include "xmalloc.h"
 
 SSL_CTX *ssl_ctx;
 
@@ -74,6 +76,28 @@ SSL *lftp_ssl_new(int fd)
    SSL *ssl=SSL_new(ssl_ctx);
    SSL_set_fd(ssl,fd);
    return ssl;
+}
+
+const char *lftp_ssl_strerror(const char *s)
+{
+   SSL_load_error_strings();
+   const char *ssl_error=ERR_error_string(ERR_get_error(),NULL);
+   if(!ssl_error)
+      ssl_error="error";
+   static char *buffer;
+   static int buffer_alloc;
+   int need=xstrlen(s)+2+xstrlen(ssl_error)+1;
+   if(buffer_alloc<need)
+      buffer=(char*)xrealloc(buffer,buffer_alloc=need);
+   if(s)
+   {
+      strcpy(buffer,s);
+      strcat(buffer,": ");
+      strcat(buffer,ssl_error);
+   }
+   else
+      strcpy(buffer,ssl_error);
+   return buffer;
 }
 
 #endif

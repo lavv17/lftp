@@ -1,8 +1,17 @@
+2000-08-04  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.cc, Http.h: init https properly; rework cookie sending/receiving,
+	  now cookies are joined from all matching closures, path is
+	  also checked; use lftp_ssl_new.
+	* ResMgr.cc, ResMgr.h: (QueryNext) new method for cookies merging.
+	* buffer.cc: use service lftp_ssl* functions.
+
 2000-07-31  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileAccess.cc: add ] to list of wildcards.
 	* FtpGlob.cc: fix coredump on empty directories.
 	* complete.cc: fix filename quotation.
+	* lftp_ssl.cc, lftp_ssl.h: new files.
 
 2000-07-30  Alexander V. Lukyanov  <lav@yars.free.net>
 
