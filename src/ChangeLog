@@ -1,3 +1,10 @@
+2000-02-12  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileCopy.cc: fix memory leaks.
+	* LsCache.cc: use xfree.
+	* commands.cc: help for repeat.
+	* xmalloc.cc, xmalloc.h: outline xstrdup; MEM_DEBUG it.
+
 2000-02-11  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CopyJob.cc: print rate using Speedometer::GetStr.
