@@ -325,11 +325,14 @@ const char *ResMgr::Query(const char *name,const char *closure)
 
 const char *ResDecl::Query(const char *closure)
 {
-   const char *v;
+   const char *v=0;
 
-   v=ResMgr::Query(name,closure);
-   if(!v) v=ResMgr::Query(name,0);
-   if(!v) v=defvalue;
+   if(closure)
+      v=ResMgr::Query(name,closure);
+   if(!v)
+      v=ResMgr::Query(name,0);
+   if(!v)
+      v=defvalue;
 
    return v;
 }
