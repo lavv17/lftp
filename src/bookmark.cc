@@ -34,10 +34,9 @@ Bookmark::Bookmark()
    const char *home=getenv("HOME");
    if(home==0)
       home="";
-   int home_len=strlen(home);
    const char *add="/.lftp/bookmarks";
-   bm_file=(char*)xmalloc(home_len+strlen(add)+1);
-   strcat(strcpy(bm_file,home),add);
+   bm_file=xstrdup(home,+strlen(add));
+   strcat(bm_file,add);
 
    bm_fd=-1;
    stamp=(time_t)-1;

@@ -89,8 +89,7 @@ FileCopyPeer *GetJob::NoProtoDst(const char *dst)
 	       count++;
 	       return 0;
 	    }
-	    backup_file=(char*)xmalloc(strlen(f)+2);
-	    strcpy(backup_file,f);
+	    backup_file=xstrdup(f,+1);
 	    strcat(backup_file,"~");
 	    if(rename(f,backup_file)!=0)
 	    {
