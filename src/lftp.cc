@@ -32,9 +32,6 @@
 #include <sys/stat.h> // for mkdir()
 #include "xstring.h"
 #include <fcntl.h>
-#ifdef HAVE_LOCALE_H
-# include <locale.h>
-#endif
 
 #include "xalloca.h"
 #include "xmalloc.h"

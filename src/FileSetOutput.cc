@@ -31,7 +31,6 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <assert.h>
-#include <locale.h>
 #include <fnmatch.h>
 #include <mbswidth.h>
 

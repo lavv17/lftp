@@ -1,3 +1,7 @@
+2002-02-27  Ayamura KIKUCHI <ayamura@ayamura.org>
+
+	* FileSetOutput.cc, lftp.cc: locale.h is now included from config.h.
+
 2002-02-26  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: add TLS flag to status when data connection is secured.
