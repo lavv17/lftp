@@ -974,7 +974,8 @@ CMD(cat)
 {
    const char *op=args->a0();
    int opt;
-   bool ascii=true;
+   bool ascii=false;
+   bool auto_ascii=true;
 
    while((opt=args->getopt("+bau"))!=EOF)
    {
@@ -982,9 +983,11 @@ CMD(cat)
       {
       case('a'):
 	 ascii=true;
+	 auto_ascii=false;
 	 break;
       case('b'):
 	 ascii=false;
+	 auto_ascii=false;
 	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),op);
@@ -1000,8 +1003,13 @@ CMD(cat)
       return 0;
    }
    CatJob *j=new CatJob(Clone(),output,args);
-   if(ascii && args->a0()[0]!='z')
-      j->Ascii();
+   if(!auto_ascii)
+   {
+      if(ascii)
+	 j->Ascii();
+      else
+	 j->Binary();
+   }
    output=0;
    args=0;
    return j;
@@ -1613,7 +1621,10 @@ CMD(wait)
    {
       if(!strcmp(jn,"all"))
       {
-	 parent->wait_all=true;
+	 parent->WaitForAllChildren();
+	 for(int i=0; i<parent->waiting_num; i++)
+	    parent->waiting[i]->Fg();
+	 exit_code=0;
 	 return 0;
       }
       if(!isdigit(jn[0]))

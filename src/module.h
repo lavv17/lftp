@@ -20,7 +20,10 @@
 
 /* $Id$ */
 
-CDECL_BEGIN
+#ifndef MODULE_H
+#define MODULE_H
+
 void *module_load(const char *name,int argc,const char *const *argv);
 const char *module_error_message();
-CDECL_END
+
+#endif

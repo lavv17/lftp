@@ -132,6 +132,15 @@ Job *Job::FindDoneAwaitedJob()
    return 0;
 }
 
+void Job::WaitForAllChildren()
+{
+   for(Job *scan=chain; scan; scan=scan->next)
+   {
+      if(scan->parent==this)
+	 AddWaiting(scan);
+   }
+}
+
 void Job::ReplaceWaiting(Job *from,Job *to)
 {
    for(int i=0; i<waiting_num; i++)
@@ -146,7 +155,7 @@ void Job::ReplaceWaiting(Job *from,Job *to)
 
 void Job::AddWaiting(Job *j)
 {
-   if(j==0)
+   if(j==0 || this->WaitsFor(j))
       return;
    assert(FindWhoWaitsFor(j)==0);
    waiting_num++;

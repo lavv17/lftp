@@ -88,6 +88,7 @@ public:
    static Job *FindWhoWaitsFor(Job *);
    int NumAwaitedJobs() { return waiting_num; }
    Job *FindDoneAwaitedJob();
+   void WaitForAllChildren();
 
    static int NumberOfJobs();
    static Job *FindJob(int n);

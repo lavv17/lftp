@@ -102,6 +102,7 @@ protected:
    virtual void NextFile() = 0;
 
    void SetCopier(FileCopy *c,const char *n);
+   void AddCopier(FileCopy *c,const char *n);
 
 public:
    int Do();

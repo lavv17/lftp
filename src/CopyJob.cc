@@ -47,7 +47,7 @@ int CopyJob::Do()
 }
 int CopyJob::Done()
 {
-   return done;
+   return done || Error();
 }
 int CopyJob::ExitCode()
 {
@@ -156,35 +156,37 @@ CopyJobEnv::~CopyJobEnv()
 }
 int CopyJobEnv::Do()
 {
+   int m=STALL;
    if(done)
       return STALL;
-   if(cp==0)
-      goto next;
-   if(cp->Error())
+   if(waiting_num<1)
+   {
+      NextFile();
+      if(waiting_num==0)
+      {
+	 done=true;
+	 m=MOVED;
+      }
+      else if(cp==0)
+	 cp=(CopyJob*)waiting[0];
+   }
+   CopyJob *j=(CopyJob*)FindDoneAwaitedJob();	// we start only CopyJob's.
+   if(j==0)
+      return m;
+   RemoveWaiting(j);
+   if(j->Error())
    {
       errors++;
-      eprintf("%s: %s\n",op,cp->ErrorText());
+      eprintf("%s: %s\n",op,j->ErrorText());
    }
-   if(cp->Error() || cp->Done())
-   {
-      count++;
-      bytes+=cp->GetBytesCount();
-      time_spent+=cp->GetTimeSpent();
-      time_spent+=cp->GetTimeSpentMilli()/1000.0;
-   next:
-      NextFile();
-      if(cp==0)
-	 done=true;
-      return MOVED;
-   }
-   return STALL;
+   count++;
+   bytes+=j->GetBytesCount();
+   time_spent+=j->GetTimeSpent();
+   time_spent+=j->GetTimeSpentMilli()/1000.0;
+   return MOVED;
 }
-void CopyJobEnv::SetCopier(FileCopy *c,const char *n)
+void CopyJobEnv::AddCopier(FileCopy *c,const char *n)
 {
-   while(waiting_num>0)
-      RemoveWaiting(waiting[0]);
-   Delete(cp);
-   cp=0;
    if(c==0)
       return;
    if(ascii)
@@ -192,6 +194,17 @@ void CopyJobEnv::SetCopier(FileCopy *c,const char *n)
    cp=new CopyJob(c,n,op);
    cp->SetParentFg(this);
    AddWaiting(cp);
+}
+void CopyJobEnv::SetCopier(FileCopy *c,const char *n)
+{
+   while(waiting_num>0)
+   {
+      Job *j=waiting[0];
+      RemoveWaiting(j);
+      Delete(j);
+   }
+   cp=0;
+   AddCopier(c,n);
 }
 
 void CopyJobEnv::SayFinalWithPrefix(const char *p)
@@ -248,7 +261,33 @@ int CopyJobEnv::AcceptSig(int sig)
 	 return WANTDIE;
       return STALL;
    }
-   return cp->AcceptSig(sig);
+   int total;
+   if(sig==SIGINT || sig==SIGTERM)
+      total=WANTDIE;
+   else
+      total=STALL;
+   for(int i=0; i<waiting_num; i++)
+   {
+      Job *j=waiting[i];
+      int res=j->AcceptSig(sig);
+      if(res==WANTDIE)
+      {
+	 RemoveWaiting(j);
+	 Delete(j);
+	 if(cp==j)
+	    cp=0;
+      }
+      else if(res==MOVED)
+	 total=MOVED;
+      else if(res==STALL)
+      {
+	 if(total==WANTDIE)
+	    total=MOVED;
+      }
+   }
+   if(waiting_num>0 && cp==0)
+      cp=(CopyJob*)waiting[0];
+   return total;
 }
 
 int CopyJobEnv::Done()

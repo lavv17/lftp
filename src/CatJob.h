@@ -34,6 +34,7 @@ protected:
    FDStream *global;
    const char *for_each;
    bool ascii;
+   bool auto_ascii;
 
    void	NextFile();
 
@@ -46,6 +47,7 @@ public:
    ~CatJob();
 
    void Ascii() { ascii=true; }
+   void Binary() { ascii=auto_ascii=false; }
 };
 
 #endif /* CATJOB_H */
