@@ -47,15 +47,8 @@ int   GetJob::Do()
    if(in_buffer==0 && got_eof)
    {
       session->Close();
-      if(made_backup)
-      {
-	 // now we can delete old file, since there is new one
-	 FileStream *f=(FileStream*)local; // we are sure it is FileStream
-	 char *b=(char*)alloca(strlen(f->full_name)+2);
-	 strcpy(b,f->full_name);
-	 strcat(b,"~");
-	 remove(b);
-      }
+      // now we can delete old file, since there is new one
+      RemoveBackupFile();
       if(delete_files)
       {
 	 if(!deleting)
@@ -176,5 +169,17 @@ void GetJob::NextFile()
    {
       file_time=set_file_time;
       set_file_time=(time_t)-1;
+   }
+}
+
+void GetJob::RemoveBackupFile()
+{
+   if(made_backup)
+   {
+      FileStream *f=(FileStream*)local; // we are sure it is FileStream
+      char *b=(char*)alloca(strlen(f->full_name)+2);
+      strcpy(b,f->full_name);
+      strcat(b,"~");
+      remove(b);
    }
 }

@@ -103,6 +103,7 @@ int pgetJob::Do()
    {
       if(file_time>=0)
 	 local->setmtime(file_time);
+      RemoveBackupFile();
       NextFile();
       return MOVED;
    }

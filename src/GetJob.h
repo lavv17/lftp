@@ -36,6 +36,8 @@ protected:
    bool	deleting:1;
    bool made_backup:1;
 
+   void RemoveBackupFile();
+
 public:
    int	 Do();
 
