@@ -1,3 +1,8 @@
+1999-09-14  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* PutJob.cc: unsuspend session; few corrections in size handling;
+	  don't try to use size of pipe.
+
 1999-09-12  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* NetAccess.cc: when adding first RateLimit, reset global pool.
