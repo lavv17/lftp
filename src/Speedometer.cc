@@ -62,6 +62,9 @@ float Speedometer::Get()
 }
 void Speedometer::Add(int b)
 {
+   if(b==0 && TimeDiff(now,last_second).MilliSeconds()<100)
+      return;
+
    // This makes Speedometer start only when first data come.
    if(rate==0)
       Reset();
