@@ -328,7 +328,7 @@ enum {
   /* Maximal string lengths for user-defined specifiers */
   MAX_USER_NAME = 64,
   MAX_USER_DATA = 256,
-
+  
   /* Maximal length of locale separator strings */
   MAX_LOCALE_SEPARATOR_LENGTH = MB_LEN_MAX,
   /* Maximal number of integers in grouping */
@@ -875,23 +875,23 @@ TRIO_PRIVATE trio_userdef_t *
 TrioFindNamespace(TRIO_CONST char *name, trio_userdef_t **prev)
 {
   trio_userdef_t *def;
-
+  
   if (internalEnterCriticalRegion)
     (void)internalEnterCriticalRegion(NULL);
-
+  
   for (def = internalUserDef; def; def = def->next)
     {
       /* Case-sensitive string comparison */
       if (trio_equal_case(def->name, name))
 	break;
-
+      
       if (prev)
 	*prev = def;
     }
-
+  
   if (internalLeaveCriticalRegion)
     (void)internalLeaveCriticalRegion(NULL);
-
+  
   return def;
 }
 
@@ -955,7 +955,7 @@ TrioParse(int type,
 #if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
   mblen(NULL, 0);
 #endif
-
+  
   while (format[index])
     {
 #if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
@@ -1033,7 +1033,7 @@ TrioParse(int type,
 		      /* Skip if no precision */
 		      if (QUALIFIER_DOT == format[index])
 			break;
-
+		      
 		      /* After the first dot we have the precision */
 		      flags |= FLAGS_PRECISION;
 		      if ((QUALIFIER_STAR == format[index]) ||
@@ -1075,7 +1075,7 @@ TrioParse(int type,
 		  else if (dots == 1) /* Base */
 		    {
 		      dots++;
-
+		      
 		      /* After the second dot we have the base */
 		      flags |= FLAGS_BASE;
 		      if ((QUALIFIER_STAR == format[index]) ||
@@ -1269,7 +1269,7 @@ TrioParse(int type,
 		    }
 		  else
 		    return TRIO_ERROR_RETURN(TRIO_EINVAL, index);
-
+		  
 		  flags |= FLAGS_FIXED_SIZE;
 		  break;
 #endif
@@ -1297,7 +1297,7 @@ TrioParse(int type,
 		  got_sticky = TRUE;
 		  break;
 #endif
-
+		  
 #if defined(QUALIFIER_VARSIZE)
 		case QUALIFIER_VARSIZE:
 		  flags |= FLAGS_VARSIZE_PARAMETER;
@@ -1364,9 +1364,9 @@ TrioParse(int type,
 	      indices[varsize] = pos;
 	      varsize = pos++;
 	    }
-
+	  
 	  indices[currentParam] = pos;
-
+	  
 	  switch (format[index++])
 	    {
 #if defined(SPECIFIER_CHAR_UPPER)
@@ -1425,11 +1425,11 @@ TrioParse(int type,
 		    }
 		}
 	      break;
-
+	      
 	    case SPECIFIER_INTEGER:
 	      parameters[pos].type = FORMAT_INT;
 	      break;
-
+	      
 	    case SPECIFIER_UNSIGNED:
 	      flags |= FLAGS_UNSIGNED;
 	      parameters[pos].type = FORMAT_INT;
@@ -1524,11 +1524,11 @@ TrioParse(int type,
 	      {
 		unsigned int max;
 		int without_namespace = TRUE;
-
+		
 		parameters[pos].type = FORMAT_USER_DEFINED;
 		parameters[pos].user_name[0] = NIL;
 		tmpformat = (char *)&format[index];
-
+	      
 		while ((ch = format[index]))
 		  {
 		    index++;
@@ -1578,7 +1578,7 @@ TrioParse(int type,
 	      }
 	      break;
 #endif /* defined(SPECIFIER_USER_DEFINED_BEGIN) */
-
+	      
 	    default:
 	      /* Bail out completely to make the error more obvious */
               return TRIO_ERROR_RETURN(TRIO_EINVAL, index);
@@ -1588,7 +1588,7 @@ TrioParse(int type,
 	  /*  Count the number of times this entry has been used */
 	  usedEntries[currentParam] += 1;
 #endif
-
+	  
 	  /* Find last sticky parameters */
 	  if (got_sticky && !(flags & FLAGS_STICKY))
 	    {
@@ -1611,7 +1611,7 @@ TrioParse(int type,
 		    }
 		}
 	    }
-
+	  
 	  parameters[pos].indexAfterSpecifier = index;
 	  parameters[pos].flags = flags;
 	  parameters[pos].width = width;
@@ -1619,12 +1619,12 @@ TrioParse(int type,
 	  parameters[pos].base = (base == NO_BASE) ? BASE_DECIMAL : base;
 	  parameters[pos].varsize = varsize;
 	  pos++;
-
+	  
 	  if (! positional)
 	    parameterPosition++;
-
+	  
 	} /* if identifier */
-
+      
     } /* while format characters left */
 
   for (num = 0; num <= maxParam; num++)
@@ -1638,7 +1638,7 @@ TrioParse(int type,
 	    return TRIO_ERROR_RETURN(TRIO_EDBLREF, num);
 	}
 #endif
-
+      
       i = indices[num];
 
       /*
@@ -1704,7 +1704,7 @@ TrioParse(int type,
 	  if (TYPE_SCAN == type)
 	    {
               if (argarray == NULL)
-                parameters[i].data.pointer =
+                parameters[i].data.pointer = 
                   (trio_uintmax_t *)va_arg(arglist, void *);
               else
                 {
@@ -1744,7 +1744,7 @@ TrioParse(int type,
 		      varsize = parameters[i].varsize;
 		    }
 		  parameters[i].flags &= ~FLAGS_ALL_VARSIZES;
-
+		  
 		  if (varsize <= (int)sizeof(int))
 		    ;
 		  else if (varsize <= (int)sizeof(long))
@@ -1935,7 +1935,7 @@ TrioWriteNumber(trio_class_t *self,
     number &= (unsigned long)-1;
   else
     number &= (unsigned int)-1;
-
+  
   /* Build number */
   pointer = bufferend = &buffer[sizeof(buffer) - 1];
   *pointer-- = NIL;
@@ -2215,7 +2215,7 @@ TrioWriteWideStringCharacter(trio_class_t *self,
 
   if (width == NO_WIDTH)
     width = sizeof(buffer);
-
+  
   size = wctomb(buffer, wch);
   if ((size <= 0) || (size > width) || (buffer[0] == NIL))
     return 0;
@@ -2255,13 +2255,13 @@ TrioWriteWideString(trio_class_t *self,
 #if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
   mblen(NULL, 0);
 #endif
-
+  
   if (wstring == NULL)
     {
       TrioWriteString(self, NULL, flags, width, precision);
       return;
     }
-
+  
   if (NO_PRECISION == precision)
     {
       length = INT_MAX;
@@ -2335,13 +2335,13 @@ TrioWriteDouble(trio_class_t *self,
   int i;
   BOOLEAN_T hasOnlyZeroes;
   int zeroes = 0;
-
+  
   assert(VALID(self));
   assert(VALID(self->OutStream));
   assert(base == BASE_DECIMAL || base == BASE_HEX);
 
   number = (double)longdoubleNumber;
-
+  
   if (! trio_isfinite(number))
     {
       /* Look for infinite numbers and non-a-number first */
@@ -2384,10 +2384,10 @@ TrioWriteDouble(trio_class_t *self,
   digits = (flags & FLAGS_UPPER) ? internalDigitsUpper : internalDigitsLower;
   isHex = (base == BASE_HEX);
   dblBase = (double)base;
-
+  
   if (precision == NO_PRECISION)
     precision = FLT_DIG;
-
+  
   isNegative = (number < 0.0);
   if (isNegative)
     number = -number;
@@ -2474,7 +2474,7 @@ TrioWriteDouble(trio_class_t *self,
 	  integerDigits++;
 	}
     }
-
+  
   /* Build the fraction part */
   numberPointer = &numberBuffer[sizeof(numberBuffer) - 1];
   *numberPointer = NIL;
@@ -2503,7 +2503,7 @@ TrioWriteDouble(trio_class_t *self,
       else
         hasOnlyZeroes = FALSE;
     }
-
+  
   /* Insert decimal point */
   if ((flags & FLAGS_ALTERNATIVE) || ((fractionDigits > 0) && !hasOnlyZeroes))
     {
@@ -2567,7 +2567,7 @@ TrioWriteDouble(trio_class_t *self,
 	    }
 	}
     }
-
+  
   /* Build the exponent */
   exponentDigits = 0;
   if (flags & FLAGS_FLOAT_E)
@@ -2594,7 +2594,7 @@ TrioWriteDouble(trio_class_t *self,
       ((exponentDigits > 1) ? sizeof("E+") : sizeof("E+0")) - 1;
   if (isHex)
     expectedWidth += sizeof("0X") - 1;
-
+  
   /* Output prefixing */
   if (flags & FLAGS_NILPADDING)
     {
@@ -2692,13 +2692,13 @@ TrioFormatProcess(trio_class_t *data,
   int precision;
   int base;
   int index;
-
+  
   index = 0;
   i = 0;
 #if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
   mblen(NULL, 0);
 #endif
-
+  
   while (format[index])
     {
 #if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
@@ -2724,7 +2724,7 @@ TrioFormatProcess(trio_class_t *data,
 	      /* Skip the parameter entries */
 	      while (parameters[i].type == FORMAT_PARAMETER)
 		i++;
-
+	      
 	      flags = parameters[i].flags;
 
 	      /* Find width */
@@ -2734,7 +2734,7 @@ TrioFormatProcess(trio_class_t *data,
 		  /* Get width from parameter list */
 		  width = (int)parameters[width].data.number.as_signed;
 		}
-
+	      
 	      /* Find precision */
 	      if (flags & FLAGS_PRECISION)
 		{
@@ -2757,7 +2757,7 @@ TrioFormatProcess(trio_class_t *data,
 		  /* Get base from parameter list */
 		  base = (int)parameters[base].data.number.as_signed;
 		}
-
+	      
 	      switch (parameters[i].type)
 		{
 		case FORMAT_CHAR:
@@ -2840,7 +2840,7 @@ TrioFormatProcess(trio_class_t *data,
 		case FORMAT_POINTER:
 		  {
 		    trio_reference_t reference;
-
+		    
 		    reference.data = data;
 		    reference.parameter = &parameters[i];
 		    trio_print_pointer(&reference, parameters[i].data.pointer);
@@ -2943,7 +2943,7 @@ TrioFormatProcess(trio_class_t *data,
 		  }
 		  break;
 #endif /* defined(FORMAT_USER_DEFINED) */
-
+		  
 		default:
 		  break;
 		} /* switch parameter type */
@@ -3167,7 +3167,7 @@ trio_printf(TRIO_CONST char *format,
   va_list args;
 
   assert(VALID(format));
-
+  
   va_start(args, format);
   status = TrioFormat(stdout, 0, TrioOutStreamFile, format, args, NULL);
   va_end(args);
@@ -3202,7 +3202,7 @@ trio_printfv(TRIO_CONST char *format,
 	     void ** args)
 {
   va_list dummy;
-
+  
   assert(VALID(format));
 
   return TrioFormat(stdout, 0, TrioOutStreamFile, format, dummy, args);
@@ -3230,7 +3230,7 @@ trio_fprintf(FILE *file,
 
   assert(VALID(file));
   assert(VALID(format));
-
+  
   va_start(args, format);
   status = TrioFormat(file, 0, TrioOutStreamFile, format, args, NULL);
   va_end(args);
@@ -3252,7 +3252,7 @@ trio_vfprintf(FILE *file,
 {
   assert(VALID(file));
   assert(VALID(format));
-
+  
   return TrioFormat(file, 0, TrioOutStreamFile, format, args, NULL);
 }
 
@@ -3270,10 +3270,10 @@ trio_fprintfv(FILE *file,
 	      void ** args)
 {
   va_list dummy;
-
+  
   assert(VALID(file));
   assert(VALID(format));
-
+  
   return TrioFormat(file, 0, TrioOutStreamFile, format, dummy, args);
 }
 
@@ -3298,7 +3298,7 @@ trio_dprintf(int fd,
   va_list args;
 
   assert(VALID(format));
-
+  
   va_start(args, format);
   status = TrioFormat(&fd, 0, TrioOutStreamFileDescriptor, format, args, NULL);
   va_end(args);
@@ -3319,7 +3319,7 @@ trio_vdprintf(int fd,
 	      va_list args)
 {
   assert(VALID(format));
-
+  
   return TrioFormat(&fd, 0, TrioOutStreamFileDescriptor, format, args, NULL);
 }
 
@@ -3337,9 +3337,9 @@ trio_dprintfv(int fd,
 	      void **args)
 {
   va_list dummy;
-
+  
   assert(VALID(format));
-
+  
   return TrioFormat(&fd, 0, TrioOutStreamFileDescriptor, format, dummy, args);
 }
 
@@ -3365,7 +3365,7 @@ trio_sprintf(char *buffer,
 
   assert(VALID(buffer));
   assert(VALID(format));
-
+  
   va_start(args, format);
   status = TrioFormat(&buffer, 0, TrioOutStreamString, format, args, NULL);
   *buffer = NIL; /* Terminate with NIL character */
@@ -3572,7 +3572,7 @@ trio_aprintf(TRIO_CONST char *format,
   char *result = NULL;
 
   assert(VALID(format));
-
+  
   info = trio_xstring_duplicate("");
   if (info)
     {
@@ -3595,9 +3595,9 @@ trio_vaprintf(TRIO_CONST char *format,
 {
   trio_string_t *info;
   char *result = NULL;
-
+  
   assert(VALID(format));
-
+  
   info = trio_xstring_duplicate("");
   if (info)
     {
@@ -3622,7 +3622,7 @@ trio_asprintf(char **result,
   assert(VALID(format));
 
   *result = NULL;
-
+  
   info = trio_xstring_duplicate("");
   if (info == NULL)
     {
@@ -3651,11 +3651,11 @@ trio_vasprintf(char **result,
 {
   int status;
   trio_string_t *info;
-
+  
   assert(VALID(format));
 
   *result = NULL;
-
+  
   info = trio_xstring_duplicate("");
   if (info == NULL)
     {
@@ -3728,23 +3728,23 @@ trio_register(trio_callback_t callback,
 	    }
 	  return NULL;
 	}
-
+      
       /* Bail out if namespace is too long */
       if (trio_length(name) >= MAX_USER_NAME)
 	return NULL;
-
+      
       /* Bail out if namespace already is registered */
       def = TrioFindNamespace(name, &prev);
       if (def)
 	return NULL;
     }
-
+  
   def = (trio_userdef_t *)TRIO_MALLOC(sizeof(trio_userdef_t));
   if (def)
     {
       if (internalEnterCriticalRegion)
 	(void)internalEnterCriticalRegion(NULL);
-
+      
       if (name)
 	{
 	  /* Link into internal list */
@@ -3785,12 +3785,12 @@ trio_unregister(void *handle)
 	{
 	  if (internalEnterCriticalRegion)
 	    (void)internalEnterCriticalRegion(NULL);
-
+	  
 	  if (prev == NULL)
 	    internalUserDef = NULL;
 	  else
 	    prev->next = def->next;
-
+	  
 	  if (internalLeaveCriticalRegion)
 	    (void)internalLeaveCriticalRegion(NULL);
 	}
@@ -3806,7 +3806,7 @@ TRIO_CONST char *
 trio_get_format(void *ref)
 {
   assert(((trio_reference_t *)ref)->parameter->type == FORMAT_USER_DEFINED);
-
+  
   return (((trio_reference_t *)ref)->parameter->user_data);
 }
 
@@ -3817,7 +3817,7 @@ void *
 trio_get_argument(void *ref)
 {
   assert(((trio_reference_t *)ref)->parameter->type == FORMAT_USER_DEFINED);
-
+  
   return ((trio_reference_t *)ref)->parameter->data.pointer;
 }
 
@@ -4278,7 +4278,7 @@ trio_print_ref(void *ref,
   va_list arglist;
 
   assert(VALID(format));
-
+  
   va_start(arglist, format);
   status = TrioFormatRef((trio_reference_t *)ref, format, arglist, NULL);
   va_end(arglist);
@@ -4294,7 +4294,7 @@ trio_vprint_ref(void *ref,
 		va_list arglist)
 {
   assert(VALID(format));
-
+  
   return TrioFormatRef((trio_reference_t *)ref, format, arglist, NULL);
 }
 
@@ -4307,9 +4307,9 @@ trio_printv_ref(void *ref,
 		void **argarray)
 {
   va_list dummy;
-
+  
   assert(VALID(format));
-
+  
   return TrioFormatRef((trio_reference_t *)ref, format, dummy, argarray);
 }
 
@@ -4421,7 +4421,7 @@ TrioGetCharacterClass(TRIO_CONST char *format,
       switch (ch)
 	{
 	case QUALIFIER_MINUS: /* Scanlist ranges */
-
+	  
 	  /*
 	   * Both C99 and UNIX98 describes ranges as implementation-
 	   * defined.
@@ -4448,17 +4448,17 @@ TrioGetCharacterClass(TRIO_CONST char *format,
 	    return TRIO_ERROR_RETURN(TRIO_EINVAL, index);
 	  if (range_begin > range_end)
 	    return TRIO_ERROR_RETURN(TRIO_ERANGE, index);
-
+	    
 	  for (i = (int)range_begin; i <= (int)range_end; i++)
 	    characterclass[i]++;
-
+	    
 	  ch = range_end;
 	  break;
-
+	  
 #if TRIO_EXTENSION
 
 	case SPECIFIER_GROUP:
-
+	  
 	  switch (format[index + 1])
 	    {
 	    case QUALIFIER_DOT: /* Collating symbol */
@@ -4477,15 +4477,15 @@ TrioGetCharacterClass(TRIO_CONST char *format,
 		}
 	      if (format[++i] != SPECIFIER_UNGROUP)
 		return -1;
-
+	      
 	      index = i;
 	      break;
-
+	  
 	    case QUALIFIER_EQUAL: /* Equivalence class expressions */
 	      {
 		unsigned int j;
 		unsigned int k;
-
+	    
 		if (internalCollationUnconverted)
 		  {
 		    /* Lazy evaluation of collation array */
@@ -4509,13 +4509,13 @@ TrioGetCharacterClass(TRIO_CONST char *format,
 		  }
 		if (format[++i] != SPECIFIER_UNGROUP)
 		  return -1;
-
+		
 		index = i;
 	      }
 	      break;
-
+	  
 	    case QUALIFIER_COLON: /* Character class expressions */
-
+	  
 	      if (trio_equal_max(CLASS_ALNUM, sizeof(CLASS_ALNUM) - 1,
 				 &format[index]))
 		{
@@ -4615,9 +4615,9 @@ TrioGetCharacterClass(TRIO_CONST char *format,
 	      break;
 	    }
 	  break;
-
+	  
 #endif /* TRIO_EXTENSION */
-
+	  
 	default:
 	  characterclass[(int)ch]++;
 	  break;
@@ -4660,9 +4660,9 @@ TrioReadNumber(trio_class_t *self,
 	}
       internalDigitsUnconverted = FALSE;
     }
-
+  
   TrioSkipWhitespaces(self);
-
+  
   if (!(flags & FLAGS_UNSIGNED))
     {
       /* Leading sign */
@@ -4676,9 +4676,9 @@ TrioReadNumber(trio_class_t *self,
 	  isNegative = TRUE;
 	}
     }
-
+  
   count = self->processed;
-
+  
   if (flags & FLAGS_ALTERNATIVE)
     {
       switch (base)
@@ -4739,7 +4739,7 @@ TrioReadNumber(trio_class_t *self,
 	}
       else
 	break;
-
+            
       number *= base;
       number += digit;
 
@@ -4749,7 +4749,7 @@ TrioReadNumber(trio_class_t *self,
   /* Was anything read at all? */
   if (self->processed == count)
     return FALSE;
-
+  
   if (target)
     *target = (isNegative) ? -number : number;
   return TRUE;
@@ -4767,7 +4767,7 @@ TrioReadChar(trio_class_t *self,
   int i;
   char ch;
   trio_uintmax_t number;
-
+  
   assert(VALID(self));
   assert(VALID(self->InStream));
 
@@ -4812,7 +4812,7 @@ TrioReadChar(trio_class_t *self,
 	      break;
 	    }
 	}
-
+      
       if (target)
 	target[i] = ch;
     }
@@ -4829,12 +4829,12 @@ TrioReadString(trio_class_t *self,
 	       int width)
 {
   int i;
-
+  
   assert(VALID(self));
   assert(VALID(self->InStream));
 
   TrioSkipWhitespaces(self);
-
+    
   /*
    * Continue until end of string is reached, a whitespace is encountered,
    * or width is exceeded
@@ -4868,7 +4868,7 @@ TrioReadWideChar(trio_class_t *self,
   int amount = 0;
   wchar_t wch;
   char buffer[MB_LEN_MAX + 1];
-
+  
   assert(VALID(self));
   assert(VALID(self->InStream));
 
@@ -4923,7 +4923,7 @@ TrioReadWideString(trio_class_t *self,
 {
   int i;
   int size;
-
+  
   assert(VALID(self));
   assert(VALID(self->InStream));
 
@@ -4932,7 +4932,7 @@ TrioReadWideString(trio_class_t *self,
 #if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
   mblen(NULL, 0);
 #endif
-
+  
   /*
    * Continue until end of string is reached, a whitespace is encountered,
    * or width is exceeded
@@ -4968,7 +4968,7 @@ TrioReadGroup(trio_class_t *self,
 {
   int ch;
   int i;
-
+  
   assert(VALID(self));
   assert(VALID(self->InStream));
 
@@ -4983,7 +4983,7 @@ TrioReadGroup(trio_class_t *self,
 	target[i] = (char)ch;
       self->InStream(self, &ch);
     }
-
+  
   if (target)
     target[i] = NIL;
   return TRUE;
@@ -5010,9 +5010,9 @@ TrioReadDouble(trio_class_t *self,
 
   if ((width == NO_WIDTH) || (width > (int)sizeof(doubleString) - 1))
     width = sizeof(doubleString) - 1;
-
+  
   TrioSkipWhitespaces(self);
-
+  
   /*
    * Read entire double number from stream. trio_to_double requires
    * a string as input, but InStream can be anything, so we have to
@@ -5072,11 +5072,11 @@ TrioReadDouble(trio_class_t *self,
 	  self->InStream(self, &ch);
 	}
       break;
-
+      
     default:
       break;
     }
-
+  
   while ((ch != EOF) && (index - start < width))
     {
       /* Integer part */
@@ -5135,7 +5135,7 @@ TrioReadDouble(trio_class_t *self,
 
   if ((index == start) || (*doubleString == NIL))
     return FALSE;
-
+  
   if (flags & FLAGS_LONGDOUBLE)
 /*     *longdoublePointer = trio_to_long_double()*/
     return FALSE; /* FIXME: Remove when long double is implemented */
@@ -5158,7 +5158,7 @@ TrioReadPointer(trio_class_t *self,
   char buffer[sizeof(internalNullString)];
 
   flags |= (FLAGS_UNSIGNED | FLAGS_ALTERNATIVE | FLAGS_NILPADDING);
-
+  
   if (TrioReadNumber(self,
 		     &number,
 		     flags,
@@ -5179,7 +5179,7 @@ TrioReadPointer(trio_class_t *self,
 			  : buffer,
 			  0,
 			  sizeof(internalNullString) - 1))
-    {
+    {  
       if (trio_equal_case(buffer, internalNullString))
 	{
 	  if (target)
@@ -5238,12 +5238,12 @@ TrioScanProcess(trio_class_t *data,
 	  continue; /* while */
 	}
 #endif /* TRIO_COMPILER_SUPPORTS_MULTIBYTE */
-
+      
       if ((EOF == ch) && (parameters[i].type != FORMAT_COUNT))
 	{
 	  return (assignment > 0) ? assignment : EOF;
 	}
-
+      
       if (CHAR_IDENTIFIER == format[index])
 	{
 	  if (CHAR_IDENTIFIER == format[index + 1])
@@ -5262,7 +5262,7 @@ TrioScanProcess(trio_class_t *data,
 	  /* Skip the parameter entries */
 	  while (parameters[i].type == FORMAT_PARAMETER)
 	    i++;
-
+	  
 	  flags = parameters[i].flags;
 	  /* Find width */
 	  width = parameters[i].width;
@@ -5278,7 +5278,7 @@ TrioScanProcess(trio_class_t *data,
 	      /* Get base from parameter list */
 	      base = (int)parameters[base].data.number.as_signed;
 	    }
-
+	  
 	  switch (parameters[i].type)
 	    {
 	    case FORMAT_INT:
@@ -5326,7 +5326,7 @@ TrioScanProcess(trio_class_t *data,
 		  }
 	      }
 	      break; /* FORMAT_INT */
-
+	      
 	    case FORMAT_STRING:
 #if TRIO_WIDECHAR
 	      if (flags & FLAGS_WIDECHAR)
@@ -5378,7 +5378,7 @@ TrioScanProcess(trio_class_t *data,
 		  }
 		/* Skip over group specifier */
 		index++;
-
+		
 		memset(characterclass, 0, sizeof(characterclass));
 		rc = TrioGetCharacterClass(format,
 					   &index,
@@ -5440,7 +5440,7 @@ TrioScanProcess(trio_class_t *data,
 		    }
 		}
 	      break; /* FORMAT_COUNT */
-
+	      
 	    case FORMAT_CHAR:
 #if TRIO_WIDECHAR
 	      if (flags & FLAGS_WIDECHAR)
@@ -5502,7 +5502,7 @@ TrioScanProcess(trio_class_t *data,
 	    }
 	  else
 	    return assignment;
-
+	  
 	  index++;
 	}
     }
@@ -5539,7 +5539,7 @@ TrioScan(TRIO_CONST void *source,
       TrioSetLocale();
     }
 #endif
-
+  
   status = TrioParse(TYPE_SCAN, format, parameters, arglist, argarray);
   if (status < 0)
     return status;
@@ -5576,7 +5576,7 @@ TrioInStreamFile(trio_class_t *self,
       self->processed++;
       self->committed++;
     }
-
+  
   if (VALID(intPointer))
     {
       *intPointer = self->current;
@@ -5611,7 +5611,7 @@ TrioInStreamFileDescriptor(trio_class_t *self,
       self->committed++;
       self->processed++;
     }
-
+  
   if (VALID(intPointer))
     {
       *intPointer = self->current;
@@ -5643,7 +5643,7 @@ TrioInStreamString(trio_class_t *self,
       self->processed++;
       self->committed++;
     }
-
+  
   if (VALID(intPointer))
     {
       *intPointer = self->current;
@@ -5682,7 +5682,7 @@ trio_scanf(TRIO_CONST char *format,
   va_list args;
 
   assert(VALID(format));
-
+  
   va_start(args, format);
   status = TrioScan(stdin, 0, TrioInStreamFile, format, args, NULL);
   va_end(args);
@@ -5694,7 +5694,7 @@ trio_vscanf(TRIO_CONST char *format,
 	    va_list args)
 {
   assert(VALID(format));
-
+  
   return TrioScan(stdin, 0, TrioInStreamFile, format, args, NULL);
 }
 
@@ -5703,9 +5703,9 @@ trio_scanfv(TRIO_CONST char *format,
 	    void **args)
 {
   va_list dummy;
-
+  
   assert(VALID(format));
-
+  
   return TrioScan(stdin, 0, TrioInStreamFile, format, dummy, args);
 }
 
@@ -5722,7 +5722,7 @@ trio_fscanf(FILE *file,
 
   assert(VALID(file));
   assert(VALID(format));
-
+  
   va_start(args, format);
   status = TrioScan(file, 0, TrioInStreamFile, format, args, NULL);
   va_end(args);
@@ -5736,7 +5736,7 @@ trio_vfscanf(FILE *file,
 {
   assert(VALID(file));
   assert(VALID(format));
-
+  
   return TrioScan(file, 0, TrioInStreamFile, format, args, NULL);
 }
 
@@ -5746,10 +5746,10 @@ trio_fscanfv(FILE *file,
 	     void **args)
 {
   va_list dummy;
-
+  
   assert(VALID(file));
   assert(VALID(format));
-
+  
   return TrioScan(file, 0, TrioInStreamFile, format, dummy, args);
 }
 
@@ -5765,7 +5765,7 @@ trio_dscanf(int fd,
   va_list args;
 
   assert(VALID(format));
-
+  
   va_start(args, format);
   status = TrioScan(&fd, 0, TrioInStreamFileDescriptor, format, args, NULL);
   va_end(args);
@@ -5778,7 +5778,7 @@ trio_vdscanf(int fd,
 	     va_list args)
 {
   assert(VALID(format));
-
+  
   return TrioScan(&fd, 0, TrioInStreamFileDescriptor, format, args, NULL);
 }
 
@@ -5788,9 +5788,9 @@ trio_dscanfv(int fd,
              void **args)
 {
   va_list dummy;
-
+  
   assert(VALID(format));
-
+  
   return TrioScan(&fd, 0, TrioInStreamFileDescriptor, format, dummy, args);
 }
 
@@ -5807,7 +5807,7 @@ trio_sscanf(TRIO_CONST char *buffer,
 
   assert(VALID(buffer));
   assert(VALID(format));
-
+  
   va_start(args, format);
   status = TrioScan(&buffer, 0, TrioInStreamString, format, args, NULL);
   va_end(args);
@@ -5821,7 +5821,7 @@ trio_vsscanf(TRIO_CONST char *buffer,
 {
   assert(VALID(buffer));
   assert(VALID(format));
-
+  
   return TrioScan(&buffer, 0, TrioInStreamString, format, args, NULL);
 }
 
@@ -5831,10 +5831,10 @@ trio_sscanfv(TRIO_CONST char *buffer,
 	     void **args)
 {
   va_list dummy;
-
+  
   assert(VALID(buffer));
   assert(VALID(format));
-
+  
   return TrioScan(&buffer, 0, TrioInStreamString, format, dummy, args);
 }
 
