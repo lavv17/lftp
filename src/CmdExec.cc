@@ -340,9 +340,9 @@ int CmdExec::Do()
 	    interactive=0;
 	    return MOVED;
 	 }
-	 if(status_line)
-	    waiting->ShowRunStatus(status_line);
       }
+      if(status_line)
+	 waiting->ShowRunStatus(status_line);
       return STALL;
    }
 
@@ -351,12 +351,10 @@ int CmdExec::Do()
       if(waiting->Done())
       {
 	 waiting->Bg();
+	 if(status_line)
+	    status_line->Show("");
  	 if(interactive)
-	 {
- 	    if(status_line)
-	       status_line->Show("");
 	    waiting->SayFinal(); // final phrase like 'rm succeed'
-	 }
 	 exit_code=waiting->ExitCode();
 	 delete waiting;
 	 waiting=0;
@@ -388,9 +386,9 @@ int CmdExec::Do()
 	    interactive=0;
 	    return MOVED;
 	 }
-	 if(status_line)
-	    waiting->ShowRunStatus(status_line);
       }
+      if(status_line)
+	 waiting->ShowRunStatus(status_line);
       return STALL;
    }
 
@@ -718,7 +716,7 @@ void CmdExec::vfprintf(FILE *file,const char *f,va_list v)
       parent->vfprintf(file,f,v);
    else
    {
-      if(interactive && status_line)
+      if(status_line)
 	 status_line->Show("");
       ::vfprintf(file,f,v);
    }
