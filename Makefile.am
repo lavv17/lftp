@@ -1,5 +1,5 @@
 EXTRA_DIST = lftp.conf lftp.lsm iumacros.m4 FAQ acconfig.h README.*\
- MIRRORS BUGS lftp.spec FEATURES
+ MIRRORS BUGS FEATURES
 SUBDIRS = include readline-4.0 lib doc intl src po
 AUTOMAKE_OPTIONS = foreign
 
@@ -14,3 +14,9 @@ uninstall-local:
 	if cmp -s $(DESTDIR)$(sysconfdir)/lftp.conf lftp.conf; then \
 		rm -f $(DESTDIR)$(sysconfdir)/lftp.conf; \
 	fi
+
+dist-hook:
+	@echo lftp.spec updating...
+	@sed "s/%define version .*/%define version $(VERSION)/" \
+	    $(srcdir)/lftp.spec > $(distdir)/lftp.spec && \
+	    cp $(distdir)/lftp.spec $(srcdir)/lftp.spec
