@@ -828,7 +828,7 @@ CMD(cat)
    int opt;
    bool ascii=true;
 
-   while((opt=args->getopt("+ba"))!=EOF)
+   while((opt=args->getopt("+bau"))!=EOF)
    {
       switch(opt)
       {

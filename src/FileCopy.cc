@@ -831,6 +831,15 @@ void FileCopyPeerFDStream::Seek(long new_pos)
 {
    if(pos==new_pos)
       return;
+#ifndef NATIVE_CRLF
+   if(ascii)
+   {
+      // it is possible to read file to determine right position,
+      // but it is costly.
+      can_seek=false;
+      return;
+   }
+#endif
    super::Seek(new_pos);
    if(getfd()==-1)
       return;
@@ -883,7 +892,12 @@ int FileCopyPeerFDStream::Get_LL(int len)
       }
    }
 
-   Allocate(len);
+#ifndef NATIVE_CRLF
+   if(ascii)
+      Allocate(len*2);
+   else
+#endif
+      Allocate(len);
 
    res=read(fd,buffer+buffer_ptr+in_buffer,len);
    if(res==-1)
@@ -897,6 +911,24 @@ int FileCopyPeerFDStream::Get_LL(int len)
       SetError(stream->error_text);
       return -1;
    }
+
+#ifndef NATIVE_CRLF
+   if(ascii)
+   {
+      char *p=buffer+buffer_ptr+in_buffer;
+      for(int i=res; i>0; i--)
+      {
+	 if(*p=='\n')
+	 {
+	    memmove(p+1,p,i);
+	    *p++='\r';
+	    res++;
+	 }
+	 p++;
+      }
+   }
+#endif
+
    if(res==0)
       eof=true;
    return res;
@@ -911,6 +943,39 @@ int FileCopyPeerFDStream::Put_LL(const char *buf,int len)
    if(fd==-1)
       return 0;
 
+   int skip_cr=0;
+
+#ifndef NATIVE_CRLF
+   if(ascii)
+   {
+      // find where line ends.
+      const char *cr=buf;
+      for(;;)
+      {
+	 cr=(const char *)memchr(cr,'\r',len-(cr-buf));
+	 if(!cr)
+	    break;
+	 if(cr-buf<len-1 && cr[1]=='\n')
+	 {
+	    skip_cr=1;
+	    len=cr-buf;
+	    break;
+	 }
+	 if(cr-buf==len-1)
+	 {
+	    if(eof)
+	       break;
+	    len--;
+	    break;
+	 }
+	 cr++;
+      }
+   }
+#endif	 // NATIVE_CRLF
+
+   if(len==0)
+      return skip_cr;
+
    int res=write(fd,buf,len);
    if(res<0)
    {
@@ -923,6 +988,8 @@ int FileCopyPeerFDStream::Put_LL(const char *buf,int len)
       SetError(stream->error_text);
       return -1;
    }
+   if(res==len)
+      res+=skip_cr;
    return res;
 }
 FgData *FileCopyPeerFDStream::GetFgData(bool fg)

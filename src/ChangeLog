@@ -1,3 +1,8 @@
+1999-12-24  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileCopy.cc: support ascii conversion.
+	* commands.cc: ignore -u for compatibility.
+
 1999-12-22  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* commands.cc, CatJob.cc, CatJob.h: add ascii mode.
