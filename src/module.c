@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include "module.h"
 #include "confpaths.h"
+#include "xalloca.h"
 
 typedef void (*init_t)(int,const char*const*);
 

@@ -29,6 +29,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 /*#include "wget.h"*/
 #include "md5.h"
+#include "xalloca.h"
 
 /* Dictionary for integer-word translations.  */
 static const char Wp[2048][4] = {
