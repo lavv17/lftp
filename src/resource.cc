@@ -236,7 +236,7 @@ static ResDecl
    ResDecl41 ("net:socket-buffer",	  "0",	   ResMgr::UNumberValidate,0),
    ResDecl42 ("net:socket-maxseg",	  "0",	   ResMgr::UNumberValidate,0),
    ResDecl43 ("net:timeout",		  "300",   ResMgr::UNumberValidate,0),
-   ResDecl44 ("net:connection-limit",	  "0",	   ResMgr::UNumberValidate,ResMgr::NoClosure),
+   ResDecl44 ("net:connection-limit",	  "0",	   ResMgr::UNumberValidate,0),
    ResDecl45 ("net:connection-takeover",  "yes",   ResMgr::BoolValidate,0),
    ResDecl46 ("mirror:time-precision",	  "1s",    ResMgr::TimeIntervalValidate,ResMgr::NoClosure),
    ResDecl47 ("mirror:loose-time-precision","24h", ResMgr::TimeIntervalValidate,ResMgr::NoClosure);
