@@ -296,5 +296,5 @@ builtin(define, [AC_OUTPUT_LINKS_ORIG], defn([AC_OUTPUT_LINKS]))
 builtin(define, [AC_OUTPUT_LINKS], [AC_OUTPUT_LINKS_ORIG([`echo $1`], [`echo $2`])])
 
 AC_OUTPUT(Makefile src/Makefile lib/Makefile include/Makefile doc/Makefile
-	  readline-4.0/Makefile intl/Makefile po/Makefile.in
-	,[sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile])
+	  readline-4.0/Makefile intl/Makefile po/Makefile.in)
+dnl	,[sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile])
