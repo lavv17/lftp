@@ -645,8 +645,8 @@ Job *CmdExec::builtin_open()
 	       path=uc.path;
 	 }
 
-	 if(!strcmp(session->GetProto(),"ftp")
-	 || !strcmp(session->GetProto(),"hftp"))
+	 if(!uc.proto && (!strcmp(session->GetProto(),"ftp")
+		       || !strcmp(session->GetProto(),"hftp")))
 	 {
 	    nrc=NetRC::LookupHost(host);
 	    if(nrc)

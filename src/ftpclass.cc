@@ -151,7 +151,7 @@ bool Ftp::data_address_ok(sockaddr_u *dp,bool verify_this_data_port)
    if(d.sa.sa_family==AF_INET && c.sa.sa_family==AF_INET6
       && IN6_IS_ADDR_V4MAPPED(&c.in6.sin6_addr))
    {
-      if(memcmp(&d.in.sin_addr,&c.in6.sin6_addr.s6_addr32[3],4))
+      if(memcmp(&d.in.sin_addr,&c.in6.sin6_addr.s6_addr[12],4))
 	 goto address_mismatch;
       if(d.in.sin_port!=htons(FTP_DATA_PORT))
 	 goto wrong_port;
