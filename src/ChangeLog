@@ -1,3 +1,8 @@
+2002-07-18  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc: don't clear signals if not interactive (suggested by
+	  Glenn Maynard <g_ld@zewt.org>)
+
 2002-07-17  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc, CmdExec.cc, CmdExec.h: fix mem leak by eliminating

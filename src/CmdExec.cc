@@ -178,9 +178,12 @@ void  CmdExec::exec_parsed_command()
    prev_exit_code=exit_code;
    exit_code=1;
 
-   SignalHook::ResetCount(SIGINT);
-   SignalHook::ResetCount(SIGHUP);
-   SignalHook::ResetCount(SIGTSTP);
+   if(interactive)
+   {
+      SignalHook::ResetCount(SIGINT);
+      SignalHook::ResetCount(SIGHUP);
+      SignalHook::ResetCount(SIGTSTP);
+   }
 
    bool did_default=false;
 
