@@ -165,7 +165,11 @@ public:
    bool is_nil() { return s==0; }
    void ToNumberPair(int &a,int &b)
       {
-	 sscanf(s,"%d%*c%d",&a,&b);
+	 switch(sscanf(s,"%d%*c%d",&a,&b))
+	 {
+	 case 0: a=b=0; break;
+	 case 1: b=a; break;
+	 }
       }
 };
 
