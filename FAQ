@@ -31,3 +31,7 @@ A: !ls
 Q: Why doesn't mirror download files starting with a dot? I can see the files
    using `ls -a'.
 A: Try `set ftp:list-options -a'.
+
+Q: ^Z doesn't work in Cygwin.
+A: Use "SET CYGWIN=TTY".  This must be done before starting a shell, if any.
+
