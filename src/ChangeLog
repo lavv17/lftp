@@ -2,6 +2,7 @@
 
 	* Http.cc: fix quote-post; fix spurious 'Op not supp' messages and
 	  looping.
+	* HttpDir.cc: fix symlinks parsing in squid ftp listing.
 
 2000-05-23  Alexander V. Lukyanov  <lav@yars.free.net>
 

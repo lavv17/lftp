@@ -499,7 +499,7 @@ parse_url_again:
       char size_str[32]="";
       char perms[10]="";
       const char *more1;
-      char *str;
+      char *str,*str_with_tags;
       int n;
       char *line_add=(char*)alloca(link_len+128+2*1024);
       bool data_available=false;
@@ -553,6 +553,7 @@ parse_url_again:
       str=string_alloca(eol-more1);
       memcpy(str,more1+1,eol-more1-1);
       str[eol-more1-1]=0;
+      str_with_tags=alloca_strdup(str);
       remove_tags(str);
 
       // usual apache listing: DD-Mon-YYYY hh:mm size
@@ -681,7 +682,7 @@ parse_url_again:
       skip_len=eol-buf+eol_len;
 
       char *ptr;
-      ptr=strstr(str," -> <A HREF=\"");
+      ptr=strstr(str_with_tags," -> <A HREF=\"");
       if(ptr)
       {
 	 is_sym_link=true;
