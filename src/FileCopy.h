@@ -177,6 +177,9 @@ private:
    bool fail_if_cannot_seek;
    bool remove_source_later;
 
+   Buffer *line_buffer;
+   int  line_buffer_max;
+
 public:
    long GetPos();
    long GetSize();
@@ -209,6 +212,7 @@ public:
    void FailIfCannotSeek() { fail_if_cannot_seek=true; }
    void SetRange(long s,long lim) { get->SetRange(s,lim); put->SetRange(s,lim); }
    void RemoveSourceLater() { remove_source_later=true; }
+   void LineBuffered(int size=0x1000);
 
    FileCopy(FileCopyPeer *src,FileCopyPeer *dst,bool cont);
    ~FileCopy();

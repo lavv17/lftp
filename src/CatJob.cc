@@ -94,7 +94,11 @@ void CatJob::NextFile()
    FileCopy *copier=new FileCopy(src_peer,dst_peer,false);
    copier->DontCopyDate();
    if(ascii)
+   {
+      if(global->usesfd(1))
+	 copier->LineBuffered();
       copier->Ascii();
+   }
    SetCopier(copier,src);
 
    if(no_status)

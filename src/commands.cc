@@ -851,6 +851,7 @@ CMD(ls)
 
    FileCopy *c=new FileCopy(src_peer,dst_peer,false);
    c->DontCopyDate();
+   c->LineBuffered();
    if(nlist)
       c->Ascii();
 

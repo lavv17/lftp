@@ -47,7 +47,7 @@
 #include "LsCache.h"
 
 #define skip_threshold 0x1000
-#define debug(a) //Log::global->Format a
+#define debug(a) Log::global->Format a
 
 ResDecl rate_period  ("xfer:rate-period","15", ResMgr::UNumberValidate,0);
 ResDecl eta_period   ("xfer:eta-period", "120",ResMgr::UNumberValidate,0);
@@ -128,7 +128,7 @@ int FileCopy::Do()
       state=DO_COPY;
       m=MOVED;
       /* fallthrough */
-   case(DO_COPY):
+   case(DO_COPY): {
       if(put->Error())
       {
       put_error:
@@ -140,6 +140,11 @@ int FileCopy::Do()
       get_error:
 	 SetError(get->ErrorText());
 	 return MOVED;
+      }
+      if(put->Broken())
+      {
+	 debug((9,"copy: put is broken"));
+	 goto pre_GET_DONE_WAIT;
       }
       put->Resume();
       if(put->GetSeekPos()==FILE_END)   // put position is not known yet.
@@ -155,10 +160,20 @@ int FileCopy::Do()
 	 SetError("seek failed");
 	 return MOVED;
       }
+      long lbsize=0;
+      if(line_buffer)
+	 lbsize=line_buffer->Size();
       /* check if positions are correct */
-      if(get->GetRealPos()!=put->GetRealPos())
+      long get_pos=get->GetRealPos()-get->range_start;
+      long put_pos=put->GetRealPos()-put->range_start;
+      if(get_pos-lbsize!=put_pos)
       {
-	 if(put->GetRealPos()<get->GetRealPos())
+	 line_buffer->Empty();
+	 if(get_pos==put_pos)
+	 {  // rare case.
+	    return MOVED;
+	 }
+	 if(put_pos<get_pos)
 	 {
 	    if(!get->CanSeek(put->GetRealPos()))
 	    {
@@ -172,7 +187,7 @@ int FileCopy::Do()
 	    get->Seek(put->GetRealPos());
 	    return MOVED;
 	 }
-	 else // put->GetRealPos() > get->GetRealPos()
+	 else // put_pos > get_pos
 	 {
 	    int skip=put->GetRealPos()-get->GetRealPos();
 	    if(!put->CanSeek(get->GetRealPos()) || skip<skip_threshold)
@@ -199,8 +214,14 @@ int FileCopy::Do()
       get->Get(&b,&s);
       if(b==0) // eof
       {
-	 debug((9,"copy: get hit eof\n"));
+	 debug((10,"copy: get hit eof\n"));
       eof:
+	 if(line_buffer)
+	 {
+	    line_buffer->Get(&b,&s);
+	    put->Put(b,s);
+	    line_buffer->Skip(s);
+	 }
 	 put->SetDate(get->GetDate());
 	 put->PutEOF();
 	 get->Suspend();
@@ -213,14 +234,45 @@ int FileCopy::Do()
 	    put->Suspend();
 	 return m;
       }
+      m=MOVED;
+
       rate_add=put_buf;
 
       if(get->range_limit!=FILE_END && get->range_limit<get->GetRealPos()+s)
 	 s=get->range_limit-get->GetRealPos();
 
-      put->Put(b,s);
-      get->Skip(s);
-      bytes_count+=s;
+      if(line_buffer)
+      {
+	 const char *lb;
+	 int ls;
+	 if(line_buffer->Size()>line_buffer_max)
+	 {
+	    line_buffer->Get(&lb,&ls);
+	    put->Put(lb,ls);
+	    line_buffer->Skip(ls);
+	 }
+	 line_buffer->Put(b,s);
+	 get->Skip(s);
+	 bytes_count+=s;
+
+	 // now find eol in line_buffer.
+	 line_buffer->Get(&lb,&ls);
+	 while(ls>0)
+	 {
+	    const char *eol=(const char *)memchr(lb,'\n',ls);
+	    if(!eol)
+	       break;
+	    put->Put(lb,eol-lb+1);
+	    line_buffer->Skip(eol-lb+1);
+	    line_buffer->Get(&lb,&ls);
+	 }
+      }
+      else
+      {
+	 put->Put(b,s);
+	 get->Skip(s);
+	 bytes_count+=s;
+      }
 
       put_buf=put->Buffered();
       rate_add-=put_buf-s;
@@ -229,11 +281,11 @@ int FileCopy::Do()
 
       if(get->range_limit!=FILE_END && get->range_limit<=get->GetRealPos())
       {
-	 debug((9,"copy: get reached range limit\n"));
+	 debug((10,"copy: get reached range limit\n"));
 	 goto eof;
       }
-      return MOVED;
-
+      return m;
+   }
    case(CONFIRM_WAIT):
       if(put->Error())
 	 goto put_error;
@@ -245,7 +297,8 @@ int FileCopy::Do()
       }
       if(!put->Done())
 	 return m;
-      debug((9,"copy: put confirmed store\n"));
+      debug((10,"copy: put confirmed store\n"));
+   pre_GET_DONE_WAIT:
       get->Empty();
       get->PutEOF();
       get->Resume();
@@ -265,7 +318,7 @@ int FileCopy::Do()
       }
       if(!get->Done())
 	 return m;
-      debug((9,"copy: get is finished - all done\n"));
+      debug((10,"copy: get is finished - all done\n"));
       state=ALL_DONE;
       delete get; get=0;
       return MOVED;
@@ -304,6 +357,8 @@ void FileCopy::Init()
    end_time_ms=0;
    fail_if_cannot_seek=false;
    remove_source_later=false;
+   line_buffer=0;
+   line_buffer_max=0;
 }
 
 FileCopy::FileCopy(FileCopyPeer *s,FileCopyPeer *d,bool c)
@@ -317,6 +372,7 @@ FileCopy::~FileCopy()
 {
    if(get) delete get;
    if(put) delete put;
+   if(line_buffer) delete line_buffer;
 }
 void FileCopy::Suspend()
 {
@@ -345,6 +401,13 @@ void FileCopy::SetError(const char *str)
    error_text=xstrdup(str);
    if(get) { delete get; get=0; }
    if(put) { delete put; put=0; }
+}
+
+void FileCopy::LineBuffered(int s)
+{
+   if(!line_buffer)
+      line_buffer=new Buffer();
+   line_buffer_max=s;
 }
 
 long FileCopy::GetPos()
@@ -1206,6 +1269,11 @@ int FileCopyPeerFDStream::Put_LL(const char *buf,int len)
       {
 	 Block(fd,POLLOUT);
 	 return 0;
+      }
+      if(errno==EPIPE)
+      {
+	 broken=true;
+	 return -1;
       }
       stream->MakeErrorText();
       SetError(stream->error_text);
