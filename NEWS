@@ -1,4 +1,4 @@
-Version 2.4.9 - 2002-01-28
+Version 2.4.9 - 2002-01-30
 
 * use trio library if system's printf is broken with %lld.
 * fixed single quote escaping in several places.
@@ -6,6 +6,7 @@ Version 2.4.9 - 2002-01-28
 * fixed keep-alive for http/1.1.
 * fixed uploading in ssl enabled ftp when data connection is protected.
 * don't send AUTH TLS to ftp proxy.
+* fixed fish protocol module.
 
 Version 2.4.8 - 2001-12-04
 
