@@ -22,6 +22,7 @@ if test $lftp_cv_precompiled_readline = yes; then
    COMPILE_READLINE=no
 else
    READLINE_DIR=readline-4.2
+   AC_CONFIG_SUBDIRS(readline-4.2)
    AC_MSG_RESULT(no - will compile)
    LINK_SRC="$LINK_SRC $READLINE_DIR"
    LINK_DST="$LINK_DST include/readline"
@@ -29,7 +30,6 @@ else
    READLINE_DEPEND='$(top_builddir)/$(READLINE_DIR)/libreadline.a'
    COMPILE_READLINE=yes
 fi
-AC_CONFIG_SUBDIRS($READLINE_DIR)
 AC_SUBST(COMPILE_READLINE)
 AC_SUBST(READLINE_DIR)
 AC_SUBST(READLINE_DEPEND)
