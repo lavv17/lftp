@@ -263,3 +263,28 @@ AC_DEFUN(LFTP_CHECK_CXX_FLAGS,
       CXXFLAGS="$CXXFLAGS $flags"
    fi
 ])
+AC_DEFUN(LFTP_CHECK_LIBM,
+[
+   AC_MSG_CHECKING(if math library is needed)
+   AC_CACHE_VAL(lftp_cv_libm_needed,
+   [
+      AC_LANG_SAVE
+      AC_LANG_CPLUSPLUS
+      AC_TRY_LINK([
+	    #include <math.h>
+	    double a,b;
+	 ],[
+	    int main()
+	    {
+	       return int(exp(a)+log(b)+pow(a,b));
+	    }
+	 ],
+	 [lftp_cv_libm_needed=no],
+	 [lftp_cv_libm_needed=yes])
+      AC_LANG_RESTORE
+   ])
+   AC_MSG_RESULT($lftp_cv_libm_needed)
+   if test x$lftp_cv_libm_needed = xyes; then
+      AC_SEARCH_LIBS(exp,m)
+   fi
+])
