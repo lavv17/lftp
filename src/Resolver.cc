@@ -30,6 +30,7 @@
 #include <time.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <ctype.h>
 #include "xstring.h"
 #include "xmalloc.h"
 #include "ResMgr.h"
@@ -64,10 +65,11 @@ static const address_family af_list[]=
 };
 
 
-Resolver::Resolver(const char *h,int p)
+Resolver::Resolver(const char *h,const char *p)
 {
    hostname=xstrdup(h);
-   port=p;
+   portname=xstrdup(p);
+   port_number=0;
 
    pipe_to_child[0]=pipe_to_child[1]=-1;
    w=0;
@@ -88,6 +90,7 @@ Resolver::~Resolver()
       close(pipe_to_child[1]);
 
    xfree(hostname);
+   xfree(portname);
    xfree(err_msg);
    xfree(addr);
    if(w)
@@ -176,7 +179,7 @@ int   Resolver::Do()
    }
    if(res<1)
       goto proto_error;
-   if(c=='E') // error
+   if(c=='E' || c=='P') // error
    {
       char buf[512];
       res=read(pipe_to_child[0],buf,sizeof(buf)-1);
@@ -184,7 +187,7 @@ int   Resolver::Do()
 	 goto read_error;
       buf[res]=0;
       err_msg=(char*)xmalloc(strlen(hostname)+res+3);
-      sprintf(err_msg,"%s: %s",hostname,buf);
+      sprintf(err_msg,"%s: %s",(c=='E'?hostname:portname),buf);
       done=true;
       return MOVED;
    }
@@ -228,13 +231,13 @@ void Resolver::AddAddress(int family,const char *address,int len)
    {
    case AF_INET:
       memcpy(&add->in.sin_addr,address,len);
-      add->in.sin_port=htons(port);
+      add->in.sin_port=port_number;
       break;
 
 #if INET6
    case AF_INET6:
       memcpy(&add->in6.sin6_addr,address,len);
-      add->in6.sin6_port=htons(port);
+      add->in6.sin6_port=port_number;
       break;
 #endif
 
@@ -289,6 +292,26 @@ void Resolver::DoGethostbyname()
 #ifndef HAVE_H_ERRNO_DECL
    extern int h_errno;
 #endif
+
+   if(port_number==0)
+   {
+      if(isdigit((unsigned char)portname[0]))
+	 port_number=htons(atoi(portname));
+      else
+      {
+	 struct servent *se=getservbyname(portname,"tcp");
+	 if(se)
+	    port_number=se->s_port;
+	 else
+	 {
+	    write(1,"P",1);
+	    error="no such tcp service";
+	    write(1,error,strlen(error));
+	    return;
+	 }
+      }
+   }
+
    int af_index=0;
    int af_order[16];
 

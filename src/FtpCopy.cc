@@ -193,27 +193,7 @@ int FtpCopy::ProcessURL(const char *url,Ftp **session,char **file,FileAccess *de
       if(pu.user && pass)
 	 new_session->Login(pu.user,pass);
       if(pu.host)
-      {
-	 int port=0;
-	 if(pu.port)
-	 {
-	    if(isdigit(pu.port[0]))
-	       port=atoi(pu.port);
-	    else
-	    {
-	       struct servent *serv=getservbyname(pu.port,"tcp");
-	       if(serv)
-		  port=serv->s_port;
-	       else
-	       {
-		  eprintf(_("%s: %s - no such tcp service\n"),
-			   op,pu.port);
-		  return -1;
-	       }
-	    }
-	 }
-	 new_session->Connect(pu.host,port);
-      }
+	 new_session->Connect(pu.host,pu.port);
       *session=(Ftp*)new_session; // we are sure this is Ftp
       *file=xstrdup(pu.path);
    }

@@ -255,24 +255,7 @@ void XferJob::NextFile(char *f)
 	    if(url->user && url->pass)
 	       new_session->Login(url->user,url->pass);
 	    if(url->host)
-	    {
-	       int port=0;
-	       if(url->port)
-	       {
-		  if(isdigit(url->port[0]))
-		     port=atoi(url->port);
-		  else
-		  {
-		     struct servent *serv=getservbyname(url->port,"tcp");
-		     if(serv)
-			port=serv->s_port;
-		     else
-			eprintf(_("%s: %s - no such tcp service, using default\n"),
-				 op,url->port);
-		  }
-	       }
-	       new_session->Connect(url->host,port);
-	    }
+	       new_session->Connect(url->host,url->port);
 	    curr=url->path;
 	    if(new_session!=session)
 	    {

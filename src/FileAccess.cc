@@ -35,7 +35,7 @@
 void FileAccess::Init()
 {
    home=0;
-   port=0;
+   portname=0;
    hostname=0;
    group=gpass=0;
    user=pass=0;
@@ -79,7 +79,8 @@ FileAccess::FileAccess(const FileAccess *fa)
    gpass=xstrdup(fa->gpass);
    xfree(hostname);
    hostname=xstrdup(fa->hostname);
-   port=fa->port;
+   xfree(portname);
+   portname=xstrdup(fa->portname);
 }
 
 FileAccess::~FileAccess()
@@ -94,6 +95,7 @@ FileAccess::~FileAccess()
    xfree(group); group=0;
    xfree(gpass); gpass=0;
    xfree(hostname); hostname=0;
+   xfree(portname); portname=0;
    xfree(url); url=0;
 }
 
@@ -284,8 +286,8 @@ const char *FileAccess::GetConnectURL(int flags)
    }
    if(hostname)
       len+=strlen(hostname)*3;
-   if(port!=0)
-      len+=1+20;
+   if(portname)
+      len+=1+strlen(portname);
    if(cwd)
       len+=1+strlen(cwd)*3;
    url=(char*)xrealloc(url,len);
@@ -302,8 +304,8 @@ const char *FileAccess::GetConnectURL(int flags)
    }
    if(hostname)
       url::encode_string(hostname,url+strlen(url));
-   if(port!=0)
-      sprintf(url+strlen(url),":%d",port);
+   if(portname)
+      sprintf(url+strlen(url),":%s",portname);
    if(cwd && strcmp(cwd,"~") && !(flags&NO_CWD))
    {
       if(cwd[0]!='/') // e.g. ~/path
@@ -311,6 +313,18 @@ const char *FileAccess::GetConnectURL(int flags)
       url::encode_string(cwd,url+strlen(url));
    }
    return url;
+}
+
+void FileAccess::Connect(const char *host1,const char *port1)
+{
+   Close();
+   xfree(hostname);
+   hostname=xstrdup(host1);
+   xfree(portname);
+   portname=xstrdup(port1);
+   xfree(cwd);
+   cwd=xstrdup("~");
+   xfree(home); home=0;
 }
 
 void FileAccess::Login(const char *user1,const char *pass1)

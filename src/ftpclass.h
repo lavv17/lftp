@@ -213,7 +213,7 @@ class Ftp : public FileAccess
    char	 *anon_user;
    char	 *anon_pass;
    char	 *proxy;
-   int	 proxy_port;
+   char	 *proxy_port;
    char  *proxy_user;
    char  *proxy_pass;
 
@@ -310,7 +310,7 @@ public:
 	     && this->IsConnected() && !((Ftp*)fa)->IsConnected());
    }
 
-   void	 Connect(const char *,int);
+   void	 Connect(const char *h,const char *p);
    void	 ConnectVerify();
 
    int   Read(void *buf,int size);

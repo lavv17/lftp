@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-1999 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ void  PrintUsage(int p)
 {
    if(p)
    {
-      printf(_("FtpGet | Version %s | Copyright (C) 1996-97 Alexander V. Lukyanov\n"),VERSION);
+      printf(_("FtpGet | Version %s | Copyright (C) 1996-1999 Alexander V. Lukyanov\n"),VERSION);
       // xgettext:c-format
       printf(_("This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"));
    }
@@ -70,7 +70,7 @@ void  PrintUsage(int p)
 
 int   main(int argc,char **argv)
 {
-   int   port=21;
+   char  *port=0;
    int   c;
    char  *user=NULL;
    char  *pass=NULL;
@@ -101,7 +101,7 @@ int   main(int argc,char **argv)
       {"async-mode",no_argument,0,ASYNC_MODE_OPT},
       {"continue",no_argument,0,'c'},
       {"user",required_argument,0,'u'},
-      {"post",required_argument,0,'p'},
+      {"port",required_argument,0,'p'},
       {"list",no_argument,0,'l'},
       {"quiet",no_argument,0,'q'},
       {"verbose",no_argument,0,'v'},
@@ -121,11 +121,7 @@ int   main(int argc,char **argv)
       switch(c)
       {
       case('p'):
-         if(sscanf(optarg,"%d",&port)!=1)
-         {
-            fprintf(stderr,"%s: invalid port number\n",program);
-	    exit(1);
-         }
+	 port=optarg;
          break;
       case('u'):
          user=optarg;

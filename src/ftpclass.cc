@@ -76,7 +76,7 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 #include "xalloca.h"
 
 #define FTPUSER "anonymous"
-#define FTPPORT 21
+#define FTPPORT "ftp"
 #define FTP_DATA_PORT 20
 
 #ifndef SOL_TCP
@@ -233,7 +233,7 @@ bool Ftp::data_address_ok(sockaddr_u *dp,bool verify_this_data_port)
    if(d.sa.sa_family==AF_INET && c.sa.sa_family==AF_INET6
       && IN6_IS_ADDR_V4MAPPED(&c.in6.sin6_addr))
    {
-      if(memcmp(&d.in.in_addr,&c.in6.sin6_addr.s6_addr32[3],4))
+      if(memcmp(&d.in.sin_addr,&c.in6.sin6_addr.s6_addr32[3],4))
 	 goto address_mismatch;
       if(d.in.sin_port!=htons(FTP_DATA_PORT))
 	 goto wrong_port;
@@ -528,15 +528,20 @@ int   Ftp::Handle_PASV()
 
 int   Ftp::Handle_EPSV()
 {
-   char delim=line[4];
-   char format[]="||%*[^|]|%u|";
+   char delim;
+   char *format=alloca_strdup("||%*[^|]|%u|");
    unsigned port;
+   char *c;
+
+   c=strchr(line,'(');
+   c=c?c+1:line+4;
+   delim=*c;
 
    for(char *p=format; *p; p++)
       if(*p=='|')
 	 *p=delim;
 
-   if(sscanf(line+4,format,&port)!=1)
+   if(sscanf(c,format,&port)!=1)
       return INITIAL_STATE;
 
    socklen_t len=sizeof(data_sa);
@@ -719,6 +724,8 @@ Ftp::Ftp(const Ftp *f) : super(f)
       peer=(sockaddr_u*)xmemdup(f->peer,f->peer_num*sizeof(*peer));
       peer_num=f->peer_num;
       peer_curr=f->peer_curr;
+      if(peer_curr>=peer_num)
+	 peer_curr=0;
       lookup_done=f->lookup_done;
    }
    flags=f->flags&MODES_MASK;
@@ -740,6 +747,7 @@ Ftp::~Ftp()
    xfree(send_cmd_buffer); send_cmd_buffer=0;
 
    xfree(proxy); proxy=0;
+   xfree(proxy_port); proxy_port=0;
 
    xfree(skey_pass); skey_pass=0;
 
@@ -806,6 +814,8 @@ void  Ftp::GetBetterConnection(int level)
 	       o->peer=(sockaddr_u*)xmemdup(peer,peer_num*sizeof(*peer));
 	       o->peer_num=peer_num;
 	       o->peer_curr=peer_curr;
+	       if(o->peer_curr>=o->peer_num)
+		  o->peer_curr=0;
 	       o->lookup_done=true;
 	    }
 	    else if(o->lookup_done && !lookup_done)
@@ -814,6 +824,8 @@ void  Ftp::GetBetterConnection(int level)
 	       peer=(sockaddr_u*)xmemdup(o->peer,o->peer_num*sizeof(*o->peer));
 	       peer_num=o->peer_num;
 	       peer_curr=o->peer_curr;
+	       if(peer_curr>=peer_num)
+		  peer_curr=0;
 	       lookup_done=true;
 	    }
 	 }
@@ -871,6 +883,33 @@ void  Ftp::SetKeepAlive(int sock)
    setsockopt(sock,SOL_SOCKET,SO_KEEPALIVE,(char*)&one,sizeof(one));
 }
 
+static const char *numeric_address(const sockaddr_u *u)
+{
+#ifdef HAVE_GETNAMEINFO
+   static char buf[NI_MAXHOST];
+   if(getnameinfo(&u->sa,sizeof(*u),buf,sizeof(buf),0,0,NI_NUMERICHOST)<0)
+      return "????";
+   return buf;
+#else
+   static char buf[256];
+   if(u->sa.sa_family!=AF_INET)
+      return "????";
+   unsigned char *a=(unsigned char *)&u->in.sin_addr;
+   sprintf(buf,"%u.%u.%u.%u",a[0],a[1],a[2],a[3]);
+   return buf;
+#endif
+}
+static int get_port(const sockaddr_u *u)
+{
+   if(u->sa.sa_family==AF_INET)
+      return ntohs(u->in.sin_port);
+#ifdef AF_INET6
+   if(u->sa.sa_family==AF_INET6)
+      return ntohs(u->in6.sin6_port);
+#endif
+   return 0;
+}
+
 int   Ftp::Do()
 {
    char	 *str =(char*)alloca(xstrlen(cwd)+xstrlen(hostname)+xstrlen(proxy)+256);
@@ -913,7 +952,7 @@ int   Ftp::Do()
 	 return MOVED;
 
       char *host_to_connect=(proxy?proxy:hostname);
-      int port_to_connect=(proxy?proxy_port:port);
+      char *port_to_connect=(proxy?proxy_port:portname);
       if(port_to_connect==0)
 	 port_to_connect=FTPPORT;
 
@@ -994,13 +1033,10 @@ int   Ftp::Do()
       fcntl(control_sock,F_SETFL,O_NONBLOCK);
       fcntl(control_sock,F_SETFD,FD_CLOEXEC);
 
-      if(peer_sa.sa.sa_family==AF_INET)
-      {
-	 a=(unsigned char*)&peer_sa.in.sin_addr;
-	 sprintf(str,_("Connecting to %s%s (%d.%d.%d.%d) port %u"),proxy?"proxy ":"",
-	       host_to_connect,a[0],a[1],a[2],a[3],ntohs(peer_sa.in.sin_port));
-	 DebugPrint("---- ",str,0);
-      }
+      a=(unsigned char*)&peer_sa.in.sin_addr;
+      sprintf(str,_("Connecting to %s%s (%s) port %u"),proxy?"proxy ":"",
+	 host_to_connect,numeric_address(&peer_sa),get_port(&peer_sa));
+      DebugPrint("---- ",str,0);
 
       res=connect(control_sock,&peer_sa.sa,sizeof(peer_sa));
       UpdateNow(); // if non-blocking don't work
@@ -1044,10 +1080,10 @@ int   Ftp::Do()
       char *user_to_use=(user?user:anon_user);
       if(proxy)
       {
-	 char *combined=(char*)alloca(strlen(user_to_use)+1+strlen(hostname)+20+1);
+	 char *combined=(char*)alloca(strlen(user_to_use)+1+strlen(hostname)+1+xstrlen(portname)+1);
 	 sprintf(combined,"%s@%s",user_to_use,hostname);
-	 if(port)
-	    sprintf(combined+strlen(combined),":%d",port);
+	 if(portname)
+	    sprintf(combined+strlen(combined),":%s",portname);
 	 user_to_use=combined;
 
       	 if(proxy_user && proxy_pass)
@@ -1167,7 +1203,7 @@ int   Ftp::Do()
 	 data_sock=socket(peer_sa.sa.sa_family,SOCK_STREAM,IPPROTO_TCP);
 	 if(data_sock==-1)
 	    goto system_error;
-	 fcntl(data_sock,F_SETFL,O_NONBLOCK);
+   	 fcntl(data_sock,F_SETFL,O_NONBLOCK);
 	 fcntl(data_sock,F_SETFD,FD_CLOEXEC);
 	 SetKeepAlive(data_sock);
 	 SetSocketBuffer(data_sock);
@@ -1505,13 +1541,9 @@ int   Ftp::Do()
 	    goto pre_WAITING_STATE;
 	 }
 
-	 if(data_sa.sa.sa_family==AF_INET)
-	 {
-	    a=(unsigned char*)&data_sa.in.sin_addr;
-	    sprintf(str,_("Connecting data socket to (%d.%d.%d.%d) port %u"),
-				 a[0],a[1],a[2],a[3],ntohs(data_sa.in.sin_port));
-	    DebugPrint("---- ",str,3);
-	 }
+	 sprintf(str,_("Connecting data socket to (%s) port %u"),
+	    numeric_address(&data_sa),get_port(&data_sa));
+	 DebugPrint("---- ",str,3);
 
 	 res=connect(data_sock,(struct sockaddr*)&data_sa,sizeof(data_sa));
 	 UpdateNow(); // if non-blocking don't work
@@ -2888,7 +2920,7 @@ void  Ftp::SetFlag(int flag,bool val)
 
 bool  Ftp::SameConnection(const Ftp *o)
 {
-   if(!strcmp(hostname,o->hostname) && port==o->port
+   if(!strcmp(hostname,o->hostname) && !xstrcmp(portname,o->portname)
    && !xstrcmp(user,o->user) && !xstrcmp(pass,o->pass)
    && !xstrcmp(group,o->group) && !xstrcmp(gpass,o->gpass)
    && (user || !xstrcmp(anon_user,o->anon_user))
@@ -2952,15 +2984,9 @@ int   Ftp::Done()
    abort();
 }
 
-void Ftp::Connect(const char *new_host,int new_port)
+void Ftp::Connect(const char *new_host,const char *new_port)
 {
-   Close();
-   xfree(hostname);
-   hostname=xstrdup(new_host);
-   port=new_port;
-   xfree(cwd);
-   cwd=xstrdup("~");
-   xfree(home); home=0;
+   super::Connect(new_host,new_port);
    flags=0;
    Reconfig();
    DontSleep();
@@ -2983,7 +3009,7 @@ void Ftp::SetProxy(const char *px)
    bool was_proxied=(proxy!=0);
 
    xfree(proxy); proxy=0;
-   proxy_port=0;
+   xfree(proxy_port); proxy_port=0;
    xfree(proxy_user); proxy_user=0;
    xfree(proxy_pass); proxy_pass=0;
    lookup_done=false;
@@ -3003,12 +3029,11 @@ void Ftp::SetProxy(const char *px)
    // FIXME: check url.proto
 
    proxy=xstrdup(url.host);
-   if(url.port)
-      proxy_port=atoi(url.port);
+   proxy_port=xstrdup(url.port);
    proxy_user=xstrdup(url.user);
    proxy_pass=xstrdup(url.pass);
    if(proxy_port==0)
-      proxy_port=FTPPORT;
+      proxy_port=xstrdup(FTPPORT);
    lookup_done=false;
 }
 

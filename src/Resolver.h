@@ -42,7 +42,9 @@ union sockaddr_u
 class Resolver : public SMTask
 {
    char *hostname;
-   int port;
+   char *portname;
+
+   int port_number;
 
    int pipe_to_child[2];
    ProcWait *w;
@@ -73,7 +75,7 @@ public:
    int	 GetResultNum() { return addr_num; }
    void  GetResult(void *m) { memcpy(m,addr,GetResultSize()); }
 
-   Resolver(const char *h,int port);
+   Resolver(const char *h,const char *p);
    ~Resolver();
 
    void Reconfig();

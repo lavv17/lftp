@@ -1051,23 +1051,7 @@ CMD(open)
       }
       if(host)
       {
-	 int port_num=0;
-	 if(port)
-	 {
-	    if(!isdigit(port[0]))
-	    {
-	       struct servent *serv=getservbyname(port,"tcp");
-	       if(serv==NULL)
-	       {
-		  eprintf(_("%s: %s - no such tcp service\n"),op,port);
-		  return 0;
-	       }
-	       port_num=serv->s_port;
-	    }
-	    else
-	       port_num=atoi(port);
-	 }
-	 session->Connect(host,port_num);
+	 session->Connect(host,port);
 	 if(verify_host && !background)
 	 {
 	    session->ConnectVerify();

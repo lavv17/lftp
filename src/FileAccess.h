@@ -72,7 +72,7 @@ public:
 
 protected:
    char	 *hostname;
-   int	 port;
+   char	 *portname;
    char  *user;
    char  *pass;
    char	 *group;
@@ -130,11 +130,11 @@ public:
    const char  *GetHome() { return home; }
    const char  *GetHostName() { return hostname; }
    const char  *GetUser() { return user; }
-   int	 GetPort() { return port; }
+   const char  *GetPort() { return portname; }
    virtual const char *GetConnectURL(int flags=0);
    enum { NO_CWD=1,WITH_PASSWORD=2 };
 
-   virtual void Connect(const char *,int) {}
+   virtual void Connect(const char *h,const char *p);
    virtual void ConnectVerify() {}
 
    virtual void AnonymousLogin();
