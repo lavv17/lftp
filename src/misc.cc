@@ -435,3 +435,20 @@ const char *squeeze_file_name(const char *name,int w)
    sprintf(buf,"...%s",b+3);
    return buf;
 }
+
+/* Converts struct tm to time_t, assuming the data in tm is UTC rather
+   than local timezone (mktime assumes the latter).
+
+   Contributed by Roger Beeman <beeman@cisco.com>, with the help of
+   Mark Baushke <mdb@cisco.com> and the rest of the Gurus at CISCO.  */
+time_t
+mktime_from_utc (struct tm *t)
+{
+  time_t tl, tb;
+
+  tl = mktime (t);
+  if (tl == -1)
+    return -1;
+  tb = mktime (gmtime (&tl));
+  return (tl <= tb ? (tl + (tl - tb)) : (tl - (tb - tl)));
+}

@@ -1866,22 +1866,6 @@ void HFtp::Reconfig(const char *name)
    use_head=Query("use-head");
 }
 
-/* Converts struct tm to time_t, assuming the data in tm is UTC rather
-   than local timezone (mktime assumes the latter).
-
-   Contributed by Roger Beeman <beeman@cisco.com>, with the help of
-   Mark Baushke <mdb@cisco.com> and the rest of the Gurus at CISCO.  */
-static time_t
-mktime_from_utc (struct tm *t)
-{
-  time_t tl, tb;
-
-  tl = mktime (t);
-  if (tl == -1)
-    return -1;
-  tb = mktime (gmtime (&tl));
-  return (tl <= tb ? (tl + (tl - tb)) : (tl - (tb - tl)));
-}
 
 /* The functions http_atotm and check_end are taken from wget */
 #define ISSPACE(c) is_ascii_space((c))

@@ -71,4 +71,6 @@ const char *format_perms(int p);
 int parse_year_or_time(const char *year_or_time,int *year,int *hour,int *minute);
 int guess_year(int month,int day,int hour=0,int minute=0);
 
+time_t mktime_from_utc(struct tm *);
+
 #endif // MISC_H
