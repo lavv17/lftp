@@ -1,3 +1,19 @@
+Version 3.1.0 - 2005-02-25
+
+* http DAV support added (PROPFIND, MKCOL, DELETE, MOVE).
+* new setting mirror:set-permissions.
+* added cls -r option (reverse sorting).
+* ignore non fatal STAT and FSTAT errors in sftp.
+* fixed globbing for file names starting with a tilde.
+* fixed fish and sftp for solaris 9 ssh.
+* fixed SITE UTIME and overloaded MDTM in ftp protocol.
+* fixed spinning when local disk is full.
+* fixed passive ftp mode for some broken servers.
+* fixed wrong year in cls output when the time is several hours in the future.
+* fixed Last-Modified parsing in non-english locales.
+* optimized memory usage for large directories.
+* compilation fixes for some compilers.
+
 Version 3.0.13 - 2004-12-20
 
 * man page updated.
