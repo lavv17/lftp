@@ -584,6 +584,19 @@ static bool InPrivateNetwork(const sockaddr_u *u)
    }
    return false;
 }
+static bool IsLoopback(const sockaddr_u *u)
+{
+   if(u->sa.sa_family==AF_INET)
+   {
+      unsigned char *a=(unsigned char *)&u->in.sin_addr;
+      return (a[0]==127 && a[1]==0 && a[2]==0 && a[3]==1);
+   }
+#if INET6
+   if(u->sa.sa_family==AF_INET6)
+      return IN6_IS_ADDR_LOOPBACK(&u->in6.sin6_addr);
+#endif
+   return false;
+}
 
 int Ftp::Handle_PASV()
 {
@@ -1344,7 +1357,8 @@ int   Ftp::Do()
 
 	 if(flags&PASSIVE_MODE)
 	 {
-	    if((bool)Query("bind-data-socket"))
+	    if((bool)Query("bind-data-socket")
+	    && !IsLoopback(&peer_sa))
 	    {
 	       // connect should come from the same address, else server can refuse.
 	       addr_len=sizeof(data_sa);

@@ -1,6 +1,7 @@
 2001-02-07  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Resolver.cc: fix rare spinning when parent process terminates.
+	* ftpclass.cc: don't bind data socket to loopback address.
 
 2001-02-04  Alexander V. Lukyanov  <lav@yars.free.net>
 
