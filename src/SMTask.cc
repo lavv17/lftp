@@ -171,6 +171,12 @@ void SMTask::Schedule()
       SMTask *sched_current=current;	  // remember what we ran.
       if(!current->deleting)		  // let it run unless it is dying.
 	 res=current->Do();
+#if 0 // for spin debug
+      if(res==MOVED)
+	 printf("MOVED: %p\n",current);
+      if(!repeat && current->block.GetTimeout()==0)
+	 printf("timeout==0: %p\n",current);
+#endif
       if(!sched_scan)			  // nested Schedule can clear sched_scan.
       	 sched_scan=current;
       sched_scan=sched_scan->next;	  // move to a next task.
