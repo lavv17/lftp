@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2\n"
-"POT-Creation-Date: 2000-09-07 22:55+0400\n"
+"POT-Creation-Date: 2000-09-18 19:02+0400\n"
 "PO-Revision-Date: 2000-09-07 09:36+08:00\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -116,7 +116,7 @@ msgstr "Ошибка доступа: %s"
 msgid "File cannot be accessed"
 msgstr "Доступ к файлу невозможен"
 
-#: src/FileAccess.cc:325 src/ftpclass.cc:3386 src/ftpclass.cc:3395
+#: src/FileAccess.cc:325 src/ftpclass.cc:3387 src/ftpclass.cc:3396
 msgid "Not connected"
 msgstr "Нет соединения"
 
@@ -236,13 +236,13 @@ msgstr ""
 "%sПодлежат удалению: %d каталог$|а|ов$, %d файл$|а|ов$, %d "
 "$ссылка|ссылки|ссылок$\n"
 
-#: src/MirrorJob.cc:168 src/MirrorJob.cc:807
+#: src/MirrorJob.cc:168 src/MirrorJob.cc:806
 #, c-format
 msgid "Removing old remote file `%s'"
 msgstr "Удаление с сервера старого файла `%s'"
 
-#: src/MirrorJob.cc:217 src/MirrorJob.cc:314 src/MirrorJob.cc:384
-#: src/MirrorJob.cc:747
+#: src/MirrorJob.cc:217 src/MirrorJob.cc:313 src/MirrorJob.cc:384
+#: src/MirrorJob.cc:746
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Удаление старого локального файла `%s'"
@@ -253,7 +253,7 @@ msgstr "Удаление старого локального файла `%s'"
 msgid "Retrieving remote file `%s'"
 msgstr "Получение с сервера файла `%s'"
 
-#: src/MirrorJob.cc:288
+#: src/MirrorJob.cc:287
 #, c-format
 msgid "Making remote directory `%s'"
 msgstr "Создание на сервере каталога `%s'"
@@ -282,22 +282,22 @@ msgstr "mirror: протокол `%s' не подходит для зеркалирования\n"
 msgid "Sending local file `%s'"
 msgstr "Отправка локального файла `%s'"
 
-#: src/MirrorJob.cc:766
+#: src/MirrorJob.cc:765
 #, c-format
 msgid "Old local file `%s' is not removed"
 msgstr "Старый локальный файл `%s' не удален"
 
-#: src/MirrorJob.cc:800
+#: src/MirrorJob.cc:799
 #, c-format
 msgid "Removing old remote directory `%s'"
 msgstr "Удаление с сервера старого каталога `%s'"
 
-#: src/MirrorJob.cc:820
+#: src/MirrorJob.cc:819
 #, c-format
 msgid "Old remote file `%s' is not removed"
 msgstr "Старый файл `%s' не удален с сервера"
 
-#: src/MirrorJob.cc:1130 src/MirrorJob.cc:1178 src/SleepJob.cc:128
+#: src/MirrorJob.cc:1129 src/MirrorJob.cc:1177 src/SleepJob.cc:128
 #: src/commands.cc:813 src/commands.cc:986 src/commands.cc:1081
 #: src/commands.cc:1335 src/commands.cc:1529 src/commands.cc:1696
 #: src/commands.cc:1703 src/commands.cc:1887 src/commands.cc:1916
@@ -352,7 +352,7 @@ msgstr ""
 msgid "dns cache hit\n"
 msgstr ""
 
-#: src/Http.cc:1509 src/Resolver.cc:193 src/ftpclass.cc:3391
+#: src/Http.cc:1509 src/Resolver.cc:193 src/ftpclass.cc:3392
 msgid "Resolving host address..."
 msgstr "Преобразование адреса сервера..."
 
@@ -1424,146 +1424,146 @@ msgstr "Канал данных имеет удаленный адрес, не совпадающий с ожидаемым"
 msgid "Switching to NOREST mode"
 msgstr "Включение режима NOREST"
 
-#: src/ftpclass.cc:377
+#: src/ftpclass.cc:378
 msgid "Saw `Login incorrect', assume failed login"
 msgstr "Получена строка `Login incorrect', подразумевается неудача регистрации"
 
-#: src/ftpclass.cc:423
+#: src/ftpclass.cc:424
 msgid "Saw `unknown', assume failed login"
 msgstr "Получена строка `unknown', подразумевается неудача регистрации"
 
-#: src/ftpclass.cc:434
+#: src/ftpclass.cc:435
 msgid "assuming failed host name lookup"
 msgstr "подразумевается ошибка преобразования адреса машины"
 
-#: src/ftpclass.cc:447
+#: src/ftpclass.cc:448
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
 msgstr ""
 
-#: src/ftpclass.cc:661
+#: src/ftpclass.cc:662
 msgid "cannot parse EPSV response"
 msgstr ""
 
-#: src/Http.cc:732 src/ftpclass.cc:1005
+#: src/Http.cc:732 src/ftpclass.cc:1006
 msgid "Closing idle connection"
 msgstr "Закрытие неиспользуемого соединения"
 
-#: src/Http.cc:860 src/ftpclass.cc:1082
+#: src/Http.cc:860 src/ftpclass.cc:1083
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr ""
 
-#: src/ftpclass.cc:1259
+#: src/ftpclass.cc:1260
 msgid "SITE CHMOD is not supported by this site"
 msgstr ""
 
-#: src/ftpclass.cc:1602 src/ftpclass.cc:1635
+#: src/ftpclass.cc:1603 src/ftpclass.cc:1636
 msgid "unsupported network protocol"
 msgstr "сетевой протокол не поддерживается"
 
-#: src/ftpclass.cc:1744
+#: src/ftpclass.cc:1745
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "Соединение сокета данных с (%s), порт %u"
 
-#: src/ftpclass.cc:1769 src/ftpclass.cc:3274
+#: src/ftpclass.cc:1770 src/ftpclass.cc:3275
 msgid "Switching passive mode off"
 msgstr "Отключение пассивного режима"
 
-#: src/NetAccess.cc:265 src/ftpclass.cc:1808
+#: src/NetAccess.cc:265 src/ftpclass.cc:1809
 msgid "Timeout - reconnecting"
 msgstr "Превышение лимита времени ожидания - повторное соединение"
 
-#: src/Http.cc:936 src/ftpclass.cc:2190
+#: src/Http.cc:936 src/ftpclass.cc:2191
 msgid "Peer closed connection"
 msgstr "Соединение закрыто удаленной машиной"
 
-#: src/ftpclass.cc:2217
+#: src/ftpclass.cc:2218
 msgid "Persist and retry"
 msgstr ""
 
-#: src/ftpclass.cc:2314
+#: src/ftpclass.cc:2315
 msgid "Closing control socket"
 msgstr "Закрытие управляющего соединения"
 
-#: src/ftpclass.cc:2395
+#: src/ftpclass.cc:2396
 msgid "Closing data socket"
 msgstr "Закрытие соединения данных"
 
-#: src/ftpclass.cc:3121
+#: src/ftpclass.cc:3122
 msgid "saw file size in response"
 msgstr "замечен размер файла в ответе сервера"
 
-#: src/ftpclass.cc:3132
+#: src/ftpclass.cc:3133
 msgid "remote end closes connection"
 msgstr "удаленная сторона закрыла соединение"
 
-#: src/ftpclass.cc:3140
+#: src/ftpclass.cc:3141
 msgid "extra server response"
 msgstr "непредвиденный ответ сервера"
 
-#: src/ftpclass.cc:3152 src/ftpclass.cc:3177
+#: src/ftpclass.cc:3153 src/ftpclass.cc:3178
 msgid "Turning on sync-mode"
 msgstr ""
 
-#: src/ftpclass.cc:3291
+#: src/ftpclass.cc:3292
 msgid "Switching passive mode on"
 msgstr "Включение пассивного режима"
 
-#: src/ftpclass.cc:3342
+#: src/ftpclass.cc:3343
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 
-#: src/ftpclass.cc:3381
+#: src/ftpclass.cc:3382
 msgid "Sending commands..."
 msgstr "Передача команд..."
 
-#: src/Http.cc:1522 src/ftpclass.cc:3383 src/ftpclass.cc:3408
-#: src/ftpclass.cc:3415
+#: src/Http.cc:1522 src/ftpclass.cc:3384 src/ftpclass.cc:3409
+#: src/ftpclass.cc:3416
 msgid "Waiting for response..."
 msgstr "Ожидание ответа..."
 
-#: src/Http.cc:1517 src/ftpclass.cc:3384
+#: src/Http.cc:1517 src/ftpclass.cc:3385
 msgid "Connection idle"
 msgstr "Соединение не используется"
 
-#: src/Http.cc:1515 src/ftpclass.cc:3397
+#: src/Http.cc:1515 src/ftpclass.cc:3398
 msgid "Connecting..."
 msgstr "Установка соединения..."
 
-#: src/ftpclass.cc:3401
+#: src/ftpclass.cc:3402
 msgid "TLS negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:3403
+#: src/ftpclass.cc:3404
 msgid "Connected"
 msgstr "Соединен"
 
-#: src/ftpclass.cc:3405
+#: src/ftpclass.cc:3406
 msgid "Logging in..."
 msgstr "Регистрация..."
 
-#: src/ftpclass.cc:3409
+#: src/ftpclass.cc:3410
 msgid "Making data connection..."
 msgstr "Установка соединения данных..."
 
-#: src/ftpclass.cc:3411
+#: src/ftpclass.cc:3412
 msgid "Changing remote directory..."
 msgstr "Смена каталога на сервере..."
 
-#: src/ftpclass.cc:3414 src/ftpclass.cc:3426
+#: src/ftpclass.cc:3415 src/ftpclass.cc:3427
 msgid "Waiting for transfer to complete"
 msgstr "Ожидание окончания пересылки"
 
-#: src/ftpclass.cc:3417
+#: src/ftpclass.cc:3418
 msgid "Waiting for data connection..."
 msgstr "Ожидание установки соединения данных..."
 
-#: src/Http.cc:1520 src/ftpclass.cc:3422
+#: src/Http.cc:1520 src/ftpclass.cc:3423
 msgid "Sending data"
 msgstr "Отправка данных"
 
-#: src/Http.cc:1525 src/ftpclass.cc:3424
+#: src/Http.cc:1525 src/ftpclass.cc:3425
 msgid "Receiving data"
 msgstr "Получение данных"
 

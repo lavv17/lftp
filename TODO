@@ -76,7 +76,7 @@ implemented.
 
  * optimize help text, introduce a phrase separator for separate translations.
 
- * add url support for mirror, find... This can wait for 2.3.
+ * add url support for mirror, find... This can wait for 2.4.
 
  * improve glob status (show directory/pattern).
 

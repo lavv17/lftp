@@ -29,3 +29,14 @@ src/CopyJob.cc
 src/FileCopy.cc
 src/DummyProto.cc
 src/Speedometer.cc
+src/FileCopyFtp.cc
+src/Filter.cc
+src/FtpDirList.cc
+src/FtpSplitList.cc
+src/LocalAccess.cc
+src/NetAccess.cc
+src/PollVec.cc
+src/SMTask.cc
+src/SleepJob.cc
+src/getdate.c
+src/module.cc
