@@ -2,6 +2,7 @@
 
 	* misc.cc: use dynamic allocation in set_tz; use unsetenv to unset TZ;
 	  implement unsetenv is not available using environ array.
+	* ColumnOutput.cc: make it compile with irix compiler.
 
 2001-10-27  Alexander V. Lukyanov <lav@yars.free.net>
 

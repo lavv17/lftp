@@ -123,8 +123,9 @@ void ColumnOutput::get_print_info(unsigned width, int *&col_arr, int *&ws_arr, i
 	 ws_arr[j] = 99999999;
       }
 
+      int filesno;
       /* Find the amount of whitespace shared by every entry in the column. */
-      for (int filesno = 0; filesno < lst_cnt; ++filesno) {
+      for (filesno = 0; filesno < lst_cnt; ++filesno) {
 	 int idx = filesno / ((lst_cnt + cols - 1) / cols);
 	 int ws = lst[filesno]->whitespace();
 	 if(ws < ws_arr[idx]) ws_arr[idx] = ws;
@@ -134,7 +135,7 @@ void ColumnOutput::get_print_info(unsigned width, int *&col_arr, int *&ws_arr, i
        * the same amount from each entry (per column) to keep each
        * column aligned with itself. */
       unsigned line_len = cols * MIN_COLUMN_WIDTH;
-      for (int filesno = 0; filesno < lst_cnt; ++filesno) {
+      for (filesno = 0; filesno < lst_cnt; ++filesno) {
 	 int idx = filesno / ((lst_cnt + cols - 1) / cols);
 	 int name_length = lst[filesno]->width();
 
