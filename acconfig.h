@@ -109,6 +109,8 @@
 
 #undef HAVE_VSNPRINTF_DECL
 
+#undef HAVE_STRCASECMP_DECL
+
 /* Define to `int' if <sys/socket.h> doesn't define.  */
 #undef socklen_t
 
