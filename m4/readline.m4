@@ -1,6 +1,13 @@
 dnl Check for libreadline of proper version
 AC_DEFUN(READLINE_CHECK,
 [AC_MSG_CHECKING(for readline)
+AC_ARG_WITH(included-readline,
+   [  --with-included-readline  use supplied readline instead of system one],
+   [with_included_readline=$withval],[with_included_readline=auto])
+case "$with_included_readline" in
+yes) lftp_cv_precompiled_readline=no;;
+no)  lftp_cv_precompiled_readline=yes;;
+*)
 AC_CACHE_VAL(lftp_cv_precompiled_readline,
 [
    old_LIBS="$LIBS"
@@ -14,6 +21,8 @@ AC_CACHE_VAL(lftp_cv_precompiled_readline,
       ],lftp_cv_precompiled_readline=no)
    LIBS="$old_LIBS"
 ])
+   ;;
+esac
 if test $lftp_cv_precompiled_readline = yes; then
    READLINE_DIR=''
    AC_MSG_RESULT(yes)
