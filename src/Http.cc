@@ -522,6 +522,7 @@ int Http::Do()
    Buffer *data_buf;
 
    // check if idle time exceeded
+   // NOT USED YET.
    if(mode==CLOSED && sock!=-1 && idle>0)
    {
       if(now-idle_start>=idle)
@@ -900,11 +901,11 @@ int Http::Do()
 	    m=MOVED;
 	 else
 	 {
+	    // check if ranges were emulated by squid
+	    bool no_ranges_if_timeout=(bytes_received==0 && !seen_ranges_bytes);
 	    if(CheckTimeout())
 	    {
-	       // check if ranges were emulated by squid
-	       if(bytes_received==0 && !seen_ranges_bytes)
-		  no_ranges=true;
+	       no_ranges|=no_ranges_if_timeout;
 	       return MOVED;
 	    }
 	 }
