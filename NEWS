@@ -1,3 +1,10 @@
+Version 2.1.1 - 1999-10-0?
+
+* close -a now really closes all connections, even if current protocol is http.
+* extra info in debug output when it goes to a file.
+* in http listings, strip slash in /~user links.
+* fixed compile problems on some systems in ResMgr.h, module.c.
+
 Version 2.1.0 - 1999-09-27
 
 * ftp over http proxy support via hftp:// notation.
