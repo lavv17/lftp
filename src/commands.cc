@@ -86,7 +86,7 @@ CMD(mkdir); CMD(quote);  CMD(scache);  CMD(mrm);
 CMD(ver);   CMD(close);  CMD(bookmark);CMD(lftp);
 CMD(echo);  CMD(suspend);CMD(ftpcopy); CMD(sleep);
 CMD(at);    CMD(find);   CMD(command); CMD(module);
-CMD(lpwd);  CMD(glob);	 CMD(chmod);
+CMD(lpwd);  CMD(glob);	 CMD(chmod);   CMD(queue);
 
 #ifdef MODULE_CMD_MIRROR
 # define cmd_mirror 0
@@ -257,6 +257,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "     it requires permission to overwrite remote files\n")},
    {"pwd",     cmd_pwd,    "pwd",
 	 N_("Print current remote directory\n")},
+   {"queue",   cmd_queue,  0,0},
    {"quit",    cmd_exit,   0,"exit"},
    {"quote",   cmd_quote,  N_("quote <cmd>"),
 	 N_("Send the command uninterpreted. Use with caution - it can lead to\n"
@@ -727,6 +728,29 @@ Job *CmdExec::builtin_glob()
    return this;
 }
 
+Job *CmdExec::builtin_queue()
+{
+   if(queue==0)
+   {
+      queue=new CmdExec(session->Clone());
+      queue->parent=this;
+      queue->AllocJobno();
+      queue->cmdline=xstrdup("queue");
+   }
+   
+   char *cmd=0;
+   if(args->count()==2)
+      cmd=args->Combine(1);
+   else
+      cmd=args->CombineQuoted(1);
+   
+   queue->FeedCmd(cmd);
+   queue->FeedCmd("\n");
+
+   xfree(cmd);
+
+   return 0;
+}
 
 // below are only non-builtin commands
 #define args	  (parent->args)
@@ -1955,4 +1979,9 @@ CMD(chmod)
    Job *j=new ChmodJob(Clone(),m,args);
    args=0;
    return j;
+}
+
+CMD(queue)
+{
+   return parent->builtin_queue();
 }

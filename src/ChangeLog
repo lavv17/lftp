@@ -1,5 +1,10 @@
 1999-08-12  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* CmdExec.h, CmdExec.cc, commands.cc: implement simple command queue;
+	  (CmdExec::queue) new static member; (queue) new command.
+
+1999-08-12  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* ftpclass.cc: paranoia check.
 
 1999-08-11  Alexander V. Lukyanov  <lav@yars.free.net>

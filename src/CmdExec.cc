@@ -52,6 +52,7 @@ static ResDecl
    res_verbose		   ("cmd:verbose",	"no", ResMgr::BoolValidate,0);
 
 CmdExec	 *CmdExec::cwd_owner=0;
+CmdExec	 *CmdExec::queue=0;
 
 void  CmdExec::SetCWD(const char *c)
 {
@@ -652,6 +653,27 @@ void CmdExec::PrintStatus(int v)
       free(s);
       return;
    }
+   if(queue==this)
+   {
+      if(!(next_cmd && next_cmd[0]))
+	 return;
+      printf(_("\tCommands queued:\n"));
+      char *cmd=next_cmd;
+      int n=1;
+      for(;;)
+      {
+	 char *cmd_end=strchr(cmd,'\n');
+	 if(!cmd_end)
+	    cmd_end=cmd+strlen(cmd);
+	 printf("\t%2d. %.*s\n",n++,cmd_end-cmd,cmd);
+	 if(*cmd_end==0)
+	    break;
+	 cmd=cmd_end+1;
+	 if(*cmd==0)
+	    break;
+      }
+      return;
+   }
    if(waiting)
    {
       printf(_("\tWaiting for job [%d] to terminate\n"),waiting->jobno);
@@ -706,6 +728,8 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
 
 CmdExec::~CmdExec()
 {
+   if(this==queue)
+      queue=0;
    free_used_aliases();
    xfree(cmd);
    if(args)

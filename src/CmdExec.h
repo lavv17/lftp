@@ -123,6 +123,8 @@ private:
    Glob *glob;
    ArgV *args_glob;
 
+   static CmdExec *queue;
+
 public:
    void FeedCmd(const char *c);
    void PrependCmd(const char *c);
@@ -189,6 +191,7 @@ public:
    Job *builtin_lftp();
    Job *builtin_restart();
    Job *builtin_glob();
+   Job *builtin_queue();
 
    Job *default_cmd();
 
