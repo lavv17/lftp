@@ -1,3 +1,7 @@
+2000-06-29	Manoj Kasichainula <manoj@io.com>
+
+	* Makefile.in.in: use DESTDIR.
+
 2000-05-24	Moritz Moeller-Herrmann <mmh@gmx.net>
 
 	* de.po: update

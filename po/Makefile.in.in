@@ -122,7 +122,7 @@ install-data-yes: all
 	    *)     destdir=$(localedir);; \
 	  esac; \
 	  lang=`echo $$cat | sed 's/\$(CATOBJEXT)$$//'`; \
-	  dir=$$destdir/$$lang/LC_MESSAGES; \
+	  dir=$(DESTDIR)$$destdir/$$lang/LC_MESSAGES; \
 	  if test -r $(MKINSTALLDIRS); then \
 	    $(MKINSTALLDIRS) $$dir; \
 	  else \
@@ -152,12 +152,12 @@ install-data-yes: all
 	done
 	if test "$(PACKAGE)" = "gettext"; then \
 	  if test -r $(MKINSTALLDIRS); then \
-	    $(MKINSTALLDIRS) $(gettextsrcdir); \
+	    $(MKINSTALLDIRS) $(DESTDIR)$(gettextsrcdir); \
 	  else \
-	    $(top_srcdir)/mkinstalldirs $(gettextsrcdir); \
+	    $(top_srcdir)/mkinstalldirs $(DESTDIR)$(gettextsrcdir); \
 	  fi; \
 	  $(INSTALL_DATA) $(srcdir)/Makefile.in.in \
-			  $(gettextsrcdir)/Makefile.in.in; \
+			  $(DESTDIR)$(gettextsrcdir)/Makefile.in.in; \
 	else \
 	  : ; \
 	fi
@@ -170,12 +170,12 @@ uninstall:
 	for cat in $$catalogs; do \
 	  cat=`basename $$cat`; \
 	  lang=`echo $$cat | sed 's/\$(CATOBJEXT)$$//'`; \
-	  rm -f $(localedir)/$$lang/LC_MESSAGES/$(PACKAGE)$(INSTOBJEXT); \
-	  rm -f $(localedir)/$$lang/LC_MESSAGES/$(PACKAGE)$(INSTOBJEXT).m; \
-	  rm -f $(gnulocaledir)/$$lang/LC_MESSAGES/$(PACKAGE)$(INSTOBJEXT); \
-	  rm -f $(gnulocaledir)/$$lang/LC_MESSAGES/$(PACKAGE)$(INSTOBJEXT).m; \
+	  rm -f $(DESTDIR)$(localedir)/$$lang/LC_MESSAGES/$(PACKAGE)$(INSTOBJEXT); \
+	  rm -f $(DESTDIR)$(localedir)/$$lang/LC_MESSAGES/$(PACKAGE)$(INSTOBJEXT).m; \
+	  rm -f $(DESTDIR)$(gnulocaledir)/$$lang/LC_MESSAGES/$(PACKAGE)$(INSTOBJEXT); \
+	  rm -f $(DESTDIR)$(gnulocaledir)/$$lang/LC_MESSAGES/$(PACKAGE)$(INSTOBJEXT).m; \
 	done
-	rm -f $(gettextsrcdir)/po-Makefile.in.in
+	rm -f $(DESTDIR)$(gettextsrcdir)/po-Makefile.in.in
 
 check: all
 
