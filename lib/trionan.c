@@ -50,6 +50,7 @@
  *   NetBSD 1.4      x86          gcc
  *   NetBSD 1.4      StrongARM    gcc
  *   NetBSD 1.5      Alpha        gcc
+ *   OpenVMS 7.1     Alpha        DEC C 6.0
  *   RISC OS 4       StrongARM    Norcroft C
  *   Solaris 2.5.1   x86          gcc
  *   Solaris 2.5.1   Sparc        gcc
@@ -62,7 +63,6 @@
  ************************************************************************/
 
 static const char rcsid[] = "@(#)$Id$";
-
 
 /*************************************************************************
  * Include files
@@ -77,7 +77,17 @@ static const char rcsid[] = "@(#)$Id$";
 #if defined(TRIO_PLATFORM_UNIX)
 # include <signal.h>
 #endif
+#if defined(TRIO_COMPILER_DECC)
+# include <fp_class.h>
+#endif
 #include <assert.h>
+
+#if defined(TRIO_DOCUMENTATION)
+# include "doc/doc_nan.h"
+#endif
+/** @addtogroup SpecialQuantities
+    @{
+*/
 
 /*************************************************************************
  * Definitions
@@ -86,7 +96,11 @@ static const char rcsid[] = "@(#)$Id$";
 /* We must enable IEEE floating-point on Alpha */
 #if defined(__alpha) && !defined(_IEEE_FP)
 # if defined(TRIO_COMPILER_DECC)
-#  error "Must be compiled with option -ieee"
+#  if defined(TRIO_PLATFORM_VMS)
+#   error "Must be compiled with option /IEEE_MODE=UNDERFLOW_TO_ZERO/FLOAT=IEEE"
+#  else
+#   error "Must be compiled with option -ieee"
+#  endif
 # elif defined(TRIO_COMPILER_GCC) && (defined(__osf__) || defined(__linux__))
 #  error "Must be compiled with option -mieee"
 # endif
@@ -102,7 +116,7 @@ static const char rcsid[] = "@(#)$Id$";
  *     maximum exponent is 10 bits wide (2^10 == 1024).
  *   o DBL_MANT_DIG == 53: The mantissa is 52 bits wide, but because
  *     numbers are normalized the initial binary 1 is represented
- *     implictly (the so-called "hidden bit"), which leaves us with
+ *     implicitly (the so-called "hidden bit"), which leaves us with
  *     the ability to represent 53 bits wide mantissa.
  */
 #if (FLT_RADIX == 2) && (DBL_MAX_EXP == 1024) && (DBL_MANT_DIG == 53)
@@ -120,16 +134,16 @@ static const char rcsid[] = "@(#)$Id$";
  * Endian-agnostic indexing macro.
  *
  * The value of internalEndianMagic, when converted into a 64-bit
- * integer, becomes 0x0001020304050607 (we could have used a 64-bit
+ * integer, becomes 0x0706050403020100 (we could have used a 64-bit
  * integer value instead of a double, but not all platforms supports
  * that type). The value is automatically encoded with the correct
  * endianess by the compiler, which means that we can support any
  * kind of endianess. The individual bytes are then used as an index
  * for the IEEE 754 bit-patterns and masks.
  */
-#define TRIO_DOUBLE_INDEX(x) (((unsigned char *)&internalEndianMagic)[(x)])
+#define TRIO_DOUBLE_INDEX(x) (((unsigned char *)&internalEndianMagic)[7-(x)])
 
-static TRIO_CONST double internalEndianMagic = 1.4015997730788920e-309;
+static TRIO_CONST double internalEndianMagic = 7.949928895127363e-275;
 
 /* Mask for the exponent */
 static TRIO_CONST unsigned char ieee_754_exponent_mask[] = {
@@ -153,9 +167,13 @@ static TRIO_CONST unsigned char ieee_754_qnan_array[] = {
 
 
 /*************************************************************************
+ * Functions
+ */
+
+/*
  * trio_make_double
  */
-static double
+TRIO_PRIVATE double
 trio_make_double(TRIO_CONST unsigned char *values)
 {
   TRIO_VOLATILE double result;
@@ -167,10 +185,10 @@ trio_make_double(TRIO_CONST unsigned char *values)
   return result;
 }
 
-/*************************************************************************
+/*
  * trio_examine_double
  */
-static int
+TRIO_PRIVATE int
 trio_is_special_quantity(double number,
 			 int *has_mantissa)
 {
@@ -192,9 +210,11 @@ trio_is_special_quantity(double number,
 #endif /* USE_IEEE_754 */
 
 
-/*************************************************************************
- * trio_pinf
- */
+/**
+   Generate positive infinity.
+
+   @return Floating-point representation of positive infinity.
+*/
 TRIO_PUBLIC double
 trio_pinf(void)
 {
@@ -234,9 +254,11 @@ trio_pinf(void)
   return result;
 }
 
-/*************************************************************************
- * trio_ninf
- */
+/**
+   Generate negative infinity.
+
+   @return Floating-point value of negative infinity.
+*/
 TRIO_PUBLIC double
 trio_ninf(void)
 {
@@ -253,9 +275,11 @@ trio_ninf(void)
   return result;
 }
 
-/*************************************************************************
- * trio_nan
- */
+/**
+   Generate NaN.
+
+   @return Floating-point representation of NaN.
+*/
 TRIO_PUBLIC double
 trio_nan(void)
 {
@@ -298,9 +322,12 @@ trio_nan(void)
   return result;
 }
 
-/*************************************************************************
- * trio_isnan
- */
+/**
+   Check for NaN.
+
+   @param number An arbitrary floating-point number.
+   @return Boolean value indicating whether or not the number is a NaN.
+*/
 TRIO_PUBLIC int
 trio_isnan(TRIO_VOLATILE double number)
 {
@@ -315,7 +342,7 @@ trio_isnan(TRIO_VOLATILE double number)
   
 #elif defined(TRIO_COMPILER_MSVC)
   /*
-   * MSC has an _isnan() function
+   * MSVC has an _isnan() function
    */
   return _isnan(number);
 
@@ -362,9 +389,12 @@ trio_isnan(TRIO_VOLATILE double number)
 #endif
 }
 
-/*************************************************************************
- * trio_isinf
- */
+/**
+   Check for infinity.
+
+   @param number An arbitrary floating-point number.
+   @return 1 if positive infinity, -1 if negative infinity, 0 otherwise.
+*/
 TRIO_PUBLIC int
 trio_isinf(TRIO_VOLATILE double number)
 {
@@ -430,7 +460,56 @@ trio_isinf(TRIO_VOLATILE double number)
 #endif
 }
 
+
+/**
+   Check for finity.
+
+   @param number An arbitrary floating-point number.
+   @return Boolean value indicating whether or not the number is a finite.
+*/
+TRIO_PUBLIC int
+trio_isfinite(TRIO_VOLATILE double number)
+{
+#if defined(isfinite)
+  /*
+   * C99 defines isfinite() as a macro.
+   */
+  return isfinite(number);
+  
+#elif defined(TRIO_COMPILER_MSVC)
+  /*
+   * MSVC uses _finite().
+   */
+  return _finite(number);
+
+#elif defined(USE_IEEE_754)
+  /*
+   * Examine IEEE 754 bit-pattern. For finity we do not care about the
+   * mantissa.
+   */
+  int dummy;
+
+  return (! trio_is_special_quantity(number, &dummy));
+
+#else
+  /*
+   * Fallback solution.
+   */
+  return ((trio_isinf(number) == 0) && (trio_isnan(number) == 0));
+  
+#endif
+}
+
+
+/** @} SpecialQuantities */
+
 /*************************************************************************
+ * For test purposes.
+ *
+ * Add the following compiler option to include this test code.
+ *
+ *  Unix : -DSTANDALONE
+ *  VMS  : /DEFINE=(STANDALONE)
  */
 #if defined(STANDALONE)
 # include <stdio.h>
