@@ -1,3 +1,7 @@
+2003-01-10  Paul Lew <paullew@cisco.com>
+
+	* resource.cc: fix build on solaris 2.6.
+
 2003-01-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Fish.cc: add -a option for ls.

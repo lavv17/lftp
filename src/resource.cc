@@ -243,7 +243,9 @@ static ResDecl
    ResDecl41 ("net:socket-buffer",	  "0",	   ResMgr::UNumberValidate,0),
    ResDecl42 ("net:socket-maxseg",	  "0",	   ResMgr::UNumberValidate,0),
    ResDecl42a("net:socket-bind-ipv4",	  "",	   ResMgr::IPv4AddrValidate,0),
+#if INET6
    ResDecl42b("net:socket-bind-ipv6",	  "",	   ResMgr::IPv6AddrValidate,0),
+#endif
    ResDecl43 ("net:timeout",		  "300",   ResMgr::UNumberValidate,0),
    ResDecl44 ("net:connection-limit",	  "0",	   ResMgr::UNumberValidate,0),
    ResDecl45 ("net:connection-takeover",  "yes",   ResMgr::BoolValidate,0),
