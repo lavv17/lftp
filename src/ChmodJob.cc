@@ -52,6 +52,7 @@ ChmodJob::~ChmodJob()
 void ChmodJob::Recurse()
 {
    set_maxdepth(-1);
+   Need(FileInfo::TYPE);
 }
 
 int ChmodJob::GetMode(const FileInfo *fi) const

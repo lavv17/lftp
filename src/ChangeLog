@@ -1,3 +1,7 @@
+2004-02-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ChmodJob.cc: fix recursing.
+
 2004-02-19  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* StatusLine.cc: don't write negative amount of chars.
