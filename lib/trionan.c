@@ -441,21 +441,13 @@ TRIO_ARGS1((number),
 	  ? 1
 	  : ((fp_class(number) == FP_NEG_INF) ? -1 : 0));
 
-#elif defined(_FPCLASSIFY)
-  /*
-   * HP-UX 11.0 has an isinf() macro, but it is broken, so we use
-   * the _FPCLASSIFY() macro instead. We also guard the C99 check
-   * below by checking for the existance of the _ISINF() macro.
-   */
-  return (_FPCLASSIFY(number) == FP_INFINITE)
-    ? ((number > 0.0) ? 1 : -1)
-    : 0;
-  
-#elif defined(isinf) && !defined(_ISINF)
+#elif defined(isinf)
   /*
    * C99 defines isinf() as a macro.
    */
-  return isinf(number);
+  return isinf(number)
+    ? ((number > 0.0) ? 1 ; -1)
+    : 0;
   
 #elif defined(TRIO_COMPILER_MSVC)
   /*

@@ -77,6 +77,7 @@ extern "C" {
 # define TRIO_FREE(x) free(x)
 #endif
 
+
 /*************************************************************************
  * User-defined specifiers
  */

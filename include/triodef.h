@@ -115,6 +115,7 @@
 # define TRIO_SIGNED
 typedef double trio_long_double_t;
 typedef char * trio_pointer_t;
+# define TRIO_SUFFIX_LONG(x) x
 # define TRIO_PROTO(x) ()
 # define TRIO_NOARGS
 # define TRIO_ARGS1(list,a1) list a1;
@@ -136,6 +137,7 @@ typedef char * trio_pointer_t;
 # define TRIO_SIGNED signed
 typedef long double trio_long_double_t;
 typedef void * trio_pointer_t;
+# define TRIO_SUFFIX_LONG(x) x ## L
 # define TRIO_PROTO(x) x
 # define TRIO_NOARGS void
 # define TRIO_ARGS1(list,a1) (a1)
