@@ -27,13 +27,22 @@
 #include "xmalloc.h"
 #include "xstring.h"
 
+bool CmdExec::quotable(char ch,char in_quotes)
+{
+   if(!ch)
+      return false;
+   if(ch=='\\' || ch=='!' || ch==in_quotes)
+      return true;
+   if(in_quotes)
+      return false;
+   if(strchr("\"' \t>|;&",ch))
+      return true;
+   return false;
+}
+
 CmdExec::parse_result CmdExec::parse_one_cmd()
 {
    char	 in_quotes;
-
-#define quotable(ch) (ch && (ch=='\\' || ch=='!' || ch==in_quotes \
-			     || (!in_quotes && strchr("\"' \t>|;&",ch))))
-
    char *line=next_cmd;
    static char *nextarg=0;
    char *endarg;
@@ -83,7 +92,7 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
    for(;;)
    {
       // skip leading whitespace
-      while(*line==' ' || *line=='\t')
+      while(is_space(*line))
 	 line++;
 
       if(line[0]=='\\' && line[1]=='\n')
@@ -121,7 +130,7 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
 	 // shell command -- it ends only with '\n'
 	 args->Append("!");
 	 line++;
-	 while(*line==' ' || *line=='\t')
+	 while(is_space(*line))
 	    line++;
 	 while(*line!='\n' && *line)
 	 {
@@ -174,7 +183,7 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
 	       }
 	       if(in_quotes && *line==in_quotes)
 		  in_quotes=0;
-	       else if(!in_quotes && (*line=='\'' || *line=='"'))
+	       else if(!in_quotes && is_quote(*line))
 		  in_quotes=*line;
 	    }
 	    *endarg++=*line++;
@@ -182,7 +191,7 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
 	 *endarg=0;
 	 args->Append(nextarg);
 	 line++;  // skip )
-	 while(*line==' ' || *line=='\t')
+	 while(is_space(*line))
 	    line++;
 	 goto cmd_end;
       }
@@ -205,17 +214,17 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
 	 }
 	 if(line[0]=='\r' && line[1]=='\n')
 	    line++;
-	 if(*line=='\\' && quotable(line[1]))
+	 if(*line=='\\' && quotable(line[1],in_quotes))
 	 {
 	    line++;
 	 }
 	 else
 	 {
 	    if(*line==0 || *line=='\n'
-	    || (!in_quotes && (*line==' ' || *line=='\t'
+	    || (!in_quotes && (is_space(*line)
 		     || *line=='>' || *line=='|' || *line==';' || *line=='&')))
 	       break;
-	    if(!in_quotes && (*line=='"' || *line=='\''))
+	    if(!in_quotes && is_quote(*line))
 	    {
 	       in_quotes=*line;
 	       line++;
@@ -297,7 +306,7 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
       }
 
       // skip leading whitespace
-      while(*line==' ' || *line=='\t')
+      while(is_space(*line))
 	 line++;
 
       if(*line==0 || *line=='\n' || *line==';' || *line=='&')
@@ -325,16 +334,16 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
 	    line+=2;
 	    continue;
 	 }
-	 if(*line=='\\' && quotable(line[1]))
+	 if(*line=='\\' && quotable(line[1],in_quotes))
 	    line++;
 	 else
 	 {
 	    // filename can end with a space, filter command can't.
 	    if(*line==0 || *line=='\n' || (!in_quotes
-		  && ((redir_type!='|' && (*line==' '||*line=='\t'))
+		  && ((redir_type!='|' && is_space(*line))
 		      || *line==';' || *line=='&')))
 	       break;
-	    if(!in_quotes && (*line=='"' || *line=='\''))
+	    if(!in_quotes && is_quote(*line))
 	    {
 	       in_quotes=*line;
 	       line++;
@@ -351,7 +360,7 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
       }
       *endarg=0;
       // skip spaces
-      while(*line==' ' || *line=='\t')
+      while(is_space(*line))
 	 line++;
    }
 
@@ -387,6 +396,4 @@ cmd_end:
    }
 
    return PARSE_OK;
-
-#undef quotable
 }

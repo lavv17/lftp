@@ -2,6 +2,10 @@
 
 	* Fish.cc, Fish.h, SFtp.cc, SFtp.h: don't sent password several times,
 	  as it most probably is incorrect.
+	* CmdExec.h, parsecmd.cc: (quotable, is_space, is_quote) add utility
+	  functions; use them.
+	* complete.cc: (copy_word_skip, skip_word) new functions; use them for
+	  argument counting; better mirror -R completion.
 
 2004-10-17  Alexander V. Lukyanov <lav@yars.free.net>
 

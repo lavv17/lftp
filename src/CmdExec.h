@@ -149,6 +149,9 @@ public:
    static void unquote(char *buf,const char *str);
    static char *unquote(const char *str);
    static bool needs_quotation(const char *buf);
+   static bool quotable(char c,char in_quotes);
+   static bool is_space(char c) { return c==' ' || c=='\t'; }
+   static bool is_quote(char c) { return c=='"' || c=='\''; }
    void FeedQuoted(const char *c);
    void AtExit();
    void EmptyCmds();

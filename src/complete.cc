@@ -255,23 +255,59 @@ int ignore_non_dirs(char **matches)
 
 static const char *find_word(const char *p)
 {
-   while(*p && isspace(*p))
+   while(CmdExec::is_space(*p))
       p++;
    return p;
+}
+static bool copy_word_skip(const char **p_in,char *buf,int n)
+{
+   const char *&p=*p_in;
+   char in_quotes=0;
+   for(;;)
+   {
+      if(!*p)
+	 break;
+      if(in_quotes)
+      {
+	 if(*p==in_quotes)
+	 {
+	    in_quotes=0,p++;
+	    continue;
+	 }
+	 else if(*p=='\\' && CmdExec::quotable(p[1],in_quotes))
+	    p++;
+	 if(buf && n>0)
+	    *buf++=*p,n--;
+	 p++;
+	 continue;
+      }
+      if(CmdExec::is_space(*p))
+	 break;
+      if(*p=='\\' && CmdExec::quotable(p[1],in_quotes))
+	 p++;
+      else if(CmdExec::is_quote(*p))
+      {
+	 in_quotes=*p++;
+	 continue;
+      }
+      if(buf && n>0)
+	 *buf++=*p,n--;
+      p++;
+   }
+   if(n>0 && buf)
+      *buf=0;
+   return n>0;
 }
 // returns false when buffer overflows
 static bool copy_word(char *buf,const char *p,int n)
 {
-   while(n>0 && *p && !isspace(*p))
-   {
-      *buf++=*p++;
-      n--;
-   }
-   if(n>0)
-      *buf=0;
-   return n>0;
+   return copy_word_skip(&p,buf,n);
 }
-
+static const char *skip_word(const char *p)
+{
+   copy_word_skip(&p,0,0);
+   return p;
+}
 
 enum completion_type
 {
@@ -383,7 +419,8 @@ static completion_type cmd_completion_type(const char *cmd,int start)
    bool was_o=false;
    bool was_N=false;
    bool was_O=false;
-   bool was_R=false;
+   bool have_R=false;
+   bool have_N=false;
    bool second=false;
    int second_start=-1;
    for(int i=start; i>4; i--)
@@ -400,11 +437,6 @@ static completion_type cmd_completion_type(const char *cmd,int start)
 	 was_N=true;
 	 break;
       }
-      if(!strncmp(rl_line_buffer+i-3,"-R",2) && isspace(rl_line_buffer[i-4]))
-      {
-	 was_R=true;
-	 break;
-      }
       if(i-14 >= 0 && !strncmp(rl_line_buffer+i-13, "--newer-than",12) && isspace(rl_line_buffer[i-14]))
       {
 	 was_N=true;
@@ -416,15 +448,32 @@ static completion_type cmd_completion_type(const char *cmd,int start)
 	 break;
       }
    }
-   w=find_word(cmd);
-   while(*w && !isspace(*w))
-      w++;  // FIXME: handle quotations.
+   w=skip_word(find_word(cmd));
    if(*w)
    {
       w=find_word(w);
       second_start=w-cmd;
       if(w-cmd==start)	// we complete second word
 	 second=true;
+   }
+
+   if(re_match(cmd," -[a-zA-Z]*R[a-zA-Z]* ",0))
+      have_R=true;
+
+   int arg=0;
+   bool opt_stop=false;
+   for(w=cmd; *w; )
+   {
+      w=find_word(w);
+      if(w-cmd==start || w-cmd+CmdExec::is_quote(*w)==start)
+	 break;
+      if(w[0]!='-' || opt_stop)
+	 arg++;
+      else if(re_match(w,"^-[a-zA-Z]*N ",0))
+	 have_N=true;
+      if(!strncmp(w,"-- ",3))
+	 opt_stop=true;
+      w=skip_word(w);
    }
 
    if(!strcmp(buf,"get")
@@ -448,11 +497,15 @@ static completion_type cmd_completion_type(const char *cmd,int start)
 	 return REMOTE_DIR;
    if(!strcmp(buf,"mirror"))
    {
-      // FIXME: guess -R better and take arg number into account.
-      if(was_R)
+      if(was_N)
+	 return LOCAL;
+      if(have_N)
+	 arg--;
+      if(have_R ^ arg!=1)
 	 return LOCAL_DIR;
-      if(!was_N)
-	 return REMOTE_DIR;
+      if(arg>2)
+	 return NO_COMPLETION;
+      return REMOTE_DIR;
    }
    if(!strcmp(buf,"bookmark"))
    {
