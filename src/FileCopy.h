@@ -205,6 +205,7 @@ public:
    FileCopyPeerFDStream(FDStream *o,direction m);
    ~FileCopyPeerFDStream();
    int Do();
+   bool Done();
    bool IOReady();
    void Seek(long new_pos);
    FgData *GetFgData(bool fg);

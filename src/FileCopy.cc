@@ -733,14 +733,14 @@ int FileCopyPeerFDStream::Do()
       {
 	 if(eof)
 	 {
-	    if(date!=NO_DATE && date!=NO_DATE_YET)
+	    if(!date_set && date!=NO_DATE && date!=NO_DATE_YET)
 	    {
 	       if(getfd()==-1)
 		  return m;
 	       stream->setmtime(date);
+	       date_set=true;
+	       m=MOVED;
 	    }
-	    date_set=true;
-	    m=MOVED;
 	    return m;
 	 }
 	 if(seek_pos==0)
@@ -779,6 +779,11 @@ int FileCopyPeerFDStream::Do()
 bool FileCopyPeerFDStream::IOReady()
 {
    return seek_pos==0 || stream->fd!=-1;
+}
+
+bool FileCopyPeerFDStream::Done()
+{
+   return super::Done() && stream->Done();
 }
 
 void FileCopyPeerFDStream::Seek(long new_pos)
