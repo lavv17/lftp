@@ -1,7 +1,7 @@
 Begin3
 Title:		LFTP command line file transfer program
-Version:	2.2.2
-Entered-date:	2000-04-29
+Version:	2.3.0
+Entered-date:	2000-09-18
 Description:	LFTP is a shell-like command line ftp client. It is
 		reliable: can retry operations and does reget automatically.
 		It can do several transfers simultaneously in background.
@@ -15,12 +15,12 @@ Description:	LFTP is a shell-like command line ftp client. It is
 		SOCKS support (configure option), ftp and http proxy support,
 		transfer rate throttling for each connection and for all
 		connections in sum, job queueing, job execution at specified
-		time, opie/skey support in ftp protocol.
+		time, opie/skey support in ftp protocol, ssl for http and ftp.
 Keywords:	ftp client, readline, reliable, background, parallel, http
 Author:		lav@yars.free.net (Alexander V. Lukyanov)
 Maintained-by:	lav@yars.free.net (Alexander V. Lukyanov)
 Primary-site:	ftp.yars.free.net /pub/software/unix/net/ftp/client/lftp
-		940 kB lftp-2.2.2.tar.gz
+		1057 kB lftp-2.3.0.tar.gz
 Alternate-site:	metalab.unc.edu /pub/Linux/system/network/file-transfer
 Platforms:	Unix, G++
 Copying-policy: GNU GPL
