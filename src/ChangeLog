@@ -1,3 +1,8 @@
+2001-07-18  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h, resource.cc: allow to choose AUTH argument;
+	  ftp:ssl-auth new variable.
+
 2001-07-14  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ResMgr.cc: make it compile with irix compiler.
