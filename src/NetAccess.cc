@@ -804,6 +804,8 @@ do_again:
       result->rewind();
       for(file=result->curr(); file!=0; file=result->next())
       {
+	 cur->size=NO_SIZE;
+	 cur->time=NO_DATE;
 	 cur->get_size = need_size && !(file->defined & file->SIZE);
 	 cur->get_time = need_time && (!(file->defined & file->DATE)
 				 || (file->date_prec>0 && can_get_prec_time));
@@ -864,9 +866,9 @@ do_again:
       session->Close();
       for(cur=get_info; get_info_cnt-->0; cur++)
       {
-	 if(cur->time!=(time_t)-1)
+	 if(cur->time!=NO_DATE)
 	    result->SetDate(cur->file,cur->time,0);
-	 if(cur->size!=-1)
+	 if(cur->size!=NO_SIZE)
 	    result->SetSize(cur->file,cur->size);
       }
       xfree(get_info);
