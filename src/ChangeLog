@@ -1,3 +1,8 @@
+2000-08-23  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileCopy.cc: fix Seek of FileCopyPeerFDStream. This fixes
+	  problem with downloading from REST uncapable servers.
+
 2000-08-21  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: if server returned address from private network

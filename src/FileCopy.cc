@@ -1204,7 +1204,7 @@ void FileCopyPeerFDStream::Seek_LL()
 {
    int fd=stream->fd;
    assert(fd!=-1);
-   if(seek_pos!=0 && CanSeek(seek_pos))
+   if(CanSeek(seek_pos))
    {
       if(seek_pos==FILE_END)
       {
@@ -1240,8 +1240,7 @@ void FileCopyPeerFDStream::Seek_LL()
    }
    else
    {
-      pos=(mode==GET?0:in_buffer);
-      seek_pos=0;
+      seek_pos=pos;
    }
 }
 
