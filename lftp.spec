@@ -33,9 +33,9 @@ fi
 # ltconfig
 %define __libtoolize true
 %if %use_modules
-    %configure --with-modules
+    %configure --with-modules --mandir=%{_mandir}
 %else
-    %configure
+    %configure --mandir=%{_mandir}
 %endif
 make
 
