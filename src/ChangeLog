@@ -1,3 +1,7 @@
+1999-11-19  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: move aborted_data_sock along with control_sock.
+
 1999-11-16  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: don't decrease sync_wait on 1xx replies.

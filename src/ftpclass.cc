@@ -2449,8 +2449,12 @@ void  Ftp::MoveConnectionHere(Ftp *o)
    o->EmptySendQueue();
 
    o->state=INITIAL_STATE;
+   assert(control_sock==-1);
    control_sock=o->control_sock;
    o->control_sock=-1;
+   assert(aborted_data_sock==-1);
+   aborted_data_sock=o->aborted_data_sock;
+   o->aborted_data_sock=-1;
    if(peer_curr>=peer_num)
       peer_curr=0;
    type=o->type;
