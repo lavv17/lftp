@@ -107,7 +107,7 @@ static ResDecl
    res_anon_user	("ftp:anon-user",      "anonymous",0,0),
    res_anon_pass	("ftp:anon-pass",      0,    0,0),
    res_socket_buffer	("ftp:socket-buffer",  "0",  ResMgr::UNumberValidate,0),
-   res_address_verify	("ftp:verify-address", "yes",ResMgr::BoolValidate,0),
+   res_address_verify	("ftp:verify-address", "no", ResMgr::BoolValidate,0),
    res_port_verify      ("ftp:verify-port",    "no", ResMgr::BoolValidate,0);
 
 void  Ftp::ClassInit()
