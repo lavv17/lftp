@@ -105,6 +105,7 @@ int FtpDirList::Do()
 	 time_t date=NO_DATE;
 	 long date_l;
 	 bool dir=false;
+	 int perms=-1;
 	 // check for EPLF listing
 	 if(eol>b+1 && b[0]=='+')
 	 {
@@ -135,6 +136,10 @@ int FtpDirList::Do()
 		     break;
 		  case 'i':
 		     break;
+		  case 'u':
+		     if(scan[1]=='p')  // permissions.
+			sscanf(scan+2,"%o",&perms);
+		     break;
 		  default:
 		     name=0;
 		     scan=0;
@@ -155,19 +160,17 @@ int FtpDirList::Do()
 	    {
 	       // ok, this is EPLF. Format new string.
 	       char *line_add=string_alloca(80+name_len);
-	       const char *perms=0;
-	       if(dir)
-		  perms="drwxr-xr-x";
-	       else
-		  perms="-rw-r--r--";
+	       if(perms==-1)
+		  perms=(dir?0755:0644);
 	       char size_str[32];
 	       if(size==NO_SIZE)
 		  strcpy(size_str,"-");
 	       else
 		  sprintf(size_str,"%ld",size);
 	       struct tm *t=localtime(&date);
-	       sprintf(line_add,"%s  %10s  %04d-%02d-%02d %02d:%02d  %.*s",
-		  perms,size_str,t->tm_year+1900,t->tm_mon+1,t->tm_mday,
+	       sprintf(line_add,"%c%s  %10s  %04d-%02d-%02d %02d:%02d  %.*s",
+		  dir?'d':'-',format_perms(perms),size_str,
+		  t->tm_year+1900,t->tm_mon+1,t->tm_mday,
 		  t->tm_hour,t->tm_min,name_len,name);
 	       b=line_add;
 	       len=strlen(b);

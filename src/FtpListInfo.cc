@@ -488,6 +488,7 @@ first character of field is type:
  / - means directory
  r - means plain file
  s - size
+ up - permissions in octal
  \t - file name follows.
 */
 static
@@ -506,6 +507,7 @@ FileInfo *ParseFtpLongList_EPLF(const char *line,int *err)
    long date_l;
    bool dir=false;
    bool type_known=false;
+   int perms=-1;
 
    const char *scan=b+1;
    int scan_len=len-1;
@@ -535,6 +537,10 @@ FileInfo *ParseFtpLongList_EPLF(const char *line,int *err)
 	    type_known=true;
 	    break;
 	 case 'i':
+	    break;
+	 case 'u':
+	    if(scan[1]=='p')  // permissions.
+	       sscanf(scan+2,"%o",&perms);
 	    break;
 	 default:
 	    name=0;
@@ -568,6 +574,8 @@ FileInfo *ParseFtpLongList_EPLF(const char *line,int *err)
       else
 	 fi->SetType(fi->NORMAL);
    }
+   if(perms!=-1)
+      fi->SetMode(perms);
 
    return fi;
 }

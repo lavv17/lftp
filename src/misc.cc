@@ -345,6 +345,26 @@ int parse_perms(const char *s)
    return p;
 }
 
+// it does not prepend file type.
+const char *format_perms(int p)
+{
+   static char s[10];
+   memset(s,'-',9);
+   if(p&0400) s[0]='r';
+   if(p&0200) s[1]='w';
+   if(p&0100) s[2]='x';
+   if(p&0040) s[3]='r';
+   if(p&0020) s[4]='w';
+   if(p&0010) s[5]='x';
+   if(p&0004) s[6]='r';
+   if(p&0002) s[7]='w';
+   if(p&0001) s[8]='x';
+   if(p&01000) s[8]=(p&0001?'t':'T');
+   if(p&02000) s[5]=(p&0010?'s':'S');
+   if(p&04000) s[2]=(p&0100?'s':'S');
+   return s;
+}
+
 int parse_month(const char *m)
 {
    static const char *months[]={

@@ -1195,6 +1195,8 @@ int   Ftp::Do()
       switch((enum open_mode)mode)
       {
       case(RETRIEVE):
+	 if(file[0]==0)
+	    goto long_list;
          type=FTP_TYPE_I;
          sprintf(str1,"RETR %s\n",file);
          break;
@@ -1204,6 +1206,7 @@ int   Ftp::Do()
 	    real_pos=0;	// some old servers don't handle REST/STOR properly.
          sprintf(str1,"STOR %s\n",file);
          break;
+      long_list:
       case(LONG_LIST):
          type=FTP_TYPE_A;
          if(!rest_list)
@@ -1283,12 +1286,12 @@ int   Ftp::Do()
 	 AddResp(RESP_TYPE_OK,INITIAL_STATE);
       }
 
-      if(opt_size && size_supported)
+      if(opt_size && size_supported && file[0])
       {
 	 SendCmd2("SIZE",file);
 	 AddResp(RESP_RESULT_HERE,INITIAL_STATE,CHECK_SIZE_OPT);
       }
-      if(opt_date && mdtm_supported)
+      if(opt_date && mdtm_supported && file[0])
       {
 	 SendCmd2("MDTM",file);
 	 AddResp(RESP_RESULT_HERE,INITIAL_STATE,CHECK_MDTM_OPT);

@@ -3,6 +3,9 @@
 	* HttpDir.cc: treat table row as a whole line; remove tags before
 	  parsing. (this helps to parse boa_indexer indices, e.g.
 	  http://download.sourceforge.net)
+	* FtpDirList.cc, FtpListInfo.cc: recognize permissions in EPLF listing.
+	* misc.cc, misc.h: (format_perms) new function.
+	* ftpclass.cc: treat cat "" as raw LIST.
 
 2000-03-17  Alexander V. Lukyanov  <lav@yars.free.net>
 
