@@ -670,8 +670,7 @@ int FileCopyPeerCLS::Do()
 	    /* if(res==FA::FILE_MOVED)
 	       {
 	       }
-	       Not going to copy+paste 25 lines of code from MirrorJob--how about a
-	       way to follow symlinks within FileAccess? /
+	       Not going to copy+paste 25 lines of code from MirrorJob
 	     */
 	    printf("%s: %s\n", args->a0(), session->StrError(res));
 	    state = GETTING_LIST;
@@ -683,6 +682,7 @@ int FileCopyPeerCLS::Do()
 	 PutEOF();
 	 return MOVED;
       }
+      list_info->UseCache(use_cache);
       state = GETTING_LIST;
       return MOVED;
    }

@@ -59,6 +59,8 @@ protected:
    bool ascii;
    bool use_cache;
 
+   bool write_allowed;
+
 public:
    enum direction { GET, PUT };
 
@@ -119,6 +121,10 @@ public:
    virtual FA *GetSession() { return 0; } // for fxp.
    virtual void Fg() {}
    virtual void Bg() {}
+
+   void AllowWrite() { write_allowed=true; }
+   bool WriteAllowed() { return write_allowed; }
+   bool WritePending() { return mode==PUT && Size()>0; }
 };
 
 class FileCopy : public SMTask
@@ -227,6 +233,10 @@ public:
 
    static FileCopy *New(FileCopyPeer *src,FileCopyPeer *dst,bool cont);
    static FileCopy *(*fxp_create)(FileCopyPeer *src,FileCopyPeer *dst,bool cont);
+
+   void AllowWrite() { put->AllowWrite(); }
+   bool WriteAllowed() { return put->WriteAllowed(); }
+   bool WritePending() { return put->WritePending(); }
 };
 
 class FileCopyPeerFA : public FileCopyPeer
@@ -343,9 +353,10 @@ public:
    FileCopyPeerDirList(FA *s,ArgV *v); // consumes s and v.
 
    int Do();
-   void NoCache() { if(dl) dl->UseCache(false); }
+   void NoCache() { use_cache=false; if(dl) dl->UseCache(false); }
    void Fg() { session->SetPriority(1); }
    void Bg() { session->SetPriority(0); }
+   const char *GetStatus() { return session->CurrentStatus(); }
 };
 
 #endif

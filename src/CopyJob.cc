@@ -43,6 +43,19 @@ int CopyJob::Do()
       done=true;
       return MOVED;
    }
+   if(!c->WriteAllowed() && c->WritePending())
+   {
+      if(no_status_on_write)
+      {
+	 // clear status.
+	 const char *empty="";
+	 eprintf(empty);
+	 // disable status.
+	 NoStatus();
+      }
+      c->AllowWrite();
+      return MOVED;
+   }
    return STALL;
 }
 int CopyJob::Done()
@@ -109,6 +122,7 @@ CopyJob::CopyJob(FileCopy *c1,const char *name1,const char *op1)
    op=xstrdup(op1);
    done=false;
    no_status=false;
+   no_status_on_write=false;
 }
 CopyJob::~CopyJob()
 {

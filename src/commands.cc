@@ -1172,7 +1172,7 @@ CMD(ls)
 
    CopyJob *j=new CopyJob(c,a,op);
    if(!output || output->usesfd(1))
-      j->NoStatus();
+      j->NoStatusOnWrite();
    xfree(a);
    output=0;
    if(!nlist)
@@ -1270,7 +1270,8 @@ CMD(cls)
    FileSetOutput fso;
    fso.config(output);
 
-   if(!strncmp(op,"re",2)) re=true;
+   if(!strncmp(op,"re",2))
+      re=true;
 
    if(const char *err = fso.parse_argv(args)) {
       if(strcmp(err, "ERR"))
@@ -1281,8 +1282,6 @@ CMD(cls)
 
    ArgV arg("", ResMgr::Query("cmd:cls-default", 0));
    fso.parse_argv(&arg);
-
-   fso.quiet=true;
 
    char *a=args->Combine(0);
 
@@ -1304,6 +1303,8 @@ CMD(cls)
    CopyJob *j=new CopyJob(c,a,op);
    if(fso.quiet)
       j->NoStatus();
+   else if(output->usesfd(1))
+      j->NoStatusOnWrite();
 
    xfree(a);
    output=0;

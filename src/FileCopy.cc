@@ -658,6 +658,7 @@ FileCopyPeer::FileCopyPeer(direction m)
    range_limit=FILE_END;
    removing=false;
    use_cache=true;
+   write_allowed=true;
    Suspend();  // don't do anything too early
 }
 FileCopyPeer::~FileCopyPeer()
@@ -1192,6 +1193,8 @@ FileCopyPeerFDStream::FileCopyPeerFDStream(FDStream *o,direction m)
 	 seek_base=0;
       }
    }
+   if(stream->usesfd(1))
+      write_allowed=false;
 }
 FileCopyPeerFDStream::~FileCopyPeerFDStream()
 {
@@ -1272,7 +1275,7 @@ int FileCopyPeerFDStream::Do()
    int m=STALL;
    int res;
    if(Done() || Error())
-      return STALL;
+      return m;
    switch(mode)
    {
    case PUT:
@@ -1294,6 +1297,8 @@ int FileCopyPeerFDStream::Do()
 	 if(seek_pos==0)
 	    return m;
       }
+      if(!write_allowed)
+	 return m;
       res=Put_LL(buffer+buffer_ptr,in_buffer);
       if(res>0)
       {

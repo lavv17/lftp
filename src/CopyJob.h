@@ -34,12 +34,14 @@ class CopyJob : public Job
    char *name; // file name
    char *op;   // command name
    bool no_status;
+   bool no_status_on_write;
 
 public:
    CopyJob(FileCopy *c1,const char *n,const char *op1);
    ~CopyJob();
 
    void NoStatus() { no_status=true; }
+   void NoStatusOnWrite() { no_status_on_write=true; }
 
    int Do();
    int Done();

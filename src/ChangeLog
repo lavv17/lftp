@@ -1,6 +1,9 @@
 2001-10-17  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h: workaround for WarFTPD ABOR glitch.
+	* CopyJob.cc, CopyJob.h, FileCopy.cc, FileCopy.h: NoStatusOnWrite added.
+	* commands.cc: use it.
+	* FileSetOutput.cc, FileSetOutput.h: fix recls.
 
 2001-10-16  Alexander V. Lukyanov <lav@yars.free.net>
 
