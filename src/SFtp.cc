@@ -56,6 +56,8 @@ int SFtp::Do()
 {
    int m=STALL;
    int count;
+   const char *b;
+   int s;
 
    // check if idle time exceeded
    if(mode==CLOSED && send_buf && idle>0)
@@ -235,10 +237,33 @@ int SFtp::Do()
 	    m=MOVED;
       }
       break;
+   case FILE_SEND:
+      // pack data from file_buf.
+      file_buf->Get(&b,&s);
+      if(s<max_buf/2 && !eof)
+	 return m;   // wait for more data before sending.
+      if(s==0)
+      {
+	 // no more data, set attributes and close the file.
+	 Request_FSETSTAT *req=new Request_FSETSTAT(handle,handle_len,protocol_version);
+	 req->attrs.mtime=entity_date;
+	 req->attrs.flags|=SSH_FILEXFER_ATTR_MODIFYTIME;
+	 SendRequest(req,EXPECT_IGNORE);
+	 CloseHandle(EXPECT_DEFAULT);
+	 state=WAITING;
+	 m=MOVED;
+	 break;
+      }
+      SendRequest(new Request_WRITE(handle,handle_len,request_pos,b,s),EXPECT_WRITE_STATUS);
+      file_buf->Skip(s);
+      request_pos+=s;
+      m=MOVED;
+      break;
    case WAITING:
    case DONE:
-      return m;
+      break;
    }
+   return m;
 }
 
 void SFtp::MoveConnectionHere(SFtp *o)
@@ -460,6 +485,20 @@ void SFtp::SendRequest()
       SendRequest(new Request_OPENDIR(lc_to_utf8(dir_file(cwd,file))),EXPECT_HANDLE);
       state=WAITING;
       break;
+   case STORE:
+      SendRequest(new Request_OPEN(lc_to_utf8(dir_file(cwd,file)),
+			SSH_FXF_WRITE|SSH_FXF_CREAT,protocol_version),EXPECT_HANDLE);
+      state=WAITING;
+      break;
+   }
+}
+
+void SFtp::CloseHandle(expect_t c)
+{
+   if(handle)
+   {
+      SendRequest(new Request_CLOSE(handle,handle_len),c);
+      xfree(handle); handle=0; handle_len=0;
    }
 }
 
@@ -484,11 +523,7 @@ void SFtp::Close()
    eof=false;
    Delete(file_buf); file_buf=0;
    delete file_set; file_set=0;
-   if(handle)
-   {
-      SendRequest(new Request_CLOSE(handle,handle_len),EXPECT_IGNORE);
-      xfree(handle); handle=0; handle_len=0;
-   }
+   CloseHandle(EXPECT_IGNORE);
    super::Close();
    // don't need these out-of-order packets anymore
    while(ooo_chain)
@@ -610,6 +645,14 @@ void SFtp::HandleExpect(Expect *e)
 	 request_pos=real_pos=pos;
 	 if(mode==RETRIEVE)
 	    SendRequest(new Request_FSTAT(handle,handle_len),EXPECT_INFO);
+	 else if(mode==STORE)
+	 {
+	    // truncate the file at write position.
+	    Request_FSETSTAT *req=new Request_FSETSTAT(handle,handle_len,protocol_version);
+	    req->attrs.size=pos;
+	    req->attrs.flags|=SSH_FILEXFER_ATTR_SIZE;
+	    SendRequest(req,EXPECT_IGNORE);
+	 }
       }
       else
 	 SetError(NO_FILE,reply);
@@ -714,6 +757,25 @@ void SFtp::HandleExpect(Expect *e)
       }
       else
 	 SetError(NO_FILE,reply);
+      break;
+   case EXPECT_WRITE_STATUS:
+      if(reply->TypeIs(SSH_FXP_STATUS))
+      {
+	 if(((Reply_STATUS*)reply)->GetCode()==SSH_FX_OK)
+	    break;
+      }
+      SetError(NO_FILE,reply);
+      break;
+   case EXPECT_DEFAULT:
+      if(reply->TypeIs(SSH_FXP_STATUS))
+      {
+	 if(((Reply_STATUS*)reply)->GetCode()==SSH_FX_OK)
+	 {
+	    state=DONE;
+	    break;
+	 }
+      }
+      SetError(NO_FILE,reply);
       break;
    case EXPECT_IGNORE:
       break;
@@ -850,11 +912,8 @@ void SFtp::CloseExpectQueue()
       case EXPECT_INFO:
       case EXPECT_DEFAULT:
       case EXPECT_DATA:
+      case EXPECT_WRITE_STATUS:
 	 e->tag=EXPECT_IGNORE;
-	 break;
-      case EXPECT_STOR_PRELIMINARY:
-      case EXPECT_STOR:
-	 Disconnect();
 	 break;
       case EXPECT_HANDLE:
 	 e->tag=EXPECT_HANDLE_STALE;
@@ -923,47 +982,46 @@ int SFtp::Write(const void *buf,int size)
    if(Error())
       return(error_code);
 
-   if(state!=FILE_SEND || rate_limit==0)
+   if(state!=FILE_SEND || rate_limit==0
+   || send_buf->Size()>3*max_buf)
       return DO_AGAIN;
 
    {
       int allowed=rate_limit->BytesAllowedToPut();
       if(allowed==0)
 	 return DO_AGAIN;
-      if(size+send_buf->Size()>allowed)
+      if(size+file_buf->Size()>allowed)
 	 size=allowed-send_buf->Size();
    }
-   if(size+send_buf->Size()>0x4000)
-      size=0x4000-send_buf->Size();
-   if(pos+size>entity_size)
+   if(size+file_buf->Size()>max_buf/2)
+      size=max_buf/2-file_buf->Size();
+   if(entity_size>=0 && pos+size>entity_size)
       size=entity_size-pos;
    if(size<=0)
       return 0;
-   // FIXME: pack packets
-   send_buf->Put((char*)buf,size);
+   file_buf->Put((char*)buf,size);
    retries=0;
    rate_limit->BytesPut(size);
    pos+=size;
+   real_pos+=size;
    return(size);
 }
 int SFtp::Buffered()
 {
-   if(send_buf==0)
+   if(file_buf==0)
       return 0;
-   return send_buf->Size();
+   return file_buf->Size();
 }
 int SFtp::StoreStatus()
 {
    if(Error())
       return error_code;
-   if(state!=FILE_SEND)
-      return IN_PROGRESS;
-   if(real_pos!=entity_size)
+   if(state==FILE_SEND && !eof)
    {
-      Disconnect();
+      eof=true;
       return IN_PROGRESS;
    }
-   if(RespQueueIsEmpty())
+   if(state==DONE)
       return OK;
    return IN_PROGRESS;
 }
@@ -1313,7 +1371,16 @@ SFtp::unpack_status_t SFtp::FileAttrs::Unpack(Buffer *b,int *offset,int limit,in
 }
 void SFtp::FileAttrs::Pack(Buffer *b,int protocol_version)
 {
-   PACK32(flags);
+   if(protocol_version<=3 && (flags & SSH_FILEXFER_ATTR_MODIFYTIME)
+   && !(flags & SSH_FILEXFER_ATTR_ACCESSTIME))
+   {
+      flags|=SSH_FILEXFER_ATTR_ACMODTIME;
+      atime=mtime;
+   }
+   if(protocol_version<=3)
+      PACK32(flags&SSH_FILEXFER_ATTR_MASK_V3);
+   else
+      PACK32(flags&SSH_FILEXFER_ATTR_MASK_V4);
    if(protocol_version>=4)
    {
       if(type==0)
@@ -1440,6 +1507,13 @@ void SFtp::Request_READ::Pack(Buffer *b)
    PacketSTRING::Pack(b);
    PACK64(pos);
    PACK32(len);
+}
+void SFtp::Request_WRITE::Pack(Buffer *b)
+{
+   PacketSTRING::Pack(b);
+   PACK64(pos);
+   PACK32(len);
+   b->Put(data,len);
 }
 
 const char *SFtp::utf8_to_lc(const char *s)

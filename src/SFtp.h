@@ -73,7 +73,6 @@ static bool is_valid_reply(int p)
       || p==SSH_FXP_EXTENDED_REPLY;
 }
 
-#define SSH_FILEXFER_ATTR_EXTENDED     0x80000000
 #define SSH_FILEXFER_ATTR_SIZE         0x00000001
 #define SSH_FILEXFER_ATTR_UIDGID       0x00000002  // used in protocol v3
 #define SSH_FILEXFER_ATTR_PERMISSIONS  0x00000004
@@ -85,6 +84,9 @@ static bool is_valid_reply(int p)
 #define SSH_FILEXFER_ATTR_OWNERGROUP   0x00000080
 #define SSH_FILEXFER_ATTR_SUBSECOND_TIMES 0x00000100
 #define SSH_FILEXFER_ATTR_EXTENDED     0x80000000
+
+#define SSH_FILEXFER_ATTR_MASK_V3      0x8000000F
+#define SSH_FILEXFER_ATTR_MASK_V4      0x800001FD
 
 #define SSH_FILEXFER_TYPE_REGULAR      1
 #define SSH_FILEXFER_TYPE_DIRECTORY    2
@@ -141,7 +143,6 @@ static bool is_valid_status(int s)
 
    void Init();
 
-   void	 Send(const char *format,...) PRINTF_LIKE(2,3);
    void	 SendMethod();
    void	 SendArrayInfoRequests();
 
@@ -401,6 +402,24 @@ static bool is_valid_status(int s)
       unpack_status_t Unpack(Buffer *b);
       const FileAttrs *GetAttrs() { return &attrs; }
    };
+   class Request_FSETSTAT : public PacketSTRING
+   {
+      int protocol_version;
+   public:
+      FileAttrs attrs;
+      Request_FSETSTAT(const char *h,int h_len,int pv)
+       : PacketSTRING(SSH_FXP_FSETSTAT,h,h_len) { protocol_version=pv; }
+      void ComputeLength()
+	 {
+	    PacketSTRING::ComputeLength();
+	    length+=attrs.ComputeLength(protocol_version);
+	 }
+      void Pack(Buffer *b)
+	 {
+	    PacketSTRING::Pack(b);
+	    attrs.Pack(b,protocol_version);
+	 }
+   };
    class Request_OPEN : public Packet
    {
       int protocol_version;
@@ -490,6 +509,17 @@ static bool is_valid_status(int s)
       Reply_DATA() : PacketSTRING(SSH_FXP_DATA) {}
       void GetData(const char **b,int *s) { *b=string; *s=string_len; }
    };
+   class Request_WRITE : public PacketSTRING
+   {
+   public:
+      off_t pos;
+      unsigned len;
+      char *data;
+      Request_WRITE(const char *h,int hlen,off_t p,const char *d,unsigned l)
+       : PacketSTRING(SSH_FXP_WRITE,h,hlen) { pos=p; len=l; data=(char*)xmemdup(d,l); }
+      void ComputeLength() { PacketSTRING::ComputeLength(); length+=8+4+len; }
+      void Pack(Buffer *b);
+   };
 
    enum expect_t
    {
@@ -501,8 +531,7 @@ static bool is_valid_status(int s)
       EXPECT_DATA,
       EXPECT_INFO,
       EXPECT_DEFAULT,
-      EXPECT_STOR_PRELIMINARY,
-      EXPECT_STOR,
+      EXPECT_WRITE_STATUS,
       EXPECT_IGNORE
    };
 
@@ -521,6 +550,7 @@ static bool is_valid_status(int s)
    int HandlePty();
    void HandleExpect(Expect *);
    void CloseExpectQueue();
+   void CloseHandle(expect_t e);
    int ReplyLogPriority(int);
 
    Expect *expect_chain;
