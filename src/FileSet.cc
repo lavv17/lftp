@@ -347,7 +347,7 @@ bool  FileInfo::SameAs(const FileInfo *fi,int ignore)
       if(p<fi->date_prec)
 	 p=fi->date_prec;
       if(!(ignore&IGNORE_DATE_IF_OLDER && date<fi->date)
-      && labs((long)date-(long)(fi->date))>p)
+      && labs(date-fi->date)>p)
 	 return false;
    }
 

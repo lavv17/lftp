@@ -41,6 +41,7 @@ protected:
 
    FileCopyPeer *NoProtoSrc(const char *src);
    FileCopyPeer *NoProtoDst(const char *dst);
+   FileCopyPeer *CreateCopyPeer(const char *path,FA::open_mode mode);
 
 public:
    GetJob(FileAccess *s,ArgV *a,bool c=false);

@@ -301,6 +301,9 @@ private:
    bool copy_allow_store;
    bool copy_failed;
 
+   bool use_mdtm;
+   bool use_size;
+
    bool use_stat;
    int  stat_interval;
 

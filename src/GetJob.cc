@@ -114,6 +114,23 @@ FileCopyPeer *GetJob::NoProtoDst(const char *dst)
    return p;
 }
 
+FileCopyPeer *GetJob::CreateCopyPeer(const char *path,FA::open_mode mode)
+{
+   ParsedURL url(path);
+   const char *plain_path=0;
+   if(!url.proto)
+      plain_path=path;
+   else if(!strcasecmp(url.proto,"file"))
+      plain_path=url.path;
+   if(plain_path)
+   {
+      if(mode==FA::STORE)
+	 return NoProtoDst(plain_path);
+      return NoProtoSrc(plain_path);
+   }
+   return new FileCopyPeerFA(&url,mode);
+}
+
 void GetJob::NextFile()
 {
 try_next:
@@ -140,24 +157,10 @@ try_next:
       return;
    }
 
-   ParsedURL src_url(src,true);
-   ParsedURL dst_url(dst,true);
-
-   FileCopyPeer *src_peer=0;
-   FileCopyPeer *dst_peer=0;
-
-   if(dst_url.proto==0)
-      dst_peer=NoProtoDst(dst);
-   else
-      dst_peer=new FileCopyPeerFA(&dst_url,FA::STORE);
-
+   FileCopyPeer *dst_peer=CreateCopyPeer(dst,FA::STORE);
    if(!dst_peer)
       goto try_next;
-
-   if(src_url.proto==0)
-      src_peer=NoProtoSrc(src);
-   else
-      src_peer=new FileCopyPeerFA(&src_url,FA::RETRIEVE);
+   FileCopyPeer *src_peer=CreateCopyPeer(src,FA::RETRIEVE);
 
    FileCopy *c=FileCopy::New(src_peer,dst_peer,cont);
 

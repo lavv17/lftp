@@ -26,7 +26,7 @@
 #include "trio.h"
 #include "Speedometer.h"
 
-#define BUFFER_INC (8*1024) // should be power of 2
+#define BUFFER_INC	   (8*1024) // should be power of 2
 
 void Buffer::Get(const char **buf,int *size)
 {
@@ -107,7 +107,7 @@ void Buffer::Put(const char *buf,int size)
    {
       buffer_ptr=0;
 
-      if(size>=1024)
+      if(size>=PUT_LL_MIN)
       {
 	 int res=Put_LL(buf,size);
 	 if(res>=0)
@@ -231,7 +231,7 @@ void Buffer::SetError(const char *e,bool fatal)
    error_text=xstrdup(e);
    error_fatal=fatal;
 }
-#if 0
+#if 0 // unused
 void Buffer::SetError2(const char *e1,const char *e2)
 {
    xfree(error_text);
@@ -258,6 +258,9 @@ int IOBufferFDStream::Do()
    {
    case PUT:
       if(in_buffer==0)
+	 return STALL;
+      if(put_ll_timer && !eof && in_buffer<PUT_LL_MIN
+      && !put_ll_timer->Stopped())
 	 return STALL;
       res=Put_LL(buffer+buffer_ptr,in_buffer);
       if(res>0)
@@ -332,6 +335,8 @@ int IOBufferFDStream::Put_LL(const char *buf,int size)
       stream->MakeErrorText();
       goto stream_err;
    }
+   if(put_ll_timer)
+      put_ll_timer->Reset();
    return res;
 
 stream_err:
@@ -381,6 +386,8 @@ FgData *IOBufferFDStream::GetFgData(bool fg)
 
 bool IOBufferFDStream::Done()
 {
+   if(put_ll_timer)
+      put_ll_timer->Stop();
    if(super::Done())
       return stream->Done(); // stream->Done indicates if sub-process finished
    return false;

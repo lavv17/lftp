@@ -920,6 +920,9 @@ void Ftp::InitFtp()
    use_stat=true;
    stat_interval=1;
 
+   use_mdtm=true;
+   use_size=true;
+
    dos_path=false;
    vms_path=false;
    mdtm_supported=true;
@@ -1658,12 +1661,12 @@ int   Ftp::Do()
 	 AddResp(RESP_TYPE_OK);
       }
 
-      if(opt_size && size_supported && file[0])
+      if(opt_size && size_supported && file[0] && use_size)
       {
 	 SendCmd2("SIZE",file);
 	 AddResp(RESP_RESULT_HERE,CHECK_SIZE_OPT);
       }
-      if(opt_date && mdtm_supported && file[0])
+      if(opt_date && mdtm_supported && file[0] && use_mdtm)
       {
 	 SendCmd2("MDTM",file);
 	 AddResp(RESP_RESULT_HERE,CHECK_MDTM_OPT);
@@ -2164,7 +2167,7 @@ void Ftp::SendArrayInfoRequests()
    for(int i=array_ptr; i<array_cnt; i++)
    {
       bool sent=false;
-      if(array_for_info[i].get_time && mdtm_supported)
+      if(array_for_info[i].get_time && mdtm_supported && use_mdtm)
       {
 	 SendCmd2("MDTM",ExpandTildeStatic(array_for_info[i].file));
 	 AddResp(RESP_RESULT_HERE,CHECK_MDTM);
@@ -2174,7 +2177,7 @@ void Ftp::SendArrayInfoRequests()
       {
 	 array_for_info[i].time=NO_DATE;
       }
-      if(array_for_info[i].get_size && size_supported)
+      if(array_for_info[i].get_size && size_supported && use_size)
       {
 	 SendCmd2("SIZE",ExpandTildeStatic(array_for_info[i].file));
 	 AddResp(RESP_RESULT_HERE,CHECK_SIZE);
@@ -2182,7 +2185,7 @@ void Ftp::SendArrayInfoRequests()
       }
       else
       {
-	 array_for_info[i].size=-1;
+	 array_for_info[i].size=NO_SIZE;
       }
       if(!sent)
       {
@@ -3901,6 +3904,9 @@ void Ftp::Reconfig(const char *name)
 
    use_stat = QueryBool("use-stat",c);
    stat_interval = Query("stat-interval",c);
+
+   use_mdtm = QueryBool("use-mdtm",c);
+   use_size = QueryBool("use-size",c);
 
    xfree(list_options);
    list_options = xstrdup(Query("list-options",c));

@@ -1197,11 +1197,15 @@ FileCopyPeerFDStream::FileCopyPeerFDStream(FDStream *o,direction m)
    }
    if(stream->usesfd(1))
       write_allowed=false;
+   put_ll_timer=0;
+   if(m==PUT)
+      put_ll_timer=new Timer(TimeDiff(0,100));
 }
 FileCopyPeerFDStream::~FileCopyPeerFDStream()
 {
-   if(stream && delete_stream)
+   if(delete_stream)
       delete stream;
+   delete put_ll_timer;
 }
 
 void FileCopyPeerFDStream::Seek_LL()
@@ -1307,6 +1311,9 @@ int FileCopyPeerFDStream::Do()
 	 return m;
       while(in_buffer>0)
       {
+	 if(!eof && in_buffer<PUT_LL_MIN
+	 && put_ll_timer && !put_ll_timer->Stopped())
+	    break;
 	 int res=Put_LL(buffer+buffer_ptr,in_buffer);
 	 if(res>0)
 	 {
@@ -1535,6 +1542,8 @@ int FileCopyPeerFDStream::Put_LL(const char *buf,int len)
    stream->clear_status();
    if(res==len)
       res+=skip_cr;
+   if(put_ll_timer)
+      put_ll_timer->Reset();
    return res;
 }
 FgData *FileCopyPeerFDStream::GetFgData(bool fg)

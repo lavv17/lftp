@@ -414,7 +414,7 @@ void Http::SendRequest(const char *connection,const char *f)
       if(hftp && user && pass)
       {
 	 url::encode_string(user,pfile+strlen(pfile),URL_USER_UNSAFE);
-// 	 if(!QueryBool("use-authorization",proxy))
+	 if(!QueryBool("use-authorization",proxy))
 	 {
 	    strcat(pfile,":");
 	    url::encode_string(pass,pfile+strlen(pfile),URL_PASS_UNSAFE);

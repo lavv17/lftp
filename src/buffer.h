@@ -25,12 +25,14 @@
 
 #include "SMTask.h"
 #include "Filter.h"
+#include "Timer.h"
 #include "fg.h"
 #include "xstring.h"
 
 #include <stdarg.h>
 
 #define GET_BUFSIZE 0x10000
+#define PUT_LL_MIN  0x2000
 
 class Speedometer;
 
@@ -138,15 +140,17 @@ public:
 class IOBufferFDStream : public IOBuffer
 {
    FDStream *stream;
+   class Timer *put_ll_timer;
 
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
 
 protected:
-   ~IOBufferFDStream() { delete stream; }
+   ~IOBufferFDStream() { delete stream; delete put_ll_timer; }
 
 public:
-   IOBufferFDStream(FDStream *o,dir_t m) : IOBuffer(m) { stream=o; }
+   IOBufferFDStream(FDStream *o,dir_t m,Timer *t=0)
+      : IOBuffer(m) { stream=o; put_ll_timer=t; }
    int Do();
    bool Done();
    FgData *GetFgData(bool fg);

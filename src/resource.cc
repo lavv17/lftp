@@ -162,7 +162,8 @@ const char *AuthArgValidate(char **s)
 #endif
 
 // Static array of objects is wrongly initialized by IRIX CC and Unixware c++.
-// So here goes list of arbitrarily named objects, they are not refered by name.
+// So here goes list of arbitrarily named objects, they are never referred
+// by name.
 static ResDecl
    ResDecl00a("ftp:acct",		  "",	   0,0),
    ResDecl00 ("ftp:anon-pass",		  "lftp@", 0,0),
@@ -197,8 +198,10 @@ static ResDecl
    ResDecl13 ("ftp:sync-mode",		  "on",    ResMgr::BoolValidate,0),
    ResDecl14 ("ftp:use-abor",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl15 ("ftp:use-fxp",		  "yes",   ResMgr::BoolValidate,0),
+   ResDecl15b("ftp:use-mdtm",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl15a("ftp:use-site-chmod",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl16a("ftp:use-site-idle",	  "no",    ResMgr::BoolValidate,0),
+   ResDecl16b("ftp:use-size",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl16 ("ftp:use-stat",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl17 ("ftp:use-quit",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl18 ("ftp:verify-address",	  "no",    ResMgr::BoolValidate,0),

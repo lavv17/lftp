@@ -1,3 +1,18 @@
+2003-06-21  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc: optimize FileCopyPeerFDStream speed by writing out
+	  data by portions of >=PUT_LL_MIN or by timeout 0.1 second.
+	* buffer.cc, buffer.h: add put_ll_timer in IOBufferFDStream too.
+	* FileSet.cc: remove unneeded type casting.
+	* GetJob.cc: create FileCopyPeerFDStream for file: url scheme.
+	  This fixes closing and re-opening output file when transfer
+	  breaks and restarts. Besides, it is slightly faster.
+	* Http.cc: turn off sending plain password in URI along with
+	  Authorization in hftp.
+	* Timer.h: add Stop method.
+	* ftpclass.cc, ftpclass.h, resource.cc: new settings ftp:use-size
+	  and ftp:use-mdtm.
+
 2003-06-16  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: set exit_code in CMD(help) (reported

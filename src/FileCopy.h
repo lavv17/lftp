@@ -37,6 +37,7 @@
 #include "buffer.h"
 #include "FileAccess.h"
 #include "Speedometer.h"
+#include "Timer.h"
 
 #define FILE_END     (-1L)
 
@@ -307,6 +308,7 @@ class FileCopyPeerFDStream : public FileCopyPeer
 {
    FDStream *stream;
    off_t seek_base;
+   Timer *put_ll_timer;
 
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);

@@ -37,6 +37,7 @@ public:
    Timer(const TimeDiff &);
    int Do();
    bool Stopped();
+   void Stop() { stop=now; }
    void Set(const TimeDiff &d);
    void SetResource(const char *,const char *);
    void SetMilliSeconds(int ms) { Set(TimeDiff(0,ms)); }
