@@ -7,10 +7,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 3.0.11\n"
+"Project-Id-Version: lftp 3.0.12\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-12-03 22:13+0300\n"
-"PO-Revision-Date: 2004-11-23 20:15+0200\n"
+"PO-Revision-Date: 2004-12-04 17:20+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -2088,7 +2088,7 @@ msgstr "ftp:ssl-auth musi byæ jednym z: SSL, TLS, TLS-P, TLS-C"
 
 #: src/resource.cc:175
 msgid "must be one of: C, S, E, P, or empty"
-msgstr ""
+msgstr "musi byæ jednym z: C, S, E, P lub puste"
 
 #: src/HttpDir.cc:1306 src/FtpDirList.cc:136
 #, c-format
