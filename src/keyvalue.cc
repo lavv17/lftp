@@ -25,6 +25,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <fcntl.h>
+#include <errno.h>
 #include "xalloca.h"
 
 int KeyValueDB::Read(int fd)
@@ -228,5 +229,19 @@ int KeyValueDB::Lock(int fd,int type)
    lk.l_whence=0;
    lk.l_start=0;
    lk.l_len=0;
-   return fcntl(fd,F_SETLKW,&lk);
+   int res=fcntl(fd,F_SETLK,&lk);
+   if(res==-1 && errno==EAGAIN)
+   {
+      int retries=5;
+      for(int i=0; i<retries; i++)
+      {
+	 sleep(1);
+	 write(2,".",1);
+	 res=fcntl(fd,F_SETLK,&lk);
+	 if(res==0)
+	    break;
+      }
+      write(2,"\r",1);
+   }
+   return res;
 }

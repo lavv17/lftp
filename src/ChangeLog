@@ -1,3 +1,8 @@
+2000-11-14  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* bookmark.cc, bookmark.h, keyvalue.cc, history.cc: don't wait for
+	  lock forever; print warning if locking fails.
+
 2000-11-05  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* history.cc, history.h: add flag of modification.

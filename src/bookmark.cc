@@ -66,8 +66,9 @@ void Bookmark::Load()
       bm_fd=open(bm_file,O_RDONLY);
       if(bm_fd==-1)
 	 return;
-      Lock(F_RDLCK);
       fcntl(bm_fd,F_SETFD,FD_CLOEXEC);
+      if(Lock(F_RDLCK)==-1)
+	 fprintf(stderr,"%s: lock for reading failed, trying to read anyway\n",bm_file);
    }
    struct stat st;
    fstat(bm_fd,&st);
@@ -82,14 +83,19 @@ void Bookmark::PreModify()
    bm_fd=open(bm_file,O_RDWR|O_CREAT,0600);
    if(bm_fd==-1)
       return;
-   Lock(F_WRLCK);
    fcntl(bm_fd,F_SETFD,FD_CLOEXEC);
+   Lock(F_WRLCK);
    Refresh();
 }
 
 void Bookmark::PostModify()
 {
-   Lock(F_WRLCK);
+   if(Lock(F_WRLCK)==-1)
+   {
+      fprintf(stderr,"%s: lock for writing failed\n",bm_file);
+      Close();
+      return;
+   }
    lseek(bm_fd,0,SEEK_SET);
 
 #ifdef HAVE_FTRUNCATE

@@ -35,7 +35,7 @@ class Bookmark : public KeyValueDB
    void Save();
    void Load();
    void Refresh();
-   void Lock(int type) { KeyValueDB::Lock(bm_fd,type); }
+   int Lock(int type) { return KeyValueDB::Lock(bm_fd,type); }
    void PreModify();
    void PostModify();
    void Close();

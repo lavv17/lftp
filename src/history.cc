@@ -118,8 +118,9 @@ void History::Load()
       fd=open(file,O_RDONLY);
       if(fd==-1)
 	 return;
-      Lock(fd,F_RDLCK);
       fcntl(fd,F_SETFD,FD_CLOEXEC);
+      if(Lock(fd,F_RDLCK)==-1)
+	 fprintf(stderr,"%s: lock for reading failed, trying to read anyway\n",file);
    }
    if(!full)
       full=new KeyValueDB;
@@ -159,8 +160,13 @@ void History::Save()
    fd=open(file,O_RDWR|O_CREAT,0600);
    if(fd==-1)
       return;
-   Lock(fd,F_WRLCK);
    fcntl(fd,F_SETFD,FD_CLOEXEC);
+   if(Lock(fd,F_WRLCK)==-1)
+   {
+      fprintf(stderr,"%s: lock for writing failed\n",file);
+      Close();
+      return;
+   }
    Refresh();
 
    // merge
