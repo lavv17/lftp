@@ -74,8 +74,6 @@ currently; some need other work to be done.
 
  * use NDIR (from RFC1127) in FtpListInfo, when long list cannot be parsed.
 
- * parse anonftpd listings (ftp://vgsn.glasnet.ru)
-
  * use FileSet in Glob.
 
  * specify directory for ListInfo.

@@ -9,6 +9,7 @@
 	* misc.h: move find_char here.
 	* HttpDir.cc: from here; parse EPLF listings from squid.
 	* ftpclass.cc: use NO_SIZE and NO_DATE macros.
+	* md5.c: don't compile anything if HAVE_MD5.
 
 2000-01-13  Alexander V. Lukyanov  <lav@yars.free.net>
 

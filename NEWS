@@ -21,7 +21,9 @@ Version 2.2.0 - 2000-??-??
   Environment variable no_proxy is copied to net:no-proxy on startup.
 * ftp to ftp (FXP) copying is now easy, e.g. `get ftp://... -o ftp://...'.
   New settings: ftp:use-fxp, ftp:fxp-passive-source. It does not work
-  for some servers, so use `set ftp:use-fxp no' for them.
+  for some servers, so use `set ftp:use-fxp no' for them. FXP is also tried
+  both ways - with passive and active source, if both fail it falls back to
+  simple copy.
 * now lftp remembers that commands MDTM, SIZE or SITE CHMOD are not supported
   by the server, and does not send them again.
 * if password is entered on command line it is supposed to be insecure and is
