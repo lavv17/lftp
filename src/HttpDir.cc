@@ -520,7 +520,7 @@ parse_url_again:
       int year=-1,month=-1,day=0,hour=0,minute=0;
       char month_name[32]="";
       char size_str[32]="";
-      char perms[10]="";
+      char perms[11]="";
       const char *more1;
       char *str,*str_with_tags;
       int n;
