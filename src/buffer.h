@@ -40,12 +40,17 @@ protected:
    int buffer_ptr;
    bool eof;	  // no reads possible (except from mem buffer)
    bool broken;	  // no writes possible
+   
+   bool save;  // save skipped data
+   int save_max;
 
    // low-level for derived classes
    virtual int Put_LL(const char *buf,int size) { return 0; }
    virtual int PutEOF_LL() { return 0; }
 
    void Allocate(int size);
+
+   void SaveMaxCheck(int addsize);
 
 public:
    virtual int Do();
@@ -62,6 +67,10 @@ public:
    void Put(const char *buf,int size);
    void Put(const char *buf) { Put(buf,strlen(buf)); }
    void PutEOF() { eof=true; PutEOF_LL(); }
+
+   // useful for cache.
+   void Save(long m) { save=true; save_max=m; }
+   void GetSaved(const char **buf,int *size);
 
    virtual FgData *GetFgData(bool) { return 0; }
 

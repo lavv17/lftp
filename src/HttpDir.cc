@@ -324,6 +324,7 @@ parse_url_again:
       char month_name[32];
       char size_str[32];
       const char *more1;
+      char *str;
       int n;
       char *line_add=(char*)alloca(link_len+128);
       bool data_available=false;
@@ -338,7 +339,9 @@ parse_url_again:
       {
 	 if(eof)
 	    goto add_file;
-	 return less-buf;  // not full line yet
+	 if(end-more>2*1024) // too long line
+	    goto add_file;
+	 return less-buf;  // no full line yet
       }
 
       more1=more;
@@ -351,12 +354,17 @@ parse_url_again:
 	 if(more1[-1]!='.')   // apache bug?
 	    break;
       }
+      
+      // the buffer is not null-terminated, so we need this
+      str=string_alloca(eol-more1);
+      memcpy(str,more1+1,eol-more1-1);
+      str[eol-more1-1]=0;
 
-      n=sscanf(more1+1,"%2d-%3s-%4d %2d:%2d %30s",
-		     &day,month_name,&year,&hour,&minute,size_str);
+      n=sscanf(str,"%2d-%3s-%4d %2d:%2d %30s",
+		    &day,month_name,&year,&hour,&minute,size_str);
       if(n!=6)
       {
-	 n=sscanf(more1+1,"%30s %2d-%3s-%4d",size_str,&day,month_name,&year);
+	 n=sscanf(str,"%30s %2d-%3s-%4d",size_str,&day,month_name,&year);
 	 if(n!=4)
 	    goto add_file;
 	 hour=0;
@@ -451,7 +459,6 @@ int HttpDirList::Do()
       if(use_cache && LsCache::Find(session,curr,mode,
 				    &cache_buffer,&cache_buffer_size))
       {
-	 from_cache=true;
 	 ubuf=new Buffer();
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
@@ -462,6 +469,8 @@ int HttpDirList::Do()
 	 session->Open(curr,mode);
 	 session->UseCache(use_cache);
 	 ubuf=new FileInputBuffer(session);
+	 if(LsCache::IsEnabled())
+	    ubuf->Save(LsCache::SizeLimit());
       }
       if(curr_url)
 	 delete curr_url;
@@ -478,32 +487,28 @@ int HttpDirList::Do()
    const char *b;
    int len;
    ubuf->Get(&b,&len);
-   if(ubuf->Eof() && len==upos) // eof
+   if(b==0) // eof
    {
-      if(!from_cache)
+      const char *cache_buffer;
+      int cache_buffer_size;
+      ubuf->GetSaved(&cache_buffer,&cache_buffer_size);
+      if(cache_buffer && cache_buffer_size>0)
       {
-	 const char *cache_buffer;
-	 int cache_buffer_size;
-	 ubuf->Get(&cache_buffer,&cache_buffer_size);
-	 if(cache_buffer && cache_buffer_size>0)
-	 {
-	    LsCache::Add(session,curr,mode,
-			   cache_buffer,cache_buffer_size);
-	 }
+	 LsCache::Add(session,curr,mode,
+			cache_buffer,cache_buffer_size);
       }
+
       delete ubuf;
       ubuf=0;
-      upos=0;
       return MOVED;
    }
+
    int m=STALL;
-   b+=upos;
-   len-=upos;
 
    int n=parse_html(b,len,ubuf->Eof(),buf,0,&all_links,curr_url,&base_href);
    if(n>0)
    {
-      upos+=n;
+      ubuf->Skip(n);
       m=MOVED;
    }
 
@@ -520,8 +525,6 @@ HttpDirList::HttpDirList(ArgV *a,FileAccess *fa)
 {
    session=fa;
    ubuf=0;
-   upos=0;
-   from_cache=false;
    mode=FA::LONG_LIST;
    args->rewind();
    if(args->count()<2)
@@ -583,7 +586,6 @@ HttpGlob::HttpGlob(FileAccess *s,const char *n_pattern)
    dir_index=0;
    updir_glob=0;
    ubuf=0;
-   from_cache=false;
 
    session=s;
    dir=xstrdup(pattern);
@@ -659,7 +661,6 @@ int HttpGlob::Do()
       if(use_cache && LsCache::Find(session,curr_dir,FA::LONG_LIST,
 				    &cache_buffer,&cache_buffer_size))
       {
-	 from_cache=true;
 	 ubuf=new Buffer();
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
@@ -670,6 +671,8 @@ int HttpGlob::Do()
 	 session->Open(curr_dir,FA::LONG_LIST);
 	 session->UseCache(use_cache);
 	 ubuf=new FileInputBuffer(session);
+	 if(LsCache::IsEnabled())
+	    ubuf->Save(LsCache::SizeLimit());
       }
       m=MOVED;
    }
@@ -703,17 +706,15 @@ int HttpGlob::Do()
    }
    xfree(base_href);
 
-   if(!from_cache)
+   const char *cache_buffer;
+   int cache_buffer_size;
+   ubuf->GetSaved(&cache_buffer,&cache_buffer_size);
+   if(cache_buffer && cache_buffer_size>0)
    {
-      const char *cache_buffer;
-      int cache_buffer_size;
-      ubuf->Get(&cache_buffer,&cache_buffer_size);
-      if(cache_buffer && cache_buffer_size>0)
-      {
-	 LsCache::Add(session,curr_dir,FA::LONG_LIST,
-			cache_buffer,cache_buffer_size);
-      }
+      LsCache::Add(session,curr_dir,FA::LONG_LIST,
+		     cache_buffer,cache_buffer_size);
    }
+
    delete ubuf;
    ubuf=0;
 
@@ -768,7 +769,6 @@ int HttpListInfo::Do()
       if(use_cache && LsCache::Find(session,"",FA::LONG_LIST,
 				    &cache_buffer,&cache_buffer_size))
       {
-	 from_cache=true;
 	 ubuf=new Buffer();
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
@@ -779,6 +779,8 @@ int HttpListInfo::Do()
 	 session->Open("",FA::LONG_LIST);
 	 session->UseCache(use_cache);
 	 ubuf=new FileInputBuffer(session);
+	 if(LsCache::IsEnabled())
+	    ubuf->Save(LsCache::SizeLimit());
       }
       m=MOVED;
    }
@@ -813,17 +815,15 @@ int HttpListInfo::Do()
       }
       xfree(base_href);
 
-      if(!from_cache)
+      const char *cache_buffer;
+      int cache_buffer_size;
+      ubuf->GetSaved(&cache_buffer,&cache_buffer_size);
+      if(cache_buffer && cache_buffer_size>0)
       {
-	 const char *cache_buffer;
-	 int cache_buffer_size;
-	 ubuf->Get(&cache_buffer,&cache_buffer_size);
-	 if(cache_buffer && cache_buffer_size>0)
-	 {
-	    LsCache::Add(session,"",FA::LONG_LIST,
-			   cache_buffer,cache_buffer_size);
-	 }
+	 LsCache::Add(session,"",FA::LONG_LIST,
+			cache_buffer,cache_buffer_size);
       }
+
       delete ubuf;
       ubuf=0;
       m=MOVED;
@@ -850,7 +850,7 @@ int HttpListInfo::Do()
 	 {
 	    if(file->filetype==file->DIRECTORY)
 	    {
-	       continue; // FIXME: directories need slash.
+	       continue; // FIXME: directories need slash in GetInfoArray.
 #if 0
 	       // don't need size for directories
 	       cur->get_size=false;

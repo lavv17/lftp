@@ -27,8 +27,6 @@ class FtpDirList : public DirList
 {
    FileAccess *session;
    Buffer *ubuf;
-   int upos;
-   bool from_cache;
    char *pattern;
 
 public:

@@ -1,5 +1,16 @@
 1999-08-18  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* buffer.h, buffer.cc: allow saving data; (Save, GetSaved) new methods.
+	* HttpDir.cc, HttpDir.h, FtpDirList.cc, FtpDirList.h: save data in
+	  Buffer ubuf, members (upos, from_cache) become obsolete.
+
+1999-08-18  Jim Pick <jim@jimpick.com>
+
+	* LsCache.h, FtpDirList.cc, FtpDirList.h: don't try to cache
+	  anything if cache is off; don't cache too large objects (by lav)
+
+1999-08-18  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* complete.cc: local completion after redirection.
 
 1999-08-17  Alexander V. Lukyanov  <lav@yars.free.net>

@@ -33,7 +33,6 @@ class HttpListInfo : public ListInfo
    int get_info_cnt;
 
    Buffer *ubuf;
-   bool from_cache;
 
 public:
    HttpListInfo(Http *session);
@@ -48,8 +47,6 @@ class HttpDirList : public DirList
 {
    FileAccess *session;
    Buffer *ubuf;
-   int upos;
-   bool from_cache;
    const char *curr;
    ParsedURL *curr_url;
    FileSet all_links;
@@ -76,7 +73,6 @@ class HttpGlob : public Glob
    HttpGlob *updir_glob;
 
    Buffer *ubuf;
-   bool	from_cache;
 
 public:
    int	 Do();
