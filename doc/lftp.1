@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "19 Mar 1998"
+.TH lftp 1 "08 Apr 1998"
 .SH NAME
 lftp \- Sophisticated ftp program
 .SH SYNTAX
@@ -63,7 +63,7 @@ lftp \- Sophisticated ftp program
 .B \-f
 .I script_file
 .SH VERSION
-This man page documents lftp version 0.14.1.
+This man page documents lftp version 1.0.
 .SH "DESCRIPTION"
 \fBlftp\fR is a program that allows sophisticated ftp connection to
 other hosts. If \fIhost\fR is specified then lftp will connect to that
@@ -122,22 +122,33 @@ alias less zmore
 .PP
 Sets the user to anonymous.  This is the default.
 
+.B bookmark
+.RI " [" subcommand ]
+.PP
+The bookmark command controls bookmarks.
+.Ds
+  add <name> [<loc>] - add current place or given location
+                       to bookmarks and bind to given name
+  del <name>         - remove bookmark with name
+  list               - list bookmarks (default)
+.De
+
 .B cache
 .RI " [" subcommand ]
 .PP
 The cache command controls local memory cache.
 The following subcommands are recognized:
 .TP
-  stat        - print cache status (default)
+  stat      - print cache status (default)
 .TP
-  on|off      - turn on/off caching
+  on|off    - turn on/off caching
 .TP
-  flush       - flush cache
+  flush     - flush cache
 .TP
   size \fIlim\fP  - set memory limit, -1 means unlimited
 .TP
   expire \fINx\fP - set cache expiration time to \fIN\fP seconds (\fIx\fP=s)
-       minutes (\fIx\fP=m) hours (\fIx\fP=h) or days (\fIx\fP=d)
+         minutes (\fIx\fP=m) hours (\fIx\fP=h) or days (\fIx\fP=d)
 .PP
 
 .BR cat " [" -u ] " \fIfiles\fP"
@@ -147,11 +158,20 @@ cat outputs the remote file(s) to stdout.  (See also \fBmore\fR,
 
 .BI cd " rdir"
 .PP
-Change current remote directory
+Change current remote directory.  The previous remote directory is
+stored as `-'. You can do `cd -' to change the directory back.
+The previous directory for each site is also stored on disk,
+so you can do `open site; cd -' even after lftp restart.
 
-.BI debug " level"\fR|\fP\fBoff\fP
+.BR close " [" -a "]"
 .PP
-Switch debugging to \fIlevel\fP or turn it off.
+Close idle connections.  By default only with the current server, use
+-a to close all idle connections.
+
+.BR debug " [" -o " file] " level"\fR|\fP\fBoff\fP
+.PP
+Switch debugging to \fIlevel\fP or turn it off.  Use -o to redirect
+the debug output to a file.
 
 .BI exit " code"
 .PP
@@ -163,7 +183,7 @@ command is used.
 .BR get " [" -e "] [" -u "] [" -c "] \fIrfile\fP [" -o " \fIlfile\fP]"
 .PP
 Retrieve the remote file \fIrfile\fP and store it as the local file
-\fIlfile\fP.  If -o omitted, the file is stored to local file named as
+\fIlfile\fP.  If -o is omitted, the file is stored to local file named as
 basename of \fIrfile\fP. If the option [-c] is specified, try to reget
 specified files.  You can get multiple files by specifying multiple
 instances of \fIrfile\fP [and -o \fIlfile\fP]. Does not expand wildcards, use
@@ -176,7 +196,7 @@ get README README.mirrors
 get README -o debian.README README.mirrors -o debian.mirrors
 .De
 
-.I help 
+.B help 
 [\fIcmd\fP]
 .PP
 Print help for \fIcmd\fP or if no \fIcmd\fP was specified print a list of
@@ -196,7 +216,8 @@ Delete specified job with \fIjob_no\fP or all jobs.  (For \fIjob_no\fP see
 .B lcd
 \fIldir\fP
 .PP
-Change current local directory \fIldir\fP
+Change current local directory \fIldir\fP. The previous local
+directory is stored as `-'. You can do `lcd -' to change the directory back.
 
 .B ls
 \fIparams\fP
@@ -228,14 +249,16 @@ Mirror specified remote directory to local directory.
  -c, --continue         continue a mirror job if possible
  -e, --delete           delete files not present at remote site
  -s, --allow-suid       set suid/sgid bits according to remote site
- -n, --only-newer       download only newer files
+ -n, --only-newer       download only newer files (-c won't work)
  -r, --no-recursion     don't go to subdirectories
  -p, --no-perms         don't set file permissions
  -R, --reverse          reverse mirror (put files)
+ -N, --newer-than FILE  download only files newer than the file
  -i \fIRX\fP, --include \fIRX\fP    include matching files (only one allowed)
  -x \fIRX\fP, --exclude \fIRX\fP    exclude matching files (only one allowed)
  -t \fINx\fP, --time-prec \fINx\fP  set time precision to \fIN\fP seconds (\fIx\fP=s)
                         minutes (\fIx\fP=m) hours (\fIx\fP=h) or days (\fIx\fP=d)
+ -v, --verbose          verbose operation
 .De
 .PP
 When using -R, the first directory is local and the second is remote.
@@ -246,9 +269,9 @@ If both directories are omitted, current local and remote directories are used.
 .BR egrep (1).
 
 .B mkdir
-\fIdir(s)\fP
+.RB "[" -p "] " \fIdir(s)\fP
 .PP
-Make remote directories.
+Make remote directories. If -p is used, make all components of paths.
 
 .B more
 \fIfiles\fP
@@ -292,7 +315,7 @@ you really have to transfer the file ASAP, or some other user may go
 mad :) Options:
 
 .Ds
- -n \fImaxconn\fP           Set maximum number of connections (default 5)
+ -n \fImaxconn\fP  Set maximum number of connections (default 5)
 .De
 .PP
 
@@ -396,7 +419,7 @@ Same as more, but filter each file through zcat. (See also \fBcat\fR,
 
 .PP
 On startup, lftp executes
-.IR "~/.lftprc" "."
+.IR "~/.lftprc " and " ~/.lftp/rc" "."
 You can place aliases
 and `set' commands there. Some people prefer to see full protocol
 debug, use `debug' to turn the debug on.
@@ -474,6 +497,12 @@ end a sequence of non-printing characters
 .TP
 .BR cmd:remote-completion \ (bool)
 a boolean to control whether or not lftp uses remote completion.
+.TP
+.BR ftp:idle \ (seconds)
+disconnect from ftp server after that number of idle seconds.
+.TP
+.BR ftp:max-retries \ (number)
+the maximum number of sequential retries of an operation without success.
 .TP
 .BR ftp:nop-interval \ (seconds)
 delay between NOOP commands when downloading tail of a file. This is useful
@@ -565,12 +594,19 @@ This should be the name of the pager to use.  It's used by the
 .I "/etc/lftp.conf"
 system-wide startup file
 .TP
-.I "~/.lftprc"
-The file executed on lftp startup after \fI/etc/lftp.conf\fR.
+.I "~/.lftp/rc," "~/.lftprc"
+These files are executed on lftp startup after \fI/etc/lftp.conf\fR.
 .TP
-.I "~/.lftp_log"
+.I "~/.lftp/log"
 The file things are logged to when lftp moves into the background in
 nohup mode.
+.TP
+.I "~/.lftp/bookmarks"
+The file is used to store lftp's bookmarks.  See the \fBbookmark\fR
+command.
+.TP
+.I "~/.lftp/cwd_history"
+The file is used to store old working directories for each site visited.
 .TP
 .I "~/.netrc"
 The file is consulted to get default login to ftp server.
