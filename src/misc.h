@@ -110,5 +110,6 @@ char *xvasprintf(const char *format, va_list ap);
 char *xasprintf(const char *format, ...);
 
 char *dirname_alloc(const char *fn);
+char *dirname_modify(char *fn);
 
 #endif // MISC_H

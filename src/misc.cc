@@ -797,6 +797,10 @@ char *xasprintf(const char *format, ...)
 char *dirname_alloc(const char *fn)
 {
    char *ret=xstrdup(fn);
+   return dirname_modify(ret);
+}
+char *dirname_modify(char *ret)
+{
    int len=strlen(ret);
 
    /* remove trailing slashes */

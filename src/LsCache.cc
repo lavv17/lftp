@@ -261,15 +261,7 @@ void LsCache::Changed(change_mode m,FileAccess *f,const char *dir)
    const char *fdir_c=dir_file(f->GetCwd(),dir);
    char *fdir=alloca_strdup(fdir_c);
    if(m==FILE_CHANGED)
-   {
-      char *slash=strrchr(fdir,'/');
-      if(!slash)
-	 fdir[0]=0;
-      else if(slash>fdir)
-	 *slash=0;
-      else
-	 fdir[1]=0;
-   }
+      dirname_modify(fdir);
    int fdir_len=strlen(fdir);
 
    LsCache **scan=&LsCache::chain;
