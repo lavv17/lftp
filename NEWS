@@ -27,6 +27,8 @@ Version 2.2.0 - 2000-??-??
 * if password is entered on command line it is supposed to be insecure and is
   printed on screen and entered into bookmarks automatically.
 * slightly better VMS support.
+* EPLF listing format is now understood. It is used by anonftpd
+  (e.g. ftp://vgsn.glasnet.ru).
 * in globbing, if list restart is not used, don't skip list beginning but
   rather use it instead of previously received.
 * ftp and hftp URLs are now assumed to have home-relative path. To write
