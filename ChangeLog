@@ -1,3 +1,7 @@
+2004-01-15	lav
+
+	* configure.ac: use AM_ICONV.
+
 2003-12-17	albert chin <china@thewrittenword.com>
 
 	* configure.ac: do AC_SYS_LARGEFILE early.

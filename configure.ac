@@ -118,6 +118,8 @@ if test x$ac_cv_lib_fl_yywrap = xno; then
    AC_DEFINE(NEED_YYWRAP, 1, [need yywrap]) dnl ?
 fi
 
+dnl ** LFTP needs iconv, call the test explicitly (even if --disable-nls)
+AM_ICONV
 ALL_LINGUAS="de es fr it ja ko pl pt_BR ru zh_CN zh_TW"
 AM_GNU_GETTEXT([external])
 if test x$USE_INCLUDED_LIBINTL = xyes; then
