@@ -127,6 +127,7 @@ class Ftp : public NetAccess
       sockaddr_u peer_sa;
       bool quit_sent;
       bool fixed_pasv; // had to fix PASV address.
+      bool translation_activated;
 #ifdef USE_SSL
       SSL *control_ssl;
       SSL *data_ssl;
@@ -139,8 +140,11 @@ class Ftp : public NetAccess
 
       bool data_address_ok(sockaddr_u *d,bool verify_address,bool verify_port);
       void SavePeerAddress();
+
       void MakeBuffers();
       void MakeSSLBuffers(const char *h);
+      void InitTelnetLayer();
+      void SetControlConnectionTranslation(const char *cs);
    };
 
    Connection *conn;
@@ -291,8 +295,6 @@ private:
    char	 *anon_pass;
 
    char	 *charset;
-   bool	 translation_activated;
-   void  SetControlConnectionTranslation(const char *cs);
 
    static const char *DefaultAnonPass();
 

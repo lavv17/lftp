@@ -858,6 +858,7 @@ Ftp::Connection::Connection()
 
    quit_sent=false;
    fixed_pasv=false;
+   translation_activated=false;
 }
 
 void Ftp::InitFtp()
@@ -919,7 +920,6 @@ void Ftp::InitFtp()
    anon_user=0;	  // will be set by Reconfig()
 
    charset=0;
-   translation_activated=false;
 
    copy_mode=COPY_NONE;
    copy_addr_valid=false;
@@ -1092,6 +1092,13 @@ void Ftp::Connection::MakeBuffers()
    control_recv=new IOBufferFDStream(
       new FDStream(control_sock,"control-socket"),IOBuffer::GET);
 }
+void Ftp::Connection::InitTelnetLayer()
+{
+   if(telnet_layer_send)
+      return;
+   control_send=telnet_layer_send=new IOBufferTelnet(control_send);
+   control_recv=new IOBufferTelnet(control_recv);
+}
 
 int   Ftp::Do()
 {
@@ -1244,7 +1251,6 @@ int   Ftp::Do()
       rest_supported=true;
       site_chmod_supported=true;
       site_utime_supported=true;
-      translation_activated=false;
       last_rest=0;
    }
 
@@ -1285,11 +1291,8 @@ int   Ftp::Do()
 	 goto usual_return;
 
    pre_CONNECTED_STATE:
-      if(use_telnet_iac && !conn->telnet_layer_send)
-      {
-	 conn->control_send=conn->telnet_layer_send=new IOBufferTelnet(conn->control_send);
-	 conn->control_recv=new IOBufferTelnet(conn->control_recv);
-      }
+      if(use_telnet_iac)
+	 conn->InitTelnetLayer();
 
       state=CONNECTED_STATE;
       m=MOVED;
@@ -1445,8 +1448,8 @@ int   Ftp::Do()
       if(RespQueueHas(CHECK_FEAT))
 	 return m;
 
-      if(!utf8_supported && charset && *charset && !translation_activated)
-	 SetControlConnectionTranslation(charset);
+      if(!utf8_supported && charset && *charset)
+	 conn->SetControlConnectionTranslation(charset);
 
       if(mode==CONNECT_VERIFY)
 	 goto notimeout_return;
@@ -3332,7 +3335,7 @@ void Ftp::CheckFEAT(char *reply)
       if(!strcasecmp(f,"UTF8"))
       {
 	 utf8_supported=true;
-	 SetControlConnectionTranslation("UTF-8");
+	 conn->SetControlConnectionTranslation("UTF-8");
 	 // some non-RFC2640 servers require this command.
 	 SendCmd("OPTS UTF8 ON");
 	 AddResp(0,CHECK_IGNORE);
@@ -3907,7 +3910,6 @@ void Ftp::ResetLocationData()
    utf8_supported=false;
    lang_supported=false;
    pret_supported=false;
-   translation_activated=false;
 #ifdef USE_SSL
    auth_supported=true;
    xfree(auth_args_supported);
@@ -3967,7 +3969,7 @@ void Ftp::Reconfig(const char *name)
    xfree(charset);
    charset=xstrdup(Query("charset",c));
    if(conn && !utf8_supported && charset && *charset && !strcmp(name,"ftp:charset"))
-      SetControlConnectionTranslation(charset);
+      conn->SetControlConnectionTranslation(charset);
 
    const char *h=QueryStringWithUserAtHost("home");
    if(h && h[0] && AbsolutePath(h))
@@ -4246,16 +4248,18 @@ void IOBufferTelnet::PutTranslated(const char *put_buf,int size)
       Buffer::Put(put_buf,put_size);
 }
 
-void Ftp::SetControlConnectionTranslation(const char *cs)
+void Ftp::Connection::SetControlConnectionTranslation(const char *cs)
 {
-   if(conn->telnet_layer_send==conn->control_send)
+   if(translation_activated)
+      return;
+   if(telnet_layer_send==control_send)
    {
       // cannot do two conversions in one DirectedBuffer, stack it.
-      conn->control_send=new IOBufferStacked(conn->control_send);
-      conn->control_recv=new IOBufferStacked(conn->control_recv);
+      control_send=new IOBufferStacked(control_send);
+      control_recv=new IOBufferStacked(control_recv);
    }
-   conn->control_send->SetTranslation(cs,false);
-   conn->control_recv->SetTranslation(cs,true);
+   control_send->SetTranslation(cs,false);
+   control_recv->SetTranslation(cs,true);
    translation_activated=true;
 }
 
