@@ -28,6 +28,7 @@ class ArgV
    char **v;
    int c;
    int ind;
+   int allocated;
 
    void Init(int,const char * const *);
    void GetRoom(int);

@@ -29,13 +29,19 @@
 void ArgV::GetRoom(int n)
 {
    // alloc one extra for trailing zero
-   v=(char**)xrealloc(v,sizeof(*v)*((n+4)&~3));
+   int size=((n+4)&~3);
+   if(size>allocated)
+   {
+      v=(char**)xrealloc(v,sizeof(*v)*size);
+      allocated=size;
+   }
 }
 
 void ArgV::Init(int new_c,const char * const *new_v)
 {
    c=new_c;
    v=0;
+   allocated=0;
    GetRoom(c);
    int i;
    for(i=0; i<c; i++)
