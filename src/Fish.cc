@@ -532,12 +532,19 @@ void Fish::SendMethod()
       real_pos=0;
       break;
    case RETRIEVE:
-      Send("#RETR %s\n"
+      if (pos>0) {
+        Send("#RETR %s\n"
+	   "ls -lLd %s; "
+	   "echo '### 100'\n"
+           "dd ibs=1 skip=%lld if=%s; echo '### 200'\n",e,e,(long long)pos,e);
+      } else {
+        Send("#RETR %s\n"
 	   "ls -lLd %s; "
 	   "echo '### 100'; cat %s; echo '### 200'\n",e,e,e);
+      }
       PushExpect(EXPECT_RETR_INFO);
       PushExpect(EXPECT_RETR);
-      real_pos=0;
+      real_pos=pos;
       break;
    case STORE:
       if(entity_size<0)
@@ -545,7 +552,7 @@ void Fish::SendMethod()
 	 SetError(NO_FILE,"Have to know file size before upload");
 	 break;
       }
-      // dd pays attansion to read boundaries and reads wrong number
+      // dd pays attension to read boundaries and reads wrong number
       // of bytes when ibs>1. Have to use the inefficient ibs=1.
       if(entity_size>0)
       {
