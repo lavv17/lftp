@@ -484,8 +484,9 @@ parse_url_again:
       }
 
       char PM[3];
-      if(7==sscanf(buf,"%d/%d/%d %d:%d %2s %ld",&month,&day,&year,&hour,
-			&minute,PM,&size))
+      // Mini-Proxy web server.
+      if(7==sscanf(buf,"%d/%d/%d %d:%d %2s %30s",&month,&day,&year,&hour,
+			&minute,PM,size_str))
       {
 	 if(!strcasecmp(PM,"PM"))
 	 {
@@ -493,7 +494,12 @@ parse_url_again:
 	    if(hour==24)
 	       hour=0;
 	 }
-	 sprintf(size_str,"%ld",size);
+	 if(!isdigit((unsigned char)size_str[0]))
+	 {
+	    if(!strcasecmp(size_str,"<dir>"))
+	       is_directory=true;
+	    strcpy(size_str,"-");
+	 }
 	 month--;
 	 goto got_info;
       }

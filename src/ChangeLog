@@ -1,6 +1,11 @@
 1999-10-13  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* HttpDir.cc: don't skip line begin early; parse Mini-Proxy listings.
+	* Filter.cc: try getfd() before utime(), it might create the file.
+	  (this is a workaround for getting empty files, a full solution
+	  would be to block on close of output file.)
+	* complete.cc: (glob_quote) remove extra quoting. This fixes completion
+	  for files with spaces in name.
 
 1999-10-13  Alexander V. Lukyanov  <lav@yars.free.net>
 
