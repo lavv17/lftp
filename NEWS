@@ -1,6 +1,13 @@
-Version 3.0.8 - 2004-08-14
+Version 3.0.9 - 2004-09-20
+
+* fixed a hang up when filtering output via an external command (the bug
+  appeared in 3.0.8).
+* don't use ftp:port-ipv4 in FXP mode.
+
+Version 3.0.8 - 2004-09-14
 
 * made http:cache-control host specific; added hftp:cache-control.
+* new setting http:authorization.
 * fixed sftp and fish protocols working with FreeBSD servers.
 * fixed transfer of zero length files when modification time is not known.
 * fixed put over fish protocol when source file grows.
