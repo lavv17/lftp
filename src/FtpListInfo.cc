@@ -278,7 +278,7 @@ FileSet *FtpListInfo::ParseFtpLongList(char **lines)
 #define FIRST_TOKEN strtok(line," \t")
 #define NEXT_TOKEN  strtok(NULL," \t")
    char	 *line;
-   char	 base_dir_len=-1;
+   int	 base_dir_len=-1;
    char	 *curr_dir=xstrdup("");
    int 	 len;
 
