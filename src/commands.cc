@@ -294,22 +294,17 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_(
 	 "Usage:\n"
 	 "       queue [-n num] <command>\n\n"
-	 "Add the command to queue for current site. Each site has its own command queue.\n"
-	 "-n adds the command before the given item in the queue.  It is possible to queue up\n"
-	 "a running job by using command `queue wait <jobno>'.\n"
+	 "Add the command to queue for current site. Each site has its own command\n"
+	 "queue. `-n' adds the command before the given item in the queue. It is\n"
+	 "possible to queue up a running job by using command `queue wait <jobno>'.\n"
 	 "\n"
-	 "       queue --del|-d [index or wildcard expression]\n\n"
-	 "Delete one or more items from the queue.  If no argument is given, the last entry in\n"
-	 "the queue is deleted.\n"
+	 "       queue --delete|-d [index or wildcard expression]\n\n"
+	 "Delete one or more items from the queue. If no argument is given, the last\n"
+	 "entry in the queue is deleted.\n"
 	 "\n"
 	 "       queue --move|-m <index or wildcard expression> [index]\n\n"
-	 "Move the given items before the given queue index, or to the end if no destination is\n"
-	 "given.\n"
-	 "Examples: queue -d 3           Delete the third item in the queue.\n"
-	 "          queue -m 6 4         Move the sixth item in the queue before the fourth.\n"
-	 "          queue -m \"get*zip\" 1  Move all commands matching \"get*zip\" to the beginning\n"
-	 "                               of the queue.  (The order of the items is preserved.)\n"
-	 "          queue -d \"get*zip\"   Delete all commands matching \"get*zip\".\n"
+	 "Move the given items before the given queue index, or to the end if no\n"
+	 "destination is given.\n"
 	 )},
    {"quit",    cmd_exit,   0,"exit"},
    {"quote",   cmd_ls,	   N_("quote <cmd>"),
@@ -879,7 +874,7 @@ Job *CmdExec::builtin_queue()
    static struct option queue_options[]=
    {
       {"move",required_argument,0,'m'},
-      {"del",optional_argument,0,'d'},
+      {"delete",optional_argument,0,'d'},
       {0,0,0,0}
    };
    enum { ins, del, move } mode = ins;
@@ -890,7 +885,7 @@ Job *CmdExec::builtin_queue()
 
    args->rewind();
    int opt;
-   
+
    exit_code=1; // more failure exits than success exits, so set success explicitely
 
    while((opt=args->getopt_long("+d::m:n:w",queue_options,0))!=EOF)
@@ -911,12 +906,12 @@ Job *CmdExec::builtin_queue()
 	 mode = move;
 	 arg = optarg;
 	 break;
-	 
+
       case 'd':
 	 mode = del;
 	 arg = optarg;
 	 break;
-	 
+
       case '?':
 	 err:
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
@@ -963,7 +958,7 @@ Job *CmdExec::builtin_queue()
 	    queue->has_queue->DelJob(atoi(arg)-1);
 	 else
 	    queue->has_queue->DelJob(arg);
-	
+
 	 exit_code=0;
       }
       break;
@@ -980,7 +975,7 @@ Job *CmdExec::builtin_queue()
 	 }
 	 /* default to moving to the end */
 	 int to = a1? atoi(a1)-1:-1;
-	 
+
 	 CmdExec *queue=GetQueue(false);
 	 if(!queue) {
 	    eprintf(_("%s: No queue is active.\n"), args->a0());
