@@ -217,7 +217,7 @@ void CopyJobEnv::SayFinalWithPrefix(const char *p)
       printf("%s",p);
       if(time_spent>=1)
       {
-	 printf(plural("%lld $#l#byte|bytes$ transferred"
+	 printf(plural("%lld $#ll#byte|bytes$ transferred"
 			" in %ld $#l#second|seconds$",
 			(long long)bytes,long(time_spent+.5)),
 			(long long)bytes,long(time_spent+.5));
