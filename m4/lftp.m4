@@ -41,6 +41,20 @@ AC_DEFUN(LFTP_PROG_CXXLINK,
    fi
    AC_MSG_RESULT(using $CXX)
 ])
+dnl try to build and run a dummy program
+AC_DEFUN(LFTP_CXX_TEST,
+[
+   AC_LANG_SAVE
+   AC_LANG_CPLUSPLUS
+   AC_MSG_CHECKING(if c++ compiler works)
+   AC_TRY_RUN([int main() { return(0); } ],
+           [cxx_sane=yes], [cxx_sane=no], [cxx_sane=yes])
+   AC_MSG_RESULT($cxx_sane)
+   if test x$cxx_sane = xno; then
+      AC_MSG_ERROR(C++ test compile failed; check your C++ compiler)
+   fi
+   AC_LANG_RESTORE
+])
 
 AC_DEFUN(LFTP_FUNC_SSCANF_CONST,
 [
