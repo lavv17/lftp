@@ -130,6 +130,7 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
 	 {"A",	     "HREF"},
 	 {"AREA",    "HREF"},
 	 {"FRAME",   "SRC"},
+// 	 {"IMG",     "SRC"},
 	 {0,0}
       };
 
