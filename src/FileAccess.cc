@@ -248,6 +248,14 @@ const char *FileAccess::StrError(int err)
    case(OK):
       return("Error 0");
    case(SEE_ERRNO):
+      if(error)
+      {
+	 const char *e=strerror(saved_errno);
+	 if(str_allocated<strlen(e)+64+strlen(error))
+	    str=(char*)xrealloc(str,str_allocated=strlen(e)+64+strlen(error));
+   	 sprintf(str,"%s: %s",error,e);
+	 return(str);
+      }
       return(strerror(saved_errno));
    case(LOOKUP_ERROR):
       return(error);
@@ -268,7 +276,7 @@ const char *FileAccess::StrError(int err)
       if(error)
       {
 	 if(str_allocated<64+strlen(error))
-	    str=(char*)xrealloc(str,64+strlen(error));
+	    str=(char*)xrealloc(str,str_allocated=64+strlen(error));
    	 sprintf(str,_("Fatal error: %s"),error);
 	 return(str);
       }
