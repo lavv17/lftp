@@ -86,3 +86,7 @@ currently; some need other work to be done.
    foreground session should have priority over bg ones.
 
  * motd. if it is not yet known, connect/login and get it. (use class Buffer).
+
+ * xfer:avg-rate, xfer:avg-eta (number of seconds to get average on).
+
+ * use NDIR (from RFC1127) in FtpListInfo, when long list cannot be parsed.
