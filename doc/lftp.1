@@ -640,7 +640,7 @@ enable DNS cache. If it is off, lftp resolves host name each time it reconnects.
 .TP
 .BR dns:cache-expire " (time interval)"
 time to live for DNS cache entries. It has format <number><unit>+, e.g.
-1d12h30m5s or just 36h.
+1d12h30m5s or just 36h. To disable expiration, set it to `inf' or `never'.
 .TP
 .BR dns:cache-size \ (number)
 maximum number of DNS cache entries.
@@ -779,7 +779,7 @@ is to be specified after variable name separated with slash `/'.
 
 The closure for `dns:', `net:', `ftp:', `http:', `hftp:' domain variables
 is currently just the host name as you specify it in the `open' command
-(with some exceptions, where closure is meaningless, e.g. dns:cache-size).
+(with some exceptions where closure is meaningless, e.g. dns:cache-size).
 For other variables it is not currently used. See examples in the sample
 .IR lftp.conf .
 
