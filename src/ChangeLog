@@ -1,3 +1,7 @@
+2001-10-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* misc.cc: use int to avoid warning.
+
 2001-10-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ColumnOutput.cc: use xfree.

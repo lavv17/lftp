@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2000 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2001 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -632,7 +632,7 @@ char *xstrftime(const char *format, const struct tm *tm)
    for(;;)
    {
       ret = (char *) xrealloc(ret, siz);
-      size_t res=strftime(ret, siz, format, tm);
+      int res=strftime(ret, siz, format, tm);
       if(res>0 && res<siz)
 	 return ret; /* success */
       /* more space */
