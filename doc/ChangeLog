@@ -1,0 +1,44 @@
+1999-06-02	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: updates for 2.0; fixes.
+	* ftpget.1: version 2.0; deprecated.
+
+1999-04-26	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: change redial to reconnect; update `set' description.
+	* lftp.1: documented 'cmd:fail-exit'.
+
+1998-12-19	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: documented 'cmd:at-exit'
+
+1998-11-18	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: documented 'command' command.
+
+1998-11-17	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: update for 1.2
+	* ftpget.1: change version to 1.2, no other changes.
+
+**** Some entries are lost below this line :-(  Ones below are from my mailbox.
+
+1998-04-06	James Troup <J.J.Troup@scm.brad.ac.uk>
+
+	* lftp.1: update
+
+1997-09-05	James Troup <J.J.Troup@comp.brad.ac.uk>
+
+	* lftp.1: update
+
+1997-08-29	James Troup <J.J.Troup@comp.brad.ac.uk>
+
+	* lftp.1: update
+
+1997-07-19	James Troup <J.J.Troup@comp.brad.ac.uk>
+
+	* lftp.1, ftpget.1: update
+
+1997-05-12	Nicolas Lichtmaier <nick@Feedback.com.ar>
+
+	* lftp.1: update
