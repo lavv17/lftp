@@ -138,6 +138,17 @@ void  MirrorJob::HandleFile(int how)
 			dir_file(remote_relative_dir,file->name));
 	       args=new ArgV("rm");
 	       args->Append(file->name);
+	       if(script)
+	       {
+		  char *cmd=args->CombineQuoted();
+		  fprintf(script,"%s",cmd);
+		  xfree(cmd);
+		  if(script_only)
+		  {
+		     delete args;
+		     goto skip;
+		  }
+	       }
 	       waiting=new rmJob(Clone(),args);
 	       waiting->parent=this;
 	       waiting->cmdline=args->Combine();
@@ -159,6 +170,13 @@ void  MirrorJob::HandleFile(int how)
 	    {
 	       Report(_("Removing old local file `%s'"),
 			dir_file(local_relative_dir,file->name));
+	       if(script)
+	       {
+		  // FIXME: shell-quote file name.
+		  fprintf(script,"! rm %s",file->name);
+		  if(script_only)
+		     goto skip;
+	       }
 	       remove(local_name);
 	    }
 	    mod_files++;
@@ -172,10 +190,25 @@ void  MirrorJob::HandleFile(int how)
 		  dir_file(remote_relative_dir,file->name));
 	 args=new ArgV("get");
 	 args->Append(file->name);
+	 if(script)
+	 {
+	    char *cmd=args->CombineQuoted();
+	    fprintf(script,"%s",cmd);
+	    xfree(cmd);
+	    if(script_only)
+	    {
+	       delete args;
+	       goto skip;
+	    }
+	 }
 	 args->Append(local_name);
 	 gj=new GetJob(Clone(),args,cont_this);
 	 if(file->defined&(file->DATE|file->DATE_UNPREC))
 	    gj->SetTime(file->date);
+#if 0
+	 if(file->defined&file->SIZE)
+	    gj->SetSize(file->size);
+#endif
 	 waiting=gj;
 	 waiting->parent=this;
 	 waiting->cmdline=(char*)xmalloc(10+strlen(file->name));
@@ -713,6 +746,10 @@ MirrorJob::MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_rem
    dir_made=false;
    create_remote_dir=false;
    newer_than=(time_t)-1;
+   
+   script=0;
+   script_only=false;
+   script_needs_closing=false;
 }
 
 MirrorJob::~MirrorJob()
@@ -746,6 +783,8 @@ MirrorJob::~MirrorJob()
       free(rx_exclude);
       regfree(&rxc_exclude);
    }
+   if(script && script_needs_closing)
+      fclose(script);
 }
 
 const char *MirrorJob::SetRX(const char *s,char **rx,regex_t *rxc)

@@ -103,6 +103,10 @@ class MirrorJob : public SessionJob
 
    const char *SetRX(const char *s,char **rx,regex_t *rxc);
 
+   FILE *script;
+   bool script_only;
+   bool script_needs_closing;
+
 public:
    enum
    {
