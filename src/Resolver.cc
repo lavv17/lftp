@@ -575,7 +575,7 @@ void Resolver::LookupOne(const char *name)
    int af_index=0;
    int af_order[16];
 
-   ParseOrder(res_order.Query(hostname),af_order);
+   ParseOrder(res_order.Query(name),af_order);
 
    for(;;)
    {
@@ -587,10 +587,10 @@ void Resolver::LookupOne(const char *name)
 
       struct hostent *ha;
 #ifdef HAVE_GETHOSTBYNAME2
-      ha=gethostbyname2(hostname,af);
+      ha=gethostbyname2(name,af);
 #else
       if(af==AF_INET)
-	 ha=gethostbyname(hostname);
+	 ha=gethostbyname(name);
       else
       {
 	 af_index++;

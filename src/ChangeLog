@@ -1,6 +1,7 @@
 1999-07-05  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* commands.cc: cd and lcd without arguments go to home.
+	* Resolver.cc: (LookupOne) fix to actually use argument.
 
 1999-07-04  Alexander V. Lukyanov  <lav@yars.free.net>
 
