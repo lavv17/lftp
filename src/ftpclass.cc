@@ -163,10 +163,10 @@ bool Ftp::data_address_ok()
    {
       struct sockaddr_in *dp=(struct sockaddr_in*)&d;
       struct sockaddr_in *cp=(struct sockaddr_in*)&c;
-      if(dp->sin_port!=htons(FTP_DATA_PORT))
-	 goto wrong_port;
       if(memcmp(&dp->sin_addr,&cp->sin_addr,sizeof(dp->sin_addr)))
 	 goto address_mismatch;
+      if(dp->sin_port!=htons(FTP_DATA_PORT))
+	 goto wrong_port;
       return true;
    }
    return true;
