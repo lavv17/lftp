@@ -28,3 +28,4 @@ src/TreatFileJob.cc
 src/CopyJob.cc
 src/FileCopy.cc
 src/DummyProto.cc
+src/Speedometer.cc
