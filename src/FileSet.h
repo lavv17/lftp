@@ -190,6 +190,8 @@ public:
    int Have() const;
 
    FileInfo * operator[](int i) const;
+
+   int EstimateMemory() const;
 };
 
 #endif // FILESET_H

@@ -33,11 +33,6 @@ long	 LsCache::sizelimit=1024*1024;
 TimeInterval LsCache::ttl("60m");  // time to live = 60 minutes
 LsCache::ExpireHelper LsCache::expire_helper;
 
-FileSet *LsCache::fset=0;
-FileAccess *LsCache::fset_loc=0;
-int LsCache::fset_m=0;
-char *LsCache::fset_a=0;
-
 void LsCache::CheckSize()
 {
    if(sizelimit<0)
@@ -60,6 +55,8 @@ void LsCache::CheckSize()
 	    oldest_time=(*scan)->timestamp;
 	 }
 	 size+=scan[0]->data_len;
+	 if(scan[0]->afset)
+	    size+=scan[0]->afset->EstimateMemory();
       }
       if(size<=sizelimit)
 	 break;
@@ -74,7 +71,7 @@ ResDecl res_cache_enable("cache:enable","yes",ResMgr::BoolValidate,0);
 ResDecl res_cache_expire("cache:expire","60m",ResMgr::TimeIntervalValidate,0);
 ResDecl res_cache_size  ("cache:size","1048576",ResMgr::UNumberValidate,ResMgr::NoClosure);
 
-void LsCache::Add(FileAccess *p_loc,const char *a,int m,const char *d,int l)
+void LsCache::Add(FileAccess *p_loc,const char *a,int m,const char *d,int l,const FileSet *fs)
 {
    if(!strcmp(p_loc->GetProto(),"file"))
       return;  // don't cache local objects
@@ -105,18 +102,18 @@ void LsCache::Add(FileAccess *p_loc,const char *a,int m,const char *d,int l)
    else
    {
       xfree(scan->data);
-      if(fset_loc && scan->loc->SameLocationAs(fset_loc))
-	 free_fset();
+      delete scan->afset;
    }
    scan->data=(char*)xmemdup(d,l);
    scan->data_len=l;
+   scan->afset=fs?new FileSet(fs):0;
    time(&scan->timestamp);
    if(expire_helper.expiring==0)
       expire_helper.expiring=scan;
    return;
 }
 
-void LsCache::Add(FileAccess *p_loc,const char *a,int m,const Buffer *ubuf)
+void LsCache::Add(FileAccess *p_loc,const char *a,int m,const Buffer *ubuf,const FileSet *fs)
 {
    if(!ubuf->IsSaving())
       return;
@@ -124,16 +121,15 @@ void LsCache::Add(FileAccess *p_loc,const char *a,int m,const Buffer *ubuf)
    const char *cache_buffer;
    int cache_buffer_size;
    ubuf->GetSaved(&cache_buffer,&cache_buffer_size);
-   LsCache::Add(p_loc,a,m,cache_buffer,cache_buffer_size);
+   LsCache::Add(p_loc,a,m,cache_buffer,cache_buffer_size,fs);
 }
 
-int LsCache::Find(FileAccess *p_loc,const char *a,int m,const char **d,int *l)
+int LsCache::Find(FileAccess *p_loc,const char *a,int m,const char **d,int *l,FileSet **fs)
 {
    if(!ResMgr::QueryBool("cache:enable",p_loc->GetHostName()))
       return 0;
 
-   LsCache *scan;
-   for(scan=chain; scan; scan=scan->next)
+   for(LsCache *scan=chain; scan; scan=scan->next)
    {
       if((m == -1 || scan->mode==m) && !strcmp(scan->arg,a) && p_loc->SameLocationAs(scan->loc))
       {
@@ -142,6 +138,8 @@ int LsCache::Find(FileAccess *p_loc,const char *a,int m,const char **d,int *l)
 	    *d=scan->data;
 	    *l=scan->data_len;
 	 }
+	 if(fs)
+	    *fs=scan->afset;
 	 return 1;
       }
    }
@@ -150,48 +148,35 @@ int LsCache::Find(FileAccess *p_loc,const char *a,int m,const char **d,int *l)
 
 FileSet *LsCache::FindFileSet(FileAccess *p_loc,const char *a,int m)
 {
-   if(fset && m==fset_m && !strcmp(fset_a,a) && p_loc->SameLocationAs(fset_loc))
-      return fset;
-
    const char *buf_c;
    int bufsiz;
-   if(!Find(p_loc, a, m, &buf_c, &bufsiz))
+   FileSet *fs=0;
+   if(!Find(p_loc, a, m, &buf_c, &bufsiz, &fs))
       return 0;
 
-   free_fset();
+   if(fs)
+      return fs;
 
-   FileSet *new_fset=p_loc->ParseLongList(buf_c, bufsiz);
-   if(!new_fset)
+   fs=p_loc->ParseLongList(buf_c, bufsiz);
+   if(!fs)
       return 0;
 
-   fset=new_fset;
-   fset_a=xstrdup(a);
-   fset_m=m;
-   fset_loc=p_loc->Clone();
-
-   return fset;
-}
-
-void LsCache::free_fset()
-{
-   SMTask::Delete(fset_loc);
-   xfree(fset_a);
-   delete fset;
-
-   fset_loc=0;
-   fset_a=0;
-   fset=0;
+   for(LsCache *scan=chain; scan; scan=scan->next)
+   {
+      if(scan->data==buf_c)
+	 scan->afset=fs;
+   }
+   return fs;
 }
 
 LsCache::~LsCache()
 {
    if(expire_helper.expiring==this)
       expire_helper.expiring=0;
-   if(fset_loc && loc->SameLocationAs(fset_loc))
-      free_fset();
    SMTask::Delete(loc);
    xfree(data);
    xfree(arg);
+   delete afset;
 }
 
 void LsCache::Flush()
@@ -213,7 +198,7 @@ void LsCache::List()
 
    long vol=0;
    for(LsCache *scan=chain; scan; scan=scan->next)
-      vol+=scan->data_len;
+      vol+=scan->data_len+(scan->afset?scan->afset->EstimateMemory():0);
 
    printf(plural("%ld $#l#byte|bytes$ cached",vol),vol);
 

@@ -417,24 +417,45 @@ static bool is_valid_status(int s)
 	    attrs.Pack(b,protocol_version);
 	 }
    };
-   class Request_OPEN : public Packet
+   class RequestNAMEATTRS : public Packet
    {
+   protected:
       int protocol_version;
       char *filename;
-      unsigned pflags;
    public:
       FileAttrs attrs;
-      Request_OPEN(const char *fn,unsigned fl,int pv) : Packet(SSH_FXP_OPEN)
+      RequestNAMEATTRS(packet_type type,const char *fn,int pv) : Packet(type)
 	 {
 	    filename=xstrdup(fn);
-	    pflags=fl;
 	    protocol_version=pv;
 	 }
-      ~Request_OPEN() { xfree(filename); }
+      ~RequestNAMEATTRS() { xfree(filename); }
       void ComputeLength()
 	 {
 	    Packet::ComputeLength();
-	    length+=4+strlen(filename)+4+attrs.ComputeLength(protocol_version);
+	    length+=4+strlen(filename)+attrs.ComputeLength(protocol_version);
+	 }
+      void Pack(Buffer *b)
+	 {
+	    Packet::Pack(b);
+	    Packet::PackString(b,filename);
+	    attrs.Pack(b,protocol_version);
+	 }
+   };
+   class Request_OPEN : public RequestNAMEATTRS
+   {
+      int protocol_version;
+      unsigned pflags;
+   public:
+      FileAttrs attrs;
+      Request_OPEN(const char *fn,unsigned fl,int pv) : RequestNAMEATTRS(SSH_FXP_OPEN,fn,pv)
+	 {
+	    pflags=fl;
+	 }
+      void ComputeLength()
+	 {
+	    RequestNAMEATTRS::ComputeLength();
+	    length+=4;
 	 }
       void Pack(Buffer *b)
 	 {
@@ -517,6 +538,48 @@ static bool is_valid_status(int s)
       void ComputeLength() { PacketSTRING::ComputeLength(); length+=8+4+len; }
       void Pack(Buffer *b);
    };
+   class Request_MKDIR : public RequestNAMEATTRS
+   {
+   public:
+      Request_MKDIR(const char *fn,int pv) : RequestNAMEATTRS(SSH_FXP_MKDIR,fn,pv) {}
+   };
+   class Request_SETSTAT : public RequestNAMEATTRS
+   {
+   public:
+      Request_SETSTAT(const char *fn,int pv) : RequestNAMEATTRS(SSH_FXP_SETSTAT,fn,pv) {}
+   };
+   class Request_RMDIR : public PacketSTRING
+   {
+   public:
+      Request_RMDIR(const char *fn) : PacketSTRING(SSH_FXP_RMDIR,fn) {}
+   };
+   class Request_REMOVE : public PacketSTRING
+   {
+   public:
+      Request_REMOVE(const char *fn) : PacketSTRING(SSH_FXP_REMOVE,fn) {}
+   };
+   class Request_RENAME : public Packet
+   {
+      char *oldpath;
+      char *newpath;
+   public:
+      Request_RENAME(const char *o,const char *n) : Packet(SSH_FXP_RENAME)
+	 {
+	    oldpath=xstrdup(o);
+	    newpath=xstrdup(n);
+	 }
+      void ComputeLength()
+	 {
+	    Packet::ComputeLength();
+	    length+=4+strlen(oldpath)+4+strlen(newpath);
+	 }
+      void Pack(Buffer *b)
+	 {
+	    Packet::Pack(b);
+	    Packet::PackString(b,oldpath);
+	    Packet::PackString(b,newpath);
+	 }
+   };
 
    enum expect_t
    {
@@ -536,9 +599,10 @@ static bool is_valid_status(int s)
    {
       Packet *request;
       Packet *reply;
-      expect_t tag;
       Expect *next;
-      Expect(Packet *req,expect_t t) { request=req; tag=t; reply=0; }
+      int i;
+      expect_t tag;
+      Expect(Packet *req,expect_t t,int j=0) { request=req; tag=t; reply=0; i=j; }
       ~Expect() { delete request; delete reply; }
    };
 
@@ -574,7 +638,8 @@ static bool is_valid_status(int s)
    bool	 eof;
 
    void	 SendRequest();
-   void	 SendRequest(Packet *req,expect_t exp);
+   void	 SendRequest(Packet *req,expect_t exp,int i=0);
+   void	 SendRequestGeneric(int type);
    void	 RequestMoreData();
    off_t request_pos;
 
@@ -636,6 +701,8 @@ class SFtpDirList : public DirList
    Buffer *ubuf;
    const char *dir;
    bool use_file_set;
+   FileSet *fset;
+   LsOptions ls_options;
 
 public:
    SFtpDirList(ArgV *a,FileAccess *fa);

@@ -33,6 +33,7 @@ class LsCache
    time_t   timestamp;
    char	 *data;
    int	 data_len;
+   FileSet *afset;    // associated file set
 
    char	 *arg;
    FileAccess *loc;
@@ -43,12 +44,6 @@ class LsCache
    static bool use;
    static long sizelimit;
    static TimeInterval ttl;
-   /* single cached fileset */
-   static FileSet *fset;
-   static FileAccess *fset_loc;
-   static int fset_m;
-   static char *fset_a;
-   static void free_fset();
 
    class ExpireHelper;
    friend class LsCache::ExpireHelper;
@@ -68,9 +63,9 @@ protected:
    ~LsCache();
 
 public:
-   static void Add(FileAccess *p_loc,const char *a,int m,const char *d,int l);
-   static void Add(FileAccess *p_loc,const char *a,int m,const Buffer *ubuf);
-   static int Find(FileAccess *p_loc,const char *a,int m,const char **d, int *l);
+   static void Add(FileAccess *p_loc,const char *a,int m,const char *d,int l,const FileSet *f=0);
+   static void Add(FileAccess *p_loc,const char *a,int m,const Buffer *ubuf,const FileSet *f=0);
+   static int Find(FileAccess *p_loc,const char *a,int m,const char **d, int *l,FileSet **f=0);
    static FileSet *FindFileSet(FileAccess *p_loc,const char *a,int m);
 
    static int IsDirectory(FileAccess *p_loc,const char *dir);

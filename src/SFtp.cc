@@ -30,6 +30,7 @@
 #include "LsCache.h"
 
 #include <assert.h>
+#include <errno.h>
 
 #define max_buf 0x10000
 
@@ -284,6 +285,9 @@ int SFtp::Do()
       m=MOVED;
       break;
    case WAITING:
+      if(mode==ARRAY_INFO)
+	 SendArrayInfoRequests();
+      break;
    case DONE:
       break;
    }
@@ -292,6 +296,7 @@ int SFtp::Do()
 
 void SFtp::MoveConnectionHere(SFtp *o)
 {
+   protocol_version=o->protocol_version;
    send_buf=o->send_buf; o->send_buf=0;
    recv_buf=o->recv_buf; o->recv_buf=0;
    pty_send_buf=o->pty_send_buf; o->pty_send_buf=0;
@@ -327,6 +332,7 @@ void SFtp::Disconnect()
       SetError(STORE_FAILED);
    received_greeting=false;
    protocol_version=0;
+   ssh_id=0;
 }
 
 void SFtp::Init()
@@ -485,24 +491,24 @@ SFtp::unpack_status_t SFtp::UnpackPacket(Buffer *b,SFtp::Packet **p)
    return res;
 }
 
-void SFtp::SendRequest(Packet *request,expect_t tag)
+void SFtp::SendRequest(Packet *request,expect_t tag,int i)
 {
    request->SetID(ssh_id++);
    request->ComputeLength();
    Log::global->Format(9,"---> sending a packet, length=%d, type=%d(%s), id=%u\n",
       request->GetLength(),request->GetPacketType(),request->GetPacketTypeText(),request->GetID());
    request->Pack(send_buf);
-   PushExpect(new Expect(request,tag));
+   PushExpect(new Expect(request,tag,i));
 }
 
 void SFtp::SendRequest()
 {
-   unsigned pflags;
    ExpandTildeInCWD();
    switch((open_mode)mode)
    {
    case CHANGE_DIR:
-      SendRequest(new Request_STAT(dir_file(lc_to_utf8(file),".")),EXPECT_CWD);
+      SendRequest(new Request_STAT(lc_to_utf8(file)),EXPECT_CWD);
+      SendRequest(new Request_STAT(lc_to_utf8(dir_file(file,"."))),EXPECT_CWD);
       state=WAITING;
       break;
    case RETRIEVE:
@@ -520,7 +526,63 @@ void SFtp::SendRequest()
 			SSH_FXF_WRITE|SSH_FXF_CREAT,protocol_version),EXPECT_HANDLE);
       state=WAITING;
       break;
+   case ARRAY_INFO:
+      state=WAITING;
+      break;
+   case RENAME:
+   {
+      if(protocol_version<3)
+      {
+	 SetError(NOT_SUPP);
+	 break;
+      }
+      char *file1_path=alloca_strdup(dir_file(cwd,file1));
+      SendRequest(new Request_RENAME(lc_to_utf8(dir_file(cwd,file)),
+				     lc_to_utf8(file1_path)),
+				    EXPECT_DEFAULT);
+      state=WAITING;
+      break;
    }
+   case CHANGE_MODE:
+   {
+      Request_SETSTAT *req=new Request_SETSTAT(lc_to_utf8(dir_file(cwd,file)),protocol_version);
+      req->attrs.permissions=chmod_mode;
+      req->attrs.flags|=SSH_FILEXFER_ATTR_PERMISSIONS;
+      SendRequest(req,EXPECT_DEFAULT);
+      state=WAITING;
+      break;
+   }
+   case MAKE_DIR:
+      SendRequest(new Request_MKDIR(lc_to_utf8(dir_file(cwd,file)),protocol_version),EXPECT_DEFAULT);
+      state=WAITING;
+      break;
+   case REMOVE_DIR:
+      SendRequest(new Request_RMDIR(lc_to_utf8(dir_file(cwd,file))),EXPECT_DEFAULT);
+      state=WAITING;
+      break;
+   case REMOVE:
+      SendRequest(new Request_REMOVE(lc_to_utf8(dir_file(cwd,file))),EXPECT_DEFAULT);
+      state=WAITING;
+      break;
+   case QUOTE_CMD:
+      SetError(NOT_SUPP);
+      break;
+   case CONNECT_VERIFY:
+   case CLOSED:
+      abort();
+   }
+}
+
+void SFtp::SendArrayInfoRequests()
+{
+   while(array_ptr<array_cnt && RespQueueSize()<max_packets_in_flight)
+   {
+      SendRequest(new Request_STAT(lc_to_utf8(dir_file(cwd,
+	       array_for_info[array_ptr].file))),EXPECT_INFO,array_ptr);
+      array_ptr++;
+   }
+   if(RespQueueIsEmpty())
+      state=DONE;
 }
 
 void SFtp::CloseHandle(expect_t c)
@@ -646,17 +708,26 @@ void SFtp::HandleExpect(Expect *e)
 	    PropagateHomeAuto();
 	    if(!home)
 	       set_home(home_auto);
+	    LsCache::SetDirectory(this, home, true);
 	 }
       }
       break;
    case EXPECT_CWD:
       if(reply->TypeIs(SSH_FXP_ATTRS))
       {
+	 const FileAttrs *a=((Reply_ATTRS*)reply)->GetAttrs();
+	 if(a->type!=SSH_FILEXFER_TYPE_DIRECTORY)
+	 {
+	    LsCache::SetDirectory(this,cwd,false);
+	    SetError(NO_FILE,strerror(ENOTDIR));
+	    break;
+	 }
 	 if(mode==CHANGE_DIR && RespQueueIsEmpty())
 	 {
 	    xfree(cwd);
 	    cwd=xstrdup(file);
 	    eof=true;
+	    LsCache::SetDirectory(this,cwd,true);
 	 }
       }
       else
@@ -775,10 +846,20 @@ void SFtp::HandleExpect(Expect *e)
       if(reply->TypeIs(SSH_FXP_ATTRS))
       {
 	 const FileAttrs *a=((Reply_ATTRS*)reply)->GetAttrs();
+	 entity_size=NO_SIZE;
+	 entity_date=NO_DATE;
 	 if(a->flags&SSH_FILEXFER_ATTR_SIZE)
 	    entity_size=a->size;
 	 if(a->flags&SSH_FILEXFER_ATTR_MODIFYTIME)
 	    entity_date=a->mtime;
+	 if(mode==ARRAY_INFO)
+	 {
+	    array_for_info[e->i].size=entity_size;
+	    array_for_info[e->i].get_size=false;
+	    array_for_info[e->i].time=entity_date;
+	    array_for_info[e->i].get_time=false;
+	    break;
+	 }
 	 Log::global->Format(9,"---- file info: size=%lld, date=%s",(long long)entity_size,ctime(&entity_date));
 	 if(opt_size)
 	    *opt_size=entity_size;
@@ -848,7 +929,6 @@ int SFtp::HandleReplies()
 
    if(recv_buf->Size()<4)
    {
-   hup:
       if(recv_buf->Error())
       {
 	 Disconnect();
@@ -984,8 +1064,6 @@ int SFtp::Read(void *buf,int size)
 
       const char *buf1;
       int size1;
-   get_again:
-
       file_buf->Get(&buf1,&size1);
       if(buf1==0)
 	 return 0;
@@ -1591,9 +1669,9 @@ FileInfo *SFtp::MakeFileInfo(const NameAttrs *na)
    FileInfo *fi=new FileInfo(na->name);
    switch(a->type)
    {
-   case SSH_FILEXFER_TYPE_REGULAR:  fi->filetype=fi->NORMAL;    break;
-   case SSH_FILEXFER_TYPE_DIRECTORY:fi->filetype=fi->DIRECTORY; break;
-   case SSH_FILEXFER_TYPE_SYMLINK:  fi->filetype=fi->SYMLINK;   break;
+   case SSH_FILEXFER_TYPE_REGULAR:  fi->SetType(fi->NORMAL);    break;
+   case SSH_FILEXFER_TYPE_DIRECTORY:fi->SetType(fi->DIRECTORY); break;
+   case SSH_FILEXFER_TYPE_SYMLINK:  fi->SetType(fi->SYMLINK);   break;
    default: delete fi; return 0;
    }
    if(na->longname)
@@ -1643,12 +1721,12 @@ int SFtpDirList::Do()
       const char *cache_buffer=0;
       int cache_buffer_size=0;
       if(use_cache && LsCache::Find(session,dir,FA::LONG_LIST,
-				    &cache_buffer,&cache_buffer_size)
-      && !use_file_set)
+				    &cache_buffer,&cache_buffer_size,&fset))
       {
 	 ubuf=new Buffer();
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
+	 fset=new FileSet(fset);
       }
       else
       {
@@ -1664,10 +1742,11 @@ int SFtpDirList::Do()
    ubuf->Get(&b,&len);
    if(b==0) // eof
    {
-      LsCache::Add(session,dir,FA::LONG_LIST, ubuf);
+      if(!fset && session->IsOpen())
+	 fset=((SFtp*)session)->GetFileSet();
+      LsCache::Add(session,dir,FA::LONG_LIST, ubuf, fset);
       if(use_file_set)
       {
-	 FileSet *fset=((SFtp*)session)->GetFileSet();
 	 fset->Sort(fset->BYNAME,false);
 	 for(fset->rewind(); fset->curr(); fset->next())
 	 {
@@ -1676,8 +1755,14 @@ int SFtpDirList::Do()
 	    buf->Put("\n");
 	 }
 	 delete fset;
+	 fset=0;
       }
-      buf->PutEOF();
+      Delete(ubuf); ubuf=0;
+      dir=args->getnext();
+      if(!dir)
+	 buf->PutEOF();
+      else
+	 buf->Format("\n%s:\n",dir);
       return MOVED;
    }
 
@@ -1703,15 +1788,38 @@ SFtpDirList::SFtpDirList(ArgV *a,FileAccess *fa)
    session=fa;
    ubuf=0;
    use_file_set=true;
+   fset=0;
+   args->rewind();
+   int opt;
+   while((opt=args->getopt("fCFl"))!=EOF)
+   {
+      switch(opt)
+      {
+      case('a'):
+	 ls_options.show_all=true;
+	 break;
+      case('C'):
+	 ls_options.multi_column=true;
+	 break;
+      case('F'):
+	 ls_options.append_type=true;
+	 break;
+      }
+   }
+   while(args->getindex()>1)
+      args->delarg(1);	// remove options.
+   if(args->count()<2)
+      args->Append("");
    args->rewind();
    dir=args->getnext();
-   if(!dir)
-      dir="";
+   if(args->getindex()+1<args->count())
+      buf->Format("%s:\n",dir);
 }
 
 SFtpDirList::~SFtpDirList()
 {
    Delete(ubuf);
+   delete fset;
 }
 
 const char *SFtpDirList::Status()
@@ -1747,15 +1855,32 @@ int SFtpListInfo::Do()
    int m=STALL;
    if(!ubuf)
    {
-      session->Open("",FA::LIST);
-      ubuf=new IOBufferFileAccess(session);
+      const char *cache_buffer=0;
+      int cache_buffer_size=0;
+      if(use_cache && LsCache::Find(session,"",FA::LONG_LIST,
+				    &cache_buffer,&cache_buffer_size,&result))
+      {
+	 ubuf=new Buffer();
+	 ubuf->Put(cache_buffer,cache_buffer_size);
+	 ubuf->PutEOF();
+	 result=new FileSet(result);
+      }
+      else
+      {
+	 session->Open("",FA::LONG_LIST);
+	 ubuf=new IOBufferFileAccess(session);
+	 if(LsCache::IsEnabled())
+	    ubuf->Save(LsCache::SizeLimit());
+      }
    }
    const char *b;
    int len;
    ubuf->Get(&b,&len);
    if(b==0) // eof
    {
-      result=((SFtp*)session)->GetFileSet();
+      if(!result && session->IsOpen())
+	 result=((SFtp*)session)->GetFileSet();
+      LsCache::Add(session,"",FA::LONG_LIST, ubuf, result);
       done=true;
       m=MOVED;
    }

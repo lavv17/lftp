@@ -1,5 +1,12 @@
 2003-11-20  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* FileAccess.h, HttpDir.h: move LsOptions to FileAccess.h.
+	* FileSet.cc, FileSet.h: (EstimateMemory) new method.
+	* LsCache.cc, LsCache.h: cache FileSet along with listing.
+	* SFtp.cc, SFtp.h: more work. All is working now.
+
+2003-11-20  Alexander V. Lukyanov <lav@yars.free.net>
+
 	* Fish.cc: add Reconfig to clone ctor.
 	* ResMgr.cc: allow 0x numbers.
 	* ResMgr.h: use strtol.

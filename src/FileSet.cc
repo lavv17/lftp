@@ -758,3 +758,16 @@ void FileInfo::MakeLongName()
    if(defined&SYMLINK_DEF)
       sprintf(longname+strlen(longname)," -> %s",symlink);
 }
+
+int FileSet::EstimateMemory() const
+{
+   int size=sizeof(FileSet)+sizeof(FileInfo*)*fnum;
+   for(int i=0; i<fnum; i++)
+   {
+      size+=sizeof(FileInfo);
+      size+=xstrlen(files[i]->name);
+      size+=xstrlen(files[i]->symlink);
+      size+=xstrlen(files[i]->longname);
+   }
+   return size;
+}
