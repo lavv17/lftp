@@ -178,6 +178,11 @@ int FileCopy::Do()
 	 SetError(_("seek failed"));
 	 return MOVED;
       }
+      if(get->GetSize()>0 && get->GetRealPos()>get->GetSize())
+      {
+	 get->SetSize(NO_SIZE_YET);
+	 get->SetDate(NO_DATE_YET);
+      }
       long lbsize=0;
       if(line_buffer)
 	 lbsize=line_buffer->Size();
