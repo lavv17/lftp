@@ -514,7 +514,10 @@ void Job::ShowRunStatus(StatusLine *sl)
    if(waiting_num==1)
       waiting[0]->ShowRunStatus(sl);
    else
-      waiting[(time(0)/3)%waiting_num]->ShowRunStatus(sl);
+   {
+      waiting[(now/3)%waiting_num]->ShowRunStatus(sl);
+      current->TimeoutS(3);
+   }
 }
 
 Job *Job::FindAnyChild()

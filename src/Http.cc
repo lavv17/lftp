@@ -1316,6 +1316,7 @@ int Http::Read(void *buf,int size)
    get_again:
       if(recv_buf->Size()==0 && recv_buf->Error())
       {
+	 DebugPrint("**** ",recv_buf->ErrorText(),0);
 	 Disconnect();
 	 return DO_AGAIN;
       }
