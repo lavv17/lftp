@@ -134,7 +134,7 @@ int OutputFilter::getfd()
       if(second_fd==-1)
       {
 	 if(second->error())
-	    error_text=xstrdup(_("chain output error"));
+	    error_text=xstrdup(second->error_text);
 	 return -1;
       }
       if(pg==0)
@@ -186,11 +186,11 @@ int OutputFilter::getfd()
       close(p[1]);
       goto out;
    }
-   /* parent */
-   Parent(p);
-
    if(pg==0)
       pg=pid;
+
+   /* parent */
+   Parent(p);
 
    fcntl(fd,F_SETFD,FD_CLOEXEC);
    fcntl(fd,F_SETFL,O_NONBLOCK);
@@ -198,8 +198,10 @@ int OutputFilter::getfd()
    xfree(oldcwd);
    oldcwd=0;
 
+   // wait until the child stops.
    int info;
    waitpid(pid,&info,WUNTRACED);
+
    w=new ProcWait(pid);
 out:
    ProcWait::Signal(true);
@@ -216,6 +218,7 @@ void OutputFilter::Init()
    pg=0;
    closed=false;
    stderr_to_stdout=false;
+   delete_second=false;
 }
 
 void OutputFilter::SetCwd(const char *cwd)
@@ -266,6 +269,9 @@ OutputFilter::~OutputFilter()
       w->Auto();
 
    xfree(oldcwd);
+
+   if(delete_second)
+      delete second;
 }
 
 bool OutputFilter::Done()
@@ -279,7 +285,7 @@ bool OutputFilter::Done()
       closed=true;
    }
    if(w->GetState()!=w->RUNNING)
-      return true;
+      return second?second->Done():true;
    return false;
 }
 bool OutputFilter::broken()
@@ -291,6 +297,23 @@ bool OutputFilter::broken()
    if(w->GetState()!=w->RUNNING)
       return true; // filter process terminated - pipe is broken
    return false;
+}
+void OutputFilter::Kill(int sig)
+{
+   if(w)
+      w->Kill(sig);
+   if(second)
+      second->Kill(sig);
+}
+bool OutputFilter::usesfd(int n_fd)
+{
+   if(FDStream::usesfd(n_fd))
+      return true;
+   if(second_fd!=-1 && n_fd==second_fd)
+      return true;
+   if(second)
+      return second->usesfd(n_fd);
+   return n_fd<=2;
 }
 
 void FileStream::setmtime(time_t t)

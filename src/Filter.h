@@ -67,6 +67,7 @@ class OutputFilter : public FDStream
    ProcWait *w;
    pid_t pg;
    FDStream *second;
+   bool delete_second;
    bool stderr_to_stdout;
 
    char *oldcwd;
@@ -94,11 +95,13 @@ public:
    int getfd();
    bool Done();
 
-   bool usesfd(int n_fd) { return FDStream::usesfd(n_fd) || n_fd<=2; }
-   void Kill(int sig=SIGTERM) { if(w) w->Kill(sig); }
+   bool usesfd(int n_fd);
+   void Kill(int sig=SIGTERM);
    pid_t GetProcGroup() { return pg; }
 
    bool broken();
+
+   void DeleteSecondaryStream() { delete_second=true; }
 };
 
 class InputFilter : public OutputFilter
