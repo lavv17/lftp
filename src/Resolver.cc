@@ -40,6 +40,11 @@
 extern "C" { const char *hstrerror(int); }
 #endif
 
+#ifndef HAVE_H_ERRNO_DECL
+extern int h_errno;
+#endif
+
+
 #if INET6
 # define DEFAULT_ORDER "inet inet6"
 #else
@@ -48,7 +53,8 @@ extern "C" { const char *hstrerror(int); }
 
 static ResDecl
    res_timeout	  ("dns:fatal-timeout","0", ResMgr::UNumberValidate,0),
-   res_order	  ("dns:order",	       DEFAULT_ORDER, Resolver::OrderValidate,0);
+   res_order	  ("dns:order",	       DEFAULT_ORDER, Resolver::OrderValidate,0),
+   res_query_srv  ("dns:SRV-query",    "no", ResMgr::BoolValidate,0);
 
 
 struct address_family
@@ -66,11 +72,16 @@ static const address_family af_list[]=
 };
 
 
-Resolver::Resolver(const char *h,const char *p)
+Resolver::Resolver(const char *h,const char *p,const char *defp,
+		   const char *ser,const char *pr)
 {
    hostname=xstrdup(h);
    portname=xstrdup(p);
    port_number=0;
+
+   service=xstrdup(ser);
+   proto=xstrdup(pr);
+   defport=xstrdup(defp);
 
    pipe_to_child[0]=pipe_to_child[1]=-1;
    w=0;
@@ -82,6 +93,8 @@ Resolver::Resolver(const char *h,const char *p)
    addr=0;
    addr_num=0;
    buf=0;
+
+   error=0;
 }
 
 Resolver::~Resolver()
@@ -93,6 +106,10 @@ Resolver::~Resolver()
 
    xfree(hostname);
    xfree(portname);
+   xfree(service);
+   xfree(proto);
+   xfree(defport);
+
    xfree(err_msg);
    xfree(addr);
    if(w)
@@ -299,33 +316,20 @@ const char *Resolver::OrderValidate(char **s)
    return ParseOrder(*s,0);
 }
 
-void Resolver::DoGethostbyname()
+void Resolver::LookupSRV_RR()
+{
+   if(!(bool)res_query_srv.Query(hostname))
+      return;
+#if 0 //def HAVE_RES_SEARCH
+   char *srv_name=string_alloca(strlen(service)+1+strlen(tproto)+1+strlen(hostname)+1);
+   sprintf(srv_name,"%s.%s.%s",service,tproto,hostname);
+   int n=res_search(srv_name, ns_c_in, ns_t_srv, (u_char *) &answer, sizeof(answer));
+#endif // HAVE_RES_SEARCH
+}
+
+void Resolver::LookupOne(const char *name)
 {
    time_t try_time;
-   const char *error=0;
-#ifndef HAVE_H_ERRNO_DECL
-   extern int h_errno;
-#endif
-
-   if(port_number==0)
-   {
-      if(isdigit((unsigned char)portname[0]))
-	 port_number=htons(atoi(portname));
-      else
-      {
-	 struct servent *se=getservbyname(portname,"tcp");
-	 if(se)
-	    port_number=se->s_port;
-	 else
-	 {
-	    write(1,"P",1);
-	    error="no such tcp service";
-	    write(1,error,strlen(error));
-	    return;
-	 }
-      }
-   }
-
    int af_index=0;
    int af_order[16];
 
@@ -379,6 +383,37 @@ void Resolver::DoGethostbyname()
       if(t-try_time<5)
 	 sleep(5-(t-try_time));
    }
+}
+
+void Resolver::DoGethostbyname()
+{
+   if(port_number==0)
+   {
+      const char *tproto=proto?proto:"tcp";
+      const char *tport=portname?portname:defport;
+
+      if(isdigit((unsigned char)tport[0]))
+	 port_number=htons(atoi(tport));
+      else
+      {
+	 struct servent *se=getservbyname(tport,tproto);
+	 if(se)
+	    port_number=se->s_port;
+	 else
+	 {
+	    write(1,"P",1);
+	    char *msg=string_alloca(64+strlen(tproto));
+	    sprintf(msg,"no such %s service",tproto);
+	    write(1,msg,strlen(msg));
+	    return;
+	 }
+      }
+   }
+
+   if(service)
+      LookupSRV_RR();
+
+   LookupOne(hostname);
 
    if(addr_num==0)
    {

@@ -515,8 +515,11 @@ int Http::Do()
       {
 	 if(resolver==0)
 	 {
-	    resolver=new Resolver(proxy?proxy:hostname,
-			proxy?proxy_port:(portname?portname:HTTP_DEFAULT_PORT));
+	    if(proxy)
+	       resolver=new Resolver(proxy,proxy_port);
+	    else
+	       resolver=new Resolver(hostname,portname,
+				    HTTP_DEFAULT_PORT,"http","tcp");
 	    ClearPeer();
 	 }
 	 if(!resolver->Done())
