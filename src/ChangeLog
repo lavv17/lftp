@@ -1,3 +1,8 @@
+2000-12-20  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* commands.cc: also use ':' as user/pass separator.
+	* ftpclass.cc, resource.cc: ftp:fix-pasv-address setting.
+
 2000-12-18  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Http.cc, misc.cc, misc.h, ftpclass.cc: move mktime_from_utc to
