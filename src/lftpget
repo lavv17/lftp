@@ -6,7 +6,7 @@
 
 # $Id$
 
-INTRO="set cmd:verbose y; set cmd:at-exit;"
+INTRO="set cmd:at-exit;"
 SCRIPT=""
 
 for f
