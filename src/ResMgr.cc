@@ -26,6 +26,7 @@
 #include <ctype.h>
 #include <unistd.h>
 #include <math.h>
+#include <regex.h>
 #include "ResMgr.h"
 #include "SMTask.h"
 #include "xmalloc.h"
@@ -582,5 +583,21 @@ const char *ResMgr::RangeValidate(char **s)
    Range r(*s);
    if(r.Error())
       return r.ErrorText();
+   return 0;
+}
+
+const char *ResMgr::ERegExpValidate(char **s)
+{
+   if(**s==0)
+      return 0;
+   regex_t re;
+   int err=regcomp(&re,*s,REG_EXTENDED|REG_NOSUB);
+   if(err)
+   {
+      static char err_msg[128];
+      regerror(err,0,err_msg,sizeof(err_msg));
+      return err_msg;
+   }
+   regfree(&re);
    return 0;
 }

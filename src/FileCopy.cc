@@ -982,6 +982,26 @@ int FileCopyPeerFA::Get_LL(int len)
 	    }
 	    else // !proto
 	    {
+	       if(orig_url)
+	       {
+		  int p_ind=url::path_index(orig_url);
+		  char *s=strrchr(orig_url,'/');
+		  int s_ind=s?s-orig_url:-1;
+		  if(p_ind==-1 || s_ind==-1 || s_ind<p_ind)
+		     s_ind=p_ind=strlen(orig_url);
+		  if(loc[0]=='/')
+		  {
+		     orig_url=(char*)xrealloc(orig_url,p_ind+strlen(loc)+1);
+		     strcpy(orig_url+p_ind,loc);
+		  }
+		  else
+		  {
+		     orig_url=(char*)xrealloc(orig_url,s_ind+1+strlen(loc)+1);
+		     strcpy(orig_url+s_ind,"/");
+		     strcpy(orig_url+s_ind+1,loc);
+		  }
+	       }
+
 	       url::decode_string(loc);
 	       char *slash=strrchr(file,'/');
 	       char *new_file;
@@ -996,9 +1016,6 @@ int FileCopyPeerFA::Get_LL(int len)
 	       }
 	       xfree(file);
 	       file=new_file;
-
-	       xfree(orig_url);
-	       orig_url=0; // FIXME: can transform previous orig_url.
 	    }
 	    try_time=0;
 	    retries=0;

@@ -2766,6 +2766,18 @@ void  Ftp::MoveConnectionHere(Ftp *o)
    state=EOF_STATE;
 }
 
+static bool re_match(const char *line,const char *a)
+{
+   if(!a || !*a)
+      return false;
+   regex_t re;
+   if(regcomp(&re,a,REG_EXTENDED|REG_NOSUB))
+      return false;
+   bool res=(0==regexec(&re,line,0,0,0));
+   regfree(&re);
+   return res;
+}
+
 void Ftp::CheckResp(int act)
 {
    if(act==150)
@@ -2838,12 +2850,11 @@ void Ftp::CheckResp(int act)
       break;
 
    case CHECK_READY:
-      // M$ can't get it right... I'm really tired of setting sync-mode manually.
-      if(!(flags&SYNC_MODE) && strstr(line,"Microsoft FTP Service"))
+      if(!(flags&SYNC_MODE) && re_match(line,Query("auto-sync-mode",hostname)))
       {
 	 DebugPrint("---- ","Turning on sync-mode",2);
-	 flags|=SYNC_MODE;
 	 ResMgr::Set("ftp:sync-mode",hostname,"on");
+	 assert(flags&SYNC_MODE);
 	 Disconnect();
 	 try_time=0; // retry immediately
       }

@@ -95,6 +95,7 @@ static const char *FtpDefaultAnonPass()
 static ResDecl
    ResDecl00 ("ftp:anon-pass",		  "-lftp@",0,0),
    ResDecl01 ("ftp:anon-user",		  "anonymous",0,0),
+   ResDecl01a("ftp:auto-sync-mode",	  "",	   ResMgr::ERegExpValidate,0),
    ResDecl02 ("ftp:fxp-passive-source",	  "no",	   ResMgr::BoolValidate,0),
    ResDecl03 ("ftp:list-options",	  "",	   0,0),
    ResDecl04 ("ftp:nop-interval",	  "120",   ResMgr::UNumberValidate,0),

@@ -1,3 +1,9 @@
+2000-07-26  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileCopy.cc: apply non-absolute redirection to orig_url.
+	* ResMgr.cc, ResMgr.h: regexp validator.
+	* ftpclass.cc, resource.cc: ftp:auto-sync-mode setting.
+
 2000-07-25  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* MirrorJob.cc, MirrorJob.h: count errors; (ExitCode) implemented.
