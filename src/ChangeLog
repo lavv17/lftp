@@ -1,3 +1,8 @@
+2004-05-25  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: drop eof flag if transfer returns error code after
+	  data connection is closed.
+
 2004-05-22  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* resource.cc: increase sftp:max-packets-in-flight to 8.

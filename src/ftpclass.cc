@@ -282,6 +282,7 @@ void Ftp::NoFileCheck(int act)
    }
    DataClose();
    state=EOF_STATE;
+   eof=false;
    retry_time=now+2; // retry after 2 seconds
 }
 
