@@ -355,6 +355,7 @@ int   MirrorJob::Do()
 	 return MOVED;
       }
       session->Chdir(remote_dir);
+      while(session->Do()==MOVED);
       state=CHANGING_REMOTE_DIR;
       return MOVED;
 

@@ -22,6 +22,9 @@
 
 #include <config.h>
 
+#include <pwd.h>
+#include <unistd.h>
+
 #include "resource.h"
 #include "ResMgr.h"
 #include "url.h"
@@ -60,6 +63,22 @@ static const char *HttpProxyValidate(char **p)
    return 0;
 }
 
+static const char *FtpDefaultAnonPass()
+{
+   static char *pass=0;
+
+   if(pass)
+      return pass;
+
+   struct passwd *pw=getpwuid(getuid());
+   const char *u=pw?pw->pw_name:"unknown";
+   pass=(char*)xmalloc(strlen(u)+3);
+   sprintf(pass,"-%s@",u);
+
+   return pass;
+}
+
+
 static ResDecl resources[]={
    ResDecl  ("ftp:sync-mode",      "on", ResMgr::BoolValidate,0),
    ResDecl  ("ftp:timeout",	   "600",ResMgr::UNumberValidate,0),
@@ -73,7 +92,7 @@ static ResDecl resources[]={
    ResDecl  ("ftp:skey-allow",     "yes",ResMgr::BoolValidate,0),
    ResDecl  ("ftp:skey-force",     "no", ResMgr::BoolValidate,0),
    ResDecl  ("ftp:anon-user",      "anonymous",0,0),
-   ResDecl  ("ftp:anon-pass",      0,    0,0),
+   ResDecl  ("ftp:anon-pass",      FtpDefaultAnonPass(),0,0),
    ResDecl  ("ftp:socket-buffer",  "0",  ResMgr::UNumberValidate,0),
    ResDecl  ("ftp:socket-maxseg",  "0",  ResMgr::UNumberValidate,0),
    ResDecl  ("ftp:verify-address", "no", ResMgr::BoolValidate,0),
@@ -92,7 +111,7 @@ static ResDecl resources[]={
    ResDecl  ("http:limit-max",      "0",  ResMgr::UNumberValidate,0)
 };
 
-void resources_init()
+void ResMgr::ClassInit()
 {
    // nothing to do, actually. ctors do all the work
 }

@@ -174,84 +174,73 @@ int ResMgr::ResourceCompare(const void *a,const void *b)
    return strcmp(ar->closure,br->closure);
 }
 
-#if 0
-void ResMgr::Print(FILE *f)
-{
-   Resource *scan;
-
-   int n=0;
-   for(scan=chain; scan; scan=scan->next)
-      n++;
-
-   Resource **arr=(Resource**)alloca(n*sizeof(Resource*));
-   n=0;
-   for(scan=chain; scan; scan=scan->next)
-      arr[n++]=scan;
-
-   qsort(arr,n,sizeof(*arr),ResourceCompare);
-
-   for(int i=0; i<n; i++)
-   {
-      fprintf(f,"set %s",arr[i]->type->name);
-      char *s=arr[i]->closure;
-      if(s)
-      {
-	 fputc('/',f);
-	 while(*s)
-	 {
-	    if(strchr("\" \t\\>|",*s))
-	       fputc('\\',f);
-	    fputc(*s++,f);
-	 }
-      }
-      fputc(' ',f);
-      s=arr[i]->value;
-
-      bool par=false;
-      if(*s==0 || strcspn(s," \t>|")!=strlen(s))
-	 par=true;
-      if(par)
-	 putc('"',f);
-      while(*s)
-      {
-	 if(strchr("\"\\",*s))
-	    putc('\\',f);
-	 putc(*s++,f);
-      }
-      if(par)
-	 putc('"',f);
-      fputc('\n',f);
-   }
-}
-#endif //0
-
-char *ResMgr::Format()
+char *ResMgr::Format(bool with_defaults,bool only_defaults)
 {
    char *res;
 
    Resource *scan;
+   ResDecl  *dscan;
 
    int n=0;
+   int dn=0;
    int size=0;
-   for(scan=chain; scan; scan=scan->next)
+   if(!only_defaults)
    {
-      size+=4+strlen(scan->type->name);
-      if(scan->closure)
-	 size+=1+2*strlen(scan->closure);
-      size+=1+1+2*strlen(scan->value)+1+1;
-      n++;
+      for(scan=chain; scan; scan=scan->next)
+      {
+	 size+=4+strlen(scan->type->name);
+	 if(scan->closure)
+	    size+=1+2*strlen(scan->closure);
+	 size+=1+1+2*strlen(scan->value)+1+1;
+	 n++;
+      }
    }
+   if(with_defaults || only_defaults)
+   {
+      for(dscan=type_chain; dscan; dscan=dscan->next)
+      {
+	 size+=4+strlen(dscan->name);
+	 size+=1+1+2*xstrlen(dscan->defvalue)+1+1;
+	 dn++;
+      }
+   }
+
    res=(char*)xmalloc(size+1);
    char *store=res;
 
-   Resource **arr=(Resource**)alloca(n*sizeof(Resource*));
+   Resource **created=(Resource**)alloca((dn+1)*sizeof(Resource*));
+   Resource **c_store=created;
+   dn=0;
+   if(with_defaults || only_defaults)
+   {
+      for(dscan=type_chain; dscan; dscan=dscan->next)
+      {
+	 if(only_defaults || SimpleQuery(dscan->name,0)==0)
+	 {
+	    dn++;
+	    *c_store++=new Resource(0,dscan,
+	       0,xstrdup(dscan->defvalue?dscan->defvalue:"(nil)"));
+	 }
+      }
+   }
+
+   Resource **arr=(Resource**)alloca((n+dn)*sizeof(Resource*));
    n=0;
-   for(scan=chain; scan; scan=scan->next)
-      arr[n++]=scan;
+   if(!only_defaults)
+   {
+      for(scan=chain; scan; scan=scan->next)
+	 arr[n++]=scan;
+   }
+   int i;
+   if(with_defaults || only_defaults)
+   {
+      for(i=0; i<dn; i++)
+	 arr[n++]=created[i];
+   }
 
    qsort(arr,n,sizeof(*arr),ResourceCompare);
 
-   for(int i=0; i<n; i++)
+   for(i=0; i<n; i++)
    {
       sprintf(store,"set %s",arr[i]->type->name);
       store+=strlen(store);
@@ -285,6 +274,8 @@ char *ResMgr::Format()
       *store++='\n';
    }
    *store=0;
+   for(i=0; i<dn; i++)
+      delete created[i];
    return res;
 }
 

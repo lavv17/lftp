@@ -265,6 +265,7 @@ restart:
 		     waiting->cmdline?waiting->cmdline:"?");
 		  waiting->PrintStatus(1);
 	       }
+	       last_bg=waiting->jobno;
 	       waiting=0;
 	    }
 	 }
@@ -464,6 +465,7 @@ int CmdExec::Do()
 	       status_line->WriteLine("[%d] %s &",waiting->jobno,waiting->cmdline);
 	    waiting->PrintStatus(1);
 	    exit_code=0;
+	    last_bg=waiting->jobno;
 	    waiting=0;
 	    return MOVED;
 	 }
@@ -479,7 +481,11 @@ int CmdExec::Do()
    }
 
    if(!interactive)
+   {
       BuryDoneJobs();
+      if(FindJob(last_bg)==0)
+	 last_bg=-1;
+   }
 
 try_get_cmd:
    if(next_cmd==0 || *next_cmd==0 || partial_cmd)
@@ -490,6 +496,8 @@ try_get_cmd:
 	 {
 	    ListDoneJobs();
 	    BuryDoneJobs();
+	    if(FindJob(last_bg)==0)
+	       last_bg=-1;
 	 }
 	 char *prompt=MakePrompt();
 	 char *cmd=feeder->NextCmd(this,prompt);
@@ -619,6 +627,7 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
    condition=COND_ANY;
    prev_exit_code=0;
    exit_code=0;
+   last_bg=-1;
 
    cwd=0;
    SaveCWD();

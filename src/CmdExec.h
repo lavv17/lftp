@@ -189,6 +189,8 @@ public:
    void print_cmd_index();
 
    static const cmd_rec *CmdExec::CmdByIndex(int i);
+
+   int	 last_bg;
 };
 
 #endif//CMDEXEC_H

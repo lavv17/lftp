@@ -77,6 +77,10 @@ void  PrintUsage(int p)
 
 int   main(int argc,char **argv)
 {
+#ifdef SOCKS
+   SOCKSinit(argv[0]);
+#endif
+
    char  *port=0;
    int   c;
    char  *user=NULL;
@@ -117,8 +121,7 @@ int   main(int argc,char **argv)
    bindtextdomain (PACKAGE, LOCALEDIR);
    textdomain (PACKAGE);
 
-   resources_init(); // resources must be inited before other classes
-
+   ResMgr::ClassInit(); // resources must be inited before other classes
    SignalHook::ClassInit();
    Resolver::ClassInit();
 

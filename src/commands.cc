@@ -275,9 +275,14 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Remove remote directories\n")},
    {"scache",  cmd_scache, N_("scache [<session_no>]"),
 	 N_("List cached sessions or switch to specified session number\n")},
-   {"set",     cmd_set,    N_("set [<var> [<val>]]"),
+   {"set",     cmd_set,    N_("set [OPT] [<var> [<val>]]"),
 	 N_("Set variable to given value. If the value is omitted, unset the variable.\n"
-         "If called with no variable, currently set variables are listed.\n")},
+	 "Variable name has format ``name/closure'', where closure can specify\n"
+	 "exact application of the setting. See lftp(1) for details.\n"
+         "If set is called with no variable then only altered settings are listed.\n"
+	 "It can be changed by options:\n"
+   	 " -a  list all settings, including default values\n"
+	 " -d  list only default values, not necessary current ones\n")},
    {"shell",   cmd_shell,  0,"!"},
    {"site",    cmd_site,   N_("site <site_cmd>"),
 	 N_("Execute site command <site_cmd> and output the result\n"
@@ -412,6 +417,7 @@ Job *CmdExec::builtin_cd()
       return 0;
    }
    session->Chdir(dir);
+   while(session->Do()==MOVED);
    builtin=BUILTIN_CD;
    return this;
 }
@@ -1170,9 +1176,28 @@ CMD(open)
 
 CMD(kill)
 {
+   int n;
+   const char *op=args->a0();
    if(args->count()<2)
    {
+#if 0 // too dangerous to kill last job. Better require explicit number.
+      n=parent->last_bg;
+      if(n==-1)
+      {
+	 eprintf(_("%s: no current job\n"),op);
+	 return 0;
+      }
+      printf("%s %d\n",op,n);
+      if(Job::Running(n))
+      {
+	 parent->Kill(n);
+	 exit_code=0;
+      }
+      else
+	 eprintf(_("%s: %d - no such job\n"),op,n);
+#else
       eprintf(_("Usage: %s <jobno> ... | all\n"),args->getarg(0));
+#endif
       return 0;
    }
    if(!strcmp(args->getarg(1),"all"))
@@ -1182,6 +1207,7 @@ CMD(kill)
       return 0;
    }
    args->rewind();
+   exit_code=0;
    for(;;)
    {
       char *arg=args->getnext();
@@ -1189,31 +1215,56 @@ CMD(kill)
 	 break;
       if(!isdigit(arg[0]))
       {
-	 eprintf(_("%s: %s - not a number\n"),args->getarg(0),arg);
+	 eprintf(_("%s: %s - not a number\n"),op,arg);
+	 exit_code=1;
       	 continue;
       }
-      int n=atoi(arg);
+      n=atoi(arg);
       if(Job::Running(n))
 	 parent->Kill(n);
       else
-	 eprintf(_("%s: %d - no such job\n"),args->getarg(0),n);
+      {
+	 eprintf(_("%s: %d - no such job\n"),op,n);
+	 exit_code=1;
+      }
    }
-   exit_code=0;
    return 0;
 }
 
 CMD(set)
 {
-   // TODO: -a and show only non-defaults by default
-   if(args->count()<2)
+   const char *op=args->a0();
+   bool with_defaults=false;
+   bool only_defaults=false;
+   int c;
+
+   args->rewind();
+   while((c=args->getopt("+ad"))!=EOF)
    {
-      char *s=ResMgr::Format();
+      switch(c)
+      {
+      case 'a':
+	 with_defaults=true;
+	 break;
+      case 'd':
+	 only_defaults=true;
+	 break;
+      default:
+	 eprintf(_("Try `help %s' for more information.\n"),op);
+	 return 0;
+      }
+   }
+   args->back();
+   char *a=args->getnext();
+
+   if(a==0)
+   {
+      char *s=ResMgr::Format(with_defaults,only_defaults);
       Job *j=new CatJob(output,s,strlen(s));
       output=0;
       return j;
    }
 
-   char *a=args->getarg(1);
    char *sl=strchr(a,'/');
    char *closure=0;
    if(sl)
@@ -1222,13 +1273,14 @@ CMD(set)
       closure=sl+1;
    }
 
-   char *val=(args->count()<=2?0:args->Combine(2));
+   args->getnext();
+   char *val=(args->getcurr()==0?0:args->Combine(args->getindex()));
    const char *msg=ResMgr::Set(a,closure,val);
    xfree(val);
 
    if(msg)
    {
-      eprintf(_("%s: %s. Use `set' to look at all variables.\n"),a,msg);
+      eprintf(_("%s: %s. Use `set -a' to look at all variables.\n"),a,msg);
       return 0;
    }
    exit_code=0;
@@ -1261,19 +1313,33 @@ CMD(alias)
 CMD(wait)
 {
    char *op=args->a0();
-   if(args->count()!=2)
+   if(args->count()>2)
    {
-      eprintf(_("Usage: %s <jobno>\n"),op);
+      eprintf(_("Usage: %s [<jobno>]\n"),op);
       return 0;
    }
+   int n=-1;
    args->rewind();
    char *jn=args->getnext();
-   if(!isdigit(jn[0]))
+   if(jn)
    {
-      eprintf(_("%s: %s - not a number\n"),op,jn);
-      return 0;
+      if(!isdigit(jn[0]))
+      {
+	 eprintf(_("%s: %s - not a number\n"),op,jn);
+	 return 0;
+      }
+      n=atoi(jn);
    }
-   int n=atoi(jn);
+   if(n==-1)
+   {
+      n=parent->last_bg;
+      if(n==-1)
+      {
+	 eprintf(_("%s: no current job\n"),op);
+	 return 0;
+      }
+      printf("%s %d\n",op,n);
+   }
    Job *j=parent->FindJob(n);
    if(j==0)
    {

@@ -137,7 +137,8 @@ void pgetJob::ShowRunStatus(StatusLine *s)
       n=n+strlen(n)-w;
    // xgettext:c-format
    s->Show(_("`%s', got %lu of %lu (%d%%) %s%s"),n,total_xferred,size,
-	 percent(total_xferred,size),CurrRate(total_xfer_rate),CurrETA(total_xfer_rate));
+	 percent(total_xferred,size),CurrRate(total_xfer_rate),
+	 CurrETA(total_xfer_rate,total_xferred));
 }
 
 // list subjobs (chunk xfers) only when verbose
@@ -161,7 +162,8 @@ void  pgetJob::PrintStatus(int verbose)
    {
       putchar('\t');
       printf(_("`%s', got %lu of %lu (%d%%) %s%s"),curr,total_xferred,size,
-	    percent(total_xferred,size),CurrRate(total_xfer_rate),CurrETA(total_xfer_rate));
+	    percent(total_xferred,size),CurrRate(total_xfer_rate),
+	    CurrETA(total_xfer_rate,total_xferred));
       putchar('\n');
       if(verbose>1)
       {

@@ -78,12 +78,14 @@ public:
    static const char *Set(const char *name,const char *closure,const char *value);
 
    static void Print(FILE *);
-   static char *Format();
+   static char *Format(bool with_defaults,bool only_defaults);
 
    static const char *BoolValidate(char **value);
    static const char *NumberValidate(char **value);
    static const char *UNumberValidate(char **value);
    static bool str2bool(const char *value);
+
+   static void ClassInit();
 };
 
 class ResDecl
@@ -106,8 +108,8 @@ public:
       this->closure_valid=closure_valid;
       this->next=ResMgr::type_chain;
       ResMgr::type_chain=this;
-      if(defvalue)
-	 ResMgr::Set(name,0,defvalue);
+/*      if(defvalue)*/
+/*	 ResMgr::Set(name,0,defvalue);*/
    }
 
    ResValue Query(const char *closure);

@@ -88,6 +88,9 @@ int FtpListInfo::Do()
       else
 	 err=1;
 
+      if(!result)
+	 result=new FileSet;
+
       delete glob;
       glob=0;
       glob_res=0; // note: glob_res is pointer to part of glob
@@ -256,7 +259,7 @@ mode_t	 parse_perms(const char *s)
    switch(s[2])
    {
    case('S'): p|=S_ISUID; break;
-   case('s'): p|=S_ISUID;
+   case('s'): p|=S_ISUID; // fall-through
    case('x'): p|=S_IXUSR; break;
    case('-'): break;
    default: goto bad;
@@ -277,7 +280,7 @@ mode_t	 parse_perms(const char *s)
    switch(s[2])
    {
    case('S'): p|=S_ISGID; break;
-   case('s'): p|=S_ISGID;
+   case('s'): p|=S_ISGID; // fall-through
    case('x'): p|=S_IXGRP; break;
    case('-'): break;
    default: goto bad;
@@ -298,7 +301,7 @@ mode_t	 parse_perms(const char *s)
    switch(s[2])
    {
    case('T'): case('t'): p|=S_ISVTX; break;
-   case('l'): p|=S_ISGID; p&=~S_IXGRP; break;
+   case('l'): case('L'): p|=S_ISGID; p&=~S_IXGRP; break;
    case('x'): p|=S_IXOTH; break;
    case('-'): break;
    default: goto bad;

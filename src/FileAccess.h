@@ -44,6 +44,7 @@
 class ListInfo;
 class Glob;
 class NoGlob;
+class DirList;
 
 class FileAccess : public SMTask
 {
@@ -239,9 +240,10 @@ public:
 
    const char *StrError(int err);
    virtual void Cleanup(bool all=false) { (void)all; }
-      // close idle connections, etc.
+      // ^^ close idle connections, etc.
    virtual ListInfo *MakeListInfo() { return 0; }
    virtual Glob *MakeGlob(const char *pattern) { return 0; }
+   virtual DirList *MakeDirList(const char *arg) { return 0; }
 
    static bool NotSerious(int err);
 
@@ -358,6 +360,35 @@ public:
    void NoNeed(unsigned mask) { need&=~mask; }
    void FollowSymlinks() { follow_symlinks=true; }
 };
+
+#include "buffer.h"
+
+class DirList : public FileAccessOperation
+{
+   Buffer *buf;
+   char *arg;
+public:
+   DirList(const char *a)
+      {
+	 buf=0;
+	 arg=xstrdup(a);
+      }
+   ~DirList()
+      {
+	 if(buf)
+	    delete buf;
+	 xfree(arg);
+      }
+
+   virtual int Do() = 0;
+   virtual const char *Status() = 0;
+
+   int Size() { return buf->Size(); }
+   bool Eof() { return buf->Eof();  }
+   void Get(const char **b,int *size) { buf->Get(b,size); }
+   void Skip(int len) { buf->Skip(len); }
+};
+
 
 // shortcut
 #define FA FileAccess

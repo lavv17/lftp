@@ -66,13 +66,13 @@ char *XferJob::CurrRate(float rate)
 #define HOUR   (60*MINUTE)
 #define DAY    (24*HOUR)
 
-char *XferJob::CurrETA(float rate)
+char *XferJob::CurrETA(float rate,long offs)
 {
    static char eta_str[20];
    eta_str[0]=0;
-   if(size>0 && rate>1 && now-last_bytes<30 && now-start_time>3 && size>=Offset())
+   if(size>0 && rate>1 && now-last_bytes<30 && now-start_time>3 && size>=offs)
    {
-      long eta=(long)((size-Offset()) / rate + 0.5);
+      long eta=(long)((size-offs) / rate + 0.5);
       char letter;
 
       if(eta>=DAY)
