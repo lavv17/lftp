@@ -1239,6 +1239,10 @@ CMD(mkdir)
    return j;
 }
 
+#ifndef O_ASCII
+# define O_ASCII 0
+#endif
+
 CMD(source)
 {
    if(args->count()<2)
@@ -1247,7 +1251,7 @@ CMD(source)
       eprintf(_("Usage: %s <file>\n"),args->a0());
       return 0;
    }
-   parent->SetCmdFeeder(new FileFeeder(new FileStream(args->getarg(1),O_RDONLY)));
+   parent->SetCmdFeeder(new FileFeeder(new FileStream(args->getarg(1),O_RDONLY|O_ASCII)));
    exit_code=0;
    return 0;
 }

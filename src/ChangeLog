@@ -1,3 +1,9 @@
+2001-02-13  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* HttpDir.cc: accept perms string 11 char long.
+	* misc.cc: accept last + in perms string as ACL tag.
+	* commands.cc: open command file in ascii mode.
+
 2001-02-07  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Resolver.cc: fix rare spinning when parent process terminates.

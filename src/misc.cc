@@ -276,7 +276,8 @@ int parse_perms(const char *s)
 {
    int p=0;
 
-   if(strlen(s)!=9)
+   if(strlen(s)!=9
+   && !(strlen(s)==10 && s[9]=='+'))   // ACL tag
       bad: return -1;
 
    switch(s[0])

@@ -520,7 +520,7 @@ parse_url_again:
       int year=-1,month=-1,day=0,hour=0,minute=0;
       char month_name[32]="";
       char size_str[32]="";
-      char perms[11]="";
+      char perms[12]="";
       const char *more1;
       char *str,*str_with_tags;
       int n;
@@ -664,12 +664,12 @@ parse_url_again:
       char year_or_time[6];
       int consumed;
 
-      n=sscanf(buf,"%10s %d %31s %31s %lld %3s %2d %5s%n",perms,&n_links,
+      n=sscanf(buf,"%11s %d %31s %31s %lld %3s %2d %5s%n",perms,&n_links,
 	    user,group,&size,month_name,&day,year_or_time,&consumed);
       if(n==4) // bsd-like listing without group?
       {
 	 group[0]=0;
-	 n=sscanf(buf,"%10s %d %31s %lld %3s %2d %5s%n",perms,&n_links,
+	 n=sscanf(buf,"%11s %d %31s %lld %3s %2d %5s%n",perms,&n_links,
 	       user,&size,month_name,&day,year_or_time,&consumed);
       }
       if(n>=7 && -1!=(perms_code=parse_perms(perms+1))
@@ -768,7 +768,7 @@ parse_url_again:
 	    else
 	       strcpy(perms,"-rw-r--r--");
 	 }
-	 sprintf(line_add,"%s  %10s  %04d-%s-%02d %02d:%02d  %s",
+	 sprintf(line_add,"%s  %11s  %04d-%s-%02d %02d:%02d  %s",
 	    perms,size_str,year,month_name,day,hour,minute,link_target);
       append_symlink_maybe:
 	 if(sym_link)
