@@ -1,3 +1,7 @@
+2001-10-02  Aaron Schrab <aaron@schrab.com>
+
+	* Fish.cc, Http.cc, log.cc: move va_end so that it is called always.
+
 2001-10-01  Aaron Schrab <aaron@schrab.com>
 
 	* Fish.cc, Http.cc, log.cc: call va_start multiple

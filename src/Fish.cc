@@ -438,6 +438,7 @@ void Fish::Send(const char *format,...)
       va_start(va,format);
       str=string_alloca(max_send);
       int res=vsnprintf(str,max_send,format,va);
+      va_end(va);
       if(res>=0 && res<max_send)
       {
 	 if(res<max_send/16)
@@ -445,7 +446,6 @@ void Fish::Send(const char *format,...)
 	 break;
       }
       max_send*=2;
-      va_end(va);
    }
 
    DebugPrint("---> ",str,5);

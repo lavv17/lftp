@@ -82,6 +82,7 @@ void Log::Format(int l,const char *f,...)
    {
       va_start(v,f);
       int res=vsnprintf(buf,buf_alloc,f,v);
+      va_end(v);
       if(res>=0 && res<buf_alloc)
 	 break;
       if(res==buf_alloc)
@@ -89,7 +90,6 @@ void Log::Format(int l,const char *f,...)
       if(res==-1)
 	 res=buf_alloc*2;
       buf=(char*)xrealloc(buf,buf_alloc=res);
-      va_end(v);
    }
 
    Write(l,buf);
