@@ -2,6 +2,10 @@
 
 	* lftp.cc: don't set LC_NUMERIC. It breaks default float settings
 	  on certain locales.
+	* FileSetOutput.h: make it compile on irix.
+	* FileSet.cc, FileSet.h: (SubtractCurr) new method; cosmetics.
+	* FtpListInfo.cc: remove FileInfo copying.
+	* LocalAccess.cc: remove files of unknown type from the set.
 
 2001-11-15  Alexander V. Lukyanov <lav@yars.free.net>
 

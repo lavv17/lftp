@@ -45,7 +45,7 @@ public:
       list_directories(false), output_block_size(0), sort(FileSet::BYNAME) { }
    ~FileSetOutput() { xfree(pat); }
    FileSetOutput(const FileSetOutput &cp);
-   const FileSetOutput &FileSetOutput::operator = (const FileSetOutput &cp);
+   const FileSetOutput &operator = (const FileSetOutput &cp);
 
    void long_list();
    void config(FDStream *fd);

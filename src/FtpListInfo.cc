@@ -423,8 +423,6 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
 03-18-98  06:01AM              2109440 nlxb318e.tar
 07-02-98  11:17AM                13844 Whatsnew.txt
 */
-#undef ERR
-#define ERR do{(*err)++;return(0);}while(0)
 static
 FileInfo *ParseFtpLongList_NT(const char *line_c,int *err,const char *tz)
 {
@@ -434,9 +432,9 @@ FileInfo *ParseFtpLongList_NT(const char *line_c,int *err,const char *tz)
    if(len==0)
       return 0;
    char *t = FIRST_TOKEN;
+   FileInfo *fi=0;
    if(t==0)
       ERR;
-   FileInfo fi;
    int month,day,year;
    if(sscanf(t,"%2d-%2d-%2d",&month,&day,&year)!=3)
       ERR;
@@ -470,17 +468,19 @@ FileInfo *ParseFtpLongList_NT(const char *line_c,int *err,const char *tz)
    tms.tm_mon=month-1;     /* months since January [0, 11] */
    tms.tm_year=year-1900;  /* years since 1900 */
    tms.tm_isdst=-1;
-   fi.SetDate(mktime_from_tz(&tms,tz),30);
+
+   fi=new FileInfo();
+   fi->SetDate(mktime_from_tz(&tms,tz),30);
 
    long long size;
    if(!strcmp(t,"<DIR>"))
-      fi.SetType(fi.DIRECTORY);
+      fi->SetType(fi->DIRECTORY);
    else
    {
-      fi.SetType(fi.NORMAL);
+      fi->SetType(fi->NORMAL);
       if(sscanf(t,"%lld",&size)!=1)
 	 ERR;
-      fi.SetSize(size);
+      fi->SetSize(size);
    }
 
    t=strtok(NULL,"");
@@ -490,9 +490,9 @@ FileInfo *ParseFtpLongList_NT(const char *line_c,int *err,const char *tz)
       t++;
    if(*t==0)
       ERR;
-   fi.SetName(t);
+   fi->SetName(t);
 
-   return new FileInfo(fi);
+   return fi;
 }
 
 /*
@@ -515,6 +515,7 @@ FileInfo *ParseFtpLongList_EPLF(const char *line,int *err,const char *)
 {
    int len=strlen(line);
    const char *b=line;
+   FileInfo *fi=0;
 
    if(len<2 || b[0]!='+')
       ERR;
@@ -583,8 +584,7 @@ FileInfo *ParseFtpLongList_EPLF(const char *line,int *err,const char *)
    if(name==0 && type_known)
       ERR;
 
-   FileInfo *fi=new FileInfo();
-   fi->SetName(name);
+   fi=new FileInfo(name);
    if(size!=NO_SIZE)
       fi->SetSize(size);
    if(date!=NO_DATE)
@@ -611,6 +611,7 @@ FileInfo *ParseFtpLongList_OS2(const char *line_c,int *err,const char *tz)
 {
    char	 *line=alloca_strdup(line_c);
    int 	 len=strlen(line);
+   FileInfo *fi=0;
 
    if(len==0)
       return 0;
@@ -618,20 +619,18 @@ FileInfo *ParseFtpLongList_OS2(const char *line_c,int *err,const char *tz)
    if(t==0)
       ERR;
 
-   FileInfo fi;
-
    long long size;
    if(sscanf(t,"%lld",&size)!=1)
       ERR;
-   fi.SetSize(size);
+   fi->SetSize(size);
 
    t = NEXT_TOKEN;
    if(t==0)
       ERR;
-   fi.SetType(fi.NORMAL);
+   fi->SetType(fi->NORMAL);
    if(!strcmp(t,"DIR"))
    {
-      fi.SetType(fi.DIRECTORY);
+      fi->SetType(fi->DIRECTORY);
       t = NEXT_TOKEN;
       if(t==0)
 	 ERR;
@@ -659,7 +658,7 @@ FileInfo *ParseFtpLongList_OS2(const char *line_c,int *err,const char *tz)
    tms.tm_mon=month-1;     /* months since January [0, 11] */
    tms.tm_year=year-1900;  /* years since 1900 */
    tms.tm_isdst=-1;
-   fi.SetDate(mktime_from_tz(&tms,tz),30);
+   fi->SetDate(mktime_from_tz(&tms,tz),30);
 
    t=strtok(NULL,"");
    if(t==0)
@@ -668,9 +667,9 @@ FileInfo *ParseFtpLongList_OS2(const char *line_c,int *err,const char *tz)
       t++;
    if(*t==0)
       ERR;
-   fi.SetName(t);
+   fi->SetName(t);
 
-   return new FileInfo(fi);
+   return fi;
 }
 
 static
@@ -678,6 +677,7 @@ FileInfo *ParseFtpLongList_MacWebStar(const char *line_c,int *err,const char *tz
 {
    char	 *line=alloca_strdup(line_c);
    int 	 len=strlen(line);
+   FileInfo *fi=0;
 
    if(len==0)
       return 0;
@@ -685,17 +685,16 @@ FileInfo *ParseFtpLongList_MacWebStar(const char *line_c,int *err,const char *tz
    if(t==0)
       ERR;
 
-   FileInfo fi;
    switch(t[0])
    {
    case('l'):  // symlink
-      fi.SetType(fi.SYMLINK);
+      fi->SetType(fi->SYMLINK);
       break;
    case('d'):  // directory
-      fi.SetType(fi.DIRECTORY);
+      fi->SetType(fi->DIRECTORY);
       break;
    case('-'):  // plain file
-      fi.SetType(fi.NORMAL);
+      fi->SetType(fi->NORMAL);
       break;
    case('b'): // block
    case('c'): // char
@@ -729,7 +728,7 @@ FileInfo *ParseFtpLongList_MacWebStar(const char *line_c,int *err,const char *tz
       {
 	 long long size;
 	 if(sscanf(t,"%lld",&size)==1)
-	    fi.SetSize(size);
+	    fi->SetSize(size);
       }
       else
 	 ERR;
@@ -778,14 +777,14 @@ FileInfo *ParseFtpLongList_MacWebStar(const char *line_c,int *err,const char *tz
       prec=12*60*60;
    }
 
-   fi.SetDate(mktime_from_tz(&date,tz),prec);
+   fi->SetDate(mktime_from_tz(&date,tz),prec);
 
    char *name=strtok(NULL,"");
    if(!name)
       ERR;
 
    // no symlinks on Mac, but anyway.
-   if(fi.filetype==fi.SYMLINK)
+   if(fi->filetype==fi->SYMLINK)
    {
       char *arrow=name;
       while((arrow=strstr(arrow," -> "))!=0)
@@ -793,15 +792,15 @@ FileInfo *ParseFtpLongList_MacWebStar(const char *line_c,int *err,const char *tz
 	 if(arrow!=name && arrow[4]!=0)
 	 {
 	    *arrow=0;
-	    fi.SetSymlink(arrow+4);
+	    fi->SetSymlink(arrow+4);
 	    break;
 	 }
 	 arrow++;
       }
    }
-   fi.SetName(name);
+   fi->SetName(name);
 
-   return new FileInfo(fi);
+   return fi;
 }
 
 typedef FileInfo *(*ListParser)(const char *line,int *err,const char *tz);

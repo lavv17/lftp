@@ -512,9 +512,7 @@ int LocalListInfo::Do()
       f=readdir(d);
       if(f==0)
 	 break;
-      FileInfo *fi=new FileInfo();
-      fi->SetName(f->d_name);
-      result->Add(fi);
+      result->Add(new FileInfo(f->d_name));
    }
    closedir(d);
 
@@ -525,6 +523,8 @@ int LocalListInfo::Do()
    {
       const char *name=dir_file(dir,file->name);
       file->LocalFile(name, follow_symlinks);
+      if(!(file->defined&file->TYPE))
+	 result->SubtractCurr();
    }
 
    done=true;

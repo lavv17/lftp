@@ -152,20 +152,14 @@ void FileSet::Merge(char **list)
 	    break;
       }
       if(j==fnum)
-      {
-	 FileInfo *fi=new FileInfo();
-	 fi->SetName(*list);
-	 Add(fi);
-      }
+	 Add(new FileInfo(*list));
    }
 }
 
 void FileSet::PrependPath(const char *path)
 {
-   for(int i=0; i < fnum; i++)
-   {
+   for(int i=0; i<fnum; i++)
       files[i]->SetName(dir_file(path, files[i]->name));
-   }
 }
 
 /* we don't copy the sort state--nothing needs it, and it'd
@@ -588,7 +582,8 @@ void FileSet::LocalChown(const char *dir)
 
 FileInfo * FileSet::operator[](int i) const
 {
-   if(i >= fnum) return 0;
+   if(i>=fnum || i<0)
+      return 0;
    return files_sort[i];
 }
 
@@ -604,6 +599,10 @@ FileInfo *FileSet::next()
       return curr();
    }
    return 0;
+}
+void FileSet::SubtractCurr()
+{
+   Sub(ind--);
 }
 
 void FileInfo::Init()

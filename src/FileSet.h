@@ -72,16 +72,13 @@ public:
 
    ~FileInfo();
    void Init();
-   FileInfo()
-      {
-	 Init();
-      }
+   FileInfo() { Init(); }
    FileInfo(const FileInfo &fi);
+   FileInfo(const char *n) { Init(); SetName(n); }
 
    void SetName(const char *n);
    void SetUser(const char *n);
    void SetGroup(const char *n);
-   FileInfo(const char *n) { Init(); SetName(n); }
    void LocalFile(const char *name, bool follow_symlinks);
 
    void SetMode(mode_t m) { mode=m; defined|=MODE; }
@@ -149,6 +146,7 @@ public:
    void	 SubtractAny(const FileSet *);
    void  SubtractOlderThan(time_t t);
    void  SubtractNotIn(const FileSet *);
+   void  SubtractCurr();
    void  Sort(sort_e newsort, bool casefold=false);
    void  Unsort();
    void	 SortByPatternList(const char *list_c);
