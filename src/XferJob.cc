@@ -55,11 +55,11 @@ char *XferJob::CurrRate(float rate)
    if(now-start_time>3 && now-last_bytes<30 && rate!=0)
    {
       if(rate<1024)
-	 sprintf(speed,"%.0fb/s ",rate);
+	 sprintf(speed,_("%.0fb/s "),rate);
       else if(rate<1024*1024)
-	 sprintf(speed,"%.1fK/s ",rate/1024.);
+	 sprintf(speed,_("%.1fK/s "),rate/1024.);
       else
-	 sprintf(speed,"%.2fM/s ",rate/1024./1024.);
+	 sprintf(speed,_("%.2fM/s "),rate/1024./1024.);
    }
    return speed;
 }
