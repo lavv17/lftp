@@ -32,7 +32,8 @@ protected:
 
    bool delete_files;
    char *backup_file;
-   FDStream *local;
+   mode_t file_mode;
+   FileStream *local;
    bool reverse;
 
    void RemoveBackupFile();

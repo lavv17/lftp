@@ -38,6 +38,8 @@ ResDecl res_make_backup	("xfer:make-backup", "yes",ResMgr::BoolValidate,ResMgr::
 
 #define super CopyJobEnv
 
+#define NO_MODE ((mode_t)-1)
+
 int   GetJob::Do()
 {
    int m=STALL;
@@ -46,6 +48,8 @@ int   GetJob::Do()
    {
       // now we can delete old file, since there is new one
       RemoveBackupFile();
+      if(file_mode!=NO_MODE && local)
+	 chmod(local->full_name,file_mode);
    }
    if(super::Do()==MOVED)
       m=MOVED;
@@ -97,6 +101,10 @@ FileCopyPeer *GetJob::NoProtoDst(const char *dst)
 	       xfree(backup_file);
 	       backup_file=0;
 	    }
+	    else
+	    {
+	       file_mode=st.st_mode;
+	    }
 	 }
       }
    }
@@ -109,6 +117,7 @@ FileCopyPeer *GetJob::NoProtoDst(const char *dst)
 void GetJob::NextFile()
 {
 try_next:
+   file_mode=NO_MODE;
    if(backup_file)
    {
       xfree(backup_file);
@@ -173,6 +182,7 @@ GetJob::GetJob(FileAccess *s,ArgV *a,bool c)
 {
    delete_files=false;
    backup_file=0;
+   file_mode=NO_MODE;
    local=0;
    reverse=false;
 }

@@ -1,3 +1,7 @@
+2000-09-05  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* GetJob.cc, GetJob.h: restore mode on new file.
+
 2000-09-05  Matthias Andree <matthias.andree@gmx.de>
 
 	* FtpDirList.cc: reformat EPLF even if mtime if absent.
