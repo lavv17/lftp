@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.0.1\n"
-"POT-Creation-Date: 2000-01-09 03:22+0300\n"
+"POT-Creation-Date: 2000-01-13 17:01+0300\n"
 "PO-Revision-Date: 1999-07-11 13:02+02:00\n"
 "Last-Translator: Giovanni Bortolozzo <borto@pluto.linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -108,12 +108,12 @@ msgstr "Login fallito"
 msgid "Operation not supported"
 msgstr "Operazione non supportata"
 
-#: src/FtpListInfo.cc:226 src/HttpDir.cc:1181
+#: src/FtpListInfo.cc:226 src/HttpDir.cc:1182
 #, c-format
 msgid "Getting directory contents (%ld)"
 msgstr "Scarico il contenuto della directory (%ld)"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:1186
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:1187
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "Scarico le informazioni sui file (%d%%)"
@@ -1574,7 +1574,7 @@ msgstr "Scarico gli header..."
 msgid "Proxy protocol unsupported"
 msgstr "Protocollo di proxy non supportato"
 
-#: src/FtpGlob.cc:258 src/HttpDir.cc:805 src/HttpDir.cc:982
+#: src/FtpGlob.cc:258 src/HttpDir.cc:806 src/HttpDir.cc:983
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "Scarico la lista dei file (%ld) [%s]"

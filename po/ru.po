@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.0\n"
-"POT-Creation-Date: 2000-01-09 03:22+0300\n"
+"POT-Creation-Date: 2000-01-13 17:01+0300\n"
 "PO-Revision-Date: 1999-09-29 09:36+08:00\n"
 "Last-Translator: Const Kaplinsky <const@ce.cctpu.edu.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -109,12 +109,12 @@ msgstr "Ошибка регистрации"
 msgid "Operation not supported"
 msgstr "Операция не поддерживается"
 
-#: src/FtpListInfo.cc:226 src/HttpDir.cc:1181
+#: src/FtpListInfo.cc:226 src/HttpDir.cc:1182
 #, c-format
 msgid "Getting directory contents (%ld)"
 msgstr "Получение содержимого каталога (%ld)"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:1186
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:1187
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "Получение информации о файлах (%d%%)"
@@ -1591,7 +1591,7 @@ msgstr "Получение заголовков HTTP..."
 msgid "Proxy protocol unsupported"
 msgstr "Данный протокол для прокси не поддерживается"
 
-#: src/FtpGlob.cc:258 src/HttpDir.cc:805 src/HttpDir.cc:982
+#: src/FtpGlob.cc:258 src/HttpDir.cc:806 src/HttpDir.cc:983
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "Получение списка файлов (%ld) [%s]"

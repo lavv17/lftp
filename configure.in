@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 # $Id$
 AC_PREREQ(2.13)
 AC_INIT(src/ftpclass.cc)
-AM_INIT_AUTOMAKE(lftp, 2.1.5)
+AM_INIT_AUTOMAKE(lftp, 2.1.6)
 AM_CONFIG_HEADER(include/config.h)
 
 dnl iumacros.m4 is stolen from inetutils-1.3a

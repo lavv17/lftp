@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp\n"
-"POT-Creation-Date: 2000-01-09 03:22+0300\n"
+"POT-Creation-Date: 2000-01-13 17:01+0300\n"
 "PO-Revision-Date: 1999-06-08 15:27+02:00\n"
 "Last-Translator: Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -108,12 +108,12 @@ msgstr "Logowanie nie uda³o siê"
 msgid "Operation not supported"
 msgstr "Operacja jest niedostêpna"
 
-#: src/FtpListInfo.cc:226 src/HttpDir.cc:1181
+#: src/FtpListInfo.cc:226 src/HttpDir.cc:1182
 #, c-format
 msgid "Getting directory contents (%ld)"
 msgstr "Pobieranie informacji o zawarto¶ci katalogu (%ld)"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:1186
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:1187
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "Pobieranie informcji o plikach (%d%%)"
@@ -1580,7 +1580,7 @@ msgstr "Przesy³am nag³ówki..."
 msgid "Proxy protocol unsupported"
 msgstr "Brak wsparcia dla protoko³u proxy"
 
-#: src/FtpGlob.cc:258 src/HttpDir.cc:805 src/HttpDir.cc:982
+#: src/FtpGlob.cc:258 src/HttpDir.cc:806 src/HttpDir.cc:983
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "Pobieranie listy plików (%ld) [%s]"

@@ -165,9 +165,10 @@ void decode_amps(char *s)
 	 {
 	    *a=scan->ch;
 	    memmove(a+1,a+len,strlen(a+len)+1);
-	    a++;
+	    break;
 	 }
       }
+      a++;
    }
 }
 

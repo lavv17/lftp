@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
-"POT-Creation-Date: 2000-01-09 03:22+0300\n"
+"POT-Creation-Date: 2000-01-13 17:01+0300\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -109,12 +109,12 @@ msgstr "登录失败"
 msgid "Operation not supported"
 msgstr "不支持的操作"
 
-#: src/FtpListInfo.cc:226 src/HttpDir.cc:1181
+#: src/FtpListInfo.cc:226 src/HttpDir.cc:1182
 #, c-format
 msgid "Getting directory contents (%ld)"
 msgstr "正在读取目录内容 (%ld)"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:1186
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:1187
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "正在读取文件信息 (%d%%)"
@@ -1543,7 +1543,7 @@ msgstr "正在取得头..."
 msgid "Proxy protocol unsupported"
 msgstr "不支持代理协议"
 
-#: src/FtpGlob.cc:258 src/HttpDir.cc:805 src/HttpDir.cc:982
+#: src/FtpGlob.cc:258 src/HttpDir.cc:806 src/HttpDir.cc:983
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "正在获取文件列表 (%ld) [%s]"

@@ -1,3 +1,9 @@
+Version 2.1.6 - 2000-01-13
+
+* fixed html parser spinning on & in file names when no sequence matches.
+* fixed compilation on Solaris2.5.1.
+* korean translation updated.
+
 Version 2.1.5 - 2000-01-09
 
 * fixed &amp; and others handling in http links.
