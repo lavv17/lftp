@@ -33,7 +33,6 @@
 #include "Http.h"
 #include "ResMgr.h"
 #include "log.h"
-#include "ProtoList.h"
 #include "url.h"
 
 #define super FileAccess
@@ -174,6 +173,7 @@ void Http::Disconnect()
 
 void Http::Close()
 {
+   retries=0;
    Disconnect();
    super::Close();
 }
@@ -194,7 +194,7 @@ void Http::Send(const char *format,...)
 
 void Http::SendMethod(const char *method,const char *efile)
 {
-   Send("%s %s HTTP/1.0\r\n",method,efile);
+   Send("%s %s HTTP/1.1\r\n",method,efile);
    Send("Host: %s\r\n",url::encode_string(hostname));
 }
 
@@ -219,13 +219,14 @@ bool Http::ModeSupported()
    case CONNECT_VERIFY:
    case QUOTE_CMD:
    case RENAME:
+   case LIST:
       return false;
    default:
       return true;
    }
 }
 
-void Http::SendRequest()
+void Http::SendRequest(const char *connection)
 {
    char *efile=alloca_strdup(url::encode_string(file));
    char *ecwd=alloca_strdup(url::encode_string(cwd));
@@ -259,17 +260,19 @@ void Http::SendRequest()
 
    max_send=strlen(efile)+40;
 
+   if(pos==0)
+      real_pos=0;
+
    switch((open_mode)mode)
    {
    case CLOSED:
    case CONNECT_VERIFY:
    case QUOTE_CMD:
    case RENAME:
+   case LIST:
       abort(); // unsupported
 
    case RETRIEVE:
-      if(pos==0)
-	 real_pos=0;
       SendMethod("GET",efile);
       if(pos>0)
 	 Send("Range: bytes=%ld-\r\n",pos);
@@ -286,22 +289,30 @@ void Http::SendRequest()
       break;
 
    case CHANGE_DIR:
-   case LIST:
    case LONG_LIST:
+   case MAKE_DIR:
       if(efile[0]==0 || !(efile[0]=='/' && efile[1]==0))
 	 strcat(efile,"/");
       if(mode==CHANGE_DIR)
 	 SendMethod("HEAD",efile);
-      else
+      else if(mode==LONG_LIST)
 	 SendMethod("GET",efile);
+      else if(mode==MAKE_DIR)
+	 SendMethod("PUT",efile);   // hope it would work
       break;
 
    case(REMOVE):
    case(REMOVE_DIR):
       SendMethod("DELETE",efile);
       break;
+
+   case ARRAY_INFO:
+      SendMethod("HEAD",efile);
+      break;
    }
    SendAuth();
+   if(mode!=ARRAY_INFO || connection)
+      Send("Connection: %s\r\n",connection?connection:"close");
    Send("\r\n");
 }
 
@@ -312,6 +323,13 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       sscanf(value,"%ld",&body_size);
       if(pos==0 && opt_size)
 	 *opt_size=body_size;
+
+      if(mode==ARRAY_INFO && status_code/100==2)
+      {
+	 array_for_info[array_ptr].size=body_size;
+	 array_for_info[array_ptr].get_size=false;
+	 retries=0;
+      }
       return;
    }
    if(!strcasecmp(name,"Content-range"))
@@ -327,8 +345,17 @@ void Http::HandleHeaderLine(const char *name,const char *value)
    }
    if(!strcasecmp(name,"Last-Modified"))
    {
+      time_t t=http_atotm(value);
       if(opt_date)
-	 *opt_date=http_atotm(value);
+	 *opt_date=t;
+
+      if(mode==ARRAY_INFO && status_code/100==2)
+      {
+	 array_for_info[array_ptr].time=t;
+	 array_for_info[array_ptr].get_time=false;
+	 retries=0;
+      }
+      return;
    }
 }
 
@@ -351,6 +378,7 @@ int Http::Do()
    int res;
    const char *buf;
    int len;
+   Buffer *data_buf;
 
    // check if idle time exceeded
    if(mode==CLOSED && sock!=-1 && idle>0)
@@ -483,7 +511,20 @@ int Http::Do()
       recv_buf=new FileInputBuffer(new FDStream(sock,"<input-socket>"));
 
       DebugPrint("---- ","Sending request...",9);
-      SendRequest();
+      if(mode==ARRAY_INFO)
+      {
+	 xfree(file);
+	 for(int i=array_ptr; i<array_cnt; i++)
+	 {
+	    file=array_for_info[i].file;
+	    SendRequest(i==array_cnt-1 ? "close" : 0);
+	 }
+	 file=0;
+      }
+      else
+      {
+	 SendRequest();
+      }
 
       state=RECEIVING_HEADER;
       m=MOVED;
@@ -514,6 +555,24 @@ int Http::Do()
 	    {
 	       DebugPrint("<--- ","",2);
 	       recv_buf->Skip(2);
+	       if(mode==ARRAY_INFO)
+	       {
+		  // we'll have to receive next header
+		  xfree(status);
+		  status=0;
+		  status_code=0;
+		  if(array_for_info[array_ptr].get_time)
+		     array_for_info[array_ptr].time=(time_t)-1;
+		  if(array_for_info[array_ptr].get_size)
+		     array_for_info[array_ptr].size=-1;
+		  if(++array_ptr>=array_cnt)
+		  {
+		     Disconnect();
+		     state=DONE;
+		     return MOVED;
+		  }
+		  return MOVED;
+	       }
 	       goto pre_RECEIVING_BODY;
 	    }
 	    len=eol-buf;
@@ -553,7 +612,16 @@ int Http::Do()
 		     Disconnect();
 		     return MOVED;
 		  }
+
 		  // FIXME: handle 3xx codes
+
+		  if(mode==ARRAY_INFO)
+		  {
+		     retries=0;
+		     recv_buf->Skip(len+2);
+		     return MOVED;
+		  }
+
 		  char *err=(char*)alloca(strlen(status+consumed)+strlen(file)+10);
 		  sprintf(err,"%s (%s)",status+consumed,file);
 		  SetError(NO_FILE,err);
@@ -593,9 +661,12 @@ int Http::Do()
    pre_RECEIVING_BODY:
       DebugPrint("---- ","Receiving body...",9);
       BytesReset();
+      if(real_pos<0) // assume Range: did not work
+	 real_pos=0;
       state=RECEIVING_BODY;
       m=MOVED;
    case RECEIVING_BODY:
+      data_buf=recv_buf;
       if(recv_buf->Error() || send_buf->Error())
       {
 	 Disconnect();
@@ -606,7 +677,7 @@ int Http::Do()
 	 recv_buf->Suspend();
 	 Timeout(1000);
       }
-      else if(recv_buf->Size()>=max_buf)
+      else if(data_buf->Size()>=max_buf)
       {
 	 recv_buf->Suspend();
 	 m=MOVED;
@@ -616,7 +687,7 @@ int Http::Do()
 	 recv_buf->Resume();
 	 BumpEventTime(send_buf->EventTime());
 	 BumpEventTime(recv_buf->EventTime());
-	 if(recv_buf->Size()>0 || recv_buf->Eof())
+	 if(data_buf->Size()>0 || (data_buf->Size()==0 && recv_buf->Eof()))
 	    m=MOVED;
 	 else
 	 {
@@ -648,7 +719,7 @@ system_error:
 void  Http::ClassInit()
 {
    // register the class
-   Protocol::Register("http",Http::New);
+   Register("http",Http::New);
 }
 
 int Http::Read(void *buf,int size)
@@ -707,6 +778,7 @@ int Http::Read(void *buf,int size)
       real_pos+=size;
       bytes_received+=size;
       BytesUsed(size);
+      retries=0;
       return size;
    }
    return DO_AGAIN;
@@ -831,6 +903,25 @@ void Http::BumpEventTime(time_t t)
 {
    if(event_time<t)
       event_time=t;
+}
+
+bool Http::SameSiteAs(FileAccess *fa)
+{
+   if(!SameProtoAs(fa))
+      return false;
+   Http *o=(Http*)fa;
+   return(!xstrcmp(hostname,o->hostname) && !xstrcmp(portname,o->portname)
+   && !xstrcmp(user,o->user) && !xstrcmp(pass,o->pass));
+}
+
+bool Http::SameLocationAs(FileAccess *fa)
+{
+   if(!SameSiteAs(fa))
+      return false;
+   Http *o=(Http*)fa;
+   if(xstrcmp(cwd,o->cwd))
+      return false;
+   return true;
 }
 
 /* Converts struct tm to time_t, assuming the data in tm is UTC rather
