@@ -1923,12 +1923,15 @@ int   Ftp::Do()
 #if INET6
 	 ipv4_port:
 #endif
-	    const char *port_ipv4=Query("port-ipv4",hostname);
-	    struct in_addr fake_ip;
-	    if(port_ipv4 && port_ipv4[0])
+	    if(copy_mode==COPY_NONE)
 	    {
-	       if(inet_aton(port_ipv4,&fake_ip))
-		  a=(unsigned char*)&fake_ip;
+	       const char *port_ipv4=Query("port-ipv4",hostname);
+	       struct in_addr fake_ip;
+	       if(port_ipv4 && port_ipv4[0])
+	       {
+		  if(inet_aton(port_ipv4,&fake_ip))
+		     a=(unsigned char*)&fake_ip;
+	       }
 	    }
 	    conn->SendCmdF("PORT %d,%d,%d,%d,%d,%d",a[0],a[1],a[2],a[3],p[0],p[1]);
 	    expect->Push(Expect::PORT);

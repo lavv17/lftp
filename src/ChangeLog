@@ -1,3 +1,8 @@
+2004-09-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc: fix endless loop in FileCopyPeerFDStream.
+	* ftpclass.cc: don't apply ftp:port-ipv4 to FXP.
+
 2004-09-13  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h: fix a core dump in FXP mode.

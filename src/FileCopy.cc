@@ -1314,8 +1314,7 @@ int FileCopyPeerFDStream::Do()
       {
 	 if(eof)
 	 {
-	    if(getfd()==-1)
-	       return m;
+	    getfd(); // give it a chance to create empty file. (FIXME - handle tmp errors)
 	    if(!date_set && date!=NO_DATE && do_set_date)
 	    {
 	       if(date==NO_DATE_YET)
