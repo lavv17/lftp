@@ -33,7 +33,7 @@ CDECL const char *strerror(int);
 #define N_(Text) Text
 
 #ifndef PARAMS
-# ifdef __STDC__
+# if defined __STDC__ || defined __cplusplus
 #  define PARAMS(x) x
 # else
 #  define PARAMS(x) ()
