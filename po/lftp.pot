@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-02-24 13:37+0300\n"
+"POT-Creation-Date: 2002-04-16 16:52+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -147,12 +147,12 @@ msgstr ""
 msgid "File moved to `%s'"
 msgstr ""
 
-#: src/FtpListInfo.cc:237 src/NetAccess.cc:879
+#: src/FtpListInfo.cc:237 src/NetAccess.cc:873
 #, c-format
 msgid "Getting directory contents (%lld)"
 msgstr ""
 
-#: src/FtpListInfo.cc:247 src/NetAccess.cc:885
+#: src/FtpListInfo.cc:247 src/NetAccess.cc:879
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr ""
@@ -162,7 +162,7 @@ msgstr ""
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr ""
 
-#: src/Job.cc:336
+#: src/Job.cc:338
 #, c-format
 msgid "[%d] Done (%s)"
 msgstr ""
@@ -1726,7 +1726,7 @@ msgid "ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C"
 msgstr ""
 
 #: src/FtpDirList.cc:145 src/FtpSplitList.cc:182 src/HttpDir.cc:1116
-#: src/NetAccess.cc:692
+#: src/NetAccess.cc:686
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr ""
@@ -1870,15 +1870,15 @@ msgstr ""
 msgid "Timeout - reconnecting"
 msgstr ""
 
-#: src/NetAccess.cc:493
+#: src/NetAccess.cc:487
 msgid "Connections limit reached"
 msgstr ""
 
-#: src/NetAccess.cc:497
+#: src/NetAccess.cc:491
 msgid "Delaying before reconnect"
 msgstr ""
 
-#: src/NetAccess.cc:508
+#: src/NetAccess.cc:502
 msgid "max-retries exceeded"
 msgstr ""
 

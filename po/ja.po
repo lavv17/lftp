@@ -2081,19 +2081,19 @@ msgstr "%.2fM/s"
 #. for translator: only first letter matters
 #: src/Speedometer.cc:126
 msgid "day"
-msgstr "日"
+msgstr ""
 
 #: src/Speedometer.cc:127
 msgid "hour"
-msgstr "時間"
+msgstr ""
 
 #: src/Speedometer.cc:128
 msgid "minute"
-msgstr "分"
+msgstr ""
 
 #: src/Speedometer.cc:129
 msgid "second"
-msgstr "秒"
+msgstr ""
 
 #. for translator: Estimated Time of Arrival.
 #: src/Speedometer.cc:132

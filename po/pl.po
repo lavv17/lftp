@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp\n"
-"POT-Creation-Date: 2002-02-24 13:37+0300\n"
+"POT-Creation-Date: 2002-04-16 16:52+0400\n"
 "PO-Revision-Date: 1999-06-08 15:27+02:00\n"
 "Last-Translator: Arkadiusz Mi¶kiewicz <misiek@pld.org.pl>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -146,12 +146,12 @@ msgstr "Plik przeniesiony: %s"
 msgid "File moved to `%s'"
 msgstr "Plik przeniesiony do `%s'"
 
-#: src/FtpListInfo.cc:237 src/NetAccess.cc:879
+#: src/FtpListInfo.cc:237 src/NetAccess.cc:873
 #, c-format
 msgid "Getting directory contents (%lld)"
 msgstr "Pobieranie informacji o zawarto¶ci katalogu (%lld)"
 
-#: src/FtpListInfo.cc:247 src/NetAccess.cc:885
+#: src/FtpListInfo.cc:247 src/NetAccess.cc:879
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "Pobieranie informcji o plikach (%d%%)"
@@ -161,7 +161,7 @@ msgstr "Pobieranie informcji o plikach (%d%%)"
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr "%s: %s: plik aktualnie istnieje i xfer:clobber jest nie ustawione\n"
 
-#: src/Job.cc:336
+#: src/Job.cc:338
 #, c-format
 msgid "[%d] Done (%s)"
 msgstr "[%d] Zakoñczono (%s)"
@@ -1956,7 +1956,7 @@ msgid "ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C"
 msgstr ""
 
 #: src/FtpDirList.cc:145 src/FtpSplitList.cc:182 src/HttpDir.cc:1116
-#: src/NetAccess.cc:692
+#: src/NetAccess.cc:686
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "Pobieranie listy plików (%lld) [%s]"
@@ -2100,15 +2100,15 @@ msgstr "£±cznie siê z %s%s (%s) port %u"
 msgid "Timeout - reconnecting"
 msgstr "Przekroczony limit czasu - ³±czê siê ponownie"
 
-#: src/NetAccess.cc:493
+#: src/NetAccess.cc:487
 msgid "Connections limit reached"
 msgstr "Osi±gniêto limit po³±czeñ"
 
-#: src/NetAccess.cc:497
+#: src/NetAccess.cc:491
 msgid "Delaying before reconnect"
 msgstr "Przerwa przed ponownym po³±czeniem"
 
-#: src/NetAccess.cc:508
+#: src/NetAccess.cc:502
 msgid "max-retries exceeded"
 msgstr "przekroczona maksymalna liczba prób"
 

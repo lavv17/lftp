@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2\n"
-"POT-Creation-Date: 2002-02-24 13:37+0300\n"
+"POT-Creation-Date: 2002-04-16 16:52+0400\n"
 "PO-Revision-Date: 2000-09-07 09:36+08:00\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -147,12 +147,12 @@ msgstr "Файл переместился: %s"
 msgid "File moved to `%s'"
 msgstr "Файл переместился в `%s'"
 
-#: src/FtpListInfo.cc:237 src/NetAccess.cc:879
+#: src/FtpListInfo.cc:237 src/NetAccess.cc:873
 #, c-format
 msgid "Getting directory contents (%lld)"
 msgstr "Получение содержимого каталога (%lld)"
 
-#: src/FtpListInfo.cc:247 src/NetAccess.cc:885
+#: src/FtpListInfo.cc:247 src/NetAccess.cc:879
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "Получение информации о файлах (%d%%)"
@@ -162,7 +162,7 @@ msgstr "Получение информации о файлах (%d%%)"
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr "%s: %s: файл уже существует и не задано xfer:clobber\n"
 
-#: src/Job.cc:336
+#: src/Job.cc:338
 #, c-format
 msgid "[%d] Done (%s)"
 msgstr "[%d] Завершено (%s)"
@@ -1940,7 +1940,7 @@ msgid "ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C"
 msgstr ""
 
 #: src/FtpDirList.cc:145 src/FtpSplitList.cc:182 src/HttpDir.cc:1116
-#: src/NetAccess.cc:692
+#: src/NetAccess.cc:686
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "Получение списка файлов (%lld) [%s]"
@@ -2086,15 +2086,15 @@ msgstr "Соединение с %s%s (%s), порт %u"
 msgid "Timeout - reconnecting"
 msgstr "Превышение лимита времени ожидания - повторное соединение"
 
-#: src/NetAccess.cc:493
+#: src/NetAccess.cc:487
 msgid "Connections limit reached"
 msgstr "Достигнут предел количества соединений"
 
-#: src/NetAccess.cc:497
+#: src/NetAccess.cc:491
 msgid "Delaying before reconnect"
 msgstr "Задержка перед повторным соединением"
 
-#: src/NetAccess.cc:508
+#: src/NetAccess.cc:502
 msgid "max-retries exceeded"
 msgstr "превышен лимит количества попыток (max-retries)"
 

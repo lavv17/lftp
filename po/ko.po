@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
-"POT-Creation-Date: 2002-02-24 13:37+0300\n"
+"POT-Creation-Date: 2002-04-16 16:52+0400\n"
 "PO-Revision-Date: 2002-02-17 KST\n"
 "Last-Translator: Dojip Kim <greendrm@greendrm.com>\n"
 "Language-Team: \n"
@@ -176,13 +176,13 @@ msgid "File moved to `%s'"
 msgstr "`%s'로 파일 이동"
 
 # src/FtpListInfo.cc:237 src/NetAccess.cc:879
-#: src/FtpListInfo.cc:237 src/NetAccess.cc:879
+#: src/FtpListInfo.cc:237 src/NetAccess.cc:873
 #, c-format
 msgid "Getting directory contents (%lld)"
 msgstr "디렉토리 정보를 가져오는 중 (%lld)"
 
 # src/FtpListInfo.cc:247 src/NetAccess.cc:885
-#: src/FtpListInfo.cc:247 src/NetAccess.cc:885
+#: src/FtpListInfo.cc:247 src/NetAccess.cc:879
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "파일 정보를 가져오는 중 (%d%%)"
@@ -194,7 +194,7 @@ msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr "%s: %s: 파일이 이미 존재하며 xfer:clobber가 설정되어 있지 않습니다\n"
 
 # src/Job.cc:336
-#: src/Job.cc:336
+#: src/Job.cc:338
 #, c-format
 msgid "[%d] Done (%s)"
 msgstr "[%d] 완료 (%s)"
@@ -2327,7 +2327,7 @@ msgstr "ftp:ssl-auth는 SSL, TLS, TLS-P, TSL-C 중 하나여만 합니다"
 # src/FtpDirList.cc:145 src/FtpSplitList.cc:182 src/HttpDir.cc:1116
 # src/NetAccess.cc:692
 #: src/FtpDirList.cc:145 src/FtpSplitList.cc:182 src/HttpDir.cc:1116
-#: src/NetAccess.cc:692
+#: src/NetAccess.cc:686
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "파일 목록을 가져옵니다 (%lld) [%s]"
@@ -2501,17 +2501,17 @@ msgid "Timeout - reconnecting"
 msgstr "시간초과 - 재접속"
 
 # src/NetAccess.cc:493
-#: src/NetAccess.cc:493
+#: src/NetAccess.cc:487
 msgid "Connections limit reached"
 msgstr "접속 제한까지 갔습니다"
 
 # src/NetAccess.cc:497
-#: src/NetAccess.cc:497
+#: src/NetAccess.cc:491
 msgid "Delaying before reconnect"
 msgstr "재접속하기 위하여 기다립니다"
 
 # src/NetAccess.cc:508
-#: src/NetAccess.cc:508
+#: src/NetAccess.cc:502
 msgid "max-retries exceeded"
 msgstr "최대-재시도를 초과했습니다"
 
