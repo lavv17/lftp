@@ -1339,19 +1339,22 @@ int   Ftp::Do()
 
 	 if(flags&PASSIVE_MODE)
 	 {
-	    // connect should come from the same address, else server can refuse.
-	    addr_len=sizeof(data_sa);
-	    getsockname(control_sock,&data_sa.sa,&addr_len);
-	    if(data_sa.sa.sa_family==AF_INET)
-	       data_sa.in.sin_port=0;
-   #if INET6
-	    else if(data_sa.sa.sa_family==AF_INET6)
-	       data_sa.in6.sin6_port=0;
-   #endif
-	    if(bind(data_sock,&data_sa.sa,addr_len)<0)
+	    if((bool)Query("bind-data-socket"))
 	    {
-	       sprintf(str,"bind(data_sock): %s",strerror(errno));
-	       DebugPrint("**** ",str,0);
+	       // connect should come from the same address, else server can refuse.
+	       addr_len=sizeof(data_sa);
+	       getsockname(control_sock,&data_sa.sa,&addr_len);
+	       if(data_sa.sa.sa_family==AF_INET)
+		  data_sa.in.sin_port=0;
+      #if INET6
+	       else if(data_sa.sa.sa_family==AF_INET6)
+		  data_sa.in6.sin6_port=0;
+      #endif
+	       if(bind(data_sock,&data_sa.sa,addr_len)<0)
+	       {
+		  sprintf(str,"bind(data_sock): %s",strerror(errno));
+		  DebugPrint("**** ",str,0);
+	       }
 	    }
 	 }
 	 else // !PASSIVE_MODE
@@ -2410,6 +2413,8 @@ void  Ftp::DataClose()
       rate_limit=0;
    }
    fixed_pasv=false;
+   if(state==DATA_OPEN_STATE)
+      state=WAITING_STATE;
 }
 
 int  Ftp::FlushSendQueue(bool all)

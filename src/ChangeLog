@@ -1,3 +1,10 @@
+2000-09-29  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileCopy.cc: fix for `ls|head'.
+	* ftpclass.cc, resource.cc: ftp:bind-data-socket new setting;
+	  fix for assert(rate_limit!=0).
+	* url.cc, url.h: provisions for not using rfc1738 for ftp urls.
+
 2000-09-23  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* commands.cc: fix lcd & in queue.

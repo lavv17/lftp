@@ -31,7 +31,7 @@
    CONNECT -> [USER[:PASS]@]HOST[:PORT]
 */
 
-ParsedURL::ParsedURL(const char *url,bool proto_required)
+ParsedURL::ParsedURL(const char *url,bool proto_required,bool use_rfc1738)
 {
    memory=(char*)xmalloc(strlen(url)*2+20+1);
    strcpy(memory,url);
@@ -87,7 +87,8 @@ ParsedURL::ParsedURL(const char *url,bool proto_required)
       if(scan[1]!='~')
       {
 	 memmove(scan+1,scan,strlen(scan)+1);
-	 if(!xstrcmp(proto,"ftp") || !xstrcmp(proto,"hftp"))
+	 if((!xstrcmp(proto,"ftp") || !xstrcmp(proto,"hftp"))
+	 && use_rfc1738)
 	 {
 	    // special handling for ftp protocol.
 	    if(!strncasecmp(scan+2,"%2F",3))
@@ -187,7 +188,7 @@ int url::path_index(const char *base)
    return 0;
 }
 
-void ParsedURL::Combine(char *url,const char *home)
+void ParsedURL::Combine(char *url,const char *home,bool use_rfc1738)
 {
    bool is_file=!strcmp(proto,"file");
    bool is_ftp=(!strcmp(proto,"ftp") || !strcmp(proto,"hftp"));
@@ -218,7 +219,7 @@ void ParsedURL::Combine(char *url,const char *home)
       if(path[0]!='/' && !is_file) // e.g. ~/path
 	 strcat(url,"/");
       int p_offset=0;
-      if(is_ftp)
+      if(is_ftp && use_rfc1738)
       {
 	 // some cruft for ftp urls...
 	 if(path[0]=='/' && xstrcmp(home,"/"))

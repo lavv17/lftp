@@ -1262,6 +1262,8 @@ int FileCopyPeerFDStream::getfd()
       return -1;
    }
    pos=0;
+   if(mode==PUT)
+      pos+=in_buffer;
    Seek_LL();
    return fd;
 }

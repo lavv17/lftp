@@ -36,14 +36,14 @@ public:
 
    char  *orig_url;
 
-   ParsedURL(const char *url,bool proto_required=false);
+   ParsedURL(const char *url,bool proto_required=false,bool use_rfc1738=true);
    ~ParsedURL()
    {
       xfree(memory);
       xfree(orig_url);
    }
 
-   void Combine(char *buf,const char *home=0);
+   void Combine(char *buf,const char *home=0,bool use_rfc1738=true);
 };
 
 # define URL_UNSAFE " <>\"%{}|\\^[]`"

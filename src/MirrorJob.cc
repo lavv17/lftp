@@ -419,7 +419,8 @@ void  MirrorJob::HandleFile(int how)
    return;
 
 skip:
-   to_transfer->next();
+   if(how==1)  // NOTE: check invocation places before changing this
+      to_transfer->next();
    return;
 }
 
