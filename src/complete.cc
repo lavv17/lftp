@@ -37,6 +37,7 @@
 #include "complete.h"
 #include "lftp_rl.h"
 #include "url.h"
+#include "ResMgr.h"
 
 CDECL_BEGIN
 #include "readline/readline.h"
@@ -48,6 +49,7 @@ static int lftp_char_is_quoted(char *string,int eindex);
 static int len;    // lenght of the word to complete
 static int cindex; // index in completion array
 static const char *const *array;
+static char **vars=NULL;
 static FileSet *glob_res=NULL;
 
 static bool shell_cmd;
@@ -58,9 +60,7 @@ char *command_generator(const char *text,int state)
    const char *name;
    static const Alias *alias;
 
-   /* If this is a new word to complete, initialize now.  This includes
-      saving the length of TEXT for efficiency, and initializing the cindex
-      variable to 0. */
+   /* If this is a new word to complete, initialize now. */
    if(!state)
    {
       cindex=0;
@@ -91,9 +91,7 @@ static char *remote_generator(const char *text,int state)
 {
    const char *name;
 
-   /* If this is a new word to complete, initialize now.  This includes
-      saving the length of TEXT for efficiency, and initializing the cindex
-      variable to 0. */
+   /* If this is a new word to complete, initialize now. */
    if(!state)
       cindex=0;
 
@@ -109,7 +107,6 @@ static char *remote_generator(const char *text,int state)
 	 return(xstrdup(name));
    }
 
-   //glob_res=NULL;
    return NULL;
 }
 
@@ -164,6 +161,37 @@ static char *array_generator(const char *text,int state)
    }
 
    array=NULL;
+   return NULL;
+}
+
+static char *vars_generator(const char *text,int state)
+{
+   const char *name;
+
+   /* If this is a new word to complete, initialize now. */
+   if(!state)
+      cindex=0;
+
+   if(vars==NULL)
+      return NULL;
+
+   while((name=vars[cindex++])!=NULL)
+   {
+      if(!name[0])
+	 continue;
+      char *text0=string_alloca(len+2);
+      strncpy(text0,text,len);
+      text0[len]=0;
+      if(ResMgr::VarNameCmp(name,text0)!=ResMgr::DIFFERENT)
+	 return(xstrdup(name));
+      if(strchr(text0,':')==0)
+      {
+	 strcat(text0,":");
+	 if(ResMgr::VarNameCmp(name,text0)!=ResMgr::DIFFERENT)
+	    return(xstrdup(name));
+      }
+   }
+
    return NULL;
 }
 
@@ -227,7 +255,7 @@ static bool copy_word(char *buf,const char *p,int n)
 enum completion_type
 {
    LOCAL, LOCAL_DIR, REMOTE_FILE, REMOTE_DIR, BOOKMARK, COMMAND,
-   STRING_ARRAY, NO_COMPLETION
+   STRING_ARRAY, VARIABLE, NO_COMPLETION
 };
 
 static completion_type cmd_completion_type(const char *cmd,int start)
@@ -427,6 +455,18 @@ static completion_type cmd_completion_type(const char *cmd,int start)
 	 return NO_COMPLETION;
    }
 
+   if(!strcmp(buf,"set"))
+   {
+      if(second)
+      {
+         if(!vars)
+            vars=ResMgr::Generator();
+         return VARIABLE;
+      }
+      else
+         return NO_COMPLETION;
+   }
+
    if(!strcmp(buf,"lcd"))
       return LOCAL_DIR;
 
@@ -505,6 +545,9 @@ static char **lftp_completion (const char *text,int start,int end)
    case STRING_ARRAY:
       generator = array_generator;
       break;
+   case VARIABLE:
+      generator = vars_generator;
+      break;
    case LOCAL:
    case LOCAL_DIR:
       if(force_remote || (url::is_url(text) && remote_completion))
@@ -582,6 +625,11 @@ static char **lftp_completion (const char *text,int start,int end)
    glob_res=0;
    if(rg)
       delete rg;
+
+   if(vars)
+   {
+      // delete vars?
+   }
 
    if(!matches)
    {

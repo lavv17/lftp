@@ -87,6 +87,7 @@ public:
 
    static void Print(FILE *);
    static char *Format(bool with_defaults,bool only_defaults);
+   static char **Generator(void);
 
    static const char *BoolValidate(char **value);
    static const char *NumberValidate(char **value);

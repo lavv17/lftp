@@ -316,6 +316,57 @@ char *ResMgr::Format(bool with_defaults,bool only_defaults)
    return res;
 }
 
+char **ResMgr::Generator(void)
+{
+   char **res;
+
+   Resource *scan;
+   ResDecl  *dscan;
+
+   int n=0;
+   int dn=0;
+   for(scan=chain; scan; scan=scan->next)
+      n++;
+   for(dscan=type_chain; dscan; dscan=dscan->next)
+      dn++;
+
+   res=(char**)xmalloc((n + dn + 1) * sizeof(char*));
+   char **store = res;
+
+   Resource **created=(Resource**)alloca((dn+1)*sizeof(Resource*));
+   Resource **c_store=created;
+   dn=0;
+   for(dscan=type_chain; dscan; dscan=dscan->next)
+   {
+      if(SimpleQuery(dscan->name,0)==0)
+      {
+         dn++;
+	 *c_store++=new Resource(0,dscan,
+	     0,xstrdup(dscan->defvalue?dscan->defvalue:"(nil)"));
+      }
+   }
+
+   Resource **arr=(Resource**)alloca((n+dn)*sizeof(Resource*));
+   n=0;
+   for(scan=chain; scan; scan=scan->next)
+      arr[n++]=scan;
+
+   int i;
+   for(i=0; i<dn; i++)
+      arr[n++]=created[i];
+
+   qsort(arr,n,sizeof(*arr),&ResMgr::VResourceCompare);
+
+   for(i=0; i<n; i++)
+      *(store++) = xstrdup(arr[i]->type->name);
+
+   *store=0;
+
+   for(i=0; i<dn; i++)
+      delete created[i];
+   return res;
+}
+
 const char *ResMgr::BoolValidate(char **value)
 {
    char *v=*value;
