@@ -1,4 +1,6 @@
+* ftp over http proxy support via hftp:// notation.
 * new command `queue' to queue commands for sequential execution.
+* fixed unlimited memory usage on `ls -R'.
 
 Version 2.0.4 - 1999-08-11
 
