@@ -103,19 +103,19 @@ int   LsJob::Do()
 	 {
 	    // EOF
 	    got_eof=true;
-	    return res;
+	    m=MOVED;
 	 }
-	 if(res==0)
-	    return res;
+	 else if(res>0)
+	 {
+	    if((unsigned)res > buffer_size-in_buffer)
+	       res=buffer_size-in_buffer;
+	    memcpy(buffer+in_buffer,tmpbuf,res);
+	    in_buffer+=res;
+	    offset+=res;
+	    dl->Skip(res);
 
-	 if((unsigned)res > buffer_size-in_buffer)
-	    res=buffer_size-in_buffer;
-	 memcpy(buffer+in_buffer,tmpbuf,res);
-	 in_buffer+=res;
-	 offset+=res;
-	 dl->Skip(res);
-
-	 CountBytes(res);
+	    CountBytes(res);
+	 }
       }
       else // !dl
       {

@@ -1,3 +1,9 @@
+1999-07-16  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* LsJob.cc: fixed bug caused by cut-n-paste. This fixes spinning
+	  when output stalls.
+	* Resolver.cc: include netinet/in.h
+
 1999-07-15  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* HttpDir.cc: fix handling of HREF=/

@@ -33,8 +33,9 @@
 #include <ctype.h>
 #include <fcntl.h>
 
-#include <resolv.h>
+#include <netinet/in.h>
 #include <arpa/nameser.h>
+#include <resolv.h>
 
 #include "xstring.h"
 #include "xmalloc.h"
