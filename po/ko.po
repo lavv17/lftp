@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
-"POT-Creation-Date: 2002-12-26 08:51+0300\n"
+"POT-Creation-Date: 2003-02-27 18:32+0300\n"
 "PO-Revision-Date: 2001-05-27 KST\n"
 "Last-Translator: Dojip Kim <greendrm@greendrm.com>\n"
 "Language-Team: \n"
@@ -38,12 +38,12 @@ msgstr "`%s'명령에 대한 모듈이 등록되어 있지 않습니다.\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "cd 성공, cwd=%s\n"
 
-#: src/CmdExec.cc:391 src/MirrorJob.cc:431
+#: src/CmdExec.cc:391 src/MirrorJob.cc:452
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: `%s'으로 리다이렉션을 받음\n"
 
-#: src/CmdExec.cc:394 src/FileCopy.cc:952
+#: src/CmdExec.cc:394 src/FileCopy.cc:956
 msgid "Too many redirections"
 msgstr "리다이렉션이 너무 많습니다"
 
@@ -91,51 +91,51 @@ msgstr "\t명령을 기다리는 중\n"
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: `%s'명령은 컴파일되지 않았습니다.\n"
 
-#: src/FileAccess.cc:225
+#: src/FileAccess.cc:226
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "(%s) 소켓 오류 - 재접속중"
 
-#: src/FileAccess.cc:316
+#: src/FileAccess.cc:317
 #, c-format
 msgid "Access failed: %s"
 msgstr "접속 실패: %s"
 
-#: src/FileAccess.cc:319
+#: src/FileAccess.cc:320
 msgid "File cannot be accessed"
 msgstr "파일을 읽을 수 없습니다"
 
-#: src/FileAccess.cc:321 src/ftpclass.cc:3652 src/ftpclass.cc:3661
+#: src/FileAccess.cc:322 src/ftpclass.cc:3662 src/ftpclass.cc:3671
 msgid "Not connected"
 msgstr "접속되지 않았습니다"
 
-#: src/FileAccess.cc:325
+#: src/FileAccess.cc:326
 #, c-format
 msgid "Fatal error: %s"
 msgstr "치명적 오류: %s"
 
-#: src/FileAccess.cc:328
+#: src/FileAccess.cc:329
 msgid "Fatal error"
 msgstr "치명적 오류"
 
-#: src/FileAccess.cc:330
+#: src/FileAccess.cc:331
 msgid "Store failed - you have to reput"
 msgstr "저장 실패 - 다시 입력하십시오"
 
-#: src/FileAccess.cc:334 src/FileAccess.cc:337
+#: src/FileAccess.cc:335 src/FileAccess.cc:338
 msgid "Login failed"
 msgstr "로그인 실패"
 
-#: src/FileAccess.cc:339
+#: src/FileAccess.cc:340
 msgid "Operation not supported"
 msgstr "지원되지 않는 오퍼레이션입니다"
 
-#: src/FileAccess.cc:343
+#: src/FileAccess.cc:344
 #, c-format
 msgid "File moved: %s"
 msgstr "파일 이동: %s"
 
-#: src/FileAccess.cc:349
+#: src/FileAccess.cc:350
 #, c-format
 msgid "File moved to `%s'"
 msgstr "`%s'로 파일 이동"
@@ -211,7 +211,7 @@ msgstr "%s삭제: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%s삭제: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 
-#: src/MirrorJob.cc:225 src/MirrorJob.cc:666
+#: src/MirrorJob.cc:225 src/MirrorJob.cc:744
 #, fuzzy, c-format
 msgid "Removing old file `%s'"
 msgstr "옛 지역 파일 `%s' 지움"
@@ -221,58 +221,58 @@ msgstr "옛 지역 파일 `%s' 지움"
 msgid "Transferring file `%s'"
 msgstr "지역 파일 `%s'을 전송"
 
-#: src/MirrorJob.cc:296 src/MirrorJob.cc:352
+#: src/MirrorJob.cc:297 src/MirrorJob.cc:373 src/MirrorJob.cc:584
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "옛 지역 파일 `%s' 지움"
 
-#: src/MirrorJob.cc:334
+#: src/MirrorJob.cc:341
 #, c-format
 msgid "Mirroring directory `%s'"
 msgstr "디렉토리 `%s' 미러링"
 
-#: src/MirrorJob.cc:365
+#: src/MirrorJob.cc:386
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "`%s'를 `%s'로 심볼 링크함"
 
-#: src/MirrorJob.cc:469
+#: src/MirrorJob.cc:505
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "미러: 프로토콜 '%s'은 mirror에 적합하지 않습니다\n"
 
-#: src/MirrorJob.cc:536
+#: src/MirrorJob.cc:602
 #, fuzzy, c-format
 msgid "Making directory `%s'"
 msgstr "원거리 디렉토리 `%s' 생성"
 
-#: src/MirrorJob.cc:628
+#: src/MirrorJob.cc:706
 #, fuzzy, c-format
 msgid "Old file `%s' is not removed"
 msgstr "옛 지역 파일 `%s'이 삭제되지 않았습니다"
 
-#: src/MirrorJob.cc:660
+#: src/MirrorJob.cc:738
 #, fuzzy, c-format
 msgid "Removing old directory `%s'"
 msgstr "옛 원거리 디렉토리 `%s' 삭제"
 
-#: src/MirrorJob.cc:1009
+#: src/MirrorJob.cc:1111
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1073 src/commands.cc:953 src/commands.cc:1049
-#: src/commands.cc:1434 src/commands.cc:1468 src/commands.cc:1568
-#: src/commands.cc:1824 src/commands.cc:2018 src/commands.cc:2192
-#: src/commands.cc:2199 src/commands.cc:2381 src/commands.cc:2409
-#: src/commands.cc:2416 src/commands.cc:2743 src/commands.cc:3004
+#: src/MirrorJob.cc:1180 src/commands.cc:961 src/commands.cc:1057
+#: src/commands.cc:1443 src/commands.cc:1477 src/commands.cc:1577
+#: src/commands.cc:1833 src/commands.cc:2027 src/commands.cc:2201
+#: src/commands.cc:2208 src/commands.cc:2390 src/commands.cc:2418
+#: src/commands.cc:2425 src/commands.cc:2752 src/commands.cc:3013
 #: src/SleepJob.cc:139
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "상세한 것은 `help %s'를 이용하십시오\n"
 
-#: src/MirrorJob.cc:1107 src/MirrorJob.cc:1123 src/commands.cc:818
-#: src/commands.cc:1912 src/DummyProto.cc:73
+#: src/MirrorJob.cc:1214 src/MirrorJob.cc:1230 src/commands.cc:826
+#: src/commands.cc:1921 src/DummyProto.cc:73
 msgid " - not supported protocol"
 msgstr " - 지원하지 않는 프로토콜입니다"
 
@@ -330,7 +330,7 @@ msgstr "이 설정에 대한 종결이 정의되어 있지 않습니다"
 msgid "invalid pair of numbers"
 msgstr "잘못된 수입니다"
 
-#: src/Resolver.cc:184 src/Resolver.cc:226 src/ftpclass.cc:3657
+#: src/Resolver.cc:184 src/Resolver.cc:226 src/ftpclass.cc:3667
 #: src/Http.cc:1645
 msgid "Resolving host address..."
 msgstr "호스트 주소를 찾습니다..."
@@ -530,7 +530,7 @@ msgid ""
 " -i, --nocase         - case-insensitive pattern matching\n"
 " -I, --sortnocase     - sort names case-insensitively\n"
 " -D, --dirsfirst      - list directories first\n"
-"     --sort=OPT       - \"name\", \"size\"\n"
+"     --sort=OPT       - \"name\", \"size\", \"date\"\n"
 " -S                   - sort by file size\n"
 " --user, --group, --perms, --date, --linkcount, --links\n"
 "                      - show individual fields\n"
@@ -1266,317 +1266,317 @@ msgstr ""
 "`exit bg'는 강제로 백그라운드로 가기 위해 사용되거나 `kill all'는 \n"
 "작업들을 종료하기 위하여 사용한다.\n"
 
-#: src/commands.cc:748
+#: src/commands.cc:756
 #, c-format
 msgid "Try `%s --help' for more information\n"
 msgstr "`%s --help'로 더 많은 정보를 보십시오\n"
 
-#: src/commands.cc:750
+#: src/commands.cc:758
 #, c-format
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 msgstr "사용법: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 
-#: src/commands.cc:864 src/commands.cc:1896
+#: src/commands.cc:872 src/commands.cc:1905
 msgid "Password: "
 msgstr "비밀번호: "
 
-#: src/commands.cc:866
+#: src/commands.cc:874
 #, c-format
 msgid "%s: GetPass() failed -- assume anonymous login\n"
 msgstr "%s: GetPass() 실패 -- 익명의 로그인으로 간주합니다\n"
 
-#: src/commands.cc:961
+#: src/commands.cc:969
 #, c-format
 msgid "Usage: %s [OPTS] command args...\n"
 msgstr "사용법: %s [OPTS] command args...\n"
 
-#: src/commands.cc:1019 src/commands.cc:1546
+#: src/commands.cc:1027 src/commands.cc:1555
 #, c-format
 msgid "%s: -n: Number expected. "
 msgstr "%s: -n: 숫자가 요구됩니다  "
 
-#: src/commands.cc:1071
+#: src/commands.cc:1079
 msgid "Created a stopped queue.\n"
 msgstr ""
 
-#: src/commands.cc:1115 src/commands.cc:1145
+#: src/commands.cc:1123 src/commands.cc:1153
 #, c-format
 msgid "%s: No queue is active.\n"
 msgstr ""
 
-#: src/commands.cc:1137
+#: src/commands.cc:1145
 #, fuzzy, c-format
 msgid "%s: -m: Number expected as second argument. "
 msgstr "%s: -n: 숫자가 요구됩니다  "
 
-#: src/commands.cc:1169
+#: src/commands.cc:1177
 msgid "Can only edit plain queues.\n"
 msgstr ""
 
-#: src/commands.cc:1182
+#: src/commands.cc:1190
 #, c-format
 msgid "Couldn't create temporary file `%s': %s.\n"
 msgstr ""
 
-#: src/commands.cc:1188
+#: src/commands.cc:1196
 #, c-format
 msgid "%s: error writing %s: %s\n"
 msgstr ""
 
-#: src/commands.cc:1243
+#: src/commands.cc:1251
 #, c-format
 msgid "Usage: %s <cmd>\n"
 msgstr "사용법: %s <cmd>\n"
 
-#: src/commands.cc:1335
+#: src/commands.cc:1344
 msgid "invalid argument for `--sort'"
 msgstr ""
 
-#: src/commands.cc:1354
+#: src/commands.cc:1363
 #, fuzzy
 msgid "invalid block size"
 msgstr "잘못된 수입니다"
 
-#: src/commands.cc:1402
+#: src/commands.cc:1411
 #, fuzzy
 msgid "invalid option"
 msgstr "잘못된 수입니다"
 
-#: src/commands.cc:1477
+#: src/commands.cc:1486
 #, c-format
 msgid "Usage: %s [OPTS] files...\n"
 msgstr "사용법: %s [OPTS] files...\n"
 
-#: src/commands.cc:1579
+#: src/commands.cc:1588
 #, c-format
 msgid "File name missed. "
 msgstr "파일명이 없습니다. "
 
-#: src/commands.cc:1688
+#: src/commands.cc:1697
 #, fuzzy, c-format
 msgid "Usage: %s %s[-f] files...\n"
 msgstr "사용법: %s [-r] [-f] files...\n"
 
-#: src/commands.cc:1726
+#: src/commands.cc:1735
 #, c-format
 msgid "Usage: %s <file>\n"
 msgstr "사용법: %s <file>\n"
 
-#: src/commands.cc:1748
+#: src/commands.cc:1757
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
 msgstr "사용법: %s [-v] [-v] ...\n"
 
-#: src/commands.cc:1776
+#: src/commands.cc:1785
 #, c-format
 msgid "Usage: %s [-p]\n"
 msgstr "사용법: %s [-p]\n"
 
-#: src/commands.cc:1863
+#: src/commands.cc:1872
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
 msgstr "디버그 레벨은 %d이고, 출력은 %s로 됩니다\n"
 
-#: src/commands.cc:1866
+#: src/commands.cc:1875
 msgid "debug is off\n"
 msgstr "디버그 끔\n"
 
-#: src/commands.cc:1877
+#: src/commands.cc:1886
 #, c-format
 msgid "Usage: %s userid [pass]\n"
 msgstr "사용법: %s userid [pass]\n"
 
-#: src/commands.cc:1952 src/commands.cc:2126
+#: src/commands.cc:1961 src/commands.cc:2135
 #, c-format
 msgid "%s: no current job\n"
 msgstr "%s: 현재 작업 없음\n"
 
-#: src/commands.cc:1962 src/commands.cc:1992 src/commands.cc:2134
+#: src/commands.cc:1971 src/commands.cc:2001 src/commands.cc:2143
 #, c-format
 msgid "%s: %d - no such job\n"
 msgstr "%s: %d - 작업 없음\n"
 
-#: src/commands.cc:1964
+#: src/commands.cc:1973
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
 msgstr "사용법: %s <jobno> ... | all\n"
 
-#: src/commands.cc:1983 src/commands.cc:2116 src/commands.cc:2261
-#: src/commands.cc:2547 src/commands.cc:2622 src/commands.cc:3016
+#: src/commands.cc:1992 src/commands.cc:2125 src/commands.cc:2270
+#: src/commands.cc:2556 src/commands.cc:2631 src/commands.cc:3025
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s %s - 숫자가 아닙니다\n"
 
-#: src/commands.cc:2048
+#: src/commands.cc:2057
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr "%s: %s. `set -a'를 사용하여 모든 값들을 봅니다.\n"
 
-#: src/commands.cc:2098
+#: src/commands.cc:2107
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
 msgstr "사용법: %s [<jobno>]\n"
 
-#: src/commands.cc:2139
+#: src/commands.cc:2148
 #, c-format
 msgid "%s: some other job waits for job %d\n"
 msgstr "%s: 일부 다른 작업이 작업 %d를 기다립니다\n"
 
-#: src/commands.cc:2144
+#: src/commands.cc:2153
 #, fuzzy, c-format
 msgid "%s: wait loop detected\n"
 msgstr "%s: 버그 - 데드락 발견\n"
 
-#: src/commands.cc:2169
+#: src/commands.cc:2178
 #, c-format
 msgid "Usage: mv <file1> <file2>\n"
 msgstr "사용법: mv <file1> <file2>\n"
 
-#: src/commands.cc:2191 src/commands.cc:2408
+#: src/commands.cc:2200 src/commands.cc:2417
 #, c-format
 msgid "Invalid command. "
 msgstr "잘못된 명령어. "
 
-#: src/commands.cc:2198 src/commands.cc:2415
+#: src/commands.cc:2207 src/commands.cc:2424
 #, c-format
 msgid "Ambiguous command. "
 msgstr "모호한 명령어. "
 
-#: src/commands.cc:2217
+#: src/commands.cc:2226
 #, c-format
 msgid "%s: Operand missed for size\n"
 msgstr "%s: 크기의 오퍼랜드가 빠졌습니다.\n"
 
-#: src/commands.cc:2234
+#: src/commands.cc:2243
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
 msgstr "%s: `expire'의 오퍼랜드가 빠졌습니다.\n"
 
-#: src/commands.cc:2267
+#: src/commands.cc:2276
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr "%s: %s - 캐시 세션이 없습니다. `scache'로 세션 목록에서 찾으십시오.\n"
 
-#: src/commands.cc:2284
+#: src/commands.cc:2293
 #, c-format
 msgid "Sorry, no help for %s\n"
 msgstr "죄송합니다, %s 에 대한 도움말은 없습니다\n"
 
-#: src/commands.cc:2289
+#: src/commands.cc:2298
 #, c-format
 msgid "%s is a built-in alias for %s\n"
 msgstr "%s 는 %s을 기본 별명입니다\n"
 
-#: src/commands.cc:2294
+#: src/commands.cc:2303
 #, c-format
 msgid "Usage: %s\n"
 msgstr "사용법: %s\n"
 
-#: src/commands.cc:2302
+#: src/commands.cc:2311
 #, c-format
 msgid "%s is an alias to `%s'\n"
 msgstr "%s는 `%s'인 별명을 갖습니다\n"
 
-#: src/commands.cc:2306
+#: src/commands.cc:2315
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr ""
 "명령어 `%s'는 없습니다. `help'를 사용하여 이용가능한 명령어를 확인하십시오.\n"
 
-#: src/commands.cc:2308
+#: src/commands.cc:2317
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr ""
 "모호한 명령어 `%s'. `help'를 사용하여 이용가능한 명령어를 확인하십시오.\n"
 
-#: src/commands.cc:2359
+#: src/commands.cc:2368
 #, fuzzy, c-format
 msgid "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 msgstr "Lftp | 버전 %s | 저작권 (C) 1996-2001 Alexander V. Lukyanov\n"
 
-#: src/commands.cc:2361
+#: src/commands.cc:2370
 msgid ""
 "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
 msgstr ""
 "이것은 ABSOLUTELY NO WARRANTY를 가지는 프리 소프트웨어입니다. 자세한 것은 "
 "COPYING을 보십시오.\n"
 
-#: src/commands.cc:2363
+#: src/commands.cc:2372
 #, c-format
 msgid "Send bug reports and questions to <%s>.\n"
 msgstr "<%s> 에게 버그 보고서나 질문을 보내십시오.\n"
 
-#: src/commands.cc:2433 src/commands.cc:2465
+#: src/commands.cc:2442 src/commands.cc:2474
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s: 북마크 이름이 필요합니다\n"
 
-#: src/commands.cc:2454
+#: src/commands.cc:2463
 #, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
 msgstr "%s: 북마크 이름에 공백문자를 사용할 수 없습니다\n"
 
-#: src/commands.cc:2467
+#: src/commands.cc:2476
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s: 그와 같은 북마크 `%s'\n"
 
-#: src/commands.cc:2482
+#: src/commands.cc:2491
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: (netscape,ncftp)에서 가져온 양식이 필요합니다\n"
 
-#: src/commands.cc:2553
+#: src/commands.cc:2562
 #, fuzzy, c-format
 msgid "Usage: %s [-d #] dir\n"
 msgstr "사용법: %s [-p]\n"
 
-#: src/commands.cc:2653
+#: src/commands.cc:2662
 #, fuzzy, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "잘못된 수입니다"
 
-#: src/commands.cc:2668
+#: src/commands.cc:2677
 #, fuzzy, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "사용법: %s [-p]\n"
 
-#: src/commands.cc:2674
+#: src/commands.cc:2683
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr ""
 
-#: src/commands.cc:2678
+#: src/commands.cc:2687
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr ""
 
-#: src/commands.cc:2730
+#: src/commands.cc:2739
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "사용법: %s command args...\n"
 
-#: src/commands.cc:2742
+#: src/commands.cc:2751
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "사용법: %s module [args...]\n"
 
-#: src/commands.cc:2760 src/LocalAccess.cc:603
+#: src/commands.cc:2769 src/LocalAccess.cc:603
 msgid "cannot get current directory"
 msgstr "현재 디렉토리에 접근할 수 없습니다"
 
-#: src/commands.cc:2821
+#: src/commands.cc:2830
 #, fuzzy, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "사용법: %s [OPTS] files...\n"
 
-#: src/commands.cc:2840
+#: src/commands.cc:2849
 #, fuzzy, c-format
 msgid "invalid mode string: %s\n"
 msgstr "잘못된 수입니다"
 
-#: src/commands.cc:2898
+#: src/commands.cc:2907
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "사용법: %s [OPTS] file\n"
@@ -1593,171 +1593,171 @@ msgstr "접속이 잘못된 주소로 된 듯 합니다"
 msgid "Switching to NOREST mode"
 msgstr "NOREST 모드로 전환"
 
-#: src/ftpclass.cc:427
+#: src/ftpclass.cc:429
 msgid "Server reply matched ftp:retry-530, retrying"
 msgstr ""
 
-#: src/ftpclass.cc:435
+#: src/ftpclass.cc:437
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
 msgstr ""
 
-#: src/ftpclass.cc:459
+#: src/ftpclass.cc:461
 msgid "Account is required, set ftp:acct variable"
 msgstr ""
 
-#: src/ftpclass.cc:484
+#: src/ftpclass.cc:486
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
 msgstr ""
 
-#: src/ftpclass.cc:500
+#: src/ftpclass.cc:502
 msgid "Saw `unknown', assume failed login"
 msgstr "`알수 없는' 보면, 로그인에 실패한 듯 합니다"
 
-#: src/ftpclass.cc:511
+#: src/ftpclass.cc:513
 msgid "assuming failed host name lookup"
 msgstr "호스트 이름을 찾는데 실패한 듯 합니다"
 
-#: src/ftpclass.cc:740
+#: src/ftpclass.cc:742
 msgid "cannot parse EPSV response"
 msgstr ""
 
-#: src/ftpclass.cc:1115 src/Http.cc:788
+#: src/ftpclass.cc:1117 src/Http.cc:788
 msgid "Closing idle connection"
 msgstr "사용하지 않는 접속을 끊습니다"
 
-#: src/ftpclass.cc:1195 src/Http.cc:911
+#: src/ftpclass.cc:1197 src/Http.cc:911
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "주소 %d의 소켓을 만들 수 없습니다"
 
-#: src/ftpclass.cc:1383
+#: src/ftpclass.cc:1385
 msgid "SITE CHMOD is not supported by this site"
 msgstr ""
 
-#: src/ftpclass.cc:1388
+#: src/ftpclass.cc:1390
 msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 msgstr ""
 
-#: src/ftpclass.cc:1739 src/ftpclass.cc:1779
+#: src/ftpclass.cc:1741 src/ftpclass.cc:1781
 msgid "unsupported network protocol"
 msgstr "지원하지 않는 네트워크 프로토콜입니다"
 
-#: src/ftpclass.cc:1889
+#: src/ftpclass.cc:1891
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "(%s) 포트 %u에 자료 소켓을 연결합니다"
 
-#: src/ftpclass.cc:1914 src/ftpclass.cc:3523
+#: src/ftpclass.cc:1916 src/ftpclass.cc:3533
 msgid "Switching passive mode off"
 msgstr "패시브(passive) 모드 끔"
 
-#: src/ftpclass.cc:2382 src/Http.cc:999
+#: src/ftpclass.cc:2384 src/Http.cc:999
 msgid "Peer closed connection"
 msgstr "접속이 끊겼습니다"
 
-#: src/ftpclass.cc:2409
+#: src/ftpclass.cc:2411
 msgid "Persist and retry"
 msgstr "계속 재시도함"
 
-#: src/ftpclass.cc:2522
+#: src/ftpclass.cc:2524
 msgid "Closing control socket"
 msgstr "제어 소켓 닫음"
 
-#: src/ftpclass.cc:2606
+#: src/ftpclass.cc:2608
 msgid "Closing data socket"
 msgstr "데이터 소켓 닫음"
 
-#: src/ftpclass.cc:3357
+#: src/ftpclass.cc:3367
 msgid "saw file size in response"
 msgstr "응답에서 파일 크기를 봅니다"
 
-#: src/ftpclass.cc:3368
+#: src/ftpclass.cc:3378
 #, fuzzy
 msgid "remote end closed connection"
 msgstr "원거리 끝이 접속을 끊습니다"
 
-#: src/ftpclass.cc:3376
+#: src/ftpclass.cc:3386
 msgid "extra server response"
 msgstr "임시 서버 응답"
 
-#: src/ftpclass.cc:3389 src/ftpclass.cc:3418
+#: src/ftpclass.cc:3399 src/ftpclass.cc:3428
 msgid "Turning on sync-mode"
 msgstr "동기 모드로 전환"
 
-#: src/ftpclass.cc:3540
+#: src/ftpclass.cc:3550
 msgid "Switching passive mode on"
 msgstr "패시브(passive) 모드로 전환"
 
-#: src/ftpclass.cc:3607
+#: src/ftpclass.cc:3617
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force가 설정되어있지만 서버가 지원하지 않거나 SSL을 허용하지 않음"
 
-#: src/ftpclass.cc:3647
+#: src/ftpclass.cc:3657
 msgid "Sending commands..."
 msgstr "명령어 전송중..."
 
-#: src/ftpclass.cc:3649 src/ftpclass.cc:3674 src/ftpclass.cc:3687
+#: src/ftpclass.cc:3659 src/ftpclass.cc:3684 src/ftpclass.cc:3697
 #: src/Http.cc:1660
 msgid "Waiting for response..."
 msgstr "응답을 기다립니다..."
 
-#: src/ftpclass.cc:3650 src/Http.cc:1653
+#: src/ftpclass.cc:3660 src/Http.cc:1653
 msgid "Connection idle"
 msgstr "사용하지 않는 접속"
 
-#: src/ftpclass.cc:3663 src/Http.cc:1651 src/Http.cc:1658
+#: src/ftpclass.cc:3673 src/Http.cc:1651 src/Http.cc:1658
 msgid "Connecting..."
 msgstr "접속중..."
 
-#: src/ftpclass.cc:3667
+#: src/ftpclass.cc:3677
 msgid "TLS negotiation..."
 msgstr "TLS 협상중..."
 
-#: src/ftpclass.cc:3669
+#: src/ftpclass.cc:3679
 msgid "Connected"
 msgstr "접속되었음"
 
-#: src/ftpclass.cc:3671
+#: src/ftpclass.cc:3681
 msgid "Logging in..."
 msgstr "로그인 중..."
 
-#: src/ftpclass.cc:3675
+#: src/ftpclass.cc:3685
 msgid "Making data connection..."
 msgstr "접속 하는 중..."
 
-#: src/ftpclass.cc:3678
+#: src/ftpclass.cc:3688
 msgid "Changing remote directory..."
 msgstr "원거리 디렉토리 변경중..."
 
-#: src/ftpclass.cc:3684
+#: src/ftpclass.cc:3694
 #, fuzzy
 msgid "Waiting for other copy peer..."
 msgstr "응답을 기다립니다..."
 
-#: src/ftpclass.cc:3686 src/ftpclass.cc:3707
+#: src/ftpclass.cc:3696 src/ftpclass.cc:3717
 msgid "Waiting for transfer to complete"
 msgstr "전송 완료를 기다립니다"
 
-#: src/ftpclass.cc:3689
+#: src/ftpclass.cc:3699
 msgid "Waiting for data connection..."
 msgstr "접속을 기다리는 중..."
 
-#: src/ftpclass.cc:3695
+#: src/ftpclass.cc:3705
 #, fuzzy
 msgid "Sending data/TLS"
 msgstr "자료 보내는 중"
 
-#: src/ftpclass.cc:3697
+#: src/ftpclass.cc:3707
 #, fuzzy
 msgid "Receiving data/TLS"
 msgstr "자료 받는 중"
 
-#: src/ftpclass.cc:3703 src/Http.cc:1656
+#: src/ftpclass.cc:3713 src/Http.cc:1656
 msgid "Sending data"
 msgstr "자료 보내는 중"
 
-#: src/ftpclass.cc:3705 src/Http.cc:1663
+#: src/ftpclass.cc:3715 src/Http.cc:1663
 msgid "Receiving data"
 msgstr "자료 받는 중"
 
@@ -1921,7 +1921,7 @@ msgstr "`%s'는 알수 없는 주소입니다"
 msgid "ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C"
 msgstr ""
 
-#: src/HttpDir.cc:1144 src/FtpDirList.cc:133
+#: src/HttpDir.cc:1149 src/FtpDirList.cc:133
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "파일 목록을 가져옵니다 (%lld) [%s]"
@@ -1966,39 +1966,43 @@ msgstr "%d of %d $file|files$ 전송 실패\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "총 %d $file|files$ 전송\n"
 
-#: src/FileCopy.cc:153
+#: src/FileCopy.cc:126
+msgid "copy: destination file is already complete\n"
+msgstr ""
+
+#: src/FileCopy.cc:159
 msgid "copy: put is broken\n"
 msgstr "copy: put은 깨짐\n"
 
-#: src/FileCopy.cc:172
+#: src/FileCopy.cc:178
 #, fuzzy
 msgid "seek failed"
 msgstr "로그인 실패"
 
-#: src/FileCopy.cc:194
+#: src/FileCopy.cc:200
 msgid "cannot seek on data source"
 msgstr "소스 자료에서 찾을 수 없음"
 
-#: src/FileCopy.cc:197
+#: src/FileCopy.cc:203
 #, c-format
 msgid "copy: put rolled back to %lld, seeking get accordingly\n"
 msgstr ""
 
-#: src/FileCopy.cc:210
+#: src/FileCopy.cc:216
 msgid "copy: all data received, but get rolled back\n"
 msgstr ""
 
-#: src/FileCopy.cc:226
+#: src/FileCopy.cc:232
 #, c-format
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr ""
 
-#: src/FileCopy.cc:949
+#: src/FileCopy.cc:953
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy: `%s'로 재지정하여 받음\n"
 
-#: src/FileCopy.cc:1150
+#: src/FileCopy.cc:1155
 msgid "file name missed in URL"
 msgstr "URL에 파일명이 빠졌습니다"
 
@@ -2037,15 +2041,15 @@ msgstr ""
 msgid "eta:"
 msgstr "남은시간:"
 
-#: src/FileCopyFtp.cc:87
+#: src/FileCopyFtp.cc:91
 msgid "**** FXP: giving up, reverting to plain copy\n"
 msgstr "**** FXP: 포기하고 일반적인 복사로 바꿈\n"
 
-#: src/FileCopyFtp.cc:96
+#: src/FileCopyFtp.cc:100
 msgid "ftp:fxp-force is set but FXP is not available"
 msgstr ""
 
-#: src/FileCopyFtp.cc:108
+#: src/FileCopyFtp.cc:112
 msgid "**** FXP: trying to reverse ftp:fxp-passive-source\n"
 msgstr "**** FXP: 역 ftp:fxp-passive-source 시도\n"
 
@@ -2064,34 +2068,34 @@ msgstr "chdir(%s) 실패: %s\n"
 msgid "execl(/bin/sh) failed: %s\n"
 msgstr "execl(/bin/sh) 실패: %s\n"
 
-#: src/NetAccess.cc:247
+#: src/NetAccess.cc:252
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "%s%s (%s) 포트 %u에 연결 중"
 
-#: src/NetAccess.cc:302
+#: src/NetAccess.cc:307
 msgid "Timeout - reconnecting"
 msgstr "시간초과 - 재접속"
 
-#: src/NetAccess.cc:529
+#: src/NetAccess.cc:534
 #, fuzzy
 msgid "Connection limit reached"
 msgstr "접속 제한까지 갔습니다"
 
-#: src/NetAccess.cc:533
+#: src/NetAccess.cc:538
 msgid "Delaying before reconnect"
 msgstr "재접속하기 위하여 기다립니다"
 
-#: src/NetAccess.cc:544
+#: src/NetAccess.cc:549
 msgid "max-retries exceeded"
 msgstr "최대-재시도를 초과했습니다"
 
-#: src/NetAccess.cc:792
+#: src/NetAccess.cc:797
 #, fuzzy, c-format
 msgid "Getting directory contents (%lld) %s[%s]"
 msgstr "디렉토리 정보를 가져오는 중 (%lld)"
 
-#: src/NetAccess.cc:799
+#: src/NetAccess.cc:804
 #, fuzzy, c-format
 msgid "Getting files information (%d%%) [%s]"
 msgstr "파일 정보를 가져오는 중 (%d%%)"
