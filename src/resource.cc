@@ -258,7 +258,7 @@ static ResDecl
    res_ssl_crl_path   ("ssl:crl-path", "", ResMgr::DirReadable, ResMgr::NoClosure),
    res_ssl_key_file   ("ssl:key-file", "", ResMgr::FileReadable,0),
    res_ssl_cert_file  ("ssl:cert-file","", ResMgr::FileReadable,0),
-   res_ssl_verify_cert("ssl:verify-certificate","yes",ResMgr::BoolValidate,0);
+   res_ssl_verify_cert("ssl:verify-certificate","no",ResMgr::BoolValidate,0);
 #endif
 
 #if INET6
