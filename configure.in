@@ -175,8 +175,15 @@ AC_CHECK_FUNC(tgetent,
    ])
 READLINE_CHECK
 
-AC_ARG_WITH(ssl, [  --without-ssl           don't use SSL],
+AC_ARG_WITH(ssl, [  --with-ssl[=/path]      use SSL [at /path]
+  --without-ssl           don't use SSL],
       [with_ssl=$withval], [with_ssl=yes])
+case "$with_ssl" in
+	yes)		: ;;
+	""|no)		: ;;
+	*)		ssl_loc=$with_ssl
+			with_ssl=yes ;;
+esac
 if test x$with_ssl = xyes; then
    LFTP_SSL_CHECK
 fi
