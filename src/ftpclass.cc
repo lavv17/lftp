@@ -675,7 +675,8 @@ Ftp::pasv_state_t Ftp::Handle_PASV()
 
    if((a0==0 && a1==0 && a2==0 && a3==0)
    || (QueryBool("fix-pasv-address",hostname) && !conn->proxy_is_http
-       && (InPrivateNetwork(&data_sa) != InPrivateNetwork(&conn->peer_sa))))
+       && (InPrivateNetwork(&data_sa) != InPrivateNetwork(&conn->peer_sa)
+	  || IsLoopback(&data_sa) != IsLoopback(&conn->peer_sa))))
    {
       // broken server, try to fix up
       conn->fixed_pasv=true;

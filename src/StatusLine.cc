@@ -114,7 +114,7 @@ void StatusLine::Show(const char *f,...)
 
 void StatusLine::ShowN(const char *const* newstr,int n)
 {
-   if(update_timer.Stopped())
+   if(update_delayed && update_timer.Stopped())
    {
       update(newstr,n);
       update_delayed=false;

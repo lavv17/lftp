@@ -1,3 +1,9 @@
+2004-03-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* StatusLine.cc: don't redisplay status line if not needed.
+	* ftpclass.cc: check loopback match in Handle_PASV; Connection
+	  and ExpectQueue subclasses.
+
 2004-03-04  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* misc.cc, misc.h: (dirname_modify) new function.
