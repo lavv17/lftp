@@ -119,6 +119,8 @@ int FtpCopy::Do()
 	 src->copy_addr_valid=true;
 	 m=MOVED;
       }
+      else
+	 block+=TimeOut(1000); // for the rolling stick :)
       return m;
 
    pre_ERROR:
@@ -291,10 +293,7 @@ void FtpCopy::ShowRunStatus(StatusLine *sl)
    if(state==GET_SIZE)
       sl->Show("Getting size of %s [%s]",dst_url,dst->CurrentStatus());
    else if(state==WAIT)
-   {
       sl->Show("Copying in progress (%c)","|/-\\"[time(0)%4]);
-      block+=TimeOut(1000);
-   }
    else
       sl->Show("");
 }
