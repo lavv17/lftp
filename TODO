@@ -62,3 +62,5 @@ implemented.
 
  * mirror option to check an alternative directory(ies) for existing files.
    (overlay filesystem replacement?)
+
+ * support keys with passphrases (sftp and fish).
