@@ -1,3 +1,8 @@
+2002-04-12	Jun Nakajima <naka01@orihime.net>
+
+	* ja.po: don't translate ETA time abbreviations because of two-byte
+	  character encoding.
+
 2002-03-13	Arkadiusz Miskiewicz <misiek@pld.org.pl>
 
 	* pl.po: update

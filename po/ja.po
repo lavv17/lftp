@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
 "POT-Creation-Date: 2002-03-12 20:01+0300\n"
-"PO-Revision-Date: 2001-09-24 00:06+0900\n"
+"PO-Revision-Date: 2002-04-12 00:06+0900\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2093,36 +2093,43 @@ msgstr "URL 中にファイル名がありません"
 #: src/Speedometer.cc:94
 #, c-format
 msgid "%.0fb/s"
-msgstr "%.0fb/s"
+msgstr "%.0fB/s"
 
 #. for translator: This is 'kilobyte per second'
 #: src/Speedometer.cc:97
 #, c-format
 msgid "%.1fK/s"
-msgstr "%.1fK/s"
+msgstr "%.1fKB/s"
 
 #. for translator: This is 'Megabyte per second'
 #: src/Speedometer.cc:100
 #, c-format
 msgid "%.2fM/s"
-msgstr "%.2fM/s"
+msgstr "%.2fMB/s"
 
 #. for translator: only first letter matters
+#
+# 注意
+#     day,hour,minute,secondには日本語を用いないでください。
+#     Speedometer.ccで先頭1バイトのみが抽出されるため、
+#     2バイト文字を用いると表示が文字化けします。
+#              Jun Nakajima <naka01@orihime.net> 2002-04-12
+#
 #: src/Speedometer.cc:126
 msgid "day"
-msgstr "日"
+msgstr "day"
 
 #: src/Speedometer.cc:127
 msgid "hour"
-msgstr "時間"
+msgstr "hour"
 
 #: src/Speedometer.cc:128
 msgid "minute"
-msgstr "分"
+msgstr "minute"
 
 #: src/Speedometer.cc:129
 msgid "second"
-msgstr "秒"
+msgstr "second"
 
 #. for translator: Estimated Time of Arrival.
 #: src/Speedometer.cc:132
