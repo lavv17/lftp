@@ -667,6 +667,13 @@ int Http::Do()
 
    pre_RECEIVING_BODY:
 
+      if(H_REDIRECTED(status_code))
+      {
+	 // check if it is redirection to the same server
+	 // or to directory instead of file.
+	 // FIXME.
+      }
+
       if(!H_20X(status_code))
       {
 	 char *err=(char*)alloca(strlen(status)+strlen(file)+xstrlen(location)+20);

@@ -29,7 +29,7 @@ void mgetJob::ShowRunStatus(StatusLine *s)
 {
    if(rg)
    {
-      s->Show(_("Getting file list [%s]"),session->CurrentStatus());
+      s->Show(_("Getting file list [%s|%s]"),rg->Status(),session->CurrentStatus());
       return;
    }
    GetJob::ShowRunStatus(s);
