@@ -98,6 +98,9 @@ AC_ISC_POSIX
 # for lib/mbswidth.{c,h}
 jm_PREREQ_MBSWIDTH
 
+# for lib/human.{c,h}
+jm_PREREQ_HUMAN
+
 jm_FUNC_MBRTOWC
 AC_MBSTATE_T
 
