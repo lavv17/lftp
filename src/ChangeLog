@@ -1,3 +1,7 @@
+2000-06-10  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* GetJob.cc: new setting xfer:make-backup.
+
 2000-06-09  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* NetAccess.cc: use 2*rate as default limit-max.

@@ -33,7 +33,8 @@
 #include "ArgV.h"
 #include "url.h"
 
-ResDecl res_clobber("xfer:clobber","yes",ResMgr::BoolValidate,0);
+ResDecl res_clobber	("xfer:clobber",     "yes",ResMgr::BoolValidate,0);
+ResDecl res_make_backup	("xfer:make-backup", "yes",ResMgr::BoolValidate,0);
 
 #define super CopyJobEnv
 
@@ -74,7 +75,7 @@ FileCopyPeer *GetJob::NoProtoDst(const char *dst)
 
    int flags=O_WRONLY|O_CREAT|(cont?0:O_TRUNC);
    const char *f=(cwd && dst[0]!='/') ? dir_file(cwd,dst) : dst;
-   if(!cont)
+   if(!cont && (bool)res_make_backup.Query(0))
    {
       /* rename old file if exists and size>0 */
       struct stat st;
