@@ -249,12 +249,12 @@ void Http::Close()
 void Http::Send(const char *format,...)
 {
    va_list va;
-   va_start(va,format);
    char *str;
 
    static int max_send=256;
    for(;;)
    {
+      va_start(va,format);
       str=string_alloca(max_send);
       int res=vsnprintf(str,max_send,format,va);
       if(res>=0 && res<max_send)
@@ -264,11 +264,11 @@ void Http::Send(const char *format,...)
 	 break;
       }
       max_send*=2;
+      va_end(va);
    }
 
    DebugPrint("---> ",str,5);
    send_buf->Put(str);
-   va_end(va);
 }
 
 void Http::SendMethod(const char *method,const char *efile)

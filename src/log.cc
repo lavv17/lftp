@@ -74,13 +74,13 @@ void Log::Format(int l,const char *f,...)
    static char *buf=0;
    static int buf_alloc;
    va_list v;
-   va_start(v,f);
 
    if(buf==0)
       buf=(char*)xmalloc(buf_alloc=1024);
 
    for(;;)
    {
+      va_start(v,f);
       int res=vsnprintf(buf,buf_alloc,f,v);
       if(res>=0 && res<buf_alloc)
 	 break;
@@ -89,9 +89,9 @@ void Log::Format(int l,const char *f,...)
       if(res==-1)
 	 res=buf_alloc*2;
       buf=(char*)xrealloc(buf,buf_alloc=res);
+      va_end(v);
    }
 
-   va_end(v);
    Write(l,buf);
 }
 

@@ -957,7 +957,7 @@ Job *CmdExec::builtin_queue()
 	  * We want an optional argument, but don't use getopt ::, since
 	  * that'll disallow the space between arguments, which we want. */
          arg = args->getarg(args->getindex());
-	 
+
 	 CmdExec *queue=GetQueue(false);
 	 if(!queue) {
 	    eprintf(_("%s: No queue is active.\n"), args->a0());
@@ -2471,14 +2471,14 @@ CMD(history)
    switch(mode) {
    case READ:
       if(int err = lftp_history_read(fn)) {
-	 eprintf(_("%s: %s: %s\n"), args->a0(), fn, strerror(err));
+	 eprintf("%s: %s: %s\n", args->a0(), fn, strerror(err));
 	 exit_code=1;
       }
       break;
 
    case WRITE:
       if(int err = lftp_history_write(fn)) {
-	 eprintf(_("%s: %s: %s\n"), args->a0(), fn, strerror(err));
+	 eprintf("%s: %s: %s\n", args->a0(), fn, strerror(err));
 	 exit_code=1;
       }
       break;
