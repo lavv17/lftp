@@ -1816,6 +1816,8 @@ FileInfo *SFtp::MakeFileInfo(const NameAttrs *na)
 	    fi->SetUser(ls->user);
 	 if(ls->group)
 	    fi->SetGroup(ls->group);
+	 if(ls->nlinks>0)
+	    fi->SetNlink(ls->nlinks);
       }
       delete ls;
    }

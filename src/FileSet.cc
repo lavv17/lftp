@@ -863,6 +863,7 @@ FileInfo *FileInfo::parse_ls_line(const char *line_c,const char *tz)
       }
    }
    fi->SetName(name);
+   fi->SetLongName(line_c);
 
    return fi;
 }

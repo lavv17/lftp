@@ -4,9 +4,10 @@
 	  in cache; add assert.
 	* misc.cc: fix comment; special case for tz=GMT for speed-up.
 	* FileSet.cc: (FileInfo::parse_ls_line) new function, moved from
-	  FtpListInfo.cc with minor modifications.
+	  FtpListInfo.cc with minor modifications; set longname in it.
 	* FtpListInfo.cc, Fish.cc: use FileInfo::parse_ls_line.
-	* SFtp.cc: try to extract owner/group from longname, use parse_ls_line.
+	* SFtp.cc: try to extract owner/group/nlinks from longname, use
+	  parse_ls_line.
 
 2004-04-19  Alexander V. Lukyanov <lav@yars.free.net>
 
