@@ -75,3 +75,5 @@ currently; some need other work to be done.
  * don't send MDTM/SIZE commands if it is known that server does not support them.
 
  * make a class FileAccessLocation
+
+ * mirror --remove-first
