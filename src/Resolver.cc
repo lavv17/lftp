@@ -34,8 +34,12 @@
 #include <fcntl.h>
 
 #include <netinet/in.h>
-#include <arpa/nameser.h>
-#include <resolv.h>
+#ifdef HAVE_ARPA_NAMESER_H
+# include <arpa/nameser.h>
+#endif
+#ifdef HAVE_RESOLV_H
+# include <resolv.h>
+#endif
 
 #include "xstring.h"
 #include "xmalloc.h"
@@ -355,6 +359,7 @@ const char *Resolver::OrderValidate(char **s)
    return ParseOrder(*s,0);
 }
 
+#ifdef HAVE_RES_SEARCH
 static
 int extract_domain(const unsigned char *answer,const unsigned char *scan,int len,
 		     char *store,int store_len)
@@ -426,6 +431,7 @@ struct SRV
    int order;
 };
 
+static
 int SRV_compare(const void *a,const void *b)
 {
    struct SRV *sa=(struct SRV*)a;
@@ -444,6 +450,7 @@ int SRV_compare(const void *a,const void *b)
       return 1;
    return 0;
 }
+#endif // RES_SEARCH
 
 void Resolver::LookupSRV_RR()
 {

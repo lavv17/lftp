@@ -39,7 +39,7 @@ History::History()
 
    const char *home=getenv("HOME");
    if(home==0)
-      home=".";
+      home="";
    int home_len=strlen(home);
    const char *add="/.lftp/cwd_history";
    file=(char*)xmalloc(home_len+strlen(add)+1);

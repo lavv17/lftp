@@ -392,6 +392,7 @@ FinderJob::prf_res FinderJob_Cmd::ProcessFile(const char *d,const FileInfo *f)
       }
       break;
    case GET:
+#if 0
       if(ISDIR)
       {
 // 	 mkdir(dir_file(saved_cwd,
@@ -402,6 +403,7 @@ FinderJob::prf_res FinderJob_Cmd::ProcessFile(const char *d,const FileInfo *f)
       else
       {
       }
+#endif
       break;
    }
    waiting=exec;

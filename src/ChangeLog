@@ -1,3 +1,15 @@
+2000-01-06  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc: include netinet/tcp.h conditionally.
+	* FindJob.cc: #if 0 dead code.
+	* Http.cc: send Last-Modified in STORE mode.
+	* Resolver.cc: include arpa/nameser.h and resolv.h conditionally;
+	  conditionally compile functions depending on HAVE_RES_SEARCH.
+	* bookmark.cc: use / if HOME is not set.
+	* history.cc: same.
+	* lftp.cc: don't create ./.lftp if HOME is not set.
+	* netrc.cc: fail if HOME is not set.
+
 2000-01-05  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileAccess.cc, FileAccess.h: (pass_open) new member;

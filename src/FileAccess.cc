@@ -27,7 +27,9 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <netinet/tcp.h>
+#ifdef HAVE_NETINET_TCP_H
+# include <netinet/tcp.h>
+#endif
 #include <errno.h>
 #include "ascii_ctype.h"
 #include <fcntl.h>

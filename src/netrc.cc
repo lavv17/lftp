@@ -67,7 +67,8 @@ NetRC::Entry *NetRC::LookupHost(const char *h)
    char cpass[256]="";
    char cacct[256]="";
    const char *home=getenv("HOME");
-   if(!home) home=".";
+   if(!home)
+      return 0;
    char *netrc=(char*)alloca(strlen(home)+8);
    sprintf(netrc,"%s/.netrc",home);
    FILE *f=fopen(netrc,"r");

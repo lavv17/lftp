@@ -205,22 +205,23 @@ static void move_to_background()
       SignalHook::Ignore(SIGTSTP);
 
       const char *home=getenv("HOME");
-      if(!home) home=".";
-
-      char *log=(char*)alloca(strlen(home)+1+9+1);
-      sprintf(log,"%s/.lftp",home);
-      if(access(log,F_OK)==-1)
-	 strcat(log,"_log");
-      else
-	 strcat(log,"/log");
-
-      int fd=open(log,O_WRONLY|O_APPEND|O_CREAT,0600);
-      if(fd>=0)
+      if(home)
       {
-	 dup2(fd,1); // stdout
-	 dup2(fd,2); // stderr
-	 if(fd!=1 && fd!=2)
-	    close(fd);
+	 char *log=(char*)alloca(strlen(home)+1+9+1);
+	 sprintf(log,"%s/.lftp",home);
+	 if(access(log,F_OK)==-1)
+	    strcat(log,"_log");
+	 else
+	    strcat(log,"/log");
+
+	 int fd=open(log,O_WRONLY|O_APPEND|O_CREAT,0600);
+	 if(fd>=0)
+	 {
+	    dup2(fd,1); // stdout
+	    dup2(fd,2); // stderr
+	    if(fd!=1 && fd!=2)
+	       close(fd);
+	 }
       }
       close(0);	  // close stdin.
       open("/dev/null",O_RDONLY); // reopen it, just in case.
@@ -293,9 +294,6 @@ int   main(int argc,char **argv)
    Ftp::ClassInit();
 #endif
 
-   const char *home=getenv("HOME");
-   if(!home) home=".";
-
    top_exec=new CmdExec(new DummyProto());
    top_exec->jobno=-1;
    top_exec->status_line=new StatusLine(1);
@@ -308,16 +306,20 @@ int   main(int argc,char **argv)
 
    source_if_exist(top_exec,SYSCONFDIR"/lftp.conf");
 
-   char	 *rc=(char*)alloca(strlen(home)+9+1);
+   const char *home=getenv("HOME");
+   if(home)
+   {
+      char *rc=(char*)alloca(strlen(home)+9+1);
 
-   // create lftp own directory
-   sprintf(rc,"%s/.lftp",home);
-   mkdir(rc,0755);
+      // create lftp own directory
+      sprintf(rc,"%s/.lftp",home);
+      mkdir(rc,0755);
 
-   sprintf(rc,"%s/.lftprc",home);
-   source_if_exist(top_exec,rc);
-   sprintf(rc,"%s/.lftp/rc",home);
-   source_if_exist(top_exec,rc);
+      sprintf(rc,"%s/.lftprc",home);
+      source_if_exist(top_exec,rc);
+      sprintf(rc,"%s/.lftp/rc",home);
+      source_if_exist(top_exec,rc);
+   }
 
    WaitDone(top_exec);
 

@@ -33,7 +33,7 @@ Bookmark::Bookmark()
 {
    const char *home=getenv("HOME");
    if(home==0)
-      home=".";
+      home="";
    int home_len=strlen(home);
    const char *add="/.lftp/bookmarks";
    bm_file=(char*)xmalloc(home_len+strlen(add)+1);

@@ -366,6 +366,12 @@ add_path:
 	 Send("Range: bytes=%ld-\r\n",pos);
       else if(pos>0)
 	 Send("Range: bytes=%ld-%ld/%ld\r\n",pos,entity_size-1,entity_size);
+      if(entity_date!=(time_t)-1)
+      {
+	 char d[256];
+	 if(strftime(d,sizeof(d)-1,"%a, %d %b %Y %T GMT",gmtime(&entity_date)))
+	    Send("Last-Modified: %s",d);
+      }
       break;
 
    case CHANGE_DIR:
