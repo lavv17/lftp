@@ -1,3 +1,11 @@
+2000-12-18  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.cc, misc.cc, misc.h, ftpclass.cc: move mktime_from_utc to
+	  misc.cc.
+	* HttpDir.cc: correct array size.
+	* lftp.cc: add cmd:save-cwd-history setting.
+	* Speedometer.cc: show up to 99 seconds eta in seconds.
+
 2000-12-08  Chmouel Boudjnah <chmouel@mandrakesoft.com>
 
 	* CatJob.cc, commands.cc, complete.cc: add bzcat and bzmore support.
