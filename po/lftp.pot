@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 1999-07-25 23:50+0400\n"
+"POT-Creation-Date: 1999-08-02 00:59+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -263,16 +263,16 @@ msgstr ""
 msgid "invalid number"
 msgstr ""
 
-#: src/Resolver.cc:209
+#: src/Resolver.cc:212
 msgid "host name resolve timeout"
 msgstr ""
 
 #. protocol error
-#: src/Resolver.cc:243
+#: src/Resolver.cc:246
 msgid "child returned invalid data"
 msgstr ""
 
-#: src/Resolver.cc:309
+#: src/Resolver.cc:312
 #, c-format
 msgid "unknown address family `%s'"
 msgstr ""
