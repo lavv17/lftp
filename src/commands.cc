@@ -1354,7 +1354,7 @@ CMD(mirror)
 	 if(optarg)
 	    verbose=atoi(optarg);
 	 else
-	    verbose=1;
+	    verbose++;
 	 if(verbose>1)
 	    flags|=MirrorJob::REPORT_NOT_DELETED;
 	 break;

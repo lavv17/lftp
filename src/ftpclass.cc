@@ -447,7 +447,16 @@ int   Ftp::PASV_Catch(int act,int)
    unsigned char *a,*p;
    a=(unsigned char*)&data_sa.sin_addr;
    p=(unsigned char*)&data_sa.sin_port;
-   a[0]=a0; a[1]=a1; a[2]=a2; a[3]=a3;
+   if(a0==0 && a1==0 && a2==0 && a3==0)
+   {
+      // broken server, try to fix up
+      struct sockaddr_in *c=&peer_sa;
+      memcpy(a,&c->sin_addr,sizeof(c->sin_addr));
+   }
+   else
+   {
+      a[0]=a0; a[1]=a1; a[2]=a2; a[3]=a3;
+   }
    p[0]=p0; p[1]=p1;
    addr_received=1;
    return state;
