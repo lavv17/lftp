@@ -551,7 +551,7 @@ void FileSet::LocalChmod(const char *dir,mode_t mask)
 	 struct stat st;
 	 mode_t new_mode=file->mode&~mask;
 
-	 if(stat(local_name,&st)!=-1 && st.st_mode!=new_mode)
+	 if(stat(local_name,&st)!=-1 && (st.st_mode&07777)!=new_mode)
 	    chmod(local_name,new_mode);
       }
    }

@@ -1292,7 +1292,11 @@ int   Ftp::Do()
       if(proxy?!xstrcmp(proxy_proto,"ftps")||!xstrcmp(proxy_proto,"https"):ftps)
       {
 	 conn->MakeSSLBuffers(hostname);
-	 conn->prot='P';
+	 if(ftps)
+	 {
+	    const char *initial_prot=Query("initial-prot",hostname);
+	    conn->prot=initial_prot[0];
+	 }
       }
       else // note the following block
 #endif

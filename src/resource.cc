@@ -159,6 +159,20 @@ const char *AuthArgValidate(char **s)
 
    return 0;
 }
+static
+const char *ProtValidate(char **s)
+{
+   for(char *i=*s; *i; i++)
+      *i=to_ascii_upper(*i);
+
+   if(strcmp(*s,"P")
+   && strcmp(*s,"C")
+   && strcmp(*s,"S")
+   && strcmp(*s,"E"))
+      return _("must be one of: C, S, E, P");
+
+   return 0;
+}
 #endif
 
 // Static array of objects is wrongly initialized by IRIX CC and Unixware c++.
@@ -201,6 +215,7 @@ static ResDecl
    ResDecl11f("ftp:ssl-protect-list",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl11d("ftp:ssl-auth",		  "TLS",   AuthArgValidate,0),
    ResDecl11e("ftp:ssl-allow-anonymous",  "no",	   ResMgr::BoolValidate,0),
+   ResDecl11h("ftps:initial-prot",	  "P",	   ProtValidate,0),
 #endif
    ResDecl12 ("ftp:stat-interval",	  "1",	   ResMgr::UNumberValidate,0),
    ResDecl13 ("ftp:sync-mode",		  "on",    ResMgr::BoolValidate,0),
