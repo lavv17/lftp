@@ -105,4 +105,4 @@ install-data-local:
 	    case " $(LDFLAGS) " in *" -s "*) \
 	       echo $(STRIP) $(DESTDIR)$(pkgverlibdir)/*.so; \
 	       $(STRIP) $(DESTDIR)$(pkgverlibdir)/*.so;; \
-	    esac; else rmdir $(DESTDIR)$(pkgverlibdir); fi
+	    esac; else rmdir $(DESTDIR)$(pkgverlibdir) 2>/dev/null || true; fi
