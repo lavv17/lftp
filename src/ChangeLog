@@ -1,3 +1,7 @@
+2000-09-23  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* commands.cc: fix lcd & in queue.
+
 2000-09-22  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* commands.cc: fix cd & in queue.

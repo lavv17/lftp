@@ -877,10 +877,9 @@ Job *CmdExec::builtin_queue()
    }
    if(xstrcmp(queue->queue_lcwd,cwd))
    {
-      ArgV cd("lcd");
-      cd.Append(cwd);
-      cd.Append("&");
-      queue->FeedArgV(&cd);
+      queue->FeedCmd("lcd ");
+      queue->FeedQuoted(cwd);
+      queue->FeedCmd(" &\n");
 
       xfree(queue->queue_lcwd);
       queue->queue_lcwd=xstrdup(cwd);
