@@ -25,6 +25,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include "xmalloc.h"
+#include "xstring.h"
 #include "log.h"
 #include "SMTask.h"
 
@@ -63,10 +64,6 @@ int Log::Do()
 {
    return STALL;
 }
-
-#if defined(HAVE_VSNPRINTF) && !defined(HAVE_VSNPRINTF_DECL)
-CDECL int vsnprintf(char *,size_t,const char *,va_list);
-#endif
 
 void Log::Format(int l,const char *f,...)
 {

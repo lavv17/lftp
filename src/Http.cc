@@ -208,23 +208,29 @@ void Http::Close()
 
 void Http::Send(const char *format,...)
 {
-   static int max_send=256;
    va_list va;
    va_start(va,format);
+   char *str;
+#ifdef HAVE_VSNPRINTF
+   static int max_send=256;
    for(;;)
    {
-      char *str=(char*)alloca(max_send);
+      str=string_alloca(max_send);
       int res=vsnprintf(str,max_send,format,va);
       if(res>=0 && res<max_send)
       {
 	 if(res<max_send/16)
 	    max_send/=2;
-	 DebugPrint("---> ",str,5);
-	 send_buf->Put(str);
 	 break;
       }
       max_send*=2;
    }
+#else // !HAVE_VSNPRINTF
+   str=string_alloca(2048);
+   vsprintf(str,format,va);
+#endif
+   DebugPrint("---> ",str,5);
+   send_buf->Put(str);
    va_end(va);
 }
 
