@@ -238,6 +238,7 @@ int GetFileInfo::Do()
 	 if(!file) {
 	    delete result; result=0;
 	    tried_file=true;
+	    from_cache=false;
 	    state=CHANGE_DIR;
 	    return MOVED;
 	 }
@@ -247,8 +248,15 @@ int GetFileInfo::Do()
 	  * with.  We probably got Access Denied.  Fail. */
 	 if(!showdir && (file->defined&file->TYPE) && file->filetype==FileInfo::DIRECTORY) {
 	    delete result; result=0;
-	    SetError(saved_error_text);
-	    goto done;
+	    if(saved_error_text)
+	    {
+	       SetError(saved_error_text);
+	       goto done;
+	    }
+	    tried_file=true;
+	    from_cache=false;
+	    state=CHANGE_DIR;
+	    return MOVED;
 	 }
 
 	 FileSet *newresult=new FileSet();
