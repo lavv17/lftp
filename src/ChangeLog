@@ -1,3 +1,7 @@
+2002-07-30  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc: don't do SetTryTime(0).
+
 2002-07-25  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* misc.cc: provide errret for setupterm, so that it does not exit

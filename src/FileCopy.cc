@@ -756,6 +756,7 @@ int FileCopyPeerFA::Do()
 	       {
 		  try_time=session->GetTryTime();
 		  retries=session->GetRetries();
+		  Log::global->Format(10,"try_time=%ld, retries=%d\n",try_time,retries);
 		  session->Close();
 		  if(can_seek && seek_pos>0)
 		     Seek(FILE_END);
@@ -872,8 +873,10 @@ void FileCopyPeerFA::OpenSession()
    session->SetFileURL(orig_url);
    if(mode==PUT)
    {
-      session->SetTryTime(try_time);
-      session->SetRetries(retries);
+      if(try_time!=0)
+	 session->SetTryTime(try_time);
+      if(retries!=0)
+	 session->SetRetries(retries);
       if(e_size!=NO_SIZE && e_size!=NO_SIZE_YET)
 	 session->SetSize(e_size);
       if(date!=NO_DATE && date!=NO_DATE_YET)
@@ -1037,6 +1040,7 @@ int FileCopyPeerFA::Put_LL(const char *buf,int len)
       {
 	 try_time=session->GetTryTime();
 	 retries=session->GetRetries();
+	 Log::global->Format(10,"try_time=%ld, retries=%d\n",try_time,retries);
 	 session->Close();
 	 if(can_seek && seek_pos>0)
 	    Seek(FILE_END);
