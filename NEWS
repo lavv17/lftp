@@ -43,6 +43,7 @@ Version 2.2.0 - 2000-??-??
   to allow instant interrupting and asynchronousity. (default is true)
 * new setting cmd:default-protocol. The value is used when open is used
   with just host name without protocol. Default is `ftp'.
+* mirror --use-cache to allow mirror to use directory listing cache.
 * check file names in ftp listings for slashes, don't use file names with
   slashes.
 * fixed completion and file name globbing for wu-ftpd-2.6.0. A long standing

@@ -50,7 +50,7 @@ currently; some need other work to be done.
 
  * tail command
 
- * ability to bind source address of sockets. (for those with several
+?* ability to bind source address of sockets. (for those with several
    interfaces)
      This needs to handle both ipv4 and ipv6 addresses, but probably only
    numeric forms, since lookups are time-consuming and can give several
@@ -64,8 +64,6 @@ currently; some need other work to be done.
  * make a class FileAccessLocation
 
  * mirror --remove-first
-
- * mirror --use-cache
 
  * job suspend/resume.
 
@@ -88,5 +86,4 @@ currently; some need other work to be done.
 
  * add url support for mirror, find... This can wait for 2.3.
 
- * SMTask::deleting to indicate destruction. assert(!running)
-   SMTask::Delete(task).
+ * improve glob status (show directory).
