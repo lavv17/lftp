@@ -288,6 +288,8 @@ bool RateLimit::total_reconfig_needed=true;
 
 RateLimit::RateLimit()
 {
+   if(total_xfer_number==0)
+      total.Reset();
    total_xfer_number++;
    Reconfig(0,0);
 }
