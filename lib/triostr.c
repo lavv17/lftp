@@ -15,8 +15,6 @@
  *
  ************************************************************************/
 
-static const char rcsid[] = "@(#)$Id$";
-
 /*************************************************************************
  * Include files
  */
@@ -26,21 +24,33 @@ static const char rcsid[] = "@(#)$Id$";
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
+#include "triodef.h"
 #include "triostr.h"
 
 /*************************************************************************
  * Definitions
  */
 
-#ifndef NULL
+#if !defined(TRIO_STRING_PUBLIC)
+# define TRIO_STRING_PUBLIC TRIO_PUBLIC
+#endif
+#if !defined(TRIO_STRING_PRIVATE)
+# define TRIO_STRING_PRIVATE TRIO_PRIVATE
+#endif
+
+#if !defined(NULL)
 # define NULL 0
 #endif
-#define NIL ((char)0)
-#ifndef FALSE
+#if !defined(NIL)
+# define NIL ((char)0)
+#endif
+#if !defined(FALSE)
 # define FALSE (1 == 0)
 # define TRUE (! FALSE)
 #endif
-#define BOOLEAN_T int
+#if !defined(BOOLEAN_T)
+# define BOOLEAN_T int
+#endif
 
 #if defined(TRIO_COMPILER_SUPPORTS_C99)
 # define USE_STRTOD
@@ -74,6 +84,14 @@ struct _trio_string_t
 };
 
 /*************************************************************************
+ * Constants
+ */
+
+#if !defined(TRIO_MINIMAL)
+static TRIO_CONST char rcsid[] = "@(#)$Id$";
+#endif
+
+/*************************************************************************
  * Static String Functions
  */
 
@@ -90,8 +108,10 @@ struct _trio_string_t
    @param size Size of new string.
    @return Pointer to string, or NULL if allocation failed.
 */
-TRIO_PUBLIC TRIO_INLINE char *
-trio_create(size_t size)
+TRIO_STRING_PUBLIC char *
+trio_create
+TRIO_ARGS1((size),
+	   size_t size)
 {
   return (char *)TRIO_MALLOC(size);
 }
@@ -102,8 +122,10 @@ trio_create(size_t size)
 
    @param string String to be freed.
 */
-TRIO_PUBLIC TRIO_INLINE void
-trio_destroy(char *string)
+TRIO_STRING_PUBLIC void
+trio_destroy
+TRIO_ARGS1((string),
+	   char *string)
 {
   if (string)
     {
@@ -118,18 +140,171 @@ trio_destroy(char *string)
    @param string String to measure.
    @return Number of characters in @string.
 */
-TRIO_PUBLIC TRIO_INLINE size_t
-trio_length(const char *string)
+TRIO_STRING_PUBLIC size_t
+trio_length
+TRIO_ARGS1((string),
+	   TRIO_CONST char *string)
 {
   return strlen(string);
+}
+
+
+#if !defined(TRIO_MINIMAL)
+/**
+   Append @p source at the end of @p target.
+   
+   @param target Target string.
+   @param source Source string.
+   @return Boolean value indicating success or failure.
+   
+   @pre @p target must point to a memory chunk with sufficient room to
+   contain the @p target string and @p source string.
+   @pre No boundary checking is performed, so insufficient memory will
+   result in a buffer overrun.
+   @post @p target will be zero terminated.
+*/
+TRIO_STRING_PUBLIC int
+trio_append
+TRIO_ARGS2((target, source),
+	   char *target,
+	   TRIO_CONST char *source)
+{
+  assert(target);
+  assert(source);
+  
+  return (strcat(target, source) != NULL);
+}
+#endif /* !defined(TRIO_MINIMAL) */
+
+#if !defined(TRIO_MINIMAL)
+/**
+   Append at most @p max characters from @p source to @p target.
+   
+   @param target Target string.
+   @param max Maximum number of characters to append.
+   @param source Source string.
+   @return Boolean value indicating success or failure.
+   
+   @pre @p target must point to a memory chuck with sufficient room to
+   contain the @p target string and the @p source string (at most @p max
+   characters).
+   @pre No boundary checking is performed, so insufficient memory will
+   result in a buffer overrun.
+   @post @p target will be zero terminated.
+*/
+TRIO_STRING_PUBLIC int
+trio_append_max
+TRIO_ARGS3((target, max, source),
+	   char *target,
+	   size_t max,
+	   TRIO_CONST char *source)
+{
+  size_t length;
+  
+  assert(target);
+  assert(source);
+
+  length = trio_length(target);
+  
+  if (max > length)
+    {
+      strncat(target, source, max - length - 1);
+    }
+  return TRUE;
+}
+#endif /* !defined(TRIO_MINIMAL) */
+
+
+#if !defined(TRIO_MINIMAL)
+/**
+   Determine if a string contains a substring.
+
+   @param string String to be searched.
+   @param substring String to be found.
+   @return Boolean value indicating success or failure.
+*/
+TRIO_STRING_PUBLIC int
+trio_contains
+TRIO_ARGS2((string, substring),
+	   TRIO_CONST char *string,
+	   TRIO_CONST char *substring)
+{
+  assert(string);
+  assert(substring);
+  
+  return (0 != strstr(string, substring));
+}
+#endif /* !defined(TRIO_MINIMAL) */
+
+
+#if !defined(TRIO_MINIMAL)
+/**
+   Copy @p source to @p target.
+   
+   @param target Target string.
+   @param source Source string.
+   @return Boolean value indicating success or failure.
+   
+   @pre @p target must point to a memory chunk with sufficient room to
+   contain the @p source string.
+   @pre No boundary checking is performed, so insufficient memory will
+   result in a buffer overrun.
+   @post @p target will be zero terminated.
+*/
+TRIO_STRING_PUBLIC int
+trio_copy
+TRIO_ARGS2((target, source),
+	   char *target,
+	   TRIO_CONST char *source)
+{
+  assert(target);
+  assert(source);
+     
+  (void)strcpy(target, source);
+  return TRUE;
+}
+#endif /* !defined(TRIO_MINIMAL) */
+
+
+/**
+   Copy at most @p max characters from @p source to @p target.
+   
+   @param target Target string.
+   @param max Maximum number of characters to append.
+   @param source Source string.
+   @return Boolean value indicating success or failure.
+   
+   @pre @p target must point to a memory chunk with sufficient room to
+   contain the @p source string (at most @p max characters).
+   @pre No boundary checking is performed, so insufficient memory will
+   result in a buffer overrun.
+   @post @p target will be zero terminated.
+*/
+TRIO_STRING_PUBLIC int
+trio_copy_max
+TRIO_ARGS3((target, max, source),
+	   char *target,
+	   size_t max,
+	   TRIO_CONST char *source)
+{
+  assert(target);
+  assert(source);
+  assert(max > 0); /* Includes != 0 */
+
+  (void)strncpy(target, source, max - 1);
+  target[max - 1] = (char)0;
+  return TRUE;
 }
 
 
 /*
  * TrioDuplicateMax
  */
-TRIO_PRIVATE char *
-TrioDuplicateMax(const char *source, size_t size)
+TRIO_STRING_PRIVATE char *
+TrioDuplicateMax
+TRIO_ARGS2((source, size),
+	   TRIO_CONST char *source,
+	   size_t size)
 {
   char *target;
 
@@ -147,137 +322,6 @@ TrioDuplicateMax(const char *source, size_t size)
 
 
 /**
-   Append @p source at the end of @p target.
-   
-   @param target Target string.
-   @param source Source string.
-   @return Boolean value indicating success or failure.
-   
-   @pre @p target must point to a memory chunk with sufficient room to
-   contain the @p target string and @p source string.
-   @pre No boundary checking is performed, so insufficient memory will
-   result in a buffer overrun.
-   @post @p target will be zero terminated.
-*/
-TRIO_PUBLIC int
-trio_append(char *target,
-	    const char *source)
-{
-  assert(target);
-  assert(source);
-  
-  return (strcat(target, source) != NULL);
-}
-
-
-/**
-   Append at most @p max characters from @p source to @p target.
-   
-   @param target Target string.
-   @param max Maximum number of characters to append.
-   @param source Source string.
-   @return Boolean value indicating success or failure.
-   
-   @pre @p target must point to a memory chuck with sufficient room to
-   contain the @p target string and the @p source string (at most @p max
-   characters).
-   @pre No boundary checking is performed, so insufficient memory will
-   result in a buffer overrun.
-   @post @p target will be zero terminated.
-*/
-TRIO_PUBLIC int
-trio_append_max(char *target,
-		size_t max,
-		const char *source)
-{
-  size_t length;
-  
-  assert(target);
-  assert(source);
-
-  length = trio_length(target);
-  
-  if (max > length)
-    {
-      strncat(target, source, max - length - 1);
-    }
-  return TRUE;
-}
-
-
-/**
-   Determine if a string contains a substring.
-
-   @param string String to be searched.
-   @param substring String to be found.
-   @return Boolean value indicating success or failure.
-*/
-TRIO_PUBLIC TRIO_INLINE int
-trio_contains(const char *string,
-	      const char *substring)
-{
-  assert(string);
-  assert(substring);
-  
-  return (0 != strstr(string, substring));
-}
-
-
-/**
-   Copy @p source to @p target.
-   
-   @param target Target string.
-   @param source Source string.
-   @return Boolean value indicating success or failure.
-   
-   @pre @p target must point to a memory chunk with sufficient room to
-   contain the @p source string.
-   @pre No boundary checking is performed, so insufficient memory will
-   result in a buffer overrun.
-   @post @p target will be zero terminated.
-*/
-TRIO_PUBLIC int
-trio_copy(char *target,
-	  const char *source)
-{
-  assert(target);
-  assert(source);
-
-  (void)strcpy(target, source);
-  return TRUE;
-}
-
-
-/**
-   Copy at most @p max characters from @p source to @p target.
-   
-   @param target Target string.
-   @param max Maximum number of characters to append.
-   @param source Source string.
-   @return Boolean value indicating success or failure.
-   
-   @pre @p target must point to a memory chunk with sufficient room to
-   contain the @p source string (at most @p max characters).
-   @pre No boundary checking is performed, so insufficient memory will
-   result in a buffer overrun.
-   @post @p target will be zero terminated.
-*/
-TRIO_PUBLIC int
-trio_copy_max(char *target,
-	      size_t max,
-	      const char *source)
-{
-  assert(target);
-  assert(source);
-  assert(max > 0); /* Includes != 0 */
-
-  (void)strncpy(target, source, max - 1);
-  target[max - 1] = (char)0;
-  return TRUE;
-}
-
-
-/**
    Duplicate @p source.
    
    @param source Source string.
@@ -285,13 +329,16 @@ trio_copy_max(char *target,
    
    @post @p target will be zero terminated.
 */
-TRIO_PUBLIC char *
-trio_duplicate(const char *source)
+TRIO_STRING_PUBLIC char *
+trio_duplicate
+TRIO_ARGS1((source),
+	   TRIO_CONST char *source)
 {
   return TrioDuplicateMax(source, trio_length(source));
 }
 
 
+#if !defined(TRIO_MINIMAL)
 /**
    Duplicate at most @p max characters of @p source.
    
@@ -301,9 +348,10 @@ trio_duplicate(const char *source)
    
    @post @p target will be zero terminated.
 */
-TRIO_PUBLIC char *
-trio_duplicate_max(const char *source,
-		   size_t max)
+TRIO_STRING_PUBLIC char *
+trio_duplicate_max TRIO_ARGS2((source, max),
+			      TRIO_CONST char *source,
+			      size_t max)
 {
   size_t length;
 
@@ -317,6 +365,7 @@ trio_duplicate_max(const char *source,
     }
   return TrioDuplicateMax(source, length);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
 /**
@@ -328,9 +377,11 @@ trio_duplicate_max(const char *source,
    
    Case-insensitive comparison.
 */
-TRIO_PUBLIC int
-trio_equal(const char *first,
-	   const char *second)
+TRIO_STRING_PUBLIC int
+trio_equal
+TRIO_ARGS2((first, second),
+	   TRIO_CONST char *first,
+	   TRIO_CONST char *second)
 {
   assert(first);
   assert(second);
@@ -365,9 +416,11 @@ trio_equal(const char *first,
    
    Case-sensitive comparison.
 */
-TRIO_PUBLIC int
-trio_equal_case(const char *first,
-		const char *second)
+TRIO_STRING_PUBLIC int
+trio_equal_case
+TRIO_ARGS2((first, second),
+	   TRIO_CONST char *first,
+	   TRIO_CONST char *second)
 {
   assert(first);
   assert(second);
@@ -380,6 +433,7 @@ trio_equal_case(const char *first,
 }
 
 
+#if !defined(TRIO_MINIMAL)
 /**
    Compare if two strings up until the first @p max characters are equal.
    
@@ -390,10 +444,12 @@ trio_equal_case(const char *first,
    
    Case-sensitive comparison.
 */
-TRIO_PUBLIC int
-trio_equal_case_max(const char *first,
-		    size_t max,
-		    const char *second)
+TRIO_STRING_PUBLIC int
+trio_equal_case_max
+TRIO_ARGS3((first, max, second),
+	   TRIO_CONST char *first,
+	   size_t max,
+	   TRIO_CONST char *second)
 {
   assert(first);
   assert(second);
@@ -404,6 +460,7 @@ trio_equal_case_max(const char *first,
     }
   return FALSE;
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
 /**
@@ -415,9 +472,11 @@ trio_equal_case_max(const char *first,
 
    Collating characters are considered equal.
 */
-TRIO_PUBLIC int
-trio_equal_locale(const char *first,
-		  const char *second)
+TRIO_STRING_PUBLIC int
+trio_equal_locale
+TRIO_ARGS2((first, second),
+	   TRIO_CONST char *first,
+	   TRIO_CONST char *second)
 {
   assert(first);
   assert(second);
@@ -440,10 +499,12 @@ trio_equal_locale(const char *first,
    
    Case-insensitive comparison.
 */
-TRIO_PUBLIC int
-trio_equal_max(const char *first,
-	       size_t max,
-	       const char *second)
+TRIO_STRING_PUBLIC int
+trio_equal_max
+TRIO_ARGS3((first, max, second),
+	   TRIO_CONST char *first,
+	   size_t max,
+	   TRIO_CONST char *second)
 {
   assert(first);
   assert(second);
@@ -478,8 +539,10 @@ trio_equal_max(const char *first,
    @param error_number Error number.
    @return Textual description of @p error_number.
 */
-TRIO_PUBLIC const char *
-trio_error(int error_number)
+TRIO_STRING_PUBLIC TRIO_CONST char *
+trio_error
+TRIO_ARGS1((error_number),
+	   int error_number)
 {
 #if defined(USE_STRERROR)
   return strerror(error_number);
@@ -489,6 +552,7 @@ trio_error(int error_number)
 }
 
 
+#if !defined(TRIO_MINIMAL)
 /**
    Format the date/time according to @p format.
 
@@ -501,11 +565,13 @@ trio_error(int error_number)
    The formatting string accepts the same specifiers as the standard C
    function strftime.
 */
-TRIO_PUBLIC size_t
-trio_format_date_max(char *target,
-		     size_t max,
-		     const char *format,
-		     const struct tm *datetime)
+TRIO_STRING_PUBLIC size_t
+trio_format_date_max
+TRIO_ARGS4((target, max, format, datetime),
+	   char *target,
+	   size_t max,
+	   TRIO_CONST char *format,
+	   TRIO_CONST struct tm *datetime)
 {
   assert(target);
   assert(format);
@@ -514,8 +580,10 @@ trio_format_date_max(char *target,
   
   return strftime(target, max, format, datetime);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /**
    Calculate a hash value for a string.
 
@@ -526,9 +594,11 @@ trio_format_date_max(char *target,
    @p type can be one of the following
    @li @c TRIO_HASH_PLAIN Plain hash function.
 */
-TRIO_PUBLIC unsigned long
-trio_hash(const char *string,
-	  int type)
+TRIO_STRING_PUBLIC unsigned long
+trio_hash
+TRIO_ARGS2((string, type),
+	   TRIO_CONST char *string,
+	   int type)
 {
   unsigned long value = 0L;
   char ch;
@@ -550,8 +620,10 @@ trio_hash(const char *string,
     }
   return value;
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /**
    Find first occurrence of a character in a string.
 
@@ -559,16 +631,20 @@ trio_hash(const char *string,
    @param character Character to be found.
    @param A pointer to the found character, or NULL if character was not found.
  */
-TRIO_PUBLIC TRIO_INLINE char *
-trio_index(const char *string,
-	   char character)
+TRIO_STRING_PUBLIC char *
+trio_index
+TRIO_ARGS2((string, character),
+	   TRIO_CONST char *string,
+	   int character)
 {
   assert(string);
 
   return strchr(string, character);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /**
    Find last occurrence of a character in a string.
 
@@ -576,31 +652,39 @@ trio_index(const char *string,
    @param character Character to be found.
    @param A pointer to the found character, or NULL if character was not found.
  */
-TRIO_PUBLIC TRIO_INLINE char *
-trio_index_last(const char *string,
-		char character)
+TRIO_STRING_PUBLIC char *
+trio_index_last
+TRIO_ARGS2((string, character),
+	   TRIO_CONST char *string,
+	   int character)
 {
   assert(string);
 
   return strchr(string, character);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /**
    Convert the alphabetic letters in the string to lower-case.
 
    @param target String to be converted.
    @return Number of processed characters (converted or not).
 */
-TRIO_PUBLIC TRIO_INLINE int
-trio_lower(char *target)
+TRIO_STRING_PUBLIC int
+trio_lower
+TRIO_ARGS1((target),
+	   char *target)
 {
   assert(target);
 
   return trio_span_function(target, target, tolower);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /**
    Compare two strings using wildcards.
 
@@ -614,9 +698,11 @@ trio_lower(char *target)
    @li @c * Match any number of characters.
    @li @c ? Match a single character.
 */
-TRIO_PUBLIC int
-trio_match(const char *string,
-	   const char *pattern)
+TRIO_STRING_PUBLIC int
+trio_match
+TRIO_ARGS2((string, pattern),
+	   TRIO_CONST char *string,
+	   TRIO_CONST char *pattern)
 {
   assert(string);
   assert(pattern);
@@ -648,8 +734,10 @@ trio_match(const char *string,
   
   return FALSE;
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /**
    Compare two strings using wildcards.
 
@@ -663,9 +751,11 @@ trio_match(const char *string,
    @li @c * Match any number of characters.
    @li @c ? Match a single character.
 */
-TRIO_PUBLIC int
-trio_match_case(const char *string,
-		const char *pattern)
+TRIO_STRING_PUBLIC int
+trio_match_case
+TRIO_ARGS2((string, pattern),
+	   TRIO_CONST char *string,
+	   TRIO_CONST char *pattern)
 {
   assert(string);
   assert(pattern);
@@ -697,8 +787,10 @@ trio_match_case(const char *string,
   
   return FALSE;
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /**
    Execute a function on each character in string.
 
@@ -707,10 +799,12 @@ trio_match_case(const char *string,
    @param Function Function to be executed.
    @return Number of processed characters.
 */
-TRIO_PUBLIC size_t
-trio_span_function(char *target,
-		   const char *source,
-		   int (*Function)(int))
+TRIO_STRING_PUBLIC size_t
+trio_span_function
+TRIO_ARGS3((target, source, Function),
+	   char *target,
+	   TRIO_CONST char *source,
+	   int (*Function) TRIO_PROTO((int)))
 {
   size_t count = 0;
 
@@ -725,8 +819,10 @@ trio_span_function(char *target,
     }
   return count;
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /**
    Search for a substring in a string.
 
@@ -735,17 +831,21 @@ trio_span_function(char *target,
    @return Pointer to first occurrence of @p substring in @p string, or NULL
    if no match was found.
 */
-TRIO_PUBLIC TRIO_INLINE char *
-trio_substring(const char *string,
-	       const char *substring)
+TRIO_STRING_PUBLIC char *
+trio_substring
+TRIO_ARGS2((string, substring),
+	   TRIO_CONST char *string,
+	   TRIO_CONST char *substring)
 {
   assert(string);
   assert(substring);
 
   return strstr(string, substring);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /**
    Search for a substring in the first @p max characters of a string.
 
@@ -755,10 +855,12 @@ trio_substring(const char *string,
    @return Pointer to first occurrence of @p substring in @p string, or NULL
    if no match was found.
 */
-TRIO_PUBLIC char *
-trio_substring_max(const char *string,
-		   size_t max,
-		   const char *substring)
+TRIO_STRING_PUBLIC char *
+trio_substring_max
+TRIO_ARGS3((string, max, substring),
+	   TRIO_CONST char *string,
+	   size_t max,
+	   TRIO_CONST char *substring)
 {
   size_t count;
   size_t size;
@@ -781,8 +883,10 @@ trio_substring_max(const char *string,
     }
   return result;
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /**
    Tokenize string.
 
@@ -792,13 +896,17 @@ trio_substring_max(const char *string,
 
    @warning @p string will be destroyed.
 */
-TRIO_PUBLIC TRIO_INLINE char *
-trio_tokenize(char *string, const char *delimiters)
+TRIO_STRING_PUBLIC char *
+trio_tokenize
+TRIO_ARGS2((string, delimiters),
+	   char *string,
+	   TRIO_CONST char *delimiters)
 {
   assert(delimiters);
   
   return strtok(string, delimiters);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
 /**
@@ -823,29 +931,32 @@ trio_tokenize(char *string, const char *delimiters)
    @endverbatim
 */
 /* FIXME: Add EBNF for hex-floats */
-TRIO_PUBLIC double
-trio_to_double(const char *source,
-	       const char **endp)
+TRIO_STRING_PUBLIC trio_long_double_t
+trio_to_long_double
+TRIO_ARGS2((source, endp),
+	   TRIO_CONST char *source,
+	   char **endp)
 {
-#if defined(USE_STRTOD)
-  return strtod(source, (char **)endp);
+#if defined(USE_STRTOLD)
+  return strtold(source, endp);
 #else
-  /* Preliminary code */
   int isNegative = FALSE;
   int isExponentNegative = FALSE;
-  unsigned long integer = 0;
-  unsigned long fraction = 0;
+  trio_long_double_t integer = 0.0;
+  trio_long_double_t fraction = 0.0;
   unsigned long exponent = 0;
-  double fracdiv = 1.0;
-  double value = 0.0;
+  trio_long_double_t base;
+  trio_long_double_t fracdiv = 1.0;
+  trio_long_double_t value = 0.0;
 
   /* First try hex-floats */
   if ((source[0] == '0') && ((source[1] == 'x') || (source[1] == 'X')))
     {
+      base = 16.0;
       source += 2;
       while (isxdigit((int)*source))
 	{
-	  integer *= 16;
+	  integer *= base;
 	  integer += (isdigit((int)*source)
 		      ? (*source - '0')
 		      : 10 + (toupper((int)*source) - 'A'));
@@ -856,11 +967,10 @@ trio_to_double(const char *source,
 	  source++;
 	  while (isxdigit((int)*source))
 	    {
-	      fraction *= 16;
-	      fraction += (isdigit((int)*source)
-			   ? (*source - '0')
-			   : 10 + (toupper((int)*source) - 'A'));
-	      fracdiv *= 16.0;
+	      fracdiv /= base;
+	      fraction += fracdiv * (isdigit((int)*source)
+				     ? (*source - '0')
+				     : 10 + (toupper((int)*source) - 'A'));
 	      source++;
 	    }
 	  if ((*source == 'p') || (*source == 'P'))
@@ -873,7 +983,7 @@ trio_to_double(const char *source,
 		}
 	      while (isdigit((int)*source))
 		{
-		  exponent *= 10;
+		  exponent *= (int)base;
 		  exponent += (*source - '0');
 		  source++;
 		}
@@ -882,6 +992,7 @@ trio_to_double(const char *source,
     }
   else /* Then try normal decimal floats */
     {
+      base = 10.0;
       isNegative = (*source == '-');
       /* Skip sign */
       if ((*source == '+') || (*source == '-'))
@@ -890,7 +1001,7 @@ trio_to_double(const char *source,
       /* Integer part */
       while (isdigit((int)*source))
 	{
-	  integer *= 10;
+	  integer *= base;
 	  integer += (*source - '0');
 	  source++;
 	}
@@ -900,9 +1011,8 @@ trio_to_double(const char *source,
 	  source++; /* skip decimal point */
 	  while (isdigit((int)*source))
 	    {
-	      fraction *= 10;
-	      fraction += (*source - '0');
-	      fracdiv *= 10.0;
+	      fracdiv /= base;
+	      fraction += (*source - '0') * fracdiv;
 	      source++;
 	    }
 	}
@@ -920,30 +1030,26 @@ trio_to_double(const char *source,
 	    source++;
 	  while (isdigit((int)*source))
 	    {
-	      exponent *= 10;
+	      exponent *= (int)base;
 	      exponent += (*source - '0');
 	      source++;
 	    }
 	}
     }
   
-  value = (double)integer;
-  if (fraction != 0)
-    {
-      value += (double)fraction / fracdiv;
-    }
+  value = integer + fraction;
   if (exponent != 0)
     {
       if (isExponentNegative)
-	value /= pow((double)10, (double)exponent);
+	value /= pow(base, (double)exponent);
       else
-	value *= pow((double)10, (double)exponent);
+	value *= pow(base, (double)exponent);
     }
   if (isNegative)
     value = -value;
 
   if (endp)
-    *endp = source;
+    *endp = (char *)source;
   return value;
 #endif
 }
@@ -956,18 +1062,44 @@ trio_to_double(const char *source,
    @param endp Pointer to end of the converted string.
    @return A floating-point number.
 
-   See @ref trio_to_double.
+   See @ref trio_to_long_double.
 */
-TRIO_PUBLIC TRIO_INLINE float
-trio_to_float(const char *source,
-	      const char **endp)
+TRIO_STRING_PUBLIC double
+trio_to_double
+TRIO_ARGS2((source, endp),
+	   TRIO_CONST char *source,
+	   char **endp)
 {
-#if defined(USE_STRTOF)
-  return strtof(source, (char **)endp);
+#if defined(USE_STRTOD)
+  return strtod(source, endp);
 #else
-  return (float)trio_to_double(source, endp);
+  return (double)trio_to_long_double(source, endp);
 #endif
 }
+
+#if !defined(TRIO_MINIMAL)
+/**
+   Convert string to floating-point number.
+
+   @param source String to be converted.
+   @param endp Pointer to end of the converted string.
+   @return A floating-point number.
+
+   See @ref trio_to_long_double.
+*/
+TRIO_STRING_PUBLIC float
+trio_to_float
+TRIO_ARGS2((source, endp),
+	   TRIO_CONST char *source,
+	   char **endp)
+{
+#if defined(USE_STRTOF)
+  return strtof(source, endp);
+#else
+  return (float)trio_to_long_double(source, endp);
+#endif
+}
+#endif /* !defined(TRIO_MINIMAL) */
 
 
 /**
@@ -977,10 +1109,12 @@ trio_to_float(const char *source,
    @param endp Pointer to end of converted string.
    @param base Radix number of number.
 */
-TRIO_PUBLIC TRIO_INLINE long
-trio_to_long(const char *string,
-	     char **endp,
-	     int base)
+TRIO_STRING_PUBLIC long
+trio_to_long
+TRIO_ARGS3((string, endp, base),
+	   TRIO_CONST char *string,
+	   char **endp,
+	   int base)
 {
   assert(string);
   assert((base >= 2) && (base <= 36));
@@ -989,6 +1123,7 @@ trio_to_long(const char *string,
 }
 
 
+#if !defined(TRIO_MINIMAL)
 /**
    Convert string to unsigned integer.
 
@@ -996,31 +1131,38 @@ trio_to_long(const char *string,
    @param endp Pointer to end of converted string.
    @param base Radix number of number.
 */
-TRIO_PUBLIC TRIO_INLINE unsigned long
-trio_to_unsigned_long(const char *string,
-		      char **endp,
-		      int base)
+TRIO_STRING_PUBLIC unsigned long
+trio_to_unsigned_long
+TRIO_ARGS3((string, endp, base),
+	   TRIO_CONST char *string,
+	   char **endp,
+	   int base)
 {
   assert(string);
   assert((base >= 2) && (base <= 36));
   
   return strtoul(string, endp, base);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /**
    Convert the alphabetic letters in the string to upper-case.
 
    @param target The string to be converted.
    @return The number of processed characters (converted or not).
 */
-TRIO_PUBLIC TRIO_INLINE int
-trio_upper(char *target)
+TRIO_STRING_PUBLIC int
+trio_upper
+TRIO_ARGS1((target),
+	   char *target)
 {
   assert(target);
 
   return trio_span_function(target, target, toupper);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
 /** @} End of StaticStrings */
@@ -1040,8 +1182,8 @@ trio_upper(char *target)
 /*
  * TrioStringAlloc
  */
-TRIO_PRIVATE trio_string_t *
-TrioStringAlloc(void)
+TRIO_STRING_PRIVATE trio_string_t *
+TrioStringAlloc(TRIO_NOARGS)
 {
   trio_string_t *self;
   
@@ -1062,9 +1204,11 @@ TrioStringAlloc(void)
  * The size of the string will be increased by 'delta' characters. If
  * 'delta' is zero, the size will be doubled.
  */
-TRIO_PRIVATE BOOLEAN_T
-TrioStringGrow(trio_string_t *self,
-	       size_t delta)
+TRIO_STRING_PRIVATE BOOLEAN_T
+TrioStringGrow
+TRIO_ARGS2((self, delta),
+	   trio_string_t *self,
+	   size_t delta)
 {
   BOOLEAN_T status = FALSE;
   char *new_content;
@@ -1092,9 +1236,11 @@ TrioStringGrow(trio_string_t *self,
  * If 'length' is less than the original size, the original size will be
  * used (that is, the size of the string is never decreased).
  */
-TRIO_PRIVATE BOOLEAN_T
-TrioStringGrowTo(trio_string_t *self,
-		 size_t length)
+TRIO_STRING_PRIVATE BOOLEAN_T
+TrioStringGrowTo
+TRIO_ARGS2((self, length),
+	   trio_string_t *self,
+	   size_t length)
 {
   length++; /* Room for terminating zero */
   return (self->allocated < length)
@@ -1103,14 +1249,17 @@ TrioStringGrowTo(trio_string_t *self,
 }
 
 
+#if !defined(TRIO_MINIMAL)
 /**
    Create a new dynamic string.
    
    @param initial_size Initial size of the buffer.
    @return Newly allocated dynamic string, or NULL if memory allocation failed.
 */
-TRIO_PUBLIC trio_string_t *
-trio_string_create(int initial_size)
+TRIO_STRING_PUBLIC trio_string_t *
+trio_string_create
+TRIO_ARGS1((initial_size),
+	   int initial_size)
 {
   trio_string_t *self;
 
@@ -1131,6 +1280,7 @@ trio_string_create(int initial_size)
     }
   return self;
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
 /**
@@ -1138,8 +1288,10 @@ trio_string_create(int initial_size)
    
    @param self Dynamic string
 */
-TRIO_PUBLIC void
-trio_string_destroy(trio_string_t *self)
+TRIO_STRING_PUBLIC void
+trio_string_destroy
+TRIO_ARGS1((self),
+	   trio_string_t *self)
 {
   assert(self);
   
@@ -1151,6 +1303,7 @@ trio_string_destroy(trio_string_t *self)
 }
 
 
+#if !defined(TRIO_MINIMAL)
 /**
    Get a pointer to the content.
    
@@ -1165,8 +1318,11 @@ trio_string_destroy(trio_string_t *self)
    number of characters from the ending of the string, starting at the
    terminating zero, is returned.
 */
-TRIO_PUBLIC char *
-trio_string_get(trio_string_t *self, int offset)
+TRIO_STRING_PUBLIC char *
+trio_string_get
+TRIO_ARGS2((self, offset),
+	   trio_string_t *self,
+	   int offset)
 {
   char *result = NULL;
   
@@ -1180,7 +1336,7 @@ trio_string_get(trio_string_t *self, int offset)
 	}
       if (offset >= 0)
 	{
-	  if (offset > self->length)
+	  if (offset > (int)self->length)
 	    {
 	      offset = self->length;
 	    }
@@ -1197,6 +1353,7 @@ trio_string_get(trio_string_t *self, int offset)
     }
   return result;
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
 /**
@@ -1208,8 +1365,10 @@ trio_string_get(trio_string_t *self, int offset)
    The content is removed from the dynamic string. This enables destruction
    of the dynamic string without deallocation of the content.
 */
-TRIO_PUBLIC char *
-trio_string_extract(trio_string_t *self)
+TRIO_STRING_PUBLIC char *
+trio_string_extract
+TRIO_ARGS1((self),
+	   trio_string_t *self)
 {
   char *result;
   
@@ -1223,6 +1382,7 @@ trio_string_extract(trio_string_t *self)
 }
 
 
+#if !defined(TRIO_MINIMAL)
 /**
    Set the content of the dynamic string.
    
@@ -1236,22 +1396,27 @@ trio_string_extract(trio_string_t *self)
    This function will make a copy of @p buffer.
    You are responsible for deallocating @p buffer yourself.
 */
-TRIO_PUBLIC void
-trio_xstring_set(trio_string_t *self,
-		 char *buffer)
+TRIO_STRING_PUBLIC void
+trio_xstring_set
+TRIO_ARGS2((self, buffer),
+	   trio_string_t *self,
+	   char *buffer)
 {
   assert(self);
 
   trio_destroy(self->content);
   self->content = trio_duplicate(buffer);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
 /*
  * trio_string_size
  */
-TRIO_PUBLIC int
-trio_string_size(trio_string_t *self)
+TRIO_STRING_PUBLIC int
+trio_string_size
+TRIO_ARGS1((self),
+	   trio_string_t *self)
 {
   assert(self);
 
@@ -1262,21 +1427,16 @@ trio_string_size(trio_string_t *self)
 /*
  * trio_string_terminate
  */
-TRIO_PUBLIC void
-trio_string_terminate(trio_string_t *self)
+TRIO_STRING_PUBLIC void
+trio_string_terminate
+TRIO_ARGS1((self),
+	   trio_string_t *self)
 {
-  char *end;
-  
-  assert(self);
-
-  end = trio_string_get(self, -1);
-  if (end)
-    {
-      *end = NIL;
-    }
+  trio_xstring_append_char(self, 0);
 }
 
 
+#if !defined(TRIO_MINIMAL)
 /**
    Append the second string to the first.
    
@@ -1284,9 +1444,11 @@ trio_string_terminate(trio_string_t *self)
    @param other Dynamic string to copy from.
    @return Boolean value indicating success or failure.
 */
-TRIO_PUBLIC int
-trio_string_append(trio_string_t *self,
-		   trio_string_t *other)
+TRIO_STRING_PUBLIC int
+trio_string_append
+TRIO_ARGS2((self, other),
+	   trio_string_t *self,
+	   trio_string_t *other)
 {
   size_t length;
   
@@ -1303,14 +1465,18 @@ trio_string_append(trio_string_t *self,
  error:
   return FALSE;
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_xstring_append
  */
-TRIO_PUBLIC int
-trio_xstring_append(trio_string_t *self,
-		    const char *other)
+TRIO_STRING_PUBLIC int
+trio_xstring_append
+TRIO_ARGS2((self, other),
+	   trio_string_t *self,
+	   TRIO_CONST char *other)
 {
   size_t length;
   
@@ -1327,18 +1493,21 @@ trio_xstring_append(trio_string_t *self,
  error:
   return FALSE;
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
 /*
  * trio_xstring_append_char
  */
-TRIO_PUBLIC int
-trio_xstring_append_char(trio_string_t *self,
-			 char character)
+TRIO_STRING_PUBLIC int
+trio_xstring_append_char
+TRIO_ARGS2((self, character),
+	   trio_string_t *self,
+	   char character)
 {
   assert(self);
 
-  if (self->length >= trio_string_size(self))
+  if ((int)self->length >= trio_string_size(self))
     {
       if (!TrioStringGrow(self, 0))
 	goto error;
@@ -1352,6 +1521,7 @@ trio_xstring_append_char(trio_string_t *self,
 }
 
 
+#if !defined(TRIO_MINIMAL)
 /**
    Search for the first occurrence of second parameter in the first.
    
@@ -1359,37 +1529,47 @@ trio_xstring_append_char(trio_string_t *self,
    @param other Dynamic string to copy from.
    @return Boolean value indicating success or failure.
 */
-TRIO_PUBLIC int
-trio_string_contains(trio_string_t *self,
-		     trio_string_t *other)
+TRIO_STRING_PUBLIC int
+trio_string_contains
+TRIO_ARGS2((self, other),
+	   trio_string_t *self,
+	   trio_string_t *other)
 {
   assert(self);
   assert(other);
 
   return trio_contains(self->content, other->content);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_xstring_contains
  */
-TRIO_PUBLIC int
-trio_xstring_contains(trio_string_t *self,
-		      const char *other)
+TRIO_STRING_PUBLIC int
+trio_xstring_contains
+TRIO_ARGS2((self, other),
+	   trio_string_t *self,
+	   TRIO_CONST char *other)
 {
   assert(self);
   assert(other);
 
   return trio_contains(self->content, other);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_string_copy
  */
-TRIO_PUBLIC int
-trio_string_copy(trio_string_t *self,
-		 trio_string_t *other)
+TRIO_STRING_PUBLIC int
+trio_string_copy
+TRIO_ARGS2((self, other),
+	   trio_string_t *self,
+	   trio_string_t *other)
 {
   assert(self);
   assert(other);
@@ -1397,14 +1577,18 @@ trio_string_copy(trio_string_t *self,
   self->length = 0;
   return trio_string_append(self, other);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_xstring_copy
  */
-TRIO_PUBLIC int
-trio_xstring_copy(trio_string_t *self,
-		  const char *other)
+TRIO_STRING_PUBLIC int
+trio_xstring_copy
+TRIO_ARGS2((self, other),
+	   trio_string_t *self,
+	   TRIO_CONST char *other)
 {
   assert(self);
   assert(other);
@@ -1412,13 +1596,17 @@ trio_xstring_copy(trio_string_t *self,
   self->length = 0;
   return trio_xstring_append(self, other);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_string_duplicate
  */
-TRIO_PUBLIC trio_string_t *
-trio_string_duplicate(trio_string_t *other)
+TRIO_STRING_PUBLIC trio_string_t *
+trio_string_duplicate
+TRIO_ARGS1((other),
+	   trio_string_t *other)
 {
   trio_string_t *self;
   
@@ -1440,13 +1628,16 @@ trio_string_duplicate(trio_string_t *other)
     }
   return self;
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
 /*
  * trio_xstring_duplicate
  */
-TRIO_PUBLIC trio_string_t *
-trio_xstring_duplicate(const char *other)
+TRIO_STRING_PUBLIC trio_string_t *
+trio_xstring_duplicate
+TRIO_ARGS1((other),
+	   TRIO_CONST char *other)
 {
   trio_string_t *self;
   
@@ -1470,168 +1661,215 @@ trio_xstring_duplicate(const char *other)
 }
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_string_equal
  */
-TRIO_PUBLIC int
-trio_string_equal(trio_string_t *self,
-		  trio_string_t *other)
+TRIO_STRING_PUBLIC int
+trio_string_equal
+TRIO_ARGS2((self, other),
+	   trio_string_t *self,
+	   trio_string_t *other)
 {
   assert(self);
   assert(other);
 
   return trio_equal(self->content, other->content);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_xstring_equal
  */
-TRIO_PUBLIC int
-trio_xstring_equal(trio_string_t *self,
-		   const char *other)
+TRIO_STRING_PUBLIC int
+trio_xstring_equal
+TRIO_ARGS2((self, other),
+	   trio_string_t *self,
+	   TRIO_CONST char *other)
 {
   assert(self);
   assert(other);
 
   return trio_equal(self->content, other);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_string_equal_max
  */
-TRIO_PUBLIC int
-trio_string_equal_max(trio_string_t *self,
-		      size_t max,
-		      trio_string_t *other)
+TRIO_STRING_PUBLIC int
+trio_string_equal_max
+TRIO_ARGS3((self, max, other),
+	   trio_string_t *self,
+	   size_t max,
+	   trio_string_t *other)
 {
   assert(self);
   assert(other);
 
   return trio_equal_max(self->content, max, other->content);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_xstring_equal_max
  */
-TRIO_PUBLIC int
-trio_xstring_equal_max(trio_string_t *self,
-		       size_t max,
-		       const char *other)
+TRIO_STRING_PUBLIC int
+trio_xstring_equal_max
+TRIO_ARGS3((self, max, other),
+	   trio_string_t *self,
+	   size_t max,
+	   TRIO_CONST char *other)
 {
   assert(self);
   assert(other);
 
   return trio_equal_max(self->content, max, other);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_string_equal_case
  */
-TRIO_PUBLIC int
-trio_string_equal_case(trio_string_t *self,
-		       trio_string_t *other)
+TRIO_STRING_PUBLIC int
+trio_string_equal_case
+TRIO_ARGS2((self, other),
+	   trio_string_t *self,
+	   trio_string_t *other)
 {
   assert(self);
   assert(other);
 
   return trio_equal_case(self->content, other->content);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_xstring_equal_case
  */
-TRIO_PUBLIC int
-trio_xstring_equal_case(trio_string_t *self,
-			const char *other)
+TRIO_STRING_PUBLIC int
+trio_xstring_equal_case
+TRIO_ARGS2((self, other),
+	   trio_string_t *self,
+	   TRIO_CONST char *other)
 {
   assert(self);
   assert(other);
 
   return trio_equal_case(self->content, other);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_string_equal_case_max
  */
-TRIO_PUBLIC int
-trio_string_equal_case_max(trio_string_t *self,
-			   size_t max,
-			   trio_string_t *other)
+TRIO_STRING_PUBLIC int
+trio_string_equal_case_max
+TRIO_ARGS3((self, max, other),
+	   trio_string_t *self,
+	   size_t max,
+	   trio_string_t *other)
 {
   assert(self);
   assert(other);
 
   return trio_equal_case_max(self->content, max, other->content);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_xstring_equal_case_max
  */
-TRIO_PUBLIC int
-trio_xstring_equal_case_max(trio_string_t *self,
-			    size_t max,
-			    const char *other)
+TRIO_STRING_PUBLIC int
+trio_xstring_equal_case_max
+TRIO_ARGS3((self, max, other),
+	   trio_string_t *self,
+	   size_t max,
+	   TRIO_CONST char *other)
 {
   assert(self);
   assert(other);
 
   return trio_equal_case_max(self->content, max, other);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_string_format_data_max
  */
-TRIO_PUBLIC size_t
-trio_string_format_date_max(trio_string_t *self,
-			    size_t max,
-			    const char *format,
-			    const struct tm *datetime)
+TRIO_STRING_PUBLIC size_t
+trio_string_format_date_max
+TRIO_ARGS4((self, max, format, datetime),
+	   trio_string_t *self,
+	   size_t max,
+	   TRIO_CONST char *format,
+	   TRIO_CONST struct tm *datetime)
 {
   assert(self);
 
   return trio_format_date_max(self->content, max, format, datetime);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_string_index
  */
-TRIO_PUBLIC char *
-trio_string_index(trio_string_t *self,
-		  int character)
+TRIO_STRING_PUBLIC char *
+trio_string_index
+TRIO_ARGS2((self, character),
+	   trio_string_t *self,
+	   int character)
 {
   assert(self);
 
   return trio_index(self->content, character);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_string_index_last
  */
-TRIO_PUBLIC char *
-trio_string_index_last(trio_string_t *self,
-		       int character)
+TRIO_STRING_PUBLIC char *
+trio_string_index_last
+TRIO_ARGS2((self, character),
+	   trio_string_t *self,
+	   int character)
 {
   assert(self);
 
   return trio_index_last(self->content, character);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_string_length
  */
-TRIO_PUBLIC int
-trio_string_length(trio_string_t *self)
+TRIO_STRING_PUBLIC int
+trio_string_length
+TRIO_ARGS1((self),
+	   trio_string_t *self)
 {
   assert(self);
 
@@ -1641,113 +1879,146 @@ trio_string_length(trio_string_t *self)
     }
   return self->length;
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_string_lower
  */
-TRIO_PUBLIC int
-trio_string_lower(trio_string_t *self)
+TRIO_STRING_PUBLIC int
+trio_string_lower
+TRIO_ARGS1((self),
+	   trio_string_t *self)
 {
   assert(self);
 
   return trio_lower(self->content);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_string_match
  */
-TRIO_PUBLIC int
-trio_string_match(trio_string_t *self,
-		  trio_string_t *other)
+TRIO_STRING_PUBLIC int
+trio_string_match
+TRIO_ARGS2((self, other),
+	   trio_string_t *self,
+	   trio_string_t *other)
 {
   assert(self);
   assert(other);
 
   return trio_match(self->content, other->content);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_xstring_match
  */
-TRIO_PUBLIC int
-trio_xstring_match(trio_string_t *self,
-		   const char *other)
+TRIO_STRING_PUBLIC int
+trio_xstring_match
+TRIO_ARGS2((self, other),
+	   trio_string_t *self,
+	   TRIO_CONST char *other)
 {
   assert(self);
   assert(other);
 
   return trio_match(self->content, other);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_string_match_case
  */
-TRIO_PUBLIC int
-trio_string_match_case(trio_string_t *self,
-		       trio_string_t *other)
+TRIO_STRING_PUBLIC int
+trio_string_match_case
+TRIO_ARGS2((self, other),
+	   trio_string_t *self,
+	   trio_string_t *other)
 {
   assert(self);
   assert(other);
 
   return trio_match_case(self->content, other->content);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_xstring_match_case
  */
-TRIO_PUBLIC int
-trio_xstring_match_case(trio_string_t *self,
-			const char *other)
+TRIO_STRING_PUBLIC int
+trio_xstring_match_case
+TRIO_ARGS2((self, other),
+	   trio_string_t *self,
+	   TRIO_CONST char *other)
 {
   assert(self);
   assert(other);
 
   return trio_match_case(self->content, other);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_string_substring
  */
-TRIO_PUBLIC char *
-trio_string_substring(trio_string_t *self,
-		      trio_string_t *other)
+TRIO_STRING_PUBLIC char *
+trio_string_substring
+TRIO_ARGS2((self, other),
+	   trio_string_t *self,
+	   trio_string_t *other)
 {
   assert(self);
   assert(other);
 
   return trio_substring(self->content, other->content);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_xstring_substring
  */
-TRIO_PUBLIC char *
-trio_xstring_substring(trio_string_t *self,
-		       const char *other)
+TRIO_STRING_PUBLIC char *
+trio_xstring_substring
+TRIO_ARGS2((self, other),
+	   trio_string_t *self,
+	   TRIO_CONST char *other)
 {
   assert(self);
   assert(other);
 
   return trio_substring(self->content, other);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 
+#if !defined(TRIO_MINIMAL)
 /*
  * trio_string_upper
  */
-TRIO_PUBLIC int
-trio_string_upper(trio_string_t *self)
+TRIO_STRING_PUBLIC int
+trio_string_upper
+TRIO_ARGS1((self),
+	   trio_string_t *self)
 {
   assert(self);
 
   return trio_upper(self->content);
 }
+#endif /* !defined(TRIO_MINIMAL) */
 
 /** @} End of DynamicStrings */

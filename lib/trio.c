@@ -28,7 +28,6 @@
  * TODO:
  *  - Scan is probably too permissive about its modifiers.
  *  - C escapes in %#[] ?
- *  - C99 support has not been properly tested.
  *  - Multibyte characters (done for format parsing, except scan groups)
  *  - Complex numbers? (C99 _Complex)
  *  - Boolean values? (C99 _Bool)
@@ -47,8 +46,16 @@
 #include "triodef.h"
 #include "trio.h"
 #include "triop.h"
-#include "triostr.h"
 #include "trionan.h"
+#if !defined(TRIO_MINIMAL)
+# include "triostr.h"
+#endif
+
+/**************************************************************************
+ *
+ * Definitions
+ *
+ *************************************************************************/
 
 /*
  * Encode the error code and the position. This is decoded
@@ -67,7 +74,6 @@
 # endif
 #endif
 
-
 /*************************************************************************
  * Generic definitions
  */
@@ -83,7 +89,11 @@
 #include <math.h>
 #include <limits.h>
 #include <float.h>
-#include <stdarg.h>
+#if defined(TRIO_COMPILER_ANCIENT)
+# include <varargs.h>
+#else
+# include <stdarg.h>
+#endif
 #include <stddef.h>
 #include <errno.h>
 
@@ -99,11 +109,6 @@
 
 /* mincore() can be used for debugging purposes */
 #define VALID(x) (NULL != (x))
-
-/* xlC crashes on log10(0) */
-#define guarded_log10(x) (((x) == 0.0) ? trio_ninf() : log10(x))
-#define guarded_log16(x) (guarded_log10(x) / log10(16.0))
-
 
 /*************************************************************************
  * Platform specific definitions
@@ -129,9 +134,11 @@
 # if defined(TRIO_COMPILER_SUPPORTS_ISO94)
 #  include <wchar.h>
 #  include <wctype.h>
+typedef wchar_t trio_wchar_t;
+typedef wint_t trio_wint_t;
 # else
-typedef char wchar_t;
-typedef int wint_t;
+typedef char trio_wchar_t;
+typedef int trio_wint_t;
 #  define WCONST(x) L ## x
 #  define WEOF EOF
 #  define iswalnum(x) isalnum(x)
@@ -180,7 +187,7 @@ typedef signed long int trio_longlong_t;
 typedef unsigned long int trio_ulonglong_t;
 # endif
 #else
-typedef signed long int trio_longlong_t;
+typedef TRIO_SIGNED long int trio_longlong_t;
 typedef unsigned long int trio_ulonglong_t;
 #endif
 
@@ -214,17 +221,17 @@ typedef trio_ulonglong_t trio_uintmax_t;
 # if defined(TRIO_INT8_T)
 typedef TRIO_INT8_T trio_int8_t;
 # else
-typedef signed char trio_int8_t;
+typedef TRIO_SIGNED char trio_int8_t;
 # endif
 # if defined(TRIO_INT16_T)
 typedef TRIO_INT16_T trio_int16_t;
 # else
-typedef signed short trio_int16_t;
+typedef TRIO_SIGNED short trio_int16_t;
 # endif
 # if defined(TRIO_INT32_T)
 typedef TRIO_INT32_T trio_int32_t;
 # else
-typedef signed int trio_int32_t;
+typedef TRIO_SIGNED int trio_int32_t;
 # endif
 # if defined(TRIO_INT64_T)
 typedef TRIO_INT64_T trio_int64_t;
@@ -233,10 +240,22 @@ typedef trio_longlong_t trio_int64_t;
 # endif
 #endif
 
+#if !(defined(TRIO_COMPILER_SUPPORTS_C99) \
+ || defined(TRIO_COMPILER_SUPPORTS_UNIX01))
+# define floorl(x) floor((double)(x))
+# define fmodl(x,y) fmod((double)(x),(double)(y))
+# define powl(x,y) pow((double)(x),(double)(y))
+#endif
+
+#define TRIO_FABS(x) (((x) < 0.0) ? -(x) : (x))
 
 /*************************************************************************
- * Internal definitions
+ * Internal Definitions
  */
+
+#ifndef DECIMAL_DIG
+# define DECIMAL_DIG DBL_DIG
+#endif
 
 /* Long double sizes */
 #ifdef LDBL_DIG
@@ -244,15 +263,18 @@ typedef trio_longlong_t trio_int64_t;
 # define MAX_EXPONENT_DIGITS 4
 # define MAX_DOUBLE_DIGITS LDBL_MAX_10_EXP
 #else
-# define MAX_MANTISSA_DIGITS DBL_DIG
+# define MAX_MANTISSA_DIGITS DECIMAL_DIG
 # define MAX_EXPONENT_DIGITS 3
 # define MAX_DOUBLE_DIGITS DBL_MAX_10_EXP
+# define LDBL_DIG DBL_DIG
+# define LDBL_MANT_DIG DBL_MANT_DIG
+# define LDBL_EPSILON DBL_EPSILON
 #endif
 
 /* The maximal number of digits is for base 2 */
 #define MAX_CHARS_IN(x) (sizeof(x) * CHAR_BIT)
 /* The width of a pointer. The number of bits in a hex digit is 4 */
-#define POINTER_WIDTH ((sizeof("0x") - 1) + sizeof(void *) * CHAR_BIT / 4)
+#define POINTER_WIDTH ((sizeof("0x") - 1) + sizeof(trio_pointer_t) * CHAR_BIT / 4)
 
 /* Infinite and Not-A-Number for floating-point */
 #define INFINITE_LOWER "inf"
@@ -303,6 +325,7 @@ enum {
   /* Reused flags */
   FLAGS_EXCLUDE             = FLAGS_SHORT,
   FLAGS_USER_DEFINED        = FLAGS_IGNORE,
+  FLAGS_ROUNDING            = FLAGS_INTMAX_T,
   /* Compounded flags */
   FLAGS_ALL_VARSIZES        = FLAGS_LONG | FLAGS_QUAD | FLAGS_INTMAX_T | FLAGS_PTRDIFF_T | FLAGS_SIZE_T,
   FLAGS_ALL_SIZES           = FLAGS_ALL_VARSIZES | FLAGS_SHORTSHORT | FLAGS_SHORT,
@@ -312,6 +335,7 @@ enum {
   NO_PRECISION = -1,
   NO_SIZE      = -1,
 
+  /* Do not change these */
   NO_BASE      = -1,
   MIN_BASE     =  2,
   MAX_BASE     = 36,
@@ -545,7 +569,7 @@ enum {
 #define QUALIFIER_MINUS '-'
 #define QUALIFIER_DOT '.'
 #define QUALIFIER_STAR '*'
-#define QUALIFIER_CIRCUMFLEX '^'
+#define QUALIFIER_CIRCUMFLEX '^' /* For scanlists */
 #if TRIO_C99
 # define QUALIFIER_SIZE_T 'z'
 # define QUALIFIER_PTRDIFF_T 't'
@@ -570,12 +594,15 @@ enum {
 # define QUALIFIER_PARAM '@' /* Experimental */
 # define QUALIFIER_COLON ':' /* For scanlists */
 # define QUALIFIER_EQUAL '=' /* For scanlists */
+# define QUALIFIER_ROUNDING_UPPER 'R'
 #endif
 
 
 /*************************************************************************
- * Internal structures
- */
+ *
+ * Internal Structures
+ *
+ *************************************************************************/
 
 /* Parameters */
 typedef struct {
@@ -597,17 +624,17 @@ typedef struct {
   union {
     char *string;
 #if TRIO_WIDECHAR
-    wchar_t *wstring;
+    trio_wchar_t *wstring;
 #endif
-    void *pointer;
+    trio_pointer_t pointer;
     union {
-      trio_uintmax_t as_signed;
-      trio_intmax_t as_unsigned;
+      trio_intmax_t as_signed;
+      trio_uintmax_t as_unsigned;
     } number;
     double doubleNumber;
     double *doublePointer;
-    long double longdoubleNumber;
-    long double *longdoublePointer;
+    trio_long_double_t longdoubleNumber;
+    trio_long_double_t *longdoublePointer;
     int errorNumber;
   } data;
   /* For the user-defined specifier */
@@ -620,15 +647,15 @@ typedef struct _trio_class_t {
   /*
    * The function to write characters to a stream.
    */
-  void (*OutStream)(struct _trio_class_t *, int);
+  void (*OutStream) TRIO_PROTO((struct _trio_class_t *, int));
   /*
    * The function to read characters from a stream.
    */
-  void (*InStream)(struct _trio_class_t *, int *);
+  void (*InStream) TRIO_PROTO((struct _trio_class_t *, int *));
   /*
    * The current location in the stream.
    */
-  void *location;
+  trio_pointer_t location;
   /*
    * The character currently being processed.
    */
@@ -669,8 +696,10 @@ typedef struct _trio_userdef_t {
 
 
 /*************************************************************************
- * Internal variables
- */
+ *
+ * Internal Variables
+ *
+ *************************************************************************/
 
 static TRIO_CONST char rcsid[] = "@(#)$Id$";
 
@@ -680,7 +709,7 @@ static TRIO_CONST char rcsid[] = "@(#)$Id$";
  * e.g: va_arg(arg_ptr, long double)
  */
 #if defined(TRIO_PLATFORM_MPEIX)
-static TRIO_CONST long double ___dummy_long_double = 0;
+static TRIO_CONST trio_long_double_t ___dummy_long_double = 0;
 #endif
 
 static TRIO_CONST char internalNullString[] = "(nil)";
@@ -693,7 +722,10 @@ static struct lconv *internalLocaleValues = NULL;
  * UNIX98 says "in a locale where the radix character is not defined,
  * the radix character defaults to a period (.)"
  */
-static char internalDecimalPoint[MAX_LOCALE_SEPARATOR_LENGTH + 1] = ".";
+static int internalDecimalPointLength = 1;
+static int internalThousandSeparatorLength = 1;
+static char internalDecimalPoint = '.';
+static char internalDecimalPointString[MAX_LOCALE_SEPARATOR_LENGTH + 1] = ".";
 static char internalThousandSeparator[MAX_LOCALE_SEPARATOR_LENGTH + 1] = ",";
 static char internalGrouping[MAX_LOCALE_GROUPS] = { (char)NO_GROUPING };
 
@@ -706,38 +738,23 @@ static BOOLEAN_T internalCollationUnconverted = TRUE;
 static char internalCollationArray[MAX_CHARACTER_CLASS][MAX_CHARACTER_CLASS];
 #endif
 
+#if TRIO_EXTENSION
 static TRIO_VOLATILE trio_callback_t internalEnterCriticalRegion = NULL;
 static TRIO_VOLATILE trio_callback_t internalLeaveCriticalRegion = NULL;
 static trio_userdef_t *internalUserDef = NULL;
+#endif
 
 
 /*************************************************************************
- * trio_strerror
- */
-TRIO_PUBLIC TRIO_CONST char *
-trio_strerror(int errorcode)
-{
-  /* Textual versions of the error codes */
-  switch (TRIO_ERROR_CODE(errorcode))
-    {
-    case TRIO_EOF:
-      return "End of file";
-    case TRIO_EINVAL:
-      return "Invalid argument";
-    case TRIO_ETOOMANY:
-      return "Too many arguments";
-    case TRIO_EDBLREF:
-      return "Double reference";
-    case TRIO_EGAP:
-      return "Reference gap";
-    case TRIO_ENOMEM:
-      return "Out of memory";
-    case TRIO_ERANGE:
-      return "Invalid range";
-    default:
-      return "Unknown";
-    }
-}
+ *
+ * Internal Functions
+ *
+ ************************************************************************/
+
+#if defined(TRIO_MINIMAL)
+# define TRIO_STRING_PUBLIC static
+# include "triostr.c"
+#endif /* defined(TRIO_MINIMAL) */
 
 /*************************************************************************
  * TrioIsQualifier
@@ -747,10 +764,12 @@ trio_strerror(int errorcode)
  *  QUALIFIER_POSITION must not be added.
  */
 TRIO_PRIVATE BOOLEAN_T
-TrioIsQualifier(TRIO_CONST char ch)
+TrioIsQualifier
+TRIO_ARGS1((character),
+	   TRIO_CONST char character)
 {
   /* QUALIFIER_POSITION is not included */
-  switch (ch)
+  switch (character)
     {
     case '0': case '1': case '2': case '3': case '4':
     case '5': case '6': case '7': case '8': case '9':
@@ -797,6 +816,9 @@ TrioIsQualifier(TRIO_CONST char ch)
 #if defined(QUALIFIER_FIXED_SIZE)
     case QUALIFIER_FIXED_SIZE:
 #endif
+#if defined(QUALIFIER_ROUNDING_UPPER)
+    case QUALIFIER_ROUNDING_UPPER:
+#endif
       return TRUE;
     default:
       return FALSE;
@@ -807,8 +829,8 @@ TrioIsQualifier(TRIO_CONST char ch)
  * TrioSetLocale
  */
 #if defined(USE_LOCALE)
-TRIO_PUBLIC void
-TrioSetLocale(void)
+TRIO_PRIVATE void
+TrioSetLocale(TRIO_NOARGS)
 {
   internalLocaleValues = (struct lconv *)localeconv();
   if (internalLocaleValues)
@@ -816,9 +838,18 @@ TrioSetLocale(void)
       if ((internalLocaleValues->decimal_point) &&
 	  (internalLocaleValues->decimal_point[0] != NIL))
 	{
-	  trio_copy_max(internalDecimalPoint,
-			sizeof(internalDecimalPoint),
-			internalLocaleValues->decimal_point);
+	  internalDecimalPointLength = trio_length(internalLocaleValues->decimal_point);
+	  if (internalDecimalPointLength == 1)
+	    {
+	      internalDecimalPoint = internalLocaleValues->decimal_point[0];
+	    }
+	  else
+	    {
+	      internalDecimalPoint = NIL;
+	      trio_copy_max(internalDecimalPointString,
+			    sizeof(internalDecimalPointString),
+			    internalLocaleValues->decimal_point);
+	    }
 	}
       if ((internalLocaleValues->thousands_sep) &&
 	  (internalLocaleValues->thousands_sep[0] != NIL))
@@ -826,6 +857,7 @@ TrioSetLocale(void)
 	  trio_copy_max(internalThousandSeparator,
 			sizeof(internalThousandSeparator),
 			internalLocaleValues->thousands_sep);
+	  internalThousandSeparatorLength = trio_length(internalThousandSeparator);
 	}
       if ((internalLocaleValues->grouping) &&
 	  (internalLocaleValues->grouping[0] != NIL))
@@ -838,15 +870,91 @@ TrioSetLocale(void)
 }
 #endif /* defined(USE_LOCALE) */
 
+TRIO_PRIVATE int
+TrioCalcThousandSeparatorLength
+TRIO_ARGS1((digits),
+	   int digits)
+{
+#if TRIO_EXTENSION
+  int count = 0;
+  int step = NO_GROUPING;
+  char *groupingPointer = internalGrouping;
+
+  while (digits > 0)
+    {
+      if (*groupingPointer == CHAR_MAX)
+	{
+	  /* Disable grouping */
+	  break; /* while */
+	}
+      else if (*groupingPointer == 0)
+	{
+	  /* Repeat last group */
+	  if (step == NO_GROUPING)
+	    {
+	      /* Error in locale */
+	      break; /* while */
+	    }
+	}
+      else
+	{
+	  step = *groupingPointer++;
+	}
+      if (digits > step)
+	count += internalThousandSeparatorLength;
+      digits -= step;
+    }
+  return count;
+#else
+  return 0;
+#endif
+}
+
+TRIO_PRIVATE BOOLEAN_T
+TrioFollowedBySeparator
+TRIO_ARGS1((position),
+	   int position)
+{
+#if TRIO_EXTENSION
+  int step = 0;
+  char *groupingPointer = internalGrouping;
+
+  position--;
+  if (position == 0)
+    return FALSE;
+  while (position > 0)
+    {
+      if (*groupingPointer == CHAR_MAX)
+	{
+	  /* Disable grouping */
+	  break; /* while */
+	}
+      else if (*groupingPointer != 0)
+	{
+	  step = *groupingPointer++;
+	}
+      if (step == 0)
+	break;
+      position -= step;
+    }
+  return (position == 0);
+#else
+  return FALSE;
+#endif
+}
+
 /*************************************************************************
  * TrioGetPosition
  *
  * Get the %n$ position.
  */
 TRIO_PRIVATE int
-TrioGetPosition(TRIO_CONST char *format,
-		int *indexPointer)
+TrioGetPosition
+TRIO_ARGS2((format, indexPointer),
+	   TRIO_CONST char *format,
+	   int *indexPointer)
 {
+#if TRIO_UNIX98
   char *tmpformat;
   int number = 0;
   int index = *indexPointer;
@@ -862,9 +970,11 @@ TrioGetPosition(TRIO_CONST char *format,
        */
       return number - 1;
     }
+#endif
   return NO_POSITION;
 }
 
+#if TRIO_EXTENSION
 /*************************************************************************
  * TrioFindNamespace
  *
@@ -872,7 +982,10 @@ TrioGetPosition(TRIO_CONST char *format,
  * The prev argument is used for optimization only.
  */
 TRIO_PRIVATE trio_userdef_t *
-TrioFindNamespace(TRIO_CONST char *name, trio_userdef_t **prev)
+TrioFindNamespace
+TRIO_ARGS2((name, prev),
+	   TRIO_CONST char *name,
+	   trio_userdef_t **prev)
 {
   trio_userdef_t *def;
   
@@ -894,6 +1007,101 @@ TrioFindNamespace(TRIO_CONST char *name, trio_userdef_t **prev)
   
   return def;
 }
+#endif
+
+/*************************************************************************
+ * TrioPower
+ *
+ * Description:
+ *  Calculate pow(base, exponent), where number and exponent are integers.
+ */
+TRIO_PRIVATE trio_long_double_t
+TrioPower
+TRIO_ARGS2((number, exponent),
+	   int number,
+	   int exponent)
+{
+  trio_long_double_t result;
+
+  if (number == 10)
+    {
+      switch (exponent)
+	{
+	  /* Speed up calculation of common cases */
+	case 0: result = (trio_long_double_t)number * 1E-1L; break;
+	case 1: result = (trio_long_double_t)number * 1E+0L; break;
+	case 2: result = (trio_long_double_t)number * 1E+1L; break;
+	case 3: result = (trio_long_double_t)number * 1E+2L; break;
+	case 4: result = (trio_long_double_t)number * 1E+3L; break;
+	case 5: result = (trio_long_double_t)number * 1E+4L; break;
+	case 6: result = (trio_long_double_t)number * 1E+5L; break;
+	case 7: result = (trio_long_double_t)number * 1E+6L; break;
+	case 8: result = (trio_long_double_t)number * 1E+7L; break;
+	case 9: result = (trio_long_double_t)number * 1E+8L; break;
+	default:
+	  result = powl((trio_long_double_t)number,
+			(trio_long_double_t)exponent);
+	  break;
+	}
+    }
+  else
+    {
+      return powl((trio_long_double_t)number, (trio_long_double_t)exponent);
+    }
+  return result;
+}
+
+/*************************************************************************
+ * TrioLogarithm
+ */
+TRIO_PRIVATE double
+TrioLogarithm
+TRIO_ARGS2((number, base),
+	   double number,
+	   int base)
+{
+  double result;
+
+  if (number < 0.0)
+    {
+      result = trio_nan();
+    }
+  if (number == 0.0)
+    {
+      /* xlC crashes on log(0) */
+      result = trio_ninf();
+    }
+  else
+    {
+      if (base == 10)
+	{
+	  result = log10(number);
+	}
+      else
+	{
+	  result = log10(number) / log10((double)base);
+	}
+    }
+  return result;
+}
+
+/*************************************************************************
+ * TrioLogarithmBase
+ */
+TRIO_PRIVATE double
+TrioLogarithmBase
+TRIO_ARGS1((base),
+	   int base)
+{
+  switch (base)
+    {
+    case BASE_BINARY : return 1.0;
+    case BASE_OCTAL  : return 3.0;
+    case BASE_DECIMAL: return 3.321928094887362345;
+    case BASE_HEX    : return 4.0;
+    default          : return TrioLogarithm((double)base, 2);
+    }
+}
 
 /*************************************************************************
  * TrioParse
@@ -902,16 +1110,16 @@ TrioFindNamespace(TRIO_CONST char *name, trio_userdef_t **prev)
  *  Parse the format string
  */
 TRIO_PRIVATE int
-TrioParse(int type,
-	  TRIO_CONST char *format,
-	  trio_parameter_t *parameters,
-	  va_list arglist,
-	  void **argarray)
+TrioParse
+TRIO_ARGS5((type, format, parameters, arglist, argarray),
+	   int type,
+	   TRIO_CONST char *format,
+	   trio_parameter_t *parameters,
+	   va_list arglist,
+	   trio_pointer_t *argarray)
 {
-#if TRIO_ERRORS
   /* Count the number of times a parameter is referenced */
   unsigned short usedEntries[MAX_PARAMETERS];
-#endif
   /* Parameter counters */
   int parameterPosition;
   int currentParam;
@@ -925,7 +1133,7 @@ TrioParse(int type,
   int index;  /* Index into formatting string */
   int dots;  /* Count number of dots in modifier part */
   BOOLEAN_T positional;  /* Does the specifier have a positional? */
-  BOOLEAN_T got_sticky = FALSE;  /* Are there any sticky modifiers at all? */
+  BOOLEAN_T gotSticky = FALSE;  /* Are there any sticky modifiers at all? */
   /*
    * indices specifies the order in which the parameters must be
    * read from the va_args (this is necessary to handle positionals)
@@ -936,24 +1144,24 @@ TrioParse(int type,
   char ch;
 #if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
   int charlen;
+  int save_errno;
 #endif
   int i = -1;
   int num;
   char *tmpformat;
 
-
-#if TRIO_ERRORS
   /*
    * The 'parameters' array is not initialized, but we need to
    * know which entries we have used.
    */
   memset(usedEntries, 0, sizeof(usedEntries));
-#endif
 
   index = 0;
   parameterPosition = 0;
 #if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
+  save_errno = errno;
   mblen(NULL, 0);
+  errno = save_errno;
 #endif
   
   while (format[index])
@@ -965,7 +1173,9 @@ TrioParse(int type,
 	   * Multibyte characters cannot be legal specifiers or
 	   * modifiers, so we skip over them.
 	   */
+	  save_errno = errno;
 	  charlen = mblen(&format[index], MB_LEN_MAX);
+	  errno = save_errno;
 	  index += (charlen > 0) ? charlen : 1;
 	  continue; /* while */
 	}
@@ -1036,8 +1246,11 @@ TrioParse(int type,
 		      
 		      /* After the first dot we have the precision */
 		      flags |= FLAGS_PRECISION;
-		      if ((QUALIFIER_STAR == format[index]) ||
-			  (QUALIFIER_PARAM == format[index]))
+		      if ((QUALIFIER_STAR == format[index])
+#if defined(QUALIFIER_PARAM)
+			  || (QUALIFIER_PARAM == format[index])
+#endif
+			  )
 			{
 			  index++;
 			  flags |= FLAGS_PRECISION_PARAMETER;
@@ -1078,8 +1291,11 @@ TrioParse(int type,
 		      
 		      /* After the second dot we have the base */
 		      flags |= FLAGS_BASE;
-		      if ((QUALIFIER_STAR == format[index]) ||
-			  (QUALIFIER_PARAM == format[index]))
+		      if ((QUALIFIER_STAR == format[index])
+#if defined(QUALIFIER_PARAM)
+			  || (QUALIFIER_PARAM == format[index])
+#endif
+			  )
 			{
 			  index++;
 			  flags |= FLAGS_BASE_PARAMETER;
@@ -1121,9 +1337,11 @@ TrioParse(int type,
 		    }
 		  break; /* QUALIFIER_DOT */
 
+#if defined(QUALIFIER_PARAM)
 		case QUALIFIER_PARAM:
 		  type = TYPE_PRINT;
 		  /* FALLTHROUGH */
+#endif
 		case QUALIFIER_STAR:
 		  /* This has different meanings for print and scan */
 		  if (TYPE_PRINT == type)
@@ -1294,7 +1512,7 @@ TrioParse(int type,
 #if defined(QUALIFIER_STICKY)
 		case QUALIFIER_STICKY:
 		  flags |= FLAGS_STICKY;
-		  got_sticky = TRUE;
+		  gotSticky = TRUE;
 		  break;
 #endif
 		  
@@ -1314,6 +1532,12 @@ TrioParse(int type,
 		  break;
 #endif
 
+#if defined(QUALIFIER_ROUNDING_UPPER)
+		case QUALIFIER_ROUNDING_UPPER:
+		  flags |= FLAGS_ROUNDING;
+		  break;
+#endif
+
 		default:
 		  /* Bail out completely to make the error more obvious */
                   return TRIO_ERROR_RETURN(TRIO_EINVAL, index);
@@ -1326,9 +1550,7 @@ TrioParse(int type,
 	   */
 	  if (flags & FLAGS_WIDTH_PARAMETER)
 	    {
-#if TRIO_ERRORS
 	      usedEntries[width] += 1;
-#endif
 	      parameters[pos].type = FORMAT_PARAMETER;
 	      parameters[pos].flags = 0;
 	      indices[width] = pos;
@@ -1336,9 +1558,7 @@ TrioParse(int type,
 	    }
 	  if (flags & FLAGS_PRECISION_PARAMETER)
 	    {
-#if TRIO_ERRORS
 	      usedEntries[precision] += 1;
-#endif
 	      parameters[pos].type = FORMAT_PARAMETER;
 	      parameters[pos].flags = 0;
 	      indices[precision] = pos;
@@ -1346,9 +1566,7 @@ TrioParse(int type,
 	    }
 	  if (flags & FLAGS_BASE_PARAMETER)
 	    {
-#if TRIO_ERRORS
 	      usedEntries[base] += 1;
-#endif
 	      parameters[pos].type = FORMAT_PARAMETER;
 	      parameters[pos].flags = 0;
 	      indices[base] = pos;
@@ -1356,9 +1574,7 @@ TrioParse(int type,
 	    }
 	  if (flags & FLAGS_VARSIZE_PARAMETER)
 	    {
-#if TRIO_ERRORS
 	      usedEntries[varsize] += 1;
-#endif
 	      parameters[pos].type = FORMAT_PARAMETER;
 	      parameters[pos].flags = 0;
 	      indices[varsize] = pos;
@@ -1494,6 +1710,10 @@ TrioParse(int type,
 	      break;
 
 	    case SPECIFIER_POINTER:
+	      if (sizeof(trio_pointer_t) == sizeof(trio_ulonglong_t))
+		flags |= FLAGS_QUAD;
+	      else if (sizeof(trio_pointer_t) == sizeof(long))
+		flags |= FLAGS_LONG;
 	      parameters[pos].type = FORMAT_POINTER;
 	      break;
 
@@ -1542,9 +1762,7 @@ TrioParse(int type,
 			    parameters[pos].flags = FLAGS_USER_DEFINED;
 			    /* Adjust parameters for insertion of new one */
 			    pos++;
-# if TRIO_ERRORS
 			    usedEntries[currentParam] += 1;
-# endif
 			    parameters[pos].type = FORMAT_USER_DEFINED;
 			    currentParam++;
 			    indices[currentParam] = pos;
@@ -1584,13 +1802,11 @@ TrioParse(int type,
               return TRIO_ERROR_RETURN(TRIO_EINVAL, index);
 	    }
 
-#if TRIO_ERRORS
 	  /*  Count the number of times this entry has been used */
 	  usedEntries[currentParam] += 1;
-#endif
 	  
 	  /* Find last sticky parameters */
-	  if (got_sticky && !(flags & FLAGS_STICKY))
+	  if (gotSticky && !(flags & FLAGS_STICKY))
 	    {
 	      for (i = pos - 1; i >= 0; i--)
 		{
@@ -1629,7 +1845,6 @@ TrioParse(int type,
 
   for (num = 0; num <= maxParam; num++)
     {
-#if TRIO_ERRORS
       if (usedEntries[num] != 1)
 	{
 	  if (usedEntries[num] == 0) /* gap detected */
@@ -1637,7 +1852,6 @@ TrioParse(int type,
 	  else /* double references detected */
 	    return TRIO_ERROR_RETURN(TRIO_EDBLREF, num);
 	}
-#endif
       
       i = indices[num];
 
@@ -1678,8 +1892,8 @@ TrioParse(int type,
 	  if (flags & FLAGS_WIDECHAR)
 	    {
 	      parameters[i].data.wstring = (argarray == NULL)
-		? va_arg(arglist, wchar_t *)
-		: (wchar_t *)(argarray[num]);
+		? va_arg(arglist, trio_wchar_t *)
+		: (trio_wchar_t *)(argarray[num]);
 	    }
 	  else
 #endif
@@ -1690,12 +1904,14 @@ TrioParse(int type,
 	    }
 	  break;
 
+#if defined(FORMAT_USER_DEFINED)
+	case FORMAT_USER_DEFINED:
+#endif
 	case FORMAT_POINTER:
 	case FORMAT_COUNT:
-	case FORMAT_USER_DEFINED:
 	case FORMAT_UNKNOWN:
 	  parameters[i].data.pointer = (argarray == NULL)
-	    ? va_arg(arglist, void *)
+	    ? va_arg(arglist, trio_pointer_t )
 	    : argarray[num];
 	  break;
 
@@ -1705,18 +1921,18 @@ TrioParse(int type,
 	    {
               if (argarray == NULL)
                 parameters[i].data.pointer = 
-                  (trio_uintmax_t *)va_arg(arglist, void *);
+                  (trio_pointer_t)va_arg(arglist, trio_pointer_t);
               else
                 {
                   if (parameters[i].type == FORMAT_CHAR)
                     parameters[i].data.pointer =
-                      (trio_uintmax_t *)((char *)argarray[num]);
+                      (trio_pointer_t)((char *)argarray[num]);
                   else if (parameters[i].flags & FLAGS_SHORT)
                     parameters[i].data.pointer =
-                      (trio_uintmax_t *)((short *)argarray[num]);
+                      (trio_pointer_t)((short *)argarray[num]);
                   else
                     parameters[i].data.pointer =
-                      (trio_uintmax_t *)((int *)argarray[num]);
+                      (trio_pointer_t)((int *)argarray[num]);
                 }
 	    }
 	  else
@@ -1813,7 +2029,7 @@ TrioParse(int type,
 	   */
 	  if (parameters[i].flags & FLAGS_USER_DEFINED)
 	    parameters[i].data.pointer = (argarray == NULL)
-	      ? va_arg(arglist, void *)
+	      ? va_arg(arglist, trio_pointer_t )
 	      : argarray[num];
 	  else
 	    parameters[i].data.number.as_unsigned = (argarray == NULL)
@@ -1824,45 +2040,41 @@ TrioParse(int type,
 	case FORMAT_DOUBLE:
 	  if (TYPE_SCAN == type)
 	    {
-	      if (parameters[i].flags & FLAGS_LONG)
+	      if (parameters[i].flags & FLAGS_LONGDOUBLE)
 		parameters[i].data.longdoublePointer = (argarray == NULL)
-		  ? va_arg(arglist, long double *)
-		  : (long double *)((long double *)argarray[num]);
+		  ? va_arg(arglist, trio_long_double_t *)
+		  : (trio_long_double_t *)argarray[num];
 	      else
                 {
-                  if (argarray == NULL)
-                    parameters[i].data.doublePointer =
-                      va_arg(arglist, double *);
-                 else
-                   {
-                     if (parameters[i].flags & FLAGS_SHORT)
-                       parameters[i].data.doublePointer =
-                         (double *)((float *)argarray[num]);
-                     else
-                       parameters[i].data.doublePointer =
-                         (double *)((double *)argarray[num]);
-                   }
+		  if (parameters[i].flags & FLAGS_LONG)
+		    parameters[i].data.doublePointer = (argarray == NULL)
+		      ? va_arg(arglist, double *)
+		      : (double *)argarray[num];
+		  else
+		    parameters[i].data.doublePointer = (argarray == NULL)
+		      ? (double *)va_arg(arglist, float *)
+		      : (double *)((float *)argarray[num]);
                 }
 	    }
 	  else
 	    {
-	      if (parameters[i].flags & FLAGS_LONG)
+	      if (parameters[i].flags & FLAGS_LONGDOUBLE)
 		parameters[i].data.longdoubleNumber = (argarray == NULL)
-		  ? va_arg(arglist, long double)
-		  : (long double)(*((long double *)argarray[num]));
+		  ? va_arg(arglist, trio_long_double_t)
+		  : (trio_long_double_t)(*((trio_long_double_t *)argarray[num]));
 	      else
 		{
 		  if (argarray == NULL)
 		    parameters[i].data.longdoubleNumber =
-		      (long double)va_arg(arglist, double);
+		      (trio_long_double_t)va_arg(arglist, double);
 		  else
 		    {
 		      if (parameters[i].flags & FLAGS_SHORT)
 			parameters[i].data.longdoubleNumber =
-			  (long double)(*((float *)argarray[num]));
+			  (trio_long_double_t)(*((float *)argarray[num]));
 		      else
 			parameters[i].data.longdoubleNumber =
-			  (long double)(long double)(*((double *)argarray[num]));
+			  (trio_long_double_t)(*((double *)argarray[num]));
 		    }
 		}
 	    }
@@ -1898,12 +2110,14 @@ TrioParse(int type,
  *  of the dependencies of the flags.
  */
 TRIO_PRIVATE void
-TrioWriteNumber(trio_class_t *self,
-		trio_uintmax_t number,
-		unsigned long flags,
-		int width,
-		int precision,
-		int base)
+TrioWriteNumber
+TRIO_ARGS6((self, number, flags, width, precision, base),
+	   trio_class_t *self,
+	   trio_uintmax_t number,
+	   unsigned long flags,
+	   int width,
+	   int precision,
+	   int base)
 {
   BOOLEAN_T isNegative;
   char buffer[MAX_CHARS_IN(trio_uintmax_t) * (1 + MAX_LOCALE_SEPARATOR_LENGTH) + 1];
@@ -1913,8 +2127,6 @@ TrioWriteNumber(trio_class_t *self,
   int i;
   int length;
   char *p;
-  int charsPerThousand;
-  int groupingIndex;
   int count;
 
   assert(VALID(self));
@@ -1922,12 +2134,14 @@ TrioWriteNumber(trio_class_t *self,
   assert(((base >= MIN_BASE) && (base <= MAX_BASE)) || (base == NO_BASE));
 
   digits = (flags & FLAGS_UPPER) ? internalDigitsUpper : internalDigitsLower;
+  if (base == NO_BASE)
+    base = BASE_DECIMAL;
 
   isNegative = (flags & FLAGS_UNSIGNED)
     ? FALSE
     : ((trio_intmax_t)number < 0);
   if (isNegative)
-    number = -number;
+    number = -((trio_intmax_t)number);
 
   if (flags & FLAGS_QUAD)
     number &= (trio_ulonglong_t)-1;
@@ -1939,8 +2153,6 @@ TrioWriteNumber(trio_class_t *self,
   /* Build number */
   pointer = bufferend = &buffer[sizeof(buffer) - 1];
   *pointer-- = NIL;
-  charsPerThousand = (int)internalGrouping[0];
-  groupingIndex = 1;
   for (i = 1; i < (int)sizeof(buffer); i++)
     {
       *pointer-- = digits[number % base];
@@ -1948,34 +2160,19 @@ TrioWriteNumber(trio_class_t *self,
       if (number == 0)
 	break;
 
-      if ((flags & FLAGS_QUOTE)
-	  && (charsPerThousand != NO_GROUPING)
-	  && (i % charsPerThousand == 0))
+      if ((flags & FLAGS_QUOTE) && TrioFollowedBySeparator(i + 1))
 	{
 	  /*
 	   * We are building the number from the least significant
 	   * to the most significant digit, so we have to copy the
 	   * thousand separator backwards
 	   */
-	  length = trio_length(internalThousandSeparator);
+	  length = internalThousandSeparatorLength;
 	  if (((int)(pointer - buffer) - length) > 0)
 	    {
 	      p = &internalThousandSeparator[length - 1];
 	      while (length-- > 0)
 		*pointer-- = *p--;
-	    }
-
-	  /* Advance to next grouping number */
-	  switch (internalGrouping[groupingIndex])
-	    {
-	    case CHAR_MAX: /* Disable grouping */
-	      charsPerThousand = NO_GROUPING;
-	      break;
-	    case 0: /* Repeat last group */
-	      break;
-	    default:
-	      charsPerThousand = (int)internalGrouping[groupingIndex++];
-	      break;
 	    }
 	}
     }
@@ -2084,9 +2281,11 @@ TrioWriteNumber(trio_class_t *self,
  *  Output a single character of a string
  */
 TRIO_PRIVATE void
-TrioWriteStringCharacter(trio_class_t *self,
-			 int ch,
-			 unsigned long flags)
+TrioWriteStringCharacter
+TRIO_ARGS3((self, ch, flags),
+	   trio_class_t *self,
+	   int ch,
+	   unsigned long flags)
 {
   if (flags & FLAGS_ALTERNATIVE)
     {
@@ -2109,7 +2308,7 @@ TrioWriteStringCharacter(trio_class_t *self,
 	    case '\\': self->OutStream(self, '\\'); break;
 	    default:
 	      self->OutStream(self, 'x');
-	      TrioWriteNumber(self, (trio_intmax_t)ch,
+	      TrioWriteNumber(self, (trio_uintmax_t)ch,
 			      FLAGS_UNSIGNED | FLAGS_NILPADDING,
 			      2, 2, BASE_HEX);
 	      break;
@@ -2138,11 +2337,13 @@ TrioWriteStringCharacter(trio_class_t *self,
  *  Output a string
  */
 TRIO_PRIVATE void
-TrioWriteString(trio_class_t *self,
-		TRIO_CONST char *string,
-		unsigned long flags,
-		int width,
-		int precision)
+TrioWriteString
+TRIO_ARGS5((self, string, flags, width, precision),
+	   trio_class_t *self,
+	   TRIO_CONST char *string,
+	   unsigned long flags,
+	   int width,
+	   int precision)
 {
   int length;
   int ch;
@@ -2202,10 +2403,12 @@ TrioWriteString(trio_class_t *self,
  */
 #if TRIO_WIDECHAR
 TRIO_PRIVATE int
-TrioWriteWideStringCharacter(trio_class_t *self,
-			     wchar_t wch,
-			     unsigned long flags,
-			     int width)
+TrioWriteWideStringCharacter
+TRIO_ARGS4((self, wch, flags, width),
+	   trio_class_t *self,
+	   trio_wchar_t wch,
+	   unsigned long flags,
+	   int width)
 {
   int size;
   int i;
@@ -2240,11 +2443,13 @@ TrioWriteWideStringCharacter(trio_class_t *self,
  */
 #if TRIO_WIDECHAR
 TRIO_PRIVATE void
-TrioWriteWideString(trio_class_t *self,
-		    TRIO_CONST wchar_t *wstring,
-		    unsigned long flags,
-		    int width,
-		    int precision)
+TrioWriteWideString
+TRIO_ARGS5((self, wstring, flags, width, precision),
+	   trio_class_t *self,
+	   TRIO_CONST trio_wchar_t *wstring,
+	   unsigned long flags,
+	   int width,
+	   int precision)
 {
   int length;
   int size;
@@ -2301,62 +2506,80 @@ TrioWriteWideString(trio_class_t *self,
 
 /*************************************************************************
  * TrioWriteDouble
+ *
+ * http://wwwold.dkuug.dk/JTC1/SC22/WG14/www/docs/dr_211.htm
+ *
+ * "5.2.4.2.2 paragraph #4
+ *
+ *  The accuracy [...] is implementation defined, as is the accuracy
+ *  of the conversion between floating-point internal representations
+ *  and string representations performed by the libray routine in
+ *  <stdio.h>"
+ */
+/* FIXME: handle all instances of constant long-double number (L)
+ *   and *l() math functions.
  */
 TRIO_PRIVATE void
-TrioWriteDouble(trio_class_t *self,
-		long double longdoubleNumber,
-		unsigned long flags,
-		int width,
-		int precision,
-		int base)
+TrioWriteDouble
+TRIO_ARGS6((self, number, flags, width, precision, base),
+	   trio_class_t *self,
+	   trio_long_double_t number,
+	   unsigned long flags,
+	   int width,
+	   int precision,
+	   int base)
 {
-  int charsPerThousand;
-  int length;
-  double number;
-  double workNumber;
+  trio_long_double_t integerNumber;
+  trio_long_double_t fractionNumber;
+  trio_long_double_t workNumber;
   int integerDigits;
   int fractionDigits;
+  int integerThreshold;
+  int fractionThreshold;
   int exponentDigits;
   int expectedWidth;
-  int exponent;
+  int exponent = 0;
   unsigned int uExponent = 0;
-  double dblBase;
+  int exponentBase;
+  trio_long_double_t dblBase;
+  trio_long_double_t dblIntegerBase;
+  trio_long_double_t dblFractionBase;
+  trio_long_double_t integerAdjust;
+  trio_long_double_t fractionAdjust;
   BOOLEAN_T isNegative;
   BOOLEAN_T isExponentNegative = FALSE;
+  BOOLEAN_T requireTwoDigitExponent;
   BOOLEAN_T isHex;
   TRIO_CONST char *digits;
-  char numberBuffer[MAX_DOUBLE_DIGITS
-		   * (1 + MAX_LOCALE_SEPARATOR_LENGTH) + 1];
-  char *numberPointer;
-  char exponentBuffer[MAX_EXPONENT_DIGITS + 1];
-  char *exponentPointer = NULL;
-  int groupingIndex;
-  char *work;
+  char *groupingPointer;
   int i;
+  int index;
   BOOLEAN_T hasOnlyZeroes;
   int zeroes = 0;
+  register int trailingZeroes;
+  BOOLEAN_T keepTrailingZeroes;
+  BOOLEAN_T keepDecimalPoint;
+  trio_long_double_t baseDigits;
+  trio_long_double_t epsilon;
   
   assert(VALID(self));
   assert(VALID(self->OutStream));
-  assert(base == BASE_DECIMAL || base == BASE_HEX);
+  assert(((base >= MIN_BASE) && (base <= MAX_BASE)) || (base == NO_BASE));
 
-  number = (double)longdoubleNumber;
-  
-  if (! trio_isfinite(number))
+  /* Determine sign and look for special quantities */
+  switch (trio_fpclassify_and_signbit(number, &isNegative))
     {
-      /* Look for infinite numbers and non-a-number first */
-      switch (trio_isinf(number))
+    case TRIO_FP_NAN:
+      TrioWriteString(self,
+		      (flags & FLAGS_UPPER)
+		      ? NAN_UPPER
+		      : NAN_LOWER,
+		      flags, width, precision);
+      return;
+      
+    case TRIO_FP_INFINITE:
+      if (isNegative)
 	{
-	case 1:
-	  /* Positive infinity */
-	  TrioWriteString(self,
-			  (flags & FLAGS_UPPER)
-			  ? INFINITE_UPPER
-			  : INFINITE_LOWER,
-			  flags, width, precision);
-	  return;
-
-	case -1:
 	  /* Negative infinity */
 	  TrioWriteString(self,
 			  (flags & FLAGS_UPPER)
@@ -2364,40 +2587,74 @@ TrioWriteDouble(trio_class_t *self,
 			  : "-" INFINITE_LOWER,
 			  flags, width, precision);
 	  return;
-
-	default:
-	  if (trio_isnan(number))
-	    {
-	      TrioWriteString(self,
-			      (flags & FLAGS_UPPER)
-			      ? NAN_UPPER
-			      : NAN_LOWER,
-			      flags, width, precision);
-	      return;
-	    }
-	  /* Finitude */
-	  break;
 	}
+      else
+	{
+	  /* Positive infinity */
+	  TrioWriteString(self,
+			  (flags & FLAGS_UPPER)
+			  ? INFINITE_UPPER
+			  : INFINITE_LOWER,
+			  flags, width, precision);
+	  return;
+	}
+
+    default:
+      /* Finitude */
+      break;
+    }
+  
+  /* Normal numbers */
+  if (flags & FLAGS_LONGDOUBLE)
+    {
+      baseDigits = (base == 10)
+	? LDBL_DIG
+	: floor(LDBL_MANT_DIG / TrioLogarithmBase(base));
+      epsilon = LDBL_EPSILON;
+    }
+  else if (flags & FLAGS_SHORT)
+    {
+      baseDigits = (base == BASE_DECIMAL)
+	? FLT_DIG
+	: floor(FLT_MANT_DIG / TrioLogarithmBase(base));
+      epsilon = FLT_EPSILON;
+    }
+  else
+    {
+      baseDigits = (base == BASE_DECIMAL)
+	? DBL_DIG
+	: floor(DBL_MANT_DIG / TrioLogarithmBase(base));
+      epsilon = DBL_EPSILON;
     }
 
-  /* Normal numbers */
   digits = (flags & FLAGS_UPPER) ? internalDigitsUpper : internalDigitsLower;
   isHex = (base == BASE_HEX);
-  dblBase = (double)base;
+  if (base == NO_BASE)
+    base = BASE_DECIMAL;
+  dblBase = (trio_long_double_t)base;
+  keepTrailingZeroes = !( (flags & FLAGS_ROUNDING) ||
+			  ( (flags & FLAGS_FLOAT_G) &&
+			    !(flags & FLAGS_ALTERNATIVE) ) );
+
+  if (flags & FLAGS_ROUNDING)
+    precision = baseDigits;
   
   if (precision == NO_PRECISION)
     precision = FLT_DIG;
   
-  isNegative = (number < 0.0);
   if (isNegative)
     number = -number;
 
-  if ((flags & FLAGS_FLOAT_G) || isHex)
+  if (isHex)
+    flags |= FLAGS_FLOAT_E;
+  
+  if (flags & FLAGS_FLOAT_G)
     {
       if (precision == 0)
 	precision = 1;
 
-      if ((number < 1.0e-4) || (number > pow(10.0, (double)precision)))
+      if ((number < 1.0E-4) || (number > powl(base,
+					      (trio_long_double_t)precision)))
 	{
 	  /* Use scientific notation */
 	  flags |= FLAGS_FLOAT_E;
@@ -2409,17 +2666,18 @@ TrioWriteDouble(trio_class_t *self,
 	   * zero, then adjust the precision to include leading fractional
 	   * zeros.
 	   */
-	  workNumber = fabs(guarded_log10(number));
-	  if (workNumber - floor(workNumber) < 0.001)
+	  workNumber = TrioLogarithm(number, base);
+	  workNumber = TRIO_FABS(workNumber);
+	  if (workNumber - floorl(workNumber) < 0.001)
 	    workNumber--;
-	  zeroes = (int)floor(workNumber);
+	  zeroes = (int)floorl(workNumber);
 	}
     }
 
   if (flags & FLAGS_FLOAT_E)
     {
       /* Scale the number */
-      workNumber = guarded_log10(number);
+      workNumber = TrioLogarithm(number, base);
       if (trio_isinf(workNumber) == -1)
 	{
 	  exponent = 0;
@@ -2429,8 +2687,8 @@ TrioWriteDouble(trio_class_t *self,
 	}
       else
 	{
-	  exponent = (int)floor(workNumber);
-	  number /= pow(10.0, (double)exponent);
+	  exponent = (int)floorl(workNumber);
+	  number /= powl(dblBase, (trio_long_double_t)exponent);
 	  isExponentNegative = (exponent < 0);
 	  uExponent = (isExponentNegative) ? -exponent : exponent;
 	  /* No thousand separators */
@@ -2438,160 +2696,107 @@ TrioWriteDouble(trio_class_t *self,
 	}
     }
 
+  integerNumber = floorl(number);
+  fractionNumber = number - integerNumber;
+  
   /*
    * Truncated number.
    *
-   * precision is number of significant digits for FLOAT_G
-   * and number of fractional digits for others
+   * Precision is number of significant digits for FLOAT_G
+   * and number of fractional digits for others.
    */
-  integerDigits = (floor(number) > DBL_EPSILON)
-    ? 1 + (int)guarded_log10(floor(number))
+  integerDigits = (integerNumber > epsilon)
+    ? 1 + (int)TrioLogarithm(integerNumber, base)
     : 1;
   fractionDigits = ((flags & FLAGS_FLOAT_G) && (zeroes == 0))
     ? precision - integerDigits
     : zeroes + precision;
 
-  if (!(integerDigits > DBL_DIG))
-    {
-      /* Within accuracy */
-      number = floor(0.5 + number * pow(dblBase, (double)fractionDigits));
-    }
-  workNumber = (isHex
-		? guarded_log16(0.5 + number)
-		: guarded_log10(0.5 + number));
-  if ((int)workNumber + 1 > integerDigits + fractionDigits)
+  dblFractionBase = TrioPower(base, fractionDigits);
+  
+  workNumber = number + 0.5 / dblFractionBase;
+  if (floorl(number) != floorl(workNumber))
     {
       if (flags & FLAGS_FLOAT_E)
 	{
 	  /* Adjust if number was rounded up one digit (ie. 0.99 to 1.00) */
-	  exponent--;
-	  uExponent -= (isExponentNegative) ? 1 : -1;
-	  number /= dblBase;
+	  exponent++;
+	  isExponentNegative = (exponent < 0);
+	  uExponent = (isExponentNegative) ? -exponent : exponent;
+	  workNumber = (number + 0.5L / dblFractionBase) / dblBase;
+	  integerNumber = floorl(workNumber);
+	  fractionNumber = workNumber - integerNumber;
 	}
       else
 	{
 	  /* Adjust if number was rounded up one digit (ie. 99 to 100) */
-	  integerDigits++;
+	  integerNumber = floorl(number + 0.5L);
+	  fractionNumber = 0.0;
+	  integerDigits = (integerNumber > epsilon)
+	    ? 1 + (int)TrioLogarithm(integerNumber, base)
+	    : 1;
 	}
     }
-  
-  /* Build the fraction part */
-  numberPointer = &numberBuffer[sizeof(numberBuffer) - 1];
-  *numberPointer = NIL;
-  hasOnlyZeroes = TRUE;
-  for (i = 0; i < fractionDigits; i++)
+
+  /* Estimate accuracy */
+  integerAdjust = fractionAdjust = 0.5;
+  if (flags & FLAGS_ROUNDING)
     {
-      if (integerDigits > DBL_DIG)
+      if (integerDigits > baseDigits)
 	{
-	  /* Beyond accuracy */
-	  *(--numberPointer) = digits[0];
+	  integerThreshold = baseDigits;
+	  fractionDigits = 0;
+	  dblFractionBase = 1.0;
+	  fractionThreshold = 0;
+	  precision = 0; /* Disable decimal-point */
+	  integerAdjust = TrioPower(base, integerDigits - integerThreshold - 1);
+	  fractionAdjust = 0.0;
 	}
       else
 	{
-	  *(--numberPointer) = digits[(int)fmod(number, dblBase)];
-	  number = floor(number / dblBase);
+	  integerThreshold = integerDigits;
+	  fractionThreshold = fractionDigits - integerThreshold;
+	  fractionAdjust = 1.0;
 	}
-
-      if ((flags & FLAGS_FLOAT_G) && !(flags & FLAGS_ALTERNATIVE))
-        {
-          /* Prune trailing zeroes */
-          if (numberPointer[0] != digits[0])
-            hasOnlyZeroes = FALSE;
-          else if (hasOnlyZeroes && (numberPointer[0] == digits[0]))
-            numberPointer++;
-        }
-      else
-        hasOnlyZeroes = FALSE;
+    }
+  else
+    {
+      integerThreshold = INT_MAX;
+      fractionThreshold = INT_MAX;
     }
   
-  /* Insert decimal point */
-  if ((flags & FLAGS_ALTERNATIVE) || ((fractionDigits > 0) && !hasOnlyZeroes))
-    {
-      i = trio_length(internalDecimalPoint);
-      while (i> 0)
-	{
-	  *(--numberPointer) = internalDecimalPoint[--i];
-	}
-    }
-  /* Insert the integer part and thousand separators */
-  charsPerThousand = (int)internalGrouping[0];
-  groupingIndex = 1;
-  for (i = 1; i < integerDigits + 1; i++)
-    {
-      if (i < integerDigits - DBL_DIG)
-	{
-	  /* Beyond accuracy */
-	  *(--numberPointer) = digits[0];
-	}
-      else
-	{
-	  *(--numberPointer) = digits[(int)fmod(number, dblBase)];
-	}
-      number = floor(number / dblBase);
-      if (number < DBL_EPSILON)
-	break;
-
-      if ((i > 0)
-	  && ((flags & (FLAGS_FLOAT_E | FLAGS_QUOTE)) == FLAGS_QUOTE)
-	  && (charsPerThousand != NO_GROUPING)
-	  && (i % charsPerThousand == 0))
-	{
-	  /*
-	   * We are building the number from the least significant
-	   * to the most significant digit, so we have to copy the
-	   * thousand separator backwards
-	   */
-	  length = trio_length(internalThousandSeparator);
-	  integerDigits += length;
-	  if (((int)(numberPointer - numberBuffer) - length) > 0)
-	    {
-	      work = &internalThousandSeparator[length - 1];
-	      while (length-- > 0)
-		*(--numberPointer) = *work--;
-	    }
-
-	  /* Advance to next grouping number */
-	  if (charsPerThousand != NO_GROUPING)
-	    {
-	      switch (internalGrouping[groupingIndex])
-		{
-		case CHAR_MAX: /* Disable grouping */
-		  charsPerThousand = NO_GROUPING;
-		  break;
-		case 0: /* Repeat last group */
-		  break;
-		default:
-		  charsPerThousand = (int)internalGrouping[groupingIndex++];
-		  break;
-		}
-	    }
-	}
-    }
-  
-  /* Build the exponent */
-  exponentDigits = 0;
-  if (flags & FLAGS_FLOAT_E)
-    {
-      exponentPointer = &exponentBuffer[sizeof(exponentBuffer) - 1];
-      *exponentPointer-- = NIL;
-      do {
-	*exponentPointer-- = digits[uExponent % base];
-	uExponent /= base;
-	exponentDigits++;
-      } while (uExponent);
-    }
-
   /*
    * Calculate expected width.
    *  sign + integer part + thousands separators + decimal point
    *  + fraction + exponent
    */
-  expectedWidth = trio_length(numberPointer);
+  fractionAdjust /= dblFractionBase;
+  hasOnlyZeroes = (floorl((fractionNumber + fractionAdjust) * dblFractionBase) < epsilon);
+  keepDecimalPoint = ( (flags & FLAGS_ALTERNATIVE) ||
+		       !((precision == 0) ||
+			 (!keepTrailingZeroes && hasOnlyZeroes)) );
+  if (flags & FLAGS_FLOAT_E)
+    {
+      exponentDigits = (uExponent == 0)
+	? 1
+	: (int)ceil(TrioLogarithm(uExponent + 1, base));
+    }
+  else
+    exponentDigits = 0;
+  requireTwoDigitExponent = ((base == BASE_DECIMAL) && (exponentDigits == 1));
+
+  expectedWidth = integerDigits + fractionDigits
+    + (keepDecimalPoint
+       ? internalDecimalPointLength
+       : 0)
+    + ((flags & FLAGS_QUOTE)
+       ? TrioCalcThousandSeparatorLength(integerDigits)
+       : 0);
   if (isNegative || (flags & FLAGS_SHOWSIGN))
     expectedWidth += sizeof("-") - 1;
   if (exponentDigits > 0)
     expectedWidth += exponentDigits +
-      ((exponentDigits > 1) ? sizeof("E+") : sizeof("E+0")) - 1;
+      ((requireTwoDigitExponent ? sizeof("E+0") : sizeof("E+")) - 1);
   if (isHex)
     expectedWidth += sizeof("0X") - 1;
   
@@ -2636,11 +2841,95 @@ TrioWriteDouble(trio_class_t *self,
 	  self->OutStream(self, (flags & FLAGS_UPPER) ? 'X' : 'x');
 	}
     }
-  /* Output number */
-  for (i = 0; numberPointer[i]; i++)
+  
+  /* Output the integer part and thousand separators */
+  dblIntegerBase = TrioPower(base, integerDigits - 1);
+  workNumber = floorl(integerNumber / dblIntegerBase);
+  for (i = 0; i < integerDigits; i++)
     {
-      self->OutStream(self, numberPointer[i]);
+      dblIntegerBase /= dblBase;
+      if (i > integerThreshold)
+	{
+	  /* Beyond accuracy */
+	  self->OutStream(self, digits[0]);
+	  workNumber = floorl(((integerNumber + integerAdjust) / dblIntegerBase));
+	}
+      else
+	{
+	  self->OutStream(self, digits[(int)fmodl(workNumber, dblBase)]);
+	  workNumber = floorl((integerNumber + integerAdjust) / dblIntegerBase);
+	}
+
+      if (((flags & (FLAGS_FLOAT_E | FLAGS_QUOTE)) == FLAGS_QUOTE)
+	  && TrioFollowedBySeparator(integerDigits - i))
+	{
+	  for (groupingPointer = internalThousandSeparator;
+	       *groupingPointer != NIL;
+	       groupingPointer++)
+	    {
+	      self->OutStream(self, *groupingPointer);
+	    }
+	}
     }
+  
+  /* Insert decimal point and build the fraction part */
+  trailingZeroes = 0;
+
+  if (keepDecimalPoint)
+    {
+      if (internalDecimalPoint)
+	{
+	  self->OutStream(self, internalDecimalPoint);
+	}
+      else
+	{
+	  for (i = 0; i < internalDecimalPointLength; i++)
+	    {
+	      self->OutStream(self, internalDecimalPointString[i]);
+	    }
+	}
+    }
+
+  for (i = 0; i < fractionDigits; i++)
+    {
+      if ((integerDigits > integerThreshold) || (i > fractionThreshold))
+	{
+	  /* Beyond accuracy */
+	  trailingZeroes++;
+	}
+      else
+	{
+	  fractionNumber *= dblBase;
+	  fractionAdjust *= dblBase;
+	  workNumber = floorl(fractionNumber + fractionAdjust);
+	  fractionNumber -= workNumber;
+	  index = (int)fmodl(workNumber, dblBase);
+	  if (index == 0)
+	    {
+	      trailingZeroes++;
+	    }
+	  else
+	    {
+	      while (trailingZeroes > 0)
+		{
+		  /* Not trailing zeroes after all */
+		  self->OutStream(self, digits[0]);
+		  trailingZeroes--;
+		}
+	      self->OutStream(self, digits[index]);
+	    }
+	}
+    }
+  
+  if (keepTrailingZeroes)
+    {
+      while (trailingZeroes > 0)
+	{
+	  self->OutStream(self, digits[0]);
+	  trailingZeroes--;
+	}
+    }
+  
   /* Output exponent */
   if (exponentDigits > 0)
     {
@@ -2651,12 +2940,14 @@ TrioWriteDouble(trio_class_t *self,
       self->OutStream(self, (isExponentNegative) ? '-' : '+');
 
       /* The exponent must contain at least two digits */
-      if (exponentDigits == 1)
+      if (requireTwoDigitExponent)
         self->OutStream(self, '0');
 
+      exponentBase = (int)TrioPower(base, exponentDigits - 1);
       for (i = 0; i < exponentDigits; i++)
 	{
-	  self->OutStream(self, exponentPointer[i + 1]);
+	  self->OutStream(self, digits[(uExponent / exponentBase) % base]);
+	  exponentBase /= base;
 	}
     }
   /* Output trailing spaces */
@@ -2676,17 +2967,19 @@ TrioWriteDouble(trio_class_t *self,
  *  This is the main engine for formatting output
  */
 TRIO_PRIVATE int
-TrioFormatProcess(trio_class_t *data,
-		  TRIO_CONST char *format,
-		  trio_parameter_t *parameters)
-
+TrioFormatProcess
+TRIO_ARGS3((data, format, parameters),
+	   trio_class_t *data,
+	   TRIO_CONST char *format,
+	   trio_parameter_t *parameters)
 {
 #if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
   int charlen;
+  int save_errno;
 #endif
   int i;
   TRIO_CONST char *string;
-  void *pointer;
+  trio_pointer_t pointer;
   unsigned long flags;
   int width;
   int precision;
@@ -2696,7 +2989,9 @@ TrioFormatProcess(trio_class_t *data,
   index = 0;
   i = 0;
 #if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
+  save_errno = errno;
   mblen(NULL, 0);
+  errno = save_errno;
 #endif
   
   while (format[index])
@@ -2704,7 +2999,9 @@ TrioFormatProcess(trio_class_t *data,
 #if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
       if (! isascii(format[index]))
 	{
+	  save_errno = errno;
 	  charlen = mblen(&format[index], MB_LEN_MAX);
+	  errno = save_errno;
 	  while (charlen-- > 0)
 	    {
 	      data->OutStream(data, format[index++]);
@@ -2772,7 +3069,7 @@ TrioFormatProcess(trio_class_t *data,
 		  if (flags & FLAGS_WIDECHAR)
 		    {
 		      TrioWriteWideStringCharacter(data,
-						   (wchar_t)parameters[i].data.number.as_signed,
+						   (trio_wchar_t)parameters[i].data.number.as_signed,
 						   flags,
 						   NO_WIDTH);
 		    }
@@ -2795,11 +3092,8 @@ TrioFormatProcess(trio_class_t *data,
 		  break; /* FORMAT_CHAR */
 
 		case FORMAT_INT:
-		  if (base == NO_BASE)
-		    base = BASE_DECIMAL;
-
 		  TrioWriteNumber(data,
-				  parameters[i].data.number.as_signed,
+				  parameters[i].data.number.as_unsigned,
 				  flags,
 				  width,
 				  precision,
@@ -2908,7 +3202,7 @@ TrioFormatProcess(trio_class_t *data,
 		    {
 		      data->OutStream(data, '#');
 		      TrioWriteNumber(data,
-				      (trio_intmax_t)parameters[i].data.errorNumber,
+				      (trio_uintmax_t)parameters[i].data.errorNumber,
 				      flags,
 				      width,
 				      precision,
@@ -2965,10 +3259,12 @@ TrioFormatProcess(trio_class_t *data,
  * TrioFormatRef
  */
 TRIO_PRIVATE int
-TrioFormatRef(trio_reference_t *reference,
-	      TRIO_CONST char *format,
-	      va_list arglist,
-	      void **argarray)
+TrioFormatRef
+TRIO_ARGS4((reference, format, arglist, argarray),
+	   trio_reference_t *reference,
+	   TRIO_CONST char *format,
+	   va_list arglist,
+	   trio_pointer_t *argarray)
 {
   int status;
   trio_parameter_t parameters[MAX_PARAMETERS];
@@ -2989,12 +3285,14 @@ TrioFormatRef(trio_reference_t *reference,
  * TrioFormat
  */
 TRIO_PRIVATE int
-TrioFormat(void *destination,
+TrioFormat
+TRIO_ARGS6((destination, destinationSize, OutStream, format, arglist, argarray),
+	   trio_pointer_t destination,
 	   size_t destinationSize,
-	   void (*OutStream)(trio_class_t *, int),
+	   void (*OutStream) TRIO_PROTO((trio_class_t *, int)),
 	   TRIO_CONST char *format,
 	   va_list arglist,
-	   void **argarray)
+	   trio_pointer_t *argarray)
 {
   int status;
   trio_class_t data;
@@ -3032,8 +3330,10 @@ TrioFormat(void *destination,
  * TrioOutStreamFile
  */
 TRIO_PRIVATE void
-TrioOutStreamFile(trio_class_t *self,
-		  int output)
+TrioOutStreamFile
+TRIO_ARGS2((self, output),
+	   trio_class_t *self,
+	   int output)
 {
   FILE *file = (FILE *)self->location;
 
@@ -3055,8 +3355,10 @@ TrioOutStreamFile(trio_class_t *self,
  * TrioOutStreamFileDescriptor
  */
 TRIO_PRIVATE void
-TrioOutStreamFileDescriptor(trio_class_t *self,
-			    int output)
+TrioOutStreamFileDescriptor
+TRIO_ARGS2((self, output),
+	   trio_class_t *self,
+	   int output)
 {
   int fd = *((int *)self->location);
   char ch;
@@ -3079,8 +3381,10 @@ TrioOutStreamFileDescriptor(trio_class_t *self,
  * TrioOutStreamString
  */
 TRIO_PRIVATE void
-TrioOutStreamString(trio_class_t *self,
-		    int output)
+TrioOutStreamString
+TRIO_ARGS2((self, output),
+	   trio_class_t *self,
+	   int output)
 {
   char **buffer = (char **)self->location;
 
@@ -3097,8 +3401,10 @@ TrioOutStreamString(trio_class_t *self,
  * TrioOutStreamStringMax
  */
 TRIO_PRIVATE void
-TrioOutStreamStringMax(trio_class_t *self,
-		       int output)
+TrioOutStreamStringMax
+TRIO_ARGS2((self, output),
+	   trio_class_t *self,
+	   int output)
 {
   char **buffer;
 
@@ -3119,8 +3425,10 @@ TrioOutStreamStringMax(trio_class_t *self,
  * TrioOutStreamStringDynamic
  */
 TRIO_PRIVATE void
-TrioOutStreamStringDynamic(trio_class_t *self,
-			   int output)
+TrioOutStreamStringDynamic
+TRIO_ARGS2((self, output),
+	   trio_class_t *self,
+	   int output)
 {
   assert(VALID(self));
   assert(VALID(self->location));
@@ -3148,6 +3456,11 @@ TrioOutStreamStringDynamic(trio_class_t *self,
     @{
 */
 
+#if defined(TRIO_COMPILER_MSVC)
+# pragma warning(push)
+# pragma warning(disable : 4700)
+#endif
+
 /*************************************************************************
  * printf
  */
@@ -3160,17 +3473,19 @@ TrioOutStreamStringDynamic(trio_class_t *self,
    @return Number of printed characters.
  */
 TRIO_PUBLIC int
-trio_printf(TRIO_CONST char *format,
-	    ...)
+trio_printf
+TRIO_VARGS2((format, va_alist),
+	    TRIO_CONST char *format,
+	    TRIO_VA_DECL)
 {
   int status;
   va_list args;
 
   assert(VALID(format));
   
-  va_start(args, format);
+  TRIO_VA_START(args, format);
   status = TrioFormat(stdout, 0, TrioOutStreamFile, format, args, NULL);
-  va_end(args);
+  TRIO_VA_END(args);
   return status;
 }
 
@@ -3182,8 +3497,10 @@ trio_printf(TRIO_CONST char *format,
    @return Number of printed characters.
  */
 TRIO_PUBLIC int
-trio_vprintf(TRIO_CONST char *format,
-	     va_list args)
+trio_vprintf
+TRIO_ARGS2((format, args),
+	   TRIO_CONST char *format,
+	   va_list args)
 {
   assert(VALID(format));
 
@@ -3198,9 +3515,25 @@ trio_vprintf(TRIO_CONST char *format,
    @return Number of printed characters.
  */
 TRIO_PUBLIC int
-trio_printfv(TRIO_CONST char *format,
-	     void ** args)
+trio_printfv
+TRIO_ARGS2((format, args),
+	   TRIO_CONST char *format,
+	   trio_pointer_t * args)
 {
+  /*
+   * Many compiles will warn about dummy being uninitialized. This
+   * warning is a "false positive"; the dummy variable is not used,
+   * so it does not have be initialized.
+   *
+   * Unfortunately there is no portable way to avoid this warning.
+   * The only correct way to initialize a va_list is to use va_start,
+   * but that requires variadic arguments (ellipsis) in the function
+   * signature, and the printfv does not have this.
+   *
+   * Do not attempt to fix this by setting dummy equal to zero, because
+   * that will fail on platforms/compilers where va_list is implemented
+   * as a struct (which is quite common on 64 bit platforms).
+   */
   va_list dummy;
   
   assert(VALID(format));
@@ -3221,9 +3554,11 @@ trio_printfv(TRIO_CONST char *format,
    @return Number of printed characters.
  */
 TRIO_PUBLIC int
-trio_fprintf(FILE *file,
-	     TRIO_CONST char *format,
-	     ...)
+trio_fprintf
+TRIO_VARGS3((file, format, va_alist),
+	    FILE *file,
+	    TRIO_CONST char *format,
+	    TRIO_VA_DECL)
 {
   int status;
   va_list args;
@@ -3231,9 +3566,9 @@ trio_fprintf(FILE *file,
   assert(VALID(file));
   assert(VALID(format));
   
-  va_start(args, format);
+  TRIO_VA_START(args, format);
   status = TrioFormat(file, 0, TrioOutStreamFile, format, args, NULL);
-  va_end(args);
+  TRIO_VA_END(args);
   return status;
 }
 
@@ -3246,9 +3581,11 @@ trio_fprintf(FILE *file,
    @return Number of printed characters.
  */
 TRIO_PUBLIC int
-trio_vfprintf(FILE *file,
-	      TRIO_CONST char *format,
-	      va_list args)
+trio_vfprintf
+TRIO_ARGS3((file, format, args),
+	   FILE *file,
+	   TRIO_CONST char *format,
+	   va_list args)
 {
   assert(VALID(file));
   assert(VALID(format));
@@ -3265,9 +3602,11 @@ trio_vfprintf(FILE *file,
    @return Number of printed characters.
  */
 TRIO_PUBLIC int
-trio_fprintfv(FILE *file,
-	      TRIO_CONST char *format,
-	      void ** args)
+trio_fprintfv
+TRIO_ARGS3((file, format, args),
+	   FILE *file,
+	   TRIO_CONST char *format,
+	   trio_pointer_t * args)
 {
   va_list dummy;
   
@@ -3290,18 +3629,20 @@ trio_fprintfv(FILE *file,
    @return Number of printed characters.
  */
 TRIO_PUBLIC int
-trio_dprintf(int fd,
-	     TRIO_CONST char *format,
-	     ...)
+trio_dprintf
+TRIO_VARGS3((fd, format, va_alist),
+	    int fd,
+	    TRIO_CONST char *format,
+	    TRIO_VA_DECL)
 {
   int status;
   va_list args;
 
   assert(VALID(format));
   
-  va_start(args, format);
+  TRIO_VA_START(args, format);
   status = TrioFormat(&fd, 0, TrioOutStreamFileDescriptor, format, args, NULL);
-  va_end(args);
+  TRIO_VA_END(args);
   return status;
 }
 
@@ -3314,9 +3655,11 @@ trio_dprintf(int fd,
    @return Number of printed characters.
  */
 TRIO_PUBLIC int
-trio_vdprintf(int fd,
-	      TRIO_CONST char *format,
-	      va_list args)
+trio_vdprintf
+TRIO_ARGS3((fd, format, args),
+	   int fd,
+	   TRIO_CONST char *format,
+	   va_list args)
 {
   assert(VALID(format));
   
@@ -3332,9 +3675,11 @@ trio_vdprintf(int fd,
    @return Number of printed characters.
  */
 TRIO_PUBLIC int
-trio_dprintfv(int fd,
-	      TRIO_CONST char *format,
-	      void **args)
+trio_dprintfv
+TRIO_ARGS3((fd, format, args),
+	   int fd,
+	   TRIO_CONST char *format,
+	   trio_pointer_t *args)
 {
   va_list dummy;
   
@@ -3356,9 +3701,11 @@ trio_dprintfv(int fd,
    @return Number of printed characters.
  */
 TRIO_PUBLIC int
-trio_sprintf(char *buffer,
-	     TRIO_CONST char *format,
-	     ...)
+trio_sprintf
+TRIO_VARGS3((buffer, format, va_alist),
+	    char *buffer,
+	    TRIO_CONST char *format,
+	    TRIO_VA_DECL)
 {
   int status;
   va_list args;
@@ -3366,10 +3713,10 @@ trio_sprintf(char *buffer,
   assert(VALID(buffer));
   assert(VALID(format));
   
-  va_start(args, format);
+  TRIO_VA_START(args, format);
   status = TrioFormat(&buffer, 0, TrioOutStreamString, format, args, NULL);
   *buffer = NIL; /* Terminate with NIL character */
-  va_end(args);
+  TRIO_VA_END(args);
   return status;
 }
 
@@ -3382,9 +3729,11 @@ trio_sprintf(char *buffer,
    @return Number of printed characters.
  */
 TRIO_PUBLIC int
-trio_vsprintf(char *buffer,
-	      TRIO_CONST char *format,
-	      va_list args)
+trio_vsprintf
+TRIO_ARGS3((buffer, format, args),
+	   char *buffer,
+	   TRIO_CONST char *format,
+	   va_list args)
 {
   int status;
 
@@ -3405,9 +3754,11 @@ trio_vsprintf(char *buffer,
    @return Number of printed characters.
  */
 TRIO_PUBLIC int
-trio_sprintfv(char *buffer,
-	      TRIO_CONST char *format,
-	      void **args)
+trio_sprintfv
+TRIO_ARGS3((buffer, format, args),
+	   char *buffer,
+	   TRIO_CONST char *format,
+	   trio_pointer_t *args)
 {
   int status;
   va_list dummy;
@@ -3434,10 +3785,12 @@ trio_sprintfv(char *buffer,
    @return Number of printed characters.
  */
 TRIO_PUBLIC int
-trio_snprintf(char *buffer,
-	      size_t max,
-	      TRIO_CONST char *format,
-	      ...)
+trio_snprintf
+TRIO_VARGS4((buffer, max, format, va_alist),
+	    char *buffer,
+	    size_t max,
+	    TRIO_CONST char *format,
+	    TRIO_VA_DECL)
 {
   int status;
   va_list args;
@@ -3445,12 +3798,12 @@ trio_snprintf(char *buffer,
   assert(VALID(buffer));
   assert(VALID(format));
 
-  va_start(args, format);
+  TRIO_VA_START(args, format);
   status = TrioFormat(&buffer, max > 0 ? max - 1 : 0,
 		      TrioOutStreamStringMax, format, args, NULL);
   if (max > 0)
     *buffer = NIL;
-  va_end(args);
+  TRIO_VA_END(args);
   return status;
 }
 
@@ -3464,10 +3817,12 @@ trio_snprintf(char *buffer,
    @return Number of printed characters.
  */
 TRIO_PUBLIC int
-trio_vsnprintf(char *buffer,
-	       size_t max,
-	       TRIO_CONST char *format,
-	       va_list args)
+trio_vsnprintf
+TRIO_ARGS4((buffer, max, format, args),
+	   char *buffer,
+	   size_t max,
+	   TRIO_CONST char *format,
+	   va_list args)
 {
   int status;
 
@@ -3491,10 +3846,12 @@ trio_vsnprintf(char *buffer,
    @return Number of printed characters.
  */
 TRIO_PUBLIC int
-trio_snprintfv(char *buffer,
-	       size_t max,
-	       TRIO_CONST char *format,
-	       void **args)
+trio_snprintfv
+TRIO_ARGS4((buffer, max, format, args),
+	   char *buffer,
+	   size_t max,
+	   TRIO_CONST char *format,
+	   trio_pointer_t *args)
 {
   int status;
   va_list dummy;
@@ -3515,16 +3872,18 @@ trio_snprintfv(char *buffer,
  * character at the end of buffer.
  */
 TRIO_PUBLIC int
-trio_snprintfcat(char *buffer,
-		 size_t max,
-		 TRIO_CONST char *format,
-		 ...)
+trio_snprintfcat
+TRIO_VARGS4((buffer, max, format, va_alist),
+	    char *buffer,
+	    size_t max,
+	    TRIO_CONST char *format,
+	    TRIO_VA_DECL)
 {
   int status;
   va_list args;
   size_t buf_len;
 
-  va_start(args, format);
+  TRIO_VA_START(args, format);
 
   assert(VALID(buffer));
   assert(VALID(format));
@@ -3534,16 +3893,18 @@ trio_snprintfcat(char *buffer,
 
   status = TrioFormat(&buffer, max - 1 - buf_len,
 		      TrioOutStreamStringMax, format, args, NULL);
-  va_end(args);
+  TRIO_VA_END(args);
   *buffer = NIL;
   return status;
 }
 
 TRIO_PUBLIC int
-trio_vsnprintfcat(char *buffer,
-		  size_t max,
-		  TRIO_CONST char *format,
-		  va_list args)
+trio_vsnprintfcat
+TRIO_ARGS4((buffer, max, format, args),
+	   char *buffer,
+	   size_t max,
+	   TRIO_CONST char *format,
+	   va_list args)
 {
   int status;
   size_t buf_len;
@@ -3564,8 +3925,10 @@ trio_vsnprintfcat(char *buffer,
 
 /* Deprecated */
 TRIO_PUBLIC char *
-trio_aprintf(TRIO_CONST char *format,
-	     ...)
+trio_aprintf
+TRIO_VARGS2((format, va_alist),
+	    TRIO_CONST char *format,
+	    TRIO_VA_DECL)
 {
   va_list args;
   trio_string_t *info;
@@ -3576,10 +3939,10 @@ trio_aprintf(TRIO_CONST char *format,
   info = trio_xstring_duplicate("");
   if (info)
     {
-      va_start(args, format);
+      TRIO_VA_START(args, format);
       (void)TrioFormat(info, 0, TrioOutStreamStringDynamic,
 		       format, args, NULL);
-      va_end(args);
+      TRIO_VA_END(args);
 
       trio_string_terminate(info);
       result = trio_string_extract(info);
@@ -3590,8 +3953,10 @@ trio_aprintf(TRIO_CONST char *format,
 
 /* Deprecated */
 TRIO_PUBLIC char *
-trio_vaprintf(TRIO_CONST char *format,
-	      va_list args)
+trio_vaprintf
+TRIO_ARGS2((format, args),
+	   TRIO_CONST char *format,
+	   va_list args)
 {
   trio_string_t *info;
   char *result = NULL;
@@ -3611,9 +3976,11 @@ trio_vaprintf(TRIO_CONST char *format,
 }
 
 TRIO_PUBLIC int
-trio_asprintf(char **result,
-	      TRIO_CONST char *format,
-	      ...)
+trio_asprintf
+TRIO_VARGS3((result, format, va_alist),
+	    char **result,
+	    TRIO_CONST char *format,
+	    TRIO_VA_DECL)
 {
   va_list args;
   int status;
@@ -3630,10 +3997,10 @@ trio_asprintf(char **result,
     }
   else
     {
-      va_start(args, format);
+      TRIO_VA_START(args, format);
       status = TrioFormat(info, 0, TrioOutStreamStringDynamic,
 			  format, args, NULL);
-      va_end(args);
+      TRIO_VA_END(args);
       if (status >= 0)
 	{
 	  trio_string_terminate(info);
@@ -3645,9 +4012,11 @@ trio_asprintf(char **result,
 }
 
 TRIO_PUBLIC int
-trio_vasprintf(char **result,
-	       TRIO_CONST char *format,
-	       va_list args)
+trio_vasprintf
+TRIO_ARGS3((result, format, args),
+	   char **result,
+	   TRIO_CONST char *format,
+	   va_list args)
 {
   int status;
   trio_string_t *info;
@@ -3675,6 +4044,10 @@ trio_vasprintf(char **result,
   return status;
 }
 
+#if defined(TRIO_COMPILER_MSVC)
+# pragma warning(pop)
+#endif
+
 /** @} End of Printf documentation module */
 
 /*************************************************************************
@@ -3683,7 +4056,6 @@ trio_vasprintf(char **result,
  *
  ************************************************************************/
 
-
 #if defined(TRIO_DOCUMENTATION)
 # include "doc/doc_register.h"
 #endif
@@ -3691,6 +4063,8 @@ trio_vasprintf(char **result,
    @addtogroup UserDefined
    @{
 */
+
+#if TRIO_EXTENSION
 
 /*************************************************************************
  * trio_register
@@ -3703,9 +4077,11 @@ trio_vasprintf(char **result,
    @param name
    @return Handle.
  */
-TRIO_PUBLIC void *
-trio_register(trio_callback_t callback,
-	      TRIO_CONST char *name)
+TRIO_PUBLIC trio_pointer_t 
+trio_register
+TRIO_ARGS2((callback, name),
+	   trio_callback_t callback,
+	   TRIO_CONST char *name)
 {
   trio_userdef_t *def;
   trio_userdef_t *prev = NULL;
@@ -3763,14 +4139,18 @@ trio_register(trio_callback_t callback,
       if (internalLeaveCriticalRegion)
 	(void)internalLeaveCriticalRegion(NULL);
     }
-  return def;
+  return (trio_pointer_t)def;
 }
 
-/*************************************************************************
- * trio_unregister [public]
+/**
+   Unregister an existing user-defined specifier.
+
+   @param handle
  */
 void
-trio_unregister(void *handle)
+trio_unregister
+TRIO_ARGS1((handle),
+	   trio_pointer_t handle)
 {
   trio_userdef_t *self = (trio_userdef_t *)handle;
   trio_userdef_t *def;
@@ -3803,9 +4183,13 @@ trio_unregister(void *handle)
  * trio_get_format [public]
  */
 TRIO_CONST char *
-trio_get_format(void *ref)
+trio_get_format
+TRIO_ARGS1((ref),
+	   trio_pointer_t ref)
 {
+#if defined(FORMAT_USER_DEFINED)
   assert(((trio_reference_t *)ref)->parameter->type == FORMAT_USER_DEFINED);
+#endif
   
   return (((trio_reference_t *)ref)->parameter->user_data);
 }
@@ -3813,10 +4197,14 @@ trio_get_format(void *ref)
 /*************************************************************************
  * trio_get_argument [public]
  */
-void *
-trio_get_argument(void *ref)
+trio_pointer_t 
+trio_get_argument
+TRIO_ARGS1((ref),
+	   trio_pointer_t ref)
 {
+#if defined(FORMAT_USER_DEFINED)
   assert(((trio_reference_t *)ref)->parameter->type == FORMAT_USER_DEFINED);
+#endif
   
   return ((trio_reference_t *)ref)->parameter->data.pointer;
 }
@@ -3825,14 +4213,18 @@ trio_get_argument(void *ref)
  * trio_get_width / trio_set_width [public]
  */
 int
-trio_get_width(void *ref)
+trio_get_width
+TRIO_ARGS1((ref),
+	   trio_pointer_t ref)
 {
   return ((trio_reference_t *)ref)->parameter->width;
 }
 
 void
-trio_set_width(void *ref,
-	       int width)
+trio_set_width
+TRIO_ARGS2((ref, width),
+	   trio_pointer_t ref,
+	   int width)
 {
   ((trio_reference_t *)ref)->parameter->width = width;
 }
@@ -3841,14 +4233,18 @@ trio_set_width(void *ref,
  * trio_get_precision / trio_set_precision [public]
  */
 int
-trio_get_precision(void *ref)
+trio_get_precision
+TRIO_ARGS1((ref),
+	   trio_pointer_t ref)
 {
   return (((trio_reference_t *)ref)->parameter->precision);
 }
 
 void
-trio_set_precision(void *ref,
-		   int precision)
+trio_set_precision
+TRIO_ARGS2((ref, precision),
+	   trio_pointer_t ref,
+	   int precision)
 {
   ((trio_reference_t *)ref)->parameter->precision = precision;
 }
@@ -3857,14 +4253,18 @@ trio_set_precision(void *ref,
  * trio_get_base / trio_set_base [public]
  */
 int
-trio_get_base(void *ref)
+trio_get_base
+TRIO_ARGS1((ref),
+	   trio_pointer_t ref)
 {
   return (((trio_reference_t *)ref)->parameter->base);
 }
 
 void
-trio_set_base(void *ref,
-	      int base)
+trio_set_base
+TRIO_ARGS2((ref, base),
+	   trio_pointer_t ref,
+	   int base)
 {
   ((trio_reference_t *)ref)->parameter->base = base;
 }
@@ -3873,14 +4273,18 @@ trio_set_base(void *ref,
  * trio_get_long / trio_set_long [public]
  */
 int
-trio_get_long(void *ref)
+trio_get_long
+TRIO_ARGS1((ref),
+	   trio_pointer_t ref)
 {
   return (((trio_reference_t *)ref)->parameter->flags & FLAGS_LONG);
 }
 
 void
-trio_set_long(void *ref,
-	      int is_long)
+trio_set_long
+TRIO_ARGS2((ref, is_long),
+	   trio_pointer_t ref,
+	   int is_long)
 {
   if (is_long)
     ((trio_reference_t *)ref)->parameter->flags |= FLAGS_LONG;
@@ -3892,14 +4296,18 @@ trio_set_long(void *ref,
  * trio_get_longlong / trio_set_longlong [public]
  */
 int
-trio_get_longlong(void *ref)
+trio_get_longlong
+TRIO_ARGS1((ref),
+	   trio_pointer_t ref)
 {
   return (((trio_reference_t *)ref)->parameter->flags & FLAGS_QUAD);
 }
 
 void
-trio_set_longlong(void *ref,
-		  int is_longlong)
+trio_set_longlong
+TRIO_ARGS2((ref, is_longlong),
+	   trio_pointer_t ref,
+	   int is_longlong)
 {
   if (is_longlong)
     ((trio_reference_t *)ref)->parameter->flags |= FLAGS_QUAD;
@@ -3911,14 +4319,18 @@ trio_set_longlong(void *ref,
  * trio_get_longdouble / trio_set_longdouble [public]
  */
 int
-trio_get_longdouble(void *ref)
+trio_get_longdouble
+TRIO_ARGS1((ref),
+	   trio_pointer_t ref)
 {
   return (((trio_reference_t *)ref)->parameter->flags & FLAGS_LONGDOUBLE);
 }
 
 void
-trio_set_longdouble(void *ref,
-		    int is_longdouble)
+trio_set_longdouble
+TRIO_ARGS2((ref, is_longdouble),
+	   trio_pointer_t ref,
+	   int is_longdouble)
 {
   if (is_longdouble)
     ((trio_reference_t *)ref)->parameter->flags |= FLAGS_LONGDOUBLE;
@@ -3930,14 +4342,18 @@ trio_set_longdouble(void *ref,
  * trio_get_short / trio_set_short [public]
  */
 int
-trio_get_short(void *ref)
+trio_get_short
+TRIO_ARGS1((ref),
+	   trio_pointer_t ref)
 {
   return (((trio_reference_t *)ref)->parameter->flags & FLAGS_SHORT);
 }
 
 void
-trio_set_short(void *ref,
-	       int is_short)
+trio_set_short
+TRIO_ARGS2((ref, is_short),
+	   trio_pointer_t ref,
+	   int is_short)
 {
   if (is_short)
     ((trio_reference_t *)ref)->parameter->flags |= FLAGS_SHORT;
@@ -3949,14 +4365,18 @@ trio_set_short(void *ref,
  * trio_get_shortshort / trio_set_shortshort [public]
  */
 int
-trio_get_shortshort(void *ref)
+trio_get_shortshort
+TRIO_ARGS1((ref),
+	   trio_pointer_t ref)
 {
   return (((trio_reference_t *)ref)->parameter->flags & FLAGS_SHORTSHORT);
 }
 
 void
-trio_set_shortshort(void *ref,
-	       int is_shortshort)
+trio_set_shortshort
+TRIO_ARGS2((ref, is_shortshort),
+	   trio_pointer_t ref,
+	   int is_shortshort)
 {
   if (is_shortshort)
     ((trio_reference_t *)ref)->parameter->flags |= FLAGS_SHORTSHORT;
@@ -3968,14 +4388,18 @@ trio_set_shortshort(void *ref,
  * trio_get_alternative / trio_set_alternative [public]
  */
 int
-trio_get_alternative(void *ref)
+trio_get_alternative
+TRIO_ARGS1((ref),
+	   trio_pointer_t ref)
 {
   return (((trio_reference_t *)ref)->parameter->flags & FLAGS_ALTERNATIVE);
 }
 
 void
-trio_set_alternative(void *ref,
-		     int is_alternative)
+trio_set_alternative
+TRIO_ARGS2((ref, is_alternative),
+	   trio_pointer_t ref,
+	   int is_alternative)
 {
   if (is_alternative)
     ((trio_reference_t *)ref)->parameter->flags |= FLAGS_ALTERNATIVE;
@@ -3987,14 +4411,18 @@ trio_set_alternative(void *ref,
  * trio_get_alignment / trio_set_alignment [public]
  */
 int
-trio_get_alignment(void *ref)
+trio_get_alignment
+TRIO_ARGS1((ref),
+	   trio_pointer_t ref)
 {
   return (((trio_reference_t *)ref)->parameter->flags & FLAGS_LEFTADJUST);
 }
 
 void
-trio_set_alignment(void *ref,
-		   int is_leftaligned)
+trio_set_alignment
+TRIO_ARGS2((ref, is_leftaligned),
+	   trio_pointer_t ref,
+	   int is_leftaligned)
 {
   if (is_leftaligned)
     ((trio_reference_t *)ref)->parameter->flags |= FLAGS_LEFTADJUST;
@@ -4006,14 +4434,18 @@ trio_set_alignment(void *ref,
  * trio_get_spacing /trio_set_spacing [public]
  */
 int
-trio_get_spacing(void *ref)
+trio_get_spacing
+TRIO_ARGS1((ref),
+	   trio_pointer_t ref)
 {
   return (((trio_reference_t *)ref)->parameter->flags & FLAGS_SPACE);
 }
 
 void
-trio_set_spacing(void *ref,
-		 int is_space)
+trio_set_spacing
+TRIO_ARGS2((ref, is_space),
+	   trio_pointer_t ref,
+	   int is_space)
 {
   if (is_space)
     ((trio_reference_t *)ref)->parameter->flags |= FLAGS_SPACE;
@@ -4025,14 +4457,18 @@ trio_set_spacing(void *ref,
  * trio_get_sign / trio_set_sign [public]
  */
 int
-trio_get_sign(void *ref)
+trio_get_sign
+TRIO_ARGS1((ref),
+	   trio_pointer_t ref)
 {
   return (((trio_reference_t *)ref)->parameter->flags & FLAGS_SHOWSIGN);
 }
 
 void
-trio_set_sign(void *ref,
-	      int is_sign)
+trio_set_sign
+TRIO_ARGS2((ref, is_sign),
+	   trio_pointer_t ref,
+	   int is_sign)
 {
   if (is_sign)
     ((trio_reference_t *)ref)->parameter->flags |= FLAGS_SHOWSIGN;
@@ -4044,14 +4480,18 @@ trio_set_sign(void *ref,
  * trio_get_padding / trio_set_padding [public]
  */
 int
-trio_get_padding(void *ref)
+trio_get_padding
+TRIO_ARGS1((ref),
+	   trio_pointer_t ref)
 {
   return (((trio_reference_t *)ref)->parameter->flags & FLAGS_NILPADDING);
 }
 
 void
-trio_set_padding(void *ref,
-		 int is_padding)
+trio_set_padding
+TRIO_ARGS2((ref, is_padding),
+	   trio_pointer_t ref,
+	   int is_padding)
 {
   if (is_padding)
     ((trio_reference_t *)ref)->parameter->flags |= FLAGS_NILPADDING;
@@ -4063,14 +4503,18 @@ trio_set_padding(void *ref,
  * trio_get_quote / trio_set_quote [public]
  */
 int
-trio_get_quote(void *ref)
+trio_get_quote
+TRIO_ARGS1((ref),
+	   trio_pointer_t ref)
 {
   return (((trio_reference_t *)ref)->parameter->flags & FLAGS_QUOTE);
 }
 
 void
-trio_set_quote(void *ref,
-	       int is_quote)
+trio_set_quote
+TRIO_ARGS2((ref, is_quote),
+	   trio_pointer_t ref,
+	   int is_quote)
 {
   if (is_quote)
     ((trio_reference_t *)ref)->parameter->flags |= FLAGS_QUOTE;
@@ -4082,14 +4526,18 @@ trio_set_quote(void *ref,
  * trio_get_upper / trio_set_upper [public]
  */
 int
-trio_get_upper(void *ref)
+trio_get_upper
+TRIO_ARGS1((ref),
+	   trio_pointer_t ref)
 {
   return (((trio_reference_t *)ref)->parameter->flags & FLAGS_UPPER);
 }
 
 void
-trio_set_upper(void *ref,
-	       int is_upper)
+trio_set_upper
+TRIO_ARGS2((ref, is_upper),
+	   trio_pointer_t ref,
+	   int is_upper)
 {
   if (is_upper)
     ((trio_reference_t *)ref)->parameter->flags |= FLAGS_UPPER;
@@ -4102,14 +4550,18 @@ trio_set_upper(void *ref,
  */
 #if TRIO_C99
 int
-trio_get_largest(void *ref)
+trio_get_largest
+TRIO_ARGS1((ref),
+	   trio_pointer_t ref)
 {
   return (((trio_reference_t *)ref)->parameter->flags & FLAGS_INTMAX_T);
 }
 
 void
-trio_set_largest(void *ref,
-		 int is_largest)
+trio_set_largest
+TRIO_ARGS2((ref, is_largest),
+	   trio_pointer_t ref,
+	   int is_largest)
 {
   if (is_largest)
     ((trio_reference_t *)ref)->parameter->flags |= FLAGS_INTMAX_T;
@@ -4122,14 +4574,18 @@ trio_set_largest(void *ref,
  * trio_get_ptrdiff / trio_set_ptrdiff [public]
  */
 int
-trio_get_ptrdiff(void *ref)
+trio_get_ptrdiff
+TRIO_ARGS1((ref),
+	   trio_pointer_t ref)
 {
   return (((trio_reference_t *)ref)->parameter->flags & FLAGS_PTRDIFF_T);
 }
 
 void
-trio_set_ptrdiff(void *ref,
-		 int is_ptrdiff)
+trio_set_ptrdiff
+TRIO_ARGS2((ref, is_ptrdiff),
+	   trio_pointer_t ref,
+	   int is_ptrdiff)
 {
   if (is_ptrdiff)
     ((trio_reference_t *)ref)->parameter->flags |= FLAGS_PTRDIFF_T;
@@ -4142,14 +4598,18 @@ trio_set_ptrdiff(void *ref,
  */
 #if TRIO_C99
 int
-trio_get_size(void *ref)
+trio_get_size
+TRIO_ARGS1((ref),
+	   trio_pointer_t ref)
 {
   return (((trio_reference_t *)ref)->parameter->flags & FLAGS_SIZE_T);
 }
 
 void
-trio_set_size(void *ref,
-	      int is_size)
+trio_set_size
+TRIO_ARGS2((ref, is_size),
+	   trio_pointer_t ref,
+	   int is_size)
 {
   if (is_size)
     ((trio_reference_t *)ref)->parameter->flags |= FLAGS_SIZE_T;
@@ -4162,13 +4622,15 @@ trio_set_size(void *ref,
  * trio_print_int [public]
  */
 void
-trio_print_int(void *ref,
-	       int number)
+trio_print_int
+TRIO_ARGS2((ref, number),
+	   trio_pointer_t ref,
+	   int number)
 {
   trio_reference_t *self = (trio_reference_t *)ref;
 
   TrioWriteNumber(self->data,
-		  (trio_intmax_t)number,
+		  (trio_uintmax_t)number,
 		  self->parameter->flags,
 		  self->parameter->width,
 		  self->parameter->precision,
@@ -4179,13 +4641,15 @@ trio_print_int(void *ref,
  * trio_print_uint [public]
  */
 void
-trio_print_uint(void *ref,
-		unsigned int number)
+trio_print_uint
+TRIO_ARGS2((ref, number),
+	   trio_pointer_t ref,
+	   unsigned int number)
 {
   trio_reference_t *self = (trio_reference_t *)ref;
 
   TrioWriteNumber(self->data,
-		  (trio_intmax_t)number,
+		  (trio_uintmax_t)number,
 		  self->parameter->flags | FLAGS_UNSIGNED,
 		  self->parameter->width,
 		  self->parameter->precision,
@@ -4196,8 +4660,10 @@ trio_print_uint(void *ref,
  * trio_print_double [public]
  */
 void
-trio_print_double(void *ref,
-		  double number)
+trio_print_double
+TRIO_ARGS2((ref, number),
+	   trio_pointer_t ref,
+	   double number)
 {
   trio_reference_t *self = (trio_reference_t *)ref;
 
@@ -4213,8 +4679,10 @@ trio_print_double(void *ref,
  * trio_print_string [public]
  */
 void
-trio_print_string(void *ref,
-		  char *string)
+trio_print_string
+TRIO_ARGS2((ref, string),
+	   trio_pointer_t ref,
+	   char *string)
 {
   trio_reference_t *self = (trio_reference_t *)ref;
 
@@ -4226,11 +4694,68 @@ trio_print_string(void *ref,
 }
 
 /*************************************************************************
+ * trio_print_ref [public]
+ */
+int
+trio_print_ref
+TRIO_VARGS3((ref, format, va_alist),
+	    trio_pointer_t ref,
+	    TRIO_CONST char *format,
+	    TRIO_VA_DECL)
+{
+  int status;
+  va_list arglist;
+
+  assert(VALID(format));
+  
+  TRIO_VA_START(arglist, format);
+  status = TrioFormatRef((trio_reference_t *)ref, format, arglist, NULL);
+  TRIO_VA_END(arglist);
+  return status;
+}
+
+/*************************************************************************
+ * trio_vprint_ref [public]
+ */
+int
+trio_vprint_ref
+TRIO_ARGS3((ref, format, arglist),
+	   trio_pointer_t ref,
+	   TRIO_CONST char *format,
+	   va_list arglist)
+{
+  assert(VALID(format));
+  
+  return TrioFormatRef((trio_reference_t *)ref, format, arglist, NULL);
+}
+
+/*************************************************************************
+ * trio_printv_ref [public]
+ */
+int
+trio_printv_ref
+TRIO_ARGS3((ref, format, argarray),
+	   trio_pointer_t ref,
+	   TRIO_CONST char *format,
+	   trio_pointer_t *argarray)
+{
+  va_list dummy;
+  
+  assert(VALID(format));
+  
+  return TrioFormatRef((trio_reference_t *)ref, format, dummy, argarray);
+}
+
+#endif /* TRIO_EXTENSION */
+
+/*************************************************************************
  * trio_print_pointer [public]
  */
 void
-trio_print_pointer(void *ref,
-		   void *pointer)
+trio_print_pointer
+TRIO_ARGS2((ref, pointer),
+	   trio_pointer_t ref,
+	   trio_pointer_t pointer)
 {
   trio_reference_t *self = (trio_reference_t *)ref;
   unsigned long flags;
@@ -4258,7 +4783,7 @@ trio_print_pointer(void *ref,
       flags |= (FLAGS_UNSIGNED | FLAGS_ALTERNATIVE |
 	        FLAGS_NILPADDING);
       TrioWriteNumber(self->data,
-		      (trio_intmax_t)number,
+		      number,
 		      flags,
 		      POINTER_WIDTH,
 		      NO_PRECISION,
@@ -4266,54 +4791,96 @@ trio_print_pointer(void *ref,
     }
 }
 
-/*************************************************************************
- * trio_print_ref [public]
- */
-int
-trio_print_ref(void *ref,
-	       TRIO_CONST char *format,
-	       ...)
-{
-  int status;
-  va_list arglist;
-
-  assert(VALID(format));
-  
-  va_start(arglist, format);
-  status = TrioFormatRef((trio_reference_t *)ref, format, arglist, NULL);
-  va_end(arglist);
-  return status;
-}
-
-/*************************************************************************
- * trio_vprint_ref [public]
- */
-int
-trio_vprint_ref(void *ref,
-		TRIO_CONST char *format,
-		va_list arglist)
-{
-  assert(VALID(format));
-  
-  return TrioFormatRef((trio_reference_t *)ref, format, arglist, NULL);
-}
-
-/*************************************************************************
- * trio_printv_ref [public]
- */
-int
-trio_printv_ref(void *ref,
-		TRIO_CONST char *format,
-		void **argarray)
-{
-  va_list dummy;
-  
-  assert(VALID(format));
-  
-  return TrioFormatRef((trio_reference_t *)ref, format, dummy, argarray);
-}
-
 /** @} End of UserDefined documentation module */
+
+/*************************************************************************
+ *
+ * LOCALES
+ *
+ ************************************************************************/
+
+/*************************************************************************
+ * trio_locale_set_decimal_point
+ *
+ * Decimal point can only be one character. The input argument is a
+ * string to enable multibyte characters. At most MB_LEN_MAX characters
+ * will be used.
+ */
+TRIO_PUBLIC void
+trio_locale_set_decimal_point
+TRIO_ARGS1((decimalPoint),
+	   char *decimalPoint)
+{
+#if defined(USE_LOCALE)
+  if (NULL == internalLocaleValues)
+    {
+      TrioSetLocale();
+    }
+#endif
+  internalDecimalPointLength = trio_length(decimalPoint);
+  if (internalDecimalPointLength == 1)
+    {
+      internalDecimalPoint = *decimalPoint;
+    }
+  else
+    {
+      internalDecimalPoint = NIL;
+      trio_copy_max(internalDecimalPointString,
+		    sizeof(internalDecimalPointString),
+		    decimalPoint);
+    }
+}
+
+/*************************************************************************
+ * trio_locale_set_thousand_separator
+ *
+ * See trio_locale_set_decimal_point
+ */
+TRIO_PUBLIC void
+trio_locale_set_thousand_separator
+TRIO_ARGS1((thousandSeparator),
+	   char *thousandSeparator)
+{
+#if defined(USE_LOCALE)
+  if (NULL == internalLocaleValues)
+    {
+      TrioSetLocale();
+    }
+#endif
+  trio_copy_max(internalThousandSeparator,
+		sizeof(internalThousandSeparator),
+		thousandSeparator);
+  internalThousandSeparatorLength = trio_length(internalThousandSeparator);
+}
+
+/*************************************************************************
+ * trio_locale_set_grouping
+ *
+ * Array of bytes. Reversed order.
+ *
+ *  CHAR_MAX : No further grouping
+ *  0        : Repeat last group for the remaining digits (not necessary
+ *             as C strings are zero-terminated)
+ *  n        : Set current group to n
+ *
+ * Same order as the grouping attribute in LC_NUMERIC.
+ */
+TRIO_PUBLIC void
+trio_locale_set_grouping
+TRIO_ARGS1((grouping),
+	   char *grouping)
+{
+#if defined(USE_LOCALE)
+  if (NULL == internalLocaleValues)
+    {
+      TrioSetLocale();
+    }
+#endif
+  trio_copy_max(internalGrouping,
+		sizeof(internalGrouping),
+		grouping);
+}
+
 
 /*************************************************************************
  *
@@ -4321,12 +4888,13 @@ trio_printv_ref(void *ref,
  *
  ************************************************************************/
 
-
 /*************************************************************************
  * TrioSkipWhitespaces
  */
 TRIO_PRIVATE int
-TrioSkipWhitespaces(trio_class_t *self)
+TrioSkipWhitespaces
+TRIO_ARGS1((self),
+	   trio_class_t *self)
 {
   int ch;
 
@@ -4343,7 +4911,7 @@ TrioSkipWhitespaces(trio_class_t *self)
  */
 #if TRIO_EXTENSION
 TRIO_PRIVATE void
-TrioGetCollation(void)
+TrioGetCollation(TRIO_NOARGS)
 {
   int i;
   int j;
@@ -4376,10 +4944,12 @@ TrioGetCollation(void)
  *  multibyte
  */
 TRIO_PRIVATE int
-TrioGetCharacterClass(TRIO_CONST char *format,
-		      int *indexPointer,
-		      unsigned long *flagsPointer,
-		      int *characterclass)
+TrioGetCharacterClass
+TRIO_ARGS4((format, indexPointer, flagsPointer, characterclass),
+	   TRIO_CONST char *format,
+	   int *indexPointer,
+	   unsigned long *flagsPointer,
+	   int *characterclass)
 {
   int index = *indexPointer;
   int i;
@@ -4633,16 +5203,19 @@ TrioGetCharacterClass(TRIO_CONST char *format,
  * strtoul, because we must handle 'long long' and thousand separators.
  */
 TRIO_PRIVATE BOOLEAN_T
-TrioReadNumber(trio_class_t *self,
-	       trio_uintmax_t *target,
-	       unsigned long flags,
-	       int width,
-	       int base)
+TrioReadNumber
+TRIO_ARGS5((self, target, flags, width, base),
+	   trio_class_t *self,
+	   trio_uintmax_t *target,
+	   unsigned long flags,
+	   int width,
+	   int base)
 {
   trio_uintmax_t number = 0;
   int digit;
   int count;
   BOOLEAN_T isNegative = FALSE;
+  BOOLEAN_T gotNumber = FALSE;
   int j;
 
   assert(VALID(self));
@@ -4742,16 +5315,17 @@ TrioReadNumber(trio_class_t *self,
             
       number *= base;
       number += digit;
+      gotNumber = TRUE; /* we need at least one digit */
 
       self->InStream(self, NULL);
     }
 
   /* Was anything read at all? */
-  if (self->processed == count)
+  if (!gotNumber)
     return FALSE;
   
   if (target)
-    *target = (isNegative) ? -number : number;
+    *target = (isNegative) ? -((trio_intmax_t)number) : number;
   return TRUE;
 }
 
@@ -4759,10 +5333,12 @@ TrioReadNumber(trio_class_t *self,
  * TrioReadChar
  */
 TRIO_PRIVATE int
-TrioReadChar(trio_class_t *self,
-	     char *target,
-	     unsigned long flags,
-	     int width)
+TrioReadChar
+TRIO_ARGS4((self, target, flags, width),
+	   trio_class_t *self,
+	   char *target,
+	   unsigned long flags,
+	   int width)
 {
   int i;
   char ch;
@@ -4823,10 +5399,12 @@ TrioReadChar(trio_class_t *self,
  * TrioReadString
  */
 TRIO_PRIVATE BOOLEAN_T
-TrioReadString(trio_class_t *self,
-	       char *target,
-	       unsigned long flags,
-	       int width)
+TrioReadString
+TRIO_ARGS4((self, target, flags, width),
+	   trio_class_t *self,
+	   char *target,
+	   unsigned long flags,
+	   int width)
 {
   int i;
   
@@ -4857,16 +5435,18 @@ TrioReadString(trio_class_t *self,
  */
 #if TRIO_WIDECHAR
 TRIO_PRIVATE int
-TrioReadWideChar(trio_class_t *self,
-		 wchar_t *target,
-		 unsigned long flags,
-		 int width)
+TrioReadWideChar
+TRIO_ARGS4((self, target, flags, width),
+	   trio_class_t *self,
+	   trio_wchar_t *target,
+	   unsigned long flags,
+	   int width)
 {
   int i;
   int j;
   int size;
   int amount = 0;
-  wchar_t wch;
+  trio_wchar_t wch;
   char buffer[MB_LEN_MAX + 1];
   
   assert(VALID(self));
@@ -4916,10 +5496,12 @@ TrioReadWideChar(trio_class_t *self,
  */
 #if TRIO_WIDECHAR
 TRIO_PRIVATE BOOLEAN_T
-TrioReadWideString(trio_class_t *self,
-		   wchar_t *target,
-		   unsigned long flags,
-		   int width)
+TrioReadWideString
+TRIO_ARGS4((self, target, flags, width),
+	   trio_class_t *self,
+	   trio_wchar_t *target,
+	   unsigned long flags,
+	   int width)
 {
   int i;
   int size;
@@ -4960,11 +5542,13 @@ TrioReadWideString(trio_class_t *self,
  * FIXME: characterclass does not work with multibyte characters
  */
 TRIO_PRIVATE BOOLEAN_T
-TrioReadGroup(trio_class_t *self,
-	      char *target,
-	      int *characterclass,
-	      unsigned long flags,
-	      int width)
+TrioReadGroup
+TRIO_ARGS5((self, target, characterclass, flags, width),
+	   trio_class_t *self,
+	   char *target,
+	   int *characterclass,
+	   unsigned long flags,
+	   int width)
 {
   int ch;
   int i;
@@ -4994,20 +5578,25 @@ TrioReadGroup(trio_class_t *self,
  *
  * FIXME:
  *  add long double
+ *  handle base
  */
 TRIO_PRIVATE BOOLEAN_T
-TrioReadDouble(trio_class_t *self,
-	       double *target,
-	       unsigned long flags,
-	       int width)
+TrioReadDouble
+TRIO_ARGS4((self, target, flags, width),
+	   trio_class_t *self,
+	   trio_pointer_t target,
+	   unsigned long flags,
+	   int width)
 {
   int ch;
-  char doubleString[512] = "";
+  char doubleString[512];
   int index = 0;
   int start;
   int j;
   BOOLEAN_T isHex = FALSE;
 
+  doubleString[0] = 0;
+  
   if ((width == NO_WIDTH) || (width > (int)sizeof(doubleString) - 1))
     width = sizeof(doubleString) - 1;
   
@@ -5049,15 +5638,41 @@ TrioReadDouble(trio_class_t *self,
       if (trio_equal(&doubleString[start], INFINITE_UPPER) ||
 	  trio_equal(&doubleString[start], LONG_INFINITE_UPPER))
 	{
-	  *target = ((start == 1 && doubleString[0] == '-'))
-	    ? trio_ninf()
-	    : trio_pinf();
+	  if (flags & FLAGS_LONGDOUBLE)
+	    {
+	      if ((start == 1) && (doubleString[0] == '-'))
+		{
+		  *((trio_long_double_t *)target) = trio_ninf();
+		}
+	      else
+		{
+		  *((trio_long_double_t *)target) = trio_pinf();
+		}
+	    }
+	  else
+	    {
+	      if ((start == 1) && (doubleString[0] == '-'))
+		{
+		  *((double *)target) = trio_ninf();
+		}
+	      else
+		{
+		  *((double *)target) = trio_pinf();
+		}
+	    }
 	  return TRUE;
 	}
       if (trio_equal(doubleString, NAN_UPPER))
 	{
 	  /* NaN must not have a preceeding + nor - */
-	  *target = trio_nan();
+	  if (flags & FLAGS_LONGDOUBLE)
+	    {
+	      *((trio_long_double_t *)target) = trio_nan();
+	    }
+	  else
+	    {
+	      *((double *)target) = trio_nan();
+	    }
 	  return TRUE;
 	}
       return FALSE;
@@ -5135,13 +5750,16 @@ TrioReadDouble(trio_class_t *self,
 
   if ((index == start) || (*doubleString == NIL))
     return FALSE;
+
+  doubleString[index] = 0;
   
   if (flags & FLAGS_LONGDOUBLE)
-/*     *longdoublePointer = trio_to_long_double()*/
-    return FALSE; /* FIXME: Remove when long double is implemented */
+    {
+      *((trio_long_double_t *)target) = trio_to_long_double(doubleString, NULL);
+    }
   else
     {
-      *target = trio_to_double(doubleString, NULL);
+      *((double *)target) = trio_to_double(doubleString, NULL);
     }
   return TRUE;
 }
@@ -5150,9 +5768,11 @@ TrioReadDouble(trio_class_t *self,
  * TrioReadPointer
  */
 TRIO_PRIVATE BOOLEAN_T
-TrioReadPointer(trio_class_t *self,
-		void **target,
-		unsigned long flags)
+TrioReadPointer
+TRIO_ARGS3((self, target, flags),
+	   trio_class_t *self,
+	   trio_pointer_t *target,
+	   unsigned long flags)
 {
   trio_uintmax_t number;
   char buffer[sizeof(internalNullString)];
@@ -5194,9 +5814,11 @@ TrioReadPointer(trio_class_t *self,
  * TrioScanProcess
  */
 TRIO_PRIVATE int
-TrioScanProcess(trio_class_t *data,
-		TRIO_CONST char *format,
-		trio_parameter_t *parameters)
+TrioScanProcess
+TRIO_ARGS3((data, format, parameters),
+	   trio_class_t *data,
+	   TRIO_CONST char *format,
+	   trio_parameter_t *parameters)
 {
 #if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
   int charlen;
@@ -5209,7 +5831,7 @@ TrioScanProcess(trio_class_t *data,
   unsigned long flags;
   int width;
   int base;
-  void *pointer;
+  trio_pointer_t pointer;
 
   assignment = 0;
   i = 0;
@@ -5355,17 +5977,29 @@ TrioScanProcess(trio_class_t *data,
 	      break; /* FORMAT_STRING */
 
 	    case FORMAT_DOUBLE:
-	      if (!TrioReadDouble(data,
-				  (flags & FLAGS_IGNORE)
-				  ? NULL
-				  : parameters[i].data.doublePointer,
-				  flags,
-				  width))
-		return assignment;
-	      if (!(flags & FLAGS_IGNORE))
-		assignment++;
-	      break; /* FORMAT_DOUBLE */
+	      {
+		trio_pointer_t pointer;
 
+		if (flags & FLAGS_IGNORE)
+		  {
+		    pointer = NULL;
+		  }
+		else
+		  {
+		    pointer = (flags & FLAGS_LONGDOUBLE)
+		      ? (trio_pointer_t)parameters[i].data.longdoublePointer
+		      : (trio_pointer_t)parameters[i].data.doublePointer;
+		  }
+		if (!TrioReadDouble(data, pointer, flags, width))
+		  {
+		    return assignment;
+		  }
+		if (!(flags & FLAGS_IGNORE))
+		  {
+		    assignment++;
+		  }
+		break; /* FORMAT_DOUBLE */
+	      }
 	    case FORMAT_GROUP:
 	      {
 		int characterclass[MAX_CHARACTER_CLASS + 1];
@@ -5472,7 +6106,7 @@ TrioScanProcess(trio_class_t *data,
 	      if (!TrioReadPointer(data,
 				   (flags & FLAGS_IGNORE)
 				   ? NULL
-				   : (void **)parameters[i].data.pointer,
+				   : (trio_pointer_t *)parameters[i].data.pointer,
 				   flags))
 		return assignment;
 	      if (!(flags & FLAGS_IGNORE))
@@ -5513,12 +6147,14 @@ TrioScanProcess(trio_class_t *data,
  * TrioScan
  */
 TRIO_PRIVATE int
-TrioScan(TRIO_CONST void *source,
-	 size_t sourceSize,
-	 void (*InStream)(trio_class_t *, int *),
-	 TRIO_CONST char *format,
-	 va_list arglist,
-	 void **argarray)
+TrioScan
+TRIO_ARGS6((source, sourceSize, InStream, format, arglist, argarray),
+	   trio_pointer_t source,
+	   size_t sourceSize,
+	   void (*InStream) TRIO_PROTO((trio_class_t *, int *)),
+	   TRIO_CONST char *format,
+	   va_list arglist,
+	   trio_pointer_t *argarray)
 {
   int status;
   trio_parameter_t parameters[MAX_PARAMETERS];
@@ -5529,7 +6165,7 @@ TrioScan(TRIO_CONST void *source,
 
   memset(&data, 0, sizeof(data));
   data.InStream = InStream;
-  data.location = (void *)source;
+  data.location = (trio_pointer_t)source;
   data.max = sourceSize;
   data.error = 0;
 
@@ -5556,8 +6192,10 @@ TrioScan(TRIO_CONST void *source,
  * TrioInStreamFile
  */
 TRIO_PRIVATE void
-TrioInStreamFile(trio_class_t *self,
-		 int *intPointer)
+TrioInStreamFile
+TRIO_ARGS2((self, intPointer),
+	   trio_class_t *self,
+	   int *intPointer)
 {
   FILE *file = (FILE *)self->location;
 
@@ -5587,8 +6225,10 @@ TrioInStreamFile(trio_class_t *self,
  * TrioInStreamFileDescriptor
  */
 TRIO_PRIVATE void
-TrioInStreamFileDescriptor(trio_class_t *self,
-			   int *intPointer)
+TrioInStreamFileDescriptor
+TRIO_ARGS2((self, intPointer),
+	   trio_class_t *self,
+	   int *intPointer)
 {
   int fd = *((int *)self->location);
   int size;
@@ -5622,8 +6262,10 @@ TrioInStreamFileDescriptor(trio_class_t *self,
  * TrioInStreamString
  */
 TRIO_PRIVATE void
-TrioInStreamString(trio_class_t *self,
-		   int *intPointer)
+TrioInStreamString
+TRIO_ARGS2((self, intPointer),
+	   trio_class_t *self,
+	   int *intPointer)
 {
   unsigned char **buffer;
 
@@ -5663,6 +6305,11 @@ TrioInStreamString(trio_class_t *self,
     @{
 */
 
+#if defined(TRIO_COMPILER_MSVC)
+# pragma warning(push)
+# pragma warning(disable : 4700)
+#endif
+
 /*************************************************************************
  * scanf
  */
@@ -5675,47 +6322,61 @@ TrioInStreamString(trio_class_t *self,
    @return Number of scanned characters.
  */
 TRIO_PUBLIC int
-trio_scanf(TRIO_CONST char *format,
-	   ...)
+trio_scanf
+TRIO_VARGS2((format, va_alist),
+	    TRIO_CONST char *format,
+	    TRIO_VA_DECL)
 {
   int status;
   va_list args;
 
   assert(VALID(format));
   
-  va_start(args, format);
-  status = TrioScan(stdin, 0, TrioInStreamFile, format, args, NULL);
-  va_end(args);
+  TRIO_VA_START(args, format);
+  status = TrioScan((trio_pointer_t)stdin, 0,
+		    TrioInStreamFile,
+		    format, args, NULL);
+  TRIO_VA_END(args);
   return status;
 }
 
 TRIO_PUBLIC int
-trio_vscanf(TRIO_CONST char *format,
-	    va_list args)
+trio_vscanf
+TRIO_ARGS2((format, args),
+	   TRIO_CONST char *format,
+	   va_list args)
 {
   assert(VALID(format));
   
-  return TrioScan(stdin, 0, TrioInStreamFile, format, args, NULL);
+  return TrioScan((trio_pointer_t)stdin, 0,
+		  TrioInStreamFile,
+		  format, args, NULL);
 }
 
 TRIO_PUBLIC int
-trio_scanfv(TRIO_CONST char *format,
-	    void **args)
+trio_scanfv
+TRIO_ARGS2((format, args),
+	   TRIO_CONST char *format,
+	   trio_pointer_t *args)
 {
   va_list dummy;
   
   assert(VALID(format));
   
-  return TrioScan(stdin, 0, TrioInStreamFile, format, dummy, args);
+  return TrioScan((trio_pointer_t)stdin, 0,
+		  TrioInStreamFile,
+		  format, dummy, args);
 }
 
 /*************************************************************************
  * fscanf
  */
 TRIO_PUBLIC int
-trio_fscanf(FILE *file,
+trio_fscanf
+TRIO_VARGS3((file, format, va_alist),
+	    FILE *file,
 	    TRIO_CONST char *format,
-	    ...)
+	    TRIO_VA_DECL)
 {
   int status;
   va_list args;
@@ -5723,84 +6384,108 @@ trio_fscanf(FILE *file,
   assert(VALID(file));
   assert(VALID(format));
   
-  va_start(args, format);
-  status = TrioScan(file, 0, TrioInStreamFile, format, args, NULL);
-  va_end(args);
+  TRIO_VA_START(args, format);
+  status = TrioScan((trio_pointer_t)file, 0,
+		    TrioInStreamFile,
+		    format, args, NULL);
+  TRIO_VA_END(args);
   return status;
 }
 
 TRIO_PUBLIC int
-trio_vfscanf(FILE *file,
-	     TRIO_CONST char *format,
-	     va_list args)
+trio_vfscanf
+TRIO_ARGS3((file, format, args),
+	   FILE *file,
+	   TRIO_CONST char *format,
+	   va_list args)
 {
   assert(VALID(file));
   assert(VALID(format));
   
-  return TrioScan(file, 0, TrioInStreamFile, format, args, NULL);
+  return TrioScan((trio_pointer_t)file, 0,
+		  TrioInStreamFile,
+		  format, args, NULL);
 }
 
 TRIO_PUBLIC int
-trio_fscanfv(FILE *file,
-	     TRIO_CONST char *format,
-	     void **args)
+trio_fscanfv
+TRIO_ARGS3((file, format, args),
+	   FILE *file,
+	   TRIO_CONST char *format,
+	   trio_pointer_t *args)
 {
   va_list dummy;
   
   assert(VALID(file));
   assert(VALID(format));
   
-  return TrioScan(file, 0, TrioInStreamFile, format, dummy, args);
+  return TrioScan((trio_pointer_t)file, 0,
+		  TrioInStreamFile,
+		  format, dummy, args);
 }
 
 /*************************************************************************
  * dscanf
  */
 TRIO_PUBLIC int
-trio_dscanf(int fd,
+trio_dscanf
+TRIO_VARGS3((fd, format, va_alist),
+	    int fd,
 	    TRIO_CONST char *format,
-	    ...)
+	    TRIO_VA_DECL)
 {
   int status;
   va_list args;
 
   assert(VALID(format));
   
-  va_start(args, format);
-  status = TrioScan(&fd, 0, TrioInStreamFileDescriptor, format, args, NULL);
-  va_end(args);
+  TRIO_VA_START(args, format);
+  status = TrioScan((trio_pointer_t)&fd, 0,
+		    TrioInStreamFileDescriptor,
+		    format, args, NULL);
+  TRIO_VA_END(args);
   return status;
 }
 
 TRIO_PUBLIC int
-trio_vdscanf(int fd,
-	     TRIO_CONST char *format,
-	     va_list args)
+trio_vdscanf
+TRIO_ARGS3((fd, format, args),
+	   int fd,
+	   TRIO_CONST char *format,
+	   va_list args)
 {
   assert(VALID(format));
   
-  return TrioScan(&fd, 0, TrioInStreamFileDescriptor, format, args, NULL);
+  return TrioScan((trio_pointer_t)&fd, 0,
+		  TrioInStreamFileDescriptor,
+		  format, args, NULL);
 }
 
 TRIO_PUBLIC int
-trio_dscanfv(int fd,
-             TRIO_CONST char *format,
-             void **args)
+trio_dscanfv
+TRIO_ARGS3((fd, format, args),
+	   int fd,
+	   TRIO_CONST char *format,
+	   trio_pointer_t *args)
 {
   va_list dummy;
   
   assert(VALID(format));
   
-  return TrioScan(&fd, 0, TrioInStreamFileDescriptor, format, dummy, args);
+  return TrioScan((trio_pointer_t)&fd, 0,
+		  TrioInStreamFileDescriptor,
+		  format, dummy, args);
 }
 
 /*************************************************************************
  * sscanf
  */
 TRIO_PUBLIC int
-trio_sscanf(TRIO_CONST char *buffer,
+trio_sscanf
+TRIO_VARGS3((buffer, format, va_alist),
+	    TRIO_CONST char *buffer,
 	    TRIO_CONST char *format,
-	    ...)
+	    TRIO_VA_DECL)
 {
   int status;
   va_list args;
@@ -5808,34 +6493,78 @@ trio_sscanf(TRIO_CONST char *buffer,
   assert(VALID(buffer));
   assert(VALID(format));
   
-  va_start(args, format);
-  status = TrioScan(&buffer, 0, TrioInStreamString, format, args, NULL);
-  va_end(args);
+  TRIO_VA_START(args, format);
+  status = TrioScan((trio_pointer_t)&buffer, 0,
+		    TrioInStreamString,
+		    format, args, NULL);
+  TRIO_VA_END(args);
   return status;
 }
 
 TRIO_PUBLIC int
-trio_vsscanf(TRIO_CONST char *buffer,
-	     TRIO_CONST char *format,
-	     va_list args)
+trio_vsscanf
+TRIO_ARGS3((buffer, format, args),
+	   TRIO_CONST char *buffer,
+	   TRIO_CONST char *format,
+	   va_list args)
 {
   assert(VALID(buffer));
   assert(VALID(format));
   
-  return TrioScan(&buffer, 0, TrioInStreamString, format, args, NULL);
+  return TrioScan((trio_pointer_t)&buffer, 0,
+		  TrioInStreamString,
+		  format, args, NULL);
 }
 
 TRIO_PUBLIC int
-trio_sscanfv(TRIO_CONST char *buffer,
-	     TRIO_CONST char *format,
-	     void **args)
+trio_sscanfv
+TRIO_ARGS3((buffer, format, args),
+	   TRIO_CONST char *buffer,
+	   TRIO_CONST char *format,
+	   trio_pointer_t *args)
 {
   va_list dummy;
   
   assert(VALID(buffer));
   assert(VALID(format));
   
-  return TrioScan(&buffer, 0, TrioInStreamString, format, dummy, args);
+  return TrioScan((trio_pointer_t)&buffer, 0,
+		  TrioInStreamString,
+		  format, dummy, args);
 }
 
+#if defined(TRIO_COMPILER_MSVC)
+# pragma warning(pop)
+#endif
+
 /** @} End of Scanf documentation module */
+
+/*************************************************************************
+ * trio_strerror
+ */
+TRIO_PUBLIC TRIO_CONST char *
+trio_strerror
+TRIO_ARGS1((errorcode),
+	   int errorcode)
+{
+  /* Textual versions of the error codes */
+  switch (TRIO_ERROR_CODE(errorcode))
+    {
+    case TRIO_EOF:
+      return "End of file";
+    case TRIO_EINVAL:
+      return "Invalid argument";
+    case TRIO_ETOOMANY:
+      return "Too many arguments";
+    case TRIO_EDBLREF:
+      return "Double reference";
+    case TRIO_EGAP:
+      return "Reference gap";
+    case TRIO_ENOMEM:
+      return "Out of memory";
+    case TRIO_ERANGE:
+      return "Invalid range";
+    default:
+      return "Unknown";
+    }
+}
