@@ -64,26 +64,26 @@ static const char * const module_aliases[]=
    NULL
 };
 
-class module_info
+class lftp_module_info
 {
-   module_info *next;
-   static module_info *base;
+   lftp_module_info *next;
+   static lftp_module_info *base;
 
    char *path;
    void *addr;
 
 public:
-   module_info(const char *p,void *a)
+   lftp_module_info(const char *p,void *a)
       {
 	 path=xstrdup(p);
 	 addr=a;
 	 next=base;
 	 base=this;
       }
-   ~module_info()
+   ~lftp_module_info()
       {
 	 xfree(path);
-	 for(module_info **scan=&base; *scan; scan=&scan[0]->next)
+	 for(lftp_module_info **scan=&base; *scan; scan=&scan[0]->next)
 	 {
 	    if(*scan==this)
 	    {
@@ -92,10 +92,10 @@ public:
 	    }
 	 }
       }
-   static module_info *find_module(const char *name)
+   static lftp_module_info *find_module(const char *name)
       {
 	 int name_len=strlen(name);
-	 for(module_info *scan=base; scan; scan=scan->next)
+	 for(lftp_module_info *scan=base; scan; scan=scan->next)
 	 {
 	    char *slash=strrchr(scan->path,'/');
 	    char *scan_name=(slash?slash+1:scan->path);
@@ -109,12 +109,12 @@ public:
       }
    static void delete_by_name(const char *name)
       {
-	 module_info *m=find_module(name);
+	 lftp_module_info *m=find_module(name);
 	 if(m)
 	    delete m;
       }
 };
-module_info *module_info::base;
+lftp_module_info *lftp_module_info::base;
 
 static ResDecl res_mod_path("module:path", PKGLIBDIR"/"VERSION":"PKGLIBDIR, 0,0);
 
@@ -167,14 +167,14 @@ void *module_load(const char *path,int argc,const char *const *argv)
    map=dlopen(fullpath,DLOPEN_FLAGS);  // LAZY?
    if(map==0)
       return 0;
-   (void)new module_info(fullpath,map);
+   (void)new lftp_module_info(fullpath,map);
 #if 0 // for some reason this does not work even with LAZY (because of _init?).
    const char*const*depend=(const char*const*)dlsym(map,"module_depend");
    if(depend)
    {
       while(*depend)
       {
-	 if(module_info::find_module(*depend)==0)
+	 if(lftp_module_info::find_module(*depend)==0)
 	 {
 	    void *dep=module_load(*depend,0,0);
 	    if(!dep)

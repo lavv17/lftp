@@ -1,3 +1,8 @@
+2003-12-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* module.cc: rename module_into to lftp_module_info to avoid
+	  name conflict.
+
 2003-12-17  albert chin <china@thewrittenword.com>
 
 	* Makefile.am: remove LOCALE_DIR, use datadir/locale instead.
