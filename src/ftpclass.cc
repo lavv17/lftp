@@ -638,6 +638,7 @@ void Ftp::InitFtp()
    resp=0;
    resp_size=0;
    resp_alloc=0;
+   sync_wait=0;
    line=0;
    type=FTP_TYPE_A;
    send_cmd_buffer=0;
@@ -735,7 +736,7 @@ void  Ftp::GetBetterConnection(int level)
       if(o==this)
 	 continue;
       if(o->control_sock==-1 || o->data_sock!=-1 || o->state!=EOF_STATE
-      || !o->RespQueueIsEmpty() || o->mode!=CLOSED)
+      || o->mode!=CLOSED)
 	 continue;
       if(SameConnection(o))
       {
@@ -770,21 +771,8 @@ void  Ftp::GetBetterConnection(int level)
 	    continue;
 
 	 // so borrow the connection
-	 o->state=INITIAL_STATE;
-	 control_sock=o->control_sock;
-	 o->control_sock=-1;
+	 MoveConnectionHere(o);
 	 state=EOF_STATE;
-	 if(peer_curr>=peer_num)
-	    peer_curr=0;
-	 type=o->type;
-	 event_time=o->event_time;
-
-	 size_supported=o->size_supported;
-	 mdtm_supported=o->mdtm_supported;
-
-	 set_real_cwd(o->real_cwd);
-	 o->set_real_cwd(0);
-      	 o->Disconnect();
 	 return;
       }
    }
@@ -931,8 +919,7 @@ int   Ftp::Do()
       if(!(res&POLLOUT))
 	 goto usual_return;
 
-      if(flags&SYNC_MODE)
-	 flags|=SYNC_WAIT; // we need to wait for RESP_READY
+      sync_wait=1; // we need to wait for RESP_READY
 
       AddResp(RESP_READY,INITIAL_STATE,CHECK_READY);
 
@@ -1615,7 +1602,7 @@ notimeout_return:
       else
       {
 	 block+=PollVec(control_sock,POLLIN);
-	 if(send_cmd_count>0 && !(flags&SYNC_WAIT))
+	 if(send_cmd_count>0 && ((flags&SYNC_MODE)==0 || sync_wait==0))
 	    block+=PollVec(control_sock,POLLOUT);
       }
    }
@@ -1707,7 +1694,8 @@ void  Ftp::ReceiveResp()
 			      // the same code as it started with.
 	       multiline_code=0;
 	    }
-	    flags&=~SYNC_WAIT; // clear the flag to send next command
+	    if(sync_wait>0)
+	       sync_wait--; // clear the flag to send next command
 	    break;
 	 }
 	 else
@@ -1788,11 +1776,8 @@ void  Ftp::DataAbort()
 	 return; // data connection cannot be established at this time
    }
 
-   // if the socket was not connected or transfer completed
-   // then ABOR is not needed
-   if(data_sock!=-1
-   && (state==ACCEPTING_STATE || state==DATASOCKET_CONNECTING_STATE
-      || RespQueueIsEmpty()))
+   // if transfer has been completed then ABOR is not needed
+   if(data_sock!=-1 && RespQueueIsEmpty())
 	 return;
 
    FlushSendQueue(/*all=*/true);
@@ -1873,7 +1858,7 @@ void  Ftp::Disconnect()
 
 void  Ftp::EmptySendQueue()
 {
-   flags&=~SYNC_WAIT;
+   sync_wait=0;
    xfree(send_cmd_buffer);
    send_cmd_buffer=send_cmd_ptr=0;
    send_cmd_alloc=send_cmd_count=0;
@@ -1920,16 +1905,15 @@ void  Ftp::FlushSendQueue(bool all)
 
    char *cmd_begin=send_cmd_ptr;
 
-   while(send_cmd_count>0 && (all || !(flags&SYNC_WAIT)))
+   while(send_cmd_count>0 && (all || (flags&SYNC_MODE)==0 || sync_wait==0))
    {
       int to_write=send_cmd_count;
-      if(!all && (flags&SYNC_MODE))
-      {
-	 char *line_end=(char*)memchr(send_cmd_ptr,'\n',send_cmd_count);
-	 if(line_end==NULL)
-	    return;
-	 to_write=line_end+1-send_cmd_ptr;
-      }
+
+      char *line_end=(char*)memchr(send_cmd_ptr,'\n',send_cmd_count);
+      if(line_end==NULL)
+	 return;
+      to_write=line_end+1-send_cmd_ptr;
+
       res=write(control_sock,send_cmd_ptr,to_write);
       if(res==0)
 	 return;
@@ -1950,8 +1934,7 @@ void  Ftp::FlushSendQueue(bool all)
       send_cmd_ptr+=res;
       event_time=now;
 
-      if(flags&SYNC_MODE)
-	 flags|=SYNC_WAIT;
+      sync_wait++;
    }
    if(send_cmd_ptr>cmd_begin)
    {
@@ -2056,12 +2039,12 @@ void  Ftp::Close()
    {
       switch(state)
       {
-      case(ACCEPTING_STATE):
-      case(DATASOCKET_CONNECTING_STATE):
       case(CONNECTING_STATE):
       case(USER_RESP_WAITING_STATE):
 	 Disconnect();
 	 break;
+      case(ACCEPTING_STATE):
+      case(DATASOCKET_CONNECTING_STATE):
       case(CWD_CWD_WAITING_STATE):
       case(WAITING_STATE):
       case(DATA_OPEN_STATE):
@@ -2420,6 +2403,44 @@ void  Ftp::EmptyRespQueue()
    RespQueue=0;
    RQ_alloc=0;
 }
+void  Ftp::MoveConnectionHere(Ftp *o)
+{
+   EmptyRespQueue();
+   EmptySendQueue();
+
+   RQ_head=o->RQ_head;
+   RQ_tail=o->RQ_tail;
+   multiline_code=o->multiline_code;
+   RespQueue=o->RespQueue;
+   RQ_alloc=o->RQ_alloc;
+
+   o->RespQueue=0;
+   o->EmptyRespQueue();
+
+   sync_wait=o->sync_wait;
+   send_cmd_buffer=o->send_cmd_buffer;
+   send_cmd_ptr=o->send_cmd_ptr;
+   send_cmd_alloc=o->send_cmd_alloc;
+   send_cmd_count=o->send_cmd_count;
+
+   o->send_cmd_buffer=0;
+   o->EmptySendQueue();
+
+   o->state=INITIAL_STATE;
+   control_sock=o->control_sock;
+   o->control_sock=-1;
+   if(peer_curr>=peer_num)
+      peer_curr=0;
+   type=o->type;
+   event_time=o->event_time;
+
+   size_supported=o->size_supported;
+   mdtm_supported=o->mdtm_supported;
+
+   set_real_cwd(o->real_cwd);
+   o->set_real_cwd(0);
+   o->Disconnect();
+}
 
 int   Ftp::CheckResp(int act)
 {
@@ -2752,9 +2773,6 @@ void  Ftp::SetFlag(int flag,bool val)
       flags|=flag;
    else
       flags&=~flag;
-
-   if(!(flags&SYNC_MODE))
-      flags&=~SYNC_WAIT;   // if SYNC_MODE is off, we don't need to wait
 }
 
 bool  Ftp::SameSiteAs(FileAccess *fa)

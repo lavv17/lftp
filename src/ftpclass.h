@@ -119,7 +119,8 @@ class Ftp : public NetAccess
    int	 RQ_head;
    int	 RQ_tail;
 
-   int	 multiline_code;
+   int	 multiline_code;// the code of multiline response.
+   int	 sync_wait;	// number of commands in flight.
 
    void	 LogResp(const char *line);
 
@@ -198,6 +199,8 @@ class Ftp : public NetAccess
    char  *send_cmd_ptr;	   // start
 
    void EmptySendQueue();
+
+   void MoveConnectionHere(Ftp *o);
 
    automate_state state;
 
@@ -307,7 +310,6 @@ public:
    enum flag_mask
    {
       SYNC_MODE=1,
-      SYNC_WAIT=2,
       NOREST_MODE=4,
       IO_FLAG=8,
       DOSISH_PATH=16,

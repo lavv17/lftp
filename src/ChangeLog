@@ -1,3 +1,9 @@
+1999-11-07  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: allow moving a connection with buffered
+	  data or expected responses; (sync_wait) new member for number of
+	  commands in flight.
+
 1999-11-04  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileAccess.cc, FileAccess.h: (RereadManual) new method to stop
