@@ -446,18 +446,17 @@ const char *FileAccess::GetConnectURL(int flags)
 void FileAccess::Connect(const char *host1,const char *port1)
 {
    Close();
-   ResetLocationData();
    xfree(hostname);
    hostname=xstrdup(host1);
    xfree(portname);
    portname=xstrdup(port1);
    DontSleep();
+   ResetLocationData();
 }
 
 void FileAccess::Login(const char *user1,const char *pass1)
 {
    Close();
-   ResetLocationData();
    xfree(user);
    user=xstrdup(user1);
    xfree(pass);
@@ -486,15 +485,16 @@ void FileAccess::Login(const char *user1,const char *pass1)
 	 }
       }
    }
+   ResetLocationData();
 }
 
 void FileAccess::AnonymousLogin()
 {
    Close();
-   ResetLocationData();
    xfree(user); user=0;
    xfree(pass); pass=0;
    pass_open=false;
+   ResetLocationData();
 }
 
 void FileAccess::ResetLocationData()

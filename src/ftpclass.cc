@@ -925,6 +925,8 @@ Ftp::Ftp(const Ftp *f) : super(f)
 
    state=INITIAL_STATE;
    flags=f->flags&MODES_MASK;
+   xfree(home_auto);
+   home_auto=xstrdup(f->home_auto);
 }
 
 Ftp::~Ftp()
@@ -973,6 +975,16 @@ void Ftp::PropagateHomeAuto()
 	    o->set_home(home_auto);
       }
    }
+}
+const char *Ftp::FindHomeAuto()
+{
+   for(FA *fo=FirstSameSite(); fo!=0; fo=NextSameSite(fo))
+   {
+      Ftp *o=(Ftp*)fo; // we are sure it is Ftp.
+      if(o->home_auto)
+	 return o->home_auto;
+   }
+   return 0;
 }
 
 void  Ftp::GetBetterConnection(int level,int count)
@@ -3617,7 +3629,7 @@ bool  Ftp::SameLocationAs(FileAccess *fa)
       return false;
    if(SameConnection(o))
    {
-      if(home && xstrcmp(home,o->home))
+      if(home && o->home && strcmp(home,o->home))
 	 return false;
 
       if(!cwd || !o->cwd)
@@ -3677,7 +3689,7 @@ void Ftp::ResetLocationData()
    size_supported=true;
    site_chmod_supported=true;
    xfree(home_auto);
-   home_auto=0;
+   home_auto=xstrdup(FindHomeAuto());
    Reconfig(0);
    state=INITIAL_STATE;
 }
