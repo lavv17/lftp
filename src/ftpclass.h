@@ -322,8 +322,7 @@ public:
    }
 
    void Reconfig(const char *name=0);
-   void Cleanup();
-   void CleanupThis();
+   void Cleanup(bool all);
 
    ListInfo *MakeListInfo();
    Glob *MakeGlob(const char *pattern);

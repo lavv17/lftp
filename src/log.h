@@ -68,8 +68,6 @@ public:
 
    void SetCB(tty_cb_t cb) { tty_cb=cb; }
 
-   bool IsTTY() { return tty; }
-
    void Init();
    Log() { Init(); }
    ~Log();

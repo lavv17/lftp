@@ -641,6 +641,8 @@ Ftp::~Ftp()
    Close();
    Disconnect();
 
+   xfree(peer);
+
    xfree(anon_user); anon_user=0;
    xfree(anon_pass); anon_pass=0;
    xfree(line); line=0;
@@ -648,6 +650,11 @@ Ftp::~Ftp()
 
    xfree(RespQueue); RespQueue=0;
    xfree(send_cmd_buffer); send_cmd_buffer=0;
+
+   xfree(proxy); proxy=0;
+   xfree(proxy_port); proxy_port=0;
+   xfree(proxy_user); proxy_user=0;
+   xfree(proxy_pass); proxy_pass=0;
 
    xfree(skey_pass); skey_pass=0;
 
@@ -1089,8 +1096,6 @@ int   Ftp::Do()
       case(CLOSED):
 	 abort(); // can't happen
       }
-      if(ascii)
-	 type=FTP_TYPE_A;
       if(old_type!=type)
       {
          strcpy(str,type==FTP_TYPE_I?"TYPE I\n":"TYPE A\n");
@@ -1113,7 +1118,6 @@ int   Ftp::Do()
 
       if(mode==ARRAY_INFO)
       {
-      array_info_send_more:
 	 for(int i=array_ptr; i<array_cnt; i++)
 	 {
 	    char *s=(char*)alloca(strlen(array_for_info[i].file)+20);
@@ -1464,10 +1468,6 @@ int   Ftp::Do()
 
       if(state!=oldstate)
          return MOVED;
-
-      // more work to do?
-      if(RespQueueIsEmpty() && mode==ARRAY_INFO && array_ptr<array_cnt)
-	 goto array_info_send_more;
 
       if(!was_empty && RespQueueIsEmpty())
       {
@@ -2732,14 +2732,7 @@ int   Ftp::Done()
    if(mode==CLOSED)
       return OK;
 
-   if(mode==ARRAY_INFO)
-   {
-      if(state==WAITING_STATE && RespQueueIsEmpty() && array_ptr==array_cnt)
-	 return(OK);
-      return(IN_PROGRESS);
-   }
-
-   if(mode==CHANGE_DIR || mode==RENAME
+   if(mode==CHANGE_DIR || mode==RENAME || mode==ARRAY_INFO
    || mode==MAKE_DIR || mode==REMOVE_DIR || mode==REMOVE || mode==CHANGE_MODE
    || copy_mode!=COPY_NONE)
    {
@@ -2810,24 +2803,18 @@ void Ftp::Reconfig(const char *name)
       SetSocketBuffer(data_sock);
 }
 
-void Ftp::Cleanup()
+void Ftp::Cleanup(bool all)
 {
-   if(hostname==0)
+   if(!all && hostname==0)
       return;
 
    for(Ftp *o=ftp_chain; o!=0; o=o->ftp_next)
    {
       if(o->control_sock==-1 || o->mode!=CLOSED)
 	 continue;
-      if(!xstrcmp(hostname,o->hostname))
+      if(all || !xstrcmp(hostname,o->hostname))
 	 o->Disconnect();
    }
-}
-void Ftp::CleanupThis()
-{
-   if(control_sock==-1 || mode!=CLOSED)
-      return;
-   Disconnect();
 }
 
 ListInfo *Ftp::MakeListInfo()

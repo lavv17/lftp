@@ -271,7 +271,7 @@ static void tty_clear()
 
 int   main(int argc,char **argv)
 {
-#ifdef SOCKS4
+#ifdef SOCKS
    SOCKSinit(argv[0]);
 #endif
 

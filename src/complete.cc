@@ -355,20 +355,9 @@ static void glob_quote(char *out,const char *in,int len)
       switch(*in)
       {
       case '*': case '?': case '[': case ']':
+      case '\\':
 	 if(!quote_glob)
 	    *out++='\\';
-	 break;
-      case '\\':
-	 switch(in[1])
-	 {
-	 case '*': case '?': case '[': case ']': case '\\':
-	    *out++=*in++;  // copy the backslash.
-	    break;
-	 default:
-	    in++; // skip it.
-	    break;
-	 }
-	 break;
       }
       *out++=*in;
       in++;

@@ -135,7 +135,6 @@ protected:
    ResValue Query(const char *name,const char *closure=0);
 
    int chmod_mode;
-   bool ascii;
 
    bool Error() { return error_code!=OK; }
    void ClearError();
@@ -143,9 +142,6 @@ protected:
    void Fatal(const char *mess);
    char *error;
    int error_code;
-
-   FileAccess *next;
-   static FileAccess *chain;
 
 public:
    virtual const char *GetProto() = 0; // http, ftp, file etc
@@ -173,7 +169,6 @@ public:
    void SetDate(time_t d) { entity_date=d; }
    void WantDate(time_t *d) { opt_date=d; }
    void WantSize(long *s) { opt_size=s; }
-   void AsciiTransfer() { ascii=true; }
    virtual void Close();
 
    virtual void	Rename(const char *rfile,const char *to);
@@ -243,9 +238,7 @@ public:
    };
 
    const char *StrError(int err);
-   virtual void Cleanup() {}
-   virtual void CleanupThis() {}
-   void CleanupAll();
+   virtual void Cleanup(bool all=false) { (void)all; }
       // ^^ close idle connections, etc.
    virtual ListInfo *MakeListInfo() { return 0; }
    virtual Glob *MakeGlob(const char *pattern) { return 0; }

@@ -803,7 +803,7 @@ void ResolverCache::CacheCheck()
    while(*scan)
    {
       Entry *s=*scan;
-      TimeInterval expire((const char *)res_cache_expire.Query(s->hostname));
+      TimeInterval expire(res_cache_expire.Query(s->hostname));
       if((!expire.IsInfty() && SMTask::now-s->timestamp>expire.Seconds())
       || (count>=countlimit))
       {

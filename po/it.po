@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.0.1\n"
-"POT-Creation-Date: 1999-10-22 19:30+0400\n"
+"POT-Creation-Date: 1999-09-27 21:18+0400\n"
 "PO-Revision-Date: 1999-07-11 13:02+02:00\n"
 "Last-Translator: Giovanni Bortolozzo <borto@pluto.linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -69,51 +69,51 @@ msgstr "\tAttendo la fine del job [%d] per terminare\n"
 msgid "\tRunning\n"
 msgstr "\tIn esecuzione\n"
 
-#: src/FileAccess.cc:210
+#: src/FileAccess.cc:183
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "Errore di socket (%s) - riconnessione in corso"
 
-#: src/FileAccess.cc:296
+#: src/FileAccess.cc:269
 #, c-format
 msgid "Access failed: %s"
 msgstr "Accesso fallito: %s"
 
-#: src/FileAccess.cc:299
+#: src/FileAccess.cc:272
 msgid "File cannot be accessed"
 msgstr "Impossibile accedere al file"
 
-#: src/FileAccess.cc:301 src/ftpclass.cc:2545 src/ftpclass.cc:2555
+#: src/FileAccess.cc:274 src/ftpclass.cc:2545 src/ftpclass.cc:2555
 msgid "Not connected"
 msgstr "Non connesso"
 
-#: src/FileAccess.cc:307
+#: src/FileAccess.cc:280
 #, c-format
 msgid "Fatal error: %s"
 msgstr "Errore fatale: %s"
 
-#: src/FileAccess.cc:310
+#: src/FileAccess.cc:283
 msgid "Fatal error"
 msgstr "Errore fatale"
 
-#: src/FileAccess.cc:312
+#: src/FileAccess.cc:285
 msgid "Store failed - you have to reput"
 msgstr "Salvataggio fallito - si deve fare reput"
 
-#: src/FileAccess.cc:314 src/ftpclass.cc:2587
+#: src/FileAccess.cc:287 src/ftpclass.cc:2587
 msgid "Login failed"
 msgstr "Login fallito"
 
-#: src/FileAccess.cc:316
+#: src/FileAccess.cc:289
 msgid "Operation not supported"
 msgstr "Operazione non supportata"
 
-#: src/FtpListInfo.cc:226 src/HttpDir.cc:1150
+#: src/FtpListInfo.cc:226 src/HttpDir.cc:1003
 #, c-format
 msgid "Getting directory contents (%ld)"
 msgstr "Scarico il contenuto della directory (%ld)"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:1155
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:1008
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "Scarico le informazioni sui file (%d%%)"
@@ -123,7 +123,7 @@ msgstr "Scarico le informazioni sui file (%d%%)"
 msgid "remote rm(%s) - %s\n"
 msgstr "rm(%s) remoto - %s\n"
 
-#: src/GetJob.cc:164
+#: src/GetJob.cc:162
 #, c-format
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr ""
@@ -241,10 +241,10 @@ msgstr "Il vecchio file remoto `%s' non è stato rimosso"
 msgid "Old local file `%s' is not removed"
 msgstr "Il vecchio file locale `%s' non è stato rimosso"
 
-#: src/MirrorJob.cc:968 src/commands.cc:838 src/commands.cc:903
-#: src/commands.cc:1001 src/commands.cc:1207 src/commands.cc:1366
-#: src/commands.cc:1553 src/commands.cc:1560 src/commands.cc:1744
-#: src/commands.cc:1773 src/commands.cc:1780 src/commands.cc:1913
+#: src/MirrorJob.cc:968 src/commands.cc:834 src/commands.cc:899
+#: src/commands.cc:997 src/commands.cc:1203 src/commands.cc:1362
+#: src/commands.cc:1549 src/commands.cc:1556 src/commands.cc:1740
+#: src/commands.cc:1766 src/commands.cc:1773 src/commands.cc:1906
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Usare `help %s' per maggiori informazioni.\n"
@@ -273,7 +273,7 @@ msgstr ""
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr ""
 
-#: src/Http.cc:1108 src/Resolver.cc:184 src/ftpclass.cc:2550
+#: src/Http.cc:1077 src/Resolver.cc:184 src/ftpclass.cc:2550
 msgid "Resolving host address..."
 msgstr "Risoluzione dell'indirizzo dell'host..."
 
@@ -369,7 +369,7 @@ msgstr "\tNessun file trasferito con successo :(\n"
 msgid "Average transfer rate %g bytes/s\n"
 msgstr "Velocità media di trasferimento %g byte/s\n"
 
-#: src/FtpCopy.cc:177 src/XferJob.cc:301 src/commands.cc:608
+#: src/FtpCopy.cc:177 src/XferJob.cc:301 src/commands.cc:607
 #, c-format
 msgid "%s: %s - not supported protocol\n"
 msgstr "%s: %s -- protocollo non supportato\n"
@@ -1052,150 +1052,155 @@ msgstr "Uso: cd dir-remota\n"
 msgid "%s: no old directory for this site\n"
 msgstr "%s: nessuna directory vecchia per questo sito\n"
 
-#: src/commands.cc:453
+#: src/commands.cc:452
 #, c-format
 msgid "Usage: %s [<exit_code>]\n"
 msgstr "Uso: %s [<codice_d'uscita>]\n"
 
-#: src/commands.cc:562 src/ftpget.cc:182
+#: src/commands.cc:561 src/ftpget.cc:182
 #, c-format
 msgid "Try `%s --help' for more information\n"
 msgstr "Usare `%s --help' per maggiori informazioni\n"
 
-#: src/commands.cc:564
+#: src/commands.cc:563
 #, c-format
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 msgstr "Uso: %s [-e cmd] [-p porta] [-u utente,[password]] <host|url>\n"
 
-#: src/commands.cc:652 src/commands.cc:1265 src/ftpget.cc:149
+#: src/commands.cc:649 src/commands.cc:1261 src/ftpget.cc:149
 msgid "Password: "
 msgstr "Password: "
 
-#: src/commands.cc:654
+#: src/commands.cc:651
 #, c-format
 msgid "%s: GetPass() failed -- assume anonymous login\n"
 msgstr "%s: GetPass() fallita -- assumo login anonimo\n"
 
-#: src/commands.cc:720 src/commands.cc:746
+#: src/commands.cc:716 src/commands.cc:742
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "Uso: %s comando arg...\n"
 
-#: src/commands.cc:848 src/commands.cc:1089
+#: src/commands.cc:844 src/commands.cc:1085
 #, c-format
 msgid "Usage: %s files...\n"
 msgstr "Uso: %s file...\n"
 
-#: src/commands.cc:890
+#: src/commands.cc:886
 #, c-format
 msgid "%s: -n: Number expected. "
 msgstr "%s: -n: Ci vuole un numero. "
 
-#: src/commands.cc:913 src/commands.cc:1011
+#: src/commands.cc:909 src/commands.cc:1007
 #, c-format
 msgid "File name missed. "
 msgstr "Manca il nome del file. "
 
-#: src/commands.cc:1129
+#: src/commands.cc:1125
 #, c-format
 msgid "Usage: %s <file>\n"
 msgstr "Uso: %s <file>\n"
 
-#: src/commands.cc:1151
+#: src/commands.cc:1147
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
 msgstr "Uso: %s [-v] [-v] ...\n"
 
-#: src/commands.cc:1246
+#: src/commands.cc:1242
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
 msgstr "il livello di debug è %d, l'output va su %s\n"
 
-#: src/commands.cc:1249
+#: src/commands.cc:1245
 msgid "debug is off\n"
 msgstr "il debug è off\n"
 
-#: src/commands.cc:1261
+#: src/commands.cc:1257
 #, c-format
 msgid "Usage: %s userid [pass]\n"
 msgstr "Uso: %s userid [pass]\n"
 
-#: src/commands.cc:1300 src/commands.cc:1462
+#: src/commands.cc:1296 src/commands.cc:1458
 #, c-format
 msgid "%s: no current job\n"
 msgstr "%s: nessun job corrente\n"
 
-#: src/commands.cc:1310 src/commands.cc:1340 src/commands.cc:1470
+#: src/commands.cc:1306 src/commands.cc:1336 src/commands.cc:1466
 #, c-format
 msgid "%s: %d - no such job\n"
 msgstr "%s: %d - job non esistente\n"
 
-#: src/commands.cc:1312
+#: src/commands.cc:1308
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
 msgstr "Uso: %s <numjob> ...| all\n"
 
-#: src/commands.cc:1331 src/commands.cc:1452 src/commands.cc:1624
+#: src/commands.cc:1327 src/commands.cc:1448 src/commands.cc:1620
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s: %s - non è un numero\n"
 
-#: src/commands.cc:1394
+#: src/commands.cc:1390
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr "%s: %s. Usare `set -a' per vedere tutte le variabili.\n"
 
-#: src/commands.cc:1442
+#: src/commands.cc:1400
+#, fuzzy, c-format
+msgid "%s: %s.\n"
+msgstr "Uso: %s\n"
+
+#: src/commands.cc:1438
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
 msgstr "Uso: %s [<numjob>]\n"
 
-#: src/commands.cc:1475
+#: src/commands.cc:1471
 #, c-format
 msgid "%s: some other job waits for job %d\n"
 msgstr "%s: qualche altro job è in attesa del job %d\n"
 
-#: src/commands.cc:1486
+#: src/commands.cc:1482
 #, c-format
 msgid "Usage: %s <raw_cmd>\n"
 msgstr "Uso: %s <cmd_raw>\n"
 
-#: src/commands.cc:1500
+#: src/commands.cc:1496
 #, c-format
 msgid "Usage: site <site_cmd>\n"
 msgstr "Uso: site <site_cmd>\n"
 
-#: src/commands.cc:1530
+#: src/commands.cc:1526
 #, c-format
 msgid "Usage: mv <file1> <file2>\n"
 msgstr "Uso: mv <file1> <file2>\n"
 
-#: src/commands.cc:1552 src/commands.cc:1772
+#: src/commands.cc:1548 src/commands.cc:1765
 #, c-format
 msgid "Invalid command. "
 msgstr "Comando non valido. "
 
-#: src/commands.cc:1559 src/commands.cc:1779
+#: src/commands.cc:1555 src/commands.cc:1772
 #, c-format
 msgid "Ambiguous command. "
 msgstr "Comando ambiguo."
 
-#: src/commands.cc:1578
+#: src/commands.cc:1574
 #, c-format
 msgid "%s: Operand missed for size\n"
 msgstr "%s: Manca l'operando per la dimensione\n"
 
-#: src/commands.cc:1585
+#: src/commands.cc:1581
 #, c-format
 msgid "%s: Invalid number for size\n"
 msgstr "%s: Numero per la dimensione non valido\n"
 
-#: src/commands.cc:1596
+#: src/commands.cc:1592
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
 msgstr "%s: Manca l'operando per `expire'\n"
 
-#: src/commands.cc:1630
+#: src/commands.cc:1626
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
@@ -1203,43 +1208,43 @@ msgstr ""
 "%s: %s - non c'è questa sessione in cache. Usare `scache' per vedere\n"
 "un elenco delle sessioni.\n"
 
-#: src/commands.cc:1647
+#: src/commands.cc:1643
 #, c-format
 msgid "Sorry, no help for %s\n"
 msgstr "Spiacente, nessun aiuto per %s\n"
 
-#: src/commands.cc:1652
+#: src/commands.cc:1648
 #, c-format
 msgid "%s is a built-in alias for %s\n"
 msgstr "%s è un alias interno per %s\n"
 
-#: src/commands.cc:1657
+#: src/commands.cc:1653
 #, c-format
 msgid "Usage: %s\n"
 msgstr "Uso: %s\n"
 
-#: src/commands.cc:1665
+#: src/commands.cc:1661
 #, c-format
 msgid "%s is an alias to `%s'\n"
 msgstr "%s è un alias per `%s'\n"
 
-#: src/commands.cc:1669
+#: src/commands.cc:1665
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr ""
 "`%s' comando inesistente. Usare `help' per vedere i comandi disponibili.\n"
 
-#: src/commands.cc:1671
+#: src/commands.cc:1667
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr "`%s' comando ambiguo. Usare `help' per vedere i comandi disponibili.\n"
 
-#: src/commands.cc:1722
+#: src/commands.cc:1718
 #, c-format
 msgid "Lftp | Version %s | Copyright (c) 1996-1999 Alexander V. Lukyanov\n"
 msgstr "Lftp | Versione %s | Copyright (c) 1996-1999 Alexander V. Lukyanov\n"
 
-#: src/commands.cc:1724 src/ftpget.cc:59
+#: src/commands.cc:1720 src/ftpget.cc:59
 #, c-format
 msgid ""
 "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
@@ -1247,42 +1252,42 @@ msgstr ""
 "Questo è un software libero ASSOLUTAMENTE NON GARANTITO. Si veda il file\n"
 "COPYNG per i dettagli.\n"
 
-#: src/commands.cc:1726
+#: src/commands.cc:1722
 #, c-format
 msgid "Send bug reports and questions to <%s>.\n"
 msgstr "Inviare segnalazioni di bug e domande a <%s>.\n"
 
-#: src/commands.cc:1795 src/commands.cc:1824
+#: src/commands.cc:1788 src/commands.cc:1817
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s: serve un nome di bookmark\n"
 
-#: src/commands.cc:1813
+#: src/commands.cc:1806
 #, c-format
 msgid "%s: cannot add empty bookmark\n"
 msgstr "%s: impossibile aggiungere un bookmark vuoto\n"
 
-#: src/commands.cc:1826
+#: src/commands.cc:1819
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s: bookmark `%s' inesistente\n"
 
-#: src/commands.cc:1841
+#: src/commands.cc:1834
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: importa il tipo richiesto (netscape, ncftp)\n"
 
-#: src/commands.cc:1912
+#: src/commands.cc:1905
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "Uso: %s modulo [arg...]\n"
 
-#: src/commands.cc:1947
+#: src/commands.cc:1940
 #, c-format
 msgid "Usage: %s mode file...\n"
 msgstr "Uso: %s permessi file...\n"
 
-#: src/commands.cc:1953
+#: src/commands.cc:1946
 #, c-format
 msgid "%s: %s - not an octal number\n"
 msgstr "%s: %s - non è un numero ottale\n"
@@ -1308,20 +1313,20 @@ msgstr "Ottenuto `unknown', assumo login fallita"
 msgid "assuming failed host name lookup"
 msgstr "dò per fallita la ricerca del nome host"
 
-#: src/Http.cc:501 src/ftpclass.cc:743
+#: src/Http.cc:472 src/ftpclass.cc:750
 msgid "Closing idle connection"
 msgstr "Chiusura della connessione inattiva"
 
-#: src/Http.cc:555 src/ftpclass.cc:795
+#: src/Http.cc:526 src/ftpclass.cc:802
 msgid "max-retries exceeded"
 msgstr "superato il numero massimo di tentativi"
 
-#: src/ftpclass.cc:1350
+#: src/ftpclass.cc:1354
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "Connessione del socket dei dati a (%s) porta %u"
 
-#: src/Http.cc:132 src/ftpclass.cc:1401
+#: src/Http.cc:130 src/ftpclass.cc:1405
 msgid "Timeout - reconnecting"
 msgstr "Timeout - riconnessione in corso"
 
@@ -1357,7 +1362,7 @@ msgstr "Metto ad off (disabilito) la modalità passiva"
 msgid "Sending commands..."
 msgstr "Invio comandi..."
 
-#: src/Http.cc:1119 src/ftpclass.cc:2542 src/ftpclass.cc:2562
+#: src/Http.cc:1088 src/ftpclass.cc:2542 src/ftpclass.cc:2562
 #: src/ftpclass.cc:2569
 msgid "Waiting for response..."
 msgstr "In attesa della risposta..."
@@ -1366,11 +1371,11 @@ msgstr "In attesa della risposta..."
 msgid "Connection idle"
 msgstr "Connessione inattiva"
 
-#: src/Http.cc:1110 src/ftpclass.cc:2552
+#: src/Http.cc:1079 src/ftpclass.cc:2552
 msgid "Delaying before reconnect"
 msgstr "Aspetto un po' prima di riconnettermi"
 
-#: src/Http.cc:1114 src/ftpclass.cc:2557
+#: src/Http.cc:1083 src/ftpclass.cc:2557
 msgid "Connecting..."
 msgstr "Connessione in corso..."
 
@@ -1394,11 +1399,11 @@ msgstr "Attendo la fine del trasferimento"
 msgid "Waiting for data connection..."
 msgstr "In attesa della connessione dati..."
 
-#: src/Http.cc:1117 src/ftpclass.cc:2576
+#: src/Http.cc:1086 src/ftpclass.cc:2576
 msgid "Sending data"
 msgstr "Sto inviando i dati"
 
-#: src/Http.cc:1122 src/ftpclass.cc:2578
+#: src/Http.cc:1091 src/ftpclass.cc:2578
 msgid "Receiving data"
 msgstr "Sto ricevendo i dati"
 
@@ -1561,11 +1566,11 @@ msgstr "%s ok, rimosse %d directory$|$\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, rimossi %d file$|$\n"
 
-#: src/Http.cc:955 src/Http.cc:975
+#: src/Http.cc:926 src/Http.cc:946
 msgid "chunked format violated"
 msgstr "violato il formato del chunked"
 
-#: src/Http.cc:1120
+#: src/Http.cc:1089
 msgid "Fetching headers..."
 msgstr "Scarico gli header..."
 
@@ -1574,14 +1579,10 @@ msgstr "Scarico gli header..."
 msgid "Proxy protocol unsupported"
 msgstr "Protocollo di proxy non supportato"
 
-#: src/FtpGlob.cc:258 src/HttpDir.cc:774 src/HttpDir.cc:951
+#: src/FtpGlob.cc:258 src/HttpDir.cc:627 src/HttpDir.cc:804
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "Scarico la lista dei file (%ld) [%s]"
-
-#, fuzzy
-#~ msgid "%s: %s.\n"
-#~ msgstr "Uso: %s\n"
 
 #~ msgid "%s: %s - invalid time precision\n"
 #~ msgstr "%s: %s - precisione temporale non valida\n"

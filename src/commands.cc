@@ -435,7 +435,6 @@ Job *CmdExec::builtin_cd()
    if (!verify_path || background)
    {
       session->Chdir(dir,false);
-      exit_code=0;
       return 0;
    }
    session->Chdir(dir);
@@ -644,8 +643,6 @@ Job *CmdExec::builtin_open()
 	    }
 	 }
       }
-      if(host)
-	 session->Connect(host,port);
       if(user)
       {
 	 if(!pass)
@@ -658,6 +655,7 @@ Job *CmdExec::builtin_open()
       }
       if(host)
       {
+	 session->Connect(host,port);
 	 if(verify_host && !background)
 	 {
 	    session->ConnectVerify();
@@ -697,8 +695,6 @@ Job *CmdExec::builtin_open()
 
    if(url)
       delete url;
-
-   Reconfig(0);
 
    if(builtin==BUILTIN_OPEN)
       return this;
@@ -1401,7 +1397,7 @@ CMD(set)
 
    if(msg)
    {
-      eprintf("%s: %s.\n",val,msg);
+      eprintf(_("%s: %s.\n"),val,msg);
       xfree(val);
       return 0;
    }
@@ -1745,10 +1741,7 @@ CMD(close)
 	 return 0;
       }
    }
-   if(all)
-      session->CleanupAll();
-   else
-      session->Cleanup();
+   session->Cleanup(all);
    exit_code=0;
    return 0;
 }

@@ -41,8 +41,6 @@
 # include "module.h"
 #endif
 
-FileAccess *FileAccess::chain=0;
-
 void FileAccess::Init()
 {
    home=0;
@@ -67,7 +65,6 @@ void FileAccess::Init()
    error_code=OK;
    saved_errno=0;
    mkdir_p=false;
-   ascii=false;
 
    url=0;
 
@@ -77,9 +74,6 @@ void FileAccess::Init()
    closure=0;
 
    chmod_mode=0644;
-
-   next=chain;
-   chain=this;
 }
 
 FileAccess::FileAccess(const FileAccess *fa)
@@ -119,38 +113,17 @@ FileAccess::~FileAccess()
    xfree(portname); portname=0;
    xfree(url); url=0;
    xfree(closure); closure=0;
-   for(FileAccess **scan=&chain; *scan; scan=&((*scan)->next))
-   {
-      if(*scan==this)
-      {
-	 *scan=next;
-	 break;
-      }
-   }
 }
 
 void  FileAccess::DebugPrint(const char *prefix,const char *str,int level)
 {
    if(!Log::global)
       return;
-
-   char *msg=(char*)alloca(xstrlen(hostname)+strlen(prefix)+strlen(str)+25);
+   char *msg=(char*)alloca(strlen(prefix)+strlen(str)+6);
 
    do
    {
-      if(Log::global->IsTTY())
-	 strcpy(msg,prefix);
-      else
-      {
-	 sprintf(msg,"[%d] ",(int)getpid());
-	 if(hostname)
-	 {
-	    strcat(msg,hostname);
-	    strcat(msg," ");
-	 }
-	 strcat(msg,prefix);
-      }
-
+      strcpy(msg,prefix);
       int msglen=strlen(msg);
       while(*str && *str!='\n')
       {
@@ -328,7 +301,6 @@ void FileAccess::Close()
    array_for_info=0;
    entity_size=-1;
    entity_date=(time_t)-1;
-   ascii=false;
    ClearError();
 }
 
@@ -454,9 +426,6 @@ void FileAccess::AnonymousLogin()
    xfree(pass); pass=0;
    xfree(group); group=0;
    xfree(gpass); gpass=0;
-   xfree(cwd);
-   cwd=xstrdup(default_cwd);
-   xfree(home);  home=0;
 }
 
 void FileAccess::GetInfoArray(struct fileinfo *info,int count)
@@ -769,12 +738,6 @@ ResValue FileAccess::Query(const char *name,const char *closure)
 
 void FileAccess::Reconfig(const char *)
 {
-}
-
-void FileAccess::CleanupAll()
-{
-   for(FileAccess *o=chain; o!=0; o=o->next)
-      o->CleanupThis();
 }
 
 // FileAccess::Protocol implementation

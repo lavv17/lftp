@@ -7,10 +7,8 @@ AC_CACHE_VAL(lftp_cv_precompiled_readline,
    LIBS="-lreadline $READLINE_SUPPLIB $LIBS"
    AC_TRY_LINK([extern int (*rl_getc_function)();],
       [rl_getc_function=0;],
-      [AC_TRY_CPP([#include <readline/readline.h>],
-		[lftp_cv_precompiled_readline=yes],
-		[lftp_cv_precompiled_readline=no])
-      ],lftp_cv_precompiled_readline=no)
+      lftp_cv_precompiled_readline=yes,
+      lftp_cv_precompiled_readline=no)
    LIBS="$old_LIBS"
 ])
 if test $lftp_cv_precompiled_readline = yes; then
