@@ -64,3 +64,5 @@ implemented.
    (overlay filesystem replacement?)
 
  * support keys with passphrases (sftp and fish).
+
+ * APPE support.

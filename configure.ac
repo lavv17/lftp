@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.53)
-AC_INIT([lftp], [3.0.7], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [3.0.8], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_LIBOBJ_DIR(lib)
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
@@ -356,7 +356,7 @@ LFTP_FUNC_SSCANF_CONST
 AC_CHECK_FUNCS([strdup strstr lstat lchown select regexec glob\
  killpg setpgid tcgetattr ftruncate vsnprintf snprintf sscanf gettimeofday\
  gethostbyname2 getipnodebyname getaddrinfo getnameinfo setsid random\
- inet_aton unsetenv setlocale nl_langinfo])
+ inet_aton unsetenv setlocale nl_langinfo dn_expand])
 AC_FUNC_ALLOCA
 lftp_VA_COPY
 LFTP_ENVIRON_CHECK
