@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.13)
 AC_INIT(src/ftpclass.cc)
-AM_INIT_AUTOMAKE(lftp, A00716)
+AM_INIT_AUTOMAKE(lftp, A00719)
 AM_CONFIG_HEADER(include/config.h)
 
 dnl Default AC_C_INLINE does not know about C++
@@ -87,7 +87,7 @@ if test x$GXX = xyes; then
    LFTP_NOIMPLEMENTINLINE
 fi
 
-AC_PROG_LIBTOOL
+AM_PROG_LIBTOOL
 
 ## get the values out of libtool
 eval `grep '^wl=' libtool`
@@ -255,7 +255,7 @@ LFTP_FUNC_POLL
 LFTP_FUNC_SSCANF_CONST
 AC_CHECK_FUNCS(strdup strstr lstat select regexec glob\
  killpg setpgid tcgetattr ftruncate vsnprintf gettimeofday\
- gethostbyname2 getaddrinfo getnameinfo setsid)
+ gethostbyname2 getipnodebyname getaddrinfo getnameinfo setsid)
 IU_CHECK_DECL(vsnprintf, [#include <stdio.h>])
 
 AC_REPLACE_FUNCS(mktime memmove strcasecmp strncasecmp strtol strtoul strptime)

@@ -2,6 +2,10 @@ Version 2.3.0 - 2000-??-??
 
 * completion now appends a slash to remote directories (finally!).
 * new mirror option --parallel=[N] to download several files in parallel.
+* ask for password for ftp:proxy if not supplied.
+* now if you set ftp:proxy to http://proxy.host:port, hftp will be used
+  automatically, but pwd will still show ftp://.
+* large file (>2G) support added.
 * full http keep-alive support.
 * new settings http:put-method (PUT or POST), http:put-content-type.
 * new setting xfer:max-redirections for http redirections following.
@@ -18,10 +22,13 @@ Version 2.3.0 - 2000-??-??
 * show QUIT reply in debug output.
 * new setting ftp:use-quit.
 * new setting net:persist-retries (ignore this number of hard errors).
-* large file (>2G) support added.
 * add workarounds for hftp over apache proxy.
 * use getaddrinfo when gethostbyname2 is unavailable.
 * fixed max-retries and reconnect delay handling when uploading.
+* fixed coredump on `mirror -x' on BSD. Reported by Andriy I Pilipenko
+  <bamby@marka.net.ua>
+* fixed `open -u ... -p ... bookmark_name'.
+* invalidate dir listing cache on chmod.
 
 Version 2.2.4 - 2000-07-12
 
