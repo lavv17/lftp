@@ -242,7 +242,9 @@ put ftp://...
 mput ftp://.../*
 mget -O ftp://... ftp://.../*
 .De
-or other combinations.
+or other combinations to get FXP transfer (directly between two ftp servers).
+lftp would fallback to plain copy (via client) if FXP transfer cannot be
+initiated or ftp:use-fxp is false.
 
 .BR get " [" -E ]
 .RB [ -a "] [" -c "] [" -O
@@ -786,6 +788,13 @@ if first server message metches this regex, turn on sync mode for that host.
 bind data socket to the interface of control connection (in passive mode).
 Default is true, exception is the loopback interface.
 .TP
+.BR ftp:fix-pasv-address \ (bool)
+if true, lftp will try to correct address returned by server for PASV command
+in case when server address is in public network and PASV returns an address
+from a private network. In this case lftp would substitute server address
+instead of the one returned by PASV command, port number would not be changed.
+Default is true.
+.TP
 .BR ftp:fxp-passive-source \ (bool)
 if true, lftp will try to set up source ftp server in passive mode first,
 otherwise destination one. If first attempt fails, lftp tries to set them up
@@ -871,14 +880,14 @@ if true, lftp will try to set up direct connection between two ftp servers.
 .TP
 .BR ftp:use-site-idle \ (bool)
 when true, lftp sends `SITE IDLE' command with net:idle argument. Default
-is true.
+is false.
 .TP
 .BR ftp:use-stat \ (bool)
 if true, lftp sends STAT command in FXP mode transfer to know how much
 data has been transferred. See also ftp:stat-interval. Default is true.
 .TP
 .BR ftp:use-quit " (bool)"
-if true, lftp sends QUIT before disconnecting from ftp server.
+if true, lftp sends QUIT before disconnecting from ftp server. Default is true.
 .TP
 .BR ftp:verify-address \ (bool)
 verify that data connection comes from the network address of control

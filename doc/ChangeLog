@@ -1,3 +1,7 @@
+2001-05-28	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: some fixes; document ftp:fix-pasv-address.
+
 2001-03-22	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document http:referer, hftp:use-type, module:path.
