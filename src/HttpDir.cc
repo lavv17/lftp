@@ -600,7 +600,7 @@ static bool try_csm_proxy(file_info &info,const char *str)
    memset(additional_file_info, '\0', sizeof (additional_file_info));
 
    // try to match hour:minute
-   if (5 <= (n = sscanf(str,"%lld %3s %d %2d:%2d%32c",
+   if (5 <= (n = sscanf(str,"%lld %3s %d %2d:%2d%32s",
 	       &info.size, info.month_name, &info.day, &info.hour, &info.minute, additional_file_info))) {
       status = true;
       if (6 == n)
@@ -608,7 +608,7 @@ static bool try_csm_proxy(file_info &info,const char *str)
    } else {
        // try to match year instead of hour:minute
        info.clear();
-       if (4 <= (n = sscanf(str,"%lld %3s %d %4d%32c",
+       if (4 <= (n = sscanf(str,"%lld %3s %d %4d%32s",
 		       &info.size, info.month_name, &info.day, &info.year, additional_file_info))) {
 	   status = true;
 	   if (5 == n)
