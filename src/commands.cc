@@ -290,7 +290,11 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"site",    cmd_site,   N_("site <site_cmd>"),
 	 N_("Execute site command <site_cmd> and output the result\n"
 	 "You can redirect its output\n")},
-   {"sleep",   cmd_sleep},
+   {"sleep",   cmd_sleep, 0,
+	 N_("Usage: sleep <time>[unit]\n"
+	 "Sleep for given amount of time. The time argument can be optionally\n"
+	 "followed by unit specifier: d - days, h - hours, m - minutes, s - seconds.\n"
+	 "By default time is assumed to be seconds.\n")},
    {"source",  cmd_source, N_("source <file>"),
 	 N_("Execute commands recorded in file <file>\n")},
    {"suspend", cmd_suspend},
