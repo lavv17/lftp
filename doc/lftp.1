@@ -216,12 +216,13 @@ the debug output to a file.
 .PP
 guess what it does.
 
-.BR exit " code"
+.BR exit " ["
+.IR code ]
 .br
 .B exit bg
 .PP
-exit will exit from lftp or move to background if jobs are active.  If
-no jobs are active, \fIcode\fP is passed to operating system as lftp's
+exit will exit from lftp or move to background if there are active jobs. If
+no job is active, \fIcode\fP is passed to operating system as lftp's
 termination status. If \fIcode\fP is omitted, the exit code of last
 command is used.
 .PP
@@ -1516,7 +1517,7 @@ lav@yars.free.net
 
 .SH ACKNOWLEDGMENTS
 This manual page was originally written by Christoph Lameter
-<clameter@debian.org>, for the Debian GNU/Linux system.
-The page was improved by Nicolas Lichtmaier <nick@Feedback.com.ar>,
-James Troup <J.J.Troup@comp.brad.ac.uk> and
-Alexander V. Lukyanov <lav@yars.free.net>.
+<clameter@debian.org>, for the Debian GNU/Linux system. The page was
+improved and updated later by Nicolas Lichtmaier <nick@Feedback.com.ar>,
+James Troup <J.J.Troup@comp.brad.ac.uk> and Alexander V. Lukyanov
+<lav@yars.free.net>.
