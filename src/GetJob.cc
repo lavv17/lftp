@@ -54,7 +54,10 @@ int   GetJob::Do()
 FileCopyPeer *GetJob::NoProtoSrc(const char *src)
 {
    if(reverse)
-      return FileCopyPeerFDStream::NewGet(src);
+   {
+      const char *f=(cwd && src[0]!='/') ? dir_file(cwd,src) : src;
+      return FileCopyPeerFDStream::NewGet(f);
+   }
 
    FileCopyPeerFA *s=new FileCopyPeerFA(session,src,FA::RETRIEVE);
    s->DontReuseSession();

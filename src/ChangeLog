@@ -2,8 +2,10 @@
 
 	* CmdExec.cc, LsCache.cc, commands.cc: don't call macro alloca_strdup
 	  on complex expressions.
-	* FileCopy.cc: remove default value in function definition.
+	* FileCopy.cc: remove default value in function definition; count
+	  rate when draining `put' in CONFIRM_STORE.
 	* ResMgr.cc: include math.h for irix.
+	* GetJob.cc: apply cwd in reverse mode.
 
 2000-03-21  Alexander V. Lukyanov  <lav@yars.free.net>
 

@@ -296,9 +296,16 @@ int FileCopy::Do()
 	 state=DO_COPY;
 	 return MOVED;
       }
+
+      rate_add=put_buf;
+      put_buf=put->Buffered();
+      rate_add-=put_buf;
+      RateAdd(rate_add);
+
       if(!put->Done())
 	 return m;
       debug((10,"copy: put confirmed store\n"));
+
    pre_GET_DONE_WAIT:
       get->Empty();
       get->PutEOF();
