@@ -41,6 +41,8 @@ protected:
 
    int	 mode;
 
+   DirList *dl;
+
 public:
    int	 Do();
    int	 Done();

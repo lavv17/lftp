@@ -356,6 +356,7 @@ public:
 
    ListInfo *MakeListInfo();
    Glob *MakeGlob(const char *pattern);
+   DirList *MakeDirList(const char *arg);
 };
 
 #endif /* FTPCLASS_H */

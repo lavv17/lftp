@@ -21,6 +21,7 @@
 #include <config.h>
 #include "buffer.h"
 #include "xmalloc.h"
+#include "FileAccess.h"
 
 #define BUFFER_INC (8*1024) // should be power of 2
 
@@ -211,11 +212,19 @@ time_t FileOutputBuffer::EventTime()
 FileInputBuffer::FileInputBuffer(FDStream *i)
 {
    in=i;
+   in_FA=0;
+   event_time=now;
+}
+FileInputBuffer::FileInputBuffer(FileAccess *i)
+{
+   in=0;
+   in_FA=i;
    event_time=now;
 }
 FileInputBuffer::~FileInputBuffer()
 {
-   delete in;
+   if(in)
+      delete in;
 }
 int FileInputBuffer::Do()
 {
@@ -239,37 +248,58 @@ int FileInputBuffer::Do()
       event_time=now;
       return MOVED;
    }
-   int fd=in->getfd();
-   if(fd>=0)
-      Block(fd,POLLIN);
-   else
-      Timeout(1000);
+   if(in)
+   {
+      int fd=in->getfd();
+      if(fd>=0)
+	 Block(fd,POLLIN);
+      else
+	 Timeout(1000);
+   }
    return STALL;
 }
 int FileInputBuffer::Get_LL(int size)
 {
-   int fd=in->getfd();
-   if(fd==-1)
+   int res=0;
+
+   if(in_FA)
    {
-      if(in->error())
+      Allocate(size);
+
+      res=in_FA->Read(buffer+buffer_ptr+in_buffer,size);
+      if(res<0)
       {
-      err:
-	 error_text=xstrdup(in->error_text);
+	 if(res==FA::DO_AGAIN)
+	    return 0;
+	 error_text=xstrdup(in_FA->StrError(res));
 	 return -1;
       }
-      return 0;
    }
-
-   Allocate(size);
-
-   int res=read(fd,buffer+buffer_ptr+in_buffer,size);
-   if(res==-1)
+   else if(in)
    {
-      if(errno==EAGAIN || errno==EINTR)
+      int fd=in->getfd();
+      if(fd==-1)
+      {
+	 if(in->error())
+	 {
+	 err:
+	    error_text=xstrdup(in->error_text);
+	    return -1;
+	 }
 	 return 0;
-      saved_errno=errno;
-      in->MakeErrorText();
-      goto err;
+      }
+
+      Allocate(size);
+
+      res=read(fd,buffer+buffer_ptr+in_buffer,size);
+      if(res==-1)
+      {
+	 if(errno==EAGAIN || errno==EINTR)
+	    return 0;
+	 saved_errno=errno;
+	 in->MakeErrorText();
+	 goto err;
+      }
    }
    if(res==0)
       eof=true;
@@ -278,6 +308,8 @@ int FileInputBuffer::Get_LL(int size)
 
 FgData *FileInputBuffer::GetFgData(bool fg)
 {
+   if(!in)
+      return 0;
    if(in->getfd()!=-1)
       return new FgData(in->GetProcGroup(),fg);
    return 0;
@@ -286,7 +318,11 @@ FgData *FileInputBuffer::GetFgData(bool fg)
 bool FileInputBuffer::Done()
 {
    if(broken || Error() || eof)
+   {
+      if(in_FA)
+	 return true;
       return in->Done(); // in->Done indicates if sub-process finished
+   }
    return false;
 }
 

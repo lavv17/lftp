@@ -27,20 +27,6 @@
 #include <unistd.h>
 #endif
 
-int strip_cr(char *buffer,int size)
-{
-   for(int i=0; i<size; i++)
-   {
-      if(buffer[i]=='\r')
-      {
-	 memmove(buffer+i,buffer+i+1,size-i-1);
-	 i--;
-	 size--;
-      }
-   }
-   return size;
-}
-
 int   LsJob::Done()
 {
    return curr==0 && local==0;
@@ -84,41 +70,82 @@ int   LsJob::Do()
    }
    if(!got_eof)
    {
-      res=TryRead(session);
-      if(res<0 && res!=FA::DO_AGAIN)
+      if(dl)
       {
-//	    local->remove_if_empty();
-	 NextFile();
-	 return MOVED;
-      }
-      else if(res>=0)
-      {
-	 int diff=res-strip_cr(buffer+in_buffer-res,res);
-	 res-=diff;
-	 in_buffer-=diff;
-	 bytes_transferred-=diff;
-	 offset-=diff;
-	 m=MOVED;
-
-	 if(res>0)
+	 if(dl->Error())
 	 {
-	    cache_buffer=(char*)xrealloc(cache_buffer,cache_buffer_size+res);
-	    memcpy(cache_buffer+cache_buffer_size,buffer+in_buffer-res,res);
-	    cache_buffer_size+=res;
+	    eprintf("%s: %s\n",op,dl->ErrorText());
+	    failed++;
+	    NextFile();
+	    return MOVED;
 	 }
-	 else if(got_eof)
+	 if(in_buffer==buffer_size)
 	 {
-	    if(cache_buffer)
+	    if(buffer_size<0x10000)
 	    {
-	       LsCache::Add(session,curr,mode,
-			      cache_buffer,cache_buffer_size);
-	       xfree(cache_buffer);
-	       cache_buffer=0;
+	       if(buffer==0)
+		  buffer=(char*)xmalloc(buffer_size=0x1000);
+	       else
+		  buffer=(char*)xrealloc(buffer,buffer_size*=2);
+	    }
+	    else
+	    {
+	       dl->Suspend();
+	       goto try_write;
+	    }
+	 }
+	 const char *tmpbuf=0;
+	 dl->Get(&tmpbuf,&res);
+	 if(tmpbuf==0)
+	 {
+	    // EOF
+	    got_eof=true;
+	    return res;
+	 }
+	 if(res==0)
+	    return res;
+
+	 if((unsigned)res > buffer_size-in_buffer)
+	    res=buffer_size-in_buffer;
+	 memcpy(buffer+in_buffer,tmpbuf,res);
+	 in_buffer+=res;
+	 offset+=res;
+	 dl->Skip(res);
+
+	 CountBytes(res);
+      }
+      else // !dl
+      {
+	 res=TryRead(session);
+	 if(res<0 && res!=FA::DO_AGAIN)
+	 {
+	    NextFile();
+	    return MOVED;
+	 }
+	 else if(res>=0)
+	 {
+	    m=MOVED;
+
+	    if(res>0)
+	    {
+	       cache_buffer=(char*)xrealloc(cache_buffer,cache_buffer_size+res);
+	       memcpy(cache_buffer+cache_buffer_size,buffer+in_buffer-res,res);
+	       cache_buffer_size+=res;
+	    }
+	    else if(got_eof)
+	    {
+	       if(cache_buffer)
+	       {
+		  LsCache::Add(session,curr,mode,
+				 cache_buffer,cache_buffer_size);
+		  xfree(cache_buffer);
+		  cache_buffer=0;
+	       }
 	    }
 	 }
       }
    }
-
+try_write:
    res=TryWrite(local);
    if(res<0)
    {
@@ -148,14 +175,20 @@ LsJob::LsJob(FileAccess *s,FDStream *l,char *a,int mode) : XferJob(s)
    cache_buffer=0;
    cache_buffer_size=0;
 
-   if(LsCache::Find(session,arg,mode,
-		     &cache_buffer,&cache_buffer_size))
+   dl=0;
+   if(mode==FA::LONG_LIST)
+      dl=session->MakeDirList(arg);
+   if(!dl)
    {
-      from_cache=true;
-   }
-   else
-   {
-      session->Open(arg,mode);
+      if(LsCache::Find(session,arg,mode,
+			&cache_buffer,&cache_buffer_size))
+      {
+	 from_cache=true;
+      }
+      else
+      {
+	 session->Open(arg,mode);
+      }
    }
 }
 LsJob::~LsJob()
@@ -168,15 +201,24 @@ LsJob::~LsJob()
    }
    xfree(cache_buffer);
    cache_buffer=0;
+   if(dl)
+      delete dl;
 }
 
 void LsJob::NextFile()
 {
    XferJob::NextFile(0);
+   if(dl)
+   {
+      delete dl;
+      dl=0;
+   }
 }
 
 void LsJob::NoCache()
 {
+   if(dl)
+      dl->UseCache(false);
    if(from_cache)
    {
       session->Open(arg,FA::LONG_LIST);

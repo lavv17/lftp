@@ -36,6 +36,7 @@
 #include "url.h"
 #include "FtpListInfo.h"
 #include "FtpGlob.h"
+#include "FtpDirList.h"
 #include "log.h"
 
 enum {FTP_TYPE_A,FTP_TYPE_I};
@@ -889,6 +890,10 @@ int   Ftp::Do()
 	    xfree(last_error_resp);
 	    last_error_resp=xstrdup(resolver->ErrorMsg());
 	    SwitchToState(LOOKUP_ERROR_STATE);
+	    xfree(hostname);
+	    hostname=0;
+	    xfree(portname);
+	    portname=0;
 	    return(MOVED);
 	 }
 
@@ -3014,6 +3019,10 @@ ListInfo *Ftp::MakeListInfo()
 Glob *Ftp::MakeGlob(const char *pattern)
 {
    return new FtpGlob(this,pattern);
+}
+DirList *Ftp::MakeDirList(const char *pattern)
+{
+   return new FtpDirList(pattern,this);
 }
 
 

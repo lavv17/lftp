@@ -444,6 +444,10 @@ int Http::Do()
 	 if(resolver->Error())
 	 {
 	    SetError(LOOKUP_ERROR,resolver->ErrorMsg());
+	    xfree(hostname);
+	    hostname=0;
+	    xfree(portname);
+	    portname=0;
 	    return(MOVED);
 	 }
 

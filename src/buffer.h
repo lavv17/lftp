@@ -89,9 +89,12 @@ public:
    time_t EventTime();
 };
 
+class FileAccess;
+
 class FileInputBuffer : public Buffer
 {
    FDStream *in;
+   FileAccess *in_FA;
 
    int Get_LL(int size);
 
@@ -99,6 +102,7 @@ class FileInputBuffer : public Buffer
 
 public:
    FileInputBuffer(FDStream *i);
+   FileInputBuffer(FileAccess *i);
    ~FileInputBuffer();
    int Do();
    bool Done();
