@@ -1062,7 +1062,7 @@ bool CmdExec::needs_quotation(const char *buf)
    {
       if(isspace(*buf))
 	 return true;
-      if(*buf=='"' || *buf=='\\' || *buf=='&' || *buf=='|' || *buf=='>' || *buf==';')
+      if(strchr("\"'\\&|>;",*buf))
 	 return true;
       buf++;
    }
