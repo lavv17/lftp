@@ -71,7 +71,7 @@ void CatJob::NextFile()
    FileCopy *copier=FileCopy::New(src_peer,dst_peer,false);
    copier->DontCopyDate();
 
-   if(ascii || (auto_ascii && !output->IsFiltered() && output->IsStdout()))
+   if(ascii || (auto_ascii && output->IsTTY()))
    {
       if(output->IsStdout())
 	 copier->LineBuffered();
@@ -124,4 +124,3 @@ void CatJob::ShowRunStatus(StatusLine *s)
       cp->ShowRunStatus(s);
    }
 }
-   

@@ -1,3 +1,7 @@
+2004-09-22  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CatJob.cc: use ascii mode only for tty output by default.
+
 2004-09-16  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc: fix endless loop in FileCopyPeerFDStream.
