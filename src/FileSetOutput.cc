@@ -299,7 +299,8 @@ int FileCopyPeerCLS::Do()
       FileSet *res = list_info->GetResult();
       Delete(list_info);
       list_info=0;
-      fso.print(*res, this);
+      if(res)
+	 fso.print(*res, this);
       fso.pat = 0;
       delete res;
       pos = oldpos;
@@ -363,4 +364,3 @@ void FileCopyPeerCLS::Resume()
    if(session)
       session->Resume();
 }
-
