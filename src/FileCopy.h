@@ -83,7 +83,7 @@ public:
    virtual void WantDate() { want_date=true; date=NO_DATE_YET; }
    virtual void WantSize() { want_size=true; size=NO_SIZE_YET; }
    time_t GetDate() { return date; }
-   off_t  GetSize() { return size; }
+   off_t  GetSize() { if(size>=0 && pos>size) WantSize(); return size; }
 
    void SetDate(time_t d);
    void SetSize(off_t s);
