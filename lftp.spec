@@ -1,5 +1,5 @@
 %define name lftp
-%define version 2.2.2
+%define version pre2.3.0-A00911
 
 Summary: The lftp command line ftp/http client
 Name: %{name}
@@ -9,7 +9,7 @@ Copyright: GPL
 Url: http://ftp.yars.free.net/projects/lftp/
 BuildRoot: /var/tmp/%{name}-%{version}-root
 Source: ftp.yars.free.net:/pub/software/unix/net/ftp/client/lftp/%{name}-%{version}.tar.gz
-Group: Applications/Networking
+Group: Applications/Internet
 
 
 %description
