@@ -90,7 +90,7 @@ void LsCache::Add(FileAccess *p_loc,const char *a,int m,const char *d,int l)
    }
    else
    {
-      free(scan->data);
+      xfree(scan->data);
    }
    scan->data=(char*)xmemdup(d,l);
    scan->data_len=l;
