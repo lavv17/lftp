@@ -28,6 +28,10 @@
 
 #include "NetAccess.h"
 
+#ifdef USE_SSL
+# include <openssl/ssl.h>
+#endif
+
 class Ftp : public NetAccess
 {
    static Ftp *ftp_chain;
@@ -38,6 +42,7 @@ class Ftp : public NetAccess
       EOF_STATE,	   // control connection is open, idle state
       INITIAL_STATE,	   // all connections are closed
       CONNECTING_STATE,	   // we are connecting the control socket
+      CONNECTED_STATE,	   // just after connect
       WAITING_STATE,	   // we're waiting for a response with data
       ACCEPTING_STATE,	   // we're waiting for an incoming data connection
       DATA_OPEN_STATE,	   // data connection is open, for read or write
@@ -91,7 +96,11 @@ class Ftp : public NetAccess
       CHECK_USER_PROXY,	// check response for USER sent to proxy
       CHECK_PASS,	// check response for PASS
       CHECK_PASS_PROXY,	// check response for PASS sent to proxy
-      CHECK_TRANSFER	// generic check for transfer
+      CHECK_TRANSFER,	// generic check for transfer
+#ifdef USE_SSL
+      CHECK_AUTH_TLS,
+      CHECK_PROT_P
+#endif
    };
 
    struct expected_response;
@@ -146,6 +155,18 @@ class Ftp : public NetAccess
    int   data_sock;
    int	 aborted_data_sock;
    bool	 quit_sent;
+
+#ifdef USE_SSL
+   SSL	 *control_ssl;
+   bool	 control_ssl_connected;
+   SSL	 *data_ssl;
+   bool	 data_ssl_connected;
+   char	 prot;	  // current data protection scheme 'C'lear or 'P'rivate
+protected:
+   bool	 ftps;	  // ssl and prot='P' by default (port 990)
+private:
+   bool	 auth_tls_sent;
+#endif
 
    /* type of transfer: TYPE_A or TYPE_I */
    int   type;
@@ -366,6 +387,19 @@ public:
 	    return copy_addr_valid && RespQueueSize()==1;
 	 return state==WAITING_STATE && RespQueueSize()==0;
       }
+};
+
+class FtpS : public Ftp
+{
+public:
+   FtpS();
+   FtpS(const FtpS *);
+   ~FtpS();
+
+   const char *GetProto() { return "ftps"; }
+
+   FileAccess *Clone() { return new FtpS(this); }
+   static FileAccess *New();
 };
 
 #endif /* FTPCLASS_H */

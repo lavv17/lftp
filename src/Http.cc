@@ -1240,7 +1240,6 @@ system_error:
 }
 
 FileAccess *Http::New() { return new Http(); }
-FileAccess *Https::New(){ return new Https();}
 FileAccess *HFtp::New() { return new HFtp(); }
 
 void  Http::ClassInit()
@@ -1806,6 +1805,7 @@ Https::Https(const Https *o) : super(o)
    res_prefix="http";
    Reconfig(0);
 }
+FileAccess *Https::New(){ return new Https();}
 #endif
 
 #undef super

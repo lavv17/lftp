@@ -67,7 +67,14 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 
 #include "xalloca.h"
 
-#define FTPPORT "ftp"
+#include "lftp_ssl.h"
+#ifndef USE_SSL
+# define control_ssl 0
+#endif
+
+
+#define FTP_DEFAULT_PORT "ftp"
+#define FTPS_DEFAULT_PORT "990"
 #define FTP_DATA_PORT 20
 
 #define super NetAccess
@@ -112,6 +119,10 @@ void  Ftp::ClassInit()
    // register the class
    Register("ftp",Ftp::New);
    FileCopy::fxp_create=FileCopyFtp::New;
+
+#ifdef USE_SSL
+   Register("ftps",FtpS::New);
+#endif
 
    test_TIOCOUTQ();
 }
@@ -428,7 +439,7 @@ void Ftp::NoPassReqCheck(int act) // for USER command
       FreeResult();
       if(force_skey && skey_pass==0)
       {
-	 SetError(LOGIN_FAILED,"ftp:force-skey is set and server does not support OPIE nor S/KEY");
+	 SetError(LOGIN_FAILED,"ftp:skey-force is set and server does not support OPIE nor S/KEY");
 	 return;
       }
    }
@@ -759,6 +770,16 @@ void Ftp::InitFtp()
    aborted_data_sock=-1;
    quit_sent=false;
 
+#ifdef USE_SSL
+   control_ssl=0;
+   control_ssl_connected=false;
+   data_ssl=0;
+   data_ssl_connected=false;
+   prot='C';	  // current protection scheme 'C'lear or 'P'rivate
+   ftps=false;	  // ssl and prot='P' by default (port 990)
+   auth_tls_sent=false;
+#endif
+
    nop_time=0;
    nop_count=0;
    nop_offset=0;
@@ -1009,7 +1030,7 @@ int   Ftp::Do()
       if(!ReconnectAllowed())
 	 return m;
 
-      if(Resolve(FTPPORT,"ftp","tcp")==MOVED)
+      if(Resolve(ftps?FTPS_DEFAULT_PORT:FTP_DEFAULT_PORT,"ftp","tcp")==MOVED)
 	 m=MOVED;
       if(!peer)
 	 return m;
@@ -1079,7 +1100,6 @@ int   Ftp::Do()
    }
 
    case(CONNECTING_STATE):
-   {
       assert(control_sock!=-1);
       res=Poll(control_sock,POLLOUT);
       if(res==-1)
@@ -1090,9 +1110,52 @@ int   Ftp::Do()
       if(!(res&POLLOUT))
 	 goto usual_return;
 
-      sync_wait=1; // we need to wait for RESP_READY
+#ifdef USE_SSL
+      if(proxy?!strncmp(proxy,"ftps://",7):ftps)
+      {
+	 control_ssl=lftp_ssl_new(control_sock);
+	 control_ssl_connected=false;
+	 prot='P';
+      }
+#endif
 
+      state=CONNECTED_STATE;
+      m=MOVED;
+      sync_wait=1; // we need to wait for RESP_READY
       AddResp(RESP_READY,CHECK_READY);
+
+#ifdef USE_SSL
+      // ssl for anonymous does not make sense.
+      if(!ftps && (bool)Query("ssl-allow") && user && pass)
+      {
+	 SendCmd("AUTH TLS");
+	 AddResp(234,CHECK_AUTH_TLS);
+	 auth_tls_sent=true;
+	 prot='C';
+      }
+#endif
+      /* fallthrough */
+   case CONNECTED_STATE:
+   {
+      m|=FlushSendQueue();
+      m|=ReceiveResp();
+      if(state!=CONNECTED_STATE)
+	 return MOVED;
+
+#ifdef USE_SSL
+      if(auth_tls_sent && !RespQueueIsEmpty())
+	 goto usual_return;
+      if(control_ssl)
+      {
+	 SendCmd("PBSZ 0");
+	 AddResp(0,CHECK_IGNORE);
+	 if((bool)Query("ssl-protect-data",hostname))
+	 {
+	    SendCmd("PROT P");
+	    AddResp(200,CHECK_PROT_P);
+	 }
+      }
+#endif // USE_SSL
 
       char *user_to_use=(user?user:anon_user);
       if(proxy)
@@ -1666,6 +1729,14 @@ int   Ftp::Do()
       state=DATA_OPEN_STATE;
       m=MOVED;
 
+#ifdef USE_SSL
+      if(prot=='P')
+      {
+	 data_ssl=lftp_ssl_new(data_sock);
+	 data_ssl_connected=false;
+      }
+#endif
+
    case(DATA_OPEN_STATE):
    {
       if(RespQueueIsEmpty() && data_sock!=-1)
@@ -1753,7 +1824,7 @@ int   Ftp::Do()
 	 goto notimeout_return;
 
       if(copy_mode==COPY_DEST && !copy_done && copy_connection_open
-      && RespQueueSize()==1 && use_stat)
+      && RespQueueSize()==1 && use_stat && !control_ssl)
       {
 	 if(stat_time+stat_interval<=now)
 	 {
@@ -1785,6 +1856,16 @@ usual_return:
 notimeout_return:
    if(m==MOVED)
       return MOVED;
+#ifdef USE_SSL
+   if(data_ssl)
+   {
+      if(SSL_want_read(data_ssl))
+	 Block(data_sock,POLLIN);
+      if(SSL_want_write(data_ssl))
+	 Block(data_sock,POLLOUT);
+   }
+   else /* note the following `if' */
+#endif
    if(data_sock!=-1)
    {
       if(state==ACCEPTING_STATE)
@@ -1814,6 +1895,16 @@ notimeout_return:
 	 abort();
       }
    }
+#ifdef USE_SSL
+   if(control_ssl)
+   {
+      if(SSL_want_read(control_ssl))
+	 Block(control_sock,POLLIN);
+      if(SSL_want_write(control_ssl))
+	 Block(control_sock,POLLOUT);
+   }
+   else /* note the following `if' */
+#endif
    if(control_sock!=-1)
    {
       if(state==CONNECTING_STATE)
@@ -1995,18 +2086,55 @@ int  Ftp::ReceiveResp()
 	       return MOVED;
 	    }
 
-	    res=read(control_sock,resp+resp_size,resp_alloc-resp_size-1);
-	    if(res==-1)
+#ifdef USE_SSL
+	    if(control_ssl)
 	    {
-	       if(errno==EAGAIN || errno==EINTR)
-		  return m;
-	       if(NotSerious(errno))
-		  DebugPrint("**** ",strerror(errno),0);
-	       else
-		  SetError(SEE_ERRNO,"read(control_socket)");
-	       quit_sent=true;
-	       Disconnect();
-	       return MOVED;
+	       if(!control_ssl_connected)
+	       {
+		  res=SSL_connect(control_ssl);
+		  if(res<=0)
+		  {
+		     if(BIO_sock_should_retry(res))
+			return m;
+		     else if (SSL_want_x509_lookup(control_ssl))
+			return m;
+		     else // error
+		     {
+			SetError(FATAL,lftp_ssl_strerror("SSL connect"));
+			return MOVED;
+		     }
+		  }
+	       }
+	       res=SSL_read(control_ssl,resp+resp_size,resp_alloc-resp_size-1);
+	       if(res<0)
+	       {
+		  if(BIO_sock_should_retry(res))
+		     return m;
+		  if(NotSerious(errno))
+		     DebugPrint("**** ",strerror(errno),0);
+		  else
+		     SetError(SEE_ERRNO,"SSL_read(control_ssl)");
+		  quit_sent=true;
+		  Disconnect();
+		  return MOVED;
+	       }
+	    }
+	    else  // note the following block
+#endif // USE_SSL
+	    {
+	       res=read(control_sock,resp+resp_size,resp_alloc-resp_size-1);
+	       if(res==-1)
+	       {
+		  if(errno==EAGAIN || errno==EINTR)
+		     return m;
+		  if(NotSerious(errno))
+		     DebugPrint("**** ",strerror(errno),0);
+		  else
+		     SetError(SEE_ERRNO,"read(control_socket)");
+		  quit_sent=true;
+		  Disconnect();
+		  return MOVED;
+	       }
 	    }
 	    if(res==0)
 	    {
@@ -2050,6 +2178,7 @@ int  Ftp::ReceiveResp()
 
 void Ftp::SendUrgentCmd(const char *cmd)
 {
+   assert(!control_ssl);   // no way to send urgent data over ssl
    FlushSendQueue(/*all=*/true);
    static const char pre_cmd[]={TELNET_IAC,TELNET_IP,TELNET_IAC,TELNET_SYNCH};
    /* send only first byte as OOB due to OOB braindamage in many unices */
@@ -2088,7 +2217,7 @@ void  Ftp::DataAbort()
 
    CloseRespQueue();
 
-   if(!(bool)Query("use-abor",hostname))
+   if(!(bool)Query("use-abor",hostname) || control_ssl)
    {
       if(copy_mode==COPY_NONE)
 	 DataClose();	// just close data connection
@@ -2121,6 +2250,16 @@ void  Ftp::DataAbort()
 
 void Ftp::ControlClose()
 {
+#ifdef USE_SSL
+   if(control_ssl)
+   {
+      SSL_free(control_ssl);
+      control_ssl=0;
+      control_ssl_connected=false;
+      prot='C';	  // current protection scheme 'C'lear or 'P'rivate
+      auth_tls_sent=false;
+   }
+#endif
    if(control_sock!=-1)
    {
       DebugPrint("---- ",_("Closing control socket"),7);
@@ -2194,6 +2333,14 @@ void  Ftp::EmptySendQueue()
 
 void  Ftp::DataClose()
 {
+#ifdef USE_SSL
+   if(data_ssl)
+   {
+      SSL_free(data_ssl);
+      data_ssl=0;
+      data_ssl_connected=false;
+   }
+#endif
    if(data_sock>=0)
    {
       DebugPrint("---- ",_("Closing data socket"),7);
@@ -2230,8 +2377,8 @@ int  Ftp::FlushSendQueue(bool all)
       Disconnect();
       return MOVED;
    }
-   if(!(pfd.revents&POLLOUT))
-      return m;
+//    if(!(pfd.revents&POLLOUT))
+//       return m;
 
    char *cmd_begin=send_cmd_ptr;
 
@@ -2244,20 +2391,57 @@ int  Ftp::FlushSendQueue(bool all)
 	 return m;
       to_write=line_end+1-send_cmd_ptr;
 
-      res=write(control_sock,send_cmd_ptr,to_write);
-      if(res==0)
-	 return m;
-      if(res==-1)
+#ifdef USE_SSL
+      if(control_ssl)
       {
-	 if(errno==EAGAIN || errno==EINTR)
+	 if(!control_ssl_connected)
+	 {
+	    res=SSL_connect(control_ssl);
+	    if(res<=0)
+	    {
+	       if(BIO_sock_should_retry(res))
+		  return m;
+	       else if (SSL_want_x509_lookup(control_ssl))
+		  return m;
+	       else // error
+	       {
+		  SetError(FATAL,lftp_ssl_strerror("SSL connect"));
+		  return MOVED;
+	       }
+	    }
+	 }
+	 res=SSL_write(control_ssl,send_cmd_ptr,to_write);
+	 if(res<=0)
+	 {
+	    if(BIO_sock_should_retry(res))
+	       return m;
+	    if(NotSerious(errno))
+	       DebugPrint("**** ",strerror(errno),0);
+	    else
+	       SetError(SEE_ERRNO,"SSL_write(control_ssl)");
+	    quit_sent=true;
+	    Disconnect();
+	    return MOVED;
+	 }
+      }
+      else  // note the following block
+#endif // USE_SSL
+      {
+	 res=write(control_sock,send_cmd_ptr,to_write);
+	 if(res==0)
 	    return m;
-	 if(NotSerious(errno) || errno==EPIPE)
-	    DebugPrint("**** ",strerror(errno),0);
-	 else
-	    SetError(SEE_ERRNO,"write(control_socket)");
-	 quit_sent=true;
-	 Disconnect();
-	 return MOVED;
+	 if(res==-1)
+	 {
+	    if(errno==EAGAIN || errno==EINTR)
+	       return m;
+	    if(NotSerious(errno) || errno==EPIPE)
+	       DebugPrint("**** ",strerror(errno),0);
+	    else
+	       SetError(SEE_ERRNO,"write(control_socket)");
+	    quit_sent=true;
+	    Disconnect();
+	    return MOVED;
+	 }
       }
       send_cmd_count-=res;
       send_cmd_ptr+=res;
@@ -2397,6 +2581,7 @@ void  Ftp::Close()
       switch(state)
       {
       case(CONNECTING_STATE):
+      case(CONNECTED_STATE):
       case(USER_RESP_WAITING_STATE):
 	 Disconnect();
 	 break;
@@ -2443,6 +2628,10 @@ void Ftp::CloseRespQueue()
       case(CHECK_READY):
       case(CHECK_ABOR):
       case(CHECK_CWD_STALE):
+#ifdef USE_SSL
+      case(CHECK_AUTH_TLS):
+      case(CHECK_PROT_P):
+#endif
 	 break;
       case(CHECK_CWD_CURR):
       case(CHECK_CWD):
@@ -2570,22 +2759,59 @@ read_again:
    }
    if(norest_manual && real_pos==0 && pos>0)
       return DO_AGAIN;
-   res=read(data_sock,buf,size);
-   if(res==-1)
+#ifdef USE_SSL
+   if(data_ssl)
    {
-      if(errno==EAGAIN || errno==EINTR)
-	 return DO_AGAIN;
-      if(NotSerious(errno))
+      if(!data_ssl_connected)
       {
-	 DebugPrint("**** ",strerror(errno),0);
+	 res=SSL_connect(data_ssl);
+	 if(res<=0)
+	 {
+	    if(BIO_sock_should_retry(res))
+	       return DO_AGAIN;
+	    else if (SSL_want_x509_lookup(data_ssl))
+	       return DO_AGAIN;
+	    else // error
+	    {
+	       SetError(FATAL,lftp_ssl_strerror("SSL connect"));
+	       return error_code;
+	    }
+	 }
+      }
+      res=SSL_read(data_ssl,(char*)buf,size);
+      if(res<=0)
+      {
+	 if(BIO_sock_should_retry(res))
+	    return DO_AGAIN;
+	 if(NotSerious(errno))
+	    DebugPrint("**** ",strerror(errno),0);
+	 else
+	    SetError(SEE_ERRNO,"SSL_read(data_ssl)");
 	 quit_sent=true;
 	 Disconnect();
-	 return DO_AGAIN;
+	 return(error_code);
       }
-      SetError(SEE_ERRNO,"read(data_socket)");
-      quit_sent=true;
-      Disconnect();
-      return(error_code);
+   }
+   else  // note the following block
+#endif // USE_SSL
+   {
+      res=read(data_sock,buf,size);
+      if(res==-1)
+      {
+	 if(errno==EAGAIN || errno==EINTR)
+	    return DO_AGAIN;
+	 if(NotSerious(errno))
+	 {
+	    DebugPrint("**** ",strerror(errno),0);
+	    quit_sent=true;
+	    Disconnect();
+	    return DO_AGAIN;
+	 }
+	 SetError(SEE_ERRNO,"read(data_socket)");
+	 quit_sent=true;
+	 Disconnect();
+	 return(error_code);
+      }
    }
    if(res==0)
    {
@@ -2623,7 +2849,7 @@ read_again:
    Well, not less reliable than in any usual ftp client.
 
    The reason for this is uncheckable receiving of data on the remote end.
-   Since that, we have to leave re-putting up to user program
+   Since that, we have to leave re-putting up to caller
 */
 int   Ftp::Write(const void *buf,int size)
 {
@@ -2660,22 +2886,59 @@ int   Ftp::Write(const void *buf,int size)
    }
    if(size==0)
       return 0;
-   res=write(data_sock,buf,size);
-   if(res==-1)
+#ifdef USE_SSL
+   if(data_ssl)
    {
-      if(errno==EAGAIN || errno==EINTR)
-	 return DO_AGAIN;
-      if(NotSerious(errno) || errno==EPIPE)
+      if(!data_ssl_connected)
       {
-	 DebugPrint("**** ",strerror(errno),0);
+	 res=SSL_connect(data_ssl);
+	 if(res<=0)
+	 {
+	    if(BIO_sock_should_retry(res))
+	       return DO_AGAIN;
+	    else if (SSL_want_x509_lookup(data_ssl))
+	       return DO_AGAIN;
+	    else // error
+	    {
+	       SetError(FATAL,lftp_ssl_strerror("SSL connect"));
+	       return error_code;
+	    }
+	 }
+      }
+      res=SSL_write(data_ssl,(char*)buf,size);
+      if(res<=0)
+      {
+	 if(BIO_sock_should_retry(res))
+	    return DO_AGAIN;
+	 if(NotSerious(errno))
+	    DebugPrint("**** ",strerror(errno),0);
+	 else
+	    SetError(SEE_ERRNO,"SSL_write(data_ssl)");
 	 quit_sent=true;
 	 Disconnect();
-	 return DO_AGAIN;
+	 return(error_code);
       }
-      SetError(SEE_ERRNO,"write(data_socket)");
-      quit_sent=true;
-      Disconnect();
-      return(error_code);
+   }
+   else  // note the following block
+#endif // USE_SSL
+   {
+      res=write(data_sock,buf,size);
+      if(res==-1)
+      {
+	 if(errno==EAGAIN || errno==EINTR)
+	    return DO_AGAIN;
+	 if(NotSerious(errno) || errno==EPIPE)
+	 {
+	    DebugPrint("**** ",strerror(errno),0);
+	    quit_sent=true;
+	    Disconnect();
+	    return DO_AGAIN;
+	 }
+	 SetError(SEE_ERRNO,"write(data_socket)");
+	 quit_sent=true;
+	 Disconnect();
+	 return(error_code);
+      }
    }
    retries=0;
    persist_retries=0;
@@ -3024,6 +3287,25 @@ void Ftp::CheckResp(int act)
       TransferCheck(act);
       break;
 
+#ifdef USE_SSL
+   case CHECK_AUTH_TLS:
+      if(is2XX(act))
+      {
+	 control_ssl=lftp_ssl_new(control_sock);
+	 control_ssl_connected=false;
+      }
+      else
+      {
+	 if((bool)Query("ssl-force"))
+	    SetError(LOGIN_FAILED,"ftp:ssl-force is set and server does not support or allow SSL");
+      }
+      break;
+   case CHECK_PROT_P:
+      if(is2XX(act))
+	 prot='P';
+      break;
+#endif // USE_SSL
+
    } /* end switch */
 
    PopResp();
@@ -3071,6 +3353,12 @@ const char *Ftp::CurrentStatus()
       return(_("Not connected"));
    case(CONNECTING_STATE):
       return(_("Connecting..."));
+   case(CONNECTED_STATE):
+#ifdef USE_SSL
+      if(auth_tls_sent)
+	 return _("TLS negotiation...");
+#endif
+      return _("Connected");
    case(USER_RESP_WAITING_STATE):
       return(_("Logging in..."));
    case(DATASOCKET_CONNECTING_STATE):
@@ -3302,7 +3590,7 @@ void Ftp::Reconfig(const char *name)
       SetProxy(Query("proxy",c));
 
    if(proxy && proxy_port==0)
-      proxy_port=xstrdup(FTPPORT);
+      proxy_port=xstrdup(FTP_DEFAULT_PORT);
 
    if(nop_interval<30)
       nop_interval=30;
@@ -3442,7 +3730,28 @@ int Ftp::Buffered()
 #endif
 }
 
-#ifdef MODULE
+#ifdef USE_SSL
+#undef super
+#define super Ftp
+FtpS::FtpS()
+{
+   ftps=true;
+   res_prefix="ftp";
+}
+FtpS::~FtpS()
+{
+}
+FtpS::FtpS(const FtpS *o) : super(o)
+{
+   ftps=true;
+   res_prefix="ftp";
+   Reconfig(0);
+}
+FileAccess *FtpS::New(){ return new FtpS();}
+#endif
+
+#include "modconfig.h"
+#ifdef MODULE_PROTO_FTP
 CDECL void module_init()
 {
    Ftp::ClassInit();

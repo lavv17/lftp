@@ -69,7 +69,8 @@ static const char *HttpProxyValidate(char **p)
    }
    if(url.proto)
    {
-      if(strcmp(url.proto,"http"))
+      if(strcmp(url.proto,"http")
+      && strcmp(url.proto,"https"))
 	 return _("Proxy protocol unsupported");
    }
    return 0;
@@ -115,6 +116,9 @@ static ResDecl
    ResDecl09 ("ftp:rest-stor",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl10 ("ftp:skey-allow",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl11 ("ftp:skey-force",		  "no",    ResMgr::BoolValidate,0),
+   ResDecl11a("ftp:ssl-allow",		  "yes",   ResMgr::BoolValidate,0),
+   ResDecl11b("ftp:ssl-force",		  "no",	   ResMgr::BoolValidate,0),
+   ResDecl11c("ftp:ssl-protect-data",	  "no",	   ResMgr::BoolValidate,0),
    ResDecl12 ("ftp:stat-interval",	  "1",	   ResMgr::UNumberValidate,0),
    ResDecl13 ("ftp:sync-mode",		  "on",    ResMgr::BoolValidate,0),
    ResDecl14 ("ftp:use-abor",		  "yes",   ResMgr::BoolValidate,0),
