@@ -664,9 +664,12 @@ int   MirrorJob::Do()
 	    goto remote_chmod_next;
 	 ArgV *a=new ArgV("chmod");
 	 a->Append(fi->name);
-	 waiting=new ChmodJob(Clone(),fi->mode,a);
+	 ChmodJob *cj=new ChmodJob(Clone(),fi->mode,a);
+	 waiting=cj;
 	 waiting->parent=this;
 	 waiting->cmdline=a->Combine();
+	 cj->BeQuiet();   // chmod is not supported on all servers; be quiet.
+
 	 m=MOVED;
       }
       return m;

@@ -57,6 +57,7 @@ class MirrorJob : public SessionJob
       WAITING_FOR_RM_BEFORE_PUT,
       WAITING_FOR_MKDIR_BEFORE_SUBMIRROR,
       REMOTE_REMOVE_OLD,
+      REMOTE_CHMOD,
       DONE
    };
    state_t state;

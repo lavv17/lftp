@@ -2545,8 +2545,7 @@ int   Ftp::CheckResp(int act)
 
    if(act==421)  // timeout or something else
    {
-      if(strstr(line,"Timeout"))
-	 DebugPrint("**** ",_("remote timeout"));
+      DebugPrint("**** ",_("remote end closes connection"));
       return(INITIAL_STATE);
    }
 
