@@ -22,6 +22,7 @@
 #include "trio.h"
 #include "xstring.h"
 #include <ctype.h>
+#include <assert.h>
 #include "url.h"
 #include "ascii_ctype.h"
 #include "ConnectionSlot.h"
@@ -265,15 +266,34 @@ decode:
    else if(!xstrcmp(proto,"bm"))
    {
       const char *bm=lftp_bookmarks.Lookup(host);
-      if(!bm)
+      if(!bm || !bm[0])
 	 return;
-      ParsedURL bu(url_file(bm,path+(path && path[0]=='/')));
+      const char *new_url=0;
+      if(orig_url)
+      {
+	 const char *new_path=orig_url+url::path_index(orig_url);
+	 if(new_path[0]=='/')
+	    new_path++;
+	 char *u=alloca_strdup2(bm,strlen(new_path)+1);
+	 if(new_path[0]=='/' || new_path[0]=='~')
+	    u[url::path_index(u)]=0;
+	 assert(u[0]);
+	 if(u[strlen(u)-1]!='/' && new_path[0]!='/')
+	    strcat(u,"/");
+	 else if(u[strlen(u)-1]=='/' && new_path[0]=='/')
+	    new_path++;
+	 strcat(u,new_path);
+	 new_url=u;
+      }
+      else
+	 new_url=url_file(bm,path+(path && path[0]=='/'));
+      ParsedURL bu(new_url);
       // move the data
       xfree(memory);
-      char *old_orig_url=orig_url;
+      xfree(orig_url);
       memcpy(this,&bu,sizeof(bu));
       bu.memory=0; // so that dtor won't free it
-      orig_url=old_orig_url;
+      bu.orig_url=0;
    }
 }
 
