@@ -1,5 +1,6 @@
 Version 2.3.0 - 2000-??-??
 
+* https and ftps protocols support (openssl library is needed).
 * completion now appends a slash to remote directories (finally!).
 * new mirror option --parallel=[N] to download several files in parallel.
 * ask for password for ftp:proxy if not supplied.
@@ -7,7 +8,8 @@ Version 2.3.0 - 2000-??-??
   automatically, but pwd will still show ftp://.
 * large file (>2G) support added.
 * full http keep-alive support.
-* new settings http:put-method (PUT or POST), http:put-content-type.
+* new settings http:put-method (PUT or POST), http:put-content-type,
+  http:post-content-type.
 * new setting xfer:max-redirections for http redirections following.
 * automatic cookie accepting (off by default). New setting http:set-cookies.
 * two http specific quote commands: `quote set-cookie' and `quote post'.
