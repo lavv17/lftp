@@ -110,13 +110,13 @@ int FtpListInfo::Do()
       delete glob;
       glob=0;
 
+   pre_GETTING_INFO:
       if(rxc_exclude || rxc_include)
 	 result->Exclude(path,rxc_exclude,rxc_include);
 
       state=GETTING_INFO;
       m=MOVED;
 
-   pre_GETTING_INFO:
       get_info_cnt=result->get_fnum();
       if(get_info_cnt==0)
 	 goto info_done;
@@ -133,6 +133,9 @@ int FtpListInfo::Do()
 
 	 if(file->defined & file->TYPE)
 	 {
+	    if(file->filetype==file->SYMLINK && follow_symlinks)
+	       file->filetype=file->NORMAL;
+
 	    if(file->filetype==file->SYMLINK)
 	    {
 	       // don't need these for symlinks
