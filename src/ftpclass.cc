@@ -2142,6 +2142,23 @@ int   Ftp::StateToError()
    }
 }
 
+/* Converts struct tm to time_t, assuming the data in tm is UTC rather
+   than local timezone (mktime assumes the latter).
+
+   Contributed by Roger Beeman <beeman@cisco.com>, with the help of
+   Mark Baushke <mdb@cisco.com> and the rest of the Gurus at CISCO.  */
+static time_t
+mktime_from_utc (struct tm *t)
+{
+  time_t tl, tb;
+
+  tl = mktime (t);
+  if (tl == -1)
+    return -1;
+  tb = mktime (gmtime (&tl));
+  return (tl <= tb ? (tl + (tl - tb)) : (tl - (tb - tl)));
+}
+
 time_t	 Ftp::ConvertFtpDate(const char *s)
 {
    struct tm tm;
@@ -2156,18 +2173,7 @@ time_t	 Ftp::ConvertFtpDate(const char *s)
    tm.tm_year-=1900;
    tm.tm_mon--;
 
-   time_t t;
-
-#ifdef HAVE_TM_ZONE
-   t=mktime(&tm);
-   tm.tm_sec+=tm.tm_gmtoff;
-#elif defined HAVE_TZNAME
-   tm.tm_sec-=timezone;
-#endif
-
-   t=mktime(&tm);
-
-   return t;
+   return mktime_from_utc(&tm);
 }
 
 void  Ftp::SetFlag(int flag,bool val)
