@@ -20,10 +20,10 @@
 
 #include <config.h>
 
-#include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include "trio.h"
 #include "CharReader.h"
 
 int CharReader::Do()

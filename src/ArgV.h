@@ -23,7 +23,7 @@
 #ifndef ARGV_H
 #define ARGV_H
 
-#include <stdio.h>
+#include "trio.h"
 #include "StringSet.h"
 
 class ArgV : public StringSet

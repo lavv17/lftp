@@ -1576,89 +1576,74 @@ int   Ftp::Do()
 	 SetSocketBuffer(conn->data_sock);
 	 SetSocketMaxseg(conn->data_sock);
 
-	 if(flags&PASSIVE_MODE)
+	 addr_len=sizeof(conn->data_sa);
+	 getsockname(conn->control_sock,&conn->data_sa.sa,&addr_len);
+
+	 // Try to assign a port from given range
+	 Range range(Query("port-range"));
+	 for(int t=0; ; t++)
 	 {
-	    if(QueryBool("bind-data-socket")
-	    && !IsLoopback(&conn->peer_sa))
+	    if(t>=10)
 	    {
-	       // connect should come from the same address, else server can refuse.
-	       addr_len=sizeof(conn->data_sa);
-	       getsockname(conn->control_sock,&conn->data_sa.sa,&addr_len);
-	       if(conn->data_sa.sa.sa_family==AF_INET)
-		  conn->data_sa.in.sin_port=0;
-      #if INET6
-	       else if(conn->data_sa.sa.sa_family==AF_INET6)
-		  conn->data_sa.in6.sin6_port=0;
-      #endif
-	       if(bind(conn->data_sock,&conn->data_sa.sa,addr_len)<0)
-	       {
-		  sprintf(str,"bind(data_sock): %s",strerror(errno));
-		  DebugPrint("**** ",str,10);
-	       }
+	       close(conn->data_sock);
+	       conn->data_sock=-1;
+	       TimeoutS(10);	 // retry later.
+	       return m;
 	    }
-	 }
-	 else // !PASSIVE_MODE
-	 {
-	    addr_len=sizeof(conn->data_sa);
-	    if(copy_mode!=COPY_NONE)
-	       conn->data_sa=copy_addr;
+	    if(t==9)
+	       ReuseAddress(conn->data_sock);   // try to reuse address.
+
+	    int port=0;
+	    if(!range.IsFull())
+	       port=range.Random();
+
+	    bool do_addr_bind=QueryBool("bind-data-socket")
+			   && !IsLoopback(&conn->peer_sa);
+
+	    if(conn->data_sa.sa.sa_family==AF_INET)
+	    {
+	       conn->data_sa.in.sin_port=htons(port);
+	       if(!do_addr_bind)
+		  memset(&conn->data_sa.in.sin_addr,0,sizeof(conn->data_sa.in.sin_addr));
+	    }
+#if INET6
+	    else if(conn->data_sa.sa.sa_family==AF_INET6)
+	    {
+	       conn->data_sa.in6.sin6_port=htons(port);
+	       if(!do_addr_bind)
+		  memset(&conn->data_sa.in6.sin6_addr,0,sizeof(conn->data_sa.in6.sin6_addr));
+	    }
+#endif
 	    else
 	    {
-	       getsockname(conn->control_sock,&conn->data_sa.sa,&addr_len);
+	       Fatal("unsupported network protocol");
+	       return MOVED;
+	    }
 
-	       Range range(Query("port-range"));
+	    if(bind(conn->data_sock,&conn->data_sa.sa,addr_len)==0)
+	       break;
 
-	       for(int t=0; ; t++)
+	    // Fail unless socket was already taken
+	    if(errno!=EINVAL && errno!=EADDRINUSE)
+	    {
+	       Log::global->Format(0,"**** bind(data_sock): %s\n",strerror(errno));
+	       close(conn->data_sock);
+	       conn->data_sock=-1;
+	       if(NonFatalError(errno))
 	       {
-		  if(t>=10)
-		  {
-		     close(conn->data_sock);
-		     conn->data_sock=-1;
-		     TimeoutS(10);	 // retry later.
-		     return m;
-		  }
-		  if(t==9)
-		     ReuseAddress(conn->data_sock);   // try to reuse address.
-
-		  int port=0;
-		  if(!range.IsFull())
-		     port=range.Random();
-
-		  if(conn->data_sa.sa.sa_family==AF_INET)
-		     conn->data_sa.in.sin_port=htons(port);
-#if INET6
-		  else if(conn->data_sa.sa.sa_family==AF_INET6)
-		     conn->data_sa.in6.sin6_port=htons(port);
-#endif
-		  else
-		  {
-		     Fatal("unsupported network protocol");
-		     return MOVED;
-		  }
-
-		  if(bind(conn->data_sock,&conn->data_sa.sa,addr_len)==0)
-		     break;
-
-		  // Fail unless socket was already taken
-		  if(errno!=EINVAL && errno!=EADDRINUSE)
-		  {
-		     Log::global->Format(0,"**** bind(data_sock): %s\n",strerror(errno));
-		     close(conn->data_sock);
-		     conn->data_sock=-1;
-		     if(NonFatalError(errno))
-		     {
-			TimeoutS(1);
-			return m;
-		     }
-		     SetError(SEE_ERRNO,"Cannot bind data socket for ftp:port-range");
-		     return MOVED;
-		  }
+		  TimeoutS(1);
+		  return m;
 	       }
-	       // get the allocated port
-	       getsockname(conn->data_sock,&conn->data_sa.sa,&addr_len);
-	       listen(conn->data_sock,1);
+	       SetError(SEE_ERRNO,"Cannot bind data socket for ftp:port-range");
+	       return MOVED;
 	    }
 	 }
+
+	 // get the allocated port
+	 getsockname(conn->data_sock,&conn->data_sa.sa,&addr_len);
+
+	 if(!(flags&PASSIVE_MODE))
+	    listen(conn->data_sock,1);
       }
 
       char want_type=(ascii?'A':'I');
@@ -3322,7 +3307,7 @@ int   Ftp::Write(const void *buf,int size)
    iobuf->Put((const char*)buf,size);
 
    if(retries+persist_retries>0
-   && iobuf->GetPos()-iobuf->Size()>Buffered()+0x1000)
+   && iobuf->GetPos()-iobuf->Size()>Buffered()+0x10000)
    {
       // reset retry count if some data were actually written to server.
       retries=0;

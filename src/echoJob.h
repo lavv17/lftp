@@ -24,7 +24,6 @@
 #include "Job.h"
 #include "StatusLine.h"
 #include "OutputJob.h"
-#include <stdio.h>
 
 class echoJob : public Job
 {

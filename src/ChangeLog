@@ -1,3 +1,9 @@
+2004-06-10  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ArgV.h, CharReader.cc, echoJob.h: use trio.h
+	* ftpclass.cc: apply ftp:port-range to passive connection too; increase
+	  minimum amount of data to upload before retry counter is reset.
+
 2004-06-07  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* complete.cc: complete `bm:' urls.
