@@ -143,6 +143,10 @@ public:
       {
 	 return atoi(s);
       }
+   operator long()
+      {
+	 return atol(s);
+      }
    operator double()
       {
 	 return atof(s);
