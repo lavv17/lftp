@@ -359,6 +359,7 @@ RateLimit::~RateLimit()
 }
 
 #define LARGE 0x10000000
+#define DEFAULT_MAX_COEFF 2
 void RateLimit::BytesPool::AdjustTime()
 {
    if(SMTask::now>t)
@@ -367,12 +368,14 @@ void RateLimit::BytesPool::AdjustTime()
 
       // prevent overflow
       if((LARGE-pool)/dif < rate)
-	 pool = pool_max>0 ? pool_max : LARGE;
+	 pool = pool_max>0 ? pool_max : rate*DEFAULT_MAX_COEFF;
       else
 	 pool += dif*rate;
 
       if(pool>pool_max && pool_max>0)
 	 pool=pool_max;
+      if(pool_max==0 && pool>rate*DEFAULT_MAX_COEFF)
+	 pool=rate*DEFAULT_MAX_COEFF;
 
       t=SMTask::now;
    }
