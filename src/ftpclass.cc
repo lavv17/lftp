@@ -88,7 +88,6 @@ const bool Ftp::ftps=false;
 #define FTPS_DATA_PORT 989
 
 #define super NetAccess
-#define peer_sa (peer[peer_curr])
 
 #define is5XX(code) ((code)>=500 && (code)<600)
 #define is4XX(code) ((code)>=400 && (code)<500)
@@ -1036,17 +1035,6 @@ void  Ftp::GetBetterConnection(int level,int count)
 	 takeover_time=now;
       }
 
-      // connected session (o) must have resolved address
-      if(!peer)
-      {
-	 // copy resolved address so that it would be possible to create
-	 // data connection.
-	 xfree(peer);
-	 peer=(sockaddr_u*)xmemdup(o->peer,o->peer_num*sizeof(*o->peer));
-	 peer_num=o->peer_num;
-	 peer_curr=o->peer_curr;
-      }
-
       if(level==0 && xstrcmp(real_cwd,o->real_cwd))
 	 continue;
 
@@ -1141,11 +1129,13 @@ int   Ftp::Do()
       if(!NextTry())
 	 return MOVED;
 
+      peer_sa=peer[peer_curr];
       control_sock=socket(peer_sa.sa.sa_family,SOCK_STREAM,IPPROTO_TCP);
       if(control_sock==-1)
       {
 	 if(peer_curr+1<peer_num)
 	 {
+	    try_time=0;
 	    peer_curr++;
 	    retries--;
 	    return MOVED;
@@ -1209,6 +1199,9 @@ int   Ftp::Do()
       }
       if(!(res&POLLOUT))
 	 goto usual_return;
+
+      addr_len=sizeof(peer_sa);
+      getsockname(control_sock,&peer_sa.sa,&addr_len);
 
 #ifdef USE_SSL
       if(proxy?!strncmp(proxy,"ftps://",7):ftps)
@@ -1352,9 +1345,6 @@ int   Ftp::Do()
 	 goto notimeout_return;
       }
       takeover_time=NO_DATE;
-
-      assert(peer!=0);
-      assert(peer_curr<peer_num);
 
       if(home==0 && !RespQueueIsEmpty())
 	 goto usual_return;
@@ -3201,6 +3191,7 @@ void  Ftp::MoveConnectionHere(Ftp *o)
    assert(aborted_data_sock==-1);
    aborted_data_sock=o->aborted_data_sock;
    o->aborted_data_sock=-1;
+   peer_sa=o->peer_sa;
    if(peer_curr>=peer_num)
       peer_curr=0;
    type=o->type;
