@@ -2163,7 +2163,7 @@ Ftp::expected_response *Ftp::FindLastCWD()
 bool  Ftp::IOReady()
 {
    return (state==DATA_OPEN_STATE || state==WAITING_STATE)
-      && real_pos!=-1;
+      && real_pos!=-1 && IsOpen();
 }
 
 int   Ftp::Read(void *buf,int size)
