@@ -71,6 +71,11 @@ public:
 
    virtual void	  PrintStatus(int,const char *prefix="\t") {};
    virtual void	  ShowRunStatus(StatusLine *);
+   void ClearStatus()
+      {
+	 const char *empty="";
+	 eprintf(empty);
+      }
    virtual void	  SayFinal() {}; // final phrase of fg job
    virtual int	  Done()=0;
    virtual int	  ExitCode() { return 0; }

@@ -46,11 +46,7 @@ int CopyJob::Do()
    if(!c->WriteAllowed() && c->WritePending())
    {
       if(no_status_on_write || clear_status_on_write)
-      {
-	 // clear status.
-	 const char *empty="";
-	 eprintf(empty);
-      }
+	 ClearStatus();
       if(no_status_on_write)
 	 NoStatus(); // disable status.
 

@@ -79,13 +79,49 @@ void OutputJob::InitCopy()
    if(initialized)
       return;
 
+   if(fa)
+   {
+      /* Set up a pipe sending data at the peer, so we can act like the FDStream
+       * constructor. */
+      int filter_pipe[2];
+
+      if(pipe(filter_pipe) == -1) {
+	 // retry later
+	 current->TimeoutS(1);
+	 return;
+      }
+
+      FileCopyPeerFA *dst_peer = FileCopyPeerFA::New(fa, fa_path, FA::STORE, true);
+      fa=0;
+
+      /* Status only for remote outputs. */
+      if(!strcmp(dst_peer->GetProto(), "file"))
+	 no_status=true;
+
+      fcntl(filter_pipe[0],F_SETFL,O_NONBLOCK);
+      fcntl(filter_pipe[1],F_SETFL,O_NONBLOCK);
+
+      /* The output of the pipe (0) goes to the output FileCopy. */
+      FDStream *pipe_output = new FDStream(filter_pipe[0],"<filter-out>");
+
+      FileCopy *output_fc=FileCopy::New(new FileCopyPeerFDStream(pipe_output, FileCopyPeer::GET), dst_peer,false);
+      output=new CopyJob(output_fc, fa_path, a0);
+      output_fd=new FDStream(filter_pipe[1],"<filter-in>");
+
+      pipe_output->CloseFD();
+      output_fd->CloseFD();
+
+      xfree(fa_path);
+      fa_path=0;
+   }
+
    initialized=true;
 
    if(Error())
       return;
 
    /* Clear the statusline, since we might change the pgrp if we create filters. */
-   printf("%s", ""); /* (and avoid gcc warning) */
+   ClearStatus();
 
    /* Some legitimate uses produce broken pipe condition (cat|head).
     * We still want to produce broken pipe if we're not piping, eg
@@ -160,7 +196,6 @@ void OutputJob::Init(const char *_a0)
    output_fd=0;
    fa=0;
    fa_path=0;
-   fa_reuse=false;
    tmp_buf=0;
    is_a_tty=false;
    width=-1;
@@ -207,49 +242,19 @@ OutputJob::OutputJob(FDStream *output_, const char *a0)
    }
 }
 
-OutputJob::OutputJob(const char *path, const char *a0, FileAccess *fa)
+OutputJob::OutputJob(const char *path, const char *a0, FileAccess *fa0)
 {
    Init(a0);
 
-   /* Set up a pipe sending data at the peer, so we can act like the FDStream
-    * constructor. */
-   int filter_pipe[2];
-
-   if(pipe(filter_pipe) == -1) {
-      /* FIXME: This can be retryable. */
-      eprintf("%s: %s\n", a0, strerror(errno));
-      error=true;
-      return;
-   }
-
-   bool reuse = false;
-   if(!fa)
+   if(fa0)
+      fa=fa0->Clone();
+   else
    {
-      fa = FileAccess::New("file");
+      fa=FileAccess::New("file");
       if(!fa)
-	 fa = new DummyNoProto("file");
-      reuse = true;
+	 fa=new DummyNoProto("file");
    }
-
-   FileCopyPeerFA *dst_peer = FileCopyPeerFA::New(fa, path, FA::STORE, reuse);
-
-   /* Status only for remote outputs. */
-   if(!strcmp(dst_peer->GetProto(), "file"))
-      no_status=true;
-
-   fcntl(filter_pipe[0],F_SETFL,O_NONBLOCK);
-   fcntl(filter_pipe[1],F_SETFL,O_NONBLOCK);
-
-   /* The output of the pipe (0) goes to the output FileCopy. */
-   FDStream *pipe_output = new FDStream(filter_pipe[0],"<filter-out>");
-
-   FileCopy *output_fc=FileCopy::New(new FileCopyPeerFDStream(pipe_output, FileCopyPeer::GET), dst_peer,false);
-   output=new CopyJob(output_fc, path, a0);
-
-   output_fd=new FDStream(filter_pipe[1],"<filter-in>");
-
-   pipe_output->CloseFD();
-   output_fd->CloseFD();
+   fa_path=xstrdup(path);
 }
 
 OutputJob::~OutputJob()
@@ -261,8 +266,7 @@ OutputJob::~OutputJob()
    if(input != output)
       Delete(output);
    delete output_fd;
-   if(fa && fa_reuse)
-      SessionPool::Reuse(fa);
+   SessionPool::Reuse(fa);
    xfree(fa_path);
    Delete(tmp_buf);
 
