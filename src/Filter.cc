@@ -301,7 +301,8 @@ FileStream::~FileStream()
 {
    if(full_name!=name)
       free(full_name);
-   close(fd);
+   if(fd!=-1)
+      close(fd);
    fd=-1;
 }
 void FileStream::remove_if_empty()
@@ -318,7 +319,7 @@ int   FileStream::getfd()
 {
    if(fd!=-1 || error())
       return fd;
-   fd=open(full_name,mode|O_NONBLOCK,0644);
+   fd=open(full_name,mode|O_NONBLOCK,0664);
    if(fd==-1)
    {
       MakeErrorText();

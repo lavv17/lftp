@@ -1,3 +1,14 @@
+1999-12-13  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* LocalAccess.h: remove error_code (it is defined in super class) -
+	  this fixes error handling in file: urls.
+	* LocalAccess.cc: set size and date to -1 in case of error;
+	  fill opt_size and opt_date.
+	* FileAccess.h: IOReady checks IsOpen.
+	* ftpclass.cc: IOReady checks IsOpen.
+	* buffer.cc, buffer.h: add pos member; de-virtualize Skip.
+	* Filter.cc: don't close -1; correct default file permissions.
+
 1999-12-11  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: check use-abor before sending ABOR.
