@@ -240,12 +240,12 @@ bool Http::ModeSupported()
    switch((open_mode)mode)
    {
    case CLOSED:
-   case CONNECT_VERIFY:
    case QUOTE_CMD:
    case RENAME:
    case LIST:
    case CHANGE_MODE:
       return false;
+   case CONNECT_VERIFY:
    case RETRIEVE:
    case STORE:
    case MAKE_DIR:
@@ -537,13 +537,10 @@ int Http::Do()
 	 return m;
       }
 
-      if(peer==0 || relookup_always)
-      {
-	 if(Resolve(HTTP_DEFAULT_PORT,"http","tcp")==MOVED)
-	    m=MOVED;
-	 if(!peer)
-	    return m;
-      }
+      if(Resolve(HTTP_DEFAULT_PORT,"http","tcp")==MOVED)
+	 m=MOVED;
+      if(!peer)
+	 return m;
 
       if(mode==CONNECT_VERIFY)
 	 return m;
@@ -1027,6 +1024,8 @@ int Http::Done()
       return error_code;
    if(state==DONE)
       return OK;
+   if(mode==CONNECT_VERIFY && peer)
+      return OK;
    return IN_PROGRESS;
 }
 
@@ -1166,10 +1165,7 @@ void Http::Connect(const char *new_host,const char *new_port)
 {
    super::Connect(new_host,new_port);
    Reconfig();
-   DontSleep();
    state=DISCONNECTED;
-   ClearPeer();
-   try_time=0;
 }
 
 DirList *Http::MakeDirList(ArgV *args)
