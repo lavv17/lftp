@@ -1,3 +1,7 @@
+2001-07-06	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update.
+
 2001-06-22  gettextize  <bug-gnu-utils@gnu.org>
 
 	* Makefile.in.in: Upgrade to gettext-0.10.38.
