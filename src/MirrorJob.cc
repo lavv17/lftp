@@ -34,6 +34,7 @@
 #include "PutJob.h"
 #include "misc.h"
 #include "xalloca.h"
+#include "plural.h"
 
 void  MirrorJob::PrintStatus(int v)
 {
@@ -47,25 +48,23 @@ void  MirrorJob::PrintStatus(int v)
    if(!Done())
       return;
 
-   // FIXME: i18n
-   printf("%sTotal: %d director%s, %d file%s, %d symlink%s\n",tab,
-      dirs,dirs==1?"y":"ies",
-      tot_files,tot_files==1?"":"s",
-      tot_symlinks,tot_symlinks==1?"":"s");
+   printf(plural(N_("%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"),
+		     dirs,tot_files,tot_symlinks),
+      tab,dirs,tot_files,tot_symlinks);
    if(new_files || new_symlinks)
-      printf("%sNew: %d file%s, %d symlink%s\n",tab,
-	 new_files,new_files==1?"":"s",
-	 new_symlinks,new_symlinks==1?"":"s");
+      printf(plural(N_("%sNew: %d file$|s$, %d symlink$|s$\n"),
+		     new_files,new_symlinks),
+	 tab,new_files,new_symlinks);
    if(mod_files || mod_symlinks)
-      printf("%sModified: %d file%s, %d symlink%s\n",tab,
-	 mod_files,mod_files==1?"":"s",
-	 mod_symlinks,mod_symlinks==1?"":"s");
+      printf(plural(N_("%sModified: %d file$|s$, %d symlink$|s$\n"),
+		     mod_files,mod_symlinks),
+	 tab,mod_files,mod_symlinks);
    if(del_dirs || del_files || del_symlinks)
-      printf("%s%semoved: %d director%s, %d file%s, %d symlink%s\n",tab,
-	 flags&DELETE?"R":"To be r",
-	 del_dirs,del_dirs==1?"y":"ies",
-	 del_files,del_files==1?"":"s",
-	 del_symlinks,del_symlinks==1?"":"s");
+      printf(plural(flags&DELETE ?
+	       N_("%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n")
+	      :N_("%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"),
+	      del_dirs,del_files,del_symlinks),
+	 tab,del_dirs,del_files,del_symlinks);
 }
 
 void  MirrorJob::ShowRunStatus(StatusLine *s)
@@ -541,13 +540,14 @@ int   MirrorJob::Do()
 		  state=REMOTE_REMOVE_OLD;
 		  return MOVED;
 	       }
-/*
-	       for(file=to_rm->curr(); file; file=to_rm->next())
+	       else if(flags&REPORT_NOT_DELETED)
 	       {
-		  Report(_("Not removing old remote file `%s'"),
-			   dir_file(remote_relative_dir,file->name));
+		  for(file=to_rm->curr(); file; file=to_rm->next())
+		  {
+		     Report(_("Old remote file `%s' is not removed"),
+			      dir_file(remote_relative_dir,file->name));
+		  }
 	       }
-*/
 	       state=DONE;
 	       return MOVED;
 	    }
@@ -570,16 +570,14 @@ int   MirrorJob::Do()
 		  to_rm->next();
 	       }
 	    }
-/*
-	    else
+	    else if(flags&REPORT_NOT_DELETED)
 	    {
 	       for(file=to_rm->curr(); file; file=to_rm->next())
 	       {
-		  Report(_("Not removing old local file `%s'"),
+		  Report(_("Old local file `%s' is not removed"),
 			   dir_file(local_relative_dir,file->name));
 	       }
 	    }
-*/
 	    if(!(flags&NO_PERMS))
 	       to_transfer->LocalChmod(local_dir,flags&ALLOW_SUID?0:S_ISUID|S_ISGID);
 	    to_transfer->LocalUtime(local_dir);
@@ -630,6 +628,8 @@ MirrorJob::MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_rem
    flags=0;
 
    rx_include=rx_exclude=0;
+   memset(&rxc_include,0,sizeof(regex_t));   // for safety
+   memset(&rxc_exclude,0,sizeof(regex_t));   // for safety
 
    prec=0;  // time must be exactly same by default
 
@@ -671,42 +671,31 @@ MirrorJob::~MirrorJob()
    }
 }
 
-int MirrorJob::SetInclude(const char *s)
+const char *MirrorJob::SetRX(const char *s,char **rx,regex_t *rxc)
 {
-   if(rx_include)
+   if(*rx)
    {
-      free(rx_include);
-      rx_include=0;
-      regfree(&rxc_include);
+      *rx=(char*)xrealloc(*rx,strlen(*rx)+1+strlen(s)+1);
+      strcat(*rx,"|");
+      strcat(*rx,s);
+      regfree(rxc);
+      memset(rxc,0,sizeof(*rxc));   // for safety
    }
-   int res=regcomp(&rxc_include,s,REG_NOSUB|REG_EXTENDED);
+   else
+   {
+      *rx=xstrdup(s);
+   }
+   int res=regcomp(rxc,*rx,REG_NOSUB|REG_EXTENDED);
    if(res!=0)
    {
-      char err[1024];
-      regerror(res,&rxc_include,err,sizeof(err));
-      eprintf("mirror: --include - %s\n",err);
-      return -1;
+      xfree(*rx);
+      *rx=0;
+
+      static char err[256];
+      regerror(res,rxc,err,sizeof(err));
+
+      return err;
    }
-   rx_include=xstrdup(s);
-   return 0;
-}
-int MirrorJob::SetExclude(const char *s)
-{
-   if(rx_exclude)
-   {
-      free(rx_exclude);
-      rx_exclude=0;
-      regfree(&rxc_exclude);
-   }
-   int res=regcomp(&rxc_exclude,s,REG_NOSUB|REG_EXTENDED);
-   if(res!=0)
-   {
-      char err[1024];
-      regerror(res,&rxc_exclude,err,sizeof(err));
-      eprintf("mirror: --exclude - %s\n",err);
-      return -1;
-   }
-   rx_exclude=xstrdup(s);
    return 0;
 }
 
