@@ -1,6 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_PREREQ(2.52)
-AC_INIT(src/ftpclass.cc)
+AC_PREREQ(2.53)
+AC_INIT
+AC_CONFIG_SRCDIR([src/ftpclass.cc])
 AM_INIT_AUTOMAKE(lftp, pre2.6.0)
 AM_CONFIG_HEADER(include/config.h)
 
@@ -122,9 +123,6 @@ AC_ARG_WITH(locale-dir,
   LOCALE_DIR=$withval)
 test -z "$LOCALE_DIR" && LOCALE_DIR='$(datadir)/locale'
 AC_SUBST(LOCALE_DIR)
-
-# workaround for incompatibility between gettext-0.10.38 and autoconf-2.50.
-AC_OUTPUT_COMMANDS([test "$ac_given_srcdir" || ac_given_srcdir=$srcdir])
 
 ALL_LINGUAS="de es fr it ja ko pl pt_BR ru zh_CN zh_TW"
 AM_GNU_GETTEXT([external])
@@ -357,23 +355,19 @@ AC_LIBOBJ(getopt1)
 
 if test x$lftp_cv_func_poll_works = xno; then
    AC_LIBOBJ(poll)
-   LINK_SRC="$LINK_SRC lib/poll.h"
-   LINK_DST="$LINK_DST include/poll.h"
+   AC_CONFIG_LINKS([include/poll.h:lib/poll.h])
 fi
 if test x$ac_cv_func_regexec = xno -o x$ac_cv_header_regex_h = xno; then
    AC_LIBOBJ(regex)
-   LINK_SRC="$LINK_SRC lib/regex.h"
-   LINK_DST="$LINK_DST include/regex.h"
+   AC_CONFIG_LINKS([include/regex.h:lib/regex.h])
 fi
 if test x$ac_cv_func_glob = xno; then
    AC_LIBOBJ(glob)
-   LINK_SRC="$LINK_SRC lib/glob.h"
-   LINK_DST="$LINK_DST include/glob.h"
+   AC_CONFIG_LINKS([include/glob.h:lib/glob.h])
 fi
 if test x$ac_cv_func_fnmatch_works = xno; then
    AC_LIBOBJ(fnmatch)
-   LINK_SRC="$LINK_SRC lib/fnmatch.h"
-   LINK_DST="$LINK_DST include/fnmatch.h"
+   AC_CONFIG_LINKS([include/fnmatch.h:lib/fnmatch.h])
    AC_DEFINE_UNQUOTED(fnmatch, rpl_fnmatch, [Define to rpl_fnmatch if system fnmatch does not work])
 fi
 
@@ -381,6 +375,5 @@ if test "$prefix" = /usr -a "$sysconfdir" = '${prefix}/etc'; then
    sysconfdir=/etc
 fi
 
-AC_LINK_FILES($LINK_SRC,$LINK_DST)
-
-AC_OUTPUT(Makefile src/Makefile lib/Makefile include/Makefile doc/Makefile readline-4.2/Makefile po/Makefile.in m4/Makefile)
+AC_CONFIG_FILES([Makefile src/Makefile lib/Makefile include/Makefile doc/Makefile readline-4.2/Makefile po/Makefile.in m4/Makefile])
+AC_OUTPUT
