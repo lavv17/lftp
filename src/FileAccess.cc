@@ -366,7 +366,7 @@ const char *FileAccess::GetFileURL(const char *f,int flags)
    if(hostname)
       len+=strlen(hostname)*3;
    if(portname)
-      len+=1+strlen(portname);
+      len+=1+strlen(portname)*3;
    f=dir_file(cwd?cwd:"~",f);
    len+=1+strlen(f)*3;
    url=(char*)xrealloc(url,len);
@@ -384,7 +384,10 @@ const char *FileAccess::GetFileURL(const char *f,int flags)
    if(hostname)
       url::encode_string(hostname,url+strlen(url),"/:"URL_UNSAFE);
    if(portname)
+   {
+      strcat(url,":");
       url::encode_string(portname,url+strlen(url),"/"URL_UNSAFE);
+   }
    if(strcmp(f,"~") && !(flags&NO_PATH))
    {
       if(f[0]!='/') // e.g. ~/path

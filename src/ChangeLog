@@ -1,3 +1,7 @@
+1999-07-04  Darren Stuart Embry <dsembr01@ox.slug.louisville.edu>
+
+	* FileAccess.cc: (GetFileURL) prepend colon before port name.
+
 1999-06-29  Artur Frysiak <wiget@t17.ds.pwr.wroc.pl>
 
 	* Http.cc: send User-Agnet header.
