@@ -663,6 +663,16 @@ bool FileCopyPeer::Done()
    return false;
 }
 
+void FileCopyPeer::Seek(off_t offs)
+{
+   seek_pos=offs;
+   if(mode==PUT)
+      pos-=in_buffer;
+   Empty();
+   eof=false;
+   broken=false;
+}
+
 FileCopyPeer::FileCopyPeer(dir_t m) : IOBuffer(m)
 {
    want_size=false;
@@ -868,6 +878,7 @@ void FileCopyPeerFA::Seek(off_t new_pos)
 
 void FileCopyPeerFA::OpenSession()
 {
+   assert(in_buffer==0);
    current->Timeout(0);	// mark it MOVED.
    if(mode==GET)
    {
@@ -936,7 +947,7 @@ void FileCopyPeerFA::OpenSession()
    }
    else
    {
-      pos=seek_pos+in_buffer;
+      pos=seek_pos;
    }
 }
 

@@ -1,6 +1,7 @@
 2004-10-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Fish.cc: prepend ./ to file names starting with - or ~
+	* FileCopy.cc, FileCopy.h: fixed upload corruption bug.
 
 2004-10-14  Alexander V. Lukyanov <lav@yars.free.net>
 

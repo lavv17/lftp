@@ -78,7 +78,7 @@ public:
    bool CanSeek0() { return can_seek0; }
    bool CanSeek(off_t p) { return p==0 ? CanSeek0() : CanSeek(); }
    off_t GetSeekPos() { return seek_pos; }
-   virtual void Seek(off_t offs) { seek_pos=offs; Empty(); eof=false; broken=false; }
+   virtual void Seek(off_t offs);
    virtual off_t GetRealPos() { return pos; }
    virtual int Buffered() { return in_buffer; }
    virtual bool IOReady() { return true; }
