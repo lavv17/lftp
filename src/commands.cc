@@ -890,8 +890,8 @@ CMD(open)
 	 if(!pass)
 	    pass=GetPass(_("Password: "));
 	 if(!pass)
-	    eprintf(_("%s: GetPass() failed: %s -- assume anonymous login\n"),
-	       args->getarg(0),strerror(errno));
+	    eprintf(_("%s: GetPass() failed -- assume anonymous login\n"),
+	       args->getarg(0));
 	 else
 	    session->Login(user,pass);
       }
