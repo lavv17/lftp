@@ -827,20 +827,16 @@ CmdExec::~CmdExec()
 
    free_used_aliases();
    xfree(cmd);
-   if(args)
-      delete args;
-   if(output)
-      delete output;
+   delete args;
+   delete output;
    xfree(cmd_buf);
    xfree(cwd);
    if(cwd_owner==this)
       cwd_owner=0;
    xfree(old_cwd);
    xfree(old_lcwd);
-   if(glob)
-      delete glob;
-   if(args_glob)
-      delete args_glob;
+   delete glob;
+   delete args_glob;
 
    Reuse(saved_session);
 
