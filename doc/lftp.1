@@ -349,6 +349,7 @@ Mirror specified remote directory to local directory.
 -c, --continue		continue a mirror job if possible
 -e, --delete		delete files not present at remote site
 -s, --allow-suid		set suid/sgid bits according to remote site
+    --allow-chown		try to set owner and group on files
 -n, --only-newer		download only newer files (-c won't work)
 -r, --no-recursion		don't go to subdirectories
 -p, --no-perms		don't set file permissions
@@ -362,6 +363,7 @@ Mirror specified remote directory to local directory.
 -v, --verbose[=level]	verbose operation
     --use-cache		use cached directory listings
 --Remove-source-files	remove files after transfer (use with caution)
+-a			same as --allow-chown --allow-suid --no-umask
 .De
 .PP
 When using -R, the first directory is local and the second is remote.
@@ -1023,12 +1025,9 @@ the string lftp sends in User-Agent header of HTTP request.
 .BR https:proxy " (string)"
 specifies https proxy. Default value is taken from environment variable \fBhttps_proxy\fP.
 .TP
-.BR mirror:order-download " (list of patterns)"
-specifies order of download.
-.TP
-.BR mirror:order-upload " (list of patterns)"
-specifies order of upload. E.g. setting this to `*.sfv *.sum' makes mirror to
-upload files matching *.sfv first, them ones matching *.sum and them all other
+.BR mirror:order" (list of patterns)"
+specifies order of file transfers. E.g. setting this to "*.sfv *.sum" makes mirror to
+transfer files matching *.sfv first, then ones matching *.sum and then all other
 files.
 .TP
 .BR module:path \ (string)
