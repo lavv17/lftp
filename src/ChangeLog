@@ -1,3 +1,11 @@
+2001-12-26  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ArgV.h: new ctor.
+	* CatJob.cc, CatJob.h: use ArgV to launch filters; always launch
+	  global command if there is for_each filter.
+	* Filter.cc, Filter.h: DeleteSecondaryStream new method; improve
+	  OutputFilter::{usesfd,Done,Kill}.
+
 2001-12-26  Glenn Maynard <g_ld@zewt.org>
 
 	* ftpclass.cc: correct message.

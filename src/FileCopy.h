@@ -320,7 +320,7 @@ public:
    void Seek(off_t new_pos);
    FgData *GetFgData(bool fg);
    pid_t GetProcGroup() { return stream->GetProcGroup(); }
-   void Kill(int sig) { stream->Kill(sig); }
+   void Kill(int sig);
 
    void DontDeleteStream() { delete_stream=false; }
    void DontCreateFgData() { create_fg_data=false; }

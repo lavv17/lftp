@@ -1532,6 +1532,11 @@ const char *FileCopyPeerFDStream::GetStatus()
 {
    return stream->status;
 }
+void FileCopyPeerFDStream::Kill(int sig)
+{
+   stream->Kill(sig);
+}
+
 
 FileCopyPeerFDStream *FileCopyPeerFDStream::NewPut(const char *file,bool cont)
 {

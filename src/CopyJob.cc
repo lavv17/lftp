@@ -174,7 +174,7 @@ int CopyJobEnv::Do()
 {
    int m=STALL;
    if(done)
-      return STALL;
+      return m;
    if(waiting_num<1)
    {
       NextFile();

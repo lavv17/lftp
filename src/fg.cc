@@ -23,6 +23,7 @@
 #include <config.h>
 #include <signal.h>
 #include <unistd.h>
+#include <stdio.h>
 #include "fg.h"
 
 void FgData::cont()
