@@ -40,10 +40,12 @@
 
 typedef void (*init_t)(int,const char*const*);
 
+// XXX: this can go to a config file.
 static const char * const module_aliases[]=
 {
    "proto-hftp",  "proto-http",
    "cmd-at",	  "cmd-sleep",
+   "cmd-repeat",  "cmd-sleep",
    NULL
 };
 

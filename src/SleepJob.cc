@@ -21,6 +21,7 @@
 /* $Id$ */
 
 #include <config.h>
+#include <ctype.h>
 #include "SleepJob.h"
 #include "CmdExec.h"
 #include "misc.h"
@@ -33,9 +34,15 @@ SleepJob::SleepJob(time_t when,FileAccess *s,char *what)
    exit_code=0;
    done=false;
    saved_cwd=xgetcwd();
+   repeat=false;
+   repeat_delay=1;
+   repeat_count=0;
+   exec=0;
 }
 SleepJob::~SleepJob()
 {
+   if(exec && exec!=waiting)
+      delete exec;
    xfree(cmd);
    xfree(saved_cwd);
 }
@@ -49,28 +56,37 @@ int SleepJob::Do()
    {
       if(!waiting->Done())
 	 return STALL;
-      exit_code=waiting->ExitCode();
-      delete waiting;
+      if(!repeat)
+      {
+	 exit_code=waiting->ExitCode();
+	 delete waiting;
+	 waiting=0;
+	 exec=0;
+	 done=true;
+	 return MOVED;
+      }
+      repeat_count++;
+      the_time=now+repeat_delay;
       waiting=0;
-      done=true;
-      return MOVED;
    }
 
-   time_t now=time(0);
    if(now>=the_time)
    {
       if(cmd)
       {
-	 CmdExec *exec=new CmdExec(session);
-	 session=0;
-	 exec->parent=this;
-	 exec->SetCWD(saved_cwd);
-	 exec->AllocJobno();
+	 if(!exec)
+	 {
+	    exec=new CmdExec(session);
+	    session=0;
+	    exec->parent=this;
+	    exec->SetCWD(saved_cwd);
+	    exec->AllocJobno();
+	    exec->cmdline=(char*)xmalloc(2+strlen(cmd));
+	    sprintf(exec->cmdline,"(%s)",cmd);
+	 }
+	 waiting=exec;
 	 exec->FeedCmd(cmd);
 	 exec->FeedCmd("\n");
-	 exec->cmdline=(char*)xmalloc(2+strlen(cmd));
-	 sprintf(exec->cmdline,"(%s)",cmd);
-	 waiting=exec;
 	 return MOVED;
       }
       done=true;
@@ -81,6 +97,15 @@ int SleepJob::Do()
       diff=1024;  // prevent overflow
    block+=TimeOut(diff*1000);
    return STALL;
+}
+
+void SleepJob::PrintStatus(int)
+{
+   if(repeat)
+   {
+      printf("\tRepeat count: %d\n",repeat_count);
+      return;
+   }
 }
 
 #define args (parent->args)
@@ -96,7 +121,7 @@ Job *cmd_sleep(CmdExec *parent)
       eprintf(_("Try `help %s' for more information.\n"),op);
       return 0;
    }
-   char *t=args->getarg(1);
+   const char *t=args->getarg(1);
    time_t delay=decode_delay(t);
    if(delay==(time_t)-1)
    {
@@ -104,6 +129,31 @@ Job *cmd_sleep(CmdExec *parent)
       goto err;
    }
    return new SleepJob(time(0)+delay);
+}
+
+Job *cmd_repeat(CmdExec *parent)
+{
+   const char *op=args->a0();
+   int cmd_start=1;
+   const char *t=args->getarg(1);
+   time_t delay=1;
+   if(t && isdigit((unsigned char)t[0]))
+   {
+      delay=decode_delay(t);
+      if(delay==(time_t)-1)
+      {
+	 eprintf(_("%s: invalid delay. "),op);
+	 eprintf("\n");
+	 return 0;
+      }
+      cmd_start=2;
+   }
+
+   char *cmd = (args->count()==cmd_start+1
+	        ? args->Combine(cmd_start) : args->CombineQuoted(cmd_start));
+   SleepJob *s=new SleepJob(time(0),Clone(),cmd);
+   s->Repeat(delay);
+   return s;
 }
 
 extern "C" {

@@ -87,13 +87,15 @@ CMD(ver);   CMD(close);  CMD(bookmark);CMD(lftp);
 CMD(echo);  CMD(suspend);CMD(ftpcopy); CMD(sleep);
 CMD(at);    CMD(find);   CMD(command); CMD(module);
 CMD(lpwd);  CMD(glob);	 CMD(chmod);   CMD(queue);
+CMD(repeat);
 
 #ifdef MODULE_CMD_MIRROR
 # define cmd_mirror 0
 #endif
 #ifdef MODULE_CMD_SLEEP
-# define cmd_sleep 0
-# define cmd_at    0
+# define cmd_sleep  0
+# define cmd_at     0
+# define cmd_repeat 0
 #endif
 
 const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
@@ -274,6 +276,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Same as `ls', but don't look in cache\n")},
    {"renlist", cmd_ls,	    N_("renlist [<args>]"),
 	 N_("Same as `nlist', but don't look in cache\n")},
+   {"repeat",  cmd_repeat},
    {"reput",   cmd_put,    N_("reput <lfile> [-o <rfile>]"),
 	 N_("Same as `put -c'\n")},
    {"rm",      cmd_rm,	    N_("rm [-r] <files>"),

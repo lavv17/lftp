@@ -32,6 +32,10 @@ class SleepJob : public SessionJob
    int exit_code;
    bool done;
    char *saved_cwd;
+   class CmdExec *exec;
+   bool   repeat;
+   time_t repeat_delay;
+   int    repeat_count;
 
 public:
    int Do();
@@ -40,6 +44,10 @@ public:
 
    SleepJob(time_t when,FileAccess *s=0,char *what=0);
    ~SleepJob();
+
+   void PrintStatus(int v);
+
+   void Repeat(time_t d) { repeat=true; repeat_delay=d; }
 };
 
 #endif//SLEEPJOB_H
