@@ -27,7 +27,6 @@
  */
 
 /* TODO:
- *   allow long type in arguments
  *   allow to select number of argument
  */
 
@@ -117,6 +116,7 @@ const char *plural(const char *format,...)
    const char *new_rule=gettext(rule);
 
    va_list va;
+   long arg;
 
 
    va_start(va,format);
@@ -152,7 +152,28 @@ const char *plural(const char *format,...)
 	 if(*s=='$')
 	    goto plain;
 
-	 plural_index=choose_plural_form(rule,va_arg(va,int));
+	 /* check options */
+	 if(*s=='#')
+	 {
+	    s++;
+	    if(*s=='l')	/* long */
+	    {
+	       s++;
+	       arg=va_arg(va,long);
+	    }
+	    else
+	    {
+	       arg=va_arg(va,int);
+	    }
+	    if(*s=='#') /* end of options */
+	       s++;
+	 }
+	 else
+	 {
+	    arg=va_arg(va,int);
+	 }
+
+	 plural_index=choose_plural_form(rule,arg);
 
 	 index=0;
 	 while(index!=plural_index)

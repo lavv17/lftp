@@ -2138,6 +2138,8 @@ btoe (char *store, const char *c)
   *store++ = ' ';
   memcpy (store, &Wp[extract (cp, 55, 11)][0], 4);
 
+  store[4] = '\0'; /* make sure string is zero-terminated */
+
 /*  DEBUGP (("store is `%s'\n", ostore));*/
 
   return ostore;

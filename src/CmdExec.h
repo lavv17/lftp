@@ -44,6 +44,7 @@ public:
    char *saved_buf;
    CmdFeeder *prev;
    virtual char *NextCmd(class CmdExec *exec,const char *prompt) = 0;
+   virtual ~CmdFeeder() {}
 };
 
 extern CmdFeeder *lftp_feeder;	 // feeder to use after 'lftp' command
