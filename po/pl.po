@@ -3,14 +3,15 @@
 # Arkadiusz Mi¶kiewicz <misiek@pld-linux.org>, 1998-2004
 # Jakub Bogusz <qboosh@pld-linux.org>, 2002-2004
 # some updates by Tomasz K³oczko <kloczek@pld.org.pl>, 2003
+# Adam Go³êbiowski <adamg@pld-linux.org>, 2004
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 3.0.4\n"
+"Project-Id-Version: lftp 3.0.11\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-11-03 17:16+0300\n"
-"PO-Revision-Date: 2004-05-31 19:17+0200\n"
-"Last-Translator: Arkadiusz Miskiewicz <arekm@pld-linux.org>\n"
+"PO-Revision-Date: 2004-11-23 20:15+0200\n"
+"Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-2\n"
@@ -1804,12 +1805,12 @@ msgstr "protokó³ nie jest obs³ugiwany"
 #: src/ftpclass.cc:2062
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
-msgstr "£±cznie siê (gniazdo danych) z (%s) port %u"
+msgstr "£±czenie siê (gniazdo danych) z (%s) port %u"
 
 #: src/ftpclass.cc:2069
 #, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
-msgstr "£±cznie siê (gniazdo danych) z proxy %s (%s) port %u"
+msgstr "£±czenie siê (gniazdo danych) z proxy %s (%s) port %u"
 
 #: src/ftpclass.cc:2094 src/ftpclass.cc:3742
 msgid "Switching passive mode off"
@@ -2034,7 +2035,7 @@ msgstr "Nie mo¿na zanalizowaæ linii statusu HTTP"
 
 #: src/Http.cc:1273
 msgid "Object is not cached and http:cache-control has only-if-cached"
-msgstr ""
+msgstr "Obiekt nie jest zapamiêtany a http:cache-control ma only-if-cache"
 
 #: src/Http.cc:1401
 msgid "Receiving body..."
@@ -2245,7 +2246,7 @@ msgstr "execlp(/bin/sh) nieudane: %s\n"
 #: src/NetAccess.cc:323
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
-msgstr "£±cznie siê z %s%s (%s) port %u"
+msgstr "£±czenie siê z %s%s (%s) port %u"
 
 #: src/NetAccess.cc:379
 msgid "Timeout - reconnecting"
@@ -2296,6 +2297,3 @@ msgstr "zale¿no¶ci modu³u `%s': %s\n"
 #: src/module.cc:200
 msgid "modules are not supported on this system"
 msgstr "modu³y nie s± wspierane na tym systemie"
-
-#~ msgid "remote end closed connection"
-#~ msgstr "komputer po drugiej stronie zamkn±³ po³±czenie"
