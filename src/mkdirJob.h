@@ -58,6 +58,9 @@ public:
    ~mkdirJob();
 
    void	 BeQuiet() { quiet=true; }
+
+   void Fg();
+   void Bg();
 };
 
 #endif // MKDIRJOB_H

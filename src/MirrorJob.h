@@ -23,26 +23,9 @@
 #ifndef MIRRORJOB_H
 #define MIRRORJOB_H
 
-#include "GetJob.h"
-
-
-/*
- * // this is obsolete
- * Sequentially do the following steps:
- * 1. retrieve long listing of current remote directory
- * 2. make FileSet of it
- * 2.1. get short list and merge thes lists.
- * 2.2. get date for those files which don't have prec date
- * 2.3. get size ^^^
- * 3. make FileSet of current local dir
- * 4. `subtract' them, thus getting list of newer/different remote files
- *    and list of local files to be deleted.
- * 5. download these files
- * 6. make local directories/links, delete files.
- * 7. for each directory, start recursive mirror job
- * 8. wait for them to finish (or wait for each after starting)
- * 9. Done.
- */
+#include "FileAccess.h"
+#include "FileSet.h"
+#include "Job.h"
 
 class MirrorJob : public Job
 {
@@ -189,6 +172,9 @@ public:
    void	 RemoveSourceFiles() { remove_source_files=true; }
 
    void  SetParallel(int p) { parallel=p; }
+
+   void Fg();
+   void Bg();
 };
 
 #endif//MIRRORJOB_H

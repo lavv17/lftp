@@ -38,6 +38,7 @@
 #include "getopt.h"
 #include "FindJob.h"
 #include "url.h"
+#include "CopyJob.h"
 
 void  MirrorJob::PrintStatus(int v)
 {
@@ -900,6 +901,19 @@ mode_t MirrorJob::get_mode_mask()
       mode_mask|=u;
    }
    return mode_mask;
+}
+
+void MirrorJob::Fg()
+{
+   Job::Fg();
+   source_session->SetPriority(1);
+   target_session->SetPriority(1);
+}
+void MirrorJob::Bg()
+{
+   source_session->SetPriority(0);
+   target_session->SetPriority(0);
+   Job::Bg();
 }
 
 MirrorJob::Statistics::Statistics()

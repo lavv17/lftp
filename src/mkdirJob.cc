@@ -26,7 +26,9 @@
 #include "url.h"
 #include "misc.h"
 
-mkdirJob::mkdirJob(FileAccess *s,ArgV *a) : SessionJob(s)
+#define super SessionJob
+
+mkdirJob::mkdirJob(FileAccess *s,ArgV *a) : super(s)
 {
    quiet=false;
    failed=file_count=0;
@@ -133,4 +135,17 @@ void  mkdirJob::SayFinal()
    else
       printf(plural("%s ok, %d director$y|ies$ created\n",file_count),
 	    op,file_count);
+}
+
+void mkdirJob::Fg()
+{
+   super::Fg();
+   if(url_session)
+      url_session->SetPriority(1);
+}
+void mkdirJob::Bg()
+{
+   if(url_session)
+      url_session->SetPriority(0);
+   super::Bg();
 }
