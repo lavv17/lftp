@@ -28,16 +28,17 @@
 #include "xalloca.h"
 #include "xmalloc.h"
 #include "FileAccess.h"
-#include "lftp.h"
 #include "CmdExec.h"
 #include "alias.h"
 #include "SignalHook.h"
 #include "CharReader.h"
 #include "LsCache.h"
+#include "complete.h"
+#include "lftp_rl.h"
 
-extern "C" {
+CDECL_BEGIN
 #include "readline/readline.h"
-}
+CDECL_END
 
 static char *bash_dequote_filename (char *text, int quote_char);
 static int lftp_char_is_quoted(char *string,int eindex);
@@ -722,7 +723,6 @@ int lftp_char_is_quoted(char *string,int eindex)
   return (0);
 }
 
-extern "C" {
 int   lftp_complete_remote(int count,int key)
 {
    extern Function *rl_last_func;
@@ -734,7 +734,6 @@ int   lftp_complete_remote(int count,int key)
    int ret=rl_complete(count,key);
    force_remote = false;
    return ret;
-}
 }
 
 int   lftp_rl_getc(FILE *file)
@@ -763,7 +762,7 @@ int   lftp_rl_getc(FILE *file)
 /* Tell the GNU Readline library how to complete.  We want to try to complete
    on command names if this is the first word in the line, or on filenames
    if not. */
-void initialize_readline ()
+void lftp_readline_init ()
 {
    /* Allow conditional parsing of the ~/.inputrc file. */
    rl_readline_name = "lftp";
@@ -782,5 +781,5 @@ void initialize_readline ()
 
    rl_add_defun("complete-remote",(Function*)lftp_complete_remote,-1);
    static char line[]="Meta-Tab: complete-remote";
-   rl_parse_and_bind(line);
+   rl_parse_and_bind(line); /* this function writes to the string */
 }

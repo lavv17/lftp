@@ -44,7 +44,6 @@
 #ifndef MODULE_PROTO_HTTP
 # include "Http.h"
 #endif
-#include "lftp.h"
 #include "xmalloc.h"
 #include "alias.h"
 #include "CmdExec.h"
@@ -58,10 +57,8 @@
 
 #include "confpaths.h"
 
-CDECL_BEGIN
-#include "readline/readline.h"
-#include "readline/history.h"
-CDECL_END
+#include "lftp_rl.h"
+#include "complete.h"
 
 int   remote_completion=0;
 
@@ -88,7 +85,7 @@ class ReadlineFeeder : public CmdFeeder
    bool tty:1;
    bool ctty:1;
    bool add_newline:1;
-   void *to_free;
+   char *to_free;
 public:
    ReadlineFeeder()
    {
@@ -101,7 +98,7 @@ public:
       xfree(to_free);
    }
 
-   char *NextCmd(class CmdExec *exec,const char *prompt)
+   const char *NextCmd(class CmdExec *exec,const char *prompt)
    {
       xfree(to_free);
       to_free=0;
@@ -115,7 +112,7 @@ public:
       ::completion_shell=exec;
       ::remote_completion=exec->remote_completion;
 
-      char *cmd_buf;
+      const char *cmd_buf;
       if(tty)
       {
 	 if(ctty) // controlling terminal
@@ -130,13 +127,13 @@ public:
 	 }
 
 	 SignalHook::ResetCount(SIGINT);
-	 cmd_buf=readline(prompt);
+	 cmd_buf=lftp_readline(prompt);
 	 if(cmd_buf && *cmd_buf)
 	 {
 	    if(exec->csh_history)
 	    {
 	       char *history_value;
-	       int expanded = history_expand (cmd_buf, &history_value);
+	       int expanded = lftp_history_expand (cmd_buf, &history_value);
 
 	       if (expanded)
 	       {
@@ -151,23 +148,19 @@ public:
 		     return "";
 		  }
 
+		  to_free=history_value;
 		  cmd_buf=history_value;
-		  to_free=cmd_buf;
 	       }
 	    }
-	    using_history();
-	    HIST_ENTRY *temp=previous_history();
-	    if(temp==0 || strcmp(temp->line,cmd_buf))
-	       add_history(cmd_buf);
-	    using_history();
+	    lftp_add_history_nodups(cmd_buf);
 	 }
 	 else if(cmd_buf==0 && exec->interactive)
 	    puts("exit");
       }
       else
       {
-	 cmd_buf=readline_from_file(stdin);
-	 to_free=cmd_buf;
+	 to_free=readline_from_file(stdin);
+	 cmd_buf=to_free;
       }
 
       ::completion_shell=0;
@@ -246,7 +239,7 @@ static void move_to_background()
    }
 }
 
-void  source_if_exist(CmdExec *exec,char *rc)
+void  source_if_exist(CmdExec *exec,const char *rc)
 {
    if(access(rc,R_OK)!=-1)
    {
@@ -280,14 +273,15 @@ int   main(int argc,char **argv)
    Ftp::ClassInit();
 #endif
 
-   const char  *home=getenv("HOME")?:".";
+   const char *home=getenv("HOME");
+   if(!home) home=".";
 
    CmdExec *top_exec=new CmdExec(new DummyProto());
    top_exec->jobno=-1;
    top_exec->status_line=new StatusLine(1);
    Log::global=new Log(top_exec->status_line);
 
-   initialize_readline();
+   lftp_readline_init();
 
    hook_signals();
 
@@ -312,8 +306,8 @@ int   main(int argc,char **argv)
    args->setarg(0,"lftp");
    if(args->count()>1)
    {
-      char *line=args->Combine();
-      add_history(line);
+      char *line=args->Combine();   // FIXME: proper quoting
+      lftp_add_history_nodups(line);
       free(line);
    }
    lftp_feeder=new ReadlineFeeder;

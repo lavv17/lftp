@@ -57,7 +57,7 @@ int SysCmdJob::Do()
    if(w)
       return m;
 
-   char *shell=getenv("SHELL");
+   const char *shell=getenv("SHELL");
    if(!shell)
       shell="/bin/sh";
 
