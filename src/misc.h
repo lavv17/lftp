@@ -63,7 +63,7 @@ int percent(long offset,long size);
 #define HOUR   (60*MINUTE)
 #define DAY    (24*HOUR)
 
-extern const char *month_names[];
+extern const char month_names[][4];
 
 int parse_month(const char *);
 int parse_perms(const char *);
