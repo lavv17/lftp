@@ -383,6 +383,8 @@ void Http::SendCacheControl()
 {
    const char *cc_setting=Query("cache-control",hostname);
    const char *cc_no_cache=(no_cache || no_cache_this)?"no-cache":0;
+   if(!*cc_setting)
+      cc_setting=0;
    if(!cc_setting && !cc_no_cache)
       return;
    int cc_no_cache_len=xstrlen(cc_no_cache);
@@ -403,7 +405,8 @@ void Http::SendCacheControl()
 	 strcat(cc," ");
       strcat(cc,cc_setting);
    }
-   Send("Cache-Control: %s\r\n",cc);
+   if(*cc)
+      Send("Cache-Control: %s\r\n",cc);
 }
 
 bool Http::ModeSupported()
