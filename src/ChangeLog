@@ -12,6 +12,11 @@
 	  use ReconnectAllowed and NextTry.
 	* FileAccess.h: (IOReady) new method.
 
+1999-11-26  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.h, FileAccess.cc, complete.cc: add Glob::NoMatchPeriod
+	  method; use it for completion.
+
 1999-11-22  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileAccess.cc: try_time=0 is the same as DontSleep().

@@ -438,6 +438,7 @@ static char **lftp_completion (char *text,int start,int end)
       rg=completion_shell->session->MakeGlob(pat);
       if(rg)
       {
+	 rg->NoMatchPeriod();
 	 if(type==REMOTE_DIR)
 	    rg->DirectoriesOnly();
 	 for(;;)

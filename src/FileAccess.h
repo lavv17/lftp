@@ -318,6 +318,7 @@ protected:
    int	 list_alloc;
    bool	 dirs_only;
    bool	 files_only;
+   bool	 match_period;
    void	 add(const char *ptr,int len);
    void	 add_force(const char *ptr,int len);
    void	 add(const char *ptr) { add(ptr,strlen(ptr)); }
@@ -329,6 +330,7 @@ public:
    virtual ~Glob();
    void DirectoriesOnly() { dirs_only=true; }
    void FilesOnly() { files_only=true; }
+   void NoMatchPeriod() { match_period=false; }
 
    static bool HasWildcards(const char *);
    static void UnquoteWildcards(char *);

@@ -900,6 +900,7 @@ Glob::Glob(const char *p)
    list_alloc=0;
    dirs_only=false;
    files_only=false;
+   match_period=true;
 }
 
 void Glob::free_list()
@@ -932,8 +933,12 @@ void Glob::add(const char *ptr,int len)
    memcpy(s,ptr,len);
    s[len]=0;
 
+   int flags=FNM_PATHNAME;
+   if(match_period)
+      flags|=FNM_PERIOD;
+
    if(pattern[0]!=0
-   && fnmatch(pattern, s, FNM_PATHNAME|FNM_PERIOD)!=0)
+   && fnmatch(pattern, s, flags)!=0)
       return; // unmatched
 
    add_force(ptr,len);
