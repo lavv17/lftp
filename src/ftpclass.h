@@ -170,6 +170,8 @@ class Ftp : public NetAccess
    long	    nop_offset;
    int	    nop_count;
 
+   time_t   stat_time;
+
    char	 *result;
    int	 result_size;
 
@@ -182,6 +184,7 @@ class Ftp : public NetAccess
    void	 SwitchToState(automate_state);
 
    void  SendCmd(const char *cmd);
+   void  SendUrgentCmd(const char *cmd);
    void	 FlushSendQueue(bool all=false);
 
    void	 ReceiveResp();
@@ -252,6 +255,8 @@ class Ftp : public NetAccess
    sockaddr_u copy_addr;
    bool copy_addr_valid;
    bool copy_passive;
+   bool	copy_done;
+   bool	copy_connection_open;
    friend class FtpCopy;
 
    const char *encode_eprt(sockaddr_u *);

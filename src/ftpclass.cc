@@ -250,10 +250,34 @@ int   Ftp::TransferCheck(int act,int exp)
 {
    (void)exp;
    if(act==225 || act==226) // data connection is still open or ABOR worked.
+   {
+      copy_done=true;
       AbortedClose();
-
-   if(mode==CLOSED || RespQueueSize()>1)
+   }
+   if(act==211)
+   {
+      // permature STAT?
+      stat_time=now+3;
       return state;
+   }
+   if(act==213)	  // this must be STAT reply.
+   {
+      stat_time=now;
+      // find the number.
+      long p;
+      for(char *b=line+4; ; b++)
+      {
+	 if(*b==0)
+	    return state;
+	 if(!is_ascii_digit(*b))
+	    continue;
+	 if(sscanf(b,"%ld",&p)==1)
+	    break;
+      }
+      if(copy_mode==COPY_DEST)
+	 real_pos=pos=p;
+      return state;
+   }
    if(act==RESP_NO_FILE && mode==LIST)
    {
       DataClose();
@@ -675,6 +699,9 @@ void Ftp::InitFtp()
    copy_mode=COPY_NONE;
    copy_addr_valid=false;
    copy_passive=false;
+   copy_done=false;
+   copy_connection_open=false;
+   stat_time=0;
 
    memset(&data_sa,0,sizeof(data_sa));
 
@@ -801,7 +828,7 @@ int   Ftp::Do()
 	 Disconnect();
 	 return m;
       }
-      block+=TimeOut((idle_start+idle-now)*1000);
+      TimeoutS(idle_start+idle-now);
    }
 
    if(Error())
@@ -860,7 +887,7 @@ int   Ftp::Do()
 	 if(errno==ENFILE || errno==EMFILE)
 	 {
 	    // file table overflow - it could free sometime
-	    block+=TimeOut(1000);
+	    TimeoutS(1);
 	    return m;
 	 }
 	 sprintf(str,"cannot create socket of address family %d",
@@ -877,7 +904,7 @@ int   Ftp::Do()
       SayConnectingTo();
 
       res=connect(control_sock,&peer_sa.sa,sizeof(peer_sa));
-      UpdateNow(); // if non-blocking don't work
+      UpdateNow(); // if non-blocking doesn't work
 
       if(res==-1
 #ifdef EINPROGRESS
@@ -1442,7 +1469,7 @@ int   Ftp::Do()
 	 DebugPrint("---- ",str,5);
 
 	 res=connect(data_sock,(struct sockaddr*)&data_sa,sizeof(data_sa));
-	 UpdateNow(); // if non-blocking don't work
+	 UpdateNow(); // if non-blocking doesn't work
 
 	 if(res==-1
 #ifdef EINPROGRESS
@@ -1503,7 +1530,7 @@ int   Ftp::Do()
 	       nop_count=0;
 	    nop_offset=pos;
 	 }
-	 block+=TimeOut((nop_interval-(now-nop_time))*1000);
+	 TimeoutS(nop_interval-(now-nop_time));
       }
 
       int ev=(mode==STORE?POLLOUT:POLLIN);
@@ -1567,6 +1594,21 @@ int   Ftp::Do()
 	 m=MOVED;
       }
 
+      if(copy_mode==COPY_DEST && !copy_done && copy_connection_open
+      && RespQueueSize()==1)
+      {
+	 if(stat_time+2<=now)
+	 {
+	    // send STAT to know current position.
+	    SendUrgentCmd("STAT");
+	    AddResp(200,INITIAL_STATE,CHECK_TRANSFER);
+	    FlushSendQueue(true);
+	    m=MOVED;
+	 }
+	 else
+	    TimeoutS(now-stat_time-2);
+      }
+
       // store mode is special - the data can be buffered
       // so is COPY_* - no data connection at all.
       if(mode==STORE || copy_mode!=COPY_NONE)
@@ -1593,11 +1635,11 @@ notimeout_return:
    if(data_sock!=-1)
    {
       if(state==ACCEPTING_STATE)
-	 block+=PollVec(data_sock,POLLIN);
+	 Block(data_sock,POLLIN);
       else if(state==DATASOCKET_CONNECTING_STATE)
       {
 	 if(addr_received==2) // that is connect in progress
-	    block+=PollVec(data_sock,POLLOUT);
+	    Block(data_sock,POLLOUT);
       }
       else if(state==DATA_OPEN_STATE)
       {
@@ -1608,9 +1650,9 @@ notimeout_return:
 	 // since REST could fail.
 	 if(!(RespQueueSize()>1 && real_pos==-1)
 	 && bytes_allowed>0) // and we are allowed to xfer
-	    block+=PollVec(data_sock,(mode==STORE?POLLOUT:POLLIN));
+	    Block(data_sock,(mode==STORE?POLLOUT:POLLIN));
 	 if(bytes_allowed==0)
-	    block+=TimeOut(1000);
+	    TimeoutS(1);
       }
       else
       {
@@ -1621,12 +1663,12 @@ notimeout_return:
    if(control_sock!=-1)
    {
       if(state==CONNECTING_STATE)
-	 block+=PollVec(control_sock,POLLOUT);
+	 Block(control_sock,POLLOUT);
       else
       {
-	 block+=PollVec(control_sock,POLLIN);
+	 Block(control_sock,POLLIN);
 	 if(send_cmd_count>0 && ((flags&SYNC_MODE)==0 || sync_wait==0))
-	    block+=PollVec(control_sock,POLLOUT);
+	    Block(control_sock,POLLOUT);
       }
    }
    return m;
@@ -1635,7 +1677,7 @@ system_error:
    if(errno==ENFILE || errno==EMFILE)
    {
       // file table overflow - it could free sometime
-      block+=TimeOut(1000);
+      TimeoutS(1);
       return m;
    }
    SwitchToState(SYSTEM_ERROR_STATE);
@@ -1796,6 +1838,16 @@ void  Ftp::ReceiveResp()
    }
 }
 
+void Ftp::SendUrgentCmd(const char *cmd)
+{
+   FlushSendQueue(/*all=*/true);
+   static const char pre_cmd[]={TELNET_IAC,TELNET_IP,TELNET_IAC,TELNET_SYNCH};
+   /* send only first byte as OOB due to OOB braindamage in many unices */
+   send(control_sock,pre_cmd,1,MSG_OOB);
+   send(control_sock,pre_cmd+1,sizeof(pre_cmd)-1,0);
+   SendCmd(cmd);
+}
+
 void  Ftp::DataAbort()
 {
    if(control_sock==-1 || state==CONNECTING_STATE)
@@ -1811,6 +1863,7 @@ void  Ftp::DataAbort()
       if(!copy_addr_valid)
 	 return; // data connection cannot be established at this time
    }
+   copy_connection_open=false;
 
    // if transfer has been completed then ABOR is not needed
    if(data_sock!=-1 && RespQueueIsEmpty())
@@ -1825,13 +1878,7 @@ void  Ftp::DataAbort()
       return;
    }
 
-   FlushSendQueue(/*all=*/true);
-   /* Send ABOR command, don't care of result */
-   static const char pre_abort[]={TELNET_IAC,TELNET_IP,TELNET_IAC,TELNET_SYNCH};
-   /* send only first byte as OOB due to OOB braindamage in many unices */
-   send(control_sock,pre_abort,1,MSG_OOB);
-   send(control_sock,pre_abort+1,sizeof(pre_abort)-1,0);
-   SendCmd("ABOR");
+   SendUrgentCmd("ABOR");
    AddResp(226,0,CHECK_ABOR);
    FlushSendQueue(true);
    AbortedClose();
@@ -2115,6 +2162,9 @@ void  Ftp::Close()
    }
    copy_mode=COPY_NONE;
    copy_addr_valid=false;
+   copy_done=false;
+   copy_connection_open=false;
+   stat_time=0;
    CloseRespQueue();
    super::Close();
 }
@@ -2510,6 +2560,9 @@ void  Ftp::MoveConnectionHere(Ftp *o)
 int   Ftp::CheckResp(int act)
 {
    int new_state=-1;
+
+   if(act==150)
+      copy_connection_open=true;
 
    if(act==150 && mode==RETRIEVE && opt_size && *opt_size==-1)
    {
