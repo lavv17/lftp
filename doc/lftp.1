@@ -840,9 +840,6 @@ variable \fBftp_proxy\fP if it starts with ``http://'', otherwise from
 environment variable \fBhttp_proxy\fP.  If your ftp proxy
 requires authentication, specify user name and password in the URL.
 .TP
-.BR hftp:user-agent " (string)"
-the string lftp sends in User-Agent header of HTTP request for ftp URLs.
-.TP
 .BR hftp:use-head \ (bool)
 if set to off, lftp will try to use `GET' instead of `HEAD' for hftp protocol.
 While this is slower, it may allow lftp to work with some proxies which

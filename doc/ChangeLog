@@ -1,6 +1,6 @@
 2000-04-20	Alexander V. Lukyanov <lav@yars.free.net>
 
-	* lftp.1: add http:user-agent and hftp:user-agent
+	* lftp.1: add http:user-agent.
 
 2000-04-19	Alexander V. Lukyanov <lav@yars.free.net>
 
