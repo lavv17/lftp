@@ -10,6 +10,17 @@
 	* ftpclass.cc: fix RETR reply handling (was broken in A00625 snapshot).
 	* Http.cc: don't use |= on bool.
 
+2000-06-25  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* resource.cc: limit max-retries by default.
+	* ftpclass.cc: fix 4xx handling in file access (broken by recent changes).
+
+2000-06-23  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc: (StrError) optimize; add error text to "Login failed".
+	* NetAccess.cc, NetAccess.h, resource.cc: net:persist-retries new setting.
+	* ftpclass.cc, ftpclass.h: rework of reply handling; persist support.
+
 2000-06-22  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileCopy.cc, FileCopy.h: log redirections; fix init of redirections;
