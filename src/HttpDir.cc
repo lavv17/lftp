@@ -28,6 +28,7 @@
 #include "ArgV.h"
 #include "LsCache.h"
 #include "misc.h"
+#include "log.h"
 #include <ctype.h>
 
 static bool token_eq(const char *buf,int len,const char *token)
@@ -211,6 +212,8 @@ static void decode_amps(char *s)
       a++;
    }
 }
+
+#define debug(str) Log::global->Format(10,"* %s\n",str)
 
 static int parse_html(const char *buf,int len,bool eof,Buffer *list,
       FileSet *set,FileSet *all_links,ParsedURL *prefix,char **base_href,
@@ -556,14 +559,22 @@ parse_url_again:
       n=sscanf(str,"%2d-%3s-%4d %2d:%2d %30s",
 		    &day,month_name,&year,&hour,&minute,size_str);
       if(n==6)
+      {
+	 debug("apache listing matched");
 	 goto got_info;
+      }
+
+      printf("str=%s\n",str);
 
       hour=0;
       minute=0;
       // unusual apache listing: size DD-Mon-YYYY
-      n=sscanf(str,"%30s %2d-%3s-%4d",size_str,&day,month_name,&year);
-      if(n==4)
+      n=sscanf(str,"%30s %2d-%3s-%d",size_str,&day,month_name,&year);
+      if(n==4 && (size_str[0]=='-' || is_ascii_digit(size_str[0])))
+      {
+	 debug("unusual apache listing matched");
 	 goto got_info;
+      }
 
       char size_unit[7];
       long size;
@@ -578,6 +589,7 @@ parse_url_again:
 	    sprintf(size_str,"%ld",size);
 	 else
 	    sprintf(size_str,"%ld%s",size,size_unit);
+	 debug("Netscape-Proxy 2.53 listing matched");
 	 goto got_info;
       }
       n=sscanf(str,"%3s %3s %d %2d:%2d:%2d %4d %s",
@@ -587,6 +599,7 @@ parse_url_again:
 	 strcpy(size_str,"-");
 	 if(!is_directory)
 	    is_sym_link=true;
+	 debug("Netscape-Proxy 2.53 listing matched (dir/symlink)");
 	 goto got_info;
       }
       if(n==8) // maybe squid's EPLF listing.
@@ -594,6 +607,7 @@ parse_url_again:
 	 // skip rest of line, because there may be href to link target.
 	 skip_len=eol-buf+eol_len;
 	 // no symlinks here.
+	 debug("squid EPLF listing matched");
 	 goto got_info;
       }
 
@@ -615,6 +629,7 @@ parse_url_again:
 	    strcpy(size_str,"-");
 	 }
 	 month--;
+	 debug("Mini-Proxy web server listing matched");
 	 goto got_info;
       }
 
@@ -648,6 +663,7 @@ parse_url_again:
 	 }
 	 info_string=buf;
 	 info_string_len=consumed;
+	 debug("apache ftp over http proxy listing matched");
 	 goto got_info;
       }
       perms[0]=0;
@@ -681,6 +697,7 @@ parse_url_again:
 	    url::decode_string(sym_link);
 	 }
       }
+      debug("squid ftp listing matched");
 
    got_info:
       if(year!=-1)

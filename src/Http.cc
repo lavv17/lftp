@@ -134,6 +134,8 @@ void Http::MoveConnectionHere(Http *o)
    send_buf=o->send_buf; o->send_buf=0;
    recv_buf=o->recv_buf; o->recv_buf=0;
    sock=o->sock; o->sock=-1;
+   rate_limit=o->rate_limit; o->rate_limit=0;
+   last_method=o->last_method; o->last_method=0;
    state=CONNECTED;
    o->Disconnect();
 }
@@ -195,9 +197,12 @@ void Http::Close()
       ResetRequestData();
       idle_start=now;
       TimeoutS(idle);
+      delete rate_limit;
+      rate_limit=0;
    }
    else
    {
+      try_time=0;
       Disconnect();
    }
    array_send=0;
@@ -858,8 +863,8 @@ int Http::Do()
 		     state=DONE;
 		     return MOVED;
 		  }
-		  // if protocol is HTTP/1.1, we can avoid reconnection
-		  if(proto_version>=0x11 && keep_alive)
+		  // we can avoid reconnection if server supports it.
+		  if(keep_alive && (keep_alive_max>1 || keep_alive_max==-1))
 		  {
 		     SendArrayInfoRequest();
 		  }

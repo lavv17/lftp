@@ -1,7 +1,8 @@
 2000-05-19  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Resolver.cc: use getaddrinfo only if gethostbyname2 is not available.
-	* HttpDir.cc: (remove_tags) don't remove anchor tags.
+	* HttpDir.cc: (remove_tags) don't remove anchor tags; add debug.
+	* Http.cc: fix few bugs concerned with keep-alive support.
 
 2000-05-13  Alexander V. Lukyanov  <lav@yars.free.net>
 
