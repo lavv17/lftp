@@ -725,10 +725,12 @@ int SFtp::HandlePty()
    const char *eol=(const char*)memchr(b,'\n',s);
    if(!eol)
    {
-      const char *p="password: ";
-      const char *y="(yes/no)? ";
+      const char *p="password:";
+      const char *y="(yes/no)?";
       int p_len=strlen(p);
       int y_len=strlen(y);
+      if(s>0 && b[s-1]==' ')
+	 s--;
       if(s>=p_len && !strncasecmp(b+s-p_len,p,p_len)
       || s>10 && !strncmp(b+s-3,"': ",3))
       {

@@ -1,3 +1,8 @@
+2004-09-09  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Fish.cc, SFtp.cc: fix FreeBSD sshd interaction (different password
+	  prompt).
+
 2004-09-06  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.cc: reduce number of left over tasks after cleaning due to
