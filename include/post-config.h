@@ -23,7 +23,7 @@
 # define CDECL_END
 #endif
 
-// should be included before any real code.
+/* should be included before any real code. */
 #include "xalloca.h"
 
 #ifndef HAVE_STRERROR
@@ -103,6 +103,10 @@ CDECL void SOCKSinit(const char *);
 
 #ifndef HAVE_INET_ATON
 # define inet_aton(host,addr) (((addr)->s_addr=inet_addr(host))!=-1)
+#endif
+
+#ifndef HAVE_STRTOK_R /* prototype for lib/strtok_r.c */
+CDECL char *strtok_r(char *str, const char *sep, char **lasts);
 #endif
 
 /* Tell the compiler when a conditional or integer expression is
