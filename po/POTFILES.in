@@ -18,7 +18,6 @@ src/mvJob.cc
 src/parsecmd.cc
 src/pgetJob.cc
 src/plural.c
-src/FtpCopy.cc
 src/rmJob.cc
 src/Http.cc
 src/resource.cc
