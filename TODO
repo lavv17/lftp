@@ -23,6 +23,7 @@ currently; some need other work to be done.
 
  * implement Queueing in FileAccess. fa->AddQueue(new FAQueueOp(args)).
    (Done()==true when queue is empty)
+   This way ARRAY_* can be obsoleted.
 
  * there are many interesting protocols: smb, fsp, fish, imap, irc, ...
 
@@ -45,6 +46,7 @@ currently; some need other work to be done.
 
  * parallel get's in mirror, mget
 +* make a command get1 to get single file with extra options.
+   implement ranges properly.
 
  * tail command
 
@@ -84,13 +86,7 @@ currently; some need other work to be done.
    the best way would be to return a error from Http to FileCopy, and
    FileCopy would change get or put accordingly.
 
-+* get -O dir, mget -O dir.
-   Make them work correctly on urls.
+ * add url support for mirror, find... This can wait for 2.3.
 
- * glob -f, glob -d to get files/directories only.
-
- * check TIOCOUTQ - it can work in two ways.
-
-+* make mkdir etc work on urls.
-
-+* DummyProtoNoProto
+ * SMTask::deleting to indicate destruction. assert(!running)
+   SMTask::Delete(task).

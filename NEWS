@@ -12,14 +12,18 @@ Version 2.2.0 - 2000-??-??
   ABOR command but closes data connection immediately.
 * new settings net:reconnect-interval-multiplier and net:reconnect-interval-max,
   reconnect-interval renamed to reconnect-interval-base. It is possible to
-  use short names recon-int-b, recon-int-mul, recon-int-max.
+  use short names, e.g. recon-int-b, recon-int-mul, recon-int-max.
 * new setting ftp:list-options to append to every LIST command. E.g. it can
   be useful for some sites to set it to `-a'. Default is empty.
 * new setting ftp:rest-stor (default: yes) to avoid file corruption
   on some old and buggy ftp servers after restarted upload.
 * new setting net:no-proxy. It contains comma separated list of domains.
   Environment variable no_proxy is copied to net:no-proxy on startup.
-* ftp to ftp (FXP) copying is now easy, e.g. `get ftp://... -o ftp://...'.
+* `glob' command can now select files by type. By default wildcards are
+  expanded to list of plain files, option `-d' makes it expand to directories
+  and `-a' - to files and directories.
+* ftp to ftp (FXP) copying is now easy, e.g. `get ftp://... -o ftp://...' or
+  `put ftp://...'.
   New settings: ftp:use-fxp, ftp:fxp-passive-source. It does not work
   for some servers, so use `set ftp:use-fxp no' for them. FXP is also tried
   both ways - with passive and active source, if both fail it falls back to
