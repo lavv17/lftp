@@ -457,6 +457,7 @@ int   MirrorJob::Do()
 	 if(!waiting->Done())
 	    return STALL;
 	 delete waiting;
+	 waiting=0;
       }
       Report(_("Sending local file `%s'"),
 	       dir_file(local_relative_dir,file->name));
@@ -608,6 +609,7 @@ int   MirrorJob::Do()
       if(waiting->Done())
       {
 	 delete waiting;
+	 waiting=0;
 	 state=DONE;
 	 return MOVED;
       }
