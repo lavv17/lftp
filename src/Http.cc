@@ -67,6 +67,7 @@ void Http::Init()
    status_code=0;
    status_consumed=0;
    proto_version=0x10;
+   location=0;
 
    idle=0;
    idle_start=now;
@@ -674,7 +675,7 @@ int Http::Do()
 
    pre_RECEIVING_BODY:
 
-      if(status_code/100!=200)
+      if(!H_20X(status_code))
       {
 	 char *err=(char*)alloca(strlen(status)+strlen(file)+xstrlen(location)+20);
 
