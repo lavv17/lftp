@@ -409,7 +409,7 @@ int   MirrorJob::Do()
 	 }
 	 local_session->Chdir(local_dir,false);
 	 list_info=local_session->MakeListInfo();
-	 list_info->UseCache(false);
+	 list_info->UseCache(use_cache);
 	 if(flags&RETR_SYMLINKS)
 	    list_info->FollowSymlinks();
 	 list_info->SetExclude(local_relative_dir,
@@ -473,7 +473,7 @@ int   MirrorJob::Do()
       	 state=DONE;
       	 return MOVED;
       }
-      list_info->UseCache(false);
+      list_info->UseCache(use_cache);
       list_info->Need(FileInfo::ALL_INFO);
       if(flags&RETR_SYMLINKS)
 	 list_info->FollowSymlinks();
@@ -788,6 +788,8 @@ MirrorJob::MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_rem
    script=0;
    script_only=false;
    script_needs_closing=false;
+
+   use_cache=false;
 }
 
 MirrorJob::~MirrorJob()
@@ -916,6 +918,7 @@ CMD(mirror)
       {"verbose",optional_argument,0,'v'},
       {"newer-than",required_argument,0,'N'},
       {"dereference",no_argument,0,'L'},
+      {"use-cache",no_argument,0,256+'C'},
       {0}
    };
 
@@ -928,6 +931,7 @@ CMD(mirror)
    static int include_alloc=0;
    static char *exclude=0;
    static int exclude_alloc=0;
+   bool use_cache=false;
 #define APPEND_STRING(s,a,s1) \
    {			                  \
       int len,len1=strlen(s1);            \
@@ -1014,7 +1018,11 @@ CMD(mirror)
       case(256+'u'):
 	 flags|=MirrorJob::NO_UMASK;
 	 break;
+      case(256+'C'):
+	 use_cache=true;
+	 break;
       case('?'):
+	 parent->eprintf(_("Try `help %s' for more information.\n"),args->a0());
 	 return 0;
       }
    }
@@ -1103,6 +1111,7 @@ CMD(mirror)
    j->SetPrec(prec);
    if(newer_than)
       j->SetNewerThan(newer_than);
+   j->UseCache(use_cache);
    return j;
 
 err_out:

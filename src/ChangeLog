@@ -5,14 +5,14 @@
 	  add GetETAStrSFromTime; pass reource name to Speedometer.
 	* pgetJob.cc: call cp->GetETAStrSFromTime.
 	* commands.cc: set old path before cd, so that after `open url'
-	  `cd -' works.
+	  `cd -' works; add --use-cache to mirror help.
 	* Speedometer.cc, Speedometer.h: new files; accept resource name
 	  instead of period.
 	* ProcWait.cc: don't change state to ERROR at all (because process
 	  can still run after waitpid fails)
 	* FtpListInfo.cc: more verbose status.
 	* FtpSplitList.cc, FtpSplitList.h: measure rate.
-	* MirrorJob.cc: show only li->Status().
+	* MirrorJob.cc: show only li->Status(); add use_cache member;
 
 2000-01-31  Alexander V. Lukyanov  <lav@yars.free.net>
 

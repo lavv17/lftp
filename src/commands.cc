@@ -228,6 +228,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "                        minutes (x=m) hours (x=h) or days (x=d)\n"
 	 "                        default - 12 hours\n"
 	 " -v, --verbose          verbose operation\n"
+	 "     --use-cache        use cached directory listings\n"
 	 "\n"
 	 "When using -R, the first directory is local and the second is remote.\n"
 	 "If the second directory is omitted, basename of first directory is used.\n"

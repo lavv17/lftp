@@ -109,6 +109,8 @@ class MirrorJob : public SessionJob
    bool script_only;
    bool script_needs_closing;
 
+   bool use_cache;
+
 public:
    enum
    {
@@ -156,6 +158,8 @@ public:
    void	 CreateRemoteDir() { create_remote_dir=true; }
 
    void	 SetNewerThan(const char *file);
+
+   void  UseCache(bool u) { use_cache=u; }
 };
 
 #endif//MIRRORJOB_H
