@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "19 Aug 1998"
+.TH lftp 1 "17 Nov 1998"
 .SH NAME
 lftp \- Sophisticated ftp program
 .SH SYNTAX
@@ -87,17 +87,17 @@ you can just exit and lftp will move itself to nohup mode in
 background, allowing you to use your shell or logout.
 .PP
 \fBlftp\fR has reliable put, reput, and mirror, along with many other
-commands. 
-.PP 
+commands.
+.PP
 \fBlftp\fR does redial and reget automatically when the
-connection broke and there is something to do. 
+connection broke and there is something to do.
 
 .SS Commands
 .PP
 
 .BI ! " shell command"
 .PP
-Launch shell or shell command.  
+Launch shell or shell command.
 .PP
 .Ds
 !ls
@@ -120,6 +120,10 @@ alias less zmore
 .B anon
 .PP
 Sets the user to anonymous.  This is the default.
+
+.BR at " \fItime\fP [ -- \fIcommand\fP ] "
+.PP
+Wait until the given time and execute given (optional) command. See also at(1).
 
 .B bookmark
 .RI " [" subcommand ]
@@ -185,6 +189,20 @@ no jobs are active, \fIcode\fP is passed to operating system as lftp's
 termination status. If \fIcode\fP is omitted, the exit code of last
 command is used.
 
+.BR find " [" directory "] "
+.PP
+List files in the directory (current directory by default) recursively.
+This can help with servers lacking ls -R support. You can redirect output
+of this command.
+
+.BR ftpcopy " [" -p  "] [" -c "] \fIURL1 URL2\fR "
+.PP
+Copies URL1 to URL2 using special feature of ftp protocol, bypassing current
+machine. If URL2 terminates with slash (/), then it is treated as directory,
+and file name from URL1 is appended. By default, source server is used in
+active mode, and target one in passive. Option -p reverses that. Option -c
+requests continuation of transfer.
+
 .BR get " [" -e "] [" -u "] [" -c "] \fIrfile\fP [" -o " \fIlfile\fP]"
 .PP
 Retrieve the remote file \fIrfile\fP and store it as the local file
@@ -201,7 +219,7 @@ get README README.mirrors
 get README -o debian.README README.mirrors -o debian.mirrors
 .De
 
-.B help 
+.B help
 [\fIcmd\fP]
 .PP
 Print help for \fIcmd\fP or if no \fIcmd\fP was specified print a list of
@@ -216,7 +234,8 @@ List running jobs. -v means verbose, several -v can be specified.
 all|\fIjob_no\fP
 .PP
 Delete specified job with \fIjob_no\fP or all jobs.  (For \fIjob_no\fP see
-.BR jobs )
+.BR jobs
+)
 
 .B lcd
 \fIldir\fP
@@ -229,9 +248,9 @@ directory is stored as `-'. You can do `lcd -' to change the directory back.
 .PP
 List remote files. You can redirect output of this command to file or
 via pipe to external command.  By default, ls output is cached, to see
-new listing use 
+new listing use
 .B rels
-or 
+or
 .B "cache flush."
 
 .BR mget " [" -c "] [" -d "] [" -e "] \fIfiles\fP"
@@ -247,10 +266,10 @@ Gets selected files with expanded wildcards.
 
 .B mirror
 .RI [ OPTS "] [" remote " [" local ]]
-.PP 
+.PP
 Mirror specified remote directory to local directory.
 .PP
-.Ds 
+.Ds
  -c, --continue         continue a mirror job if possible
  -e, --delete           delete files not present at remote site
  -s, --allow-suid       set suid/sgid bits according to remote site
@@ -258,6 +277,7 @@ Mirror specified remote directory to local directory.
  -r, --no-recursion     don't go to subdirectories
  -p, --no-perms         don't set file permissions
  -R, --reverse          reverse mirror (put files)
+ -L, --dereference      download symbolic links as files
  -N, --newer-than FILE  download only files newer than the file
  -i \fIRX\fP, --include \fIRX\fP    include matching files (only one allowed)
  -x \fIRX\fP, --exclude \fIRX\fP    exclude matching files (only one allowed)
@@ -363,11 +383,12 @@ Same as `nlist', but ignores the cache.
 .PP
 Same as `put -c'.
 
-.B rm
+.BR rm " [ -r ] "
 \fIfiles\fP
 .PP
 Remove remote files.  Does not expand wildcards, use \fBmrm\fR for
-that.
+that. -r is for recursive directory remove. Be careful, if something goes
+wrong you can lose files.
 
 .B rmdir
 \fIdir(s)\fP
@@ -391,6 +412,11 @@ listed.
 .PP
 Execute site command \fIsite_cmd\fP and output the result.
 You can redirect its output.
+
+.BR sleep " \fIinterval\fP "
+Sleep given time interval and exit. Interval is in seconds by default, but
+can be suffixed with 'm', 'h', 'd' for minutes, hours and days respectively.
+See also \fBat\fP.
 
 .B source
 \fIfile\fP
@@ -467,6 +493,9 @@ characters that are decoded as follows:
 .RS
 .PD 0
 .TP
+.B \e@
+insert @ if current user is not default
+.TP
 .B \ea
 an ASCII bell character (07)
 .TP
@@ -523,8 +552,15 @@ will fail to resolve a given host name. 0 means unlimited, the default.
 .BR ftp:idle \ (seconds)
 disconnect from ftp server after that number of idle seconds.
 .TP
+.BR ftp:limit-rate \ (bytes per second)
+timit transfer rate on data connection. 0 means unlimited.
+.TP
+.BR ftp:limit-max \ (bytes)
+limit accumulating of limit-rate in time. 0 means unlimited.
+.TP
 .BR ftp:max-retries \ (number)
 the maximum number of sequential retries of an operation without success.
+0 means unlimited.
 .TP
 .BR ftp:nop-interval \ (seconds)
 delay between NOOP commands when downloading tail of a file. This is useful
@@ -544,8 +580,8 @@ uses ftp protocol, not ftp over http.
 sets the minimal time between reconnects.
 .TP
 .BR ftp:relookup-always \ (bool)
-a boolean to control whether or not to lookup host address each time
-before connecting. Can be useful if ftp server uses dynamic ip
+a boolean to control whether to lookup host address each time
+before connecting or not. Can be useful if ftp server uses dynamic ip
 address.
 .TP
 .BR ftp:skey-allow \ (bool)
@@ -554,6 +590,14 @@ allow sending skey/opie reply if server appears to support it. On by default.
 .BR ftp:skey-force \ (bool)
 do not send plain text password over the network, use skey/opie instead. If
 skey/opie is not available, assume failed login. Off by default.
+.TP
+.BR ftp:socket-buffer \ (bytes)
+use given size for SO_SNDBUF and SO_RCVBUF socket options. 0 means system
+default.
+.TP
+.BR ftp:socket-maxseg \ (bytes)
+use given size for TCP_MAXSEG socket option. Not all operating systems support
+setting this option, but linux does.
 .TP
 .BR ftp:sync-mode \ (bool)
 if set lftp will send one command at a time and wait for
@@ -605,10 +649,15 @@ case of several FTP commands in one network packet.
 RFC959 says: ``The user-process sending another command before the
 completion reply would be in violation of protocol; but server-FTP
 processes should queue any commands that arrive while a preceding
-command is in progress.'' So it must be safe to send several commands
-at once, which speeds up operation a lot and seems to work with all
-Unix and VMS based ftp servers. Windows based servers often
-cannot handle several commands in one packet.
+command is in progress''. Also, RFC1123 says: ``Implementors MUST
+NOT assume any correspondence between READ boundaries on the control
+connection and the Telnet EOL sequences (CR LF).'' and ``a single READ
+from the control connection may include more than one FTP command''.
+
+So it must be safe to send several commands at once, which speeds up
+operation a lot and seems to work with all Unix and VMS based ftp
+servers. Unfortunately, windows based servers often cannot handle
+several commands in one packet, and so cannot some broken routers.
 
 .SH OPTIONS
 .TP
