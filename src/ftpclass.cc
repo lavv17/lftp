@@ -385,7 +385,7 @@ void Ftp::TransferCheck(int act)
 
 void Ftp::LoginCheck(int act)
 {
-   if(ignore_pass)
+   if(conn->ignore_pass)
       return;
    if(act==530) // login incorrect or overloaded server
    {
@@ -433,7 +433,7 @@ void Ftp::NoPassReqCheck(int act) // for USER command
 {
    if(is2XX(act)) // in some cases, ftpd does not ask for pass.
    {
-      ignore_pass=true;
+      conn->ignore_pass=true;
       return;
    }
    if(act==331 && allow_skey && user && pass)
@@ -864,6 +864,8 @@ Ftp::Connection::Connection()
    translation_activated=false;
    sync_wait=1;	// expect server greetings
    multiline_code=0;
+   ignore_pass=false;
+   try_feat_after_login=false;
 
    dos_path=false;
    vms_path=false;
@@ -894,9 +896,6 @@ void Ftp::InitFtp()
    eof=false;
    state=INITIAL_STATE;
    flags=SYNC_MODE;
-   wait_flush=false;
-   ignore_pass=false;
-   try_feat_after_login=false;
    skey_pass=0;
    allow_skey=true;
    force_skey=false;
@@ -1288,7 +1287,6 @@ int   Ftp::Do()
       m=MOVED;
       AddResp(RESP_READY,CHECK_READY);
 
-      try_feat_after_login=false;
       if(use_feat)
       {
 	 conn->SendCmd("FEAT");
@@ -1336,7 +1334,6 @@ int   Ftp::Do()
       xfree(skey_pass);
       skey_pass=0;
 
-      ignore_pass=false;
       AddResp(RESP_PASS_REQ,CHECK_USER);
       conn->SendCmd2("USER",user_to_use);
 
@@ -1356,7 +1353,7 @@ int   Ftp::Do()
 	    goto usual_return;
       }
 
-      if(!ignore_pass)
+      if(!conn->ignore_pass)
       {
 	 const char *pass_to_use=pass?pass:anon_pass;
 	 if(allow_skey && skey_pass)
@@ -1365,7 +1362,7 @@ int   Ftp::Do()
 	 conn->SendCmd2("PASS",pass_to_use);
       }
 
-      if(try_feat_after_login)
+      if(conn->try_feat_after_login)
       {
 	 conn->SendCmd("FEAT");
 	 AddResp(211,CHECK_FEAT);
@@ -3611,7 +3608,7 @@ void Ftp::CheckResp(int act)
       break;
    case CHECK_FEAT:
       if(act==530)
-	 try_feat_after_login=true;
+	 conn->try_feat_after_login=true;
       if(!is2XX(act))
 	 break;
       CheckFEAT(all_lines);

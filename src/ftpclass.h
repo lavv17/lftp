@@ -127,12 +127,14 @@ class Ftp : public NetAccess
       int aborted_data_sock;
       sockaddr_u peer_sa;
       bool quit_sent;
-      bool fixed_pasv; // had to fix PASV address.
+      bool fixed_pasv;	  // had to fix PASV address.
       bool translation_activated;
       bool proxy_is_http; // true when connection was established via http proxy.
 
       int multiline_code; // the code of multiline response.
-      int sync_wait; // number of commands in flight.
+      int sync_wait;	  // number of commands in flight.
+      bool ignore_pass;	  // logged in just with user
+      bool try_feat_after_login;
 
       char type;  // type of transfer: 'A'scii or 'I'mage
 
@@ -271,8 +273,6 @@ private:
    void  ControlClose();
    void  AbortedClose();
 
-   void	 SwitchToState(automate_state);
-
    void  SendUrgentCmd(const char *cmd);
    int	 FlushSendQueueOneCmd();
    int	 FlushSendQueue(bool all=false);
@@ -321,9 +321,6 @@ private:
 
    void	 SetError(int code,const char *mess=0);
 
-   bool	 wait_flush;	// wait until all responces come
-   bool	 ignore_pass;	// logged in just with user
-   bool	 try_feat_after_login;
    bool  verify_data_address;
    bool  verify_data_port;
    bool	 rest_list;
