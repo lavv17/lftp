@@ -215,6 +215,7 @@ class Ftp : public NetAccess
    bool  vms_path;
    bool  mdtm_supported;
    bool  size_supported;
+   bool  site_chmod_supported;
 
    int	 StateToError();
 

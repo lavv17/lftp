@@ -660,6 +660,7 @@ void Ftp::InitFtp()
    vms_path=false;
    mdtm_supported=true;
    size_supported=true;
+   site_chmod_supported=true;
 
    RespQueue=0;
    RQ_alloc=0;
@@ -906,6 +907,12 @@ int   Ftp::Do()
       state=CONNECTING_STATE;
       m=MOVED;
       event_time=now;
+
+      // reset *_supported on reconnect - we can possibly connect
+      // to a different server in fact.
+      size_supported=true;
+      mdtm_supported=true;
+      site_chmod_supported=true;
    }
 
    case(CONNECTING_STATE):
@@ -998,6 +1005,13 @@ int   Ftp::Do()
 
       if(mode==CLOSED || mode==CONNECT_VERIFY)
 	 goto notimeout_return;
+
+      if(mode==CHANGE_MODE && !site_chmod_supported)
+      {
+	 SetError(NO_FILE,_("SITE CHMOD is not supported by this site"));
+	 state=NO_FILE_STATE;
+	 return MOVED;
+      }
 
       assert(peer!=0);
       assert(peer_curr<peer_num);
@@ -2444,6 +2458,7 @@ void  Ftp::MoveConnectionHere(Ftp *o)
 
    size_supported=o->size_supported;
    mdtm_supported=o->mdtm_supported;
+   site_chmod_supported=o->site_chmod_supported;
 
    set_real_cwd(o->real_cwd);
    o->set_real_cwd(0);
@@ -2553,6 +2568,12 @@ int   Ftp::CheckResp(int act)
 
    case CHECK_FILE_ACCESS:
    file_access:
+      if(mode==CHANGE_MODE && (act==500 || act==501 || act==502))
+      {
+	 site_chmod_supported=false;
+	 new_state=NO_FILE_STATE;
+	 break;
+      }
       new_state=NoFileCheck(act,exp);
       break;
 
@@ -2875,6 +2896,7 @@ void Ftp::Connect(const char *new_host,const char *new_port)
    vms_path=false;
    mdtm_supported=true;
    size_supported=true;
+   site_chmod_supported=true;
 
    Reconfig();
    state=INITIAL_STATE;

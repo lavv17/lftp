@@ -1,3 +1,7 @@
+1999-11-11  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: add site_chmod_supported flag.
+
 1999-11-09  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: properly set info.size and info.time if mdtm or size
