@@ -274,10 +274,7 @@ AC_DEFUN(LFTP_CHECK_LIBM,
 	    #include <math.h>
 	    double a,b;
 	 ],[
-	    int main()
-	    {
-	       return int(exp(a)+log(b)+pow(a,b));
-	    }
+	    return int(exp(a)+log(b)+pow(a,b));
 	 ],
 	 [lftp_cv_libm_needed=no],
 	 [lftp_cv_libm_needed=yes])
