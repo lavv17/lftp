@@ -155,14 +155,14 @@ int SFtp::Do()
       if(!NextTry())
 	 return MOVED;
 
-      const char *init="sftp";
-      ArgV *cmd=new ArgV("ssh");
+      const char *init=Query("server-program",hostname);
+      ArgV *cmd=new ArgV(Query("connect-program",hostname));
       cmd->Add("-x");	// don't forward X11
       cmd->Add("-a");	// don't forward AuthAgent.
       if(!strchr(init,'/'))
       {
 	 cmd->Add("-s");   // run ssh2 subsystem
-	 // unfortunately, sftpd does not have a greeting
+	 // sftpd does not have a greeting
 	 received_greeting=true;
       }
       else
@@ -221,7 +221,7 @@ int SFtp::Do()
    case CONNECTING_1:
       if(!received_greeting)
 	 return m;
-      SendRequest(new Request_INIT(Query("protocol-version")),EXPECT_VERSION);
+      SendRequest(new Request_INIT(Query("protocol-version",hostname)),EXPECT_VERSION);
       state=CONNECTING_2;
       return MOVED;
 
