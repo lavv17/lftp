@@ -37,7 +37,7 @@ FileSet *LsCache::fset=0;
 FileAccess *LsCache::fset_loc=0;
 int LsCache::fset_m=0;
 char *LsCache::fset_a=0;
-	    
+
 void LsCache::CheckSize()
 {
    if(sizelimit<0)
@@ -97,6 +97,8 @@ void LsCache::Add(FileAccess *p_loc,const char *a,int m,const char *d,int l)
    else
    {
       xfree(scan->data);
+      if(fset_loc && scan->loc->SameLocationAs(fset_loc))
+	 free_fset();
    }
    scan->data=(char*)xmemdup(d,l);
    scan->data_len=l;
@@ -146,16 +148,17 @@ FileSet *LsCache::Find(FileAccess *p_loc,const char *a,int m)
    if(!Find(p_loc, a, m, &buf_c, &bufsiz))
       return 0;
 
-   FileSet *new_fset=p_loc->ParseLongList(buf_c, bufsiz);
-   assert(fset); /* should not have unparsable lists cached */
-   
    free_fset();
+
+   FileSet *new_fset=p_loc->ParseLongList(buf_c, bufsiz);
+   if(!new_fset)
+      return 0;
 
    fset=new_fset;
    fset_a=xstrdup(a);
    fset_m=m;
    fset_loc=p_loc->Clone();
-   
+
    return fset;
 }
 
@@ -310,7 +313,7 @@ int LsCache::IsDirectory(FileAccess *p_loc,const char *dir_c)
    char *origdir = alloca_strdup(p_loc->GetCwd());
    p_loc->Chdir(dir_c, false);
 
-   /* Cheap tests first: 
+   /* Cheap tests first:
     *
     * First, we know the path is a directory or not if we have an expicit
     * CHANGE_DIR entry for it. */
@@ -363,7 +366,7 @@ int LsCache::IsDirectory(FileAccess *p_loc,const char *dir_c)
    char *origdir = alloca_strdup(p_loc->GetCwd());
    p_loc->Chdir(dir_c, false);
 
-   /* Cheap tests first: 
+   /* Cheap tests first:
     *
     * First, we know the path is a directory or not if we have an expicit
     * CHANGE_DIR entry for it. */

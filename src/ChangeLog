@@ -1,3 +1,8 @@
+2001-12-10  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* LsCache.cc: don't assume the listing to be parseable; call free_fset
+	  when listing is replaced with new one.
+
 2001-12-10  Glenn Maynard <g_ld@zewt.org>
 
 	* LsCache.cc, LsCache.h, ftpclass.cc: Add explicit filetype caching.
