@@ -48,6 +48,7 @@ static int cindex; // index in completion array
 static const char *const*glob_res=NULL;
 
 static bool shell_cmd;
+static bool quote_glob;
 
 char *command_generator(char *text,int state)
 {
@@ -242,6 +243,14 @@ static completion_type cmd_completion_type(int start)
 	 break;
    }
 
+   if(!strcmp(buf,"shell"))
+      shell_cmd=true;
+   if(!strcmp(buf,"glob")
+   || !strcmp(buf,"mget")
+   || !strcmp(buf,"mput")
+   || !strcmp(buf,"mrm"))
+      quote_glob=true;
+
    if(!strcmp(buf,"cd")
    || !strcmp(buf,"mkdir"))
       return REMOTE_DIR; /* append slash automatically */
@@ -339,6 +348,24 @@ static completion_type cmd_completion_type(int start)
    return LOCAL;
 }
 
+static void glob_quote(char *out,const char *in,int len)
+{
+   while(len>0)
+   {
+      switch(*in)
+      {
+      case '*': case '?': case '[': case ']':
+      case '\\':
+	 if(!quote_glob)
+	    *out++='\\';
+      }
+      *out++=*in;
+      in++;
+      len--;
+   }
+   *out=0;
+}
+
 CmdExec *completion_shell;
 
 static bool force_remote=false;
@@ -356,6 +383,7 @@ static char **lftp_completion (char *text,int start,int end)
 
    rl_completion_append_character=' ';
    shell_cmd=false;
+   quote_glob=false;
 
    completion_type type=cmd_completion_type(start);
 
@@ -386,12 +414,8 @@ static char **lftp_completion (char *text,int start,int end)
       if(!remote_completion && !force_remote)
 	 break; // local
    really_remote:
-      char *pat=(char*)alloca(len+5);
-      strncpy(pat,text,len);
-      pat[len]=0;
-
-      if(strchr(pat,'*') || strchr(pat,'?'))
-	 return(NULL);
+      char *pat=(char*)alloca(len*2+10);
+      glob_quote(pat,text,len);
 
       strcat(pat,"*");
 
@@ -540,10 +564,12 @@ backslash_quote (char *string)
  	case '\'':
  	case '(': case ')':
  	case '!': case '{': case '}':		/* reserved words */
- 	case '*': case '[': case '?': case ']':	/* globbing chars */
  	case '^':
  	case '$': case '`':			/* expansion chars */
 	  if(!shell_cmd)
+	    goto def;
+ 	case '*': case '[': case '?': case ']':	/* globbing chars */
+	  if(!shell_cmd && !quote_glob)
 	    goto def;
 	case ' ': case '\t': case '\n':		/* IFS white space */
 	case '"': case '\\':		/* quoting chars */
@@ -851,7 +877,7 @@ void lftp_readline_init ()
 
    rl_completer_quote_characters = (char*)"\"";
    rl_completer_word_break_characters = (char*)" \t\n\"";
-   rl_filename_quote_characters = (char*)" \t\n\\\">;|&()";
+   rl_filename_quote_characters = (char*)" \t\n\\\">;|&()*?[]";
    rl_filename_quoting_function = (CPFunction*)bash_quote_filename;
    rl_filename_dequoting_function = (CPFunction*)bash_dequote_filename;
    rl_char_is_quoted_p = (Function*)lftp_char_is_quoted;

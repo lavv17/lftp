@@ -1,3 +1,7 @@
+1999-08-26  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* complete.cc: improve completion of file names with wildcards.
+
 1999-08-25  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: handle 225 and 226 replies in TransferCheck.
