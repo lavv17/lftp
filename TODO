@@ -46,5 +46,11 @@ currently; some need other work to be done.
  * mirror: --log=file write actions to file, --script=file prepare script of
    actions to be done.
 
- * FileCopy class.
- 
+ * FileCopy class. (use it in get, put)
+
+ * `local' command to swap local/remote, e.g.
+      mirror -R = local mirror
+      put = local get
+   of course, implement commands using two sessions where possible.
+
+ * make debug output to clear/redraw prompt.
