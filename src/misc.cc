@@ -64,11 +64,11 @@ char *basename_ptr(char *s)
    return s1;
 }
 
-char *expand_home_relative(char *s)
+const char *expand_home_relative(const char *s)
 {
    if(s[0]=='~')
    {
-      char *home=0;
+      const char *home=0;
       char *sl;
       static char *ret_path=0;
 
