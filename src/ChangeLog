@@ -7,6 +7,7 @@
 
 	* Fish.cc: make reget more efficient by using larger block size and
 	  dd skip.
+	* Resolver.cc: declare dn_expand and dn_skipname if needed.
 
 2005-01-11  Alexander V. Lukyanov <lav@yars.free.net>
 
