@@ -1,3 +1,7 @@
+1999-08-09  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* HttpDir.cc: (HttpDirList::Do) use proper prefix for ls -f.
+
 1999-08-08  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* HttpDir.cc: only try to get info for href links.

@@ -466,6 +466,13 @@ int HttpDirList::Do()
       if(curr_url)
 	 delete curr_url;
       curr_url=new ParsedURL(session->GetFileURL(curr));
+      if(mode==FA::RETRIEVE)
+      {
+	 // strip file name, directory remains.
+	 char *slash=strrchr(curr_url->path,'/');
+	 if(slash && slash>curr_url->path)
+	    *slash=0;
+      }
    }
 
    const char *b;
