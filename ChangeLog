@@ -1,3 +1,7 @@
+1999-09-29	Andreas Ley <andy@rz.uni-karlsruhe.de>
+
+	* configure.in: fix check for res_search for AIX.
+
 1999-09-20	lav
 
 	* acconfig.h: remove __USE_XOPEN.

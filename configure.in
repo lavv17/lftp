@@ -126,6 +126,7 @@ AC_SEARCH_LIBS(gethostbyname,nsl)
 AC_SEARCH_LIBS(dlopen,dl,[AC_DEFINE(HAVE_DLOPEN)])
 AC_SEARCH_LIBS(res_search,resolv bind,[AC_DEFINE(HAVE_RES_SEARCH)])
 IU_CHECK_DECL(res_search, [
+     #include <stdio.h>
      #include <sys/types.h>
      #include <netinet/in.h>
      #include <arpa/nameser.h>
