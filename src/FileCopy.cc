@@ -51,6 +51,7 @@
 
 ResDecl rate_period  ("xfer:rate-period","15", ResMgr::UNumberValidate,0);
 ResDecl eta_period   ("xfer:eta-period", "120",ResMgr::UNumberValidate,0);
+ResDecl max_redir    ("xfer:max-redirections", "0",ResMgr::UNumberValidate,0);
 
 // FileCopy
 #define super SMTask
@@ -943,6 +944,67 @@ int FileCopyPeerFA::Get_LL(int len)
    {
       if(res==FA::DO_AGAIN)
 	 return 0;
+      if(res==FA::FILE_MOVED)
+      {
+	 // handle redirection.
+	 assert(!fxp);
+	 const char *loc_c=session->GetNewLocation();
+	 int max_redirections=max_redir.Query(0);
+	 if(loc_c && loc_c[0] && max_redirections>0)
+	 {
+	    if(++redirections>max_redirections)
+	    {
+	       SetError(_("Too many redirections"));
+	       return -1;
+	    }
+
+	    char *loc=alloca_strdup(loc_c);
+	    session->Close(); // loc_c is no longer valid.
+
+	    ParsedURL u(loc,true);
+
+	    if(u.proto)
+	    {
+	       if(reuse_later)
+		  SessionPool::Reuse(session);
+
+	       session=FileAccess::New(&u);
+	       reuse_later=true;
+
+	       xfree(file);
+	       file=xstrdup(u.path);
+	       size=NO_SIZE_YET;
+	       date=NO_DATE_YET;
+
+	       xfree(orig_url);
+	       orig_url=xstrdup(loc);
+	    }
+	    else // !proto
+	    {
+	       url::decode_string(loc);
+	       char *slash=strrchr(file,'/');
+	       char *new_file;
+	       if(loc[0]!='/' && slash)
+	       {
+		  *slash=0;
+		  new_file=xstrdup(dir_file(file,loc));
+	       }
+	       else
+	       {
+		  new_file=xstrdup(loc);
+	       }
+	       xfree(file);
+	       file=new_file;
+
+	       xfree(orig_url);
+	       orig_url=0; // FIXME: can transform previous orig_url.
+	    }
+	    try_time=0;
+	    retries=0;
+	    current->Timeout(0); // retry with new location.
+	    return 0;
+	 }
+      }
       SetError(session->StrError(res));
       return -1;
    }
@@ -1032,6 +1094,7 @@ FileCopyPeerFA::FileCopyPeerFA(FileAccess *s,const char *f,int m)
    fxp=false;
    try_time=0;
    retries=0;
+   redirections=0;
    if(FAmode==FA::LIST || FAmode==FA::LONG_LIST)
       Save(LsCache::SizeLimit());
 }

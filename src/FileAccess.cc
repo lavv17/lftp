@@ -77,6 +77,7 @@ void FileAccess::Init()
    mkdir_p=false;
    ascii=false;
    norest_manual=false;
+   location=0;
 
    url=0;
 
@@ -118,20 +119,21 @@ FileAccess::FileAccess(const FileAccess *fa)
 
 FileAccess::~FileAccess()
 {
-   xfree(file); file=0;
+   xfree(file);
    xfree(file_url);
-   xfree(cwd); cwd=0;
-   xfree(real_cwd); real_cwd=0;
-   xfree(error); error=0;
-   xfree(home); home=0;
-   xfree(user); user=0;
-   xfree(pass); pass=0;
-   xfree(group); group=0;
-   xfree(gpass); gpass=0;
-   xfree(hostname); hostname=0;
-   xfree(portname); portname=0;
-   xfree(url); url=0;
-   xfree(closure); closure=0;
+   xfree(cwd);
+   xfree(real_cwd);
+   xfree(error);
+   xfree(home);
+   xfree(user);
+   xfree(pass);
+   xfree(group);
+   xfree(gpass);
+   xfree(hostname);
+   xfree(portname);
+   xfree(url);
+   xfree(closure);
+   xfree(location);
    for(FileAccess **scan=&chain; *scan; scan=&((*scan)->next))
    {
       if(*scan==this)
@@ -331,6 +333,20 @@ const char *FileAccess::StrError(int err)
       return(_("Login failed"));
    case(NOT_SUPP):
       return(_("Operation not supported"));
+   case(FILE_MOVED):
+      if(error)
+      {
+	 if(str_allocated<64+strlen(error))
+	    str=(char*)xrealloc(str,64+strlen(error));
+   	 sprintf(str,_("File moved: %s"),error);
+      }
+      else
+      {
+	 if(str_allocated<64+xstrlen(location))
+	    str=(char*)xrealloc(str,64+xstrlen(location));
+	 sprintf(str,_("File moved to `%s'"),location?location:"?");
+      }
+      return str;
    }
    return("");
 }
@@ -348,6 +364,7 @@ void FileAccess::Close()
    entity_date=NO_DATE;
    ascii=false;
    norest_manual=false;
+   xfree(location); location=0;
    ClearError();
 }
 

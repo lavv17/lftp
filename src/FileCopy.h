@@ -247,6 +247,8 @@ class FileCopyPeerFA : public FileCopyPeer
    time_t try_time;
    int retries;
 
+   int redirections;
+
 protected:
    ~FileCopyPeerFA();
 

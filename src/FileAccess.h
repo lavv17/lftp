@@ -155,6 +155,7 @@ protected:
    void Fatal(const char *mess);
    char *error;
    int error_code;
+   char *location;
 
    FileAccess *next;
    static FileAccess *chain;
@@ -256,6 +257,7 @@ public:
       NOT_OPEN,
       NO_FILE,
       NO_HOST,
+      FILE_MOVED,
       FATAL,
       STORE_FAILED,
       LOGIN_FAILED,
@@ -273,6 +275,8 @@ public:
    virtual DirList *MakeDirList(ArgV *a);
 
    static bool NotSerious(int err);
+
+   const char *GetNewLocation() { return location; }
 
    void Reconfig(const char *);
 

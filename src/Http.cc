@@ -72,7 +72,6 @@ void Http::Init()
    status_code=0;
    status_consumed=0;
    proto_version=0x10;
-   location=0;
    sent_eot=false;
    last_method=0;
 
@@ -178,8 +177,6 @@ void Http::ResetRequestData()
    status_consumed=0;
    xfree(line);
    line=0;
-   xfree(location);
-   location=0;
    sent_eot=false;
    keep_alive=false;
    keep_alive_max=-1;
@@ -535,7 +532,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       body_size=bs;
       if(pos==0 && mode!=STORE)
 	 entity_size=body_size;
-      if(pos==0 && opt_size)
+      if(pos==0 && opt_size && H_20X(status_code))
 	 *opt_size=body_size;
 
       if(mode==ARRAY_INFO && H_20X(status_code))
@@ -555,14 +552,14 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       body_size=last-first+1;
       if(mode!=STORE)
 	 entity_size=fsize;
-      if(opt_size)
+      if(opt_size && H_20X(status_code))
 	 *opt_size=fsize;
       return;
    }
    if(!strcasecmp(name,"Last-Modified"))
    {
       time_t t=http_atotm(value);
-      if(opt_date)
+      if(opt_date && H_20X(status_code))
 	 *opt_date=t;
 
       if(mode==ARRAY_INFO && H_20X(status_code))
@@ -1072,10 +1069,14 @@ int Http::Do()
       if(!H_20X(status_code))
       {
 	 char *err=(char*)alloca(strlen(status)+strlen(file)+strlen(cwd)+xstrlen(location)+20);
+	 int code=NO_FILE;
 
 	 if(H_REDIRECTED(status_code))
+	 {
 	    sprintf(err,"%s (%s -> %s)",status+status_consumed,file,
 				    location?location:"nowhere");
+	    code=FILE_MOVED;
+	 }
 	 else
 	 {
 	    if(file && file[0])
@@ -1085,7 +1086,7 @@ int Http::Do()
 		  (cwd[0] && cwd[strlen(cwd)-1]=='/')?"":"/");
 	 }
 	 Disconnect();
-	 SetError(NO_FILE,err);
+	 SetError(code,err);
 	 return MOVED;
       }
       if(mode==CHANGE_DIR)
@@ -1104,7 +1105,7 @@ int Http::Do()
 	 if(mode!=STORE && body_size>=0)
 	 {
 	    entity_size=body_size;
-	    if(opt_size)
+	    if(opt_size && H_20X(status_code))
 	       *opt_size=entity_size;
 	 }
 	 real_pos=0;

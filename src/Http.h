@@ -83,7 +83,6 @@ class Http : public NetAccess
    char *line;
    off_t body_size;
    off_t bytes_received;
-   char *location;
    bool sent_eot;
 
    bool ModeSupported();
