@@ -365,9 +365,9 @@ rl_redisplay ()
      one passed to readline()), use the values we have already expanded.
      If not, use what's already in rl_display_prompt.  WRAP_OFFSET is the
      number of non-visible characters in the prompt string. */
-  if (rl_display_prompt == rl_prompt || local_prompt)
+  if (rl_display_prompt == rl_prompt && local_prompt)
     {
-      int local_len = local_prompt ? strlen (local_prompt) : 0;
+      int local_len = strlen (local_prompt);
       if (local_prompt_prefix && forced_display)
 	_rl_output_some_chars (local_prompt_prefix, strlen (local_prompt_prefix));
 
