@@ -733,8 +733,7 @@ static char *mem_crlf(const char *buf, int s)
 /* convert \r\n -> \n in buf; return new size; be efficient for large strings */
 int crlf_to_lf(char *buf, int s)
 {
-   char *store;
-   store=mem_crlf(buf,s);
+   char *store=mem_crlf(buf,s);
    if(!store)
       return s;
 
