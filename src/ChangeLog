@@ -1,3 +1,7 @@
+2002-01-29  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* LocalDir.cc, LocalDir.h: add forgotten dtor.
+
 2002-01-27  Glenn Maynard <g_ld@zewt.org>
 
 	* commands.cc: implement du --block-size

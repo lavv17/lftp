@@ -96,3 +96,8 @@ LocalDirectory *LocalDirectory::Clone() const
 {
    return new LocalDirectory(this);
 }
+
+LocalDirectory::~LocalDirectory()
+{
+   Unset();
+}

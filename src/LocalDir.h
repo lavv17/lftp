@@ -31,6 +31,7 @@ class LocalDirectory
 public:
    LocalDirectory();
    LocalDirectory(const LocalDirectory *);
+   ~LocalDirectory();
 
    const char *GetName();
    const char *Chdir();	// returns error message or NULL
