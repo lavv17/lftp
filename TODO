@@ -54,3 +54,5 @@ currently; some need other work to be done.
    of course, implement commands using two sessions where possible.
 
  * make debug output to clear/redraw prompt.
+
+ * safety: options for permanent backup, maybe complain instead of overwriting.
