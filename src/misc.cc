@@ -51,7 +51,7 @@ CDECL_END
 #include "ResMgr.h"
 #include <mbswidth.h>
 
-#if defined(HAVE_UNSETENV) && !defined(HAVE_UNSETENV_DECL)
+#if HAVE_UNSETENV && !HAVE_DECL_UNSETENV
 CDECL void unsetenv(const char *name);
 #endif
 

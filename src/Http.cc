@@ -42,7 +42,7 @@
 
 #include "ascii_ctype.h"
 
-#ifndef HAVE_STRPTIME_DECL
+#if !HAVE_DECL_STRPTIME
 CDECL char *strptime(const char *buf, const char *format, struct tm *tm);
 #endif
 

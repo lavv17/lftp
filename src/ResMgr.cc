@@ -729,7 +729,7 @@ bool Range::Match(int n)
    return full || (n>=start && n<=end);
 }
 
-#ifndef HAVE_RANDOM_DECL
+#if !HAVE_DECL_RANDOM
 CDECL long random();
 CDECL void srandom(unsigned seed);
 #endif
@@ -775,7 +775,7 @@ const char *ResMgr::ERegExpValidate(char **s)
    return 0;
 }
 
-#if defined(HAVE_INET_ATON) && !defined(HAVE_INET_ATON_DECL)
+#if HAVE_INET_ATON && !HAVE_DECL_INET_ATON
 CDECL int inet_aton(const char *,struct in_addr *);
 #endif
 

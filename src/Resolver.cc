@@ -56,17 +56,17 @@
 # define T_SRV 33
 #endif
 
-#if !defined(HAVE_HSTRERROR_DECL)
+#if !HAVE_DECL_HSTRERROR
 extern "C" { const char *hstrerror(int); }
 #endif
 
 #ifdef HAVE_H_ERRNO
-#ifndef HAVE_H_ERRNO_DECL
+#if !HAVE_DECL_H_ERRNO
 CDECL int h_errno;
 #endif
 #endif
 
-#if defined(HAVE_RES_SEARCH) && !defined(HAVE_RES_SEARCH_DECL)
+#if HAVE_RES_SEARCH && !HAVE_DECL_RES_SEARCH
 CDECL int res_search(const char*,int,int,unsigned char*,int);
 #endif
 
@@ -331,6 +331,9 @@ void Resolver::AddAddress(int family,const char *address,int len)
       }
       memcpy(&add->in.sin_addr,address,len);
       add->in.sin_port=port_number;
+#ifdef HAVE_STRUCT_SOCKADDR_SA_LEN
+      add->sa.sa_len=sizeof(add->in);
+#endif
       break;
 
 #if INET6
@@ -342,6 +345,9 @@ void Resolver::AddAddress(int family,const char *address,int len)
       }
       memcpy(&add->in6.sin6_addr,address,len);
       add->in6.sin6_port=port_number;
+#ifdef HAVE_STRUCT_SOCKADDR_SA_LEN
+      add->sa.sa_len=sizeof(add->in6);
+#endif
       break;
 #endif
 

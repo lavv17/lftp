@@ -209,7 +209,7 @@ socklen_t NetAccess::SocketAddrLen(const sockaddr_u *u)
    return sizeof(*u);
 }
 
-#if defined(HAVE_INET_ATON) && !defined(HAVE_INET_ATON_DECL)
+#if HAVE_INET_ATON && !HAVE_DECL_INET_ATON
 CDECL int inet_aton(const char *,struct in_addr *);
 #endif
 
