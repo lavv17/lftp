@@ -929,7 +929,6 @@ int   Ftp::Do()
    unsigned char *p;
    automate_state oldstate;
    int	 m=STALL;
-   int 	 old_type;
 
    // check if idle time exceeded
    if(mode==CLOSED && control_sock!=-1 && idle>0)
@@ -1227,7 +1226,7 @@ int   Ftp::Do()
 	 SetSocketMaxseg(data_sock);
       }
 
-      old_type=type;
+      int old_type=type;
       if((flags&NOREST_MODE) || pos==0)
 	 real_pos=0;
       else
@@ -1351,38 +1350,7 @@ int   Ftp::Do()
 
       if(mode==ARRAY_INFO)
       {
-      array_info_send_more:
-	 for(int i=array_ptr; i<array_cnt; i++)
-	 {
-	    bool sent=false;
-	    if(array_for_info[i].get_time && mdtm_supported)
-	    {
-	       SendCmd2("MDTM",ExpandTildeStatic(array_for_info[i].file));
-	       AddResp(RESP_RESULT_HERE,CHECK_MDTM);
-	       sent=true;
-	    }
-	    else
-	    {
-	       array_for_info[i].time=NO_DATE;
-	    }
-	    if(array_for_info[i].get_size && size_supported)
-	    {
-	       SendCmd2("SIZE",ExpandTildeStatic(array_for_info[i].file));
-	       AddResp(RESP_RESULT_HERE,CHECK_SIZE);
-	       sent=true;
-	    }
-	    else
-	    {
-	       array_for_info[i].size=-1;
-	    }
-	    if(!sent)
-	    {
-	       if(i==array_ptr)
-		  array_ptr++;	 // if it is first one, just skip it.
-	       else
-		  break;	 // otherwise, wait until it is first.
-	    }
-	 }
+	 SendArrayInfoRequests();
 	 goto pre_WAITING_STATE;
       }
 
@@ -1749,7 +1717,10 @@ int   Ftp::Do()
 
       // more work to do?
       if(RespQueueIsEmpty() && mode==ARRAY_INFO && array_ptr<array_cnt)
-	 goto array_info_send_more;
+      {
+	 SendArrayInfoRequests();
+	 return MOVED;
+      }
 
       if(copy_mode==COPY_DEST && !copy_allow_store)
 	 goto notimeout_return;
@@ -1839,6 +1810,41 @@ system_error:
    Disconnect();
    SetError(SEE_ERRNO,0);
    return MOVED;
+}
+
+void Ftp::SendArrayInfoRequests()
+{
+   for(int i=array_ptr; i<array_cnt; i++)
+   {
+      bool sent=false;
+      if(array_for_info[i].get_time && mdtm_supported)
+      {
+	 SendCmd2("MDTM",ExpandTildeStatic(array_for_info[i].file));
+	 AddResp(RESP_RESULT_HERE,CHECK_MDTM);
+	 sent=true;
+      }
+      else
+      {
+	 array_for_info[i].time=NO_DATE;
+      }
+      if(array_for_info[i].get_size && size_supported)
+      {
+	 SendCmd2("SIZE",ExpandTildeStatic(array_for_info[i].file));
+	 AddResp(RESP_RESULT_HERE,CHECK_SIZE);
+	 sent=true;
+      }
+      else
+      {
+	 array_for_info[i].size=-1;
+      }
+      if(!sent)
+      {
+	 if(i==array_ptr)
+	    array_ptr++;   // if it is first one, just skip it.
+	 else
+	    break;	   // otherwise, wait until it is first.
+      }
+   }
 }
 
 void  Ftp::LogResp(const char *l)

@@ -643,6 +643,7 @@ LocalDirList::LocalDirList(ArgV *a,const char *cwd)
    : DirList(a)
 {
    fg_data=0;
+   a->setarg(0,"ls");
    a->insarg(1,"-l");
    InputFilter *f=new InputFilter(a);
    f->SetCwd(cwd);
