@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2000 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2001 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,15 +72,6 @@ CDECL int res_search(const char*,int,int,unsigned char*,int);
 # define DEFAULT_ORDER "inet"
 #endif
 
-static ResDecl
-   res_cache_enable("dns:cache-enable", "yes", ResMgr::BoolValidate,0),
-   res_cache_expire("dns:cache-expire", "1h",  ResMgr::TimeIntervalValidate,0),
-   res_cache_size  ("dns:cache-size",   "256", ResMgr::UNumberValidate,ResMgr::NoClosure),
-   res_timeout	   ("dns:fatal-timeout","0",   ResMgr::UNumberValidate,0),
-   res_order	   ("dns:order",	DEFAULT_ORDER, Resolver::OrderValidate,0),
-   res_query_srv   ("dns:SRV-query",    "no",  ResMgr::BoolValidate,0),
-   res_use_fork	   ("dns:use-fork",     "yes", ResMgr::BoolValidate,ResMgr::NoClosure);
-
 
 struct address_family
 {
@@ -96,7 +87,7 @@ static const address_family af_list[]=
    { -1, 0 }
 };
 
-ResolverCache *Resolver::cache;
+ResolverCache *Resolver::cache=new ResolverCache;
 
 Resolver::Resolver(const char *h,const char *p,const char *defp,
 		   const char *ser,const char *pr)
@@ -119,7 +110,7 @@ Resolver::Resolver(const char *h,const char *p,const char *defp,
    addr=0;
    addr_num=0;
    buf=0;
-   use_fork=res_use_fork.Query(0);
+   use_fork=ResMgr::Query("dns:use-fork",0);
 
    error=0;
 
@@ -336,42 +327,32 @@ void Resolver::AddAddress(int family,const char *address,int len)
    }
 }
 
-const char *Resolver::ParseOrder(const char *s,int *o)
+int Resolver::FindAddressFamily(const char *name)
 {
-   static char *error=0;
+   for(const address_family *f=af_list; f->name; f++)
+   {
+      if(!strcasecmp(name,f->name))
+	 return f->number;
+   }
+   return -1;
+}
 
+void Resolver::ParseOrder(const char *s,int *o)
+{
    const char * const delim="\t ";
    char *s1=alloca_strdup(s);
    int idx=0;
 
    for(s1=strtok(s1,delim); s1; s1=strtok(0,delim))
    {
-      const address_family *f;
-      for(f=af_list; f->name; f++)
+      int af=FindAddressFamily(s1);
+      if(af!=-1 && idx<15)
       {
-	 if(!strcasecmp(s1,f->name))
-	    break;
-      }
-      if(!f->name)
-      {
-	 const char * const format=_("unknown address family `%s'");
-	 error=(char*)xrealloc(error,strlen(format)+strlen(s1));
-	 sprintf(error,format,s1);
-	 return error;
-      }
-      if(idx<15)
-      {
-	 if(o) o[idx]=f->number;
+	 if(o) o[idx]=af;
 	 idx++;
       }
    }
    if(o) o[idx]=-1;
-   return 0;
-}
-
-const char *Resolver::OrderValidate(char **s)
-{
-   return ParseOrder(*s,0);
 }
 
 #ifdef HAVE_RES_SEARCH
@@ -469,7 +450,7 @@ int SRV_compare(const void *a,const void *b)
 
 void Resolver::LookupSRV_RR()
 {
-   if(!(bool)res_query_srv.Query(hostname))
+   if(!(bool)ResMgr::Query("dns:SRV-query",hostname))
       return;
 #ifdef HAVE_RES_SEARCH
    const char *tproto=proto?proto:"tcp";
@@ -637,7 +618,7 @@ void Resolver::LookupOne(const char *name)
    int af_index=0;
    int af_order[16];
 
-   const char *order=res_order.Query(name);
+   const char *order=ResMgr::Query("dns:order",name);
 
    const char *proto_delim=strchr(name,',');
    if(proto_delim)
@@ -645,7 +626,8 @@ void Resolver::LookupOne(const char *name)
       char *o=string_alloca(proto_delim-name+1);
       memcpy(o,name,proto_delim-name);
       o[proto_delim-name]=0;
-      if(ParseOrder(o,0)==0) // check if the protocol name is valid.
+      // check if the protocol name is valid.
+      if(FindAddressFamily(o)!=-1)
 	 order=o;
       name=proto_delim+1;
    }
@@ -847,16 +829,12 @@ flush:
 
 void Resolver::Reconfig(const char *name)
 {
-   timeout = res_timeout.Query(hostname);
+   timeout = ResMgr::Query("dns:fatal-timeout",hostname);
    if(!name || strncmp(name,"dns:",4))
       return;
    cache->Clear();
 }
 
-void Resolver::ClassInit()
-{
-   cache=new ResolverCache;
-}
 
 
 ResolverCache::ResolverCache()
@@ -910,7 +888,7 @@ void ResolverCache::Find(const char *h,const char *p,const char *defp,
    *n=0;
 
    // if cache is disabled for this host, return nothing.
-   if(!(bool)res_cache_enable.Query(h))
+   if(!(bool)ResMgr::Query("dns:cache-enable",h))
       return;
 
    Entry **ptr=FindPtr(h,p,defp,ser,pr);
@@ -925,13 +903,13 @@ void ResolverCache::Find(const char *h,const char *p,const char *defp,
 // FIXME: this function can be speed-optimized.
 void ResolverCache::CacheCheck()
 {
-   int countlimit=res_cache_size.Query(0);
+   int countlimit=ResMgr::Query("dns:cache-size",0);
    int count=0;
    Entry **scan=&chain;
    while(*scan)
    {
       Entry *s=*scan;
-      TimeInterval expire((const char *)res_cache_expire.Query(s->hostname));
+      TimeInterval expire((const char *)ResMgr::Query("dns:cache-expire",s->hostname));
       if((!expire.IsInfty() && SMTask::now-s->timestamp>expire.Seconds())
       || (count>=countlimit))
       {

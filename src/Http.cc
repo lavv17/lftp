@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1999-2000 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1999-2001 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,9 +36,8 @@
 #include "url.h"
 #include "HttpDir.h"
 #include "misc.h"
-#ifdef USE_SSL
-# include "lftp_ssl.h"
-#endif
+#include "buffer_ssl.h"
+#include "lftp_ssl.h"
 
 #include "ascii_ctype.h"
 
@@ -332,7 +331,8 @@ void Http::SendMethod(const char *method,const char *efile)
       if(!xstrcmp(referer,"."))
       {
 	 referer=GetConnectURL();
-	 slash="/";
+	 if(referer[0] && referer[strlen(referer)-1]!='/')
+	    slash="/";
       }
       if(referer && referer[0])
 	 Send("Referer: %s%s\r\n",referer,slash);
@@ -2025,7 +2025,7 @@ base64_encode (const char *s, char *store, int length)
 
 #include "modconfig.h"
 #ifdef MODULE_PROTO_HTTP
-CDECL void module_init()
+void module_init()
 {
    Http::ClassInit();
 }

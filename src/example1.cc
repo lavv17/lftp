@@ -14,9 +14,7 @@ int main()
 {
    ResMgr::ClassInit();
    SignalHook::ClassInit();
-   Resolver::ClassInit();
    FileAccess::ClassInit();
-   Log::global=new Log();
 
    Ftp *f=new Ftp;
    f->Connect("ftp.yars.free.net",0);

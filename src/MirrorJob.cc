@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2000 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2001 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,21 +82,21 @@ void  MirrorJob::PrintStatus(int v)
 
 final:
    if(dirs>0)
-      printf(plural(N_("%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"),
+      printf(plural("%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n",
 		     dirs,tot_files,tot_symlinks),
 	 tab,dirs,tot_files,tot_symlinks);
    if(new_files || new_symlinks)
-      printf(plural(N_("%sNew: %d file$|s$, %d symlink$|s$\n"),
+      printf(plural("%sNew: %d file$|s$, %d symlink$|s$\n",
 		     new_files,new_symlinks),
 	 tab,new_files,new_symlinks);
    if(mod_files || mod_symlinks)
-      printf(plural(N_("%sModified: %d file$|s$, %d symlink$|s$\n"),
+      printf(plural("%sModified: %d file$|s$, %d symlink$|s$\n",
 		     mod_files,mod_symlinks),
 	 tab,mod_files,mod_symlinks);
    if(del_dirs || del_files || del_symlinks)
       printf(plural(flags&DELETE ?
-	       N_("%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n")
-	      :N_("%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"),
+	       "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
+	      :"%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n",
 	      del_dirs,del_files,del_symlinks),
 	 tab,del_dirs,del_files,del_symlinks);
    return;
@@ -1304,7 +1304,8 @@ mode_t MirrorJob::get_mode_mask()
 
 #include "modconfig.h"
 #ifdef MODULE_CMD_MIRROR
-CDECL void module_init()
+CDECL void module_init();
+void module_init()
 {
    CmdExec::RegisterCommand("mirror",cmd_mirror);
 }

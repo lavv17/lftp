@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1998 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1998-2001 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 #include "log.h"
 #include "SMTask.h"
 
-Log *Log::global=0;
+Log *Log::global=new Log;
 
 void Log::Init()
 {

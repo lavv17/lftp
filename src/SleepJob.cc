@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1998 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1998-2001 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -218,7 +218,7 @@ Job *cmd_at(CmdExec *parent)
 
 #include "modconfig.h"
 #ifdef MODULE_CMD_SLEEP
-CDECL void module_init()
+void module_init()
 {
    CmdExec::RegisterCommand("sleep",cmd_sleep);
    CmdExec::RegisterCommand("at",cmd_at);

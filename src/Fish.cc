@@ -919,7 +919,7 @@ void FishDirList::Resume()
 
 #include "modconfig.h"
 #ifdef MODULE_PROTO_FISH
-CDECL void module_init()
+void module_init()
 {
    Fish::ClassInit();
 }

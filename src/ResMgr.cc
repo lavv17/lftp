@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2001 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -500,6 +500,37 @@ ResDecl::ResDecl(const char *a_name,const char *a_defvalue,
    if(defvalue)
       ResMgr::Set(name,0,defvalue);
 #endif
+}
+ResDecl::~ResDecl()
+{
+   for(ResDecl **scan=&ResMgr::type_chain; *scan; scan=&(*scan)->next)
+   {
+      if(*scan==this)
+      {
+	 *scan=this->next;
+	 break;
+      }
+   }
+
+   // remove all resources of this type
+   bool modified=false;
+   ResMgr::Resource **scan=&ResMgr::chain;
+   while(*scan)
+   {
+      if((*scan)->type==this)
+      {
+	 ResMgr::Resource *to_free=*scan;
+	 *scan=(*scan)->next;
+	 delete to_free;
+	 modified=true;
+      }
+      else
+      {
+	 scan=&(*scan)->next;
+      }
+   }
+   if(modified)
+      SMTask::ReconfigAll(this->name);
 }
 
 #define MINUTE (60)

@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1999-2000 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1999-2001 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,6 +100,47 @@ static const char *PutOrPost(char **s)
    return 0;
 }
 
+static const char *const af_list[]=
+{
+   "inet",
+#if INET6
+   "inet6",
+#endif
+   0
+};
+const char *OrderValidate(char **s)
+{
+   static char *error=0;
+
+   const char * const delim="\t ";
+   char *s1=alloca_strdup(*s);
+   char *fixed=(char*)xmalloc(strlen(s1));
+   fixed[0]=0;
+
+   for(s1=strtok(s1,delim); s1; s1=strtok(0,delim))
+   {
+      const char *const *f;
+      for(f=af_list; *f; f++)
+      {
+	 if(!strcasecmp(s1,*f))
+	    break;
+      }
+      if(!*f)
+      {
+	 const char * const format=_("unknown address family `%s'");
+	 error=(char*)xrealloc(error,strlen(format)+strlen(s1));
+	 sprintf(error,format,s1);
+	 return error;
+      }
+      if(fixed[0])
+	 strcat(fixed," ");
+      strcat(fixed,s1);
+   }
+   xfree(*s);
+   *s=fixed;
+   return 0;
+}
+
 // Static array of objects is wrongly initialized by IRIX CC and Unixware c++.
 // So here goes list of arbitrarily named objects, they are not refered by name.
 static ResDecl
@@ -171,6 +212,22 @@ static ResDecl
    ResDecl45 ("net:connection-takeover",  "yes",   ResMgr::BoolValidate,0),
    ResDecl46 ("mirror:time-precision",	  "1s",    ResMgr::TimeIntervalValidate,ResMgr::NoClosure),
    ResDecl47 ("mirror:loose-time-precision","24h", ResMgr::TimeIntervalValidate,ResMgr::NoClosure);
+
+#if INET6
+# define DEFAULT_ORDER "inet inet6"
+#else
+# define DEFAULT_ORDER "inet"
+#endif
+
+static ResDecl
+   res_cache_enable("dns:cache-enable", "yes", ResMgr::BoolValidate,0),
+   res_cache_expire("dns:cache-expire", "1h",  ResMgr::TimeIntervalValidate,0),
+   res_cache_size  ("dns:cache-size",   "256", ResMgr::UNumberValidate,ResMgr::NoClosure),
+   res_timeout	   ("dns:fatal-timeout","0",   ResMgr::UNumberValidate,0),
+   res_order	   ("dns:order",	DEFAULT_ORDER, OrderValidate,0),
+   res_query_srv   ("dns:SRV-query",    "no",  ResMgr::BoolValidate,0),
+   res_use_fork	   ("dns:use-fork",     "yes", ResMgr::BoolValidate,ResMgr::NoClosure);
+
 
 void ResMgr::ClassInit()
 {

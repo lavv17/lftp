@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2001 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +70,8 @@ class Resolver : public SMTask
    void  MakeErrMsg(const char *f);
    void	 DoGethostbyname();
 
-   static const char *ParseOrder(const char *s,int *o);
+   static int FindAddressFamily(const char *name);
+   static void ParseOrder(const char *s,int *o);
 
    void LookupOne(const char *name);
    void LookupSRV_RR();
@@ -100,10 +101,6 @@ public:
 	    const char *pr=0);
 
    void Reconfig(const char *name=0);
-
-   static const char *OrderValidate(char **s);
-
-   static void ClassInit();
 };
 
 class ResolverCache

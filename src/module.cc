@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1999-2000 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1999-2001 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,17 +34,17 @@
 #include "xstring.h"
 #include "xmalloc.h"
 
+#ifndef RTLD_GLOBAL
+# define RTLD_GLOBAL 0
+#endif
 #ifdef RTLD_NOW
-# ifndef RTLD_GLOBAL
-#  define RTLD_GLOBAL 0
-# endif
 # define DLOPEN_FLAGS RTLD_NOW|RTLD_GLOBAL
 #else
 /* SunOS4 manual says it is reserved and must be 1 */
 # define DLOPEN_FLAGS 1
 #endif
 #ifdef RTLD_LAZY
-# define DLOPEN_FLAGS_LAZY RTLD_LAZY
+# define DLOPEN_FLAGS_LAZY RTLD_LAZY|RTLD_GLOBAL
 #else
 # define DLOPEN_FLAGS_LAZY DLOPEN_FLAGS
 #endif
@@ -162,13 +162,13 @@ void *module_load(const char *path,int argc,const char *const *argv)
 	 }
       }
       if(p==0)
-	 sprintf(fullpath,"%s/%s",PKGLIBDIR,path); // fallback
+	 sprintf(fullpath,"%s/%s/%s.so",PKGLIBDIR,VERSION,path); // fallback
    }
-   map=dlopen(fullpath,DLOPEN_FLAGS); //DLOPEN_FLAGS_LAZY);
+   map=dlopen(fullpath,DLOPEN_FLAGS);  // LAZY?
    if(map==0)
       return 0;
    (void)new module_info(fullpath,map);
-#if 0 // for some reason this does not work.
+#if 0 // for some reason this does not work even with LAZY (_init?).
    const char*const*depend=(const char*const*)dlsym(map,"module_depend");
    if(depend)
    {
@@ -183,16 +183,6 @@ void *module_load(const char *path,int argc,const char *const *argv)
 	 depend++;
       }
    }
-#if DLOPEN_FLAGS!=DLOPEN_FLAGS_LAZY
-   dlclose(map);
-   // reopen it with RTLD_NOW
-   map=dlopen(fullpath,DLOPEN_FLAGS);
-   if(map==0)
-   {
-      module_info::delete_by_name(fullpath);
-      return 0;
-   }
-#endif
 #endif //0
    init=(init_t)dlsym(map,"module_init");
    if(init)

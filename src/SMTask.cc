@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2001 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ time_t	 SMTask::now=time(0);
 int	 SMTask::now_ms; // milliseconds
 
 static int task_count=0;
-static SMTaskInit init_task;
+static SMTask *init_task=new SMTaskInit;
 
 SMTask::SMTask()
 {
@@ -203,6 +203,17 @@ void SMTask::ReconfigAll(const char *name)
    for(SMTask *scan=chain; scan; scan=scan->next)
       scan->Reconfig(name);
    sched_total.SetTimeout(0);  // for new values handling
+}
+void SMTask::DeleteAll()
+{
+   SMTask **scan=&chain;
+   while(*scan)
+   {
+      SMTask *old=*scan;
+      Delete(*scan);
+      if(*scan==old)
+	 scan=&(*scan)->next;
+   }
 }
 
 int SMTaskInit::Do()

@@ -1,3 +1,21 @@
+2001-04-04  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Fish.cc, SleepJob.cc, ftpclass.cc: move CDECL to modconfig.h.
+	* FtpListInfo.cc: set tm_isdst to -1 (automatic DST).
+	* Http.cc: don't add extra / to Referer.
+	* Makefile.am: use libtool to build modules; libnetwork.so.
+	* MirrorJob.cc: remove unneeded N_.
+	* ResMgr.cc, ResMgr.h: add dtor for ResDecl.
+	* Resolver.cc, Resolver.h: move resources to resource.cc;
+	  remove ClassInit.
+	* SMTask.cc, SMTask.h: add DeleteAll method.
+	* buffer.cc, buffer.h: move IOBufferSSL to separate files.
+	* buffer_ssl.cc, buffer_ssl.h: new files.
+	* lftp_ssl.h: add ifdef USE_SSL.
+	* log.cc: automatically init Log::global.
+	* modconfig.h: add MODULE_NETWORK; prototype for module_init.
+	* resource.cc: move resources from Resolver.cc here.
+
 2001-03-22  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Resolver.cc: set default for dns:cache-expire to 1h.

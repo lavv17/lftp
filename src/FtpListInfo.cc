@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1998 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1998-2001 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -366,7 +366,7 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err)
       date.tm_year=atoi(t)-1900;
    }
 
-   date.tm_isdst=0;
+   date.tm_isdst=-1;
    date.tm_sec=0;
 
    fi.SetDateUnprec(mktime(&date));
@@ -451,7 +451,7 @@ FileInfo *ParseFtpLongList_NT(const char *line_c,int *err)
    tms.tm_mday=day;	   /* day of the month [1, 31] */
    tms.tm_mon=month-1;     /* months since January [0, 11] */
    tms.tm_year=year-1900;  /* years since 1900 */
-   tms.tm_isdst=0;
+   tms.tm_isdst=-1;
    fi.SetDateUnprec(mktime(&tms));
 
    long long size;
@@ -640,7 +640,7 @@ FileInfo *ParseFtpLongList_OS2(const char *line_c,int *err)
    tms.tm_mday=day;	   /* day of the month [1, 31] */
    tms.tm_mon=month-1;     /* months since January [0, 11] */
    tms.tm_year=year-1900;  /* years since 1900 */
-   tms.tm_isdst=0;
+   tms.tm_isdst=-1;
    fi.SetDateUnprec(mktime(&tms));
 
    t=strtok(NULL,"");

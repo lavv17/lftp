@@ -6,3 +6,4 @@ ftpget
 .deps
 .libs
 .le.ini
+*.lo

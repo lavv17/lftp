@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2000 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2001 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,6 @@
 #include "history.h"
 #include "log.h"
 #include "DummyProto.h"
-#include "Resolver.h"
 #include "ResMgr.h"
 
 #include "confpaths.h"
@@ -301,7 +300,6 @@ int   main(int argc,char **argv)
    // order is significant.
    SignalHook::ClassInit();
    ResMgr::ClassInit();
-   Resolver::ClassInit();
    FileAccess::ClassInit();
 
    lftp_readline_init();
@@ -310,7 +308,6 @@ int   main(int argc,char **argv)
 
    top_exec=new CmdExec(new DummyProto());
    top_exec->status_line=new StatusLine(1);
-   Log::global=new Log();
    Log::global->SetCB(tty_clear);
 
    source_if_exist(top_exec,SYSCONFDIR"/lftp.conf");
@@ -359,5 +356,7 @@ int   main(int argc,char **argv)
       top_exec->SetInteractive(false);
       move_to_background();
    }
-   return top_exec->ExitCode();
+   int exit_code=top_exec->ExitCode();
+   SMTask::DeleteAll();
+   return exit_code;
 }

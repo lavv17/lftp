@@ -9,10 +9,8 @@ int main()
 {
    ResMgr::ClassInit();
    SignalHook::ClassInit();
-   Resolver::ClassInit();
    FileAccess::ClassInit();
 
-   Log::global=new Log();
    Log::global->SetOutput(2,false);
    Log::global->SetLevel(5);
    Log::global->Enable();

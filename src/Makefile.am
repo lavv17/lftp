@@ -1,4 +1,5 @@
 localedir = @LOCALE_DIR@
+pkgverlibdir = $(pkglibdir)/$(VERSION)
 
 bin_PROGRAMS = lftp
 bin_SCRIPTS = lftpget
@@ -13,11 +14,30 @@ lftp_SOURCES = lftp.cc complete.h complete.cc lftp_rl.c lftp_rl.h
 
 noinst_LIBRARIES = libtasks.a libjobs.a
 
-## this does not work too well
-# MODULES_LA = proto-ftp.la
-# lib_LTLIBRARIES = $(MODULES_LA)
-# proto_ftp_la_SOURCES = ftpclass.cc FtpListInfo.cc FtpGlob.cc FtpDirList.cc md5.c ftp-opie.c NetAccess.cc FtpSplitList.cc FileCopyFtp.cc
-# proto_ftp_la_LDFLAGS = -module -avoid-version
+EXTRA_LTLIBRARIES = proto-ftp.la proto-http.la proto-file.la cmd-mirror.la cmd-sleep.la proto-fish.la libnetwork.la
+pkgverlib_LTLIBRARIES = $(MODULES_LA)
+
+proto_ftp_la_SOURCES  = ftpclass.cc FtpListInfo.cc FtpGlob.cc FtpDirList.cc\
+ md5.c ftp-opie.c FtpSplitList.cc FileCopyFtp.cc
+proto_http_la_SOURCES = Http.cc HttpDir.cc
+proto_file_la_SOURCES = LocalAccess.cc
+proto_fish_la_SOURCES = Fish.cc
+cmd_mirror_la_SOURCES = MirrorJob.cc
+cmd_sleep_la_SOURCES  = SleepJob.cc getdate.c
+libnetwork_la_SOURCES = NetAccess.cc Resolver.cc lftp_ssl.cc buffer_ssl.cc
+
+proto_ftp_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
+proto_http_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
+proto_file_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
+proto_fish_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
+cmd_mirror_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
+cmd_sleep_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
+libnetwork_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir) $(SSL_LDFLAGS)
+libnetwork_la_LIBADD  = $(SOCKSLIBS) $(SSL_LIBS)
+
+proto_ftp_la_LIBADD  = libnetwork.la
+proto_http_la_LIBADD = libnetwork.la
+proto_fish_la_LIBADD = libnetwork.la
 
 libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  ProcWait.h ftpclass.cc ftpclass.h GetPass.cc GetPass.h\
@@ -31,7 +51,7 @@ libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  resource.cc DummyProto.cc DummyProto.h FtpGlob.cc FtpGlob.h FtpDirList.cc\
  FtpDirList.h ArgV.cc ArgV.h HttpDir.cc HttpDir.h ascii_ctype.h\
  NetAccess.cc NetAccess.h FtpSplitList.h FtpSplitList.cc Speedometer.cc\
- Speedometer.h lftp_ssl.cc lftp_ssl.h netrc.cc netrc.h
+ Speedometer.h lftp_ssl.cc lftp_ssl.h netrc.cc netrc.h buffer_ssl.cc
 #Fish.cc Fish.h
 
 libjobs_a_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
@@ -44,13 +64,11 @@ libjobs_a_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  SleepJob.cc SleepJob.h getdate.y getdate.h FindJob.cc FindJob.h\
  ChmodJob.cc ChmodJob.h TreatFileJob.cc TreatFileJob.h CopyJob.cc CopyJob.h
 
-lftp_LDFLAGS = $(EXPORT_DYNAMIC) $(SSL_LDFLAGS)
+lftp_LDFLAGS = -export-dynamic $(LFTP_SSL_LDFLAGS)
 lftp_LDADD = libjobs.a libtasks.a $(READLINE) $(READLINE_SUPPLIB) \
-	$(top_builddir)/lib/liblib.a $(INTLLIBS) $(SOCKSLIBS) $(SSL_LIBS)
+	$(top_builddir)/lib/liblib.a $(INTLLIBS) $(LFTP_SSL_LIBS)
 lftp_DEPENDENCIES = libjobs.a libtasks.a $(READLINE_DEPEND) \
 	$(top_builddir)/lib/liblib.a
-#ftpget_LDFLAGS = $(EXPORT_DYNAMIC)
-#ftpget_LDADD = libjobs.a libtasks.a $(top_builddir)/lib/liblib.a $(INTLLIBS) $(SOCKSLIBS)
 
 confpaths.h: Makefile
 	echo "#define SYSCONFDIR \"$(sysconfdir)\""  > $@
@@ -67,46 +85,3 @@ OMIT_DEPENDENCIES = readline.h keymaps.h chardefs.h tilde.h \
 	history.h libintl.hregex.h glob.h fnmatch.h poll.h rlstdc.h
 
 lftp.o commands.o module.o: confpaths.h
-
-
-all-local: $(MODULES)
-clean-local:
-	-rm -f $(MODULES)
-
-install-exec-local:
-	@$(NORMAL_INSTALL)
-	@if [ '$(MODULES)' ]; then $(mkinstalldirs) $(DESTDIR)$(pkglibdir)/$(VERSION); \
-	list='$(MODULES)'; for p in $$list; do \
-	  if test -f $$p; then \
-	    echo "  $(INSTALL_DATA) $$p $(DESTDIR)$(pkglibdir)/$(VERSION)/$$p"; \
-	     $(INSTALL_DATA) $$p $(DESTDIR)$(pkglibdir)/$(VERSION)/$$p; \
-	  else :; fi; \
-	done; fi
-uninstall-local:
-	@$(NORMAL_UNINSTALL)
-	@list='$(MODULES)'; for p in $$list; do \
-	    rm -f $(DESTDIR)$(pkglibdir)/$(VERSION)/$$p; \
-	done
-	-@rmdir $(DESTDIR)$(pkglibdir)/$(VERSION)
-
-MODULEFLAGS=$(PIC_FLAG) -shared -nostdlib
-CXXMODLINK=$(CXXCOMPILE) $(LDFLAGS) $(MODULEFLAGS)
-proto-http.so: Http.cc HttpDir.cc NetAccess.cc
-	@-rm -f $@
-	$(CXXMODLINK) $^ -o $@
-proto-file.so: LocalAccess.cc
-	@-rm -f $@
-	$(CXXMODLINK) $^ -o $@
-proto-ftp.so: ftpclass.cc FtpListInfo.cc FtpGlob.cc FtpDirList.cc\
- md5.c ftp-opie.c NetAccess.cc FtpSplitList.cc FileCopyFtp.cc
-	@-rm -f $@
-	$(CXXMODLINK) $^ -o $@
-proto-fish.so: Fish.cc NetAccess.cc
-	@-rm -f $@
-	$(CXXMODLINK) $^ -o $@
-cmd-mirror.so: MirrorJob.cc
-	@-rm -f $@
-	$(CXXMODLINK) $^ -o $@
-cmd-sleep.so: SleepJob.cc getdate.c
-	@-rm -f $@
-	$(CXXMODLINK) $^ -o $@
