@@ -376,7 +376,8 @@ void SFtp::Init()
    recv_translate=0;
    handle=0;
    handle_len=0;
-   max_packets_in_flight=3;
+   max_packets_in_flight=16;
+   max_packets_in_flight_slow_start=1;
    size_read=0x8000;
    size_write=0x8000;
 }
@@ -583,11 +584,14 @@ const char *SFtp::SkipHome(const char *path)
 }
 const char *SFtp::WirePath(const char *path)
 {
-   return lc_to_utf8(SkipHome(dir_file(cwd,path)));
+   path=SkipHome(dir_file(cwd,path));
+   Log::global->Format(9,"---- path on wire is `%s'\n",path);
+   return lc_to_utf8(path);
 }
 
 void SFtp::SendRequest()
 {
+   max_packets_in_flight_slow_start=1;
    ExpandTildeInCWD();
    switch((open_mode)mode)
    {
@@ -725,7 +729,8 @@ int SFtp::HandlePty()
       const char *y="(yes/no)? ";
       int p_len=strlen(p);
       int y_len=strlen(y);
-      if(s>=p_len && !strncasecmp(b+s-p_len,p,p_len))
+      if(s>=p_len && !strncasecmp(b+s-p_len,p,p_len)
+      || s>10 && !strncmp(b+s-3,"': ",3))
       {
 	 if(!pass)
 	 {
@@ -866,6 +871,8 @@ void SFtp::HandleExpect(Expect *e)
       }
       break;
    case Expect::DATA:
+      if(max_packets_in_flight_slow_start<max_packets_in_flight)
+	 max_packets_in_flight_slow_start++;
       if(reply->TypeIs(SSH_FXP_DATA))
       {
 	 Request_READ *r=(Request_READ*)e->request;
@@ -1155,7 +1162,8 @@ int SFtp::Read(void *buf,int size)
    if(state==FILE_RECV)
    {
       // keep some packets in flight.
-      if(RespQueueSize()<max_packets_in_flight && !file_buf->Eof())
+      int limit=(entity_size>=0?max_packets_in_flight:max_packets_in_flight_slow_start);
+      if(RespQueueSize()<limit && !file_buf->Eof())
       {
 	 // but don't request much after possible EOF.
 	 if(entity_size<0 || request_pos<entity_size || RespQueueSize()<2)
@@ -1350,6 +1358,8 @@ void SFtp::Reconfig(const char *name)
    max_packets_in_flight=Query("max-packets-in-flight",c);
    if(max_packets_in_flight<1)
       max_packets_in_flight=1;
+   if(max_packets_in_flight_slow_start>max_packets_in_flight)
+      max_packets_in_flight_slow_start=max_packets_in_flight;
    size_read=Query("size-read",c);
    size_write=Query("size-write",c);
    if(size_read<16)
