@@ -159,7 +159,7 @@ try_write:
    return m;
 }
 
-LsJob::LsJob(FileAccess *s,FDStream *l,char *a,int mode) : XferJob(s)
+LsJob::LsJob(FileAccess *s,FDStream *l,ArgV *a,int mode) : XferJob(s)
 {
    op="ls";
    local=l;
@@ -169,7 +169,8 @@ LsJob::LsJob(FileAccess *s,FDStream *l,char *a,int mode) : XferJob(s)
    this->mode=mode;
 
    print_run_status=!local->usesfd(1);
-   arg=a;
+   args=a;
+   arg=a->Combine(1);
    XferJob::NextFile(arg);
 
    from_cache=false;
@@ -178,7 +179,7 @@ LsJob::LsJob(FileAccess *s,FDStream *l,char *a,int mode) : XferJob(s)
 
    dl=0;
    if(mode==FA::LONG_LIST)
-      dl=session->MakeDirList(arg);
+      dl=session->MakeDirList(args);
    if(!dl)
    {
       if(LsCache::Find(session,arg,mode,
@@ -195,6 +196,7 @@ LsJob::LsJob(FileAccess *s,FDStream *l,char *a,int mode) : XferJob(s)
 LsJob::~LsJob()
 {
    xfree(arg); arg=0;
+   delete args;
    if(local)
    {
       delete local;

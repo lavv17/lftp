@@ -42,7 +42,9 @@ class LsCache
    static long sizelimit;
    static time_t ttl;
 
-   friend class ExpireHelper : public SMTask
+   class ExpireHelper;
+   friend class LsCache::ExpireHelper;
+   class ExpireHelper : public SMTask
    {
    public:
       LsCache *expiring;

@@ -53,6 +53,15 @@ void FileSet::Add(FileInfo *fi)
       delete fi;
       return;
    }
+   for(int j=0; j<fnum; j++)
+   {
+      if(!strcmp(files[j]->name,fi->name))
+      {
+	 files[j]->Merge(*fi);
+	 delete fi;
+	 return;
+      }
+   }
    files=(FileInfo**)xrealloc(files,(++fnum)*sizeof(*files));
    files[fnum-1]=fi;
 }
@@ -362,4 +371,16 @@ FileInfo *FileSet::next()
       return curr();
    }
    return 0;
+}
+
+static int name_compare(const void *a,const void *b)
+{
+   FileInfo *pa=*(FileInfo*const*)a;
+   FileInfo *pb=*(FileInfo*const*)b;
+   return strcmp(pa->name,pb->name);
+}
+
+void FileSet::SortByName()
+{
+   qsort(files,fnum,sizeof(*files),name_compare);
 }

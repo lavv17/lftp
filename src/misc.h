@@ -27,10 +27,11 @@
 const char *expand_home_relative(const char *);
 
 // returns ptr to last path element
-char *basename_ptr(char *);
-inline const char *basename_ptr(const char *f)
+const char *basename_ptr(const char *);
+static inline
+char *basename_ptr(char *f)
 {
-   return (const char*)basename_ptr((char*)f);
+   return (char*)basename_ptr((const char *)f);
 }
 
 // clues file to dir; returns pointer to static storage

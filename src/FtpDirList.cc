@@ -25,6 +25,7 @@
 #include "FileAccess.h"
 #include "FtpDirList.h"
 #include "LsCache.h"
+#include "ArgV.h"
 
 #define super DirList
 
@@ -43,7 +44,7 @@ int FtpDirList::Do()
    {
       char *cache_buffer=0;
       int cache_buffer_size=0;
-      if(use_cache && LsCache::Find(session,arg,FA::LONG_LIST,
+      if(use_cache && LsCache::Find(session,pattern,FA::LONG_LIST,
 				    &cache_buffer,&cache_buffer_size))
       {
 	 from_cache=true;
@@ -54,7 +55,7 @@ int FtpDirList::Do()
       }
       else
       {
-	 session->Open(arg,FA::LONG_LIST);
+	 session->Open(pattern,FA::LONG_LIST);
 	 ubuf=new FileInputBuffer(session);
       }
    }
@@ -72,7 +73,7 @@ int FtpDirList::Do()
 	 ubuf->Get(&cache_buffer,&cache_buffer_size);
 	 if(cache_buffer && cache_buffer_size>0)
 	 {
-	    LsCache::Add(session,arg,FA::LONG_LIST,
+	    LsCache::Add(session,pattern,FA::LONG_LIST,
 			   cache_buffer,cache_buffer_size);
 	 }
       }
@@ -120,18 +121,20 @@ int FtpDirList::Do()
    return m;
 }
 
-FtpDirList::FtpDirList(const char *a,FileAccess *fa)
+FtpDirList::FtpDirList(ArgV *a,FileAccess *fa)
    : DirList(a)
 {
    session=fa;
    ubuf=0;
    upos=0;
    from_cache=false;
+   pattern=args->Combine(1);
 }
 
 FtpDirList::~FtpDirList()
 {
    delete ubuf;
+   xfree(pattern);
 }
 
 const char *FtpDirList::Status()

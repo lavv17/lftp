@@ -30,6 +30,7 @@ class LsJob : public XferJob
 {
 protected:
    char	 *arg;
+   ArgV  *args;
    FDStream *local;
 
    void NextFile();
@@ -47,7 +48,7 @@ public:
    int	 Do();
    int	 Done();
 
-   LsJob(FileAccess *s,FDStream *g,char *a,int mode=FA::LONG_LIST);
+   LsJob(FileAccess *s,FDStream *g,ArgV *args,int mode=FA::LONG_LIST);
    ~LsJob();
 
    void	 NoCache();

@@ -58,9 +58,9 @@ const char *dir_file(const char *dir,const char *file)
 }
 
 
-char *basename_ptr(char *s)
+const char *basename_ptr(const char *s)
 {
-   char *s1=s+strlen(s);
+   const char *s1=s+strlen(s);
    while(s1>s && s1[-1]=='/')
       s1--;
    while(s1>s && s1[-1]!='/')

@@ -25,6 +25,8 @@
 
 #include <signal.h>
 
+typedef void (*signal_handler)(int);
+
 class SignalHook
 {
    static int *counts;
@@ -32,15 +34,15 @@ class SignalHook
    static bool *old_saved;
 
    static void cnt_handler(int sig);
-   static void set_signal(int sig,void (*handler)(int));
+   static void set_signal(int sig,signal_handler handler);
 public:
    static void DoCount(int sig) { set_signal(sig,&SignalHook::cnt_handler); }
    static int GetCount(int sig) { return counts[sig]; }
    static void ResetCount(int sig) { counts[sig]=0; }
    static void IncreaseCount(int sig) { counts[sig]++; }
    static void Handle(int sig,void (*h)(int)) { set_signal(sig,h); }
-   static void Ignore(int sig)  { set_signal(sig,(void (*)(int))SIG_IGN); }
-   static void Default(int sig) { set_signal(sig,(void (*)(int))SIG_DFL); }
+   static void Ignore(int sig)  { set_signal(sig,(signal_handler)SIG_IGN); }
+   static void Default(int sig) { set_signal(sig,(signal_handler)SIG_DFL); }
    static void Restore(int sig);
    static void Block(int sig);
    static void Unblock(int sig);

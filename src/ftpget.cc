@@ -204,9 +204,9 @@ int   main(int argc,char **argv)
 
    if(list)
    {
-      ArgV *rest=new ArgV(argc-optind,argv+optind);
-      j=new LsJob(f,0,rest->Combine());
-      delete rest;
+      ArgV *rest=new ArgV(argc-optind+1,argv+optind-1);
+      rest->setarg(0,"ls");
+      j=new LsJob(f,0,rest);
    }
    else
    {

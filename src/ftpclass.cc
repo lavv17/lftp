@@ -26,7 +26,6 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <ctype.h>
 #include <assert.h>
 
 #include "ftpclass.h"
@@ -38,6 +37,8 @@
 #include "FtpGlob.h"
 #include "FtpDirList.h"
 #include "log.h"
+
+#include "ascii_ctype.h"
 
 enum {FTP_TYPE_A,FTP_TYPE_I};
 
@@ -370,7 +371,7 @@ int   Ftp::proxy_NoPassReqCheck(int act,int exp)
    return(-1);
 }
 
-char *Ftp::ExtractPWD()
+const char *Ftp::ExtractPWD()
 {
    static char pwd[1024];
 
@@ -492,7 +493,7 @@ int   Ftp::CatchDATE(int act,int)
 
    if(act/100==2)
    {
-      if(strlen(line)>4 && isdigit(line[4]))
+      if(strlen(line)>4 && is_ascii_digit(line[4]))
 	 array_for_info[array_ptr].time=ConvertFtpDate(line+4);
       else
 	 array_for_info[array_ptr].time=(time_t)-1;
@@ -515,7 +516,7 @@ int   Ftp::CatchDATE_opt(int act,int)
    if(!opt_date)
       return state;
 
-   if(act/100==2 && strlen(line)>4 && isdigit(line[4]))
+   if(act/100==2 && strlen(line)>4 && is_ascii_digit(line[4]))
    {
       *opt_date=ConvertFtpDate(line+4);
       opt_date=0;
@@ -852,8 +853,8 @@ int   Ftp::Do()
       if(state!=INITIAL_STATE)
 	 return MOVED;
 
-      char *host_to_connect=(proxy?proxy:hostname);
-      char *port_to_connect=(proxy?proxy_port:portname);
+      const char *host_to_connect=(proxy?proxy:hostname);
+      const char *port_to_connect=(proxy?proxy_port:portname);
       if(port_to_connect==0)
 	 port_to_connect=FTPPORT;
 
@@ -1645,7 +1646,7 @@ system_error:
    return MOVED;
 }
 
-void  Ftp::LogResp(char *l)
+void  Ftp::LogResp(const char *l)
 {
    if(result==0)
    {
@@ -2804,15 +2805,20 @@ time_t	 Ftp::ConvertFtpDate(const char *s)
 {
    struct tm tm;
    memset(&tm,0,sizeof(tm));
+   int year,month,day,hour,minute,second;
 
-   int n=sscanf(s,"%4d%2d%2d%2d%2d%2d",&tm.tm_year,&tm.tm_mon,&tm.tm_mday,
-				       &tm.tm_hour,&tm.tm_min,&tm.tm_sec);
+   int n=sscanf(s,"%4d%2d%2d%2d%2d%2d",
+		  &year,&month,&day,&hour,&minute,&second);
 
    if(n!=6)
       return((time_t)-1);
 
-   tm.tm_year-=1900;
-   tm.tm_mon--;
+   tm.tm_year=year-1900;
+   tm.tm_mon=month-1;
+   tm.tm_mday=day;
+   tm.tm_hour=hour;
+   tm.tm_min=minute;
+   tm.tm_sec=second;
 
    return mktime_from_utc(&tm);
 }
@@ -3020,9 +3026,9 @@ Glob *Ftp::MakeGlob(const char *pattern)
 {
    return new FtpGlob(this,pattern);
 }
-DirList *Ftp::MakeDirList(const char *pattern)
+DirList *Ftp::MakeDirList(ArgV *args)
 {
-   return new FtpDirList(pattern,this);
+   return new FtpDirList(args,this);
 }
 
 

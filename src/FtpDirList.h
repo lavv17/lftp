@@ -29,9 +29,10 @@ class FtpDirList : public DirList
    Buffer *ubuf;
    int upos;
    bool from_cache;
+   char *pattern;
 
 public:
-   FtpDirList(const char *a,FileAccess *fa);
+   FtpDirList(ArgV *a,FileAccess *fa);
    ~FtpDirList();
    const char *Status();
    int Do();

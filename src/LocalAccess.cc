@@ -107,7 +107,7 @@ int LocalAccess::Do()
    case(QUOTE_CMD):
       if(stream==0)
       {
-	 char cmd[10+xstrlen(file)];
+	 char *cmd=(char*)alloca(10+xstrlen(file));
 	 if(mode==LIST)
 	 {
 	    if(file && file[0])

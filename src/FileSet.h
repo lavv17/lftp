@@ -39,6 +39,7 @@ public:
    mode_t   mode;
    time_t   date;
    long	    size;
+   void	    *data;
 
    enum	 type
    {
@@ -63,6 +64,7 @@ public:
    {
       xfree(name);
       xfree(symlink);
+      xfree(data);
    }
 
    FileInfo()
@@ -70,6 +72,7 @@ public:
       name=NULL;
       defined=0;
       symlink=NULL;
+      data=0;
    }
    FileInfo(const FileInfo &fi)
    {
@@ -100,6 +103,13 @@ public:
 
    bool	 SameAs(const FileInfo *,bool only_newer,time_t prec,int ignore);
    bool	 OlderThan(time_t t);
+
+   void	 SetAssociatedData(void *d,int len)
+      {
+	 xfree(data);
+	 data=xmemdup(d,len);
+      }
+   void  *GetAssociatedData() { return data; }
 };
 
 class FileSet
@@ -145,18 +155,20 @@ public:
 
    FileInfo *FindByName(const char *name);
 
-   void  SetSize(char *name,long size)
+   void  SetSize(const char *name,long size)
    {
       FileInfo *f=FindByName(name);
       if(f)
 	 f->SetSize(size);
    }
-   void  SetDate(char *name,time_t date)
+   void  SetDate(const char *name,time_t date)
    {
       FileInfo *f=FindByName(name);
       if(f)
 	 f->SetDate(date);
    }
+
+   void SortByName();
 };
 
 #endif // FILESET_H

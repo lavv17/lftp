@@ -45,6 +45,7 @@ class ListInfo;
 class Glob;
 class NoGlob;
 class DirList;
+class ArgV;
 
 class FileAccess : public SMTask
 {
@@ -68,7 +69,7 @@ public:
 
    struct fileinfo
    {
-      char *file;
+      const char *file;
       long size;
       time_t time;
       bool get_size:1;
@@ -174,10 +175,10 @@ public:
    void WantSize(long *s) { opt_size=s; }
    virtual void Close();
 
-   virtual void	Rename(const char *file,const char *to);
-   virtual void Mkdir(const char *file,bool allpath=false);
+   virtual void	Rename(const char *rfile,const char *to);
+   virtual void Mkdir(const char *rfile,bool allpath=false);
    virtual void Chdir(const char *dir,bool verify=true);
-   void Remove(const char *file)    { Open(file,REMOVE); }
+   void Remove(const char *rfile)    { Open(rfile,REMOVE); }
    void RemoveDir(const char *dir)  { Open(dir,REMOVE_DIR); }
 
    void	 GetInfoArray(struct fileinfo *info,int count);
@@ -243,7 +244,7 @@ public:
       // ^^ close idle connections, etc.
    virtual ListInfo *MakeListInfo() { return 0; }
    virtual Glob *MakeGlob(const char *pattern) { return 0; }
-   virtual DirList *MakeDirList(const char *arg) { return 0; }
+   virtual DirList *MakeDirList(ArgV *arg) { return 0; }
 
    static bool NotSerious(int err);
 
@@ -367,18 +368,17 @@ class DirList : public FileAccessOperation
 {
 protected:
    Buffer *buf;
-   char *arg;
+   ArgV *args;
 public:
-   DirList(const char *a)
+   DirList(ArgV *a)
       {
 	 buf=new Buffer();
-	 arg=xstrdup(a);
+	 args=a;
       }
    ~DirList()
       {
 	 if(buf)
 	    delete buf;
-	 xfree(arg);
       }
 
    virtual int Do() = 0;

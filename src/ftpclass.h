@@ -106,6 +106,8 @@ class Ftp : public FileAccess
       CHECK_TRANSFER	// generic check for transfer
    };
 
+   struct expected_response;
+   friend struct Ftp::expected_response;
    struct expected_response
    {
       int   expect;
@@ -113,8 +115,8 @@ class Ftp : public FileAccess
       check_case_t check_case;
       bool  log_resp;
       char  *path;
-   }
-      *RespQueue;
+   };
+   expected_response *RespQueue;
    int	 RQ_alloc;   // memory allocated
 
    int	 RQ_head;
@@ -122,7 +124,7 @@ class Ftp : public FileAccess
 
    int	 multiline_code;
 
-   void	 LogResp(char *line);
+   void	 LogResp(const char *line);
 
    void  AddResp(int exp,int fail,check_case_t ck=CHECK_NONE,bool log=false);
    void  SetRespPath(const char *p);
@@ -141,7 +143,7 @@ class Ftp : public FileAccess
    int	 NoPassReqCheck(int,int);
    int	 proxy_LoginCheck(int,int);
    int	 proxy_NoPassReqCheck(int,int);
-   char  *ExtractPWD();
+   const char *ExtractPWD();
    int	 CatchDATE(int,int);
    int	 CatchDATE_opt(int,int);
    int	 CatchSIZE(int,int);
@@ -356,7 +358,7 @@ public:
 
    ListInfo *MakeListInfo();
    Glob *MakeGlob(const char *pattern);
-   DirList *MakeDirList(const char *arg);
+   DirList *MakeDirList(ArgV *args);
 };
 
 #endif /* FTPCLASS_H */

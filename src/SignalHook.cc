@@ -32,12 +32,12 @@ void SignalHook::cnt_handler(int sig)
    counts[sig]++;
 }
 
-void SignalHook::set_signal(int sig,void (*handler)(int))
+void SignalHook::set_signal(int sig,signal_handler handler)
 {
    if(!old_saved[sig])
    {
       sigaction(sig,0,&old_handlers[sig]);
-      if(sig==SIGINT && old_handlers[sig].sa_handler==(void(*)(int))SIG_IGN)
+      if(sig==SIGINT && old_handlers[sig].sa_handler==(signal_handler)SIG_IGN)
 	 return;
       old_saved[sig]=true;
    }
