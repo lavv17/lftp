@@ -824,37 +824,14 @@ CMD(ls)
 
 CMD(cat)
 {
-   char *op=args->a0();
-   ArgV *n_args=new ArgV(op);
-   bool use_urls=false;
-   int opt;
-
-   while((opt=args->getopt("+u"))!=EOF)
-   {
-      switch(opt)
-      {
-      case('u'):
-	 use_urls=true;
-	 break;
-      case('?'):
-      err:
-	 eprintf(_("Try `help %s' for more information.\n"),op);
-	 return 0;
-      }
-   }
-   args->back();
-   char *a;
-   while((a=args->getnext())!=0)
-      n_args->Append(a);
-   if(n_args->count()<=1)
+   if(args->count()<=1)
    {
       eprintf(_("Usage: %s files...\n"),args->a0());
-      goto err;
+      return 0;
    }
-   CatJob *j=new CatJob(Clone(),output,n_args);
+   CatJob *j=new CatJob(Clone(),output,args);
    output=0;
-   if(use_urls)
-      j->UseURLs();
+   args=0;
    return j;
 }
 
