@@ -2167,7 +2167,7 @@ time_t	 Ftp::ConvertFtpDate(const char *s)
    return t;
 }
 
-void  Ftp::SetFlag(int flag,int val)
+void  Ftp::SetFlag(int flag,bool val)
 {
    flag&=MODES_MASK;  // only certain flags can be changed
    if(val)
@@ -2259,17 +2259,6 @@ void Ftp::ConnectVerify()
    mode=CONNECT_VERIFY;
 }
 
-const char *Ftp::ResQuery(ResDecl &r)
-{
-   const char *v;
-
-   v=ResMgr::Query(r.name,hostname);
-   if(!v) v=ResMgr::Query(r.name,0);
-   if(!v) v=r.defvalue;
-
-   return v;
-}
-
 void Ftp::SetProxy(const char *px)
 {
    xfree(proxy); proxy=0;
@@ -2298,23 +2287,24 @@ void Ftp::SetProxy(const char *px)
 
 void Ftp::Reconfig()
 {
-   SetFlag(SYNC_MODE,	ResMgr::str2bool(ResQuery(res_sync_mode)));
-   SetFlag(PASSIVE_MODE,ResMgr::str2bool(ResQuery(res_passive_mode)));
-   timeout=atoi(ResQuery(res_timeout));
-   sleep_time=atoi(ResQuery(res_redial_interval));
-   nop_interval=atoi(ResQuery(res_nop_interval));
-   idle=atoi(ResQuery(res_idle));
-   max_retries=atoi(ResQuery(res_max_retries));
+   const char *c=hostname;
+
+   SetFlag(SYNC_MODE,	res_sync_mode.Query(c));
+   SetFlag(PASSIVE_MODE,res_passive_mode.Query(c));
+
+   timeout = res_timeout.Query(c);
+   sleep_time = res_redial_interval.Query(c);
+   nop_interval = res_nop_interval.Query(c);
+   idle = res_idle.Query(c);
+   max_retries = res_max_retries.Query(c);
+   relookup_always = res_relookup_always.Query(c);
+   allow_skey = res_allow_skey.Query(c);
+   force_skey = res_force_skey.Query(c);
+
+   SetProxy(res_proxy.Query(c));
+
    if(nop_interval<30)
       nop_interval=30;
-   relookup_always=ResMgr::str2bool(ResQuery(res_relookup_always));
-   allow_skey=ResMgr::str2bool(ResQuery(res_allow_skey));
-   force_skey=ResMgr::str2bool(ResQuery(res_force_skey));
-
-   SetProxy(ResQuery(res_proxy));
-
-   if(idle>0 || max_retries>0)
-      block+=NoWait();	// for new values handling
 }
 
 void Ftp::Cleanup(bool all)

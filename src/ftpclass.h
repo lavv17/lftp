@@ -184,8 +184,6 @@ class Ftp : public FileAccess
 
    int	 StateToError();
 
-   const char *ResQuery(ResDecl &);
-
    int	 addr_received;	// state of PASV
 
    bool	 lookup_done:1;
@@ -260,7 +258,7 @@ public:
    int	 Do();
    void  Disconnect();
 
-   void	 SetFlag(int flag,int val);
+   void	 SetFlag(int flag,bool val);
    int	 GetFlag(int flag) { return flags&flag; }
 
    static time_t ConvertFtpDate(const char *);
