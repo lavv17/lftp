@@ -25,7 +25,10 @@
 
 #include <stdio.h>
 #include <sys/types.h>
-#include <time.h>
+#include <sys/time.h>
+#ifdef TIME_WITH_SYS_TIME
+# include <time.h>
+#endif
 
 // expands tilde; returns pointer to static data
 const char *expand_home_relative(const char *);
@@ -93,5 +96,8 @@ char *Subst(const char *txt, const subst_t *s);
 
 char **tokenize(const char *str, int *argc = NULL);
 void tokenize_free(char **argv);
+
+/* uses gettimeofday if available */
+void xgettimeofday(time_t *sec, int *usec);
 
 #endif // MISC_H

@@ -147,9 +147,8 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"close",   cmd_close,   "close [-a]",
 	 N_("Close idle connections. By default only with current server.\n"
 	 " -a  close idle connections with all servers\n")},
-   {"cls",     cmd_cls,     N_("cls [opts] [path/][wildcards]..."),
-	 N_("cls [opts] [path/][wildcards]..."
-	    "List remote files. You can redirect output of this command to file\n"
+   {"cls",     cmd_cls,     N_("[re]cls [opts] [path/][pattern]"),
+	 N_("List remote files. You can redirect output of this command to file\n"
 	    "or via pipe to external command.\n"
 	    "\n"
 	    /* note: I've tried to keep options which are likely to be always
@@ -319,7 +318,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Removes specified files with wildcard expansion\n")},
    {"mv",      cmd_mv,	    N_("mv <file1> <file2>"),
 	 N_("Rename <file1> to <file2>\n")},
-   {"nlist",   cmd_ls,     N_("nlist [<args>]"),
+   {"nlist",   cmd_ls,     N_("[re]nlist [<args>]"),
 	 N_("List remote file names.\n"
 	 "By default, nlist output is cached, to see new listing use `renlist' or\n"
 	 "`cache flush'.\n")},
@@ -347,8 +346,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Print current remote URL.\n"
 	 " -p  show password\n")},
    {"queue",   cmd_queue,  N_("queue [OPTS] [<cmd>]"),
-	 N_(
-	 "\n"
+	 N_("\n"
 	 "       queue [-n num] <command>\n\n"
 	 "Add the command to queue for current site. Each site has its own command\n"
 	 "queue. `-n' adds the command before the given item in the queue. It is\n"
@@ -369,19 +367,23 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "be sure that any change of remote state because of quoted command\n"
 	 "is solid - it can be reset by reconnect at any time.\n")},
    {"recls",    cmd_cls,   0,
-	 N_("Same as `cls', but don't look in cache\n")},
-   {"reget",   cmd_get,    N_("reget [OPTS] <rfile> [-o <lfile>]"),
-	 N_("Same as `get -c'\n")},
+	 N_("recls [<args>]"
+	 "Same as `cls', but don't look in cache\n")},
+   {"reget",   cmd_get,    0,
+	 N_("Usage: reget [OPTS] <rfile> [-o <lfile>]"
+	 "Same as `get -c'\n")},
    {"rels",    cmd_ls,	    0,
-	 N_("Same as `ls', but don't look in cache\n")},
+	 N_("Usage: rels [<args>]"
+	    "Same as `ls', but don't look in cache\n")},
    {"renlist", cmd_ls,	    0,
-	 N_("Same as `nlist', but don't look in cache\n")},
-   {"repeat",  cmd_repeat, 0,
-	 N_("Usage: repeat [delay] [command]\n"
-	 "Repeat specified command with a delay between iterations.\n"
+	 N_("Usage: renlist [<args>]"
+	 "Same as `nlist', but don't look in cache\n")},
+   {"repeat",  cmd_repeat, N_("repeat [delay] [command]"),
+	 N_("Repeat specified command with a delay between iterations.\n"
 	 "Default delay is one second, default command is empty.\n")},
-   {"reput",   cmd_get,    N_("reput <lfile> [-o <rfile>]"),
-	 N_("Same as `put -c'\n")},
+   {"reput",   cmd_get,    0,
+	 N_("Usage: reput <lfile> [-o <rfile>]"
+	 "Same as `put -c'\n")},
    {"rm",      cmd_rm,	    N_("rm [-r] [-f] <files>"),
 	 N_("Remove remote files\n"
 	    " -r  recursive directory removal, be careful\n"

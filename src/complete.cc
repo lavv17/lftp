@@ -642,8 +642,6 @@ static char **lftp_completion (const char *text,int start,int end)
 
       rl_save_prompt();
 
-      int now_s = SMTask::now, now_ms = SMTask::now_ms;
-
       ArgV arg("", ResMgr::Query("cmd:cls-completion-default", 0));
       fso.parse_argv(&arg);
 
@@ -658,6 +656,9 @@ static char **lftp_completion (const char *text,int start,int end)
 	    rl_variable_bind("completion-ignore-case", "0");
 	 if(type==REMOTE_DIR)
 	    rg->glob->DirectoriesOnly();
+	 Timer timer;
+	 int interval = ResMgr::Query("cmd:status-interval", 0);
+
 	 for(;;)
 	 {
 	    SMTask::Schedule();
@@ -671,18 +672,12 @@ static char **lftp_completion (const char *text,int start,int end)
 	       return 0;
 	    }
 
-	    /* this time should match StatusLine's */
-	    if((SMTask::now - now_s)*1000 + (SMTask::now_ms - now_ms) > 1000) {
-	       now_s = SMTask::now;
-	       now_ms = SMTask::now_ms;
-
-	       if(!fso.quiet) {
-		  /* don't set blank status; if we're operating from cache,
-		   * that's all we'll get and it'll look ugly: */
-		  const char *ret = rg->Status();
-		  if(*ret)
-		     rl_message ("%s ", ret);
-	       }
+	    if(!fso.quiet && !timer.go(interval)) {
+	       /* don't set blank status; if we're operating from cache,
+		* that's all we'll get and it'll look ugly: */
+	       const char *ret = rg->Status();
+	       if(*ret)
+		  rl_message ("%s ", ret);
 	    }
 
 	    SMTask::Block();

@@ -5,7 +5,8 @@
 
 2001-10-09  Glenn F. Maynard <g_ld@zewt.org>
 
-	* Time.cc, Time.h, commands.cc, complete.cc:
+	* Time.cc, Time.h, commands.cc, complete.cc, StatusLine.cc, StatusLine.h,
+	misc.cc, misc.h:
 
 	Time and Timer classes in Time.{cc,h}.  Implemented only a
 	couple operators; add others as required.  This can probably be fairly
@@ -20,6 +21,8 @@
 	some short help, it might not, though--not on an 80x25, anyway.)
 
 	Updated [c]ls help; it was too long.
+
+	(xgettimeofday) new function. (cmd:status-interval) new setting.
 
 2001-10-08  Alexander V. Lukyanov <lav@yars.free.net>
 

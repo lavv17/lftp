@@ -37,9 +37,11 @@
 #include <termios.h>
 #endif
 
-#ifdef TM_IN_SYS_TIME
-# include <sys/time.h>
+#include <sys/time.h>
+#ifdef TIME_WITH_SYS_TIME
+# include <time.h>
 #endif
+
 #include <regex.h>
 #include "misc.h"
 #include "ProcWait.h"
@@ -598,5 +600,18 @@ void tokenize_free(char **argv)
    if(!argv) return;
    xfree(argv[0]);
    xfree(argv);
+}
+
+void xgettimeofday(time_t *sec, int *usec)
+{
+#ifdef HAVE_GETTIMEOFDAY
+   struct timeval tv;
+   gettimeofday(&tv,0);
+   if(sec) *sec = tv.tv_sec;
+   if(usec) *usec = tv.tv_usec;
+#else
+   if(sec) time(sec);
+   if(usec) *usec = 0;
+#endif
 }
 

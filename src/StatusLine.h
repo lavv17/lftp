@@ -29,14 +29,16 @@
 # define PRINTF_LIKE(n,m)
 #endif
 
+#include <time.h>
 #include "SMTask.h"
+#include "Time.h"
 
 class StatusLine : public SMTask
 {
    int fd;
    char shown[0x800];
    bool	not_term;
-   time_t update_time;
+   Timer timer;
    char to_be_shown[0x800];
    char def_title[0x800];
    bool update_delayed;

@@ -1,3 +1,4 @@
+#include <config.h>
 #include "misc.h"
 #include "Time.h"
 
@@ -58,7 +59,7 @@ void Timer::force()
 {
    last.clear();
 }
-   
+
 Timer::Timer()
 {
    force();
@@ -77,7 +78,6 @@ int Timer::go(int ms)
    }
 
    reset();
-   
+
    return 0;
 }
-

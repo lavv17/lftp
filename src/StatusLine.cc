@@ -40,6 +40,8 @@
 #include "misc.h"
 #include "StatusLine.h"
 
+ResDecl status_interval ("cmd:status-interval",        "1000",   ResMgr::UNumberValidate,0);
+	
 int  StatusLine::GetWidth()
 {
 #ifdef TIOCGWINSZ
@@ -60,7 +62,6 @@ StatusLine::StatusLine(int new_fd)
 {
    fd=new_fd;
    update_delayed=false;
-   update_time=0;
    strcpy(shown,"");
    strcpy(def_title,"");
    not_term=!isatty(fd);
@@ -78,7 +79,7 @@ void StatusLine::Clear()
    newstr[0]=0;
    update(newstr);
    update_delayed=false;
-   update_time=0;
+   timer.force();
 
    WriteTitle(def_title, fd);
 }
@@ -104,17 +105,19 @@ void StatusLine::Show(const char *f,...)
    vsnprintf(newstr,sizeof(newstr),f,v);
    va_end(v);
 
-   if(now>update_time)
+   if(!strcmp(to_be_shown,newstr)) return;
+
+   int res = timer.go(status_interval.Query(0));
+   if(!res)
    {
       update(newstr);
       update_delayed=false;
-      update_time=now;
    }
-   else if(strcmp(to_be_shown,newstr))
+   else
    {
       strcpy(to_be_shown,newstr);
       update_delayed=true;
-      TimeoutS(1);
+      Timeout(res);
    }
 }
 
@@ -182,7 +185,6 @@ void StatusLine::update(char *newstr)
    write(fd,newstr,strlen(newstr));
 }
 
-
 void StatusLine::WriteLine(const char *f,...)
 {
    char *newstr=(char*)alloca(sizeof(shown)+strlen(f)+64);
@@ -230,13 +232,13 @@ int StatusLine::Do()
 {
    if(!update_delayed)
       return STALL;
-   if(now>update_time)
+   int res = timer.go(status_interval.Query(0));
+   if(!res)
    {
       update(to_be_shown);
       update_delayed=false;
-      update_time=now;
       return STALL;
    }
-   TimeoutS(1);
+   Timeout(res);
    return STALL;
 }
