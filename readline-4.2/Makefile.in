@@ -21,7 +21,7 @@ RL_LIBRARY_NAME = readline
 srcdir = @srcdir@
 VPATH = .:@srcdir@
 top_srcdir = @top_srcdir@
-BUILD_DIR = @BUILD_DIR@
+BUILD_DIR = .
 
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -35,8 +35,7 @@ RM = rm -f
 CP = cp
 MV = mv
 
-@SET_MAKE@
-SHELL = @MAKE_SHELL@
+SHELL = /bin/sh
 
 prefix = @prefix@
 exec_prefix = @exec_prefix@
@@ -125,7 +124,14 @@ INSTALLED_HEADERS = readline.h chardefs.h keymaps.h history.h tilde.h \
 
 ##########################################################################
 
-all: static
+all: all-@COMPILE_READLINE@
+
+all-no:
+
+all-yes: static
+
+COMPILE_READLINE = COMPILE_READLINE
+all-@$(COMPILE_READLINE)@: static
 
 everything: static shared examples
 
@@ -147,13 +153,13 @@ readline: $(OBJECTS) readline.h rldefs.h chardefs.h ./libreadline.a
 lint:	force
 	$(MAKE) $(MFLAGS) CCFLAGS='$(GCC_LINT_CFLAGS)' static
 
-Makefile makefile: config.status $(srcdir)/Makefile.in
-	CONFIG_FILES=Makefile CONFIG_HEADERS= $(SHELL) ./config.status
-
-Makefiles makefiles: config.status $(srcdir)/Makefile.in
-	@for mf in $(CREATED_MAKEFILES); do \
-		CONFIG_FILES=$$mf CONFIG_HEADERS= $(SHELL) ./config.status ; \
-	done
+#Makefile makefile: config.status $(srcdir)/Makefile.in
+#	CONFIG_FILES=Makefile CONFIG_HEADERS= $(SHELL) ./config.status
+#
+#Makefiles makefiles: config.status $(srcdir)/Makefile.in
+#	@for mf in $(CREATED_MAKEFILES); do \
+#		CONFIG_FILES=$$mf CONFIG_HEADERS= $(SHELL) ./config.status ; \
+#	done
 
 config.status: configure
 	$(SHELL) ./config.status --recheck
@@ -193,7 +199,9 @@ uninstall-headers:
 
 maybe-uninstall-headers: uninstall-headers
 
-install: installdirs $(STATIC_LIBS) install-headers
+install: all
+
+install-readline: installdirs $(STATIC_LIBS) install-headers
 	-$(MV) $(libdir)/libreadline.a $(libdir)/libreadline.old
 	$(INSTALL_DATA) libreadline.a $(libdir)/libreadline.a
 	-test -n "$(RANLIB)" && $(RANLIB) $(libdir)/libreadline.a
@@ -209,7 +217,9 @@ installdirs: $(srcdir)/support/mkdirs
 	-$(SHELL) $(srcdir)/support/mkdirs $(includedir) \
 		$(includedir)/readline $(libdir) $(infodir) $(man3dir)
 
-uninstall: uninstall-headers
+uninstall:
+
+uninstall-readline: uninstall-headers
 	-test -n "$(libdir)" && cd $(libdir) && \
 		${RM} libreadline.a libreadline.old libhistory.a libhistory.old $(SHARED_LIBS)
 
@@ -228,36 +238,31 @@ tags:	force
 clean:	force
 	$(RM) $(OBJECTS) $(STATIC_LIBS)
 	$(RM) readline readline.exe
-	-( cd shlib && $(MAKE) $(MFLAGS) $@ )
-	-( cd doc && $(MAKE) $(MFLAGS) $@ )
-	-( cd examples && $(MAKE) $(MFLAGS) $@ )
 
 mostlyclean: clean
-	-( cd shlib && $(MAKE) $(MFLAGS) $@ )
-	-( cd doc && $(MAKE) $(MFLAGS) $@ )
-	-( cd examples && $(MAKE) $(MFLAGS) $@ )
 
 distclean maintainer-clean: clean
-	-( cd shlib && $(MAKE) $(MFLAGS) $@ )
-	-( cd doc && $(MAKE) $(MFLAGS) $@ )
-	-( cd examples && $(MAKE) $(MFLAGS) $@ )
 	$(RM) Makefile
 	$(RM) $(CREATED_CONFIGURE)
 	$(RM) $(CREATED_TAGS)
 
 info dvi:
-	-( cd doc && $(MAKE) $(MFLAGS) $@ )
 
 install-info:
 check:
 installcheck:
 
 dist:   force
-	@echo Readline distributions are created using $(srcdir)/support/mkdist.
+	@echo Readline distributions are created using $(srcdir)/mkdist.
 	@echo Here is a sample of the necessary commands:
-	@echo bash $(srcdir)/support/mkdist -m $(srcdir)/MANIFEST -s $(srcdir) -r $(RL_LIBRARY_NAME) $(RL_LIBRARY_VERSION)
+	@echo bash $(srcdir)/mkdist -m $(srcdir)/MANIFEST -s $(srcdir) -r $(RL_LIBRARY_NAME) $(RL_LIBRARY_VERSION)
 	@echo tar cf $(RL_LIBRARY_NAME)-${RL_LIBRARY_VERSION}.tar ${RL_LIBRARY_NAME}-$(RL_LIBRARY_VERSION)
 	@echo gzip $(RL_LIBRARY_NAME)-$(RL_LIBRARY_VERSION).tar
+
+distdir:
+	bash $(srcdir)/mkdist -m $(srcdir)/MANIFEST -s $(srcdir) \
+		-r `dirname $(distdir)`/readline -v 4.1
+
 
 # Tell versions [3.59,3.63) of GNU make not to export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
