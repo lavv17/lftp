@@ -29,6 +29,7 @@
 #include "LsCache.h"
 #include "misc.h"
 #include "log.h"
+#include "DirColors.h"
 
 static bool token_eq(const char *buf,int len,const char *token)
 {
@@ -264,9 +265,9 @@ void file_info::clear()
    year=-1;
    month=-1;
    day=0;
-   hour=0;
-   minute=0;
-   second=0;
+   hour=-1;
+   minute=-1;
+   second=-1;
    month_name[0]=0;
    size_str[0]=0;
    perms[0]=0;
@@ -291,7 +292,7 @@ bool file_info::validate()
 	 year+=1900;
    }
 
-   if(day<1 || day>31 || hour<0 || hour>23 || minute<0 || minute>59
+   if(day<1 || day>31 || hour<-1 || hour>23 || minute<-1 || minute>59
    || (month==-1 && !is_ascii_alnum(month_name[0])))
       return false;
 
@@ -580,12 +581,65 @@ static bool try_wwwoffle_ftp(file_info &info,const char *buf,
    return false;
 }
 
+//     4096             Jun 25 23:48Directory| ***
+//     4096             Jun 23  2002Directory| ***
+//       50             Jul  9 18:37Symbolic Link| ***
+//      217             Jun  3 06:01Plain Text| ***
+//    40419             Jul  6 13:06Hypertext Markup Language| ***
+// 14289850             Jul 16 17:04Windows Bitmap| ***
+//  6668926             Jul 17 16:01Binary Executable| ***
+static bool try_csm_proxy(file_info &info,const char *str)
+{
+   info.clear();
+
+   int n;
+   int status = false;
+   char additional_file_info[32];
+   int has_additional_file_info = false;
+
+   memset(additional_file_info, '\0', sizeof (additional_file_info));
+
+   // try to match hour:minute
+   if (5 <= (n = sscanf(str,"%d %3s %d %2d:%2d%32c",
+	       &info.size, info.month_name, &info.day, &info.hour, &info.minute, additional_file_info))) {
+      status = true;
+      if (6 == n)
+	  has_additional_file_info = true;
+   } else {
+       // try to match year instead of hour:minute
+       info.clear();
+       if (4 <= (n = sscanf(str,"%d %3s %d %4d%32c",
+		       &info.size, info.month_name, &info.day, &info.year, additional_file_info))) {
+	   status = true;
+	   if (5 == n)
+	       has_additional_file_info = true;
+       }
+   }
+
+   if (true == status) {
+      debug("csm_proxy listing matched");
+      sprintf(info.size_str, "%ld", info.size);
+      if (true == has_additional_file_info && strlen(additional_file_info)) {
+	  if (!strcmp("Symbolic Link", additional_file_info)) {
+	      info.is_sym_link = true;
+	  } else if (!strcmp("Directory", additional_file_info)) {
+	      info.is_directory = true;
+	  } else {
+	      // fprintf(stderr, "try_csm_proxy: |%s|\n", additional_file_info);
+	      Log::global->Format(10,
+		      "* try_csm_proxy: unknown file type '%s'\n",
+		      additional_file_info);
+	  }
+      }
+   }
+   return status;
+}
 
 // this procedure is highly inefficient in some cases,
 // esp. when it has to return for more data many times.
 static int parse_html(const char *buf,int len,bool eof,Buffer *list,
       FileSet *set,FileSet *all_links,ParsedURL *prefix,char **base_href,
-      LsOptions *lsopt=0)
+      LsOptions *lsopt=0, int color = 0)
 {
    const char *end=buf+len;
    const char *less=find_char(buf,len,'<');
@@ -892,6 +946,7 @@ parse_url_again:
       char *line_add=(char*)alloca(link_len+128+2*1024);
       const char *info_string=0;
       int         info_string_len=0;
+      int type;
 
       if(!a_href)
 	 goto add_file_no_info;	// only <a href> tags can have useful info.
@@ -974,6 +1029,7 @@ parse_url_again:
 	 skip_len=eol-buf+eol_len;
 	 goto got_info;
       }
+      if(try_csm_proxy(info,str) && info.validate()) goto got_info;
 
    add_file_no_info:
       sprintf(line_add,"%s  --  %s",
@@ -1003,9 +1059,50 @@ parse_url_again:
 	 else
 	    strcpy(info.perms,"-rw-r--r--");
       }
-      sprintf(line_add,"%s  %11s  %04d-%s-%02d %02d:%02d  %s",
-	 info.perms,info.size_str,info.year,info.month_name,info.day,
-	 info.hour,info.minute,link_target);
+
+      sprintf(line_add,"%s  %11s  %04d-%s-%02d",
+	 info.perms,info.size_str,info.year,info.month_name,info.day);
+
+      if (info.hour >= 0 || info.minute >= 0) {
+	  if (info.hour >= 0) {
+	      char hour[6];
+	      sprintf(hour, " %02d:", info.hour);
+	      strcat(line_add, hour);
+	  } else {
+	      strcat(line_add, " --:");
+	  }
+
+	  if (info.minute >= 0) {
+	      char minute[4];
+	      sprintf(minute, "%02d", info.minute);
+	      strcat(line_add, minute);
+	  } else {
+	      strcat(line_add, "--");
+	  }
+      } else {
+	  // neither hour nor minute are given
+	  strcat(line_add, "      ");
+      }
+
+      strcat(line_add, "  ");
+
+      type = FileInfo::NORMAL;
+
+      if (color) {
+	  if(info.is_directory)
+	      type = FileInfo::DIRECTORY;
+	  else if(info.is_sym_link && !info.sym_link)
+	      type = FileInfo::SYMLINK;
+      }
+
+      if (color && FileInfo::NORMAL != type && all_links && !all_links->FindByName(link_target)) {
+	  list->Put(line_add);
+	  DirColors::GetInstance()->PutColored(list, link_target, type);
+	  line_add[0] = '\0'; // reset
+      } else {
+	  strcat(line_add, link_target);
+      }
+
    append_symlink_maybe:
       if(info.sym_link)
 	 sprintf(line_add+strlen(line_add)," -> %s",info.sym_link);
@@ -1142,7 +1239,7 @@ int HttpDirList::Do()
 
    int m=STALL;
 
-   int n=parse_html(b,len,ubuf->Eof(),buf,0,&all_links,curr_url,&base_href,&ls_options);
+   int n=parse_html(b,len,ubuf->Eof(),buf,0,&all_links,curr_url,&base_href,&ls_options, color);
    if(n>0)
    {
       ubuf->Skip(n);

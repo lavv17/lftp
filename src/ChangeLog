@@ -1,3 +1,11 @@
+2003-08-11  Johannes Zellner <johannes@zellner.org>
+
+	* HttpDir.cc:
+	  1) implemented the hftp protocol over a CSM proxy
+	  2) hftp listings are colored according to DIRECTORY / SYMLINK
+	  3) do NOT print hour:minute, if it wasn't specified in the
+	     http proxy output
+
 2003-07-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h, resource.cc: add ftp:use-telnet-iac setting.
