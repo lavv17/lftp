@@ -101,7 +101,7 @@ public:
    const char *GetProto() { return "http"; }
 
    FileAccess *Clone() { return new Http(this); }
-   static FileAccess *New() { return new Http(); }
+   static FileAccess *New();
 
    int Do();
    int Done();
@@ -139,7 +139,7 @@ public:
    const char *GetProto() { return "hftp"; }
 
    FileAccess *Clone() { return new HFtp(this); }
-   static FileAccess *New() { return new HFtp(); }
+   static FileAccess *New();
 
    virtual void Login(const char *,const char *);
    virtual void Reconfig(const char *);

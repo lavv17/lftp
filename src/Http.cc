@@ -911,6 +911,9 @@ system_error:
    return MOVED;
 }
 
+FileAccess *Http::New() { return new Http(); }
+FileAccess *HFtp::New() { return new HFtp(); }
+
 void  Http::ClassInit()
 {
    // register the class
