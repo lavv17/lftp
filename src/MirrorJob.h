@@ -145,7 +145,7 @@ public:
    ~MirrorJob();
 
    int	 Do();
-   int	 Done() { return waiting_num==0 && state==DONE; }
+   int	 Done() { return state==DONE; }
    void	 ShowRunStatus(StatusLine *);
    void	 PrintStatus(int v);
    void	 SayFinal() { PrintStatus(-1); }

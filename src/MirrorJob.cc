@@ -715,14 +715,12 @@ int   MirrorJob::Do()
 	 transfer_count--;
 	 m=MOVED;
       }
+      if(waiting_num>0)
+	 break;
 
-      if(waiting_num==0)
-      {
-	 transfer_count++; // parent mirror will decrement it.
-	 state=DONE;
-	 m=MOVED;
-      }
-
+      transfer_count++; // parent mirror will decrement it.
+      state=DONE;
+      m=MOVED;
    case(DONE):
       break;
    }
