@@ -241,7 +241,7 @@ AC_CHECK_FUNC(strerror, AC_DEFINE(HAVE_STRERROR),[
 AC_CHECK_FUNC(vsnprintf, ,[
   AC_DEFINE_UNQUOTED(NEED_TRIO, 1,
     [Define if we need the trio replacement *printf() functions])
-  LIBOBJS="$LIBOBJS trio.o strio.o"])
+  LIBOBJS="$LIBOBJS strio.o trio.o trionan.o"])
 
 # See if we have h_errno (the test is here so we can use -lresolv if necessary).
 AC_CACHE_CHECK([for h_errno], inetutils_cv_var_h_errno,
