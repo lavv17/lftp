@@ -35,7 +35,7 @@ RM = rm -f
 CP = cp
 MV = mv
 
-SHELL = @MAKE_SHELL@
+SHELL = /bin/sh
 
 prefix = @prefix@
 exec_prefix = @exec_prefix@
