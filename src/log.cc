@@ -77,7 +77,7 @@ void Log::Write(int l,const char *s)
 	 time_t t=now;
 	 char *ts=string_alloca(21);
 	 strftime(ts,21,"%Y-%m-%d %H:%M:%S ",localtime(&t));
-	 write(output,ts,21);
+	 write(output,ts,20);
       }
       if(show_context)
       {

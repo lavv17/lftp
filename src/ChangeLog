@@ -1,6 +1,7 @@
 2004-03-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: fix a number of null refs; set auth_sent properly.
+	* log.cc: don't write trailing \0.
 
 2004-03-13  Alexander V. Lukyanov <lav@yars.free.net>
 
