@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.0\n"
-"POT-Creation-Date: 1999-08-11 22:02+0400\n"
+"POT-Creation-Date: 1999-09-18 17:06+0400\n"
 "PO-Revision-Date: 1999-07-01 09:54+08:00\n"
 "Last-Translator: Const Kaplinsky <const@ce.cctpu.edu.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -80,7 +80,7 @@ msgstr "Ошибка доступа: %s"
 msgid "File cannot be accessed"
 msgstr "Доступ к файлу невозможен"
 
-#: src/FileAccess.cc:294 src/ftpclass.cc:2666 src/ftpclass.cc:2676
+#: src/FileAccess.cc:294 src/ftpclass.cc:2672 src/ftpclass.cc:2682
 msgid "Not connected"
 msgstr "Нет соединения"
 
@@ -97,7 +97,7 @@ msgstr "Фатальная ошибка"
 msgid "Store failed - you have to reput"
 msgstr "Передача файла не выполнена - требуется возобновление (reput)"
 
-#: src/FileAccess.cc:307 src/ftpclass.cc:2708
+#: src/FileAccess.cc:307 src/ftpclass.cc:2714
 msgid "Login failed"
 msgstr "Ошибка регистрации"
 
@@ -1327,7 +1327,7 @@ msgstr "Получена строка `unknown', подразумевается неудача регистрации"
 msgid "assuming failed host name lookup"
 msgstr "подразумевается ошибка преобразования адреса машины"
 
-#: src/Http.cc:146 src/ftpclass.cc:706 src/ftpclass.cc:1514
+#: src/Http.cc:146 src/ftpclass.cc:706 src/ftpclass.cc:1520
 msgid "Timeout - reconnecting"
 msgstr "Превышение лимита времени ожидания - повторное соединение"
 
@@ -1335,7 +1335,7 @@ msgstr "Превышение лимита времени ожидания - повторное соединение"
 msgid "Closing idle connection"
 msgstr "Закрытие неиспользуемого соединения"
 
-#: src/Http.cc:1092 src/ftpclass.cc:875 src/ftpclass.cc:2671
+#: src/Http.cc:1092 src/ftpclass.cc:875 src/ftpclass.cc:2677
 msgid "Resolving host address..."
 msgstr "Преобразование адреса сервера..."
 
@@ -1348,89 +1348,89 @@ msgstr "превышен лимит количества попыток (max-retries)"
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Установка соединения с %s%s (%s), порт %u"
 
-#: src/ftpclass.cc:1464
+#: src/ftpclass.cc:1470
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "Соединение сокета данных с (%s), порт %u"
 
-#: src/ftpclass.cc:1776
+#: src/ftpclass.cc:1782
 msgid "Peer closed connection"
 msgstr "Соединение закрыто удаленной машиной"
 
-#: src/ftpclass.cc:1849
+#: src/ftpclass.cc:1855
 msgid "Closing control socket"
 msgstr "Закрытие управляющего соединения"
 
-#: src/ftpclass.cc:1922
+#: src/ftpclass.cc:1928
 msgid "Closing data socket"
 msgstr "Закрытие соединения данных"
 
-#: src/ftpclass.cc:2476
+#: src/ftpclass.cc:2482
 msgid "saw file size in response"
 msgstr "замечен размер файла в ответе сервера"
 
-#: src/ftpclass.cc:2485
+#: src/ftpclass.cc:2491
 msgid "remote end closes connection"
 msgstr "удаленная сторона закрыла соединение"
 
-#: src/ftpclass.cc:2491
+#: src/ftpclass.cc:2497
 msgid "extra server response"
 msgstr "непредвиденный ответ сервера"
 
-#: src/ftpclass.cc:2588
+#: src/ftpclass.cc:2594
 msgid "Switching passive mode off"
 msgstr "Отключение пассивного режима"
 
-#: src/ftpclass.cc:2661
+#: src/ftpclass.cc:2667
 msgid "Sending commands..."
 msgstr "Передача команд..."
 
-#: src/Http.cc:1103 src/ftpclass.cc:2663 src/ftpclass.cc:2683
-#: src/ftpclass.cc:2690
+#: src/Http.cc:1103 src/ftpclass.cc:2669 src/ftpclass.cc:2689
+#: src/ftpclass.cc:2696
 msgid "Waiting for response..."
 msgstr "Ожидание ответа..."
 
-#: src/ftpclass.cc:2664
+#: src/ftpclass.cc:2670
 msgid "Connection idle"
 msgstr "Соединение не используется"
 
-#: src/Http.cc:1094 src/ftpclass.cc:2673
+#: src/Http.cc:1094 src/ftpclass.cc:2679
 msgid "Delaying before reconnect"
 msgstr "Задержка перед повторным соединением"
 
-#: src/Http.cc:1098 src/ftpclass.cc:2678
+#: src/Http.cc:1098 src/ftpclass.cc:2684
 msgid "Connecting..."
 msgstr "Установка соединения..."
 
-#: src/ftpclass.cc:2680
+#: src/ftpclass.cc:2686
 msgid "Logging in..."
 msgstr "Регистрация..."
 
-#: src/ftpclass.cc:2684
+#: src/ftpclass.cc:2690
 msgid "Making data connection..."
 msgstr "Установка соединения данных..."
 
-#: src/ftpclass.cc:2686
+#: src/ftpclass.cc:2692
 msgid "Changing remote directory..."
 msgstr "Смена каталога на сервере..."
 
-#: src/ftpclass.cc:2689 src/ftpclass.cc:2701
+#: src/ftpclass.cc:2695 src/ftpclass.cc:2707
 msgid "Waiting for transfer to complete"
 msgstr "Ожидание окончания пересылки"
 
-#: src/ftpclass.cc:2692
+#: src/ftpclass.cc:2698
 msgid "Waiting for data connection..."
 msgstr "Ожидание установки соединения данных..."
 
-#: src/Http.cc:1101 src/ftpclass.cc:2697
+#: src/Http.cc:1101 src/ftpclass.cc:2703
 msgid "Sending data"
 msgstr "Отправка данных"
 
-#: src/Http.cc:1106 src/ftpclass.cc:2699
+#: src/Http.cc:1106 src/ftpclass.cc:2705
 msgid "Receiving data"
 msgstr "Получение данных"
 
-#: src/ftpclass.cc:2703
+#: src/ftpclass.cc:2709
 msgid "Fatal protocol error occured"
 msgstr "Произошла фатальная ошибка протокола"
 

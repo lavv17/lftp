@@ -1,3 +1,13 @@
+Version 2.0.5 - 1999-09-18
+
+* new translation zh_CN. (by Wang Jian)
+* fixed unlimited memory usage on `ls -R' when the listing is too large to be   
+  cached.
+* fixed error with `Invalid argument' when kernel is compiled without ipv6
+  support and host has both ipv4 and ipv6 addresses.
+* fixed deadlock bug when doing put from named pipe and pipe is slower
+  than network.
+
 Version 2.0.4 - 1999-08-11
 
 * added ftp:rest-list setting to allow using of REST/LIST pair. By default
