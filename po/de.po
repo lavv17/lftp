@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lftp 2.1.3\n"
 "POT-Creation-Date: 2001-07-30 18:39+0400\n"
-"PO-Revision-Date: 2001-07-06 10:07+CET\n"
+"PO-Revision-Date: 2001-07-31 16:55GMT\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "<moritz@hippokrates.jura.uni-mannheim.de>\n"
-"X-Generator: KBabel 0.9.1beta\n"
+"X-Generator: KBabel 0.9.2\n"
 
 #: src/CmdExec.cc:79
 #, c-format
@@ -558,7 +558,6 @@ msgstr ""
 "Befehls benutzt.\n"
 
 #: src/commands.cc:161
-#, fuzzy
 msgid ""
 "Usage: find [OPTS] [directory]\n"
 "Print contents of specified directory of current directory recursively.\n"
@@ -566,11 +565,12 @@ msgid ""
 "You can redirect output of this command.\n"
 " -d, --maxdepth=LEVELS  Descend at most LEVELS of directories.\n"
 msgstr ""
-"Verwendung: find [verzeichnis]\n"
+"Verwendung: find [OPTIONEN] [Verzeichnis]\n"
 "Gibt den Inhalt des angegebenen oder des aktuellen Verzeichnisses rekursiv\n"
-"aus. Verzeichnisse werden in der Liste durch einen angehängten "
-"Schrägstrich \n"
+"aus. Verzeichnisse werden in der Liste durch einen angehängten Schrägstrich \n"
 "(/) gekennzeichnet. Man kann die Ausgabe dieses Befehls umleiten.\n"
+"       -d, --maxdepth=EBENEN  Maximal bis zu EBENEN tief in Verzeichnisstruktur\n"
+"        eindringen\n"
 
 #: src/commands.cc:166
 msgid "get [OPTS] <rfile> [-o <lfile>]"
@@ -627,8 +627,7 @@ msgstr "Zeige die Hilfe für den Befehl <cmd>, sonst zeige verfügbare Befehle\n"
 
 #: src/commands.cc:186
 msgid "List running jobs. -v means verbose, several -v can be specified.\n"
-msgstr ""
-"Aktive Jobs auflisten. -v bedeutet mit Details, mehrere -v sind möglich.\n"
+msgstr "Aktive Jobs auflisten. -v bedeutet mit Details, mehrere -v sind möglich.\n"
 
 #: src/commands.cc:187
 msgid "kill all|<job_no>"
@@ -967,6 +966,24 @@ msgid ""
 "Move the given items before the given queue index, or to the end if no\n"
 "destination is given.\n"
 msgstr ""
+"Benutzung:\n"
+"        queue [-n num] <Befehl>\n"
+"\n"
+"Den Befehl in die Warteschlange für die aktuelle Gegenstelle einfügen.\n"
+"Jede Gegen Stelle hat ihre eigene Warteschlange für Befehle.\n"
+"»-n« fügt den Befehl vor dem angegebenen Eintrag in die Warteschlange ein. Es\n"
+"ist möglich einen bereits laufenden Job wieder in die Warteschlange zu stellen\n"
+"mit »queue wait <befehlsnr.>«.\n"
+"\n"
+"        queue --delete|-d <Index oder Joker-Ausdruck>\n"
+"\n"
+"Ein oder mehrere Einträge in der Warteschlange löschen. Ohne Angaben wird\n"
+"der letzte Eintrag entfernt.\n"
+"\n"
+"        queue --move|-m <Index oder Joker-Ausdruck> [Index]\n"
+"\n"
+"Die angegebenen Einträge vor den angegebenen Warteschlangen-Index stellen,\n"
+"oder an das Ende, wenn kein Ziel angegeben wurde.\n"
 
 #: src/commands.cc:310
 msgid "quote <cmd>"
@@ -1249,26 +1266,26 @@ msgstr "%s: -n: Zahl erwartet."
 #: src/commands.cc:951 src/commands.cc:981
 #, c-format
 msgid "%s: No queue is active.\n"
-msgstr ""
+msgstr "%s: Keine Warteschlange aktiv.\n"
 
 #: src/commands.cc:973
-#, fuzzy, c-format
+#, c-format
 msgid "%s: -m: Number expected as second argument. "
-msgstr "%s: -n: Zahl erwartet."
+msgstr "%s: -m: Zahl als zweite Angabe erwartet."
 
 #: src/commands.cc:1004
 msgid "Can only edit plain queues.\n"
-msgstr ""
+msgstr "Kann nur einfache Warteschlangen editieren.\n"
 
 #: src/commands.cc:1017
 #, c-format
 msgid "Couldn't create temporary file `%s': %s.\n"
-msgstr ""
+msgstr "Konnte temporäre Datei `%s': %s nicht anlegen.\n"
 
 #: src/commands.cc:1023
 #, c-format
 msgid "%s: error writing %s: %s\n"
-msgstr ""
+msgstr "%s: Fehler beim Schreiben von %s: %s\n"
 
 #: src/commands.cc:1078
 #, c-format
@@ -1387,10 +1404,8 @@ msgstr "%s: Angabe für »expire«(Ablauf) fehlt\n"
 
 #: src/commands.cc:1931
 #, c-format
-msgid ""
-"%s: %s - no such cached session. Use `scache' to look at session list.\n"
-msgstr ""
-"%s: %s - keine derartige Sitzung gecached. »scache« zeigt eine Liste.\n"
+msgid "%s: %s - no such cached session. Use `scache' to look at session list.\n"
+msgstr "%s: %s - keine derartige Sitzung gecached. »scache« zeigt eine Liste.\n"
 
 #: src/commands.cc:1948
 #, c-format
@@ -1428,8 +1443,7 @@ msgid "Lftp | Version %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"
 msgstr "Lftp | Version %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"
 
 #: src/commands.cc:2025
-msgid ""
-"This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
+msgid "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
 msgstr ""
 "Dies ist freie Software OHNE IRGENDWELCHE GARANTIEN ODER GEWÄHRLEISTUNGEN.\n"
 "Die Datei COPYING enthält Details.\n"
@@ -1460,9 +1474,9 @@ msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: Importtyp muß angegeben werden (netscape,ncftp)\n"
 
 #: src/commands.cc:2214
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [-d #] dir\n"
-msgstr "Benutzung: %s [-p]\n"
+msgstr "Benutzung: %s [-d #] dir\n"
 
 #: src/commands.cc:2233
 #, c-format
@@ -1515,8 +1529,7 @@ msgstr "Eingerichteter Zugang ist erforderlich, ftp:acct Variable setzen."
 
 #: src/ftpclass.cc:447
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
-msgstr ""
-"ftp:skey-force ist gesetzt und Gegenstelle unterstützt weder OPIE noch S/KEY"
+msgstr "ftp:skey-force ist gesetzt und Gegenstelle unterstützt weder OPIE noch S/KEY"
 
 #: src/ftpclass.cc:463
 msgid "Saw `unknown', assume failed login"
@@ -1594,8 +1607,7 @@ msgstr "Schalte Passivmodus ein"
 
 #: src/ftpclass.cc:3416
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
-msgstr ""
-"ftp:ssl-force ist gesetzt und Gegenstelle unterstützt oder erlaubt kein SSL"
+msgstr "ftp:ssl-force ist gesetzt und Gegenstelle unterstützt oder erlaubt kein SSL"
 
 #: src/ftpclass.cc:3455
 msgid "Sending commands..."
@@ -1818,7 +1830,7 @@ msgstr "unbekannte Adress Familie »%s«"
 
 #: src/resource.cc:156
 msgid "ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C"
-msgstr ""
+msgstr "ftp:ssl-auth muss eines der folgenden sein: SSL, TLS, TLS-P, TLS-C"
 
 #: src/FtpDirList.cc:223 src/FtpSplitList.cc:183 src/HttpDir.cc:1116
 #: src/NetAccess.cc:695
@@ -2039,25 +2051,3 @@ msgstr "Vorraussetzung Modul »%s«: %s\n"
 msgid "modules are not supported on this system"
 msgstr "Module sind auf diesem System nicht verwendbar"
 
-#~ msgid "\tCommands queued:\n"
-#~ msgstr "        Befehle in Warteschlange:\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "Usage: queue -e|-s <file>|<command>\n"
-#~ " -e|--edit    Edit the queue\n"
-#~ " -s|--source <file> adds the contents of a file to the end of the queue\n"
-#~ "<command>     Add the command to queue for current site. Each site has "
-#~ "its\n"
-#~ "own command queue. It is possible to queue up a running job by using\n"
-#~ "command `queue wait <jobno>'.\n"
-#~ msgstr ""
-#~ "Benutzung: queue <befehl>\n"
-#~ "Den Befehl in die Warteschlange für die momentane Gegenstelle einreihen.\n"
-#~ "Jede Gegenstelle hat ihre eigene Befehlswarteschlange. \n"
-#~ "Man kann einen laufenden Job in die Warteschlange einreihen, indem man\n"
-#~ "»queue wait <jobnr.>« verwendet.\n"
-
-#, fuzzy
-#~ msgid "Usage: %s -e|-s|command args...\n"
-#~ msgstr "Benutzung: %s befehl argumente..\n"
