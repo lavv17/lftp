@@ -1,4 +1,9 @@
-2002-01-21  Alexander V. Lukyanov
+2002-03-03  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* va_copy.m4: fix copy-by-value test; use VA_ZZZ_COPY tag for
+	  proper autoheader sorting; don't do unneeded tests.
+
+2002-01-21  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* needtrio.m4: define TRIO_REPLACE_STDIO instead of NEED_TRIO.
 
