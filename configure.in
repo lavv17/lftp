@@ -1,16 +1,12 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.52)
 AC_INIT(src/ftpclass.cc)
-AM_INIT_AUTOMAKE(lftp, 2.5.3)
+AM_INIT_AUTOMAKE(lftp, 2.5.4)
 AM_CONFIG_HEADER(include/config.h)
 
 # This doesn't *require* GNU extensions; it merely enables them if
 # they're there.
 AC__GNU_SOURCE
-
-dnl Default AC_C_INLINE does not know about C++
-m4_undefine([AC_C_INLINE])
-AC_DEFUN([AC_C_INLINE],[LFTP_C_INLINE])
 
 test -z "$CXX"	     && DEFAULT_CXX=yes
 test -z "$CFLAGS"    && DEFAULT_CFLAGS=yes
@@ -117,7 +113,7 @@ AC_SYS_LARGEFILE
 AC_PROG_YACC
 
 if test x$ac_cv_lib_fl_yywrap = xno; then
-   AC_DEFINE(NEED_YYWRAP)
+   AC_DEFINE(NEED_YYWRAP, 1, [need yywrap]) dnl ?
 fi
 
 
@@ -152,7 +148,7 @@ AC_ARG_WITH(socks,
 [  with_socks=$withval;	],
 [  with_socks=no;	])
 if test x$with_socks = xyes; then
-   AC_DEFINE(SOCKS4)
+   AC_DEFINE(SOCKS4, 1, [define if you are building with SOCKS support])
    SOCKSLIBS=-lsocks
 fi
 
@@ -161,7 +157,7 @@ AC_ARG_WITH(socks5,
 [  with_socks5=$withval;],
 [  with_socks5=no;	])
 if test x$with_socks5 = xyes; then
-   AC_DEFINE(SOCKS5)
+   AC_DEFINE(SOCKS5, 1, [define if you are building with SOCKSv5 support])
    SOCKSLIBS=-lsocks5
 fi
 
@@ -170,7 +166,7 @@ AC_ARG_WITH(socksdante,
 [  with_socksdante=$withval;],
 [  with_socksdante=no;	])
 if test x$with_socksdante = xyes; then
-   AC_DEFINE(SOCKS_DANTE)
+   AC_DEFINE(SOCKS_DANTE, 1, [define if you are building with SOCKS-Dante support])
    SOCKSLIBS=-lsocks
 fi
 AC_SUBST(SOCKSLIBS)
@@ -183,7 +179,7 @@ AC_ARG_WITH(modules,
 if test "$with_modules" = yes; then
    enable_static=no
    enable_shared=yes
-   AC_DEFINE(WITH_MODULES)
+   AC_DEFINE(WITH_MODULES, 1, [build modular lftp])
    MODULES_LA="libnetwork.la proto-ftp.la proto-http.la proto-file.la proto-fish.la cmd-mirror.la cmd-sleep.la"
    LFTP_SSL_LDFLAGS=
    LFTP_SSL_LIBS=
@@ -206,11 +202,11 @@ LIBTOOL="$LIBTOOL --silent"
 dnl Checks for libraries.
 LFTP_CHECK_LIBM
 dnl This won't work for glibc2
-dnl AC_SEARCH_LIBS(md5_process_bytes,crypt,[AC_DEFINE(HAVE_MD5)])
+dnl AC_SEARCH_LIBS(md5_process_bytes,crypt,[AC_DEFINE(HAVE_MD5, 1, [md5 support is present in libc or libcrypt])])
 AC_SEARCH_LIBS(socket,socket)
 AC_SEARCH_LIBS(gethostbyname,nsl)
-AC_SEARCH_LIBS(dlopen,dl,[AC_DEFINE(HAVE_DLOPEN)])
-AC_SEARCH_LIBS(res_search,resolv bind,[AC_DEFINE(HAVE_RES_SEARCH)])
+AC_SEARCH_LIBS(dlopen,dl,[AC_DEFINE(HAVE_DLOPEN, 1, [have dlopen])])
+AC_SEARCH_LIBS(res_search,resolv bind,[AC_DEFINE(HAVE_RES_SEARCH, 1, [have res_search])])
 IU_CHECK_DECL(res_search, [
      #include <stdio.h>
      #include <sys/types.h>
@@ -263,10 +259,10 @@ AC_HEADER_TIME
 AC_CHECK_HEADERS(fcntl.h sys/time.h errno.h stdlib.h varargs.h dirent.h\
  termios.h termio.h sys/select.h sys/poll.h sys/stropts.h string.h memory.h\
  strings.h sys/ioctl.h dlfcn.h resolv.h arpa/nameser.h netinet/tcp.h\
- langinfo.h endian.h regex.h)
+ langinfo.h endian.h regex.h locale.h)
 
 # See if the system has strerror and replace if not
-AC_CHECK_FUNC(strerror, AC_DEFINE(HAVE_STRERROR),[
+AC_CHECK_FUNC(strerror, AC_DEFINE(HAVE_STRERROR, 1, [System has usable strerror]),[
   AC_LIBOBJ(strerror)
   # No strerror, so see if the SYS_ERRLIST variable can be used by ours
   AC_CHECK_FUNC(sys_errlist,
@@ -287,7 +283,7 @@ AC_CACHE_CHECK([for h_errno], inetutils_cv_var_h_errno,
       int iu_x = h_errno; ],
     inetutils_cv_var_h_errno=yes, inetutils_cv_var_h_errno=no))
 if test "$inetutils_cv_var_h_errno" = yes; then
-  AC_DEFINE(HAVE_H_ERRNO)
+  AC_DEFINE(HAVE_H_ERRNO, 1, [system has h_errno])
   IU_CHECK_DECL(h_errno, [#include <netdb.h>])
 fi
 
@@ -305,18 +301,17 @@ if test "$ac_cv_func_hstrerror" = yes -o "$ac_cv_func_h_errlist" = yes; then
   # We still provide some definition, regardless, but this allows people to use
   # a reasonable alternative if the situation allows, rather than using a
   # degenerate version that only says `Host lookup error N'.
-  AC_DEFINE(HAVE_HSTRERROR)
+  AC_DEFINE(HAVE_HSTRERROR, 1, [System has usable hstrerror])
 fi
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_PID_T
 AC_STRUCT_TM
 
-# these are checked by AM_GNU_GETTEXT
-dnl AC_C_CONST
-dnl AC_C_INLINE
-dnl AC_TYPE_OFF_T
-dnl AC_TYPE_SIZE_T
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_OFF_T
+AC_TYPE_SIZE_T
 if test x$ac_cv_header_endian_h = xno; then
    AC_C_BIGENDIAN
 fi

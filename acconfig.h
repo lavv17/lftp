@@ -22,123 +22,24 @@
 #define CONFIG_H
 @TOP@
 
-/* the name of package */
-#undef PACKAGE
-
-/* the version of package */
-#undef VERSION
-
-/* Define if inline functions a la GCC are available.  */
-#undef HAVE_INLINE
-
-/* Define as __inline if that's what the C compiler calls it.  */
-#undef c_inline
-
-#ifndef __cplusplus
-# ifdef c_inline
-#  define inline c_inline
-# endif
-#endif
-
-/* Define if sysinfo is available.  */
-#undef HAVE_SYSINFO
-
-/* Define if __NR_sysinfo is available.  */
-#undef HAVE_NRSYSINFO
-
-/* Define if ???.  */
-#undef HAVE_ALPHASORT_DECLARATION
-
-/* Define if function attributes a la GCC 2.5 and higher are available.  */
-#undef HAVE_GNUC25_ATTRIB
-
-/* Define if constant functions a la GCC 2.5 and higher are available.  */
-#undef HAVE_GNUC25_CONST
-
-/* Define if nonreturning functions a la GCC 2.5 and higher are available.  */
-#undef HAVE_GNUC25_NORETURN
-
-/* Define if printf-format argument lists a la GCC are available.  */
-#undef HAVE_GNUC25_PRINTFFORMAT
-
-/* Set this to the canonical Debian architecture string for this CPU type. */
-#undef ARCHITECTURE
-
-/* Set this to 1 to build new archives by default. */
-#define BUILDOLDPKGFORMAT 0
-
-/* Set this string to append something to the version number. */
-#define ARCHBINFMT ""
-
-/* Define to 1 if NLS is requested.  */
-#undef ENABLE_NLS
-
-/* Define as 1 if you have catgets and don't want to use GNU gettext.  */
-#undef HAVE_CATGETS
-
-/* Define as 1 if you have gettext and don't want to use GNU gettext.  */
-#undef HAVE_GETTEXT
-
-/* Define if your locale.h file contains LC_MESSAGES.  */
-#undef HAVE_LC_MESSAGES
-
-/* Define as 1 if you have the stpcpy function.  */
-#undef HAVE_STPCPY
-
-#undef HAVE_SYS_ERRLIST_DECL
-
 #undef HAVE_HSTRERROR_DECL
-
 #undef HAVE_H_ERRLIST_DECL
-
-#undef HAVE_H_ERRNO
-
 #undef HAVE_H_ERRNO_DECL
-
-#undef HAVE_UNSETENV_DECL
-
-#undef NEED_YYWRAP
-
+#undef HAVE_INET_ATON_DECL
 #undef HAVE_POLL
-
-#undef HAVE_STRERROR
-
-#undef HAVE_HSTRERROR
-
-#undef HAVE_DLOPEN
-
-#undef HAVE_RES_SEARCH
-
+#undef HAVE_RANDOM_DECL
 #undef HAVE_RES_SEARCH_DECL
-
-#undef HAVE_RES_GETHOSTBYNAME2_DECL
-
+#undef HAVE_STRCASECMP_DECL
+#undef HAVE_STRPTIME_DECL
+#undef HAVE_SYS_ERRLIST_DECL
+#undef HAVE_UNSETENV_DECL
 #undef HAVE_VSNPRINTF_DECL
 
-#undef HAVE_STRCASECMP_DECL
-
-#undef HAVE_STRPTIME_DECL
-
-#undef HAVE_RANDOM_DECL
-
-#undef HAVE_INET_ATON_DECL
-
-/* define if you are building with SOCKS support */
-#undef SOCKS4
-
-/* define if you are building with SOCKSv5 support */
-#undef SOCKS5
-
-/* define if you are building with SOCKS-Dante support */
-#undef SOCKS_DANTE
-
-/* build modular lftp */
-#undef WITH_MODULES
-
-/* md5 support is present in libc or libcrypt */
-#undef HAVE_MD5
-
 @BOTTOM@
+
+#if defined(__cplusplus) && defined(inline)
+# undef inline
+#endif
 
 #if !defined(HAVE_LSTAT)
 # define lstat(file,stp)     stat((file),(stp))
