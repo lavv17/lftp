@@ -131,6 +131,10 @@ private:
    char *queue_lcwd;
    CmdExec *FindQueue();
 
+   FileAccess *saved_session;
+   void ReuseSavedSession();
+   void RevertToSavedSession();
+
 public:
    void FeedCmd(const char *c);
    void FeedArgV(const ArgV *,int start=0);

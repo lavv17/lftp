@@ -329,6 +329,20 @@ void CmdExec::RemoveFeeder()
       cwd_history.Set(session,session->GetCwd());
 }
 
+void CmdExec::ReuseSavedSession()
+{
+   Reuse(saved_session);
+   saved_session=0;
+}
+void CmdExec::RevertToSavedSession()
+{
+   if(saved_session==0)
+      return;
+   Reuse(session);
+   session=saved_session;
+   saved_session=0;
+}
+
 int CmdExec::Do()
 {
    int m=STALL;
@@ -380,6 +394,7 @@ int CmdExec::Do()
 	    if(status_line)
 	       status_line->Clear();
 	    session->Close();
+	    ReuseSavedSession();
 	    waiting=0;
 	    builtin=BUILTIN_NONE;
 	    beep_if_long();
@@ -393,6 +408,7 @@ int CmdExec::Do()
 	       status_line->Clear();
 	    eprintf("%s: %s\n",args->getarg(0),session->StrError(res));
 	    session->Close();
+	    RevertToSavedSession();
 	    waiting=0;
 	    builtin=BUILTIN_NONE;
 	    beep_if_long();
@@ -464,7 +480,8 @@ int CmdExec::Do()
 	       if(builtin==BUILTIN_CD)
 	       {
 		  // accept the path
-		  session->Chdir(session->GetFile(),false);
+		  char *f=alloca_strdup(session->GetFile()); // play safe
+		  session->Chdir(f,false);
 	       }
 	       session->Close();
 	       exit_code=0;
@@ -746,6 +763,8 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
    is_queue=false;
    queue_cwd=0;
    queue_lcwd=0;
+
+   saved_session=0;
 }
 
 CmdExec::~CmdExec()
@@ -779,6 +798,8 @@ CmdExec::~CmdExec()
 
    xfree(queue_cwd);
    xfree(queue_lcwd);
+
+   Reuse(saved_session);
 }
 
 char *CmdExec::MakePrompt()
@@ -975,8 +996,11 @@ int CmdExec::AcceptSig(int sig)
       switch(builtin)
       {
       case(BUILTIN_CD):
+	 session->Close();
+	 break;
       case(BUILTIN_OPEN):
 	 session->Close();
+	 RevertToSavedSession();
 	 break;
       case(BUILTIN_GLOB):
 	 delete glob;

@@ -550,6 +550,8 @@ Job *CmdExec::builtin_lftp()
 
 Job *CmdExec::builtin_open()
 {
+   ReuseSavedSession();
+
    bool	 debug=false;
    char	 *port=NULL;
    char	 *host=NULL;
@@ -652,7 +654,7 @@ Job *CmdExec::builtin_open()
 	       new_session=session->Clone();
 	       new_session->AnonymousLogin();
 	    }
-	    Reuse(session);
+	    saved_session=session;
 	    session=new_session;
 
 	    if(uc.user && !user)
@@ -739,6 +741,8 @@ Job *CmdExec::builtin_open()
 
    if(builtin==BUILTIN_OPEN)
       return this;
+
+   ReuseSavedSession();
 
    exit_code=0;
    return 0;

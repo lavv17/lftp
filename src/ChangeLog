@@ -1,5 +1,8 @@
 2000-02-20  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* CmdExec.cc, CmdExec.h, commands.cc: (saved_session) new member;
+	  save old session while new host name is verified and restore on error.
+	* NetAccess.cc: nullify cwd too on bad host name error.
 	* FileAccess.cc: (Rename) correct typo (which caused core dumps).
 
 2000-02-19  Alexander V. Lukyanov  <lav@yars.free.net>
