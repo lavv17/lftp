@@ -19,7 +19,7 @@
  */
 
 #include <config.h>
-#include <stdio.h>
+#include "trio.h"
 #include "xstring.h"
 #include <ctype.h>
 #include "xalloca.h"

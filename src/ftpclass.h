@@ -23,7 +23,7 @@
 #ifndef FTPCLASS_H
 #define FTPCLASS_H
 
-#include <stdio.h>
+#include "trio.h"
 #include <time.h>
 
 #include "NetAccess.h"

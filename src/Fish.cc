@@ -20,11 +20,7 @@
 
 #include <config.h>
 #include "Fish.h"
-#include <stdio.h>
-#ifdef NEED_TRIO
 #include "trio.h"
-#define vsnprintf trio_vsnprintf
-#endif
 #include <unistd.h>
 #include <errno.h>
 #include <stdarg.h>

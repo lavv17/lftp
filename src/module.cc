@@ -21,7 +21,7 @@
 /* $Id$ */
 
 #include <config.h>
-#include <stdio.h>
+#include "trio.h"
 #include <string.h>
 #ifdef HAVE_DLFCN_H
 # include <dlfcn.h>

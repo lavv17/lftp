@@ -24,7 +24,7 @@
 #include "Job.h"
 #include "StatusLine.h"
 #include "ArgV.h"
-#include <stdio.h>
+#include "trio.h"
 
 class mkdirJob : public SessionJob
 {

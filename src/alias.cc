@@ -23,7 +23,7 @@
 #include <config.h>
 
 #include <stdlib.h>
-#include <stdio.h>
+#include "trio.h"
 
 #include "alias.h"
 #include "xmalloc.h"

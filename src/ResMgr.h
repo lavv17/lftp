@@ -23,7 +23,7 @@
 #ifndef RESMGR_H
 #define RESMGR_H
 
-#include <stdio.h>
+#include "trio.h"
 #include <sys/types.h>
 #include <time.h>
 #include "xmalloc.h"

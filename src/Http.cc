@@ -21,11 +21,7 @@
 /* $Id$ */
 
 #include <config.h>
-#include <stdio.h>
-#ifdef NEED_TRIO
 #include "trio.h"
-#define vsnprintf trio_vsnprintf
-#endif
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>

@@ -24,7 +24,7 @@
 #define FILEACCESS_H
 
 #include "SMTask.h"
-#include <stdio.h>
+#include "trio.h"
 #include <time.h>
 #include <sys/types.h>
 

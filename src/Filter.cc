@@ -20,7 +20,7 @@
 
 #include <config.h>
 
-#include <stdio.h>
+#include "trio.h"
 #include <unistd.h>
 #include <errno.h>
 #include <stdlib.h>

@@ -21,7 +21,7 @@
 /* $Id$ */
 
 #include <config.h>
-#include <stdio.h>
+#include "trio.h"
 #include "xmalloc.h"
 
 static int memory_count=0;

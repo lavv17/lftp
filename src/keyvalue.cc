@@ -23,7 +23,7 @@
 #include <config.h>
 #include "keyvalue.h"
 #include <unistd.h>
-#include <stdio.h>
+#include "trio.h"
 #include <fcntl.h>
 #include <errno.h>
 #include "xalloca.h"

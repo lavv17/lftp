@@ -21,13 +21,9 @@
 /* $Id$ */
 
 #include <config.h>
-#ifdef NEED_TRIO
-#include "trio.h"
-#define vsnprintf trio_vsnprintf
-#endif
 #include "xmalloc.h"
 #include "xstring.h"
-#include <stdio.h>
+#include "trio.h"
 #include <pwd.h>
 #include <unistd.h>
 #include <errno.h>

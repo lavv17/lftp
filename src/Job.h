@@ -24,7 +24,7 @@
 #define JOB_H
 
 #include <stdarg.h>
-#include <stdio.h>
+#include "trio.h"
 #undef printf
 
 #include "SMTask.h"

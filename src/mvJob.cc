@@ -20,7 +20,7 @@
 
 #include <config.h>
 #include <errno.h>
-#include <stdio.h>
+#include "trio.h"
 #include "mvJob.h"
 
 mvJob::mvJob(FileAccess *session,const char *from,const char *to) : SessionJob(session)

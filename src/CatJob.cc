@@ -21,7 +21,7 @@
 /* $Id$ */
 
 #include <config.h>
-#include <stdio.h>
+#include "trio.h"
 #include <errno.h>
 #include <unistd.h>
 

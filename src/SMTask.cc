@@ -23,7 +23,7 @@
 #include <config.h>
 #include <assert.h>
 #include <time.h>
-#include <stdio.h>
+#include "trio.h"
 #ifdef TIME_WITH_SYS_TIME
 # include <sys/types.h>
 # include <sys/time.h>

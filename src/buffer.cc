@@ -22,10 +22,6 @@
 #include "buffer.h"
 #include "xmalloc.h"
 #include "FileAccess.h"
-#ifdef NEED_TRIO
-#include "trio.h"
-#define vsnprintf trio_vsnprintf
-#endif
 
 #define BUFFER_INC (8*1024) // should be power of 2
 

@@ -21,7 +21,7 @@
 #ifndef SYSCMDJOB_H
 #define SYSCMDJOB_H
 
-#include <stdio.h>
+#include "trio.h"
 #include "Job.h"
 #include "ProcWait.h"
 

@@ -22,7 +22,7 @@
 
 #include <config.h>
 
-#include <stdio.h>
+#include "trio.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <time.h>
