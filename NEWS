@@ -1,4 +1,4 @@
-Version 3.0.0 - 2004-??-??
+Version 3.0.0 - 2004-03-??
 
 * sftp protocol support (use `sftp://user@host' URLs). sftp is a protocol
   implemented as ssh2 subsystem, it is binary and works over a secure channel.
@@ -9,11 +9,25 @@ Version 3.0.0 - 2004-??-??
   argument MDTM command (off by default); new settings ftp:use-site-utime and
   ftp:use-mdtm-overloaded.
 * charset translation in ftp protocol, new setting ftp:charset.
-* new mirror option --remove-first to remove old files before transferring new
+* new mirror option --delete-first to remove old files before transferring new
   files. By default mirror removes old files after the transfers.
 * now mirror can replace directories with plain files or symbolic links if
   --delete (-e) option is specified.
-* ftp can now use CONNECT method of http proxies.
+* ftp can now use CONNECT method of http proxies (when ftp:use-hftp is false).
+* mirror open --newer-than can now take time specification like that of at(1)
+  command, like `week ago', `now-7days' or `2004-01-01'.
+* new mirror options --ignore-size and --only-missing.
+* new mirror option --use-pget[-n=N] to make mirror use pget to transfer files.
+* debug output can now include date and time on each line (debug -t). When lftp
+  goes to background, this is turned on by default, along with pid (-p) and
+  context (-c). Try `debug -tcp' and see.
+* get1 command has now --source-region and --target-position options to get
+  a part of a file.
+* better handling of ~/.netrc - multiple logins for the same machine are
+  allowed, proper password is taken automatically from netrc if a login matches.
+* pget has now a progress bar which shows file download state.
+* new source option -e to execute output of an external program.
+* chmod -R fixed.
 
 Version 2.6.12 - 2004-01-23
 
