@@ -1,6 +1,6 @@
 EXTRA_DIST = lftp.conf lftp.lsm FAQ acconfig.h README README.debug-levels\
  README.modules MIRRORS BUGS FEATURES ltcf-c.sh ltcf-cxx.sh
-SUBDIRS = include readline-4.1 lib doc intl src po m4
+SUBDIRS = include readline-4.2 lib doc intl src po m4
 AUTOMAKE_OPTIONS = foreign
 M4DIR = $(srcdir)/m4
 ACLOCAL_AMFLAGS = -I $(M4DIR)

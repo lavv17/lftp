@@ -328,4 +328,4 @@ builtin(define, [AC_OUTPUT_LINKS_ORIG], defn([AC_OUTPUT_LINKS]))
 builtin(define, [AC_OUTPUT_LINKS], [AC_OUTPUT_LINKS_ORIG([`echo $1`], [`echo $2`])])
 
 AC_OUTPUT(Makefile src/Makefile lib/Makefile include/Makefile doc/Makefile
-	  readline-4.1/Makefile intl/Makefile po/Makefile.in m4/Makefile)
+	  readline-4.2/Makefile intl/Makefile po/Makefile.in m4/Makefile)
