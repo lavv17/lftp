@@ -1,3 +1,8 @@
+2001-10-29  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* misc.cc: use dynamic allocation in set_tz; use unsetenv to unset TZ;
+	  implement unsetenv is not available using environ array.
+
 2001-10-27  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FtpDirList.cc: clean up; style.

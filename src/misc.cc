@@ -497,13 +497,50 @@ mktime_from_utc (const struct tm *t)
    return (tl <= tb ? (tl + (tl - tb)) : (tl - (tb - tl)));
 }
 
-static char put_tz[64];
+#ifndef HAVE_UNSETENV
+# ifdef HAVE_ENVIRON
+extern char **environ;
+void unsetenv(const char *env)
+{
+   char **scan=environ;
+   if(!scan)
+      return;
+   int env_len=strlen(env);
+   while(*scan)
+   {
+      if(!strncmp(*scan,env,env_len) && (*scan)[env_len]=='=')
+	 break;
+      scan++;
+   }
+   while(*scan)
+   {
+      *scan=*(scan+1);
+      scan++;
+   }
+}
+# endif
+#endif
+
 static void set_tz(const char *tz)
 {
    if(!tz)
-      tz="";
-   sprintf(put_tz,"TZ=%.60s",tz);
-   putenv(put_tz);
+   {
+      unsetenv("TZ");
+      return;
+   }
+   static char *put_tz;
+   static int put_tz_alloc;
+   int tz_len=strlen(tz)+4;
+   char *new_tz=put_tz;
+   if(tz_len>put_tz_alloc)
+      new_tz=(char*)xmalloc(put_tz_alloc=tz_len);
+   sprintf(new_tz,"TZ=%s",tz);
+   if(new_tz!=put_tz)
+   {
+      putenv(new_tz);
+      xfree(put_tz);
+      put_tz=new_tz;
+   }
 }
 static char *saved_tz=0;
 static void save_tz()
