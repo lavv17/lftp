@@ -14,8 +14,9 @@ AC_CACHE_VAL(lftp_cv_ssl,
 			CPPFLAGS="$CPPFLAGS -I$loc/include"
 		fi
 		AC_TRY_LINK(
-			[#include <openssl/ssl.h>],
-			[static SSL_CTX *ctx; SSL_new(ctx)],
+			[#include <openssl/ssl.h>
+			 #include <openssl/rand.h>],
+			[static SSL_CTX *ctx; SSL_new(ctx); RAND_status(); RAND_egd("file")],
 			[found_loc="$loc"])
 		LIBS="$old_LIBS"
 		LDFLAGS="$old_LDFLAGS"
