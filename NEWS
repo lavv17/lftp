@@ -1,5 +1,6 @@
 Version 2.4.8 - 2001-1?-??
 
+* fixed listing parser in Fish protocol, now it extracts all information.
 * force LC_NUMERIC to C, this fixes floating point settings initialization.
 * fixed assertion failure when setting ftp proxy after establishing
   connection to an ftp server.
