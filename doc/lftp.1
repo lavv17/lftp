@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "31 Jul 2002"
+.TH lftp 1 "02 Aug 2002"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -341,10 +341,12 @@ Gets selected files with expanded wildcards.
 .De
 
 .B mirror
-.RI [ OPTS "] [" remote
-.RI "[" local "]]"
+.RI [ OPTS "] [" source
+.RI "[" target "]]"
 .PP
-Mirror specified remote directory to local directory.
+Mirror specified source directory to local target directory. If target
+directory ends with a slash, the source base name is appended to target
+directory name. Source and/or target can be URLs pointing to directories.
 .PP
 .Ds
 -c, --continue		continue a mirror job if possible
@@ -401,6 +403,7 @@ only newer files even if size is different. By default older files are downloade
 if size is different.
 .PP
 You can mirror between two servers if you specify URLs instead of directories.
+FXP is used automatically for transfers between ftp servers, if possible.
 
 .B mkdir
 .RB "[" -p "] " \fIdir(s)\fP

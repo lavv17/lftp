@@ -1,3 +1,7 @@
+2002-08-02	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document new mirror target/ semantics.
+
 2002-07-31	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document new queue features (stop/start); -I/-X options
