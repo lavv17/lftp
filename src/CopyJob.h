@@ -32,25 +32,68 @@ class CopyJob : public Job
    FileCopy *c;
    bool done;
    char *name;
-   bool print_run_status;
+   bool no_status;
 
 public:
    CopyJob(FileCopy *c1,const char *n);
    ~CopyJob();
 
-   void NoStatus() { print_run_status=false; }
+   void NoStatus() { no_status=true; }
 
    int Do();
    int Done();
    int ExitCode();
 
+   int AcceptSig(int sig);
+   pid_t GetProcGroup() { return c?c->GetProcGroup():0; }
+
+   bool Error() { return c->Error(); }
+   const char *ErrorText() { return c->ErrorText(); }
+   long GetTimeSpent() { return c->GetTimeSpent(); }
+   int  GetTimeSpentMilli() { return c->GetTimeSpentMilli(); }
+   long GetBytesCount() { return c->GetBytesCount(); }
+
    void ShowRunStatus(StatusLine *s);
+   void	PrintStatus(int);
 
    static CopyJob *NewGet(FileAccess *f,const char *src,const char *dst);
    static CopyJob *NewPut(FileAccess *f,const char *src,const char *dst);
    static CopyJob *NewEcho(const char *str,int len,FDStream *o);
    static CopyJob *NewEcho(const char *str,FDStream *o)
       { return NewEcho(str,strlen(str),o); }
+};
+
+class ArgV;
+class CopyJobEnv : public SessionJob
+{
+protected:
+   CopyJob *cp;
+   bool done;
+   int errors;
+   int count;
+   long bytes;
+   float time_spent;
+   const char *op;
+   bool no_status;
+
+   ArgV *args;
+
+   virtual void NextFile() = 0;
+
+   void SetCopier(FileCopy *c,const char *n);
+
+public:
+   int Do();
+   int Done();
+   int ExitCode() { return errors!=0; }
+
+   int AcceptSig(int sig);
+
+   CopyJobEnv(FileAccess *s,ArgV *a);
+   ~CopyJobEnv();
+
+   void SayFinal();
+   void	PrintStatus(int);
 };
 
 #endif // COPYJOB_H
