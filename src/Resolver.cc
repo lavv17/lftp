@@ -178,7 +178,7 @@ int   Resolver::Do()
       fcntl(pipe_to_child[0],F_SETFD,FD_CLOEXEC);
       fcntl(pipe_to_child[1],F_SETFD,FD_CLOEXEC);
       m=MOVED;
-      Log::global->Format(4,"---- %s",_("Resolving host address..."));
+      Log::global->Format(4,"---- %s\n",_("Resolving host address..."));
    }
 
    if(!w)
