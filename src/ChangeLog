@@ -1,3 +1,7 @@
+2002-07-10  Glenn Maynard <g_ld@zewt.org>
+
+	* CmdExec.cc: fd leak fixed.
+
 2002-07-10  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CharReader.cc, FileAccess.cc, Filter.cc, ftpclass.cc: F_GETFL returns

@@ -830,7 +830,7 @@ CmdExec::~CmdExec()
    delete args;
    delete output;
    xfree(cmd_buf);
-   xfree(cwd);
+   delete cwd;
    if(cwd_owner==this)
       cwd_owner=0;
    xfree(old_cwd);
