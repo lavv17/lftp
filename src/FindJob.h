@@ -69,7 +69,7 @@ class FinderJob : public SessionJob
     * call ValidateArgs(). */
    bool validate_args;
 
-   char *exclude;
+   PatternSet *exclude;
 
 protected:
    enum state_t { START_INFO, INFO, LOOP, WAIT, DONE };
@@ -110,7 +110,7 @@ public:
    virtual void PrintStatus(int v);
 
    void BeQuiet() { quiet=true; }
-   void SetExclude(const char *excl) { xfree(exclude); exclude = xstrdup(excl); }
+   void SetExclude(PatternSet *p) { exclude = p; }
    void set_maxdepth(int _maxdepth) { maxdepth = _maxdepth; }
 };
 

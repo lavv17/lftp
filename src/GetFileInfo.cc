@@ -207,7 +207,7 @@ int GetFileInfo::Do()
       li->UseCache(use_cache);
       li->NoNeed(FileInfo::ALL_INFO); /* clear need */
       li->Need(need);
-      SetExclude(exclude_prefix, rxc_exclude, rxc_include);
+      SetExclude(exclude_prefix, exclude);
       state=GETTING_LIST;
       m=MOVED;
 

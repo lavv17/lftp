@@ -29,6 +29,7 @@
 #include "misc.h"
 #include "GetFileInfo.h"
 #include "url.h"
+#include "PatternSet.h"
 
 #define top (*stack[stack_ptr])
 #define super SessionJob
@@ -235,7 +236,7 @@ void FinderJob::Push(FileSet *fset)
    /* matching exclusions don't include the path, so they operate
     * on the filename portion only */
    if(exclude)
-      fset->Exclude(0, exclude,0);
+      fset->Exclude(0, exclude);
    stack[stack_ptr]=new place(new_path,fset);
 
    /* give a chance to operate on the list as a whole, and
@@ -333,7 +334,7 @@ FinderJob::~FinderJob()
       xfree(orig_init_dir);
    xfree(stack);
    xfree(init_dir);
-   xfree(exclude);
+   delete exclude;
    xfree(dir);
    Delete(li);
 }

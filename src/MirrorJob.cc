@@ -309,8 +309,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 mj->SetFlags(flags,1);
 	 mj->UseCache(use_cache);
 
-	 if(rx_include)	mj->SetInclude(rx_include);
-	 if(rx_exclude)	mj->SetExclude(rx_exclude);
+	 mj->SetExclude(exclude);
 
 	 mj->source_relative_dir=
 	       xstrdup(dir_file(source_relative_dir,file->name));
@@ -463,8 +462,7 @@ void MirrorJob::HandleListInfoCreation(FileAccess * &session,ListInfo * &list_in
    if(flags&RETR_SYMLINKS)
       list_info->FollowSymlinks();
 
-   list_info->SetExclude(relative_dir,
-		  rx_exclude?&rxc_exclude:0,rx_include?&rxc_include:0);
+   list_info->SetExclude(relative_dir,exclude);
    Roll(list_info);
 }
 
@@ -729,9 +727,7 @@ MirrorJob::MirrorJob(MirrorJob *parent,
 
    flags=0;
 
-   rx_include=rx_exclude=0;
-   memset(&rxc_include,0,sizeof(regex_t));   // for safety
-   memset(&rxc_exclude,0,sizeof(regex_t));   // for safety
+   exclude=0;
 
    state=INITIAL_STATE;
 
@@ -779,49 +775,12 @@ MirrorJob::~MirrorJob()
    // session disposal should be done after ListInfo deletion.
    SessionPool::Reuse(source_session);
    SessionPool::Reuse(target_session);
-   if(rx_include)
-   {
-      xfree(rx_include);
-      regfree(&rxc_include);
-   }
-   if(rx_exclude)
-   {
-      xfree(rx_exclude);
-      regfree(&rxc_exclude);
-   }
+   delete exclude;
    if(script && script_needs_closing)
       fclose(script);
    if(parent_mirror)
       parent_mirror->stats.Add(stats);
    transfer_count++;	// parent mirror will decrement it.
-}
-
-const char *MirrorJob::SetRX(const char *s,char **rx,regex_t *rxc)
-{
-   if(*rx)
-   {
-      *rx=(char*)xrealloc(*rx,strlen(*rx)+1+strlen(s)+1);
-      strcat(*rx,"|");
-      strcat(*rx,s);
-      regfree(rxc);
-      memset(rxc,0,sizeof(*rxc));   // for safety
-   }
-   else
-   {
-      *rx=xstrdup(s);
-   }
-   int res=regcomp(rxc,*rx,REG_NOSUB|REG_EXTENDED);
-   if(res!=0)
-   {
-      xfree(*rx);
-      *rx=0;
-
-      static char err[256];
-      regerror(res,rxc,err,sizeof(err));
-
-      return err;
-   }
-   return 0;
 }
 
 void MirrorJob::va_Report(const char *fmt,va_list v)
@@ -943,33 +902,7 @@ CMD(mirror)
    int opt;
    int flags=0;
 
-   static char *include=0;
-   static int include_alloc=0;
-   static char *exclude=0;
-   static int exclude_alloc=0;
    bool use_cache=false;
-#define APPEND_STRING(s,a,s1) \
-   {			                  \
-      int len,len1=strlen(s1);            \
-      if(!s)		                  \
-      {			                  \
-	 s=(char*)xmalloc(a = len1+1);    \
-      	 strcpy(s,s1);	                  \
-      }			                  \
-      else				  \
-      {					  \
-	 len=strlen(s);		       	  \
-	 if(a < len+1+len1+1)		  \
-	    s=(char*)xrealloc(s, a = len+1+len1+1); \
-	 if(s[0]) strcat(s,"|");	  \
-	 strcat(s,s1);			  \
-      }					  \
-   } /* END OF APPEND_STRING */
-
-   if(include)
-      include[0]=0;
-   if(exclude)
-      exclude[0]=0;
 
    FileAccess *source_session=0;
    FileAccess *target_session=0;
@@ -979,6 +912,8 @@ CMD(mirror)
    bool  remove_source_files=false;
    int	 parallel=0;
    bool	 reverse=false;
+
+   PatternSet *exclude=new PatternSet;
 
    args->rewind();
    while((opt=args->getopt_long("esi:x:nrpcRvN:LPa",mirror_opts,0))!=EOF)
@@ -1010,11 +945,18 @@ CMD(mirror)
 	 flags|=MirrorJob::CONTINUE;
 	 break;
       case('x'):
-	 APPEND_STRING(exclude,exclude_alloc,optarg);
-	 break;
       case('i'):
-	 APPEND_STRING(include,include_alloc,optarg);
+      {
+	 PatternSet::Regex *rx=new PatternSet::Regex(optarg);
+	 if(rx->Error())
+	 {
+	    eprintf("%s: %s: %s\n",args->a0(),optarg,rx->ErrorText());
+	    delete rx;
+	    goto no_job;
+	 }
+	 exclude->Add(opt=='x'?PatternSet::EXCLUDE:PatternSet::INCLUDE,rx);
 	 break;
+      }
       case('R'):
 	 reverse=true;
 	 break;
@@ -1049,6 +991,12 @@ CMD(mirror)
 	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
+      no_job:
+	 delete exclude;
+	 if(source_session)
+	    SMTask::Delete(source_session);
+	 if(target_session)
+	    SMTask::Delete(target_session);
 	 return 0;
       }
    }
@@ -1070,7 +1018,7 @@ CMD(mirror)
 	 {
 	    eprintf("%s: %s%s\n",args->a0(),source_url.proto,
 		     _(" - not supported protocol"));
-	    return 0;
+	    goto no_job;
 	 }
 	 source_dir=alloca_strdup(source_url.path);
       }
@@ -1086,7 +1034,7 @@ CMD(mirror)
 	    {
 	       eprintf("%s: %s%s\n",args->a0(),target_url.proto,
 			_(" - not supported protocol"));
-	       return 0;
+	       goto no_job;
 	    }
 	    target_dir=alloca_strdup(target_url.path);
 	 }
@@ -1117,16 +1065,7 @@ CMD(mirror)
    MirrorJob *j=new MirrorJob(0,source_session,target_session,source_dir,target_dir);
    j->SetFlags(flags,1);
    j->SetVerbose(verbose);
-
-   const char *err;
-   const char *err_tag;
-
-   err_tag="include";
-   if(include && include[0] && (err=j->SetInclude(include)))
-      goto err_out;
-   err_tag="exclude";
-   if(exclude && exclude[0] && (err=j->SetExclude(exclude)))
-      goto err_out;
+   j->SetExclude(exclude);
 
    if(newer_than)
       j->SetNewerThan(newer_than);
@@ -1139,12 +1078,9 @@ CMD(mirror)
       parallel=16;   // a sane limit.
    if(parallel)
       j->SetParallel(parallel);
+
    return j;
 
-err_out:
-   eprintf("%s: %s: %s\n",args->a0(),err_tag,err);
-   SMTask::Delete(j);
-   return 0;
 #undef args
 }
 

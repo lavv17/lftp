@@ -533,7 +533,7 @@ int LocalListInfo::Do()
    }
    closedir(d);
 
-   result->Exclude(exclude_prefix,rxc_exclude,rxc_include);
+   result->Exclude(exclude_prefix,exclude);
 
    result->rewind();
    for(FileInfo *file=result->curr(); file!=0; file=result->next())

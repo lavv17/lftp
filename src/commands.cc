@@ -67,6 +67,7 @@
 #include "QueueFeeder.h"
 #include "lftp_rl.h"
 #include "FileSetOutput.h"
+#include "PatternSet.h"
 
 #include "confpaths.h"
 
@@ -2625,7 +2626,11 @@ CMD(du)
    if(separate_dirs && maxdepth != -1)
       j->set_maxdepth(maxdepth);
    if(exclude)
-      j->SetExclude(exclude);
+   {
+      PatternSet *p=new PatternSet();
+      p->Add(p->EXCLUDE,new PatternSet::Glob(exclude));
+      j->SetExclude(p);
+   }
 
    output=0;
    return j;

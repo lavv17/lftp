@@ -40,6 +40,7 @@
 #include "ResMgr.h"
 #include "StringPool.h"
 #include "IdNameCache.h"
+#include "PatternSet.h"
 
 void  FileInfo::Merge(const FileInfo& f)
 {
@@ -403,29 +404,14 @@ FileInfo *FileSet::FindByName(const char *name) const
    return 0;
 }
 
-void  FileSet::Exclude(const char *prefix,regex_t *exclude,regex_t *include)
+void  FileSet::Exclude(const char *prefix,PatternSet *x)
 {
+   if(!x)
+      return;
    for(int i=0; i<fnum; i++)
    {
       const char *name=dir_file(prefix,files[i]->name);
-      if(!(include && regexec(include,name,0,0,0)==0)
-       && ((exclude && regexec(exclude,name,0,0,0)==0)
-	   || (include && !exclude)))
-      {
-	 Sub(i);
-	 i--;
-      }
-   }
-}
-
-void  FileSet::Exclude(const char *prefix,const char *exclude,const char *include)
-{
-   for(int i=0; i<fnum; i++)
-   {
-      const char *name=dir_file(prefix,files[i]->name);
-      if(!(include && fnmatch(include,name,0)==0)
-       && ((exclude && fnmatch(exclude,name,0)==0)
-	   || (include && !exclude)))
+      if(x->MatchExclude(name))
       {
 	 Sub(i);
 	 i--;

@@ -623,8 +623,7 @@ int GenericParseListInfo::Do()
 	 result=new FileSet;
 
       result->ExcludeDots();
-      if(rxc_exclude || rxc_include)
-	 result->Exclude(exclude_prefix,rxc_exclude,rxc_include);
+      result->Exclude(exclude_prefix,exclude);
 
       get_info_cnt=result->get_fnum();
       if(get_info_cnt==0)

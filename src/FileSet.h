@@ -26,10 +26,6 @@
 #include <sys/types.h>
 #include "xmalloc.h"
 
-CDECL_BEGIN
-#include <regex.h>
-CDECL_END
-
 #undef TYPE
 
 class TimeInterval;
@@ -107,6 +103,8 @@ public:
    operator const char *() { return name; }
 };
 
+class PatternSet;
+
 class FileSet
 {
 public:
@@ -150,8 +148,7 @@ public:
    void  Unsort();
    void	 SortByPatternList(const char *list_c);
 
-   void	 Exclude(const char *prefix,regex_t *exclude,regex_t *include);
-   void  Exclude(const char *prefix,const char *exclude,const char *include);
+   void	 Exclude(const char *prefix,PatternSet *x);
    void	 ExcludeDots();
 
    void	 rewind() { ind=0; }

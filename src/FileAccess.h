@@ -369,6 +369,8 @@ public:
 
 #include "FileSet.h"
 
+class PatternSet;
+
 class ListInfo : public FileAccessOperation
 {
 protected:
@@ -377,8 +379,7 @@ protected:
    FileSet *result;
 
    const char *exclude_prefix;
-   regex_t *rxc_exclude;
-   regex_t *rxc_include;
+   PatternSet *exclude;
 
    unsigned need;
    bool follow_symlinks;
@@ -388,7 +389,7 @@ protected:
 public:
    ListInfo(FileAccess *session,const char *path);
 
-   virtual void SetExclude(const char *p,regex_t *x,regex_t *i);
+   void SetExclude(const char *p,PatternSet *e);
 
    // caller has to delete the resulting FileSet itself.
    FileSet *GetResult()

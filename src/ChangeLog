@@ -1,5 +1,13 @@
 2001-12-14  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* FileAccess.cc, FileAccess.h, FileSet.cc, FileSet.h, FindJob.cc,
+	  FindJob.h, GetFileInfo.cc, LocalAccess.cc, Makefile.am, MirrorJob.cc,
+	  MirrorJob.h, NetAccess.cc, PatternSet.cc, PatternSet.h, commands.cc,
+	  ftpclass.cc: (PatternSet) new class. Use it for exclude/include.
+	* MirrorJob.cc: fixed session leak in case of options error.
+
+2001-12-14  Alexander V. Lukyanov <lav@yars.free.net>
+
 	* GetFileInfo.cc: add forgotten SetError.
 	* TimeDate.h: don't use time_t as operator arg, it confuses compaq c++.
 

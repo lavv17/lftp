@@ -26,6 +26,7 @@
 #include "FileAccess.h"
 #include "FileSet.h"
 #include "Job.h"
+#include "PatternSet.h"
 
 class MirrorJob : public Job
 {
@@ -85,8 +86,7 @@ class MirrorJob : public Job
 
    int	 flags;
 
-   char  *rx_include,*rx_exclude;
-   regex_t rxc_include,rxc_exclude;
+   PatternSet *exclude;
 
    bool	 dir_made;
    bool	 create_remote_dir;
@@ -97,8 +97,6 @@ class MirrorJob : public Job
    MirrorJob *parent_mirror;
 
    time_t newer_than;
-
-   const char *SetRX(const char *s,char **rx,regex_t *rxc);
 
    FILE *script;
    bool script_only;
@@ -154,13 +152,9 @@ public:
    void	 SayFinal() { PrintStatus(-1); }
    int	 ExitCode() { return stats.error_count; }
 
-   const char *SetInclude(const char *s)
+   void SetExclude(PatternSet *x)
       {
-	 return SetRX(s,&rx_include,&rxc_include);
-      }
-   const char *SetExclude(const char *s)
-      {
-	 return SetRX(s,&rx_exclude,&rxc_exclude);
+	 exclude=x;
       }
 
    void	 SetVerbose(int v) { verbose_report=v; }

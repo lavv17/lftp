@@ -1040,8 +1040,7 @@ ListInfo::ListInfo(FileAccess *s,const char *p)
    saved_cwd=0;
    result=0;
 
-   rxc_exclude=0;
-   rxc_include=0;
+   exclude=0;
    exclude_prefix=0;
 
    need=0;
@@ -1065,10 +1064,9 @@ ListInfo::~ListInfo()
    xfree(saved_cwd);
 }
 
-void ListInfo::SetExclude(const char *p,regex_t *x,regex_t *i)
+void ListInfo::SetExclude(const char *p,PatternSet *x)
 {
-   rxc_exclude=x;
-   rxc_include=i;
+   exclude=x;
    exclude_prefix=p;
 }
 

@@ -56,7 +56,7 @@ libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  FileSetOutput.h PtyShell.cc PtyShell.h lftp_pty.c lftp_pty.h \
  TimeDate.cc TimeDate.h Timer.cc Timer.h GetFileInfo.cc GetFileInfo.h \
  StringPool.cc StringPool.h DirColors.cc DirColors.h IdNameCache.cc\
- IdNameCache.h
+ IdNameCache.h PatternSet.cc PatternSet.h
 
 libjobs_a_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\
