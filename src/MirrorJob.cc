@@ -158,7 +158,7 @@ void  MirrorJob::ShowRunStatus(StatusLine *s)
    }
 }
 
-void  MirrorJob::HandleFile(int how)
+void  MirrorJob::HandleFile(FileInfo *file)
 {
    int	 res;
    struct stat st;
@@ -170,17 +170,22 @@ void  MirrorJob::HandleFile(int how)
    const char *target_name=dir_file(target_dir,file->name);
    target_name=alloca_strdup(target_name);
 
+   FileInfo::type filetype=FileInfo::NORMAL;
    if(file->defined&file->TYPE)
+      filetype=file->filetype;
+   else
    {
-      switch(file->filetype)
-      {
+      FileInfo *target=target_set->FindByName(file->name);
+      if(target && (target->defined&target->TYPE))
+	 filetype=target->filetype;
+   }
+
+   switch(filetype)
+   {
       case(FileInfo::NORMAL):
       {
-      try_get:
 	 bool remove_target=false;
-	 cont_this=false;
-	 if(how!=0)
-	    goto skip;
+	 bool cont_this=false;
 	 if(target_is_local)
 	 {
 	    if(lstat(target_name,&st)!=-1)
@@ -257,6 +262,7 @@ void  MirrorJob::HandleFile(int how)
 	 if(file->defined&file->SIZE)
 	    cp->SetSize(file->size);
 	 AddWaiting(cp);
+	 transfer_count++;
 	 cp->SetParentFg(this);
 	 cp->cmdline=xasprintf("\\transfer %s",file->name);
 	 state=WAITING_FOR_TRANSFER;
@@ -264,8 +270,7 @@ void  MirrorJob::HandleFile(int how)
       }
       case(FileInfo::DIRECTORY):
       {
-      try_recurse:
-	 if(how!=1 || (flags&NO_RECURSION))
+	 if(flags&NO_RECURSION)
 	    goto skip;
 	 bool create_target_dir=true;
 	 FileInfo *old=target_set->FindByName(file->name);
@@ -295,9 +300,9 @@ void  MirrorJob::HandleFile(int how)
 	 }
 
 	 // launch sub-mirror
-	 MirrorJob *mj=new MirrorJob(source_session->Clone(),target_session->Clone(),
-				       source_name,target_name);
-	 mj->parent_mirror=this;
+	 MirrorJob *mj=new MirrorJob(this,
+	    source_session->Clone(),target_session->Clone(),
+	    source_name,target_name);
 	 AddWaiting(mj);
 	 mj->SetParentFg(this);
 	 mj->cmdline=xasprintf("\\mirror %s",file->name);
@@ -326,8 +331,7 @@ void  MirrorJob::HandleFile(int how)
 	 break;
       }
       case(FileInfo::SYMLINK):
-	 if(how!=0)
-	    goto skip;
+      {
 	 if(!target_is_local)
 	 {
 	    // can't create symlink remotely
@@ -360,26 +364,10 @@ void  MirrorJob::HandleFile(int how)
 	       eprintf("mirror: symlink(%s): %s\n",target_name,strerror(errno));
 	 }
 #endif /* LSTAT */
-	 goto skip;
+	 break;
       }
    }
-   else
-   {
-      FileInfo *target=target_set->FindByName(file->name);
-      if(target && (target->defined&target->TYPE)
-      && target->filetype==target->DIRECTORY)
-      {
-	 // assume it's a directory
-	 goto try_recurse;
-      }
-      // no info on type -- try to get
-      goto try_get;
-   }
-   return;
-
 skip:
-   if(how==1)  // NOTE: check invocation places before changing this
-      to_transfer->next();
    return;
 }
 
@@ -452,6 +440,7 @@ void MirrorJob::HandleChdir(FileAccess * &session, int &redirections)
    cd_err_normal:
       eprintf("mirror: %s\n",session->StrError(res));
       stats.error_count++;
+      transfer_count-=root_transfer_count;
       state=DONE;
       source_session->Close();
       target_session->Close();
@@ -467,6 +456,7 @@ void MirrorJob::HandleListInfoCreation(FileAccess * &session,ListInfo * &list_in
    {
       eprintf(_("mirror: protocol `%s' is not suitable for mirror\n"),
 	       session->GetProto());
+      transfer_count-=root_transfer_count;
       state=DONE;
       return;
    }
@@ -490,6 +480,7 @@ void MirrorJob::HandleListInfo(ListInfo * &list_info, FileSet * &set)
    {
       eprintf("mirror: %s\n",list_info->ErrorText());
       stats.error_count++;
+      transfer_count-=root_transfer_count;
       state=DONE;
       Delete(source_list_info);
       source_list_info=0;
@@ -560,7 +551,6 @@ int   MirrorJob::Do()
       m=MOVED;
 
    case(GETTING_LIST_INFO):
-   {
       HandleListInfo(source_list_info,source_set);
       HandleListInfo(target_list_info,target_set);
       if(state!=GETTING_LIST_INFO)
@@ -568,16 +558,15 @@ int   MirrorJob::Do()
       if(source_list_info || target_list_info)
 	 return m;
 
-      // now we have both local and remote file sets.
+      // now we have both target and source file sets.
       stats.dirs++;
 
       InitSets(source_set,target_set);
 
       to_transfer->rewind();
+      transfer_count-=root_transfer_count; // leave room for transfers.
       state=WAITING_FOR_TRANSFER;
-      return MOVED;
-   }
-
+      m=MOVED;
    case(WAITING_FOR_TRANSFER):
       j=FindDoneAwaitedJob();
       if(j)
@@ -586,59 +575,35 @@ int   MirrorJob::Do()
 	    stats.error_count++;
 	 RemoveWaiting(j);
 	 Delete(j);
+	 transfer_count--;
       }
-      while(waiting_num<parallel && state==WAITING_FOR_TRANSFER)
+      while(transfer_count<parallel && state==WAITING_FOR_TRANSFER)
       {
-	 file=to_transfer->curr();
+	 FileInfo *file=to_transfer->curr();
       	 if(!file)
 	 {
 	    if(waiting_num>0)
 	       return m;
-	    to_transfer->rewind();
-	    state=WAITING_FOR_SUBMIRROR;
-	    return MOVED;
+	    goto pre_TARGET_REMOVE_OLD;
 	 }
-	 HandleFile(0);
+	 HandleFile(file);
 	 to_transfer->next();
 	 m=MOVED;
       }
       return m;
 
-   case(WAITING_FOR_SUBMIRROR):
-      j=FindDoneAwaitedJob();
-      if(j==0 && waiting_num>0)
-	 return m;
-      if(j)
-      {
-	 to_transfer->next();
-	 RemoveWaiting(j);
-	 Delete(j);
-      }
-      while(waiting_num<1 && state==WAITING_FOR_SUBMIRROR)
-      {
-	 file=to_transfer->curr();
-      	 if(!file)
-	 {
-	    to_rm->Count(&stats.del_dirs,&stats.del_files,&stats.del_symlinks,&stats.del_files);
-	    to_rm->rewind();
-	    state=TARGET_REMOVE_OLD;
-	    return MOVED;
-
-	    state=DONE;
-	    return MOVED;
-	 }
-	 HandleFile(1);
-	 m=MOVED;
-      }
-      return m;
-
+   pre_TARGET_REMOVE_OLD:
+      to_rm->Count(&stats.del_dirs,&stats.del_files,&stats.del_symlinks,&stats.del_files);
+      to_rm->rewind();
+      state=TARGET_REMOVE_OLD;
+      m=MOVED;
    case(TARGET_REMOVE_OLD):
       if(waiting_num==0)
       {
 	 if(flags&DELETE)
 	 {
 	    ArgV *args=new ArgV("rm");
-	    file=to_rm->curr();
+	    FileInfo *file=to_rm->curr();
 	    if(file)
 	    {
 	       args->Append(file->name);
@@ -663,7 +628,7 @@ int   MirrorJob::Do()
 	 }
 	 else if(flags&REPORT_NOT_DELETED)
 	 {
-	    for(file=to_rm->curr(); file; file=to_rm->next())
+	    for(FileInfo *file=to_rm->curr(); file; file=to_rm->next())
 	    {
 	       Report(_("Old file `%s' is not removed"),
 			dir_file(target_relative_dir,file->name));
@@ -736,11 +701,15 @@ int   MirrorJob::Do()
    return m;
 }
 
-MirrorJob::MirrorJob(FileAccess *source,FileAccess *target,
+MirrorJob::MirrorJob(MirrorJob *parent,
+   FileAccess *source,FileAccess *target,
    const char *new_source_dir,const char *new_target_dir)
+ :
+   root_transfer_count(0),
+   transfer_count(parent?parent->transfer_count:root_transfer_count)
 {
    verbose_report=0;
-   parent_mirror=0;
+   parent_mirror=parent;
 
    source_session=source;
    target_session=target;
@@ -756,8 +725,6 @@ MirrorJob::MirrorJob(FileAccess *source,FileAccess *target,
    to_transfer=to_rm=same=0;
    source_set=target_set=0;
    new_files_set=old_files_set=0;
-   file=0;
-   cont_this=false;
    create_target_dir=true;
    source_list_info=0;
    target_list_info=0;
@@ -784,12 +751,20 @@ MirrorJob::MirrorJob(FileAccess *source,FileAccess *target,
 
    source_redirections=0;
    target_redirections=0;
+
+   if(parent_mirror)
+   {
+      bool parallel_dirs=ResMgr::QueryBool("mirror:parallel-directories",0);
+      // If parallel_dirs is true, allow parent mirror to continue
+      // processing other directories, otherwise block it until we
+      // get file sets and start transfers.
+      root_transfer_count=parallel_dirs?1:1024;
+      transfer_count+=root_transfer_count;
+   }
 }
 
 MirrorJob::~MirrorJob()
 {
-   SessionPool::Reuse(source_session);
-   SessionPool::Reuse(target_session);
    xfree(source_dir);
    xfree(target_dir);
    xfree(source_relative_dir);
@@ -801,9 +776,11 @@ MirrorJob::~MirrorJob()
    delete same;
    delete new_files_set;
    delete old_files_set;
-   // don't delete this->file -- it is a reference
    Delete(source_list_info);
    Delete(target_list_info);
+   // session disposal should be done after ListInfo deletion.
+   SessionPool::Reuse(source_session);
+   SessionPool::Reuse(target_session);
    if(rx_include)
    {
       xfree(rx_include);
@@ -818,6 +795,7 @@ MirrorJob::~MirrorJob()
       fclose(script);
    if(parent_mirror)
       parent_mirror->stats.Add(stats);
+   transfer_count++;	// parent mirror will decrement it.
 }
 
 const char *MirrorJob::SetRX(const char *s,char **rx,regex_t *rxc)
@@ -1138,7 +1116,7 @@ CMD(mirror)
 	 target_session=parent->session->Clone();
    }
 
-   MirrorJob *j=new MirrorJob(source_session,target_session,source_dir,target_dir);
+   MirrorJob *j=new MirrorJob(0,source_session,target_session,source_dir,target_dir);
    j->SetFlags(flags,1);
    j->SetVerbose(verbose);
 

@@ -678,6 +678,17 @@ int FileSet::Have() const
    return bits;
 }
 
+static bool fnmatch_dir(const char *pattern,const FileInfo *file)
+{
+   char *name=file->name;
+   if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
+   {
+      name=alloca_strdup2(name,1);
+      strcat(name,"/");
+   }
+   return fnmatch(pattern,name,FNM_PATHNAME|FNM_CASEFOLD);
+}
+
 void FileSet::SortByPatternList(const char *list_c)
 {
    const int max_rank=1000000;
@@ -687,7 +698,7 @@ void FileSet::SortByPatternList(const char *list_c)
    int rank=0;
    for(char *p=strtok(list," "); p; p=strtok(0," "), rank++)
       for(int i=0; i<fnum; i++)
-	 if(files[i]->GetRank()==max_rank && !fnmatch(p,files[i]->name,0))
+	 if(files[i]->GetRank()==max_rank && !fnmatch_dir(p,files[i]))
 	    files[i]->SetRank(rank);
    Sort(BYRANK);
 }

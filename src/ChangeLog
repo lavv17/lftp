@@ -3,6 +3,10 @@
 	* LsCache.cc: don't assume the listing to be parseable; call free_fset
 	  when listing is replaced with new one.
 	* mkdirJob.cc, mkdirJob.h, MirrorJob.cc, MirrorJob.h: add Fg/Bg.
+	* MirrorJob.cc, MirrorJob.h, resource.cc: allow several directories
+	  to be processed in parallel; new resources.
+	* FileSet.cc: match trailing slash on directories in SortByPatternList;
+	  make it case insensitive.
 
 2001-12-10  Glenn Maynard <g_ld@zewt.org>
 

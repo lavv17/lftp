@@ -240,7 +240,11 @@ static ResDecl
    ResDecl43 ("net:timeout",		  "300",   ResMgr::UNumberValidate,0),
    ResDecl44 ("net:connection-limit",	  "0",	   ResMgr::UNumberValidate,0),
    ResDecl45 ("net:connection-takeover",  "yes",   ResMgr::BoolValidate,0),
-   ResDecl48 ("mirror:order",		  "*.sfv *.sig *.md5* *.sum", 0,ResMgr::NoClosure);
+   ResDecl46 ("mirror:order",		  "*.sfv *.sig *.md5* *.sum * */", 0,ResMgr::NoClosure),
+   ResDecl47 ("mirror:parallel-directories", "yes", ResMgr::BoolValidate,ResMgr::NoClosure),
+   ResDecl48 ("mirror:parallel-transfer-count", "1", ResMgr::UNumberValidate,ResMgr::NoClosure),
+   ResDecl49 ("mirror:exclude-regex",	  "(^|/)(\\.in\\.|\\.nfs)",ResMgr::ERegExpValidate,ResMgr::NoClosure),
+   ResDecl50 ("mirror:include-regex",	  "",	   ResMgr::ERegExpValidate,ResMgr::NoClosure);
 
 #if INET6
 # define DEFAULT_ORDER "inet inet6"

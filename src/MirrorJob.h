@@ -57,8 +57,7 @@ class MirrorJob : public Job
    FileSet *new_files_set;
    void	 InitSets(FileSet *src,FileSet *dst);
 
-   FileInfo *file;
-   void	 HandleFile(int);
+   void	 HandleFile(FileInfo *);
 
    bool cont_this; // try to continue transfer of current file.
    bool create_target_dir;
@@ -81,6 +80,9 @@ class MirrorJob : public Job
       void Add(const Statistics &);
    };
    Statistics stats;
+
+   int	 root_transfer_count;
+   int	 &transfer_count;
 
    int	 flags;
 
@@ -142,7 +144,7 @@ public:
 	 flags&=~f;
    }
 
-   MirrorJob(FileAccess *f,FileAccess *target,
+   MirrorJob(MirrorJob *parent,FileAccess *f,FileAccess *target,
       const char *new_source_dir,const char *new_target_dir);
    ~MirrorJob();
 
