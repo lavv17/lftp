@@ -367,6 +367,7 @@ static void glob_quote(char *out,const char *in,int len)
 }
 
 CmdExec *completion_shell;
+int remote_completion=0;
 
 static bool force_remote=false;
 
