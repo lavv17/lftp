@@ -895,8 +895,9 @@ void  Ftp::GetBetterConnection(int level,int count)
 
 int   Ftp::Do()
 {
-   char	 *str =(char*)alloca(xstrlen(cwd)+xstrlen(hostname)+xstrlen(proxy)+256);
-   char	 *str1=(char*)alloca(xstrlen(file)+xstrlen(list_options)+20);
+   char	 *str=(char*)alloca(xstrlen(cwd)+xstrlen(hostname)+xstrlen(proxy)+256);
+   const char *command=0;
+   bool	       append_file=false;
    int   res;
    socklen_t addr_len;
    unsigned char *a;
@@ -1198,39 +1199,37 @@ int   Ftp::Do()
 	 if(file[0]==0)
 	    goto long_list;
          type=FTP_TYPE_I;
-         sprintf(str1,"RETR %s\n",file);
+	 command="RETR";
+	 append_file=true;
          break;
       case(STORE):
          type=FTP_TYPE_I;
 	 if(!(bool)Query("rest-stor",hostname))
 	    real_pos=0;	// some old servers don't handle REST/STOR properly.
-         sprintf(str1,"STOR %s\n",file);
+         command="STOR";
+	 append_file=true;
          break;
       long_list:
       case(LONG_LIST):
          type=FTP_TYPE_A;
          if(!rest_list)
 	    real_pos=0;	// some ftp servers do not do REST/LIST.
-	 strcpy(str1,"LIST");
+	 command="LIST";
 	 if(list_options && list_options[0])
 	 {
-	    strcat(str1," ");
-	    strcat(str1,list_options);
+	    char *c=string_alloca(5+strlen(list_options)+1);
+	    sprintf(c,"LIST %s",list_options);
+	    command=c;
 	 }
 	 if(file && file[0])
-	 {
-	    strcat(str1," ");
-            strcat(str1,file);
-	 }
-	 strcat(str1,"\n");
+	    append_file=true;
          break;
       case(LIST):
          type=FTP_TYPE_A;
          real_pos=0; // REST doesn't work for NLST
+	 command="NLST";
 	 if(file && file[0])
-            sprintf(str1,"NLST %s\n",file);
-         else
-            sprintf(str1,"NLST\n");
+            append_file=true;
          break;
       case(CHANGE_DIR):
 	 if(!xstrcmp(real_cwd,file))
@@ -1241,38 +1240,50 @@ int   Ftp::Do()
 	 else
 	 {
 	    int len=xstrlen(real_cwd);
+	    char *path_to_use=file;
 	    if(!vms_path && !AbsolutePath(file) && real_cwd
 	    && !strncmp(file,real_cwd,len) && file[len]=='/')
-	       sprintf(str1,"CWD .%s\n",file+len);
-	    else
-	       sprintf(str1,"CWD %s\n",file);
-	    SendCmd(str1);
+	    {
+	       path_to_use=string_alloca(strlen(file+len)+2);
+	       sprintf(path_to_use,".%s",file+len);
+	    }
+	    SendCmd2("CWD",path_to_use);
 	    AddResp(RESP_CWD_RMD_DELE_OK,INITIAL_STATE,CHECK_CWD);
 	    SetRespPath(file);
 	 }
 	 goto pre_WAITING_STATE;
       case(MAKE_DIR):
-	 sprintf(str1,"MKD %s\n",file);
+	 command="MKD";
+	 append_file=true;
 	 break;
       case(REMOVE_DIR):
-	 sprintf(str1,"RMD %s\n",file);
+	 command="RMD";
+	 append_file=true;
 	 break;
       case(REMOVE):
-	 sprintf(str1,"DELE %s\n",file);
+	 command="DELE";
+	 append_file=true;
 	 break;
       case(QUOTE_CMD):
 	 real_pos=0;
-	 sprintf(str1,"%s\n",file);
+	 command="";
+	 append_file=true;
 	 break;
       case(RENAME):
-	 sprintf(str1,"RNFR %s\n",file);
+	 command="RNFR";
+	 append_file=true;
 	 break;
       case(ARRAY_INFO):
 	 type=FTP_TYPE_I;
 	 break;
       case(CHANGE_MODE):
-	 sprintf(str1,"SITE CHMOD %03o %s\n",chmod_mode,file);
-	 break;
+	 {
+	    char *c=string_alloca(11+30);
+	    sprintf(c,"SITE CHMOD %03o",chmod_mode);
+	    command=c;
+	    append_file=true;
+	    break;
+	 }
       case(CONNECT_VERIFY):
       case(CLOSED):
 	 abort(); // can't happen
@@ -1281,8 +1292,7 @@ int   Ftp::Do()
 	 type=FTP_TYPE_A;
       if(old_type!=type)
       {
-         strcpy(str,type==FTP_TYPE_I?"TYPE I\n":"TYPE A\n");
-	 SendCmd(str);
+	 SendCmd2("TYPE",type==FTP_TYPE_I?"I":"A");
 	 AddResp(RESP_TYPE_OK,INITIAL_STATE);
       }
 
@@ -1353,7 +1363,12 @@ int   Ftp::Do()
 	       sl=strchr(sl+1,'/');
 	    }
 	 }
-	 SendCmd(str1);
+
+	 if(append_file)
+	    SendCmd2(command,file);
+	 else
+	    SendCmd(command);
+
 	 if(mode==REMOVE_DIR || mode==REMOVE)
 	    AddResp(RESP_CWD_RMD_DELE_OK,INITIAL_STATE,CHECK_FILE_ACCESS);
 	 else if(mode==MAKE_DIR)
@@ -1485,7 +1500,10 @@ int   Ftp::Do()
       }
       if(copy_mode!=COPY_DEST || copy_allow_store)
       {
-	 SendCmd(str1);
+	 if(append_file)
+	    SendCmd2(command,file);
+	 else
+	    SendCmd(command);
 	 AddResp(RESP_TRANSFER_OK,mode==STORE?STORE_FAILED_STATE:INITIAL_STATE,
 		  CHECK_TRANSFER);
       }
@@ -2156,6 +2174,7 @@ int  Ftp::FlushSendQueue(bool all)
 
       sync_wait++;
    }
+   // FIXME: \0 in commands can make logging fail.
    if(send_cmd_ptr>cmd_begin)
    {
       send_cmd_ptr[-1]=0;
@@ -2188,14 +2207,18 @@ int  Ftp::FlushSendQueue(bool all)
    return m;
 }
 
-void  Ftp::SendCmd(const char *cmd)
+void  Ftp::SendCmd(const char *cmd,int len)
 {
+   if(len==-1)
+      len=strlen(cmd);
    char ch,prev_ch;
    if(send_cmd_count==0)
       send_cmd_ptr=send_cmd_buffer;
    prev_ch=0;
-   while((ch=*cmd++)!=0)
+   while(len>0)
    {
+      ch=*cmd++;
+      len--;
       if(send_cmd_ptr-send_cmd_buffer+send_cmd_count+1>=send_cmd_alloc)
       {
 	 if(send_cmd_ptr-send_cmd_buffer<2)
@@ -2213,20 +2236,35 @@ void  Ftp::SendCmd(const char *cmd)
       {
 	 ch='\r';
 	 cmd--;
+	 len++;
       }
       else if(ch=='\377') // double chr(255) as in telnet protocol
       	 send_cmd_ptr[send_cmd_count++]='\377';
       send_cmd_ptr[send_cmd_count++]=prev_ch=ch;
-      if(*cmd==0 && ch!='\n')
+      if(len==0 && ch!='\n')
+      {
 	 cmd="\n";
+	 len=1;
+      }
    }
 }
 
 void Ftp::SendCmd2(const char *cmd,const char *f)
 {
    char *s=string_alloca(strlen(cmd)+1+strlen(f)+2);
-   sprintf(s,"%s %s\n",cmd,f);
-   SendCmd(s);
+   strcpy(s,cmd);
+   char *store=s+strlen(s);
+   if(store>s)
+      *store++=' ';
+   while(*f)
+   {
+      if(*f=='\n')
+	 *store++='\0';
+      else
+	 *store++=*f;
+      f++;
+   }
+   SendCmd(s,store-s);
 }
 
 int   Ftp::SendEOT()
@@ -3337,13 +3375,6 @@ int Ftp::Buffered()
 #else
    return 0;
 #endif
-}
-
-void Ftp::Open(const char *f,int m,long offs)
-{
-   super::Open(f,m,offs);
-   if((file && strchr(file,'\n')) || (file1 && strchr(file1,'\n')))
-      Fatal("cannot access file with <NL> in its name");
 }
 
 #ifdef MODULE

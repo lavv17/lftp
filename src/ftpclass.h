@@ -185,7 +185,7 @@ class Ftp : public NetAccess
 
    void	 SwitchToState(automate_state);
 
-   void  SendCmd(const char *cmd);
+   void  SendCmd(const char *cmd,int len=-1);
    void  SendCmd2(const char *cmd,const char *f);
    void  SendUrgentCmd(const char *cmd);
    int	 FlushSendQueue(bool all=false);
@@ -294,7 +294,6 @@ public:
    }
 
    void	 Connect(const char *h,const char *p);
-   void	 Open(const char *file,int mode,long pos=0);
 
    int   Read(void *buf,int size);
    int   Write(const void *buf,int size);

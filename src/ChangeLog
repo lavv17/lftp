@@ -1,3 +1,8 @@
+2000-03-21  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: allow \n in file names, substitute it
+	  with \0; clean up command sending.
+
 2000-03-20  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileCopy.cc: add debug messages.
