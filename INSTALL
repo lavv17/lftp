@@ -12,6 +12,7 @@ libstdc++.
 Try `configure --without-libresolv' - it can sometimes help.
    * Sun C++ v5.0 compiler can be used to compile lftp. Use
 	CXX=CC CXXFLAGS="-compat=4 -features=bool" ./configure
+   * you need OpenSSL 0.9.5a or later to compile with SSL support.
 
 
 
