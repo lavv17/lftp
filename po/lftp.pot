@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 1999-07-20 19:03+0400\n"
+"POT-Creation-Date: 1999-07-25 23:50+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1158,19 +1158,19 @@ msgstr ""
 msgid "Timeout - reconnecting"
 msgstr ""
 
-#: src/Http.cc:493 src/ftpclass.cc:838
+#: src/Http.cc:494 src/ftpclass.cc:838
 msgid "Closing idle connection"
 msgstr ""
 
-#: src/Http.cc:1091 src/ftpclass.cc:883 src/ftpclass.cc:2677
+#: src/Http.cc:1092 src/ftpclass.cc:883 src/ftpclass.cc:2677
 msgid "Resolving host address..."
 msgstr ""
 
-#: src/Http.cc:562 src/ftpclass.cc:929
+#: src/Http.cc:563 src/ftpclass.cc:929
 msgid "max-retries exceeded"
 msgstr ""
 
-#: src/Http.cc:581 src/ftpclass.cc:950
+#: src/Http.cc:582 src/ftpclass.cc:950
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr ""
@@ -1212,7 +1212,7 @@ msgstr ""
 msgid "Sending commands..."
 msgstr ""
 
-#: src/Http.cc:1102 src/ftpclass.cc:2669 src/ftpclass.cc:2689
+#: src/Http.cc:1103 src/ftpclass.cc:2669 src/ftpclass.cc:2689
 #: src/ftpclass.cc:2696
 msgid "Waiting for response..."
 msgstr ""
@@ -1221,11 +1221,11 @@ msgstr ""
 msgid "Connection idle"
 msgstr ""
 
-#: src/Http.cc:1093 src/ftpclass.cc:2679
+#: src/Http.cc:1094 src/ftpclass.cc:2679
 msgid "Delaying before reconnect"
 msgstr ""
 
-#: src/Http.cc:1097 src/ftpclass.cc:2684
+#: src/Http.cc:1098 src/ftpclass.cc:2684
 msgid "Connecting..."
 msgstr ""
 
@@ -1249,11 +1249,11 @@ msgstr ""
 msgid "Waiting for data connection..."
 msgstr ""
 
-#: src/Http.cc:1100 src/ftpclass.cc:2703
+#: src/Http.cc:1101 src/ftpclass.cc:2703
 msgid "Sending data"
 msgstr ""
 
-#: src/Http.cc:1105 src/ftpclass.cc:2705
+#: src/Http.cc:1106 src/ftpclass.cc:2705
 msgid "Receiving data"
 msgstr ""
 
@@ -1404,11 +1404,11 @@ msgstr ""
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr ""
 
-#: src/Http.cc:940 src/Http.cc:960
+#: src/Http.cc:941 src/Http.cc:961
 msgid "chunked format violated"
 msgstr ""
 
-#: src/Http.cc:1103
+#: src/Http.cc:1104
 msgid "Fetching headers..."
 msgstr ""
 

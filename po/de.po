@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Lftp 1.2.4\n"
-"POT-Creation-Date: 1999-07-20 19:03+0400\n"
+"POT-Creation-Date: 1999-07-25 23:50+0400\n"
 "PO-Revision-Date: 1999-07-15 00:17+02:00\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: German <de@li.org>\n"
@@ -1326,19 +1326,19 @@ msgstr "Zeitablauf - sync Modus versuchen (Ist es Windoof?)"
 msgid "Timeout - reconnecting"
 msgstr "Zeitablauf - neu verbinden"
 
-#: src/Http.cc:493 src/ftpclass.cc:838
+#: src/Http.cc:494 src/ftpclass.cc:838
 msgid "Closing idle connection"
 msgstr "Schließe unbenutzte Verbindung"
 
-#: src/Http.cc:1091 src/ftpclass.cc:883 src/ftpclass.cc:2677
+#: src/Http.cc:1092 src/ftpclass.cc:883 src/ftpclass.cc:2677
 msgid "Resolving host address..."
 msgstr "Löse Hostadresse auf..."
 
-#: src/Http.cc:562 src/ftpclass.cc:929
+#: src/Http.cc:563 src/ftpclass.cc:929
 msgid "max-retries exceeded"
 msgstr "Zahl der Wiederholungsversuche überschritten"
 
-#: src/Http.cc:581 src/ftpclass.cc:950
+#: src/Http.cc:582 src/ftpclass.cc:950
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Verbinde mit %s%s (%s)  Port %u"
@@ -1380,7 +1380,7 @@ msgstr "Schalte Passivmodus ab"
 msgid "Sending commands..."
 msgstr "Schicke Befehle"
 
-#: src/Http.cc:1102 src/ftpclass.cc:2669 src/ftpclass.cc:2689
+#: src/Http.cc:1103 src/ftpclass.cc:2669 src/ftpclass.cc:2689
 #: src/ftpclass.cc:2696
 msgid "Waiting for response..."
 msgstr "Warte auf Antwort"
@@ -1389,11 +1389,11 @@ msgstr "Warte auf Antwort"
 msgid "Connection idle"
 msgstr "Verbindung ruht"
 
-#: src/Http.cc:1093 src/ftpclass.cc:2679
+#: src/Http.cc:1094 src/ftpclass.cc:2679
 msgid "Delaying before reconnect"
 msgstr "Pause vor Verbindungsneuaufbau"
 
-#: src/Http.cc:1097 src/ftpclass.cc:2684
+#: src/Http.cc:1098 src/ftpclass.cc:2684
 msgid "Connecting..."
 msgstr "Verbinde..."
 
@@ -1417,11 +1417,11 @@ msgstr "Warte auf Übertragungsende"
 msgid "Waiting for data connection..."
 msgstr "Warte auf Datenverbindung"
 
-#: src/Http.cc:1100 src/ftpclass.cc:2703
+#: src/Http.cc:1101 src/ftpclass.cc:2703
 msgid "Sending data"
 msgstr "Sende Daten"
 
-#: src/Http.cc:1105 src/ftpclass.cc:2705
+#: src/Http.cc:1106 src/ftpclass.cc:2705
 msgid "Receiving data"
 msgstr "Empfange Daten"
 
@@ -1585,11 +1585,11 @@ msgstr "%s OK, %d Verzeichnis$|se$ gelöscht\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s OK, %d Datei$|en$ gelöscht\n"
 
-#: src/Http.cc:940 src/Http.cc:960
+#: src/Http.cc:941 src/Http.cc:961
 msgid "chunked format violated"
 msgstr "Blockformatierung verletzt"
 
-#: src/Http.cc:1103
+#: src/Http.cc:1104
 msgid "Fetching headers..."
 msgstr "Hole Kopfzeilen..."
 

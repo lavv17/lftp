@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.0\n"
-"POT-Creation-Date: 1999-07-11 23:30+0400\n"
+"POT-Creation-Date: 1999-07-25 23:50+0400\n"
 "PO-Revision-Date: 1999-07-01 09:54+08:00\n"
 "Last-Translator: Const Kaplinsky <const@ce.cctpu.edu.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -105,12 +105,12 @@ msgstr "Ошибка регистрации"
 msgid "Operation not supported"
 msgstr "Операция не поддерживается"
 
-#: src/FtpListInfo.cc:226 src/HttpDir.cc:905
+#: src/FtpListInfo.cc:226 src/HttpDir.cc:908
 #, c-format
 msgid "Getting directory contents (%ld)"
 msgstr "Получение содержимого каталога (%ld)"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:910
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:913
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "Получение информации о файлах (%d%%)"
@@ -242,11 +242,11 @@ msgstr "Старый локальный файл `%s' не удален"
 msgid "%s: %s - invalid time precision\n"
 msgstr "%s: %s - неверная точность времени\n"
 
-#: src/MirrorJob.cc:903 src/commands.cc:774 src/commands.cc:839
-#: src/commands.cc:927 src/commands.cc:1133 src/commands.cc:1294
-#: src/commands.cc:1470 src/commands.cc:1477 src/commands.cc:1661
-#: src/commands.cc:1687 src/commands.cc:1694 src/commands.cc:1811
-#: src/commands.cc:1889
+#: src/MirrorJob.cc:903 src/commands.cc:775 src/commands.cc:840
+#: src/commands.cc:928 src/commands.cc:1134 src/commands.cc:1295
+#: src/commands.cc:1471 src/commands.cc:1478 src/commands.cc:1662
+#: src/commands.cc:1688 src/commands.cc:1695 src/commands.cc:1812
+#: src/commands.cc:1890
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Запустите `help %s' для получения дополнительной информации.\n"
@@ -267,16 +267,16 @@ msgstr "неверное логическое значение"
 msgid "invalid number"
 msgstr "неверное число"
 
-#: src/Resolver.cc:204
+#: src/Resolver.cc:209
 msgid "host name resolve timeout"
 msgstr "при преобразовании адреса сервера превышен лимит времени"
 
 #. protocol error
-#: src/Resolver.cc:238
+#: src/Resolver.cc:243
 msgid "child returned invalid data"
 msgstr "порожденный процесс возвратил некорректные данные"
 
-#: src/Resolver.cc:304
+#: src/Resolver.cc:309
 #, c-format
 msgid "unknown address family `%s'"
 msgstr "неизвестный тип адреса `%s'"
@@ -1067,7 +1067,7 @@ msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 msgstr ""
 "Использование: %s [-e команда] [-p порт] [-u имя[,пароль]] <машина|url>\n"
 
-#: src/commands.cc:641 src/commands.cc:1193 src/ftpget.cc:149
+#: src/commands.cc:641 src/commands.cc:1194 src/ftpget.cc:149
 msgid "Password: "
 msgstr "Пароль: "
 
@@ -1081,121 +1081,121 @@ msgstr "%s: ошибка GetPass() -- подразумевается анонимная регистрация\n"
 msgid "Usage: %s command args...\n"
 msgstr "Использование: %s команда аргументы...\n"
 
-#: src/commands.cc:784 src/commands.cc:1015
+#: src/commands.cc:785 src/commands.cc:1016
 #, c-format
 msgid "Usage: %s files...\n"
 msgstr "Использование: %s файлы...\n"
 
-#: src/commands.cc:826
+#: src/commands.cc:827
 #, c-format
 msgid "%s: -n: Number expected. "
 msgstr "%s: -n: Ожидается числовое значение. "
 
-#: src/commands.cc:849 src/commands.cc:937
+#: src/commands.cc:850 src/commands.cc:938
 #, c-format
 msgid "File name missed. "
 msgstr "Пропущено имя файла. "
 
-#: src/commands.cc:1055
+#: src/commands.cc:1056
 #, c-format
 msgid "Usage: %s <file>\n"
 msgstr "Использование: %s <файл>\n"
 
-#: src/commands.cc:1077
+#: src/commands.cc:1078
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
 msgstr "Использование: %s [-v] [-v] ...\n"
 
-#: src/commands.cc:1174
+#: src/commands.cc:1175
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
 msgstr "уровень отладки %d, вывод направлен в %s\n"
 
-#: src/commands.cc:1177
+#: src/commands.cc:1178
 msgid "debug is off\n"
 msgstr "отладка выключена\n"
 
-#: src/commands.cc:1189
+#: src/commands.cc:1190
 #, c-format
 msgid "Usage: %s userid [pass]\n"
 msgstr "Использование: %s имя [пароль]\n"
 
-#: src/commands.cc:1228 src/commands.cc:1379
+#: src/commands.cc:1229 src/commands.cc:1380
 #, c-format
 msgid "%s: no current job\n"
 msgstr "%s: текущее задание отсутствует\n"
 
-#: src/commands.cc:1238 src/commands.cc:1268 src/commands.cc:1387
+#: src/commands.cc:1239 src/commands.cc:1269 src/commands.cc:1388
 #, c-format
 msgid "%s: %d - no such job\n"
 msgstr "%s: %d - указанное задание отсутствует\n"
 
-#: src/commands.cc:1240
+#: src/commands.cc:1241
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
 msgstr "Использование: %s <номер_задания> ... | all\n"
 
-#: src/commands.cc:1259 src/commands.cc:1369 src/commands.cc:1541
+#: src/commands.cc:1260 src/commands.cc:1370 src/commands.cc:1542
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s: %s - не является числом\n"
 
-#: src/commands.cc:1324
+#: src/commands.cc:1325
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr "%s: %s. Используйте `set -a' для просмотра списка всех переменных.\n"
 
-#: src/commands.cc:1359
+#: src/commands.cc:1360
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
 msgstr "Использование: %s [<номер_задания>]\n"
 
-#: src/commands.cc:1392
+#: src/commands.cc:1393
 #, c-format
 msgid "%s: some other job waits for job %d\n"
 msgstr "%s: другое задание ожидает завершения задания %d\n"
 
-#: src/commands.cc:1403
+#: src/commands.cc:1404
 #, c-format
 msgid "Usage: %s <raw_cmd>\n"
 msgstr "Использование: %s <команда>\n"
 
-#: src/commands.cc:1417
+#: src/commands.cc:1418
 #, c-format
 msgid "Usage: site <site_cmd>\n"
 msgstr "Использование: site <команда_сервера>\n"
 
-#: src/commands.cc:1447
+#: src/commands.cc:1448
 #, c-format
 msgid "Usage: mv <file1> <file2>\n"
 msgstr "Использование: mv <файл1> <файл2>\n"
 
-#: src/commands.cc:1469 src/commands.cc:1686
+#: src/commands.cc:1470 src/commands.cc:1687
 #, c-format
 msgid "Invalid command. "
 msgstr "Недопустимая команда. "
 
-#: src/commands.cc:1476 src/commands.cc:1693
+#: src/commands.cc:1477 src/commands.cc:1694
 #, c-format
 msgid "Ambiguous command. "
 msgstr "Неоднозначное сокращение. "
 
-#: src/commands.cc:1495
+#: src/commands.cc:1496
 #, c-format
 msgid "%s: Operand missed for size\n"
 msgstr "%s: Пропущен параметр размера\n"
 
-#: src/commands.cc:1502
+#: src/commands.cc:1503
 #, c-format
 msgid "%s: Invalid number for size\n"
 msgstr "%s: Неверное число для размера\n"
 
-#: src/commands.cc:1513
+#: src/commands.cc:1514
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
 msgstr "%s: Пропущен параметр `expire'\n"
 
-#: src/commands.cc:1520
+#: src/commands.cc:1521
 #, c-format
 msgid ""
 "%s: Invalid expire period (use Ns - in sec, Nm - in min, Nh - in hours)\n"
@@ -1203,7 +1203,7 @@ msgstr ""
 "%s: Неправильный период времени.\n"
 " (используйте: Ns - секунды, Nm - минуты, Nh - часы)\n"
 
-#: src/commands.cc:1547
+#: src/commands.cc:1548
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
@@ -1211,45 +1211,45 @@ msgstr ""
 "%s: %s - нет такого резервного сеанса.\n"
 "Для просмотра списка резервных сеансов используйте команду `scache'.\n"
 
-#: src/commands.cc:1564
+#: src/commands.cc:1565
 #, c-format
 msgid "Sorry, no help for %s\n"
 msgstr "Извините, нет помощи для %s\n"
 
-#: src/commands.cc:1569
+#: src/commands.cc:1570
 #, c-format
 msgid "%s is a built-in alias for %s\n"
 msgstr "%s является встроенным псевдонимом для %s\n"
 
-#: src/commands.cc:1574
+#: src/commands.cc:1575
 #, c-format
 msgid "Usage: %s\n"
 msgstr "Использование: %s\n"
 
-#: src/commands.cc:1582
+#: src/commands.cc:1583
 #, c-format
 msgid "%s is an alias to `%s'\n"
 msgstr "%s является псевдонимом для `%s'\n"
 
-#: src/commands.cc:1586
+#: src/commands.cc:1587
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr ""
 "Команда `%s' отсутствует.\n"
 "Введите `help' для получения списка доступных команд.\n"
 
-#: src/commands.cc:1588
+#: src/commands.cc:1589
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr ""
 "Неоднозначное сокращение `%s'. Введите `help' для списка доступных команд.\n"
 
-#: src/commands.cc:1639
+#: src/commands.cc:1640
 #, c-format
 msgid "Lftp | Version %s | Copyright (c) 1996-1999 Alexander V. Lukyanov\n"
 msgstr "Lftp | Версия %s | Copyright (c) 1996-1999 Александр В. Лукьянов\n"
 
-#: src/commands.cc:1641 src/ftpget.cc:59
+#: src/commands.cc:1642 src/ftpget.cc:59
 #, c-format
 msgid ""
 "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
@@ -1257,52 +1257,52 @@ msgstr ""
 "Это свободное программное обеспечение, распространяемое без каких-либо\n"
 "гарантий. Смотрите файл COPYING для получения дополнительной информации.\n"
 
-#: src/commands.cc:1643
+#: src/commands.cc:1644
 #, c-format
 msgid "Send bug reports and questions to <%s>.\n"
 msgstr "Сообщения об ошибках и вопросы посылайте по адресу <%s>.\n"
 
-#: src/commands.cc:1709 src/commands.cc:1738
+#: src/commands.cc:1710 src/commands.cc:1739
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s: требуется указать имя закладки\n"
 
-#: src/commands.cc:1727
+#: src/commands.cc:1728
 #, c-format
 msgid "%s: cannot add empty bookmark\n"
 msgstr "%s: невозможно добавить пустую закладку\n"
 
-#: src/commands.cc:1740
+#: src/commands.cc:1741
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s: закладка `%s' отсутствует\n"
 
-#: src/commands.cc:1755
+#: src/commands.cc:1756
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: требуется указание типа импорта (netscape,ncftp)\n"
 
-#: src/commands.cc:1809
+#: src/commands.cc:1810
 #, c-format
 msgid "%s: argument required. "
 msgstr "%s: требуется указание аргумента. "
 
-#: src/commands.cc:1818
+#: src/commands.cc:1819
 #, c-format
 msgid "%s: invalid delay. "
 msgstr "%s: недопустимое значение задержки. "
 
-#: src/commands.cc:1888
+#: src/commands.cc:1889
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "Использование: %s модуль [аргументы...]\n"
 
-#: src/commands.cc:1923
+#: src/commands.cc:1924
 #, c-format
 msgid "Usage: %s mode file...\n"
 msgstr "Использование: %s режим файл...\n"
 
-#: src/commands.cc:1929
+#: src/commands.cc:1930
 #, c-format
 msgid "%s: %s - not an octal number\n"
 msgstr "%s: %s - не является восьмеричным числом\n"
@@ -1335,19 +1335,19 @@ msgstr "Превышение лимита времени ожидания - включение синхронного режима"
 msgid "Timeout - reconnecting"
 msgstr "Превышение лимита времени ожидания - повторное соединение"
 
-#: src/Http.cc:493 src/ftpclass.cc:838
+#: src/Http.cc:494 src/ftpclass.cc:838
 msgid "Closing idle connection"
 msgstr "Закрытие неиспользуемого соединения"
 
-#: src/Http.cc:1091 src/ftpclass.cc:883 src/ftpclass.cc:2677
+#: src/Http.cc:1092 src/ftpclass.cc:883 src/ftpclass.cc:2677
 msgid "Resolving host address..."
 msgstr "Преобразование адреса сервера..."
 
-#: src/Http.cc:562 src/ftpclass.cc:929
+#: src/Http.cc:563 src/ftpclass.cc:929
 msgid "max-retries exceeded"
 msgstr "превышен лимит количества попыток (max-retries)"
 
-#: src/Http.cc:581 src/ftpclass.cc:950
+#: src/Http.cc:582 src/ftpclass.cc:950
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Установка соединения с %s%s (%s), порт %u"
@@ -1389,7 +1389,7 @@ msgstr "Отключение пассивного режима"
 msgid "Sending commands..."
 msgstr "Передача команд..."
 
-#: src/Http.cc:1102 src/ftpclass.cc:2669 src/ftpclass.cc:2689
+#: src/Http.cc:1103 src/ftpclass.cc:2669 src/ftpclass.cc:2689
 #: src/ftpclass.cc:2696
 msgid "Waiting for response..."
 msgstr "Ожидание ответа..."
@@ -1398,11 +1398,11 @@ msgstr "Ожидание ответа..."
 msgid "Connection idle"
 msgstr "Соединение не используется"
 
-#: src/Http.cc:1093 src/ftpclass.cc:2679
+#: src/Http.cc:1094 src/ftpclass.cc:2679
 msgid "Delaying before reconnect"
 msgstr "Задержка перед повторным соединением"
 
-#: src/Http.cc:1097 src/ftpclass.cc:2684
+#: src/Http.cc:1098 src/ftpclass.cc:2684
 msgid "Connecting..."
 msgstr "Установка соединения..."
 
@@ -1426,11 +1426,11 @@ msgstr "Ожидание окончания пересылки"
 msgid "Waiting for data connection..."
 msgstr "Ожидание установки соединения данных..."
 
-#: src/Http.cc:1100 src/ftpclass.cc:2703
+#: src/Http.cc:1101 src/ftpclass.cc:2703
 msgid "Sending data"
 msgstr "Отправка данных"
 
-#: src/Http.cc:1105 src/ftpclass.cc:2705
+#: src/Http.cc:1106 src/ftpclass.cc:2705
 msgid "Receiving data"
 msgstr "Получение данных"
 
@@ -1594,11 +1594,11 @@ msgstr "%s ok, %d каталог$|а|ов$ удалено\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d файл$|а|ов$ удалено\n"
 
-#: src/Http.cc:940 src/Http.cc:960
+#: src/Http.cc:941 src/Http.cc:961
 msgid "chunked format violated"
 msgstr "формат данных `chunked' нарушен"
 
-#: src/Http.cc:1103
+#: src/Http.cc:1104
 msgid "Fetching headers..."
 msgstr "Получение заголовков HTTP..."
 
@@ -1607,7 +1607,7 @@ msgstr "Получение заголовков HTTP..."
 msgid "Proxy protocol unsupported"
 msgstr "Данный протокол для прокси не поддерживается"
 
-#: src/FtpGlob.cc:258 src/HttpDir.cc:526 src/HttpDir.cc:712
+#: src/FtpGlob.cc:258 src/HttpDir.cc:529 src/HttpDir.cc:715
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "Получение списка файлов (%ld) [%s]"
