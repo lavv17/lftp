@@ -99,7 +99,7 @@ INCLUDES = -I$(top_srcdir)/include $(SSL_CPPFLAGS)
 lftp.o commands.lo module.lo: confpaths.h
 
 # libtool does not strip modules, do it here.
-install-data-local:
+install-data-hook:
 	@-if test "$(MODULES_LA)"; then \
 	    rm -f $(DESTDIR)$(pkgverlibdir)/*.la; \
 	    case " $(LDFLAGS) " in *" -s "*) \

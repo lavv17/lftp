@@ -1,3 +1,7 @@
+2004-04-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Makefile.am: use install-data-hook to do cleaning after install.
+
 2004-04-12  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FtpListInfo.cc: use sscanf instead of atoll.
