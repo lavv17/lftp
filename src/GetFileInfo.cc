@@ -154,6 +154,7 @@ int GetFileInfo::Do()
 	    state=CHANGE_DIR;
 	    return MOVED;
 	 }
+	 SetError(saved_error_text);
 	 state=DONE;
 	 return MOVED;
       }

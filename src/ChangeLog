@@ -1,3 +1,13 @@
+2001-12-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* GetFileInfo.cc: add forgotten SetError.
+	* TimeDate.h: don't use time_t as operator arg, it confuses compaq c++.
+
+2001-12-14  Albert Chin-A-Young <china@thewrittenword.com>
+
+	* lftp_pty.c: add missing brace.
+	* misc.cc: define unsetenv prototype if needed.
+
 2001-12-13  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileAccess.cc, FileAccess.h: (OptimizePath) new method; optimize
