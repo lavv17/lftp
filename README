@@ -1,0 +1,131 @@
+** lftp-2.0
+
+This package `lftp' contains the following components:
+
+   lftp
+      cool command line ftp client.
+
+   ftpget
+      a simple non-interactive tool for downloading files (deprecated)
+
+These programs are written in C++ and are cooperative-threaded.
+
+
+lftp
+~~~~
+lftp is quite a powerful ftp client. It uses GNU readline to read
+commands. It uses shell-like command syntax allowing you to launch
+several commands in parallel in background (&).
+
+Some commands allow redirecting its output (cat, ls) to file or via
+pipe to external command. Commands can be started conditionally based
+on termination status of previous command (&&, ||). Also, it is
+possible to group commands within () and execute them in background.
+All background jobs are executed in the same single process. You can
+bring a foreground job to background with ^Z and back with command
+`wait' (or `fg' which is alias to `wait').
+
+When you think you are done but some jobs are not yet finished, you
+can just exit and lftp will move itself to nohup mode in background.
+The same happens when you have a real hangup.
+
+lftp has reliable put, reput, mirror, and many other commands. Use
+command `help' or read documentation to learn more.
+
+Every operation in lftp is reliable, that is any not fatal error is
+ignored and the operation is repeated. So if downloading breaks, it
+will be restarted from the point automatically. Even if ftp server
+does not support REST command, lftp will try to retrieve the file from
+the very beginning until the file is transferred completely.
+
+
+On startup, lftp executes /etc/lftp.conf and then ~/.lftprc and
+~/.lftp/rc. You can place aliases and `set' commands there. Some
+people prefer to see full protocol debug, use `debug' to turn the
+debug on. Use `debug 0' to see only greeting messages and error
+messages.
+
+lftp has the following settable variables (you can also use `set' to
+see all variables and their values):
+ * cmd:csh-history - (bool) enables csh-like history expansion
+ * cmd:long-running - (seconds) time of command execution, which is
+considered as `long' and a beep is done before next prompt. 0 means
+off.
+ * cmd:ls-default - (string) default ls argument
+ * cmd:prompt - (string) prompt. lftp recognizes some bash escapes,
+such as \u, \h, \w.
+ * cmd:remote-completion - (bool) whether to use remote completion.
+ * net:idle - (seconds) close idle connections locally after this time
+ * net:max-retries - (num) limit maximum number of operation retries
+(default 0=unlimited)
+ * ftp:passive-mode - (bool) passive mode ftp
+ * ftp:proxy - (string) ftp proxy
+ * net:reconnect-interval - (seconds) minimal time between reconnects.
+ * net:relookup-always - (bool) relookup host address each time before
+connecting
+ * ftp:sync-mode - (bool) send one command at a time and wait for
+response. Might be necessary to set it to `on' if buggy ftp server or
+router is used. Setting it to `off' speeds up command/response
+exchange with server, especially if ping time is significant.
+ * net:timeout - (seconds) network protocol timeout
+
+Variable names can be abbreviated and prefix can be omitted unless the
+rest becomes ambiguous.
+
+See man page for other variables. You can also use `set -a' to see all
+current valiables and their values, and `set -d' to see variable
+defaults.
+
+Internals
+~~~~~~~~~
+All this is based on SMTask class which implements non-preemptive
+multitasking via Do method. The method Do does a little bit of work,
+sets wake up condition (block member) and returns.
+
+The class Ftp allows reliable deliver of files via ftp protocol, it
+hides all the details from application and allows asynchronous
+operation. Redial and reget are done as necessary. It can also speed
+up ftp operations by sending several commands at once and then
+checking all the responses. It seems this sometimes does not work, so
+it is disabled by default. To turn it on, use `set sync-mode n' in
+lftp or --async-mode for ftpget.
+
+Note that sending several commands is considered as violation or
+protocol, but RFC959 says: ``The user-process sending another command
+before the completion reply would be in violation of protocol; but
+server-FTP processes should queue any commands that arrive while a
+preceding command is in progress.''
+
+It is known that some network software dealing with address
+translation works incorrectly in case of several FTP commands in one
+network packet.
+
+
+Systems
+~~~~~~~
+The package is known to compile on Solaris2.5(gcc), Linux, FreeBSD and
+SCO v5.0(gcc). If you can't compile it on your system, let me know. It
+is possible that lftp version 2.0 can be compiled with non-gcc
+compilers since it does not have gcc-isms, but so far no compiler
+tried (but gcc) produced a working executable.
+
+
+Mailing list
+~~~~~~~~~~~~
+There is a mailing list for discussion of lftp and announcements. It
+is managed by majordomo; to subscribe, send mail to
+majordomo@uniyar.ac.ru with `subscribe lftp' in body of message; to
+send letters to the list, send them to lftp@uniyar.ac.ru; to
+unsubscribe, send mail to majordomo@uniyar.ac.ru with `unsubscribe
+lftp' in body of message. This is low volume list.
+
+There is also list lftp-devel@uniyar.ac.ru for snapshot announcements
+and other development.
+
+
+Author
+~~~~~~
+Author: Alexander V. Lukyanov <lav@yars.free.net>
+Postal address: Aviatorov st. 80-45, Yaroslavl 150051, Russia
+
+Comments and bug reports are welcome.
