@@ -131,8 +131,6 @@ void  Ftp::ClassInit()
    test_TIOCOUTQ();
 }
 
-Ftp *Ftp::ftp_chain=0;
-
 
 #if INET6
 
@@ -860,9 +858,6 @@ void Ftp::InitFtp()
    anon_pass=0;
    anon_user=0;	  // will be set by Reconfig()
 
-   ftp_next=ftp_chain;
-   ftp_chain=this;
-
    copy_mode=COPY_NONE;
    copy_addr_valid=false;
    copy_passive=false;
@@ -905,15 +900,6 @@ Ftp::~Ftp()
    xfree(send_cmd_buffer);
 
    xfree(skey_pass);
-
-   for(Ftp **scan=&ftp_chain; *scan; scan=&((*scan)->ftp_next))
-   {
-      if(*scan==this)
-      {
-	 *scan=ftp_next;
-	 break;
-      }
-   }
 }
 
 bool Ftp::AbsolutePath(const char *s)
@@ -931,10 +917,10 @@ void  Ftp::GetBetterConnection(int level,int count)
    if(level==0 && cwd==0)
       return;
 
-   for(Ftp *o=ftp_chain; o!=0; o=o->ftp_next)
+   for(FA *fo=FirstSameSite(); fo!=0; fo=NextSameSite(fo))
    {
-      if(o==this)
-	 continue;
+      Ftp *o=(Ftp*)fo; // we are sure it is Ftp.
+
       if(o->IsConnected()<2)
 	 continue;
       if(!SameConnection(o))
@@ -3651,13 +3637,10 @@ void Ftp::Cleanup()
    if(hostname==0)
       return;
 
-   for(Ftp *o=ftp_chain; o!=0; o=o->ftp_next)
-   {
-      if(o->control_sock==-1 || o->mode!=CLOSED)
-	 continue;
-      if(!xstrcmp(hostname,o->hostname))
-	 o->Disconnect();
-   }
+   for(FA *fo=FirstSameSite(); fo!=0; fo=NextSameSite(fo))
+      fo->CleanupThis();
+
+   CleanupThis();
 }
 void Ftp::CleanupThis()
 {

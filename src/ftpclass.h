@@ -34,9 +34,6 @@
 
 class Ftp : public NetAccess
 {
-   static Ftp *ftp_chain;
-   Ftp *ftp_next;
-
    enum automate_state
    {
       EOF_STATE,	   // control connection is open, idle state
