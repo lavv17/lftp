@@ -1,3 +1,16 @@
+Version 3.0.7 - 2004-08-09
+
+* slow-start in sftp implemented.
+* ftp proxy which expects user@proxy-user@host is now supported with new
+  boolean setting ftp:proxy-auth-joined.
+* key passphrase for sftp is now supported.
+* new setting http:cache-control to set corresponding request header.
+* don't send FEAT to ftp proxy before login.
+* fixed timeout handling after FEAT command.
+* fixed find and du to show status line correctly when output goes to screen.
+* fixed shell (!) command to return proper error code.
+* fixed binding ftp data socket in non-passive mode.
+
 Version 3.0.6 - 2004-06-12
 
 * completion for bm: URL scheme implemented.
