@@ -225,6 +225,27 @@ void NetAccess::SetProxy(const char *px)
    ClearPeer();
 }
 
+bool NetAccess::NoProxy()
+{
+   // match hostname against no-proxy var.
+   if(!hostname)
+      return false;
+   const char *no_proxy_c=ResMgr::Query("net:no-proxy",0);
+   if(!no_proxy_c)
+      return false;
+   char *no_proxy=alloca_strdup(no_proxy_c);
+   int h_len=strlen(hostname);
+   for(char *p=strtok(no_proxy," ,"); p; p=strtok(0," ,"))
+   {
+      int p_len=strlen(p);
+      if(p_len>h_len || p_len==0)
+	 continue;
+      if(!strcasecmp(hostname+h_len-p_len,p))
+	 return true;
+   }
+   return false;
+}
+
 int NetAccess::CheckTimeout()
 {
    if(now-event_time>=timeout)

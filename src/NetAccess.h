@@ -74,6 +74,7 @@ protected:
    void SayConnectingTo();
 
    void SetProxy(const char *);
+   bool NoProxy();
 
    int Resolve(const char *defp,const char *ser,const char *pr);
 

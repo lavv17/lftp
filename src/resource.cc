@@ -111,6 +111,7 @@ static ResDecl resources[]={
    ResDecl  ("net:limit-total-max",    "0",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:limit-total-rate",   "0",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:max-retries",	       "0",	ResMgr::UNumberValidate,0),
+   ResDecl  ("net:no-proxy",	       "",	0,0),
    ResDecl  ("net:reconnect-interval-base","30",ResMgr::UNumberValidate,0),
    ResDecl  ("net:reconnect-interval-multiplier","1.5",ResMgr::FloatValidate,0),
    ResDecl  ("net:reconnect-interval-max","600",ResMgr::UNumberValidate,0),
@@ -140,6 +141,10 @@ void ResMgr::ClassInit()
       else if(!strncmp(ftp_proxy,"http://",7))
 	 Set("hftp:proxy",0,ftp_proxy);
    }
+
+   const char *no_proxy=getenv("no_proxy");
+   if(no_proxy)
+      Set("net:no-proxy",0,no_proxy);
 
 #if INET6
    // check if ipv6 is really supported

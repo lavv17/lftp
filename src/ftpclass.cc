@@ -3023,7 +3023,8 @@ void Ftp::Reconfig(const char *name)
    xfree(anon_pass);
    anon_pass=xstrdup(Query("anon-pass",c));
 
-   SetProxy(Query("proxy",c));
+   if(!NoProxy())
+      SetProxy(Query("proxy",c));
 
    if(proxy && proxy_port==0)
       proxy_port=xstrdup(FTPPORT);

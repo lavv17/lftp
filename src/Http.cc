@@ -1154,7 +1154,8 @@ void Http::Reconfig(const char *name)
    super::Reconfig(name);
 
    no_cache = !(bool)Query("cache",c);
-   SetProxy(Query("proxy",c));
+   if(!NoProxy())
+      SetProxy(Query("proxy",c));
 
    if(sock!=-1)
       SetSocketBuffer(sock,socket_buffer);

@@ -3,6 +3,8 @@
 	* FileCopyFtp.cc: check use-fxp for both sessions.
 	* Makefile.am: remove FtpCopy.{cc,h}.
 	* commands.cc: get rid of ftpcopy.
+	* NetAccess.cc, NetAccess.h, ftpclass.cc, Http.cc, resource.cc:
+	  support no_proxy environment variable; net:no-proxy setting.
 
 2000-01-09  Alexander V. Lukyanov  <lav@yars.free.net>
 
