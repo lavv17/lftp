@@ -55,7 +55,54 @@ static int parse_month(const char *m)
    return -1;
 }
 
+static bool find_value(const char *scan,const char *more,const char *name,char *store)
+{
+   for(;;)
+   {
+      while(is_ascii_space(*scan))
+	 scan++;
+      if(scan>=more)
+	 return false;
 
+      if(!is_ascii_alnum(*scan))
+      {
+	 scan++;
+	 continue;
+      }
+
+      bool match=token_eq(scan,more-scan,name);
+
+      while(is_ascii_alnum(*scan))
+	 scan++;
+      if(scan>=more)
+	 return false;
+
+      if(*scan!='=')
+	 continue;
+
+      scan++;
+      char quote=0;
+      if(*scan=='"' || *scan=='\'')
+	 quote=*scan++;
+
+      while(scan<more && (quote ? *scan!=quote : !is_ascii_space(*scan)))
+      {
+	 if(match)
+	    *store++=*scan;
+	 scan++;
+      }
+      if(match)
+      {
+	 *store=0;
+	 return true;
+      }
+      if(scan>=more)
+	 return false;
+      if(quote)
+	 scan++;  // skip closing quotation mark.
+   }
+   return false;
+}
 static int parse_html(const char *buf,int len,bool eof,Buffer *list,
       FileSet *set,FileSet *all_links,ParsedURL *prefix)
 {
@@ -74,30 +121,22 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
    int tag_len=more-buf+1;
    if(more-less<3)
       return tag_len;   // too small
-   if(!token_eq(less+1,end-less-1,"a"))
-      return tag_len;   // not interesting
-   const char *scan=less+2;
-   while(is_ascii_space(*scan))
-      scan++;
-   assert(scan<end);
-   if(!token_eq(scan,end-scan,"href"))
-      return tag_len;   // not interesting
-   scan+=4;
-   while(is_ascii_space(*scan))
-      scan++;
-   assert(scan<end);
-   if(*scan!='=')
-      return tag_len;	// syntax error
-   scan++;
-   char quote=0;
-   if(*scan=='"' || *scan=='\'')
-      quote=*scan++;
 
-   char *link_target=(char*)alloca(more-scan+1+2);
-   char *store=link_target;
-   while(scan<more && (quote ? *scan!=quote : !is_ascii_space(*scan)))
-      *store++=*scan++;
-   *store=0;
+   char *link_target=(char*)alloca(more-less+1+2);
+
+   if(token_eq(less+1,end-less-1,"a"))
+   {
+      if(!find_value(less+2,more,"href",link_target))
+	 return tag_len;   // error
+   }
+   else if(token_eq(less+1,end-less-1,"frame"))
+   {
+      if(!find_value(less+6,more,"src",link_target))
+	 return tag_len;   // error
+   }
+   else
+      return tag_len;	// not interesting
+
    // ok, found the target.
 
    // check if the target is a relative and not a cgi
@@ -305,7 +344,7 @@ int HttpDirList::Do()
 
       char *cache_buffer=0;
       int cache_buffer_size=0;
-      if(use_cache && LsCache::Find(session,curr,FA::LONG_LIST,
+      if(use_cache && LsCache::Find(session,curr,mode,
 				    &cache_buffer,&cache_buffer_size))
       {
 	 from_cache=true;
@@ -316,7 +355,7 @@ int HttpDirList::Do()
       }
       else
       {
-	 session->Open(curr,FA::LONG_LIST);
+	 session->Open(curr,mode);
 	 ubuf=new FileInputBuffer(session);
       }
       if(curr_url)
@@ -336,7 +375,7 @@ int HttpDirList::Do()
 	 ubuf->Get(&cache_buffer,&cache_buffer_size);
 	 if(cache_buffer && cache_buffer_size>0)
 	 {
-	    LsCache::Add(session,curr,FA::LONG_LIST,
+	    LsCache::Add(session,curr,mode,
 			   cache_buffer,cache_buffer_size);
 	 }
       }
@@ -371,9 +410,15 @@ HttpDirList::HttpDirList(ArgV *a,FileAccess *fa)
    ubuf=0;
    upos=0;
    from_cache=false;
+   mode=FA::LONG_LIST;
+   args->rewind();
    if(args->count()<2)
       args->Append("");
-   args->rewind();
+   else if(args->count()>2 && !strcmp(args->getarg(1),"-f"))
+   {
+      args->delarg(1);	// del -f
+      mode=FA::RETRIEVE;
+   }
    curr=0;
    curr_url=0;
 }

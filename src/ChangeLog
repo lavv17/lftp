@@ -1,3 +1,8 @@
+1999-06-22  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* HttpDir.cc, HttpDir.h: extract link target from <frame src=;
+	  support `ls -f file.html' to extract links from file.
+
 1999-06-19  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* XferJob.cc: more precise eta reporting.
