@@ -1489,6 +1489,7 @@ void Http::SetCookie(const char *value_const)
    const char *old=Query("cookie",hostname);
    char *c=string_alloca(strlen(value)+xstrlen(old)+3);
    strcpy(c,old?old:"");
+   const char *domain=hostname;
 
    for(char *entry=strtok(value,";"); entry; entry=strtok(0,";"))
    {
@@ -1497,11 +1498,24 @@ void Http::SetCookie(const char *value_const)
       if(*entry==0)
 	 break;
       if(!strncasecmp(entry,"path=",5)
-      || !strncasecmp(entry,"domain=",7)
       || !strncasecmp(entry,"expires=",8)
       || (!strncasecmp(entry,"secure",6)
 	  && (entry[6]==' ' || entry[6]==0 || entry[6]==';')))
-	 continue; // filter out path= domain= expires= secure
+	 continue; // filter out path= expires= secure
+
+      if(!strncasecmp(entry,"domain=",7))
+      {
+	 char *new_domain=alloca_strdup(entry+6);
+	 if(new_domain[1]=='.')
+	    new_domain[0]='*';
+	 else
+	    new_domain++;
+	 char *end=strchr(new_domain,';');
+	 if(end)
+	    *end=0;
+	 domain=new_domain;
+	 continue;
+      }
 
       char *c_name=entry;
       char *c_value=strchr(entry,'=');
@@ -1556,7 +1570,7 @@ void Http::SetCookie(const char *value_const)
       else
 	 strcpy(c+c_len,c_value);
    }
-   ResMgr::Set("http:cookie",hostname,c);
+   ResMgr::Set("http:cookie",domain,c);
 }
 
 #undef super
