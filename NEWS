@@ -1,3 +1,14 @@
+Version 2.4.2 - 2001-08-23
+
+* new setting ftp:home to specify starting directory explicitly. Set it
+  to `/' to override RFC1738 ftp url semantics if you don't like the
+  look of `ftp://host/%2Fpath'.
+* fixed validation of ftp:ssl-auth.
+* fixed a coredump with assertion "res==Ftp::OK" failed.
+* improved abort sequence for passive mode, now wu-ftpd does not hang.
+* compile proto-fish.so properly when configured with modules.
+* compilation fixes.
+
 Version 2.4.1 - 2001-08-08
 
 * translation updates.
