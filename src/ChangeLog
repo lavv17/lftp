@@ -1,3 +1,17 @@
+2001-03-13  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.cc: add \n to connect: message.
+	* HttpDir.cc: do Exclude.
+	* Job.cc, Job.h: undef printf (for new glibc).
+	* commands.cc: update help for `module'.
+	* module.cc: search modules in module:path.
+	* resource.cc: init module:path from env LFTP_MODULE_PATH.
+
+2001-03-13  Glenn F. Maynard <glenn@zewt.org>
+
+	* CmdExec.cc, CmdExec.h, StatusLine.cc, StatusLine.h: support for
+	  terminal titlebar.
+
 2001-02-23  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CmdExec.cc: (MakePrompt) fix \NNN recognition (reported by

@@ -28,6 +28,7 @@
 #endif
 #include <unistd.h>
 #include "module.h"
+#include "ResMgr.h"
 #include "confpaths.h"
 #include "xalloca.h"
 #include "xstring.h"
@@ -115,15 +116,26 @@ public:
 };
 module_info *module_info::base;
 
+static ResDecl res_mod_path("module:path", PKGLIBDIR"/"VERSION":"PKGLIBDIR, 0,0);
+
 void *module_load(const char *path,int argc,const char *const *argv)
 {
 #ifdef HAVE_DLOPEN
    void *map;
-   char *fullpath=(char*)alloca(strlen(PKGLIBDIR)+1+strlen(path)+3+1);
+   const char *modules_path=res_mod_path.Query(path);
+   char *fullpath=(char*)alloca(strlen(modules_path)+strlen(PKGLIBDIR)+1+strlen(path)+3+1);
    init_t init;
 
    if(strchr(path,'/'))
+   {
       strcpy(fullpath,path);
+      if(access(fullpath,F_OK)==-1)
+      {
+	 int len=strlen(fullpath);
+	 if(len>3 && strcmp(fullpath+len-3,".so"))
+	    strcat(fullpath,".so");
+      }
+   }
    else
    {
       const char *const *scan;
@@ -135,13 +147,22 @@ void *module_load(const char *path,int argc,const char *const *argv)
 	    break;
 	 }
       }
-      sprintf(fullpath,"%s/%s",PKGLIBDIR,path);
-   }
-   if(access(fullpath,F_OK)==-1)
-   {
-      int len=strlen(fullpath);
-      if(len>3 && strcmp(fullpath+len-3,".so"))
-	 strcat(fullpath,".so");
+      char *p=alloca_strdup(modules_path);
+      for(p=strtok(p,":"); p; p=strtok(0,":"))
+      {
+	 sprintf(fullpath,"%s/%s",p,path);
+	 if(access(fullpath,F_OK)==0)
+	    break;
+	 int len=strlen(fullpath);
+	 if(len>3 && strcmp(fullpath+len-3,".so"))
+	 {
+	    strcat(fullpath,".so");
+	    if(access(fullpath,F_OK)==0)
+	       break;
+	 }
+      }
+      if(p==0)
+	 sprintf(fullpath,"%s/%s",PKGLIBDIR,path); // fallback
    }
    map=dlopen(fullpath,DLOPEN_FLAGS); //DLOPEN_FLAGS_LAZY);
    if(map==0)

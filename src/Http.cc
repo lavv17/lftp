@@ -889,7 +889,7 @@ int Http::Do()
       )
       {
 	 NextPeer();
-	 Log::global->Format(0,_("connect: %s"),strerror(errno));
+	 Log::global->Format(0,"connect: %s\n",strerror(errno));
 	 Disconnect();
 	 if(NotSerious(errno))
 	    return MOVED;

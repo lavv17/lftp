@@ -25,6 +25,7 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+#undef printf
 
 #include "SMTask.h"
 #include "StatusLine.h"

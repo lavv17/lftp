@@ -247,7 +247,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Load module (shared object). The module should contain function\n"
 	 "   void module_init(int argc,const char *const *argv)\n"
 	 "If name contains a slash, then the module is searched in current\n"
-	 "directory, otherwise in PKGLIBDIR.\n")},
+	 "directory, otherwise in directories specified by setting module:path.\n")},
    {"more",    cmd_cat,    N_("more <files>"),
 	 N_("Same as `cat <files> | more'. if PAGER is set, it is used as filter\n")},
    {"mput",    cmd_get,	   N_("mput [OPTS] <files>"),

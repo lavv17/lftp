@@ -216,4 +216,8 @@ void ResMgr::ClassInit()
    if(s!=-1)
       close(s);
 #endif // INET6
+
+   const char *module_path=getenv("LFTP_MODULE_PATH");
+   if(module_path)
+      Set("module:path",0,module_path);
 }

@@ -1221,6 +1221,10 @@ int HttpListInfo::Do()
       ubuf=0;
       m=MOVED;
 
+      result->ExcludeDots();
+      if(rxc_exclude || rxc_include)
+	 result->Exclude(path,rxc_exclude,rxc_include);
+
       get_info_cnt=result->get_fnum();
       if(get_info_cnt==0)
       {
