@@ -29,6 +29,8 @@
 typedef const char *ResValValid(char **value);
 typedef const char *ResClValid(char **closure);
 
+class ResValue;
+
 class ResMgr
 {
    friend class ResDecl;
@@ -94,7 +96,7 @@ public:
    const char *defvalue;
 
    ResDecl(const char *name,const char *defvalue,
-	   ResValValid *val_valid,ResClValid *closure_valid)
+	   ResValValid *val_valid,ResClValid *closure_valid=0)
    {
       this->name=name;
       this->defvalue=defvalue;
@@ -106,7 +108,29 @@ public:
 	 ResMgr::Set(name,0,defvalue);
    }
 
-   const char *Query(const char *closure);
+   ResValue Query(const char *closure);
+};
+
+class ResValue
+{
+   const char *s;
+public:
+   ResValue(const char *s_new)
+      {
+	 s=s_new;
+      }
+   operator bool()
+      {
+	 return ResMgr::str2bool(s);
+      }
+   operator int()
+      {
+	 return atoi(s);
+      }
+   operator const char*()
+      {
+	 return s;
+      }
 };
 
 #endif //RESMGR_H

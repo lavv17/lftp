@@ -323,7 +323,7 @@ const char *ResMgr::Query(const char *name,const char *closure)
    return 0;
 }
 
-const char *ResDecl::Query(const char *closure)
+ResValue ResDecl::Query(const char *closure)
 {
    const char *v=0;
 
