@@ -1369,7 +1369,7 @@ CMD(mirror)
 	 APPEND_STRING(include,include_alloc,optarg);
 	 break;
       case('R'):
-	 flags|=MirrorJob::REVERSE|MirrorJob::ONLY_NEWER;
+	 flags|=MirrorJob::REVERSE;
 	 break;
       case('v'):
 	 if(optarg)

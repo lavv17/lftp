@@ -183,7 +183,7 @@ static completion_type cmd_completion_type(int start)
 {
    const char *cmd=rl_line_buffer;
 
-   if(find_word(cmd)-cmd == start) // forst word is command
+   if(find_word(cmd)-cmd == start) // first word is command
       return COMMAND;
 
    // try to guess whether the completion word is remote
@@ -277,6 +277,8 @@ static bool force_remote=false;
    array of matches, or NULL if there aren't any. */
 char **lftp_completion (char *text,int start,int end)
 {
+   RemoteGlob *rg=0;
+
    rl_completion_append_character=' ';
    shell_cmd=false;
 
@@ -331,28 +333,30 @@ char **lftp_completion (char *text,int start,int end)
       &&  LsCache::Find(completion_shell->session,pat,Ftp::LONG_LIST,0,0))
       {
 	 // this is a bad hack, but often requested by people
+	 // and it's actually useful :)
 	 mode=Ftp::LONG_LIST;
       }
 
       completion_shell->session->DontSleep();
 
       SignalHook::ResetCount(SIGINT);
-      RemoteGlob g(completion_shell->session,pat,mode);
+      rg=new RemoteGlob(completion_shell->session,pat,mode);
       if(mode==Ftp::LIST)
-	 g.SetSlashFilter(1);
+	 rg->SetSlashFilter(1);
       for(;;)
       {
 	 SMTask::Schedule();
-	 if(g.Done())
+	 if(rg->Done())
 	    break;
 	 if(SignalHook::GetCount(SIGINT))
 	 {
 	    rl_attempted_completion_over = 1;
+	    delete rg;
 	    return 0;
 	 }
 	 SMTask::Block();
       }
-      glob_res=g.GetResult();
+      glob_res=rg->GetResult();
 
       if(mode==Ftp::LONG_LIST)
       {
@@ -398,6 +402,9 @@ char **lftp_completion (char *text,int start,int end)
    len=strlen(text);
 
    char **matches=completion_matches(text,generator);
+
+   if(rg)
+      delete rg;
 
    free(text);
    if(!matches)

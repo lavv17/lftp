@@ -98,7 +98,7 @@ public:
 
    void	 Merge(const FileInfo&);
 
-   bool	 SameAs(const FileInfo *,bool only_newer,time_t prec);
+   bool	 SameAs(const FileInfo *,bool only_newer,time_t prec,int ignore);
    bool	 OlderThan(time_t t);
 };
 
@@ -126,7 +126,7 @@ public:
    void	 Add(FileInfo *);
    void	 Merge(const FileSet *);
    void	 Merge(char **);   // file list
-   void	 SubtractSame(const FileSet *,bool only_newer,time_t prec);
+   void	 SubtractSame(const FileSet *,bool only_newer,time_t prec,int ignore);
    void	 SubtractAny(const FileSet *);
    void  SubtractOlderThan(time_t t);
 

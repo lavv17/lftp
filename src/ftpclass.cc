@@ -247,7 +247,7 @@ int   Ftp::NoFileCheck(int act,int exp)
       }
       return(NO_FILE_STATE);
    }
-   if(act!=exp && copy_mode!=COPY_NONE)
+   if(act/100!=exp/100 && copy_mode!=COPY_NONE)
       return COPY_FAILED;
    return(-1);
 }
@@ -271,7 +271,7 @@ int Ftp::CWD_Check(int act,int exp)
 // check response for 'CWD $cwd' command.
 int   Ftp::CwdCwd_Check(int act,int exp)
 {
-   if(act!=exp)
+   if(act/100!=exp/100)
       return NO_FILE_STATE;
 
    set_real_cwd(cwd);
@@ -476,7 +476,7 @@ int   Ftp::PASV_Catch(int act,int)
 
 int   Ftp::CatchHomePWD(int act,int exp)
 {
-   if(act==exp && !home)
+   if(act/100==exp/100 && !home)
    {
       home=xstrdup(ExtractPWD());
    }

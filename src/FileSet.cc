@@ -128,13 +128,13 @@ FileSet::~FileSet()
    xfree(files);
 }
 
-void FileSet::SubtractSame(const FileSet *set,bool only_newer,time_t prec)
+void FileSet::SubtractSame(const FileSet *set,bool only_newer,time_t prec,int ignore)
 {
    for(int i=0; i<fnum; i++)
    {
       for(int j=0; j<set->fnum; j++)
       {
-	 if(files[i]->SameAs(set->files[j],only_newer,prec))
+	 if(files[i]->SameAs(set->files[j],only_newer,prec,ignore))
 	 {
 	    Sub(i);
 	    i--;
@@ -187,7 +187,7 @@ void FileSet::ExcludeDots()
    }
 }
 
-bool  FileInfo::SameAs(const FileInfo *fi,bool only_newer,time_t prec)
+bool  FileInfo::SameAs(const FileInfo *fi,bool only_newer,time_t prec,int ignore)
 {
    if(defined&NAME && fi->defined&NAME)
       if(strcmp(name,fi->name))
@@ -203,7 +203,7 @@ bool  FileInfo::SameAs(const FileInfo *fi,bool only_newer,time_t prec)
    if(defined&SYMLINK_DEF && fi->defined&SYMLINK_DEF)
       return (strcmp(symlink,fi->symlink)==0);
 
-   if(defined&DATE && fi->defined&DATE)
+   if(defined&DATE && fi->defined&DATE && !(ignore&DATE))
    {
       if(only_newer && date<fi->date)
 	    return true;
@@ -211,7 +211,7 @@ bool  FileInfo::SameAs(const FileInfo *fi,bool only_newer,time_t prec)
 	 return false;
    }
 
-   if(defined&SIZE && fi->defined&SIZE)
+   if(defined&SIZE && fi->defined&SIZE && !(ignore&SIZE))
       if(size!=fi->size)
 	 return false;
 

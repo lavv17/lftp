@@ -127,10 +127,7 @@ void  MirrorJob::HandleFile(int how)
       try_get:
 	 bool cont_this=false;
 	 if(how!=0)
-	 {
-	    to_transfer->next();
-	    break;
-	 }
+	    goto skip;
 	 if(flags&REVERSE)
 	 {
 	    if(remote_set->FindByName(file->name)!=0)
@@ -187,15 +184,9 @@ void  MirrorJob::HandleFile(int how)
       {
       try_recurse:
 	 if(how!=1 || (flags&NO_RECURSION))
-	 {
-	    to_transfer->next();
-	    break;
-	 }
+	    goto skip;
 	 if(!strcmp(file->name,".") || !strcmp(file->name,".."))
-	 {
-	    to_transfer->next();
-	    break;
-	 }
+	    goto skip;
 	 if(flags&REVERSE)
 	 {
 	    if(!dir_made)
@@ -238,6 +229,11 @@ void  MirrorJob::HandleFile(int how)
 		  }
 	       }
 	    }
+	    else if(res==-1) // other error
+	    {
+	       eprintf("mirror: mkdir(%s): %s\n",strerror(errno));
+	       goto skip;
+	    }
 	 }
 	 // launch sub-mirror
 	 MirrorJob *mj=new MirrorJob(Clone(),local_name,remote_name);
@@ -269,15 +265,11 @@ void  MirrorJob::HandleFile(int how)
       }
       case(file->SYMLINK):
 	 if(how!=0)
-	 {
-	    to_transfer->next();
-	    break;
-	 }
+	    goto skip;
 	 if(flags&REVERSE)
 	 {
 	    // can't create symlink remotely
-	    to_transfer->next();
-	    break;
+	    goto skip;
 	 }
 
 #ifdef HAVE_LSTAT
@@ -302,8 +294,7 @@ void  MirrorJob::HandleFile(int how)
 	       perror(local_name);
 	 }
 #endif /* LSTAT */
-	 to_transfer->next();
-	 break;
+	 goto skip;
       }
    }
    else
@@ -318,6 +309,11 @@ void  MirrorJob::HandleFile(int how)
       // no info on type -- try to get
       goto try_get;
    }
+   return;
+
+skip:
+   to_transfer->next();
+   return;
 }
 
 void  MirrorJob::InitSets(FileSet *source,FileSet *dest)
@@ -329,7 +325,10 @@ void  MirrorJob::InitSets(FileSet *source,FileSet *dest)
 
    same=new FileSet(source);
    to_transfer=new FileSet(source);
-   to_transfer->SubtractSame(dest,flags&ONLY_NEWER,prec);
+   int ignore=0;
+   if(flags&REVERSE)
+      ignore|=FileInfo::DATE;
+   to_transfer->SubtractSame(dest,flags&ONLY_NEWER,prec,ignore);
 
    same->SubtractAny(to_transfer);
 
