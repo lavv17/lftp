@@ -114,21 +114,22 @@ void StatusLine::Show(const char *f,...)
 
 void StatusLine::ShowN(const char *const* newstr,int n)
 {
-   if(update_delayed && update_timer.Stopped())
-   {
-      update(newstr,n);
-      update_delayed=false;
-      return;
-   }
-
    if(!update_delayed && shown.IsEqual(newstr,n))
       return;
    if(update_delayed && to_be_shown.IsEqual(newstr,n))
       return;
 
-   /* not yet */
-   to_be_shown.Assign(newstr,n);
-   update_delayed=true;
+   if(!update_timer.Stopped())
+   {
+      /* not yet */
+      to_be_shown.Assign(newstr,n);
+      update_delayed=true;
+   }
+   else
+   {
+      update(newstr,n);
+      update_delayed=false;
+   }
 }
 
 const char *StatusLine::to_status_line = get_string_term_cap("tsl", "ts");

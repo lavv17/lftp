@@ -1,3 +1,8 @@
+2004-06-12  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* StatusLine.cc: (ShowN) show status line immediately if update_timer
+	  stopped.
+
 2004-06-10  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ArgV.h, CharReader.cc, echoJob.h: use trio.h
