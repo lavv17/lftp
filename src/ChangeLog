@@ -1,3 +1,9 @@
+2000-03-27  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* MirrorJob.cc, MirrorJob.h: check --no-perms in reverse mirror;
+	  take umask into account in reverse mirror (unless --no-umask
+	  is specified).
+
 2000-03-24  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Job.h: (SetParentFg) new method.

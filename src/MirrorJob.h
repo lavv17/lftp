@@ -111,6 +111,8 @@ class MirrorJob : public SessionJob
 
    bool use_cache;
 
+   mode_t get_mode_mask();
+
 public:
    enum
    {

@@ -718,15 +718,7 @@ int   MirrorJob::Do()
 			   dir_file(local_relative_dir,file->name));
 	       }
 	    }
-	    mode_t mode_mask=0;
-	    if(!(flags&ALLOW_SUID))
-	       mode_mask|=S_ISUID|S_ISGID;
-	    if(!(flags&NO_UMASK))
-	    {
-	       mode_t u=umask(022); // get+set
-	       umask(u);	    // retore
-	       mode_mask|=u;
-	    }
+	    mode_t mode_mask=get_mode_mask();
 	    if(!(flags&NO_PERMS))
 	       to_transfer->LocalChmod(local_dir,mode_mask);
 	    to_transfer->LocalUtime(local_dir,/*only_dirs=*/true);
@@ -757,6 +749,11 @@ int   MirrorJob::Do()
       return m;
 
    pre_REMOTE_CHMOD:
+      if(flags&NO_PERMS)
+      {
+	 state=DONE;
+	 return MOVED;
+      }
       to_transfer->rewind();
       goto remote_chmod_next;
    case(REMOTE_CHMOD):
@@ -777,7 +774,7 @@ int   MirrorJob::Do()
 	    goto remote_chmod_next;
 	 ArgV *a=new ArgV("chmod");
 	 a->Append(fi->name);
-	 ChmodJob *cj=new ChmodJob(Clone(),fi->mode,a);
+	 ChmodJob *cj=new ChmodJob(Clone(),fi->mode&~get_mode_mask(),a);
 	 waiting=cj;
 	 waiting->SetParentFg(this);
 	 waiting->cmdline=a->Combine();
@@ -1161,6 +1158,19 @@ err_out:
 #undef args
 }
 
+mode_t MirrorJob::get_mode_mask()
+{
+   mode_t mode_mask=0;
+   if(!(flags&ALLOW_SUID))
+      mode_mask|=S_ISUID|S_ISGID;
+   if(!(flags&NO_UMASK))
+   {
+      mode_t u=umask(022); // get+set
+      umask(u);	    // retore
+      mode_mask|=u;
+   }
+   return mode_mask;
+}
 
 #ifdef MODULE
 CDECL void module_init()
