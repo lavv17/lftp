@@ -1,3 +1,7 @@
+2004-04-29  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: store zero sized files properly.
+
 2004-04-28  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: accept multiple AUTH lines in FEAT reply; check if

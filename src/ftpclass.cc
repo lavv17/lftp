@@ -1512,8 +1512,8 @@ int   Ftp::Do()
       if(copy_mode!=COPY_NONE && !copy_passive && !copy_addr_valid)
 	 goto usual_return;
 
-      if(entity_size!=NO_SIZE && entity_size!=NO_SIZE_YET && entity_size<=pos
-      && (mode==RETRIEVE || mode==STORE))
+      if(entity_size>=0 && entity_size<=pos
+      && (mode==RETRIEVE || (mode==STORE && entity_size>0)))
       {
 	 if(mode==STORE)
 	    SendUTimeRequest();
