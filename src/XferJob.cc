@@ -169,10 +169,7 @@ void  XferJob::ShowRunStatus(StatusLine *s)
    if(!print_run_status)
       return;
    if(Done())
-   {
-      s->Show("");
       return;
-   }
 
    const char *st=session->CurrentStatus();
 

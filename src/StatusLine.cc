@@ -63,18 +63,25 @@ StatusLine::~StatusLine()
 {
 }
 
-void StatusLine::Show(const char *f,...)
+void StatusLine::Clear()
 {
    char newstr[sizeof(shown)];
 
+   newstr[0]=0;
+   update(newstr);
+   update_delayed=false;
+   update_time=0;
+}
+
+void StatusLine::Show(const char *f,...)
+{
    if(f==0 || f[0]==0)
    {
-      newstr[0]=0;
-      update(newstr);
-      update_delayed=false;
-      update_time=0;
+      Clear();
       return;
    }
+
+   char newstr[sizeof(shown)];
 
    va_list v;
    va_start(v,f);

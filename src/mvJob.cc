@@ -60,9 +60,7 @@ void  mvJob::PrintStatus(int v)
 
 void  mvJob::ShowRunStatus(StatusLine *s)
 {
-   if(Done())
-      s->Show("");
-   else
+   if(!Done())
       s->Show("[%s]",session->CurrentStatus());
 }
 

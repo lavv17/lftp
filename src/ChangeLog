@@ -1,5 +1,14 @@
 1999-08-04  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* CmdExec.cc, FindJob.cc, FtpCopy.cc, LsJob.cc, MirrorJob.cc,
+	  StatusLine.cc, StatusLine.h, TreatFileJob.cc, XferJob.cc,
+	  log.cc, mkdirJob.cc, mvJob.cc: (StatusLine::Clear) new method;
+	  use it everywhere, this avoids warning in new gcc.
+	  Don't call Clear when Done(), it will be cleared anyway by upper
+	  level job (it was race anyway).
+
+1999-08-04  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* StatusLine.h, StatusLine.cc, XferJob.cc, pgetJob.cc:
 	  (StatusLine::GetWidthDelayed) new method; use it to reduce number
 	  of ioctl calls.

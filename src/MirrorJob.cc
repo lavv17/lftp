@@ -77,7 +77,6 @@ void  MirrorJob::ShowRunStatus(StatusLine *s)
    {
    case(INITIAL_STATE):
    case(DONE):
-      s->Show("");
       break;
 
    // these have a sub-job

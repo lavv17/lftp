@@ -297,7 +297,7 @@ void FinderJob::ShowRunStatus(StatusLine *sl)
       waiting->ShowRunStatus(sl);
       break;
    default:
-      sl->Show("");
+      sl->Clear();
       break;
    }
 }

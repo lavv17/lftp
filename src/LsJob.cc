@@ -246,10 +246,7 @@ void  LsJob::ShowRunStatus(StatusLine *s)
    if(!print_run_status)
       return;
    if(Done())
-   {
-      s->Show("");
       return;
-   }
 
    if(!dl)
       super::ShowRunStatus(s);

@@ -59,7 +59,7 @@ void Log::Write(int l,const char *s)
    {
       sl_cleared=true;
       block+=NoWait();
-      sl->Show("");
+      sl->Clear();
    }
    write(output,s,strlen(s));
 }
