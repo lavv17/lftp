@@ -1225,8 +1225,9 @@ CMD(ls)
 
    char *a=args->Combine(nlist?1:0);
 
-   if(!nlist && args->count()==1 && parent->var_ls && parent->var_ls[0])
-      args->Append(parent->var_ls);
+   const char *var_ls=ResMgr::Query("cmd:ls-default",session->GetConnectURL(FA::NO_PATH));
+   if(!nlist && args->count()==1 && var_ls[0])
+      args->Append(var_ls);
 
    FileCopyPeer *src_peer=0;
    if(!nlist)

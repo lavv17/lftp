@@ -794,7 +794,6 @@ CmdExec::CmdExec(FileAccess *f,LocalDirectory *c) : SessionJob(f)
 
    cwd=c;
 
-   var_ls=xstrdup("");
    remote_completion=false;
    long_running=0;
    csh_history=false;
@@ -936,8 +935,6 @@ void CmdExec::Reconfig(const char *name)
    long_running = res_long_running.Query(c);
    remote_completion = res_remote_completion.QueryBool(c);
    csh_history = res_csh_history.QueryBool(0);
-   xfree(var_ls);
-   var_ls=xstrdup(res_default_ls.Query(c));
    verify_path=res_verify_path.QueryBool(c);
    verify_host=res_verify_host.QueryBool(c);
    verbose=res_verbose.QueryBool(0);
