@@ -35,6 +35,10 @@
 #include "ResMgr.h"
 #include "StatusLine.h"
 
+#if defined(HAVE_VSNPRINTF) && !defined(HAVE_VSNPRINTF_DECL)
+CDECL int vsnprintf(char *,size_t,const char *,va_list);
+#endif
+
 int  StatusLine::GetWidth()
 {
 #ifdef TIOCGWINSZ
@@ -96,7 +100,11 @@ void StatusLine::Show(const char *f,...)
 
    va_list v;
    va_start(v,f);
-   vsprintf(newstr,f,v);
+#ifdef HAVE_VSNPRINTF
+   vsnprintf(newstr,sizeof(newstr),f,v);
+#else
+   vsprintf(newstr,f,v);   // can overflow :(
+#endif
    va_end(v);
 
    if(now>update_time)

@@ -24,6 +24,7 @@
 #include "mkdirJob.h"
 #include "plural.h"
 #include "url.h"
+#include "misc.h"
 
 mkdirJob::mkdirJob(FileAccess *s,ArgV *a) : SessionJob(s)
 {
@@ -113,7 +114,9 @@ void  mkdirJob::ShowRunStatus(StatusLine *s)
    if(Done())
       return;
 
-   s->Show("%s `%s' [%s]",args->getarg(0),curr,Session()->CurrentStatus());
+   s->Show("%s `%s' [%s]",args->getarg(0),
+      squeeze_file_name(curr,s->GetWidthDelayed()-40),
+      Session()->CurrentStatus());
 }
 
 void  mkdirJob::SayFinal()

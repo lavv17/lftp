@@ -1062,7 +1062,7 @@ CMD(mirror)
       {0}
    };
 
-   char cwd[2*1024];
+   char *cwd;
    const char *rcwd;
    int opt;
    int	 flags=0;
@@ -1186,7 +1186,8 @@ CMD(mirror)
       }
    }
 
-   if(getcwd(cwd,sizeof(cwd)/2)==0)
+   cwd=string_alloca(1024);
+   if(getcwd(cwd,1024)==0)
    {
       perror("getcwd()");
       return 0;
@@ -1201,11 +1202,13 @@ CMD(mirror)
       else
       {
 	 if(arg[0]=='/')
-	    strcpy(cwd,arg);
+	    cwd=arg;
 	 else
 	 {
-	    strcat(cwd,"/");
-	    strcat(cwd,arg);
+	    char *cwd1=alloca_strdup2(cwd,strlen(arg)+1);
+	    strcat(cwd1,"/");
+	    strcat(cwd1,arg);
+	    cwd=cwd1;
 	 }
 	 rcwd=args->getnext();
 	 if(!rcwd)
@@ -1227,25 +1230,32 @@ CMD(mirror)
 	 rcwd=".";
       else
       {
-	 strcat(cwd,"/");
 	 char *arg=args->getnext();
 	 if(arg)
 	 {
 	    if(arg[0]=='/')
-	       strcpy(cwd,arg);
+	       cwd=arg;
 	    else
-	       strcat(cwd,arg);
+	    {
+	       char *cwd1=alloca_strdup2(cwd,strlen(arg)+1);
+	       strcat(cwd1,"/");
+	       strcat(cwd1,arg);
+	       cwd=cwd1;
+	    }
 	    if(create_directories(arg)==-1)
 	       return 0;
 	 }
 	 else
 	 {
-	    int len=strlen(cwd);
 	    const char *base=basename_ptr(rcwd);
 	    if(base[0]!='/')
 	    {
-	       strcat(cwd,base);
-	       if(create_directories(cwd+len)==-1)
+	       int len=strlen(cwd);
+	       char *cwd1=alloca_strdup2(cwd,strlen(base)+1);
+	       strcat(cwd1,"/");
+	       strcat(cwd1,base);
+	       cwd=cwd1;
+	       if(create_directories(cwd+len+1)==-1)
 		  return 0;
 	    }
 	 }
