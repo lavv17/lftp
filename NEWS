@@ -1,8 +1,14 @@
 Version 2.1.4 - 1999-10-2?
 
-* hftp: support for non-anonymous user added
+* hftp support for non-anonymous user added
+* http Proxy-Authorization support added.
+* new setting hftp:use-head for proxies that don't properly handle HEAD
+  requests for ftp:// URLs.
 * memory leak in http code fixed.
-* http PUT fixed.
+* http/hftp PUT fixed.
+* a bug in parsing squid ftp listing fixed (some files were shown
+  without info).
+* fixed handling of base-href in hftp listings.
 
 Version 2.1.3 - 1999-10-16
 

@@ -28,7 +28,7 @@ currently; some need other work to be done.
  * implement Queueing in FileAccess. fa->AddQueue(new FAQueueOp(args)).
    (Done()==true when queue is empty)
 
- * there are many interesting protocols: smb, fsp, fish, ...
+ * there are many interesting protocols: smb, fsp, fish, imap, irc, ...
 
  * put -n (only if newer) Maybe it would be better to add a command to compare
    times?
