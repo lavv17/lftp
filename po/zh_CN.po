@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
-"POT-Creation-Date: 1999-10-22 19:30+0400\n"
+"POT-Creation-Date: 1999-10-09 18:18+0400\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -109,12 +109,12 @@ msgstr "登录失败"
 msgid "Operation not supported"
 msgstr "不支持的操作"
 
-#: src/FtpListInfo.cc:226 src/HttpDir.cc:1150
+#: src/FtpListInfo.cc:226 src/HttpDir.cc:1069
 #, c-format
 msgid "Getting directory contents (%ld)"
 msgstr "正在读取目录内容 (%ld)"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:1155
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:1074
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "正在读取文件信息 (%d%%)"
@@ -124,7 +124,7 @@ msgstr "正在读取文件信息 (%d%%)"
 msgid "remote rm(%s) - %s\n"
 msgstr "远程删除(%s) - %s\n"
 
-#: src/GetJob.cc:164
+#: src/GetJob.cc:162
 #, c-format
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr ""
@@ -242,10 +242,10 @@ msgstr "没有删除旧的远程文件 `%s'"
 msgid "Old local file `%s' is not removed"
 msgstr "没有删除旧的本地文件 `%s'"
 
-#: src/MirrorJob.cc:968 src/commands.cc:838 src/commands.cc:903
-#: src/commands.cc:1001 src/commands.cc:1207 src/commands.cc:1366
-#: src/commands.cc:1553 src/commands.cc:1560 src/commands.cc:1744
-#: src/commands.cc:1773 src/commands.cc:1780 src/commands.cc:1913
+#: src/MirrorJob.cc:968 src/commands.cc:834 src/commands.cc:899
+#: src/commands.cc:997 src/commands.cc:1203 src/commands.cc:1362
+#: src/commands.cc:1549 src/commands.cc:1556 src/commands.cc:1740
+#: src/commands.cc:1769 src/commands.cc:1776 src/commands.cc:1909
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "请用 `help %s' 或得更多的信息.\n"
@@ -274,7 +274,7 @@ msgstr ""
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr ""
 
-#: src/Http.cc:1108 src/Resolver.cc:184 src/ftpclass.cc:2550
+#: src/Http.cc:1078 src/Resolver.cc:184 src/ftpclass.cc:2550
 msgid "Resolving host address..."
 msgstr "正在解析主机地址..."
 
@@ -369,7 +369,7 @@ msgstr "\t没有一个文件传输成功 :(\n"
 msgid "Average transfer rate %g bytes/s\n"
 msgstr "平均传输速率 %g 字节/秒\n"
 
-#: src/FtpCopy.cc:177 src/XferJob.cc:301 src/commands.cc:608
+#: src/FtpCopy.cc:177 src/XferJob.cc:301 src/commands.cc:607
 #, c-format
 msgid "%s: %s - not supported protocol\n"
 msgstr "%s: %s - 不支持的协议\n"
@@ -1027,232 +1027,232 @@ msgstr "用法: cd remote-dir\n"
 msgid "%s: no old directory for this site\n"
 msgstr "%s: 这个站点没有保存的旧目录\n"
 
-#: src/commands.cc:453
+#: src/commands.cc:452
 #, c-format
 msgid "Usage: %s [<exit_code>]\n"
 msgstr "用法: %s [<exit_code>]\n"
 
-#: src/commands.cc:562 src/ftpget.cc:182
+#: src/commands.cc:561 src/ftpget.cc:182
 #, c-format
 msgid "Try `%s --help' for more information\n"
 msgstr "请用 `%s --help' 获取更多的信息\n"
 
-#: src/commands.cc:564
+#: src/commands.cc:563
 #, c-format
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 msgstr "用法: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 
-#: src/commands.cc:652 src/commands.cc:1265 src/ftpget.cc:149
+#: src/commands.cc:649 src/commands.cc:1261 src/ftpget.cc:149
 msgid "Password: "
 msgstr "口令: "
 
-#: src/commands.cc:654
+#: src/commands.cc:651
 #, c-format
 msgid "%s: GetPass() failed -- assume anonymous login\n"
 msgstr "%s: GetPass() 失败 -- 使用匿名登录\n"
 
-#: src/commands.cc:720 src/commands.cc:746
+#: src/commands.cc:716 src/commands.cc:742
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "用法: %s command args...\n"
 
-#: src/commands.cc:848 src/commands.cc:1089
+#: src/commands.cc:844 src/commands.cc:1085
 #, c-format
 msgid "Usage: %s files...\n"
 msgstr "用法: %s files...\n"
 
-#: src/commands.cc:890
+#: src/commands.cc:886
 #, c-format
 msgid "%s: -n: Number expected. "
 msgstr "%s: -n: 需要数字. "
 
-#: src/commands.cc:913 src/commands.cc:1011
+#: src/commands.cc:909 src/commands.cc:1007
 #, c-format
 msgid "File name missed. "
 msgstr "缺少文件名. "
 
-#: src/commands.cc:1129
+#: src/commands.cc:1125
 #, c-format
 msgid "Usage: %s <file>\n"
 msgstr "用法: %s <file>\n"
 
-#: src/commands.cc:1151
+#: src/commands.cc:1147
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
 msgstr "用法: %s [-v] [-v] ...\n"
 
-#: src/commands.cc:1246
+#: src/commands.cc:1242
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
 msgstr "调试级别为 %d, 输出到 %s\n"
 
-#: src/commands.cc:1249
+#: src/commands.cc:1245
 msgid "debug is off\n"
 msgstr "调试功能关闭\n"
 
-#: src/commands.cc:1261
+#: src/commands.cc:1257
 #, c-format
 msgid "Usage: %s userid [pass]\n"
 msgstr "用法: %s userid [pass]\n"
 
-#: src/commands.cc:1300 src/commands.cc:1462
+#: src/commands.cc:1296 src/commands.cc:1458
 #, c-format
 msgid "%s: no current job\n"
 msgstr "%s: 没有当前任务\n"
 
-#: src/commands.cc:1310 src/commands.cc:1340 src/commands.cc:1470
+#: src/commands.cc:1306 src/commands.cc:1336 src/commands.cc:1466
 #, c-format
 msgid "%s: %d - no such job\n"
 msgstr "%s: %d - 没有这个任务\n"
 
-#: src/commands.cc:1312
+#: src/commands.cc:1308
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
 msgstr "用法: %s <jobno> ... | all\n"
 
-#: src/commands.cc:1331 src/commands.cc:1452 src/commands.cc:1624
+#: src/commands.cc:1327 src/commands.cc:1448 src/commands.cc:1620
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s: %s - 不是一个数字\n"
 
-#: src/commands.cc:1394
+#: src/commands.cc:1390
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr "%s: %s. 使用 `set -a' 查看所有的变量.\n"
 
-#: src/commands.cc:1442
+#: src/commands.cc:1438
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
 msgstr "用法: %s [<jobno>]\n"
 
-#: src/commands.cc:1475
+#: src/commands.cc:1471
 #, c-format
 msgid "%s: some other job waits for job %d\n"
 msgstr "%s: 某个任务在等待任务 %d 结束\n"
 
-#: src/commands.cc:1486
+#: src/commands.cc:1482
 #, c-format
 msgid "Usage: %s <raw_cmd>\n"
 msgstr "用法: %s <raw_cmd>\n"
 
-#: src/commands.cc:1500
+#: src/commands.cc:1496
 #, c-format
 msgid "Usage: site <site_cmd>\n"
 msgstr "用法: site <site_cmd>\n"
 
-#: src/commands.cc:1530
+#: src/commands.cc:1526
 #, c-format
 msgid "Usage: mv <file1> <file2>\n"
 msgstr "用法: mv <file1> <file2>\n"
 
-#: src/commands.cc:1552 src/commands.cc:1772
+#: src/commands.cc:1548 src/commands.cc:1768
 #, c-format
 msgid "Invalid command. "
 msgstr "无效的命令. "
 
-#: src/commands.cc:1559 src/commands.cc:1779
+#: src/commands.cc:1555 src/commands.cc:1775
 #, c-format
 msgid "Ambiguous command. "
 msgstr "不确切的命令. "
 
-#: src/commands.cc:1578
+#: src/commands.cc:1574
 #, c-format
 msgid "%s: Operand missed for size\n"
 msgstr "%s: size 缺少操作数\n"
 
-#: src/commands.cc:1585
+#: src/commands.cc:1581
 #, c-format
 msgid "%s: Invalid number for size\n"
 msgstr "%s: size 使用了无效的数字\n"
 
-#: src/commands.cc:1596
+#: src/commands.cc:1592
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
 msgstr "%s: `expire' 缺少操作数\n"
 
-#: src/commands.cc:1630
+#: src/commands.cc:1626
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr "%s: %s - 没有这个缓存的会话. 使用 `scache' 列出会话列表.\n"
 
-#: src/commands.cc:1647
+#: src/commands.cc:1643
 #, c-format
 msgid "Sorry, no help for %s\n"
 msgstr "抱歉, 没有针对 %s 的帮助信息\n"
 
-#: src/commands.cc:1652
+#: src/commands.cc:1648
 #, c-format
 msgid "%s is a built-in alias for %s\n"
 msgstr "%s 是 %s 的一个内建别名\n"
 
-#: src/commands.cc:1657
+#: src/commands.cc:1653
 #, c-format
 msgid "Usage: %s\n"
 msgstr "用法: %s\n"
 
-#: src/commands.cc:1665
+#: src/commands.cc:1661
 #, c-format
 msgid "%s is an alias to `%s'\n"
 msgstr "%s 是 `%s' 的别名\n"
 
-#: src/commands.cc:1669
+#: src/commands.cc:1665
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr "没有 `%s' 这个命令. 请用 `help' 列出可用的命令.\n"
 
-#: src/commands.cc:1671
+#: src/commands.cc:1667
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr "不确切的命令 `%s'. 请用 `help' 列出可用的命令.\n"
 
-#: src/commands.cc:1722
+#: src/commands.cc:1718
 #, c-format
 msgid "Lftp | Version %s | Copyright (c) 1996-1999 Alexander V. Lukyanov\n"
 msgstr "Lftp | Version %s | Copyright (c) 1996-1999 Alexander V. Lukyanov\n"
 
-#: src/commands.cc:1724 src/ftpget.cc:59
+#: src/commands.cc:1720 src/ftpget.cc:59
 #, c-format
 msgid ""
 "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
 msgstr "这是一个不提供任何保证的自由软件. 查看 COPYING 获得更多信息.\n"
 
-#: src/commands.cc:1726
+#: src/commands.cc:1722
 #, c-format
 msgid "Send bug reports and questions to <%s>.\n"
 msgstr "Send bug reports and questions to <%s>.\n"
 
-#: src/commands.cc:1795 src/commands.cc:1824
+#: src/commands.cc:1791 src/commands.cc:1820
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s: 需要书签名\n"
 
-#: src/commands.cc:1813
+#: src/commands.cc:1809
 #, c-format
 msgid "%s: cannot add empty bookmark\n"
 msgstr "%s: 不能添加空的书签\n"
 
-#: src/commands.cc:1826
+#: src/commands.cc:1822
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s: 没有 `%s' 这个书签\n"
 
-#: src/commands.cc:1841
+#: src/commands.cc:1837
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: 需要导入类型(netscape,ncftp)\n"
 
-#: src/commands.cc:1912
+#: src/commands.cc:1908
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "用法: %s module [args...]\n"
 
-#: src/commands.cc:1947
+#: src/commands.cc:1943
 #, c-format
 msgid "Usage: %s mode file...\n"
 msgstr "用法: %s mode 文件...\n"
 
-#: src/commands.cc:1953
+#: src/commands.cc:1949
 #, c-format
 msgid "%s: %s - not an octal number\n"
 msgstr "%s: %s - 不是八进制数\n"
@@ -1277,11 +1277,11 @@ msgstr "发现 `未知', 登录失败"
 msgid "assuming failed host name lookup"
 msgstr "名字查询失败"
 
-#: src/Http.cc:501 src/ftpclass.cc:743
+#: src/Http.cc:473 src/ftpclass.cc:743
 msgid "Closing idle connection"
 msgstr "关闭发呆的连接"
 
-#: src/Http.cc:555 src/ftpclass.cc:795
+#: src/Http.cc:527 src/ftpclass.cc:795
 msgid "max-retries exceeded"
 msgstr "达到最大重试次数"
 
@@ -1290,7 +1290,7 @@ msgstr "达到最大重试次数"
 msgid "Connecting data socket to (%s) port %u"
 msgstr "正在建立数据连接到 (%s) 端口 %u"
 
-#: src/Http.cc:132 src/ftpclass.cc:1401
+#: src/Http.cc:131 src/ftpclass.cc:1401
 msgid "Timeout - reconnecting"
 msgstr "超时 - 重新连接"
 
@@ -1326,7 +1326,7 @@ msgstr "正在关闭被动模式"
 msgid "Sending commands..."
 msgstr "正在发送命令..."
 
-#: src/Http.cc:1119 src/ftpclass.cc:2542 src/ftpclass.cc:2562
+#: src/Http.cc:1089 src/ftpclass.cc:2542 src/ftpclass.cc:2562
 #: src/ftpclass.cc:2569
 msgid "Waiting for response..."
 msgstr "正等待应答..."
@@ -1335,11 +1335,11 @@ msgstr "正等待应答..."
 msgid "Connection idle"
 msgstr "连接空闲"
 
-#: src/Http.cc:1110 src/ftpclass.cc:2552
+#: src/Http.cc:1080 src/ftpclass.cc:2552
 msgid "Delaying before reconnect"
 msgstr "重新连接前延时"
 
-#: src/Http.cc:1114 src/ftpclass.cc:2557
+#: src/Http.cc:1084 src/ftpclass.cc:2557
 msgid "Connecting..."
 msgstr "正在连接..."
 
@@ -1363,11 +1363,11 @@ msgstr "正等待传输完成"
 msgid "Waiting for data connection..."
 msgstr "正等待数据连接..."
 
-#: src/Http.cc:1117 src/ftpclass.cc:2576
+#: src/Http.cc:1087 src/ftpclass.cc:2576
 msgid "Sending data"
 msgstr "正发送数据"
 
-#: src/Http.cc:1122 src/ftpclass.cc:2578
+#: src/Http.cc:1092 src/ftpclass.cc:2578
 msgid "Receiving data"
 msgstr "正接收数据"
 
@@ -1530,11 +1530,11 @@ msgstr "%s 成功, 删除 %d 个目录\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s 成功, 删除 %d 个文件\n"
 
-#: src/Http.cc:955 src/Http.cc:975
+#: src/Http.cc:927 src/Http.cc:947
 msgid "chunked format violated"
 msgstr "块格式冲突"
 
-#: src/Http.cc:1120
+#: src/Http.cc:1090
 msgid "Fetching headers..."
 msgstr "正在取得头..."
 
@@ -1543,7 +1543,7 @@ msgstr "正在取得头..."
 msgid "Proxy protocol unsupported"
 msgstr "不支持代理协议"
 
-#: src/FtpGlob.cc:258 src/HttpDir.cc:774 src/HttpDir.cc:951
+#: src/FtpGlob.cc:258 src/HttpDir.cc:693 src/HttpDir.cc:870
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "正在获取文件列表 (%ld) [%s]"

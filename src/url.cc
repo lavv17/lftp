@@ -158,26 +158,23 @@ void url::decode_string(char *p)
 
 /* Encodes the unsafe characters (listed in URL_UNSAFE) in a given
    string, returning a malloc-ed %XX encoded string.  */
-#define need_quote(c) (!unsafe || iscntrl((unsigned char)c) || strchr(unsafe,c))
 char *url::encode_string (const char *s,char *res,const char *unsafe)
 {
   char *p;
-
-#if 0 // this easily leads to memory leaks.
   int i;
+
   if (res==0)
   {
      const char *b = s;
      for (i = 0; *s; s++, i++)
-       if (need_quote(*s))
+       if (strchr (unsafe, *s))
 	 i += 2; /* Two more characters (hex digits) */
      res = (char *)xmalloc (i + 1);
      s = b;
   }
-#endif
   for (p = res; *s; s++)
   {
-    if (need_quote(*s))
+    if (iscntrl(*s) || strchr (unsafe, *s))
       {
 	const unsigned char c = *s;
 	*p++ = '%';

@@ -49,7 +49,6 @@ class Http : public NetAccess
    FileInputBuffer *recv_buf;
    void SendMethod(const char *,const char *);
    void SendAuth();
-   void SendBasicAuth(const char *tag,const char *u,const char *p);
    void SendRequest(const char *connection,const char *f);
    void SendRequest(const char *connection=0)
       {
@@ -89,7 +88,6 @@ class Http : public NetAccess
 
 protected:
    bool hftp;  // ftp over http proxy.
-   bool use_head;
 
 public:
    static void ClassInit();
@@ -110,7 +108,7 @@ public:
    int StoreStatus();
    int SendEOT();
 
-   void	Connect(const char *h,const char *p);
+   void	 Connect(const char *h,const char *p);
 
    void Close();
    const char *CurrentStatus();
@@ -138,9 +136,6 @@ public:
 
    FileAccess *Clone() { return new HFtp(this); }
    static FileAccess *New() { return new HFtp(); }
-
-   virtual void Login(const char *,const char *);
-   virtual void Reconfig(const char *);
 };
 
 #endif//HTTP_H

@@ -28,7 +28,6 @@
 #include "ArgV.h"
 #include "LsCache.h"
 #include "misc.h"
-#include <ctype.h>
 
 static const char *find_char(const char *buf,int len,char ch)
 {
@@ -105,68 +104,21 @@ static bool find_value(const char *scan,const char *more,const char *name,char *
    return false;
 }
 
-static
-const char *find_eol(const char *buf,int len,bool eof,int *eol_size)
-{
-   const char *real_eol=find_char(buf,len,'\n');
-   const char *less=find_char(buf,len,'<');
-   const char *more=0;
-   if(less)
-   {
-      more=find_char(less+1,len-(less+1-buf),'>');
-      if(more && !token_eq(less+1,len-(less+1-buf),"br"))
-      {
-	 // if the tag is finished and not BR, ignore it.
-	 less=0;
-	 more=0;
-      }
-   }
-   // is real_eol past the tag?
-   if(real_eol && less && real_eol>less)
-      real_eol=0;  // then ignore it.
-   // real_eol not found?
-   if(!real_eol)
-   {
-      // BR found?
-      if(less && more)
-      {
-	 *eol_size=more-less+1;
-	 return less;
-      }
-      *eol_size=0;
-      if(eof)
-	 return buf+len;
-      return 0;
-   }
-   *eol_size=1;
-   return real_eol;
-}
-
 static int parse_html(const char *buf,int len,bool eof,Buffer *list,
       FileSet *set,FileSet *all_links,ParsedURL *prefix,char **base_href,
       LsOptions *lsopt=0)
 {
    const char *end=buf+len;
    const char *less=find_char(buf,len,'<');
-   int eol_len=0;
-   int skip_len=0;
-   const char *eol;
-
-   eol=find_eol(buf,len,eof,&eol_len);
-   if(eol)
-      skip_len=eol-buf+eol_len;
-
    if(less==0)
-      return skip_len;
-   if(skip_len>0 && eol<less)
-      return skip_len;
+      return len;
    // FIXME: a > sign can be inside quoted value. (?)
    const char *more=find_char(less+1,end-less-1,'>');
    if(more==0)
    {
       if(eof)
 	 return len;
-      return 0;
+      return less-buf;
    }
    // we have found a tag
    int tag_len=more-buf+1;
@@ -284,11 +236,7 @@ parse_url_again:
       if(!prefix)
 	 return tag_len;	// no way
 
-      const char *pproto=prefix->proto;
-      if(!xstrcmp(pproto,"hftp"))
-	 pproto++;
-
-      if(xstrcmp(link_url.proto,pproto)
+      if(xstrcmp(link_url.proto,prefix->proto)
       || xstrcmp(link_url.host,prefix->host)
       || xstrcmp(link_url.user,prefix->user)
       || xstrcmp(link_url.port,prefix->port))
@@ -387,13 +335,13 @@ parse_url_again:
    if(icon && link_target[0]=='/')
       show_in_list=false;  // makes apache listings look better.
 
-   skip_len=tag_len;
+   int skip_len=tag_len;
    char *sym_link=0;
    bool is_sym_link=false;
 
    if(list && show_in_list)
    {
-      int year=-1,month=-1,day=0,hour=0,minute=0;
+      int year=-1,month=0,day=0,hour=0,minute=0;
       char month_name[32]="";
       char size_str[32]="";
       const char *more1;
@@ -418,19 +366,17 @@ parse_url_again:
 	       goto add_file;
 	    if(end-more>2*1024) // too long a-href
 	       goto add_file;
-	    return 0;  // no full a-href yet
+	    return less-buf;  // no full a-href yet
 	 }
 	 if(!strncasecmp(more1-3,"</a",3))
 	    break;
       }
-      // get a whole line in buffer if possible.
-      eol=find_eol(more1+1,end-more1-1,eof,&eol_len);
+      const char *eol;	// get a whole line in buffer if possible.
+      eol=find_char(more1+1,end-more1-1,'\n');
       if(!eol)
       {
 	 if(!eof && end-more<=2*1024)
-	    return 0;  // no full line yet
-	 eol=end;
-	 eol_len=0;
+	    return less-buf;  // no full line yet
       }
 
       // little workaround for squid's ftp listings
@@ -487,27 +433,6 @@ parse_url_again:
 	 goto got_info;
       }
 
-      char PM[3];
-      // Mini-Proxy web server.
-      if(7==sscanf(buf,"%d/%d/%d %d:%d %2s %30s",&month,&day,&year,&hour,
-			&minute,PM,size_str))
-      {
-	 if(!strcasecmp(PM,"PM"))
-	 {
-	    hour+=12;
-	    if(hour==24)
-	       hour=0;
-	 }
-	 if(!isdigit((unsigned char)size_str[0]))
-	 {
-	    if(!strcasecmp(size_str,"<dir>"))
-	       is_directory=true;
-	    strcpy(size_str,"-");
-	 }
-	 month--;
-	 goto got_info;
-      }
-
       strcpy(size_str,"-");
       char year_or_time[6];
       // squid's ftp listing: Mon DD (YYYY or hh:mm) [size]
@@ -526,10 +451,9 @@ parse_url_again:
       {
 	 if(1!=sscanf(year_or_time,"%d",&year))
 	    goto add_file;
-	 hour=minute=0;
       }
       // skip rest of line, because there may be href to link target.
-      skip_len=eol-buf+eol_len;
+      skip_len=eol-buf+1;
 
       char *ptr;
       ptr=strstr(str," -> <A HREF=\"");
@@ -557,17 +481,12 @@ parse_url_again:
 	    year+=1900;
       }
 
-      if(day<1 || day>31 || hour<0 || hour>23 || minute<0 || minute>59
-      || (month==-1 && !isalnum((unsigned char)month_name[0])))
-	 goto add_file;	// invalid data
-
       data_available=true;
 
    add_file:
       if(data_available)
       {
-	 if(month==-1)
-	    month=parse_month(month_name);
+	 month=parse_month(month_name);
 	 if(month>=0)
 	 {
 	    sprintf(month_name,"%02d",month+1);

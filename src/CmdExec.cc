@@ -1154,7 +1154,6 @@ void CmdExec::ChangeSession(FileAccess *new_session)
 {
    Reuse(session);
    session=new_session;
-   Reconfig(0);
 }
 
 const CmdExec::cmd_rec *CmdExec::CmdByIndex(int i)
