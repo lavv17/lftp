@@ -1877,16 +1877,6 @@ usual_return:
 notimeout_return:
    if(m==MOVED)
       return MOVED;
-#ifdef USE_SSL
-   if(data_ssl)
-   {
-      if(SSL_want_read(data_ssl))
-	 Block(data_sock,POLLIN);
-      if(SSL_want_write(data_ssl))
-	 Block(data_sock,POLLOUT);
-   }
-   else /* note the following `if' */
-#endif
    if(data_sock!=-1)
    {
       if(state==ACCEPTING_STATE)
@@ -1916,16 +1906,6 @@ notimeout_return:
 	 abort();
       }
    }
-#ifdef USE_SSL
-   if(control_ssl)
-   {
-      if(SSL_want_read(control_ssl))
-	 Block(control_sock,POLLIN);
-      if(SSL_want_write(control_ssl))
-	 Block(control_sock,POLLOUT);
-   }
-   else /* note the following `if' */
-#endif
    if(control_sock!=-1)
    {
       if(state==CONNECTING_STATE)
@@ -2025,12 +2005,24 @@ int Ftp::ReplyLogPriority(int code)
    return 4;
 }
 
+#ifdef USE_SSL
+void Ftp::BlockOnSSL(SSL *ssl)
+{
+   int fd=SSL_get_fd(ssl);
+   if(SSL_want_read(ssl))
+      current->Block(fd,POLLIN);
+   if(SSL_want_write(ssl))
+      current->Block(fd,POLLOUT);
+}
+#endif
+
 int  Ftp::ReceiveResp()
 {
    char  *store;
    char  *nl;
    int   code;
    int	 m=STALL;
+   int	 res;
 
    if(control_sock==-1)
       return m;
@@ -2102,19 +2094,6 @@ int  Ftp::ReceiveResp()
 	 }
 	 else
 	 {
-	    struct pollfd pfd;
-	    pfd.fd=control_sock;
-	    pfd.events=POLLIN;
-	    int res=poll(&pfd,1,0);
-	    if(res<=0)
-	       return m;
-	    if(CheckHangup(&pfd,1))
-	    {
-	       ControlClose();
-	       Disconnect();
-	       return MOVED;
-	    }
-
 #ifdef USE_SSL
 	    if(control_ssl)
 	    {
@@ -2124,7 +2103,10 @@ int  Ftp::ReceiveResp()
 		  if(res<=0)
 		  {
 		     if(BIO_sock_should_retry(res))
+		     {
+			BlockOnSSL(control_ssl);
 			return m;
+		     }
 		     else if (SSL_want_x509_lookup(control_ssl))
 			return m;
 		     else // error
@@ -2139,7 +2121,10 @@ int  Ftp::ReceiveResp()
 	       if(res<0)
 	       {
 		  if(BIO_sock_should_retry(res))
+		  {
+		     BlockOnSSL(control_ssl);
 		     return m;
+		  }
 		  if(NotSerious(errno))
 		     DebugPrint("**** ",strerror(errno),0);
 		  else
@@ -2393,22 +2378,7 @@ void  Ftp::DataClose()
 int  Ftp::FlushSendQueue(bool all)
 {
    int res;
-   struct pollfd pfd;
    int m=STALL;
-
-   pfd.events=POLLOUT;
-   pfd.fd=control_sock;
-   res=poll(&pfd,1,0);
-   if(res<=0)
-      return m;
-   if(CheckHangup(&pfd,1))
-   {
-      ControlClose();
-      Disconnect();
-      return MOVED;
-   }
-//    if(!(pfd.revents&POLLOUT))
-//       return m;
 
    char *cmd_begin=send_cmd_ptr;
 
@@ -2430,7 +2400,10 @@ int  Ftp::FlushSendQueue(bool all)
 	    if(res<=0)
 	    {
 	       if(BIO_sock_should_retry(res))
+	       {
+		  BlockOnSSL(control_ssl);
 		  return m;
+	       }
 	       else if (SSL_want_x509_lookup(control_ssl))
 		  return m;
 	       else // error
@@ -2445,7 +2418,10 @@ int  Ftp::FlushSendQueue(bool all)
 	 if(res<=0)
 	 {
 	    if(BIO_sock_should_retry(res))
+	    {
+	       BlockOnSSL(control_ssl);
 	       return m;
+	    }
 	    if(NotSerious(errno))
 	       DebugPrint("**** ",strerror(errno),0);
 	    else
@@ -2768,18 +2744,6 @@ read_again:
    if(RespQueueSize()>1 && real_pos==-1)
       return(DO_AGAIN);
 
-   struct pollfd pfd;
-   pfd.fd=data_sock;
-   pfd.events=POLLIN;
-   res=poll(&pfd,1,0);
-   if(res<=0)
-      return(DO_AGAIN);
-   if(CheckHangup(&pfd,1))
-   {
-      DataClose();
-      Disconnect();
-      return(DO_AGAIN);
-   }
    {
       assert(rate_limit!=0);
       int allowed=rate_limit->BytesAllowed();
@@ -2799,7 +2763,10 @@ read_again:
 	 if(res<=0)
 	 {
 	    if(BIO_sock_should_retry(res))
+	    {
+	       BlockOnSSL(control_ssl);
 	       return DO_AGAIN;
+	    }
 	    else if (SSL_want_x509_lookup(data_ssl))
 	       return DO_AGAIN;
 	    else // error
@@ -2811,10 +2778,13 @@ read_again:
 	 data_ssl_connected=true;
       }
       res=SSL_read(data_ssl,(char*)buf,size);
-      if(res<=0)
+      if(res<0)
       {
 	 if(BIO_sock_should_retry(res))
+	 {
+	    BlockOnSSL(control_ssl);
 	    return DO_AGAIN;
+	 }
 	 if(NotSerious(errno))
 	    DebugPrint("**** ",strerror(errno),0);
 	 else
@@ -2885,6 +2855,8 @@ read_again:
 */
 int   Ftp::Write(const void *buf,int size)
 {
+   int res;
+
    if(mode!=STORE)
       return(0);
 
@@ -2896,18 +2868,6 @@ int   Ftp::Write(const void *buf,int size)
    if(state!=DATA_OPEN_STATE || (RespQueueSize()>1 && real_pos==-1))
       return DO_AGAIN;
 
-   struct pollfd pfd;
-   pfd.fd=data_sock;
-   pfd.events=POLLOUT;
-   int res=poll(&pfd,1,0);
-   if(res<=0)
-      return(DO_AGAIN);
-   if(CheckHangup(&pfd,1))
-   {
-      DataClose();
-      Disconnect();
-      return(DO_AGAIN);
-   }
    {
       assert(rate_limit!=0);
       int allowed=rate_limit->BytesAllowed();
@@ -2927,7 +2887,10 @@ int   Ftp::Write(const void *buf,int size)
 	 if(res<=0)
 	 {
 	    if(BIO_sock_should_retry(res))
+	    {
+	       BlockOnSSL(control_ssl);
 	       return DO_AGAIN;
+	    }
 	    else if (SSL_want_x509_lookup(data_ssl))
 	       return DO_AGAIN;
 	    else // error
@@ -2942,7 +2905,10 @@ int   Ftp::Write(const void *buf,int size)
       if(res<=0)
       {
 	 if(BIO_sock_should_retry(res))
+	 {
+	    BlockOnSSL(control_ssl);
 	    return DO_AGAIN;
+	 }
 	 if(NotSerious(errno))
 	    DebugPrint("**** ",strerror(errno),0);
 	 else

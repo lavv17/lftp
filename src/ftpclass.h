@@ -162,6 +162,7 @@ class Ftp : public NetAccess
    SSL	 *data_ssl;
    bool	 data_ssl_connected;
    char	 prot;	  // current data protection scheme 'C'lear or 'P'rivate
+   void	 BlockOnSSL(SSL*);
 protected:
    bool	 ftps;	  // ssl and prot='P' by default (port 990)
 private:

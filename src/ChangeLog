@@ -12,6 +12,7 @@
 	  xgettext to extract it (reported by Nicolas Noble).
 	* FileAccess.cc: allow //path (required by posix and needed for
 	  novell). Reported by Andreas Quitzow <u042415@xham.dlh.de>.
+	* ftpclass.cc, ftpclass.h: fix ssl support (tested on ftpd-tls).
 
 2000-08-25  Alexander V. Lukyanov  <lav@yars.free.net>
 
