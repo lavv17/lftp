@@ -56,27 +56,6 @@ class Ftp : public NetAccess
       DATASOCKET_CONNECTING_STATE  // waiting for data_sock to connect
    };
 
-   enum response
-   {
-      // only first digit of these responses should be used (RFC1123)
-      RESP_READY=220,
-      RESP_PASS_REQ=331,
-      RESP_LOGGED_IN=230,
-      RESP_CWD_RMD_DELE_OK=250,
-      RESP_TYPE_OK=200,
-      RESP_PORT_OK=200,
-      RESP_REST_OK=350,
-      RESP_TRANSFER_OK=226,
-      RESP_RESULT_HERE=213,
-      RESP_PWD_MKD_OK=257,
-      RESP_NOT_IMPLEMENTED=502,
-      RESP_NOT_UNDERSTOOD=500,
-      RESP_NO_FILE=550,
-      RESP_PERM_DENIED=553,
-      RESP_BROKEN_PIPE=426,
-      RESP_LOGIN_FAILED=530
-   };
-
    enum expect_t
    {
       CHECK_NONE,	// no special check

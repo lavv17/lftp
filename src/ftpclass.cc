@@ -92,6 +92,8 @@ const bool Ftp::ftps=false;
 #define is3XX(code) ((code)>=300 && (code)<400)
 #define is2XX(code) ((code)>=200 && (code)<300)
 #define is1XX(code) ((code)>=100 && (code)<200)
+#define cmd_unsupported(code) ((code)==500 || (code)==502)
+#define site_cmd_unsupported(code) (cmd_unsupported((code)) || (code)==501)
 
 #define debug(a) Log::global->Format a
 
@@ -240,7 +242,7 @@ void Ftp::RestCheck(int act)
       return;
    if(is5XX(act))
    {
-      if(act==RESP_NOT_IMPLEMENTED || act==RESP_NOT_UNDERSTOOD)
+      if(cmd_unsupported(act))
 	 conn->rest_supported=false;
       DebugPrint("---- ",_("Switching to NOREST mode"),2);
       flags|=NOREST_MODE;
@@ -257,7 +259,7 @@ void Ftp::NoFileCheck(int act)
 {
    if(is2XX(act))
       return;
-   if(act==RESP_NOT_IMPLEMENTED || act==RESP_NOT_UNDERSTOOD)
+   if(cmd_unsupported(act))
    {
       SetError(FATAL,all_lines);
       return;
@@ -286,7 +288,7 @@ void Ftp::NoFileCheck(int act)
 /* 5xx that aren't errors at all */
 bool Ftp::NonError5XX(int act)
 {
-   return (mode==LIST && act==RESP_NO_FILE && (!file || !file[0]))
+   return (mode==LIST && act==550 && (!file || !file[0]))
        // ...and proftpd workaround.
        || (mode==LIST && act==450 && strstr(line,"No files found"));
 }
@@ -375,7 +377,7 @@ void Ftp::TransferCheck(int act)
       eof=true; // simulate eof
       return;
    }
-   if(act==RESP_BROKEN_PIPE && copy_mode==COPY_NONE)
+   if(act==426 && copy_mode==COPY_NONE)
    {
       if(conn->data_sock==-1 && strstr(line,"Broken pipe"))
    	 return;
@@ -741,7 +743,7 @@ void Ftp::CatchDATE(int act)
    }
    else	if(is5XX(act))
    {
-      if(act==500 || act==502)
+      if(cmd_unsupported(act))
 	 conn->mdtm_supported=false;
       array_for_info[array_ptr].time=NO_DATE;
    }
@@ -770,7 +772,7 @@ void Ftp::CatchDATE_opt(int act)
    }
    else
    {
-      if(act==500 || act==502)
+      if(cmd_unsupported(act))
 	 conn->mdtm_supported=false;
       *opt_date=NO_DATE;
    }
@@ -790,7 +792,7 @@ void Ftp::CatchSIZE(int act)
    }
    else	if(is5XX(act))
    {
-      if(act==500 || act==502)
+      if(cmd_unsupported(act))
 	 conn->size_supported=false;
    }
    else
@@ -821,7 +823,7 @@ void Ftp::CatchSIZE_opt(int act)
    }
    else
    {
-      if(act==500 || act==502)
+      if(cmd_unsupported(act))
 	 conn->size_supported=false;
    }
 
@@ -3481,7 +3483,7 @@ void Ftp::CheckResp(int act)
 
    case CHECK_FILE_ACCESS:
    file_access:
-      if(mode==CHANGE_MODE && (act==500 || act==501 || act==502))
+      if(mode==CHANGE_MODE && site_cmd_unsupported(act))
       {
 	 conn->site_chmod_supported=false;
 	 SetError(NO_FILE,all_lines);
@@ -3491,7 +3493,7 @@ void Ftp::CheckResp(int act)
       break;
 
    case CHECK_PRET:
-      if(act==500 || act==502)
+      if(cmd_unsupported(act))
 	 conn->pret_supported=false;
       goto ignore;
 
@@ -3611,7 +3613,7 @@ void Ftp::CheckResp(int act)
       break;
 
    case CHECK_SITE_UTIME:
-      if(act==500 || act==501 || act==502)
+      if(site_cmd_unsupported(act))
       {
 	 conn->site_utime_supported=false;
 	 SendUTimeRequest();  // try another method.
