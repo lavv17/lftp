@@ -725,7 +725,10 @@ char *xvasprintf(const char *format, va_list ap)
    for(;;)
    {
       ret = (char *) xrealloc(ret, siz);
-      int res=vsnprintf(ret, siz, format, ap);
+      va_list tmp;
+      va_copy(tmp,ap);
+      int res=vsnprintf(ret, siz, format, tmp);
+      va_end(tmp);
       if(res>=0 && res<siz)
 	 return ret;
       if(res>siz)
