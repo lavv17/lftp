@@ -219,19 +219,8 @@ if test x$with_libresolv = xyes; then
    AC_SEARCH_LIBS(hstrerror, resolv)
 fi
 
-AC_SUBST(READLINE_SUPPLIB)
-AC_CHECK_FUNC(tgetent,
-   [READLINE_SUPPLIB=],
-   [AC_CHECK_LIB(curses, tgetent,
-      [READLINE_SUPPLIB=-lcurses],
-      [AC_CHECK_LIB(ncurses, tgetent,
-	 [READLINE_SUPPLIB=-lncurses],
-	 [AC_CHECK_LIB(termcap, tgetent,
-	    [READLINE_SUPPLIB=-ltermcap],
-	    [AC_MSG_WARN(No termcap nor curses library found)])
-	 ])
-      ])
-   ])
+lftp_TERMINFO
+
 READLINE_CHECK
 
 AC_ARG_WITH(ssl, [  --with-ssl[=/path]        use SSL [at /path]
