@@ -36,9 +36,8 @@ AC_DEFUN([LFTP_NEED_TRIO],[
    ])
    case $ac_cv_need_trio in
    yes*)
-      AC_DEFINE_UNQUOTED(NEED_TRIO, 1,
-	    [Define if we need the trio replacement *printf() functions])
       LIBOBJS="$LIBOBJS strio.o trio.o trionan.o"
+      AC_DEFINE(TRIO_REPLACE_STDIO, 1, [replace system's printf functions])
       ;;
    esac
 ])
