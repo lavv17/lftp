@@ -1,3 +1,9 @@
+1999-12-16  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* LocalAccess.cc: use mainstream fixed version.
+	* Http.cc: send port to proxy; encode hostname properly.
+	* url.h: use head version.
+
 1999-11-16  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: don't clear SYNC_FLAG on 1xx replies.

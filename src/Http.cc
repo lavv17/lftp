@@ -279,9 +279,9 @@ void Http::SendRequest(const char *connection,const char *f)
 	 if(user && pass)
 	 {
 	    strcpy(pfile,"ftp://");
-	    url::encode_string(user,pfile+strlen(pfile),"/:@"URL_UNSAFE);
+	    url::encode_string(user,pfile+strlen(pfile),URL_USER_UNSAFE);
 	    strcat(pfile,"@");
-	    url::encode_string(hostname,pfile+strlen(pfile));
+	    url::encode_string(hostname,pfile+strlen(pfile),URL_PATH_UNSAFE);
 	    goto add_path;
 	 }
 	 proto="ftp";
