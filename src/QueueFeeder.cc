@@ -24,10 +24,6 @@
 #include <errno.h>
 #include <unistd.h>
 #include <assert.h>
-
-/* Our autoconf test will switch to lib/fnmatch.c if the local fnmatch
- * isn't GNU, so this should be OK. */
-#define _GNU_SOURCE
 #include <fnmatch.h>
 
 #include "QueueFeeder.h"

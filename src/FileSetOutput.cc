@@ -32,7 +32,7 @@
 #include <sys/stat.h>
 #include <assert.h>
 #include <locale.h>
-
+#include <fnmatch.h>
 #include <mbswidth.h>
 
 CDECL_BEGIN
@@ -41,11 +41,6 @@ CDECL_END
 
 #include "misc.h"
 #include "ResMgr.h"
-
-/* Our autoconf test will switch to lib/fnmatch.c if the local fnmatch
- * isn't GNU, so this should be OK. */
-#define _GNU_SOURCE
-#include <fnmatch.h>
 
 #include "FileSetOutput.h"
 #include "ArgV.h"
@@ -354,3 +349,17 @@ const char *FileCopyPeerCLS::GetStatus()
 {
    return session->CurrentStatus();
 }
+
+void FileCopyPeerCLS::Suspend()
+{
+   if(session)
+      session->Suspend();
+   super::Suspend();
+}
+void FileCopyPeerCLS::Resume()
+{
+   super::Resume();
+   if(session)
+      session->Resume();
+}
+

@@ -81,8 +81,12 @@ public:
    FileCopyPeerCLS(FA *s, ArgV *a, const FileSetOutput &_opts);
    int Do();
    const char *GetStatus();
-   void Quiet() { quiet = 1; }
-};
+   void Quiet() { quiet = true; }
 
+   void Fg() { session->SetPriority(1); }
+   void Bg() { session->SetPriority(0); }
+   void Suspend();
+   void Resume();
+};
 
 #endif

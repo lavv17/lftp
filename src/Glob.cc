@@ -26,7 +26,6 @@
 #include <sys/types.h>
 #include <errno.h>
 #include <stdlib.h>
-#define _GNU_SOURCE
 #include <fnmatch.h>
 
 #include "xalloca.h"
