@@ -1,3 +1,7 @@
+2001-07-30	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document new queue options; formatting.
+
 2001-05-29	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document ftp:retry-530.

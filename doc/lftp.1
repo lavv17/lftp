@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "22 Mar 2001"
+.TH lftp 1 "30 Jul 2001"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 2.3.9.
+This man page documents lftp version 2.4.0.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a program that allows sophisticated ftp and http connections to
@@ -68,11 +68,13 @@ host otherwise a connection has to be established with the open
 command.
 .PP
 \fBlftp\fP can handle six file access methods - ftp, ftps, http, https,
-hftp and file (https and ftps are only available when lftp is compiled with
-openssl library). You can specify the method to use in `open URL' command,
-e.g. `open http://www.us.kernel.org/pub/linux'. hftp is
-ftp-over-http-proxy protocol. It can be used automatically instead of
-ftp if ftp:proxy is set to `http://proxy[:port]'.
+hftp, fish and file (https and ftps are only available when lftp is
+compiled with openssl library). You can specify the method to use in `open
+URL' command, e.g. `open http://www.us.kernel.org/pub/linux'. hftp is
+ftp-over-http-proxy protocol. It can be used automatically instead of ftp
+if ftp:proxy is set to `http://proxy[:port]'. Fish is a protocol working
+over an ssh connection. Only ssh connections without password are
+currently supported.
 
 .PP
 Every operation in \fBlftp\fP is reliable, that is any not fatal error is
@@ -155,12 +157,12 @@ Wait until the given time and execute given (optional) command. See also at(1).
 .PP
 The bookmark command controls bookmarks.
 .Ds
-  add <name> [<loc>] - add current place or given location
-                       to bookmarks and bind to given name
-  del <name>         - remove bookmark with name
-  edit               - start editor on bookmarks file
-  import <type>      - import foreign bookmarks
-  list               - list bookmarks (default)
+add <name> [<loc>]	add current place or given location
+  			to bookmarks and bind to given name
+del <name>		remove bookmark with name
+edit			start editor on bookmarks file
+import <type>		import foreign bookmarks
+list			list bookmarks (default)
 .De
 
 .B cache
@@ -169,12 +171,12 @@ The bookmark command controls bookmarks.
 The cache command controls local memory cache.
 The following subcommands are recognized:
 .Ds
-  stat      - print cache status (default)
-  on|off    - turn on/off caching
-  flush     - flush cache
-  size \fIlim\fP  - set memory limit, -1 means unlimited
-  expire \fINx\fP - set cache expiration time to \fIN\fP seconds (\fIx\fP=s)
-         minutes (\fIx\fP=m) hours (\fIx\fP=h) or days (\fIx\fP=d)
+stat			print cache status (default)
+on|off			turn on/off caching
+flush			flush cache
+size \fIlim\fP			set memory limit, -1 means unlimited
+expire \fINx\fP		set cache expiration time to \fIN\fP seconds (\fIx\fP=s)
+			minutes (\fIx\fP=m) hours (\fIx\fP=h) or days (\fIx\fP=d)
 .De
 .PP
 
@@ -259,10 +261,10 @@ base name of \fIrfile\fP. You can get multiple files by specifying multiple
 instances of \fIrfile\fP [and -o \fIlfile\fP]. Does not expand wildcards, use
 \fBmget\fR for that.
 .Ds
- -c  continue, reget
- -E  delete remote files after successful transfer
- -a  use ascii mode (binary is the default)
- -O <base> specifies base directory or URL where files should be placed
+-c		continue, reget
+-E		delete remote files after successful transfer
+-a		use ascii mode (binary is the default)
+-O <base>	specifies base directory or URL where files should be placed
 .De
 .PP
 Examples:
@@ -281,9 +283,9 @@ get README -o ftp://some.host.org/debian-dir/ (end slash is important)
 Glob given patterns containing metacharacters and pass result to given command.
 E.g. ``glob echo *''.
 .Ds
- -f  plain files (default)
- -d  directories
- -a  all types
+-f	plain files (default)
+-d	directories
+-a	all types
 .De
 
 .B help
@@ -330,12 +332,12 @@ or
 Gets selected files with expanded wildcards.
 .PP
 .Ds
- -c  continue, reget.
- -d  create directories the same as file names and get
-     the files into them instead of current directory.
- -E  delete remote files after successful transfer
- -a  use ascii mode (binary is the default)
- -O <base> specifies base directory or URL where files should be placed
+-c		continue, reget.
+-d		create directories the same as file names and get
+		the files into them instead of current directory.
+-E		delete remote files after successful transfer
+-a		use ascii mode (binary is the default)
+-O <base>	specifies base directory or URL where files should be placed
 .De
 
 .B mirror
@@ -345,27 +347,27 @@ Gets selected files with expanded wildcards.
 Mirror specified remote directory to local directory.
 .PP
 .Ds
- -c, --continue         continue a mirror job if possible
- -e, --delete           delete files not present at remote site
- -s, --allow-suid       set suid/sgid bits according to remote site
- -n, --only-newer       download only newer files (-c won't work)
- -r, --no-recursion     don't go to subdirectories
- -p, --no-perms         don't set file permissions
-     --no-umask         don't apply umask to file modes
- -R, --reverse          reverse mirror (put files)
- -L, --dereference      download symbolic links as files
- -N, --newer-than FILE  download only files newer than the file
- -P, --parallel[=N]     download N files in parallel
- -i \fIRX\fP, --include \fIRX\fP    include matching files
- -x \fIRX\fP, --exclude \fIRX\fP    exclude matching files
- -t \fINx\fP, --time-prec \fINx\fP  set time precision to \fIN\fP seconds (\fIx\fP=s)
-                        minutes (\fIx\fP=m) hours (\fIx\fP=h) or days (\fIx\fP=d)
-                        default - mirror:time-precision setting
- -T \fINx\fP, --loose-time-prec  set time precision for imprecise time
-                        default - mirror:loose-time-precision setting
- -v, --verbose[=level]  verbose operation
-     --use-cache        use cached directory listings
- --Remove-source-files  remove files after transfer (use with caution)
+-c, --continue		continue a mirror job if possible
+-e, --delete		delete files not present at remote site
+-s, --allow-suid		set suid/sgid bits according to remote site
+-n, --only-newer		download only newer files (-c won't work)
+-r, --no-recursion		don't go to subdirectories
+-p, --no-perms		don't set file permissions
+    --no-umask		don't apply umask to file modes
+-R, --reverse		reverse mirror (put files)
+-L, --dereference		download symbolic links as files
+-N, --newer-than FILE	download only files newer than the file
+-P, --parallel[=N]		download N files in parallel
+-i \fIRX\fP, --include \fIRX\fP	include matching files
+-x \fIRX\fP, --exclude \fIRX\fP	exclude matching files
+-t \fINx\fP, --time-prec \fINx\fP	set time precision to \fIN\fP seconds (\fIx\fP=s)
+			minutes (\fIx\fP=m) hours (\fIx\fP=h) or days (\fIx\fP=d)
+			default - mirror:time-precision setting
+-T \fINx\fP, --loose-time-prec	set time precision for imprecise time
+			default - mirror:loose-time-precision setting
+-v, --verbose[=level]	verbose operation
+    --use-cache		use cached directory listings
+--Remove-source-files	remove files after transfer (use with caution)
 .De
 .PP
 When using -R, the first directory is local and the second is remote.
@@ -382,10 +384,10 @@ to, use `mirror -RL' command (treat symbolic links as files).
 Verbosity level can be selected using \-\-verbose=level option or by several
 \-v options, e.g. \-vvv. Levels are:
 .Ds
- 0 - no output (default)
- 1 - print actions
- 2 - +print not deleted file names (when -e is not specified)
- 3 - +print directory names which are mirrored
+0 - no output (default)
+1 - print actions
+2 - +print not deleted file names (when -e is not specified)
+3 - +print directory names which are mirrored
 .De
 .PP
 \-\-only\-newer turns off file size comparision and uploads/downloads
@@ -418,12 +420,12 @@ Same as `cat \fIfiles\fP | more'. if \fBPAGER\fP is set, it is used as filter.
 Upload files with wildcard expansion. By default it uses the base name of
 local name as remote one. This can be changed by `-d' option.
 .Ds
- -c  continue, reput
- -d  create directories the same as in file names and put the
-     files into them instead of current directory
- -E  delete remote files after successful transfer (dangerous)
- -a  use ascii mode (binary is the default)
- -O <base> specifies base directory or URL where files should be placed
+-c		continue, reput
+-d		create directories the same as in file names and put the
+		files into them instead of current directory
+-E		delete remote files after successful transfer (dangerous)
+-a		use ascii mode (binary is the default)
+-O <base>	specifies base directory or URL where files should be placed
 .De
 
 .B mrm
@@ -457,7 +459,7 @@ transfer, but loads the net heavily impacting other users. Use only if
 you really have to transfer the file ASAP, or some other user may go
 mad :) Options:
 .Ds
- -n \fImaxconn\fP  set maximum number of connections (default 5)
+-n	\fImaxconn\fP  set maximum number of connections (default 5)
 .De
 .PP
 
@@ -468,12 +470,12 @@ mad :) Options:
 Upload \fIlfile\fP with remote name \fIrfile\fP. If -o omitted, the base name
 of \fIlfile\fP is used as remote name. Does not expand wildcards, use \fBmput\fR for that.
 .Ds
- -o <rfile> specifies remote file name (default - basename of lfile)
- -c  continue, reput
-     it requires permission to overwrite remote files
- -E  delete local files after successful transfer (dangerous)
- -a  use ascii mode (binary is the default)
- -O <base> specifies base directory or URL where files should be placed
+-o <rfile>	specifies remote file name (default - basename of lfile)
+-c		continue, reput
+		it requires permission to overwrite remote files
+-E		delete local files after successful transfer (dangerous)
+-a		use ascii mode (binary is the default)
+-O <base>	specifies base directory or URL where files should be placed
 .De
 
 .B pwd
@@ -481,14 +483,25 @@ of \fIlfile\fP is used as remote name. Does not expand wildcards, use \fBmput\fR
 Print current remote directory.
 
 .B queue
-\fIcmd\fP
+.RB [ -n " \fInum\fP ] \fIcmd\fP"
 .PP
 Add the given command to queue for sequential execution. Each site has its own
-queue. Don't try to queue `cd' or `lcd' commands, it may confuse lftp. Instead
+queue. `-n' adds the command before the given item in the queue. Don't try to queue `cd' or `lcd' commands, it may confuse lftp. Instead
 do the cd/lcd before `queue' command, and it will remember the place in which
 the command is to be done. It is possible to queue up an already running job
 by `queue wait <jobno>', but the job will continue execution even if it is not
 the first in queue.
+
+.B queue
+.BR "--delete|-d " "[\fIindex or wildcard expression\fP]"
+.PP
+Delete one or more items from the queue. If no argument is given, the last
+entry in the queue is deleted.
+
+.B queue
+.BR "--move|-m " "<\fIindex or wildcard expression\fP> [\fIindex\fP]"
+Move the given items before the given queue index, or to the end if no
+destination is given.
 .PP
 .Ds
 > get file &
@@ -497,6 +510,14 @@ the first in queue.
 > queue get another_file
 > cd a_directory
 > queue get yet_another_file
+.De
+.PP
+.Ds
+queue -d 3		Delete the third item in the queue.
+queue -m 6 4		Move the sixth item in the queue before the fourth.
+queue -m "get*zip" 1	Move all commands matching "get*zip" to the beginning
+			of the queue.  (The order of the items is preserved.)
+queue -d "get*zip"	Delete all commands matching "get*zip".
 .De
 
 .B quote
@@ -570,8 +591,8 @@ If set is called with no variable then only altered settings are listed.
 It can be changed by options:
 .PP
 .Ds
- -a  list all settings, including default values
- -d  list only default values, not necessary current ones
+-a	list all settings, including default values
+-d	list only default values, not necessary current ones
 .De
 .PP
 
@@ -746,8 +767,8 @@ It is also possible to skip the check for a single `cd' command if `&' is given,
 or if ^Z is pressed during the check.
 Examples:
 .Ds
-  set cmd:verify-path/hftp://* false
-  cd directory &
+set cmd:verify-path/hftp://* false
+cd directory &
 .De
 .TP
 .BR dns:SRV-query \ (bool)
