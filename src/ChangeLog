@@ -1,3 +1,9 @@
+2002-08-29  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* rmJob.cc: set recursive properly. This fixes bug with DELE instead
+	  of RMD.
+	* OutputJob.cc: handle PutEOF when InitCopy temporarily failed.
+
 2002-08-28  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* OutputJob.cc: don't create LocalAccess directly (it breaks modularity).
