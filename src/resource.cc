@@ -25,6 +25,10 @@
 #include <pwd.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <errno.h>
 
 #include "ResMgr.h"
 #include "url.h"
@@ -129,4 +133,19 @@ void ResMgr::ClassInit()
       else if(!strncmp(ftp_proxy,"http://",7))
 	 Set("hftp:proxy",0,ftp_proxy);
    }
+
+#if INET6
+   // check if ipv6 is really supported
+   int s=socket(AF_INET6,SOCK_STREAM,IPPROTO_TCP);
+   if(s==-1 && (errno==EINVAL
+#ifdef EAFNOSUPPORT
+      || errno==EAFNOSUPPORT
+#endif
+   ))
+   {
+      Set("dns:order",0,"inet");
+   }
+   if(s!=-1)
+      close(s);
+#endif // INET6
 }
