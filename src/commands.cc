@@ -848,7 +848,7 @@ CMD(ls)
 
    char *a=args->Combine(1);
 
-   if(!nlist && args->count()==1)
+   if(!nlist && args->count()==1 && parent->var_ls && parent->var_ls[0])
       args->Append(parent->var_ls);
 
    FileCopyPeer *src_peer=0;

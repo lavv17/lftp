@@ -24,6 +24,7 @@
 #define FILTER_H
 
 #include "ProcWait.h"
+#include "ArgV.h"
 
 class FDStream
 {
@@ -57,6 +58,7 @@ public:
 
 class OutputFilter : public FDStream
 {
+   ArgV *a;
    ProcWait *w;
    pid_t pg;
    FDStream *second;
@@ -76,6 +78,8 @@ protected:
 public:
    OutputFilter(const char *filter,int second_fd=-1);
    OutputFilter(const char *filter,FDStream *second);
+   OutputFilter(ArgV *a,int second_fd=-1);
+   OutputFilter(ArgV *a,FDStream *second);
    virtual ~OutputFilter();
 
    void SetCwd(const char *);
@@ -101,6 +105,10 @@ public:
       : OutputFilter(filter,second_fd) {}
    InputFilter(const char *filter,FDStream *second)
       : OutputFilter(filter,second) {}
+   InputFilter(ArgV *a,int second_fd=-1)
+      : OutputFilter(a,second_fd) {}
+   InputFilter(ArgV *a,FDStream *second)
+      : OutputFilter(a,second) {}
 };
 
 class FileStream : public FDStream

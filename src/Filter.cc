@@ -37,7 +37,10 @@
 FDStream::FDStream(int new_fd,const char *new_name)
 {
    fd=new_fd;
-   name=xstrdup(expand_home_relative(new_name));
+   if(new_name)
+      name=xstrdup(expand_home_relative(new_name));
+   else
+      name=0;
    error_text=0;
 }
 FDStream::FDStream()
@@ -173,6 +176,8 @@ int OutputFilter::getfd()
 	    _exit(1);
 	 }
       }
+      if(a)
+	 execvp(a->a0(),a->GetV());
       execl("/bin/sh","sh","-c",name,NULL);
       fprintf(stderr,"execl(/bin/sh) failed: %s\n",strerror(errno));
       fflush(stderr);
@@ -203,6 +208,7 @@ out:
 
 void OutputFilter::Init()
 {
+   a=0;
    w=0;
    second=0;
    second_fd=-1;
@@ -235,9 +241,28 @@ OutputFilter::OutputFilter(const char *filter,FDStream *new_second)
    Init();
    second=new_second;
 }
+OutputFilter::OutputFilter(ArgV *a1,int new_second_fd)
+   : FDStream(-1,0)
+{
+   Init();
+   second_fd=new_second_fd;
+   a=a1;
+   name=a->Combine();
+}
+
+OutputFilter::OutputFilter(ArgV *a1,FDStream *new_second)
+   : FDStream(-1,0)
+{
+   Init();
+   second=new_second;
+   a=a1;
+   name=a->Combine();
+}
 
 OutputFilter::~OutputFilter()
 {
+   // `a' is not deleted here
+
    close(fd);
    fd=-1;
 

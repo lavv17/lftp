@@ -57,6 +57,7 @@ public:
 
    ListInfo *MakeListInfo();
    Glob	    *MakeGlob(const char *pattern);
+   DirList  *MakeDirList(ArgV *a);
 };
 
 class LocalListInfo : public ListInfo
@@ -72,6 +73,16 @@ class LocalGlob : public Glob
 {
 public:
    LocalGlob(const char *cwd,const char *pattern);
+   const char *Status() { return "..."; }
+   int Do();
+};
+
+class LocalDirList : public DirList
+{
+   FgData *fg_data;
+public:
+   LocalDirList(ArgV *a,const char *cwd);
+   ~LocalDirList();
    const char *Status() { return "..."; }
    int Do();
 };

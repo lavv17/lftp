@@ -1,6 +1,10 @@
 2000-01-11  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* NetAccess.cc: cast off const for solaris 2.5.1.
+	* Filter.cc, Filter.h: allow Input/OutputFilter from ArgV.
+	* LocalAccess.cc, LocalAccess.h: accept current system cwd as default;
+	  log errors; implemented LocalDirList.
+	* commands.cc: don't append var_ls if empty.
 
 2000-01-10  Alexander V. Lukyanov  <lav@yars.free.net>
 

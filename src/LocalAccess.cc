@@ -38,6 +38,7 @@
 #include "xalloca.h"
 #include "xstring.h"
 #include "misc.h"
+#include "log.h"
 
 void LocalAccess::ClassInit()
 {
@@ -64,8 +65,10 @@ void LocalAccess::Connect(const char *host,const char *port)
 LocalAccess::LocalAccess() : FileAccess()
 {
    Init();
+   xfree(cwd);
+   cwd=xgetcwd();
 }
-LocalAccess::LocalAccess(const LocalAccess *o) : FileAccess((const FileAccess *)o)
+LocalAccess::LocalAccess(const LocalAccess *o) : FileAccess(o)
 {
    Init();
 }
@@ -84,6 +87,7 @@ void LocalAccess::errno_handle()
       sprintf(error,"rename(%s, %s): %s",file,file1,err);
    else
       sprintf(error,"%s: %s",file,err);
+   Log::global->Format(0,"**** %s\n",error);
 }
 
 int LocalAccess::Done()
@@ -119,6 +123,7 @@ int LocalAccess::Do()
       if(stream==0)
       {
 	 char *cmd=(char*)alloca(10+xstrlen(file));
+	 // FIXME: shell-quote file name
 	 if(mode==LIST)
 	 {
 	    if(file && file[0])
@@ -135,7 +140,7 @@ int LocalAccess::Do()
 	 }
 	 else// if(mode==QUOTE_CMD)
 	    strcpy(cmd,file);
-	 DebugPrint("---- ",cmd,3);
+	 DebugPrint("---- ",cmd,5);
 	 InputFilter *f_stream=new InputFilter(cmd);
 	 f_stream->SetCwd(cwd);
 	 stream=f_stream;
@@ -168,14 +173,17 @@ int LocalAccess::Do()
       }
       done=true;
       return MOVED;
-   case(REMOVE):
-      if(remove(dir_file(cwd,file))==-1)
+   case(REMOVE): {
+      const char *f=dir_file(cwd,file);
+      Log::global->Format(5,"---- remove(%s)\n",f);
+      if(remove(f)==-1)
       {
 	 errno_handle();
 	 error_code=NO_FILE;
       }
       done=true;
       return MOVED;
+   }
    case(REMOVE_DIR):
       if(rmdir(dir_file(cwd,file))==-1)
       {
@@ -611,6 +619,47 @@ int LocalGlob::Do()
       return MOVED;
    }
    return STALL;
+}
+
+DirList *LocalAccess::MakeDirList(ArgV *a)
+{
+   return new LocalDirList(a,cwd);
+}
+
+LocalDirList::LocalDirList(ArgV *a,const char *cwd)
+   : DirList(a)
+{
+   fg_data=0;
+   a->insarg(1,"-l");
+   InputFilter *f=new InputFilter(a);
+   f->SetCwd(cwd);
+   if(buf) delete buf;
+   buf=new FileInputBuffer(f);
+}
+int LocalDirList::Do()
+{
+   if(done)
+      return STALL;
+
+   if(buf->Eof())
+   {
+      done=true;
+      return MOVED;
+   }
+
+   if(buf->Error())
+   {
+      SetError(buf->ErrorText());
+      return MOVED;
+   }
+   if(!fg_data)
+      fg_data=buf->GetFgData(false);
+   return STALL;
+}
+LocalDirList::~LocalDirList()
+{
+   if(fg_data)
+      delete fg_data;
 }
 
 #ifdef MODULE
