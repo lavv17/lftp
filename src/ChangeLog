@@ -1,3 +1,7 @@
+2003-02-28  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: close data connection when sending ABOR over ssl.
+
 2003-02-26  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* OutputJob.cc: fixed large file support (should have used off_t).

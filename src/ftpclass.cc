@@ -2503,6 +2503,11 @@ void  Ftp::DataAbort()
    aborted_data_sock=data_sock;
    data_sock=-1;
 
+   // ABOR over SSL connection does not always work,
+   // closing data socket should help it.
+   if(control_ssl)
+      AbortedClose();
+
    if(QueryBool("web-mode"))
       Disconnect();
 }
