@@ -37,6 +37,12 @@ if test x$ac_cv_lib_fl_yywrap = xno; then
 fi
 
 
+AC_ARG_WITH(locale-dir,
+  [  --with-locale-dir=DIR   specify locale directory],
+  LOCALE_DIR=$withval)
+test -z "$LOCALE_DIR" && LOCALE_DIR='$(datadir)/locale'
+AC_SUBST(LOCALE_DIR)
+
 ALL_LINGUAS="es ru it pt_BR pl de zh_CN ko fr ja"
 AM_GNU_GETTEXT
 if test x$USE_INCLUDED_LIBINTL = xyes; then
@@ -94,6 +100,7 @@ if test x$GXX = xyes; then
    LFTP_NOIMPLEMENTINLINE
 fi
 
+test -z "$enable_static" && enable_static=no
 AM_PROG_LIBTOOL
 
 ## get the values out of libtool
@@ -142,8 +149,10 @@ AC_ARG_WITH(modules,
 if test "$with_modules" = yes; then
    AC_DEFINE(WITH_MODULES)
    MODULES="proto-ftp.so proto-http.so proto-file.so cmd-mirror.so cmd-sleep.so"
+   MODULES_LA="proto-ftp.la proto-http.la proto-file.la cmd-mirror.la cmd-sleep.la"
 fi
 AC_SUBST(MODULES)
+AC_SUBST(MODULES_LA)
 
 dnl Checks for libraries.
 LFTP_CHECK_LIBM
