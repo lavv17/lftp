@@ -111,6 +111,8 @@ class Ftp : public NetAccess
       bool auth_sent;
       bool auth_supported;
       bool cpsv_supported;
+      bool sscn_supported;
+      bool sscn_on;
       char *auth_args_supported;
       bool ssl_is_activated() { return control_ssl!=0; }
 #else
@@ -180,7 +182,7 @@ class Ftp : public NetAccess
 	 SITE_UTIME,
 	 QUOTED		// check response for any command submitted by QUOTE_CMD
 #ifdef USE_SSL
-	 ,AUTH_TLS,PROT
+	 ,AUTH_TLS,PROT,SSCN
 #endif
       };
 

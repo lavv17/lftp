@@ -1679,7 +1679,7 @@ static TABLE const MilitaryTable[] = {
     { NULL }
 };
 
-
+
 
 static char *get_date_error_buf;
 const char *get_date_error()

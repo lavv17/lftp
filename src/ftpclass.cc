@@ -858,6 +858,8 @@ Ftp::Connection::Connection()
    auth_supported=true;
    auth_args_supported=0;
    cpsv_supported=false;
+   sscn_supported=false;
+   sscn_on=false;
 #endif
    type='A';
    last_rest=0;
@@ -1490,7 +1492,21 @@ int   Ftp::Do()
 	 else
 	    want_prot=QueryBool("ssl-protect-data",hostname)?'P':'C';
 	 if(copy_mode!=COPY_NONE)
+	 {
 	    want_prot=copy_protect?'P':'C';
+	    if(conn->sscn_supported && !conn->cpsv_supported
+	    && copy_protect && !conn->sscn_on)
+	    {
+	       conn->SendCmd("SSCN ON");
+	       expect->Push(new Expect(Expect::SSCN,'Y'));
+	    }
+	 }
+	 else if(conn->sscn_on)
+	 {
+	    // SSCN is no longer needed.
+	    conn->SendCmd("SSCN OFF");
+	    expect->Push(new Expect(Expect::SSCN,'N'));
+	 }
 	 if(want_prot!=conn->prot)
 	 {
 	    conn->SendCmdF("PROT %c",want_prot);
@@ -1512,8 +1528,9 @@ int   Ftp::Do()
       if(mode!=CHANGE_DIR && expect->FindLastCWD())
 	 goto usual_return;
 #ifdef USE_SSL
-      // PROT is critical for data transfers
-      if(expect->Has(Expect::PROT))
+      // PROT and SSCN are critical for data transfers
+      if(expect->Has(Expect::PROT)
+      || expect->Has(Expect::SSCN))
 	 goto usual_return;
 #endif
 
@@ -1841,7 +1858,7 @@ int   Ftp::Do()
 	 ipv4_pasv:
 #endif
 #ifdef USE_SSL
-	    if(copy_mode!=COPY_NONE && conn->prot=='P')
+	    if(copy_mode!=COPY_NONE && conn->prot=='P' && !conn->sscn_on)
 	       conn->SendCmd("CPSV"); // same as PASV, but server does SSL_connect
 	    else
 #endif // note the following statement
@@ -3147,6 +3164,7 @@ void Ftp::ExpectQueue::Close()
 #ifdef USE_SSL
       case(Expect::AUTH_TLS):
       case(Expect::PROT):
+      case(Expect::SSCN):
 #endif
 	 break;
       case(Expect::CWD_CURR):
@@ -3500,6 +3518,8 @@ void Ftp::CheckFEAT(char *reply)
       }
       else if(!strcasecmp(f,"CPSV"))
 	 conn->cpsv_supported=true;
+      else if(!strcasecmp(f,"SSCN"))
+	 conn->sscn_supported=true;
 #endif // USE_SSL
    }
    conn->have_feat_info=true;
@@ -3813,6 +3833,10 @@ void Ftp::CheckResp(int act)
    case Expect::PROT:
       if(is2XX(act))
 	 conn->prot=arg[0];
+      break;
+   case Expect::SSCN:
+      if(is2XX(act))
+	 conn->sscn_on=(arg[0]=='Y');
       break;
 #endif // USE_SSL
 

@@ -1,3 +1,8 @@
+2004-05-20  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: SSCN support added.
+	* getdate.y: remove ^L as it confuses some broken compilers.
+
 2004-05-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopyFtp.cc, FileCopyFtp.h: protect FXP if ssl-protect-fxp is
