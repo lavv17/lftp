@@ -354,7 +354,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Same as cat, but filter each file through bzcat\n")},
    {"bzmore",   cmd_cat,    N_("bzmore <files>"),
 	 N_("Same as more, but filter each file through bzcat\n")},
-   
+
    {NULL,NULL}
 };
 
@@ -602,6 +602,8 @@ Job *CmdExec::builtin_open()
          pass=strchr(optarg,',');
 	 if(pass==NULL)
 	    pass=strchr(optarg,' ');
+	 if(pass==NULL)
+	    pass=strchr(optarg,':');
 	 if(pass==NULL)
    	    break;
 	 *pass=0;
