@@ -154,6 +154,7 @@ public:
    char *MakePrompt();
 
    bool interactive;
+   bool verbose;
    StatusLine *status_line;
    void SetCmdFeeder(CmdFeeder *new_feeder);
    void	RemoveFeeder();

@@ -49,6 +49,7 @@ static ResDecl
    res_verify_host	   ("cmd:verify-host",	"yes",ResMgr::BoolValidate,0),
    res_at_exit		   ("cmd:at-exit",	"",   0,0),
    res_fail_exit	   ("cmd:fail-exit",	"no", ResMgr::BoolValidate,0),
+   res_verbose		   ("cmd:verbose",	"no", ResMgr::BoolValidate,0),
    res_save_passwords	   ("bmk:save-passwords","no",ResMgr::BoolValidate,0);
 
 CmdExec	 *CmdExec::cwd_owner=0;
@@ -324,7 +325,7 @@ int CmdExec::Do()
 	    // done
 	    if(status_line)
 	       status_line->Show("");
-	    if(interactive)
+	    if(interactive || verbose)
 	    {
 	       const char *cwd=session->GetCwd();
 	       eprintf(_("cd ok, cwd=%s\n"),cwd?cwd:"~");
@@ -424,7 +425,7 @@ int CmdExec::Do()
 	 waiting->Bg();
 	 if(status_line)
 	    status_line->Show("");
- 	 if(interactive)
+ 	 if(interactive || verbose)
 	    waiting->SayFinal(); // final phrase like 'rm succeed'
 	 exit_code=waiting->ExitCode();
 	 delete waiting;
@@ -789,6 +790,7 @@ void CmdExec::Reconfig()
    save_passwords=res_save_passwords.Query(0);
    verify_path=res_verify_path.Query(0);
    verify_host=res_verify_host.Query(0);
+   verbose=res_verbose.Query(0);
 }
 
 void CmdExec::vfprintf(FILE *file,const char *f,va_list v)
