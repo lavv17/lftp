@@ -957,6 +957,24 @@ bool Ftp::AbsolutePath(const char *s)
 	  && s[dev_len-1]=='/'));
 }
 
+void Ftp::PropagateHomeAuto()
+{
+   if(!home_auto)
+      return;
+   for(FA *fo=FirstSameSite(); fo!=0; fo=NextSameSite(fo))
+   {
+      Ftp *o=(Ftp*)fo; // we are sure it is Ftp.
+      if(!o->home_auto)
+      {
+	 o->home_auto=xstrdup(home_auto);
+	 o->dos_path=dos_path;
+	 o->vms_path=vms_path;
+	 if(!o->home)
+	    o->set_home(home_auto);
+      }
+   }
+}
+
 void  Ftp::GetBetterConnection(int level,int count)
 {
    if(level==0 && cwd==0)
@@ -1006,19 +1024,6 @@ void  Ftp::GetBetterConnection(int level,int count)
 	 peer=(sockaddr_u*)xmemdup(o->peer,o->peer_num*sizeof(*o->peer));
 	 peer_num=o->peer_num;
 	 peer_curr=o->peer_curr;
-      }
-
-      if(home_auto && !o->home_auto)
-      {
-	 o->home_auto=xstrdup(home_auto);
-	 o->dos_path=dos_path;
-	 o->vms_path=vms_path;
-      }
-      else if(!home_auto && o->home_auto)
-      {
-	 home_auto=xstrdup(o->home_auto);
-	 dos_path=o->dos_path;
-	 vms_path=o->vms_path;
       }
 
       if(level==0 && xstrcmp(real_cwd,o->real_cwd))
@@ -3184,7 +3189,7 @@ void  Ftp::MoveConnectionHere(Ftp *o)
    last_rest=o->last_rest;
 
    if(!home)
-      home=xstrdup(home_auto);
+      set_home(home_auto);
 
    set_real_cwd(o->real_cwd);
    o->set_real_cwd(0);
@@ -3399,12 +3404,12 @@ void Ftp::CheckResp(int act)
       if(is2XX(act))
       {
 	 if(!home_auto)
-	    home_auto=ExtractPWD();   // it allocates space.
-	 if(!home)
 	 {
-	    home=xstrdup(home_auto);
-	    ExpandTildeInCWD();
+	    home_auto=ExtractPWD();   // it allocates space.
+	    PropagateHomeAuto();
 	 }
+	 if(!home)
+	    set_home(home_auto);
 	 break;
       }
       break;
@@ -3612,11 +3617,6 @@ bool  Ftp::SameLocationAs(FileAccess *fa)
       return false;
    if(SameConnection(o))
    {
-      if(home && !o->home)
-	 o->home=xstrdup(home);
-      else if(!home && o->home)
-	 home=xstrdup(o->home);
-
       if(home && xstrcmp(home,o->home))
 	 return false;
 
@@ -3720,12 +3720,11 @@ void Ftp::Reconfig(const char *name)
    xfree(anon_pass);
    anon_pass=xstrdup(Query("anon-pass",c));
 
-   xfree(home);
    const char *h=QueryStringWithUserAtHost("home");
    if(h && h[0] && AbsolutePath(h))
-      home=xstrdup(h);
+      set_home(h);
    else
-      home=xstrdup(home_auto);
+      set_home(home_auto);
 
    if(NoProxy(hostname))
       SetProxy(0);

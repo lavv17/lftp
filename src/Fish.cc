@@ -701,8 +701,7 @@ int Fish::HandleReplies()
       if(!message)
 	 break;
       xfree(home);
-      home=message;
-      message=0;
+      set_home(message);
       break;
    case EXPECT_CWD:
       p=PopDirectory();

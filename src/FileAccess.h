@@ -134,6 +134,12 @@ protected:
 	 xfree(real_cwd);
 	 real_cwd=xstrdup(c);
       }
+   void set_home(const char *h)
+      {
+	 xfree(home);
+	 home=xstrdup(h);
+	 ExpandTildeInCWD();
+      }
 
    char *url;
 
