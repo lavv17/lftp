@@ -52,6 +52,7 @@ int  StatusLine::GetWidth()
       sz.ws_col=80;
    if(sz.ws_row==0)
       sz.ws_row=24;
+   LastHeight=sz.ws_row;
    return(LastWidth=sz.ws_col);
 #else /* !TIOCGWINSZ */
    return 80;
@@ -63,10 +64,9 @@ StatusLine::StatusLine(int new_fd)
    fd=new_fd;
    update_delayed=false;
    next_update_title_only=false;
-   strcpy(shown,"");
    strcpy(def_title,"");
    not_term=!isatty(fd);
-   LastWidth=GetWidth();
+   GetWidth();
    Reconfig();
 }
 
@@ -78,10 +78,7 @@ StatusLine::~StatusLine()
 
 void StatusLine::Clear(bool title_also)
 {
-   char newstr[sizeof(shown)];
-
-   newstr[0]=0;
-   update(newstr);
+   update("");
    update_delayed=false;
    update_timer.SetMilliSeconds(20);
 
@@ -103,30 +100,73 @@ void StatusLine::Show(const char *f,...)
       return;
    }
 
-   char newstr[sizeof(shown)];
+   char newstr[0x800];
 
    va_list v;
    va_start(v,f);
    vsnprintf(newstr,sizeof(newstr),f,v);
    va_end(v);
+   newstr[sizeof(newstr)-1]=0;
 
+   const char *s=newstr;
+   ShowN(&s,1);
+}
+
+bool LineSet::IsEqual(const char *const *set1,int n1)
+{
+   if(n!=n1)
+      return false;
+   int i=0;
+   while(i<n)
+   {
+      if(strcmp(set[i],set1[i]))
+	 return false;
+      i++;
+   }
+   return true;
+}
+void LineSet::Empty()
+{
+   while(n>0)
+   {
+      n--;
+      xfree(set[n]);
+      set[n]=0;
+   }
+}
+void LineSet::Assign(const char *const *set1,int n1)
+{
+   Empty();
+   if(allocated<n1)
+      set=(char**)xrealloc(set,sizeof(*set)*(allocated=n1));
+   n=0;
+   while(n<n1)
+   {
+      set[n]=xstrdup(set1[n]);
+      n++;
+   }
+}
+
+void StatusLine::ShowN(const char *const* newstr,int n)
+{
    if(update_timer.Stopped())
    {
-      update(newstr);
+      update(newstr,n);
       update_delayed=false;
       return;
    }
 
-   if(!strcmp(to_be_shown,newstr))
+   if(to_be_shown.IsEqual(newstr,n))
       return;
 
    /* not yet */
-   strcpy(to_be_shown,newstr);
+   to_be_shown.Assign(newstr,n);
    update_delayed=true;
 }
 
 const char *StatusLine::to_status_line = get_string_term_cap("tsl", "ts");
 const char *StatusLine::from_status_line = get_string_term_cap("fsl", "fs");
+const char *StatusLine::prev_line = get_string_term_cap("cuu1","up");
 
 void StatusLine::WriteTitle(const char *s, int fd) const
 {
@@ -158,7 +198,7 @@ void StatusLine::WriteTitle(const char *s, int fd) const
    xfree(disp);
 }
 
-void StatusLine::update(char *newstr)
+void StatusLine::update(const char *const *newstr,int newstr_height)
 {
    if(not_term)
       return;
@@ -167,7 +207,7 @@ void StatusLine::update(char *newstr)
       return;
 
    /* Don't write blank titles into the title; let Clear() do that. */
-   if(newstr[0]) WriteTitle(newstr, fd);
+   if(newstr_height>0 && newstr[0][0]) WriteTitle(newstr[0], fd);
 
    if(next_update_title_only)
    {
@@ -177,100 +217,86 @@ void StatusLine::update(char *newstr)
 
    int w=GetWidth();
    int mbflags=MBSW_ACCEPT_INVALID|MBSW_ACCEPT_UNPRINTABLE;
-   char *end=newstr;
-   int len=strlen(newstr);
-   int wpos=0;
-   while(len>0)
+
+   if(newstr_height>LastHeight)
+      newstr_height=LastHeight;
+
+   // clear old extra lines. Assume we are at beginning of last shown line.
+   int j=shown.Count();
+   int i=j-newstr_height;
+   char *spaces=string_alloca(w+1);
+   memset(spaces,' ',w);
+   spaces[w]=0;
+   while(i-->0)
    {
-      int ch_len=mblen(end,len);
-      if(ch_len<1)
-	 ch_len=1;
-      int ch_width=mbsnwidth(end,ch_len,mbflags);
-      if(wpos+ch_width>w-1)
-	 break;
-      end+=ch_len;
-      len-=ch_len;
-      wpos+=ch_width;
-      if(wpos>=w-1)
-	 break;
+      int tw=mbswidth(shown[--j],mbflags);
+      write(fd,spaces,tw);
+      write(fd,"\r",1);
+      write(fd,prev_line,strlen(prev_line));
+   }
+   // move to top of shown lines.
+   while(--j>0)
+      write(fd,prev_line,strlen(prev_line));
+
+   int curr_line=0;
+   while(curr_line<newstr_height)
+   {
+      const char *end=newstr[curr_line];
+      int len=strlen(newstr[curr_line]);
+      int wpos=0;
+      while(len>0)
+      {
+	 int ch_len=mblen(end,len);
+	 if(ch_len<1)
+	    ch_len=1;
+	 int ch_width=mbsnwidth(end,ch_len,mbflags);
+	 if(wpos+ch_width>w-1)
+	    break;
+	 end+=ch_len;
+	 len-=ch_len;
+	 wpos+=ch_width;
+	 if(wpos>=w-1)
+	    break;
+      }
+
+      // FIXME: this assumes that multibyte chars cannot include ' '.
+      while(end>newstr[curr_line] && end[-1]==' ')
+      {
+	 end--;
+	 wpos--;  // FIXME: assumption - space width is 1
+      }
+
+      write(fd,newstr[curr_line],end-newstr[curr_line]);
+
+      const char *shown_curr=(curr_line>=shown.Count()?"":shown[curr_line]);
+      int dif=strlen(shown_curr)-(end-newstr[curr_line])+2;
+      if(dif>(w-1)-wpos)
+	 dif=(w-1)-wpos;
+      write(fd,spaces,dif);
+      write(fd,"\r",1);
+
+      if(++curr_line<newstr_height)
+	 write(fd,"\n",1);
    }
 
-   // FIXME: this assumes that multibyte chars cannot include ' '.
-   while(end>newstr && end[-1]==' ')
-   {
-      end--;
-      wpos--;  // FIXME: assumption - space width is 1
-   }
-
-   *end=0;
-
-   if(!strcmp(shown,newstr))
-      return;
-
-   int dif=strlen(shown)-strlen(newstr)+2;
-
-   strcpy(shown,newstr);
-
-   while(dif-->0 && wpos<w-1)
-   {
-      *end++=' ';
-      wpos++;  // FIXME: assumption - space width is 1
-   }
-
-   *end=0;
-
-   if(end==newstr)
-      return;
-
-   *end++='\r';
-   *end=0;
-
-   write(fd,"\r",1);
-   write(fd,newstr,end-newstr);
+   shown.Assign(newstr,newstr_height);
 
    update_timer.SetResource("cmd:status-interval",0);
 }
 
 void StatusLine::WriteLine(const char *f,...)
 {
-   char *newstr=(char*)alloca(sizeof(shown)+strlen(f)+64);
+   char *newstr=string_alloca(0x800+strlen(f));
 
    va_list v;
    va_start(v,f);
    vsprintf(newstr,f,v);
    va_end(v);
 
-   if(not_term || shown[0]==0)
-   {
-      strcat(newstr,"\n");
-      write(fd,newstr,strlen(newstr));
-      update_delayed=false;
-      return;
-   }
+   Clear();
 
-   char *end=newstr+strlen(newstr);
-   while(end>newstr && end[-1]==' ')
-      end--;
-   *end=0;
-   if(!strcmp(shown,newstr))
-   {
-      write(fd,"\n",1);
-      return;
-   }
-
-   int dif=strlen(shown)-strlen(newstr)+2;
-   int w=GetWidth();
-
-   while(dif-->0 && end-newstr<w-1)
-      *end++=' ';
-
-   *end++='\n';
-   *end=0;
-
-   write(fd,"\r",1);
+   strcat(newstr,"\n");
    write(fd,newstr,strlen(newstr));
-
-   strcpy(shown,"");
    update_delayed=false;
 }
 
@@ -280,7 +306,7 @@ int StatusLine::Do()
       return STALL;
    if(update_timer.Stopped())
    {
-      update(to_be_shown);
+      update(to_be_shown.Set(),to_be_shown.Count());
       update_delayed=false;
       return STALL;
    }

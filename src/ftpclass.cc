@@ -313,6 +313,8 @@ bool Ftp::Transient5XX(int act)
 // 226 Transfer complete.
 void Ftp::TransferCheck(int act)
 {
+   if(data_sock==-1)
+      eof=true;
    if(act==225 || act==226) // data connection is still open or ABOR worked.
    {
       copy_done=true;
@@ -2133,6 +2135,7 @@ int   Ftp::Do()
 	       eof=true;
 	       m=MOVED;
 	    }
+	    state=WAITING_STATE;
 	 }
       }
 

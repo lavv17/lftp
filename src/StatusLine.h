@@ -26,19 +26,47 @@
 #include "SMTask.h"
 #include "Timer.h"
 
+class LineSet
+{
+   char **set;
+   int n;
+   int allocated;
+
+   void Init() { set=0; allocated=n=0; }
+
+public:
+   LineSet() { Init(); }
+   LineSet(const char *const *s,int n) { Init(); Assign(s,n); }
+   LineSet(const LineSet &o) { Init(); Assign(o.set,o.n); }
+   LineSet(const char *s) { Init(); Assign(&s,1); }
+   ~LineSet() { Empty(); xfree(set); }
+
+   void Empty();
+   void Assign(const char *const *s,int n);
+   void Assign(const char *s) { Assign(&s,1); }
+   bool IsEqual(const char *const *s,int n);
+   bool IsEqual(const LineSet &o) { return IsEqual(o.set,o.n); }
+
+   const char *const *Set() { return set; }
+   int Count() { return n; }
+   const char *operator[](int i) { return i>=0 && i<n ? set[i] : 0; }
+};
+
 class StatusLine : public SMTask
 {
    int fd;
-   char shown[0x800];
+   LineSet shown;
    bool	not_term;
    Timer update_timer;
-   char to_be_shown[0x800];
+   LineSet to_be_shown;
    char def_title[0x800];
    bool update_delayed;
-   void update(char *);
+   void update(const char *const *,int);
+   void update(const char *s) { update(&s,1); }
    int LastWidth;
+   int LastHeight;
    bool next_update_title_only;
-   static const char *to_status_line, *from_status_line;
+   static const char *to_status_line, *from_status_line, *prev_line;
 
 protected:
    ~StatusLine();
@@ -46,9 +74,12 @@ protected:
 
 public:
    int GetWidth();
+   int GetHeight();
    int GetWidthDelayed() const { return LastWidth; }
+   int GetHeightDelayed() const { return LastHeight; }
    void NextUpdateTitleOnly() { next_update_title_only=true; }
    void DefaultTitle(const char *s);
+   void ShowN(const char *const* newstr,int n);
    void Show(const char *f,...) PRINTF_LIKE(2,3);
    void WriteLine(const char *f,...) PRINTF_LIKE(2,3);
    void Clear(bool title_also=true);
