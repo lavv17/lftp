@@ -124,6 +124,7 @@ public:
    virtual FgData *GetFgData(bool) { return 0; }
 
    virtual time_t EventTime() { return now; }
+   virtual const char *Status() { return ""; }
 
    Buffer();
 };
@@ -172,6 +173,7 @@ public:
    int Do();
    bool Done();
    FgData *GetFgData(bool fg);
+   const char *Status() { return stream->status; }
 };
 
 class FileAccess;
@@ -191,6 +193,7 @@ public:
 
    void Suspend();
    void Resume();
+   const char *Status();
 };
 
 #endif // BUFFER_H

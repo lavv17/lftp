@@ -234,8 +234,15 @@ PtyShell::PtyShell(ArgV *a1)
 PtyShell::~PtyShell()
 {
    delete a;
-   close(fd);
-   fd=-1;
+   if(fd!=-1)
+   {
+      close(fd);
+      fd=-1;
+   }
+   if(pipe_in!=-1)
+      close(pipe_in);
+   if(pipe_out!=-1)
+      close(pipe_out);
    if(w)
       w->Auto();
    xfree(oldcwd);

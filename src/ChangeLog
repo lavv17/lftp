@@ -1,3 +1,10 @@
+2003-11-26  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopyFtp.cc: add ftps to acceptable fxp protocols.
+	* Fish.cc, SFtp.cc: report status from PtyShell.
+	* PtyShell.cc: close pipes correctly.
+	* buffer.cc, buffer.h: add Status method.
+
 2003-11-21  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Fish.cc, SFtp.cc, resource.cc: allow args in connect-program
