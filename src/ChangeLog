@@ -1,6 +1,6 @@
 2001-10-05  Alexander V. Lukyanov <lav@yars.free.net>
 
-	* ColumnOutput.cc: fix memory leak.
+	* ColumnOutput.cc: fix memory leak; change \e to \\e.
 	* FileSetOutput.cc: fix coredump when LS_COLORS is unset.
 	* misc.h: add comment on Subst.
 

@@ -34,9 +34,9 @@
 #include "misc.h"
 
 ResDecl res_color	("color:use-color",		"auto",ResMgr::TriBoolValidate,ResMgr::NoClosure);
-ResDecl res_color_begin	("color:term-color-begin",	"\e[", 0, 0);
+ResDecl res_color_begin	("color:term-color-begin",	"\\e[", 0, 0);
 ResDecl res_color_end	("color:term-color-end",	"m", 0, 0);
-ResDecl res_color_reset	("color:term-color-reset",	"\e[0m", 0, 0);
+ResDecl res_color_reset	("color:term-color-reset",	"\\e[0m", 0, 0);
 
 ColumnOutput::ColumnOutput()
 {
