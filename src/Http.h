@@ -49,6 +49,8 @@ class Http : public NetAccess
    FileInputBuffer *recv_buf;
    void SendMethod(const char *,const char *);
    const char *last_method;
+   bool post;
+   char *post_data;
    void SendAuth();
    void SendBasicAuth(const char *tag,const char *u,const char *p);
    void SendRequest(const char *connection,const char *f);
