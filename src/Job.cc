@@ -475,6 +475,7 @@ void Job::Bg()
 }
 void Job::Fg()
 {
+   Resume();
    if(fg)
       return;
    fg=true;

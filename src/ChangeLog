@@ -1,3 +1,7 @@
+2002-08-06  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Job.cc: resume job in Fg.
+
 2002-08-06  Glenn Maynard <g_ld@zewt.org>
 
 	* commands.cc: disallow 0 as queue position.
