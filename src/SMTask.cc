@@ -221,6 +221,11 @@ int SMTask::TaskCount()
    return count;
 }
 
+void SMTask::Cleanup()
+{
+  delete init_task;
+}
+
 #include <errno.h>
 #include "ResMgr.h"
 ResDecl enospc_fatal ("xfer:disk-full-fatal","no",ResMgr::BoolValidate,ResMgr::NoClosure);

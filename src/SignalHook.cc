@@ -93,3 +93,10 @@ void SignalHook::ClassInit()
    Ignore(SIGXFSZ);  // and EFBIG
 #endif
 }
+
+void SignalHook::Cleanup()
+{
+   delete [] counts;
+   delete [] old_handlers;
+   delete [] old_saved;
+}

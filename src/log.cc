@@ -125,6 +125,10 @@ void Log::Format(int l,const char *f,...)
    Write(l,buf);
 }
 
+void Log::Cleanup()
+{
+   delete global;
+}
 Log::~Log()
 {
    CloseOutput();

@@ -49,6 +49,7 @@ public:
    static void RestoreAll();
 
    static void ClassInit();
+   static void Cleanup();
 };
 
 #endif//SIGNALHOOK_H

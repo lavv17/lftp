@@ -421,6 +421,9 @@ int   main(int argc,char **argv)
    ProcWait::DeleteAll();
    DirColors::DeleteInstance();
    IdNameCacheCleanup();
+   SignalHook::Cleanup();
+   Log::Cleanup();
+   SMTask::Cleanup();
 
    // the tasks left: SMTaskInit, LsCache::ExpireHelper, Log::global.
    int task_count=SMTask::TaskCount();

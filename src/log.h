@@ -84,6 +84,8 @@ public:
    void ShowPID(bool yes=true) { show_pid=yes; }
    void ShowTime(bool yes=true) { show_time=yes; }
    void ShowContext(bool yes=true) { show_context=yes; }
+
+   static void Cleanup();
 };
 
 #endif // LOG_H

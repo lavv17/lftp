@@ -97,6 +97,8 @@ public:
    static int TaskCount();
    static bool NonFatalError(int err);
    static bool TemporaryNetworkError(int err);
+
+   static void Cleanup();
 };
 
 class SMTaskInit : public SMTask
