@@ -56,8 +56,10 @@
 extern "C" { const char *hstrerror(int); }
 #endif
 
+#ifdef HAVE_H_ERRNO
 #ifndef HAVE_H_ERRNO_DECL
 CDECL int h_errno;
+#endif
 #endif
 
 #if defined(HAVE_RES_SEARCH) && !defined(HAVE_RES_SEARCH_DECL)
