@@ -51,6 +51,7 @@ void  MirrorJob::PrintStatus(int v,const char *tab)
    case(DONE):
    case(WAITING_FOR_TRANSFER):
    case(TARGET_REMOVE_OLD):
+   case(TARGET_REMOVE_OLD_FIRST):
    case(TARGET_CHMOD):
       break;
 
@@ -117,6 +118,7 @@ void  MirrorJob::ShowRunStatus(StatusLine *s)
    // these have a sub-job
    case(WAITING_FOR_TRANSFER):
    case(TARGET_REMOVE_OLD):
+   case(TARGET_REMOVE_OLD_FIRST):
    case(TARGET_CHMOD):
    case(FINISHING):
    case(DONE):
@@ -218,14 +220,17 @@ void  MirrorJob::HandleFile(FileInfo *file)
 		     chmod(target_name,st.st_mode|0200);
 		  }
 	       }
+	       stats.mod_files++;
 	    }
-	    else
+	    else if(!to_rm_mismatched->FindByName(file->name))
 	    {
 	       Report(_("Removing old file `%s'"),
 			dir_file(target_relative_dir,file->name));
 	       remove_target=true;
+	       stats.mod_files++;
 	    }
-	    stats.mod_files++;
+	    else
+	       stats.new_files++;
 	 }
 	 else
 	    stats.new_files++;
@@ -428,6 +433,13 @@ void  MirrorJob::InitSets(FileSet *source,FileSet *dest)
    old_files_set=new FileSet(dest);
    old_files_set->SubtractNotIn(to_transfer);
 
+   to_rm_mismatched=new FileSet(old_files_set);
+   to_rm_mismatched->SubtractSameType(to_transfer);
+   to_rm_mismatched->SubtractNotDirs();
+
+   if(!(flags&DELETE))
+      to_transfer->SubtractAny(to_rm_mismatched);
+
    to_transfer->SortByPatternList(ResMgr::Query("mirror:order",0));
 }
 
@@ -555,6 +567,7 @@ int   MirrorJob::Do()
       Roll(source_session);
       state=CHANGING_DIR_SOURCE;
       m=MOVED;
+      /*fallthrough*/
    case(CHANGING_DIR_SOURCE):
       HandleChdir(source_session,source_redirections);
       if(state!=CHANGING_DIR_SOURCE)
@@ -614,6 +627,7 @@ int   MirrorJob::Do()
       target_session->Mkdir(target_dir,(parent_mirror==0));
       state=MAKE_TARGET_DIR;
       m=MOVED;
+      /*fallthrough*/
    case(MAKE_TARGET_DIR):
       res=target_session->Done();
       if(res==FA::IN_PROGRESS)
@@ -626,6 +640,7 @@ int   MirrorJob::Do()
       Roll(target_session);
       state=CHANGING_DIR_TARGET;
       m=MOVED;
+      /*fallthrough*/
    case(CHANGING_DIR_TARGET):
       HandleChdir(target_session,target_redirections);
       if(state!=CHANGING_DIR_TARGET)
@@ -646,7 +661,7 @@ int   MirrorJob::Do()
 	 Delete(target_list_info); target_list_info=0;
 	 return MOVED;
       }
-
+      /*fallthrough*/
    case(GETTING_LIST_INFO):
       HandleListInfo(source_list_info,source_set);
       HandleListInfo(target_list_info,target_set);
@@ -659,11 +674,19 @@ int   MirrorJob::Do()
       stats.dirs++;
 
       InitSets(source_set,target_set);
+      to_rm->Count(&stats.del_dirs,&stats.del_files,&stats.del_symlinks,&stats.del_files);
+      to_rm->rewind();
+      to_rm_mismatched->Count(&stats.del_dirs,&stats.del_files,&stats.del_symlinks,&stats.del_files);
+      to_rm_mismatched->rewind();
+      state=TARGET_REMOVE_OLD_FIRST;
+      return MOVED;
 
+   pre_WAITING_FOR_TRANSFER:
       to_transfer->rewind();
       transfer_count-=root_transfer_count; // leave room for transfers.
       state=WAITING_FOR_TRANSFER;
       m=MOVED;
+      /*fallthrough*/
    case(WAITING_FOR_TRANSFER):
       j=FindDoneAwaitedJob();
       if(j)
@@ -691,25 +714,13 @@ int   MirrorJob::Do()
       break;
 
    pre_TARGET_REMOVE_OLD:
-      to_rm->Count(&stats.del_dirs,&stats.del_files,&stats.del_symlinks,&stats.del_files);
-      to_rm->rewind();
+      if(flags&REMOVE_FIRST)
+	 goto pre_TARGET_CHMOD;
       state=TARGET_REMOVE_OLD;
       m=MOVED;
-
-      if(!(flags&DELETE))
-      {
-	 if(flags&REPORT_NOT_DELETED)
-	 {
-	    for(file=to_rm->curr(); file; file=to_rm->next())
-	    {
-	       Report(_("Old file `%s' is not removed"),
-			dir_file(target_relative_dir,file->name));
-	    }
-	 }
-	 goto pre_TARGET_CHMOD;
-      }
       /*fallthrough*/
    case(TARGET_REMOVE_OLD):
+   case(TARGET_REMOVE_OLD_FIRST):
       j=FindDoneAwaitedJob();
       if(j)
       {
@@ -718,12 +729,31 @@ int   MirrorJob::Do()
 	 transfer_count--;
 	 m=MOVED;
       }
-      while(transfer_count<parallel && state==TARGET_REMOVE_OLD)
+      while(transfer_count<parallel && (state==TARGET_REMOVE_OLD || state==TARGET_REMOVE_OLD_FIRST))
       {
-	 file=to_rm->curr();
+	 file=0;
+	 if(!file && state==TARGET_REMOVE_OLD_FIRST)
+	 {
+	    file=to_rm_mismatched->curr();
+	    to_rm_mismatched->next();
+	 }
+	 if(!file && (state==TARGET_REMOVE_OLD || (flags&REMOVE_FIRST)))
+	 {
+	    file=to_rm->curr();
+	    to_rm->next();
+	 }
 	 if(!file)
-	    goto pre_TARGET_CHMOD;
-	 to_rm->next();
+	    break;
+	 if(!(flags&DELETE) && (flags&REPORT_NOT_DELETED))
+	 {
+	    if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
+	       Report(_("Old directory `%s' is not removed"),
+			dir_file(target_relative_dir,file->name));
+	    else
+	       Report(_("Old file `%s' is not removed"),
+			dir_file(target_relative_dir,file->name));
+	    continue;
+	 }
 	 if(script)
 	 {
 	    ArgV args("rm");
@@ -758,6 +788,12 @@ int   MirrorJob::Do()
 		     dir_file(target_relative_dir,file->name));
 	 }
       }
+      if(waiting_num==0)
+      {
+	 if(state==TARGET_REMOVE_OLD)
+	    goto pre_TARGET_CHMOD;
+	 goto pre_WAITING_FOR_TRANSFER;
+      }
       break;
 
    pre_TARGET_CHMOD:
@@ -767,6 +803,7 @@ int   MirrorJob::Do()
       to_transfer->rewind();
       state=TARGET_CHMOD;
       m=MOVED;
+      /*fallthrough*/
    case(TARGET_CHMOD):
       j=FindDoneAwaitedJob();
       if(j)
@@ -837,6 +874,7 @@ int   MirrorJob::Do()
       }
       state=FINISHING;
       m=MOVED;
+      /*fallthrough*/
    case(FINISHING):
       j=FindDoneAwaitedJob();
       if(j)
@@ -852,6 +890,7 @@ int   MirrorJob::Do()
       transfer_count++; // parent mirror will decrement it.
       state=DONE;
       m=MOVED;
+      /*fallthrough*/
    case(DONE):
       break;
    }
@@ -882,7 +921,7 @@ MirrorJob::MirrorJob(MirrorJob *parent,
    source_relative_dir=0;
    target_relative_dir=0;
 
-   to_transfer=to_rm=same=0;
+   to_transfer=to_rm=to_rm_mismatched=same=0;
    source_set=target_set=0;
    new_files_set=old_files_set=0;
    create_target_dir=true;
@@ -932,6 +971,7 @@ MirrorJob::~MirrorJob()
    delete target_set;
    delete to_transfer;
    delete to_rm;
+   delete to_rm_mismatched;
    delete same;
    delete new_files_set;
    delete old_files_set;
@@ -1091,6 +1131,7 @@ CMD(mirror)
       {"script",    required_argument,0,256+'S'},
       {"just-print",optional_argument,0,256+'S'},
       {"dry-run",   optional_argument,0,256+'S'},
+      {"remove-first",no_argument,0,256+'r'},
       {0}
    };
 
@@ -1224,6 +1265,9 @@ CMD(mirror)
 	 script_file=optarg;
 	 if(script_file==0)
 	    script_file="-";
+	 break;
+      case(256+'r'):
+	 flags|=MirrorJob::REMOVE_FIRST;
 	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());

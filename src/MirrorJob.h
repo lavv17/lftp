@@ -39,6 +39,7 @@ class MirrorJob : public Job
       GETTING_LIST_INFO,
       WAITING_FOR_TRANSFER,
       TARGET_REMOVE_OLD,
+      TARGET_REMOVE_OLD_FIRST,
       TARGET_CHMOD,
       FINISHING,
       DONE
@@ -55,6 +56,7 @@ class MirrorJob : public Job
    FileSet *to_transfer;
    FileSet *same;
    FileSet *to_rm;
+   FileSet *to_rm_mismatched;
    FileSet *old_files_set;
    FileSet *new_files_set;
    void	 InitSets(FileSet *src,FileSet *dst);
@@ -133,7 +135,8 @@ public:
       RETR_SYMLINKS=1<<7,
       NO_UMASK=1<<8,
       ALLOW_CHOWN=1<<9,
-      IGNORE_TIME=1<<10
+      IGNORE_TIME=1<<10,
+      REMOVE_FIRST=1<<11
    };
 
    void SetFlags(int f,int v)
