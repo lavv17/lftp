@@ -486,11 +486,16 @@ TimeInterval::TimeInterval(const char *s)
 	 prec*=DAY;
       else if(ch!='s')
       {
-	 error_text=_("Invalid time unit letter, only [smhd] are allowed");
+	 error_text=_("Invalid time unit letter, only [smhd] are allowed.");
 	 return;
       }
       interval+=prec;
       pos+=pos1;
+   }
+   if(pos==0)
+   {
+      error_text=_("Invalid time format. Format is <time><unit>, e.g. 2h30m.");
+      return;
    }
 }
 TimeInterval::~TimeInterval()

@@ -1,5 +1,11 @@
 1999-09-20  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* MirrorJob.cc, MirrorJob.h: use TimeInterval.
+	* misc.cc, misc.h: drop decode_delay.
+	* ResMgr.cc: (TimeInterval ctor) handle one more error case.
+
+1999-09-20  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* Http.cc: define _XOPEN_SOURCE 500 for linux.
 
 1999-09-19  Alexander V. Lukyanov  <lav@yars.free.net>

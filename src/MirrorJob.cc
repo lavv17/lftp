@@ -172,7 +172,7 @@ void  MirrorJob::HandleFile(int how)
 
 	    if((flags&CONTINUE) && S_ISREG(st.st_mode)
 	    && (file->defined&(file->DATE|file->DATE_UNPREC))
-	    && file->date + prec < st.st_mtime
+	    && file->date + prec.Seconds() < st.st_mtime
 	    && (file->defined&file->SIZE) && file->size >= st.st_size)
 	       cont_this=true;
 	    else
@@ -370,9 +370,9 @@ void  MirrorJob::InitSets(FileSet *source,FileSet *dest)
    same=new FileSet(source);
    to_transfer=new FileSet(source);
    int ignore=0;
-   if(flags&REVERSE)
+   if((flags&REVERSE) || prec.IsInfty())
       ignore|=FileInfo::DATE;
-   to_transfer->SubtractSame(dest,flags&ONLY_NEWER,prec,ignore);
+   to_transfer->SubtractSame(dest,flags&ONLY_NEWER,prec.Seconds(),ignore);
 
    same->SubtractAny(to_transfer);
 
@@ -731,7 +731,7 @@ int   MirrorJob::Do()
 }
 
 MirrorJob::MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_remote_dir)
-   : SessionJob(f)
+   : SessionJob(f), prec("0")
 {
    verbose_report=0;
    parent_mirror=0;
@@ -757,8 +757,6 @@ MirrorJob::MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_rem
    rx_include=rx_exclude=0;
    memset(&rxc_include,0,sizeof(regex_t));   // for safety
    memset(&rxc_exclude,0,sizeof(regex_t));   // for safety
-
-   prec=0;  // time must be exactly same by default
 
    state=INITIAL_STATE;
 
@@ -934,7 +932,7 @@ CMD(mirror)
    if(exclude)
       exclude[0]=0;
 
-   time_t prec=12*HOUR;
+   TimeInterval prec("12h");
    bool	 create_remote_dir=false;
    int	 verbose=0;
    const char *newer_than=0;
@@ -963,10 +961,10 @@ CMD(mirror)
 	 flags|=MirrorJob::CONTINUE;
 	 break;
       case('t'):
-	 prec=decode_delay(optarg);
-	 if(prec==(time_t)-1)
+	 prec=TimeInterval(optarg);
+	 if(prec.Error())
 	 {
-	    parent->eprintf(_("%s: %s - invalid time precision\n"),args->a0(),optarg);
+	    parent->eprintf("%s: %s: %s\n",args->a0(),optarg,prec.ErrorText());
 	    parent->eprintf(_("Try `help %s' for more information.\n"),args->a0());
 	    return 0;
 	 }
@@ -1083,7 +1081,7 @@ CMD(mirror)
    if(exclude && exclude[0] && (err=j->SetExclude(exclude)))
       goto err_out;
 
-   j->SetPrec((time_t)prec);
+   j->SetPrec(prec);
    if(newer_than)
       j->SetNewerThan(newer_than);
    return j;

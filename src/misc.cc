@@ -187,23 +187,3 @@ char *xgetcwd()
       size*=2;
    }
 }
-
-time_t decode_delay(const char *s)
-{
-   long prec;
-   char ch;
-   int n=sscanf(s,"%lu%c",&prec,&ch);
-   if(n<1)
-      return -1;
-   if(n==1)
-      ch='s';
-   else if(ch=='m')
-      prec*=MINUTE;
-   else if(ch=='h')
-      prec*=HOUR;
-   else if(ch=='d')
-      prec*=DAY;
-   else if(ch!='s')
-      return -1;
-   return prec;
-}
