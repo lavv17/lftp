@@ -1,3 +1,16 @@
+Version 2.5.2 - 2002-05-07
+
+* new setting ftp:fxp-force to disable copying data over client.
+* new settings cache:enable, cache:expire and cache:size for cache control.
+* create parent directories of target mirror directory.
+* ignore any error 550 for NLST if no file name is given.
+* fixed ftp request to http proxy - port number could be missing.
+* change http request to GET after redirection from a POST request.
+* handle relative redirect location from a POST request correctly.
+* try next peer address if server disconnects without greeting message.
+* a memory leak fixed (Glenn Maynard).
+* fixed compilation on case-insensitive systems.
+
 Version 2.5.1 - 2002-04-16
 
 * translations updated.

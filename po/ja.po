@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
-"POT-Creation-Date: 2002-04-16 17:30+0400\n"
+"POT-Creation-Date: 2002-05-07 19:10+0400\n"
 "PO-Revision-Date: 2002-04-12 00:06+0900\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -101,7 +101,7 @@ msgstr "アクセス失敗: %s"
 msgid "File cannot be accessed"
 msgstr "ファイルにアクセスできません"
 
-#: src/FileAccess.cc:317 src/ftpclass.cc:3622 src/ftpclass.cc:3631
+#: src/FileAccess.cc:317 src/ftpclass.cc:3623 src/ftpclass.cc:3632
 msgid "Not connected"
 msgstr "接続されていません"
 
@@ -142,43 +142,43 @@ msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr ""
 "%s: %s: ファイルはすでに存在し、また xfer:clobber がセットされていません\n"
 
-#: src/Job.cc:338
+#: src/Job.cc:340
 #, c-format
 msgid "[%d] Done (%s)"
 msgstr "[%d] 完了 (%s)"
 
-#: src/LsCache.cc:200
+#: src/LsCache.cc:210
 msgid "Cache is on"
 msgstr "キャッシュは有効"
 
-#: src/LsCache.cc:202
+#: src/LsCache.cc:212
 msgid "Cache is off"
 msgstr "キャッシュは無効"
 
-#: src/LsCache.cc:208
+#: src/LsCache.cc:218
 #, c-format
 msgid "%ld $#l#byte|bytes$ cached"
 msgstr "%ld バイトキャッシュ済"
 
-#: src/LsCache.cc:211
+#: src/LsCache.cc:221
 msgid ", no size limit"
 msgstr "、サイズ制限無し"
 
-#: src/LsCache.cc:213
+#: src/LsCache.cc:223
 #, c-format
 msgid ", maximum size %ld\n"
 msgstr "、最大サイズは %ld バイト\n"
 
-#: src/LsCache.cc:216
+#: src/LsCache.cc:226
 msgid "Cache entries do not expire"
 msgstr "キャッシュエントリは失効しません"
 
-#: src/LsCache.cc:218
+#: src/LsCache.cc:228
 #, c-format
 msgid "Cache entries expire in %ld $#l#second|seconds$\n"
 msgstr "キャッシュエントリは %ld 秒で無効になります\n"
 
-#: src/LsCache.cc:223
+#: src/LsCache.cc:233
 #, c-format
 msgid "Cache entries expire in %ld $#l#minute|minutes$\n"
 msgstr "キャッシュエントリは %ld 分で無効になります\n"
@@ -264,9 +264,9 @@ msgstr "%s: %s の書き込みでエラー: %s\n"
 #: src/MirrorJob.cc:1049 src/SleepJob.cc:139 src/commands.cc:943
 #: src/commands.cc:1035 src/commands.cc:1400 src/commands.cc:1453
 #: src/commands.cc:1552 src/commands.cc:1805 src/commands.cc:1999
-#: src/commands.cc:2171 src/commands.cc:2178 src/commands.cc:2362
-#: src/commands.cc:2390 src/commands.cc:2397 src/commands.cc:2719
-#: src/commands.cc:2980
+#: src/commands.cc:2171 src/commands.cc:2178 src/commands.cc:2360
+#: src/commands.cc:2388 src/commands.cc:2395 src/commands.cc:2717
+#: src/commands.cc:2978
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "`help %s' でより詳しい情報が得られます。\n"
@@ -328,8 +328,8 @@ msgstr "不正なIPv4番号アドレス"
 msgid "no closure defined for this setting"
 msgstr "この設定では終止が定義されていません"
 
-#: src/Http.cc:1580 src/Resolver.cc:184 src/Resolver.cc:226
-#: src/ftpclass.cc:3627
+#: src/Http.cc:1603 src/Resolver.cc:184 src/Resolver.cc:226
+#: src/ftpclass.cc:3628
 msgid "Resolving host address..."
 msgstr "ホストアドレスを解決しています..."
 
@@ -1466,8 +1466,8 @@ msgstr "%s: %d - そのようなジョブはありません\n"
 msgid "Usage: %s <jobno> ... | all\n"
 msgstr "使い方: %s <jobno> ... | all\n"
 
-#: src/commands.cc:1964 src/commands.cc:2095 src/commands.cc:2242
-#: src/commands.cc:2524 src/commands.cc:2598 src/commands.cc:2992
+#: src/commands.cc:1964 src/commands.cc:2095 src/commands.cc:2240
+#: src/commands.cc:2522 src/commands.cc:2596 src/commands.cc:2990
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s: %s - 数ではありません\n"
@@ -1497,12 +1497,12 @@ msgstr "%s: バグ - デッドロックが検出されました\n"
 msgid "Usage: mv <file1> <file2>\n"
 msgstr "使い方: mv <file1> <file2>\n"
 
-#: src/commands.cc:2170 src/commands.cc:2389
+#: src/commands.cc:2170 src/commands.cc:2387
 #, c-format
 msgid "Invalid command. "
 msgstr "不正なコマンドです。 "
 
-#: src/commands.cc:2177 src/commands.cc:2396
+#: src/commands.cc:2177 src/commands.cc:2394
 #, c-format
 msgid "Ambiguous command. "
 msgstr "あいまいなコマンドです。 "
@@ -1512,17 +1512,17 @@ msgstr "あいまいなコマンドです。 "
 msgid "%s: Operand missed for size\n"
 msgstr "%s: サイズのためのオペランドがありません\n"
 
-#: src/commands.cc:2203
-#, c-format
-msgid "%s: Invalid number for size\n"
-msgstr "%s: サイズとしては不正な数です\n"
+#: src/commands.cc:2203 src/commands.cc:2220
+#, fuzzy, c-format
+msgid "%s: %s: %s\n"
+msgstr "%s: %s: %s\n"
 
-#: src/commands.cc:2214
+#: src/commands.cc:2213
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
 msgstr "%s: `expire' のためのオペランドがありません\n"
 
-#: src/commands.cc:2248
+#: src/commands.cc:2246
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
@@ -1530,127 +1530,127 @@ msgstr ""
 "%s: %s - そのようなキャッシュされたセッションはありません。`scache' でセッ"
 "ションリストを見てください。\n"
 
-#: src/commands.cc:2265
+#: src/commands.cc:2263
 #, c-format
 msgid "Sorry, no help for %s\n"
 msgstr "残念ながら、%s のヘルプはありません\n"
 
-#: src/commands.cc:2270
+#: src/commands.cc:2268
 #, c-format
 msgid "%s is a built-in alias for %s\n"
 msgstr "%s は %s の組み込みエイリアスです\n"
 
-#: src/commands.cc:2275
+#: src/commands.cc:2273
 #, c-format
 msgid "Usage: %s\n"
 msgstr "使い方: %s\n"
 
-#: src/commands.cc:2283
+#: src/commands.cc:2281
 #, c-format
 msgid "%s is an alias to `%s'\n"
 msgstr "%s は `%s' のエイリアスです\n"
 
-#: src/commands.cc:2287
+#: src/commands.cc:2285
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr ""
 "`%s'というコマンドはありません。利用可能なコマンドは `help' で調べられま"
 "す。\n"
 
-#: src/commands.cc:2289
+#: src/commands.cc:2287
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr ""
 "`%s' ではコマンドを特定できません。利用可能なコマンドは `help' で調べられま"
 "す。\n"
 
-#: src/commands.cc:2340
+#: src/commands.cc:2338
 #, fuzzy, c-format
 msgid "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 msgstr "Lftp | バージョン %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"
 
-#: src/commands.cc:2342
+#: src/commands.cc:2340
 msgid ""
 "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
 msgstr ""
 "lftp はフリーソフトウェアであり、*全くの無保証*です。詳しくは COPYING を参"
 "照。\n"
 
-#: src/commands.cc:2344
+#: src/commands.cc:2342
 #, c-format
 msgid "Send bug reports and questions to <%s>.\n"
 msgstr "バグ報告や質問は <%s> まで送ってください。\n"
 
-#: src/commands.cc:2413 src/commands.cc:2445
+#: src/commands.cc:2411 src/commands.cc:2443
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s: ブックマーク名が必要です\n"
 
-#: src/commands.cc:2434
+#: src/commands.cc:2432
 #, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
 msgstr "%s: ブックマーク名にスペースを入れてはいけません\n"
 
-#: src/commands.cc:2447
+#: src/commands.cc:2445
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s: `%s' というブックマークはありません\n"
 
-#: src/commands.cc:2462
+#: src/commands.cc:2460
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: インポートタイプ(netscape,ncftp)を指定してください\n"
 
-#: src/commands.cc:2530
+#: src/commands.cc:2528
 #, c-format
 msgid "Usage: %s [-d #] dir\n"
 msgstr "使い方: %s [-d #] dir\n"
 
-#: src/commands.cc:2629
+#: src/commands.cc:2627
 #, fuzzy, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "不正な数"
 
-#: src/commands.cc:2644
+#: src/commands.cc:2642
 #, fuzzy, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "使い方: %s [-d #] dir\n"
 
-#: src/commands.cc:2650
+#: src/commands.cc:2648
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr ""
 
-#: src/commands.cc:2654
+#: src/commands.cc:2652
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr ""
 
-#: src/commands.cc:2706
+#: src/commands.cc:2704
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "使い方: %s command args...\n"
 
-#: src/commands.cc:2718
+#: src/commands.cc:2716
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "使い方: %s module [args...]\n"
 
-#: src/LocalAccess.cc:600 src/commands.cc:2736
+#: src/LocalAccess.cc:600 src/commands.cc:2734
 msgid "cannot get current directory"
 msgstr "現在のディレクトリが取得できません"
 
-#: src/commands.cc:2797
+#: src/commands.cc:2795
 #, fuzzy, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "使い方: %s [OPTS] files...\n"
 
-#: src/commands.cc:2816
+#: src/commands.cc:2814
 #, fuzzy, c-format
 msgid "invalid mode string: %s\n"
 msgstr "不正な数"
 
-#: src/commands.cc:2874
+#: src/commands.cc:2872
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "使い方: %s [OPTS] file\n"
@@ -1667,174 +1667,174 @@ msgstr "データ接続ピアのアドレスが一致しません"
 msgid "Switching to NOREST mode"
 msgstr "NOREST モードに切り替えます"
 
-#: src/ftpclass.cc:428
+#: src/ftpclass.cc:427
 msgid "Server reply matched ftp:retry-530, retrying"
 msgstr "サーバの返答が ftp:retry-530 とマッチしました。再試行中"
 
-#: src/ftpclass.cc:436
+#: src/ftpclass.cc:435
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
 msgstr "サーバの返答が ftp:retry-530-anonymous とマッチしました。再試行中"
 
-#: src/ftpclass.cc:460
+#: src/ftpclass.cc:459
 msgid "Account is required, set ftp:acct variable"
 msgstr "アカウントが必要です。ftp:acct 変数を設定してください"
 
-#: src/ftpclass.cc:485
+#: src/ftpclass.cc:484
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
 msgstr ""
 "ftp:skey-forceがセットされていますが、サーバはOPIEもS/KEYもサポートしていませ"
 "ん"
 
-#: src/ftpclass.cc:501
+#: src/ftpclass.cc:500
 msgid "Saw `unknown', assume failed login"
 msgstr "`unknown' を検出しましたので、ログインに失敗したと仮定します"
 
-#: src/ftpclass.cc:512
+#: src/ftpclass.cc:511
 msgid "assuming failed host name lookup"
 msgstr "ホスト名検索に失敗したと仮定します"
 
-#: src/ftpclass.cc:740
+#: src/ftpclass.cc:739
 msgid "cannot parse EPSV response"
 msgstr "EPSV レスポンスを解析できません"
 
-#: src/Http.cc:762 src/ftpclass.cc:1115
+#: src/Http.cc:753 src/ftpclass.cc:1114
 msgid "Closing idle connection"
 msgstr "アイドル状態の接続を閉じます"
 
-#: src/Http.cc:885 src/ftpclass.cc:1195
+#: src/Http.cc:876 src/ftpclass.cc:1194
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "アドレスファミリ %d のソケットを作れません"
 
-#: src/ftpclass.cc:1380
+#: src/ftpclass.cc:1379
 msgid "SITE CHMOD is not supported by this site"
 msgstr "SITE CHMOD はこのサイトではサポートされていません"
 
-#: src/ftpclass.cc:1385
+#: src/ftpclass.cc:1384
 #, fuzzy
 msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 msgstr "SITE CHMOD はこのサイトではサポートされていません"
 
-#: src/ftpclass.cc:1733 src/ftpclass.cc:1773
+#: src/ftpclass.cc:1732 src/ftpclass.cc:1772
 msgid "unsupported network protocol"
 msgstr "サポートされていないネットワークプロトコルです"
 
-#: src/ftpclass.cc:1883
+#: src/ftpclass.cc:1882
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "データソケットを (%s) のポート %u に接続中"
 
-#: src/ftpclass.cc:1908 src/ftpclass.cc:3493
+#: src/ftpclass.cc:1907 src/ftpclass.cc:3494
 msgid "Switching passive mode off"
 msgstr "パッシヴモードをオフに切り替えました"
 
-#: src/Http.cc:973 src/ftpclass.cc:2370
+#: src/Http.cc:964 src/ftpclass.cc:2369
 msgid "Peer closed connection"
 msgstr "ピアが接続を閉じました"
 
-#: src/ftpclass.cc:2397
+#: src/ftpclass.cc:2396
 msgid "Persist and retry"
 msgstr "持続的に再試行します"
 
-#: src/ftpclass.cc:2496
+#: src/ftpclass.cc:2495
 msgid "Closing control socket"
 msgstr "コントロールソケットを閉じています"
 
-#: src/ftpclass.cc:2578
+#: src/ftpclass.cc:2579
 msgid "Closing data socket"
 msgstr "データソケットを閉じています"
 
-#: src/ftpclass.cc:3327
+#: src/ftpclass.cc:3328
 msgid "saw file size in response"
 msgstr "レスポンス中にファイルサイズがありました"
 
-#: src/ftpclass.cc:3338
+#: src/ftpclass.cc:3339
 #, fuzzy
 msgid "remote end closed connection"
 msgstr "リモートエンドが接続を閉じました"
 
-#: src/ftpclass.cc:3346
+#: src/ftpclass.cc:3347
 msgid "extra server response"
 msgstr "余分なサーバレスポンスです"
 
-#: src/ftpclass.cc:3359 src/ftpclass.cc:3388
+#: src/ftpclass.cc:3360 src/ftpclass.cc:3389
 msgid "Turning on sync-mode"
 msgstr "sync モードを有効にしました"
 
-#: src/ftpclass.cc:3510
+#: src/ftpclass.cc:3511
 msgid "Switching passive mode on"
 msgstr "パッシヴモードをオンに切り替えました"
 
-#: src/ftpclass.cc:3577
+#: src/ftpclass.cc:3578
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force がセットされていますが、サーバは SSL をサポートあるいは許可して"
 "いません"
 
-#: src/ftpclass.cc:3617
+#: src/ftpclass.cc:3618
 msgid "Sending commands..."
 msgstr "コマンドを送信中..."
 
-#: src/Http.cc:1595 src/ftpclass.cc:3619 src/ftpclass.cc:3644
-#: src/ftpclass.cc:3655
+#: src/Http.cc:1618 src/ftpclass.cc:3620 src/ftpclass.cc:3645
+#: src/ftpclass.cc:3658
 msgid "Waiting for response..."
 msgstr "応答を待っています..."
 
-#: src/Http.cc:1588 src/ftpclass.cc:3620
+#: src/Http.cc:1611 src/ftpclass.cc:3621
 msgid "Connection idle"
 msgstr "接続アイドル"
 
-#: src/Http.cc:1586 src/Http.cc:1593 src/ftpclass.cc:3633
+#: src/Http.cc:1609 src/Http.cc:1616 src/ftpclass.cc:3634
 msgid "Connecting..."
 msgstr "接続中..."
 
-#: src/ftpclass.cc:3637
+#: src/ftpclass.cc:3638
 msgid "TLS negotiation..."
 msgstr "TLS ネゴシエーション..."
 
-#: src/ftpclass.cc:3639
+#: src/ftpclass.cc:3640
 msgid "Connected"
 msgstr "接続しました"
 
-#: src/ftpclass.cc:3641
+#: src/ftpclass.cc:3642
 msgid "Logging in..."
 msgstr "ログインしています..."
 
-#: src/ftpclass.cc:3645
+#: src/ftpclass.cc:3646
 msgid "Making data connection..."
 msgstr "データ接続を確立中..."
 
-#: src/ftpclass.cc:3647
+#: src/ftpclass.cc:3649
 msgid "Changing remote directory..."
 msgstr "リモートディレクトリを変更中..."
 
-#: src/ftpclass.cc:3652
+#: src/ftpclass.cc:3655
 msgid "Waiting for other copy peer..."
 msgstr "他のコピー相手を待っています..."
 
-#: src/ftpclass.cc:3654 src/ftpclass.cc:3675
+#: src/ftpclass.cc:3657 src/ftpclass.cc:3678
 msgid "Waiting for transfer to complete"
 msgstr "送受信の完了を待っています"
 
-#: src/ftpclass.cc:3657
+#: src/ftpclass.cc:3660
 msgid "Waiting for data connection..."
 msgstr "データ接続を待っています..."
 
-#: src/ftpclass.cc:3663
+#: src/ftpclass.cc:3666
 #, fuzzy
 msgid "Sending data/TLS"
 msgstr "データ送信中"
 
-#: src/ftpclass.cc:3665
+#: src/ftpclass.cc:3668
 #, fuzzy
 msgid "Receiving data/TLS"
 msgstr "データ受信中"
 
-#: src/Http.cc:1591 src/ftpclass.cc:3671
+#: src/Http.cc:1614 src/ftpclass.cc:3674
 msgid "Sending data"
 msgstr "データ送信中"
 
-#: src/Http.cc:1598 src/ftpclass.cc:3673
+#: src/Http.cc:1621 src/ftpclass.cc:3676
 msgid "Receiving data"
 msgstr "データ受信中"
 
@@ -1933,55 +1933,55 @@ msgid "POST method failed"
 msgstr "POST メソッド失敗"
 
 #. problem here: hftp cannot work without proxy
-#: src/Http.cc:841
+#: src/Http.cc:832
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "ftp over http はプロキシ無しでは利用できません。hftp:proxy をセットしてくださ"
 "い。"
 
-#: src/Http.cc:984
+#: src/Http.cc:975
 msgid "Sending request..."
 msgstr "リクエストを送信中..."
 
 #. eof
-#: src/Http.cc:1022
+#: src/Http.cc:1013
 msgid "Hit EOF while fetching headers"
 msgstr "ヘッダの取得中に EOF に達しました"
 
 #. should never happen
-#: src/Http.cc:1105
+#: src/Http.cc:1096
 msgid "Success, but did nothing??"
 msgstr "成功しましたが、何もしなかったのかな??"
 
-#: src/Http.cc:1139
+#: src/Http.cc:1130
 msgid "Could not parse HTTP status line"
 msgstr "HTTP ステータスラインを解析できませんでした"
 
-#: src/Http.cc:1245
+#: src/Http.cc:1268
 msgid "Receiving body..."
 msgstr "ボディを受信中..."
 
-#: src/Http.cc:1376
+#: src/Http.cc:1399
 msgid "Hit EOF"
 msgstr "EOF に達しました"
 
-#: src/Http.cc:1379
+#: src/Http.cc:1402
 msgid "Received not enough data, retrying"
 msgstr "十分なデータを受信できなかったので、再試行します"
 
-#: src/Http.cc:1387
+#: src/Http.cc:1410
 msgid "Received all"
 msgstr "すべて受信しました"
 
-#: src/Http.cc:1392
+#: src/Http.cc:1415
 msgid "Received all (total)"
 msgstr "すべて受信しました (合計)"
 
-#: src/Http.cc:1415 src/Http.cc:1436
+#: src/Http.cc:1438 src/Http.cc:1459
 msgid "chunked format violated"
 msgstr "chunked フォーマットに違反しています"
 
-#: src/Http.cc:1596
+#: src/Http.cc:1619
 msgid "Fetching headers..."
 msgstr "ヘッダを取得中..."
 
@@ -2007,7 +2007,7 @@ msgid "ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C"
 msgstr ""
 "ftp:ssl-auth は以下のどれかでなければなりません: SSL、TLS、TLS-P、TLS-C"
 
-#: src/FtpDirList.cc:141 src/HttpDir.cc:1144
+#: src/FtpDirList.cc:133 src/HttpDir.cc:1144
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "ファイルリスト (%lld) [%s] を取得中"
@@ -2085,7 +2085,7 @@ msgstr "copy: get は %lld に戻りました。適宜 put しています\n"
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy: `%s' へのリダイレクションを受け取りました\n"
 
-#: src/FileCopy.cc:1131
+#: src/FileCopy.cc:1133
 msgid "file name missed in URL"
 msgstr "URL 中にファイル名がありません"
 
@@ -2141,7 +2141,11 @@ msgstr "eta:"
 msgid "**** FXP: giving up, reverting to plain copy\n"
 msgstr "**** FXP: あきらめてプレーンコピーに戻ります\n"
 
-#: src/FileCopyFtp.cc:100
+#: src/FileCopyFtp.cc:96
+msgid "ftp:fxp-force is set but FXP is not available"
+msgstr ""
+
+#: src/FileCopyFtp.cc:108
 msgid "**** FXP: trying to reverse ftp:fxp-passive-source\n"
 msgstr "**** FXP: ftp:fxp-passive-source を置き換えようとしています\n"
 
@@ -2229,9 +2233,8 @@ msgstr "モジュール `%s' に依存しています: %s\n"
 msgid "modules are not supported on this system"
 msgstr "モジュールはこのシステムではサポートされていません"
 
-#, fuzzy
-#~ msgid "%s: %s.\n"
-#~ msgstr "%s: %s: %s\n"
+#~ msgid "%s: Invalid number for size\n"
+#~ msgstr "%s: サイズとしては不正な数です\n"
 
 #~ msgid "Warning: getcwd() failed: %s\n"
 #~ msgstr "警告: getcwd() が失敗しました: %s\n"
