@@ -42,7 +42,7 @@ struct xml_context
    void push(const char *);
    void pop();
    void set_base_dir(const char *d) { base_dir=xstrdup(d); }
-   const char *top() { return depth>0?stack[depth-1]:0; }
+   const char *top(int i=0) { return depth>i?stack[depth-i-1]:0; }
 };
 
 xml_context::~xml_context()
@@ -108,7 +108,7 @@ static void chardata_handle(void *data, const char *chardata, int len)
    memcpy(s,chardata,len);
    s[len]=0;
    const char *tag=ctx->top();
-   if(!strcmp(tag, "DAV:href"))
+   if(!strcmp(tag, "DAV:href") && !xstrcmp(ctx->top(1), "DAV:response"))
    {
       ParsedURL u(s,true);
       s=u.path;
@@ -140,6 +140,10 @@ static void chardata_handle(void *data, const char *chardata, int len)
    else if(!strcmp(tag,"DAV:getlastmodified"))
    {
       ctx->fi->SetDate(Http::atotm(s),0);
+   }
+   else if(!strcmp(tag,"DAV:creator-displayname"))
+   {
+      ctx->fi->SetUser(s);
    }
    else if(!strcmp(tag,"http://apache.org/dav/props/executable"))
    {
@@ -194,6 +198,8 @@ void HttpDirList::ParsePropsFormat(const char *b,int len,bool eof)
 	      XML_GetCurrentLineNumber(xml_p),
 	      XML_ErrorString(XML_GetErrorCode(xml_p)));
    }
+   if(!xml_ctx->fs)
+      goto end;
    xml_ctx->fs->rewind();
    for(;;)
    {
