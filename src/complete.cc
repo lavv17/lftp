@@ -677,7 +677,7 @@ static char **lftp_completion (const char *text,int start,int end)
 		* that's all we'll get and it'll look ugly: */
 	       const char *ret = rg->Status();
 	       if(*ret)
-		  rl_message ("%s ", ret);
+		  rl_message ("%s> ", ret);
 	    }
 
 	    SMTask::Block();

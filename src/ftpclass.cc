@@ -1550,10 +1550,7 @@ int   Ftp::Do()
 	    char *path_to_use=file;
 	    if(!vms_path && !AbsolutePath(file) && real_cwd
 	    && !strncmp(file,real_cwd,len) && file[len]=='/')
-	    {
-	       path_to_use=string_alloca(strlen(file+len)+2);
-	       sprintf(path_to_use,".%s",file+len);
-	    }
+	       path_to_use=file+len+1;
 	    SendCmd2("CWD",path_to_use);
 	    AddResp(RESP_CWD_RMD_DELE_OK,CHECK_CWD);
 	    SetRespPath(file);
