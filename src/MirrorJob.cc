@@ -912,7 +912,7 @@ CMD(mirror)
    int	 verbose=0;
    const char *newer_than=0;
    bool  remove_source_files=false;
-   int	 parallel=0;
+   int	 parallel=ResMgr::Query("mirror:parallel-transfer-count",0);
    bool	 reverse=false;
 
    PatternSet *exclude=0;
