@@ -1,3 +1,10 @@
+1999-08-06  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h, resource.cc: add ftp:rest-list setting.
+	* Job.h, Job.cc: more useful Job::AcceptSig.
+	* CmdExec.cc: improve AcceptSig.
+	* SleepJob.cc: assign jobno and cmdline to sub-CmdExec.
+
 1999-08-05  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* modconfig.h: enable proto-ftp module for real.

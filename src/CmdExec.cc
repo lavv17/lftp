@@ -933,12 +933,18 @@ int CmdExec::AcceptSig(int sig)
       if(res==WANTDIE)
       {
 	 exit_code=1;
+	 Job *new_waiting=waiting->waiting;
+	 waiting->waiting=0;
 	 delete waiting;
-	 waiting=0;
+	 waiting=new_waiting;
       }
+      if(waiting==0 && parent!=0)
+	 return WANTDIE;
       return MOVED;
    }
-   return WANTDIE;
+   if(parent!=0)
+      return WANTDIE;
+   return STALL;
 }
 
 void CmdExec::SetInteractive(bool i)

@@ -65,8 +65,11 @@ int SleepJob::Do()
 	 session=0;
 	 exec->parent=this;
 	 exec->SetCWD(saved_cwd);
+	 exec->AllocJobno();
 	 exec->FeedCmd(cmd);
 	 exec->FeedCmd("\n");
+	 exec->cmdline=(char*)xmalloc(2+strlen(cmd));
+	 sprintf(exec->cmdline,"(%s)",cmd);
 	 waiting=exec;
 	 return MOVED;
       }
