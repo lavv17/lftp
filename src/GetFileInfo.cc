@@ -4,6 +4,7 @@
 
 #include "GetFileInfo.h"
 #include "misc.h"
+#include "LsCache.h"
 
 GetFileInfo::GetFileInfo(FileAccess *a, const char *_dir, bool _showdir)
    : ListInfo(a,0)
@@ -20,10 +21,16 @@ GetFileInfo::GetFileInfo(FileAccess *a, const char *_dir, bool _showdir)
 
    if(_showdir) tried_dir = true;
 
-   /* if it ends with a slash and we're not showing directories,
-    * don't try it as a file at all */
-   if(!_showdir && *dir && dir[strlen(dir)-1] == '/')
-      tried_file = true;
+   /* if we're not showing directories, try to skip tests we don't need */
+   if(!_showdir) switch(LsCache::IsDirectory(a,dir))
+   {
+   case 0:
+      tried_dir = true; /* it's a file */
+      break;
+   case 1:
+      tried_file = true; /* it's a dir */
+      break;
+   }
 
    assert(!tried_dir || !tried_file); /* always do at least one */
    saved_error_text=0;

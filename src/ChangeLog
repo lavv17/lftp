@@ -1,3 +1,8 @@
+2001-12-05  Glenn Maynard <g_ld@zewt.org>
+
+	* GetFileInfo.cc: use LsCache::IsDirectory.
+	* LsCache.cc, LsCache.h: implement LsCache::IsDirectory.
+
 2001-12-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileAccess.h: (ParseLongList) new virtual method.
