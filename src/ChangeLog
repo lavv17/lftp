@@ -1,3 +1,7 @@
+2002-08-07  Glenn Maynard <g_ld@zewt.org>
+
+	* lftp_tinfo.cc: use extern "C".
+
 2002-08-06  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Job.cc: resume job in Fg.
