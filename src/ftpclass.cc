@@ -736,15 +736,13 @@ void  Ftp::GetBetterConnection(int level)
 	 continue;
       if(SameConnection(o))
       {
-	 // connected session must have resolved address
-	 if(/*o->lookup_done &&*/ !lookup_done)
+	 // connected session (o) must have resolved address
+	 if(!lookup_done)
 	 {
 	    xfree(peer);
 	    peer=(sockaddr_u*)xmemdup(o->peer,o->peer_num*sizeof(*o->peer));
 	    peer_num=o->peer_num;
 	    peer_curr=o->peer_curr;
-	    if(peer_curr>=peer_num)
-	       peer_curr=0;
 	    lookup_done=true;
 	 }
 
@@ -764,6 +762,8 @@ void  Ftp::GetBetterConnection(int level)
 	 control_sock=o->control_sock;
 	 o->control_sock=-1;
 	 state=EOF_STATE;
+	 if(peer_curr>=peer_num)
+	    peer_curr=0;
 	 type=o->type;
 	 event_time=o->event_time;
 
@@ -932,14 +932,17 @@ int   Ftp::Do()
 
       control_sock=socket(peer_sa.sa.sa_family,SOCK_STREAM,IPPROTO_TCP);
       if(control_sock==-1)
+      {
+	 sprintf(str,"socket: %s",strerror(errno));
+         DebugPrint("**** ",str,0);
 	 goto system_error;
+      }
       KeepAlive(control_sock);
       SetSocketBuffer(control_sock);
       SetSocketMaxseg(control_sock);
       NonBlock(control_sock);
       CloseOnExec(control_sock);
 
-      a=(unsigned char*)&peer_sa.in.sin_addr;
       sprintf(str,_("Connecting to %s%s (%s) port %u"),proxy?"proxy ":"",
 	 host_to_connect,numeric_address(&peer_sa),get_port(&peer_sa));
       DebugPrint("---- ",str,0);
@@ -1059,6 +1062,9 @@ int   Ftp::Do()
       if(mode==CLOSED || mode==CONNECT_VERIFY)
 	 goto notimeout_return;
 
+      assert(peer!=0);
+      assert(peer_curr<peer_num);
+
       if(home==0 && !RespQueueIsEmpty())
 	 goto usual_return;
 
@@ -1108,7 +1114,11 @@ int   Ftp::Do()
       {
 	 data_sock=socket(peer_sa.sa.sa_family,SOCK_STREAM,IPPROTO_TCP);
 	 if(data_sock==-1)
+	 {
+	    sprintf(str,"socket(data): %s",strerror(errno));
+	    DebugPrint("**** ",str,0);
 	    goto system_error;
+	 }
    	 NonBlock(data_sock);
 	 CloseOnExec(data_sock);
 	 KeepAlive(data_sock);
