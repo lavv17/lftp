@@ -806,7 +806,8 @@ static void init_terminfo()
    if(initted) return;
    initted = true;
 
-   if(setupterm(NULL, 1, NULL) == ERR)
+   int errret=0;
+   if(setupterm(NULL, 1, &errret) == ERR)
       terminfo_ok = false;
 }
 #endif

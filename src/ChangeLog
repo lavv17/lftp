@@ -1,3 +1,8 @@
+2002-07-25  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* misc.cc: provide errret for setupterm, so that it does not exit
+	  on error, allowing lftp to work without valid TERM.
+
 2002-07-24  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* complete.cc: no need for multiple functions slot-N.
