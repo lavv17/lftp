@@ -94,14 +94,24 @@ void remove_tags(char *buf)
    for(;;)
    {
       char *less=strchr(buf,'<');
-      if(!less)
+      char *amp=strstr(buf,"&nbsp;");
+      if(!less && !amp)
 	 break;
+      if(amp && (!less || amp<less))
+      {
+	 amp[0]=' ';
+	 memmove(amp+1,amp+6,strlen(amp+6)+1);
+	 buf=amp+1;
+	 continue;
+      }
+#if 0
       if(token_eq(less+1,strlen(less+1),"a"))
       {
 	 // don't allow anchors to be skipped.
       	 *less=0;
 	 break;
       }
+#endif
       char *more=strchr(less+1,'>');
       if(!more)
 	 break;
@@ -144,7 +154,7 @@ const char *find_eol(const char *buf,int len,bool eof,int *eol_size)
 	    real_eol=0;
 	 break;
       }
-      if(strncasecmp(scan,"<td>",4) && strncasecmp(scan,"</td>",5))
+      if(strncasecmp(scan,"<td",3) && strncasecmp(scan,"</td",4))
 	 break;
       real_eol=find_char(scan,len-(scan-buf),'\n');
    }
@@ -212,7 +222,303 @@ static void decode_amps(char *s)
    }
 }
 
+class file_info
+{
+public:
+   long long size;
+   int year,month,day,hour,minute,second;
+   char *sym_link;
+   bool free_sym_link;
+   bool is_sym_link;
+   bool is_directory;
+   char month_name[32];
+   char size_str[32];
+   char perms[12];
+
+   void clear();
+   bool validate();
+
+   file_info()
+   {
+      is_directory=false;
+      free_sym_link=false;
+      clear();
+   }
+};
+void file_info::clear()
+{
+   size=-1;
+   year=-1;
+   month=-1;
+   day=0;
+   hour=0;
+   minute=0;
+   second=0;
+   month_name[0]=0;
+   size_str[0]=0;
+   perms[0]=0;
+   if(free_sym_link)
+      xfree(sym_link);
+   sym_link=0;
+   is_sym_link=false;
+}
+bool file_info::validate()
+{
+   if(year!=-1)
+   {
+      // server's y2000 problem :)
+      if(year<37)
+	 year+=2000;
+      else if(year<100)
+	 year+=1900;
+   }
+
+   if(day<1 || day>31 || hour<0 || hour>23 || minute<0 || minute>59
+   || (month==-1 && !is_ascii_alnum(month_name[0])))
+      return false;
+
+   return true;
+}
+
+
 #define debug(str) Log::global->Format(10,"* %s\n",str)
+
+static bool try_apache_listing(file_info &info,const char *str)
+{
+   info.clear();
+
+   // usual apache listing: DD-Mon-YYYY hh:mm size
+   int n=sscanf(str,"%2d-%3s-%4d %2d:%2d %30s",
+	       &info.day,info.month_name,&info.year,
+	       &info.hour,&info.minute,info.size_str);
+   if(n==6 && (info.size_str[0]=='-' || is_ascii_digit(info.size_str[0])))
+   {
+      debug("apache listing matched");
+      return true;
+   }
+   return false;
+}
+static bool try_apache_listing_unusual(file_info &info,const char *str)
+{
+   info.clear();
+
+   // unusual apache listing: size DD-Mon-YYYY
+   int n=sscanf(str,"%30s %2d-%3s-%d",
+	       info.size_str,&info.day,info.month_name,&info.year);
+   if(n==4 && (info.size_str[0]=='-' || is_ascii_digit(info.size_str[0])))
+   {
+      debug("unusual apache listing matched");
+      return true;
+   }
+   return false;
+}
+static bool try_netscape_proxy(file_info &info,const char *str)
+{
+   info.clear();
+
+   char size_unit[7];
+   char week_day[4];
+   // Netscape-Proxy 2.53
+   int n=sscanf(str,"%lld %6s %3s %3s %d %2d:%2d:%2d %4d",
+	       &info.size,size_unit,week_day,
+	       info.month_name,&info.day,
+	       &info.hour,&info.minute,&info.second,&info.year);
+   if(n==9)
+   {
+      if(!strcasecmp(size_unit,"bytes")
+      || !strcasecmp(size_unit,"byte"))
+	 sprintf(info.size_str,"%lld",info.size);
+      else
+      {
+	 sprintf(info.size_str,"%lld%s",info.size,size_unit);
+	 info.size=-1;
+      }
+      debug("Netscape-Proxy 2.53 listing matched");
+      return true;
+   }
+   n=sscanf(str,"%3s %3s %d %2d:%2d:%2d %4d %s",
+	    week_day,info.month_name,&info.day,
+	    &info.hour,&info.minute,&info.second,&info.year,info.size_str);
+   if(n==7 || (n==8 && !is_ascii_digit(info.size_str[0])))
+   {
+      strcpy(info.size_str,"-");
+      if(!info.is_directory)
+	 info.is_sym_link=true;
+      debug("Netscape-Proxy 2.53 listing matched (dir/symlink)");
+      return true;
+   }
+   return false;
+}
+static bool try_squid_eplf(file_info &info,const char *str)
+{
+   info.clear();
+
+   char week_day[4];
+   int n=sscanf(str,"%3s %3s %d %2d:%2d:%2d %4d %s",
+	    week_day,info.month_name,&info.day,
+	    &info.hour,&info.minute,&info.second,&info.year,info.size_str);
+   if(n==8) // maybe squid's EPLF listing.
+   {
+      // no symlinks here.
+      debug("squid EPLF listing matched");
+      return true;
+   }
+   return false;
+}
+static bool try_mini_proxy(file_info &info,const char *buf)
+{
+   info.clear();
+
+   char PM[3];
+   // Mini-Proxy web server.
+   if(7==sscanf(buf,"%d/%d/%d %d:%d %2s %30s",
+	       &info.month,&info.day,&info.year,
+	       &info.hour,&info.minute,PM,info.size_str))
+   {
+      if(!strcasecmp(PM,"PM"))
+      {
+	 info.hour+=12;
+	 if(info.hour==24)
+	    info.hour=0;
+      }
+      if(!is_ascii_digit(info.size_str[0]))
+      {
+	 if(!strcasecmp(info.size_str,"<dir>"))
+	    info.is_directory=true;
+	 strcpy(info.size_str,"-");
+      }
+      info.month--;
+      debug("Mini-Proxy web server listing matched");
+      return true;
+   }
+   return false;
+}
+static bool try_apache_unixlike(file_info &info,const char *buf,
+   const char *more,const char *more1,const char **info_string,int *info_string_len)
+{
+   info.clear();
+
+   // Apache Unix-like listing (from apache proxy):
+   //   Perms Nlnk user [group] size Mon DD (YYYY or hh:mm)
+   int perms_code;
+   int n_links;
+   char user[32];
+   char group[32];
+   char year_or_time[6];
+   int consumed;
+
+   int n=sscanf(buf,"%11s %d %31s %31s %lld %3s %2d %5s%n",info.perms,&n_links,
+	       user,group,&info.size,info.month_name,&info.day,
+	       year_or_time,&consumed);
+   if(n==4) // bsd-like listing without group?
+   {
+      group[0]=0;
+      n=sscanf(buf,"%11s %d %31s %lld %3s %2d %5s%n",info.perms,&n_links,
+	    user,&info.size,info.month_name,&info.day,year_or_time,&consumed);
+   }
+   if(n>=7 && -1!=(perms_code=parse_perms(info.perms+1))
+   && -1!=(info.month=parse_month(info.month_name))
+   && -1!=parse_year_or_time(year_or_time,&info.year,&info.hour,&info.minute))
+   {
+      sprintf(info.size_str,"%lld",info.size);
+      if(info.perms[0]=='d')
+	 info.is_directory=true;
+      else if(info.perms[0]=='l')
+      {
+	 info.is_sym_link=true;
+	 char *str=string_alloca(more1-more);
+	 memcpy(str,more+1,more1-more-4);
+	 str[more1-more-4]=0;
+	 str=strstr(str," -> ");
+	 if(str)
+	 {
+	    info.sym_link=xstrdup(str+4);
+	    info.free_sym_link=true;
+	 }
+      }
+      *info_string=buf;
+      *info_string_len=consumed;
+      debug("apache ftp over http proxy listing matched");
+      return true;
+   }
+   return false;
+}
+
+static bool try_roxen(file_info &info,const char *str)
+{
+   info.clear();
+
+   // Roxen listing ([size] {kb/Mb} application/octet-stream YYYY-MM-DD)
+   // or (directory YYYY-MM-DD)
+   char size_mod[6];
+   long size_mod_i=0;
+
+   str=strchr(str+(*str=='\n'),'\n');
+   if(!str)
+      return false;
+   int n=sscanf(str,"%26s %5s %*[a-z0-9/-] %4d-%2d-%2d",info.size_str,size_mod,
+	 &info.year,&info.month,&info.day);
+   if(n==5)
+   {
+      if(!strncmp(size_mod,"byte",4))
+	 size_mod_i=1;
+      else if(!strcmp(size_mod,"kb"))
+	 size_mod_i=1024;
+      else if(!strcmp(size_mod,"Mb"))
+	 size_mod_i=1024*1024;
+      else if(!strcmp(size_mod,"Gb"))
+	 size_mod_i=1024*1024*1024;
+      if(size_mod_i)
+      {
+	 sprintf(info.size_str,"%s%s",info.size_str,size_mod);
+	 debug("Roxen web server listing matched");
+	 return true;
+      }
+   }
+   strcpy(info.size_str,"-");
+   n=sscanf(str," directory %4d-%2d-%2d",&info.year,&info.month,&info.day);
+   if(n==3)
+   {
+      debug("Roxen web server listing matched (directory)");
+      info.is_directory=true;
+      return true;
+   }
+   return false;
+}
+static bool try_squid_ftp(file_info &info,const char *str,char *str_with_tags)
+{
+   info.clear();
+
+   char year_or_time[6];
+
+   // squid's ftp listing: Mon DD (YYYY or hh:mm) [size]
+   int n=sscanf(str,"%3s %2d %5s %30s",info.month_name,&info.day,year_or_time,info.size_str);
+   if(n<3)
+      return false;
+   if(!is_ascii_digit(info.size_str[0]))
+      strcpy(info.size_str,"-");
+   if(-1==parse_year_or_time(year_or_time,&info.year,&info.hour,&info.minute))
+      return false;
+
+   char *ptr;
+   ptr=strstr(str_with_tags," -> <A HREF=\"");
+   if(ptr)
+   {
+      info.is_sym_link=true;
+      info.sym_link=ptr+13;
+      ptr=strchr(info.sym_link,'"');
+      if(!ptr)
+	 info.sym_link=0;
+      else
+      {
+	 *ptr=0;
+	 url::decode_string(info.sym_link);
+      }
+   }
+   debug("squid ftp listing matched");
+   return true;
+}
+
 
 // this procedure is highly inefficient in some cases,
 // esp. when it has to return for more data many times.
@@ -448,8 +754,10 @@ parse_url_again:
    }
 
    int link_len=strlen(link_target);
-   bool is_directory=(link_len>0 && link_target[link_len-1]=='/');
-   if(is_directory && link_len>1)
+
+   file_info info;
+   info.is_directory=(link_len>0 && link_target[link_len-1]=='/');
+   if(info.is_directory && link_len>1)
       link_target[--link_len]=0;
 
    if(prefix)
@@ -511,25 +819,16 @@ parse_url_again:
       show_in_list=false;  // makes apache listings look better.
 
    skip_len=tag_len;
-   char *sym_link=0;
-   bool is_sym_link=false;
-
    if(list && show_in_list)
    {
-      int year=-1,month=-1,day=0,hour=0,minute=0;
-      char month_name[32]="";
-      char size_str[32]="";
-      char perms[12]="";
       const char *more1;
       char *str,*str_with_tags;
-      int n;
       char *line_add=(char*)alloca(link_len+128+2*1024);
-      bool data_available=false;
       const char *info_string=0;
       int         info_string_len=0;
 
       if(!a_href)
-	 goto add_file;	// only <a href> tags can have useful info.
+	 goto add_file_no_info;	// only <a href> tags can have useful info.
 
       // try to extract file information
       more1=more;
@@ -541,9 +840,9 @@ parse_url_again:
 	 if(!more1)
 	 {
 	    if(eof)
-	       goto add_file;
+	       goto add_file_no_info;
 	    if(end-more>2*1024) // too long a-href
-	       goto add_file;
+	       goto add_file_no_info;
 	    return 0;  // no full a-href yet
 	 }
 	 if(!strncasecmp(more1-3,"</a",3))
@@ -578,211 +877,68 @@ parse_url_again:
       str_with_tags=alloca_strdup(str);
       remove_tags(str);
 
-      // usual apache listing: DD-Mon-YYYY hh:mm size
-      n=sscanf(str,"%2d-%3s-%4d %2d:%2d %30s",
-		    &day,month_name,&year,&hour,&minute,size_str);
-      if(n==6)
+      if(try_apache_listing(info,str)		&& info.validate()) goto got_info;
+      if(try_apache_listing_unusual(info,str)	&& info.validate()) goto got_info;
+      if(try_netscape_proxy(info,str)		&& info.validate()) goto got_info;
+      if(try_squid_eplf(info,str) && info.validate())
       {
-	 debug(_("apache listing matched"));
+	 // skip rest of line, because there may be another href to link target.
+	 skip_len=eol-buf+eol_len;
 	 goto got_info;
       }
-
-      hour=0;
-      minute=0;
-      // unusual apache listing: size DD-Mon-YYYY
-      n=sscanf(str,"%30s %2d-%3s-%d",size_str,&day,month_name,&year);
-      if(n==4 && (size_str[0]=='-' || is_ascii_digit(size_str[0])))
-      {
-	 debug(_("unusual apache listing matched"));
+      if(try_mini_proxy(info,buf)		&& info.validate()) goto got_info;
+      if(try_apache_unixlike(info,buf,more,more1,&info_string,&info_string_len)
+      && info.validate())
 	 goto got_info;
-      }
-
-      char size_unit[7];
-      long long size;
-      char week_day[4];
-      int second;
-      // Netscape-Proxy 2.53
-      if(9==sscanf(str,"%lld %6s %3s %3s %d %2d:%2d:%2d %4d",&size,size_unit,
-	       week_day,month_name,&day,&hour,&minute,&second,&year))
-      {
-	 if(!strcasecmp(size_unit,"bytes")
-	 || !strcasecmp(size_unit,"byte"))
-	    sprintf(size_str,"%lld",size);
-	 else
-	    sprintf(size_str,"%lld%s",size,size_unit);
-	 debug(_("Netscape-Proxy 2.53 listing matched"));
-	 goto got_info;
-      }
-      n=sscanf(str,"%3s %3s %d %2d:%2d:%2d %4d %s",
-	       week_day,month_name,&day,&hour,&minute,&second,&year,size_str);
-      if(n==7 || (n==8 && !is_ascii_digit(size_str[0])))
-      {
-	 strcpy(size_str,"-");
-	 if(!is_directory)
-	    is_sym_link=true;
-	 debug(_("Netscape-Proxy 2.53 listing matched (dir/symlink)"));
-	 goto got_info;
-      }
-      if(n==8) // maybe squid's EPLF listing.
+      if(try_roxen(info,str)			&& info.validate()) goto got_info;
+      if(try_squid_ftp(info,str,str_with_tags) && info.validate())
       {
 	 // skip rest of line, because there may be href to link target.
 	 skip_len=eol-buf+eol_len;
-	 // no symlinks here.
-	 debug(_("squid EPLF listing matched"));
 	 goto got_info;
       }
 
-      char PM[3];
-      // Mini-Proxy web server.
-      if(7==sscanf(buf,"%d/%d/%d %d:%d %2s %30s",&month,&day,&year,&hour,
-			&minute,PM,size_str))
-      {
-	 if(!strcasecmp(PM,"PM"))
-	 {
-	    hour+=12;
-	    if(hour==24)
-	       hour=0;
-	 }
-	 if(!is_ascii_digit(size_str[0]))
-	 {
-	    if(!strcasecmp(size_str,"<dir>"))
-	       is_directory=true;
-	    strcpy(size_str,"-");
-	 }
-	 month--;
-	 debug(_("Mini-Proxy web server listing matched"));
-	 goto got_info;
-      }
-
-      // Apache Unix-like listing (from apache proxy):
-      //   Perms Nlnk user [group] size Mon DD (YYYY or hh:mm)
-      int perms_code;
-      int n_links;
-      char user[32];
-      char group[32];
-      char year_or_time[6];
-      int consumed;
-
-      n=sscanf(buf,"%11s %d %31s %31s %lld %3s %2d %5s%n",perms,&n_links,
-	    user,group,&size,month_name,&day,year_or_time,&consumed);
-      if(n==4) // bsd-like listing without group?
-      {
-	 group[0]=0;
-	 n=sscanf(buf,"%11s %d %31s %lld %3s %2d %5s%n",perms,&n_links,
-	       user,&size,month_name,&day,year_or_time,&consumed);
-      }
-      if(n>=7 && -1!=(perms_code=parse_perms(perms+1))
-      && -1!=(month=parse_month(month_name))
-      && -1!=parse_year_or_time(year_or_time,&year,&hour,&minute))
-      {
-	 sprintf(size_str,"%lld",size);
-	 if(perms[0]=='d')
-	    is_directory=true;
-	 else if(perms[0]=='l')
-	 {
-	    is_sym_link=true;
-	    str=string_alloca(more1-more);
-	    memcpy(str,more+1,more1-more-4);
-	    str[more1-more-4]=0;
-	    sym_link=strstr(str," -> ");
-	    if(sym_link)
-	       sym_link+=4;
-	 }
-	 info_string=buf;
-	 info_string_len=consumed;
-	 debug(_("apache ftp over http proxy listing matched"));
-	 goto got_info;
-      }
-      perms[0]=0;
-      size=-1;
-      strcpy(size_str,"-");
-
-      // squid's ftp listing: Mon DD (YYYY or hh:mm) [size]
-      n=sscanf(str,"%3s %2d %5s %30s",month_name,&day,year_or_time,size_str);
-      if(n<3)
-	 goto add_file;
-      if(!is_ascii_digit(size_str[0]))
-	 strcpy(size_str,"-");
-      if(-1==parse_year_or_time(year_or_time,&year,&hour,&minute))
-	 goto add_file;
-
-      // skip rest of line, because there may be href to link target.
-      skip_len=eol-buf+eol_len;
-
-      char *ptr;
-      ptr=strstr(str_with_tags," -> <A HREF=\"");
-      if(ptr)
-      {
-	 is_sym_link=true;
-	 sym_link=ptr+13;
-	 ptr=strchr(sym_link,'"');
-	 if(!ptr)
-	    sym_link=0;
-	 else
-	 {
-	    *ptr=0;
-	    url::decode_string(sym_link);
-	 }
-      }
-      debug("squid ftp listing matched");
+   add_file_no_info:
+      sprintf(line_add,"%s  --  %s",
+	    info.is_directory?"drwxr-xr-x":"-rw-r--r--",link_target);
+      goto append_type_maybe;
 
    got_info:
-      if(year!=-1)
+      if(info_string)
       {
-	 // server's y2000 problem :)
-	 if(year<37)
-	    year+=2000;
-	 else if(year<100)
-	    year+=1900;
+	 sprintf(line_add,"%.*s %s",info_string_len,info_string,link_target);
+	 goto append_symlink_maybe;
       }
-
-      if(day<1 || day>31 || hour<0 || hour>23 || minute<0 || minute>59
-      || (month==-1 && !is_ascii_alnum(month_name[0])))
-	 goto add_file;	// invalid data
-
-      data_available=true;
-
-   add_file:
-      if(data_available)
+      if(info.month==-1)
+	 info.month=parse_month(info.month_name);
+      if(info.month>=0)
       {
-	 if(info_string)
-	 {
-	    sprintf(line_add,"%.*s %s",info_string_len,info_string,link_target);
-	    goto append_symlink_maybe;
-	 }
-	 if(month==-1)
-	    month=parse_month(month_name);
-	 if(month>=0)
-	 {
-	    sprintf(month_name,"%02d",month+1);
-	    if(year==-1)
-	       year=guess_year(month,day);
-	 }
-	 if(perms[0]==0)
-	 {
-	    if(is_directory)
-	       strcpy(perms,"drwxr-xr-x");
-	    else if(is_sym_link)
-	       strcpy(perms,"lrwxrwxrwx");
-	    else
-	       strcpy(perms,"-rw-r--r--");
-	 }
-	 sprintf(line_add,"%s  %11s  %04d-%s-%02d %02d:%02d  %s",
-	    perms,size_str,year,month_name,day,hour,minute,link_target);
-      append_symlink_maybe:
-	 if(sym_link)
-	    sprintf(line_add+strlen(line_add)," -> %s",sym_link);
+	 sprintf(info.month_name,"%02d",info.month+1);
+	 if(info.year==-1)
+	    info.year=guess_year(info.month,info.day);
       }
-      else
+      if(info.perms[0]==0)
       {
-	 sprintf(line_add,"%s  --  %s",
-	    is_directory?"drwxr-xr-x":"-rw-r--r--",link_target);
+	 if(info.is_directory)
+	    strcpy(info.perms,"drwxr-xr-x");
+	 else if(info.is_sym_link)
+	    strcpy(info.perms,"lrwxrwxrwx");
+	 else
+	    strcpy(info.perms,"-rw-r--r--");
       }
+      sprintf(line_add,"%s  %11s  %04d-%s-%02d %02d:%02d  %s",
+	 info.perms,info.size_str,info.year,info.month_name,info.day,
+	 info.hour,info.minute,link_target);
+   append_symlink_maybe:
+      if(info.sym_link)
+	 sprintf(line_add+strlen(line_add)," -> %s",info.sym_link);
+
+   append_type_maybe:
       if(lsopt && lsopt->append_type)
       {
-	 if(is_directory)
+	 if(info.is_directory)
 	    strcat(line_add,"/");
-	 if(is_sym_link && !sym_link)
+	 if(info.is_sym_link && !info.sym_link)
 	    strcat(line_add,"@");
       }
       strcat(line_add,"\n");
@@ -802,15 +958,15 @@ parse_url_again:
       if(slash)
       {
 	 *slash=0;
-	 is_directory=true;
+	 info.is_directory=true;
       }
 
       FileInfo *fi=new FileInfo;
       fi->SetName(link_target);
-      if(sym_link)
-	 fi->SetSymlink(sym_link);
+      if(info.sym_link)
+	 fi->SetSymlink(info.sym_link);
       else
-	 fi->SetType(is_directory ? fi->DIRECTORY : fi->NORMAL);
+	 fi->SetType(info.is_directory ? fi->DIRECTORY : fi->NORMAL);
 
       set->Add(fi);
    }
