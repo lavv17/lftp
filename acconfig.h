@@ -119,6 +119,8 @@
 
 #undef HAVE_RANDOM_DECL
 
+#undef HAVE_INET_ATON_DECL
+
 /* Define to `int' if <sys/socket.h> doesn't define.  */
 #undef socklen_t
 
@@ -237,7 +239,7 @@ CDECL void SOCKSinit(const char *);
 #endif
 
 #ifndef HAVE_INET_ATON
-# define inet_aton(host,addr) ((addr->s_addr=inet_addr(host))!=-1)
+# define inet_aton(host,addr) (((addr)->s_addr=inet_addr(host))!=-1)
 #endif
 
 /* Tell the compiler when a conditional or integer expression is
