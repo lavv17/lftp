@@ -8,6 +8,7 @@
 	  process.
 	* ResMgr.h: add TimeInterval(time_t) constructor.
 	* SleepJob.cc, SleepJob.h: use TimeInterval; support `sleep forever'.
+	* commands.cc, LsCache.cc, LsCache.h: use TimeInterval.
 
 1999-09-19  Alexander V. Lukyanov  <lav@yars.free.net>
 
