@@ -54,7 +54,6 @@ protected:
 public:
    int	 Do();
    int	 GetState() { return status; }
-   int	 GetErrno() { return saved_errno; }
    int	 GetInfo() { return term_info; }
    int	 Kill(int sig=SIGTERM);
 
