@@ -1047,8 +1047,8 @@ msgid ""
 " -d  list only default values, not necessary current ones\n"
 msgstr ""
 "Définit la variable à la valeur indiquée. Si la valeur est omise, cela\n"
-"va effacer la variable. Le format d'un nom de variable est ``nom/"
-"restriction''\n"
+"va effacer la variable. Le format d'un nom de variable est "
+"``nom/restriction''\n"
 "où la restriction permet de spécifier l'application exacte de la "
 "définition.\n"
 "Regardez lftp(1) pour les détails.\n"
@@ -1449,7 +1449,7 @@ msgstr "Passage en mode NOREST"
 
 #: src/ftpclass.cc:379
 msgid "Server reply matched ftp:retry-530[-anonymous], retrying"
-msgstr ""
+msgstr "La réponse du serveur est de la forme ftp:retry-530[-anonymous], recommence"
 
 #: src/ftpclass.cc:419
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
@@ -1997,6 +1997,3 @@ msgstr "dépendence du module `%s': %s\n"
 #: src/module.cc:201
 msgid "modules are not supported on this system"
 msgstr "les modules ne sont pas supportés sur ce système"
-
-#~ msgid "Saw `Login incorrect', assume failed login"
-#~ msgstr "`Login incorrect' détecté, échec de la connexion"
