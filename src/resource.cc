@@ -97,7 +97,6 @@ static ResDecl resources[]={
    ResDecl  ("ftp:verify-port",	       "no",    ResMgr::BoolValidate,0),
    ResDecl  ("hftp:cache",	       "yes",	ResMgr::BoolValidate,0),
    ResDecl  ("hftp:proxy",	       "",	HttpProxyValidate,0),
-   ResDecl  ("hftp:use-head",	       "yes",	ResMgr::BoolValidate,0),
    ResDecl  ("http:cache",	       "yes",	ResMgr::BoolValidate,0),
    ResDecl  ("http:proxy",	       "",	HttpProxyValidate,0),
    ResDecl  ("net:idle",	       "180",   ResMgr::UNumberValidate,0),

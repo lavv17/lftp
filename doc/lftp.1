@@ -726,11 +726,6 @@ Default value is taken from environment
 variable \fBftp_proxy\fP if it starts with ``http://'', otherwise from
 environment variable \fBhttp_proxy\fP.
 .TP
-.BR hftp:use-head \ (bool)
-if set to off, lftp will try to use `GET' instead of `HEAD' for hftp protocol.
-While this is slower, it may allow lftp to work with some proxies which
-don't understand or mishandle ``HEAD ftp://'' requests.
-.TP
 .BR http:cache \ (bool)
 allow server/proxy side caching.
 .TP

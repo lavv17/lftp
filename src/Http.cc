@@ -90,7 +90,6 @@ void Http::Init()
    no_cache=false;
 
    hftp=false;
-   use_head=true;
 }
 
 Http::Http() : super()
@@ -206,33 +205,23 @@ void Http::Send(const char *format,...)
 
 void Http::SendMethod(const char *method,const char *efile)
 {
-   char *ehost=string_alloca(strlen(hostname)*3+1);
-   url::encode_string(hostname,ehost);
-   if(!use_head && !strcmp(method,"HEAD"))
-      method="GET";
    Send("%s %s HTTP/1.1\r\n",method,efile);
-   Send("Host: %s\r\n",ehost);
+   Send("Host: %s\r\n",url::encode_string(hostname));
    Send("User-Agent: %s/%s\r\n","lftp",VERSION);
    Send("Accept: */*\r\n");
 }
 
 
-void Http::SendBasicAuth(const char *tag,const char *user,const char *pass)
+void Http::SendAuth()
 {
+   if(!user || !pass)
+      return;
    /* Basic scheme */
    char *buf=(char*)alloca(strlen(user)+1+strlen(pass)+1);
    sprintf(buf,"%s:%s",user,pass);
    char *buf64=(char*)alloca(base64_length(strlen(buf))+1);
    base64_encode(buf,buf64,strlen(buf));
-   Send("%s: Basic %s\r\n",tag,buf64);
-}
-
-void Http::SendAuth()
-{
-   if(proxy && proxy_user && proxy_pass)
-      SendBasicAuth("Proxy-Authorization",proxy_user,proxy_pass);
-   if(user && pass)
-      SendBasicAuth("Authorization",user,pass);
+   Send("Authorization: Basic %s\r\n",buf64);
 }
 
 bool Http::ModeSupported()
@@ -261,40 +250,25 @@ bool Http::ModeSupported()
 
 void Http::SendRequest(const char *connection,const char *f)
 {
-   char *efile=string_alloca(strlen(f)*3+1);
-   url::encode_string(f,efile);
-   char *ecwd=string_alloca(strlen(cwd)*3+1);
-   url::encode_string(cwd,ecwd);
+   char *efile=alloca_strdup(url::encode_string(f));
+   char *ecwd=alloca_strdup(url::encode_string(cwd));
    int efile_len;
 
-   char *pfile=(char*)alloca(4+3+xstrlen(user)*6+3+xstrlen(pass)*3+1+
-			      strlen(hostname)*3+1+strlen(cwd)*3+1+
-			      strlen(efile)+1+1);
+   char *pfile=(char*)alloca(4+3+strlen(hostname)*3+1
+			      +strlen(cwd)*3+1+strlen(efile)+1+1);
 
    if(proxy)
    {
       const char *proto="http";
       if(hftp)
-      {
-	 if(user && pass)
-	 {
-	    strcpy(pfile,"ftp://");
-	    url::encode_string(user,pfile+strlen(pfile),"/:@"URL_UNSAFE);
-	    strcat(pfile,"@");
-	    url::encode_string(hostname,pfile+strlen(pfile));
-	    goto add_path;
-	 }
 	 proto="ftp";
-      }
-      sprintf(pfile,"%s://",proto);
-      url::encode_string(hostname,pfile+strlen(pfile));
+      sprintf(pfile,"%s://%s",proto,url::encode_string(hostname));
    }
    else
    {
       pfile[0]=0;
    }
 
-add_path:
    if(ecwd[0]=='~' && ecwd[1]=='/')
       ecwd+=1;
 
@@ -374,8 +348,6 @@ add_path:
       Send("Pragma: no-cache\r\n"); // for HTTP/1.0 compatibility
       Send("Cache-Control: no-cache\r\n");
    }
-   if(mode==ARRAY_INFO && !use_head)
-      connection="close";
    if(mode!=ARRAY_INFO || connection)
       Send("Connection: %s\r\n",connection?connection:"close");
    Send("\r\n");
@@ -1038,7 +1010,7 @@ int Http::Write(const void *buf,int size)
    if(Error())
       return(error_code);
 
-   if(state!=RECEIVING_HEADER || status!=0 || send_buf->Size()!=0)
+   if(state!=RECEIVING_HEADER || status!=0)
       return DO_AGAIN;
 
    {
@@ -1075,11 +1047,9 @@ int Http::SendEOT()
 {
    if(sent_eot)
       return OK;
-   if(Error())
-      return(error_code);
    if(mode==STORE)
    {
-      if(state==RECEIVING_HEADER && send_buf->Size()==0)
+      if(state==RECEIVING_HEADER)
       {
 	 shutdown(sock,1);
 	 sent_eot=true;
@@ -1184,36 +1154,18 @@ ListInfo *Http::MakeListInfo()
 }
 
 
-#undef super
-#define super Http
 HFtp::HFtp()
 {
    hftp=true;
-   Reconfig(0);
+   Reconfig();
 }
 HFtp::~HFtp()
 {
 }
-HFtp::HFtp(const HFtp *o) : super(o)
+HFtp::HFtp(const HFtp *o) : Http(o)
 {
    hftp=true;
-   Reconfig(0);
-}
-void HFtp::Login(const char *u,const char *p)
-{
-   super::Login(u,p);
-   if(u)
-   {
-      home=(char*)xmalloc(strlen(u)+2);
-      sprintf(home,"~%s",u);
-      xfree(cwd);
-      cwd=xstrdup(home);
-   }
-}
-void HFtp::Reconfig(const char *name)
-{
-   super::Reconfig(name);
-   use_head=Query("use-head");
+   Reconfig();
 }
 
 /* Converts struct tm to time_t, assuming the data in tm is UTC rather
