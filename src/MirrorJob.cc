@@ -930,6 +930,8 @@ int   MirrorJob::Do()
 	 break;
 
       transfer_count++; // parent mirror will decrement it.
+      if(parent_mirror)
+	 parent_mirror->stats.Add(stats);
       state=DONE;
       m=MOVED;
       /*fallthrough*/
@@ -1028,8 +1030,6 @@ MirrorJob::~MirrorJob()
       delete exclude;
    if(script && script_needs_closing)
       fclose(script);
-   if(parent_mirror)
-      parent_mirror->stats.Add(stats);
 }
 
 void MirrorJob::va_Report(const char *fmt,va_list v)

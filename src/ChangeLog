@@ -1,3 +1,8 @@
+2004-10-17  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: fixed rare coredump when parent_mirror was referenced
+	  from dtor, and it was already deleted.
+
 2004-10-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Fish.cc: prepend ./ to file names starting with - or ~
