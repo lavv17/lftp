@@ -75,6 +75,7 @@ SSL *lftp_ssl_new(int fd)
    lftp_ssl_ctx_init();
    SSL *ssl=SSL_new(ssl_ctx);
    SSL_set_fd(ssl,fd);
+   SSL_ctrl(ssl,SSL_CTRL_MODE,SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER,0);
    return ssl;
 }
 
