@@ -181,7 +181,9 @@ socklen_t NetAccess::SocketAddrLen(const sockaddr_u *u)
 
 int NetAccess::SocketConnect(int fd,const sockaddr_u *u)
 {
-   int res=connect(fd,&u->sa,SocketAddrLen(u));
+   // some systems have wrong connect() prototype, so we have to cast off const.
+   // in any case, connect does not alter the address.
+   int res=connect(fd,(sockaddr*)&u->sa,SocketAddrLen(u));
    if(res!=-1)
       UpdateNow(); // if non-blocking doesn't work
    return res;
