@@ -1,3 +1,9 @@
+2004-04-20  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* LsCache.cc: (IsDirectory) use dirname_modify; check for MP_LIST
+	  in cache; add assert.
+	* misc.cc: fix comment.
+
 2004-04-19  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: fixed STAT command in FXP mode; fixed coredump when

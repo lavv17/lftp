@@ -791,7 +791,7 @@ char *xasprintf(const char *format, ...)
  * file/name -> "file"
  * file/name/ -> "file"
  * file -> ""
- * note: last differs from dirname (wwould return ".")
+ * note: the last differs from dirname(1) (which would return ".")
  *
  */
 char *dirname_alloc(const char *fn)

@@ -316,6 +316,7 @@ int LsCache::IsDirectory(FileAccess *p_loc,const char *dir_c)
    int bufsiz;
    if(Find(p_loc, "", FileAccess::CHANGE_DIR, &buf_c,&bufsiz))
    {
+      assert(bufsiz==1);
       ret = (buf_c[0]=='1');
       goto leave;
    }
@@ -334,17 +335,12 @@ int LsCache::IsDirectory(FileAccess *p_loc,const char *dir_c)
    {
       p_loc->SetCwd(origdir);
       char *dir = alloca_strdup(dir_c);
-      char *sl = strrchr(dir, '/');
-      if(sl)
-      {
-	 if(sl>dir)
-	    *sl=0;
-	 else
-	    sl[1]=0;
-	 p_loc->Chdir(dir, false);
-      }
+      p_loc->Chdir(dirname_modify(dir), false);
 
-      const FileSet *fs=FindFileSet(p_loc, "", FA::LONG_LIST);
+
+      const FileSet *fs=FindFileSet(p_loc, "", FA::MP_LIST);
+      if(!fs)
+	 fs=FindFileSet(p_loc, "", FA::LONG_LIST);
       if(fs)
       {
 	 FileInfo *fi=fs->FindByName(basename_ptr(dir_c));
