@@ -142,6 +142,7 @@ public:
    void	 SubtractSame(const FileSet *,int ignore);
    void	 SubtractAny(const FileSet *);
    void  SubtractOlderThan(time_t t);
+   void  SubtractDirs();
    void  SubtractNotIn(const FileSet *);
    void  SubtractCurr();
    void  Sort(sort_e newsort, bool casefold=false);

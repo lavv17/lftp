@@ -290,6 +290,18 @@ void FileSet::SubtractOlderThan(time_t t)
       }
    }
 }
+void FileSet::SubtractDirs()
+{
+   for(int i=0; i<fnum; i++)
+   {
+      if(files[i]->defined&FileInfo::TYPE
+      && files[i]->filetype==FileInfo::DIRECTORY)
+      {
+	 Sub(i);
+	 i--;
+      }
+   }
+}
 
 void FileSet::ExcludeDots()
 {

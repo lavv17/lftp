@@ -396,6 +396,9 @@ void  MirrorJob::InitSets(FileSet *source,FileSet *dest)
    if(newer_than!=(time_t)-1)
       to_transfer->SubtractOlderThan(newer_than);
 
+   if(flags&NO_RECURSION)
+      to_transfer->SubtractDirs();
+
    new_files_set=new FileSet(to_transfer);
    new_files_set->SubtractAny(dest);
    old_files_set=new FileSet(dest);
