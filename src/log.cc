@@ -94,7 +94,7 @@ void Log::Format(int l,const char *f,...)
 	 res*=2;
       if(res==-1)
 	 res=buf_alloc*2;
-      buf=xrealloc(buf,buf_alloc=res);
+      buf=(char*)xrealloc(buf,buf_alloc=res);
    }
 #else
    vsprintf(buf,f,v);

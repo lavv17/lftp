@@ -27,7 +27,7 @@
 #include <time.h>
 #include "xalloca.h"
 #include "xmalloc.h"
-#include "ftpclass.h"
+#include "FileAccess.h"
 #include "lftp.h"
 #include "rglob.h"
 #include "CmdExec.h"
@@ -325,23 +325,23 @@ char **lftp_completion (char *text,int start,int end)
       else
 	 pat[0]=0;	// no slashes
 
-      FileAccess::open_mode mode=Ftp::LIST;
+      FileAccess::open_mode mode=FA::LIST;
 
       // try to find in cache
       if(completion_shell->completion_use_ls
       && !LsCache::Find(completion_shell->session,pat,mode,0,0)
-      &&  LsCache::Find(completion_shell->session,pat,Ftp::LONG_LIST,0,0))
+      &&  LsCache::Find(completion_shell->session,pat,FA::LONG_LIST,0,0))
       {
 	 // this is a bad hack, but often requested by people
 	 // and it's actually useful :)
-	 mode=Ftp::LONG_LIST;
+	 mode=FA::LONG_LIST;
       }
 
       completion_shell->session->DontSleep();
 
       SignalHook::ResetCount(SIGINT);
       rg=new RemoteGlob(completion_shell->session,pat,mode);
-      if(mode==Ftp::LIST)
+      if(mode==FA::LIST)
 	 rg->SetSlashFilter(1);
       for(;;)
       {
@@ -358,7 +358,7 @@ char **lftp_completion (char *text,int start,int end)
       }
       glob_res=rg->GetResult();
 
-      if(mode==Ftp::LONG_LIST)
+      if(mode==FA::LONG_LIST)
       {
 	 // bad hack
 	 // try to extract file names

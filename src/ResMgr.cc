@@ -291,7 +291,7 @@ char *ResMgr::Format()
 const char *ResMgr::BoolValidate(char **value)
 {
    char *v=*value;
-   char *newval=0;
+   const char *newval=0;
 
    switch(v[0])
    {

@@ -61,6 +61,7 @@ class Ftp : public FileAccess
 
    enum response
    {
+      // only first digit of these responses should be used (RFC1123)
       RESP_READY=220,
       RESP_PASS_REQ=331,
       RESP_LOGGED_IN=230,
@@ -68,7 +69,6 @@ class Ftp : public FileAccess
       RESP_TYPE_OK=200,
       RESP_PORT_OK=200,
       RESP_REST_OK=350,
-      //RESP_DATA_OPEN=150,
       RESP_TRANSFER_OK=226,
       RESP_RESULT_HERE=213,
       RESP_PWD_MKD_OK=257,
@@ -80,12 +80,38 @@ class Ftp : public FileAccess
       RESP_LOGIN_FAILED=530
    };
 
+   enum check_case_t
+   {
+      CHECK_NONE,	// no special check
+      CHECK_IGNORE,	// ignore response
+      CHECK_READY,	// check response after connect
+      CHECK_REST,	// check response for REST
+      CHECK_CWD,	// check response for CWD
+      CHECK_CWD_CURR,	// check response for CWD into current directory
+      CHECK_CWD_STALE,	// check response for CWD when it's not critical
+      CHECK_ABOR,	// check response for ABOR
+      CHECK_SIZE,	// check response for SIZE
+      CHECK_SIZE_OPT,	// check response for SIZE and save size to *opt_size
+      CHECK_MDTM,	// check response for MDTM
+      CHECK_MDTM_OPT,	// check response for MDTM and save size to *opt_date
+      CHECK_PASV,	// check response for PASV
+      CHECK_FILE_ACCESS,// generic check for file access
+      CHECK_PWD,	// check response for PWD and save it to home
+      CHECK_RNFR,	// check RNFR and issue RNTO
+      CHECK_USER,	// check response for USER
+      CHECK_USER_PROXY,	// check response for USER sent to proxy
+      CHECK_PASS,	// check response for PASS
+      CHECK_PASS_PROXY,	// check response for PASS sent to proxy
+      CHECK_TRANSFER	// generic check for transfer
+   };
+
    struct expected_response
    {
       int   expect;
       int   fail_state;
-      int   (Ftp::*check_resp)(int actual,int expect);
+      check_case_t check_case;
       bool  log_resp;
+      char  *path;
    }
       *RespQueue;
    int	 RQ_alloc;   // memory allocated
@@ -97,34 +123,28 @@ class Ftp : public FileAccess
 
    void	 LogResp(char *line);
 
-   void  AddResp(int exp,int fail,int (Ftp::*ck)(int,int)=0,bool log=false);
+   void  AddResp(int exp,int fail,check_case_t ck=CHECK_NONE,bool log=false);
+   void  SetRespPath(const char *p);
    int   CheckResp(int resp);
    void  PopResp();
    void	 EmptyRespQueue();
+   void	 CloseRespQueue(); // treat responses on Close()
    int   RespQueueIsEmpty() { return RQ_head==RQ_tail; }
    int	 RespQueueSize() { return RQ_tail-RQ_head; }
 
-   int	 ReadyCheck(int,int);
-   int	 IgnoreCheck(int,int);
    int	 RestCheck(int,int);
    int   NoFileCheck(int,int);
-   int	 CWD_Check(int,int);
-   int	 CwdCwd_Check(int,int);
    int	 TransferCheck(int,int);
    int	 LoginCheck(int,int);
    int	 NoPassReqCheck(int,int);
    int	 proxy_LoginCheck(int,int);
    int	 proxy_NoPassReqCheck(int,int);
-   int	 CatchPWDResponse(int,int);
-   int	 CatchHomePWD(int,int);
    char  *ExtractPWD();
-   int	 RNFR_Check(int,int);
    int	 CatchDATE(int,int);
    int	 CatchDATE_opt(int,int);
    int	 CatchSIZE(int,int);
    int	 CatchSIZE_opt(int,int);
    int	 PASV_Catch(int,int);
-   int	 ABOR_Check(int,int);
 
    void	 InitFtp();
 
@@ -285,10 +305,6 @@ public:
 
    void	 Connect(const char *,int);
    void	 ConnectVerify();
-
-#if 0
-   void	 Login(const char*,const char*);
-#endif
 
    int   Read(void *buf,int size);
    int   Write(const void *buf,int size);

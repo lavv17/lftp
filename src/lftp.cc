@@ -194,7 +194,7 @@ static void move_to_background()
       SignalHook::Ignore(SIGHUP);
       SignalHook::Ignore(SIGTSTP);
 
-      char *home=getenv("HOME");
+      const char *home=getenv("HOME");
       if(!home) home=".";
 
       char *log=(char*)alloca(strlen(home)+1+9+1);
@@ -256,7 +256,7 @@ int   main(int argc,char **argv)
    LocalAccess::ClassInit();
    Ftp::ClassInit();
 
-   char  *home=getenv("HOME")?:".";
+   const char  *home=getenv("HOME")?:".";
 
    CmdExec *top_exec=new CmdExec(new Ftp());
    top_exec->jobno=-1;

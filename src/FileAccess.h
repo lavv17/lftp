@@ -209,6 +209,9 @@ public:
    virtual ListInfo *MakeListInfo() { return 0; }
 };
 
+// shortcut
+#define FA FileAccess
+
 // cache of used sessions
 class SessionPool
 {
