@@ -187,6 +187,8 @@ uninstall-headers:
 
 maybe-uninstall-headers: uninstall-headers
 
+install:
+
 install-readline: installdirs $(STATIC_LIBS) install-headers
 	-$(MV) $(libdir)/libreadline.a $(libdir)/libreadline.old
 	$(INSTALL_DATA) libreadline.a $(libdir)/libreadline.a
@@ -202,6 +204,8 @@ install-readline: installdirs $(STATIC_LIBS) install-headers
 installdirs: $(srcdir)/support/mkdirs
 	-$(SHELL) $(srcdir)/support/mkdirs $(includedir) \
 		$(includedir)/readline $(libdir) $(infodir) $(man3dir)
+
+uninstall:
 
 uninstall-readline: uninstall-headers
 	-test -n "$(libdir)" && cd $(libdir) && \
