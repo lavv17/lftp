@@ -86,10 +86,10 @@ currently; some need other work to be done.
 
  * parse anonftpd listings (ftp://vgsn.glasnet.ru)
 
- * growth of reconnect-interval. net:reconnect-interval-multiplier, max.
-
  * in get,cat, etc (FileCopy class) try RereadManual if output is seekable.
 
  * check mget -e -- REMOVE mode was Close()'d too early.
 
  * help queue
+
+ * use FileSet in Glob.

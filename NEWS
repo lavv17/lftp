@@ -1,3 +1,18 @@
+* new settings net:reconnect-interval-multiplier and net:reconnect-interval-max,
+  reconnect-interval renamed to reconnect-interval-base. It is possible to
+  use short names recon-int-b, recon-int-mul, recon-int-max.
+* new setting ftp:list-options to append to every LIST command. E.g. it can
+  be useful for some sites to set it to `-a'. Default is empty.
+* new setting ftp:rest-stor (default: yes) to avoid file corruption
+  on some old and buggy ftp servers after restarted upload.
+* now lftp remembers that commands MDTM, SIZE or SITE CHMOD are not supported
+  by the server, and does not send them again.
+* slightly better VMS support.
+* in globbing, if list restart is not used, don't skip list beginning but
+  rather use it instead of previously received.
+* fixed completion and file name globbing for wu-ftpd-2.6.0. A long standing
+  bug with multiple path component globbing over ftp has also been fixed.
+
 Version 2.1.4 - 1999-10-23
 
 * hftp support for non-anonymous user added

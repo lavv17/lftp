@@ -139,6 +139,7 @@ fi
 AC_SUBST(MODULES)
 
 dnl Checks for libraries.
+AC_CHECK_LIB(m,exp)
 AC_SEARCH_LIBS(socket,socket)
 AC_SEARCH_LIBS(gethostbyname,nsl)
 AC_SEARCH_LIBS(dlopen,dl,[AC_DEFINE(HAVE_DLOPEN)])
