@@ -379,7 +379,7 @@ int CmdExec::Do()
 	       if(loc_c && loc_c[0] && max_redirections>0
 	       && loc_c[strlen(loc_c)-1]=='/')
 	       {
-		  eprintf(_("cd: received redirection to `%s'\n"),loc_c);
+		  eprintf(_("%s: received redirection to `%s'\n"),"cd",loc_c);
 		  if(++redirections>max_redirections)
 		  {
 		     eprintf("cd: %s\n",_("Too many redirections"));
