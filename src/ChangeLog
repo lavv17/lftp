@@ -2,6 +2,7 @@
 
 	* CmdExec.cc, CmdExec.h, Job.cc, Makefile.am, commands.cc: queue
 	  editing support (QueueFeeder class).
+	* QueueFeeder.cc, QueueFeeder.h: new files.
 
 2001-07-25  Alexander V. Lukyanov  <lav@yars.free.net>
 
