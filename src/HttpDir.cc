@@ -929,8 +929,8 @@ const char *HttpDirList::Status()
    static char s[256];
    if(ubuf && !ubuf->Eof() && session->IsOpen())
    {
-      sprintf(s,_("Getting file list (%ld) [%s]"),
-		     session->GetPos(),session->CurrentStatus());
+      sprintf(s,_("Getting file list (%lld) [%s]"),
+		     (long long)session->GetPos(),session->CurrentStatus());
       return s;
    }
    return "";
@@ -1112,8 +1112,8 @@ const char *HttpGlob::Status()
    static char s[256];
    if(ubuf && !ubuf->Eof() && session->IsOpen())
    {
-      sprintf(s,_("Getting file list (%ld) [%s]"),
-		     session->GetPos(),session->CurrentStatus());
+      sprintf(s,_("Getting file list (%lld) [%s]"),
+		     (long long)session->GetPos(),session->CurrentStatus());
       return s;
    }
    return "";
@@ -1309,12 +1309,14 @@ const char *HttpListInfo::Status()
    static char s[256];
    if(ubuf && !ubuf->Eof() && session->IsOpen())
    {
-      sprintf(s,_("Getting directory contents (%ld)"),session->GetPos());
+      sprintf(s,_("Getting directory contents (%lld)"),
+		     (long long)session->GetPos());
       return s;
    }
    if(get_info)
    {
-      sprintf(s,_("Getting files information (%d%%)"),session->InfoArrayPercentDone());
+      sprintf(s,_("Getting files information (%d%%)"),
+		     session->InfoArrayPercentDone());
       return s;
    }
    return "";

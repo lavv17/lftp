@@ -213,8 +213,8 @@ const char *FtpDirList::Status()
    static char s[256];
    if(ubuf && !ubuf->Eof() && session->IsOpen())
    {
-      sprintf(s,_("Getting file list (%ld) [%s]"),
-		     session->GetPos(),session->CurrentStatus());
+      sprintf(s,_("Getting file list (%lld) [%s]"),
+		     (long long)session->GetPos(),session->CurrentStatus());
       return s;
    }
    return "";

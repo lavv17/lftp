@@ -171,8 +171,8 @@ const char *FtpSplitList::Status()
    static char s[256];
    if(state==GETTING_DATA)
    {
-      sprintf(s,_("Getting file list (%ld) [%s]"),
-		     f->GetPos(),f->CurrentStatus());
+      sprintf(s,_("Getting file list (%lld) [%s]"),
+		     (long long)f->GetPos(),f->CurrentStatus());
       return s;
    }
    return "";

@@ -227,7 +227,8 @@ const char *FtpListInfo::Status()
    case(GETTING_SHORT_LIST):
       if(!slist)
 	 return "";
-      sprintf(s,_("Getting directory contents (%ld)"),session->GetPos());
+      sprintf(s,_("Getting directory contents (%lld)"),
+		     (long long)session->GetPos());
       if(slist->RateValid())
 	 sprintf(s+strlen(s)," %s",slist->GetRateStr());
       status=session->CurrentStatus();
