@@ -32,7 +32,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-// #include <termios.h>
 #include <assert.h>
 
 #include "CmdExec.h"
@@ -1555,7 +1554,7 @@ void CmdExec::print_cmd_help(const char *cmd)
 	 printf(_("Sorry, no help for %s\n"),cmd);
 	 return;
       }
-      if(!strchr(c->long_desc,' '))
+      if(c->short_desc==0 && !strchr(c->long_desc,' '))
       {
 	 printf(_("%s is a built-in alias for %s\n"),cmd,c->long_desc);
 	 print_cmd_help(c->long_desc);
