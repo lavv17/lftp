@@ -1,3 +1,11 @@
+2003-12-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* HttpDir.cc: (find_eol, try_csm_proxy) fix bugs found by
+	  Solar Designer <solar@openwall.com> - increment *eol_size,
+	  not eol_size; use proper %lld format for size; use larger
+	  buffer for additional_file_info to store trailing \0; some
+	  style mods.
+
 2003-12-08  Harnhammar, Ulf <Ulf.Harnhammar.9485@student.uu.se>
 
 	* HttpDir.cc: (try_netscape_proxy, try_squid_eplf) fixed buffer overflows.
