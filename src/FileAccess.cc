@@ -752,11 +752,7 @@ void FileAccess::SetSuggestedFileName(const char *fn)
       return;
 
    // don't allow subdirectories.
-   char *slash=strchr(fn,'/');
-   if(slash)
-      return;
-   slash=strchr(fn,'\\');
-   if(slash)
+   if(strchr(fn,'/') || strchr(fn,'\\'))
       return;
    for(int i=0; fn[i]; i++)
    {
