@@ -77,7 +77,7 @@ static const char *FtpDefaultAnonPass()
    struct passwd *pw=getpwuid(getuid());
    const char *u=pw?pw->pw_name:"unknown";
    pass=(char*)xmalloc(strlen(u)+3);
-   sprintf(pass,"-%s@",u);
+   sprintf(pass,"%s@",u);
 
    return pass;
 }

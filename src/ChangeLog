@@ -1,3 +1,7 @@
+2000-05-20  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* resource.cc: remove `-' from default anon password.
+
 2000-05-19  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Resolver.cc: use getaddrinfo only if gethostbyname2 is not available.
