@@ -52,6 +52,7 @@ GetFileInfo::GetFileInfo(FileAccess *a, const char *_dir, bool _showdir)
 GetFileInfo::~GetFileInfo()
 {
    session->Close();
+   session->SetCwd(origdir);
    Delete(li);
    xfree(saved_error_text);
    xfree(dir);
@@ -192,7 +193,10 @@ int GetFileInfo::Do()
       }
       if(was_directory && showdir)
       {
-	 // we could chdir to the dir, but we should not get dir listing
+	 /* We could chdir to the dir, but we should not get dir listing.
+	  * We got here because either we could not get dir listing of
+	  * parent directory or the file name was not found in parent
+	  * directory index. */
 	 FileInfo *fi = new FileInfo(dir);
 	 fi->SetType(fi->DIRECTORY);
 	 prepend_path=false;
@@ -289,7 +293,6 @@ done:
 	 if(result && prepend_path)
 	    result->PrependPath(path_to_prefix);
 	 done=true;
-	 session->SetCwd(origdir);
 	 m=MOVED;
       }
       return m;

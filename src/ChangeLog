@@ -1,3 +1,7 @@
+2001-12-17  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* GetFileInfo.cc: move SetCwd(origdir) to dtor; improve comment.
+
 2001-12-17  Glenn Maynard <g_ld@zewt.org>
 
 	* commands.cc: queue --delete has no argument.
