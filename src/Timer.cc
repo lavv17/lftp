@@ -86,3 +86,9 @@ Timer::Timer() : last_setting(1)
    resource=0;
    closure=0;
 }
+Timer::Timer(const TimeDiff &d) : last_setting(d)
+{
+   resource=0;
+   closure=0;
+   Reset();
+}

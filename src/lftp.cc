@@ -48,6 +48,7 @@
 #include "ResMgr.h"
 #include "LsCache.h"
 #include "DirColors.h"
+#include "IdNameCache.h"
 
 #include "confpaths.h"
 
@@ -377,7 +378,9 @@ int   main(int argc,char **argv)
    LsCache::Flush();
    ProcWait::DeleteAll();
    DirColors::DeleteInstance();
+   IdNameCacheCleanup();
 
+   // the tasks left: SMTaskInit, LsCache::ExpireHelper, Log::global.
    int task_count=SMTask::TaskCount();
    if(task_count>3)
       printf("WARNING: task_count=%d\n",task_count);

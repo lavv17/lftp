@@ -51,7 +51,7 @@ class TimeDiff;
 class Time : public time_tuple
 {
 public:
-   Time() { SetToCurrentTime(); }
+   Time();
    Time(time_t s,int ms=0)     { set(s,ms); }
    void Set(time_t s,int ms=0) { set(s,ms); }
    void SetToCurrentTime();
@@ -82,7 +82,7 @@ class TimeDate : public Time
    void set_local_time();
 
 public:
-   TimeDate() { local_time_unix=0; }
+   TimeDate() { SetToCurrentTime(); local_time_unix=0; }
    TimeDate(time_t s,int ms=0) : Time(s,ms) { local_time_unix=0; }
 
    operator const struct tm *() { set_local_time(); return &local_time; }

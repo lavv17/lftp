@@ -21,6 +21,7 @@
 #include <config.h>
 #include "TimeDate.h"
 #include "misc.h"
+#include "SMTask.h"
 
 void time_tuple::normalize()
 {
@@ -68,6 +69,11 @@ void Time::SetToCurrentTime()
    xgettimeofday(&s,&ms);
    ms/=1000;
    set(s,ms);
+}
+Time::Time()
+{
+   // this saves a system call
+   *this=SMTask::now;
 }
 void TimeDate::set_local_time()
 {

@@ -34,6 +34,7 @@ class Timer : public SMTask
    void set_timeout();
 public:
    Timer();
+   Timer(const TimeDiff &);
    int Do();
    bool Stopped();
    void Set(const TimeDiff &d);

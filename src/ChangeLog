@@ -2,6 +2,13 @@
 
 	* DirColors.cc, DirColors.h: move resource definition to make it
 	  compile on irix.
+	* CmdExec.cc: remove unneeded if's.
+	* FileSet.cc: use IdNameCache.
+	* TimeDate.cc, TimeDate.h: init Time from SMTask::now, this saves
+	  a syscall.
+	* Timer.cc, Timer.h: add ctor from TimeDiff.
+	* lftp.cc: call IdNameCacheCleanup.
+	* IdNameCache.cc, IdNameCache.h: new files.
 
 2001-11-19  Alexander V. Lukyanov <lav@yars.free.net>
 

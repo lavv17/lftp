@@ -39,6 +39,7 @@
 #include "misc.h"
 #include "ResMgr.h"
 #include "StringPool.h"
+#include "IdNameCache.h"
 
 void  FileInfo::Merge(const FileInfo& f)
 {
@@ -554,25 +555,15 @@ void FileSet::LocalChown(const char *dir)
 	 gid_t new_gid=st.st_gid;
 	 if(file->defined&file->USER)
 	 {
-	    if(isdigit((unsigned char)file->user[0]))
-	       new_uid=atol(file->user);
-	    else
-	    {
-	       const struct passwd *p=getpwnam(file->user);
-	       if(p)
-		  new_uid=p->pw_uid;
-	    }
+	    int u=PasswdCache::LookupS(file->user);
+	    if(u!=-1)
+	       new_uid=u;
 	 }
 	 if(file->defined&file->GROUP)
 	 {
-	    if(isdigit((unsigned char)file->group[0]))
-	       new_uid=atol(file->group);
-	    else
-	    {
-	       const struct group *g=getgrnam(file->group);
-	       if(g)
-		  new_gid=g->gr_gid;
-	    }
+	    int g=GroupCache::LookupS(file->group);
+	    if(g!=-1)
+	       new_gid=g;
 	 }
 	 if(new_uid!=st.st_uid || new_gid!=st.st_gid)
 	    lchown(local_name,new_uid,new_gid);
@@ -671,24 +662,9 @@ check_again:
    SetType(t);
    SetNlink(st.st_nlink);
 
-   struct passwd *user = getpwuid(st.st_uid);
-   if(user)
-      SetUser(user->pw_name);
-   else
-   {
-      char buf[32];
-      sprintf(buf, "%ld", (long)st.st_uid);
-      SetUser(buf);
-   }
+   SetUser(PasswdCache::LookupS(st.st_uid));
+   SetGroup(GroupCache::LookupS(st.st_gid));
 
-   struct group *gr = getgrgid(st.st_gid);
-   if(gr)
-      SetGroup(gr->gr_name);
-   else {
-      char buf[32];
-      sprintf(buf, "%ld", (long)st.st_gid);
-      SetGroup(buf);
-   }
 #ifdef HAVE_LSTAT
    if(t==SYMLINK)
    {
