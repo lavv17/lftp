@@ -1,3 +1,7 @@
+2000-04-20	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: add http:user-agent and hftp:user-agent
+
 2000-04-19	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document new mirror: settings and -T mirror option.
