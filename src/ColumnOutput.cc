@@ -263,10 +263,8 @@ void datum::print(Buffer *o, bool color, int skip,
       skip = 0;
    }
 
-   if(cur_color) {
-      const char *reset = res_color_reset.Query(getenv("TERM"));
-      o->Put(reset);
-   }
+   if(cur_color)
+      o->Put(color_reset);
 }
 
 int datum::whitespace() const

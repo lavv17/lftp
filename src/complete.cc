@@ -26,6 +26,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <time.h>
+#include <unistd.h>
+#include <glob.h>
+#include <sys/time.h>
+#include <assert.h>
 #include "xalloca.h"
 #include "xmalloc.h"
 #include "FileAccess.h"
@@ -38,6 +42,9 @@
 #include "lftp_rl.h"
 #include "url.h"
 #include "ResMgr.h"
+#include "ColumnOutput.h"
+#include "FileSetOutput.h"
+#include "misc.h"
 
 CDECL_BEGIN
 #include "readline/readline.h"
@@ -87,7 +94,8 @@ char *command_generator(const char *text,int state)
    return(NULL);
 }
 
-static char *remote_generator(const char *text,int state)
+/* this is used for both remote and local gen now; rename */
+static char *file_generator(const char *text,int state)
 {
    const char *name;
 
@@ -103,7 +111,9 @@ static char *remote_generator(const char *text,int state)
       name=(*glob_res)[cindex++]->name;
       if(!name[0])
 	 continue;
-      if(strncmp(name,text,len)==0)
+      /* it's not our job to be case-sensitive; that's done (or not done)
+       * when we create the glob_res */
+      if(strncasecmp(name,text,len)==0)
 	 return(xstrdup(name));
    }
 
@@ -333,6 +343,9 @@ static completion_type cmd_completion_type(const char *cmd,int start)
 
    if(!strcmp(buf,"cat")
    || !strcmp(buf,"ls")
+   || !strcmp(buf,"cls")
+   || !strcmp(buf,"recls")
+   || !strcmp(buf,"rels")
    || !strcmp(buf,"more")
    || !strcmp(buf,"mrm")
    || !strcmp(buf,"mv")
@@ -513,6 +526,8 @@ static bool force_remote=false;
    array of matches, or NULL if there aren't any. */
 static char **lftp_completion (const char *text,int start,int end)
 {
+   FileSetOutput fso;
+
    completion_shell->RestoreCWD();
 
    if(start>end)  // workaround for a bug in readline
@@ -524,6 +539,8 @@ static char **lftp_completion (const char *text,int start,int end)
    rl_ignore_some_completions_function=0;
    shell_cmd=false;
    quote_glob=false;
+   delete glob_res;
+   glob_res=0;
 
    completion_type type=cmd_completion_type(rl_line_buffer,start);
 
@@ -548,23 +565,67 @@ static char **lftp_completion (const char *text,int start,int end)
    case VARIABLE:
       generator = vars_generator;
       break;
+
+      char *pat;
    case LOCAL:
-   case LOCAL_DIR:
+   case LOCAL_DIR: {
       if(force_remote || (url::is_url(text) && remote_completion))
       {
 	 if(type==LOCAL_DIR)
 	    type=REMOTE_DIR;
 	 goto really_remote;
       }
-      if(type==LOCAL_DIR)
-	 lftp_rl_set_ignore_some_completions_function(ignore_non_dirs);
+
+      ArgV arg("", ResMgr::Query("cmd:cls-completion-default", 0));
+      fso.parse_argv(&arg);
+
+      pat=(char*)alloca(len*2+10);
+      glob_quote(pat,text,len);
+
+      /* if we want case-insensitive matching, we need to match everything
+       * in the dir and weed it ourselves (let the generator do it), since
+       * glob() has no casefold option */
+      if(fso.patterns_casefold) {
+	 rl_variable_bind("completion-ignore-case", "1");
+
+	 /* strip back to the last / */
+	 char *sl = strrchr(pat, '/');
+	 if(sl) *++sl = 0;
+	 else pat[0] = 0;
+      } else {
+	 rl_variable_bind("completion-ignore-case", "0");
+      }
+
+      strcat(pat,"*");
+
+      glob_t pglob;
+      glob(pat,GLOB_PERIOD,0,&pglob);
+      glob_res=new FileSet;
+      for(int i=0; i<(int)pglob.gl_pathc; i++)
+      {
+	 char *src=pglob.gl_pathv[i];
+	 if(!strcmp(basename_ptr(src), ".")) continue; 
+	 if(!strcmp(basename_ptr(src), "..")) continue;
+	 if(type==LOCAL_DIR && not_dir(src)) continue;
+
+	 FileInfo *f = new FileInfo;
+
+	 f->LocalFile(src, false);
+	 glob_res->Add(f);
+      }
+      globfree(&pglob);
+      glob_res->ExcludeDots();
+
+      rl_filename_completion_desired=1;
+      generator = file_generator;
       break;
+   }
    case REMOTE_FILE:
-   case REMOTE_DIR:
+   case REMOTE_DIR: {
       if(!remote_completion && !force_remote)
 	 break; // local
    really_remote:
-      char *pat=(char*)alloca(len*2+10);
+      pat=(char*)alloca(len*2+10);
       glob_quote(pat,text,len);
 
       strcat(pat,"*");
@@ -574,10 +635,23 @@ static char **lftp_completion (const char *text,int start,int end)
       SignalHook::ResetCount(SIGINT);
       glob_res=NULL;
       rg=new GlobURL(completion_shell->session,pat);
+
+      rl_save_prompt();
+      
+      int now_s = SMTask::now, now_ms = SMTask::now_ms;
+
+      ArgV arg("", ResMgr::Query("cmd:cls-completion-default", 0));
+      fso.parse_argv(&arg);
+
       if(rg)
       {
 	 rg->glob->NoMatchPeriod();
 	 rg->glob->NoInhibitTilde();
+	 if(fso.patterns_casefold) {
+	    rl_variable_bind("completion-ignore-case", "1");
+	    rg->glob->CaseFold();
+	 } else
+	    rl_variable_bind("completion-ignore-case", "0");
 	 if(type==REMOTE_DIR)
 	    rg->glob->DirectoriesOnly();
 	 for(;;)
@@ -592,11 +666,29 @@ static char **lftp_completion (const char *text,int start,int end)
 	       delete rg;
 	       return 0;
 	    }
+
+	    /* this time should match StatusLine's */
+	    if((SMTask::now - now_s)*1000 + (SMTask::now_ms - now_ms) > 1000) {
+	       now_s = SMTask::now;
+	       now_ms = SMTask::now_ms;
+
+	       if(!fso.quiet) {
+		  /* don't set blank status; if we're operating from cache,
+		   * that's all we'll get and it'll look ugly: */
+		  const char *ret = rg->Status();
+		  if(*ret)
+		     rl_message ("%s ", ret);
+	       }
+	    }
+
 	    SMTask::Block();
 	 }
-	 glob_res=rg->GetResult();
+	 glob_res=new FileSet(rg->GetResult());
 	 glob_res->rewind();
       }
+      rl_restore_prompt();
+      rl_clear_message();
+
       if(glob_res->get_fnum()==1)
       {
 	 FileInfo *info=glob_res->curr();
@@ -605,13 +697,12 @@ static char **lftp_completion (const char *text,int start,int end)
 	    rl_completion_append_character='/';
       }
       rl_filename_completion_desired=1;
-      generator = remote_generator;
+      generator = file_generator;
       break;
-
+   }
    } /* end switch */
 
-   if(generator==0)
-      return 0; // default to local
+   assert(generator);
 
    char quoted=((lftp_char_is_quoted(rl_line_buffer,start) &&
 		 strchr(rl_completer_quote_characters,rl_line_buffer[start-1]))
@@ -622,7 +713,6 @@ static char **lftp_completion (const char *text,int start,int end)
 
    char **matches=lftp_rl_completion_matches(textq,generator);
 
-   glob_res=0;
    if(rg)
       delete rg;
 
@@ -645,6 +735,11 @@ leave:
    return matches;
 }
 
+extern "C" void lftp_line_complete()
+{
+   delete glob_res;
+   glob_res=0;
+}
 
 enum { COMPLETE_DQUOTE,COMPLETE_SQUOTE,COMPLETE_BSQUOTE };
 #define completion_quoting_style COMPLETE_BSQUOTE
@@ -1056,3 +1151,54 @@ void lftp_readline_init ()
    lftp_rl_add_defun("complete-remote",lftp_complete_remote,-1);
    lftp_rl_bind("Meta-Tab","complete-remote");
 }
+
+extern "C" void completion_display_list (char **matches, int len)
+{
+   FDStream o(1,"<stdout>");
+   Buffer *b = new Buffer;
+
+   if(glob_res) {
+      /* Our last completion action was of files, and we kept that
+       * data around.  Take the files in glob_res which are in matches
+       * and put them in another FileSet.  (This is a little wasteful,
+       * since we're going to use it briefly and discard it, but it's
+       * not worth adding temporary-filtering options to FileSet.) */
+      FileSet tmp;
+      for(int i = 1; i <= len; i++) {
+	 FileInfo *fi = glob_res->FindByName(matches[i]);
+	 assert(fi);
+	 tmp.Add(new FileInfo(*fi));
+      }
+
+      FileSetOutput fso;
+      fso.config(&o);
+
+      ArgV arg("", ResMgr::Query("cmd:cls-completion-default", 0));
+      fso.parse_argv(&arg);
+
+      fso.print(tmp, b);
+   } else {
+      /* Just pass it through ColumnInfo. */
+      ColumnOutput c;
+      for(int i = 1; i <= len; i++) {
+	 c.append();
+	 c.add(matches[i], "");
+      }
+      c.print(b, fd_width(o.getfd()), isatty(o.getfd()));
+   }
+
+   const char *buf;
+   int sz;
+   b->Get(&buf, &sz);
+
+   while(sz) { 
+      int ret = write(1, buf, sz);
+      if(ret <= 0)
+	 break; /* oops */
+      sz -= ret;
+      buf += ret;
+   }
+
+   SMTask::Delete(b);
+}
+

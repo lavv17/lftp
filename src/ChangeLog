@@ -1,3 +1,43 @@
+2001-10-08  Glenn F. Maynard <g_ld@zewt.org>
+
+	* ColumnOutput.cc, commands.cc, complete.cc, complete.h, lftp_rl.c:
+
+	Reupdated my address.
+
+	Add cls, recls and rels to list of remote-completers.
+
+	Make local completion mimic remote completion by forming a FileSet.
+	This simplifies completion, gets rid of ignore_non_dirs (which was
+	causing some really obscure problems with completion adding one too
+	many slashes--didn't track this down since ignore_non_dirs isn't used
+	anymore) and gives us color (etc) for local completion.  I didn't
+	actually delete ignore_non_dirs yet.
+
+	Add status feedback for remote completion, in the message area.  If -q
+	is given in cls_completion_default, this is disabled.  (This is also
+	undocumented and slightly different from the effect -q is intended to
+	have--but doesn't, since it's currently disabled--but it seems the most
+	appropriate place to put this, since cls_completion_default honors just
+	about every cls option; and even if status displaying was currently
+	working for cls, job status wouldn't be appropriate for completion
+	since it'd mangle the line.)  I'll hold off on documenting this until -q
+	is fixed for cls (unless it turns out that it just can't reasonably be done,
+	but I'm optimistic.)
+
+	Keep glob_res around after completion until the next completion or the
+	next command; this lets us use it to do our own completion result
+	display.
+
+	Handle our own completion results; this also gives us optimized column
+	widths for all completions, not just filenames.
+
+	Fixed color reset bug.
+
+	Glitch: we don't honor the user's completion-ignore-case readline
+	setting.  We can't get access to it portably.  It's not too big a deal;
+	adding -i to cls-completion-default has the same effect, and honoring
+	both of them would probably be a little confusing anyway.
+
 2001-10-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ColumnOutput.cc: fix memory leak; change \e to \\e.

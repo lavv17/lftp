@@ -27,6 +27,9 @@
 #include "lftp_rl.h"
 #include "xalloca.h"
 
+/* complete.cc */
+void lftp_line_complete();
+
 void lftp_add_history_nodups(const char *cmd_buf)
 {
    HIST_ENTRY *temp;
@@ -39,7 +42,12 @@ void lftp_add_history_nodups(const char *cmd_buf)
 
 char *lftp_readline(const char *prompt)
 {
-   return readline(prompt);
+   char *ret = readline(prompt);
+   /* Tell completion that we don't need completion data anymore;
+    * it might be taking a good chunk of memory. */
+   lftp_line_complete();
+
+   return ret;
 }
 
 int lftp_history_expand(const char *what, char **where)
@@ -124,6 +132,15 @@ char **lftp_rl_completion_matches(const char *text,char *(*compentry)(const char
    return rl_completion_matches(text,compentry);
 }
 
+void completion_display_list (char **matches, int len);
+
+void lftp_rl_display_match_list (char **matches, int len, int max)
+{
+   printf("\n"); /* get off the input line */
+   completion_display_list(matches, len);
+   rl_forced_update_display(); /* redraw input line */
+}
+ 
 void lftp_rl_init(
    const char *readline_name,
    char **(*attempted_completion_function)(const char *,int,int),
@@ -144,6 +161,8 @@ void lftp_rl_init(
    rl_filename_quoting_function      =filename_quoting_function;
    rl_filename_dequoting_function    =filename_dequoting_function;
    rl_char_is_quoted_p               =char_is_quoted_p;
+
+   rl_completion_display_matches_hook = lftp_rl_display_match_list;
 }
 
 void lftp_rl_add_defun(const char *name,int (*func)(int,int),int key)

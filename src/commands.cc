@@ -147,8 +147,9 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"close",   cmd_close,   "close [-a]",
 	 N_("Close idle connections. By default only with current server.\n"
 	 " -a  close idle connections with all servers\n")},
-   {"cls",     cmd_cls,     0 /*N_("cls [opts] [path/][wildcards]...")*/,
-	 N_("List remote files. You can redirect output of this command to file\n"
+   {"cls",     cmd_cls,     0, 
+	 N_("cls [opts] [path/][wildcards]..."
+	    "List remote files. You can redirect output of this command to file\n"
 	    "or via pipe to external command.\n"
 	    "\n"
 	    /* note: I've tried to keep options which are likely to be always
@@ -254,11 +255,12 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " <site>              host name, URL or bookmark name\n")},
    {"lpwd",    cmd_lpwd},
    {"login",   cmd_user,   0,"user"},
-   {"ls",      cmd_ls,	    N_("ls [<args>]"),
+   {"ls",      cmd_ls,	    N_("[c]ls [<args>]"),
 	 N_("List remote files. You can redirect output of this command to file\n"
 	 "or via pipe to external command.\n"
 	 "By default, ls output is cached, to see new listing use `rels' or\n"
-	 "`cache flush'.\n")},
+	 "`cache flush'.\n"
+	 "See also `help cls'.")},
    {"mget",    cmd_get,	   N_("mget [OPTS] <files>"),
 	 N_("Gets selected files with expanded wildcards\n"
 	 " -c  continue, reget\n"

@@ -29,5 +29,6 @@
 extern CmdExec *completion_shell;
 extern int remote_completion;
 int   lftp_rl_getc(FILE *);
-
+extern "C" void lftp_line_complete();
+	
 #endif //COMPLETE_H
