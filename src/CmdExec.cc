@@ -308,6 +308,10 @@ void CmdExec::RemoveFeeder()
    if(!feeder)
       return;
 
+   // save old cwd if necessary
+   if(interactive && feeder->prev==0)
+      cwd_history.Set(session,session->GetCwd());
+
    CmdFeeder *tmp=feeder->prev;
    next_cmd=cmd_buf=feeder->saved_buf;
    partial_cmd=false;
@@ -316,9 +320,6 @@ void CmdExec::RemoveFeeder()
    delete feeder;
    feeder=tmp;
 
-   // save old cwd if necessary
-   if(interactive && feeder==0)
-      cwd_history.Set(session,session->GetCwd());
 }
 
 void CmdExec::ReuseSavedSession()

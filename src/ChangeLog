@@ -1,3 +1,8 @@
+2003-07-10  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc: save cwd history before destroying last feeder (this
+	  fixes a bug with saving last working directory).
+
 2003-06-26  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* LsCache.cc: (SetDirectory) use SetCwd to restore cwd, this fixes
