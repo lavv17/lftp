@@ -31,13 +31,6 @@
 CDECL const char *strerror(int);
 #endif
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#ifdef lftp_socklen_t
-# undef  socklen_t
-# define socklen_t lftp_socklen_t
-#endif
-
 #include <gettext.h>
 #define _(Text) gettext (Text)
 #define N_(Text) Text
@@ -87,6 +80,13 @@ CDECL void SOCKSinit(const char *);
 #ifdef SOCKS5
 # define SOCKS
 # include <socks.h>
+#endif
+
+#include <sys/types.h>
+#include <sys/socket.h>
+#ifdef lftp_socklen_t
+# undef  socklen_t
+# define socklen_t lftp_socklen_t
 #endif
 
 #if defined __MSDOS__ || defined __CYGWIN32__
