@@ -140,7 +140,8 @@ AC_SUBST(MODULES)
 
 dnl Checks for libraries.
 AC_SEARCH_LIBS(exp,m)
-AC_SEARCH_LIBS(md5_process_bytes,crypt,[AC_DEFINE(HAVE_MD5)])
+dnl This won't work for glibc2
+dnl AC_SEARCH_LIBS(md5_process_bytes,crypt,[AC_DEFINE(HAVE_MD5)])
 AC_SEARCH_LIBS(socket,socket)
 AC_SEARCH_LIBS(gethostbyname,nsl)
 AC_SEARCH_LIBS(dlopen,dl,[AC_DEFINE(HAVE_DLOPEN)])
@@ -254,7 +255,8 @@ AC_CHECK_FUNCS(strdup strstr lstat select regexec glob\
  gethostbyname2 getaddrinfo getnameinfo setsid)
 IU_CHECK_DECL(vsnprintf, [#include <stdio.h>])
 
-AC_REPLACE_FUNCS(mktime memmove strcasecmp strtol strtoul strptime)
+AC_REPLACE_FUNCS(mktime memmove strcasecmp strncasecmp strtol strtoul strptime)
+IU_CHECK_DECL(strcasecmp, [#include <string.h>])
 
 # always want GNU getopt
 LIBOBJS="$LIBOBJS getopt.o getopt1.o"
