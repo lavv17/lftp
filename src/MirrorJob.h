@@ -67,6 +67,8 @@ class MirrorJob : public SessionJob
    FileSet *to_transfer;
    FileSet *same;
    FileSet *to_rm;
+   FileSet *old_files_set;
+   FileSet *new_files_set;
    void	 InitSets(FileSet *src,FileSet *dst);
 
    FileInfo *file;

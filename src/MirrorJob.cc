@@ -161,6 +161,15 @@ void  MirrorJob::HandleFile(int how)
 	 }
 	 if(lstat(local_name,&st)!=-1)
 	 {
+	    // few safety checks.
+	    FileInfo *old=new_files_set->FindByName(file->name);
+	    if(old)
+	       goto skip;  // file has appeared after mirror start
+	    old=old_files_set->FindByName(file->name);
+	    if(old && ((old->defined&old->SIZE && old->size!=st.st_size)
+		     ||(old->defined&old->DATE && old->date!=st.st_mtime)))
+	       goto skip;  // the file has changed after mirror start
+
 	    if((flags&CONTINUE) && S_ISREG(st.st_mode)
 	    && (file->defined&(file->DATE|file->DATE_UNPREC))
 	    && file->date + prec < st.st_mtime
@@ -369,6 +378,11 @@ void  MirrorJob::InitSets(FileSet *source,FileSet *dest)
 
    if(newer_than!=(time_t)-1)
       to_transfer->SubtractOlderThan(newer_than);
+
+   new_files_set=new FileSet(to_transfer);
+   new_files_set->SubtractAny(dest);
+   old_files_set=new FileSet(dest);
+   old_files_set->SubtractNotIn(to_transfer);
 }
 
 int   MirrorJob::Do()
@@ -725,6 +739,7 @@ MirrorJob::MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_rem
 
    to_transfer=to_rm=same=0;
    remote_set=local_set=0;
+   new_files_set=old_files_set=0;
    file=0;
    list_info=0;
    local_session=0;
@@ -746,7 +761,7 @@ MirrorJob::MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_rem
    dir_made=false;
    create_remote_dir=false;
    newer_than=(time_t)-1;
-   
+
    script=0;
    script_only=false;
    script_needs_closing=false;
@@ -768,6 +783,10 @@ MirrorJob::~MirrorJob()
       delete to_rm;
    if(same)
       delete same;
+   if(new_files_set)
+      delete new_files_set;
+   if(old_files_set)
+      delete old_files_set;
    // don't delete this->file -- it is a reference
    if(list_info)
       delete list_info;
