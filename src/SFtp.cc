@@ -1621,7 +1621,7 @@ void SFtp::FileAttrs::Pack(Buffer *b,int protocol_version)
       Packet::PackString(b,group);
    }
    if(flags & SSH_FILEXFER_ATTR_PERMISSIONS)
-      PACK32(permissions&S_IAMB);
+      PACK32(permissions);
    if(protocol_version<=3 && (flags & SSH_FILEXFER_ATTR_ACMODTIME))
    {
       PACK32_SIGNED(atime);
@@ -1795,7 +1795,7 @@ FileInfo *SFtp::MakeFileInfo(const NameAttrs *na)
       fi->SetGroup(utf8_to_lc(a->group));
    }
    if(a->flags&SSH_FILEXFER_ATTR_PERMISSIONS)
-      fi->SetMode(a->permissions&S_IAMB);
+      fi->SetMode(a->permissions&07777);
    if(a->flags&SSH_FILEXFER_ATTR_MODIFYTIME)
       fi->SetDate(a->mtime,0);
    return fi;

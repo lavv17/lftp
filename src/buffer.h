@@ -126,10 +126,10 @@ class DirectedBuffer : public Buffer
 {
 public:
    enum dir_t { GET, PUT };
-   iconv_t backend_translate;
-   Buffer *untranslated;
 
 protected:
+   iconv_t backend_translate;
+   Buffer *untranslated;
    dir_t mode;
    void EmbraceNewData(int len);
 
@@ -137,7 +137,7 @@ public:
    DirectedBuffer(dir_t m) { mode=m; backend_translate=0; untranslated=0; }
    ~DirectedBuffer();
    void SetTranslation(const char *be_encoding,bool translit=true);
-   void PutTranslated(const char *buf,int size);
+   virtual void PutTranslated(const char *buf,int size);
    void PutTranslated(const char *buf) { PutTranslated(buf,strlen(buf)); }
    void ResetTranslation();
    void Put(const char *buf,int size)
@@ -148,6 +148,7 @@ public:
 	    Buffer::Put(buf,size);
       }
    void Put(const char *buf) { Put(buf,strlen(buf)); }
+   dir_t GetDirection() { return mode; }
 };
 
 class IOBuffer : public DirectedBuffer, public SMTask
@@ -175,6 +176,21 @@ public:
    virtual FgData *GetFgData(bool) { return 0; }
    virtual const char *Status() { return ""; }
    virtual int Buffered() { return Size(); }
+};
+
+class IOBufferStacked : public IOBuffer
+{
+   IOBuffer *down;
+
+   int Get_LL(int size);
+   int Put_LL(const char *buf,int size);
+
+public:
+   IOBufferStacked(IOBuffer *b) : IOBuffer(b->GetDirection()) { down=b; }
+   ~IOBufferStacked() { Delete(down); }
+   time_t EventTime() { return down->EventTime(); }
+   int Do();
+   bool Done();
 };
 
 class IOBufferFDStream : public IOBuffer

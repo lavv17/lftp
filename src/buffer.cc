@@ -283,10 +283,12 @@ void DirectedBuffer::PutTranslated(const char *put_buf,int size)
       Buffer::Put(put_buf,size);
       return;
    }
+   bool from_untranslated=false;
    if(untranslated && untranslated->Size()>0)
    {
       untranslated->Put(put_buf,size);
       untranslated->Get(&put_buf,&size);
+      from_untranslated=true;
    }
    if(size<=0)
       return;
@@ -303,16 +305,19 @@ try_again:
    // do the translation
    size_t res=iconv(backend_translate,&put_buf,&put_size,&store_buf,&store_size);
    in_buffer+=store_buf-(buffer+buffer_ptr+in_buffer);
-   if(untranslated)
+   if(from_untranslated)
       untranslated->Skip(put_buf-base_buf);
    if(res==(size_t)-1)
    {
       switch(errno)
       {
       case EINVAL: // incomplete character
-	 if(!untranslated)
-	    untranslated=new Buffer;
-	 untranslated->Put(put_buf,put_size);
+	 if(!from_untranslated)
+	 {
+	    if(!untranslated)
+	       untranslated=new Buffer;
+	    untranslated->Put(put_buf,put_size);
+	 }
 	 break;
       case EILSEQ: // invalid character
 	 Buffer::Put("?");
@@ -347,6 +352,97 @@ void DirectedBuffer::EmbraceNewData(int len)
       in_buffer+=len;
    }
    SaveMaxCheck(0);
+}
+
+// IOBufferStacked implementation
+#undef super
+#define super IOBuffer
+int IOBufferStacked::Do()
+{
+   int m=STALL;
+   if(Done() || Error())
+      return m;
+   int res=0;
+   switch(mode)
+   {
+   case PUT:
+      if(down->Broken() && !broken)
+      {
+	 broken=true;
+	 return MOVED;
+      }
+      if(down->Error())
+      {
+	 SetError(down->ErrorText(),down->ErrorFatal());
+	 m=MOVED;
+      }
+      if(in_buffer==0)
+	 return m;
+      res=Put_LL(buffer+buffer_ptr,in_buffer);
+      if(res>0)
+      {
+	 in_buffer-=res;
+	 buffer_ptr+=res;
+	 m=MOVED;
+	 down->Do();
+      }
+      break;
+
+   case GET:
+      m|=down->Do();
+      res=Get_LL(GET_BUFSIZE);
+      if(res>0)
+      {
+	 EmbraceNewData(res);
+	 m=MOVED;
+      }
+      if(eof)
+	 m=MOVED;
+      if(down->Error())
+      {
+	 SetError(down->ErrorText(),down->ErrorFatal());
+	 m=MOVED;
+      }
+      break;
+   }
+   if(res<0)
+      return MOVED;
+   return m;
+}
+int IOBufferStacked::Put_LL(const char *buf,int size)
+{
+   if(down->Broken())
+   {
+      broken=true;
+      return -1;
+   }
+   down->Put(buf,size);
+   return size;
+}
+
+int IOBufferStacked::Get_LL(int)
+{
+   const char *b;
+   int size;
+   down->Get(&b,&size);
+
+   if(!b)
+   {
+      eof=true;
+      return 0;
+   }
+
+   Allocate(size);
+   memcpy(buffer+buffer_ptr+in_buffer,b,size);
+   down->Skip(size);
+   return size;
+}
+
+bool IOBufferStacked::Done()
+{
+   if(super::Done())
+      return down->Done();
+   return false;
 }
 
 // IOBufferFDStream implementation
@@ -497,7 +593,7 @@ bool IOBufferFDStream::Done()
    return false;
 }
 
-// FileInputBuffer implementation
+// IOBufferFileAccess implementation
 #undef super
 #define super IOBuffer
 IOBufferFileAccess::~IOBufferFileAccess()

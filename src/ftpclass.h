@@ -32,6 +32,13 @@
 # include <openssl/ssl.h>
 #endif
 
+class IOBufferTelnet : public IOBufferStacked
+{
+   void PutTranslated(const char *,int);
+public:
+   IOBufferTelnet(IOBuffer *b) : IOBufferStacked(b) {}
+};
+
 class Ftp : public NetAccess
 {
    enum automate_state
@@ -96,7 +103,8 @@ class Ftp : public NetAccess
       CHECK_PASS_PROXY,	// check response for PASS sent to proxy
       CHECK_TRANSFER,	// generic check for transfer
       CHECK_TRANSFER_CLOSED, // check for transfer complete when Close()d.
-      CHECK_FEAT	// check response for FEAT
+      CHECK_FEAT,	// check response for FEAT
+      CHECK_SITE_UTIME	// check response for SITE UTIME
 #ifdef USE_SSL
       ,CHECK_AUTH_TLS,
       CHECK_PROT
@@ -162,6 +170,7 @@ class Ftp : public NetAccess
    int   control_sock;
    IOBuffer *control_recv;
    IOBuffer *control_send;
+   IOBufferTelnet *telnet_layer_send;
    Buffer *send_cmd_buffer; // holds unsent commands.
    int   data_sock;
    IOBuffer *data_iobuf;
@@ -202,6 +211,7 @@ private:
    int	    nop_count;
 
    time_t   stat_time;
+   time_t   retry_time;
 
    char	 *result;
    int	 result_size;
@@ -220,11 +230,13 @@ private:
    void  SendCmd2(const char *cmd,const char *f);
    void  SendCmd2(const char *cmd,int v);
    void  SendUrgentCmd(const char *cmd);
+   int	 FlushSendQueueOneCmd();
    int	 FlushSendQueue(bool all=false);
    void	 SendArrayInfoRequests();
    void	 SendSiteIdle();
    void	 SendAcct();
    void	 SendSiteGroup();
+   void	 SendUTimeRequest();
 
    const char *QueryStringWithUserAtHost(const char *);
 
@@ -252,6 +264,7 @@ private:
    bool  mdtm_supported;
    bool  size_supported;
    bool  site_chmod_supported;
+   bool  site_utime_supported;
    bool	 pret_supported;
    bool	 utf8_supported;
    bool	 lang_supported;

@@ -49,7 +49,7 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 
 #define TELNET_IAC	255		/* interpret as command: */
 #define	TELNET_IP	244		/* interrupt process--permanently */
-#define	TELNET_SYNCH	242		/* for telfunc calls */
+#define	TELNET_DM	242		/* for telfunc calls */
 
 #include <errno.h>
 #include <time.h>
@@ -261,13 +261,8 @@ void Ftp::NoFileCheck(int act)
       SetError(FATAL,line);
       return;
    }
-   if(is5XX(act))
+   if(is5XX(act) && !Transient5XX(act))
    {
-      if(Transient5XX(act))
-      {
-	 Disconnect();
-	 return;
-      }
       if(real_pos>0 && !(flags&IO_FLAG) && copy_mode==COPY_NONE)
       {
 	 DataClose();
@@ -282,7 +277,8 @@ void Ftp::NoFileCheck(int act)
       SetError(NO_FILE,line);
       return;
    }
-   Disconnect();
+   state=EOF_STATE;
+   retry_time=now+2; // retry after 2 seconds
 }
 
 /* 5xx that aren't errors at all */
@@ -853,6 +849,7 @@ void Ftp::InitFtp()
 
    control_sock=-1;
    control_recv=control_send=0;
+   telnet_layer_send=0;
    data_sock=-1;
    data_iobuf=0;
    aborted_data_sock=-1;
@@ -904,6 +901,7 @@ void Ftp::InitFtp()
    mdtm_supported=true;
    size_supported=true;
    site_chmod_supported=true;
+   site_utime_supported=true;
    pret_supported=false;
    utf8_supported=false;
    lang_supported=false;
@@ -932,6 +930,8 @@ void Ftp::InitFtp()
    disconnect_on_close=false;
 
    Reconfig();
+
+   retry_time=0;
 }
 Ftp::Ftp() : super()
 {
@@ -1198,6 +1198,7 @@ int   Ftp::Do()
       size_supported=true;
       mdtm_supported=true;
       site_chmod_supported=true;
+      site_utime_supported=true;
       last_rest=0;
    }
 
@@ -1224,10 +1225,20 @@ int   Ftp::Do()
       else // note the following block
 #endif
       {
-	 control_send=new IOBufferFDStream(
+	 if(use_telnet_iac)
+	 {
+	    control_send=telnet_layer_send=new IOBufferTelnet(
+	       new IOBufferFDStream(new FDStream(control_sock,"control-socket"),IOBuffer::PUT));
+	    control_recv=new IOBufferTelnet(
+	       new IOBufferFDStream(new FDStream(control_sock,"control-socket"),IOBuffer::GET));
+	 }
+	 else
+	 {
+	    control_send=new IOBufferFDStream(
 	       new FDStream(control_sock,"control-socket"),IOBuffer::PUT);
-	 control_recv=new IOBufferFDStream(
+	    control_recv=new IOBufferFDStream(
 	       new FDStream(control_sock,"control-socket"),IOBuffer::GET);
+	 }
       }
 
       state=CONNECTED_STATE;
@@ -1401,6 +1412,10 @@ int   Ftp::Do()
 
       if(home==0 && !RespQueueIsEmpty())
 	 goto usual_return;
+
+      if(now<retry_time)
+	 goto usual_return;
+      retry_time=0;
 
       if(real_cwd==0)
 	 set_real_cwd(home_auto);
@@ -2163,6 +2178,29 @@ void Ftp::SendSiteIdle()
    SendCmd2("SITE IDLE",idle);
    AddResp(0,CHECK_IGNORE);
 }
+void Ftp::SendUTimeRequest()
+{
+   if(entity_date==NO_DATE || !file)
+      return;
+   if(QueryBool("use-site-utime") && site_utime_supported)
+   {
+      char *c=string_alloca(11+strlen(file)+14*3+3+4);
+      char d[15];
+      time_t n=now;
+      strftime(d,sizeof(d)-1,"%Y%m%d%H%M%S",gmtime(&n));
+      sprintf(c,"SITE UTIME %s %s %s %s UTC",file,d,d,d);
+      SendCmd(c);
+      AddResp(200,CHECK_SITE_UTIME);
+   }
+   else if(QueryBool("use-mdtm-overloaded"))
+   {
+      char *c=string_alloca(5+14+1);
+      time_t n=now;
+      strftime(c,19,"MDTM %Y%m%d%H%M%S",gmtime(&n));
+      SendCmd2(c,file);
+      AddResp(0,CHECK_IGNORE);
+   }
+}
 const char *Ftp::QueryStringWithUserAtHost(const char *var)
 {
    const char *u=user?user:"anonymous";
@@ -2402,36 +2440,35 @@ int  Ftp::ReceiveResp()
 
 void Ftp::SendUrgentCmd(const char *cmd)
 {
-   if(!use_telnet_iac)
+   if(!use_telnet_iac || !telnet_layer_send)
    {
       SendCmd(cmd);
       return;
    }
 
-   static const char pre_cmd[]={TELNET_IAC,TELNET_IP,TELNET_IAC,TELNET_SYNCH};
+   static const char pre_cmd[]={TELNET_IAC,TELNET_IP,TELNET_IAC,TELNET_DM};
 
-   int fl=fcntl(control_sock,F_GETFL);
-   fcntl(control_sock,F_SETFL,fl&~O_NONBLOCK);
-   FlushSendQueue(/*all=*/true);
-   if(!control_send)
-      return;
-   if(control_send->Size()>0)
-      Roll(control_send);
 #ifdef USE_SSL
    if(control_ssl)
    {
       // no way to send urgent data over ssl, send normally.
-      SSL_write(control_ssl,pre_cmd,4);
+      telnet_layer_send->Buffer::Put(pre_cmd,4);
    }
-   else
+   else // note the following block
 #endif
    {
+      int fl=fcntl(control_sock,F_GETFL);
+      fcntl(control_sock,F_SETFL,fl&~O_NONBLOCK);
+      FlushSendQueue(/*all=*/true);
+      if(!control_send)
+	 return;
+      if(control_send->Size()>0)
+	 Roll(control_send);
       /* send only first byte as OOB due to OOB braindamage in many unices */
       send(control_sock,pre_cmd,1,MSG_OOB);
-      send(control_sock,pre_cmd+1,sizeof(pre_cmd)-1,0);
+      send(control_sock,pre_cmd+1,3,0);
+      fcntl(control_sock,F_SETFL,fl);
    }
-   fcntl(control_sock,F_SETFL,fl);
-
    SendCmd(cmd);
 }
 
@@ -2464,6 +2501,9 @@ void  Ftp::DataAbort()
       return;
 
    CloseRespQueue();
+
+   if(control_sock==-1)	// CloseRespQueue can disconnect.
+      return;
 
    if(!QueryBool("use-abor",hostname)
    || RespQueueSize()>1)
@@ -2518,7 +2558,7 @@ void Ftp::ControlClose()
       auth_sent=false;
    }
 #endif
-   Delete(control_send); control_send=0;
+   Delete(control_send); control_send=0; telnet_layer_send=0;
    Delete(control_recv); control_recv=0;
    delete send_cmd_buffer; send_cmd_buffer=0;
    if(control_sock!=-1)
@@ -2535,6 +2575,7 @@ void Ftp::AbortedClose()
 {
    if(aborted_data_sock!=-1)
    {
+      DebugPrint("---- ",_("Closing aborted data socket"));
       close(aborted_data_sock);
       aborted_data_sock=-1;
    }
@@ -2618,6 +2659,56 @@ void  Ftp::DataClose()
       state=WAITING_STATE;
 }
 
+int Ftp::FlushSendQueueOneCmd()
+{
+   const char *send_cmd_ptr;
+   int send_cmd_count;
+   send_cmd_buffer->Get(&send_cmd_ptr,&send_cmd_count);
+
+   if(send_cmd_count==0)
+      return STALL;
+
+   const char *cmd_begin=send_cmd_ptr;
+   const char *line_end=(const char*)memchr(send_cmd_ptr,'\n',send_cmd_count);
+   if(!line_end)
+      return STALL;
+
+   int to_write=line_end+1-send_cmd_ptr;
+   control_send->Put(send_cmd_ptr,to_write);
+   send_cmd_buffer->Skip(to_write);
+   sync_wait++;
+
+   int log_level=5;
+
+   bool may_show = (skey_pass!=0) || (user==0) || pass_open;
+   if(proxy && proxy_user) // can't distinguish here
+      may_show=false;
+   if(!may_show && !strncasecmp(cmd_begin,"PASS ",5))
+      Log::global->Write(log_level,"---> PASS XXXX\n");
+   else
+   {
+      Log::global->Write(log_level,"---> ");
+      for(const char *s=cmd_begin; s<=line_end; s++)
+      {
+	 if(*s==0)
+	    Log::global->Write(log_level,"<NUL>");
+	 else if((unsigned char)*s==TELNET_IAC && use_telnet_iac)
+	 {
+	    s++;
+	    if((unsigned char)*s==TELNET_IAC)
+	       Log::global->Write(log_level,"\377");
+	    else if((unsigned char)*s==TELNET_IP)
+	       Log::global->Write(log_level,"<IP>");
+	    else if((unsigned char)*s==TELNET_DM)
+	       Log::global->Write(log_level,"<DM>");
+	 }
+	 else
+	    Log::global->Format(log_level,"%c",*s?*s:'!');
+      }
+   }
+   return MOVED;
+}
+
 int  Ftp::FlushSendQueue(bool all)
 {
    int m=STALL;
@@ -2636,67 +2727,17 @@ int  Ftp::FlushSendQueue(bool all)
       return MOVED;
    }
 
-   const char *send_cmd_ptr;
-   int send_cmd_count;
-   send_cmd_buffer->Get(&send_cmd_ptr,&send_cmd_count);
-
-   const char *cmd_begin=send_cmd_ptr;
-
-   while(send_cmd_count>0 && (all || (flags&SYNC_MODE)==0 || sync_wait==0))
+   while(sync_wait<=0 || all || !(flags&SYNC_MODE))
    {
-      const char *line_end=(const char*)memchr(send_cmd_ptr,'\n',send_cmd_count);
-      if(!line_end)
-	 return m;
-      int to_write=line_end+1-send_cmd_ptr;
-
-      control_send->Put(send_cmd_ptr,to_write);
-
-      send_cmd_count-=to_write;
-      send_cmd_ptr+=to_write;
-
-      sync_wait++;
+      int res=FlushSendQueueOneCmd();
+      if(res==STALL)
+	 break;
+      m|=res;
    }
-   if(send_cmd_ptr>cmd_begin)
-   {
-      send_cmd_buffer->Skip(send_cmd_ptr-cmd_begin);
+
+   if(m==MOVED)
       Roll(control_send);
-      m=MOVED;
 
-      char *buf=string_alloca(send_cmd_ptr-cmd_begin+1);
-      memcpy(buf,cmd_begin,send_cmd_ptr-cmd_begin);
-      buf[send_cmd_ptr-cmd_begin]=0;
-      for(char *scan=buf+(send_cmd_ptr-cmd_begin)-1; scan>=buf; scan--)
-      {
-	 if(*scan=='\0')
-	    *scan='!';
-      }
-
-      char *p=strstr(buf,"PASS ");
-
-      bool may_show = (skey_pass!=0) || (user==0) || pass_open;
-      if(proxy && proxy_user) // can't distinguish here
-	 may_show=false;
-      if(p && !may_show)
-      {
-	 // try to hide password
-	 if(p>buf)
-	 {
-	    p[-1]=0;
-	    DebugPrint("---> ",buf,5);
-	 }
-	 DebugPrint("---> ","PASS XXXX",5);
-	 char *eol=strchr(p,'\n');
-	 if(eol)
-	 {
-	    *eol=0;
-	    DebugPrint("---> ",eol+1,5);
-	 }
-      }
-      else
-      {
-	 DebugPrint("---> ",buf,5);
-      }
-   }
    return m;
 }
 
@@ -2836,6 +2877,7 @@ void Ftp::CloseRespQueue()
       case(CHECK_EPSV):
       case(CHECK_TRANSFER_CLOSED):
       case(CHECK_FEAT):
+      case(CHECK_SITE_UTIME):
 #ifdef USE_SSL
       case(CHECK_AUTH_TLS):
       case(CHECK_PROT):
@@ -3131,6 +3173,7 @@ void  Ftp::MoveConnectionHere(Ftp *o)
 
    control_send=o->control_send; o->control_send=0;
    control_recv=o->control_recv; o->control_recv=0;
+   telnet_layer_send=o->telnet_layer_send; o->telnet_layer_send=0;
 
 #ifdef USE_SSL
    control_ssl=o->control_ssl;
@@ -3144,6 +3187,7 @@ void  Ftp::MoveConnectionHere(Ftp *o)
    size_supported=o->size_supported;
    mdtm_supported=o->mdtm_supported;
    site_chmod_supported=o->site_chmod_supported;
+   site_utime_supported=o->site_utime_supported;
    pret_supported=o->pret_supported;
    utf8_supported=o->utf8_supported;
    lang_supported=o->lang_supported;
@@ -3182,8 +3226,11 @@ void Ftp::CheckFEAT(char *reply)
       if(!strcasecmp(f,"UTF8"))
       {
 	 utf8_supported=true;
+	 control_send=new IOBufferStacked(control_send);
+	 control_recv=new IOBufferStacked(control_recv);
 	 control_send->SetTranslation("UTF-8",false);
 	 control_recv->SetTranslation("UTF-8",true);
+	 // some non-RFC2640 servers require this command.
 	 SendCmd("OPTS UTF8 ON");
 	 AddResp(0,CHECK_IGNORE);
       }
@@ -3468,6 +3515,9 @@ void Ftp::CheckResp(int act)
 
    case CHECK_TRANSFER:
       TransferCheck(act);
+      if(mode==STORE && is2XX(act)
+      && entity_size==real_pos)
+	 SendUTimeRequest();
       break;
 
    case CHECK_TRANSFER_CLOSED:
@@ -3485,6 +3535,14 @@ void Ftp::CheckResp(int act)
       if(!is2XX(act))
 	 break;
       CheckFEAT(all_lines);
+      break;
+
+   case CHECK_SITE_UTIME:
+      if(act==500 || act==501 || act==502)
+      {
+	 site_utime_supported=false;
+	 SendUTimeRequest();  // try another method.
+      }
       break;
 
 #ifdef USE_SSL
@@ -3530,6 +3588,8 @@ const char *Ftp::CurrentStatus()
 {
    if(Error())
       return StrError(error_code);
+   if(RespQueueHas(CHECK_FEAT))
+      return _("FEAT negotiation...");
    switch(state)
    {
    case(EOF_STATE):
@@ -3539,6 +3599,8 @@ const char *Ftp::CurrentStatus()
 	    return(_("Sending commands..."));
 	 if(!RespQueueIsEmpty())
 	    return(_("Waiting for response..."));
+	 if(retry_time>now)
+	    return _("Delaying before retry");
 	 return(_("Connection idle"));
       }
       return(_("Not connected"));
@@ -3733,6 +3795,7 @@ void Ftp::ResetLocationData()
    mdtm_supported=true;
    size_supported=true;
    site_chmod_supported=true;
+   site_utime_supported=true;
    utf8_supported=false;
    lang_supported=false;
    pret_supported=false;
@@ -3963,18 +4026,88 @@ FileAccess *FtpS::New(){ return new FtpS();}
 
 void Ftp::MakeSSLBuffers()
 {
-   Delete(control_send);
-   Delete(control_recv);
+   Delete(control_send); control_send=0; telnet_layer_send=0;
+   Delete(control_recv); control_recv=0;
 
    control_ssl=lftp_ssl_new(control_sock,hostname);
    IOBufferSSL *send_ssl=new IOBufferSSL(control_ssl,IOBufferSSL::PUT,hostname);
    IOBufferSSL *recv_ssl=new IOBufferSSL(control_ssl,IOBufferSSL::GET,hostname);
    send_ssl->DoConnect();
    recv_ssl->CloseLater();
-   control_send=send_ssl;
-   control_recv=recv_ssl;
+   if(use_telnet_iac)
+   {
+      control_send=telnet_layer_send=new IOBufferTelnet(send_ssl);
+      control_recv=new IOBufferTelnet(recv_ssl);
+   }
+   else
+   {
+      control_send=send_ssl;
+      control_recv=recv_ssl;
+   }
 }
 #endif
+
+void IOBufferTelnet::PutTranslated(const char *put_buf,int size)
+{
+   bool from_untranslated=false;
+   if(untranslated && untranslated->Size()>0)
+   {
+      untranslated->Put(put_buf,size);
+      untranslated->Get(&put_buf,&size);
+      from_untranslated=true;
+   }
+   if(size<=0)
+      return;
+   size_t put_size=size;
+   const char *iac;
+   while(put_size>0)
+   {
+      iac=(const char*)memchr(put_buf,TELNET_IAC,put_size);
+      if(!iac)
+	 break;
+      Buffer::Put(put_buf,iac-put_buf);
+      if(from_untranslated)
+	 untranslated->Skip(iac-put_buf);
+      put_size-=iac-put_buf;
+      put_buf=iac;
+      if(mode==PUT)
+      {
+	 // double the IAC to send it literally.
+	 Buffer::Put(iac,1);
+	 Buffer::Put(iac,1);
+	 if(from_untranslated)
+	    untranslated->Skip(1);
+	 put_buf++;
+	 put_size--;
+      }
+      else // mode==GET
+      {
+	 if(put_size<2)
+	 {
+	    if(!from_untranslated)
+	    {
+	       if(!untranslated)
+		  untranslated=new Buffer;
+	       untranslated->Put(iac,1);
+	    }
+	    return;
+	 }
+	 switch((unsigned char)iac[1])
+	 {
+	 case TELNET_IAC:
+	    Buffer::Put(iac,1);
+	    /*fallthrough*/
+	 default:
+	    if(from_untranslated)
+	       untranslated->Skip(2);
+	    put_buf+=2;
+	    put_size-=2;
+	 }
+      }
+   }
+   if(put_size>0)
+      Buffer::Put(put_buf,put_size);
+}
 
 #include "modconfig.h"
 #ifdef MODULE_PROTO_FTP

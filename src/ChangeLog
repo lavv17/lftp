@@ -1,5 +1,18 @@
 2004-01-14  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* FileCopy.cc: set entity size at end of transfer too, in case it was
+	  not known at the beginning.
+	* SFtp.cc: don't use non-portable S_IAMB macro.
+	* buffer.cc, buffer.h: fixed translation by adding bool from_untranslated;
+	  new class IOBufferStacked.
+	* ftpclass.cc: don't disconnect on some temporary errors, just re-send
+	  the command after delay; (IOBufferTelnet) new class; use it;
+	  (telnet_layer_send) new member; add site utime support; better status
+	  for FEAT negotiation; add overloaded MDTM support.
+	* resource.cc: (ftp:use-site-utime, ftp:use-mdtm-overloaded) new settings.
+
+2004-01-14  Alexander V. Lukyanov <lav@yars.free.net>
+
 	* ProcWait.cc: don't call NonFatalError, as it causes ProcWait to spin.
 	* commands.cc: fix compilation with IRIX compiler.
 

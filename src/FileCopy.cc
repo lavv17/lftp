@@ -255,6 +255,8 @@ int FileCopy::Do()
 	    line_buffer->Skip(s);
 	 }
 	 put->SetDate(get->GetDate());
+	 if(get->GetSize()!=NO_SIZE && get->GetSize()!=NO_SIZE_YET)
+	    put->SetEntitySize(get->GetSize());
 	 put->PutEOF();
 	 get->Suspend();
 	 put_eof_pos=put->GetRealPos();
@@ -755,6 +757,8 @@ int FileCopyPeerFA::Do()
 	 {
 	    if(date!=NO_DATE && date!=NO_DATE_YET)
 	       session->SetDate(date);
+	    if(e_size!=NO_SIZE && e_size!=NO_SIZE_YET)
+	       session->SetSize(e_size);
 	    res=session->StoreStatus();
 	    if(res==FA::OK)
 	    {
