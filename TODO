@@ -81,13 +81,13 @@ currently; some need other work to be done.
  * motd. if it is not yet known, connect/login and get it. (use class Buffer).
 
 +* xfer:avg-rate, xfer:avg-eta (number of seconds to get average on).
-   class speedometer.
++* class speedometer.
 
  * use NDIR (from RFC1127) in FtpListInfo, when long list cannot be parsed.
 
  * parse anonftpd listings (ftp://vgsn.glasnet.ru)
 
- * in get,cat, etc (FileCopy class) try RereadManual if output is seekable.
++* in get,cat, etc (FileCopy class) try RereadManual if output is seekable.
 
  * help for queue
 
@@ -95,7 +95,10 @@ currently; some need other work to be done.
 
  * specify directory for ListInfo.
 
- * glob urls; completion in URLs.
++* glob urls; completion in URLs.
 
 +* password migration between sessions.
- * login ftp://user@host to remember password for the site.
++* login ftp://user@host to remember password for the site.
+
++* ascii conversion. (in file: too)
++* url globbing finish; url completion.

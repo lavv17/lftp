@@ -1,3 +1,7 @@
+Version 2.2.0 - 2000-??-??
+
+* new settings xfer:eta-period and xfer:rate-period for calculation of eta
+  and current rate.
 * ascii mode transfers - `get -a', `put -a' etc.
 * new setting ftp:use-abor. (default: yes) If set to no, lftp does not send
   ABOR command but closes data connection immediately.
