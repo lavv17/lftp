@@ -145,6 +145,9 @@ int FileCopy::Do()
       }
       if(put->Broken())
       {
+	 get->Suspend();
+	 if(!put->Done())
+	    return m;
 	 debug((9,_("copy: put is broken\n")));
 	 if(fail_if_broken)
 	 {
@@ -624,7 +627,7 @@ void FileCopyPeer::SetDate(time_t d)
 
 bool FileCopyPeer::Done()
 {
-   if(broken || Error())
+   if(Error())
       return true;
    if(eof && in_buffer==0)
    {
@@ -634,6 +637,8 @@ bool FileCopyPeer::Done()
 	 return done;
       return true;
    }
+   if(broken)
+      return true;
    return false;
 }
 
@@ -1505,6 +1510,8 @@ int FileCopyPeerFDStream::Put_LL(const char *buf,int len)
       if(errno==EPIPE)
       {
 	 broken=true;
+	 in_buffer=0;
+	 eof=true;
 	 return -1;
       }
       if(stream->NonFatalError(errno))
