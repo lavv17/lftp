@@ -7,6 +7,7 @@
 	  indicating progress; OR it with m in Ftp::Do; fix condition
 	  of Disconnect in copy mode; fix SwitchToState to not ignore
 	  severe errors in copy mode.
+	* HttpDir.cc: fix spinning on & in file names when no &amp; etc match.
 
 2000-01-12  Alexander V. Lukyanov  <lav@yars.free.net>
 
