@@ -349,6 +349,7 @@ Mirror specified remote directory to local directory.
                         default - mirror:loose-time-precision setting
  -v, --verbose[=level]  verbose operation
      --use-cache        use cached directory listings
+ --Remove-source-files  remove files after transfer (use with caution)
 .De
 .PP
 When using -R, the first directory is local and the second is remote.
@@ -848,10 +849,14 @@ don't understand or mishandle ``HEAD ftp://'' requests.
 .BR http:cache \ (bool)
 allow server/proxy side caching.
 .TP
+.BR http:cookie \ (string)
+send this cookie to server. A closure is useful here:
+     set cookie/www.somehost.com "param=value"
+.TP
 .BR http:proxy \ (URL)
 specifies http proxy. It is used when lftp works over http protocol.
 Default value is taken from environment variable \fBhttp_proxy\fP.
-If your ftp proxy requires authentication, specify user name and password
+If your proxy requires authentication, specify user name and password
 in the URL.
 .TP
 .BR http:user-agent " (string)"
