@@ -29,11 +29,17 @@
 # define PRINTF_LIKE(n,m)
 #endif
 
-class StatusLine
+#include "SMTask.h"
+
+class StatusLine : public SMTask
 {
    int fd;
    char shown[0x800];
    bool	not_term;
+   time_t update_time;
+   char to_be_shown[0x800];
+   bool update_delayed;
+   void update(char *);
 
 public:
    int GetWidth();
@@ -43,6 +49,9 @@ public:
    int getfd() { return fd; }
 
    StatusLine(int new_fd);
+   ~StatusLine();
+
+   int Do();
 };
 
 #endif // STATUSLINE_H

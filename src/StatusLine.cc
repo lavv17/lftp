@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include "xstring.h"
+#include "xmalloc.h"
 
 #include "StatusLine.h"
 
@@ -52,24 +53,51 @@ int  StatusLine::GetWidth()
 StatusLine::StatusLine(int new_fd)
 {
    fd=new_fd;
+   update_delayed=false;
+   update_time=0;
    strcpy(shown,"");
    not_term=!isatty(fd);
+}
+StatusLine::~StatusLine()
+{
 }
 
 void StatusLine::Show(const char *f,...)
 {
-   if(not_term)
-      return;
-
-   if(tcgetpgrp(fd)!=getpgrp())
-      return;
-
    char newstr[sizeof(shown)];
 
    va_list v;
    va_start(v,f);
    vsprintf(newstr,f,v);
    va_end(v);
+
+   if(newstr[0]==0)
+   {
+      update(newstr);
+      update_delayed=false;
+      update_time=0;
+   }
+   else if(now>update_time)
+   {
+      update(newstr);
+      update_delayed=false;
+      update_time=now;
+   }
+   else
+   {
+      strcpy(to_be_shown,newstr);
+      update_delayed=true;
+      SMTask::block+=TimeOut(1000);
+   }
+}
+
+void StatusLine::update(char *newstr)
+{
+   if(not_term)
+      return;
+
+   if(tcgetpgrp(fd)!=getpgrp())
+      return;
 
    char *end=newstr+strlen(newstr);
 
@@ -143,4 +171,20 @@ void StatusLine::WriteLine(const char *f,...)
    write(fd,newstr,strlen(newstr));
 
    strcpy(shown,"");
+   update_delayed=false;
+}
+
+int StatusLine::Do()
+{
+   if(!update_delayed)
+      return STALL;
+   if(now>update_time)
+   {
+      update(to_be_shown);
+      update_delayed=false;
+      update_time=now;
+      return STALL;
+   }
+   Timeout(1000);
+   return STALL;
 }
