@@ -8,9 +8,6 @@ currently; some need other work to be done.
 
 ?* save command history (to different files for diff hosts?)
 
- * Http-style proxy support for ftp.
-   Maybe as a new protocol: hftp?
-
 ?* document variables in on-line help
 
  * mirror --config <file.cf>
@@ -36,8 +33,6 @@ currently; some need other work to be done.
    (Done()==true when queue is empty)
 
  * there are many interesting protocols: smb, fsp, fish, ...
-
- * split off NetworkFA class.
 
  * put -n (only if newer) Maybe it would be better to add a command to compare
    times?
