@@ -1,3 +1,7 @@
+2000-04-15	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: add a note about --only-newer.
+
 2000-03-21	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document rm -f.

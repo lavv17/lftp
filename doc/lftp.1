@@ -367,6 +367,10 @@ Verbosity level can be selected using \-\-verbose=level option or by several
  2 - +print not deleted file names (when -e is not specified)
  3 - +print directory names which are mirrored
 .De
+.PP
+\-\-only\-newer turns off file size comparision and uploads/downloads
+only newer files even if size is different. By default older files are downloaded/uploaded
+if size is different.
 
 .B mkdir
 .RB "[" -p "] " \fIdir(s)\fP
