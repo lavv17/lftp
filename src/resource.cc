@@ -91,6 +91,8 @@ static ResDecl resources[]={
    ResDecl  ("ftp:sync-mode",	       "on",    ResMgr::BoolValidate,0),
    ResDecl  ("ftp:verify-address",     "no",    ResMgr::BoolValidate,0),
    ResDecl  ("ftp:verify-port",	       "no",    ResMgr::BoolValidate,0),
+   ResDecl  ("hftp:cache",	       "yes",	ResMgr::BoolValidate,0),
+   ResDecl  ("hftp:proxy",	       "",	HttpProxyValidate,0),
    ResDecl  ("http:cache",	       "yes",	ResMgr::BoolValidate,0),
    ResDecl  ("http:proxy",	       "",	HttpProxyValidate,0),
    ResDecl  ("net:idle",	       "180",   ResMgr::UNumberValidate,0),
@@ -112,5 +114,17 @@ void ResMgr::ClassInit()
    // inherit http proxy from environment
    const char *http_proxy=getenv("http_proxy");
    if(http_proxy)
+   {
       Set("http:proxy",0,http_proxy);
+      Set("hftp:proxy",0,http_proxy);
+   }
+   
+   const char *ftp_proxy=getenv("ftp_proxy");
+   if(ftp_proxy)
+   {
+      if(!strncmp(ftp_proxy,"ftp://",6))
+	 Set("ftp:proxy",0,ftp_proxy);
+      else if(!strncmp(ftp_proxy,"http://",7))
+	 Set("hftp:proxy",0,ftp_proxy);
+   }
 }
