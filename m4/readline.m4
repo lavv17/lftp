@@ -6,7 +6,8 @@ AC_CACHE_VAL(lftp_cv_precompiled_readline,
    old_LIBS="$LIBS"
    LIBS="-lreadline $READLINE_SUPPLIB $LIBS"
    AC_TRY_LINK([extern int (*rl_getc_function)();],
-      [rl_getc_function=0;],
+      [rl_getc_function=0;
+       rl_completion_matches(0,0);],
       [AC_TRY_CPP([#include <readline/readline.h>],
 		[lftp_cv_precompiled_readline=yes],
 		[lftp_cv_precompiled_readline=no])
@@ -20,7 +21,7 @@ if test $lftp_cv_precompiled_readline = yes; then
    READLINE_DEPEND=''
    COMPILE_READLINE=no
 else
-   READLINE_DIR=readline-4.1
+   READLINE_DIR=readline-4.2
    AC_MSG_RESULT(no - will compile)
    LINK_SRC="$LINK_SRC $READLINE_DIR"
    LINK_DST="$LINK_DST include/readline"

@@ -88,5 +88,9 @@ OMIT_DEPENDENCIES = readline.h keymaps.h chardefs.h tilde.h rltypedefs.h\
 lftp.o commands.o module.o: confpaths.h
 
 # libtool does not strip modules, do it here.
-install-exec-local:
-	-case " $(LDFLAGS) " in *" -s "*) $(STRIP) $(pkgverlibdir)/*.so 2>/dev/null || true;; esac
+install-data-local:
+	@-if test "$(MODULES_LA)"; then \
+	    case " $(LDFLAGS) " in *" -s "*) \
+	       echo $(STRIP) $(DESTDIR)$(pkgverlibdir)/*.so; \
+	       $(STRIP) $(DESTDIR)$(pkgverlibdir)/*.so;; \
+	    esac; fi

@@ -32,6 +32,8 @@ extern "C" {
    and traditional C compilers with something like this:
 	extern char *func __P((char *, char *, int)); */
 
+#undef __P
+
 #if !defined (__P)
 #  if defined (__STDC__) || defined (__GNUC__) || defined (__cplusplus)
 #    define __P(protos) protos

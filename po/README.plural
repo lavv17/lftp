@@ -71,6 +71,7 @@ That said, let's show an example. The rule "=1 >1<5|>20%10>1<5" means:
    choose form #2 if the number >1 and <5, or it is >20 and last
       digit >1 and <5 (%10 means ramainder from division by 10)
    otherwise, choose form #3
+This is NOT the rule for russian language, %100 is missing.
 
 
 The second thing is to get the chosen form of a word. I decided to make
