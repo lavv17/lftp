@@ -1,3 +1,8 @@
+2004-12-17  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: use get -O to reduce log size.
+	* commands.cc: add -e for pget.
+
 2004-12-16  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc: fixed mirror --no-symlinks.

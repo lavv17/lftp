@@ -1530,7 +1530,7 @@ CMD(get)
    }
    if(!strcmp(op,"pget"))
    {
-      opts="+n:uO:";
+      opts="+n:euO:";
       n_conn=-1;
    }
    else if(!strcmp(op,"put") || !strcmp(op,"reput"))
@@ -1650,6 +1650,8 @@ CMD(get)
       pgetJob *j=new pgetJob(session->Clone(),get_args);
       if(n_conn!=-1)
 	 j->SetMaxConn(n_conn);
+      if(del_target)
+	 j->RemoveTargetFirst();
       return j;
    }
 }

@@ -255,10 +255,10 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	       args.Append("-c");
 	    if(remove_target)
 	       args.Append("-e");
+	    args.Append("-O");
+	    args.Append(target_is_local?target_dir
+			:target_session->GetConnectURL());
 	    args.Append(source_session->GetFileURL(file->name));
-	    args.Append("-o");
-	    args.Append(target_is_local?dir_file(target_dir,file->name)
-			:target_session->GetFileURL(file->name));
 	    char *cmd=args.CombineQuoted();
 	    fprintf(script,"%s\n",cmd);
 	    xfree(cmd);
