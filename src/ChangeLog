@@ -1,3 +1,8 @@
+2004-08-31  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc: make sure the file is created in FileCopyPeerFDStream
+	  before setting done.
+
 2004-08-30  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* url.cc: make nice orig_url in case of bm: scheme, so that
