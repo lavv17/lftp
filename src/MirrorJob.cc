@@ -210,6 +210,14 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    && file->size >= old->size)
 	    {
 	       cont_this=true;
+	       if(target_is_local)
+	       {
+		  if(access(target_name,W_OK)==-1)
+		  {
+		     // try to enable write access.
+		     chmod(target_name,st.st_mode|0200);
+		  }
+	       }
 	    }
 	    else
 	    {

@@ -1,6 +1,8 @@
 2001-12-17  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* GetFileInfo.cc: move SetCwd(origdir) to dtor; improve comment.
+	* MirrorJob.cc: try to enable write access to file being appended.
+	*
 
 2001-12-17  Glenn Maynard <g_ld@zewt.org>
 
