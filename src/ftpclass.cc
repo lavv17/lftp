@@ -37,7 +37,11 @@
 #include "url.h"
 #include "FtpListInfo.h"
 
-enum {TYPE_A,TYPE_I};
+enum {FTP_TYPE_A,FTP_TYPE_I};
+
+#define TELNET_IAC	255		/* interpret as command: */
+#define	TELNET_IP	244		/* interrupt process--permanently */
+#define	TELNET_SYNCH	242		/* for telfunc calls */
 
 #include <errno.h>
 #include <ctype.h>
@@ -210,6 +214,8 @@ int   Ftp::RestCheck(int act,int exp)
       real_pos=0;
       if(mode==STORE)
 	 pos=0;
+      if(copy_mode!=COPY_NONE)
+	 return COPY_FAILED;
       return(state);
    }
    real_pos=pos;  // REST successful
@@ -224,8 +230,12 @@ int   Ftp::NoFileCheck(int act,int exp)
    if(act/100==5)
    {
       if(strstr(line,"Broken pipe"))
+      {
+	 if(copy_mode!=COPY_NONE)
+	    return COPY_FAILED;
 	 return INITIAL_STATE;
-      if(real_pos>0 && !(flags&IO_FLAG))
+      }
+      if(real_pos>0 && !(flags&IO_FLAG) && copy_mode==COPY_NONE)
       {
 	 DebugPrint("---- ","Switching to NOREST mode");
 	 flags|=NOREST_MODE;
@@ -237,6 +247,8 @@ int   Ftp::NoFileCheck(int act,int exp)
       }
       return(NO_FILE_STATE);
    }
+   if(act!=exp && copy_mode!=COPY_NONE)
+      return COPY_FAILED;
    return(-1);
 }
 
@@ -274,7 +286,7 @@ int   Ftp::TransferCheck(int act,int exp)
       return state;
    if(act==RESP_NO_FILE && mode==LIST)
       return(NO_FILE_STATE);
-   if(act==RESP_BROKEN_PIPE)
+   if(act==RESP_BROKEN_PIPE && copy_mode==COPY_NONE)
    {
       if(data_sock==-1 && strstr(line,"Broken pipe"))
    	 return(state);
@@ -338,7 +350,7 @@ int   Ftp::NoPassReqCheck(int act,int exp) // for USER command
       free(result); result=0; result_size=0;
       if(force_skey && skey_pass==0)
       {
-	 // FIXME
+	 // FIXME - make proper err msg
 	 return(LOGIN_FAILED_STATE);
       }
    }
@@ -564,7 +576,7 @@ void Ftp::InitFtp()
    resp_size=0;
    resp_alloc=0;
    line=0;
-   type=TYPE_A;
+   type=FTP_TYPE_A;
    send_cmd_buffer=0;
    send_cmd_alloc=0;
    send_cmd_count=0;
@@ -600,6 +612,10 @@ void Ftp::InitFtp()
 
    ftp_next=ftp_chain;
    ftp_chain=this;
+
+   copy_mode=COPY_NONE;
+   copy_addr_valid=false;
+   copy_passive=false;
 
    Reconfig();
 }
@@ -965,7 +981,7 @@ int   Ftp::Do()
       }
 
       set_real_cwd("~");   // starting point
-      type=TYPE_A;	   // just after login we are in TEXT mode
+      type=FTP_TYPE_A;	   // just after login we are in TEXT mode
 
       state=EOF_STATE;
       m=MOVED;
@@ -1005,10 +1021,15 @@ int   Ftp::Do()
       if(mode!=CHANGE_DIR && xstrcmp(cwd,real_cwd))
 	 goto usual_return;
 
+      // address of peer is not known yet
+      if(copy_mode!=COPY_NONE && !copy_passive && !copy_addr_valid)
+	 goto usual_return;
+
       if(mode==STORE && (flags&NOREST_MODE) && pos>0)
 	 pos=0;
 
-      if(mode==RETRIEVE || mode==STORE || mode==LIST || mode==LONG_LIST)
+      if(copy_mode==COPY_NONE
+      && (mode==RETRIEVE || mode==STORE || mode==LIST || mode==LONG_LIST))
       {
 	 data_sock=socket(PF_INET,SOCK_STREAM,IPPROTO_TCP);
 	 if(data_sock==-1)
@@ -1030,22 +1051,22 @@ int   Ftp::Do()
       switch((enum open_mode)mode)
       {
       case(RETRIEVE):
-         type=TYPE_I;
+         type=FTP_TYPE_I;
          sprintf(str1,"RETR %s\n",file);
          break;
       case(STORE):
-         type=TYPE_I;
+         type=FTP_TYPE_I;
          sprintf(str1,"STOR %s\n",file);
          break;
       case(LONG_LIST):
-         type=TYPE_A;
+         type=FTP_TYPE_A;
          if(file && file[0])
             sprintf(str1,"LIST %s\n",file);
          else
             sprintf(str1,"LIST\n");
          break;
       case(LIST):
-         type=TYPE_A;
+         type=FTP_TYPE_A;
          real_pos=0; // REST doesn't work for NLST
 	 if(file && file[0])
             sprintf(str1,"NLST %s\n",file);
@@ -1073,9 +1094,7 @@ int   Ftp::Do()
 	    SendCmd(str1);
 	    AddResp(RESP_CWD_RMD_DELE_OK,INITIAL_STATE,&CWD_Check);
 	 }
-	 state=WAITING_STATE;
-	 m=MOVED;
-	 goto waiting_state_label;
+	 goto pre_WAITING_STATE;
       case(MAKE_DIR):
 	 sprintf(str1,"MKD %s\n",file);
 	 break;
@@ -1092,7 +1111,7 @@ int   Ftp::Do()
 	 sprintf(str1,"RNFR %s\n",file);
 	 break;
       case(ARRAY_INFO):
-	 type=TYPE_I;
+	 type=FTP_TYPE_I;
 	 break;
       case(CONNECT_VERIFY):
       case(CLOSED):
@@ -1100,7 +1119,7 @@ int   Ftp::Do()
       }
       if(old_type!=type)
       {
-         strcpy(str,type==TYPE_I?"TYPE I\n":"TYPE A\n");
+         strcpy(str,type==FTP_TYPE_I?"TYPE I\n":"TYPE A\n");
 	 SendCmd(str);
 	 AddResp(RESP_TYPE_OK,INITIAL_STATE);
       }
@@ -1136,9 +1155,7 @@ int   Ftp::Do()
 	       AddResp(RESP_RESULT_HERE,INITIAL_STATE,&CatchSIZE);
 	    }
 	 }
-      	 state=WAITING_STATE;
-	 m=MOVED;
-	 goto waiting_state_label;
+	 goto pre_WAITING_STATE;
       }
 
       if(mode==QUOTE_CMD
@@ -1177,12 +1194,11 @@ int   Ftp::Do()
 	    result=0;
 	    result_size=0;
 	 }
-	 state=WAITING_STATE;
-	 m=MOVED;
-	 goto waiting_state_label;
+	 goto pre_WAITING_STATE;
       }
 
-      if(flags&PASSIVE_MODE)
+      if((flags&PASSIVE_MODE)
+      || (copy_mode!=COPY_NONE && copy_passive))
       {
 	 SendCmd("PASV");
 	 AddResp(227,INITIAL_STATE,&PASV_Catch);
@@ -1191,11 +1207,16 @@ int   Ftp::Do()
       else
       {
 	 addr_len=sizeof(struct sockaddr);
-	 getsockname(control_sock,(struct sockaddr*)&data_sa,&addr_len);
-	 data_sa.sin_port=0;
-	 bind(data_sock,(struct sockaddr*)&data_sa,addr_len);
-	 listen(data_sock,1);
-	 getsockname(data_sock,(struct sockaddr*)&data_sa,&addr_len);
+	 if(copy_mode!=COPY_NONE)
+	    memcpy(&data_sa,&copy_addr,addr_len);
+	 else
+	 {
+	    getsockname(control_sock,(struct sockaddr*)&data_sa,&addr_len);
+	    data_sa.sin_port=0;
+	    bind(data_sock,(struct sockaddr*)&data_sa,addr_len);
+	    listen(data_sock,1);
+	    getsockname(data_sock,(struct sockaddr*)&data_sa,&addr_len);
+	 }
 	 a=(unsigned char*)&data_sa.sin_addr;
 	 p=(unsigned char*)&data_sa.sin_port;
 	 sprintf(str,"PORT %d,%d,%d,%d,%d,%d\n",a[0],a[1],a[2],a[3],p[0],p[1]);
@@ -1212,7 +1233,10 @@ int   Ftp::Do()
       AddResp(RESP_TRANSFER_OK,mode==STORE?STORE_FAILED_STATE:INITIAL_STATE,&TransferCheck);
 
       m=MOVED;
-      if(flags&PASSIVE_MODE)
+      if(copy_mode!=COPY_NONE && !copy_passive)
+	 goto pre_WAITING_STATE;
+      if((flags&PASSIVE_MODE)
+      || (copy_mode!=COPY_NONE && copy_passive))
       {
 	 state=DATASOCKET_CONNECTING_STATE;
       	 goto datasocket_connecting_state;
@@ -1278,6 +1302,12 @@ int   Ftp::Do()
       if(addr_received==1)
       {
 	 addr_received=2;
+	 if(copy_mode!=COPY_NONE)
+	 {
+	    memcpy(&copy_addr,&data_sa,sizeof(data_sa));
+	    copy_addr_valid=true;
+	    goto pre_WAITING_STATE;
+	 }
 	 a=(unsigned char*)&data_sa.sin_addr;
 	 sprintf(str,_("Connecting data socket to (%d.%d.%d.%d) port %u"),
 			      a[0],a[1],a[2],a[3],ntohs(data_sa.sin_port));
@@ -1364,9 +1394,12 @@ int   Ftp::Do()
 
       goto usual_return;
    }
+
+   pre_WAITING_STATE:
+      state=WAITING_STATE;
+      m=MOVED;
    case(WAITING_STATE):
    {
-   waiting_state_label:
       oldstate=state;
 
       FlushSendQueue();
@@ -1594,11 +1627,31 @@ void  Ftp::ReceiveResp()
    }
 }
 
+void  Ftp::DataAbort()
+{
+   if(control_sock==-1)
+      return;
+
+   if(data_sock==-1 && copy_mode==COPY_NONE)
+      return;
+
+   FlushSendQueue(/*all=*/true);
+   /* Send ABOR command, don't care of result */
+   static const char pre_abort[]={TELNET_IAC,TELNET_IP,TELNET_IAC,TELNET_SYNCH};
+   send(control_sock,pre_abort,sizeof(pre_abort),MSG_OOB);
+   SendCmd("ABOR");
+   AddResp(226,0,&IgnoreCheck);
+   FlushSendQueue(true);
+}
+
 void  Ftp::Disconnect()
 {
+   DataAbort();
    DataClose();
    if(control_sock>=0)
    {
+      SendCmd("QUIT");
+      FlushSendQueue(true);
       DebugPrint("---- ",_("Closing control socket"),2);
       close(control_sock);
       control_sock=-1;
@@ -1606,7 +1659,12 @@ void  Ftp::Disconnect()
 	 lookup_done=false;
    }
    resp_size=0;
-   state=(mode==STORE && (flags&IO_FLAG) ? STORE_FAILED_STATE : INITIAL_STATE);
+   if(copy_mode!=COPY_NONE)
+      state=COPY_FAILED;
+   else if(mode==STORE && (flags&IO_FLAG))
+      state=STORE_FAILED_STATE;
+   else
+      state=INITIAL_STATE;
    send_cmd_count=0;
    flags&=~SYNC_WAIT;
    EmptyRespQueue();
@@ -1630,7 +1688,7 @@ void  Ftp::DataClose()
    result=NULL;
 }
 
-void  Ftp::FlushSendQueue()
+void  Ftp::FlushSendQueue(bool all)
 {
    int res;
    struct pollfd pfd;
@@ -1652,10 +1710,10 @@ void  Ftp::FlushSendQueue()
 
    char *cmd_begin=send_cmd_ptr;
 
-   while(send_cmd_count>0 && !(flags&SYNC_WAIT))
+   while(send_cmd_count>0 && (all || !(flags&SYNC_WAIT)))
    {
       int to_write=send_cmd_count;
-      if(flags&SYNC_MODE)
+      if(!all && (flags&SYNC_MODE))
       {
 	 char *line_end=(char*)memchr(send_cmd_ptr,'\n',send_cmd_count);
 	 if(line_end==NULL)
@@ -1782,6 +1840,7 @@ void  Ftp::Close()
 
    Resume();
    ExpandTildeInCWD();
+   DataAbort();
    DataClose();
    if(control_sock!=-1)
    {
@@ -1795,7 +1854,8 @@ void  Ftp::Close()
 	 Disconnect();
 	 break;
       case(WAITING_STATE):
-	 if((mode==CHANGE_DIR || mode==QUOTE_CMD) && !RespQueueIsEmpty())
+	 if((mode==CHANGE_DIR || mode==QUOTE_CMD)
+	 && !RespQueueIsEmpty())
 	 {
 	    Disconnect();
 	    break;
@@ -1805,7 +1865,8 @@ void  Ftp::Close()
       case(STORE_FAILED_STATE):
       case(FATAL_STATE):
       case(SYSTEM_ERROR_STATE):
-	 state=EOF_STATE;
+      case(COPY_FAILED):
+	 state=(control_sock==-1 ? INITIAL_STATE : EOF_STATE);
 	 break;
       case(NO_HOST_STATE):
       case(INITIAL_STATE):
@@ -1822,6 +1883,8 @@ void  Ftp::Close()
       else
 	 state=NO_HOST_STATE;
    }
+   copy_mode=COPY_NONE;
+   copy_addr_valid=false;
    super::Close();
 }
 
@@ -1994,6 +2057,8 @@ void  Ftp::SwitchToState(automate_state ns)
 {
    if(ns==state)
       return;
+   if(copy_mode!=COPY_NONE && copy_passive && copy_addr_valid)
+      ns=COPY_FAILED;
    switch(ns)
    {
    case(INITIAL_STATE):
@@ -2005,6 +2070,7 @@ void  Ftp::SwitchToState(automate_state ns)
       Disconnect();
       break;
    case(EOF_STATE):
+      DataAbort();
       DataClose();
       xfree(file); file=0;
       set_idle_start();
@@ -2018,8 +2084,11 @@ void  Ftp::SwitchToState(automate_state ns)
       break;
    case(LOOKUP_ERROR_STATE):
       break;
+   case(COPY_FAILED):
+      break;
    default:
-      fprintf(stderr,_("SwitchToState called with invalid state\n"));
+      // don't translate - this message just indicates bug in lftp
+      fprintf(stderr,"SwitchToState called with invalid state\n");
       abort();
    }
    if(ns==STORE_FAILED_STATE && mode!=STORE)
@@ -2227,8 +2296,11 @@ const char *Ftp::CurrentStatus()
       return(strerror(saved_errno));
    case(LOOKUP_ERROR_STATE):
       return(StrError(LOOKUP_ERROR));
+   case(COPY_FAILED):
+      // user will not see this
+      return("Copy failed");
    }
-   return("");
+   abort();
 }
 
 int   Ftp::StateToError()
@@ -2351,7 +2423,8 @@ int   Ftp::Done()
       return OK;
 
    if(mode==CHANGE_DIR || mode==RENAME || mode==ARRAY_INFO
-   || mode==MAKE_DIR || mode==REMOVE_DIR || mode==REMOVE)
+   || mode==MAKE_DIR || mode==REMOVE_DIR || mode==REMOVE
+   || copy_mode!=COPY_NONE)
    {
       if(state==WAITING_STATE && RespQueueIsEmpty())
 	 return(OK);

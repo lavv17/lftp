@@ -30,6 +30,9 @@
 #include "FileAccess.h"
 #include "ResMgr.h"
 
+#include <sys/types.h>
+#include <sys/socket.h>
+
 class Ftp : public FileAccess
 {
    static Ftp *ftp_chain;
@@ -52,7 +55,8 @@ class Ftp : public FileAccess
       LOOKUP_ERROR_STATE,  // unsuccessful host name lookup
       CWD_CWD_WAITING_STATE,  // waiting until 'CWD $cwd' finishes
       USER_RESP_WAITING_STATE,// waiting until 'USER $user' finishes
-      DATASOCKET_CONNECTING_STATE   // waiting for data_sock to connect
+      DATASOCKET_CONNECTING_STATE,   // waiting for data_sock to connect
+      COPY_FAILED
    };
 
    enum response
@@ -150,12 +154,13 @@ class Ftp : public FileAccess
    char	 *result;
    int	 result_size;
 
+   void	 DataAbort();
    void  DataClose();
 
    void	 SwitchToState(automate_state);
 
    void  SendCmd(const char *cmd);
-   void	 FlushSendQueue();
+   void	 FlushSendQueue(bool all=false);
 
    void	 ReceiveResp();
 	 // If a response is received, it checks it for accordance with
@@ -225,6 +230,13 @@ class Ftp : public FileAccess
    static void SetKeepAlive(int sock);
 
    bool data_address_ok();
+
+   enum copy_mode_t { COPY_NONE, COPY_SOURCE, COPY_DEST };
+   copy_mode_t copy_mode;
+   struct sockaddr copy_addr;
+   bool copy_addr_valid;
+   bool copy_passive;
+   friend class FtpCopy;
 
 public:
    static void ClassInit();
