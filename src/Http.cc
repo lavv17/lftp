@@ -614,6 +614,11 @@ int Http::Do()
 
       state=RECEIVING_HEADER;
       m=MOVED;
+      if(mode==STORE)
+      {
+	 assert(rate_limit==0);
+	 rate_limit=new RateLimit();
+      }
 
    case RECEIVING_HEADER:
       if(send_buf->Error() || recv_buf->Error())

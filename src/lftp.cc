@@ -217,11 +217,18 @@ static void move_to_background()
       int fd=open(log,O_WRONLY|O_APPEND|O_CREAT,0600);
       if(fd>=0)
       {
-	 dup2(fd,1);
-	 dup2(fd,2);
+	 dup2(fd,1); // stdout
+	 dup2(fd,2); // stderr
 	 if(fd!=1 && fd!=2)
 	    close(fd);
       }
+      close(0);	  // close stdin.
+      open("/dev/null",O_RDONLY); // reopen it, just in case.
+
+#ifdef HAVE_SETSID
+      setsid();	  // start a new session.
+#endif
+
       pid=getpid();
       time_t t=time(0);
       SignalHook::Handle(SIGTERM,sig_term);
