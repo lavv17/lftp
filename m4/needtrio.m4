@@ -1,11 +1,11 @@
 AC_DEFUN([LFTP_NEED_TRIO],[
-   AC_CHECK_FUNCS(vsnprintf)
+   AC_CHECK_FUNCS(vsnprintf snprintf)
    AC_CACHE_CHECK([if trio library is needed], ac_cv_need_trio,
    [
       ac_cv_need_trio=no;
 
-      if test x$ac_cv_func_vsnprintf != xyes; then
-	 ac_cv_need_trio="yes (because there is no system vsnprintf function)"
+      if test x$ac_cv_func_vsnprintf != xyes -o x$ac_cv_func_snprintf != xyes; then
+	 ac_cv_need_trio="yes (because there is no system snprintf/vsnprintf functions)"
       else
 
       AC_TRY_RUN([
