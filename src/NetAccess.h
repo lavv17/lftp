@@ -64,6 +64,8 @@ protected:
    void	 SetSocketMaxseg(int sock);
 
    static void KeepAlive(int sock);
+   static void MinimizeLatency(int sock);
+   static void MaximizeThroughput(int sock);
    static void ReuseAddress(int sock);
    static void SetSocketBuffer(int sock,int val);
    static void SetSocketMaxseg(int sock,int val);

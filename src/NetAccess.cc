@@ -27,6 +27,7 @@
 #include <math.h>
 #include <sys/types.h>
 #include <netinet/in.h>
+#include <netinet/ip.h>
 #ifdef HAVE_NETINET_TCP_H
 # include <netinet/tcp.h>
 #endif
@@ -136,6 +137,22 @@ static int one=1;
 void NetAccess::KeepAlive(int sock)
 {
    setsockopt(sock,SOL_SOCKET,SO_KEEPALIVE,(char*)&one,sizeof(one));
+}
+void NetAccess::MinimizeLatency(int sock)
+{
+   int tos;
+#ifdef IP_TOS
+   tos = IPTOS_LOWDELAY;
+   setsockopt(sock, IPPROTO_IP, IP_TOS, (char *)&tos, sizeof(int));
+#endif
+}
+void NetAccess::MaximizeThroughput(int sock)
+{
+   int tos;
+#ifdef IP_TOS
+   tos = IPTOS_THROUGHPUT;
+   setsockopt(sock, IPPROTO_IP, IP_TOS, (char *)&tos, sizeof(int));
+#endif
 }
 void NetAccess::ReuseAddress(int sock)
 {

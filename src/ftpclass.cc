@@ -1247,6 +1247,7 @@ int   Ftp::Do()
 	 return MOVED;
       }
       KeepAlive(conn->control_sock);
+	  MinimizeLatency(conn->control_sock);
       SetSocketBuffer(conn->control_sock);
       SetSocketMaxseg(conn->control_sock);
       NonBlock(conn->control_sock);
@@ -1599,6 +1600,7 @@ int   Ftp::Do()
 	 NonBlock(conn->data_sock);
 	 CloseOnExec(conn->data_sock);
 	 KeepAlive(conn->data_sock);
+	 MaximizeThroughput(conn->data_sock);
 	 SetSocketBuffer(conn->data_sock);
 	 SetSocketMaxseg(conn->data_sock);
 
@@ -2021,6 +2023,7 @@ int   Ftp::Do()
       NonBlock(conn->data_sock);
       CloseOnExec(conn->data_sock);
       KeepAlive(conn->data_sock);
+	  MaximizeThroughput(conn->data_sock);
       SetSocketBuffer(conn->data_sock);
       SetSocketMaxseg(conn->data_sock);
 
