@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
-"POT-Creation-Date: 2002-06-02 14:22+0400\n"
+"POT-Creation-Date: 2002-06-05 16:27+0400\n"
 "PO-Revision-Date: 1999-07-12 00:00+0400\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -339,16 +339,16 @@ msgstr ""
 msgid "---- %d address$|es$ found\n"
 msgstr ""
 
-#: src/Resolver.cc:787
+#: src/Resolver.cc:784
 msgid "Host name lookup failure"
 msgstr ""
 
-#: src/Resolver.cc:819
+#: src/Resolver.cc:816
 #, fuzzy, c-format
 msgid "no such %s service"
 msgstr "variável desconhecida"
 
-#: src/Resolver.cc:841
+#: src/Resolver.cc:838
 msgid "No address found"
 msgstr ""
 

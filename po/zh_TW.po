@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.3.9\n"
-"POT-Creation-Date: 2002-06-02 14:22+0400\n"
+"POT-Creation-Date: 2002-06-05 16:27+0400\n"
 "PO-Revision-Date: 2001-04-22 06:01+0800\n"
 "Last-Translator: Abel Cheung <maddog@linux.org.hk>\n"
 "Language-Team: Traditional Chinese <zh-l10n@linux.org.tw>\n"
@@ -336,16 +336,16 @@ msgstr "逾時仍找不到主機地址"
 msgid "---- %d address$|es$ found\n"
 msgstr "沒有地址"
 
-#: src/Resolver.cc:787
+#: src/Resolver.cc:784
 msgid "Host name lookup failure"
 msgstr "不能檢查主機名稱"
 
-#: src/Resolver.cc:819
+#: src/Resolver.cc:816
 #, c-format
 msgid "no such %s service"
 msgstr "沒有這種 %s 服務"
 
-#: src/Resolver.cc:841
+#: src/Resolver.cc:838
 msgid "No address found"
 msgstr "沒有地址"
 

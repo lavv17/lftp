@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
-"POT-Creation-Date: 2002-06-02 14:22+0400\n"
+"POT-Creation-Date: 2002-06-05 16:27+0400\n"
 "PO-Revision-Date: 2002-04-12 00:06+0900\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -341,16 +341,16 @@ msgstr "ホスト名解決がタイムアウトしました"
 msgid "---- %d address$|es$ found\n"
 msgstr "---- %d 個のアドレスが見つかりました\n"
 
-#: src/Resolver.cc:787
+#: src/Resolver.cc:784
 msgid "Host name lookup failure"
 msgstr "ホスト名検索に失敗しました"
 
-#: src/Resolver.cc:819
+#: src/Resolver.cc:816
 #, c-format
 msgid "no such %s service"
 msgstr "%s などというサービスはありません"
 
-#: src/Resolver.cc:841
+#: src/Resolver.cc:838
 msgid "No address found"
 msgstr "アドレスが見つかりません"
 

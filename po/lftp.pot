@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-06-02 14:22+0400\n"
+"POT-Creation-Date: 2002-06-05 16:27+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -337,16 +337,16 @@ msgstr ""
 msgid "---- %d address$|es$ found\n"
 msgstr ""
 
-#: src/Resolver.cc:787
+#: src/Resolver.cc:784
 msgid "Host name lookup failure"
 msgstr ""
 
-#: src/Resolver.cc:819
+#: src/Resolver.cc:816
 #, c-format
 msgid "no such %s service"
 msgstr ""
 
-#: src/Resolver.cc:841
+#: src/Resolver.cc:838
 msgid "No address found"
 msgstr ""
 

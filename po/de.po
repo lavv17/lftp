@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Lftp 2.4.5\n"
-"POT-Creation-Date: 2002-06-02 14:22+0400\n"
+"POT-Creation-Date: 2002-06-05 16:27+0400\n"
 "PO-Revision-Date: 2002-05-17 12:37+0200\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: deutsch <de@li.org>\n"
@@ -342,16 +342,16 @@ msgstr "Zeitablauf: Rechnernamen nicht aufgelöst"
 msgid "---- %d address$|es$ found\n"
 msgstr "%d  Adresse$|n$ gefunden\n"
 
-#: src/Resolver.cc:787
+#: src/Resolver.cc:784
 msgid "Host name lookup failure"
 msgstr "Nachschlagen des Hostnamen fehlgeschlagen"
 
-#: src/Resolver.cc:819
+#: src/Resolver.cc:816
 #, c-format
 msgid "no such %s service"
 msgstr "kein derartiger %s Dienst"
 
-#: src/Resolver.cc:841
+#: src/Resolver.cc:838
 msgid "No address found"
 msgstr "Keine Adresse gefunden"
 

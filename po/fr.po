@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
-"POT-Creation-Date: 2002-06-02 14:22+0400\n"
+"POT-Creation-Date: 2002-06-05 16:27+0400\n"
 "PO-Revision-Date: 2002-03-03 23:34GMT\n"
 "Last-Translator: Nicolas Noble <nicolas@nobis-crew.org>\n"
 "Language-Team: French <fr@li.org>\n"
@@ -336,16 +336,16 @@ msgstr "résolution de l'adresse trop longue"
 msgid "---- %d address$|es$ found\n"
 msgstr "---- %d: adress$e trouvée|es trouvées$\n"
 
-#: src/Resolver.cc:787
+#: src/Resolver.cc:784
 msgid "Host name lookup failure"
 msgstr "La résolution du nom a échouée"
 
-#: src/Resolver.cc:819
+#: src/Resolver.cc:816
 #, c-format
 msgid "no such %s service"
 msgstr "service %s inconnu"
 
-#: src/Resolver.cc:841
+#: src/Resolver.cc:838
 msgid "No address found"
 msgstr "Adresse non trouvée"
 

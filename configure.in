@@ -383,5 +383,4 @@ fi
 
 AC_LINK_FILES($LINK_SRC,$LINK_DST)
 
-AC_OUTPUT(Makefile src/Makefile lib/Makefile include/Makefile doc/Makefile
-	  readline-4.2/Makefile po/Makefile.in m4/Makefile)
+AC_OUTPUT(Makefile src/Makefile lib/Makefile include/Makefile doc/Makefile readline-4.2/Makefile po/Makefile.in m4/Makefile)

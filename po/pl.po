@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp\n"
-"POT-Creation-Date: 2002-06-02 14:22+0400\n"
+"POT-Creation-Date: 2002-06-05 16:27+0400\n"
 "PO-Revision-Date: 1999-06-08 15:27+02:00\n"
 "Last-Translator: Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -347,16 +347,16 @@ msgstr "przekroczony czas badania nazwy hosta"
 msgid "---- %d address$|es$ found\n"
 msgstr "---- %d znaleziono adres$y|ów$\n"
 
-#: src/Resolver.cc:787
+#: src/Resolver.cc:784
 msgid "Host name lookup failure"
 msgstr "Rozwi±zywanie nazwy hosta nie powiod³o siê"
 
-#: src/Resolver.cc:819
+#: src/Resolver.cc:816
 #, c-format
 msgid "no such %s service"
 msgstr "nie ma takiej us³ugi %s"
 
-#: src/Resolver.cc:841
+#: src/Resolver.cc:838
 msgid "No address found"
 msgstr "Nie znaleziono adresu"
 

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2.3\n"
-"POT-Creation-Date: 2002-06-02 14:22+0400\n"
+"POT-Creation-Date: 2002-06-05 16:27+0400\n"
 "PO-Revision-Date: 2000-06-18 10:46+02:00\n"
 "Last-Translator: Giovanni Bortolozzo <borto@pluto.linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -338,16 +338,16 @@ msgstr "timeout nella risoluzione del nome dell'host"
 msgid "---- %d address$|es$ found\n"
 msgstr ""
 
-#: src/Resolver.cc:787
+#: src/Resolver.cc:784
 msgid "Host name lookup failure"
 msgstr ""
 
-#: src/Resolver.cc:819
+#: src/Resolver.cc:816
 #, fuzzy, c-format
 msgid "no such %s service"
 msgstr "variabile inesistente"
 
-#: src/Resolver.cc:841
+#: src/Resolver.cc:838
 msgid "No address found"
 msgstr ""
 
