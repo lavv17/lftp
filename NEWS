@@ -1,3 +1,13 @@
+Version 2.3.6 - 2000-12-29
+
+* new setting cmd:save-cwd-history.
+* new setting ftp:fix-pasv-address, don't fix PASV address by default.
+  (this fixes a problem with certain masquerading firewalls).
+* new setting hftp:use-authorization for some proxies (default is yes).
+* send port in Host: HTTP header.
+* check net:no-proxy before using hftp instead of ftp.
+* new commands bzcat, bzmore (Chmouel Boudjnah).
+
 Version 2.3.5 - 2000-11-25
 
 * implemented [ipv6::address]:port as specified by rfc2732.

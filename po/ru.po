@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2\n"
-"POT-Creation-Date: 2000-11-24 14:11+0300\n"
+"POT-Creation-Date: 2000-11-28 11:17+0300\n"
 "PO-Revision-Date: 2000-09-07 09:36+08:00\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -352,7 +352,7 @@ msgstr ""
 msgid "dns cache hit\n"
 msgstr ""
 
-#: src/Http.cc:1512 src/Resolver.cc:193 src/ftpclass.cc:3398
+#: src/Http.cc:1514 src/Resolver.cc:193 src/ftpclass.cc:3398
 msgid "Resolving host address..."
 msgstr "Преобразование адреса сервера..."
 
@@ -1444,11 +1444,11 @@ msgstr ""
 msgid "cannot parse EPSV response"
 msgstr ""
 
-#: src/Http.cc:732 src/ftpclass.cc:1007
+#: src/Http.cc:734 src/ftpclass.cc:1007
 msgid "Closing idle connection"
 msgstr "Закрытие неиспользуемого соединения"
 
-#: src/Http.cc:860 src/ftpclass.cc:1086
+#: src/Http.cc:862 src/ftpclass.cc:1086
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr ""
@@ -1474,7 +1474,7 @@ msgstr "Отключение пассивного режима"
 msgid "Timeout - reconnecting"
 msgstr "Превышение лимита времени ожидания - повторное соединение"
 
-#: src/Http.cc:939 src/ftpclass.cc:2193
+#: src/Http.cc:941 src/ftpclass.cc:2193
 msgid "Peer closed connection"
 msgstr "Соединение закрыто удаленной машиной"
 
@@ -1518,16 +1518,16 @@ msgstr ""
 msgid "Sending commands..."
 msgstr "Передача команд..."
 
-#: src/Http.cc:1525 src/ftpclass.cc:3390 src/ftpclass.cc:3415
+#: src/Http.cc:1527 src/ftpclass.cc:3390 src/ftpclass.cc:3415
 #: src/ftpclass.cc:3422
 msgid "Waiting for response..."
 msgstr "Ожидание ответа..."
 
-#: src/Http.cc:1520 src/ftpclass.cc:3391
+#: src/Http.cc:1522 src/ftpclass.cc:3391
 msgid "Connection idle"
 msgstr "Соединение не используется"
 
-#: src/Http.cc:1518 src/ftpclass.cc:3404
+#: src/Http.cc:1520 src/ftpclass.cc:3404
 msgid "Connecting..."
 msgstr "Установка соединения..."
 
@@ -1559,11 +1559,11 @@ msgstr "Ожидание окончания пересылки"
 msgid "Waiting for data connection..."
 msgstr "Ожидание установки соединения данных..."
 
-#: src/Http.cc:1523 src/ftpclass.cc:3429
+#: src/Http.cc:1525 src/ftpclass.cc:3429
 msgid "Sending data"
 msgstr "Отправка данных"
 
-#: src/Http.cc:1528 src/ftpclass.cc:3431
+#: src/Http.cc:1530 src/ftpclass.cc:3431
 msgid "Receiving data"
 msgstr "Получение данных"
 
@@ -1662,58 +1662,58 @@ msgid "POST method failed"
 msgstr ""
 
 #. problem here: hftp cannot work without proxy
-#: src/Http.cc:811
+#: src/Http.cc:813
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 
-#: src/Http.cc:880
+#: src/Http.cc:882
 #, c-format
 msgid "connect: %s"
 msgstr ""
 
-#: src/Http.cc:950
+#: src/Http.cc:952
 msgid "Sending request..."
 msgstr "Передача запроса..."
 
 #. eof
-#: src/Http.cc:988
+#: src/Http.cc:990
 msgid "Hit EOF while fetching headers"
 msgstr "Получил конец файла (EOF) при чтении заголовков"
 
 #. should never happen
-#: src/Http.cc:1043
+#: src/Http.cc:1045
 msgid "Success, but did nothing??"
 msgstr ""
 
-#: src/Http.cc:1077
+#: src/Http.cc:1079
 msgid "Could not parse HTTP status line"
 msgstr ""
 
-#: src/Http.cc:1175
+#: src/Http.cc:1177
 msgid "Receiving body..."
 msgstr "Получение тела ответа..."
 
-#: src/Http.cc:1310
+#: src/Http.cc:1312
 msgid "Hit EOF"
 msgstr ""
 
-#: src/Http.cc:1313
+#: src/Http.cc:1315
 msgid "Received not enough data, retrying"
 msgstr ""
 
-#: src/Http.cc:1321
+#: src/Http.cc:1323
 msgid "Received all"
 msgstr "Все получил"
 
-#: src/Http.cc:1326
+#: src/Http.cc:1328
 msgid "Received all (total)"
 msgstr ""
 
-#: src/Http.cc:1347 src/Http.cc:1368
+#: src/Http.cc:1349 src/Http.cc:1370
 msgid "chunked format violated"
 msgstr "формат данных `chunked' нарушен"
 
-#: src/Http.cc:1526
+#: src/Http.cc:1528
 msgid "Fetching headers..."
 msgstr "Получение заголовков HTTP..."
 

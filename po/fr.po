@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
-"POT-Creation-Date: 2000-11-24 14:11+0300\n"
+"POT-Creation-Date: 2000-11-28 11:17+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Nicolas Noble <nicolas.n.@wanadoo.fr>\n"
 "Language-Team: French <fr@li.org>\n"
@@ -348,7 +348,7 @@ msgstr "aucune restriction pour ce paramètre"
 msgid "dns cache hit\n"
 msgstr "le cache de nom a fonctionné\n"
 
-#: src/Http.cc:1512 src/Resolver.cc:193 src/ftpclass.cc:3398
+#: src/Http.cc:1514 src/Resolver.cc:193 src/ftpclass.cc:3398
 msgid "Resolving host address..."
 msgstr "Résolution de l'adresse..."
 
@@ -1461,11 +1461,11 @@ msgstr "ftp:skey-force est défini et le serveur ne supporte pas OPIE ou S/KEY"
 msgid "cannot parse EPSV response"
 msgstr "ne peut analyser la réponse EPSV"
 
-#: src/Http.cc:732 src/ftpclass.cc:1007
+#: src/Http.cc:734 src/ftpclass.cc:1007
 msgid "Closing idle connection"
 msgstr "Fermeture de la connexion inutile"
 
-#: src/Http.cc:860 src/ftpclass.cc:1086
+#: src/Http.cc:862 src/ftpclass.cc:1086
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "ne peut créer un socket de la famille %d"
@@ -1491,7 +1491,7 @@ msgstr "Désactivation du mode passif"
 msgid "Timeout - reconnecting"
 msgstr "Temps écoulé - reconnexion"
 
-#: src/Http.cc:939 src/ftpclass.cc:2193
+#: src/Http.cc:941 src/ftpclass.cc:2193
 msgid "Peer closed connection"
 msgstr "Connexion interrompue par un tiers"
 
@@ -1535,16 +1535,16 @@ msgstr "ftp:ssl-force est défini et le serveur ne supporte pas SSL"
 msgid "Sending commands..."
 msgstr "Emission des commandes..."
 
-#: src/Http.cc:1525 src/ftpclass.cc:3390 src/ftpclass.cc:3415
+#: src/Http.cc:1527 src/ftpclass.cc:3390 src/ftpclass.cc:3415
 #: src/ftpclass.cc:3422
 msgid "Waiting for response..."
 msgstr "En attente de réponse..."
 
-#: src/Http.cc:1520 src/ftpclass.cc:3391
+#: src/Http.cc:1522 src/ftpclass.cc:3391
 msgid "Connection idle"
 msgstr "Connexion stagnante"
 
-#: src/Http.cc:1518 src/ftpclass.cc:3404
+#: src/Http.cc:1520 src/ftpclass.cc:3404
 msgid "Connecting..."
 msgstr "Connexion..."
 
@@ -1576,11 +1576,11 @@ msgstr "En attente de la fin du transfert"
 msgid "Waiting for data connection..."
 msgstr "En attente de la connexion de données..."
 
-#: src/Http.cc:1523 src/ftpclass.cc:3429
+#: src/Http.cc:1525 src/ftpclass.cc:3429
 msgid "Sending data"
 msgstr "Emission des données"
 
-#: src/Http.cc:1528 src/ftpclass.cc:3431
+#: src/Http.cc:1530 src/ftpclass.cc:3431
 msgid "Receiving data"
 msgstr "Réception des données"
 
@@ -1679,59 +1679,59 @@ msgid "POST method failed"
 msgstr ""
 
 #. problem here: hftp cannot work without proxy
-#: src/Http.cc:811
+#: src/Http.cc:813
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
 
-#: src/Http.cc:880
+#: src/Http.cc:882
 #, c-format
 msgid "connect: %s"
 msgstr "connexion: %s"
 
-#: src/Http.cc:950
+#: src/Http.cc:952
 msgid "Sending request..."
 msgstr "Emission des requètes..."
 
 #. eof
-#: src/Http.cc:988
+#: src/Http.cc:990
 msgid "Hit EOF while fetching headers"
 msgstr "Reçu une fin de fichier en lisant les entêtes"
 
 #. should never happen
-#: src/Http.cc:1043
+#: src/Http.cc:1045
 msgid "Success, but did nothing??"
 msgstr "Terminé, mais rien ne s'est produit?!?"
 
-#: src/Http.cc:1077
+#: src/Http.cc:1079
 msgid "Could not parse HTTP status line"
 msgstr "Ne peut analyser la ligne d'état HTTP"
 
-#: src/Http.cc:1175
+#: src/Http.cc:1177
 msgid "Receiving body..."
 msgstr "Réception du corps..."
 
-#: src/Http.cc:1310
+#: src/Http.cc:1312
 msgid "Hit EOF"
 msgstr "Fin de fichier atteinte"
 
-#: src/Http.cc:1313
+#: src/Http.cc:1315
 msgid "Received not enough data, retrying"
 msgstr "Pas assez de données reçues, recommence"
 
-#: src/Http.cc:1321
+#: src/Http.cc:1323
 msgid "Received all"
 msgstr "Tout reçu"
 
-#: src/Http.cc:1326
+#: src/Http.cc:1328
 msgid "Received all (total)"
 msgstr "Tout reçu (total)"
 
-#: src/Http.cc:1347 src/Http.cc:1368
+#: src/Http.cc:1349 src/Http.cc:1370
 msgid "chunked format violated"
 msgstr "format en 'chunk' violé"
 
-#: src/Http.cc:1526
+#: src/Http.cc:1528
 msgid "Fetching headers..."
 msgstr "Réception des entêtes..."
 
