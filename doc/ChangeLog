@@ -1,3 +1,8 @@
+2004-01-16	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document sftp, mirror --ignore-time, ftp:use-feat, ftp:lang,
+	  ftp:use-mdtm-overloaded, ftp:use-site-utime
+
 2003-08-25	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document new settings.

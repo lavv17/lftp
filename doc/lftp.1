@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "25 Dec 2002"
+.TH lftp 1 "25 Nov 2003"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,21 +59,22 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 2.6.4.
+This man page documents lftp version 3.0.0.
 
 .SH "DESCRIPTION"
-\fBlftp\fR is a program that allows sophisticated ftp and http connections to
-other hosts. If \fIhost\fR is specified then lftp will connect to that
-host otherwise a connection has to be established with the open
-command.
+\fBlftp\fR is a file transfer program that allows sophisticated ftp, http
+and other connections to other hosts. If \fIsite\fR is specified then lftp
+will connect to that site otherwise a connection has to be established with
+the open command.
 .PP
-\fBlftp\fP can handle six file access methods - ftp, ftps, http, https,
-hftp, fish and file (https and ftps are only available when lftp is
+\fBlftp\fP can handle seven file access methods - ftp, ftps, http, https,
+hftp, fish, sftp and file (https and ftps are only available when lftp is
 compiled with openssl library). You can specify the method to use in `open
 URL' command, e.g. `open http://www.us.kernel.org/pub/linux'. hftp is
 ftp-over-http-proxy protocol. It can be used automatically instead of ftp
 if ftp:proxy is set to `http://proxy[:port]'. Fish is a protocol working
-over an ssh connection.
+over an ssh connection to a unix account. SFtp is a protocol implemented
+in ssh2 as sftp subsystem.
 
 .PP
 Every operation in \fBlftp\fP is reliable, that is any not fatal error is
@@ -353,6 +354,7 @@ directory name. Source and/or target can be URLs pointing to directories.
 -e, --delete		delete files not present at remote site
 -s, --allow-suid		set suid/sgid bits according to remote site
     --allow-chown		try to set owner and group on files
+    --ignore-time		ignore time when deciding whether to download
 -n, --only-newer		download only newer files (-c won't work)
 -r, --no-recursion		don't go to subdirectories
 -p, --no-perms		don't set file permissions
@@ -848,6 +850,11 @@ look up address in inet family, then inet6 and use first matched.
 .BR dns:use-fork \ (bool)
 if true, lftp will fork before resolving host address. Default is true.
 .TP
+.BR fish:connect-program \ (string)
+the program to use for connecting to remote server. It should support `-l' option
+for user name, `-p' for port number. Default is `ssh -ax'. You can set it to
+`rsh', for example.
+.TP
 .BR fish:shell \ (string)
 use specified shell on server side. Default is /bin/sh. On some systems,
 /bin/sh exits when doing cd to a non-existent directory. lftp can handle
@@ -992,16 +999,32 @@ variable TZ.
 if false, lftp does not send ABOR command but closes data connection
 immediately.
 .TP
+.BR ftp:use-feat \ (bool)
+when true (default), lftp uses FEAT command to determine extended features of
+ftp server.
+.TP
 .BR ftp:use-fxp \ (bool)
 if true, lftp will try to set up direct connection between two ftp servers.
+.TP
+.BR ftp:lang \ (bool)
+the language selected with LANG command, if supported as indicated by FEAT
+response. Default is empty which means server default.
 .TP
 .BR ftp:use-mdtm \ (bool)
 when true (default), lftp uses MDTM command to determine file modification
 time.
 .TP
+.BR ftp:use-mdtm-overloaded \ (bool)
+when true, lftp uses two argument MDTM command to set file modification
+time on uploaded files. Default is false.
+.TP
 .BR ftp:use-site-idle \ (bool)
 when true, lftp sends `SITE IDLE' command with net:idle argument. Default
 is false.
+.TP
+.BR ftp:use-site-utime \ (bool)
+when true, lftp sends `SITE UTIME' command to set file modification time
+on uploaded files. Default is true.
 .TP
 .BR ftp:use-size \ (bool)
 when true (default), lftp uses SIZE command to determine file size.
@@ -1195,6 +1218,35 @@ this option, but linux does.
 .TP
 .BR net:timeout \ (seconds)
 sets the network protocol timeout.
+.TP
+.BR sftp:connect-program \ (string)
+the program to use for connecting to remote server. It should support `-l' option
+for user name, `-p' for port number. Default is `ssh -ax'. You can set it to
+`rsh', for example.
+.TP
+.BR sftp:max-packets-in-flight \ (number)
+The maximum number of unreplied packets in flight. If round trip time is
+significant, you should increase this and size-read/size-write. Default is 3.
+.TP
+.BR sftp:protocol-version \ (number)
+The protocol number to negotiate. Default is 4. The actual protocol version
+used depends on server.
+.TP
+.BR sftp:server-program \ (string)
+The server program implementing SFTP protocol. If it does not contain a slash `/',
+it is considered a ssh2 subsystem and -s option is used when starting connect-program.
+Default is `sftp'. You can use rsh as transport level protocol like this:
+.Ds
+set sftp:connect-program rsh
+set sftp:server-program /usr/libexec/openssh/sftp-server
+.De
+Similarly you can run sftp over ssh1.
+.TP
+.BR sftp:size-read \ (number)
+Block size for reading. Default is 0x8000.
+.TP
+.BR sftp:size-write \ (number)
+Block size for writing. Default is 0x8000.
 .TP
 .BR ssl:ca-file " (path to file)"
 use specified file as Certificate Authority certificate.
