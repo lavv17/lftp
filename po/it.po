@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.9\n"
-"POT-Creation-Date: 2000-02-22 15:38+0300\n"
+"POT-Creation-Date: 2000-03-09 17:19+0300\n"
 "PO-Revision-Date: 2000-02-24 21:36+01:00\n"
 "Last-Translator: Giovanni Bortolozzo <borto@pluto.linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
