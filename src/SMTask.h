@@ -33,6 +33,7 @@ class SMTask
    static SMTask *sched_scan;
    static PollVec sched_total;
 
+
 protected:
    bool	 running;
    bool	 suspended;
@@ -46,6 +47,10 @@ protected:
 
 public:
    PollVec  block;
+
+   static time_t now;
+   static int now_ms;
+   static void UpdateNow();
 
    static void Schedule();
    static void Block() { sched_total.Block(); }

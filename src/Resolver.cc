@@ -130,7 +130,6 @@ int   Resolver::Do()
    {
       if(timeout>0)
       {
-	 time_t now=time(0);
 	 if(now-start_time > timeout)
 	 {
 	    err_msg=xstrdup(_("host name resolve timeout"));

@@ -27,6 +27,8 @@
 SMTask	 *SMTask::chain=0;
 SMTask	 *SMTask::sched_scan=0;
 PollVec	 SMTask::sched_total;
+time_t	 SMTask::now=time(0);
+int	 SMTask::now_ms; // milliseconds
 
 SMTask::SMTask()
 {
@@ -66,8 +68,23 @@ SMTask::~SMTask()
    }
 }
 
+void SMTask::UpdateNow()
+{
+#ifdef HAVE_GETTIMEOFDAY
+   struct timeval tv;
+   gettimeofday(&tv,0);
+   now=tv.tv_sec;
+   now_ms=tv.tv_usec/1000;
+#else
+   time(&now);
+#endif
+}
+
 void SMTask::Schedule()
 {
+   // get time onec and assume Do() don't take much time
+   UpdateNow();
+
    bool repeat=false;
    sched_scan=chain;
    while(sched_scan)

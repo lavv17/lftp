@@ -132,7 +132,7 @@ int   FileAccess::Poll(int fd,int ev)
    if(res<1)
       return 0;
    if(CheckHangup(&pfd,1))
-      return 0;
+      return -1;
    if(pfd.revents)
       time(&event_time);
    return pfd.revents;
@@ -163,12 +163,13 @@ int   FileAccess::CheckHangup(struct pollfd *pfd,int num)
       {
 	 len=sizeof(s_errno);
 	 getsockopt(pfd[i].fd,SOL_SOCKET,SO_ERROR,(char*)&s_errno,&len);
+	 if(errno==ENOTSOCK)
+	    return 0;
 	 if(errno!=0 || s_errno!=0)
 	 {
 	    sprintf(str,_("Socket error (%s) - reconnecting"),
 				       strerror(errno?errno:s_errno));
 	    DebugPrint("**** ",str);
-	    Disconnect();
 	    return 1;
 	 }
       }

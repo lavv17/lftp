@@ -173,6 +173,13 @@ public:
    }
 };
 
+static void sig_term(int sig)
+{
+   time_t t=time(0);
+   printf(_("[%lu] Terminated by signal %d. %s\n"),(unsigned long)getpid(),sig,ctime(&t));
+   exit(1);
+}
+
 static void move_to_background()
 {
    fflush(stdout);
@@ -207,6 +214,7 @@ static void move_to_background()
       }
       pid=getpid();
       time_t t=time(0);
+      SignalHook::Handle(SIGTERM,sig_term);
       printf(_("[%lu] Started.  %s"),(unsigned long)pid,ctime(&t));
       for(;;)
       {
