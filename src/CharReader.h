@@ -23,6 +23,7 @@
 
 #include "SMTask.h"
 
+// CharReader fetches a single character from given file descriptor.
 class CharReader : public SMTask
 {
    int	 fd;

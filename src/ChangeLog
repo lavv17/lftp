@@ -1,3 +1,8 @@
+2002-02-12  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CharReader.cc, CharReader.h: handle EINTR properly; try reading in
+	  non-block mode instead of polling.
+
 2002-02-11  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftpget: more ' quoting. -v should work now.

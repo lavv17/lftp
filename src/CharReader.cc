@@ -20,33 +20,45 @@
 
 #include <config.h>
 
+#include <stdio.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
 #include "CharReader.h"
 
 int CharReader::Do()
 {
+   int m=STALL;
    if(ch!=NOCHAR)
-      return STALL;
-   struct pollfd pfd;
-   pfd.fd=fd;
-   pfd.events=POLLIN;
-   int res=poll(&pfd,1,0);
-   if(res==-1
-   || (res==1 && !(pfd.revents&(POLLIN|POLLNVAL))))
-   {
-      ch=EOFCHAR;
-      return MOVED;
-   }
-   if(res==0)
-   {
-      Block(fd,POLLIN);
-      return STALL;
-   }
+      return m;
+
+   int oldfl=0;
+   fcntl(fd,F_GETFL,&oldfl);
+   if(!(oldfl&O_NONBLOCK))
+      fcntl(fd,F_SETFL,oldfl|O_NONBLOCK);
+
    unsigned char c;
-   res=read(fd,&c,1);
-   if(res==1)
+   int res=read(fd,&c,1);
+   if(res==-1 && errno==EAGAIN)
+      Block(fd,POLLIN);
+   else if(res==-1 && errno==EINTR)
+      m=MOVED;
+   else if(res>0)
+   {
       ch=c;
-   else
+      m=MOVED;
+   }
+   else	 // eof or error.
+   {
       ch=EOFCHAR;
-   return MOVED;
+      m=MOVED;
+   }
+
+   if(!(oldfl&O_NONBLOCK))
+      fcntl(fd,F_SETFL,oldfl);
+
+   if(res==-1 && ch==EOFCHAR)
+      fprintf(stderr,"read(%d): %s\n",fd,strerror(errno));
+
+   return m;
 }
