@@ -1,3 +1,8 @@
+2002-05-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* StatusLine.cc: fix for terminals with am and with no xenl (a space
+	  could be written in last column).
+
 2002-05-13  Michail Litvak <mci@owl.openwall.com
 
 	* Resolver.cc: check that addresses have proper length.

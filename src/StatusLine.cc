@@ -166,7 +166,7 @@ void StatusLine::update(char *newstr)
 
    strcpy(shown,newstr);
 
-   while(dif-->0 && end-newstr<w)
+   while(dif-->0 && end-newstr<w-1)
       *end++=' ';
 
    *end=0;
