@@ -142,6 +142,35 @@ const char *find_eol(const char *buf,int len,bool eof,int *eol_size)
    return real_eol;
 }
 
+/* This function replaces &amp; &lt; &gt; &quot; to appropriate characters */
+void decode_amps(char *s)
+{
+   static const struct pair
+      { char str[7]; char ch; }
+   table[]={
+      { "&amp;",  '&' },
+      { "&lt;",   '<' },
+      { "&gt;",   '>' },
+      { "&quot;", '"' },
+      { "", 0 }
+   };
+   const struct pair *scan;
+
+   for(char *a=s; a; a=strchr(a,'&'))
+   {
+      for(scan=table; scan->ch; scan++)
+      {
+	 int len=strlen(scan->str);
+	 if(!strncmp(a,scan->str,len))
+	 {
+	    *a=scan->ch;
+	    memmove(a+1,a+len,strlen(a+len)+1);
+	    a++;
+	 }
+      }
+   }
+}
+
 static int parse_html(const char *buf,int len,bool eof,Buffer *list,
       FileSet *set,FileSet *all_links,ParsedURL *prefix,char **base_href,
       LsOptions *lsopt=0)
@@ -224,6 +253,8 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
       return tag_len;	// not interesting
 
    // ok, found the target.
+
+   decode_amps(link_target);  // decode all &amp; and similar
 
    if(!strcasecmp(tag_scan->tag,"base"))
    {
@@ -609,7 +640,7 @@ parse_url_again:
       }
    }
 
-   if(set && link_target[0]!='/')
+   if(set && link_target[0]!='/' && link_target[0]!='~')
    {
       char *slash=strchr(link_target,'/');
       if(slash)

@@ -1,3 +1,7 @@
+1999-12-19  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* HttpDir.cc: decode &amp and similar. Skip ~ for ListInfo.
+
 1999-12-16  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* LocalAccess.cc: use mainstream fixed version.
