@@ -412,7 +412,7 @@ const char *FileAccess::GetFileURL(const char *f,int flags)
 	    f++;
 	 }
       }
-      url::encode_string(f,url+strlen(url));
+      url::encode_string(f,url+strlen(url),URL_PATH_UNSAFE);
    }
    return url;
 }
