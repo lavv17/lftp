@@ -1,7 +1,11 @@
 2001-10-01  Aaron Schrab <aaron@schrab.com>
 
-	* Fish.cc, Http.cc, commands.cc, log.cc: call va_start multiple
+	* Fish.cc, Http.cc, log.cc: call va_start multiple
 	  times when needed, fixes powerpc coredumps.
+
+2001-10-01  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* commands.cc: remove unneeded _().
 
 2001-09-12  Alexander V. Lukyanov  <lav@yars.free.net>
 
