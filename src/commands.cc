@@ -54,7 +54,6 @@
 #include "netrc.h"
 #include "url.h"
 #include "GetPass.h"
-#include "vars.h"
 #include "SignalHook.h"
 #include "ProtoList.h"
 #include "FileFeeder.h"
@@ -238,6 +237,43 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
 
    {NULL,NULL}
 };
+
+// returns:
+//    0 - no match
+//    1 - found, if *res==0 then ambiguous
+static
+int find_command(const char *unprec_name,const char * const *names,
+	         const char **res)
+{
+   const char *match=0;
+   for( ; *names; names++)
+   {
+      const char *s,*u;
+      for(s=*names,u=unprec_name; *s && *u==*s; s++,u++)
+	 ;
+      if(*s && !*u)
+      {
+	 if(match)
+	 {
+	    *res=0;
+	    return 1;
+	 }
+	 match=*names;
+      }
+      else if(!*s && !*u)
+      {
+	 *res=*names;
+	 return 1;
+      }
+   }
+   if(match)
+   {
+      *res=match;
+      return 1;
+   }
+   *res=0;
+   return 0;
+}
 
 CMD(lcd)
 {
@@ -1351,7 +1387,7 @@ CMD(cache)  // cache control
 
    if(!op)
       op="status";
-   else if(!find_var_name(op,cache_subcmd,&op))
+   else if(!find_command(op,cache_subcmd,&op))
    {
       // xgettext:c-format
       eprintf(_("Invalid command. "));
@@ -1559,7 +1595,7 @@ CMD(bookmark)
 
    if(!op)
       op="list";
-   else if(!find_var_name(op,bookmark_subcmd,&op))
+   else if(!find_command(op,bookmark_subcmd,&op))
    {
       // xgettext:c-format
       eprintf(_("Invalid command. "));
