@@ -221,8 +221,10 @@ void NetAccess::ClearPeer()
 void NetAccess::NextPeer()
 {
    peer_curr++;
-   if(peer_curr>peer_num)
+   if(peer_curr>=peer_num)
       peer_curr=0;
+   else
+      try_time=0;	// try next address immediately
 }
 
 void NetAccess::Connect(const char *h,const char *p)
