@@ -140,6 +140,9 @@ class Ftp : public NetAccess
       bool auth_sent;
       bool auth_supported;
       char *auth_args_supported;
+      bool ssl_is_activated() { return control_ssl!=0; }
+#else
+      bool ssl_is_activated() { return false; }
 #endif
 
       char *mlst_attr_supported;

@@ -2212,7 +2212,7 @@ int   Ftp::Do()
 
       if(copy_mode==COPY_DEST && !copy_done && copy_connection_open
       && expect->FirstIs(CHECK_TRANSFER) && use_stat
-      && !conn->control_ssl && !conn->proxy_is_http)
+      && !conn->ssl_is_activated() && !conn->proxy_is_http)
       {
 	 if(stat_time+stat_interval<=now)
 	 {
@@ -2272,6 +2272,7 @@ system_error:
    return MOVED;
 }
 
+#ifdef USE_SSL
 void Ftp::SendAuth(const char *auth)
 {
    if(!conn->auth_supported || conn->auth_sent || conn->control_ssl)
@@ -2312,6 +2313,8 @@ void Ftp::SendAuth(const char *auth)
    else
       conn->prot='P';
 }
+#endif // USE_SSL
+
 void Ftp::SendSiteIdle()
 {
    if(!QueryBool("use-site-idle"))
@@ -2740,7 +2743,7 @@ void  Ftp::DataAbort()
 
    // ABOR over SSL connection does not always work,
    // closing data socket should help it.
-   if(conn->control_ssl)
+   if(conn->ssl_is_activated())
       AbortedClose();
 
    if(QueryBool("web-mode"))
@@ -2816,7 +2819,9 @@ out:
 void Ftp::Connection::CloseDataConnection()
 {
    Delete(data_iobuf); data_iobuf=0;
-   data_ssl=0; // if is free'd by data_iobuf dtor.
+#ifdef USE_SSL
+   data_ssl=0; // it is free'd by data_iobuf dtor.
+#endif
    if(data_sock!=-1)
    {
       Log::global->Format(7,"---- %s\n",_("Closing data socket"));
