@@ -168,7 +168,7 @@ void *module_load(const char *path,int argc,const char *const *argv)
    if(map==0)
       return 0;
    (void)new module_info(fullpath,map);
-#if 0 // for some reason this does not work even with LAZY (_init?).
+#if 0 // for some reason this does not work even with LAZY (because of _init?).
    const char*const*depend=(const char*const*)dlsym(map,"module_depend");
    if(depend)
    {

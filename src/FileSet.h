@@ -148,6 +148,7 @@ public:
 
    void Count(int *d,int *f,int *s,int *o);
 
+   int FindGEIndByName(const char *name) const;
    FileInfo *FindByName(const char *name) const;
 
    void  SetSize(const char *name,off_t size)

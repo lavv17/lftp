@@ -64,17 +64,16 @@ void FileSet::Add(FileInfo *fi)
       delete fi;
       return;
    }
-   for(int j=0; j<fnum; j++)
-   {
-      if(!strcmp(files[j]->name,fi->name))
-      {
-	 files[j]->Merge(*fi);
-	 delete fi;
-	 return;
-      }
+   /* add sorted */
+   int pos = FindGEIndByName(fi->name);
+   if(pos < fnum && !strcmp(files[pos]->name,fi->name)) {
+      files[pos]->Merge(*fi);
+      delete fi;
+      return;
    }
    files=(FileInfo**)xrealloc(files,(++fnum)*sizeof(*files));
-   files[fnum-1]=fi;
+   memmove(files+pos+1, files+pos, sizeof(*files)*(fnum-pos-1));
+   files[pos]=fi;
 }
 
 void FileSet::Sub(int i)
@@ -280,6 +279,35 @@ void FileSet::Count(int *d,int *f,int *s,int *o)
 	 if(s) (*s)++; break;
       }
    }
+}
+
+/* assumes sorted by name. binary search for name, returning the first name
+ * >= name; returns fnum if name is greater than all names. */
+int FileSet::FindGEIndByName(const char *name) const
+{
+   int l = 0, u = fnum - 1;
+
+   /* no files or name is greater than the max file: */
+   if(!fnum || strcmp(files[u]->name, name) < 0)
+      return fnum;
+
+   /* we have files, and u >= name (meaning l <= name <= u); loop while
+    * this is true: */
+   while(l < u) {
+      /* find the midpoint: */
+      int m = (l + u) / 2;
+      int cmp = strcmp(files[m]->name, name);
+
+      /* if files[m]->name >= name, update the upper bound: */
+      if (cmp >= 0)
+	 u = m;
+
+      /* if files[m]->name < name, update the lower bound: */
+      if (cmp < 0)
+	 l = m+1;
+   }
+
+   return u;
 }
 
 FileInfo *FileSet::FindByName(const char *name) const

@@ -416,25 +416,30 @@ int percent(off_t offset,off_t size)
 
 const char *squeeze_file_name(const char *name,int w)
 {
-   if(strlen(name)<=(unsigned)w)
-      return name;
-
    static char *buf;
    static int buf_len;
+
+   int name_len=strlen(name);
+
+   if(name_len<=w)
+      return name;
+
    if(buf_len<w+20)
       buf=(char*)xrealloc(buf,buf_len=w+20);
 
    const char *b=basename_ptr(name);
-   int b_len=strlen(b);
+   int b_len=name_len-(b-name);
    if(b_len<=w-4 && b_len>w-15)
    {
-      sprintf(buf,".../%s",b);
+      strcpy(buf,".../");
+      strcat(buf,b);
       return buf;
    }
-   b=name+strlen(name)-w;
+   b=name+name_len-w;
    if(w<4)
       return b;
-   sprintf(buf,"...%s",b+3);
+   strcpy(buf,"...");
+   strcat(buf,b+3);
    return buf;
 }
 

@@ -1,3 +1,11 @@
+2001-07-09  Glenn F. Maynard <glenn@zewt.org>
+
+	* FileSet.cc, FileSet.h: speed-optimization using binary search.
+
+2001-07-06  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* misc.cc: little speed-optimization in squeeze_file_name.
+
 2001-07-03  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileAccess.cc, FileAccess.h, ftpclass.cc, ftpclass.h:
