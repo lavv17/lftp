@@ -247,6 +247,14 @@ const char *FtpListInfo::Status()
 }
 
 
+/*
+total 123
+-rwxr-xr-x   1 lav      root         4771 Sep 12  1996 install-sh
+-rw-r--r--   1 lav      root         1349 Feb  2 14:10 lftp.lsm
+drwxr-xr-x   4 lav      root         1024 Feb 22 15:32 lib
+lrwxrwxrwx   1 lav      root           33 Feb 14 17:45 ltconfig -> /usr/share/libtool/ltconfig
+NOTE: group may be missing.
+*/
 static
 FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err)
 {
@@ -389,6 +397,15 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err)
    return new FileInfo(fi);
 }
 
+/*
+07-13-98  09:06PM       <DIR>          aix
+07-13-98  09:06PM       <DIR>          hpux
+07-13-98  09:06PM       <DIR>          linux
+07-13-98  09:06PM       <DIR>          ncr
+07-13-98  09:06PM       <DIR>          solaris
+03-18-98  06:01AM              2109440 nlxb318e.tar
+07-02-98  11:17AM                13844 Whatsnew.txt
+*/
 static
 FileInfo *ParseFtpLongList_NT(const char *line_c,int *err)
 {
@@ -459,6 +476,20 @@ FileInfo *ParseFtpLongList_NT(const char *line_c,int *err)
    return new FileInfo(fi);
 }
 
+/*
++i774.71425,m951188401,/,	users
++i774.49602,m917883130,r,s79126,	jgr_www2.exe
+
+starts with +
+comma separated
+first character of field is type:
+ i - ?
+ m - modification time
+ / - means directory
+ r - means plain file
+ s - size
+ \t - file name follows.
+*/
 static
 FileInfo *ParseFtpLongList_EPLF(const char *line,int *err)
 {
