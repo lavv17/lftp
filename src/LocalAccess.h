@@ -29,7 +29,6 @@
 class LocalAccess : public FileAccess
 {
    FDStream *stream;
-   int error_code;
    bool done;
    void errno_handle();
    void fill_array_info();
