@@ -1,7 +1,9 @@
-Version 2.4.6 - 2001-10-??
+Version 2.4.6 - 2001-10-30
 
+* new setting ftp:timezone to select time zone of file listings.
 * new setting fish:shell to select remote shell, default is /bin/sh.
 * translation updates.
+* optimized cpu usage in ascii mode transfer (Glenn Maynard).
 * restore prompt when remote completion is interrupted with ^C.
 * fixed local tilde completion.
 * compilation fixes.

@@ -17,8 +17,6 @@ implemented.
 
 ?* eval -f "foo $1 $2; ls $@" a1 a2 a3
 
- * parent->GrabOutput GrabFD? to disable status line
-
  * update process title
  * at-exit-bg
 
