@@ -3298,7 +3298,7 @@ void Ftp::CheckResp(int act)
    if(act==421 || act==221)  // timeout or something else
    {
       if(RespQueueIsEmpty() || RespQueue[RQ_head].expect!=221)
-	 DebugPrint("**** ",_("remote end closes connection"),3);
+	 DebugPrint("**** ",_("remote end closed connection"),3);
       quit_sent=true;
       Disconnect();
       return;

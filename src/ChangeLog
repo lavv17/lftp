@@ -1,7 +1,17 @@
+2001-12-26  Glenn Maynard <g_ld@zewt.org>
+
+	* ftpclass.cc: correct message.
+
+2001-12-25  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc: assume keep-alive for http/1.1 by default (reported by
+	  Marc Lehmann).
+
 2001-12-24  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: reset real_cwd when someone does quote CWD and the like;
-	  scan PWD reply for rightmost quote (suggested by Glenn Maynard).
+	  scan PWD reply for rightmost quote (suggested by Glenn Maynard);
+	  separate method SendCWD.
 
 2001-12-24  Glenn Maynard <g_ld@zewt.org>
 
