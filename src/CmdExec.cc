@@ -649,7 +649,10 @@ void CmdExec::PrintStatus(int v)
    {
       if(waiting)
       {
-	 printf(_("\tNow executing: %s\n"),waiting->cmdline);
+	 printf("\t%s ",_("Now executing:"));
+	 if(waiting->jobno>=0)
+	    printf("[%d] ",waiting->jobno);
+	 printf("%s\n",waiting->cmdline?waiting->cmdline:"?");
 	 if(v==0)
 	 {
 	    waiting->PrintStatus(v);
