@@ -588,6 +588,9 @@ int last_element_is_doubledot(char *path,char *end)
 
 int FileAccess::device_prefix_len(const char *path)
 {
+   ResValue dp=Query("device-prefix",hostname);
+   if(dp.is_nil() || !dp.to_bool())
+      return 0;
    int i=0;
    while(path[i] && (is_ascii_alnum(path[i]) || strchr("$_-",path[i])))
       i++;

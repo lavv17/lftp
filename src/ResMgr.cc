@@ -550,7 +550,7 @@ ResValue ResMgr::Query(const char *name,const char *closure)
    if(msg)
    {
       // debug only
-      fprintf(stderr,_("Query of variable `%s' failed: %s\n"),name,msg);
+      // fprintf(stderr,_("Query of variable `%s' failed: %s\n"),name,msg);
       return 0;
    }
 

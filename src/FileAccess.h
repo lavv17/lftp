@@ -176,7 +176,7 @@ protected:
    FileAccess *FirstSameSite() { return NextSameSite(0); }
    FileAccess *NextSameSite(FileAccess *);
 
-   static int device_prefix_len(const char *path);
+   int device_prefix_len(const char *path);
 
    virtual ~FileAccess();
 
