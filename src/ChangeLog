@@ -1,3 +1,8 @@
+2000-02-15  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CmdExec.cc: (SuspendJob) print a better status for CopyJobEnv.
+	* Speedometer.cc: reduce initial rate period to 2 seconds.
+
 2000-02-14  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: close data socket when switching to no-rest mode.

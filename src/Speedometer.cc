@@ -46,7 +46,7 @@ Speedometer::Speedometer(const char *p)
 }
 bool Speedometer::Valid()
 {
-   return now>start+2 && now<last_bytes+period;
+   return now>start+1 && now<last_bytes+period;
 }
 int Speedometer::Do()
 {

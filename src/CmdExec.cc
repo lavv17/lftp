@@ -269,7 +269,11 @@ void CmdExec::SuspendJob()
       status_line->WriteLine("[%d] %s &",waiting->jobno,
 			waiting->cmdline?waiting->cmdline:"?");
    if(interactive)
+   {
       waiting->PrintStatus(0);
+      if(waiting->waiting && waiting->waiting->cmdline==0)
+	 waiting->waiting->PrintStatus(0); // mostly for CopyJobEnv.
+   }
    last_bg=waiting->jobno;
    exit_code=0;
    waiting=0;
