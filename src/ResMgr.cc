@@ -746,6 +746,10 @@ const char *ResMgr::ERegExpValidate(char **s)
    return 0;
 }
 
+#if defined(HAVE_INET_ATON) && !defined(HAVE_INET_ATON_DECL)
+CDECL int inet_aton(const char *,struct in_addr *);
+#endif
+
 const char *ResMgr::IPv4AddrValidate(char **value)
 {
    if(!**value)

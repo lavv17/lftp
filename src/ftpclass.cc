@@ -68,6 +68,10 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 # include <termios.h>
 #endif
 
+#if defined(HAVE_INET_ATON) && !defined(HAVE_INET_ATON_DECL)
+CDECL int inet_aton(const char *,struct in_addr *);
+#endif
+
 #include "xalloca.h"
 
 #ifdef USE_SSL
