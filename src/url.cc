@@ -127,8 +127,10 @@ ParsedURL::ParsedURL(const char *url,bool proto_required,bool use_rfc1738)
 
    // try to extract user name/password
    scan=base;
-   while(*scan && *scan!='@')
+   while(*scan && *scan!='/')
       scan++;
+   while(scan>base && *scan!='@')
+      scan--;
    if(*scan=='@')
    {
       *scan++=0;

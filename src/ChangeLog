@@ -1,3 +1,7 @@
+2001-10-12  Jonas Jensen <bones@huleboer.dk>
+
+	* url.cc: allow @ in password.
+
 2001-10-12  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Fish.cc, Fish.h: use PtyShell; answer ssh questions about (yes/no)
