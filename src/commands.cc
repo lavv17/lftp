@@ -306,10 +306,11 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "Default delay is one second, default command is empty.\n")},
    {"reput",   cmd_get,    N_("reput <lfile> [-o <rfile>]"),
 	 N_("Same as `put -c'\n")},
-   {"rm",      cmd_rm,	    N_("rm [-r] <files>"),
+   {"rm",      cmd_rm,	    N_("rm [-r] [-f] <files>"),
 	 N_("Remove remote files\n"
-	    " -r  recursive directory remove, be careful\n")},
-   {"rmdir",   cmd_rm,	    N_("rmdir <dirs>"),
+	    " -r  recursive directory removal, be careful\n"
+	    " -f  work quietly\n")},
+   {"rmdir",   cmd_rm,	    N_("rmdir [-f] <dirs>"),
 	 N_("Remove remote directories\n")},
    {"scache",  cmd_scache, N_("scache [<session_no>]"),
 	 N_("List cached sessions or switch to specified session number\n")},
