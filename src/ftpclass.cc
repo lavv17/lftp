@@ -1219,7 +1219,7 @@ int   Ftp::Do()
 
 #ifdef USE_SSL
       // ssl for anonymous does not make sense.
-      if(!ftps && QueryBool("ssl-allow") && user && pass)
+      if(!ftps && !proxy && QueryBool("ssl-allow") && user && pass)
       {
 	 const char *auth=Query("ssl-auth",hostname);
 	 SendCmd2("AUTH",auth);
@@ -2934,6 +2934,7 @@ read_again:
    {
       if(!data_ssl_connected)
       {
+	 errno=0;
 	 res=SSL_connect(data_ssl);
 	 if(res<=0)
 	 {
@@ -2946,6 +2947,16 @@ read_again:
 	       return DO_AGAIN;
 	    else // error
 	    {
+	       if(SSL_get_error(data_ssl,res)==SSL_ERROR_SYSCALL)
+	       {
+		  if(ERR_get_error()==0)
+		     goto we_have_eof;
+		  if(NotSerious(errno))
+		  {
+		     Disconnect();
+		     return DO_AGAIN;
+		  }
+	       }
 	       SetError(FATAL,lftp_ssl_strerror("SSL connect"));
 	       return error_code;
 	    }
@@ -3059,8 +3070,9 @@ int   Ftp::Write(const void *buf,int size)
    {
       if(!data_ssl_connected)
       {
+	 errno=0;
 	 res=SSL_connect(data_ssl);
-	 if(res<=0)
+	 if(res<0)
 	 {
 	    if(BIO_sock_should_retry(res))
 	    {
@@ -3071,6 +3083,14 @@ int   Ftp::Write(const void *buf,int size)
 	       return DO_AGAIN;
 	    else // error
 	    {
+	       if(SSL_get_error(data_ssl,res)==SSL_ERROR_SYSCALL)
+	       {
+		  if(ERR_get_error()==0 || errno==0 || NotSerious(errno))
+		  {
+		     Disconnect();
+		     return DO_AGAIN;
+		  }
+	       }
 	       SetError(FATAL,lftp_ssl_strerror("SSL connect"));
 	       return error_code;
 	    }

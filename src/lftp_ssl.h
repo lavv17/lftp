@@ -23,6 +23,7 @@
 
 #ifdef USE_SSL
 # include <openssl/ssl.h>
+# include <openssl/err.h>
 
 SSL *lftp_ssl_new(int fd);
 const char *lftp_ssl_strerror(const char *s);
