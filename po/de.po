@@ -1,20 +1,22 @@
+# translation of de.po to 
+# translation of de.po to deutsch
 # LFTP -  deutsche Übersetzung
 # Korrekturen, KRITIK SEHR willkommen
 # COPYRIGHT:
-# Moritz Moeller-Herrmann <mmh@gmx.net>, 1999,2000,2001,2002
 # GPL
+# Moritz Moeller-Herrmann <mmh@gmx.net>, 1999,2000,2001,2002,2003
 msgid ""
 msgstr ""
-"Project-Id-Version: Lftp 2.6.2\n"
+"Project-Id-Version: de\n"
 "POT-Creation-Date: 2002-12-26 08:51+0300\n"
-"PO-Revision-Date: 2002-09-16 15:43+0200\n"
-"Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
-"Language-Team: deutsch <de@li.org>\n"
+"PO-Revision-Date: 2003-02-06 16:34+0100\n"
+"Last-Translator: \n"
+"Language-Team:  <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "<moritz@hippokrates.jura.uni-mannheim.de>\n"
-"X-Generator: KBabel 0.9.6\n"
+"X-Generator: KBabel 1.0\n"
 
 #: src/CmdExec.cc:89
 #, c-format
@@ -106,7 +108,7 @@ msgstr "Zugriff nicht möglich: %s"
 
 #: src/FileAccess.cc:319
 msgid "File cannot be accessed"
-msgstr "Dateizugriff nicht möglich"
+msgstr "Zugriff auf Datei nicht möglich"
 
 #: src/FileAccess.cc:321 src/ftpclass.cc:3652 src/ftpclass.cc:3661
 msgid "Not connected"
@@ -293,11 +295,11 @@ msgstr "Mehrdeutiger Name für Variable"
 
 #: src/ResMgr.cc:399
 msgid "invalid boolean value"
-msgstr "unzulässiger boolescher Wert"
+msgstr "unzulässiger boolscher Wert"
 
 #: src/ResMgr.cc:424
 msgid "invalid boolean/auto value"
-msgstr "unzulässiger boolescher/automatischer Wert"
+msgstr "unzulässiger boolscher/automatischer Wert"
 
 #: src/ResMgr.cc:448 src/ResMgr.cc:479
 msgid "invalid number"
@@ -324,9 +326,8 @@ msgid "Invalid IPv4 numeric address"
 msgstr "Ungültige IPv4 Adressierungsnummer"
 
 #: src/ResMgr.cc:795
-#, fuzzy
 msgid "Invalid IPv6 numeric address"
-msgstr "Ungültige IPv4 Adressierungsnummer"
+msgstr "Ungültige IPv6 Adressierungsnummer"
 
 #: src/ResMgr.cc:855
 msgid "no closure defined for this setting"
@@ -448,13 +449,13 @@ msgid ""
 "  expire <Nx> - set cache expiration time to N seconds (x=s)\n"
 "                minutes (x=m) hours (x=h) or days (x=d)\n"
 msgstr ""
-"Der cache Befehl kontrolliert den lokalen Speichercache\n"
+"Der cache Befehl kontrolliert den lokalen Zwischenspeicher\n"
 "\n"
 "Die folgenden Unterbefehle werden erkannt:\n"
 "  stat        - Status des Cache ausgeben (Vorgabe)\n"
 "  on|off      - Cache an- oder ausschalten\n"
 "  flush       - Cache leeren\n"
-"  size <Lim>  - Speicherlimit setzen, -1 bedeutet unbegrenzt\n"
+"  size <Lim>  - Speichergrenze setzen, -1 bedeutet unbegrenzt\n"
 "  expire <Nx> - Ablaufzeit setzen auf N Sekunden (x=s)\n"
 "                Minuten (x=m), Stunden (x=h) oder Tage (x=d)\n"
 
@@ -468,7 +469,7 @@ msgid ""
 " -b  use binary mode (ascii is the default)\n"
 msgstr ""
 "cat - nichtlokale Dateien an STDOUT ausgeben. (Kann umgeleitet werden)\n"
-" -b Binärmodus verwenden (Textmodus ascii ist der Standardwert)\n"
+" -b Binärmodus verwenden (Textmodus ASCII ist der Standardwert)\n"
 
 #: src/commands.cc:147
 msgid "cd <rdir>"
@@ -486,7 +487,7 @@ msgstr ""
 "Rechner wird unter »-« gespeichert. Man kann mit »cd -« wieder zurückgehen.\n"
 "Das vorherige Verzeichnis für jeden Server wird auch auf Festplatte "
 "gesichert, so\n"
-"daß man auch bei einem Neustart von Lftp »open Server; cd -« benutzen kann.\n"
+"dass man auch bei einem Neustart von Lftp »open Server; cd -« benutzen kann.\n"
 
 #: src/commands.cc:152
 msgid "chmod [OPTS] mode file..."
@@ -564,16 +565,16 @@ msgid ""
 "to make filename completion case-insensitive.\n"
 msgstr ""
 "Dateien auf der Gegenstelle auflisten. Man kann die Ausgabe des Befehls\n"
-"in eine Datei umleiten oder mittels einer pipe in ein Programm einspeisen.\n"
+"in eine Datei umleiten oder mittels einer Pipe in ein Programm einspeisen.\n"
 "\n"
 " -1                   - einspaltige Ausgabe\n"
 " -B, --basename       - nur die Namenswurzel anzeigen\n"
 "\n"
-"     --block-size=GRÖSSE                       - Blocks in der GRÖSSE in "
+"     --block-size=GRÖßE                       - Blocks in der GRÖßE in "
 "Bytes\n"
-" -d, --directory      - list directory entries instead of contents\n"
+" -d, --directory      - Verzeichnisnamen statt Verzeichnisinhalt ausgeben\n"
 " -F, --classify       - Indikator (einen aus /@) an Einträge hängen\n"
-" -h, --human-readable - Dateigeössen in verständlichem Format ausgeben(z.B. "
+" -h, --human-readable - Dateigrößen in verständlichem Format ausgeben(z.B. "
 "1k)\n"
 "     --si             - ebenso, aber 1000 statt 1024 als Grundlage nehmen\n"
 " -l, --long           - ausführliches Format der Listenausgabe\n"
@@ -646,8 +647,8 @@ msgstr ""
 "Plattenspeicherverbrauch anzeigen.\n"
 " -a, --all             Angaben für alle Dateien und nicht nur Verzeichnisse\n"
 "                       ausgeben.\n"
-"     --block-size=GRÖSSE\n"
-"                       Blocks der angegbenen GRÖSSE in Bytes verwenden\n"
+"     --block-size=GRÖßE\n"
+"                       Blocks der angegebenen GRÖßE in Bytes verwenden\n"
 " -b, --bytes           Größe in Bytes ausgeben\n"
 " -c, --total           Gesamtsumme des Speicherbedarfs ausgeben\n"
 " -d, --max-depth=N     Summe des Speicherbedarfs für ein Verzeichnis\n"
@@ -655,7 +656,7 @@ msgstr ""
 "                       N oder weniger Ebenen unter dem Befehlsargument "
 "liegt;\n"
 "                       --max-depth=0 entspricht --summarize\n"
-" -F  --files           Anzahl der Dateien statt der Grösse angeben\n"
+" -F  --files           Anzahl der Dateien statt der Größe angeben\n"
 " -h, --human-readable  Größen in verständlichem Format ausgeben.\n"
 "                       (z.B. 1K 234M 2G)\n"
 " -H, --si              ähnlich, aber verwendet Vielfache von 1000 nicht "
@@ -780,8 +781,7 @@ msgstr ""
 
 #: src/commands.cc:274
 msgid "List running jobs. -v means verbose, several -v can be specified.\n"
-msgstr ""
-"Aktive Jobs auflisten. -v bedeutet mit Details, mehrere -v sind möglich.\n"
+msgstr "Aktive Jobs auflisten. -v bedeutet mit Details, mehrere -v sind möglich.\n"
 
 #: src/commands.cc:275
 msgid "kill all|<job_no>"
@@ -845,7 +845,7 @@ msgid ""
 msgstr ""
 "Nichtlokale Dateien auflisten. Man kann die Ausgabe dieses Befehls in\n"
 "eine Datei oder mittels einer Pipe zu einem externen Befehl umleiten.\n"
-"Als Standardvorgabe, wird die Ausgabe gecached, um die Liste zu erneuern\n"
+"Als Standardvorgabe, wird die Ausgabe zwischengespeichert, um die Liste zu erneuern\n"
 "dient entweder »rels« oder »cache flush«.\n"
 "Siehe auch »help cls«.\n"
 
@@ -868,7 +868,7 @@ msgstr ""
 " -d  Verzeichnisse mit dem Namen der ausgewählten Dateien erstellen und\n"
 "     die Dateien dort ablegen statt im normalen Verzeichnis\n"
 " -E  Dateien auf dem Server nach erfolgreicher Übertragung löschen\n"
-" -a ascii / Textmodus verwenden (Binärmodus ist die Voreinstellung)\n"
+" -a ASCII / Textmodus verwenden (Binärmodus ist die Voreinstellung)\n"
 " -O <basis> gibt das Oberverzeichnis bzw. die URL an, wo Dateien abgelegt\n"
 "    werden sollten\n"
 
@@ -931,7 +931,7 @@ msgstr ""
 "     --use-cache        bereits gespeicherte Dateilisten benutzen\n"
 "\n"
 "Gibt man -R an, so ist das erste Verzeichnis lokal und das andere auf dem \n"
-"Host.\n"
+"Gegenstelle.\n"
 "Wird das zweite Verzeichnis nicht angegeben, wird die Namenswurzel"
 "(basename)\n"
 "des ersten Verzeichnisses verwendet.\n"
@@ -996,7 +996,7 @@ msgstr ""
 " -d  Verzeichnisse mit dem Namen der ausgewählten Dateien erstellen und\n"
 "     die Dateien dorthin hochladen statt im normalen Verzeichnis\n"
 " -e  lokale Dateien nach erfolgreicher Übertragung löschen (Vorsicht!!)\n"
-" -a  ascii / Textmodus verwenden (Binärmodus ist die Vorgabe)\n"
+" -a  ASCII / Textmodus verwenden (Binärmodus ist die Vorgabe)\n"
 " -O  <basis> gibt das Oberverzeichnis bzw. die URL an, wo die Dateien\n"
 "     abgelegt werden sollen.\n"
 
@@ -1027,7 +1027,7 @@ msgid ""
 "`cache flush'.\n"
 msgstr ""
 "Nichtlokale Dateien auflisten.\n"
-"Als Standardvorgabe, wird die Ausgabe gecached, um die Liste zu erneuern\n"
+"Als Standardvorgabe, wird die Ausgabe zwischengespeichert, um die Liste zu erneuern\n"
 "dient entweder »rels« oder »cache flush«.\n"
 
 #: src/commands.cc:358
@@ -1093,7 +1093,7 @@ msgstr ""
 "     Man braucht die Berechtigung Dateien auf dem Server zu überschreiben.\n"
 " -e  Lokal vorliegende Dateien nach erfolgreicher Übertragung löschen \n"
 "    (Vorsicht!! Riskant!)\n"
-" -a  ascii / Textmodus verwenden (Binärmodus ist die Vorgabe)\n"
+" -a  ASCII / Textmodus verwenden (Binärmodus ist die Vorgabe)\n"
 " -O <basis> gibt das Oberverzeichnis bzw. die URL an, wo die Dateien\n"
 "    gespeichert werden sollen.\n"
 
@@ -1102,7 +1102,7 @@ msgid ""
 "Print current remote URL.\n"
 " -p  show password\n"
 msgstr ""
-"Drucke momentane URL der Ggenstelle.\n"
+"Drucke momentane URL der Gegenstelle.\n"
 " -p  Passwort zeigen\n"
 
 #: src/commands.cc:381
@@ -1223,7 +1223,7 @@ msgid ""
 "Repeat specified command with a delay between iterations.\n"
 "Default delay is one second, default command is empty.\n"
 msgstr ""
-"Den angegebenen Befehl mit der angegebenen Verzögung wiederholt ausführen.\n"
+"Den angegebenen Befehl mit der angegebenen Verzögerung wiederholt ausführen.\n"
 "Standardverzögerung ist 1 Sekunde. Standardbefehl ist leer.\n"
 
 #: src/commands.cc:424
@@ -1308,7 +1308,7 @@ msgid ""
 "By default time is assumed to be seconds.\n"
 msgstr ""
 "Verwendung: sleep <Zeitdauer>[Zeiteinheit]\n"
-"Schalfe für die angegebene Zeitdauer. Das Zeitargument kann mit der Angabe \n"
+"Schlafe für die angegebene Zeitdauer. Das Zeitargument kann mit der Angabe \n"
 "einer Einheit ergänzt werden: d - Tage, h - Stunden, m - Minuten, s - "
 "Sekunden.\n"
 "Ohne Angabe wird die Zeitangabe als Sekunden interpretiert.\n"
@@ -1346,7 +1346,7 @@ msgid ""
 "Wait for specified job to terminate. If jobno is omitted, wait\n"
 "for last backgrounded job.\n"
 msgstr ""
-"Darauf warten, daß der angegebene Job beendet ist. Wird keine jobnr "
+"Darauf warten, dass der angegebene Job beendet ist. Wird keine Jobnr. "
 "angegeben,\n"
 "wartet lftp auf den letzten in den Hintergrund gestellten Job.\n"
 
@@ -1406,7 +1406,7 @@ msgid ""
 "jobs.\n"
 msgstr ""
 "Jobs laufen noch und »cmd:move-background« ist nicht eingeschaltet.\n"
-"Bitte »exit bg« verwenden um im Hintergrund forzufahren oder\n"
+"Bitte »exit bg« verwenden um im Hintergrund fortzufahren oder\n"
 "»kill all« um alle Jobs zu beenden.\n"
 
 #: src/commands.cc:748
@@ -1417,7 +1417,7 @@ msgstr "»%s --help' gibt weitere Informationen aus\n"
 #: src/commands.cc:750
 #, c-format
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
-msgstr "Benutzung: %s [-e befehl] [-p port] [-u user[,passwt]] <Host|URL>\n"
+msgstr "Benutzung: %s [-e Befehl] [-p Port] [-u user[,passwort]] <Host|URL>\n"
 
 #: src/commands.cc:864 src/commands.cc:1896
 msgid "Password: "
@@ -1431,7 +1431,7 @@ msgstr "%s: GetPass() fehlgeschlagen -- benutze anonymen Login\n"
 #: src/commands.cc:961
 #, c-format
 msgid "Usage: %s [OPTS] command args...\n"
-msgstr "Benutzung: %s befehl argumente..\n"
+msgstr "Benutzung: %s Befehl Argumente..\n"
 
 #: src/commands.cc:1019 src/commands.cc:1546
 #, c-format
@@ -1556,7 +1556,7 @@ msgstr "%s: %s. »set -a« zeigt alle Variablen.\n"
 #: src/commands.cc:2098
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
-msgstr "Benutzung: %s [jobnr]\n"
+msgstr "Benutzung: %s [<Jobnr.>]\n"
 
 #: src/commands.cc:2139
 #, c-format
@@ -1595,15 +1595,13 @@ msgstr "%s: Angabe für »expire«(Ablauf) fehlt\n"
 
 #: src/commands.cc:2267
 #, c-format
-msgid ""
-"%s: %s - no such cached session. Use `scache' to look at session list.\n"
-msgstr ""
-"%s: %s - keine derartige Sitzung gecached. »scache« zeigt eine Liste.\n"
+msgid "%s: %s - no such cached session. Use `scache' to look at session list.\n"
+msgstr "%s: %s - keine derartige Sitzung zwischengespeichert. »scache« zeigt eine Liste.\n"
 
 #: src/commands.cc:2284
 #, c-format
 msgid "Sorry, no help for %s\n"
-msgstr "Tut mir leid, keine Hilfe für %s\n"
+msgstr "Tut mir Leid, keine Hilfe für %s\n"
 
 #: src/commands.cc:2289
 #, c-format
@@ -1636,8 +1634,7 @@ msgid "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 msgstr "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 
 #: src/commands.cc:2361
-msgid ""
-"This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
+msgid "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
 msgstr ""
 "Dies ist freie Software OHNE IRGENDWELCHE GARANTIEN ODER GEWÄHRLEISTUNGEN.\n"
 "Die Datei COPYING enthält Details.\n"
@@ -1665,7 +1662,7 @@ msgstr "%s: kein derartiges Lesezeichen »%s«\n"
 #: src/commands.cc:2482
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
-msgstr "%s: Importtyp muß angegeben werden (netscape,ncftp)\n"
+msgstr "%s: Importtyp muss angegeben werden (Netscape,ncftp)\n"
 
 #: src/commands.cc:2553
 #, c-format
@@ -1695,16 +1692,16 @@ msgstr "%s: »summarize« kann nicht mit --max-depth=%i kombiniert werden\n"
 #: src/commands.cc:2730
 #, c-format
 msgid "Usage: %s command args...\n"
-msgstr "Benutzung: %s befehl argumente..\n"
+msgstr "Benutzung: %s Befehl Argumente..\n"
 
 #: src/commands.cc:2742
 #, c-format
 msgid "Usage: %s module [args...]\n"
-msgstr "Benutzung: %s module [argumente..]\n"
+msgstr "Benutzung: %s module [Argumente..]\n"
 
 #: src/commands.cc:2760 src/LocalAccess.cc:603
 msgid "cannot get current directory"
-msgstr "Kann aktelles Verzeichnis nicht feststellen"
+msgstr "Kann aktuelles Verzeichnis nicht feststellen"
 
 #: src/commands.cc:2821
 #, c-format
@@ -1747,8 +1744,7 @@ msgstr "Eingerichteter Zugang ist erforderlich, ftp:acct Variable setzen."
 
 #: src/ftpclass.cc:484
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
-msgstr ""
-"ftp:skey-force ist gesetzt und Gegenstelle unterstützt weder OPIE noch S/KEY"
+msgstr "ftp:skey-force ist gesetzt und Gegenstelle unterstützt weder OPIE noch S/KEY"
 
 #: src/ftpclass.cc:500
 msgid "Saw `unknown', assume failed login"
@@ -1786,7 +1782,7 @@ msgstr "nicht unterstütztes Netzwerkprotokoll"
 #: src/ftpclass.cc:1889
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
-msgstr "Verbinde Daten socket mit (%s) Port %u"
+msgstr "Verbinde Daten Socket mit (%s) Port %u"
 
 #: src/ftpclass.cc:1914 src/ftpclass.cc:3523
 msgid "Switching passive mode off"
@@ -1830,8 +1826,7 @@ msgstr "Schalte Passivmodus ein"
 
 #: src/ftpclass.cc:3607
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
-msgstr ""
-"ftp:ssl-force ist gesetzt und Gegenstelle unterstützt oder erlaubt kein SSL"
+msgstr "ftp:ssl-force ist gesetzt und Gegenstelle unterstützt oder erlaubt kein SSL"
 
 #: src/ftpclass.cc:3647
 msgid "Sending commands..."
@@ -2006,7 +2001,7 @@ msgstr "Erfolg, aber nichts passiert??"
 
 #: src/Http.cc:1175
 msgid "Could not parse HTTP status line"
-msgstr "Konnte HTTP Statusabzeige nicht auswerten"
+msgstr "Konnte HTTP Statusanzeige nicht auswerten"
 
 #: src/Http.cc:1315
 msgid "Receiving body..."
@@ -2042,7 +2037,7 @@ msgstr "Proxy Protokoll wird nicht unterstützt"
 
 #: src/resource.cc:54
 msgid "ftp:proxy password: "
-msgstr "ftp:proxy Paßwort:"
+msgstr "ftp:proxy Passwort:"
 
 #: src/resource.cc:99
 msgid "only PUT and POST values allowed"
@@ -2075,8 +2070,7 @@ msgstr "Modus von »%s«  nach %04o (%s) geändert.\n"
 #: src/ChmodJob.cc:85
 #, c-format
 msgid "Failed to change mode of `%s' because no old mode is available.\n"
-msgstr ""
-"Konnte den Modus von »%s« nicht ändern, da kein alter Modus zugänglich war.\n"
+msgstr "Konnte den Modus von »%s« nicht ändern, da kein alter Modus zugänglich war.\n"
 
 #: src/CopyJob.cc:78
 #, c-format
@@ -2249,7 +2243,7 @@ msgstr "%s: Argument vorgeschrieben. "
 #: src/module.cc:181
 #, c-format
 msgid "depend module `%s': %s\n"
-msgstr "Vorraussetzung Modul »%s«: %s\n"
+msgstr "Voraussetzung Modul »%s«: %s\n"
 
 #: src/module.cc:201
 msgid "modules are not supported on this system"
@@ -2302,3 +2296,4 @@ msgstr "Module sind auf diesem System nicht verwendbar"
 
 #~ msgid "Old remote file `%s' is not removed"
 #~ msgstr "Bestehende nichtlokale Datei »%s« wird nicht entfernt"
+
