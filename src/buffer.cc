@@ -118,6 +118,14 @@ void Buffer::Skip(int len)
    buffer_ptr+=len;
    pos+=len;
 }
+void Buffer::UnSkip(int len)
+{
+   if(len>buffer_ptr)
+      len=buffer_ptr;
+   in_buffer+=len;
+   buffer_ptr-=len;
+   pos-=len;
+}
 
 void Buffer::Empty()
 {

@@ -67,6 +67,7 @@ public:
 
    void Get(const char **buf,int *size);
    void Skip(int len); // Get(); consume; Skip()
+   void UnSkip(int len); // this only works if there were no Put's.
    void Put(const char *buf,int size);
    void Put(const char *buf) { Put(buf,strlen(buf)); }
    void PutEOF() { eof=true; PutEOF_LL(); }
