@@ -1599,7 +1599,7 @@ int   Ftp::Do()
 	 {
 	    // send STAT to know current position.
 	    SendUrgentCmd("STAT");
-	    AddResp(200,INITIAL_STATE,CHECK_TRANSFER);
+	    AddResp(213,INITIAL_STATE,CHECK_TRANSFER);
 	    FlushSendQueue(true);
 	    m=MOVED;
 	 }
@@ -2560,7 +2560,10 @@ int   Ftp::CheckResp(int act)
    int new_state=-1;
 
    if(act==150)
+   {
       copy_connection_open=true;
+      stat_time=now+2;
+   }
 
    if(act==150 && mode==RETRIEVE && opt_size && *opt_size==-1)
    {
