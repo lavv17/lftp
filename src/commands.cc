@@ -1585,8 +1585,8 @@ CMD(rm)
    }
 
    rmJob *j=(rmdir?
-	     new rmJob(Clone(),new ArgV(args->a0())):
-	     new rmdirJob(Clone(),new ArgV(args->a0())));
+	     new rmdirJob(Clone(),new ArgV(args->a0())):
+	     new rmJob(Clone(),new ArgV(args->a0())));
 
    while(curr)
    {
