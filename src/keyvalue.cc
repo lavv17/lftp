@@ -164,7 +164,7 @@ char *KeyValueDB::Format()
    size_required+=max_key_len*n;
    max_key_len&=~7;  // save some bytes
 
-   char *buf=xmalloc(size_required+1);
+   char *buf=(char*)xmalloc(size_required+1);
    char *store=buf;
 
    for(p=chain; p; p=p->next)
