@@ -56,6 +56,7 @@ public:
    virtual int Do();
    virtual bool Done() { return in_buffer==0; }
    bool Error() { return error_text!=0; }
+   void SetError(const char *e);
    int  Errno() { return saved_errno; }
    const char *ErrorText() { return error_text; }
    int Size() { return in_buffer; }

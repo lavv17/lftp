@@ -148,6 +148,12 @@ Buffer::~Buffer()
    xfree(buffer);
 }
 
+void Buffer::SetError(const char *e)
+{
+   xfree(error_text);
+   error_text=xstrdup(e);
+}
+
 // FileOutputBuffer implementation
 #include <fcntl.h>
 #include <unistd.h>
@@ -201,7 +207,7 @@ int FileOutputBuffer::Put_LL(const char *buf,int size)
       if(out->error())
       {
       err:
-	 error_text=xstrdup(out->error_text);
+	 SetError(out->error_text);
 	 return -1;
       }
       event_time=now;
@@ -313,7 +319,7 @@ int FileInputBuffer::Get_LL(int size)
       {
 	 if(res==FA::DO_AGAIN)
 	    return 0;
-	 error_text=xstrdup(in_FA->StrError(res));
+	 SetError(in_FA->StrError(res));
 	 return -1;
       }
    }
@@ -325,7 +331,7 @@ int FileInputBuffer::Get_LL(int size)
 	 if(in->error())
 	 {
 	 err:
-	    error_text=xstrdup(in->error_text);
+	    SetError(in->error_text);
 	    return -1;
 	 }
 	 return 0;
