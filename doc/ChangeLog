@@ -1,3 +1,7 @@
+2002-12-25	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:port-ipv4, net:socket-bind-ipv{4,6}.
+
 2002-08-02	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document new mirror target/ semantics.

@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "02 Aug 2002"
+.TH lftp 1 "25 Dec 2002"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 2.6.0.
+This man page documents lftp version 2.6.4.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a program that allows sophisticated ftp and http connections to
@@ -906,6 +906,10 @@ data transfer. In such cases NOOP commands can prevent connection timeout.
 sets passive ftp mode. This can be useful if you are behind a firewall
 or a dumb masquerading router.
 .TP
+.BR ftp:port-ipv4 " (ipv4 address)"
+specifies an IPv4 address to send with PORT command. Default is empty which
+means to send the address of local end of control connection.
+.TP
 .BR ftp:port-range \ (from-to)
 allowed port range for active mode.
 Format is min-max, or `full' or `any' to indicate any port. Default is `full'.
@@ -1155,6 +1159,15 @@ is reset back to net:reconnect-interval-base.
 sets multiplier by which base interval is multiplied each time new attempt
 to perform an operation fails. When the interval reachs maximum, it is reset
 to base value. See net:reconnect-interval-base and net:reconnect-interval-max.
+.TP
+.BR net:socket-bind-ipv4 " (ipv4 address)"
+bind all IPv4 sockets to specified address. This can be useful to select a
+specific network interface to use. Default is empty which means not to bind
+IPv4 sockets, operating system will choose an address automatically using
+routing table.
+.TP
+.BR net:socket-bind-ipv6 " (ipv6 address)"
+the same for IPv6 sockets.
 .TP
 .BR net:socket-buffer \ (bytes)
 use given size for SO_SNDBUF and SO_RCVBUF socket options. 0 means system
