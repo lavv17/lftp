@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "25 Nov 2003"
+.TH lftp 1 "16 Jan 2004"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -876,6 +876,11 @@ Default is "anonymous".
 .TP
 .BR ftp:auto-sync-mode \ (regex)
 if first server message metches this regex, turn on sync mode for that host.
+.TP
+.BR ftp:charset \ (string)
+the character set used by ftp server in requests, replies and file listings.
+Default is empty which means the same as local. This setting is only used
+when the server does not support UTF8.
 .TP
 .BR ftp:bind-data-socket \ (bool)
 bind data socket to the interface of control connection (in passive mode).
