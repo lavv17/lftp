@@ -95,6 +95,7 @@ static ResDecl resources[]={
    ResDecl  ("ftp:skey-allow",	       "yes",   ResMgr::BoolValidate,0),
    ResDecl  ("ftp:skey-force",	       "no",    ResMgr::BoolValidate,0),
    ResDecl  ("ftp:sync-mode",	       "on",    ResMgr::BoolValidate,0),
+   ResDecl  ("ftp:use-abor",	       "on",    ResMgr::BoolValidate,0),
    ResDecl  ("ftp:verify-address",     "no",    ResMgr::BoolValidate,0),
    ResDecl  ("ftp:verify-port",	       "no",    ResMgr::BoolValidate,0),
    ResDecl  ("hftp:cache",	       "yes",	ResMgr::BoolValidate,0),
