@@ -664,7 +664,11 @@ int FileCopyPeerFA::Do()
 	 m=MOVED;
       }
       if(fxp)
+      {
+	 if(eof)
+	    goto fxp_eof;
 	 return m;
+      }
       res=Put_LL(buffer+buffer_ptr,in_buffer);
       if(res>0)
       {
@@ -684,6 +688,7 @@ int FileCopyPeerFA::Do()
 	    if(res==FA::OK)
 	    {
 	       session->Close();
+	    fxp_eof:
 	       // FIXME: set date for real.
 	       date_set=true;
 	       m=MOVED;
