@@ -4,3 +4,4 @@ lftp
 ftpget
 .deps
 .libs
+.le.ini
