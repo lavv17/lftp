@@ -1,3 +1,11 @@
+2003-05-15	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: minor corrections.
+
+2003-05-15	Noel Kothe <noel@debian.org>
+
+	* lftp.1: update ftp over ssl draft version; make it wrap properly.
+
 2002-12-25	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document ftp:port-ipv4, net:socket-bind-ipv{4,6}.

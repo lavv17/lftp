@@ -1239,7 +1239,7 @@ h - hours, m - minutes, s - seconds. Default unit is second. E.g. 5h30m.
 Also the interval can be `infinity', `inf', `never', `forever' - it means
 infinite interval. E.g. `sleep forever' or `set dns:cache-expire never'.
 
-.SS FTP asynchronous mode
+.SS FTP asynchronous mode (pipelining)
 .PP
 .B Lftp
 can speed up ftp operations by sending several commands at once and
@@ -1321,7 +1321,7 @@ The file is used to store lftp's bookmarks.  See the \fBbookmark\fR
 command.
 .TP
 .I "~/.lftp/cwd_history"
-The file is used to store old working directories for each site visited.
+The file is used to store last working directories for each site visited.
 .TP
 .I "~/.netrc"
 The file is consulted to get default login and password to ftp server.
@@ -1340,7 +1340,10 @@ RFC2068 (http/1.1),
 RFC2228 (ftp security extensions),
 RFC2428 (ftp/ipv6).
 .br
-http://www.ietf.org/internet-drafts/draft-murray-auth-ftp-ssl-05.txt (ftp over ssl).
+.na
+http://www.ietf.org/internet-drafts/draft-murray-auth-ftp-ssl-11.txt
+(ftp over ssl).
+.ad
 
 .SH AUTHOR
 .nf
