@@ -1,3 +1,19 @@
+2000-07-07  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* lftp.cc, resource.cc: ask for password for ftp:proxy.
+	* Http.cc: workaround for redirections without "\n\n";
+	  check if all data arrived before disconnecting; set body_size=0
+	  on "204 No Content"; handle "100 Continue".
+
+2000-07-04  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h: (FileAccess::ClassInit) new function;
+	  move calls of Ftp::ClassInit there.
+	* lftp.cc: call FileAccess::ClassInit.
+	* Filter.cc, Filter.h: add stderr_to_stdout flag.
+	* FtpDirList.cc, FtpListInfo.cc, FtpSplitList.cc, HttpDir.cc:
+	  fix printing for off_t.
+
 2000-07-03  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Http.cc: fix compilation problem on IRIX.

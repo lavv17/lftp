@@ -32,6 +32,7 @@
 
 #include "ResMgr.h"
 #include "url.h"
+#include "GetPass.h"
 
 static const char *FtpProxyValidate(char **p)
 {
@@ -46,6 +47,12 @@ static const char *FtpProxyValidate(char **p)
    {
       if(strcmp(url.proto,"ftp") /* TODO: && strcmp(url.proto,"http")*/)
 	 return _("Proxy protocol unsupported");
+   }
+   if(url.user && !url.pass)
+   {
+      url.pass=GetPass("ftp:proxy password: ");
+      *p=(char*)xrealloc(*p,3*strlen(*p)+3*xstrlen(url.pass)+2);
+      url.Combine(*p);
    }
    return 0;
 }

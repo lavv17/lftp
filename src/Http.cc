@@ -57,6 +57,7 @@ static void base64_encode (const char *s, char *store, int length);
 #define H_20X(x)        (((x) >= 200) && ((x) < 300))
 #define H_PARTIAL(x)    ((x) == 206)
 #define H_REDIRECTED(x) (((x) == 301) || ((x) == 302))
+#define H_EMPTY(x)	(((x) == 204) || ((x) == 205))
 
 
 void Http::Init()
@@ -191,9 +192,15 @@ void Http::Close()
    if(mode==CLOSED)
       return;
    if(sock!=-1 && keep_alive && (keep_alive_max>1 || keep_alive_max==-1)
-   && mode!=STORE && (!xstrcmp(last_method,"HEAD")
-		      || (body_size>=0 && bytes_received==body_size)))
+   && mode!=STORE && !recv_buf->Eof() && state==RECEIVING_BODY)
    {
+      if(xstrcmp(last_method,"HEAD"))
+      {
+	 // check if all data are in buffer
+	 bytes_received+=recv_buf->Size();
+	 if(!(body_size>=0 && bytes_received==body_size))
+	    goto disconnect;
+      }
       // can reuse the connection.
       state=CONNECTED;
       ResetRequestData();
@@ -204,6 +211,7 @@ void Http::Close()
    }
    else
    {
+   disconnect:
       try_time=0;
       Disconnect();
    }
@@ -933,6 +941,9 @@ int Http::Do()
       {
 	 // eof
 	 DebugPrint("**** ","Hit EOF while fetching headers",0);
+	 // workaround some broken servers
+	 if(H_REDIRECTED(status_code) && location)
+	    goto pre_RECEIVING_BODY;
 	 Disconnect();
 	 return MOVED;
       }
@@ -1026,6 +1037,13 @@ int Http::Do()
 	       proto_version=(ver_major<<4)+ver_minor;
 	       if(!H_20X(status_code))
 	       {
+		  if(status_code==100)
+		  {
+		     // 100 Continue
+		     status_code=0;
+		     xfree(status);
+		  }
+
 		  if(status_code/100==5) // server failed, try another
 		     NextPeer();
 		  // check for retriable codes
@@ -1039,10 +1057,7 @@ int Http::Do()
 		  }
 
 		  if(mode==ARRAY_INFO)
-		  {
 		     retries=0;
-		     return MOVED;
-		  }
 
 		  return MOVED;
 	       }
@@ -1069,6 +1084,10 @@ int Http::Do()
       return m;
 
    pre_RECEIVING_BODY:
+
+      // 204 No Content
+      if(H_EMPTY(status_code) && body_size<0)
+	 body_size=0;
 
       if(H_REDIRECTED(status_code))
       {

@@ -295,8 +295,9 @@ int   main(int argc,char **argv)
    bindtextdomain (PACKAGE, LOCALEDIR);
    textdomain (PACKAGE);
 
-   ResMgr::ClassInit(); // resources must be inited before other classes
+   // order is significant.
    SignalHook::ClassInit();
+   ResMgr::ClassInit();
    Resolver::ClassInit();
    FileAccess::ClassInit();
 

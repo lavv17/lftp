@@ -77,6 +77,14 @@ class Fish : public NetAccess
    void PushExpect(expect_t);
    int HandleReplies();
 
+   expect_t *RespQueue;
+   int	 RQ_alloc;   // memory allocated
+   int	 RQ_head;
+   int	 RQ_tail;
+
+   int   RespQueueIsEmpty() { return RQ_head==RQ_tail; }
+   int	 RespQueueSize() { return RQ_tail-RQ_head; }
+
 public:
    static void ClassInit();
 
