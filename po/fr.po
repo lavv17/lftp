@@ -1,18 +1,19 @@
+# translation of fr.po to Francais
 # French messages of lftp
-# Copyright (C) 2000-2001 Free Software Foundation, Inc.
-# Nicolas Noble <nicolas@nobis-crew.org>, 2000-2001.
+# Copyright (C) 2000-2001,2003 Free Software Foundation, Inc.
+# Nicolas Noble <nicolas@nobis-crew.org>, 2000-2003.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
 "POT-Creation-Date: 2003-05-28 16:41+0400\n"
-"PO-Revision-Date: 2003-02-20 08:48GMT\n"
-"Last-Translator: Noble Nicolas <nicolas@nobis-crew.org>\n"
+"PO-Revision-Date: 2003-06-08 00:26+0200\n"
+"Last-Translator: Nicolas Noble <nicolas@nobis-crew.org>\n"
 "Language-Team: Français <fr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 0.9.5\n"
+"X-Generator: KBabel 1.0.1\n"
 
 #: src/CmdExec.cc:89
 #, c-format
@@ -521,7 +522,6 @@ msgid "[re]cls [opts] [path/][pattern]"
 msgstr "[re]cls [opts] [chemin/][expression]"
 
 #: src/commands.cc:165
-#, fuzzy
 msgid ""
 "List remote files. You can redirect output of this command to file\n"
 "or via pipe to external command.\n"
@@ -582,9 +582,8 @@ msgstr ""
 " --user, --group, --perms, --date, --linkcount, --links\n"
 "                      - affiche des champs individuels\n"
 "\n"
-"Par défaut, la sortie de cls est cachée, pour voir un nouveau listing, "
-"utilisez\n"
-"`recls' ou `cache flush'.\n"
+"Par défaut, la sortie de cls est cachée, pour voir un nouveau listing,\n"
+"utilisez `recls' ou `cache flush'.\n"
 "\n"
 "Les variables cls-default et cls-completion-default peuvent être utilisées\n"
 "pour spécifier les défauts pour les listings cls et les listings de\n"
@@ -592,7 +591,7 @@ msgstr ""
 "complétion affichent les tailles de fichiers, mettez\n"
 "cls-completion-default à \"-s\".\n"
 "\n"
-"Astices: Utilisez --filesize et -D pour de meilleurs listings. Si vous\n"
+"Astuces: Utilisez --filesize et -D pour de meilleurs listings. Si vous\n"
 "ne voulez pas toujours voir les tailles des fichiers, --filesize pour\n"
 "cls-default affectera l'option -s de la ligne de commande. Toutes les\n"
 "options fonctionnent pour cls-completion-default. -i pour\n"
@@ -1567,8 +1566,7 @@ msgstr "%s: `expire' attendu\n"
 
 #: src/commands.cc:2271
 #, c-format
-msgid ""
-"%s: %s - no such cached session. Use `scache' to look at session list.\n"
+msgid "%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr "%s: %s - pas de telle session cachée. Utilisez `scache'\n"
 
 #: src/commands.cc:2288
@@ -1594,14 +1592,12 @@ msgstr "%s est un alias pour `%s'\n"
 #: src/commands.cc:2310
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
-msgstr ""
-"Commande inconnue `%s'. Utilisez `help' pour voir la liste des commandes.\n"
+msgstr "Commande inconnue `%s'. Utilisez `help' pour voir la liste des commandes.\n"
 
 #: src/commands.cc:2312
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
-msgstr ""
-"Commande ambiguë `%s'. Utilisez `help' pour voir la liste des commandes.\n"
+msgstr "Commande ambiguë `%s'. Utilisez `help' pour voir la liste des commandes.\n"
 
 #: src/commands.cc:2363
 #, c-format
@@ -1609,10 +1605,8 @@ msgid "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 msgstr "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 
 #: src/commands.cc:2365
-msgid ""
-"This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
-msgstr ""
-"Ceci est un logiciel libre SANS GARANTIE. Voir COPYING pour les détails.\n"
+msgid "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
+msgstr "Ceci est un logiciel libre SANS GARANTIE. Voir COPYING pour les détails.\n"
 
 #: src/commands.cc:2367
 #, c-format
@@ -1711,8 +1705,7 @@ msgstr "La réponse du serveur est de la forme ftp:retry-530, recommence"
 
 #: src/ftpclass.cc:437
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
-msgstr ""
-"La réponse du serveur est de la forme ftp:retry-530-anonymous, recommence"
+msgstr "La réponse du serveur est de la forme ftp:retry-530-anonymous, recommence"
 
 #: src/ftpclass.cc:461
 msgid "Account is required, set ftp:acct variable"
@@ -1961,8 +1954,7 @@ msgstr "échec de la méthode POST"
 
 #: src/Http.cc:877
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
-msgstr ""
-"ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
+msgstr "ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
 
 #: src/Http.cc:1020
 msgid "Sending request..."
@@ -2047,8 +2039,7 @@ msgstr "Le mode de `%s' a été changé en %04o (%s).\n"
 #: src/ChmodJob.cc:85
 #, c-format
 msgid "Failed to change mode of `%s' because no old mode is available.\n"
-msgstr ""
-"Impossible de changer le mode de `%s' car il n'y a pas d'ancien mode.\n"
+msgstr "Impossible de changer le mode de `%s' car il n'y a pas d'ancien mode.\n"
 
 #: src/CopyJob.cc:78
 #, c-format
@@ -2077,7 +2068,7 @@ msgstr "Total %d fichier$|s$ transférés\n"
 
 #: src/FileCopy.cc:126
 msgid "copy: destination file is already complete\n"
-msgstr ""
+msgstr "copy: le fichier de destination est déjà terminé\n"
 
 #: src/FileCopy.cc:159
 msgid "copy: put is broken\n"
@@ -2230,3 +2221,4 @@ msgstr "dépendance du module `%s': %s\n"
 #: src/module.cc:201
 msgid "modules are not supported on this system"
 msgstr "les modules ne sont pas supportés sur ce système"
+
