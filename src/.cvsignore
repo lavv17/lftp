@@ -1,4 +1,5 @@
 Makefile
+Makefile.in
 confpaths.h
 lftp
 ftpget
