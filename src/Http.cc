@@ -561,7 +561,7 @@ void Http::SendRequest(const char *connection,const char *f)
 void Http::SendArrayInfoRequest()
 {
    int m=1;
-   if(keep_alive)
+   if(keep_alive && use_head)
    {
       m=keep_alive_max;
       if(m==-1)
@@ -1115,7 +1115,7 @@ int Http::Do()
 		     return MOVED;
 		  }
 		  // we can avoid reconnection if server supports it.
-		  if(keep_alive && (keep_alive_max>1 || keep_alive_max==-1))
+		  if(keep_alive && (keep_alive_max>1 || keep_alive_max==-1) && use_head)
 		  {
 		     SendArrayInfoRequest();
 		  }

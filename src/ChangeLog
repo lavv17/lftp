@@ -1,3 +1,8 @@
+2003-04-28  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc: fix hftp file information retrieval when use-head is off
+	  (bug reported by Robert A. Thompson <rob@doc.com>).
+
 2003-04-15  AIDA Shinra <shinra@j10n.org>
 
 	* HttpDir.cc: fix bug with unterminated string; add wwwoffle support.
