@@ -1,3 +1,8 @@
+1999-09-22      Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: add subsections headings `Settings' and
+	  `FTP asynchronous mode'; remove some extra blank lines.
+
 1999-09-20	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: describe time interval; fix an error.

@@ -536,6 +536,7 @@ Same as cat, but filter each file through zcat. (See also \fBcat\fR,
 Same as more, but filter each file through zcat. (See also \fBcat\fR,
 \fBzcat\fR and \fBmore\fR)
 
+.SS Settings
 .PP
 On startup, lftp executes
 .IR "~/.lftprc " and " ~/.lftp/rc" "."
@@ -775,22 +776,21 @@ ambiguous. The prefix before `:' can be omitted too. You can
 set one variable several times for different closures, and thus
 you can get a particular settings for particular state. The closure
 is to be specified after variable name separated with slash `/'.
-.P
-
+.PP
 The closure for `dns:', `net:', `ftp:', `http:', `hftp:' domain variables
 is currently just the host name as you specify it in the `open' command
 (with some exceptions where closure is meaningless, e.g. dns:cache-size).
 For other variables it is not currently used. See examples in the sample
 .IR lftp.conf .
-
-.P
+.PP
 Certain commands and settings take a time interval parameter. It has
 the format Nx[Nx...], where N is time amount and x is time unit: d - days,
 h - hours, m - minutes, s - seconds. Default unit is second. E.g. 5h30m.
 Also the interval can be `infinity', `inf', `never', `forever' - it means
 infinite interval. E.g. `sleep forever' or `set dns:cache-expire never'.
 
-.P
+.SS FTP asynchronous mode
+.PP
 .B Lftp
 can speed up ftp operations by sending several commands at once and
 then checking all the responses. See ftp:sync-mode variable. Sometimes
@@ -798,7 +798,6 @@ this does not work, thus synchronous mode is the default. You can try
 to turn synchronous mode off and see if it works for you. It is known
 that some network software dealing with address translation works
 incorrectly in the case of several FTP commands in one network packet.
-
 .PP
 RFC959 says: ``The user-process sending another command before the
 completion reply would be in violation of protocol; but server-FTP
