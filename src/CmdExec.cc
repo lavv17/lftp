@@ -495,7 +495,7 @@ int CmdExec::Do()
       }
       if(status_line)
 	 waiting->ShowRunStatus(status_line);
-      return STALL;
+      return m;
    }
 
    if(waiting)
@@ -536,7 +536,7 @@ int CmdExec::Do()
       }
       if(status_line)
 	 waiting->ShowRunStatus(status_line);
-      return STALL;
+      return m;
    }
 
    if(!interactive)
