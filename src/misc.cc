@@ -102,14 +102,11 @@ const char *url_file(const char *url,const char *file)
       strcpy(buf,dir_file(url,file));
       return buf;
    }
-   if(file[0]=='/' || file[0]=='~' || u.path==0 || u.path[0]==0)
-   {
-      u.path=(char*)file;
-      u.Combine(buf);
-      return buf;
-   }
-   url::encode_string(file,buf,URL_PATH_UNSAFE);
-   return dir_file(url,buf);
+   u.path=(char*)dir_file(u.path,file);
+   xfree(buf);
+   buf=u.Combine();
+   buf_size=xstrlen(buf)+1;
+   return buf;
 }
 
 const char *output_file_name(const char *src,const char *dst,bool dst_local,
@@ -120,7 +117,8 @@ const char *output_file_name(const char *src,const char *dst,bool dst_local,
    {
       if(dst_base)
 	 dst=url_file(dst_base,dst);
-      if(url::is_url(dst))
+      ParsedURL u_dst(dst,true);
+      if(u_dst.proto)
 	 dst_local=false;
       if(dst_local)
       {
@@ -129,9 +127,12 @@ const char *output_file_name(const char *src,const char *dst,bool dst_local,
 	 if(stat(dst,&st)!=-1 && S_ISDIR(st.st_mode))
 	    dst_is_dir=true;
       }
-      int len=strlen(dst);
-      if(len>0 && dst[len-1]=='/')
-	 dst_is_dir=true;
+      else
+      {
+	 int len=xstrlen(u_dst.path);
+	 if(len>0 && u_dst.path[len-1]=='/')
+	    dst_is_dir=true;
+      }
       if(!dst_is_dir)
 	 return dst;
    }

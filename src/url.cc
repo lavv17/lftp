@@ -193,6 +193,58 @@ decode:
    url::decode_string(pass);
    url::decode_string(host);
    url::decode_string(path);
+
+   if(!xstrcmp(proto,"slot"))
+   {
+      xfree(orig_url);
+      orig_url=0;
+      FileAccess *fa=ConnectionSlot::FindSession(host);
+      if(!fa)
+	 return;
+      xfree(memory);
+      memory=(char*)xmalloc(
+		     xstrlen(fa->GetProto())+1
+		    +xstrlen(fa->GetUser())+1
+		    +xstrlen(fa->GetPassword())+1
+		    +xstrlen(fa->GetHostName())+1
+		    +xstrlen(fa->GetPort())+1
+		    +xstrlen(fa->GetCwd())+2);
+      proto=user=pass=host=port=path=0;
+      char *next=memory;
+      proto=next;
+      strcpy(proto,fa->GetProto());
+      next=proto+strlen(proto)+1;
+      if(fa->GetUser())
+      {
+	 user=next;
+	 strcpy(user,fa->GetUser());
+	 next=user+strlen(user)+1;
+      }
+      if(fa->GetPassword())
+      {
+	 pass=next;
+	 strcpy(pass,fa->GetPassword());
+	 next=pass+strlen(pass)+1;
+      }
+      if(fa->GetHostName())
+      {
+	 host=next;
+	 strcpy(host,fa->GetHostName());
+	 next=host+strlen(host)+1;
+      }
+      if(fa->GetPort())
+      {
+	 port=next;
+	 strcpy(port,fa->GetPort());
+	 next=port+strlen(port)+1;
+      }
+      if(fa->GetCwd())
+      {
+	 path=next;
+	 strcpy(path,fa->GetCwd());
+	 strcat(path,"/");
+      }
+   }
 }
 
 int url::path_index(const char *base)
@@ -216,8 +268,26 @@ int url::path_index(const char *base)
    return 0;
 }
 
-void ParsedURL::Combine(char *url,const char *home,bool use_rfc1738)
+char *ParsedURL::Combine(const char *home,bool use_rfc1738)
 {
+   int len=1;
+   if(proto)
+      len+=strlen(proto)+strlen("://");
+   if(user)
+   {
+      len+=strlen(user)*3+1;
+      if(pass)
+	 len+=strlen(pass)*3+1;
+   }
+   if(host)
+      len+=strlen(host)*3;
+   if(port)
+      len+=1+strlen(port)*3;
+   if(path)
+      len+=1+strlen(path)*3;
+
+   char *url=(char*)xmalloc(len);
+
    bool is_file=!xstrcmp(proto,"file");
    bool is_ftp=(!xstrcmp(proto,"ftp") || !xstrcmp(proto,"hftp"));
 
@@ -245,7 +315,7 @@ void ParsedURL::Combine(char *url,const char *home,bool use_rfc1738)
       url::encode_string(port,url+strlen(url),URL_PORT_UNSAFE);
    }
    if(path==0)
-      return;
+      return url;
    if(strcmp(path,"~"))
    {
       if(path[0]!='/' && !is_file) // e.g. ~/path
@@ -264,6 +334,7 @@ void ParsedURL::Combine(char *url,const char *home,bool use_rfc1738)
       }
       url::encode_string(path+p_offset,url+strlen(url),URL_PATH_UNSAFE);
    }
+   return url;
 }
 
 void url::decode_string(char *p)

@@ -8,6 +8,11 @@
 	  TreatFileJob.h, mgetJob.cc, mgetJob.h, mkdirJob.cc, mkdirJob.h,
 	  mvJob.cc, mvJob.h, pgetJob.cc, pgetJob.h: PrintStatus with explicit
 	  prefix.
+	* MirrorJob.cc, FileSet.cc, FileSet.h: do SubtractDirs if not recursive.
+	* CmdExec.cc, FileAccess.cc, FileAccess.h, misc.cc, resource.cc,
+	  url.cc, url.h: properly Clone session in ChangeSlot; add assert;
+	  better slot: url support; better url_file.
+
 
 2002-07-30  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -43,7 +43,8 @@ public:
       xfree(orig_url);
    }
 
-   void Combine(char *buf,const char *home=0,bool use_rfc1738=true);
+   // returns allocated memory
+   char *Combine(const char *home=0,bool use_rfc1738=true);
 };
 
 # define URL_UNSAFE " <>\"%{}|\\^[]`"

@@ -343,7 +343,7 @@ void CmdExec::ChangeSlot(const char *n)
    if(!s)
       ConnectionSlot::Set(n,session);
    else
-      ChangeSession(s);
+      ChangeSession(s->Clone());
    slot=xstrdup(n);
 }
 

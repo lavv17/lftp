@@ -191,6 +191,7 @@ public:
    const char  *GetHome() { return home; }
    const char  *GetHostName() { return hostname; }
    const char  *GetUser() { return user; }
+   const char  *GetPassword() { return pass; }
    const char  *GetPort() { return portname; }
    const char  *GetConnectURL(int flags=0);
    const char  *GetFileURL(const char *file,int flags=0);

@@ -32,6 +32,7 @@
 #endif
 #include <errno.h>
 #include <ctype.h>
+#include <assert.h>
 #include "ascii_ctype.h"
 #include <fcntl.h>
 #include "LsCache.h"
@@ -398,26 +399,9 @@ bool FileAccess::SameSiteAs(FileAccess *fa)
 
 const char *FileAccess::GetFileURL(const char *f,int flags)
 {
-   int len=1;
    const char *proto=GetVisualProto();
    if(proto[0]==0)
       return "";
-
-   len+=strlen(proto)+strlen("://");
-   if(user)
-   {
-      len+=strlen(user)*3+1;
-      if(pass)
-	 len+=strlen(pass)*3+1;
-   }
-   if(hostname)
-      len+=strlen(hostname)*3;
-   if(portname)
-      len+=1+strlen(portname)*3;
-   if(!f || (f[0]!='/' && f[0]!='~'))
-      f=dir_file(cwd?cwd:"~",f);
-   len+=1+strlen(f)*3;
-   url=(char*)xrealloc(url,len);
 
    ParsedURL u("");
 
@@ -429,9 +413,14 @@ const char *FileAccess::GetFileURL(const char *f,int flags)
    u.host=hostname;
    u.port=portname;
    if(!(flags&NO_PATH))
+   {
+      if(!f || (f[0]!='/' && f[0]!='~'))
+	 f=dir_file(cwd?cwd:"~",f);
       u.path=(char*)f;
+   }
 
-   u.Combine(url,home);
+   xfree(url);
+   url=u.Combine(home);
 
    return url;
 }
@@ -794,6 +783,7 @@ void SessionPool::Reuse(FileAccess *f)
    int i;
    for(i=0; i<pool_size; i++)
    {
+      assert(pool[i]!=f);
       if(pool[i]==0)
       {
 	 pool[i]=f;
