@@ -30,6 +30,7 @@
 #include "url.h"
 #include "LsCache.h"
 #include "misc.h"
+#include "Speedometer.h"
 
 #define super FileAccess
 
@@ -573,6 +574,7 @@ int GenericParseListInfo::Do()
 	 session->Open("",mode);
 	 session->UseCache(use_cache);
 	 ubuf=new IOBufferFileAccess(session);
+	 ubuf->SetSpeedometer(new Speedometer());
 	 if(LsCache::IsEnabled())
 	    ubuf->Save(LsCache::SizeLimit());
       }
@@ -739,14 +741,16 @@ const char *GenericParseListInfo::Status()
    static char s[256];
    if(ubuf && !ubuf->Eof() && session->IsOpen())
    {
-      sprintf(s,_("Getting directory contents (%lld)"),
-		     (long long)session->GetPos());
+      sprintf(s,_("Getting directory contents (%lld) %s[%s]"),
+		     (long long)session->GetPos(),
+		     ubuf->GetRateStrS(),session->CurrentStatus());
       return s;
    }
    if(get_info)
    {
-      sprintf(s,_("Getting files information (%d%%)"),
-		     session->InfoArrayPercentDone());
+      sprintf(s,_("Getting files information (%d%%) [%s]"),
+		     session->InfoArrayPercentDone(),
+		     session->CurrentStatus());
       return s;
    }
    return "";

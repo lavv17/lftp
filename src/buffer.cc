@@ -26,6 +26,7 @@
 #include "trio.h"
 #define vsnprintf trio_vsnprintf
 #endif
+#include "Speedometer.h"
 
 #define BUFFER_INC (8*1024) // should be power of 2
 
@@ -195,11 +196,26 @@ Buffer::Buffer()
    save=false;
    save_max=0;
    pos=0;
+   rate=0;
 }
 Buffer::~Buffer()
 {
    xfree(error_text);
    xfree(buffer);
+   delete rate;
+}
+
+const char *Buffer::GetRateStrS()
+{
+   if(!rate || !rate->Valid())
+      return "";
+   return rate->GetStrS();
+}
+void Buffer::RateAdd(int n)
+{
+   if(!rate)
+      return;
+   rate->Add(n);
 }
 
 void Buffer::SetError(const char *e)
@@ -238,6 +254,7 @@ int IOBufferFDStream::Do()
       res=Put_LL(buffer+buffer_ptr,in_buffer);
       if(res>0)
       {
+	 RateAdd(res);
 	 in_buffer-=res;
 	 buffer_ptr+=res;
 	 event_time=now;
@@ -249,6 +266,7 @@ int IOBufferFDStream::Do()
       res=Get_LL(GET_BUFSIZE);
       if(res>0)
       {
+	 RateAdd(res);
 	 in_buffer+=res;
 	 SaveMaxCheck(0);
 	 event_time=now;
@@ -376,6 +394,7 @@ int IOBufferFileAccess::Do()
    int res=Get_LL(GET_BUFSIZE);
    if(res>0)
    {
+      RateAdd(res);
       in_buffer+=res;
       SaveMaxCheck(0);
       event_time=now;

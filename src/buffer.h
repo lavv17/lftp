@@ -30,6 +30,8 @@
 
 #define GET_BUFSIZE 0x4000
 
+class Speedometer;
+
 class Buffer : public SMTask
 {
 protected:
@@ -51,6 +53,9 @@ protected:
    // low-level for derived classes
    virtual int Put_LL(const char *buf,int size) { return 0; }
    virtual int PutEOF_LL() { return 0; }
+
+   Speedometer *rate;
+   void RateAdd(int n);
 
    void Allocate(int size);
 
@@ -84,6 +89,9 @@ public:
    void SaveRollback(int p);
 
    void SetPos(off_t p) { pos=p; }
+
+   void SetSpeedometer(Speedometer *s) { rate=s; }
+   const char *GetRateStrS();
 
    void Empty();
 
