@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.2\n"
-"POT-Creation-Date: 1999-09-27 21:18+0400\n"
+"POT-Creation-Date: 1999-10-02 23:37+0400\n"
 "PO-Revision-Date: 1999-06-05 14:51-0300\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -67,51 +67,51 @@ msgstr "\tEsperando que termine la tarea [%d]\n"
 msgid "\tRunning\n"
 msgstr "\tEjecutando\n"
 
-#: src/FileAccess.cc:183
+#: src/FileAccess.cc:209
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "Error de socket (%s) - reconectando"
 
-#: src/FileAccess.cc:269
+#: src/FileAccess.cc:295
 #, c-format
 msgid "Access failed: %s"
 msgstr "Falló el acceso: %s"
 
-#: src/FileAccess.cc:272
+#: src/FileAccess.cc:298
 msgid "File cannot be accessed"
 msgstr "El fichero no puede ser accedido"
 
-#: src/FileAccess.cc:274 src/ftpclass.cc:2545 src/ftpclass.cc:2555
+#: src/FileAccess.cc:300 src/ftpclass.cc:2545 src/ftpclass.cc:2555
 msgid "Not connected"
 msgstr "No conectado"
 
-#: src/FileAccess.cc:280
+#: src/FileAccess.cc:306
 #, c-format
 msgid "Fatal error: %s"
 msgstr "Error fatal: %s"
 
-#: src/FileAccess.cc:283
+#: src/FileAccess.cc:309
 msgid "Fatal error"
 msgstr "Error fatal"
 
-#: src/FileAccess.cc:285
+#: src/FileAccess.cc:311
 msgid "Store failed - you have to reput"
 msgstr "El envío falló - tiene que usar reput"
 
-#: src/FileAccess.cc:287 src/ftpclass.cc:2587
+#: src/FileAccess.cc:313 src/ftpclass.cc:2587
 msgid "Login failed"
 msgstr "Falló la identificación con el servidor"
 
-#: src/FileAccess.cc:289
+#: src/FileAccess.cc:315
 msgid "Operation not supported"
 msgstr "Operación no soportada"
 
-#: src/FtpListInfo.cc:226 src/HttpDir.cc:1003
+#: src/FtpListInfo.cc:226 src/HttpDir.cc:1006
 #, c-format
 msgid "Getting directory contents (%ld)"
 msgstr "Obteniendo el contenido del directorio (%ld)"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:1008
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:1011
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "Obteniendo información sobre los ficheros (%d%%)"
@@ -243,7 +243,7 @@ msgstr "Viejo fichero local `%s' no removido"
 #: src/MirrorJob.cc:968 src/commands.cc:834 src/commands.cc:899
 #: src/commands.cc:997 src/commands.cc:1203 src/commands.cc:1362
 #: src/commands.cc:1549 src/commands.cc:1556 src/commands.cc:1740
-#: src/commands.cc:1766 src/commands.cc:1773 src/commands.cc:1906
+#: src/commands.cc:1769 src/commands.cc:1776 src/commands.cc:1909
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Pruebe `help %s' para mayor información.\n"
@@ -1137,11 +1137,6 @@ msgstr "%s: %s - no es un número\n"
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr "%s: %s. Use `set -a' para ver todas las variables.\n"
 
-#: src/commands.cc:1400
-#, fuzzy, c-format
-msgid "%s: %s.\n"
-msgstr "Uso: %s\n"
-
 #: src/commands.cc:1438
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
@@ -1167,12 +1162,12 @@ msgstr "Uso: site <orden_directa_al_sitio>\n"
 msgid "Usage: mv <file1> <file2>\n"
 msgstr "Uso: mv <fichero1> <fichero2>\n"
 
-#: src/commands.cc:1548 src/commands.cc:1765
+#: src/commands.cc:1548 src/commands.cc:1768
 #, c-format
 msgid "Invalid command. "
 msgstr "Orden inválida."
 
-#: src/commands.cc:1555 src/commands.cc:1772
+#: src/commands.cc:1555 src/commands.cc:1775
 #, c-format
 msgid "Ambiguous command. "
 msgstr "Orden ambigua. "
@@ -1245,37 +1240,37 @@ msgstr ""
 msgid "Send bug reports and questions to <%s>.\n"
 msgstr "Envíe reportes de bugs y preguntas a <%s>.\n"
 
-#: src/commands.cc:1788 src/commands.cc:1817
+#: src/commands.cc:1791 src/commands.cc:1820
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s: se requiere un nombre de señalador\n"
 
-#: src/commands.cc:1806
+#: src/commands.cc:1809
 #, c-format
 msgid "%s: cannot add empty bookmark\n"
 msgstr "%s: no se puede agregar un señalador vacío\n"
 
-#: src/commands.cc:1819
+#: src/commands.cc:1822
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s: no existe señalador `%s'\n"
 
-#: src/commands.cc:1834
+#: src/commands.cc:1837
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: se requiere el tipo a importar (netscape, ncftp)\n"
 
-#: src/commands.cc:1905
+#: src/commands.cc:1908
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "Uso: %s módulo [args...]\n"
 
-#: src/commands.cc:1940
+#: src/commands.cc:1943
 #, c-format
 msgid "Usage: %s mode file...\n"
 msgstr "Uso: %s modo fichero...\n"
 
-#: src/commands.cc:1946
+#: src/commands.cc:1949
 #, c-format
 msgid "%s: %s - not an octal number\n"
 msgstr "%s: %s - no es un número octal\n"
@@ -1568,10 +1563,14 @@ msgstr "Trayendo encabezados..."
 msgid "Proxy protocol unsupported"
 msgstr "Protocolo de proxy no soportado"
 
-#: src/FtpGlob.cc:258 src/HttpDir.cc:627 src/HttpDir.cc:804
+#: src/FtpGlob.cc:258 src/HttpDir.cc:630 src/HttpDir.cc:807
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "Obteniendo lista de ficheros (%ld) [%s]"
+
+#, fuzzy
+#~ msgid "%s: %s.\n"
+#~ msgstr "Uso: %s\n"
 
 #~ msgid "%s: %s - invalid time precision\n"
 #~ msgstr "%s: %s - precisión de tiempo inválida\n"

@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.0\n"
-"POT-Creation-Date: 1999-09-27 21:18+0400\n"
-"PO-Revision-Date: 1999-07-01 09:54+08:00\n"
+"POT-Creation-Date: 1999-10-02 23:37+0400\n"
+"PO-Revision-Date: 1999-09-29 09:36+08:00\n"
 "Last-Translator: Const Kaplinsky <const@ce.cctpu.edu.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -58,7 +58,7 @@ msgstr "\tВыполнение примитива `%s' [%s]\n"
 
 #: src/CmdExec.cc:660
 msgid "\tCommands queued:\n"
-msgstr ""
+msgstr "\tОчередь команд:\n"
 
 #: src/CmdExec.cc:679
 #, c-format
@@ -70,51 +70,51 @@ msgstr "\tОжидание завершения задания [%d]\n"
 msgid "\tRunning\n"
 msgstr "\tВыполнение\n"
 
-#: src/FileAccess.cc:183
+#: src/FileAccess.cc:209
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "Ошибка на сокете (%s) - повторное соединение"
 
-#: src/FileAccess.cc:269
+#: src/FileAccess.cc:295
 #, c-format
 msgid "Access failed: %s"
 msgstr "Ошибка доступа: %s"
 
-#: src/FileAccess.cc:272
+#: src/FileAccess.cc:298
 msgid "File cannot be accessed"
 msgstr "Доступ к файлу невозможен"
 
-#: src/FileAccess.cc:274 src/ftpclass.cc:2545 src/ftpclass.cc:2555
+#: src/FileAccess.cc:300 src/ftpclass.cc:2545 src/ftpclass.cc:2555
 msgid "Not connected"
 msgstr "Нет соединения"
 
-#: src/FileAccess.cc:280
+#: src/FileAccess.cc:306
 #, c-format
 msgid "Fatal error: %s"
 msgstr "Фатальная ошибка: %s"
 
-#: src/FileAccess.cc:283
+#: src/FileAccess.cc:309
 msgid "Fatal error"
 msgstr "Фатальная ошибка"
 
-#: src/FileAccess.cc:285
+#: src/FileAccess.cc:311
 msgid "Store failed - you have to reput"
 msgstr "Передача файла не выполнена - требуется возобновление (reput)"
 
-#: src/FileAccess.cc:287 src/ftpclass.cc:2587
+#: src/FileAccess.cc:313 src/ftpclass.cc:2587
 msgid "Login failed"
 msgstr "Ошибка регистрации"
 
-#: src/FileAccess.cc:289
+#: src/FileAccess.cc:315
 msgid "Operation not supported"
 msgstr "Операция не поддерживается"
 
-#: src/FtpListInfo.cc:226 src/HttpDir.cc:1003
+#: src/FtpListInfo.cc:226 src/HttpDir.cc:1006
 #, c-format
 msgid "Getting directory contents (%ld)"
 msgstr "Получение содержимого каталога (%ld)"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:1008
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:1011
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "Получение информации о файлах (%d%%)"
@@ -127,7 +127,7 @@ msgstr "удаление `%s' на сервере - %s\n"
 #: src/GetJob.cc:162
 #, c-format
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
-msgstr ""
+msgstr "%s: %s: файл уже существует и не задано xfer:clobber\n"
 
 #: src/Job.cc:222
 #, c-format
@@ -249,7 +249,7 @@ msgstr "Старый локальный файл `%s' не удален"
 #: src/MirrorJob.cc:968 src/commands.cc:834 src/commands.cc:899
 #: src/commands.cc:997 src/commands.cc:1203 src/commands.cc:1362
 #: src/commands.cc:1549 src/commands.cc:1556 src/commands.cc:1740
-#: src/commands.cc:1766 src/commands.cc:1773 src/commands.cc:1906
+#: src/commands.cc:1769 src/commands.cc:1776 src/commands.cc:1909
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Запустите `help %s' для получения дополнительной информации.\n"
@@ -272,11 +272,11 @@ msgstr "неверное число"
 
 #: src/ResMgr.cc:489
 msgid "Invalid time unit letter, only [smhd] are allowed."
-msgstr ""
+msgstr "Недопустимые единицы измерения времени, допускаются только [smhd]."
 
 #: src/ResMgr.cc:497
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
-msgstr ""
+msgstr "Неверный формат времени. Формат: <время><единицы>, например 2h30m."
 
 #: src/Http.cc:1077 src/Resolver.cc:184 src/ftpclass.cc:2550
 msgid "Resolving host address..."
@@ -1160,11 +1160,6 @@ msgstr "%s: %s - не является числом\n"
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr "%s: %s. Используйте `set -a' для просмотра списка всех переменных.\n"
 
-#: src/commands.cc:1400
-#, fuzzy, c-format
-msgid "%s: %s.\n"
-msgstr "Использование: %s\n"
-
 #: src/commands.cc:1438
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
@@ -1190,12 +1185,12 @@ msgstr "Использование: site <команда_сервера>\n"
 msgid "Usage: mv <file1> <file2>\n"
 msgstr "Использование: mv <файл1> <файл2>\n"
 
-#: src/commands.cc:1548 src/commands.cc:1765
+#: src/commands.cc:1548 src/commands.cc:1768
 #, c-format
 msgid "Invalid command. "
 msgstr "Недопустимая команда. "
 
-#: src/commands.cc:1555 src/commands.cc:1772
+#: src/commands.cc:1555 src/commands.cc:1775
 #, c-format
 msgid "Ambiguous command. "
 msgstr "Неоднозначное сокращение. "
@@ -1274,37 +1269,37 @@ msgstr ""
 msgid "Send bug reports and questions to <%s>.\n"
 msgstr "Сообщения об ошибках и вопросы посылайте по адресу <%s>.\n"
 
-#: src/commands.cc:1788 src/commands.cc:1817
+#: src/commands.cc:1791 src/commands.cc:1820
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s: требуется указать имя закладки\n"
 
-#: src/commands.cc:1806
+#: src/commands.cc:1809
 #, c-format
 msgid "%s: cannot add empty bookmark\n"
 msgstr "%s: невозможно добавить пустую закладку\n"
 
-#: src/commands.cc:1819
+#: src/commands.cc:1822
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s: закладка `%s' отсутствует\n"
 
-#: src/commands.cc:1834
+#: src/commands.cc:1837
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: требуется указание типа импорта (netscape,ncftp)\n"
 
-#: src/commands.cc:1905
+#: src/commands.cc:1908
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "Использование: %s модуль [аргументы...]\n"
 
-#: src/commands.cc:1940
+#: src/commands.cc:1943
 #, c-format
 msgid "Usage: %s mode file...\n"
 msgstr "Использование: %s режим файл...\n"
 
-#: src/commands.cc:1946
+#: src/commands.cc:1949
 #, c-format
 msgid "%s: %s - not an octal number\n"
 msgstr "%s: %s - не является восьмеричным числом\n"
@@ -1596,28 +1591,10 @@ msgstr "Получение заголовков HTTP..."
 msgid "Proxy protocol unsupported"
 msgstr "Данный протокол для прокси не поддерживается"
 
-#: src/FtpGlob.cc:258 src/HttpDir.cc:627 src/HttpDir.cc:804
+#: src/FtpGlob.cc:258 src/HttpDir.cc:630 src/HttpDir.cc:807
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "Получение списка файлов (%ld) [%s]"
 
-#~ msgid "%s: %s - invalid time precision\n"
-#~ msgstr "%s: %s - неверная точность времени\n"
-
-#~ msgid ""
-#~ "%s: Invalid expire period (use Ns - in sec, Nm - in min, Nh - in hours)\n"
-#~ msgstr ""
-#~ "%s: Неправильный период времени.\n"
-#~ " (используйте: Ns - секунды, Nm - минуты, Nh - часы)\n"
-
-#~ msgid "Connecting to %s%s (%s) port %u"
-#~ msgstr "Установка соединения с %s%s (%s), порт %u"
-
-#~ msgid "%s: argument required. "
-#~ msgstr "%s: требуется указание аргумента. "
-
-#~ msgid "%s: invalid delay. "
-#~ msgstr "%s: недопустимое значение задержки. "
-
-#~ msgid "Timeout - trying sync mode (is it windoze?)"
-#~ msgstr "Превышение лимита времени ожидания - включение синхронного режима"
+#~ msgid "%s: %s.\n"
+#~ msgstr "%s: %s.\n"

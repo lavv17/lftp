@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 1999-09-27 21:18+0400\n"
+"POT-Creation-Date: 1999-10-02 23:37+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -70,51 +70,51 @@ msgstr ""
 msgid "\tRunning\n"
 msgstr ""
 
-#: src/FileAccess.cc:183
+#: src/FileAccess.cc:209
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr ""
 
-#: src/FileAccess.cc:269
+#: src/FileAccess.cc:295
 #, c-format
 msgid "Access failed: %s"
 msgstr ""
 
-#: src/FileAccess.cc:272
+#: src/FileAccess.cc:298
 msgid "File cannot be accessed"
 msgstr ""
 
-#: src/FileAccess.cc:274 src/ftpclass.cc:2545 src/ftpclass.cc:2555
+#: src/FileAccess.cc:300 src/ftpclass.cc:2545 src/ftpclass.cc:2555
 msgid "Not connected"
 msgstr ""
 
-#: src/FileAccess.cc:280
+#: src/FileAccess.cc:306
 #, c-format
 msgid "Fatal error: %s"
 msgstr ""
 
-#: src/FileAccess.cc:283
+#: src/FileAccess.cc:309
 msgid "Fatal error"
 msgstr ""
 
-#: src/FileAccess.cc:285
+#: src/FileAccess.cc:311
 msgid "Store failed - you have to reput"
 msgstr ""
 
-#: src/FileAccess.cc:287 src/ftpclass.cc:2587
+#: src/FileAccess.cc:313 src/ftpclass.cc:2587
 msgid "Login failed"
 msgstr ""
 
-#: src/FileAccess.cc:289
+#: src/FileAccess.cc:315
 msgid "Operation not supported"
 msgstr ""
 
-#: src/FtpListInfo.cc:226 src/HttpDir.cc:1003
+#: src/FtpListInfo.cc:226 src/HttpDir.cc:1006
 #, c-format
 msgid "Getting directory contents (%ld)"
 msgstr ""
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:1008
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:1011
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr ""
@@ -245,7 +245,7 @@ msgstr ""
 #: src/MirrorJob.cc:968 src/commands.cc:834 src/commands.cc:899
 #: src/commands.cc:997 src/commands.cc:1203 src/commands.cc:1362
 #: src/commands.cc:1549 src/commands.cc:1556 src/commands.cc:1740
-#: src/commands.cc:1766 src/commands.cc:1773 src/commands.cc:1906
+#: src/commands.cc:1769 src/commands.cc:1776 src/commands.cc:1909
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr ""
@@ -992,11 +992,6 @@ msgstr ""
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr ""
 
-#: src/commands.cc:1400
-#, c-format
-msgid "%s: %s.\n"
-msgstr ""
-
 #: src/commands.cc:1438
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
@@ -1022,12 +1017,12 @@ msgstr ""
 msgid "Usage: mv <file1> <file2>\n"
 msgstr ""
 
-#: src/commands.cc:1548 src/commands.cc:1765
+#: src/commands.cc:1548 src/commands.cc:1768
 #, c-format
 msgid "Invalid command. "
 msgstr ""
 
-#: src/commands.cc:1555 src/commands.cc:1772
+#: src/commands.cc:1555 src/commands.cc:1775
 #, c-format
 msgid "Ambiguous command. "
 msgstr ""
@@ -1099,37 +1094,37 @@ msgstr ""
 msgid "Send bug reports and questions to <%s>.\n"
 msgstr ""
 
-#: src/commands.cc:1788 src/commands.cc:1817
+#: src/commands.cc:1791 src/commands.cc:1820
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr ""
 
-#: src/commands.cc:1806
+#: src/commands.cc:1809
 #, c-format
 msgid "%s: cannot add empty bookmark\n"
 msgstr ""
 
-#: src/commands.cc:1819
+#: src/commands.cc:1822
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr ""
 
-#: src/commands.cc:1834
+#: src/commands.cc:1837
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr ""
 
-#: src/commands.cc:1905
+#: src/commands.cc:1908
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr ""
 
-#: src/commands.cc:1940
+#: src/commands.cc:1943
 #, c-format
 msgid "Usage: %s mode file...\n"
 msgstr ""
 
-#: src/commands.cc:1946
+#: src/commands.cc:1949
 #, c-format
 msgid "%s: %s - not an octal number\n"
 msgstr ""
@@ -1408,7 +1403,7 @@ msgstr ""
 msgid "Proxy protocol unsupported"
 msgstr ""
 
-#: src/FtpGlob.cc:258 src/HttpDir.cc:627 src/HttpDir.cc:804
+#: src/FtpGlob.cc:258 src/HttpDir.cc:630 src/HttpDir.cc:807
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr ""
