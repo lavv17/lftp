@@ -399,7 +399,16 @@ FinderJob::prf_res FinderJob_List::ProcessFile(const char *d,const FileInfo *fi)
       fg_data=buf->GetFgData(fg);
    if(buf->Size()>0x10000)
       return PRF_LATER;
-   buf->Put(dir_file(d,fi->name));
+   if(ProcessingURL())
+   {
+      char *old_cwd=alloca_strdup(session->GetCwd());
+      session->SetCwd(init_dir);
+      session->Chdir(dir_file(d,fi->name),false);
+      buf->Put(session->GetConnectURL());
+      session->SetCwd(old_cwd);
+   }
+   else
+      buf->Put(dir_file(d,fi->name));
    if((fi->defined&fi->TYPE) && fi->filetype==fi->DIRECTORY)
       buf->Put("/");
    buf->Put("\n");

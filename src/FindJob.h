@@ -95,6 +95,8 @@ protected:
    void Need(unsigned need) { file_info_need=need; }
    void ValidateArgs() { validate_args=true; }
 
+   bool ProcessingURL() { return session!=orig_session; }
+
 public:
    int Do();
    int Done() { return state==DONE; }
