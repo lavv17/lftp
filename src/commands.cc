@@ -284,7 +284,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -O <base> specifies base directory or URL where files should be placed\n")},
    {"pwd",     cmd_pwd,    "pwd [-u]",
 	 N_("Print current remote URL.\n"
-	 " -u  show password\n")},
+	 " -p  show password\n")},
    {"queue",   cmd_queue,  0,
 	 N_("Usage: queue <command>\n"
 	 "Add the command to queue for current site. Each site has its own\n"
