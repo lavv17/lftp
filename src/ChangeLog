@@ -1,3 +1,7 @@
+2000-02-14  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: close data socket when switching to no-rest mode.
+
 2000-01-13  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* HttpDir.cc: fix cycling on & in file names when no &amp; etc match.
