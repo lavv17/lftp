@@ -25,6 +25,7 @@
 #include <fnmatch.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <math.h>
 #include "ResMgr.h"
 #include "SMTask.h"
 #include "xmalloc.h"

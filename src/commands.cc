@@ -1252,8 +1252,9 @@ CMD(pwd)
 	 return 0;
       }
    }
-   char *url=alloca_strdup(session->GetConnectURL(flags));
-   int len=strlen(url);
+   const char *url_c=session->GetConnectURL(flags);
+   char *url=alloca_strdup(url_c);
+   int len=strlen(url_c);
    url[len++]='\n';  // replaces \0
    Job *j=CopyJob::NewEcho(url,len,output,args->a0());
    output=0;

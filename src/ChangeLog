@@ -1,3 +1,10 @@
+2000-03-22  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CmdExec.cc, LsCache.cc, commands.cc: don't call macro alloca_strdup
+	  on complex expressions.
+	* FileCopy.cc: remove default value in function definition.
+	* ResMgr.cc: include math.h for irix.
+
 2000-03-21  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h: allow \n in file names, substitute it

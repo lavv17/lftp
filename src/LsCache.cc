@@ -212,7 +212,8 @@ int LsCache::ExpireHelper::Do()
 
 void LsCache::Changed(change_mode m,FileAccess *f,const char *dir)
 {
-   char *fdir=alloca_strdup(dir_file(f->GetCwd(),dir));
+   const char *fdir_c=dir_file(f->GetCwd(),dir);
+   char *fdir=alloca_strdup(fdir_c);
    if(m==FILE_CHANGED)
    {
       char *slash=strrchr(fdir,'/');

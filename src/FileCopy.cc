@@ -1359,7 +1359,7 @@ void FileCopyPeerFDStream::RemoveFile()
    removing=false;   // it is instant.
 }
 
-FileCopyPeerFDStream *FileCopyPeerFDStream::NewPut(const char *file,bool cont=false)
+FileCopyPeerFDStream *FileCopyPeerFDStream::NewPut(const char *file,bool cont)
 {
    return new FileCopyPeerFDStream(new FileStream(file,O_WRONLY|O_CREAT
 				    |(cont?0:O_TRUNC)),FileCopyPeer::PUT);
