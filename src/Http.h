@@ -140,6 +140,7 @@ public:
    int Write(const void *,int);
    int StoreStatus();
    int SendEOT();
+   int Buffered();
 
    void	ResetLocationData();
 
