@@ -1,3 +1,8 @@
+1999-06-22	lav
+
+	* configure.in: workaround autoconf feature with multiple AC_LINK_FILES
+	* Makefile.am: remove autoconf.patch from distribution. 
+
 1999-06-15	lav
 
 	* INSTALL: refer to libstdc++ instead of libg++.
