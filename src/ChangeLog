@@ -1,6 +1,7 @@
 2003-12-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* HttpDir.cc: fix a compilation error (reported by Albert Chin).
+	* Http.cc: make base64 char table const.
 
 2003-12-11  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -2160,7 +2160,7 @@ static void
 base64_encode (const char *s, char *store, int length)
 {
   /* Conversion table.  */
-  static char tbl[64] = {
+  static const char tbl[64] = {
     'A','B','C','D','E','F','G','H',
     'I','J','K','L','M','N','O','P',
     'Q','R','S','T','U','V','W','X',
