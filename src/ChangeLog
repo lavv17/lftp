@@ -1,3 +1,7 @@
+2001-12-14  Albert Chin-A-Young <lftp-devel@thewrittenword.com>
+
+	* FtpDirList.h: compilation fix.
+
 2001-12-03  Glenn Maynard <g_ld@zewt.org>
 
 	* FileSetOutput.cc: don't add type suffix if type is not defined.
