@@ -12,3 +12,5 @@ ltcf-cxx.sh
 Makefile.in
 configure
 junk
+ABOUT-NLS
+intl
