@@ -1157,7 +1157,8 @@ int Http::Do()
 	    bool no_ranges_if_timeout=(bytes_received==0 && !seen_ranges_bytes);
 	    if(CheckTimeout())
 	    {
-	       no_ranges|=no_ranges_if_timeout;
+	       if(no_ranges_if_timeout)
+		  no_ranges=true;
 	       return MOVED;
 	    }
 	 }

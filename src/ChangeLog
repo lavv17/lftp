@@ -4,6 +4,7 @@
 	* Job.cc, Job.h: (FindAnyChild) new method.
 	* CmdExec.cc, CmdExec.h, commands.cc: support for `wait all'.
 	* ftpclass.cc: fix RETR reply handling (was broken in A00625 snapshot).
+	* Http.cc: don't use |= on bool.
 
 2000-06-22  Alexander V. Lukyanov  <lav@yars.free.net>
 
