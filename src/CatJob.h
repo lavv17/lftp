@@ -35,6 +35,7 @@ protected:
    ArgV *for_each;
    bool ascii;
    bool auto_ascii;
+   bool fail_if_broken;
 
    void	NextFile();
 

@@ -94,6 +94,8 @@ void CatJob::NextFile()
 
    FileCopy *copier=FileCopy::New(src_peer,dst_peer,false);
    copier->DontCopyDate();
+   if(!fail_if_broken)
+      copier->DontFailIfBroken();
    if(ascii || (auto_ascii && !for_each && global->usesfd(1)))
    {
       if(!for_each && global->usesfd(1))
@@ -145,6 +147,7 @@ CatJob::CatJob(FileAccess *new_session,FDStream *new_global,ArgV *new_args)
    for_each=0;
    ascii=false;
    auto_ascii=true;
+   fail_if_broken=true;
 
    if(!strcmp(op,"more") || !strcmp(op,"zmore") || !strcmp(op,"bzmore"))
    {
@@ -155,6 +158,7 @@ CatJob::CatJob(FileAccess *new_session,FDStream *new_global,ArgV *new_args)
 	    pager="exec more";
 	 delete global;
 	 global=new OutputFilter(pager);
+	 fail_if_broken=false;
       }
    }
    if(!strcmp(op,"zcat") || !strcmp(op,"zmore"))
@@ -168,6 +172,10 @@ CatJob::CatJob(FileAccess *new_session,FDStream *new_global,ArgV *new_args)
       for_each=new ArgV("bzcat");
       Binary();
    }
+
+   // some legitimate uses produce broken pipe condition (cat|head)
+   if(global)
+      fail_if_broken=false;
 
    if(!global)
       global=new FDStream(1,"<stdout>");
