@@ -83,7 +83,8 @@ int GetFileInfo::Do()
 	    from_cache = true;
 	    break;
 	 case 1:
-	    tried_file = true; /* it's a dir */
+	    if(!showdir)
+	       tried_file = true; /* it's a dir */
 	    from_cache = true;
 	    break;
 	 }
@@ -102,15 +103,17 @@ int GetFileInfo::Do()
 	    return MOVED;
 	 }
 	 tried_dir=false;  // this will get error message.
+	 from_cache=false;
       }
 
-      const char *cd_path;
+      const char *cd_path=0;
       if(!tried_dir && (tried_file || !showdir))
       {
 	 /* First, try to treat the path as a directory,
 	  * if we are going to show its contents */
 	 tried_dir=true;
 	 cd_path = dir;
+	 xfree(path_to_prefix);
 	 path_to_prefix=xstrdup(dir);
 	 was_directory=true;
       }
@@ -166,17 +169,30 @@ int GetFileInfo::Do()
 	 session->SetCwd(origdir);
 	 session->Chdir(dir, false);
 
+	 xfree(verify_fn);
 	 verify_fn = xstrdup(basename_ptr(session->GetCwd()));
 
 	 /* go back */
 	 session->SetCwd(pwd);
-      }
 
-      /* Special case: looking up "/". Make a phony entry. */
-      if(showdir && !strcmp(verify_fn, "/"))
+	 /* Special case: looking up "/". Make a phony entry. */
+	 if(showdir && !strcmp(verify_fn, "/"))
+	 {
+	    FileInfo *fi = new FileInfo(verify_fn);
+	    fi->SetType(fi->DIRECTORY);
+
+	    result = new FileSet;
+	    result->Add(fi);
+	    state=DONE;
+	    return MOVED;
+	 }
+      }
+      if(was_directory && showdir)
       {
-	 FileInfo *fi = new FileInfo(verify_fn);
+	 // we could chdir to the dir, but we should not get dir listing
+	 FileInfo *fi = new FileInfo(dir);
 	 fi->SetType(fi->DIRECTORY);
+	 prepend_path=false;
 
 	 result = new FileSet;
 	 result->Add(fi);
