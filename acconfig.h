@@ -113,7 +113,7 @@
 #undef socklen_t
 
 /* define if you are building with SOCKS support */
-#undef SOCKS
+#undef SOCKS4
 
 /* define if you are building with SOCKSv5 support */
 #undef SOCKS5
@@ -175,7 +175,7 @@ CDECL const char *strerror(int);
 #define INET6 (defined(AF_INET6) && defined(HAVE_GETHOSTBYNAME2) \
 	       && defined(HAVE_GETNAMEINFO) && defined(HAVE_GETADDRINFO))
 
-#ifdef SOCKS
+#ifdef SOCKS4
 # define connect     Rconnect
 # define getsockname Rgetsockname
 # define bind	     Rbind
@@ -185,6 +185,7 @@ CDECL const char *strerror(int);
 #endif
 
 #ifdef SOCKS5
+# define SOCKS
 # include <socks.h>
 #endif
 

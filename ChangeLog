@@ -1,3 +1,8 @@
+1999-10-05	lav
+
+	* acconfig.h, configure.in: handle --with-socks5, define SOCKS4 for old
+	  socks.
+
 1999-09-30	lav
 
 	* acinclude.m4: (READLINE_CHECK) check for header readline/readline.h.

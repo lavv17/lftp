@@ -99,12 +99,12 @@ AC_SUBST(PIC_FLAG)
 
 
 AC_ARG_WITH(socks,
-[  --with-socks            build with SOCKS library],
+[  --with-socks            build with SOCKSv4 library],
 [  with_socks=$withval;	],
 [  with_socks=no;	])
 
 if test x$with_socks = xyes; then
-   AC_DEFINE(SOCKS)
+   AC_DEFINE(SOCKS4)
    SOCKSLIBS=-lsocks
 fi
 
