@@ -1,3 +1,7 @@
+2000-11-05  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* history.cc, history.h: add flag of modification.
+
 2000-10-24  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* commands.cc: set last_bg in queue.

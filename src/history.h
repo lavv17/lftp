@@ -33,6 +33,7 @@ class History : public KeyValueDB
 
    char *file;
    int fd;
+   bool modified;
 
    void Load();
    void Close();

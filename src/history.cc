@@ -37,6 +37,7 @@ History::History()
    full=0;
    stamp=0;
    fd=-1;
+   modified=false;
 
    const char *home=getenv("HOME");
    if(home==0)
@@ -147,11 +148,14 @@ void History::Set(FileAccess *s,const char *cwd)
    sprintf(res,"%lu:",(unsigned long)time(0));
    url::encode_string(cwd,res+strlen(res),URL_PATH_UNSAFE);
    super::Add(s->GetConnectURL(s->NO_PATH|s->NO_PASSWORD),res);
+   modified=true;
 }
 
 void History::Save()
 {
    Close();
+   if(!modified)
+      return;
    fd=open(file,O_RDWR|O_CREAT,0600);
    if(fd==-1)
       return;
