@@ -1,3 +1,5 @@
+* new setting ftp:use-abor. (default: yes) If set to no, lftp does not send
+  ABOR command but closes data connection immediately.
 * new settings net:reconnect-interval-multiplier and net:reconnect-interval-max,
   reconnect-interval renamed to reconnect-interval-base. It is possible to
   use short names recon-int-b, recon-int-mul, recon-int-max.

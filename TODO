@@ -47,12 +47,12 @@ currently; some need other work to be done.
 
  * mirror: add settings like mirror:default-time-prec. make default 0?.
 
- * ascii mode
++* ascii mode
 
  * intelligently squeeze file name in status line.
 
  * parallel get's in mirror, mget
- * make a command get1 to get single file with extra options.
++* make a command get1 to get single file with extra options.
 
  * tail command
 
@@ -81,6 +81,7 @@ currently; some need other work to be done.
  * motd. if it is not yet known, connect/login and get it. (use class Buffer).
 
  * xfer:avg-rate, xfer:avg-eta (number of seconds to get average on).
+   class speedometer.
 
  * use NDIR (from RFC1127) in FtpListInfo, when long list cannot be parsed.
 
@@ -88,8 +89,12 @@ currently; some need other work to be done.
 
  * in get,cat, etc (FileCopy class) try RereadManual if output is seekable.
 
- * check mget -e -- REMOVE mode was Close()'d too early.
-
- * help queue
+ * help for queue
 
  * use FileSet in Glob.
+
+ * specify directory for ListInfo.
+
+ * glob urls; completion in URLs.
+
+ * password migration between sessions.
