@@ -21,6 +21,7 @@
 /* $Id$ */
 
 /* this is not very useful, just a proof of concept */
+/* this is used in mirror command to build local files list */
 
 #include <config.h>
 #include <errno.h>
@@ -30,6 +31,7 @@
 #include <fcntl.h>
 #include <dirent.h>
 #include <glob.h>
+#include <utime.h>
 
 #include "LocalAccess.h"
 #include "xmalloc.h"
@@ -279,35 +281,27 @@ int LocalAccess::Read(void *buf,int size)
    }
    stream->Kill(SIGCONT);
 read_again:
-   int res=Poll(fd,POLLIN);
-   if(res==-1 || (res&(POLLIN|POLLNVAL)))
+   int res=read(fd,buf,size);
+   if(res<0)
    {
-      int res=read(fd,buf,size);
-      if(res<0)
-      {
-	 saved_errno=errno;
-	 return SEE_ERRNO;
-      }
-      if(res==0)
-	 return res;
-      real_pos+=res;
-      if(real_pos<=pos)
-	 goto read_again;
-      int shift;
-      if((shift=pos+res-real_pos)>0)
-      {
-	 memmove(buf,(char*)buf+shift,size-shift);
-	 res-=shift;
-      }
-      pos+=res;
-      return(res);
+      if(errno==EINTR || errno==EAGAIN)
+	 return DO_AGAIN;
+      saved_errno=errno;
+      return SEE_ERRNO;
    }
-   if(res)
+   if(res==0)
+      return res; // eof
+   real_pos+=res;
+   if(real_pos<=pos)
+      goto read_again;
+   int shift;
+   if((shift=pos+res-real_pos)>0)
    {
-      // looks like eof
-      return 0;
+      memmove(buf,(char*)buf+shift,size-shift);
+      res-=shift;
    }
-   return DO_AGAIN;
+   pos+=res;
+   return(res);
 }
 
 int LocalAccess::Write(const void *buf,int size)
@@ -332,24 +326,34 @@ int LocalAccess::Write(const void *buf,int size)
       }
    }
    stream->Kill(SIGCONT);
-   int res=Poll(fd,POLLOUT);
-   if(res==-1 || (res&(POLLOUT|POLLNVAL)))
+
+   int res=write(fd,buf,size);
+   if(res<0)
    {
-      int res=write(fd,buf,size);
-      if(res>=0)
-      {
-	 pos=(real_pos+=res);
-	 return res;
-      }
+      if(errno==EINTR || errno==EAGAIN)
+	 return DO_AGAIN;
       saved_errno=errno;
       return SEE_ERRNO;
    }
 
-   return 0;
+   pos=(real_pos+=res);
+   return res;
 }
 
 int LocalAccess::StoreStatus()
 {
+   if(stream)
+   {
+      delete stream;
+      stream=0;
+      if(entity_date!=(time_t)-1)
+      {
+	 static struct utimbuf ut;
+	 ut.actime=ut.modtime=entity_date;
+	 utime(dir_file(cwd,file),&ut);
+      }
+   }
+
    if(error_code<0)
       return error_code;
 

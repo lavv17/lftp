@@ -45,7 +45,7 @@ static int lftp_char_is_quoted(char *string,int eindex);
 
 static int len;    // lenght of the word to complete
 static int cindex; // index in completion array
-static char **glob_res=NULL;
+static const char *const*glob_res=NULL;
 
 static bool shell_cmd;
 
@@ -85,7 +85,7 @@ char *command_generator(char *text,int state)
 
 static char *remote_generator(char *text,int state)
 {
-   char *name;
+   const char *name;
 
    /* If this is a new word to complete, initialize now.  This includes
       saving the length of TEXT for efficiency, and initializing the cindex
@@ -100,20 +100,6 @@ static char *remote_generator(char *text,int state)
    {
       if(!name[0])
 	 continue;
-      if(!strchr(name,'/') && memchr(text,'/',len))
-      {
-	 // workaround for servers returning only names without dir
-	 char *slash=text+len;
-	 while(slash[-1]!='/')
-	    slash--;
-	 if(strncmp(name,slash,len-(slash-text)))
-	    continue;
-
-	 char *combined=(char*)xmalloc(strlen(name)+len+1);
-	 strncpy(combined,text,slash-text);
-	 strcpy(combined+(slash-text),name);
-	 return combined;
-      }
       if(strncmp(name,text,len)==0)
 	 return(xstrdup(name));
    }
@@ -153,6 +139,28 @@ static char *bookmark_generator(char *text,int s)
    }
 }
 
+static char *array_generator(char *text,int state)
+{
+   const char *name;
+
+   /* If this is a new word to complete, initialize now. */
+   if(!state)
+      cindex=0;
+
+   if(glob_res==NULL)
+      return NULL;
+
+   while((name=glob_res[cindex++])!=NULL)
+   {
+      if(!name[0])
+	 continue;
+      if(strncmp(name,text,len)==0)
+	 return(xstrdup(name));
+   }
+
+   glob_res=NULL;
+   return NULL;
+}
 
 static const char *find_word(const char *p)
 {
@@ -176,7 +184,8 @@ static bool copy_word(char *buf,const char *p,int n)
 
 enum completion_type
 {
-   LOCAL, REMOTE_FILE, REMOTE_DIR, BOOKMARK, COMMAND
+   LOCAL, REMOTE_FILE, REMOTE_DIR, BOOKMARK, COMMAND,
+   STRING_ARRAY, NO_COMPLETION
 };
 
 static completion_type cmd_completion_type(int start)
@@ -227,25 +236,25 @@ static completion_type cmd_completion_type(int start)
    || !strcmp(buf,"mkdir"))
       return REMOTE_DIR; /* append slash automatically */
 
-   if(!strcmp(buf,"ls")
+   if(!strcmp(buf,"cat")
+   || !strcmp(buf,"ls")
    || !strcmp(buf,"mget")
-   || !strcmp(buf,"rm")
-   || !strcmp(buf,"mrm")
-   || !strcmp(buf,"rmdir")
    || !strcmp(buf,"more")
-   || !strcmp(buf,"cat")
+   || !strcmp(buf,"mrm")
+   || !strcmp(buf,"mv")
+   || !strcmp(buf,"rm")
+   || !strcmp(buf,"rmdir")
    || !strcmp(buf,"zcat")
-   || !strcmp(buf,"zmore")
-   || !strcmp(buf,"mv"))
+   || !strcmp(buf,"zmore"))
       return REMOTE_FILE;
 
    if(!strcmp(buf,"open")
-   || !strcmp(buf,"lftp")
-   || !strcmp(buf,"bookmark"))
+   || !strcmp(buf,"lftp"))
       return BOOKMARK;
 
    bool was_o=false;
    bool was_N=false;
+   bool second=false;
    for(int i=start; i>4; i--)
    {
       if(!isspace(rl_line_buffer[i-1]))
@@ -261,6 +270,15 @@ static completion_type cmd_completion_type(int start)
 	 break;
       }
    }
+   const char *w=find_word(cmd);
+   while(*w && !isspace(*w))
+      w++;
+   if(*w)
+   {
+      w=find_word(w);
+      if(w-cmd==start)	// we complete second word
+	 second=true;
+   }
 
    if(!strcmp(buf,"get")
    || !strcmp(buf,"pget"))
@@ -272,6 +290,40 @@ static completion_type cmd_completion_type(int start)
    if(!strcmp(buf,"mirror"))
       if(!was_N)
 	 return REMOTE_FILE;
+   if(!strcmp(buf,"bookmark"))
+   {
+      if(second)
+      {
+	 glob_res=bookmark_subcmd;
+	 return STRING_ARRAY;
+      }
+      else
+	 return BOOKMARK;
+   }
+   if(!strcmp(buf,"chmod"))
+   {
+      if(second)
+	 return NO_COMPLETION;
+      else
+	 return REMOTE_FILE;
+   }
+   if(!strcmp(buf,"glob"))
+   {
+      if(second)
+	 return COMMAND;
+      else
+	 return REMOTE_FILE;  // FIXME: it would be better to check argv[1].
+   }
+   if(!strcmp(buf,"cache"))
+   {
+      if(second)
+      {
+	 glob_res=cache_subcmd;
+	 return STRING_ARRAY;
+      }
+      else
+	 return NO_COMPLETION;
+   }
 
    return LOCAL;
 }
@@ -299,11 +351,17 @@ char **lftp_completion (char *text,int start,int end)
 
    switch(type)
    {
+   case NO_COMPLETION:
+      rl_attempted_completion_over = 1;
+      return 0;
    case COMMAND:
       generator = command_generator;
       break;
    case BOOKMARK:
       generator = bookmark_generator;
+      break;
+   case STRING_ARRAY:
+      generator = array_generator;
       break;
    case LOCAL:
       if(force_remote)
@@ -337,6 +395,7 @@ char **lftp_completion (char *text,int start,int end)
 	       break;
 	    if(SignalHook::GetCount(SIGINT))
 	    {
+	       SignalHook::ResetCount(SIGINT);
 	       rl_attempted_completion_over = 1;
 	       delete rg;
 	       return 0;
@@ -348,6 +407,7 @@ char **lftp_completion (char *text,int start,int end)
       rl_filename_completion_desired=1;
       generator = remote_generator;
       break;
+
    } /* end switch */
 
    if(generator==0)

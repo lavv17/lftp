@@ -24,6 +24,8 @@
 #define PUTJOB_H
 
 #include "FileXfer.h"
+#include <sys/types.h>
+#include <time.h>
 
 class PutJob : public FileXfer
 {
@@ -36,6 +38,8 @@ protected:
 
    bool delete_files;
 
+   time_t   entity_date;
+
 public:
    int	 Do();
 
@@ -44,6 +48,7 @@ public:
    {
       remote_size=0;
       delete_files=false;
+      entity_date=(time_t)-1;
    }
 };
 

@@ -199,4 +199,7 @@ public:
    int	 last_bg;
 };
 
+extern const char * const bookmark_subcmd[];
+extern const char * const cache_subcmd[];
+
 #endif//CMDEXEC_H

@@ -84,6 +84,8 @@ FtpGlob::FtpGlob(FileAccess *session,const char *n_pattern,FA::open_mode n_mode)
    }
 
 #if 0
+   // Unfortunately, we don't know if remote server itself does globbing.
+   // So we can't pass it strings with * ? reliably.
    if(dir[0] && mode==FA::LIST)
    {
       updir_glob=new FtpGlob(session,dir,mode);
@@ -171,33 +173,45 @@ int   FtpGlob::Do()
       inbuf+=res;
    }
 
-   while((nl=(char*)memchr(ptr,'\n',inbuf-(ptr-buf))))
+   for( ; 0!=(nl=(char*)memchr(ptr,'\n',inbuf-(ptr-buf))); ptr=nl+1 )
    {
       int len=nl-ptr;
       if(nl[-1]=='\r')
 	 len--;
 
-      if(!(flags&NO_CHANGE))
+      if(!(flags&NO_CHANGE) && mode==FA::LIST)
       {
 	 // workaround for some ftp servers
-	 if(ptr[0]=='.' && ptr[1]=='/')
+	 if(!(dir[0]=='.' && dir[1]=='/')
+	  && (ptr[0]=='.' && ptr[1]=='/'))
 	 {
 	    ptr+=2;
 	    len-=2;
 	 }
-	 else if(ptr[0]=='/' && ptr[1]=='/')
+	 if(!(dir[0]=='/' && dir[1]=='/')
+	  && (ptr[0]=='/' && ptr[1]=='/'))
 	 {
 	    ptr++;
 	    len--;
 	 }
+	 if(dir[0] && !memchr(ptr,'/',len))
+	 {
+	    // workaround for servers returning only names without dir
+	    int dir_len=strlen(dir);
+	    char *combined=(char*)xmalloc(dir_len+len+2);
+	    strcpy(combined,dir);
+	    if(dir[dir_len-1]!='/')
+	       strcat(combined,"/");
+	    int c_len=strlen(combined)+len;
+	    strncat(combined,ptr,len);
+	    add(combined,c_len);
+	    continue;
+	 }
       }
-
       if(from_cache && use_long_list)
 	 add_force(ptr,len);
       else
 	 add(ptr,len);
-
-      ptr=nl+1;
    }
 
    if(from_cache)

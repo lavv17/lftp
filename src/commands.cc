@@ -1442,7 +1442,7 @@ CMD(mv)
    return j;
 }
 
-static const char *const cache_subcmd[]={
+const char *const cache_subcmd[]={
    "status","flush","on","off","size","expire",
    NULL
 };

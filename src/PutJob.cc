@@ -82,6 +82,8 @@ int   PutJob::Do()
 	 session->Open(curr,FA::STORE,remote_size<0?0:remote_size);
 	 if(size>=0)
 	    session->SetSize(size);
+	 if(entity_date!=(time_t)-1)
+	    session->SetDate(entity_date);
       }
    }
    // in store mode position can jump back
@@ -181,7 +183,7 @@ remote_error:
 	 {
 	    size=st.st_size;
 	    session->SetSize(size);
-	    session->SetDate(st.st_mtime);
+	    session->SetDate(entity_date=st.st_mtime);
 	 }
       }
 
@@ -253,4 +255,7 @@ void PutJob::NextFile()
       remote_size=-1;
    else
       remote_size=-2;	// -2 means no file
+
+   size=-1;
+   entity_date=(time_t)-1;
 }
