@@ -1,3 +1,8 @@
+2000-05-22  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.cc, Http.h, resourse.cc: add http:set-cookies var.
+	* xmalloc.cc: (xstrdup) correct spare allocation when str==0.
+
 2000-05-20  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* resource.cc: remove `-' from default anon password.
