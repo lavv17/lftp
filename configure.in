@@ -269,11 +269,7 @@ AC_CHECK_FUNC(strerror, AC_DEFINE(HAVE_STRERROR),[
       #include <errno.h>
       #endif]))])
 
-# See if the system has vsnprintf and replace if not
-AC_CHECK_FUNC(vsnprintf, ,[
-  AC_DEFINE_UNQUOTED(NEED_TRIO, 1,
-    [Define if we need the trio replacement *printf() functions])
-  LIBOBJS="$LIBOBJS strio.o trio.o trionan.o"])
+LFTP_NEED_TRIO
 
 # See if we have h_errno (the test is here so we can use -lresolv if necessary).
 AC_CACHE_CHECK([for h_errno], inetutils_cv_var_h_errno,
@@ -335,7 +331,8 @@ AC_CHECK_FUNCS(strdup strstr lstat lchown select regexec glob\
  gethostbyname2 getipnodebyname getaddrinfo getnameinfo setsid random\
  inet_aton unsetenv environ)
 IU_CHECK_DECL(vsnprintf, [#include <stdio.h>])
-AC_CHECK_DECLS([va_copy, __va_copy],,, [#include <stdarg.h>])
+
+lftp_VA_COPY
 
 AC_REPLACE_FUNCS(mktime memmove strcasecmp strncasecmp strtol strtoul strptime)
 IU_CHECK_DECL(strcasecmp, [#include <string.h>])
