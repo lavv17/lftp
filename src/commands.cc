@@ -2414,7 +2414,7 @@ CMD(help)
 CMD(ver)
 {
    printf(
-      _("Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"),VERSION);
+      _("Lftp | Version %s | Copyright (c) 1996-2004 Alexander V. Lukyanov\n"),VERSION);
    printf(
       _("This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"));
    printf(
