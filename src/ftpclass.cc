@@ -823,6 +823,10 @@ int   Ftp::Do()
 
       // walk through ftp classes and try to find identical idle ftp session
       GetBetterConnection(0);
+
+      if(state!=INITIAL_STATE)
+	 return MOVED;
+
       GetBetterConnection(1);
 
       if(state!=INITIAL_STATE)

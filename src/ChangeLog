@@ -1,3 +1,8 @@
+1999-12-06  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* check if GetBetterConnection(0) succeeded. (bug report from
+	  Robert de Bath <rdebath@poboxes.com>).
+
 1999-12-04  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* resource.cc: new resources reconnect-interval-multiplier/max;
