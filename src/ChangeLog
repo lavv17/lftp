@@ -1,3 +1,7 @@
+2000-09-22  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* commands.cc: fix cd & in queue.
+
 2000-09-21  Arkadiusz Miskiewicz <misiek@pld.org.pl>
 
 	* ftpclass.cc: fix addr_received initialization for ipv6.
