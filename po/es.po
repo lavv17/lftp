@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2.1\n"
-"POT-Creation-Date: 2000-07-31 21:27+0400\n"
+"POT-Creation-Date: 2000-09-07 19:38+0400\n"
 "PO-Revision-Date: 2000-07-15 22:56-0300\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -286,20 +286,20 @@ msgstr "Formato de tiempo inválido, debe ser <tiempo><unidad>, p.ej. 2h30m."
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Formato del rango inválido. El formato es mín-máx, p.ej. 10-20."
 
-#: src/Http.cc:1193 src/Resolver.cc:191 src/ftpclass.cc:2991
+#: src/Http.cc:1193 src/Resolver.cc:193 src/ftpclass.cc:2991
 msgid "Resolving host address..."
 msgstr "Resolviendo dirección del servidor..."
 
-#: src/Resolver.cc:254
+#: src/Resolver.cc:256
 msgid "host name resolve timeout"
 msgstr "tiempo fuera resolviendo el nombre de host"
 
 #. protocol error
-#: src/Resolver.cc:288
+#: src/Resolver.cc:290
 msgid "child returned invalid data"
 msgstr "proceso hijo devolvió datos inválidos"
 
-#: src/Resolver.cc:355
+#: src/Resolver.cc:357
 #, c-format
 msgid "unknown address family `%s'"
 msgstr "familia `%s' de direcciones desconocida"
@@ -1566,6 +1566,42 @@ msgstr "%d archivo$|s$ transferido$|s$ en total.\n"
 msgid "file name missed in URL"
 msgstr "nombre de archivo no encontrado em URL"
 
+#: src/Speedometer.cc:85
+#, c-format
+msgid "%.0fb/s"
+msgstr ""
+
+#: src/Speedometer.cc:87
+#, c-format
+msgid "%.1fK/s"
+msgstr ""
+
+#: src/Speedometer.cc:89
+#, c-format
+msgid "%.2fM/s"
+msgstr ""
+
+#. for translator: only first letter matters
+#: src/Speedometer.cc:115
+msgid "day"
+msgstr "día"
+
+#: src/Speedometer.cc:116
+msgid "hour"
+msgstr "hora"
+
+#: src/Speedometer.cc:117
+msgid "minute"
+msgstr "minuto"
+
+#: src/Speedometer.cc:118
+msgid "second"
+msgstr "segundo"
+
+#: src/Speedometer.cc:120
+msgid "eta:"
+msgstr "falta:"
+
 #~ msgid "Usage: %s files...\n"
 #~ msgstr "Uso: %s archivos...\n"
 
@@ -1574,21 +1610,6 @@ msgstr "nombre de archivo no encontrado em URL"
 
 #~ msgid "Delaying before reconnect"
 #~ msgstr "Esperando antes de reintentar"
-
-#~ msgid "day"
-#~ msgstr "día"
-
-#~ msgid "hour"
-#~ msgstr "hora"
-
-#~ msgid "minute"
-#~ msgstr "minuto"
-
-#~ msgid "second"
-#~ msgstr "segundo"
-
-#~ msgid "eta:"
-#~ msgstr "falta:"
 
 #~ msgid "Use specified info for remote login\n"
 #~ msgstr ""

@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
-"POT-Creation-Date: 2000-07-31 21:27+0400\n"
+"POT-Creation-Date: 2000-09-07 19:38+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -287,20 +287,20 @@ msgstr ""
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr ""
 
-#: src/Http.cc:1193 src/Resolver.cc:191 src/ftpclass.cc:2991
+#: src/Http.cc:1193 src/Resolver.cc:193 src/ftpclass.cc:2991
 msgid "Resolving host address..."
 msgstr ""
 
-#: src/Resolver.cc:254
+#: src/Resolver.cc:256
 msgid "host name resolve timeout"
 msgstr ""
 
 #. protocol error
-#: src/Resolver.cc:288
+#: src/Resolver.cc:290
 msgid "child returned invalid data"
 msgstr ""
 
-#: src/Resolver.cc:355
+#: src/Resolver.cc:357
 #, c-format
 msgid "unknown address family `%s'"
 msgstr ""
@@ -1469,6 +1469,42 @@ msgstr "%d arquivos transmitidos"
 
 #: src/FileCopy.cc:1047
 msgid "file name missed in URL"
+msgstr ""
+
+#: src/Speedometer.cc:85
+#, c-format
+msgid "%.0fb/s"
+msgstr ""
+
+#: src/Speedometer.cc:87
+#, c-format
+msgid "%.1fK/s"
+msgstr ""
+
+#: src/Speedometer.cc:89
+#, c-format
+msgid "%.2fM/s"
+msgstr ""
+
+#. for translator: only first letter matters
+#: src/Speedometer.cc:115
+msgid "day"
+msgstr ""
+
+#: src/Speedometer.cc:116
+msgid "hour"
+msgstr ""
+
+#: src/Speedometer.cc:117
+msgid "minute"
+msgstr ""
+
+#: src/Speedometer.cc:118
+msgid "second"
+msgstr ""
+
+#: src/Speedometer.cc:120
+msgid "eta:"
 msgstr ""
 
 #, fuzzy

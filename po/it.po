@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2.3\n"
-"POT-Creation-Date: 2000-07-31 21:27+0400\n"
+"POT-Creation-Date: 2000-09-07 19:38+0400\n"
 "PO-Revision-Date: 2000-06-18 10:46+02:00\n"
 "Last-Translator: Giovanni Bortolozzo <borto@pluto.linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -287,20 +287,20 @@ msgstr "Formato temporale non valido. Il formato è <tempo><unità>, es. 2h30m."
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Formato dell'intervallo non valido. Il formato è min-max, es. 10-20."
 
-#: src/Http.cc:1193 src/Resolver.cc:191 src/ftpclass.cc:2991
+#: src/Http.cc:1193 src/Resolver.cc:193 src/ftpclass.cc:2991
 msgid "Resolving host address..."
 msgstr "Risoluzione dell'indirizzo dell'host..."
 
-#: src/Resolver.cc:254
+#: src/Resolver.cc:256
 msgid "host name resolve timeout"
 msgstr "timeout nella risoluzione del nome dell'host"
 
 #. protocol error
-#: src/Resolver.cc:288
+#: src/Resolver.cc:290
 msgid "child returned invalid data"
 msgstr "il processo figlio ha restituito dati non validi"
 
-#: src/Resolver.cc:355
+#: src/Resolver.cc:357
 #, c-format
 msgid "unknown address family `%s'"
 msgstr "famiglia di indirizzi `%s' sconosciuta"
@@ -1578,6 +1578,42 @@ msgstr "Trasferit$o|i$ %d file in totale\n"
 #: src/FileCopy.cc:1047
 msgid "file name missed in URL"
 msgstr "nell'URL manca il nome del file"
+
+#: src/Speedometer.cc:85
+#, c-format
+msgid "%.0fb/s"
+msgstr ""
+
+#: src/Speedometer.cc:87
+#, c-format
+msgid "%.1fK/s"
+msgstr ""
+
+#: src/Speedometer.cc:89
+#, c-format
+msgid "%.2fM/s"
+msgstr ""
+
+#. for translator: only first letter matters
+#: src/Speedometer.cc:115
+msgid "day"
+msgstr ""
+
+#: src/Speedometer.cc:116
+msgid "hour"
+msgstr ""
+
+#: src/Speedometer.cc:117
+msgid "minute"
+msgstr ""
+
+#: src/Speedometer.cc:118
+msgid "second"
+msgstr ""
+
+#: src/Speedometer.cc:120
+msgid "eta:"
+msgstr ""
 
 #~ msgid "rmdir <dirs>"
 #~ msgstr "rmdir <dir>"

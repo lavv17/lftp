@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2\n"
-"POT-Creation-Date: 2000-07-31 21:27+0400\n"
+"POT-Creation-Date: 2000-09-07 19:38+0400\n"
 "PO-Revision-Date: 1999-09-29 09:36+08:00\n"
 "Last-Translator: Const Kaplinsky <const@ce.cctpu.edu.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -293,20 +293,20 @@ msgstr "Неверный формат времени. Формат: <время><единицы>, например 2h30m."
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Неверный формат времени. Формат: <время><единицы>, например 2h30m."
 
-#: src/Http.cc:1193 src/Resolver.cc:191 src/ftpclass.cc:2991
+#: src/Http.cc:1193 src/Resolver.cc:193 src/ftpclass.cc:2991
 msgid "Resolving host address..."
 msgstr "Преобразование адреса сервера..."
 
-#: src/Resolver.cc:254
+#: src/Resolver.cc:256
 msgid "host name resolve timeout"
 msgstr "при преобразовании адреса сервера превышен лимит времени"
 
 #. protocol error
-#: src/Resolver.cc:288
+#: src/Resolver.cc:290
 msgid "child returned invalid data"
 msgstr "порожденный процесс возвратил некорректные данные"
 
-#: src/Resolver.cc:355
+#: src/Resolver.cc:357
 #, c-format
 msgid "unknown address family `%s'"
 msgstr "неизвестный тип адреса `%s'"
@@ -1561,6 +1561,42 @@ msgstr "Всего перемещено: %d $файл|файла|файлов$\n"
 msgid "file name missed in URL"
 msgstr "Пропущено имя файла. "
 
+#: src/Speedometer.cc:85
+#, c-format
+msgid "%.0fb/s"
+msgstr "%.0fб/с"
+
+#: src/Speedometer.cc:87
+#, c-format
+msgid "%.1fK/s"
+msgstr "%.1fКб/с"
+
+#: src/Speedometer.cc:89
+#, c-format
+msgid "%.2fM/s"
+msgstr "%.2fМб/с"
+
+#. for translator: only first letter matters
+#: src/Speedometer.cc:115
+msgid "day"
+msgstr "день"
+
+#: src/Speedometer.cc:116
+msgid "hour"
+msgstr "час"
+
+#: src/Speedometer.cc:117
+msgid "minute"
+msgstr "минута"
+
+#: src/Speedometer.cc:118
+msgid "second"
+msgstr "секунда"
+
+#: src/Speedometer.cc:120
+msgid "eta:"
+msgstr "овп:"
+
 #~ msgid "rmdir <dirs>"
 #~ msgstr "rmdir <каталоги>"
 
@@ -1572,30 +1608,6 @@ msgstr "Пропущено имя файла. "
 
 #~ msgid "Delaying before reconnect"
 #~ msgstr "Задержка перед повторным соединением"
-
-#~ msgid "%.0fb/s"
-#~ msgstr "%.0fб/с"
-
-#~ msgid "%.1fK/s"
-#~ msgstr "%.1fКб/с"
-
-#~ msgid "%.2fM/s"
-#~ msgstr "%.2fМб/с"
-
-#~ msgid "day"
-#~ msgstr "день"
-
-#~ msgid "hour"
-#~ msgstr "час"
-
-#~ msgid "minute"
-#~ msgstr "минута"
-
-#~ msgid "second"
-#~ msgstr "секунда"
-
-#~ msgid "eta:"
-#~ msgstr "овп:"
 
 #~ msgid "Use specified info for remote login\n"
 #~ msgstr "Использовать указанную информацию для регистрации на сервере\n"

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
-"POT-Creation-Date: 2000-07-31 21:27+0400\n"
+"POT-Creation-Date: 2000-09-07 19:38+0400\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -289,20 +289,20 @@ msgstr ""
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr ""
 
-#: src/Http.cc:1193 src/Resolver.cc:191 src/ftpclass.cc:2991
+#: src/Http.cc:1193 src/Resolver.cc:193 src/ftpclass.cc:2991
 msgid "Resolving host address..."
 msgstr "正在解析主机地址..."
 
-#: src/Resolver.cc:254
+#: src/Resolver.cc:256
 msgid "host name resolve timeout"
 msgstr "主机名解析超时"
 
 #. protocol error
-#: src/Resolver.cc:288
+#: src/Resolver.cc:290
 msgid "child returned invalid data"
 msgstr "子进程返回无效的数据"
 
-#: src/Resolver.cc:355
+#: src/Resolver.cc:357
 #, c-format
 msgid "unknown address family `%s'"
 msgstr "未知的地址族 `%s'"
@@ -1529,6 +1529,42 @@ msgstr "总共传输 %d 个文件\n"
 msgid "file name missed in URL"
 msgstr "缺少文件名. "
 
+#: src/Speedometer.cc:85
+#, fuzzy, c-format
+msgid "%.0fb/s"
+msgstr "%.0fb/s "
+
+#: src/Speedometer.cc:87
+#, fuzzy, c-format
+msgid "%.1fK/s"
+msgstr "%.1fK/s "
+
+#: src/Speedometer.cc:89
+#, fuzzy, c-format
+msgid "%.2fM/s"
+msgstr "%.2fM/s "
+
+#. for translator: only first letter matters
+#: src/Speedometer.cc:115
+msgid "day"
+msgstr "天"
+
+#: src/Speedometer.cc:116
+msgid "hour"
+msgstr "小时"
+
+#: src/Speedometer.cc:117
+msgid "minute"
+msgstr "分钟"
+
+#: src/Speedometer.cc:118
+msgid "second"
+msgstr "秒"
+
+#: src/Speedometer.cc:120
+msgid "eta:"
+msgstr "eta:"
+
 #~ msgid "rmdir <dirs>"
 #~ msgstr "rmdir <dirs>"
 
@@ -1541,33 +1577,6 @@ msgstr "缺少文件名. "
 
 #~ msgid "Delaying before reconnect"
 #~ msgstr "重新连接前延时"
-
-#, fuzzy
-#~ msgid "%.0fb/s"
-#~ msgstr "%.0fb/s "
-
-#, fuzzy
-#~ msgid "%.1fK/s"
-#~ msgstr "%.1fK/s "
-
-#, fuzzy
-#~ msgid "%.2fM/s"
-#~ msgstr "%.2fM/s "
-
-#~ msgid "day"
-#~ msgstr "天"
-
-#~ msgid "hour"
-#~ msgstr "小时"
-
-#~ msgid "minute"
-#~ msgstr "分钟"
-
-#~ msgid "second"
-#~ msgstr "秒"
-
-#~ msgid "eta:"
-#~ msgstr "eta:"
 
 #~ msgid "Use specified info for remote login\n"
 #~ msgstr "指定远程登录的信息\n"

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2.6\n"
-"POT-Creation-Date: 2000-07-31 21:27+0400\n"
+"POT-Creation-Date: 2000-09-07 19:38+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Nicolas Noble <nicolas.n.@wanadoo.fr>\n"
 "Language-Team: French <fr@li.org>\n"
@@ -287,20 +287,20 @@ msgstr "Format de temps invalide. Le format est <temps><unité>, ex: 2h30m."
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Format de domaine invalide. Le format est min-max, ex: 10-20"
 
-#: src/Http.cc:1193 src/Resolver.cc:191 src/ftpclass.cc:2991
+#: src/Http.cc:1193 src/Resolver.cc:193 src/ftpclass.cc:2991
 msgid "Resolving host address..."
 msgstr "Résolution de l'adresse..."
 
-#: src/Resolver.cc:254
+#: src/Resolver.cc:256
 msgid "host name resolve timeout"
 msgstr "résolution de l'adresse trop longue"
 
 #. protocol error
-#: src/Resolver.cc:288
+#: src/Resolver.cc:290
 msgid "child returned invalid data"
 msgstr "l'enfant a renvoyé des données invalides"
 
-#: src/Resolver.cc:355
+#: src/Resolver.cc:357
 #, c-format
 msgid "unknown address family `%s'"
 msgstr "famille d'adresse inconnue `%s'"
@@ -441,7 +441,8 @@ msgid ""
 "Close idle connections. By default only with current server.\n"
 " -a  close idle connections with all servers\n"
 msgstr ""
-"Ferme les connexions inutiles. Par défaut, uniquement pour le serveur actif.\n"
+"Ferme les connexions inutiles. Par défaut, uniquement pour le serveur "
+"actif.\n"
 " -a  ferme les connexion inutiles de tous les serveurs\n"
 
 #: src/commands.cc:148
@@ -453,7 +454,8 @@ msgid ""
 "Set debug level to given value or turn debug off completely.\n"
 " -o <file>  redirect debug output to the file.\n"
 msgstr ""
-"Définit le niveau de déboggage a la valeur indiquée ou désactive le debuggage.\n"
+"Définit le niveau de déboggage a la valeur indiquée ou désactive le "
+"debuggage.\n"
 " -o <fichier>  redirige le déboggage vers un fichier.\n"
 
 #: src/commands.cc:152
@@ -481,7 +483,8 @@ msgid ""
 "You can redirect output of this command.\n"
 msgstr ""
 "Usage: find [répertoire]\n"
-"Affiche le contenu du répertoire spécifié ou du répertoire en cours de manière\n"
+"Affiche le contenu du répertoire spécifié ou du répertoire en cours de "
+"manière\n"
 "récursive. Les répertoires dans la listes sont marqués aec un slash final.\n"
 "Vous pouvez rediriger la sortie de cette commande.\n"
 
@@ -521,7 +524,8 @@ msgstr ""
 "Etend les jokers et lance la commande spécifiée.\n"
 "Les options peuvent être utilisées pour étendre les jokers à une liste de\n"
 "fichiers, de répertoires ou des deux types. La détermination du type n'est\n"
-"pas très fiable et dépend du serveur. Si une entrée ne peut être déterminée,\n"
+"pas très fiable et dépend du serveur. Si une entrée ne peut être "
+"déterminée,\n"
 "elle sera include dans la liste.\n"
 " -f  fichiers (défaut)\n"
 " -d  répertoires\n"
@@ -689,7 +693,8 @@ msgstr ""
 "\n"
 "Lorsque vous utilisez -R, le premier répertoire est local et le second est\n"
 "distant. Si le second répertoire est ommis, le nom de base du premier est\n"
-"utilisé. Si les deux répertoires sont ommis, les répertoires local et distants\n"
+"utilisé. Si les deux répertoires sont ommis, les répertoires local et "
+"distants\n"
 "en cours sont utilisés.\n"
 
 #: src/commands.cc:241
@@ -727,7 +732,8 @@ msgstr "more <fichiers>"
 #: src/commands.cc:250
 msgid "Same as `cat <files> | more'. if PAGER is set, it is used as filter\n"
 msgstr ""
-"Même chose que `cat <fichiers> | more'. Si PAGER est définit, il est utilisé\n"
+"Même chose que `cat <fichiers> | more'. Si PAGER est définit, il est "
+"utilisé\n"
 "en temps que filtre.\n"
 
 #: src/commands.cc:251
@@ -858,8 +864,8 @@ msgid ""
 msgstr ""
 "Usage: queue <commande>\n"
 "Ajoute la commande à la file d'attente pour le site en cours.\n"
-"Chaque site possède sa propre file d'attente. Il est possible"
-"d'ajouter un travail actif à la queue en faisant:\n"
+"Chaque site possède sa propre file d'attente. Il est possibled'ajouter un "
+"travail actif à la queue en faisant:\n"
 
 #: src/commands.cc:294
 msgid "quote <cmd>"
@@ -966,10 +972,13 @@ msgid ""
 " -d  list only default values, not necessary current ones\n"
 msgstr ""
 "Définit la variable à la valeur indiquée. Si la valeur est omise, cela\n"
-"va effacer la variable. Le format d'un nom de variable est ``nom/restriction''\n"
-"où la restriction permet de spécifier l'application exacte de la définition.\n"
+"va effacer la variable. Le format d'un nom de variable est "
+"``nom/restriction''\n"
+"où la restriction permet de spécifier l'application exacte de la "
+"définition.\n"
 "Regardez lftp(1) pour les détails.\n"
-"Si set est appelée sans nom de variable, alors seuls les définitions modifiées\n"
+"Si set est appelée sans nom de variable, alors seuls les définitions "
+"modifiées\n"
 "sont affichées. Cela peut être changé par les options:\n"
 " -a  liste toutes les définitions, même les valeurs par défaut\n"
 " -d  liste uniquement les valeurs par défaut\n"
@@ -1256,12 +1265,14 @@ msgstr "%s est un alias pour `%s'\n"
 #: src/commands.cc:1767
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
-msgstr "Commande inconnue `%s'. Utilisez `help' pour voir la liste des commandes.\n"
+msgstr ""
+"Commande inconnue `%s'. Utilisez `help' pour voir la liste des commandes.\n"
 
 #: src/commands.cc:1769
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
-msgstr "Commande ambigüe `%s'. Utilisez `help' pour voir la liste des commandes.\n"
+msgstr ""
+"Commande ambigüe `%s'. Utilisez `help' pour voir la liste des commandes.\n"
 
 #: src/commands.cc:1820
 #, c-format
@@ -1564,3 +1575,39 @@ msgstr "Total %d fichier$|s$ transférés\n"
 #: src/FileCopy.cc:1047
 msgid "file name missed in URL"
 msgstr "nom de fichier manquant dans l'URL"
+
+#: src/Speedometer.cc:85
+#, c-format
+msgid "%.0fb/s"
+msgstr ""
+
+#: src/Speedometer.cc:87
+#, c-format
+msgid "%.1fK/s"
+msgstr ""
+
+#: src/Speedometer.cc:89
+#, c-format
+msgid "%.2fM/s"
+msgstr ""
+
+#. for translator: only first letter matters
+#: src/Speedometer.cc:115
+msgid "day"
+msgstr ""
+
+#: src/Speedometer.cc:116
+msgid "hour"
+msgstr ""
+
+#: src/Speedometer.cc:117
+msgid "minute"
+msgstr ""
+
+#: src/Speedometer.cc:118
+msgid "second"
+msgstr ""
+
+#: src/Speedometer.cc:120
+msgid "eta:"
+msgstr ""
