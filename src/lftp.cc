@@ -37,6 +37,9 @@
 #include "xalloca.h"
 #include "ftpclass.h"
 #include "LocalAccess.h"
+#ifndef MODULE_HTTP
+# include "Http.h"
+#endif
 #include "lftp.h"
 #include "xmalloc.h"
 #include "alias.h"
@@ -250,12 +253,19 @@ void  source_if_exist(CmdExec *exec,char *rc)
 
 int   main(int argc,char **argv)
 {
+#ifdef SOCKS
+   SOCKSinit(argv[0]);
+#endif
+
    setlocale (LC_ALL, "");
    bindtextdomain (PACKAGE, LOCALEDIR);
    textdomain (PACKAGE);
 
    LocalAccess::ClassInit();
    Ftp::ClassInit();
+#ifndef MODULE_HTTP
+   Http::ClassInit();
+#endif
 
    const char  *home=getenv("HOME")?:".";
 
