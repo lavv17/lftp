@@ -796,6 +796,10 @@ look up address in inet family, then inet6 and use first matched.
 .BR dns:use-fork \ (bool)
 if true, lftp will fork before resolving host address. Default is true.
 .TP
+.BR ftp:acct \ (string)
+Send this string in ACCT command after login. The result is ignored.
+The closure for this setting has format \fIuser@host\fP.
+.TP
 .BR ftp:anon-pass \ (string)
 sets the password used for anonymous ftp access authentication.
 Default is "-name@", where name is the username of the user running the
@@ -827,7 +831,8 @@ copy. See also ftp:use-fxp.
 .TP
 .BR ftp:home \ (string)
 Initial directory. Default is empty string which means auto. Set this to `/'
-if you don't like the look of %2F in ftp URLs.
+if you don't like the look of %2F in ftp URLs. The closure for this setting
+has format \fIuser@host\fP.
 .TP
 .BR ftp:list-options \ (string)
 sets options which are always appended to LIST command. It can be
@@ -873,6 +878,10 @@ This setting should be useful to distinguish between overloaded server
 .TP
 .BR ftp:retry-530-anonymous \ (regex)
 Same as ftp:retry-530, but applies to anonymous login.
+.TP
+.BR ftp:site-group \ (string)
+Send this string in SITE GROUP command after login. The result is ignored.
+The closure for this setting has format \fIuser@host\fP.
 .TP
 .BR ftp:skey-allow \ (bool)
 allow sending skey/opie reply if server appears to support it. On by default.
