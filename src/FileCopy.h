@@ -40,7 +40,6 @@ protected:
    long size;
    time_t date;
 
-   long real_pos;
    long seek_pos;
    bool can_seek;
    bool date_set;
@@ -54,29 +53,22 @@ protected:
 public:
    bool CanSeek() { return can_seek; }
    virtual void Seek(long offs) { seek_pos=offs; Empty(); eof=false; broken=false; }
-   virtual long GetRealPos() { return real_pos; }
+   virtual long GetRealPos() { return pos; }
    virtual long Buffered() { return in_buffer; }
    virtual bool IOReady() { return true; }
-   virtual void Skip(int);
 
    virtual void WantDate() { want_date=true; date=NO_DATE_YET; }
    virtual void WantSize() { want_size=true; size=NO_SIZE_YET; }
    time_t GetDate() { return date; }
    long   GetSize() { return size; }
 
-   void SetDate(time_t d)
-      {
-	 want_date=false;
-	 date=d;
-	 if(date==NO_DATE || date==NO_DATE_YET)
-	    date_set=true;
-	 else
-	    date_set=false;
-      }
-   void SetSize(long s) { want_size=false; size=s; }
+   void SetDate(time_t d);
+   void SetSize(long s);
 
    FileCopyPeer(direction m);
    ~FileCopyPeer();
+
+   bool Done();
 };
 
 class FileCopy : public SMTask
@@ -131,10 +123,9 @@ public:
    FileCopyPeerFA(FileAccess *s,const char *f,int m);
    ~FileCopyPeerFA();
    int Do();
-   bool Done();
-   bool IOReady()    { return seek_pos!=FILE_END && session->IOReady(); }
+   bool IOReady();
    long GetRealPos();
-   void Seek(long pos);
+   void Seek(long new_pos);
 
    long Buffered() { return in_buffer+session->Buffered(); }
 
@@ -152,10 +143,10 @@ class FileCopyPeerFDStream : public FileCopyPeer
 public:
    FileCopyPeerFDStream(FDStream *o,direction m);
    ~FileCopyPeerFDStream();
+   int getfd();
    int Do();
-   bool Done();
-   bool IOReady() { return stream->getfd()!=-1; }
-   long GetRealPos() { return real_pos; }
+   bool IOReady();
+   void Seek(long new_pos);
    FgData *GetFgData(bool fg);
 };
 

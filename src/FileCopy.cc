@@ -21,8 +21,12 @@
 /* $Id$ */
 
 #include <config.h>
-#include "FileCopy.h"
 #include <assert.h>
+#include <unistd.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include "FileCopy.h"
 
 #define skip_threshold 0x1000
 
@@ -110,6 +114,10 @@ int FileCopy::Do()
       }
       if(s==0)
 	 return m;
+      if(put->Size()>max_buf)
+	 get->Suspend(); // stall the get.
+      else
+	 get->Resume();
       put->Put(b,s);
       get->Skip(s);
       return MOVED;
@@ -127,6 +135,7 @@ int FileCopy::Do()
 	 return m;
       state=GET_DONE_WAIT;
       m=MOVED;
+      delete put; put=0;
       /* fallthrough */
    case(GET_DONE_WAIT):
       if(get->Error())
@@ -134,6 +143,7 @@ int FileCopy::Do()
       if(!get->Done())
 	 return m;
       state=ALL_DONE;
+      delete get; get=0;
       return MOVED;
 
    case(ALL_DONE):
@@ -176,13 +186,41 @@ void FileCopy::SetError(const char *str)
 // FileCopyPeer implementation
 #undef super
 #define super Buffer
-void FileCopyPeer::Skip(int n)
+void FileCopyPeer::SetSize(long s)
 {
-   assert(n<=in_buffer);
-   real_pos+=n;
-   seek_pos+=n;
-   super::Skip(n);
+   want_size=false;
+   size=s;
+   if(seek_pos==FILE_END)
+   {
+      if(size!=NO_SIZE && size!=NO_SIZE_YET)
+	 seek_pos=size;
+      else
+	 seek_pos=0;
+   }
 }
+void FileCopyPeer::SetDate(time_t d)
+{
+   want_date=false;
+   date=d;
+   if(date==NO_DATE || date==NO_DATE_YET)
+      date_set=true;
+   else
+      date_set=false;
+}
+
+bool FileCopyPeer::Done()
+{
+   if(broken || Error())
+      return true;
+   if(eof && in_buffer==0)
+   {
+      if(mode==PUT)
+	 return date_set;
+      return true;
+   }
+   return false;
+}
+
 FileCopyPeer::FileCopyPeer(direction m)
 {
    mode=m;
@@ -190,7 +228,6 @@ FileCopyPeer::FileCopyPeer(direction m)
    want_date=false;
    size=NO_SIZE;
    date=NO_DATE;
-   real_pos=0;
    seek_pos=0;
    can_seek=true;
    date_set=false;
@@ -242,6 +279,7 @@ int FileCopyPeerFA::Do()
 	    res=session->StoreStatus();
 	    if(res==FA::OK)
 	    {
+	       session->Close();
 	       // FIXME: set date for real.
 	       date_set=true;
 	       m=MOVED;
@@ -261,8 +299,8 @@ int FileCopyPeerFA::Do()
 	       SetError(session->StrError(res));
 	       return MOVED;
 	    }
+	    return m;
 	 }
-	 return m;
       }
       res=Put_LL(buffer+buffer_ptr,in_buffer);
       if(res>0)
@@ -276,6 +314,8 @@ int FileCopyPeerFA::Do()
       break;
 
    case GET:
+      if(eof)
+	 return m;
       res=Get_LL(0x4000);
       if(res>0)
       {
@@ -286,23 +326,22 @@ int FileCopyPeerFA::Do()
       if(res<0)
 	 return MOVED;
       if(eof)
+      {
+	 session->Close();
 	 return MOVED;
+      }
       break;
    }
    return m;
 }
 
-bool FileCopyPeerFA::Done()
+bool FileCopyPeerFA::IOReady()
 {
-   if(broken || Error())
+   if(seek_pos==0)
       return true;
-   if(eof && in_buffer==0)
-   {
-      if(mode==PUT)
-	 return date_set;
-      return true;
-   }
-   return false;
+   if(seek_pos==FILE_END && size==NO_SIZE_YET)
+      return false;
+   return session->IOReady();
 }
 
 void FileCopyPeerFA::Suspend()
@@ -316,24 +355,28 @@ void FileCopyPeerFA::Resume()
    session->Resume();
 }
 
-void FileCopyPeerFA::Seek(long pos)
+void FileCopyPeerFA::Seek(long new_pos)
 {
-   if(pos==real_pos)
+   if(pos==new_pos)
       return;
    session->Close();
-   if(pos!=FILE_END)
+   if(new_pos!=FILE_END)
    {
-      session->Open(file,FAmode,pos);
+      session->Open(file,FAmode,new_pos);
       session->RereadManual();
+      if(want_size)
+	 session->WantSize(&size);
+      if(want_date)
+	 session->WantDate(&date);
    }
    else
    {
       WantSize();
    }
-   super::Seek(pos);
+   super::Seek(new_pos);
 }
 
-int FileCopyPeerFA::Get_LL(int size)
+int FileCopyPeerFA::Get_LL(int len)
 {
    int res=0;
 
@@ -341,14 +384,18 @@ int FileCopyPeerFA::Get_LL(int size)
    {
       session->Open(file,FAmode,seek_pos);
       session->RereadManual();
+      if(want_size)
+	 session->WantSize(&size);
+      if(want_date)
+	 session->WantDate(&date);
    }
-   long io_at=real_pos;
-   if(GetRealPos()!=io_at) // GetRealPos can alter real_pos.
+   long io_at=pos;
+   if(GetRealPos()!=io_at) // GetRealPos can alter pos.
       return 0;
 
-   Allocate(size);
+   Allocate(len);
 
-   res=session->Read(buffer+buffer_ptr+in_buffer,size);
+   res=session->Read(buffer+buffer_ptr+in_buffer,len);
    if(res<0)
    {
       if(res==FA::DO_AGAIN)
@@ -361,25 +408,21 @@ int FileCopyPeerFA::Get_LL(int size)
    return res;
 }
 
-int FileCopyPeerFA::Put_LL(const char *buf,int size)
+int FileCopyPeerFA::Put_LL(const char *buf,int len)
 {
    if(session->IsClosed())
    {
-      if(seek_pos==FILE_END)
-      {
-	 if(size!=NO_SIZE && size!=NO_SIZE_YET)
-	    seek_pos=size;
-	 else
-	    seek_pos=0;
-      }
       session->Open(file,FAmode,seek_pos);
-      real_pos=seek_pos;
+      pos=seek_pos;
    }
-   long io_at=real_pos;
-   if(GetRealPos()!=io_at) // GetRealPos can alter real_pos.
+   long io_at=pos;
+   if(GetRealPos()!=io_at) // GetRealPos can alter pos.
       return 0;
 
-   int res=session->Write(buf,size);
+   if(len==0)
+      return 0;
+
+   int res=session->Write(buf,len);
    if(res<0)
    {
       if(res==FA::DO_AGAIN)
@@ -400,11 +443,11 @@ long FileCopyPeerFA::GetRealPos()
 {
    if(mode==PUT)
    {
-      if(real_pos-in_buffer!=session->GetPos())
+      if(pos-in_buffer!=session->GetPos())
       {
 	 Empty();
 	 can_seek=false;
-	 real_pos=session->GetPos();
+	 pos=session->GetPos();
       }
    }
    else
@@ -414,13 +457,13 @@ long FileCopyPeerFA::GetRealPos()
 	 can_seek=false;
 	 session->SeekReal();
       }
-      if(real_pos+in_buffer!=session->GetPos())
+      if(pos+in_buffer!=session->GetPos())
       {
 	 Empty();
-	 real_pos=session->GetPos();
+	 pos=session->GetPos();
       }
    }
-   return real_pos;
+   return pos;
 }
 
 FileCopyPeerFA::FileCopyPeerFA(FileAccess *s,const char *f,int m)
@@ -432,5 +475,197 @@ FileCopyPeerFA::FileCopyPeerFA(FileAccess *s,const char *f,int m)
 }
 FileCopyPeerFA::~FileCopyPeerFA()
 {
+   session->Close();
    xfree(file);
+}
+
+
+// FileCopyPeerFDStream
+#undef super
+#define super FileCopyPeer
+FileCopyPeerFDStream::FileCopyPeerFDStream(FDStream *o,direction m)
+   : FileCopyPeer(m)
+{
+   stream=o;
+}
+FileCopyPeerFDStream::~FileCopyPeerFDStream()
+{
+   if(stream) delete stream;
+}
+int FileCopyPeerFDStream::getfd()
+{
+   int fd=stream->getfd();
+   if(fd==-1)
+   {
+      if(stream->error())
+      {
+	 SetError(stream->error_text);
+	 block+=NoWait();
+      }
+      else
+      {
+	 Timeout(1000);
+      }
+   }
+   return fd;
+}
+int FileCopyPeerFDStream::Do()
+{
+   int m=STALL;
+   int res;
+   if(Done() || Error())
+      return STALL;
+   switch(mode)
+   {
+   case PUT:
+      if(in_buffer==0)
+      {
+	 if(eof)
+	 {
+	    if(date!=NO_DATE && date!=NO_DATE_YET)
+	    {
+	       if(getfd()==-1)
+		  return m;
+	       stream->setmtime(date);
+	    }
+	    date_set=true;
+	    m=MOVED;
+	    return m;
+	 }
+	 if(seek_pos==0)
+	    return m;
+      }
+      res=Put_LL(buffer+buffer_ptr,in_buffer);
+      if(res>0)
+      {
+	 in_buffer-=res;
+	 buffer_ptr+=res;
+	 return MOVED;
+      }
+      if(res<0)
+	 return MOVED;
+      break;
+
+   case GET:
+      if(eof)
+	 return m;
+      res=Get_LL(0x4000);
+      if(res>0)
+      {
+	 in_buffer+=res;
+	 SaveMaxCheck(0);
+	 return MOVED;
+      }
+      if(res<0)
+	 return MOVED;
+      if(eof)
+	 return MOVED;
+      break;
+   }
+   return m;
+}
+
+bool FileCopyPeerFDStream::IOReady()
+{
+   return seek_pos==0 || stream->fd!=-1;
+}
+
+void FileCopyPeerFDStream::Seek(long new_pos)
+{
+   if(pos==new_pos)
+      return;
+   super::Seek(new_pos);
+   if(getfd()==-1)
+      return;
+   if(new_pos==FILE_END)
+   {
+      new_pos=lseek(getfd(),0,SEEK_END);
+      if(new_pos==-1)
+      {
+	 can_seek=false;
+	 return;
+      }
+      SetSize(pos=new_pos);
+   }
+   else
+   {
+      if(lseek(getfd(),new_pos,SEEK_SET)==-1)
+      {
+	 can_seek=false;
+	 return;
+      }
+      pos=new_pos;
+   }
+}
+
+int FileCopyPeerFDStream::Get_LL(int len)
+{
+   int res=0;
+
+   int fd=getfd();
+   if(fd==-1)
+      return 0;
+
+   if(want_date || want_size)
+   {
+      struct stat st;
+      if(fstat(fd,&st)==-1)
+      {
+	 SetDate(NO_DATE);
+	 SetSize(NO_SIZE);
+      }
+      else
+      {
+	 SetDate(st.st_mtime);
+	 SetSize(st.st_size);
+      }
+   }
+
+   Allocate(len);
+
+   res=read(fd,buffer+buffer_ptr+in_buffer,len);
+   if(res==-1)
+   {
+      if(errno==EAGAIN || errno==EINTR)
+      {
+	 Block(fd,POLLIN);
+	 return 0;
+      }
+      stream->MakeErrorText();
+      SetError(stream->error_text);
+      return -1;
+   }
+   if(res==0)
+      eof=true;
+   return res;
+}
+
+int FileCopyPeerFDStream::Put_LL(const char *buf,int len)
+{
+   if(len==0)
+      return 0;
+
+   int fd=getfd();
+   if(fd==-1)
+      return 0;
+
+   int res=write(fd,buf,len);
+   if(res<0)
+   {
+      if(errno==EAGAIN || errno==EINTR)
+      {
+	 Block(fd,POLLOUT);
+	 return 0;
+      }
+      stream->MakeErrorText();
+      SetError(stream->error_text);
+      return -1;
+   }
+   return res;
+}
+FgData *FileCopyPeerFDStream::GetFgData(bool fg)
+{
+   if(getfd()!=-1)
+      return new FgData(stream->GetProcGroup(),fg);
+   return 0;
 }
