@@ -39,8 +39,18 @@ int FileCopyFtp::Do()
 {
    int src_res,dst_res;
    int m=super::Do();
-   if(disable_fxp || Error() || state!=DO_COPY
-   || put->GetSeekPos()==FILE_END || get->Eof())
+
+   if(disable_fxp || Error())
+      return m;
+
+   if(state==PUT_WAIT && put->GetSeekPos()!=FILE_END && ftp_dst->IsClosed())
+   {
+      ((FileCopyPeerFA*)put)->OpenSession();
+      ftp_dst->SetCopyMode(Ftp::COPY_DEST,!passive_source,dst_retries,dst_try_time);
+      m=MOVED;
+   }
+
+   if(state!=DO_COPY || put->GetSeekPos()==FILE_END || get->Eof())
       return m;
 
    // FileCopy can suspend peers.
@@ -56,7 +66,7 @@ int FileCopyFtp::Do()
    if(ftp_dst->IsClosed())
    {
       ((FileCopyPeerFA*)put)->OpenSession();
-      ftp_dst->SetCopyMode(Ftp::COPY_DEST,!passive_source,dst_retries,src_try_time);
+      ftp_dst->SetCopyMode(Ftp::COPY_DEST,!passive_source,dst_retries,dst_try_time);
       m=MOVED;
    }
    // check for errors
@@ -96,7 +106,12 @@ int FileCopyFtp::Do()
       dst_try_time=ftp_dst->GetTryTime();
       Close();
       if(put->CanSeek())
+      {
 	 put->Seek(FILE_END);
+	 get->Suspend();
+	 put->Resume();
+	 state=PUT_WAIT;
+      }
       else
 	 put->Seek(0);
       return MOVED;
