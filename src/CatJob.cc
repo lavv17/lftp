@@ -41,10 +41,19 @@ int CatJob::Done()
 
 int   CatJob::Do()
 {
-   if(!fg_data && global && global->GetProcGroup())
-      fg_data=new FgData(global->GetProcGroup(),fg);
+   int m=STALL;
    if(Done())
-      return STALL;
+      return m;
+   if(!fg_data && global && global->GetProcGroup())
+   {
+      if(fg)
+      {
+	 // clear status line.
+	 const char *empty="";
+	 eprintf(empty);
+      }
+      fg_data=new FgData(global->GetProcGroup(),fg);
+   }
    if(super::Done())
    {
       if(global->Done())
@@ -54,7 +63,7 @@ int   CatJob::Do()
 	 return MOVED;
       }
    }
-   return super::Do();
+   return m||super::Do();
 }
 
 void CatJob::NextFile()
@@ -72,7 +81,7 @@ void CatJob::NextFile()
    FileCopyPeerFDStream *dst_peer=0;
    if(for_each)
    {
-      OutputFilter *out=new OutputFilter(for_each,global);
+      OutputFilter *out=new OutputFilter(new ArgV(for_each),global);
       out->SetCwd(cwd);
       dst_peer=new FileCopyPeerFDStream(out,FileCopyPeer::PUT);
       dst_peer->DontCreateFgData();
@@ -85,9 +94,9 @@ void CatJob::NextFile()
 
    FileCopy *copier=FileCopy::New(src_peer,dst_peer,false);
    copier->DontCopyDate();
-   if(ascii || (auto_ascii && (isatty(global->getfd()) || global->usesfd(1))))
+   if(ascii || (auto_ascii && !for_each && global->usesfd(1)))
    {
-      if(global->usesfd(1))
+      if(!for_each && global->usesfd(1))
 	 copier->LineBuffered();
       copier->Ascii();
    }
@@ -103,8 +112,8 @@ CatJob::~CatJob()
 
    AcceptSig(SIGTERM);
 
-   if(global)
-      delete global;
+   delete global;
+   delete for_each;
 };
 
 int CatJob::AcceptSig(int sig)
@@ -116,7 +125,7 @@ int CatJob::AcceptSig(int sig)
       grp=global->GetProcGroup();
    if(grp==0)
    {
-      if(sig==SIGINT)
+      if(sig==SIGINT || sig==SIGTERM)
 	 return WANTDIE;
       return STALL;
    }
@@ -143,28 +152,33 @@ CatJob::CatJob(FileAccess *new_session,FDStream *new_global,ArgV *new_args)
       {
 	 const char *pager=getenv("PAGER");
 	 if(pager==NULL)
-	    pager="more";
+	    pager="exec more";
+	 delete global;
 	 global=new OutputFilter(pager);
       }
    }
    if(!strcmp(op,"zcat") || !strcmp(op,"zmore"))
    {
-      for_each="zcat";
+      for_each=new ArgV("zcat");
       Binary();
    }
 
    if(!strcmp(op,"bzcat") || !strcmp(op,"bzmore"))
    {
-      for_each="bzcat";
+      for_each=new ArgV("bzcat");
       Binary();
-   }   
-   
-   if(!global)
-   {
-      if(for_each)
-	 global=new OutputFilter("cat"); // To ensure there is a single pgroup
-      else
-	 global=new FDStream(1,"<stdout>");
    }
+
+   if(!global)
+      global=new FDStream(1,"<stdout>");
+
+   if(for_each)
+   {
+      // we need a single process group for all for_each filters.
+      OutputFilter *new_global=new OutputFilter(new ArgV("cat"),global);
+      new_global->DeleteSecondaryStream();
+      global=new_global;
+   }
+
    no_status=global->usesfd(1);
 }

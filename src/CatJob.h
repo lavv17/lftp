@@ -32,7 +32,7 @@ class CatJob : public CopyJobEnv
 {
 protected:
    FDStream *global;
-   const char *for_each;
+   ArgV *for_each;
    bool ascii;
    bool auto_ascii;
 
