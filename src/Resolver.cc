@@ -661,7 +661,7 @@ void Resolver::LookupOne(const char *name)
 
       time(&try_time);
 
-#if defined(HAVE_GETADDRINFO) && INET6
+#if defined(HAVE_GETADDRINFO) && INET6 && !defined(HAVE_GETHOSTBYNAME2)
       // getaddrinfo support by Brandon Hume
       struct addrinfo	    *ainfo=0,
 			    *a_res,
@@ -692,7 +692,7 @@ void Resolver::LookupOne(const char *name)
 	    {
 	       if(a_res->ai_family!=af)
 		  continue;
-	    
+
 	       sockname	= a_res->ai_addr;
 
 	       switch(a_res->ai_family)
@@ -711,7 +711,7 @@ void Resolver::LookupOne(const char *name)
 
 	       AddAddress(a_res->ai_family, addr_data, a_res->ai_addrlen);
 	    }
-	 } 
+	 }
 
 	 freeaddrinfo(ainfo);
 	 break;
