@@ -6,8 +6,6 @@ class Time {
 	int tms;
 
 public:
-	Time() { clear(); }
-
 	/* set the time to now */
 	void set_now();
 
@@ -25,9 +23,11 @@ public:
 
 	Time operator - (Time rhs) const;
 	Time &operator -= (Time rhs);
-		
+
 	bool operator < (Time cmp) const;
 	bool operator >= (Time cmp) const { return !(*this < cmp); }
+
+	Time() { clear(); }
 };
 
 class Timer {
