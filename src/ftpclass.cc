@@ -285,7 +285,7 @@ int   Ftp::TransferCheck(int act,int exp)
    if(mode==CLOSED || RespQueueSize()>1)
       return state;
    if(act==RESP_NO_FILE && mode==LIST)
-      return(NO_FILE_STATE);
+      return(DATA_OPEN_STATE); // simulate eof
    if(act==RESP_BROKEN_PIPE && copy_mode==COPY_NONE)
    {
       if(data_sock==-1 && strstr(line,"Broken pipe"))
@@ -2099,11 +2099,16 @@ void  Ftp::SwitchToState(automate_state ns)
       break;
    case(COPY_FAILED):
       break;
+   case(DATA_OPEN_STATE): // special case for NLIST to emulate eof
+      DataClose();
+      break;
    default:
       // don't translate - this message just indicates bug in lftp
       fprintf(stderr,"SwitchToState called with invalid state\n");
       abort();
    }
+   if(state==COPY_FAILED || state==STORE_FAILED_STATE)
+      return; // don't set state, 'cause we've already failed
    if(ns==STORE_FAILED_STATE && mode!=STORE)
       state=INITIAL_STATE;
    else
