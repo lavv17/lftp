@@ -1,3 +1,7 @@
+2004-02-04  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SFtp.cc: (SkipHome) fix it to skip / too; handle ~.
+
 2004-01-28  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* NetAccess.cc, NetAccess.h: (proxy_proto) new member.

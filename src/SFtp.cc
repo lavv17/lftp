@@ -555,13 +555,17 @@ void SFtp::SendRequest(Packet *request,expect_t tag,int i)
 
 const char *SFtp::SkipHome(const char *path)
 {
+   if(path[0]=='~' && path[1]=='/' && path[2])
+      return path+2;
+   if(path[0]=='~' && !path[1])
+      return ".";
    if(!home)
       return path;
    int home_len=strlen(home);
    if(strncmp(home,path,home_len))
       return path;
    if(path[home_len]=='/' && path[home_len+1] && path[home_len+1]!='/')
-      return path+home_len;
+      return path+home_len+1;
    if(!path[home_len])
       return ".";
    return path;
