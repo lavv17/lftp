@@ -111,6 +111,8 @@ class MirrorJob : public SessionJob
 
    bool use_cache;
 
+   bool remove_source_files;
+
    mode_t get_mode_mask();
 
 public:
@@ -162,6 +164,7 @@ public:
    void	 SetNewerThan(const char *file);
 
    void  UseCache(bool u) { use_cache=u; }
+   void	 RemoveSourceFiles() { remove_source_files=true; }
 };
 
 #endif//MIRRORJOB_H

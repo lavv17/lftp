@@ -93,6 +93,8 @@ void Http::Init()
 
    hftp=false;
    use_head=true;
+
+   user_agent=0;
 }
 
 Http::Http() : super()
@@ -195,7 +197,7 @@ void Http::SendMethod(const char *method,const char *efile)
       method="GET";
    Send("%s %s HTTP/1.1\r\n",method,efile);
    Send("Host: %s\r\n",ehost);
-   Send("User-Agent: %s/%s\r\n","lftp",VERSION);
+   Send("User-Agent: %s\r\n",user_agent);
    Send("Accept: */*\r\n");
 }
 
@@ -1183,8 +1185,10 @@ void Http::Reconfig(const char *name)
 
    if(sock!=-1)
       SetSocketBuffer(sock,socket_buffer);
-   if(proxy_port==0)
+   if(proxy && proxy_port==0)
       proxy_port=xstrdup(HTTP_DEFAULT_PROXY_PORT);
+
+   user_agent=Query("user-agent");
 }
 
 bool Http::SameSiteAs(FileAccess *fa)

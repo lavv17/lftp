@@ -109,6 +109,7 @@ static ResDecl resources[]={
    ResDecl  ("hftp:use-head",	       "yes",	ResMgr::BoolValidate,0),
    ResDecl  ("http:cache",	       "yes",	ResMgr::BoolValidate,0),
    ResDecl  ("http:proxy",	       "",	HttpProxyValidate,0),
+   ResDecl  ("http:user-agent",	       PACKAGE"/"VERSION,0,0),
    ResDecl  ("net:idle",	       "180",   ResMgr::UNumberValidate,0),
    ResDecl  ("net:limit-max",	       "0",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:limit-rate",	       "0",	ResMgr::UNumberValidate,0),

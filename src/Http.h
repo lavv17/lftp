@@ -96,6 +96,8 @@ class Http : public NetAccess
    bool no_cache;
    bool no_cache_this;
 
+   const char *user_agent;
+
 protected:
    bool hftp;  // ftp over http proxy.
    bool use_head;

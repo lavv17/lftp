@@ -683,7 +683,7 @@ int FileCopyPeerFA::Do()
    }
 
    if(Done() || Error())
-      return STALL;
+      return m;
    switch(mode)
    {
    case PUT:

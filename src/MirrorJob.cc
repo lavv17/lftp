@@ -244,12 +244,15 @@ void  MirrorJob::HandleFile(int how)
 
 	 FileCopyPeerFA *src_peer=
 	    new FileCopyPeerFA(session,file->name,FA::RETRIEVE);
-	 src_peer->DontReuseSession(); // mirror won't need session
+	 src_peer->DontReuseSession(); // mirror will need this session
 	 FileCopyPeer *dst_peer=
 	    FileCopyPeerFDStream::NewPut(local_name,cont_this);
 
+	 FileCopy *c=FileCopy::New(src_peer,dst_peer,cont_this);
+	 if(remove_source_files)
+	    c->RemoveSourceLater();
 	 CopyJob *cp=
-	    new CopyJob(FileCopy::New(src_peer,dst_peer,cont_this),file->name,"mirror");
+	    new CopyJob(c,file->name,"mirror");
 	 if(file->defined&(file->DATE|file->DATE_UNPREC))
 	    cp->SetDate(file->date);
 	 if(file->defined&file->SIZE)
@@ -591,8 +594,11 @@ int   MirrorJob::Do()
       FileCopyPeer *src_peer=
 	 FileCopyPeerFDStream::NewGet(local_name);
 
+      FileCopy *c=FileCopy::New(src_peer,dst_peer,false);
+      if(remove_source_files)
+	 c->RemoveSourceLater();
       CopyJob *cp=
-	 new CopyJob(FileCopy::New(src_peer,dst_peer,false),file->name,"mirror");
+	 new CopyJob(c,file->name,"mirror");
       waiting=cp;
       waiting->SetParentFg(this);
       waiting->cmdline=(char*)xmalloc(10+strlen(file->name));
@@ -827,6 +833,7 @@ MirrorJob::MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_rem
    script_needs_closing=false;
 
    use_cache=false;
+   remove_source_files=false;
 }
 
 MirrorJob::~MirrorJob()
@@ -956,6 +963,7 @@ CMD(mirror)
       {"newer-than",required_argument,0,'N'},
       {"dereference",no_argument,0,'L'},
       {"use-cache",no_argument,0,256+'C'},
+      {"Remove-source-files",no_argument,0,256+'R'},
       {0}
    };
 
@@ -996,6 +1004,7 @@ CMD(mirror)
    bool	 create_remote_dir=false;
    int	 verbose=0;
    const char *newer_than=0;
+   bool  remove_source_files=false;
 
    args->rewind();
    while((opt=args->getopt_long("esi:x:t:nrpcRvN:L",mirror_opts,0))!=EOF)
@@ -1057,6 +1066,9 @@ CMD(mirror)
 	 break;
       case(256+'C'):
 	 use_cache=true;
+	 break;
+      case(256+'R'):
+	 remove_source_files=true;
 	 break;
       case('?'):
 	 parent->eprintf(_("Try `help %s' for more information.\n"),args->a0());
@@ -1149,6 +1161,8 @@ CMD(mirror)
    if(newer_than)
       j->SetNewerThan(newer_than);
    j->UseCache(use_cache);
+   if(remove_source_files)
+      j->RemoveSourceFiles();
    return j;
 
 err_out:

@@ -47,7 +47,10 @@ int pgetJob::Do()
       RemoveBackupFile();
 
    if(chunks==0 || cp->GetPos()<chunks[0]->start)
+   {
+      cp->Resume();
       m=super::Do(); // it can call NextFile.
+   }
    else
       cp->Suspend();
 

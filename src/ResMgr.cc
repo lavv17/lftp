@@ -106,14 +106,13 @@ const char *ResMgr::Set(const char *name,const char *cclosure,const char *cvalue
       return msg;
 
    char *value=xstrdup(cvalue);
-   char *closure=xstrdup(cclosure);
-
    if(value && type->val_valid && (msg=(*type->val_valid)(&value))!=0)
    {
       xfree(value);
       return msg;
    }
 
+   char *closure=xstrdup(cclosure);
    if(closure && type->closure_valid && (msg=(*type->closure_valid)(&closure))!=0)
    {
       xfree(closure);
@@ -143,7 +142,7 @@ const char *ResMgr::Set(const char *name,const char *cclosure,const char *cvalue
       {
 	 Resource *to_free=*scan;
 	 *scan=(*scan)->next;
-	 xfree(to_free);
+	 delete to_free;
 	 xfree(closure);
       }
       SMTask::ReconfigAll(type->name);

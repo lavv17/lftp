@@ -1,3 +1,11 @@
+2000-04-03  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileCopy.cc: return m, not STALL.
+	* Http.cc, Http.h, resource.cc: add http:user-agent setting.
+	* MirrorJob.cc, MirrorJob.h: add --Remove-source-files option.
+	* ResMgr.cc: fix small memory leak.
+	* pgetJob.cc: resume CopyJob, maybe this fixes rare pget hang.
+
 2000-03-29  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: disconnect even if control_sock==-1.
