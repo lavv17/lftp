@@ -16,7 +16,7 @@ public:
    void clear() { set(0,0); }
 
    int sec() const { return tsec; }
-   int ms() const { return (tsec * 1000) + tms; }
+   int ms() const;
 
    Time operator + (Time rhs) const;
    Time &operator += (Time rhs);

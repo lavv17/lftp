@@ -77,8 +77,20 @@ Time Time::operator - (Time rhs) const
 
 bool Time::operator < (Time cmp) const
 {
-   if(tsec == cmp.tsec) return tms < cmp.tms;
-   else return tsec < cmp.tsec;
+   if(tsec == cmp.tsec)
+      return tms < cmp.tms;
+   else
+      return tsec < cmp.tsec;
+}
+
+int Time::ms() const
+{
+   // don't allow overflows.
+   if(tsec<-1000000)
+      return -1000000000;
+   if(tsec>1000000)
+      return 1000000000;
+   return (tsec * 1000) + tms;
 }
 
 /* don't want to add a dependancy to SMTask */
@@ -102,10 +114,10 @@ int Timer::remaining() const
    Time now;
    now.set_now();
 
-   Time next = last + interval;
-
-   Time left = next - now;
-   return left.ms();
+   Time next(last);
+   next+=interval;
+   next-=now;
+   return next.ms();
 }
 
 bool Timer::go()
