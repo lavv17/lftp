@@ -53,7 +53,7 @@ protected:
 
 public:
    bool CanSeek() { return can_seek; }
-   virtual void Seek(long offs) { seek_pos=offs; Empty(); eof=false; }
+   virtual void Seek(long offs) { seek_pos=offs; Empty(); eof=false; broken=false; }
    virtual long GetRealPos() { return real_pos; }
    virtual long Buffered() { return in_buffer; }
    virtual bool IOReady() { return true; }
@@ -66,13 +66,14 @@ public:
 
    void SetDate(time_t d)
       {
+	 want_date=false;
 	 date=d;
 	 if(date==NO_DATE || date==NO_DATE_YET)
 	    date_set=true;
 	 else
 	    date_set=false;
       }
-   void SetSize(long s) { size=s; }
+   void SetSize(long s) { want_size=false; size=s; }
 
    FileCopyPeer(direction m);
    ~FileCopyPeer();
@@ -124,12 +125,14 @@ class FileCopyPeerFA : public FileCopyPeer
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
 
+   FileAccess::fileinfo info;
+
 public:
    FileCopyPeerFA(FileAccess *s,const char *f,int m);
    ~FileCopyPeerFA();
    int Do();
    bool Done();
-   bool IOReady()    { return session->IOReady(); }
+   bool IOReady()    { return seek_pos!=FILE_END && session->IOReady(); }
    long GetRealPos() { return session->GetRealPos(); }
    void Seek(long pos);
 

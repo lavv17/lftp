@@ -211,13 +211,56 @@ int FileCopyPeerFA::Do()
    switch(mode)
    {
    case PUT:
+      if(want_size)
+      {
+	 if(session->IsClosed())
+	 {
+	    info.file=file;
+	    info.get_size=true;
+	    info.get_time=false;
+	    session->GetInfoArray(&info,1);
+	    m=MOVED;
+	 }
+	 res=session->Done();
+	 if(res==FA::IN_PROGRESS)
+	    return m;
+	 if(res<0)
+	 {
+	    session->Close();
+	    SetSize(NO_SIZE);
+	    return MOVED;
+	 }
+	 SetSize(info.size);
+	 session->Close();
+	 m=MOVED;
+      }
+
       if(in_buffer==0)
       {
 	 if(eof)
 	 {
-	    // FIXME: set date for real.
-	    date_set=true;
-	    m=MOVED;
+	    res=session->StoreStatus();
+	    if(res==FA::OK)
+	    {
+	       // FIXME: set date for real.
+	       date_set=true;
+	       m=MOVED;
+	    }
+	    else if(res==FA::IN_PROGRESS)
+	       return m;
+	    else
+	    {
+	       if(res==FA::DO_AGAIN)
+		  return m;
+	       if(res==FA::STORE_FAILED)
+	       {
+		  session->Close();
+		  Seek(FILE_END);
+		  return MOVED;
+	       }
+	       SetError(session->StrError(res));
+	       return MOVED;
+	    }
 	 }
 	 return m;
       }
@@ -317,11 +360,50 @@ int FileCopyPeerFA::Get_LL(int size)
    {
       if(res==FA::DO_AGAIN)
 	 return 0;
-      error_text=xstrdup(session->StrError(res));
+      SetError(session->StrError(res));
       return -1;
    }
    if(res==0)
       eof=true;
+   return res;
+}
+
+int FileCopyPeerFA::Put_LL(const char *buf,int size)
+{
+   if(session->IsClosed())
+   {
+      if(seek_pos==FILE_END)
+      {
+	 if(size!=NO_SIZE && size!=NO_SIZE_YET)
+	    seek_pos=size;
+	 else
+	    seek_pos=0;
+      }
+      session->Open(file,FAmode,seek_pos);
+      real_pos=seek_pos;
+   }
+   if(real_pos+in_buffer!=session->GetPos())
+   {
+      Empty();
+      can_seek=false;
+      real_pos=session->GetPos();
+      return 0;
+   }
+
+   int res=session->Write(buf,size);
+   if(res<0)
+   {
+      if(res==FA::DO_AGAIN)
+	 return 0;
+      if(res==FA::STORE_FAILED)
+      {
+	 session->Close();
+	 Seek(FILE_END);
+	 return 0;
+      }
+      SetError(session->StrError(res));
+      return -1;
+   }
    return res;
 }
 
