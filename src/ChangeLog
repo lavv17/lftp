@@ -1,3 +1,10 @@
+1999-07-20  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Resolver.cc: make it compile on sunos551.
+	* FindJob.cc, FindJob.h: fix core dump on output stall;
+	  add PrintStatus method.
+	* lftpget: set verbose; unset at-exit; print usage.
+
 1999-07-19  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* lftpget: new file.

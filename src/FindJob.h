@@ -62,7 +62,7 @@ protected:
    char *start_dir;
    char *init_dir;
 
-   enum prf_res { PRF_FATAL, PRF_ERR, PRF_OK, PRF_WAIT };
+   enum prf_res { PRF_FATAL, PRF_ERR, PRF_OK, PRF_WAIT, PRF_LATER };
    virtual prf_res ProcessFile(const char *d,const FileInfo *fi);
    virtual void Finish() {};
 
@@ -83,6 +83,7 @@ public:
    ~FinderJob();
 
    void ShowRunStatus(StatusLine *sl);
+   void PrintStatus(int v);
 };
 
 class FinderJob_List : public FinderJob

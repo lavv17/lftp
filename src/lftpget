@@ -6,20 +6,21 @@
 
 # $Id$
 
+INTRO="set cmd:verbose y; set cmd:at-exit;"
 SCRIPT=""
 
 for f
 do
    need_pass=false
    case "$f" in
-   "*\"*|*\\*")
+   "*[\"\\]*")
       # need to quote
       f="`echo "$f" | sed 's/\([\\\"]\)/\\\1/g'`"
       ;;
    esac
    case "$f" in
-   *://*:*@*)  ;;
-   *://*@*)    need_pass=true;;
+   "*://*:*@*")  ;;
+   "*://*@*")    need_pass=true;;
    esac
 
    if $need_pass; then
@@ -28,4 +29,9 @@ do
    SCRIPT="$SCRIPT get -u \"$f\";"
 done
 
-exec lftp -c "$SCRIPT"
+if [ "$SCRIPT" = "" ]; then
+   echo "Usage: $0 URL [URL...]" >&2
+   exit 1
+fi
+
+exec lftp -c "$INTRO $SCRIPT"

@@ -115,9 +115,13 @@ int FinderJob::Do()
 	    return MOVED;
 	 }
       }
+      pres=ProcessFile(top.path,top.fset->curr());
+
+      if(pres==PRF_LATER)
+	 return m;
+
       depth_done=false;
 
-      pres=ProcessFile(top.path,top.fset->curr());
       switch(pres)
       {
       case(PRF_FATAL):
@@ -133,6 +137,8 @@ int FinderJob::Do()
 	 return MOVED;
       case(PRF_OK):
 	 break;
+      case(PRF_LATER):
+	 abort();
       }
    post_WAIT:
       if(stack_ptr==-1)
@@ -296,6 +302,26 @@ void FinderJob::ShowRunStatus(StatusLine *sl)
    }
 }
 
+void FinderJob::PrintStatus(int v)
+{
+   SessionJob::PrintStatus(v);
+
+   char *path=0;
+   switch(state)
+   {
+   case INFO:
+      if(stack_ptr>=0)
+	 path=top.path;
+      printf("\t%s: %s [%s]\n",dir_file(path,dir),li->Status(),
+			   session->CurrentStatus());
+      break;
+   case WAIT:
+      break;
+   default:
+      break;
+   }
+}
+
 // FinderJob_List implementation
 // find files and write list to a stream
 FinderJob::prf_res FinderJob_List::ProcessFile(const char *d,const FileInfo *fi)
@@ -310,8 +336,10 @@ FinderJob::prf_res FinderJob_List::ProcessFile(const char *d,const FileInfo *fi)
    if(fg_data==0)
       fg_data=buf->GetFgData(fg);
    if(buf->Size()>0x10000)
-      return PRF_WAIT;
+      return PRF_LATER;
    buf->Put(dir_file(d,fi->name));
+   if((fi->defined&fi->TYPE) && fi->filetype==fi->DIRECTORY)
+      buf->Put("/");
    buf->Put("\n");
    return FinderJob::ProcessFile(d,fi);
 }
