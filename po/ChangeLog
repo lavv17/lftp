@@ -1,0 +1,110 @@
+1999-06-11	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* it.po, pt_BR.po: few obvious to me corrections.
+
+1999-06-11	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update
+
+1999-06-09	Nicolas Lichtmaier <nick@debian.org>
+
+	* es.po: update
+
+1999-06-04	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: few corrections.
+
+1999-06-04	Const Kaplinsky <const@ce.cctpu.edu.ru>
+
+	* ru.po: better translation.
+
+1999-06-03	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update for 990602
+
+1999-06-02	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update for 990602 snapshot
+
+1999-05-26	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update for lftp-990526
+	* POTFILES.in: add ChmodJob.cc, TreatFileJob.cc; remove mrmJob.cc.
+
+1999-05-20	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* POTFILES.in: add HttpDir.cc
+
+1999-05-17	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update for lftp-990517
+	* POTFILES.in: add FtpGlob.cc
+
+1999-04-30	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update for lftp-990430
+
+1999-04-16	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update for lftp-990415
+
+1999-04-15	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update for lftp-990415
+
+1999-04-15	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update
+
+1999-02-19	Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+
+	* pl.po: updated for lftp-990204
+
+1999-01-29	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: new file
+
+1999-01-03	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* es.po, it.po, pl.po, ru.po: updated copyright translation for
+	  1999 year
+
+1998-12-13	Giovanni Bortolozzo <borto@dei.unipd.it>
+
+	* it.po: update for 1.2
+
+1998-12-10	Arkadiusz Mi¶kiewicz <misiek@zsz2.starachowice.pl>
+
+	* pl.po: update
+
+1998-11-27	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update
+
+1998-10-27	Giovanni Bortolozzo <borto@dei.unipd.it>
+
+	* it.po: update
+
+1998-09-27	Nicolás Lichtmaier <nick@debian.org>
+
+	* es.po: update
+
+1998-09-14	Arkadiusz Mi¶kiewicz <misiek@debian.eu.org>
+
+	* pl.po: fixed typo (',' -> '|')
+
+1998-09-08	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* pl.po: added #l# for some strings, add %s for eta
+
+1998-09-08	Arkadiusz Mi¶kiewicz <misiek@debian.eu.org>
+
+	* new pl.po
+
+1998-09-04	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* es.po, ru.po, it.po, pt_BR.po: ajusted some strings due to
+	  introduction of #l# option for plural; also add %s to some
+	  strings for new eta in get and pget.
+
+(older events are not logged, unfortunately)
