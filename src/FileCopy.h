@@ -274,6 +274,9 @@ public:
    void NeedSeek() { need_seek=true; }
    void RemoveFile();
    void SetBase(long b) { seek_base=b; }
+
+   static FileCopyPeerFDStream *NewPut(const char *file,bool cont=false);
+   static FileCopyPeerFDStream *NewGet(const char *file);
 };
 
 class FileCopyPeerString : public FileCopyPeer
