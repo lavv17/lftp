@@ -889,7 +889,7 @@ local character set. It is set from current locale initially.
 .TP
 .BR fish:connect-program \ (string)
 the program to use for connecting to remote server. It should support `-l' option
-for user name, `-p' for port number. Default is `ssh -ax'. You can set it to
+for user name, `-p' for port number. Default is `ssh -a -x'. You can set it to
 `rsh', for example.
 .TP
 .BR fish:shell \ (string)
@@ -1309,7 +1309,7 @@ sets the network protocol timeout.
 .TP
 .BR sftp:connect-program \ (string)
 the program to use for connecting to remote server. It should support `-l' option
-for user name, `-p' for port number. Default is `ssh -ax'. You can set it to
+for user name, `-p' for port number. Default is `ssh -a -x'. You can set it to
 `rsh', for example.
 .TP
 .BR sftp:max-packets-in-flight \ (number)
