@@ -101,12 +101,12 @@ public:
 class TimeDiff : public time_tuple
 {
 public:
+   void SetDiff(const Time&a,const Time&b) { this->set(a); sub(b); }
    TimeDiff() {}
    TimeDiff(const Time&a,const Time&b) { SetDiff(a,b); }
    TimeDiff(double s) { Set(s); }
    TimeDiff(time_t s,int ms) { set(s,ms); }
    void Set(time_t s,int ms) { set(s,ms); }
-   void SetDiff(const Time&a,const Time&b) { this->set(a); sub(b); }
    operator double() const { return to_double(); }
    void Set(double s);
 
