@@ -43,7 +43,7 @@ public:
 
    const char *GetProto() { return "file"; }
    FileAccess *Clone() { return new LocalAccess(this); }
-   static FileAccess *New() { return new LocalAccess(); }
+   static FileAccess *New();
    bool SameLocationAs(FileAccess *fa);
 
    int Read(void *buf,int size);

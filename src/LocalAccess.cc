@@ -40,6 +40,8 @@
 #include "misc.h"
 #include "log.h"
 
+FileAccess *LocalAccess::New() { return new LocalAccess(); }
+
 void LocalAccess::ClassInit()
 {
    // register the class
