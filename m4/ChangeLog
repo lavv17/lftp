@@ -1,3 +1,7 @@
+2003-12-17  albert chin <china@thewrittenword.com>
+
+	* socklen.m4: define lftp_socklen_t instead of socklen_t.
+
 2003-05-27  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ssl.m4: add -R option for shared ssl lib.
