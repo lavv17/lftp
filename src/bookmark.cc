@@ -83,19 +83,18 @@ void Bookmark::PreModify()
    bm_fd=open(bm_file,O_RDWR|O_CREAT,0600);
    if(bm_fd==-1)
       return;
-   fcntl(bm_fd,F_SETFD,FD_CLOEXEC);
-   Lock(F_WRLCK);
-   Refresh();
-}
-
-void Bookmark::PostModify()
-{
    if(Lock(F_WRLCK)==-1)
    {
       fprintf(stderr,"%s: lock for writing failed\n",bm_file);
       Close();
       return;
    }
+   Refresh();
+}
+
+void Bookmark::PostModify()
+{
+   // the file is already locked in PreModify.
    lseek(bm_fd,0,SEEK_SET);
 
 #ifdef HAVE_FTRUNCATE
