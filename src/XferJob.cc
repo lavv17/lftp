@@ -500,8 +500,12 @@ int XferJob::TryWrite(FDStream *f)
    if(res==-1)
    {
       if(errno==EAGAIN || errno==EINTR)
+      {
+	 res=0;
 	 goto normal_return;
-      perror(f->name);
+      }
+      if(errno!=EPIPE)
+	 perror(f->name);
       failed++;
       return -1;
    }
