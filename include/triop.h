@@ -52,7 +52,7 @@ extern "C" {
 # define TRIO_UNIX98 1
 #endif
 #ifndef TRIO_MICROSOFT
-# define TRIO_MICROSOFT 1
+# define TRIO_MICROSOFT 0
 #endif
 #ifndef TRIO_EXTENSION
 # define TRIO_EXTENSION 1
