@@ -124,6 +124,9 @@
 /* build modular lftp */
 #undef WITH_MODULES
 
+/* md5 support is present in libc or libcrypt */
+#undef HAVE_MD5
+
 @BOTTOM@
 
 #if !defined(HAVE_LSTAT)
