@@ -273,8 +273,19 @@ void Http::Send(const char *format,...)
 
 void Http::SendMethod(const char *method,const char *efile)
 {
-   char *ehost=string_alloca(strlen(hostname)*3+1);
-   url::encode_string(hostname,ehost);
+   char *ehost=string_alloca(xstrlen(user)*3+1+strlen(hostname)*3+1+xstrlen(portname)*3+1);
+   ehost[0]=0;
+   if(hftp && user)
+   {
+      url::encode_string(user,ehost,URL_USER_UNSAFE);
+      strcat(ehost,"@");
+   }
+   url::encode_string(hostname,ehost+strlen(ehost),URL_HOST_UNSAFE);
+   if(portname)
+   {
+      strcat(ehost,":");
+      url::encode_string(portname,ehost+strlen(ehost),URL_PORT_UNSAFE);
+   }
    if(!use_head && !strcmp(method,"HEAD"))
       method="GET";
    last_method=method;
