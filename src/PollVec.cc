@@ -56,9 +56,9 @@ void PollVec::SetTimeout(int t)
 
 void PollVec::AddTimeout(int t)
 {
-   if(t==-1)
-      return;
-   if(timeout!=-1 && timeout<t)
+   if(t<0)
+      t=0;
+   if(timeout>=0 && timeout<t)
       return;
    SetTimeout(t);
 }
@@ -92,7 +92,7 @@ void  PollVec::Block() const
 
    if(fds_num==0)
    {
-      if(/*async==0 && */ timeout==-1)
+      if(/*async==0 && */ timeout<0)
       {
 	 /* dead lock */
 	 fprintf(stderr,_("%s: BUG - deadlock detected\n"),"PollVec::Block");
@@ -109,7 +109,8 @@ void  PollVec::Block() const
 
 void PollVec::Merge(const PollVec &p)
 {
-   AddTimeout(p.timeout);
+   if(p.timeout>=0)
+      AddTimeout(p.timeout);
    if(timeout==0)
       return;
    for(int i=0; i<p.fds_num; i++)
