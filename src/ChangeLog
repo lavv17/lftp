@@ -1,3 +1,9 @@
+2000-07-28  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileCopy.cc, FileCopy.h: don't create file in reget until data are
+	  available.
+	* buffer.cc, buffer.h: get_size new method; getsize_and_seek_end removed.
+
 2000-07-27  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ResMgr.cc, ResMgr.h: NoClosure validator.

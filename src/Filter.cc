@@ -69,17 +69,6 @@ FDStream::~FDStream()
    xfree(error_text);
 };
 
-off_t FDStream::getsize_and_seek_end()
-{
-   int fd=getfd();
-   if(fd==-1)
-      return -1;
-   off_t size=lseek(fd,0,SEEK_END);
-   if(size<0)
-      size=0;
-   return size;
-}
-
 void OutputFilter::Parent(int *p)
 {
    close(p[0]);
@@ -362,4 +351,16 @@ bool FileStream::can_seek()
    if(mode&O_APPEND)
       return false;  // whatever we seek, the writes will go to end of file.
    return true;
+}
+
+off_t FileStream::get_size()
+{
+   struct stat st;
+   if(-1==(fd==-1?stat(full_name,&st):fstat(fd,&st)))
+   {
+      if(errno==ENOENT)
+	 return 0;   // assume non-existent files to be empty.
+      return -1;
+   }
+   return st.st_size;
 }

@@ -222,6 +222,7 @@ int FileCopy::Do()
       {
 	 debug((10,"copy: get hit eof\n"));
       eof:
+	 put->Resume();
 	 if(line_buffer)
 	 {
 	    line_buffer->Get(&b,&s);
@@ -1198,6 +1199,52 @@ FileCopyPeerFDStream::~FileCopyPeerFDStream()
    if(stream && delete_stream)
       delete stream;
 }
+
+void FileCopyPeerFDStream::Seek_LL()
+{
+   int fd=stream->fd;
+   assert(fd!=-1);
+   if(seek_pos!=0 && CanSeek(seek_pos))
+   {
+      if(seek_pos==FILE_END)
+      {
+	 seek_pos=lseek(fd,0,SEEK_END);
+	 if(seek_pos==-1)
+	 {
+	    can_seek=false;
+	    can_seek0=false;
+	    seek_pos=0;
+	 }
+	 else
+	 {
+	    SetSize(seek_pos);
+	    if(seek_pos>seek_base)
+	       seek_pos-=seek_base;
+	    else
+	       seek_pos=0;
+	 }
+	 pos=seek_pos;
+      }
+      else
+      {
+	 if(lseek(fd,seek_pos+seek_base,SEEK_SET)==-1)
+	 {
+	    can_seek=false;
+	    can_seek0=false;
+	    seek_pos=0;
+	 }
+	 pos=seek_pos;
+      }
+      if(mode==PUT)
+	 pos+=in_buffer;
+   }
+   else
+   {
+      pos=(mode==GET?0:in_buffer);
+      seek_pos=0;
+   }
+}
+
 int FileCopyPeerFDStream::getfd()
 {
    if(stream->fd!=-1)
@@ -1216,17 +1263,7 @@ int FileCopyPeerFDStream::getfd()
       }
       return -1;
    }
-   if(seek_pos!=0)
-   {
-      if(pos==seek_pos)
-	 pos=seek_pos-1;
-      Seek(seek_pos);
-   }
-   if(!can_seek)
-   {
-      pos=(mode==GET?0:in_buffer);
-      seek_pos=0;
-   }
+   Seek_LL();
    return fd;
 }
 int FileCopyPeerFDStream::Do()
@@ -1288,7 +1325,7 @@ int FileCopyPeerFDStream::Do()
 
 bool FileCopyPeerFDStream::IOReady()
 {
-   return seek_pos==0 || stream->fd!=-1;
+   return seek_pos==pos || stream->fd!=-1;
 }
 
 bool FileCopyPeerFDStream::Done()
@@ -1315,40 +1352,33 @@ void FileCopyPeerFDStream::Seek(off_t new_pos)
    }
 #endif
    super::Seek(new_pos);
-   if(getfd()==-1)
+   int fd=stream->fd;
+   if(fd==-1)
    {
       if(seek_pos!=FILE_END)
+      {
 	 pos=seek_pos+(mode==PUT)*in_buffer;
-      return;
-   }
-   if(new_pos==FILE_END)
-   {
-      new_pos=lseek(getfd(),0,SEEK_END);
-      if(new_pos==-1)
-      {
-	 can_seek=false;
-	 can_seek0=false;
 	 return;
       }
-      SetSize(new_pos);
-      if(new_pos>seek_base)
-	 new_pos-=seek_base;
       else
-	 new_pos=0;
-      pos=new_pos;
-   }
-   else
-   {
-      if(lseek(getfd(),new_pos+seek_base,SEEK_SET)==-1)
       {
-	 can_seek=false;
-	 can_seek0=false;
-	 return;
+	 off_t s=stream->get_size();
+	 if(s!=-1)
+	 {
+	    SetSize(s);
+	    pos=seek_pos+(mode==PUT)*in_buffer;
+	    return;
+	 }
+	 else
+	 {
+	    // ok, have to try getfd.
+	    fd=getfd();
+	 }
       }
-      pos=new_pos;
+      if(fd==-1)
+	 return;
    }
-   if(mode==PUT)
-      pos+=in_buffer;
+   Seek_LL();
 }
 
 int FileCopyPeerFDStream::Get_LL(int len)

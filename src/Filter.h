@@ -44,7 +44,7 @@ public:
 
    void MakeErrorText();
 
-   virtual off_t getsize_and_seek_end();
+   virtual off_t get_size() { return -1; }
    virtual void setmtime(time_t) {}
    virtual bool can_setmtime() { return false; }
    virtual void remove_if_empty() {}
@@ -87,8 +87,6 @@ public:
    void SetCwd(const char *);
    void StderrToStdout() { stderr_to_stdout=true; }
 
-   off_t getsize_and_seek_end() { return 0; }
-
    int getfd();
    bool Done();
 
@@ -128,6 +126,7 @@ public:
    void remove();
    int getfd();
    bool can_seek();
+   off_t get_size();
 };
 
 #endif /* FILTER_H */

@@ -289,6 +289,7 @@ class FileCopyPeerFDStream : public FileCopyPeer
 
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
+   void Seek_LL();
 
    int getfd();
 
