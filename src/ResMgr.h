@@ -27,6 +27,7 @@
 #include <sys/types.h>
 #include <time.h>
 #include "xmalloc.h"
+#include "TimeDate.h"
 
 typedef const char *ResValValid(char **value);
 typedef const char *ResClValid(char **closure);
@@ -166,25 +167,18 @@ inline bool ResMgr::QueryBool(const char *name,const char *closure)
    return Query(name,closure).to_bool();
 }
 
-class TimeInterval
+class TimeInterval : public TimeDiff
 {
-   time_t interval;
    bool infty;
    const char *error_text;
 public:
    TimeInterval(const char *);
-   TimeInterval(time_t i)
-      {
-	 interval=i;
-	 infty=false;
-	 error_text=0;
-      }
-   ~TimeInterval();
+   TimeInterval(time_t i) : TimeDiff(i,0) { infty=false; error_text=0; }
+   TimeInterval(const TimeDiff &d) : TimeDiff(d) { infty=false; error_text=0; }
    bool Error() const { return error_text!=0; };
    const char *ErrorText() const { return error_text; }
 
    bool IsInfty() const { return infty; }
-   time_t Seconds() const { return interval; }
 };
 
 class Range

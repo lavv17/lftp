@@ -22,18 +22,25 @@
 #define TIMER_H
 
 #include "SMTask.h"
+#include "ResMgr.h"
 
 class Timer : public SMTask
 {
+   Time start;
    Time stop;
-   TimeDiff last_setting;
+   TimeInterval last_setting;
+   const char *resource;
+   const char *closure;
    void set_timeout();
 public:
+   Timer();
    int Do();
    bool Stopped();
    void Set(const TimeDiff &d);
+   void SetResource(const char *,const char *);
    void SetMilliSeconds(int ms) { Set(TimeDiff(0,ms)); }
-   void Reset() { Set(last_setting); }
+   void Reset();
+   void Reconfig(const char *);
 };
 
 #endif

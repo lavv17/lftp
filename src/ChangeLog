@@ -1,3 +1,10 @@
+2001-11-09  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ResMgr.cc, ResMgr.h, StatusLine.cc, TimeDate.cc, TimeDate.h,
+	  Timer.cc, Timer.h, complete.cc: make TimeInterval subclass of
+	  TimeDiff; add resource support in Timer; fix Timer to stop
+	  spinning once it is Stopped.
+
 2001-11-09  Glenn Maynard <g_ld@zewt.org>
 
 	* FileSet.cc FileSet.h FileSetOutput.cc FileSetOutput.h FindJob.cc

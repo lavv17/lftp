@@ -692,7 +692,7 @@ static char **lftp_completion (const char *text,int start,int end)
 	    rg->glob->DirectoriesOnly();
 
 	 Timer status_timer;
-	 status_timer.SetMilliSeconds(ResMgr::Query("cmd:status-interval",0));
+	 status_timer.SetMilliSeconds(20);
 
 	 for(;;)
 	 {
@@ -721,7 +721,7 @@ static char **lftp_completion (const char *text,int start,int end)
 		  if(status_timer.Stopped())
 		  {
 		     rl_message ("%s> ", ret);
-		     status_timer.Reset();
+		     status_timer.SetResource("cmd:status-interval",0);
 		  }
 	       }
 	    }

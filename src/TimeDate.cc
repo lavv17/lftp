@@ -87,3 +87,12 @@ int TimeDiff::MilliSeconds() const
 {
    return get_seconds()*1000+get_milliseconds();
 }
+time_t TimeDiff::Seconds() const
+{
+   return get_seconds()+(get_milliseconds()+500)/1000;
+}
+void TimeDiff::Set(double s)
+{
+   time_t s_int=(time_t)s;
+   set(s_int,int((s-s_int)*1000));
+}

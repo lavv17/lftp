@@ -652,7 +652,7 @@ ResDecl::~ResDecl()
 
 TimeInterval::TimeInterval(const char *s)
 {
-   interval=0;
+   double interval=0;
    infty=false;
    error_text=0;
 
@@ -666,10 +666,10 @@ TimeInterval::TimeInterval(const char *s)
    int pos=0;
    for(;;)
    {
-      long prec;
+      double prec;
       char ch='s';
       int pos1=strlen(s+pos);
-      int n=sscanf(s+pos,"%lu%c%n",&prec,&ch,&pos1);
+      int n=sscanf(s+pos,"%lf%c%n",&prec,&ch,&pos1);
       if(n<1)
 	 break;
       ch=tolower((unsigned char)ch);
@@ -692,9 +692,7 @@ TimeInterval::TimeInterval(const char *s)
       error_text=_("Invalid time format. Format is <time><unit>, e.g. 2h30m.");
       return;
    }
-}
-TimeInterval::~TimeInterval()
-{
+   Set(interval);
 }
 
 const char *ResMgr::TimeIntervalValidate(char **s)

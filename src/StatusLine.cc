@@ -40,7 +40,7 @@
 #include "misc.h"
 #include "StatusLine.h"
 
-ResDecl res_status_interval ("cmd:status-interval", "1000", ResMgr::UNumberValidate,ResMgr::NoClosure);
+ResDecl res_status_interval ("cmd:status-interval", "0.8s", ResMgr::TimeIntervalValidate,ResMgr::NoClosure);
 
 int  StatusLine::GetWidth()
 {
@@ -184,7 +184,7 @@ void StatusLine::update(char *newstr)
    write(fd,"\r",1);
    write(fd,newstr,strlen(newstr));
 
-   update_timer.SetMilliSeconds(ResMgr::Query("cmd:status-interval",0));
+   update_timer.SetResource("cmd:status-interval",0);
 }
 
 void StatusLine::WriteLine(const char *f,...)

@@ -23,22 +23,66 @@
 
 void Timer::set_timeout()
 {
-   TimeDiff remains(stop,now);
-   Timeout(remains.MilliSeconds());
+   if(last_setting.IsInfty())
+      current->TimeoutS(1024);
+   else
+   {
+      TimeDiff remains(stop,now);
+      Timeout(remains.MilliSeconds());
+   }
 }
 
 void Timer::Set(const TimeDiff &diff)
 {
+   last_setting=diff;
+   resource=closure=0;
+   Reset();
+}
+void Timer::Reset()
+{
+   start=now;
    stop=now;
-   stop+=diff;
+   stop+=last_setting;
    set_timeout();
+}
+void Timer::SetResource(const char *r,const char *c)
+{
+   if(resource!=r || closure!=c)
+   {
+      resource=r;
+      closure=c;
+      start=now;
+      Reconfig(r);
+   }
+   else
+   {
+      Reset();
+   }
 }
 int Timer::Do()
 {
-   set_timeout();
+   if(!Stopped())
+      set_timeout();
    return STALL;
 }
 bool Timer::Stopped()
 {
+   if(last_setting.IsInfty())
+      return false;
    return now>=stop;
+}
+void Timer::Reconfig(const char *r)
+{
+   if(resource && (!r || !strcmp(r,resource)))
+   {
+      last_setting=TimeInterval(ResMgr::Query(resource,closure));
+      stop=start;
+      stop+=last_setting;
+      set_timeout();
+   }
+}
+Timer::Timer() : last_setting(1)
+{
+   resource=0;
+   closure=0;
 }

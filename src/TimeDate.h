@@ -103,11 +103,12 @@ class TimeDiff : public time_tuple
 public:
    TimeDiff() {}
    TimeDiff(const Time&a,const Time&b) { SetDiff(a,b); }
-   TimeDiff(double s);
+   TimeDiff(double s) { Set(s); }
    TimeDiff(time_t s,int ms) { set(s,ms); }
    void Set(time_t s,int ms) { set(s,ms); }
    void SetDiff(const Time&a,const Time&b) { this->set(a); sub(b); }
    operator double() const { return to_double(); }
+   void Set(double s);
 
    bool operator<(const TimeDiff &o) const { return this->lt(o); }
    bool operator>=(const TimeDiff &o) const { return !(*this<o); }
@@ -117,6 +118,7 @@ public:
    const TimeDiff &operator+=(const TimeDiff &o);
 
    int MilliSeconds() const;
+   time_t Seconds() const;
 };
 
 inline const Time &Time::operator+=(const TimeDiff &o) { add(o); return *this; }
