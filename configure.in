@@ -182,7 +182,8 @@ AC_HEADER_SYS_WAIT
 AC_HEADER_TIME
 AC_CHECK_HEADERS(fcntl.h sys/time.h errno.h stdlib.h varargs.h dirent.h\
  termios.h termio.h sys/select.h sys/poll.h sys/stropts.h string.h memory.h\
- strings.h sys/ioctl.h dlfcn.h resolv.h arpa/nameser.h netinet/tcp.h langinfo.h)
+ strings.h sys/ioctl.h dlfcn.h resolv.h arpa/nameser.h netinet/tcp.h\
+ langinfo.h endian.h)
 
 # See if the system has strerror, and replace it if not
 AC_CHECK_FUNC(strerror, AC_DEFINE(HAVE_STRERROR), LIBOBJS="$LIBOBJS strerror.o")
@@ -236,7 +237,9 @@ dnl AC_C_CONST
 dnl AC_C_INLINE
 dnl AC_TYPE_OFF_T
 dnl AC_TYPE_SIZE_T
-AC_C_BIGENDIAN
+if test x$ac_cv_header_endian_h = xno; then
+   AC_C_BIGENDIAN
+fi
 TYPE_SOCKLEN_T
 
 AC_STRUCT_TIMEZONE

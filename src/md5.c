@@ -43,9 +43,9 @@
 /*#include "wget.h"*/
 #include "md5.h"
 
-#ifdef _LIBC
+#ifdef HAVE_ENDIAN_H
 # include <endian.h>
-# if __BYTE_ORDER == __BIG_ENDIAN
+# if __BYTE_ORDER==__BIG_ENDIAN
 #  define WORDS_BIGENDIAN 1
 # endif
 #endif

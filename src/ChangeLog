@@ -1,3 +1,7 @@
+2000-01-26  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* md5.c: check for HAVE_ENDIAN_H
+
 2000-01-25  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: runtime test for TIOCOUTQ.
