@@ -1496,10 +1496,10 @@ void Http::SetCookie(const char *value_const)
 	 entry++;
       if(*entry==0)
 	 break;
-      if(!strncmp(entry,"path=",5)
-      || !strncmp(entry,"domain=",7)
-      || !strncmp(entry,"expires=",8)
-      || (!strncmp(entry,"secure",6)
+      if(!strncasecmp(entry,"path=",5)
+      || !strncasecmp(entry,"domain=",7)
+      || !strncasecmp(entry,"expires=",8)
+      || (!strncasecmp(entry,"secure",6)
 	  && (entry[6]==' ' || entry[6]==0 || entry[6]==';')))
 	 continue; // filter out path= domain= expires= secure
 
