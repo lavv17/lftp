@@ -66,6 +66,7 @@ class Http : public FileAccess
       {
 	 SendRequest(connection,file);
       }
+   void SendArrayInfoRequest();
    int status_code;
    void HandleHeaderLine(const char *name,const char *value);
 
@@ -104,6 +105,15 @@ class Http : public FileAccess
    void SetProxy(const char *);
 
    void BumpEventTime(time_t t);
+
+   int  keep_alive_max;
+   bool keep_alive;
+
+   int array_send;
+
+   bool chunked;
+   long chunk_size;
+   long chunk_pos;
 
 public:
    static void ClassInit();

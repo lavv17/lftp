@@ -85,6 +85,15 @@ void Http::Init()
    proxy_user=proxy_pass=0;
 
    default_cwd="/";
+
+   keep_alive=false;
+   keep_alive_max=1;
+
+   array_send=0;
+
+   chunked=false;
+   chunk_size=-1;
+   chunk_pos=0;
 }
 
 Http::Http() : super()
@@ -183,6 +192,12 @@ void Http::Disconnect()
    xfree(location);
    location=0;
    sent_eot=false;
+   keep_alive=false;
+   keep_alive_max=1;
+   array_send=array_ptr;
+   chunked=false;
+   chunk_size=-1;
+   chunk_pos=0;
    if(mode==STORE && state!=DONE && state!=ERROR)
       SetError(STORE_FAILED,0);
    else
@@ -193,6 +208,7 @@ void Http::Close()
 {
    retries=0;
    Disconnect();
+   array_send=0;
    super::Close();
 }
 
@@ -346,9 +362,27 @@ void Http::SendRequest(const char *connection,const char *f)
       break;
    }
    SendAuth();
+//    Send("Accept: */*\r\n");
    if(mode!=ARRAY_INFO || connection)
       Send("Connection: %s\r\n",connection?connection:"close");
    Send("\r\n");
+
+   keep_alive=false;
+   chunked=false;
+   chunk_size=-1;
+   chunk_pos=0;
+}
+
+void Http::SendArrayInfoRequest()
+{
+   while(array_send-array_ptr<keep_alive_max
+	 && array_send<array_cnt)
+   {
+      SendRequest(array_send==array_cnt-1 ? "close" : "keep-alive",
+	 array_for_info[array_send].file);
+      array_send++;
+   }
+   keep_alive=false;
 }
 
 void Http::HandleHeaderLine(const char *name,const char *value)
@@ -397,6 +431,31 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       xfree(location);
       location=xstrdup(value);
       return;
+   }
+   if(!strcasecmp(name,"Keep-Alive"))
+   {
+      keep_alive=true;
+      const char *m=strstr(value,"max=");
+      if(m)
+	 sscanf(m+4,"%d",&keep_alive_max);
+      return;
+   }
+   if(!strcasecmp(name,"Connection")
+   || !strcasecmp(name,"Proxy-Connection"))
+   {
+      if(!strcasecmp(value,"keep-alive"))
+	 keep_alive=true;
+      else if(!strcasecmp(value,"close"))
+	 keep_alive=false;
+   }
+   if(!strcasecmp(name,"Transfer-Encoding"))
+   {
+      if(!strcasecmp(value,"chunked"))
+      {
+	 chunked=true;
+	 chunk_size=-1;	// to indicate "before first chunk"
+	 chunk_pos=0;
+      }
    }
 }
 
@@ -559,8 +618,7 @@ int Http::Do()
       DebugPrint("---- ","Sending request...",9);
       if(mode==ARRAY_INFO)
       {
-	 SendRequest(array_ptr==array_cnt-1 ? "close" : "keep-alive",
-	    array_for_info[array_ptr].file);
+	 SendArrayInfoRequest();
       }
       else
       {
@@ -617,14 +675,16 @@ int Http::Do()
 		     state=DONE;
 		     return MOVED;
 		  }
-#if 0
-		  // FIXME: this does not work. Why?
-		  SendRequest(array_ptr==array_cnt-1 ? "close" : "keep-alive",
-		     array_for_info[array_ptr].file);
-#else
-		  Disconnect();
-		  try_time=0;
-#endif
+		  // if protocol is HTTP/1.1, we can avoid reconnection
+		  if(proto_version>=0x11 && keep_alive)
+		  {
+		     SendArrayInfoRequest();
+		  }
+		  else
+		  {
+		     Disconnect();
+		     try_time=0;
+		  }
 		  return MOVED;
 	       }
 	       else if(mode==STORE)
@@ -838,7 +898,7 @@ int Http::Read(void *buf,int size)
       if(buf1==0) // eof
       {
 	 DebugPrint("---- ","Hit EOF",9);
-	 if(bytes_received<body_size)
+	 if(bytes_received<body_size || chunked)
 	 {
 	    DebugPrint("**** ","Received not enough data, retrying",1);
 	    Disconnect();
@@ -846,8 +906,57 @@ int Http::Read(void *buf,int size)
 	 }
 	 return 0;
       }
+      if(size1==0)
+	 return DO_AGAIN;
       if(body_size>=0 && bytes_received>=body_size)
 	 return 0; // all received
+      if(chunked)
+      {
+	 if(chunk_size==-1) // expecting first/next chunk
+	 {
+	    const char *nl=(const char*)memchr(buf1,'\n',size1);
+	    if(nl==0)  // not yet
+	    {
+	    not_yet:
+	       if(recv_buf->Eof())
+		  Disconnect();	 // connection closed too early
+	       return DO_AGAIN;
+	    }
+	    if(!is_ascii_xdigit(*buf1)
+	    || sscanf(buf1,"%lx",&chunk_size)!=1)
+	    {
+	       Fatal(_("chunked format violated"));
+	       return FATAL;
+	    }
+	    recv_buf->Skip(nl-buf1+1);
+	    chunk_pos=0;
+	    goto get_again;
+	 }
+	 if(chunk_size==0) // eof
+	 {
+	    // FIXME: headers may follow
+	    Disconnect();
+	    state=DONE;
+	    return 0;
+	 }
+	 if(chunk_pos==chunk_size)
+	 {
+	    if(size1<2)
+	       goto not_yet;
+	    if(buf1[0]!='\r' || buf1[1]!='\n')
+	    {
+	       Fatal(_("chunked format violated"));
+	       return FATAL;
+	    }
+	    recv_buf->Skip(2);
+	    chunk_size=-1;
+	    goto get_again;
+	 }
+	 // ok, now we may get portion of data
+	 if(size1>chunk_size-chunk_pos)
+	    size1=chunk_size-chunk_pos;
+      }
+
       int bytes_allowed=BytesAllowed();
       if(size1>bytes_allowed)
 	 size1=bytes_allowed;
@@ -860,6 +969,8 @@ int Http::Read(void *buf,int size)
 	    to_skip=size1;
 	 recv_buf->Skip(to_skip);
 	 real_pos+=to_skip;
+	 if(chunked)
+	    chunk_pos+=to_skip;
 	 goto get_again;
       }
       if(size>size1)
@@ -869,6 +980,8 @@ int Http::Read(void *buf,int size)
       pos+=size;
       real_pos+=size;
       bytes_received+=size;
+      if(chunked)
+	 chunk_pos+=size;
       BytesUsed(size);
       retries=0;
       return size;

@@ -31,6 +31,11 @@ static inline bool is_ascii_digit(char ch)
    return ch>='0' && ch<='9';
 }
 
+static inline bool is_ascii_xdigit(char ch)
+{
+   return is_ascii_digit(ch) || (ch>='a' && ch<='f') || (ch>='A' && ch<='F');
+}
+
 static inline bool is_ascii_space(char ch)
 {
    return ch==' ' || ch=='\t' || ch=='\n' || ch=='\r' || ch=='\014';
