@@ -1,4 +1,4 @@
-** lftp-2.3
+** lftp-2.4
 
 This package `lftp' contains the following components:
 
@@ -61,6 +61,10 @@ Variable names can be abbreviated and prefix can be omitted unless the
 rest becomes ambiguous.
 
 Use command `help' or read documentation (man lftp) to learn more.
+
+If lftp was compiled with ssl support, then it includes software
+developed by the OpenSSL Project for use in the OpenSSL Toolkit.
+(http://www.openssl.org/)
 
 Where to get
 ~~~~~~~~~~~~

@@ -1,8 +1,9 @@
-Version 2.4.0 - 2001-07-??
+Version 2.4.0 - 2001-07-30
 
-* use CONNECT method for https over http proxy.
 * fish protocol support (over plain ssh connection).
+* use CONNECT method for https over http proxy.
 * support for variable name completion (Nicolas Noble).
+* queue editing support (Glenn F. Maynard).
 * support http keep-alive in case of chunked transfer encoding.
 * terminate some never-ending jobs before moving to background.
 * included trio for systems lacking vsnprintf (Albert Chin).
@@ -11,6 +12,8 @@ Version 2.4.0 - 2001-07-??
   (ftp:site-group variable). E.g. `set ftp:acct/user@host account/password'.
 * new setting ftp:port-ipv4 to specify explicitly IP address sent with PORT
   command (suggested by Julien Oster and Jonas Jensen with patches).
+* new setting ftp:ssl-auth to specify AUTH argument to use (SSL, TLS, TLS-C
+  or TLS-P).
 * roxen directory listing support.
 * fixed reget of non-existent files.
 * fixed restart of transfer in FXP mode.
@@ -19,6 +22,9 @@ Version 2.4.0 - 2001-07-??
 * fixed a memory leak happening in resolver when dns:use-fork=no.
 * fixed debug redirection to a file (debug LEVEL -o log).
 * fixed glob for */* in http.
+* fixed a memory leak in find/mirror for ftp protocol (reported by
+  Glenn F. Maynard)
+* fixed handling of range-end==-1 in http header Content-Range:.
 
 Version 2.3.11 - 2001-05-24
 

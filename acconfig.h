@@ -231,4 +231,9 @@ CDECL void SOCKSinit(const char *);
 #define E_RETRY(e) ((e)==EAGAIN || (e)==EWOULDBLOCK || (e)==EINTR)
 #define E_LOCK_IGNORE(e) ((e)==EINVAL || (e)==ENOLCK)
 
+#ifndef HAVE_RANDOM
+#define srandom(x) srand((x))
+#define random() ((long)(rand()/(RAND_MAX+1.0)*2147483648.0))
+#endif
+
 #endif /* CONFIG_H */

@@ -89,3 +89,5 @@ implemented.
 
  * remember user-specified URL path from open/cd.
  * flag to mark cwd as a file, not a directory. (for http).
+
+ * du command
