@@ -360,7 +360,7 @@ if test x$lftp_cv_func_poll_works = xno; then
    LINK_DST="$LINK_DST include/poll.h"
 fi
 if test x$ac_cv_func_regexec = xno -o x$ac_cv_header_regex_h = xno; then
-   AC_LIBOBJ(regex.o)
+   AC_LIBOBJ(regex)
    LINK_SRC="$LINK_SRC lib/regex.h"
    LINK_DST="$LINK_DST include/regex.h"
 fi

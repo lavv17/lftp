@@ -5,13 +5,20 @@ Version 2.5.0 - 2002-01-??
   if possible.
 * mirror can now upload/download certain files first based on pattern list,
   new setting mirror:order contains the pattern list.
+* mirror has now options -X and -I which allow to specify exclude and include
+  as shell glob patterns. E.g. `mirror -X *.bak'.
+* mirror can now set file owner/group if it can (--allow-chown option).
 * mirror options -t, -T, --time-prec and --loose-time-prec are now obsolete,
   so are settings mirror:time-prec and mirror:loose-time-prec.
 * find can now understand URLs and plain files specified on command line
   (Glenn Maynard, Alexander Lukyanov)
 * chmod can now handle symbolic modes and can work recursively (Glenn Maynard).
 * now plain ls can also use color for file names.
+* new setting xfer:full-disk-fatal. When it is false, lftp waits for more disk
+  space instead of cancelling transfers in case of full disk (Glenn Maynard,
+  Alexander Lukyanov)
 * cls improved (Glenn Maynard).
+* `bookmark list' hides passwords now.
 
 Version 2.4.8 - 2001-12-04
 
