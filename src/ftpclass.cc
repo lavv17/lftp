@@ -1983,6 +1983,12 @@ void  Ftp::DataAbort()
       return;
    }
 
+   if(aborted_data_sock!=-1)  // don't allow double ABOR.
+   {
+      Disconnect();
+      return;
+   }
+
    SendUrgentCmd("ABOR");
    AddResp(226,0,CHECK_ABOR);
    FlushSendQueue(true);
