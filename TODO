@@ -52,6 +52,7 @@ currently; some need other work to be done.
       mirror -R = local mirror
       put = local get
    of course, implement commands using two sessions where possible.
+   ?? then proto-file will not be a module, that is it will be always loaded.
 
  * make debug output to clear/redraw prompt.
 
@@ -62,3 +63,7 @@ currently; some need other work to be done.
  * ascii mode?
 
  * intelligently squeeze file name in status line.
+
+ * `repeat' command, e.g. repeat "at tomorrow -- mirror"
+
+ * Cache DNS data inside Resolver class.
