@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.52)
 AC_INIT(src/ftpclass.cc)
-AM_INIT_AUTOMAKE(lftp, 2.5.4)
+AM_INIT_AUTOMAKE(lftp, pre2.6.0)
 AM_CONFIG_HEADER(include/config.h)
 
 # This doesn't *require* GNU extensions; it merely enables them if
