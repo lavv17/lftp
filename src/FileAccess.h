@@ -185,10 +185,11 @@ public:
 
    virtual void Connect(const char *h,const char *p);
    virtual void ConnectVerify();
-
    virtual void AnonymousLogin();
-
    virtual void Login(const char *u,const char *p);
+
+   // reset location-related state on Connect/Login/AnonymousLogin
+   virtual void ResetLocationData();
 
    virtual void Open(const char *file,int mode,off_t pos=0);
    void SetFileURL(const char *u) { xfree(file_url); file_url=xstrdup(u); }

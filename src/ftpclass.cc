@@ -3667,18 +3667,18 @@ int   Ftp::Done()
    abort();
 }
 
-void Ftp::Connect(const char *new_host,const char *new_port)
+void Ftp::ResetLocationData()
 {
-   super::Connect(new_host,new_port);
+   super::ResetLocationData();
    flags=0;
-
    dos_path=false;
    vms_path=false;
    mdtm_supported=true;
    size_supported=true;
    site_chmod_supported=true;
-
-   Reconfig();
+   xfree(home_auto);
+   home_auto=0;
+   Reconfig(0);
    state=INITIAL_STATE;
 }
 

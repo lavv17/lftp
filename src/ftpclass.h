@@ -315,6 +315,8 @@ public:
    bool	 SameLocationAs(FileAccess *);
    bool	 SameSiteAs(FileAccess *);
 
+   void	 ResetLocationData();
+
    int IsConnected()
    {
       if(control_sock==-1)
@@ -323,8 +325,6 @@ public:
 	 return 1;
       return 2;
    }
-
-   void	 Connect(const char *h,const char *p);
 
    int   Read(void *buf,int size);
    int   Write(const void *buf,int size);

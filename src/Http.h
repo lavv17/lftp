@@ -141,7 +141,7 @@ public:
    int StoreStatus();
    int SendEOT();
 
-   void	Connect(const char *h,const char *p);
+   void	ResetLocationData();
 
    void Close();
    const char *CurrentStatus();

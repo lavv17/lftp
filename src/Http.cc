@@ -1668,9 +1668,9 @@ bool Http::SameLocationAs(FileAccess *fa)
    return true;
 }
 
-void Http::Connect(const char *new_host,const char *new_port)
+void Http::ResetLocationData()
 {
-   super::Connect(new_host,new_port);
+   super::ResetLocationData();
    Reconfig();
    state=DISCONNECTED;
 }

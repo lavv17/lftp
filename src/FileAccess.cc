@@ -446,28 +446,23 @@ const char *FileAccess::GetConnectURL(int flags)
 void FileAccess::Connect(const char *host1,const char *port1)
 {
    Close();
+   ResetLocationData();
    xfree(hostname);
    hostname=xstrdup(host1);
    xfree(portname);
    portname=xstrdup(port1);
-   xfree(cwd);
-   cwd=xstrdup(default_cwd);
-   xfree(home); home=0;
    DontSleep();
 }
 
 void FileAccess::Login(const char *user1,const char *pass1)
 {
-   Disconnect();
+   Close();
+   ResetLocationData();
    xfree(user);
    user=xstrdup(user1);
    xfree(pass);
    pass=xstrdup(pass1);
    pass_open=false;
-   xfree(cwd);
-   cwd=xstrdup(default_cwd);
-   xfree(home);
-   home=0;
 
    if(user && pass==0)
    {
@@ -493,6 +488,21 @@ void FileAccess::Login(const char *user1,const char *pass1)
    }
 }
 
+void FileAccess::AnonymousLogin()
+{
+   Close();
+   ResetLocationData();
+   xfree(user); user=0;
+   xfree(pass); pass=0;
+   pass_open=false;
+}
+
+void FileAccess::ResetLocationData()
+{
+   xfree(cwd);  cwd=xstrdup(default_cwd);
+   xfree(home); home=0;
+}
+
 void FileAccess::SetPasswordGlobal(const char *p)
 {
    xfree(pass);
@@ -511,17 +521,6 @@ void FileAccess::SetPasswordGlobal(const char *p)
       else
 	 o->pass=save_pass;
    }
-}
-
-void FileAccess::AnonymousLogin()
-{
-   Disconnect();
-   xfree(user); user=0;
-   xfree(pass); pass=0;
-   pass_open=false;
-   xfree(cwd);
-   cwd=xstrdup(default_cwd);
-   xfree(home);  home=0;
 }
 
 void FileAccess::GetInfoArray(struct fileinfo *info,int count)

@@ -294,11 +294,11 @@ void NetAccess::NextPeer()
       try_time=0;	// try next address immediately
 }
 
-void NetAccess::Connect(const char *h,const char *p)
+void NetAccess::ResetLocationData()
 {
    Disconnect();
-   super::Connect(h,p);
    ClearPeer();
+   super::ResetLocationData();
 }
 
 void NetAccess::ConnectVerify()

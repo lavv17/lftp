@@ -1,3 +1,10 @@
+2001-10-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: fix site command broken by ls changes.
+	* FileAccess.h, FileAccess.cc, Http.cc, Http.h, ftpclass.cc, ftpclass.h:
+	  NetAccess.cc, NetAccess.h: new method ResetLocationData; reset
+	  home_auto on Connect/Login/AnonymousLogin.
+
 2001-10-08  Glenn F. Maynard <g_ld@zewt.org>
 
 	* ColumnOutput.cc, commands.cc, complete.cc, complete.h, lftp_rl.c:
