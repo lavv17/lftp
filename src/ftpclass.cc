@@ -2133,6 +2133,7 @@ int  Ftp::ReceiveResp()
 			return MOVED;
 		     }
 		  }
+		  control_ssl_connected=true;
 	       }
 	       res=SSL_read(control_ssl,resp+resp_size,resp_alloc-resp_size-1);
 	       if(res<0)
@@ -2438,6 +2439,7 @@ int  Ftp::FlushSendQueue(bool all)
 		  return MOVED;
 	       }
 	    }
+	    control_ssl_connected=true;
 	 }
 	 res=SSL_write(control_ssl,send_cmd_ptr,to_write);
 	 if(res<=0)
@@ -2806,6 +2808,7 @@ read_again:
 	       return error_code;
 	    }
 	 }
+	 data_ssl_connected=true;
       }
       res=SSL_read(data_ssl,(char*)buf,size);
       if(res<=0)
@@ -2933,6 +2936,7 @@ int   Ftp::Write(const void *buf,int size)
 	       return error_code;
 	    }
 	 }
+	 data_ssl_connected=true;
       }
       res=SSL_write(data_ssl,(char*)buf,size);
       if(res<=0)

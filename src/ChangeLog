@@ -1,3 +1,7 @@
+2000-08-25  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: set *_ssl_connected after SSL_connect.
+
 2000-08-24  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.h, Fish.h: fix last comma in enum.
