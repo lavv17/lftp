@@ -3,6 +3,8 @@
 	* ColumnOutput.cc: fix memory leak; change \e to \\e.
 	* FileSetOutput.cc: fix coredump when LS_COLORS is unset.
 	* misc.h: add comment on Subst.
+	* lftp.cc: set top_exec to zero after deletion, this fixes a coredump
+	  at exit.
 
 2001-10-05  Glenn F. Maynard <g_ld@zewt.org>
 

@@ -291,7 +291,8 @@ void  source_if_exist(CmdExec *exec,const char *rc)
 
 static void tty_clear()
 {
-   top_exec->pre_stdout();
+   if(top_exec)
+      top_exec->pre_stdout();
 }
 
 ResDecl res_save_cwd_history
@@ -369,6 +370,7 @@ int   main(int argc,char **argv)
    top_exec->KillAll();
    int exit_code=top_exec->ExitCode();
    SMTask::Delete(top_exec);
+   top_exec=0;
    SessionPool::ClearAll();
    LsCache::Flush();
    ProcWait::DeleteAll();
