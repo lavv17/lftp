@@ -2,7 +2,9 @@ EXTRA_DIST = lftp.conf lftp.lsm FAQ acconfig.h README README.debug-levels\
  README.modules MIRRORS BUGS FEATURES ltcf-c.sh ltcf-cxx.sh
 SUBDIRS = include readline-4.1 lib doc intl src po m4
 AUTOMAKE_OPTIONS = foreign
-ACLOCAL_AMFLAGS = -I m4
+M4DIR = $(srcdir)/m4
+ACLOCAL_AMFLAGS = -I $(M4DIR)
+ACINCLUDE_INPUTS = $(M4DIR)/gettext.m4 $(M4DIR)/lcmessage.m4 $(M4DIR)/progtest.m4
 
 install-data-local:
 	if [ ! -f $(DESTDIR)$(sysconfdir)/lftp.conf ]; then \
@@ -45,3 +47,6 @@ release:
 	    rm -f $(PACKAGE).tar.gz && ln -s $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE).tar.gz)
 	mutt -s add lsm@execpc.com < $(PACKAGE).lsm
 	cvs tag $(PACKAGE)-`echo $(VERSION) | sed 's/\./-/g'` .
+
+$(srcdir)/acinclude.m4: $(ACINCLUDE_INPUTS)
+	cat $(ACINCLUDE_INPUTS) > $@

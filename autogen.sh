@@ -81,6 +81,8 @@ if test "$DIE" -eq 1; then
   exit 1
 fi
 
+make -f Makefile.am srcdir=. acinclude.m4
+
 if test -z "$*"; then
   echo "**Warning**: I am going to run \`configure' with no arguments."
   echo "If you wish to pass any to it, please specify them on the"
@@ -140,7 +142,7 @@ do
   fi
 done
 
-conf_flags="--enable-maintainer-mode --enable-compile-warnings" #--enable-iso-c
+conf_flags="--enable-maintainer-mode --enable-compile-warnings --with-debug" #--enable-iso-c
 if [ `uname` = SunOS ]; then
    conf_flags="$conf_flags --with-included-gettext"
 fi
