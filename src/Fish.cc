@@ -330,6 +330,7 @@ void Fish::Disconnect()
    if(mode==STORE)
       SetError(STORE_FAILED,0);
    received_greeting=false;
+   password_sent=0;
 }
 
 void Fish::EmptyPathQueue()
@@ -356,6 +357,7 @@ void Fish::Init()
    path_queue=0;
    path_queue_len=0;
    received_greeting=false;
+   password_sent=0;
 }
 
 Fish::Fish()
@@ -659,12 +661,18 @@ int Fish::HandleReplies()
 	 {
 	    if(!pass)
 	    {
-	       SetError(LOGIN_FAILED,"Password required");
+	       SetError(LOGIN_FAILED,_("Password required"));
+	       return MOVED;
+	    }
+	    if(password_sent>0)
+	    {
+	       SetError(LOGIN_FAILED,_("Login incorrect"));
 	       return MOVED;
 	    }
 	    recv_buf->Put("XXXX");
 	    send_buf->Put(pass);
 	    send_buf->Put("\n");
+	    password_sent++;
 	    return m;
 	 }
 	 if(s>=y_len && !strncasecmp(b+s-y_len,y,y_len))

@@ -129,6 +129,7 @@ private:
 
    state_t state;
    bool received_greeting;
+   int  password_sent;
    unsigned ssh_id;
    char *handle;
    int handle_len;

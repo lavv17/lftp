@@ -345,6 +345,7 @@ void SFtp::Disconnect()
    if(mode==STORE)
       SetError(STORE_FAILED);
    received_greeting=false;
+   password_sent=0;
    protocol_version=0;
    delete send_translate; send_translate=0;
    delete recv_translate; recv_translate=0;
@@ -367,6 +368,7 @@ void SFtp::Init()
    ssh_id=0;
    eof=false;
    received_greeting=false;
+   password_sent=0;
    expect_queue_size=0;
    expect_chain=0;
    expect_chain_end=&expect_chain;
@@ -736,12 +738,18 @@ int SFtp::HandlePty()
       {
 	 if(!pass)
 	 {
-	    SetError(LOGIN_FAILED,"Password required");
+	    SetError(LOGIN_FAILED,_("Password required"));
+	    return MOVED;
+	 }
+	 if(password_sent>0)
+	 {
+	    SetError(LOGIN_FAILED,_("Login incorrect"));
 	    return MOVED;
 	 }
 	 pty_recv_buf->Put("XXXX");
 	 pty_send_buf->Put(pass);
 	 pty_send_buf->Put("\n");
+	 password_sent++;
 	 return m;
       }
       if(s>=y_len && !strncasecmp(b+s-y_len,y,y_len))

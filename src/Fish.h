@@ -42,6 +42,7 @@ class Fish : public NetAccess
 
    state_t state;
    bool received_greeting;
+   int  password_sent;
 
    void Init();
 
