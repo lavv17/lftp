@@ -1,3 +1,8 @@
+1999-09-12	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document command `queue'; settings xfer:clobber,
+	  net:limit-total-rate, net:limit-total-max.
+
 1999-08-10	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: add a note about sysconfdir.

@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "06 Aug 1999"
+.TH lftp 1 "12 Sep 1999"
 .SH NAME
 lftp \- Sophisticated ftp program
 .SH SYNTAX
@@ -61,7 +61,7 @@ lftp \- Sophisticated ftp program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 2.0.4.
+This man page documents lftp version 2.1.0.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a program that allows sophisticated ftp connection to
@@ -406,6 +406,20 @@ directory. Does not expand wildcards, use \fBmput\fR for that.
 .PP
 Print current remote directory.
 
+.B queue
+\fIcmd\fP
+.PP
+Add the given command to queue for sequential execution. Each site has its own
+queue. Don't try to queue `cd' or `lcd' commands, it may confuse lftp. Instead
+do the cd/lcd before `queue' command, and it will remember the place in which
+the command is to be done.
+.PP
+.Ds
+queue get one_file
+cd a_directory
+queue get another_file
+.De
+
 .B quote
 \fIcmd\fP
 .PP
@@ -676,7 +690,13 @@ disconnect from server after that number of idle seconds.
 limit transfer rate on data connection. 0 means unlimited.
 .TP
 .BR net:limit-max \ (bytes)
-limit accumulating of limit-rate in time. 0 means unlimited.
+limit accumulating of unused limit-rate. 0 means unlimited.
+.TP
+.BR net:limit-total-rate \ (bytes " " per " " second)
+limit transfer rate of all connections in sum. 0 means unlimited.
+.TP
+.BR net:limit-total-max \ (bytes)
+limit accumulating of unused limit-total-rate. 0 means unlimited.
 .TP
 .BR net:max-retries \ (number)
 the maximum number of sequential retries of an operation without success.
@@ -700,6 +720,10 @@ this option, but linux does.
 .TP
 .BR net:timeout \ (seconds)
 sets the network protocol timeout.
+.TP
+.BR xfer:clobber \ (bool)
+if this setting is off, get commands will not overwrite existing
+files and generate an error instead. Default is on.
 .TP
 .BR xfer:eta-terse \ (bool)
 show terse ETA (only high order parts). Default is true.
