@@ -1013,7 +1013,12 @@ int Fish::Write(const void *buf,int size)
    if(size+send_buf->Size()>0x4000)
       size=0x4000-send_buf->Size();
    if(pos+size>entity_size)
+   {
       size=entity_size-pos;
+      // tried to write more than originally requested. Make it retry with Open:
+      if(size==0)
+	 return STORE_FAILED;
+   }
    if(size<=0)
       return 0;
    send_buf->Put((char*)buf,size);

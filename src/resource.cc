@@ -228,6 +228,7 @@ static ResDecl
    ResDecl20a("ftp:retry-530",		  RETRY_530,ResMgr::ERegExpValidate,0),
    ResDecl20b("ftp:retry-530-anonymous",  "Login incorrect",ResMgr::ERegExpValidate,0),
    ResDecl21 ("hftp:cache",		  "yes",   ResMgr::BoolValidate,0),
+   ResDecl21a("hftp:cache-control",	  "",	   0,0),
    ResDecl22 ("hftp:proxy",		  "",	   HttpProxyValidate,0),
    ResDecl22a("hftp:use-authorization",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl23 ("hftp:use-head",		  "yes",   ResMgr::BoolValidate,0),
