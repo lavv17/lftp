@@ -515,6 +515,7 @@ int   MirrorJob::Do()
       if(res<0)
       {
 	 eprintf("mirror: %s\n",session->StrError(res));
+	 error_count++;
 	 state=DONE;
 	 session->Close();
 	 return MOVED;
