@@ -200,7 +200,7 @@ public:
    virtual int Write(const void *buf,int size) = 0;
    virtual int Buffered() { return 0; }
    virtual int StoreStatus() = 0;
-   virtual bool IOReady() { return true; }
+   virtual bool IOReady() { return IsOpen(); }
    long GetPos() { return pos; }
    long GetRealPos() { return real_pos<0?pos:real_pos; }
    void SeekReal() { pos=GetRealPos(); }
