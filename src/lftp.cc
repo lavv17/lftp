@@ -251,10 +251,6 @@ int   main(int argc,char **argv)
 
    WaitDone(top_exec);
 
-   top_exec->SetCmdFeeder(new ReadlineFeeder);
-
-   top_exec->SetInteractive(isatty(0));
-
    ArgV *args=new ArgV(argc,argv);
    args->setarg(0,"lftp");
    if(args->count()>1)
@@ -263,8 +259,8 @@ int   main(int argc,char **argv)
       add_history(line);
       free(line);
    }
+   lftp_feeder=new ReadlineFeeder;
    top_exec->ExecParsed(args);
-   top_exec->FeedCmd("||exit\n");   // if the command fails, quit
 
    WaitDone(top_exec);
 

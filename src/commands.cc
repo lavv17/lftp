@@ -129,7 +129,15 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
    {"lcd",     &do_lcd,    N_("lcd <ldir>"),
 	 N_("Change current local directory to <ldir>. The previous local directory\n"
 	 "is stored as `-'. You can do `lcd -' to change the directory back.\n")},
-   {"lftp",    &do_open,	   0,"open"},
+   {"lftp",    &do_lftp,   "lftp [OPTS] <site>",
+	 N_("`lftp' is the first command executed by lftp after rc files\n"
+	 " -f <file>           execute commands from the file and exit\n"
+	 " -c <cmd>            execute the commands and exit\n"
+	 "Other options are the same as in `open' command\n"
+	 " -e <cmd>            execute the command just after selecting\n"
+	 " -u <user>[,<pass>]  use the user/password for authentication\n"
+	 " -p <port>           use the port for connection\n"
+	 " <site>              host name, URL or bookmark name\n")},
    {"login",   &do_user,	   0,"user"},
    {"ls",      &do_ls,	   N_("ls [<args>]"),
 	 N_("List remote files. You can redirect output of this command to file\n"
@@ -178,9 +186,12 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
 	 N_("Rename <file1> to <file2>\n")},
    {"nlist",   &do_ls,	   N_("nlist [<args>]"),
 	 N_("List remote file names\n")},
-   {"open",    &do_open,   N_("open <host>"),
-	 N_("open - select an ftp server\n"
-	 "Usage: open [-e cmd] [-u user[,pass]] [-p port] <host|url>\n")},
+   {"open",    &do_open,   N_("open [OPTS] <site>"),
+	 N_("Select a server, URL or bookmark\n"
+	 " -e <cmd>            execute the command just after selecting\n"
+	 " -u <user>[,<pass>]  use the user/password for authentication\n"
+	 " -p <port>           use the port for connection\n"
+	 " <site>              host name, URL or bookmark name\n")},
    {"pget",    &do_get,	   N_("pget [OPTS] <rfile> [-o <lfile>]"),
 	 N_("Gets the specified file using several connections. This can speed up transfer,\n"
 	 "but loads the net heavily impacting other users. Use only if you really\n"
@@ -610,10 +621,11 @@ CMD(source)
    if(args->count()<2)
    {
       // xgettext:c-format
-      eprintf(_("Usage: source <file>\n"));
+      eprintf(_("Usage: %s <file>\n"),args->a0());
       return 0;
    }
    SetCmdFeeder(new FileFeeder(new FileStream(args->getarg(1),O_RDONLY)));
+   exit_code=0;
    return 0;
 }
 
@@ -631,7 +643,7 @@ CMD(jobs)
 	 break;
       case('?'):
          // xgettext:c-format
-	 eprintf(_("Usage: jobs [-v] [-v] ...\n"));
+	 eprintf(_("Usage: %s [-v] [-v] ...\n"),args->a0());
 	 return 0;
       }
    }
@@ -805,6 +817,61 @@ void unquote(char *buf,char *str)
    *buf=0;
 }
 
+CmdFeeder *lftp_feeder=0;
+static struct option lftp_options[]=
+{
+   {"help",no_argument,0,'h'},
+   {"version",no_argument,0,'v'},
+   {0}
+};
+
+CMD(lftp)
+{
+   int c;
+   char *cmd=0;
+
+   args->rewind();
+   opterr=false;
+   while((c=args->getopt_long("+f:c:vh",lftp_options,0))!=EOF)
+   {
+      switch(c)
+      {
+      case('h'):
+	 cmd="help lftp;";
+	 break;
+      case('v'):
+	 cmd="version;";
+	 break;
+      case('f'):
+	 cmd=(char*)alloca(20+2*strlen(optarg));
+	 strcpy(cmd,"source \"");
+	 unquote(cmd+strlen(cmd),optarg);
+	 strcat(cmd,"\";");
+	 break;
+      case('c'):
+	 cmd=(char*)alloca(4+strlen(optarg));
+	 sprintf(cmd,"(%s);",optarg);
+	 break;
+      }
+   }
+   opterr=true;
+
+   if(cmd)
+      PrependCmd(cmd);
+
+   if(Done() && lftp_feeder)  // no feeder and no commands
+   {
+      SetCmdFeeder(lftp_feeder);
+      lftp_feeder=0;
+      SetInteractive(isatty(0));
+      FeedCmd("||exit\n");   // if the command fails, quit
+      args->setarg(0,"open");
+      return do_open();
+   }
+   exit_code=0;
+   return 0;
+}
+
 CMD(open)
 {
    bool	 debug=false;
@@ -815,11 +882,10 @@ CMD(open)
    char	 *pass=NULL;
    int	 c;
    NetRC::Entry *nrc=0;
-   char	 *cmd_to_exec=0;
-   char  *file_to_exec=0;
+   char  *cmd_to_exec=0;
 
    args->rewind();
-   while((c=args->getopt("u:p:e:df:"))!=EOF)
+   while((c=args->getopt("u:p:e:d"))!=EOF)
    {
       switch(c)
       {
@@ -841,9 +907,6 @@ CMD(open)
 	 break;
       case('e'):
 	 cmd_to_exec=optarg;
-	 break;
-      case('f'):
-	 file_to_exec=optarg;
 	 break;
       case('?'):
 	 eprintf(_("Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"),
@@ -960,16 +1023,6 @@ CMD(open)
    if(cmd_to_exec)
    {
       PrependCmd(cmd_to_exec);
-   }
-
-   if(file_to_exec)
-   {
-      PrependCmd("exit\n\n");
-      char *s=(char *)alloca(20+2*strlen(file_to_exec));
-      strcpy(s,"source \"");
-      unquote(s+strlen(s),file_to_exec);
-      strcat(s,"\"\n");
-      PrependCmd(s);
    }
 
    if(path)
@@ -1484,34 +1537,33 @@ void CmdExec::print_cmd_help(const char *cmd)
 
    if(part==1)
    {
-      if(c->long_desc==0)
+      if(c->long_desc==0 && c->short_desc==0)
       {
-	 if(c->short_desc)
-	    ::puts(_(c->short_desc));
-	 else
-	    ::printf(_("Sorry, no help for %s\n"),cmd);
+	 printf(_("Sorry, no help for %s\n"),cmd);
 	 return;
       }
       if(!strchr(c->long_desc,' '))
       {
-	 ::printf(_("%s is a built-in alias for %s\n"),cmd,c->long_desc);
+	 printf(_("%s is a built-in alias for %s\n"),cmd,c->long_desc);
 	 print_cmd_help(c->long_desc);
 	 return;
       }
-      ::puts(_(c->short_desc));
-      ::printf("%s",_(c->long_desc));
+      if(c->short_desc)
+	 printf(_("Usage: %s\n"),_(c->short_desc));
+      if(c->long_desc)
+	 printf("%s",_(c->long_desc));
       return;
    }
    const char *a=Alias::Find(cmd);
    if(a)
    {
-      ::printf(_("%s is an alias to `%s'\n"),cmd,a);
+      printf(_("%s is an alias to `%s'\n"),cmd,a);
       return;
    }
    if(part==0)
-      ::printf(_("No such command `%s'. Use `help' to see available commands.\n"),cmd);
+      printf(_("No such command `%s'. Use `help' to see available commands.\n"),cmd);
    else
-      ::printf(_("Ambiguous command `%s'. Use `help' to see available commands.\n"),cmd);
+      printf(_("Ambiguous command `%s'. Use `help' to see available commands.\n"),cmd);
 }
 
 CMD(help)

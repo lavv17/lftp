@@ -44,6 +44,8 @@ public:
    virtual char *NextCmd(class CmdExec *exec,const char *prompt) = 0;
 };
 
+extern CmdFeeder *lftp_feeder;	 // feeder to use after 'lftp' command
+
 class CmdExec : public SessionJob
 {
 // current command data
@@ -88,7 +90,7 @@ class CmdExec : public SessionJob
    };
    static const cmd_rec cmd_table[];
 
-   static void print_cmd_help(const char *cmd);
+   void print_cmd_help(const char *cmd);
    static int find_cmd(const char *cmd_name,const cmd_rec **ret);
 
    void exec_parsed_command();
@@ -125,15 +127,15 @@ public:
    void PrependCmd(const char *c);
    void ExecParsed(ArgV *a,FDStream *o=0,bool b=false);
 
-   in_CMD(alias); in_CMD(anon);  in_CMD(cd);    in_CMD(debug);
-   in_CMD(exit);  in_CMD(get);   in_CMD(help);  in_CMD(jobs);
-   in_CMD(kill);  in_CMD(lcd);   in_CMD(ls);    in_CMD(mget);
-   in_CMD(open);  in_CMD(pwd);   in_CMD(put);   in_CMD(set);
-   in_CMD(shell); in_CMD(source);in_CMD(user);  in_CMD(rm);
-   in_CMD(wait);  in_CMD(site);  in_CMD(subsh); in_CMD(mirror);
-   in_CMD(mput);  in_CMD(mv);	 in_CMD(cat);   in_CMD(cache);
-   in_CMD(mkdir); in_CMD(quote); in_CMD(scache);in_CMD(mrm);
-   in_CMD(ver);	  in_CMD(close); in_CMD(bookmark);
+   in_CMD(alias); in_CMD(anon);  in_CMD(cd);      in_CMD(debug);
+   in_CMD(exit);  in_CMD(get);   in_CMD(help);    in_CMD(jobs);
+   in_CMD(kill);  in_CMD(lcd);   in_CMD(ls);      in_CMD(mget);
+   in_CMD(open);  in_CMD(pwd);   in_CMD(put);     in_CMD(set);
+   in_CMD(shell); in_CMD(source);in_CMD(user);    in_CMD(rm);
+   in_CMD(wait);  in_CMD(site);  in_CMD(subsh);   in_CMD(mirror);
+   in_CMD(mput);  in_CMD(mv);	 in_CMD(cat);     in_CMD(cache);
+   in_CMD(mkdir); in_CMD(quote); in_CMD(scache);  in_CMD(mrm);
+   in_CMD(ver);	  in_CMD(close); in_CMD(bookmark);in_CMD(lftp);
 
    static const char * const var_list[];
 
