@@ -242,7 +242,6 @@ static completion_type cmd_completion_type(int start)
    || !strcmp(buf,"more")
    || !strcmp(buf,"mrm")
    || !strcmp(buf,"mv")
-   || !strcmp(buf,"nlist")
    || !strcmp(buf,"rm")
    || !strcmp(buf,"rmdir")
    || !strcmp(buf,"zcat")
@@ -815,7 +814,6 @@ int   lftp_rl_getc(FILE *file)
 	 return EOF;
       if(res!=r.NOCHAR)
 	 return res;
-      lftp_rl_redisplay_maybe();
       SMTask::Block();
       if(SignalHook::GetCount(SIGINT)>0)
       {

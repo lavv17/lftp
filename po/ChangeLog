@@ -1,24 +1,3 @@
-1999-07-25	Moritz Moeller-Herrmann <mmh@gmx.net>
-
-	* de.po: update
-
-1999-07-15	Moritz Moeller-Herrmann <mmh@gmx.net>
-
-	* de.po: update for 2.0.2
-
-1999-07-12	Alexander V. Lukyanov <lav@yars.free.net>
-
-	* de.po, es.po, it.po, pl.po, pt_BR.po, ru.po: remove \n in Done
-	  message.
-
-1999-07-11	Giovanni Bortolozzo <borto@dei.unipd.it>
-
-	* it.po: update for 2.0.1
-
-1999-07-01	Const Kaplinsky <const@ce.cctpu.edu.ru>
-
-	* ru.po: update for 2.0.1
-
 1999-06-27	Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
 
 	* pl.po: update

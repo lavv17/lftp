@@ -41,7 +41,6 @@ public:
    ~ArgV() { Empty(); }
 
    char *Combine(int start_index=0);
-   char *CombineQuoted(int start_index=0);
 
    int getopt_long(const char *opts,const struct option *lopts,int *lind);
    int getopt(const char *opts)

@@ -4,9 +4,6 @@ This package `lftp' contains the following components:
 
    lftp
       cool command line ftp client.
-      
-   lftpget
-      shell script for downloading by URL, calls `lftp -c'.
 
    ftpget
       a simple non-interactive tool for downloading files (deprecated)
@@ -79,36 +76,19 @@ See man page for other variables. You can also use `set -a' to see all
 current valiables and their values, and `set -d' to see variable
 defaults.
 
-Where to get
-~~~~~~~~~~~~
-By FTP:
-	ftp://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/
-	ftp://metalab.unc.edu/pub/Linux/system/network/file-transfer/
-By HTTP:
-	http://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/
-	http://metalab.unc.edu/pub/Linux/system/network/file-transfer/
-By CVS:
-	CVSROOT=:pserver:anonymous@swing.yars.free.net:/home/lav/cvsroot
-	export CVSROOT
-	cvs login (empty password, just hit enter)
-	cvs -z9 co -r lftp-2-0-3 lftp (if you omit -r option, you'll get
-		latest development sources)
-		
-See also home page `http://ftp.yars.free.net/projects/lftp/'.
-
 Internals
 ~~~~~~~~~
 All this is based on SMTask class which implements non-preemptive
 multitasking via Do method. The method Do does a little bit of work,
 sets wake up condition (block member) and returns.
 
-The class Ftp allows reliable deliver of files via ftp protocol, it hides
-all the details from application and allows asynchronous operation.
-Reconnect and reget are done as necessary. It can also speed up ftp
-operations by sending several commands at once and then checking all the
-responses. It seems this sometimes does not work, so it is disabled by
-default. To turn it on, use `set sync-mode n' in lftp or --async-mode for
-ftpget.
+The class Ftp allows reliable deliver of files via ftp protocol, it
+hides all the details from application and allows asynchronous
+operation. Redial and reget are done as necessary. It can also speed
+up ftp operations by sending several commands at once and then
+checking all the responses. It seems this sometimes does not work, so
+it is disabled by default. To turn it on, use `set sync-mode n' in
+lftp or --async-mode for ftpget.
 
 Note that sending several commands is considered as violation or
 protocol, but RFC959 says: ``The user-process sending another command
@@ -123,12 +103,11 @@ network packet.
 
 Systems
 ~~~~~~~
-The package is known to compile on Solaris2.5(gcc), Linux, FreeBSD,
-SCO v5.0(gcc), IRIX(gcc). If you can't compile it on your system, let
-me know. It is possible that lftp version 2.0 can be compiled with
-non-gcc compilers since it does not have gcc-isms, and it was
-successfully compiled by Sun C++ v5.0 compiler using
-CXXFLAGS="-compat=4 -features=bool".
+The package is known to compile on Solaris2.5(gcc), Linux, FreeBSD and
+SCO v5.0(gcc). If you can't compile it on your system, let me know. It
+is possible that lftp version 2.0 can be compiled with non-gcc
+compilers since it does not have gcc-isms, but so far no compiler
+tried (but gcc) produced a working executable.
 
 
 Mailing list

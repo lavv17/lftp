@@ -57,7 +57,7 @@ public:
    virtual int	  Done()=0;
    virtual int	  ExitCode() { return 0; }
    virtual int	  Do()=0;
-   virtual int	  AcceptSig(int);
+   virtual int	  AcceptSig(int) { return WANTDIE; }
    virtual void	  Bg();
    virtual void	  Fg();
 
@@ -77,9 +77,8 @@ public:
    void SendSig(int n,int sig);
    void KillAll();
 
-   void vfprintf(FILE *file,const char *fmt,va_list v);
    // CmdExec redefines this, and traps all messages of its children.
-   virtual void top_vfprintf(FILE *file,const char *fmt,va_list v);
+   virtual void vfprintf(FILE *file,const char *fmt,va_list v);
 
    // C-like functions calling vfprintf
    void eprintf(const char *fmt,...) PRINTF_LIKE(2,3);
@@ -90,8 +89,6 @@ public:
 
    Job();
    virtual ~Job();
-
-   virtual const char *GetConnectURL() { return 0; }
 };
 
 class SessionJob : public Job
@@ -106,12 +103,6 @@ protected:
 public:
    void PrintStatus(int v);
    FileAccess *session;
-   const char *GetConnectURL()
-      {
-	 if(!session)
-	    return 0;
-	 return session->GetConnectURL();
-      }
 };
 
 #endif /* JOB_H */

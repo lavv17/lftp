@@ -274,5 +274,5 @@ void FtpCopy::ShowRunStatus(StatusLine *sl)
       sl->Show(_("Copying of `%s' in progress (%c)"),src_url,
 	    "|/-\\"[time(0)%4]);
    else
-      sl->Clear();
+      sl->Show("");
 }

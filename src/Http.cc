@@ -102,6 +102,10 @@ void Http::Init()
 Http::Http() : super()
 {
    Init();
+   xfree(home);
+   home=xstrdup("/");
+   xfree(cwd);
+   cwd=xstrdup(default_cwd);
    Reconfig();
 }
 Http::Http(const Http *f) : super(f)
@@ -230,8 +234,6 @@ void Http::SendMethod(const char *method,const char *efile)
 {
    Send("%s %s HTTP/1.1\r\n",method,efile);
    Send("Host: %s\r\n",url::encode_string(hostname));
-   Send("User-Agent: %s/%s\r\n","lftp",VERSION);
-   Send("Accept: */*\r\n");
 }
 
 
@@ -498,10 +500,6 @@ int Http::Do()
       Timeout((idle_start+idle-now)*1000);
    }
 
-   if(home==0)
-      home=xstrdup("/");
-   ExpandTildeInCWD();
-
    switch(state)
    {
    case DISCONNECTED:
@@ -516,11 +514,8 @@ int Http::Do()
       {
 	 if(resolver==0)
 	 {
-	    if(proxy)
-	       resolver=new Resolver(proxy,proxy_port);
-	    else
-	       resolver=new Resolver(hostname,portname,
-				    HTTP_DEFAULT_PORT,"http","tcp");
+	    resolver=new Resolver(proxy?proxy:hostname,
+			proxy?proxy_port:(portname?portname:HTTP_DEFAULT_PORT));
 	    ClearPeer();
 	 }
 	 if(!resolver->Done())
@@ -584,7 +579,7 @@ int Http::Do()
       DebugPrint("---- ",str,0);
 #endif
 
-      DebugPrint("---- ","Connecting...",2);
+      DebugPrint("---- ","Connecting...",9);
       res=connect(sock,&peer[peer_curr].sa,sizeof(*peer));
       UpdateNow(); // if non-blocking don't work
 

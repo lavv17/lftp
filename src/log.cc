@@ -59,7 +59,7 @@ void Log::Write(int l,const char *s)
    {
       sl_cleared=true;
       block+=NoWait();
-      sl->Clear();
+      sl->Show("");
    }
    write(output,s,strlen(s));
 }
@@ -73,10 +73,6 @@ int Log::Do()
    }
    return STALL;
 }
-
-#if defined(HAVE_VSNPRINTF) && !defined(HAVE_VSNPRINTF_DECL)
-CDECL int vsnprintf(char *,size_t,const char *,va_list);
-#endif
 
 void Log::Format(int l,const char *f,...)
 {

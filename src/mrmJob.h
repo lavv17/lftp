@@ -1,7 +1,7 @@
 /*
- * lftp - file transfer program
+ * lftp and utils
  *
- * Copyright (c) 1999 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,30 +18,24 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id$ */
+#ifndef MRMJOB_H
+#define MRMJOB_H
 
-#include <config.h>
-#include <stdio.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include "lftp_rl.h"
+#include "rmJob.h"
 
-void lftp_add_history_nodups(const char *cmd_buf)
+class mrmJob : public rmJob
 {
-   HIST_ENTRY *temp;
-   using_history();
-   temp=previous_history();
-   if(temp==0 || strcmp(temp->line,cmd_buf))
-      add_history(cmd_buf);
-   using_history();
-}
+   Glob *rg;
+   ArgV *args;
 
-const char *lftp_readline(const char *prompt)
-{
-   return readline(prompt);
-}
+public:
+   int	 Do();
+   int	 Done() { return(rg==0 && rmJob::Done()); }
+   void	 PrintStatus(int);
+   void	 ShowRunStatus(StatusLine *s);
 
-int lftp_history_expand(const char *what, char **where)
-{
-   return history_expand(what,where);
-}
+   mrmJob(FileAccess *session,ArgV *args);
+   ~mrmJob();
+};
+
+#endif // MRMJOB_H

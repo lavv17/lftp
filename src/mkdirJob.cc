@@ -92,7 +92,9 @@ void  mkdirJob::PrintStatus(int v)
 
 void  mkdirJob::ShowRunStatus(StatusLine *s)
 {
-   if(!Done())
+   if(Done())
+      s->Show("");
+   else
       s->Show("%s `%s' [%s]",args->getarg(0),curr,session->CurrentStatus());
 }
 

@@ -33,32 +33,7 @@ currently; some need other work to be done.
  * at-exit-bg
 
  * implement Queueing in FileAccess. fa->AddQueue(new FAQueueOp(args)).
-   (Done()==true when queue is empty)
 
  * there are many interesting protocols: smb, fsp, fish, ...
 
- * split off NetworkFA class.
-
- * put -n (only if newer) Maybe it would be better to add a command to compare
-   times?
-
- * http: ls -a to see all links, even off-site.
- * mirror: --log=file write actions to file, --script=file prepare script of
-   actions to be done.
-
- * FileCopy class. (use it in get, put)
-
- * `local' command to swap local/remote, e.g.
-      mirror -R = local mirror
-      put = local get
-   of course, implement commands using two sessions where possible.
-
- * make debug output to clear/redraw prompt.
-
- * safety: options for permanent backup, maybe complain instead of overwriting.
-
- * mirror: add settings like mirror:default-time-prec. make default 0?.
-
- * ascii mode?
-
- * intelligently squeeze file name in status line.
+ * DNS SRV RR support

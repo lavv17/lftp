@@ -45,10 +45,6 @@ class Resolver : public SMTask
    char *hostname;
    char *portname;
 
-   char *service;
-   char *proto;
-   char *defport;
-
    int port_number;
 
    int pipe_to_child[2];
@@ -71,10 +67,6 @@ class Resolver : public SMTask
 
    static const char *ParseOrder(const char *s,int *o);
 
-   void LookupOne(const char *name);
-   void LookupSRV_RR();
-   const char *error;
-
 public:
    int	 Do();
    bool	 Done() { return done; }
@@ -85,8 +77,7 @@ public:
    int	 GetResultNum() { return addr_num; }
    void  GetResult(void *m) { memcpy(m,addr,GetResultSize()); }
 
-   Resolver(const char *h,const char *p,const char *defp=0,const char *ser=0,
-	    const char *pr=0);
+   Resolver(const char *h,const char *p);
    ~Resolver();
 
    void Reconfig();
