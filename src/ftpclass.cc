@@ -98,12 +98,13 @@ static ResDecl
    res_nop_interval	("ftp:nop-interval",   "120",ResMgr::UNumberValidate,0),
    res_idle		("ftp:idle",	       "180",ResMgr::UNumberValidate,0),
    res_max_retries	("ftp:max-retries",    "0",  ResMgr::UNumberValidate,0),
-   res_allow_skey	("ftp:allow-skey",     "yes",ResMgr::BoolValidate,0),
-   res_force_skey	("ftp:force-skey",     "no", ResMgr::BoolValidate,0),
+   res_allow_skey	("ftp:skey-allow",     "yes",ResMgr::BoolValidate,0),
+   res_force_skey	("ftp:skey-force",     "no", ResMgr::BoolValidate,0),
    res_anon_user	("ftp:anon-user",      "anonymous",0,0),
    res_anon_pass	("ftp:anon-pass",      0,    0,0),
    res_socket_buffer	("ftp:socket-buffer",  "0",  ResMgr::UNumberValidate,0),
-   res_address_verify	("ftp:address-verify", "yes",ResMgr::BoolValidate,0);
+   res_address_verify	("ftp:verify-address", "yes",ResMgr::BoolValidate,0),
+   res_port_verify      ("ftp:verify-port",    "no", ResMgr::BoolValidate,0);
 
 void  Ftp::ClassInit()
 {
@@ -171,10 +172,14 @@ bool Ftp::data_address_ok()
    return true;
 
 wrong_port:
+   if(!verify_data_port)
+      return true;
    DebugPrint("**** ",_("Data connection peer has wrong port number"),0);
    return false;
 
 address_mismatch:
+   if(!verify_data_address)
+      return true;
    DebugPrint("**** ",_("Data connection peer has mismatching address"),0);
    return false;
 }
@@ -1218,11 +1223,15 @@ int   Ftp::Do()
 
       close(data_sock);
       data_sock=res;
+      fcntl(data_sock,F_SETFL,O_NONBLOCK);
+      fcntl(data_sock,F_SETFD,FD_CLOEXEC);
+      SetKeepAlive(data_sock);
+      SetSocketBuffer(data_sock);
 
       state=DATA_OPEN_STATE;
       m=MOVED;
 
-      if(verify_data_address && !data_address_ok())
+      if(!data_address_ok())
       {
 	 Disconnect();
 	 return MOVED;
@@ -2104,9 +2113,10 @@ int   Ftp::CheckResp(int act)
    if(act>=100 && act<200)	// intermediate responses are ignored
       return -1;
 
-   if(act==421)  // timeout
+   if(act==421)  // timeout or something else
    {
-      DebugPrint("**** ",_("remote timeout"));
+      if(strstr(line,"Timeout"))
+	 DebugPrint("**** ",_("remote timeout"));
       return(INITIAL_STATE);
    }
 
@@ -2391,6 +2401,7 @@ void Ftp::Reconfig()
    allow_skey = res_allow_skey.Query(c);
    force_skey = res_force_skey.Query(c);
    verify_data_address = res_address_verify.Query(c);
+   verify_data_port = res_port_verify.Query(c);
    socket_buffer = res_socket_buffer.Query(c);
 
    xfree(anon_user);
@@ -2406,6 +2417,11 @@ void Ftp::Reconfig()
 
    if(nop_interval<30)
       nop_interval=30;
+
+   if(control_sock)
+      SetSocketBuffer(control_sock);
+   if(data_sock)
+      SetSocketBuffer(data_sock);
 }
 
 void Ftp::Cleanup(bool all)

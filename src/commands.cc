@@ -683,6 +683,7 @@ CMD(cd)
 	 eprintf(_("%s: no old directory for this site\n"),args->a0());
 	 return 0;
       }
+      args->setarg(1,dir); // for status line
    }
 
    xfree(old_cwd);
