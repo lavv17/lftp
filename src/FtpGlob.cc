@@ -159,7 +159,16 @@ const char *FtpGlob::Status()
 {
    if(updir_glob && !dir_list)
       return updir_glob->Status();
-   if(li)
-      return li->Status();
-   return "";
+   if(!li)
+      return "";
+
+   const char *st = li->Status();
+   if(!*st)
+      return "";
+
+   static char *buf = 0;
+   if(buf) xfree(buf);
+   buf=xasprintf("%s: %s", *dir? dir:".", st);
+
+   return buf;
 }

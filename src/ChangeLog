@@ -1,3 +1,17 @@
+2001-11-23  Glenn Maynard <g_ld@zewt.org>
+
+	* ftpclass.cc: fix query for ftp:web-mode.
+	* FileSetOutput.cc: Fixed wildcard silliness in CLS.  First, I meant
+	  strpbrk, not strspn; second, it needs to handle escapes anyway, and
+	  you already have a function to do that.
+	* GetFileInfo.cc: If a file "abc" exists, and we do "cls abc/def", fail.
+	  Improve ENOENT and EACCES error messages.
+	* FtpGlob.cc: Add path to FtpGlob status.
+	* FtpSplitList.cc, FtpListInfo.cc: Move some status stuff from
+	  FtpListInfo to FtpSplitList.  (FtpSplitList was essentially doing
+	  this stuff anyway, just not as intelligently.)
+	* commands.cc: improve error message of cls.
+
 2001-11-22  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: fix - rmdir/rm were interchanged.

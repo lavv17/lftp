@@ -177,11 +177,17 @@ int   FtpSplitList::Do()
 const char *FtpSplitList::Status()
 {
    static char s[256];
-   if(state==GETTING_DATA)
-   {
-      sprintf(s,_("Getting file list (%lld) [%s]"),
-		     (long long)f->GetPos(),f->CurrentStatus());
-      return s;
-   }
-   return "";
+   if(state!=GETTING_DATA)
+      return "";
+
+   sprintf(s,_("Getting file list (%lld)"),
+	 (long long)f->GetPos());
+   if(RateValid())
+      sprintf(s+strlen(s)," %s",GetRateStr());
+
+   const char *status=f->CurrentStatus();
+   if(status && status[0])
+      sprintf(s+strlen(s)," [%s]", status);
+
+   return s;
 }
