@@ -30,7 +30,6 @@
 #include <glob.h>
 #include <sys/time.h>
 #include <assert.h>
-#include "xalloca.h"
 #include "xmalloc.h"
 #include "FileAccess.h"
 #include "CmdExec.h"

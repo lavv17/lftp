@@ -30,7 +30,6 @@
 #include "module.h"
 #include "ResMgr.h"
 #include "confpaths.h"
-#include "xalloca.h"
 #include "xstring.h"
 #include "xmalloc.h"
 

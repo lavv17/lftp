@@ -25,7 +25,6 @@
 #include <errno.h>
 #include <assert.h>
 #include "Job.h"
-#include "xalloca.h"
 
 Job *Job::chain;
 

@@ -26,7 +26,6 @@
 #include <stdlib.h>
 #include "xstring.h"
 #include "netrc.h"
-#include "xalloca.h"
 #include "xmalloc.h"
 
 NetRC::Entry::Entry(const char *h,const char *u,const char *p,const char *a)

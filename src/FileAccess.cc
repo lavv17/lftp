@@ -27,16 +27,12 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#ifdef HAVE_NETINET_TCP_H
-# include <netinet/tcp.h>
-#endif
 #include <errno.h>
 #include <ctype.h>
 #include <assert.h>
 #include "ascii_ctype.h"
 #include <fcntl.h>
 #include "LsCache.h"
-#include "xalloca.h"
 #include "log.h"
 #include "url.h"
 #include "misc.h"

@@ -28,7 +28,6 @@
 #include <stdlib.h>
 #include <fnmatch.h>
 
-#include "xalloca.h"
 #include "FileGlob.h"
 #include "xmalloc.h"
 #include "misc.h"

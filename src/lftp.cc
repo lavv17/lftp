@@ -34,7 +34,6 @@
 #include <fcntl.h>
 #include <locale.h>
 
-#include "xalloca.h"
 #include "xmalloc.h"
 #include "alias.h"
 #include "CmdExec.h"
