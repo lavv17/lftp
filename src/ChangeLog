@@ -1,3 +1,8 @@
+2000-09-08  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.cc: don't remember path=/ in cookies; skip all spaces
+	  before a cookie.
+
 2000-09-07  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* MirrorJob.cc, MirrorJob.h: support for redirection.

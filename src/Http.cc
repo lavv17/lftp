@@ -1743,7 +1743,7 @@ void Http::SetCookie(const char *value_const)
 
    for(char *entry=strtok(value,";"); entry; entry=strtok(0,";"))
    {
-      if(*entry==' ')
+      while(*entry==' ')   // skip spaces.
 	 entry++;
       if(*entry==0)
 	 break;
@@ -1781,7 +1781,7 @@ void Http::SetCookie(const char *value_const)
 
    char *closure=string_alloca(strlen(domain)+xstrlen(path)+32);
    strcpy(closure,domain);
-   if(path && path[0])
+   if(path && path[0] && strcmp(path,"/"))
    {
       strcat(closure,";path=");
       strcat(closure,path);
