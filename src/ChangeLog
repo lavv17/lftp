@@ -1,3 +1,12 @@
+2001-07-24  Glenn F. Maynard <g_ld@zewt.org>
+
+	* FileAccess.cc: make url protocol case insensitive.
+
+2001-07-24  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.cc: fix CONNECT_VERIFY in case of borrowed connection.
+	* commands.cc: check find -d argument for being a number.
+
 2001-07-19  Glenn F. Maynard <g_ld@zewt.org>
 
 	* FindJob.cc, FindJob.h, commands.cc: add find --maxdepth option.

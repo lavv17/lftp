@@ -988,7 +988,7 @@ FileAccess::Protocol::Protocol(const char *proto, SessionCreator *creator)
 FileAccess::Protocol *FileAccess::Protocol::FindProto(const char *proto)
 {
    for(Protocol *scan=chain; scan; scan=scan->next)
-      if(!strcmp(scan->proto,proto))
+      if(!strcasecmp(scan->proto,proto))
 	 return scan;
    return 0;
 }
