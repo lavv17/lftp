@@ -108,7 +108,6 @@ static ResDecl resources[]={
    ResDecl  ("net:limit-total-rate",   "0",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:max-retries",	       "0",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:reconnect-interval", "30",	ResMgr::UNumberValidate,0),
-   ResDecl  ("net:relookup-always",    "off",   ResMgr::BoolValidate,0),
    ResDecl  ("net:socket-buffer",      "0",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:socket-maxseg",      "0",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:timeout",	       "300",   ResMgr::UNumberValidate,0),

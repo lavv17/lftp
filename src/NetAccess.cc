@@ -88,7 +88,6 @@ void NetAccess::Reconfig(const char *name)
    reconnect_interval = ResMgr::Query("net:reconnect-interval",c);
    idle = ResMgr::Query("net:idle",c);
    max_retries = ResMgr::Query("net:max-retries",c);
-   relookup_always = ResMgr::Query("net:relookup-always",c);
    socket_buffer = ResMgr::Query("net:socket-buffer",c);
    socket_maxseg = ResMgr::Query("net:socket-maxseg",c);
 
@@ -233,28 +232,26 @@ void NetAccess::Connect(const char *h,const char *p)
    ClearPeer();
 }
 
+void NetAccess::ConnectVerify()
+{
+   if(peer)
+      return;
+   mode=CONNECT_VERIFY;
+}
+
 int NetAccess::Resolve(const char *defp,const char *ser,const char *pr)
 {
    int m=STALL;
 
-   if(peer)
-   {
-      if(relookup_always)
-	 ClearPeer();
-      else
-	 return m;
-   }
-
    if(!resolver)
    {
+      ClearPeer();
       if(proxy)
 	 resolver=new Resolver(proxy,proxy_port,defp);
       else
 	 resolver=new Resolver(hostname,portname,defp,ser,pr);
       m=MOVED;
    }
-   if(relookup_always)
-      resolver->NoCache();
 
    resolver->Do();
 

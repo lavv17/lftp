@@ -833,13 +833,10 @@ int   Ftp::Do()
 	 return m;
       }
 
-      if(!peer || relookup_always)
-      {
-	 if(Resolve(FTPPORT,"ftp","tcp")==MOVED)
-	    m=MOVED;
-	 if(!peer)
-	    return m;
-      }
+      if(Resolve(FTPPORT,"ftp","tcp")==MOVED)
+	 m=MOVED;
+      if(!peer)
+	 return m;
 
       if(mode==CONNECT_VERIFY)
 	 return m;
@@ -1859,14 +1856,7 @@ void  Ftp::Disconnect()
    AbortedClose();
 
    if(state==CONNECTING_STATE)
-   {
       NextPeer();
-   }
-   else
-   {
-      if(relookup_always && !proxy)
-	 ClearPeer();
-   }
 
    if(copy_mode!=COPY_NONE)
       state=COPY_FAILED;
@@ -2904,13 +2894,6 @@ void Ftp::Connect(const char *new_host,const char *new_port)
 
    Reconfig();
    state=INITIAL_STATE;
-}
-
-void Ftp::ConnectVerify()
-{
-   if(peer)
-      return;
-   mode=CONNECT_VERIFY;
 }
 
 void Ftp::Reconfig(const char *name)

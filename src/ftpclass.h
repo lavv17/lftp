@@ -284,7 +284,6 @@ public:
    }
 
    void	 Connect(const char *h,const char *p);
-   void	 ConnectVerify();
 
    int   Read(void *buf,int size);
    int   Write(const void *buf,int size);
