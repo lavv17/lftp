@@ -1,3 +1,7 @@
+2000-05-13  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: disconnect on 421/221 reply without sending QUIT.
+
 2000-05-11  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Http.cc: use vsnprintf only if available.

@@ -2795,6 +2795,7 @@ int   Ftp::CheckResp(int act)
    {
       if(RespQueueIsEmpty() || RespQueue[RQ_head].expect!=221)
 	 DebugPrint("**** ",_("remote end closes connection"),3);
+      quit_sent=true;
       Disconnect();
       return(state);
    }
