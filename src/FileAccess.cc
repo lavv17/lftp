@@ -1125,8 +1125,12 @@ void ListInfo::SetExclude(const char *p,PatternSet *x)
 #else
 # define _fish
 #endif
+#ifndef MODULE_PROTO_SFTP
 # include "SFtp.h"
 # define _sftp SFtp::ClassInit()
+#else
+# define _sftp
+#endif
 void FileAccess::ClassInit()
 {
    _ftp;
