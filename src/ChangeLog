@@ -3,6 +3,8 @@
 	* Resolver.cc: recognize host names in the form proto,hostname and
 	  lookup address in specified protocol family, e.g. inet6,hostname.com.
 	  (Note: this won't work over proxies)
+	* GetJob.cc: add xfer:clobber setting; don't overwrite files if it is
+	  false.
 
 1999-09-08  Alexander V. Lukyanov  <lav@yars.free.net>
 
