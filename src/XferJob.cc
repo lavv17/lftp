@@ -44,7 +44,7 @@ char *XferJob::Percent()
    static char p[10];
    p[0]=0;
    if(size>0)
-      sprintf(p,"(%d%%) ",percent(offset,size));
+      sprintf(p,"(%d%%) ",percent(Offset(),size));
    return p;
 }
 
@@ -72,9 +72,9 @@ char *XferJob::CurrETA(float rate)
 {
    static char eta_str[20];
    eta_str[0]=0;
-   if(size>0 && rate>1 && now-last_bytes<30 && now-start_time>3 && size>=offset)
+   if(size>0 && rate>1 && now-last_bytes<30 && now-start_time>3 && size>=Offset())
    {
-      long eta=(long)((size-offset) / rate + 0.5);
+      long eta=(long)((size-Offset()) / rate + 0.5);
       char letter;
 
       if(eta>=DAY)
@@ -132,7 +132,7 @@ void  XferJob::ShowRunStatus(StatusLine *s)
       if((int)strlen(n)>w-2)
 	 n+=strlen(n)-(w-2);
 
-      s->Show(_("`%s' at %lu %s%s%s[%s]"),n,offset,Percent(),CurrRate(),CurrETA(),st);
+      s->Show(_("`%s' at %lu %s%s%s[%s]"),n,Offset(),Percent(),CurrRate(),CurrETA(),st);
    }
 }
 
@@ -207,7 +207,7 @@ void  XferJob::PrintStatus(int verbose)
    if(curr && session->IsOpen())
    {
       putchar('\t');
-      printf(_("`%s' at %lu %s%s%s[%s]"),curr,offset,Percent(),CurrRate(),
+      printf(_("`%s' at %lu %s%s%s[%s]"),curr,Offset(),Percent(),CurrRate(),
 	       CurrETA(),session->CurrentStatus());
       putchar('\n');
    }
@@ -227,6 +227,7 @@ void XferJob::NextFile(char *f)
    got_eof=false;
    in_buffer=0;
    curr=f;
+   session_buffered=0;
 
    if(!curr)
    {
@@ -312,6 +313,7 @@ XferJob::XferJob(FileAccess *f) : SessionJob(f)
    url=0;
    last_status_update=0;
    last_status[0]=0;
+   session_buffered=0;
 }
 
 XferJob::~XferJob()
@@ -372,6 +374,15 @@ void XferJob::CountBytes(long res)
       minute_xfer_rate=0;
       last_bytes=0;
       return;
+   }
+
+   if(session)
+   {
+      int now_buffered=session->Buffered();
+      res-=(now_buffered-session_buffered);
+      if(res<0)
+	 res=0;
+      session_buffered=now_buffered;
    }
 
    float div=60;
@@ -496,4 +507,16 @@ float XferJob::xfer_rate()
 {
    float how_long = (end_time-start_time) + (end_time_ms-start_time_ms)/1000.0;
    return bytes_transferred/how_long;
+}
+
+long XferJob::Offset()
+{
+   int buf=0;
+   long off=offset;
+   if(session)
+      buf=session->Buffered();
+   off-=buf;
+   if(off<0)
+      off=0;
+   return off;
 }

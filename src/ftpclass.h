@@ -308,6 +308,7 @@ public:
 
    int   Read(void *buf,int size);
    int   Write(const void *buf,int size);
+   int   Buffered();
    void  Close();
 
 	 // When you are putting a file, call SendEOT to terminate

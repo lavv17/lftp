@@ -69,6 +69,10 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 # include <poll.h>
 #endif
 
+#ifdef HAVE_SYS_IOCTL_H
+# include <sys/ioctl.h>
+#endif
+
 #include "xalloca.h"
 
 #define FTPUSER "anonymous"
@@ -2897,4 +2901,24 @@ void Ftp::BytesReset()
 {
    bytes_pool=bytes_pool_rate;
    bytes_pool_time=now;
+}
+
+int Ftp::Buffered()
+{
+#ifdef TIOCOUTQ
+   if(state!=DATA_OPEN_STATE || data_sock==-1 || mode!=STORE)
+      return 0;
+   int buffer=0;
+   int len=sizeof(buffer);
+   if(getsockopt(data_sock,SOL_SOCKET,SO_SNDBUF,&buffer,&len)==-1)
+      return 0;
+   int avail=buffer;
+   if(ioctl(data_sock,TIOCOUTQ,&avail)==-1)
+      return 0;
+   if(avail>buffer)
+      return 0; // something wrong
+   return buffer-avail;
+#else
+   return 0;
+#endif
 }

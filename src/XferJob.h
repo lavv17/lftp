@@ -54,9 +54,13 @@ protected:
    long	 offset;
    long	 size;
 
+   long	 Offset();   // uses session->Buffered()
+
    float minute_xfer_rate;
    time_t last_second;
    time_t last_bytes;
+
+   int	 session_buffered;
 
    float xfer_rate();
 
