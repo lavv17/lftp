@@ -39,6 +39,7 @@ time_t	 SMTask::now=time(0);
 int	 SMTask::now_ms; // milliseconds
 
 static int task_count=0;
+static SMTaskInit init_task;
 
 SMTask::SMTask()
 {
@@ -202,4 +203,19 @@ void SMTask::ReconfigAll(const char *name)
    for(SMTask *scan=chain; scan; scan=scan->next)
       scan->Reconfig(name);
    sched_total.SetTimeout(0);  // for new values handling
+}
+
+int SMTaskInit::Do()
+{
+   return STALL;
+}
+SMTaskInit::SMTaskInit()
+{
+   running=true;
+   current=this;
+}
+SMTaskInit::~SMTaskInit()
+{
+   running=false;
+   current=0;
 }

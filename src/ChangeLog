@@ -1,8 +1,21 @@
+2000-02-29  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CmdExec.cc: explain termination when cwd is not accessible.
+	* FileAccess.cc, FileAccess.h: (priority) new member; (SetPriority);
+	  (FirstSameSite, NextSameSite) new methods.
+	* FileCopy.cc: (OpenSession) mark current task as moved.
+	* Http.h: (IsConnected) implemented.
+	* NetAccess.cc, NetAccess.h: (CountConnections) new method;
+	  (connection_limit, connection_takeover) new members.
+	* SMTask.cc, SMTask.h: add a dummy init_task so that current!=0.
+
 2000-02-28  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h: remember last REST position and do `REST 0'
 	  if last REST was >0 (for broken? ftp servers that don't reset REST).
 	* MirrorJob.cc: (PrintStatus) improved.
+	* pgetJob.cc: get size and offset after calling super::Do, because
+	  the copier can be changed by it.
 
 2000-02-27  Alexander V. Lukyanov  <lav@yars.free.net>
 

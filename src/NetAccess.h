@@ -50,6 +50,9 @@ protected:
    float reconnect_interval_multiplier;
    int   reconnect_interval_max;
 
+   int	 connection_limit;
+   bool	 connection_takeover;
+
    int	 socket_buffer;
    int	 socket_maxseg;
    void	 SetSocketBuffer(int sock);
@@ -102,6 +105,8 @@ public:
    time_t GetTryTime() { return try_time; }
 
    void Close();
+
+   int CountConnections();
 };
 
 class RateLimit

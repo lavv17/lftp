@@ -85,6 +85,8 @@ void FileAccess::Init()
 
    chmod_mode=0644;
 
+   priority=0;
+
    next=chain;
    chain=this;
 }
@@ -252,6 +254,7 @@ void  FileAccess::Open(const char *fn,int mode,long offs)
    this->mode=mode;
    mkdir_p=false;
    try_time=0;
+   Timeout(0);
 
    switch((open_mode)mode)
    {
@@ -875,6 +878,19 @@ void FileAccess::CleanupAll()
    for(FileAccess *o=chain; o!=0; o=o->next)
       o->CleanupThis();
 }
+
+FileAccess *FileAccess::NextSameSite(FA *scan)
+{
+   if(scan==0)
+      scan=chain;
+   else
+      scan=scan->next;
+   for( ; scan; scan=scan->next)
+      if(scan!=this && SameSiteAs(scan))
+	 return scan;
+   return 0;
+}
+
 
 FileAccess *FileAccess::New(const ParsedURL *u,bool dummy)
 {

@@ -94,6 +94,7 @@ int  CmdExec::RestoreCWD()
       eprintf(_("Warning: chdir(%s) failed: %s\n"),cwd,strerror(errno));
    fail:
       // can't run further commands in wrong directory
+      eprintf("No directory to execute commands in - terminating\n");
       while(!Done())
 	 RemoveFeeder();
       exit_code=1;

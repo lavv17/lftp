@@ -145,6 +145,8 @@ protected:
    bool ascii;
    bool norest_manual;
 
+   int	priority;   // higher priority can take over other session.
+
    bool Error() { return error_code!=OK; }
    void ClearError();
    void SetError(int code,const char *mess=0);
@@ -154,6 +156,8 @@ protected:
 
    FileAccess *next;
    static FileAccess *chain;
+   FileAccess *FirstSameSite() { return NextSameSite(0); }
+   FileAccess *NextSameSite(FileAccess *);
 
    static int device_prefix_len(const char *path);
 
@@ -299,6 +303,13 @@ public:
    void InsecurePassword(bool i)
       {
 	 pass_open=i;
+      }
+   void SetPriority(int p)
+      {
+	 if(p==priority)
+	    return;
+	 priority=p;
+	 current->Timeout(0);
       }
 };
 

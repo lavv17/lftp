@@ -804,6 +804,7 @@ void FileCopyPeerFA::Seek(long new_pos)
 
 void FileCopyPeerFA::OpenSession()
 {
+   current->Timeout(0);	// mark it MOVED.
    if(mode==GET)
    {
       if(size!=NO_SIZE && size!=NO_SIZE_YET && seek_pos>=size && !ascii)

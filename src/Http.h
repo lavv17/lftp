@@ -61,6 +61,7 @@ class Http : public NetAccess
 
    int sock;
    void Disconnect();
+   bool IsConnected() { return sock!=-1; }
 
    char *status;
    int   status_consumed;

@@ -75,4 +75,12 @@ public:
    static SMTask *current;
 };
 
+class SMTaskInit : public SMTask
+{
+   int Do();
+public:
+   SMTaskInit();
+   ~SMTaskInit();
+};
+
 #endif /* SMTASK_H */

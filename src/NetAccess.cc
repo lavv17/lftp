@@ -56,6 +56,9 @@ void NetAccess::Init()
 
    rate_limit=0;
 
+   connection_limit=0;	// no limit.
+   connection_takeover=false;
+
    Reconfig(0);
 }
 
@@ -494,4 +497,15 @@ void NetAccess::Close()
    resolver=0;
 
    super::Close();
+}
+
+int NetAccess::CountConnections()
+{
+   int count=0;
+   for(FileAccess *o=FirstSameSite(); o!=0; o=NextSameSite(o))
+   {
+      if(o->IsConnected())
+	 count++;
+   }
+   return count;
 }
