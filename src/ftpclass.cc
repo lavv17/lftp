@@ -1596,7 +1596,7 @@ void  Ftp::SendCmd(const char *cmd)
 	    int shift=send_cmd_ptr-send_cmd_buffer;
 	    if(send_cmd_alloc==0)
 	       send_cmd_alloc=0x80;
-	    send_cmd_buffer=(char*)xrealloc(send_cmd_buffer,send_cmd_alloc*2);
+	    send_cmd_buffer=(char*)xrealloc(send_cmd_buffer,send_cmd_alloc*=2);
 	    send_cmd_ptr=send_cmd_buffer+shift;
 	 }
 	 memmove(send_cmd_buffer,send_cmd_ptr,send_cmd_count);
