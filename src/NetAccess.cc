@@ -53,6 +53,7 @@ void NetAccess::Init()
    idle_start=now;
    max_retries=0;
    max_persist_retries=0;
+   retries=0;
    persist_retries=0;
    socket_buffer=0;
    socket_maxseg=0;
@@ -564,25 +565,6 @@ void RateLimit::ReconfigTotal()
    total_reconfig_needed = false;
 }
 
-long NetAccess::ReconnectInterval()
-{
-   // cyclic exponential growth.
-   float interval = reconnect_interval;
-   if(reconnect_interval_multiplier>1
-   && reconnect_interval_max>=reconnect_interval*reconnect_interval_multiplier
-   && retries>0)
-   {
-      int modval = (int)(log((float)reconnect_interval_max/reconnect_interval)
-                              / log(reconnect_interval_multiplier) + 1.999);
-
-      interval *= pow(reconnect_interval_multiplier, (retries-1)%modval);
-
-      if( interval > reconnect_interval_max )
-         interval = reconnect_interval_max;
-   }
-   return long(interval+.5);
-}
-
 bool NetAccess::ReconnectAllowed()
 {
    if(max_retries>0 && retries>=max_retries)
@@ -591,10 +573,9 @@ bool NetAccess::ReconnectAllowed()
       return false;
    if(try_time==0)
       return true;
-   long interval = ReconnectInterval();
-   if(time_t(now) >= try_time+interval)
+   if(time_t(now) >= try_time+long(reconnect_interval_current))
       return true;
-   TimeoutS(interval-(time_t(now)-try_time));
+   TimeoutS(long(reconnect_interval_current)-(time_t(now)-try_time));
    return false;
 }
 
@@ -603,7 +584,7 @@ const char *NetAccess::DelayingMessage()
    static char buf[80];
    if(connection_limit>0 && connection_limit<=CountConnections())
       return _("Connection limit reached");
-   long remains=ReconnectInterval()-(time_t(now)-try_time);
+   long remains=long(reconnect_interval_current)-(time_t(now)-try_time);
    if(remains<=0)
       return "";
    sprintf(buf,"%s: %ld",_("Delaying before reconnect"),remains);
@@ -622,7 +603,20 @@ bool NetAccess::NextTry()
    }
    retries++;
 
+   if(reconnect_interval_multiplier>1)
+   {
+      reconnect_interval_current*=reconnect_interval_multiplier;
+      if(reconnect_interval_current>reconnect_interval_max)
+	 reconnect_interval_current=reconnect_interval_max;
+   }
+
    return true;
+}
+void NetAccess::TrySuccess()
+{
+   retries=0;
+   persist_retries=0;
+   reconnect_interval_current=reconnect_interval;
 }
 
 void NetAccess::Close()
@@ -633,8 +627,7 @@ void NetAccess::Close()
       TimeoutS(idle);
    }
 
-   retries=0;
-   persist_retries=0;
+   TrySuccess();
 
    Delete(resolver);
    resolver=0;

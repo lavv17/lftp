@@ -765,8 +765,7 @@ void Ftp::CatchDATE(int act)
    if(!array_for_info[array_ptr].get_size)
       array_ptr++;
 
-   retries=0;
-   persist_retries=0;
+   TrySuccess();
 }
 void Ftp::CatchDATE_opt(int act)
 {
@@ -818,8 +817,7 @@ void Ftp::CatchSIZE(int act)
    if(!array_for_info[array_ptr].get_time)
       array_ptr++;
 
-   retries=0;
-   persist_retries=0;
+   TrySuccess();
 }
 void Ftp::CatchSIZE_opt(int act)
 {
@@ -2242,10 +2240,7 @@ int   Ftp::Do()
 
    pre_WAITING_STATE:
       if(copy_mode!=COPY_NONE)
-      {
-	 retries=0;  // it is enough to get here in copying.
-	 persist_retries=0;
-      }
+	 TrySuccess();	// it is enough to get here in copying.
       state=WAITING_STATE;
       m=MOVED;
    case(WAITING_STATE):
@@ -3292,8 +3287,7 @@ int   Ftp::Read(void *buf,int size)
    memcpy(buf,b,size);
    conn->data_iobuf->Skip(size);
 
-   retries=0;
-   persist_retries=0;
+   TrySuccess();
    assert(rate_limit!=0);
    rate_limit->BytesGot(size);
    real_pos+=size;
@@ -3354,8 +3348,7 @@ int   Ftp::Write(const void *buf,int size)
    && iobuf->GetPos()-iobuf->Size()>Buffered()+0x10000)
    {
       // reset retry count if some data were actually written to server.
-      retries=0;
-      persist_retries=0;
+      TrySuccess();
    }
 
    assert(rate_limit!=0);

@@ -644,7 +644,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       {
 	 array_for_info[array_ptr].size=body_size;
 	 array_for_info[array_ptr].get_size=false;
-	 retries=0;
+	 TrySuccess();
       }
       return;
    }
@@ -682,7 +682,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       {
 	 array_for_info[array_ptr].time=t;
 	 array_for_info[array_ptr].get_time=false;
-	 retries=0;
+	 TrySuccess();
       }
       return;
    }
@@ -1287,7 +1287,7 @@ int Http::Do()
 		  }
 
 		  if(mode==ARRAY_INFO)
-		     retries=0;
+		     TrySuccess();
 
 		  return MOVED;
 	       }
@@ -1634,7 +1634,7 @@ int Http::Read(void *buf,int size)
       if(chunked)
 	 chunk_pos+=size;
       rate_limit->BytesGot(size);
-      retries=0;
+      TrySuccess();
       return size;
    }
    return DO_AGAIN;
@@ -1695,7 +1695,7 @@ int Http::Write(const void *buf,int size)
    send_buf->Put((const char*)buf,size);
 
    if(retries>0 && send_buf->GetPos()-send_buf->Size()>Buffered()+0x1000)
-      retries=0;
+      TrySuccess();
    rate_limit->BytesPut(size);
    pos+=size;
    real_pos+=size;

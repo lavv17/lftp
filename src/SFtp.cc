@@ -1190,7 +1190,7 @@ int SFtp::Read(void *buf,int size)
       pos+=size;
       real_pos+=size;
       rate_limit->BytesGot(size);
-      retries=0;
+      TrySuccess();
       return size;
    }
    return DO_AGAIN;
@@ -1224,7 +1224,7 @@ int SFtp::Write(const void *buf,int size)
    if(size<=0)
       return 0;
    file_buf->Put((char*)buf,size);
-   retries=0;
+   TrySuccess();
    rate_limit->BytesPut(size);
    pos+=size;
    real_pos+=size;

@@ -871,6 +871,10 @@ int   MirrorJob::Do()
 	    if((st.st_mode&07777)==(file->mode&~mode_mask))
 	       continue;
 	 }
+	 FileInfo *target=target_set->FindByName(file->name);
+	 if(target && target->filetype==file->DIRECTORY && file->filetype==file->DIRECTORY
+	 && target->mode==file->mode && target->mode&0200)
+	    continue;
 	 if(script)
 	 {
 	    ArgV args("chmod");

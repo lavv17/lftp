@@ -1,3 +1,10 @@
+2004-10-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: don't chmod if not needed.
+	* NetAccess.cc, NetAccess.cc: (TrySuccess) new method; optimize
+	  reconnect interval calculation, add reconnect_interval_curr member.
+	* Http.cc, ftpclass.cc, SFtp.cc, Fish.cc: use TrySuccess.
+
 2004-10-04  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* complete.cc: rough mirror -R handling.

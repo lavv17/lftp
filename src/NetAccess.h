@@ -39,6 +39,7 @@ protected:
 
    int	 max_retries;
    int	 max_persist_retries;
+   int	 retries;
    int	 persist_retries;
 
    int	 idle;
@@ -48,6 +49,7 @@ protected:
    bool	 CheckTimeout();
 
    int	 reconnect_interval;
+   float reconnect_interval_current;
    float reconnect_interval_multiplier;
    int   reconnect_interval_max;
 
@@ -90,10 +92,10 @@ protected:
 
    int Resolve(const char *defp,const char *ser,const char *pr);
 
-   long ReconnectInterval();
    const char *DelayingMessage();
    bool ReconnectAllowed();
-   bool NextTry();   // returns false if max-retries exceeded.
+   bool NextTry();	// returns false if max-retries exceeded.
+   void TrySuccess();	// reset retry counters.
 
    virtual void HandleTimeout();
 
