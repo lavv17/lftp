@@ -45,6 +45,11 @@ extern "C" {
 # define isascii ((unsigned)(x) < 0x80)
 #endif
 
+/* Error macros */
+#define TRIO_ERROR_CODE(x) ((-(x)) & 0x00FF)
+#define TRIO_ERROR_POSITION(x) ((-(x)) >> 8)
+#define TRIO_ERROR_NAME(x) trio_strerror(x)
+
 /*
  * Error codes.
  *
@@ -57,13 +62,9 @@ enum {
   TRIO_EDBLREF  = 4,
   TRIO_EGAP     = 5,
   TRIO_ENOMEM   = 6,
-  TRIO_ERANGE   = 7
+  TRIO_ERANGE   = 7,
+  TRIO_ERRNO    = 8
 };
-
-/* Error macros */
-#define TRIO_ERROR_CODE(x) ((-(x)) & 0x00FF)
-#define TRIO_ERROR_POSITION(x) ((-(x)) >> 8)
-#define TRIO_ERROR_NAME(x) trio_strerror(x)
 
 const char *trio_strerror(int);
 
@@ -186,13 +187,6 @@ int trio_sscanfv(const char *buffer, const char *format, void **args);
 #define dscanf trio_dscanf
 #define vdscanf trio_vdscanf
 #endif
-
-/* strio compatible names */
-#define StrScan trio_sscanf
-#define StrFormat trio_sprintf
-#define StrFormatMax trio_snprintf
-#define StrFormatAlloc trio_aprintf
-#define StrFormatAppendMax trio_snprintfcat
 
 #ifdef __cplusplus
 } /* extern "C" */

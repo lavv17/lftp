@@ -15,8 +15,8 @@
  *
  ************************************************************************/
 
-#ifndef __TRIO_NAN_H__
-#define __TRIO_NAN_H__
+#ifndef TRIO_NAN_H
+#define TRIO_NAN_H
 
 #include "triodef.h"
 
@@ -49,8 +49,13 @@ TRIO_PUBLIC int trio_isnan(double number);
  */
 TRIO_PUBLIC int trio_isinf(double number);
 
+/*
+ * If number is finite return non-zero, otherwise return zero.
+ */
+TRIO_PUBLIC int trio_isfinite(double number);
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __TRIO_NAN_H__ */
+#endif /* TRIO_NAN_H */

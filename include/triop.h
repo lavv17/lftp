@@ -27,6 +27,7 @@
 #define TRIO_TRIOP_H
 
 #include <stdlib.h>
+#include <stdarg.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,7 +49,7 @@ extern "C" {
 # define TRIO_UNIX98 1
 #endif
 #ifndef TRIO_MICROSOFT
-# define TRIO_MICROSOFT 0
+# define TRIO_MICROSOFT 1
 #endif
 #ifndef TRIO_EXTENSION
 # define TRIO_EXTENSION 1
@@ -70,7 +71,11 @@ extern "C" {
 # define TRIO_FREE(x) free(x)
 #endif
 
-typedef int (*trio_callback_t)(void *ref);
+/*************************************************************************
+ * User-defined specifiers
+ */
+
+typedef int (*trio_callback_t)(void *);
 
 void *trio_register(trio_callback_t callback, const char *name);
 void trio_unregister(void *handle);
