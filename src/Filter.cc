@@ -328,3 +328,10 @@ int   FileStream::getfd()
    fcntl(fd,F_SETFD,FD_CLOEXEC);
    return fd;
 }
+
+bool FileStream::can_seek()
+{
+   if(mode&O_APPEND)
+      return false;  // whatever we seek, the writes will go to end of file.
+   return true;
+}

@@ -51,6 +51,7 @@ public:
    virtual void Kill(int=SIGTERM) {}
    virtual pid_t GetProcGroup() { return 0; }
    virtual bool broken() { return false; }
+   virtual bool can_seek() { return false; }
 };
 
 class OutputFilter : public FDStream
@@ -113,6 +114,7 @@ public:
    bool can_setmtime() { return true; }
    void remove_if_empty();
    int getfd();
+   bool can_seek();
 };
 
 #endif /* FILTER_H */
