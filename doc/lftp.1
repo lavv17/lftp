@@ -1033,10 +1033,22 @@ the string lftp sends in User-Agent header of HTTP request.
 .BR https:proxy " (string)"
 specifies https proxy. Default value is taken from environment variable \fBhttps_proxy\fP.
 .TP
-.BR mirror:order" (list of patterns)"
+.BR mirror:exclude-regex " (regex)"
+specifies default exclusion pattern. You can override it by --include option.
+.TP
+.BR mirror:order " (list of patterns)"
 specifies order of file transfers. E.g. setting this to "*.sfv *.sum" makes mirror to
 transfer files matching *.sfv first, then ones matching *.sum and then all other
-files.
+files. To process directories after other files, add "*/" to end of pattern list.
+.TP
+.BR mirror:parallel-directories " (boolean)"
+if true, mirror will start processing of several directories in parallel
+when it is in parallel mode. Otherwise, it will transfer files from a single
+directory before moving to other directories.
+.TP
+.BR mirror:parallel-transfer-count " (number)"
+specifies number of parallel transfers mirror is allowed to start. Default is 1.
+You can override it with --parallel option.
 .TP
 .BR module:path \ (string)
 colon separated list of directories to look for modules. Can be initialized by

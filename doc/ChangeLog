@@ -1,3 +1,7 @@
+2001-12-17	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document new mirror settings.
+
 2001-12-04	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document quote for fish.
