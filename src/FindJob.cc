@@ -441,7 +441,7 @@ FinderJob_List::~FinderJob_List()
 
 void FinderJob_List::Finish()
 {
-   char *d=args->getnext();
+   const char *d=args->getnext();
    if(!d) {
       buf->PutEOF();
       return;

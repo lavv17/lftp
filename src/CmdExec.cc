@@ -1103,11 +1103,12 @@ char *ArgV::CombineQuoted(int start) const
 {
    int	 i;
    char  *res;
-   char	 *store,*arg;
+   char	 *store;
+   const char *arg;
    int	 len=0;
 
-   for(i=start; i<c; i++)
-      len+=strlen(v[i])*2+3;
+   for(i=start; i<Count(); i++)
+      len+=strlen(String(i))*2+3;
 
    if(len==0)
       return(xstrdup(""));
@@ -1115,9 +1116,9 @@ char *ArgV::CombineQuoted(int start) const
    res=(char*)xmalloc(len);
 
    store=res;
-   for(i=start; i<c; i++)
+   for(i=start; i<Count(); i++)
    {
-      arg=v[i];
+      arg=String(i);
       if(CmdExec::needs_quotation(arg))
       {
 	 *store++='"';

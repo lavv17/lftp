@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2001 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2004 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,40 +25,15 @@
 
 #include "SMTask.h"
 #include "Timer.h"
-
-class LineSet
-{
-   char **set;
-   int n;
-   int allocated;
-
-   void Init() { set=0; allocated=n=0; }
-
-public:
-   LineSet() { Init(); }
-   LineSet(const char *const *s,int n) { Init(); Assign(s,n); }
-   LineSet(const LineSet &o) { Init(); Assign(o.set,o.n); }
-   LineSet(const char *s) { Init(); Assign(&s,1); }
-   ~LineSet() { Empty(); xfree(set); }
-
-   void Empty();
-   void Assign(const char *const *s,int n);
-   void Assign(const char *s) { Assign(&s,1); }
-   bool IsEqual(const char *const *s,int n);
-   bool IsEqual(const LineSet &o) { return IsEqual(o.set,o.n); }
-
-   const char *const *Set() { return set; }
-   int Count() { return n; }
-   const char *operator[](int i) { return i>=0 && i<n ? set[i] : 0; }
-};
+#include "StringSet.h"
 
 class StatusLine : public SMTask
 {
    int fd;
-   LineSet shown;
+   StringSet shown;
    bool	not_term;
    Timer update_timer;
-   LineSet to_be_shown;
+   StringSet to_be_shown;
    char def_title[0x800];
    bool update_delayed;
    void update(const char *const *,int);

@@ -50,7 +50,7 @@ void TreatFileJob::Begin(const char *d)
 void TreatFileJob::Finish()
 {
    /* next? */
-   char *d=args->getnext();
+   const char *d=args->getnext();
    if(d) {
       /* we have another argument */
       Begin(d);

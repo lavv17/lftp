@@ -716,14 +716,14 @@ Job *CmdExec::builtin_open()
 
    bool	 debug=false;
    char	 *port=NULL;
-   char	 *host=NULL;
+   const char *host=NULL;
    char  *path=NULL;
    char	 *user=NULL;
    char	 *pass=NULL;
    int	 c;
    NetRC::Entry *nrc=0;
    char  *cmd_to_exec=0;
-   char  *op=args->a0();
+   const char *op=args->a0();
    bool insecure=false;
    bool no_bm=false;
 
@@ -1149,7 +1149,7 @@ Job *CmdExec::builtin_queue()
 	  * queue -m 1 2  (move entry 1 to position 2)
 	  * queue -m "*get*" 1
 	  * queue -m 3    (move entry 3 to the end) */
-         char *a1 = args->getarg(args->getindex());
+         const char *a1 = args->getarg(args->getindex());
 	 if(a1 && !isdigit(a1[0])) {
 	    eprintf(_("%s: -m: Number expected as second argument. "), args->a0());
 	    goto err;
@@ -1739,13 +1739,36 @@ CMD(mkdir)
 
 CMD(source)
 {
-   if(args->count()<2)
+   int opt;
+   args->rewind();
+   bool e=false;
+   while((opt=args->getopt("+e"))!=EOF)
    {
-      // xgettext:c-format
-      eprintf(_("Usage: %s <file>\n"),args->a0());
-      return 0;
+      switch(opt)
+      {
+      case('e'):
+	 e=true;
+	 break;
+      case('?'):
+      usage:
+	 // xgettext:c-format
+	 eprintf(_("Usage: %s [-e] <file|command>\n"),args->a0());
+	 return 0;
+      }
    }
-   parent->SetCmdFeeder(new FileFeeder(new FileStream(args->getarg(1),O_RDONLY|O_ASCII)));
+   if(args->getindex()>=args->count())
+      goto usage;
+   FDStream *f=0;
+   if(e)
+   {
+      char *cmd=args->Combine(args->getindex());
+      f=new InputFilter(cmd);
+      xfree(cmd);
+   }
+   else
+      f=new FileStream(args->getarg(1),O_RDONLY|O_ASCII);
+
+   parent->SetCmdFeeder(new FileFeeder(f));
    exit_code=0;
    return 0;
 }
@@ -1862,7 +1885,7 @@ CMD(debug)
    else
       Log::global->SetOutput(fd,true);
 
-   char *a=args->getcurr();
+   const char *a=args->getcurr();
    if(a)
    {
       if(!strcasecmp(a,"off"))
@@ -1911,8 +1934,8 @@ CMD(user)
       eprintf(_("Usage: %s userid [pass]\n"),args->getarg(0));
       return 0;
    }
-   char *user=args->getarg(1);
-   char	*pass=args->getarg(2);
+   const char *user=args->getarg(1);
+   const char *pass=args->getarg(2);
    bool insecure=(pass!=0);
 
    ParsedURL u(user,true);
@@ -2009,7 +2032,7 @@ CMD(kill)
    exit_code=0;
    for(;;)
    {
-      char *arg=args->getnext();
+      const char *arg=args->getnext();
       if(arg==0)
 	 break;
       if(!isdigit((unsigned char)arg[0]))
@@ -2054,7 +2077,7 @@ CMD(set)
       }
    }
    args->back();
-   char *a=args->getnext();
+   const char *a=args->getnext();
 
    if(a==0)
    {
@@ -2126,7 +2149,7 @@ CMD(alias)
 
 CMD(wait)
 {
-   char *op=args->a0();
+   const char *op=args->a0();
    if(args->count()>2)
    {
       eprintf(_("Usage: %s [<jobno>]\n"),op);
@@ -2134,7 +2157,7 @@ CMD(wait)
    }
    int n=-1;
    args->rewind();
-   char *jn=args->getnext();
+   const char *jn=args->getnext();
    if(jn)
    {
       if(!strcasecmp(jn,"all"))
@@ -2187,7 +2210,7 @@ CMD(subsh)
 {
    CmdExec *e=new CmdExec(session->Clone(),parent->cwd->Clone());
 
-   char *c=args->getarg(1);
+   const char *c=args->getarg(1);
    e->FeedCmd(c);
    e->FeedCmd("\n");
    e->cmdline=(char*)xmalloc(strlen(c)+3);
@@ -2289,7 +2312,7 @@ CMD(scache)
    }
    else
    {
-      char *a=args->getarg(1);
+      const char *a=args->getarg(1);
       if(!isdigit((unsigned char)a[0]))
       {
 	 eprintf(_("%s: %s - not a number\n"),args->a0(),a);
@@ -2374,7 +2397,7 @@ CMD(help)
       args->rewind();
       for(;;)
       {
-	 char *cmd=args->getnext();
+	 const char *cmd=args->getnext();
 	 if(cmd==0)
 	    break;
 	 parent->print_cmd_help(cmd);
@@ -2772,7 +2795,7 @@ CMD(command)
 
 CMD(module)
 {
-   char *op=args->a0();
+   const char *op=args->a0();
    if(args->count()<2)
    {
       eprintf(_("Usage: %s module [args...]\n"),args->a0());
@@ -3066,7 +3089,7 @@ CMD(history)
    }
 
    int cnt = 16;
-   if(char *arg = args->getcurr()) {
+   if(const char *arg = args->getcurr()) {
       if(!strcasecmp(arg, "all"))
 	 cnt = -1;
       else if(isdigit(arg[0]))

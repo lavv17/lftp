@@ -112,41 +112,6 @@ void StatusLine::Show(const char *f,...)
    ShowN(&s,1);
 }
 
-bool LineSet::IsEqual(const char *const *set1,int n1)
-{
-   if(n!=n1)
-      return false;
-   int i=0;
-   while(i<n)
-   {
-      if(strcmp(set[i],set1[i]))
-	 return false;
-      i++;
-   }
-   return true;
-}
-void LineSet::Empty()
-{
-   while(n>0)
-   {
-      n--;
-      xfree(set[n]);
-      set[n]=0;
-   }
-}
-void LineSet::Assign(const char *const *set1,int n1)
-{
-   Empty();
-   if(allocated<n1)
-      set=(char**)xrealloc(set,sizeof(*set)*(allocated=n1));
-   n=0;
-   while(n<n1)
-   {
-      set[n]=xstrdup(set1[n]);
-      n++;
-   }
-}
-
 void StatusLine::ShowN(const char *const* newstr,int n)
 {
    if(update_timer.Stopped())
@@ -156,7 +121,9 @@ void StatusLine::ShowN(const char *const* newstr,int n)
       return;
    }
 
-   if(to_be_shown.IsEqual(newstr,n))
+   if(!update_delayed && shown.IsEqual(newstr,n))
+      return;
+   if(update_delayed && to_be_shown.IsEqual(newstr,n))
       return;
 
    /* not yet */

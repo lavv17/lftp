@@ -37,7 +37,7 @@ mkdirJob::mkdirJob(FileAccess *s,ArgV *a) : super(s)
 
    args=a;
    args->rewind();
-   char *op=args->getarg(0);
+   const char *op=args->getarg(0);
 
    curr=first=0;
    opt_p=false;
@@ -130,7 +130,7 @@ void  mkdirJob::SayFinal()
 {
    if(failed==file_count)
       return;
-   char *op=args->getarg(0);
+   const char *op=args->getarg(0);
    if(file_count==1)
       // A directory has just been created
       printf(_("%s ok, `%s' created\n"),op,first);

@@ -35,6 +35,7 @@ const char *FileFeeder::NextCmd(CmdExec *exec, const char *)
       }
       return "";
    }
+   in->Kill(SIGCONT);
    int res=read(fd,buffer,buffer_size-1);
    if(res==0)
    {

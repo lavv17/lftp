@@ -149,7 +149,7 @@ int PtyShell::getfd()
       putenv((char*)"LANG=C");
       putenv((char*)"LANGUAGE=C");
       if(a)
-	 execvp(a->a0(),a->GetV());
+	 execvp(a->a0(),a->GetVNonConst());
       execl("/bin/sh","sh","-c",name,NULL);
       fprintf(stderr,_("execl(/bin/sh) failed: %s\n"),strerror(errno));
       fflush(stderr);

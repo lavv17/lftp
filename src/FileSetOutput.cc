@@ -331,13 +331,12 @@ int clsJob::Do()
       xfree(dir); dir = 0;
       xfree(mask); mask = 0;
 
-      dir = args->getnext();
+      dir=xstrdup(args->getnext());
       if(!dir) {
 	 /* done */
 	 state=DONE;
 	 return MOVED;
       }
-      dir = xstrdup(dir);
 
       /* If the basename contains wildcards, set up the mask. */
       mask = strrchr(dir, '/');

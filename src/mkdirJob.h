@@ -29,7 +29,7 @@
 class mkdirJob : public SessionJob
 {
    ArgV	 *args;
-   char	 *curr,*first;
+   const char *curr,*first;
    FA	 *orig_session;
    int	 failed,file_count;
    bool	 quiet;

@@ -84,7 +84,7 @@ void FinderJob_Du::Finish()
    } else success = true; /* at least one succeeded */
 
    /* next? */
-   char *d=args->getnext();
+   const char *d=args->getnext();
    if(d) {
       /* we have another argument */
       Init(d);

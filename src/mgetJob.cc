@@ -162,7 +162,7 @@ int mgetJob::Do()
    {
    next:
       if(rg) { delete rg; rg=0; }
-      char *p=m_args->getnext();
+      const char *p=m_args->getnext();
       if(!p)
       {
 	 delete m_args;

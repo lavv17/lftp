@@ -131,7 +131,7 @@ void SleepJob::lftpMovesToBackground()
 #define session (parent->session)
 Job *cmd_sleep(CmdExec *parent)
 {
-   char *op=args->a0();
+   const char *op=args->a0();
    if(args->count()!=2)
    {
       eprintf(_("%s: argument required. "),op);
@@ -183,7 +183,7 @@ Job *cmd_at(CmdExec *parent)
    int date_len=0;
    for(;;)
    {
-      char *arg=args->getnext();
+      const char *arg=args->getnext();
       if(arg==0)
 	 break;
       if(!strcmp(arg,"--"))

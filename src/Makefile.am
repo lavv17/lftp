@@ -53,7 +53,7 @@ libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  FileAccess.h FileAccess.cc ResMgr.h ResMgr.cc\
  Filter.cc Filter.h SignalHook.cc SignalHook.h FileCopy.cc FileCopy.h\
  xmalloc.cc xmalloc.h FileSet.cc FileSet.h\
- log.h log.cc\
+ log.h log.cc StringSet.cc StringSet.h\
  buffer.cc buffer.h url.cc url.h StatusLine.cc StatusLine.h plural.c plural.h\
  misc.h misc.cc fg.cc fg.h module.cc module.h modconfig.h\
  resource.cc DummyProto.cc DummyProto.h\

@@ -23,28 +23,24 @@
 #ifndef ARGV_H
 #define ARGV_H
 
-class ArgV
-{
-   char **v;
-   int c;
-   int ind;
-   int allocated;
+#include <stdio.h>
+#include "StringSet.h"
 
-   void Init(int,const char * const *);
-   void GetRoom(int);
+class ArgV : public StringSet
+{
+   int ind;
 
 public:
-   ArgV() { Init(0,0); }
-   ArgV(const char *a0) { Init(1,&a0); }
+   ArgV() { ind=0; }
+   ArgV(const char *a0) : StringSet(&a0,1) { ind=0; }
    ArgV(const char *a0, const char *args);
-   void Empty();
-   void Append(const char *);
+   ArgV(const ArgV& a) : StringSet(a) { ind=0; }
+   ArgV(const ArgV *a) : StringSet(*a) { ind=0; }
+   ArgV(int new_c,const char * const *new_v) : StringSet(new_v,new_c) { ind=0; }
+
+   void Append(const char *s) { StringSet::Append(s); }
    void Append(int a) { char buf[12]; sprintf(buf,"%d",a); Append(buf); }
    void Add(const char *a) { Append(a); } // alias
-   ArgV(const ArgV& a) { Init(a.c,a.v); }
-   ArgV(const ArgV *a) { Init(a->c,a->v); }
-   ArgV(int new_c,const char * const *new_v) { Init(new_c,new_v); }
-   ~ArgV();
 
    char *Combine(int start_index=0) const;
    char *CombineQuoted(int start_index=0) const;
@@ -57,23 +53,19 @@ public:
 
    void seek(int n);
    void rewind() { seek(0); }
-   char *getnext();
+   const char *getnext();
 
-   char *getarg(int n) const
-      {
-	 if(n>=c)
-	    return 0;
-	 return v[n];
-      }
-   char *getcurr() const { return ind<c?getarg(ind):0; }
+   const char *getarg(int n) const { return String(n); }
+   const char *getcurr() const { return ind<Count()?getarg(ind):0; }
    int getindex() const { return ind; }
-   void setarg(int n,const char *s);
-   void delarg(int n);
-   void insarg(int n,const char *s);
-   char *a0() const { return getarg(0); }
+   void setarg(int n,const char *s) { Replace(n,s); }
+   void delarg(int n) { if(ind>n)--ind; Remove(n); }
+   void insarg(int n,const char *s) { InsertBefore(n,s); }
+   const char *a0() const { return getarg(0); }
    void back();
-   int count() const { return c; }
-   char **GetV() const { return v; }
+   int count() const { return Count(); }
+   const char *const*GetV() const { return Set(); }
+   char **GetVNonConst() { return SetNonConst(); }
 };
 
 #endif//ARGV_H
