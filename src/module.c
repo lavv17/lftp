@@ -40,6 +40,13 @@
 
 typedef void (*init_t)(int,const char*const*);
 
+static const char * const module_aliases[]=
+{
+   "proto-hftp",  "proto-http",
+   "cmd-at",	  "cmd-sleep",
+   NULL
+};
+
 void *module_load(const char *path,int argc,const char *const *argv)
 {
 #ifdef HAVE_DLOPEN
@@ -50,7 +57,18 @@ void *module_load(const char *path,int argc,const char *const *argv)
    if(strchr(path,'/'))
       strcpy(fullpath,path);
    else
+   {
+      const char *const *scan;
+      for(scan=module_aliases; *scan; scan+=2)
+      {
+	 if(!strcmp(path,*scan))
+	 {
+	    path=scan[1];
+	    break;
+	 }
+      }
       sprintf(fullpath,"%s/%s",PKGLIBDIR,path);
+   }
    if(access(fullpath,F_OK)==-1)
    {
       int len=strlen(fullpath);

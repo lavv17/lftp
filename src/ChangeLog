@@ -1,5 +1,10 @@
 1999-08-20  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* module.c: provide module aliases.
+	* FileAccess.cc: revert last change.
+
+1999-08-20  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* Http.cc, Http.h, HttpDir.cc: implement hftp protocol (ftp over http);
 	  parse squid's ftp listings.
 	* FileAccess.cc: load proto-http when hftp is requested.
