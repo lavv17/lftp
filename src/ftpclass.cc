@@ -1017,7 +1017,7 @@ void  Ftp::GetBetterConnection(int level,int count)
 	 {
 	    if((o->flags&NOREST_MODE) && o->real_pos>0x1000)
 	       continue;
-	    if(QueryBool("ftp:web-mode",o->hostname))
+	    if(o->QueryBool("web-mode",o->hostname))
 	       continue;
 	    o->DataAbort();
 	    o->DataClose();
