@@ -20,6 +20,10 @@
 
 /* $Id$ */
 
+/* Ideally, this is simple:
+ *
+ * Queue FileInfo;
+ */
 #include <config.h>
 #include <assert.h>
 #include <fnmatch.h>
@@ -27,58 +31,56 @@
 #include "FindJob.h"
 #include "CmdExec.h"
 #include "misc.h"
+#include "GetFileInfo.h"
+#include "url.h"
 
 #define top (*stack[stack_ptr])
+#define super SessionJob
 
 int FinderJob::Do()
 {
    int m=STALL;
-   int res;
    prf_res pres;
    Job *j;
 
    switch(state)
    {
-   case INIT:
-      // nothing to do - just fall to CD
+   case START_INFO:
+   {
+      /* If we're not validating, and this is an argument (first-level path),
+       * pretend the file exists. */
+      if((file_info_need|FileInfo::NAME) == FileInfo::NAME &&
+	    !validate_args && stack_ptr == -1)
+      {
+	 FileSet *fs = new FileSet();
+	 fs->Add(new FileInfo(dir));
+	 Push(fs);
+	 state=LOOP;
+	 return MOVED;
+      }
 
-      {
-	 const char *cd_dir=dir;
-	 if(stack_ptr>=0)
-	    cd_dir=dir_file(dir_file(start_dir,top.path),dir);
-	 session->Chdir(cd_dir,false);
-      }
-      state=CD;
-      m=MOVED;
-   case CD:
-      res=session->Done();
-      if(res==session->IN_PROGRESS)
-	 return m;
-      if(res==session->OK)
-      {
-	 session->Close();
-	 goto pre_INFO;
-      }
-      // cd error
-      if(!quiet)
-	 eprintf("%s: cd %s: %s\n",op,dir,session->StrError(res));
-      errors++;
-      depth_done=true;
-      state=LOOP;
-      return MOVED;
+      /* The first time we get here (stack_ptr == -1), dir is an actual
+       * argument, so it might be a file.  (Every other time, it's guaranteed
+       * to be a directory.)  Set show_dirs to true, so it'll end up actually
+       * being on the stack, with type information. */
+      li=new GetFileInfo(session, dir, stack_ptr == -1);
 
-   pre_INFO:
-      li=session->MakeListInfo();
-      if(li==0)
-      {
-	 //FIXME
-	 abort();
-      }
-      li->Need(file_info_need|FileInfo::NAME|FileInfo::TYPE);
+      /* Prepend for the argument level entry only: */
+      if(stack_ptr != -1)
+	 li->DontPrependPath();
+
+      int need = file_info_need|FileInfo::NAME;
+
+      /* We only explicitely need the type if we're recursing further. */
+      if(stack_ptr+1 < maxdepth)
+	 need |= FileInfo::TYPE;
+
+      li->Need(need);
       if(use_cache)
 	 li->UseCache();
       state=INFO;
       m=MOVED;
+   }
    case INFO:
       if(!li->Done())
 	 return m;
@@ -93,11 +95,15 @@ int FinderJob::Do()
 	 state=LOOP;
 	 return MOVED;
       }
+
+      if(stack_ptr != -1 && li->WasDirectory())
+	 Enter(dir);
+
       Push(li->GetResult());
+      top.fset->rewind();
+
       Delete(li);
       li=0;
-
-      top.fset->rewind();
       state=LOOP;
       m=MOVED;
    case LOOP:
@@ -106,6 +112,8 @@ int FinderJob::Do()
 	 Up();
 	 return MOVED;
       }
+
+      session->Chdir(dir_file(init_dir, top.path),false);
       // at this point either is true:
       // 1. we just process another file (!depth_done)
       // 2. we just returned from a subdir (depth_done)
@@ -115,7 +123,6 @@ int FinderJob::Do()
 	 if((f->defined&f->TYPE) && f->filetype==f->DIRECTORY)
 	 {
 	    Down(f->name);
-	    Enter(f->name);
 	    return MOVED;
 	 }
       }
@@ -154,7 +161,6 @@ int FinderJob::Do()
 	 {
 	    top.fset->next();
 	    Down(f->name);
-	    Enter(f->name);
 	    return MOVED;
 	 }
       }
@@ -186,7 +192,10 @@ void FinderJob::Up()
       Finish();
       return;
    }
-   Exit();
+   /* stack[0] is the dir entry for the argument (ie. ls -d dir), and
+    * stack[1] is the contents (ls dir); don't exit for the first. */
+   if(stack_ptr)
+      Exit();
    delete stack[stack_ptr--];
    if(stack_ptr==-1)
       goto done;
@@ -207,11 +216,13 @@ void FinderJob::Push(FileSet *fset)
       stack=(place**)xrealloc(stack,sizeof(*stack)*stack_allocated);
    }
 
+   if(stack_ptr != 0)
+      fset->ExcludeDots(); /* don't need . and .. (except for stack[0]) */
+
    const char *new_path="";
    if(old_path) // the first path will be empty
       new_path=dir_file(old_path,dir);
 
-   fset->ExcludeDots(); // don't need . and ..
    /* matching exclusions don't include the path, so they operate
     * on the filename portion only */
    if(exclude)
@@ -236,8 +247,9 @@ FinderJob::place::~place()
 
 void FinderJob::Down(const char *p)
 {
-   dir=p;
-   state=INIT;
+   xfree(dir);
+   dir=xstrdup(p);
+   state=START_INFO;
 }
 
 FinderJob::prf_res FinderJob::ProcessFile(const char *d,const FileInfo *f)
@@ -248,7 +260,6 @@ FinderJob::prf_res FinderJob::ProcessFile(const char *d,const FileInfo *f)
 void FinderJob::Init()
 {
    op="find";
-   start_dir=0;
    init_dir=0;
    dir=0;
    errors=0;
@@ -265,12 +276,13 @@ void FinderJob::Init()
 
    file_info_need=0;
    use_cache=true;
+   validate_args=false;
 
    quiet=false;
    maxdepth=-1;
    exclude=0;
 
-   state=INIT;
+   state=START_INFO;
 }
 
 FinderJob::FinderJob(FileAccess *s)
@@ -283,10 +295,21 @@ FinderJob::FinderJob(FileAccess *s)
 void FinderJob::NextDir(const char *d)
 {
    session->Chdir(init_dir,false); // no verification
-   xfree(start_dir);
-   start_dir=xstrdup(dir_file(session->GetCwd(),d));
-   Down(start_dir);
-   Enter(d); /* tell derived that we entered the base path */
+
+#if 0
+   ParsedURL u(d,true);
+   if(u.proto)
+   {
+      session->Close();
+      Reuse(session);
+      FileAccess *newsession=FileAccess::New(&u);
+      newsession->SetPriority(session->GetPriority());
+      session=newsession;
+      d=u.path;
+   }
+#endif
+
+   Down(d);
 }
 
 FinderJob::~FinderJob()
@@ -294,9 +317,9 @@ FinderJob::~FinderJob()
    while(stack_ptr>=0)
       Up();
    xfree(stack);
-   xfree(start_dir);
    xfree(init_dir);
    xfree(exclude);
+   xfree(dir);
    Delete(li);
 }
 
@@ -370,6 +393,7 @@ FinderJob_List::FinderJob_List(FileAccess *s,ArgV *a,FDStream *o)
    show_sl = !o->usesfd(1);
    buf=new IOBufferFDStream(o,IOBuffer::PUT);
    NextDir(a->getcurr());
+   ValidateArgs();
 }
 
 FinderJob_List::~FinderJob_List()
@@ -389,6 +413,7 @@ void FinderJob_List::Finish()
 
 // FinderJob_Cmd implementation
 // process directory tree
+#undef super
 #define super FinderJob
 
 FinderJob::prf_res FinderJob_Cmd::ProcessFile(const char *d,const FileInfo *f)
@@ -397,7 +422,6 @@ FinderJob::prf_res FinderJob_Cmd::ProcessFile(const char *d,const FileInfo *f)
 #define ISLINK ((f->defined&f->TYPE) && f->filetype==f->SYMLINK)
 
    FileAccess *s=session->Clone();
-   s->Chdir(dir_file(start_dir,d),false);
 
    CmdExec *exec=new CmdExec(s);
    exec->SetParentFg(this);
@@ -480,26 +504,6 @@ void FinderJob_Cmd::Finish()
 {
    if(cmd==RM)
    {
-      if(removing_last)
-	 removing_last=false;
-      else
-      {
-	 /* remove the specified directory at the last */
-	 session->Chdir(init_dir,false); // to leave the directory
-	 CmdExec *exec=new CmdExec(session->Clone());
-	 exec->SetParentFg(this);
-	 exec->FeedCmd("rmdir ");
-	 if(quiet)
-	    exec->FeedCmd("-f ");
-	 exec->FeedCmd("-- ");
-	 exec->FeedQuoted(start_dir);
-	 exec->FeedCmd("\n");
-	 AddWaiting(exec);
-	 removing_last=true;
-	 state=WAIT; // it will wait for termination, try to process
-		     // next file and call Finish() again
-	 return;
-      }
    }
    char *d=args->getnext();
    if(!d)
@@ -511,4 +515,3 @@ int FinderJob_Cmd::Done()
 {
    return FinderJob::Done() && args->getcurr()==0;
 }
-

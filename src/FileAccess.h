@@ -331,6 +331,7 @@ public:
 	 priority=p;
 	 current->Timeout(0);
       }
+   int GetPriority() const { return priority; }
 
    // not pretty (FIXME)
    int GetRetries() { return retries; }

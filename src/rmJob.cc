@@ -26,10 +26,19 @@
 #include "rmJob.h"
 #include "plural.h"
 #include "url.h"
+#include "misc.h"
 
 rmJob::rmJob(FileAccess *s,ArgV *a) : TreatFileJob(s,a)
 {
    mode=FA::REMOVE;
+   recurse=false;
+   depth_first=true;
+}
+
+void rmJob::Recurse()
+{
+   set_maxdepth(-1);
+   Need(FileInfo::TYPE);
 }
 
 void  rmJob::SayFinal()
@@ -37,7 +46,7 @@ void  rmJob::SayFinal()
    if(failed==file_count)
       return;
    if(file_count==1)
-      printf(_("%s ok, `%s' removed\n"),op,first);
+      printf(_("%s ok, `%s' removed\n"),op,first->name);
    else if(failed)
    {
       if(mode==FA::REMOVE_DIR)
@@ -58,13 +67,12 @@ void  rmJob::SayFinal()
    }
 }
 
-void rmJob::TreatCurrent()
+void rmJob::TreatCurrent(const char *d, const FileInfo *fi)
 {
-   ParsedURL u(curr,true);
-   if(u.proto)
-      url_session=FA::New(&u);
-   if(url_session)
-      url_session->Open(u.path,mode);
+   /* If we're recursing and this is a directory, rmdir it.  (If we're
+    * not recursing, just send an rm and let it fail.) */
+   if(recurse && (fi->defined&fi->TYPE) && (fi->filetype==fi->DIRECTORY))
+      session->Open(fi->name,FA::REMOVE_DIR);
    else
-      session->Open(curr,mode);
+      session->Open(fi->name,mode);
 }

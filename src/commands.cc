@@ -144,7 +144,15 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "is stored as `-'. You can do `cd -' to change the directory back.\n"
 	 "The previous directory for each site is also stored on disk, so you can\n"
 	 "do `open site; cd -' even after lftp restart.\n")},
-   {"chmod",   cmd_chmod,   N_("chmod mode file..."), 0},
+   {"chmod",   cmd_chmod,   N_("chmod [OPTS] mode file..."),
+	 N_("Usage: chmod [OPTION]... MODE[,MODE]... FILE...\n"
+	    "or:  chmod [OPTION]... OCTAL-MODE FILE...\n"
+	    "Change the mode of each FILE to MODE.\n"
+	    "\n"
+	    " -c, --changes        - like verbose but report only when a change is made\n"
+	    " -f, --quiet          - suppress most error messages\n"
+	    " -v, --verbose        - output a diagnostic for every file processed\n"
+	    " -R, --recursive      - change files and directories recursively\n")},
    {"close",   cmd_close,   "close [-a]",
 	 N_("Close idle connections. By default only with current server.\n"
 	 " -a  close idle connections with all servers\n")},
@@ -1618,29 +1626,18 @@ CMD(rm)
 	 return 0;
       }
    }
-   args->back();
-   char *curr=args->getnext();
-   if(curr==0)
+
+   if(args->getcurr()==0)
       goto print_usage;
 
-   if(recursive)
-   {
-      FinderJob *j=new FinderJob_Cmd(Clone(),args,FinderJob_Cmd::RM);
-      args=0;
-      if(silent)
-	 j->BeQuiet();
-      return j;
-   }
-
    rmJob *j=(rmdir?
-	     new rmdirJob(Clone(),new ArgV(args->a0())):
-	     new rmJob(Clone(),new ArgV(args->a0())));
+	     new rmdirJob(Clone(),args):
+	     new rmJob(Clone(),args));
 
-   while(curr)
-   {
-      j->AddFile(curr);
-      curr=args->getnext();
-   }
+   if(recursive)
+      j->Recurse();
+
+   args=0;
 
    if(silent)
       j->BeQuiet();
@@ -2460,12 +2457,12 @@ CMD(find)
       {"maxdepth",required_argument,0,'d'},
       {0,0,0,0}
    };
-   int opt;
+   int opt, longopt;
    int maxdepth = -1;
    const char *op=args->a0();
 
    args->rewind();
-   while((opt=args->getopt_long("+d:",find_options,0))!=EOF)
+   while((opt=args->getopt_long("+d:",find_options,&longopt))!=EOF)
    {
       switch(opt)
       {
@@ -2484,7 +2481,7 @@ CMD(find)
    }
 
    if(!args->getcurr())
-      args->Append("");
+      args->Append(".");
    FinderJob_List *j=new class FinderJob_List(Clone(),args,
       output?output:new FDStream(1,"<stdout>"));
    j->set_maxdepth(maxdepth);
@@ -2683,19 +2680,79 @@ CMD(glob)
 
 CMD(chmod)
 {
-   if(args->count()<3)
+   ChmodJob::verbosity verbose = ChmodJob::V_NONE;
+   bool recurse = false, quiet = false;
+
+   static struct option chmod_options[]=
    {
-      eprintf(_("Usage: %s mode file...\n"),args->a0());
+      {"verbose",no_argument,0,'v'},
+      {"changes",no_argument,0,'c'},
+      {"recursive",no_argument,0,'R'},
+      {"silent",no_argument,0,'f'},
+      {"quiet",no_argument,0,'f'},
+      {0,0,0,0}
+   };
+   int opt;
+   int modeind = 0;
+
+   while((opt=args->getopt_long("vcRfrwxXstugoa,+-=",chmod_options,0))!=EOF)
+   {
+      switch(opt)
+      {
+      case 'r': case 'w': case 'x':
+      case 'X': case 's': case 't':
+      case 'u': case 'g': case 'o':
+      case 'a':
+      case ',':
+      case '+': case '=':
+	 modeind = optind?optind-1:1;
+	 break; /* mode string that begins with - */
+
+      case 'v':
+	 verbose=ChmodJob::V_ALL;
+	 break;
+      case 'c':
+	 verbose=ChmodJob::V_CHANGES;
+	 break;
+      case 'R':
+	 recurse = true;
+	 break;
+      case 'f':
+	 quiet = true;
+	 break;
+
+      case '?':
+      usage:
+	 eprintf(_("Usage: %s [OPTS] mode file...\n"),args->a0());
+	 return 0;
+      }
+   }
+
+   if(modeind == 0)
+      modeind = args->getindex();
+
+   char *arg = alloca_strdup(args->getarg(modeind));
+   if(!arg)
+      goto usage;
+   args->delarg(modeind);
+
+   if(!args->getcurr())
+      goto usage;
+
+   mode_change *m = mode_compile(arg, MODE_MASK_ALL);
+   if(m == MODE_INVALID)
+   {
+      eprintf(_("invalid mode string: %s\n"), arg);
       return 0;
    }
-   int m;
-   if(sscanf(args->getarg(1),"%o",&m)!=1)
-   {
-      eprintf(_("%s: %s - not an octal number\n"),args->a0(),args->getarg(1));
-      return 0;
-   }
-   args->delarg(1);
-   Job *j=new ChmodJob(Clone(),m,args);
+
+   ChmodJob *j=new ChmodJob(Clone(),args);
+   j->SetVerbosity(verbose);
+   j->SetMode(m);
+   if(quiet)
+      j->BeQuiet(); /* does not affect messages from Verbosity */
+   if(recurse)
+      j->Recurse();
    args=0;
    return j;
 }

@@ -109,4 +109,6 @@ char *xstrftime(const char *format, const struct tm *tm);
 char *xvasprintf(const char *format, va_list ap);
 char *xasprintf(const char *format, ...);
 
+char *dirname_alloc(const char *fn);
+
 #endif // MISC_H

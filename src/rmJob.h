@@ -25,13 +25,16 @@
 
 class rmJob : public TreatFileJob
 {
-   void TreatCurrent();
+   void TreatCurrent(const char *, const FileInfo *);
 
 protected:
    FA::open_mode mode;
 
+   bool recurse;
+
 public:
-   void	 SayFinal();
+   void	SayFinal();
+   void Recurse(); // rm -r
 
    rmJob(FileAccess *session,ArgV *a);
 };

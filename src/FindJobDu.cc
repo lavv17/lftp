@@ -124,10 +124,11 @@ FinderJob::prf_res FinderJob_Du::ProcessFile(const char *d,const FileInfo *fi)
       size_stack[stack_ptr].size += add;
    tot_size += add;
 
-   if(all_files) {
+   if(all_files || stack_ptr == -1) {
       /* this is <, where Pop() is <=, since the file counts in depth */
       if(max_print_depth == -1 || stack_ptr < max_print_depth)
-	 print_size(fi->size, dir_file(size_stack[stack_ptr].dir,fi->name));
+	 print_size(fi->size,
+	       dir_file(stack_ptr == -1? "":size_stack[stack_ptr].dir,fi->name));
    }
 
    return PRF_OK;

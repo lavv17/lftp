@@ -34,9 +34,14 @@ class GetFileInfo: public ListInfo
    char *dir;
 
    /* directory we've actually listed: */
-   char *realdir;
+   char *path_to_prefix;
 
+   /* directory we started in: */
    char *origdir;
+
+   /* In showdir mode, we make sure the path actually exists; this is
+    * the filename to look for. */
+   char *verify_fn;
 
    bool showdir;
 
@@ -47,6 +52,10 @@ class GetFileInfo: public ListInfo
    bool tried_file;
    /* whether we found out the file type from cache */
    bool from_cache;
+   /* whether the given path was a file or directory. */
+   bool was_directory;
+   /* if true, prepend the appropriate relative path to the result */
+   bool prepend_path;
 
    char *saved_error_text;
 
@@ -56,6 +65,8 @@ public:
 
    int Do();
    const char *Status();
+   bool WasDirectory() const { return was_directory; }
+   void DontPrependPath() { prepend_path=false; }
 };
 
 #endif /* GETFILEINFO_H */

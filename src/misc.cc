@@ -748,3 +748,28 @@ char *xasprintf(const char *format, ...)
    va_end(va);
    return ret;
 }
+
+/* /file/name -> /file
+ * /file -> /
+ * file/name -> "file"
+ * file/name/ -> "file"
+ * file -> ""
+ * note: last differs from dirname (wwould return ".")
+ *
+ */
+char *dirname_alloc(const char *fn)
+{
+   char *ret=xstrdup(fn);
+   /* remove trailing slash */
+   if(ret[strlen(ret)-1] == '/')
+      ret[strlen(ret)-1] = 0;
+
+   char *slash = strrchr(ret, '/');
+   if(!slash)
+      ret[0]=0; /* file with no path */
+   else if(slash == fn)
+      ret[1]=0; /* the slash is the first character */
+   else
+      *slash=0;
+   return ret;
+}

@@ -26,12 +26,13 @@
 #include "Job.h"
 #include "buffer.h"
 #include "ArgV.h"
+#include "GetFileInfo.h"
 
 class FinderJob : public SessionJob
 {
-   const char *dir;
+   char *dir;
    int errors;
-   ListInfo *li;
+   GetFileInfo *li;
 
    class place
       {
@@ -57,15 +58,21 @@ class FinderJob : public SessionJob
 
    bool depth_done;
    unsigned file_info_need;
+   /* In certain circumstances, we can skip a LIST altogether and just
+    * pass argument names on: we don't need anything other than the name
+    * (no other file_info_needs) and we're not recursing (which would imply
+    * needing the type.)  This means arguments that don't actually exist
+    * get passed on; if this is inappropriate (ie for a simple Find),
+    * call ValidateArgs(). */
+   bool validate_args;
 
    char *exclude;
 
 protected:
-   enum state_t { INIT, CD, INFO, LOOP, WAIT, DONE };
+   enum state_t { START_INFO, INFO, LOOP, WAIT, DONE };
    state_t state;
 
    const char *op;
-   char *start_dir;
    char *init_dir;
 
    enum prf_res { PRF_FATAL, PRF_ERR, PRF_OK, PRF_WAIT, PRF_LATER };
@@ -83,6 +90,7 @@ protected:
    void NextDir(const char *d);
    const char *GetCur() const { return dir; }
    void Need(unsigned need) { file_info_need=need; }
+   void ValidateArgs() { validate_args=true; }
 
 public:
    int Do();
@@ -91,10 +99,10 @@ public:
 
    void Init();
    FinderJob(FileAccess *s);
-   ~FinderJob();
+   virtual ~FinderJob();
 
    void ShowRunStatus(StatusLine *sl);
-   void PrintStatus(int v);
+   virtual void PrintStatus(int v);
 
    void BeQuiet() { quiet=true; }
    void SetExclude(const char *excl) { xfree(exclude); exclude = xstrdup(excl); }

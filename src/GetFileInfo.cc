@@ -29,29 +29,36 @@
  * dir/ to a file).  It's not possible to fix completely, and a partial fix
  * would cause other problems, so it's not worth bothering with.
  */
+
 GetFileInfo::GetFileInfo(FileAccess *a, const char *_dir, bool _showdir)
    : ListInfo(a,0)
 {
-   dir=xstrdup(_dir? _dir:"");
+   dir=xstrdup(_dir? _dir:"", 16);
+
    showdir=_showdir;
    state=INITIAL;
    tried_dir=tried_file=false;
    result=0;
-   realdir=0;
+   path_to_prefix=0;
+   verify_fn=0;
    li=0;
    from_cache=0;
    saved_error_text=0;
+   was_directory=0;
+   prepend_path=true;
 
    origdir=xstrdup(session->GetCwd());
 }
 
 GetFileInfo::~GetFileInfo()
 {
+   session->Close();
    Delete(li);
    xfree(saved_error_text);
    xfree(dir);
-   xfree(realdir);
+   xfree(path_to_prefix);
    xfree(origdir);
+   xfree(verify_fn);
 }
 
 int GetFileInfo::Do()
@@ -67,6 +74,8 @@ int GetFileInfo::Do()
    case INITIAL:
       state=CHANGE_DIR;
 
+      if(showdir)
+	 tried_dir=true;
       /* if we're not showing directories, try to skip tests we don't need */
       if(use_cache && !showdir) switch(LsCache::IsDirectory(session,dir))
       {
@@ -83,6 +92,7 @@ int GetFileInfo::Do()
       assert(!tried_dir || !tried_file); /* always do at least one */
 
    case CHANGE_DIR:
+   {
       if(tried_dir && tried_file) {
 	 /* We tried both; no luck.  Fail. */
 	 SetError(saved_error_text);
@@ -91,33 +101,51 @@ int GetFileInfo::Do()
 	 return MOVED;
       }
 
+      const char *cd_path;
       if(!tried_dir)
       {
 	 /* First, try to treat the path as a directory. */
 	 tried_dir=true;
-	 realdir = xstrdup(dir);
+	 cd_path = dir;
+	 path_to_prefix=xstrdup(dir);
+	 was_directory=true;
       }
       else if(!tried_file)
       {
 	 tried_file=true;
 
-	 xfree(realdir);
-	 realdir = xstrdup(dir);
-	 /* If the path ends with a slash, and we're showing directories, remove it. */
-	 if(*realdir && realdir[strlen(realdir)-1] == '/')
-	    realdir[strlen(realdir)-1] = 0;
+	 /* CD into the full path (without validation), and grab the
+	  * path's basename. */
+	 session->Chdir(dir, false);
+	 verify_fn = xstrdup(basename_ptr(session->GetCwd()));
 
-	 char *slash = strrchr(realdir, '/');
-	 if(!slash)
-	    realdir=xstrdup(""); /* file with no path */
-	 else
-	    *slash=0;
+	 /* Now go to the parent directory to list the directory we now
+	  * have a name for: */
+	 cd_path = "..";
+
+	 xfree(path_to_prefix);
+	 path_to_prefix=dirname_alloc(dir);
+
+	 /* Special case: looking up "/". Make a phony "/" entry. */
+	 if(showdir && !strcmp(verify_fn, "/"))
+	 {
+	    FileInfo *fi = new FileInfo(verify_fn);
+	    fi->SetType(fi->DIRECTORY);
+
+	    result = new FileSet;
+	    result->Add(fi);
+	    state=DONE;
+	    return MOVED;
+	 }
+
+	 was_directory=false;
       }
 
       /* See top comments for logic here: */
-      session->Chdir(realdir, !from_cache);
+      session->Chdir(cd_path, !from_cache);
       state=CHANGING_DIR;
       m=MOVED;
+   }
 
    case CHANGING_DIR:
       res=session->Done();
@@ -162,15 +190,13 @@ int GetFileInfo::Do()
       result=li->GetResult();
       Delete(li); li=0;
 
-      /* If this was a listing of the dirname: */
-      if(strcmp(realdir, dir)) {
-	 char *filename = xstrdup(basename_ptr(dir));
-	 if(filename[strlen(filename)-1] == '/')
-	    filename[strlen(filename)-1] = 0;
+      /* If this was a listing of the basename: */
+      if(!was_directory) {
+	 if(verify_fn[strlen(verify_fn)-1] == '/')
+	    verify_fn[strlen(verify_fn)-1] = 0;
 
 	 /* Find the file with our filename: */
-	 FileInfo *file = result->FindByName(filename);
-	 xfree(filename);
+	 const FileInfo *file = result->FindByName(verify_fn);
 
 	 if(!file) {
 	    /* The file doesn't exist; fail. */
@@ -193,17 +219,32 @@ int GetFileInfo::Do()
 	 }
 
 	 FileSet *newresult=new FileSet();
-	 newresult->Add(new FileInfo(*file));
+	 FileInfo *copy = new FileInfo(*file);
+
+	 newresult->Add(copy);
 	 delete result;
 	 result=newresult;
       }
-
-      result->PrependPath(realdir);
 
 done:
    case DONE:
       if(!done)
       {
+	 if(showdir && result->get_fnum())
+	 {
+	    FileInfo *f = (*result)[0];
+	    /* Make sure the filename is what was requested (ie ".."). */
+	    char *fn = basename_ptr(dir);
+	    f->SetName(*fn? fn:".");
+
+	    /* If we're in show_dir mode, was_directory will always be false;
+	     * set it to whether the single file is actually a directory or not. */
+	    if(f->defined&f->TYPE)
+	       was_directory = (f->filetype == f->DIRECTORY);
+	 }
+
+	 if(prepend_path)
+	    result->PrependPath(path_to_prefix);
 	 done=true;
 	 session->Chdir(origdir, false);
       }

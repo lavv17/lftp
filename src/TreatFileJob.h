@@ -22,48 +22,34 @@
 #define TREATFILEJOB_H
 
 #include "Job.h"
+#include "FindJob.h"
 
 class StatusLine;
 class ArgV;
 
-class TreatFileJob : public SessionJob
+class TreatFileJob : public FinderJob
 {
 protected:
    ArgV	 *args;
-   const char *curr;
-   const char *first;
-   const char *op;
+   const FileInfo *curr;
+   FileInfo *first;
    int	 failed,file_count;
-   bool	 quiet;
-   bool  done;
 
-   virtual void	TreatCurrent() = 0;
+   virtual void	TreatCurrent(const char *d,const FileInfo *fi) = 0;
+   virtual void CurrentFinished(const char *d,const FileInfo *fi) { }
 
-   FA *url_session;
-   FA *Session() { return url_session?url_session:session; }
-   void Reuse()
-      {
-	 if(url_session)
-	 {
-	    SessionPool::Reuse(url_session);
-	    url_session=0;
-	 }
-      }
+   void Begin(const char *d);
+
+   /* virtuals */
+   void Finish();
+   prf_res ProcessFile(const char *d,const FileInfo *fi);
 
 public:
-   int	 Do();
-   int	 Done() { return done; }
-   int	 ExitCode() { return failed; }
-
    void	 PrintStatus(int);
    void	 ShowRunStatus(StatusLine *);
 
    TreatFileJob(FileAccess *session,ArgV *a);
-   ~TreatFileJob();
-
-   void	 BeQuiet() { quiet=true; }
-
-   void	 AddFile(const char *f);
+   virtual ~TreatFileJob();
 };
 
 #endif // TREATFILEJOB_H

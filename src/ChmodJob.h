@@ -24,15 +24,39 @@
 #define CHMODJOB_H
 
 #include "TreatFileJob.h"
+#include "FileSet.h"
+CDECL_BEGIN
+#include "modechange.h"
+CDECL_END
 
 class ChmodJob : public TreatFileJob
 {
-   void TreatCurrent();
+public:
+   enum verbosity { V_NONE, V_CHANGES, V_ALL };
 
-   int m;
+private:
+   void TreatCurrent(const char *d,const FileInfo *fi);
+   void CurrentFinished(const char *d,const FileInfo *fi);
+
+   void Init();
+   void Report(const char *d,const FileInfo *fi, bool success);
+   bool RelativeMode(const mode_change *m) const;
+
+   verbosity verbose;
+   mode_change *m;
+   int simple_mode;
+   int GetMode(const FileInfo *fi) const;
 
 public:
-   ChmodJob(FileAccess *s,int new_m,ArgV *a);
+   /* if you use this constructor, also set a mode with SetMode() */
+   ChmodJob(FileAccess *s,ArgV *a);
+   /* simple "chmod 123" interface: */
+   ChmodJob(FileAccess *s,int m,ArgV *a);
+   ChmodJob::~ChmodJob();
+
+   void SetVerbosity(verbosity v);
+   void SetMode(mode_change *newm);
+   void Recurse();
 };
 
 #endif//CHMODJOB_H

@@ -1,3 +1,26 @@
+2001-12-11  Glenn Maynard <g_ld@zewt.org>
+
+	* ChmodJob.cc, ChmodJob.h: Add relative paths, -v, -c, -R.  Maintain
+          simple numeric mode interface.
+	* FileSetOutput.cc: make sure "cls -ld ." shows the directory, even
+          without "show_dots".
+	* FindJob.cc, FindJob.h: Accept files as well as directories to NextDir().
+          Pass top-level path to ProcessFile. Don't get listing if we don't need it.
+	* FindJobDu.cc: print files with "du filename" even without -a.
+	* GetFileInfo.cc, GetFileInfo.h: Make prefixing the path optional.
+          Add member to find out whether the given path was a file or directory.
+          Fix verification with ".." at the end of path.
+          If ".." was requested (with show_dirs on), return "..", not the
+          name of the directory, etc.
+	* TreatFileJob.cc, TreatFileJob.h: Derive from FinderJob.  AddFile() no
+          longer needed.
+	* commands.cc: chmod, rm, rmdir updated.  Give find "." instead of "" by
+          default.
+	* misc.cc, misc.h: Add dirname_alloc().  (Semantics are not exactly the
+          same as dirname.)
+	* rmJob.cc, rmJob.h: Handle rm -r directly.
+	* FileAccess.h: (GetPriority) new method.
+
 2001-12-11  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* mkdirJob.cc: set priority on newly created url_session.

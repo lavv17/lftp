@@ -71,7 +71,8 @@ void FileSetOutput::print(FileSet &fs, Buffer *o) const
 
    for(int i = 0; fs[i]; i++) {
       const FileInfo *f = fs[i];
-      if(!showdots && (!strcmp(basename_ptr(f->name),".") || !strcmp(basename_ptr(f->name),"..")))
+      if(!showdots && !list_directories &&
+	    (!strcmp(basename_ptr(f->name),".") || !strcmp(basename_ptr(f->name),"..")))
 	 continue;
 
       if(pat && *pat &&
