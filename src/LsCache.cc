@@ -317,7 +317,7 @@ void LsCache::SetDirectory(FileAccess *p_loc, const char *path, bool dir)
    p_loc->Chdir(path,false);
    const char *entry = dir? "1":"0";
    LsCache::Add(p_loc,"",FileAccess::CHANGE_DIR, entry, strlen(entry));
-   p_loc->Chdir(origdir,false);
+   p_loc->SetCwd(origdir);
 }
 
 /* This is a hint function. If file type is really needed, use GetFileInfo

@@ -39,8 +39,8 @@ protected:
 
    void RemoveBackupFile();
 
-   FileCopyPeer *NoProtoSrc(const char *src);
-   FileCopyPeer *NoProtoDst(const char *dst);
+   FileCopyPeer *NoProtoSrc(const char *src,bool from_local);
+   FileCopyPeer *NoProtoDst(const char *dst,bool to_local);
    FileCopyPeer *CreateCopyPeer(const char *path,FA::open_mode mode);
 
 public:

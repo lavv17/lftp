@@ -1,3 +1,9 @@
+2003-06-26  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* LsCache.cc: (SetDirectory) use SetCwd to restore cwd, this fixes
+	  a problem with home values without leading slash.
+	* GetJob.cc, GetJob.h: re-do file: handling.
+
 2003-06-21  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc: optimize FileCopyPeerFDStream speed by writing out

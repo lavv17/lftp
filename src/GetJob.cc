@@ -56,9 +56,9 @@ int   GetJob::Do()
    return m;
 }
 
-FileCopyPeer *GetJob::NoProtoSrc(const char *src)
+FileCopyPeer *GetJob::NoProtoSrc(const char *src,bool from_local)
 {
-   if(reverse)
+   if(from_local)
    {
       const char *f=(cwd && src[0]!='/') ? dir_file(cwd,src) : src;
       return FileCopyPeerFDStream::NewGet(f);
@@ -68,9 +68,9 @@ FileCopyPeer *GetJob::NoProtoSrc(const char *src)
    s->DontReuseSession();
    return s;
 }
-FileCopyPeer *GetJob::NoProtoDst(const char *dst)
+FileCopyPeer *GetJob::NoProtoDst(const char *dst,bool to_local)
 {
-   if(reverse)
+   if(!to_local)
    {
       FileCopyPeerFA *s=new FileCopyPeerFA(session,dst,FA::STORE);
       s->DontReuseSession();
@@ -117,17 +117,14 @@ FileCopyPeer *GetJob::NoProtoDst(const char *dst)
 FileCopyPeer *GetJob::CreateCopyPeer(const char *path,FA::open_mode mode)
 {
    ParsedURL url(path);
-   const char *plain_path=0;
    if(!url.proto)
-      plain_path=path;
+      return (mode==FA::STORE)
+	 ? NoProtoDst(path,!reverse)
+	 : NoProtoSrc(path,reverse);
    else if(!strcasecmp(url.proto,"file"))
-      plain_path=url.path;
-   if(plain_path)
-   {
-      if(mode==FA::STORE)
-	 return NoProtoDst(plain_path);
-      return NoProtoSrc(plain_path);
-   }
+      return (mode==FA::STORE)
+	 ? NoProtoDst(url.path,true)
+	 : NoProtoSrc(url.path,true);
    return new FileCopyPeerFA(&url,mode);
 }
 
