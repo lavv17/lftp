@@ -96,11 +96,7 @@ class Ftp : public FileAccess
    void  AddResp(int exp,int fail,int (Ftp::*ck)(int,int)=0,bool log=false);
    int   CheckResp(int resp);
    void  PopResp();
-   void	 EmptyRespQueue()
-   {
-      RQ_head=RQ_tail=0;
-      multiline_code=0;
-   }
+   void	 EmptyRespQueue();
    int   RespQueueIsEmpty() { return RQ_head==RQ_tail; }
    int	 RespQueueSize() { return RQ_tail-RQ_head; }
 

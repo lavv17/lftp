@@ -665,6 +665,7 @@ void  Ftp::GetBetterConnection(int level)
 
 	 set_real_cwd(o->real_cwd);
 	 o->set_real_cwd(0);
+      	 o->Disconnect();
       }
    }
 }
@@ -1499,6 +1500,9 @@ void  Ftp::Disconnect()
    send_cmd_count=0;
    flags&=~SYNC_WAIT;
    EmptyRespQueue();
+   xfree(send_cmd_buffer);
+   send_cmd_buffer=send_cmd_ptr=0;
+   send_cmd_alloc=send_cmd_count=0;
 }
 
 void  Ftp::DataClose()
@@ -1585,12 +1589,14 @@ void  Ftp::SendCmd(const char *cmd)
    prev_ch=0;
    while((ch=*cmd++)!=0)
    {
-      if(send_cmd_ptr-send_cmd_buffer+send_cmd_count>=send_cmd_alloc-1)
+      if(send_cmd_ptr-send_cmd_buffer+send_cmd_count+1>=send_cmd_alloc)
       {
 	 if(send_cmd_ptr-send_cmd_buffer<2)
 	 {
 	    int shift=send_cmd_ptr-send_cmd_buffer;
-	    send_cmd_buffer=(char*)xrealloc(send_cmd_buffer,send_cmd_alloc+=0x1000);
+	    if(send_cmd_alloc==0)
+	       send_cmd_alloc=0x80;
+	    send_cmd_buffer=(char*)xrealloc(send_cmd_buffer,send_cmd_alloc*2);
 	    send_cmd_ptr=send_cmd_buffer+shift;
 	 }
 	 memmove(send_cmd_buffer,send_cmd_ptr,send_cmd_count);
@@ -1970,6 +1976,15 @@ void  Ftp::AddResp(int exp,int fail, int (Ftp::*ck)(int,int),bool log)
    RespQueue[RQ_tail].check_resp=ck;
    RespQueue[RQ_tail].log_resp=log;
    RQ_tail=newtail;
+}
+
+void  Ftp::EmptyRespQueue()
+{
+   RQ_head=RQ_tail=0;
+   multiline_code=0;
+   xfree(RespQueue);
+   RespQueue=0;
+   RQ_alloc=0;
 }
 
 int   Ftp::CheckResp(int act)
