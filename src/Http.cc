@@ -405,11 +405,6 @@ void Http::SendCacheControl()
 
 bool Http::ModeSupported()
 {
-#ifndef HAVE_EXPAT_H
-   // without XML parser it is meaningless to retrieve XML file info.
-   if(mode==MP_LIST)
-      return false;
-#endif
    switch((open_mode)mode)
    {
    case CLOSED:
@@ -427,8 +422,14 @@ bool Http::ModeSupported()
    case REMOVE:
    case LONG_LIST:
    case RENAME:
-   case MP_LIST:
       return true;
+   case MP_LIST:
+#ifdef HAVE_EXPAT_H
+      return QueryBool("use-propfind",hostname);
+#else
+      // without XML parser it is meaningless to retrieve XML file info.
+      return false;
+#endif
    }
    abort(); // should not happen
 }
@@ -575,7 +576,13 @@ void Http::SendRequest(const char *connection,const char *f)
 	 goto retrieve;
       else if(mode==MAKE_DIR)
       {
-	 SendMethod("MKCOL",efile);
+	 if(QueryBool("use-mkcol"))
+	    SendMethod("MKCOL",efile);
+	 else
+	 {
+	    SendMethod("PUT",efile);
+	    Send("Content-Length: 0\r\n");
+	 }
 	 pos=entity_size=0;
       }
       else if(mode==MP_LIST)
@@ -1425,7 +1432,8 @@ int Http::Do()
 	 {
 	    const char *closure=file;
 	    if(status_code==400  // Bad request
-	    || status_code==405) // Method Not Allowed
+	    || status_code==405  // Method Not Allowed
+	    || status_code==501) // Not Implemented
 	    {
 	       code=NOT_SUPP;
 	       closure=last_method;

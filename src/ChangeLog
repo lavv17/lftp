@@ -3,6 +3,8 @@
 	* Http.cc: set C locale before time conversion (fixes Last-Modified
 	  parsing).
 	* FileSetOutput.cc: get time format at run time, not statically.
+	* Http.cc, resource.cc: add use-propfind and use-mkcol settings, turn
+	  them off by default for hftp.
 
 2005-02-23  Alexander V. Lukyanov <lav@yars.free.net>
 
