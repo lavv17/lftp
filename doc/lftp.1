@@ -323,6 +323,10 @@ If both directories are omitted, current local and remote directories are used.
 .PP
 \fIRX\fP is an extended regular expression, just like in
 .BR egrep (1).
+.PP
+Note that when -R is used (reverse mirror), symbolic links are not created
+on server, because ftp protocol cannot do it. To upload files the links refer
+to, use `mirror -RL' command (treat symbolic links as files).
 
 .B mkdir
 .RB "[" -p "] " \fIdir(s)\fP

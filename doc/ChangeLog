@@ -1,3 +1,7 @@
+1999-06-14	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document symbolic link handling on mirror -R.
+
 1999-06-02	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: updates for 2.0; fixes.
