@@ -2,6 +2,7 @@
 
 	* keyvalue.cc: ignore certain lock errors.
 	* Makefile.am: install modules into pkglibdir/version dir.
+	* resource.cc, Http.cc: http:referer, hftp:use-type new settings.
 
 2001-03-13  Alexander V. Lukyanov  <lav@yars.free.net>
 

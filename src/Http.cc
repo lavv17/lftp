@@ -295,7 +295,8 @@ void Http::SendMethod(const char *method,const char *efile)
 
    if(hftp && mode!=LONG_LIST && mode!=CHANGE_DIR && mode!=MAKE_DIR
    && mode!=REMOVE && mode!=REMOVE_DIR
-   && (strlen(efile)<7 || strncmp(efile+strlen(efile)-7,";type=",6)))
+   && (strlen(efile)<7 || strncmp(efile+strlen(efile)-7,";type=",6))
+   && (bool)Query("use-type",hostname))
    {
       char *pfile=alloca_strdup2(efile,7);
       sprintf(pfile,"%s;type=%c",efile,ascii?'a':'i');
@@ -308,15 +309,38 @@ void Http::SendMethod(const char *method,const char *efile)
       Send("User-Agent: %s\r\n",user_agent);
    if(!hftp)
    {
-      const char *accept=Query("accept");
+      const char *content_type=0;
+      if(!strcmp(method,"PUT"))
+	 content_type=Query("put-content-type",hostname);
+      else if(!strcmp(method,"POST"))
+	 content_type=Query("post-content-type",hostname);
+      if(content_type && content_type[0])
+	 Send("Content-Type: %s\r\n",content_type);
+
+      const char *accept=Query("accept",hostname);
       if(accept && accept[0])
 	 Send("Accept: %s\r\n",accept);
-      accept=Query("accept-language");
+      accept=Query("accept-language",hostname);
       if(accept && accept[0])
 	 Send("Accept-Language: %s\r\n",accept);
-      accept=Query("accept-charset");
+      accept=Query("accept-charset",hostname);
       if(accept && accept[0])
 	 Send("Accept-Charset: %s\r\n",accept);
+
+      const char *referer=Query("referer",hostname);
+      const char *slash="";
+      if(!xstrcmp(referer,"."))
+      {
+	 referer=GetConnectURL();
+	 slash="/";
+      }
+      if(referer && referer[0])
+	 Send("Referer: %s%s\r\n",referer,slash);
+
+      char *cookie=MakeCookie(hostname,efile+(proxy?url::path_index(efile):0));
+      if(cookie && cookie[0])
+	 Send("Cookie: %s\r\n",cookie);
+      xfree(cookie);
    }
 }
 
@@ -521,21 +545,6 @@ add_path:
    {
       Send("Pragma: no-cache\r\n"); // for HTTP/1.0 compatibility
       Send("Cache-Control: no-cache\r\n");
-   }
-   if(!hftp)
-   {
-      char *cookie=MakeCookie(hostname,efile+(proxy?url::path_index(efile):0));
-      if(cookie && cookie[0])
-	 Send("Cookie: %s\r\n",cookie);
-      xfree(cookie);
-
-      const char *content_type=0;
-      if(!strcmp(last_method,"PUT"))
-	 content_type=Query("put-content-type",hostname);
-      else if(!strcmp(last_method,"POST"))
-	 content_type=Query("post-content-type",hostname);
-      if(content_type && content_type[0])
-	 Send("Content-Type: %s\r\n",content_type);
    }
    if(mode==ARRAY_INFO && !use_head)
       connection="close";

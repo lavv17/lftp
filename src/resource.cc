@@ -137,6 +137,7 @@ static ResDecl
    ResDecl22 ("hftp:proxy",		  "",	   HttpProxyValidate,0),
    ResDecl22a("hftp:use-authorization",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl23 ("hftp:use-head",		  "yes",   ResMgr::BoolValidate,0),
+   ResDecl23a("hftp:use-type",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl24a("http:accept",		  "*/*",   0,0),
    ResDecl24b("http:accept-language",	  "",	   0,0),
    ResDecl24c("http:accept-charset",	  "",	   0,0),
@@ -148,6 +149,7 @@ static ResDecl
    ResDecl29a("http:post-content-type",   "application/x-www-form-urlencoded",0,0),
    ResDecl29 ("http:put-method",	  "PUT",   PutOrPost,0),
    ResDecl30 ("http:put-content-type",	  "",	   0,0),
+   ResDecl30b("http:referer",		  ".",	   0,0),
 #ifdef USE_SSL
    ResDecl30a("https:proxy",		  "",	   HttpProxyValidate,0),
 #endif
