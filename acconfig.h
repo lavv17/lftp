@@ -179,6 +179,8 @@ CDECL const char *strerror(int);
 # define textdomain(Domain)
 # define _(Text) Text
 # define gettext(z) z
+# define dgettext(d,z) z
+# define dcgettext(d,z,c) z
 #endif
 #define N_(Text) Text
 

@@ -1,3 +1,7 @@
+2001-10-22	Glenn Maynard <glenn@zewt.org>
+
+	* acconfig.h: define dgettext and dcgettext when nls is disabled.
+
 2001-09-07	albert chin <china@thewrittenword.com>
 
 	* configure.in: add trionan.o to LIBOBJS.
