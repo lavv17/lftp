@@ -190,25 +190,32 @@ void  Job::SortJobs()
    }
 }
 
+void Job::ListOneJobRecursively(int verbose,int indent)
+{
+   if(jobno>=0 || cmdline)
+   {
+      printf("%*s",indent,"");
+      if(jobno>=0)
+	 printf("[%d] ",jobno);
+      printf("%s\n",cmdline?cmdline:"?");
+   }
+   PrintStatus(verbose);
+   ListJobs(verbose,indent+1);
+}
+
 void  Job::ListJobs(int verbose,int indent)
 {
    if(indent==0)
       SortJobs();
 
+   // list the foreground job first.
+   if(waiting && waiting!=this && waiting->parent==this)
+      waiting->ListOneJobRecursively(verbose,indent);
+
    for(Job *scan=chain; scan; scan=scan->next)
    {
-      if(!scan->Done() && scan->parent==this)
-      {
-	 if(scan->jobno>=0 || scan->cmdline)
-	 {
-	    printf("%*s",indent,"");
-	    if(scan->jobno>=0)
-	       printf("[%d] ",scan->jobno);
-	    printf("%s\n",scan->cmdline?scan->cmdline:"?");
-	 }
-	 scan->PrintStatus(verbose);
-	 scan->ListJobs(verbose,indent+1);
-      }
+      if(!scan->Done() && scan->parent==this && waiting!=scan)
+	 scan->ListOneJobRecursively(verbose,indent);
    }
 }
 

@@ -60,6 +60,7 @@ public:
    long GetPos()  { return c->GetPos(); }
    float GetRate() { return c->GetRate(); }
    long GetETA() { return c->GetETA(); }
+   long GetETA(long rem) { return c->GetETA(rem); }
    void SetRange(long s,long lim) { c->SetRange(s,lim); }
    void SetDate(time_t d) { c->SetDate(d); }
    void SetSize(long s)   { c->SetSize(s); }

@@ -1,3 +1,11 @@
+2000-01-01  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CopyJob.h: add GetETA(long remainder) method.
+	* Job.cc, Job.h: (ListOneJobRecursively) new method; list waiting
+	  job before others.
+	* LocalAccess.cc: expand tilde (finally).
+	* pgetJob.cc, pgetJob.h: re-implement PrintStatus method.
+
 1999-12-30  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileAccess.cc: fix SetPasswordGlobal.

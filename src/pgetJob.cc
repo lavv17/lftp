@@ -97,10 +97,13 @@ int pgetJob::Do()
 	 chunks[i]=NewChunk(s,name,local,curr_offs-chunk_size,curr_offs);
 	 chunks[i]->parent=this;
 	 chunks[i]->cmdline=(char*)xmalloc(7+2*20+1);
-	 sprintf(chunks[i]->cmdline,"chunk %ld-%ld",
-				    curr_offs-chunk_size,curr_offs);
+	 sprintf(chunks[i]->cmdline,"\\chunk %ld-%ld",
+				    curr_offs-chunk_size,curr_offs-1);
 	 curr_offs-=chunk_size;
       }
+      xfree(cp->cmdline);
+      cp->cmdline=(char*)xmalloc(7+2*20+1);
+      sprintf(cp->cmdline,"\\chunk %ld-%ld",0L,chunks[0]->start-1);
       m=MOVED;
    }
 
@@ -117,7 +120,7 @@ int pgetJob::Do()
       if(rem<=0)
 	 total_eta=0;
       else
-	 total_eta=long(rem/total_xfer_rate+.5);
+	 total_eta=cp->GetETA(rem);
    }
    for(int i=0; i<num_of_chunks; i++)
    {
@@ -165,6 +168,12 @@ int pgetJob::Do()
    return m;
 }
 
+// xgettext:c-format
+#define PGET_STATUS \
+   _("`%s', got %lu of %lu (%d%%) %s%s"),name,total_xferred,size, \
+   percent(total_xferred,size),Speedometer::GetStrS(total_xfer_rate), \
+   Speedometer::GetETAStrSFromTime(total_eta)
+
 void pgetJob::ShowRunStatus(StatusLine *s)
 {
    if(Done() || no_parallel || max_chunks<2 || !chunks)
@@ -181,23 +190,28 @@ void pgetJob::ShowRunStatus(StatusLine *s)
 
    const char *name=cp->SqueezeName(s->GetWidthDelayed()-40);
    long size=cp->GetSize();
-   // xgettext:c-format
-   s->Show(_("`%s', got %lu of %lu (%d%%) %s%s"),name,total_xferred,size,
-	 percent(total_xferred,size),Speedometer::GetStrS(total_xfer_rate),
-	 Speedometer::GetETAStrSFromTime(total_eta));
+   s->Show(PGET_STATUS);
 }
 
 // list subjobs (chunk xfers) only when verbose
 void  pgetJob::ListJobs(int verbose,int indent)
 {
-   if(verbose>1)
+   if(!chunks)
+   {
       Job::ListJobs(verbose,indent);
+      return;
+   }
+   if(verbose>1 && cp)
+   {
+      cp->SetRange(0,chunks[0]->start);
+      Job::ListJobs(verbose,indent);
+      cp->SetRange(0,FILE_END);
+   }
 }
 
 void  pgetJob::PrintStatus(int verbose)
 {
-#if 0
-   if(Done() || no_parallel || max_chunks<2 || !chunks)
+   if(!cp || Done() || no_parallel || max_chunks<2 || !chunks)
    {
       GetJob::PrintStatus(verbose);
       return;
@@ -205,21 +219,11 @@ void  pgetJob::PrintStatus(int verbose)
 
    SessionJob::PrintStatus(verbose);
 
-   if(curr && session->IsOpen())
-   {
-      putchar('\t');
-      printf(_("`%s', got %lu of %lu (%d%%) %s%s"),curr,total_xferred,size,
-	    percent(total_xferred,size),CurrRate(total_xfer_rate),
-	    CurrETA(total_xfer_rate,total_xferred));
-      putchar('\n');
-      if(verbose>1)
-      {
-	 // xgettext:c-format
-	 printf(_("\tat %ld (%d%%) [%s]\n"),MIN(offset,chunks[0]->start),
-	       percent(offset,chunks[0]->start),session->CurrentStatus());
-      }
-   }
-#endif
+   putchar('\t');
+   const char *name=cp->GetName();
+   long size=cp->GetSize();
+   printf(PGET_STATUS);
+   putchar('\n');
 }
 
 void pgetJob::free_chunks()
@@ -233,6 +237,11 @@ void pgetJob::free_chunks()
       }
       free(chunks);
       chunks=0;
+   }
+   if(cp)
+   {
+      xfree(cp->cmdline);
+      cp->cmdline=0;
    }
 }
 
@@ -282,15 +291,4 @@ pgetJob::ChunkXfer::ChunkXfer(FileCopy *c1,const char *name,
 
 pgetJob::ChunkXfer::~ChunkXfer()
 {
-}
-
-void  pgetJob::ChunkXfer::PrintStatus(int)
-{
-#if 0
-   if(curr && session->IsOpen())
-   {
-      printf(_("\tat %ld (%d%%) [%s]\n"),offset,percent(offset-start,limit-start),
-			      session->CurrentStatus());
-   }
-#endif
 }

@@ -36,8 +36,6 @@ class pgetJob : public GetJob
 
       ChunkXfer(FileCopy *c,const char *remote,long start,long limit);
       ~ChunkXfer();
-
-      void PrintStatus(int);
    };
 
    ChunkXfer   **chunks;

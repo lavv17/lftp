@@ -107,6 +107,8 @@ int LocalAccess::Do()
    if(Error() || done)
       return STALL;
    int m=STALL;
+   if(mode!=CLOSED)
+      ExpandTildeInCWD();
    switch((open_mode)mode)
    {
    case(CLOSED):

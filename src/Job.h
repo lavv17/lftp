@@ -63,6 +63,7 @@ public:
 
    char	 *cmdline;
    virtual void ListJobs(int verbose_level,int indent=0);
+   void ListOneJobRecursively(int verbose,int indent);
    void ListDoneJobs();
    void BuryDoneJobs();
 
