@@ -660,6 +660,8 @@ int Http::Do()
    case RECEIVING_HEADER:
       if(send_buf->Error() || recv_buf->Error())
       {
+	 if(mode==STORE && status_code && !H_20X(status_code))
+	    goto pre_RECEIVING_BODY;   // assume error.
 	 if(send_buf->Error())
 	    DebugPrint("**** ",send_buf->ErrorText(),0);
 	 if(recv_buf->Error())

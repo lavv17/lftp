@@ -3,12 +3,14 @@
 	* FileAccess.cc, FileAccess.h: (pass_open) new member;
 	  (InsecurePassword) new method; (GetFileURL) include password if
 	  pass_open is true; (OpenMode) new method.
-	* FileCopy.cc: don't check session pos if it is not properly opened.
+	* FileCopy.cc: don't check session pos if it is not properly opened;
+	  use OpenSession in Put_LL.
 	* commands.cc: `pwd -p' to show password; call InsecurePassword
 	  when password is entered on command line; forbid recursive bookmarks;
 	  use ascii mode for ls.
 	* ftpclass.cc: don't hide password if pass_open.
 	* FtpDirList.cc: don't strip CRs.
+	* Http.cc: better handle PUT errors.
 
 2000-01-04  Alexander V. Lukyanov  <lav@yars.free.net>
 

@@ -829,6 +829,7 @@ void FileCopyPeerFA::OpenSession()
    if(want_date)
       session->WantDate(&date);
    SaveRollback(seek_pos);
+   pos=seek_pos;
 }
 
 void FileCopyPeerFA::RemoveFile()
@@ -872,12 +873,8 @@ int FileCopyPeerFA::Get_LL(int len)
 int FileCopyPeerFA::Put_LL(const char *buf,int len)
 {
    if(session->IsClosed())
-   {
-      session->Open(file,FAmode,seek_pos);
-      if(ascii)
-	 session->AsciiTransfer();
-      pos=seek_pos;
-   }
+      OpenSession();
+
    long io_at=pos;
    if(GetRealPos()!=io_at) // GetRealPos can alter pos.
       return 0;
