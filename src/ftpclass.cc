@@ -49,7 +49,6 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 
 #include <errno.h>
 #include <time.h>
-#include <assert.h>
 
 #ifdef TM_IN_SYS_TIME
 # include <sys/time.h>
@@ -1583,12 +1582,6 @@ int   Ftp::Do()
 
       if(state!=oldstate)
          return MOVED;
-
-      if(data_sock==-1)
-      {
-	 if(RespQueueIsEmpty())
-	    return m;	// ???
-      }
 
       goto usual_return;
    }

@@ -47,6 +47,10 @@ int ProcWait::Do()
    int res=waitpid(pid,&info,WNOHANG|WUNTRACED);
    if(res==-1)
    {
+      if(status!=RUNNING)
+	 return MOVED;
+      if(errno==EINTR || errno==EAGAIN)
+	 goto leave;
       perror("waitpid");
       saved_errno=errno;
       status=ERROR;
@@ -61,6 +65,7 @@ int ProcWait::Do()
 	 goto final;
       }
    }
+leave:
    Timeout(500); // check from time to time, in case SIGCHLD fails
    return m;
 }
