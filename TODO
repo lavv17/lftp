@@ -18,10 +18,6 @@ currently; some need other work to be done.
 
  * parent->GrabOutput GrabFD? to disable status line
 
- * ftpcopy glob, multiple files
-
- * progress indicator for ftpcopy
-
  * update process title
  * at-exit-bg
 
@@ -94,3 +90,9 @@ currently; some need other work to be done.
  * Reconfig Speedometer.
 
  * glob -f, glob -d to get files/directories only.
+
+ * check file names for validity in FtpListInfo (e.g. no slashes allowed)
+
+ * check for md5 in -lcrypt
+
+ * check TIOCOUTQ - it can work in two ways.
