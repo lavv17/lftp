@@ -312,8 +312,9 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"source",  cmd_source, N_("source <file>"),
 	 N_("Execute commands recorded in file <file>\n")},
    {"suspend", cmd_suspend},
-   {"user",    cmd_user,   N_("user <user> [<pass>]"),
-	 N_("Use specified info for remote login\n")},
+   {"user",    cmd_user,   N_("user <user|URL> [<pass>]"),
+	 N_("Use specified info for remote login. If you specify URL, the password\n"
+	 "will be cached for future usage.")},
    {"version", cmd_ver,    "version",
 	 N_("Shows lftp version\n")},
    {"wait",    cmd_wait,   N_("wait [<jobno>]"),
@@ -1306,45 +1307,47 @@ CMD(debug)
 
 CMD(user)
 {
-   char	 *pass;
    if(args->count()<2 || args->count()>3)
    {
       eprintf(_("Usage: %s userid [pass]\n"),args->getarg(0));
       return 0;
    }
-   bool insecure=false;
-   if(args->count()==2)
-      pass=GetPass(_("Password: "));
-   else
+   char *user=args->getarg(1);
+   char	*pass=args->getarg(2);
+   bool insecure=(pass!=0);
+
+   ParsedURL u(user,true);
+   if(u.proto && u.user && u.pass)
    {
-      pass=args->getarg(2);
+      pass=u.pass;
       insecure=true;
    }
-   if(pass)
+   if(!pass)
+      pass=GetPass(_("Password: "));
+   if(!pass)
+      return 0;
+
+   if(u.proto && u.user)
    {
-      ParsedURL u(args->getarg(1),true);
-      if(u.proto)
+      FA *s=FA::New(&u);
+      if(s)
       {
-	 FA *s=FA::New(&u);
-	 if(s)
-	 {
-	    s->SetPasswordGlobal(pass);
-	    s->InsecurePassword(insecure);
-	    SessionPool::Reuse(s);
-	 }
-	 else
-	 {
-	    eprintf("%s: %s%s\n",args->a0(),u.proto,
-		     _(" - not supported protocol"));
-	    return 0;
-	 }
+	 s->SetPasswordGlobal(pass);
+	 s->InsecurePassword(insecure);
+	 SessionPool::Reuse(s);
       }
       else
       {
-	 session->Login(args->getarg(1),0);
-	 session->SetPasswordGlobal(pass);
-	 session->InsecurePassword(insecure);
+	 eprintf("%s: %s%s\n",args->a0(),u.proto,
+		  _(" - not supported protocol"));
+	 return 0;
       }
+   }
+   else
+   {
+      session->Login(args->getarg(1),0);
+      session->SetPasswordGlobal(pass);
+      session->InsecurePassword(insecure);
    }
    exit_code=0;
    return 0;
@@ -1769,7 +1772,7 @@ CMD(help)
 CMD(ver)
 {
    printf(
-      _("Lftp | Version %s | Copyright (c) 1996-1999 Alexander V. Lukyanov\n"),VERSION);
+      _("Lftp | Version %s | Copyright (c) 1996-2000 Alexander V. Lukyanov\n"),VERSION);
    printf(
       _("This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"));
    printf(
