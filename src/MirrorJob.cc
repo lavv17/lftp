@@ -36,6 +36,7 @@
 #include "xalloca.h"
 #include "plural.h"
 #include "getopt.h"
+#include "FindJob.h"
 
 void  MirrorJob::PrintStatus(int v)
 {
@@ -204,7 +205,12 @@ void  MirrorJob::HandleFile(int how)
 	    && (file->defined&(file->DATE|file->DATE_UNPREC))
 	    && file->date + prec.Seconds() < st.st_mtime
 	    && (file->defined&file->SIZE) && file->size >= st.st_size)
+	    {
 	       cont_this=true;
+	       // make it writable
+	       if((st.st_mode&0200)==0)
+		  chmod(local_name,st.st_mode|0200);
+	    }
 	    else
 	    {
 	       Report(_("Removing old local file `%s'"),
@@ -297,7 +303,7 @@ void  MirrorJob::HandleFile(int how)
 	 {
 	    mode=((file->defined&file->MODE)&&!(flags&NO_PERMS))?file->mode:0755;
 	    struct stat st;
-	    if(stat(local_name,&st)!=-1)
+	    if(lstat(local_name,&st)!=-1)
 	    {
 	       if(S_ISDIR(st.st_mode))
 		  chmod(local_name,st.st_mode|0700);
@@ -679,28 +685,6 @@ int   MirrorJob::Do()
 	    to_rm->rewind();
 	    if(flags&REVERSE)
 	    {
-	       if(flags&DELETE)
-	       {
-		  ArgV *args=new ArgV("rm");
-		  while((file=to_rm->curr())!=0)
-		  {
-		     Report(_("Removing old remote file `%s'"),
-			      dir_file(remote_relative_dir,file->name));
-		     args->Append(file->name);
-		     to_rm->next();
-		  }
-		  waiting=new rmJob(Clone(),args);
-		  waiting->SetParentFg(this);
-		  waiting->cmdline=args->Combine();
-	       }
-	       else if(flags&REPORT_NOT_DELETED)
-	       {
-		  for(file=to_rm->curr(); file; file=to_rm->next())
-		  {
-		     Report(_("Old remote file `%s' is not removed"),
-			      dir_file(remote_relative_dir,file->name));
-		  }
-	       }
 	       state=REMOTE_REMOVE_OLD;
 	       return MOVED;
 	    }
@@ -751,14 +735,48 @@ int   MirrorJob::Do()
 
    case(REMOTE_REMOVE_OLD):
       if(!waiting)
-	 goto pre_REMOTE_CHMOD;
+      {
+	 if(flags&DELETE)
+	 {
+	    ArgV *args=new ArgV("rm");
+	    file=to_rm->curr();
+	    if(file)
+	    {
+	       args->Append(file->name);
+	       to_rm->next();
+	       if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
+	       {
+		  Report(_("Removing old remote directory `%s'"),
+			   dir_file(remote_relative_dir,file->name));
+		  args->getnext(); // prepare args position.
+	       	  waiting=new FinderJob_Cmd(Clone(),args,FinderJob_Cmd::RM);
+	       }
+	       else
+	       {
+		  Report(_("Removing old remote file `%s'"),
+			   dir_file(remote_relative_dir,file->name));
+		  waiting=new rmJob(Clone(),args);
+	       }
+	       waiting->SetParentFg(this);
+	       waiting->cmdline=args->Combine();
+	    }
+	 }
+	 else if(flags&REPORT_NOT_DELETED)
+	 {
+	    for(file=to_rm->curr(); file; file=to_rm->next())
+	    {
+	       Report(_("Old remote file `%s' is not removed"),
+			dir_file(remote_relative_dir,file->name));
+	    }
+	 }
+	 if(!waiting)
+	    goto pre_REMOTE_CHMOD;
+      }
       if(waiting->Done())
       {
 	 Delete(waiting);
 	 waiting=0;
-	 state=DONE;
-	 m=MOVED;
-	 goto pre_REMOTE_CHMOD;
+	 return MOVED;
       }
       return m;
 
@@ -769,6 +787,8 @@ int   MirrorJob::Do()
 	 return MOVED;
       }
       to_transfer->rewind();
+      state=REMOTE_CHMOD;
+      m=MOVED;
       goto remote_chmod_next;
    case(REMOTE_CHMOD):
       if(waiting->Done())
