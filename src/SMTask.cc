@@ -24,6 +24,7 @@
 #include <assert.h>
 #include <sys/types.h>
 #include <sys/time.h>
+#include <stdio.h>
 #ifdef TIME_WITH_SYS_TIME
 # include <time.h>
 #endif
@@ -136,6 +137,10 @@ void SMTask::Schedule()
 	 res=tmp->Do();
 	 tmp->running=false;
       }
+#if 0
+      if(res==MOVED)
+	 printf("MOVED: %p\n",tmp);
+#endif
       if(sched_scan)
 	 sched_scan=sched_scan->next;
       if(tmp->deleting)

@@ -23,6 +23,7 @@
 #include <config.h>
 #include <sys/wait.h>
 #include <errno.h>
+#include <stdio.h>
 #include "ProcWait.h"
 #include "SignalHook.h"
 
@@ -39,7 +40,6 @@ int ProcWait::Do()
 	 deleting=true;
 	 return MOVED;
       }
-      Timeout(0);
       return m;
    }
 
@@ -47,6 +47,7 @@ int ProcWait::Do()
    int res=waitpid(pid,&info,WNOHANG|WUNTRACED);
    if(res==-1)
    {
+      perror("waitpid");
       saved_errno=errno;
       status=ERROR;
       m=MOVED;

@@ -222,7 +222,7 @@ int   Resolver::Do()
       if(!buf)
       {
 	 buf=new FileInputBuffer(new FDStream(pipe_to_child[0],"<pipe>"));
-	 Roll(buf);
+// 	 Roll(buf);
 	 m=MOVED;
       }
    }
@@ -726,8 +726,7 @@ void Resolver::DoGethostbyname()
 	    char *msg=string_alloca(64+strlen(tproto));
 	    sprintf(msg,"no such %s service",tproto);
 	    buf->Put(msg);
-	    buf->PutEOF();
-	    return;
+	    goto flush;
 	 }
       }
    }
@@ -752,13 +751,13 @@ void Resolver::DoGethostbyname()
       if(error==0)
 	 error="No address found";
       buf->Put(error);
-      buf->PutEOF();
-      return;
+      goto flush;
    }
    buf->Put("O");
    buf->Put((char*)addr,addr_num*sizeof(*addr));
-   buf->PutEOF();
 
+flush:
+   buf->PutEOF();
    if(use_fork)
    {
       while(buf->Size()>0)
