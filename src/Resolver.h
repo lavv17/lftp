@@ -36,6 +36,8 @@ class Resolver : public SMTask
    ProcWait *w;
    int timeout;
 
+   time_t start_time;
+
    struct sockaddr_in sa;
 
    char *err_msg;
