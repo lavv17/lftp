@@ -304,6 +304,8 @@ private:
    bool use_mdtm;
    bool use_size;
 
+   bool use_telnet_iac;
+
    bool use_stat;
    int  stat_interval;
 

@@ -922,6 +922,7 @@ void Ftp::InitFtp()
 
    use_mdtm=true;
    use_size=true;
+   use_telnet_iac=true;
 
    dos_path=false;
    vms_path=false;
@@ -2434,6 +2435,12 @@ int  Ftp::ReceiveResp()
 
 void Ftp::SendUrgentCmd(const char *cmd)
 {
+   if(!use_telnet_iac)
+   {
+      SendCmd(cmd);
+      return;
+   }
+
    static const char pre_cmd[]={TELNET_IAC,TELNET_IP,TELNET_IAC,TELNET_SYNCH};
 
    int fl=fcntl(control_sock,F_GETFL);
@@ -2792,7 +2799,7 @@ void  Ftp::SendCmd(const char *cmd,int len)
 	 cmd--;
 	 len++;
       }
-      else if(ch=='\377') // double chr(255) as in telnet protocol
+      else if(ch=='\377' && use_telnet_iac) // double chr(255) as in telnet protocol
       	 send_cmd_ptr[send_cmd_count++]='\377';
       send_cmd_ptr[send_cmd_count++]=prev_ch=ch;
       if(len==0 && ch!='\n')
@@ -3907,6 +3914,8 @@ void Ftp::Reconfig(const char *name)
 
    use_mdtm = QueryBool("use-mdtm",c);
    use_size = QueryBool("use-size",c);
+
+   use_telnet_iac = QueryBool("use-telnet-iac",c);
 
    xfree(list_options);
    list_options = xstrdup(Query("list-options",c));

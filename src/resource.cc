@@ -203,6 +203,7 @@ static ResDecl
    ResDecl16a("ftp:use-site-idle",	  "no",    ResMgr::BoolValidate,0),
    ResDecl16b("ftp:use-size",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl16 ("ftp:use-stat",		  "yes",   ResMgr::BoolValidate,0),
+   ResDecl16c("ftp:use-telnet-iac",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl17 ("ftp:use-quit",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl18 ("ftp:verify-address",	  "no",    ResMgr::BoolValidate,0),
    ResDecl19 ("ftp:verify-port",	  "no",    ResMgr::BoolValidate,0),
