@@ -1769,6 +1769,7 @@ notimeout_return:
       }
       else if(state==DATA_OPEN_STATE)
       {
+	 assert(rate_limit!=0);
 	 int bytes_allowed = rate_limit->BytesAllowed();
 	 // guard against unimplemented REST: if we have sent REST command
 	 // (real_pos==-1) and did not yet receive the response
@@ -2518,6 +2519,7 @@ read_again:
       return(DO_AGAIN);
    }
    {
+      assert(rate_limit!=0);
       int allowed=rate_limit->BytesAllowed();
       if(allowed==0)
 	 return DO_AGAIN;
@@ -2557,6 +2559,7 @@ read_again:
    }
    retries=0;
    persist_retries=0;
+   assert(rate_limit!=0);
    rate_limit->BytesUsed(res);
    real_pos+=res;
    if(real_pos<=pos)
@@ -2606,6 +2609,7 @@ int   Ftp::Write(const void *buf,int size)
       return(DO_AGAIN);
    }
    {
+      assert(rate_limit!=0);
       int allowed=rate_limit->BytesAllowed();
       if(allowed==0)
 	 return DO_AGAIN;
@@ -2633,6 +2637,7 @@ int   Ftp::Write(const void *buf,int size)
    }
    retries=0;
    persist_retries=0;
+   assert(rate_limit!=0);
    rate_limit->BytesUsed(res);
    pos+=res;
    real_pos+=res;
@@ -2696,14 +2701,12 @@ void  Ftp::MoveConnectionHere(Ftp *o)
    EmptyRespQueue();
    EmptySendQueue();
 
-   RQ_head=o->RQ_head;
-   RQ_tail=o->RQ_tail;
-   multiline_code=o->multiline_code;
-   RespQueue=o->RespQueue;
-   RQ_alloc=o->RQ_alloc;
+   RQ_head=o->RQ_head; o->RQ_head=0;
+   RQ_tail=o->RQ_tail; o->RQ_tail=0;
+   multiline_code=o->multiline_code; o->multiline_code=0;
+   RespQueue=o->RespQueue; o->RespQueue=0;
+   RQ_alloc=o->RQ_alloc; o->RQ_alloc=0;
 
-   o->RespQueue=0;
-   o->EmptyRespQueue();
    CloseRespQueue(); // we need not handle other session's replies.
 
    sync_wait=o->sync_wait;

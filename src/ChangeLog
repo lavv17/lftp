@@ -1,7 +1,7 @@
 2000-07-13  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h: (SendArrayInfoRequests) new method;
-	  fix gcc-2.96 error.
+	  fix gcc-2.96 error; fix a coredump; add asserts.
 	* LocalAccess.cc: fix rels.
 
 2000-07-12  Alexander V. Lukyanov  <lav@yars.free.net>
