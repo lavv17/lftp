@@ -1,3 +1,8 @@
+1999-08-05  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FtpListInfo.cc: fix NT listing parser for the case of file name
+	  with spaces.
+
 1999-08-04  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CmdExec.cc, FindJob.cc, FtpCopy.cc, LsJob.cc, MirrorJob.cc,
