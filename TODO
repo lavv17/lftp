@@ -24,7 +24,7 @@ implemented.
    (Done()==true when queue is empty)
    This way ARRAY_* can be obsoleted.
 
- * there are many interesting protocols: smb, fsp, fish, imap, irc, ...
+ * there are many interesting protocols: smb, fsp, imap, irc, ...
 
  * put -n (only if newer) Maybe it would be better to add a command to compare
    times?
@@ -88,4 +88,3 @@ implemented.
  * remember user-specified URL path from open/cd.
  * flag to mark cwd as a file, not a directory. (for http).
 
- * du command

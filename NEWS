@@ -1,5 +1,6 @@
-Version 2.4.7 - 2001-11-??
+Version 2.4.7 - 2001-11-12
 
+* du command (Glenn Maynard).
 * fixed coredump in `mget -E', introduced in 2.4.6.
 * speed-optimized directory listing parsing.
 * fixed EPLF listings.

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
-"POT-Creation-Date: 2001-10-30 11:03+0300\n"
+"POT-Creation-Date: 2001-11-12 16:39+0300\n"
 "PO-Revision-Date: 2001-09-24 00:06+0900\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -53,7 +53,7 @@ msgstr "cd 成功、cwd=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: `%s'へのリダイレクションを受け取りました\n"
 
-#: src/CmdExec.cc:390 src/FileCopy.cc:936
+#: src/CmdExec.cc:390 src/FileCopy.cc:924
 msgid "Too many redirections"
 msgstr "リダイレクションが多すぎます"
 
@@ -111,7 +111,7 @@ msgstr "アクセス失敗: %s"
 msgid "File cannot be accessed"
 msgstr "ファイルにアクセスできません"
 
-#: src/FileAccess.cc:321 src/ftpclass.cc:3520 src/ftpclass.cc:3529
+#: src/FileAccess.cc:321 src/ftpclass.cc:3527 src/ftpclass.cc:3536
 msgid "Not connected"
 msgstr "接続されていません"
 
@@ -159,7 +159,8 @@ msgstr "ファイル情報 (%d%%)を取得中"
 #: src/GetJob.cc:92
 #, c-format
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
-msgstr "%s: %s: ファイルはすでに存在し、また xfer:clobber がセットされていません\n"
+msgstr ""
+"%s: %s: ファイルはすでに存在し、また xfer:clobber がセットされていません\n"
 
 #: src/Job.cc:336
 #, c-format
@@ -205,7 +206,8 @@ msgstr "キャッシュエントリは %ld 分で無効になります\n"
 #: src/MirrorJob.cc:85
 #, c-format
 msgid "%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
-msgstr "%s合計: %d 個のディレクトリ、%d 個のファイル、%d 個のシンボリックリンク\n"
+msgstr ""
+"%s合計: %d 個のディレクトリ、%d 個のファイル、%d 個のシンボリックリンク\n"
 
 #: src/MirrorJob.cc:89
 #, c-format
@@ -220,12 +222,14 @@ msgstr "%s変更有り: %d 個のファイル、%d 個のシンボリックリンク\n"
 #: src/MirrorJob.cc:98
 #, c-format
 msgid "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
-msgstr "%s削除: %d 個のディレクトリ、%d 個のファイル、%d 個のシンボリックリンク\n"
+msgstr ""
+"%s削除: %d 個のディレクトリ、%d 個のファイル、%d 個のシンボリックリンク\n"
 
 #: src/MirrorJob.cc:99
 #, c-format
 msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
-msgstr "%s削除予定: %d 個のディレクトリ、%d 個のファイル、%d 個のシンボリックリンク\n"
+msgstr ""
+"%s削除予定: %d 個のディレクトリ、%d 個のファイル、%d 個のシンボリックリンク\n"
 
 #: src/MirrorJob.cc:181 src/MirrorJob.cc:829
 #, c-format
@@ -261,7 +265,9 @@ msgstr "`%s' から `%s' へのシンボリックリンクを張っています"
 
 #: src/MirrorJob.cc:487
 msgid "mirror: cannot create `file:' access object, installation error?\n"
-msgstr "mirror: `file:' アクセスオブジェクトを作成できません。インストール時のエラーかも?\n"
+msgstr ""
+"mirror: `file:' アクセスオブジェクトを作成できません。インストール時のエラー"
+"かも?\n"
 
 #: src/MirrorJob.cc:584
 #, c-format
@@ -289,11 +295,11 @@ msgid "Old remote file `%s' is not removed"
 msgstr "古いリモートファイル `%s' は削除されません"
 
 #: src/MirrorJob.cc:1153 src/MirrorJob.cc:1201 src/SleepJob.cc:138
-#: src/commands.cc:901 src/commands.cc:977 src/commands.cc:1283
-#: src/commands.cc:1339 src/commands.cc:1434 src/commands.cc:1692
-#: src/commands.cc:1886 src/commands.cc:2053 src/commands.cc:2060
-#: src/commands.cc:2244 src/commands.cc:2273 src/commands.cc:2280
-#: src/commands.cc:2445 src/commands.cc:2640
+#: src/commands.cc:918 src/commands.cc:994 src/commands.cc:1300
+#: src/commands.cc:1356 src/commands.cc:1451 src/commands.cc:1713
+#: src/commands.cc:1907 src/commands.cc:2074 src/commands.cc:2081
+#: src/commands.cc:2265 src/commands.cc:2294 src/commands.cc:2301
+#: src/commands.cc:2590 src/commands.cc:2785
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "`help %s' でより詳しい情報が得られます。\n"
@@ -335,22 +341,23 @@ msgstr "時間単位を示す文字として不正です。[smhd] のみ許されます。"
 
 #: src/ResMgr.cc:692
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
-msgstr "時間フォーマットが不正です。正しいフォーマットは <時間><単位> 例) 2h30m"
+msgstr ""
+"時間フォーマットが不正です。正しいフォーマットは <時間><単位> 例) 2h30m"
 
-#: src/ResMgr.cc:720
+#: src/ResMgr.cc:718
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "範囲フォーマットが不正です。正しいフォーマットは 最小-最大 例) 10-20"
 
-#: src/ResMgr.cc:793
+#: src/ResMgr.cc:791
 msgid "Invalid IPv4 numeric address"
 msgstr "不正なIPv4番号アドレス"
 
-#: src/ResMgr.cc:799
+#: src/ResMgr.cc:797
 msgid "no closure defined for this setting"
 msgstr "この設定では終止が定義されていません"
 
 #: src/Http.cc:1591 src/Resolver.cc:187 src/Resolver.cc:228
-#: src/ftpclass.cc:3525
+#: src/ftpclass.cc:3532
 msgid "Resolving host address..."
 msgstr "ホストアドレスを解決しています..."
 
@@ -381,20 +388,20 @@ msgstr "アドレスが見つかりません"
 msgid "execlp(%s) failed: %s\n"
 msgstr "execlp(%s) に失敗しました: %s\n"
 
-#: src/commands.cc:106
+#: src/commands.cc:107
 #, fuzzy
 msgid "!<shell-command>"
 msgstr "!<shell_command>"
 
-#: src/commands.cc:107
+#: src/commands.cc:108
 msgid "Launch shell or shell command\n"
 msgstr "シェルあるいはシェルコマンドを実行します\n"
 
-#: src/commands.cc:108
+#: src/commands.cc:109
 msgid "(commands)"
 msgstr "(commands)"
 
-#: src/commands.cc:109
+#: src/commands.cc:110
 msgid ""
 "Group commands together to be executed as one command\n"
 "You can launch such a group in background\n"
@@ -402,11 +409,11 @@ msgstr ""
 "複数のコマンドをまとめて、一つのコマンドとして実行できるようにします\n"
 "グループ化されたコマンドはバックグラウンドで実行できます\n"
 
-#: src/commands.cc:112
+#: src/commands.cc:113
 msgid "alias [<name> [<value>]]"
 msgstr "alias [<name> [<value>]]"
 
-#: src/commands.cc:113
+#: src/commands.cc:114
 msgid ""
 "Define or undefine alias <name>. If <value> omitted,\n"
 "the alias is undefined, else is takes the value <value>.\n"
@@ -416,15 +423,15 @@ msgstr ""
 "エイリアスは解除され、他の場合には値 <value> が使われます。\n"
 "もし引数が指定されなければ、現在のエイリアスが列挙されます。\n"
 
-#: src/commands.cc:117
+#: src/commands.cc:118
 msgid "anon - login anonymously (by default)\n"
 msgstr "anon - 匿名でログインする (デフォルト)\n"
 
-#: src/commands.cc:119
+#: src/commands.cc:120
 msgid "bookmark [SUBCMD]"
 msgstr "bookmark [SUBCMD]"
 
-#: src/commands.cc:120
+#: src/commands.cc:121
 msgid ""
 "bookmark command controls bookmarks\n"
 "\n"
@@ -439,18 +446,19 @@ msgstr ""
 "bookmark コマンドはブックマークを制御します\n"
 "\n"
 "以下のサブコマンドが利用できます:\n"
-"  add <name> [<loc>] - 現在の場所か指定されたロケーションをブックマークに加え\n"
+"  add <name> [<loc>] - 現在の場所か指定されたロケーションをブックマークに加"
+"え\n"
 "                       指定の名前と結びつける\n"
 "  del <name>         - 指定された名前のブックマークを削除する\n"
 "  edit               - ブックマークファイルのエディタで編集する\n"
 "  import <type>      - 他形式のブックマークを取り込む\n"
 "  list               - ブックマークを列挙する (デフォルト)\n"
 
-#: src/commands.cc:129
+#: src/commands.cc:130
 msgid "cache [SUBCMD]"
 msgstr "cache [SUBCMD]"
 
-#: src/commands.cc:130
+#: src/commands.cc:131
 msgid ""
 "cache command controls local memory cache\n"
 "\n"
@@ -472,11 +480,11 @@ msgstr ""
 "  expire <Nx> - キャッシュの期限を N 秒 (x=s)、N 分 (x=m)、\n"
 "                N 時間 (x=h)、N 日 (x=d) にセット\n"
 
-#: src/commands.cc:138
+#: src/commands.cc:139
 msgid "cat [-b] <files>"
 msgstr "cat [-b] <files>"
 
-#: src/commands.cc:139
+#: src/commands.cc:140
 msgid ""
 "cat - output remote files to stdout (can be redirected)\n"
 " -b  use binary mode (ascii is the default)\n"
@@ -484,27 +492,28 @@ msgstr ""
 "cat - リモートファイルを stdout に出力します(リダイレクト可能)\n"
 " -b  バイナリモードを使う (デフォルトはアスキー)\n"
 
-#: src/commands.cc:141
+#: src/commands.cc:142
 msgid "cd <rdir>"
 msgstr "cd <rdir>"
 
-#: src/commands.cc:142
+#: src/commands.cc:143
 msgid ""
 "Change current remote directory to <rdir>. The previous remote directory\n"
 "is stored as `-'. You can do `cd -' to change the directory back.\n"
 "The previous directory for each site is also stored on disk, so you can\n"
 "do `open site; cd -' even after lftp restart.\n"
 msgstr ""
-"現在のリモートディレクトリを <rdir> に変更します。以前いたリモートディレクトリ\n"
+"現在のリモートディレクトリを <rdir> に変更します。以前いたリモートディレクト"
+"リ\n"
 "は `-' として記憶され、`cd -' で以前のディレクトリに戻ることができます。\n"
 "以前のディレクトリはそれぞれのサイトごとにディスクに記憶されるので、\n"
 "lftp を再起動したあとでも `open site; cd -'とすることが可能です。\n"
 
-#: src/commands.cc:146
+#: src/commands.cc:147
 msgid "chmod mode file..."
 msgstr "chmod mode file..."
 
-#: src/commands.cc:148
+#: src/commands.cc:149
 msgid ""
 "Close idle connections. By default only with current server.\n"
 " -a  close idle connections with all servers\n"
@@ -512,7 +521,7 @@ msgstr ""
 "アイドル状態の接続を閉じます。デフォルトでは現在のサーバにのみ有効です。\n"
 " -a  すべてのサーバについてアイドル状態の接続を閉じる\n"
 
-#: src/commands.cc:150
+#: src/commands.cc:151
 msgid "[re]cls [opts] [path/][pattern]"
 msgstr ""
 
@@ -526,7 +535,7 @@ msgstr ""
 #. * add --filesize; it won't have any effect unless -s is also used, so
 #. * it can be enabled all the time. (that's also poorly worded, and too
 #. * long.)
-#: src/commands.cc:151
+#: src/commands.cc:152
 msgid ""
 "List remote files. You can redirect output of this command to file\n"
 "or via pipe to external command.\n"
@@ -561,11 +570,11 @@ msgid ""
 "be recognized as a directory.\n"
 msgstr ""
 
-#: src/commands.cc:196
+#: src/commands.cc:197
 msgid "debug [<level>|off] [-o <file>]"
 msgstr "debug [<level>|off] [-o <file>]"
 
-#: src/commands.cc:197
+#: src/commands.cc:198
 msgid ""
 "Set debug level to given value or turn debug off completely.\n"
 " -o <file>  redirect debug output to the file.\n"
@@ -574,10 +583,36 @@ msgstr ""
 " -o <file> デバッグ出力を指定のファイルにリダイレクトする。\n"
 
 #: src/commands.cc:200
+#, fuzzy
+msgid "du [options] <dirs>"
+msgstr "mkdir [-p] <dirs>"
+
+#: src/commands.cc:201
+msgid ""
+"Summarize disk usage.\n"
+" -a, --all             write counts for all files, not just directories\n"
+" -b, --bytes           print size in bytes\n"
+" -c, --total           produce a grand total\n"
+" -d, --max-depth=N     print the total for a directory (or file, with --"
+"all)\n"
+"                       only if it is N or fewer levels below the command\n"
+"                       line argument;  --max-depth=0 is the same as\n"
+"                       --summarize\n"
+" -h, --human-readable  print sizes in human readable format (e.g., 1K 234M "
+"2G)\n"
+" -H, --si              likewise, but use powers of 1000 not 1024\n"
+" -k, --kilobytes       like --block-size=1024\n"
+" -m, --megabytes       like --block-size=1048576\n"
+" -S, --separate-dirs   do not include size of subdirectories\n"
+" -s, --summarize       display only a total for each argument\n"
+"     --exclude=PAT     exclude files that match PAT\n"
+msgstr ""
+
+#: src/commands.cc:217
 msgid "exit [<code>|bg]"
 msgstr "exit [<code>|bg]"
 
-#: src/commands.cc:201
+#: src/commands.cc:218
 msgid ""
 "exit - exit from lftp or move to background if jobs are active\n"
 "\n"
@@ -585,13 +620,16 @@ msgid ""
 "termination status. If omitted, exit code of last command is used.\n"
 "`bg' forces moving to background if cmd:move-background is false.\n"
 msgstr ""
-"exit - lftp を終了させるか、ジョブがアクティブならばそれらをバックグラウンドに移行させます\n"
+"exit - lftp を終了させるか、ジョブがアクティブならばそれらをバックグラウンド"
+"に移行させます\n"
 "\n"
 "もしアクティブなジョブが無ければ、lftp の終了ステータスとして指定のコードが\n"
-"オペレーティングシステムに渡されます。省略された場合、最後のコマンドの終了コードが使われます。\n"
-"`bg'を指定すると、cmd:move-background が偽の時でも強制的にバックグラウンドに移行させます。\n"
+"オペレーティングシステムに渡されます。省略された場合、最後のコマンドの終了"
+"コードが使われます。\n"
+"`bg'を指定すると、cmd:move-background が偽の時でも強制的にバックグラウンドに"
+"移行させます。\n"
 
-#: src/commands.cc:207
+#: src/commands.cc:224
 msgid ""
 "Usage: find [OPTS] [directory]\n"
 "Print contents of specified directory of current directory recursively.\n"
@@ -605,11 +643,11 @@ msgstr ""
 "このコマンドの出力をリダイレクトすることが可能です。\n"
 " -d, --maxdepth=LEVELS 最深で深さLEVELSのディレクトリまで降下します。\n"
 
-#: src/commands.cc:212
+#: src/commands.cc:229
 msgid "get [OPTS] <rfile> [-o <lfile>]"
 msgstr "get [OPTS] <rfile> [-o <lfile>]"
 
-#: src/commands.cc:213
+#: src/commands.cc:230
 msgid ""
 "Retrieve remote file <rfile> and store it to local file <lfile>.\n"
 " -o <lfile> specifies local file name (default - basename of rfile)\n"
@@ -618,18 +656,20 @@ msgid ""
 " -a  use ascii mode (binary is the default)\n"
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
-"リモートファイル <rfile> を取得し、それをローカルファイル <lfile> に保存します。\n"
-" -o <lfile> ローカルでのファイル名を指定 (デフォルト - rfile のベースネーム)\n"
+"リモートファイル <rfile> を取得し、それをローカルファイル <lfile> に保存しま"
+"す。\n"
+" -o <lfile> ローカルでのファイル名を指定 (デフォルト - rfile のベースネー"
+"ム)\n"
 " -c 継続してダウンロード、reget と同じ\n"
 " -E 転送が成功したらリモートファイルを削除する\n"
 " -a アスキーモードを使う (デフォルトではバイナリ)\n"
 " -O <base> ファイルが置かれるベースディレクトリか URL を指定\n"
 
-#: src/commands.cc:220
+#: src/commands.cc:237
 msgid "glob [OPTS] <cmd> <args>"
 msgstr ""
 
-#: src/commands.cc:222
+#: src/commands.cc:239
 #, fuzzy
 msgid ""
 "Expand wildcards and run specified command.\n"
@@ -642,26 +682,29 @@ msgid ""
 msgstr ""
 "使い方: glob [OPTS] command args...\n"
 "ワイルドカードを展開して指定のコマンドを実行します。\n"
-"ファイル、ディレクトリ、あるいは両方のどのタイプについてワイルドカードを展開するか\n"
-"オプションで指定できます。タイプ選択はそれほど信頼できるものではなく、サーバに依ります。\n"
+"ファイル、ディレクトリ、あるいは両方のどのタイプについてワイルドカードを展開"
+"するか\n"
+"オプションで指定できます。タイプ選択はそれほど信頼できるものではなく、サーバ"
+"に依ります。\n"
 "そのエントリのタイプが決定できない場合には、リストに含められます。\n"
 " -f プレーンファイル (デフォルト)\n"
 " -d ディレクトリ\n"
 " -a 全タイプ\n"
 
-#: src/commands.cc:229
+#: src/commands.cc:246
 msgid "help [<cmd>]"
 msgstr "help [<cmd>]"
 
-#: src/commands.cc:230
+#: src/commands.cc:247
 msgid "Print help for command <cmd>, or list of available commands\n"
-msgstr "コマンド <cmd> のヘルプを表示するか、利用可能なコマンドの一覧を表示します\n"
+msgstr ""
+"コマンド <cmd> のヘルプを表示するか、利用可能なコマンドの一覧を表示します\n"
 
-#: src/commands.cc:231
+#: src/commands.cc:248
 msgid "history -w file|-r file|-c|-l [cnt]"
 msgstr "history -w file|-r file|-c|-l [cnt]"
 
-#: src/commands.cc:232
+#: src/commands.cc:249
 msgid ""
 " -w <file> Write history to file.\n"
 " -r <file> Read history from file; appends to current history.\n"
@@ -674,37 +717,42 @@ msgstr ""
 " -r <file> 履歴をファイルから読み込み、現在の履歴に追加します。\n"
 " -c 履歴を消去します。\n"
 " -l 履歴を列挙します(デフォルト)。\n"
-" オプション引数 cnt では列挙する履歴の行数を指定します。\"all\"を指定すると全てのエントリが列挙されます。\n"
+" オプション引数 cnt では列挙する履歴の行数を指定します。\"all\"を指定すると全"
+"てのエントリが列挙されます。\n"
 
-#: src/commands.cc:239
+#: src/commands.cc:256
 msgid "List running jobs. -v means verbose, several -v can be specified.\n"
-msgstr "実行中のジョブを列挙します。-v は冗長を意味し、-v をいくつか指定することもできます。\n"
+msgstr ""
+"実行中のジョブを列挙します。-v は冗長を意味し、-v をいくつか指定することもで"
+"きます。\n"
 
-#: src/commands.cc:240
+#: src/commands.cc:257
 msgid "kill all|<job_no>"
 msgstr "kill all|<job_no>"
 
-#: src/commands.cc:241
+#: src/commands.cc:258
 msgid "Delete specified job with <job_no> or all jobs\n"
 msgstr "<job_no> で指定されたジョブかすべてのジョブを削除します\n"
 
-#: src/commands.cc:242
+#: src/commands.cc:259
 msgid "lcd <ldir>"
 msgstr "lcd <ldir>"
 
-#: src/commands.cc:243
+#: src/commands.cc:260
 msgid ""
 "Change current local directory to <ldir>. The previous local directory\n"
 "is stored as `-'. You can do `lcd -' to change the directory back.\n"
 msgstr ""
-"現在のローカルディレクトリを <ldir> に変更します。以前いたローカルディレクトリ\n"
-"は `-' として保存されますので、`lcd -' とすれば元いたディレクトリに戻ることができます\n"
+"現在のローカルディレクトリを <ldir> に変更します。以前いたローカルディレクト"
+"リ\n"
+"は `-' として保存されますので、`lcd -' とすれば元いたディレクトリに戻ることが"
+"できます\n"
 
-#: src/commands.cc:245
+#: src/commands.cc:262
 msgid "lftp [OPTS] <site>"
 msgstr "lftp [OPTS] <site>"
 
-#: src/commands.cc:246
+#: src/commands.cc:263
 msgid ""
 "`lftp' is the first command executed by lftp after rc files\n"
 " -f <file>           execute commands from the file and exit\n"
@@ -728,11 +776,11 @@ msgstr ""
 " -p <port>           接続に指定のポートを使う\n"
 " <site>              ホスト名、URL あるいはブックマーク名\n"
 
-#: src/commands.cc:258
+#: src/commands.cc:275
 msgid "ls [<args>]"
 msgstr "ls [<args>]"
 
-#: src/commands.cc:259
+#: src/commands.cc:276
 #, fuzzy
 msgid ""
 "List remote files. You can redirect output of this command to file\n"
@@ -746,11 +794,11 @@ msgstr ""
 " デフォルトでは ls 出力はキャッシュされますので、新しい一覧を見るには\n"
 "`rels' を使うか `cache flush' を実行してください。\n"
 
-#: src/commands.cc:264
+#: src/commands.cc:281
 msgid "mget [OPTS] <files>"
 msgstr "mget [OPTS] <files>"
 
-#: src/commands.cc:265
+#: src/commands.cc:282
 msgid ""
 "Gets selected files with expanded wildcards\n"
 " -c  continue, reget\n"
@@ -768,11 +816,11 @@ msgstr ""
 " -a  アスキーモードを使う (デフォルトではバイナリ)\n"
 " -O <base> ファイルが置かれるベースディレクトリか URL を指定する\n"
 
-#: src/commands.cc:272
+#: src/commands.cc:289
 msgid "mirror [OPTS] [remote [local]]"
 msgstr "mirror [OPTS] [remote [local]]"
 
-#: src/commands.cc:273
+#: src/commands.cc:290
 msgid ""
 "\n"
 "Mirror specified remote directory to local directory\n"
@@ -810,7 +858,8 @@ msgstr ""
 " -c, --continue         可能ならばミラーのジョブを継続する\n"
 " -e, --delete           リモートサイトに存在しないファイルを削除する\n"
 " -s, --allow-suid       リモートサイトに従って suid/sgid ビットを立てる\n"
-" -n, --only-newer       更新されたファイルのみダウンロードする (-c は使えません)\n"
+" -n, --only-newer       更新されたファイルのみダウンロードする (-c は使えませ"
+"ん)\n"
 " -r, --no-recursion     サブディレクトリまでミラーしない\n"
 " -p, --no-perms         ファイルのパーミッションをセットしない\n"
 "     --no-umask         ファイルのモードに umask を適用しない\n"
@@ -829,16 +878,19 @@ msgstr ""
 " -v, --verbose[=N]      冗長な操作\n"
 "     --use-cache        キャッシュされたディレクトリの一覧を使う\n"
 "\n"
-"-R を使う際、最初のディレクトリはローカルで次のディレクトリがリモートになります。\n"
-"第二のディレクトリが省略された場合には、最初のディレクトリのベースネームが使われます。\n"
-"両方のディレクトリが省略された場合、現在のローカルおよびリモートディレクトリが\n"
+"-R を使う際、最初のディレクトリはローカルで次のディレクトリがリモートになりま"
+"す。\n"
+"第二のディレクトリが省略された場合には、最初のディレクトリのベースネームが使"
+"われます。\n"
+"両方のディレクトリが省略された場合、現在のローカルおよびリモートディレクトリ"
+"が\n"
 "使われます。\n"
 
-#: src/commands.cc:300
+#: src/commands.cc:317
 msgid "mkdir [-p] <dirs>"
 msgstr "mkdir [-p] <dirs>"
 
-#: src/commands.cc:301
+#: src/commands.cc:318
 msgid ""
 "Make remote directories\n"
 " -p  make all levels of path\n"
@@ -846,11 +898,11 @@ msgstr ""
 "リモートディレクトリを作成します\n"
 " -p  パスの全レベルを作成する\n"
 
-#: src/commands.cc:303
+#: src/commands.cc:320
 msgid "module name [args]"
 msgstr "module name [args]"
 
-#: src/commands.cc:304
+#: src/commands.cc:321
 msgid ""
 "Load module (shared object). The module should contain function\n"
 "   void module_init(int argc,const char *const *argv)\n"
@@ -859,22 +911,26 @@ msgid ""
 msgstr ""
 "モジュール (共有オブジェクト) を読み込みます。モジュールには\n"
 "   void module_init(int argc,const char *const *argv)\n"
-"という関数が含まれている必要があります。名前にスラッシュが含まれていた場合、\n"
-"現在のディレクトリから探します。そうでなければ module:path で設定されたディレクトリから探します。\n"
+"という関数が含まれている必要があります。名前にスラッシュが含まれていた場"
+"合、\n"
+"現在のディレクトリから探します。そうでなければ module:path で設定されたディレ"
+"クトリから探します。\n"
 
-#: src/commands.cc:308
+#: src/commands.cc:325
 msgid "more <files>"
 msgstr "more <files>"
 
-#: src/commands.cc:309
+#: src/commands.cc:326
 msgid "Same as `cat <files> | more'. if PAGER is set, it is used as filter\n"
-msgstr "`cat <files> | more' と同じです。もし PAGER がセットされていれば、それをフィルタとして使います\n"
+msgstr ""
+"`cat <files> | more' と同じです。もし PAGER がセットされていれば、それをフィ"
+"ルタとして使います\n"
 
-#: src/commands.cc:310
+#: src/commands.cc:327
 msgid "mput [OPTS] <files>"
 msgstr "mput [OPTS] <files>"
 
-#: src/commands.cc:311
+#: src/commands.cc:328
 msgid ""
 "Upload files with wildcard expansion\n"
 " -c  continue, reput\n"
@@ -892,28 +948,28 @@ msgstr ""
 " -a  アスキーモードを使う (デフォルトはバイナリ)\n"
 " -O <base> ファイルが置かれるベースディレクトリか URL を指定\n"
 
-#: src/commands.cc:318
+#: src/commands.cc:335
 msgid "mrm <files>"
 msgstr "mrm <files>"
 
-#: src/commands.cc:319
+#: src/commands.cc:336
 msgid "Removes specified files with wildcard expansion\n"
 msgstr "ワイルドカード展開で指定されたファイルを削除します\n"
 
-#: src/commands.cc:320
+#: src/commands.cc:337
 msgid "mv <file1> <file2>"
 msgstr "mv <file1> <file2>"
 
-#: src/commands.cc:321
+#: src/commands.cc:338
 msgid "Rename <file1> to <file2>\n"
 msgstr "<file1> を <file2> にリネームします\n"
 
-#: src/commands.cc:322
+#: src/commands.cc:339
 #, fuzzy
 msgid "[re]nlist [<args>]"
 msgstr "renlist [<args>]"
 
-#: src/commands.cc:323
+#: src/commands.cc:340
 #, fuzzy
 msgid ""
 "List remote file names.\n"
@@ -925,11 +981,11 @@ msgstr ""
 " デフォルトでは ls 出力はキャッシュされますので、新しい一覧を見るには\n"
 "`rels' を使うか `cache flush' を実行してください。\n"
 
-#: src/commands.cc:326
+#: src/commands.cc:343
 msgid "open [OPTS] <site>"
 msgstr "open [OPTS] <site>"
 
-#: src/commands.cc:327
+#: src/commands.cc:344
 msgid ""
 "Select a server, URL or bookmark\n"
 " -e <cmd>            execute the command just after selecting\n"
@@ -943,11 +999,11 @@ msgstr ""
 " -p <port>           接続に指定のポートを使う\n"
 " <site>              ホスト名、URL、ブックマーク名\n"
 
-#: src/commands.cc:332
+#: src/commands.cc:349
 msgid "pget [OPTS] <rfile> [-o <lfile>]"
 msgstr "pget [OPTS] <rfile> [-o <lfile>]"
 
-#: src/commands.cc:333
+#: src/commands.cc:350
 msgid ""
 "Gets the specified file using several connections. This can speed up "
 "transfer,\n"
@@ -957,7 +1013,8 @@ msgid ""
 "Options:\n"
 " -n <maxconn>  set maximum number of connections (default 5)\n"
 msgstr ""
-"指定されたファイルを複数の接続を使って取得します。スピードアップが図れますが、\n"
+"指定されたファイルを複数の接続を使って取得します。スピードアップが図れます"
+"が、\n"
 "ネットに大きな負荷をかけ、他のユーザに迷惑をかけます。そのファイルを本当に\n"
 "一刻も早く転送しなければならない場合のみ使ってください。さもないと\n"
 "他のユーザがぶちきれるかもしれません :)\n"
@@ -965,11 +1022,11 @@ msgstr ""
 "オプション:\n"
 " -n <maxconn>  接続の最大数をセット (デフォルトは 5)\n"
 
-#: src/commands.cc:338
+#: src/commands.cc:355
 msgid "put [OPTS] <lfile> [-o <rfile>]"
 msgstr "put [OPTS] <lfile> [-o <rfile>]"
 
-#: src/commands.cc:339
+#: src/commands.cc:356
 msgid ""
 "Upload <lfile> with remote name <rfile>.\n"
 " -o <rfile> specifies remote file name (default - basename of lfile)\n"
@@ -980,14 +1037,15 @@ msgid ""
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
 "<lfile> をリモートでの名前 <rfile> としてアップロードします。\n"
-" -o <rfile> リモートでのファイル名を指定 (デフォルト - lfile のベースネーム)\n"
+" -o <rfile> リモートでのファイル名を指定 (デフォルト - lfile のベースネー"
+"ム)\n"
 " -c 継続してアップロード、reput と同じ\n"
 "    リモートファイルを上書きする権限が必要です\n"
 " -E 転送が成功したらローカルファイルを削除する (危険)\n"
 " -a アスキーモードを使う (デフォルトはバイナリ)\n"
 " -O <base> ファイルが置かれるベースディレクトリか URL を指定\n"
 
-#: src/commands.cc:347
+#: src/commands.cc:364
 msgid ""
 "Print current remote URL.\n"
 " -p  show password\n"
@@ -995,11 +1053,11 @@ msgstr ""
 "現在のリモート URL を表示します。\n"
 " -p パスワードを見せる\n"
 
-#: src/commands.cc:349
+#: src/commands.cc:366
 msgid "queue [OPTS] [<cmd>]"
 msgstr ""
 
-#: src/commands.cc:350
+#: src/commands.cc:367
 #, fuzzy
 msgid ""
 "\n"
@@ -1022,8 +1080,10 @@ msgstr ""
 "使い方:\n"
 "       queue [-n num] <command>\n"
 "\n"
-"コマンドを現在のサイトのキューに追加します。サイトはそれぞれ自分のコマンドキューを持っています。\n"
-"`-n' はコマンドをキューの指定アイテムの前に追加します。キューを実行中のジョブの後に実行させるには\n"
+"コマンドを現在のサイトのキューに追加します。サイトはそれぞれ自分のコマンド"
+"キューを持っています。\n"
+"`-n' はコマンドをキューの指定アイテムの前に追加します。キューを実行中のジョブ"
+"の後に実行させるには\n"
 "コマンド `queue wait <jobno>' を使います。\n"
 "\n"
 "       queue --delete|-d [index or wildcard expression]\n"
@@ -1036,64 +1096,68 @@ msgstr ""
 "指定のアイテムを指定のキューインデックスの前に移動します。\n"
 "移動先が指定されていなかった場合最後に移動します。\n"
 
-#: src/commands.cc:365
+#: src/commands.cc:382
 msgid "quote <cmd>"
 msgstr "quote <cmd>"
 
-#: src/commands.cc:366
+#: src/commands.cc:383
 msgid ""
 "Send the command uninterpreted. Use with caution - it can lead to\n"
 "unknown remote state and thus will cause reconnect. You cannot\n"
 "be sure that any change of remote state because of quoted command\n"
 "is solid - it can be reset by reconnect at any time.\n"
 msgstr ""
-"コマンドを解釈せずに送信します。注意して使ってください - このコマンドによって\n"
-"リモートの状態が不明になり、再接続を生じることがあるかもしれません。クォートされたコマンドによる\n"
-"リモート状態の変更が信頼できるとは限りません - いつ再接続によってリセットされるか分からないのです。\n"
+"コマンドを解釈せずに送信します。注意して使ってください - このコマンドによっ"
+"て\n"
+"リモートの状態が不明になり、再接続を生じることがあるかもしれません。クォート"
+"されたコマンドによる\n"
+"リモート状態の変更が信頼できるとは限りません - いつ再接続によってリセットされ"
+"るか分からないのです。\n"
 
-#: src/commands.cc:371
+#: src/commands.cc:388
 #, fuzzy
 msgid "recls [<args>]Same as `cls', but don't look in cache\n"
 msgstr "`ls' と同じですが、キャッシュを参照しません\n"
 
-#: src/commands.cc:374
+#: src/commands.cc:391
 #, fuzzy
 msgid "Usage: reget [OPTS] <rfile> [-o <lfile>]Same as `get -c'\n"
 msgstr "reget [OPTS] <rfile> [-o <lfile>]"
 
-#: src/commands.cc:377
+#: src/commands.cc:394
 #, fuzzy
 msgid "Usage: rels [<args>]Same as `ls', but don't look in cache\n"
 msgstr "`ls' と同じですが、キャッシュを参照しません\n"
 
-#: src/commands.cc:380
+#: src/commands.cc:397
 #, fuzzy
 msgid "Usage: renlist [<args>]Same as `nlist', but don't look in cache\n"
 msgstr "`nlist' と同じですが、キャッシュを参照しません\n"
 
-#: src/commands.cc:382
+#: src/commands.cc:399
 msgid "repeat [delay] [command]"
 msgstr ""
 
-#: src/commands.cc:383
+#: src/commands.cc:400
 #, fuzzy
 msgid ""
 "Repeat specified command with a delay between iterations.\n"
 "Default delay is one second, default command is empty.\n"
 msgstr ""
 "使い方: repeat [delay] [command]\n"
-"指定されたコマンドを、ディレイを挟んで繰り返します。デフォルトのディレイは 1 秒で、デフォルトのコマンドは空です。\n"
+"指定されたコマンドを、ディレイを挟んで繰り返します。デフォルトのディレイは 1 "
+"秒で、デフォルトのコマンドは空です。\n"
 
-#: src/commands.cc:386
+#: src/commands.cc:403
 #, fuzzy
 msgid "Usage: reput <lfile> [-o <rfile>]Same as `put -c'\n"
 msgstr "reput <lfile> [-o <rfile>]"
 
-#: src/commands.cc:388
+#: src/commands.cc:405
 msgid "rm [-r] [-f] <files>"
 msgstr "rm [-r] [-f] <files>"
 
-#: src/commands.cc:389
+#: src/commands.cc:406
 msgid ""
 "Remove remote files\n"
 " -r  recursive directory removal, be careful\n"
@@ -1103,27 +1167,29 @@ msgstr ""
 " -r  再帰的なディレクトリ削除、使用注意\n"
 " -f  静かに作業\n"
 
-#: src/commands.cc:392
+#: src/commands.cc:409
 msgid "rmdir [-f] <dirs>"
 msgstr "rmdir [-f] <dirs>"
 
-#: src/commands.cc:393
+#: src/commands.cc:410
 msgid "Remove remote directories\n"
 msgstr "リモートディレクトリを削除します\n"
 
-#: src/commands.cc:394
+#: src/commands.cc:411
 msgid "scache [<session_no>]"
 msgstr "scache [<session_no>]"
 
-#: src/commands.cc:395
+#: src/commands.cc:412
 msgid "List cached sessions or switch to specified session number\n"
-msgstr "キャッシュされたセッションを列挙するか、指定されたセッション番号に切り替えます\n"
+msgstr ""
+"キャッシュされたセッションを列挙するか、指定されたセッション番号に切り替えま"
+"す\n"
 
-#: src/commands.cc:396
+#: src/commands.cc:413
 msgid "set [OPT] [<var> [<val>]]"
 msgstr "set [OPT] [<var> [<var>]]"
 
-#: src/commands.cc:397
+#: src/commands.cc:414
 msgid ""
 "Set variable to given value. If the value is omitted, unset the variable.\n"
 "Variable name has format ``name/closure'', where closure can specify\n"
@@ -1133,7 +1199,8 @@ msgid ""
 " -a  list all settings, including default values\n"
 " -d  list only default values, not necessary current ones\n"
 msgstr ""
-"変数を与えられた値にセットします。値が省かれた場合、変数をアンセットします。\n"
+"変数を与えられた値にセットします。値が省かれた場合、変数をアンセットしま"
+"す。\n"
 "変数名は ``名前/クロージャ'' というフォーマットであり、クロージャで設定の\n"
 "正確なアプリケーションを指定できます。詳しくは lftp(1) を参照してください。\n"
 "変数の指定無く set が呼ばれた場合、変更された設定のみ列挙されます。\n"
@@ -1141,11 +1208,11 @@ msgstr ""
 " -a すべての設定を列挙、デフォルト値も含む\n"
 " -d デフォルト値のみ列挙、現在のものであるとは限らない\n"
 
-#: src/commands.cc:405
+#: src/commands.cc:422
 msgid "site <site_cmd>"
 msgstr "site <site_cmd>"
 
-#: src/commands.cc:406
+#: src/commands.cc:423
 msgid ""
 "Execute site command <site_cmd> and output the result\n"
 "You can redirect its output\n"
@@ -1153,7 +1220,7 @@ msgstr ""
 "サイトのコマンド <site_cmd> を実行し、結果を出力します\n"
 "出力はリダイレクトできます\n"
 
-#: src/commands.cc:409
+#: src/commands.cc:426
 msgid ""
 "Usage: sleep <time>[unit]\n"
 "Sleep for given amount of time. The time argument can be optionally\n"
@@ -1161,23 +1228,24 @@ msgid ""
 "By default time is assumed to be seconds.\n"
 msgstr ""
 "使い方: sleep <time>[unit]\n"
-"指定された時間だけスリープします。時間を指定する引数に続けて、単位を指定する\n"
+"指定された時間だけスリープします。時間を指定する引数に続けて、単位を指定す"
+"る\n"
 "文字をつけることも可能です: d - 日、h - 時間、m - 分、s - 秒。\n"
 "デフォルトでは時間は秒であると仮定されます。\n"
 
-#: src/commands.cc:413
+#: src/commands.cc:430
 msgid "source <file>"
 msgstr "source <file>"
 
-#: src/commands.cc:414
+#: src/commands.cc:431
 msgid "Execute commands recorded in file <file>\n"
 msgstr "ファイル <file> に記録されたコマンドを実行します\n"
 
-#: src/commands.cc:416
+#: src/commands.cc:433
 msgid "user <user|URL> [<pass>]"
 msgstr "user <user|URL> [<pass>]"
 
-#: src/commands.cc:417
+#: src/commands.cc:434
 msgid ""
 "Use specified info for remote login. If you specify URL, the password\n"
 "will be cached for future usage.\n"
@@ -1185,15 +1253,15 @@ msgstr ""
 "リモートログインの際指定された情報を使います。URL を指定した場合、\n"
 "パスワードは将来の利用のためにキャッシュされます。\n"
 
-#: src/commands.cc:420
+#: src/commands.cc:437
 msgid "Shows lftp version\n"
 msgstr "lftp のバージョンを表示します\n"
 
-#: src/commands.cc:421
+#: src/commands.cc:438
 msgid "wait [<jobno>]"
 msgstr "wait [<jobno>]"
 
-#: src/commands.cc:422
+#: src/commands.cc:439
 msgid ""
 "Wait for specified job to terminate. If jobno is omitted, wait\n"
 "for last backgrounded job.\n"
@@ -1201,354 +1269,378 @@ msgstr ""
 "指定されたジョブが終了するまで待ちます。jobno が省略された場合、\n"
 "最後のバックグラウンド化されたジョブを待ちます。\n"
 
-#: src/commands.cc:424
+#: src/commands.cc:441
 msgid "zcat <files>"
 msgstr "zcat <files>"
 
-#: src/commands.cc:425
+#: src/commands.cc:442
 msgid "Same as cat, but filter each file through zcat\n"
 msgstr "cat と同じですが、それぞれのファイルを zcat にかけます\n"
 
-#: src/commands.cc:426
+#: src/commands.cc:443
 msgid "zmore <files>"
 msgstr "zmore <files>"
 
-#: src/commands.cc:427
+#: src/commands.cc:444
 msgid "Same as more, but filter each file through zcat\n"
 msgstr "more と同じですが、それぞれのファイルを zcat にかけます\n"
 
-#: src/commands.cc:429
+#: src/commands.cc:446
 msgid "Same as cat, but filter each file through bzcat\n"
 msgstr "cat と同じですが、それぞれのファイルを bzcat にかけます\n"
 
-#: src/commands.cc:431
+#: src/commands.cc:448
 msgid "Same as more, but filter each file through bzcat\n"
 msgstr "more と同じですが、それぞれのファイルを bzcat にかけます\n"
 
-#: src/commands.cc:480
+#: src/commands.cc:497
 #, c-format
 msgid "Usage: %s local-dir\n"
 msgstr "使い方: %s local-dir\n"
 
-#: src/commands.cc:510
+#: src/commands.cc:527
 #, c-format
 msgid "lcd ok, local cwd=%s\n"
 msgstr "lcd 成功、ローカルの cwd=%s\n"
 
-#: src/commands.cc:524
+#: src/commands.cc:541
 #, c-format
 msgid "Usage: cd remote-dir\n"
 msgstr "使い方: cd remote-dir\n"
 
-#: src/commands.cc:538
+#: src/commands.cc:555
 #, c-format
 msgid "%s: no old directory for this site\n"
 msgstr "%s: このサイトの古いディレクトリはありません\n"
 
-#: src/commands.cc:570
+#: src/commands.cc:587
 #, c-format
 msgid "Usage: %s [<exit_code>]\n"
 msgstr "使い方: %s [<exit_code>]\n"
 
-#: src/commands.cc:579
+#: src/commands.cc:596
 msgid ""
 "There are running jobs and `cmd:move-background' is not set.\n"
 "Use `exit bg' to force moving to background or `kill all' to terminate "
 "jobs.\n"
 msgstr ""
 "実行中のジョブがあるのに、`cmd:move-background' がセットされていません。\n"
-"`exit bg' を使って強制的にバックグラウンドに移行させるか、`kill all'でジョブを終了させてください。\n"
+"`exit bg' を使って強制的にバックグラウンドに移行させるか、`kill all'でジョブ"
+"を終了させてください。\n"
 
-#: src/commands.cc:699
+#: src/commands.cc:716
 #, c-format
 msgid "Try `%s --help' for more information\n"
 msgstr "`%s --help' でより詳しい情報が得られます\n"
 
-#: src/commands.cc:701
+#: src/commands.cc:718
 #, c-format
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 msgstr "使い方: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 
-#: src/DummyProto.cc:79 src/commands.cc:769 src/commands.cc:1780
+#: src/DummyProto.cc:79 src/commands.cc:786 src/commands.cc:1801
 msgid " - not supported protocol"
 msgstr " - はサポートされていないプロトコルです"
 
-#: src/commands.cc:815 src/commands.cc:1764
+#: src/commands.cc:832 src/commands.cc:1785
 msgid "Password: "
 msgstr "パスワード: "
 
-#: src/commands.cc:817
+#: src/commands.cc:834
 #, c-format
 msgid "%s: GetPass() failed -- assume anonymous login\n"
 msgstr "%s: GetPass() が失敗しました -- 匿名ログインと仮定します\n"
 
-#: src/commands.cc:909
+#: src/commands.cc:926
 #, c-format
 msgid "Usage: %s [OPTS] command args...\n"
 msgstr "使い方: %s [OPTS] command args...\n"
 
-#: src/commands.cc:959 src/commands.cc:1415
+#: src/commands.cc:976 src/commands.cc:1432
 #, c-format
 msgid "%s: -n: Number expected. "
 msgstr "%s: -n: 数字が必要です。"
 
-#: src/commands.cc:1016 src/commands.cc:1046
+#: src/commands.cc:1033 src/commands.cc:1063
 #, c-format
 msgid "%s: No queue is active.\n"
 msgstr "%s: アクティブなキューはありません。\n"
 
-#: src/commands.cc:1038
+#: src/commands.cc:1055
 #, c-format
 msgid "%s: -m: Number expected as second argument. "
 msgstr "%s: -m: 第二の引数として数字が必要です。"
 
-#: src/commands.cc:1069
+#: src/commands.cc:1086
 msgid "Can only edit plain queues.\n"
 msgstr "プレーンなキューのみ編集できます。\n"
 
-#: src/commands.cc:1082
+#: src/commands.cc:1099
 #, c-format
 msgid "Couldn't create temporary file `%s': %s.\n"
 msgstr "一時ファイル `%s' が作成できませんでした: %s。\n"
 
-#: src/commands.cc:1088
+#: src/commands.cc:1105
 #, c-format
 msgid "%s: error writing %s: %s\n"
 msgstr "%s: %s の書き込みでエラー: %s\n"
 
-#: src/commands.cc:1143
+#: src/commands.cc:1160
 #, c-format
 msgid "Usage: %s <cmd>\n"
 msgstr "使い方: %s <cmd>\n"
 
-#: src/commands.cc:1213
+#: src/commands.cc:1230
 msgid "invalid argument for `--sort'"
 msgstr ""
 
 #. silly getopt won't give us its error instead of printing it, oh well.
 #. * we only need to never print errors for completion and validation; for
 #. * cls itself we could do it, but that'd be a special case ...
-#: src/commands.cc:1253
+#: src/commands.cc:1270
 #, fuzzy
 msgid "invalid option"
 msgstr "不正な数"
 
-#: src/commands.cc:1282
+#: src/commands.cc:1299
 #, fuzzy, c-format
 msgid "%s: %s.\n"
 msgstr "%s: %s: %s\n"
 
-#: src/commands.cc:1348
+#: src/commands.cc:1365
 #, c-format
 msgid "Usage: %s [OPTS] files...\n"
 msgstr "使い方: %s [OPTS] files...\n"
 
-#: src/commands.cc:1445
+#: src/commands.cc:1462
 #, c-format
 msgid "File name missed. "
 msgstr "ファイル名がありません。"
 
-#: src/commands.cc:1548
-#, c-format
-msgid "Usage: %s [-r] [-f] files...\n"
+#: src/commands.cc:1569
+#, fuzzy, c-format
+msgid "Usage: %s %s[-f] files...\n"
 msgstr "使い方: %s [-r] [-f] files...\n"
 
-#: src/commands.cc:1597
+#: src/commands.cc:1618
 #, c-format
 msgid "Usage: %s <file>\n"
 msgstr "使い方: %s <file>\n"
 
-#: src/commands.cc:1619
+#: src/commands.cc:1640
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
 msgstr "使い方: %s [-v] [-v] ...\n"
 
-#: src/commands.cc:1647
+#: src/commands.cc:1668
 #, c-format
 msgid "Usage: %s [-p]\n"
 msgstr "使い方: %s [-p]\n"
 
-#: src/commands.cc:1731
+#: src/commands.cc:1752
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
 msgstr "デバッグレベルは %d、出力は %s へ\n"
 
-#: src/commands.cc:1734
+#: src/commands.cc:1755
 msgid "debug is off\n"
 msgstr "デバッグはオフ\n"
 
-#: src/commands.cc:1745
+#: src/commands.cc:1766
 #, c-format
 msgid "Usage: %s userid [pass]\n"
 msgstr "使い方: %s userid [pass]\n"
 
-#: src/commands.cc:1820 src/commands.cc:1992
+#: src/commands.cc:1841 src/commands.cc:2013
 #, c-format
 msgid "%s: no current job\n"
 msgstr "%s: 現在ジョブはありません\n"
 
-#: src/commands.cc:1830 src/commands.cc:1860 src/commands.cc:2000
+#: src/commands.cc:1851 src/commands.cc:1881 src/commands.cc:2021
 #, c-format
 msgid "%s: %d - no such job\n"
 msgstr "%s: %d - そのようなジョブはありません\n"
 
-#: src/commands.cc:1832
+#: src/commands.cc:1853
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
 msgstr "使い方: %s <jobno> ... | all\n"
 
-#: src/commands.cc:1851 src/commands.cc:1982 src/commands.cc:2124
-#: src/commands.cc:2407 src/commands.cc:2652
+#: src/commands.cc:1872 src/commands.cc:2003 src/commands.cc:2145
+#: src/commands.cc:2428 src/commands.cc:2499 src/commands.cc:2797
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s: %s - 数ではありません\n"
 
-#: src/commands.cc:1915
+#: src/commands.cc:1936
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr "%s: %s です。すべての変数を見るには `set -a' を使いましょう。\n"
 
-#: src/commands.cc:1964
+#: src/commands.cc:1985
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
 msgstr "使い方: %s [<jobno>]\n"
 
-#: src/commands.cc:2005
+#: src/commands.cc:2026
 #, c-format
 msgid "%s: some other job waits for job %d\n"
 msgstr "%s: いくつかの他のジョブがジョブ %d を待っています\n"
 
-#: src/commands.cc:2030
+#: src/commands.cc:2051
 #, c-format
 msgid "Usage: mv <file1> <file2>\n"
 msgstr "使い方: mv <file1> <file2>\n"
 
-#: src/commands.cc:2052 src/commands.cc:2272
+#: src/commands.cc:2073 src/commands.cc:2293
 #, c-format
 msgid "Invalid command. "
 msgstr "不正なコマンドです。 "
 
-#: src/commands.cc:2059 src/commands.cc:2279
+#: src/commands.cc:2080 src/commands.cc:2300
 #, c-format
 msgid "Ambiguous command. "
 msgstr "あいまいなコマンドです。 "
 
-#: src/commands.cc:2078
+#: src/commands.cc:2099
 #, c-format
 msgid "%s: Operand missed for size\n"
 msgstr "%s: サイズのためのオペランドがありません\n"
 
-#: src/commands.cc:2085
+#: src/commands.cc:2106
 #, c-format
 msgid "%s: Invalid number for size\n"
 msgstr "%s: サイズとしては不正な数です\n"
 
-#: src/commands.cc:2096
+#: src/commands.cc:2117
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
 msgstr "%s: `expire' のためのオペランドがありません\n"
 
-#: src/commands.cc:2130
+#: src/commands.cc:2151
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
-msgstr "%s: %s - そのようなキャッシュされたセッションはありません。`scache' でセッションリストを見てください。\n"
+msgstr ""
+"%s: %s - そのようなキャッシュされたセッションはありません。`scache' でセッ"
+"ションリストを見てください。\n"
 
-#: src/commands.cc:2147
+#: src/commands.cc:2168
 #, c-format
 msgid "Sorry, no help for %s\n"
 msgstr "残念ながら、%s のヘルプはありません\n"
 
-#: src/commands.cc:2152
+#: src/commands.cc:2173
 #, c-format
 msgid "%s is a built-in alias for %s\n"
 msgstr "%s は %s の組み込みエイリアスです\n"
 
-#: src/commands.cc:2157
+#: src/commands.cc:2178
 #, c-format
 msgid "Usage: %s\n"
 msgstr "使い方: %s\n"
 
-#: src/commands.cc:2165
+#: src/commands.cc:2186
 #, c-format
 msgid "%s is an alias to `%s'\n"
 msgstr "%s は `%s' のエイリアスです\n"
 
-#: src/commands.cc:2169
+#: src/commands.cc:2190
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
-msgstr "`%s'というコマンドはありません。利用可能なコマンドは `help' で調べられます。\n"
+msgstr ""
+"`%s'というコマンドはありません。利用可能なコマンドは `help' で調べられま"
+"す。\n"
 
-#: src/commands.cc:2171
+#: src/commands.cc:2192
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
-msgstr "`%s' ではコマンドを特定できません。利用可能なコマンドは `help' で調べられます。\n"
+msgstr ""
+"`%s' ではコマンドを特定できません。利用可能なコマンドは `help' で調べられま"
+"す。\n"
 
-#: src/commands.cc:2222
+#: src/commands.cc:2243
 #, c-format
 msgid "Lftp | Version %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"
 msgstr "Lftp | バージョン %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"
 
-#: src/commands.cc:2224
+#: src/commands.cc:2245
 msgid ""
 "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
-msgstr "lftp はフリーソフトウェアであり、*全くの無保証*です。詳しくは COPYING を参照。\n"
+msgstr ""
+"lftp はフリーソフトウェアであり、*全くの無保証*です。詳しくは COPYING を参"
+"照。\n"
 
-#: src/commands.cc:2226
+#: src/commands.cc:2247
 #, c-format
 msgid "Send bug reports and questions to <%s>.\n"
 msgstr "バグ報告や質問は <%s> まで送ってください。\n"
 
-#: src/commands.cc:2296 src/commands.cc:2328
+#: src/commands.cc:2317 src/commands.cc:2349
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s: ブックマーク名が必要です\n"
 
-#: src/commands.cc:2317
+#: src/commands.cc:2338
 #, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
 msgstr "%s: ブックマーク名にスペースを入れてはいけません\n"
 
-#: src/commands.cc:2330
+#: src/commands.cc:2351
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s: `%s' というブックマークはありません\n"
 
-#: src/commands.cc:2345
+#: src/commands.cc:2366
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: インポートタイプ(netscape,ncftp)を指定してください\n"
 
-#: src/commands.cc:2413
+#: src/commands.cc:2434
 #, c-format
 msgid "Usage: %s [-d #] dir\n"
 msgstr "使い方: %s [-d #] dir\n"
 
-#: src/commands.cc:2432
+#: src/commands.cc:2530
+#, fuzzy, c-format
+msgid "Usage: %s [options] <dirs>\n"
+msgstr "使い方: %s [-d #] dir\n"
+
+#: src/commands.cc:2536
+#, c-format
+msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
+msgstr ""
+
+#: src/commands.cc:2540
+#, c-format
+msgid "%s: summarizing conflicts with --max-depth=%i\n"
+msgstr ""
+
+#: src/commands.cc:2577
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "使い方: %s command args...\n"
 
-#: src/commands.cc:2444
+#: src/commands.cc:2589
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "使い方: %s module [args...]\n"
 
-#: src/LocalAccess.cc:552 src/commands.cc:2462
+#: src/LocalAccess.cc:552 src/commands.cc:2607
 msgid "cannot get current directory"
 msgstr "現在のディレクトリが取得できません"
 
-#: src/commands.cc:2479
+#: src/commands.cc:2624
 #, c-format
 msgid "Usage: %s mode file...\n"
 msgstr "使い方: %s mode file...\n"
 
-#: src/commands.cc:2485
+#: src/commands.cc:2630
 #, c-format
 msgid "%s: %s - not an octal number\n"
 msgstr "%s: %s - 8進数ではありません\n"
 
-#: src/commands.cc:2534
+#: src/commands.cc:2679
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "使い方: %s [OPTS] file\n"
@@ -1579,7 +1671,9 @@ msgstr "アカウントが必要です。ftp:acct 変数を設定してください"
 
 #: src/ftpclass.cc:460
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
-msgstr "ftp:skey-forceがセットされていますが、サーバはOPIEもS/KEYもサポートしていません"
+msgstr ""
+"ftp:skey-forceがセットされていますが、サーバはOPIEもS/KEYもサポートしていませ"
+"ん"
 
 #: src/ftpclass.cc:476
 msgid "Saw `unknown', assume failed login"
@@ -1593,126 +1687,128 @@ msgstr "ホスト名検索に失敗したと仮定します"
 msgid "cannot parse EPSV response"
 msgstr "EPSV レスポンスを解析できません"
 
-#: src/Http.cc:769 src/ftpclass.cc:1073
+#: src/Http.cc:769 src/ftpclass.cc:1078
 msgid "Closing idle connection"
 msgstr "アイドル状態の接続を閉じます"
 
-#: src/Http.cc:897 src/ftpclass.cc:1152
+#: src/Http.cc:897 src/ftpclass.cc:1157
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "アドレスファミリ %d のソケットを作れません"
 
-#: src/ftpclass.cc:1334
+#: src/ftpclass.cc:1339
 msgid "SITE CHMOD is not supported by this site"
 msgstr "SITE CHMOD はこのサイトではサポートされていません"
 
-#: src/ftpclass.cc:1682 src/ftpclass.cc:1722
+#: src/ftpclass.cc:1687 src/ftpclass.cc:1727
 msgid "unsupported network protocol"
 msgstr "サポートされていないネットワークプロトコルです"
 
-#: src/ftpclass.cc:1832
+#: src/ftpclass.cc:1837
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "データソケットを (%s) のポート %u に接続中"
 
-#: src/ftpclass.cc:1857 src/ftpclass.cc:3393
+#: src/ftpclass.cc:1862 src/ftpclass.cc:3400
 msgid "Switching passive mode off"
 msgstr "パッシヴモードをオフに切り替えました"
 
-#: src/Http.cc:985 src/ftpclass.cc:2300
+#: src/Http.cc:985 src/ftpclass.cc:2307
 msgid "Peer closed connection"
 msgstr "ピアが接続を閉じました"
 
-#: src/ftpclass.cc:2327
+#: src/ftpclass.cc:2334
 msgid "Persist and retry"
 msgstr "持続的に再試行します"
 
-#: src/ftpclass.cc:2426
+#: src/ftpclass.cc:2433
 msgid "Closing control socket"
 msgstr "コントロールソケットを閉じています"
 
-#: src/ftpclass.cc:2507
+#: src/ftpclass.cc:2514
 msgid "Closing data socket"
 msgstr "データソケットを閉じています"
 
-#: src/ftpclass.cc:3234
+#: src/ftpclass.cc:3241
 msgid "saw file size in response"
 msgstr "レスポンス中にファイルサイズがありました"
 
-#: src/ftpclass.cc:3245
+#: src/ftpclass.cc:3252
 msgid "remote end closes connection"
 msgstr "リモートエンドが接続を閉じました"
 
-#: src/ftpclass.cc:3253
+#: src/ftpclass.cc:3260
 msgid "extra server response"
 msgstr "余分なサーバレスポンスです"
 
-#: src/ftpclass.cc:3265 src/ftpclass.cc:3290
+#: src/ftpclass.cc:3272 src/ftpclass.cc:3297
 msgid "Turning on sync-mode"
 msgstr "sync モードを有効にしました"
 
-#: src/ftpclass.cc:3410
+#: src/ftpclass.cc:3417
 msgid "Switching passive mode on"
 msgstr "パッシヴモードをオンに切り替えました"
 
-#: src/ftpclass.cc:3476
+#: src/ftpclass.cc:3483
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
-msgstr "ftp:ssl-force がセットされていますが、サーバは SSL をサポートあるいは許可していません"
+msgstr ""
+"ftp:ssl-force がセットされていますが、サーバは SSL をサポートあるいは許可して"
+"いません"
 
-#: src/ftpclass.cc:3515
+#: src/ftpclass.cc:3522
 msgid "Sending commands..."
 msgstr "コマンドを送信中..."
 
-#: src/Http.cc:1606 src/ftpclass.cc:3517 src/ftpclass.cc:3542
-#: src/ftpclass.cc:3554
+#: src/Http.cc:1606 src/ftpclass.cc:3524 src/ftpclass.cc:3549
+#: src/ftpclass.cc:3561
 msgid "Waiting for response..."
 msgstr "応答を待っています..."
 
-#: src/Http.cc:1599 src/ftpclass.cc:3518
+#: src/Http.cc:1599 src/ftpclass.cc:3525
 msgid "Connection idle"
 msgstr "接続アイドル"
 
-#: src/Http.cc:1597 src/Http.cc:1604 src/ftpclass.cc:3531
+#: src/Http.cc:1597 src/Http.cc:1604 src/ftpclass.cc:3538
 msgid "Connecting..."
 msgstr "接続中..."
 
-#: src/ftpclass.cc:3535
+#: src/ftpclass.cc:3542
 msgid "TLS negotiation..."
 msgstr "TLS ネゴシエーション..."
 
-#: src/ftpclass.cc:3537
+#: src/ftpclass.cc:3544
 msgid "Connected"
 msgstr "接続しました"
 
-#: src/ftpclass.cc:3539
+#: src/ftpclass.cc:3546
 msgid "Logging in..."
 msgstr "ログインしています..."
 
-#: src/ftpclass.cc:3543
+#: src/ftpclass.cc:3550
 msgid "Making data connection..."
 msgstr "データ接続を確立中..."
 
-#: src/ftpclass.cc:3545
+#: src/ftpclass.cc:3552
 msgid "Changing remote directory..."
 msgstr "リモートディレクトリを変更中..."
 
-#: src/ftpclass.cc:3550
+#: src/ftpclass.cc:3557
 msgid "Waiting for other copy peer..."
 msgstr "他のコピー相手を待っています..."
 
-#: src/ftpclass.cc:3553 src/ftpclass.cc:3565
+#: src/ftpclass.cc:3560 src/ftpclass.cc:3572
 msgid "Waiting for transfer to complete"
 msgstr "送受信の完了を待っています"
 
-#: src/ftpclass.cc:3556
+#: src/ftpclass.cc:3563
 msgid "Waiting for data connection..."
 msgstr "データ接続を待っています..."
 
-#: src/Http.cc:1602 src/ftpclass.cc:3561
+#: src/Http.cc:1602 src/ftpclass.cc:3568
 msgid "Sending data"
 msgstr "データ送信中"
 
-#: src/Http.cc:1609 src/ftpclass.cc:3563
+#: src/Http.cc:1609 src/ftpclass.cc:3570
 msgid "Receiving data"
 msgstr "データ受信中"
 
@@ -1763,11 +1859,11 @@ msgstr "%s 成功、%d 個のディレクトリを作成しました\n"
 msgid "rename successful\n"
 msgstr "リネームに成功しました\n"
 
-#: src/parsecmd.cc:294
+#: src/parsecmd.cc:302
 msgid "parse: missing filter command\n"
 msgstr "parse: フィルタコマンドがありません\n"
 
-#: src/parsecmd.cc:296
+#: src/parsecmd.cc:304
 msgid "parse: missing redirection filename\n"
 msgstr "parse: リダイレクションのファイル名がありません\n"
 
@@ -1813,7 +1909,9 @@ msgstr "POST メソッド失敗"
 #. problem here: hftp cannot work without proxy
 #: src/Http.cc:848
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
-msgstr "ftp over http はプロキシ無しでは利用できません。hftp:proxy をセットしてください。"
+msgstr ""
+"ftp over http はプロキシ無しでは利用できません。hftp:proxy をセットしてくださ"
+"い。"
 
 #: src/Http.cc:996
 msgid "Sending request..."
@@ -1880,7 +1978,8 @@ msgstr "アドレスファミリー `%s' は不明です"
 
 #: src/resource.cc:156
 msgid "ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C"
-msgstr "ftp:ssl-auth は以下のどれかでなければなりません: SSL、TLS、TLS-P、TLS-C"
+msgstr ""
+"ftp:ssl-auth は以下のどれかでなければなりません: SSL、TLS、TLS-P、TLS-C"
 
 #: src/FtpDirList.cc:145 src/FtpSplitList.cc:182 src/HttpDir.cc:1116
 #: src/NetAccess.cc:695
@@ -1893,22 +1992,22 @@ msgstr "ファイルリスト (%lld) [%s] を取得中"
 msgid "`%s' at %lld %s%s%s%s"
 msgstr "`%s' (現在 %lld バイト) %s%s%s%s"
 
-#: src/CopyJob.cc:234
+#: src/CopyJob.cc:233
 #, c-format
 msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
 msgstr "%lld バイト転送済、%ld 秒経過"
 
-#: src/CopyJob.cc:246
+#: src/CopyJob.cc:245
 #, c-format
 msgid "%lld $#ll#byte|bytes$ transferred\n"
 msgstr "%lld バイト転送済\n"
 
-#: src/CopyJob.cc:253
+#: src/CopyJob.cc:252
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr "%d 個(%d ファイル中)の転送が失敗\n"
 
-#: src/CopyJob.cc:259
+#: src/CopyJob.cc:258
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr "計 %d ファイル転送済\n"
@@ -1941,51 +2040,52 @@ msgstr "copy: データをすべて受信しましたが、get は戻りました\n"
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr "copy: get は %lld に戻りました。適宜 put しています\n"
 
-#: src/FileCopy.cc:933
+#: src/FileCopy.cc:921
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy: `%s' へのリダイレクションを受け取りました\n"
 
-#: src/FileCopy.cc:1129
+#: src/FileCopy.cc:1117
 msgid "file name missed in URL"
 msgstr "URL 中にファイル名がありません"
 
 #. for translator: those are the units. This is 'byte per second'
-#: src/Speedometer.cc:86
+#: src/Speedometer.cc:94
 #, c-format
 msgid "%.0fb/s"
 msgstr "%.0fb/s"
 
 #. for translator: This is 'kilobyte per second'
-#: src/Speedometer.cc:89
+#: src/Speedometer.cc:97
 #, c-format
 msgid "%.1fK/s"
 msgstr "%.1fK/s"
 
 #. for translator: This is 'Megabyte per second'
-#: src/Speedometer.cc:92
+#: src/Speedometer.cc:100
 #, c-format
 msgid "%.2fM/s"
 msgstr "%.2fM/s"
 
 #. for translator: only first letter matters
-#: src/Speedometer.cc:118
+#: src/Speedometer.cc:126
 msgid "day"
 msgstr "日"
 
-#: src/Speedometer.cc:119
+#: src/Speedometer.cc:127
 msgid "hour"
 msgstr "時間"
 
-#: src/Speedometer.cc:120
+#: src/Speedometer.cc:128
 msgid "minute"
 msgstr "分"
 
-#: src/Speedometer.cc:121
+#: src/Speedometer.cc:129
 msgid "second"
 msgstr "秒"
 
-#: src/Speedometer.cc:123
+#. for translator: Estimated Time of Arrival.
+#: src/Speedometer.cc:132
 msgid "eta:"
 msgstr "eta:"
 
