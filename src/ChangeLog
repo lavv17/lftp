@@ -15,6 +15,7 @@
 	* resource.cc: new setting http:cache-control.
 	* Http.cc: use new setting http:cache-control; handle 503 Gateway
 	  timeout specially if only-if-cached is specified.
+	* NetAccess.cc: clear files info before getting.
 
 2004-07-26  Alexander V. Lukyanov <lav@yars.free.net>
 
