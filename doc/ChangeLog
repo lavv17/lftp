@@ -1,3 +1,7 @@
+1999-10-22	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document hftp:use-head.
+
 1999-10-12	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: correct example with verify-path.
