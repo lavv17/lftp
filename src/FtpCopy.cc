@@ -39,7 +39,7 @@ void FtpCopy::Close()
 
 int FtpCopy::Do()
 {
-   int res;
+   int src_res,dst_res;
    int m=STALL;
    switch(state)
    {
@@ -58,10 +58,10 @@ int FtpCopy::Do()
       state=GET_SIZE;
       m=MOVED;
    case GET_SIZE:
-      res=dst->Done();
-      if(res==Ftp::IN_PROGRESS)
+      dst_res=dst->Done();
+      if(dst_res==Ftp::IN_PROGRESS)
       	 return m;
-      if(res<0)
+      if(dst_res<0)
 	 dst_size=0;
       else
 	 dst_size=(info.size<0?0:info.size);
@@ -90,21 +90,21 @@ int FtpCopy::Do()
 	 goto pre_GET_SIZE;
       }
 
-      res=src->StateToError();
-      if(res!=src->OK)
+      src_res=src->Done();
+      dst_res=dst->Done();
+      if(src_res==src->OK && dst_res==dst->OK)
+	 goto pre_DONE;
+      if(src_res!=src->IN_PROGRESS && src_res!=src->OK)
       {
-	 eprintf("%s: %s: %s\n",op,src_url,src->StrError(res));
+	 eprintf("%s: %s: %s\n",op,src_url,src->StrError(src_res));
 	 goto pre_ERROR;
       }
-      res=dst->StateToError();
-      if(res!=dst->OK)
+      if(dst_res!=dst->IN_PROGRESS && dst_res!=dst->OK)
       {
-	 eprintf("%s: %s: %s\n",op,dst_url,dst->StrError(res));
+	 eprintf("%s: %s: %s\n",op,dst_url,dst->StrError(dst_res));
 	 goto pre_ERROR;
       }
 
-      if(src->Done()==src->OK && dst->Done()==dst->OK)
-	 goto pre_DONE;
 
       // exchange copy address
       if(src->copy_addr_valid && !dst->copy_addr_valid)
