@@ -576,18 +576,18 @@ parse_url_again:
       }
 
       char size_unit[7];
-      long size;
+      long long size;
       char week_day[4];
       int second;
       // Netscape-Proxy 2.53
-      if(9==sscanf(str,"%ld %6s %3s %3s %d %2d:%2d:%2d %4d",&size,size_unit,
+      if(9==sscanf(str,"%lld %6s %3s %3s %d %2d:%2d:%2d %4d",&size,size_unit,
 	       week_day,month_name,&day,&hour,&minute,&second,&year))
       {
 	 if(!strcasecmp(size_unit,"bytes")
 	 || !strcasecmp(size_unit,"byte"))
-	    sprintf(size_str,"%ld",size);
+	    sprintf(size_str,"%lld",size);
 	 else
-	    sprintf(size_str,"%ld%s",size,size_unit);
+	    sprintf(size_str,"%lld%s",size,size_unit);
 	 debug("Netscape-Proxy 2.53 listing matched");
 	 goto got_info;
       }
@@ -641,13 +641,13 @@ parse_url_again:
       char year_or_time[6];
       int consumed;
 
-      n=sscanf(buf,"%10s %d %31s %31s %ld %3s %2d %5s%n",perms,&n_links,
+      n=sscanf(buf,"%10s %d %31s %31s %lld %3s %2d %5s%n",perms,&n_links,
 	    user,group,&size,month_name,&day,year_or_time,&consumed);
       if(n==8 && -1!=(perms_code=parse_perms(perms+1))
       && -1!=(month=parse_month(month_name))
       && -1!=parse_year_or_time(year_or_time,&year,&hour,&minute))
       {
-	 sprintf(size_str,"%ld",size);
+	 sprintf(size_str,"%lld",size);
 	 if(perms[0]=='d')
 	    is_directory=true;
 	 else if(perms[0]=='l')

@@ -228,7 +228,7 @@ int Fish::Read(void *buf,int size)
 	 return DO_AGAIN;
       if(real_pos<pos)
       {
-	 long to_skip=pos-real_pos;
+	 off_t to_skip=pos-real_pos;
 	 if(to_skip>size1)
 	    to_skip=size1;
 	 recv_buf->Skip(to_skip);

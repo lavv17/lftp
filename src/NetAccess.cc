@@ -496,8 +496,8 @@ bool NetAccess::NextTry()
    }
    retries++;
 
-   assert(peer!=0);
-   assert(peer_curr<peer_num);
+//    assert(peer!=0);
+//    assert(peer_curr<peer_num);
 
    return true;
 }

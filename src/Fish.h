@@ -65,8 +65,8 @@ class Fish : public NetAccess
 	 return 2;
       }
 
-   long body_size;
-   long bytes_received;
+   off_t body_size;
+   off_t bytes_received;
 
 public:
    static void ClassInit();

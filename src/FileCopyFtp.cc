@@ -74,7 +74,7 @@ int FileCopyFtp::Do()
 	    disable_fxp=true;
 	    ((FileCopyPeerFA*)get)->SetFXP(false);
 	    ((FileCopyPeerFA*)put)->SetFXP(false);
-	    long pos=put->GetRealPos();
+	    off_t pos=put->GetRealPos();
 	    if(!get->CanSeek(pos) || !put->CanSeek(pos))
 	       pos=0;
 	    get->Seek(pos);
@@ -128,14 +128,14 @@ int FileCopyFtp::Do()
       RateReset();
    }
 
-   long add=ftp_dst->GetPos()-put->GetRealPos();
+   off_t add=ftp_dst->GetPos()-put->GetRealPos();
    if(add>0)
    {
       RateAdd(add);
       bytes_count+=add;
    }
 
-   long pos=ftp_dst->GetPos();
+   off_t pos=ftp_dst->GetPos();
    get->SetPos(pos);
    put->SetPos(pos);
 

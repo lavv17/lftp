@@ -453,13 +453,13 @@ FileInfo *ParseFtpLongList_NT(const char *line_c,int *err)
    tms.tm_isdst=0;
    fi.SetDateUnprec(mktime(&tms));
 
-   unsigned long size;
+   long long size;
    if(!strcmp(t,"<DIR>"))
       fi.SetType(fi.DIRECTORY);
    else
    {
       fi.SetType(fi.NORMAL);
-      if(sscanf(t,"%lu",&size)!=1)
+      if(sscanf(t,"%lld",&size)!=1)
 	 ERR;
       fi.SetSize(size);
    }
@@ -502,9 +502,10 @@ FileInfo *ParseFtpLongList_EPLF(const char *line,int *err)
 
    const char *name=0;
    int name_len=0;
-   long size=NO_SIZE;
+   off_t size=NO_SIZE;
    time_t date=NO_DATE;
    long date_l;
+   long long size_ll;
    bool dir=false;
    bool type_known=false;
    int perms=-1;
@@ -521,7 +522,9 @@ FileInfo *ParseFtpLongList_EPLF(const char *line,int *err)
 	    scan=0;
 	    break;
 	 case 's':
-	    sscanf(scan+1,"%ld",&size);
+	    if(1 != sscanf(scan+1,"%lld",&size_ll))
+	       break;
+	    size = size_ll;
 	    break;
 	 case 'm':
 	    if(1 != sscanf(scan+1,"%ld",&date_l))
@@ -598,8 +601,8 @@ FileInfo *ParseFtpLongList_OS2(const char *line_c,int *err)
 
    FileInfo fi;
 
-   unsigned long size;
-   if(sscanf(t,"%lu",&size)!=1)
+   long long size;
+   if(sscanf(t,"%lld",&size)!=1)
       ERR;
    fi.SetSize(size);
 

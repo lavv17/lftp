@@ -101,9 +101,10 @@ int FtpDirList::Do()
 
 	 const char *name=0;
 	 int name_len=0;
-	 long size=NO_SIZE;
+	 off_t size=NO_SIZE;
 	 time_t date=NO_DATE;
 	 long date_l;
+	 long long size_ll;
 	 bool dir=false;
 	 int perms=-1;
 	 // check for EPLF listing
@@ -121,7 +122,9 @@ int FtpDirList::Do()
 		     scan=0;
 		     break;
 		  case 's':
-		     sscanf(scan+1,"%ld",&size);
+		     if(1 != sscanf(scan+1,"%lld",&size_ll))
+			break;
+		     size = size_ll;
 		     break;
 		  case 'm':
 		     if(1 != sscanf(scan+1,"%ld",&date_l))
@@ -166,7 +169,7 @@ int FtpDirList::Do()
 	       if(size==NO_SIZE)
 		  strcpy(size_str,"-");
 	       else
-		  sprintf(size_str,"%ld",size);
+		  sprintf(size_str,"%lld",(long long)size);
 	       struct tm *t=localtime(&date);
 	       sprintf(line_add,"%c%s  %10s  %04d-%02d-%02d %02d:%02d  %.*s",
 		  dir?'d':'-',format_perms(perms),size_str,

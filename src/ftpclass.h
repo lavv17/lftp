@@ -169,7 +169,7 @@ class Ftp : public NetAccess
    char  *line;
 
    time_t   nop_time;
-   long	    nop_offset;
+   off_t    nop_offset;
    int	    nop_count;
 
    time_t   stat_time;
@@ -220,7 +220,7 @@ class Ftp : public NetAccess
    bool  mdtm_supported;
    bool  size_supported;
    bool  site_chmod_supported;
-   long	 last_rest;
+   off_t last_rest;
 
    int	 StateToError();
 
