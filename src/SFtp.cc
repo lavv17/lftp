@@ -121,7 +121,8 @@ int SFtp::Do()
       BumpEventTime(pty_recv_buf->EventTime());
 
    // check for timeout only if there should be connection activity.
-   if(state!=DISCONNECTED && mode!=CLOSED && CheckTimeout())
+   if(state!=DISCONNECTED && state!=CONNECTED
+   && mode!=CLOSED && CheckTimeout())
       return MOVED;
 
    if((state==FILE_RECV || state==FILE_SEND)

@@ -2,6 +2,7 @@
 
 	* LocalAccess.cc: move Block'ing to Read and Write, this fixes spinning
 	  if disk is full.
+	* SFtp.cc: fix timeout handling when idle time > timeout.
 
 2004-12-28  Alexander V. Lukyanov <lav@yars.free.net>
 
