@@ -1041,7 +1041,7 @@ bool Ftp::GetBetterConnection(int level,bool limit_reached)
    {
       Ftp *o=(Ftp*)fo; // we are sure it is Ftp.
 
-      if(o->IsConnected()<2)
+      if(o->GetConnectLevel()!=CL_LOGGED_IN)
 	 continue;
       if(!SameConnection(o))
 	 continue;

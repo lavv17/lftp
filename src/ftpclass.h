@@ -330,13 +330,32 @@ public:
 
    void	 ResetLocationData();
 
-   int IsConnected()
+   enum ConnectLevel
+   {
+      CL_NOT_CONNECTED,
+      CL_CONNECTING,
+      CL_JUST_CONNECTED,
+      CL_NOT_LOGGED_IN,
+      CL_LOGGED_IN,
+      CL_JUST_BEFORE_DISCONNECT
+   };
+   ConnectLevel GetConnectLevel()
    {
       if(control_sock==-1)
-	 return 0;
-      if(state==CONNECTING_STATE || quit_sent)
-	 return 1;
-      return 2;
+	 return CL_NOT_CONNECTED;
+      if(state==CONNECTING_STATE)
+	 return CL_CONNECTING;
+      if(state==CONNECTED_STATE)
+	 return CL_JUST_CONNECTED;
+      if(state==USER_RESP_WAITING_STATE)
+	 return CL_NOT_LOGGED_IN;
+      if(quit_sent)
+	 return CL_JUST_BEFORE_DISCONNECT;
+      return CL_LOGGED_IN;
+   }
+   int IsConnected()
+   {
+      return GetConnectLevel()!=CL_NOT_CONNECTED;
    }
 
    int   Read(void *buf,int size);
