@@ -1,3 +1,8 @@
+2002-08-28  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* OutputJob.cc: don't create LocalAccess directly (it breaks modularity).
+	* OutputJob.cc: check if output_fd really has an error.
+
 2002-08-09  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Http.cc, FileAccess.cc: fixed core dump when Content-Disposition

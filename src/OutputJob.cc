@@ -61,6 +61,7 @@
 #include "url.h"
 #include "misc.h"
 #include "StatusLine.h"
+#include "DummyProto.h"
 
 #include <assert.h>
 #include <unistd.h>
@@ -172,6 +173,7 @@ OutputJob::OutputJob(FDStream *output_, const char *a0)
    if(!output_fd)
       output_fd=new FDStream(1,"<stdout>");
    else
+   {
       /* We don't want to produce broken pipe when we're actually
        * piping, since some legitimate uses produce broken pipe, eg
        * cat|head.  However, that's actually handled in InitCopy().
@@ -182,6 +184,7 @@ OutputJob::OutputJob(FDStream *output_, const char *a0)
        * So, until we handle pipes directly, disable broken pipe whenever
        * we're being sent anywhere but stdout. */
       fail_if_broken=false;
+   }
 
    is_stdout=output_fd->usesfd(1);
    is_a_tty=isatty(output_fd->fd);
@@ -193,7 +196,7 @@ OutputJob::OutputJob(FDStream *output_, const char *a0)
    /* Make sure that if the output is going to fail, it fails early, so
     * the parent doesn't start anything expensive (like begin downloading
     * a file.) */
-   if(output_fd->getfd() == -1)
+   if(output_fd->getfd()==-1 && output_fd->error())
    {
       eprintf("%s: %s\n", a0, output_fd->error_text);
       error=true;
