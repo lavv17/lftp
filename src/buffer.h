@@ -44,6 +44,8 @@ protected:
    bool save;  // save skipped data
    int save_max;
 
+   long pos;
+
    // low-level for derived classes
    virtual int Put_LL(const char *buf,int size) { return 0; }
    virtual int PutEOF_LL() { return 0; }
@@ -64,7 +66,7 @@ public:
    bool Broken() { return broken; }
 
    void Get(const char **buf,int *size);
-   virtual void Skip(int len); // Get(); consume; Skip()
+   void Skip(int len); // Get(); consume; Skip()
    void Put(const char *buf,int size);
    void Put(const char *buf) { Put(buf,strlen(buf)); }
    void PutEOF() { eof=true; PutEOF_LL(); }

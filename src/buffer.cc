@@ -95,6 +95,7 @@ void Buffer::Put(const char *buf,int size)
 	 {
 	    buf+=res;
 	    size-=res;
+	    pos+=res;
 	 }
       }
    }
@@ -106,6 +107,7 @@ void Buffer::Put(const char *buf,int size)
 
    memcpy(buffer+buffer_ptr+in_buffer,buf,size);
    in_buffer+=size;
+   pos+=size;
 }
 
 void Buffer::Skip(int len)
@@ -114,6 +116,7 @@ void Buffer::Skip(int len)
       len=in_buffer;
    in_buffer-=len;
    buffer_ptr+=len;
+   pos+=len;
 }
 
 void Buffer::Empty()
@@ -141,6 +144,7 @@ Buffer::Buffer()
    broken=false;
    save=false;
    save_max=0;
+   pos=0;
 }
 Buffer::~Buffer()
 {
