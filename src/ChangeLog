@@ -1,3 +1,13 @@
+2002-07-07  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc, FileAccess.cc, FileAccess.h: (GetSuggestedFileName) new
+	  method; handle Content-Disposition filename= in Http.
+
+2002-07-07  Glenn Maynard <g_ld@zewt.org>
+
+	* MirrorJob.cc, MirrorJob.h: add FINISHING state; fix transfer_count
+	  bug which led to more parallel transfers than was requested.
+
 2002-07-06  Albert Chin <lftp-devel@thewrittenword.com>
 
 	* ChmodJob.h: make HP-UX C++ happy.
