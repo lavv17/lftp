@@ -1,3 +1,7 @@
+2005-04-05  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc, MirrorJob.h: add --loop option.
+
 2005-04-04  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileAccess.cc, FileAccess.h, buffer.cc, buffer.h: (SetErrorCached) new method.

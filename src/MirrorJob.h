@@ -80,8 +80,12 @@ class MirrorJob : public Job
       int dirs,del_dirs;
       int tot_symlinks,new_symlinks,mod_symlinks,del_symlinks;
       int error_count;
+      long long bytes;
+      double time;
       Statistics();
+      void Reset();
       void Add(const Statistics &);
+      bool HaveSomethingDone();
    };
    Statistics stats;
 
@@ -140,7 +144,8 @@ public:
       IGNORE_TIME=1<<10,
       REMOVE_FIRST=1<<11,
       IGNORE_SIZE=1<<12,
-      NO_SYMLINKS=1<<13
+      NO_SYMLINKS=1<<13,
+      LOOP=1<<14
    };
 
    void SetFlags(int f,int v)

@@ -689,6 +689,7 @@ int   MirrorJob::Do()
       xfree(target_dir);
       target_dir=xstrdup(target_session->GetCwd());
 
+   pre_GETTING_LIST_INFO:
       state=GETTING_LIST_INFO;
       m=MOVED;
       HandleListInfoCreation(source_session,source_list_info,source_relative_dir);
@@ -931,6 +932,17 @@ int   MirrorJob::Do()
       transfer_count++; // parent mirror will decrement it.
       if(parent_mirror)
 	 parent_mirror->stats.Add(stats);
+      else
+      {
+	 if((flags&LOOP) && stats.HaveSomethingDone())
+	 {
+	    state=DONE;
+	    PrintStatus(0,"");
+	    printf(_("Retrying mirror...\n"));
+	    stats.Reset();
+	    goto pre_GETTING_LIST_INFO;
+	 }
+      }
       state=DONE;
       m=MOVED;
       /*fallthrough*/
@@ -1116,10 +1128,16 @@ void MirrorJob::Bg()
 
 MirrorJob::Statistics::Statistics()
 {
+   Reset();
+   error_count=0;
+   bytes=0;
+   time=0;
+}
+void MirrorJob::Statistics::Reset()
+{
    tot_files=new_files=mod_files=del_files=
    tot_symlinks=new_symlinks=mod_symlinks=del_symlinks=
-   dirs=del_dirs=
-   error_count=0;
+   dirs=del_dirs=0;
 }
 void MirrorJob::Statistics::Add(const Statistics &s)
 {
@@ -1134,6 +1152,12 @@ void MirrorJob::Statistics::Add(const Statistics &s)
    dirs        +=s.dirs;
    del_dirs    +=s.del_dirs;
    error_count +=s.error_count;
+   bytes       +=s.bytes;
+   time	       +=s.time;
+}
+bool MirrorJob::Statistics::HaveSomethingDone()
+{
+   return new_files|mod_files|del_files|new_symlinks|mod_symlinks|del_symlinks|del_dirs;
 }
 
 char *MirrorJob::SetScriptFile(const char *n)
@@ -1189,6 +1213,7 @@ CMD(mirror)
       {"delete-first",no_argument,0,256+'e'},
       {"use-pget-n",optional_argument,0,256+'p'},
       {"no-symlinks",no_argument,0,256+'y'},
+      {"loop",no_argument,0,256+'l'},
       {0}
    };
 
@@ -1344,6 +1369,9 @@ CMD(mirror)
 	 break;
       case(256+'y'):
 	 flags|=MirrorJob::NO_SYMLINKS;
+	 break;
+      case(256+'l'):
+	 flags|=MirrorJob::LOOP;
 	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
