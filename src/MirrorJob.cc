@@ -961,7 +961,7 @@ CMD(mirror)
       {"include",required_argument,0,'i'},
       {"exclude",required_argument,0,'x'},
       {"time-prec",required_argument,0,'t'},
-      {"loose-time-prec",required_argument,0,256+'T'},
+      {"loose-time-prec",required_argument,0,'T'},
       {"only-newer",no_argument,0,'n'},
       {"no-recursion",no_argument,0,'r'},
       {"no-perms",no_argument,0,'p'},
@@ -1017,7 +1017,7 @@ CMD(mirror)
    bool  remove_source_files=false;
 
    args->rewind();
-   while((opt=args->getopt_long("esi:x:t:nrpcRvN:L",mirror_opts,0))!=EOF)
+   while((opt=args->getopt_long("esi:x:t:T:nrpcRvN:L",mirror_opts,0))!=EOF)
    {
       switch(opt)
       {
@@ -1040,7 +1040,7 @@ CMD(mirror)
 	 flags|=MirrorJob::CONTINUE;
 	 break;
       case('t'):
-      case(256+'T'):
+      case('T'):
       {
 	 TimeInterval p(optarg);
 	 if(p.Error())

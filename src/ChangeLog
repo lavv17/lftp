@@ -1,6 +1,7 @@
 2000-04-19  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileAccess.cc, Http.cc: fix SetError(SEE_ERRNO) usage.
+	* MirrorJob.cc: add -T option.
 
 2000-04-15  Alexander V. Lukyanov  <lav@yars.free.net>
 
