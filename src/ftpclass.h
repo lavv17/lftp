@@ -155,6 +155,7 @@ class Ftp : public NetAccess
    int   data_sock;
    int	 aborted_data_sock;
    bool	 quit_sent;
+   bool	 fixed_pasv; // had to fix PASV address.
 
 #ifdef USE_SSL
    SSL	 *control_ssl;

@@ -629,6 +629,7 @@ int Ftp::Handle_PASV()
    || (InPrivateNetwork(&data_sa) && !InPrivateNetwork(&peer_sa)))
    {
       // broken server, try to fix up
+      fixed_pasv=true;
       if(data_sa.sa.sa_family==AF_INET)
 	 memcpy(a,&peer_sa.in.sin_addr,sizeof(peer_sa.in.sin_addr));
 #if INET6
@@ -786,6 +787,7 @@ void Ftp::InitFtp()
    data_sock=-1;
    aborted_data_sock=-1;
    quit_sent=false;
+   fixed_pasv=false;
 
 #ifdef USE_SSL
    control_ssl=0;
@@ -1762,6 +1764,11 @@ int   Ftp::Do()
       res=Poll(data_sock,POLLOUT);
       if(res==-1)
       {
+	 if(fixed_pasv)
+	 {
+	    DebugPrint("---- ",_("Switching passive mode off"),2);
+	    SetFlag(PASSIVE_MODE,0);
+	 }
 	 Disconnect();
          return MOVED;
       }
@@ -2400,6 +2407,7 @@ void  Ftp::DataClose()
       delete rate_limit;
       rate_limit=0;
    }
+   fixed_pasv=false;
 }
 
 int  Ftp::FlushSendQueue(bool all)
