@@ -61,7 +61,7 @@ void *xrealloc(void *pointer,size_t bytes)
    if(temp==0)
       memory_error_and_abort ("xrealloc",bytes);
 #ifdef MEM_DEBUG
-   printf("xrealloc %p %lu\n",temp,(long)bytes);
+   printf("xrealloc %p %p %lu\n",pointer,temp,(long)bytes);
 #endif
    return(temp);
 }
