@@ -45,7 +45,7 @@ public:
    FDStream(int new_fd,const char *new_name);
    virtual ~FDStream();
 
-   void MakeErrorText();
+   void MakeErrorText(int e=0);
    bool NonFatalError(int err);
    void set_status(const char *str) { status=str; }
    void clear_status() { status=0; }

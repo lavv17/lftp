@@ -523,18 +523,20 @@ int IOBufferFDStream::Put_LL(const char *buf,int size)
    res=write(fd,buf,size);
    if(res==-1)
    {
-      if(NonFatalError(errno))
+      saved_errno=errno;
+      if(E_RETRY(saved_errno))
       {
 	 Block(fd,POLLOUT);
 	 return 0;
       }
+      if(NonFatalError(saved_errno))
+	 return 0;
       if(errno==EPIPE)
       {
 	 broken=true;
 	 return -1;
       }
-      saved_errno=errno;
-      stream->MakeErrorText();
+      stream->MakeErrorText(saved_errno);
       goto stream_err;
    }
    if(put_ll_timer)
@@ -564,13 +566,15 @@ int IOBufferFDStream::Get_LL(int size)
    res=read(fd,buffer+buffer_ptr+in_buffer,size);
    if(res==-1)
    {
-      if(NonFatalError(errno))
+      saved_errno=errno;
+      if(E_RETRY(saved_errno))
       {
 	 Block(fd,POLLIN);
 	 return 0;
       }
-      saved_errno=errno;
-      stream->MakeErrorText();
+      if(NonFatalError(saved_errno))
+	 return 0;
+      stream->MakeErrorText(saved_errno);
       goto stream_err;
    }
 

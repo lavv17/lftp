@@ -58,11 +58,13 @@ FDStream::FDStream()
    status=0;
    close_fd=false;
 }
-void FDStream::MakeErrorText()
+void FDStream::MakeErrorText(int e)
 {
-   if(NonFatalError(errno))
+   if(!e)
+      e=errno;
+   if(NonFatalError(e))
       return;  // not a serious error - can be retried
-   char *syserr=strerror(errno);
+   char *syserr=strerror(e);
    error_text=(char*)xmalloc(strlen(name)+strlen(syserr)+3);
    sprintf(error_text,"%s: %s",name,syserr);
 }

@@ -1,3 +1,9 @@
+2005-03-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* buffer.cc: prevent spinning when disk is full in IOBufferFDStream;
+	  better saving of errno.
+	* Filter.cc, Filter.h: allow passing errno value to MakeErrorText.
+
 2005-03-11  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* HttpDir.cc: extract listing info for HttpListInfo.
