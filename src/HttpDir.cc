@@ -345,7 +345,13 @@ parse_url_again:
       n=sscanf(more1+1,"%2d-%3s-%4d %2d:%2d %30s",
 		     &day,month_name,&year,&hour,&minute,size_str);
       if(n!=6)
-	 goto add_file;
+      {
+	 n=sscanf(more1+1,"%30s %2d-%3s-%4d",size_str,&day,month_name,&year);
+	 if(n!=4)
+	    goto add_file;
+	 hour=0;
+	 minute=0;
+      }
 
       // y2000 problem :)
       if(year<37)

@@ -1,3 +1,8 @@
+1999-08-04  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* LsJob.cc: (NoCache) open with proper mode.
+	* HttpDir.cc: handle another listing format.
+
 1999-08-02  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Resolver.cc, log.cc: declare res_search, vsnprintf if prototypes

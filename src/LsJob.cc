@@ -229,7 +229,7 @@ void LsJob::NoCache()
    }
    if(from_cache)
    {
-      session->Open(arg,FA::LONG_LIST);
+      session->Open(arg,mode);
       if(cache_buffer)
       {
 	 xfree(cache_buffer);
