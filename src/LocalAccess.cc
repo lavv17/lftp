@@ -552,8 +552,6 @@ int LocalListInfo::Do()
    }
    closedir(d);
 
-   result->Exclude(exclude_prefix,exclude);
-
    result->rewind();
    for(FileInfo *file=result->curr(); file!=0; file=result->next())
    {
@@ -562,6 +560,8 @@ int LocalListInfo::Do()
       if(!(file->defined&file->TYPE))
 	 result->SubtractCurr();
    }
+
+   result->Exclude(exclude_prefix,exclude);
 
    done=true;
    return MOVED;
