@@ -838,6 +838,14 @@ if false, lftp will not try to use REST before STOR. This can be useful
 for some buggy servers which corrupt (fill with zeros) the file if REST followed
 by STOR is used.
 .TP
+.BR ftp:retry-530 \ (regex)
+Retry on server reply 530 for PASS command if text matches this regular expression.
+This setting should be useful to distinguish between overloaded server
+(temporary condition) and incorrect password (permanent condition).
+.TP
+.BR ftp:retry-530-anonymous \ (regex)
+Same as ftp:retry-530, but applies to anonymous login.
+.TP
 .BR ftp:skey-allow \ (bool)
 allow sending skey/opie reply if server appears to support it. On by default.
 .TP
