@@ -33,29 +33,21 @@
 #include <ctype.h>
 #include <fcntl.h>
 
-#include <netinet/in.h>
-#include <arpa/nameser.h>
 #include <resolv.h>
+#include <arpa/nameser.h>
 
 #include "xstring.h"
 #include "xmalloc.h"
 #include "ResMgr.h"
-
-#ifndef T_SRV
-# define T_SRV 33
-#endif
 
 #if !defined(HAVE_HSTRERROR_DECL)
 extern "C" { const char *hstrerror(int); }
 #endif
 
 #ifndef HAVE_H_ERRNO_DECL
-CDECL int h_errno;
+extern int h_errno;
 #endif
 
-#if defined(HAVE_RES_SEARCH) && !defined(HAVE_RES_SEARCH_DECL)
-CDECL int res_search(const char*,int,int,unsigned char*,int);
-#endif
 
 #if INET6
 # define DEFAULT_ORDER "inet inet6"
@@ -660,7 +652,7 @@ void Resolver::DoGethostbyname()
       }
    }
 
-   if(service && !portname && !isdigit((unsigned char)hostname[0]))
+   if(service && !portname)
       LookupSRV_RR();
 
    LookupOne(hostname);

@@ -231,7 +231,6 @@ void Http::SendMethod(const char *method,const char *efile)
    Send("%s %s HTTP/1.1\r\n",method,efile);
    Send("Host: %s\r\n",url::encode_string(hostname));
    Send("User-Agent: %s/%s\r\n","lftp",VERSION);
-   Send("Accept: */*\r\n");
 }
 
 
@@ -584,7 +583,7 @@ int Http::Do()
       DebugPrint("---- ",str,0);
 #endif
 
-      DebugPrint("---- ","Connecting...",2);
+      DebugPrint("---- ","Connecting...",9);
       res=connect(sock,&peer[peer_curr].sa,sizeof(*peer));
       UpdateNow(); // if non-blocking don't work
 

@@ -1,11 +1,10 @@
 localedir = $(datadir)/locale
 
 bin_PROGRAMS = lftp ftpget
-bin_SCRIPTS = lftpget
 
 pkgdata_SCRIPTS = import-ncftp import-netscape
 
-EXTRA_DIST = $(pkgdata_SCRIPTS) $(bin_SCRIPTS) example1.cc example2.cc
+EXTRA_DIST = $(pkgdata_SCRIPTS) example1.cc example2.cc
 
 lftp_SOURCES = lftp.cc complete.h complete.cc lftp_rl.c lftp_rl.h
 ftpget_SOURCES = ftpget.cc

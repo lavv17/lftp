@@ -103,19 +103,19 @@ int   LsJob::Do()
 	 {
 	    // EOF
 	    got_eof=true;
-	    m=MOVED;
+	    return res;
 	 }
-	 else if(res>0)
-	 {
-	    if((unsigned)res > buffer_size-in_buffer)
-	       res=buffer_size-in_buffer;
-	    memcpy(buffer+in_buffer,tmpbuf,res);
-	    in_buffer+=res;
-	    offset+=res;
-	    dl->Skip(res);
+	 if(res==0)
+	    return res;
 
-	    CountBytes(res);
-	 }
+	 if((unsigned)res > buffer_size-in_buffer)
+	    res=buffer_size-in_buffer;
+	 memcpy(buffer+in_buffer,tmpbuf,res);
+	 in_buffer+=res;
+	 offset+=res;
+	 dl->Skip(res);
+
+	 CountBytes(res);
       }
       else // !dl
       {
@@ -229,7 +229,7 @@ void LsJob::NoCache()
    }
    if(from_cache)
    {
-      session->Open(arg,mode);
+      session->Open(arg,FA::LONG_LIST);
       if(cache_buffer)
       {
 	 xfree(cache_buffer);
@@ -246,7 +246,10 @@ void  LsJob::ShowRunStatus(StatusLine *s)
    if(!print_run_status)
       return;
    if(Done())
+   {
+      s->Show("");
       return;
+   }
 
    if(!dl)
       super::ShowRunStatus(s);

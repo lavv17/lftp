@@ -4,9 +4,6 @@ This package `lftp' contains the following components:
 
    lftp
       cool command line ftp client.
-      
-   lftpget
-      shell script for downloading by URL, calls `lftp -c'.
 
    ftpget
       a simple non-interactive tool for downloading files (deprecated)
@@ -91,10 +88,10 @@ By CVS:
 	CVSROOT=:pserver:anonymous@swing.yars.free.net:/home/lav/cvsroot
 	export CVSROOT
 	cvs login (empty password, just hit enter)
-	cvs -z9 co -r lftp-2-0-3 lftp (if you omit -r option, you'll get
+	cvs -z9 co -r lftp-2-0-1 lftp (if you omit -r option, you'll get
 		latest development sources)
 		
-See also home page `http://ftp.yars.free.net/projects/lftp/'.
+See also home page http://ftp.yars.free.net/projects/lftp/ .
 
 Internals
 ~~~~~~~~~
@@ -123,12 +120,11 @@ network packet.
 
 Systems
 ~~~~~~~
-The package is known to compile on Solaris2.5(gcc), Linux, FreeBSD,
-SCO v5.0(gcc), IRIX(gcc). If you can't compile it on your system, let
-me know. It is possible that lftp version 2.0 can be compiled with
-non-gcc compilers since it does not have gcc-isms, and it was
-successfully compiled by Sun C++ v5.0 compiler using
-CXXFLAGS="-compat=4 -features=bool".
+The package is known to compile on Solaris2.5(gcc), Linux, FreeBSD and
+SCO v5.0(gcc). If you can't compile it on your system, let me know. It
+is possible that lftp version 2.0 can be compiled with non-gcc
+compilers since it does not have gcc-isms, but so far no compiler
+tried (but gcc) produced a working executable.
 
 
 Mailing list

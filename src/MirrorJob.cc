@@ -77,6 +77,7 @@ void  MirrorJob::ShowRunStatus(StatusLine *s)
    {
    case(INITIAL_STATE):
    case(DONE):
+      s->Show("");
       break;
 
    // these have a sub-job
@@ -620,9 +621,7 @@ int   MirrorJob::Do()
 	    to_transfer->LocalUtime(local_dir,/*only_dirs=*/true);
 	    if(!(flags&NO_PERMS))
 	       same->LocalChmod(local_dir,mode_mask);
-#if 0 // this can cause problems if files really differ
 	    same->LocalUtime(local_dir); // the old mtime can differ up to prec
-#endif
 	    state=DONE;
 	    return MOVED;
 	 }

@@ -205,11 +205,6 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
    && !strcasecmp(tag_scan->link,"src"))
       icon=true;
 
-   bool a_href=false;
-   if(!strcasecmp(tag_scan->tag,"a")
-   && !strcasecmp(tag_scan->link,"href"))
-      a_href=true;
-
    // check if the target is a relative and not a cgi
    if(strchr(link_target,'?'))
       return tag_len;	// cgi
@@ -277,12 +272,9 @@ parse_url_again:
 
       if(p_len==1 && p_path[0]=='/' && link_target[0]=='/')
       {
-	 if(link_len>1)
-	 {
-	    // strip leading slash
-	    link_len--;
-	    memmove(link_target,link_target+1,link_len+1);
-	 }
+	 // strip leading slash
+	 link_len--;
+	 memmove(link_target,link_target+1,link_len+1);
       }
       else if(p_len>0 && !strncmp(link_target,p_path,p_len))
       {
@@ -327,13 +319,8 @@ parse_url_again:
       int n;
       char *line_add=(char*)alloca(link_len+128);
       bool data_available=false;
-
-      if(!a_href)
-	 goto add_file;	// only <a href> tags can have useful info.
-
       // try to extract file information
-      const char *eol;
-      eol=find_char(more+1,end-more-1,'\n');
+      const char *eol=find_char(more+1,end-more-1,'\n');
       if(!eol)
       {
 	 if(eof)
@@ -355,13 +342,7 @@ parse_url_again:
       n=sscanf(more1+1,"%2d-%3s-%4d %2d:%2d %30s",
 		     &day,month_name,&year,&hour,&minute,size_str);
       if(n!=6)
-      {
-	 n=sscanf(more1+1,"%30s %2d-%3s-%4d",size_str,&day,month_name,&year);
-	 if(n!=4)
-	    goto add_file;
-	 hour=0;
-	 minute=0;
-      }
+	 goto add_file;
 
       // y2000 problem :)
       if(year<37)
@@ -466,13 +447,6 @@ int HttpDirList::Do()
       if(curr_url)
 	 delete curr_url;
       curr_url=new ParsedURL(session->GetFileURL(curr));
-      if(mode==FA::RETRIEVE)
-      {
-	 // strip file name, directory remains.
-	 char *slash=strrchr(curr_url->path,'/');
-	 if(slash && slash>curr_url->path)
-	    *slash=0;
-      }
    }
 
    const char *b;

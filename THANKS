@@ -2,10 +2,8 @@ The following people contributed to lftp in various ways: testing,
 suggesting useful improvements, sending patches. Listed in abc order.
 
 Andy Eskilsson <x-aes@telelogic.se> for testing and suggestions.
-Artur Frysiak <wiget@t17.ds.pwr.wroc.pl>
 Bozo Dragojevic <bozzo@hermes.si> for testing with an ftp proxy, patch.
 Christoph Lameter <clameter@debian.org> for initial man pages
-Darren Stuart Embry <dsembr01@ox.slug.louisville.edu>
 Edward Grimm <tgape@bigfoot.com> for testing and suggestions.
 Hugo Van den Berg <hbe@cypres.nl> for tip about quote command, patch.
 Igor Vinokurov <igor@zynaps.ru> for suggestions.

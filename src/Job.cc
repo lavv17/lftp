@@ -349,18 +349,3 @@ void Job::Fg()
    if(waiting && waiting!=this)
       waiting->Fg();
 }
-
-int Job::AcceptSig(int s)
-{
-   if(waiting && waiting!=this)
-   {
-      if(waiting->AcceptSig(s)==WANTDIE)
-      {
-	 Job *new_waiting=waiting->waiting;
-	 waiting->waiting=0;
-	 delete waiting;
-	 waiting=new_waiting;
-      }
-   }
-   return WANTDIE;
-}

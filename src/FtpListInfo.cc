@@ -521,12 +521,8 @@ FileInfo *ParseFtpLongList_NT(const char *line_c,int *err)
       fi.SetSize(size);
    }
 
-   t=strtok(NULL,"");
+   t = NEXT_TOKEN;
    if(t==0)
-      ERR;
-   while(*t==' ')
-      t++;
-   if(*t==0)
       ERR;
    fi.SetName(t);
 

@@ -232,9 +232,7 @@ int   Ftp::NoFileCheck(int act,int exp)
       return(FATAL_STATE);
    if(act/100==5)
    {
-      // retry on these errors (ftp server ought to send 4xx code instead)
-      if((strstr(line,"Broken pipe") && !strstr(file,"Broken pipe"))
-      || (strstr(line,"Too many")    && !strstr(file,"Too many")))
+      if(strstr(line,"Broken pipe")) // retry on that error
       {
 	 if(copy_mode!=COPY_NONE)
 	    return COPY_FAILED;
@@ -703,7 +701,17 @@ int   Ftp::CheckTimeout()
 {
    if(now-event_time>=timeout)
    {
-      DebugPrint("**** ",_("Timeout - reconnecting"));
+      /* try to autodetect faulty ftp server */
+      /* Some Windows based ftp servers seem to clear input queue
+	    after USER command */
+      if(!RespQueueIsEmpty() && RespQueue[RQ_head].expect==RESP_LOGGED_IN
+      && !(flags&SYNC_MODE))
+      {
+	 flags|=SYNC_MODE;
+	 DebugPrint("**** ",_("Timeout - trying sync mode (is it windoze?)"));
+      }
+      else
+	 DebugPrint("**** ",_("Timeout - reconnecting"));
       Disconnect();
       event_time=now;
       return(1);
@@ -1142,9 +1150,7 @@ int   Ftp::Do()
          break;
       case(LONG_LIST):
          type=FTP_TYPE_A;
-         if(!rest_list)
-	    real_pos=0;	// some ftp servers do not do REST/LIST.
-	 if(file && file[0])
+         if(file && file[0])
             sprintf(str1,"LIST %s\n",file);
          else
             sprintf(str1,"LIST\n");
@@ -2931,7 +2937,6 @@ void Ftp::Reconfig()
 
    SetFlag(SYNC_MODE,	Query("sync-mode",c));
    SetFlag(PASSIVE_MODE,Query("passive-mode",c));
-   rest_list = Query("rest-list");
 
    timeout = Query("timeout",c);
    sleep_time = Query("reconnect-interval",c);

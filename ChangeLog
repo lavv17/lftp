@@ -1,21 +1,3 @@
-1999-08-11	lav
-
-	* configure.in, acconfig.h, acinclude.m4: define LFTP_C_INLINE,
-	  use it instead of AC_C_INLINE to protect c++ inline.
-
-1999-08-02	lav
-
-	* configure.in, acconfig.h: check for res_search, vsnprintf
-	  declarations, add corresponding symbols.
-
-1999-07-25	lav
-
-	* configure.in, NEWS, lftp.lsm, README: version 2.0.3
-
-1999-07-21	lav
-
-	* BUGS: new file; describe problem with ftp glob.
-
 1999-07-06	lav
 
 	* README: add download section.

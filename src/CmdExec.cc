@@ -338,7 +338,7 @@ int CmdExec::Do()
 	 {
 	    // done
 	    if(status_line)
-	       status_line->Clear();
+	       status_line->Show("");
 	    if(interactive || verbose)
 	    {
 	       const char *cwd=session->GetCwd();
@@ -356,7 +356,7 @@ int CmdExec::Do()
 	 {
 	    // error
 	    if(status_line)
-	       status_line->Clear();
+	       status_line->Show("");
 	    eprintf("%s: %s\n",args->getarg(0),session->StrError(res));
 	    session->Close();
 	    waiting=0;
@@ -372,7 +372,7 @@ int CmdExec::Do()
 	 if(res==FA::OK)
 	 {
 	    if(status_line)
-	       status_line->Clear();
+	       status_line->Show("");
 	    session->Close();
 	    waiting=0;
 	    builtin=BUILTIN_NONE;
@@ -384,7 +384,7 @@ int CmdExec::Do()
 	 if(res<0)
 	 {
 	    if(status_line)
-	       status_line->Clear();
+	       status_line->Show("");
 	    eprintf("%s: %s\n",args->getarg(0),session->StrError(res));
 	    session->Close();
 	    waiting=0;
@@ -398,7 +398,7 @@ int CmdExec::Do()
 	 if(glob->Error())
 	 {
 	    if(status_line)
-	       status_line->Clear();
+	       status_line->Show("");
 	    eprintf("%s: %s\n",args->getarg(0),glob->ErrorText());
 	 }
 	 else if(glob->Done())
@@ -427,7 +427,7 @@ int CmdExec::Do()
 	       waiting=0;
 	       builtin=BUILTIN_NONE;
 	       if(status_line)
-		  status_line->Clear();
+		  status_line->Show("");
 	       exit_code=prev_exit_code;
 	       exec_parsed_command();
 	       return MOVED;
@@ -456,7 +456,7 @@ int CmdExec::Do()
 	    if(builtin==BUILTIN_CD || builtin==BUILTIN_OPEN)
 	    {
 	       if(status_line)
-		  status_line->Clear();
+		  status_line->Show("");
 	       if(builtin==BUILTIN_CD)
 	       {
 		  // accept the path
@@ -490,7 +490,7 @@ int CmdExec::Do()
       {
 	 waiting->Bg();
 	 if(status_line)
-	    status_line->Clear();
+	    status_line->Show("");
  	 if(interactive || verbose)
 	    waiting->SayFinal(); // final phrase like 'rm succeed'
 	 exit_code=waiting->ExitCode();
@@ -638,6 +638,8 @@ void CmdExec::ShowRunStatus(StatusLine *s)
 	 abort(); // can't happen
       }
    }
+   else if(Done())
+      s->Show("");
 }
 
 void CmdExec::PrintStatus(int v)
@@ -885,7 +887,7 @@ void CmdExec::Reconfig()
 void CmdExec::top_vfprintf(FILE *file,const char *f,va_list v)
 {
    if(status_line)
-      status_line->Clear();
+      status_line->Show("");
    if(feeder_called)
       feeder->clear();
    ::vfprintf(file,f,v);
@@ -933,18 +935,12 @@ int CmdExec::AcceptSig(int sig)
       if(res==WANTDIE)
       {
 	 exit_code=1;
-	 Job *new_waiting=waiting->waiting;
-	 waiting->waiting=0;
 	 delete waiting;
-	 waiting=new_waiting;
+	 waiting=0;
       }
-      if(waiting==0 && parent!=0)
-	 return WANTDIE;
       return MOVED;
    }
-   if(parent!=0)
-      return WANTDIE;
-   return STALL;
+   return WANTDIE;
 }
 
 void CmdExec::SetInteractive(bool i)
@@ -995,45 +991,6 @@ void CmdExec::FeedQuoted(const char *c)
    unquote(buf+1,c);
    strcat(buf,"\"");
    FeedCmd(buf);
-}
-
-// implementation is here because it depends on CmdExec.
-char *ArgV::CombineQuoted(int start)
-{
-   int	 i;
-   char  *res;
-   char	 *store,*arg;
-   int	 len=0;
-
-   for(i=start; i<c; i++)
-      len+=strlen(v[i])*2+3;
-
-   if(len==0)
-      return(xstrdup(""));
-
-   res=(char*)xmalloc(len);
-
-   store=res;
-   for(i=start; i<c; i++)
-   {
-      arg=v[i];
-      if(CmdExec::needs_quotation(arg))
-      {
-	 *store++='"';
-	 CmdExec::unquote(store,arg);
-	 store+=strlen(store);
-	 *store++='"';
-      }
-      else
-      {
-	 strcpy(store,arg);
-	 store+=strlen(store);
-      }
-      *store++=' ';
-   }
-   store[-1]=0;
-
-   return(res);
 }
 
 const char *CmdExec::GetFullCommandName(const char *cmd)
