@@ -390,9 +390,14 @@ bool NetAccess::ReconnectAllowed()
    if(try_time==0)
       return true;
    // cyclic exponential growth.
-   float interval = reconnect_interval*pow(reconnect_interval_multiplier,
-      retries%(int)(log((float)reconnect_interval_max/reconnect_interval)
-		   /log(reconnect_interval_multiplier)));
+   float interval = reconnect_interval;
+   if(reconnect_interval_multiplier>1
+   && reconnect_interval_max>reconnect_interval*reconnect_interval_multiplier)
+   {
+      interval*=pow(reconnect_interval_multiplier,
+	 retries%(int)(log((float)reconnect_interval_max/reconnect_interval)
+		      /log(reconnect_interval_multiplier)));
+   }
    if(now-try_time >= interval)
       return true;
    Timeout(1000*(interval-(now-try_time)));
