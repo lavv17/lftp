@@ -260,8 +260,6 @@ void Http::Send(const char *format,...)
       max_send*=2;
    }
 
-Log::global->Format(
-
    DebugPrint("---> ",str,5);
    send_buf->Put(str);
 }
