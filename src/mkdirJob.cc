@@ -30,6 +30,8 @@
 
 mkdirJob::mkdirJob(FileAccess *s,ArgV *a) : super(s)
 {
+   orig_session=session;
+
    quiet=false;
    failed=file_count=0;
 
@@ -39,8 +41,6 @@ mkdirJob::mkdirJob(FileAccess *s,ArgV *a) : super(s)
 
    curr=first=0;
    opt_p=false;
-
-   url_session=0;
 
    int opt;
    while((opt=args->getopt("p"))!=EOF)
@@ -57,49 +57,51 @@ mkdirJob::mkdirJob(FileAccess *s,ArgV *a) : super(s)
       fprintf(stderr,"Usage: %s [-p] files...\n",op);
       return;
    }
-
 }
 
 mkdirJob::~mkdirJob()
 {
    delete args;
    args=0;
-   Reuse();
+   if(orig_session!=session)
+      Reuse(orig_session);
 }
 
 int mkdirJob::Do()
 {
    if(Done())
       return STALL;
-   if(Session()->IsClosed())
+   if(session->IsClosed())
    {
       ParsedURL u(curr,true);
       if(u.proto)
-	 url_session=FileAccess::New(&u);
-      if(url_session)
       {
-	 url_session->SetPriority(fg?1:0);
-	 url_session->Mkdir(u.path,opt_p);
+	 session=FileAccess::New(&u);
+	 session->SetPriority(fg?1:0);
+	 session->Mkdir(u.path,opt_p);
       }
       else
+      {
+	 session=orig_session;
 	 session->Mkdir(curr,opt_p);
+      }
    }
 
-   int res=Session()->Done();
+   int res=session->Done();
    if(res==FA::DO_AGAIN || res==FA::IN_PROGRESS)
       return STALL;
    if(res<0)
    {
       failed++;
       if(!quiet)
-	 fprintf(stderr,"%s: %s\n",args->getarg(0),Session()->StrError(res));
+	 fprintf(stderr,"%s: %s\n",args->getarg(0),session->StrError(res));
    }
    file_count++;
-   Session()->Close();
-   if(url_session)
+   session->Close();
+   if(session!=orig_session)
    {
-      SessionPool::Reuse(url_session);
-      url_session=0;
+      Reuse(session);
+      session=orig_session;
    }
    curr=args->getnext();
    return MOVED;
@@ -111,7 +113,7 @@ void  mkdirJob::PrintStatus(int v)
    if(Done())
       return;
 
-   printf("\t`%s' [%s]\n",curr,Session()->CurrentStatus());
+   printf("\t`%s' [%s]\n",curr,session->CurrentStatus());
 }
 
 void  mkdirJob::ShowRunStatus(StatusLine *s)
@@ -121,7 +123,7 @@ void  mkdirJob::ShowRunStatus(StatusLine *s)
 
    s->Show("%s `%s' [%s]",args->getarg(0),
       squeeze_file_name(curr,s->GetWidthDelayed()-40),
-      Session()->CurrentStatus());
+      session->CurrentStatus());
 }
 
 void  mkdirJob::SayFinal()
@@ -143,12 +145,12 @@ void  mkdirJob::SayFinal()
 void mkdirJob::Fg()
 {
    super::Fg();
-   if(url_session)
-      url_session->SetPriority(1);
+   if(orig_session!=session)
+      orig_session->SetPriority(1);
 }
 void mkdirJob::Bg()
 {
-   if(url_session)
-      url_session->SetPriority(0);
+   if(orig_session!=session)
+      orig_session->SetPriority(0);
    super::Bg();
 }

@@ -1,3 +1,9 @@
+2001-12-21  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* mkdirJob.cc, mkdirJob.h: use orig_session approach instead of
+	  url_session.
+	* FindJob.cc, FindJob.h: Fg/Bg methods.
+
 2001-12-20  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ArgV.cc, ArgV.h: (seek) new method.

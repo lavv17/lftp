@@ -380,6 +380,19 @@ void FinderJob::PrintStatus(int v)
    }
 }
 
+void FinderJob::Fg()
+{
+   super::Fg();
+   if(orig_session!=session)
+      orig_session->SetPriority(1);
+}
+void FinderJob::Bg()
+{
+   if(orig_session!=session)
+      orig_session->SetPriority(0);
+   super::Bg();
+}
+
 // FinderJob_List implementation
 // find files and write list to a stream
 FinderJob::prf_res FinderJob_List::ProcessFile(const char *d,const FileInfo *fi)

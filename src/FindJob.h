@@ -112,6 +112,9 @@ public:
    void BeQuiet() { quiet=true; }
    void SetExclude(PatternSet *p) { exclude = p; }
    void set_maxdepth(int _maxdepth) { maxdepth = _maxdepth; }
+
+   void Fg();
+   void Bg();
 };
 
 class FinderJob_List : public FinderJob

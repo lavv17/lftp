@@ -30,20 +30,10 @@ class mkdirJob : public SessionJob
 {
    ArgV	 *args;
    char	 *curr,*first;
-   FA	 *url_session;
+   FA	 *orig_session;
    int	 failed,file_count;
    bool	 quiet;
    bool	 opt_p;
-
-   FA *Session() { return url_session?url_session:session; }
-   void Reuse()
-      {
-	 if(url_session)
-	 {
-	    SessionPool::Reuse(url_session);
-	    url_session=0;
-	 }
-      }
 
 public:
    int	 Do();
