@@ -13,6 +13,7 @@ Version 3.0.0 - 2004-??-??
   files. By default mirror removes old files after the transfers.
 * now mirror can replace directories with plain files or symbolic links if
   --delete (-e) option is specified.
+* ftp can now use CONNECT method of http proxies.
 
 Version 2.6.12 - 2004-01-23
 
