@@ -61,12 +61,10 @@ void FileAccess::Init()
    time(&event_time);
    opt_date=0;
    opt_size=0;
-   last_error_resp=0;
+   error=0;
+   error_code=OK;
    saved_errno=0;
    mkdir_p=false;
-
-   sleep_time=30; // retry with 30 second interval
-   timeout=600;	  // 10 minutes with no events = reconnect
 
    url=0;
 
@@ -105,7 +103,7 @@ FileAccess::~FileAccess()
    xfree(file); file=0;
    xfree(cwd); cwd=0;
    xfree(real_cwd); real_cwd=0;
-   xfree(last_error_resp); last_error_resp=0;
+   xfree(error); error=0;
    xfree(home); home=0;
    xfree(user); user=0;
    xfree(pass); pass=0;
@@ -207,32 +205,6 @@ void FileAccess::CloseOnExec(int fd)
 {
    fcntl(fd,F_SETFD,FD_CLOEXEC);
 }
-void FileAccess::KeepAlive(int sock)
-{
-   static int one=1;
-   setsockopt(sock,SOL_SOCKET,SO_KEEPALIVE,(char*)&one,sizeof(one));
-}
-void FileAccess::SetSocketBuffer(int sock,int socket_buffer)
-{
-   if(socket_buffer==0)
-      return;
-   if(-1==setsockopt(sock,SOL_SOCKET,SO_SNDBUF,(char*)&socket_buffer,sizeof(socket_buffer)))
-      Log::global->Format(1,"setsockopt(SO_SNDBUF,%d): %s\n",socket_buffer,strerror(errno));
-   if(-1==setsockopt(sock,SOL_SOCKET,SO_RCVBUF,(char*)&socket_buffer,sizeof(socket_buffer)))
-      Log::global->Format(1,"setsockopt(SO_RCVBUF,%d): %s\n",socket_buffer,strerror(errno));
-}
-void FileAccess::SetSocketMaxseg(int sock,int socket_maxseg)
-{
-#ifndef SOL_TCP
-# define SOL_TCP IPPROTO_TCP
-#endif
-#ifdef TCP_MAXSEG
-   if(socket_maxseg==0)
-      return;
-   if(-1==setsockopt(sock,SOL_TCP,TCP_MAXSEG,(char*)&socket_maxseg,sizeof(socket_maxseg)))
-      Log::global->Format(1,"setsockopt(TCP_MAXSEG,%d): %s\n",socket_maxseg,strerror(errno));
-#endif
-}
 
 
 void  FileAccess::Open(const char *fn,int mode,long offs)
@@ -278,26 +250,26 @@ const char *FileAccess::StrError(int err)
    case(SEE_ERRNO):
       return(strerror(saved_errno));
    case(LOOKUP_ERROR):
-      return(last_error_resp);
+      return(error);
    case(NOT_OPEN):   // Actually this means an error in application
       return("Class is not Open()ed");
    case(NO_FILE):
-      if(last_error_resp)
+      if(error)
       {
-	 if(str_allocated<64+strlen(last_error_resp))
-	    str=(char*)xrealloc(str,64+strlen(last_error_resp));
-   	 sprintf(str,_("Access failed: %s"),last_error_resp);
+	 if(str_allocated<64+strlen(error))
+	    str=(char*)xrealloc(str,64+strlen(error));
+   	 sprintf(str,_("Access failed: %s"),error);
 	 return(str);
       }
       return(_("File cannot be accessed"));
    case(NO_HOST):
       return(_("Not connected"));
    case(FATAL):
-      if(last_error_resp)
+      if(error)
       {
-	 if(str_allocated<64+strlen(last_error_resp))
-	    str=(char*)xrealloc(str,64+strlen(last_error_resp));
-   	 sprintf(str,_("Fatal error: %s"),last_error_resp);
+	 if(str_allocated<64+strlen(error))
+	    str=(char*)xrealloc(str,64+strlen(error));
+   	 sprintf(str,_("Fatal error: %s"),error);
 	 return(str);
       }
       return(_("Fatal error"));
@@ -321,6 +293,7 @@ void FileAccess::Close()
    array_for_info=0;
    entity_size=-1;
    entity_date=(time_t)-1;
+   ClearError();
 }
 
 void FileAccess::Rename(const char *f,const char *f1)
@@ -412,6 +385,8 @@ void FileAccess::Connect(const char *host1,const char *port1)
    xfree(cwd);
    cwd=xstrdup(default_cwd);
    xfree(home); home=0;
+   try_time=0;
+   DontSleep();
 }
 
 void FileAccess::Login(const char *user1,const char *pass1)
@@ -613,6 +588,26 @@ void FileAccess::Chmod(const char *file,int m)
    Open(file,CHANGE_MODE);
 }
 
+void FileAccess::SetError(int ec,const char *e)
+{
+   xfree(error);
+   error=xstrdup(e);
+   error_code=ec;
+}
+
+void FileAccess::ClearError()
+{
+   error_code=OK;
+   xfree(error);
+   error=0;
+}
+
+void FileAccess::Fatal(const char *e)
+{
+   SetError(FATAL,e);
+}
+
+
 FileAccess *SessionPool::pool[pool_size];
 
 void SessionPool::Reuse(FileAccess *f)
@@ -719,44 +714,10 @@ bool FileAccess::NotSerious(int e)
    return false;
 }
 
-
-int FileAccess::BytesAllowed()
+void FileAccess::BumpEventTime(time_t t)
 {
-#define LARGE 0x10000000
-
-   if(bytes_pool_rate==0) // unlimited
-      return LARGE;
-
-   if(now>bytes_pool_time)
-   {
-      time_t dif=now-bytes_pool_time;
-
-      // prevent overflow
-      if((LARGE-bytes_pool)/dif < bytes_pool_rate)
-	 bytes_pool = bytes_pool_max>0 ? bytes_pool_max : LARGE;
-      else
-	 bytes_pool += dif*bytes_pool_rate;
-
-      if(bytes_pool>bytes_pool_max && bytes_pool_max>0)
-	 bytes_pool=bytes_pool_max;
-
-      bytes_pool_time=now;
-   }
-   return bytes_pool;
-}
-
-void FileAccess::BytesUsed(int bytes)
-{
-   if(bytes_pool<bytes)
-      bytes_pool=0;
-   else
-      bytes_pool-=bytes;
-}
-
-void FileAccess::BytesReset()
-{
-   bytes_pool=bytes_pool_rate;
-   bytes_pool_time=now;
+   if(event_time<t)
+      event_time=t;
 }
 
 ResValue FileAccess::Query(const char *name,const char *closure)
@@ -764,23 +725,11 @@ ResValue FileAccess::Query(const char *name,const char *closure)
    const char *prefix=GetProto();
    char *fullname=(char*)alloca(3+strlen(prefix)+1+strlen(name)+1);
    sprintf(fullname,"%s:%s",prefix,name);
-   ResDecl *type;
-   ResValue res(0);
-   if(ResMgr::FindVar(fullname,&type)==0)
-      res=ResMgr::Query(fullname,closure);
-   else
-   {
-      sprintf(fullname,"net:%s",name);
-      res=ResMgr::Query(fullname,closure);
-   }
-   return res;
+   return ResMgr::Query(fullname,closure);
 }
 
-void FileAccess::Reconfig()
+void FileAccess::Reconfig(const char *)
 {
-   bytes_pool_rate = Query("limit-rate",closure);
-   bytes_pool_max  = Query("limit-max",closure);
-   BytesReset(); // to cut bytes_pool.
 }
 
 // FileAccess::Protocol implementation

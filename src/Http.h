@@ -23,12 +23,11 @@
 #ifndef HTTP_H
 #define HTTP_H
 
-#include "FileAccess.h"
-#include "Resolver.h"
+#include "NetAccess.h"
 #include "buffer.h"
 #include "StatusLine.h"
 
-class Http : public FileAccess
+class Http : public NetAccess
 {
    enum state_t
    {
@@ -36,23 +35,12 @@ class Http : public FileAccess
       CONNECTING,
       RECEIVING_HEADER,
       RECEIVING_BODY,
-      DONE,
-      ERROR
+      DONE
    };
 
    state_t state;
 
    void Init();
-
-   Resolver *resolver;
-
-   sockaddr_u *peer;
-   int	 peer_num;
-   int	 peer_curr;
-   void	 ClearPeer();
-   void	 NextPeer();
-
-   bool  relookup_always;
 
    int 	 max_send;
    void	 Send(const char *format,...) PRINTF_LIKE(2,3);
@@ -82,29 +70,9 @@ class Http : public FileAccess
    char *location;
    bool sent_eot;
 
-   void SetError(int code,const char *mess=0);
-   void Fatal(const char *mess);
-   int error_code;
-
    bool CheckTimeout();
 
    bool ModeSupported();
-
-   int	 idle;
-   time_t idle_start;
-   int	 retries;
-   int	 max_retries;
-   int	 socket_buffer;
-   int	 socket_maxseg;
-
-   char *proxy;
-   char *proxy_port;
-   char *proxy_user;
-   char *proxy_pass;
-
-   void SetProxy(const char *);
-
-   void BumpEventTime(time_t t);
 
    int  keep_alive_max;
    bool keep_alive;
@@ -145,7 +113,7 @@ public:
    void Close();
    const char *CurrentStatus();
 
-   void Reconfig();
+   void Reconfig(const char *name=0);
 
    bool SameSiteAs(FileAccess *fa);
    bool SameLocationAs(FileAccess *fa);

@@ -279,6 +279,14 @@ int NetAccess::Resolve(const char *defp,const char *ser,const char *pr)
 {
    int m=STALL;
 
+   if(peer)
+   {
+      if(relookup_always)
+	 ClearPeer();
+      else
+	 return m;
+   }
+
    if(!resolver)
    {
       if(proxy)

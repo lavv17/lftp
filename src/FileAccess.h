@@ -75,6 +75,7 @@ public:
       time_t time;
       bool get_size:1;
       bool get_time:1;
+      bool is_dir:1;
    };
 
 protected:
@@ -101,16 +102,12 @@ protected:
    int   CheckHangup(struct pollfd *pfd,int num);
    static void NonBlock(int fd);
    static void CloseOnExec(int fd);
-   static void KeepAlive(int sock);
-   static void SetSocketBuffer(int sock,int val);
-   static void SetSocketMaxseg(int sock,int val);
-
-   char	 *last_error_resp;
 
    void  DebugPrint(const char *prefix,const char *str,int level=0);
 
    time_t   try_time;
    time_t   event_time;
+   void BumpEventTime(time_t t);
 
    fileinfo *array_for_info;
    int	 array_ptr;
@@ -119,9 +116,6 @@ protected:
    bool	 mkdir_p;
 
    int	 saved_errno;
-
-   int	 timeout;
-   int	 sleep_time;
 
    void	 ExpandTildeInCWD();
 
@@ -134,15 +128,6 @@ protected:
 
    char *url;
 
-   // traffic shaper, sort of :)
-   int BytesAllowed();
-   void BytesUsed(int);
-   void BytesReset();
-   int bytes_pool;
-   int bytes_pool_rate;
-   int bytes_pool_max;
-   time_t bytes_pool_time;
-
    long   entity_size; // size of file to be sent
    time_t entity_date; // date of file to be sent
 
@@ -150,6 +135,13 @@ protected:
    ResValue Query(const char *name,const char *closure=0);
 
    int chmod_mode;
+
+   bool Error() { return error_code!=OK; }
+   void ClearError();
+   void SetError(int code,const char *mess=0);
+   void Fatal(const char *mess);
+   char *error;
+   int error_code;
 
 public:
    virtual const char *GetProto() = 0; // http, ftp, file etc
@@ -254,7 +246,7 @@ public:
 
    static bool NotSerious(int err);
 
-   void Reconfig();
+   void Reconfig(const char *);
 
 
    typedef FileAccess *SessionCreator();

@@ -37,7 +37,7 @@
 
 #include "ascii_ctype.h"
 
-#define super FileAccess
+#define super NetAccess
 
 #define max_buf 0x10000
 
@@ -57,9 +57,6 @@ static void base64_encode (const char *s, char *store, int length);
 void Http::Init()
 {
    state=DISCONNECTED;
-   resolver=0;
-   peer=0;
-   peer_num=peer_curr=0;
    sock=-1;
    send_buf=0;
    recv_buf=0;
@@ -71,18 +68,6 @@ void Http::Init()
    proto_version=0x10;
    location=0;
    sent_eot=false;
-
-   idle=0;
-   idle_start=now;
-   retries=0;
-
-   socket_buffer=0;
-   socket_maxseg=0;
-   max_retries=0;
-
-   proxy=0;
-   proxy_port=0;
-   proxy_user=proxy_pass=0;
 
    default_cwd="/";
 
@@ -97,6 +82,8 @@ void Http::Init()
 
    no_cache_this=false;
    no_cache=false;
+
+   hftp=false;
 }
 
 Http::Http() : super()
@@ -120,9 +107,6 @@ Http::Http(const Http *f) : super(f)
 
 Http::~Http()
 {
-   if(resolver)
-      delete resolver;
-   xfree(peer);
    if(send_buf)
       delete send_buf;
    if(recv_buf)
@@ -132,11 +116,6 @@ Http::~Http()
    xfree(line);
    xfree(status);
    xfree(location);
-
-   xfree(proxy); proxy=0;
-   xfree(proxy_port); proxy_port=0;
-   xfree(proxy_user); proxy_user=0;
-   xfree(proxy_pass); proxy_pass=0;
 }
 
 bool Http::CheckTimeout()
@@ -150,19 +129,6 @@ bool Http::CheckTimeout()
    }
    block+=TimeOut((timeout-(now-event_time))*1000);
    return(false);
-}
-
-void Http::SetError(int ec,const char *e)
-{
-   xfree(last_error_resp);
-   last_error_resp=xstrdup(e);
-   state=ERROR;
-   error_code=ec;
-}
-
-void Http::Fatal(const char *e)
-{
-   SetError(FATAL,e);
 }
 
 void Http::Disconnect()
@@ -197,7 +163,7 @@ void Http::Disconnect()
    chunked=false;
    chunk_size=-1;
    chunk_pos=0;
-   if(mode==STORE && state!=DONE && state!=ERROR)
+   if(mode==STORE && state!=DONE && !Error())
       SetError(STORE_FAILED,0);
    else
       state=DISCONNECTED;
@@ -504,6 +470,9 @@ int Http::Do()
       home=xstrdup("/");
    ExpandTildeInCWD();
 
+   if(Error())
+      return m;
+
    switch(state)
    {
    case DISCONNECTED:
@@ -525,36 +494,10 @@ int Http::Do()
       }
       if(peer==0 || relookup_always)
       {
-	 if(resolver==0)
-	 {
-	    if(proxy)
-	       resolver=new Resolver(proxy,proxy_port);
-	    else
-	       resolver=new Resolver(hostname,portname,
-				    HTTP_DEFAULT_PORT,"http","tcp");
-	    ClearPeer();
-	 }
-	 if(!resolver->Done())
+	 if(Resolve(HTTP_DEFAULT_PORT,"http","tcp")==MOVED)
+	    m=MOVED;
+	 if(!peer)
 	    return m;
-
-	 if(resolver->Error())
-	 {
-	    SetError(LOOKUP_ERROR,resolver->ErrorMsg());
-	    xfree(hostname);
-	    hostname=0;
-	    xfree(portname);
-	    portname=0;
-	    return(MOVED);
-	 }
-
-	 xfree(peer);
-	 peer=(sockaddr_u*)xmalloc(resolver->GetResultSize());
-	 peer_num=resolver->GetResultNum();
-	 resolver->GetResult(peer);
-	 peer_curr=0;
-
-	 delete resolver;
-	 resolver=0;
       }
       if(peer_curr>=peer_curr)
 	 peer_curr=0;
@@ -562,9 +505,9 @@ int Http::Do()
       if(mode==CONNECT_VERIFY)
 	 return m;
 
-      if(try_time!=0 && now-try_time<sleep_time)
+      if(try_time!=0 && now-try_time<reconnect_interval)
       {
-	 block+=TimeOut(1000*(sleep_time-(now-try_time)));
+	 block+=TimeOut(1000*(reconnect_interval-(now-try_time)));
 	 return m;
       }
       try_time=now;
@@ -881,7 +824,6 @@ int Http::Do()
       return m;
 
    case DONE:
-   case ERROR:
       return m;
    }
    return m;
@@ -908,7 +850,7 @@ void  Http::ClassInit()
 
 int Http::Read(void *buf,int size)
 {
-   if(state==ERROR)
+   if(Error())
       return error_code;
    if(mode==CLOSED)
       return 0;
@@ -1024,7 +966,7 @@ int Http::Done()
 {
    if(mode==CLOSED)
       return OK;
-   if(state==ERROR)
+   if(Error())
       return error_code;
    if(state==DONE)
       return OK;
@@ -1038,7 +980,7 @@ int Http::Write(const void *buf,int size)
 
    Resume();
    Do();
-   if(state==ERROR)
+   if(Error())
       return(error_code);
 
    if(state!=RECEIVING_HEADER || status!=0)
@@ -1107,7 +1049,7 @@ const char *Http::CurrentStatus()
       {
 	 if(resolver)
 	    return(_("Resolving host address..."));
-	 if(now-try_time<sleep_time)
+	 if(now-try_time<reconnect_interval)
 	    return(_("Delaying before reconnect"));
       }
       return "";
@@ -1121,85 +1063,25 @@ const char *Http::CurrentStatus()
       return(_("Fetching headers..."));
    case RECEIVING_BODY:
       return(_("Receiving data"));
-   case ERROR:
    case DONE:
       return "";
    }
    abort();
 }
 
-void Http::Reconfig()
+void Http::Reconfig(const char *name)
 {
-   xfree(closure);
-   closure=xstrdup(hostname);
-   const char *c=closure;
+   const char *c=hostname;
 
-   super::Reconfig();
-
-   timeout = Query("timeout",c);
-   sleep_time = Query("reconnect-interval",c);
-   idle = Query("idle",c);
-   max_retries = Query("max-retries",c);
-   relookup_always = Query("relookup-always",c);
-   socket_buffer = Query("socket-buffer",c);
-   socket_maxseg = Query("socket-maxseg",c);
-
-   SetProxy(Query("proxy",c));
+   super::Reconfig(name);
 
    no_cache = !(bool)Query("cache",c);
+   SetProxy(Query("proxy",c));
 
    if(sock!=-1)
       SetSocketBuffer(sock,socket_buffer);
-}
-
-void Http::ClearPeer()
-{
-   xfree(peer);
-   peer=0;
-   peer_curr=peer_num=0;
-}
-
-void Http::NextPeer()
-{
-   peer_curr++;
-   if(peer_curr>peer_num)
-      peer_curr=0;
-}
-
-void Http::SetProxy(const char *px)
-{
-   bool was_proxied=(proxy!=0);
-
-   xfree(proxy); proxy=0;
-   xfree(proxy_port); proxy_port=0;
-   xfree(proxy_user); proxy_user=0;
-   xfree(proxy_pass); proxy_pass=0;
-
-   if(!px)
-   {
-   no_proxy:
-      if(was_proxied)
-	 ClearPeer();
-      return;
-   }
-
-   ParsedURL url(px);
-   if(!url.host || url.host[0]==0)
-      goto no_proxy;
-
-   proxy=xstrdup(url.host);
-   proxy_port=xstrdup(url.port);
-   proxy_user=xstrdup(url.user);
-   proxy_pass=xstrdup(url.pass);
    if(proxy_port==0)
       proxy_port=xstrdup(HTTP_DEFAULT_PROXY_PORT);
-   ClearPeer();
-}
-
-void Http::BumpEventTime(time_t t)
-{
-   if(event_time<t)
-      event_time=t;
 }
 
 bool Http::SameSiteAs(FileAccess *fa)

@@ -26,14 +26,10 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "Resolver.h"
-#include "FileAccess.h"
-#include "ResMgr.h"
+#include "NetAccess.h"
+/*#include "ResMgr.h"*/
 
-#include <sys/types.h>
-#include <sys/socket.h>
-
-class Ftp : public FileAccess
+class Ftp : public NetAccess
 {
    static Ftp *ftp_chain;
    Ftp *ftp_next;
@@ -53,6 +49,7 @@ class Ftp : public FileAccess
       LOGIN_FAILED_STATE,  // login failed due to invalid password
       SYSTEM_ERROR_STATE,  // system error occured, errno saved to saved_errno
       LOOKUP_ERROR_STATE,  // unsuccessful host name lookup
+/*      ERROR_STATE,	   // see error_code.*/
       CWD_CWD_WAITING_STATE,  // waiting until 'CWD $cwd' finishes
       USER_RESP_WAITING_STATE,// waiting until 'USER $user' finishes
       DATASOCKET_CONNECTING_STATE,   // waiting for data_sock to connect
@@ -160,12 +157,6 @@ class Ftp : public FileAccess
    /* type of transfer: TYPE_A or TYPE_I */
    int   type;
 
-   Resolver *resolver;
-
-   sockaddr_u *peer;
-   int	 peer_num;
-   int	 peer_curr;
-
    /* address for data accepting */
    sockaddr_u   data_sa;
 
@@ -177,8 +168,6 @@ class Ftp : public FileAccess
    time_t   nop_time;
    long	    nop_offset;
    int	    nop_count;
-
-   int	 CheckTimeout();
 
    char	 *result;
    int	 result_size;
@@ -214,13 +203,8 @@ class Ftp : public FileAccess
 
    char	 *anon_user;
    char	 *anon_pass;
-   char	 *proxy;
-   char	 *proxy_port;
-   char  *proxy_user;
-   char  *proxy_pass;
 
    static const char *DefaultAnonPass();
-   void	 SetProxy(const char *px);
 
    int	 flags;
 
@@ -228,8 +212,6 @@ class Ftp : public FileAccess
 
    int	 addr_received;	// state of PASV
 
-   bool	 lookup_done:1;
-   bool	 relookup_always:1;
    bool	 wait_flush:1;	// wait until all responces come
    bool	 ignore_pass:1;	// logged in just with user
    bool  verify_data_address:1;
@@ -241,11 +223,6 @@ class Ftp : public FileAccess
 
    int	 nop_interval;
 
-   int	 max_retries;
-   int	 retries;
-
-   int	 idle;
-   time_t idle_start;
    void set_idle_start()
       {
 	 time(&idle_start);
@@ -258,12 +235,6 @@ class Ftp : public FileAccess
    bool force_skey;
    const char *make_skey_reply();
 
-   int	 socket_buffer;
-   int	 socket_maxseg;
-   void	 SetSocketBuffer(int sock);
-   void	 SetSocketMaxseg(int sock);
-   static void SetKeepAlive(int sock);
-
    bool data_address_ok(sockaddr_u *d=0,bool verify_this_data_port=true);
 
    enum copy_mode_t { COPY_NONE, COPY_SOURCE, COPY_DEST };
@@ -274,8 +245,6 @@ class Ftp : public FileAccess
    friend class FtpCopy;
 
    const char *encode_eprt(sockaddr_u *);
-
-   void Fatal(const char *);
 
 public:
    static void ClassInit();
@@ -352,7 +321,7 @@ public:
       }
    }
 
-   void Reconfig();
+   void Reconfig(const char *name=0);
    void Cleanup(bool all);
 
    ListInfo *MakeListInfo();

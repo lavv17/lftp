@@ -78,7 +78,7 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 #define FTPPORT "ftp"
 #define FTP_DATA_PORT 20
 
-#define super FileAccess
+#define super NetAccess
 #define peer_sa (peer[peer_curr])
 
 
@@ -336,8 +336,7 @@ int   Ftp::NoPassReqCheck(int act,int exp) // for USER command
       if(proxy && (strstr(line,"host") || strstr(line,"resolve")))
       {
 	 DebugPrint("---- ",_("assuming failed host name lookup"),9);
-	 xfree(last_error_resp);
-	 last_error_resp=xstrdup(line);
+	 SetError(LOOKUP_ERROR,line);
 	 Disconnect();
 	 return(LOOKUP_ERROR_STATE);
       }
@@ -596,7 +595,6 @@ void Ftp::InitFtp()
    data_sock=-1;
    aborted_data_sock=-1;
 
-   try_time=0;
    nop_time=0;
    nop_count=0;
    nop_offset=0;
@@ -613,23 +611,12 @@ void Ftp::InitFtp()
    result_size=0;
    state=NO_HOST_STATE;
    flags=SYNC_MODE;
-   resolver=0;
-   lookup_done=false;
    wait_flush=false;
    ignore_pass=false;
-   proxy=0;
-   proxy_port=0;
-   proxy_user=proxy_pass=0;
-   idle=0;
-   idle_start=now;
-   max_retries=0;
-   retries=0;
    skey_pass=0;
    allow_skey=true;
    force_skey=false;
    verify_data_address=true;
-   socket_buffer=0;
-   socket_maxseg=0;
 
    RespQueue=0;
    RQ_alloc=0;
@@ -645,15 +632,6 @@ void Ftp::InitFtp()
    copy_addr_valid=false;
    copy_passive=false;
 
-   bytes_pool_rate=0; // unlim
-   bytes_pool=bytes_pool_rate;
-   bytes_pool_max=0;
-   bytes_pool_time=now;
-
-   peer=0;
-   peer_num=0;
-   peer_curr=0;
-
    memset(&data_sa,0,sizeof(data_sa));
 
    Reconfig();
@@ -668,15 +646,6 @@ Ftp::Ftp(const Ftp *f) : super(f)
 
    if(f->state!=NO_HOST_STATE)
       state=INITIAL_STATE;
-   if(!relookup_always && f->lookup_done)
-   {
-      peer=(sockaddr_u*)xmemdup(f->peer,f->peer_num*sizeof(*peer));
-      peer_num=f->peer_num;
-      peer_curr=f->peer_curr;
-      if(peer_curr>=peer_num)
-	 peer_curr=0;
-      lookup_done=f->lookup_done;
-   }
    flags=f->flags&MODES_MASK;
 }
 
@@ -712,19 +681,6 @@ Ftp::~Ftp()
    }
 }
 
-int   Ftp::CheckTimeout()
-{
-   if(now-event_time>=timeout)
-   {
-      DebugPrint("**** ",_("Timeout - reconnecting"));
-      Disconnect();
-      event_time=now;
-      return(1);
-   }
-   block+=TimeOut((timeout-(now-event_time))*1000);
-   return(0);
-}
-
 int   Ftp::AbsolutePath(const char *s)
 {
    if(!s)
@@ -748,13 +704,14 @@ void  Ftp::GetBetterConnection(int level)
       if(SameConnection(o))
       {
 	 // connected session (o) must have resolved address
-	 if(!lookup_done)
+	 if(!peer)
 	 {
+	    // copy resolved address so that it would be possible to create
+	    // data connection.
 	    xfree(peer);
 	    peer=(sockaddr_u*)xmemdup(o->peer,o->peer_num*sizeof(*o->peer));
 	    peer_num=o->peer_num;
 	    peer_curr=o->peer_curr;
-	    lookup_done=true;
 	 }
 
 	 if(home && !o->home)
@@ -786,43 +743,6 @@ void  Ftp::GetBetterConnection(int level)
    }
 }
 
-void  Ftp::SetSocketBuffer(int sock)
-{
-   super::SetSocketBuffer(sock,socket_buffer);
-}
-
-void  Ftp::SetSocketMaxseg(int sock)
-{
-   super::SetSocketBuffer(sock,socket_maxseg);
-}
-
-static const char *numeric_address(const sockaddr_u *u)
-{
-#ifdef HAVE_GETNAMEINFO
-   static char buf[NI_MAXHOST];
-   if(getnameinfo(&u->sa,sizeof(*u),buf,sizeof(buf),0,0,NI_NUMERICHOST)<0)
-      return "????";
-   return buf;
-#else
-   static char buf[256];
-   if(u->sa.sa_family!=AF_INET)
-      return "????";
-   unsigned char *a=(unsigned char *)&u->in.sin_addr;
-   sprintf(buf,"%u.%u.%u.%u",a[0],a[1],a[2],a[3]);
-   return buf;
-#endif
-}
-static int get_port(const sockaddr_u *u)
-{
-   if(u->sa.sa_family==AF_INET)
-      return ntohs(u->in.sin_port);
-#if INET6
-   if(u->sa.sa_family==AF_INET6)
-      return ntohs(u->in6.sin6_port);
-#endif
-   return 0;
-}
-
 int   Ftp::Do()
 {
    char	 *str =(char*)alloca(xstrlen(cwd)+xstrlen(hostname)+xstrlen(proxy)+256);
@@ -847,14 +767,21 @@ int   Ftp::Do()
       block+=TimeOut((idle_start+idle-now)*1000);
    }
 
+   if(Error())
+   {
+      if(mode!=CLOSED)
+	 block+=NoWait();  // ???
+      return m;
+   }
+
+   if(!hostname)
+      return m;
+
    switch(state)
    {
    case(INITIAL_STATE):
    {
       if(mode==CLOSED)
-	 return m;
-
-      if(hostname==0)
 	 return m;
 
       // walk through ftp classes and try to find identical idle ftp session
@@ -864,67 +791,31 @@ int   Ftp::Do()
       if(state!=INITIAL_STATE)
 	 return MOVED;
 
-      if(lookup_done && peer)
+      if(peer)
       {
 	 if(peer_curr>=peer_num)
 	 {
 	    if(relookup_always && !proxy)
-	    {
-	       xfree(peer);
-	       peer=0;
-	       lookup_done=false;
-	    }
+	       ClearPeer();
 	    else
-	    {
 	       peer_curr=0;
-	    }
 	 }
       }
 
-      if(!lookup_done)
+      if(!peer)
       {
-	 if(!resolver)
-	 {
-	    DebugPrint("---- ",_("Resolving host address..."),4);
-	    if(proxy)
-	       resolver=new Resolver(proxy,proxy_port,FTPPORT);
-	    else
-	       resolver=new Resolver(hostname,portname,FTPPORT,"ftp","tcp");
+	 if(Resolve(FTPPORT,"ftp","tcp")==MOVED)
 	    m=MOVED;
-	 }
-	 if(!resolver->Done())
+	 if(!peer)
 	    return m;
-
-	 if(resolver->Error())
-	 {
-	    xfree(last_error_resp);
-	    last_error_resp=xstrdup(resolver->ErrorMsg());
-	    SwitchToState(LOOKUP_ERROR_STATE);
-	    xfree(hostname);
-	    hostname=0;
-	    xfree(portname);
-	    portname=0;
-	    return(MOVED);
-	 }
-
-	 xfree(peer);
-	 peer=(sockaddr_u*)xmalloc(resolver->GetResultSize());
-	 peer_num=resolver->GetResultNum();
-	 resolver->GetResult(peer);
-	 peer_curr=0;
-
-	 delete resolver;
-	 resolver=0;
-	 lookup_done=true;
-	 m=MOVED;
       }
 
       if(mode==CONNECT_VERIFY)
 	 return m;
 
-      if(try_time!=0 && now-try_time<sleep_time)
+      if(try_time!=0 && now-try_time<reconnect_interval)
       {
-	 block+=TimeOut(1000*(sleep_time-(now-try_time)));
+	 block+=TimeOut(1000*(reconnect_interval-(now-try_time)));
 	 return m;
       }
       try_time=now;
@@ -952,9 +843,7 @@ int   Ftp::Do()
       NonBlock(control_sock);
       CloseOnExec(control_sock);
 
-      sprintf(str,_("Connecting to %s%s (%s) port %u"),proxy?"proxy ":"",
-	 proxy?proxy:hostname,numeric_address(&peer_sa),get_port(&peer_sa));
-      DebugPrint("---- ",str,0);
+      SayConnectingTo();
 
       res=connect(control_sock,&peer_sa.sa,sizeof(peer_sa));
       UpdateNow(); // if non-blocking don't work
@@ -1475,7 +1364,7 @@ int   Ftp::Do()
 	 }
 
 	 sprintf(str,_("Connecting data socket to (%s) port %u"),
-	    numeric_address(&data_sa),get_port(&data_sa));
+	    SocketNumericAddress(&data_sa),SocketPort(&data_sa));
 	 DebugPrint("---- ",str,3);
 
 	 res=connect(data_sock,(struct sockaddr*)&data_sa,sizeof(data_sa));
@@ -1807,8 +1696,8 @@ void  Ftp::ReceiveResp()
       {
 	 if(newstate==FATAL_STATE || newstate==NO_FILE_STATE)
 	 {
-	    xfree(last_error_resp);
-	    last_error_resp=xstrdup(line);
+	    if(!Error())
+	       SetError(StateToError(),line);
 	 }
 	 SwitchToState((automate_state)newstate);
 	 if(resp_size==0)
@@ -1902,12 +1791,12 @@ void  Ftp::Disconnect()
       if(peer_curr<peer_num)
 	 try_time=0; // try next address immediately
       else if(relookup_always && !proxy)
-	 lookup_done=false;
+	 ClearPeer();
    }
    else
    {
       if(relookup_always && !proxy)
-	 lookup_done=false;
+	 ClearPeer();
    }
 
    if(copy_mode!=COPY_NONE)
@@ -2438,13 +2327,6 @@ void  Ftp::SwitchToState(automate_state ns)
       state=ns;
 }
 
-void Ftp::Fatal(const char *msg)
-{
-   xfree(last_error_resp);
-   last_error_resp=xstrdup(msg);
-   SwitchToState(FATAL_STATE);
-}
-
 void  Ftp::AddResp(int exp,int fail,check_case_t ck,bool log)
 {
    int newtail=RQ_tail+1;
@@ -2666,6 +2548,8 @@ void  Ftp::PopResp()
 
 const char *Ftp::CurrentStatus()
 {
+   if(Error())
+      return StrError(error_code);
    switch(state)
    {
    case(EOF_STATE):
@@ -2684,7 +2568,7 @@ const char *Ftp::CurrentStatus()
       {
 	 if(resolver)
 	    return(_("Resolving host address..."));
-	 if(now-try_time<sleep_time)
+	 if(now-try_time<reconnect_interval)
 	    return(_("Delaying before reconnect"));
       }
    case(NO_HOST_STATE):
@@ -2734,6 +2618,8 @@ const char *Ftp::CurrentStatus()
 
 int   Ftp::StateToError()
 {
+   if(Error())
+      return error_code;
    switch(state)
    {
    case(NO_FILE_STATE):
@@ -2878,7 +2764,7 @@ int   Ftp::Done()
    {
       if(state!=INITIAL_STATE)
 	 return OK;
-      return(lookup_done?OK:IN_PROGRESS);
+      return(peer?OK:IN_PROGRESS);
    }
    abort();
 }
@@ -2888,59 +2774,22 @@ void Ftp::Connect(const char *new_host,const char *new_port)
    super::Connect(new_host,new_port);
    flags=0;
    Reconfig();
-   DontSleep();
    state=INITIAL_STATE;
-   lookup_done=false;
-   try_time=0;
-   if(hostname[0]==0)
-      state=NO_HOST_STATE; // no need to lookup
 }
 
 void Ftp::ConnectVerify()
 {
-   if(lookup_done)
+   if(peer)
       return;
    mode=CONNECT_VERIFY;
 }
 
-void Ftp::SetProxy(const char *px)
-{
-   bool was_proxied=(proxy!=0);
-
-   xfree(proxy); proxy=0;
-   xfree(proxy_port); proxy_port=0;
-   xfree(proxy_user); proxy_user=0;
-   xfree(proxy_pass); proxy_pass=0;
-
-   if(!px)
-   {
-   no_proxy:
-      if(was_proxied)
-	 lookup_done=false;
-      return;
-   }
-
-   ParsedURL url(px);
-   if(!url.host || url.host[0]==0)
-      goto no_proxy;
-
-   // FIXME: check url.proto
-
-   proxy=xstrdup(url.host);
-   proxy_port=xstrdup(url.port);
-   proxy_user=xstrdup(url.user);
-   proxy_pass=xstrdup(url.pass);
-   if(proxy_port==0)
-      proxy_port=xstrdup(FTPPORT);
-   lookup_done=false;
-}
-
-void Ftp::Reconfig()
+void Ftp::Reconfig(const char *name)
 {
    xfree(closure);
    closure=xstrdup(hostname);
 
-   super::Reconfig();
+   super::Reconfig(name);
 
    const char *c=closure;
 
@@ -2948,18 +2797,12 @@ void Ftp::Reconfig()
    SetFlag(PASSIVE_MODE,Query("passive-mode",c));
    rest_list = Query("rest-list");
 
-   timeout = Query("timeout",c);
-   sleep_time = Query("reconnect-interval",c);
    nop_interval = Query("nop-interval",c);
-   idle = Query("idle",c);
-   max_retries = Query("max-retries",c);
-   relookup_always = Query("relookup-always",c);
+
    allow_skey = Query("skey-allow",c);
    force_skey = Query("skey-force",c);
    verify_data_address = Query("verify-address",c);
    verify_data_port = Query("verify-port",c);
-   socket_buffer = Query("socket-buffer",c);
-   socket_maxseg = Query("socket-maxseg",c);
 
    xfree(anon_user);
    anon_user=xstrdup(Query("anon-user",c));
@@ -2967,6 +2810,9 @@ void Ftp::Reconfig()
    anon_pass=xstrdup(Query("anon-pass",c));
 
    SetProxy(Query("proxy",c));
+
+   if(proxy && proxy_port==0)
+      proxy_port=xstrdup(FTPPORT);
 
    if(nop_interval<30)
       nop_interval=30;

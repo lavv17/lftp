@@ -29,7 +29,8 @@ libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  buffer.cc buffer.h url.cc url.h StatusLine.cc StatusLine.h plural.c plural.h\
  misc.h misc.cc Http.cc Http.h fg.cc fg.h module.c module.h modconfig.h\
  resource.cc DummyProto.cc DummyProto.h FtpGlob.cc FtpGlob.h FtpDirList.cc\
- FtpDirList.h ArgV.cc ArgV.h HttpDir.cc HttpDir.h ascii_ctype.h
+ FtpDirList.h ArgV.cc ArgV.h HttpDir.cc HttpDir.h ascii_ctype.h\
+ NetAccess.cc NetAccess.h
 
 libjobs_a_SOURCES = Job.cc Job.h XferJob.cc XferJob.h CmdExec.cc CmdExec.h\
  commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\

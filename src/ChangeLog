@@ -1,3 +1,17 @@
+	* FileAccess.cc, FileAccess.h, Http.cc, Http.h, LocalAccess.cc,
+	  NetAccess.cc, ftpclass.cc, ftpclass.h: split off NetAccess class;
+	  use Resolver cache; add Resolve method; move rate limiter to
+	  NetAccess.
+	* Resolver.cc, Resolver.h: implement cache.
+	* LsCache.cc, LsCache.h: allow adding from Buffer class.
+	* HttpDir.cc: use new LsCache::Add method varianth; handle symlinks.
+	* commands.cc: remove debug level restriction.
+	* buffer.cc, buffer.h: make GetSaved const.
+	* Makefile.am: add NetAccess.
+	* NetAccess.cc, NetAccess.h: new files.
+	* SMTask.cc, SMTask.h, ResMgr.cc, CmdExec.cc, CmdExec.h:
+	  Reconfig now takes arg.
+
 1999-08-26  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* complete.cc: improve completion of file names with wildcards.
