@@ -1,3 +1,7 @@
+2000-03-09  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CmdExec.cc: fix prompt space allocation.
+
 2000-02-20  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileAccess.cc: (Rename) correct typo (which caused core dumps).
