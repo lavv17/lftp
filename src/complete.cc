@@ -47,6 +47,8 @@ static int len;    // lenght of the word to complete
 static int cindex; // index in completion array
 static char **glob_res=NULL;
 
+static bool shell_cmd;
+
 char *command_generator(char *text,int state)
 {
    const char *name;
@@ -81,7 +83,7 @@ char *command_generator(char *text,int state)
    return(NULL);
 }
 
-char *remote_generator(char *text,int state)
+static char *remote_generator(char *text,int state)
 {
    char *name;
 
@@ -120,6 +122,38 @@ char *remote_generator(char *text,int state)
    return NULL;
 }
 
+static char *bookmark_generator(char *text,int s)
+{
+   static int state;
+   const char *t;
+   if(!s)
+   {
+      state=0;
+      lftp_bookmarks.Rewind();
+   }
+   for(;;)
+   {
+      switch(state)
+      {
+      case 0:
+	 t=lftp_bookmarks.CurrentKey();
+	 if(!t)
+	 {
+	    state=1;
+	    break;
+	 }
+	 if(!lftp_bookmarks.Next())
+	    state=1;
+	 if(strncmp(t,text,len)==0)
+	    return xstrdup(t);
+	 break;
+      case 1:
+	 return 0;
+      }
+   }
+}
+
+
 static const char *find_word(const char *p)
 {
    while(*p && isspace(*p))
@@ -140,23 +174,30 @@ static bool copy_word(char *buf,const char *p,int n)
 }
 
 
-// returns:
-//    2 - remote dir
-//    1 - remote file
-//    0 - local
-int   remote_cmd(int start)
+enum completion_type
 {
+   LOCAL, REMOTE_FILE, REMOTE_DIR, BOOKMARK, COMMAND
+};
+
+static completion_type cmd_completion_type(int start)
+{
+   const char *cmd=rl_line_buffer;
+
+   if(find_word(cmd)-cmd == start) // forst word is command
+      return COMMAND;
+
    // try to guess whether the completion word is remote
 
    char buf[20];  // no commands longer
-   const char *cmd=rl_line_buffer;
    TouchedAlias *used_aliases=0;
 
    for(;;)
    {
       const char *w=find_word(cmd);
+      if(w[0]=='!')
+	 shell_cmd=true;
       if(w[0]=='!' || w[0]=='#')
-	 return 0;
+	 return LOCAL;
       if(w[0]=='(')
       {
 	 cmd=w+1;
@@ -166,7 +207,7 @@ int   remote_cmd(int start)
       || buf[0]==0)
       {
 	 TouchedAlias::FreeChain(used_aliases);
-	 return 0;
+	 return LOCAL;
       }
       const char *alias=Alias::Find(buf);
       if(alias && !TouchedAlias::IsTouched(alias,used_aliases))
@@ -175,17 +216,16 @@ int   remote_cmd(int start)
 	 cmd=alias;
 	 continue;
       }
-      const CmdExec::cmd_rec *c;
-      int part=CmdExec::find_cmd(buf,&c);
-      if(part==1)
-	 strcpy(buf,c->name);
+      const char *full=CmdExec::GetFullCommandName(buf);
+      if(full!=buf)
+	 strcpy(buf,full);
       TouchedAlias::FreeChain(used_aliases);
       break;
    }
 
    if(!strcmp(buf,"cd")
    || !strcmp(buf,"mkdir"))
-      return 2;	/* append slash automatically */
+      return REMOTE_DIR; /* append slash automatically */
 
    if(!strcmp(buf,"ls")
    || !strcmp(buf,"mget")
@@ -197,7 +237,12 @@ int   remote_cmd(int start)
    || !strcmp(buf,"cat")
    || !strcmp(buf,"zcat")
    || !strcmp(buf,"zmore"))
-      return 1;
+      return REMOTE_FILE;
+
+   if(!strcmp(buf,"open")
+   || !strcmp(buf,"lftp")
+   || !strcmp(buf,"bookmark"))
+      return BOOKMARK;
 
    bool was_o=false;
    for(int i=start; i>4; i--)
@@ -214,12 +259,12 @@ int   remote_cmd(int start)
    if(!strcmp(buf,"get")
    || !strcmp(buf,"pget"))
       if(!was_o)
-	 return 1;
+	 return REMOTE_FILE;
    if(!strcmp(buf,"put"))
       if(was_o)
-	 return 1;
+	 return REMOTE_FILE;
 
-   return 0;
+   return LOCAL;
 }
 
 CmdExec *completion_shell;
@@ -233,19 +278,35 @@ static bool force_remote=false;
 char **lftp_completion (char *text,int start,int end)
 {
    rl_completion_append_character=' ';
+   shell_cmd=false;
 
-   if(start==0)
+   completion_type type=cmd_completion_type(start);
+
+   len=end-start;
+
+   char *(*generator)(char *text,int state) = 0;
+
+   switch(type)
    {
-      len=end;
-      return completion_matches(text,command_generator);
-   }
-   int remote_type=remote_cmd(start);
-   if((remote_completion && remote_type) || force_remote)
-   {
-      len=end-start;
+   case COMMAND:
+      generator = command_generator;
+      break;
+   case BOOKMARK:
+      generator = bookmark_generator;
+      break;
+   case LOCAL:
+      if(force_remote)
+	 goto really_remote;
+      break;
+   case REMOTE_FILE:
+   case REMOTE_DIR:
+      if(!remote_completion && !force_remote)
+	 break; // local
+   really_remote:
       char *pat=(char*)alloca(len+5);
       strncpy(pat,text,len);
       pat[len]=0;
+
       if(strchr(pat,'*') || strchr(pat,'?'))
 	 return(NULL);
 
@@ -261,8 +322,6 @@ char **lftp_completion (char *text,int start,int end)
 	 pat[1]=0;	// '///'
       else
 	 pat[0]=0;	// no slashes
-
-//       strcat(pat,"/*")
 
       FileAccess::open_mode mode=Ftp::LIST;
 
@@ -325,24 +384,30 @@ char **lftp_completion (char *text,int start,int end)
       }
 
       rl_filename_completion_desired=1;
+      generator = remote_generator;
+      break;
+   } /* end switch */
 
-      char quoted=((lftp_char_is_quoted(rl_line_buffer,start) &&
-		    strchr(rl_completer_quote_characters,rl_line_buffer[start-1]))
-		   ? rl_line_buffer[start-1] : 0);
-      text=bash_dequote_filename(text, quoted);
-      len=strlen(text);
-      char **matches=completion_matches(text,remote_generator);
-      free(text);
-      if(!matches)
-      {
-	 rl_attempted_completion_over = 1;
-	 return 0;
-      }
-      if(remote_type==2 /* cd/mkdir */)
-	 rl_completion_append_character='/';
-      return matches;
+   if(generator==0)
+      return 0; // default to local
+
+   char quoted=((lftp_char_is_quoted(rl_line_buffer,start) &&
+		 strchr(rl_completer_quote_characters,rl_line_buffer[start-1]))
+		? rl_line_buffer[start-1] : 0);
+   text=bash_dequote_filename(text, quoted);
+   len=strlen(text);
+
+   char **matches=completion_matches(text,generator);
+
+   free(text);
+   if(!matches)
+   {
+      rl_attempted_completion_over = 1;
+      return 0;
    }
-   return(NULL);
+   if(type==REMOTE_DIR)
+      rl_completion_append_character='/';
+   return matches;
 }
 
 
@@ -400,12 +465,14 @@ double_quote (char *string)
     {
       switch (c)
         {
+	case '$':
+	case '`':
+	  if(!shell_cmd)
+	     goto def;
 	case '"':
-// 	case '$':
-// 	case '`':
 	case '\\':
 	  *r++ = '\\';
-	default:
+	default: def:
 	  *r++ = c;
 	  break;
         }
@@ -431,27 +498,29 @@ backslash_quote (char *string)
     {
       switch (c)
 	{
+ 	case '\'':
+ 	case '(': case ')':
+ 	case '!': case '{': case '}':		/* reserved words */
+ 	case '*': case '[': case '?': case ']':	/* globbing chars */
+ 	case '^':
+ 	case '$': case '`':			/* expansion chars */
+	  if(!shell_cmd)
+	    goto def;
 	case ' ': case '\t': case '\n':		/* IFS white space */
-// 	case '\'':
 	case '"': case '\\':		/* quoting chars */
 	case '|': case '&': case ';':		/* shell metacharacters */
-// 	case '(': case ')':
 	case '<': case '>':
-// 	case '!': case '{': case '}':		/* reserved words */
-// 	case '*': case '[': case '?': case ']':	/* globbing chars */
-// 	case '^':
-// 	case '$': case '`':			/* expansion chars */
 	  *r++ = '\\';
 	  *r++ = c;
 	  break;
-	case '#':				/* comment char */
-#if 0
 	case '~':				/* tilde expansion */
-#endif
+	  if(!shell_cmd)
+	    goto def;
+	case '#':				/* comment char */
 	  if (s == string)
 	    *r++ = '\\';
 	  /* FALLTHROUGH */
-	default:
+	default: def:
 	  *r++ = c;
 	  break;
 	}
