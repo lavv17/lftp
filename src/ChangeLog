@@ -1,3 +1,7 @@
+2001-08-20  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* resource.cc: fixed ftp:ssl-auth validation.
+
 2001-08-16  Wolfram Gloger <Wolfram.Gloger@dent.med.uni-muenchen.de>
 
 	* FileSet.cc: include stdlib.h; use labs instead of abs.
