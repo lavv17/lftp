@@ -1,3 +1,7 @@
+2004-06-01  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: save old directory when no cd verification is done.
+
 2004-05-31  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: set copy_failed in NoFileCheck and TransferCheck on 4xx codes;

@@ -597,6 +597,7 @@ Job *CmdExec::builtin_cd()
    if(!verify_path || background
    || (!verify_path_cached && LsCache::IsDirectory(session,dir)==1))
    {
+      cwd_history.Set(session,session->GetCwd());
       session->Chdir(dir,false);
       if(slot)
 	 ConnectionSlot::SetCwd(slot,session->GetCwd());
