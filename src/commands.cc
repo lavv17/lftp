@@ -492,8 +492,9 @@ Job *CmdExec::builtin_exit()
 	 return 0;
       }
    }
+   // Note: one job is this CmdExec.
    if(!bg && top_level
-   && !(bool)ResMgr::Query("cmd:move-background",0) && NumberOfJobs()>0)
+   && !(bool)ResMgr::Query("cmd:move-background",0) && NumberOfJobs()>1)
    {
       eprintf(_(
 	 "There are running jobs and `cmd:move-background' is not set.\n"
