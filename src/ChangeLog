@@ -1,3 +1,7 @@
+2001-09-10  Glenn F. Maynard <g_ld@zewt.org>
+
+	* commands.cc, lftp_rl.c, lftp_rl.h: implement history command.
+
 2001-08-28  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Resolver.cc: retry with use_fork=false; don't create pipe if

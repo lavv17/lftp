@@ -64,6 +64,7 @@
 #include "FileCopy.h"
 #include "DummyProto.h"
 #include "QueueFeeder.h"
+#include "lftp_rl.h"
 
 #include "confpaths.h"
 
@@ -86,7 +87,7 @@ CMD(ver);   CMD(close);  CMD(bookmark);CMD(lftp);
 CMD(echo);  CMD(suspend);CMD(sleep);
 CMD(at);    CMD(find);   CMD(command); CMD(module);
 CMD(lpwd);  CMD(glob);	 CMD(chmod);   CMD(queue);
-CMD(repeat);CMD(get1);
+CMD(repeat);CMD(get1);   CMD(history);
 
 #ifdef MODULE_CMD_MIRROR
 # define cmd_mirror 0
@@ -182,6 +183,13 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -a  all types\n")},
    {"help",    cmd_help,   N_("help [<cmd>]"),
 	 N_("Print help for command <cmd>, or list of available commands\n")},
+   {"history", cmd_history,N_("history -w file|-r file|-c|-l [cnt]"),
+	 N_(" -w <file> Write history to file.\n"
+	 " -r <file> Read history from file; appends to current history.\n"
+	 " -c  Clear the history.\n"
+	 " -l  List the history (default).\n"
+	 "Optional argument cnt specifies the number of history lines to list,\n"
+	 "or \"all\" to list all entries.\n")},
    {"jobs",    cmd_jobs,   "jobs [-v]",
 	 N_("List running jobs. -v means verbose, several -v can be specified.\n")},
    {"kill",    cmd_kill,   N_("kill all|<job_no>"),
@@ -2407,4 +2415,81 @@ CMD(get1)
       c->Ascii();
 
    return new CopyJob(c,src,args->a0());
+}
+
+CMD(history)
+{
+   enum { READ, WRITE, CLEAR, LIST } mode = LIST;
+   const char *fn = NULL;
+   static struct option history_options[]=
+   {
+      {"read",required_argument,0,'r'},
+      {"write",required_argument,0,'w'},
+      {"clear",no_argument,0,'c'},
+      {"list",required_argument,0,'l'},
+      {0,0,0,0}
+   };
+
+   exit_code=0;
+   args->rewind();
+   int opt;
+   while((opt=args->getopt_long("+r:w:cl",history_options,0))!=EOF) {
+      switch(opt) {
+      case 'r':
+	 mode = READ;
+	 fn = optarg;
+	 break;
+      case 'w':
+	 mode = WRITE;
+	 fn = optarg;
+	 break;
+      case 'c':
+	 mode = CLEAR;
+	 break;
+      case 'l':
+	 mode = LIST;
+	 break;
+      case '?':
+	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
+	 return 0;
+      }
+   }
+
+   int cnt = 16;
+   if(char *arg = args->getcurr()) {
+      if(!strcasecmp(arg, "all"))
+	 cnt = -1;
+      else if(isdigit(arg[0]))
+	 cnt = atoi(arg);
+      else {
+	 eprintf(_("%s: %s - not a number\n"), args->a0(), args->getcurr());
+	 exit_code=1;
+	 return 0;
+      }
+   }
+
+   switch(mode) {
+   case READ:
+      if(int err = lftp_history_read(fn)) {
+	 eprintf(_("%s: %s: %s\n"), args->a0(), fn, strerror(err));
+	 exit_code=1;
+      }
+      break;
+
+   case WRITE:
+      if(int err = lftp_history_write(fn)) {
+	 eprintf(_("%s: %s: %s\n"), args->a0(), fn, strerror(err));
+	 exit_code=1;
+      }
+      break;
+
+   case LIST:
+      lftp_history_list(cnt);
+      break;
+   case CLEAR:
+      lftp_history_clear();
+      break;
+   }
+
+   return 0;
 }

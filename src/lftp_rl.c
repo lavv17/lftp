@@ -47,6 +47,37 @@ int lftp_history_expand(const char *what, char **where)
    return history_expand((char*)what,where);
 }
 
+int lftp_history_read(const char *fn)
+{
+   using_history();
+   return read_history(fn);
+}
+
+int lftp_history_write(const char *fn)
+{
+   using_history();
+   return write_history(fn);
+}
+
+void lftp_history_list(int cnt)
+{
+   HISTORY_STATE *st = history_get_history_state();
+   HIST_ENTRY *hist;
+   int i;
+   using_history();
+
+   i = history_base + st->length - cnt;
+   if(cnt == -1 || i < history_base) i = history_base;
+
+   while((hist = history_get(i)))
+      printf("%5i  %s\n", i++, hist->line);
+}
+
+void lftp_history_clear()
+{
+   clear_history();
+}
+
 static int is_clear=0;
 
 void lftp_rl_clear()
