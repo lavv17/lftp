@@ -537,7 +537,7 @@ void OutputJob::Put(const char *buf,int size)
 
    update_timer.SetResource("cmd:status-interval",0);
 
-   int oldpos = InputPeer()->GetPos();
+   off_t oldpos = InputPeer()->GetPos();
    InputPeer()->Put(buf, size);
    InputPeer()->SetPos(oldpos);
 }

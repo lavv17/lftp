@@ -1,3 +1,7 @@
+2003-02-26  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* OutputJob.cc: fixed large file support (should have used off_t).
+
 2003-02-14  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc, FileCopyFtp.cc: don't start "put" peer if target file
