@@ -423,7 +423,6 @@ void FileAccess::Connect(const char *host1,const char *port1)
    xfree(cwd);
    cwd=xstrdup(default_cwd);
    xfree(home); home=0;
-   try_time=0;
    DontSleep();
 }
 
