@@ -1,3 +1,14 @@
+2004-05-17  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: wait until LANG/OPTS UTF8 complete before sending
+	  more commands; activate specified charset if utf8 activation
+	  fail; actually send CLNT and HOST commands; activate charset
+	  from Reconfig only if no utf8 activation commands pending.
+	* ftpclass.cc: use ssl-protect-fxp in FXP mode; send CPSV even
+	  if seems unsupported - no choice. (suggested by Tillmann Steinbrecher
+	  <t-st@t-st.org> w/patch).
+	* resource.cc: (ftp:ssl-protect-fxp) new setting.
+
 2004-05-11  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CmdExec.cc: call ShowRunStatus only if necessary.

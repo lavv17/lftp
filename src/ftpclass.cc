@@ -1427,10 +1427,12 @@ int   Ftp::Do()
       if(state!=EOF_STATE || Error())
 	 return MOVED;
 
-      if(expect->Has(Expect::FEAT))
+      if(expect->Has(Expect::FEAT)
+      || expect->Has(Expect::OPTS_UTF8)
+      || expect->Has(Expect::LANG))
 	 return m;
 
-      if(!conn->utf8_supported && charset && *charset)
+      if(!conn->utf8_activated && charset && *charset)
 	 conn->SetControlConnectionTranslation(charset);
 
       if(mode==CONNECT_VERIFY)
@@ -1487,7 +1489,7 @@ int   Ftp::Do()
 	 else
 	    want_prot=QueryBool("ssl-protect-data",hostname)?'P':'C';
 	 if(copy_mode!=COPY_NONE)
-	    want_prot='C';
+	    want_prot=QueryBool("ssl-protect-fxp")?'P':'C';
 	 if(want_prot!=conn->prot)
 	 {
 	    conn->SendCmdF("PROT %c",want_prot);
@@ -1838,7 +1840,7 @@ int   Ftp::Do()
 	 ipv4_pasv:
 #endif
 #ifdef USE_SSL
-	    if(copy_mode!=COPY_NONE && conn->prot=='P' && conn->cpsv_supported)
+	    if(copy_mode!=COPY_NONE && conn->prot=='P')
 	       conn->SendCmd("CPSV"); // same as PASV, but server does SSL_connect
 	    else
 #endif // note the following statement
@@ -3468,6 +3470,10 @@ void Ftp::CheckFEAT(char *reply)
 	 conn->mdtm_supported=true;
       else if(!strcasecmp(f,"SIZE"))
 	 conn->size_supported=true;
+      else if(!strcasecmp(f,"CLNT"))
+	 conn->clnt_supported=true;
+      else if(!strcasecmp(f,"HOST"))
+	 conn->host_supported=true;
       else if(!strncasecmp(f,"REST ",5)) // FIXME: actually REST STREAM
 	 conn->rest_supported=true;
       else if(!strncasecmp(f,"MLST ",5))
@@ -4074,7 +4080,9 @@ void Ftp::Reconfig(const char *name)
 
    xfree(charset);
    charset=xstrdup(Query("charset",c));
-   if(conn && !conn->utf8_supported && charset && *charset && !strcmp(name,"ftp:charset"))
+   if(conn && conn->have_feat_info && !conn->utf8_activated
+   && !(expect->Has(Expect::LANG) || expect->Has(Expect::OPTS_UTF8))
+   && charset && *charset && !strcmp(name,"ftp:charset"))
       conn->SetControlConnectionTranslation(charset);
 
    const char *h=QueryStringWithUserAtHost("home");

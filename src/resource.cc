@@ -195,6 +195,7 @@ static ResDecl
    ResDecl11a("ftp:ssl-allow",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl11b("ftp:ssl-force",		  "no",	   ResMgr::BoolValidate,0),
    ResDecl11c("ftp:ssl-protect-data",	  "no",	   ResMgr::BoolValidate,0),
+   ResDecl11g("ftp:ssl-protect-fxp",	  "no",    ResMgr::BoolValidate,ResMgr::NoClosure),
    ResDecl11f("ftp:ssl-protect-list",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl11d("ftp:ssl-auth",		  "TLS",   AuthArgValidate,0),
    ResDecl11e("ftp:ssl-allow-anonymous",  "no",	   ResMgr::BoolValidate,0),
