@@ -1105,14 +1105,17 @@ CMD(set)
 {
    if(args->count()<2)
    {
+/* can't happen
       if(args->count()!=1)
       {
 	 eprintf(_("Usage: %s <variable> [<value>]\n"),args->getarg(0));
 	 return 0;
       }
-      ResMgr::Print(stdout);
-      exit_code=0;
-      return 0;
+*/
+      char *s=ResMgr::Format();
+      Job *j=new CatJob(output,s,strlen(s));
+      output=0;
+      return j;
    }
 
    char *a=args->getarg(1);
