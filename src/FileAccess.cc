@@ -269,6 +269,7 @@ void  FileAccess::Open(const char *fn,int mode,off_t offs)
    case STORE:
    case REMOVE:
    case MAKE_DIR:
+   case CHANGE_MODE:
       LsCache::FileChanged(this,file);
       break;
    case REMOVE_DIR:

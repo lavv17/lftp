@@ -63,6 +63,7 @@ public:
 
    virtual void Suspend();
    virtual void Resume();
+   bool IsSuspended() { return suspended; }
 
    virtual void Reconfig(const char *name=0) {};
    static void ReconfigAll(const char *name);

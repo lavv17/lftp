@@ -300,7 +300,10 @@ FileInputBuffer::~FileInputBuffer()
    if(in)
       delete in;
    if(in_FA)
+   {
+      in_FA->Resume();
       in_FA->Close();
+   }
 }
 int FileInputBuffer::Do()
 {

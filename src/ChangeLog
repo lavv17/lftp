@@ -1,3 +1,11 @@
+2000-07-16  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc: invalidate dir listing cache on chmod.
+	* Http.cc, Http.h: implement Suspend, Resume; resume and Roll
+	  recv_buf on Close.
+	* SMTask.h: (IsSuspended) new method.
+	* buffer.cc: resume in_FA before Close.
+
 2000-07-14  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* NetAccess.cc: (SocketNumericAddress) use SocketAddrLen, this fixes

@@ -66,6 +66,7 @@ void Http::Init()
    sock=-1;
    send_buf=0;
    recv_buf=0;
+   recv_buf_suspended=false;
    body_size=-1;
    bytes_received=0;
    line=0;
@@ -194,6 +195,8 @@ void Http::Close()
    if(sock!=-1 && keep_alive && (keep_alive_max>1 || keep_alive_max==-1)
    && mode!=STORE && !recv_buf->Eof() && state==RECEIVING_BODY)
    {
+      recv_buf->Resume();
+      Roll(recv_buf);
       if(xstrcmp(last_method,"HEAD"))
       {
 	 // check if all data are in buffer
@@ -1215,6 +1218,30 @@ void  Http::ClassInit()
    // register the class
    Register("http",Http::New);
    Register("hftp",HFtp::New);
+}
+
+void Http::Suspend()
+{
+   if(suspended)
+      return;
+   if(recv_buf)
+   {
+      recv_buf_suspended=recv_buf->IsSuspended();
+      recv_buf->Suspend();
+   }
+   if(send_buf)
+      send_buf->Suspend();
+   super::Suspend();
+}
+void Http::Resume()
+{
+   if(!suspended)
+      return;
+   super::Resume();
+   if(recv_buf && !recv_buf_suspended)
+      recv_buf->Resume();
+   if(send_buf)
+      send_buf->Resume();
 }
 
 int Http::Read(void *buf,int size)

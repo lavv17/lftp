@@ -47,6 +47,7 @@ class Http : public NetAccess
 
    FileOutputBuffer *send_buf;
    FileInputBuffer *recv_buf;
+   bool recv_buf_suspended;
    void SendMethod(const char *,const char *);
    const char *last_method;
    bool post;
@@ -144,6 +145,9 @@ public:
    void UseCache(bool use) { no_cache_this=!use; }
 
    bool NeedSizeDateBeforehand() { return true; }
+
+   void Suspend();
+   void Resume();
 };
 
 class HFtp : public Http
