@@ -96,7 +96,11 @@ void  MirrorJob::ShowRunStatus(StatusLine *s)
       break;
 
    case(GETTING_LIST_INFO):
-      s->Show(list_info->Status());
+      if(remote_relative_dir)
+	 s->Show("%s: %s",squeeze_file_name(remote_relative_dir,20),
+	    list_info->Status());
+      else
+	 s->Show("%s",list_info->Status());
       break;
    }
 }
@@ -303,6 +307,10 @@ void  MirrorJob::HandleFile(int how)
 
 	 mj->verbose_report=verbose_report;
 	 mj->newer_than=newer_than;
+
+	 if(verbose_report>=3)
+	    Report(_("Mirroring directory `%s'"),
+	       (flags&REVERSE)?mj->local_relative_dir:mj->remote_relative_dir);
 
 	 dir_made=false;   // for next directory
 
