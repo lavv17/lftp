@@ -159,6 +159,7 @@ public:
 
    virtual int Read(void *buf,int size) = 0;
    virtual int Write(const void *buf,int size) = 0;
+   virtual int Buffered() { return 0; }
    virtual int StoreStatus() = 0;
    long GetPos() { return pos; }
    long GetRealPos() { return real_pos<0?pos:real_pos; }
