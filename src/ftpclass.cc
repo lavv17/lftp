@@ -1735,6 +1735,8 @@ int   Ftp::Do()
       if(prot=='P')
       {
 	 data_ssl=lftp_ssl_new(data_sock);
+	 // share session id between control and data connections.
+	 SSL_copy_session_id(data_ssl,control_ssl);
 	 data_ssl_connected=false;
       }
 #endif
