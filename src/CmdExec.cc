@@ -918,11 +918,14 @@ char *CmdExec::MakePrompt()
 	 continue;
 
       int store_index=store-prompt;
-      int need=store_index+(int)strlen(to_add)+1;
-      while(prompt_size<need)
-	 prompt_size*=2;
-      prompt=(char*)xrealloc(prompt,prompt_size);
-      store=prompt+store_index;
+      int need=store_index+strlen(to_add)+1;
+      if(prompt_size<need)
+      {
+	 while(prompt_size<need)
+	    prompt_size*=2;
+	 prompt=(char*)xrealloc(prompt,prompt_size);
+	 store=prompt+store_index;
+      }
 
       strcpy(store,to_add);
       store+=strlen(to_add);
