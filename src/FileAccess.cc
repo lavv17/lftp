@@ -145,8 +145,13 @@ void  FileAccess::DebugPrint(const char *prefix,const char *str,int level)
 {
    if(!Log::global)
       return;
-   char *buf=string_alloca(strlen(prefix)+strlen(str)+2);
-   sprintf(buf,"%s%s\n",prefix,str);
+   int len=strlen(str);
+   if(len>0 && str[len-1]=='\n')
+      len--;
+   if(len>0 && str[len-1]=='\r')
+      len--;
+   char *buf=string_alloca(strlen(prefix)+len+2);
+   sprintf(buf,"%s%.*s\n",prefix,len,str);
    Log::global->Write(level,buf);
 }
 

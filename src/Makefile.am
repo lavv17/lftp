@@ -13,11 +13,9 @@ lftp_SOURCES = lftp.cc complete.h complete.cc lftp_rl.c lftp_rl.h getdate.y getd
 
 #ftpget_SOURCES = ftpget.cc
 
-noinst_LIBRARIES = libtasks.a libjobs.a
-
 EXTRA_LTLIBRARIES = liblftp-pty.la liblftp-network.la proto-ftp.la proto-http.la proto-file.la cmd-mirror.la cmd-sleep.la proto-fish.la proto-sftp.la
 pkgverlib_LTLIBRARIES = $(MODULES_LA)
-noinst_LTLIBRARIES = $(MODULES_LA_STATIC)
+noinst_LTLIBRARIES = liblftp-tasks.la liblftp-jobs.la $(MODULES_LA_STATIC)
 
 proto_ftp_la_SOURCES  = ftpclass.cc ftpclass.h FtpListInfo.cc FtpListInfo.h\
  FtpDirList.cc FtpDirList.h md5.c md5.h ftp-opie.c FileCopyFtp.cc FileCopyFtp.h
@@ -47,7 +45,7 @@ proto_http_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la
 proto_fish_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la liblftp-pty.la
 proto_sftp_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la liblftp-pty.la
 
-libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
+liblftp_tasks_la_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  ProcWait.h GetPass.cc GetPass.h ConnectionSlot.cc ConnectionSlot.h\
  CharReader.cc CharReader.h LsCache.cc LsCache.h\
  FileAccess.h FileAccess.cc ResMgr.h ResMgr.cc\
@@ -66,7 +64,7 @@ libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  StringPool.cc StringPool.h DirColors.cc DirColors.h IdNameCache.cc\
  IdNameCache.h PatternSet.cc PatternSet.h LocalDir.cc LocalDir.h
 
-libjobs_a_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
+liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\
  parsecmd.cc\
  mvJob.cc mvJob.h alias.cc alias.h\
@@ -79,9 +77,9 @@ libjobs_a_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  OutputJob.cc OutputJob.h
 
 lftp_LDFLAGS = -export-dynamic $(LFTP_SSL_LDFLAGS)
-lftp_LDADD = libjobs.a libtasks.a $(MODULES_LA_STATIC) $(READLINE) \
+lftp_LDADD = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC) $(READLINE)\
 	$(top_builddir)/lib/liblib.a $(LFTP_SSL_LIBS) $(LTLIBINTL) $(LTLIBICONV)
-lftp_DEPENDENCIES = libjobs.a libtasks.a $(READLINE_DEPEND) \
+lftp_DEPENDENCIES = liblftp-jobs.la liblftp-tasks.la $(READLINE_DEPEND) \
 	$(top_builddir)/lib/liblib.a $(MODULES_LA_STATIC)
 
 confpaths.h: Makefile
@@ -98,7 +96,7 @@ INCLUDES = -I$(top_srcdir)/include $(SSL_CPPFLAGS)
 #OMIT_DEPENDENCIES = readline.h keymaps.h chardefs.h tilde.h rltypedefs.h\
 #	history.h libintl.hregex.h glob.h fnmatch.h poll.h rlstdc.h
 
-lftp.o commands.o module.o: confpaths.h
+lftp.o commands.lo module.lo: confpaths.h
 
 # libtool does not strip modules, do it here.
 install-lib-local:

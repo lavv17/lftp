@@ -1,7 +1,9 @@
 2004-03-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: set proper timeout for retry_time; better error handling
-	  for port-range;
+	  for port-range.
+	* FileAccess.cc: (DebugPrint) check for \r\n in the string.
+	* Makefile.am: use libtool for libtasks and libjobs; rename them.
 
 2004-03-15  Alexander V. Lukyanov <lav@yars.free.net>
 
