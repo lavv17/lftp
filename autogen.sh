@@ -81,7 +81,7 @@ if test "$DIE" -eq 1; then
   exit 1
 fi
 
-make -f Makefile.am srcdir=. acinclude.m4
+#make -f Makefile.am srcdir=. acinclude.m4
 
 if test -z "$*"; then
   echo "**Warning**: I am going to run \`configure' with no arguments."
@@ -104,7 +104,8 @@ do
     echo processing $dr
     macrodirs=`sed -n -e 's,AM_ACLOCAL_INCLUDE(\(.*\)),\1,gp' < $coin`
     ( cd $dr
-      aclocalinclude="$ACLOCAL_FLAGS -I m4"
+      aclocalinclude="$ACLOCAL_FLAGS"
+      test -d m4 && aclocalinclude="$aclocalinclude -I m4"
       for k in $macrodirs; do
   	if test -d $k; then
           aclocalinclude="$aclocalinclude -I $k"
@@ -130,16 +131,16 @@ do
       fi
       echo "Running aclocal $aclocalinclude ..."
       aclocal $aclocalinclude
-      if grep "^AM_CONFIG_HEADER" configure.in >/dev/null; then
+      if grep "^A[MC]_CONFIG_HEADER" configure.in >/dev/null; then
 	echo "Running autoheader..."
 	autoheader
       fi
-      echo "Running automake --gnu $am_opt ..."
-      automake --add-missing --gnu $am_opt
+      if [ -r Makefile.am ]; then
+        echo "Running automake --gnu $am_opt ..."
+        automake --add-missing --gnu $am_opt
+      fi
       echo "Running autoconf ..."
       autoconf
-      echo "Running autoconf in " readline* ...
-      (cd readline* && autoconf && autoheader)
     )
   fi
 done

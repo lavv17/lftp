@@ -1,3 +1,9 @@
+Version 2.4.3 - 2001-09-05
+
+* man page updated.
+* sometimes lftp did not expand tilde in remote path - fixed.
+* fixed `bookmark add' in cygwin port.
+
 Version 2.4.2 - 2001-08-23
 
 * new setting ftp:home to specify starting directory explicitly. Set it
