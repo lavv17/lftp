@@ -283,6 +283,8 @@ void Http::SendRequest(const char *connection,const char *f)
    if(proxy)
    {
       const char *proto="http";
+      if(hftp)
+	 proto="ftp";
       sprintf(pfile,"%s://%s",proto,url::encode_string(hostname));
    }
    else
@@ -511,6 +513,15 @@ int Http::Do()
       {
 	 SetError(NOT_SUPP);
 	 return MOVED;
+      }
+      if(hftp)
+      {
+	 if(!proxy)
+	 {
+	    // problem here: hftp cannot work without proxy
+	    SetError(FATAL,"ftp over http cannot work without proxy, set hftp:proxy.");
+	    return MOVED;
+	 }
       }
       if(peer==0 || relookup_always)
       {
@@ -887,6 +898,7 @@ void  Http::ClassInit()
 {
    // register the class
    Register("http",Http::New);
+   Register("hftp",HFtp::New);
 }
 
 int Http::Read(void *buf,int size)
@@ -1228,6 +1240,20 @@ ListInfo *Http::MakeListInfo()
    return new HttpListInfo(this);
 }
 
+
+HFtp::HFtp()
+{
+   hftp=true;
+   Reconfig();
+}
+HFtp::~HFtp()
+{
+}
+HFtp::HFtp(const HFtp *o) : Http(o)
+{
+   hftp=true;
+   Reconfig();
+}
 
 /* Converts struct tm to time_t, assuming the data in tm is UTC rather
    than local timezone (mktime assumes the latter).

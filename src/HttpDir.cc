@@ -314,6 +314,15 @@ parse_url_again:
       }
    }
 
+   char *type=strstr(link_target,";type=");
+   if(type && type[6] && !type[7])
+   {
+      type[0]=0;
+      if(all_links && all_links->FindByName(link_target))
+	 return tag_len;
+      type[0]=';';
+   }
+
    bool show_in_list=true;
    if(icon && link_target[0]=='/')
       show_in_list=false;  // makes apache listings look better.
@@ -345,37 +354,69 @@ parse_url_again:
       }
 
       more1=more;
+   find_a_end:
       for(;;)
       {
 	 more1++;
 	 more1=find_char(more1,eol-more1,'>');
 	 if(!more1)
 	    goto add_file;
-	 if(more1[-1]!='.')   // apache bug?
+	 if(!strncasecmp(more1-3,"</a",3))
 	    break;
       }
-      
+
+      // little workaround for squid's ftp listings
+      if(more1[1]==' ' && eol-more1>more-less+10
+      && !strncmp(more1+2,less,more-less+1))
+      {
+	 more1=more1+2+(more-less);
+	 goto find_a_end;
+      }
+      if(more1[1]==' ')
+	 more1++;
+      while(more1+1+2<eol && more1[1]=='.' && more1[2]==' ')
+	 more1+=2;
+
       // the buffer is not null-terminated, so we need this
       str=string_alloca(eol-more1);
       memcpy(str,more1+1,eol-more1-1);
       str[eol-more1-1]=0;
 
+      // usual apache listing: DD-Mon-YYYY hh:mm size
       n=sscanf(str,"%2d-%3s-%4d %2d:%2d %30s",
 		    &day,month_name,&year,&hour,&minute,size_str);
       if(n!=6)
       {
-	 n=sscanf(str,"%30s %2d-%3s-%4d",size_str,&day,month_name,&year);
-	 if(n!=4)
-	    goto add_file;
 	 hour=0;
 	 minute=0;
+	 // unusual apache listing: size DD-Mon-YYYY
+	 n=sscanf(str,"%30s %2d-%3s-%4d",size_str,&day,month_name,&year);
+	 if(n!=4)
+	 {
+	    strcpy(size_str,"-");
+	    char year_or_time[6];
+	    // squid's ftp listing: Mon DD (YYYY or hh:mm) [size]
+	    n=sscanf(str,"%3s %2d %5s %30s",month_name,&day,year_or_time,size_str);
+	    if(n<3)
+	       goto add_file;
+	    if(year_or_time[2]==':')
+	    {
+	       sscanf(year_or_time,"%2d:%2d",&hour,&minute);
+	       year=-1;
+	    }
+	    else
+	       sscanf(year_or_time,"%d",&year);
+	 }
       }
 
-      // y2000 problem :)
-      if(year<37)
-	 year+=2000;
-      else if(year<100)
-	 year+=1900;
+      if(year!=-1)
+      {
+	 // server's y2000 problem :)
+	 if(year<37)
+	    year+=2000;
+	 else if(year<100)
+	    year+=1900;
+      }
 
       data_available=true;
 
@@ -384,7 +425,17 @@ parse_url_again:
       {
 	 month=parse_month(month_name);
 	 if(month>=0)
+	 {
 	    sprintf(month_name,"%02d",month+1);
+	    if(year==-1)
+	    {
+	       time_t curr=time(0);
+	       struct tm &now=*localtime(&curr);
+	       year=now.tm_year+1900;
+	       if(month*64+day>now.tm_mon*64+now.tm_mday)
+		  year--;
+	    }
+	 }
 	 sprintf(line_add,"%s  %10s  %04d-%s-%02d %02d:%02d  %s\n",
 	    is_directory?"drwxr-xr-x":"-rw-r--r--",
 	    size_str,year,month_name,day,hour,minute,link_target);

@@ -118,6 +118,9 @@ class Http : public FileAccess
    bool no_cache;
    bool no_cache_this;
 
+protected:
+   bool hftp;  // ftp over http proxy.
+
 public:
    static void ClassInit();
 
@@ -152,6 +155,19 @@ public:
    ListInfo *MakeListInfo();
 
    void UseCache(bool use) { no_cache_this=!use; }
+};
+
+class HFtp : public Http
+{
+public:
+   HFtp();
+   HFtp(const HFtp *);
+   ~HFtp();
+
+   const char *GetProto() { return "hftp"; }
+
+   FileAccess *Clone() { return new HFtp(this); }
+   static FileAccess *New() { return new HFtp(); }
 };
 
 #endif//HTTP_H
