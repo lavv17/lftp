@@ -655,7 +655,8 @@ Job *CmdExec::builtin_open()
 	       new_session->AnonymousLogin();
 	    }
 	    saved_session=session;
-	    session=new_session;
+	    session=0;
+	    ChangeSession(new_session);
 
 	    if(uc.user && !user)
 	       user=uc.user;

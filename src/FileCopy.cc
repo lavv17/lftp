@@ -407,6 +407,16 @@ void FileCopy::Resume()
 	 put->Resume();
    }
 }
+void FileCopy::Fg()
+{
+   if(get) get->Fg();
+   if(put) put->Fg();
+}
+void FileCopy::Bg()
+{
+   if(get) get->Bg();
+   if(put) put->Bg();
+}
 
 void FileCopy::Reconfig(const char *s)
 {

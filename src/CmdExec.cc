@@ -1184,6 +1184,7 @@ void CmdExec::ChangeSession(FileAccess *new_session)
 {
    Reuse(session);
    session=new_session;
+   session->SetPriority(fg?1:0);
    Reconfig(0);
 }
 

@@ -323,6 +323,19 @@ void SessionJob::PrintStatus(int v)
       printf("\t%s\n",url);
 }
 
+void SessionJob::Fg()
+{
+   if(session)
+      session->SetPriority(1);
+   Job::Fg();
+}
+void SessionJob::Bg()
+{
+   Job::Bg();
+   if(session)
+      session->SetPriority(0);
+}
+
 void Job::vfprintf(FILE *file,const char *fmt,va_list v)
 {
    if(file!=stdout && file!=stderr)

@@ -740,6 +740,7 @@ void SessionPool::Reuse(FileAccess *f)
       return;
    }
    f->Close();
+   f->SetPriority(0);
    int i;
    for(i=0; i<pool_size; i++)
    {

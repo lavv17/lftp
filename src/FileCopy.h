@@ -116,7 +116,9 @@ public:
 	 if(p==0)
 	    can_seek0=false;
       }
-   virtual FA *GetSession() { return 0; }
+   virtual FA *GetSession() { return 0; } // for fxp.
+   virtual void Fg() {}
+   virtual void Bg() {}
 };
 
 class FileCopy : public SMTask
@@ -217,6 +219,8 @@ public:
    int Do();
    void Suspend();
    void Resume();
+   void Fg();
+   void Bg();
 
    void Reconfig(const char *);
 
@@ -265,6 +269,8 @@ public:
 
    void OpenSession();
    FA *GetSession() { return session; }
+   void Fg() { session->SetPriority(1); }
+   void Bg() { session->SetPriority(0); }
    void SetFXP(bool on) { fxp=on; }
 };
 
@@ -329,6 +335,8 @@ public:
 
    int Do();
    void NoCache() { if(dl) dl->UseCache(false); }
+   void Fg() { session->SetPriority(1); }
+   void Bg() { session->SetPriority(0); }
 };
 
 #endif

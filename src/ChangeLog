@@ -1,3 +1,10 @@
+2000-02-01  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CmdExec.cc, CopyJob.h, FileAccess.cc, FileCopy.cc, FileCopy.h,
+	  Job.cc, Job.h, NetAccess.cc, commands.cc, ftpclass.cc, resource.cc:
+	  implement net:connection-limit and net:connection-takeover
+	  settings; add Fg/Bg where needed.
+
 2000-02-29  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CmdExec.cc: explain termination when cwd is not accessible.

@@ -47,6 +47,8 @@ public:
 
    void Suspend() { c->Suspend(); Job::Suspend(); }
    void Resume() { Job::Resume(); c->Resume(); }
+   void Fg() { c->Fg(); Job::Fg(); }
+   void Bg() { Job::Bg(); c->Bg(); }
 
    int AcceptSig(int sig);
    pid_t GetProcGroup() { return c?c->GetProcGroup():0; }

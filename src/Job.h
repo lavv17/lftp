@@ -116,6 +116,8 @@ public:
 	    return 0;
 	 return session->GetConnectURL();
       }
+   void Fg();
+   void Bg();
 };
 
 #endif /* JOB_H */

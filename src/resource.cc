@@ -120,6 +120,8 @@ static ResDecl resources[]={
    ResDecl  ("net:socket-buffer",      "0",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:socket-maxseg",      "0",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:timeout",	       "300",   ResMgr::UNumberValidate,0),
+   ResDecl  ("net:connection-limit",   "0",	ResMgr::UNumberValidate,0),
+   ResDecl  ("net:connection-takeover","yes",	ResMgr::BoolValidate,0),
 };
 
 void ResMgr::ClassInit()

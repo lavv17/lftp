@@ -825,46 +825,62 @@ void  Ftp::GetBetterConnection(int level)
    {
       if(o==this)
 	 continue;
-      if(o->control_sock==-1 || o->data_sock!=-1 || o->state!=EOF_STATE
-      || o->mode!=CLOSED)
+      if(o->control_sock==-1)
 	 continue;
-      if(SameConnection(o))
+      if(!SameConnection(o))
+	 continue;
+
+      if(o->data_sock!=-1 || o->state!=EOF_STATE || o->mode!=CLOSED)
       {
-	 // connected session (o) must have resolved address
-	 if(!peer)
-	 {
-	    // copy resolved address so that it would be possible to create
-	    // data connection.
-	    xfree(peer);
-	    peer=(sockaddr_u*)xmemdup(o->peer,o->peer_num*sizeof(*o->peer));
-	    peer_num=o->peer_num;
-	    peer_curr=o->peer_curr;
-	 }
-
-	 if(home && !o->home)
-	 {
-	    o->home=xstrdup(home);
-	    o->dos_path=dos_path;
-	    o->vms_path=vms_path;
-	 }
-	 else if(!home && o->home)
-	 {
-	    home=xstrdup(o->home);
-	    dos_path=o->dos_path;
-	    vms_path=o->vms_path;
-	 }
-
-	 o->ExpandTildeInCWD();
-	 ExpandTildeInCWD();
-
-	 if(level==0 && xstrcmp(real_cwd,o->real_cwd))
+	 if(level<2 || !connection_takeover || o->priority>=priority)
 	    continue;
-
-	 // so borrow the connection
-	 MoveConnectionHere(o);
-	 state=EOF_STATE;
-	 return;
+	 if(o->data_sock!=-1 && o->RespQueueSize()<=1)
+	 {
+	    o->DataAbort();
+	    o->DataClose();
+	    if(o->control_sock==-1)
+	       continue; // oops...
+	 }
+	 else
+	 {
+	    if(o->RespQueueSize()>0)
+	       continue;
+	 }
       }
+
+      // connected session (o) must have resolved address
+      if(!peer)
+      {
+	 // copy resolved address so that it would be possible to create
+	 // data connection.
+	 xfree(peer);
+	 peer=(sockaddr_u*)xmemdup(o->peer,o->peer_num*sizeof(*o->peer));
+	 peer_num=o->peer_num;
+	 peer_curr=o->peer_curr;
+      }
+
+      if(home && !o->home)
+      {
+	 o->home=xstrdup(home);
+	 o->dos_path=dos_path;
+	 o->vms_path=vms_path;
+      }
+      else if(!home && o->home)
+      {
+	 home=xstrdup(o->home);
+	 dos_path=o->dos_path;
+	 vms_path=o->vms_path;
+      }
+
+      o->ExpandTildeInCWD();
+      ExpandTildeInCWD();
+
+      if(level==0 && xstrcmp(real_cwd,o->real_cwd))
+	 continue;
+
+      // so borrow the connection
+      MoveConnectionHere(o);
+      return;
    }
 }
 
@@ -905,15 +921,13 @@ int   Ftp::Do()
 	 return m;
 
       // walk through ftp classes and try to find identical idle ftp session
-      GetBetterConnection(0);
-
-      if(state!=INITIAL_STATE)
-	 return MOVED;
-
-      GetBetterConnection(1);
-
-      if(state!=INITIAL_STATE)
-	 return MOVED;
+      // first try "easy" cases of session take-over.
+      for(int i=0; i<3; i++)
+      {
+	 GetBetterConnection(i);
+	 if(state!=INITIAL_STATE)
+	    return MOVED;
+      }
 
       if(!ReconnectAllowed())
 	 return m;
@@ -1954,6 +1968,9 @@ void Ftp::AbortedClose()
 
 void  Ftp::Disconnect()
 {
+   if(control_sock==-1)
+      return;  // already disconnected.
+
    /* protect against re-entering from FlushSendQueue */
    static bool disconnect_in_progress=false;
    if(disconnect_in_progress)
@@ -2578,6 +2595,7 @@ void  Ftp::MoveConnectionHere(Ftp *o)
 
    o->RespQueue=0;
    o->EmptyRespQueue();
+   CloseRespQueue(); // we need not handle other session's replies.
 
    sync_wait=o->sync_wait;
    send_cmd_buffer=o->send_cmd_buffer;
@@ -2608,6 +2626,7 @@ void  Ftp::MoveConnectionHere(Ftp *o)
    set_real_cwd(o->real_cwd);
    o->set_real_cwd(0);
    o->Disconnect();
+   state=EOF_STATE;
 }
 
 int   Ftp::CheckResp(int act)

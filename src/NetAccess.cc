@@ -101,6 +101,8 @@ void NetAccess::Reconfig(const char *name)
    max_retries = ResMgr::Query("net:max-retries",c);
    socket_buffer = ResMgr::Query("net:socket-buffer",c);
    socket_maxseg = ResMgr::Query("net:socket-maxseg",c);
+   connection_limit = ResMgr::Query("net:connection-limit",c);
+   connection_takeover = ResMgr::Query("net:connection-takeover",c);
 
    if(rate_limit)
       rate_limit->Reconfig(name,c);
@@ -452,6 +454,8 @@ bool NetAccess::ReconnectAllowed()
 {
    if(max_retries>0 && retries>=max_retries)
       return true; // it will fault later - no need to wait.
+   if(connection_limit>0 && connection_limit<=CountConnections())
+      return false;
    if(try_time==0)
       return true;
    long interval = ReconnectInterval();
@@ -464,6 +468,8 @@ bool NetAccess::ReconnectAllowed()
 const char *NetAccess::DelayingMessage()
 {
    static char buf[80];
+   if(connection_limit>0 && connection_limit<=CountConnections())
+      return _("Connections limit reached");
    long remains=ReconnectInterval()-(now-try_time);
    if(remains<=0)
       return "";
