@@ -362,7 +362,7 @@ lftp_VA_COPY
 LFTP_ENVIRON_CHECK
 AC_REPLACE_FUNCS([mktime memmove strcasecmp strncasecmp strtol strtoul\
  strptime strtok_r])
-AC_CHECK_DECLS([vsnprintf,snprintf,unsetenv,random,inet_aton,strcasecmp,strptime,strtok_r],,,[
+AC_CHECK_DECLS([vsnprintf,snprintf,unsetenv,random,inet_aton,strcasecmp,strptime,strtok_r,dn_expand],,,[
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <stdio.h>
@@ -382,6 +382,7 @@ AC_CHECK_DECLS([vsnprintf,snprintf,unsetenv,random,inet_aton,strcasecmp,strptime
 #ifdef HAVE_ARPA_INET_H
 # include <arpa/inet.h>
 #endif
+#include <resolv.h>
 ])
 
 # always want GNU getopt

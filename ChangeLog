@@ -1,3 +1,7 @@
+2005-01-21	lav
+
+	* configure.ac: check for declaration of dn_expand.
+
 2004-07-08	Albert Chin <lftp-devel@mlists.thewrittenword.com>
 
 	* configure.ac: use AC_GNU_SOURCE, AC_FUNC_FNMATCH_GNU, AH_TOP and
