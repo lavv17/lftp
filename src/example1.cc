@@ -3,6 +3,7 @@
 	This example shows blocking usage of Ftp class
 */
 
+#include <config.h>
 #include "ftpclass.h"
 #include <unistd.h>
 
