@@ -64,7 +64,7 @@ CDECL_BEGIN
 #include <regex.h>
 CDECL_END
 
-#if defined(HAVE_INET_ATON) && !defined(HAVE_INET_ATON_DECL)
+#if HAVE_INET_ATON && !HAVE_DECL_INET_ATON
 CDECL int inet_aton(const char *,struct in_addr *);
 #endif
 
@@ -3795,7 +3795,7 @@ void Ftp::CheckResp(int act)
 	 if(conn->try_feat_after_login && conn->have_feat_info)
 	    TuneConnectionAfterFEAT();
       }
-      else if(act==530)
+      else if(act==530 || act==503)
 	 conn->try_feat_after_login=true;
       break;
 
