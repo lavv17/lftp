@@ -19,6 +19,8 @@ Version 2.2.0 - 2000-??-??
   on some old and buggy ftp servers after restarted upload.
 * now lftp remembers that commands MDTM, SIZE or SITE CHMOD are not supported
   by the server, and does not send them again.
+* if password is entered on command line it is supposed to be insecure and is
+  printed on screen and entered into bookmarks automatically.
 * slightly better VMS support.
 * in globbing, if list restart is not used, don't skip list beginning but
   rather use it instead of previously received.
@@ -26,8 +28,14 @@ Version 2.2.0 - 2000-??-??
   root-relative path in such URLs, use ftp://site/%2Fpath.
 * fixed completion and file name globbing for wu-ftpd-2.6.0. A long standing
   bug with multiple path component globbing over ftp has also been fixed.
+
+Version 2.1.5 - 2000-01-09
+
+* fixed &amp; and others handling in http links.
+* fixed sending of port to http proxy.
+* don't send queued command after 1xx reply in sync mode.
 * fixed `mget -e': session was Close()'d too early.
-* fixed http and hftp sending port to proxy.
+* fixed connect() problem on NetBSD 1.4P
 
 Version 2.1.4 - 1999-10-23
 
