@@ -1,3 +1,7 @@
+2001-01-06	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: add more examples of `get' (suggested by Arkadiusz Miskiewicz)
+
 2000-12-01	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document hftp:use-authorization.

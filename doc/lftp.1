@@ -266,6 +266,8 @@ get README
 get README -o debian.README
 get README README.mirrors
 get README -o debian.README README.mirrors -o debian.mirrors
+get README -o ftp://some.host.org/debian.README
+get README -o ftp://some.host.org/debian-dir/ (end slash is important)
 .De
 
 .BR glob " [" -d "] [" -a "]"
