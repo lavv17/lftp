@@ -19,8 +19,8 @@ VPATH = @srcdir@
 prefix = @prefix@
 exec_prefix = @exec_prefix@
 datadir = $(prefix)/@DATADIRNAME@
-localedir = $(datadir)/locale
-gnulocaledir = $(prefix)/share/locale
+localedir = @LOCALE_DIR@
+gnulocaledir = @GNU_LOCALE_DIR@
 gettextsrcdir = $(prefix)/share/gettext/po
 subdir = po
 
