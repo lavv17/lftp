@@ -939,7 +939,7 @@ parse_url_again:
       show_in_list=false;  // makes apache listings look better.
 
    skip_len=tag_len;
-   if(list && show_in_list)
+   // try to find file info
    {
       const char *more1;
       char *str,*str_with_tags, *str2;
@@ -1032,16 +1032,13 @@ parse_url_again:
       if(try_csm_proxy(info,str) && info.validate()) goto got_info;
 
    add_file_no_info:
+      if(!list || !show_in_list)
+	 goto info_done;
       sprintf(line_add,"%s  --  %s",
 	    info.is_directory?"drwxr-xr-x":"-rw-r--r--",link_target);
       goto append_type_maybe;
 
    got_info:
-      if(info_string)
-      {
-	 sprintf(line_add,"%.*s %s",info_string_len,info_string,link_target);
-	 goto append_symlink_maybe;
-      }
       if(info.month==-1)
 	 info.month=parse_month(info.month_name);
       if(info.month>=0)
@@ -1049,6 +1046,34 @@ parse_url_again:
 	 sprintf(info.month_name,"%02d",info.month+1);
 	 if(info.year==-1)
 	    info.year=guess_year(info.month,info.day,info.hour,info.minute);
+      }
+      if(info.year!=-1 && info.month!=-1 && info.day!=-1)
+      {
+	 struct tm tm;
+	 memset(&tm,0,sizeof(tm));
+	 tm.tm_year=info.year-1900;
+	 tm.tm_mon=info.month-1;
+	 tm.tm_mday=info.day;
+	 tm.tm_hour=12;
+	 info.date_prec=43200;
+	 if(info.hour!=-1 && info.minute!=-1)
+	 {
+	    tm.tm_hour=info.hour;
+	    tm.tm_min=info.minute;
+	    tm.tm_sec=30;
+	    info.date_prec=30;
+	    if(info.second!=-1)
+	    {
+	       tm.tm_sec=info.second;
+	       info.date_prec=0;
+	    }
+	 }
+	 info.date=mktime_from_utc(&tm);
+      }
+      if(info.size==-1)
+      {
+	 if(strspn(info.size_str,"0123456789")==strlen(info.size_str))
+	    info.size=atoll(info.size_str);
       }
       if(info.perms[0]==0)
       {
@@ -1058,6 +1083,14 @@ parse_url_again:
 	    strcpy(info.perms,"lrwxrwxrwx");
 	 else
 	    strcpy(info.perms,"-rw-r--r--");
+      }
+      if(!list || !show_in_list)
+	 goto info_done;
+
+      if(info_string)
+      {
+	 sprintf(line_add,"%.*s %s",info_string_len,info_string,link_target);
+	 goto append_symlink_maybe;
       }
 
       sprintf(line_add,"%s  %11s  %04d-%s-%02d",
@@ -1088,12 +1121,10 @@ parse_url_again:
 
       type = FileInfo::NORMAL;
 
-      if (color) {
-	  if(info.is_directory)
-	      type = FileInfo::DIRECTORY;
-	  else if(info.is_sym_link && !info.sym_link)
-	      type = FileInfo::SYMLINK;
-      }
+       if(info.is_directory)
+	   type = FileInfo::DIRECTORY;
+       else if(info.is_sym_link && !info.sym_link)
+	   type = FileInfo::SYMLINK;
 
       if (color && FileInfo::NORMAL != type && all_links && !all_links->FindByName(link_target)) {
 	  list->Put(line_add);
@@ -1120,12 +1151,11 @@ parse_url_again:
       if(!all_links->FindByName(link_target))
       {
 	 list->Put(line_add);
-	 FileInfo *fi=new FileInfo;
-	 fi->SetName(link_target);
+	 FileInfo *fi=new FileInfo(link_target);
 	 all_links->Add(fi);
       }
    }
-
+info_done:
    if(set && link_target[0]!='/' && link_target[0]!='~')
    {
       char *slash=strchr(link_target,'/');
@@ -1135,8 +1165,7 @@ parse_url_again:
 	 info.is_directory=true;
       }
 
-      FileInfo *fi=new FileInfo;
-      fi->SetName(link_target);
+      FileInfo *fi=new FileInfo(link_target);
       if(info.sym_link)
 	 fi->SetSymlink(info.sym_link);
       else
@@ -1151,7 +1180,7 @@ parse_url_again:
 	 fi->SetSize(info.size);
       if(info.perms[0])
       {
-	 int m=parse_perms(info.perms);
+	 int m=parse_perms(info.perms+1);
 	 if(m>=0)
 	    fi->SetMode(m);
       }
