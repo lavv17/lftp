@@ -1082,6 +1082,28 @@ Glob::Glob(const char *p)
    dirs_only=false;
    files_only=false;
    match_period=true;
+   inhibit_tilde=true;
+
+   if(pattern[0]=='~')
+   {
+      char *slash=strchr(pattern,'/');
+      if(slash)
+      {
+	 *slash=0;
+	 inhibit_tilde=HasWildcards(pattern);
+	 *slash='/';
+      }
+      else
+	 inhibit_tilde=HasWildcards(pattern);;
+   }
+   if(pattern[0] && !HasWildcards(pattern))
+   {
+      // no need to glob, just unquote
+      char *u=alloca_strdup(pattern);
+      UnquoteWildcards(u);
+      add(new FileInfo(u));
+      done=true;
+   }
 }
 
 void Glob::add_force(const FileInfo *info)
@@ -1112,7 +1134,19 @@ void Glob::add(const FileInfo *info)
    && fnmatch(pattern, s, flags)!=0)
       return; // unmatched
 
-   add_force(info);
+   if(s[0]=='~' && inhibit_tilde)
+   {
+      char *new_name=alloca_strdup2(s,2);
+      strcpy(new_name,"./");
+      strcat(new_name,s);
+      FileInfo new_info(*info);
+      new_info.SetName(new_name);
+      add_force(&new_info);
+   }
+   else
+   {
+      add_force(info);
+   }
 }
 
 bool Glob::HasWildcards(const char *s)

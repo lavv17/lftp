@@ -362,6 +362,7 @@ protected:
    bool	 dirs_only;
    bool	 files_only;
    bool	 match_period;
+   bool	 inhibit_tilde;
    void	 add(const FileInfo *info);
    void	 add_force(const FileInfo *info);
    virtual ~Glob();
@@ -372,6 +373,7 @@ public:
    void DirectoriesOnly() { dirs_only=true; }
    void FilesOnly() { files_only=true; }
    void NoMatchPeriod() { match_period=false; }
+   void NoInhibitTilde() { inhibit_tilde=false; }
    void SortByName() { list.SortByName(); }
 
    static bool HasWildcards(const char *);

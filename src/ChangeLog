@@ -1,5 +1,12 @@
 2000-10-12  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* FileAccess.cc, FileAccess.h: fix globbing for tilde; optimize
+	  the case when pattern does not contain wildcards.
+	* HttpDir.cc, FtpGlob.cc: some code moved to FileAccess.cc.
+	* complete.cc: call NoInhibitTilde.
+
+2000-10-12  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* FileAccess.cc, FileAccess.h, FtpSplitList.cc, FtpSplitList.h,
 	  FtpGlob.cc, HttpDir.cc: Glob::add cleanup.
 	* complete.cc: fix completion for filenames starting with tilde.

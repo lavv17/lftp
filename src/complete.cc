@@ -531,6 +531,7 @@ static char **lftp_completion (char *text,int start,int end)
       if(rg)
       {
 	 rg->glob->NoMatchPeriod();
+	 rg->glob->NoInhibitTilde();
 	 if(type==REMOTE_DIR)
 	    rg->glob->DirectoriesOnly();
 	 for(;;)

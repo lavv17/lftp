@@ -1003,15 +1003,8 @@ HttpGlob::HttpGlob(FileAccess *s,const char *n_pattern)
    else
       dir[1]=0;	  // root directory
 
-   if(pattern[0] && !HasWildcards(pattern))
-   {
-      // no need to glob, just unquote
-      char *u=alloca_strdup(pattern);
-      UnquoteWildcards(u);
-      add(new FileInfo(u));
-      done=true;
+   if(done)
       return;
-   }
 
    if(dir[0])
    {

@@ -58,15 +58,8 @@ FtpGlob::FtpGlob(FileAccess *session,const char *n_pattern)
    else
       dir[1]=0;	  // root directory
 
-   if(pattern[0] && !HasWildcards(pattern))
-   {
-      // no need to glob, just unquote
-      char *u=alloca_strdup(pattern);
-      UnquoteWildcards(u);
-      add(new FileInfo(u));
-      done=true;
+   if(done)
       return;
-   }
 
    base_dir=xstrdup(f->GetCwd());
 
