@@ -59,7 +59,12 @@ int ChmodJob::GetMode(const FileInfo *fi) const
    if(simple_mode != -1)
       return simple_mode;
 
-   return mode_adjust(fi->mode, m);
+   if(fi->defined&fi->MODE)
+      return mode_adjust(fi->mode, m);
+   if(!RelativeMode(m))
+      return mode_adjust(0, m);
+
+   return -1;
 }
 
 void ChmodJob::CurrentFinished(const char *d,const FileInfo *fi)
@@ -69,21 +74,27 @@ void ChmodJob::CurrentFinished(const char *d,const FileInfo *fi)
    {
       if(quiet)
 	 return;
-      fmt = _("failed to change mode of %s to %04lo (%s)\n");
+      fmt = _("Failed to change mode of `%s' to %04o (%s).\n");
    }
    else
-      fmt = _("mode of %s changed to %04lo (%s)\n");
+      fmt = _("Mode of `%s' changed to %04o (%s).\n");
 
 
-   unsigned mode = GetMode(fi);
-   if(verbose == V_ALL || (verbose == V_CHANGES && mode != fi->mode))
+   int mode=GetMode(fi);
+   if(mode==-1)
+   {
+      eprintf(_("Failed to change mode of `%s' because no old mode is available."),fi->name);
+      return;
+   }
+   if(verbose == V_ALL || (verbose == V_CHANGES
+			 && (!(fi->defined&fi->mode) || mode != (int)fi->mode)))
    {
       char perms[11];               /* "-rwxrwxrwx" ls-style modes. */
 
       mode_string (mode, perms);
       perms[10] = '\0';             /* `mode_string' does not null terminate. */
 
-      eprintf (fmt, fi->name, (unsigned long) mode, perms+1);
+      eprintf (fmt, fi->name, (int) mode, perms+1);
    }
 }
 
@@ -120,5 +131,7 @@ bool ChmodJob::RelativeMode(const mode_change *m) const
 
 void ChmodJob::TreatCurrent(const char *d,const FileInfo *fi)
 {
-   session->Chmod(fi->name,GetMode(fi));
+   int new_mode=GetMode(fi);
+   if(new_mode!=-1)
+      session->Chmod(fi->name,new_mode);
 }

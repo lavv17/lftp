@@ -760,14 +760,16 @@ char *xasprintf(const char *format, ...)
 char *dirname_alloc(const char *fn)
 {
    char *ret=xstrdup(fn);
-   /* remove trailing slash */
-   if(ret[strlen(ret)-1] == '/')
-      ret[strlen(ret)-1] = 0;
+   int len=strlen(ret);
 
-   char *slash = strrchr(ret, '/');
+   /* remove trailing slashes */
+   while(len>0 && ret[len-1]=='/')
+      ret[--len] = 0;
+
+   char *slash=strrchr(ret,'/');
    if(!slash)
       ret[0]=0; /* file with no path */
-   else if(slash == fn)
+   else if(slash==ret)
       ret[1]=0; /* the slash is the first character */
    else
       *slash=0;

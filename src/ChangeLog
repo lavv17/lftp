@@ -1,3 +1,9 @@
+2001-12-11  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ChmodJob.cc: handle undefined mode correctly.
+	* misc.cc: fix dirname_alloc to strip all trailing slashes and
+	  return / for /file.
+
 2001-12-11  Glenn Maynard <g_ld@zewt.org>
 
 	* ChmodJob.cc, ChmodJob.h: Add relative paths, -v, -c, -R.  Maintain
