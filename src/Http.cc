@@ -269,7 +269,7 @@ void Http::SendRequest(const char *connection,const char *f)
 
    char *pfile=(char*)alloca(4+3+xstrlen(user)*6+3+xstrlen(pass)*3+1+
 			      strlen(hostname)*3+1+strlen(cwd)*3+1+
-			      strlen(efile)+1+1);
+			      strlen(efile)+1+6+1);
 
    if(proxy)
    {
@@ -295,19 +295,28 @@ void Http::SendRequest(const char *connection,const char *f)
    }
 
 add_path:
-   if(ecwd[0]=='~' && ecwd[1]=='/')
-      ecwd+=1;
+
+   char *path_base=pfile+strlen(pfile);
 
    if(efile[0]=='/')
-      strcat(pfile,efile);
+      strcpy(path_base,efile);
    else if(efile[0]=='~')
-      sprintf(pfile+strlen(pfile),"/%s",efile);
-   else if(cwd[0]==0 || ((cwd[0]=='/' || cwd[0]=='~') && cwd[1]==0))
-      sprintf(pfile+strlen(pfile),"/%s",efile);
+      sprintf(path_base,"/%s",efile);
+   else if(cwd[0]==0 || ((cwd[0]=='/' || (!hftp && cwd[0]=='~')) && cwd[1]==0))
+      sprintf(path_base,"/%s",efile);
    else if(cwd[0]=='~')
-      sprintf(pfile+strlen(pfile),"/%s/%s",ecwd,efile);
+      sprintf(path_base,"/%s/%s",ecwd,efile);
    else
-      sprintf(pfile+strlen(pfile),"%s/%s",ecwd,efile);
+      sprintf(path_base,"%s/%s",ecwd,efile);
+
+   if(path_base[1]=='~' && path_base[2]=='/')
+      memmove(path_base,path_base+2,strlen(path_base+2)+1);
+   else if(hftp && path_base[1]!='~')
+   {
+      // root directory in ftp urls needs special encoding. (/%2Fpath)
+      memmove(path_base+4,path_base+1,strlen(path_base+1)+1);
+      memcpy(path_base+1,"%2F",3);
+   }
 
    efile=pfile;
    efile_len=strlen(efile);
@@ -349,7 +358,8 @@ add_path:
    case CHANGE_DIR:
    case LONG_LIST:
    case MAKE_DIR:
-      if(efile[0]==0 || efile[efile_len-1]!='/')
+      if((efile_len<1 || efile[efile_len-1]!='/')
+      && (efile_len<3 || strcasecmp(&efile[efile_len-3],"%2F")))
 	 strcat(efile,"/");
       if(mode==CHANGE_DIR)
 	 SendMethod("HEAD",efile);
@@ -1176,6 +1186,7 @@ ListInfo *Http::MakeListInfo()
 HFtp::HFtp()
 {
    hftp=true;
+   default_cwd="~";
    Reconfig(0);
 }
 HFtp::~HFtp()
@@ -1191,8 +1202,8 @@ void HFtp::Login(const char *u,const char *p)
    super::Login(u,p);
    if(u)
    {
-      home=(char*)xmalloc(strlen(u)+2);
-      sprintf(home,"~%s",u);
+      xfree(home);
+      home=xstrdup("~");
       xfree(cwd);
       cwd=xstrdup(home);
    }

@@ -83,7 +83,23 @@ ParsedURL::ParsedURL(const char *url,bool proto_required)
       if(scan-1>=base && scan[-1]==':')
 	 scan[-1]=0;
       if(scan[1]!='~')
+      {
 	 memmove(scan+1,scan,strlen(scan)+1);
+	 if(!xstrcmp(proto,"ftp") || !xstrcmp(proto,"hftp"))
+	 {
+	    // special handling for ftp protocol.
+	    if(strncasecmp(scan+2,"%2F",3))
+	    {
+	       memmove(scan+3,scan+2,strlen(scan+2)+1);
+	       scan[1]='~';
+	       scan[2]='/';
+	    }
+	    else
+	    {
+	       memmove(scan+2,scan+5,strlen(scan+5)+1);
+	    }
+	 }
+      }
       *scan++=0;
       path=scan;
    }

@@ -403,6 +403,15 @@ const char *FileAccess::GetFileURL(const char *f,int flags)
    {
       if(f[0]!='/') // e.g. ~/path
 	 strcat(url,"/");
+      else if(!strcmp(GetProto(),"ftp") || !strcmp(GetProto(),"hftp"))
+      {
+	 // some cruft for ftp urls...
+	 if(xstrcmp(home,"/"))
+	 {
+	    strcat(url,"/%2F");
+	    f++;
+	 }
+      }
       url::encode_string(f,url+strlen(url));
    }
    return url;

@@ -1,3 +1,8 @@
+1999-12-10  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc, Http.cc, url.cc: fix ftp url handling (%2F for root)
+	  (reported by Robert de Bath <rdebath@poboxes.com>)
+
 1999-12-09  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* GetJob.cc: don't close session too early when deleting.
