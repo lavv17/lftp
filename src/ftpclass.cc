@@ -1369,13 +1369,12 @@ int   Ftp::Do()
 	 expect->Push(Expect::PASS);
 	 conn->SendCmd2("PASS",pass_to_use);
       }
-
+      SendAcct();
       if(conn->try_feat_after_login)
       {
 	 conn->SendCmd("FEAT");
 	 expect->Push(Expect::FEAT);
       }
-      SendAcct();
       SendSiteGroup();
       SendSiteIdle();
 
