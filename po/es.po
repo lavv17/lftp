@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.2\n"
-"POT-Creation-Date: 1999-09-18 17:06+0400\n"
+"POT-Creation-Date: 1999-09-18 17:23+0400\n"
 "PO-Revision-Date: 1999-06-05 14:51-0300\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -1570,7 +1570,7 @@ msgid "Fetching headers..."
 msgstr "Trayendo encabezados..."
 
 #. TODO: && strcmp(url.proto,"http")
-#: src/resource.cc:44 src/resource.cc:61
+#: src/resource.cc:48 src/resource.cc:65
 msgid "Proxy protocol unsupported"
 msgstr "Protocolo de proxy no soportado"
 

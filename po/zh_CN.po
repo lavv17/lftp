@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
-"POT-Creation-Date: 1999-09-18 17:06+0400\n"
+"POT-Creation-Date: 1999-09-18 17:23+0400\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -1549,7 +1549,7 @@ msgid "Fetching headers..."
 msgstr "正在取得头..."
 
 #. TODO: && strcmp(url.proto,"http")
-#: src/resource.cc:44 src/resource.cc:61
+#: src/resource.cc:48 src/resource.cc:65
 msgid "Proxy protocol unsupported"
 msgstr "不支持代理协议"
 
