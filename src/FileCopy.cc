@@ -916,7 +916,8 @@ void FileCopyPeerString::Seek(long new_pos)
 // Speedometer
 #undef super
 #define super SMTask
-char Speedometer::buf[40];
+char Speedometer::buf_rate[40];
+char Speedometer::buf_eta[40];
 Speedometer::Speedometer(int c)
 {
    period=c;
@@ -957,24 +958,24 @@ void Speedometer::Add(int b)
 }
 const char *Speedometer::GetStr()
 {
-   buf[0]=0;
+   buf_rate[0]=0;
    float r=Get();
    if(r<1)
       return "";
    if(r<1024)
-      sprintf(buf,_("%.0fb/s "),r);
+      sprintf(buf_rate,_("%.0fb/s "),r);
    else if(r<1024*1024)
-      sprintf(buf,_("%.1fK/s "),r/1024.);
+      sprintf(buf_rate,_("%.1fK/s "),r/1024.);
    else
-      sprintf(buf,_("%.2fM/s "),r/1024./1024.);
-   return buf;
+      sprintf(buf_rate,_("%.2fM/s "),r/1024./1024.);
+   return buf_rate;
 }
 const char *Speedometer::GetETAStr(long size)
 {
-   buf[0]=0;
+   buf_eta[0]=0;
 
    if(!Valid() || Get()<1)
-      return buf;
+      return buf_eta;
 
    long eta=long(size/Get()+.5);
 
@@ -1031,46 +1032,46 @@ const char *Speedometer::GetETAStr(long size)
 	 letter=second_c;
       }
       if(letter2 && ueta2>0)
-	 sprintf(buf,"%s%ld%c%ld%c",tr_eta,ueta,letter,ueta2,letter2);
+	 sprintf(buf_eta,"%s%ld%c%ld%c",tr_eta,ueta,letter,ueta2,letter2);
       else
-	 sprintf(buf,"%s%ld%c",tr_eta,ueta,letter);
+	 sprintf(buf_eta,"%s%ld%c",tr_eta,ueta,letter);
    }
    else // verbose eta (by Ben Winslow)
    {
       long unit;
-      strcpy(buf, tr_eta);
+      strcpy(buf_eta, tr_eta);
 
       if(eta>=DAY)
       {
 	 unit=eta/DAY;
-	 sprintf(buf+strlen(buf), "%ld%c", unit, day_c);
+	 sprintf(buf_eta+strlen(buf_eta), "%ld%c", unit, day_c);
       }
       if(eta>=HOUR)
       {
 	 unit=(eta/HOUR)%24;
-	 sprintf(buf+strlen(buf), "%ld%c", unit, hour_c);
+	 sprintf(buf_eta+strlen(buf_eta), "%ld%c", unit, hour_c);
       }
       if(eta>=MINUTE)
       {
 	 unit=(eta/MINUTE)%60;
-	 sprintf(buf+strlen(buf), "%ld%c", unit, minute_c);
+	 sprintf(buf_eta+strlen(buf_eta), "%ld%c", unit, minute_c);
       }
       unit=eta%60;
-      sprintf(buf+strlen(buf), "%ld%c", unit, second_c);
+      sprintf(buf_eta+strlen(buf_eta), "%ld%c", unit, second_c);
    }
-   return buf;
+   return buf_eta;
 }
 const char *Speedometer::GetStrS()
 {
    GetStr();
-   if(buf[0])
-      strcat(buf," ");
-   return buf;
+   if(buf_rate[0])
+      strcat(buf_rate," ");
+   return buf_rate;
 }
 const char *Speedometer::GetETAStrS(long s)
 {
    GetETAStr(s);
-   if(buf[0])
-      strcat(buf," ");
-   return buf;
+   if(buf_eta[0])
+      strcat(buf_eta," ");
+   return buf_eta;
 }

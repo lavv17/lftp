@@ -89,7 +89,8 @@ class Speedometer : public SMTask
    time_t last_second;
    time_t last_bytes;
    time_t start;
-   static char buf[];
+   static char buf_eta[];
+   static char buf_rate[];
 public:
    Speedometer(int p);
    float Get();
