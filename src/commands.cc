@@ -185,7 +185,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	    " -i, --nocase         - case-insensitive pattern matching\n"
 	    " -I, --sortnocase     - sort names case-insensitively\n"
 	    " -D, --dirsfirst      - list directories first\n"
-	    "     --sort=OPT       - \"name\", \"size\"\n"
+	    "     --sort=OPT       - \"name\", \"size\", \"date\"\n"
 	    " -S                   - sort by file size\n"
 	    " --user, --group, --perms, --date, --linkcount, --links\n"
 	    "                      - show individual fields\n"
@@ -1340,6 +1340,7 @@ const char *FileSetOutput::parse_argv(ArgV *a)
 	 if(!strcmp(cls_options[longopt].name, "sort")) {
 	    if(!strcasecmp(optarg, "name")) sort = FileSet::BYNAME;
 	    else if(!strcasecmp(optarg, "size")) sort = FileSet::BYSIZE;
+	    else if(!strcasecmp(optarg, "date")) sort = FileSet::BYDATE;
 	    else return _("invalid argument for `--sort'");
 	 } else if(!strcmp(cls_options[longopt].name, "filesize")) {
 	    size_filesonly = true;

@@ -108,7 +108,7 @@ class PatternSet;
 class FileSet
 {
 public:
-   enum sort_e { BYNAME, BYSIZE, DIRSFIRST, BYRANK };
+   enum sort_e { BYNAME, BYSIZE, DIRSFIRST, BYRANK, BYDATE };
 
 private:
    FileInfo **files;

@@ -197,6 +197,15 @@ static int sort_rank(const void *s1, const void *s2)
    return p1->GetRank()<p2->GetRank() ? -1 : 1;
 }
 
+static int sort_date(const void *s1, const void *s2)
+{
+   const FileInfo *p1 = *(const FileInfo **) s1;
+   const FileInfo *p2 = *(const FileInfo **) s2;
+   if(p1->date==p2->date)
+      return sort_name(s1,s2);
+   return p1->date>p2->date ? -1 : 1;
+}
+
 /* files_sort is an alias of files when sort == NAME (since
  * files is always sorted by name), and an independant array
  * of pointers (pointing to the same data) otherwise. */
@@ -223,6 +232,7 @@ void FileSet::Sort(sort_e newsort, bool casefold)
    case BYSIZE: qsort(files_sort, fnum, sizeof(FileInfo *), sort_size); break;
    case DIRSFIRST: qsort(files_sort, fnum, sizeof(FileInfo *), sort_dirs); break;
    case BYRANK: qsort(files_sort, fnum, sizeof(FileInfo *), sort_rank); break;
+   case BYDATE: qsort(files_sort, fnum, sizeof(FileInfo *), sort_date); break;
    }
 }
 
