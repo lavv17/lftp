@@ -1,8 +1,16 @@
+2000-01-31  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CmdExec.cc: show job number for queue's current job.
+	* complete.cc: improve completion for queue command.
+	* commands.cc: improve help for queue.
+
 2000-01-30  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Resolver.cc: flush buffer in case of error.
 	* ProcWait.cc: don't spin on error or done.
 	* SMTask.cc: add debug code.
+	* ftpclass.cc: add assert; remove obsolete code.
+	* ProcWait.cc: handle waitpid errors better.
 
 2000-01-29  Alexander V. Lukyanov  <lav@yars.free.net>
 

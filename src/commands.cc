@@ -281,7 +281,8 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"queue",   cmd_queue,  0,
 	 N_("Usage: queue <command>\n"
 	 "Add the command to queue for current site. Each site has its own\n"
-	 "command queue.\n")},
+	 "command queue. It is possible to queue up a running job by using\n")
+	 "command `queue wait <jobno>'.\n"},
    {"quit",    cmd_exit,   0,"exit"},
    {"quote",   cmd_ls,	   N_("quote <cmd>"),
 	 N_("Send the command uninterpreted. Use with caution - it can lead to\n"
