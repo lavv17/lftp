@@ -1,3 +1,7 @@
+2005-03-01  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* NetAccess.cc: make TOS changes compile on solaris.
+
 2005-03-01  Mark Schreiber <mark7@alumni.cmu.edu>
 
 	* ftpclass.cc, NetAccess.cc, NetAccess.h: use TOS on ftp connections.
