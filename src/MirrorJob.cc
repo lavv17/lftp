@@ -185,6 +185,7 @@ void  MirrorJob::HandleFile(int how)
       }
       case(file->DIRECTORY):
       {
+      try_recurse:
 	 if(how!=1 || (flags&NO_RECURSION))
 	 {
 	    to_transfer->next();
@@ -307,6 +308,13 @@ void  MirrorJob::HandleFile(int how)
    }
    else
    {
+      FileInfo *local=local_set->FindByName(file->name);
+      if(local && (local->defined&local->TYPE)
+      && local->filetype==local->DIRECTORY)
+      {
+	 // assume it's a directory
+	 goto try_recurse;
+      }
       // no info on type -- try to get
       goto try_get;
    }

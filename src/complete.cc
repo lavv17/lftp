@@ -265,7 +265,8 @@ char **lftp_completion (char *text,int start,int end)
       FileAccess::open_mode mode=Ftp::LIST;
 
       // try to find in cache
-      if(!LsCache::Find(completion_shell->session,pat,mode,0,0)
+      if(completion_shell->completion_use_ls
+      && !LsCache::Find(completion_shell->session,pat,mode,0,0)
       &&  LsCache::Find(completion_shell->session,pat,Ftp::LONG_LIST,0,0))
       {
 	 // this is a bad hack, but often requested by people
@@ -276,7 +277,8 @@ char **lftp_completion (char *text,int start,int end)
 
       SignalHook::ResetCount(SIGINT);
       RemoteGlob g(completion_shell->session,pat,mode);
-      g.SetSlashFilter(1);
+      if(mode==Ftp::LIST)
+	 g.SetSlashFilter(1);
       for(;;)
       {
 	 SMTask::Schedule();
@@ -303,8 +305,10 @@ char **lftp_completion (char *text,int start,int end)
 	    && !strncmp(space-3," ->",3))
 	    {
 	       space[-3]=0;
-	       space=strrchr(space-3,' ');
+	       space=strrchr(s,' ');
 	    }
+	    if(s[0]=='d')
+	       rl_completion_append_character='/';
 	    if(space)
 	       memmove(s,space+1,strlen(space));
 	    int len=strlen(s);
