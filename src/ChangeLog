@@ -6,7 +6,8 @@
 	* NetAccess.cc: correct calculations in extreme cases
 	  (reported by Robert de Bath)
 	* FileAccess.cc, FileAccess.h: expand tilde in file and file1 too.
-	  (ExpandTildeStatic) new method; New from ParsedURL.
+	  (ExpandTildeStatic) new method; New from ParsedURL; propagate
+	  passwords.
 	* ftpclass.cc: handle size==0 in Write; expand tilde for ARRAY_INFO;
 	  correct test for ftp:rest-stor.
 	* Http.cc: handle size==0 in Write; send port to proxy;
