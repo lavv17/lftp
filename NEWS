@@ -1,3 +1,15 @@
+Version 2.3.3 - 2000-0?-??
+
+* fixed `ls|head'.
+* new setting ftp:bind-data-socket (bool) to disable binding of local end
+  of data connection in passive mode.
+* japanese translation (Masayuki Hatta)
+
+Version 2.3.2 - 2000-09-28
+
+* fixed bug in mirror - some files were not downloaded.
+* fixed very rare bug with assert(rate_limit!=0).
+
 Version 2.3.1 - 2000-09-25
 
 * fixed cmd:move-background handling.

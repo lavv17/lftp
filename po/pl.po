@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp\n"
-"POT-Creation-Date: 2000-09-24 14:04+0400\n"
+"POT-Creation-Date: 2000-09-29 11:51+0400\n"
 "PO-Revision-Date: 1999-06-08 15:27+02:00\n"
 "Last-Translator: Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -48,7 +48,7 @@ msgstr ""
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, cwd=%s\n"
 
-#: src/CmdExec.cc:382 src/MirrorJob.cc:529
+#: src/CmdExec.cc:382 src/MirrorJob.cc:530
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
@@ -117,7 +117,7 @@ msgstr "Brak dostêpu: %s"
 msgid "File cannot be accessed"
 msgstr "Brak dostêpu do pliku"
 
-#: src/FileAccess.cc:325 src/ftpclass.cc:3388 src/ftpclass.cc:3397
+#: src/FileAccess.cc:325 src/ftpclass.cc:3393 src/ftpclass.cc:3402
 msgid "Not connected"
 msgstr "Brak po³±czenia"
 
@@ -245,13 +245,13 @@ msgstr ""
 "%sDo usuniêcia: %d katalog$|i|ów$, %d plik$|i|ów$, %d $dowi±zanie "
 "symboliczne|dowi±zania symboliczne|dowi±zañ symbolicznych$.\n"
 
-#: src/MirrorJob.cc:168 src/MirrorJob.cc:806
+#: src/MirrorJob.cc:168 src/MirrorJob.cc:807
 #, c-format
 msgid "Removing old remote file `%s'"
 msgstr "Usuwanie starego zdalnego pliku `%s'"
 
 #: src/MirrorJob.cc:217 src/MirrorJob.cc:313 src/MirrorJob.cc:384
-#: src/MirrorJob.cc:746
+#: src/MirrorJob.cc:747
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Usuwanie starego lokalnego pliku `%s'"
@@ -277,36 +277,36 @@ msgstr "Tworzenie zdalnego katalogu `%s'"
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Tworzenie dowi±zania symbolicznego `%s' do `%s'"
 
-#: src/MirrorJob.cc:466
+#: src/MirrorJob.cc:467
 msgid "mirror: cannot create `file:' access object, installation error?\n"
 msgstr ""
 
-#: src/MirrorJob.cc:563
+#: src/MirrorJob.cc:564
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: protokó³ `%s' nieodpowiedni dla mirror-a\n"
 
-#: src/MirrorJob.cc:626
+#: src/MirrorJob.cc:627
 #, c-format
 msgid "Sending local file `%s'"
 msgstr "Wysy³anie lokalnego pliku `%s'"
 
-#: src/MirrorJob.cc:765
+#: src/MirrorJob.cc:766
 #, c-format
 msgid "Old local file `%s' is not removed"
 msgstr "Stary lokalny plik `%s' nie zosta³ usuniêty"
 
-#: src/MirrorJob.cc:799
+#: src/MirrorJob.cc:800
 #, fuzzy, c-format
 msgid "Removing old remote directory `%s'"
 msgstr "Usuwanie starego zdalnego pliku `%s'"
 
-#: src/MirrorJob.cc:819
+#: src/MirrorJob.cc:820
 #, c-format
 msgid "Old remote file `%s' is not removed"
 msgstr "Stary zdalny plik `%s' nie zosta³ usuniêty"
 
-#: src/MirrorJob.cc:1129 src/MirrorJob.cc:1177 src/SleepJob.cc:128
+#: src/MirrorJob.cc:1130 src/MirrorJob.cc:1178 src/SleepJob.cc:128
 #: src/commands.cc:814 src/commands.cc:985 src/commands.cc:1080
 #: src/commands.cc:1334 src/commands.cc:1528 src/commands.cc:1695
 #: src/commands.cc:1702 src/commands.cc:1886 src/commands.cc:1915
@@ -362,7 +362,7 @@ msgstr ""
 msgid "dns cache hit\n"
 msgstr ""
 
-#: src/Http.cc:1509 src/Resolver.cc:193 src/ftpclass.cc:3393
+#: src/Http.cc:1509 src/Resolver.cc:193 src/ftpclass.cc:3398
 msgid "Resolving host address..."
 msgstr "Uzyskiwanie adresu hosta..."
 
@@ -1458,116 +1458,116 @@ msgstr ""
 msgid "SITE CHMOD is not supported by this site"
 msgstr ""
 
-#: src/ftpclass.cc:1604 src/ftpclass.cc:1637
+#: src/ftpclass.cc:1607 src/ftpclass.cc:1640
 #, fuzzy
 msgid "unsupported network protocol"
 msgstr "%s: %s - protokó³ nie jest obs³ugiwany\n"
 
-#: src/ftpclass.cc:1746
+#: src/ftpclass.cc:1749
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "£±cznie siê (data socket) z (%s) port %u"
 
-#: src/ftpclass.cc:1771 src/ftpclass.cc:3276
+#: src/ftpclass.cc:1774 src/ftpclass.cc:3281
 msgid "Switching passive mode off"
 msgstr "Wy³±czam tryb pasywny"
 
-#: src/NetAccess.cc:265 src/ftpclass.cc:1810
+#: src/NetAccess.cc:265 src/ftpclass.cc:1813
 msgid "Timeout - reconnecting"
 msgstr "Przekroczony limit czasu - ³±czê siê ponownie"
 
-#: src/Http.cc:936 src/ftpclass.cc:2192
+#: src/Http.cc:936 src/ftpclass.cc:2195
 msgid "Peer closed connection"
 msgstr "Komputer po drugiej stronie zamkn±³ po³±czenie"
 
-#: src/ftpclass.cc:2219
+#: src/ftpclass.cc:2222
 msgid "Persist and retry"
 msgstr ""
 
-#: src/ftpclass.cc:2316
+#: src/ftpclass.cc:2319
 msgid "Closing control socket"
 msgstr "Zamykanie control socket"
 
-#: src/ftpclass.cc:2397
+#: src/ftpclass.cc:2400
 msgid "Closing data socket"
 msgstr "Zamykam gniazdo danych"
 
-#: src/ftpclass.cc:3123
+#: src/ftpclass.cc:3128
 msgid "saw file size in response"
 msgstr "w odpowiedzi pojawi³ siê rozmiar pliku"
 
-#: src/ftpclass.cc:3134
+#: src/ftpclass.cc:3139
 msgid "remote end closes connection"
 msgstr "komputer po drugiej stronie zamkn±³ po³±czenie"
 
-#: src/ftpclass.cc:3142
+#: src/ftpclass.cc:3147
 msgid "extra server response"
 msgstr "dodatkowa odpowied¼ serwera"
 
-#: src/ftpclass.cc:3154 src/ftpclass.cc:3179
+#: src/ftpclass.cc:3159 src/ftpclass.cc:3184
 msgid "Turning on sync-mode"
 msgstr ""
 
-#: src/ftpclass.cc:3293
+#: src/ftpclass.cc:3298
 #, fuzzy
 msgid "Switching passive mode on"
 msgstr "Wy³±czam tryb pasywny"
 
-#: src/ftpclass.cc:3344
+#: src/ftpclass.cc:3349
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 
-#: src/ftpclass.cc:3383
+#: src/ftpclass.cc:3388
 msgid "Sending commands..."
 msgstr "Wysy³anie komend..."
 
-#: src/Http.cc:1522 src/ftpclass.cc:3385 src/ftpclass.cc:3410
-#: src/ftpclass.cc:3417
+#: src/Http.cc:1522 src/ftpclass.cc:3390 src/ftpclass.cc:3415
+#: src/ftpclass.cc:3422
 msgid "Waiting for response..."
 msgstr "Czekanie na odpowied¼..."
 
-#: src/Http.cc:1517 src/ftpclass.cc:3386
+#: src/Http.cc:1517 src/ftpclass.cc:3391
 msgid "Connection idle"
 msgstr "Po³±czenie bezczynne"
 
-#: src/Http.cc:1515 src/ftpclass.cc:3399
+#: src/Http.cc:1515 src/ftpclass.cc:3404
 msgid "Connecting..."
 msgstr "£±czenie siê..."
 
-#: src/ftpclass.cc:3403
+#: src/ftpclass.cc:3408
 msgid "TLS negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:3405
+#: src/ftpclass.cc:3410
 #, fuzzy
 msgid "Connected"
 msgstr "Brak po³±czenia"
 
-#: src/ftpclass.cc:3407
+#: src/ftpclass.cc:3412
 msgid "Logging in..."
 msgstr "Logowanie siê..."
 
-#: src/ftpclass.cc:3411
+#: src/ftpclass.cc:3416
 msgid "Making data connection..."
 msgstr "Ustanawianie po³±czenie dla danych..."
 
-#: src/ftpclass.cc:3413
+#: src/ftpclass.cc:3418
 msgid "Changing remote directory..."
 msgstr "Zmiana zdalnego katalogu..."
 
-#: src/ftpclass.cc:3416 src/ftpclass.cc:3428
+#: src/ftpclass.cc:3421 src/ftpclass.cc:3433
 msgid "Waiting for transfer to complete"
 msgstr "Oczekiwanie na zakoñczenie transferu"
 
-#: src/ftpclass.cc:3419
+#: src/ftpclass.cc:3424
 msgid "Waiting for data connection..."
 msgstr "Czekam na po³±czenie dla danych..."
 
-#: src/Http.cc:1520 src/ftpclass.cc:3424
+#: src/Http.cc:1520 src/ftpclass.cc:3429
 msgid "Sending data"
 msgstr "Wysy³am dane"
 
-#: src/Http.cc:1525 src/ftpclass.cc:3426
+#: src/Http.cc:1525 src/ftpclass.cc:3431
 msgid "Receiving data"
 msgstr "Otrzymujê dane"
 

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
-"POT-Creation-Date: 2000-09-24 14:04+0400\n"
+"POT-Creation-Date: 2000-09-29 11:51+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Nicolas Noble <nicolas.n.@wanadoo.fr>\n"
 "Language-Team: French <fr@li.org>\n"
@@ -48,7 +48,7 @@ msgstr "Le module pour la commande `%s' ne s'est pas enregistré.\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, cwd=%s\n"
 
-#: src/CmdExec.cc:382 src/MirrorJob.cc:529
+#: src/CmdExec.cc:382 src/MirrorJob.cc:530
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: reçu une redirection vers `%s'\n"
@@ -115,7 +115,7 @@ msgstr "L'acces a échoué: %s"
 msgid "File cannot be accessed"
 msgstr "Le fichier ne peut être adressé"
 
-#: src/FileAccess.cc:325 src/ftpclass.cc:3388 src/ftpclass.cc:3397
+#: src/FileAccess.cc:325 src/ftpclass.cc:3393 src/ftpclass.cc:3402
 msgid "Not connected"
 msgstr "Non connecté"
 
@@ -231,13 +231,13 @@ msgstr "%sSupprimé: %d répertoire$|s$, %d fichier$|s$, %d lien$|s$\n"
 msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%sA supprimer: %d répertoire$|s$, %d fichier$|s$, %d lien$|s$\n"
 
-#: src/MirrorJob.cc:168 src/MirrorJob.cc:806
+#: src/MirrorJob.cc:168 src/MirrorJob.cc:807
 #, c-format
 msgid "Removing old remote file `%s'"
 msgstr "Suppression de l'ancien fichier `%s'"
 
 #: src/MirrorJob.cc:217 src/MirrorJob.cc:313 src/MirrorJob.cc:384
-#: src/MirrorJob.cc:746
+#: src/MirrorJob.cc:747
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Suppression de l'ancien fichier local `%s'"
@@ -263,37 +263,37 @@ msgstr "Duplication du répertoire `%s'"
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Création du lien `%s' -> `%s'"
 
-#: src/MirrorJob.cc:466
+#: src/MirrorJob.cc:467
 msgid "mirror: cannot create `file:' access object, installation error?\n"
 msgstr ""
 "mirror: ne peut créer l'objet d'acces `file:', erreur d'installation?\n"
 
-#: src/MirrorJob.cc:563
+#: src/MirrorJob.cc:564
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: le protocole `%s' ne convient pas pour une duplication\n"
 
-#: src/MirrorJob.cc:626
+#: src/MirrorJob.cc:627
 #, c-format
 msgid "Sending local file `%s'"
 msgstr "Emission du fichier local `%s'"
 
-#: src/MirrorJob.cc:765
+#: src/MirrorJob.cc:766
 #, c-format
 msgid "Old local file `%s' is not removed"
 msgstr "L'ancien fichier local `%s' n'est pas supprimé"
 
-#: src/MirrorJob.cc:799
+#: src/MirrorJob.cc:800
 #, c-format
 msgid "Removing old remote directory `%s'"
 msgstr "Suppression de l'ancien répertoire distant `%s'"
 
-#: src/MirrorJob.cc:819
+#: src/MirrorJob.cc:820
 #, c-format
 msgid "Old remote file `%s' is not removed"
 msgstr "L'ancien fichier distant `%s' n'est pas supprimé"
 
-#: src/MirrorJob.cc:1129 src/MirrorJob.cc:1177 src/SleepJob.cc:128
+#: src/MirrorJob.cc:1130 src/MirrorJob.cc:1178 src/SleepJob.cc:128
 #: src/commands.cc:814 src/commands.cc:985 src/commands.cc:1080
 #: src/commands.cc:1334 src/commands.cc:1528 src/commands.cc:1695
 #: src/commands.cc:1702 src/commands.cc:1886 src/commands.cc:1915
@@ -348,7 +348,7 @@ msgstr "aucune restriction pour ce paramètre"
 msgid "dns cache hit\n"
 msgstr "le cache de nom a fonctionné\n"
 
-#: src/Http.cc:1509 src/Resolver.cc:193 src/ftpclass.cc:3393
+#: src/Http.cc:1509 src/Resolver.cc:193 src/ftpclass.cc:3398
 msgid "Resolving host address..."
 msgstr "Résolution de l'adresse..."
 
@@ -1474,113 +1474,113 @@ msgstr "ne peut créer un socket de la famille %d"
 msgid "SITE CHMOD is not supported by this site"
 msgstr "SITE CHMOD n'est pas supportée par ce site"
 
-#: src/ftpclass.cc:1604 src/ftpclass.cc:1637
+#: src/ftpclass.cc:1607 src/ftpclass.cc:1640
 msgid "unsupported network protocol"
 msgstr "protocole non supporté"
 
-#: src/ftpclass.cc:1746
+#: src/ftpclass.cc:1749
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "Connexion du socket de données à (%s) port %u"
 
-#: src/ftpclass.cc:1771 src/ftpclass.cc:3276
+#: src/ftpclass.cc:1774 src/ftpclass.cc:3281
 msgid "Switching passive mode off"
 msgstr "Désactivation du mode passif"
 
-#: src/NetAccess.cc:265 src/ftpclass.cc:1810
+#: src/NetAccess.cc:265 src/ftpclass.cc:1813
 msgid "Timeout - reconnecting"
 msgstr "Temps écoulé - reconnexion"
 
-#: src/Http.cc:936 src/ftpclass.cc:2192
+#: src/Http.cc:936 src/ftpclass.cc:2195
 msgid "Peer closed connection"
 msgstr "Connexion interrompue par un tiers"
 
-#: src/ftpclass.cc:2219
+#: src/ftpclass.cc:2222
 msgid "Persist and retry"
 msgstr "Persiste et réessaye"
 
-#: src/ftpclass.cc:2316
+#: src/ftpclass.cc:2319
 msgid "Closing control socket"
 msgstr "Fermeture du socket de contrôle"
 
-#: src/ftpclass.cc:2397
+#: src/ftpclass.cc:2400
 msgid "Closing data socket"
 msgstr "Fermeture du socket de données"
 
-#: src/ftpclass.cc:3123
+#: src/ftpclass.cc:3128
 msgid "saw file size in response"
 msgstr "taille du fichier détectée dans la réponse"
 
-#: src/ftpclass.cc:3134
+#: src/ftpclass.cc:3139
 msgid "remote end closes connection"
 msgstr "le serveur a fermé la connexion"
 
-#: src/ftpclass.cc:3142
+#: src/ftpclass.cc:3147
 msgid "extra server response"
 msgstr "réponse du serveur supplémentaire"
 
-#: src/ftpclass.cc:3154 src/ftpclass.cc:3179
+#: src/ftpclass.cc:3159 src/ftpclass.cc:3184
 msgid "Turning on sync-mode"
 msgstr "Activation de sync-mode"
 
-#: src/ftpclass.cc:3293
+#: src/ftpclass.cc:3298
 msgid "Switching passive mode on"
 msgstr "Activation du mode passif"
 
-#: src/ftpclass.cc:3344
+#: src/ftpclass.cc:3349
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr "ftp:ssl-force est défini et le serveur ne supporte pas SSL"
 
-#: src/ftpclass.cc:3383
+#: src/ftpclass.cc:3388
 msgid "Sending commands..."
 msgstr "Emission des commandes..."
 
-#: src/Http.cc:1522 src/ftpclass.cc:3385 src/ftpclass.cc:3410
-#: src/ftpclass.cc:3417
+#: src/Http.cc:1522 src/ftpclass.cc:3390 src/ftpclass.cc:3415
+#: src/ftpclass.cc:3422
 msgid "Waiting for response..."
 msgstr "En attente de réponse..."
 
-#: src/Http.cc:1517 src/ftpclass.cc:3386
+#: src/Http.cc:1517 src/ftpclass.cc:3391
 msgid "Connection idle"
 msgstr "Connexion stagnante"
 
-#: src/Http.cc:1515 src/ftpclass.cc:3399
+#: src/Http.cc:1515 src/ftpclass.cc:3404
 msgid "Connecting..."
 msgstr "Connexion..."
 
-#: src/ftpclass.cc:3403
+#: src/ftpclass.cc:3408
 msgid "TLS negotiation..."
 msgstr "négotiation TLS..."
 
-#: src/ftpclass.cc:3405
+#: src/ftpclass.cc:3410
 msgid "Connected"
 msgstr "Connecté"
 
-#: src/ftpclass.cc:3407
+#: src/ftpclass.cc:3412
 msgid "Logging in..."
 msgstr "Login en cours..."
 
-#: src/ftpclass.cc:3411
+#: src/ftpclass.cc:3416
 msgid "Making data connection..."
 msgstr "Etablissement de la connexion de données..."
 
-#: src/ftpclass.cc:3413
+#: src/ftpclass.cc:3418
 msgid "Changing remote directory..."
 msgstr "Changement de répertoire distant..."
 
-#: src/ftpclass.cc:3416 src/ftpclass.cc:3428
+#: src/ftpclass.cc:3421 src/ftpclass.cc:3433
 msgid "Waiting for transfer to complete"
 msgstr "En attente de la fin du transfert"
 
-#: src/ftpclass.cc:3419
+#: src/ftpclass.cc:3424
 msgid "Waiting for data connection..."
 msgstr "En attente de la connexion de données..."
 
-#: src/Http.cc:1520 src/ftpclass.cc:3424
+#: src/Http.cc:1520 src/ftpclass.cc:3429
 msgid "Sending data"
 msgstr "Emission des données"
 
-#: src/Http.cc:1525 src/ftpclass.cc:3426
+#: src/Http.cc:1525 src/ftpclass.cc:3431
 msgid "Receiving data"
 msgstr "Réception des données"
 
