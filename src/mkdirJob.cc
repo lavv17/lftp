@@ -22,6 +22,7 @@
 
 #include <errno.h>
 #include "mkdirJob.h"
+#include "plural.h"
 
 mkdirJob::mkdirJob(FileAccess *s,ArgV *a) : SessionJob(s)
 {
@@ -108,5 +109,6 @@ void  mkdirJob::SayFinal()
    else if(failed)
       printf(_("%s failed for %d of %d directories\n"),op,failed,file_count);
    else
-      printf(_("%s ok, %d directories created\n"),op,file_count);
+      printf(plural("%s ok, %d director$y|ies$ created\n",file_count),
+	    op,file_count);
 }

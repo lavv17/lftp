@@ -367,7 +367,10 @@ static void expand_tilde(char **path, const char *home)
       if(home_len==1 && home[0]=='/' && (*path)[1]=='/')
 	 home_len=0;
       int path_len=strlen(*path+1);
-      *path=(char*)xrealloc(*path,path_len+home_len+1);
+      // Note: don't shrink the array, because later memmove would break
+      // We could first memmove then shrink, but it won't give much
+      if(home_len>1)
+	 *path=(char*)xrealloc(*path,path_len+home_len+1);
       memmove(*path+home_len,*path+1,path_len+1);
       memmove(*path,home,home_len);
    }
