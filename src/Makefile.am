@@ -1,24 +1,23 @@
-localedir = $(datadir)/locale
+localedir = @LOCALE_DIR@
 
 bin_PROGRAMS = lftp
 bin_SCRIPTS = lftpget
 pkgdata_SCRIPTS = import-ncftp import-netscape
 noinst_SCRIPTS = ftpget
 
-EXTRA_DIST = $(pkgdata_SCRIPTS) $(bin_SCRIPTS) $(noinst_SCRIPTS) example1.cc example2.cc\
- Fish.cc Fish.h
+EXTRA_DIST = $(pkgdata_SCRIPTS) $(bin_SCRIPTS) $(noinst_SCRIPTS) \
+	example1.cc example2.cc Fish.cc Fish.h
 
 lftp_SOURCES = lftp.cc complete.h complete.cc lftp_rl.c lftp_rl.h
 #ftpget_SOURCES = ftpget.cc
 
 noinst_LIBRARIES = libtasks.a libjobs.a
 
-## this does not work too well as I need to compile modules with -DMODULE
+## this does not work too well
 # MODULES_LA = proto-ftp.la
 # lib_LTLIBRARIES = $(MODULES_LA)
 # proto_ftp_la_SOURCES = ftpclass.cc FtpListInfo.cc FtpGlob.cc FtpDirList.cc md5.c ftp-opie.c NetAccess.cc FtpSplitList.cc FileCopyFtp.cc
 # proto_ftp_la_LDFLAGS = -module -avoid-version
-# proto_ftp_la_CXXFLAGS = -DMODULE
 
 libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  ProcWait.h ftpclass.cc ftpclass.h GetPass.cc GetPass.h\
@@ -32,13 +31,13 @@ libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  resource.cc DummyProto.cc DummyProto.h FtpGlob.cc FtpGlob.h FtpDirList.cc\
  FtpDirList.h ArgV.cc ArgV.h HttpDir.cc HttpDir.h ascii_ctype.h\
  NetAccess.cc NetAccess.h FtpSplitList.h FtpSplitList.cc Speedometer.cc\
- Speedometer.h lftp_ssl.cc lftp_ssl.h
+ Speedometer.h lftp_ssl.cc lftp_ssl.h netrc.cc netrc.h
 #Fish.cc Fish.h
 
 libjobs_a_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\
  parsecmd.cc MirrorJob.cc MirrorJob.h\
- mvJob.cc mvJob.h alias.cc alias.h netrc.cc netrc.h\
+ mvJob.cc mvJob.h alias.cc alias.h\
  bookmark.cc bookmark.h CatJob.cc CatJob.h GetJob.cc GetJob.h\
  mkdirJob.cc mkdirJob.h pgetJob.cc pgetJob.h FileFeeder.cc FileFeeder.h\
  keyvalue.cc keyvalue.h history.cc history.h\
@@ -46,8 +45,10 @@ libjobs_a_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  ChmodJob.cc ChmodJob.h TreatFileJob.cc TreatFileJob.h CopyJob.cc CopyJob.h
 
 lftp_LDFLAGS = $(EXPORT_DYNAMIC) $(SSL_LDFLAGS)
-lftp_LDADD = libjobs.a libtasks.a $(READLINE) $(READLINE_SUPPLIB) $(top_builddir)/lib/liblib.a $(INTLLIBS) $(SOCKSLIBS) $(SSL_LIBS)
-lftp_DEPENDENCIES = libjobs.a libtasks.a $(READLINE_DEPEND) $(top_builddir)/lib/liblib.a
+lftp_LDADD = libjobs.a libtasks.a $(READLINE) $(READLINE_SUPPLIB) \
+	$(top_builddir)/lib/liblib.a $(INTLLIBS) $(SOCKSLIBS) $(SSL_LIBS)
+lftp_DEPENDENCIES = libjobs.a libtasks.a $(READLINE_DEPEND) \
+	$(top_builddir)/lib/liblib.a
 #ftpget_LDFLAGS = $(EXPORT_DYNAMIC)
 #ftpget_LDADD = libjobs.a libtasks.a $(top_builddir)/lib/liblib.a $(INTLLIBS) $(SOCKSLIBS)
 
@@ -62,8 +63,8 @@ DISTCLEANFILES = confpaths.h
 INCLUDES = -I$(top_srcdir)/include $(SSL_CPPFLAGS)
 
 # These files can be linked to ../include by configure, but not always.
-OMIT_DEPENDENCIES = readline.h keymaps.h chardefs.h tilde.h history.h libintl.h\
- regex.h glob.h fnmatch.h poll.h rlstdc.h
+OMIT_DEPENDENCIES = readline.h keymaps.h chardefs.h tilde.h \
+	history.h libintl.hregex.h glob.h fnmatch.h poll.h rlstdc.h
 
 lftp.o commands.o module.o: confpaths.h
 

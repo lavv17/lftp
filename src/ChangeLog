@@ -1,3 +1,7 @@
+2001-03-22  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Resolver.cc: set default for dns:cache-expire to 1h.
+
 2001-03-20  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* keyvalue.cc: ignore certain lock errors.

@@ -74,7 +74,7 @@ CDECL int res_search(const char*,int,int,unsigned char*,int);
 
 static ResDecl
    res_cache_enable("dns:cache-enable", "yes", ResMgr::BoolValidate,0),
-   res_cache_expire("dns:cache-expire", "24h", ResMgr::TimeIntervalValidate,0),
+   res_cache_expire("dns:cache-expire", "1h",  ResMgr::TimeIntervalValidate,0),
    res_cache_size  ("dns:cache-size",   "256", ResMgr::UNumberValidate,ResMgr::NoClosure),
    res_timeout	   ("dns:fatal-timeout","0",   ResMgr::UNumberValidate,0),
    res_order	   ("dns:order",	DEFAULT_ORDER, Resolver::OrderValidate,0),

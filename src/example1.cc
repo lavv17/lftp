@@ -7,35 +7,41 @@
 #include "ftpclass.h"
 #include "ResMgr.h"
 #include "SignalHook.h"
+#include "log.h"
 #include <unistd.h>
 
 int main()
 {
    ResMgr::ClassInit();
    SignalHook::ClassInit();
+   Resolver::ClassInit();
+   FileAccess::ClassInit();
+   Log::global=new Log();
 
-   Ftp f;
-   f.Connect("ftp.yars.free.net",0);
-   f.Open("/pub/software/unix/net/ftp/client/lftp",f.LONG_LIST);
+   Ftp *f=new Ftp;
+   f->Connect("ftp.yars.free.net",0);
+   f->Open("/pub/software/unix/net/ftp/client/lftp",f->LONG_LIST);
    for(;;)
    {
       SMTask::Schedule();
       SMTask::Block();
 
       char buf[1024];
-      int res=f.Read(buf,sizeof(buf));
+      int res=f->Read(buf,sizeof(buf));
       if(res<0)
       {
-	 if(res==f.DO_AGAIN)
+	 if(res==f->DO_AGAIN)
 	    continue;
-	 fprintf(stderr,"Error: %s\n",f.StrError(res));
+	 fprintf(stderr,"Error: %s\n",f->StrError(res));
 	 return 1;
       }
       if(res==0) // eof
       {
-	 f.Close();
-	 return 0;
+	 f->Close();
+	 break;
       }
       write(1,buf,res);
    }
+   SMTask::Delete(f);
+   return 0;
 }

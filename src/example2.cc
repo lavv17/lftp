@@ -9,35 +9,38 @@ int main()
 {
    ResMgr::ClassInit();
    SignalHook::ClassInit();
+   Resolver::ClassInit();
+   FileAccess::ClassInit();
 
    Log::global=new Log();
    Log::global->SetOutput(2,false);
    Log::global->SetLevel(5);
    Log::global->Enable();
 
-   Http f;
-   f.Connect("ftp.yars.free.net",0);
-   f.Open("/pub/software/",f.RETRIEVE);
+   Http *f=new Http;
+   f->Connect("ftp.yars.free.net",0);
+   f->Open("/pub/software/",f->RETRIEVE);
    for(;;)
    {
       SMTask::Schedule();
       SMTask::Block();
 
       char buf[1024];
-      int res=f.Read(buf,sizeof(buf));
+      int res=f->Read(buf,sizeof(buf));
       if(res<0)
       {
-	 if(res==f.DO_AGAIN)
+	 if(res==f->DO_AGAIN)
 	    continue;
-	 fprintf(stderr,"Error: %s\n",f.StrError(res));
+	 fprintf(stderr,"Error: %s\n",f->StrError(res));
 	 return 1;
       }
       if(res==0) // eof
       {
-	 f.Close();
+	 f->Close();
 	 return 0;
       }
       write(1,buf,res);
    }
+   SMTask::Delete(f);
    return 0;
 }
