@@ -511,7 +511,7 @@ void Fish::SendMethod()
       if(!encode_file)
 	 e=file;
       Send("#LIST %s\n"
-	   "ls -l %s; echo '### 200'\n",e,e);
+	   "ls -la %s; echo '### 200'\n",e,e);
       PushExpect(EXPECT_DIR);
       real_pos=0;
       break;
@@ -519,7 +519,7 @@ void Fish::SendMethod()
       if(!encode_file)
 	 e=file;
       Send("#LIST %s\n"
-	   "ls %s; echo '### 200'\n",e,e);
+	   "ls -a %s; echo '### 200'\n",e,e);
       PushExpect(EXPECT_DIR);
       real_pos=0;
       break;

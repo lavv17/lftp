@@ -1,3 +1,8 @@
+2003-01-05  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Fish.cc: add -a option for ls.
+	* commands.cc: add -d option for lftp -f and lftp -c.
+
 2002-12-25  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* resource.cc: new settings net:socket-bind-ipv4 and net:socket-bind-ipv6.

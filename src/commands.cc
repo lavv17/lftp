@@ -642,6 +642,7 @@ Job *CmdExec::builtin_lftp()
    int c;
    const char *cmd=0;
    char *acmd;
+   bool debug=false;
    static struct option lftp_options[]=
    {
       {"help",no_argument,0,'h'},
@@ -651,7 +652,7 @@ Job *CmdExec::builtin_lftp()
 
    args->rewind();
    opterr=false;
-   while((c=args->getopt_long("+f:c:vh",lftp_options,0))!=EOF)
+   while((c=args->getopt_long("+f:c:vhd",lftp_options,0))!=EOF)
    {
       switch(c)
       {
@@ -673,12 +674,19 @@ Job *CmdExec::builtin_lftp()
 	 sprintf(acmd,"%s\n\n",optarg);
 	 cmd=acmd;
 	 break;
+      case('d'):
+	 debug=true;
+	 break;
       }
    }
    opterr=true;
 
    if(cmd)
+   {
       PrependCmd(cmd);
+      if(debug)
+	 PrependCmd("debug;");
+   }
 
    if(Done() && lftp_feeder)  // no feeder and no commands
    {
