@@ -1212,6 +1212,9 @@ CMD(mirror)
    PatternSet *exclude=0;
    const char *default_exclude=ResMgr::Query("mirror:exclude-regex",0);
 
+   if(!ResMgr::QueryBool("mirror:set-permissions",0))
+      flags|=MirrorJob::NO_PERMS;
+
    args->rewind();
    while((opt=args->getopt_long("esi:x:I:X:nrpcRvN:LPa",mirror_opts,0))!=EOF)
    {

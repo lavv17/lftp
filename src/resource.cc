@@ -292,7 +292,8 @@ static ResDecl
    ResDecl47 ("mirror:parallel-directories", "yes", ResMgr::BoolValidate,ResMgr::NoClosure),
    ResDecl48 ("mirror:parallel-transfer-count", "1", ResMgr::UNumberValidate,ResMgr::NoClosure),
    ResDecl49 ("mirror:exclude-regex",	  "(^|/)(\\.in\\.|\\.nfs)",ResMgr::ERegExpValidate,ResMgr::NoClosure),
-   ResDecl50 ("mirror:use-pget-n",	  "1",	   ResMgr::UNumberValidate,ResMgr::NoClosure);
+   ResDecl50 ("mirror:use-pget-n",	  "1",	   ResMgr::UNumberValidate,ResMgr::NoClosure),
+   ResDecl51 ("mirror:set-permissions",	  "yes",   ResMgr::BoolValidate,ResMgr::NoClosure);
 
 static ResDecl
    res_sftp_packets  ("sftp:max-packets-in-flight","16",ResMgr::UNumberValidate,0),
