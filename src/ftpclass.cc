@@ -199,6 +199,9 @@ bool Ftp::data_address_ok(sockaddr_u *dp,bool verify_this_data_port)
       return true;
    }
 #if INET6
+# ifndef  IN6_ARE_ADDR_EQUAL
+#  define IN6_ARE_ADDR_EQUAL(a,b) (!memcmp((a),(b),16))
+# endif
    if(d.sa.sa_family==AF_INET6)
    {
       if(!IN6_ARE_ADDR_EQUAL(&d.in6.sin6_addr,&c.in6.sin6_addr))

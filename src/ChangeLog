@@ -1,3 +1,8 @@
+2000-01-28  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* url.cc: workaround for dos paths.
+	* ftpclass.cc: unixware does not have IN6_ARE_ADDR_EQUAL - workaround.
+
 2000-01-27  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CharReader.h, CmdExec.cc, CopyJob.cc, FileAccess.cc, FileAccess.h,

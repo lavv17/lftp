@@ -24,6 +24,7 @@
 #include <ctype.h>
 #include "xalloca.h"
 #include "url.h"
+#include "ascii_ctype.h"
 
 /*
    URL -> [PROTO://]CONNECT[[:]/PATH]
@@ -44,7 +45,7 @@ ParsedURL::ParsedURL(const char *url,bool proto_required)
 
    char *base=memory;
    char *scan=base;
-   while(isalpha(*scan))
+   while(is_ascii_alpha(*scan))
       scan++;
    if(scan[0]==':' && scan[1]=='/' && scan[2]=='/')
    {
@@ -88,16 +89,19 @@ ParsedURL::ParsedURL(const char *url,bool proto_required)
 	 if(!xstrcmp(proto,"ftp") || !xstrcmp(proto,"hftp"))
 	 {
 	    // special handling for ftp protocol.
-	    if(strncasecmp(scan+2,"%2F",3))
-	    {
-	       memmove(scan+3,scan+2,strlen(scan+2)+1);
-	       scan[1]='~';
-	       scan[2]='/';
-	    }
-	    else
+	    if(!strncasecmp(scan+2,"%2F",3))
 	    {
 	       char *p=scan+5+(scan[5]=='/');
 	       memmove(scan+2,p,strlen(p)+1);
+	    }
+	    else
+	    {
+	       if(!(is_ascii_alpha(scan[2]) && scan[3]==':' && scan[4]=='/'))
+	       {
+		  memmove(scan+3,scan+2,strlen(scan+2)+1);
+		  scan[1]='~';
+		  scan[2]='/';
+	       }
 	    }
 	 }
       }
@@ -154,7 +158,7 @@ decode:
 int url::path_index(const char *base)
 {
    const char *scan=base;
-   while(isalpha(*scan))
+   while(is_ascii_alpha(*scan))
       scan++;
    if(scan[0]==':' && scan[1]=='/' && scan[2]=='/')
    {
@@ -242,7 +246,7 @@ void url::decode_string(char *p)
 
 /* Encodes the unsafe characters (listed in URL_UNSAFE) in a given
    string, returning a malloc-ed %XX encoded string.  */
-#define need_quote(c) (!unsafe || iscntrl((unsigned char)c) || strchr(unsafe,c))
+#define need_quote(c) (!unsafe || iscntrl((unsigned char)(c)) || strchr(unsafe,(c)))
 char *url::encode_string (const char *s,char *res,const char *unsafe)
 {
   char *p;
