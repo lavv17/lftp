@@ -8,8 +8,10 @@ Version 2.3.0 - 2000-??-??
   var=value > output'.
 * send encoded path in http protocol as it was entered by user in URL.
   (e.g. `get http://www.server.net/abc.cgi?arg=cba -o cba')
+* new settings http:accept, http:accept-charset, http:accept-language.
 * show QUIT reply in debug output.
 * new setting ftp:use-quit.
+* new setting net:persist-retries
 * large file (>2G) support added.
 * add workarounds for hftp over apache proxy.
 * use getaddrinfo when gethostbyname2 is unavailable.
