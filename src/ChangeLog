@@ -8,6 +8,7 @@
 	  if we know from cache that there is no such file; try another
 	  method only if we get NO_FILE error; strip all trailing slashes;
 	  don't assume result!=0.
+	* FileSetOutput.cc: don't print anything if GetFileInfo returned no set.
 
 2001-12-13  Glenn Maynard <g_ld@zewt.org>
 
