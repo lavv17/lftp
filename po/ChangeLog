@@ -1,3 +1,7 @@
+2000-11-23	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update
+
 2000-10-31	Arkadiusz Miskiewicz <misiek@misiek.eu.org>
 
 	* pl.po: update
@@ -256,4 +260,4 @@
 	  introduction of #l# option for plural; also add %s to some
 	  strings for new eta in get and pget.
 
-(older events are not logged, unfortunately)
+(older events were not logged, unfortunately)
