@@ -53,6 +53,9 @@ extern "C" {
 #ifndef TRIO_EXTENSION
 # define TRIO_EXTENSION 1
 #endif
+#ifndef TRIO_WIDECHAR /* Does not work yet. Do not enable */
+# define TRIO_WIDECHAR 0
+#endif
 #ifndef TRIO_ERRORS
 # define TRIO_ERRORS 1
 #endif

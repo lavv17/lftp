@@ -46,6 +46,7 @@ static const char rcsid[] = "@(#)$Id$";
 /*************************************************************************
  * Trio include files
  */
+#include "triodef.h"
 #include "trio.h"
 #include "triop.h"
 #include "trionan.h"
@@ -61,62 +62,10 @@ static const char rcsid[] = "@(#)$Id$";
 # define TRIO_ERROR_RETURN(x,y) (-1)
 #endif
 
-
-/*************************************************************************
- * Platform and compiler support detection
- */
-#if defined(__GNUC__)
-# define TRIO_COMPILER_GCC
-#elif defined(__SUNPRO_C)
-# define TRIO_COMPILER_SUNPRO
-#elif defined(__SUNPRO_CC)
-# define TRIO_COMPILER_SUNPRO
-# define __SUNPRO_C __SUNPRO_CC
-#elif defined(__xlC__)
-# define TRIO_COMPILER_XLC
-#elif defined(__DECC)
-# define TRIO_COMPILER_DECC
-#elif defined(_MSC_VER)
-# define TRIO_COMPILER_MSVC
-#endif
-
-#if defined(unix) || defined(__unix) || defined(__unix__)
-# define PLATFORM_UNIX
-#elif defined(TRIO_COMPILER_XLC) || defined(_AIX)
-# define PLATFORM_UNIX
-#elif defined(TRIO_COMPILER_DECC) || defined(__alpha)
-# define PLATFORM_UNIX
-#elif defined(__QNX__)
-# define PLATFORM_UNIX
-#elif defined(__NetBSD__)
-# define PLATFORM_UNIX
-#elif defined(AMIGA) && defined(TRIO_COMPILER_GCC)
-# define PLATFORM_UNIX
-#elif defined(TRIO_COMPILER_MSVC) || defined(WIN32) || defined(_WIN32)
-# define PLATFORM_WIN32
-#endif
-
-#if defined(__STDC__)
-# if defined(__STDC_VERSION__)
-#  if (__STDC_VERSION__ >= 199409L)
-#   define TRIO_COMPILER_SUPPORTS_ISO94
-#  endif
-#  if (__STDC_VERSION__ >= 199901L)
-#   define TRIO_COMPILER_SUPPORTS_C99
-#  endif
-# elif defined(TRIO_COMPILER_SUNPRO)
-#  if (__SUNPRO_C >= 0x420)
-#   define TRIO_COMPILER_SUPPORTS_ISO94
-#  endif
-# endif
-#endif
-
-#if defined(_XOPEN_SOURCE)
-# if defined(_XOPEN_SOURCE_EXTENDED)
-#  define TRIO_COMPILER_SUPPORTS_UNIX95
-# endif
-# if (_XOPEN_VERSION >= 500)
-#  define TRIO_COMPILER_SUPPORTS_UNIX98
+#if defined(__STDC_ISO_10646__) || defined(MB_LEN_MAX) || defined(USE_MULTIBYTE) || TRIO_WIDECHAR
+# define TRIO_COMPILER_SUPPORTS_MULTIBYTE
+# if !defined(MB_LEN_MAX)
+#  define MB_LEN_MAX 6
 # endif
 #endif
 
@@ -130,7 +79,7 @@ static const char rcsid[] = "@(#)$Id$";
 #endif
 #include <assert.h>
 #include <ctype.h>
-#if !(defined(isblank) || defined(TRIO_COMPILER_SUPPORTS_C99))
+#if !defined(TRIO_COMPILER_SUPPORTS_C99)
 # define isblank(x) (((x)==32) || ((x)==9))
 #endif
 #include <math.h>
@@ -161,63 +110,48 @@ static const char rcsid[] = "@(#)$Id$";
 /*************************************************************************
  * Platform specific definitions
  */
-#if defined(PLATFORM_UNIX)
+#if defined(TRIO_PLATFORM_UNIX)
 # include <unistd.h>
 # include <signal.h>
 # include <locale.h>
 # define USE_LOCALE
-#endif /* PLATFORM_UNIX */
-#if defined(PLATFORM_WIN32)
+#endif /* TRIO_PLATFORM_UNIX */
+#if defined(TRIO_PLATFORM_WIN32)
 # include <io.h>
 # define read _read
 # define write _write
-#endif /* PLATFORM_WIN32 */
+#endif /* TRIO_PLATFORM_WIN32 */
 
 #define TRIO_MSVC_VERSION_5 1100
 
-#if !defined(MB_LEN_MAX)
-# define MB_LEN_MAX 6
+#if TRIO_WIDECHAR
+# if defined(TRIO_COMPILER_SUPPORTS_ISO94)
+#  include <wchar.h>
+#  include <wctype.h>
+# else
+typedef char wchar_t;
+typedef int wint_t;
+#  define WCONST(x) L ## x
+#  define WEOF EOF
+#  define iswalnum(x) isalnum(x)
+#  define iswalpha(x) isalpha(x)
+#  define iswblank(x) isblank(x)
+#  define iswcntrl(x) iscntrl(x)
+#  define iswdigit(x) isdigit(x)
+#  define iswgraph(x) isgraph(x)
+#  define iswlower(x) islower(x)
+#  define iswprint(x) isprint(x)
+#  define iswpunct(x) ispunct(x)
+#  define iswspace(x) isspace(x)
+#  define iswupper(x) isupper(x)
+#  define iswxdigit(x) isxdigit(x)
+# endif
 #endif
 
 
 /*************************************************************************
  * Compiler dependent definitions
  */
-
-/* Wide characters */
-#define iswascii(x) ((x) < 128)
-#if defined(TRIO_COMPILER_DECC)
-# define WCONST(x) L ## x
-# include <sys/types.h>
-#elif defined(TRIO_COMPILER_SUPPORTS_ISO94)
-# define WCONST(x) L ## x
-# if !defined(TRIO_COMPILER_SUPPORTS_C99)
-#  include <stdlib.h>
-# else
-#  include <wchar.h>
-#  include <wctype.h>
-# endif
-#else
-# define WCONST(x) (x)
-typedef char wchar_t;
-typedef int wint_t;
-# define WEOF EOF
-# define iswalnum(x) isalnum(x)
-# define iswalpha(x) isalpha(x)
-# define iswblank(x) isblank(x)
-# define iswcntrl(x) iscntrl(x)
-# define iswdigit(x) isdigit(x)
-# define iswgraph(x) isgraph(x)
-# define iswlower(x) islower(x)
-# define iswprint(x) isprint(x)
-# define iswpunct(x) ispunct(x)
-# define iswspace(x) isspace(x)
-# define iswupper(x) isupper(x)
-# define iswxdigit(x) isxdigit(x)
-# define mbtowc(x,y,n) ((x)[0]=(y)[0])
-# define wctomb(x,y) ((x)[0]=y,(x)[1]=0,1)
-# define mblen(x,y) (1)
-#endif
 
 /* Support for long long */
 #ifndef __cplusplus
@@ -641,21 +575,6 @@ enum {
 typedef struct {
   /* An indication of which entry in the data union is used */
   int type;
-  /* The data from the argument list */
-  union {
-    char *string;
-    wchar_t *wstring;
-    void *pointer;
-    union {
-      trio_uintmax_t as_signed;
-      trio_intmax_t as_unsigned;
-    } number;
-    double doubleNumber;
-    double *doublePointer;
-    long double longdoubleNumber;
-    long double *longdoublePointer;
-    int errorNumber;
-  } data;
   /* The flags */
   unsigned long flags;
   /* The width qualifier */
@@ -668,6 +587,23 @@ typedef struct {
   int varsize;
   /* The marker of the end of the specifier */
   int indexAfterSpecifier;
+  /* The data from the argument list */
+  union {
+    char *string;
+#if TRIO_WIDECHAR
+    wchar_t *wstring;
+#endif
+    void *pointer;
+    union {
+      trio_uintmax_t as_signed;
+      trio_intmax_t as_unsigned;
+    } number;
+    double doubleNumber;
+    double *doublePointer;
+    long double longdoubleNumber;
+    long double *longdoublePointer;
+    int errorNumber;
+  } data;
   /* For the user-defined specifier */
   char user_name[MAX_USER_NAME];
   char user_data[MAX_USER_DATA];
@@ -782,13 +718,13 @@ const char *trio_strerror(int errorcode)
 }
 
 /*************************************************************************
- * TrioIsQualifier [private]
+ * TrioIsQualifier
  *
  * Description:
  *  Remember to add all new qualifiers to this function.
  *  QUALIFIER_POSITION must not be added.
  */
-static BOOLEAN_T
+TRIO_PRIVATE BOOLEAN_T
 TrioIsQualifier(const char ch)
 {
   /* QUALIFIER_POSITION is not included */
@@ -846,10 +782,10 @@ TrioIsQualifier(const char ch)
 }
 
 /*************************************************************************
- * TrioSetLocale [private]
+ * TrioSetLocale
  */
 #if defined(USE_LOCALE)
-static void
+TRIO_PUBLIC void
 TrioSetLocale(void)
 {
   internalLocaleValues = (struct lconv *)localeconv();
@@ -881,11 +817,11 @@ TrioSetLocale(void)
 #endif /* defined(USE_LOCALE) */
 
 /*************************************************************************
- * TrioGetPosition [private]
+ * TrioGetPosition
  *
  * Get the %n$ position.
  */
-static int
+TRIO_PRIVATE int
 TrioGetPosition(const char *format,
 		int *indexPointer)
 {
@@ -908,12 +844,12 @@ TrioGetPosition(const char *format,
 }
 
 /*************************************************************************
- * TrioFindNamespace [private]
+ * TrioFindNamespace
  *
  * Find registered user-defined specifier.
  * The prev argument is used for optimisation only.
  */
-static trio_userdef_t *
+TRIO_PRIVATE trio_userdef_t *
 TrioFindNamespace(const char *name, trio_userdef_t **prev)
 {
   trio_userdef_t *def;
@@ -938,12 +874,12 @@ TrioFindNamespace(const char *name, trio_userdef_t **prev)
 }
 
 /*************************************************************************
- * TrioParse [private]
+ * TrioParse
  *
  * Description:
  *  Parse the format string
  */
-static int
+TRIO_PRIVATE int
 TrioParse(int type,
 	  const char *format,
 	  trio_parameter_t *parameters,
@@ -976,7 +912,9 @@ TrioParse(int type,
   int pos = 0;
   /* Various variables */
   char ch;
+#if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
   int charlen;
+#endif
   int i = -1;
   int num;
   char *tmpformat;
@@ -992,10 +930,13 @@ TrioParse(int type,
 
   index = 0;
   parameterPosition = 0;
+#if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
   mblen(NULL, 0);
+#endif
   
   while (format[index])
     {
+#if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
       if (! isascii(format[index]))
 	{
 	  /*
@@ -1006,6 +947,7 @@ TrioParse(int type,
 	  index += (charlen > 0) ? charlen : 1;
 	  continue; /* while */
 	}
+#endif /* TRIO_COMPILER_SUPPORTS_MULTIBYTE */
       if (CHAR_IDENTIFIER == format[index++])
 	{
 	  if (CHAR_IDENTIFIER == format[index])
@@ -1401,14 +1343,10 @@ TrioParse(int type,
 	      /* FALLTHROUGH */
 #endif
 	    case SPECIFIER_CHAR:
-#if TRIO_C99 || TRIO_EXTENSIONS
 	      if (flags & FLAGS_LONG)
 		flags |= FLAGS_WIDECHAR;
-# if TRIO_EXTENSIONS
 	      else if (flags & FLAGS_SHORT)
 		flags &= ~FLAGS_WIDECHAR;
-# endif
-#endif
 	      parameters[pos].type = FORMAT_CHAR;
 	      break;
 
@@ -1418,14 +1356,10 @@ TrioParse(int type,
 	      /* FALLTHROUGH */
 #endif
 	    case SPECIFIER_STRING:
-#if TRIO_C99 || TRIO_EXTENSIONS
 	      if (flags & FLAGS_LONG)
 		flags |= FLAGS_WIDECHAR;
-# if TRIO_EXTENSIONS
 	      else if (flags & FLAGS_SHORT)
 		flags &= ~FLAGS_WIDECHAR;
-# endif
-#endif
 	      parameters[pos].type = FORMAT_STRING;
 	      break;
 
@@ -1708,6 +1642,7 @@ TrioParse(int type,
 	{
 	case FORMAT_GROUP:
 	case FORMAT_STRING:
+#if TRIO_WIDECHAR
 	  if (flags & FLAGS_WIDECHAR)
 	    {
 	      parameters[i].data.wstring = (argarray == NULL)
@@ -1715,6 +1650,7 @@ TrioParse(int type,
 		: (wchar_t *)(argarray[num]);
 	    }
 	  else
+#endif
 	    {
 	      parameters[i].data.string = (argarray == NULL)
 		? va_arg(arglist, char *)
@@ -1919,14 +1855,14 @@ TrioParse(int type,
 
 
 /*************************************************************************
- * TrioWriteNumber [private]
+ * TrioWriteNumber
  *
  * Description:
  *  Output a number.
  *  The complexity of this function is a result of the complexity
  *  of the dependencies of the flags.
  */
-static void
+TRIO_PRIVATE void
 TrioWriteNumber(trio_class_t *self,
 		trio_uintmax_t number,
 		unsigned long flags,
@@ -2107,12 +2043,12 @@ TrioWriteNumber(trio_class_t *self,
 }
 
 /*************************************************************************
- * TrioWriteStringCharacter [private]
+ * TrioWriteStringCharacter
  *
  * Description:
  *  Output a single character of a string
  */
-static void
+TRIO_PRIVATE void
 TrioWriteStringCharacter(trio_class_t *self,
 			 int ch,
 			 unsigned long flags)
@@ -2161,12 +2097,12 @@ TrioWriteStringCharacter(trio_class_t *self,
 }
 
 /*************************************************************************
- * TrioWriteString [private]
+ * TrioWriteString
  *
  * Description:
  *  Output a string
  */
-static void
+TRIO_PRIVATE void
 TrioWriteString(trio_class_t *self,
 		const char *string,
 		unsigned long flags,
@@ -2224,12 +2160,13 @@ TrioWriteString(trio_class_t *self,
 }
 
 /*************************************************************************
- * TrioWriteWideStringCharacter [private]
+ * TrioWriteWideStringCharacter
  *
  * Description:
  *  Output a wide string as a multi-byte sequence
  */
-static int
+#if TRIO_WIDECHAR
+TRIO_PRIVATE int
 TrioWriteWideStringCharacter(trio_class_t *self,
 			     wchar_t wch,
 			     unsigned long flags,
@@ -2258,14 +2195,16 @@ TrioWriteWideStringCharacter(trio_class_t *self,
     }
   return size;
 }
+#endif /* TRIO_WIDECHAR */
 
 /*************************************************************************
- * TrioWriteString [private]
+ * TrioWriteString
  *
  * Description:
  *  Output a wide character string as a multi-byte string
  */
-static void
+#if TRIO_WIDECHAR
+TRIO_PRIVATE void
 TrioWriteWideString(trio_class_t *self,
 		    const wchar_t *wstring,
 		    unsigned long flags,
@@ -2278,7 +2217,9 @@ TrioWriteWideString(trio_class_t *self,
   assert(VALID(self));
   assert(VALID(self->OutStream));
 
+#if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
   mblen(NULL, 0);
+#endif
   
   if (wstring == NULL)
     {
@@ -2321,11 +2262,12 @@ TrioWriteWideString(trio_class_t *self,
   if (flags & FLAGS_QUOTE)
     self->OutStream(self, CHAR_QUOTE);
 }
+#endif /* TRIO_WIDECHAR */
 
 /*************************************************************************
- * TrioWriteDouble [private]
+ * TrioWriteDouble
  */
-static void
+TRIO_PRIVATE void
 TrioWriteDouble(trio_class_t *self,
 		long double longdoubleNumber,
 		unsigned long flags,
@@ -2670,15 +2612,17 @@ TrioWriteDouble(trio_class_t *self,
 }
 
 /*************************************************************************
- * TrioFormatProcess [private]
+ * TrioFormatProcess
  */
-static int
+TRIO_PRIVATE int
 TrioFormatProcess(trio_class_t *data,
 		  const char *format,
 		  trio_parameter_t *parameters)
 
 {
+#if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
   int charlen;
+#endif
   int i;
   const char *string;
   void *pointer;
@@ -2690,10 +2634,13 @@ TrioFormatProcess(trio_class_t *data,
   
   index = 0;
   i = 0;
+#if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
   mblen(NULL, 0);
+#endif
   
   while (format[index])
     {
+#if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
       if (! isascii(format[index]))
 	{
 	  charlen = mblen(&format[index], MB_LEN_MAX);
@@ -2703,6 +2650,7 @@ TrioFormatProcess(trio_class_t *data,
 	    }
 	  continue; /* while */
 	}
+#endif /* TRIO_COMPILER_SUPPORTS_MULTIBYTE */
       if (CHAR_IDENTIFIER == format[index])
 	{
 	  if (CHAR_IDENTIFIER == format[index + 1])
@@ -2759,6 +2707,7 @@ TrioFormatProcess(trio_class_t *data,
 		      while (--width > 0)
 			data->OutStream(data, CHAR_ADJUST);
 		    }
+#if TRIO_WIDECHAR
 		  if (flags & FLAGS_WIDECHAR)
 		    {
 		      TrioWriteWideStringCharacter(data,
@@ -2767,11 +2716,13 @@ TrioFormatProcess(trio_class_t *data,
 						   NO_WIDTH);
 		    }
 		  else
+#endif
 		    {
 		      TrioWriteStringCharacter(data,
 					       (int)parameters[i].data.number.as_signed,
 					       flags);
 		    }
+
 		  if (flags & FLAGS_LEFTADJUST)
 		    {
 		      while(--width > 0)
@@ -2805,6 +2756,7 @@ TrioFormatProcess(trio_class_t *data,
 		  break; /* FORMAT_DOUBLE */
 
 		case FORMAT_STRING:
+#if TRIO_WIDECHAR
 		  if (flags & FLAGS_WIDECHAR)
 		    {
 		      TrioWriteWideString(data,
@@ -2814,6 +2766,7 @@ TrioFormatProcess(trio_class_t *data,
 					  precision);
 		    }
 		  else
+#endif
 		    {
 		      TrioWriteString(data,
 				      parameters[i].data.string,
@@ -2948,13 +2901,13 @@ TrioFormatProcess(trio_class_t *data,
 }
 
 /*************************************************************************
- * TrioFormatRef [private]
+ * TrioFormatRef
  */
-static int
+TRIO_PRIVATE int
 TrioFormatRef(trio_reference_t *reference,
-	       const char *format,
-	       va_list arglist,
-	       void **argarray)
+	      const char *format,
+	      va_list arglist,
+	      void **argarray)
 {
   int status;
   trio_parameter_t parameters[MAX_PARAMETERS];
@@ -2967,12 +2920,12 @@ TrioFormatRef(trio_reference_t *reference,
 }
 
 /*************************************************************************
- * TrioFormat [private]
+ * TrioFormat
  *
  * Description:
  *  This is the main engine for formatting output
  */
-static int
+TRIO_PRIVATE int
 TrioFormat(void *destination,
 	   size_t destinationSize,
 	   void (*OutStream)(trio_class_t *, int),
@@ -3007,9 +2960,9 @@ TrioFormat(void *destination,
 }
 
 /*************************************************************************
- * TrioOutStreamFile [private]
+ * TrioOutStreamFile
  */
-static void
+TRIO_PRIVATE void
 TrioOutStreamFile(trio_class_t *self,
 		  int output)
 {
@@ -3024,9 +2977,9 @@ TrioOutStreamFile(trio_class_t *self,
 }
 
 /*************************************************************************
- * TrioOutStreamFileDescriptor [private]
+ * TrioOutStreamFileDescriptor
  */
-static void
+TRIO_PRIVATE void
 TrioOutStreamFileDescriptor(trio_class_t *self,
 			    int output)
 {
@@ -3042,9 +2995,9 @@ TrioOutStreamFileDescriptor(trio_class_t *self,
 }
 
 /*************************************************************************
- * TrioOutStreamString [private]
+ * TrioOutStreamString
  */
-static void
+TRIO_PRIVATE void
 TrioOutStreamString(trio_class_t *self,
 		    int output)
 {
@@ -3060,9 +3013,9 @@ TrioOutStreamString(trio_class_t *self,
 }
 
 /*************************************************************************
- * TrioOutStreamStringMax [private]
+ * TrioOutStreamStringMax
  */
-static void
+TRIO_PRIVATE void
 TrioOutStreamStringMax(trio_class_t *self,
 		       int output)
 {
@@ -3082,7 +3035,7 @@ TrioOutStreamStringMax(trio_class_t *self,
 }
 
 /*************************************************************************
- * TrioOutStreamStringDynamic [private]
+ * TrioOutStreamStringDynamic
  */
 #define DYNAMIC_START_SIZE 32
 struct dynamicBuffer {
@@ -3091,7 +3044,7 @@ struct dynamicBuffer {
   size_t allocated;
 };
 
-static void
+TRIO_PRIVATE void
 TrioOutStreamStringDynamic(trio_class_t *self,
 			   int output)
 {
@@ -4172,9 +4125,9 @@ trio_printv_ref(void *ref,
 
 
 /*************************************************************************
- * TrioSkipWhitespaces [private]
+ * TrioSkipWhitespaces
  */
-static int
+TRIO_PRIVATE int
 TrioSkipWhitespaces(trio_class_t *self)
 {
   int ch;
@@ -4188,10 +4141,10 @@ TrioSkipWhitespaces(trio_class_t *self)
 }
 
 /*************************************************************************
- * TrioGetCollation [private]
+ * TrioGetCollation
  */
 #if TRIO_EXTENSION
-static void
+TRIO_PRIVATE void
 TrioGetCollation()
 {
   int i;
@@ -4219,12 +4172,12 @@ TrioGetCollation()
 #endif
 
 /*************************************************************************
- * TrioGetCharacterClass [private]
+ * TrioGetCharacterClass
  *
  * FIXME:
  *  multibyte
  */
-static int
+TRIO_PRIVATE int
 TrioGetCharacterClass(const char *format,
 		      int *indexPointer,
 		      unsigned long *flagsPointer,
@@ -4476,12 +4429,12 @@ TrioGetCharacterClass(const char *format,
 }
 
 /*************************************************************************
- * TrioReadNumber [private]
+ * TrioReadNumber
  *
  * We implement our own number conversion in preference of strtol and
  * strtoul, because we must handle 'long long' and thousand separators.
  */
-static BOOLEAN_T
+TRIO_PRIVATE BOOLEAN_T
 TrioReadNumber(trio_class_t *self,
 	       trio_uintmax_t *target,
 	       unsigned long flags,
@@ -4605,9 +4558,9 @@ TrioReadNumber(trio_class_t *self,
 }
 
 /*************************************************************************
- * TrioReadChar [private]
+ * TrioReadChar
  */
-static int
+TRIO_PRIVATE int
 TrioReadChar(trio_class_t *self,
 	     char *target,
 	     unsigned long flags,
@@ -4669,9 +4622,9 @@ TrioReadChar(trio_class_t *self,
 }
 
 /*************************************************************************
- * TrioReadString [private]
+ * TrioReadString
  */
-static BOOLEAN_T
+TRIO_PRIVATE BOOLEAN_T
 TrioReadString(trio_class_t *self,
 	       char *target,
 	       unsigned long flags,
@@ -4702,9 +4655,10 @@ TrioReadString(trio_class_t *self,
 }
 
 /*************************************************************************
- * TrioReadWideChar [private]
+ * TrioReadWideChar
  */
-static int
+#if TRIO_WIDECHAR
+TRIO_PRIVATE int
 TrioReadWideChar(trio_class_t *self,
 		 wchar_t *target,
 		 unsigned long flags,
@@ -4757,11 +4711,13 @@ TrioReadWideChar(trio_class_t *self,
     }
   return amount;
 }
+#endif /* TRIO_WIDECHAR */
 
 /*************************************************************************
- * TrioReadWideString [private]
+ * TrioReadWideString
  */
-static BOOLEAN_T
+#if TRIO_WIDECHAR
+TRIO_PRIVATE BOOLEAN_T
 TrioReadWideString(trio_class_t *self,
 		   wchar_t *target,
 		   unsigned long flags,
@@ -4775,7 +4731,9 @@ TrioReadWideString(trio_class_t *self,
 
   TrioSkipWhitespaces(self);
 
+#if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
   mblen(NULL, 0);
+#endif
   
   /*
    * Continue until end of string is reached, a whitespace is encountered,
@@ -4796,13 +4754,14 @@ TrioReadWideString(trio_class_t *self,
     target[i] = WCONST('\0');
   return TRUE;
 }
+#endif /* TRIO_WIDECHAR */
 
 /*************************************************************************
- * TrioReadGroup [private]
+ * TrioReadGroup
  *
  * FIXME: characterclass does not work with multibyte characters
  */
-static BOOLEAN_T
+TRIO_PRIVATE BOOLEAN_T
 TrioReadGroup(trio_class_t *self,
 	      char *target,
 	      int *characterclass,
@@ -4833,12 +4792,12 @@ TrioReadGroup(trio_class_t *self,
 }
 
 /*************************************************************************
- * TrioReadDouble [private]
+ * TrioReadDouble
  *
  * FIXME:
  *  add long double
  */
-static BOOLEAN_T
+TRIO_PRIVATE BOOLEAN_T
 TrioReadDouble(trio_class_t *self,
 	       double *target,
 	       unsigned long flags,
@@ -4990,9 +4949,9 @@ TrioReadDouble(trio_class_t *self,
 }
 
 /*************************************************************************
- * TrioReadPointer [private]
+ * TrioReadPointer
  */
-static BOOLEAN_T
+TRIO_PRIVATE BOOLEAN_T
 TrioReadPointer(trio_class_t *self,
 		void **target,
 		unsigned long flags)
@@ -5034,9 +4993,9 @@ TrioReadPointer(trio_class_t *self,
 }
 
 /*************************************************************************
- * TrioScan [private]
+ * TrioScan
  */
-static int
+TRIO_PRIVATE int
 TrioScan(const void *source,
 	 size_t sourceSize,
 	 void (*InStream)(trio_class_t *, int *),
@@ -5044,14 +5003,16 @@ TrioScan(const void *source,
 	 va_list arglist,
 	 void **argarray)
 {
+#if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
   int charlen;
+  int cnt;
+#endif
   int status;
   int assignment;
   trio_parameter_t parameters[MAX_PARAMETERS];
   trio_class_t internalData;
   trio_class_t *data;
   int ch;
-  int cnt;
   int index; /* Index of format string */
   int i; /* Index of current parameter */
   unsigned long flags;
@@ -5084,10 +5045,13 @@ TrioScan(const void *source,
   index = 0;
   data->InStream(data, &ch);
 
+#if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
   mblen(NULL, 0);
+#endif
 
   while (format[index])
     {
+#if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)
       if (! isascii(format[index]))
 	{
 	  charlen = mblen(&format[index], MB_LEN_MAX);
@@ -5102,6 +5066,7 @@ TrioScan(const void *source,
 	    }
 	  continue; /* while */
 	}
+#endif /* TRIO_COMPILER_SUPPORTS_MULTIBYTE */
       if (EOF == ch)
 	return EOF;
       
@@ -5188,6 +5153,7 @@ TrioScan(const void *source,
 	      break; /* FORMAT_INT */
 	      
 	    case FORMAT_STRING:
+#if TRIO_WIDECHAR
 	      if (flags & FLAGS_WIDECHAR)
 		{
 		  if (!TrioReadWideString(data,
@@ -5199,6 +5165,7 @@ TrioScan(const void *source,
 		    return assignment;
 		}
 	      else
+#endif
 		{
 		  if (!TrioReadString(data,
 				      (flags & FLAGS_IGNORE)
@@ -5294,6 +5261,7 @@ TrioScan(const void *source,
 	      break; /* FORMAT_COUNT */
 	      
 	    case FORMAT_CHAR:
+#if TRIO_WIDECHAR
 	      if (flags & FLAGS_WIDECHAR)
 		{
 		  if (TrioReadWideChar(data,
@@ -5305,6 +5273,7 @@ TrioScan(const void *source,
 		    return assignment;
 		}
 	      else
+#endif
 		{
 		  if (TrioReadChar(data,
 				   (flags & FLAGS_IGNORE)
@@ -5358,9 +5327,9 @@ TrioScan(const void *source,
 }
 
 /*************************************************************************
- * TrioInStreamFile [private]
+ * TrioInStreamFile
  */
-static void
+TRIO_PRIVATE void
 TrioInStreamFile(trio_class_t *self,
 		 int *intPointer)
 {
@@ -5380,9 +5349,9 @@ TrioInStreamFile(trio_class_t *self,
 }
 
 /*************************************************************************
- * TrioInStreamFileDescriptor [private]
+ * TrioInStreamFileDescriptor
  */
-static void
+TRIO_PRIVATE void
 TrioInStreamFileDescriptor(trio_class_t *self,
 			   int *intPointer)
 {
@@ -5404,9 +5373,9 @@ TrioInStreamFileDescriptor(trio_class_t *self,
 }
 
 /*************************************************************************
- * TrioInStreamString [private]
+ * TrioInStreamString
  */
-static void
+TRIO_PRIVATE void
 TrioInStreamString(trio_class_t *self,
 		   int *intPointer)
 {
