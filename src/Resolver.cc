@@ -606,7 +606,20 @@ void Resolver::LookupOne(const char *name)
    int af_index=0;
    int af_order[16];
 
-   ParseOrder(res_order.Query(name),af_order);
+   const char *order=res_order.Query(name);
+
+   const char *proto_delim=strchr(name,',');
+   if(proto_delim)
+   {
+      char *o=string_alloca(proto_delim-name+1);
+      memcpy(o,name,proto_delim-name);
+      o[proto_delim-name]=0;
+      if(ParseOrder(o,0)==0) // check if the protocol name is valid.
+	 order=o;
+      name=proto_delim+1;
+   }
+
+   ParseOrder(order,af_order);
 
    for(;;)
    {

@@ -1,3 +1,9 @@
+1999-09-10  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Resolver.cc: recognize host names in the form proto,hostname and
+	  lookup address in specified protocol family, e.g. inet6,hostname.com.
+	  (Note: this won't work over proxies)
+
 1999-09-08  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* NetAccess.cc, NetAccess.h: drop first_lookup.
