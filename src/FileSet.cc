@@ -26,6 +26,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <utime.h>
+#include <stdlib.h>
 #include "misc.h"
 #include "ResMgr.h"
 
@@ -240,7 +241,7 @@ bool  FileInfo::SameAs(const FileInfo *fi,
 	 inf=prec->IsInfty();
       }
       if(!(ignore&IGNORE_DATE_IF_OLDER && date<fi->date)
-      && (!inf && abs((long)date-(long)(fi->date))>p))
+      && (!inf && labs((long)date-(long)(fi->date))>p))
 	 return false;
    }
 

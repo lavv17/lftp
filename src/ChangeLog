@@ -1,3 +1,7 @@
+2001-08-16  Wolfram Gloger <Wolfram.Gloger@dent.med.uni-muenchen.de>
+
+	* FileSet.cc: include stdlib.h; use labs instead of abs.
+
 2001-08-15  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc, ResMgr.cc: declare inet_aton if needed.
