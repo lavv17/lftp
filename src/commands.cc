@@ -2843,9 +2843,10 @@ CMD(chmod)
    if(modeind == 0)
       modeind = args->getindex();
 
-   char *arg = alloca_strdup(args->getarg(modeind));
+   const char *arg = args->getarg(modeind);
    if(!arg)
       goto usage;
+   arg = alloca_strdup(arg);
    args->delarg(modeind);
 
    if(!args->getcurr())
