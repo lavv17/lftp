@@ -269,7 +269,7 @@ void NetAccess::HandleTimeout()
 
 bool NetAccess::CheckTimeout()
 {
-   if(now >= event_time+timeout)
+   if(time_t(now) >= event_time+timeout)
    {
       HandleTimeout();
       return(true);
