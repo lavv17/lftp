@@ -270,13 +270,13 @@ void Ftp::RestCheck(int act)
       last_rest=rest_pos;
       return;
    }
+   real_pos=0;
    if(pos==0)
       return;
    if(is5XX(act))
    {
       DebugPrint("---- ",_("Switching to NOREST mode"),2);
       flags|=NOREST_MODE;
-      real_pos=0;
       if(mode==STORE)
 	 pos=0;
       if(copy_mode!=COPY_NONE)
@@ -1374,12 +1374,6 @@ int   Ftp::Do()
       {
 	 SendCmd("PBSZ 0");
 	 AddResp(0,CHECK_IGNORE);
-	 const char *want_prot=QueryBool("ssl-protect-data",hostname)?"P":"C";
-	 if(*want_prot!=prot)
-	 {
-	    SendCmd2("PROT",want_prot);
-	    AddResp(200,CHECK_PROT);
-	 }
       }
 #endif // USE_SSL
 
@@ -1430,6 +1424,23 @@ int   Ftp::Do()
 	    last_cwd->check_case=CHECK_CWD_CURR;
 	 }
       }
+#ifdef USE_SSL
+      if(control_ssl)
+      {
+	 const char *want_prot="P";
+	 if(mode==LIST || mode==LONG_LIST)
+	    want_prot=QueryBool("ssl-protect-list",hostname)?"P":"C";
+	 else
+	    want_prot=QueryBool("ssl-protect-data",hostname)?"P":"C";
+	 if(copy_mode!=COPY_NONE)
+	    want_prot="C";
+	 if(*want_prot!=prot)
+	 {
+	    SendCmd2("PROT",want_prot);
+	    AddResp(200,CHECK_PROT);
+	 }
+      }
+#endif
       state=CWD_CWD_WAITING_STATE;
       m=MOVED;
 
@@ -1443,6 +1454,11 @@ int   Ftp::Do()
       // wait for all CWD to finish
       if(mode!=CHANGE_DIR && FindLastCWD())
 	 goto usual_return;
+#ifdef USE_SSL
+      // PROT is critical for data transfers
+      if(RespQueueHas(CHECK_PROT))
+	 goto usual_return;
+#endif
 
       // address of peer is not known yet
       if(copy_mode!=COPY_NONE && !copy_passive && !copy_addr_valid)
@@ -1814,7 +1830,7 @@ int   Ftp::Do()
       // so check if last_rest was different.
       if(real_pos==-1 || last_rest!=real_pos)
       {
-         rest_pos=real_pos!=-1?real_pos:pos;
+         rest_pos=(real_pos!=-1?real_pos:pos);
 	 sprintf(str,"REST %lld\n",(long long)rest_pos);
 	 real_pos=-1;
 	 SendCmd(str);
@@ -2093,12 +2109,10 @@ notimeout_return:
 	 assert(rate_limit!=0);
 	 int bytes_allowed = rate_limit->BytesAllowed(
 			      mode==STORE?rate_limit->PUT:rate_limit->GET);
-	 // guard against unimplemented REST: if we have sent REST command
-	 // (real_pos==-1) and did not yet receive the response
-	 // (RespQueueSize()>1), don't allow to read/write the data
-	 // since REST could fail.
-	 if(!(RespQueueSize()>1 && real_pos==-1)
-	 && bytes_allowed>0) // and we are allowed to xfer
+	 /* If we have sent REST command and have not received the response yet
+	  * (real_pos==-1), then don't allow to read/write the data
+	  * since REST can fail. */
+	 if(real_pos!=-1 && bytes_allowed>0) // and we are allowed to xfer
 	    Block(data_sock,(mode==STORE?POLLOUT:POLLIN));
 	 if(bytes_allowed==0)
 	    TimeoutS(1);
@@ -2911,6 +2925,14 @@ void  Ftp::Close()
       Disconnect();
 }
 
+bool Ftp::RespQueueHas(check_case_t cc)
+{
+   for(int i=RQ_head; i<RQ_tail; i++)
+      if(cc==RespQueue[i].check_case)
+	 return true;
+   return false;
+}
+
 void Ftp::CloseRespQueue()
 {
    for(int i=RQ_head; i<RQ_tail; i++)
@@ -3371,6 +3393,7 @@ void  Ftp::MoveConnectionHere(Ftp *o)
    size_supported=o->size_supported;
    mdtm_supported=o->mdtm_supported;
    site_chmod_supported=o->site_chmod_supported;
+   pret_supported=o->pret_supported;
    last_rest=o->last_rest;
 
    if(!home)
@@ -4007,6 +4030,21 @@ void Ftp::SetError(int ec,const char *e)
       break;
    }
    super::SetError(ec,e);
+}
+
+Ftp::ConnectLevel Ftp::GetConnectLevel()
+{
+   if(control_sock==-1)
+      return CL_NOT_CONNECTED;
+   if(state==CONNECTING_STATE)
+      return CL_CONNECTING;
+   if(state==CONNECTED_STATE)
+      return CL_JUST_CONNECTED;
+   if(state==USER_RESP_WAITING_STATE)
+      return CL_NOT_LOGGED_IN;
+   if(quit_sent)
+      return CL_JUST_BEFORE_DISCONNECT;
+   return CL_LOGGED_IN;
 }
 
 ListInfo *Ftp::MakeListInfo(const char *path)

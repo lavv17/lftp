@@ -132,6 +132,7 @@ class Ftp : public NetAccess
    int   RespQueueIsEmpty() { return RQ_head==RQ_tail; }
    int	 RespQueueSize() { return RQ_tail-RQ_head; }
    expected_response *FindLastCWD();
+   bool	 RespQueueHas(check_case_t cc);
 
    void	 RestCheck(int);
    void  NoFileCheck(int);
@@ -347,20 +348,7 @@ public:
       CL_LOGGED_IN,
       CL_JUST_BEFORE_DISCONNECT
    };
-   ConnectLevel GetConnectLevel()
-   {
-      if(control_sock==-1)
-	 return CL_NOT_CONNECTED;
-      if(state==CONNECTING_STATE)
-	 return CL_CONNECTING;
-      if(state==CONNECTED_STATE)
-	 return CL_JUST_CONNECTED;
-      if(state==USER_RESP_WAITING_STATE)
-	 return CL_NOT_LOGGED_IN;
-      if(quit_sent)
-	 return CL_JUST_BEFORE_DISCONNECT;
-      return CL_LOGGED_IN;
-   }
+   ConnectLevel GetConnectLevel();
    int IsConnected()
    {
       return GetConnectLevel()!=CL_NOT_CONNECTED;
