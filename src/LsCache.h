@@ -88,8 +88,6 @@ public:
    static void SetSizeLimit(long l) { sizelimit=l; }
    static long SizeLimit() { return sizelimit; }
    static void SetExpire(const TimeInterval &t) { ttl=t; }
-
-   int Do();
 };
 
 #endif//LSCACHE_H
