@@ -21,7 +21,7 @@ proto_ftp_la_SOURCES  = ftpclass.cc FtpListInfo.cc FtpGlob.cc FtpDirList.cc\
  md5.c ftp-opie.c FtpSplitList.cc FileCopyFtp.cc
 proto_http_la_SOURCES = Http.cc HttpDir.cc
 proto_file_la_SOURCES = LocalAccess.cc
-proto_fish_la_SOURCES = Fish.cc PtyShell.cc
+proto_fish_la_SOURCES = Fish.cc PtyShell.cc lftp_pty.c
 cmd_mirror_la_SOURCES = MirrorJob.cc
 cmd_sleep_la_SOURCES  = SleepJob.cc getdate.c
 libnetwork_la_SOURCES = NetAccess.cc Resolver.cc lftp_ssl.cc buffer_ssl.cc
