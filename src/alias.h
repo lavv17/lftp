@@ -45,7 +45,7 @@ public:
 
    static char *Format();
 
-   friend char *command_generator(char *text,int state);
+   friend char *command_generator(const char *text,int state);
 };
 
 class TouchedAlias

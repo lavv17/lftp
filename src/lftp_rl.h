@@ -31,6 +31,21 @@ char *lftp_readline (const char *prompt);
 void lftp_add_history_nodups(const char *cmd);
 void lftp_rl_clear(void);
 void lftp_rl_redisplay_maybe(void);
+void lftp_rl_set_ignore_some_completions_function(int (*func)(char**));
+char **lftp_rl_completion_matches(const char *text,char *(*compentry)(const char *,int));
+void lftp_rl_add_defun(const char *name,int (*func)(int,int),int key);
+void lftp_rl_bind(const char *key,const char *func);
+
+void lftp_rl_init(
+   const char *readline_name,
+   char **(*attempted_completion_function)(const char *,int,int),
+   int (*getc_function)(FILE*),
+   const char *completer_quote_characters,
+   const char *completer_word_break_characters,
+   const char *filename_quote_characters,
+   char *(*filename_quoting_function)(char *,int,char *),
+   char *(*filename_dequoting_function)(char *,int),
+   int (*char_is_quoted_p)(char *,int));
 
 CDECL_END
 

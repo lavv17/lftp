@@ -53,7 +53,7 @@ static FileSet *glob_res=NULL;
 static bool shell_cmd;
 static bool quote_glob;
 
-char *command_generator(char *text,int state)
+char *command_generator(const char *text,int state)
 {
    const char *name;
    static const Alias *alias;
@@ -87,7 +87,7 @@ char *command_generator(char *text,int state)
    return(NULL);
 }
 
-static char *remote_generator(char *text,int state)
+static char *remote_generator(const char *text,int state)
 {
    const char *name;
 
@@ -113,7 +113,7 @@ static char *remote_generator(char *text,int state)
    return NULL;
 }
 
-static char *bookmark_generator(char *text,int s)
+static char *bookmark_generator(const char *text,int s)
 {
    static int state;
    const char *t;
@@ -144,7 +144,7 @@ static char *bookmark_generator(char *text,int s)
    }
 }
 
-static char *array_generator(char *text,int state)
+static char *array_generator(const char *text,int state)
 {
    const char *name;
 
@@ -176,7 +176,7 @@ static bool not_dir(char *f)
    return res;
 }
 
-void ignore_non_dirs(char **matches)
+int ignore_non_dirs(char **matches)
 {
    // filter out non-dirs.
    int out=1;
@@ -201,6 +201,7 @@ void ignore_non_dirs(char **matches)
 	 matches[0]=0;
       }
    }
+   return 0;
 }
 
 static const char *find_word(const char *p)
@@ -311,7 +312,7 @@ static completion_type cmd_completion_type(const char *cmd,int start)
    || !strcmp(buf,"rm")
    || !strcmp(buf,"rmdir")
    || !strcmp(buf,"bzcat")
-   || !strcmp(buf,"bzmore")      
+   || !strcmp(buf,"bzmore")
    || !strcmp(buf,"zcat")
    || !strcmp(buf,"zmore"))
       return REMOTE_FILE;
@@ -470,7 +471,7 @@ static bool force_remote=false;
    region of TEXT that contains the word to complete.  We can use the
    entire line in case we want to do some simple parsing.  Return the
    array of matches, or NULL if there aren't any. */
-static char **lftp_completion (char *text,int start,int end)
+static char **lftp_completion (const char *text,int start,int end)
 {
    completion_shell->RestoreCWD();
 
@@ -488,7 +489,7 @@ static char **lftp_completion (char *text,int start,int end)
 
    len=end-start;
 
-   char *(*generator)(char *text,int state) = 0;
+   char *(*generator)(const char *text,int state) = 0;
 
    switch(type)
    {
@@ -513,7 +514,7 @@ static char **lftp_completion (char *text,int start,int end)
 	 goto really_remote;
       }
       if(type==LOCAL_DIR)
-	 rl_ignore_some_completions_function = (Function*)ignore_non_dirs;
+	 lftp_rl_set_ignore_some_completions_function(ignore_non_dirs);
       break;
    case REMOTE_FILE:
    case REMOTE_DIR:
@@ -572,10 +573,11 @@ static char **lftp_completion (char *text,int start,int end)
    char quoted=((lftp_char_is_quoted(rl_line_buffer,start) &&
 		 strchr(rl_completer_quote_characters,rl_line_buffer[start-1]))
 		? rl_line_buffer[start-1] : 0);
-   text=bash_dequote_filename(text, quoted);
-   len=strlen(text);
+   char *textq=alloca_strdup(text);
+   textq=bash_dequote_filename(textq, quoted);
+   len=strlen(textq);
 
-   char **matches=completion_matches(text,(CPFunction*)generator);
+   char **matches=lftp_rl_completion_matches(textq,generator);
 
    glob_res=0;
    if(rg)
@@ -591,7 +593,7 @@ static char **lftp_completion (char *text,int start,int end)
       rl_completion_append_character='/';
 
 leave:
-   xfree(text);
+   xfree(textq);
    return matches;
 }
 
@@ -950,12 +952,12 @@ int lftp_char_is_quoted(char *string,int eindex)
   return (0);
 }
 
-int   lftp_complete_remote(int count,int key)
+extern "C" int (*rl_last_func)(int,int);
+static int lftp_complete_remote(int count,int key)
 {
-   extern Function *rl_last_func;
 
-   if(rl_last_func == (Function*)lftp_complete_remote)
-      rl_last_func = (Function*)rl_complete;
+   if(rl_last_func == lftp_complete_remote)
+      rl_last_func = rl_complete;
 
    force_remote = true;
    int ret=rl_complete(count,key);
@@ -963,7 +965,7 @@ int   lftp_complete_remote(int count,int key)
    return ret;
 }
 
-int   lftp_rl_getc(FILE *file)
+int lftp_rl_getc(FILE *file)
 {
    int res;
    CharReader r(fileno(file));
@@ -992,22 +994,17 @@ int   lftp_rl_getc(FILE *file)
    if not. */
 void lftp_readline_init ()
 {
-   /* Allow conditional parsing of the ~/.inputrc file. */
-   rl_readline_name = (char*)"lftp";
+   lftp_rl_init(
+      "lftp",		      // rl_readline_name
+      lftp_completion,	      // rl_attempted_completion_function
+      lftp_rl_getc,	      // rl_getc_function
+      "\"",		      // rl_completer_quote_characters
+      " \t\n\"",	      // rl_completer_word_break_characters
+      " \t\n\\\">;|&()*?[]~", // rl_filename_quote_characters
+      bash_quote_filename,    // rl_filename_quoting_function
+      bash_dequote_filename,  // rl_filename_dequoting_function
+      lftp_char_is_quoted);   // rl_char_is_quoted_p
 
-   /* Tell the completer that we want a crack first. */
-   rl_attempted_completion_function = (CPPFunction *)lftp_completion;
-
-   rl_getc_function = (Function*)lftp_rl_getc;
-
-   rl_completer_quote_characters = (char*)"\"";
-   rl_completer_word_break_characters = (char*)" \t\n\"";
-   rl_filename_quote_characters = (char*)" \t\n\\\">;|&()*?[]~";
-   rl_filename_quoting_function = (CPFunction*)bash_quote_filename;
-   rl_filename_dequoting_function = (CPFunction*)bash_dequote_filename;
-   rl_char_is_quoted_p = (Function*)lftp_char_is_quoted;
-
-   rl_add_defun((char*)"complete-remote",(Function*)lftp_complete_remote,-1);
-   static char line[]="Meta-Tab: complete-remote";
-   rl_parse_and_bind(line); /* this function writes to the string */
+   lftp_rl_add_defun("complete-remote",lftp_complete_remote,-1);
+   lftp_rl_bind("Meta-Tab","complete-remote");
 }

@@ -1,6 +1,8 @@
 2001-04-17  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* MirrorJob.cc, mkdirJob.cc, StatusLine.cc: fix overflows.
+	* complete.cc, lftp_rl.c, lftp_rl.h, alias.h: make it compile with
+	  readline-4.2.
 
 2001-04-04  Alexander V. Lukyanov  <lav@yars.free.net>
 
