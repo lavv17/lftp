@@ -3656,6 +3656,7 @@ const char *Ftp::CurrentStatus()
    case(ACCEPTING_STATE):
       return(_("Waiting for data connection..."));
    case(DATA_OPEN_STATE):
+#ifdef USE_SSL
       if(data_ssl)
       {
 	 if(mode==STORE)
@@ -3663,6 +3664,7 @@ const char *Ftp::CurrentStatus()
          else
 	    return(_("Receiving data/TLS"));
       }
+#endif
       if(data_sock!=-1)
       {
 	 if(mode==STORE)

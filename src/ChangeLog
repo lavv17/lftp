@@ -1,3 +1,7 @@
+2002-03-10  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: add ifdef USE_SSL around data_ssl.
+
 2002-02-27  Ayamura KIKUCHI <ayamura@ayamura.org>
 
 	* FileSetOutput.cc, lftp.cc: locale.h is now included from config.h.
