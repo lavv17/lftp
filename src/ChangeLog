@@ -3,6 +3,9 @@
 	* FileAccess.cc: use NO_SIZE and NO_DATE.
 	* ftpclass.cc: save size in entity_size and simulate eof on pos>=size;
 	  send proper offset for REST.
+	* NetAccess.cc, NetAccess.h: add takeover_time.
+	* ftpclass.cc, ftpclass.h: don't use taken-over connection immediately
+	  if priority<1; pass connection count to GetBetterConnection.
 
 2000-03-02  Alexander V. Lukyanov  <lav@yars.free.net>
 

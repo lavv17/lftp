@@ -52,6 +52,7 @@ protected:
 
    int	 connection_limit;
    bool	 connection_takeover;
+   time_t takeover_time;
 
    int	 socket_buffer;
    int	 socket_maxseg;

@@ -232,7 +232,7 @@ class Ftp : public NetAccess
    bool	 rest_list:1;
    char  *list_options;
 
-   void	 GetBetterConnection(int level);
+   void	 GetBetterConnection(int level,int count);
    bool  SameConnection(const Ftp *o);
 
    int	 nop_interval;

@@ -817,7 +817,7 @@ bool Ftp::AbsolutePath(const char *s)
 	  && s[dev_len-1]=='/'));
 }
 
-void  Ftp::GetBetterConnection(int level)
+void  Ftp::GetBetterConnection(int level,int count)
 {
    if(level==0 && cwd==0)
       return;
@@ -851,6 +851,10 @@ void  Ftp::GetBetterConnection(int level)
 	    if(o->RespQueueSize()>0)
 	       continue;
 	 }
+      }
+      else
+      {
+	 takeover_time=now;
       }
 
       // connected session (o) must have resolved address
@@ -927,12 +931,12 @@ int   Ftp::Do()
 
       // walk through ftp classes and try to find identical idle ftp session
       // first try "easy" cases of session take-over.
+      int count=CountConnections();
       for(int i=0; i<3; i++)
       {
-	 if(i>=2 && (connection_limit==0
-		  || connection_limit>CountConnections()))
+	 if(i>=2 && (connection_limit==0 || connection_limit>count))
 	    break;
-	 GetBetterConnection(i);
+	 GetBetterConnection(i,count);
 	 if(state!=INITIAL_STATE)
 	    return MOVED;
       }
@@ -1104,6 +1108,13 @@ int   Ftp::Do()
 	 state=NO_FILE_STATE;
 	 return MOVED;
       }
+
+      if(takeover_time!=NO_DATE && takeover_time+1-priority>now)
+      {
+	 TimeoutS(takeover_time+1-priority-now);
+	 goto notimeout_return;
+      }
+      takeover_time=NO_DATE;
 
       assert(peer!=0);
       assert(peer_curr<peer_num);
