@@ -182,7 +182,6 @@ private:
    int start_time_ms;
    time_t end_time;
    int end_time_ms;
-   long bytes_count;
 
    bool fail_if_cannot_seek;
    bool remove_source_later;
@@ -203,6 +202,7 @@ protected:
 	 rate->Reset();
 	 rate_for_eta->Reset();
       }
+   long bytes_count;
 
 public:
    long GetPos();
