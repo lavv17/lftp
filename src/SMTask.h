@@ -22,6 +22,7 @@
 #define SMTASK_H
 
 #include "PollVec.h"
+#include "TimeDate.h"
 
 class SMTask
 {
@@ -54,9 +55,8 @@ public:
    void Timeout(int ms) { block.AddTimeout(ms); }
    void TimeoutS(int s) { Timeout(1000*s); }
 
-   static time_t now;
-   static int now_ms;
-   static void UpdateNow();
+   static TimeDate now;
+   static void UpdateNow() { now.SetToCurrentTime(); }
 
    static void Schedule();
    static void Block() { sched_total.Block(); }

@@ -360,11 +360,7 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
    if(strlen(t)==5)
    {
       sscanf(t,"%2d:%2d",&date.tm_hour,&date.tm_min);
-      time_t curr=time(0);
-      struct tm &now=*localtime(&curr);
-      date.tm_year=now.tm_year;
-      if(date.tm_mon*64+date.tm_mday>now.tm_mon*64+now.tm_mday)
-	 date.tm_year--;
+      date.tm_year=guess_year(date.tm_mon,date.tm_mday,date.tm_hour,date.tm_min,SMTask::now);
    }
    else
    {

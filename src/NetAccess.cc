@@ -269,12 +269,12 @@ void NetAccess::HandleTimeout()
 
 bool NetAccess::CheckTimeout()
 {
-   if(now-event_time>=timeout)
+   if(now >= event_time+timeout)
    {
       HandleTimeout();
       return(true);
    }
-   TimeoutS(timeout-(now-event_time));
+   TimeoutS(timeout-(time_t(now)-event_time));
    return(false);
 }
 
@@ -376,15 +376,15 @@ RateLimit::~RateLimit()
 #define DEFAULT_MAX_COEFF 2
 void RateLimit::BytesPool::AdjustTime()
 {
-   if(SMTask::now>t)
-   {
-      time_t dif=SMTask::now-t;
+   double dif=TimeDiff(SMTask::now,t);
 
+   if(dif>0)
+   {
       // prevent overflow
       if((LARGE-pool)/dif < rate)
 	 pool = pool_max>0 ? pool_max : rate*DEFAULT_MAX_COEFF;
       else
-	 pool += dif*rate;
+	 pool += int(dif*rate+0.5);
 
       if(pool>pool_max && pool_max>0)
 	 pool=pool_max;
@@ -480,9 +480,9 @@ bool NetAccess::ReconnectAllowed()
    if(try_time==0)
       return true;
    long interval = ReconnectInterval();
-   if(now-try_time >= interval)
+   if(now >= try_time+interval)
       return true;
-   TimeoutS(interval-(now-try_time));
+   TimeoutS(interval-(time_t(now)-try_time));
    return false;
 }
 
@@ -491,7 +491,7 @@ const char *NetAccess::DelayingMessage()
    static char buf[80];
    if(connection_limit>0 && connection_limit<=CountConnections())
       return _("Connections limit reached");
-   long remains=ReconnectInterval()-(now-try_time);
+   long remains=ReconnectInterval()-(time_t(now)-try_time);
    if(remains<=0)
       return "";
    sprintf(buf,"%s: %ld",_("Delaying before reconnect"),remains);

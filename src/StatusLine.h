@@ -29,16 +29,15 @@
 # define PRINTF_LIKE(n,m)
 #endif
 
-#include <time.h>
 #include "SMTask.h"
-#include "Time.h"
+#include "Timer.h"
 
 class StatusLine : public SMTask
 {
    int fd;
    char shown[0x800];
    bool	not_term;
-   Timer timer;
+   Timer update_timer;
    char to_be_shown[0x800];
    char def_title[0x800];
    bool update_delayed;
@@ -48,7 +47,7 @@ class StatusLine : public SMTask
 protected:
    ~StatusLine();
    void WriteTitle(const char *s, int fd) const;
-	   
+
 public:
    int GetWidth();
    int GetWidthDelayed() { return LastWidth; }
@@ -56,7 +55,6 @@ public:
    void Show(const char *f,...) PRINTF_LIKE(2,3);
    void WriteLine(const char *f,...) PRINTF_LIKE(2,3);
    void Clear();
-   void Reconfig(const char *name=0);
 
    int getfd() { return fd; }
 

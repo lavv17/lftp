@@ -29,9 +29,9 @@ class Speedometer : public SMTask
 {
    int period;
    float rate;
-   time_t last_second;
-   time_t last_bytes;
-   time_t start;
+   Time last_second;
+   Time last_bytes;
+   Time start;
    bool terse;
    const char *period_resource;
    static char buf_eta[];

@@ -119,7 +119,7 @@ public:
       int pool;
       int rate;
       int pool_max;
-      time_t t;
+      Time t;
 
       void AdjustTime();
       void Reset();

@@ -689,8 +689,8 @@ static char **lftp_completion (const char *text,int start,int end)
 	 if(type==REMOTE_DIR)
 	    rg->glob->DirectoriesOnly();
 
-	 TimeDiff status_interval(0,ResMgr::Query("cmd:status-interval", 0));
-	 Time last_status;
+	 Timer status_timer;
+	 status_timer.SetMilliSeconds(ResMgr::Query("cmd:status-interval",0));
 
 	 for(;;)
 	 {
@@ -716,11 +716,10 @@ static char **lftp_completion (const char *text,int start,int end)
 	       const char *ret = rg->Status();
 	       if(*ret)
 	       {
-		  TimeDiff elapsed(SMTask::now,last_status);
-		  if(elapsed>status_interval)
+		  if(status_timer.Stopped())
 		  {
 		     rl_message ("%s> ", ret);
-		     last_status=SMTask::now;
+		     status_timer.Reset();
 		  }
 	       }
 	    }

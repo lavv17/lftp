@@ -91,7 +91,7 @@ int Fish::Do()
    // check if idle time exceeded
    if(mode==CLOSED && send_buf && idle>0)
    {
-      if(now-idle_start>=idle)
+      if(now >= idle_start+idle)
       {
 	 DebugPrint("---- ",_("Closing idle connection"),1);
 	 Disconnect();
@@ -1328,7 +1328,7 @@ static FileInfo *ls_to_FileInfo(char *line)
       {
 	 sprintf(month_name,"%02d",month+1);
 	 if(year==-1)
-	    year=guess_year(month,day);
+	    year=guess_year(month,day,hour,minute,SMTask::now);
       }
 
       FileInfo *fi=new FileInfo;

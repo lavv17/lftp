@@ -244,13 +244,13 @@ int   Resolver::Do()
    {
       if(timeout>0)
       {
-	 if(now-start_time > timeout)
+	 if(now >= start_time+timeout)
 	 {
 	    err_msg=xstrdup(_("host name resolve timeout"));
 	    done=true;
 	    return MOVED;
 	 }
-	 TimeoutS(timeout-(now-start_time));
+	 TimeoutS(timeout-(time_t(now)-start_time));
       }
       return m;
    }
@@ -926,7 +926,7 @@ void ResolverCache::CacheCheck()
    {
       Entry *s=*scan;
       TimeInterval expire((const char *)ResMgr::Query("dns:cache-expire",s->hostname));
-      if((!expire.IsInfty() && SMTask::now-s->timestamp>expire.Seconds())
+      if((!expire.IsInfty() && SMTask::now>=s->timestamp+expire.Seconds())
       || (count>=countlimit))
       {
 	 *scan=s->next;

@@ -35,8 +35,7 @@ SMTask	 *SMTask::chain=0;
 SMTask	 *SMTask::sched_scan=0;
 SMTask	 *SMTask::current=0;
 PollVec	 SMTask::sched_total;
-time_t	 SMTask::now=time(0);
-int	 SMTask::now_ms; // milliseconds
+TimeDate SMTask::now;
 
 static int task_count=0;
 static SMTask *init_task=new SMTaskInit;
@@ -100,18 +99,6 @@ void SMTask::Delete(SMTask *task)
       delete task;
 }
 
-void SMTask::UpdateNow()
-{
-#ifdef HAVE_GETTIMEOFDAY
-   struct timeval tv;
-   gettimeofday(&tv,0);
-   now=tv.tv_sec;
-   now_ms=tv.tv_usec/1000;
-#else
-   time(&now);
-#endif
-}
-
 int SMTask::Roll(SMTask *task)
 {
    int m=STALL;
@@ -126,7 +113,7 @@ int SMTask::Roll(SMTask *task)
 
 void SMTask::RollAll(int max_time)
 {
-   time_t time_limit=now+(now_ms+500)/1000+max_time;
+   time_t time_limit=now.UnixTime()+max_time;
    do { Schedule(); }
    while(sched_total.GetTimeout()==0
 	 && (max_time==0 || now<time_limit));

@@ -1,3 +1,13 @@
+2001-11-06  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* PtyShell.cc: include sys/types.h and sys/ioctl.h.
+	* TimeDate.cc, TimeDate.h, Timer.cc, Timer.h: new files.
+	* CopyJob.cc, CopyJob.h, FileCopy.cc, FileCopy.h, Fish.cc,
+	  FtpListInfo.cc, Http.cc, HttpDir.cc, NetAccess.cc,
+	  NetAccess.h, Resolver.cc, SMTask.cc, SMTask.h, SleepJob.cc,
+	  Speedometer.cc, Speedometer.h, StatusLine.cc, StatusLine.h,
+	  complete.cc, ftpclass.cc, misc.cc, misc.h: use new time classes.
+
 2001-11-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.h: fix coredump on `mget -E'.

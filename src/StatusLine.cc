@@ -40,7 +40,7 @@
 #include "misc.h"
 #include "StatusLine.h"
 
-ResDecl status_interval ("cmd:status-interval",        "1000",   ResMgr::UNumberValidate,0);
+ResDecl res_status_interval ("cmd:status-interval", "1000", ResMgr::UNumberValidate,ResMgr::NoClosure);
 
 int  StatusLine::GetWidth()
 {
@@ -80,7 +80,7 @@ void StatusLine::Clear()
    newstr[0]=0;
    update(newstr);
    update_delayed=false;
-   timer.force();
+   update_timer.SetMilliSeconds(0);
 
    WriteTitle(def_title, fd);
 }
@@ -106,7 +106,8 @@ void StatusLine::Show(const char *f,...)
    vsnprintf(newstr,sizeof(newstr),f,v);
    va_end(v);
 
-   if(timer.go()) {
+   if(update_timer.Stopped())
+   {
       update(newstr);
       update_delayed=false;
       return;
@@ -118,15 +119,6 @@ void StatusLine::Show(const char *f,...)
    /* not yet */
    strcpy(to_be_shown,newstr);
    update_delayed=true;
-   Timeout(timer.remaining());
-}
-
-void StatusLine::Reconfig(const char *name)
-{
-   if(name && strcmp(name, "cmd:status-interval"))
-      return;
-
-   timer.set_interval((int) status_interval.Query(0));
 }
 
 void StatusLine::WriteTitle(const char *s, int fd) const
@@ -191,6 +183,8 @@ void StatusLine::update(char *newstr)
 
    write(fd,"\r",1);
    write(fd,newstr,strlen(newstr));
+
+   update_timer.SetMilliSeconds(ResMgr::Query("cmd:status-interval",0));
 }
 
 void StatusLine::WriteLine(const char *f,...)
@@ -240,12 +234,11 @@ int StatusLine::Do()
 {
    if(!update_delayed)
       return STALL;
-   if(timer.go())
+   if(update_timer.Stopped())
    {
       update(to_be_shown);
       update_delayed=false;
       return STALL;
    }
-   Timeout(timer.remaining());
    return STALL;
 }

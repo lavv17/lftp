@@ -1068,7 +1068,7 @@ int   Ftp::Do()
    // check if idle time exceeded
    if(mode==CLOSED && control_sock!=-1 && idle>0)
    {
-      if(now-idle_start>=idle)
+      if(now >= idle_start+idle)
       {
 	 DebugPrint("---- ",_("Closing idle connection"),1);
 	 Disconnect();
@@ -1076,7 +1076,7 @@ int   Ftp::Do()
 	    idle_start=now+timeout;
 	 return m;
       }
-      TimeoutS(idle_start+idle-now);
+      TimeoutS(idle_start+idle-time_t(now));
    }
 
    if(Error() || eof || quit_sent || mode==CLOSED)
@@ -1888,7 +1888,7 @@ int   Ftp::Do()
 	 // but the data can be still unsent in server side kernel buffer.
 	 // So the ftp server can decide the connection is idle for too long
 	 // time and disconnect. This hack is to prevent the above.
-	 if(now-nop_time>=nop_interval)
+	 if(now >= nop_time+nop_interval)
 	 {
 	    // prevent infinite NOOP's
 	    if(nop_offset==pos && nop_count*nop_interval>=timeout)
@@ -1907,7 +1907,7 @@ int   Ftp::Do()
 	       nop_count=0;
 	    nop_offset=pos;
 	 }
-	 TimeoutS(nop_interval-(now-nop_time));
+	 TimeoutS(nop_interval-(time_t(now)-nop_time));
       }
 
       oldstate=state;

@@ -426,10 +426,9 @@ int parse_year_or_time(const char *year_or_time,int *year,int *hour,int *minute)
    }
    return 0;
 }
-int guess_year(int month,int day,int hour,int minute)
+int guess_year(int month,int day,int hour,int minute,const struct tm *now_p)
 {
-   time_t curr=time(0);
-   struct tm &now=*localtime(&curr);
+   const struct tm &now=*now_p;
    int year=now.tm_year+1900;
    if(((month     *32+        day)*64+       hour)*64+       minute
     > ((now.tm_mon*32+now.tm_mday)*64+now.tm_hour)*64+now.tm_min)

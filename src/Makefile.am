@@ -53,7 +53,8 @@ libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  NetAccess.cc NetAccess.h FtpSplitList.h FtpSplitList.cc Speedometer.cc\
  Speedometer.h lftp_ssl.cc lftp_ssl.h netrc.cc netrc.h buffer_ssl.cc\
  buffer_ssl.h Fish.cc Fish.h ColumnOutput.cc ColumnOutput.h FileSetOutput.cc \
- FileSetOutput.h Time.cc Time.h PtyShell.cc PtyShell.h lftp_pty.c lftp_pty.h
+ FileSetOutput.h PtyShell.cc PtyShell.h lftp_pty.c lftp_pty.h \
+ TimeDate.cc TimeDate.h Timer.cc Timer.h
 
 libjobs_a_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\
@@ -88,7 +89,7 @@ INCLUDES = -I$(top_srcdir)/include $(SSL_CPPFLAGS)
 lftp.o commands.o module.o: confpaths.h
 
 # libtool does not strip modules, do it here.
-install-data-local:
+install-lib-local:
 	@-if test "$(MODULES_LA)"; then \
 	    case " $(LDFLAGS) " in *" -s "*) \
 	       echo $(STRIP) $(DESTDIR)$(pkgverlibdir)/*.so; \

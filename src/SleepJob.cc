@@ -76,7 +76,7 @@ int SleepJob::Do()
       return STALL;
    }
 
-   if(now-start_time>=next_time.Seconds())
+   if(now >= start_time+next_time.Seconds())
    {
       if(cmd)
       {
@@ -99,7 +99,7 @@ int SleepJob::Do()
       done=true;
       return MOVED;
    }
-   time_t diff=next_time.Seconds()-(now-start_time);
+   time_t diff=next_time.Seconds()-(time_t(now)-start_time);
    if(diff>1024)
       diff=1024;  // prevent overflow
    TimeoutS(diff);

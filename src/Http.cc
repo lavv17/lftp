@@ -764,7 +764,7 @@ int Http::Do()
    // check if idle time exceeded
    if(mode==CLOSED && sock!=-1 && idle>0)
    {
-      if(now-idle_start>=idle)
+      if(now >= idle_start+idle)
       {
 	 DebugPrint("---- ",_("Closing idle connection"),1);
 	 Disconnect();

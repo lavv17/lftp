@@ -324,7 +324,6 @@ int FileCopy::Do()
       state=GET_DONE_WAIT;
       m=MOVED;
       end_time=now;
-      end_time_ms=now_ms;
       Delete(put); put=0;
       /* fallthrough */
    case(GET_DONE_WAIT):
@@ -371,10 +370,6 @@ void FileCopy::Init()
    put_buf=0;
    put_eof_pos=0;
    bytes_count=0;
-   start_time=0;
-   start_time_ms=0;
-   end_time=0;
-   end_time_ms=0;
    fail_if_cannot_seek=false;
    remove_source_later=false;
    line_buffer=0;
@@ -558,18 +553,11 @@ const char *FileCopy::GetStatus()
    return buf;
 }
 
-time_t FileCopy::GetTimeSpent()
+double FileCopy::GetTimeSpent()
 {
-   if(start_time==0 || end_time==0 || end_time<start_time)
+   if(end_time<start_time)
       return 0;
-   return end_time-start_time;
-}
-int FileCopy::GetTimeSpentMilli()
-{
-   if(start_time==0 || end_time==0 || end_time<start_time
-   || (end_time==start_time && end_time_ms<start_time_ms))
-      return 0;
-   return end_time_ms-start_time_ms;
+   return TimeDiff(end_time,start_time);
 }
 
 FgData *FileCopy::GetFgData(bool fg)

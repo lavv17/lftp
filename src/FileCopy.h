@@ -157,10 +157,8 @@ private:
    int put_buf;
    off_t put_eof_pos;
 
-   time_t start_time;
-   int start_time_ms;
-   time_t end_time;
-   int end_time_ms;
+   Time start_time;
+   Time end_time;
 
    bool fail_if_cannot_seek;
    bool remove_source_later;
@@ -177,7 +175,6 @@ protected:
    void RateReset()
       {
 	 start_time=now;
-	 start_time_ms=now_ms;
 	 rate->Reset();
 	 rate_for_eta->Reset();
       }
@@ -202,8 +199,7 @@ public:
    pid_t GetProcGroup();
    void Kill(int sig);
    off_t GetBytesCount() { return bytes_count; }
-   time_t GetTimeSpent();
-   int GetTimeSpentMilli();
+   double GetTimeSpent();
 
    void SetDate(time_t t) { get->SetDate(t); }
    void SetSize(off_t  s) { get->SetSize(s); }

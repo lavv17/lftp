@@ -46,7 +46,7 @@ Speedometer::Speedometer(const char *p)
 }
 bool Speedometer::Valid()
 {
-   return now>start+1 && now<last_bytes+period;
+   return now>=start+1 && now<last_bytes+period;
 }
 int Speedometer::Do()
 {
@@ -61,15 +61,23 @@ float Speedometer::Get()
 }
 void Speedometer::Add(int b)
 {
-   float div=period;
+   double div=period;
+
    if(start>now)
       start=now;  // time was adjusted?
    if(now<last_second)
       last_second=now;
-   if(now-start<div)
-      div=now-start+1;
-   rate*=pow(double(div-1)/div,int(now-last_second));
+
+   double time_passed_since_start=TimeDiff(now,start);
+   double time_passed=TimeDiff(now,last_second);
+   if(time_passed_since_start<div)
+      div=time_passed_since_start;
+   if(div<1)
+      div=1;
+
+   rate*=1-time_passed/div;
    rate+=b/div;
+
    last_second=now;
    if(b>0)
       last_bytes=now;

@@ -57,8 +57,7 @@ public:
 
    bool Error() { return c->Error(); }
    const char *ErrorText() { return c->ErrorText(); }
-   long GetTimeSpent() { return c->GetTimeSpent(); }
-   int  GetTimeSpentMilli() { return c->GetTimeSpentMilli(); }
+   double GetTimeSpent() { return c->GetTimeSpent(); }
    off_t GetBytesCount() { return c->GetBytesCount(); }
    off_t GetSize() { return c->GetSize(); }
    off_t GetPos()  { return c->GetPos(); }
