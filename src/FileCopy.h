@@ -55,6 +55,7 @@ protected:
    bool date_set;
    bool do_set_date;
    bool removing;
+   bool file_removed;
 
    bool ascii;
    bool use_cache;
@@ -109,7 +110,7 @@ public:
    virtual pid_t GetProcGroup() { return 0; }
    virtual void Kill(int sig) {}
 
-   virtual void RemoveFile() {}
+   virtual void RemoveFile() { file_removed=true; }
    virtual void NeedSeek() {} // fd is shared, seek before access.
 
    void CannotSeek(int p)
@@ -125,6 +126,8 @@ public:
    void AllowWrite() { write_allowed=true; }
    bool WriteAllowed() { return write_allowed; }
    bool WritePending() { return mode==PUT && Size()>0; }
+
+   bool FileRemoved() { return file_removed; }
 };
 
 class FileCopy : public SMTask
@@ -162,6 +165,7 @@ private:
 
    bool fail_if_cannot_seek;
    bool remove_source_later;
+   bool remove_target_first;
 
    Buffer *line_buffer;
    int  line_buffer_max;
@@ -214,6 +218,7 @@ public:
    void FailIfCannotSeek() { fail_if_cannot_seek=true; }
    void SetRange(off_t s,off_t lim) { get->SetRange(s,lim); put->SetRange(s,lim); }
    void RemoveSourceLater() { remove_source_later=true; }
+   void RemoveTargetFirst() { remove_target_first=true; put->Resume(); put->RemoveFile(); }
    void LineBuffered(int size=0x1000);
 
    FileCopy(FileCopyPeer *src,FileCopyPeer *dst,bool cont);

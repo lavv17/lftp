@@ -72,6 +72,9 @@ int FileCopy::Do()
       state=INITIAL;
       m=MOVED;
    case(INITIAL):
+      if(remove_target_first && !put->FileRemoved())
+	 return m;
+      remove_target_first=false;
       if(put->NeedSizeDateBeforehand())
       {
 	 if(get->GetSize()==NO_SIZE_YET || get->GetDate()==NO_DATE_YET)
@@ -372,6 +375,7 @@ void FileCopy::Init()
    bytes_count=0;
    fail_if_cannot_seek=false;
    remove_source_later=false;
+   remove_target_first=false;
    line_buffer=0;
    line_buffer_max=0;
 }
@@ -645,6 +649,7 @@ FileCopyPeer::FileCopyPeer(direction m)
    range_start=0;
    range_limit=FILE_END;
    removing=false;
+   file_removed=false;
    use_cache=true;
    write_allowed=true;
    Suspend();  // don't do anything too early
@@ -667,8 +672,10 @@ int FileCopyPeerFA::Do()
       if(res<=0)
       {
 	 removing=false;
+	 file_removed=true;
 	 session->Close();
-	 m=MOVED;
+	 Suspend();
+	 return MOVED;
       }
       else
 	 return m;
@@ -1511,6 +1518,9 @@ void FileCopyPeerFDStream::RemoveFile()
 {
    stream->remove();
    removing=false;   // it is instant.
+   file_removed=true;
+   Suspend();
+   current->Timeout(0);
 }
 
 FileCopyPeerFDStream *FileCopyPeerFDStream::NewPut(const char *file,bool cont)

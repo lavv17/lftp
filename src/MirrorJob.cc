@@ -43,9 +43,7 @@ void  MirrorJob::PrintStatus(int v)
 {
    const char *tab="\t";
 
-   if(v!=-1)
-      SessionJob::PrintStatus(v);
-   else
+   if(v==-1)
       tab="";
 
    if(Done())
@@ -55,9 +53,8 @@ void  MirrorJob::PrintStatus(int v)
    {
    case(INITIAL_STATE):
    case(DONE):
-   case(WAITING_FOR_SUBGET):
+   case(WAITING_FOR_TRANSFER):
    case(WAITING_FOR_SUBMIRROR):
-   case(WAITING_FOR_RM_BEFORE_TRANSFER):
    case(WAITING_FOR_MKDIR_BEFORE_SUBMIRROR):
    case(TARGET_REMOVE_OLD):
    case(TARGET_CHMOD):
@@ -69,18 +66,24 @@ void  MirrorJob::PrintStatus(int v)
 
    case(CHANGING_DIR):
       printf("\tcd `%s' [%s]\n",target_dir,target_session->CurrentStatus());
-      printf("\tcd `%s' [%s]\n",source_dir,session->CurrentStatus());
+      printf("\tcd `%s' [%s]\n",source_dir,source_session->CurrentStatus());
       break;
 
    case(GETTING_LIST_INFO):
-      if(target_relative_dir)
-	 printf("\t%s: %s\n",target_relative_dir,target_list_info->Status());
-      else
-	 printf("\t%s\n",target_list_info->Status());
-      if(source_relative_dir)
-	 printf("\t%s: %s\n",source_relative_dir,source_list_info->Status());
-      else
-	 printf("\t%s\n",source_list_info->Status());
+      if(target_list_info)
+      {
+	 if(target_relative_dir)
+	    printf("\t%s: %s\n",target_relative_dir,target_list_info->Status());
+	 else
+	    printf("\t%s\n",target_list_info->Status());
+      }
+      if(source_list_info)
+      {
+	 if(source_relative_dir)
+	    printf("\t%s: %s\n",source_relative_dir,source_list_info->Status());
+	 else
+	    printf("\t%s\n",source_list_info->Status());
+      }
       break;
    }
    return;
@@ -116,9 +119,8 @@ void  MirrorJob::ShowRunStatus(StatusLine *s)
       break;
 
    // these have a sub-job
-   case(WAITING_FOR_SUBGET):
+   case(WAITING_FOR_TRANSFER):
    case(WAITING_FOR_SUBMIRROR):
-   case(WAITING_FOR_RM_BEFORE_TRANSFER):
    case(WAITING_FOR_MKDIR_BEFORE_SUBMIRROR):
    case(TARGET_REMOVE_OLD):
    case(TARGET_CHMOD):
@@ -130,10 +132,10 @@ void  MirrorJob::ShowRunStatus(StatusLine *s)
       break;
 
    case(CHANGING_DIR):
-      if(target_session->IsOpen() && (!session->IsOpen() || now%4>=2))
+      if(target_session->IsOpen() && (!source_session->IsOpen() || now%4>=2))
 	 s->Show("cd `%s' [%s]",target_dir,target_session->CurrentStatus());
-      else if(session->IsOpen())
-	 s->Show("cd `%s' [%s]",source_dir,session->CurrentStatus());
+      else if(source_session->IsOpen())
+	 s->Show("cd `%s' [%s]",source_dir,source_session->CurrentStatus());
       break;
 
    case(GETTING_LIST_INFO):
@@ -177,6 +179,7 @@ void  MirrorJob::HandleFile(int how)
       case(FileInfo::NORMAL):
       {
       try_get:
+	 bool remove_target=false;
 	 cont_this=false;
 	 if(how!=0)
 	    goto skip;
@@ -211,29 +214,54 @@ void  MirrorJob::HandleFile(int how)
 	    {
 	       Report(_("Removing old file `%s'"),
 			dir_file(target_relative_dir,file->name));
-	       args=new ArgV("rm");
-	       args->Append(file->name);
-	       if(script)
-	       {
-		  char *cmd=args->CombineQuoted();
-		  fprintf(script,"%s",cmd);
-		  xfree(cmd);
-		  if(script_only)
-		  {
-		     delete args;
-		     goto skip;
-		  }
-	       }
-	       Job *j=new rmJob(target_session->Clone(),args);
-	       j->SetParentFg(this);
-	       j->cmdline=args->Combine();
-	       AddWaiting(j);
+	       remove_target=true;
 	    }
 	    mod_files++;
 	 }
 	 else
 	    new_files++;
-	 state=WAITING_FOR_RM_BEFORE_TRANSFER;
+
+	 Report(_("Transferring file `%s'"),
+		  dir_file(source_relative_dir,file->name));
+
+   #if 0 // unfinished
+	 if(script)
+	 {
+	    args=new ArgV("put1");
+	    if(cont_this)
+	       args->Append("-c");
+	    args->Append(local_name);
+	    args->Append("-o");
+	    args->Append(file->name);
+	    char *cmd=args->CombineQuoted();
+	    fprintf(script,"%s",cmd);
+	    xfree(cmd);
+	    delete args; args=0;
+	    if(script_only)
+	       goto skip;
+	 }
+   #endif
+
+	 FileCopyPeerFA *src_peer=
+	    new FileCopyPeerFA(source_session->Clone(),file->name,FA::RETRIEVE);
+	 FileCopyPeerFA *dst_peer=
+	    new FileCopyPeerFA(target_session->Clone(),file->name,FA::STORE);
+
+	 FileCopy *c=FileCopy::New(src_peer,dst_peer,cont_this);
+	 if(remove_source_files)
+	    c->RemoveSourceLater();
+	 if(remove_target)
+	    c->RemoveTargetFirst();
+	 CopyJob *cp=
+	    new CopyJob(c,file->name,"mirror");
+	 if(file->defined&file->DATE && file->date_prec<1)
+	    cp->SetDate(file->date);
+	 if(file->defined&file->SIZE)
+	    cp->SetSize(file->size);
+	 AddWaiting(cp);
+	 cp->SetParentFg(this);
+	 cp->cmdline=xasprintf("\\transfer %s",file->name);
+	 state=WAITING_FOR_TRANSFER;
 	 break;
       }
       case(FileInfo::DIRECTORY):
@@ -281,7 +309,7 @@ void  MirrorJob::HandleFile(int how)
 	 }
 
 	 // launch sub-mirror
-	 MirrorJob *mj=new MirrorJob(Clone(),target_session->Clone(),
+	 MirrorJob *mj=new MirrorJob(source_session->Clone(),target_session->Clone(),
 				       source_name,target_name);
 	 mj->parent_mirror=this;
 	 AddWaiting(mj);
@@ -440,7 +468,7 @@ void MirrorJob::HandleChdir(FileAccess * &session, int &redirections)
       eprintf("mirror: %s\n",session->StrError(res));
       error_count++;
       state=DONE;
-      this->session->Close();
+      source_session->Close();
       target_session->Close();
       return;
    }
@@ -510,28 +538,28 @@ int   MirrorJob::Do()
 	 return m;
       target_session->Close();
 
-      session->Chdir(source_dir);
+      source_session->Chdir(source_dir);
       target_session->Chdir(target_dir);
-      redirections=0;
+      source_redirections=0;
       target_redirections=0;
-      Roll(session);
+      Roll(source_session);
       Roll(target_session);
       state=CHANGING_DIR;
       m=MOVED;
    case(CHANGING_DIR):
-      HandleChdir(session,redirections);
+      HandleChdir(source_session,source_redirections);
       HandleChdir(target_session,target_redirections);
       if(state!=CHANGING_DIR)
 	 return MOVED;
-      if(session->IsOpen() || target_session->IsOpen())
+      if(source_session->IsOpen() || target_session->IsOpen())
 	 return m;
 
       xfree(target_dir);
       target_dir=xstrdup(target_session->GetCwd());
       xfree(source_dir);
-      source_dir=xstrdup(session->GetCwd());
+      source_dir=xstrdup(source_session->GetCwd());
 
-      HandleListInfoCreation(session,source_list_info,source_relative_dir);
+      HandleListInfoCreation(source_session,source_list_info,source_relative_dir);
       HandleListInfoCreation(target_session,target_list_info,target_relative_dir);
       if(state!=CHANGING_DIR)
       {
@@ -557,66 +585,11 @@ int   MirrorJob::Do()
       InitSets(source_set,target_set);
 
       to_transfer->rewind();
-      state=WAITING_FOR_SUBGET;
+      state=WAITING_FOR_TRANSFER;
       return MOVED;
    }
 
-   case(WAITING_FOR_RM_BEFORE_TRANSFER):
-   {
-      if(waiting_num>0)
-      {
-	 while((j=FindDoneAwaitedJob())!=0)
-	 {
-	    m=MOVED;
-	    RemoveWaiting(j);
-	    Delete(j);
-	 }
-	 if(waiting_num>0)
-	    return m;
-      }
-      Report(_("Transferring file `%s'"),
-	       dir_file(source_relative_dir,file->name));
-
-#if 0 // unfinished
-      if(script)
-      {
-	 args=new ArgV("put1");
-	 if(cont_this)
-	    args->Append("-c");
-	 args->Append(local_name);
-	 args->Append("-o");
-	 args->Append(file->name);
-	 char *cmd=args->CombineQuoted();
-	 fprintf(script,"%s",cmd);
-	 xfree(cmd);
-	 delete args; args=0;
-	 if(script_only)
-	    goto skip;
-      }
-#endif
-
-      FileCopyPeerFA *dst_peer=
-	 new FileCopyPeerFA(target_session->Clone(),file->name,FA::STORE);
-      FileCopyPeerFA *src_peer=
-	 new FileCopyPeerFA(Clone(),file->name,FA::RETRIEVE);
-
-      FileCopy *c=FileCopy::New(src_peer,dst_peer,cont_this);
-      if(remove_source_files)
-	 c->RemoveSourceLater();
-      CopyJob *cp=
-	 new CopyJob(c,file->name,"mirror");
-      if(file->defined&file->DATE && file->date_prec<1)
-	 cp->SetDate(file->date);
-      if(file->defined&file->SIZE)
-	 cp->SetSize(file->size);
-      AddWaiting(cp);
-      cp->SetParentFg(this);
-      cp->cmdline=xasprintf("\\transfer %s",file->name);
-      state=WAITING_FOR_SUBGET;
-      return MOVED;
-   }
-
-   case(WAITING_FOR_SUBGET):
+   case(WAITING_FOR_TRANSFER):
       j=FindDoneAwaitedJob();
       if(j)
       {
@@ -625,7 +598,7 @@ int   MirrorJob::Do()
 	 RemoveWaiting(j);
 	 Delete(j);
       }
-      while(waiting_num<parallel && state==WAITING_FOR_SUBGET)
+      while(waiting_num<parallel && state==WAITING_FOR_TRANSFER)
       {
 	 file=to_transfer->curr();
       	 if(!file)
@@ -803,15 +776,16 @@ int   MirrorJob::Do()
    return m;
 }
 
-MirrorJob::MirrorJob(FileAccess *f,FileAccess *target,const char *new_source_dir,const char *new_target_dir)
-   : SessionJob(f)
+MirrorJob::MirrorJob(FileAccess *source,FileAccess *target,
+   const char *new_source_dir,const char *new_target_dir)
 {
    verbose_report=0;
    parent_mirror=0;
 
+   source_session=source;
    target_session=target;
    // TODO: get rid of this.
-   source_is_local=!strcmp(session       ->GetProto(),"file");
+   source_is_local=!strcmp(source_session->GetProto(),"file");
    target_is_local=!strcmp(target_session->GetProto(),"file");
 
    source_dir=xstrdup(new_source_dir);
@@ -852,13 +826,14 @@ MirrorJob::MirrorJob(FileAccess *f,FileAccess *target,const char *new_source_dir
 
    parallel=1;
 
-   redirections=0;
+   source_redirections=0;
    target_redirections=0;
 }
 
 MirrorJob::~MirrorJob()
 {
-   Reuse(target_session);
+   SessionPool::Reuse(source_session);
+   SessionPool::Reuse(target_session);
    xfree(source_dir);
    xfree(target_dir);
    xfree(source_relative_dir);

@@ -1,3 +1,11 @@
+2001-12-07  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc, FileCopy.h: (RemoveTargetFirst) new method; do it.
+	* MirrorJob.cc, MirrorJob.h: use RemoveTargetFirst; mirror -P
+	  works again; fix NULL dereference in PrintStatus; don't derive
+	  from SessionJob - use source_session member instead.
+	* TimeDate.h: rearrange inline functions to help compiler.
+
 2001-12-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* NetAccess.cc: improve GenericParseListInfo status.

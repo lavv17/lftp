@@ -44,7 +44,7 @@
  * 9. Done.
  */
 
-class MirrorJob : public SessionJob
+class MirrorJob : public Job
 {
    enum state_t
    {
@@ -52,9 +52,8 @@ class MirrorJob : public SessionJob
       MAKE_TARGET_DIR,
       CHANGING_DIR,
       GETTING_LIST_INFO,
-      WAITING_FOR_SUBGET,
+      WAITING_FOR_TRANSFER,
       WAITING_FOR_SUBMIRROR,
-      WAITING_FOR_RM_BEFORE_TRANSFER,
       WAITING_FOR_MKDIR_BEFORE_SUBMIRROR,
       TARGET_REMOVE_OLD,
       TARGET_CHMOD,
@@ -62,6 +61,7 @@ class MirrorJob : public SessionJob
    };
    state_t state;
 
+   FileAccess *source_session;
    FileAccess *target_session;
    bool target_is_local;
    bool source_is_local;
@@ -122,7 +122,7 @@ class MirrorJob : public SessionJob
 
    mode_t get_mode_mask();
 
-   int redirections;
+   int source_redirections;
    int target_redirections;
 
    void HandleChdir(FileAccess * &session, int &redirections);
