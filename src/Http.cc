@@ -1109,7 +1109,7 @@ const char *Http::CurrentStatus()
 	 if(resolver)
 	    return(_("Resolving host address..."));
 	 if(!ReconnectAllowed())
-	    return(_("Delaying before reconnect"));
+	    return DelayingMessage();
       }
       return "";
    case CONNECTING:

@@ -78,6 +78,8 @@ protected:
 
    int Resolve(const char *defp,const char *ser,const char *pr);
 
+   long ReconnectInterval();
+   const char *DelayingMessage();
    bool ReconnectAllowed();
    bool NextTry();   // returns false if max-retries exceeded.
 

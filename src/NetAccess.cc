@@ -425,12 +425,8 @@ void RateLimit::ReconfigTotal()
    total_reconfig_needed = false;
 }
 
-bool NetAccess::ReconnectAllowed()
+long NetAccess::ReconnectInterval()
 {
-   if(max_retries>0 && retries>=max_retries)
-      return true; // it will fault later - no need to wait.
-   if(try_time==0)
-      return true;
    // cyclic exponential growth.
    float interval = reconnect_interval;
    if(reconnect_interval_multiplier>1
@@ -445,11 +441,33 @@ bool NetAccess::ReconnectAllowed()
       if( interval > reconnect_interval_max )
          interval = reconnect_interval_max;
    }
+   return long(interval+.5);
+}
+
+bool NetAccess::ReconnectAllowed()
+{
+   if(max_retries>0 && retries>=max_retries)
+      return true; // it will fault later - no need to wait.
+   if(try_time==0)
+      return true;
+   long interval = ReconnectInterval();
    if(now-try_time >= interval)
       return true;
-   Timeout(1000*(interval-(now-try_time)));
+   TimeoutS(interval-(now-try_time));
    return false;
 }
+
+const char *NetAccess::DelayingMessage()
+{
+   static char buf[80];
+   long remains=ReconnectInterval()-(now-try_time);
+   if(remains<=0)
+      return "";
+   sprintf(buf,"%s: %ld",_("Delaying before reconnect"),remains);
+   TimeoutS(1);
+   return buf;
+}
+
 bool NetAccess::NextTry()
 {
    try_time=now;

@@ -2854,7 +2854,7 @@ const char *Ftp::CurrentStatus()
 	 if(resolver)
 	    return(_("Resolving host address..."));
 	 if(!ReconnectAllowed())
-	    return(_("Delaying before reconnect"));
+	    return DelayingMessage();
       }
    case(NO_HOST_STATE):
       return(_("Not connected"));
