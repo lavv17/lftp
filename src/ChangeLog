@@ -5,6 +5,8 @@
 	* misc.h: add comment on Subst.
 	* lftp.cc: set top_exec to zero after deletion, this fixes a coredump
 	  at exit.
+	* commands.cc: remove bzcat, bzmore and cls from command index,
+	  it has become too long for 25 linear display.
 
 2001-10-05  Glenn F. Maynard <g_ld@zewt.org>
 

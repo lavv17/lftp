@@ -147,7 +147,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"close",   cmd_close,   "close [-a]",
 	 N_("Close idle connections. By default only with current server.\n"
 	 " -a  close idle connections with all servers\n")},
-   {"cls",     cmd_cls,     N_("cls [opts] [path/][wildcards]..."),
+   {"cls",     cmd_cls,     0 /*N_("cls [opts] [path/][wildcards]...")*/,
 	 N_("List remote files. You can redirect output of this command to file\n"
 	    "or via pipe to external command.\n"
 	    "\n"
@@ -418,9 +418,9 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Same as cat, but filter each file through zcat\n")},
    {"zmore",   cmd_cat,    N_("zmore <files>"),
 	 N_("Same as more, but filter each file through zcat\n")},
-   {"bzcat",    cmd_cat,    N_("bzcat <files>"),
+   {"bzcat",    cmd_cat,    0,
 	 N_("Same as cat, but filter each file through bzcat\n")},
-   {"bzmore",   cmd_cat,    N_("bzmore <files>"),
+   {"bzmore",   cmd_cat,    0,
 	 N_("Same as more, but filter each file through bzcat\n")},
 
    {NULL,NULL}
@@ -1232,7 +1232,7 @@ const char *FileSetOutput::parse_argv(ArgV *a)
       case('I'):
 	 sort_casefold = true;
 	 break;
-      case('S'): 
+      case('S'):
 	 sort = FileSet::BYSIZE;
 	 break;
 
@@ -1254,7 +1254,7 @@ const char *FileSetOutput::parse_argv(ArgV *a)
 CMD(cls)
 {
    exit_code=0;
-		     
+
    const char *op=args->a0();
    bool re=false;
 
