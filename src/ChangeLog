@@ -2,6 +2,7 @@
 
 	* FtpSplitList.cc: fix mem leak (reported by Glenn F. Maynard).
 	* ftpclass.cc: break normal execution if Error().
+	* Http.cc: workaround for range end ==-1.
 
 2001-07-24  Glenn F. Maynard <g_ld@zewt.org>
 

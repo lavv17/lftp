@@ -621,7 +621,10 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       if(sscanf(value,"%*s %lld-%lld/%lld",&first,&last,&fsize)!=3)
 	 return;
       real_pos=first;
-      body_size=last-first+1;
+      if(last==-1)
+	 last=fsize-first-1;
+      if(body_size<0)
+	 body_size=last-first+1;
       if(mode!=STORE)
 	 entity_size=fsize;
       if(opt_size && H_20X(status_code))
@@ -1830,7 +1833,7 @@ void Http::SetCookie(const char *value_const)
 	 break;
 
       if(!strncasecmp(entry,"expires=",8))
-	 continue; // not used yet
+	 continue; // not used yet (FIXME)
 
       if(!strncasecmp(entry,"secure",6)
       && (entry[6]==' ' || entry[6]==0 || entry[6]==';'))
