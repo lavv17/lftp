@@ -929,6 +929,9 @@ int Http::Do()
       }
       /*fallthrough*/
    case CONNECTED:
+      if(mode==CONNECT_VERIFY)
+	 return MOVED;
+
       if(mode==QUOTE_CMD && !post)
 	 goto handle_quote_cmd;
       if(recv_buf->Eof())

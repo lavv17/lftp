@@ -289,6 +289,7 @@ void NetAccess::NextPeer()
 
 void NetAccess::Connect(const char *h,const char *p)
 {
+   Disconnect();
    super::Connect(h,p);
    ClearPeer();
 }
