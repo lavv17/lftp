@@ -32,6 +32,7 @@ struct IdNamePair
    IdNamePair *next;
 
    IdNamePair(int id1,const char *name1) { id=id1; name=StringPool::Get(name1); }
+   IdNamePair(const IdNamePair *p) { id=p->id; name=StringPool::Get(p->name); }
 };
 
 class IdNameCache : public SMTask

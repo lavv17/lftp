@@ -43,7 +43,10 @@ void IdNameCache::free_list(IdNamePair *list)
 void IdNameCache::free()
 {
    for(int i=0; i<table_size; i++)
+   {
       free_list(table_id[i]);
+      free_list(table_name[i]);
+   }
 }
 void IdNameCache::add(unsigned h,IdNamePair **p,IdNamePair *r)
 {
@@ -61,7 +64,7 @@ IdNamePair *IdNameCache::lookup(int id)
       r=new IdNamePair(id,0);
    add(h,table_id,r);
    if(r->name)
-      add(hash(r->name),table_name,r);
+      add(hash(r->name),table_name,new IdNamePair(r));
    return r;
 }
 IdNamePair *IdNameCache::lookup(const char *name)
@@ -77,7 +80,7 @@ IdNamePair *IdNameCache::lookup(const char *name)
       r=new IdNamePair(-1,name);
    add(h,table_name,r);
    if(r->id!=-1)
-      add(hash(r->id),table_id,r);
+      add(hash(r->id),table_id,new IdNamePair(r));
    return r;
 }
 const char *IdNameCache::Lookup(int id)
