@@ -37,13 +37,6 @@
 #endif
 
 #include "xalloca.h"
-#include "ftpclass.h"
-#ifndef MODULE_PROTO_FILE
-# include "LocalAccess.h"
-#endif
-#ifndef MODULE_PROTO_HTTP
-# include "Http.h"
-#endif
 #include "xmalloc.h"
 #include "alias.h"
 #include "CmdExec.h"
@@ -305,16 +298,7 @@ int   main(int argc,char **argv)
    ResMgr::ClassInit(); // resources must be inited before other classes
    SignalHook::ClassInit();
    Resolver::ClassInit();
-
-#ifndef MODULE_PROTO_FILE
-   LocalAccess::ClassInit();
-#endif
-#ifndef MODULE_PROTO_HTTP
-   Http::ClassInit();
-#endif
-#ifndef MODULE_PROTO_FTP
-   Ftp::ClassInit();
-#endif
+   FileAccess::ClassInit();
 
    lftp_readline_init();
 

@@ -324,6 +324,8 @@ public:
    void SetRetries(int r) { retries=r; }
    time_t GetTryTime() { return try_time; }
    void SetTryTime(time_t t) { try_time=t; }
+
+   static void ClassInit();
 };
 
 class FileAccessOperation : public SMTask

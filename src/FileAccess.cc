@@ -1206,3 +1206,35 @@ char **GlobURL::GetResult()
    }
    return list;
 }
+
+#ifndef MODULE_PROTO_FTP
+# include "ftpclass.h"
+# define _ftp Ftp::ClassInit()
+#else
+# define _ftp
+#endif
+#ifndef MODULE_PROTO_FILE
+# include "LocalAccess.h"
+# define _file LocalAccess::ClassInit()
+#else
+# define _file
+#endif
+#ifndef MODULE_PROTO_HTTP
+# include "Http.h"
+# define _http Http::ClassInit()
+#else
+# define _http
+#endif
+#ifndef MODULE_PROTO_FISH
+# include "Fish.h"
+# define _fish Fish::ClassInit()
+#else
+# define _fish
+#endif
+void FileAccess::ClassInit()
+{
+   _ftp;
+   _file;
+   _http;
+   _fish;
+}
