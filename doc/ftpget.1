@@ -18,14 +18,16 @@
 .\"
 .\" $Id$
 .\"
-.TH ftpget 1 "12 Jan 1998"
+.TH ftpget 1 "19 Mar 1998"
 .SH NAME
 ftpget \- Get files fast from the commandline
 .SH SYNTAX
 .B ftpget
-.I [options] host filename  [\-o local] [filename] ...
+.RI [ options ] " host filename
+.RB [ "\-o"
+.IR local "] [" filename "] ..."
 .SH VERSION
-This man page documents ftpget version 0.14.0.
+This man page documents ftpget version 0.14.3.
 .SH "DESCRIPTION"
 \fBftpget\fR is a program that gets the given \fIfilename\fR from the
 indicated \fIhost\fR.  Multiple filenames can be specified. If a
@@ -33,35 +35,35 @@ filename needs to be redirected to another local file then use the
 \fB-o\fR option.
 .SH OPTIONS
 .TP
-.B \-p, \-\-port
+.I \-p, \-\-port
 Set port number
 .TP
-.B \-u, \-\-user
+.I \-u, \-\-user
 login as user using pass as password
 .TP
-.B \-l, \-\-list
+.I \-l, \-\-list
 Get listing of specified directories
 .TP
-.B \-c, \-\-continue
+.I \-c, \-\-continue
 Reget specified file(s)
 .TP
-.B \-q, \-\-quiet
+.I \-q, \-\-quiet
 Run quietly (no output).
 .TP
-.B \-v, \-\-verbose
+.I \-v, \-\-verbose
 Run verbosely (lots of output).
 .TP
-.B \-\-async-mode
+.I \-\-async-mode
 Use asynchronos mode (faster)
 .TP
-.B \-\-sync-mode
+.I \-\-sync-mode
 Use synchronos mode (compatible with bugs)
 .TP
-.B \-o file
+.I \-o file
 output to local file 'local' (default \- base name of filename)
 
 .SH SEE ALSO
-.BR lftp(1)
+.BR lftp (1)
 
 .SH AUTHOR
 .nf
