@@ -1,3 +1,7 @@
+2004-04-05  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SFtp.cc: fix data packet debug message (s was not initialized).
+
 2004-04-04  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.cc, SFtp.h: outline HasID as it fails to inline on certain

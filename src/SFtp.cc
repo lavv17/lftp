@@ -869,8 +869,8 @@ void SFtp::HandleExpect(Expect *e)
 	 if(r->pos==pos+file_buf->Size())
 	 {
 	    const char *b; int s;
-	    Log::global->Format(9,"---- data packet: pos=%lld, size=%d\n",(long long)r->pos,s);
 	    d->GetData(&b,&s);
+	    Log::global->Format(9,"---- data packet: pos=%lld, size=%d\n",(long long)r->pos,s);
 	    file_buf->Put(b,s);
 	 }
 	 else
