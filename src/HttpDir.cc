@@ -262,6 +262,14 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
       if(strncasecmp(link_target,"URL=",4))
 	 return tag_len;
       link_target+=4;
+      if(link_target[0]=='\'')
+      {
+	 // FIXME: maybe a more complex value parser is required.
+	 link_target++;
+	 int len=strlen(link_target);
+	 if(len>0 && link_target[len-1]=='\'')
+	    link_target[len-1]=0;
+      }
    }
 
    bool icon=false;
