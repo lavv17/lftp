@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "07 Mar 2000"
+.TH lftp 1 "14 Mar 2000"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -817,6 +817,10 @@ verify that data connection has port 20 (ftp-data) on its remote end.
 This can possibly prevent data connection spoofing by users of remote
 host. Unfortunately, too many windows and even unix ftp servers forget
 to set proper port on data connection, thus this check is off by default.
+.TP
+.BR ftp:web-mode \ (bool)
+disconnect after closing data connection. This can be useful for totally
+broken ftp servers. Default is false.
 .TP
 .BR hftp:cache \ (bool)
 allow server/proxy side caching for ftp-over-http protocol.

@@ -1,3 +1,7 @@
+2000-03-14	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:web-mode.
+
 2000-03-07	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document ftp:port-range.
