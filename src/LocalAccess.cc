@@ -428,9 +428,9 @@ check_again:
       {
 	 if(follow_symlinks)
 	 {
-	    if(stat(name,&st)==-1)
-	       continue;
-	    goto check_again;
+	    if(stat(name,&st)!=-1)
+	       goto check_again;
+	    // dangling symlink, don't follow it.
 	 }
 	 t=FileInfo::SYMLINK;
       }
