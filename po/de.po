@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Lftp 2.1.3\n"
-"POT-Creation-Date: 2000-05-20 21:53+0400\n"
-"PO-Revision-Date: 2000-05-24 00:16+02:00\n"
+"POT-Creation-Date: 2000-07-31 21:27+0400\n"
+"PO-Revision-Date: 2000-08-06 05:10+02:00\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -64,60 +64,56 @@ msgstr "        Befehle in Warteschlange:\n"
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\t Warte auf Beendigung von Job [%d]\n"
 
-#: src/CmdExec.cc:704
+#: src/CmdExec.cc:702
 #, c-format
 msgid "\tRunning\n"
 msgstr "\tWird ausgeführt\n"
 
-#: src/CmdExec.cc:708
-msgid "\tWaiting for command\n"
-msgstr "        Warte auf Befehl\n"
-
-#: src/FileAccess.cc:223
+#: src/FileAccess.cc:220
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "Socket Fehler (%s) - erneutes Verbinden"
 
-#: src/FileAccess.cc:313
+#: src/FileAccess.cc:311
 #, c-format
 msgid "Access failed: %s"
 msgstr "Zugriff nicht möglich: %s"
 
-#: src/FileAccess.cc:316
+#: src/FileAccess.cc:314
 msgid "File cannot be accessed"
 msgstr "Dateizugriff nicht möglich"
 
-#: src/FileAccess.cc:318 src/ftpclass.cc:3019 src/ftpclass.cc:3029
+#: src/FileAccess.cc:316 src/ftpclass.cc:2986 src/ftpclass.cc:2996
 msgid "Not connected"
 msgstr "Keine Verbindung"
 
-#: src/FileAccess.cc:324
+#: src/FileAccess.cc:322
 #, c-format
 msgid "Fatal error: %s"
 msgstr "Fataler Fehler: %s"
 
-#: src/FileAccess.cc:327
+#: src/FileAccess.cc:325
 msgid "Fatal error"
 msgstr "Fataler Fehler"
 
-#: src/FileAccess.cc:329
+#: src/FileAccess.cc:327
 msgid "Store failed - you have to reput"
 msgstr "Speichern fehlgeschlagen - erneutes Hochladen notwendig"
 
-#: src/FileAccess.cc:331 src/ftpclass.cc:3061
+#: src/FileAccess.cc:329 src/ftpclass.cc:3028
 msgid "Login failed"
 msgstr "Login fehlgeschlagen"
 
-#: src/FileAccess.cc:333
+#: src/FileAccess.cc:331
 msgid "Operation not supported"
 msgstr "Operation wird nicht unterstützt"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:1311
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:1312
 #, c-format
 msgid "Getting directory contents (%ld)"
 msgstr "Lese Verzeichnis (%ld) aus"
 
-#: src/FtpListInfo.cc:239 src/HttpDir.cc:1316
+#: src/FtpListInfo.cc:239 src/HttpDir.cc:1317
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "Lese Dateiinformationen (%d%%)"
@@ -170,86 +166,91 @@ msgstr "Cache Einträge verfallen in %ld $#l#Sekunde(n)$\n"
 msgid "Cache entries expire in %ld $#l#minute|minutes$\n"
 msgstr "Cache Einträge verfallen in %ld $#l#Minute|Minuten$\n"
 
-#: src/MirrorJob.cc:83
+#: src/MirrorJob.cc:84
 #, c-format
 msgid "%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%sGesamt: %d Verzeichni$s|sse$, %d Datei$|en$, %d Verknüpfungen$|s$\n"
 
-#: src/MirrorJob.cc:87
+#: src/MirrorJob.cc:88
 #, c-format
 msgid "%sNew: %d file$|s$, %d symlink$|s$\n"
 msgstr "%sNeu: %d Datei$|en$, %d Verknüpfungen$|s$\n"
 
-#: src/MirrorJob.cc:91
+#: src/MirrorJob.cc:92
 #, c-format
 msgid "%sModified: %d file$|s$, %d symlink$|s$\n"
 msgstr "%sVerändert: %d Datei$|en$, %d Symlink$|s$\n"
 
-#: src/MirrorJob.cc:96
+#: src/MirrorJob.cc:97
 #, c-format
 msgid "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%sGelöscht: %d Verzeichnis$|sse$, %d Datei$|en$, %d Symlink$|s$\n"
 
-#: src/MirrorJob.cc:97
+#: src/MirrorJob.cc:98
 #, c-format
 msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 "%sZur Löschung vorgesehen: %d Verzeichnis$|se$, %d Datei$|en$, %d "
 "Symlink$|s$\n"
 
-#: src/MirrorJob.cc:167 src/MirrorJob.cc:687
+#: src/MirrorJob.cc:168 src/MirrorJob.cc:756
 #, c-format
 msgid "Removing old remote file `%s'"
 msgstr "Entferne alte Datei `%s' auf remote - Rechner"
 
-#: src/MirrorJob.cc:210 src/MirrorJob.cc:306 src/MirrorJob.cc:375
-#: src/MirrorJob.cc:712
+#: src/MirrorJob.cc:216 src/MirrorJob.cc:312 src/MirrorJob.cc:381
+#: src/MirrorJob.cc:696
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Entferne alte lokale Datei `%s'"
 
 #. launch get job
-#: src/MirrorJob.cc:228
+#: src/MirrorJob.cc:234
 #, c-format
 msgid "Retrieving remote file `%s'"
 msgstr "Hole nichtlokale Datei `%s'"
 
-#: src/MirrorJob.cc:281
+#: src/MirrorJob.cc:287
 #, c-format
 msgid "Making remote directory `%s'"
 msgstr "Lege nichtlokales Verzeichnis `%s' an"
 
-#: src/MirrorJob.cc:353
+#: src/MirrorJob.cc:359
 #, c-format
 msgid "Mirroring directory `%s'"
 msgstr "Spiegele Verzeichnis `%s'"
 
-#: src/MirrorJob.cc:388
+#: src/MirrorJob.cc:394
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Erzeuge symbolische Verknüpfung `%s' nach `%s'"
 
-#: src/MirrorJob.cc:521
+#: src/MirrorJob.cc:527
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: Protokoll `%s' ist nicht für das spiegeln geeignet\n"
 
-#: src/MirrorJob.cc:579
+#: src/MirrorJob.cc:585
 #, c-format
 msgid "Sending local file `%s'"
 msgstr "Sende lokale Datei `%s'"
 
-#: src/MirrorJob.cc:700
-#, c-format
-msgid "Old remote file `%s' is not removed"
-msgstr "Bestehende nichtlokale Datei `%s' wird nicht entfernt"
-
-#: src/MirrorJob.cc:731
+#: src/MirrorJob.cc:715
 #, c-format
 msgid "Old local file `%s' is not removed"
 msgstr "Bestehende lokale Datei `%s' wird nicht entfernt"
 
-#: src/MirrorJob.cc:1049 src/MirrorJob.cc:1091 src/commands.cc:784
+#: src/MirrorJob.cc:749
+#, c-format
+msgid "Removing old remote directory `%s'"
+msgstr "Entferne alte Datei `%s' auf dem verbundenen Rechner"
+
+#: src/MirrorJob.cc:768
+#, c-format
+msgid "Old remote file `%s' is not removed"
+msgstr "Bestehende nichtlokale Datei `%s' wird nicht entfernt"
+
+#: src/MirrorJob.cc:1069 src/MirrorJob.cc:1111 src/commands.cc:784
 #: src/commands.cc:954 src/commands.cc:1044 src/commands.cc:1298
 #: src/commands.cc:1492 src/commands.cc:1651 src/commands.cc:1658
 #: src/commands.cc:1842 src/commands.cc:1871 src/commands.cc:1878
@@ -290,7 +291,7 @@ msgstr "Ungültige Zeitangabe. Das Format ist <Zeit><Einheit> - z.B. 2h30m."
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Ungültige Angabe der Spanne. Das Format ist min-max - z.B. 10-20."
 
-#: src/Http.cc:1315 src/Resolver.cc:191 src/ftpclass.cc:3024
+#: src/Http.cc:1193 src/Resolver.cc:191 src/ftpclass.cc:2991
 msgid "Resolving host address..."
 msgstr "Löse Hostadresse auf..."
 
@@ -1365,101 +1366,101 @@ msgstr "`Unknown' empfangen, gehe von fehlgeschlagenem Login aus"
 msgid "assuming failed host name lookup"
 msgstr "nehme fehlgeschlagene Auflösung des Hostnamens an"
 
-#: src/Http.cc:661 src/ftpclass.cc:915
+#: src/Http.cc:566 src/ftpclass.cc:913
 msgid "Closing idle connection"
 msgstr "Schließe unbenutzte Verbindung"
 
-#: src/ftpclass.cc:1123
+#: src/ftpclass.cc:1109
 msgid "SITE CHMOD is not supported by this site"
 msgstr "SITE CHMOD wird von dieser Gegenstelle nicht unterstützt"
 
-#: src/ftpclass.cc:1611
+#: src/ftpclass.cc:1597
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "Verbinde Daten socket mit (%s) Port %u"
 
-#: src/ftpclass.cc:1660
+#: src/ftpclass.cc:1646
 msgid "Timeout - reconnecting"
 msgstr "Zeitablauf - neu verbinden"
 
-#: src/Http.cc:794 src/ftpclass.cc:1944
+#: src/ftpclass.cc:1928
 msgid "Peer closed connection"
 msgstr "Gegenüber hat Verbindung beendet"
 
-#: src/ftpclass.cc:2061
+#: src/ftpclass.cc:2040
 msgid "Closing control socket"
 msgstr "Schließe den Kontroll - Socket"
 
-#: src/ftpclass.cc:2134
+#: src/ftpclass.cc:2107
 msgid "Closing data socket"
 msgstr "Schließe den Daten Socket"
 
-#: src/ftpclass.cc:2787
+#: src/ftpclass.cc:2757
 msgid "saw file size in response"
 msgstr "Dateigröße in Antwort empfangen"
 
-#: src/ftpclass.cc:2797
+#: src/ftpclass.cc:2766
 msgid "remote end closes connection"
 msgstr "Gegenüber schließt Verbindung "
 
-#: src/ftpclass.cc:2805
+#: src/ftpclass.cc:2772
 msgid "extra server response"
 msgstr "zusätzliche Server Antwort"
 
-#: src/ftpclass.cc:2926
+#: src/ftpclass.cc:2893
 msgid "Switching passive mode off"
 msgstr "Schalte Passivmodus ab"
 
-#: src/ftpclass.cc:2941
+#: src/ftpclass.cc:2908
 msgid "Switching passive mode on"
 msgstr "Schalte Passivmodus ein"
 
-#: src/ftpclass.cc:3014
+#: src/ftpclass.cc:2981
 msgid "Sending commands..."
 msgstr "Schicke Befehle"
 
-#: src/Http.cc:1328 src/ftpclass.cc:3016 src/ftpclass.cc:3036
-#: src/ftpclass.cc:3043
+#: src/Http.cc:1204 src/ftpclass.cc:2983 src/ftpclass.cc:3003
+#: src/ftpclass.cc:3010
 msgid "Waiting for response..."
 msgstr "Warte auf Antwort"
 
-#: src/Http.cc:1323 src/ftpclass.cc:3017
+#: src/ftpclass.cc:2984
 msgid "Connection idle"
 msgstr "Verbindung ruht"
 
-#: src/Http.cc:1321 src/ftpclass.cc:3031
+#: src/Http.cc:1199 src/ftpclass.cc:2998
 msgid "Connecting..."
 msgstr "Verbinde..."
 
-#: src/ftpclass.cc:3033
+#: src/ftpclass.cc:3000
 msgid "Logging in..."
 msgstr "Logge ein..."
 
-#: src/ftpclass.cc:3037
+#: src/ftpclass.cc:3004
 msgid "Making data connection..."
 msgstr "Stelle Datenverbindung her..."
 
-#: src/ftpclass.cc:3039
+#: src/ftpclass.cc:3006
 msgid "Changing remote directory..."
 msgstr "Wechsle nichtlokales Verzeichnis"
 
-#: src/ftpclass.cc:3042 src/ftpclass.cc:3054
+#: src/ftpclass.cc:3009 src/ftpclass.cc:3021
 msgid "Waiting for transfer to complete"
 msgstr "Warte auf Übertragungsende"
 
-#: src/ftpclass.cc:3045
+#: src/ftpclass.cc:3012
 msgid "Waiting for data connection..."
 msgstr "Warte auf Datenverbindung"
 
-#: src/Http.cc:1326 src/ftpclass.cc:3050
+#: src/Http.cc:1202 src/ftpclass.cc:3017
 msgid "Sending data"
 msgstr "Sende Daten"
 
-#: src/Http.cc:1331 src/ftpclass.cc:3052
+#: src/Http.cc:1207 src/ftpclass.cc:3019
 msgid "Receiving data"
 msgstr "Empfange Daten"
 
-#: src/ftpclass.cc:3056
+#: src/ftpclass.cc:3023
 msgid "Fatal protocol error occured"
 msgstr "Fataler Protokollfehler"
 
@@ -1544,15 +1545,11 @@ msgstr "%s OK, %d Verzeichnis$|se$ gelöscht\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s OK, %d Datei$|en$ gelöscht\n"
 
-#: src/Http.cc:156
-msgid "Closing HTTP connection"
-msgstr "Schließe HTTP - Verbindung"
-
-#: src/Http.cc:1150 src/Http.cc:1171
+#: src/Http.cc:1035 src/Http.cc:1055
 msgid "chunked format violated"
 msgstr "Blockformatierung verletzt"
 
-#: src/Http.cc:1329
+#: src/Http.cc:1205
 msgid "Fetching headers..."
 msgstr "Hole Kopfzeilen..."
 
@@ -1561,7 +1558,7 @@ msgstr "Hole Kopfzeilen..."
 msgid "Proxy protocol unsupported"
 msgstr "Proxy Protokoll wird nicht unterstützt"
 
-#: src/HttpDir.cc:931 src/HttpDir.cc:1114
+#: src/HttpDir.cc:932 src/HttpDir.cc:1115
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "Hole Dateiliste (%ld) [%s]"
@@ -1586,6 +1583,6 @@ msgstr "Übertragung von %d der %d $Datei|Dateien fehlgeschlagen\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Insgesamt %d $Datei|Dateien$ übertragen\n"
 
-#: src/FileCopy.cc:1062
+#: src/FileCopy.cc:1047
 msgid "file name missed in URL"
 msgstr "Dateiname fehlt in der URL"

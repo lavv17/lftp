@@ -1,3 +1,11 @@
+2000-08-06	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update
+
+2000-07-17	Nicolás Lichtmaier <nick@debian.org>
+
+	* es.po: update.
+
 2000-06-29	Manoj Kasichainula <manoj@io.com>
 
 	* Makefile.in.in: use DESTDIR.
