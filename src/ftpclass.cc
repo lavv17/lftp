@@ -1150,7 +1150,9 @@ int   Ftp::Do()
          break;
       case(LONG_LIST):
          type=FTP_TYPE_A;
-         if(file && file[0])
+         if(!rest_list)
+	    real_pos=0;	// some ftp servers do not do REST/LIST.
+	 if(file && file[0])
             sprintf(str1,"LIST %s\n",file);
          else
             sprintf(str1,"LIST\n");
@@ -2937,6 +2939,7 @@ void Ftp::Reconfig()
 
    SetFlag(SYNC_MODE,	Query("sync-mode",c));
    SetFlag(PASSIVE_MODE,Query("passive-mode",c));
+   rest_list = Query("rest-list");
 
    timeout = Query("timeout",c);
    sleep_time = Query("reconnect-interval",c);

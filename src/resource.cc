@@ -85,6 +85,7 @@ static ResDecl resources[]={
    ResDecl  ("ftp:nop-interval",       "120",	ResMgr::UNumberValidate,0),
    ResDecl  ("ftp:passive-mode",       "off",   ResMgr::BoolValidate,0),
    ResDecl  ("ftp:proxy",	       "",	FtpProxyValidate,0),
+   ResDecl  ("ftp:rest-list",	       "no",	ResMgr::BoolValidate,0),
    ResDecl  ("ftp:skey-allow",	       "yes",   ResMgr::BoolValidate,0),
    ResDecl  ("ftp:skey-force",	       "no",    ResMgr::BoolValidate,0),
    ResDecl  ("ftp:sync-mode",	       "on",    ResMgr::BoolValidate,0),
