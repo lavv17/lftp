@@ -1,3 +1,7 @@
+2000-04-19  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc, Http.cc: fix SetError(SEE_ERRNO) usage.
+
 2000-04-15  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileSet.cc, FileSet.h: use class TimeInterval; add loose_prec arg.

@@ -715,6 +715,8 @@ void FileAccess::Chmod(const char *file,int m)
 
 void FileAccess::SetError(int ec,const char *e)
 {
+   if(ec==SEE_ERRNO)
+      saved_errno=errno;
    xfree(error);
    error=xstrdup(e);
    error_code=ec;

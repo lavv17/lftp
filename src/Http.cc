@@ -918,9 +918,8 @@ system_error:
       Timeout(1000);
       return m;
    }
-   saved_errno=errno;
+   SetError(SEE_ERRNO,0);
    Disconnect();
-   SetError(SEE_ERRNO,strerror(saved_errno));
    return MOVED;
 }
 
@@ -1104,9 +1103,8 @@ int Http::Write(const void *buf,int size)
 	 Disconnect();
 	 return STORE_FAILED;
       }
-      saved_errno=errno;
+      SetError(SEE_ERRNO,0);
       Disconnect();
-      SetError(SEE_ERRNO,strerror(saved_errno));
       return error_code;
    }
    retries=0;
