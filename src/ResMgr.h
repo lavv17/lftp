@@ -68,7 +68,8 @@ class ResMgr
    static int ResourceCompare(const void *a,const void *b);
 
 public:
-   static const char *Query(const char *name,const char *closure);
+   static const char *SimpleQuery(const char *name,const char *closure);
+   static ResValue Query(const char *name,const char *closure);
 
    enum CmpRes { EXACT,SUBSTR,DIFFERENT };
 

@@ -81,6 +81,8 @@ public:
    void Reconfig();
 
    static const char *OrderValidate(char **s);
+
+   static void ClassInit();
 };
 
 #endif // RESOLVER_H

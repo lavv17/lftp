@@ -66,6 +66,8 @@ void FileAccess::Init()
 
    entity_size=-1;
    entity_date=(time_t)-1;
+
+   closure=0;
 }
 
 FileAccess::FileAccess(const FileAccess *fa)
@@ -104,6 +106,7 @@ FileAccess::~FileAccess()
    xfree(hostname); hostname=0;
    xfree(portname); portname=0;
    xfree(url); url=0;
+   xfree(closure); closure=0;
 }
 
 void  FileAccess::DebugPrint(const char *prefix,const char *str,int level)
@@ -715,4 +718,19 @@ void FileAccess::BytesReset()
 {
    bytes_pool=bytes_pool_rate;
    bytes_pool_time=now;
+}
+
+ResValue FileAccess::Query(const char *name,const char *closure)
+{
+   const char *prefix=GetProto();
+   char *fullname=(char*)alloca(strlen(prefix)+1+strlen(name)+1);
+   sprintf(fullname,"%s:%s",prefix,name);
+   return ResMgr::Query(fullname,closure);
+}
+
+void FileAccess::Reconfig()
+{
+   bytes_pool_rate = Query("limit-rate",closure);
+   bytes_pool_max  = Query("limit-max",closure);
+   BytesReset(); // to cut bytes_pool.
 }

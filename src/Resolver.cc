@@ -47,7 +47,7 @@ extern "C" { const char *hstrerror(int); }
 #endif
 
 static ResDecl
-   res_timeout	  ("dns:timeout",      "0", ResMgr::UNumberValidate,0),
+   res_timeout	  ("dns:timeout","0", ResMgr::UNumberValidate,0),
    res_order	  ("dns:order",	       DEFAULT_ORDER, Resolver::OrderValidate,0);
 
 
@@ -401,4 +401,8 @@ void Resolver::DoGethostbyname()
 void Resolver::Reconfig()
 {
    timeout = res_timeout.Query(0);
+}
+
+void Resolver::ClassInit()
+{
 }

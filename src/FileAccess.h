@@ -40,6 +40,7 @@
 
 #include "xmalloc.h"
 #include "ListInfo.h"
+#include "ResMgr.h"
 
 class FileAccess : public SMTask
 {
@@ -139,6 +140,9 @@ protected:
    long   entity_size; // size of file to be sent
    time_t entity_date; // date of file to be sent
 
+   char *closure;
+   ResValue Query(const char *name,const char *closure=0);
+
 public:
    virtual const char *GetProto() = 0; // http, ftp, file etc
    bool SameProtoAs(FileAccess *fa) { return !strcmp(GetProto(),fa->GetProto()); }
@@ -230,6 +234,8 @@ public:
    virtual ListInfo *MakeListInfo() { return 0; }
 
    static bool NotSerious(int err);
+
+   void Reconfig();
 };
 
 // shortcut

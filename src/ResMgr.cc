@@ -365,7 +365,7 @@ bool ResMgr::Resource::ClosureMatch(const char *cl_data)
    return 0==fnmatch(closure,cl_data,FNM_PATHNAME);
 }
 
-const char *ResMgr::Query(const char *name,const char *closure)
+const char *ResMgr::SimpleQuery(const char *name,const char *closure)
 {
    const char *msg;
 
@@ -376,7 +376,7 @@ const char *ResMgr::Query(const char *name,const char *closure)
       return 0;
 
    Resource **scan;
-   // find the old value
+   // find the value
    for(scan=&chain; *scan; scan=&(*scan)->next)
       if((*scan)->type==type && (*scan)->ClosureMatch(closure))
 	 break;
@@ -388,14 +388,46 @@ const char *ResMgr::Query(const char *name,const char *closure)
    return 0;
 }
 
+ResValue ResMgr::Query(const char *name,const char *closure)
+{
+   const char *msg;
+
+   ResDecl *type;
+   // find type of given variable
+   msg=FindVar(name,&type);
+   if(msg)
+   {
+      // debug only
+      fprintf(stderr,"Query of variable `%s' failed: %s\n",name,msg);
+      return 0;
+   }
+
+   for(;;)
+   {
+      Resource **scan;
+      // find the value
+      for(scan=&chain; *scan; scan=&(*scan)->next)
+	 if((*scan)->type==type && (*scan)->ClosureMatch(closure))
+	    break;
+      // if found
+      if(*scan)
+	 return (*scan)->value;
+      if(!closure)
+	 break;
+      closure=0;
+   }
+
+   return type->defvalue;
+}
+
 ResValue ResDecl::Query(const char *closure)
 {
    const char *v=0;
 
    if(closure)
-      v=ResMgr::Query(name,closure);
+      v=ResMgr::SimpleQuery(name,closure);
    if(!v)
-      v=ResMgr::Query(name,0);
+      v=ResMgr::SimpleQuery(name,0);
    if(!v)
       v=defvalue;
 
