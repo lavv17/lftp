@@ -572,6 +572,10 @@ FileInfo *ParseFtpLongList_EPLF(const char *line,int *err)
    return fi;
 }
 
+/*
+                 0          DIR  06-27-96  11:57  PROTOCOL
+               169               11-29-94  09:20  SYSLEVEL.MPT
+*/
 static
 FileInfo *ParseFtpLongList_OS2(const char *line_c,int *err)
 {
