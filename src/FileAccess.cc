@@ -111,6 +111,7 @@ FileAccess::FileAccess(const FileAccess *fa)
    hostname=xstrdup(fa->hostname);
    xfree(portname);
    portname=xstrdup(fa->portname);
+   vproto=xstrdup(fa->vproto);
 }
 
 FileAccess::~FileAccess()
