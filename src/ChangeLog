@@ -1,9 +1,11 @@
 2003-11-14  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc: drop size/date if read pos>size.
+	* FileCopy.h: (GetDescriptionForLog) new method.
 	* commands.cc: add --sort=time for cls; add long options for open;
 	  optional verification of cached dirs.
 	* CmdExec.cc, CmdExec.h: optional verification of cached dirs.
+	* Resolver.cc: define C_IN if undefined.
 
 2003-11-11  Alexander V. Lukyanov <lav@yars.free.net>
 

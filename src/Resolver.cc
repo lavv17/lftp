@@ -49,6 +49,9 @@
 #include "log.h"
 #include "plural.h"
 
+#ifndef C_IN
+# define C_IN 1
+#endif
 #ifndef T_SRV
 # define T_SRV 33
 #endif
