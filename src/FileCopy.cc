@@ -861,28 +861,7 @@ void FileCopyPeerFA::OpenSession()
 	 Allocate(s);
 	 memmove(buffer+buffer_ptr,b,s);
       #ifndef NATIVE_CRLF
-	 if(ascii)
-	 {
-	    char *buf=buffer+buffer_ptr;
-	    // find where line ends.
-	    char *cr=buf;
-	    for(;;)
-	    {
-	       cr=(char *)memchr(cr,'\r',s-(cr-buf));
-	       if(!cr)
-		  break;
-	       if(cr-buf<s-1 && cr[1]=='\n')
-	       {
-		  memmove(cr,cr+1,s-(cr-buf)-1);
-		  s--;
-		  if(s<=1)
-		     break;
-	       }
-	       else if(cr-buf==s-1)
-		  break;
-	       cr++;
-	    }
-	 }
+	 if(ascii) s = crlf_to_lf(buffer+buffer_ptr, s);
       #endif	 // NATIVE_CRLF
 	 in_buffer=s;
 	 pos=seek_pos;
@@ -1273,7 +1252,6 @@ int FileCopyPeerFDStream::getfd()
 int FileCopyPeerFDStream::Do()
 {
    int m=STALL;
-   int res;
    if(Done() || Error())
       return m;
    switch(mode)
@@ -1299,31 +1277,39 @@ int FileCopyPeerFDStream::Do()
       }
       if(!write_allowed)
 	 return m;
-      res=Put_LL(buffer+buffer_ptr,in_buffer);
-      if(res>0)
-      {
-	 in_buffer-=res;
-	 buffer_ptr+=res;
-	 return MOVED;
+      while(in_buffer > 0) {
+	 int res=Put_LL(buffer+buffer_ptr,in_buffer);
+	 if(res>0)
+	 {
+	    in_buffer-=res;
+	    buffer_ptr+=res;
+	    m = MOVED;
+	 }
+	 if(res<0)
+	    return MOVED;
+	 if(res == 0)
+	    break;
       }
-      if(res<0)
-	 return MOVED;
       break;
 
    case GET:
-      if(eof)
-	 return m;
-      res=Get_LL(GET_BUFSIZE);
-      if(res>0)
-      {
-	 in_buffer+=res;
-	 SaveMaxCheck(0);
-	 return MOVED;
+      while(in_buffer < GET_BUFSIZE) {
+	 if(eof)
+	    return MOVED;
+	 int res=Get_LL(GET_BUFSIZE);
+	 if(res>0)
+	 {
+	    in_buffer+=res;
+	    SaveMaxCheck(0);
+	    m = MOVED;
+	 }
+	 if(res<0)
+	    return MOVED;
+	 if(eof)
+	    return MOVED;
+	 if(res == 0)
+	    break;
       }
-      if(res<0)
-	 return MOVED;
-      if(eof)
-	 return MOVED;
       break;
    }
    return m;

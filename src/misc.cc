@@ -708,3 +708,45 @@ char *xasprintf(const char *format, ...)
    va_end(va);
    return ret;
 }
+
+static char *mem_crlf(const char *buf, int s)
+{
+   while(buf && s) {
+      char *cr=(char *)memchr(buf,'\r',s);
+
+      if(!cr || cr == buf+s-1)
+	 return NULL;
+
+      if(cr[1] == '\n') return cr;
+      s -= (cr-buf)+1;
+      buf += (cr-buf)+1;
+   }
+
+   return NULL;
+}
+
+/* convert \r\n -> \n in buf; return new size; be efficient for large strings */
+int crlf_to_lf(char *buf, int s)
+{
+   int retsiz = s;
+
+   char *startpos;
+   startpos = mem_crlf(buf, s);
+   if(!startpos) return retsiz;
+
+   char *append = startpos;
+   while(startpos+1 < buf + s)
+   {
+      char *nextpos = mem_crlf(startpos+1, s - (startpos+1 - buf));
+
+      if(nextpos == 0) nextpos = buf + s - 1; /* EOS */
+      memmove(append, startpos+1, nextpos-startpos);
+      append += nextpos-startpos-1;
+
+      startpos=nextpos;
+      retsiz--;
+   }
+
+   return retsiz;
+}
+

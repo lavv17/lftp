@@ -1191,7 +1191,7 @@ const char *FileSetOutput::parse_argv(ArgV *a)
       {"long",no_argument,0,'l'},
       {"quiet",no_argument,0,'q'},
       {"size", no_argument,0,'s'},	/* show size */
-      {"filesize", no_argument,0,0},	/*           for files only */
+      {"filesize", no_argument,0,0},	/* for files only */
       {"nocase", no_argument,0,'i'},
       {"sortnocase", no_argument,0,'I'},
       {"dirsfirst", no_argument,0,'D'},

@@ -88,108 +88,31 @@ int FtpDirList::Do()
 
    int m=STALL;
 
-   if(len>0)
+   while(len>0)
    {
       const char *eol=find_char(b,len,'\n');
       if(!eol && !ubuf->Eof() && len<0x1000)
 	 return m;
-      int skip_len=len;
+      int line_len=len;
+      char *eplf = NULL;
       if(eol)
       {
-	 skip_len=eol+1-b;
-	 len=skip_len;
+	 line_len=eol+1-b;
 
-	 const char *name=0;
-	 int name_len=0;
-	 off_t size=NO_SIZE;
-	 time_t date=NO_DATE;
-	 long date_l;
-	 long long size_ll;
-	 bool dir=false;
-	 int perms=-1;
-	 // check for EPLF listing
-	 if(eol>b+1 && b[0]=='+')
-	 {
-	    const char *scan=b+1;
-	    int scan_len=len-1;
-	    while(scan && scan_len>0)
-	    {
-	       switch(*scan)
-	       {
-		  case '\t':  // the rest is file name.
-		     name=scan+1;
-		     name_len=scan_len-1;
-		     scan=0;
-		     break;
-		  case 's':
-		     if(1 != sscanf(scan+1,"%lld",&size_ll))
-			break;
-		     size = size_ll;
-		     break;
-		  case 'm':
-		     if(1 != sscanf(scan+1,"%ld",&date_l))
-			break;
-		     date = date_l;
-		     break;
-		  case '/':
-		     dir=true;
-		     break;
-		  case 'r':
-		     dir=false;
-		     break;
-		  case 'i':
-		     break;
-		  case 'u':
-		     if(scan[1]=='p')  // permissions.
-			sscanf(scan+2,"%o",&perms);
-		     break;
-		  default:
-		     name=0;
-		     scan=0;
-		     break;
-	       }
-	       if(scan==0 || scan_len==0)
-		  break;
-	       const char *comma=find_char(scan,scan_len,',');
-	       if(comma)
-	       {
-		  scan_len-=comma+1-scan;
-		  scan=comma+1;
-	       }
-	       else
-		  break;
-	    }
-	    if(name && name_len>0)
-	    {
-	       // ok, this is EPLF. Format new string.
-	       char *line_add=string_alloca(80+name_len);
-	       if(perms==-1)
-		  perms=(dir?0755:0644);
-	       char size_str[32];
-	       if(size==NO_SIZE)
-		  strcpy(size_str,"-");
-	       else
-		  sprintf(size_str,"%lld",(long long)size);
-	       char date_str[21];
-	       if(date == NO_DATE)
-		  strcpy(date_str,"-");
-	       else {
-		  struct tm *t=localtime(&date);
-		  sprintf(date_str, "%04d-%02d-%02d %02d:%02d",
-			  t->tm_year+1900,t->tm_mon+1,t->tm_mday,
-			  t->tm_hour,t->tm_min);
-	       }
-	       sprintf(line_add, "%c%s  %10s  %16s  %.*s",
-		       dir ? 'd':'-', format_perms(perms), size_str,
-		       date_str, name_len, name);
-	       b=line_add;
-	       len=strlen(b);
-	    }
-	 } // end if(+).
-      } // end if(eol)
+	 eplf = EPLF(b, eol-b);
+      }
 
-      buf->Put(b,len);
-      ubuf->Skip(skip_len);
+      if(eplf) {
+	 /* put the new string instead */
+	 buf->Put(eplf,strlen(eplf));
+	 xfree(eplf);
+      } else
+         buf->Put(b,line_len);
+
+      ubuf->Skip(line_len);
+      len -= line_len;
+      b += line_len;
+
       m=MOVED;
    }
 
@@ -238,4 +161,95 @@ void FtpDirList::Resume()
    super::Resume();
    if(ubuf)
       ubuf->Resume();
+}
+
+char *FtpDirList::EPLF(const char *b, int linelen)
+{
+   // check for EPLF listing
+   if(linelen <= 1) return NULL;
+   if(b[0]!='+')  return NULL;
+
+   const char *scan=b+1;
+   int scan_len=linelen-1;
+
+   const char *name=0;
+   int name_len=0;
+   off_t size=NO_SIZE;
+   time_t date=NO_DATE;
+   bool dir=false;
+   int perms=-1;
+   long long size_ll;
+   long date_l;
+   while(scan && scan_len>0)
+   {
+      switch(*scan)
+      {
+      case '\t':  // the rest is file name.
+	 name=scan+1;
+	 name_len=scan_len-1;
+	 scan=0;
+	 break;
+      case 's':
+	 if(1 != sscanf(scan+1,"%lld",&size_ll))
+	    break;
+	 size = size_ll;
+	 break;
+      case 'm':
+	 if(1 != sscanf(scan+1,"%ld",&date_l))
+	    break;
+	 date = date_l;
+	 break;
+      case '/':
+	 dir=true;
+	 break;
+      case 'r':
+	 dir=false;
+	 break;
+      case 'i':
+	 break;
+      case 'u':
+	 if(scan[1]=='p')  // permissions.
+	    sscanf(scan+2,"%o",&perms);
+	 break;
+      default:
+	 name=0;
+	 scan=0;
+	 break;
+      }
+      if(scan==0 || scan_len==0)
+	 break;
+      const char *comma=find_char(scan,scan_len,',');
+      if(comma)
+      {
+	 scan_len-=comma+1-scan;
+	 scan=comma+1;
+      }
+      else
+	 break;
+   }
+   if(!name || name_len == 0) return NULL;
+
+   // ok, this is EPLF. Format new string.
+   char *line_add=(char *) xmalloc(80+name_len);
+   if(perms==-1)
+      perms=(dir?0755:0644);
+   char size_str[32];
+   if(size==NO_SIZE)
+      strcpy(size_str,"-");
+   else
+      sprintf(size_str,"%lld",(long long)size);
+   char date_str[21];
+   if(date == NO_DATE)
+      strcpy(date_str,"-");
+   else {
+      struct tm *t=localtime(&date);
+      sprintf(date_str, "%04d-%02d-%02d %02d:%02d",
+	    t->tm_year+1900,t->tm_mon+1,t->tm_mday,
+	    t->tm_hour,t->tm_min);
+   }
+   sprintf(line_add, "%c%s  %10s  %16s  %.*s",
+	 dir ? 'd':'-', format_perms(perms), size_str,
+	 date_str, name_len, name);
+
+   return line_add;
 }

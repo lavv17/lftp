@@ -109,4 +109,7 @@ char *xstrftime(const char *format, const struct tm *tm);
 char *xvasprintf(const char *format, va_list ap);
 char *xasprintf(const char *format, ...);
 
+/* convert \r\n -> \n in buf; return new size */
+int crlf_to_lf(char *buf, int s);
+
 #endif // MISC_H

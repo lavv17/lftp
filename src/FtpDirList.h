@@ -29,6 +29,8 @@ class FtpDirList : public DirList
    Buffer *ubuf;
    char *pattern;
 
+   static char *FtpDirList::EPLF(const char *line, int len);
+	   
 public:
    FtpDirList(ArgV *a,FileAccess *fa);
    ~FtpDirList();

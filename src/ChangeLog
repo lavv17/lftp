@@ -1,3 +1,9 @@
+2001-10-27  Glenn Maynard <g_ld@zewt.org>
+
+	* FileCopy.cc, FtpDirList.cc, FtpDirList.h, misc.cc, misc.h:
+	  Speed up ascii mode transfer.
+	* command.cc: cosmetics.
+
 2001-10-25  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* misc.cc, misc.h: (mktime_from_tz) new function.
