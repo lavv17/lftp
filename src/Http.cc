@@ -716,16 +716,21 @@ void Http::HandleHeaderLine(const char *name,const char *value)
    }
 }
 
-static const char *find_eol(const char *str,int len)
+static
+const char *find_eol(const char *p,int len,int *eol_size)
 {
-   const char *p=str;
-   for(int i=0; i<len-1; i++,p++)
+   *eol_size=1;
+   for(int i=0; i<len; i++,p++)
    {
-      if(p[1]=='\n' && p[0]=='\r')
+      if(p[0]=='\n')
 	 return p;
-      if(p[1]!='\r')
-	 p++,i++; // fast skip
+      if(i+1<len && p[1]=='\n' && p[0]=='\r')
+      {
+	 *eol_size=2;
+	 return p;
+      }
    }
+   *eol_size=0;
    return 0;
 }
 
@@ -1058,13 +1063,14 @@ int Http::Do()
       }
       if(len>0)
       {
-	 const char *eol=find_eol(buf,len);
+	 int eol_size;
+	 const char *eol=find_eol(buf,len,&eol_size);
 	 if(eol)
 	 {
 	    if(eol==buf)
 	    {
 	       DebugPrint("<--- ","",4);
-	       recv_buf->Skip(2);
+	       recv_buf->Skip(eol_size);
 	       if(tunnel_state==TUNNEL_WAITING)
 	       {
 		  if(H_20X(status_code))
@@ -1146,7 +1152,7 @@ int Http::Do()
 	    memcpy(line,buf,len);
 	    line[len]=0;
 
-	    recv_buf->Skip(len+2);
+	    recv_buf->Skip(len+eol_size);
 
 	    DebugPrint("<--- ",line,4);
 	    m=MOVED;

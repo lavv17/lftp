@@ -1,3 +1,8 @@
+2002-09-05  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc: allow single LF as EOL (suggested by Peter Vreman
+	  <peter@freepascal.org>). Also recommended by RFC2616.
+
 2002-09-04  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* IdNameCache.cc, IdNameCache.h: fixed a bug which caused a single
