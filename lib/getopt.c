@@ -74,9 +74,9 @@
 
 #ifdef VMS
 #include <unixlib.h>
+#endif
 #if HAVE_STRING_H - 0
 #include <string.h>
-#endif
 #endif
 
 #if defined (WIN32) && !defined (__CYGWIN32__)
@@ -645,7 +645,7 @@ _getopt_internal (argc, argv, optstring, longopts, longind, long_only)
 		optarg = nameend + 1;
 	      else
 		{
-		  if (opterr)
+		  if (opterr) {
 		   if (argv[optind - 1][1] == '-')
 		    /* --option */
 		    fprintf (stderr,
@@ -656,6 +656,7 @@ _getopt_internal (argc, argv, optstring, longopts, longind, long_only)
 		    fprintf (stderr,
 		     _("%s: option `%c%s' doesn't allow an argument\n"),
 		     argv[0], argv[optind - 1][0], pfound->name);
+		  }
 
 		  nextchar += strlen (nextchar);
 
