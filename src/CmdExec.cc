@@ -898,6 +898,7 @@ char *CmdExec::MakePrompt()
 	 {
 	    unsigned len;
 	    unsigned code;
+	    scan--;
 	    sscanf(scan,"%3o%n",&code,&len);
 	    ch=code;
 	    scan+=len;
