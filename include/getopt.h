@@ -82,7 +82,7 @@ extern int optopt;
 
 struct option
 {
-# if defined __STDC__ && __STDC__
+# if (defined __STDC__ && __STDC__) || defined __cplusplus
   const char *name;
 # else
   char *name;
