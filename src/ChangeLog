@@ -1,3 +1,14 @@
+2002-06-17  Glenn Maynard <g_ld@zewt.org>
+
+	* MirrorJob.cc: pass timestamp to copier even if it is inaccurate.
+	  This fixes mirror with servers not supporting MDTM.
+
+2002-06-11  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileAccess.cc: copy vproto in clone ctor.
+	* parsecmd.cc, complete.cc: allow ! to be backslash-quoted (for csh-history).
+	* ResMgr.cc, ResMgr.h: new verificators: FileReadable, DirReadable.
+
 2002-06-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc: set buf to 0 after xfree; this fixes double free.
