@@ -1,3 +1,11 @@
+1999-11-22  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc: try_time=0 is the same as DontSleep().
+	* Http.cc: support ConnectVerify; remove some unneeded statements.
+	* NetAccess.cc, NetAccess.h: move ConnectVerify here; remove
+	  relookup-always setting.
+	* resource.cc, ftpclass.cc, ftpclass.h: remove relookup-always.
+
 1999-11-19  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: move aborted_data_sock along with control_sock.
