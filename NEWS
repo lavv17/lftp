@@ -1,5 +1,10 @@
+Version 2.1.2 - 1999-10-??
+
 * http: ls -F implemented, accept some other options.
-* socks5 support added (--with-socks5).
+* hftp: parser for Netscape proxy added.
+* socks5 support added (--with-socks5), dante support (--with-socksdante).
+* korean translation.
+* fixed a SEGV due to double freed memory.
 
 Version 2.1.1 - 1999-10-02
 
