@@ -1,3 +1,12 @@
+2005-02-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc: split off FileCopyPeerOutputJob.
+	* FileSet.cc, FileSet.h, FileSetOutput.cc, FileSetOutput.h,
+	  commands.cc: add support for reverse sorting.
+	* example2.cc: blocking fix.
+	* FileCopyOutputJob.cc: new file (split from FileCopy.cc).
+	* Makefile.am: move some modules to libtasks, where they belong.
+
 2005-02-04  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileAccess.cc, FileAccess.h: move entity_content_type here; add

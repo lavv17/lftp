@@ -1328,18 +1328,18 @@ const char *FileSetOutput::parse_argv(ArgV *a)
       {"dirsfirst", no_argument,0,'D'},
 
       {"sort", required_argument,0, 0},
+      {"reverse",no_argument,0,'r'},
       {"user", no_argument,0, 0},
       {"group", no_argument,0, 0},
       {"perms", no_argument,0, 0},
       {"date", no_argument,0, 0},
       {"linkcount", no_argument,0, 0},
       {"links", no_argument,0, 0},
-      {0, no_argument, 0, 'S'}, // sort by size
       {0,0,0,0}
    };
 
    int opt, longopt;
-   while((opt=a->getopt_long(":1BdFhiklqsDIS", cls_options, &longopt))!=EOF)
+   while((opt=a->getopt_long(":1BdFhiklqsDISrt", cls_options, &longopt))!=EOF)
    {
       switch(opt) {
       case 0:
@@ -1409,6 +1409,12 @@ const char *FileSetOutput::parse_argv(ArgV *a)
 	 break;
       case('S'):
 	 sort = FileSet::BYSIZE;
+	 break;
+      case('t'):
+	 sort = FileSet::BYDATE;
+	 break;
+      case('r'):
+	 sort_reverse = true;
 	 break;
 
       default:

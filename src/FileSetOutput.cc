@@ -55,8 +55,8 @@ ResDecl	res_default_cls         ("cmd:cls-default",  "-F", FileSetOutput::Valida
 /* note: this sorts (add a nosort if necessary) */
 void FileSetOutput::print(FileSet &fs, OutputJob *o) const
 {
-   fs.Sort(sort, sort_casefold);
-   if(sort_dirs_first) fs.Sort(FileSet::DIRSFIRST, false);
+   fs.Sort(sort, sort_casefold, sort_reverse);
+   if(sort_dirs_first) fs.Sort(FileSet::DIRSFIRST, false, sort_reverse);
 
    ColumnOutput c;
 

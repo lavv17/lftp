@@ -46,7 +46,6 @@
 #include "misc.h"
 #include "LsCache.h"
 #include "plural.h"
-#include "OutputJob.h"
 
 #define skip_threshold 0x1000
 #define debug(a) Log::global->Format a
@@ -1690,78 +1689,6 @@ int FileCopyPeerDirList::Do()
    in_buffer+=s;
    dl->Skip(s);
    return MOVED;
-}
-
-FileCopyPeerOutputJob::FileCopyPeerOutputJob(OutputJob *new_o)
-   : FileCopyPeer(PUT)
-{
-   o=new_o;
-   DontCopyDate();
-}
-
-int FileCopyPeerOutputJob::Put_LL(const char *buf,int len)
-{
-   off_t io_at=pos;
-   if(GetRealPos()!=io_at) // GetRealPos can alter pos.
-      return 0;
-
-   if(len==0 && eof)
-      return 0;
-
-   if(o->Full())
-      return 0;
-
-   o->Put(buf,len);
-
-   seek_pos+=len; // mainly to indicate that there was some output.
-   return len;
-}
-
-int FileCopyPeerOutputJob::Do()
-{
-   if(o->Error())
-   {
-      broken=true;
-      return MOVED;
-   }
-
-   if(eof && !in_buffer)
-   {
-      done=true;
-      return MOVED;
-   }
-
-   int m=STALL;
-
-   if(!write_allowed)
-      return m;
-
-   while(in_buffer>0)
-   {
-      int res=Put_LL(buffer+buffer_ptr,in_buffer);
-      if(res>0)
-      {
-	 in_buffer-=res;
-	 buffer_ptr+=res;
-	 m=MOVED;
-      }
-      if(res<0)
-	 return MOVED;
-      if(res==0)
-	 break;
-   }
-   return m;
-}
-
-void FileCopyPeerOutputJob::Fg()
-{
-   o->Fg();
-   FileCopyPeer::Fg();
-}
-void FileCopyPeerOutputJob::Bg()
-{
-   o->Bg();
-   FileCopyPeer::Bg();
 }
 
 // special pointer to creator of ftp/ftp copier. It is init'ed in Ftp class.

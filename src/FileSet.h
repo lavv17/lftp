@@ -155,7 +155,7 @@ public:
    void  SubtractNotIn(const FileSet *);
    void  SubtractSameType(const FileSet *);
    void  SubtractCurr();
-   void  Sort(sort_e newsort, bool casefold=false);
+   void  Sort(sort_e newsort, bool casefold=false, bool reverse=false);
    void  Unsort();
    void	 SortByPatternList(const char *list_c);
 

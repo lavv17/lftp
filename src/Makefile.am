@@ -55,7 +55,7 @@ liblftp_tasks_la_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  buffer.cc buffer.h url.cc url.h StatusLine.cc StatusLine.h plural.c plural.h\
  misc.h misc.cc fg.cc fg.h module.cc module.h modconfig.h\
  resource.cc DummyProto.cc DummyProto.h\
- ArgV.cc ArgV.h ascii_ctype.h\
+ ArgV.cc ArgV.h ascii_ctype.h keyvalue.cc keyvalue.h bookmark.cc bookmark.h\
  Speedometer.cc FileGlob.cc FileGlob.h\
  Speedometer.h netrc.cc netrc.h\
  ColumnOutput.cc ColumnOutput.h FileSetOutput.cc\
@@ -68,17 +68,17 @@ liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\
  parsecmd.cc\
  mvJob.cc mvJob.h alias.cc alias.h\
- bookmark.cc bookmark.h CatJob.cc CatJob.h GetJob.cc GetJob.h\
+ CatJob.cc CatJob.h GetJob.cc GetJob.h\
  mkdirJob.cc mkdirJob.h pgetJob.cc pgetJob.h FileFeeder.cc FileFeeder.h\
- QueueFeeder.cc QueueFeeder.h keyvalue.cc keyvalue.h history.cc history.h\
+ QueueFeeder.cc QueueFeeder.h history.cc history.h\
  FindJob.cc FindJob.h \
  FindJobDu.cc FindJobDu.h ChmodJob.cc ChmodJob.h\
  TreatFileJob.cc TreatFileJob.h CopyJob.cc CopyJob.h echoJob.cc echoJob.h \
- OutputJob.cc OutputJob.h buffer_std.cc buffer_std.h
+ OutputJob.cc OutputJob.h FileCopyOutputJob.cc buffer_std.cc buffer_std.h
 
 lftp_LDFLAGS = -export-dynamic $(LFTP_SSL_LDFLAGS)
 lftp_LDADD = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC) $(READLINE)\
-	$(top_builddir)/lib/liblib.a $(LFTP_SSL_LIBS) $(SOCKSLIBS) $(EXPAT_LIBS) $(LTLIBINTL) $(LTLIBICONV)
+	$(top_builddir)/lib/liblib.a $(LFTP_SSL_LIBS) $(SOCKSLIBS) $(LFTP_EXPAT_LIBS) $(LTLIBINTL) $(LTLIBICONV)
 lftp_DEPENDENCIES = liblftp-jobs.la liblftp-tasks.la $(READLINE_DEPEND) \
 	$(top_builddir)/lib/liblib.a $(MODULES_LA_STATIC)
 

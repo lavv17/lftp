@@ -21,14 +21,16 @@ int main()
    for(;;)
    {
       SMTask::Schedule();
-      SMTask::Block();
 
       char buf[1024];
       int res=f->Read(buf,sizeof(buf));
       if(res<0)
       {
 	 if(res==f->DO_AGAIN)
+	 {
+	    SMTask::Block();
 	    continue;
+	 }
 	 fprintf(stderr,"Error: %s\n",f->StrError(res));
 	 return 1;
       }

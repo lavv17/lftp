@@ -56,6 +56,7 @@ public:
    bool quiet;
    bool patterns_casefold;
    bool sort_casefold;
+   bool sort_reverse;
    bool sort_dirs_first;
    bool size_filesonly;
    bool single_column;
@@ -65,7 +66,7 @@ public:
    FileSet::sort_e sort;
    FileSetOutput(): classify(0), width(0), color(false), mode(NONE),
       pat(NULL), basenames(false), showdots(false),
-      quiet(false), patterns_casefold(false), sort_casefold(false),
+      quiet(false), patterns_casefold(false), sort_casefold(false), sort_reverse(false),
       sort_dirs_first(false), size_filesonly(false), single_column(false),
       list_directories(false), output_block_size(0), sort(FileSet::BYNAME) { }
    ~FileSetOutput() { xfree(pat); }

@@ -174,20 +174,21 @@ FileSet::FileSet(FileSet const *set)
 }
 
 static int (*compare)(const char *s1, const char *s2);
+static int rev_cmp;
 
 static int sort_name(const void *s1, const void *s2)
 {
    const FileInfo *p1 = *(const FileInfo **) s1;
    const FileInfo *p2 = *(const FileInfo **) s2;
-   return compare(p1->name, p2->name);
+   return compare(p1->name, p2->name) * rev_cmp;
 }
 
 static int sort_size(const void *s1, const void *s2)
 {
    const FileInfo *p1 = *(const FileInfo **) s1;
    const FileInfo *p2 = *(const FileInfo **) s2;
-   if(p1->size > p2->size) return -1;
-   if(p1->size < p2->size) return 1;
+   if(p1->size > p2->size) return -rev_cmp;
+   if(p1->size < p2->size) return rev_cmp;
    return 0;
 }
 
@@ -195,8 +196,8 @@ static int sort_dirs(const void *s1, const void *s2)
 {
    const FileInfo *p1 = *(const FileInfo **) s1;
    const FileInfo *p2 = *(const FileInfo **) s2;
-   if(p1->filetype == FileInfo::DIRECTORY && !p2->filetype == FileInfo::DIRECTORY) return -1;
-   if(!p1->filetype == FileInfo::DIRECTORY && p2->filetype == FileInfo::DIRECTORY) return 1;
+   if(p1->filetype == FileInfo::DIRECTORY && !p2->filetype == FileInfo::DIRECTORY) return -rev_cmp;
+   if(!p1->filetype == FileInfo::DIRECTORY && p2->filetype == FileInfo::DIRECTORY) return rev_cmp;
    return 0;
 }
 
@@ -206,7 +207,7 @@ static int sort_rank(const void *s1, const void *s2)
    const FileInfo *p2 = *(const FileInfo **) s2;
    if(p1->GetRank()==p2->GetRank())
       return sort_name(s1,s2);
-   return p1->GetRank()<p2->GetRank() ? -1 : 1;
+   return p1->GetRank()<p2->GetRank() ? -rev_cmp : rev_cmp;
 }
 
 static int sort_date(const void *s1, const void *s2)
@@ -215,15 +216,15 @@ static int sort_date(const void *s1, const void *s2)
    const FileInfo *p2 = *(const FileInfo **) s2;
    if(p1->date==p2->date)
       return sort_name(s1,s2);
-   return p1->date>p2->date ? -1 : 1;
+   return p1->date>p2->date ? -rev_cmp : rev_cmp;
 }
 
 /* files_sort is an alias of files when sort == NAME (since
  * files is always sorted by name), and an independant array
  * of pointers (pointing to the same data) otherwise. */
-void FileSet::Sort(sort_e newsort, bool casefold)
+void FileSet::Sort(sort_e newsort, bool casefold, bool reverse)
 {
-   if(newsort == BYNAME && !casefold) {
+   if(newsort == BYNAME && !casefold && !reverse) {
       Unsort();
       return;
    }
@@ -238,6 +239,8 @@ void FileSet::Sort(sort_e newsort, bool casefold)
 
    if(casefold) compare = strcasecmp;
    else compare = strcmp;
+
+   rev_cmp=(reverse?-1:1);
 
    switch(newsort) {
    case BYNAME: qsort(files_sort, fnum, sizeof(FileInfo *), sort_name); break;
