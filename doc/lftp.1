@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "19 Sep 1999"
+.TH lftp 1 "10 Oct 1999"
 .SH NAME
 lftp \- Sophisticated ftp program
 .SH SYNTAX
@@ -61,7 +61,7 @@ lftp \- Sophisticated ftp program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 2.1.0.
+This man page documents lftp version 2.1.2.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a program that allows sophisticated ftp connection to
@@ -93,9 +93,9 @@ commands.
 \fBlftp\fR does reconnect and reget automatically when the
 connection broke and there is something to do.
 .PP
-Since version 2.0.0 lftp can handle three file access methods -
-ftp, http and file. You can specify method to use in ``open URL'' command,
-e.g. ``open http://www.us.kernel.org/pub/linux''.
+lftp 2.1.x can handle four file access methods - ftp, http, hftp and file. You
+can specify method to use in ``open URL'' command, e.g. ``open
+http://www.us.kernel.org/pub/linux''. hftp is ftp-over-http-proxy protocol.
 
 .SS Commands
 .PP
@@ -632,6 +632,21 @@ end a sequence of non-printing characters
 .BR cmd:remote-completion \ (bool)
 a boolean to control whether or not lftp uses remote completion.
 .TP
+.BR cmd:verify-host \ (bool)
+if true, lftp resolves host name immediately in `open' command.
+It is also possible to skip the check for a single `open' command if `&' is given,
+or if ^Z is pressed during the check.
+.TP
+.BR cmd:verify-path \ (bool)
+if true, lftp checks the path given in `cd' command.
+It is also possible to skip the check for a single `cd' command if `&' is given,
+or if ^Z is pressed during the check.
+Examples:
+.Ds
+  set cmd:verify-path/hftp:* false
+  cd directory &
+.De
+.TP
 .BR dns:SRV-query \ (bool)
 query for SRV records and use them before gethostbyname. The SRV records
 are only used if port is not explicitly specified. See RFC2052 for details.
@@ -780,6 +795,7 @@ is to be specified after variable name separated with slash `/'.
 The closure for `dns:', `net:', `ftp:', `http:', `hftp:' domain variables
 is currently just the host name as you specify it in the `open' command
 (with some exceptions where closure is meaningless, e.g. dns:cache-size).
+For some `cmd:' domain variables the closure is current URL without path.
 For other variables it is not currently used. See examples in the sample
 .IR lftp.conf .
 .PP
