@@ -1,5 +1,16 @@
 1999-07-10  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* CmdExec.h: (CmdFeeder::clear) new method; (CmdExec::feeder_called)
+	  new member.
+	* CmdExec.cc: set feeder_called; call feeder->clear in top_vfprintf.
+	* MirrorJob.cc: (va_Report) print even in background.
+	* complete.cc: redisplay before waiting for key.
+	* lftp.cc: (ReadlineFeeder::clear) implemented.
+	* lftp_rl.c, lftp_rl.h: (lftp_rl_clear, lftp_rl_redisplay_maybe) new
+	  functions.
+
+1999-07-10  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* complete.cc: add nlist to list of commands taking remote file as
 	  an argument.
 

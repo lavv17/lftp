@@ -46,6 +46,8 @@ public:
    CmdFeeder *prev;
    virtual const char *NextCmd(class CmdExec *exec,const char *prompt) = 0;
    virtual ~CmdFeeder() {}
+
+   virtual void clear() {}
 };
 
 extern CmdFeeder *lftp_feeder;	 // feeder to use after 'lftp' command
@@ -101,6 +103,7 @@ private:
    parse_result parse_one_cmd();
 
    CmdFeeder *feeder;
+   bool feeder_called;
 
    int	 prev_exit_code;
 

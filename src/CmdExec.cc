@@ -551,7 +551,9 @@ try_get_cmd:
 	       last_bg=-1;
 	 }
 	 char *prompt=MakePrompt();
+	 feeder_called=true;
 	 const char *cmd=feeder->NextCmd(this,prompt);
+	 feeder_called=false;
 	 if(cmd==0)
 	 {
 	    if(next_cmd && *next_cmd && partial_cmd)
@@ -672,6 +674,7 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
    interactive=false;
    status_line=0;
    feeder=0;
+   feeder_called=false;
    used_aliases=0;
 
    next_cmd=cmd_buf=0;
@@ -885,6 +888,8 @@ void CmdExec::top_vfprintf(FILE *file,const char *f,va_list v)
 {
    if(status_line)
       status_line->Show("");
+   if(feeder_called)
+      feeder->clear();
    ::vfprintf(file,f,v);
 }
 

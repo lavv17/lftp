@@ -45,3 +45,30 @@ int lftp_history_expand(const char *what, char **where)
 {
    return history_expand(what,where);
 }
+
+static int is_clear=0;
+
+void lftp_rl_clear()
+{
+   extern char *rl_display_prompt;
+   int old_end;
+
+   old_end=rl_end;
+   rl_end=0;
+   /* better use rl_save_prompt, but it is not available prior to 4.0 */
+   rl_expand_prompt("");
+
+   rl_redisplay();
+
+   rl_end=old_end;
+   rl_expand_prompt(rl_display_prompt);
+
+   is_clear=1;
+}
+
+void lftp_rl_redisplay_maybe()
+{
+   if(is_clear)
+      rl_redisplay();
+   is_clear=0;
+}

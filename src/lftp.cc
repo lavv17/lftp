@@ -173,6 +173,12 @@ public:
       }
       return cmd_buf;
    }
+   void clear()
+      {
+	 if(!tty)
+	    return;
+	 lftp_rl_clear();
+      }
 };
 
 static void sig_term(int sig)
