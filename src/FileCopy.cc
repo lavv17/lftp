@@ -623,10 +623,7 @@ bool FileCopyPeer::Done()
       if(removing)
 	 return false;
       if(mode==PUT)
-      {
-	 if(do_set_date && !date_set)
-	    return false;
-      }
+	 return done;
       return true;
    }
    return false;
@@ -652,6 +649,7 @@ FileCopyPeer::FileCopyPeer(direction m)
    file_removed=false;
    use_cache=true;
    write_allowed=true;
+   done=false;
    Suspend();  // don't do anything too early
 }
 FileCopyPeer::~FileCopyPeer()
@@ -737,6 +735,7 @@ int FileCopyPeerFA::Do()
 	    fxp_eof:
 	       // FIXME: set date for real.
 	       date_set=true;
+	       done=true;
 	       m=MOVED;
 	    }
 	    else if(res==FA::IN_PROGRESS)
@@ -1256,15 +1255,19 @@ int FileCopyPeerFDStream::Do()
       {
 	 if(eof)
 	 {
-	    if(date_set || date==NO_DATE_YET)
-	       return m;
-	    if(date!=NO_DATE && do_set_date)
+	    if(!date_set && date!=NO_DATE && do_set_date)
 	    {
+	       if(date==NO_DATE_YET)
+		  return m;
 	       if(getfd()==-1)
 		  return m;
 	       stream->setmtime(date);
+	       date_set=true;
+	       m=MOVED;
 	    }
-	    date_set=true;
+	    if(stream && delete_stream && !stream->Done())
+	       return m;
+	    done=true;
 	    return MOVED;
 	 }
 	 if(seek_pos==0)
@@ -1315,15 +1318,6 @@ int FileCopyPeerFDStream::Do()
 bool FileCopyPeerFDStream::IOReady()
 {
    return seek_pos==pos || stream->fd!=-1;
-}
-
-bool FileCopyPeerFDStream::Done()
-{
-   if(!super::Done())
-      return false;
-   if(stream && delete_stream && !stream->Done())
-      return false;
-   return true;
 }
 
 void FileCopyPeerFDStream::Seek(off_t new_pos)

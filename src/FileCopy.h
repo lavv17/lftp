@@ -57,6 +57,8 @@ protected:
    bool removing;
    bool file_removed;
 
+   bool done;
+
    bool ascii;
    bool use_cache;
 
@@ -315,7 +317,6 @@ protected:
 public:
    FileCopyPeerFDStream(FDStream *o,direction m);
    int Do();
-   bool Done();
    bool IOReady();
    void Seek(off_t new_pos);
    FgData *GetFgData(bool fg);

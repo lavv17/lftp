@@ -1,3 +1,8 @@
+2001-01-09  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc, FileCopy.h: (FileCopyPeer::done) new member; use it;
+	  (FileCopyPeerFDStream::Done) method removed.
+
 2001-01-08  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Job.cc, Job.h: (CheckForWaitLoop) new method.
