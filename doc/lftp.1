@@ -42,14 +42,17 @@
 .fi
 .in
 ..
-.TH lftp 1 "12 Jan 1998"
+.TH lftp 1 "15 Feb 1998"
 .SH NAME
 lftp \- Sophisticated ftp program
 .SH SYNTAX
 .B lftp
-.I [-d] [-e cmd] [-p port] [-u\ user[,pass]]\ [host]
+.I [\-d] [\-e cmd] [\-p port] [\-u\ user[,pass]]\ [host]
+.br
+.B lftp
+.I \-f script_file
 .SH VERSION
-This man page documents lftp version 0.14.0.
+This man page documents lftp version 0.14.1.
 .SH "DESCRIPTION"
 \fBlftp\fR is a program that allows sophisticated ftp connection to
 other hosts. If \fIhost\fR is specified then lftp will connect to that
@@ -539,6 +542,9 @@ Use the given port to connect
 .TP
 .B \-u user,pass
 Use the given username and password to connect
+.TP
+.B \-f script_file
+Execute commands in the file and exit
 
 .SH ENVIRONMENT VARIABLES
 The following environment variables are processed by \fBlftp\fR:
