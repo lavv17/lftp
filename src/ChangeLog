@@ -1,5 +1,11 @@
 2001-12-14  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* FileSet.cc: Exclude appends / for directories before matching.
+	* PatternSet.cc, PatternSet.h: match last directory components
+	  in Glob::Match, e.g. abc/def/ghi.zip matches def/*.zip.
+
+2001-12-14  Alexander V. Lukyanov <lav@yars.free.net>
+
 	* FileAccess.cc, FileAccess.h, FileSet.cc, FileSet.h, FindJob.cc,
 	  FindJob.h, GetFileInfo.cc, LocalAccess.cc, Makefile.am, MirrorJob.cc,
 	  MirrorJob.h, NetAccess.cc, PatternSet.cc, PatternSet.h, commands.cc,

@@ -88,8 +88,9 @@ public:
    };
    class Glob : public Pattern
    {
+      int slash_count;
    public:
-      Glob(const char *p) : Pattern(p) {}
+      Glob(const char *p);
       bool Match(const char *str);
    };
 };

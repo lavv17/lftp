@@ -69,9 +69,34 @@ PatternSet::Pattern::~Pattern()
    xfree(pattern);
 }
 
+PatternSet::Glob::Glob(const char *p) : Pattern(p)
+{
+   slash_count=0;
+   for(p=pattern; *p; p++)
+      if(*p=='/')
+	 slash_count++;
+}
+
+// abc/def.zip matches *.zip
+// abc/def/ghi matches def/g*
 bool PatternSet::Glob::Match(const char *str)
 {
-   return fnmatch(pattern,str,FNM_PATHNAME);
+   const char *scan=str+strlen(str);
+   int countdown=slash_count;
+   while(scan>str)
+   {
+      scan--;
+      if(*scan=='/')
+      {
+	 if(countdown==0)
+	 {
+	    scan++;
+	    break;
+	 }
+	 countdown--;
+      }
+   }
+   return fnmatch(pattern,scan,FNM_PATHNAME);
 }
 
 PatternSet::Regex::Regex(const char *p) : Pattern(p)

@@ -404,14 +404,25 @@ FileInfo *FileSet::FindByName(const char *name) const
    return 0;
 }
 
+static bool do_exclude_match(const char *prefix,FileInfo *fi,PatternSet *x)
+{
+   const char *name=dir_file(prefix,fi->name);
+   if(fi->defined&fi->TYPE && fi->filetype==fi->DIRECTORY)
+   {
+      char *name1=alloca_strdup2(name,1);
+      strcat(name1,"/");
+      name=name1;
+   }
+   return x->MatchExclude(name);
+}
+
 void  FileSet::Exclude(const char *prefix,PatternSet *x)
 {
    if(!x)
       return;
    for(int i=0; i<fnum; i++)
    {
-      const char *name=dir_file(prefix,files[i]->name);
-      if(x->MatchExclude(name))
+      if(do_exclude_match(prefix,files[i],x))
       {
 	 Sub(i);
 	 i--;
