@@ -397,6 +397,37 @@ int   MirrorJob::Do()
       return STALL;
 
    case(INITIAL_STATE):
+      if(!local_set)
+      {
+	 local_session=FileAccess::New("file");
+	 if(!local_session)
+	 {
+	    eprintf("mirror: cannot create `file:' access object, installation error?\n");
+	    state=DONE;
+	    return MOVED;
+	 }
+	 local_session->Chdir(local_dir,false);
+	 list_info=local_session->MakeListInfo();
+	 list_info->UseCache(false);
+	 if(flags&RETR_SYMLINKS)
+	    list_info->FollowSymlinks();
+	 list_info->SetExclude(local_relative_dir,
+			rx_exclude?&rxc_exclude:0,rx_include?&rxc_include:0);
+
+	 while(!list_info->Done())
+	    list_info->Do();  // this should be fast
+
+	 if(list_info->Error())
+	    goto list_info_error;
+
+	 local_set=list_info->GetResult();
+	 delete list_info;
+	 list_info=0;
+	 delete local_session;
+	 local_session=0;
+
+	 local_set->ExcludeDots();  // don't need .. and .
+      }
       if(create_remote_dir)
       {
 	 create_remote_dir=false;
@@ -473,34 +504,7 @@ int   MirrorJob::Do()
 
       remote_set->ExcludeDots(); // don't need .. and .
 
-      local_session=FileAccess::New("file");
-      if(!local_session)
-      {
-	 eprintf("mirror: cannot create `file:' access object, installation error?\n");
-	 state=DONE;
-	 return MOVED;
-      }
-      local_session->Chdir(local_dir,false);
-      list_info=local_session->MakeListInfo();
-      list_info->UseCache(false);
-      if(flags&RETR_SYMLINKS)
-	 list_info->FollowSymlinks();
-      list_info->SetExclude(local_relative_dir,
-		     rx_exclude?&rxc_exclude:0,rx_include?&rxc_include:0);
-
-      while(!list_info->Done())
-	 list_info->Do();  // this should be fast
-
-      if(list_info->Error())
-	 goto list_info_error;
-
-      local_set=list_info->GetResult();
-      delete list_info;
-      list_info=0;
-      delete local_session;
-      local_session=0;
-
-      local_set->ExcludeDots();  // don't need .. and .
+      // now we have both local and remote file sets.
 
       if(flags&REVERSE)
 	 InitSets(local_set,remote_set);

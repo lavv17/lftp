@@ -36,7 +36,6 @@ protected:
    int	 peer_curr;
    void	 ClearPeer();
    void	 NextPeer();
-   bool	 first_lookup;
 
    bool	 relookup_always;
 

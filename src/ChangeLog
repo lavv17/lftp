@@ -1,7 +1,9 @@
 1999-09-08  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* NetAccess.cc, NetAccess.h: drop first_lookup.
 	* MirrorJob.cc, MirrorJob.h: don't get just appeared files, check
-	  that size/date has not changed before overwrite/append.
+	  that size/date has not changed before overwrite/append;
+	  build local file set before remote one.
 	* FileSet.cc, FileSet.h: (SubstractNotIn) new method; optimize
 	  other Substract* methods; make FindByName const.
 

@@ -52,8 +52,6 @@ void NetAccess::Init()
    reconnect_interval=30;  // retry with 30 second interval
    timeout=600;		   // 10 minutes with no events = reconnect
 
-   first_lookup=false;
-
    proxy=0;
    proxy_port=0;
    proxy_user=proxy_pass=0;
@@ -272,7 +270,6 @@ void NetAccess::Connect(const char *h,const char *p)
 {
    super::Connect(h,p);
    ClearPeer();
-   first_lookup=true;
 }
 
 int NetAccess::Resolve(const char *defp,const char *ser,const char *pr)
@@ -295,7 +292,7 @@ int NetAccess::Resolve(const char *defp,const char *ser,const char *pr)
 	 resolver=new Resolver(hostname,portname,defp,ser,pr);
       m=MOVED;
    }
-   if(first_lookup || relookup_always)
+   if(relookup_always)
       resolver->NoCache();
 
    resolver->Do();
@@ -321,6 +318,5 @@ int NetAccess::Resolve(const char *defp,const char *ser,const char *pr)
 
    delete resolver;
    resolver=0;
-   first_lookup=false;
    return MOVED;
 }
