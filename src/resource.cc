@@ -176,6 +176,7 @@ static ResDecl
    ResDecl01c("ftp:fix-pasv-address",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl01d("ftp:fxp-force",		  "no",	   ResMgr::BoolValidate,0),
    ResDecl02 ("ftp:fxp-passive-source",	  "no",	   ResMgr::BoolValidate,ResMgr::NoClosure),
+   ResDecl02d("ftp:fxp-passive-sscn",	  "yes",   ResMgr::BoolValidate,ResMgr::NoClosure),
    ResDecl02b("ftp:home",		  "",	   0,0),
    ResDecl02a("ftp:site-group",		  "",	   0,0),
    ResDecl02c("ftp:lang",		  "",	   0,0),

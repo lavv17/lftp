@@ -34,7 +34,11 @@ class FileCopyFtp : public FileCopy
    bool passive_source;
    bool orig_passive_source;
    bool disable_fxp;
+#if USE_SSL
    bool protect;
+   bool passive_ssl_connect;
+   bool orig_passive_ssl_connect;
+#endif
    int src_retries;
    int dst_retries;
    time_t src_try_time;

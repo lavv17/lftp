@@ -29,6 +29,11 @@
 
 #define super FileCopy
 
+#if !USE_SSL
+#define protect false
+#define passive_ssl_connect true
+#endif
+
 void FileCopyFtp::Close()
 {
    ftp_src->Close();
@@ -50,7 +55,8 @@ int FileCopyFtp::Do()
       if(ftp_dst->IsClosed())
       {
 	 ((FileCopyPeerFA*)put)->OpenSession();
-	 ftp_dst->SetCopyMode(Ftp::COPY_DEST,!passive_source,protect,dst_retries,dst_try_time);
+	 ftp_dst->SetCopyMode(Ftp::COPY_DEST,!passive_source,protect,
+	       passive_source^passive_ssl_connect,dst_retries,dst_try_time);
 	 m=MOVED;
       }
    }
@@ -65,13 +71,15 @@ int FileCopyFtp::Do()
    if(ftp_src->IsClosed())
    {
       ((FileCopyPeerFA*)get)->OpenSession();
-      ftp_src->SetCopyMode(Ftp::COPY_SOURCE,passive_source,protect,src_retries,src_try_time);
+      ftp_src->SetCopyMode(Ftp::COPY_SOURCE,passive_source,protect,
+	    !passive_source^passive_ssl_connect,src_retries,src_try_time);
       m=MOVED;
    }
    if(ftp_dst->IsClosed())
    {
       ((FileCopyPeerFA*)put)->OpenSession();
-      ftp_dst->SetCopyMode(Ftp::COPY_DEST,!passive_source,protect,dst_retries,dst_try_time);
+      ftp_dst->SetCopyMode(Ftp::COPY_DEST,!passive_source,protect,
+	    passive_source^passive_ssl_connect,dst_retries,dst_try_time);
       m=MOVED;
    }
 
@@ -88,6 +96,13 @@ int FileCopyFtp::Do()
 	 passive_source=!passive_source;
 	 Log::global->Write(0,_("**** FXP: trying to reverse ftp:fxp-passive-source\n"));
       }
+#if USE_SSL
+      else if(passive_ssl_connect==orig_passive_ssl_connect)
+      {
+	 passive_ssl_connect=!passive_ssl_connect;
+	 passive_source=orig_passive_source;
+	 Log::global->Write(0,_("**** FXP: trying to reverse ftp:fxp-passive-sscn\n"));
+      }
       else if(protect
       && !ResMgr::QueryBool("ftp:ssl-force",ftp_src->GetHostName())
       && !ResMgr::QueryBool("ftp:ssl-force",ftp_dst->GetHostName()))
@@ -96,6 +111,7 @@ int FileCopyFtp::Do()
 	 protect=false;
 	 Log::global->Write(0,_("**** FXP: trying to reverse ftp:ssl-protect-fxp\n"));
       }
+#endif // USE_SSL
       else
       {
 	 // both ways failed. Fall back to normal copying.
@@ -192,7 +208,10 @@ void FileCopyFtp::Init()
    src_retries=dst_retries=0;
    src_try_time=dst_try_time=0;
    disable_fxp=false;
+#if USE_SSL
    protect=false;
+   orig_passive_ssl_connect=passive_ssl_connect=true;
+#endif
 }
 
 FileCopyFtp::~FileCopyFtp()
@@ -221,6 +240,11 @@ FileCopyFtp::FileCopyFtp(FileCopyPeer *s,FileCopyPeer *d,bool c,bool rp)
    if(ResMgr::QueryBool("ftp:ssl-protect-fxp",ftp_src->GetHostName())
    || ResMgr::QueryBool("ftp:ssl-protect-fxp",ftp_dst->GetHostName()))
       protect=true;
+
+#if USE_SSL
+   passive_ssl_connect=ResMgr::QueryBool("ftp:fxp-passive-sscn",0);
+   orig_passive_ssl_connect=passive_ssl_connect;
+#endif
 }
 
 FileCopy *FileCopyFtp::New(FileCopyPeer *s,FileCopyPeer *d,bool c)

@@ -1,3 +1,12 @@
+2004-05-26  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopyFtp.cc, FileCopyFtp.h: vary passive_ssl_connect to find
+	  suitable combination of pasv/sscn.
+	* ftpclass.cc, ftpclass.h: (copy_ssl_connect) new member; clean up
+	  prot and sscn modes choice; don't disconnect on pasv and port errors.
+	* resource.cc: (ftp:fxp-passive-sscn) new setting to choose initial
+	  sscn mode of passive end of fxp.
+
 2004-05-25  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: drop eof flag if transfer returns error code after

@@ -937,6 +937,7 @@ void Ftp::InitFtp()
    copy_addr_valid=false;
    copy_passive=false;
    copy_protect=false;
+   copy_ssl_connect=false;
    copy_done=false;
    copy_connection_open=false;
    stat_time=0;
@@ -1487,26 +1488,25 @@ int   Ftp::Do()
 #ifdef USE_SSL
       if(conn->ssl_is_activated())
       {
-	 char want_prot='P';
+	 char want_prot=conn->prot;
 	 if(mode==LIST || mode==LONG_LIST || mode==MP_LIST)
 	    want_prot=QueryBool("ssl-protect-list",hostname)?'P':'C';
-	 else
+	 else if(mode==RETRIEVE || mode==STORE)
 	    want_prot=QueryBool("ssl-protect-data",hostname)?'P':'C';
 	 if(copy_mode!=COPY_NONE)
-	 {
 	    want_prot=copy_protect?'P':'C';
-	    if(conn->sscn_supported && !conn->cpsv_supported
-	    && copy_protect && !conn->sscn_on)
-	    {
-	       conn->SendCmd("SSCN ON");
-	       expect->Push(new Expect(Expect::SSCN,'Y'));
-	    }
-	 }
-	 else if(conn->sscn_on)
+
+	 bool want_sscn=conn->sscn_on;
+	 if(copy_mode!=COPY_NONE)
+	    want_sscn=copy_protect && copy_ssl_connect
+		      && !(copy_passive && conn->cpsv_supported);
+	 else if(mode==RETRIEVE || mode==STORE || mode==LIST || mode==LONG_LIST || mode==MP_LIST)
+	    want_sscn=false;
+
+	 if(conn->sscn_supported && want_sscn!=conn->sscn_on)
 	 {
-	    // SSCN is no longer needed.
-	    conn->SendCmd("SSCN OFF");
-	    expect->Push(new Expect(Expect::SSCN,'N'));
+	    conn->SendCmd2("SSCN",want_sscn?"ON":"OFF");
+	    expect->Push(new Expect(Expect::SSCN,want_sscn?'Y':'N'));
 	 }
 	 if(want_prot!=conn->prot)
 	 {
@@ -3084,6 +3084,7 @@ void  Ftp::Close()
    }
    copy_mode=COPY_NONE;
    copy_protect=false;
+   copy_ssl_connect=false;
    copy_addr_valid=false;
    copy_done=false;
    copy_connection_open=false;
@@ -3703,7 +3704,7 @@ void Ftp::CheckResp(int act)
       if(copy_mode!=COPY_NONE)
       {
 	 copy_passive=!copy_passive;
-	 Disconnect();
+	 copy_failed=true;
 	 break;
       }
       if(is5XX(act))
@@ -3721,7 +3722,7 @@ void Ftp::CheckResp(int act)
       if(copy_mode!=COPY_NONE)
       {
 	 copy_passive=!copy_passive;
-	 Disconnect();
+	 copy_failed=true;
 	 break;
       }
       if(is5XX(act))
