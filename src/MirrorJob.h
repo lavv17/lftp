@@ -87,7 +87,6 @@ class MirrorJob : public Job
 
    PatternSet *exclude;
 
-   bool	 dir_made;
    bool	 create_remote_dir;
 
    void	 Report(const char *fmt,...) PRINTF_LIKE(2,3);

@@ -731,7 +731,6 @@ MirrorJob::MirrorJob(MirrorJob *parent,
 
    state=INITIAL_STATE;
 
-   dir_made=false;
    newer_than=(time_t)-1;
 
    script=0;
