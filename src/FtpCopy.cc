@@ -27,7 +27,6 @@
 
 #include "FtpCopy.h"
 #include "url.h"
-#include "ProtoList.h"
 #include "misc.h"
 #include "GetPass.h"
 
@@ -173,7 +172,7 @@ int FtpCopy::ProcessURL(const char *url,Ftp **session,char **file,FileAccess *de
 	 return -1;
       }
       FileAccess *new_session;
-      new_session=Protocol::NewSession(pu.proto);
+      new_session=FileAccess::New(pu.proto);
       if(!new_session)
       {
 	 eprintf(_("%s: %s - not supported protocol\n"),
