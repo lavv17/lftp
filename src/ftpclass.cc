@@ -2417,8 +2417,7 @@ void Ftp::SendUrgentCmd(const char *cmd)
 {
    static const char pre_cmd[]={TELNET_IAC,TELNET_IP,TELNET_IAC,TELNET_SYNCH};
 
-   int fl;
-   fcntl(control_sock,F_GETFL,&fl);
+   int fl=fcntl(control_sock,F_GETFL);
    fcntl(control_sock,F_SETFL,fl&~O_NONBLOCK);
    FlushSendQueue(/*all=*/true);
 #ifdef USE_SSL

@@ -32,8 +32,7 @@ int CharReader::Do()
    if(ch!=NOCHAR)
       return m;
 
-   int oldfl=0;
-   fcntl(fd,F_GETFL,&oldfl);
+   int oldfl=fcntl(fd,F_GETFL);
    if(!(oldfl&O_NONBLOCK))
       fcntl(fd,F_SETFL,oldfl|O_NONBLOCK);
 

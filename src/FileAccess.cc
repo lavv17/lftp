@@ -237,8 +237,7 @@ int   FileAccess::CheckHangup(struct pollfd *pfd,int num)
 
 void FileAccess::NonBlock(int fd)
 {
-   int fl=0;
-   fcntl(fd,F_GETFL,&fl);
+   int fl=fcntl(fd,F_GETFL);
    fcntl(fd,F_SETFL,fl|O_NONBLOCK);
 }
 void FileAccess::CloseOnExec(int fd)

@@ -48,6 +48,7 @@ FDStream::FDStream(int new_fd,const char *new_name)
       name=0;
    error_text=0;
    status=0;
+   close_fd=false;
 }
 FDStream::FDStream()
 {
@@ -55,6 +56,7 @@ FDStream::FDStream()
    name=0;
    error_text=0;
    status=0;
+   close_fd=false;
 }
 void FDStream::MakeErrorText()
 {
@@ -66,7 +68,8 @@ void FDStream::MakeErrorText()
 }
 FDStream::~FDStream()
 {
-   // don't close fd
+   if(close_fd)
+      close(fd);
    xfree(name);
    xfree(error_text);
 };
@@ -97,8 +100,7 @@ void OutputFilter::Child(int *p)
 	 dup2(second_fd,1);
 	 close(second_fd);
       }
-      int fl;
-      fcntl(1,F_GETFL,&fl);
+      int fl=fcntl(1,F_GETFL);
       fcntl(1,F_SETFL,fl&~O_NONBLOCK);
    }
 }
@@ -117,8 +119,7 @@ void InputFilter::Child(int *p)
 	 dup2(second_fd,0);
 	 close(second_fd);
       }
-      int fl;
-      fcntl(0,F_GETFL,&fl);
+      int fl=fcntl(0,F_GETFL);
       fcntl(0,F_SETFL,fl&~O_NONBLOCK);
    }
 }
