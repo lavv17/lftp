@@ -179,6 +179,9 @@ public:
 	 f->SetDate(date);
    }
 
+   /* add a path to all files */
+   void PrependPath(const char *path);
+   
    FileInfo * operator[](int i) const;
 };
 

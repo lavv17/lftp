@@ -54,7 +54,7 @@ libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  Speedometer.h lftp_ssl.cc lftp_ssl.h netrc.cc netrc.h buffer_ssl.cc\
  buffer_ssl.h Fish.cc Fish.h ColumnOutput.cc ColumnOutput.h FileSetOutput.cc \
  FileSetOutput.h PtyShell.cc PtyShell.h lftp_pty.c lftp_pty.h \
- TimeDate.cc TimeDate.h Timer.cc Timer.h
+ TimeDate.cc TimeDate.h Timer.cc Timer.h GetFileInfo.cc GetFileInfo.h
 
 libjobs_a_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\

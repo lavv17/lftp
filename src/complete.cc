@@ -104,8 +104,6 @@ char *command_generator(const char *text,int state)
 /* this is used for both remote and local gen now; rename */
 static char *file_generator(const char *text,int state)
 {
-   const char *name;
-
    /* If this is a new word to complete, initialize now. */
    if(!state)
       cindex=0;
@@ -115,7 +113,8 @@ static char *file_generator(const char *text,int state)
 
    while((*glob_res)[cindex])
    {
-      name=(*glob_res)[cindex++]->name;
+      const char *name=(*glob_res)[cindex++]->name;
+
       if(!name[0])
 	 continue;
       /* it's not our job to be case-sensitive; that's done (or not done)

@@ -98,8 +98,6 @@ void FinderJob_Du::Finish()
 
 FinderJob::prf_res FinderJob_Du::ProcessFile(const char *d,const FileInfo *fi)
 {
-   assert(stack_ptr != -1);
-
    if(buf->Broken())
       return PRF_FATAL;
    if(buf->Error())
@@ -118,7 +116,8 @@ FinderJob::prf_res FinderJob_Du::ProcessFile(const char *d,const FileInfo *fi)
    }
 
    /* add this file to the current dir */
-   size_stack[stack_ptr].size += fi->size;
+   if(stack_ptr != -1)
+      size_stack[stack_ptr].size += fi->size;
    tot_size += fi->size;
 
    if(all_files) {

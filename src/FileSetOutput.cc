@@ -419,7 +419,7 @@ void FileSetOutput::print(FileSet &fs, Buffer *o) const
 	    char buffer[128];
 	    sprintf(sz, "%10s ",
 	       human_readable_inexact (f->size, buffer, 1,
-		  -1024 /*output_block_size*/, human_ceiling));
+		  output_block_size? output_block_size:1024, human_ceiling));
 	 } else {
 	    sprintf(sz, "%10s ", ""); /* pad */
 	 }
@@ -555,6 +555,9 @@ void FileSetOutput::long_list()
 {
    single_column = true;
    mode = ALL;
+   /* -l's default size is 1; otherwise 1024 */
+   if(!output_block_size)
+      output_block_size = 1;
 }
 
 const char *FileSetOutput::ValidateArgv(char **s)
@@ -582,13 +585,13 @@ FileCopyPeerCLS::FileCopyPeerCLS(FA *_session, ArgV *a, const FileSetOutput &_fs
    fso(_fso), f(0),
    args(a),
    quiet(false),
-   num(1), dir(0), mask(0),
-   state(INIT)
+   num(1), dir(0), mask(0)
 {
+   if(args->count() == 1)
+      args->Add("");
    list_info=0;
    can_seek=false;
    can_seek0=false;
-   init_dir=xstrdup(session->GetCwd());
 }
 
 FileCopyPeerCLS::~FileCopyPeerCLS()
@@ -598,18 +601,12 @@ FileCopyPeerCLS::~FileCopyPeerCLS()
    Delete(list_info);
    SessionPool::Reuse(session);
    xfree(dir);
-   xfree(init_dir);
 }
 
 int FileCopyPeerCLS::Do()
 {
    if(Done()) return STALL;
-
-   int res;
-   switch(state) {
-   case INIT:
-   case GETTING_LIST:
-      /* one currently processing and incomplete? */
+      /* one currently processing? */
       if(list_info) {
 	 if(list_info->Error()) {
 	    SetError(list_info->ErrorText());
@@ -634,68 +631,35 @@ int FileCopyPeerCLS::Do()
       /* next: */
       xfree(dir); dir = 0;
       xfree(mask); mask = 0;
-      if(args->count() == 1 && num == 1) {
-	 dir = xstrdup("./");
-	 num++;
-      } else {
-	 dir = args->getarg(num++);
-	 if(!dir) {
-	    /* done */
-	    PutEOF();
-	    return MOVED;
-	 }
-	 dir = xstrdup(dir);
+
+      dir = args->getnext();
+      if(!dir) {
+	 /* done */
+	 PutEOF();
+	 return MOVED;
       }
+      dir = xstrdup(dir);
 
-      /* Problem: is "bar" in "foo/bar" (the last portion) a directory or a
-       * file?
-       * Neither is intuitive--"cls /pub" is common; so is
-       * "cls dir/filename".
-       *
-       * Let's assume it's a file and force people to use a trailing slash.
-       * (I don't particularly like that, but it's done in other places
-       * anyway ...) */
-
+      /* If the basename contains wildcards, move the basename into mask. */
       mask = strrchr(dir, '/');
-      if(mask) {
-	 *mask++ = 0;
-	 mask = xstrdup(mask);
-      } else {
-	 mask = dir;
-	 dir = 0;
-      }
-
-      session->Chdir(init_dir,false);
-      if(dir) session->Chdir(dir);
-      state = CHANGING_DIR;
-      return MOVED;
-
-   case CHANGING_DIR:
-      if(dir) {
-	 res=session->Done();
-	 if(res==FA::IN_PROGRESS)
-	    return STALL;
-	 if(res<0)
-	 {
-	    /* if(res==FA::FILE_MOVED)
-	       {
-	       }
-	       Not going to copy+paste 25 lines of code from MirrorJob
-	     */
-	    printf("%s: %s\n", args->a0(), session->StrError(res));
-	    state = GETTING_LIST;
-	    return MOVED;
+      if(!mask) mask=dir;
+      if(strspn(mask, "*?")) {
+	 if(mask == dir)
+	    dir = xstrdup("");
+	 else {
+	    mask[-1] = 0;
+	    mask = xstrdup(mask);
 	 }
-      }
-      list_info=session->MakeListInfo();
+      } else mask=0;
+
+      mask = 0;
+
+      list_info=new GetFileInfo(session, dir, fso.list_directories);
       if(!list_info) {
 	 PutEOF();
 	 return MOVED;
       }
       list_info->UseCache(use_cache);
-      state = GETTING_LIST;
-      return MOVED;
-   }
 
    return MOVED;
 }

@@ -2149,6 +2149,9 @@ int Ftp::ReplyLogPriority(int code)
       return 4;
    if(code==550 && mode==LIST && line && strstr(line,"No files found"))
       return 4;
+   if(code==550 && mode==CHANGE_DIR)
+      return 4;
+
    // Error messages
    // 221 is the reply to QUIT, but we don't expect it.
    if(code>=400 || (code==221 && RespQueue[RQ_head].expect!=221))

@@ -159,7 +159,12 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	     * them align with GNU ls options. */
 	    " -1                   - single-column output\n"
 	    " -B, --basename       - show basename of files only\n"
+	    "     --block-size=SIZ - use SIZ-byte blocks\n"
+	    " -d, --directory      - list directory entries instead of contents\n"
 	    " -F, --classify       - append indicator (one of /@) to entries\n"
+	    " -h, --human-readable - print sizes in human readable format (e.g., 1K)\n"
+	    "     --si             - likewise, but use powers of 1000 not 1024\n"
+	    " -k, --kilobytes      - like --block-size=1024\n"
 	    " -l, --long           - use a long listing format\n"
 	    " -q, --quiet          - don't show status\n"
 	    " -s, --size           - print size of each file\n"
@@ -188,9 +193,6 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	    "-s flag on the commandline as well.  All flags work in\n"
 	    "cls-completion-default.  -i in cls-completion-default makes filename\n"
 	    "completion case-insensitive."
-	    "\n"
-	    "Usage note: directory names must have a trailing slash; \"cls pub/\" to\n"
-	    "be recognized as a directory.\n"
 	   )},
    {"connect", cmd_open,   0,"open"},
    {"command", cmd_command},
@@ -1204,6 +1206,10 @@ const char *FileSetOutput::parse_argv(ArgV *a)
 {
    static struct option cls_options[] = {
       {"basename",no_argument,0,'B'},
+      {"directory",no_argument,0,'d'},
+      {"human-readable",no_argument,0,'h'},
+      {"block-size",required_argument,0,0},
+      {"si",no_argument,0,0},
       {"classify",no_argument,0,'F'},
       {"long",no_argument,0,'l'},
       {"quiet",no_argument,0,'q'},
@@ -1220,7 +1226,7 @@ const char *FileSetOutput::parse_argv(ArgV *a)
 
    a->rewind();
    int opt, longopt;
-   while((opt=a->getopt_long(":1BFilqsDIS", cls_options, &longopt))!=EOF)
+   while((opt=a->getopt_long(":1BdFhiklqsDIS", cls_options, &longopt))!=EOF)
    {
       switch(opt) {
       case 0:
@@ -1230,6 +1236,12 @@ const char *FileSetOutput::parse_argv(ArgV *a)
 	    else return _("invalid argument for `--sort'");
 	 } else if(!strcmp(cls_options[longopt].name, "filesize")) {
 	    size_filesonly = true;
+	 } else if(!strcmp(cls_options[longopt].name, "si")) {
+	    output_block_size = -1000;
+	 } else if(!strcmp(cls_options[longopt].name, "block-size")) {
+	    if(!isdigit(optarg[0]))
+	       return _("invalid block size");
+	    output_block_size = atoi(optarg);
 	 }
 	 break;
       case('1'):
@@ -1238,11 +1250,20 @@ const char *FileSetOutput::parse_argv(ArgV *a)
       case('B'):
 	 basenames = true;
          break;
+      case('d'):
+	 list_directories = true;
+         break;
+      case('h'):
+	 output_block_size = -1024;
+         break;
       case('l'):
 	 long_list();
          break;
       case('i'):
 	 patterns_casefold = true;
+         break;
+      case('k'):
+	 output_block_size = 1024;
          break;
       case('F'):
          classify=true;
@@ -1294,15 +1315,15 @@ CMD(cls)
    if(!strncmp(op,"re",2))
       re=true;
 
+   ArgV arg("", ResMgr::Query("cmd:cls-default", 0));
+   fso.parse_argv(&arg);
+
    if(const char *err = fso.parse_argv(args)) {
       if(strcmp(err, "ERR"))
 	      eprintf(_("%s: %s.\n"), op, err);
       eprintf(_("Try `help %s' for more information.\n"),op);
       return 0;
    }
-
-   ArgV arg("", ResMgr::Query("cmd:cls-default", 0));
-   fso.parse_argv(&arg);
 
    char *a=args->Combine(0);
 
@@ -2437,7 +2458,7 @@ CMD(find)
    }
 
    if(!args->getcurr())
-      args->Append(".");
+      args->Append("");
    FinderJob_List *j=new class FinderJob_List(Clone(),args,
       output?output:new FDStream(1,"<stdout>"));
    j->set_maxdepth(maxdepth);

@@ -1,5 +1,28 @@
 2001-11-13  Glenn Maynard <g_ld@zewt.org>
 
+	* FileSet.cc, FileSet.h: (PrependPath) new FileSet method.
+
+	* FileSetOutput.cc, FileSetOutput.h, FindJobDu.cc, GetFileInfo.cc,
+	GetFileInfo.h, Makefile.am, commands.cc, ftpclass.cc:
+
+	Added -d, --block-size, -h, and -k to cls.  Sizes now default to blocks
+	of 1024 unless -l is given (full sizes in column-output display is too
+	much; this also aligns with "ls -s".)  cls no longer has the
+	trailing-slash problem.
+
+	Parse cls-default before commandline arguments for cls, so they don't
+	override explicit options.
+
+	Changed CHANGE_DIR 550 to pri 4.
+
+	Restore CWD in GetListInfo.  (Removed restore directory for cls.)
+
+	Some du changes that aren't really needed; they're related to my
+	attempts to make FinderJob work when given file arguments.  They won't
+	cause problems without the FinderJob changes.
+
+	* complete.cc: cosmetics.
+
 	* ColumnOutput.cc: (addf) fix memory leak.
 
 2001-11-12  Alexander V. Lukyanov <lav@yars.free.net>

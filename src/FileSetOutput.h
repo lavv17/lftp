@@ -5,6 +5,7 @@
 #include "buffer.h"
 #include "keyvalue.h"
 #include "FileCopy.h"
+#include "GetFileInfo.h"
 
 class FileSetOutput {
    const char *FileInfoColor(const FileInfo &fi, KeyValueDB &col) const;
@@ -12,7 +13,7 @@ class FileSetOutput {
 
 public:
    bool classify; // add / (dir) @ (link)
-   // TODO: extra-optional * for exec?
+   // TODO: extra-optional * for exec? maybe not, some servers stick +x on everything
 
    int width; // width to output, 0 to force one column
    bool color;
@@ -32,13 +33,15 @@ public:
    bool sort_dirs_first;
    bool size_filesonly;
    bool single_column;
+   bool list_directories;
+   int output_block_size;
 
    FileSet::sort_e sort;
    FileSetOutput(): classify(0), width(0), color(false), mode(NONE),
       pat(NULL), basenames(false), showdots(false),
       quiet(false), patterns_casefold(false), sort_casefold(false),
       sort_dirs_first(false), size_filesonly(false), single_column(false),
-      sort(FileSet::BYNAME) { }
+      list_directories(false), output_block_size(0), sort(FileSet::BYNAME) { }
    ~FileSetOutput() { xfree(pat); }
    FileSetOutput(const FileSetOutput &cp);
    const FileSetOutput &FileSetOutput::operator = (const FileSetOutput &cp);
@@ -69,9 +72,7 @@ class FileCopyPeerCLS : public FileCopyPeer
 
    char *dir;
    char *mask;
-   char *init_dir;
 
-   enum { INIT, GETTING_LIST, CHANGING_DIR } state;
 protected:
    ~FileCopyPeerCLS();
 
