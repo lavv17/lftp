@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Lftp 1.2.4\n"
-"POT-Creation-Date: 1999-09-18 17:23+0400\n"
+"POT-Creation-Date: 1999-09-18 18:49+0400\n"
 "PO-Revision-Date: 1999-07-15 00:17+02:00\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: German <de@li.org>\n"
@@ -104,12 +104,12 @@ msgstr "Login fehlgeschlagen"
 msgid "Operation not supported"
 msgstr "Operation wird nicht unterstützt"
 
-#: src/FtpListInfo.cc:226 src/HttpDir.cc:931
+#: src/FtpListInfo.cc:226 src/HttpDir.cc:1003
 #, c-format
 msgid "Getting directory contents (%ld)"
 msgstr "Lese Verzeichnis (%ld) aus"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:936
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:1008
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "Lese Dateiinformationen (%d%%)"
@@ -124,38 +124,38 @@ msgstr "nichtlokales rm(%s) -%s\n"
 msgid "[%d] Done (%s)"
 msgstr "[%d] Fertig (%s)"
 
-#: src/LsCache.cc:143
+#: src/LsCache.cc:152
 msgid "Cache is on"
 msgstr "Cache ist an"
 
-#: src/LsCache.cc:145
+#: src/LsCache.cc:154
 msgid "Cache is off"
 msgstr "Cache ist aus"
 
-#: src/LsCache.cc:151
+#: src/LsCache.cc:160
 #, c-format
 msgid "%ld $#l#byte|bytes$ cached"
 msgstr "%ld $#l#Byte|Bytes$ gecached"
 
-#: src/LsCache.cc:154
+#: src/LsCache.cc:163
 msgid ", no size limit"
 msgstr ", keine Größenbegrenzung"
 
-#: src/LsCache.cc:156
+#: src/LsCache.cc:165
 #, c-format
 msgid ", maximum size %ld\n"
 msgstr ", Maximalgröße %ld\n"
 
-#: src/LsCache.cc:159
+#: src/LsCache.cc:168
 msgid "Cache entries do not expire"
 msgstr "Cache Einträge verfallen nicht"
 
-#: src/LsCache.cc:161
+#: src/LsCache.cc:170
 #, c-format
 msgid "Cache entries expire in %ld $#l#second|seconds$\n"
 msgstr "Cache Einträge verfallen in %ld $#l#Sekunde(n)$\n"
 
-#: src/LsCache.cc:166
+#: src/LsCache.cc:175
 #, c-format
 msgid "Cache entries expire in %ld $#l#minute|minutes$\n"
 msgstr "Cache Einträge verfallen in %ld $#l#Minute|Minuten$\n"
@@ -1594,7 +1594,7 @@ msgstr "Hole Kopfzeilen..."
 msgid "Proxy protocol unsupported"
 msgstr "Proxy Protokoll wird nicht unterstützt"
 
-#: src/FtpGlob.cc:258 src/HttpDir.cc:552 src/HttpDir.cc:738
+#: src/FtpGlob.cc:258 src/HttpDir.cc:627 src/HttpDir.cc:804
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "Hole Dateiliste (%ld) [%s]"

@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.2\n"
-"POT-Creation-Date: 1999-09-18 17:23+0400\n"
+"POT-Creation-Date: 1999-09-18 18:49+0400\n"
 "PO-Revision-Date: 1999-06-05 14:51-0300\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -102,12 +102,12 @@ msgstr "Falló la identificación con el servidor"
 msgid "Operation not supported"
 msgstr "Operación no soportada"
 
-#: src/FtpListInfo.cc:226 src/HttpDir.cc:931
+#: src/FtpListInfo.cc:226 src/HttpDir.cc:1003
 #, c-format
 msgid "Getting directory contents (%ld)"
 msgstr "Obteniendo el contenido del directorio (%ld)"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:936
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:1008
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "Obteniendo información sobre los ficheros (%d%%)"
@@ -122,38 +122,38 @@ msgstr "rm(%s) remoto - %s\n"
 msgid "[%d] Done (%s)"
 msgstr "[%d] Hecho (%s)"
 
-#: src/LsCache.cc:143
+#: src/LsCache.cc:152
 msgid "Cache is on"
 msgstr "El caché está encendido"
 
-#: src/LsCache.cc:145
+#: src/LsCache.cc:154
 msgid "Cache is off"
 msgstr "El caché está apagado"
 
-#: src/LsCache.cc:151
+#: src/LsCache.cc:160
 #, c-format
 msgid "%ld $#l#byte|bytes$ cached"
 msgstr "%ld byte$#l#|s$ cacheados"
 
-#: src/LsCache.cc:154
+#: src/LsCache.cc:163
 msgid ", no size limit"
 msgstr ", sin límite de tamaño"
 
-#: src/LsCache.cc:156
+#: src/LsCache.cc:165
 #, c-format
 msgid ", maximum size %ld\n"
 msgstr ", tamaño máximo %ld\n"
 
-#: src/LsCache.cc:159
+#: src/LsCache.cc:168
 msgid "Cache entries do not expire"
 msgstr "Las entradas del caché no expiran"
 
-#: src/LsCache.cc:161
+#: src/LsCache.cc:170
 #, c-format
 msgid "Cache entries expire in %ld $#l#second|seconds$\n"
 msgstr "Las entradas del caché expiran en %ld segundo$#l#|s$\n"
 
-#: src/LsCache.cc:166
+#: src/LsCache.cc:175
 #, c-format
 msgid "Cache entries expire in %ld $#l#minute|minutes$\n"
 msgstr "Las entradas del caché expiran en %ld minuto$#l#|s$\n"
@@ -1574,7 +1574,7 @@ msgstr "Trayendo encabezados..."
 msgid "Proxy protocol unsupported"
 msgstr "Protocolo de proxy no soportado"
 
-#: src/FtpGlob.cc:258 src/HttpDir.cc:552 src/HttpDir.cc:738
+#: src/FtpGlob.cc:258 src/HttpDir.cc:627 src/HttpDir.cc:804
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "Obteniendo lista de ficheros (%ld) [%s]"

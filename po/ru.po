@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.0\n"
-"POT-Creation-Date: 1999-09-18 17:23+0400\n"
+"POT-Creation-Date: 1999-09-18 18:49+0400\n"
 "PO-Revision-Date: 1999-07-01 09:54+08:00\n"
 "Last-Translator: Const Kaplinsky <const@ce.cctpu.edu.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -105,12 +105,12 @@ msgstr "Ошибка регистрации"
 msgid "Operation not supported"
 msgstr "Операция не поддерживается"
 
-#: src/FtpListInfo.cc:226 src/HttpDir.cc:931
+#: src/FtpListInfo.cc:226 src/HttpDir.cc:1003
 #, c-format
 msgid "Getting directory contents (%ld)"
 msgstr "Получение содержимого каталога (%ld)"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:936
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:1008
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "Получение информации о файлах (%d%%)"
@@ -125,38 +125,38 @@ msgstr "удаление `%s' на сервере - %s\n"
 msgid "[%d] Done (%s)"
 msgstr "[%d] Завершено (%s)"
 
-#: src/LsCache.cc:143
+#: src/LsCache.cc:152
 msgid "Cache is on"
 msgstr "Кэш включен"
 
-#: src/LsCache.cc:145
+#: src/LsCache.cc:154
 msgid "Cache is off"
 msgstr "Кэш выключен"
 
-#: src/LsCache.cc:151
+#: src/LsCache.cc:160
 #, c-format
 msgid "%ld $#l#byte|bytes$ cached"
 msgstr "%ld $#l#байт|байта|байтов$ в кэше"
 
-#: src/LsCache.cc:154
+#: src/LsCache.cc:163
 msgid ", no size limit"
 msgstr ", нет ограничений по размеру"
 
-#: src/LsCache.cc:156
+#: src/LsCache.cc:165
 #, c-format
 msgid ", maximum size %ld\n"
 msgstr ", максимальный размер %ld\n"
 
-#: src/LsCache.cc:159
+#: src/LsCache.cc:168
 msgid "Cache entries do not expire"
 msgstr "Содержимое кэша не устаревает"
 
-#: src/LsCache.cc:161
+#: src/LsCache.cc:170
 #, c-format
 msgid "Cache entries expire in %ld $#l#second|seconds$\n"
 msgstr "Содержимое кэша устаревает через %ld $#l#секунду|секунды|секунд$\n"
 
-#: src/LsCache.cc:166
+#: src/LsCache.cc:175
 #, c-format
 msgid "Cache entries expire in %ld $#l#minute|minutes$\n"
 msgstr "Содержимое кэша устаревает через %ld $#l#минуту|минуты|минут$\n"
@@ -1603,7 +1603,7 @@ msgstr "Получение заголовков HTTP..."
 msgid "Proxy protocol unsupported"
 msgstr "Данный протокол для прокси не поддерживается"
 
-#: src/FtpGlob.cc:258 src/HttpDir.cc:552 src/HttpDir.cc:738
+#: src/FtpGlob.cc:258 src/HttpDir.cc:627 src/HttpDir.cc:804
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "Получение списка файлов (%ld) [%s]"
