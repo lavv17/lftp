@@ -37,6 +37,7 @@ extern "C" {
 static ResDecl
    res_long_running	   ("cmd:long-running","30",ResMgr::UNumberValidate,0),
    res_remote_completion   ("cmd:remote-completion","on",ResMgr::BoolValidate,0),
+   res_completion_use_ls   ("cmd:ls-in-completion","on",ResMgr::BoolValidate,0),
    res_prompt		   ("cmd:prompt","lftp> ",0,0),
    res_default_ls	   ("cmd:ls-default","",0,0),
    res_csh_history	   ("cmd:csh-history","off",ResMgr::BoolValidate,0),
@@ -530,6 +531,7 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
    var_ls=xstrdup("");
    var_prompt=xstrdup("lftp> ");
    remote_completion=false;
+   completion_use_ls=true;
    long_running=0;
    csh_history=false;
    save_passwords=false;
@@ -705,9 +707,10 @@ void CmdExec::Reconfig()
 {
    long_running = res_long_running.Query(0);
    remote_completion = res_remote_completion.Query(0);
+   completion_use_ls = res_completion_use_ls.Query(0);
    csh_history = res_csh_history.Query(0);
    xfree(var_ls);
-   var_ls=xstrdup(res_default_ls.Query(0));
+   var_ls=xstrdup(res_default_ls.Query(session->GetHostName()));
    xfree(var_prompt);
    var_prompt=xstrdup(res_prompt.Query(0));
    save_passwords=res_save_passwords.Query(0);

@@ -164,6 +164,7 @@ public:
    char	 *var_ls;
    char	 *var_prompt;
    bool	 remote_completion;
+   bool	 completion_use_ls;
    int	 long_running;
    bool	 csh_history;
    bool	 save_passwords;

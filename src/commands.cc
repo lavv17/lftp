@@ -301,7 +301,7 @@ CMD(lcd)
       eprintf(_("Usage: %s local-dir\n"),args->getarg(0));
       return 0;
    }
-   char *cd_to=args->getarg(1);
+   const char *cd_to=args->getarg(1);
 
    if(!strcmp(cd_to,"-"))
    {
@@ -434,8 +434,8 @@ CMD(get)
       }
    }
    args->back();
-   char *a=args->getnext();
-   char *a1;
+   const char *a=args->getnext();
+   const char *a1;
    if(a==0)
    {
       // xgettext:c-format
@@ -522,8 +522,8 @@ CMD(put)
       }
    }
    args->back();
-   char *a=args->getnext();
-   char *a1;
+   const char *a=args->getnext();
+   const char *a1;
    if(a==0)
    {
       // xgettext:c-format
