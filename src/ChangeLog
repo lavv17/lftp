@@ -1,3 +1,8 @@
+2002-01-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, lftp_ssl.h: workaround for improperly closed ssl
+	  data connection.
+
 2002-01-22  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, lftp_ssl.cc: fix random SSL_write errors
