@@ -1,3 +1,13 @@
+2001-10-25  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc, FileAccess.h, FileCopyFtp.cc, FileSetOutput.cc, Fish.cc,
+	  GetJob.cc, Http.cc, NetAccess.cc, ResMgr.h, Resolver.cc,
+	  Speedometer.cc, StatusLine.cc, commands.cc, ftpclass.cc, ftpclass.h,
+	  lftp.cc: (QueryBool) new functions, now lftp should compile with
+	  a compiler without bool type.
+	* Fish.cc: check line length before comparing with yes/no/password;
+	  remove extra xfree(home), fortunately home was null at that point.
+
 2001-10-22  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* complete.cc: fix local tilde completion.

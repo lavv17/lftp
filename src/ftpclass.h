@@ -256,11 +256,11 @@ private:
 
    int	 addr_received;	// state of PASV
 
-   bool	 wait_flush:1;	// wait until all responces come
-   bool	 ignore_pass:1;	// logged in just with user
-   bool  verify_data_address:1;
-   bool  verify_data_port:1;
-   bool	 rest_list:1;
+   bool	 wait_flush;	// wait until all responces come
+   bool	 ignore_pass;	// logged in just with user
+   bool  verify_data_address;
+   bool  verify_data_port;
+   bool	 rest_list;
    char  *list_options;
 
    void	 GetBetterConnection(int level,int count);

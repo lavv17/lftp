@@ -682,7 +682,7 @@ int Ftp::Handle_PASV()
    p[0]=p0; p[1]=p1;
 
    if((a0==0 && a1==0 && a2==0 && a3==0)
-   || ((bool)Query("fix-pasv-address",hostname)
+   || (QueryBool("fix-pasv-address",hostname)
        && InPrivateNetwork(&data_sa) && !InPrivateNetwork(&peer_sa)))
    {
       // broken server, try to fix up
@@ -1217,7 +1217,7 @@ int   Ftp::Do()
 
 #ifdef USE_SSL
       // ssl for anonymous does not make sense.
-      if(!ftps && (bool)Query("ssl-allow") && user && pass)
+      if(!ftps && QueryBool("ssl-allow") && user && pass)
       {
 	 const char *auth=Query("ssl-auth");
 	 SendCmd2("AUTH",auth);
@@ -1245,7 +1245,7 @@ int   Ftp::Do()
       {
 	 SendCmd("PBSZ 0");
 	 AddResp(0,CHECK_IGNORE);
-	 const char *want_prot=(bool)Query("ssl-protect-data",hostname)?"P":"C";
+	 const char *want_prot=QueryBool("ssl-protect-data",hostname)?"P":"C";
 	 if(*want_prot!=prot)
 	 {
 	    SendCmd2("PROT",want_prot);
@@ -1416,7 +1416,7 @@ int   Ftp::Do()
 
 	 if(flags&PASSIVE_MODE)
 	 {
-	    if((bool)Query("bind-data-socket")
+	    if(QueryBool("bind-data-socket")
 	    && !IsLoopback(&peer_sa))
 	    {
 	       // connect should come from the same address, else server can refuse.
@@ -1511,7 +1511,7 @@ int   Ftp::Do()
          break;
       case(STORE):
          type=FTP_TYPE_I;
-	 if(!(bool)Query("rest-stor",hostname))
+	 if(!QueryBool("rest-stor",hostname))
 	    real_pos=0;	// some old servers don't handle REST/STOR properly.
          command="STOR";
 	 append_file=true;
@@ -2044,7 +2044,7 @@ system_error:
 
 void Ftp::SendSiteIdle()
 {
-   if(!(bool)Query("use-site-idle"))
+   if(!QueryBool("use-site-idle"))
       return;
    SendCmd2("SITE IDLE",idle);
    AddResp(0,CHECK_IGNORE);
@@ -2376,7 +2376,7 @@ void  Ftp::DataAbort()
 
    CloseRespQueue();
 
-   if(!(bool)Query("use-abor",hostname) || control_ssl
+   if(!QueryBool("use-abor",hostname) || control_ssl
    || RespQueueSize()>1)
    {
       if(copy_mode==COPY_NONE
@@ -2405,7 +2405,7 @@ void  Ftp::DataAbort()
    aborted_data_sock=data_sock;
    data_sock=-1;
 
-   if((bool)Query("web-mode"))
+   if(QueryBool("web-mode"))
       Disconnect();
 }
 
@@ -2453,7 +2453,7 @@ void  Ftp::Disconnect()
    DataAbort();
    DataClose();
    if(control_sock>=0 && state!=CONNECTING_STATE && !quit_sent
-   && RespQueueSize()<2 && (bool)Query("use-quit",hostname))
+   && RespQueueSize()<2 && QueryBool("use-quit",hostname))
    {
       SendCmd("QUIT");
       AddResp(221);
@@ -2507,7 +2507,7 @@ void  Ftp::DataClose()
       DebugPrint("---- ",_("Closing data socket"),7);
       close(data_sock);
       data_sock=-1;
-      if((bool)Query("web-mode"))
+      if(QueryBool("web-mode"))
 	 Disconnect();
    }
    nop_time=0;
@@ -3472,7 +3472,7 @@ void Ftp::CheckResp(int act)
       }
       else
       {
-	 if((bool)Query("ssl-force"))
+	 if(QueryBool("ssl-force"))
 	    SetError(LOGIN_FAILED,_("ftp:ssl-force is set and server does not support or allow SSL"));
       }
       break;
@@ -3721,18 +3721,18 @@ void Ftp::Reconfig(const char *name)
 
    const char *c=closure;
 
-   SetFlag(SYNC_MODE,	Query("sync-mode",c));
-   SetFlag(PASSIVE_MODE,Query("passive-mode",c));
-   rest_list = Query("rest-list",c);
+   SetFlag(SYNC_MODE,	QueryBool("sync-mode",c));
+   SetFlag(PASSIVE_MODE,QueryBool("passive-mode",c));
+   rest_list = QueryBool("rest-list",c);
 
    nop_interval = Query("nop-interval",c);
 
-   allow_skey = Query("skey-allow",c);
-   force_skey = Query("skey-force",c);
-   verify_data_address = Query("verify-address",c);
-   verify_data_port = Query("verify-port",c);
+   allow_skey = QueryBool("skey-allow",c);
+   force_skey = QueryBool("skey-force",c);
+   verify_data_address = QueryBool("verify-address",c);
+   verify_data_port = QueryBool("verify-port",c);
 
-   use_stat = Query("use-stat",c);
+   use_stat = QueryBool("use-stat",c);
    stat_interval = Query("stat-interval",c);
 
    xfree(list_options);

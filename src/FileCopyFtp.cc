@@ -204,8 +204,8 @@ FileCopy *FileCopyFtp::New(FileCopyPeer *s,FileCopyPeer *d,bool c)
       return 0;
    if(strcmp(s_s->GetProto(),"ftp") || strcmp(d_s->GetProto(),"ftp"))
       return 0;
-   if(!(bool)ResMgr::Query("ftp:use-fxp",s_s->GetHostName())
-   || !(bool)ResMgr::Query("ftp:use-fxp",d_s->GetHostName()))
+   if(!ResMgr::QueryBool("ftp:use-fxp",s_s->GetHostName())
+   || !ResMgr::QueryBool("ftp:use-fxp",d_s->GetHostName()))
       return 0;
-   return new FileCopyFtp(s,d,c,ResMgr::Query("ftp:fxp-passive-source",0));
+   return new FileCopyFtp(s,d,c,ResMgr::QueryBool("ftp:fxp-passive-source",0));
 }

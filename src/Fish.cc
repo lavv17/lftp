@@ -638,7 +638,9 @@ int Fish::HandleReplies()
       {
 	 const char *p="password: ";
 	 const char *y="(yes/no)? ";
-	 if(!strncasecmp(b+s-strlen(p),p,strlen(p)))
+	 int p_len=strlen(p);
+	 int y_len=strlen(y);
+	 if(s>=p_len && !strncasecmp(b+s-p_len,p,p_len))
 	 {
 	    if(!pass)
 	    {
@@ -650,7 +652,7 @@ int Fish::HandleReplies()
 	    send_buf->Put("\n");
 	    return m;
 	 }
-	 if(!strncasecmp(b+s-strlen(y),y,strlen(y)))
+	 if(s>=y_len && !strncasecmp(b+s-y_len,y,y_len))
 	 {
 	    recv_buf->Put("yes\n");
 	    send_buf->Put("yes\n");
@@ -713,7 +715,6 @@ int Fish::HandleReplies()
    case EXPECT_PWD:
       if(!message)
 	 break;
-      xfree(home);
       set_home(message);
       break;
    case EXPECT_CWD:

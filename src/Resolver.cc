@@ -111,7 +111,7 @@ Resolver::Resolver(const char *h,const char *p,const char *defp,
    addr=0;
    addr_num=0;
    buf=0;
-   use_fork=ResMgr::Query("dns:use-fork",0);
+   use_fork=ResMgr::QueryBool("dns:use-fork",0);
 
    error=0;
 
@@ -461,7 +461,7 @@ int SRV_compare(const void *a,const void *b)
 
 void Resolver::LookupSRV_RR()
 {
-   if(!(bool)ResMgr::Query("dns:SRV-query",hostname))
+   if(!ResMgr::QueryBool("dns:SRV-query",hostname))
       return;
 #ifdef HAVE_RES_SEARCH
    const char *tproto=proto?proto:"tcp";
@@ -904,7 +904,7 @@ void ResolverCache::Find(const char *h,const char *p,const char *defp,
    *n=0;
 
    // if cache is disabled for this host, return nothing.
-   if(!(bool)ResMgr::Query("dns:cache-enable",h))
+   if(!ResMgr::QueryBool("dns:cache-enable",h))
       return;
 
    Entry **ptr=FindPtr(h,p,defp,ser,pr);

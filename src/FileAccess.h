@@ -149,6 +149,10 @@ protected:
    char *closure;
    const char *res_prefix;
    ResValue Query(const char *name,const char *closure=0);
+   bool QueryBool(const char *name,const char *closure=0)
+      {
+	 return Query(name,closure).to_bool();
+      }
 
    int chmod_mode;
    bool ascii;

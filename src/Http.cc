@@ -295,7 +295,7 @@ void Http::SendMethod(const char *method,const char *efile)
    if(hftp && mode!=LONG_LIST && mode!=CHANGE_DIR && mode!=MAKE_DIR
    && mode!=REMOVE && mode!=REMOVE_DIR
    && (strlen(efile)<7 || strncmp(efile+strlen(efile)-7,";type=",6))
-   && (bool)Query("use-type",hostname))
+   && QueryBool("use-type",hostname))
    {
       char *pfile=alloca_strdup2(efile,7);
       sprintf(pfile,"%s;type=%c",efile,ascii?'a':'i');
@@ -359,7 +359,7 @@ void Http::SendAuth()
 {
    if(proxy && proxy_user && proxy_pass)
       SendBasicAuth("Proxy-Authorization",proxy_user,proxy_pass);
-   if(user && pass && !(hftp && !(bool)Query("use-authorization",proxy)))
+   if(user && pass && !(hftp && !QueryBool("use-authorization",proxy)))
       SendBasicAuth("Authorization",user,pass);
 }
 
@@ -410,7 +410,7 @@ void Http::SendRequest(const char *connection,const char *f)
 	 {
 	    strcpy(pfile,"ftp://");
 	    url::encode_string(user,pfile+strlen(pfile),URL_USER_UNSAFE);
-	    if(!(bool)Query("use-authorization",proxy))
+	    if(!QueryBool("use-authorization",proxy))
 	    {
 	       strcat(pfile,":");
 	       url::encode_string(pass,pfile+strlen(pfile),URL_PASS_UNSAFE);
@@ -693,7 +693,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       return;
    }
    if(!strcasecmp(name,"Set-Cookie")
-   && !hftp && (bool)Query("set-cookies",hostname))
+   && !hftp && QueryBool("set-cookies",hostname))
       SetCookie(value);
 }
 
@@ -1619,7 +1619,7 @@ void Http::Reconfig(const char *name)
 
    super::Reconfig(name);
 
-   no_cache = !(bool)Query("cache",c);
+   no_cache = !QueryBool("cache",c);
    if(!hftp && NoProxy(hostname))
       SetProxy(0);
    else
@@ -1949,7 +1949,7 @@ void HFtp::Login(const char *u,const char *p)
 void HFtp::Reconfig(const char *name)
 {
    super::Reconfig(name);
-   use_head=Query("use-head");
+   use_head=QueryBool("use-head");
 }
 
 void Http::Cleanup()

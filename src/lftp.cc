@@ -359,7 +359,7 @@ int   main(int argc,char **argv)
    top_exec->AtExit();
    WaitDone(top_exec);
 
-   if((bool)res_save_cwd_history.Query(0))
+   if(res_save_cwd_history.QueryBool(0))
       cwd_history.Save();
 
    if(Job::NumberOfJobs()>0)

@@ -542,7 +542,7 @@ void FileSetOutput::config(FDStream *fd)
    width = fd_width(fd->getfd());
    assert(width != -1);
    if(!strcasecmp(ResMgr::Query("color:use-color", 0), "auto")) color = isatty(fd->getfd());
-   else color = ResMgr::Query("color:use-color", 0);
+   else color = ResMgr::QueryBool("color:use-color", 0);
 }
 
 void FileSetOutput::long_list()

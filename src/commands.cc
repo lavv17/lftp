@@ -572,7 +572,7 @@ Job *CmdExec::builtin_exit()
    }
    // Note: one job is this CmdExec.
    if(!bg && top_level
-   && !(bool)ResMgr::Query("cmd:move-background",0) && NumberOfJobs()>1)
+   && !ResMgr::QueryBool("cmd:move-background",0) && NumberOfJobs()>1)
    {
       eprintf(_(
 	 "There are running jobs and `cmd:move-background' is not set.\n"
@@ -2294,7 +2294,7 @@ CMD(bookmark)
       {
 	 const char *value=args->getnext();
 	 int flags=0;
-	 if((bool)res_save_passwords.Query(session->GetHostName()))
+	 if(res_save_passwords.QueryBool(session->GetHostName()))
 	    flags|=session->WITH_PASSWORD;
 	 if(value==0)
 	 {

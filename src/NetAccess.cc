@@ -107,7 +107,7 @@ void NetAccess::Reconfig(const char *name)
    socket_buffer = ResMgr::Query("net:socket-buffer",c);
    socket_maxseg = ResMgr::Query("net:socket-maxseg",c);
    connection_limit = ResMgr::Query("net:connection-limit",c);
-   connection_takeover = ResMgr::Query("net:connection-takeover",c);
+   connection_takeover = ResMgr::QueryBool("net:connection-takeover",c);
 
    if(rate_limit)
       rate_limit->Reconfig(name,c);

@@ -175,7 +175,7 @@ void  CmdExec::exec_parsed_command()
    switch(condition)
    {
    case(COND_ANY):
-      if(exit_code!=0 && bool(res_fail_exit.Query(0)))
+      if(exit_code!=0 && res_fail_exit.QueryBool(0))
       {
 	 while(!Done())
 	    RemoveFeeder();
@@ -931,16 +931,16 @@ void CmdExec::Reconfig(const char *name)
       c = session->GetConnectURL(FA::NO_PATH);
 
    long_running = res_long_running.Query(c);
-   remote_completion = res_remote_completion.Query(c);
-   csh_history = res_csh_history.Query(0);
+   remote_completion = res_remote_completion.QueryBool(c);
+   csh_history = res_csh_history.QueryBool(0);
    xfree(var_ls);
    var_ls=xstrdup(res_default_ls.Query(c));
-   verify_path=res_verify_path.Query(c);
-   verify_host=res_verify_host.Query(c);
-   verbose=res_verbose.Query(0);
+   verify_path=res_verify_path.QueryBool(c);
+   verify_host=res_verify_host.QueryBool(c);
+   verbose=res_verbose.QueryBool(0);
    // only allow explicit setting of cmd:interactive to change interactiveness.
    if(top_level && name && !strcmp(name,"cmd:interactive"))
-      SetInteractive(res_interactive.Query(0));
+      SetInteractive(res_interactive.QueryBool(0));
 }
 
 void CmdExec::pre_stdout()

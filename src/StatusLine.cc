@@ -131,7 +131,7 @@ void StatusLine::Reconfig(const char *name)
 
 void StatusLine::WriteTitle(const char *s, int fd) const
 {
-   if(!(bool)ResMgr::Query("cmd:set-term-status", getenv("TERM")))
+   if(!ResMgr::QueryBool("cmd:set-term-status", getenv("TERM")))
       return;
 
    subst_t subst[] = {

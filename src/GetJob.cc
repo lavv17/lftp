@@ -79,7 +79,7 @@ FileCopyPeer *GetJob::NoProtoDst(const char *dst)
 
    int flags=O_WRONLY|O_CREAT|(cont?0:O_TRUNC);
    const char *f=(cwd && dst[0]!='/') ? dir_file(cwd,dst) : dst;
-   if(!cont && (bool)res_make_backup.Query(0))
+   if(!cont && res_make_backup.QueryBool(0))
    {
       /* rename old file if exists and size>0 */
       struct stat st;
@@ -87,7 +87,7 @@ FileCopyPeer *GetJob::NoProtoDst(const char *dst)
       {
 	 if(st.st_size>0 && S_ISREG(st.st_mode))
 	 {
-	    if(!(bool)res_clobber.Query(0))
+	    if(!res_clobber.QueryBool(0))
 	    {
 	       eprintf(_("%s: %s: file already exists and xfer:clobber is unset\n"),op,dst);
 	       errors++;

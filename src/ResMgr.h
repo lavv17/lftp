@@ -74,6 +74,7 @@ public:
    static const char *QueryNext(const char *name,const char **closure,Resource **ptr);
    static const char *SimpleQuery(const char *name,const char *closure);
    static ResValue Query(const char *name,const char *closure);
+   static bool QueryBool(const char *name,const char *closure);
 
    enum CmpRes {
       EXACT_PREFIX=0x00,SUBSTR_PREFIX=0x01,
@@ -123,6 +124,7 @@ public:
    ~ResDecl();
 
    ResValue Query(const char *closure);
+   bool QueryBool(const char *closure);
 };
 
 class ResValue
@@ -133,7 +135,7 @@ public:
       {
 	 s=s_new;
       }
-   operator bool()
+   bool to_bool()
       {
 	 return ResMgr::str2bool(s);
       }
@@ -155,6 +157,15 @@ public:
       }
    bool is_nil() { return s==0; }
 };
+
+inline bool ResDecl::QueryBool(const char *closure)
+{
+   return Query(closure).to_bool();
+}
+inline bool ResMgr::QueryBool(const char *name,const char *closure)
+{
+   return Query(name,closure).to_bool();
+}
 
 class TimeInterval
 {
