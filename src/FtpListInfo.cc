@@ -217,6 +217,8 @@ FileInfo *ParseFtpLongList_UNIX(char *line,int *err,const char *tz)
    int	 tmp;
    if(sscanf(line,"total %d",&tmp)==1)
       return 0;
+   if(strchr("bcpsD",line[0])) // block, char, pipe, socket, Door.
+      return 0;
 
    FileInfo *fi=FileInfo::parse_ls_line(line,tz);
    if(!fi)

@@ -428,6 +428,8 @@ void  MirrorJob::HandleFile(FileInfo *file)
 #endif /* LSTAT */
 	 break;
       }
+   case FileInfo::UNKNOWN:
+      break;
    }
 skip:
    return;

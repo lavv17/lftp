@@ -398,11 +398,7 @@ void FileSet::Count(int *d,int *f,int *s,int *o)
 {
    for(int i=0; i<fnum; i++)
    {
-      if(!(files[i]->defined&FileInfo::TYPE))
-      {
-	 if(o) (*o)++;
-      }
-      else switch(files[i]->filetype)
+      switch(files[i]->filetype)
       {
       case(FileInfo::DIRECTORY):
 	 if(d) (*d)++; break;
@@ -410,6 +406,8 @@ void FileSet::Count(int *d,int *f,int *s,int *o)
 	 if(f) (*f)++; break;
       case(FileInfo::SYMLINK):
 	 if(s) (*s)++; break;
+      case(FileInfo::UNKNOWN):
+	 if(o) (*o)++;
       }
    }
 }
@@ -626,7 +624,7 @@ void FileSet::SubtractCurr()
 
 void FileInfo::Init()
 {
-   filetype=NORMAL;
+   filetype=UNKNOWN;
    mode=(mode_t)-1;
    date=NO_DATE;
    date_prec=0;
@@ -753,6 +751,7 @@ FileInfo *FileInfo::parse_ls_line(const char *line_c,const char *tz)
    case('c'): // char
    case('p'): // pipe
    case('s'): // sock
+   case('D'): // Door
       return 0;  // ignore
    default:
       ERR;
@@ -916,9 +915,10 @@ void FileInfo::MakeLongName()
 {
    longname=(char*)xrealloc(longname,80+xstrlen(name)+xstrlen(symlink));
    char filetype_c='-';
-   switch(defined&TYPE?filetype:NORMAL)
+   switch(filetype)
    {
    case NORMAL:	   break;
+   case UNKNOWN:   break;
    case DIRECTORY: filetype_c='d'; break;
    case SYMLINK:   filetype_c='l'; break;
    }

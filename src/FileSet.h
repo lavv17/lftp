@@ -44,6 +44,7 @@ public:
 
    enum	 type
    {
+      UNKNOWN=0,
       DIRECTORY,
       SYMLINK,
       NORMAL
