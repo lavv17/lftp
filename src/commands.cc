@@ -904,8 +904,7 @@ CMD(lftp)
       SetCmdFeeder(lftp_feeder);
       lftp_feeder=0;
       SetInteractive(isatty(0));
-      if(cmd)
-	 FeedCmd("||exit\n");   // if the command fails, quit
+      FeedCmd("||command exit\n");   // if the command fails, quit
    }
 
    if(!cmd)

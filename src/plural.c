@@ -173,6 +173,9 @@ const char *plural(const char *format,...)
 	    arg=va_arg(va,int);
 	 }
 
+	 if(arg<0)
+	    arg=-arg;
+
 	 plural_index=choose_plural_form(rule,arg);
 
 	 index=0;
