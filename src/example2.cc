@@ -21,6 +21,7 @@ int main()
    for(;;)
    {
       SMTask::Schedule();
+      SMTask::Block();
 
       char buf[1024];
       int res=f.Read(buf,sizeof(buf));
@@ -37,8 +38,6 @@ int main()
 	 return 0;
       }
       write(1,buf,res);
-
-      SMTask::Block();
    }
    return 0;
 }
