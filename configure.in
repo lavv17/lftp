@@ -157,7 +157,7 @@ IU_CHECK_DECL(res_search, [
 AC_ARG_WITH(libresolv, [  --without-libresolv     don't use libresolv],
       [with_libresolv=$withval], [with_libresolv=yes])
 if test x$with_libresolv = xyes; then
-   AC_CHECK_LIB(resolv, hstrerror)
+   AC_SEARCH_LIBS(hstrerror, resolv)
 fi
 
 AC_SUBST(READLINE_SUPPLIB)
@@ -175,7 +175,11 @@ AC_CHECK_FUNC(tgetent,
    ])
 READLINE_CHECK
 
-LFTP_SSL_CHECK
+AC_ARG_WITH(ssl, [  --without-ssl           don't use SSL],
+      [with_ssl=$withval], [with_ssl=yes])
+if test x$with_ssl = xyes; then
+   LFTP_SSL_CHECK
+fi
 
 dnl Checks for header files.
 AC_HEADER_DIRENT
