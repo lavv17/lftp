@@ -78,7 +78,6 @@
 #define HOUR   (60*MINUTE)
 #define DAY    (24*HOUR)
 
-Bookmark lftp_bookmarks;
 History	 cwd_history;
 
 CMD(alias); CMD(anon);   CMD(cd);      CMD(debug);	CMD(du);

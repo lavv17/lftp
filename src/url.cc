@@ -25,6 +25,7 @@
 #include "url.h"
 #include "ascii_ctype.h"
 #include "ConnectionSlot.h"
+#include "bookmark.h"
 #include "misc.h"
 
 /*
@@ -33,6 +34,7 @@
 */
 
 static bool valid_slot(const char *s);
+static bool valid_bm(const char *s);
 
 ParsedURL::ParsedURL(const char *url,bool proto_required,bool use_rfc1738)
 {
@@ -76,9 +78,11 @@ ParsedURL::ParsedURL(const char *url,bool proto_required,bool use_rfc1738)
       path=scan+10;
       goto decode;
    }
-   else if(scan[0]==':' && !strncmp(base,"slot:",5) && valid_slot(scan+1))
+   else if(scan[0]==':'
+   && ((!strncmp(base,"slot:",5) && valid_slot(scan+1))
+       || (!strncmp(base,"bm:",3) && valid_bm(scan+1))))
    {
-      // special form for selecting a connection slot
+      // special form for selecting a connection slot or a bookmark
       *scan++=0;
       proto=base;
       host=scan;
@@ -202,13 +206,14 @@ decode:
    url::decode_string(host);
    url::decode_string(path);
 
+   FileAccess *fa=0;
    if(!xstrcmp(proto,"slot"))
    {
-      xfree(orig_url);
-      orig_url=0;
-      FileAccess *fa=ConnectionSlot::FindSession(host);
+      fa=ConnectionSlot::FindSession(host);
       if(!fa)
 	 return;
+      xfree(orig_url);
+      orig_url=0;
       char *orig_path=alloca_strdup(path);
       xfree(memory);
       memory=(char*)xmalloc(
@@ -257,6 +262,19 @@ decode:
 	    strcat(path,"/");
       }
    }
+   else if(!xstrcmp(proto,"bm"))
+   {
+      const char *bm=lftp_bookmarks.Lookup(host);
+      if(!bm || !valid_bm(host))
+	 return;
+      ParsedURL bu(url_file(bm,path+(path && path[0]=='/')));
+      // move the data
+      xfree(memory);
+      xfree(orig_url);
+      memcpy(this,&bu,sizeof(bu));
+      bu.memory=0;
+      bu.orig_url=0; // so that dtor won't free them
+   }
 }
 
 static bool valid_slot(const char *cs)
@@ -266,6 +284,15 @@ static bool valid_slot(const char *cs)
    if(slash)
       *slash=0;
    return 0!=ConnectionSlot::Find(s);
+}
+static bool valid_bm(const char *bm)
+{
+   char *s=alloca_strdup(bm);
+   char *slash=strchr(s,'/');
+   if(slash)
+      *slash=0;
+   const char *url=lftp_bookmarks.Lookup(s);
+   return(url && !strchr(url,' ') && !strchr(url,'\t'));
 }
 
 int url::path_index(const char *base)

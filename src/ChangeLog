@@ -3,6 +3,9 @@
 	* ftpclass.cc: retry FEAT after login on 503 (invalid sequence of commands).
 	* Resolver.cc: fill sa_len if present.
 	* Http.cc, NetAccess.cc, ResMgr.cc, misc.cc: new DECL tests and defines.
+	* bookmark.cc, bookmark.h, commands.cc, CmdExec.h: move lftp_bookmarks.
+	* ftpclass.cc: accept CLNT with argument in FEAT reply.
+	* url.cc: (bm:) new URL scheme to refer to bookmarked URLs.
 
 2004-05-27  Alexander V. Lukyanov <lav@yars.free.net>
 

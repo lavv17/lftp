@@ -56,4 +56,6 @@ public:
       }
 };
 
+extern Bookmark lftp_bookmarks;
+
 #endif //BOOKMARK_H

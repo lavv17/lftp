@@ -37,7 +37,6 @@ class QueueFeeder;
 class LocalDirectory;
 
 extern History cwd_history;
-extern Bookmark lftp_bookmarks;
 
 #define	CMD(name) Job *cmd_##name(CmdExec *parent)
 

@@ -29,6 +29,8 @@
 
 #define super KeyValueDB
 
+Bookmark lftp_bookmarks;
+
 Bookmark::Bookmark()
 {
    const char *home=getenv("HOME");

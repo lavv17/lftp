@@ -3494,7 +3494,7 @@ void Ftp::CheckFEAT(char *reply)
 	 conn->mdtm_supported=true;
       else if(!strcasecmp(f,"SIZE"))
 	 conn->size_supported=true;
-      else if(!strcasecmp(f,"CLNT"))
+      else if(!strcasecmp(f,"CLNT") || !strncasecmp(f,"CLNT ",5))
 	 conn->clnt_supported=true;
       else if(!strcasecmp(f,"HOST"))
 	 conn->host_supported=true;
