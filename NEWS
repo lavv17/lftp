@@ -1,3 +1,11 @@
+Version 2.4.6 - 2001-10-??
+
+* new setting fish:shell to select remote shell, default is /bin/sh.
+* translation updates.
+* restore prompt when remote completion is interrupted with ^C.
+* fixed local tilde completion.
+* compilation fixes.
+
 Version 2.4.5 - 2001-10-17
 
 * fish protocol support improved. Now password can be used for authentication.

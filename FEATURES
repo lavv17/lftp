@@ -10,6 +10,8 @@ LFTP includes the following features (some may be missed in this list):
 * FTP listings support: unix-style, NT, EPLF.
 * Automatic reconnect and retry of an operation on retriable errors or timeout.
 * IPv6 support in both FTP and HTTP.
+* FISH protocol support. It uses ssh with no special program on server side.
+* HTTP/1.1 keep-alive support.
 * Experimental support for SRV DNS records.
 * SOCKS support (configure option).
 

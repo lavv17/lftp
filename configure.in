@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.52)
 AC_INIT(src/ftpclass.cc)
-AM_INIT_AUTOMAKE(lftp, 2.4.5)
+AM_INIT_AUTOMAKE(lftp, pre2.4.6)
 AM_CONFIG_HEADER(include/config.h)
 
 dnl Default AC_C_INLINE does not know about C++
@@ -39,7 +39,9 @@ if test x$with_debug = xno; then
       fi
    fi
    if test x$DEFAULT_LDFLAGS = xyes; then
-      LDFLAGS="$LDFLAGS -s"
+      case "`uname -s`" in
+      Darwin)  ;;
+      *)       LDFLAGS="$LDFLAGS -s";;
    fi
 fi
 
