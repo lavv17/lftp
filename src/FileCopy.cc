@@ -145,6 +145,11 @@ int FileCopy::Do()
       if(put->Broken())
       {
 	 debug((9,_("copy: put is broken\n")));
+	 if(fail_if_broken)
+	 {
+	    SetError(strerror(EPIPE));
+	    return MOVED;
+	 }
 	 goto pre_GET_DONE_WAIT;
       }
       put->Resume();
@@ -374,6 +379,7 @@ void FileCopy::Init()
    put_eof_pos=0;
    bytes_count=0;
    fail_if_cannot_seek=false;
+   fail_if_broken=true;
    remove_source_later=false;
    remove_target_first=false;
    line_buffer=0;

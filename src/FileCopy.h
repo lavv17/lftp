@@ -166,6 +166,7 @@ private:
    Time end_time;
 
    bool fail_if_cannot_seek;
+   bool fail_if_broken;
    bool remove_source_later;
    bool remove_target_first;
 
@@ -217,6 +218,7 @@ public:
 
    void DontCopyDate() { put->DontCopyDate(); }
    void Ascii() { get->Ascii(); put->Ascii(); }
+   void DontFailIfBroken() { fail_if_broken=false; }
    void FailIfCannotSeek() { fail_if_cannot_seek=true; }
    void SetRange(off_t s,off_t lim) { get->SetRange(s,lim); put->SetRange(s,lim); }
    void RemoveSourceLater() { remove_source_later=true; }
