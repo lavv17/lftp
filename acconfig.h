@@ -118,6 +118,9 @@
 /* define if you are building with SOCKSv5 support */
 #undef SOCKS5
 
+/* define if you are building with SOCKS-Dante support */
+#undef SOCKS_DANTE
+
 /* build modular lftp */
 #undef WITH_MODULES
 
@@ -175,13 +178,31 @@ CDECL const char *strerror(int);
 #define INET6 (defined(AF_INET6) && defined(HAVE_GETHOSTBYNAME2) \
 	       && defined(HAVE_GETNAMEINFO) && defined(HAVE_GETADDRINFO))
 
-#ifdef SOCKS4
+#if defined(SOCKS4) || defined(SOCKS_DANTE)
 # define connect     Rconnect
 # define getsockname Rgetsockname
 # define bind	     Rbind
 # define accept	     Raccept
 # define listen	     Rlisten
 /* select, poll ? */
+CDECL void SOCKSinit(const char *);
+#endif
+#ifdef SOCKS_DANTE
+# define rresvport Rrresvport
+# define bindresvport Rbindresvport
+# define gethostbyname Rgethostbyname
+# define gethostbyname2 Rgethostbyname2
+# define sendto Rsendto
+# define recvfrom Rrecvfrom
+# define recvfrom Rrecvfrom
+# define write Rwrite
+# define writev Rwritev
+# define send Rsend
+# define sendmsg Rsendmsg
+# define read Rread
+# define readv Rreadv
+# define recv Rrecv
+# define recvmsg Rrecvmsg
 #endif
 
 #ifdef SOCKS5
