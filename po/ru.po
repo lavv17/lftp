@@ -1649,7 +1649,7 @@ msgstr "Требуется учетная запись, установите переменную ftp:acct"
 
 #: src/ftpclass.cc:486
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
-msgstr ""
+msgstr "ftp:skey-force включено, а сервер не поддерживает ни OPIE, ни S/KEY"
 
 #: src/ftpclass.cc:502
 msgid "Saw `unknown', assume failed login"
@@ -1699,7 +1699,7 @@ msgstr "Соединение закрыто удаленной машиной"
 
 #: src/ftpclass.cc:2451
 msgid "Persist and retry"
-msgstr ""
+msgstr "Назойливо попробуем еще раз"
 
 #: src/ftpclass.cc:2575
 msgid "Closing control socket"
@@ -1723,7 +1723,7 @@ msgstr "непредвиденный ответ сервера"
 
 #: src/ftpclass.cc:3461 src/ftpclass.cc:3490
 msgid "Turning on sync-mode"
-msgstr ""
+msgstr "Включение синхронного режима"
 
 #: src/ftpclass.cc:3617
 msgid "Switching passive mode on"
@@ -1731,7 +1731,7 @@ msgstr "Включение пассивного режима"
 
 #: src/ftpclass.cc:3684
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
-msgstr ""
+msgstr "ftp:ssl-force установлено, а сервер не поддерживает или не позволяет использовать SSL"
 
 #: src/ftpclass.cc:3724
 msgid "Sending commands..."
@@ -1886,7 +1886,7 @@ msgstr "Закрытие соединения HTTP"
 
 #: src/Http.cc:172
 msgid "POST method failed"
-msgstr ""
+msgstr "Метод POST завершился неудачей"
 
 #: src/Http.cc:882
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
@@ -1907,7 +1907,7 @@ msgstr ""
 
 #: src/Http.cc:1195
 msgid "Could not parse HTTP status line"
-msgstr ""
+msgstr "Невозможно разобрать строку статуса HTTP"
 
 #: src/Http.cc:1335
 msgid "Receiving body..."
@@ -1947,7 +1947,7 @@ msgstr "Пароль для ftp:proxy: "
 
 #: src/resource.cc:99
 msgid "only PUT and POST values allowed"
-msgstr ""
+msgstr "разрешены только PUT и POST"
 
 #: src/resource.cc:133
 #, c-format
@@ -1956,7 +1956,7 @@ msgstr "неизвестный тип адреса `%s'"
 
 #: src/resource.cc:158
 msgid "ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C"
-msgstr ""
+msgstr "ftp:ssl-auth должен быть одним из: SSL, TLS, TLS-P, TLS-C"
 
 #: src/HttpDir.cc:1306 src/FtpDirList.cc:133
 #, c-format
@@ -2085,7 +2085,7 @@ msgstr ""
 
 #: src/FileCopyFtp.cc:101
 msgid "ftp:fxp-force is set but FXP is not available"
-msgstr ""
+msgstr "ftp:fxp-force установлен, но FXP не удалось использовать"
 
 #: src/FileCopyFtp.cc:113
 msgid "**** FXP: trying to reverse ftp:fxp-passive-source\n"
