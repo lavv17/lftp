@@ -50,6 +50,10 @@ CDECL_BEGIN
 #include "readline/readline.h"
 CDECL_END
 
+#ifndef GLOB_PERIOD
+# define GLOB_PERIOD 0
+#endif
+
 static char *bash_dequote_filename (char *text, int quote_char);
 static int lftp_char_is_quoted(char *string,int eindex);
 
@@ -599,12 +603,12 @@ static char **lftp_completion (const char *text,int start,int end)
       strcat(pat,"*");
 
       glob_t pglob;
-      glob(pat,GLOB_PERIOD,0,&pglob);
+      glob(pat,GLOB_PERIOD,NULL,&pglob);
       glob_res=new FileSet;
       for(int i=0; i<(int)pglob.gl_pathc; i++)
       {
 	 char *src=pglob.gl_pathv[i];
-	 if(!strcmp(basename_ptr(src), ".")) continue; 
+	 if(!strcmp(basename_ptr(src), ".")) continue;
 	 if(!strcmp(basename_ptr(src), "..")) continue;
 	 if(type==LOCAL_DIR && not_dir(src)) continue;
 
@@ -637,7 +641,7 @@ static char **lftp_completion (const char *text,int start,int end)
       rg=new GlobURL(completion_shell->session,pat);
 
       rl_save_prompt();
-      
+
       int now_s = SMTask::now, now_ms = SMTask::now_ms;
 
       ArgV arg("", ResMgr::Query("cmd:cls-completion-default", 0));
@@ -1191,7 +1195,7 @@ extern "C" void completion_display_list (char **matches, int len)
    int sz;
    b->Get(&buf, &sz);
 
-   while(sz) { 
+   while(sz) {
       int ret = write(1, buf, sz);
       if(ret <= 0)
 	 break; /* oops */
@@ -1201,4 +1205,3 @@ extern "C" void completion_display_list (char **matches, int len)
 
    SMTask::Delete(b);
 }
-

@@ -1,3 +1,21 @@
+2001-10-09  Glenn F. Maynard <g_ld@zewt.org>
+
+	* Time.cc, Time.h, commands.cc, complete.cc:
+
+	Time and Timer classes in Time.{cc,h}.  Implemented only a
+	couple operators; add others as required.  This can probably be fairly
+	widely-used; I didn't implement it anywhere else, though.  It doesn't
+	cast to anything; that just causes problems.
+
+	Disabled short help for: rels renlist reget reput
+
+	added references: [re]ls, [re]nlist, [re]get, [re]cls, [re]put
+	Help is down to 23 lines (from 25.)  How about changing help to use
+	ColumnOutput?  That might cut it down further.  (Due to the length of
+	some short help, it might not, though--not on an 80x25, anyway.)
+
+	Updated [c]ls help; it was too long.
+
 2001-10-08  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: fix site command broken by ls changes.

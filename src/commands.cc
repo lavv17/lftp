@@ -103,7 +103,7 @@ CMD(repeat);CMD(get1);   CMD(history);
 
 const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 {
-   {"!",       cmd_shell,  N_("!<shell_command>"),
+   {"!",       cmd_shell,  N_("!<shell-command>"),
 	 N_("Launch shell or shell command\n")},
    {"(",       cmd_subsh,  N_("(commands)"),
 	 N_("Group commands together to be executed as one command\n"
@@ -147,7 +147,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"close",   cmd_close,   "close [-a]",
 	 N_("Close idle connections. By default only with current server.\n"
 	 " -a  close idle connections with all servers\n")},
-   {"cls",     cmd_cls,     0,
+   {"cls",     cmd_cls,     N_("cls [opts] [path/][wildcards]..."),
 	 N_("cls [opts] [path/][wildcards]..."
 	    "List remote files. You can redirect output of this command to file\n"
 	    "or via pipe to external command.\n"
@@ -217,8 +217,8 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -a  use ascii mode (binary is the default)\n"
 	 " -O <base> specifies base directory or URL where files should be placed\n")},
    {"get1",    cmd_get1,   0,0},
-   {"glob",    cmd_glob,   0,
-	 N_("Usage: glob [OPTS] command args...\n"
+   {"glob",    cmd_glob,   N_("glob [OPTS] <cmd> <args>"),
+	 N_(
 	 "Expand wildcards and run specified command.\n"
 	 "Options can be used to expand wildcards to list of files, directories,\n"
 	 "or both types. Type selection is not very reliable and depends on server.\n"
@@ -255,12 +255,12 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " <site>              host name, URL or bookmark name\n")},
    {"lpwd",    cmd_lpwd},
    {"login",   cmd_user,   0,"user"},
-   {"ls",      cmd_ls,	    N_("[c]ls [<args>]"),
+   {"ls",      cmd_ls,	    N_("ls [<args>]"),
 	 N_("List remote files. You can redirect output of this command to file\n"
 	 "or via pipe to external command.\n"
 	 "By default, ls output is cached, to see new listing use `rels' or\n"
 	 "`cache flush'.\n"
-	 "See also `help cls'.")},
+	 "See also `help cls'.\n")},
    {"mget",    cmd_get,	   N_("mget [OPTS] <files>"),
 	 N_("Gets selected files with expanded wildcards\n"
 	 " -c  continue, reget\n"
@@ -320,7 +320,9 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"mv",      cmd_mv,	    N_("mv <file1> <file2>"),
 	 N_("Rename <file1> to <file2>\n")},
    {"nlist",   cmd_ls,     N_("nlist [<args>]"),
-	 N_("List remote file names\n")},
+	 N_("List remote file names.\n"
+	 "By default, nlist output is cached, to see new listing use `renlist' or\n"
+	 "`cache flush'.\n")},
    {"open",    cmd_open,   N_("open [OPTS] <site>"),
 	 N_("Select a server, URL or bookmark\n"
 	 " -e <cmd>            execute the command just after selecting\n"
@@ -344,9 +346,9 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"pwd",     cmd_pwd,    "pwd [-p]",
 	 N_("Print current remote URL.\n"
 	 " -p  show password\n")},
-   {"queue",   cmd_queue,  0,
+   {"queue",   cmd_queue,  N_("queue [OPTS] [<cmd>]"),
 	 N_(
-	 "Usage:\n"
+	 "\n"
 	 "       queue [-n num] <command>\n\n"
 	 "Add the command to queue for current site. Each site has its own command\n"
 	 "queue. `-n' adds the command before the given item in the queue. It is\n"
@@ -366,13 +368,13 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "unknown remote state and thus will cause reconnect. You cannot\n"
 	 "be sure that any change of remote state because of quoted command\n"
 	 "is solid - it can be reset by reconnect at any time.\n")},
-   {"recls",    cmd_cls,   N_("recls [<args>]"),
+   {"recls",    cmd_cls,   0,
 	 N_("Same as `cls', but don't look in cache\n")},
    {"reget",   cmd_get,    N_("reget [OPTS] <rfile> [-o <lfile>]"),
 	 N_("Same as `get -c'\n")},
-   {"rels",    cmd_ls,	    N_("rels [<args>]"),
+   {"rels",    cmd_ls,	    0,
 	 N_("Same as `ls', but don't look in cache\n")},
-   {"renlist", cmd_ls,	    N_("renlist [<args>]"),
+   {"renlist", cmd_ls,	    0,
 	 N_("Same as `nlist', but don't look in cache\n")},
    {"repeat",  cmd_repeat, 0,
 	 N_("Usage: repeat [delay] [command]\n"
