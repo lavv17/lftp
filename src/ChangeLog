@@ -1,3 +1,11 @@
+1999-12-21  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: (DataAbort) Disconnect in copy mode if ABOR is disabled.
+
+1999-12-21  Robert de Bath <rdebath@poboxes.com>
+
+	* NetAccess.cc: correction for ReconnectAllowed
+
 1999-12-20  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CopyJob.cc, CopyJob.h: add methods for creating different copiers:
