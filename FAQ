@@ -24,3 +24,6 @@ A: You have compiled lftp with large file support (>2G) but your kernel
    does not support 64 bit file locking. Either install a better kernel
    (e.g. linux-2.4.0) or compile lftp without large file support
    (configure --disable-largefile)
+
+Q: Where is lls?
+A: !ls

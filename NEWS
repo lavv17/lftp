@@ -1,4 +1,4 @@
-Version 2.5.0 - 2002-01-??
+Version 2.5.0 - 2002-03-06
 
 * mirror understands URLs now. It can mirror between two ftp sites, for
   example: `mirror ftp://site1/path1 ftp://site2/path2'. It will use FXP
@@ -19,6 +19,23 @@ Version 2.5.0 - 2002-01-??
   Alexander Lukyanov).
 * cls improved (Glenn Maynard).
 * `bookmark list' hides passwords now.
+
+Version 2.4.10 - 2002-02-26
+
+* newer trio library with scanf fix.
+* try another FXP mode (fxp-passive-source on/off) on any 425 reply.
+* translations updated.
+* fixed lftpget -v.
+
+Version 2.4.9 - 2002-01-30
+
+* use trio library if system's printf is broken with %lld.
+* fixed single quote escaping in several places.
+* fixed coredump if service is unknown.
+* fixed keep-alive for http/1.1.
+* fixed uploading in ssl enabled ftp when data connection is protected.
+* don't send AUTH TLS to ftp proxy.
+* fixed fish protocol module.
 
 Version 2.4.8 - 2001-12-04
 
