@@ -86,6 +86,7 @@ public:
    static const char *TimeIntervalValidate(char **value);
    static const char *RangeValidate(char **value);
    static const char *ERegExpValidate(char **value);
+   static const char *NoClosure(char **);
    static bool str2bool(const char *value);
 
    static void ClassInit();

@@ -45,14 +45,14 @@ static ResDecl
    res_remote_completion   ("cmd:remote-completion","on",ResMgr::BoolValidate,0),
    res_prompt		   ("cmd:prompt",	"lftp> ",0,0),
    res_default_ls	   ("cmd:ls-default",	"",0,0),
-   res_csh_history	   ("cmd:csh-history",	"off",ResMgr::BoolValidate,0),
+   res_csh_history	   ("cmd:csh-history",	"off",ResMgr::BoolValidate,ResMgr::NoClosure),
    res_verify_path	   ("cmd:verify-path",	"yes",ResMgr::BoolValidate,0),
    res_verify_host	   ("cmd:verify-host",	"yes",ResMgr::BoolValidate,0),
    res_at_exit		   ("cmd:at-exit",	"",   0,0),
-   res_fail_exit	   ("cmd:fail-exit",	"no", ResMgr::BoolValidate,0),
-   res_verbose		   ("cmd:verbose",	"no", ResMgr::BoolValidate,0),
-   res_interactive	   ("cmd:interactive",	"no", ResMgr::BoolValidate,0),
-   res_move_background	   ("cmd:move-background","yes", ResMgr::BoolValidate,0);
+   res_fail_exit	   ("cmd:fail-exit",	"no", ResMgr::BoolValidate,ResMgr::NoClosure),
+   res_verbose		   ("cmd:verbose",	"no", ResMgr::BoolValidate,ResMgr::NoClosure),
+   res_interactive	   ("cmd:interactive",	"no", ResMgr::BoolValidate,ResMgr::NoClosure),
+   res_move_background	   ("cmd:move-background","yes", ResMgr::BoolValidate,ResMgr::NoClosure);
 
 CmdExec	 *CmdExec::cwd_owner=0;
 CmdExec	 *CmdExec::chain=0;

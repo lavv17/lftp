@@ -73,11 +73,11 @@ CDECL int res_search(const char*,int,int,unsigned char*,int);
 static ResDecl
    res_cache_enable("dns:cache-enable", "yes", ResMgr::BoolValidate,0),
    res_cache_expire("dns:cache-expire", "24h", ResMgr::TimeIntervalValidate,0),
-   res_cache_size  ("dns:cache-size",   "256", ResMgr::UNumberValidate,0),
+   res_cache_size  ("dns:cache-size",   "256", ResMgr::UNumberValidate,ResMgr::NoClosure),
    res_timeout	   ("dns:fatal-timeout","0",   ResMgr::UNumberValidate,0),
    res_order	   ("dns:order",	DEFAULT_ORDER, Resolver::OrderValidate,0),
    res_query_srv   ("dns:SRV-query",    "no",  ResMgr::BoolValidate,0),
-   res_use_fork	   ("dns:use-fork",     "yes", ResMgr::BoolValidate,0);
+   res_use_fork	   ("dns:use-fork",     "yes", ResMgr::BoolValidate,ResMgr::NoClosure);
 
 
 struct address_family
@@ -845,7 +845,7 @@ flush:
 
 void Resolver::Reconfig(const char *name)
 {
-   timeout = res_timeout.Query(0);
+   timeout = res_timeout.Query(hostname);
    if(!name || strncmp(name,"dns:",4))
       return;
    cache->Clear();

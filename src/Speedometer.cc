@@ -216,7 +216,7 @@ void Speedometer::Reset()
    last_bytes=0;
 }
 
-ResDecl res_eta_terse("xfer:eta-terse",  "yes",ResMgr::BoolValidate,0);
+ResDecl res_eta_terse("xfer:eta-terse",  "yes",ResMgr::BoolValidate,ResMgr::NoClosure);
 void Speedometer::Reconfig(const char *n)
 {
    terse=res_eta_terse.Query(0);

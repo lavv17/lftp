@@ -49,9 +49,9 @@
 #define skip_threshold 0x1000
 #define debug(a) Log::global->Format a
 
-ResDecl rate_period  ("xfer:rate-period","15", ResMgr::UNumberValidate,0);
-ResDecl eta_period   ("xfer:eta-period", "120",ResMgr::UNumberValidate,0);
-ResDecl max_redir    ("xfer:max-redirections", "0",ResMgr::UNumberValidate,0);
+ResDecl rate_period  ("xfer:rate-period","15", ResMgr::UNumberValidate,ResMgr::NoClosure);
+ResDecl eta_period   ("xfer:eta-period", "120",ResMgr::UNumberValidate,ResMgr::NoClosure);
+ResDecl max_redir    ("xfer:max-redirections", "0",ResMgr::UNumberValidate,ResMgr::NoClosure);
 
 // FileCopy
 #define super SMTask

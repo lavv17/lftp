@@ -675,7 +675,7 @@ Job *CmdExec::builtin_open()
 
 	    const char *p=uc.proto;
 	    if(!p)
-	       p=ResMgr::Query("cmd:default-protocol",0);
+	       p=ResMgr::Query("cmd:default-protocol",uc.host);
 	    if(!p)
 	       p="ftp";
 	    new_session=FileAccess::New(p,uc.host);
@@ -1941,7 +1941,7 @@ CMD(bookmark)
       {
 	 const char *value=args->getnext();
 	 int flags=0;
-	 if((bool)res_save_passwords.Query(0))
+	 if((bool)res_save_passwords.Query(session->GetHostName()))
 	    flags|=session->WITH_PASSWORD;
 	 if(value==0)
 	 {

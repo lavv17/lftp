@@ -601,3 +601,8 @@ const char *ResMgr::ERegExpValidate(char **s)
    regfree(&re);
    return 0;
 }
+
+const char *ResMgr::NoClosure(char **)
+{
+   return _("no closure defined for this setting");
+}

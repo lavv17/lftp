@@ -33,6 +33,7 @@
 #include "ResMgr.h"
 #include "url.h"
 #include "GetPass.h"
+#include "ascii_ctype.h"
 
 static const char *FtpProxyValidate(char **p)
 {
@@ -89,6 +90,14 @@ static const char *FtpDefaultAnonPass()
    return pass;
 }
 
+static const char *PutOrPost(char **s)
+{
+   if(strcasecmp(*s,"PUT") && strcasecmp(*s,"POST"))
+      return _("only PUT and POST values allowed");
+   for(char *scan=*s; *scan; scan++)
+      *scan=to_ascii_upper((unsigned char)*scan);
+   return 0;
+}
 
 // Static array of objects is wrongly initialized by IRIX CC and Unixware c++.
 // So here goes list of arbitrarily named objects, they are not refered by name.
@@ -96,7 +105,7 @@ static ResDecl
    ResDecl00 ("ftp:anon-pass",		  "-lftp@",0,0),
    ResDecl01 ("ftp:anon-user",		  "anonymous",0,0),
    ResDecl01a("ftp:auto-sync-mode",	  "",	   ResMgr::ERegExpValidate,0),
-   ResDecl02 ("ftp:fxp-passive-source",	  "no",	   ResMgr::BoolValidate,0),
+   ResDecl02 ("ftp:fxp-passive-source",	  "no",	   ResMgr::BoolValidate,ResMgr::NoClosure),
    ResDecl03 ("ftp:list-options",	  "",	   0,0),
    ResDecl04 ("ftp:nop-interval",	  "120",   ResMgr::UNumberValidate,0),
    ResDecl05 ("ftp:passive-mode",	  "on",    ResMgr::BoolValidate,0),
@@ -126,26 +135,27 @@ static ResDecl
    ResDecl26 ("http:user-agent",	  PACKAGE"/"VERSION,0,0),
    ResDecl27 ("http:cookie",		  "",	   0,0),
    ResDecl28 ("http:set-cookies",	  "no",	   0,0),
-   ResDecl29 ("http:put-method",	  "PUT",   0,0),
+   ResDecl29a("http:post-content-type",   "application/x-www-form-urlencoded",0,0),
+   ResDecl29 ("http:put-method",	  "PUT",   PutOrPost,0),
    ResDecl30 ("http:put-content-type",	  "",	   0,0),
    ResDecl31 ("net:idle",		  "180",   ResMgr::UNumberValidate,0),
    ResDecl32 ("net:limit-max",		  "0",	   ResMgr::UNumberValidate,0),
    ResDecl33 ("net:limit-rate",		  "0",	   ResMgr::UNumberValidate,0),
-   ResDecl34 ("net:limit-total-max",	  "0",	   ResMgr::UNumberValidate,0),
-   ResDecl35 ("net:limit-total-rate",	  "0",	   ResMgr::UNumberValidate,0),
+   ResDecl34 ("net:limit-total-max",	  "0",	   ResMgr::UNumberValidate,ResMgr::NoClosure),
+   ResDecl35 ("net:limit-total-rate",	  "0",	   ResMgr::UNumberValidate,ResMgr::NoClosure),
    ResDecl36 ("net:max-retries",	  "4096",  ResMgr::UNumberValidate,0),
    ResDecl36a("net:persist-retries",	  "0",	   ResMgr::UNumberValidate,0),
-   ResDecl37 ("net:no-proxy",		  "",	   0,0),
+   ResDecl37 ("net:no-proxy",		  "",	   0,ResMgr::NoClosure),
    ResDecl38 ("net:reconnect-interval-base","30",  ResMgr::UNumberValidate,0),
    ResDecl39 ("net:reconnect-interval-multiplier","1.5",ResMgr::FloatValidate,0),
    ResDecl40 ("net:reconnect-interval-max","600",  ResMgr::UNumberValidate,0),
    ResDecl41 ("net:socket-buffer",	  "0",	   ResMgr::UNumberValidate,0),
    ResDecl42 ("net:socket-maxseg",	  "0",	   ResMgr::UNumberValidate,0),
    ResDecl43 ("net:timeout",		  "300",   ResMgr::UNumberValidate,0),
-   ResDecl44 ("net:connection-limit",	  "0",	   ResMgr::UNumberValidate,0),
+   ResDecl44 ("net:connection-limit",	  "0",	   ResMgr::UNumberValidate,ResMgr::NoClosure),
    ResDecl45 ("net:connection-takeover",  "yes",   ResMgr::BoolValidate,0),
-   ResDecl46 ("mirror:time-precision",	  "1s",    ResMgr::TimeIntervalValidate,0),
-   ResDecl47 ("mirror:loose-time-precision","24h", ResMgr::TimeIntervalValidate,0);
+   ResDecl46 ("mirror:time-precision",	  "1s",    ResMgr::TimeIntervalValidate,ResMgr::NoClosure),
+   ResDecl47 ("mirror:loose-time-precision","24h", ResMgr::TimeIntervalValidate,ResMgr::NoClosure);
 
 void ResMgr::ClassInit()
 {
