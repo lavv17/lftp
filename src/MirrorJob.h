@@ -49,21 +49,25 @@ class MirrorJob : public SessionJob
    enum state_t
    {
       INITIAL_STATE,
-      MAKE_REMOTE_DIR,
-      CHANGING_REMOTE_DIR,
+      MAKE_TARGET_DIR,
+      CHANGING_DIR,
       GETTING_LIST_INFO,
       WAITING_FOR_SUBGET,
       WAITING_FOR_SUBMIRROR,
-      WAITING_FOR_RM_BEFORE_PUT,
+      WAITING_FOR_RM_BEFORE_TRANSFER,
       WAITING_FOR_MKDIR_BEFORE_SUBMIRROR,
-      REMOTE_REMOVE_OLD,
-      REMOTE_CHMOD,
+      TARGET_REMOVE_OLD,
+      TARGET_CHMOD,
       DONE
    };
    state_t state;
 
-   FileSet *remote_set;
-   FileSet *local_set;
+   FileAccess *target_session;
+   bool target_is_local;
+   bool source_is_local;
+
+   FileSet *target_set;
+   FileSet *source_set;
    FileSet *to_transfer;
    FileSet *same;
    FileSet *to_rm;
@@ -76,13 +80,13 @@ class MirrorJob : public SessionJob
 
    bool cont_this; // try to continue transfer of current file.
 
-   ListInfo *list_info;
-   FileAccess *local_session;
+   ListInfo *source_list_info;
+   ListInfo *target_list_info;
 
-   char	 *local_dir;
-   char	 *local_relative_dir;
-   char	 *remote_dir;
-   char	 *remote_relative_dir;
+   char	 *source_dir;
+   char	 *source_relative_dir;
+   char	 *target_dir;
+   char	 *target_relative_dir;
 
    int	 tot_files,new_files,mod_files,del_files;
    int	 dirs,del_dirs;
@@ -119,6 +123,12 @@ class MirrorJob : public SessionJob
    mode_t get_mode_mask();
 
    int redirections;
+   int target_redirections;
+
+   void HandleChdir(FileAccess * &session, int &redirections);
+   void HandleListInfoCreation(FileAccess * &session,ListInfo * &list_info,
+	    const char *relative_dir);
+   void HandleListInfo(ListInfo * &list_info, FileSet * &set);
 
 public:
    enum
@@ -129,7 +139,6 @@ public:
       ONLY_NEWER=8,
       NO_PERMS=16,
       CONTINUE=32,
-      REVERSE=64,
       REPORT_NOT_DELETED=128,
       RETR_SYMLINKS=256,
       NO_UMASK=512,
@@ -144,7 +153,8 @@ public:
 	 flags&=~f;
    }
 
-   MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_remote_dir);
+   MirrorJob(FileAccess *f,FileAccess *target,
+      const char *new_source_dir,const char *new_target_dir);
    ~MirrorJob();
 
    int	 Do();
