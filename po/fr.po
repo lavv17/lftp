@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
-"POT-Creation-Date: 2002-11-04 21:26+0300\n"
+"POT-Creation-Date: 2002-12-26 08:51+0300\n"
 "PO-Revision-Date: 2002-03-03 23:34GMT\n"
 "Last-Translator: Nicolas Noble <nicolas@nobis-crew.org>\n"
 "Language-Team: French <fr@li.org>\n"
@@ -44,7 +44,7 @@ msgstr "cd ok, cwd=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: reçu une redirection vers `%s'\n"
 
-#: src/CmdExec.cc:394 src/FileCopy.cc:948
+#: src/CmdExec.cc:394 src/FileCopy.cc:952
 msgid "Too many redirections"
 msgstr "Trop de redirections"
 
@@ -317,11 +317,16 @@ msgstr "Format de domaine invalide. Le format est min-max, ex: 10-20"
 msgid "Invalid IPv4 numeric address"
 msgstr "Adresse numérique IPv4 invalide"
 
-#: src/ResMgr.cc:843
+#: src/ResMgr.cc:795
+#, fuzzy
+msgid "Invalid IPv6 numeric address"
+msgstr "Adresse numérique IPv4 invalide"
+
+#: src/ResMgr.cc:855
 msgid "no closure defined for this setting"
 msgstr "aucune restriction pour ce paramètre"
 
-#: src/ResMgr.cc:856
+#: src/ResMgr.cc:868
 #, fuzzy
 msgid "invalid pair of numbers"
 msgstr "nombre invalide"
@@ -1669,7 +1674,7 @@ msgstr "Usage: %s commande args...\n"
 msgid "Usage: %s module [args...]\n"
 msgstr "Usage: %s module [args...]\n"
 
-#: src/commands.cc:2760 src/LocalAccess.cc:600
+#: src/commands.cc:2760 src/LocalAccess.cc:603
 msgid "cannot get current directory"
 msgstr "ne peut lire le répertoire en cours"
 
@@ -2069,38 +2074,38 @@ msgstr "Le transfert de %d sur %d fichier$|s$ a échoué\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Total %d fichier$|s$ transférés\n"
 
-#: src/FileCopy.cc:151
+#: src/FileCopy.cc:153
 msgid "copy: put is broken\n"
 msgstr "copy: 'put' brisé\n"
 
-#: src/FileCopy.cc:170
+#: src/FileCopy.cc:172
 msgid "seek failed"
 msgstr "'seek' a échoué"
 
-#: src/FileCopy.cc:192
+#: src/FileCopy.cc:194
 msgid "cannot seek on data source"
 msgstr "ne peut se déplacer sur la source"
 
-#: src/FileCopy.cc:195
+#: src/FileCopy.cc:197
 #, c-format
 msgid "copy: put rolled back to %lld, seeking get accordingly\n"
 msgstr "copy: 'put' est revenu à %lld, 'get' s'y ajuste\n"
 
-#: src/FileCopy.cc:208
+#: src/FileCopy.cc:210
 msgid "copy: all data received, but get rolled back\n"
 msgstr "copy: toutes les données reçues, mais 'get' est revenu en arrière\n"
 
-#: src/FileCopy.cc:224
+#: src/FileCopy.cc:226
 #, c-format
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr "copy: 'get' est revenu à %lld, 'put' s'y ajuste\n"
 
-#: src/FileCopy.cc:945
+#: src/FileCopy.cc:949
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy: reçu une redirection vers `%s'\n"
 
-#: src/FileCopy.cc:1146
+#: src/FileCopy.cc:1150
 msgid "file name missed in URL"
 msgstr "nom de fichier manquant dans l'URL"
 
@@ -2166,33 +2171,33 @@ msgstr "chdir(%s) a échouée: %s\n"
 msgid "execl(/bin/sh) failed: %s\n"
 msgstr "execl(/bin/sh) a échouée: %s\n"
 
-#: src/NetAccess.cc:210
+#: src/NetAccess.cc:247
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Connexion à %s%s (%s) port %u"
 
-#: src/NetAccess.cc:265
+#: src/NetAccess.cc:302
 msgid "Timeout - reconnecting"
 msgstr "Temps écoulé - reconnexion"
 
-#: src/NetAccess.cc:492
+#: src/NetAccess.cc:529
 msgid "Connection limit reached"
 msgstr "Limite de connexions atteinte"
 
-#: src/NetAccess.cc:496
+#: src/NetAccess.cc:533
 msgid "Delaying before reconnect"
 msgstr "Attente avant reconnexion"
 
-#: src/NetAccess.cc:507
+#: src/NetAccess.cc:544
 msgid "max-retries exceeded"
 msgstr "max-retries atteint"
 
-#: src/NetAccess.cc:740
+#: src/NetAccess.cc:792
 #, c-format
 msgid "Getting directory contents (%lld) %s[%s]"
 msgstr "Récupération du contenu du répertoire (%lld) %s[%s]"
 
-#: src/NetAccess.cc:747
+#: src/NetAccess.cc:799
 #, c-format
 msgid "Getting files information (%d%%) [%s]"
 msgstr "Lecture des informations de fichiers (%d%%) [%s]"

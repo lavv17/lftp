@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
-"POT-Creation-Date: 2002-11-04 21:26+0300\n"
+"POT-Creation-Date: 2002-12-26 08:51+0300\n"
 "PO-Revision-Date: 2002-04-12 00:06+0900\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -43,7 +43,7 @@ msgstr "cd 成功、cwd=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: `%s'へのリダイレクションを受け取りました\n"
 
-#: src/CmdExec.cc:394 src/FileCopy.cc:948
+#: src/CmdExec.cc:394 src/FileCopy.cc:952
 msgid "Too many redirections"
 msgstr "リダイレクションが多すぎます"
 
@@ -322,11 +322,16 @@ msgstr "範囲フォーマットが不正です。正しいフォーマットは 最小-最大 例) 10-20"
 msgid "Invalid IPv4 numeric address"
 msgstr "不正なIPv4番号アドレス"
 
-#: src/ResMgr.cc:843
+#: src/ResMgr.cc:795
+#, fuzzy
+msgid "Invalid IPv6 numeric address"
+msgstr "不正なIPv4番号アドレス"
+
+#: src/ResMgr.cc:855
 msgid "no closure defined for this setting"
 msgstr "この設定では終止が定義されていません"
 
-#: src/ResMgr.cc:856
+#: src/ResMgr.cc:868
 #, fuzzy
 msgid "invalid pair of numbers"
 msgstr "不正な数"
@@ -1626,7 +1631,7 @@ msgstr "使い方: %s command args...\n"
 msgid "Usage: %s module [args...]\n"
 msgstr "使い方: %s module [args...]\n"
 
-#: src/commands.cc:2760 src/LocalAccess.cc:600
+#: src/commands.cc:2760 src/LocalAccess.cc:603
 msgid "cannot get current directory"
 msgstr "現在のディレクトリが取得できません"
 
@@ -2035,38 +2040,38 @@ msgstr "%d 個(%d ファイル中)の転送が失敗\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "計 %d ファイル転送済\n"
 
-#: src/FileCopy.cc:151
+#: src/FileCopy.cc:153
 msgid "copy: put is broken\n"
 msgstr "copy: put が壊れています\n"
 
-#: src/FileCopy.cc:170
+#: src/FileCopy.cc:172
 msgid "seek failed"
 msgstr "seek 失敗"
 
-#: src/FileCopy.cc:192
+#: src/FileCopy.cc:194
 msgid "cannot seek on data source"
 msgstr "データソースには seek できません"
 
-#: src/FileCopy.cc:195
+#: src/FileCopy.cc:197
 #, c-format
 msgid "copy: put rolled back to %lld, seeking get accordingly\n"
 msgstr "copy: put は %lld に戻りました。適宜 get しています\n"
 
-#: src/FileCopy.cc:208
+#: src/FileCopy.cc:210
 msgid "copy: all data received, but get rolled back\n"
 msgstr "copy: データをすべて受信しましたが、get は戻りました\n"
 
-#: src/FileCopy.cc:224
+#: src/FileCopy.cc:226
 #, c-format
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr "copy: get は %lld に戻りました。適宜 put しています\n"
 
-#: src/FileCopy.cc:945
+#: src/FileCopy.cc:949
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy: `%s' へのリダイレクションを受け取りました\n"
 
-#: src/FileCopy.cc:1146
+#: src/FileCopy.cc:1150
 msgid "file name missed in URL"
 msgstr "URL 中にファイル名がありません"
 
@@ -2139,34 +2144,34 @@ msgstr "chdir(%s) が失敗しました: %s\n"
 msgid "execl(/bin/sh) failed: %s\n"
 msgstr "execl (/bin/sh) が失敗しました: %s\n"
 
-#: src/NetAccess.cc:210
+#: src/NetAccess.cc:247
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "%s%s (%s) ポート %u に接続中"
 
-#: src/NetAccess.cc:265
+#: src/NetAccess.cc:302
 msgid "Timeout - reconnecting"
 msgstr "タイムアウト - 再接続中"
 
-#: src/NetAccess.cc:492
+#: src/NetAccess.cc:529
 #, fuzzy
 msgid "Connection limit reached"
 msgstr "接続数制限に達しました"
 
-#: src/NetAccess.cc:496
+#: src/NetAccess.cc:533
 msgid "Delaying before reconnect"
 msgstr "再接続を遅延しています"
 
-#: src/NetAccess.cc:507
+#: src/NetAccess.cc:544
 msgid "max-retries exceeded"
 msgstr "最大再試行回数を超えました"
 
-#: src/NetAccess.cc:740
+#: src/NetAccess.cc:792
 #, fuzzy, c-format
 msgid "Getting directory contents (%lld) %s[%s]"
 msgstr "ディレクトリ内容 (%lld) を取得中"
 
-#: src/NetAccess.cc:747
+#: src/NetAccess.cc:799
 #, fuzzy, c-format
 msgid "Getting files information (%d%%) [%s]"
 msgstr "ファイル情報 (%d%%)を取得中"

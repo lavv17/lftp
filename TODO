@@ -5,8 +5,6 @@ currently; some need other work to be done. Items marked with + are partially
 implemented.
 
 
-?* save command history (to different files for diff hosts?)
-
 ?* document variables in on-line help
 
  * mirror --config <file.cf>
@@ -22,7 +20,7 @@ implemented.
    (Done()==true when queue is empty)
    This way ARRAY_* can be obsoleted.
 
- * there are many interesting protocols: smb, fsp, imap, irc, ...
+ * there are many interesting protocols: smb, fsp, imap, irc, sftp...
 
  * put -n (only if newer) Maybe it would be better to add a command to compare
    times?
@@ -46,17 +44,6 @@ implemented.
    implement ranges properly.
 
  * tail command
-
-?* ability to bind source address of sockets. (for those with several
-   interfaces)
-     This needs to handle both ipv4 and ipv6 addresses, but probably only
-   numeric forms, since lookups are time-consuming and can give several
-   addresses.
-     The source address family must match that of destination address, so
-   probably several settings are necessary, e.g. net:source-address-ipv4 and
-   net:source-address-ipv6. Or a closure can be used.
-     Maybe it is better to specify interface instead of address, then address
-   family can be used to get proper address off the interface. (?)
 
  * make a class FileAccessLocation (class url?)
 

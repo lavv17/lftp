@@ -1,3 +1,11 @@
+Version 2.6.4 - 2002-12-26
+
+* new settings net:socket-bind-ipv4 and net:socket-bind-ipv6 to bind sockets
+  to a specific address (useful to select a specific network interface to use).
+* now reget does not start transfer if not needed.
+* ssl:verify-certificate set to no by default.
+* fixed ~ handling in find and mirror.
+
 Version 2.6.3 - 2002-11-04
 
 * fixed wrong eta calculation.

@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
-"POT-Creation-Date: 2002-11-04 21:26+0300\n"
+"POT-Creation-Date: 2002-12-26 08:51+0300\n"
 "PO-Revision-Date: 1999-07-12 00:00+0400\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -42,7 +42,7 @@ msgstr ""
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
 
-#: src/CmdExec.cc:394 src/FileCopy.cc:948
+#: src/CmdExec.cc:394 src/FileCopy.cc:952
 msgid "Too many redirections"
 msgstr ""
 
@@ -320,11 +320,15 @@ msgstr ""
 msgid "Invalid IPv4 numeric address"
 msgstr ""
 
-#: src/ResMgr.cc:843
+#: src/ResMgr.cc:795
+msgid "Invalid IPv6 numeric address"
+msgstr ""
+
+#: src/ResMgr.cc:855
 msgid "no closure defined for this setting"
 msgstr ""
 
-#: src/ResMgr.cc:856
+#: src/ResMgr.cc:868
 #, fuzzy
 msgid "invalid pair of numbers"
 msgstr "número inválido"
@@ -1478,7 +1482,7 @@ msgstr ""
 msgid "Usage: %s module [args...]\n"
 msgstr ""
 
-#: src/commands.cc:2760 src/LocalAccess.cc:600
+#: src/commands.cc:2760 src/LocalAccess.cc:603
 #, fuzzy
 msgid "cannot get current directory"
 msgstr "Criando diretório remoto `%s'"
@@ -1880,39 +1884,39 @@ msgstr "Transferência de %d de %d arquivos falhou\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "%d arquivos transmitidos"
 
-#: src/FileCopy.cc:151
+#: src/FileCopy.cc:153
 msgid "copy: put is broken\n"
 msgstr ""
 
-#: src/FileCopy.cc:170
+#: src/FileCopy.cc:172
 #, fuzzy
 msgid "seek failed"
 msgstr "Falha na conexão"
 
-#: src/FileCopy.cc:192
+#: src/FileCopy.cc:194
 msgid "cannot seek on data source"
 msgstr ""
 
-#: src/FileCopy.cc:195
+#: src/FileCopy.cc:197
 #, c-format
 msgid "copy: put rolled back to %lld, seeking get accordingly\n"
 msgstr ""
 
-#: src/FileCopy.cc:208
+#: src/FileCopy.cc:210
 msgid "copy: all data received, but get rolled back\n"
 msgstr ""
 
-#: src/FileCopy.cc:224
+#: src/FileCopy.cc:226
 #, c-format
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr ""
 
-#: src/FileCopy.cc:945
+#: src/FileCopy.cc:949
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr ""
 
-#: src/FileCopy.cc:1146
+#: src/FileCopy.cc:1150
 msgid "file name missed in URL"
 msgstr ""
 
@@ -1978,33 +1982,33 @@ msgstr "Atenção: chdir() falhou: %s\n"
 msgid "execl(/bin/sh) failed: %s\n"
 msgstr "falha em execlp(%s): %s\n"
 
-#: src/NetAccess.cc:210
+#: src/NetAccess.cc:247
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr ""
 
-#: src/NetAccess.cc:265
+#: src/NetAccess.cc:302
 msgid "Timeout - reconnecting"
 msgstr ""
 
-#: src/NetAccess.cc:492
+#: src/NetAccess.cc:529
 msgid "Connection limit reached"
 msgstr ""
 
-#: src/NetAccess.cc:496
+#: src/NetAccess.cc:533
 msgid "Delaying before reconnect"
 msgstr ""
 
-#: src/NetAccess.cc:507
+#: src/NetAccess.cc:544
 msgid "max-retries exceeded"
 msgstr ""
 
-#: src/NetAccess.cc:740
+#: src/NetAccess.cc:792
 #, fuzzy, c-format
 msgid "Getting directory contents (%lld) %s[%s]"
 msgstr "Buscando conteúdo do diretório (%ld)"
 
-#: src/NetAccess.cc:747
+#: src/NetAccess.cc:799
 #, fuzzy, c-format
 msgid "Getting files information (%d%%) [%s]"
 msgstr "Buscando informações dos arquivos (%d%%)"
