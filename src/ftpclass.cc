@@ -1739,6 +1739,15 @@ int   Ftp::Do()
 #if INET6
 	 ipv4_pasv:
 #endif
+	    //BEGIN DRFTPD PRET
+ 	    char *s=string_alloca(5+strlen(command)+1+strlen(file)+2);
+ 	    strcpy(s, "PRET ");
+	    strcat(s, command);
+	    strcat(s, " ");
+	    strcat(s, file);
+ 	    SendCmd(s);
+ 	    AddResp(200,CHECK_IGNORE);
+	    //END DRFTPD PRET
 	    SendCmd("PASV");
 	    AddResp(227,CHECK_PASV);
 	    addr_received=0;

@@ -1,3 +1,7 @@
+2003-10-02  Morgan Christiansson <lftp@mog.se>
+
+	* ftpclass.cc: send PRET before PASV command for distributed ftp servers.
+
 2003-08-21  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: (Disconnect) ignore replies when Disconnect is called,
