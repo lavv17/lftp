@@ -1235,6 +1235,7 @@ int FileCopyPeerFDStream::getfd()
       }
       return -1;
    }
+   stream->clear_status();
    pos=0;
    if(mode==PUT)
       pos+=in_buffer;
@@ -1408,12 +1409,13 @@ int FileCopyPeerFDStream::Get_LL(int len)
 	 Block(fd,POLLIN);
 	 return 0;
       }
-      if(NonFatalError(errno))
+      if(stream->NonFatalError(errno))
 	 return 0;
       stream->MakeErrorText();
       SetError(stream->error_text);
       return -1;
    }
+   stream->clear_status();
 
 #ifndef NATIVE_CRLF
    if(ascii)
@@ -1495,12 +1497,13 @@ int FileCopyPeerFDStream::Put_LL(const char *buf,int len)
 	 broken=true;
 	 return -1;
       }
-      if(NonFatalError(errno))
+      if(stream->NonFatalError(errno))
 	 return 0;
       stream->MakeErrorText();
       SetError(stream->error_text);
       return -1;
    }
+   stream->clear_status();
    if(res==len)
       res+=skip_cr;
    return res;
@@ -1521,6 +1524,11 @@ void FileCopyPeerFDStream::RemoveFile()
    file_removed=true;
    Suspend();
    current->Timeout(0);
+}
+
+const char *FileCopyPeerFDStream::GetStatus()
+{
+   return stream->status;
 }
 
 FileCopyPeerFDStream *FileCopyPeerFDStream::NewPut(const char *file,bool cont)

@@ -327,6 +327,8 @@ public:
    void RemoveFile();
    void SetBase(off_t b) { seek_base=b; }
 
+   const char *GetStatus();
+
    static FileCopyPeerFDStream *NewPut(const char *file,bool cont=false);
    static FileCopyPeerFDStream *NewGet(const char *file);
 };

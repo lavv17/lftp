@@ -47,12 +47,14 @@ FDStream::FDStream(int new_fd,const char *new_name)
    else
       name=0;
    error_text=0;
+   status=0;
 }
 FDStream::FDStream()
 {
    fd=-1;
    name=0;
    error_text=0;
+   status=0;
 }
 void FDStream::MakeErrorText()
 {
@@ -369,5 +371,10 @@ off_t FileStream::get_size()
 #include "SMTask.h"
 bool FDStream::NonFatalError(int err)
 {
-   return SMTask::NonFatalError(err);
+   bool non_fatal=SMTask::NonFatalError(err);
+   if(non_fatal)
+      set_status(strerror(err));
+   else
+      clear_status();
+   return non_fatal;
 }

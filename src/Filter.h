@@ -33,6 +33,7 @@ public:
    int fd;
    char *name;
    char *error_text;
+   const char *status;
 
    bool	 error() { return error_text!=0; }
 
@@ -44,6 +45,8 @@ public:
 
    void MakeErrorText();
    bool NonFatalError(int err);
+   void set_status(const char *str) { status=str; }
+   void clear_status() { status=0; }
 
    virtual off_t get_size() { return -1; }
    virtual void setmtime(time_t) {}
