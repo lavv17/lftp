@@ -142,15 +142,13 @@ int OutputFilter::getfd()
    }
 
    int	 p[2];
-   char  s[256];
    pid_t pid;
 
    if(pipe(p)==-1)
    {
       if(NonFatalError(errno))
 	 return -1;
-      sprintf(s,_("pipe() failed: %s"),strerror(errno));
-      error_text=xstrdup(s);
+      error_text=xasprintf(_("pipe() failed: %s"),strerror(errno));
       return -1;
    }
 

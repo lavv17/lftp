@@ -1,3 +1,8 @@
+2002-05-29  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: fixed pasv address fixation.
+	* Filter.cc: use xasprintf.
+
 2002-05-20  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* pgetJob.cc: let the copyer run before the session to avoid unneeded

@@ -704,10 +704,11 @@ int Ftp::Handle_PASV()
 
    if((a0==0 && a1==0 && a2==0 && a3==0)
    || (QueryBool("fix-pasv-address",hostname)
-       && InPrivateNetwork(&data_sa) && !InPrivateNetwork(&peer_sa)))
+       && (InPrivateNetwork(&data_sa) != InPrivateNetwork(&peer_sa))))
    {
       // broken server, try to fix up
       fixed_pasv=true;
+      DebugPrint("---- ","Address returned by PASV seemed to be incorrect and has been fixed",2);
       if(data_sa.sa.sa_family==AF_INET)
 	 memcpy(a,&peer_sa.in.sin_addr,sizeof(peer_sa.in.sin_addr));
 #if INET6
@@ -1244,7 +1245,7 @@ int   Ftp::Do()
 	 goto usual_return;
 
       addr_len=sizeof(peer_sa);
-      getsockname(control_sock,&peer_sa.sa,&addr_len);
+      getpeername(control_sock,&peer_sa.sa,&addr_len);
 
 #ifdef USE_SSL
       if(proxy?!strncmp(proxy,"ftps://",7):ftps)
