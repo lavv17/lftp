@@ -40,39 +40,12 @@
 
 #define max_buf 0x10000
 
-static const char *ProxyValidate(char **p)
-{
-   ParsedURL url(*p);
-   if(url.host==0)
-   {
-      if((*p)[0]!=0)
-	 (*p)[0]=0;
-      return 0;
-   }
-   if(url.proto)
-   {
-      if(strcmp(url.proto,"http"))
-	 return _("Proxy protocol unsupported");
-   }
-   return 0;
-}
-
-static ResDecl
-   res_timeout		("http:timeout",        "600",ResMgr::UNumberValidate,0),
-   res_redial_interval	("http:redial-interval","30", ResMgr::UNumberValidate,0),
-   res_relookup_always	("http:relookup-always","off",ResMgr::BoolValidate,0),
-   res_proxy		("http:proxy",          "",   ProxyValidate,0),
-   res_idle		("http:idle",	        "180",ResMgr::UNumberValidate,0),
-   res_max_retries	("http:max-retries",    "0",  ResMgr::UNumberValidate,0),
-   res_socket_buffer	("http:socket-buffer",  "0",  ResMgr::UNumberValidate,0),
-   res_socket_maxseg	("http:socket-maxseg",  "0",  ResMgr::UNumberValidate,0),
-   res_limit_rate	("http:limit-rate",     "0",  ResMgr::UNumberValidate,0),
-   res_limit_max	("http:limit-max",      "0",  ResMgr::UNumberValidate,0);
-
 #define HTTP_DEFAULT_PORT	 "80"
 #define HTTP_DEFAULT_PROXY_PORT	 "3128"
 
 static time_t http_atotm (const char *time_string);
+static int  base64_length (int len);
+static void base64_encode (const char *s, char *store, int length);
 
 
 void Http::Init()
@@ -225,8 +198,17 @@ void Http::SendMethod(const char *method,const char *efile)
    Send("Host: %s\r\n",url::encode_string(hostname));
 }
 
+
 void Http::SendAuth()
 {
+   if(!user || !pass)
+      return;
+   /* Basic scheme */
+   char *buf=(char*)alloca(strlen(user)+1+strlen(pass)+1);
+   sprintf(buf,"%s:%s",user,pass);
+   char *buf64=(char*)alloca(base64_length(strlen(buf))+1);
+   base64_encode(buf,buf64,strlen(buf));
+   Send("Authorization: Basic %s\r\n",buf64);
 }
 
 bool Http::ModeSupported()
@@ -304,9 +286,14 @@ void Http::SendRequest()
       break;
 
    case CHANGE_DIR:
+   case LIST:
+   case LONG_LIST:
       if(efile[0]==0 || !(efile[0]=='/' && efile[1]==0))
 	 strcat(efile,"/");
-      SendMethod("HEAD",efile);
+      if(mode==CHANGE_DIR)
+	 SendMethod("HEAD",efile);
+      else
+	 SendMethod("GET",efile);
       break;
 
    case(REMOVE):
@@ -314,6 +301,7 @@ void Http::SendRequest()
       SendMethod("DELETE",efile);
       break;
    }
+   SendAuth();
    Send("\r\n");
 }
 
@@ -660,7 +648,7 @@ system_error:
 void  Http::ClassInit()
 {
    // register the class
-   (void)new Protocol("http",Http::New);
+   Protocol::Register("http",Http::New);
 }
 
 int Http::Read(void *buf,int size)
@@ -775,20 +763,21 @@ const char *Http::CurrentStatus()
 
 void Http::Reconfig()
 {
-   const char *c=hostname;
+   xfree(closure);
+   closure=xstrdup(hostname);
+   const char *c=closure;
 
-   timeout = res_timeout.Query(c);
-   sleep_time = res_redial_interval.Query(c);
-   idle = res_idle.Query(c);
-   max_retries = res_max_retries.Query(c);
-   relookup_always = res_relookup_always.Query(c);
-   socket_buffer = res_socket_buffer.Query(c);
-   socket_maxseg = res_socket_maxseg.Query(c);
-   bytes_pool_rate = res_limit_rate.Query(c);
-   bytes_pool_max  = res_limit_max.Query(c);
-   BytesReset(); // to cut bytes_pool.
+   super::Reconfig();
 
-   SetProxy(res_proxy.Query(c));
+   timeout = Query("timeout",c);
+   sleep_time = Query("reconnect-interval",c);
+   idle = Query("idle",c);
+   max_retries = Query("max-retries",c);
+   relookup_always = Query("relookup-always",c);
+   socket_buffer = Query("socket-buffer",c);
+   socket_maxseg = Query("socket-maxseg",c);
+
+   SetProxy(Query("proxy",c));
 
    if(sock!=-1)
       SetSocketBuffer(sock,socket_buffer);
@@ -956,6 +945,52 @@ http_atotm (const char *time_string)
   /* Failure.  */
   return -1;
 }
+
+/* How many bytes it will take to store LEN bytes in base64.  */
+static int
+base64_length(int len)
+{
+  return (4 * (((len) + 2) / 3));
+}
+
+/* Encode the string S of length LENGTH to base64 format and place it
+   to STORE.  STORE will be 0-terminated, and must point to a writable
+   buffer of at least 1+BASE64_LENGTH(length) bytes.  */
+static void
+base64_encode (const char *s, char *store, int length)
+{
+  /* Conversion table.  */
+  static char tbl[64] = {
+    'A','B','C','D','E','F','G','H',
+    'I','J','K','L','M','N','O','P',
+    'Q','R','S','T','U','V','W','X',
+    'Y','Z','a','b','c','d','e','f',
+    'g','h','i','j','k','l','m','n',
+    'o','p','q','r','s','t','u','v',
+    'w','x','y','z','0','1','2','3',
+    '4','5','6','7','8','9','+','/'
+  };
+  int i;
+  unsigned char *p = (unsigned char *)store;
+
+  /* Transform the 3x8 bits to 4x6 bits, as required by base64.  */
+  for (i = 0; i < length; i += 3)
+    {
+      *p++ = tbl[s[0] >> 2];
+      *p++ = tbl[((s[0] & 3) << 4) + (s[1] >> 4)];
+      *p++ = tbl[((s[1] & 0xf) << 2) + (s[2] >> 6)];
+      *p++ = tbl[s[2] & 0x3f];
+      s += 3;
+    }
+  /* Pad the result if necessary...  */
+  if (i == length + 1)
+    *(p - 1) = '=';
+  else if (i == length + 2)
+    *(p - 1) = *(p - 2) = '=';
+  /* ...and zero-terminate it.  */
+  *p = '\0';
+}
+
 
 
 #ifdef MODULE
