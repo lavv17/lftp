@@ -2780,6 +2780,7 @@ out:
 void Ftp::Connection::CloseDataConnection()
 {
    Delete(data_iobuf); data_iobuf=0;
+   data_ssl=0; // if is free'd by data_iobuf dtor.
    if(data_sock!=-1)
    {
       Log::global->Format(7,"---- %s\n",_("Closing data socket"));
