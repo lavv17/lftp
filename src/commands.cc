@@ -44,7 +44,6 @@
 #include "SysCmdJob.h"
 #include "mvJob.h"
 #include "pgetJob.h"
-#include "FtpCopy.h"
 #include "SleepJob.h"
 #include "FindJob.h"
 #include "ChmodJob.h"
@@ -82,7 +81,7 @@ CMD(wait);  CMD(subsh);  CMD(mirror);
 CMD(mv);    CMD(cat);    CMD(cache);
 CMD(mkdir); CMD(scache); CMD(mrm);
 CMD(ver);   CMD(close);  CMD(bookmark);CMD(lftp);
-CMD(echo);  CMD(suspend);CMD(ftpcopy); CMD(sleep);
+CMD(echo);  CMD(suspend);CMD(sleep);
 CMD(at);    CMD(find);   CMD(command); CMD(module);
 CMD(lpwd);  CMD(glob);	 CMD(chmod);   CMD(queue);
 CMD(repeat);CMD(get1);
@@ -156,7 +155,6 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "termination status. If omitted, exit code of last command is used.\n")},
    {"fg",      cmd_wait,   0,"wait"},
    {"find",    cmd_find},
-   {"ftpcopy", cmd_ftpcopy},
    {"get",     cmd_get,    N_("get [OPTS] <rfile> [-o <lfile>]"),
 	 N_("Retrieve remote file <rfile> and store it to local file <lfile>.\n"
 	 " -o <lfile> specifies local file name (default - basename of rfile)\n"
@@ -1937,13 +1935,6 @@ CMD(suspend)
 {
    kill(getpid(),SIGSTOP);
    return 0;
-}
-
-CMD(ftpcopy)
-{
-   Job *j=new FtpCopy(args,session);
-   args=0;
-   return j;
 }
 
 CMD(find)

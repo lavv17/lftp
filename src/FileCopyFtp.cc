@@ -137,13 +137,14 @@ FileCopyFtp::FileCopyFtp(FileCopyPeer *s,FileCopyPeer *d,bool c,bool rp)
 
 FileCopy *FileCopyFtp::New(FileCopyPeer *s,FileCopyPeer *d,bool c)
 {
-   if(!(bool)ResMgr::Query("ftp:use-fxp",0))
-      return 0;
    FA *s_s=s->GetSession();
    FA *d_s=d->GetSession();
    if(!s_s || !d_s)
       return 0;
    if(strcmp(s_s->GetProto(),"ftp") || strcmp(d_s->GetProto(),"ftp"))
+      return 0;
+   if(!(bool)ResMgr::Query("ftp:use-fxp",s_s->GetHostName())
+   || !(bool)ResMgr::Query("ftp:use-fxp",d_s->GetHostName()))
       return 0;
    return new FileCopyFtp(s,d,c,ResMgr::Query("ftp:fxp-passive-source",0));
 }
