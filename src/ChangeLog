@@ -1,5 +1,10 @@
 1999-08-06  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* commands.cc: (cmd_get) decode %xx in default output file name.
+	* XferJob.h: disable non_strict_urls (too complex).
+
+1999-08-06  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* ftpclass.cc, ftpclass.h, resource.cc: add ftp:rest-list setting.
 	* Job.h, Job.cc: more useful Job::AcceptSig.
 	* CmdExec.cc: improve AcceptSig.

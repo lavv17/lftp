@@ -106,9 +106,11 @@ public:
 
    void UseURLs()
       {
+#if 0
 	 if(use_urls)
 	    non_strict_urls=true;
 	 else
+#endif
 	    use_urls=true;
       }
 };

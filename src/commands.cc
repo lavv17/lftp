@@ -850,10 +850,20 @@ CMD(get)
       eprintf(_("File name missed. "));
       goto err;
    }
+   if(!use_urls)
+      use_urls=ResMgr::Query("xfer:use-urls",0);
    while(a)
    {
       get_args->Append(a);
-      a1=basename_ptr(a);
+      ParsedURL url(a);
+      a1=0;
+      if(use_urls)
+      {
+	 if(url.proto && url.path)
+	    a1=basename_ptr(url.path);
+      }
+      if(a1==0)
+	 a1=basename_ptr(a);
       a=args->getnext();
       if(a && !strcmp(a,"-o"))
       {
