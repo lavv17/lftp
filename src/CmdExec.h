@@ -161,6 +161,7 @@ public:
    void ShowRunStatus(StatusLine *s);
    int AcceptSig(int sig);
 
+   char *FormatPrompt(const char *scan);
    char *MakePrompt();
 
    bool interactive;

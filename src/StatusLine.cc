@@ -32,6 +32,7 @@
 #include "xstring.h"
 #include "xmalloc.h"
 
+#include "ResMgr.h"
 #include "StatusLine.h"
 
 int  StatusLine::GetWidth()
@@ -56,9 +57,11 @@ StatusLine::StatusLine(int new_fd)
    update_delayed=false;
    update_time=0;
    strcpy(shown,"");
+   strcpy(def_title,"");
    not_term=!isatty(fd);
    LastWidth=GetWidth();
 }
+
 StatusLine::~StatusLine()
 {
 }
@@ -71,6 +74,14 @@ void StatusLine::Clear()
    update(newstr);
    update_delayed=false;
    update_time=0;
+
+   WriteTitle(def_title, fd);
+}
+
+void StatusLine::DefaultTitle(const char *s)
+{
+   strncpy(def_title, s, sizeof(def_title));
+   def_title[sizeof(def_title)-1] = 0;
 }
 
 void StatusLine::Show(const char *f,...)
@@ -102,6 +113,82 @@ void StatusLine::Show(const char *f,...)
    }
 }
 
+void StatusLine::WriteTitle(const char *s, int fd) const
+{
+   if(!(bool)ResMgr::Query("cmd:set-term-status", getenv("TERM")))
+      return;
+
+   const char *scan=ResMgr::Query("cmd:term-status", getenv("TERM"));
+   char ch;
+   char str[3];
+   const char *to_add;
+
+   for(;;)
+   {
+      ch=*scan++;
+      if(ch==0)
+	 break;
+
+      if(ch=='\\' && *scan && *scan!='\\')
+      {
+	 ch=*scan++;
+	 switch(ch)
+	 {
+	 case'0':case'1':case'2':case'3':case'4':case'5':case'6':case'7':
+	 {
+	    unsigned len;
+	    unsigned code;
+	    scan--;
+	    sscanf(scan,"%3o%n",&code,&len);
+	    ch=code;
+	    scan+=len;
+	    str[0]=ch;
+	    str[1]=0;
+	    to_add=str;
+	    break;
+	 }
+	 case 'a':
+	    to_add="\007";
+	    break;
+	 case 'e':
+	    to_add="\033";
+	    break;
+	 case 'n':
+ 	    to_add="\n";
+ 	    break;
+	 case 's':
+ 	    to_add="lftp";
+ 	    break;
+	 case 'T':
+ 	    to_add=s;
+ 	    break;
+ 	 case 'v':
+	    to_add=VERSION;
+	    break;
+	 default:
+	    str[0]='\\';
+	    str[1]=ch;
+	    str[2]=0;
+	    to_add=str;
+	    break;
+	 }
+      }
+      else
+      {
+	 if(ch=='\\' && *scan=='\\')
+	    scan++;
+	 str[0]=ch;
+	 str[1]=0;
+	 to_add=str;
+      }
+
+      if(to_add==0)
+	 continue;
+
+      write(fd, to_add, strlen(to_add));
+   }
+}
+
 void StatusLine::update(char *newstr)
 {
    if(not_term)
@@ -109,6 +196,9 @@ void StatusLine::update(char *newstr)
 
    if(tcgetpgrp(fd)!=getpgrp())
       return;
+
+   /* Don't write blank titles into the title; let Clear() do that. */
+   if(newstr[0]) WriteTitle(newstr, fd);
 
    char *end=newstr+strlen(newstr);
 
@@ -142,6 +232,7 @@ void StatusLine::update(char *newstr)
    write(fd,"\r",1);
    write(fd,newstr,strlen(newstr));
 }
+
 
 void StatusLine::WriteLine(const char *f,...)
 {

@@ -45,6 +45,7 @@ static ResDecl
    res_long_running	   ("cmd:long-running",	"30",ResMgr::UNumberValidate,0),
    res_remote_completion   ("cmd:remote-completion","on",ResMgr::BoolValidate,0),
    res_prompt		   ("cmd:prompt",	"lftp> ",0,0),
+   res_default_title	   ("cmd:default-title","lftp \\h:\\w",0,0),
    res_default_ls	   ("cmd:ls-default",	"",0,0),
    res_csh_history	   ("cmd:csh-history",	"off",ResMgr::BoolValidate,ResMgr::NoClosure),
    res_verify_path	   ("cmd:verify-path",	"yes",ResMgr::BoolValidate,0),
@@ -53,7 +54,9 @@ static ResDecl
    res_fail_exit	   ("cmd:fail-exit",	"no", ResMgr::BoolValidate,ResMgr::NoClosure),
    res_verbose		   ("cmd:verbose",	"no", ResMgr::BoolValidate,ResMgr::NoClosure),
    res_interactive	   ("cmd:interactive",	"no", ResMgr::BoolValidate,ResMgr::NoClosure),
-   res_move_background	   ("cmd:move-background","yes", ResMgr::BoolValidate,ResMgr::NoClosure);
+   res_move_background	   ("cmd:move-background","yes", ResMgr::BoolValidate,ResMgr::NoClosure),
+   res_set_term_status     ("cmd:set-term-status","no", ResMgr::BoolValidate,0),
+   res_term_status         ("cmd:term-status",  "", 0, 0);
 
 CmdExec	 *CmdExec::cwd_owner=0;
 CmdExec	 *CmdExec::chain=0;
@@ -598,6 +601,14 @@ try_get_cmd:
 	    if(FindJob(last_bg)==0)
 	       last_bg=-1;
 	 }
+
+	 if(status_line)
+	 {
+	    char *def_title = FormatPrompt(res_default_title.Query(getenv("TERM")));
+	    status_line->DefaultTitle(def_title);
+	    status_line->Clear();
+	 }
+
 	 char *prompt=MakePrompt();
 	 feeder_called=true;
 	 const char *cmd=feeder->NextCmd(this,prompt);
@@ -861,7 +872,7 @@ CmdExec::~CmdExec()
    Reuse(saved_session);
 }
 
-char *CmdExec::MakePrompt()
+char *CmdExec::FormatPrompt(const char *scan)
 {
    static char *prompt=0;
    static int prompt_size=256;
@@ -869,14 +880,8 @@ char *CmdExec::MakePrompt()
    if(prompt==0)
       prompt=(char*)xmalloc(prompt_size);
 
-   if(partial_cmd)
-   {
-      return strcpy(prompt,"> ");
-   }
-
    char *store=prompt;
 
-   const char *scan=res_prompt.Query(getenv("TERM"));
    char ch;
    char str[3];
    const char *to_add;
@@ -1003,6 +1008,17 @@ char *CmdExec::MakePrompt()
       store+=strlen(to_add);
    }
    return(prompt);
+}
+
+char *CmdExec::MakePrompt()
+{
+   if(partial_cmd)
+   {
+      static char partial_prompt[] = "> ";
+      return partial_prompt;
+   }
+
+   return FormatPrompt(res_prompt.Query(getenv("TERM")));
 }
 
 void CmdExec::beep_if_long()

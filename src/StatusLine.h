@@ -38,16 +38,19 @@ class StatusLine : public SMTask
    bool	not_term;
    time_t update_time;
    char to_be_shown[0x800];
+   char def_title[0x800];
    bool update_delayed;
    void update(char *);
    int LastWidth;
 
 protected:
    ~StatusLine();
-
+   void WriteTitle(const char *s, int fd) const;
+	   
 public:
    int GetWidth();
    int GetWidthDelayed() { return LastWidth; }
+   void DefaultTitle(const char *s);
    void Show(const char *f,...) PRINTF_LIKE(2,3);
    void WriteLine(const char *f,...) PRINTF_LIKE(2,3);
    void Clear();
