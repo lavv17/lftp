@@ -31,6 +31,7 @@
 #include <stdarg.h>
 #include <time.h>
 #include <fnmatch.h>
+#include <locale.h>
 #include "Http.h"
 #include "ResMgr.h"
 #include "log.h"
