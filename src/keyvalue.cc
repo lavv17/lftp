@@ -144,28 +144,45 @@ void KeyValueDB::Sort()
    }
 }
 
-int KeyValueDB::Write(int fd)
+char *KeyValueDB::Format()
 {
-   FILE *f=fdopen(fd,"w");
-   if(!f)
-      return -1;
    Sort();
 
    Pair *p;
    int max_key_len=0;
+   size_t size_required=0;
+   int n=0;
 
    for(p=chain; p; p=p->next)
    {
       int len=strlen(p->key);
       if(len>max_key_len)
 	 max_key_len=len;
+      size_required+=1+strlen(p->value)+1;
+      n++;
    }
+   size_required+=max_key_len*n;
    max_key_len&=~7;  // save some bytes
-   for(p=chain; p; p=p->next)
-      fprintf(f,"%-*s\t%s\n",max_key_len,p->key,p->value);
 
-   fclose(f);
-   return 0;
+   char *buf=xmalloc(size_required+1);
+   char *store=buf;
+
+   for(p=chain; p; p=p->next)
+   {
+      sprintf(store,"%-*s\t%s\n",max_key_len,p->key,p->value);
+      store+=strlen(store);
+   }
+
+   return buf;
+}
+
+int KeyValueDB::Write(int fd)
+{
+   char *buf=Format();
+   int res=write(fd,buf,strlen(buf));
+   xfree(buf);
+   close(fd);
+   return res;
 }
 
 void KeyValueDB::Add(const char *key,const char *value)
