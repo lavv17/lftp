@@ -811,14 +811,9 @@ FileAccess *FileAccess::Protocol::NewSession(const char *proto)
       return p->New();
 
 #ifdef WITH_MODULES
-
-   const char *load=proto;
-   if(!strcmp(proto,"hftp"))
-      load="http";  // special case: hftp is together with http.
-
 #define PROTO_PREFIX "proto-"
-   char *mod=(char*)alloca(strlen(PROTO_PREFIX)+strlen(load)+1);
-   sprintf(mod,"%s%s",PROTO_PREFIX,load);
+   char *mod=(char*)alloca(strlen(PROTO_PREFIX)+strlen(proto)+1);
+   sprintf(mod,"%s%s",PROTO_PREFIX,proto);
    void *map=module_load(mod,0,0);
    if(map==0)
    {
@@ -828,9 +823,7 @@ FileAccess *FileAccess::Protocol::NewSession(const char *proto)
    p=FindProto(proto);
    if(p)
       return p->New();
-
 #endif
-
    return 0;
 }
 
