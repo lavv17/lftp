@@ -1,3 +1,15 @@
+Version 2.3.5 - 2000-11-25
+
+* implemented [ipv6::address]:port as specified by rfc2732.
+* fixed local tilde globbing.
+* don't wait for file lock forever; print warning if locking fails.
+* save cwd_history only if needed.
+* `queue' command now sets last job number to itself.
+* optimize number of poll calls during ftp transfer.
+* fixed mput for directory case (continue loop instead of returning).
+* don't queue up too much MDTM/SIZE commands in sync mode.
+* fixed --with-modules compilation.
+
 Version 2.3.4 - 2000-10-13
 
 * fixed completion and globbing for file names starting with tilde.

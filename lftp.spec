@@ -1,73 +1,59 @@
-%define name lftp
-%define version 2.3.4
+%define version 2.3.5
+%define release 1
+%define use_modules 1
 
-Summary: The lftp command line ftp/http client
-Name: %{name}
+Summary: sophisticated command line file transfer program
+Name: lftp
 Version: %{version}
-Release: 1
-Copyright: GPL
-Url: http://ftp.yars.free.net/projects/lftp/
-BuildRoot: /var/tmp/%{name}-%{version}-root
-Source: ftp.yars.free.net:/pub/software/unix/net/ftp/client/lftp/%{name}-%{version}.tar.gz
+Release: %{release}
+URL: http://ftp.yars.free.net/projects/lftp/
+Source: ftp://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/lftp-%{version}.tar.gz
 Group: Applications/Internet
-
+BuildRoot: %{_tmppath}/%{name}-buildroot
+Copyright: GPL
+#Packager: Manoj Kasichainula <manojk+rpm@io.com>
 
 %description
-LFTP is a shell-like command line ftp client. It is
-reliable: can retry operations and does reget automatically.
-It can do several transfers simultaneously in background.
-You can start a transfer in background and continue browsing
-the ftp site or another one. This all is done in one process.
-Background jobs will be completed in nohup mode if you exit
-or close modem connection. Lftp has reput, mirror, reverse
-mirror among its features. Since version 2.0 it also supports
-http protocol.
-
-
+lftp is command line file transfer program. It supports FTP and HTTP
+protocols. GNU Readline library is used for input.
 
 %prep
-rm -rf $RPM_BUILD_ROOT
-
 %setup
-CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=/usr --with-modules
+#%setup -n %{name}
+
+%build
+
+# Make sure that all message catalogs are built
+if [ $LINGUAS ]; then
+    unset LINGUAS
+fi
+
+# The lftp maintainer seems to use a newer version of libtool than Red
+# Hat (even 7.0) ships with. So make sure that we don't muck with
+# ltconfig
+%define __libtoolize true
+%if %use_modules
+    %configure --with-modules
+%else
+    %configure
+%endif
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make DESTDIR=$RPM_BUILD_ROOT install
+rm -rf %{buildroot}
+make install DESTDIR=%{buildroot}
 
 %clean
-rm -rf $RPM_BUILD_ROOT
-
-%changelog
-* Sat Oct 02 1999 Alexander Lukyanov <lav@yars.free.net>
-
-- 2.1.1 release
-- removed ChangeLog from doc.
-
-* Mon Sep 27 1999 Alexander Lukyanov <lav@yars.free.net>
-
-- 2.1.0 release
-
-* Tue Sep 14 1999 Alexander Lukyanov <lav@yars.free.net>
-
-- add lftpget
-
-* Tue Jul 27 1999 Adrian Likins <alikins@redhat.com>
-
--initial release
-
+rm -rf %{buildroot}
 
 %files
-%defattr(644,root,root,755)
-%doc README README.modules FAQ THANKS COPYING TODO lftp.lsm NEWS INSTALL FEATURES
-#%doc /usr/man/man1/ftpget.1
-%doc /usr/man/man1/lftp.1*
+%defattr(644 root root 755)
+%doc ABOUT-NLS BUGS COPYING FAQ FEATURES NEWS README* THANKS TODO lftp.lsm
 %config /etc/lftp.conf
-%dir /usr/share/lftp
-%attr(755,root,root) /usr/share/lftp/import-*
-/usr/share/locale/*/*/*
-%attr(755,root,root) /usr/bin/lftp
-#%attr(755,root,root) /usr/bin/ftpget
-%attr(755,root,root) /usr/bin/lftpget
-%attr(644,root,root) /usr/lib/lftp/*
+%attr(755 root root) %{_bindir}/*
+%if %use_modules
+%{_libdir}/*
+%endif
+%{_mandir}/man*/*
+%attr(- root root) %{_datadir}/lftp
+%{_datadir}/locale/*/*/*
