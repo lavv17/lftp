@@ -28,7 +28,6 @@
    +FileCopyPeerFDStream
    +FileCopyPeerString
    \FileCopyPeerList
-   Speedometer
 */
 
 #ifndef FILECOPY_H
@@ -37,6 +36,7 @@
 #include "SMTask.h"
 #include "buffer.h"
 #include "FileAccess.h"
+#include "Speedometer.h"
 
 #define FILE_END     (-1L)
 
@@ -119,33 +119,6 @@ public:
    virtual FA *GetSession() { return 0; }
 };
 
-class Speedometer : public SMTask
-{
-   int period;
-   float rate;
-   time_t last_second;
-   time_t last_bytes;
-   time_t start;
-   static char buf_eta[];
-   static char buf_rate[];
-public:
-   Speedometer(int p);
-   float Get();
-   static const char *GetStr(float r);
-   const char *GetStr() { return GetStr(Get()); }
-   static const char *GetStrS(float r);
-   const char *GetStrS() { return GetStrS(Get()); }
-   const char *GetETAStrFromSize(long s);
-   const char *GetETAStrSFromSize(long s);
-   static const char *GetETAStrFromTime(long t);
-   static const char *GetETAStrSFromTime(long t);
-   bool Valid();
-   void Add(int bytes);
-   void Reset();
-   void SetPeriod(int p) { period=p; }
-   int Do();
-};
-
 class FileCopy : public SMTask
 {
 public:
@@ -214,6 +187,7 @@ public:
    long GetETA() { return GetETA(GetBytesRemaining()); }
    long GetETA(long b);
    const char *GetETAStr();
+   const char *GetETAStrSFromTime(time_t t) { return rate_for_eta->GetETAStrSFromTime(t); }
    const char *GetStatus();
    FgData *GetFgData(bool fg);
    pid_t GetProcGroup();

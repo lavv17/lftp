@@ -707,6 +707,10 @@ Job *CmdExec::builtin_open()
 
    if(path)
    {
+      const char *old=cwd_history.Lookup(session);
+      if(old)
+	 session->Chdir(old,false);
+
       char *s=string_alloca(strlen(path)*4+40);
       strcpy(s,"&& cd \"");
       unquote(s+strlen(s),path);
@@ -714,18 +718,6 @@ Job *CmdExec::builtin_open()
       if(background)
 	 strcat(s,"&");
       strcat(s,"\n");
-#if 0
-      char *slash=strrchr(path,'/');
-      if(slash && slash[1])
-      {
-	 *slash=0;
-	 strcat(s,"|| (cd \"");
-	 unquote(s+strlen(s),path);
-	 strcat(s,"\" && get -- \"");
-	 unquote(s+strlen(s),slash+1);
-	 strcat(s,"\")\n");
-      }
-#endif
       PrependCmd(s);
    }
 

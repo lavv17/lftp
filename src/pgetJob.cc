@@ -173,7 +173,7 @@ int pgetJob::Do()
 #define PGET_STATUS \
    _("`%s', got %lu of %lu (%d%%) %s%s"),name,total_xferred,size, \
    percent(total_xferred,size),Speedometer::GetStrS(total_xfer_rate), \
-   Speedometer::GetETAStrSFromTime(total_eta)
+   cp->GetETAStrSFromTime(total_eta)
 
 void pgetJob::ShowRunStatus(StatusLine *s)
 {
