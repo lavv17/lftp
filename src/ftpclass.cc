@@ -1397,7 +1397,7 @@ int   Ftp::Do()
       if(mode!=CHANGE_DIR)
       {
 	 expected_response *last_cwd=FindLastCWD();
-	 if((!last_cwd && xstrcmp(cwd,real_cwd))
+	 if((!last_cwd && xstrcmp(cwd,real_cwd) && !(real_cwd==0 && !xstrcmp(cwd,"~")))
 	    || (last_cwd && xstrcmp(last_cwd->path,cwd)))
 	 {
 	    SendCWD(cwd,CHECK_CWD_CURR);
