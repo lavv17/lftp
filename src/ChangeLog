@@ -2,6 +2,9 @@
 
 	* ftpclass.cc: fixed STAT command in FXP mode; fixed coredump when
 	  disconnecting in FXP mode (when DataAbort disconnects too).
+	* SFtp.h: fix mem leaks in Packet_WRITE and Packet_RENAME.
+	* ftpclass.cc: follow ftp:ssl-force even if ftp server does not
+	  advertise AUTH in FEAT reply (reported by Nikos Mavroyanopoulos <nmav@gnutls.org>).
 
 2004-04-16  Alexander V. Lukyanov <lav@yars.free.net>
 

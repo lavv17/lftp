@@ -1318,6 +1318,8 @@ int   Ftp::Do()
       if(QueryBool((user && pass)?"ssl-allow":"ssl-allow-anonymous",hostname)
       && !ftps && (!proxy || conn->proxy_is_http))
 	 SendAuth(Query("ssl-auth",hostname));
+      if(state!=CONNECTED_STATE)
+	 return MOVED;
 
       if(conn->auth_sent && !expect->IsEmpty())
 	 goto usual_return;
@@ -2281,7 +2283,11 @@ system_error:
 void Ftp::SendAuth(const char *auth)
 {
    if(!conn->auth_supported || conn->auth_sent || conn->control_ssl)
+   {
+      if(QueryBool("ssl-force",hostname))
+	 SetError(LOGIN_FAILED,_("ftp:ssl-force is set and server does not support or allow SSL"));
       return;
+   }
 
    if(conn->auth_args_supported)
    {
