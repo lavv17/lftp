@@ -73,14 +73,14 @@ SMTask::~SMTask()
 #endif
    task_count--;
    assert(!running);
+   if(this==sched_scan)
+      sched_scan=0;
    // remove from the chain
    SMTask **scan=&chain;
    while(*scan)
    {
       if(*scan==this)
       {
-	 assert(this!=sched_scan);
-
 	 *scan=next;
 	 break;
       }
