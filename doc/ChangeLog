@@ -1,3 +1,7 @@
+2005-04-05	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document mirror --loop option.
+
 2005-04-04	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document cache: settings, cmd:verify-path-cached.
