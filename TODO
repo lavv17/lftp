@@ -4,7 +4,7 @@ at least tell me what you think. Items marked with - are hard to implement
 currently; some need other work to be done.
 
 
- * complete group/gpass and ACCT (does anyone need it?)
+?* complete group/gpass and ACCT (does anyone need it?)
 
 ?* save command history (to different files for diff hosts?)
 
@@ -58,3 +58,5 @@ currently; some need other work to be done.
    an error, and in case of such error restart from beginning.
 
  * tail command
+
+ * rest-stor
