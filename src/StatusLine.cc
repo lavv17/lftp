@@ -106,13 +106,15 @@ void StatusLine::Show(const char *f,...)
    vsnprintf(newstr,sizeof(newstr),f,v);
    va_end(v);
 
-   if(!strcmp(to_be_shown,newstr)) return;
-
    if(timer.go()) {
       update(newstr);
       update_delayed=false;
       return;
    }
+
+   if(!strcmp(to_be_shown,newstr))
+      return;
+
    /* not yet */
    strcpy(to_be_shown,newstr);
    update_delayed=true;
