@@ -310,6 +310,8 @@ static completion_type cmd_completion_type(const char *cmd,int start)
    || !strcmp(buf,"nlist")
    || !strcmp(buf,"rm")
    || !strcmp(buf,"rmdir")
+   || !strcmp(buf,"bzcat")
+   || !strcmp(buf,"bzmore")      
    || !strcmp(buf,"zcat")
    || !strcmp(buf,"zmore"))
       return REMOTE_FILE;

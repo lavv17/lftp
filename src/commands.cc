@@ -350,7 +350,11 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Same as cat, but filter each file through zcat\n")},
    {"zmore",   cmd_cat,    N_("zmore <files>"),
 	 N_("Same as more, but filter each file through zcat\n")},
-
+   {"bzcat",    cmd_cat,    N_("bzcat <files>"),
+	 N_("Same as cat, but filter each file through bzcat\n")},
+   {"bzmore",   cmd_cat,    N_("bzmore <files>"),
+	 N_("Same as more, but filter each file through bzcat\n")},
+   
    {NULL,NULL}
 };
 

@@ -137,7 +137,7 @@ CatJob::CatJob(FileAccess *new_session,FDStream *new_global,ArgV *new_args)
    ascii=false;
    auto_ascii=true;
 
-   if(!strcmp(op,"more") || !strcmp(op,"zmore"))
+   if(!strcmp(op,"more") || !strcmp(op,"zmore") || !strcmp(op,"bzmore"))
    {
       if(!global)
       {
@@ -153,6 +153,12 @@ CatJob::CatJob(FileAccess *new_session,FDStream *new_global,ArgV *new_args)
       Binary();
    }
 
+   if(!strcmp(op,"bzcat") || !strcmp(op,"bzmore"))
+   {
+      for_each="bzcat";
+      Binary();
+   }   
+   
    if(!global)
    {
       if(for_each)

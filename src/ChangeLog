@@ -1,3 +1,7 @@
+2000-12-08  Chmouel Boudjnah <chmouel@mandrakesoft.com>
+
+	* CatJob.cc, commands.cc, complete.cc: add bzcat and bzmore support.
+
 2000-12-01  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* resource.cc: hftp:use-authorization.
