@@ -465,6 +465,8 @@ int LocalAccess::Write(const void *vbuf,int len)
 
 int LocalAccess::StoreStatus()
 {
+   if(mode!=STORE)
+      return OK;
    if(!stream)
       return IN_PROGRESS;
    if(stream->getfd()==-1)

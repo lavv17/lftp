@@ -6,7 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.6\n"
-"POT-Creation-Date: 2003-12-19 13:51+0300\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2003-12-22 16:19+0300\n"
 "PO-Revision-Date: 2000-09-07 09:36+08:00\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -53,6 +54,7 @@ msgid "Interrupt"
 msgstr "Прерывание"
 
 #: src/CmdExec.cc:633
+#, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "Предупреждение: неполный остаток команды игнорируется\n"
 
@@ -75,6 +77,7 @@ msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\tОжидание завершения задания [%d]\n"
 
 #: src/CmdExec.cc:752
+#, c-format
 msgid "\tWaiting for termination of jobs: "
 msgstr "\tОжидание завершения заданий: "
 
@@ -84,6 +87,7 @@ msgid "\tRunning\n"
 msgstr "\tВыполнение\n"
 
 #: src/CmdExec.cc:767
+#, c-format
 msgid "\tWaiting for command\n"
 msgstr "\tОжидание команды\n"
 
@@ -1337,6 +1341,7 @@ msgid "%s: -n: Number expected. "
 msgstr "%s: -n: Ожидается числовое значение. "
 
 #: src/commands.cc:1085
+#, c-format
 msgid "Created a stopped queue.\n"
 msgstr "Создана остановленная очередь.\n"
 
@@ -1417,6 +1422,7 @@ msgid "debug level is %d, output goes to %s\n"
 msgstr "уровень отладки %d, вывод направлен в %s\n"
 
 #: src/commands.cc:1882
+#, c-format
 msgid "debug is off\n"
 msgstr "отладка выключена\n"
 
@@ -1538,6 +1544,7 @@ msgid "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 msgstr "Lftp | Версия %s | Copyright (c) 1996-2002 Александр В. Лукьянов\n"
 
 #: src/commands.cc:2378
+#, c-format
 msgid ""
 "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
 msgstr ""

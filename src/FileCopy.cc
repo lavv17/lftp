@@ -891,7 +891,7 @@ void FileCopyPeerFA::OpenSession()
    }
    else // mode==PUT
    {
-      if(e_size!=NO_SIZE && seek_pos>=e_size)
+      if(e_size>=0 && size>=0 && seek_pos>=e_size)
       {
 	 debug((10,"copy dst: seek past eof (seek_pos=%lld, size=%lld)\n",
 		  (long long)seek_pos,(long long)e_size));

@@ -4,7 +4,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
-"POT-Creation-Date: 2003-12-19 13:51+0300\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2003-12-22 16:19+0300\n"
 "PO-Revision-Date: 1999-07-12 00:00+0400\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -51,6 +52,7 @@ msgid "Interrupt"
 msgstr "Interrupção"
 
 #: src/CmdExec.cc:633
+#, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "Atenção: descartando comando incompleto\n"
 
@@ -73,7 +75,7 @@ msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\tEsperanto término do serviço [%d]\n"
 
 #: src/CmdExec.cc:752
-#, fuzzy
+#, fuzzy, c-format
 msgid "\tWaiting for termination of jobs: "
 msgstr "Esperando término da filtragem"
 
@@ -83,7 +85,7 @@ msgid "\tRunning\n"
 msgstr "\tExecutando\n"
 
 #: src/CmdExec.cc:767
-#, fuzzy
+#, fuzzy, c-format
 msgid "\tWaiting for command\n"
 msgstr "Atenção: descartando comando incompleto\n"
 
@@ -1220,6 +1222,7 @@ msgid "%s: -n: Number expected. "
 msgstr ""
 
 #: src/commands.cc:1085
+#, c-format
 msgid "Created a stopped queue.\n"
 msgstr ""
 
@@ -1302,6 +1305,7 @@ msgid "debug level is %d, output goes to %s\n"
 msgstr ""
 
 #: src/commands.cc:1882
+#, c-format
 msgid "debug is off\n"
 msgstr ""
 
@@ -1418,6 +1422,7 @@ msgid "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 msgstr ""
 
 #: src/commands.cc:2378
+#, c-format
 msgid ""
 "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
 msgstr ""

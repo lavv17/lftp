@@ -1,3 +1,8 @@
+2003-12-19  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* LocalAccess.cc: (StoreStatus) return OK when not opened for storing.
+	* FileCopy.cc: skip storing past eof only if there is such file already.
+
 2003-12-17  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* module.cc: rename module_into to lftp_module_info to avoid

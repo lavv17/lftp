@@ -5,7 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
-"POT-Creation-Date: 2003-12-19 13:51+0300\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2003-12-22 16:19+0300\n"
 "PO-Revision-Date: 2001-05-27 KST\n"
 "Last-Translator: Dojip Kim <greendrm@greendrm.com>\n"
 "Language-Team: \n"
@@ -52,6 +53,7 @@ msgid "Interrupt"
 msgstr "인터럽트"
 
 #: src/CmdExec.cc:633
+#, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "경고: 불완전한 명령어 무시\n"
 
@@ -74,6 +76,7 @@ msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\t작업 [%d]의 종료를 기다리는 중\n"
 
 #: src/CmdExec.cc:752
+#, c-format
 msgid "\tWaiting for termination of jobs: "
 msgstr "\t작업 종료를 위하여 기다리는 중: "
 
@@ -83,6 +86,7 @@ msgid "\tRunning\n"
 msgstr "\t실행중\n"
 
 #: src/CmdExec.cc:767
+#, c-format
 msgid "\tWaiting for command\n"
 msgstr "\t명령을 기다리는 중\n"
 
@@ -1296,6 +1300,7 @@ msgid "%s: -n: Number expected. "
 msgstr "%s: -n: 숫자가 요구됩니다  "
 
 #: src/commands.cc:1085
+#, c-format
 msgid "Created a stopped queue.\n"
 msgstr ""
 
@@ -1378,6 +1383,7 @@ msgid "debug level is %d, output goes to %s\n"
 msgstr "디버그 레벨은 %d이고, 출력은 %s로 됩니다\n"
 
 #: src/commands.cc:1882
+#, c-format
 msgid "debug is off\n"
 msgstr "디버그 끔\n"
 
@@ -1496,6 +1502,7 @@ msgid "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 msgstr "Lftp | 버전 %s | 저작권 (C) 1996-2001 Alexander V. Lukyanov\n"
 
 #: src/commands.cc:2378
+#, c-format
 msgid ""
 "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
 msgstr ""
