@@ -25,6 +25,7 @@
 #include "misc.h"
 #include "trio.h"
 #include "Speedometer.h"
+#include "log.h"
 
 #define BUFFER_INC	   (8*1024) // should be power of 2
 
@@ -457,12 +458,34 @@ void IOBufferFileAccess::Resume()
    session->Resume();
 }
 
+unsigned long long Buffer::UnpackUINT64BE(int offset)
+{
+   if(in_buffer-offset<8)
+      return 0;
+   unsigned long long res=UnpackUINT32BE(offset);
+   res=(res<<32)|UnpackUINT32BE(offset+4);
+   return res;
+}
+long long Buffer::UnpackINT64BE(int offset)
+{
+   unsigned long long n=UnpackUINT64BE(offset);
+   if(n&0x8000000000000000ULL)
+      return -(long long)(n^0xFFFFFFFFFFFFFFFFULL)-1;
+   return (long long)n;
+}
 unsigned Buffer::UnpackUINT32BE(int offset)
 {
    if(in_buffer-offset<4)
       return 0;
    unsigned char *b=(unsigned char*)buffer+buffer_ptr+offset;
    return (b[0]<<24)|(b[1]<<16)|(b[2]<<8)|b[3];
+}
+int Buffer::UnpackINT32BE(int offset)
+{
+   unsigned n=UnpackUINT32BE(offset);
+   if(n&0x80000000U)
+      return -(int)(n^0xFFFFFFFFU)-1;
+   return (int)n;
 }
 unsigned Buffer::UnpackUINT16BE(int offset)
 {
@@ -478,8 +501,25 @@ unsigned Buffer::UnpackUINT8(int offset)
    unsigned char *b=(unsigned char*)buffer+buffer_ptr+offset;
    return b[0];
 }
+void Buffer::PackUINT64BE(unsigned long long data)
+{
+   Log::global->Format(11,"PackUINT64BE(0x%016llX)\n",data);
+   Allocate(8);
+   PackUINT32BE((unsigned)(data>>32));
+   PackUINT32BE((unsigned)(data&0xFFFFFFFFU));
+}
+void Buffer::PackINT64BE(long long data)
+{
+   unsigned long long n;
+   if(data<0)
+      n=(unsigned long long)(-data)^0xFFFFFFFFFFFFFFFFULL+1;
+   else
+      n=(unsigned long long)data;
+   PackUINT64BE(n);
+}
 void Buffer::PackUINT32BE(unsigned data)
 {
+   Log::global->Format(11,"PackUINT32BE(0x%08X)\n",data);
    Allocate(4);
    char *b=buffer+buffer_ptr+in_buffer;
    b[0]=(data>>24)&255;
@@ -487,6 +527,15 @@ void Buffer::PackUINT32BE(unsigned data)
    b[2]=(data>>8)&255;
    b[3]=(data)&255;
    in_buffer+=4;
+}
+void Buffer::PackINT32BE(int data)
+{
+   unsigned n;
+   if(data<0)
+      n=(unsigned)(-data)^0xFFFFFFFFU+1;
+   else
+      n=(unsigned)data;
+   PackUINT32BE(n);
 }
 void Buffer::PackUINT16BE(unsigned data)
 {
@@ -498,6 +547,7 @@ void Buffer::PackUINT16BE(unsigned data)
 }
 void Buffer::PackUINT8(unsigned data)
 {
+   Log::global->Format(11,"PackUINT8(0x%02X)\n",data);
    Allocate(1);
    char *b=buffer+buffer_ptr+in_buffer;
    b[0]=(data)&255;

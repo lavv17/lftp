@@ -49,15 +49,37 @@ int PtyShell::getfd()
 
    int ptyfd,ttyfd;
    pid_t pid;
+   int pipe0[2];
+   int pipe1[2];
+
+   if(use_pipes)
+   {
+      if(pipe(pipe0)<0)
+	 return -1;
+      if(pipe(pipe1)<0)
+      {
+	 close(pipe0[0]);
+	 close(pipe0[1]);
+	 return -1;
+      }
+   }
 
    const char *tty_name=open_pty(&ptyfd,&ttyfd);
    if(!tty_name)
    {
-      if(NonFatalError(errno))
-      	 return -1;
-      char s[256];
-      sprintf(s,_("pseudo-tty allocation failed: %s"),strerror(errno));
-      error_text=xstrdup(s);
+      if(!NonFatalError(errno))
+      {
+	 char s[256];
+	 sprintf(s,_("pseudo-tty allocation failed: %s"),strerror(errno));
+	 error_text=xstrdup(s);
+      }
+      if(use_pipes)
+      {
+	 close(pipe0[0]);
+	 close(pipe0[1]);
+	 close(pipe1[0]);
+	 close(pipe1[1]);
+      }
       return -1;
    }
 
@@ -77,8 +99,22 @@ int PtyShell::getfd()
    {
    case(0): /* child */
       close(ptyfd);
-      dup2(ttyfd,0);
-      dup2(ttyfd,1);
+      if(use_pipes)
+      {
+	 close(pipe0[1]);
+	 close(pipe1[0]);
+	 dup2(pipe0[0],0);
+	 dup2(pipe1[1],1);
+	 if(pipe0[0]>2)
+	    close(pipe0[0]);
+	 if(pipe1[1]>2)
+	    close(pipe1[1]);
+      }
+      else
+      {
+	 dup2(ttyfd,0);
+	 dup2(ttyfd,1);
+      }
       dup2(ttyfd,2);
       if(ttyfd>2)
 	 close(ttyfd);
@@ -121,17 +157,36 @@ int PtyShell::getfd()
    case(-1): /* error */
       close(ttyfd);
       close(ptyfd);
+      if(use_pipes)
+      {
+	 close(pipe0[0]);
+	 close(pipe0[1]);
+	 close(pipe1[0]);
+	 close(pipe1[1]);
+      }
       goto out;
    }
    /* parent */
-   close(ttyfd);
-   fd=ptyfd;
-
    if(pg==0)
       pg=pid;
 
+   close(ttyfd);
+   fd=ptyfd;
+
    fcntl(fd,F_SETFD,FD_CLOEXEC);
    fcntl(fd,F_SETFL,O_NONBLOCK);
+
+   if(use_pipes)
+   {
+      close(pipe0[0]);
+      pipe_out=pipe0[1];
+      close(pipe1[1]);
+      pipe_in=pipe1[0];
+      fcntl(pipe_in,F_SETFD,FD_CLOEXEC);
+      fcntl(pipe_in,F_SETFL,O_NONBLOCK);
+      fcntl(pipe_out,F_SETFD,FD_CLOEXEC);
+      fcntl(pipe_out,F_SETFL,O_NONBLOCK);
+   }
 
    xfree(oldcwd);
    oldcwd=0;
@@ -151,6 +206,9 @@ void PtyShell::Init()
    oldcwd=xgetcwd();
    pg=0;
    closed=false;
+   use_pipes=false;
+   pipe_in=-1;
+   pipe_out=-1;
 }
 
 void PtyShell::SetCwd(const char *cwd)

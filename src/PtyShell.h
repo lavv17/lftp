@@ -34,6 +34,9 @@ class PtyShell : public FDStream
    char *oldcwd;
 
    bool closed;
+   bool use_pipes;
+   int pipe_in;
+   int pipe_out;
 
    void Init();
 
@@ -43,8 +46,11 @@ public:
    ~PtyShell();
 
    void SetCwd(const char *);
+   void UsePipes() { use_pipes=true; }
 
    int getfd();
+   int getfd_pipe_in()  { return pipe_in; }
+   int getfd_pipe_out() { return pipe_out; }
    bool Done();
 
    void Kill(int sig=SIGTERM) { if(w) w->Kill(sig); }

@@ -1,3 +1,9 @@
+2003-11-19  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* PtyShell.cc, PtyShell.h: add pipe support, thus the ability to
+	  separate data and interaction with ssh (passwords etc).
+	* buffer.cc, buffer.h: pack/unpack - signed int, 64 bit, debugging.
+
 2003-11-14  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc: drop size/date if read pos>size.

@@ -89,12 +89,23 @@ public:
    void vFormat(const char *f, va_list v);
    void PutEOF() { eof=true; PutEOF_LL(); }
 
+   unsigned long long UnpackUINT64BE(int offset=0);
    unsigned UnpackUINT32BE(int offset=0);
    unsigned UnpackUINT16BE(int offset=0);
    unsigned UnpackUINT8(int offset=0);
+   void PackUINT64BE(unsigned long long data);
    void PackUINT32BE(unsigned data);
    void PackUINT16BE(unsigned data);
    void PackUINT8(unsigned data);
+
+   long long UnpackINT64BE(int offset=0);
+   int UnpackINT32BE(int offset=0);
+   int UnpackINT16BE(int offset=0);
+   int UnpackINT8(int offset=0);
+   void PackINT64BE(long long data);
+   void PackINT32BE(int data);
+   void PackINT16BE(int data);
+   void PackINT8(int data);
 
    // useful for cache.
    void Save(int m) { save=true; save_max=m; }
