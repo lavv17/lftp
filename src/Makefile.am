@@ -14,7 +14,7 @@ lftp_SOURCES = lftp.cc complete.h complete.cc lftp_rl.c lftp_rl.h
 
 noinst_LIBRARIES = libtasks.a libjobs.a
 
-EXTRA_LTLIBRARIES = libpty.la libnetwork.la proto-ftp.la proto-http.la proto-file.la cmd-mirror.la cmd-sleep.la proto-fish.la proto-sftp.la
+EXTRA_LTLIBRARIES = liblftp-pty.la liblftp-network.la proto-ftp.la proto-http.la proto-file.la cmd-mirror.la cmd-sleep.la proto-fish.la proto-sftp.la
 pkgverlib_LTLIBRARIES = $(MODULES_LA)
 noinst_LTLIBRARIES = $(MODULES_LA_STATIC)
 
@@ -26,8 +26,8 @@ proto_fish_la_SOURCES = Fish.cc Fish.h
 proto_sftp_la_SOURCES = SFtp.cc SFtp.h
 cmd_mirror_la_SOURCES = MirrorJob.cc MirrorJob.h
 cmd_sleep_la_SOURCES  = SleepJob.cc SleepJob.h getdate.y getdate.h
-libpty_la_SOURCES     = PtyShell.cc PtyShell.h lftp_pty.c lftp_pty.h
-libnetwork_la_SOURCES = NetAccess.cc NetAccess.h Resolver.cc Resolver.h\
+liblftp_pty_la_SOURCES     = PtyShell.cc PtyShell.h lftp_pty.c lftp_pty.h
+liblftp_network_la_SOURCES = NetAccess.cc NetAccess.h Resolver.cc Resolver.h\
  lftp_ssl.cc lftp_ssl.h buffer_ssl.cc buffer_ssl.h
 
 proto_ftp_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
@@ -37,14 +37,14 @@ proto_fish_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
 proto_sftp_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
 cmd_mirror_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
 cmd_sleep_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
-libpty_la_LDFLAGS     = -avoid-version -rpath $(pkgverlibdir)
-libnetwork_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir) $(SSL_LDFLAGS)
-libnetwork_la_LIBADD  = $(SOCKSLIBS) $(SSL_LIBS)
+liblftp_pty_la_LDFLAGS     = -avoid-version -rpath $(pkgverlibdir)
+liblftp_network_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir) $(SSL_LDFLAGS)
+liblftp_network_la_LIBADD  = $(SOCKSLIBS) $(SSL_LIBS)
 
-proto_ftp_la_LIBADD  = -L$(DESTDIR)$(pkgverlibdir) libnetwork.la
-proto_http_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) libnetwork.la
-proto_fish_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) libnetwork.la libpty.la
-proto_sftp_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) libnetwork.la libpty.la
+proto_ftp_la_LIBADD  = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la
+proto_http_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la
+proto_fish_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la liblftp-pty.la
+proto_sftp_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la liblftp-pty.la
 
 libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  ProcWait.h GetPass.cc GetPass.h ConnectionSlot.cc ConnectionSlot.h\

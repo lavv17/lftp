@@ -156,12 +156,17 @@ int SFtp::Do()
 	 return MOVED;
 
       const char *init=Query("server-program",hostname);
-      ArgV *cmd=new ArgV(Query("connect-program",hostname));
-      cmd->Add("-x");	// don't forward X11
-      cmd->Add("-a");	// don't forward AuthAgent.
+      const char *prog=Query("connect-program",hostname);
+      if(!prog || !prog[0])
+	 prog="ssh -ax";
+      char *a=alloca_strdup(prog);
+      ArgV *cmd=new ArgV;
+      for(a=strtok(a," "); a; a=strtok(0," "))
+	 cmd->Add(a);
       if(!strchr(init,'/'))
       {
-	 cmd->Add("-s");   // run ssh2 subsystem
+	 if(init[0])
+	    cmd->Add("-s");   // run ssh2 subsystem
 	 // sftpd does not have a greeting
 	 received_greeting=true;
       }
@@ -183,9 +188,10 @@ int SFtp::Do()
 	 cmd->Add(portname);
       }
       cmd->Add(hostname);
-      cmd->Add(init);
+      if(init[0])
+	 cmd->Add(init);
       char *cmd_str=cmd->Combine(0);
-      Log::global->Format(9,"---- %s (%s)\n",_("Running ssh..."),cmd_str);
+      Log::global->Format(9,"---- %s (%s)\n",_("Running connect program"),cmd_str);
       xfree(cmd_str);
       ssh=new PtyShell(cmd);
       ssh->UsePipes();
@@ -326,6 +332,7 @@ void SFtp::Disconnect()
    Delete(recv_buf); recv_buf=0;
    Delete(pty_send_buf); pty_send_buf=0;
    Delete(pty_recv_buf); pty_recv_buf=0;
+   Delete(file_buf); file_buf=0;
    delete ssh; ssh=0;
    EmptyRespQueue();
    state=DISCONNECTED;
@@ -775,6 +782,7 @@ void SFtp::HandleExpect(Expect *e)
       {
 	 handle=((Reply_HANDLE*)reply)->GetHandle(&handle_len);
 	 state=(mode==STORE?FILE_SEND:FILE_RECV);
+	 assert(!file_buf);
 	 file_buf=new Buffer;
 	 Log::global->Write(9,"---- got file handle ");
 	 for(int i=0; i<handle_len; i++)

@@ -265,7 +265,7 @@ static ResDecl
    res_sftp_proto_ver("sftp:protocol-version","4",ResMgr::UNumberValidate,0),
    res_sftp_rsize    ("sftp:size-read", "0x8000",ResMgr::UNumberValidate,0),
    res_sftp_wsize    ("sftp:size-write","0x8000",ResMgr::UNumberValidate,0),
-   res_sftp_conn_prog("sftp:connect-program","ssh",0,0),
+   res_sftp_conn_prog("sftp:connect-program","ssh -ax",0,0),
    res_sftp_srv_prog ("sftp:server-program","sftp",0,0);
 
 #ifdef USE_SSL
@@ -296,7 +296,7 @@ static ResDecl
 
 static ResDecl
    fish_shell  ("fish:shell", "/bin/sh",  0,0),
-   fish_connect("fish:connect-program", "ssh", 0,0);
+   fish_connect("fish:connect-program", "ssh -ax", 0,0);
 
 static ResDecl
    res_dir_colors ("color:dir-colors",   "",   0,ResMgr::NoClosure);

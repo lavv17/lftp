@@ -146,9 +146,13 @@ int Fish::Do()
       char *init=alloca_strdup2("echo FISH:;",strlen(shell));
       strcat(init,shell);
 
-      ArgV *cmd=new ArgV(Query("connect-program",hostname));
-      cmd->Add("-x");	// don't forward X11
-      cmd->Add("-a");	// don't forward AuthAgent.
+      const char *prog=Query("connect-program",hostname);
+      if(!prog || !prog[0])
+	 prog="ssh -ax";
+      char *a=alloca_strdup(prog);
+      ArgV *cmd=new ArgV;
+      for(a=strtok(a," "); a; a=strtok(0," "))
+	 cmd->Add(a);
       if(user)
       {
 	 cmd->Add("-l");

@@ -1,3 +1,9 @@
+2003-11-21  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Fish.cc, SFtp.cc, resource.cc: allow args in connect-program
+	  resource; move -a and -x options to connect-program.
+	* Makefile.am: rename lftp libs.
+
 2003-11-20  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileAccess.h, HttpDir.h: move LsOptions to FileAccess.h.
