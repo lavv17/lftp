@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-11-03 17:16+0300\n"
+"POT-Creation-Date: 2004-12-03 22:13+0300\n"
 "PO-Revision-Date: 1999-07-12 00:00+0400\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -108,7 +108,7 @@ msgstr "Falha no acesso: %s"
 msgid "File cannot be accessed"
 msgstr "Arquivo não pode ser acessado"
 
-#: src/FileAccess.cc:292 src/ftpclass.cc:3900 src/ftpclass.cc:3909
+#: src/FileAccess.cc:292 src/ftpclass.cc:3920 src/ftpclass.cc:3929
 msgid "Not connected"
 msgstr "Não conectado"
 
@@ -345,8 +345,8 @@ msgstr ""
 msgid "invalid pair of numbers"
 msgstr "número inválido"
 
-#: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3905
-#: src/Http.cc:1743
+#: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3925
+#: src/Http.cc:1742
 msgid "Resolving host address..."
 msgstr ""
 
@@ -1564,157 +1564,157 @@ msgstr ""
 msgid "Closing control socket"
 msgstr ""
 
-#: src/ftpclass.cc:1137 src/Http.cc:847
+#: src/ftpclass.cc:1136 src/Http.cc:846
 msgid "Closing idle connection"
 msgstr ""
 
-#: src/ftpclass.cc:1176
+#: src/ftpclass.cc:1175
 msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 msgstr ""
 
-#: src/ftpclass.cc:1181
+#: src/ftpclass.cc:1180
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr ""
 
-#: src/ftpclass.cc:1244 src/Http.cc:975
+#: src/ftpclass.cc:1243 src/Http.cc:974
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr ""
 
-#: src/ftpclass.cc:1475
+#: src/ftpclass.cc:1478
 msgid "SITE CHMOD is not supported by this site"
 msgstr ""
 
-#: src/ftpclass.cc:1480
+#: src/ftpclass.cc:1483
 msgid "MLST and MLSD are not supported by this site"
 msgstr ""
 
-#: src/ftpclass.cc:1900 src/ftpclass.cc:1950
+#: src/ftpclass.cc:1903 src/ftpclass.cc:1953
 #, fuzzy
 msgid "unsupported network protocol"
 msgstr "%s: %s - protocolo não suportado\n"
 
-#: src/ftpclass.cc:2062
+#: src/ftpclass.cc:2065
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr ""
 
-#: src/ftpclass.cc:2069
+#: src/ftpclass.cc:2072
 #, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr ""
 
-#: src/ftpclass.cc:2094 src/ftpclass.cc:3742
+#: src/ftpclass.cc:2097 src/ftpclass.cc:3762
 msgid "Switching passive mode off"
 msgstr ""
 
-#: src/ftpclass.cc:2350 src/ftpclass.cc:3860
+#: src/ftpclass.cc:2354 src/ftpclass.cc:3880
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 
-#: src/ftpclass.cc:2555 src/ftpclass.cc:2674 src/Http.cc:1063
+#: src/ftpclass.cc:2559 src/ftpclass.cc:2694 src/Http.cc:1062
 msgid "Peer closed connection"
 msgstr ""
 
-#: src/ftpclass.cc:2635
+#: src/ftpclass.cc:2639
 msgid "Persist and retry"
 msgstr ""
 
-#: src/ftpclass.cc:2891
+#: src/ftpclass.cc:2911
 msgid "Closing data socket"
 msgstr ""
 
-#: src/ftpclass.cc:2907
+#: src/ftpclass.cc:2927
 msgid "Closing aborted data socket"
 msgstr ""
 
-#: src/ftpclass.cc:3580
+#: src/ftpclass.cc:3600
 msgid "saw file size in response"
 msgstr ""
 
-#: src/ftpclass.cc:3595
+#: src/ftpclass.cc:3615
 msgid "extra server response"
 msgstr ""
 
-#: src/ftpclass.cc:3609 src/ftpclass.cc:3632
+#: src/ftpclass.cc:3629 src/ftpclass.cc:3652
 msgid "Turning on sync-mode"
 msgstr ""
 
-#: src/ftpclass.cc:3759
+#: src/ftpclass.cc:3779
 msgid "Switching passive mode on"
 msgstr ""
 
-#: src/ftpclass.cc:3886
+#: src/ftpclass.cc:3906
 msgid "FEAT negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:3893
+#: src/ftpclass.cc:3913
 msgid "Sending commands..."
 msgstr ""
 
-#: src/ftpclass.cc:3895 src/ftpclass.cc:3923 src/ftpclass.cc:3936
-#: src/Http.cc:1758
+#: src/ftpclass.cc:3915 src/ftpclass.cc:3943 src/ftpclass.cc:3956
+#: src/Http.cc:1757
 msgid "Waiting for response..."
 msgstr ""
 
-#: src/ftpclass.cc:3897
+#: src/ftpclass.cc:3917
 msgid "Delaying before retry"
 msgstr ""
 
-#: src/ftpclass.cc:3898 src/Http.cc:1751
+#: src/ftpclass.cc:3918 src/Http.cc:1750
 msgid "Connection idle"
 msgstr ""
 
-#: src/ftpclass.cc:3912 src/Http.cc:1749 src/Http.cc:1756
+#: src/ftpclass.cc:3932 src/Http.cc:1748 src/Http.cc:1755
 msgid "Connecting..."
 msgstr ""
 
-#: src/ftpclass.cc:3916
+#: src/ftpclass.cc:3936
 msgid "TLS negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:3918
+#: src/ftpclass.cc:3938
 #, fuzzy
 msgid "Connected"
 msgstr "Não conectado"
 
-#: src/ftpclass.cc:3920
+#: src/ftpclass.cc:3940
 msgid "Logging in..."
 msgstr ""
 
-#: src/ftpclass.cc:3924
+#: src/ftpclass.cc:3944
 msgid "Making data connection..."
 msgstr ""
 
-#: src/ftpclass.cc:3927
+#: src/ftpclass.cc:3947
 msgid "Changing remote directory..."
 msgstr ""
 
-#: src/ftpclass.cc:3933
+#: src/ftpclass.cc:3953
 msgid "Waiting for other copy peer..."
 msgstr ""
 
-#: src/ftpclass.cc:3935 src/ftpclass.cc:3956
+#: src/ftpclass.cc:3955 src/ftpclass.cc:3976
 msgid "Waiting for transfer to complete"
 msgstr ""
 
-#: src/ftpclass.cc:3938
+#: src/ftpclass.cc:3958
 msgid "Waiting for data connection..."
 msgstr ""
 
-#: src/ftpclass.cc:3944
+#: src/ftpclass.cc:3964
 msgid "Sending data/TLS"
 msgstr ""
 
-#: src/ftpclass.cc:3946
+#: src/ftpclass.cc:3966
 msgid "Receiving data/TLS"
 msgstr ""
 
-#: src/ftpclass.cc:3952 src/Http.cc:1754
+#: src/ftpclass.cc:3972 src/Http.cc:1753
 msgid "Sending data"
 msgstr ""
 
-#: src/ftpclass.cc:3954 src/Http.cc:1761
+#: src/ftpclass.cc:3974 src/Http.cc:1760
 msgid "Receiving data"
 msgstr ""
 
@@ -1801,59 +1801,59 @@ msgstr "%s: nenhum arquivo encontrado\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s: nenhum arquivo encontrado\n"
 
-#: src/Http.cc:165
+#: src/Http.cc:163
 msgid "Closing HTTP connection"
 msgstr ""
 
-#: src/Http.cc:173
+#: src/Http.cc:171
 msgid "POST method failed"
 msgstr ""
 
-#: src/Http.cc:931
+#: src/Http.cc:930
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 
-#: src/Http.cc:1079
+#: src/Http.cc:1078
 msgid "Sending request..."
 msgstr ""
 
-#: src/Http.cc:1126
+#: src/Http.cc:1125
 msgid "Hit EOF while fetching headers"
 msgstr ""
 
-#: src/Http.cc:1242
+#: src/Http.cc:1241
 msgid "Could not parse HTTP status line"
 msgstr ""
 
-#: src/Http.cc:1273
+#: src/Http.cc:1272
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr ""
 
-#: src/Http.cc:1401
+#: src/Http.cc:1400
 msgid "Receiving body..."
 msgstr ""
 
-#: src/Http.cc:1530
+#: src/Http.cc:1529
 msgid "Hit EOF"
 msgstr ""
 
-#: src/Http.cc:1533
+#: src/Http.cc:1532
 msgid "Received not enough data, retrying"
 msgstr ""
 
-#: src/Http.cc:1541
+#: src/Http.cc:1540
 msgid "Received all"
 msgstr ""
 
-#: src/Http.cc:1546
+#: src/Http.cc:1545
 msgid "Received all (total)"
 msgstr ""
 
-#: src/Http.cc:1569 src/Http.cc:1590
+#: src/Http.cc:1568 src/Http.cc:1589
 msgid "chunked format violated"
 msgstr ""
 
-#: src/Http.cc:1759
+#: src/Http.cc:1758
 msgid "Fetching headers..."
 msgstr ""
 
@@ -1876,6 +1876,10 @@ msgstr ""
 
 #: src/resource.cc:158
 msgid "ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C"
+msgstr ""
+
+#: src/resource.cc:175
+msgid "must be one of: C, S, E, P, or empty"
 msgstr ""
 
 #: src/HttpDir.cc:1306 src/FtpDirList.cc:136
@@ -2033,24 +2037,24 @@ msgstr "Atenção: chdir() falhou: %s\n"
 msgid "execl(/bin/sh) failed: %s\n"
 msgstr "falha em execlp(%s): %s\n"
 
-#: src/NetAccess.cc:323
+#: src/NetAccess.cc:324
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr ""
 
-#: src/NetAccess.cc:379
+#: src/NetAccess.cc:380
 msgid "Timeout - reconnecting"
 msgstr ""
 
-#: src/NetAccess.cc:586
+#: src/NetAccess.cc:587
 msgid "Connection limit reached"
 msgstr ""
 
-#: src/NetAccess.cc:590
+#: src/NetAccess.cc:591
 msgid "Delaying before reconnect"
 msgstr ""
 
-#: src/NetAccess.cc:601
+#: src/NetAccess.cc:600
 msgid "max-retries exceeded"
 msgstr ""
 
