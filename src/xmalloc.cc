@@ -68,11 +68,23 @@ void *xrealloc(void *pointer,size_t bytes)
 
 void xfree(void *p)
 {
-   if(p)
-   {
+   if(!p)
+      return;
 #ifdef MEM_DEBUG
-      printf("xfree %p\n",p);
+   printf("xfree %p\n",p);
 #endif
-      free(p);
-   }
+   free(p);
+}
+
+char *xstrdup(const char *s)
+{
+   if(!s)
+      return 0;
+#ifdef MEM_DEBUG
+   printf("xstrdup \"%s\"\n",s);
+#endif
+   int len=strlen(s)+1;
+   char *mem=(char*)xmalloc(len);
+   memcpy(mem,s,len);
+   return mem;
 }
