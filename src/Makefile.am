@@ -15,8 +15,9 @@ noinst_LIBRARIES = libtasks.a libjobs.a
 ## this does not work too well as I need to compile modules with -DMODULE
 # MODULES_LA = proto-ftp.la
 # lib_LTLIBRARIES = $(MODULES_LA)
-# proto_ftp_la_SOURCES = ftpclass.cc FtpListInfo.cc FtpGlob.cc FtpDirList.cc md5.c ftp-opie.c
+# proto_ftp_la_SOURCES = ftpclass.cc FtpListInfo.cc FtpGlob.cc FtpDirList.cc md5.c ftp-opie.c NetAccess.cc FtpSplitList.cc FileCopyFtp.cc
 # proto_ftp_la_LDFLAGS = -module -avoid-version
+# proto_ftp_la_CXXFLAGS = -DMODULE
 
 libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  ProcWait.h ftpclass.cc ftpclass.h GetPass.cc GetPass.h\
