@@ -4,9 +4,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 2.0.1\n"
-"POT-Creation-Date: 1999-10-22 19:30+0400\n"
-"PO-Revision-Date: 1999-07-11 13:02+02:00\n"
+"Project-Id-Version: lftp 2.1.4\n"
+"POT-Creation-Date: 1999-10-13 21:45+0400\n"
+"PO-Revision-Date: 1999-10-23 14:07+02:00\n"
 "Last-Translator: Giovanni Bortolozzo <borto@pluto.linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -57,7 +57,7 @@ msgstr "\tEsecuzione del comando interno `%s' [%s]\n"
 
 #: src/CmdExec.cc:660
 msgid "\tCommands queued:\n"
-msgstr ""
+msgstr "\tComandi in coda:\n"
 
 #: src/CmdExec.cc:679
 #, c-format
@@ -126,7 +126,7 @@ msgstr "rm(%s) remoto - %s\n"
 #: src/GetJob.cc:164
 #, c-format
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
-msgstr ""
+msgstr "%s: %s: il file esiste già e xfer:clobber non è impostato\n"
 
 #: src/Job.cc:222
 #, c-format
@@ -267,11 +267,11 @@ msgstr "numero non valido"
 
 #: src/ResMgr.cc:489
 msgid "Invalid time unit letter, only [smhd] are allowed."
-msgstr ""
+msgstr "Lettera per l'unità di tempo non valida. Sono permesse solo [smhd]"
 
 #: src/ResMgr.cc:497
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
-msgstr ""
+msgstr "Formato temporale non valido. Formato è <tempo><unità>, e.g. 2h30m."
 
 #: src/Http.cc:1108 src/Resolver.cc:184 src/ftpclass.cc:2550
 msgid "Resolving host address..."
