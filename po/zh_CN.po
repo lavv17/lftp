@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
-"POT-Creation-Date: 2000-06-09 03:12+0400\n"
+"POT-Creation-Date: 2000-07-12 20:51+0400\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -165,84 +165,89 @@ msgstr "缓冲条目在 %ld 秒内过期\n"
 msgid "Cache entries expire in %ld $#l#minute|minutes$\n"
 msgstr "缓冲条目在 %ld 分钟内过期\n"
 
-#: src/MirrorJob.cc:83
+#: src/MirrorJob.cc:84
 #, c-format
 msgid "%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%s全部: %d 个目录,%d 个文件, %d 个符号链接\n"
 
-#: src/MirrorJob.cc:87
+#: src/MirrorJob.cc:88
 #, c-format
 msgid "%sNew: %d file$|s$, %d symlink$|s$\n"
 msgstr "%s新建: %d 个文件, %d 个符号链接\n"
 
-#: src/MirrorJob.cc:91
+#: src/MirrorJob.cc:92
 #, c-format
 msgid "%sModified: %d file$|s$, %d symlink$|s$\n"
 msgstr "%s修改过: %d 个文件, %d 个符号链接\n"
 
-#: src/MirrorJob.cc:96
+#: src/MirrorJob.cc:97
 #, c-format
 msgid "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%s删除: %%d 个目录, %d 个文件, %d 个符号链接\n"
 
-#: src/MirrorJob.cc:97
+#: src/MirrorJob.cc:98
 #, c-format
 msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%s要删除: %d 个目录, %d 个文件, %d 个符号链接\n"
 
-#: src/MirrorJob.cc:167 src/MirrorJob.cc:687
+#: src/MirrorJob.cc:168 src/MirrorJob.cc:756
 #, c-format
 msgid "Removing old remote file `%s'"
 msgstr "删除旧的远程文件 `%s'"
 
-#: src/MirrorJob.cc:210 src/MirrorJob.cc:306 src/MirrorJob.cc:375
-#: src/MirrorJob.cc:712
+#: src/MirrorJob.cc:216 src/MirrorJob.cc:312 src/MirrorJob.cc:381
+#: src/MirrorJob.cc:696
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "正在删除本地文件 `%s'"
 
 #. launch get job
-#: src/MirrorJob.cc:228
+#: src/MirrorJob.cc:234
 #, c-format
 msgid "Retrieving remote file `%s'"
 msgstr "正在下载远程文件 `%s'"
 
-#: src/MirrorJob.cc:281
+#: src/MirrorJob.cc:287
 #, c-format
 msgid "Making remote directory `%s'"
 msgstr "建立远程目录 `%s'"
 
-#: src/MirrorJob.cc:353
+#: src/MirrorJob.cc:359
 #, fuzzy, c-format
 msgid "Mirroring directory `%s'"
 msgstr "建立远程目录 `%s'"
 
-#: src/MirrorJob.cc:388
+#: src/MirrorJob.cc:394
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "建立符号链接 `%s' 指向 `%s'"
 
-#: src/MirrorJob.cc:521
+#: src/MirrorJob.cc:527
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "镜像: 协议 `%s' 不适合进行镜像\n"
 
-#: src/MirrorJob.cc:579
+#: src/MirrorJob.cc:585
 #, c-format
 msgid "Sending local file `%s'"
 msgstr "上传本地文件 '%s'"
 
-#: src/MirrorJob.cc:700
-#, c-format
-msgid "Old remote file `%s' is not removed"
-msgstr "没有删除旧的远程文件 `%s'"
-
-#: src/MirrorJob.cc:731
+#: src/MirrorJob.cc:715
 #, c-format
 msgid "Old local file `%s' is not removed"
 msgstr "没有删除旧的本地文件 `%s'"
 
-#: src/MirrorJob.cc:1049 src/MirrorJob.cc:1091 src/commands.cc:784
+#: src/MirrorJob.cc:749
+#, fuzzy, c-format
+msgid "Removing old remote directory `%s'"
+msgstr "删除旧的远程文件 `%s'"
+
+#: src/MirrorJob.cc:768
+#, c-format
+msgid "Old remote file `%s' is not removed"
+msgstr "没有删除旧的远程文件 `%s'"
+
+#: src/MirrorJob.cc:1069 src/MirrorJob.cc:1111 src/commands.cc:784
 #: src/commands.cc:954 src/commands.cc:1044 src/commands.cc:1298
 #: src/commands.cc:1492 src/commands.cc:1651 src/commands.cc:1658
 #: src/commands.cc:1842 src/commands.cc:1871 src/commands.cc:1878
@@ -284,7 +289,7 @@ msgstr ""
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr ""
 
-#: src/Http.cc:1189 src/Resolver.cc:191 src/ftpclass.cc:2991
+#: src/Http.cc:1193 src/Resolver.cc:191 src/ftpclass.cc:2991
 msgid "Resolving host address..."
 msgstr "正在解析主机地址..."
 
@@ -1301,7 +1306,7 @@ msgstr "发现 `未知', 登录失败"
 msgid "assuming failed host name lookup"
 msgstr "名字查询失败"
 
-#: src/Http.cc:562 src/ftpclass.cc:913
+#: src/Http.cc:566 src/ftpclass.cc:913
 msgid "Closing idle connection"
 msgstr "关闭发呆的连接"
 
@@ -1355,7 +1360,7 @@ msgstr "正在关闭被动模式"
 msgid "Sending commands..."
 msgstr "正在发送命令..."
 
-#: src/Http.cc:1200 src/ftpclass.cc:2983 src/ftpclass.cc:3003
+#: src/Http.cc:1204 src/ftpclass.cc:2983 src/ftpclass.cc:3003
 #: src/ftpclass.cc:3010
 msgid "Waiting for response..."
 msgstr "正等待应答..."
@@ -1364,7 +1369,7 @@ msgstr "正等待应答..."
 msgid "Connection idle"
 msgstr "连接空闲"
 
-#: src/Http.cc:1195 src/ftpclass.cc:2998
+#: src/Http.cc:1199 src/ftpclass.cc:2998
 msgid "Connecting..."
 msgstr "正在连接..."
 
@@ -1388,11 +1393,11 @@ msgstr "正等待传输完成"
 msgid "Waiting for data connection..."
 msgstr "正等待数据连接..."
 
-#: src/Http.cc:1198 src/ftpclass.cc:3017
+#: src/Http.cc:1202 src/ftpclass.cc:3017
 msgid "Sending data"
 msgstr "正发送数据"
 
-#: src/Http.cc:1203 src/ftpclass.cc:3019
+#: src/Http.cc:1207 src/ftpclass.cc:3019
 msgid "Receiving data"
 msgstr "正接收数据"
 
@@ -1481,11 +1486,11 @@ msgstr "%s 成功, 删除 %d 个目录\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s 成功, 删除 %d 个文件\n"
 
-#: src/Http.cc:1031 src/Http.cc:1051
+#: src/Http.cc:1035 src/Http.cc:1055
 msgid "chunked format violated"
 msgstr "块格式冲突"
 
-#: src/Http.cc:1201
+#: src/Http.cc:1205
 msgid "Fetching headers..."
 msgstr "正在取得头..."
 

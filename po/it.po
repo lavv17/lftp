@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2.3\n"
-"POT-Creation-Date: 2000-06-09 03:12+0400\n"
+"POT-Creation-Date: 2000-07-12 20:51+0400\n"
 "PO-Revision-Date: 2000-06-18 10:46+02:00\n"
 "Last-Translator: Giovanni Bortolozzo <borto@pluto.linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -164,84 +164,89 @@ msgstr "Le voci della cache scadono in %ld $#l#secondo|secondi$\n"
 msgid "Cache entries expire in %ld $#l#minute|minutes$\n"
 msgstr "Le voci della cache scadono in %ld $#l#minuto|minuti$\n"
 
-#: src/MirrorJob.cc:83
+#: src/MirrorJob.cc:84
 #, c-format
 msgid "%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%sTotale: %d directory$|$, %d file$|$, %d link simbolic$o|i$\n"
 
-#: src/MirrorJob.cc:87
+#: src/MirrorJob.cc:88
 #, c-format
 msgid "%sNew: %d file$|s$, %d symlink$|s$\n"
 msgstr "%sNuovi: %d file$|$, %d link simbolic$o|i$\n"
 
-#: src/MirrorJob.cc:91
+#: src/MirrorJob.cc:92
 #, c-format
 msgid "%sModified: %d file$|s$, %d symlink$|s$\n"
 msgstr "%sModificati: %d file$|$, %d link simbolic$o|i$\n"
 
-#: src/MirrorJob.cc:96
+#: src/MirrorJob.cc:97
 #, c-format
 msgid "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%sCancellati: %d directory$|$, %d file$|$, %d link simbolic$o|i$\n"
 
-#: src/MirrorJob.cc:97
+#: src/MirrorJob.cc:98
 #, c-format
 msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%sDa cancellare: %d directory$|$, %d file$|$, %d link simbolic$o|i$\n"
 
-#: src/MirrorJob.cc:167 src/MirrorJob.cc:687
+#: src/MirrorJob.cc:168 src/MirrorJob.cc:756
 #, c-format
 msgid "Removing old remote file `%s'"
 msgstr "Cancellazione del vecchio file remoto `%s'"
 
-#: src/MirrorJob.cc:210 src/MirrorJob.cc:306 src/MirrorJob.cc:375
-#: src/MirrorJob.cc:712
+#: src/MirrorJob.cc:216 src/MirrorJob.cc:312 src/MirrorJob.cc:381
+#: src/MirrorJob.cc:696
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Cancellazione del vecchio file locale `%s'"
 
 #. launch get job
-#: src/MirrorJob.cc:228
+#: src/MirrorJob.cc:234
 #, c-format
 msgid "Retrieving remote file `%s'"
 msgstr "Scarico il file remoto `%s'"
 
-#: src/MirrorJob.cc:281
+#: src/MirrorJob.cc:287
 #, c-format
 msgid "Making remote directory `%s'"
 msgstr "Creo la directory remota `%s'"
 
-#: src/MirrorJob.cc:353
+#: src/MirrorJob.cc:359
 #, c-format
 msgid "Mirroring directory `%s'"
 msgstr "Mirror della directory `%s'"
 
-#: src/MirrorJob.cc:388
+#: src/MirrorJob.cc:394
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Creo il link simbolico da `%s' a `%s'"
 
-#: src/MirrorJob.cc:521
+#: src/MirrorJob.cc:527
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: il protocollo `%s' non va bene per fare il mirror\n"
 
-#: src/MirrorJob.cc:579
+#: src/MirrorJob.cc:585
 #, c-format
 msgid "Sending local file `%s'"
 msgstr "Invio il file locale `%s'"
 
-#: src/MirrorJob.cc:700
-#, c-format
-msgid "Old remote file `%s' is not removed"
-msgstr "Il vecchio file remoto `%s' non è stato rimosso"
-
-#: src/MirrorJob.cc:731
+#: src/MirrorJob.cc:715
 #, c-format
 msgid "Old local file `%s' is not removed"
 msgstr "Il vecchio file locale `%s' non è stato rimosso"
 
-#: src/MirrorJob.cc:1049 src/MirrorJob.cc:1091 src/commands.cc:784
+#: src/MirrorJob.cc:749
+#, fuzzy, c-format
+msgid "Removing old remote directory `%s'"
+msgstr "Cancellazione del vecchio file remoto `%s'"
+
+#: src/MirrorJob.cc:768
+#, c-format
+msgid "Old remote file `%s' is not removed"
+msgstr "Il vecchio file remoto `%s' non è stato rimosso"
+
+#: src/MirrorJob.cc:1069 src/MirrorJob.cc:1111 src/commands.cc:784
 #: src/commands.cc:954 src/commands.cc:1044 src/commands.cc:1298
 #: src/commands.cc:1492 src/commands.cc:1651 src/commands.cc:1658
 #: src/commands.cc:1842 src/commands.cc:1871 src/commands.cc:1878
@@ -282,7 +287,7 @@ msgstr "Formato temporale non valido. Il formato è <tempo><unità>, es. 2h30m."
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Formato dell'intervallo non valido. Il formato è min-max, es. 10-20."
 
-#: src/Http.cc:1189 src/Resolver.cc:191 src/ftpclass.cc:2991
+#: src/Http.cc:1193 src/Resolver.cc:191 src/ftpclass.cc:2991
 msgid "Resolving host address..."
 msgstr "Risoluzione dell'indirizzo dell'host..."
 
@@ -680,7 +685,8 @@ msgstr ""
 " -t Nx, --time-prec Nx  imposta la precisione temporale a N secondi (x=s),\n"
 "                        minuti (x=m), ore (x=h) o giorni (x=d)\n"
 "                        default - impostazione mirror:time-precision\n"
-"-T Nx, --loose-time-prec  imposta la precisione temporale per i tempi imprecisi\n"
+"-T Nx, --loose-time-prec  imposta la precisione temporale per i tempi "
+"imprecisi\n"
 "                        default - mirror:loose-time-precision\n"
 " -v, --verbose          funzionamento prolisso\n"
 "     --use-cache        usa gli elenchi di directory in cache\n"
@@ -1352,7 +1358,7 @@ msgstr "Ottenuto `unknown', assumo login fallita"
 msgid "assuming failed host name lookup"
 msgstr "dò per fallita la ricerca del nome host"
 
-#: src/Http.cc:562 src/ftpclass.cc:913
+#: src/Http.cc:566 src/ftpclass.cc:913
 msgid "Closing idle connection"
 msgstr "Chiusura della connessione inattiva"
 
@@ -1405,7 +1411,7 @@ msgstr "Abilito la modalità passiva"
 msgid "Sending commands..."
 msgstr "Invio comandi..."
 
-#: src/Http.cc:1200 src/ftpclass.cc:2983 src/ftpclass.cc:3003
+#: src/Http.cc:1204 src/ftpclass.cc:2983 src/ftpclass.cc:3003
 #: src/ftpclass.cc:3010
 msgid "Waiting for response..."
 msgstr "In attesa della risposta..."
@@ -1414,7 +1420,7 @@ msgstr "In attesa della risposta..."
 msgid "Connection idle"
 msgstr "Connessione inattiva"
 
-#: src/Http.cc:1195 src/ftpclass.cc:2998
+#: src/Http.cc:1199 src/ftpclass.cc:2998
 msgid "Connecting..."
 msgstr "Connessione in corso..."
 
@@ -1438,11 +1444,11 @@ msgstr "Attendo la fine del trasferimento"
 msgid "Waiting for data connection..."
 msgstr "In attesa della connessione dati..."
 
-#: src/Http.cc:1198 src/ftpclass.cc:3017
+#: src/Http.cc:1202 src/ftpclass.cc:3017
 msgid "Sending data"
 msgstr "Sto inviando i dati"
 
-#: src/Http.cc:1203 src/ftpclass.cc:3019
+#: src/Http.cc:1207 src/ftpclass.cc:3019
 msgid "Receiving data"
 msgstr "Sto ricevendo i dati"
 
@@ -1531,11 +1537,11 @@ msgstr "%s ok, rimosse %d directory$|$\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, rimossi %d file$|$\n"
 
-#: src/Http.cc:1031 src/Http.cc:1051
+#: src/Http.cc:1035 src/Http.cc:1055
 msgid "chunked format violated"
 msgstr "violato il formato chunked"
 
-#: src/Http.cc:1201
+#: src/Http.cc:1205
 msgid "Fetching headers..."
 msgstr "Scarico gli header..."
 

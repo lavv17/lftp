@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp\n"
-"POT-Creation-Date: 2000-06-09 03:12+0400\n"
+"POT-Creation-Date: 2000-07-12 20:51+0400\n"
 "PO-Revision-Date: 1999-06-08 15:27+02:00\n"
 "Last-Translator: Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -166,94 +166,99 @@ msgid "Cache entries expire in %ld $#l#minute|minutes$\n"
 msgstr ""
 "Wpisy w pamiêci cache deaktualizuj± siê po %ld minu$#l#cie|tach|tach$\n"
 
-#: src/MirrorJob.cc:83
+#: src/MirrorJob.cc:84
 #, c-format
 msgid "%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 "%sSumuj±c: %d katalog$|i|ów$, %d plik$|i|ów$, %d $dowi±zanie "
 "symboliczne|dowi±zania symboliczne|dowi±zañ symbolicznych$.\n"
 
-#: src/MirrorJob.cc:87
+#: src/MirrorJob.cc:88
 #, c-format
 msgid "%sNew: %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 "%sNowych: %d plik$|i|ów$, %d $dowi±zanie symboliczne|dowi±zania "
 "symboliczne|dowi±zañ symbolicznych$.\n"
 
-#: src/MirrorJob.cc:91
+#: src/MirrorJob.cc:92
 #, c-format
 msgid "%sModified: %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 "%sZmodyfikowano: %d plik$|i|ów$, %d $dowi±zanie symboliczne|dowi±zania "
 "symboliczne|dowi±zañ symbolicznych$.\n"
 
-#: src/MirrorJob.cc:96
+#: src/MirrorJob.cc:97
 #, c-format
 msgid "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 "%sUsuniêto: %d katalog$|i|ów$, %d plik$|i|ów$, %d $dowi±zanie "
 "symboliczne|dowi±zania symboliczne|dowi±zañ symbolicznych$.\n"
 
-#: src/MirrorJob.cc:97
+#: src/MirrorJob.cc:98
 #, c-format
 msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 "%sDo usuniêcia: %d katalog$|i|ów$, %d plik$|i|ów$, %d $dowi±zanie "
 "symboliczne|dowi±zania symboliczne|dowi±zañ symbolicznych$.\n"
 
-#: src/MirrorJob.cc:167 src/MirrorJob.cc:687
+#: src/MirrorJob.cc:168 src/MirrorJob.cc:756
 #, c-format
 msgid "Removing old remote file `%s'"
 msgstr "Usuwanie starego zdalnego pliku `%s'"
 
-#: src/MirrorJob.cc:210 src/MirrorJob.cc:306 src/MirrorJob.cc:375
-#: src/MirrorJob.cc:712
+#: src/MirrorJob.cc:216 src/MirrorJob.cc:312 src/MirrorJob.cc:381
+#: src/MirrorJob.cc:696
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Usuwanie starego lokalnego pliku `%s'"
 
 #. launch get job
-#: src/MirrorJob.cc:228
+#: src/MirrorJob.cc:234
 #, c-format
 msgid "Retrieving remote file `%s'"
 msgstr "Pobieranie zdalnego pliku `%s'"
 
-#: src/MirrorJob.cc:281
+#: src/MirrorJob.cc:287
 #, c-format
 msgid "Making remote directory `%s'"
 msgstr "Tworzenie zdalnego katalogu `%s'"
 
-#: src/MirrorJob.cc:353
+#: src/MirrorJob.cc:359
 #, fuzzy, c-format
 msgid "Mirroring directory `%s'"
 msgstr "Tworzenie zdalnego katalogu `%s'"
 
-#: src/MirrorJob.cc:388
+#: src/MirrorJob.cc:394
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Tworzenie dowi±zania symbolicznego `%s' do `%s'"
 
-#: src/MirrorJob.cc:521
+#: src/MirrorJob.cc:527
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: protokó³ `%s' nieodpowiedni dla mirror-a\n"
 
-#: src/MirrorJob.cc:579
+#: src/MirrorJob.cc:585
 #, c-format
 msgid "Sending local file `%s'"
 msgstr "Wysy³anie lokalnego pliku `%s'"
 
-#: src/MirrorJob.cc:700
-#, c-format
-msgid "Old remote file `%s' is not removed"
-msgstr "Stary zdalny plik `%s' nie zosta³ usuniêty"
-
-#: src/MirrorJob.cc:731
+#: src/MirrorJob.cc:715
 #, c-format
 msgid "Old local file `%s' is not removed"
 msgstr "Stary lokalny plik `%s' nie zosta³ usuniêty"
 
-#: src/MirrorJob.cc:1049 src/MirrorJob.cc:1091 src/commands.cc:784
+#: src/MirrorJob.cc:749
+#, fuzzy, c-format
+msgid "Removing old remote directory `%s'"
+msgstr "Usuwanie starego zdalnego pliku `%s'"
+
+#: src/MirrorJob.cc:768
+#, c-format
+msgid "Old remote file `%s' is not removed"
+msgstr "Stary zdalny plik `%s' nie zosta³ usuniêty"
+
+#: src/MirrorJob.cc:1069 src/MirrorJob.cc:1111 src/commands.cc:784
 #: src/commands.cc:954 src/commands.cc:1044 src/commands.cc:1298
 #: src/commands.cc:1492 src/commands.cc:1651 src/commands.cc:1658
 #: src/commands.cc:1842 src/commands.cc:1871 src/commands.cc:1878
@@ -295,7 +300,7 @@ msgstr ""
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr ""
 
-#: src/Http.cc:1189 src/Resolver.cc:191 src/ftpclass.cc:2991
+#: src/Http.cc:1193 src/Resolver.cc:191 src/ftpclass.cc:2991
 msgid "Resolving host address..."
 msgstr "Uzyskiwanie adresu hosta..."
 
@@ -1335,7 +1340,7 @@ msgstr "Pojawi³o siê `unknown', przypuszczalnie logowanie nie powiod³o siê"
 msgid "assuming failed host name lookup"
 msgstr "przypuszalnie nie powiod³o siê wyszukiwanie IP hosta"
 
-#: src/Http.cc:562 src/ftpclass.cc:913
+#: src/Http.cc:566 src/ftpclass.cc:913
 msgid "Closing idle connection"
 msgstr "Zamykanie bezczynnego po³±czenia"
 
@@ -1389,7 +1394,7 @@ msgstr "Wy³±czam tryb pasywny"
 msgid "Sending commands..."
 msgstr "Wysy³anie komend..."
 
-#: src/Http.cc:1200 src/ftpclass.cc:2983 src/ftpclass.cc:3003
+#: src/Http.cc:1204 src/ftpclass.cc:2983 src/ftpclass.cc:3003
 #: src/ftpclass.cc:3010
 msgid "Waiting for response..."
 msgstr "Czekanie na odpowied¼..."
@@ -1398,7 +1403,7 @@ msgstr "Czekanie na odpowied¼..."
 msgid "Connection idle"
 msgstr "Po³±czenie bezczynne"
 
-#: src/Http.cc:1195 src/ftpclass.cc:2998
+#: src/Http.cc:1199 src/ftpclass.cc:2998
 msgid "Connecting..."
 msgstr "£±czenie siê..."
 
@@ -1422,11 +1427,11 @@ msgstr "Oczekiwanie na zakoñczenie transferu"
 msgid "Waiting for data connection..."
 msgstr "Czekam na po³±czenie dla danych..."
 
-#: src/Http.cc:1198 src/ftpclass.cc:3017
+#: src/Http.cc:1202 src/ftpclass.cc:3017
 msgid "Sending data"
 msgstr "Wysy³am dane"
 
-#: src/Http.cc:1203 src/ftpclass.cc:3019
+#: src/Http.cc:1207 src/ftpclass.cc:3019
 msgid "Receiving data"
 msgstr "Otrzymujê dane"
 
@@ -1515,11 +1520,11 @@ msgstr "%s ok, %d katalog$|i|ów$ usuniêto\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d plik$|i|ów$ usuniêto\n"
 
-#: src/Http.cc:1031 src/Http.cc:1051
+#: src/Http.cc:1035 src/Http.cc:1055
 msgid "chunked format violated"
 msgstr "naruszony format"
 
-#: src/Http.cc:1201
+#: src/Http.cc:1205
 msgid "Fetching headers..."
 msgstr "Przesy³am nag³ówki..."
 
