@@ -352,6 +352,7 @@ directory name. Source and/or target can be URLs pointing to directories.
 .Ds
 -c, --continue		continue a mirror job if possible
 -e, --delete		delete files not present at remote site
+    --delete-first	delete old files before transferring new ones
 -s, --allow-suid		set suid/sgid bits according to remote site
     --allow-chown		try to set owner and group on files
     --ignore-time		ignore time when deciding whether to download
@@ -368,6 +369,9 @@ directory name. Source and/or target can be URLs pointing to directories.
 -I \fIGP\fP, --include-glob \fIGP\fP	include matching files
 -X \fIGP\fP, --exclude-glob \fIGP\fP	exclude matching files
 -v, --verbose[=level]	verbose operation
+    --log=FILE		write lftp commands being executed to FILE\n"
+    --script=FILE	write lftp commands to FILE, but don't execute them\n"
+    --just-print, --dry-run	same as --script=-\n"
     --use-cache		use cached directory listings
 --Remove-source-files	remove files after transfer (use with caution)
 -a			same as --allow-chown --allow-suid --no-umask
@@ -401,8 +405,7 @@ Verbosity level can be selected using \-\-verbose=level option or by several
 .De
 .PP
 \-\-only\-newer turns off file size comparision and uploads/downloads
-only newer files even if size is different. By default older files are downloaded/uploaded
-if size is different.
+only newer files even if size is different. By default older files are transferred and replace newer ones.
 .PP
 You can mirror between two servers if you specify URLs instead of directories.
 FXP is used automatically for transfers between ftp servers, if possible.
