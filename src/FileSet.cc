@@ -300,7 +300,7 @@ void FileSet::LocalRemove(const char *dir)
 }
 #endif
 
-void FileSet::LocalUtime(const char *dir)
+void FileSet::LocalUtime(const char *dir,bool only_dirs)
 {
    FileInfo *file;
    for(int i=0; i<fnum; i++)
@@ -308,8 +308,11 @@ void FileSet::LocalUtime(const char *dir)
       file=files[i];
       if(file->defined & (file->DATE|file->DATE_UNPREC))
       {
-	 if(file->defined & file->TYPE
-	 && file->filetype==file->SYMLINK)
+	 if(!(file->defined & file->TYPE))
+	    continue;
+	 if(file->filetype==file->SYMLINK)
+	    continue;
+	 if(only_dirs && file->filetype!=file->DIRECTORY)
 	    continue;
 
 	 const char *local_name=dir_file(dir,file->name);

@@ -718,6 +718,11 @@ CMD(cd)
    xfree(old_cwd);
    old_cwd=xstrdup(session->GetCwd());
 
+   if (!verify_path)
+   {
+      session->Chdir(dir,false);
+      return 0;
+   }
    session->Chdir(dir);
    builtin=BUILTIN_CD;
    return this;
@@ -1052,8 +1057,11 @@ CMD(open)
 	       port_num=atoi(port);
 	 }
 	 session->Connect(host,port_num);
-	 session->ConnectVerify();
-	 builtin=BUILTIN_OPEN;
+	 if(verify_host)
+	 {
+	    session->ConnectVerify();
+	    builtin=BUILTIN_OPEN;
+	 }
       }
       if(nrc)
 	 delete nrc;
@@ -1086,7 +1094,7 @@ CMD(open)
    if(url)
       delete url;
 
-   if(host && !bm)
+   if(host && !bm && verify_host)
       return this;
 
    exit_code=0;

@@ -164,6 +164,8 @@ public:
    int	 long_running;
    bool	 csh_history;
    bool	 save_passwords;
+   bool	 verify_host;
+   bool	 verify_path;
 
    void	 Reconfig();
 

@@ -124,11 +124,13 @@ class Ftp : public FileAccess
    int	 CatchSIZE(int,int);
    int	 CatchSIZE_opt(int,int);
    int	 PASV_Catch(int,int);
+   int	 ABOR_Check(int,int);
 
    void	 InitFtp();
 
    int   control_sock;
    int   data_sock;
+   int	 aborted_data_sock;
 
    /* type of transfer: TYPE_A or TYPE_I */
    int   type;

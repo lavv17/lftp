@@ -138,7 +138,7 @@ public:
    FileInfo *next();
 
    void	 LocalRemove(const char *dir);
-   void	 LocalUtime(const char *dir);
+   void	 LocalUtime(const char *dir,bool only_dirs=false);
    void	 LocalChmod(const char *dir,mode_t mask=0);
 
    void Count(int *d,int *f,int *s,int *o);

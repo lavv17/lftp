@@ -575,10 +575,22 @@ int   Ftp::CatchSIZE_opt(int act,int)
    return state;
 }
 
+int   Ftp::ABOR_Check(int,int)
+{
+   if(aborted_data_sock!=-1)
+   {
+      close(aborted_data_sock);
+      aborted_data_sock=-1;
+   }
+   return state;
+}
+
+
 void Ftp::InitFtp()
 {
    control_sock=-1;
    data_sock=-1;
+   aborted_data_sock=-1;
 
    try_time=0;
    nop_time=0;
@@ -1693,10 +1705,17 @@ void  Ftp::DataAbort()
    FlushSendQueue(/*all=*/true);
    /* Send ABOR command, don't care of result */
    static const char pre_abort[]={TELNET_IAC,TELNET_IP,TELNET_IAC,TELNET_SYNCH};
-   send(control_sock,pre_abort,sizeof(pre_abort),MSG_OOB);
+   /* send only first byte as OOB due to OOB braindamage in many unices */
+   send(control_sock,pre_abort,1,MSG_OOB);
+   send(control_sock,pre_abort+1,sizeof(pre_abort)-1,0);
    SendCmd("ABOR");
-   AddResp(226,0,&IgnoreCheck);
+   AddResp(226,0,&ABOR_Check);
    FlushSendQueue(true);
+   if(aborted_data_sock!=-1)
+      close(aborted_data_sock);
+   // don't close it now, wait for ABOR result
+   aborted_data_sock=data_sock;
+   data_sock=-1;
 }
 
 void  Ftp::Disconnect()
@@ -1731,6 +1750,12 @@ void  Ftp::Disconnect()
       state=INITIAL_STATE;
    EmptyRespQueue();
    EmptySendQueue();
+
+   if(aborted_data_sock!=-1)
+   {
+      close(aborted_data_sock);
+      aborted_data_sock=-1;
+   }
 
    disconnect_in_progress=false;
 }
@@ -2522,6 +2547,7 @@ void Ftp::SetProxy(const char *px)
    proxy_port=0;
    xfree(proxy_user); proxy_user=0;
    xfree(proxy_pass); proxy_pass=0;
+   lookup_done=false;
 
    if(!px)
       return;

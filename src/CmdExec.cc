@@ -44,6 +44,8 @@ static ResDecl
    res_prompt		   ("cmd:prompt","lftp> ",0,0),
    res_default_ls	   ("cmd:ls-default","",0,0),
    res_csh_history	   ("cmd:csh-history","off",ResMgr::BoolValidate,0),
+   res_verify_path	   ("cmd:verify-path",	"yes",ResMgr::BoolValidate,0),
+   res_verify_host	   ("cmd:verify-host",	"yes",ResMgr::BoolValidate,0),
    res_save_passwords	   ("bmk:save-passwords","no",ResMgr::BoolValidate,0);
 
 CmdExec	 *CmdExec::cwd_owner=0;
@@ -363,6 +365,19 @@ int CmdExec::Do()
 	       status_line->WriteLine(_("Interrupt"));
 	    return AcceptSig(SIGINT);
 	 }
+	 if(SignalHook::GetCount(SIGTSTP))
+	 {
+	    if(status_line)
+	       status_line->Show("");
+	    if(builtin==BUILTIN_CD)
+	    {
+	       // accept the path
+	       session->Chdir(session->GetFile(),false);
+	    }
+	    session->Close();
+	    waiting=0;
+	    return MOVED;
+	 }
 	 if(SignalHook::GetCount(SIGHUP))
 	 {
 	    interactive=0;
@@ -561,6 +576,7 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
    long_running=0;
    csh_history=false;
    save_passwords=false;
+   verify_host=verify_path=true;
 
    Reconfig();
 
@@ -740,6 +756,8 @@ void CmdExec::Reconfig()
    xfree(var_prompt);
    var_prompt=xstrdup(res_prompt.Query(0));
    save_passwords=res_save_passwords.Query(0);
+   verify_path=res_verify_path.Query(0);
+   verify_host=res_verify_host.Query(0);
 }
 
 void CmdExec::vfprintf(FILE *file,const char *f,va_list v)
