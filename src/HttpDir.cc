@@ -403,7 +403,7 @@ parse_url_again:
    }
 
    bool show_in_list=true;
-   if(icon && link_target[0]=='/')
+   if(icon && (link_target[0]=='/' || link_target[0]=='~'))
       show_in_list=false;  // makes apache listings look better.
 
    skip_len=tag_len;
