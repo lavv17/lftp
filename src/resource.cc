@@ -24,6 +24,7 @@
 
 #include <pwd.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 #include "ResMgr.h"
 #include "url.h"
@@ -79,7 +80,7 @@ static const char *FtpDefaultAnonPass()
 
 
 static ResDecl resources[]={
-   ResDecl  ("ftp:anon-pass",	       FtpDefaultAnonPass(),0,0),
+   ResDecl  ("ftp:anon-pass",	       "-lftp@",0,0),
    ResDecl  ("ftp:anon-user",	       "anonymous",0,0),
    ResDecl  ("ftp:nop-interval",       "120",	ResMgr::UNumberValidate,0),
    ResDecl  ("ftp:passive-mode",       "off",   ResMgr::BoolValidate,0),
@@ -105,4 +106,9 @@ void ResMgr::ClassInit()
 {
    // make anon-pass visible
    Set("ftp:anon-pass",0,FtpDefaultAnonPass());
+
+   // inherit http proxy from environment
+   const char *http_proxy=getenv("http_proxy");
+   if(http_proxy)
+      Set("http:proxy",0,http_proxy);
 }
