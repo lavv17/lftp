@@ -1,3 +1,5 @@
+* new command `queue' to queue commands for sequential execution.
+
 Version 2.0.4 - 1999-08-11
 
 * added ftp:rest-list setting to allow using of REST/LIST pair. By default
