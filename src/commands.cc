@@ -251,7 +251,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -c  continue, reput\n"
 	 " -d  create directories the same as in file names and put the\n"
 	 "     files into them instead of current directory\n"
-	 " -e  delete remote files after successful transfer (dangerous)\n"
+	 " -e  delete local files after successful transfer (dangerous)\n"
 	 " -a  use ascii mode (binary is the default)\n"
 	 " -O <base> specifies base directory or URL where files should be placed\n")},
    {"mrm",     cmd_mrm,    N_("mrm <files>"),
