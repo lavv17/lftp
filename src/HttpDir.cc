@@ -1305,7 +1305,7 @@ HttpDirList::HttpDirList(ArgV *a,FileAccess *fa)
    session=fa;
    ubuf=0;
    mode=FA::MP_LIST;
-#ifdef HAVE_EXPAT_H
+#if USE_EXPAT
    xml_p=0;
    xml_ctx=0;
 #endif

@@ -674,10 +674,14 @@ Job *CmdExec::builtin_lftp()
 	 cmd=acmd;
 	 break;
       case('c'):
-	 acmd=string_alloca(4+strlen(optarg));
-	 sprintf(acmd,"%s\n\n",optarg);
+      {
+	 char *c=args->CombineQuoted(args->getindex()-1);
+	 acmd=string_alloca(4+strlen(c));
+	 sprintf(acmd,"%s\n\n",c);
 	 cmd=acmd;
+	 xfree(c);
 	 break;
+      }
       case('d'):
 	 debug=true;
 	 break;

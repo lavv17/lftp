@@ -424,7 +424,7 @@ bool Http::ModeSupported()
    case RENAME:
       return true;
    case MP_LIST:
-#ifdef HAVE_EXPAT_H
+#if USE_EXPAT
       return QueryBool("use-propfind",hostname);
 #else
       // without XML parser it is meaningless to retrieve XML file info.
@@ -512,6 +512,11 @@ void Http::SendRequest(const char *connection,const char *f)
       real_pos=0;
    if(mode==STORE)    // can't seek before writing
       real_pos=pos;
+
+#ifdef DEBUG_MP_LIST
+   if(mode==RETRIEVE && file[0]==0)
+      mode=MP_LIST;
+#endif
 
    switch((open_mode)mode)
    {
