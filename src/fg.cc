@@ -59,6 +59,9 @@ void FgData::Fg()
    if(tc_grp==-1 || tc_grp==getpgrp())
    {
       old_pgrp=getpgrp();
+#ifdef FG_DEBUG
+      printf("fg: tcsetpgrp(%d)\n",(int)pg);
+#endif
       tcsetpgrp(0,pg);
    }
    cont();
@@ -68,6 +71,9 @@ void FgData::Bg()
 {
    if(old_pgrp)
    {
+#ifdef FG_DEBUG
+      printf("bg: tcsetpgrp(%d)\n",(int)old_pgrp);
+#endif
       tcsetpgrp(0,old_pgrp);
       old_pgrp=0;
    }
