@@ -2,6 +2,8 @@
 
 	* Http.cc, FileAccess.cc: fixed core dump when Content-Disposition
 	  is handled (suggested_filename was not properly initialized).
+	* Speedometer.cc: fix eta rounding (reported by Igor Zhbanov
+	  <bsg@uniyar.ac.ru>).
 
 2002-08-07  Glenn Maynard <g_ld@zewt.org>
 

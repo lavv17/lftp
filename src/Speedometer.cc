@@ -145,7 +145,7 @@ const char *Speedometer::GetETAStrFromTime(long eta)
 	 if(ueta<10)
 	 {
 	    letter2=hour_c;
-	    ueta2=((eta2<0?eta2+DAY:eta2)+HOUR/2)/HOUR;
+	    ueta2=((eta2<HOUR/2?eta2+DAY:eta2)+HOUR/2)/HOUR;
 	    if(ueta2>0 && eta2<0)
 	       ueta--;
 	 }
@@ -158,7 +158,7 @@ const char *Speedometer::GetETAStrFromTime(long eta)
 	 if(ueta<10)
 	 {
 	    letter2=minute_c;
-	    ueta2=((eta2<0?eta2+HOUR:eta2)+MINUTE/2)/MINUTE;
+	    ueta2=((eta2<MINUTE/2?eta2+HOUR:eta2)+MINUTE/2)/MINUTE;
 	    if(ueta2>0 && eta2<0)
 	       ueta--;
 	 }
