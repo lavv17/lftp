@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "01 Dec 2000"
+.TH lftp 1 "22 Mar 2001"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 2.3.6.
+This man page documents lftp version 2.3.9.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a program that allows sophisticated ftp and http connections to
@@ -396,8 +396,7 @@ Make remote directories. If -p is used, make all components of paths.
 .IR "module " [ " args " ]
 .PP
 Load given module using dlopen(3) function. If module name does not contain
-a slash, it is searched in PKGLIBDIR, usually
-.IR /usr/lib/lftp " or " /usr/local/lib/lftp.
+a slash, it is searched in directories specified by module:path variable.
 Arguments are passed to module_init function. See README.modules for technical
 details.
 
@@ -919,6 +918,10 @@ if set to off, lftp will try to use `GET' instead of `HEAD' for hftp protocol.
 While this is slower, it may allow lftp to work with some proxies which
 don't understand or mishandle ``HEAD ftp://'' requests.
 .TP
+.BR hftp:use-type \ (bool)
+If set to off, lftp won't try to append `;type=' to URLs passed to proxy.
+Some broken proxies don't handle it correctly. Default is on.
+.TP
 .BR "http:accept, http:accept-charset, http:accept-language" " (string)"
 specify corresponding HTTP request headers.
 .TP
@@ -945,6 +948,11 @@ specifies which http method to use on put.
 .BR http:put-content-type " (string)"
 specifies value of Content-Type http request header for PUT method.
 .TP
+.BR http:referer " (string)"
+specifies value for Referer http request header. Single dot `.' expands
+to current directory URL. Default is `.'. Set to empty string to disable
+Referer header.
+.TP
 .BR http:set-cookies " (boolean)"
 if true, lftp modifies http:cookie variables when Set-Cookie header is received.
 .TP
@@ -961,6 +969,10 @@ is checked too.
 .BR mirror:loose-time-precision " (time interval)"
 same as time-precision, but applies to the case of imprecise time information.
 (e.g. derived from file listing which includes only date without time)
+.TP
+.BR module:path \ (string)
+colon separated list of directories to look for modules. Can be initialized by
+environment variable LFTP_MODULE_PATH. Default is `PKGLIBDIR/VERSION:PKGLIBDIR'.
 .TP
 .BR net:connection-limit \ (number)
 maximum number of concurrent connections to the same site. 0 means unlimited.
@@ -1121,6 +1133,8 @@ Used to set initial ftp:proxy or hftp:proxy variables, depending
 on URL protocol used in this environment variable.
 .IP "\fBno_proxy\fP"
 Used to set initial net:no-proxy variable.
+.IP "\fBLFTP_MODULE_PATH\fP"
+Used to set initial module:path variable.
 
 .SH FILES
 .TP
