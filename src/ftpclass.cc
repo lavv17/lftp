@@ -1778,7 +1778,16 @@ void  Ftp::ReceiveResp()
 	 if(newstate==FATAL_STATE || newstate==NO_FILE_STATE)
 	 {
 	    if(!Error())
-	       SetError(StateToError(),line);
+	    {
+	       char *m=line;
+	       if(newstate==NO_FILE_STATE
+	       && file && file[0] && !strstr(line,file))
+	       {
+		  m=string_alloca(strlen(line)+2+strlen(file)+2);
+		  sprintf(m,"%s (%s)",line,file);
+	       }
+	       SetError(StateToError(),m);
+	    }
 	 }
 	 SwitchToState((automate_state)newstate);
 	 if(resp_size==0)

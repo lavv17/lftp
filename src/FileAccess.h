@@ -287,6 +287,8 @@ public:
 	 return Protocol::NewSession(proto);
       }
    static FileAccess *New(const class ParsedURL *u);
+
+   void SetPasswordGlobal(const char *p);
 };
 
 class FileAccessOperation : public SMTask

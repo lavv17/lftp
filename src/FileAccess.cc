@@ -465,6 +465,24 @@ void FileAccess::Login(const char *user1,const char *pass1)
    }
 }
 
+void FileAccess::SetPasswordGlobal(const char *p)
+{
+   xfree(pass);
+   pass=xstrdup(p);
+   for(FileAccess *o=chain; o!=0; o=o->next)
+   {
+      char *save_pass=o->pass;	 // cheat SameSiteAs.
+      o->pass=pass;
+      if(SameSiteAs(o))
+      {
+	 xfree(save_pass);
+	 o->pass=xstrdup(pass);
+      }
+      else
+	 o->pass=save_pass;
+   }
+}
+
 void FileAccess::GroupLogin(const char *group,const char *pass)
 {
    Disconnect();

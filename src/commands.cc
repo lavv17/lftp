@@ -78,7 +78,7 @@ CMD(exit);  CMD(get);    CMD(help);    CMD(jobs);
 CMD(kill);  CMD(lcd);    CMD(ls);
 CMD(open);  CMD(pwd);    CMD(set);
 CMD(shell); CMD(source); CMD(user);    CMD(rm);
-CMD(wait);  CMD(subsh);   CMD(mirror);
+CMD(wait);  CMD(subsh);  CMD(mirror);
 CMD(mv);    CMD(cat);    CMD(cache);
 CMD(mkdir); CMD(scache); CMD(mrm);
 CMD(ver);   CMD(close);  CMD(bookmark);CMD(lftp);
@@ -657,7 +657,11 @@ Job *CmdExec::builtin_open()
 	    eprintf(_("%s: GetPass() failed -- assume anonymous login\n"),
 	       args->getarg(0));
 	 else
-	    session->Login(user,pass);
+	 {
+	    session->Login(user,0);
+	    // assume the new password is the correct one.
+	    session->SetPasswordGlobal(pass);
+	 }
       }
       if(host)
       {
@@ -1290,7 +1294,7 @@ CMD(user)
 	 FA *s=FA::New(&u);
 	 if(s)
 	 {
-	    s->Login(s->GetUser(),pass);
+	    s->SetPasswordGlobal(pass);
 	    SessionPool::Reuse(s);
 	 }
 	 else
@@ -1301,7 +1305,10 @@ CMD(user)
 	 }
       }
       else
-	 session->Login(args->getarg(1),pass);
+      {
+	 session->Login(args->getarg(1),0);
+	 session->SetPasswordGlobal(pass);
+      }
    }
    exit_code=0;
    return 0;
