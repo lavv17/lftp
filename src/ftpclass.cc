@@ -628,6 +628,13 @@ char *Ftp::ExtractPWD()
    return xstrdup(pwd);
 }
 
+void Ftp::SendCWD(const char *path)
+{
+   SendCmd2("CWD",path);
+   AddResp(RESP_CWD_RMD_DELE_OK,CHECK_CWD_CURR);
+   SetRespPath(path);
+}
+
 static bool InPrivateNetwork(const sockaddr_u *u)
 {
    if(u->sa.sa_family==AF_INET)
@@ -1389,9 +1396,7 @@ int   Ftp::Do()
 	 if((!last_cwd && xstrcmp(cwd,real_cwd))
 	    || (last_cwd && xstrcmp(last_cwd->path,cwd)))
 	 {
-	    SendCmd2("CWD",cwd);
-	    AddResp(RESP_CWD_RMD_DELE_OK,CHECK_CWD_CURR);
-	    SetRespPath(cwd);
+	    SendCWD(cwd);
 	 }
 	 else if(last_cwd && !xstrcmp(last_cwd->path,cwd))
 	 {
@@ -1582,8 +1587,7 @@ int   Ftp::Do()
 	    if(!vms_path && !AbsolutePath(file) && real_cwd
 	    && !strncmp(file,real_cwd,len) && file[len]=='/')
 	       path_to_use=file+len+1;
-	    SendCmd2("CWD",path_to_use);
-	    AddResp(RESP_CWD_RMD_DELE_OK,CHECK_CWD);
+	    SendCWD(path_to_use);
 	    SetRespPath(file);
 	 }
 	 goto pre_WAITING_STATE;
@@ -3548,7 +3552,10 @@ void Ftp::CheckResp(int act)
 void  Ftp::SetRespPath(const char *p)
 {
    if(RQ_tail>RQ_head)
+   {
+      xfree(RespQueue[RQ_tail-1].path);
       RespQueue[RQ_tail-1].path=xstrdup(p);
+   }
 }
 
 void  Ftp::PopResp()
