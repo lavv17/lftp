@@ -1282,6 +1282,10 @@ void SFtp::Suspend()
    }
    if(send_buf)
       send_buf->Suspend();
+   if(pty_send_buf)
+      pty_send_buf->Suspend();
+   if(pty_recv_buf)
+      pty_recv_buf->Suspend();
    super::Suspend();
 }
 void SFtp::Resume()
@@ -1293,6 +1297,10 @@ void SFtp::Resume()
       recv_buf->Resume();
    if(send_buf)
       send_buf->Resume();
+   if(pty_send_buf)
+      pty_send_buf->Resume();
+   if(pty_recv_buf)
+      pty_recv_buf->Resume();
 }
 
 const char *SFtp::CurrentStatus()

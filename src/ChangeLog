@@ -1,3 +1,7 @@
+2004-11-26  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SFtp.cc: suspend/resume pty buffers too.
+
 2004-11-19  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* NetAccess.cc: set TIOCOUTQ_tested so that it is not tested each time.
