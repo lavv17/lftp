@@ -1,3 +1,17 @@
+Version 2.3.11 - 2001-05-24
+
+* new settings ftp:retry-530 and ftp:retry-530-anonymous. Retry on server
+  reply 530 for PASS command if text matches these regular expressions.
+  This settings should be useful to distinguish between overloaded server
+  (temporary condition) and incorrect password (permanent condition).
+* retry ftp login quickly on next address if the server has many (works
+  well on ftp.redhat.com, for example).
+* improved fuzzy variable name matching. Exact prefix and exact name after
+  prefix are taken into account separately. E.g. http:pro is not ambigous
+  now between http:proxy and https:proxy.
+* implemented -c option for reverse mirror (mirror -R -c).
+* french translation updated (Nicolas Noble).
+
 Version 2.3.10 - 2001-05-11
 
 * used libtool to build modules (finally).

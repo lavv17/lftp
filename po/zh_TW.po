@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.3.9\n"
-"POT-Creation-Date: 2001-05-10 18:57+0400\n"
+"POT-Creation-Date: 2001-05-24 14:47+0400\n"
 "PO-Revision-Date: 2001-04-22 06:01+0800\n"
 "Last-Translator: Abel Cheung <maddog@linux.org.hk>\n"
 "Language-Team: Traditional Chinese <zh-l10n@linux.org.tw>\n"
@@ -48,7 +48,7 @@ msgstr "指令 `%s' 要用的模組根本沒有該指令在內。\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "cd 成功，cwd 為 %s\n"
 
-#: src/CmdExec.cc:385 src/MirrorJob.cc:536
+#: src/CmdExec.cc:385 src/MirrorJob.cc:550
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: 重新導向至 `%s'\n"
@@ -115,7 +115,7 @@ msgstr "存取失敗: %s"
 msgid "File cannot be accessed"
 msgstr "不能存取檔案"
 
-#: src/FileAccess.cc:325 src/ftpclass.cc:3413 src/ftpclass.cc:3422
+#: src/FileAccess.cc:325 src/ftpclass.cc:3402 src/ftpclass.cc:3411
 msgid "Not connected"
 msgstr "並未連線"
 
@@ -231,68 +231,68 @@ msgstr "%s刪除︰%d 個目錄，%d 個檔案，%d 個軟連結\n"
 msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%s將會刪除︰%d 個目錄，%d 個檔案，%d 個軟連結\n"
 
-#: src/MirrorJob.cc:168 src/MirrorJob.cc:813
+#: src/MirrorJob.cc:181 src/MirrorJob.cc:829
 #, c-format
 msgid "Removing old remote file `%s'"
 msgstr "刪除舊的遠端檔案 `%s'"
 
-#: src/MirrorJob.cc:217 src/MirrorJob.cc:313 src/MirrorJob.cc:384
-#: src/MirrorJob.cc:753
+#: src/MirrorJob.cc:231 src/MirrorJob.cc:327 src/MirrorJob.cc:398
+#: src/MirrorJob.cc:769
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "刪除舊的本機檔案 `%s'"
 
 #. launch get job
-#: src/MirrorJob.cc:235
+#: src/MirrorJob.cc:249
 #, c-format
 msgid "Retrieving remote file `%s'"
 msgstr "下載遠端檔案 `%s'"
 
-#: src/MirrorJob.cc:287
+#: src/MirrorJob.cc:301
 #, c-format
 msgid "Making remote directory `%s'"
 msgstr "在遠端建立目錄 `%s'"
 
-#: src/MirrorJob.cc:362
+#: src/MirrorJob.cc:376
 #, c-format
 msgid "Mirroring directory `%s'"
 msgstr "正在映射目錄 `%s'"
 
-#: src/MirrorJob.cc:397
+#: src/MirrorJob.cc:411
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "建立軟連結 `%s' 到 `%s'"
 
-#: src/MirrorJob.cc:473
+#: src/MirrorJob.cc:487
 msgid "mirror: cannot create `file:' access object, installation error?\n"
 msgstr "映射: 無法建立 `file:' 存取物件，是否安裝出現錯誤？\n"
 
-#: src/MirrorJob.cc:570
+#: src/MirrorJob.cc:584
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror : 協定 `%s' 不適合作為映射\n"
 
-#: src/MirrorJob.cc:633
+#: src/MirrorJob.cc:647
 #, c-format
 msgid "Sending local file `%s'"
 msgstr "正在上傳本機檔案 `%s'"
 
-#: src/MirrorJob.cc:772
+#: src/MirrorJob.cc:788
 #, c-format
 msgid "Old local file `%s' is not removed"
 msgstr "舊的本機檔案 `%s' 沒有被刪除"
 
-#: src/MirrorJob.cc:806
+#: src/MirrorJob.cc:822
 #, c-format
 msgid "Removing old remote directory `%s'"
 msgstr "刪除舊的遠端目錄 `%s'"
 
-#: src/MirrorJob.cc:826
+#: src/MirrorJob.cc:842
 #, c-format
 msgid "Old remote file `%s' is not removed"
 msgstr "舊的遠端檔案 `%s' 沒有被刪除"
 
-#: src/MirrorJob.cc:1136 src/MirrorJob.cc:1184 src/SleepJob.cc:128
+#: src/MirrorJob.cc:1153 src/MirrorJob.cc:1201 src/SleepJob.cc:128
 #: src/commands.cc:827 src/commands.cc:1000 src/commands.cc:1095
 #: src/commands.cc:1353 src/commands.cc:1547 src/commands.cc:1714
 #: src/commands.cc:1721 src/commands.cc:1905 src/commands.cc:1934
@@ -301,45 +301,45 @@ msgstr "舊的遠端檔案 `%s' 沒有被刪除"
 msgid "Try `help %s' for more information.\n"
 msgstr "輸入 `help %s' 查看更多資料。\n"
 
-#: src/ResMgr.cc:94
+#: src/ResMgr.cc:114
 msgid "no such variable"
 msgstr "沒有這個變數"
 
-#: src/ResMgr.cc:98
+#: src/ResMgr.cc:118
 msgid "ambiguous variable name"
 msgstr "變數名稱過於模糊"
 
-#: src/ResMgr.cc:321
+#: src/ResMgr.cc:341
 msgid "invalid boolean value"
 msgstr "不正確的布林值"
 
-#: src/ResMgr.cc:344 src/ResMgr.cc:375
+#: src/ResMgr.cc:364 src/ResMgr.cc:395
 msgid "invalid number"
 msgstr "不正確的數字"
 
-#: src/ResMgr.cc:359
+#: src/ResMgr.cc:379
 msgid "invalid floating point number"
 msgstr "不正確的浮點數"
 
 #. debug only
-#: src/ResMgr.cc:449
+#: src/ResMgr.cc:469
 #, c-format
 msgid "Query of variable `%s' failed: %s\n"
 msgstr "詢問變數 `%s' 失敗: %s\n"
 
-#: src/ResMgr.cc:573
+#: src/ResMgr.cc:593
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "不正確的時間單位，只允許 [smhd]。"
 
-#: src/ResMgr.cc:581
+#: src/ResMgr.cc:601
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "不正確的時間格式。格式是 <time><unit>，例如: 2h30m。"
 
-#: src/ResMgr.cc:609
+#: src/ResMgr.cc:629
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "區段的格式不正確。格式是 min-max，例如 10-20。"
 
-#: src/ResMgr.cc:674
+#: src/ResMgr.cc:694
 msgid "no closure defined for this setting"
 msgstr "此設定值並沒有定義 closure"
 
@@ -347,7 +347,7 @@ msgstr "此設定值並沒有定義 closure"
 msgid "dns cache hit\n"
 msgstr "找到 DNS 暫存資料\n"
 
-#: src/Http.cc:1537 src/Resolver.cc:184 src/ftpclass.cc:3418
+#: src/Http.cc:1537 src/Resolver.cc:184 src/ftpclass.cc:3407
 msgid "Resolving host address..."
 msgstr "正在解析主機地址..."
 
@@ -1404,142 +1404,142 @@ msgstr "對方使用了不匹配的地址"
 msgid "Switching to NOREST mode"
 msgstr "切換到 NOREST 模式"
 
-#: src/ftpclass.cc:380
-msgid "Saw `Login incorrect', assume failed login"
-msgstr "看到 `Login incorrect'，假設登入已失敗"
+#: src/ftpclass.cc:379
+msgid "Server reply matched ftp:retry-530[-anonymous], retrying"
+msgstr ""
 
-#: src/ftpclass.cc:420
+#: src/ftpclass.cc:419
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
 msgstr "設定了 ftp:skey-force 但伺服器不支援 OPIE 或 S/KEY"
 
-#: src/ftpclass.cc:436
+#: src/ftpclass.cc:435
 msgid "Saw `unknown', assume failed login"
 msgstr "看到 `unknown'，假設登入已失敗"
 
-#: src/ftpclass.cc:447
+#: src/ftpclass.cc:446
 msgid "assuming failed host name lookup"
 msgstr "假設查看主機名稱已失敗"
 
-#: src/ftpclass.cc:678
+#: src/ftpclass.cc:677
 msgid "cannot parse EPSV response"
 msgstr "不能分析 EPSV 回應內容"
 
-#: src/Http.cc:753 src/ftpclass.cc:1028
+#: src/Http.cc:753 src/ftpclass.cc:1027
 msgid "Closing idle connection"
 msgstr "關閉了閒置的連線"
 
-#: src/Http.cc:881 src/ftpclass.cc:1107
+#: src/Http.cc:881 src/ftpclass.cc:1106
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "不能建立地址族群 %d 的 socket"
 
-#: src/ftpclass.cc:1284
+#: src/ftpclass.cc:1283
 msgid "SITE CHMOD is not supported by this site"
 msgstr "這個站台不支援 SITE CHMOD"
 
-#: src/ftpclass.cc:1632 src/ftpclass.cc:1665
+#: src/ftpclass.cc:1631 src/ftpclass.cc:1664
 msgid "unsupported network protocol"
 msgstr "不受支援的網絡協定"
 
-#: src/ftpclass.cc:1774
+#: src/ftpclass.cc:1773
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "連接資料 socket 到 (%s) 連接埠 %u"
 
-#: src/ftpclass.cc:1799 src/ftpclass.cc:3301
+#: src/ftpclass.cc:1798 src/ftpclass.cc:3290
 msgid "Switching passive mode off"
 msgstr "關閉了 passive 模式"
 
-#: src/Http.cc:960 src/ftpclass.cc:2213
+#: src/Http.cc:960 src/ftpclass.cc:2212
 msgid "Peer closed connection"
 msgstr "對方節點關閉了連線"
 
-#: src/ftpclass.cc:2240
+#: src/ftpclass.cc:2239
 msgid "Persist and retry"
 msgstr "繼續重試"
 
-#: src/ftpclass.cc:2337
+#: src/ftpclass.cc:2336
 msgid "Closing control socket"
 msgstr "正在關閉控制 socket"
 
-#: src/ftpclass.cc:2418
+#: src/ftpclass.cc:2417
 msgid "Closing data socket"
 msgstr "正在關閉資料 socket"
 
-#: src/ftpclass.cc:3148
+#: src/ftpclass.cc:3135
 msgid "saw file size in response"
 msgstr "回應包括檔案的大小"
 
-#: src/ftpclass.cc:3159
+#: src/ftpclass.cc:3146
 msgid "remote end closes connection"
 msgstr "遠端終止了連線"
 
-#: src/ftpclass.cc:3167
+#: src/ftpclass.cc:3154
 msgid "extra server response"
 msgstr "額外的伺服器回應"
 
-#: src/ftpclass.cc:3179 src/ftpclass.cc:3204
+#: src/ftpclass.cc:3166 src/ftpclass.cc:3191
 msgid "Turning on sync-mode"
 msgstr "啟動 sync-mode"
 
-#: src/ftpclass.cc:3318
+#: src/ftpclass.cc:3307
 msgid "Switching passive mode on"
 msgstr "開啟 passive 模式"
 
-#: src/ftpclass.cc:3369
+#: src/ftpclass.cc:3358
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr "已設定 ftp:ssl-force 但伺服器不支援/不使用 SSL"
 
-#: src/ftpclass.cc:3408
+#: src/ftpclass.cc:3397
 msgid "Sending commands..."
 msgstr "正在送出指令..."
 
-#: src/Http.cc:1550 src/ftpclass.cc:3410 src/ftpclass.cc:3435
-#: src/ftpclass.cc:3442
+#: src/Http.cc:1550 src/ftpclass.cc:3399 src/ftpclass.cc:3424
+#: src/ftpclass.cc:3431
 msgid "Waiting for response..."
 msgstr "正在等待回應..."
 
-#: src/Http.cc:1545 src/ftpclass.cc:3411
+#: src/Http.cc:1545 src/ftpclass.cc:3400
 msgid "Connection idle"
 msgstr "連線閒置了"
 
-#: src/Http.cc:1543 src/ftpclass.cc:3424
+#: src/Http.cc:1543 src/ftpclass.cc:3413
 msgid "Connecting..."
 msgstr "正在連線..."
 
-#: src/ftpclass.cc:3428
+#: src/ftpclass.cc:3417
 msgid "TLS negotiation..."
 msgstr "使用 TLS 協定通訊中…"
 
-#: src/ftpclass.cc:3430
+#: src/ftpclass.cc:3419
 msgid "Connected"
 msgstr "已經連接"
 
-#: src/ftpclass.cc:3432
+#: src/ftpclass.cc:3421
 msgid "Logging in..."
 msgstr "正在登入..."
 
-#: src/ftpclass.cc:3436
+#: src/ftpclass.cc:3425
 msgid "Making data connection..."
 msgstr "正在建立資料傳送的連線..."
 
-#: src/ftpclass.cc:3438
+#: src/ftpclass.cc:3427
 msgid "Changing remote directory..."
 msgstr "改變遠端目錄..."
 
-#: src/ftpclass.cc:3441 src/ftpclass.cc:3453
+#: src/ftpclass.cc:3430 src/ftpclass.cc:3442
 msgid "Waiting for transfer to complete"
 msgstr "等待傳送完成"
 
-#: src/ftpclass.cc:3444
+#: src/ftpclass.cc:3433
 msgid "Waiting for data connection..."
 msgstr "等待資料傳送的連線..."
 
-#: src/Http.cc:1548 src/ftpclass.cc:3449
+#: src/Http.cc:1548 src/ftpclass.cc:3438
 msgid "Sending data"
 msgstr "正在傳送資料"
 
-#: src/Http.cc:1553 src/ftpclass.cc:3451
+#: src/Http.cc:1553 src/ftpclass.cc:3440
 msgid "Receiving data"
 msgstr "正在接收資料"
 
@@ -1952,6 +1952,9 @@ msgstr "需要模組 `%s': %s\n"
 #: src/module.cc:201
 msgid "modules are not supported on this system"
 msgstr "此系統不支援模組"
+
+#~ msgid "Saw `Login incorrect', assume failed login"
+#~ msgstr "看到 `Login incorrect'，假設登入已失敗"
 
 #~ msgid "%s: cannot add empty bookmark\n"
 #~ msgstr "%s: 不可加入空白的書籤\n"

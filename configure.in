@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.13)
 AC_INIT(src/ftpclass.cc)
-AM_INIT_AUTOMAKE(lftp, 2.3.10)
+AM_INIT_AUTOMAKE(lftp, 2.3.11)
 AM_CONFIG_HEADER(include/config.h)
 
 dnl Default AC_C_INLINE does not know about C++

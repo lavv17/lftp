@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
-"POT-Creation-Date: 2001-05-10 18:57+0400\n"
+"POT-Creation-Date: 2001-05-24 14:47+0400\n"
 "PO-Revision-Date: 2000-01-13 KST\n"
 "Last-Translator: Dojip Kim <greendrm@kamsi.yonsei.ac.kr>\n"
 "Language-Team: \n"
@@ -49,7 +49,7 @@ msgstr ""
 msgid "cd ok, cwd=%s\n"
 msgstr "cd 성공, cwd=%s\n"
 
-#: src/CmdExec.cc:385 src/MirrorJob.cc:536
+#: src/CmdExec.cc:385 src/MirrorJob.cc:550
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
@@ -118,7 +118,7 @@ msgstr "접속 실패: %s"
 msgid "File cannot be accessed"
 msgstr "파일을 읽을 수 없습니다"
 
-#: src/FileAccess.cc:325 src/ftpclass.cc:3413 src/ftpclass.cc:3422
+#: src/FileAccess.cc:325 src/ftpclass.cc:3402 src/ftpclass.cc:3411
 msgid "Not connected"
 msgstr "접속되지 않았습니다"
 
@@ -234,68 +234,68 @@ msgstr "%s삭제: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%s삭제예정: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 
-#: src/MirrorJob.cc:168 src/MirrorJob.cc:813
+#: src/MirrorJob.cc:181 src/MirrorJob.cc:829
 #, c-format
 msgid "Removing old remote file `%s'"
 msgstr "옛 원거리 파일 `%s' 지움"
 
-#: src/MirrorJob.cc:217 src/MirrorJob.cc:313 src/MirrorJob.cc:384
-#: src/MirrorJob.cc:753
+#: src/MirrorJob.cc:231 src/MirrorJob.cc:327 src/MirrorJob.cc:398
+#: src/MirrorJob.cc:769
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "옛 지역 파일 `%s' 지움"
 
 #. launch get job
-#: src/MirrorJob.cc:235
+#: src/MirrorJob.cc:249
 #, c-format
 msgid "Retrieving remote file `%s'"
 msgstr "원거리 파일 `%s' 다시 받음"
 
-#: src/MirrorJob.cc:287
+#: src/MirrorJob.cc:301
 #, c-format
 msgid "Making remote directory `%s'"
 msgstr "원거리 디렉토리 `%s' 생성"
 
-#: src/MirrorJob.cc:362
+#: src/MirrorJob.cc:376
 #, fuzzy, c-format
 msgid "Mirroring directory `%s'"
 msgstr "원거리 디렉토리 `%s' 생성"
 
-#: src/MirrorJob.cc:397
+#: src/MirrorJob.cc:411
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "`%s'를 `%s'로 심볼 링크함"
 
-#: src/MirrorJob.cc:473
+#: src/MirrorJob.cc:487
 msgid "mirror: cannot create `file:' access object, installation error?\n"
 msgstr ""
 
-#: src/MirrorJob.cc:570
+#: src/MirrorJob.cc:584
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: 전송규약 '%s'은 mirror에 적합하지 않습니다\n"
 
-#: src/MirrorJob.cc:633
+#: src/MirrorJob.cc:647
 #, c-format
 msgid "Sending local file `%s'"
 msgstr "지역 파일 `%s'을 전송"
 
-#: src/MirrorJob.cc:772
+#: src/MirrorJob.cc:788
 #, c-format
 msgid "Old local file `%s' is not removed"
 msgstr "옛 지역 파일 `%s'이 삭제되지 않았습니다"
 
-#: src/MirrorJob.cc:806
+#: src/MirrorJob.cc:822
 #, fuzzy, c-format
 msgid "Removing old remote directory `%s'"
 msgstr "옛 원거리 파일 `%s' 지움"
 
-#: src/MirrorJob.cc:826
+#: src/MirrorJob.cc:842
 #, c-format
 msgid "Old remote file `%s' is not removed"
 msgstr "옛 원거리 파일 `%s'이 삭제되지 않았습니다"
 
-#: src/MirrorJob.cc:1136 src/MirrorJob.cc:1184 src/SleepJob.cc:128
+#: src/MirrorJob.cc:1153 src/MirrorJob.cc:1201 src/SleepJob.cc:128
 #: src/commands.cc:827 src/commands.cc:1000 src/commands.cc:1095
 #: src/commands.cc:1353 src/commands.cc:1547 src/commands.cc:1714
 #: src/commands.cc:1721 src/commands.cc:1905 src/commands.cc:1934
@@ -304,47 +304,47 @@ msgstr "옛 원거리 파일 `%s'이 삭제되지 않았습니다"
 msgid "Try `help %s' for more information.\n"
 msgstr "상세한 것은 `help %s'를 이용하십시오\n"
 
-#: src/ResMgr.cc:94
+#: src/ResMgr.cc:114
 msgid "no such variable"
 msgstr "그러한 변수는 없습니다"
 
-#: src/ResMgr.cc:98
+#: src/ResMgr.cc:118
 msgid "ambiguous variable name"
 msgstr "모호한 변수명입니다"
 
-#: src/ResMgr.cc:321
+#: src/ResMgr.cc:341
 msgid "invalid boolean value"
 msgstr "잘못된 boolean 변수입니다"
 
-#: src/ResMgr.cc:344 src/ResMgr.cc:375
+#: src/ResMgr.cc:364 src/ResMgr.cc:395
 msgid "invalid number"
 msgstr "잘못된 수입니다"
 
-#: src/ResMgr.cc:359
+#: src/ResMgr.cc:379
 #, fuzzy
 msgid "invalid floating point number"
 msgstr "잘못된 수입니다"
 
 #. debug only
-#: src/ResMgr.cc:449
+#: src/ResMgr.cc:469
 #, c-format
 msgid "Query of variable `%s' failed: %s\n"
 msgstr ""
 
-#: src/ResMgr.cc:573
+#: src/ResMgr.cc:593
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "잘못된 시간 단위입니다, [smhd] 만 허용합니다."
 
-#: src/ResMgr.cc:581
+#: src/ResMgr.cc:601
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "잘못된 시간 양식입니다. 양식은 <time><unit> 입니다, 예. 2h30m."
 
-#: src/ResMgr.cc:609
+#: src/ResMgr.cc:629
 #, fuzzy
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "잘못된 시간 양식입니다. 양식은 <time><unit> 입니다, 예. 2h30m."
 
-#: src/ResMgr.cc:674
+#: src/ResMgr.cc:694
 msgid "no closure defined for this setting"
 msgstr ""
 
@@ -352,7 +352,7 @@ msgstr ""
 msgid "dns cache hit\n"
 msgstr ""
 
-#: src/Http.cc:1537 src/Resolver.cc:184 src/ftpclass.cc:3418
+#: src/Http.cc:1537 src/Resolver.cc:184 src/ftpclass.cc:3407
 msgid "Resolving host address..."
 msgstr "호스트 주소를 찾습니다..."
 
@@ -1407,145 +1407,145 @@ msgstr "접속이 잘못된 주소로 된 듯 합니다"
 msgid "Switching to NOREST mode"
 msgstr "패시브(passive) 모드 끔"
 
-#: src/ftpclass.cc:380
-msgid "Saw `Login incorrect', assume failed login"
-msgstr "`틀린 로그인' 보면, 로그인에 실해한 듯 합니다"
+#: src/ftpclass.cc:379
+msgid "Server reply matched ftp:retry-530[-anonymous], retrying"
+msgstr ""
 
-#: src/ftpclass.cc:420
+#: src/ftpclass.cc:419
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
 msgstr ""
 
-#: src/ftpclass.cc:436
+#: src/ftpclass.cc:435
 msgid "Saw `unknown', assume failed login"
 msgstr "`알수 없는' 보면, 로그인에 실패한 듯 합니다"
 
-#: src/ftpclass.cc:447
+#: src/ftpclass.cc:446
 msgid "assuming failed host name lookup"
 msgstr "호스트 이름을 찾는데 실패한 듯 합니다"
 
-#: src/ftpclass.cc:678
+#: src/ftpclass.cc:677
 msgid "cannot parse EPSV response"
 msgstr ""
 
-#: src/Http.cc:753 src/ftpclass.cc:1028
+#: src/Http.cc:753 src/ftpclass.cc:1027
 msgid "Closing idle connection"
 msgstr "사용하지 않는 접속을 끊습니다"
 
-#: src/Http.cc:881 src/ftpclass.cc:1107
+#: src/Http.cc:881 src/ftpclass.cc:1106
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr ""
 
-#: src/ftpclass.cc:1284
+#: src/ftpclass.cc:1283
 msgid "SITE CHMOD is not supported by this site"
 msgstr ""
 
-#: src/ftpclass.cc:1632 src/ftpclass.cc:1665
+#: src/ftpclass.cc:1631 src/ftpclass.cc:1664
 #, fuzzy
 msgid "unsupported network protocol"
 msgstr "%s: %s - 지원하지 않는 전송규약입니다\n"
 
-#: src/ftpclass.cc:1774
+#: src/ftpclass.cc:1773
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "(%s) 포트 %u에 자료 소켓을 연결합니다"
 
-#: src/ftpclass.cc:1799 src/ftpclass.cc:3301
+#: src/ftpclass.cc:1798 src/ftpclass.cc:3290
 msgid "Switching passive mode off"
 msgstr "패시브(passive) 모드 끔"
 
-#: src/Http.cc:960 src/ftpclass.cc:2213
+#: src/Http.cc:960 src/ftpclass.cc:2212
 msgid "Peer closed connection"
 msgstr "접속이 끊겼습니다"
 
-#: src/ftpclass.cc:2240
+#: src/ftpclass.cc:2239
 msgid "Persist and retry"
 msgstr ""
 
-#: src/ftpclass.cc:2337
+#: src/ftpclass.cc:2336
 msgid "Closing control socket"
 msgstr "제어 소켓 닫음"
 
-#: src/ftpclass.cc:2418
+#: src/ftpclass.cc:2417
 msgid "Closing data socket"
 msgstr "데이터 소켓 닫음"
 
-#: src/ftpclass.cc:3148
+#: src/ftpclass.cc:3135
 msgid "saw file size in response"
 msgstr "응답에서 파일 크기를 봅니다"
 
-#: src/ftpclass.cc:3159
+#: src/ftpclass.cc:3146
 msgid "remote end closes connection"
 msgstr "원거리 끝이 접속을 끊습니다"
 
-#: src/ftpclass.cc:3167
+#: src/ftpclass.cc:3154
 msgid "extra server response"
 msgstr "임시 서버 응답"
 
-#: src/ftpclass.cc:3179 src/ftpclass.cc:3204
+#: src/ftpclass.cc:3166 src/ftpclass.cc:3191
 msgid "Turning on sync-mode"
 msgstr ""
 
-#: src/ftpclass.cc:3318
+#: src/ftpclass.cc:3307
 #, fuzzy
 msgid "Switching passive mode on"
 msgstr "패시브(passive) 모드 끔"
 
-#: src/ftpclass.cc:3369
+#: src/ftpclass.cc:3358
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 
-#: src/ftpclass.cc:3408
+#: src/ftpclass.cc:3397
 msgid "Sending commands..."
 msgstr "명령어 전송중..."
 
-#: src/Http.cc:1550 src/ftpclass.cc:3410 src/ftpclass.cc:3435
-#: src/ftpclass.cc:3442
+#: src/Http.cc:1550 src/ftpclass.cc:3399 src/ftpclass.cc:3424
+#: src/ftpclass.cc:3431
 msgid "Waiting for response..."
 msgstr "응답을 기다립니다..."
 
-#: src/Http.cc:1545 src/ftpclass.cc:3411
+#: src/Http.cc:1545 src/ftpclass.cc:3400
 msgid "Connection idle"
 msgstr "사용하지 않는 접속"
 
-#: src/Http.cc:1543 src/ftpclass.cc:3424
+#: src/Http.cc:1543 src/ftpclass.cc:3413
 msgid "Connecting..."
 msgstr "접속중..."
 
-#: src/ftpclass.cc:3428
+#: src/ftpclass.cc:3417
 msgid "TLS negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:3430
+#: src/ftpclass.cc:3419
 #, fuzzy
 msgid "Connected"
 msgstr "접속되지 않았습니다"
 
-#: src/ftpclass.cc:3432
+#: src/ftpclass.cc:3421
 msgid "Logging in..."
 msgstr "로그인 중..."
 
-#: src/ftpclass.cc:3436
+#: src/ftpclass.cc:3425
 msgid "Making data connection..."
 msgstr "접속 하는 중..."
 
-#: src/ftpclass.cc:3438
+#: src/ftpclass.cc:3427
 msgid "Changing remote directory..."
 msgstr "원거리 디렉토리 변경중..."
 
-#: src/ftpclass.cc:3441 src/ftpclass.cc:3453
+#: src/ftpclass.cc:3430 src/ftpclass.cc:3442
 msgid "Waiting for transfer to complete"
 msgstr "전송 완료를 기다립니다"
 
-#: src/ftpclass.cc:3444
+#: src/ftpclass.cc:3433
 msgid "Waiting for data connection..."
 msgstr "접속을 기다리는 중..."
 
-#: src/Http.cc:1548 src/ftpclass.cc:3449
+#: src/Http.cc:1548 src/ftpclass.cc:3438
 msgid "Sending data"
 msgstr "자료 보내는 중"
 
-#: src/Http.cc:1553 src/ftpclass.cc:3451
+#: src/Http.cc:1553 src/ftpclass.cc:3440
 msgid "Receiving data"
 msgstr "자료 받는 중"
 
@@ -1964,6 +1964,9 @@ msgstr ""
 #: src/module.cc:201
 msgid "modules are not supported on this system"
 msgstr ""
+
+#~ msgid "Saw `Login incorrect', assume failed login"
+#~ msgstr "`틀린 로그인' 보면, 로그인에 실해한 듯 합니다"
 
 #~ msgid "%s: cannot add empty bookmark\n"
 #~ msgstr "%s: 빈 북마크를 추가할 수 없습니다\n"

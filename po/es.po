@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2.1\n"
-"POT-Creation-Date: 2001-05-10 18:57+0400\n"
+"POT-Creation-Date: 2001-05-24 14:47+0400\n"
 "PO-Revision-Date: 2000-08-26 00:01-0300\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -46,7 +46,7 @@ msgstr "El módulo para la orden `%s' no registro esa orden.\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, dir actual=%s\n"
 
-#: src/CmdExec.cc:385 src/MirrorJob.cc:536
+#: src/CmdExec.cc:385 src/MirrorJob.cc:550
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: se recibió redirección a `%s'\n"
@@ -113,7 +113,7 @@ msgstr "Falló el acceso: %s"
 msgid "File cannot be accessed"
 msgstr "El archivo no puede ser accedido"
 
-#: src/FileAccess.cc:325 src/ftpclass.cc:3413 src/ftpclass.cc:3422
+#: src/FileAccess.cc:325 src/ftpclass.cc:3402 src/ftpclass.cc:3411
 msgid "Not connected"
 msgstr "No conectado"
 
@@ -230,69 +230,69 @@ msgstr "%sBorrados: %d directorio$|s$, %d archivo$|s$, %d enlace$|s$\n"
 msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%sSerán borrados: %d directorio$|s$, %d archivo$|s$, %d enlace$|s$\n"
 
-#: src/MirrorJob.cc:168 src/MirrorJob.cc:813
+#: src/MirrorJob.cc:181 src/MirrorJob.cc:829
 #, c-format
 msgid "Removing old remote file `%s'"
 msgstr "Borrando archivo remoto viejo `%s'"
 
-#: src/MirrorJob.cc:217 src/MirrorJob.cc:313 src/MirrorJob.cc:384
-#: src/MirrorJob.cc:753
+#: src/MirrorJob.cc:231 src/MirrorJob.cc:327 src/MirrorJob.cc:398
+#: src/MirrorJob.cc:769
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Borrando archivo local viejo `%s'"
 
 #. launch get job
-#: src/MirrorJob.cc:235
+#: src/MirrorJob.cc:249
 #, c-format
 msgid "Retrieving remote file `%s'"
 msgstr "Obteniendo archivo remoto `%s'"
 
-#: src/MirrorJob.cc:287
+#: src/MirrorJob.cc:301
 #, c-format
 msgid "Making remote directory `%s'"
 msgstr "Creando directorio remoto `%s'"
 
-#: src/MirrorJob.cc:362
+#: src/MirrorJob.cc:376
 #, c-format
 msgid "Mirroring directory `%s'"
 msgstr "Replicando directorio `%s'"
 
-#: src/MirrorJob.cc:397
+#: src/MirrorJob.cc:411
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Creando enlace simbólico `%s' a `%s'"
 
-#: src/MirrorJob.cc:473
+#: src/MirrorJob.cc:487
 msgid "mirror: cannot create `file:' access object, installation error?\n"
 msgstr ""
 "mirror: no se pudo crear objeto de acceso `file:', ¿error de instalación?\n"
 
-#: src/MirrorJob.cc:570
+#: src/MirrorJob.cc:584
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: el protocolo `%s' no es adecuado para mirror\n"
 
-#: src/MirrorJob.cc:633
+#: src/MirrorJob.cc:647
 #, c-format
 msgid "Sending local file `%s'"
 msgstr "Enviando archivo local `%s'"
 
-#: src/MirrorJob.cc:772
+#: src/MirrorJob.cc:788
 #, c-format
 msgid "Old local file `%s' is not removed"
 msgstr "Viejo archivo local `%s' no removido"
 
-#: src/MirrorJob.cc:806
+#: src/MirrorJob.cc:822
 #, c-format
 msgid "Removing old remote directory `%s'"
 msgstr "Borrando directorio remoto viejo `%s'"
 
-#: src/MirrorJob.cc:826
+#: src/MirrorJob.cc:842
 #, c-format
 msgid "Old remote file `%s' is not removed"
 msgstr "Viejo archivo remoto `%s' no removido"
 
-#: src/MirrorJob.cc:1136 src/MirrorJob.cc:1184 src/SleepJob.cc:128
+#: src/MirrorJob.cc:1153 src/MirrorJob.cc:1201 src/SleepJob.cc:128
 #: src/commands.cc:827 src/commands.cc:1000 src/commands.cc:1095
 #: src/commands.cc:1353 src/commands.cc:1547 src/commands.cc:1714
 #: src/commands.cc:1721 src/commands.cc:1905 src/commands.cc:1934
@@ -301,45 +301,45 @@ msgstr "Viejo archivo remoto `%s' no removido"
 msgid "Try `help %s' for more information.\n"
 msgstr "Pruebe `help %s' para mayor información.\n"
 
-#: src/ResMgr.cc:94
+#: src/ResMgr.cc:114
 msgid "no such variable"
 msgstr "no existe tal variable"
 
-#: src/ResMgr.cc:98
+#: src/ResMgr.cc:118
 msgid "ambiguous variable name"
 msgstr "nombre de variable ambiguo"
 
-#: src/ResMgr.cc:321
+#: src/ResMgr.cc:341
 msgid "invalid boolean value"
 msgstr "valor lógico inválido"
 
-#: src/ResMgr.cc:344 src/ResMgr.cc:375
+#: src/ResMgr.cc:364 src/ResMgr.cc:395
 msgid "invalid number"
 msgstr "número inválido"
 
-#: src/ResMgr.cc:359
+#: src/ResMgr.cc:379
 msgid "invalid floating point number"
 msgstr "número de coma flotante inválido"
 
 #. debug only
-#: src/ResMgr.cc:449
+#: src/ResMgr.cc:469
 #, c-format
 msgid "Query of variable `%s' failed: %s\n"
 msgstr ""
 
-#: src/ResMgr.cc:573
+#: src/ResMgr.cc:593
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "Unidad de tiempo inválida, sólo se permiten [smhd]."
 
-#: src/ResMgr.cc:581
+#: src/ResMgr.cc:601
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "Formato de tiempo inválido, debe ser <tiempo><unidad>, p.ej. 2h30m."
 
-#: src/ResMgr.cc:609
+#: src/ResMgr.cc:629
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Formato del rango inválido. El formato es mín-máx, p.ej. 10-20."
 
-#: src/ResMgr.cc:674
+#: src/ResMgr.cc:694
 msgid "no closure defined for this setting"
 msgstr ""
 
@@ -347,7 +347,7 @@ msgstr ""
 msgid "dns cache hit\n"
 msgstr "acierto en el cache dns\n"
 
-#: src/Http.cc:1537 src/Resolver.cc:184 src/ftpclass.cc:3418
+#: src/Http.cc:1537 src/Resolver.cc:184 src/ftpclass.cc:3407
 msgid "Resolving host address..."
 msgstr "Resolviendo dirección del servidor..."
 
@@ -1447,143 +1447,143 @@ msgstr "No coincide la dirección del otro extremo de la conexión de datos"
 msgid "Switching to NOREST mode"
 msgstr "Conectando modo NOREST"
 
-#: src/ftpclass.cc:380
-msgid "Saw `Login incorrect', assume failed login"
-msgstr "Vi `Login incorrect', asumiendo indentificación fallida"
+#: src/ftpclass.cc:379
+msgid "Server reply matched ftp:retry-530[-anonymous], retrying"
+msgstr ""
 
-#: src/ftpclass.cc:420
+#: src/ftpclass.cc:419
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
 msgstr "ftp:está definido skey-force y el servidor no soporta ni OPIE ni S/KEY"
 
-#: src/ftpclass.cc:436
+#: src/ftpclass.cc:435
 msgid "Saw `unknown', assume failed login"
 msgstr "Vi `unknown', asumiendo identificación fallida"
 
-#: src/ftpclass.cc:447
+#: src/ftpclass.cc:446
 msgid "assuming failed host name lookup"
 msgstr "asumiendo falla en la búsqueda del nombre de servidor"
 
-#: src/ftpclass.cc:678
+#: src/ftpclass.cc:677
 msgid "cannot parse EPSV response"
 msgstr "no se pudo interpretar la respuesta EPSV"
 
-#: src/Http.cc:753 src/ftpclass.cc:1028
+#: src/Http.cc:753 src/ftpclass.cc:1027
 msgid "Closing idle connection"
 msgstr "Cerrando conexión ociosa"
 
-#: src/Http.cc:881 src/ftpclass.cc:1107
+#: src/Http.cc:881 src/ftpclass.cc:1106
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "no se pudo crear un socket de la familia %d de direcciones"
 
-#: src/ftpclass.cc:1284
+#: src/ftpclass.cc:1283
 msgid "SITE CHMOD is not supported by this site"
 msgstr "El servidor no soporta el comando SITE CHMOD"
 
-#: src/ftpclass.cc:1632 src/ftpclass.cc:1665
+#: src/ftpclass.cc:1631 src/ftpclass.cc:1664
 msgid "unsupported network protocol"
 msgstr "protocolo de red no soportado"
 
-#: src/ftpclass.cc:1774
+#: src/ftpclass.cc:1773
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "Conectando socket de datos a (%s) port %u"
 
-#: src/ftpclass.cc:1799 src/ftpclass.cc:3301
+#: src/ftpclass.cc:1798 src/ftpclass.cc:3290
 msgid "Switching passive mode off"
 msgstr "Desconectando modo pasivo"
 
-#: src/Http.cc:960 src/ftpclass.cc:2213
+#: src/Http.cc:960 src/ftpclass.cc:2212
 msgid "Peer closed connection"
 msgstr "El otro extremo cerró la conexión"
 
-#: src/ftpclass.cc:2240
+#: src/ftpclass.cc:2239
 msgid "Persist and retry"
 msgstr "Persistir y reintentar"
 
-#: src/ftpclass.cc:2337
+#: src/ftpclass.cc:2336
 msgid "Closing control socket"
 msgstr "Cerrando socket de control"
 
-#: src/ftpclass.cc:2418
+#: src/ftpclass.cc:2417
 msgid "Closing data socket"
 msgstr "Cerrando socket de datos"
 
-#: src/ftpclass.cc:3148
+#: src/ftpclass.cc:3135
 msgid "saw file size in response"
 msgstr "vi tamaño del archivo en la respuesta"
 
-#: src/ftpclass.cc:3159
+#: src/ftpclass.cc:3146
 msgid "remote end closes connection"
 msgstr "el extremo remoto cierra la conexión"
 
-#: src/ftpclass.cc:3167
+#: src/ftpclass.cc:3154
 msgid "extra server response"
 msgstr "respuesta extra del servidor"
 
-#: src/ftpclass.cc:3179 src/ftpclass.cc:3204
+#: src/ftpclass.cc:3166 src/ftpclass.cc:3191
 msgid "Turning on sync-mode"
 msgstr "Activando sync-mode"
 
-#: src/ftpclass.cc:3318
+#: src/ftpclass.cc:3307
 msgid "Switching passive mode on"
 msgstr "Conectando modo pasivo"
 
-#: src/ftpclass.cc:3369
+#: src/ftpclass.cc:3358
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "Está asignado el parámetro ssl-force y el sistema no soporta o no permite SSL"
 
-#: src/ftpclass.cc:3408
+#: src/ftpclass.cc:3397
 msgid "Sending commands..."
 msgstr "Enviando comandos..."
 
-#: src/Http.cc:1550 src/ftpclass.cc:3410 src/ftpclass.cc:3435
-#: src/ftpclass.cc:3442
+#: src/Http.cc:1550 src/ftpclass.cc:3399 src/ftpclass.cc:3424
+#: src/ftpclass.cc:3431
 msgid "Waiting for response..."
 msgstr "Esperando respuesta..."
 
-#: src/Http.cc:1545 src/ftpclass.cc:3411
+#: src/Http.cc:1545 src/ftpclass.cc:3400
 msgid "Connection idle"
 msgstr "Conexión ociosa"
 
-#: src/Http.cc:1543 src/ftpclass.cc:3424
+#: src/Http.cc:1543 src/ftpclass.cc:3413
 msgid "Connecting..."
 msgstr "Conectándose..."
 
-#: src/ftpclass.cc:3428
+#: src/ftpclass.cc:3417
 msgid "TLS negotiation..."
 msgstr "Negociando TLS..."
 
-#: src/ftpclass.cc:3430
+#: src/ftpclass.cc:3419
 msgid "Connected"
 msgstr "Conectado"
 
-#: src/ftpclass.cc:3432
+#: src/ftpclass.cc:3421
 msgid "Logging in..."
 msgstr "Identificándose..."
 
-#: src/ftpclass.cc:3436
+#: src/ftpclass.cc:3425
 msgid "Making data connection..."
 msgstr "Estableciendo la conexión de datos..."
 
-#: src/ftpclass.cc:3438
+#: src/ftpclass.cc:3427
 msgid "Changing remote directory..."
 msgstr "Cambiando el directorio remoto..."
 
-#: src/ftpclass.cc:3441 src/ftpclass.cc:3453
+#: src/ftpclass.cc:3430 src/ftpclass.cc:3442
 msgid "Waiting for transfer to complete"
 msgstr "Esperando que finalice la transferencia"
 
-#: src/ftpclass.cc:3444
+#: src/ftpclass.cc:3433
 msgid "Waiting for data connection..."
 msgstr "Esperando la conexión de datos..."
 
-#: src/Http.cc:1548 src/ftpclass.cc:3449
+#: src/Http.cc:1548 src/ftpclass.cc:3438
 msgid "Sending data"
 msgstr "Enviando datos"
 
-#: src/Http.cc:1553 src/ftpclass.cc:3451
+#: src/Http.cc:1553 src/ftpclass.cc:3440
 msgid "Receiving data"
 msgstr "Recibiendo datos"
 
@@ -1996,6 +1996,9 @@ msgstr ""
 #: src/module.cc:201
 msgid "modules are not supported on this system"
 msgstr "este sistema no soporta el uso de módulos"
+
+#~ msgid "Saw `Login incorrect', assume failed login"
+#~ msgstr "Vi `Login incorrect', asumiendo indentificación fallida"
 
 #~ msgid "%s: cannot add empty bookmark\n"
 #~ msgstr "%s: no se puede agregar un señalador vacío\n"
