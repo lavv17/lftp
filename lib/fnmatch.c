@@ -40,6 +40,8 @@
 # include <stdlib.h>
 #endif
 
+#include "xalloca.h"
+
 /* For platform which support the ISO C amendement 1 functionality we
    support user defined character classes.  */
 #if defined _LIBC || (defined HAVE_WCTYPE_H && defined HAVE_WCHAR_H)
