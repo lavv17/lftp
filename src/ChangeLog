@@ -1,3 +1,7 @@
+2001-10-12  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* url.cc: optimize user/password extraction using strrchr.
+
 2001-10-12  Jonas Jensen <bones@huleboer.dk>
 
 	* url.cc: allow @ in password.
