@@ -1,17 +1,16 @@
-%define	name	lftp
-%define	version	2.0.4
-%define	release	1
-%define	serial	1
+%define name lftp
+%define version 2.0.4
 
-Summary:	LFTP command line file transfer program
-Name:		%{name}
-Version:	%{version}
-Release:	%{release}
-Copyright:	GPL
-Group:		Applications/Internet
-Url:		http://ftp.yars.free.net/projects/lftp/
-Source:		%{name}-%{version}.tar.gz
-BuildRoot:	/var/tmp/%{name}-%{version}
+Summary: The lftp command line ftp/http client
+Name: %{name} 
+Version: %{version}
+Release: 1
+Copyright: GPL
+Url: http://ftp.yars.free.net/projects/lftp/
+BuildRoot: /var/tmp/%{name}-%{version}-root
+Source: ftp.yars.free.net:/pub/software/unix/net/ftp/client/lftp/%{name}-%{version}.tar.gz
+Group: Applications/Networking
+
 
 %description
 LFTP is a shell-like command line ftp client. It is
@@ -24,43 +23,43 @@ or close modem connection. Lftp has reput, mirror, reverse
 mirror among its features. Since version 2.0 it also supports
 http protocol.
 
-%prep
-%setup -q -n %{name}-%{version}
 
-%build
-./configure --prefix=/usr --sysconfdir=/etc
-make all
+
+%prep
+rm -rf $RPM_BUILD_ROOT
+
+%setup
+CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=/usr
+make
 
 %install
-if [ -e $RPM_BUILD_ROOT ]; then rm -rf $RPM_BUILD_ROOT; fi
-mkdir $RPM_BUILD_ROOT
-
-# can't just use this, we should install things manually
-make prefix=$RPM_BUILD_ROOT/usr sysconfdir=$RPM_BUILD_ROOT/etc install
-
-mkdir -p -m 0755 $RPM_BUILD_ROOT/etc
-install -m 644 lftp.conf $RPM_BUILD_ROOT/etc/lftp.conf
-
-# no shared libraries yet
-#%post -p /sbin/ldconfig
-#%postun -p /sbin/ldconfig
+rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT/etc
+make prefix=$RPM_BUILD_ROOT/usr install
+install -c -m 644 lftp.conf $RPM_BUILD_ROOT/etc/lftp.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files
-%defattr(-, root, root)
-%doc ABOUT-NLS BUGS COPYING ChangeLog FAQ INSTALL NEWS README README.modules THANKS TODO
-%config /etc/lftp.conf
-/usr/man/man1/ftpget.1
-/usr/man/man1/lftp.1
-/usr/bin/lftp
-/usr/bin/ftpget
-/usr/bin/lftpget
-/usr/share/lftp/import-ncftp
-/usr/share/lftp/import-netscape
-/usr/share/locale/
-
 %changelog
-* Fri Sep 10 1999 Wang Jian <lark@linux.net.cn>
-- Initial package
+* Tue Jul 27 1999 Adrian Likins <alikins@redhat.com>
+
+-initial release
+
+* Tue Sep 14 1999 Alexander Lukyanov <lav@yars.free.net>
+
+- add lftpget
+
+
+%files
+%defattr(644,root,root,755)
+%doc README README.modules FAQ ChangeLog THANKS COPYING TODO lftp.lsm NEWS INSTALL
+%doc /usr/man/man1/ftpget.1
+%doc /usr/man/man1/lftp.1
+%config /etc/lftp.conf
+%dir /usr/share/lftp
+%attr(755,root,root) /usr/share/lftp/*
+/usr/share/locale/*/*/*
+%attr(755,root,root) /usr/bin/lftp
+%attr(755,root,root) /usr/bin/ftpget
+%attr(755,root,root) /usr/bin/lftpget
