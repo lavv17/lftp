@@ -54,8 +54,6 @@ currently; some need other work to be done.
    of course, implement commands using two sessions where possible.
    ?? then proto-file will not be a module, that is it will be always loaded.
 
- * safety: options for permanent backup, maybe complain instead of overwriting.
-
  * mirror: add settings like mirror:default-time-prec. make default 0?.
 
  * ascii mode?

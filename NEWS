@@ -6,6 +6,7 @@
 * added a possibility to specify protocol family explicitly in host name:
   inet6,ftp.hostname.com will resolve to only inet6 address. This can be
   also acheived by `set dns:order/ftp.hostname.com inet6'.
+* added xfer:clobber setting. When it is off, get does not overwrite files.
 * fixed unlimited memory usage on `ls -R' when the listing is too large to be
   cached.
 
