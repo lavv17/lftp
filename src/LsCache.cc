@@ -69,10 +69,15 @@ void LsCache::CheckSize()
    }
 }
 
+ResDecl res_cache_empty_listings("cache:cache-empty-listings",  "no",ResMgr::BoolValidate,0);
+
 void LsCache::Add(FileAccess *p_loc,const char *a,int m,const char *d,int l)
 {
    if(!strcmp(p_loc->GetProto(),"file"))
       return;  // don't cache local objects
+   if(l == 0 &&
+	 !res_cache_empty_listings.QueryBool(p_loc->GetHostName()))
+      return;
 
    CheckSize();
 
@@ -110,11 +115,13 @@ void LsCache::Add(FileAccess *p_loc,const char *a,int m,const char *d,int l)
 
 void LsCache::Add(FileAccess *p_loc,const char *a,int m,const Buffer *ubuf)
 {
+   if(!ubuf->IsSaving())
+      return;
+
    const char *cache_buffer;
    int cache_buffer_size;
    ubuf->GetSaved(&cache_buffer,&cache_buffer_size);
-   if(cache_buffer && cache_buffer_size>0)
-      LsCache::Add(p_loc,a,m,cache_buffer,cache_buffer_size);
+   LsCache::Add(p_loc,a,m,cache_buffer,cache_buffer_size);
 }
 
 int LsCache::Find(FileAccess *p_loc,const char *a,int m,const char **d,int *l)

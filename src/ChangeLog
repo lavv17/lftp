@@ -1,3 +1,9 @@
+2002-04-27  Glenn Maynard <g_ld@zewt.org>
+
+	* LsCache.cc: add cache:cache-empty-listings.
+	* buffer.h: add IsSaving().
+	* FtpDirList.cc, Fish.cc: use alternative LsCache::Add.
+
 2002-04-23  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopyFtp.cc, resource.cc: add ftp:fxp-force setting.

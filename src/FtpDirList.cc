@@ -76,15 +76,7 @@ int FtpDirList::Do()
    if(b==0) // eof
    {
       buf->PutEOF();
-
-      const char *cache_buffer;
-      int cache_buffer_size;
-      ubuf->GetSaved(&cache_buffer,&cache_buffer_size);
-      if(cache_buffer && cache_buffer_size>0)
-      {
-	 LsCache::Add(session,pattern,FA::LONG_LIST,
-		      cache_buffer,cache_buffer_size);
-      }
+      LsCache::Add(session,pattern,FA::LONG_LIST, ubuf);
 
       return MOVED;
    }

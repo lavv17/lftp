@@ -88,6 +88,7 @@ public:
 
    // useful for cache.
    void Save(int m) { save=true; save_max=m; }
+   bool IsSaving() const { return save; }
    void GetSaved(const char **buf,int *size) const;
    void SaveRollback(int p);
 
