@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "14 Mar 2002"
+.TH lftp 1 "24 Jul 2002"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 2.5.0.
+This man page documents lftp version 2.6.0.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a program that allows sophisticated ftp and http connections to
@@ -623,6 +623,16 @@ Sleep given time interval and exit. Interval is in seconds by default, but
 can be suffixed with 'm', 'h', 'd' for minutes, hours and days respectively.
 See also \fBat\fP.
 
+.BR slot " [\fIname\fP]"
+.PP
+Select specified slot or list all slots allocated. A slot is a connection
+to a server, somewhat like a virtual console. You can create multiple slots
+connected to different servers and switch between them. You can also use
+\fIslot:name\fP as a pseudo-URL evaluating to that slot location.
+.PP
+Default readline binding allow quick switching between slots named 0-9 using
+Meta-0 - Meta-9 keys (often you can use Alt instead of Meta).
+
 .B source
 \fIfile\fP
 .PP
@@ -737,6 +747,9 @@ newline
 .B \es
 the name of the client (lftp)
 .TP
+.B \eS
+current slot name
+.TP
 .B \eu
 the username of the user you are logged in as
 .TP
@@ -757,6 +770,9 @@ the character corresponding to the octal number \fInnn\fP
 .TP
 .B \e\e
 a backslash
+.TP
+.B \e?
+skips next character if previous substitution was empty.
 .TP
 .B \e[
 begin a sequence of non-printing characters, which could be used to
@@ -984,7 +1000,7 @@ allow server/proxy side caching for ftp-over-http protocol.
 .TP
 .BR hftp:proxy \ (URL)
 specifies http proxy for ftp-over-http protocol (hftp). The protocol hftp
-cannot work without http proxy, obviously.
+cannot work without a http proxy, obviously.
 Default value is taken from environment
 variable \fBftp_proxy\fP if it starts with ``http://'', otherwise from
 environment variable \fBhttp_proxy\fP.  If your ftp proxy
@@ -1076,13 +1092,15 @@ interrupt background transfers to complete a foreground operation.
 disconnect from server after that number of idle seconds.
 .TP
 .BR net:limit-rate " (bytes per second)"
-limit transfer rate on data connection. 0 means unlimited.
+limit transfer rate on data connection. 0 means unlimited. You can specify
+two numbers separated by colon to limit download and upload rate separately.
 .TP
 .BR net:limit-max \ (bytes)
 limit accumulating of unused limit-rate. 0 means unlimited.
 .TP
-.BR net:limit-total-rate \ (bytes " " per " " second)
-limit transfer rate of all connections in sum. 0 means unlimited.
+.BR net:limit-total-rate " (bytes per second)"
+limit transfer rate of all connections in sum. 0 means unlimited. You can specify
+two numbers separated by colon to limit download and upload rate separately.
 Note that sockets have receive buffers on them, this can lead to network
 link load higher than this rate limit just after transfer beginning. You
 can try to set net:socket-buffer to relatively small value to avoid this.
@@ -1127,6 +1145,28 @@ this option, but linux does.
 .TP
 .BR net:timeout \ (seconds)
 sets the network protocol timeout.
+.TP
+.BR ssl:ca-file " (path to file)"
+use specified file as Certificate Authority certificate.
+.TP
+.BR ssl:ca-path " (path to directory)"
+use specified directory as Certificate Authority certificate repository.
+.TP
+.BR ssl:crl-file " (path to file)"
+use specified file as Certificate Revocation List certificate.
+.TP
+.BR ssl:crl-path " (path to directory)"
+use specified directory as Certificate Revocation List certificate repository.
+.TP
+.BR ssl:key-file " (path to file)"
+use specified file as your private key.
+.TP
+.BR ssl:cert-file " (path to file)"
+use specified file as your certificate.
+.TP
+.BR ssl:verify-certificate \ (boolean)
+if set to yes, then verify server's certificate to be signed by a known
+Certificate Authority and not be on Certificate Revocation List.
 .TP
 .BR xfer:clobber \ (bool)
 if this setting is off, get commands will not overwrite existing

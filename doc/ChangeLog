@@ -1,3 +1,8 @@
+2002-07-24	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ssl vars, slot command, \? in prompt, new limit-rate
+	  format.
+
 2002-03-03	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document new mirror ability to mirror between two URLs.
