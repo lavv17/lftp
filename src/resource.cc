@@ -143,6 +143,8 @@ const char *OrderValidate(char **s)
    *s=fixed;
    return 0;
 }
+
+#ifdef USE_SSL
 static
 const char *AuthArgValidate(char **s)
 {
@@ -157,6 +159,7 @@ const char *AuthArgValidate(char **s)
 
    return 0;
 }
+#endif
 
 // Static array of objects is wrongly initialized by IRIX CC and Unixware c++.
 // So here goes list of arbitrarily named objects, they are not refered by name.
