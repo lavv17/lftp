@@ -27,11 +27,15 @@ extern "C" {
 # include <curses.h>
 # if defined(HAVE_TERM_H)
 #  include <term.h>
+# elif defined(HAVE_NCURSES_TERM_H)
+#  include <ncurses/term.h>
 # endif
 #elif defined(HAVE_NCURSES_CURSES_H)
 #include <ncurses/curses.h>
 # if defined(HAVE_NCURSES_TERM_H)
 #  include <ncurses/term.h>
+# elif defined(HAVE_TERM_H)
+#  include <term.h>
 # endif
 #endif
 }
