@@ -1,5 +1,9 @@
 1999-09-27  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* HttpDir.cc: strip leading slash in links to /~user.
+
+1999-09-27  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* Http.cc: create rate_limit for STORE mode.
 	* lftp.cc: close fd 0; call setsid.
 

@@ -219,6 +219,9 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
    if(*link_target==0)
       return tag_len;	// no target ?
 
+   if(link_target[0]=='/' && link_target[1]=='~')
+      link_target++;
+
    bool base_href_applied=false;
 
 parse_url_again:
