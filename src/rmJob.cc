@@ -41,9 +41,11 @@ void  rmJob::SayFinal()
    else if(failed)
    {
       if(mode==FA::REMOVE_DIR)
-	 printf(_("%s failed for %d of %d directories\n"),op,failed,file_count);
+	 printf(plural("%s failed for %d of %d director$y|ies$\n",file_count),
+	    op,failed,file_count);
       else
-	 printf(_("%s failed for %d of %d files\n"),op,failed,file_count);
+	 printf(plural("%s failed for %d of %d file$|s$\n",file_count),
+	    op,failed,file_count);
    }
    else
    {

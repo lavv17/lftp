@@ -34,6 +34,9 @@
 #include "xmalloc.h"
 
 #ifdef RTLD_NOW
+# ifndef RTLD_GLOBAL
+#  define RTLD_GLOBAL 0
+# endif
 # define DLOPEN_FLAGS RTLD_NOW|RTLD_GLOBAL
 #else
 /* SunOS4 manual says it is reserved and must be 1 */
@@ -165,12 +168,12 @@ void *module_load(const char *path,int argc,const char *const *argv)
       return 0;
    }
 #endif
-#endif
+#endif //0
    init=(init_t)dlsym(map,"module_init");
    if(init)
       (*init)(argc,argv);
    return map;
-#else
+#else // !HAVE_DLOPEN
    return 0;
 #endif
 }

@@ -125,7 +125,8 @@ void  mkdirJob::SayFinal()
       // A directory has just been created
       printf(_("%s ok, `%s' created\n"),op,first);
    else if(failed)
-      printf(_("%s failed for %d of %d directories\n"),op,failed,file_count);
+      printf(plural("%s failed for %d of %d director$y|ies$\n",file_count),
+	    op,failed,file_count);
    else
       printf(plural("%s ok, %d director$y|ies$ created\n",file_count),
 	    op,file_count);

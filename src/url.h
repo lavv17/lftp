@@ -28,11 +28,11 @@ class ParsedURL
    char	 *memory;
 public:
    char	 *proto;
-   char  *user;
+   char	 *user;
    char	 *pass;
-   char  *host;
+   char	 *host;
    char	 *port;
-   char  *path;
+   char	 *path;
 
    char  *orig_url;
 

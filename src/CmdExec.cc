@@ -33,6 +33,7 @@
 #include "misc.h"
 #include "ResMgr.h"
 #include "module.h"
+#include "url.h"
 
 #define RL_PROMPT_START_IGNORE	'\001'
 #define RL_PROMPT_END_IGNORE	'\002'
@@ -364,17 +365,56 @@ int CmdExec::Do()
 	    session->Close();
 	    exit_code=0;
 	    builtin=BUILTIN_NONE;
+	    redirections=0;
 	    beep_if_long();
 	    return MOVED;
 	 }
 	 if(res<0)
 	 {
+	    if(res==FA::FILE_MOVED)
+	    {
+	       // cd to another url.
+	       const char *loc_c=session->GetNewLocation();
+	       int max_redirections=ResMgr::Query("xfer:max-redirections",0);
+	       if(loc_c && loc_c[0] && max_redirections>0
+	       && loc_c[strlen(loc_c)-1]=='/')
+	       {
+		  eprintf(_("cd: received redirection to `%s'\n"),loc_c);
+		  if(++redirections>max_redirections)
+		  {
+		     eprintf("cd: %s\n",_("Too many redirections"));
+		     goto cd_err_done;
+		  }
+
+		  char *loc=alloca_strdup(loc_c);
+		  session->Close(); // loc_c is no longer valid.
+
+		  ParsedURL u(loc,true);
+
+		  if(!u.proto)
+		  {
+		     url::decode_string(loc);
+		     session->Chdir(loc);
+		     Roll(session);
+		     return MOVED;
+		  }
+		  builtin=BUILTIN_NONE;
+		  char *cmd=string_alloca(6+3+2*strlen(loc));
+		  strcpy(cmd,"open \"");
+		  unquote(cmd+strlen(cmd),loc);
+		  strcat(cmd,"\";");
+		  PrependCmd(cmd);
+	       	  return MOVED;
+	       }
+	    }
 	    // error
 	    if(status_line)
 	       status_line->Clear();
 	    eprintf("%s: %s\n",args->getarg(0),session->StrError(res));
+	 cd_err_done:
 	    session->Close();
 	    builtin=BUILTIN_NONE;
+	    redirections=0;
 	    beep_if_long();
 	    exit_code=1;
 	    return MOVED;
@@ -390,6 +430,7 @@ int CmdExec::Do()
 	    session->Close();
 	    ReuseSavedSession();
 	    builtin=BUILTIN_NONE;
+	    redirections=0;
 	    beep_if_long();
 	    exit_code=0;
 
@@ -403,6 +444,7 @@ int CmdExec::Do()
 	    session->Close();
 	    RevertToSavedSession();
 	    builtin=BUILTIN_NONE;
+	    redirections=0;
 	    beep_if_long();
 	    exit_code=1;
 	    return MOVED;
@@ -434,6 +476,7 @@ int CmdExec::Do()
 	       args=args_glob;
 	       args_glob=0;
 	       builtin=BUILTIN_NONE;
+	       redirections=0;
 	       if(status_line)
 		  status_line->Clear();
 	       exit_code=prev_exit_code;
@@ -473,6 +516,7 @@ int CmdExec::Do()
 	       session->Close();
 	       exit_code=0;
 	       builtin=BUILTIN_NONE;
+	       redirections=0;
 	       return MOVED;
 	    }
 	    else
@@ -769,6 +813,8 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
    glob=0;
    args_glob=0;
 
+   redirections=0;
+
    is_queue=false;
    queue_cwd=0;
    queue_lcwd=0;
@@ -1035,6 +1081,7 @@ int CmdExec::AcceptSig(int sig)
 	 abort(); // should not happen
       }
       builtin=BUILTIN_NONE;
+      redirections=0;
       exit_code=1;
       return MOVED;
    }

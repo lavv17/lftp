@@ -124,6 +124,8 @@ private:
    GlobURL *glob;
    ArgV *args_glob;
 
+   int redirections;
+
    static CmdExec *chain;
    CmdExec *next;
 

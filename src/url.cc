@@ -109,6 +109,16 @@ ParsedURL::ParsedURL(const char *url,bool proto_required)
       *scan++=0;
       path=scan;
    }
+   else if(proto)
+   {
+      if(!strcmp(proto,"http") || !strcmp(proto,"https"))
+      {
+	 scan++;
+	 scan[0]='/';
+	 scan[1]=0;
+	 path=scan;
+      }
+   }
 
    // try to extract user name/password
    scan=base;
