@@ -26,8 +26,8 @@
 #include <stdio.h>
 #include "CmdExec.h"
 
-extern int  remote_completion;
-int   lftp_rl_getc(FILE *);
 extern CmdExec *completion_shell;
+extern int remote_completion;
+int   lftp_rl_getc(FILE *);
 
 #endif //COMPLETE_H

@@ -122,6 +122,7 @@ public:
    void	 SubtractSame(const FileSet *,bool only_newer,time_t prec,int ignore);
    void	 SubtractAny(const FileSet *);
    void  SubtractOlderThan(time_t t);
+   void  SubtractNotIn(const FileSet *);
 
    void	 Exclude(const char *prefix,regex_t *exclude,regex_t *include);
    void	 ExcludeDots();
@@ -136,7 +137,7 @@ public:
 
    void Count(int *d,int *f,int *s,int *o);
 
-   FileInfo *FindByName(const char *name);
+   FileInfo *FindByName(const char *name) const;
 
    void  SetSize(const char *name,long size)
    {

@@ -40,6 +40,7 @@
 #include "xstring.h"
 #include "xmalloc.h"
 #include "ResMgr.h"
+#include "log.h"
 
 #ifndef T_SRV
 # define T_SRV 33
@@ -64,9 +65,12 @@ CDECL int res_search(const char*,int,int,unsigned char*,int);
 #endif
 
 static ResDecl
-   res_timeout	  ("dns:fatal-timeout","0", ResMgr::UNumberValidate,0),
-   res_order	  ("dns:order",	       DEFAULT_ORDER, Resolver::OrderValidate,0),
-   res_query_srv  ("dns:SRV-query",    "no", ResMgr::BoolValidate,0);
+   res_cache_enable("dns:cache-enable", "yes", ResMgr::BoolValidate,0),
+   res_cache_expire("dns:cache-expire", "24h", ResMgr::TimeIntervalValidate,0),
+   res_cache_size  ("dns:cache-size",   "256", ResMgr::UNumberValidate,0),
+   res_timeout	   ("dns:fatal-timeout","0",   ResMgr::UNumberValidate,0),
+   res_order	   ("dns:order",	DEFAULT_ORDER, Resolver::OrderValidate,0),
+   res_query_srv   ("dns:SRV-query",    "no",  ResMgr::BoolValidate,0);
 
 
 struct address_family
@@ -83,6 +87,7 @@ static const address_family af_list[]=
    { -1, 0 }
 };
 
+ResolverCache *Resolver::cache;
 
 Resolver::Resolver(const char *h,const char *p,const char *defp,
 		   const char *ser,const char *pr)
@@ -107,6 +112,8 @@ Resolver::Resolver(const char *h,const char *p,const char *defp,
    buf=0;
 
    error=0;
+
+   no_cache=false;
 }
 
 Resolver::~Resolver()
@@ -140,6 +147,23 @@ int   Resolver::Do()
 
    int m=STALL;
 
+   if(!no_cache)
+   {
+      const sockaddr_u *a;
+      int n;
+      cache->Find(hostname,portname,defport,service,proto,&a,&n);
+      if(a && n>0)
+      {
+	 Log::global->Write(10,"dns cache hit\n");
+	 addr_num=n;
+	 addr=(sockaddr_u*)xmalloc(n*sizeof(*addr));
+	 memcpy(addr,a,n*sizeof(*addr));
+	 done=true;
+	 return MOVED;
+      }
+      no_cache=true;
+   }
+
    if(pipe_to_child[0]==-1)
    {
       int res=pipe(pipe_to_child);
@@ -157,6 +181,7 @@ int   Resolver::Do()
       fcntl(pipe_to_child[0],F_SETFD,FD_CLOEXEC);
       fcntl(pipe_to_child[1],F_SETFD,FD_CLOEXEC);
       m=MOVED;
+      Log::global->Format(4,"---- %s\n",_("Resolving host address..."));
    }
 
    if(!w)
@@ -251,6 +276,7 @@ int   Resolver::Do()
    addr=(sockaddr_u*)xmalloc(n);
    memcpy(addr,s,n);
    done=true;
+   cache->Add(hostname,portname,defport,service,proto,addr,addr_num);
    return MOVED;
 }
 
@@ -583,7 +609,20 @@ void Resolver::LookupOne(const char *name)
    int af_index=0;
    int af_order[16];
 
-   ParseOrder(res_order.Query(name),af_order);
+   const char *order=res_order.Query(name);
+
+   const char *proto_delim=strchr(name,',');
+   if(proto_delim)
+   {
+      char *o=string_alloca(proto_delim-name+1);
+      memcpy(o,name,proto_delim-name);
+      o[proto_delim-name]=0;
+      if(ParseOrder(o,0)==0) // check if the protocol name is valid.
+	 order=o;
+      name=proto_delim+1;
+   }
+
+   ParseOrder(order,af_order);
 
    for(;;)
    {
@@ -678,11 +717,101 @@ void Resolver::DoGethostbyname()
    return;
 }
 
-void Resolver::Reconfig()
+void Resolver::Reconfig(const char *name)
 {
    timeout = res_timeout.Query(0);
+   if(!name || strncmp(name,"dns:",4))
+      return;
+   cache->Clear();
 }
 
 void Resolver::ClassInit()
 {
+   cache=new ResolverCache;
+}
+
+
+ResolverCache::ResolverCache()
+{
+   chain=0;
+}
+void ResolverCache::Add(const char *h,const char *p,const char *defp,
+	 const char *ser,const char *pr,const sockaddr_u *a,int n)
+{
+   Entry **ptr=FindPtr(h,p,defp,ser,pr);
+   if(ptr && *ptr)
+   {
+      // delete old
+      Entry *next=(*ptr)->next;
+      delete *ptr;
+      *ptr=next;
+   }
+   chain=new Entry(chain,h,p,defp,ser,pr,a,n);
+}
+ResolverCache::Entry **ResolverCache::FindPtr(const char *h,const char *p,
+	 const char *defp,const char *ser,const char *pr)
+{
+   CacheCheck();
+   Entry **scan=&chain;
+   while(*scan)
+   {
+      Entry *s=*scan;
+      if(!xstrcmp(s->hostname,h)
+      && !xstrcmp(s->portname,p)
+      && !xstrcmp(s->defport,defp)
+      && !xstrcmp(s->service,ser)
+      && !xstrcmp(s->proto,pr))
+	 return scan;
+      scan=&s->next;
+   }
+   return 0;
+}
+void ResolverCache::Clear()
+{
+   while(chain)
+   {
+      Entry *next=chain->next;
+      delete chain;
+      chain=next;
+   }
+}
+void ResolverCache::Find(const char *h,const char *p,const char *defp,
+	 const char *ser,const char *pr,const sockaddr_u **a,int *n)
+{
+   *a=0;
+   *n=0;
+
+   // if cache is disabled for this host, return nothing.
+   if(!(bool)res_cache_enable.Query(h))
+      return;
+
+   Entry **ptr=FindPtr(h,p,defp,ser,pr);
+   if(ptr && *ptr)
+   {
+      Entry *s=*ptr;
+      *a=s->addr;
+      *n=s->addr_num;
+   }
+}
+
+// FIXME: this function can be speed-optimized.
+void ResolverCache::CacheCheck()
+{
+   int countlimit=res_cache_size.Query(0);
+   int count=0;
+   Entry **scan=&chain;
+   while(*scan)
+   {
+      Entry *s=*scan;
+      TimeInterval expire((const char *)res_cache_expire.Query(s->hostname));
+      if((!expire.IsInfty() && SMTask::now-s->timestamp>expire.Seconds())
+      || (count>=countlimit))
+      {
+	 *scan=s->next;
+	 delete s;
+	 continue;
+      }
+      scan=&s->next;
+      count++;
+   }
 }

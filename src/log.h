@@ -33,8 +33,8 @@ class Log : public SMTask
    int output;
    bool need_close_output;
    bool tty;
-   StatusLine *sl;
-   bool sl_cleared;
+   typedef void (*tty_cb_t)();
+   tty_cb_t tty_cb;
 
    void CloseOutput()
       {
@@ -65,15 +65,13 @@ public:
 	 if(output!=-1)
 	    tty=isatty(output);
       }
-   void SetStatusLine(StatusLine *s) { sl=s; }
+
+   void SetCB(tty_cb_t cb) { tty_cb=cb; }
+
+   bool IsTTY() { return tty; }
 
    void Init();
    Log() { Init(); }
-   Log(StatusLine *s)
-      {
-	 Init();
-	 SetStatusLine(s);
-      }
    ~Log();
 
    int Do();

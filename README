@@ -1,4 +1,4 @@
-** lftp-2.0
+** lftp-2.1
 
 This package `lftp' contains the following components:
 
@@ -11,7 +11,7 @@ This package `lftp' contains the following components:
    ftpget
       a simple non-interactive tool for downloading files (deprecated)
 
-These programs are written in C++ and are cooperative-threaded.
+These programs are written in C++, in a cooperative-threaded model.
 
 
 lftp
@@ -76,8 +76,8 @@ Variable names can be abbreviated and prefix can be omitted unless the
 rest becomes ambiguous.
 
 See man page for other variables. You can also use `set -a' to see all
-current valiables and their values, and `set -d' to see variable
-defaults.
+current valiables and their values, and `set -d' to see default values
+of all variables.
 
 Where to get
 ~~~~~~~~~~~~
@@ -124,10 +124,10 @@ network packet.
 Systems
 ~~~~~~~
 The package is known to compile on Solaris2.5(gcc), Linux, FreeBSD,
-SCO v5.0(gcc), IRIX(gcc). If you can't compile it on your system, let
-me know. It is possible that lftp version 2.0 can be compiled with
-non-gcc compilers since it does not have gcc-isms, and it was
-successfully compiled by Sun C++ v5.0 compiler using
+SCO v5.0(gcc), IRIX(gcc) and other systems. If you can't compile it on
+your system, let me know. It is possible that lftp version 2.0 can be
+compiled with non-gcc compilers since it does not have gcc-isms, and
+it was successfully compiled by Sun C++ v5.0 compiler using
 CXXFLAGS="-compat=4 -features=bool".
 
 

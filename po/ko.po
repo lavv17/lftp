@@ -1,246 +1,246 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
-# Wang Jian <lark@linux.net.cn>
+# Dojip Kim <greendrm@kamsi.yonsei.ac.kr>, 1999.
 #
-#
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp-2.0.4\n"
+"Project-Id-Version: lftp 2.1.1\n"
 "POT-Creation-Date: 1999-10-22 19:30+0400\n"
-"PO-Revision-Date: 1999-09-10 00:50+0800\n"
-"Last-Translator: Wang Jian <lark@linux.net.cn>\n"
-"Language-Team: zh <zh@li.org>\n"
+"PO-Revision-Date: 1999-10-20 \n"
+"Last-Translator: Dojip Kim <greendrm@kamsi.yonsei.ac.kr>\n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=gb2312\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Type: text/plain; charset=EUC-KR\n"
+"Content-Transfer-Encoding: 8-bit\n"
 
 #: src/CatJob.cc:50 src/CatJob.cc:61
 msgid "Waiting for filter to terminate"
-msgstr "等待过滤器中止"
+msgstr "鞘磐 辆丰甫 困窍咯 扁促赋聪促"
 
 #: src/CmdExec.cc:71
 #, c-format
 msgid "Warning: getcwd() failed: %s\n"
-msgstr "警告: getcwd() 失败: %s\n"
+msgstr "版绊: getcwd() 角菩: %s\n"
 
 #: src/CmdExec.cc:93
 #, c-format
 msgid "Warning: chdir(%s) failed: %s\n"
-msgstr "警告: chdir(%s) 失败: %s\n"
+msgstr "版绊: chdir(%s) 角菩: %s\n"
 
 #: src/CmdExec.cc:201
 #, c-format
 msgid "Unknown command `%s'.\n"
-msgstr "未知命令 `%s'.\n"
+msgstr "`%s' 舅荐 绝绰 疙飞绢.\n"
 
 #: src/CmdExec.cc:203
 #, c-format
 msgid "Ambiguous command `%s'.\n"
-msgstr "不明确的命令 `%s'.\n"
+msgstr "`%s' 葛龋茄 疙飞绢.\n"
 
 #: src/CmdExec.cc:346
 #, c-format
 msgid "cd ok, cwd=%s\n"
-msgstr "cd 成功, 当前目录=%s\n"
+msgstr "cd 己傍, cwd=%s\n"
 
 #: src/CmdExec.cc:452 src/CmdExec.cc:510
 msgid "Interrupt"
-msgstr "中断"
+msgstr "牢磐反飘"
 
 #: src/CmdExec.cc:568
 msgid "Warning: discarding incomplete command\n"
-msgstr "警告: 放弃未完成的命令\n"
+msgstr "版绊: 阂肯傈茄 疙飞绢 公矫\n"
 
 #: src/CmdExec.cc:652
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
-msgstr "\t执行内建的 `%s' [%s]\n"
+msgstr ""
 
 #: src/CmdExec.cc:660
 msgid "\tCommands queued:\n"
-msgstr ""
+msgstr "\t疙飞绢 措扁:\n"
 
 #: src/CmdExec.cc:679
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
-msgstr "\t等待任务 [%d] 中止\n"
+msgstr "\t累诀 [%d]狼 辆丰甫 扁促赋聪促\n"
 
 #: src/CmdExec.cc:683
 #, c-format
 msgid "\tRunning\n"
-msgstr "\t正在运行\n"
+msgstr "\t角青吝\n"
 
 #: src/FileAccess.cc:210
 #, c-format
 msgid "Socket error (%s) - reconnecting"
-msgstr "Socket 错误 (%s) - 重新连接"
+msgstr "(%s) 家南 坷幅 - 犁立加"
 
 #: src/FileAccess.cc:296
 #, c-format
 msgid "Access failed: %s"
-msgstr "访问失败: %s"
+msgstr "立加 角菩: %s"
 
 #: src/FileAccess.cc:299
 msgid "File cannot be accessed"
-msgstr "不能访问文件"
+msgstr "颇老阑 佬阑 荐 绝嚼聪促"
 
 #: src/FileAccess.cc:301 src/ftpclass.cc:2545 src/ftpclass.cc:2555
 msgid "Not connected"
-msgstr "没有连接上"
+msgstr "立加登瘤 臼疽嚼聪促"
 
 #: src/FileAccess.cc:307
 #, c-format
 msgid "Fatal error: %s"
-msgstr "严重错误: %s"
+msgstr "摹疙利 坷幅: %s"
 
 #: src/FileAccess.cc:310
 msgid "Fatal error"
-msgstr "严重错误"
+msgstr "摹疙利 坷幅"
 
 #: src/FileAccess.cc:312
 msgid "Store failed - you have to reput"
-msgstr "保存失败 - 你必须重新上传"
+msgstr "历厘 角菩 - 犁涝仿窍绞矫坷"
 
 #: src/FileAccess.cc:314 src/ftpclass.cc:2587
 msgid "Login failed"
-msgstr "登录失败"
+msgstr "肺弊牢 角菩"
 
 #: src/FileAccess.cc:316
 msgid "Operation not supported"
-msgstr "不支持的操作"
+msgstr "瘤盔登瘤 臼绰 坷欺饭捞记涝聪促"
 
 #: src/FtpListInfo.cc:226 src/HttpDir.cc:1150
 #, c-format
 msgid "Getting directory contents (%ld)"
-msgstr "正在读取目录内容 (%ld)"
+msgstr "叼泛配府 郴侩阑 啊廉坷绰 吝 (%ld)"
 
 #: src/FtpListInfo.cc:230 src/HttpDir.cc:1155
 #, c-format
 msgid "Getting files information (%d%%)"
-msgstr "正在读取文件信息 (%d%%)"
+msgstr "颇老 沥焊甫 啊廉坷绰 吝 (%d%%)"
 
 #: src/GetJob.cc:68
 #, c-format
 msgid "remote rm(%s) - %s\n"
-msgstr "远程删除(%s) - %s\n"
+msgstr "盔芭府 rm(%s) -%s\n"
 
 #: src/GetJob.cc:164
 #, c-format
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
-msgstr ""
+msgstr "%s: %s: 颇老捞 捞固 粮犁窍哥 xfer: clobber啊 汲沥登绢 乐瘤 臼嚼聪促\n"
 
 #: src/Job.cc:222
 #, c-format
 msgid "[%d] Done (%s)"
-msgstr "[%d] 完成 (%s)"
+msgstr "[%d] 肯丰 (%s)"
 
 #: src/LsCache.cc:152
 msgid "Cache is on"
-msgstr "缓冲打开了"
+msgstr "某矫 脑"
 
 #: src/LsCache.cc:154
 msgid "Cache is off"
-msgstr "缓冲关闭了"
+msgstr "某矫 阐"
 
 #: src/LsCache.cc:160
 #, c-format
 msgid "%ld $#l#byte|bytes$ cached"
-msgstr "缓冲了 %ld 字节"
+msgstr ""
 
 #: src/LsCache.cc:163
 msgid ", no size limit"
-msgstr ", 没有大小限制"
+msgstr ", 农扁 力茄 绝澜"
 
 #: src/LsCache.cc:165
 #, c-format
 msgid ", maximum size %ld\n"
-msgstr ", 最大为 %ld\n"
+msgstr ", 弥措 农扁 %ld\n"
 
 #: src/LsCache.cc:168
 msgid "Cache entries do not expire"
-msgstr "缓冲条目不过期"
+msgstr "某矫 郴侩 父扁登瘤 臼疽嚼聪促"
 
 #: src/LsCache.cc:170
 #, c-format
 msgid "Cache entries expire in %ld $#l#second|seconds$\n"
-msgstr "缓冲条目在 %ld 秒内过期\n"
+msgstr "%ld $#l#second|seconds$ 俊 某矫 郴侩捞 父扁登菌嚼聪促\n"
 
 #: src/LsCache.cc:175
 #, c-format
 msgid "Cache entries expire in %ld $#l#minute|minutes$\n"
-msgstr "缓冲条目在 %ld 分钟内过期\n"
+msgstr "%ld $#l#minute|minutes$ 俊 某矫 郴侩捞 父扁登菌嚼聪促\n"
 
 #: src/MirrorJob.cc:53
 #, c-format
 msgid "%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
-msgstr "%s全部: %d 个目录,%d 个文件, %d 个符号链接\n"
+msgstr ""
 
 #: src/MirrorJob.cc:57
 #, c-format
 msgid "%sNew: %d file$|s$, %d symlink$|s$\n"
-msgstr "%s新建: %d 个文件, %d 个符号链接\n"
+msgstr ""
 
 #: src/MirrorJob.cc:61
 #, c-format
 msgid "%sModified: %d file$|s$, %d symlink$|s$\n"
-msgstr "%s修改过: %d 个文件, %d 个符号链接\n"
+msgstr ""
 
 #: src/MirrorJob.cc:66
 #, c-format
 msgid "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
-msgstr "%s删除: %%d 个目录, %d 个文件, %d 个符号链接\n"
+msgstr ""
 
 #: src/MirrorJob.cc:67
 #, c-format
 msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
-msgstr "%s要删除: %d 个目录, %d 个文件, %d 个符号链接\n"
+msgstr ""
 
 #: src/MirrorJob.cc:137 src/MirrorJob.cc:612
 #, c-format
 msgid "Removing old remote file `%s'"
-msgstr "删除旧的远程文件 `%s'"
+msgstr "烤 盔芭府 颇老 `%s' 瘤框"
 
 #: src/MirrorJob.cc:180 src/MirrorJob.cc:269 src/MirrorJob.cc:325
 #: src/MirrorJob.cc:637
 #, c-format
 msgid "Removing old local file `%s'"
-msgstr "正在删除本地文件 `%s'"
+msgstr "烤 瘤开 颇老 `%s' 瘤框"
 
 #. launch get job
 #: src/MirrorJob.cc:198
 #, c-format
 msgid "Retrieving remote file `%s'"
-msgstr "正在下载远程文件 `%s'"
+msgstr "盔芭府 颇老 `%s' 促矫 罐澜"
 
 #: src/MirrorJob.cc:241
 #, c-format
 msgid "Making remote directory `%s'"
-msgstr "建立远程目录 `%s'"
+msgstr "盔芭府 叼泛配府 `%s' 积己"
 
 #: src/MirrorJob.cc:334
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
-msgstr "建立符号链接 `%s' 指向 `%s'"
+msgstr "`%s'甫 `%s'肺 缴杭 傅农窃"
 
 #: src/MirrorJob.cc:470
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
-msgstr "镜像: 协议 `%s' 不适合进行镜像\n"
+msgstr "mirror: 傈价痹距 '%s'篮 mirror俊 利钦窍瘤 臼嚼聪促\n"
 
 #: src/MirrorJob.cc:529
 #, c-format
 msgid "Sending local file `%s'"
-msgstr "上传本地文件 '%s'"
+msgstr "瘤开 颇老 `%s'阑 傈价"
 
 #: src/MirrorJob.cc:625
 #, c-format
 msgid "Old remote file `%s' is not removed"
-msgstr "没有删除旧的远程文件 `%s'"
+msgstr "烤 盔芭府 颇老 `%s'捞 昏力登瘤 臼疽嚼聪促"
 
 #: src/MirrorJob.cc:656
 #, c-format
 msgid "Old local file `%s' is not removed"
-msgstr "没有删除旧的本地文件 `%s'"
+msgstr "烤 瘤开 颇老 `%s'捞 昏力登瘤 臼疽嚼聪促"
 
 #: src/MirrorJob.cc:968 src/commands.cc:838 src/commands.cc:903
 #: src/commands.cc:1001 src/commands.cc:1207 src/commands.cc:1366
@@ -248,160 +248,158 @@ msgstr "没有删除旧的本地文件 `%s'"
 #: src/commands.cc:1773 src/commands.cc:1780 src/commands.cc:1913
 #, c-format
 msgid "Try `help %s' for more information.\n"
-msgstr "请用 `help %s' 或得更多的信息.\n"
+msgstr "`help %s'肺 歹 腹篮 沥焊甫 备窍技夸\n"
 
 #: src/ResMgr.cc:89
 msgid "no such variable"
-msgstr "没有这个变量"
+msgstr "弊矾茄 函荐绰 绝嚼聪促"
 
 #: src/ResMgr.cc:93
 msgid "ambiguous variable name"
-msgstr "不确切的变量名"
+msgstr "葛龋茄 函荐疙涝聪促"
 
 #: src/ResMgr.cc:310
 msgid "invalid boolean value"
-msgstr "无效的布尔值"
+msgstr "肋给等 boolean 函荐涝聪促"
 
 #: src/ResMgr.cc:333 src/ResMgr.cc:349
 msgid "invalid number"
-msgstr "无效的数字"
+msgstr "肋给等 荐涝聪促"
 
 #: src/ResMgr.cc:489
 msgid "Invalid time unit letter, only [smhd] are allowed."
-msgstr ""
+msgstr "肋给等 矫埃 窜困涝聪促, [smhd] 父 倾侩钦聪促."
 
 #: src/ResMgr.cc:497
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
-msgstr ""
+msgstr "肋给等 矫埃 剧侥涝聪促. 剧侥篮 <time><unit> 涝聪促, 抗. 2h30m."
 
 #: src/Http.cc:1108 src/Resolver.cc:184 src/ftpclass.cc:2550
 msgid "Resolving host address..."
-msgstr "正在解析主机地址..."
+msgstr "龋胶飘 林家甫 茫嚼聪促..."
 
 #: src/Resolver.cc:237
 msgid "host name resolve timeout"
-msgstr "主机名解析超时"
+msgstr "龋胶飘 林家甫 茫绰单 矫埃檬苞登菌嚼聪促"
 
 #. protocol error
 #: src/Resolver.cc:271
 msgid "child returned invalid data"
-msgstr "子进程返回无效的数据"
+msgstr "肋给等 沥焊甫 馆券沁嚼聪促"
 
 #: src/Resolver.cc:338
 #, c-format
 msgid "unknown address family `%s'"
-msgstr "未知的地址族 `%s'"
+msgstr "`%s'绰 舅荐 绝绰 林家涝聪促"
 
 #: src/SysCmdJob.cc:78
 #, c-format
 msgid "execlp(%s) failed: %s\n"
-msgstr "execlp(%s) 失败: %s\n"
+msgstr "execlp(%s) 角菩: %s\n"
 
 #: src/XferJob.cc:63
 #, c-format
 msgid "%.0fb/s "
-msgstr "%.0fb/s "
+msgstr ""
 
 #: src/XferJob.cc:65
 #, c-format
 msgid "%.1fK/s "
-msgstr "%.1fK/s "
+msgstr ""
 
 #: src/XferJob.cc:67
 #, c-format
 msgid "%.2fM/s "
-msgstr "%.2fM/s "
+msgstr ""
 
 #. for translator: only first letter matters
 #: src/XferJob.cc:90
 msgid "day"
-msgstr "天"
+msgstr ""
 
 #: src/XferJob.cc:91
 msgid "hour"
-msgstr "小时"
+msgstr ""
 
 #: src/XferJob.cc:92
 msgid "minute"
-msgstr "分钟"
+msgstr ""
 
 #: src/XferJob.cc:93
 msgid "second"
-msgstr "秒"
+msgstr ""
 
 #: src/XferJob.cc:95
 msgid "eta:"
-msgstr "eta:"
+msgstr "巢篮矫埃:"
 
 #: src/XferJob.cc:185 src/XferJob.cc:260
 #, c-format
 msgid "`%s' at %lu %s%s%s[%s]"
-msgstr "`%s' 在 %lu %s%s%s[%s]"
+msgstr ""
 
 #: src/XferJob.cc:200
 #, c-format
 msgid ""
 "%ld $#l#byte|bytes$ transferred in %ld $#l#second|seconds$ (%g bytes/s)\n"
-msgstr "%ld 字节, 在 %ld 秒中传输完毕 (%g 字节/秒)\n"
+msgstr "%ld $#l#second|seconds$ (%g bytes/s) 肺 %ld $#l#byte|bytes$ 傈价\n"
 
 #: src/XferJob.cc:207
 #, c-format
 msgid "%ld $#l#byte|bytes$ transferred\n"
-msgstr "传输 %ld 字节\n"
+msgstr "%ld $#l#byte|bytes$ 傈价\n"
 
 #: src/XferJob.cc:214 src/XferJob.cc:240
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
-msgstr "传输 %d/%d 文件失败\n"
+msgstr "%d $file|$files$ 吝 %d 狼 傈价 角菩\n"
 
 #: src/XferJob.cc:219 src/XferJob.cc:246
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
-msgstr "总共传输 %d 个文件\n"
+msgstr "醚 %d $file|files$ 傈价\n"
 
 #: src/XferJob.cc:234
 #, c-format
 msgid "\tNo files transferred successfully :(\n"
-msgstr "\t没有一个文件传输成功 :(\n"
+msgstr "\t颇老 傈价 角菩 :(\n"
 
 #: src/XferJob.cc:252
 #, c-format
 msgid "Average transfer rate %g bytes/s\n"
-msgstr "平均传输速率 %g 字节/秒\n"
+msgstr "乞闭 傈价伏篮 %g 官捞飘/檬 涝聪促\n"
 
 #: src/FtpCopy.cc:177 src/XferJob.cc:301 src/commands.cc:608
 #, c-format
 msgid "%s: %s - not supported protocol\n"
-msgstr "%s: %s - 不支持的协议\n"
+msgstr "%s: %s - 瘤盔窍瘤 臼绰 傈价痹距涝聪促\n"
 
 #: src/XferJob.cc:514
 #, c-format
 msgid "%s: cannot write -- disk full?\n"
-msgstr "%s: 不能写 - 磁盘已满 ?\n"
+msgstr "%s: 历厘且 荐 绝嚼聪促 -- 叼胶农啊 硅何福绰淀?\n"
 
 #: src/commands.cc:103
 msgid "!<shell_command>"
-msgstr "!<shell command>"
+msgstr ""
 
 #: src/commands.cc:104
 msgid "Launch shell or shell command\n"
-msgstr "启动 shell 或 shell 命令\n"
+msgstr "僵 唱甸捞 肚绰 僵 疙飞绢\n"
 
 #: src/commands.cc:105
 msgid "(commands)"
-msgstr "(commands)"
+msgstr ""
 
 #: src/commands.cc:106
 msgid ""
 "Group commands together to be executed as one command\n"
 "You can launch such a group in background\n"
 msgstr ""
-"把多个要执行的命令编为一组成为一个命令\n"
-"你可以在后台启动这样一个组\n"
 
 #: src/commands.cc:109
 msgid "alias [<name> [<value>]]"
-msgstr "alias [<name> [<value>]]"
+msgstr ""
 
 #: src/commands.cc:110
 msgid ""
@@ -409,17 +407,17 @@ msgid ""
 "the alias is undefined, else is takes the value <value>.\n"
 "If no argument is given the current aliases are listed.\n"
 msgstr ""
-"定义或取消别名 <name>. 如果 <value> 被忽略,\n"
-"则取消别名定义, 否则定义其值为 <value>.\n"
-"如果没有参数, 列出当前的所有别名.\n"
+"alias <name> 甫 沥狼 肚绰 秦力. <value>甫 积帆沁促搁,\n"
+"alias绰 秦力登哥, 馆措牢 版快绰 <value> 蔼阑 爱嚼聪促.\n"
+"绢恫 牢荐档 林瘤 臼栏搁 泅犁 aliase甸阑 焊咯凛聪促.\n"
 
 #: src/commands.cc:114
 msgid "anon - login anonymously (by default)\n"
-msgstr "anon - 匿名登录(默认)\n"
+msgstr "anon - 劳疙栏肺 肺弊牢 (扁夯)\n"
 
 #: src/commands.cc:116
 msgid "bookmark [SUBCMD]"
-msgstr "bookmark [SUBCMD]"
+msgstr ""
 
 #: src/commands.cc:117
 msgid ""
@@ -433,18 +431,19 @@ msgid ""
 "  import <type>      - import foreign bookmarks\n"
 "  list               - list bookmarks (default)\n"
 msgstr ""
-"bookmark 命令控制书签\n"
+"bookmark 疙飞绢绰 bookmark甫 力绢茄促\n"
 "\n"
-"支持下面的子命令:\n"
-"  add <name> [<loc>] - 把当前位置或指定的位置加入书签,并使用给定名字\n"
-"  del <name>         - 删除指定名字的书签\n"
-"  edit               - 编辑书签文件\n"
-"  import <type>      - 导入其他程序的书签\n"
-"  list               - 列出书签 (默认)\n"
+"辑宏疙飞绢绰 促澜苞 鞍促:\n"
+"  add <name> [<loc>] - 泅犁 困摹窍绰 镑 肚绰 合付农(bookmark)俊 林绢柳\n"
+"                       镑阑 眠啊钦聪促. 弊府绊 林绢柳 捞抚栏肺 钎矫钦聪促\n"
+"  del <name>         - 捞抚阑 啊瘤绰 合付农甫 瘤矿聪促\n"
+"  edit               - 合付农 颇老阑 祈笼钦聪促\n"
+"  import <type>      - 寇何 合付农甫 啊廉可聪促\n"
+"  list               - 合付农狼 格废阑 焊咯凛聪促(扁夯)\n"
 
 #: src/commands.cc:126
 msgid "cache [SUBCMD]"
-msgstr "cache [SUBCMD]"
+msgstr ""
 
 #: src/commands.cc:127
 msgid ""
@@ -458,31 +457,31 @@ msgid ""
 "  expire <Nx> - set cache expiration time to N seconds (x=s)\n"
 "                minutes (x=m) hours (x=h) or days (x=d)\n"
 msgstr ""
-"cache 命令控制本地的缓存\n"
+"cache 疙飞绢绰 瘤开 皋葛府 某矫甫 力绢钦聪促\n"
 "\n"
-"支持下列子命令:\n"
-"  stat        - 显示缓存的状态 (默认)\n"
-"  on|ff       - 打开/关闭缓存\n"
-"  flush       - 清除缓存\n"
-"  size <lim>  - 设置内存限制, -1 表示没有限制\n"
-"  expire <Nx> - 设置缓存过期的时间为 N 秒 (x=s)\n"
-"                分钟 (x=m) 小时 (x=h) 或天(x=d)\n"
+"辑宏 疙飞绢绰 促澜苞 鞍嚼聪促:\n"
+"  stat        - 某矫 惑怕甫 焊咯凛聪促(扁夯)\n"
+"  on|off      - 某矫 哺绊/颤聪促\n"
+"  flush       - 某矫甫 厚矿聪促\n"
+"  size <lim>  - 皋葛府 茄拌甫 汲沥钦聪促, -1篮 公力茄\n"
+"  expire <Nx> - 某矫狼 父扁甫 N檬(x=s)/盒(x=m)/矫(x=h)\n"
+"                肚绰 朝(x=d)肺 汲沥钦聪促\n"
 
 #: src/commands.cc:135
 msgid "cat [-u] <files>"
-msgstr "cat [-u] <files>"
+msgstr ""
 
 #: src/commands.cc:136
 msgid ""
 "cat - output remote files to stdout\n"
 " -u  try to recognize URLs\n"
 msgstr ""
-"cat - 输出远程文件内容到标准输出\n"
-" -u  使用 URL\n"
+"cat - 盔芭府 颇老阑 钎霖免仿(拳搁)栏肺 焊忱聪促\n"
+" -u   URL阑 犬牢秦 壕聪促\n"
 
 #: src/commands.cc:138
 msgid "cd <rdir>"
-msgstr "cd <rdir>"
+msgstr ""
 
 #: src/commands.cc:139
 msgid ""
@@ -491,38 +490,40 @@ msgid ""
 "The previous directory for each site is also stored on disk, so you can\n"
 "do `open site; cd -' even after lftp restart.\n"
 msgstr ""
-"改变当前的远程目录到 <rdir>. 先前的远程目录被存为 `-'. 你可以用 `cd -'\n"
-"回到先前的目录.\n"
-"每个站点的先前目录保存在磁盘上, 即使在 lftp 重启动后, 你也可以用\n"
-"`open site; cd -', 回到先前的目录\n"
+"<rdir>肺 泅犁 盔芭府 叼泛配府甫 官策聪促. 捞傈 盔芭府 叼泛配府绰 -肺 "
+"历厘邓聪促.\n"
+"'cd -'肺 盔贰狼 叼泛配府肺 倒酒哎 荐 乐嚼聪促. 阿 荤捞飘喊肺 捞傈 叼泛配府啊 "
+"\n"
+"叼胶农俊 历厘邓聪促. 溜, lftp甫 犁矫累 饶俊 'open site; cd -'甫 捞侩且 荐 "
+"乐嚼聪促.\n"
 
 #: src/commands.cc:143
 msgid "chmod mode file..."
-msgstr "chmod mode file..."
+msgstr "颇老 葛靛 官厕..."
 
 #: src/commands.cc:145
 msgid ""
 "Close idle connections. By default only with current server.\n"
 " -a  close idle connections with all servers\n"
 msgstr ""
-"关闭发呆的连接. 默认设置只关闭当前服务器的连接.\n"
-" -a  关闭所有服务器上的发呆连接\n"
+"愁绊 立加阑 摧绰促. 扁夯利栏肺 泅犁 辑滚俊 利侩邓聪促.\n"
+" -a绰 葛电 辑滚狼 愁绊 乐绰 立加阑 摧嚼聪促\n"
 
 #: src/commands.cc:149
 msgid "debug [<level>|off] [-o <file>]"
-msgstr "debug [<level>|off] [-o <file>]"
+msgstr ""
 
 #: src/commands.cc:150
 msgid ""
 "Set debug level to given value or turn debug off completely.\n"
 " -o <file>  redirect debug output to the file.\n"
 msgstr ""
-"设置调试级别或关闭调试功能.\n"
-" -o <file>  把调试信息输出重定向到文件中.\n"
+"林绢柳 蔼栏肺 叼滚弊 饭骇阑 汲沥窍芭唱 叼滚弊 扁瓷阑 颤聪促.\n"
+" -o <file> 篮 叼滚弊 免仿阑 颇老肺 历厘钦聪促.\n"
 
 #: src/commands.cc:153
 msgid "exit [<code>]"
-msgstr "exit [<code>]"
+msgstr ""
 
 #: src/commands.cc:154
 msgid ""
@@ -531,14 +532,14 @@ msgid ""
 "If no jobs active, the code is passed to operating system as lftp\n"
 "termination status. If omitted, exit code of last command is used.\n"
 msgstr ""
-"exit - 从 lftp 中退出, 如果有任务活动则进入后台\n"
+"exit - lftp甫 狐廉唱啊芭唱 劝己拳等 老阑 归弊扼款靛肺 颗遍聪促\n"
 "\n"
-"如果没有活动任务, code 会被传给操作系统作为 lftp 的退出状态.\n"
-"如果忽略, 使用上个命令的退出码.\n"
+"劝己拳等 老捞 绝促搁, 内靛绰 lftp狼 辆丰 惑怕肺结 OS俊 焊郴笼聪促.\n"
+"积帆沁促搁, 付瘤阜 疙飞绢啊 辆丰 内靛肺 荤侩邓聪促.\n"
 
 #: src/commands.cc:160
 msgid "get [OPTS] <rfile> [-o <lfile>]"
-msgstr "get [OPTS] <rfile> [-o <lfile>]"
+msgstr ""
 
 #: src/commands.cc:161
 msgid ""
@@ -548,47 +549,49 @@ msgid ""
 " -e  delete remote files after successful transfer\n"
 " -u  try to recognize URLs\n"
 msgstr ""
-"下载远程文件 <rfile> 并保存为本地文件 <lfile>.\n"
-" -o <lfile> 指定本地文件名 (默认值 - rfile 的名字)\n"
-" -c 继续, 重取\n"
-" -e 传输完成后删除远程文件\n"
-" -u 文件名使用 URL\n"
+"盔芭府 颇老 <rfile>阑 罐绊 瘤开 颇老 <lfile>肺 历厘钦聪促.\n"
+" -o <lfile> 瘤开 颇老 捞抚阑 瘤沥钦聪促 (扁夯 - rfile苞 鞍嚼聪促)\n"
+" -c 捞绢罐扁, reget\n"
+" -e 己傍利栏肺 罐篮 饶 盔芭府 颇老阑 瘤矿聪促\n"
+" -u URLs甫 犁犬牢钦聪促\n"
 
 #: src/commands.cc:167
 msgid "help [<cmd>]"
-msgstr "help [<cmd>]"
+msgstr ""
 
 #: src/commands.cc:168
 msgid "Print help for command <cmd>, or list of available commands\n"
-msgstr "显示命令 <cmd> 的帮助信息, 或者列出可用的命令\n"
+msgstr "疙飞绢 <cmd> 狼 档框富, 肚绰 捞侩 啊瓷茄 疙飞绢狼 格废阑 焊咯凛聪促\n"
 
 #: src/commands.cc:170
 msgid "List running jobs. -v means verbose, several -v can be specified.\n"
-msgstr "列出运行的任务. -v 表示更多信息, 可以指定多个 -v.\n"
+msgstr ""
+"荐青吝牢 累诀狼 格废甫 焊咯凛聪促. -v绰 磊技洒, 老何 -v绰 炼扒栏肺 瘤沥瞪 荐 "
+"乐嚼聪促.\n"
 
 #: src/commands.cc:171
 msgid "kill all|<job_no>"
-msgstr "kill all|<job_no>"
+msgstr ""
 
 #: src/commands.cc:172
 msgid "Delete specified job with <job_no> or all jobs\n"
-msgstr "删除指定的任务号为 <job_no> 的任务, 或者所有的任务\n"
+msgstr "<job_no>甫 啊柳 漂沥 累诀 肚绰 葛电 累诀阑 瘤矿聪促\n"
 
 #: src/commands.cc:173
 msgid "lcd <ldir>"
-msgstr "lcd <ldir>"
+msgstr ""
 
 #: src/commands.cc:174
 msgid ""
 "Change current local directory to <ldir>. The previous local directory\n"
 "is stored as `-'. You can do `lcd -' to change the directory back.\n"
 msgstr ""
-"改变当前本地目录到 <ldir>. 先前的本地目录保存为 `-'.\n"
-"你可以使用 `lcd -' 切换回先前的目录.\n"
+"泅犁 瘤开 叼泛配府甫 <ldir>肺 官策聪促. 捞傈 瘤开 叼泛配府绰 `-'肺结\n"
+"历厘邓聪促. `lcd -'栏肺 捞傈 叼泛配府肺 登倒酒哎 荐 乐嚼聪促.\n"
 
 #: src/commands.cc:176
 msgid "lftp [OPTS] <site>"
-msgstr "lftp [OPTS] <site>"
+msgstr ""
 
 #: src/commands.cc:177
 msgid ""
@@ -603,20 +606,20 @@ msgid ""
 " -p <port>           use the port for connection\n"
 " <site>              host name, URL or bookmark name\n"
 msgstr ""
-"`lftp' 是在 rc 文件执行后 lftp 执行的第一个命令\n"
-" -f <file>           执行文件中的命令后退出\n"
-" -c <cmd>            执行命令后退出\n"
-" --help              显示帮助信息后退出\n"
-" --version           显示 lftp 版本后退出\n"
-" 其他的选项同 `open' 命令\n"
-" -e <cmd>            在选择后执行命令\n"
-" -u <user>[,<pass>]  使用指定的用户名/口令进行验证\n"
-" -p <port>           连接指定的端口\n"
-" <site>              主机名, URL 或书签的名字\n"
+"`lftp'绰 rc 颇老 捞饶 lftp俊 狼秦 角青登绰 霉锅掳 疙飞绢涝聪促\n"
+" -f <file>           颇老肺何磐 疙飞绢甫 角青窍绊 狐廉唱癌聪促\n"
+" -c <cmd>            疙飞绢甫 角青窍绊 狐廉唱癌聪促\n"
+" --help              捞 档框富阑 免仿窍绊 狐廉唱癌聪促\n"
+" --version           lftp狼 滚傈阑 免仿窍绊 狐廉唱癌聪促\n"
+"促弗 可记甸篮 `open' 疙飞绢俊 乐绰 巴苞 鞍嚼聪促\n"
+" -e <cmd>            瘤沥等 疙飞绢父 角青钦聪促\n"
+" -u <user>[, <pass>] user/password肺 牢刘罐嚼聪促\n"
+" -p <port>           器飘肺 立加钦聪促\n"
+" <site>              龋胶飘 捞抚, URL 肚绰 合付农 捞抚\n"
 
 #: src/commands.cc:189
 msgid "ls [<args>]"
-msgstr "ls [<args>]"
+msgstr ""
 
 #: src/commands.cc:190
 msgid ""
@@ -625,14 +628,14 @@ msgid ""
 "By default, ls output is cached, to see new listing use `rels' or\n"
 "`cache flush'.\n"
 msgstr ""
-"列出远程文件. 你可以把这个命令的输出重定向到文件, 或通过管道\n"
-"输出到外部命令.\n"
-"默认的, ls 的输出是缓存的, 如果需要看到新的列表, 使用 `rels' 或\n"
-"`cache flush'.\n"
+"盔芭府 颇老 格废涝聪促, 颇老 肚绰 促弗 疙飞绢俊 颇捞橇甫 烹窍咯 免仿\n"
+"阑 犁瘤沥且 荐 乐嚼聪促.\n"
+"扁夯蔼栏肺, ls 免仿篮 某矫登哥, `rels' 肚绰 `cache flush'肺 货 格废阑\n"
+"杭 荐 乐嚼聪促.\n"
 
 #: src/commands.cc:194
 msgid "mget [-c] [-d] [-e] <files>"
-msgstr "mget [-c] [-d] [-e] <files>"
+msgstr ""
 
 #: src/commands.cc:195
 msgid ""
@@ -642,15 +645,10 @@ msgid ""
 "     files into them instead of current directory\n"
 " -e  delete remote files after successful transfer\n"
 msgstr ""
-"使用展开的通配符来下载选中的文件\n"
-" -c  继续, 重传\n"
-" -d  建立文件名中包含的目录, 把文件下载到这些目录中, 而不是\n"
-"     下载到当前目录\n"
-" -e  传输完后删除远程文件\n"
 
 #: src/commands.cc:200
 msgid "mirror [OPTS] [remote [local]]"
-msgstr "mirror [OPTS] [remote [local]]"
+msgstr ""
 
 #: src/commands.cc:201
 msgid ""
@@ -680,42 +678,20 @@ msgid ""
 "If both directories are omitted, current local and remote directories are "
 "used.\n"
 msgstr ""
-"\n"
-"把指定的远程目录镜像到本地\n"
-"\n"
-" -c, --continue         如果可能, 继续一个镜像任务\n"
-" -e, --delete           删除在远程站点不存在的文件\n"
-" -s, --allow-suid       根据远程站点设置相应的 suid/sgid 位\n"
-" -n, --only-newer       只下载新的文件 (-c 没有作用)\n"
-" -r, --no-recursion     不下载子目录\n"
-" -p, --no-perms         不设置文件权限\n"
-"     --no-umask         不在文件上使用umask\n"
-" -R, --reverse          反向镜像 (上传文件)\n"
-" -L, --dereference      下载符号链接指向的文件\n"
-" -N, --newer-than FILE  只下载比文件 FILE 更新的文件\n"
-" -i RX, --include RX    包括匹配的文件 (只能使用一次)\n"
-" -x RX, --exclude RX    不包括匹配的文件 (只能使用一次)\n"
-"                        RX 是括展的正则表达式\n"
-" -t Nx, --time-prec Nx  设置时间精度为 N 秒 (x=s) 分钟 (x=m)\n"
-"                        小时 (x=h) 或者天 (x=d)\n"
-"                        默认值 - 12 小时\n"
-" -v, --verbose          冗长输出\n"
 
 #: src/commands.cc:224
 msgid "mkdir [-p] <dirs>"
-msgstr "mkdir [-p] <dirs>"
+msgstr ""
 
 #: src/commands.cc:225
 msgid ""
 "Make remote directories\n"
 " -p  make all levels of path\n"
 msgstr ""
-"建立远程目录\n"
-" -p  建立各级路径\n"
 
 #: src/commands.cc:227
 msgid "module name [args]"
-msgstr "module name [args]"
+msgstr ""
 
 #: src/commands.cc:228
 msgid ""
@@ -724,26 +700,20 @@ msgid ""
 "If name contains a slash, then the module is searched in current\n"
 "directory, otherwise in PKGLIBDIR.\n"
 msgstr ""
-"装载模块 (共享对象). 模块应该包含函数\n"
-"   void module_init(int argc,const char *const *argv)\n"
-"如果名字中包含 `/', 那么模块在当前路径中寻找, 否则在\n"
-"PKGLIBDIR 中.\n"
 
 #: src/commands.cc:232
 msgid "more [-u] <files>"
-msgstr "more [-u] <files>"
+msgstr ""
 
 #: src/commands.cc:233
 msgid ""
 "Same as `cat <files> | more'. if PAGER is set, it is used as filter\n"
 " -u  try to recognize URLs\n"
 msgstr ""
-"和 `cat <files> | more' 相同. 如果设置了 PAGER, 它被用来做过滤\n"
-" -u  使用 URL\n"
 
 #: src/commands.cc:235
 msgid "mput [-c] [-d] <files>"
-msgstr "mput [-c] [-d] <files>"
+msgstr ""
 
 #: src/commands.cc:236
 msgid ""
@@ -752,38 +722,34 @@ msgid ""
 " -d  create directories the same as in file names and put the\n"
 "     files into them instead of current directory\n"
 msgstr ""
-"使用通配符展开上传文件\n"
-" -c  继续, 重传\n"
-" -d  建立文件名中的目录, 把文件上传到这些目录中, 而不是\n"
-"     放到当前的目录\n"
 
 #: src/commands.cc:240
 msgid "mrm <files>"
-msgstr "mrm <files>"
+msgstr ""
 
 #: src/commands.cc:241
 msgid "Removes specified files with wildcard expansion\n"
-msgstr "使用通配符展开来删除指定的文件\n"
+msgstr "客老靛墨靛 侥栏肺 漂沥 颇老甸阑 瘤矿聪促\n"
 
 #: src/commands.cc:242
 msgid "mv <file1> <file2>"
-msgstr "mv <file1> <file2>"
+msgstr ""
 
 #: src/commands.cc:243
 msgid "Rename <file1> to <file2>\n"
-msgstr "把文件 <file1> 更名为 <file2>\n"
+msgstr ""
 
 #: src/commands.cc:244
 msgid "nlist [<args>]"
-msgstr "nlist [<args>]"
+msgstr ""
 
 #: src/commands.cc:245
 msgid "List remote file names\n"
-msgstr "列出远程文件名\n"
+msgstr "盔芭府 颇老 捞抚狼 格废涝聪促\n"
 
 #: src/commands.cc:246
 msgid "open [OPTS] <site>"
-msgstr "open [OPTS] <site>"
+msgstr ""
 
 #: src/commands.cc:247
 msgid ""
@@ -793,15 +759,10 @@ msgid ""
 " -p <port>           use the port for connection\n"
 " <site>              host name, URL or bookmark name\n"
 msgstr ""
-"选择一个服务器, URL 或书签\n"
-" -e <cmd>            在选中后执行命令\n"
-" -u <user>[,<pass>]  使用指定的用户名/口令进行验证\n"
-" -p <port>           连接指定端口\n"
-" <site>              主机名, URL 或书签名\n"
 
 #: src/commands.cc:252
 msgid "pget [OPTS] <rfile> [-o <lfile>]"
-msgstr "pget [OPTS] <rfile> [-o <lfile>]"
+msgstr ""
 
 #: src/commands.cc:253
 msgid ""
@@ -814,17 +775,10 @@ msgid ""
 " -n <maxconn>  set maximum number of connections (default 5)\n"
 " -u            try to recognize URLs\n"
 msgstr ""
-"使用多个连接下载指定的文件. 这可以加快传输的速度,\n"
-"但是给网络增加了负担, 显著地影响其他用户. 只在你真正\n"
-"需要尽快下载文件的时候使用, 否则其他的用户会发疯的 :)\n"
-"\n"
-"选项:\n"
-" -n <maxconn>  设置最大连接数 (默认为 5)\n"
-" -u            使用 URL\n"
 
 #: src/commands.cc:259
 msgid "put [-c] <lfile> [-o <rfile>]"
-msgstr "put [-c] <lfile> [-o <rfile>]"
+msgstr ""
 
 #: src/commands.cc:260
 msgid ""
@@ -833,18 +787,14 @@ msgid ""
 " -c  continue, reput\n"
 "     it requires permission to overwrite remote files\n"
 msgstr ""
-"上传 <lfile> 成为远程文件 <rfile>.\n"
-" -o <rfile> 指定远程文件名 (默认值 - lfile 的名字)\n"
-" -c 继续, 重传\n"
-"    这需要有覆盖远程文件的权限\n"
 
 #: src/commands.cc:265
 msgid "Print current remote directory\n"
-msgstr "显示当前远程目录\n"
+msgstr "泅犁狼 盔芭府 叼泛配府甫 焊咯凛聪促\n"
 
 #: src/commands.cc:268
 msgid "quote <cmd>"
-msgstr "quote <cmd>"
+msgstr ""
 
 #: src/commands.cc:269
 msgid ""
@@ -853,73 +803,70 @@ msgid ""
 "be sure that any change of remote state because of quoted command\n"
 "is solid - it can be reset by reconnect at any time.\n"
 msgstr ""
-"发出未经本地解释的命令. 小心使用 - 它可能会导致远程的\n"
-"未知状态, 这样会引起重新连接. 你不能保证 quote 命令\n"
-"引起的远程状态的改变是一致的 - 可以通过重新连接来复位.\n"
 
 #: src/commands.cc:273
 msgid "reget [OPTS] <rfile> [-o <lfile>]"
-msgstr "reget [OPTS] <rfile> [-o <lfile>]"
+msgstr ""
 
 #: src/commands.cc:274
 msgid "Same as `get -c'\n"
-msgstr "同 `get -c'\n"
+msgstr ""
 
 #: src/commands.cc:275
 msgid "rels [<args>]"
-msgstr "rels [<args>]"
+msgstr ""
 
 #: src/commands.cc:276
 msgid "Same as `ls', but don't look in cache\n"
-msgstr "同 `ls', 但不在缓存中查找\n"
+msgstr "`ls' 客 鞍瘤父 某矫甫 捞侩窍瘤 臼嚼聪促\n"
 
 #: src/commands.cc:277
 msgid "renlist [<args>]"
-msgstr "renlist [<args>]"
+msgstr ""
 
 #: src/commands.cc:278
 msgid "Same as `nlist', but don't look in cache\n"
-msgstr "同 `nlist', 但不在缓存中查找\n"
+msgstr "`nlist' 客 鞍瘤父 某矫甫 捞侩窍瘤 臼嚼聪促\n"
 
 #: src/commands.cc:280
 msgid "reput <lfile> [-o <rfile>]"
-msgstr "reput <lfile> [-o <rfile>]"
+msgstr ""
 
 #: src/commands.cc:281
 msgid "Same as `put -c'\n"
-msgstr "同 `put -c'\n"
+msgstr "`put -c' 客 鞍嚼聪促\n"
 
 #: src/commands.cc:282
 msgid "rm [-r] <files>"
-msgstr "rm [-r] <files>"
+msgstr ""
 
 #: src/commands.cc:283
 msgid ""
 "Remove remote files\n"
 " -r  recursive directory remove, be careful\n"
 msgstr ""
-"删除远程文件\n"
-" -r  递归删除目录, 请谨慎使用\n"
+"盔芭府 颇老阑 瘤矿聪促\n"
+" -r 辑宏 叼泛配府甫 瘤矿聪促, 林狼窍绞矫坷\n"
 
 #: src/commands.cc:285
 msgid "rmdir <dirs>"
-msgstr "rmdir <dirs>"
+msgstr ""
 
 #: src/commands.cc:286
 msgid "Remove remote directories\n"
-msgstr "删除远程目录\n"
+msgstr "盔芭府 叼泛配府甫 瘤矿聪促\n"
 
 #: src/commands.cc:287
 msgid "scache [<session_no>]"
-msgstr "scache [<session_no>]"
+msgstr ""
 
 #: src/commands.cc:288
 msgid "List cached sessions or switch to specified session number\n"
-msgstr "列出缓存的会话, 或者切换到指定的会话\n"
+msgstr "某矫等 技记 格废阑 焊咯林芭唱 瘤沥等 技记栏肺 傈券钦聪促\n"
 
 #: src/commands.cc:289
 msgid "set [OPT] [<var> [<val>]]"
-msgstr "set [OPT] [<var> [<val>]]"
+msgstr ""
 
 #: src/commands.cc:290
 msgid ""
@@ -931,25 +878,16 @@ msgid ""
 " -a  list all settings, including default values\n"
 " -d  list only default values, not necessary current ones\n"
 msgstr ""
-"设置变量为指定的值. 如果值忽略, 取消变量.\n"
-"变量名的格式为 ``名字/约束'', 约束可以指定设置的\n"
-"应用范围. 请查看 lftp(1) 获得细节.\n"
-"如果不带变量使用 set, 只有改动过的设置才被列出.\n"
-"这可以通过下列选项来改变:\n"
-" -a  列出所有的设置, 包括默认设置\n"
-" -d  只列出默认值, 不一定是正在用的\n"
 
 #: src/commands.cc:298
 msgid "site <site_cmd>"
-msgstr "site <site_cmd>"
+msgstr ""
 
 #: src/commands.cc:299
 msgid ""
 "Execute site command <site_cmd> and output the result\n"
 "You can redirect its output\n"
 msgstr ""
-"执行 site 命令 <site_cmd> 并输出结果\n"
-"你可以重定向它的输出\n"
 
 #: src/commands.cc:302
 msgid ""
@@ -958,427 +896,427 @@ msgid ""
 "followed by unit specifier: d - days, h - hours, m - minutes, s - seconds.\n"
 "By default time is assumed to be seconds.\n"
 msgstr ""
-"用法: sleep <time>[unit]\n"
-"休眠给定的时间. 时间参数可加上指定的单位:\n"
-"d - 天, h - 小时, m - 分钟, s - 秒.\n"
-"默认的时间单位为秒.\n"
 
 #: src/commands.cc:306
 msgid "source <file>"
-msgstr "source <file>"
+msgstr ""
 
 #: src/commands.cc:307
 msgid "Execute commands recorded in file <file>\n"
-msgstr "执行文件 <file> 中的命令\n"
+msgstr "颇老 <file> 俊 扁废等 疙飞绢甸阑 角青钦聪促\n"
 
 #: src/commands.cc:309
 msgid "user <user> [<pass>]"
-msgstr "user <user> [<pass>]"
+msgstr ""
 
 #: src/commands.cc:310
 msgid "Use specified info for remote login\n"
-msgstr "指定远程登录的信息\n"
+msgstr "盔芭府 肺弊牢阑 困窍咯 瘤沥等 沥焊甫 荤侩钦聪促\n"
 
 #: src/commands.cc:312
 msgid "Shows lftp version\n"
-msgstr "显示 lftp 的版本\n"
+msgstr "lftp 滚傈阑 焊咯凛聪促\n"
 
 #: src/commands.cc:313
 msgid "wait <jobno>"
-msgstr "wait <jobno>"
+msgstr ""
 
 #: src/commands.cc:314
 msgid "Wait for specified job to terminate.\n"
-msgstr "等待指定的任务结束.\n"
+msgstr "瘤沥等 累诀捞 辆丰登扁甫 扁促赋聪促.\n"
 
 #: src/commands.cc:315
 msgid "zcat [-u] <files>"
-msgstr "zcat [-u] <files>"
+msgstr ""
 
 #: src/commands.cc:316
 msgid "Same as cat, but filter each file through zcat\n"
-msgstr "同 cat, 但使用 zcat 过滤每个文件\n"
+msgstr "cat苞 鞍栏唱, zcat栏肺 阿 颇老阑 鞘磐傅钦聪促\n"
 
 #: src/commands.cc:317
 msgid "zmore [-u] <files>"
-msgstr "zmore [-u] <files>"
+msgstr ""
 
 #: src/commands.cc:318
 msgid "Same as more, but filter each file through zcat\n"
-msgstr "同 more, 但使用 zcat 过滤每个文件\n"
+msgstr "more苞 鞍栏唱, zcat栏肺 阿 颇老阑 鞘磐傅钦聪促\n"
 
 #: src/commands.cc:367
 #, c-format
 msgid "Usage: %s local-dir\n"
-msgstr "用法: %s local-dir\n"
+msgstr "荤侩过: %s local-dir\n"
 
 #: src/commands.cc:397
 #, c-format
 msgid "lcd ok, local cwd=%s\n"
-msgstr "lcd 成功, 本地目录=%s\n"
+msgstr "lcd 己傍, 瘤开 cwd=%s\n"
 
 #: src/commands.cc:411
 #, c-format
 msgid "Usage: cd remote-dir\n"
-msgstr "用法: cd remote-dir\n"
+msgstr "荤侩过: cd remote-dir\n"
 
 #: src/commands.cc:426
 #, c-format
 msgid "%s: no old directory for this site\n"
-msgstr "%s: 这个站点没有保存的旧目录\n"
+msgstr "%s: 捞 荤捞飘浚 烤 叼泛配府啊 粮犁窍瘤 臼嚼聪促\n"
 
 #: src/commands.cc:453
 #, c-format
 msgid "Usage: %s [<exit_code>]\n"
-msgstr "用法: %s [<exit_code>]\n"
+msgstr "荤侩过: %s [<exit_code>]\n"
 
 #: src/commands.cc:562 src/ftpget.cc:182
 #, c-format
 msgid "Try `%s --help' for more information\n"
-msgstr "请用 `%s --help' 获取更多的信息\n"
+msgstr "`%s --help'肺 歹 腹篮 沥焊甫 焊绞矫坷\n"
 
 #: src/commands.cc:564
 #, c-format
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
-msgstr "用法: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
+msgstr "荤侩过: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 
 #: src/commands.cc:652 src/commands.cc:1265 src/ftpget.cc:149
 msgid "Password: "
-msgstr "口令: "
+msgstr "厚剐锅龋: "
 
 #: src/commands.cc:654
 #, c-format
 msgid "%s: GetPass() failed -- assume anonymous login\n"
-msgstr "%s: GetPass() 失败 -- 使用匿名登录\n"
+msgstr "%s: GetPass() 角菩 -- 劳疙狼 肺弊牢栏肺 埃林钦聪促\n"
 
 #: src/commands.cc:720 src/commands.cc:746
 #, c-format
 msgid "Usage: %s command args...\n"
-msgstr "用法: %s command args...\n"
+msgstr "荤侩过: %s command args...\n"
 
 #: src/commands.cc:848 src/commands.cc:1089
 #, c-format
 msgid "Usage: %s files...\n"
-msgstr "用法: %s files...\n"
+msgstr "荤侩过: %s files...\n"
 
 #: src/commands.cc:890
 #, c-format
 msgid "%s: -n: Number expected. "
-msgstr "%s: -n: 需要数字. "
+msgstr "%s: -n: 箭磊啊 夸备邓聪促  "
 
 #: src/commands.cc:913 src/commands.cc:1011
 #, c-format
 msgid "File name missed. "
-msgstr "缺少文件名. "
+msgstr "颇老疙捞 绝嚼聪促. "
 
 #: src/commands.cc:1129
 #, c-format
 msgid "Usage: %s <file>\n"
-msgstr "用法: %s <file>\n"
+msgstr "荤侩过: %s <file>\n"
 
 #: src/commands.cc:1151
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
-msgstr "用法: %s [-v] [-v] ...\n"
+msgstr "荤侩过: %s [-v] [-v] ...\n"
 
 #: src/commands.cc:1246
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
-msgstr "调试级别为 %d, 输出到 %s\n"
+msgstr "叼滚弊 饭骇篮 %捞绊, 免仿篮 %s肺 邓聪促\n"
 
 #: src/commands.cc:1249
 msgid "debug is off\n"
-msgstr "调试功能关闭\n"
+msgstr "叼滚弊 阐\n"
 
 #: src/commands.cc:1261
 #, c-format
 msgid "Usage: %s userid [pass]\n"
-msgstr "用法: %s userid [pass]\n"
+msgstr "荤侩过: %s userid [pass]\n"
 
 #: src/commands.cc:1300 src/commands.cc:1462
 #, c-format
 msgid "%s: no current job\n"
-msgstr "%s: 没有当前任务\n"
+msgstr "%s: 泅犁 累诀 绝澜\n"
 
 #: src/commands.cc:1310 src/commands.cc:1340 src/commands.cc:1470
 #, c-format
 msgid "%s: %d - no such job\n"
-msgstr "%s: %d - 没有这个任务\n"
+msgstr "%s: %d - 累诀 绝嚼聪促\n"
 
 #: src/commands.cc:1312
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
-msgstr "用法: %s <jobno> ... | all\n"
+msgstr "荤侩过: %s <jobno> ... | all\n"
 
 #: src/commands.cc:1331 src/commands.cc:1452 src/commands.cc:1624
 #, c-format
 msgid "%s: %s - not a number\n"
-msgstr "%s: %s - 不是一个数字\n"
+msgstr "%s %s - 箭磊啊 酒凑聪促\n"
 
 #: src/commands.cc:1394
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
-msgstr "%s: %s. 使用 `set -a' 查看所有的变量.\n"
+msgstr "%s: %s. `set -a'甫 荤侩窍咯 葛电 蔼甸阑 壕聪促.\n"
 
 #: src/commands.cc:1442
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
-msgstr "用法: %s [<jobno>]\n"
+msgstr "荤侩过: %s [<jobno>]\n"
 
 #: src/commands.cc:1475
 #, c-format
 msgid "%s: some other job waits for job %d\n"
-msgstr "%s: 某个任务在等待任务 %d 结束\n"
+msgstr "%s: 老何 促弗 累诀捞 累诀 %d甫 扁促赋聪促\n"
 
 #: src/commands.cc:1486
 #, c-format
 msgid "Usage: %s <raw_cmd>\n"
-msgstr "用法: %s <raw_cmd>\n"
+msgstr "荤侩过: %s <raw_cmd>\n"
 
 #: src/commands.cc:1500
 #, c-format
 msgid "Usage: site <site_cmd>\n"
-msgstr "用法: site <site_cmd>\n"
+msgstr "荤侩过: site <site_cmd>\n"
 
 #: src/commands.cc:1530
 #, c-format
 msgid "Usage: mv <file1> <file2>\n"
-msgstr "用法: mv <file1> <file2>\n"
+msgstr "荤侩过: mv <file1> <file2>\n"
 
 #: src/commands.cc:1552 src/commands.cc:1772
 #, c-format
 msgid "Invalid command. "
-msgstr "无效的命令. "
+msgstr "肋给等 疙飞绢. "
 
 #: src/commands.cc:1559 src/commands.cc:1779
 #, c-format
 msgid "Ambiguous command. "
-msgstr "不确切的命令. "
+msgstr "葛龋茄 疙飞绢. "
 
 #: src/commands.cc:1578
 #, c-format
 msgid "%s: Operand missed for size\n"
-msgstr "%s: size 缺少操作数\n"
+msgstr "%s: 农扁狼 坷欺罚靛啊 狐脸嚼聪促.\n"
 
 #: src/commands.cc:1585
 #, c-format
 msgid "%s: Invalid number for size\n"
-msgstr "%s: size 使用了无效的数字\n"
+msgstr "%s: 农扁肺 荤侩且 荐 绝绰 荐涝聪促\n"
 
 #: src/commands.cc:1596
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
-msgstr "%s: `expire' 缺少操作数\n"
+msgstr "%s: `expire'狼 坷欺罚靛啊 狐脸嚼聪促.\n"
 
 #: src/commands.cc:1630
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
-msgstr "%s: %s - 没有这个缓存的会话. 使用 `scache' 列出会话列表.\n"
+msgstr "%s: %s - 某矫 技记捞 绝嚼聪促. `scache'肺 技记 格废俊辑 茫栏绞矫坷.\n"
 
 #: src/commands.cc:1647
 #, c-format
 msgid "Sorry, no help for %s\n"
-msgstr "抱歉, 没有针对 %s 的帮助信息\n"
+msgstr "了价钦聪促, %s 俊 措茄 档框富篮 绝嚼聪促\n"
 
 #: src/commands.cc:1652
 #, c-format
 msgid "%s is a built-in alias for %s\n"
-msgstr "%s 是 %s 的一个内建别名\n"
+msgstr "%s 绰 %s阑 扁夯 喊疙涝聪促\n"
 
 #: src/commands.cc:1657
 #, c-format
 msgid "Usage: %s\n"
-msgstr "用法: %s\n"
+msgstr "荤侩过: %s\n"
 
 #: src/commands.cc:1665
 #, c-format
 msgid "%s is an alias to `%s'\n"
-msgstr "%s 是 `%s' 的别名\n"
+msgstr "%s绰 `%s'牢 喊疙阑 爱嚼聪促\n"
 
 #: src/commands.cc:1669
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
-msgstr "没有 `%s' 这个命令. 请用 `help' 列出可用的命令.\n"
+msgstr ""
+"疙飞绢 `%s'绰 绝嚼聪促. `help'甫 荤侩窍咯 捞侩啊瓷茄 疙飞绢甫 犬牢窍绞矫坷.\n"
 
 #: src/commands.cc:1671
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
-msgstr "不确切的命令 `%s'. 请用 `help' 列出可用的命令.\n"
+msgstr ""
+"葛龋茄 疙飞绢 `%s'. `help'甫 荤侩窍咯 捞侩啊瓷茄 疙飞绢甫 犬牢窍绞矫坷.\n"
 
 #: src/commands.cc:1722
 #, c-format
 msgid "Lftp | Version %s | Copyright (c) 1996-1999 Alexander V. Lukyanov\n"
-msgstr "Lftp | Version %s | Copyright (c) 1996-1999 Alexander V. Lukyanov\n"
+msgstr "Lftp | 滚傈 %s | 历累鼻 (C) 1996-1999 Alexander V. Lukyanov\n"
 
 #: src/commands.cc:1724 src/ftpget.cc:59
 #, c-format
 msgid ""
 "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
-msgstr "这是一个不提供任何保证的自由软件. 查看 COPYING 获得更多信息.\n"
+msgstr ""
+"捞巴篮 ABSOLUTELY NO WARRANTY甫 啊瘤绰 橇府 家橇飘傀绢涝聪促. 磊技茄 巴篮 "
+"COPYING阑 焊绞矫坷.\n"
 
 #: src/commands.cc:1726
 #, c-format
 msgid "Send bug reports and questions to <%s>.\n"
-msgstr "Send bug reports and questions to <%s>.\n"
+msgstr "<%s> 俊霸 滚弊 焊绊辑唱 龙巩阑 焊郴绞矫坷.\n"
 
 #: src/commands.cc:1795 src/commands.cc:1824
 #, c-format
 msgid "%s: bookmark name required\n"
-msgstr "%s: 需要书签名\n"
+msgstr "%s: 合付农 捞抚捞 鞘夸钦聪促\n"
 
 #: src/commands.cc:1813
 #, c-format
 msgid "%s: cannot add empty bookmark\n"
-msgstr "%s: 不能添加空的书签\n"
+msgstr "%s: 后 合付农甫 眠啊且 荐 绝嚼聪促\n"
 
 #: src/commands.cc:1826
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
-msgstr "%s: 没有 `%s' 这个书签\n"
+msgstr "%s: 弊客 鞍篮 合付农 `%s'\n"
 
 #: src/commands.cc:1841
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
-msgstr "%s: 需要导入类型(netscape,ncftp)\n"
+msgstr "%s: (netscape,ncftp)俊辑 啊廉柯 剧侥捞 鞘夸钦聪促\n"
 
 #: src/commands.cc:1912
 #, c-format
 msgid "Usage: %s module [args...]\n"
-msgstr "用法: %s module [args...]\n"
+msgstr "荤侩过: %s module [args...]\n"
 
 #: src/commands.cc:1947
 #, c-format
 msgid "Usage: %s mode file...\n"
-msgstr "用法: %s mode 文件...\n"
+msgstr "荤侩过: %s mode file...\n"
 
 #: src/commands.cc:1953
 #, c-format
 msgid "%s: %s - not an octal number\n"
-msgstr "%s: %s - 不是八进制数\n"
+msgstr "%s: %s - 8柳荐啊 酒凑聪促\n"
 
 #: src/ftpclass.cc:183
 msgid "Data connection peer has wrong port number"
-msgstr "数据连接对端的端口号是错的"
+msgstr "立加捞 肋给等 器飘肺 登绰 淀 钦聪促"
 
 #: src/ftpclass.cc:189
 msgid "Data connection peer has mismatching address"
-msgstr "数据连接对端的地址不对"
+msgstr "立加捞 肋给等 林家肺 登绰 淀 钦聪促"
 
 #: src/ftpclass.cc:282 src/ftpclass.cc:355
 msgid "Saw `Login incorrect', assume failed login"
-msgstr "发现 `Login incorrect', 登录失败"
+msgstr "`撇赴 肺弊牢' 焊搁, 肺弊牢俊 角秦茄 淀 钦聪促"
 
 #: src/ftpclass.cc:314 src/ftpclass.cc:371
 msgid "Saw `unknown', assume failed login"
-msgstr "发现 `未知', 登录失败"
+msgstr "`舅荐 绝绰' 焊搁, 肺弊牢俊 角菩茄 淀 钦聪促"
 
 #: src/ftpclass.cc:325
 msgid "assuming failed host name lookup"
-msgstr "名字查询失败"
+msgstr "龋胶飘 捞抚阑 茫绰单 角菩茄 淀 钦聪促"
 
 #: src/Http.cc:501 src/ftpclass.cc:743
 msgid "Closing idle connection"
-msgstr "关闭发呆的连接"
+msgstr "愁绊 乐绰 立加 摧嚼聪促"
 
 #: src/Http.cc:555 src/ftpclass.cc:795
 msgid "max-retries exceeded"
-msgstr "达到最大重试次数"
+msgstr "弥措-犁矫档甫 檬苞沁嚼聪促"
 
 #: src/ftpclass.cc:1350
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
-msgstr "正在建立数据连接到 (%s) 端口 %u"
+msgstr "(%s) 器飘 %u俊 磊丰 家南阑 楷搬钦聪促"
 
 #: src/Http.cc:132 src/ftpclass.cc:1401
 msgid "Timeout - reconnecting"
-msgstr "超时 - 重新连接"
+msgstr "矫埃檬苞 - 犁立加"
 
 #: src/ftpclass.cc:1662
 msgid "Peer closed connection"
-msgstr "对端关闭连接"
+msgstr "立加捞 谗变 淀 钦聪促"
 
 #: src/ftpclass.cc:1735
 msgid "Closing control socket"
-msgstr "关闭控制连接"
+msgstr "力绢 家南 罐澜"
 
 #: src/ftpclass.cc:1804
 msgid "Closing data socket"
-msgstr "关闭数据连接"
+msgstr "单捞磐 家南 摧澜"
 
 #: src/ftpclass.cc:2351
 msgid "saw file size in response"
-msgstr "看到应答中的文件大小"
+msgstr "览翠俊辑 颇老 农扁甫 壕聪促"
 
 #: src/ftpclass.cc:2360
 msgid "remote end closes connection"
-msgstr "对端关闭连接"
+msgstr "盔芭府 场捞 立加阑 谗嚼聪促"
 
 #: src/ftpclass.cc:2366
 msgid "extra server response"
-msgstr "额外的服务器应答"
+msgstr "烙矫 辑滚 览翠"
 
 #: src/ftpclass.cc:2465
 msgid "Switching passive mode off"
-msgstr "正在关闭被动模式"
+msgstr "菩矫宏(passive) 葛靛 阐"
 
 #: src/ftpclass.cc:2540
 msgid "Sending commands..."
-msgstr "正在发送命令..."
+msgstr "疙飞绢 傈价吝..."
 
 #: src/Http.cc:1119 src/ftpclass.cc:2542 src/ftpclass.cc:2562
 #: src/ftpclass.cc:2569
 msgid "Waiting for response..."
-msgstr "正等待应答..."
+msgstr "览翠阑 扁促赋聪促..."
 
 #: src/ftpclass.cc:2543
 msgid "Connection idle"
-msgstr "连接空闲"
+msgstr "立加 愁绊 乐绢夸"
 
 #: src/Http.cc:1110 src/ftpclass.cc:2552
 msgid "Delaying before reconnect"
-msgstr "重新连接前延时"
+msgstr "犁立加窍扁 困窍咯 扁促赋聪促"
 
 #: src/Http.cc:1114 src/ftpclass.cc:2557
 msgid "Connecting..."
-msgstr "正在连接..."
+msgstr "立加吝..."
 
 #: src/ftpclass.cc:2559
 msgid "Logging in..."
-msgstr "正在登录..."
+msgstr "肺弊牢 吝..."
 
 #: src/ftpclass.cc:2563
 msgid "Making data connection..."
-msgstr "正在建立数据连接..."
+msgstr "立加 窍绰 吝..."
 
 #: src/ftpclass.cc:2565
 msgid "Changing remote directory..."
-msgstr "正在改变远程目录..."
+msgstr "盔芭府 叼泛配府 函版吝..."
 
 #: src/ftpclass.cc:2568 src/ftpclass.cc:2580
 msgid "Waiting for transfer to complete"
-msgstr "正等待传输完成"
+msgstr "傈价 肯丰甫 扁促赋聪促"
 
 #: src/ftpclass.cc:2571
 msgid "Waiting for data connection..."
-msgstr "正等待数据连接..."
+msgstr "立加阑 扁促绰 吝..."
 
 #: src/Http.cc:1117 src/ftpclass.cc:2576
 msgid "Sending data"
-msgstr "正发送数据"
+msgstr "磊丰 焊郴绰 吝"
 
 #: src/Http.cc:1122 src/ftpclass.cc:2578
 msgid "Receiving data"
-msgstr "正接收数据"
+msgstr "磊丰 罐绰 吝"
 
 #: src/ftpclass.cc:2582
 msgid "Fatal protocol error occured"
-msgstr "出现严重的协议错误"
+msgstr "摹疙利牢 傈价痹距 坷幅啊 惯积沁嚼聪促"
 
 #: src/ftpget.cc:57
 #, c-format
 msgid "FtpGet | Version %s | Copyright (C) 1996-1999 Alexander V. Lukyanov\n"
-msgstr "FtpGet | Version %s | Copyright (C) 1996-1999 Alexander V. Lukyanov\n"
+msgstr "FtpGet | 滚傈 %s | 历累鼻(C) 1996-1999 Alexander V. Lukyanov\n"
 
 #: src/ftpget.cc:61
 msgid ""
@@ -1395,93 +1333,81 @@ msgid ""
 "\n"
 "-o  output to local file `local' (default - base name of filename)\n"
 msgstr ""
-"用法: ftpget [OPTIONS] host filename [-o local] [filename...]\n"
-"\n"
-"-p  --port         设置端口号\n"
-"-u  --user         指定登录用户名\n"
-"-l  --list         列出指定目录的内容\n"
-"-c  --continue     重新下载指定的文件\n"
-"-q  --quiet        静默模式(无输出)\n"
-"-v  --verbose      冗长输出(很多输出)\n"
-"    --async-mode   使用异步模式(更快)\n"
-"    --sync-mode    使用同步模式(和某些缺陷兼容)\n"
-"\n"
-"-o  输出到本地文件 `local' (默认值 - filename)\n"
 
 #: src/lftp.cc:189
 #, c-format
 msgid "[%lu] Terminated by signal %d. %s"
-msgstr "[%lu] 被信号 %d 中止. %s"
+msgstr "[%lu] 脚龋 %d 肺 辆丰登菌嚼聪促. %s"
 
 #: src/lftp.cc:235
 #, c-format
 msgid "[%lu] Started.  %s"
-msgstr "[%lu] 启动. %s"
+msgstr "[%lu] 矫累. %s"
 
 #: src/lftp.cc:244
 #, c-format
 msgid "[%lu] Finished. %s"
-msgstr "[%lu] 完成. %s"
+msgstr "[%lu] 辆丰. %s"
 
 #. parent
 #: src/lftp.cc:248
 #, c-format
 msgid "[%lu] Moving to background to complete transfers...\n"
-msgstr "[%lu] 转到后台完成传输...\n"
+msgstr "[%lu] 傈价阑 肯丰窍档废 归弊扼款靛肺 颗扁绰 吝...\n"
 
 #: src/mgetJob.cc:72
 #, c-format
 msgid "Usage: %s [-c] [-d] [-e] pattern ...\n"
-msgstr "用法: %s [-c] [-d] [-e] pattern ...\n"
+msgstr "荤侩过: %s [-c] [-d] [-e] pattern ...\n"
 
 #: src/mgetJob.cc:111
 #, c-format
 msgid "%s: no files found\n"
-msgstr "%s: 没有找到文件\n"
+msgstr "%s: 颇老荐 茫阑 荐 绝嚼聪促\n"
 
 #. A directory has just been created
 #: src/mkdirJob.cc:106
 #, c-format
 msgid "%s ok, `%s' created\n"
-msgstr "%s 成功, 建立 `%s'\n"
+msgstr "%s 己傍, `%s' 父甸菌嚼聪促\n"
 
 #: src/mkdirJob.cc:108 src/rmJob.cc:43
 #, c-format
 msgid "%s failed for %d of %d directories\n"
-msgstr "%s 失败, %d/%d 个目录\n"
+msgstr "%s啊 %d/%d 叼泛配府俊 措秦 角菩沁嚼聪促\n"
 
 #: src/mkdirJob.cc:110
 #, c-format
 msgid "%s ok, %d director$y|ies$ created\n"
-msgstr "%s 成功, 建立 %d 个目录\n"
+msgstr "%s 己傍, %d director$y|ies$ created\n"
 
 #: src/mvJob.cc:72
 #, c-format
 msgid "rename successful\n"
-msgstr "重命名成功\n"
+msgstr "捞抚函版 己傍\n"
 
 #: src/parsecmd.cc:286
 msgid "parse: missing filter command\n"
-msgstr "parse: 缺少过滤器命令\n"
+msgstr "parse: 鞘磐 疙飞绢 狐脸嚼聪促\n"
 
 #: src/parsecmd.cc:288
 msgid "parse: missing redirection filename\n"
-msgstr "parse: 缺少重定向文件名\n"
+msgstr "parse: 府促捞泛记 颇老疙捞 狐脸嚼聪促\n"
 
 #: src/pgetJob.cc:139 src/pgetJob.cc:164
 #, c-format
 msgid "`%s', got %lu of %lu (%d%%) %s%s"
-msgstr "`%s', 下载 %lu/%lu (%d%%) %s%s"
+msgstr ""
 
 #: src/pgetJob.cc:171 src/pgetJob.cc:299
 #, c-format
 msgid "\tat %ld (%d%%) [%s]\n"
-msgstr "\t在 %ld (%d%%) [%s]\n"
+msgstr ""
 
 #: src/pgetJob.cc:293
 #, c-format
 msgid "\tDone\n"
-msgstr "\t完成\n"
+msgstr "\t肯丰\n"
 
 #. This is the rule for plural form choice (last condition can be omitted)
 #. Operators: = > < ! | %
@@ -1492,78 +1418,58 @@ msgstr ""
 #: src/FtpCopy.cc:170
 #, c-format
 msgid "Sorry, %s can work with only ftp protocol\n"
-msgstr "抱歉, %s 只能用在 ftp 协议上\n"
+msgstr "了价钦聪促, %s 绰 ftp 傈价痹距捞绢具 悼累钦聪促\n"
 
 #. 	 eprintf(_("Try `help %s' for more information.\n"),op);
 #: src/FtpCopy.cc:229
 #, c-format
 msgid "Usage: %s [-c] [-p] <source> <dest>\n"
-msgstr "用法: %s [-c] [-p] <source> <dest>\n"
+msgstr "荤侩过: %s [-c] [-p] <source> <dest>\n"
 
 #: src/FtpCopy.cc:272
 #, c-format
 msgid "Getting size of `%s' [%s]"
-msgstr "得到 `%s' 的大小 [%s]"
+msgstr "'%s'狼 农扁甫 啊廉坷绊 乐嚼聪促 [%s]"
 
 #: src/FtpCopy.cc:274
 #, c-format
 msgid "Copying of `%s' in progress (%c)"
-msgstr "正在进行 `%s' 的复制 (%c)"
+msgstr "'%s'狼 汗荤啊 柳青吝涝聪促 (%c)"
 
 #: src/rmJob.cc:39
 #, c-format
 msgid "%s ok, `%s' removed\n"
-msgstr "%s 成功, 删除 `%s'\n"
+msgstr "%s 己傍, `%s' 昏力沁嚼聪促\n"
 
 #: src/rmJob.cc:45
 #, c-format
 msgid "%s failed for %d of %d files\n"
-msgstr "%s 失败, %d/%d 个文件\n"
+msgstr "$s绰 %d/%d 颇老甸俊 措秦 角菩沁嚼聪促\n"
 
 #: src/rmJob.cc:50
 #, c-format
 msgid "%s ok, %d director$y|ies$ removed\n"
-msgstr "%s 成功, 删除 %d 个目录\n"
+msgstr "%s 己傍, %d director$y|ies$ 昏力沁嚼聪促\n"
 
 #: src/rmJob.cc:53
 #, c-format
 msgid "%s ok, %d file$|s$ removed\n"
-msgstr "%s 成功, 删除 %d 个文件\n"
+msgstr "%s 己傍, %d file$|s$ 昏力沁嚼聪促\n"
 
 #: src/Http.cc:955 src/Http.cc:975
 msgid "chunked format violated"
-msgstr "块格式冲突"
+msgstr "静瘤 臼绰 剧侥捞 巩力啊 邓聪促"
 
 #: src/Http.cc:1120
 msgid "Fetching headers..."
-msgstr "正在取得头..."
+msgstr "庆歹甫 佬绊 乐绢绢..."
 
 #. TODO: && strcmp(url.proto,"http")
 #: src/resource.cc:48 src/resource.cc:65
 msgid "Proxy protocol unsupported"
-msgstr "不支持代理协议"
+msgstr "橇遏矫 傈价痹距阑 瘤盔窍瘤 臼嚼聪促"
 
 #: src/FtpGlob.cc:258 src/HttpDir.cc:774 src/HttpDir.cc:951
 #, c-format
 msgid "Getting file list (%ld) [%s]"
-msgstr "正在获取文件列表 (%ld) [%s]"
-
-#, fuzzy
-#~ msgid "%s: %s.\n"
-#~ msgstr "用法: %s\n"
-
-#~ msgid "%s: %s - invalid time precision\n"
-#~ msgstr "%s: %s - 无效的时间精度\n"
-
-#~ msgid ""
-#~ "%s: Invalid expire period (use Ns - in sec, Nm - in min, Nh - in hours)\n"
-#~ msgstr "%s: 无效的过期周期 ( use Ns - 秒, Nm - 分钟, Nh - 小时)\n"
-
-#~ msgid "%s: argument required. "
-#~ msgstr "%s: 需要参数. "
-
-#~ msgid "%s: invalid delay. "
-#~ msgstr "%s: 无效的延时. "
-
-#~ msgid "Connecting to %s%s (%s) port %u"
-#~ msgstr "正在连接到 %s%s (%s) 端口 %u"
+msgstr "颇老 格废阑 啊廉可聪促 (%ld) [%s]"

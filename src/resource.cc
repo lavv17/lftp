@@ -25,6 +25,10 @@
 #include <pwd.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <errno.h>
 
 #include "ResMgr.h"
 #include "url.h"
@@ -91,11 +95,16 @@ static ResDecl resources[]={
    ResDecl  ("ftp:sync-mode",	       "on",    ResMgr::BoolValidate,0),
    ResDecl  ("ftp:verify-address",     "no",    ResMgr::BoolValidate,0),
    ResDecl  ("ftp:verify-port",	       "no",    ResMgr::BoolValidate,0),
+   ResDecl  ("hftp:cache",	       "yes",	ResMgr::BoolValidate,0),
+   ResDecl  ("hftp:proxy",	       "",	HttpProxyValidate,0),
+   ResDecl  ("hftp:use-head",	       "yes",	ResMgr::BoolValidate,0),
    ResDecl  ("http:cache",	       "yes",	ResMgr::BoolValidate,0),
    ResDecl  ("http:proxy",	       "",	HttpProxyValidate,0),
    ResDecl  ("net:idle",	       "180",   ResMgr::UNumberValidate,0),
    ResDecl  ("net:limit-max",	       "0",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:limit-rate",	       "0",	ResMgr::UNumberValidate,0),
+   ResDecl  ("net:limit-total-max",    "0",	ResMgr::UNumberValidate,0),
+   ResDecl  ("net:limit-total-rate",   "0",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:max-retries",	       "0",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:reconnect-interval", "30",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:relookup-always",    "off",   ResMgr::BoolValidate,0),
@@ -112,5 +121,32 @@ void ResMgr::ClassInit()
    // inherit http proxy from environment
    const char *http_proxy=getenv("http_proxy");
    if(http_proxy)
+   {
       Set("http:proxy",0,http_proxy);
+      Set("hftp:proxy",0,http_proxy);
+   }
+
+   const char *ftp_proxy=getenv("ftp_proxy");
+   if(ftp_proxy)
+   {
+      if(!strncmp(ftp_proxy,"ftp://",6))
+	 Set("ftp:proxy",0,ftp_proxy);
+      else if(!strncmp(ftp_proxy,"http://",7))
+	 Set("hftp:proxy",0,ftp_proxy);
+   }
+
+#if INET6
+   // check if ipv6 is really supported
+   int s=socket(AF_INET6,SOCK_STREAM,IPPROTO_TCP);
+   if(s==-1 && (errno==EINVAL
+#ifdef EAFNOSUPPORT
+      || errno==EAFNOSUPPORT
+#endif
+   ))
+   {
+      Set("dns:order",0,"inet");
+   }
+   if(s!=-1)
+      close(s);
+#endif // INET6
 }

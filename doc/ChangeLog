@@ -1,3 +1,41 @@
+1999-10-22	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document hftp:use-head.
+
+1999-10-12	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: correct example with verify-path.
+
+1999-10-10	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: add hftp to protocol list, document cmd:verify-*
+	  variables, document closure for cmd: domain.
+
+1999-09-22      Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: add subsections headings `Settings' and
+	  `FTP asynchronous mode'; remove some extra blank lines.
+
+1999-09-20	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: describe time interval; fix an error.
+
+1999-09-19	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document dns:cache-* variables, update closure
+	  description.
+
+1999-09-15	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document repeat command.
+
+1999-09-12	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document command `queue'; settings xfer:clobber,
+	  net:limit-total-rate, net:limit-total-max, http:cache,
+	  hftp:proxy, hftp:cache; mention environment variables
+	  http_proxy and ftp_proxy.
+
 1999-08-10	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: add a note about sysconfdir.

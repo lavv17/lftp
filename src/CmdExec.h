@@ -123,8 +123,17 @@ private:
    Glob *glob;
    ArgV *args_glob;
 
+   static CmdExec *chain;
+   CmdExec *next;
+
+   bool is_queue;
+   char *queue_cwd;
+   char *queue_lcwd;
+   CmdExec *FindQueue();
+
 public:
    void FeedCmd(const char *c);
+   void FeedArgV(const ArgV *,int start=0);
    void PrependCmd(const char *c);
    void ExecParsed(ArgV *a,FDStream *o=0,bool b=false);
    static void unquote(char *buf,const char *str);
@@ -162,7 +171,7 @@ public:
    bool	 verify_host;
    bool	 verify_path;
 
-   void	 Reconfig();
+   void	 Reconfig(const char *name=0);
 
    void	 beep_if_long();
    time_t start_time;
@@ -189,6 +198,7 @@ public:
    Job *builtin_lftp();
    Job *builtin_restart();
    Job *builtin_glob();
+   Job *builtin_queue();
 
    Job *default_cmd();
 
@@ -200,6 +210,8 @@ public:
    static const cmd_rec *CmdByIndex(int i);
 
    int	 last_bg;
+
+   void pre_stdout();
 };
 
 extern const char * const bookmark_subcmd[];

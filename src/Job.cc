@@ -292,7 +292,7 @@ SessionJob::~SessionJob()
 
 void SessionJob::PrintStatus(int v)
 {
-   if(v<2)
+   if(v<2 || !session)
       return;
    const char *url=session->GetConnectURL();
    if(url)
@@ -363,4 +363,10 @@ int Job::AcceptSig(int s)
       }
    }
    return WANTDIE;
+}
+
+void Job::ShowRunStatus(StatusLine *sl)
+{
+   if(waiting)
+      waiting->ShowRunStatus(sl);
 }

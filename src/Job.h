@@ -52,7 +52,7 @@ public:
    void	 AllocJobno();
 
    virtual void	  PrintStatus(int) {};
-   virtual void	  ShowRunStatus(StatusLine *) {}
+   virtual void	  ShowRunStatus(StatusLine *);
    virtual void	  SayFinal() {}; // final phrase of fg job
    virtual int	  Done()=0;
    virtual int	  ExitCode() { return 0; }

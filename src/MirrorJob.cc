@@ -138,6 +138,17 @@ void  MirrorJob::HandleFile(int how)
 			dir_file(remote_relative_dir,file->name));
 	       args=new ArgV("rm");
 	       args->Append(file->name);
+	       if(script)
+	       {
+		  char *cmd=args->CombineQuoted();
+		  fprintf(script,"%s",cmd);
+		  xfree(cmd);
+		  if(script_only)
+		  {
+		     delete args;
+		     goto skip;
+		  }
+	       }
 	       waiting=new rmJob(Clone(),args);
 	       waiting->parent=this;
 	       waiting->cmdline=args->Combine();
@@ -150,15 +161,31 @@ void  MirrorJob::HandleFile(int how)
 	 }
 	 if(lstat(local_name,&st)!=-1)
 	 {
+	    // few safety checks.
+	    FileInfo *old=new_files_set->FindByName(file->name);
+	    if(old)
+	       goto skip;  // file has appeared after mirror start
+	    old=old_files_set->FindByName(file->name);
+	    if(old && ((old->defined&old->SIZE && old->size!=st.st_size)
+		     ||(old->defined&old->DATE && old->date!=st.st_mtime)))
+	       goto skip;  // the file has changed after mirror start
+
 	    if((flags&CONTINUE) && S_ISREG(st.st_mode)
 	    && (file->defined&(file->DATE|file->DATE_UNPREC))
-	    && file->date + prec < st.st_mtime
+	    && file->date + prec.Seconds() < st.st_mtime
 	    && (file->defined&file->SIZE) && file->size >= st.st_size)
 	       cont_this=true;
 	    else
 	    {
 	       Report(_("Removing old local file `%s'"),
 			dir_file(local_relative_dir,file->name));
+	       if(script)
+	       {
+		  // FIXME: shell-quote file name.
+		  fprintf(script,"! rm %s",file->name);
+		  if(script_only)
+		     goto skip;
+	       }
 	       remove(local_name);
 	    }
 	    mod_files++;
@@ -172,10 +199,25 @@ void  MirrorJob::HandleFile(int how)
 		  dir_file(remote_relative_dir,file->name));
 	 args=new ArgV("get");
 	 args->Append(file->name);
+	 if(script)
+	 {
+	    char *cmd=args->CombineQuoted();
+	    fprintf(script,"%s",cmd);
+	    xfree(cmd);
+	    if(script_only)
+	    {
+	       delete args;
+	       goto skip;
+	    }
+	 }
 	 args->Append(local_name);
 	 gj=new GetJob(Clone(),args,cont_this);
 	 if(file->defined&(file->DATE|file->DATE_UNPREC))
 	    gj->SetTime(file->date);
+#if 0
+	 if(file->defined&file->SIZE)
+	    gj->SetSize(file->size);
+#endif
 	 waiting=gj;
 	 waiting->parent=this;
 	 waiting->cmdline=(char*)xmalloc(10+strlen(file->name));
@@ -328,14 +370,19 @@ void  MirrorJob::InitSets(FileSet *source,FileSet *dest)
    same=new FileSet(source);
    to_transfer=new FileSet(source);
    int ignore=0;
-   if(flags&REVERSE)
+   if((flags&REVERSE) || prec.IsInfty())
       ignore|=FileInfo::DATE;
-   to_transfer->SubtractSame(dest,flags&ONLY_NEWER,prec,ignore);
+   to_transfer->SubtractSame(dest,flags&ONLY_NEWER,prec.Seconds(),ignore);
 
    same->SubtractAny(to_transfer);
 
    if(newer_than!=(time_t)-1)
       to_transfer->SubtractOlderThan(newer_than);
+
+   new_files_set=new FileSet(to_transfer);
+   new_files_set->SubtractAny(dest);
+   old_files_set=new FileSet(dest);
+   old_files_set->SubtractNotIn(to_transfer);
 }
 
 int   MirrorJob::Do()
@@ -350,6 +397,37 @@ int   MirrorJob::Do()
       return STALL;
 
    case(INITIAL_STATE):
+      if(!local_set)
+      {
+	 local_session=FileAccess::New("file");
+	 if(!local_session)
+	 {
+	    eprintf("mirror: cannot create `file:' access object, installation error?\n");
+	    state=DONE;
+	    return MOVED;
+	 }
+	 local_session->Chdir(local_dir,false);
+	 list_info=local_session->MakeListInfo();
+	 list_info->UseCache(false);
+	 if(flags&RETR_SYMLINKS)
+	    list_info->FollowSymlinks();
+	 list_info->SetExclude(local_relative_dir,
+			rx_exclude?&rxc_exclude:0,rx_include?&rxc_include:0);
+
+	 while(!list_info->Done())
+	    list_info->Do();  // this should be fast
+
+	 if(list_info->Error())
+	    goto list_info_error;
+
+	 local_set=list_info->GetResult();
+	 delete list_info;
+	 list_info=0;
+	 delete local_session;
+	 local_session=0;
+
+	 local_set->ExcludeDots();  // don't need .. and .
+      }
       if(create_remote_dir)
       {
 	 create_remote_dir=false;
@@ -426,34 +504,7 @@ int   MirrorJob::Do()
 
       remote_set->ExcludeDots(); // don't need .. and .
 
-      local_session=FileAccess::New("file");
-      if(!local_session)
-      {
-	 eprintf("mirror: cannot create `file:' access object, installation error?\n");
-	 state=DONE;
-	 return MOVED;
-      }
-      local_session->Chdir(local_dir,false);
-      list_info=local_session->MakeListInfo();
-      list_info->UseCache(false);
-      if(flags&RETR_SYMLINKS)
-	 list_info->FollowSymlinks();
-      list_info->SetExclude(local_relative_dir,
-		     rx_exclude?&rxc_exclude:0,rx_include?&rxc_include:0);
-
-      while(!list_info->Done())
-	 list_info->Do();  // this should be fast
-
-      if(list_info->Error())
-	 goto list_info_error;
-
-      local_set=list_info->GetResult();
-      delete list_info;
-      list_info=0;
-      delete local_session;
-      local_session=0;
-
-      local_set->ExcludeDots();  // don't need .. and .
+      // now we have both local and remote file sets.
 
       if(flags&REVERSE)
 	 InitSets(local_set,remote_set);
@@ -680,7 +731,7 @@ int   MirrorJob::Do()
 }
 
 MirrorJob::MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_remote_dir)
-   : SessionJob(f)
+   : SessionJob(f), prec("0")
 {
    verbose_report=0;
    parent_mirror=0;
@@ -692,6 +743,7 @@ MirrorJob::MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_rem
 
    to_transfer=to_rm=same=0;
    remote_set=local_set=0;
+   new_files_set=old_files_set=0;
    file=0;
    list_info=0;
    local_session=0;
@@ -706,13 +758,15 @@ MirrorJob::MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_rem
    memset(&rxc_include,0,sizeof(regex_t));   // for safety
    memset(&rxc_exclude,0,sizeof(regex_t));   // for safety
 
-   prec=0;  // time must be exactly same by default
-
    state=INITIAL_STATE;
 
    dir_made=false;
    create_remote_dir=false;
    newer_than=(time_t)-1;
+
+   script=0;
+   script_only=false;
+   script_needs_closing=false;
 }
 
 MirrorJob::~MirrorJob()
@@ -731,6 +785,10 @@ MirrorJob::~MirrorJob()
       delete to_rm;
    if(same)
       delete same;
+   if(new_files_set)
+      delete new_files_set;
+   if(old_files_set)
+      delete old_files_set;
    // don't delete this->file -- it is a reference
    if(list_info)
       delete list_info;
@@ -746,6 +804,8 @@ MirrorJob::~MirrorJob()
       free(rx_exclude);
       regfree(&rxc_exclude);
    }
+   if(script && script_needs_closing)
+      fclose(script);
 }
 
 const char *MirrorJob::SetRX(const char *s,char **rx,regex_t *rxc)
@@ -786,6 +846,10 @@ void MirrorJob::va_Report(const char *fmt,va_list v)
 
    if(verbose_report)
    {
+      pid_t p=tcgetpgrp(fileno(stdout));
+      if(p!=-1 && p!=getpgrp())
+	 return;
+
       vfprintf(stdout,fmt,v);
       printf("\n");
       fflush(stdout);
@@ -868,7 +932,7 @@ CMD(mirror)
    if(exclude)
       exclude[0]=0;
 
-   time_t prec=12*HOUR;
+   TimeInterval prec("12h");
    bool	 create_remote_dir=false;
    int	 verbose=0;
    const char *newer_than=0;
@@ -897,10 +961,10 @@ CMD(mirror)
 	 flags|=MirrorJob::CONTINUE;
 	 break;
       case('t'):
-	 prec=decode_delay(optarg);
-	 if(prec==(time_t)-1)
+	 prec=TimeInterval(optarg);
+	 if(prec.Error())
 	 {
-	    parent->eprintf(_("%s: %s - invalid time precision\n"),args->a0(),optarg);
+	    parent->eprintf("%s: %s: %s\n",args->a0(),optarg,prec.ErrorText());
 	    parent->eprintf(_("Try `help %s' for more information.\n"),args->a0());
 	    return 0;
 	 }
@@ -1017,7 +1081,7 @@ CMD(mirror)
    if(exclude && exclude[0] && (err=j->SetExclude(exclude)))
       goto err_out;
 
-   j->SetPrec((time_t)prec);
+   j->SetPrec(prec);
    if(newer_than)
       j->SetNewerThan(newer_than);
    return j;

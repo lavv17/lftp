@@ -33,7 +33,6 @@ class HttpListInfo : public ListInfo
    int get_info_cnt;
 
    Buffer *ubuf;
-   bool from_cache;
 
 public:
    HttpListInfo(Http *session);
@@ -44,17 +43,31 @@ public:
 
 class ParsedURL;
 
+class LsOptions
+{
+public:
+   bool append_type:1;
+   bool multi_column:1;
+   bool show_all:1;
+   LsOptions()
+      {
+	 append_type=false;
+	 multi_column=false;
+	 show_all=false;
+      }
+};
+
 class HttpDirList : public DirList
 {
    FileAccess *session;
    Buffer *ubuf;
-   int upos;
-   bool from_cache;
    const char *curr;
    ParsedURL *curr_url;
    FileSet all_links;
    int mode;
    char *base_href;
+
+   LsOptions ls_options;
 
 public:
    HttpDirList(ArgV *a,FileAccess *fa);
@@ -76,7 +89,6 @@ class HttpGlob : public Glob
    HttpGlob *updir_glob;
 
    Buffer *ubuf;
-   bool	from_cache;
 
 public:
    int	 Do();

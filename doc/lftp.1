@@ -42,13 +42,13 @@
 .fi
 .in
 ..
-.TH lftp 1 "06 Aug 1999"
+.TH lftp 1 "10 Oct 1999"
 .SH NAME
 lftp \- Sophisticated ftp program
 .SH SYNTAX
 .B lftp
-[\fB-d\fR] [\fB-e \fIcmd\fR] [\fB-p \fIport\fR]
-[\fB-u \fIuser\fR[\fB,\fIpass\fR]] [\fIsite\fR]
+[\fB\-d\fR] [\fB\-e \fIcmd\fR] [\fB\-p \fIport\fR]
+[\fB\-u \fIuser\fR[\fB,\fIpass\fR]] [\fIsite\fR]
 .br
 .B lftp \-f
 .I script_file
@@ -61,7 +61,7 @@ lftp \- Sophisticated ftp program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 2.0.4.
+This man page documents lftp version 2.1.2.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a program that allows sophisticated ftp connection to
@@ -93,9 +93,9 @@ commands.
 \fBlftp\fR does reconnect and reget automatically when the
 connection broke and there is something to do.
 .PP
-Since version 2.0.0 lftp can handle three file access methods -
-ftp, http and file. You can specify method to use in ``open URL'' command,
-e.g. ``open http://www.us.kernel.org/pub/linux''.
+lftp 2.1.x can handle four file access methods - ftp, http, hftp and file. You
+can specify method to use in ``open URL'' command, e.g. ``open
+http://www.us.kernel.org/pub/linux''. hftp is ftp-over-http-proxy protocol.
 
 .SS Commands
 .PP
@@ -406,6 +406,20 @@ directory. Does not expand wildcards, use \fBmput\fR for that.
 .PP
 Print current remote directory.
 
+.B queue
+\fIcmd\fP
+.PP
+Add the given command to queue for sequential execution. Each site has its own
+queue. Don't try to queue `cd' or `lcd' commands, it may confuse lftp. Instead
+do the cd/lcd before `queue' command, and it will remember the place in which
+the command is to be done.
+.PP
+.Ds
+queue get one_file
+cd a_directory
+queue get another_file
+.De
+
 .B quote
 \fIcmd\fP
 .PP
@@ -427,6 +441,15 @@ Same as `ls', but ignores the cache.
 [\fIargs\fP]
 .PP
 Same as `nlist', but ignores the cache.
+
+.BR repeat " [\fIdelay\fP] [\fIcommand\fP]"
+.PP
+Repeat the command. Between the commands a delay inserted, by default 1 second.
+Example:
+.Ds
+repeat at tomorrow -- mirror
+repeat 1d mirror
+.De
 
 .BR reput " \fIlfile\fP [" -o " \fIrfile\fP]"
 .PP
@@ -513,6 +536,7 @@ Same as cat, but filter each file through zcat. (See also \fBcat\fR,
 Same as more, but filter each file through zcat. (See also \fBcat\fR,
 \fBzcat\fR and \fBmore\fR)
 
+.SS Settings
 .PP
 On startup, lftp executes
 .IR "~/.lftprc " and " ~/.lftp/rc" "."
@@ -608,9 +632,34 @@ end a sequence of non-printing characters
 .BR cmd:remote-completion \ (bool)
 a boolean to control whether or not lftp uses remote completion.
 .TP
+.BR cmd:verify-host \ (bool)
+if true, lftp resolves host name immediately in `open' command.
+It is also possible to skip the check for a single `open' command if `&' is given,
+or if ^Z is pressed during the check.
+.TP
+.BR cmd:verify-path \ (bool)
+if true, lftp checks the path given in `cd' command.
+It is also possible to skip the check for a single `cd' command if `&' is given,
+or if ^Z is pressed during the check.
+Examples:
+.Ds
+  set cmd:verify-path/hftp://* false
+  cd directory &
+.De
+.TP
 .BR dns:SRV-query \ (bool)
 query for SRV records and use them before gethostbyname. The SRV records
 are only used if port is not explicitly specified. See RFC2052 for details.
+.TP
+.BR dns:cache-enable \ (bool)
+enable DNS cache. If it is off, lftp resolves host name each time it reconnects.
+.TP
+.BR dns:cache-expire " (time interval)"
+time to live for DNS cache entries. It has format <number><unit>+, e.g.
+1d12h30m5s or just 36h. To disable expiration, set it to `inf' or `never'.
+.TP
+.BR dns:cache-size \ (number)
+maximum number of DNS cache entries.
 .TP
 .BR dns:fatal-timeout \ (seconds)
 limit the time for DNS queries. If DNS server is unavailable too long, lftp
@@ -630,9 +679,10 @@ sets passive ftp mode. This can be useful if you are behind a firewall
 or a dumb masquerading router.
 .TP
 .BR ftp:proxy \ (string)
-specifies ftp proxy to use. The format currently is `proxy_host:port'.
+specifies ftp proxy to use.
 To disable proxy set this to empty string. Note that it is an ftp proxy which
-uses ftp protocol, not ftp over http.
+uses ftp protocol, not ftp over http. Default value is taken from environment
+variable \fBftp_proxy\fP if it starts with ``ftp://''.
 .TP
 .BR ftp:rest-list \ (bool)
 allow usage of REST command before LIST command. This might be useful for
@@ -657,8 +707,8 @@ troubles with it, so it is on by default.
 verify that data connection comes from the network address of control
 connection peer. This can possibly prevent data connection spoofing
 which can lead to data corruption. Unfortunately, this can fail
-for sertain ftp servers with several network interfaces and
-that do not set outgoing address on data socket, so it is disabled by default.
+for sertain ftp servers with several network interfaces,
+when they do not set outgoing address on data socket, so it is disabled by default.
 .TP
 .BR ftp:verify-port \ (bool)
 verify that data connection has port 20 (ftp-data) on its remote end.
@@ -666,8 +716,27 @@ This can possibly prevent data connection spoofing by users of remote
 host. Unfortunately, too many windows and even unix ftp servers forget
 to set proper port on data connection, thus this check is off by default.
 .TP
-.BR http:proxy
+.BR hftp:cache \ (bool)
+allow server/proxy side caching for ftp-over-http protocol.
+.TP
+.BR hftp:proxy \ (string)
+specifies http proxy for ftp-over-http protocol (hftp). The protocol hftp
+cannot work without http proxy, obviously.
+Default value is taken from environment
+variable \fBftp_proxy\fP if it starts with ``http://'', otherwise from
+environment variable \fBhttp_proxy\fP.
+.TP
+.BR hftp:use-head \ (bool)
+if set to off, lftp will try to use `GET' instead of `HEAD' for hftp protocol.
+While this is slower, it may allow lftp to work with some proxies which
+don't understand or mishandle ``HEAD ftp://'' requests.
+.TP
+.BR http:cache \ (bool)
+allow server/proxy side caching.
+.TP
+.BR http:proxy \ (string)
 specifies http proxy. It is used when lftp works over http protocol.
+Default value is taken from environment variable \fBhttp_proxy\fP.
 .TP
 .BR net:idle \ (seconds)
 disconnect from server after that number of idle seconds.
@@ -676,7 +745,16 @@ disconnect from server after that number of idle seconds.
 limit transfer rate on data connection. 0 means unlimited.
 .TP
 .BR net:limit-max \ (bytes)
-limit accumulating of limit-rate in time. 0 means unlimited.
+limit accumulating of unused limit-rate. 0 means unlimited.
+.TP
+.BR net:limit-total-rate \ (bytes " " per " " second)
+limit transfer rate of all connections in sum. 0 means unlimited.
+Note that sockets have receive buffers on them, this can lead to network
+link load higher than this rate limit just after transfer beginning. You
+can try to set net:socket-buffer to relatively small value to avoid this.
+.TP
+.BR net:limit-total-max \ (bytes)
+limit accumulating of unused limit-total-rate. 0 means unlimited.
 .TP
 .BR net:max-retries \ (number)
 the maximum number of sequential retries of an operation without success.
@@ -688,7 +766,8 @@ sets the minimal time between reconnects.
 .BR net:relookup-always \ (bool)
 a boolean to control whether to lookup host address each time
 before connecting or not. Can be useful if server uses dynamic ip
-address and dynamic DNS.
+address and dynamic DNS. This setting is deprecated, use dns:cache-enable
+instead.
 .TP
 .BR net:socket-buffer \ (bytes)
 use given size for SO_SNDBUF and SO_RCVBUF socket options. 0 means system
@@ -700,6 +779,10 @@ this option, but linux does.
 .TP
 .BR net:timeout \ (seconds)
 sets the network protocol timeout.
+.TP
+.BR xfer:clobber \ (bool)
+if this setting is off, get commands will not overwrite existing
+files and generate an error instead. Default is on.
 .TP
 .BR xfer:eta-terse \ (bool)
 show terse ETA (only high order parts). Default is true.
@@ -713,14 +796,22 @@ ambiguous. The prefix before `:' can be omitted too. You can
 set one variable several times for different closures, and thus
 you can get a particular settings for particular state. The closure
 is to be specified after variable name separated with slash `/'.
-.P
-
-The closure for `dns:', `ftp:', `http:' domain variables is currently
-just the host
-name as you specify it in the `open' command. For other variables it
-is not currently used. See examples in the sample
+.PP
+The closure for `dns:', `net:', `ftp:', `http:', `hftp:' domain variables
+is currently just the host name as you specify it in the `open' command
+(with some exceptions where closure is meaningless, e.g. dns:cache-size).
+For some `cmd:' domain variables the closure is current URL without path.
+For other variables it is not currently used. See examples in the sample
 .IR lftp.conf .
+.PP
+Certain commands and settings take a time interval parameter. It has
+the format Nx[Nx...], where N is time amount and x is time unit: d - days,
+h - hours, m - minutes, s - seconds. Default unit is second. E.g. 5h30m.
+Also the interval can be `infinity', `inf', `never', `forever' - it means
+infinite interval. E.g. `sleep forever' or `set dns:cache-expire never'.
 
+.SS FTP asynchronous mode
+.PP
 .B Lftp
 can speed up ftp operations by sending several commands at once and
 then checking all the responses. See ftp:sync-mode variable. Sometimes
@@ -728,7 +819,6 @@ this does not work, thus synchronous mode is the default. You can try
 to turn synchronous mode off and see if it works for you. It is known
 that some network software dealing with address translation works
 incorrectly in the case of several FTP commands in one network packet.
-
 .PP
 RFC959 says: ``The user-process sending another command before the
 completion reply would be in violation of protocol; but server-FTP
@@ -772,6 +862,11 @@ Used by the \fB!\fR command to determine the shell to run.
 .IP "\fBPAGER\fP"
 This should be the name of the pager to use.  It's used by the
 \fBmore\fR and \fBzmore\fR commands.
+.IP "\fBhttp_proxy\fP"
+Used to set initial http:proxy and hftp:proxy variables.
+.IP "\fBftp_proxy\fP"
+Used to set initial ftp:proxy or hftp:proxy variables, depending
+on URL protocol used in this environment variable.
 
 .SH FILES
 .TP

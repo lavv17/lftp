@@ -1,3 +1,69 @@
+Version 2.1.4 - 1999-10-23
+
+* hftp support for non-anonymous user added
+* http Proxy-Authorization support added.
+* new setting hftp:use-head for proxies that don't properly handle HEAD
+  requests for ftp:// URLs.
+* memory leak in http code fixed.
+* http/hftp PUT fixed.
+* a bug in parsing squid ftp listing fixed (some files were shown
+  without info).
+* fixed handling of base-href in hftp listings.
+
+Version 2.1.3 - 1999-10-16
+
+* documentation update.
+* get: don't create output file early.
+* http: check if extracted file info is valid.
+* http: list parser for Mini-Proxy added.
+* http: fixed core dump on certain html pages.
+* fixed closure handling in cmd: veriables.
+* fixed a bug with setting variables using shortened name.
+* fixed completion for files with spaces in name.
+
+Version 2.1.2 - 1999-10-09
+
+* http: ls -F implemented, accept some other options.
+* hftp: parser for Netscape proxy added.
+* socks5 and dante support added (--with-socks5, --with-socksdante).
+* korean translation.
+* mget -d now uses 0777 mode on directories.
+* fixed a SEGV due to double freed memory.
+
+Version 2.1.1 - 1999-10-02
+
+* close -a now really closes all connections, even if current protocol is http.
+* extra info in debug output when it goes to a file.
+* in http listings, strip slash in /~user links.
+* fixed compile problems on some systems in ResMgr.h, module.c.
+
+Version 2.1.0 - 1999-09-27
+
+* ftp over http proxy support via hftp:// notation.
+* new command `queue' to queue commands for sequential execution.
+* rate limit for all connections in sum: settings net:limit-total-rate and
+  net:limit-total-max.
+* dns cache implemented: settings dns:cache-{enable,expire,size}.
+  Use `set dns:cache-expire never' to disable expiration.
+* improved completion of file names with wildcards.
+* debug output now clears and redraws the prompt.
+* mirror now does not overwrite just appeared/changed files.
+* added a possibility to specify protocol family explicitly in host name:
+  inet6,ftp.hostname.com will resolve to only inet6 address. This can be
+  also acheived by `set dns:order/ftp.hostname.com inet6'.
+* added xfer:clobber setting. When it is off, get does not overwrite files.
+* new command `repeat' to repeat a command. E.g. `repeat 1d mirror'.
+
+Version 2.0.5 - 1999-09-18
+
+* new translation zh_CN. (by Wang Jian)
+* fixed unlimited memory usage on `ls -R' when the listing is too large to be
+  cached.
+* fixed error with `Invalid argument' when kernel is compiled without ipv6
+  support and host has both ipv4 and ipv6 addresses.
+* fixed deadlock bug when doing put from named pipe and pipe is slower
+  than network.
+
 Version 2.0.4 - 1999-08-11
 
 * added ftp:rest-list setting to allow using of REST/LIST pair. By default

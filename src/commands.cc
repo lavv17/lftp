@@ -86,10 +86,16 @@ CMD(mkdir); CMD(quote);  CMD(scache);  CMD(mrm);
 CMD(ver);   CMD(close);  CMD(bookmark);CMD(lftp);
 CMD(echo);  CMD(suspend);CMD(ftpcopy); CMD(sleep);
 CMD(at);    CMD(find);   CMD(command); CMD(module);
-CMD(lpwd);  CMD(glob);	 CMD(chmod);
+CMD(lpwd);  CMD(glob);	 CMD(chmod);   CMD(queue);
+CMD(repeat);
 
 #ifdef MODULE_CMD_MIRROR
 # define cmd_mirror 0
+#endif
+#ifdef MODULE_CMD_SLEEP
+# define cmd_sleep  0
+# define cmd_at     0
+# define cmd_repeat 0
 #endif
 
 const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
@@ -257,6 +263,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "     it requires permission to overwrite remote files\n")},
    {"pwd",     cmd_pwd,    "pwd",
 	 N_("Print current remote directory\n")},
+   {"queue",   cmd_queue,  0,0},
    {"quit",    cmd_exit,   0,"exit"},
    {"quote",   cmd_quote,  N_("quote <cmd>"),
 	 N_("Send the command uninterpreted. Use with caution - it can lead to\n"
@@ -269,6 +276,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Same as `ls', but don't look in cache\n")},
    {"renlist", cmd_ls,	    N_("renlist [<args>]"),
 	 N_("Same as `nlist', but don't look in cache\n")},
+   {"repeat",  cmd_repeat},
    {"reput",   cmd_put,    N_("reput <lfile> [-o <rfile>]"),
 	 N_("Same as `put -c'\n")},
    {"rm",      cmd_rm,	    N_("rm [-r] <files>"),
@@ -427,6 +435,7 @@ Job *CmdExec::builtin_cd()
    if (!verify_path || background)
    {
       session->Chdir(dir,false);
+      exit_code=0;
       return 0;
    }
    session->Chdir(dir);
@@ -635,6 +644,8 @@ Job *CmdExec::builtin_open()
 	    }
 	 }
       }
+      if(host)
+	 session->Connect(host,port);
       if(user)
       {
 	 if(!pass)
@@ -647,7 +658,6 @@ Job *CmdExec::builtin_open()
       }
       if(host)
       {
-	 session->Connect(host,port);
 	 if(verify_host && !background)
 	 {
 	    session->ConnectVerify();
@@ -688,6 +698,8 @@ Job *CmdExec::builtin_open()
    if(url)
       delete url;
 
+   Reconfig(0);
+
    if(builtin==BUILTIN_OPEN)
       return this;
 
@@ -727,6 +739,57 @@ Job *CmdExec::builtin_glob()
    return this;
 }
 
+Job *CmdExec::builtin_queue()
+{
+   if(args->count()==1)
+   {
+      eprintf(_("Usage: %s command args...\n"),args->a0());
+      return 0;
+   }
+
+   CmdExec *queue=FindQueue();
+   if(queue==0)
+   {
+      queue=new CmdExec(session->Clone());
+      queue->parent=this;
+      queue->AllocJobno();
+      const char *url=session->GetConnectURL(FA::NO_PATH);
+      queue->cmdline=(char*)xmalloc(9+strlen(url));
+      sprintf(queue->cmdline,"queue (%s)",url);
+      queue->is_queue=true;
+      queue->queue_cwd=xstrdup(session->GetCwd());
+      queue->queue_lcwd=xstrdup(cwd);
+
+      assert(FindQueue()==queue);
+   }
+
+   if(xstrcmp(queue->queue_cwd,session->GetCwd()))
+   {
+      ArgV cd("cd");
+      cd.Append(session->GetCwd());
+      cd.Append("&");
+      queue->FeedArgV(&cd);
+
+      xfree(queue->queue_cwd);
+      queue->queue_cwd=xstrdup(session->GetCwd());
+   }
+   if(xstrcmp(queue->queue_lcwd,cwd))
+   {
+      ArgV cd("lcd");
+      cd.Append(cwd);
+      cd.Append("&");
+      queue->FeedArgV(&cd);
+
+      xfree(queue->queue_lcwd);
+      queue->queue_lcwd=xstrdup(cwd);
+   }
+
+   queue->FeedArgV(args,1);
+
+   exit_code=0;
+
+   return 0;
+}
 
 // below are only non-builtin commands
 #define args	  (parent->args)
@@ -1161,8 +1224,6 @@ CMD(debug)
       else
       {
 	 new_dlevel=atoi(args->getarg(1));
-	 if(new_dlevel>9)
-	    new_dlevel=9;
 	 if(new_dlevel<0)
 	    new_dlevel=0;
 	 enabled=true;
@@ -1325,16 +1386,27 @@ CMD(set)
       closure=sl+1;
    }
 
-   args->getnext();
-   char *val=(args->getcurr()==0?0:args->Combine(args->getindex()));
-   const char *msg=ResMgr::Set(a,closure,val);
-   xfree(val);
-
+   ResDecl *type;
+   // find type of given variable
+   const char *msg=ResMgr::FindVar(a,&type);
    if(msg)
    {
       eprintf(_("%s: %s. Use `set -a' to look at all variables.\n"),a,msg);
       return 0;
    }
+
+   args->getnext();
+   char *val=(args->getcurr()==0?0:args->Combine(args->getindex()));
+   msg=ResMgr::Set(a,closure,val);
+
+   if(msg)
+   {
+      eprintf("%s: %s.\n",val,msg);
+      xfree(val);
+      return 0;
+   }
+   xfree(val);
+
    exit_code=0;
    return 0;
 }
@@ -1525,10 +1597,10 @@ CMD(cache)  // cache control
 	 exit_code=1;
 	 return 0;
       }
-      time_t exp=decode_delay(op);
-      if(exp==-1)
+      TimeInterval exp(op);
+      if(exp.Error())
       {
-	 eprintf(_("%s: Invalid expire period (use Ns - in sec, Nm - in min, Nh - in hours)\n"),args->a0());
+	 eprintf("%s: %s: %s.\n",args->a0(),op,exp.ErrorText());
 	 exit_code=1;
 	 return 0;
       }
@@ -1673,7 +1745,10 @@ CMD(close)
 	 return 0;
       }
    }
-   session->Cleanup(all);
+   if(all)
+      session->CleanupAll();
+   else
+      session->Cleanup();
    exit_code=0;
    return 0;
 }
@@ -1812,79 +1887,6 @@ CMD(ftpcopy)
    return j;
 }
 
-CMD(sleep)
-{
-   char *op=args->a0();
-   if(args->count()!=2)
-   {
-      eprintf(_("%s: argument required. "),op);
-   err:
-      eprintf(_("Try `help %s' for more information.\n"),op);
-      return 0;
-   }
-   char *t=args->getarg(1);
-   time_t delay=decode_delay(t);
-   if(delay==(time_t)-1)
-   {
-      eprintf(_("%s: invalid delay. "),op);
-      goto err;
-   }
-   return new SleepJob(time(0)+delay);
-}
-
-extern "C" {
-#include "getdate.h"
-}
-CMD(at)
-{
-   int count=1;
-   int cmd_start=0;
-   int date_len=0;
-   for(;;)
-   {
-      char *arg=args->getnext();
-      if(arg==0)
-	 break;
-      if(!strcmp(arg,"--"))
-      {
-	 cmd_start=count+1;
-	 break;
-      }
-      date_len+=strlen(arg)+1;
-      count++;
-   }
-
-#if 0
-   char **av=(char**)xmemdup(args->GetV(),(count+1)*sizeof(char**));
-   av[count]=0;
-   time_t when=parsetime(count-1,av+1);
-   xfree(av);
-#endif
-   char *date=args->Combine(1);
-   date[date_len]=0;
-   time_t now=time(0);
-   time_t when=get_date(date,&now);
-   xfree(date);
-
-   if(when==0 || when==(time_t)-1)
-      return 0;
-
-   char *cmd=0;
-   if(cmd_start)
-   {
-      // two cases:
-      //  1. at time -- "cmd; cmd..." (one argument)
-      //  2. at time -- shell "cmd; cmd..." (several args)
-      if(cmd_start==args->count()-1)
-	 cmd=args->Combine(cmd_start);
-      else
-	 cmd=args->CombineQuoted(cmd_start);
-   }
-
-   FileAccess *s = cmd ? Clone() : 0;
-   return new SleepJob(when, s, cmd);
-}
-
 CMD(find)
 {
    const char *path=".";
@@ -1955,4 +1957,9 @@ CMD(chmod)
    Job *j=new ChmodJob(Clone(),m,args);
    args=0;
    return j;
+}
+
+CMD(queue)
+{
+   return parent->builtin_queue();
 }

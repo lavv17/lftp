@@ -132,10 +132,10 @@ void SMTask::Schedule()
    return;
 }
 
-void SMTask::ReconfigAll()
+void SMTask::ReconfigAll(const char *name)
 {
    UpdateNow();
    for(SMTask *scan=chain; scan; scan=scan->next)
-      scan->Reconfig();
+      scan->Reconfig(name);
    sched_total+=NoWait();  // for new values handling
 }

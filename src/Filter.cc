@@ -276,6 +276,7 @@ bool OutputFilter::broken()
 
 void FileStream::setmtime(time_t t)
 {
+   getfd(); // this might create the file... But can fail retriably. FIXME.
    struct utimbuf ut;
    ut.actime=ut.modtime=t;
    utime(full_name,&ut);

@@ -495,32 +495,30 @@ int XferJob::TryWrite(FDStream *f)
 	 to_write=nl-buffer+1;
    }
 
-   struct pollfd pfd={fd,POLLOUT};
-   int res=poll(&pfd,1,0);
-   if(res==1 && pfd.revents&(POLLOUT|POLLNVAL))
+   // fd should be non-blocking.
+   int res=write(fd,buffer,to_write);
+   if(res==-1)
    {
-      res=write(fd,buffer,to_write);
-      if(res==-1)
+      if(errno==EAGAIN || errno==EINTR)
       {
+	 res=0;
+	 goto normal_return;
+      }
+      if(errno!=EPIPE)
 	 perror(f->name);
-	 failed++;
-	 return -1;
-      }
-      if(res==0)
-      {
-	 fprintf(stderr,_("%s: cannot write -- disk full?\n"),op);
-	 failed++;
-	 return -1;
-      }
-      in_buffer-=res;
-      memmove(buffer,buffer+res,in_buffer);
-   }
-   else if(res==1)   // what's up?
-   {
-//       fprintf(stderr,"Broken pipe\n");
       failed++;
       return -1;
    }
+   if(res==0)
+   {
+      fprintf(stderr,_("%s: cannot write -- disk full?\n"),op);
+      failed++;
+      return -1;
+   }
+   in_buffer-=res;
+   memmove(buffer,buffer+res,in_buffer);
+
+normal_return:
    if(in_buffer>0)
       block+=PollVec(fd,POLLOUT);
    if(in_buffer<buffer_size && session)

@@ -31,6 +31,8 @@
 #include "GetJob.h"
 #include "misc.h"
 
+ResDecl res_clobber("xfer:clobber","yes",ResMgr::BoolValidate,0);
+
 int   GetJob::Do()
 {
    RateDrain();
@@ -78,20 +80,22 @@ int   GetJob::Do()
    {
       if(session->IsClosed())
       {
-	 if(local->getfd()==-1)
-	 {
-	    if(!local->error())
-	    {
-	       block+=TimeOut(1000);
-	       return m;
-	    }
-	    fprintf(stderr,"%s: %s\n",op,local->error_text);
-	    failed++;
-	    NextFile();
-	    return MOVED;
-	 }
 	 if(cont)
 	 {
+	    // need to get current file size.
+	    // ensure the file is opened.
+	    if(local->getfd()==-1)
+	    {
+	       if(!local->error())
+	       {
+		  block+=TimeOut(1000);
+		  return m;
+	       }
+	       fprintf(stderr,"%s: %s\n",op,local->error_text);
+	       failed++;
+	       NextFile();
+	       return MOVED;
+	    }
 	    offset=local->getsize_and_seek_end();
 	    if(offset<0)
 	       offset=0;
@@ -129,6 +133,7 @@ int   GetJob::Do()
 
 void GetJob::NextFile()
 {
+try_next:
    if(!args)
       return;
    if(local)
@@ -154,6 +159,12 @@ void GetJob::NextFile()
       {
 	 if(st.st_size>0)
 	 {
+	    if(!(bool)res_clobber.Query(0))
+	    {
+	       eprintf(_("%s: %s: file already exists and xfer:clobber is unset\n"),op,l);
+	       failed++;
+	       goto try_next;
+	    }
 	    char *b=(char*)alloca(strlen(f)+2);
 	    strcpy(b,f);
 	    strcat(b,"~");

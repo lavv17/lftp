@@ -52,6 +52,7 @@ static ResDecl
    res_verbose		   ("cmd:verbose",	"no", ResMgr::BoolValidate,0);
 
 CmdExec	 *CmdExec::cwd_owner=0;
+CmdExec	 *CmdExec::chain=0;
 
 void  CmdExec::SetCWD(const char *c)
 {
@@ -652,6 +653,27 @@ void CmdExec::PrintStatus(int v)
       free(s);
       return;
    }
+   if(is_queue)
+   {
+      if(!(next_cmd && next_cmd[0]))
+	 return;
+      printf(_("\tCommands queued:\n"));
+      char *cmd=next_cmd;
+      int n=1;
+      for(;;)
+      {
+	 char *cmd_end=strchr(cmd,'\n');
+	 if(!cmd_end)
+	    cmd_end=cmd+strlen(cmd);
+	 printf("\t%2d. %.*s\n",n++,int(cmd_end-cmd),cmd);
+	 if(*cmd_end==0)
+	    break;
+	 cmd=cmd_end+1;
+	 if(*cmd==0)
+	    break;
+      }
+      return;
+   }
    if(waiting)
    {
       printf(_("\tWaiting for job [%d] to terminate\n"),waiting->jobno);
@@ -663,6 +685,10 @@ void CmdExec::PrintStatus(int v)
 
 CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
 {
+   // add this to chain
+   next=chain;
+   chain=this;
+
    cmd=0;
    args=0;
    waiting=0;
@@ -702,10 +728,24 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
 
    glob=0;
    args_glob=0;
+
+   is_queue=false;
+   queue_cwd=0;
+   queue_lcwd=0;
 }
 
 CmdExec::~CmdExec()
 {
+   // remove this from chain.
+   for(CmdExec **scan=&chain; *scan; scan=&(*scan)->next)
+   {
+      if(this==*scan)
+      {
+	 *scan=(*scan)->next;
+	 break;
+      }
+   }
+
    free_used_aliases();
    xfree(cmd);
    if(args)
@@ -722,6 +762,9 @@ CmdExec::~CmdExec()
       delete glob;
    if(args_glob)
       delete args_glob;
+
+   xfree(queue_cwd);
+   xfree(queue_lcwd);
 }
 
 char *CmdExec::MakePrompt()
@@ -868,26 +911,35 @@ void CmdExec::beep_if_long()
       write(1,"\007",1);
 }
 
-void CmdExec::Reconfig()
+void CmdExec::Reconfig(const char *)
 {
-   long_running = res_long_running.Query(0);
-   remote_completion = res_remote_completion.Query(0);
+   const char *c=0;
+   if(session)
+      c = session->GetConnectURL(FA::NO_PATH);
+
+   long_running = res_long_running.Query(c);
+   remote_completion = res_remote_completion.Query(c);
    csh_history = res_csh_history.Query(0);
    xfree(var_ls);
-   var_ls=xstrdup(res_default_ls.Query(session->GetConnectURL(FA::NO_PATH)));
+   var_ls=xstrdup(res_default_ls.Query(c));
    xfree(var_prompt);
-   var_prompt=xstrdup(res_prompt.Query(0));
-   verify_path=res_verify_path.Query(0);
-   verify_host=res_verify_host.Query(0);
+   var_prompt=xstrdup(res_prompt.Query(c));
+   verify_path=res_verify_path.Query(c);
+   verify_host=res_verify_host.Query(c);
    verbose=res_verbose.Query(0);
 }
 
-void CmdExec::top_vfprintf(FILE *file,const char *f,va_list v)
+void CmdExec::pre_stdout()
 {
    if(status_line)
       status_line->Clear();
    if(feeder_called)
       feeder->clear();
+}
+
+void CmdExec::top_vfprintf(FILE *file,const char *f,va_list v)
+{
+   pre_stdout();
    ::vfprintf(file,f,v);
 }
 
@@ -998,7 +1050,7 @@ void CmdExec::FeedQuoted(const char *c)
 }
 
 // implementation is here because it depends on CmdExec.
-char *ArgV::CombineQuoted(int start)
+char *ArgV::CombineQuoted(int start) const
 {
    int	 i;
    char  *res;
@@ -1102,6 +1154,7 @@ void CmdExec::ChangeSession(FileAccess *new_session)
 {
    Reuse(session);
    session=new_session;
+   Reconfig(0);
 }
 
 const CmdExec::cmd_rec *CmdExec::CmdByIndex(int i)
@@ -1126,4 +1179,30 @@ Job *CmdExec::default_cmd()
    eprintf("%s: command `%s' is not compiled in.\n",op,op);
    return 0;
 #endif
+}
+
+void CmdExec::FeedArgV(const ArgV *args,int start)
+{
+   char *cmd;
+
+   if(start+1==args->count())
+      cmd=args->Combine(start);
+   else
+      cmd=args->CombineQuoted(start);
+
+   FeedCmd(cmd);
+   FeedCmd("\n");
+   xfree(cmd);
+}
+
+CmdExec *CmdExec::FindQueue()
+{
+   for(CmdExec *scan=chain; scan; scan=scan->next)
+   {
+      if(scan->is_queue
+      && !strcmp(this->session->GetConnectURL(FA::NO_PATH),
+	         scan->session->GetConnectURL(FA::NO_PATH)))
+	 return scan;
+   }
+   return 0;
 }

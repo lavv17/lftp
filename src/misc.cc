@@ -131,7 +131,7 @@ int   create_directories(char *path)
 	 *sl=0;
       if(access(path,0)==-1)
       {
-	 res=mkdir(path,0755);
+	 res=mkdir(path,0777);
 	 if(res==-1)
 	 {
 	    if(errno!=EEXIST)
@@ -186,24 +186,4 @@ char *xgetcwd()
 	 return 0;
       size*=2;
    }
-}
-
-time_t decode_delay(const char *s)
-{
-   long prec;
-   char ch;
-   int n=sscanf(s,"%lu%c",&prec,&ch);
-   if(n<1)
-      return -1;
-   if(n==1)
-      ch='s';
-   else if(ch=='m')
-      prec*=MINUTE;
-   else if(ch=='h')
-      prec*=HOUR;
-   else if(ch=='d')
-      prec*=DAY;
-   else if(ch!='s')
-      return -1;
-   return prec;
 }

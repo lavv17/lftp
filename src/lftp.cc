@@ -60,7 +60,9 @@
 #include "lftp_rl.h"
 #include "complete.h"
 
-int   remote_completion=0;
+
+CmdExec	 *top_exec;
+
 
 void  hook_signals()
 {
@@ -215,11 +217,18 @@ static void move_to_background()
       int fd=open(log,O_WRONLY|O_APPEND|O_CREAT,0600);
       if(fd>=0)
       {
-	 dup2(fd,1);
-	 dup2(fd,2);
+	 dup2(fd,1); // stdout
+	 dup2(fd,2); // stderr
 	 if(fd!=1 && fd!=2)
 	    close(fd);
       }
+      close(0);	  // close stdin.
+      open("/dev/null",O_RDONLY); // reopen it, just in case.
+
+#ifdef HAVE_SETSID
+      setsid();	  // start a new session.
+#endif
+
       pid=getpid();
       time_t t=time(0);
       SignalHook::Handle(SIGTERM,sig_term);
@@ -255,9 +264,14 @@ void  source_if_exist(CmdExec *exec,const char *rc)
    }
 }
 
+static void tty_clear()
+{
+   top_exec->pre_stdout();
+}
+
 int   main(int argc,char **argv)
 {
-#ifdef SOCKS
+#ifdef SOCKS4
    SOCKSinit(argv[0]);
 #endif
 
@@ -282,10 +296,11 @@ int   main(int argc,char **argv)
    const char *home=getenv("HOME");
    if(!home) home=".";
 
-   CmdExec *top_exec=new CmdExec(new DummyProto());
+   top_exec=new CmdExec(new DummyProto());
    top_exec->jobno=-1;
    top_exec->status_line=new StatusLine(1);
-   Log::global=new Log(top_exec->status_line);
+   Log::global=new Log();
+   Log::global->SetCB(tty_clear);
 
    lftp_readline_init();
 

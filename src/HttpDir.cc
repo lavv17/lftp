@@ -28,6 +28,7 @@
 #include "ArgV.h"
 #include "LsCache.h"
 #include "misc.h"
+#include <ctype.h>
 
 static const char *find_char(const char *buf,int len,char ch)
 {
@@ -104,20 +105,68 @@ static bool find_value(const char *scan,const char *more,const char *name,char *
    return false;
 }
 
+static
+const char *find_eol(const char *buf,int len,bool eof,int *eol_size)
+{
+   const char *real_eol=find_char(buf,len,'\n');
+   const char *less=find_char(buf,len,'<');
+   const char *more=0;
+   if(less)
+   {
+      more=find_char(less+1,len-(less+1-buf),'>');
+      if(more && !token_eq(less+1,len-(less+1-buf),"br"))
+      {
+	 // if the tag is finished and not BR, ignore it.
+	 less=0;
+	 more=0;
+      }
+   }
+   // is real_eol past the tag?
+   if(real_eol && less && real_eol>less)
+      real_eol=0;  // then ignore it.
+   // real_eol not found?
+   if(!real_eol)
+   {
+      // BR found?
+      if(less && more)
+      {
+	 *eol_size=more-less+1;
+	 return less;
+      }
+      *eol_size=0;
+      if(eof)
+	 return buf+len;
+      return 0;
+   }
+   *eol_size=1;
+   return real_eol;
+}
+
 static int parse_html(const char *buf,int len,bool eof,Buffer *list,
-      FileSet *set,FileSet *all_links,ParsedURL *prefix,char **base_href)
+      FileSet *set,FileSet *all_links,ParsedURL *prefix,char **base_href,
+      LsOptions *lsopt=0)
 {
    const char *end=buf+len;
    const char *less=find_char(buf,len,'<');
+   int eol_len=0;
+   int skip_len=0;
+   const char *eol;
+
+   eol=find_eol(buf,len,eof,&eol_len);
+   if(eol)
+      skip_len=eol-buf+eol_len;
+
    if(less==0)
-      return len;
+      return skip_len;
+   if(skip_len>0 && eol<less)
+      return skip_len;
    // FIXME: a > sign can be inside quoted value. (?)
    const char *more=find_char(less+1,end-less-1,'>');
    if(more==0)
    {
       if(eof)
 	 return len;
-      return less-buf;
+      return 0;
    }
    // we have found a tag
    int tag_len=more-buf+1;
@@ -219,6 +268,13 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
    if(*link_target==0)
       return tag_len;	// no target ?
 
+   // netscape internal icons
+   if(icon && !strncasecmp(link_target,"internal-gopher",15))
+      return tag_len;
+
+   if(link_target[0]=='/' && link_target[1]=='~')
+      link_target++;
+
    bool base_href_applied=false;
 
 parse_url_again:
@@ -228,7 +284,11 @@ parse_url_again:
       if(!prefix)
 	 return tag_len;	// no way
 
-      if(xstrcmp(link_url.proto,prefix->proto)
+      const char *pproto=prefix->proto;
+      if(!xstrcmp(pproto,"hftp"))
+	 pproto++;
+
+      if(xstrcmp(link_url.proto,pproto)
       || xstrcmp(link_url.host,prefix->host)
       || xstrcmp(link_url.user,prefix->user)
       || xstrcmp(link_url.port,prefix->port))
@@ -314,78 +374,231 @@ parse_url_again:
       }
    }
 
+   char *type=strstr(link_target,";type=");
+   if(type && type[6] && !type[7])
+   {
+      type[0]=0;
+      if(!all_links || all_links->FindByName(link_target))
+	 return tag_len;
+      type[0]=';';
+   }
+
    bool show_in_list=true;
    if(icon && link_target[0]=='/')
       show_in_list=false;  // makes apache listings look better.
 
+   skip_len=tag_len;
+   char *sym_link=0;
+   bool is_sym_link=false;
+
    if(list && show_in_list)
    {
-      int year,month,day,hour,minute;
-      char month_name[32];
-      char size_str[32];
+      int year=-1,month=-1,day=0,hour=0,minute=0;
+      char month_name[32]="";
+      char size_str[32]="";
       const char *more1;
+      char *str;
       int n;
-      char *line_add=(char*)alloca(link_len+128);
+      char *line_add=(char*)alloca(link_len+128+2*1024);
       bool data_available=false;
 
       if(!a_href)
 	 goto add_file;	// only <a href> tags can have useful info.
 
       // try to extract file information
-      const char *eol;
-      eol=find_char(more+1,end-more-1,'\n');
-      if(!eol)
-      {
-	 if(eof)
-	    goto add_file;
-	 return less-buf;  // not full line yet
-      }
-
       more1=more;
+   find_a_end:
       for(;;)
       {
 	 more1++;
-	 more1=find_char(more1,eol-more1,'>');
+	 more1=find_char(more1,end-more1,'>');
 	 if(!more1)
-	    goto add_file;
-	 if(more1[-1]!='.')   // apache bug?
+	 {
+	    if(eof)
+	       goto add_file;
+	    if(end-more>2*1024) // too long a-href
+	       goto add_file;
+	    return 0;  // no full a-href yet
+	 }
+	 if(!strncasecmp(more1-3,"</a",3))
 	    break;
       }
-
-      n=sscanf(more1+1,"%2d-%3s-%4d %2d:%2d %30s",
-		     &day,month_name,&year,&hour,&minute,size_str);
-      if(n!=6)
+      // get a whole line in buffer if possible.
+      eol=find_eol(more1+1,end-more1-1,eof,&eol_len);
+      if(!eol)
       {
-	 n=sscanf(more1+1,"%30s %2d-%3s-%4d",size_str,&day,month_name,&year);
-	 if(n!=4)
-	    goto add_file;
-	 hour=0;
-	 minute=0;
+	 if(!eof && end-more<=2*1024)
+	    return 0;  // no full line yet
+	 eol=end;
+	 eol_len=0;
       }
 
-      // y2000 problem :)
-      if(year<37)
-	 year+=2000;
-      else if(year<100)
-	 year+=1900;
+      // little workaround for squid's ftp listings
+      if(more1[1]==' ' && eol-more1>more-less+10
+      && !strncmp(more1+2,less,more-less+1))
+      {
+	 more1=more1+2+(more-less);
+	 goto find_a_end;
+      }
+      if(more1[1]==' ')
+	 more1++;
+      while(more1+1+2<eol && more1[1]=='.' && more1[2]==' ')
+	 more1+=2;
+
+      // the buffer is not null-terminated, so we need this
+      str=string_alloca(eol-more1);
+      memcpy(str,more1+1,eol-more1-1);
+      str[eol-more1-1]=0;
+
+      // usual apache listing: DD-Mon-YYYY hh:mm size
+      n=sscanf(str,"%2d-%3s-%4d %2d:%2d %30s",
+		    &day,month_name,&year,&hour,&minute,size_str);
+      if(n==6)
+	 goto got_info;
+
+      hour=0;
+      minute=0;
+      // unusual apache listing: size DD-Mon-YYYY
+      n=sscanf(str,"%30s %2d-%3s-%4d",size_str,&day,month_name,&year);
+      if(n==4)
+	 goto got_info;
+
+      char size_unit[7];
+      long size;
+      char week_day[4];
+      int second;
+      // Netscape-Proxy 2.53
+      if(9==sscanf(str,"%ld %6s %3s %3s %d %2d:%2d:%2d %4d",&size,size_unit,
+	       week_day,month_name,&day,&hour,&minute,&second,&year))
+      {
+	 if(!strcasecmp(size_unit,"bytes")
+	 || !strcasecmp(size_unit,"byte"))
+	    sprintf(size_str,"%ld",size);
+	 else
+	    sprintf(size_str,"%ld%s",size,size_unit);
+	 goto got_info;
+      }
+      if(7==sscanf(str,"%3s %3s %d %2d:%2d:%2d %4d",
+	       week_day,month_name,&day,&hour,&minute,&second,&year))
+      {
+	 strcpy(size_str,"-");
+	 if(!is_directory)
+	    is_sym_link=true;
+	 goto got_info;
+      }
+
+      char PM[3];
+      // Mini-Proxy web server.
+      if(7==sscanf(buf,"%d/%d/%d %d:%d %2s %30s",&month,&day,&year,&hour,
+			&minute,PM,size_str))
+      {
+	 if(!strcasecmp(PM,"PM"))
+	 {
+	    hour+=12;
+	    if(hour==24)
+	       hour=0;
+	 }
+	 if(!isdigit((unsigned char)size_str[0]))
+	 {
+	    if(!strcasecmp(size_str,"<dir>"))
+	       is_directory=true;
+	    strcpy(size_str,"-");
+	 }
+	 month--;
+	 goto got_info;
+      }
+
+      strcpy(size_str,"-");
+      char year_or_time[6];
+      // squid's ftp listing: Mon DD (YYYY or hh:mm) [size]
+      n=sscanf(str,"%3s %2d %5s %30s",month_name,&day,year_or_time,size_str);
+      if(n<3)
+	 goto add_file;
+      if(!is_ascii_digit(size_str[0]))
+	 strcpy(size_str,"-");
+      if(year_or_time[2]==':')
+      {
+	 if(2!=sscanf(year_or_time,"%2d:%2d",&hour,&minute))
+	    goto add_file;
+	 year=-1;
+      }
+      else
+      {
+	 if(1!=sscanf(year_or_time,"%d",&year))
+	    goto add_file;
+	 hour=minute=0;
+      }
+      // skip rest of line, because there may be href to link target.
+      skip_len=eol-buf+eol_len;
+
+      char *ptr;
+      ptr=strstr(str," -> <A HREF=\"");
+      if(ptr)
+      {
+	 is_sym_link=true;
+	 sym_link=ptr+13;
+	 ptr=strchr(sym_link,'"');
+	 if(!ptr)
+	    sym_link=0;
+	 else
+	 {
+	    *ptr=0;
+	    url::decode_string(sym_link);
+	 }
+      }
+
+   got_info:
+      if(year!=-1)
+      {
+	 // server's y2000 problem :)
+	 if(year<37)
+	    year+=2000;
+	 else if(year<100)
+	    year+=1900;
+      }
+
+      if(day<1 || day>31 || hour<0 || hour>23 || minute<0 || minute>59
+      || (month==-1 && !isalnum((unsigned char)month_name[0])))
+	 goto add_file;	// invalid data
 
       data_available=true;
 
    add_file:
       if(data_available)
       {
-	 month=parse_month(month_name);
+	 if(month==-1)
+	    month=parse_month(month_name);
 	 if(month>=0)
+	 {
 	    sprintf(month_name,"%02d",month+1);
-	 sprintf(line_add,"%s  %10s  %04d-%s-%02d %02d:%02d  %s\n",
-	    is_directory?"drwxr-xr-x":"-rw-r--r--",
+	    if(year==-1)
+	    {
+	       time_t curr=time(0);
+	       struct tm &now=*localtime(&curr);
+	       year=now.tm_year+1900;
+	       if(month*64+day>now.tm_mon*64+now.tm_mday)
+		  year--;
+	    }
+	 }
+	 sprintf(line_add,"%s  %10s  %04d-%s-%02d %02d:%02d  %s",
+	    is_directory?"drwxr-xr-x":(is_sym_link?"lrwxrwxrwx":"-rw-r--r--"),
 	    size_str,year,month_name,day,hour,minute,link_target);
+	 if(sym_link)
+	    sprintf(line_add+strlen(line_add)," -> %s",sym_link);
       }
       else
       {
-	 sprintf(line_add,"%s    %s\n",
+	 sprintf(line_add,"%s    %s",
 	    is_directory?"drwxr-xr-x":"-rw-r--r--",link_target);
       }
+      if(lsopt && lsopt->append_type)
+      {
+	 if(is_directory)
+	    strcat(line_add,"/");
+	 if(is_sym_link && !sym_link)
+	    strcat(line_add,"@");
+      }
+      strcat(line_add,"\n");
 
       if(!all_links->FindByName(link_target))
       {
@@ -407,11 +620,15 @@ parse_url_again:
 
       FileInfo *fi=new FileInfo;
       fi->SetName(link_target);
-      fi->SetType(is_directory ? fi->DIRECTORY : fi->NORMAL);
+      if(sym_link)
+	 fi->SetSymlink(sym_link);
+      else
+	 fi->SetType(is_directory ? fi->DIRECTORY : fi->NORMAL);
+
       set->Add(fi);
    }
 
-   return tag_len;
+   return skip_len;
 }
 
 
@@ -451,7 +668,6 @@ int HttpDirList::Do()
       if(use_cache && LsCache::Find(session,curr,mode,
 				    &cache_buffer,&cache_buffer_size))
       {
-	 from_cache=true;
 	 ubuf=new Buffer();
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
@@ -462,6 +678,8 @@ int HttpDirList::Do()
 	 session->Open(curr,mode);
 	 session->UseCache(use_cache);
 	 ubuf=new FileInputBuffer(session);
+	 if(LsCache::IsEnabled())
+	    ubuf->Save(LsCache::SizeLimit());
       }
       if(curr_url)
 	 delete curr_url;
@@ -478,32 +696,21 @@ int HttpDirList::Do()
    const char *b;
    int len;
    ubuf->Get(&b,&len);
-   if(ubuf->Eof() && len==upos) // eof
+   if(b==0) // eof
    {
-      if(!from_cache)
-      {
-	 const char *cache_buffer;
-	 int cache_buffer_size;
-	 ubuf->Get(&cache_buffer,&cache_buffer_size);
-	 if(cache_buffer && cache_buffer_size>0)
-	 {
-	    LsCache::Add(session,curr,mode,
-			   cache_buffer,cache_buffer_size);
-	 }
-      }
+      LsCache::Add(session,curr,mode,ubuf);
+
       delete ubuf;
       ubuf=0;
-      upos=0;
       return MOVED;
    }
-   int m=STALL;
-   b+=upos;
-   len-=upos;
 
-   int n=parse_html(b,len,ubuf->Eof(),buf,0,&all_links,curr_url,&base_href);
+   int m=STALL;
+
+   int n=parse_html(b,len,ubuf->Eof(),buf,0,&all_links,curr_url,&base_href,&ls_options);
    if(n>0)
    {
-      upos+=n;
+      ubuf->Skip(n);
       m=MOVED;
    }
 
@@ -520,17 +727,32 @@ HttpDirList::HttpDirList(ArgV *a,FileAccess *fa)
 {
    session=fa;
    ubuf=0;
-   upos=0;
-   from_cache=false;
    mode=FA::LONG_LIST;
    args->rewind();
+   int opt;
+   while((opt=args->getopt("faCFl"))!=EOF)
+   {
+      switch(opt)
+      {
+      case('f'):
+	 mode=FA::RETRIEVE;
+	 break;
+      case('a'):
+	 ls_options.show_all=true;
+	 break;
+      case('C'):
+	 ls_options.multi_column=true;
+	 break;
+      case('F'):
+	 ls_options.append_type=true;
+	 break;
+      }
+   }
+   while(args->getindex()>1)
+      args->delarg(1);	// remove options.
    if(args->count()<2)
       args->Append("");
-   else if(args->count()>2 && !strcmp(args->getarg(1),"-f"))
-   {
-      args->delarg(1);	// del -f
-      mode=FA::RETRIEVE;
-   }
+   args->rewind();
    curr=0;
    curr_url=0;
    base_href=0;
@@ -583,7 +805,6 @@ HttpGlob::HttpGlob(FileAccess *s,const char *n_pattern)
    dir_index=0;
    updir_glob=0;
    ubuf=0;
-   from_cache=false;
 
    session=s;
    dir=xstrdup(pattern);
@@ -659,7 +880,6 @@ int HttpGlob::Do()
       if(use_cache && LsCache::Find(session,curr_dir,FA::LONG_LIST,
 				    &cache_buffer,&cache_buffer_size))
       {
-	 from_cache=true;
 	 ubuf=new Buffer();
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
@@ -670,6 +890,8 @@ int HttpGlob::Do()
 	 session->Open(curr_dir,FA::LONG_LIST);
 	 session->UseCache(use_cache);
 	 ubuf=new FileInputBuffer(session);
+	 if(LsCache::IsEnabled())
+	    ubuf->Save(LsCache::SizeLimit());
       }
       m=MOVED;
    }
@@ -703,17 +925,8 @@ int HttpGlob::Do()
    }
    xfree(base_href);
 
-   if(!from_cache)
-   {
-      const char *cache_buffer;
-      int cache_buffer_size;
-      ubuf->Get(&cache_buffer,&cache_buffer_size);
-      if(cache_buffer && cache_buffer_size>0)
-      {
-	 LsCache::Add(session,curr_dir,FA::LONG_LIST,
-			cache_buffer,cache_buffer_size);
-      }
-   }
+   LsCache::Add(session,curr_dir,FA::LONG_LIST,ubuf);
+
    delete ubuf;
    ubuf=0;
 
@@ -768,7 +981,6 @@ int HttpListInfo::Do()
       if(use_cache && LsCache::Find(session,"",FA::LONG_LIST,
 				    &cache_buffer,&cache_buffer_size))
       {
-	 from_cache=true;
 	 ubuf=new Buffer();
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
@@ -779,6 +991,8 @@ int HttpListInfo::Do()
 	 session->Open("",FA::LONG_LIST);
 	 session->UseCache(use_cache);
 	 ubuf=new FileInputBuffer(session);
+	 if(LsCache::IsEnabled())
+	    ubuf->Save(LsCache::SizeLimit());
       }
       m=MOVED;
    }
@@ -813,17 +1027,8 @@ int HttpListInfo::Do()
       }
       xfree(base_href);
 
-      if(!from_cache)
-      {
-	 const char *cache_buffer;
-	 int cache_buffer_size;
-	 ubuf->Get(&cache_buffer,&cache_buffer_size);
-	 if(cache_buffer && cache_buffer_size>0)
-	 {
-	    LsCache::Add(session,"",FA::LONG_LIST,
-			   cache_buffer,cache_buffer_size);
-	 }
-      }
+      LsCache::Add(session,"",FA::LONG_LIST,ubuf);
+
       delete ubuf;
       ubuf=0;
       m=MOVED;
@@ -848,9 +1053,23 @@ int HttpListInfo::Do()
 
 	 if(file->defined & file->TYPE)
 	 {
-	    if(file->filetype==file->DIRECTORY)
+	    if(file->filetype==file->SYMLINK && follow_symlinks)
 	    {
-	       continue; // FIXME: directories need slash.
+	       file->filetype=file->NORMAL;
+	       file->defined &= ~(file->SIZE|file->SYMLINK_DEF|file->MODE|file->DATE_UNPREC);
+	       cur->get_size=true;
+	       cur->get_time=true;
+	    }
+
+	    if(file->filetype==file->SYMLINK)
+	    {
+	       // don't need these for symlinks
+	       cur->get_size=false;
+	       cur->get_time=false;
+	    }
+	    else if(file->filetype==file->DIRECTORY)
+	    {
+	       continue; // FIXME: directories need slash in GetInfoArray.
 #if 0
 	       // don't need size for directories
 	       cur->get_size=false;

@@ -50,6 +50,5 @@ char *xgetcwd();
 #define MINUTE (60)
 #define HOUR   (60*MINUTE)
 #define DAY    (24*HOUR)
-time_t decode_delay(const char *s);
 
 #endif // MISC_H

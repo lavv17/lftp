@@ -1,3 +1,28 @@
+1999-10-09	lav
+
+	* configure.in: version 2.1.2
+
+1999-10-06	lav
+
+	* acconfig.h, configure.in: handle --with-socksdante.
+
+1999-10-05	lav
+
+	* acconfig.h, configure.in: handle --with-socks5, define SOCKS4 for old
+	  socks.
+
+1999-09-30	lav
+
+	* acinclude.m4: (READLINE_CHECK) check for header readline/readline.h.
+
+1999-09-29	Andreas Ley <andy@rz.uni-karlsruhe.de>
+
+	* configure.in: fix check for res_search for AIX.
+
+1999-09-20	lav
+
+	* acconfig.h: remove __USE_XOPEN.
+
 1999-08-11	lav
 
 	* configure.in, acconfig.h, acinclude.m4: define LFTP_C_INLINE,

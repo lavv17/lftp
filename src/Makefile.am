@@ -29,7 +29,8 @@ libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  buffer.cc buffer.h url.cc url.h StatusLine.cc StatusLine.h plural.c plural.h\
  misc.h misc.cc Http.cc Http.h fg.cc fg.h module.c module.h modconfig.h\
  resource.cc DummyProto.cc DummyProto.h FtpGlob.cc FtpGlob.h FtpDirList.cc\
- FtpDirList.h ArgV.cc ArgV.h HttpDir.cc HttpDir.h ascii_ctype.h
+ FtpDirList.h ArgV.cc ArgV.h HttpDir.cc HttpDir.h ascii_ctype.h\
+ NetAccess.cc NetAccess.h
 
 libjobs_a_SOURCES = Job.cc Job.h XferJob.cc XferJob.h CmdExec.cc CmdExec.h\
  commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\
@@ -60,7 +61,7 @@ INCLUDES = -I$(top_srcdir)/include
 
 # These files can be linked to ../include by configure, but not always.
 OMIT_DEPENDENCIES = readline.h keymaps.h chardefs.h tilde.h history.h libintl.h\
- regex.h glob.h fnmatch.h poll.h
+ regex.h glob.h fnmatch.h poll.h rlstdc.h
 
 lftp.o ftpget.o commands.o module.o: confpaths.h
 
@@ -84,17 +85,20 @@ uninstall-local:
 	    rm -f $(DESTDIR)$(pkglibdir)/$$p; \
 	done
 
-MODULEFLAGS=$(PIC_FLAG) -shared -DMODULE
+MODULEFLAGS=$(PIC_FLAG) -shared -nostdlib -DMODULE
 CXXMODLINK=$(CXXCOMPILE) $(LDFLAGS) $(MODULEFLAGS)
-proto-http.so: Http.cc HttpDir.cc
+proto-http.so: Http.cc HttpDir.cc NetAccess.cc
 	@-rm -f $@
 	$(CXXMODLINK) $^ -o $@
 proto-file.so: LocalAccess.cc
 	@-rm -f $@
 	$(CXXMODLINK) $^ -o $@
-proto-ftp.so: ftpclass.cc FtpListInfo.cc FtpGlob.cc FtpDirList.cc md5.c ftp-opie.c
+proto-ftp.so: ftpclass.cc FtpListInfo.cc FtpGlob.cc FtpDirList.cc md5.c ftp-opie.c NetAccess.cc
 	@-rm -f $@
 	$(CXXMODLINK) $^ -o $@
 cmd-mirror.so: MirrorJob.cc
+	@-rm -f $@
+	$(CXXMODLINK) $^ -o $@
+cmd-sleep.so: SleepJob.cc getdate.c
 	@-rm -f $@
 	$(CXXMODLINK) $^ -o $@

@@ -26,6 +26,8 @@
 #include <time.h>
 #include "FileAccess.h"
 
+class Buffer;
+
 class LsCache
 {
    time_t   timestamp;
@@ -40,7 +42,7 @@ class LsCache
    static LsCache *chain;
    static bool use;
    static long sizelimit;
-   static time_t ttl;
+   static TimeInterval ttl;
 
    class ExpireHelper;
    friend class LsCache::ExpireHelper;
@@ -57,6 +59,7 @@ class LsCache
 
 public:
    static void Add(FileAccess *p_loc,const char *a,int m,const char *d,int l);
+   static void Add(FileAccess *p_loc,const char *a,int m,const Buffer *ubuf);
    static int Find(FileAccess *p_loc,const char *a,int m,char **d,int *l);
 
    enum change_mode { FILE_CHANGED, DIR_CHANGED, TREE_CHANGED };
@@ -78,8 +81,10 @@ public:
    static void Flush();
    static void On() { use=true; }
    static void Off() { use=false; }
+   static bool IsEnabled() { return use; }
    static void SetSizeLimit(long l) { sizelimit=l; }
-   static void SetExpire(time_t t) { ttl=t; }
+   static long SizeLimit() { return sizelimit; }
+   static void SetExpire(const TimeInterval &t) { ttl=t; }
 
    ~LsCache();
 

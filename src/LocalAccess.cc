@@ -70,13 +70,13 @@ LocalAccess::~LocalAccess()
 
 void LocalAccess::errno_handle()
 {
-   xfree(last_error_resp);
+   xfree(error);
    const char *err=strerror(errno);
-   last_error_resp=(char*)xmalloc(xstrlen(file)+xstrlen(file1)+strlen(err)+20);
+   error=(char*)xmalloc(xstrlen(file)+xstrlen(file1)+strlen(err)+20);
    if(mode==RENAME)
-      sprintf(last_error_resp,"rename(%s, %s): %s",file,file1,err);
+      sprintf(error,"rename(%s, %s): %s",file,file1,err);
    else
-      sprintf(last_error_resp,"%s: %s",file,err);
+      sprintf(error,"%s: %s",file,err);
 }
 
 int LocalAccess::Done()
@@ -97,7 +97,7 @@ int LocalAccess::Done()
 
 int LocalAccess::Do()
 {
-   if(error_code<0 || done)
+   if(Error() || done)
       return STALL;
    int m=STALL;
    switch((open_mode)mode)
@@ -137,9 +137,7 @@ int LocalAccess::Do()
       {
 	 if(stream->error())
 	 {
-	    error_code=FATAL;
-	    xfree(last_error_resp);
-	    last_error_resp=xstrdup(stream->error_text);
+	    Fatal(stream->error_text);
 	    return MOVED;
 	 }
 	 block+=TimeOut(1000);
@@ -225,9 +223,7 @@ int LocalAccess::Do()
       {
 	 if(stream->error())
 	 {
-	    error_code=NO_FILE;
-	    xfree(last_error_resp);
-	    last_error_resp=xstrdup(stream->error_text);
+	    SetError(NO_FILE,stream->error_text);
 	    return MOVED;
 	 }
 	 block+=TimeOut(1000);

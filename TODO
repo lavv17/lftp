@@ -4,12 +4,9 @@ at least tell me what you think. Items marked with - are hard to implement
 currently; some need other work to be done.
 
 
- * complete group/gpass and ACCT (does anyone need it?)
+?* complete group/gpass and ACCT (does anyone need it?)
 
 ?* save command history (to different files for diff hosts?)
-
- * Http-style proxy support for ftp.
-   Maybe as a new protocol: hftp?
 
 ?* document variables in on-line help
 
@@ -23,11 +20,7 @@ currently; some need other work to be done.
 
  * ftpcopy glob, multiple files
 
--* progress indicator for ftpcopy
-
- * glob each directory component in FtpGlob
--  problem: have to assume server does globbing and support backslash-quotes,
-   or that it does neither
+-* progress indicator for ftpcopy (hard)
 
  * update process title
  * at-exit-bg
@@ -35,9 +28,7 @@ currently; some need other work to be done.
  * implement Queueing in FileAccess. fa->AddQueue(new FAQueueOp(args)).
    (Done()==true when queue is empty)
 
- * there are many interesting protocols: smb, fsp, fish, ...
-
- * split off NetworkFA class.
+ * there are many interesting protocols: smb, fsp, fish, imap, irc, ...
 
  * put -n (only if newer) Maybe it would be better to add a command to compare
    times?
@@ -52,13 +43,46 @@ currently; some need other work to be done.
       mirror -R = local mirror
       put = local get
    of course, implement commands using two sessions where possible.
-
- * make debug output to clear/redraw prompt.
-
- * safety: options for permanent backup, maybe complain instead of overwriting.
+   ?? then proto-file will not be a module, that is it will be always loaded.
 
  * mirror: add settings like mirror:default-time-prec. make default 0?.
 
  * ascii mode?
 
  * intelligently squeeze file name in status line.
+
+ * parallel get's in mirror, mget
+ * make a command get1 to get single file with extra options.
+
+ * in Glob and FileInfo: set a flag that if REST does not work to report
+   an error, and in case of such error restart from beginning.
+
+ * tail command
+
+ * ftp:rest-stor
+
+ * ability to bind source address of sockets. (for those with several
+   interfaces)
+     This needs to handle both ipv4 and ipv6 addresses, but probably only
+   numeric forms, since lookups are time-consuming and can give several
+   addresses.
+     The source address family must match that of destination address, so
+   probably several settings are necessary, e.g. net:source-address-ipv4 and
+   net:source-address-ipv6. Or a closure can be used.
+     Maybe it is better to specify interface instead of address, then address
+   family can be used to get proper address off the interface. (?)
+
+ * don't send MDTM/SIZE commands if it is known that server does not support them.
+
+ * make a class FileAccessLocation
+
+ * mirror --remove-first
+
+ * mirror --use-cache
+
+ * job suspend/resume.
+
+ * connection number limit, connection takeover even if it is used(?).
+   foreground session should have priority over bg ones.
+
+ * motd. if it is not yet known, connect/login and get it. (use class Buffer).

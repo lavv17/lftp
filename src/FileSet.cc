@@ -141,32 +141,24 @@ void FileSet::SubtractSame(const FileSet *set,bool only_newer,time_t prec,int ig
 {
    for(int i=0; i<fnum; i++)
    {
-      for(int j=0; j<set->fnum; j++)
-      {
-	 if(files[i]->SameAs(set->files[j],only_newer,prec,ignore))
-	 {
-	    Sub(i);
-	    i--;
-	    break;
-	 }
-      }
+      FileInfo *f=set->FindByName(files[i]->name);
+      if(f && files[i]->SameAs(f,only_newer,prec,ignore))
+	 Sub(i--);
    }
 }
 
 void FileSet::SubtractAny(const FileSet *set)
 {
    for(int i=0; i<fnum; i++)
-   {
-      for(int j=0; j<set->fnum; j++)
-      {
-	 if(!strcmp(files[i]->name,set->files[j]->name))
-	 {
-	    Sub(i);
-	    i--;
-	    break;
-	 }
-      }
-   }
+      if(set->FindByName(files[i]->name))
+	 Sub(i--);
+}
+
+void FileSet::SubtractNotIn(const FileSet *set)
+{
+   for(int i=0; i<fnum; i++)
+      if(!set->FindByName(files[i]->name))
+	 Sub(i--);
 }
 
 void FileSet::SubtractOlderThan(time_t t)
@@ -252,7 +244,7 @@ void FileSet::Count(int *d,int *f,int *s,int *o)
    }
 }
 
-FileInfo *FileSet::FindByName(const char *name)
+FileInfo *FileSet::FindByName(const char *name) const
 {
    for(int i=0; i<fnum; i++)
    {

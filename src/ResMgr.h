@@ -24,6 +24,8 @@
 #define RESMGR_H
 
 #include <stdio.h>
+#include <sys/types.h>
+#include <time.h>
 #include "xmalloc.h"
 
 typedef const char *ResValValid(char **value);
@@ -80,6 +82,7 @@ public:
    static const char *BoolValidate(char **value);
    static const char *NumberValidate(char **value);
    static const char *UNumberValidate(char **value);
+   static const char *TimeIntervalValidate(char **value);
    static bool str2bool(const char *value);
 
    static void ClassInit();
@@ -126,6 +129,27 @@ public:
 	 return s;
       }
    bool is_nil() { return s==0; }
+};
+
+class TimeInterval
+{
+   time_t interval;
+   bool infty;
+   const char *error_text;
+public:
+   TimeInterval(const char *);
+   TimeInterval(time_t i)
+      {
+	 interval=i;
+	 infty=false;
+	 error_text=0;
+      }
+   ~TimeInterval();
+   bool Error() { return error_text!=0; };
+   const char *ErrorText() { return error_text; }
+
+   bool IsInfty() { return infty; }
+   time_t Seconds() { return interval; }
 };
 
 #endif //RESMGR_H

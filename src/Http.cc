@@ -20,6 +20,12 @@
 
 /* $Id$ */
 
+#ifdef __linux__
+/* to get prototype for strptime, we need this */
+# define _XOPEN_SOURCE 500
+# define _XOPEN_SOURCE_EXTENDED 1
+#endif
+
 #include <config.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -37,7 +43,7 @@
 
 #include "ascii_ctype.h"
 
-#define super FileAccess
+#define super NetAccess
 
 #define max_buf 0x10000
 
@@ -57,9 +63,6 @@ static void base64_encode (const char *s, char *store, int length);
 void Http::Init()
 {
    state=DISCONNECTED;
-   resolver=0;
-   peer=0;
-   peer_num=peer_curr=0;
    sock=-1;
    send_buf=0;
    recv_buf=0;
@@ -71,18 +74,6 @@ void Http::Init()
    proto_version=0x10;
    location=0;
    sent_eot=false;
-
-   idle=0;
-   idle_start=now;
-   retries=0;
-
-   socket_buffer=0;
-   socket_maxseg=0;
-   max_retries=0;
-
-   proxy=0;
-   proxy_port=0;
-   proxy_user=proxy_pass=0;
 
    default_cwd="/";
 
@@ -97,6 +88,9 @@ void Http::Init()
 
    no_cache_this=false;
    no_cache=false;
+
+   hftp=false;
+   use_head=true;
 }
 
 Http::Http() : super()
@@ -120,9 +114,6 @@ Http::Http(const Http *f) : super(f)
 
 Http::~Http()
 {
-   if(resolver)
-      delete resolver;
-   xfree(peer);
    if(send_buf)
       delete send_buf;
    if(recv_buf)
@@ -132,11 +123,6 @@ Http::~Http()
    xfree(line);
    xfree(status);
    xfree(location);
-
-   xfree(proxy); proxy=0;
-   xfree(proxy_port); proxy_port=0;
-   xfree(proxy_user); proxy_user=0;
-   xfree(proxy_pass); proxy_pass=0;
 }
 
 bool Http::CheckTimeout()
@@ -152,19 +138,6 @@ bool Http::CheckTimeout()
    return(false);
 }
 
-void Http::SetError(int ec,const char *e)
-{
-   xfree(last_error_resp);
-   last_error_resp=xstrdup(e);
-   state=ERROR;
-   error_code=ec;
-}
-
-void Http::Fatal(const char *e)
-{
-   SetError(FATAL,e);
-}
-
 void Http::Disconnect()
 {
    if(send_buf)
@@ -176,6 +149,11 @@ void Http::Disconnect()
    {
       delete recv_buf;
       recv_buf=0;
+   }
+   if(rate_limit)
+   {
+      delete rate_limit;
+      rate_limit=0;
    }
    if(sock!=-1)
    {
@@ -197,7 +175,7 @@ void Http::Disconnect()
    chunked=false;
    chunk_size=-1;
    chunk_pos=0;
-   if(mode==STORE && state!=DONE && state!=ERROR)
+   if(mode==STORE && state!=DONE && !Error())
       SetError(STORE_FAILED,0);
    else
       state=DISCONNECTED;
@@ -228,23 +206,33 @@ void Http::Send(const char *format,...)
 
 void Http::SendMethod(const char *method,const char *efile)
 {
+   char *ehost=string_alloca(strlen(hostname)*3+1);
+   url::encode_string(hostname,ehost);
+   if(!use_head && !strcmp(method,"HEAD"))
+      method="GET";
    Send("%s %s HTTP/1.1\r\n",method,efile);
-   Send("Host: %s\r\n",url::encode_string(hostname));
+   Send("Host: %s\r\n",ehost);
    Send("User-Agent: %s/%s\r\n","lftp",VERSION);
    Send("Accept: */*\r\n");
 }
 
 
-void Http::SendAuth()
+void Http::SendBasicAuth(const char *tag,const char *user,const char *pass)
 {
-   if(!user || !pass)
-      return;
    /* Basic scheme */
    char *buf=(char*)alloca(strlen(user)+1+strlen(pass)+1);
    sprintf(buf,"%s:%s",user,pass);
    char *buf64=(char*)alloca(base64_length(strlen(buf))+1);
    base64_encode(buf,buf64,strlen(buf));
-   Send("Authorization: Basic %s\r\n",buf64);
+   Send("%s: Basic %s\r\n",tag,buf64);
+}
+
+void Http::SendAuth()
+{
+   if(proxy && proxy_user && proxy_pass)
+      SendBasicAuth("Proxy-Authorization",proxy_user,proxy_pass);
+   if(user && pass)
+      SendBasicAuth("Authorization",user,pass);
 }
 
 bool Http::ModeSupported()
@@ -273,23 +261,40 @@ bool Http::ModeSupported()
 
 void Http::SendRequest(const char *connection,const char *f)
 {
-   char *efile=alloca_strdup(url::encode_string(f));
-   char *ecwd=alloca_strdup(url::encode_string(cwd));
+   char *efile=string_alloca(strlen(f)*3+1);
+   url::encode_string(f,efile);
+   char *ecwd=string_alloca(strlen(cwd)*3+1);
+   url::encode_string(cwd,ecwd);
    int efile_len;
 
-   char *pfile=(char*)alloca(4+3+strlen(hostname)*3+1
-			      +strlen(cwd)*3+1+strlen(efile)+1+1);
+   char *pfile=(char*)alloca(4+3+xstrlen(user)*6+3+xstrlen(pass)*3+1+
+			      strlen(hostname)*3+1+strlen(cwd)*3+1+
+			      strlen(efile)+1+1);
 
    if(proxy)
    {
       const char *proto="http";
-      sprintf(pfile,"%s://%s",proto,url::encode_string(hostname));
+      if(hftp)
+      {
+	 if(user && pass)
+	 {
+	    strcpy(pfile,"ftp://");
+	    url::encode_string(user,pfile+strlen(pfile),"/:@"URL_UNSAFE);
+	    strcat(pfile,"@");
+	    url::encode_string(hostname,pfile+strlen(pfile));
+	    goto add_path;
+	 }
+	 proto="ftp";
+      }
+      sprintf(pfile,"%s://",proto);
+      url::encode_string(hostname,pfile+strlen(pfile));
    }
    else
    {
       pfile[0]=0;
    }
 
+add_path:
    if(ecwd[0]=='~' && ecwd[1]=='/')
       ecwd+=1;
 
@@ -369,6 +374,8 @@ void Http::SendRequest(const char *connection,const char *f)
       Send("Pragma: no-cache\r\n"); // for HTTP/1.0 compatibility
       Send("Cache-Control: no-cache\r\n");
    }
+   if(mode==ARRAY_INFO && !use_head)
+      connection="close";
    if(mode!=ARRAY_INFO || connection)
       Send("Connection: %s\r\n",connection?connection:"close");
    Send("\r\n");
@@ -502,6 +509,9 @@ int Http::Do()
       home=xstrdup("/");
    ExpandTildeInCWD();
 
+   if(Error())
+      return MOVED;
+
    switch(state)
    {
    case DISCONNECTED:
@@ -512,50 +522,32 @@ int Http::Do()
 	 SetError(NOT_SUPP);
 	 return MOVED;
       }
+      if(hftp)
+      {
+	 if(!proxy)
+	 {
+	    // problem here: hftp cannot work without proxy
+	    SetError(FATAL,"ftp over http cannot work without proxy, set hftp:proxy.");
+	    return MOVED;
+	 }
+      }
+      if(try_time!=0 && now-try_time<reconnect_interval)
+      {
+	 block+=TimeOut(1000*(reconnect_interval-(now-try_time)));
+	 return m;
+      }
+
       if(peer==0 || relookup_always)
       {
-	 if(resolver==0)
-	 {
-	    if(proxy)
-	       resolver=new Resolver(proxy,proxy_port);
-	    else
-	       resolver=new Resolver(hostname,portname,
-				    HTTP_DEFAULT_PORT,"http","tcp");
-	    ClearPeer();
-	 }
-	 if(!resolver->Done())
+	 if(Resolve(HTTP_DEFAULT_PORT,"http","tcp")==MOVED)
+	    m=MOVED;
+	 if(!peer)
 	    return m;
-
-	 if(resolver->Error())
-	 {
-	    SetError(LOOKUP_ERROR,resolver->ErrorMsg());
-	    xfree(hostname);
-	    hostname=0;
-	    xfree(portname);
-	    portname=0;
-	    return(MOVED);
-	 }
-
-	 xfree(peer);
-	 peer=(sockaddr_u*)xmalloc(resolver->GetResultSize());
-	 peer_num=resolver->GetResultNum();
-	 resolver->GetResult(peer);
-	 peer_curr=0;
-
-	 delete resolver;
-	 resolver=0;
       }
-      if(peer_curr>=peer_curr)
-	 peer_curr=0;
 
       if(mode==CONNECT_VERIFY)
 	 return m;
 
-      if(try_time!=0 && now-try_time<sleep_time)
-      {
-	 block+=TimeOut(1000*(sleep_time-(now-try_time)));
-	 return m;
-      }
       try_time=now;
 
       if(max_retries>0 && retries>=max_retries)
@@ -570,21 +562,32 @@ int Http::Do()
 
       sock=socket(peer[peer_curr].sa.sa_family,SOCK_STREAM,IPPROTO_TCP);
       if(sock==-1)
-	 goto system_error;
+      {
+	 if(peer_curr+1<peer_num)
+	 {
+	    peer_curr++;
+	    retries--;
+	    return MOVED;
+	 }
+	 if(errno==ENFILE || errno==EMFILE)
+	 {
+	    // file table overflow - it could free sometime
+	    block+=TimeOut(1000);
+	    return m;
+	 }
+	 char str[256];
+	 sprintf(str,"cannot create socket of address family %d",
+			peer[peer_curr].sa.sa_family);
+	 SetError(SEE_ERRNO,str);
+	 return MOVED;
+      }
       KeepAlive(sock);
       SetSocketBuffer(sock,socket_buffer);
       SetSocketMaxseg(sock,socket_maxseg);
       NonBlock(sock);
       CloseOnExec(sock);
 
-#if 0
-      a=(unsigned char*)&peer_sa.in.sin_addr;
-      sprintf(str,_("Connecting to %s%s (%s) port %u"),proxy?"proxy ":"",
-	 host_to_connect,numeric_address(&peer_sa),get_port(&peer_sa));
-      DebugPrint("---- ",str,0);
-#endif
-
-      DebugPrint("---- ","Connecting...",2);
+      SayConnectingTo();
       res=connect(sock,&peer[peer_curr].sa,sizeof(*peer));
       UpdateNow(); // if non-blocking don't work
 
@@ -640,6 +643,11 @@ int Http::Do()
 
       state=RECEIVING_HEADER;
       m=MOVED;
+      if(mode==STORE)
+      {
+	 assert(rate_limit==0);
+	 rate_limit=new RateLimit();
+      }
 
    case RECEIVING_HEADER:
       if(send_buf->Error() || recv_buf->Error())
@@ -802,13 +810,18 @@ int Http::Do()
 
       if(!H_20X(status_code))
       {
-	 char *err=(char*)alloca(strlen(status)+strlen(file)+xstrlen(location)+20);
+	 char *err=(char*)alloca(strlen(status)+strlen(file)+strlen(cwd)+xstrlen(location)+20);
 
 	 if(H_REDIRECTED(status_code))
 	    sprintf(err,"%s (%s -> %s)",status+status_consumed,file,
 				    location?location:"nowhere");
 	 else
-	    sprintf(err,"%s (%s)",status+status_consumed,file);
+	 {
+	    if(file && file[0])
+	       sprintf(err,"%s (%s)",status+status_consumed,file);
+	    else
+	       sprintf(err,"%s (%s/)",status+status_consumed,cwd);
+	 }
 	 Disconnect();
 	 SetError(NO_FILE,err);
 	 return MOVED;
@@ -823,7 +836,8 @@ int Http::Do()
       }
 
       DebugPrint("---- ","Receiving body...",9);
-      BytesReset();
+      assert(rate_limit==0);
+      rate_limit=new RateLimit();
       if(real_pos<0) // assume Range: did not work
 	 real_pos=0;
       state=RECEIVING_BODY;
@@ -839,7 +853,7 @@ int Http::Do()
 	 Disconnect();
 	 return MOVED;
       }
-      if(recv_buf->Size()>=BytesAllowed())
+      if(recv_buf->Size()>=rate_limit->BytesAllowed())
       {
 	 recv_buf->Suspend();
 	 Timeout(1000);
@@ -865,7 +879,6 @@ int Http::Do()
       return m;
 
    case DONE:
-   case ERROR:
       return m;
    }
    return m;
@@ -887,11 +900,12 @@ void  Http::ClassInit()
 {
    // register the class
    Register("http",Http::New);
+   Register("hftp",HFtp::New);
 }
 
 int Http::Read(void *buf,int size)
 {
-   if(state==ERROR)
+   if(Error())
       return error_code;
    if(mode==CLOSED)
       return 0;
@@ -970,7 +984,7 @@ int Http::Read(void *buf,int size)
 	    size1=chunk_size-chunk_pos;
       }
 
-      int bytes_allowed=BytesAllowed();
+      int bytes_allowed=rate_limit->BytesAllowed();
       if(size1>bytes_allowed)
 	 size1=bytes_allowed;
       if(size1==0)
@@ -996,7 +1010,7 @@ int Http::Read(void *buf,int size)
       bytes_received+=size;
       if(chunked)
 	 chunk_pos+=size;
-      BytesUsed(size);
+      rate_limit->BytesUsed(size);
       retries=0;
       return size;
    }
@@ -1007,7 +1021,7 @@ int Http::Done()
 {
    if(mode==CLOSED)
       return OK;
-   if(state==ERROR)
+   if(Error())
       return error_code;
    if(state==DONE)
       return OK;
@@ -1021,14 +1035,14 @@ int Http::Write(const void *buf,int size)
 
    Resume();
    Do();
-   if(state==ERROR)
+   if(Error())
       return(error_code);
 
-   if(state!=RECEIVING_HEADER || status!=0)
+   if(state!=RECEIVING_HEADER || status!=0 || send_buf->Size()!=0)
       return DO_AGAIN;
 
    {
-      int allowed=BytesAllowed();
+      int allowed=rate_limit->BytesAllowed();
       if(allowed==0)
 	 return DO_AGAIN;
       if(size>allowed)
@@ -1051,7 +1065,7 @@ int Http::Write(const void *buf,int size)
       return error_code;
    }
    retries=0;
-   BytesUsed(res);
+   rate_limit->BytesUsed(res);
    pos+=res;
    real_pos+=res;
    return(res);
@@ -1061,9 +1075,11 @@ int Http::SendEOT()
 {
    if(sent_eot)
       return OK;
+   if(Error())
+      return(error_code);
    if(mode==STORE)
    {
-      if(state==RECEIVING_HEADER)
+      if(state==RECEIVING_HEADER && send_buf->Size()==0)
       {
 	 shutdown(sock,1);
 	 sent_eot=true;
@@ -1090,7 +1106,7 @@ const char *Http::CurrentStatus()
       {
 	 if(resolver)
 	    return(_("Resolving host address..."));
-	 if(now-try_time<sleep_time)
+	 if(now-try_time<reconnect_interval)
 	    return(_("Delaying before reconnect"));
       }
       return "";
@@ -1104,85 +1120,25 @@ const char *Http::CurrentStatus()
       return(_("Fetching headers..."));
    case RECEIVING_BODY:
       return(_("Receiving data"));
-   case ERROR:
    case DONE:
       return "";
    }
    abort();
 }
 
-void Http::Reconfig()
+void Http::Reconfig(const char *name)
 {
-   xfree(closure);
-   closure=xstrdup(hostname);
-   const char *c=closure;
+   const char *c=hostname;
 
-   super::Reconfig();
-
-   timeout = Query("timeout",c);
-   sleep_time = Query("reconnect-interval",c);
-   idle = Query("idle",c);
-   max_retries = Query("max-retries",c);
-   relookup_always = Query("relookup-always",c);
-   socket_buffer = Query("socket-buffer",c);
-   socket_maxseg = Query("socket-maxseg",c);
-
-   SetProxy(Query("proxy",c));
+   super::Reconfig(name);
 
    no_cache = !(bool)Query("cache",c);
+   SetProxy(Query("proxy",c));
 
    if(sock!=-1)
       SetSocketBuffer(sock,socket_buffer);
-}
-
-void Http::ClearPeer()
-{
-   xfree(peer);
-   peer=0;
-   peer_curr=peer_num=0;
-}
-
-void Http::NextPeer()
-{
-   peer_curr++;
-   if(peer_curr>peer_num)
-      peer_curr=0;
-}
-
-void Http::SetProxy(const char *px)
-{
-   bool was_proxied=(proxy!=0);
-
-   xfree(proxy); proxy=0;
-   xfree(proxy_port); proxy_port=0;
-   xfree(proxy_user); proxy_user=0;
-   xfree(proxy_pass); proxy_pass=0;
-
-   if(!px)
-   {
-   no_proxy:
-      if(was_proxied)
-	 ClearPeer();
-      return;
-   }
-
-   ParsedURL url(px);
-   if(!url.host || url.host[0]==0)
-      goto no_proxy;
-
-   proxy=xstrdup(url.host);
-   proxy_port=xstrdup(url.port);
-   proxy_user=xstrdup(url.user);
-   proxy_pass=xstrdup(url.pass);
    if(proxy_port==0)
       proxy_port=xstrdup(HTTP_DEFAULT_PROXY_PORT);
-   ClearPeer();
-}
-
-void Http::BumpEventTime(time_t t)
-{
-   if(event_time<t)
-      event_time=t;
 }
 
 bool Http::SameSiteAs(FileAccess *fa)
@@ -1210,8 +1166,7 @@ void Http::Connect(const char *new_host,const char *new_port)
    Reconfig();
    DontSleep();
    state=DISCONNECTED;
-   xfree(peer);
-   peer=0;
+   ClearPeer();
    try_time=0;
 }
 
@@ -1228,6 +1183,38 @@ ListInfo *Http::MakeListInfo()
    return new HttpListInfo(this);
 }
 
+
+#undef super
+#define super Http
+HFtp::HFtp()
+{
+   hftp=true;
+   Reconfig(0);
+}
+HFtp::~HFtp()
+{
+}
+HFtp::HFtp(const HFtp *o) : super(o)
+{
+   hftp=true;
+   Reconfig(0);
+}
+void HFtp::Login(const char *u,const char *p)
+{
+   super::Login(u,p);
+   if(u)
+   {
+      home=(char*)xmalloc(strlen(u)+2);
+      sprintf(home,"~%s",u);
+      xfree(cwd);
+      cwd=xstrdup(home);
+   }
+}
+void HFtp::Reconfig(const char *name)
+{
+   super::Reconfig(name);
+   use_head=Query("use-head");
+}
 
 /* Converts struct tm to time_t, assuming the data in tm is UTC rather
    than local timezone (mktime assumes the latter).

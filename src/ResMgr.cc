@@ -23,6 +23,7 @@
 #include <config.h>
 
 #include <fnmatch.h>
+#include <ctype.h>
 #include "ResMgr.h"
 #include "SMTask.h"
 #include "xmalloc.h"
@@ -143,14 +144,14 @@ const char *ResMgr::Set(const char *name,const char *cclosure,const char *cvalue
 	 free(to_free);
 	 free(closure);
       }
-      SMTask::ReconfigAll();
+      SMTask::ReconfigAll(type->name);
    }
    else
    {
       if(value)
       {
 	 chain=new Resource(chain,type,closure,value);
-	 SMTask::ReconfigAll();
+	 SMTask::ReconfigAll(type->name);
       }
       else
 	 free(closure);
@@ -448,4 +449,63 @@ ResDecl::ResDecl(const char *a_name,const char *a_defvalue,
    if(defvalue)
       ResMgr::Set(name,0,defvalue);
 #endif
+}
+
+#define MINUTE (60)
+#define HOUR   (60*MINUTE)
+#define DAY    (24*HOUR)
+
+TimeInterval::TimeInterval(const char *s)
+{
+   interval=0;
+   infty=false;
+   error_text=0;
+
+   if(!strncasecmp(s,"inf",3)
+   || !strcasecmp(s,"forever")
+   || !strcasecmp(s,"never"))
+   {
+      infty=true;
+      return;
+   }
+   int pos=0;
+   for(;;)
+   {
+      long prec;
+      char ch='s';
+      int pos1=strlen(s+pos);
+      int n=sscanf(s+pos,"%lu%c%n",&prec,&ch,&pos1);
+      if(n<1)
+	 break;
+      ch=tolower((unsigned char)ch);
+      if(ch=='m')
+	 prec*=MINUTE;
+      else if(ch=='h')
+	 prec*=HOUR;
+      else if(ch=='d')
+	 prec*=DAY;
+      else if(ch!='s')
+      {
+	 error_text=_("Invalid time unit letter, only [smhd] are allowed.");
+	 return;
+      }
+      interval+=prec;
+      pos+=pos1;
+   }
+   if(pos==0)
+   {
+      error_text=_("Invalid time format. Format is <time><unit>, e.g. 2h30m.");
+      return;
+   }
+}
+TimeInterval::~TimeInterval()
+{
+}
+
+const char *ResMgr::TimeIntervalValidate(char **s)
+{
+   TimeInterval t(*s);
+   if(t.Error())
+      return t.ErrorText();
+   return 0;
 }

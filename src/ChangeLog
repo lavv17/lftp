@@ -1,3 +1,313 @@
+1999-10-22  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.h, Http.cc: (use_head) new member; hftp:use-head new setting;
+	  use GET instead of HEAD if !use_head.
+	* resource.cc: (hftp:use-head) new setting.
+
+1999-10-21  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* HttpDir.cc: compare ftp:// with hftp:// properly.
+
+1999-10-20  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc: (AnonymousLogin) reset cwd and home.
+	* Http.h, Http.cc: add HFtp::Login; don't send password in URI.
+	* commands.cc: do Login after Connect, not reverse.
+
+1999-10-19  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* HttpDir.cc: set hour/minute to 0 if they are not available.
+	* Http.cc: avoid memory leak in encode_string; add support for
+	  non-anonymous ftp over http.
+	* url.cc: (url::encode_string) don't malloc buffer;
+	  quote all if quote==0.
+
+1999-10-19  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.cc: don't send data in STORE mode until header is sent.
+	  (reported by Brian Ristuccia)
+
+1999-10-13  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* HttpDir.cc: don't skip line begin early; parse Mini-Proxy listings.
+	* Filter.cc: try getfd() before utime(), it might create the file.
+	  (this is a workaround for getting empty files, a full solution
+	  would be to block on close of output file.)
+	* complete.cc: (glob_quote) remove extra quoting. This fixes completion
+	  for files with spaces in name.
+
+1999-10-13  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ResMgr.cc: pass canonic resource name to Reconfig.
+
+1999-10-12  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* commands.cc, CmdExec.cc: call Reconfig after session change;
+	  (do_cd) exit_code=0 if check is not needed.
+
+1999-10-11  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* HttpDir.cc: check file info for validity.
+	* HttpDir.cc: don't dump core on eol==0.
+
+1999-10-10  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* GetJob.cc: don't open local file early if !cont.
+
+1999-10-09  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* misc.cc: call mkdir(...,0777) to let user choose umask.
+	* ftpclass.cc: prepare for better handling of unsupported SIZE/MDTM.
+
+1999-10-08  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h, ftpclass.cc: low level ascii-mode
+	  support.
+
+1999-10-07  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: don't free peer, it is freed in parent class, and so
+	  don't free proxy* (the later was harmless since proxy was set to 0).
+	* Http.cc: use ClearPeer.
+	* CmdExec.cc: actually assign c.
+	* HttpDir.cc: better handle symlinks.
+
+1999-10-05  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* HttpDir.cc: handle Netscape-proxy listing; handle parse errors
+	  better.
+	* lftp.cc: use SOCKS4 define.
+	* CmdExec.cc: use URL closure on several settings.
+
+1999-10-04  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ArgV.cc: (delarg) decrement ind if needed.
+	* HttpDir.h, HttpDir.cc: (LsOptions) new class, use it, implement
+	  -F ls option, accept -alC but ignore them for now.
+
+1999-10-02  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CmdExec.cc: fix type mismatch on 64-bit machines.
+	* Makefile.am: don't depend on rlstdc.h
+
+1999-10-01  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Resolver.cc: cast ResValue to (const char *) to avoid ambiguity.
+
+1999-09-30  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* commands.cc: remove _() from "%s: %s\n".
+
+1999-09-30  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h, ftpclass.cc, ftpclass.h, commands.cc:
+	  (CleanupAll, CleanupThis) new methods; use it in cmd_close.
+
+1999-09-30  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc, log.h: extra info in debug output when it goes
+	  to a file. (suggested by Caleb Epstein <cae@home.com>)
+
+1999-09-30  Albert Chin-A-Young <china@thewrittenword.com>
+
+	* module.c: fix // comment
+
+1999-09-29  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ResMgr.h: include time.h for time_t.
+
+1999-09-27  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* HttpDir.cc: strip leading slash in links to /~user.
+
+1999-09-27  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.cc: create rate_limit for STORE mode.
+	* lftp.cc: close fd 0; call setsid.
+
+1999-09-20  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* MirrorJob.cc, MirrorJob.h: use TimeInterval.
+	* misc.cc, misc.h: drop decode_delay.
+	* ResMgr.cc: (TimeInterval ctor) handle one more error case.
+
+1999-09-20  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.cc: define _XOPEN_SOURCE 500 for linux.
+
+1999-09-19  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* MirrorJob.cc: don't print messages when lftp is not foreground
+	  process.
+	* ResMgr.h: add TimeInterval(time_t) constructor.
+	* SleepJob.cc, SleepJob.h: use TimeInterval; support `sleep forever'.
+	* commands.cc, LsCache.cc, LsCache.h: use TimeInterval.
+
+1999-09-19  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ResMgr.cc, ResMgr.h: new resource type TimeInterval.
+	* Resolver.cc, Resolver.h: settings cache-{enable,expire,size}.
+	* commands.cc: (set) print more meaningful message for invalid values.
+
+1999-09-18  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* SleepJob.cc, SleepJob.h: add repeat functionality;
+	  implement PrintStatus.
+	* commands.cc: add repeat command.
+	* module.c: another module alias.
+	* XferJob.cc: remove unneeded poll call.
+	* ftpclass.cc: remove unneeded error checks.
+
+1999-09-15  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Job.cc: (SessionJob::PrintStatus) check if session!=0.
+
+1999-09-14  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* resource.cc: check if ipv6 is supported at runtime.
+	* FileAccess.cc: better message for system errors, correctly adjust
+	  str_allocated.
+	* NetAccess.cc: (NextPeer) fix off-by-one error; set try_time.
+	* Http.cc, ftpclass.cc: move reconnect delay before Resolve, to avoid
+	  double lookup in case of relookup_always; handle error of socket
+	  creation better, skip address and report error verbosely.
+
+1999-09-14  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* PutJob.cc: unsuspend session; few corrections in size handling;
+	  don't try to use size of pipe.
+
+1999-09-12  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* NetAccess.cc: when adding first RateLimit, reset global pool.
+
+1999-09-12  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* NetAccess.cc, NetAccess.h: implement RateLimit class; use it.
+	* ftpclass.cc, Http.cc: use RateLimit.
+	* resource.cc: new resources net:limit-total-rate
+	  and net:limit-total-max.
+	* ftpget.cc: create Log::global.
+
+1999-09-10  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Resolver.cc: recognize host names in the form proto,hostname and
+	  lookup address in specified protocol family, e.g. inet6,hostname.com.
+	  (Note: this won't work over proxies)
+	* GetJob.cc: add xfer:clobber setting; don't overwrite files if it is
+	  false.
+
+1999-09-08  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* NetAccess.cc, NetAccess.h: drop first_lookup.
+	* MirrorJob.cc, MirrorJob.h: don't get just appeared files, check
+	  that size/date has not changed before overwrite/append;
+	  build local file set before remote one.
+	* FileSet.cc, FileSet.h: (SubstractNotIn) new method; optimize
+	  other Substract* methods; make FindByName const.
+
+1999-08-31  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Resolver.cc: add missing \n
+	* ftpclass.cc: fix previous change not to close data_sock.
+	* Http.cc: call SayConnectingTo.
+	* complete.cc, complete.h: move remote_completion here.
+	* CmdExec.cc, CmdExec.h, lftp.cc, log.cc, log.h: make debug output
+	  clear/redraw the prompt.
+
+1999-08-26  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h, Http.cc, Http.h, LocalAccess.cc,
+	  NetAccess.cc, ftpclass.cc, ftpclass.h: split off NetAccess class;
+	  use Resolver cache; add Resolve method; move rate limiter to
+	  NetAccess.
+	* Resolver.cc, Resolver.h: implement cache.
+	* LsCache.cc, LsCache.h: allow adding from Buffer class.
+	* HttpDir.cc: use new LsCache::Add method varianth; handle symlinks.
+	* commands.cc: remove debug level restriction.
+	* buffer.cc, buffer.h: make GetSaved const.
+	* Makefile.am: add NetAccess.
+	* NetAccess.cc, NetAccess.h: new files.
+	* SMTask.cc, SMTask.h, ResMgr.cc, CmdExec.cc, CmdExec.h:
+	  Reconfig now takes arg.
+
+1999-08-26  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* complete.cc: improve completion of file names with wildcards.
+
+1999-08-25  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: handle 225 and 226 replies in TransferCheck.
+	* Http.cc: use cwd in error message if file=="".
+
+1999-08-24  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: reset try_time on certain failures: greeting, user,
+	  pass, to sleep proper time before reconnect.
+
+1999-08-21  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* HttpDir.cc: improve support for squid's ftp listings;
+	  support symlinks.
+	* Makefile.am: cmd-sleep.so target; use -nostdlib to reduce size,
+	  this works unless there are static constructors.
+	* SleepJob.cc, commands.cc: move at and sleep commands to SleepJob.cc
+	  to allow modularity.
+	* modconfig.h: add MODULE_CMD_SLEEP.
+
+1999-08-20  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* module.c: provide module aliases.
+	* FileAccess.cc: revert last change.
+
+1999-08-20  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.cc, Http.h, HttpDir.cc: implement hftp protocol (ftp over http);
+	  parse squid's ftp listings.
+	* FileAccess.cc: load proto-http when hftp is requested.
+	* resource.cc: hftp resources added; set ftp:proxy if environment
+	  variable ftp_proxy points to ftp proxy.
+
+1999-08-18  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* buffer.h, buffer.cc: allow saving data; (Save, GetSaved) new methods.
+	* HttpDir.cc, HttpDir.h, FtpDirList.cc, FtpDirList.h: save data in
+	  Buffer ubuf, members (upos, from_cache) become obsolete.
+
+1999-08-18  Jim Pick <jim@jimpick.com>
+
+	* LsCache.h, FtpDirList.cc, FtpDirList.h: don't try to cache
+	  anything if cache is off; don't cache too large objects (by lav)
+
+1999-08-18  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* complete.cc: local completion after redirection.
+
+1999-08-17  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Job.cc, Job.h: provide useful default ShowRunStatus method.
+	  (e.g. helps `at' command)
+
+1999-08-16  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ArgV.cc, ArgV.h: make several methods const.
+	* CmdExec.cc, CmdExec.h, commands.cc: chain all CmdExec's; allow
+	  several queues to exist; (FindQueue) new method; (FeedArgV) new
+	  method; synchronize cwd's of queue and main CmdExec.
+
+1999-08-16  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* commands.cc: (cmd_queue) print usage; set exit_code.
+
+1999-08-12  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CmdExec.h, CmdExec.cc, commands.cc: implement simple command queue;
+	  (CmdExec::queue) new static member; (queue) new command.
+
+1999-08-12  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: paranoia check.
+
 1999-08-11  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: try to catch "Too many open files" server error;

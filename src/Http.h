@@ -23,12 +23,11 @@
 #ifndef HTTP_H
 #define HTTP_H
 
-#include "FileAccess.h"
-#include "Resolver.h"
+#include "NetAccess.h"
 #include "buffer.h"
 #include "StatusLine.h"
 
-class Http : public FileAccess
+class Http : public NetAccess
 {
    enum state_t
    {
@@ -36,23 +35,12 @@ class Http : public FileAccess
       CONNECTING,
       RECEIVING_HEADER,
       RECEIVING_BODY,
-      DONE,
-      ERROR
+      DONE
    };
 
    state_t state;
 
    void Init();
-
-   Resolver *resolver;
-
-   sockaddr_u *peer;
-   int	 peer_num;
-   int	 peer_curr;
-   void	 ClearPeer();
-   void	 NextPeer();
-
-   bool  relookup_always;
 
    int 	 max_send;
    void	 Send(const char *format,...) PRINTF_LIKE(2,3);
@@ -61,6 +49,7 @@ class Http : public FileAccess
    FileInputBuffer *recv_buf;
    void SendMethod(const char *,const char *);
    void SendAuth();
+   void SendBasicAuth(const char *tag,const char *u,const char *p);
    void SendRequest(const char *connection,const char *f);
    void SendRequest(const char *connection=0)
       {
@@ -82,29 +71,9 @@ class Http : public FileAccess
    char *location;
    bool sent_eot;
 
-   void SetError(int code,const char *mess=0);
-   void Fatal(const char *mess);
-   int error_code;
-
    bool CheckTimeout();
 
    bool ModeSupported();
-
-   int	 idle;
-   time_t idle_start;
-   int	 retries;
-   int	 max_retries;
-   int	 socket_buffer;
-   int	 socket_maxseg;
-
-   char *proxy;
-   char *proxy_port;
-   char *proxy_user;
-   char *proxy_pass;
-
-   void SetProxy(const char *);
-
-   void BumpEventTime(time_t t);
 
    int  keep_alive_max;
    bool keep_alive;
@@ -117,6 +86,10 @@ class Http : public FileAccess
 
    bool no_cache;
    bool no_cache_this;
+
+protected:
+   bool hftp;  // ftp over http proxy.
+   bool use_head;
 
 public:
    static void ClassInit();
@@ -137,12 +110,12 @@ public:
    int StoreStatus();
    int SendEOT();
 
-   void	 Connect(const char *h,const char *p);
+   void	Connect(const char *h,const char *p);
 
    void Close();
    const char *CurrentStatus();
 
-   void Reconfig();
+   void Reconfig(const char *name=0);
 
    bool SameSiteAs(FileAccess *fa);
    bool SameLocationAs(FileAccess *fa);
@@ -152,6 +125,22 @@ public:
    ListInfo *MakeListInfo();
 
    void UseCache(bool use) { no_cache_this=!use; }
+};
+
+class HFtp : public Http
+{
+public:
+   HFtp();
+   HFtp(const HFtp *);
+   ~HFtp();
+
+   const char *GetProto() { return "hftp"; }
+
+   FileAccess *Clone() { return new HFtp(this); }
+   static FileAccess *New() { return new HFtp(); }
+
+   virtual void Login(const char *,const char *);
+   virtual void Reconfig(const char *);
 };
 
 #endif//HTTP_H

@@ -67,6 +67,8 @@ class MirrorJob : public SessionJob
    FileSet *to_transfer;
    FileSet *same;
    FileSet *to_rm;
+   FileSet *old_files_set;
+   FileSet *new_files_set;
    void	 InitSets(FileSet *src,FileSet *dst);
 
    FileInfo *file;
@@ -89,7 +91,7 @@ class MirrorJob : public SessionJob
    char  *rx_include,*rx_exclude;
    regex_t rxc_include,rxc_exclude;
 
-   time_t   prec;
+   TimeInterval prec;
 
    bool	 dir_made;
    bool	 create_remote_dir;
@@ -102,6 +104,10 @@ class MirrorJob : public SessionJob
    time_t newer_than;
 
    const char *SetRX(const char *s,char **rx,regex_t *rxc);
+
+   FILE *script;
+   bool script_only;
+   bool script_needs_closing;
 
 public:
    enum
@@ -146,7 +152,7 @@ public:
 
    void	 SetVerbose(int v) { verbose_report=v; }
 
-   void	 SetPrec(time_t p) { prec=p; }
+   void	 SetPrec(const TimeInterval &p) { prec=p; }
    void	 CreateRemoteDir() { create_remote_dir=true; }
 
    void	 SetNewerThan(const char *file);

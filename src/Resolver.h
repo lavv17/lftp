@@ -30,6 +30,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include "buffer.h"
+#include "xmalloc.h"
 
 union sockaddr_u
 {
@@ -75,6 +76,10 @@ class Resolver : public SMTask
    void LookupSRV_RR();
    const char *error;
 
+   static class ResolverCache *cache;
+
+   bool no_cache;
+
 public:
    int	 Do();
    bool	 Done() { return done; }
@@ -84,16 +89,81 @@ public:
    size_t GetResultSize() { return addr_num*sizeof(*addr); }
    int	 GetResultNum() { return addr_num; }
    void  GetResult(void *m) { memcpy(m,addr,GetResultSize()); }
+   void	 UseCache(bool y) { no_cache=!y; }
+   void	 NoCache() { UseCache(false); }
 
    Resolver(const char *h,const char *p,const char *defp=0,const char *ser=0,
 	    const char *pr=0);
    ~Resolver();
 
-   void Reconfig();
+   void Reconfig(const char *name=0);
 
    static const char *OrderValidate(char **s);
 
    static void ClassInit();
+};
+
+class ResolverCache
+{
+   class Entry
+   {
+      friend class ResolverCache;
+
+      char *hostname;
+      char *portname;
+      char *defport;
+      char *service;
+      char *proto;
+
+      int addr_num;
+      sockaddr_u *addr;
+      time_t timestamp;
+
+      Entry *next;
+
+      Entry(Entry *nxt,const char *h,const char *p,const char *defp,
+         const char *ser,const char *pr,const sockaddr_u *a,int n)
+	 {
+	    next=nxt;
+
+	    hostname=xstrdup(h);
+	    portname=xstrdup(p);
+	    service=xstrdup(ser);
+	    proto=xstrdup(pr);
+	    defport=xstrdup(defp);
+
+	    addr_num=n;
+	    addr=(sockaddr_u*)xmalloc(n*sizeof(*addr));
+	    memcpy(addr,a,n*sizeof(*addr));
+
+	    timestamp=SMTask::now;
+	 }
+      ~Entry()
+	 {
+	    xfree(hostname);
+	    xfree(portname);
+	    xfree(service);
+	    xfree(proto);
+	    xfree(defport);
+	    xfree(addr);
+	 }
+   };
+
+   Entry *chain;
+
+   Entry **FindPtr(const char *h,const char *p,const char *defp,
+         const char *ser,const char *pr);
+
+   void CacheCheck(); // prune cache as needed
+
+public:
+   void Add(const char *h,const char *p,const char *defp,
+         const char *ser,const char *pr,const sockaddr_u *a,int n);
+   void Find(const char *h,const char *p,const char *defp,
+         const char *ser,const char *pr,const sockaddr_u **a,int *n);
+   void Clear();
+
+   ResolverCache();
 };
 
 #endif // RESOLVER_H
