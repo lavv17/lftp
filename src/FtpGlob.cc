@@ -63,7 +63,7 @@ FtpGlob::FtpGlob(FileAccess *session,const char *n_pattern)
       // no need to glob, just unquote
       char *u=alloca_strdup(pattern);
       UnquoteWildcards(u);
-      add(u);
+      add(new FileInfo(u));
       done=true;
       return;
    }

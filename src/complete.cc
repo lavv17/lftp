@@ -697,6 +697,9 @@ backslash_quote (char *string)
 	  *r++ = c;
 	  break;
 	case '~':				/* tilde expansion */
+	  if (s == string)
+	    *r++ = '.', *r++ = '/';
+	  goto def;
 	case '#':				/* comment char */
 	  if(!shell_cmd)
 	    goto def;
@@ -995,7 +998,7 @@ void lftp_readline_init ()
 
    rl_completer_quote_characters = (char*)"\"";
    rl_completer_word_break_characters = (char*)" \t\n\"";
-   rl_filename_quote_characters = (char*)" \t\n\\\">;|&()*?[]";
+   rl_filename_quote_characters = (char*)" \t\n\\\">;|&()*?[]~";
    rl_filename_quoting_function = (CPFunction*)bash_quote_filename;
    rl_filename_dequoting_function = (CPFunction*)bash_dequote_filename;
    rl_char_is_quoted_p = (Function*)lftp_char_is_quoted;

@@ -362,9 +362,6 @@ protected:
    bool	 dirs_only;
    bool	 files_only;
    bool	 match_period;
-   void	 add(const char *ptr,int len);
-   void	 add_force(const char *ptr,int len);
-   void	 add(const char *ptr) { add(ptr,strlen(ptr)); }
    void	 add(const FileInfo *info);
    void	 add_force(const FileInfo *info);
    virtual ~Glob();

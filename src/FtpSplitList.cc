@@ -61,6 +61,14 @@ FtpSplitList::~FtpSplitList()
    Delete(rate);
 }
 
+void FtpSplitList::add(const char *ptr,int len)
+{
+   char *s=string_alloca(len+1);
+   memcpy(s,ptr,len);
+   s[len]=0;
+   Glob::add(new FileInfo(s));
+}
+
 int   FtpSplitList::Do()
 {
    int	 res;

@@ -1084,30 +1084,6 @@ Glob::Glob(const char *p)
    match_period=true;
 }
 
-void Glob::add_force(const char *ptr,int len)
-{
-   // insert new file name into list
-   char *s=string_alloca(len+1);
-   memcpy(s,ptr,len);
-   s[len]=0;
-   list.Add(new FileInfo(s));
-}
-void Glob::add(const char *ptr,int len)
-{
-   char *s=string_alloca(len+1);
-   memcpy(s,ptr,len);
-   s[len]=0;
-
-   int flags=FNM_PATHNAME;
-   if(match_period)
-      flags|=FNM_PERIOD;
-
-   if(pattern[0]!=0
-   && fnmatch(pattern, s, flags)!=0)
-      return; // unmatched
-
-   add_force(ptr,len);
-}
 void Glob::add_force(const FileInfo *info)
 {
    // insert new file name into list
@@ -1190,7 +1166,7 @@ int NoGlob::Do()
       {
 	 char *p=alloca_strdup(pattern);
 	 UnquoteWildcards(p);
-	 add(p);
+	 add(new FileInfo(p));
       }
       done=true;
       return MOVED;

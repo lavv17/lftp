@@ -46,6 +46,7 @@ class FtpSplitList : public Glob
    FileAccess  *f;
 
    void Init(FileAccess *session,FA::open_mode n_mode);
+   void add(const char *ptr,int len);
 
    Speedometer *rate;
 

@@ -71,6 +71,7 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 # include "lftp_ssl.h"
 #else
 # define control_ssl 0
+const bool Ftp::ftps=false;
 #endif
 
 

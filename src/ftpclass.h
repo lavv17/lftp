@@ -169,7 +169,7 @@ protected:
 private:
    bool	 auth_tls_sent;
 #else
-   static const bool ftps=false; // for convenience
+   static const bool ftps; // for convenience
 #endif
 
    /* type of transfer: TYPE_A or TYPE_I */
