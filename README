@@ -45,8 +45,8 @@ people prefer to see full protocol debug, use `debug' to turn the
 debug on. Use `debug 0' to see only greeting messages and error
 messages.
 
-lftp has the following settable variables (you can also use `set' to
-see all variables and their values):
+lftp has a number of settable variables (you can use `set -a' to
+see all variables and their values), here are some:
  * cmd:csh-history - (bool) enables csh-like history expansion
  * cmd:long-running - (seconds) time of command execution, which is
 considered as `long' and a beep is done before next prompt. 0 means

@@ -1,8 +1,9 @@
 dnl Process this file with autoconf to produce a configure script.
+dnl You need to patch autoconf 2.13 with autoconf.patch in lftp distribution.
 # $Id$
 AC_PREREQ(2.13)
 AC_INIT(src/ftpclass.cc)
-AM_INIT_AUTOMAKE(lftp, pre2.0.0-990611)
+AM_INIT_AUTOMAKE(lftp, 2.0.0)
 AM_CONFIG_HEADER(include/config.h)
 
 # iumacros.m4 is stolen from inetutils-1.3a

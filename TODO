@@ -1,6 +1,7 @@
-* The items with a question mark are questionable. I'm not sure whether they
-  are really needed. If you think it is a good feature do it yourself :) or
-  at least tell me what you think.
+The items with a question mark are questionable. I'm not sure whether they
+are really needed. If you think it is a good feature do it yourself :) or
+at least tell me what you think. Items marked with - are hard to implement
+currently; some need other work to be done.
 
 
  * complete group/gpass and ACCT (does anyone need it?)
@@ -31,4 +32,4 @@
  * update process title
  * at-exit-bg
 
- * HttpListInfo
+ * for http: ls -f file.html to extract links.

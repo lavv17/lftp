@@ -5,12 +5,13 @@ This is a bug in readline/readline.h header. Replace `int rl_dispatching'
 with `extern int rl_dispatching' in /usr/include/readline/readline.h
 Then do 'make clean; make' in lftp directory.
    * g++ cannot create executables
-You probably do not have installed libg++. As a workaround, you can try
-`CXX=gcc configure' to avoid linking with libg++.
+You probably do not have installed libstdc++ (or libg++). As a
+workaround, you can try `CXX=gcc configure' to avoid linking with
+libstdc++.
    * lftp cannot resolve host names
 Try `configure --without-libresolv' - it can sometimes help.
    * Sun C++ v5.0 compiler can be used to compile lftp, Use
-      CXX=CC CXXFLAGS="-compat=4 -features=bool" ./configure
+	CXX=CC CXXFLAGS="-compat=4 -features=bool" ./configure
 
 
 
