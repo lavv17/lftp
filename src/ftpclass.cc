@@ -641,8 +641,6 @@ Ftp::~Ftp()
    Close();
    Disconnect();
 
-   xfree(peer);
-
    xfree(anon_user); anon_user=0;
    xfree(anon_pass); anon_pass=0;
    xfree(line); line=0;
@@ -650,11 +648,6 @@ Ftp::~Ftp()
 
    xfree(RespQueue); RespQueue=0;
    xfree(send_cmd_buffer); send_cmd_buffer=0;
-
-   xfree(proxy); proxy=0;
-   xfree(proxy_port); proxy_port=0;
-   xfree(proxy_user); proxy_user=0;
-   xfree(proxy_pass); proxy_pass=0;
 
    xfree(skey_pass); skey_pass=0;
 

@@ -1,3 +1,9 @@
+1999-10-07  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: don't free peer, it is freed in parent class, and so
+	  don't free proxy* (the later was harmless since proxy was set to 0).
+	* Http.cc: use ClearPeer.
+
 1999-10-05  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* HttpDir.cc: handle Netscape-proxy listing; handle parse errors

@@ -23,6 +23,7 @@
 #ifdef __linux__
 /* to get prototype for strptime, we need this */
 # define _XOPEN_SOURCE 500
+# define _XOPEN_SOURCE_EXTENDED 1
 #endif
 
 #include <config.h>
@@ -1135,8 +1136,7 @@ void Http::Connect(const char *new_host,const char *new_port)
    Reconfig();
    DontSleep();
    state=DISCONNECTED;
-   xfree(peer);
-   peer=0;
+   ClearPeer();
    try_time=0;
 }
 
