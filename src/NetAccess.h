@@ -132,7 +132,7 @@ private:
    BytesPool one;
 
 public:
-   RateLimit();
+   RateLimit(const char *closure);
    ~RateLimit();
 
    int BytesAllowed();

@@ -98,7 +98,7 @@ int Fish::Do()
 
    if((state==FILE_RECV || state==FILE_SEND)
    && rate_limit==0)
-      rate_limit=new RateLimit();
+      rate_limit=new RateLimit(hostname);
 
    switch(state)
    {

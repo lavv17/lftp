@@ -3,6 +3,8 @@
 	* HttpDir.cc: accept perms string 11 char long.
 	* misc.cc: accept last + in perms string as ACL tag.
 	* commands.cc: open command file in ascii mode.
+	* Fish.cc, Http.cc, NetAccess.cc, NetAccess.h, ftpclass.cc:
+	  create RateLimit with closure.
 
 2001-02-07  Alexander V. Lukyanov  <lav@yars.free.net>
 

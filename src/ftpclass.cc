@@ -1802,7 +1802,7 @@ int   Ftp::Do()
 
    pre_data_open:
       assert(rate_limit==0);
-      rate_limit=new RateLimit();
+      rate_limit=new RateLimit(hostname);
       state=DATA_OPEN_STATE;
       m=MOVED;
 

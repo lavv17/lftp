@@ -974,7 +974,7 @@ int Http::Do()
       if(mode==STORE)
       {
 	 assert(rate_limit==0);
-	 rate_limit=new RateLimit();
+	 rate_limit=new RateLimit(hostname);
       }
 
    case RECEIVING_HEADER:
@@ -1189,7 +1189,7 @@ int Http::Do()
 
       DebugPrint("---- ",_("Receiving body..."));
       assert(rate_limit==0);
-      rate_limit=new RateLimit();
+      rate_limit=new RateLimit(hostname);
       if(real_pos<0) // assume Range: did not work
       {
 	 if(mode!=STORE && body_size>=0)

@@ -353,12 +353,12 @@ int RateLimit::total_xfer_number;
 RateLimit::BytesPool RateLimit::total;
 bool RateLimit::total_reconfig_needed=true;
 
-RateLimit::RateLimit()
+RateLimit::RateLimit(const char *c)
 {
    if(total_xfer_number==0)
       total.Reset();
    total_xfer_number++;
-   Reconfig(0,0);
+   Reconfig(0,c);
 }
 RateLimit::~RateLimit()
 {
