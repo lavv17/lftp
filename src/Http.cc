@@ -367,7 +367,10 @@ void Http::SendRequest(const char *connection,const char *f)
    }
    SendAuth();
    if(no_cache || no_cache_this)
-      Send("Pragma: no-cache\r\n");
+   {
+      Send("Pragma: no-cache\r\n"); // for HTTP/1.0 compatibility
+      Send("Cache-Control: no-cache\r\n");
+   }
    if(mode!=ARRAY_INFO || connection)
       Send("Connection: %s\r\n",connection?connection:"close");
    Send("\r\n");

@@ -223,7 +223,10 @@ void LsJob::NextFile()
 void LsJob::NoCache()
 {
    if(dl)
+   {
       dl->UseCache(false);
+      return;
+   }
    if(from_cache)
    {
       session->Open(arg,FA::LONG_LIST);
@@ -235,6 +238,7 @@ void LsJob::NoCache()
       }
       from_cache=false;
    }
+   session->UseCache(false);
 }
 
 void  LsJob::ShowRunStatus(StatusLine *s)

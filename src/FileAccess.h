@@ -227,6 +227,7 @@ public:
    virtual void CopyOptions(FileAccess *fa) { (void)fa; }
    virtual bool IsConnected() { return false; }
    virtual void Disconnect() {}
+   virtual void UseCache(bool) {}
 
    enum status
    {

@@ -150,6 +150,8 @@ public:
    DirList *MakeDirList(ArgV *a);
    Glob *MakeGlob(const char *pattern);
    ListInfo *MakeListInfo();
+
+   void UseCache(bool use) { no_cache_this=!use; }
 };
 
 #endif//HTTP_H

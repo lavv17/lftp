@@ -356,6 +356,7 @@ int HttpDirList::Do()
       else
       {
 	 session->Open(curr,mode);
+	 session->UseCache(use_cache);
 	 ubuf=new FileInputBuffer(session);
       }
       if(curr_url)
@@ -554,6 +555,7 @@ int HttpGlob::Do()
       else
       {
 	 session->Open(curr_dir,FA::LONG_LIST);
+	 session->UseCache(use_cache);
 	 ubuf=new FileInputBuffer(session);
       }
       m=MOVED;
@@ -660,6 +662,7 @@ int HttpListInfo::Do()
       else
       {
 	 session->Open("",FA::LONG_LIST);
+	 session->UseCache(use_cache);
 	 ubuf=new FileInputBuffer(session);
       }
       m=MOVED;

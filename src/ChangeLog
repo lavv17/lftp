@@ -1,3 +1,8 @@
+1999-06-26  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.h, Http.h: (FA::UseCache) new method.
+	* LsJob.cc, HttpDir.cc: use it in rels.
+
 1999-06-25  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Http.cc, Http.h, resource.cc: implement http:cache (pragma:no-cache)
