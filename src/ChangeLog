@@ -1,3 +1,7 @@
+1999-12-30  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc: fix SetPasswordGlobal.
+
 1999-12-28  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileCopy.cc, FileCopy.h: implemet LineBuffered; handle EPIPE.

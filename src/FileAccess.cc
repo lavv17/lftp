@@ -471,6 +471,8 @@ void FileAccess::SetPasswordGlobal(const char *p)
    pass=xstrdup(p);
    for(FileAccess *o=chain; o!=0; o=o->next)
    {
+      if(o==this)
+	 continue;
       char *save_pass=o->pass;	 // cheat SameSiteAs.
       o->pass=pass;
       if(SameSiteAs(o))
