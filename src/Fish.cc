@@ -534,22 +534,24 @@ void Fish::SendMethod()
    case RETRIEVE:
       if(pos>0)
       {
+	 int bs=0x1000;
+	 real_pos=pos-pos%bs;
 	 Send("#RETRP %lld %s\n"
 	      "ls -lLd %s; "
 	      "echo '### 100'; "
-	      "cat %s|(dd ibs=1 count=%lld of=/dev/null 2>/dev/null;cat); "
+	      "dd ibs=%d skip=%lld if=%s 2>/dev/null; "
 	      "echo '### 200'\n",
-	    (long long)pos,e,e,e,(long long)pos);
+	    (long long)real_pos,e,e,bs,(long long)real_pos/bs,e);
       }
       else
       {
 	 Send("#RETR %s\n"
 	   "ls -lLd %s; "
 	   "echo '### 100'; cat %s; echo '### 200'\n",e,e,e);
+	 real_pos=0;
       }
       PushExpect(EXPECT_RETR_INFO);
       PushExpect(EXPECT_RETR);
-      real_pos=pos;
       break;
    case STORE:
       if(entity_size<0)
