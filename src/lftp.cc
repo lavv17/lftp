@@ -79,18 +79,27 @@ class ReadlineFeeder : public CmdFeeder
 {
    bool tty:1;
    bool add_newline:1;
+   void *to_free;
 public:
    ReadlineFeeder()
    {
       tty=isatty(0);
+      to_free=0;
+   }
+   virtual ~ReadlineFeeder()
+   {
+      xfree(to_free);
    }
 
    char *NextCmd(class CmdExec *exec,const char *prompt)
    {
+      xfree(to_free);
+      to_free=0;
+
       if(add_newline)
       {
 	 add_newline=false;
-	 return xstrdup("\n");
+	 return "\n";
       }
 
       ::completion_shell=exec;
@@ -100,7 +109,7 @@ public:
       if(tty)
       {
 	 SignalHook::ResetCount(SIGINT);
-	 cmd_buf=xstrdup(readline(prompt));
+	 cmd_buf=readline(prompt);
 	 if(cmd_buf && *cmd_buf)
 	 {
 	    if(exec->csh_history)
@@ -117,13 +126,12 @@ public:
 		  if (expanded < 0 || expanded == 2)	/* 2 == print only */
 		  {
 		     exec->block+=NoWait();  // and retry immediately
-		     free (cmd_buf);
-		     free (history_value);
-		     return xstrdup("");
+		     xfree(history_value);
+		     return "";
 		  }
 
-		  xfree(cmd_buf);
 		  cmd_buf=history_value;
+		  to_free=cmd_buf;
 	       }
 	    }
 	    using_history();
@@ -136,7 +144,10 @@ public:
 	    puts("exit");
       }
       else
-	 cmd_buf=xstrdup(readline_from_file(stdin));
+      {
+	 cmd_buf=readline_from_file(stdin);
+	 to_free=cmd_buf;
+      }
 
       ::completion_shell=0;
 
