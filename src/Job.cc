@@ -189,15 +189,30 @@ void  Job::SortJobs()
    }
 }
 
+void Job::PrintJobTitle(int indent,const char *suffix)
+{
+   if(jobno<0 && cmdline==0)
+      return;
+   printf("%*s",indent,"");
+   if(jobno>=0)
+      printf("[%d] ",jobno);
+   printf("%s",cmdline?cmdline:"?");
+   if(suffix)
+      printf(" %s",suffix);
+   printf("\n");
+}
+
+void Job::ListOneJob(int verbose,int indent,const char *suffix)
+{
+   PrintJobTitle(indent,suffix);
+   PrintStatus(verbose);
+   if(waiting && waiting->jobno<0 && waiting->cmdline==0)
+      waiting->ListOneJob(verbose,indent+1);
+}
+
 void Job::ListOneJobRecursively(int verbose,int indent)
 {
-   if(jobno>=0 || cmdline)
-   {
-      printf("%*s",indent,"");
-      if(jobno>=0)
-	 printf("[%d] ",jobno);
-      printf("%s\n",cmdline?cmdline:"?");
-   }
+   PrintJobTitle(indent);
    PrintStatus(verbose);
    ListJobs(verbose,indent+1);
 }

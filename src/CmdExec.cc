@@ -265,15 +265,8 @@ restart:
 void CmdExec::SuspendJob()
 {
    waiting->Bg();
-   if(status_line)
-      status_line->WriteLine("[%d] %s &",waiting->jobno,
-			waiting->cmdline?waiting->cmdline:"?");
    if(interactive)
-   {
-      waiting->PrintStatus(0);
-      if(waiting->waiting && waiting->waiting->cmdline==0)
-	 waiting->waiting->PrintStatus(0); // mostly for CopyJobEnv.
-   }
+      waiting->ListOneJob(0,0,"&");
    last_bg=waiting->jobno;
    exit_code=0;
    waiting=0;
@@ -670,16 +663,10 @@ void CmdExec::PrintStatus(int v)
       if(waiting)
       {
 	 printf("\t%s ",_("Now executing:"));
-	 if(waiting->jobno>=0)
-	    printf("[%d] ",waiting->jobno);
-	 printf("%s\n",waiting->cmdline?waiting->cmdline:"?");
 	 if(v==0)
-	 {
-	    waiting->PrintStatus(v);
-	    if(waiting->waiting && waiting->waiting->cmdline==0)
-	       waiting->waiting->PrintStatus(v); // mostly for CopyJobEnv.
-	    return;
-	 }
+	    waiting->ListOneJob(v);
+	 else
+	    waiting->PrintJobTitle();
       }
       if(!(next_cmd && next_cmd[0]))
 	 return;
@@ -970,6 +957,7 @@ void CmdExec::pre_stdout()
       status_line->Clear();
    if(feeder_called)
       feeder->clear();
+   current->TimeoutS(1);
 }
 
 void CmdExec::top_vfprintf(FILE *file,const char *f,va_list v)
