@@ -1,3 +1,9 @@
+2002-03-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* NetAccess.cc: don't clear hostname etc on lookup error.
+	* FileAccess.cc: (Chdir) handle cwd==0 correctly (reported by Glenn
+	  Maynard <g_ld@zewt.org>).
+
 2002-03-10  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: add ifdef USE_SSL around data_ssl.

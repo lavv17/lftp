@@ -687,7 +687,7 @@ void FileAccess::Chdir(const char *path,bool verify)
 {
    ExpandTildeInCWD();
 
-   char	 *newcwd=(char*)alloca(strlen(cwd)+strlen(path)+2);
+   char	 *newcwd=(char*)alloca(xstrlen(cwd)+strlen(path)+2);
 
    if(path[0]=='/')
       strcpy(newcwd,path);
@@ -697,7 +697,7 @@ void FileAccess::Chdir(const char *path,bool verify)
       strcpy(newcwd,path);
    else
    {
-      if(cwd[0])
+      if(cwd && cwd[0])
       {
 	 if(cwd[strlen(cwd)-1]=='/')
 	    sprintf(newcwd,"%s%s",cwd,path);
