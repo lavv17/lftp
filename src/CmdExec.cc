@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1999 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2002 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@
 #include "module.h"
 #include "url.h"
 #include "QueueFeeder.h"
+#include "LocalDir.h"
 
 #define RL_PROMPT_START_IGNORE	'\001'
 #define RL_PROMPT_END_IGNORE	'\002'
@@ -62,51 +63,30 @@ static ResDecl
 CmdExec	 *CmdExec::cwd_owner=0;
 CmdExec	 *CmdExec::chain=0;
 
-void  CmdExec::SetCWD(const char *c)
-{
-   xfree(cwd);
-   cwd=xstrdup(c);
-   if(cwd_owner==this)
-      cwd_owner=0;
-}
-
 void  CmdExec::SaveCWD()
 {
-   cwd=xgetcwd();
-   if(cwd==0)
-   {
-      // A bad case, but we can do nothing ( xgettext:c-format )
-      eprintf(_("Warning: getcwd() failed: %s\n"),strerror(errno));
+   if(!cwd)
+      cwd=new LocalDirectory;
+   cwd->SetFromCWD();
+   if(cwd_owner==0)
       cwd_owner=this;
-   }
-   else
-   {
-      if(cwd_owner==0)
-	 cwd_owner=this;
-   }
 }
 int  CmdExec::RestoreCWD()
 {
    if(cwd_owner==this)
       return 0;
    if(cwd==0)
-      goto fail;
-   if(chdir(cwd)==0)
+      return -1;
+   const char *err=cwd->Chdir();
+   if(!err)
    {
       cwd_owner=this;
       return 0;
    }
-   else
-   {
-      eprintf(_("Warning: chdir(%s) failed: %s\n"),cwd,strerror(errno));
-   fail:
-      // can't run further commands in wrong directory
-      eprintf(_("No directory to execute commands in - terminating\n"));
-      while(!Done())
-	 RemoveFeeder();
-      exit_code=1;
-      return -1;
-   }
+
+   const char *name=cwd->GetName();
+   eprintf(_("Warning: chdir(%s) failed: %s\n"),name?name:"?",err);
+   return -1;
 }
 
 void CmdExec::FeedCmd(const char *c)
@@ -170,6 +150,8 @@ int CmdExec::find_cmd(const char *cmd_name,const struct cmd_rec **ret)
    return part;
 }
 
+CMD(lcd);
+
 void  CmdExec::exec_parsed_command()
 {
    switch(condition)
@@ -213,7 +195,10 @@ restart:
    else
    {
       if(RestoreCWD()==-1)
-	 return;
+      {
+	 if(c->creator!=cmd_lcd)
+	    return;
+      }
 
       args->setarg(0,c->name); // in case it was abbreviated
 
@@ -759,7 +744,7 @@ void CmdExec::PrintStatus(int v)
    }
 }
 
-CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
+CmdExec::CmdExec(FileAccess *f,LocalDirectory *c) : SessionJob(f)
 {
    // add this to chain
    next=chain;
@@ -786,8 +771,7 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
    exit_code=0;
    last_bg=-1;
 
-   cwd=0;
-   SaveCWD();
+   cwd=c;
 
    var_ls=xstrdup("");
    remote_completion=false;
@@ -1295,14 +1279,14 @@ CmdExec  *CmdExec::GetQueue(bool create)
    }
    if(!create) return NULL;
 
-   CmdExec *queue=new CmdExec(session->Clone());
+   CmdExec *queue=new CmdExec(session->Clone(),cwd->Clone());
 
    queue->SetParentFg(this,false);
    queue->AllocJobno();
    const char *url=session->GetConnectURL(FA::NO_PATH);
    queue->cmdline=(char*)xmalloc(9+strlen(url));
    sprintf(queue->cmdline,"queue (%s)",url);
-   queue->has_queue=new QueueFeeder(session->GetCwd(), cwd);
+   queue->has_queue=new QueueFeeder(session->GetCwd(), cwd->GetName());
    queue->SetCmdFeeder(queue->has_queue);
 
    return queue;

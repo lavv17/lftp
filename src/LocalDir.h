@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1998-2002 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 2002 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,39 +20,24 @@
 
 /* $Id$ */
 
-#ifndef SLEEPJOB_H
-#define SLEEPJOB_H
+#ifndef LOCALDIR_H
+#define LOCALDIR_H
 
-#include "Job.h"
-#include "ResMgr.h"
-
-class LocalDirectory;
-
-class SleepJob : public SessionJob
+class LocalDirectory
 {
-   time_t start_time;
-   TimeInterval next_time;
-   char *cmd;
-   int exit_code;
-   bool done;
-   LocalDirectory *saved_cwd;
-   class CmdExec *exec;
-   bool   repeat;
-   int    repeat_count;
+   int fd;
+   char *name;
 
 public:
-   int Do();
-   int Done() { return done; }
-   int ExitCode() { return exit_code; }
+   LocalDirectory();
+   LocalDirectory(const LocalDirectory *);
 
-   SleepJob(const TimeInterval &when,FileAccess *s=0,LocalDirectory *cwd=0,char *what=0);
-   ~SleepJob();
+   const char *GetName();
+   const char *Chdir();	// returns error message or NULL
+   void SetFromCWD();
+   void Unset();
 
-   void PrintStatus(int v);
-
-   void Repeat() { repeat=true; start_time-=next_time.Seconds(); }
-
-   void lftpMovesToBackground();
+   LocalDirectory *Clone() const;
 };
 
-#endif//SLEEPJOB_H
+#endif

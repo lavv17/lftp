@@ -1,3 +1,15 @@
+2001-01-04  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* LocalDir.cc, LocalDir.h: new files.
+	* CmdExec.cc, CmdExec.h: use new LocalDirectory class; specify local
+	  directory at CmdExec creation time.
+	* LocalAccess.cc: use LocalDirectory.
+	* SleepJob.cc, SleepJob.h: specify LocalDirectory at creation time;
+	  use it to create CmdExec.
+	* commands.cc: handle new CmdExec and SleepJob creation; allow lpwd
+	  redirection.
+	* lftp.cc: new CmdExec ctor.
+
 2001-01-03  jfaith <jfaith@cemsys.com>
 
 	* resource.cc: (OrderValidate) fix off by one xmalloc bug.

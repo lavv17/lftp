@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1998-2001 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1998-2002 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,15 +25,16 @@
 #include "SleepJob.h"
 #include "CmdExec.h"
 #include "misc.h"
+#include "LocalDir.h"
 
-SleepJob::SleepJob(const TimeInterval &when,FileAccess *s,char *what)
+SleepJob::SleepJob(const TimeInterval &when,FileAccess *s,LocalDirectory *cwd,char *what)
    : SessionJob(s), next_time(when)
 {
    start_time=now;
    cmd=what;
    exit_code=0;
    done=false;
-   saved_cwd=xgetcwd();
+   saved_cwd=cwd;
    repeat=false;
    repeat_count=0;
    exec=0;
@@ -42,7 +43,7 @@ SleepJob::~SleepJob()
 {
    Delete(exec);
    xfree(cmd);
-   xfree(saved_cwd);
+   delete saved_cwd;
 }
 
 int SleepJob::Do()
@@ -82,10 +83,10 @@ int SleepJob::Do()
       {
 	 if(!exec)
 	 {
-	    exec=new CmdExec(session);
+	    exec=new CmdExec(session,saved_cwd);
 	    session=0;
+	    saved_cwd=0;
 	    exec->SetParentFg(this);
-	    exec->SetCWD(saved_cwd);
 	    exec->AllocJobno();
 	    exec->cmdline=(char*)xmalloc(3+strlen(cmd));
 	    sprintf(exec->cmdline,"(%s)",cmd);
@@ -126,8 +127,8 @@ void SleepJob::lftpMovesToBackground()
 }
 
 #define args (parent->args)
-#define eprintf parent->eprintf
-#define Clone() parent->session->Clone()
+#define eprintf (parent->eprintf)
+#define session (parent->session)
 Job *cmd_sleep(CmdExec *parent)
 {
    char *op=args->a0();
@@ -167,7 +168,7 @@ Job *cmd_repeat(CmdExec *parent)
 
    char *cmd = (args->count()==cmd_start+1
 	        ? args->Combine(cmd_start) : args->CombineQuoted(cmd_start));
-   SleepJob *s=new SleepJob(delay,Clone(),cmd);
+   SleepJob *s=new SleepJob(delay,session->Clone(),parent->cwd->Clone(),cmd);
    s->Repeat();
    return s;
 }
@@ -221,8 +222,10 @@ Job *cmd_at(CmdExec *parent)
 	 cmd=args->CombineQuoted(cmd_start);
    }
 
-   FileAccess *s = cmd ? Clone() : 0;
-   return new SleepJob(when-now, s, cmd);
+   if(!cmd)
+      return new SleepJob(when-now);
+
+   return new SleepJob(when-now, session->Clone(), parent->cwd->Clone(), cmd);
 }
 #undef args
 

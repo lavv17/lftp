@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1999 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2002 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@
 #include "Glob.h"
 
 class QueueFeeder;
+class LocalDirectory;
 
 extern History cwd_history;
 extern Bookmark lftp_bookmarks;
@@ -155,7 +156,7 @@ public:
 
    void SuspendJob(Job *j);
 
-   CmdExec(FileAccess *s);
+   CmdExec(FileAccess *s,LocalDirectory *c);
    ~CmdExec();
 
    bool Idle();	// when we have no command running and command buffer is empty
@@ -192,10 +193,9 @@ public:
    time_t start_time;
 
    static CmdExec *cwd_owner;
-   char	 *cwd;
+   LocalDirectory *cwd;
    void	 SaveCWD();
    int	 RestoreCWD();
-   void  SetCWD(const char *c);
 
    FDStream *default_output;
 

@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2001 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2002 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@
 #include "LsCache.h"
 #include "DirColors.h"
 #include "IdNameCache.h"
+#include "LocalDir.h"
 
 #include "confpaths.h"
 
@@ -320,7 +321,9 @@ int   main(int argc,char **argv)
 
    hook_signals();
 
-   top_exec=new CmdExec(new DummyProto());
+   LocalDirectory *cwd=new LocalDirectory;
+   cwd->SetFromCWD();
+   top_exec=new CmdExec(new DummyProto(),cwd);
    top_exec->SetStatusLine(new StatusLine(1));
    Log::global->SetCB(tty_clear);
 

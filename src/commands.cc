@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2001 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2002 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,6 +68,7 @@
 #include "lftp_rl.h"
 #include "FileSetOutput.h"
 #include "PatternSet.h"
+#include "LocalDir.h"
 
 #include "confpaths.h"
 
@@ -523,7 +524,14 @@ Job *CmdExec::builtin_lcd()
 
    cd_to=expand_home_relative(cd_to);
 
-   RestoreCWD();
+   if(RestoreCWD()==-1)
+   {
+      if(cd_to[0]!='/')
+      {
+	 eprintf("No current local directory, use absolute path.\n");
+	 return 0;
+      }
+   }
 
    int res=chdir(cd_to);
    if(res==-1)
@@ -534,13 +542,13 @@ Job *CmdExec::builtin_lcd()
    }
 
    xfree(old_lcwd);
-   old_lcwd=cwd;
-   cwd=0;
+   old_lcwd=xstrdup(cwd->GetName());
 
-   SaveCWD();  // this allocates cwd again
+   SaveCWD();
 
+   const char *name=cwd->GetName();
    if(interactive)
-      eprintf(_("lcd ok, local cwd=%s\n"),cwd?cwd:"?");
+      eprintf(_("lcd ok, local cwd=%s\n"),name?name:"?");
 
    exit_code=0;
    return 0;
@@ -1050,7 +1058,7 @@ Job *CmdExec::builtin_queue()
 	 else
 		 cmd=args->CombineQuoted(args->getindex());
 
-	 queue->has_queue->QueueCmd(cmd, session->GetCwd(), cwd, pos, verbose);
+	 queue->has_queue->QueueCmd(cmd, session->GetCwd(), cwd?cwd->GetName():0, pos, verbose);
 	 xfree(cmd);
 
 	 last_bg=queue->jobno;
@@ -1177,7 +1185,6 @@ Job *CmdExec::builtin_queue_edit()
 #define exit_code (parent->exit_code)
 #define output	  (parent->output)
 #define session	  (parent->session)
-#define Clone()	  session->Clone()
 #define eprintf	  parent->eprintf
 
 CMD(lcd)
@@ -1216,7 +1223,7 @@ CMD(ls)
    FileCopyPeer *src_peer=0;
    if(!nlist)
    {
-      FileCopyPeerDirList *dir_list=new FileCopyPeerDirList(Clone(),args);
+      FileCopyPeerDirList *dir_list=new FileCopyPeerDirList(session->Clone(),args);
 
       src_peer=dir_list;
       ResValue color=ResMgr::Query("color:use-color",0);
@@ -1228,7 +1235,7 @@ CMD(ls)
       dir_list->UseColor(use);
    }
    else
-      src_peer=new FileCopyPeerFA(Clone(),a,mode);
+      src_peer=new FileCopyPeerFA(session->Clone(),a,mode);
 
    if(re)
       src_peer->NoCache();
@@ -1396,7 +1403,7 @@ CMD(cls)
    char *a=args->Combine(0);
 
    FileCopyPeer *src_peer=0;
-   src_peer=new FileCopyPeerCLS(Clone(),args,fso);
+   src_peer=new FileCopyPeerCLS(session->Clone(),args,fso);
    args=0;
 
    if(re)
@@ -1454,7 +1461,7 @@ CMD(cat)
       eprintf(_("Usage: %s [OPTS] files...\n"),op);
       return 0;
    }
-   CatJob *j=new CatJob(Clone(),output,args);
+   CatJob *j=new CatJob(session->Clone(),output,args);
    if(!auto_ascii)
    {
       if(ascii)
@@ -1560,7 +1567,7 @@ CMD(get)
       // remove options
       while(args->getindex()>1)
 	 args->delarg(1);
-      mgetJob *j=new mgetJob(Clone(),args,cont,make_dirs);
+      mgetJob *j=new mgetJob(session->Clone(),args,cont,make_dirs);
       if(reverse)
 	 j->Reverse();
       if(del)
@@ -1595,7 +1602,7 @@ CMD(get)
 
    if(n_conn==0)
    {
-      GetJob *j=new GetJob(Clone(),get_args,cont);
+      GetJob *j=new GetJob(session->Clone(),get_args,cont);
       if(del)
 	 j->DeleteFiles();
       if(del_target)
@@ -1608,7 +1615,7 @@ CMD(get)
    }
    else
    {
-      pgetJob *j=new pgetJob(Clone(),get_args);
+      pgetJob *j=new pgetJob(session->Clone(),get_args);
       if(n_conn!=-1)
 	 j->SetMaxConn(n_conn);
       return j;
@@ -1670,8 +1677,8 @@ CMD(rm)
       goto print_usage;
 
    rmJob *j=(rmdir?
-	     new rmdirJob(Clone(),args):
-	     new rmJob(Clone(),args));
+	     new rmdirJob(session->Clone(),args):
+	     new rmJob(session->Clone(),args));
 
    if(recursive)
       j->Recurse();
@@ -1685,7 +1692,7 @@ CMD(rm)
 }
 CMD(mkdir)
 {
-   Job *j=new mkdirJob(Clone(),args);
+   Job *j=new mkdirJob(session->Clone(),args);
    args=0;
    return j;
 }
@@ -2117,7 +2124,7 @@ CMD(wait)
 
 CMD(subsh)
 {
-   CmdExec *e=new CmdExec(Clone());
+   CmdExec *e=new CmdExec(session->Clone(),parent->cwd->Clone());
 
    char *c=args->getarg(1);
    e->FeedCmd(c);
@@ -2135,7 +2142,7 @@ CMD(mv)
       eprintf(_("Usage: mv <file1> <file2>\n"));
       return 0;
    }
-   Job *j=new mvJob(Clone(),args->getarg(1),args->getarg(2));
+   Job *j=new mvJob(session->Clone(),args->getarg(1),args->getarg(2));
    return j;
 }
 
@@ -2324,7 +2331,7 @@ CMD(help)
 CMD(ver)
 {
    printf(
-      _("Lftp | Version %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"),VERSION);
+      _("Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"),VERSION);
    printf(
       _("This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"));
    printf(
@@ -2521,7 +2528,7 @@ CMD(find)
 
    if(!args->getcurr())
       args->Append(".");
-   FinderJob_List *j=new class FinderJob_List(Clone(),args,
+   FinderJob_List *j=new class FinderJob_List(session->Clone(),args,
       output?output:new FDStream(1,"<stdout>"));
    j->set_maxdepth(maxdepth);
    output=0;
@@ -2646,7 +2653,7 @@ CMD(du)
 
    if(!args->getcurr())
       args->Append(".");
-   FinderJob_Du *j=new class FinderJob_Du(Clone(),args,
+   FinderJob_Du *j=new class FinderJob_Du(session->Clone(),args,
       output?output:new FDStream(1,"<stdout>"));
    args=0;
    j->PrintDepth(maxdepth);
@@ -2711,9 +2718,12 @@ CMD(lpwd)
       eprintf("%s: %s\n",args->a0(),_("cannot get current directory"));
       return 0;
    }
-   printf("%s\n",parent->cwd);
-   exit_code=0;
-   return 0;
+   const char *name=parent->cwd->GetName();
+   char *buf=alloca_strdup2(name,2);
+   sprintf(buf,"%s\n",name?name:"?");
+   Job *j=CopyJob::NewEcho(buf,strlen(buf),output,args->a0());
+   output=0;
+   return j;
 }
 
 CMD(glob)
@@ -2789,7 +2799,7 @@ CMD(chmod)
       return 0;
    }
 
-   ChmodJob *j=new ChmodJob(Clone(),args);
+   ChmodJob *j=new ChmodJob(session->Clone(),args);
    j->SetVerbosity(verbose);
    j->SetMode(m);
    if(quiet)
@@ -2901,7 +2911,7 @@ CMD(get1)
    FileCopyPeer *src_peer=0;
    FileCopyPeer *dst_peer=0;
 
-   src_peer=FileCopyPeerFA::New(Clone(),src,FA::RETRIEVE,true);
+   src_peer=FileCopyPeerFA::New(session->Clone(),src,FA::RETRIEVE,true);
 
    if(dst_url.proto==0)
       dst_peer=FileCopyPeerFDStream::NewPut(dst,cont);

@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2002 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,6 @@
 
 /* $Id$ */
 
-/* this is not very useful, just a proof of concept */
-/* this is used in mirror command to build local files list */
-
 #include <config.h>
 #include <errno.h>
 #include <unistd.h>
@@ -39,6 +36,7 @@
 #include "xstring.h"
 #include "misc.h"
 #include "log.h"
+#include "LocalDir.h"
 
 FileAccess *LocalAccess::New() { return new LocalAccess(); }
 
@@ -64,6 +62,8 @@ LocalAccess::LocalAccess() : FileAccess()
    Init();
    xfree(cwd);
    cwd=xgetcwd();
+   if(!cwd)
+      cwd=xstrdup(".");
 }
 LocalAccess::LocalAccess(const LocalAccess *o) : FileAccess(o)
 {
@@ -576,8 +576,10 @@ int LocalGlob::Do()
       return STALL;
 
    glob_t g;
-   char *oldcwd=xgetcwd();
-   if(!oldcwd)
+   LocalDirectory oldcwd;
+   oldcwd.SetFromCWD();
+   // check if we can return.
+   if(oldcwd.Chdir())
    {
       SetError(_("cannot get current directory"));
       return MOVED;
@@ -588,7 +590,6 @@ int LocalGlob::Do()
       char *err=(char*)alloca(strlen(cwd)+strlen(se)+20);
       sprintf(err,"chdir(%s): %s",cwd,se);
       SetError(err);
-      xfree(oldcwd);
       return MOVED;
    }
 
@@ -613,9 +614,10 @@ int LocalGlob::Do()
    }
    globfree(&g);
 
-   if(chdir(oldcwd)==-1)
-      fprintf(stderr,"chdir(%s): %s",oldcwd,strerror(errno));
-   xfree(oldcwd);
+   const char *err=oldcwd.Chdir();
+   const char *name=oldcwd.GetName();
+   if(err)
+      fprintf(stderr,"chdir(%s): %s",name?name:"?",err);
 
    done=true;
    return MOVED;
