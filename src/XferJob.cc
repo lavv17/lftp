@@ -34,8 +34,7 @@
 #include "ResMgr.h"
 
 static ResDecl
-   res_use_urls	  ("xfer:use-urls",    "no", ResMgr::BoolValidate,0),
-   res_eta_terse  ("xfer:eta-terse",   "yes",ResMgr::BoolValidate,0);
+   res_use_urls	  ("xfer:use-urls",    "no", ResMgr::BoolValidate,0);
 
 char *XferJob::Percent()
 {
@@ -94,7 +93,7 @@ char *XferJob::CurrETA(float rate,long offs)
 
       const char *tr_eta=_("eta:");
 
-      if((bool)res_eta_terse.Query(0))
+      if((bool)ResMgr::Query("xfer:eta-terse",0))
       {
 	 if(eta>=DAY)
 	 {
