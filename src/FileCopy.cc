@@ -658,7 +658,8 @@ int FileCopyPeerFA::Do()
 	 session->Close();
 	 m=MOVED;
       }
-
+      if(fxp)
+	 return m;
       res=Put_LL(buffer+buffer_ptr,in_buffer);
       if(res>0)
       {
@@ -708,6 +709,8 @@ int FileCopyPeerFA::Do()
    case GET:
       if(eof)
 	 return m;
+      if(fxp)
+	 return m;
       res=Get_LL(GET_BUFSIZE);
       if(res>0)
       {
@@ -738,6 +741,8 @@ bool FileCopyPeerFA::IOReady()
 
 void FileCopyPeerFA::Suspend()
 {
+   if(fxp && mode==PUT)
+      return;
    session->Suspend();
    super::Suspend();
 }
@@ -752,6 +757,11 @@ void FileCopyPeerFA::Seek(long new_pos)
    if(pos==new_pos)
       return;
    super::Seek(new_pos);
+   if(fxp)
+   {
+      session->Disconnect();
+      return;
+   }
    session->Close();
    if(seek_pos!=FILE_END)
       OpenSession();
@@ -826,7 +836,7 @@ void FileCopyPeerFA::OpenSession()
       session->AsciiTransfer();
    if(want_size)
       session->WantSize(&size);
-   if(want_date)
+   if(want_date && date==NO_DATE_YET)
       session->WantDate(&date);
    SaveRollback(seek_pos);
    pos=seek_pos;
@@ -941,6 +951,7 @@ FileCopyPeerFA::FileCopyPeerFA(FileAccess *s,const char *f,int m)
    file=xstrdup(f);
    session=s;
    reuse_later=true;
+   fxp=false;
    if(FAmode==FA::LIST || FAmode==FA::LONG_LIST)
       Save(LsCache::SizeLimit());
 }
@@ -962,6 +973,7 @@ FileCopyPeerFA::FileCopyPeerFA(ParsedURL *u,int m)
    file=xstrdup(u->path);
    session=FileAccess::New(u);
    reuse_later=true;
+   fxp=false;
    if(!session)
    {
       const char *e=_(" - not supported protocol");
@@ -980,7 +992,11 @@ FileCopyPeerFA *FileCopyPeerFA::New(FileAccess *s,const char *url,int m,bool reu
 {
    ParsedURL u(url,true);
    if(u.proto)
+   {
+      if(reuse)
+	 SessionPool::Reuse(s);
       return new FileCopyPeerFA(&u,m);
+   }
    FileCopyPeerFA *peer=new FileCopyPeerFA(s,url,m);
    if(!reuse)
       peer->DontReuseSession();

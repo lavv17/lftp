@@ -236,6 +236,7 @@ class FileCopyPeerFA : public FileCopyPeer
    FileAccess::fileinfo info;
 
    bool reuse_later;
+   bool fxp;   // FXP (ftp<=>ftp copy) active
 
 public:
    FileCopyPeerFA(FileAccess *s,const char *f,int m);
