@@ -696,6 +696,8 @@ Job *CmdExec::builtin_open()
    if(url)
       delete url;
 
+   Reconfig(0);
+
    if(builtin==BUILTIN_OPEN)
       return this;
 

@@ -1,3 +1,7 @@
+1999-10-12  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* commands.cc, CmdExec.cc: call Reconfig after session change.
+
 1999-10-11  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* HttpDir.cc: check file info for validity.
