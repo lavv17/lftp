@@ -111,6 +111,10 @@ int Fish::Do()
       return MOVED;
    }
    m|=HandleReplies();
+
+   if(Error())
+      return m;
+
    if(send_buf)
       BumpEventTime(send_buf->EventTime());
    if(recv_buf)
@@ -416,6 +420,7 @@ void Fish::Close()
    }
 //    if(!RespQueueIsEmpty())
 //       Disconnect(); // play safe.
+   CloseExpectQueue();
    state=(recv_buf?CONNECTED:DISCONNECTED);
    eof=false;
    encode_file=true;
@@ -717,7 +722,7 @@ int Fish::HandleReplies()
       xfree(p);
       break;
    case EXPECT_RETR_INFO:
-      if(message && is_ascii_digit(message[0]))
+      if(message && is_ascii_digit(message[0]) && !strchr(message,':'))
       {
 	 long long size_ll;
 	 if(1==sscanf(message,"%lld",&size_ll))
@@ -730,6 +735,11 @@ int Fish::HandleReplies()
       else if(message)
       {
 	 FileInfo *fi=ls_to_FileInfo(message);
+	 if(!fi)
+	 {
+	    SetError(NO_FILE,message);
+	    return MOVED;
+	 }
 	 if(fi->defined&fi->SIZE)
 	 {
 	    entity_size=fi->size;
@@ -748,11 +758,11 @@ int Fish::HandleReplies()
    case EXPECT_INFO:
    {
       FileInfo *fi=ls_to_FileInfo(message);
-      if(fi->defined&fi->SIZE)
+      if(fi && fi->defined&fi->SIZE)
 	 array_for_info[array_ptr].size=fi->size;
       else
 	 array_for_info[array_ptr].size=NO_SIZE;
-      if(fi->defined&(fi->DATE|fi->DATE_UNPREC))
+      if(fi && fi->defined&(fi->DATE|fi->DATE_UNPREC))
 	 array_for_info[array_ptr].time=fi->date;
       else
 	 array_for_info[array_ptr].time=NO_DATE;
@@ -785,6 +795,8 @@ int Fish::HandleReplies()
 	 SetError(NO_FILE,message);
       }
       break;
+   case EXPECT_IGNORE:
+      break;
    }
 
    if(!keep_message)
@@ -810,6 +822,33 @@ void Fish::PushExpect(expect_t e)
    }
    RespQueue[RQ_tail]=e;
    RQ_tail=newtail;
+}
+void Fish::CloseExpectQueue()
+{
+   for(int i=RQ_head; i<RQ_tail; i++)
+   {
+      switch(RespQueue[i])
+      {
+      case EXPECT_IGNORE:
+      case EXPECT_FISH:
+      case EXPECT_VER:
+      case EXPECT_PWD:
+      case EXPECT_CWD:
+	 break;
+      case EXPECT_RETR_INFO:
+      case EXPECT_INFO:
+      case EXPECT_RETR:
+      case EXPECT_DIR:
+      case EXPECT_QUOTE:
+      case EXPECT_DEFAULT:
+	 RespQueue[i]=EXPECT_IGNORE;
+	 break;
+      case EXPECT_STOR_PRELIMINARY:
+      case EXPECT_STOR:
+	 Disconnect();
+	 break;
+      }
+   }
 }
 
 void Fish::PushDirectory(const char *p)
@@ -1020,7 +1059,26 @@ void Fish::Resume()
 
 const char *Fish::CurrentStatus()
 {
-   return "FIXME";
+   switch(state)
+   {
+   case DISCONNECTED:
+      return _("Not connected");
+   case CONNECTING:
+      return _("Connecting...");
+   case CONNECTED:
+      if(!RespQueueIsEmpty() && RespQueue[RQ_head]==EXPECT_FISH)
+	 return _("Connecting...");
+      return _("Connected");
+   case WAITING:
+      return _("Waiting for response...");
+   case FILE_RECV:
+      return _("Receiving data");
+   case FILE_SEND:
+      return _("Sending data");
+   case DONE:
+      return _("Done");
+   }
+   return "";
 }
 
 bool Fish::SameSiteAs(FileAccess *fa)

@@ -81,11 +81,13 @@ class Fish : public NetAccess
       EXPECT_DEFAULT,
       EXPECT_STOR_PRELIMINARY,
       EXPECT_STOR,
-      EXPECT_QUOTE
+      EXPECT_QUOTE,
+      EXPECT_IGNORE
    };
 
    void PushExpect(expect_t);
    int HandleReplies();
+   void CloseExpectQueue();
    int ReplyLogPriority(int);
 
    expect_t *RespQueue;

@@ -3,6 +3,7 @@
 	* ftpclass.cc: fix closure generation for user==0.
 	* CmdExec.cc: fix for cwd==0.
 	* Http.cc: get rid of data_buf; handle identity encoding.
+	* Fish.cc, Fish.h: more work.
 
 2001-06-19  Alexander V. Lukyanov  <lav@yars.free.net>
 
