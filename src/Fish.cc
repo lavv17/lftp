@@ -248,6 +248,7 @@ int Fish::Do()
       {
 	 state=FILE_SEND;
 	 real_pos=0;
+	 pos=0;
 	 m=MOVED;
       }
       if(RespQueueSize()==0)
@@ -538,17 +539,27 @@ void Fish::SendMethod()
       }
       // dd pays attansion to read boundaries and reads wrong number
       // of bytes when ibs>1. Have to use the inefficient ibs=1.
-      Send("#STOR %lld %s\n"
-           ">%s;echo '### 001';"
-	   "dd ibs=1 count=%lld 2>/dev/null"
-	   "|(cat>%s;cat>/dev/null);echo '### 200'\n",
-	   (long long)entity_size,e,
-	   e,
-	   (long long)entity_size,
-	   e);
+      if(entity_size>0)
+      {
+	 Send("#STOR %lld %s\n"
+	      ">%s;echo '### 001';"
+	      "dd ibs=1 count=%lld 2>/dev/null"
+	      "|(cat>%s;cat>/dev/null);echo '### 200'\n",
+	      (long long)entity_size,e,
+	      e,
+	      (long long)entity_size,
+	      e);
+      }
+      else
+      {
+	 Send("#STOR %lld %s\n"
+	      ">%s;echo '### 001';echo '### 200'\n",
+	      (long long)entity_size,e,e);
+      }
       PushExpect(EXPECT_STOR_PRELIMINARY);
       PushExpect(EXPECT_STOR);
       real_pos=0;
+      pos=0;
       break;
    case ARRAY_INFO:
       SendArrayInfoRequests();
@@ -632,7 +643,8 @@ int Fish::HandleReplies()
 	 const char *y="(yes/no)? ";
 	 int p_len=strlen(p);
 	 int y_len=strlen(y);
-	 if(s>=p_len && !strncasecmp(b+s-p_len,p,p_len))
+	 if(s>=p_len && !strncasecmp(b+s-p_len,p,p_len)
+	 || s>10 && !strncmp(b+s-3,"': ",3))
 	 {
 	    if(!pass)
 	    {
@@ -1015,6 +1027,8 @@ int Fish::StoreStatus()
 {
    if(Error())
       return error_code;
+   if(state!=FILE_SEND)
+      return IN_PROGRESS;
    if(real_pos!=entity_size)
    {
       Disconnect();
