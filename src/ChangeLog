@@ -1,3 +1,7 @@
+2000-02-20  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc: (Rename) correct typo (which caused core dumps).
+
 2000-02-19  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileCopy.cc: count Buffered() change even when input buffer is empty.

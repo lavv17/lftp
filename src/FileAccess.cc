@@ -343,7 +343,7 @@ void FileAccess::Close()
 
 void FileAccess::Rename(const char *f,const char *f1)
 {
-   Open(file,RENAME);
+   Open(f,RENAME);
    file1=xstrdup(f1);
 
    LsCache::TreeChanged(this,file);
