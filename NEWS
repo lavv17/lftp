@@ -3,7 +3,7 @@
 * fixed handling of HREF=/ in http ls.
 * fixed coredump on mrm without arguments.
 * fixed coredump from find command when pipe stalls.
-* fixed compilation problem on sunos551.
+* fixed compilation problem with T_SRV on some systems.
 
 Version 2.0.2 - 1999-07-12
 
