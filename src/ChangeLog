@@ -1,3 +1,11 @@
+2004-05-18  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopyFtp.cc, FileCopyFtp.h: protect FXP if ssl-protect-fxp is
+	  true for any of the two servers; try to turn off protection
+	  if it fails.
+	* ftpclass.cc, ftpclass.h: (copy_protect) new member.
+	* resource.cc: ftp:ssl-protect-fxp can now have a closure.
+
 2004-05-17  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: wait until LANG/OPTS UTF8 complete before sending

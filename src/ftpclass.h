@@ -374,6 +374,7 @@ private:
    sockaddr_u copy_addr;
    bool copy_addr_valid;
    bool copy_passive;
+   bool copy_protect;
    bool	copy_done;
    bool	copy_connection_open;
    bool copy_allow_store;
@@ -474,10 +475,11 @@ public:
    DirList *MakeDirList(ArgV *args);
    FileSet *ParseLongList(const char *buf,int len,int *err=0);
 
-   void SetCopyMode(copy_mode_t cm,bool rp,int rnum,time_t tt)
+   void SetCopyMode(copy_mode_t cm,bool rp,bool prot,int rnum,time_t tt)
       {
 	 copy_mode=cm;
 	 copy_passive=rp;
+	 copy_protect=prot;
 	 retries=rnum;
 	 try_time=tt;
       }

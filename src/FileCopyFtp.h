@@ -34,6 +34,7 @@ class FileCopyFtp : public FileCopy
    bool passive_source;
    bool orig_passive_source;
    bool disable_fxp;
+   bool protect;
    int src_retries;
    int dst_retries;
    time_t src_try_time;

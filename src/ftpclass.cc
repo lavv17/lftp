@@ -933,6 +933,7 @@ void Ftp::InitFtp()
    copy_mode=COPY_NONE;
    copy_addr_valid=false;
    copy_passive=false;
+   copy_protect=false;
    copy_done=false;
    copy_connection_open=false;
    stat_time=0;
@@ -1489,7 +1490,7 @@ int   Ftp::Do()
 	 else
 	    want_prot=QueryBool("ssl-protect-data",hostname)?'P':'C';
 	 if(copy_mode!=COPY_NONE)
-	    want_prot=QueryBool("ssl-protect-fxp")?'P':'C';
+	    want_prot=copy_protect?'P':'C';
 	 if(want_prot!=conn->prot)
 	 {
 	    conn->SendCmdF("PROT %c",want_prot);
@@ -3064,6 +3065,7 @@ void  Ftp::Close()
       state=INITIAL_STATE;
    }
    copy_mode=COPY_NONE;
+   copy_protect=false;
    copy_addr_valid=false;
    copy_done=false;
    copy_connection_open=false;
