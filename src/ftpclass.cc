@@ -397,11 +397,20 @@ void Ftp::LoginCheck(int act)
       return;
    if(act==530) // login incorrect or overloaded server
    {
-      const char *rexp=Query(user?"retry-530":"retry-530-anonymous",hostname);
+      const char *rexp=Query("retry-530",hostname);
       if(re_match(all_lines,rexp,REG_ICASE))
       {
-	 DebugPrint("---- ",_("Server reply matched ftp:retry-530[-anonymous], retrying"));
+	 DebugPrint("---- ",_("Server reply matched ftp:retry-530, retrying"));
 	 goto retry;
+      }
+      if(!user)
+      {
+	 rexp=Query("retry-530-anonymous",hostname);
+	 if(re_match(all_lines,rexp,REG_ICASE))
+	 {
+	    DebugPrint("---- ",_("Server reply matched ftp:retry-530-anonymous, retrying"));
+	    goto retry;
+	 }
       }
    }
    if(is5XX(act))

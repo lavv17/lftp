@@ -70,7 +70,7 @@ void lftp_history_list(int cnt)
    if(cnt == -1 || i < history_base) i = history_base;
 
    while((hist = history_get(i)))
-      printf("%5i  %s\n", i++, hist->line);
+      printf("%5d%c %s\n", i++, hist->data?'*':' ', hist->line);
 }
 
 void lftp_history_clear()

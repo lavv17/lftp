@@ -1,3 +1,9 @@
+2001-09-10  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* lftp_rl.c: print * for modified lines in history (like in bash).
+	* resource.cc, ftpclass.cc: use retry-530-anonymous as an additional
+	  regexp for retry-530.
+
 2001-09-10  Glenn F. Maynard <g_ld@zewt.org>
 
 	* commands.cc, lftp_rl.c, lftp_rl.h: implement history command.
