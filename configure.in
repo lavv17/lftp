@@ -121,6 +121,7 @@ dnl Checks for libraries.
 AC_SEARCH_LIBS(socket,socket)
 AC_SEARCH_LIBS(gethostbyname,nsl)
 AC_SEARCH_LIBS(dlopen,dl,[AC_DEFINE(HAVE_DLOPEN)])
+AC_SEARCH_LIBS(res_search,resolv,[AC_DEFINE(HAVE_RES_SEARCH)])
 
 AC_ARG_WITH(libresolv, [  --without-libresolv     don't use libresolv],
       [with_libresolv=$withval], [with_libresolv=yes])

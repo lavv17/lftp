@@ -1,3 +1,7 @@
+1999-07-04	lav
+
+	* configure.in: check for res_search.
+
 1999-06-27	lav
 
 	* configure.in: version 2.0.1
