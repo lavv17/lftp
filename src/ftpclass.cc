@@ -411,6 +411,16 @@ void Ftp::NoPassReqCheck(int act) // for USER command
       ignore_pass=true;
       return;
    }
+   if(act==331 && allow_skey && user && pass && result)
+   {
+      skey_pass=xstrdup(make_skey_reply());
+      FreeResult();
+      if(force_skey && skey_pass==0)
+      {
+	 SetError(LOGIN_FAILED,_("ftp:skey-force is set and server does not support OPIE nor S/KEY"));
+	 return;
+      }
+   }
    if(is3XX(act))
       return;
    if(act==530)	  // no such user or overloaded server
@@ -440,16 +450,6 @@ void Ftp::NoPassReqCheck(int act) // for USER command
       }
       SetError(LOGIN_FAILED,line);
       return;
-   }
-   if(act==331 && allow_skey && user && pass && result)
-   {
-      skey_pass=xstrdup(make_skey_reply());
-      FreeResult();
-      if(force_skey && skey_pass==0)
-      {
-	 SetError(LOGIN_FAILED,_("ftp:skey-force is set and server does not support OPIE nor S/KEY"));
-	 return;
-      }
    }
 def_ret:
    Disconnect();

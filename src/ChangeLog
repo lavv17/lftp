@@ -1,3 +1,8 @@
+2001-01-12  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: fix opie/skey reply.
+	* Http.cc: some fixes for PUT and `100 Continue'.
+
 2000-12-20  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* commands.cc: also use ':' as user/pass separator.

@@ -63,6 +63,7 @@ static void base64_encode (const char *s, char *store, int length);
 #define H_PARTIAL(x)    ((x) == 206)
 #define H_REDIRECTED(x) (((x) == 301) || ((x) == 302))
 #define H_EMPTY(x)	(((x) == 204) || ((x) == 205))
+#define H_CONTINUE(x)	((x) == 100)
 
 
 void Http::Init()
@@ -1041,14 +1042,21 @@ int Http::Do()
 	       }
 	       else if(mode==STORE)
 	       {
-		  if(sent_eot && H_20X(status_code))
+		  if(H_CONTINUE(status_code))
+		  {
+		     xfree(status);
+		     status=0;
+		     status_code=0;
+		     return MOVED;
+		  }
+		  if((sent_eot || pos==entity_size) && H_20X(status_code))
 		  {
 		     state=DONE;
 		     Disconnect();
 		     state=DONE;
 		     return MOVED;
 		  }
-		  if(!sent_eot && H_20X(status_code))
+		  if(H_20X(status_code))
 		  {
 		     // should never happen
 		     DebugPrint("**** ",_("Success, but did nothing??"),0);
@@ -1093,12 +1101,8 @@ int Http::Do()
 	       proto_version=(ver_major<<4)+ver_minor;
 	       if(!H_20X(status_code))
 	       {
-		  if(status_code==100)
-		  {
-		     // 100 Continue
-		     status_code=0;
-		     xfree(status);
-		  }
+		  if(H_CONTINUE(status_code))
+		     return MOVED;
 
 		  if(status_code/100==5) // server failed, try another
 		     NextPeer();
@@ -1134,7 +1138,7 @@ int Http::Do()
 	 }
       }
 
-      if(mode==STORE && !status && !sent_eot)
+      if(mode==STORE && (!status || H_CONTINUE(status_code)) && !sent_eot)
 	 Block(sock,POLLOUT);
 
       return m;
