@@ -85,7 +85,7 @@ public:
    int Do();
 
    void Put(const char *buf,int size);
-   void Put(const char *buf) { return Put(buf,strlen(buf)); }
+   void Put(const char *buf) { Put(buf,strlen(buf)); }
    void Format(const char *f,...) PRINTF_LIKE(2,3);
    void PutEOF();
 
