@@ -44,7 +44,7 @@ currently; some need other work to be done.
 
  * more intelligently squeeze file name in status line.
 
- * parallel get's in mirror, mget
+ * parallel get's in +mirror, mget
 +* make a command get1 to get single file with extra options.
    implement ranges properly.
 

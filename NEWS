@@ -1,6 +1,7 @@
 Version 2.3.0 - 2000-??-??
 
 * completion now appends a slash to remote directories (finally!).
+* new mirror option --parallel=[N] to download several files in parallel.
 * full http keep-alive support.
 * new settings http:put-method (PUT or POST), http:put-content-type.
 * new setting xfer:max-redirections for http redirections following.
