@@ -14,3 +14,7 @@ configure
 junk
 ABOUT-NLS
 intl
+missing
+install-sh
+mkinstalldirs
+depcomp
