@@ -330,7 +330,7 @@ LFTP_FUNC_SSCANF_CONST
 AC_CHECK_FUNCS(strdup strstr lstat select regexec glob\
  killpg setpgid tcgetattr ftruncate vsnprintf gettimeofday\
  gethostbyname2 getipnodebyname getaddrinfo getnameinfo setsid random\
- inet_aton)
+ inet_aton unsetenv environ)
 IU_CHECK_DECL(vsnprintf, [#include <stdio.h>])
 dnl AC_CHECK_DECLS([va_copy, __va_copy],,, [#include <stdarg.h>])
 
