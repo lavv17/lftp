@@ -109,7 +109,7 @@ void LsCache::Add(FileAccess *p_loc,const char *a,int m,const Buffer *ubuf)
       LsCache::Add(p_loc,a,m,cache_buffer,cache_buffer_size);
 }
 
-int LsCache::Find(FileAccess *p_loc,const char *a,int m,char **d,int *l)
+int LsCache::Find(FileAccess *p_loc,const char *a,int m,const char **d,int *l)
 {
    if(!use)
       return 0;
@@ -120,7 +120,10 @@ int LsCache::Find(FileAccess *p_loc,const char *a,int m,char **d,int *l)
       if(scan->mode==m && !strcmp(scan->arg,a) && p_loc->SameLocationAs(scan->loc))
       {
 	 if(d && l)
-	    *d=(char*)xmemdup(scan->data,*l=scan->data_len);
+	 {
+	    *d=scan->data;
+	    *l=scan->data_len;
+	 }
 	 return 1;
       }
    }

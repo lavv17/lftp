@@ -4,6 +4,12 @@
 	* LsCache.cc: use xfree.
 	* commands.cc: help for repeat.
 	* xmalloc.cc, xmalloc.h: outline xstrdup; MEM_DEBUG it.
+	* ArgV.cc, ArgV.h: fix memory leak. Allocate memory in chunks.
+	* FileAccess.cc, FileAccess.h, Filter.cc, Filter.h, LocalAccess.cc:
+	  don't include ArgV.h in header.
+	* LsCache.h, LsCache.cc: don't dup memory in Find method.
+	* FtpDirList.cc, FtpSplitList.cc, HttpDir.cc: use new LsCache::Find.
+	* url.h: start implementing class url.
 
 2000-02-11  Alexander V. Lukyanov  <lav@yars.free.net>
 

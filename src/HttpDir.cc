@@ -722,7 +722,7 @@ int HttpDirList::Do()
 	 buf->Put(":\n");
       }
 
-      char *cache_buffer=0;
+      const char *cache_buffer=0;
       int cache_buffer_size=0;
       if(use_cache && LsCache::Find(session,curr,mode,
 				    &cache_buffer,&cache_buffer_size))
@@ -730,7 +730,6 @@ int HttpDirList::Do()
 	 ubuf=new Buffer();
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
-	 xfree(cache_buffer);
       }
       else
       {
@@ -932,7 +931,7 @@ int HttpGlob::Do()
 	 return MOVED;
       }
 
-      char *cache_buffer=0;
+      const char *cache_buffer=0;
       int cache_buffer_size=0;
       if(use_cache && LsCache::Find(session,curr_dir,FA::LONG_LIST,
 				    &cache_buffer,&cache_buffer_size))
@@ -940,7 +939,6 @@ int HttpGlob::Do()
 	 ubuf=new Buffer();
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
-	 xfree(cache_buffer);
       }
       else
       {
@@ -1042,7 +1040,7 @@ int HttpListInfo::Do()
 
    if(!ubuf && !get_info)
    {
-      char *cache_buffer=0;
+      const char *cache_buffer=0;
       int cache_buffer_size=0;
       if(use_cache && LsCache::Find(session,"",FA::LONG_LIST,
 				    &cache_buffer,&cache_buffer_size))
@@ -1050,7 +1048,6 @@ int HttpListInfo::Do()
 	 ubuf=new Buffer();
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
-	 xfree(cache_buffer);
       }
       else
       {

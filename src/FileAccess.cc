@@ -41,6 +41,7 @@
 #include "misc.h"
 #include "DummyProto.h"
 #include "netrc.h"
+#include "ArgV.h"
 #ifdef WITH_MODULES
 # include "module.h"
 #endif
@@ -861,6 +862,13 @@ void FileAccess::CleanupThis() {}
 ListInfo *FileAccess::MakeListInfo() { return 0; }
 Glob *FileAccess::MakeGlob(const char *pattern) { return 0; }
 DirList *FileAccess::MakeDirList(ArgV *a) { if(a) delete a; return 0; }
+
+DirList::~DirList()
+{
+   Delete(buf);
+   if(args)
+      delete args;
+}
 
 void FileAccess::CleanupAll()
 {

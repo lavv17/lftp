@@ -638,6 +638,7 @@ DirList *LocalAccess::MakeDirList(ArgV *a)
    return new LocalDirList(a,cwd);
 }
 
+#include "ArgV.h"
 LocalDirList::LocalDirList(ArgV *a,const char *cwd)
    : DirList(a)
 {

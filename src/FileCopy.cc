@@ -807,7 +807,7 @@ void FileCopyPeerFA::OpenSession()
 	 eof=true;
 	 return;
       }
-      char *b;
+      const char *b;
       int s;
       if(use_cache && LsCache::Find(session,file,FAmode,&b,&s))
       {
@@ -822,7 +822,6 @@ void FileCopyPeerFA::OpenSession()
 	 Save(0);
 	 Allocate(s);
 	 memmove(buffer+buffer_ptr,b,s);
-	 xfree(b);
       #ifndef NATIVE_CRLF
 	 if(ascii)
 	 {

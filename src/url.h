@@ -43,15 +43,29 @@ public:
    void Combine(char *buf,const char *home=0);
 };
 
-class url
-{
-public:
 # define URL_UNSAFE " <>\"%{}|\\^[]`"
 # define URL_PATH_UNSAFE URL_UNSAFE"#;?"
 # define URL_HOST_UNSAFE URL_UNSAFE":/"
 # define URL_PORT_UNSAFE URL_UNSAFE"/"
 # define URL_USER_UNSAFE URL_UNSAFE"/:@"
 # define URL_PASS_UNSAFE URL_UNSAFE"/:@"
+class url
+{
+public:
+   char	 *proto;
+   char  *user;
+   char	 *pass;
+   char  *host;
+   char	 *port;
+   char  *path;
+
+   url(const char *u);
+   url();
+   ~url();
+
+   void SetPath(const char *p,const char *q=URL_PATH_UNSAFE);
+   char *Combine();
+
    // encode unsafe chars as %XY
    static char *encode_string(const char *,char *buf=0,const char *u=URL_UNSAFE);
    // reverse; done in-place.

@@ -63,7 +63,7 @@ protected:
 public:
    static void Add(FileAccess *p_loc,const char *a,int m,const char *d,int l);
    static void Add(FileAccess *p_loc,const char *a,int m,const Buffer *ubuf);
-   static int Find(FileAccess *p_loc,const char *a,int m,char **d,int *l);
+   static int Find(FileAccess *p_loc,const char *a,int m,const char **d, int *l);
 
    enum change_mode { FILE_CHANGED, DIR_CHANGED, TREE_CHANGED };
    static void Changed(change_mode m,FileAccess *f,const char *what);

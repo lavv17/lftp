@@ -81,8 +81,10 @@ int   FtpSplitList::Do()
    {
       if(use_cache)
       {
-	 if(LsCache::Find(f,"",mode,&buf,&inbuf))
+	 const char *b;
+	 if(LsCache::Find(f,"",mode,&b,&inbuf))
 	 {
+	    buf=(char*)xmemdup(b,inbuf);
 	    from_cache=true;
 	    ptr=buf;
 	 }

@@ -24,7 +24,8 @@
 #define FILTER_H
 
 #include "ProcWait.h"
-#include "ArgV.h"
+
+class ArgV;
 
 class FDStream
 {

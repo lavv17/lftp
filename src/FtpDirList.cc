@@ -49,7 +49,7 @@ int FtpDirList::Do()
 
    if(!ubuf)
    {
-      char *cache_buffer=0;
+      const char *cache_buffer=0;
       int cache_buffer_size=0;
       if(use_cache && LsCache::Find(session,pattern,FA::LONG_LIST,
 				    &cache_buffer,&cache_buffer_size))
@@ -57,7 +57,6 @@ int FtpDirList::Do()
 	 ubuf=new Buffer();
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
-	 xfree(cache_buffer);
       }
       else
       {

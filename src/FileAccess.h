@@ -40,7 +40,6 @@
 
 #include "xmalloc.h"
 #include "ResMgr.h"
-#include "ArgV.h"
 
 #define NO_SIZE	     (-1L)
 #define NO_SIZE_YET  (-2L)
@@ -51,6 +50,7 @@ class ListInfo;
 class Glob;
 class NoGlob;
 class DirList;
+class ArgV;
 
 class FileAccess : public SMTask
 {
@@ -418,12 +418,7 @@ class DirList : public FileAccessOperation
 protected:
    Buffer *buf;
    ArgV *args;
-   ~DirList()
-      {
-	 Delete(buf);
-	 if(args)
-	    delete args;
-      }
+   ~DirList();
 public:
    DirList(ArgV *a)
       {
