@@ -279,7 +279,7 @@ FCT (pattern, string, string_end, no_leading_period, flags)
 		      }
 		    str[c1] = L('\0');
 
-#if defined _LIBC || (defined HAVE_WCTYPE_H && defined HAVE_WCHAR_H)
+#if defined _LIBC || (defined HAVE_WCTYPE_H && defined HAVE_WCHAR_H && defined HAVE_BTOWC)
 		    wt = IS_CHAR_CLASS (str);
 		    if (wt == 0)
 		      /* Invalid character class name.  */
