@@ -890,7 +890,7 @@ void FileCopyPeerFA::OpenSession()
    }
    else // mode==PUT
    {
-      if(e_size!=NO_SIZE && seek_pos>=e_size)
+      if(e_size>=0 && size>=0 && seek_pos>=e_size)
       {
 	 debug((10,"copy dst: seek past eof (seek_pos=%lld, size=%lld)\n",
 		  (long long)seek_pos,(long long)e_size));
@@ -1213,7 +1213,7 @@ FileCopyPeerFDStream::FileCopyPeerFDStream(FDStream *o,dir_t m)
       write_allowed=false;
    put_ll_timer=0;
    if(m==PUT)
-      put_ll_timer=new Timer(TimeDiff(0,100));
+      put_ll_timer=new Timer(TimeDiff(0,200));
 }
 FileCopyPeerFDStream::~FileCopyPeerFDStream()
 {
@@ -1554,8 +1554,14 @@ int FileCopyPeerFDStream::Put_LL(const char *buf,int len)
       return -1;
    }
    stream->clear_status();
-   if(res==len)
+   if(res==len && skip_cr)
+   {
       res+=skip_cr;
+      // performance gets worse because of writing a single char,
+      // but leaving uncomplete line on screen allows mixing it with debug text.
+      if(write(fd,"\n",1)==1)
+	 res+=1;
+   }
    if(put_ll_timer)
       put_ll_timer->Reset();
    return res;
