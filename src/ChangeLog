@@ -1,6 +1,7 @@
 2000-10-15  Alexander V. Lukyanov  <lav@yars.free.net>
 
-	* ftpclass.cc: use service name `ftps' for ftps.
+	* ftpclass.cc: use service name `ftps' for ftps; don't queue up
+	  too much MDTM/SIZE commands in sync mode.
 
 2000-10-12  Alexander V. Lukyanov  <lav@yars.free.net>
 

@@ -2014,6 +2014,11 @@ void Ftp::SendArrayInfoRequests()
 	 else
 	    break;	   // otherwise, wait until it is first.
       }
+      else
+      {
+	 if(flags&SYNC_MODE)
+	    break;	   // don't flood the queues.
+      }
    }
 }
 
