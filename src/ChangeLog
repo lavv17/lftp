@@ -1,3 +1,18 @@
+1999-08-24  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: reset try_time on certain failures: greeting, user,
+	  pass, to sleep proper time before reconnect.
+
+1999-08-21  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* HttpDir.cc: improve support for squid's ftp listings;
+	  support symlinks.
+	* Makefile.am: cmd-sleep.so target; use -nostdlib to reduce size,
+	  this works unless there are static constructors.
+	* SleepJob.cc, commands.cc: move at and sleep commands to SleepJob.cc
+	  to allow modularity.
+	* modconfig.h: add MODULE_CMD_SLEEP.
+
 1999-08-20  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* module.c: provide module aliases.

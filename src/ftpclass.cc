@@ -285,7 +285,7 @@ int   Ftp::LoginCheck(int act,int exp)
       if(strstr(line,"Login incorrect")) // Don't translate!!!
       {
 	 if(!user)   // unusual message for anonymous user
-	    return(-1);
+	    goto def_ret;
 	 DebugPrint("---- ",_("Saw `Login incorrect', assume failed login"),9);
 	 return(LOGIN_FAILED_STATE);
       }
@@ -294,6 +294,9 @@ int   Ftp::LoginCheck(int act,int exp)
    if(act/100==5)
       return(LOGIN_FAILED_STATE);
 
+def_ret:
+   if(act/100!=exp/100)
+      try_time=now;	// count the reconnect-interval from this moment
    return(-1);
 }
 
@@ -310,12 +313,15 @@ int   Ftp::NoPassReqCheck(int act,int exp) // for USER command
       // Unfortunately, at this point we cannot tell if it is
       // really incorrect login or overloaded server, because
       // many overloaded servers return hard error 530...
-      // So try to check the message for 'user unknown'.
+      // So try to check the message for `user unknown'.
+      // NOTE: modern ftp servers don't say `user unknown', they wait for
+      // PASS and then say `Login incorrect'.
       if(strstr(line,"unknown")) // Don't translate!!!
       {
 	 DebugPrint("---- ",_("Saw `unknown', assume failed login"),9);
 	 return(LOGIN_FAILED_STATE);
       }
+      try_time=now;	// count the reconnect-interval from this moment
       return -1;
    }
    if(act/100==5)
@@ -343,6 +349,7 @@ int   Ftp::NoPassReqCheck(int act,int exp) // for USER command
    }
    if(act/100==3)
       return state;
+   try_time=now;	// count the reconnect-interval from this moment
    return(-1);
 }
 
@@ -2518,6 +2525,8 @@ int   Ftp::CheckResp(int act)
 	 try_time=0; // retry immediately
 	 new_state=INITIAL_STATE;
       }
+      if(!match)
+	 try_time=now;	// count the reconnect-interval from this moment
       break;
 
    case CHECK_REST:
