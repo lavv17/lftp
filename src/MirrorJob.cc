@@ -111,7 +111,6 @@ void  MirrorJob::HandleFile(int how)
    ArgV *args;
    int	 res;
    mode_t mode;
-   GetJob   *gj;
    struct stat st;
 
    // dir_name returns pointer to static data - need to dup it.
@@ -197,28 +196,35 @@ void  MirrorJob::HandleFile(int how)
 	 // launch get job
 	 Report(_("Retrieving remote file `%s'"),
 		  dir_file(remote_relative_dir,file->name));
-	 args=new ArgV("get");
-	 args->Append(file->name);
 	 if(script)
 	 {
+	    args=new ArgV("get1");
+	    if(cont_this)
+	       args->Append("-c");
+	    args->Append(file->name);
+	    args->Append("-o");
+	    args->Append(local_name);
 	    char *cmd=args->CombineQuoted();
 	    fprintf(script,"%s",cmd);
 	    xfree(cmd);
+	    delete args; args=0;
 	    if(script_only)
-	    {
-	       delete args;
 	       goto skip;
-	    }
 	 }
-	 args->Append(local_name);
-	 gj=new GetJob(Clone(),args,cont_this);
-// 	 if(file->defined&(file->DATE|file->DATE_UNPREC))   FIXME
-// 	    gj->SetTime(file->date);
-#if 0
+
+	 FileCopyPeerFA *src_peer=
+	    new FileCopyPeerFA(session,file->name,FA::RETRIEVE);
+	 src_peer->DontReuseSession(); // mirror won't need session
+	 FileCopyPeer *dst_peer=
+	    FileCopyPeerFDStream::NewPut(local_name,cont_this);
+
+	 CopyJob *cp=
+	    new CopyJob(new FileCopy(src_peer,dst_peer,cont_this),file->name);
+	 if(file->defined&(file->DATE|file->DATE_UNPREC))
+	    cp->SetDate(file->date);
 	 if(file->defined&file->SIZE)
-	    gj->SetSize(file->size);
-#endif
-	 waiting=gj;
+	    cp->SetSize(file->size);
+	 waiting=cp;
 	 waiting->parent=this;
 	 waiting->cmdline=(char*)xmalloc(10+strlen(file->name));
 	 sprintf(waiting->cmdline,"\\get %s",file->name);
@@ -529,12 +535,34 @@ int   MirrorJob::Do()
       Report(_("Sending local file `%s'"),
 	       dir_file(local_relative_dir,file->name));
       const char *local_name=dir_file(local_dir,file->name);
-      ArgV *args=new ArgV("put");
-      args->Append(local_name);
-      args->Append(file->name);
-      waiting=new PutJob(Clone(),args);
+
+#if 0 // unfinished
+      if(script)
+      {
+	 args=new ArgV("put1");
+	 args->Append(local_name);
+	 args->Append("-o");
+	 args->Append(file->name);
+	 char *cmd=args->CombineQuoted();
+	 fprintf(script,"%s",cmd);
+	 xfree(cmd);
+	 delete args; args=0;
+	 if(script_only)
+	    goto skip;
+      }
+#endif
+
+      FileCopyPeerFA *dst_peer=
+	 new FileCopyPeerFA(session,file->name,FA::STORE);
+      dst_peer->DontReuseSession(); // mirror won't need session
+      FileCopyPeer *src_peer=
+	 FileCopyPeerFDStream::NewGet(local_name);
+
+      CopyJob *cp=
+	 new CopyJob(new FileCopy(src_peer,dst_peer,false),file->name);
+      waiting=cp;
       waiting->parent=this;
-      waiting->cmdline=(char*)xmalloc(6+strlen(file->name));
+      waiting->cmdline=(char*)xmalloc(10+strlen(file->name));
       sprintf(waiting->cmdline,"\\put %s",file->name);
       state=WAITING_FOR_SUBGET;
       return MOVED;

@@ -3,6 +3,8 @@
 	* commands.cc: help update; support get -a for ascii mode;
 	  don't use ascii mode for zcat and zmore.
 	* CopyJob.cc, CopyJob.h: ascii support in CopyJobEnv.
+	* FileCopy.cc: init can_seek0.
+	* MirrorJob.cc: use CopyJob.
 
 1999-12-25  Alexander V. Lukyanov  <lav@yars.free.net>
 

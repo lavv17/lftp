@@ -26,6 +26,7 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 #include <math.h>
 #include "FileCopy.h"
 #include "url.h"
@@ -517,6 +518,7 @@ FileCopyPeer::FileCopyPeer(direction m)
    date=NO_DATE_YET;
    seek_pos=0;
    can_seek=true;
+   can_seek0=true;
    date_set=false;
    do_set_date=true;
    ascii=false;
@@ -1148,6 +1150,18 @@ void FileCopyPeerFDStream::RemoveFile()
    stream->remove();
    removing=false;   // it is instant.
 }
+
+FileCopyPeerFDStream *FileCopyPeerFDStream::NewPut(const char *file,bool cont=false)
+{
+   return new FileCopyPeerFDStream(new FileStream(file,O_WRONLY|O_CREAT
+				    |(cont?0:O_TRUNC)),FileCopyPeer::PUT);
+}
+FileCopyPeerFDStream *FileCopyPeerFDStream::NewGet(const char *file)
+{
+   return new FileCopyPeerFDStream(new FileStream(file,O_RDONLY),
+				    FileCopyPeer::GET);
+}
+
 
 // FileCopyPeerString
 #undef super
