@@ -307,6 +307,7 @@ int NetAccess::Resolve(const char *defp,const char *ser,const char *pr)
    if(!resolver)
    {
       xfree(peer);
+      peer=0;
       peer_num=0;
       if(proxy)
 	 resolver=new Resolver(proxy,proxy_port,defp);
