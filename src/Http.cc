@@ -1010,7 +1010,7 @@ int Http::Write(const void *buf,int size)
    if(Error())
       return(error_code);
 
-   if(state!=RECEIVING_HEADER || status!=0)
+   if(state!=RECEIVING_HEADER || status!=0 || send_buf->Size()!=0)
       return DO_AGAIN;
 
    {
@@ -1047,9 +1047,11 @@ int Http::SendEOT()
 {
    if(sent_eot)
       return OK;
+   if(Error())
+      return(error_code);
    if(mode==STORE)
    {
-      if(state==RECEIVING_HEADER)
+      if(state==RECEIVING_HEADER && send_buf->Size()==0)
       {
 	 shutdown(sock,1);
 	 sent_eot=true;
