@@ -2,6 +2,8 @@
 * fixed rare spining in ls (when pipe stalls).
 * fixed handling of HREF=/ in http ls.
 * fixed coredump on mrm without arguments.
+* fixed coredump from find command when pipe stalls.
+* fixed compilation problem on sunos551.
 
 Version 2.0.2 - 1999-07-12
 
