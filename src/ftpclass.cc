@@ -3314,6 +3314,7 @@ void Ftp::CheckResp(int act)
    // some servers mess all up
    if(act==331 && exp==220 && !(flags&SYNC_MODE) && RespQueueSize()>1)
    {
+      PopResp();
       DebugPrint("---- ",_("Turning on sync-mode"),2);
       ResMgr::Set("ftp:sync-mode",hostname,"on");
       Disconnect();
@@ -3323,6 +3324,10 @@ void Ftp::CheckResp(int act)
 
    bool match=(act/100==exp/100);
    check_case_t cc=RespQueue[RQ_head].check_case;
+   const char *exp_path=alloca_strdup(RespQueue[RQ_head].path);
+
+   // remove first, so that Disconnect() has accurate picture.
+   PopResp();
 
    switch(cc)
    {
@@ -3365,16 +3370,16 @@ void Ftp::CheckResp(int act)
 	 if(cc==CHECK_CWD)
 	 {
 	    xfree(cwd);
-	    cwd=xstrdup(RespQueue[RQ_head].path);
+	    cwd=xstrdup(exp_path);
 	 }
 	 set_real_cwd(cwd);
-	 LsCache::SetDirectory(this, RespQueue[RQ_head].path, true);
+	 LsCache::SetDirectory(this, exp_path, true);
 	 break;
       }
       if(is5XX(act))
       {
 	 SetError(NO_FILE,line);
-	 LsCache::SetDirectory(this, RespQueue[RQ_head].path, false);
+	 LsCache::SetDirectory(this, exp_path, false);
 	 break;
       }
       Disconnect();
@@ -3382,7 +3387,7 @@ void Ftp::CheckResp(int act)
 
    case CHECK_CWD_STALE:
       if(is2XX(act))
-	 set_real_cwd(RespQueue[RQ_head].path);
+	 set_real_cwd(exp_path);
       goto ignore;
 
    case CHECK_ABOR:
@@ -3510,7 +3515,7 @@ void Ftp::CheckResp(int act)
 
    case CHECK_TRANSFER_CLOSED:
       if(strstr(line,"ABOR")
-      && RespQueueSize()>=2 && RespQueue[RQ_head+1].check_case==CHECK_ABOR)
+      && RespQueueSize()>=2 && RespQueue[RQ_head].check_case==CHECK_ABOR)
       {
 	 DebugPrint("**** ","server bug: 426 reply missed",1);
 	 PopResp();
@@ -3538,8 +3543,6 @@ void Ftp::CheckResp(int act)
 #endif // USE_SSL
 
    } /* end switch */
-
-   PopResp();
 }
 
 void  Ftp::SetRespPath(const char *p)
