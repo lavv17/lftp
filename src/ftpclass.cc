@@ -1989,6 +1989,7 @@ void  Ftp::DataAbort()
       return;
    }
 
+   CloseRespQueue();
    SendUrgentCmd("ABOR");
    AddResp(226,0,CHECK_ABOR);
    FlushSendQueue(true);
