@@ -1,4 +1,4 @@
-%define version 2.6.10
+%define version 2.6.11
 %define release 1
 %define use_modules 0
 
