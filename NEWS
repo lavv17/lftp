@@ -1,8 +1,11 @@
+Version 2.6.12 - 2004-01-23
+
+* fixed put over https protocol.
 * fixed spinning in bg mode when an external program was still running at
   the time of moving to background.
 * fixed compilation with IRIX MIPSPro compiler.
 
-Version 2.6.11 - 2004-12-22
+Version 2.6.11 - 2003-12-22
 
 * fixed mirror for empty files.
 * a rare coredump fixed in http 0.9 handling, when first line of reply is empty.

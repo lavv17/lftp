@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-12-22 16:19+0300\n"
+"POT-Creation-Date: 2004-01-23 22:32+0300\n"
 "PO-Revision-Date: 2003-06-08 00:26+0200\n"
 "Last-Translator: Nicolas Noble <nicolas@nobis-crew.org>\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -271,7 +271,7 @@ msgstr "%s: expression régulière `%s': %s\n"
 #: src/commands.cc:1450 src/commands.cc:1484 src/commands.cc:1584
 #: src/commands.cc:1840 src/commands.cc:2034 src/commands.cc:2208
 #: src/commands.cc:2215 src/commands.cc:2398 src/commands.cc:2426
-#: src/commands.cc:2433 src/commands.cc:2760 src/commands.cc:3021
+#: src/commands.cc:2433 src/commands.cc:2760 src/commands.cc:3022
 #: src/SleepJob.cc:139
 #, c-format
 msgid "Try `help %s' for more information.\n"
@@ -335,7 +335,7 @@ msgid "invalid pair of numbers"
 msgstr "paire de nombre invalide"
 
 #: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3733
-#: src/Http.cc:1673
+#: src/Http.cc:1674
 msgid "Resolving host address..."
 msgstr "Résolution de l'adresse..."
 
@@ -1521,7 +1521,7 @@ msgid "Usage: %s <jobno> ... | all\n"
 msgstr "Usage: %s <num_travail> | all\n"
 
 #: src/commands.cc:1999 src/commands.cc:2132 src/commands.cc:2277
-#: src/commands.cc:2564 src/commands.cc:2639 src/commands.cc:3033
+#: src/commands.cc:2564 src/commands.cc:2639 src/commands.cc:3034
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s: %s - n'est pas un nombre\n"
@@ -1690,12 +1690,12 @@ msgstr "ne peut lire le répertoire en cours"
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "Usage: %s [OPTS] mode du fichier...\n"
 
-#: src/commands.cc:2857
+#: src/commands.cc:2858
 #, c-format
 msgid "invalid mode string: %s\n"
 msgstr "chaîne de mode invalide: %s\n"
 
-#: src/commands.cc:2915
+#: src/commands.cc:2916
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "Usage: %s [OPTS] fichier\n"
@@ -1741,11 +1741,11 @@ msgstr "la résolution du nom du host a échouée"
 msgid "cannot parse EPSV response"
 msgstr "ne peut analyser la réponse EPSV"
 
-#: src/ftpclass.cc:1133 src/Http.cc:798
+#: src/ftpclass.cc:1133 src/Http.cc:801
 msgid "Closing idle connection"
 msgstr "Fermeture de la connexion inutile"
 
-#: src/ftpclass.cc:1213 src/Http.cc:926
+#: src/ftpclass.cc:1213 src/Http.cc:929
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "ne peut créer un socket de la famille %d"
@@ -1771,7 +1771,7 @@ msgstr "Connexion du socket de données à (%s) port %u"
 msgid "Switching passive mode off"
 msgstr "Désactivation du mode passif"
 
-#: src/ftpclass.cc:2423 src/Http.cc:1014
+#: src/ftpclass.cc:2423 src/Http.cc:1017
 msgid "Peer closed connection"
 msgstr "Connexion interrompue par un tiers"
 
@@ -1816,15 +1816,15 @@ msgid "Sending commands..."
 msgstr "Émission des commandes..."
 
 #: src/ftpclass.cc:3725 src/ftpclass.cc:3750 src/ftpclass.cc:3763
-#: src/Http.cc:1688
+#: src/Http.cc:1689
 msgid "Waiting for response..."
 msgstr "En attente de réponse..."
 
-#: src/ftpclass.cc:3726 src/Http.cc:1681
+#: src/ftpclass.cc:3726 src/Http.cc:1682
 msgid "Connection idle"
 msgstr "Connexion stagnante"
 
-#: src/ftpclass.cc:3739 src/Http.cc:1679 src/Http.cc:1686
+#: src/ftpclass.cc:3739 src/Http.cc:1680 src/Http.cc:1687
 msgid "Connecting..."
 msgstr "Connexion..."
 
@@ -1868,11 +1868,11 @@ msgstr "Émission des données/TLS"
 msgid "Receiving data/TLS"
 msgstr "Réception des données/TLS"
 
-#: src/ftpclass.cc:3779 src/Http.cc:1684
+#: src/ftpclass.cc:3779 src/Http.cc:1685
 msgid "Sending data"
 msgstr "Émission des données"
 
-#: src/ftpclass.cc:3781 src/Http.cc:1691
+#: src/ftpclass.cc:3781 src/Http.cc:1692
 msgid "Receiving data"
 msgstr "Réception des données"
 
@@ -1966,48 +1966,48 @@ msgstr "Fermeture de la connexion HTTP"
 msgid "POST method failed"
 msgstr "échec de la méthode POST"
 
-#: src/Http.cc:882
+#: src/Http.cc:885
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
 
-#: src/Http.cc:1030
+#: src/Http.cc:1033
 msgid "Sending request..."
 msgstr "Émission des requêtes..."
 
-#: src/Http.cc:1077
+#: src/Http.cc:1080
 msgid "Hit EOF while fetching headers"
 msgstr "Reçu une fin de fichier en lisant les entêtes"
 
-#: src/Http.cc:1193
+#: src/Http.cc:1196
 msgid "Could not parse HTTP status line"
 msgstr "Ne peut analyser la ligne d'état HTTP"
 
-#: src/Http.cc:1339
+#: src/Http.cc:1342
 msgid "Receiving body..."
 msgstr "Réception du corps..."
 
-#: src/Http.cc:1465
+#: src/Http.cc:1468
 msgid "Hit EOF"
 msgstr "Fin de fichier atteinte"
 
-#: src/Http.cc:1468
+#: src/Http.cc:1471
 msgid "Received not enough data, retrying"
 msgstr "Pas assez de données reçues, recommence"
 
-#: src/Http.cc:1476
+#: src/Http.cc:1479
 msgid "Received all"
 msgstr "Tout reçu"
 
-#: src/Http.cc:1481
+#: src/Http.cc:1484
 msgid "Received all (total)"
 msgstr "Tout reçu (total)"
 
-#: src/Http.cc:1504 src/Http.cc:1525
+#: src/Http.cc:1507 src/Http.cc:1528
 msgid "chunked format violated"
 msgstr "format en 'chunk' violé"
 
-#: src/Http.cc:1689
+#: src/Http.cc:1690
 msgid "Fetching headers..."
 msgstr "Réception des entêtes..."
 

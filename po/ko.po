@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-12-22 16:19+0300\n"
+"POT-Creation-Date: 2004-01-23 22:32+0300\n"
 "PO-Revision-Date: 2001-05-27 KST\n"
 "Last-Translator: Dojip Kim <greendrm@greendrm.com>\n"
 "Language-Team: \n"
@@ -269,7 +269,7 @@ msgstr ""
 #: src/commands.cc:1450 src/commands.cc:1484 src/commands.cc:1584
 #: src/commands.cc:1840 src/commands.cc:2034 src/commands.cc:2208
 #: src/commands.cc:2215 src/commands.cc:2398 src/commands.cc:2426
-#: src/commands.cc:2433 src/commands.cc:2760 src/commands.cc:3021
+#: src/commands.cc:2433 src/commands.cc:2760 src/commands.cc:3022
 #: src/SleepJob.cc:139
 #, c-format
 msgid "Try `help %s' for more information.\n"
@@ -335,7 +335,7 @@ msgid "invalid pair of numbers"
 msgstr "잘못된 수입니다"
 
 #: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3733
-#: src/Http.cc:1673
+#: src/Http.cc:1674
 msgid "Resolving host address..."
 msgstr "호스트 주소를 찾습니다..."
 
@@ -1408,7 +1408,7 @@ msgid "Usage: %s <jobno> ... | all\n"
 msgstr "사용법: %s <jobno> ... | all\n"
 
 #: src/commands.cc:1999 src/commands.cc:2132 src/commands.cc:2277
-#: src/commands.cc:2564 src/commands.cc:2639 src/commands.cc:3033
+#: src/commands.cc:2564 src/commands.cc:2639 src/commands.cc:3034
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s %s - 숫자가 아닙니다\n"
@@ -1578,12 +1578,12 @@ msgstr "현재 디렉토리에 접근할 수 없습니다"
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "사용법: %s [OPTS] files...\n"
 
-#: src/commands.cc:2857
+#: src/commands.cc:2858
 #, fuzzy, c-format
 msgid "invalid mode string: %s\n"
 msgstr "잘못된 수입니다"
 
-#: src/commands.cc:2915
+#: src/commands.cc:2916
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "사용법: %s [OPTS] file\n"
@@ -1628,11 +1628,11 @@ msgstr "호스트 이름을 찾는데 실패한 듯 합니다"
 msgid "cannot parse EPSV response"
 msgstr ""
 
-#: src/ftpclass.cc:1133 src/Http.cc:798
+#: src/ftpclass.cc:1133 src/Http.cc:801
 msgid "Closing idle connection"
 msgstr "사용하지 않는 접속을 끊습니다"
 
-#: src/ftpclass.cc:1213 src/Http.cc:926
+#: src/ftpclass.cc:1213 src/Http.cc:929
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "주소 %d의 소켓을 만들 수 없습니다"
@@ -1658,7 +1658,7 @@ msgstr "(%s) 포트 %u에 자료 소켓을 연결합니다"
 msgid "Switching passive mode off"
 msgstr "패시브(passive) 모드 끔"
 
-#: src/ftpclass.cc:2423 src/Http.cc:1014
+#: src/ftpclass.cc:2423 src/Http.cc:1017
 msgid "Peer closed connection"
 msgstr "접속이 끊겼습니다"
 
@@ -1705,15 +1705,15 @@ msgid "Sending commands..."
 msgstr "명령어 전송중..."
 
 #: src/ftpclass.cc:3725 src/ftpclass.cc:3750 src/ftpclass.cc:3763
-#: src/Http.cc:1688
+#: src/Http.cc:1689
 msgid "Waiting for response..."
 msgstr "응답을 기다립니다..."
 
-#: src/ftpclass.cc:3726 src/Http.cc:1681
+#: src/ftpclass.cc:3726 src/Http.cc:1682
 msgid "Connection idle"
 msgstr "사용하지 않는 접속"
 
-#: src/ftpclass.cc:3739 src/Http.cc:1679 src/Http.cc:1686
+#: src/ftpclass.cc:3739 src/Http.cc:1680 src/Http.cc:1687
 msgid "Connecting..."
 msgstr "접속중..."
 
@@ -1760,11 +1760,11 @@ msgstr "자료 보내는 중"
 msgid "Receiving data/TLS"
 msgstr "자료 받는 중"
 
-#: src/ftpclass.cc:3779 src/Http.cc:1684
+#: src/ftpclass.cc:3779 src/Http.cc:1685
 msgid "Sending data"
 msgstr "자료 보내는 중"
 
-#: src/ftpclass.cc:3781 src/Http.cc:1691
+#: src/ftpclass.cc:3781 src/Http.cc:1692
 msgid "Receiving data"
 msgstr "자료 받는 중"
 
@@ -1858,48 +1858,48 @@ msgstr "HTTP 연결을 닫습니다"
 msgid "POST method failed"
 msgstr "POST 메소드 실패"
 
-#: src/Http.cc:882
+#: src/Http.cc:885
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "http상의 ftp는 프락시 없이는 동작할 수 없습니다, http:proxy를 설정하세요"
 
-#: src/Http.cc:1030
+#: src/Http.cc:1033
 msgid "Sending request..."
 msgstr "request 보내는 중..."
 
-#: src/Http.cc:1077
+#: src/Http.cc:1080
 msgid "Hit EOF while fetching headers"
 msgstr "헤더를 읽어 오는 동안 EOF를 입력"
 
-#: src/Http.cc:1193
+#: src/Http.cc:1196
 msgid "Could not parse HTTP status line"
 msgstr "HTTP 상태를 파싱할 수 없음"
 
-#: src/Http.cc:1339
+#: src/Http.cc:1342
 msgid "Receiving body..."
 msgstr "body를 받은 중..."
 
-#: src/Http.cc:1465
+#: src/Http.cc:1468
 msgid "Hit EOF"
 msgstr ""
 
-#: src/Http.cc:1468
+#: src/Http.cc:1471
 msgid "Received not enough data, retrying"
 msgstr "충분한 자료를 받지 못해 다시 시도중"
 
-#: src/Http.cc:1476
+#: src/Http.cc:1479
 msgid "Received all"
 msgstr "모두 받았음"
 
-#: src/Http.cc:1481
+#: src/Http.cc:1484
 msgid "Received all (total)"
 msgstr "모두(전체) 받음"
 
-#: src/Http.cc:1504 src/Http.cc:1525
+#: src/Http.cc:1507 src/Http.cc:1528
 msgid "chunked format violated"
 msgstr "쓰지 않는 양식이 문제가 됩니다"
 
-#: src/Http.cc:1689
+#: src/Http.cc:1690
 msgid "Fetching headers..."
 msgstr "헤더를 읽고 있는중.."
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.3.9\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-12-22 16:19+0300\n"
+"POT-Creation-Date: 2004-01-23 22:32+0300\n"
 "PO-Revision-Date: 2001-04-22 06:01+0800\n"
 "Last-Translator: Abel Cheung <maddog@linux.org.hk>\n"
 "Language-Team: Traditional Chinese <zh-l10n@linux.org.tw>\n"
@@ -269,7 +269,7 @@ msgstr ""
 #: src/commands.cc:1450 src/commands.cc:1484 src/commands.cc:1584
 #: src/commands.cc:1840 src/commands.cc:2034 src/commands.cc:2208
 #: src/commands.cc:2215 src/commands.cc:2398 src/commands.cc:2426
-#: src/commands.cc:2433 src/commands.cc:2760 src/commands.cc:3021
+#: src/commands.cc:2433 src/commands.cc:2760 src/commands.cc:3022
 #: src/SleepJob.cc:139
 #, c-format
 msgid "Try `help %s' for more information.\n"
@@ -335,7 +335,7 @@ msgid "invalid pair of numbers"
 msgstr "不正確的數字"
 
 #: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3733
-#: src/Http.cc:1673
+#: src/Http.cc:1674
 msgid "Resolving host address..."
 msgstr "正在解析主機地址..."
 
@@ -1403,7 +1403,7 @@ msgid "Usage: %s <jobno> ... | all\n"
 msgstr "使用方法: %s <工作代號> ... | all\n"
 
 #: src/commands.cc:1999 src/commands.cc:2132 src/commands.cc:2277
-#: src/commands.cc:2564 src/commands.cc:2639 src/commands.cc:3033
+#: src/commands.cc:2564 src/commands.cc:2639 src/commands.cc:3034
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s: %s - 不是一個數字\n"
@@ -1569,12 +1569,12 @@ msgstr "找不到現時的目錄"
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "Usage: %s [選項] 檔案...\n"
 
-#: src/commands.cc:2857
+#: src/commands.cc:2858
 #, fuzzy, c-format
 msgid "invalid mode string: %s\n"
 msgstr "不正確的數字"
 
-#: src/commands.cc:2915
+#: src/commands.cc:2916
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "使用方法: %s [選項] 檔案\n"
@@ -1619,11 +1619,11 @@ msgstr "假設查看主機名稱已失敗"
 msgid "cannot parse EPSV response"
 msgstr "不能分析 EPSV 回應內容"
 
-#: src/ftpclass.cc:1133 src/Http.cc:798
+#: src/ftpclass.cc:1133 src/Http.cc:801
 msgid "Closing idle connection"
 msgstr "關閉了閒置的連線"
 
-#: src/ftpclass.cc:1213 src/Http.cc:926
+#: src/ftpclass.cc:1213 src/Http.cc:929
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "不能建立地址族群 %d 的 socket"
@@ -1650,7 +1650,7 @@ msgstr "連接資料 socket 到 (%s) 連接埠 %u"
 msgid "Switching passive mode off"
 msgstr "關閉了 passive 模式"
 
-#: src/ftpclass.cc:2423 src/Http.cc:1014
+#: src/ftpclass.cc:2423 src/Http.cc:1017
 msgid "Peer closed connection"
 msgstr "對方節點關閉了連線"
 
@@ -1696,15 +1696,15 @@ msgid "Sending commands..."
 msgstr "正在送出指令..."
 
 #: src/ftpclass.cc:3725 src/ftpclass.cc:3750 src/ftpclass.cc:3763
-#: src/Http.cc:1688
+#: src/Http.cc:1689
 msgid "Waiting for response..."
 msgstr "正在等待回應..."
 
-#: src/ftpclass.cc:3726 src/Http.cc:1681
+#: src/ftpclass.cc:3726 src/Http.cc:1682
 msgid "Connection idle"
 msgstr "連線閒置了"
 
-#: src/ftpclass.cc:3739 src/Http.cc:1679 src/Http.cc:1686
+#: src/ftpclass.cc:3739 src/Http.cc:1680 src/Http.cc:1687
 msgid "Connecting..."
 msgstr "正在連線..."
 
@@ -1751,11 +1751,11 @@ msgstr "正在傳送資料"
 msgid "Receiving data/TLS"
 msgstr "正在接收資料"
 
-#: src/ftpclass.cc:3779 src/Http.cc:1684
+#: src/ftpclass.cc:3779 src/Http.cc:1685
 msgid "Sending data"
 msgstr "正在傳送資料"
 
-#: src/ftpclass.cc:3781 src/Http.cc:1691
+#: src/ftpclass.cc:3781 src/Http.cc:1692
 msgid "Receiving data"
 msgstr "正在接收資料"
 
@@ -1849,48 +1849,48 @@ msgstr "正在關閉 HTTP 連線"
 msgid "POST method failed"
 msgstr "使用 POST 方法失敗"
 
-#: src/Http.cc:882
+#: src/Http.cc:885
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "若沒有代理伺服器，是不可能在 http 連線上使用 ftp 的，請設定 http:proxy。"
 
-#: src/Http.cc:1030
+#: src/Http.cc:1033
 msgid "Sending request..."
 msgstr "正在送出要求..."
 
-#: src/Http.cc:1077
+#: src/Http.cc:1080
 msgid "Hit EOF while fetching headers"
 msgstr "讀取標頭時檔案已終結了"
 
-#: src/Http.cc:1193
+#: src/Http.cc:1196
 msgid "Could not parse HTTP status line"
 msgstr "不能分析 HTTP 狀態"
 
-#: src/Http.cc:1339
+#: src/Http.cc:1342
 msgid "Receiving body..."
 msgstr "正在接收內容…"
 
-#: src/Http.cc:1465
+#: src/Http.cc:1468
 msgid "Hit EOF"
 msgstr "檔案終結"
 
-#: src/Http.cc:1468
+#: src/Http.cc:1471
 msgid "Received not enough data, retrying"
 msgstr "接收的資料不足，繼續嘗試"
 
-#: src/Http.cc:1476
+#: src/Http.cc:1479
 msgid "Received all"
 msgstr "已接收所有資料"
 
-#: src/Http.cc:1481
+#: src/Http.cc:1484
 msgid "Received all (total)"
 msgstr "已接收所有資料"
 
-#: src/Http.cc:1504 src/Http.cc:1525
+#: src/Http.cc:1507 src/Http.cc:1528
 msgid "chunked format violated"
 msgstr "資料格式錯誤"
 
-#: src/Http.cc:1689
+#: src/Http.cc:1690
 msgid "Fetching headers..."
 msgstr "正在讀取標頭…"
 
