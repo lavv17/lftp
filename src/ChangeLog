@@ -1,3 +1,7 @@
+2004-08-12  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc, Http.h, resource.cc: add http:authorization setting.
+
 2004-08-03  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* buffer_std.cc, buffer_std.h: new files.

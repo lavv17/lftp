@@ -60,6 +60,7 @@ class Http : public NetAccess
    char *post_data;
    void SendAuth();
    void SendCacheControl();
+   void SendBasicAuth(const char *tag,const char *auth);
    void SendBasicAuth(const char *tag,const char *u,const char *p);
    void SendRequest(const char *connection,const char *f);
    void SendRequest(const char *connection=0)

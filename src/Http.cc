@@ -353,15 +353,21 @@ void Http::SendMethod(const char *method,const char *efile)
    }
 }
 
-
+void Http::SendBasicAuth(const char *tag,const char *auth)
+{
+   if(!auth || !*auth)
+      return;
+   int auth_len=strlen(auth);
+   char *buf64=string_alloca(base64_length(auth_len)+1);
+   base64_encode(auth,buf64,auth_len);
+   Send("%s: Basic %s\r\n",tag,buf64);
+}
 void Http::SendBasicAuth(const char *tag,const char *user,const char *pass)
 {
    /* Basic scheme */
    char *buf=string_alloca(strlen(user)+1+strlen(pass)+1);
    sprintf(buf,"%s:%s",user,pass);
-   char *buf64=string_alloca(base64_length(strlen(buf))+1);
-   base64_encode(buf,buf64,strlen(buf));
-   Send("%s: Basic %s\r\n",tag,buf64);
+   SendBasicAuth(tag,buf);
 }
 
 void Http::SendAuth()
@@ -370,6 +376,8 @@ void Http::SendAuth()
       SendBasicAuth("Proxy-Authorization",proxy_user,proxy_pass);
    if(user && pass && !(hftp && !QueryBool("use-authorization",proxy)))
       SendBasicAuth("Authorization",user,pass);
+   else if(!hftp)
+      SendBasicAuth("Authorization",Query("authorization",hostname));
 }
 void Http::SendCacheControl()
 {
