@@ -1,4 +1,4 @@
-%define version 3.1.2rc1
+%define version 3.1.2
 %define release 1
 %define use_modules 0
 
