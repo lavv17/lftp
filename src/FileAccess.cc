@@ -1243,6 +1243,7 @@ FileSet *GlobURL::GetResult()
    return &list;
 }
 
+#include "modconfig.h"
 #ifndef MODULE_PROTO_FTP
 # include "ftpclass.h"
 # define _ftp Ftp::ClassInit()

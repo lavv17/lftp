@@ -1,3 +1,7 @@
+2000-09-12  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc: include modconfig.h. (fixes module compilation).
+
 2000-09-11  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* buffer.cc: handle eof on ssl connection properly.
