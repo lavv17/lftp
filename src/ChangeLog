@@ -1,3 +1,7 @@
+2002-07-31  Ayamura KIKUCHI <ayamura@ayamura.org>
+
+	* misc.cc: <curses.h> should be included before <term.h> on IRIX.
+
 2002-07-31  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CmdExec.cc, CmdExec.h, commands.cc: allow per-slot queues;
