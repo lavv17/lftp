@@ -108,6 +108,13 @@ public:
       char *cmd_buf;
       if(tty)
       {
+	 if(getpgrp()!=tcgetpgrp(0))
+	 {
+	    // looks like we are in background. Can't read from tty
+	    exec->block+=TimeOut(500);
+	    return "";
+	 }
+
 	 SignalHook::ResetCount(SIGINT);
 	 cmd_buf=readline(prompt);
 	 if(cmd_buf && *cmd_buf)
@@ -262,6 +269,8 @@ int   main(int argc,char **argv)
    source_if_exist(top_exec,rc);
 
    WaitDone(top_exec);
+
+   top_exec->Fg();
 
    ArgV *args=new ArgV(argc,argv);
    args->setarg(0,"lftp");

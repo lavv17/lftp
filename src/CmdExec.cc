@@ -34,6 +34,8 @@ extern "C" {
 #include <readline/readline.h>
 }
 
+#define super SessionJob
+
 static ResDecl
    res_long_running	   ("cmd:long-running","30",ResMgr::UNumberValidate,0),
    res_remote_completion   ("cmd:remote-completion","on",ResMgr::BoolValidate,0),
@@ -185,7 +187,8 @@ void  CmdExec::exec_parsed_command()
 	    waiting->cmdline=cmd;
 	    cmd=0;
       	 }
-	 waiting->Fg();
+	 if(fg && !background)
+	    waiting->Fg();
       }
       if(background)
       {
@@ -801,4 +804,17 @@ int CmdExec::OpenDebug(const char *file)
    }
    fcntl(fileno(debug_file),F_SETFD,FD_CLOEXEC);
    return 0;
+}
+
+void CmdExec::Fg()
+{
+   super::Fg();
+   if(waiting)
+      waiting->Fg();
+}
+void CmdExec::Bg()
+{
+   if(waiting)
+      waiting->Bg();
+   super::Bg();
 }

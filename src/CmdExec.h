@@ -184,6 +184,9 @@ public:
 
    void SetInteractive(bool i);
 
+
+   void Fg(),Bg();
+
    static CmdExec *debug_shell;	 // to be zapped
 };
 
