@@ -44,7 +44,8 @@ public:
 class url
 {
 public:
-# define URL_UNSAFE " <>\"%{}|\\^[]`\033"
+# define URL_UNSAFE " <>\"%{}|\\^[]`"
+# define URL_PATH_UNSAFE URL_UNSAFE"#;?"
    // encode unsafe chars as %XY
    static char *encode_string(const char *,char *buf=0,const char *u=URL_UNSAFE);
    // reverse; done in-place.
