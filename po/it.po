@@ -1,12 +1,12 @@
 # Italian messages for lftp
-# Copyright (C) 1998 Free Software Foundation, Inc.
-# Giovanni Bortolozzo <borto@pluto.linux.it>, 1998.
+# Copyright (C) 1998-2000 Free Software Foundation, Inc.
+# Giovanni Bortolozzo <borto@pluto.linux.it>, 1998-2000.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 2.2.0a\n"
+"Project-Id-Version: lftp 2.2.3\n"
 "POT-Creation-Date: 2000-06-09 03:12+0400\n"
-"PO-Revision-Date: 2000-04-24 10:01+02:00\n"
+"PO-Revision-Date: 2000-06-18 10:46+02:00\n"
 "Last-Translator: Giovanni Bortolozzo <borto@pluto.linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -630,7 +630,6 @@ msgid "mirror [OPTS] [remote [local]]"
 msgstr "mirror [OPZIONI] [remota [locale]]"
 
 #: src/commands.cc:215
-#, fuzzy
 msgid ""
 "\n"
 "Mirror specified remote directory to local directory\n"
@@ -680,7 +679,9 @@ msgstr ""
 "                        volta)  RX è un espressione regolare estesa\n"
 " -t Nx, --time-prec Nx  imposta la precisione temporale a N secondi (x=s),\n"
 "                        minuti (x=m), ore (x=h) o giorni (x=d)\n"
-"                        default - 12 ore\n"
+"                        default - impostazione mirror:time-precision\n"
+"-T Nx, --loose-time-prec  imposta la precisione temporale per i tempi imprecisi\n"
+"                        default - mirror:loose-time-precision\n"
 " -v, --verbose          funzionamento prolisso\n"
 "     --use-cache        usa gli elenchi di directory in cache\n"
 "\n"
