@@ -243,10 +243,10 @@ int pgetJob::ChunkXfer::Do()
    {
       if(session->IsClosed())
       {
-	 session->Open(curr,Ftp::RETRIEVE,start);
+	 session->Open(curr,FA::RETRIEVE,start);
       }
       res=TryRead(session);
-      if(res<0 && res!=Ftp::DO_AGAIN)
+      if(res<0 && res!=FA::DO_AGAIN)
       {
 	 error=true;
 	 done=true;

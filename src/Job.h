@@ -27,9 +27,9 @@
 #include <stdio.h>
 
 #include "SMTask.h"
-#include "ftpclass.h"
 #include "StatusLine.h"
 #include "fg.h"
+#include "FileAccess.h"
 
 class Job : public SMTask
 {

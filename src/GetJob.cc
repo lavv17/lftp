@@ -54,7 +54,7 @@ int   GetJob::Do()
 	 if(!deleting)
 	 {
 	    deleting=true;
-	    session->Open(curr,Ftp::REMOVE);
+	    session->Open(curr,FA::REMOVE);
 	    m=MOVED;
 	 }
 	 res=session->Done();
@@ -105,7 +105,7 @@ int   GetJob::Do()
 	 session->WantSize(&size);
       }
       res=TryRead(session);
-      if(res<0 && res!=Ftp::DO_AGAIN)
+      if(res<0 && res!=FA::DO_AGAIN)
       {
 	 local->remove_if_empty();
 	 NextFile();

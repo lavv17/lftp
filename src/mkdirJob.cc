@@ -68,7 +68,7 @@ int mkdirJob::Do()
       session->Mkdir(curr,opt_p);
 
    int res=session->Done();
-   if(res==Ftp::DO_AGAIN || res==Ftp::IN_PROGRESS)
+   if(res==FA::DO_AGAIN || res==FA::IN_PROGRESS)
       return STALL;
    if(res<0)
    {

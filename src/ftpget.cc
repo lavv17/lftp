@@ -32,6 +32,7 @@
 #include "LsJob.h"
 #include "GetPass.h"
 #include "log.h"
+#include "ftpclass.h"
 #ifdef HAVE_LOCALE_H
 # include <locale.h>
 #endif

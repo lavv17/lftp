@@ -36,7 +36,7 @@ class rmJob : public SessionJob
    bool  done;
 
 protected:
-   Ftp::open_mode mode;
+   FA::open_mode mode;
 
 public:
    int	 Do();
@@ -60,7 +60,7 @@ class rmdirJob : public rmJob
 public:
    rmdirJob(FileAccess *session,ArgV *a) : rmJob(session,a)
    {
-      mode=Ftp::REMOVE_DIR;
+      mode=FA::REMOVE_DIR;
    }
 };
 

@@ -54,7 +54,7 @@ int   QuoteJob::Do()
    if(!got_eof)
    {
       res=TryRead(session);
-      if(res<0 && res!=Ftp::DO_AGAIN)
+      if(res<0 && res!=FA::DO_AGAIN)
       {
 	 local->remove_if_empty();
 	 got_eof=true; in_buffer=0;

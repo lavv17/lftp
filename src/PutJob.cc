@@ -57,7 +57,7 @@ int   PutJob::Do()
 	 session->GetInfoArray(&info,1);
       }
       int res=session->Done();
-      if(res==Ftp::IN_PROGRESS)
+      if(res==FA::IN_PROGRESS)
       	 return m;
       m=MOVED;
       if(res<0)
@@ -78,7 +78,7 @@ int   PutJob::Do()
 	    return MOVED;
 	 }
 	 m=MOVED;
-	 session->Open(curr,Ftp::STORE,remote_size<0?0:remote_size);
+	 session->Open(curr,FA::STORE,remote_size<0?0:remote_size);
       }
    }
    // in store mode position can jump back
@@ -93,12 +93,12 @@ int   PutJob::Do()
    {
       res=session->StoreStatus();
 remote_error:
-      if(res==Ftp::DO_AGAIN)
+      if(res==FA::DO_AGAIN)
 	 return m;
-      if(res==Ftp::IN_PROGRESS)
+      if(res==FA::IN_PROGRESS)
 	 return m;
       m=MOVED;
-      if(res==Ftp::STORE_FAILED)
+      if(res==FA::STORE_FAILED)
       {
 	 offset+=in_buffer;
 	 in_buffer=0;	// flush buffer
@@ -106,7 +106,7 @@ remote_error:
 	 session->Close();
 	 return m;
       }
-      if(res!=Ftp::OK)
+      if(res!=FA::OK)
       {
 	 fprintf(stderr,"%s: %s\n",op,session->StrError(res));
 	 failed++;
@@ -203,7 +203,7 @@ try_write:
       return MOVED;
    }
    res=session->Write(buffer,in_buffer);
-   if(res==Ftp::DO_AGAIN)
+   if(res==FA::DO_AGAIN)
       return m;
    m=MOVED;
    if(res<0)

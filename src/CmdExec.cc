@@ -31,6 +31,7 @@
 #include "SignalHook.h"
 #include "alias.h"
 #include "misc.h"
+#include "ResMgr.h"
 extern "C" {
 #include <readline/readline.h>
 }
@@ -309,7 +310,7 @@ int CmdExec::Do()
       {
       case(BUILTIN_CD):
 	 res=session->Done();
-	 if(res==Ftp::OK)
+	 if(res==FA::OK)
 	 {
 	    // done
 	    if(status_line)
@@ -342,7 +343,7 @@ int CmdExec::Do()
 
       case(BUILTIN_OPEN):
 	 res=session->Done();
-	 if(res==Ftp::OK)
+	 if(res==FA::OK)
 	 {
 	    if(status_line)
 	       status_line->Show("");

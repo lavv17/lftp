@@ -67,7 +67,7 @@ mrmJob::mrmJob(FileAccess *session,ArgV *args) : rmJob(session,new ArgV(args->a0
    if(!p)
       goto print_usage;
 
-   rg=new RemoteGlob(session,p,Ftp::LIST);
+   rg=new RemoteGlob(session,p,FA::LIST);
    rg->RestrictPath();
    rg->Do();
 }
@@ -114,7 +114,7 @@ next:
       return MOVED;
    }
 
-   rg=new RemoteGlob(session,p,Ftp::LIST);
+   rg=new RemoteGlob(session,p,FA::LIST);
    rg->RestrictPath();
    rg->Do();
 

@@ -24,7 +24,7 @@
 #define LSCACHE_H
 
 #include <time.h>
-#include "ftpclass.h"
+#include "FileAccess.h"
 
 class LsCache
 {

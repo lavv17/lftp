@@ -22,6 +22,7 @@
 
 #include <errno.h>
 #include "rmJob.h"
+#include "plural.h"
 
 rmJob::rmJob(FileAccess *s,ArgV *a) : SessionJob(s)
 {
@@ -32,7 +33,7 @@ rmJob::rmJob(FileAccess *s,ArgV *a) : SessionJob(s)
    args=a;
    args->rewind();
 
-   mode=Ftp::REMOVE;
+   mode=FA::REMOVE;
 
    curr=first=0;
    args->rewind();
@@ -64,13 +65,13 @@ int rmJob::Do()
       session->Open(curr,mode);
    }
    int res=session->Done();
-   if(res==Ftp::IN_PROGRESS)
+   if(res==FA::IN_PROGRESS)
       return STALL;
    if(res<0)
    {
       failed++;
       if(!quiet)
-	 fprintf(stderr,"%s: %s\n",args->getarg(0),session->StrError(res));
+	 fprintf(stderr,"%s: %s\n",args->a0(),session->StrError(res));
    }
    file_count++;
    session->Close();
@@ -98,12 +99,25 @@ void  rmJob::SayFinal()
 {
    if(failed==file_count)
       return;
-   char *file=(mode==Ftp::REMOVE?"fil":"directori");
-   char *op=args->getarg(0);
+   const char *op=args->a0();
    if(file_count==1)
-      printf("%s ok, `%s' removed\n",op,first);
+      printf(_("%s ok, `%s' removed\n"),op,first);
    else if(failed)
-      printf("%s failed for %d of %d %ses\n",op,failed,file_count,file);
+   {
+      if(mode==FA::REMOVE)
+	 printf(plural("%s failed for %d of %d director$y|ies$\n",file_count),
+	    op,failed,file_count);
+      else
+	 printf(plural("%s failed for %d of %d file$|s$\n",file_count),
+	    op,failed,file_count);
+   }
    else
-      printf("%s ok, %d %ses removed\n",op,file_count,file);
+   {
+      if(mode==FA::REMOVE)
+	 printf(plural("%s ok, %d file$|s$ removed\n",file_count),
+	    op,file_count);
+      else
+	 printf(plural("%s ok, %d director$y|ies$ removed\n",file_count),
+	    op,file_count);
+   }
 }

@@ -80,7 +80,7 @@ mgetJob::mgetJob(FileAccess *session,ArgV *args) : GetJob(session,new ArgV(args-
    if(!p)
       goto print_usage;
 
-   rg=new RemoteGlob(session,p,Ftp::LIST);
+   rg=new RemoteGlob(session,p,FA::LIST);
    rg->RestrictPath();
    rg->NoCache();
    rg->Do();
@@ -146,7 +146,7 @@ next:
       return MOVED;
    }
 
-   rg=new RemoteGlob(session,p,Ftp::LIST);
+   rg=new RemoteGlob(session,p,FA::LIST);
    rg->RestrictPath();
    rg->NoCache();
    rg->Do();

@@ -34,6 +34,7 @@
 #include "ProtoList.h"
 #include "rglob.h"
 #include "plural.h"
+#include "ResMgr.h"
 
 static ResDecl
    res_use_urls	("xfer:use-urls",      "no", ResMgr::BoolValidate,0);

@@ -35,14 +35,14 @@ int mvJob::Do()
       return STALL;
 
    int res=session->Done();
-   if(res==Ftp::IN_PROGRESS)
+   if(res==FA::IN_PROGRESS)
       return STALL;
-   if(res==Ftp::OK)
+   if(res==FA::OK)
    {
       session->Close();
       return MOVED;
    }
-   if(res==Ftp::DO_AGAIN)
+   if(res==FA::DO_AGAIN)
       return STALL;
    fprintf(stderr,"%s\n",session->StrError(res));
    failed=1;

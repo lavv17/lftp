@@ -360,7 +360,7 @@ int   MirrorJob::Do()
 
    case(MAKE_REMOTE_DIR):
       res=session->Done();
-      if(res==Ftp::IN_PROGRESS)
+      if(res==FA::IN_PROGRESS)
 	 return m;
       session->Close();
       state=INITIAL_STATE;
@@ -368,7 +368,7 @@ int   MirrorJob::Do()
 
    case(CHANGING_REMOTE_DIR):
       res=session->Done();
-      if(res==Ftp::IN_PROGRESS)
+      if(res==FA::IN_PROGRESS)
 	 return STALL;
       if(res<0)
       {

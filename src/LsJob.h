@@ -45,7 +45,7 @@ public:
    int	 Do();
    int	 Done();
 
-   LsJob(FileAccess *s,FDStream *g,char *a,int mode=Ftp::LONG_LIST);
+   LsJob(FileAccess *s,FDStream *g,char *a,int mode=FA::LONG_LIST);
    ~LsJob();
 
    void	 NoCache();

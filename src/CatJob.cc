@@ -167,10 +167,10 @@ int   CatJob::Do()
       {
 	 offset=0;
 	 m=MOVED;
-	 session->Open(curr,Ftp::RETRIEVE,offset);
+	 session->Open(curr,FA::RETRIEVE,offset);
       }
       res=TryRead(session);
-      if(res<0 && res!=Ftp::DO_AGAIN)
+      if(res<0 && res!=FA::DO_AGAIN)
       {
 	 NextFile();
 	 return MOVED;

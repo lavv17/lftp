@@ -37,7 +37,7 @@ public:
       quote_cmd=cmd;
       local=o;
       print_run_status=!local->usesfd(1);
-      session->Open(quote_cmd,Ftp::QUOTE_CMD);
+      session->Open(quote_cmd,FA::QUOTE_CMD);
    }
    ~QuoteJob()
    {
