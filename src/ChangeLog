@@ -1,6 +1,8 @@
 1999-12-19  Alexander V. Lukyanov  <lav@yars.free.net>
 
         * HttpDir.cc: decode &amp; and similar; don't accept ~ for ListInfo.
+	* FileCopy.h, FileCopy.cc, CopyJob.cc: (GetFgData) implemented;
+	  fill CopyJob::fg_data.
 
 1999-12-18  Alexander V. Lukyanov  <lav@yars.free.net>
 

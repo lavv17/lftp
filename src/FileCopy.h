@@ -127,6 +127,7 @@ public:
    long GetETA();
    const char *GetETAStr();
    const char *GetStatus();
+   FgData *GetFgData(bool fg);
 
    bool Done() { return state==ALL_DONE; }
    bool Error() { return error_text!=0; }

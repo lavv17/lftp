@@ -38,6 +38,8 @@ int CopyJob::Do()
       done=true;
       return MOVED;
    }
+   if(!fg_data)
+      fg_data=c->GetFgData(fg);
    return STALL;
 }
 int CopyJob::Done()

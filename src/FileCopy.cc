@@ -389,6 +389,14 @@ const char *FileCopy::GetStatus()
    return buf;
 }
 
+FgData *FileCopy::GetFgData(bool fg)
+{
+   // NOTE: only one of get/put can have FgData in this implementation.
+   FgData *f=get->GetFgData(fg);
+   if(f) return f;
+   return put->GetFgData(fg);
+}
+
 // FileCopyPeer implementation
 #undef super
 #define super Buffer
