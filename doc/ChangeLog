@@ -1,3 +1,7 @@
+2000-08-20	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: add RFC2228 reference.
+
 2000-08-07	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document several new settings and protocols https and ftps;
