@@ -6,7 +6,7 @@
 
 2001-12-03  Alexander V. Lukyanov <lav@yars.free.net>
 
-	* ftpclass.cc: sync with head branch.
+	* ftpclass.cc, ftpclass.h: sync with head branch.
 
 2001-11-22  Alexander V. Lukyanov <lav@yars.free.net>
 

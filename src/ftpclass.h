@@ -283,6 +283,8 @@ private:
 
    bool data_address_ok(sockaddr_u *d=0,bool verify_this_data_port=true);
 
+   bool disconnect_on_close;
+
 public:
    enum copy_mode_t { COPY_NONE, COPY_SOURCE, COPY_DEST };
 private:
