@@ -1,5 +1,9 @@
 1999-07-15  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* HttpDir.cc: fix handling of HREF=/
+
+1999-07-15  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* commands.cc: (glob) rewind args before calling original command.
 	  (fixes coredump for mrm without args)
 

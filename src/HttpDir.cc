@@ -272,9 +272,12 @@ parse_url_again:
 
       if(p_len==1 && p_path[0]=='/' && link_target[0]=='/')
       {
-	 // strip leading slash
-	 link_len--;
-	 memmove(link_target,link_target+1,link_len+1);
+	 if(link_len>1)
+	 {
+	    // strip leading slash
+	    link_len--;
+	    memmove(link_target,link_target+1,link_len+1);
+	 }
       }
       else if(p_len>0 && !strncmp(link_target,p_path,p_len))
       {
