@@ -1,3 +1,8 @@
+2001-12-20  Glenn Maynard <g_ld@zewt.org>
+
+	* FileAccess.cc, FileAccess.h: add last_priority member.
+	* ftpclass.cc, ftpclass.h: tune log levels.
+
 2001-12-19  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* QueueFeeder.cc: pass correct job count to plural().

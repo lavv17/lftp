@@ -159,6 +159,7 @@ protected:
    bool norest_manual;
 
    int	priority;   // higher priority can take over other session.
+   int	last_priority;
 
    bool Error() { return error_code!=OK; }
    void ClearError();

@@ -88,7 +88,7 @@ void FileAccess::Init()
 
    chmod_mode=0644;
 
-   priority=0;
+   priority=last_priority=0;
 
    next=chain;
    chain=this;

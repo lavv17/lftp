@@ -149,6 +149,9 @@ class Ftp : public NetAccess
    int	 Handle_PASV();
    int	 Handle_EPSV();
 
+   bool NonError5XX(int act);
+   bool Transient5XX(int act);
+
    void	 InitFtp();
 
    void	 HandleTimeout();

@@ -100,6 +100,8 @@ const bool Ftp::ftps=false;
 #define is2XX(code) ((code)>=200 && (code)<300)
 #define is1XX(code) ((code)>=100 && (code)<200)
 
+#define debug(a) Log::global->Format a
+
 #ifdef TIOCOUTQ
 static bool TIOCOUTQ_returns_free_space;
 static bool TIOCOUTQ_works;
@@ -295,12 +297,7 @@ void Ftp::NoFileCheck(int act)
    }
    if(is5XX(act))
    {
-      // retry on these errors (ftp server ought to send 4xx code instead)
-      if((strstr(line,"Broken pipe") && (!file || !strstr(file,"Broken pipe")))
-      || (strstr(line,"Too many")    && (!file || !strstr(file,"Too many")))
-      || (strstr(line,"timed out")   && (!file || !strstr(file,"timed out")))
-      // if there were some data received, assume it is temporary error.
-      || (mode!=STORE && (flags&IO_FLAG)))
+      if(Transient5XX(act))
       {
 	 Disconnect();
 	 return;
@@ -320,6 +317,30 @@ void Ftp::NoFileCheck(int act)
       return;
    }
    Disconnect();
+}
+
+/* 5xx that aren't errors at all */
+bool Ftp::NonError5XX(int act)
+{
+   /* don't strstr; we might have done "NLST No files found" */
+   return (mode==LIST && act==RESP_NO_FILE && !strcmp(line,"550 No files found."));
+}
+
+/* 5xx that are really transient like 4xx */
+bool Ftp::Transient5XX(int act)
+{
+   if(!is5XX(act))
+      return false;
+
+   // retry on these errors (ftp server ought to send 4xx code instead)
+   if((strstr(line,"Broken pipe") && (!file || !strstr(file,"Broken pipe")))
+   || (strstr(line,"Too many")    && (!file || !strstr(file,"Too many")))
+   || (strstr(line,"timed out")   && (!file || !strstr(file,"timed out")))
+   // if there were some data received, assume it is temporary error.
+   || (mode!=STORE && (flags&IO_FLAG)))
+      return true;
+
+   return false;
 }
 
 // 226 Transfer complete.
@@ -380,7 +401,7 @@ void Ftp::TransferCheck(int act)
       copy_failed=true;
       return;
    }
-   if(act==RESP_NO_FILE && mode==LIST)
+   if(NonError5XX(act))
    {
       DataClose();
       state=EOF_STATE;
@@ -2146,18 +2167,20 @@ int Ftp::ReplyLogPriority(int code)
       return 3;
    if(code==451 && mode==CLOSED)
       return 4;
-   if(code==550 && mode==ARRAY_INFO
-   && !RespQueueIsEmpty() && RespQueue[RQ_head].check_case==CHECK_MDTM)
-      return 4;
-   if(code==550 && mode==LIST && line && strstr(line,"No files found"))
-      return 4;
-   if(code==550 && mode==CHANGE_DIR)
-      return 4;
+   /* Most 5XXs go to level 4, as it's the job's responsibility to
+    * print fatal errors. Some 5XXs are treated as 4XX's; send those
+    * to level 0. (Maybe they should go to 1; we're going to retry them,
+    * after all. */
+   if(is5XX(code))
+      return Transient5XX(code)? 0:4;
 
-   // Error messages
-   // 221 is the reply to QUIT, but we don't expect it.
-   if(code>=400 || (code==221 && RespQueue[RQ_head].expect!=221))
+   if(is4XX(code))
       return 0;
+
+   // 221 is the reply to QUIT, but we don't expect it.
+   if(code==221 && RespQueue[RQ_head].expect!=221)
+      return 0;
+
    return 4;
 }
 
