@@ -50,8 +50,9 @@ char *XferJob::Percent()
 char *XferJob::CurrRate(float rate)
 {
    static char speed[40];
+   time_t now=time(0);
    speed[0]=0;
-   if(time(0)-start_time>3 && time(0)-last_bytes<30 && rate!=0)
+   if(now-start_time>3 && now-last_bytes<30 && rate!=0)
    {
       if(rate<1024)
 	 sprintf(speed,"%.0fb/s ",rate);
@@ -61,6 +62,40 @@ char *XferJob::CurrRate(float rate)
 	 sprintf(speed,"%.2fM/s ",rate/1024./1024.);
    }
    return speed;
+}
+
+#define MINUTE (60)
+#define HOUR   (60*MINUTE)
+#define DAY    (24*HOUR)
+
+char *XferJob::CurrETA(float rate)
+{
+   static char eta_str[20];
+   time_t now=time(0);
+   eta_str[0]=0;
+   if(size>0 && rate>1 && now-last_bytes<30 && now-start_time>3 && size>=offset)
+   {
+      long eta=(long)((size-offset) / rate + 0.5);
+      char letter='s';
+
+      if(eta>=DAY)
+      {
+	 eta=(eta+DAY/2)/DAY;
+	 letter='d';
+      }
+      else if(eta>=HOUR)
+      {
+	 eta=(eta+HOUR/2)/HOUR;
+	 letter='h';
+      }
+      else if(eta>=MINUTE)
+      {
+	 eta=(eta+MINUTE/2)/MINUTE;
+	 letter='m';
+      }
+      sprintf(eta_str,"eta:%ld%c ",eta,letter);
+   }
+   return eta_str;
 }
 
 void  XferJob::ShowRunStatus(StatusLine *s)
@@ -84,14 +119,14 @@ void  XferJob::ShowRunStatus(StatusLine *s)
 
    if(curr && session->IsOpen())
    {
-      int w=s->GetWidth()-30;
+      int w=s->GetWidth()-40;
       if(w<=0)
 	 return;
       char *n=curr;
-      if((int)strlen(n)>w)
-	 n=n+strlen(n)-w;
+      if((int)strlen(n)>w-2)
+	 n+=strlen(n)-(w-2);
 
-      s->Show(_("`%s' at %lu %s%s[%s]"),n,offset,Percent(),CurrRate(),st);
+      s->Show(_("`%s' at %lu %s%s%s[%s]"),n,offset,Percent(),CurrRate(),CurrETA(),st);
    }
 }
 
@@ -166,8 +201,8 @@ void  XferJob::PrintStatus(int verbose)
    if(curr && session->IsOpen())
    {
       putchar('\t');
-      printf(_("`%s' at %lu %s%s[%s]"),curr,offset,Percent(),CurrRate(),
-	       session->CurrentStatus());
+      printf(_("`%s' at %lu %s%s%s[%s]"),curr,offset,Percent(),CurrRate(),
+	       CurrETA(),session->CurrentStatus());
       putchar('\n');
    }
 }

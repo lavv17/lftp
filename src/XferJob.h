@@ -85,6 +85,8 @@ protected:
    char *Percent(); // return either string ending with a space or empty string
    char *CurrRate(float);
    char *CurrRate() { return CurrRate(minute_xfer_rate); }
+   char *CurrETA(float rate);
+   char *CurrETA() { return CurrETA(minute_xfer_rate); }
 
 public:
    long	 bytes_transferred;
