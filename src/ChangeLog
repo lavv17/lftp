@@ -2,6 +2,7 @@
 
 	* FileCopy.cc, FileCopy.h: implemet LineBuffered; handle EPIPE.
 	* commands.cc, CatJob.cc: use LineBuffered.
+	* CopyJob.cc: implement SqueezeName.
 
 1999-12-28  Alexander V. Lukyanov  <lav@yars.free.net>
 
