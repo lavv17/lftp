@@ -90,6 +90,7 @@ void Http::Init()
    no_cache=false;
 
    hftp=false;
+   use_head=true;
 }
 
 Http::Http() : super()
@@ -207,6 +208,8 @@ void Http::SendMethod(const char *method,const char *efile)
 {
    char *ehost=string_alloca(strlen(hostname)*3+1);
    url::encode_string(hostname,ehost);
+   if(!use_head && !strcmp(method,"HEAD"))
+      method="GET";
    Send("%s %s HTTP/1.1\r\n",method,efile);
    Send("Host: %s\r\n",ehost);
    Send("User-Agent: %s/%s\r\n","lftp",VERSION);
@@ -214,16 +217,22 @@ void Http::SendMethod(const char *method,const char *efile)
 }
 
 
-void Http::SendAuth()
+void Http::SendBasicAuth(const char *tag,const char *user,const char *pass)
 {
-   if(!user || !pass)
-      return;
    /* Basic scheme */
    char *buf=(char*)alloca(strlen(user)+1+strlen(pass)+1);
    sprintf(buf,"%s:%s",user,pass);
    char *buf64=(char*)alloca(base64_length(strlen(buf))+1);
    base64_encode(buf,buf64,strlen(buf));
-   Send("Authorization: Basic %s\r\n",buf64);
+   Send("%s: Basic %s\r\n",tag,buf64);
+}
+
+void Http::SendAuth()
+{
+   if(proxy && proxy_user && proxy_pass)
+      SendBasicAuth("Proxy-Authorization",proxy_user,proxy_pass);
+   if(user && pass)
+      SendBasicAuth("Authorization",user,pass);
 }
 
 bool Http::ModeSupported()
@@ -365,6 +374,8 @@ add_path:
       Send("Pragma: no-cache\r\n"); // for HTTP/1.0 compatibility
       Send("Cache-Control: no-cache\r\n");
    }
+   if(mode==ARRAY_INFO && !use_head)
+      connection="close";
    if(mode!=ARRAY_INFO || connection)
       Send("Connection: %s\r\n",connection?connection:"close");
    Send("\r\n");
@@ -1173,22 +1184,24 @@ ListInfo *Http::MakeListInfo()
 }
 
 
+#undef super
+#define super Http
 HFtp::HFtp()
 {
    hftp=true;
-   Reconfig();
+   Reconfig(0);
 }
 HFtp::~HFtp()
 {
 }
-HFtp::HFtp(const HFtp *o) : Http(o)
+HFtp::HFtp(const HFtp *o) : super(o)
 {
    hftp=true;
-   Reconfig();
+   Reconfig(0);
 }
 void HFtp::Login(const char *u,const char *p)
 {
-   Http::Login(u,p);
+   super::Login(u,p);
    if(u)
    {
       home=(char*)xmalloc(strlen(u)+2);
@@ -1197,7 +1210,11 @@ void HFtp::Login(const char *u,const char *p)
       cwd=xstrdup(home);
    }
 }
-
+void HFtp::Reconfig(const char *name)
+{
+   super::Reconfig(name);
+   use_head=Query("use-head");
+}
 
 /* Converts struct tm to time_t, assuming the data in tm is UTC rather
    than local timezone (mktime assumes the latter).

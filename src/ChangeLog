@@ -1,3 +1,9 @@
+1999-10-22  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.h, Http.cc: (use_head) new member; hftp:use-head new setting;
+	  use GET instead of HEAD if !use_head.
+	* resource.cc: (hftp:use-head) new setting.
+
 1999-10-21  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* HttpDir.cc: compare ftp:// with hftp:// properly.
