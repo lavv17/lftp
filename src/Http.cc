@@ -1627,6 +1627,8 @@ bool Http::CookieClosureMatch(const char *closure_c,
    if(!path)
       return true;
    int path_len=strlen(path);
+   if(path_len>0 && path[path_len-1]=='/')
+      path_len--;
    if(!strncmp(efile,path,path_len)
    && (efile[path_len]==0 || efile[path_len]=='/'))
       return true;
