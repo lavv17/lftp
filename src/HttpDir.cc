@@ -162,11 +162,14 @@ const char *find_eol(const char *buf,int len,bool eof,int *eol_size)
    const char *more=0;
    if(less)
    {
-      more=find_char(less+1,len-(less+1-buf),'>');
-      if(more && !token_eq(less+1,len-(less+1-buf),"br")
-      && !token_eq(less+1,len-(less+1-buf),"/tr"))
+      int rest=len-(less+1-buf);
+      more=find_char(less+1,rest,'>');
+      if(more
+      && !token_eq(less+1,rest,"br")
+      && !token_eq(less+1,rest,"/tr")
+      && !token_eq(less+1,rest,"tr"))
       {
-	 // if the tag is finished and not BR nor /TR, ignore it.
+	 // if the tag is finished and not BR nor /TR nor TR, ignore it.
 	 less=0;
 	 more=0;
       }
@@ -506,6 +509,8 @@ static bool try_squid_ftp(file_info &info,const char *str,char *str_with_tags)
       strcpy(info.size_str,"-");
    if(-1==parse_year_or_time(year_or_time,&info.year,&info.hour,&info.minute))
       return false;
+   if(-1==parse_month(info.month_name))
+      return false;  // be strict.
 
    char *ptr;
    ptr=strstr(str_with_tags," -> <A HREF=\"");
