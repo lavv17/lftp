@@ -167,13 +167,16 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
 	 " -N, --newer-than FILE  download only files newer than the file\n"
 	 " -i RX, --include RX    include matching files (only one allowed)\n"
 	 " -x RX, --exclude RX    exclude matching files (only one allowed)\n"
+	 "                        RX is extended regular expression\n"
 	 " -t Nx, --time-prec Nx  set time precision to N seconds (x=s)\n"
 	 "                        minutes (x=m) hours (x=h) or days (x=d)\n"
+	 "                        default - 12 hours\n"
 	 " -v, --verbose          verbose operation\n"
-	 "\nWhen using -R, the first directory is local and the second is remote.\n"
+	 "\n"
+	 "When using -R, the first directory is local and the second is remote.\n"
 	 "If the second directory is omitted, basename of first directory is used.\n"
-	 "If both directories are omitted, current local and remote directories are used.\n")},
-
+	 "If both directories are omitted, current local and remote directories are used.\n"
+	 )},
    {"mkdir",   &do_mkdir,  N_("mkdir [-p] <dirs>"),
 	 N_("Make remote directories\n"
 	 " -p  make all levels of path\n")},
@@ -1261,7 +1264,7 @@ CMD(mirror)
       {"no-perms",no_argument,0,'p'},
       {"continue",no_argument,0,'c'},
       {"reverse",no_argument,0,'R'},
-      {"verbose",no_argument,0,'v'},
+      {"verbose",optional_argument,0,'v'},
       {"newer-than",required_argument,0,'N'},
       {0}
    };
@@ -1270,9 +1273,33 @@ CMD(mirror)
    const char *rcwd;
    int opt;
    int	 flags=0;
-   char *include=0;
-   char *exclude=0;
-   time_t prec=0;
+
+   static char *include=0;
+   static int include_alloc=0;
+   static char *exclude=0;
+   static int exclude_alloc=0;
+#define APPEND_STRING(s,a,s1) \
+   {			                  \
+      int len,len1=strlen(s1);            \
+      if(!s)		                  \
+      {			                  \
+	 s=(char*)xmalloc(a=len1+1);      \
+      	 strcpy(s,s1);	                  \
+      }			                  \
+      else if(a<(len=strlen(s))+1+len1+1) \
+      {					  \
+	 s=(char*)xrealloc(s,a=len+1+len1+1); \
+	 strcat(s,"|");			  \
+	 strcat(s,s1);			  \
+      }					  \
+   } /* END OF APPEND_STRING */
+
+   if(include)
+      include[0]=0;
+   if(exclude)
+      exclude[0]=0;
+
+   time_t prec=12*60*60; // 12 hours
    bool	 create_remote_dir=false;
    int	 verbose=0;
    const char *newer_than=0;
@@ -1310,16 +1337,21 @@ CMD(mirror)
 	 }
 	 break;
       case('x'):
-	 exclude=optarg;
+	 APPEND_STRING(exclude,exclude_alloc,optarg);
 	 break;
       case('i'):
-	 include=optarg;
+	 APPEND_STRING(include,include_alloc,optarg);
 	 break;
       case('R'):
 	 flags|=MirrorJob::REVERSE|MirrorJob::ONLY_NEWER;
 	 break;
       case('v'):
-	 verbose=1;
+	 if(optarg)
+	    verbose=atoi(optarg);
+	 else
+	    verbose=1;
+	 if(verbose>1)
+	    flags|=MirrorJob::REPORT_NOT_DELETED;
 	 break;
       case('N'):
 	 newer_than=optarg;
@@ -1399,26 +1431,26 @@ CMD(mirror)
    j->SetVerbose(verbose);
    if(create_remote_dir)
       j->CreateRemoteDir();
-   if(include)
-   {
-      if(j->SetInclude(include)==-1)
-      {
-	 delete j;
-	 return 0;
-      }
-   }
-   if(exclude)
-   {
-      if(j->SetExclude(exclude)==-1)
-      {
-	 delete j;
-	 return 0;
-      }
-   }
+
+   const char *err;
+   const char *err_tag;
+
+   err_tag="include";
+   if(include && include[0] && (err=j->SetInclude(include)))
+      goto err_out;
+   err_tag="exclude";
+   if(exclude && exclude[0] && (err=j->SetExclude(exclude)))
+      goto err_out;
+
    j->SetPrec((time_t)prec);
    if(newer_than)
       j->SetNewerThan(newer_than);
    return j;
+
+err_out:
+   eprintf("%s: %s: %s\n",args->a0(),err_tag,err);
+   delete j;
+   return 0;
 }
 
 CMD(mv)
