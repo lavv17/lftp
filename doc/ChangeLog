@@ -1,3 +1,8 @@
+2005-02-25	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document use-mkcol and use-propfind options; add short
+	  cls description; use boolean instead of bool.
+
 2005-01-21	Thomas Glanzmann <sithglan@stud.uni-erlangen.de>
 
 	* lftp.1: change connect-program default.

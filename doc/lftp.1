@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "20 Dec 2004"
+.TH lftp 1 "25 Feb 2005"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 3.0.13.
+This man page documents lftp version 3.1.0.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -201,6 +201,14 @@ Change permission mask on remote files. The mode must be an octal number.
 .PP
 Close idle connections.  By default only with the current server, use
 -a to close all idle connections.
+
+.BR cls " [" OPTS "] " \fIfiles...\fP
+.PP
+`cls' tries to retrieve information about specified files or directories
+and outputs the information according to format options. The difference between
+`ls' and `cls' is that `ls' requests the server to format file listing, and
+`cls' formats it itself, after retrieving all the needed information.
+See `help cls' for options.
 
 .BR command " \fIcmd args...\fP
 .PP
@@ -751,21 +759,21 @@ It can be in different directory, see FILES section.
 has the following settable variables (you can also use
 `set -a' to see all variables and their values):
 .TP
-.BR bmk:save-passwords \ (bool)
+.BR bmk:save-passwords \ (boolean)
 save plain text passwords in ~/.lftp/bookmarks on `bookmark add' command.
 Off by default.
 .TP
 .BR cmd:at-exit \ (string)
 the commands in string are executed before lftp exits.
 .TP
-.BR cmd:csh-history \ (bool)
+.BR cmd:csh-history \ (boolean)
 enables csh-like history expansion.
 .TP
 .BR cmd:default-protocol \ (string)
 The value is used when `open' is used
 with just host name without protocol. Default is `ftp'.
 .TP
-.BR cmd:fail-exit \ (bool)
+.BR cmd:fail-exit \ (boolean)
 if true, exit when an unconditional (without || and && at begin) command fails.
 .TP
 .BR cmd:long-running \ (seconds)
@@ -841,15 +849,15 @@ end a sequence of non-printing characters
 .RE
 
 .TP
-.BR cmd:remote-completion \ (bool)
+.BR cmd:remote-completion \ (boolean)
 a boolean to control whether or not lftp uses remote completion.
 .TP
-.BR cmd:verify-host \ (bool)
+.BR cmd:verify-host \ (boolean)
 if true, lftp resolves host name immediately in `open' command.
 It is also possible to skip the check for a single `open' command if `&' is given,
 or if ^Z is pressed during the check.
 .TP
-.BR cmd:verify-path \ (bool)
+.BR cmd:verify-path \ (boolean)
 if true, lftp checks the path given in `cd' command.
 It is also possible to skip the check for a single `cd' command if `&' is given,
 or if ^Z is pressed during the check.
@@ -859,11 +867,11 @@ set cmd:verify-path/hftp://* false
 cd directory &
 .De
 .TP
-.BR dns:SRV-query \ (bool)
+.BR dns:SRV-query \ (boolean)
 query for SRV records and use them before gethostbyname. The SRV records
 are only used if port is not explicitly specified. See RFC2052 for details.
 .TP
-.BR dns:cache-enable \ (bool)
+.BR dns:cache-enable \ (boolean)
 enable DNS cache. If it is off, lftp resolves host name each time it reconnects.
 .TP
 .BR dns:cache-expire " (time interval)"
@@ -881,7 +889,7 @@ will fail to resolve a given host name. 0 means unlimited, the default.
 sets the order of DNS queries. Default is ``inet inet6'' which means first
 look up address in inet family, then inet6 and use first matched.
 .TP
-.BR dns:use-fork \ (bool)
+.BR dns:use-fork \ (boolean)
 if true, lftp will fork before resolving host address. Default is true.
 .TP
 .BR file:charset \ (string)
@@ -923,18 +931,18 @@ when the server does not support UTF8.
 the name of ftp client to send with CLNT command, if supported by server.
 If it is empty, then no CLNT command will be sent.
 .TP
-.BR ftp:bind-data-socket \ (bool)
+.BR ftp:bind-data-socket \ (boolean)
 bind data socket to the interface of control connection (in passive mode).
 Default is true, exception is the loopback interface.
 .TP
-.BR ftp:fix-pasv-address \ (bool)
+.BR ftp:fix-pasv-address \ (boolean)
 if true, lftp will try to correct address returned by server for PASV command
 in case when server address is in public network and PASV returns an address
 from a private network. In this case lftp would substitute server address
 instead of the one returned by PASV command, port number would not be changed.
 Default is true.
 .TP
-.BR ftp:fxp-passive-source \ (bool)
+.BR ftp:fxp-passive-source \ (boolean)
 if true, lftp will try to set up source ftp server in passive mode first,
 otherwise destination one. If first attempt fails, lftp tries to set them up
 the other way. If the other disposition fails too, lftp falls back to plain
@@ -945,7 +953,7 @@ Initial directory. Default is empty string which means auto. Set this to `/'
 if you don't like the look of %2F in ftp URLs. The closure for this setting
 has format \fIuser@host\fP.
 .TP
-.BR ftp:list-empty-ok \ (bool)
+.BR ftp:list-empty-ok \ (boolean)
 if set to false, empty lists from LIST command will be treated as incorrect,
 and another method (NLST) will be used.
 .TP
@@ -959,7 +967,7 @@ delay between NOOP commands when downloading tail of a file. This is useful
 for ftp servers which send "Transfer complete" message before flushing
 data transfer. In such cases NOOP commands can prevent connection timeout.
 .TP
-.BR ftp:passive-mode \ (bool)
+.BR ftp:passive-mode \ (boolean)
 sets passive ftp mode. This can be useful if you are behind a firewall or a
 dumb masquerading router. In passive mode lftp uses PASV command, not the
 PORT command which is used in active mode. In passive mode lftp itself
@@ -984,16 +992,16 @@ requires authentication, specify user name and password in the URL.
 If ftp:proxy starts with http://, hftp (ftp over http proxy) is used instead
 of ftp automatically.
 .TP
-.BR ftp:proxy-auth-joined \ (bool)
+.BR ftp:proxy-auth-joined \ (boolean)
 when true, lftp sends ``user@proxy_user@ftp.example.org'' as user name to proxy,
 and ``password@proxy_password'' as password. When false, it first sends 
 proxy user and proxy password and then ``user@ftp.example.org'' and password.
 .TP
-.BR ftp:rest-list \ (bool)
+.BR ftp:rest-list \ (boolean)
 allow usage of REST command before LIST command. This might be useful for
 large directories, but some ftp servers silently ignore REST before LIST.
 .TP
-.BR ftp:rest-stor \ (bool)
+.BR ftp:rest-stor \ (boolean)
 if false, lftp will not try to use REST before STOR. This can be useful
 for some buggy servers which corrupt (fill with zeros) the file if REST followed
 by STOR is used.
@@ -1010,41 +1018,41 @@ Additional regular expression for anonymous login, like ftp:retry-530.
 Send this string in SITE GROUP command after login. The result is ignored.
 The closure for this setting has format \fIuser@host\fP.
 .TP
-.BR ftp:skey-allow \ (bool)
+.BR ftp:skey-allow \ (boolean)
 allow sending skey/opie reply if server appears to support it. On by default.
 .TP
-.BR ftp:skey-force \ (bool)
+.BR ftp:skey-force \ (boolean)
 do not send plain text password over the network, use skey/opie instead. If
 skey/opie is not available, assume failed login. Off by default.
 .TP
-.BR ftp:ssl-allow \ (bool)
+.BR ftp:ssl-allow \ (boolean)
 if true, try to negotiate SSL connection with ftp server for non-anonymous
 access. Default is true. This setting is only available if lftp was compiled
 with openssl.
 .TP
-.BR ftp:ssl-force \ (bool)
+.BR ftp:ssl-force \ (boolean)
 if trus, refuse to send password in clear when server does not support SSL.
 Default is false. This setting is only available if lftp was compiled with
 openssl.
 .TP
-.BR ftp:ssl-protect-data \ (bool)
+.BR ftp:ssl-protect-data \ (boolean)
 if true, request ssl connection for data transfers. This is cpu-intensive
 but provides privacy. Default is false. This setting is only available if
 lftp was compiled with openssl.
 .TP
-.BR ftp:ssl-protect-fxp \ (bool)
+.BR ftp:ssl-protect-fxp \ (boolean)
 if true, request ssl connection for data transfer between two ftp servers
 in FXP mode. CPSV or SSCN command will be used in that case. If ssl connection
 fails for some reason, lftp would try unprotected FXP transfer unless
 ftp:ssl-force is set for any of the two servers. Default is false.
 .TP
-.BR ftp:ssl-protect-list \ (bool)
+.BR ftp:ssl-protect-list \ (boolean)
 if true, request ssl connection for file list transfers. Default is true.
 .TP
 .BR ftp:stat-interval \ (seconds)
 interval between STAT commands. Default is 1.
 .TP
-.BR ftp:sync-mode \ (bool)
+.BR ftp:sync-mode \ (boolean)
 if true, lftp will send one command at a time and wait for
 response. This might be useful if you are using a buggy ftp server or
 router. When it is off, lftp sends a pack of commands and waits for
@@ -1059,71 +1067,71 @@ This setting can be GMT offset [+|-]HH[:MM[:SS]] or any valid TZ value
 Set it to an empty value to assume local timezone specified by environment
 variable TZ.
 .TP
-.BR ftp:use-abor \ (bool)
+.BR ftp:use-abor \ (boolean)
 if false, lftp does not send ABOR command but closes data connection
 immediately.
 .TP
-.BR ftp:use-feat \ (bool)
+.BR ftp:use-feat \ (boolean)
 when true (default), lftp uses FEAT command to determine extended features of
 ftp server.
 .TP
-.BR ftp:use-fxp \ (bool)
+.BR ftp:use-fxp \ (boolean)
 if true, lftp will try to set up direct connection between two ftp servers.
 .TP
-.BR ftp:use-hftp \ (bool)
+.BR ftp:use-hftp \ (boolean)
 when ftp:proxy points to an http proxy, this setting selects hftp method (GET,
 HEAD) when true, and CONNECT method when false. Default is true.
 .TP
-.BR ftp:lang \ (bool)
+.BR ftp:lang \ (boolean)
 the language selected with LANG command, if supported as indicated by FEAT
 response. Default is empty which means server default.
 .TP
-.BR ftp:use-mdtm \ (bool)
+.BR ftp:use-mdtm \ (boolean)
 when true (default), lftp uses MDTM command to determine file modification
 time.
 .TP
-.BR ftp:use-mdtm-overloaded \ (bool)
+.BR ftp:use-mdtm-overloaded \ (boolean)
 when true, lftp uses two argument MDTM command to set file modification
 time on uploaded files. Default is false.
 .TP
-.BR ftp:use-site-idle \ (bool)
+.BR ftp:use-site-idle \ (boolean)
 when true, lftp sends `SITE IDLE' command with net:idle argument. Default
 is false.
 .TP
-.BR ftp:use-site-utime \ (bool)
+.BR ftp:use-site-utime \ (boolean)
 when true, lftp sends `SITE UTIME' command to set file modification time
 on uploaded files. Default is true.
 .TP
-.BR ftp:use-size \ (bool)
+.BR ftp:use-size \ (boolean)
 when true (default), lftp uses SIZE command to determine file size.
 .TP
-.BR ftp:use-stat \ (bool)
+.BR ftp:use-stat \ (boolean)
 if true, lftp sends STAT command in FXP mode transfer to know how much
 data has been transferred. See also ftp:stat-interval. Default is true.
 .TP
-.BR ftp:use-telnet-iac \ (bool)
+.BR ftp:use-telnet-iac \ (boolean)
 when true (default), lftp uses TELNET IAC command and follows TELNET protocol
 as specified in RFC959. When false, it does not follow TELNET protocol and
 thus does not double 255 (0xFF, 0377) character and does not prefix ABOR and
 STAT commands with TELNET IP+SYNCH signal.
 .TP
-.BR ftp:use-quit " (bool)"
+.BR ftp:use-quit " (boolean)"
 if true, lftp sends QUIT before disconnecting from ftp server. Default is true.
 .TP
-.BR ftp:verify-address \ (bool)
+.BR ftp:verify-address \ (boolean)
 verify that data connection comes from the network address of control
 connection peer. This can possibly prevent data connection spoofing
 which can lead to data corruption. Unfortunately, this can fail
 for sertain ftp servers with several network interfaces,
 when they do not set outgoing address on data socket, so it is disabled by default.
 .TP
-.BR ftp:verify-port \ (bool)
+.BR ftp:verify-port \ (boolean)
 verify that data connection has port 20 (ftp-data) on its remote end.
 This can possibly prevent data connection spoofing by users of remote
 host. Unfortunately, too many windows and even unix ftp servers forget
 to set proper port on data connection, thus this check is off by default.
 .TP
-.BR ftp:web-mode \ (bool)
+.BR ftp:web-mode \ (boolean)
 disconnect after closing data connection. This can be useful for totally
 broken ftp servers. Default is false.
 .TP
@@ -1133,7 +1141,7 @@ E, P, or empty. Default is empty which means unknown, so that lftp will use
 PROT command unconditionally. If PROT command turns out to be unsupported,
 then Clear mode would be assumed.
 .TP
-.BR hftp:cache \ (bool)
+.BR hftp:cache \ (boolean)
 allow server/proxy side caching for ftp-over-http protocol.
 .TP
 .BR hftp:cache-control \ (string)
@@ -1147,17 +1155,25 @@ variable \fBftp_proxy\fP if it starts with ``http://'', otherwise from
 environment variable \fBhttp_proxy\fP.  If your ftp proxy
 requires authentication, specify user name and password in the URL.
 .TP
-.BR hftp:use-authorization \ (bool)
+.BR hftp:use-authorization \ (boolean)
 if set to off, lftp will send password as part of URL to the proxy. This
 may be required for some proxies (e.g. M-soft). Default is on, and lftp
 will send password as part of Authorization header.
 .TP
-.BR hftp:use-head \ (bool)
+.BR hftp:use-head \ (boolean)
 if set to off, lftp will try to use `GET' instead of `HEAD' for hftp protocol.
 While this is slower, it may allow lftp to work with some proxies which
 don't understand or mishandle ``HEAD ftp://'' requests.
 .TP
-.BR hftp:use-type \ (bool)
+.BR hftp:use-mkcol \ (boolean)
+if set to off, lftp will try to use `PUT' instead of `MKCOL' to create
+directories with hftp protocol. Default is off.
+.TP
+.BR hftp:use-propfind \ (boolean)
+if set to off, lftp will not try to use `PROPFIND' to get directory contents
+with hftp protocol and use `GET' instead. Default is off.
+.TP
+.BR hftp:use-type \ (boolean)
 If set to off, lftp won't try to append `;type=' to URLs passed to proxy.
 Some broken proxies don't handle it correctly. Default is on.
 .TP
@@ -1168,7 +1184,7 @@ specify corresponding HTTP request headers.
 the authorization to use by default, when no user is specified. The format
 is ``user:password''. Default is empty which means no authorization.
 .TP
-.BR http:cache \ (bool)
+.BR http:cache \ (boolean)
 allow server/proxy side caching.
 .TP
 .BR http:cache-control \ (string)
@@ -1202,6 +1218,14 @@ Referer header.
 .BR http:set-cookies " (boolean)"
 if true, lftp modifies http:cookie variables when Set-Cookie header is received.
 .TP
+.BR http:use-mkcol \ (boolean)
+if set to off, lftp will try to use `PUT' instead of `MKCOL' to create
+directories with http protocol. Default is on.
+.TP
+.BR http:use-propfind \ (boolean)
+if set to off, lftp will not try to use `PROPFIND' to get directory contents
+with http protocol and use `GET' instead. Default is on.
+.TP
 .BR http:user-agent " (string)"
 the string lftp sends in User-Agent header of HTTP request.
 .TP
@@ -1225,6 +1249,10 @@ directory before moving to other directories.
 specifies number of parallel transfers mirror is allowed to start. Default is 1.
 You can override it with --parallel option.
 .TP
+.BR mirror:set-permissions \ (boolean)
+When set to off, mirror won't try to copy file and directory permissions.
+Default is on.
+.TP
 .BR mirror:use-pget-n " (number)"
 specifies -n option for pget command used to transfer every single file under
 mirror. Default is 1 which disables pget.
@@ -1236,7 +1264,7 @@ environment variable LFTP_MODULE_PATH. Default is `PKGLIBDIR/VERSION:PKGLIBDIR'.
 .BR net:connection-limit \ (number)
 maximum number of concurrent connections to the same site. 0 means unlimited.
 .TP
-.BR net:connection-takeover \ (bool)
+.BR net:connection-takeover \ (boolean)
 if true, foreground connections have priority over background ones and can
 interrupt background transfers to complete a foreground operation.
 .TP
@@ -1358,14 +1386,14 @@ use specified file as your certificate.
 if set to yes, then verify server's certificate to be signed by a known
 Certificate Authority and not be on Certificate Revocation List.
 .TP
-.BR xfer:clobber \ (bool)
+.BR xfer:clobber \ (boolean)
 if this setting is off, get commands will not overwrite existing
 files and generate an error instead. Default is on.
 .TP
 .BR xfer:eta-period \ (seconds)
 the period over which wheighted average rate is calculated to produce ETA.
 .TP
-.BR xfer:eta-terse \ (bool)
+.BR xfer:eta-terse \ (boolean)
 show terse ETA (only high order parts). Default is true.
 .TP
 .BR xfer:max-redirections " (number)"
