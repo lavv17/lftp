@@ -253,6 +253,7 @@ protected:
    ~FileCopyPeerFA();
 
 public:
+   void Init();
    FileCopyPeerFA(FileAccess *s,const char *f,int m);
    FileCopyPeerFA(class ParsedURL *u,int m);
    int Do();

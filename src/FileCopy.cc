@@ -1084,18 +1084,27 @@ off_t FileCopyPeerFA::GetRealPos()
    return pos;
 }
 
-FileCopyPeerFA::FileCopyPeerFA(FileAccess *s,const char *f,int m)
-   : FileCopyPeer(m==FA::STORE ? PUT : GET)
+void FileCopyPeerFA::Init()
 {
-   FAmode=m;
-   file=xstrdup(f);
-   session=s;
-   reuse_later=true;
+   FAmode=FA::RETRIEVE;
+   file=0;
+   session=0;
+   reuse_later=false;
    orig_url=0;
    fxp=false;
    try_time=0;
    retries=0;
    redirections=0;
+}
+
+FileCopyPeerFA::FileCopyPeerFA(FileAccess *s,const char *f,int m)
+   : FileCopyPeer(m==FA::STORE ? PUT : GET)
+{
+   Init();
+   FAmode=m;
+   file=xstrdup(f);
+   session=s;
+   reuse_later=true;
    if(FAmode==FA::LIST || FAmode==FA::LONG_LIST)
       Save(LsCache::SizeLimit());
 }
@@ -1114,16 +1123,13 @@ FileCopyPeerFA::~FileCopyPeerFA()
 FileCopyPeerFA::FileCopyPeerFA(ParsedURL *u,int m)
    : FileCopyPeer(m==FA::STORE ? PUT : GET)
 {
+   Init();
    FAmode=m;
    file=xstrdup(u->path);
    session=FileAccess::New(u);
    reuse_later=true;
    orig_url=u->orig_url;
    u->orig_url=0;
-   fxp=false;
-   try_time=0;
-   retries=0;
-   redirections=0;
    if(!file)
    {
       SetError(_("file name missed in URL"));
