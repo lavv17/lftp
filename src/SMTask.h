@@ -50,6 +50,7 @@ public:
 
    void Block(int fd,int mask) { block+=PollVec(fd,mask); }
    void Timeout(int ms) { block+=TimeOut(ms); }
+   void TimeoutS(int s) { Timeout(1000*s); }
 
    static time_t now;
    static int now_ms;
