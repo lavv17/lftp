@@ -1,3 +1,7 @@
+2001-08-07  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: fix memory allocation error.
+
 2001-07-30  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* commands.cc: format queue help at 80 columns.
