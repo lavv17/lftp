@@ -40,6 +40,7 @@
 #include "FtpDirList.h"
 #include "log.h"
 #include "FileCopyFtp.h"
+#include "LsCache.h"
 
 #include "ascii_ctype.h"
 #include "misc.h"
@@ -3327,11 +3328,13 @@ void Ftp::CheckResp(int act)
 	    cwd=xstrdup(RespQueue[RQ_head].path);
 	 }
 	 set_real_cwd(cwd);
+	 LsCache::SetDirectory(this, RespQueue[RQ_head].path, true);
 	 break;
       }
       if(is5XX(act))
       {
 	 SetError(NO_FILE,line);
+	 LsCache::SetDirectory(this, RespQueue[RQ_head].path, false);
 	 break;
       }
       Disconnect();
@@ -3434,6 +3437,7 @@ void Ftp::CheckResp(int act)
 	 }
 	 if(!home)
 	    set_home(home_auto);
+	 LsCache::SetDirectory(this, home, true);
 	 break;
       }
       break;

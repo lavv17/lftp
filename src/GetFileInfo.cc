@@ -6,34 +6,43 @@
 #include "misc.h"
 #include "LsCache.h"
 
+/* Get information about a path (dir or file).  If _dir is a file, get
+ * information about that file only.  If it's a directory, get information
+ * about files in it.  If _showdir is true, act like ls -d: get information
+ * about the directory itself.
+ *
+ * To find out if a path is a directory, attempt to chdir into it.  If it
+ * succeeds it's a path, otherwise it's a directory (or there was an error).
+ * Do this by setting the verify argument to Chdir() to true.
+ *
+ * If the cache knows the file type of _dir, avoid changing directories if
+ * possible, so cached listings don't touch the connection at all.
+ *
+ * We still need to Chdir() if we're operating out of cache (that's how you
+ * look up cache entries).  However, we don't really want to change the
+ * directory of the session (ie. send a CWD if we're FTP), so set verify to
+ * false if we're operating out of cache.
+ *
+ * Note: it's possible to know the type of a path (ie. its parent is cached)
+ * but not its contents.  This can lead to some inconsistencies, but only in
+ * fairly contrived situations (ie. "cls dir/", then change a directory in
+ * dir/ to a file).  It's not possible to fix completely, and a partial fix
+ * would cause other problems, so it's not worth bothering with.
+ */
 GetFileInfo::GetFileInfo(FileAccess *a, const char *_dir, bool _showdir)
    : ListInfo(a,0)
 {
    dir=xstrdup(_dir? _dir:"");
    showdir=_showdir;
-   state=CHANGE_DIR;
+   state=INITIAL;
    tried_dir=tried_file=false;
    result=0;
    realdir=0;
    li=0;
+   from_cache=0;
+   saved_error_text=0;
 
    origdir=xstrdup(session->GetCwd());
-
-   if(_showdir) tried_dir = true;
-
-   /* if we're not showing directories, try to skip tests we don't need */
-   if(!_showdir) switch(LsCache::IsDirectory(a,dir))
-   {
-   case 0:
-      tried_dir = true; /* it's a file */
-      break;
-   case 1:
-      tried_file = true; /* it's a dir */
-      break;
-   }
-
-   assert(!tried_dir || !tried_file); /* always do at least one */
-   saved_error_text=0;
 }
 
 GetFileInfo::~GetFileInfo()
@@ -48,12 +57,31 @@ GetFileInfo::~GetFileInfo()
 int GetFileInfo::Do()
 {
    int res;
+   int m=STALL;
 
    if(Done())
-      return STALL;
+      return m;
 
    switch(state)
    {
+   case INITIAL:
+      state=CHANGE_DIR;
+
+      /* if we're not showing directories, try to skip tests we don't need */
+      if(use_cache && !showdir) switch(LsCache::IsDirectory(session,dir))
+      {
+	 case 0:
+	    tried_dir = true; /* it's a file */
+	    from_cache = true;
+	    break;
+	 case 1:
+	    tried_file = true; /* it's a dir */
+	    from_cache = true;
+	    break;
+      }
+
+      assert(!tried_dir || !tried_file); /* always do at least one */
+
    case CHANGE_DIR:
       if(tried_dir && tried_file) {
 	 /* We tried both; no luck.  Fail. */
@@ -86,14 +114,17 @@ int GetFileInfo::Do()
 	    *slash=0;
       }
 
-      session->Chdir(realdir, true);
+      /* See top comments for logic here: */
+      session->Chdir(realdir, !from_cache);
       state=CHANGING_DIR;
-      return MOVED;
+      m=MOVED;
 
    case CHANGING_DIR:
       res=session->Done();
       if(res==FA::IN_PROGRESS)
-	 return STALL;
+	 return m;
+      session->Close();
+
       if(res<0)
       {
 	 /* Failed.  Save the error, then go back and try to CD again.
@@ -113,7 +144,7 @@ int GetFileInfo::Do()
       li->Need(need);
       SetExclude(exclude_prefix, rxc_exclude, rxc_include);
       state=GETTING_LIST;
-      return MOVED;
+      m=MOVED;
 
    case GETTING_LIST:
       if(li->Error()) {
@@ -122,9 +153,10 @@ int GetFileInfo::Do()
       }
 
       if(!li->Done())
-	 return STALL;
+	 return m;
 
       state=DONE;
+      m=MOVED;
 
       /* Got the list.  Steal it from the listinfo: */
       result=li->GetResult();
@@ -146,7 +178,7 @@ int GetFileInfo::Do()
 	    SetError(buf);
 	    xfree(buf);
 	    delete result; result=0;
-	    return MOVED;
+	    goto done;
 	 }
 
 	 /* If we're not listing directories as files, and the file is a
@@ -157,7 +189,7 @@ int GetFileInfo::Do()
 	    SetError(buf);
 	    xfree(buf);
 	    delete result; result=0;
-	    return MOVED;
+	    goto done;
 	 }
 
 	 FileSet *newresult=new FileSet();
@@ -168,15 +200,14 @@ int GetFileInfo::Do()
 
       result->PrependPath(realdir);
 
-      return MOVED;
-
+done:
    case DONE:
-      if(done)
-	 return STALL;
-
-      done=true;
-      session->Chdir(origdir, false);
-      return MOVED;
+      if(!done)
+      {
+	 done=true;
+	 session->Chdir(origdir, false);
+      }
+      return m;
    }
 
    abort();

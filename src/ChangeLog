@@ -1,3 +1,9 @@
+2001-12-10  Glenn Maynard <g_ld@zewt.org>
+
+	* LsCache.cc, LsCache.h, ftpclass.cc: Add explicit filetype caching.
+	* LsCache.cc, LsCache.cc: Cache a single fileset.
+	* GetFileInfo.cc, GetFileInfo.h: Fix up cache lookups. Call Close().
+
 2001-12-07  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc, FileCopy.h: (RemoveTargetFirst) new method; do it.

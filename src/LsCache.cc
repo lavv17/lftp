@@ -21,6 +21,7 @@
 /* $Id$ */
 
 #include <config.h>
+#include <assert.h>
 #include "LsCache.h"
 #include "xmalloc.h"
 #include "plural.h"
@@ -32,6 +33,11 @@ long	 LsCache::sizelimit=1024*1024;
 TimeInterval LsCache::ttl("60m");  // time to live = 60 minutes
 LsCache::ExpireHelper LsCache::expire_helper;
 
+FileSet *LsCache::fset=0;
+FileAccess *LsCache::fset_loc=0;
+int LsCache::fset_m=0;
+char *LsCache::fset_a=0;
+	    
 void LsCache::CheckSize()
 {
    if(sizelimit<0)
@@ -130,10 +136,46 @@ int LsCache::Find(FileAccess *p_loc,const char *a,int m,const char **d,int *l)
    return 0;
 }
 
+FileSet *LsCache::Find(FileAccess *p_loc,const char *a,int m)
+{
+   if(!fset || m != fset_m && strcmp(fset_a, a) && !p_loc->SameLocationAs(fset_loc))
+      return fset;
+
+   const char *buf_c;
+   int bufsiz;
+   if(!Find(p_loc, a, m, &buf_c, &bufsiz))
+      return 0;
+
+   FileSet *new_fset=p_loc->ParseLongList(buf_c, bufsiz);
+   assert(fset); /* should not have unparsable lists cached */
+   
+   free_fset();
+
+   fset=new_fset;
+   fset_a=xstrdup(a);
+   fset_m=m;
+   fset_loc=p_loc->Clone();
+   
+   return fset;
+}
+
+void LsCache::free_fset()
+{
+   SMTask::Delete(fset_loc);
+   xfree(fset_a);
+   delete fset;
+
+   fset_loc=0;
+   fset_a=0;
+   fset=0;
+}
+
 LsCache::~LsCache()
 {
    if(expire_helper.expiring==this)
       expire_helper.expiring=0;
+   if(fset_loc && loc->SameLocationAs(fset_loc))
+      free_fset();
    SMTask::Delete(loc);
    xfree(data);
    xfree(arg);
@@ -244,21 +286,45 @@ void LsCache::Changed(change_mode m,FileAccess *f,const char *dir)
    }
 }
 
-/* This is a hint only function. If file type is really needed, use ListInfo */
-/* Returns -1 if type is not known for sure */
+/* Mark a path as a directory or file. (We have other ways of knowing this;
+ * this is the most explicit and least expensive.) */
+void LsCache::SetDirectory(FileAccess *p_loc, const char *path, bool dir)
+{
+   char *origdir = alloca_strdup(p_loc->GetCwd());
+
+   p_loc->Chdir(path,false);
+   const char *entry = dir? "1":"0";
+   LsCache::Add(p_loc,"",FileAccess::CHANGE_DIR, entry, strlen(entry));
+   p_loc->Chdir(origdir,false);
+}
+
+/* This is a hint function. If file type is really needed, use GetFileInfo
+ * with showdir set to true. (GetFileInfo uses this function.)
+ * Returns -1 if type is not known, 1 if a directory, 0 if a file. */
+
 int LsCache::IsDirectory(FileAccess *p_loc,const char *dir_c)
 {
    if(*dir_c && dir_c[strlen(dir_c)-1] == '/')
       return 1;
 
    char *origdir = alloca_strdup(p_loc->GetCwd());
-
-   /* (This is cheap, so do this first.)  We know the path is a directory
-    * if we have a cache entry for it.  This is true regardless of the list
-    * type. */
-   /* TODO: or if we have a subdirectory cached; ie /foo is a dir if we
-    * know about /foo/bar */
    p_loc->Chdir(dir_c, false);
+
+   /* Cheap tests first: 
+    *
+    * First, we know the path is a directory or not if we have an expicit
+    * CHANGE_DIR entry for it. */
+   const char *buf_c;
+   int bufsiz;
+   if(Find(p_loc, "", FileAccess::CHANGE_DIR, &buf_c,&bufsiz))
+   {
+      p_loc->SetCwd(origdir);
+      return buf_c[0] == '1';
+   }
+
+   /* We know the path is a directory if we have a cache entry for it.  This is
+    * true regardless of the list type.  (Unless it's a CHANGE_DIR entry; do this
+    * test after the CHANGE_DIR check.) */
    int ret = Find(p_loc, "", -1, 0,0);
    p_loc->SetCwd(origdir);
    if(ret)
@@ -275,8 +341,59 @@ int LsCache::IsDirectory(FileAccess *p_loc,const char *dir_c)
    }
 
    ret = -1; /* don't know */
+   FileSet *fs=Find(p_loc, "", FA::LONG_LIST);
+   if(fs)
+   {
+      FileInfo *fi=fs->FindByName(basename_ptr(dir_c));
+      if(fi && (fi->defined&fi->TYPE))
+	 ret = (fi->filetype == fi->DIRECTORY);
+      delete fs;
+   }
+
+   p_loc->SetCwd(origdir);
+   return ret;
+}
+
+#if 0
+int LsCache::IsDirectory(FileAccess *p_loc,const char *dir_c)
+{
+   if(*dir_c && dir_c[strlen(dir_c)-1] == '/')
+      return 1;
+
+   char *origdir = alloca_strdup(p_loc->GetCwd());
+   p_loc->Chdir(dir_c, false);
+
+   /* Cheap tests first: 
+    *
+    * First, we know the path is a directory or not if we have an expicit
+    * CHANGE_DIR entry for it. */
    const char *buf_c;
    int bufsiz;
+   if(Find(p_loc, "", FileAccess::CHANGE_DIR, &buf_c,&bufsiz))
+   {
+      p_loc->SetCwd(origdir);
+      return buf_c[0] == '1';
+   }
+
+   /* We know the path is a directory if we have a cache entry for it.  This is
+    * true regardless of the list type.  (Unless it's a CHANGE_DIR entry; do this
+    * test after the CHANGE_DIR check.) */
+   int ret = Find(p_loc, "", -1, 0,0);
+   p_loc->SetCwd(origdir);
+   if(ret)
+      return 1;
+
+   /* We know this is a file or a directory if the dirname is cached and
+    * contains the basename. */
+   char *dir = alloca_strdup(dir_c);
+   char *sl = strrchr(dir, '/');
+   if(sl)
+   {
+      *sl = 0;
+      p_loc->Chdir(dir, false);
+   }
+
+   ret = -1; /* don't know */
    if(Find(p_loc, "", FA::LONG_LIST, &buf_c, &bufsiz))
    {
       FileSet *fs = p_loc->ParseLongList(buf_c, bufsiz);
@@ -292,3 +409,4 @@ int LsCache::IsDirectory(FileAccess *p_loc,const char *dir_c)
    p_loc->SetCwd(origdir);
    return ret;
 }
+#endif

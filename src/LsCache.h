@@ -43,6 +43,12 @@ class LsCache
    static bool use;
    static long sizelimit;
    static TimeInterval ttl;
+   /* single cached fileset */
+   static FileSet *fset;
+   static FileAccess *fset_loc;
+   static int fset_m;
+   static char *fset_a;
+   static void free_fset();
 
    class ExpireHelper;
    friend class LsCache::ExpireHelper;
@@ -64,8 +70,10 @@ public:
    static void Add(FileAccess *p_loc,const char *a,int m,const char *d,int l);
    static void Add(FileAccess *p_loc,const char *a,int m,const Buffer *ubuf);
    static int Find(FileAccess *p_loc,const char *a,int m,const char **d, int *l);
+   static FileSet *Find(FileAccess *p_loc,const char *a,int m);
 
    static int IsDirectory(FileAccess *p_loc,const char *dir);
+   static void SetDirectory(FileAccess *p_loc, const char *path, bool dir);
 
    enum change_mode { FILE_CHANGED, DIR_CHANGED, TREE_CHANGED };
    static void Changed(change_mode m,FileAccess *f,const char *what);

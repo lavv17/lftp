@@ -40,11 +40,13 @@ class GetFileInfo: public ListInfo
 
    bool showdir;
 
-   enum state_t { CHANGE_DIR, CHANGING_DIR, GETTING_LIST, DONE } state;
+   enum state_t { INITIAL, CHANGE_DIR, CHANGING_DIR, GETTING_LIST, DONE } state;
    /* whether we've tried to cd to the whole dir (treating it as a dir): */
    bool tried_dir;
    /* and whether we've tried to cd to the basename (treating it as a file): */
    bool tried_file;
+   /* whether we found out the file type from cache */
+   bool from_cache;
 
    char *saved_error_text;
 
