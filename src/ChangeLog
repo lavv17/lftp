@@ -6,6 +6,7 @@
 2001-12-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* LsCache.cc: use alloca in IsDirectory; style.
+	* MirrorJob.cc: fix eprintf calls - double parent led to NULL.
 
 2001-12-05  Glenn Maynard <g_ld@zewt.org>
 

@@ -960,7 +960,7 @@ void MirrorJob::SetNewerThan(const char *f)
 CMD(mirror)
 {
 #define args (parent->args)
-#define eprintf parent->eprintf
+#define eprintf (parent->eprintf)
    static struct option mirror_opts[]=
    {
       {"delete",no_argument,0,'e'},
@@ -1091,7 +1091,7 @@ CMD(mirror)
 	    parallel=3;
 	 break;
       case('?'):
-	 parent->eprintf(_("Try `help %s' for more information.\n"),args->a0());
+	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
 	 return 0;
       }
    }
@@ -1185,7 +1185,7 @@ CMD(mirror)
    return j;
 
 err_out:
-   parent->eprintf("%s: %s: %s\n",args->a0(),err_tag,err);
+   eprintf("%s: %s: %s\n",args->a0(),err_tag,err);
    SMTask::Delete(j);
    return 0;
 #undef args
