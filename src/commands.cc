@@ -675,7 +675,9 @@ Job *CmdExec::builtin_lftp()
 	 break;
       case('c'):
       {
-	 char *c=args->CombineQuoted(args->getindex()-1);
+	 int cmd_start=args->getindex()-1;
+	 char *c = (args->count()==cmd_start+1
+		      ? args->Combine(cmd_start) : args->CombineQuoted(cmd_start));
 	 acmd=string_alloca(4+strlen(c));
 	 sprintf(acmd,"%s\n\n",c);
 	 cmd=acmd;

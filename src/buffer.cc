@@ -228,6 +228,12 @@ void Buffer::SetError(const char *e,bool fatal)
    error_text=xstrdup(e);
    error_fatal=fatal;
 }
+void Buffer::SetErrorCached(const char *e)
+{
+   xfree(error_text);
+   error_text=xasprintf(_("%s [cached]"),e);
+   error_fatal=false;
+}
 #if 0 // unused
 void Buffer::SetError2(const char *e1,const char *e2)
 {

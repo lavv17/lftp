@@ -1047,6 +1047,12 @@ void FileAccessOperation::SetError(const char *e)
    error_text=xstrdup(e);
    done=true;
 }
+void FileAccessOperation::SetErrorCached(const char *e)
+{
+   xfree(error_text);
+   error_text=xasprintf(_("%s [cached]"),e);
+   done=true;
+}
 
 
 // ListInfo implementation

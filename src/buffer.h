@@ -70,14 +70,15 @@ protected:
    void SaveMaxCheck(int addsize);
 
 public:
-   bool Error() { return error_text!=0; }
-   bool ErrorFatal() { return error_fatal; }
+   bool Error() const { return error_text!=0; }
+   bool ErrorFatal() const { return error_fatal; }
    void SetError(const char *e,bool fatal=false);
    void SetError2(const char *e1,const char *e2,bool fatal=false);
-   const char *ErrorText() { return error_text; }
-   int Size() { return in_buffer; }
-   bool Eof() { return eof; }
-   bool Broken() { return broken; }
+   void SetErrorCached(const char *e);
+   const char *ErrorText() const { return error_text; }
+   int Size() const { return in_buffer; }
+   bool Eof() const { return eof; }
+   bool Broken() const { return broken; }
 
    void Get(const char **buf,int *size);
    void Skip(int len); // Get(); consume; Skip()

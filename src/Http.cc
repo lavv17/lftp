@@ -1453,6 +1453,13 @@ int Http::Do()
 	    || status_code==405  // Method Not Allowed
 	    || status_code==501) // Not Implemented
 	    {
+	       if(status_code==400 || status_code==501)
+	       {
+		  if(!xstrcmp(last_method,"PROPFIND"))
+		     ResMgr::Set("http:use-propfind",hostname,"no");
+		  if(!xstrcmp(last_method,"MKCOL"))
+		     ResMgr::Set("http:use-mkcol",hostname,"no");
+	       }
 	       code=NOT_SUPP;
 	       closure=last_method;
 	    }

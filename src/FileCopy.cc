@@ -891,8 +891,14 @@ void FileCopyPeerFA::OpenSession()
       }
       const char *b;
       int s;
-      if(use_cache && LsCache::Find(session,file,FAmode,&b,&s))
+      int err;
+      if(use_cache && LsCache::Find(session,file,FAmode,&err,&b,&s))
       {
+	 if(err)
+	 {
+	    SetError(b);
+	    return;
+	 }
 	 size=s;
 	 if(seek_pos>=s)
 	    goto past_eof;
@@ -1064,7 +1070,7 @@ int FileCopyPeerFA::Get_LL(int len)
    if(res==0)
    {
       eof=true;
-      LsCache::Add(session,file,FAmode,this);
+      LsCache::Add(session,file,FAmode,FA::OK,this);
    }
    return res;
 }

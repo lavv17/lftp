@@ -364,6 +364,7 @@ protected:
    bool done;
    char *error_text;
    void SetError(const char *);
+   void SetErrorCached(const char *);
 
    bool use_cache;
 

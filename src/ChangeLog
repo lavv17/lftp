@@ -1,3 +1,11 @@
+2005-04-04  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h, buffer.cc, buffer.h: (SetErrorCached) new method.
+	* commands.cc: don't quote lftp -c argument when it is single.
+	* FileCopy.cc, Fish.cc, FtpDirList.cc, HttpDir.cc, LsCache.cc, LsCache.h,
+	  NetAccess.cc, SFtp.cc: add negative cache support.
+	* Http.cc: set use-propfind and use-mkcol when those methods are unsupported.
+
 2005-04-01  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.cc: re-request missed data (could happen when file is growing).

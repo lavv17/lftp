@@ -714,9 +714,17 @@ do_again:
    {
       const char *cache_buffer=0;
       int cache_buffer_size=0;
-      if(use_cache && LsCache::Find(session,"",mode,
+      int err;
+      if(use_cache && LsCache::Find(session,"",mode,&err,
 				    &cache_buffer,&cache_buffer_size))
       {
+	 if(err)
+	 {
+	    if(err==FA::NOT_SUPP)
+	       goto not_supported;
+	    SetErrorCached(cache_buffer);
+	    return MOVED;
+	 }
 	 ubuf=new IOBuffer(IOBuffer::GET);
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
@@ -740,6 +748,7 @@ do_again:
       {
 	 if(session->GetErrorCode()==FA::NOT_SUPP)
 	 {
+	 not_supported:
 	    if(mode==FA::MP_LIST)
 	    {
 	       mode=FA::LONG_LIST;
@@ -749,6 +758,7 @@ do_again:
 	       goto do_again;
 	    }
 	 }
+	 LsCache::Add(session,"",mode,session->GetErrorCode(),ubuf);
 	 SetError(ubuf->ErrorText());
 	 Delete(ubuf);
 	 ubuf=0;
@@ -758,7 +768,7 @@ do_again:
       if(!ubuf->Eof())
 	 return m;
 
-      LsCache::Add(session,"",mode,ubuf);
+      LsCache::Add(session,"",mode,FA::OK,ubuf);
 
       // now we have all the index in ubuf; parse it.
       const char *b;

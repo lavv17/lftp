@@ -31,6 +31,7 @@ LsCache *LsCache::chain=0;
 bool	 LsCache::use=true;
 long	 LsCache::sizelimit=1024*1024;
 TimeInterval LsCache::ttl("60m");  // time to live = 60 minutes
+TimeInterval LsCache::ttl_neg("1m");  // time to live for negative cache
 LsCache::ExpireHelper LsCache::expire_helper;
 
 void LsCache::CheckSize()
@@ -39,20 +40,21 @@ void LsCache::CheckSize()
       return;  // no limit
 
    LsCache **oldest;
-   time_t   oldest_time;
+   time_t   oldest_expire_time;
    LsCache **scan;
 
    for(;;)
    {
       long size=0;
       oldest=&chain;
-      oldest_time=0;
+      oldest_expire_time=0;
       for(scan=&chain; *scan; scan=&(*scan)->next)
       {
-	 if(*oldest || oldest_time<(*scan)->timestamp)
+	 time_t e_time=(*scan)->ExpireTime();
+	 if(oldest_expire_time<e_time)
 	 {
 	    oldest=scan;
-	    oldest_time=(*scan)->timestamp;
+	    oldest_expire_time=e_time;
 	 }
 	 size+=scan[0]->data_len;
 	 if(scan[0]->afset)
@@ -69,14 +71,17 @@ void LsCache::CheckSize()
 ResDecl res_cache_empty_listings("cache:cache-empty-listings","no",ResMgr::BoolValidate,0);
 ResDecl res_cache_enable("cache:enable","yes",ResMgr::BoolValidate,0);
 ResDecl res_cache_expire("cache:expire","60m",ResMgr::TimeIntervalValidate,0);
+ResDecl res_cache_expire_neg("cache:expire-negative","1m",ResMgr::TimeIntervalValidate,0);
 ResDecl res_cache_size  ("cache:size","1048576",ResMgr::UNumberValidate,ResMgr::NoClosure);
 
-void LsCache::Add(FileAccess *p_loc,const char *a,int m,const char *d,int l,const FileSet *fs)
+void LsCache::Add(FileAccess *p_loc,const char *a,int m,int e,const char *d,int l,const FileSet *fs)
 {
    if(!strcmp(p_loc->GetProto(),"file"))
       return;  // don't cache local objects
    if(l == 0 &&
 	 !res_cache_empty_listings.QueryBool(p_loc->GetHostName()))
+      return;
+   if(e!=FA::OK && e!=FA::NO_FILE && e!=FA::NOT_SUPP)
       return;
 
    CheckSize();
@@ -104,27 +109,34 @@ void LsCache::Add(FileAccess *p_loc,const char *a,int m,const char *d,int l,cons
       xfree(scan->data);
       delete scan->afset;
    }
+   scan->err_code=e;
    scan->data=(char*)xmemdup(d,l);
    scan->data_len=l;
    scan->afset=fs?new FileSet(fs):0;
-   time(&scan->timestamp);
-   if(expire_helper.expiring==0)
+   scan->timestamp=SMTask::now;
+   if(expire_helper.expiring==0
+   || scan->ExpireTime()<expire_helper.expiring->ExpireTime())
       expire_helper.expiring=scan;
-   return;
 }
 
-void LsCache::Add(FileAccess *p_loc,const char *a,int m,const Buffer *ubuf,const FileSet *fs)
+void LsCache::Add(FileAccess *p_loc,const char *a,int m,int e,const Buffer *ubuf,const FileSet *fs)
 {
    if(!ubuf->IsSaving())
       return;
 
    const char *cache_buffer;
    int cache_buffer_size;
-   ubuf->GetSaved(&cache_buffer,&cache_buffer_size);
-   LsCache::Add(p_loc,a,m,cache_buffer,cache_buffer_size,fs);
+   if(e)
+   {
+      cache_buffer=ubuf->ErrorText();
+      cache_buffer_size=strlen(cache_buffer)+1;
+   }
+   else
+      ubuf->GetSaved(&cache_buffer,&cache_buffer_size);
+   LsCache::Add(p_loc,a,m,e,cache_buffer,cache_buffer_size,fs);
 }
 
-int LsCache::Find(FileAccess *p_loc,const char *a,int m,const char **d,int *l,FileSet **fs)
+int LsCache::Find(FileAccess *p_loc,const char *a,int m,int *e,const char **d,int *l,FileSet **fs)
 {
    if(!ResMgr::QueryBool("cache:enable",p_loc->GetHostName()))
       return 0;
@@ -140,6 +152,7 @@ int LsCache::Find(FileAccess *p_loc,const char *a,int m,const char **d,int *l,Fi
 	 }
 	 if(fs)
 	    *fs=scan->afset;
+	 *e=scan->err_code;
 	 return 1;
       }
    }
@@ -150,8 +163,9 @@ FileSet *LsCache::FindFileSet(FileAccess *p_loc,const char *a,int m)
 {
    const char *buf_c;
    int bufsiz;
+   int e;
    FileSet *fs=0;
-   if(!Find(p_loc, a, m, &buf_c, &bufsiz, &fs))
+   if(!Find(p_loc, a, m, &e, &buf_c, &bufsiz, &fs))
       return 0;
 
    if(fs)
@@ -220,39 +234,63 @@ void LsCache::List()
    }
 }
 
+time_t LsCache::ExpireTime()
+{
+   TimeInterval *this_ttl=(err_code==FA::OK?&ttl:&ttl_neg);
+   if(this_ttl->IsInfty() || this_ttl->Seconds()==0)
+      return 0;
+   return(timestamp+this_ttl->Seconds());
+}
+bool LsCache::Expired()
+{
+   time_t e_time=ExpireTime();
+   return(e_time && e_time<=(time_t)SMTask::now);
+}
+
 int LsCache::ExpireHelper::Do()
 {
-   if(ttl.IsInfty() || ttl.Seconds()==0)
+   if((ttl.IsInfty() || ttl.Seconds()==0)
+   && (ttl_neg.IsInfty() || ttl_neg.Seconds()==0))
       return STALL;
-   if(!expiring || expiring->timestamp+ttl.Seconds() <= now)
+   if(!expiring || expiring->Expired())
    {
       LsCache **scan=&LsCache::chain;
       while(*scan)
       {
-	 if((*scan)->timestamp+ttl.Seconds() <= now)
+	 if((*scan)->Expired())
 	 {
 	    LsCache *tmp=*scan;
 	    *scan=tmp->next;
 	    delete tmp;
+	    scan=&LsCache::chain;   // rescan the chain to find next expiring
 	    continue;
 	 }
-	 if(!expiring || expiring->timestamp > (*scan)->timestamp)
+	 if(!expiring)
 	    expiring=*scan;
+	 else
+	 {
+	    // compare expire times and find the least one
+   	    time_t expiring_e_time=expiring->ExpireTime();
+	    time_t scan_e_time=(*scan)->ExpireTime();
+	    if(scan_e_time!=0 && scan_e_time!=0 && expiring_e_time > scan_e_time);
+	       expiring=*scan;
+	 }
 	 scan=&scan[0]->next;
       }
       if(!expiring)
 	 return STALL;
    }
-   time_t t_out=expiring->timestamp+ttl.Seconds()-(time_t)now;
+   time_t t_out=expiring->ExpireTime()-(time_t)now;
    if(t_out>1024)
       t_out=1024;
-   Timeout(t_out*1000);
+   TimeoutS(t_out);
    return STALL;
 }
 void LsCache::ExpireHelper::Reconfig(const char *name)
 {
    SetSizeLimit(ResMgr::Query("cache:size",0));
    SetExpire(TimeInterval((const char*)ResMgr::Query("cache:expire",0)));
+   SetExpireNegative(TimeInterval((const char*)ResMgr::Query("cache:expire-negative",0)));
    use=ResMgr::QueryBool("cache:enable",0);
 }
 
@@ -293,7 +331,7 @@ void LsCache::SetDirectory(FileAccess *p_loc, const char *path, bool dir)
 
    p_loc->Chdir(path,false);
    const char *entry = dir? "1":"0";
-   LsCache::Add(p_loc,"",FileAccess::CHANGE_DIR, entry, strlen(entry));
+   LsCache::Add(p_loc,"",FileAccess::CHANGE_DIR, dir?FA::OK:FA::NO_FILE, entry, strlen(entry));
    p_loc->SetCwd(origdir);
 }
 
@@ -314,19 +352,30 @@ int LsCache::IsDirectory(FileAccess *p_loc,const char *dir_c)
     * CHANGE_DIR entry for it. */
    const char *buf_c;
    int bufsiz;
-   if(Find(p_loc, "", FileAccess::CHANGE_DIR, &buf_c,&bufsiz))
+   int e;
+   if(Find(p_loc, "", FileAccess::CHANGE_DIR, &e, &buf_c,&bufsiz))
    {
       assert(bufsiz==1);
-      ret = (buf_c[0]=='1');
+      ret = (e==FA::OK);
       goto leave;
    }
 
    /* We know the path is a directory if we have a cache entry for it.  This is
     * true regardless of the list type.  (Unless it's a CHANGE_DIR entry; do this
     * test after the CHANGE_DIR check.) */
-   if(Find(p_loc, "", -1, 0,0))
+   if(Find(p_loc, "", FA::LONG_LIST, &e, 0,0))
    {
-      ret = 1;
+      ret = (e==FA::OK);
+      goto leave;
+   }
+   if(Find(p_loc, "", FA::MP_LIST, &e, 0,0))
+   {
+      ret = (e==FA::OK);
+      goto leave;
+   }
+   if(Find(p_loc, "", FA::LIST, &e, 0,0))
+   {
+      ret = (e==FA::OK);
       goto leave;
    }
 

@@ -1238,9 +1238,19 @@ int HttpDirList::Do()
    retry:
       const char *cache_buffer=0;
       int cache_buffer_size=0;
-      if(use_cache && LsCache::Find(session,curr,mode,
+      int err;
+      if(use_cache && LsCache::Find(session,curr,mode,&err,
 				    &cache_buffer,&cache_buffer_size))
       {
+	 if(err)
+	 {
+	    if(mode==FA::MP_LIST)
+	    {
+	       mode=FA::LONG_LIST;
+	       goto retry;
+	    }
+	    SetErrorCached(cache_buffer);
+	 }
 	 ubuf=new IOBuffer(IOBuffer::GET);
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
@@ -1260,8 +1270,7 @@ int HttpDirList::Do()
    ubuf->Get(&b,&len);
    if(b==0) // eof
    {
-      LsCache::Add(session,curr,mode,ubuf);
-
+      LsCache::Add(session,curr,mode,FA::OK,ubuf);
       Delete(ubuf);
       ubuf=0;
       return MOVED;
@@ -1289,6 +1298,7 @@ reparse:
 
    if(ubuf->Error())
    {
+      LsCache::Add(session,curr,mode,session->GetErrorCode(),ubuf);
       if(mode==FA::MP_LIST)
       {
 	 mode=FA::LONG_LIST;

@@ -1891,9 +1891,15 @@ int SFtpDirList::Do()
    {
       const char *cache_buffer=0;
       int cache_buffer_size=0;
-      if(use_cache && LsCache::Find(session,dir,FA::LONG_LIST,
+      int err;
+      if(use_cache && LsCache::Find(session,dir,FA::LONG_LIST,&err,
 				    &cache_buffer,&cache_buffer_size,&fset))
       {
+	 if(err)
+	 {
+	    SetErrorCached(cache_buffer);
+	    return MOVED;
+	 }
 	 ubuf=new IOBuffer(IOBuffer::GET);
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
@@ -1915,7 +1921,7 @@ int SFtpDirList::Do()
    {
       if(!fset && session->IsOpen())
 	 fset=((SFtp*)session)->GetFileSet();
-      LsCache::Add(session,dir,FA::LONG_LIST, ubuf, fset);
+      LsCache::Add(session,dir,FA::LONG_LIST,FA::OK,ubuf,fset);
       if(use_file_set)
       {
 	 fset->Sort(fset->BYNAME,false);
@@ -2028,9 +2034,15 @@ int SFtpListInfo::Do()
    {
       const char *cache_buffer=0;
       int cache_buffer_size=0;
-      if(use_cache && LsCache::Find(session,"",FA::LONG_LIST,
+      int err;
+      if(use_cache && LsCache::Find(session,"",FA::LONG_LIST,&err,
 				    &cache_buffer,&cache_buffer_size,&result))
       {
+	 if(err)
+	 {
+	    SetErrorCached(cache_buffer);
+	    return MOVED;
+	 }
 	 ubuf=new IOBuffer(IOBuffer::GET);
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
@@ -2051,7 +2063,7 @@ int SFtpListInfo::Do()
    {
       if(!result && session->IsOpen())
 	 result=((SFtp*)session)->GetFileSet();
-      LsCache::Add(session,"",FA::LONG_LIST, ubuf, result);
+      LsCache::Add(session,"",FA::LONG_LIST,FA::OK,ubuf,result);
       result->ExcludeDots();
       result->Exclude(exclude_prefix,exclude);
       done=true;

@@ -1219,9 +1219,15 @@ int FishDirList::Do()
    {
       const char *cache_buffer=0;
       int cache_buffer_size=0;
-      if(use_cache && LsCache::Find(session,pattern,FA::LONG_LIST,
+      int err;
+      if(use_cache && LsCache::Find(session,pattern,FA::LONG_LIST,&err,
 				    &cache_buffer,&cache_buffer_size))
       {
+	 if(err)
+	 {
+	    SetErrorCached(cache_buffer);
+	    return MOVED;
+	 }
 	 ubuf=new IOBuffer(IOBuffer::GET);
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
@@ -1242,8 +1248,7 @@ int FishDirList::Do()
    if(b==0) // eof
    {
       buf->PutEOF();
-      LsCache::Add(session,pattern,FA::LONG_LIST, ubuf);
-
+      LsCache::Add(session,pattern,FA::LONG_LIST,FA::OK,ubuf);
       return MOVED;
    }
 
