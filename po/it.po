@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.0.1\n"
-"POT-Creation-Date: 2000-01-13 17:01+0300\n"
+"POT-Creation-Date: 2000-02-18 14:37+0300\n"
 "PO-Revision-Date: 1999-07-11 13:02+02:00\n"
 "Last-Translator: Giovanni Bortolozzo <borto@pluto.linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -83,7 +83,7 @@ msgstr "Accesso fallito: %s"
 msgid "File cannot be accessed"
 msgstr "Impossibile accedere al file"
 
-#: src/FileAccess.cc:301 src/ftpclass.cc:2542 src/ftpclass.cc:2552
+#: src/FileAccess.cc:301 src/ftpclass.cc:2546 src/ftpclass.cc:2556
 msgid "Not connected"
 msgstr "Non connesso"
 
@@ -100,7 +100,7 @@ msgstr "Errore fatale"
 msgid "Store failed - you have to reput"
 msgstr "Salvataggio fallito - si deve fare reput"
 
-#: src/FileAccess.cc:314 src/ftpclass.cc:2584
+#: src/FileAccess.cc:314 src/ftpclass.cc:2588
 msgid "Login failed"
 msgstr "Login fallito"
 
@@ -273,7 +273,7 @@ msgstr ""
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr ""
 
-#: src/Http.cc:1113 src/Resolver.cc:184 src/ftpclass.cc:2547
+#: src/Http.cc:1113 src/Resolver.cc:184 src/ftpclass.cc:2551
 msgid "Resolving host address..."
 msgstr "Risoluzione dell'indirizzo dell'host..."
 
@@ -1296,113 +1296,113 @@ msgid "Data connection peer has mismatching address"
 msgstr ""
 "L'altro estremo della connesione dati ha un indirizzo che non corrisponde"
 
-#: src/ftpclass.cc:282 src/ftpclass.cc:355
+#: src/ftpclass.cc:283 src/ftpclass.cc:356
 msgid "Saw `Login incorrect', assume failed login"
 msgstr "Ottenuto `Login incorrect', assumo login fallita"
 
-#: src/ftpclass.cc:314 src/ftpclass.cc:371
+#: src/ftpclass.cc:315 src/ftpclass.cc:372
 msgid "Saw `unknown', assume failed login"
 msgstr "Ottenuto `unknown', assumo login fallita"
 
-#: src/ftpclass.cc:325
+#: src/ftpclass.cc:326
 msgid "assuming failed host name lookup"
 msgstr "dò per fallita la ricerca del nome host"
 
-#: src/Http.cc:506 src/ftpclass.cc:743
+#: src/Http.cc:506 src/ftpclass.cc:747
 msgid "Closing idle connection"
 msgstr "Chiusura della connessione inattiva"
 
-#: src/Http.cc:560 src/ftpclass.cc:795
+#: src/Http.cc:560 src/ftpclass.cc:799
 msgid "max-retries exceeded"
 msgstr "superato il numero massimo di tentativi"
 
-#: src/ftpclass.cc:1348
+#: src/ftpclass.cc:1352
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "Connessione del socket dei dati a (%s) porta %u"
 
-#: src/Http.cc:132 src/ftpclass.cc:1397
+#: src/Http.cc:132 src/ftpclass.cc:1401
 msgid "Timeout - reconnecting"
 msgstr "Timeout - riconnessione in corso"
 
-#: src/ftpclass.cc:1659
+#: src/ftpclass.cc:1663
 msgid "Peer closed connection"
 msgstr "Connessione chiusa dal peer"
 
-#: src/ftpclass.cc:1732
+#: src/ftpclass.cc:1736
 msgid "Closing control socket"
 msgstr "Chiusura del socket di controllo"
 
-#: src/ftpclass.cc:1801
+#: src/ftpclass.cc:1805
 msgid "Closing data socket"
 msgstr "Chiusura del socket dati"
 
-#: src/ftpclass.cc:2348
+#: src/ftpclass.cc:2352
 msgid "saw file size in response"
 msgstr "ottenuta la dimensione del file in risposta"
 
-#: src/ftpclass.cc:2357
+#: src/ftpclass.cc:2361
 msgid "remote end closes connection"
 msgstr "connessione chiusa dal sito remoto"
 
-#: src/ftpclass.cc:2363
+#: src/ftpclass.cc:2367
 msgid "extra server response"
 msgstr "risposta extra del server"
 
-#: src/ftpclass.cc:2462
+#: src/ftpclass.cc:2466
 msgid "Switching passive mode off"
 msgstr "Metto ad off (disabilito) la modalità passiva"
 
-#: src/ftpclass.cc:2537
+#: src/ftpclass.cc:2541
 msgid "Sending commands..."
 msgstr "Invio comandi..."
 
-#: src/Http.cc:1124 src/ftpclass.cc:2539 src/ftpclass.cc:2559
-#: src/ftpclass.cc:2566
+#: src/Http.cc:1124 src/ftpclass.cc:2543 src/ftpclass.cc:2563
+#: src/ftpclass.cc:2570
 msgid "Waiting for response..."
 msgstr "In attesa della risposta..."
 
-#: src/ftpclass.cc:2540
+#: src/ftpclass.cc:2544
 msgid "Connection idle"
 msgstr "Connessione inattiva"
 
-#: src/Http.cc:1115 src/ftpclass.cc:2549
+#: src/Http.cc:1115 src/ftpclass.cc:2553
 msgid "Delaying before reconnect"
 msgstr "Aspetto un po' prima di riconnettermi"
 
-#: src/Http.cc:1119 src/ftpclass.cc:2554
+#: src/Http.cc:1119 src/ftpclass.cc:2558
 msgid "Connecting..."
 msgstr "Connessione in corso..."
 
-#: src/ftpclass.cc:2556
+#: src/ftpclass.cc:2560
 msgid "Logging in..."
 msgstr "Accesso al server..."
 
-#: src/ftpclass.cc:2560
+#: src/ftpclass.cc:2564
 msgid "Making data connection..."
 msgstr "Creo la connessione dati..."
 
-#: src/ftpclass.cc:2562
+#: src/ftpclass.cc:2566
 msgid "Changing remote directory..."
 msgstr "Cambio la directory remota..."
 
-#: src/ftpclass.cc:2565 src/ftpclass.cc:2577
+#: src/ftpclass.cc:2569 src/ftpclass.cc:2581
 msgid "Waiting for transfer to complete"
 msgstr "Attendo la fine del trasferimento"
 
-#: src/ftpclass.cc:2568
+#: src/ftpclass.cc:2572
 msgid "Waiting for data connection..."
 msgstr "In attesa della connessione dati..."
 
-#: src/Http.cc:1122 src/ftpclass.cc:2573
+#: src/Http.cc:1122 src/ftpclass.cc:2577
 msgid "Sending data"
 msgstr "Sto inviando i dati"
 
-#: src/Http.cc:1127 src/ftpclass.cc:2575
+#: src/Http.cc:1127 src/ftpclass.cc:2579
 msgid "Receiving data"
 msgstr "Sto ricevendo i dati"
 
-#: src/ftpclass.cc:2579
+#: src/ftpclass.cc:2583
 msgid "Fatal protocol error occured"
 msgstr "Errore fatale di protocollo"
 

@@ -1,3 +1,7 @@
+Version 2.1.8 - 2000-02-18
+
+* fixed a stupid bug in PWD reply extraction.
+
 Version 2.1.7 - 2000-02-14
 
 * fixed assertion failure in ftpclass.cc.
