@@ -17,6 +17,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+
+/* $Id$ */
+
 #include <config.h>
 
 #include <sys/types.h>
@@ -91,7 +94,8 @@ static ResDecl
    res_proxy		("ftp:proxy",          "",   ProxyValidate,0),
    res_nop_interval	("ftp:nop-interval",   "120",ResMgr::UNumberValidate,0),
    res_idle		("ftp:idle",	       "180",ResMgr::UNumberValidate,0),
-   res_max_retries	("ftp:max-retries",    "0",  ResMgr::UNumberValidate,0);
+   res_max_retries	("ftp:max-retries",    "0",  ResMgr::UNumberValidate,0),
+   res_allow_skey	("ftp:allow-skey",     "no", ResMgr::BoolValidate,0);
 
 void  Ftp::ClassInit()
 {
@@ -268,6 +272,10 @@ int   Ftp::NoPassReqCheck(int act,int exp) // for USER command
       }
       return(LOGIN_FAILED_STATE);
    }
+   if(allow_skey && user && pass)
+      skey_pass=xstrdup(make_skey_reply(line,pass));
+   if(act/100==3)
+      return state;
    return(-1);
 }
 
@@ -500,6 +508,8 @@ void Ftp::InitFtp()
    max_retries=0;
    retries=0;
    target_cwd=0;
+   skey_pass=0;
+   allow_skey=false;
 
    RespQueue=0;
    RQ_alloc=0;
@@ -549,6 +559,8 @@ Ftp::~Ftp()
    xfree(send_cmd_buffer); send_cmd_buffer=0;
 
    xfree(proxy); proxy=0;
+
+   xfree(skey_pass); skey_pass=0;
 
    for(Ftp **scan=&ftp_chain; *scan; scan=&((*scan)->ftp_next))
    {
@@ -807,6 +819,9 @@ int   Ftp::Do()
 	 }
       }
 
+      xfree(skey_pass);
+      skey_pass=0;
+
       ignore_pass=false;
       sprintf(str,"USER %s\n",user_to_use);
       AddResp(RESP_PASS_REQ,INITIAL_STATE,&NoPassReqCheck);
@@ -817,7 +832,7 @@ int   Ftp::Do()
    }
 
    case(USER_RESP_WAITING_STATE):
-      if((flags&SYNC_MODE) && !RespQueueIsEmpty())
+      if(((flags&SYNC_MODE) || allow_skey) && !RespQueueIsEmpty())
       {
 	 FlushSendQueue();
 	 ReceiveResp();
@@ -829,7 +844,10 @@ int   Ftp::Do()
 
       if(!ignore_pass)
       {
-	 sprintf(str,"PASS %s\n",pass?pass:anon_pass);
+	 const char *pass_to_use=pass?pass:anon_pass;
+	 if(allow_skey && skey_pass)
+	    pass_to_use=skey_pass;
+	 sprintf(str,"PASS %s\n",pass_to_use);
 	 AddResp(RESP_LOGGED_IN,INITIAL_STATE,&LoginCheck);
 	 SendCmd(str);
       }
@@ -2239,6 +2257,7 @@ void Ftp::Reconfig()
    if(nop_interval<30)
       nop_interval=30;
    relookup_always=ResMgr::str2bool(ResQuery(res_relookup_always));
+   allow_skey=ResMgr::str2bool(ResQuery(res_allow_skey));
 
    SetProxy(ResQuery(res_proxy));
 
@@ -2263,4 +2282,43 @@ void Ftp::Cleanup(bool all)
 ListInfo *Ftp::MakeListInfo()
 {
    return new FtpListInfo(this);
+}
+
+
+extern "C"
+   const char *calculate_skey_response (int, const char *, const char *);
+
+const char *Ftp::make_skey_reply(const char *respline,const char *pass)
+{
+  static const char * const skey_head[] = {
+    "331 s/key ",
+    "331 opiekey ",
+    0
+  };
+  int i;
+
+  for (i = 0; skey_head[i]; i++)
+    {
+      if (strncmp (skey_head[i], respline, strlen (skey_head[i])) == 0)
+	break;
+    }
+  if (skey_head[i])
+    {
+      const char *cp;
+      int skey_sequence = 0;
+
+      for (cp = respline + strlen (skey_head[i]);
+	   '0' <= *cp && *cp <= '9';
+	   cp++)
+	{
+	  skey_sequence = skey_sequence * 10 + *cp - '0';
+	}
+      if (*cp == ' ')
+	cp++;
+      else
+        return 0;
+
+      return calculate_skey_response (skey_sequence, cp, pass);
+    }
+  return 0;
 }
