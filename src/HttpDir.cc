@@ -979,6 +979,10 @@ void HttpDirList::Resume()
 
 
 // HttpGlob implementation
+GenericParseGlob *HttpGlob::MakeUpDirGlob()
+{
+   return new HttpGlob(session,dir);
+}
 FileSet *HttpGlob::Parse(const char *b,int len)
 {
    FileSet *set=new FileSet;
@@ -997,206 +1001,19 @@ FileSet *HttpGlob::Parse(const char *b,int len)
 }
 
 // HttpListInfo implementation
-#undef super
-#define super ListInfo
-
-int HttpListInfo::Do()
+FileSet *HttpListInfo::Parse(const char *b,int len)
 {
-#define need_size (need&FileInfo::SIZE)
-#define need_time (need&FileInfo::DATE)
-
-   FA::fileinfo *cur;
-   FileInfo *file;
-   int res;
-   int m=STALL;
-
-   if(done)
-      return m;
-
-   if(!ubuf && !get_info)
+   FileSet *set=new FileSet;
+   ParsedURL prefix(session->GetConnectURL());
+   char *base_href=0;
+   for(;;)
    {
-      const char *cache_buffer=0;
-      int cache_buffer_size=0;
-      if(use_cache && LsCache::Find(session,"",FA::LONG_LIST,
-				    &cache_buffer,&cache_buffer_size))
-      {
-	 ubuf=new Buffer();
-	 ubuf->Put(cache_buffer,cache_buffer_size);
-	 ubuf->PutEOF();
-      }
-      else
-      {
-	 session->Open("",FA::LONG_LIST);
-	 session->UseCache(use_cache);
-	 ubuf=new IOBufferFileAccess(session);
-	 if(LsCache::IsEnabled())
-	    ubuf->Save(LsCache::SizeLimit());
-      }
-      m=MOVED;
+      int n=parse_html(b,len,true,0,set,0,&prefix,&base_href);
+      if(n==0)
+	 break;
+      b+=n;
+      len-=n;
    }
-   if(ubuf)
-   {
-      if(ubuf->Error())
-      {
-	 SetError(ubuf->ErrorText());
-	 Delete(ubuf);
-	 ubuf=0;
-	 return MOVED;
-      }
-
-      if(!ubuf->Eof())
-	 return m;
-
-      // now we have all the index in ubuf; parse it.
-      const char *b;
-      int len;
-      ubuf->Get(&b,&len);
-
-      result=new FileSet;
-      ParsedURL prefix(session->GetConnectURL());
-      char *base_href=0;
-      for(;;)
-      {
-	 int n=parse_html(b,len,true,0,result,0,&prefix,&base_href);
-	 if(n==0)
-	    break;
-	 b+=n;
-	 len-=n;
-      }
-      xfree(base_href);
-
-      LsCache::Add(session,"",FA::LONG_LIST,ubuf);
-
-      Delete(ubuf);
-      ubuf=0;
-      m=MOVED;
-
-      result->ExcludeDots();
-      if(rxc_exclude || rxc_include)
-	 result->Exclude(path,rxc_exclude,rxc_include);
-
-      get_info_cnt=result->get_fnum();
-      if(get_info_cnt==0)
-      {
-	 done=true;
-	 return m;
-      }
-
-      get_info=(FA::fileinfo*)xmalloc(sizeof(*get_info)*get_info_cnt);
-      cur=get_info;
-
-      get_info_cnt=0;
-      result->rewind();
-      for(file=result->curr(); file!=0; file=result->next())
-      {
-	 cur->get_size = !(file->defined & file->SIZE) && need_size;
-	 cur->get_time = !(file->defined & file->DATE) && need_time;
-	 cur->file=0;
-
-	 if(file->defined & file->TYPE)
-	 {
-	    if(file->filetype==file->SYMLINK && follow_symlinks)
-	    {
-	       file->filetype=file->NORMAL;
-	       file->defined &= ~(file->SIZE|file->SYMLINK_DEF|file->MODE|file->DATE_UNPREC);
-	       cur->get_size=true;
-	       cur->get_time=true;
-	    }
-
-	    if(file->filetype==file->SYMLINK)
-	    {
-	       // don't need these for symlinks
-	       cur->get_size=false;
-	       cur->get_time=false;
-	    }
-	    else if(file->filetype==file->DIRECTORY)
-	    {
-	       continue; // FIXME: directories need slash in GetInfoArray.
-#if 0
-	       // don't need size for directories
-	       cur->get_size=false;
-	       // and need slash
-#endif
-	    }
-	 }
-
-	 if(cur->get_size || cur->get_time)
-	 {
-	    cur->file=file->name;
-	    if(!cur->get_size)
-	       cur->size=-1;
-	    if(!cur->get_time)
-	       cur->time=(time_t)-1;
-	    cur++;
-	    get_info_cnt++;
-	 }
-      }
-      if(get_info_cnt==0)
-      {
-	 xfree(get_info);
-	 get_info=0;
-	 done=true;
-	 return m;
-      }
-      session->GetInfoArray(get_info,get_info_cnt);
-   }
-   if(get_info)
-   {
-      res=session->Done();
-      if(res==FA::DO_AGAIN)
-	 return m;
-      if(res==FA::IN_PROGRESS)
-	 return m;
-      assert(res==FA::OK);
-      session->Close();
-
-      cur=get_info;
-      for(cur=get_info; get_info_cnt-->0; cur++)
-      {
-	 if(cur->time!=(time_t)-1)
-	    result->SetDate(cur->file,cur->time);
-	 if(cur->size!=-1)
-	    result->SetSize(cur->file,cur->size);
-      }
-      xfree(get_info);
-      get_info=0;
-      done=true;
-      m=MOVED;
-   }
-   return m;
-}
-
-HttpListInfo::HttpListInfo(Http *s)
-{
-   session=s;
-
-   get_info=0;
-   get_info_cnt=0;
-
-   ubuf=0;
-}
-
-HttpListInfo::~HttpListInfo()
-{
-   session->Close();
-   xfree(get_info);
-   Delete(ubuf);
-}
-
-const char *HttpListInfo::Status()
-{
-   static char s[256];
-   if(ubuf && !ubuf->Eof() && session->IsOpen())
-   {
-      sprintf(s,_("Getting directory contents (%lld)"),
-		     (long long)session->GetPos());
-      return s;
-   }
-   if(get_info)
-   {
-      sprintf(s,_("Getting files information (%d%%)"),
-		     session->InfoArrayPercentDone());
-      return s;
-   }
-   return "";
+   xfree(base_href);
+   return set;
 }

@@ -166,4 +166,27 @@ public:
    virtual ~GenericParseGlob();
 };
 
+class GenericParseListInfo : public ListInfo
+{
+protected:
+   FileAccess *session;
+
+   FA::fileinfo *get_info;
+   int get_info_cnt;
+
+   Buffer *ubuf;
+
+   bool get_time_for_dirs;
+   bool can_get_prec_time;
+
+   virtual FileSet *Parse(const char *buf,int len)=0;
+
+public:
+   GenericParseListInfo(FileAccess *session);
+   virtual ~GenericParseListInfo();
+   int Do();
+   const char *Status();
+};
+
+
 #endif//NETACCESS_H

@@ -25,20 +25,15 @@
 
 #include "Http.h"
 
-class HttpListInfo : public ListInfo
+class HttpListInfo : public GenericParseListInfo
 {
-   Http *session;
-
-   FA::fileinfo *get_info;
-   int get_info_cnt;
-
-   Buffer *ubuf;
-
+   FileSet *Parse(const char *buf,int len);
 public:
-   HttpListInfo(Http *session);
-   virtual ~HttpListInfo();
-   int Do();
-   const char *Status();
+   HttpListInfo(Http *session)
+      : GenericParseListInfo(session)
+      {
+	 get_time_for_dirs=false;
+      }
 };
 
 class ParsedURL;
@@ -82,9 +77,7 @@ public:
 class HttpGlob : public GenericParseGlob
 {
    FileSet *Parse(const char *buf,int len);
-   GenericParseGlob *MakeUpDirGlob()
-      { return new HttpGlob(session,dir); }
-
+   GenericParseGlob *MakeUpDirGlob();
 public:
    HttpGlob(FileAccess *s,const char *n_pattern)
       : GenericParseGlob(s,n_pattern) {}
