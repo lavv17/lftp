@@ -875,7 +875,8 @@ CMD(open)
 	    nrc=NetRC::LookupHost(host);
 	    if(nrc)
 	    {
-	       if(nrc->user && !user)
+	       if(nrc->user && !user
+	       || (nrc->user && user && !strcmp(nrc->user,user) && !pass))
 	       {
 		  user=nrc->user;
 		  if(nrc->pass)
