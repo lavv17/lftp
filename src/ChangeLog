@@ -1,3 +1,7 @@
+2003-12-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* HttpDir.cc: fix a compilation error (reported by Albert Chin).
+
 2003-12-11  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc: handle the case when put retry seeks to the eof.

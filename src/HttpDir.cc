@@ -566,7 +566,7 @@ static bool try_wwwoffle_ftp(file_info &info,const char *buf,
       else if(info.perms[0]=='l')
       {
 	 info.is_sym_link=true;
-	 char *p=strstr(ext,"-&gt; ");
+	 const char *p=strstr(ext,"-&gt; ");
 	 if(p)
 	 {
 	    info.sym_link=xstrdup(p+6);
