@@ -37,6 +37,7 @@ class SFtp : public NetAccess
    const char *lc_to_utf8(const char *);
    const char *utf8_to_lc(const char *);
 
+public:
 enum packet_type {
    SSH_FXP_INIT     =1,
    SSH_FXP_VERSION  =2,
@@ -112,6 +113,7 @@ enum sftp_status_t {
    SSH_FX_NO_MEDIA           =13
 };
 
+private:
    enum state_t
    {
       DISCONNECTED,
@@ -162,6 +164,7 @@ enum sftp_status_t {
    const char *SkipHome(const char *path);
    const char *WirePath(const char *path);
 
+public:
    enum unpack_status_t
    {
       UNPACK_SUCCESS=0,
@@ -169,6 +172,7 @@ enum sftp_status_t {
       UNPACK_PREMATURE_EOF=-2,
       UNPACK_NO_DATA_YET=1
    };
+private:
    class Packet
    {
       static bool is_valid_reply(int p)
