@@ -1,3 +1,7 @@
+2001-03-12	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document mirror -P.
+
 2001-02-08	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document ftp:bind-data-socket.
