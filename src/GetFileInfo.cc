@@ -1,5 +1,6 @@
 #include <config.h>
 #include <errno.h>
+#include <assert.h>
 
 #include "GetFileInfo.h"
 #include "misc.h"
@@ -55,13 +56,13 @@ int GetFileInfo::Do()
 	 return MOVED;
       }
 
-      if(!tried_dir) 
+      if(!tried_dir)
       {
 	 /* First, try to treat the path as a directory. */
 	 tried_dir=true;
 	 realdir = xstrdup(dir);
       }
-      else if(!tried_file) 
+      else if(!tried_file)
       {
 	 /* No need to save the initial directory, since we only chdir()
 	  * twice when the first fails (hence leaving our cwd intact). */
@@ -72,7 +73,7 @@ int GetFileInfo::Do()
 	 /* If the path ends with a slash, and we're showing directories, remove it. */
 	 if(*realdir && realdir[strlen(realdir)-1] == '/')
 	    realdir[strlen(realdir)-1] = 0;
-	 
+
 	 char *slash = strrchr(realdir, '/');
 	 if(!slash)
 	    realdir=xstrdup(""); /* file with no path */
@@ -90,7 +91,7 @@ int GetFileInfo::Do()
 	 return STALL;
       if(res<0)
       {
-	 /* Failed.  Save the error, then go back and try to CD again. 
+	 /* Failed.  Save the error, then go back and try to CD again.
 	  * Only save the first error, so error texts contain the full
 	  * path. */
 	 if(!saved_error_text)
@@ -98,7 +99,7 @@ int GetFileInfo::Do()
 	 state=CHANGE_DIR;
 	 return MOVED;
       }
-      
+
       /* Get a listing: */
       li=session->MakeListInfo();
       if(follow_symlinks) li->FollowSymlinks();
@@ -119,7 +120,7 @@ int GetFileInfo::Do()
 
       state=DONE;
 
-      /* Got the list.  Steal it from the listinfo: */ 
+      /* Got the list.  Steal it from the listinfo: */
       result=li->GetResult();
       Delete(li); li=0;
 
@@ -128,7 +129,7 @@ int GetFileInfo::Do()
 	 char *filename = xstrdup(basename_ptr(dir));
 	 if(filename[strlen(filename)-1] == '/')
 	    filename[strlen(filename)-1] = 0;
-	 
+
 	 /* Find the file with our filename: */
 	 FileInfo *file = result->FindByName(filename);
 	 xfree(filename);
@@ -164,8 +165,8 @@ int GetFileInfo::Do()
       return MOVED;
 
    case DONE:
-      if(done) 
-	 return STALL; 
+      if(done)
+	 return STALL;
 
       done=true;
       session->Chdir(origdir, false);
@@ -181,4 +182,3 @@ const char *GetFileInfo::Status()
 
    return session->CurrentStatus();
 }
-
