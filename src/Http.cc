@@ -668,13 +668,16 @@ void Http::HandleHeaderLine(const char *name,const char *value)
    }
    if(!strcasecmp(name,"Transfer-Encoding"))
    {
-      if(!strcasecmp(value,"chunked"))
+      if(!strcasecmp(value,"identity"))
+	 return;
+      if(!strcasecmp(value,"chunked"));
       {
 	 chunked=true;
 	 chunk_size=-1;	// to indicate "before first chunk"
 	 chunk_pos=0;
 	 chunked_trailer=false;
       }
+      // handle gzip?
       return;
    }
    if(!strcasecmp(name,"Accept-Ranges"))
@@ -751,7 +754,6 @@ int Http::Do()
    int res;
    const char *buf;
    int len;
-   Buffer *data_buf;
    int count;
 
    // check if idle time exceeded
@@ -1235,7 +1237,6 @@ int Http::Do()
       state=RECEIVING_BODY;
       m=MOVED;
    case RECEIVING_BODY:
-      data_buf=recv_buf;
       if(recv_buf->Error() || send_buf->Error())
       {
 	 if(send_buf->Error())
@@ -1250,7 +1251,7 @@ int Http::Do()
 	 recv_buf->Suspend();
 	 Timeout(1000);
       }
-      else if(data_buf->Size()>=max_buf)
+      else if(recv_buf->Size()>=max_buf)
       {
 	 recv_buf->Suspend();
 	 m=MOVED;
@@ -1260,7 +1261,7 @@ int Http::Do()
 	 recv_buf->Resume();
 	 BumpEventTime(send_buf->EventTime());
 	 BumpEventTime(recv_buf->EventTime());
-	 if(data_buf->Size()>0 || (data_buf->Size()==0 && recv_buf->Eof()))
+	 if(recv_buf->Size()>0 || (recv_buf->Size()==0 && recv_buf->Eof()))
 	    m=MOVED;
 	 else
 	 {
