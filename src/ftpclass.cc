@@ -102,6 +102,7 @@ static ResDecl
    res_force_skey	("ftp:force-skey",     "no", ResMgr::BoolValidate,0),
    res_anon_user	("ftp:anon-user",      "anonymous",0,0),
    res_anon_pass	("ftp:anon-pass",      0,    0,0),
+   res_socket_buffer	("ftp:socket-buffer",  "0",  ResMgr::UNumberValidate,0),
    res_address_verify	("ftp:address-verify", "yes",ResMgr::BoolValidate,0);
 
 void  Ftp::ClassInit()
@@ -112,7 +113,6 @@ void  Ftp::ClassInit()
       ResMgr::Set(res_anon_pass.name,0,DefaultAnonPass());
 }
 
-static int  one=1;
 Ftp *Ftp::ftp_chain=0;
 
 static bool NotSerious(int e)
@@ -171,11 +171,11 @@ bool Ftp::data_address_ok()
    return true;
 
 wrong_port:
-   DebugPrint(_("Data connection peer has wrong port number"),0);
+   DebugPrint("**** ",_("Data connection peer has wrong port number"),0);
    return false;
 
 address_mismatch:
-   DebugPrint(_("Data connection peer has mismatching address"),0);
+   DebugPrint("**** ",_("Data connection peer has mismatching address"),0);
    return false;
 }
 
@@ -561,6 +561,7 @@ void Ftp::InitFtp()
    allow_skey=true;
    force_skey=false;
    verify_data_address=true;
+   socket_buffer=0;
 
    RespQueue=0;
    RQ_alloc=0;
@@ -716,6 +717,20 @@ void  Ftp::GetBetterConnection(int level)
    }
 }
 
+void  Ftp::SetSocketBuffer(int sock)
+{
+   if(socket_buffer==0)
+      return;
+   setsockopt(sock,SOL_SOCKET,SO_SNDBUF,(char*)&socket_buffer,sizeof(socket_buffer));
+   setsockopt(sock,SOL_SOCKET,SO_RCVBUF,(char*)&socket_buffer,sizeof(socket_buffer));
+}
+
+void  Ftp::SetKeepAlive(int sock)
+{
+   static int one=1;
+   setsockopt(sock,SOL_SOCKET,SO_KEEPALIVE,(char*)&one,sizeof(one));
+}
+
 int   Ftp::Do()
 {
    char	 *str =(char*)alloca(xstrlen(cwd)+xstrlen(hostname)+xstrlen(proxy)+256);
@@ -814,7 +829,8 @@ int   Ftp::Do()
       control_sock=socket(PF_INET,SOCK_STREAM,IPPROTO_TCP);
       if(control_sock==-1)
 	 goto system_error;
-      setsockopt(control_sock,SOL_SOCKET,SO_KEEPALIVE,(char *)&one,sizeof(one));
+      SetKeepAlive(control_sock);
+      SetSocketBuffer(control_sock);
       fcntl(control_sock,F_SETFL,O_NONBLOCK);
       fcntl(control_sock,F_SETFD,FD_CLOEXEC);
 
@@ -970,7 +986,8 @@ int   Ftp::Do()
 	    goto system_error;
 	 fcntl(data_sock,F_SETFL,O_NONBLOCK);
 	 fcntl(data_sock,F_SETFD,FD_CLOEXEC);
-	 setsockopt(data_sock,SOL_SOCKET,SO_KEEPALIVE,(char *)&one,sizeof(one));
+	 SetKeepAlive(data_sock);
+	 SetSocketBuffer(data_sock);
       }
 
       old_type=type;
@@ -1443,7 +1460,12 @@ void  Ftp::ReceiveResp()
 	    if(strlen(line)>=3 && isdigit(line[0]))
 	       sscanf(line,"%3d",&code);
 
-	    DebugPrint("<--- ",line,(code==220||code==230)?0:1);
+	    int pri=1;
+	    if(code==220 || code==230
+	    || (code==0 && (multiline_code==220 || multiline_code==230)))
+	       pri=0;
+
+	    DebugPrint("<--- ",line,pri);
 	    if(!RespQueueIsEmpty() && RespQueue[RQ_head].log_resp)
 	    {
 	       LogResp(line);
@@ -2369,6 +2391,7 @@ void Ftp::Reconfig()
    allow_skey = res_allow_skey.Query(c);
    force_skey = res_force_skey.Query(c);
    verify_data_address = res_address_verify.Query(c);
+   socket_buffer = res_socket_buffer.Query(c);
 
    xfree(anon_user);
    anon_user=xstrdup(res_anon_user.Query(c));

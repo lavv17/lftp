@@ -218,6 +218,10 @@ class Ftp : public FileAccess
    bool force_skey;
    const char *make_skey_reply();
 
+   int	 socket_buffer;
+   void	 SetSocketBuffer(int sock);
+   static void SetKeepAlive(int sock);
+
    bool data_address_ok();
 
 public:
