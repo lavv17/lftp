@@ -65,5 +65,9 @@ static inline char to_ascii_lower(char ch)
 {
    return is_ascii_upper(ch) ? ch-'A'+'a' : ch;
 }
+static inline char to_ascii_upper(char ch)
+{
+   return is_ascii_lower(ch) ? ch-'a'+'A' : ch;
+}
 
 #endif//ASCII_CTYPE_H
