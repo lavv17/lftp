@@ -698,7 +698,12 @@ void FileAccess::Chdir(const char *path,bool verify)
    else
    {
       if(cwd[0])
-	 sprintf(newcwd,"%s/%s",cwd,path);
+      {
+	 if(cwd[strlen(cwd)-1]=='/')
+	    sprintf(newcwd,"%s%s",cwd,path);
+	 else
+	    sprintf(newcwd,"%s/%s",cwd,path);
+      }
       else
 	 strcpy(newcwd,path);
    }
@@ -708,10 +713,7 @@ void FileAccess::Chdir(const char *path,bool verify)
    if(verify)
       Open(newcwd,CHANGE_DIR);
    else
-   {
-      xfree(cwd);
-      cwd=xstrdup(newcwd);
-   }
+      SetCwd(newcwd);
 }
 
 void FileAccess::Chmod(const char *file,int m)
