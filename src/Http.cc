@@ -155,7 +155,7 @@ void Http::Disconnect()
       sock=-1;
    }
    if(((mode==STORE && state!=DONE && real_pos>0)
-       || (post && state==RECEIVING_BODY || state==RECEIVING_HEADER))
+       || (post && (state==RECEIVING_BODY || state==RECEIVING_HEADER)))
    && !Error())
    {
       if(last_method && !strcmp(last_method,"POST"))
