@@ -110,32 +110,27 @@ class CmdExec : public SessionJob
    }
       builtin;
 
-   static void debug_callback(char *);
-
    CmdFeeder *feeder;
 
    char *old_cwd;
    char *old_lcwd;
-
-   FILE *debug_file;
-   void CloseDebug();
-   int  OpenDebug(const char *file);
 
 public:
    void FeedCmd(const char *c);
    void PrependCmd(const char *c);
    void ExecParsed(ArgV *a,FDStream *o=0,bool b=false);
 
-   in_CMD(alias); in_CMD(anon);  in_CMD(cd);      in_CMD(debug);
-   in_CMD(exit);  in_CMD(get);   in_CMD(help);    in_CMD(jobs);
-   in_CMD(kill);  in_CMD(lcd);   in_CMD(ls);      in_CMD(mget);
-   in_CMD(open);  in_CMD(pwd);   in_CMD(put);     in_CMD(set);
-   in_CMD(shell); in_CMD(source);in_CMD(user);    in_CMD(rm);
-   in_CMD(wait);  in_CMD(site);  in_CMD(subsh);   in_CMD(mirror);
-   in_CMD(mput);  in_CMD(mv);	 in_CMD(cat);     in_CMD(cache);
-   in_CMD(mkdir); in_CMD(quote); in_CMD(scache);  in_CMD(mrm);
-   in_CMD(ver);	  in_CMD(close); in_CMD(bookmark);in_CMD(lftp);
-   in_CMD(echo);  in_CMD(suspend);
+   in_CMD(alias); in_CMD(anon);   in_CMD(cd);      in_CMD(debug);
+   in_CMD(exit);  in_CMD(get);    in_CMD(help);    in_CMD(jobs);
+   in_CMD(kill);  in_CMD(lcd);    in_CMD(ls);      in_CMD(mget);
+   in_CMD(open);  in_CMD(pwd);    in_CMD(put);     in_CMD(set);
+   in_CMD(shell); in_CMD(source); in_CMD(user);    in_CMD(rm);
+   in_CMD(wait);  in_CMD(site);   in_CMD(subsh);   in_CMD(mirror);
+   in_CMD(mput);  in_CMD(mv);	  in_CMD(cat);     in_CMD(cache);
+   in_CMD(mkdir); in_CMD(quote);  in_CMD(scache);  in_CMD(mrm);
+   in_CMD(ver);	  in_CMD(close);  in_CMD(bookmark);in_CMD(lftp);
+   in_CMD(echo);  in_CMD(suspend);in_CMD(ftpcopy); in_CMD(sleep);
+   in_CMD(at);
 
    static const char * const var_list[];
 
@@ -183,11 +178,6 @@ public:
    void vfprintf(FILE *file,const char *f,va_list v);
 
    void SetInteractive(bool i);
-
-
-   void Fg(),Bg();
-
-   static CmdExec *debug_shell;	 // to be zapped
 };
 
 #endif//CMDEXEC_H

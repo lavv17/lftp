@@ -48,6 +48,8 @@
 #include "MirrorJob.h"
 #include "mvJob.h"
 #include "pgetJob.h"
+#include "FtpCopy.h"
+#include "SleepJob.h"
 
 #include "misc.h"
 #include "alias.h"
@@ -59,8 +61,13 @@
 #include "FileFeeder.h"
 #include "xalloca.h"
 #include "bookmark.h"
+#include "log.h"
 
 #include "confpaths.h"
+
+#define MINUTE (60)
+#define HOUR   (60*MINUTE)
+#define DAY    (24*HOUR)
 
 Bookmark lftp_bookmarks;
 History	 cwd_history;
@@ -79,6 +86,7 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
          "If no argument is given the current aliases are listed.\n")},
    {"anon",    &do_anon,   "anon",
 	 N_("anon - login anonymously (by default)\n")},
+   {"at",      &do_at},
    {"bookmark",&do_bookmark,N_("bookmark [SUBCMD]"),
 	 N_("bookmark command controls bookmarks\n\n"
 	 "The following subcommands are recognized:\n"
@@ -119,6 +127,7 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
 	 "If no jobs active, the code is passed to operating system as lftp\n"
 	 "termination status. If omitted, exit code of last command is used.\n")},
    {"fg",      &do_wait,	   0,"wait"},
+   {"ftpcopy", &do_ftpcopy, 0},
    {"get",     &do_get,	   N_("get [OPTS] <rfile> [-o <lfile>]"),
 	 N_("Retrieve remote file <rfile> and store it to local file <lfile>.\n"
 	 " -o <lfile> specifies local file name (default - basename of rfile)\n"
@@ -241,6 +250,7 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
    {"site",    &do_site,   N_("site <site_cmd>"),
 	 N_("Execute site command <site_cmd> and output the result\n"
 	 "You can redirect its output\n")},
+   {"sleep",   &do_sleep},
    {"source",  &do_source, N_("source <file>"),
 	 N_("Execute commands recorded in file <file>\n")},
    {"suspend", &do_suspend},
@@ -721,30 +731,13 @@ CMD(exit)
    return 0;
 }
 
-CmdExec *CmdExec::debug_shell=0;
-void CmdExec::debug_callback(char *msg)
-{
-   if(!debug_shell)
-      return;
-   if(debug_shell->status_line==0)
-      return;
-   if(isatty(1) && tcgetpgrp(1)!=getpgrp())
-      return;
-   debug_shell->status_line->WriteLine(msg);
-   debug_shell->block+=NoWait(); // force resched
-}
-
 CMD(debug)
 {
    const char *op=args->a0();
-   void	 (*new_cb)(char *)=&debug_callback;
    int	 new_dlevel=9;
    char	 *debug_file_name=0;
-
-   if(!debug_shell)
-      return 0;
-
-   debug_shell->CloseDebug();
+   int 	 fd=-1;
+   bool  enabled=true;
 
    int opt;
    while((opt=args->getopt("o:"))!=EOF)
@@ -753,41 +746,59 @@ CMD(debug)
       {
       case('o'):
 	 debug_file_name=optarg;
-	 if(debug_shell->OpenDebug(debug_file_name)==-1)
+	 if(fd!=-1)
+	    close(fd);
+	 fd=open(debug_file_name,O_WRONLY|O_CREAT|O_APPEND,0600);
+	 if(fd==-1)
+	 {
+	    perror(debug_file_name);
 	    return 0;
+	 }
+	 fcntl(fd,F_SETFL,O_NONBLOCK);
+	 fcntl(fd,F_SETFD,FD_CLOEXEC);
 	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),op);
 	 return 0;
       }
    }
+
+   if(fd==-1)
+      Log::global->SetOutput(2,false);
+   else
+      Log::global->SetOutput(fd,true);
+
    char *a=args->getcurr();
    if(a)
    {
       if(!strcasecmp(args->getarg(1),"off"))
       {
-	 debug_shell->CloseDebug();
-	 new_cb=0;
-	 new_dlevel=0;
+	 enabled=false;
       }
       else
       {
 	 new_dlevel=atoi(args->getarg(1));
+	 enabled=true;
       }
    }
 
-   if(debug_shell->debug_file)
-      new_cb=0;
+   if(enabled)
+   {
+      Log::global->Enable();
+      Log::global->SetLevel(new_dlevel);
+   }
+   else
+      Log::global->Disable();
+
 
    if(interactive)
    {
-      if(new_cb || debug_shell->debug_file)
+      if(enabled)
 	 printf(_("debug level is %d, output goes to %s\n"),new_dlevel,
-		     debug_shell->debug_file?debug_file_name:"<stdout>");
+		     debug_file_name?debug_file_name:"<stderr>");
       else
 	 printf(_("debug is off\n"));
    }
-   FileAccess::SetDebug(debug_shell->debug_file,new_dlevel,new_cb);
    exit_code=0;
    return 0;
 }
@@ -1246,11 +1257,11 @@ time_t decode_delay(const char *s)
    if(n==1)
       ch='s';
    else if(ch=='m')
-      prec*=60;
+      prec*=MINUTE;
    else if(ch=='h')
-      prec*=60*60;
+      prec*=HOUR;
    else if(ch=='d')
-      prec*=24*60*60;
+      prec*=DAY;
    else
       return -1;
    return prec;
@@ -1305,7 +1316,7 @@ CMD(mirror)
    if(exclude)
       exclude[0]=0;
 
-   time_t prec=12*60*60; // 12 hours
+   time_t prec=12*HOUR;
    bool	 create_remote_dir=false;
    int	 verbose=0;
    const char *newer_than=0;
@@ -1790,4 +1801,76 @@ CMD(suspend)
 {
    kill(getpid(),SIGSTOP);
    return 0;
+}
+
+CMD(ftpcopy)
+{
+   Job *j=new FtpCopy(args,session);
+   args=0;
+   return j;
+}
+
+CMD(sleep)
+{
+   if(args->count()!=2)
+   {
+      eprintf(_("%s: argument required\n"),args->a0());
+      return 0;
+   }
+   char *t=args->getarg(1);
+   if(!isdigit((unsigned char)*t))
+   {
+      eprintf(_("%s: %s - not a number\n"),args->a0(),t);
+      return 0;
+   }
+   time_t when=time(0);
+   int delay=atoi(t);
+   char c='s';
+   if(strlen(t)>1)
+      c=t[strlen(t)-1];
+   switch(c)
+   {
+   case 'm':
+      delay*=MINUTE;
+      break;
+   case 'h':
+      delay*=HOUR;
+      break;
+   case 'd':
+      delay*=DAY;
+      break;
+   }
+   when+=delay;
+   return new SleepJob(when);
+}
+
+#include "parsetime-i.h"
+CMD(at)
+{
+   int count=1;
+   int cmd_start=0;
+   for(;;)
+   {
+      char *arg=args->getnext();
+      if(arg==0)
+	 break;
+      if(!strcmp(arg,"--"))
+      {
+	 cmd_start=count+1;
+	 break;
+      }
+      count++;
+   }
+
+   char **av=(char**)xmemdup(args->GetV(),(count+1)*sizeof(char**));
+   av[count]=0;
+   time_t when=parsetime(count-1,av+1);
+   xfree(av);
+
+   if(when==0)
+      return 0;
+
+   char *cmd = cmd_start ? args->Combine(cmd_start) : 0;
+   FileAccess *s = cmd ? Clone() : 0;
+   return new SleepJob(when, s, cmd);
 }

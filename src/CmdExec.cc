@@ -544,15 +544,10 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
    start_time=0;
    old_cwd=0;
    old_lcwd=0;
-
-   debug_file=0;
 }
 
 CmdExec::~CmdExec()
 {
-   CloseDebug();
-   if(debug_shell==this)
-      debug_shell=0; // unfortunately, we lose debug with this shell
    free_used_aliases();
    xfree(cmd);
    if(args)
@@ -782,39 +777,4 @@ void CmdExec::SetInteractive(bool i)
       SignalHook::Restore(SIGTSTP);
    }
    interactive=i;
-}
-
-void CmdExec::CloseDebug()
-{
-   if(debug_file)
-   {
-      fclose(debug_file);
-      debug_file=0;
-   }
-}
-
-int CmdExec::OpenDebug(const char *file)
-{
-   CloseDebug();
-   debug_file=fopen(optarg,"a");
-   if(!debug_file)
-   {
-      perror(optarg);
-      return -1;
-   }
-   fcntl(fileno(debug_file),F_SETFD,FD_CLOEXEC);
-   return 0;
-}
-
-void CmdExec::Fg()
-{
-   super::Fg();
-   if(waiting)
-      waiting->Fg();
-}
-void CmdExec::Bg()
-{
-   if(waiting)
-      waiting->Bg();
-   super::Bg();
 }
