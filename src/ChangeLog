@@ -7,6 +7,7 @@
 	  NetAccess.h, Resolver.cc, SMTask.cc, SMTask.h, SleepJob.cc,
 	  Speedometer.cc, Speedometer.h, StatusLine.cc, StatusLine.h,
 	  complete.cc, ftpclass.cc, misc.cc, misc.h: use new time classes.
+	* commands.cc: (builtin_lcd) don't assume cwd!=0.
 
 2001-11-05  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -507,7 +507,7 @@ Job *CmdExec::builtin_lcd()
    SaveCWD();  // this allocates cwd again
 
    if(interactive)
-      eprintf(_("lcd ok, local cwd=%s\n"),cwd);
+      eprintf(_("lcd ok, local cwd=%s\n"),cwd?cwd:"?");
 
    exit_code=0;
    return 0;

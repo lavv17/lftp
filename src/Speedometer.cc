@@ -128,6 +128,7 @@ const char *Speedometer::GetETAStrFromTime(long eta)
    const char minute_c=_("minute")[0];
    const char second_c=_("second")[0];
 
+   // for translator: Estimated Time of Arrival.
    const char *tr_eta=_("eta:");
 
    if(terse)
