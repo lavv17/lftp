@@ -171,8 +171,6 @@ int   FtpGlob::Do()
       inbuf+=res;
    }
 
-   char *name=(char*)alloca(inbuf-(ptr-buf));
-
    while((nl=(char*)memchr(ptr,'\n',inbuf-(ptr-buf))))
    {
       int len=nl-ptr;
@@ -192,12 +190,12 @@ int   FtpGlob::Do()
 	    ptr++;
 	    len--;
 	 }
-
-	 strncpy(name,ptr,len);
-	 name[len]=0;
       }
 
-      add(ptr,len);
+      if(from_cache && use_long_list)
+	 add_force(ptr,len);
+      else
+	 add(ptr,len);
 
       ptr=nl+1;
    }

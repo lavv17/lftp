@@ -644,14 +644,6 @@ int Http::Do()
 
 		  return MOVED;
 	       }
-	       if(mode==CHANGE_DIR)
-	       {
-		  xfree(cwd);
-		  cwd=xstrdup(file);
-		  Disconnect();
-		  state=DONE;
-		  return MOVED;
-	       }
 	    }
 	    else
 	    {
@@ -686,6 +678,14 @@ int Http::Do()
 	    sprintf(err,"%s (%s)",status+status_consumed,file);
 	 Disconnect();
 	 SetError(NO_FILE,err);
+	 return MOVED;
+      }
+      if(mode==CHANGE_DIR)
+      {
+	 xfree(cwd);
+	 cwd=xstrdup(file);
+	 Disconnect();
+	 state=DONE;
 	 return MOVED;
       }
 
@@ -782,7 +782,7 @@ int Http::Read(void *buf,int size)
 	 }
 	 return 0;
       }
-      if(bytes_received>=body_size)
+      if(body_size>=0 && bytes_received>=body_size)
       {
 	 Disconnect();
 	 return 0; // all received

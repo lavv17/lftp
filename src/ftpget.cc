@@ -32,7 +32,15 @@
 #include "LsJob.h"
 #include "GetPass.h"
 #include "log.h"
-#include "ftpclass.h"
+#include "FileAccess.h"
+#include "Resolver.h"
+#include "resource.h"
+#include "SignalHook.h"
+#include "ResMgr.h"
+#include "modconfig.h"
+#ifndef MODULE_PROTO_FTP
+# include "ftpclass.h"
+#endif
 #ifdef HAVE_LOCALE_H
 # include <locale.h>
 #endif
@@ -61,7 +69,6 @@ void  PrintUsage(int p)
 	  "-v  --verbose      verbose (lots of output)\n"
 	  "    --async-mode   use asynchronous mode (faster)\n"
 	  "    --sync-mode    use synchronous mode (compatible with bugs)\n"
-	  "    --norest-mode  don't use REST command\n"
 	  "\n"
 	  "-o  output to local file `local' (default - base name of filename)\n")
       );
@@ -81,7 +88,6 @@ int   main(int argc,char **argv)
    int   verbose=0;
    int   cont=0;
    char  *host_name;
-   int	 flags=0;
 
    enum
    {
@@ -96,7 +102,6 @@ int   main(int argc,char **argv)
    {
       {"help",no_argument,0,HELP_OPT},
       {"version",no_argument,0,VERSION_OPT},
-      {"norest-mode",no_argument,0,NOREST_MODE_OPT},
       {"sync-mode",no_argument,0,SYNC_MODE_OPT},
       {"async-mode",no_argument,0,ASYNC_MODE_OPT},
       {"continue",no_argument,0,'c'},
@@ -112,9 +117,18 @@ int   main(int argc,char **argv)
    bindtextdomain (PACKAGE, LOCALEDIR);
    textdomain (PACKAGE);
 
+   resources_init(); // resources must be inited before other classes
+
+   SignalHook::ClassInit();
+   Resolver::ClassInit();
+
+#ifndef MODULE_PROTO_FTP
+   Ftp::ClassInit();
+#endif
+
    program=argv[0];
 
-   Ftp *f=new Ftp;
+   FileAccess *f=FileAccess::New("ftp");
 
    while((c=getopt_long(argc,argv,"+p:u:lqvc",ftpget_options,0))!=-1)
    {
@@ -151,13 +165,10 @@ int   main(int argc,char **argv)
          cont=1;
          break;
       case(SYNC_MODE_OPT):
-	 f->SetFlag(f->SYNC_MODE,1);
+	 ResMgr::Set("ftp:sync-mode","yes",0);
 	 break;
       case(ASYNC_MODE_OPT):
-	 f->SetFlag(f->SYNC_MODE,0);
-	 break;
-      case(NOREST_MODE_OPT):
-	 flags|=Ftp::NOREST_MODE;
+	 ResMgr::Set("ftp:sync-mode","no",0);
 	 break;
       case(HELP_OPT):
 	 PrintUsage(0);
@@ -181,7 +192,6 @@ int   main(int argc,char **argv)
       Log::global->SetLevel(5);
       Log::global->Enable();
    }
-   f->SetFlag(flags,1);
 
    f->Connect(host_name=argv[optind++],port);
    if(user)

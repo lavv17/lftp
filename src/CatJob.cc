@@ -87,42 +87,39 @@ int   CatJob::Do()
       {
 	 char *a=args->getnext();
 	 if(!a)
+	 {
+	    delete args;
+	    args=0;
+	    args_globbed->rewind();
+	    NextFile();
+	    m=MOVED;
 	    break;
+	 }
 	 rg=session->MakeGlob(a);
 	 if(!rg)
 	    rg=new NoGlob(a);
-	 while(!rg->Done());
+	 while(rg->Do()==MOVED);
 	 m=MOVED;
       }
-      if(!rg)
-      {
-	 delete args;
-	 args=0;
-	 args_globbed->rewind();
-	 NextFile();
-	 m=MOVED;
-      }
+
+      if(!rg->Done())
+	 return m;
+
+      char **files,**i;
+      m=MOVED;
+
+      files=rg->GetResult();
+      if(rg->Error())
+	 eprintf("rglob: %s\n",rg->ErrorText());
+      else if(!files)
+	 eprintf(_("%s: no files found\n"),rg->GetPattern());
       else
       {
-	 if(!rg->Done())
-	    return m;
-
-	 char **files,**i;
-	 m=MOVED;
-
-	 files=rg->GetResult();
-	 if(rg->Error())
-	    eprintf("rglob: %s\n",rg->ErrorText());
-	 else if(!files)
-	    eprintf(_("%s: no files found\n"),rg->GetPattern());
-	 else
-	 {
-	    for(i=files; *i; i++)
-	       args_globbed->Append(*i);
-	 }
-	 delete rg;
-	 rg=0;
+	 for(i=files; *i; i++)
+	    args_globbed->Append(*i);
       }
+      delete rg;
+      rg=0;
    }
 
    if(filter_wait)

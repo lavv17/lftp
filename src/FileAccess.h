@@ -298,6 +298,7 @@ protected:
    int	 list_size;
    int	 list_alloc;
    void	 add(const char *ptr,int len);
+   void	 add_force(const char *ptr,int len);
    void	 add(const char *ptr) { add(ptr,strlen(ptr)); }
    void	 free_list();
 public:

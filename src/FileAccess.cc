@@ -879,12 +879,8 @@ void Glob::free_list()
    list_size=0;
 }
 
-void Glob::add(const char *ptr,int len)
+void Glob::add_force(const char *ptr,int len)
 {
-   if(pattern[0]!=0
-   && fnmatch(pattern, ptr, FNM_PATHNAME|FNM_PERIOD)!=0)
-      return; // unmatched
-
    // insert new file name into list
    if(list_size>=list_alloc-1)
    {
@@ -896,6 +892,18 @@ void Glob::add(const char *ptr,int len)
    memcpy(list[list_size],ptr,len);
    list[list_size][len]=0;
    list[++list_size]=0;
+}
+void Glob::add(const char *ptr,int len)
+{
+   char *s=(char*)alloca(len+1);
+   memcpy(s,ptr,len);
+   s[len]=0;
+
+   if(pattern[0]!=0
+   && fnmatch(pattern, s, FNM_PATHNAME|FNM_PERIOD)!=0)
+      return; // unmatched
+
+   add_force(ptr,len);
 }
 
 bool Glob::HasWildcards(const char *s)
