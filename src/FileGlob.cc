@@ -29,7 +29,7 @@
 #include <fnmatch.h>
 
 #include "xalloca.h"
-#include "Glob.h"
+#include "FileGlob.h"
 #include "xmalloc.h"
 #include "misc.h"
 #include "url.h"

@@ -36,7 +36,7 @@
 #include "xalloca.h"
 #include "url.h"
 #include "FtpListInfo.h"
-#include "Glob.h"
+#include "FileGlob.h"
 #include "FtpDirList.h"
 #include "log.h"
 #include "FileCopyFtp.h"

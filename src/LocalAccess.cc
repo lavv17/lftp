@@ -564,7 +564,7 @@ int LocalListInfo::Do()
    return MOVED;
 }
 
-#include "Glob.h"
+#include "FileGlob.h"
 class LocalGlob : public Glob
 {
    const char *cwd;

@@ -1668,7 +1668,7 @@ DirList *Http::MakeDirList(ArgV *args)
 {
    return new HttpDirList(args,this);
 }
-#include "Glob.h"
+#include "FileGlob.h"
 Glob *Http::MakeGlob(const char *pattern)
 {
    return new GenericGlob(this,pattern);

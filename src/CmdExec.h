@@ -31,7 +31,7 @@
 #include "alias.h"
 #include "history.h"
 #include "bookmark.h"
-#include "Glob.h"
+#include "FileGlob.h"
 
 class QueueFeeder;
 class LocalDirectory;

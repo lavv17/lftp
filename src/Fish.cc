@@ -1139,7 +1139,7 @@ DirList *Fish::MakeDirList(ArgV *args)
 {
    return new FishDirList(args,this);
 }
-#include "Glob.h"
+#include "FileGlob.h"
 Glob *Fish::MakeGlob(const char *pattern)
 {
    return new GenericGlob(this,pattern);

@@ -44,7 +44,7 @@ CDECL_END
 #include "ArgV.h"
 #include "ColumnOutput.h"
 #include "DirColors.h"
-#include "Glob.h"
+#include "FileGlob.h"
 
 
 ResDecl	res_default_cls         ("cmd:cls-default",  "-F", FileSetOutput::ValidateArgv,0),
