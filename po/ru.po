@@ -1648,7 +1648,7 @@ msgstr "`%s', принято %llu из %llu (%d%%) %s%s"
 #. Operators: = > < ! | %
 #: src/plural.c:110
 msgid "=1 =0|>1"
-msgstr "%100!11%10=1 %100>1<5|>20%10>1<5"
+msgstr "%100!11%10=1 %100>1<5|%100>20%10>1<5"
 
 #: src/rmJob.cc:40
 #, c-format

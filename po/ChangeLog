@@ -1,3 +1,7 @@
+2001-04-03	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: fix plural rule for russian. What a shame...
+
 2001-03-02	Moritz Moeller-Herrmann <mmh@gmx.net>
 
 	* de.po: update
