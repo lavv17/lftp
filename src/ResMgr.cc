@@ -597,16 +597,6 @@ ResDecl::ResDecl(const char *a_name,const char *a_defvalue,
    closure_valid=a_closure_valid;
    next=ResMgr::type_chain;
    ResMgr::type_chain=this;
-   if(defvalue && val_valid)
-   {
-      const char *error=(*val_valid)(&defvalue);
-      if(error)
-	 fprintf(stderr,"Default value for %s is invalid: %s\n",name,error);
-   }
-#if 0
-   if(defvalue)
-      ResMgr::Set(name,0,defvalue);
-#endif
 }
 ResDecl::~ResDecl()
 {
