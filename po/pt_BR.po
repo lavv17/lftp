@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
-"POT-Creation-Date: 2000-03-28 19:17+0400\n"
+"POT-Creation-Date: 2000-03-29 15:37+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -82,7 +82,7 @@ msgstr "Falha no acesso: %s"
 msgid "File cannot be accessed"
 msgstr "Arquivo não pode ser acessado"
 
-#: src/FileAccess.cc:316 src/ftpclass.cc:2986 src/ftpclass.cc:2996
+#: src/FileAccess.cc:316 src/ftpclass.cc:2983 src/ftpclass.cc:2993
 msgid "Not connected"
 msgstr "Não conectado"
 
@@ -99,7 +99,7 @@ msgstr "Erro fatal"
 msgid "Store failed - you have to reput"
 msgstr "Falha no armazenamento - você terá que reenviar"
 
-#: src/FileAccess.cc:329 src/ftpclass.cc:3028
+#: src/FileAccess.cc:329 src/ftpclass.cc:3025
 msgid "Login failed"
 msgstr "Falha na conexão"
 
@@ -282,7 +282,7 @@ msgstr ""
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr ""
 
-#: src/Http.cc:1151 src/Resolver.cc:189 src/ftpclass.cc:2991
+#: src/Http.cc:1151 src/Resolver.cc:189 src/ftpclass.cc:2988
 msgid "Resolving host address..."
 msgstr ""
 
@@ -1267,76 +1267,76 @@ msgstr ""
 msgid "Closing control socket"
 msgstr ""
 
-#: src/ftpclass.cc:2107
+#: src/ftpclass.cc:2104
 msgid "Closing data socket"
 msgstr ""
 
-#: src/ftpclass.cc:2757
+#: src/ftpclass.cc:2754
 msgid "saw file size in response"
 msgstr ""
 
-#: src/ftpclass.cc:2766
+#: src/ftpclass.cc:2763
 msgid "remote end closes connection"
 msgstr ""
 
-#: src/ftpclass.cc:2772
+#: src/ftpclass.cc:2769
 msgid "extra server response"
 msgstr ""
 
-#: src/ftpclass.cc:2893
+#: src/ftpclass.cc:2890
 msgid "Switching passive mode off"
 msgstr ""
 
-#: src/ftpclass.cc:2908
+#: src/ftpclass.cc:2905
 msgid "Switching passive mode on"
 msgstr ""
 
-#: src/ftpclass.cc:2981
+#: src/ftpclass.cc:2978
 msgid "Sending commands..."
 msgstr ""
 
-#: src/Http.cc:1162 src/ftpclass.cc:2983 src/ftpclass.cc:3003
-#: src/ftpclass.cc:3010
+#: src/Http.cc:1162 src/ftpclass.cc:2980 src/ftpclass.cc:3000
+#: src/ftpclass.cc:3007
 msgid "Waiting for response..."
 msgstr ""
 
-#: src/ftpclass.cc:2984
+#: src/ftpclass.cc:2981
 msgid "Connection idle"
 msgstr ""
 
-#: src/Http.cc:1157 src/ftpclass.cc:2998
+#: src/Http.cc:1157 src/ftpclass.cc:2995
 msgid "Connecting..."
 msgstr ""
 
-#: src/ftpclass.cc:3000
+#: src/ftpclass.cc:2997
 msgid "Logging in..."
 msgstr ""
 
-#: src/ftpclass.cc:3004
+#: src/ftpclass.cc:3001
 msgid "Making data connection..."
 msgstr ""
 
-#: src/ftpclass.cc:3006
+#: src/ftpclass.cc:3003
 msgid "Changing remote directory..."
 msgstr ""
 
-#: src/ftpclass.cc:3009 src/ftpclass.cc:3021
+#: src/ftpclass.cc:3006 src/ftpclass.cc:3018
 msgid "Waiting for transfer to complete"
 msgstr ""
 
-#: src/ftpclass.cc:3012
+#: src/ftpclass.cc:3009
 msgid "Waiting for data connection..."
 msgstr ""
 
-#: src/Http.cc:1160 src/ftpclass.cc:3017
+#: src/Http.cc:1160 src/ftpclass.cc:3014
 msgid "Sending data"
 msgstr ""
 
-#: src/Http.cc:1165 src/ftpclass.cc:3019
+#: src/Http.cc:1165 src/ftpclass.cc:3016
 msgid "Receiving data"
 msgstr ""
 
-#: src/ftpclass.cc:3023
+#: src/ftpclass.cc:3020
 msgid "Fatal protocol error occured"
 msgstr ""
 

@@ -1,3 +1,7 @@
+Version 2.2.0a - 2000-03-29
+
+* A bug in ftp code fixed, it could lead to connection hang.
+
 Version 2.2.0 - 2000-03-28
 
 * URLs are now handled in more places: `get URL1 -o URL2', `login URL',

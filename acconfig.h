@@ -219,4 +219,8 @@ CDECL void SOCKSinit(const char *);
 # include <socks.h>
 #endif
 
+#if defined __MSDOS__ || defined __CYGWIN32__
+# define NATIVE_CRLF 1
+#endif
+
 #endif /* CONFIG_H */

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp\n"
-"POT-Creation-Date: 2000-03-28 19:17+0400\n"
+"POT-Creation-Date: 2000-03-29 15:37+0400\n"
 "PO-Revision-Date: 1999-06-08 15:27+02:00\n"
 "Last-Translator: Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -83,7 +83,7 @@ msgstr "Brak dostêpu: %s"
 msgid "File cannot be accessed"
 msgstr "Brak dostêpu do pliku"
 
-#: src/FileAccess.cc:316 src/ftpclass.cc:2986 src/ftpclass.cc:2996
+#: src/FileAccess.cc:316 src/ftpclass.cc:2983 src/ftpclass.cc:2993
 msgid "Not connected"
 msgstr "Brak po³±czenia"
 
@@ -100,7 +100,7 @@ msgstr "B³±d krytyczny"
 msgid "Store failed - you have to reput"
 msgstr "Zapis siê nie powiód³ - musisz u¿yæ reput"
 
-#: src/FileAccess.cc:329 src/ftpclass.cc:3028
+#: src/FileAccess.cc:329 src/ftpclass.cc:3025
 msgid "Login failed"
 msgstr "Logowanie nie uda³o siê"
 
@@ -295,7 +295,7 @@ msgstr ""
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr ""
 
-#: src/Http.cc:1151 src/Resolver.cc:189 src/ftpclass.cc:2991
+#: src/Http.cc:1151 src/Resolver.cc:189 src/ftpclass.cc:2988
 msgid "Resolving host address..."
 msgstr "Uzyskiwanie adresu hosta..."
 
@@ -1358,77 +1358,77 @@ msgstr "Komputer po drugiej stronie zamkn±³ po³±czenie"
 msgid "Closing control socket"
 msgstr "Zamykanie control socket"
 
-#: src/ftpclass.cc:2107
+#: src/ftpclass.cc:2104
 msgid "Closing data socket"
 msgstr "Zamykam gniazdo danych"
 
-#: src/ftpclass.cc:2757
+#: src/ftpclass.cc:2754
 msgid "saw file size in response"
 msgstr "w odpowiedzi pojawi³ siê rozmiar pliku"
 
-#: src/ftpclass.cc:2766
+#: src/ftpclass.cc:2763
 msgid "remote end closes connection"
 msgstr "komputer po drugiej stronie zamkn±³ po³±czenie"
 
-#: src/ftpclass.cc:2772
+#: src/ftpclass.cc:2769
 msgid "extra server response"
 msgstr "dodatkowa odpowied¼ serwera"
 
-#: src/ftpclass.cc:2893
+#: src/ftpclass.cc:2890
 msgid "Switching passive mode off"
 msgstr "Wy³±czam tryb pasywny"
 
-#: src/ftpclass.cc:2908
+#: src/ftpclass.cc:2905
 #, fuzzy
 msgid "Switching passive mode on"
 msgstr "Wy³±czam tryb pasywny"
 
-#: src/ftpclass.cc:2981
+#: src/ftpclass.cc:2978
 msgid "Sending commands..."
 msgstr "Wysy³anie komend..."
 
-#: src/Http.cc:1162 src/ftpclass.cc:2983 src/ftpclass.cc:3003
-#: src/ftpclass.cc:3010
+#: src/Http.cc:1162 src/ftpclass.cc:2980 src/ftpclass.cc:3000
+#: src/ftpclass.cc:3007
 msgid "Waiting for response..."
 msgstr "Czekanie na odpowied¼..."
 
-#: src/ftpclass.cc:2984
+#: src/ftpclass.cc:2981
 msgid "Connection idle"
 msgstr "Po³±czenie bezczynne"
 
-#: src/Http.cc:1157 src/ftpclass.cc:2998
+#: src/Http.cc:1157 src/ftpclass.cc:2995
 msgid "Connecting..."
 msgstr "£±czenie siê..."
 
-#: src/ftpclass.cc:3000
+#: src/ftpclass.cc:2997
 msgid "Logging in..."
 msgstr "Logowanie siê..."
 
-#: src/ftpclass.cc:3004
+#: src/ftpclass.cc:3001
 msgid "Making data connection..."
 msgstr "Ustanawianie po³±czenie dla danych..."
 
-#: src/ftpclass.cc:3006
+#: src/ftpclass.cc:3003
 msgid "Changing remote directory..."
 msgstr "Zmiana zdalnego katalogu..."
 
-#: src/ftpclass.cc:3009 src/ftpclass.cc:3021
+#: src/ftpclass.cc:3006 src/ftpclass.cc:3018
 msgid "Waiting for transfer to complete"
 msgstr "Oczekiwanie na zakoñczenie transferu"
 
-#: src/ftpclass.cc:3012
+#: src/ftpclass.cc:3009
 msgid "Waiting for data connection..."
 msgstr "Czekam na po³±czenie dla danych..."
 
-#: src/Http.cc:1160 src/ftpclass.cc:3017
+#: src/Http.cc:1160 src/ftpclass.cc:3014
 msgid "Sending data"
 msgstr "Wysy³am dane"
 
-#: src/Http.cc:1165 src/ftpclass.cc:3019
+#: src/Http.cc:1165 src/ftpclass.cc:3016
 msgid "Receiving data"
 msgstr "Otrzymujê dane"
 
-#: src/ftpclass.cc:3023
+#: src/ftpclass.cc:3020
 msgid "Fatal protocol error occured"
 msgstr "Wyst±pi³ b³±d krytyczny protoko³u"
 

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.9\n"
-"POT-Creation-Date: 2000-03-28 19:17+0400\n"
+"POT-Creation-Date: 2000-03-29 15:37+0400\n"
 "PO-Revision-Date: 2000-02-24 21:36+01:00\n"
 "Last-Translator: Giovanni Bortolozzo <borto@pluto.linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -83,7 +83,7 @@ msgstr "Accesso fallito: %s"
 msgid "File cannot be accessed"
 msgstr "Impossibile accedere al file"
 
-#: src/FileAccess.cc:316 src/ftpclass.cc:2986 src/ftpclass.cc:2996
+#: src/FileAccess.cc:316 src/ftpclass.cc:2983 src/ftpclass.cc:2993
 msgid "Not connected"
 msgstr "Non connesso"
 
@@ -100,7 +100,7 @@ msgstr "Errore fatale"
 msgid "Store failed - you have to reput"
 msgstr "Salvataggio fallito - si deve fare reput"
 
-#: src/FileAccess.cc:329 src/ftpclass.cc:3028
+#: src/FileAccess.cc:329 src/ftpclass.cc:3025
 msgid "Login failed"
 msgstr "Login fallito"
 
@@ -284,7 +284,7 @@ msgstr "Formato temporale non valido. Formato è <tempo><unità>, e.g. 2h30m."
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Formato temporale non valido. Formato è <tempo><unità>, e.g. 2h30m."
 
-#: src/Http.cc:1151 src/Resolver.cc:189 src/ftpclass.cc:2991
+#: src/Http.cc:1151 src/Resolver.cc:189 src/ftpclass.cc:2988
 msgid "Resolving host address..."
 msgstr "Risoluzione dell'indirizzo dell'host..."
 
@@ -1355,77 +1355,77 @@ msgstr "Connessione chiusa dal peer"
 msgid "Closing control socket"
 msgstr "Chiusura del socket di controllo"
 
-#: src/ftpclass.cc:2107
+#: src/ftpclass.cc:2104
 msgid "Closing data socket"
 msgstr "Chiusura del socket dati"
 
-#: src/ftpclass.cc:2757
+#: src/ftpclass.cc:2754
 msgid "saw file size in response"
 msgstr "ottenuta la dimensione del file in risposta"
 
-#: src/ftpclass.cc:2766
+#: src/ftpclass.cc:2763
 msgid "remote end closes connection"
 msgstr "connessione chiusa dal sito remoto"
 
-#: src/ftpclass.cc:2772
+#: src/ftpclass.cc:2769
 msgid "extra server response"
 msgstr "risposta extra del server"
 
-#: src/ftpclass.cc:2893
+#: src/ftpclass.cc:2890
 msgid "Switching passive mode off"
 msgstr "Metto ad off (disabilito) la modalità passiva"
 
-#: src/ftpclass.cc:2908
+#: src/ftpclass.cc:2905
 #, fuzzy
 msgid "Switching passive mode on"
 msgstr "Metto ad off (disabilito) la modalità passiva"
 
-#: src/ftpclass.cc:2981
+#: src/ftpclass.cc:2978
 msgid "Sending commands..."
 msgstr "Invio comandi..."
 
-#: src/Http.cc:1162 src/ftpclass.cc:2983 src/ftpclass.cc:3003
-#: src/ftpclass.cc:3010
+#: src/Http.cc:1162 src/ftpclass.cc:2980 src/ftpclass.cc:3000
+#: src/ftpclass.cc:3007
 msgid "Waiting for response..."
 msgstr "In attesa della risposta..."
 
-#: src/ftpclass.cc:2984
+#: src/ftpclass.cc:2981
 msgid "Connection idle"
 msgstr "Connessione inattiva"
 
-#: src/Http.cc:1157 src/ftpclass.cc:2998
+#: src/Http.cc:1157 src/ftpclass.cc:2995
 msgid "Connecting..."
 msgstr "Connessione in corso..."
 
-#: src/ftpclass.cc:3000
+#: src/ftpclass.cc:2997
 msgid "Logging in..."
 msgstr "Accesso al server..."
 
-#: src/ftpclass.cc:3004
+#: src/ftpclass.cc:3001
 msgid "Making data connection..."
 msgstr "Creo la connessione dati..."
 
-#: src/ftpclass.cc:3006
+#: src/ftpclass.cc:3003
 msgid "Changing remote directory..."
 msgstr "Cambio la directory remota..."
 
-#: src/ftpclass.cc:3009 src/ftpclass.cc:3021
+#: src/ftpclass.cc:3006 src/ftpclass.cc:3018
 msgid "Waiting for transfer to complete"
 msgstr "Attendo la fine del trasferimento"
 
-#: src/ftpclass.cc:3012
+#: src/ftpclass.cc:3009
 msgid "Waiting for data connection..."
 msgstr "In attesa della connessione dati..."
 
-#: src/Http.cc:1160 src/ftpclass.cc:3017
+#: src/Http.cc:1160 src/ftpclass.cc:3014
 msgid "Sending data"
 msgstr "Sto inviando i dati"
 
-#: src/Http.cc:1165 src/ftpclass.cc:3019
+#: src/Http.cc:1165 src/ftpclass.cc:3016
 msgid "Receiving data"
 msgstr "Sto ricevendo i dati"
 
-#: src/ftpclass.cc:3023
+#: src/ftpclass.cc:3020
 msgid "Fatal protocol error occured"
 msgstr "Errore fatale di protocollo"
 
