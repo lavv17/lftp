@@ -64,8 +64,10 @@ void  MirrorJob::PrintStatus(int v)
       break;
 
    case(CHANGING_DIR):
-      printf("\tcd `%s' [%s]\n",target_dir,target_session->CurrentStatus());
-      printf("\tcd `%s' [%s]\n",source_dir,source_session->CurrentStatus());
+      if(target_session->IsOpen())
+	 printf("\tcd `%s' [%s]\n",target_dir,target_session->CurrentStatus());
+      if(source_session->IsOpen())
+	 printf("\tcd `%s' [%s]\n",source_dir,source_session->CurrentStatus());
       break;
 
    case(GETTING_LIST_INFO):
