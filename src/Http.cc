@@ -262,9 +262,9 @@ bool Http::ModeSupported()
 void Http::SendRequest(const char *connection,const char *f)
 {
    char *efile=string_alloca(strlen(f)*3+1);
-   url::encode_string(f,efile);
+   url::encode_string(f,efile,URL_PATH_UNSAFE);
    char *ecwd=string_alloca(strlen(cwd)*3+1);
-   url::encode_string(cwd,ecwd);
+   url::encode_string(cwd,ecwd,URL_PATH_UNSAFE);
    int efile_len;
 
    char *pfile=(char*)alloca(4+3+xstrlen(user)*6+3+xstrlen(pass)*3+1+
@@ -318,6 +318,14 @@ add_path:
       memcpy(path_base+1,"%2F",3);
    }
 
+   if(hftp && mode!=LONG_LIST && mode!=CHANGE_DIR && mode!=MAKE_DIR)
+   {
+      if(ascii)
+	 strcat(pfile,";type=a");
+      else
+	 strcat(pfile,";type=i");
+   }
+
    efile=pfile;
    efile_len=strlen(efile);
 
@@ -358,8 +366,7 @@ add_path:
    case CHANGE_DIR:
    case LONG_LIST:
    case MAKE_DIR:
-      if((efile_len<1 || efile[efile_len-1]!='/')
-      && (efile_len<3 || strcasecmp(&efile[efile_len-3],"%2F")))
+      if(efile_len<1 || efile[efile_len-1]!='/')
 	 strcat(efile,"/");
       if(mode==CHANGE_DIR)
 	 SendMethod("HEAD",efile);
@@ -516,7 +523,7 @@ int Http::Do()
    }
 
    if(home==0)
-      home=xstrdup("/");
+      home=xstrdup(default_cwd);
    ExpandTildeInCWD();
 
    if(Error())
