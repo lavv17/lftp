@@ -16,7 +16,7 @@ Version 2.5.0 - 2002-01-??
 * now plain ls can also use color for file names.
 * new setting xfer:full-disk-fatal. When it is false, lftp waits for more disk
   space instead of cancelling transfers in case of full disk (Glenn Maynard,
-  Alexander Lukyanov)
+  Alexander Lukyanov).
 * cls improved (Glenn Maynard).
 * `bookmark list' hides passwords now.
 
