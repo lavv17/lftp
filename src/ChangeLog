@@ -1,3 +1,23 @@
+	* commands.cc: get1 command.
+	* XferJob.cc: move xfer:eta-terse to CopyJob.
+	* FtpCopy.cc, FtpCopy.h: save retries count.
+	* CopyJob.cc, CopyJob.h: first version.
+	* FileCopy.cc, FileCopy.h: finished.
+	* NetAccess.cc: correct calculations in extreme cases
+	  (reported by Robert de Bath)
+	* FileAccess.cc, FileAccess.h: expand tilde in file and file1 too.
+	  (ExpandTildeStatic) new method; New from ParsedURL.
+	* ftpclass.cc: handle size==0 in Write; expand tilde for ARRAY_INFO;
+	  correct test for ftp:rest-stor.
+	* Http.cc: handle size==0 in Write; send port to proxy;
+	  encode hostname; in error message append / conditionally.
+	* url.h: add more URL_*_UNSAFE.
+
+1999-12-14  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Filter.h, Filter.cc: add can_seek method.
+	* buffer.cc, buffer.h: add UnSkip method.
+
 1999-12-13  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* LocalAccess.h: remove error_code (it is defined in super class) -
