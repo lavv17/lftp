@@ -999,6 +999,7 @@ FileCopyPeerFDStream::FileCopyPeerFDStream(FDStream *o,direction m)
    seek_base=0;
    delete_stream=true;
    create_fg_data=true;
+   need_seek=false;
    can_seek = can_seek0 = stream->can_seek();
    if(can_seek && stream->fd!=-1)
    {
