@@ -1,3 +1,8 @@
+Version 3.0.0 - 2003-??-??
+
+* sftp protocol support (use `sftp://user@host' URLs).
+* faster directory caching, no re-parsing each time.
+
 Version 2.6.9 - 2003-11-19
 
 * new setting ftp:ssl-protect-list for encrypting file listings selectively.

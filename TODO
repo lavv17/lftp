@@ -20,14 +20,12 @@ implemented.
    (Done()==true when queue is empty)
    This way ARRAY_* can be obsoleted.
 
- * there are many interesting protocols: smb, fsp, imap, irc, sftp...
+ * there are many interesting protocols: smb, fsp, imap, irc...
 
  * put -n (only if newer) Maybe it would be better to add a command to compare
    times?
 
  * http: ls -a to see all links, even off-site.
- * mirror: --log=file write actions to file, --script=file prepare script of
-   actions to be done.
 
  * `local' (or `reverse') command to swap local/remote, e.g.
       mirror -R = local mirror
@@ -64,8 +62,6 @@ implemented.
 
  * remember user-specified URL path from open/cd.
  * flag to mark cwd as a file, not a directory. (for http).
-
- * sftp protocol.
 
  * mirror option to check an alternative directory(ies) for existing files.
    (overlay filesystem replacement?)
