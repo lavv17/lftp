@@ -124,7 +124,8 @@ do
 	  test -r $dr/aclocal.m4 || touch $dr/aclocal.m4
 	  echo "Running gettextize...  Ignore non-fatal messages."
 	  echo "no" | gettextize --force --copy --no-changelog
-	  mv configure.ac~ configure.ac 2>/dev/null
+	  mv configure.ac~ configure.ac
+	  mv m4/Makefile.am~ m4/Makefile.am 
 	  echo "Making $dr/aclocal.m4 writable ..."
 	  test -r $dr/aclocal.m4 && chmod u+w $dr/aclocal.m4
         fi
@@ -132,6 +133,7 @@ do
       if grep "^AM_PROG_LIBTOOL" configure.ac >/dev/null; then
 	echo "Running libtoolize..."
 	libtoolize --force --copy
+	mv Makefile.am~ Makefile.am
       fi
       echo "Running aclocal $aclocalinclude ..."
       aclocal $aclocalinclude

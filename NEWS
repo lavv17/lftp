@@ -1,7 +1,11 @@
-Version 2.6.9 - 2003-11-??
+Version 2.6.9 - 2003-11-19
 
 * new setting ftp:ssl-protect-list for encrypting file listings selectively.
 * don't use PRET again if it is not supported.
+* added cls --sort=time option (alias for sort=date).
+* don't set file modification time if it grew while downloading.
+* new setting cmd:verify-path-cached.
+* added long options for `open' command.
 
 Version 2.6.8 - 2003-10-10
 
