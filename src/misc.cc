@@ -187,3 +187,115 @@ char *xgetcwd()
       size*=2;
    }
 }
+
+int parse_perms(const char *s)
+{
+   int p=0;
+
+   if(strlen(s)!=9)
+      bad: return -1;
+
+   switch(s[0])
+   {
+   case('r'): p|=S_IRUSR; break;
+   case('-'): break;
+   default: goto bad;
+   }
+   switch(s[1])
+   {
+   case('w'): p|=S_IWUSR; break;
+   case('-'): break;
+   default: goto bad;
+   }
+   switch(s[2])
+   {
+   case('S'): p|=S_ISUID; break;
+   case('s'): p|=S_ISUID; // fall-through
+   case('x'): p|=S_IXUSR; break;
+   case('-'): break;
+   default: goto bad;
+   }
+   s+=3;
+   switch(s[0])
+   {
+   case('r'): p|=S_IRGRP; break;
+   case('-'): break;
+   default: goto bad;
+   }
+   switch(s[1])
+   {
+   case('w'): p|=S_IWGRP; break;
+   case('-'): break;
+   default: goto bad;
+   }
+   switch(s[2])
+   {
+   case('S'): p|=S_ISGID; break;
+   case('s'): p|=S_ISGID; // fall-through
+   case('x'): p|=S_IXGRP; break;
+   case('-'): break;
+   default: goto bad;
+   }
+   s+=3;
+   switch(s[0])
+   {
+   case('r'): p|=S_IROTH; break;
+   case('-'): break;
+   default: goto bad;
+   }
+   switch(s[1])
+   {
+   case('w'): p|=S_IWOTH; break;
+   case('-'): break;
+   default: goto bad;
+   }
+   switch(s[2])
+   {
+   case('T'): case('t'): p|=S_ISVTX; break;
+   case('l'): case('L'): p|=S_ISGID; p&=~S_IXGRP; break;
+   case('x'): p|=S_IXOTH; break;
+   case('-'): break;
+   default: goto bad;
+   }
+
+   return p;
+}
+
+int parse_month(const char *m)
+{
+   static const char *months[]={
+      "Jan","Feb","Mar","Apr","May","Jun",
+      "Jul","Aug","Sep","Oct","Nov","Dec",0
+   };
+   for(int i=0; months[i]; i++)
+      if(!strcasecmp(months[i],m))
+	 return(i%12);
+   return -1;
+}
+
+int parse_year_or_time(const char *year_or_time,int *year,int *hour,int *minute)
+{
+   if(year_or_time[2]==':')
+   {
+      if(2!=sscanf(year_or_time,"%2d:%2d",hour,minute))
+	 return -1;
+      *year=-1;
+   }
+   else
+   {
+      if(1!=sscanf(year_or_time,"%d",year))
+	 return -1;;
+      *hour=*minute=0;
+   }
+   return 0;
+}
+int guess_year(int month,int day,int hour,int minute)
+{
+   time_t curr=time(0);
+   struct tm &now=*localtime(&curr);
+   int year=now.tm_year+1900;
+   if(((month     *32+        day)*64+       hour)*64+       minute
+    > ((now.tm_mon*32+now.tm_mday)*64+now.tm_hour)*64+now.tm_min)
+      year--;
+   return year;
+}

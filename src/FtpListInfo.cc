@@ -30,6 +30,7 @@
 #include <ctype.h>
 #include "xalloca.h"
 #include "FtpSplitList.h"
+#include "misc.h"
 
 #define need_size (need&FileInfo::SIZE)
 #define need_time (need&FileInfo::DATE)
@@ -235,93 +236,6 @@ const char *FtpListInfo::Status()
    abort();
 }
 
-
-
-
-mode_t	 parse_perms(const char *s)
-{
-   mode_t   p=0;
-
-   if(strlen(s)!=9)
-      bad: return (mode_t)-1;
-
-   switch(s[0])
-   {
-   case('r'): p|=S_IRUSR; break;
-   case('-'): break;
-   default: goto bad;
-   }
-   switch(s[1])
-   {
-   case('w'): p|=S_IWUSR; break;
-   case('-'): break;
-   default: goto bad;
-   }
-   switch(s[2])
-   {
-   case('S'): p|=S_ISUID; break;
-   case('s'): p|=S_ISUID; // fall-through
-   case('x'): p|=S_IXUSR; break;
-   case('-'): break;
-   default: goto bad;
-   }
-   s+=3;
-   switch(s[0])
-   {
-   case('r'): p|=S_IRGRP; break;
-   case('-'): break;
-   default: goto bad;
-   }
-   switch(s[1])
-   {
-   case('w'): p|=S_IWGRP; break;
-   case('-'): break;
-   default: goto bad;
-   }
-   switch(s[2])
-   {
-   case('S'): p|=S_ISGID; break;
-   case('s'): p|=S_ISGID; // fall-through
-   case('x'): p|=S_IXGRP; break;
-   case('-'): break;
-   default: goto bad;
-   }
-   s+=3;
-   switch(s[0])
-   {
-   case('r'): p|=S_IROTH; break;
-   case('-'): break;
-   default: goto bad;
-   }
-   switch(s[1])
-   {
-   case('w'): p|=S_IWOTH; break;
-   case('-'): break;
-   default: goto bad;
-   }
-   switch(s[2])
-   {
-   case('T'): case('t'): p|=S_ISVTX; break;
-   case('l'): case('L'): p|=S_ISGID; p&=~S_IXGRP; break;
-   case('x'): p|=S_IXOTH; break;
-   case('-'): break;
-   default: goto bad;
-   }
-
-   return p;
-}
-
-int   parse_month(char *m)
-{
-   static const char *months[]={
-      "Jan","Feb","Mar","Apr","May","Jun",
-      "Jul","Aug","Sep","Oct","Nov","Dec",0
-   };
-   for(int i=0; months[i]; i++)
-      if(!strcasecmp(months[i],m))
-	 return(i%12);
-   return -1;
-}
 
 static
 FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err)
