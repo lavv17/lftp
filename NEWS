@@ -2,7 +2,7 @@ Version 2.1.2 - 1999-10-09
 
 * http: ls -F implemented, accept some other options.
 * hftp: parser for Netscape proxy added.
-* socks5 support added (--with-socks5), dante support (--with-socksdante).
+* socks5 and dante support added (--with-socks5, --with-socksdante).
 * korean translation.
 * mget -d now uses 0777 mode on directories.
 * fixed a SEGV due to double freed memory.

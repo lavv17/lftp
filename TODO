@@ -60,3 +60,18 @@ currently; some need other work to be done.
  * tail command
 
  * rest-stor
+
+ * ability to bind source address of sockets. (for those with several
+   interfaces)
+     This needs to handle both ipv4 and ipv6 addresses, but probably only
+   numeric forms, since lookups are time-consuming and can give several
+   addresses.
+     The source address family must match that of destination address, so
+   probably several settings are necessary, e.g. net:source-address-ipv4 and
+   net:source-address-ipv6. Or a closure can be used.
+     Maybe it is better to specify interface instead of address, then address
+   family can be used to get proper address off the interface.
+
+ * don't send MDTM/SIZE commands if it is known that server does not support them.
+
+ * make a class FileAccessLocation

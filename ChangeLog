@@ -1,3 +1,7 @@
+1999-10-09	lav
+
+	* configure.in: version 2.1.2
+
 1999-10-06	lav
 
 	* acconfig.h, configure.in: handle --with-socksdante.
