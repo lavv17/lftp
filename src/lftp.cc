@@ -78,12 +78,14 @@ void WaitDone(CmdExec *exec)
 class ReadlineFeeder : public CmdFeeder
 {
    bool tty:1;
+   bool ctty:1;
    bool add_newline:1;
    void *to_free;
 public:
    ReadlineFeeder()
    {
       tty=isatty(0);
+      ctty=(tcgetpgrp(0)!=(pid_t)-1);
       to_free=0;
    }
    virtual ~ReadlineFeeder()
@@ -108,18 +110,15 @@ public:
       char *cmd_buf;
       if(tty)
       {
-	 pid_t term_pg=tcgetpgrp(0);
-	 if(term_pg==(pid_t)-1 && (errno==EBADF || errno==EIO))
+	 if(ctty) // controlling terminal
 	 {
-	    // it used to be terminal, but now is not
-	    // assume it hung up -- return EOF
-	    return 0;
-	 }
-	 if(getpgrp()!=term_pg)
-	 {
-	    // looks like we are in background. Can't read from tty
-	    exec->block+=TimeOut(500);
-	    return "";
+	    pid_t term_pg=tcgetpgrp(0);
+	    if(term_pg!=(pid_t)-1 && getpgrp()!=term_pg)
+	    {
+	       // looks like we are in background. Can't read from tty
+	       exec->block+=TimeOut(500);
+	       return "";
+	    }
 	 }
 
 	 SignalHook::ResetCount(SIGINT);
