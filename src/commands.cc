@@ -2069,7 +2069,8 @@ CMD(set)
       }
    }
    args->back();
-   const char *a=args->getnext();
+   const char *ac=args->getnext();
+   char *a=alloca_strdup(ac);
 
    if(a==0)
    {
