@@ -174,6 +174,7 @@ int ResMgr::ResourceCompare(const void *a,const void *b)
    return strcmp(ar->closure,br->closure);
 }
 
+#if 0
 void ResMgr::Print(FILE *f)
 {
    Resource *scan;
@@ -221,6 +222,70 @@ void ResMgr::Print(FILE *f)
 	 putc('"',f);
       fputc('\n',f);
    }
+}
+#endif //0
+
+char *ResMgr::Format()
+{
+   char *res;
+
+   Resource *scan;
+
+   int n=0;
+   int size=0;
+   for(scan=chain; scan; scan=scan->next)
+   {
+      size+=4+strlen(scan->type->name);
+      if(scan->closure)
+	 size+=1+2*strlen(scan->closure);
+      size+=1+1+2*strlen(scan->value)+1+1;
+      n++;
+   }
+   res=(char*)xmalloc(size+1);
+   char *store=res;
+
+   Resource **arr=(Resource**)alloca(n*sizeof(Resource*));
+   n=0;
+   for(scan=chain; scan; scan=scan->next)
+      arr[n++]=scan;
+
+   qsort(arr,n,sizeof(*arr),ResourceCompare);
+
+   for(int i=0; i<n; i++)
+   {
+      sprintf(store,"set %s",arr[i]->type->name);
+      store+=strlen(store);
+      char *s=arr[i]->closure;
+      if(s)
+      {
+	 *store++='/';
+	 while(*s)
+	 {
+	    if(strchr("\" \t\\>|",*s))
+	       *store++='\\';
+	    *store++=*s++;
+	 }
+      }
+      *store++=' ';
+      s=arr[i]->value;
+
+      bool par=false;
+      if(*s==0 || strcspn(s," \t>|")!=strlen(s))
+	 par=true;
+      if(par)
+	 *store++='"';
+      while(*s)
+      {
+	 if(strchr("\"\\",*s))
+	    *store++='\\';
+	 *store++=*s++;
+      }
+      if(par)
+	 *store++='"';
+      *store++='\n';
+   }
+   *store=0;
+   return res;
 }
 
 const char *ResMgr::BoolValidate(char **value)

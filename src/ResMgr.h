@@ -77,6 +77,7 @@ public:
    static const char *Set(const char *name,const char *closure,const char *value);
 
    static void Print(FILE *);
+   static char *Format();
 
    static const char *BoolValidate(char **value);
    static const char *NumberValidate(char **value);
