@@ -105,7 +105,10 @@ CDECL const char *strerror(int);
 # define bind	     Rbind
 # define accept	     Raccept
 # define listen	     Rlisten
-/* select, poll ? */
+# define select	     Rselect
+# ifdef HAVE_RPOLL
+#  define poll	     Rpoll
+# endif
 CDECL void SOCKSinit(const char *);
 #endif
 #ifdef SOCKS_DANTE

@@ -1,3 +1,23 @@
+Version 2.6.0 - 2002-08-02
+
+* separated rate limitations for download and upload (set limit-rate 200:100).
+* added SSL certificate support and several SSL related settings.
+* connection slot support. Now you can switch sessions with Meta-[123...]
+  or with command `slot <name>'. You can also use slot:<name> as a pseudo-URL.
+* per-slot queues. Now you can have several queues for the same site using
+  different slots.
+* queue can be stopped now. Use `queue' with no args to create a stopped
+  queue, `queue start' to run it, `queue stop' to stop it. When you exit lftp,
+  the queue will start automatically.
+* mirror now appends source base name to target if target ends with a slash.
+* improved hftp:proxy setting. Now it defaults to http:proxy and is not
+  needed if ftp:proxy is set to `http://...'.
+* fixed mirror in case of server without MDTM command (Glenn Maynard).
+* mirror could start multiple transfers if it could not cd to a direcory,
+  even without --parallel (test case by Glenn Maynard).
+* fixed fd leak in `(commands)' structure (Glenn Maynard).
+* fixed memory leak in '(commands)'.
+
 Version 2.5.4 - 2002-06-05
 
 * fixed double free problem introduced in version 2.5.3.

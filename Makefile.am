@@ -1,6 +1,6 @@
 EXTRA_DIST = config.rpath lftp.conf lftp.lsm FAQ acconfig.h README README.debug-levels\
  README.modules MIRRORS BUGS FEATURES
-SUBDIRS = include readline-4.2 lib doc src po m4
+SUBDIRS = include readline-4.2 lib doc src po m4 contrib
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
 
@@ -42,6 +42,9 @@ release:
 	cp -p $(PACKAGE).lsm $(REL_DIR)/$(PACKAGE)-$(VERSION).lsm
 	cd $(REL_DIR) && \
 	    (addbz $(PACKAGE)-$(VERSION).tar.gz; \
-	    rm -f $(PACKAGE).tar.gz && ln -s $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE).tar.gz)
+	    rm -f $(PACKAGE).tar.gz && ln -s $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE).tar.gz; \
+	    gpg -ba $(PACKAGE)-$(VERSION).tar.gz; \
+	    gpg -ba $(PACKAGE)-$(VERSION).tar.bz2; \
+	    md5sum $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-$(VERSION).tar.bz2 > $(PACKAGE)-$(VERSION).md5sum)
 	mutt -s add lsm@execpc.com < $(PACKAGE).lsm
 	cvs tag $(PACKAGE)-`echo $(VERSION) | sed 's/\./-/g'` .

@@ -1,8 +1,8 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.53)
-AC_INIT
+AC_INIT([lftp], [2.6.0], [lftp-bugs@lftp.yar.ru])
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
-AM_INIT_AUTOMAKE(lftp, pre2.6.0)
+AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(include/config.h)
 
 # This doesn't *require* GNU extensions; it merely enables them if
@@ -167,7 +167,13 @@ if test x$with_socksdante = xyes; then
    AC_DEFINE(SOCKS_DANTE, 1, [define if you are building with SOCKS-Dante support])
    SOCKSLIBS=-lsocks
 fi
-AC_SUBST(SOCKSLIBS)
+LIBS="$LIBS $SOCKSLIBS"
+if test "$SOCKSLIBS" = "-lsocks"; then
+   AC_CHECK_FUNCS([Rpoll])
+   if test "$ac_cv_func_Rpoll" != yes; then
+      lftp_cv_func_poll_works = no
+   fi
+fi
 
 AC_ARG_WITH(modules,
 [  --with-modules          build modular lftp (protocols become dll's)],
@@ -364,5 +370,5 @@ if test "$prefix" = /usr -a "$sysconfdir" = '${prefix}/etc'; then
    sysconfdir=/etc
 fi
 
-AC_CONFIG_FILES([Makefile src/Makefile lib/Makefile include/Makefile doc/Makefile readline-4.2/Makefile po/Makefile.in m4/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile lib/Makefile include/Makefile doc/Makefile readline-4.2/Makefile po/Makefile.in m4/Makefile contrib/Makefile])
 AC_OUTPUT
