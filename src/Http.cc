@@ -697,7 +697,7 @@ int Http::Do()
    ExpandTildeInCWD();
 
    if(Error())
-      return MOVED;
+      return m;
 
    switch(state)
    {
@@ -715,8 +715,25 @@ int Http::Do()
 	    const char *scan=file+5;
 	    while(*scan==' ')
 	       scan++;
-	    const char *url=GetConnectURL(*scan=='/'?NO_PATH:0);
-	    char *path=xstrdup(dir_file(url,scan));
+	    char *url=string_alloca(5+xstrlen(hostname)*3+1+xstrlen(portname)*3
+				    +1+xstrlen(cwd)*3+1+strlen(scan)+1);
+	    strcpy(url,"http://");
+	    url::encode_string(hostname,url+strlen(url),URL_HOST_UNSAFE);
+	    if(portname)
+	    {
+	       strcat(url,":");
+	       url::encode_string(portname,url+strlen(url),URL_PORT_UNSAFE);
+	    }
+	    if(*scan!='/' && cwd)
+	    {
+	       if(cwd[0]!='/')
+		  strcat(url,"/");
+	       url::encode_string(cwd,url+strlen(url),URL_PATH_UNSAFE);
+	    }
+	    if(*scan!='/')
+	       strcat(url,"/");
+	    strcat(url,scan);
+	    char *path=xstrdup(url);
 	    char *space=strchr(path,' ');
 	    if(space)
 	       *space=0;
@@ -851,11 +868,6 @@ int Http::Do()
    case CONNECTED:
       if(mode==QUOTE_CMD && !post)
 	 goto handle_quote_cmd;
-      if(!post && !ModeSupported())
-      {
-	 SetError(NOT_SUPP);
-	 return MOVED;
-      }
       if(recv_buf->Eof())
       {
 	 DebugPrint("**** ",_("Peer closed connection"),0);
@@ -864,6 +876,11 @@ int Http::Do()
       }
       if(mode==CLOSED)
 	 return m;
+      if(!post && !ModeSupported())
+      {
+	 SetError(NOT_SUPP);
+	 return MOVED;
+      }
       DebugPrint("---- ","Sending request...");
       if(mode==ARRAY_INFO)
       {
