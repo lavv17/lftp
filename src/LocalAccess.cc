@@ -40,7 +40,7 @@
 void LocalAccess::ClassInit()
 {
    // register the class
-   (void)new Protocol("file",LocalAccess::New);
+   Protocol::Register("file",LocalAccess::New);
 }
 
 void LocalAccess::Init()

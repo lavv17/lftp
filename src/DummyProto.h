@@ -35,6 +35,7 @@ public:
    int Read(void *buf,int size);
    int Write(const void *buf,int size);
    int StoreStatus();
+   void Reconfig() {}
 };
 
 #endif

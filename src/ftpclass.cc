@@ -81,50 +81,13 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 #define super FileAccess
 #define peer_sa (peer[peer_curr])
 
-static const char *ProxyValidate(char **p)
-{
-   ParsedURL url(*p);
-   if(url.host==0)
-   {
-      if((*p)[0]!=0)
-	 (*p)[0]=0;
-      return 0;
-   }
-   if(url.proto)
-   {
-      if(strcmp(url.proto,"ftp") /* TODO: && strcmp(url.proto,"http")*/)
-	 return _("Proxy protocol unsupported");
-   }
-   return 0;
-}
-
-static ResDecl
-   res_sync_mode	("ftp:sync-mode",      "on", ResMgr::BoolValidate,0),
-   res_timeout		("ftp:timeout",	       "600",ResMgr::UNumberValidate,0),
-   res_redial_interval	("ftp:redial-interval","30", ResMgr::UNumberValidate,0),
-   res_passive_mode	("ftp:passive-mode",   "off",ResMgr::BoolValidate,0),
-   res_relookup_always	("ftp:relookup-always","off",ResMgr::BoolValidate,0),
-   res_proxy		("ftp:proxy",          "",   ProxyValidate,0),
-   res_nop_interval	("ftp:nop-interval",   "120",ResMgr::UNumberValidate,0),
-   res_idle		("ftp:idle",	       "180",ResMgr::UNumberValidate,0),
-   res_max_retries	("ftp:max-retries",    "0",  ResMgr::UNumberValidate,0),
-   res_allow_skey	("ftp:skey-allow",     "yes",ResMgr::BoolValidate,0),
-   res_force_skey	("ftp:skey-force",     "no", ResMgr::BoolValidate,0),
-   res_anon_user	("ftp:anon-user",      "anonymous",0,0),
-   res_anon_pass	("ftp:anon-pass",      0,    0,0),
-   res_socket_buffer	("ftp:socket-buffer",  "0",  ResMgr::UNumberValidate,0),
-   res_socket_maxseg	("ftp:socket-maxseg",  "0",  ResMgr::UNumberValidate,0),
-   res_address_verify	("ftp:verify-address", "no", ResMgr::BoolValidate,0),
-   res_port_verify      ("ftp:verify-port",    "no", ResMgr::BoolValidate,0),
-   res_limit_rate	("ftp:limit-rate",     "0",  ResMgr::UNumberValidate,0),
-   res_limit_max	("ftp:limit-max",      "0",  ResMgr::UNumberValidate,0);
 
 void  Ftp::ClassInit()
 {
    // register the class
-   (void)new Protocol("ftp",Ftp::New);
-   if(res_anon_pass.Query(0)==(const char *)0)
-      ResMgr::Set(res_anon_pass.name,0,DefaultAnonPass());
+   Protocol::Register("ftp",Ftp::New);
+   if(ResMgr::Query("ftp:anon-pass",0)==(const char *)0)
+      ResMgr::Set("ftp:anon-pass",0,DefaultAnonPass());
 }
 
 Ftp *Ftp::ftp_chain=0;
@@ -1363,8 +1326,9 @@ int   Ftp::Do()
 	       return MOVED;
 	    }
 	    bind(data_sock,&data_sa.sa,addr_len);
-	    listen(data_sock,1);
+	    // get the port allocated
 	    getsockname(data_sock,&data_sa.sa,&addr_len);
+	    listen(data_sock,1);
 	 }
 	 if(data_sa.sa.sa_family==AF_INET)
 	 {
@@ -2991,37 +2955,39 @@ void Ftp::SetProxy(const char *px)
 
 void Ftp::Reconfig()
 {
-   const char *c=hostname;
+   xfree(closure);
+   closure=xstrdup(hostname);
 
-   SetFlag(SYNC_MODE,	res_sync_mode.Query(c));
-   SetFlag(PASSIVE_MODE,res_passive_mode.Query(c));
+   super::Reconfig();
 
-   timeout = res_timeout.Query(c);
-   sleep_time = res_redial_interval.Query(c);
-   nop_interval = res_nop_interval.Query(c);
-   idle = res_idle.Query(c);
-   max_retries = res_max_retries.Query(c);
-   relookup_always = res_relookup_always.Query(c);
-   allow_skey = res_allow_skey.Query(c);
-   force_skey = res_force_skey.Query(c);
-   verify_data_address = res_address_verify.Query(c);
-   verify_data_port = res_port_verify.Query(c);
-   socket_buffer = res_socket_buffer.Query(c);
-   socket_maxseg = res_socket_maxseg.Query(c);
-   bytes_pool_rate = res_limit_rate.Query(c);
-   bytes_pool_max  = res_limit_max.Query(c);
-   BytesReset(); // to cut bytes_pool.
+   const char *c=closure;
+
+   SetFlag(SYNC_MODE,	Query("sync-mode",c));
+   SetFlag(PASSIVE_MODE,Query("passive-mode",c));
+
+   timeout = Query("timeout",c);
+   sleep_time = Query("reconnect-interval",c);
+   nop_interval = Query("nop-interval",c);
+   idle = Query("idle",c);
+   max_retries = Query("max-retries",c);
+   relookup_always = Query("relookup-always",c);
+   allow_skey = Query("skey-allow",c);
+   force_skey = Query("skey-force",c);
+   verify_data_address = Query("verify-address",c);
+   verify_data_port = Query("verify-port",c);
+   socket_buffer = Query("socket-buffer",c);
+   socket_maxseg = Query("socket-maxseg",c);
 
    xfree(anon_user);
-   anon_user=xstrdup(res_anon_user.Query(c));
+   anon_user=xstrdup(Query("anon-user",c));
    xfree(anon_pass);
-   anon_pass=xstrdup(res_anon_pass.Query(c));
+   anon_pass=xstrdup(Query("anon-pass",c));
    if(anon_user==0)
       anon_user=xstrdup(FTPUSER);
    if(anon_pass==0)
       anon_pass=xstrdup(DefaultAnonPass());
 
-   SetProxy(res_proxy.Query(c));
+   SetProxy(Query("proxy",c));
 
    if(nop_interval<30)
       nop_interval=30;
@@ -3130,3 +3096,11 @@ int Ftp::Buffered()
    return 0;
 #endif
 }
+
+
+#ifdef MODULE
+CDECL void module_init()
+{
+   Ftp::ClassInit();
+}
+#endif

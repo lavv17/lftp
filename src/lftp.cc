@@ -53,6 +53,8 @@
 #include "history.h"
 #include "log.h"
 #include "DummyProto.h"
+#include "resource.h"
+#include "Resolver.h"
 
 #include "confpaths.h"
 
@@ -265,13 +267,20 @@ int   main(int argc,char **argv)
    bindtextdomain (PACKAGE, LOCALEDIR);
    textdomain (PACKAGE);
 
+   resources_init(); // resources must be inited before other classes
+
+   Resolver::ClassInit();
+
 #ifndef MODULE_PROTO_FILE
    LocalAccess::ClassInit();
 #endif
 #ifndef MODULE_PROTO_HTTP
    Http::ClassInit();
 #endif
+#ifndef MODULE_PROTO_FTP
    Ftp::ClassInit();
+#endif
+   ListInfo::ClassInit();
 
    const char  *home=getenv("HOME")?:".";
 

@@ -64,6 +64,7 @@
 #include "xalloca.h"
 #include "bookmark.h"
 #include "log.h"
+#include "module.h"
 
 #include "confpaths.h"
 
@@ -84,7 +85,7 @@ CMD(mput);  CMD(mv);	 CMD(cat);     CMD(cache);
 CMD(mkdir); CMD(quote);  CMD(scache);  CMD(mrm);
 CMD(ver);   CMD(close);  CMD(bookmark);CMD(lftp);
 CMD(echo);  CMD(suspend);CMD(ftpcopy); CMD(sleep);
-CMD(at);    CMD(find);   CMD(command);
+CMD(at);    CMD(find);   CMD(command); CMD(module);
 
 #ifdef MODULE_CMD_MIRROR
 # define cmd_mirror 0
@@ -192,6 +193,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -n, --only-newer       download only newer files (-c won't work)\n"
 	 " -r, --no-recursion     don't go to subdirectories\n"
 	 " -p, --no-perms         don't set file permissions\n"
+	 "     --no-umask         don't apply umask to file modes\n"
 	 " -R, --reverse          reverse mirror (put files)\n"
 	 " -L, --dereference      download symbolic links as files\n"
 	 " -N, --newer-than FILE  download only files newer than the file\n"
@@ -210,6 +212,11 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"mkdir",   cmd_mkdir,  N_("mkdir [-p] <dirs>"),
 	 N_("Make remote directories\n"
 	 " -p  make all levels of path\n")},
+   {"module",  cmd_module, N_("module name [args]"),
+	 N_("Load module (shared object). The module should contain function\n"
+	 "   void module_init(int argc,const char *const *argv\n"
+	 "If name contains a slash, then the module is searched in current\n"
+	 "directory, otherwise in PKGLIBDIR.\n")},
    {"more",    cmd_cat,    N_("more [-u] <files>"),
 	 N_("Same as `cat <files> | more'. if PAGER is set, it is used as filter\n"
 	 " -u  try to recognize URLs\n")},
@@ -686,10 +693,10 @@ CMD(lcd)
 
 CMD(ls)
 {
-   int mode=Ftp::LONG_LIST;
+   int mode=FA::LONG_LIST;
    if(strstr(args->a0(),"nlist"))
-      mode=Ftp::LIST;
-   if(mode==Ftp::LONG_LIST && args->count()==1)
+      mode=FA::LIST;
+   if(mode==FA::LONG_LIST && args->count()==1)
       args->Append(parent->var_ls);
    LsJob *j=new LsJob(Clone(),output,args->Combine(1),mode);
    output=0;
@@ -1619,7 +1626,7 @@ CMD(bookmark)
    }
    else if(!strcmp(op,"edit"))
    {
-      parent->PrependCmd("shell \"/bin/sh -c \\\"exec ${EDITOR:-vi} $HOME/.lftp/bookmarks\\\"\"\n");
+      parent->PrependCmd("shell \"/bin/sh -c 'exec ${EDITOR:-vi} $HOME/.lftp/bookmarks'\"\n");
    }
    else if(!strcmp(op,"import"))
    {
@@ -1750,4 +1757,23 @@ CMD(find)
 CMD(command)
 {
    return parent->builtin_command();
+}
+
+CMD(module)
+{
+   char *op=args->a0();
+   if(args->count()<2)
+   {
+      eprintf(_("Usage: %s module [args...]\n"),args->a0());
+      eprintf(_("Try `help %s' for more information.\n"),op);
+      return 0;
+   }
+   void *map=module_load(args->getarg(1),args->count()-1,args->GetV()+1);
+   if(map==0)
+   {
+      eprintf("%s\n",module_error_message());
+      return 0;
+   }
+   exit_code=0;
+   return 0;
 }
