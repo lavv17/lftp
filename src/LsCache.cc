@@ -293,6 +293,9 @@ void LsCache::Changed(change_mode m,FileAccess *f,const char *dir)
  * this is the most explicit and least expensive.) */
 void LsCache::SetDirectory(FileAccess *p_loc, const char *path, bool dir)
 {
+   if(!path)
+      return;
+
    char *origdir = alloca_strdup(p_loc->GetCwd());
 
    p_loc->Chdir(path,false);

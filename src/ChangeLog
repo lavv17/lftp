@@ -1,3 +1,7 @@
+2001-12-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* LsCache.cc: ignore SetDirectory with NULL argument.
+
 2001-12-21  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* mkdirJob.cc, mkdirJob.h: use orig_session approach instead of
