@@ -65,3 +65,5 @@ implemented.
 
  * mirror option to check an alternative directory(ies) for existing files.
    (overlay filesystem replacement?)
+
+ * use MLST/MLSD when supported.

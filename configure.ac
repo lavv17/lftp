@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.53)
-AC_INIT([lftp], [pre3.0.0-20031201], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [pre3.0.0-20040115], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
 AM_CONFIG_HEADER(include/config.h)
@@ -179,13 +179,13 @@ if test "$with_modules" = yes; then
    enable_static=no
    enable_shared=yes
    AC_DEFINE(WITH_MODULES, 1, [build modular lftp])
-   MODULES_LA="libpty.la libnetwork.la proto-ftp.la proto-http.la proto-file.la proto-fish.la proto-sftp.la cmd-mirror.la cmd-sleep.la"
+   MODULES_LA="liblftp-pty.la liblftp-network.la proto-ftp.la proto-http.la proto-file.la proto-fish.la proto-sftp.la cmd-mirror.la cmd-sleep.la"
    LFTP_SSL_LDFLAGS=
    LFTP_SSL_LIBS=
 else
    enable_static=yes
    enable_shared=no
-   MODULES_LA_STATIC="libpty.la libnetwork.la proto-ftp.la proto-http.la proto-file.la proto-fish.la proto-sftp.la cmd-mirror.la cmd-sleep.la"
+   MODULES_LA_STATIC="liblftp-pty.la liblftp-network.la proto-ftp.la proto-http.la proto-file.la proto-fish.la proto-sftp.la cmd-mirror.la cmd-sleep.la"
    LFTP_SSL_LDFLAGS='$(SSL_LDFLAGS)'
    LFTP_SSL_LIBS='$(SSL_LIBS)'
 fi
@@ -247,8 +247,16 @@ AC_HEADER_SYS_WAIT
 AC_HEADER_TIME
 AC_CHECK_HEADERS(fcntl.h sys/time.h errno.h stdlib.h varargs.h dirent.h\
  termios.h termio.h sys/select.h sys/poll.h sys/stropts.h string.h memory.h\
- strings.h sys/ioctl.h dlfcn.h resolv.h arpa/nameser.h netinet/tcp.h\
- langinfo.h endian.h regex.h locale.h)
+ strings.h sys/ioctl.h dlfcn.h arpa/nameser.h netinet/tcp.h netinet/in.h\
+ resolv.h langinfo.h endian.h regex.h locale.h,,,[
+#include <sys/types.h>
+#ifdef HAVE_ARPA_NAMESER_H
+#include <arpa/nameser.h>
+#endif
+#ifdef HAVE_NETINET_IN_H
+#include <netinet/in.h>
+#endif
+])
 
 # See if the system has strerror and replace if not
 AC_CHECK_FUNC(strerror, AC_DEFINE(HAVE_STRERROR, 1, [System has usable strerror]),[

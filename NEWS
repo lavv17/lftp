@@ -1,7 +1,29 @@
-Version 3.0.0 - 2003-??-??
+Version 3.0.0 - 2004-??-??
 
 * sftp protocol support (use `sftp://user@host' URLs).
 * faster directory caching, no re-parsing each time.
+* ftp now follows RFC2640; FEAT, LANG, UTF8 support.
+* ftp can set modification time on remote files using either SITE UTIME or two
+  argument MDTM command (off by default).
+* new settings ftp:use-feat, ftp:lang, ftp:use-site-utime, ftp:use-mdtm-overloaded.
+* fixed put over https protocol.
+
+Version 2.6.11 - 2004-12-22
+
+* fixed mirror for empty files.
+* a rare coredump fixed in http 0.9 handling, when first line of reply is empty.
+* compilation fixes for compilers other than gcc.
+* translations update.
+
+Version 2.6.10 - 2003-12-11
+
+* security fixes in html parsing code.
+* fxp between ftps session is now possible (unencrypted yet).
+* fixed a rare bug with access to freed memory in ftp.
+* fixed a bug in mirror, now it does not incorrectly append directory name
+  when target directory is the root.
+* fixed compilation on AIX.
+* Polish translation updated.
 
 Version 2.6.9 - 2003-11-19
 
