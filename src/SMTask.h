@@ -61,8 +61,8 @@ public:
    virtual void Suspend();
    virtual void Resume();
 
-   virtual void Reconfig() {};
-   static void ReconfigAll();
+   virtual void Reconfig(const char *name=0) {};
+   static void ReconfigAll(const char *name);
 
    SMTask();
    virtual ~SMTask();
