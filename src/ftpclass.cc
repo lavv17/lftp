@@ -859,7 +859,7 @@ Ftp::Connection::Connection()
    auth_supported=true;
    auth_args_supported=0;
    cpsv_supported=false;
-   sscn_supported=false;
+   sscn_supported=true;
    sscn_on=false;
 #endif
    type='A';
@@ -3465,6 +3465,8 @@ void Ftp::CheckFEAT(char *reply)
    conn->auth_supported=false;
    xfree(conn->auth_args_supported);
    conn->auth_args_supported=0;
+   conn->cpsv_supported=false;
+   conn->sscn_supported=false;
 #endif
 
    char *scan=strchr(reply,'\n');
@@ -3839,6 +3841,8 @@ void Ftp::CheckResp(int act)
    case Expect::SSCN:
       if(is2XX(act))
 	 conn->sscn_on=(arg[0]=='Y');
+      else if(cmd_unsupported(act))
+	 conn->sscn_supported=false;
       break;
 #endif // USE_SSL
 
