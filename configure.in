@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.52)
 AC_INIT(src/ftpclass.cc)
-AM_INIT_AUTOMAKE(lftp, 2.5.2)
+AM_INIT_AUTOMAKE(lftp, 2.5.3)
 AM_CONFIG_HEADER(include/config.h)
 
 # This doesn't *require* GNU extensions; it merely enables them if
@@ -131,7 +131,7 @@ AC_SUBST(LOCALE_DIR)
 AC_OUTPUT_COMMANDS([test "$ac_given_srcdir" || ac_given_srcdir=$srcdir])
 
 ALL_LINGUAS="de es fr it ja ko pl pt_BR ru zh_CN zh_TW"
-AM_GNU_GETTEXT
+AM_GNU_GETTEXT([external])
 if test x$USE_INCLUDED_LIBINTL = xyes; then
    LINK_SRC="$LINK_SRC intl/libgnuintl.h"
    LINK_DST="$LINK_DST include/libintl.h"
@@ -146,10 +146,6 @@ if test x$gt_cv_func_gettext_libintl = xyes; then
    *)	       LIBS="$LIBS -lintl";;
    esac
 fi
-
-test -z "$enable_static" && enable_static=no
-AM_PROG_LIBTOOL
-LIBTOOL="$LIBTOOL --silent"
 
 AC_ARG_WITH(socks,
 [  --with-socks            build with SOCKSv4 library],
@@ -185,18 +181,27 @@ AC_ARG_WITH(modules,
 [  with_modules=no;	   ])
 
 if test "$with_modules" = yes; then
+   enable_static=no
+   enable_shared=yes
    AC_DEFINE(WITH_MODULES)
    MODULES_LA="libnetwork.la proto-ftp.la proto-http.la proto-file.la proto-fish.la cmd-mirror.la cmd-sleep.la"
    LFTP_SSL_LDFLAGS=
    LFTP_SSL_LIBS=
 else
+   enable_static=yes
+   enable_shared=no
+   MODULES_LA_STATIC="libnetwork.la proto-ftp.la proto-http.la proto-file.la proto-fish.la cmd-mirror.la cmd-sleep.la"
    LFTP_SSL_LDFLAGS='$(SSL_LDFLAGS)'
    LFTP_SSL_LIBS='$(SSL_LIBS)'
 fi
-AC_SUBST(MODULES)
 AC_SUBST(MODULES_LA)
+AC_SUBST(MODULES_LA_STATIC)
 AC_SUBST(LFTP_SSL_LDFLAGS)
 AC_SUBST(LFTP_SSL_LIBS)
+
+#test -z "$enable_static" && enable_static=no
+AM_PROG_LIBTOOL
+LIBTOOL="$LIBTOOL --silent"
 
 dnl Checks for libraries.
 LFTP_CHECK_LIBM
@@ -331,7 +336,8 @@ LFTP_FUNC_SSCANF_CONST
 AC_CHECK_FUNCS(strdup strstr lstat lchown select regexec glob\
  killpg setpgid tcgetattr ftruncate vsnprintf gettimeofday\
  gethostbyname2 getipnodebyname getaddrinfo getnameinfo setsid random\
- inet_aton unsetenv)
+ inet_aton unsetenv setlocale)
+AC_FUNC_ALLOCA
 IU_CHECK_DECL(vsnprintf, [#include <stdio.h>])
 IU_CHECK_DECL(unsetenv, [#include <stdlib.h>])
 
@@ -383,4 +389,4 @@ fi
 AC_LINK_FILES($LINK_SRC,$LINK_DST)
 
 AC_OUTPUT(Makefile src/Makefile lib/Makefile include/Makefile doc/Makefile
-	  readline-4.2/Makefile intl/Makefile po/Makefile.in m4/Makefile)
+	  readline-4.2/Makefile po/Makefile.in m4/Makefile)

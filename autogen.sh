@@ -40,7 +40,7 @@ grep "^AM_GNU_GETTEXT" $srcdir/configure.in >/dev/null && {
   (gettextize --version) < /dev/null > /dev/null 2>&1 || {
     echo
     echo "**Error**: You must have \`gettext' installed to compile $PKG_NAME."
-    echo "Get ftp://ftp.gnu.org/pub/gnu/gettext/gettext-0.10.40.tar.gz"
+    echo "Get ftp://ftp.gnu.org/pub/gnu/gettext/gettext-0.11.2.tar.gz"
     echo "(or a newer version if it is available)"
     DIE=1
   }
@@ -69,13 +69,13 @@ ver=`gettextize --version 2>&1 | sed -n 's/^.*GNU gettext.* \([0-9]*\.[0-9.]*\).
 
 case $ver in
   '') gettext_fail_text="Unknown gettext version.";;
-  0.10.[4-9][0-9]* | 0.1[1-9]* | 0.[2-9]* | [1-9].*) ;;
+  0.1[1-9]* | 0.[2-9]* | [1-9].*) ;;
   *) gettext_fail_text="Old gettext version $ver.";;
 esac
 
 if test "$gettext_fail_text" != ""; then
   echo "$gettext_fail_text."
-  echo "Get ftp://ftp.gnu.org/pub/gnu/gettext/gettext-0.10.40.tar.gz"
+  echo "Get ftp://ftp.gnu.org/pub/gnu/gettext/gettext-0.11.2.tar.gz"
   echo "(or a newer version if it is available)"
   DIE=1
 fi
@@ -123,9 +123,7 @@ do
 	  echo "Creating $dr/aclocal.m4 ..."
 	  test -r $dr/aclocal.m4 || touch $dr/aclocal.m4
 	  echo "Running gettextize...  Ignore non-fatal messages."
-	  echo "no" | gettextize --force --copy
-	  patch -p0 < gettext.diff || exit 1
-	  mv -f po/ChangeLog~ po/ChangeLog
+	  echo "no" | gettextize --force --copy --no-changelog
 	  echo "Making $dr/aclocal.m4 writable ..."
 	  test -r $dr/aclocal.m4 && chmod u+w $dr/aclocal.m4
         fi

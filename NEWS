@@ -1,3 +1,8 @@
+* handle HTTP `100 Continue' in any open mode.
+* status line fixed: don't write a space to last screen column.
+* security fix: check that addresses have proper length (Michail Litvak).
+* migrated to gettext-0.11.2 and automake-1.6.
+
 Version 2.5.2 - 2002-05-07
 
 * new setting ftp:fxp-force to disable copying data over client.

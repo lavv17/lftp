@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.3.9\n"
-"POT-Creation-Date: 2002-05-07 19:10+0400\n"
+"POT-Creation-Date: 2002-05-16 18:22+0400\n"
 "PO-Revision-Date: 2001-04-22 06:01+0800\n"
 "Last-Translator: Abel Cheung <maddog@linux.org.hk>\n"
 "Language-Team: Traditional Chinese <zh-l10n@linux.org.tw>\n"
@@ -257,18 +257,18 @@ msgstr "刪除舊的遠端目錄 `%s'"
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1049 src/SleepJob.cc:139 src/commands.cc:943
-#: src/commands.cc:1035 src/commands.cc:1400 src/commands.cc:1453
-#: src/commands.cc:1552 src/commands.cc:1805 src/commands.cc:1999
-#: src/commands.cc:2171 src/commands.cc:2178 src/commands.cc:2360
-#: src/commands.cc:2388 src/commands.cc:2395 src/commands.cc:2717
-#: src/commands.cc:2978
+#: src/MirrorJob.cc:1049 src/commands.cc:943 src/commands.cc:1035
+#: src/commands.cc:1400 src/commands.cc:1453 src/commands.cc:1552
+#: src/commands.cc:1805 src/commands.cc:1999 src/commands.cc:2171
+#: src/commands.cc:2178 src/commands.cc:2360 src/commands.cc:2388
+#: src/commands.cc:2395 src/commands.cc:2717 src/commands.cc:2978
+#: src/SleepJob.cc:139
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "輸入 `help %s' 查看更多資料。\n"
 
-#: src/DummyProto.cc:73 src/MirrorJob.cc:1083 src/MirrorJob.cc:1099
-#: src/commands.cc:811 src/commands.cc:1893
+#: src/MirrorJob.cc:1083 src/MirrorJob.cc:1099 src/commands.cc:811
+#: src/commands.cc:1893 src/DummyProto.cc:73
 msgid " - not supported protocol"
 msgstr " - 不支援此協定"
 
@@ -297,7 +297,6 @@ msgstr "不正確的數字"
 msgid "invalid floating point number"
 msgstr "不正確的浮點數"
 
-#. debug only
 #: src/ResMgr.cc:550
 #, c-format
 msgid "Query of variable `%s' failed: %s\n"
@@ -323,8 +322,8 @@ msgstr ""
 msgid "no closure defined for this setting"
 msgstr "此設定值並沒有定義 closure"
 
-#: src/Http.cc:1603 src/Resolver.cc:184 src/Resolver.cc:226
-#: src/ftpclass.cc:3628
+#: src/Resolver.cc:184 src/Resolver.cc:226 src/ftpclass.cc:3628
+#: src/Http.cc:1605
 msgid "Resolving host address..."
 msgstr "正在解析主機地址..."
 
@@ -332,21 +331,21 @@ msgstr "正在解析主機地址..."
 msgid "host name resolve timeout"
 msgstr "逾時仍找不到主機地址"
 
-#: src/Resolver.cc:298
+#: src/Resolver.cc:300
 #, fuzzy, c-format
 msgid "---- %d address$|es$ found\n"
 msgstr "沒有地址"
 
-#: src/Resolver.cc:769
+#: src/Resolver.cc:787
 msgid "Host name lookup failure"
 msgstr "不能檢查主機名稱"
 
-#: src/Resolver.cc:801
+#: src/Resolver.cc:819
 #, c-format
 msgid "no such %s service"
 msgstr "沒有這種 %s 服務"
 
-#: src/Resolver.cc:823
+#: src/Resolver.cc:841
 msgid "No address found"
 msgstr "沒有地址"
 
@@ -501,16 +500,6 @@ msgstr ""
 msgid "[re]cls [opts] [path/][pattern]"
 msgstr ""
 
-#. note: I've tried to keep options which are likely to be always
-#. * turned on (via cmd:cls-default, etc) capital, to leave lowercase
-#. * available for options more commonly used manually.  -s/-S is an
-#. * exception; they both seem to be options used manually, so I made
-#. * them align with GNU ls options.
-#. FIXME: poorly worded. another explanation of --filesize: if a person
-#. * wants to only see file sizes for files (not dirs) when he uses -s,
-#. * add --filesize; it won't have any effect unless -s is also used, so
-#. * it can be enabled all the time. (that's also poorly worded, and too
-#. * long.)
 #: src/commands.cc:162
 msgid ""
 "List remote files. You can redirect output of this command to file\n"
@@ -1330,9 +1319,6 @@ msgstr ""
 msgid "invalid block size"
 msgstr "不正確的數字"
 
-#. silly getopt won't give us its error instead of printing it, oh well.
-#. * we only need to never print errors for completion and validation; for
-#. * cls itself we could do it, but that'd be a special case ...
 #: src/commands.cc:1368
 #, fuzzy
 msgid "invalid option"
@@ -1559,7 +1545,7 @@ msgstr "使用方法: %s 指令 參數...\n"
 msgid "Usage: %s module [args...]\n"
 msgstr "使用方法: %s 模組 [參數...]\n"
 
-#: src/LocalAccess.cc:600 src/commands.cc:2734
+#: src/commands.cc:2734 src/LocalAccess.cc:600
 msgid "cannot get current directory"
 msgstr "找不到現時的目錄"
 
@@ -1618,11 +1604,11 @@ msgstr "假設查看主機名稱已失敗"
 msgid "cannot parse EPSV response"
 msgstr "不能分析 EPSV 回應內容"
 
-#: src/Http.cc:753 src/ftpclass.cc:1114
+#: src/ftpclass.cc:1114 src/Http.cc:753
 msgid "Closing idle connection"
 msgstr "關閉了閒置的連線"
 
-#: src/Http.cc:876 src/ftpclass.cc:1194
+#: src/ftpclass.cc:1194 src/Http.cc:876
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "不能建立地址族群 %d 的 socket"
@@ -1649,7 +1635,7 @@ msgstr "連接資料 socket 到 (%s) 連接埠 %u"
 msgid "Switching passive mode off"
 msgstr "關閉了 passive 模式"
 
-#: src/Http.cc:964 src/ftpclass.cc:2369
+#: src/ftpclass.cc:2369 src/Http.cc:964
 msgid "Peer closed connection"
 msgstr "對方節點關閉了連線"
 
@@ -1694,16 +1680,16 @@ msgstr "已設定 ftp:ssl-force 但伺服器不支援/不使用 SSL"
 msgid "Sending commands..."
 msgstr "正在送出指令..."
 
-#: src/Http.cc:1618 src/ftpclass.cc:3620 src/ftpclass.cc:3645
-#: src/ftpclass.cc:3658
+#: src/ftpclass.cc:3620 src/ftpclass.cc:3645 src/ftpclass.cc:3658
+#: src/Http.cc:1620
 msgid "Waiting for response..."
 msgstr "正在等待回應..."
 
-#: src/Http.cc:1611 src/ftpclass.cc:3621
+#: src/ftpclass.cc:3621 src/Http.cc:1613
 msgid "Connection idle"
 msgstr "連線閒置了"
 
-#: src/Http.cc:1609 src/Http.cc:1616 src/ftpclass.cc:3634
+#: src/ftpclass.cc:3634 src/Http.cc:1611 src/Http.cc:1618
 msgid "Connecting..."
 msgstr "正在連線..."
 
@@ -1750,11 +1736,11 @@ msgstr "正在傳送資料"
 msgid "Receiving data/TLS"
 msgstr "正在接收資料"
 
-#: src/Http.cc:1614 src/ftpclass.cc:3674
+#: src/ftpclass.cc:3674 src/Http.cc:1616
 msgid "Sending data"
 msgstr "正在傳送資料"
 
-#: src/Http.cc:1621 src/ftpclass.cc:3676
+#: src/ftpclass.cc:3676 src/Http.cc:1623
 msgid "Receiving data"
 msgstr "正在接收資料"
 
@@ -1773,7 +1759,6 @@ msgstr "[%lu] 開始。%s"
 msgid "[%lu] Finished. %s"
 msgstr "[%lu] 完成。%s"
 
-#. parent
 #: src/lftp.cc:273
 #, c-format
 msgid "[%lu] Moving to background to complete transfers...\n"
@@ -1784,7 +1769,6 @@ msgstr "[%lu] 將傳送工作移到背景繼續執行\n"
 msgid "%s: no files found\n"
 msgstr "%s: 找不到檔案\n"
 
-#. A directory has just been created
 #: src/mkdirJob.cc:136
 #, c-format
 msgid "%s ok, `%s' created\n"
@@ -1818,8 +1802,6 @@ msgstr "parse: 缺少了重新導向的檔案名稱\n"
 msgid "`%s', got %lld of %lld (%d%%) %s%s"
 msgstr "`%s'，下載了 %lld，總數為 %lld（%d%%）%s%s"
 
-#. This is the rule for plural form choice (last condition can be omitted)
-#. Operators: = > < ! | %
 #: src/plural.c:110
 msgid "=1 =0|>1"
 msgstr "=0|>0"
@@ -1852,7 +1834,6 @@ msgstr "正在關閉 HTTP 連線"
 msgid "POST method failed"
 msgstr "使用 POST 方法失敗"
 
-#. problem here: hftp cannot work without proxy
 #: src/Http.cc:832
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
@@ -1862,12 +1843,10 @@ msgstr ""
 msgid "Sending request..."
 msgstr "正在送出要求..."
 
-#. eof
 #: src/Http.cc:1013
 msgid "Hit EOF while fetching headers"
 msgstr "讀取標頭時檔案已終結了"
 
-#. should never happen
 #: src/Http.cc:1096
 msgid "Success, but did nothing??"
 msgstr "成功，但沒有動作？"
@@ -1876,31 +1855,31 @@ msgstr "成功，但沒有動作？"
 msgid "Could not parse HTTP status line"
 msgstr "不能分析 HTTP 狀態"
 
-#: src/Http.cc:1268
+#: src/Http.cc:1270
 msgid "Receiving body..."
 msgstr "正在接收內容…"
 
-#: src/Http.cc:1399
+#: src/Http.cc:1401
 msgid "Hit EOF"
 msgstr "檔案終結"
 
-#: src/Http.cc:1402
+#: src/Http.cc:1404
 msgid "Received not enough data, retrying"
 msgstr "接收的資料不足，繼續嘗試"
 
-#: src/Http.cc:1410
+#: src/Http.cc:1412
 msgid "Received all"
 msgstr "已接收所有資料"
 
-#: src/Http.cc:1415
+#: src/Http.cc:1417
 msgid "Received all (total)"
 msgstr "已接收所有資料"
 
-#: src/Http.cc:1438 src/Http.cc:1459
+#: src/Http.cc:1440 src/Http.cc:1461
 msgid "chunked format violated"
 msgstr "資料格式錯誤"
 
-#: src/Http.cc:1619
+#: src/Http.cc:1621
 msgid "Fetching headers..."
 msgstr "正在讀取標頭…"
 
@@ -1925,7 +1904,7 @@ msgstr "未知的地址族群 `%s'"
 msgid "ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C"
 msgstr ""
 
-#: src/FtpDirList.cc:133 src/HttpDir.cc:1144
+#: src/HttpDir.cc:1144 src/FtpDirList.cc:133
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "正在擷取檔案列表 (%lld) [%s]"
@@ -1978,7 +1957,6 @@ msgstr "複製: put 不能正常運作\n"
 msgid "seek failed"
 msgstr "搜尋失敗"
 
-#. we lose... How about a large buffer?
 #: src/FileCopy.cc:188
 msgid "cannot seek on data source"
 msgstr "不能搜尋資料來源"
@@ -1988,7 +1966,6 @@ msgstr "不能搜尋資料來源"
 msgid "copy: put rolled back to %lld, seeking get accordingly\n"
 msgstr "複製: 寫出的位置回捲到 %lld, 調整讀入的位置\n"
 
-#. simulate eof, as we have already have the whole file.
 #: src/FileCopy.cc:204
 msgid "copy: all data received, but get rolled back\n"
 msgstr "複製: 已接收所有資料，回捲到檔案末端的位置\n"
@@ -2007,25 +1984,21 @@ msgstr "複製: 重新導向到 `%s'\n"
 msgid "file name missed in URL"
 msgstr "URL 裡沒有指定檔案名稱"
 
-#. for translator: those are the units. This is 'byte per second'
 #: src/Speedometer.cc:94
 #, c-format
 msgid "%.0fb/s"
 msgstr "每秒 %.0f 位元"
 
-#. for translator: This is 'kilobyte per second'
 #: src/Speedometer.cc:97
 #, c-format
 msgid "%.1fK/s"
 msgstr "每秒 %.1fK"
 
-#. for translator: This is 'Megabyte per second'
 #: src/Speedometer.cc:100
 #, c-format
 msgid "%.2fM/s"
 msgstr "每秒 %.2fM"
 
-#. for translator: only first letter matters
 #: src/Speedometer.cc:126
 msgid "day"
 msgstr "日"
@@ -2042,12 +2015,10 @@ msgstr "分鐘"
 msgid "second"
 msgstr "秒"
 
-#. for translator: Estimated Time of Arrival.
 #: src/Speedometer.cc:132
 msgid "eta:"
 msgstr "估計距離完成時間:"
 
-#. both ways failed. Fall back to normal copying.
 #: src/FileCopyFtp.cc:87
 msgid "**** FXP: giving up, reverting to plain copy\n"
 msgstr "**** FXP: 放棄，使用普通複製\n"
@@ -2107,7 +2078,6 @@ msgstr "正在擷取目錄內容 (%lld)"
 msgid "Getting files information (%d%%) [%s]"
 msgstr "正在擷取檔案資訊 (%d%%)"
 
-#. dead lock
 #: src/PollVec.cc:98
 #, c-format
 msgid "%s: BUG - deadlock detected\n"
@@ -2122,16 +2092,6 @@ msgstr "\t重複次數: %d\n"
 #, c-format
 msgid "%s: argument required. "
 msgstr "%s: 需要參數。"
-
-#: getdate.y:1012
-msgid ""
-"Enter date, or blank line to exit.\n"
-"\t> "
-msgstr ""
-
-#: getdate.y:1020
-msgid "Bad format - couldn't convert.\n"
-msgstr ""
 
 #: src/module.cc:181
 #, fuzzy, c-format

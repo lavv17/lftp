@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
-"POT-Creation-Date: 2002-05-07 19:10+0400\n"
+"POT-Creation-Date: 2002-05-16 18:22+0400\n"
 "PO-Revision-Date: 2001-05-27 KST\n"
 "Last-Translator: Dojip Kim <greendrm@greendrm.com>\n"
 "Language-Team: \n"
@@ -257,18 +257,18 @@ msgstr "옛 원거리 디렉토리 `%s' 삭제"
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1049 src/SleepJob.cc:139 src/commands.cc:943
-#: src/commands.cc:1035 src/commands.cc:1400 src/commands.cc:1453
-#: src/commands.cc:1552 src/commands.cc:1805 src/commands.cc:1999
-#: src/commands.cc:2171 src/commands.cc:2178 src/commands.cc:2360
-#: src/commands.cc:2388 src/commands.cc:2395 src/commands.cc:2717
-#: src/commands.cc:2978
+#: src/MirrorJob.cc:1049 src/commands.cc:943 src/commands.cc:1035
+#: src/commands.cc:1400 src/commands.cc:1453 src/commands.cc:1552
+#: src/commands.cc:1805 src/commands.cc:1999 src/commands.cc:2171
+#: src/commands.cc:2178 src/commands.cc:2360 src/commands.cc:2388
+#: src/commands.cc:2395 src/commands.cc:2717 src/commands.cc:2978
+#: src/SleepJob.cc:139
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "상세한 것은 `help %s'를 이용하십시오\n"
 
-#: src/DummyProto.cc:73 src/MirrorJob.cc:1083 src/MirrorJob.cc:1099
-#: src/commands.cc:811 src/commands.cc:1893
+#: src/MirrorJob.cc:1083 src/MirrorJob.cc:1099 src/commands.cc:811
+#: src/commands.cc:1893 src/DummyProto.cc:73
 msgid " - not supported protocol"
 msgstr " - 지원하지 않는 프로토콜입니다"
 
@@ -297,7 +297,6 @@ msgstr "잘못된 수입니다"
 msgid "invalid floating point number"
 msgstr "잘못된 부동소수 점 수입니다"
 
-#. debug only
 #: src/ResMgr.cc:550
 #, c-format
 msgid "Query of variable `%s' failed: %s\n"
@@ -323,8 +322,8 @@ msgstr ""
 msgid "no closure defined for this setting"
 msgstr "이 설정에 대한 종결이 정의되어 있지 않습니다"
 
-#: src/Http.cc:1603 src/Resolver.cc:184 src/Resolver.cc:226
-#: src/ftpclass.cc:3628
+#: src/Resolver.cc:184 src/Resolver.cc:226 src/ftpclass.cc:3628
+#: src/Http.cc:1605
 msgid "Resolving host address..."
 msgstr "호스트 주소를 찾습니다..."
 
@@ -332,21 +331,21 @@ msgstr "호스트 주소를 찾습니다..."
 msgid "host name resolve timeout"
 msgstr "호스트 주소를 찾는데 시간이 초과되었습니다"
 
-#: src/Resolver.cc:298
+#: src/Resolver.cc:300
 #, fuzzy, c-format
 msgid "---- %d address$|es$ found\n"
 msgstr "주소를 찾을 수 없습니다"
 
-#: src/Resolver.cc:769
+#: src/Resolver.cc:787
 msgid "Host name lookup failure"
 msgstr "호스트명 찾기 실패"
 
-#: src/Resolver.cc:801
+#: src/Resolver.cc:819
 #, c-format
 msgid "no such %s service"
 msgstr "그러한 %s는  없습니다"
 
-#: src/Resolver.cc:823
+#: src/Resolver.cc:841
 msgid "No address found"
 msgstr "주소를 찾을 수 없습니다"
 
@@ -503,16 +502,6 @@ msgstr ""
 msgid "[re]cls [opts] [path/][pattern]"
 msgstr ""
 
-#. note: I've tried to keep options which are likely to be always
-#. * turned on (via cmd:cls-default, etc) capital, to leave lowercase
-#. * available for options more commonly used manually.  -s/-S is an
-#. * exception; they both seem to be options used manually, so I made
-#. * them align with GNU ls options.
-#. FIXME: poorly worded. another explanation of --filesize: if a person
-#. * wants to only see file sizes for files (not dirs) when he uses -s,
-#. * add --filesize; it won't have any effect unless -s is also used, so
-#. * it can be enabled all the time. (that's also poorly worded, and too
-#. * long.)
 #: src/commands.cc:162
 msgid ""
 "List remote files. You can redirect output of this command to file\n"
@@ -1335,9 +1324,6 @@ msgstr ""
 msgid "invalid block size"
 msgstr "잘못된 수입니다"
 
-#. silly getopt won't give us its error instead of printing it, oh well.
-#. * we only need to never print errors for completion and validation; for
-#. * cls itself we could do it, but that'd be a special case ...
 #: src/commands.cc:1368
 #, fuzzy
 msgid "invalid option"
@@ -1568,7 +1554,7 @@ msgstr "사용법: %s command args...\n"
 msgid "Usage: %s module [args...]\n"
 msgstr "사용법: %s module [args...]\n"
 
-#: src/LocalAccess.cc:600 src/commands.cc:2734
+#: src/commands.cc:2734 src/LocalAccess.cc:600
 msgid "cannot get current directory"
 msgstr "현재 디렉토리에 접근할 수 없습니다"
 
@@ -1627,11 +1613,11 @@ msgstr "호스트 이름을 찾는데 실패한 듯 합니다"
 msgid "cannot parse EPSV response"
 msgstr ""
 
-#: src/Http.cc:753 src/ftpclass.cc:1114
+#: src/ftpclass.cc:1114 src/Http.cc:753
 msgid "Closing idle connection"
 msgstr "사용하지 않는 접속을 끊습니다"
 
-#: src/Http.cc:876 src/ftpclass.cc:1194
+#: src/ftpclass.cc:1194 src/Http.cc:876
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "주소 %d의 소켓을 만들 수 없습니다"
@@ -1657,7 +1643,7 @@ msgstr "(%s) 포트 %u에 자료 소켓을 연결합니다"
 msgid "Switching passive mode off"
 msgstr "패시브(passive) 모드 끔"
 
-#: src/Http.cc:964 src/ftpclass.cc:2369
+#: src/ftpclass.cc:2369 src/Http.cc:964
 msgid "Peer closed connection"
 msgstr "접속이 끊겼습니다"
 
@@ -1703,16 +1689,16 @@ msgstr ""
 msgid "Sending commands..."
 msgstr "명령어 전송중..."
 
-#: src/Http.cc:1618 src/ftpclass.cc:3620 src/ftpclass.cc:3645
-#: src/ftpclass.cc:3658
+#: src/ftpclass.cc:3620 src/ftpclass.cc:3645 src/ftpclass.cc:3658
+#: src/Http.cc:1620
 msgid "Waiting for response..."
 msgstr "응답을 기다립니다..."
 
-#: src/Http.cc:1611 src/ftpclass.cc:3621
+#: src/ftpclass.cc:3621 src/Http.cc:1613
 msgid "Connection idle"
 msgstr "사용하지 않는 접속"
 
-#: src/Http.cc:1609 src/Http.cc:1616 src/ftpclass.cc:3634
+#: src/ftpclass.cc:3634 src/Http.cc:1611 src/Http.cc:1618
 msgid "Connecting..."
 msgstr "접속중..."
 
@@ -1759,11 +1745,11 @@ msgstr "자료 보내는 중"
 msgid "Receiving data/TLS"
 msgstr "자료 받는 중"
 
-#: src/Http.cc:1614 src/ftpclass.cc:3674
+#: src/ftpclass.cc:3674 src/Http.cc:1616
 msgid "Sending data"
 msgstr "자료 보내는 중"
 
-#: src/Http.cc:1621 src/ftpclass.cc:3676
+#: src/ftpclass.cc:3676 src/Http.cc:1623
 msgid "Receiving data"
 msgstr "자료 받는 중"
 
@@ -1782,7 +1768,6 @@ msgstr "[%lu] 시작. %s"
 msgid "[%lu] Finished. %s"
 msgstr "[%lu] 종료. %s"
 
-#. parent
 #: src/lftp.cc:273
 #, c-format
 msgid "[%lu] Moving to background to complete transfers...\n"
@@ -1793,7 +1778,6 @@ msgstr "[%lu] 전송을 완료하도록 백그라운드로 옮기는 중...\n"
 msgid "%s: no files found\n"
 msgstr "%s: 파일수 찾을 수 없습니다\n"
 
-#. A directory has just been created
 #: src/mkdirJob.cc:136
 #, c-format
 msgid "%s ok, `%s' created\n"
@@ -1827,8 +1811,6 @@ msgstr "parse: 재지정 파일명이 빠졌습니다\n"
 msgid "`%s', got %lld of %lld (%d%%) %s%s"
 msgstr ""
 
-#. This is the rule for plural form choice (last condition can be omitted)
-#. Operators: = > < ! | %
 #: src/plural.c:110
 msgid "=1 =0|>1"
 msgstr ""
@@ -1861,7 +1843,6 @@ msgstr "HTTP 연결을 닫습니다"
 msgid "POST method failed"
 msgstr "POST 메소드 실패"
 
-#. problem here: hftp cannot work without proxy
 #: src/Http.cc:832
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
@@ -1871,12 +1852,10 @@ msgstr ""
 msgid "Sending request..."
 msgstr "request 보내는 중..."
 
-#. eof
 #: src/Http.cc:1013
 msgid "Hit EOF while fetching headers"
 msgstr "헤더를 읽어 오는 동안 EOF를 입력"
 
-#. should never happen
 #: src/Http.cc:1096
 msgid "Success, but did nothing??"
 msgstr "성공했지만, 아무 변화도 없다??"
@@ -1885,31 +1864,31 @@ msgstr "성공했지만, 아무 변화도 없다??"
 msgid "Could not parse HTTP status line"
 msgstr "HTTP 상태를 파싱할 수 없음"
 
-#: src/Http.cc:1268
+#: src/Http.cc:1270
 msgid "Receiving body..."
 msgstr "body를 받은 중..."
 
-#: src/Http.cc:1399
+#: src/Http.cc:1401
 msgid "Hit EOF"
 msgstr ""
 
-#: src/Http.cc:1402
+#: src/Http.cc:1404
 msgid "Received not enough data, retrying"
 msgstr "충분한 자료를 받지 못해 다시 시도중"
 
-#: src/Http.cc:1410
+#: src/Http.cc:1412
 msgid "Received all"
 msgstr "모두 받았음"
 
-#: src/Http.cc:1415
+#: src/Http.cc:1417
 msgid "Received all (total)"
 msgstr "모두(전체) 받음"
 
-#: src/Http.cc:1438 src/Http.cc:1459
+#: src/Http.cc:1440 src/Http.cc:1461
 msgid "chunked format violated"
 msgstr "쓰지 않는 양식이 문제가 됩니다"
 
-#: src/Http.cc:1619
+#: src/Http.cc:1621
 msgid "Fetching headers..."
 msgstr "헤더를 읽고 있는중.."
 
@@ -1934,7 +1913,7 @@ msgstr "`%s'는 알수 없는 주소입니다"
 msgid "ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C"
 msgstr ""
 
-#: src/FtpDirList.cc:133 src/HttpDir.cc:1144
+#: src/HttpDir.cc:1144 src/FtpDirList.cc:133
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "파일 목록을 가져옵니다 (%lld) [%s]"
@@ -1988,7 +1967,6 @@ msgstr "copy: put은 깨짐\n"
 msgid "seek failed"
 msgstr "로그인 실패"
 
-#. we lose... How about a large buffer?
 #: src/FileCopy.cc:188
 msgid "cannot seek on data source"
 msgstr "소스 자료에서 찾을 수 없음"
@@ -1998,7 +1976,6 @@ msgstr "소스 자료에서 찾을 수 없음"
 msgid "copy: put rolled back to %lld, seeking get accordingly\n"
 msgstr ""
 
-#. simulate eof, as we have already have the whole file.
 #: src/FileCopy.cc:204
 msgid "copy: all data received, but get rolled back\n"
 msgstr ""
@@ -2017,25 +1994,21 @@ msgstr "copy: `%s'로 재지정하여 받음\n"
 msgid "file name missed in URL"
 msgstr "URL에 파일명이 빠졌습니다"
 
-#. for translator: those are the units. This is 'byte per second'
 #: src/Speedometer.cc:94
 #, c-format
 msgid "%.0fb/s"
 msgstr "%.0fb/초"
 
-#. for translator: This is 'kilobyte per second'
 #: src/Speedometer.cc:97
 #, c-format
 msgid "%.1fK/s"
 msgstr "%.1fK/초"
 
-#. for translator: This is 'Megabyte per second'
 #: src/Speedometer.cc:100
 #, c-format
 msgid "%.2fM/s"
 msgstr "%.2fM/초"
 
-#. for translator: only first letter matters
 #: src/Speedometer.cc:126
 msgid "day"
 msgstr ""
@@ -2052,12 +2025,10 @@ msgstr ""
 msgid "second"
 msgstr ""
 
-#. for translator: Estimated Time of Arrival.
 #: src/Speedometer.cc:132
 msgid "eta:"
 msgstr "남은시간:"
 
-#. both ways failed. Fall back to normal copying.
 #: src/FileCopyFtp.cc:87
 msgid "**** FXP: giving up, reverting to plain copy\n"
 msgstr "**** FXP: 포기하고 일반적인 복사로 바꿈\n"
@@ -2117,7 +2088,6 @@ msgstr "디렉토리 정보를 가져오는 중 (%lld)"
 msgid "Getting files information (%d%%) [%s]"
 msgstr "파일 정보를 가져오는 중 (%d%%)"
 
-#. dead lock
 #: src/PollVec.cc:98
 #, c-format
 msgid "%s: BUG - deadlock detected\n"
@@ -2133,18 +2103,6 @@ msgstr "\t반복 횟수: %d\n"
 msgid "%s: argument required. "
 msgstr "%s: 인자가 필요합니다. "
 
-#: getdate.y:1012
-msgid ""
-"Enter date, or blank line to exit.\n"
-"\t> "
-msgstr ""
-"자료 입력, 종료하기 위해선 공백라인을 입력.\n"
-"\t> "
-
-#: getdate.y:1020
-msgid "Bad format - couldn't convert.\n"
-msgstr "잘못도니 양식 - 변환할 수 없음.\n"
-
 #: src/module.cc:181
 #, c-format
 msgid "depend module `%s': %s\n"
@@ -2153,6 +2111,16 @@ msgstr "`%s'모듈에 의존함: %s\n"
 #: src/module.cc:201
 msgid "modules are not supported on this system"
 msgstr "모듈은 이 시스템에서 지원되지 않음"
+
+#~ msgid ""
+#~ "Enter date, or blank line to exit.\n"
+#~ "\t> "
+#~ msgstr ""
+#~ "자료 입력, 종료하기 위해선 공백라인을 입력.\n"
+#~ "\t> "
+
+#~ msgid "Bad format - couldn't convert.\n"
+#~ msgstr "잘못도니 양식 - 변환할 수 없음.\n"
 
 #~ msgid "%s: Invalid number for size\n"
 #~ msgstr "%s: 크기로 사용할 수 없는 수입니다\n"

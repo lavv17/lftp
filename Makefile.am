@@ -1,9 +1,8 @@
-EXTRA_DIST = lftp.conf lftp.lsm FAQ acconfig.h README README.debug-levels\
+EXTRA_DIST = config.rpath lftp.conf lftp.lsm FAQ acconfig.h README README.debug-levels\
  README.modules MIRRORS BUGS FEATURES
-SUBDIRS = include readline-4.2 lib doc intl src po m4
+SUBDIRS = include readline-4.2 lib doc src po m4
 AUTOMAKE_OPTIONS = foreign
-M4DIR = $(srcdir)/m4
-ACLOCAL_AMFLAGS = -I $(M4DIR)
+ACLOCAL_AMFLAGS = -I m4
 
 install-data-local:
 	if [ ! -f $(DESTDIR)$(sysconfdir)/lftp.conf ]; then \

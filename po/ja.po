@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
-"POT-Creation-Date: 2002-05-07 19:10+0400\n"
+"POT-Creation-Date: 2002-05-16 18:22+0400\n"
 "PO-Revision-Date: 2002-04-12 00:06+0900\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -261,18 +261,18 @@ msgstr "古いリモートディレクトリ `%s' を削除しています"
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s: %s の書き込みでエラー: %s\n"
 
-#: src/MirrorJob.cc:1049 src/SleepJob.cc:139 src/commands.cc:943
-#: src/commands.cc:1035 src/commands.cc:1400 src/commands.cc:1453
-#: src/commands.cc:1552 src/commands.cc:1805 src/commands.cc:1999
-#: src/commands.cc:2171 src/commands.cc:2178 src/commands.cc:2360
-#: src/commands.cc:2388 src/commands.cc:2395 src/commands.cc:2717
-#: src/commands.cc:2978
+#: src/MirrorJob.cc:1049 src/commands.cc:943 src/commands.cc:1035
+#: src/commands.cc:1400 src/commands.cc:1453 src/commands.cc:1552
+#: src/commands.cc:1805 src/commands.cc:1999 src/commands.cc:2171
+#: src/commands.cc:2178 src/commands.cc:2360 src/commands.cc:2388
+#: src/commands.cc:2395 src/commands.cc:2717 src/commands.cc:2978
+#: src/SleepJob.cc:139
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "`help %s' でより詳しい情報が得られます。\n"
 
-#: src/DummyProto.cc:73 src/MirrorJob.cc:1083 src/MirrorJob.cc:1099
-#: src/commands.cc:811 src/commands.cc:1893
+#: src/MirrorJob.cc:1083 src/MirrorJob.cc:1099 src/commands.cc:811
+#: src/commands.cc:1893 src/DummyProto.cc:73
 msgid " - not supported protocol"
 msgstr " - はサポートされていないプロトコルです"
 
@@ -301,7 +301,6 @@ msgstr "不正な数"
 msgid "invalid floating point number"
 msgstr "不正な浮動小数点数"
 
-#. debug only
 #: src/ResMgr.cc:550
 #, c-format
 msgid "Query of variable `%s' failed: %s\n"
@@ -328,8 +327,8 @@ msgstr "不正なIPv4番号アドレス"
 msgid "no closure defined for this setting"
 msgstr "この設定では終止が定義されていません"
 
-#: src/Http.cc:1603 src/Resolver.cc:184 src/Resolver.cc:226
-#: src/ftpclass.cc:3628
+#: src/Resolver.cc:184 src/Resolver.cc:226 src/ftpclass.cc:3628
+#: src/Http.cc:1605
 msgid "Resolving host address..."
 msgstr "ホストアドレスを解決しています..."
 
@@ -337,21 +336,21 @@ msgstr "ホストアドレスを解決しています..."
 msgid "host name resolve timeout"
 msgstr "ホスト名解決がタイムアウトしました"
 
-#: src/Resolver.cc:298
+#: src/Resolver.cc:300
 #, c-format
 msgid "---- %d address$|es$ found\n"
 msgstr "---- %d 個のアドレスが見つかりました\n"
 
-#: src/Resolver.cc:769
+#: src/Resolver.cc:787
 msgid "Host name lookup failure"
 msgstr "ホスト名検索に失敗しました"
 
-#: src/Resolver.cc:801
+#: src/Resolver.cc:819
 #, c-format
 msgid "no such %s service"
 msgstr "%s などというサービスはありません"
 
-#: src/Resolver.cc:823
+#: src/Resolver.cc:841
 msgid "No address found"
 msgstr "アドレスが見つかりません"
 
@@ -510,16 +509,6 @@ msgstr ""
 msgid "[re]cls [opts] [path/][pattern]"
 msgstr ""
 
-#. note: I've tried to keep options which are likely to be always
-#. * turned on (via cmd:cls-default, etc) capital, to leave lowercase
-#. * available for options more commonly used manually.  -s/-S is an
-#. * exception; they both seem to be options used manually, so I made
-#. * them align with GNU ls options.
-#. FIXME: poorly worded. another explanation of --filesize: if a person
-#. * wants to only see file sizes for files (not dirs) when he uses -s,
-#. * add --filesize; it won't have any effect unless -s is also used, so
-#. * it can be enabled all the time. (that's also poorly worded, and too
-#. * long.)
 #: src/commands.cc:162
 msgid ""
 "List remote files. You can redirect output of this command to file\n"
@@ -1399,9 +1388,6 @@ msgstr ""
 msgid "invalid block size"
 msgstr "不正な数"
 
-#. silly getopt won't give us its error instead of printing it, oh well.
-#. * we only need to never print errors for completion and validation; for
-#. * cls itself we could do it, but that'd be a special case ...
 #: src/commands.cc:1368
 #, fuzzy
 msgid "invalid option"
@@ -1636,7 +1622,7 @@ msgstr "使い方: %s command args...\n"
 msgid "Usage: %s module [args...]\n"
 msgstr "使い方: %s module [args...]\n"
 
-#: src/LocalAccess.cc:600 src/commands.cc:2734
+#: src/commands.cc:2734 src/LocalAccess.cc:600
 msgid "cannot get current directory"
 msgstr "現在のディレクトリが取得できません"
 
@@ -1697,11 +1683,11 @@ msgstr "ホスト名検索に失敗したと仮定します"
 msgid "cannot parse EPSV response"
 msgstr "EPSV レスポンスを解析できません"
 
-#: src/Http.cc:753 src/ftpclass.cc:1114
+#: src/ftpclass.cc:1114 src/Http.cc:753
 msgid "Closing idle connection"
 msgstr "アイドル状態の接続を閉じます"
 
-#: src/Http.cc:876 src/ftpclass.cc:1194
+#: src/ftpclass.cc:1194 src/Http.cc:876
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "アドレスファミリ %d のソケットを作れません"
@@ -1728,7 +1714,7 @@ msgstr "データソケットを (%s) のポート %u に接続中"
 msgid "Switching passive mode off"
 msgstr "パッシヴモードをオフに切り替えました"
 
-#: src/Http.cc:964 src/ftpclass.cc:2369
+#: src/ftpclass.cc:2369 src/Http.cc:964
 msgid "Peer closed connection"
 msgstr "ピアが接続を閉じました"
 
@@ -1775,16 +1761,16 @@ msgstr ""
 msgid "Sending commands..."
 msgstr "コマンドを送信中..."
 
-#: src/Http.cc:1618 src/ftpclass.cc:3620 src/ftpclass.cc:3645
-#: src/ftpclass.cc:3658
+#: src/ftpclass.cc:3620 src/ftpclass.cc:3645 src/ftpclass.cc:3658
+#: src/Http.cc:1620
 msgid "Waiting for response..."
 msgstr "応答を待っています..."
 
-#: src/Http.cc:1611 src/ftpclass.cc:3621
+#: src/ftpclass.cc:3621 src/Http.cc:1613
 msgid "Connection idle"
 msgstr "接続アイドル"
 
-#: src/Http.cc:1609 src/Http.cc:1616 src/ftpclass.cc:3634
+#: src/ftpclass.cc:3634 src/Http.cc:1611 src/Http.cc:1618
 msgid "Connecting..."
 msgstr "接続中..."
 
@@ -1830,11 +1816,11 @@ msgstr "データ送信中"
 msgid "Receiving data/TLS"
 msgstr "データ受信中"
 
-#: src/Http.cc:1614 src/ftpclass.cc:3674
+#: src/ftpclass.cc:3674 src/Http.cc:1616
 msgid "Sending data"
 msgstr "データ送信中"
 
-#: src/Http.cc:1621 src/ftpclass.cc:3676
+#: src/ftpclass.cc:3676 src/Http.cc:1623
 msgid "Receiving data"
 msgstr "データ受信中"
 
@@ -1853,7 +1839,6 @@ msgstr "[%lu] 開始。 %s"
 msgid "[%lu] Finished. %s"
 msgstr "[%lu] 完了。 %s"
 
-#. parent
 #: src/lftp.cc:273
 #, c-format
 msgid "[%lu] Moving to background to complete transfers...\n"
@@ -1864,7 +1849,6 @@ msgstr "[%lu] 転送を完了するためバックグラウンドに移行中です...\n"
 msgid "%s: no files found\n"
 msgstr "%s: ファイルがありません\n"
 
-#. A directory has just been created
 #: src/mkdirJob.cc:136
 #, c-format
 msgid "%s ok, `%s' created\n"
@@ -1898,8 +1882,6 @@ msgstr "parse: リダイレクションのファイル名がありません\n"
 msgid "`%s', got %lld of %lld (%d%%) %s%s"
 msgstr "`%s'、%lld (%lld 中、%d%%)を取得 %s%s"
 
-#. This is the rule for plural form choice (last condition can be omitted)
-#. Operators: = > < ! | %
 #: src/plural.c:110
 msgid "=1 =0|>1"
 msgstr "=1 =0|>1"
@@ -1932,7 +1914,6 @@ msgstr "HTTP 接続を閉じています"
 msgid "POST method failed"
 msgstr "POST メソッド失敗"
 
-#. problem here: hftp cannot work without proxy
 #: src/Http.cc:832
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
@@ -1943,12 +1924,10 @@ msgstr ""
 msgid "Sending request..."
 msgstr "リクエストを送信中..."
 
-#. eof
 #: src/Http.cc:1013
 msgid "Hit EOF while fetching headers"
 msgstr "ヘッダの取得中に EOF に達しました"
 
-#. should never happen
 #: src/Http.cc:1096
 msgid "Success, but did nothing??"
 msgstr "成功しましたが、何もしなかったのかな??"
@@ -1957,31 +1936,31 @@ msgstr "成功しましたが、何もしなかったのかな??"
 msgid "Could not parse HTTP status line"
 msgstr "HTTP ステータスラインを解析できませんでした"
 
-#: src/Http.cc:1268
+#: src/Http.cc:1270
 msgid "Receiving body..."
 msgstr "ボディを受信中..."
 
-#: src/Http.cc:1399
+#: src/Http.cc:1401
 msgid "Hit EOF"
 msgstr "EOF に達しました"
 
-#: src/Http.cc:1402
+#: src/Http.cc:1404
 msgid "Received not enough data, retrying"
 msgstr "十分なデータを受信できなかったので、再試行します"
 
-#: src/Http.cc:1410
+#: src/Http.cc:1412
 msgid "Received all"
 msgstr "すべて受信しました"
 
-#: src/Http.cc:1415
+#: src/Http.cc:1417
 msgid "Received all (total)"
 msgstr "すべて受信しました (合計)"
 
-#: src/Http.cc:1438 src/Http.cc:1459
+#: src/Http.cc:1440 src/Http.cc:1461
 msgid "chunked format violated"
 msgstr "chunked フォーマットに違反しています"
 
-#: src/Http.cc:1619
+#: src/Http.cc:1621
 msgid "Fetching headers..."
 msgstr "ヘッダを取得中..."
 
@@ -2007,7 +1986,7 @@ msgid "ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C"
 msgstr ""
 "ftp:ssl-auth は以下のどれかでなければなりません: SSL、TLS、TLS-P、TLS-C"
 
-#: src/FtpDirList.cc:133 src/HttpDir.cc:1144
+#: src/HttpDir.cc:1144 src/FtpDirList.cc:133
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "ファイルリスト (%lld) [%s] を取得中"
@@ -2060,7 +2039,6 @@ msgstr "copy: put が壊れています\n"
 msgid "seek failed"
 msgstr "seek 失敗"
 
-#. we lose... How about a large buffer?
 #: src/FileCopy.cc:188
 msgid "cannot seek on data source"
 msgstr "データソースには seek できません"
@@ -2070,7 +2048,6 @@ msgstr "データソースには seek できません"
 msgid "copy: put rolled back to %lld, seeking get accordingly\n"
 msgstr "copy: put は %lld に戻りました。適宜 get しています\n"
 
-#. simulate eof, as we have already have the whole file.
 #: src/FileCopy.cc:204
 msgid "copy: all data received, but get rolled back\n"
 msgstr "copy: データをすべて受信しましたが、get は戻りました\n"
@@ -2089,19 +2066,16 @@ msgstr "copy: `%s' へのリダイレクションを受け取りました\n"
 msgid "file name missed in URL"
 msgstr "URL 中にファイル名がありません"
 
-#. for translator: those are the units. This is 'byte per second'
 #: src/Speedometer.cc:94
 #, c-format
 msgid "%.0fb/s"
 msgstr "%.0fB/s"
 
-#. for translator: This is 'kilobyte per second'
 #: src/Speedometer.cc:97
 #, c-format
 msgid "%.1fK/s"
 msgstr "%.1fKB/s"
 
-#. for translator: This is 'Megabyte per second'
 #: src/Speedometer.cc:100
 #, c-format
 msgid "%.2fM/s"
@@ -2114,7 +2088,6 @@ msgstr "%.2fMB/s"
 #     2バイト文字を用いると表示が文字化けします。
 #              Jun Nakajima <naka01@orihime.net> 2002-04-12
 #
-#. for translator: only first letter matters
 #: src/Speedometer.cc:126
 msgid "day"
 msgstr "day"
@@ -2131,12 +2104,10 @@ msgstr "minute"
 msgid "second"
 msgstr "second"
 
-#. for translator: Estimated Time of Arrival.
 #: src/Speedometer.cc:132
 msgid "eta:"
 msgstr "eta:"
 
-#. both ways failed. Fall back to normal copying.
 #: src/FileCopyFtp.cc:87
 msgid "**** FXP: giving up, reverting to plain copy\n"
 msgstr "**** FXP: あきらめてプレーンコピーに戻ります\n"
@@ -2196,7 +2167,6 @@ msgstr "ディレクトリ内容 (%lld) を取得中"
 msgid "Getting files information (%d%%) [%s]"
 msgstr "ファイル情報 (%d%%)を取得中"
 
-#. dead lock
 #: src/PollVec.cc:98
 #, c-format
 msgid "%s: BUG - deadlock detected\n"
@@ -2212,18 +2182,6 @@ msgstr "\tリピート回数: %d\n"
 msgid "%s: argument required. "
 msgstr "%s: 引数が必要です。"
 
-#: getdate.y:1012
-msgid ""
-"Enter date, or blank line to exit.\n"
-"\t> "
-msgstr ""
-"日付を入力してください。空行で終了します。\n"
-"\t> "
-
-#: getdate.y:1020
-msgid "Bad format - couldn't convert.\n"
-msgstr "不正な形式 -  変換できません。\n"
-
 #: src/module.cc:181
 #, c-format
 msgid "depend module `%s': %s\n"
@@ -2232,6 +2190,16 @@ msgstr "モジュール `%s' に依存しています: %s\n"
 #: src/module.cc:201
 msgid "modules are not supported on this system"
 msgstr "モジュールはこのシステムではサポートされていません"
+
+#~ msgid ""
+#~ "Enter date, or blank line to exit.\n"
+#~ "\t> "
+#~ msgstr ""
+#~ "日付を入力してください。空行で終了します。\n"
+#~ "\t> "
+
+#~ msgid "Bad format - couldn't convert.\n"
+#~ msgstr "不正な形式 -  変換できません。\n"
 
 #~ msgid "%s: Invalid number for size\n"
 #~ msgstr "%s: サイズとしては不正な数です\n"
