@@ -1126,7 +1126,7 @@ int   Ftp::Do()
 	    && !strncmp(file,real_cwd,len) && file[len]=='/')
 	       sprintf(str1,"CWD .%s\n",file+len);
 	    else
-	       sprintf(str1,"CWD %s\n",cwd);
+	       sprintf(str1,"CWD %s\n",file);
 	    SendCmd(str1);
 	    AddResp(RESP_CWD_RMD_DELE_OK,INITIAL_STATE,CHECK_CWD);
 	    SetRespPath(file);
