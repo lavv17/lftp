@@ -1,3 +1,12 @@
+2005-04-01  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SFtp.cc: re-request missed data (could happen when file is growing).
+
+2005-03-29  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* HttpDir.cc, HttpDir.h, HttpDirXML.cc: parse invalid XML as html,
+	  this works around some servers that return plain index for PROPFIND.
+
 2005-03-28  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: interpret the rest of line after lftp -c as command.

@@ -894,6 +894,15 @@ void SFtp::HandleExpect(Expect *e)
 	    d->GetData(&b,&s);
 	    Log::global->Format(9,"---- data packet: pos=%lld, size=%d\n",(long long)r->pos,s);
 	    file_buf->Put(b,s);
+	    if(r->len > unsigned(s))   // received less than requested?
+	    {
+	       // if we have not yet requested next chunk of data,
+	       // then adjust request position, else re-request missed data.
+	       if(r->pos+r->len==request_pos)
+		  request_pos=r->pos+s;
+	       else
+		  SendRequest(new Request_READ(handle,handle_len,r->pos+s,r->len-s),Expect::DATA);
+	    }
 	 }
 	 else
 	 {
