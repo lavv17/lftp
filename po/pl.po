@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.6.9\n"
-"POT-Creation-Date: 2003-11-19 13:14+0300\n"
+"POT-Creation-Date: 2003-12-11 18:12+0300\n"
 "PO-Revision-Date: 2003-11-20 22:57+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -45,7 +45,7 @@ msgstr "cd ok, cwd=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: otrzymano przekierowanie do `%s'\n"
 
-#: src/CmdExec.cc:396 src/FileCopy.cc:961
+#: src/CmdExec.cc:396 src/FileCopy.cc:971
 msgid "Too many redirections"
 msgstr "Zbyt du¿o przekierowañ"
 
@@ -343,7 +343,7 @@ msgid "invalid pair of numbers"
 msgstr "nieprawid³owa para liczb"
 
 #: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3734
-#: src/Http.cc:1655
+#: src/Http.cc:1666
 msgid "Resolving host address..."
 msgstr "Uzyskiwanie adresu hosta..."
 
@@ -356,16 +356,16 @@ msgstr "przekroczony czas rozwi±zywania nazwy hosta"
 msgid "---- %d address$|es$ found\n"
 msgstr "---- %d znaleziono adres$y|ów$\n"
 
-#: src/Resolver.cc:787
+#: src/Resolver.cc:788
 msgid "Host name lookup failure"
 msgstr "Rozwi±zywanie nazwy hosta nie powiod³o siê"
 
-#: src/Resolver.cc:819
+#: src/Resolver.cc:820
 #, c-format
 msgid "no such %s service"
 msgstr "nie ma takiej us³ugi %s"
 
-#: src/Resolver.cc:841
+#: src/Resolver.cc:842
 msgid "No address found"
 msgstr "Nie znaleziono adresu"
 
@@ -1749,7 +1749,7 @@ msgstr "nie mo¿na przeanalizowaæ odpowiedzi EPSV"
 msgid "Closing idle connection"
 msgstr "Zamykanie bezczynnego po³±czenia"
 
-#: src/ftpclass.cc:1214 src/Http.cc:921
+#: src/ftpclass.cc:1214 src/Http.cc:926
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "nie mo¿na utworzyæ gniazda dla rodziny adresu %d"
@@ -1775,7 +1775,7 @@ msgstr "£±cznie siê (gniazdo danych) z (%s) port %u"
 msgid "Switching passive mode off"
 msgstr "Wy³±czam tryb pasywny"
 
-#: src/ftpclass.cc:2424 src/Http.cc:1009
+#: src/ftpclass.cc:2424 src/Http.cc:1014
 msgid "Peer closed connection"
 msgstr "Komputer po drugiej stronie zamkn±³ po³±czenie"
 
@@ -1822,15 +1822,15 @@ msgid "Sending commands..."
 msgstr "Wysy³anie komend..."
 
 #: src/ftpclass.cc:3726 src/ftpclass.cc:3751 src/ftpclass.cc:3764
-#: src/Http.cc:1670
+#: src/Http.cc:1681
 msgid "Waiting for response..."
 msgstr "Czekanie na odpowied¼..."
 
-#: src/ftpclass.cc:3727 src/Http.cc:1663
+#: src/ftpclass.cc:3727 src/Http.cc:1674
 msgid "Connection idle"
 msgstr "Po³±czenie bezczynne"
 
-#: src/ftpclass.cc:3740 src/Http.cc:1661 src/Http.cc:1668
+#: src/ftpclass.cc:3740 src/Http.cc:1672 src/Http.cc:1679
 msgid "Connecting..."
 msgstr "£±czenie siê..."
 
@@ -1874,11 +1874,11 @@ msgstr "Wysy³am dane/TLS"
 msgid "Receiving data/TLS"
 msgstr "Otrzymujê dane/TLS"
 
-#: src/ftpclass.cc:3780 src/Http.cc:1666
+#: src/ftpclass.cc:3780 src/Http.cc:1677
 msgid "Sending data"
 msgstr "Wysy³am dane"
 
-#: src/ftpclass.cc:3782 src/Http.cc:1673
+#: src/ftpclass.cc:3782 src/Http.cc:1684
 msgid "Receiving data"
 msgstr "Otrzymujê dane"
 
@@ -1972,51 +1972,51 @@ msgstr "Zamykanie po³±czenia HTTP"
 msgid "POST method failed"
 msgstr "nie powiod³a siê metoda POST"
 
-#: src/Http.cc:877
+#: src/Http.cc:882
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr "ftp poprzez http mo¿e nie dzia³aæ bez proxy, ustaw hftp:proxy"
 
-#: src/Http.cc:1020
+#: src/Http.cc:1030
 msgid "Sending request..."
 msgstr "Wysy³anie ¿±dania..."
 
-#: src/Http.cc:1067
+#: src/Http.cc:1077
 msgid "Hit EOF while fetching headers"
 msgstr "Natrafiono na EOF podczas przesy³ania nag³ówków"
 
-#: src/Http.cc:1151
+#: src/Http.cc:1161
 msgid "Success, but did nothing??"
 msgstr "Sukces, ale nic nie zrobiono??"
 
-#: src/Http.cc:1185
+#: src/Http.cc:1195
 msgid "Could not parse HTTP status line"
 msgstr "Nie mo¿na zanalizowaæ linii statusu HTTP"
 
-#: src/Http.cc:1325
+#: src/Http.cc:1335
 msgid "Receiving body..."
 msgstr "Otrzymujê dane..."
 
-#: src/Http.cc:1451
+#: src/Http.cc:1461
 msgid "Hit EOF"
 msgstr "Natrafiono na EOF"
 
-#: src/Http.cc:1454
+#: src/Http.cc:1464
 msgid "Received not enough data, retrying"
 msgstr "Przes³anie nie wystarczaj±c± ilo¶æ danych, próbujê ponownie"
 
-#: src/Http.cc:1462
+#: src/Http.cc:1472
 msgid "Received all"
 msgstr "Przes³ano wszystko"
 
-#: src/Http.cc:1467
+#: src/Http.cc:1477
 msgid "Received all (total)"
 msgstr "Przes³ano wszystko (ca³o¶æ)"
 
-#: src/Http.cc:1490 src/Http.cc:1511
+#: src/Http.cc:1500 src/Http.cc:1521
 msgid "chunked format violated"
 msgstr "naruszony format"
 
-#: src/Http.cc:1671
+#: src/Http.cc:1682
 msgid "Fetching headers..."
 msgstr "Przesy³am nag³ówki..."
 
@@ -2119,12 +2119,12 @@ msgstr ""
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr "kopiowanie: get powróci³o do %lld, przeszukiwanie put\n"
 
-#: src/FileCopy.cc:958
+#: src/FileCopy.cc:968
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "kopiowanie: otrzymano przekierowanie do `%s'\n"
 
-#: src/FileCopy.cc:1160
+#: src/FileCopy.cc:1170
 msgid "file name missed in URL"
 msgstr "brak nazwy pliku w URL"
 

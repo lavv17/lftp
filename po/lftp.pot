@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2003-11-19 13:14+0300\n"
+"POT-Creation-Date: 2003-12-11 18:12+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,7 +45,7 @@ msgstr ""
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
 
-#: src/CmdExec.cc:396 src/FileCopy.cc:961
+#: src/CmdExec.cc:396 src/FileCopy.cc:971
 msgid "Too many redirections"
 msgstr ""
 
@@ -331,7 +331,7 @@ msgid "invalid pair of numbers"
 msgstr ""
 
 #: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3734
-#: src/Http.cc:1655
+#: src/Http.cc:1666
 msgid "Resolving host address..."
 msgstr ""
 
@@ -344,16 +344,16 @@ msgstr ""
 msgid "---- %d address$|es$ found\n"
 msgstr ""
 
-#: src/Resolver.cc:787
+#: src/Resolver.cc:788
 msgid "Host name lookup failure"
 msgstr ""
 
-#: src/Resolver.cc:819
+#: src/Resolver.cc:820
 #, c-format
 msgid "no such %s service"
 msgstr ""
 
-#: src/Resolver.cc:841
+#: src/Resolver.cc:842
 msgid "No address found"
 msgstr ""
 
@@ -1432,7 +1432,7 @@ msgstr ""
 msgid "Closing idle connection"
 msgstr ""
 
-#: src/ftpclass.cc:1214 src/Http.cc:921
+#: src/ftpclass.cc:1214 src/Http.cc:926
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr ""
@@ -1458,7 +1458,7 @@ msgstr ""
 msgid "Switching passive mode off"
 msgstr ""
 
-#: src/ftpclass.cc:2424 src/Http.cc:1009
+#: src/ftpclass.cc:2424 src/Http.cc:1014
 msgid "Peer closed connection"
 msgstr ""
 
@@ -1503,15 +1503,15 @@ msgid "Sending commands..."
 msgstr ""
 
 #: src/ftpclass.cc:3726 src/ftpclass.cc:3751 src/ftpclass.cc:3764
-#: src/Http.cc:1670
+#: src/Http.cc:1681
 msgid "Waiting for response..."
 msgstr ""
 
-#: src/ftpclass.cc:3727 src/Http.cc:1663
+#: src/ftpclass.cc:3727 src/Http.cc:1674
 msgid "Connection idle"
 msgstr ""
 
-#: src/ftpclass.cc:3740 src/Http.cc:1661 src/Http.cc:1668
+#: src/ftpclass.cc:3740 src/Http.cc:1672 src/Http.cc:1679
 msgid "Connecting..."
 msgstr ""
 
@@ -1555,11 +1555,11 @@ msgstr ""
 msgid "Receiving data/TLS"
 msgstr ""
 
-#: src/ftpclass.cc:3780 src/Http.cc:1666
+#: src/ftpclass.cc:3780 src/Http.cc:1677
 msgid "Sending data"
 msgstr ""
 
-#: src/ftpclass.cc:3782 src/Http.cc:1673
+#: src/ftpclass.cc:3782 src/Http.cc:1684
 msgid "Receiving data"
 msgstr ""
 
@@ -1653,51 +1653,51 @@ msgstr ""
 msgid "POST method failed"
 msgstr ""
 
-#: src/Http.cc:877
+#: src/Http.cc:882
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 
-#: src/Http.cc:1020
+#: src/Http.cc:1030
 msgid "Sending request..."
 msgstr ""
 
-#: src/Http.cc:1067
+#: src/Http.cc:1077
 msgid "Hit EOF while fetching headers"
 msgstr ""
 
-#: src/Http.cc:1151
+#: src/Http.cc:1161
 msgid "Success, but did nothing??"
 msgstr ""
 
-#: src/Http.cc:1185
+#: src/Http.cc:1195
 msgid "Could not parse HTTP status line"
 msgstr ""
 
-#: src/Http.cc:1325
+#: src/Http.cc:1335
 msgid "Receiving body..."
 msgstr ""
 
-#: src/Http.cc:1451
+#: src/Http.cc:1461
 msgid "Hit EOF"
 msgstr ""
 
-#: src/Http.cc:1454
+#: src/Http.cc:1464
 msgid "Received not enough data, retrying"
 msgstr ""
 
-#: src/Http.cc:1462
+#: src/Http.cc:1472
 msgid "Received all"
 msgstr ""
 
-#: src/Http.cc:1467
+#: src/Http.cc:1477
 msgid "Received all (total)"
 msgstr ""
 
-#: src/Http.cc:1490 src/Http.cc:1511
+#: src/Http.cc:1500 src/Http.cc:1521
 msgid "chunked format violated"
 msgstr ""
 
-#: src/Http.cc:1671
+#: src/Http.cc:1682
 msgid "Fetching headers..."
 msgstr ""
 
@@ -1797,12 +1797,12 @@ msgstr ""
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr ""
 
-#: src/FileCopy.cc:958
+#: src/FileCopy.cc:968
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr ""
 
-#: src/FileCopy.cc:1160
+#: src/FileCopy.cc:1170
 msgid "file name missed in URL"
 msgstr ""
 

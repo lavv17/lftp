@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
-"POT-Creation-Date: 2003-11-19 13:14+0300\n"
+"POT-Creation-Date: 2003-12-11 18:12+0300\n"
 "PO-Revision-Date: 2002-04-12 00:06+0900\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -43,7 +43,7 @@ msgstr "cd 成功、cwd=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: `%s'へのリダイレクションを受け取りました\n"
 
-#: src/CmdExec.cc:396 src/FileCopy.cc:961
+#: src/CmdExec.cc:396 src/FileCopy.cc:971
 msgid "Too many redirections"
 msgstr "リダイレクションが多すぎます"
 
@@ -337,7 +337,7 @@ msgid "invalid pair of numbers"
 msgstr "不正な数"
 
 #: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3734
-#: src/Http.cc:1655
+#: src/Http.cc:1666
 msgid "Resolving host address..."
 msgstr "ホストアドレスを解決しています..."
 
@@ -350,16 +350,16 @@ msgstr "ホスト名解決がタイムアウトしました"
 msgid "---- %d address$|es$ found\n"
 msgstr "---- %d 個のアドレスが見つかりました\n"
 
-#: src/Resolver.cc:787
+#: src/Resolver.cc:788
 msgid "Host name lookup failure"
 msgstr "ホスト名検索に失敗しました"
 
-#: src/Resolver.cc:819
+#: src/Resolver.cc:820
 #, c-format
 msgid "no such %s service"
 msgstr "%s などというサービスはありません"
 
-#: src/Resolver.cc:841
+#: src/Resolver.cc:842
 msgid "No address found"
 msgstr "アドレスが見つかりません"
 
@@ -1697,7 +1697,7 @@ msgstr "EPSV レスポンスを解析できません"
 msgid "Closing idle connection"
 msgstr "アイドル状態の接続を閉じます"
 
-#: src/ftpclass.cc:1214 src/Http.cc:921
+#: src/ftpclass.cc:1214 src/Http.cc:926
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "アドレスファミリ %d のソケットを作れません"
@@ -1724,7 +1724,7 @@ msgstr "データソケットを (%s) のポート %u に接続中"
 msgid "Switching passive mode off"
 msgstr "パッシヴモードをオフに切り替えました"
 
-#: src/ftpclass.cc:2424 src/Http.cc:1009
+#: src/ftpclass.cc:2424 src/Http.cc:1014
 msgid "Peer closed connection"
 msgstr "ピアが接続を閉じました"
 
@@ -1772,15 +1772,15 @@ msgid "Sending commands..."
 msgstr "コマンドを送信中..."
 
 #: src/ftpclass.cc:3726 src/ftpclass.cc:3751 src/ftpclass.cc:3764
-#: src/Http.cc:1670
+#: src/Http.cc:1681
 msgid "Waiting for response..."
 msgstr "応答を待っています..."
 
-#: src/ftpclass.cc:3727 src/Http.cc:1663
+#: src/ftpclass.cc:3727 src/Http.cc:1674
 msgid "Connection idle"
 msgstr "接続アイドル"
 
-#: src/ftpclass.cc:3740 src/Http.cc:1661 src/Http.cc:1668
+#: src/ftpclass.cc:3740 src/Http.cc:1672 src/Http.cc:1679
 msgid "Connecting..."
 msgstr "接続中..."
 
@@ -1826,11 +1826,11 @@ msgstr "データ送信中"
 msgid "Receiving data/TLS"
 msgstr "データ受信中"
 
-#: src/ftpclass.cc:3780 src/Http.cc:1666
+#: src/ftpclass.cc:3780 src/Http.cc:1677
 msgid "Sending data"
 msgstr "データ送信中"
 
-#: src/ftpclass.cc:3782 src/Http.cc:1673
+#: src/ftpclass.cc:3782 src/Http.cc:1684
 msgid "Receiving data"
 msgstr "データ受信中"
 
@@ -1924,53 +1924,53 @@ msgstr "HTTP 接続を閉じています"
 msgid "POST method failed"
 msgstr "POST メソッド失敗"
 
-#: src/Http.cc:877
+#: src/Http.cc:882
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "ftp over http はプロキシ無しでは利用できません。hftp:proxy をセットしてくださ"
 "い。"
 
-#: src/Http.cc:1020
+#: src/Http.cc:1030
 msgid "Sending request..."
 msgstr "リクエストを送信中..."
 
-#: src/Http.cc:1067
+#: src/Http.cc:1077
 msgid "Hit EOF while fetching headers"
 msgstr "ヘッダの取得中に EOF に達しました"
 
-#: src/Http.cc:1151
+#: src/Http.cc:1161
 msgid "Success, but did nothing??"
 msgstr "成功しましたが、何もしなかったのかな??"
 
-#: src/Http.cc:1185
+#: src/Http.cc:1195
 msgid "Could not parse HTTP status line"
 msgstr "HTTP ステータスラインを解析できませんでした"
 
-#: src/Http.cc:1325
+#: src/Http.cc:1335
 msgid "Receiving body..."
 msgstr "ボディを受信中..."
 
-#: src/Http.cc:1451
+#: src/Http.cc:1461
 msgid "Hit EOF"
 msgstr "EOF に達しました"
 
-#: src/Http.cc:1454
+#: src/Http.cc:1464
 msgid "Received not enough data, retrying"
 msgstr "十分なデータを受信できなかったので、再試行します"
 
-#: src/Http.cc:1462
+#: src/Http.cc:1472
 msgid "Received all"
 msgstr "すべて受信しました"
 
-#: src/Http.cc:1467
+#: src/Http.cc:1477
 msgid "Received all (total)"
 msgstr "すべて受信しました (合計)"
 
-#: src/Http.cc:1490 src/Http.cc:1511
+#: src/Http.cc:1500 src/Http.cc:1521
 msgid "chunked format violated"
 msgstr "chunked フォーマットに違反しています"
 
-#: src/Http.cc:1671
+#: src/Http.cc:1682
 msgid "Fetching headers..."
 msgstr "ヘッダを取得中..."
 
@@ -2071,12 +2071,12 @@ msgstr "copy: データをすべて受信しましたが、get は戻りました\n"
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr "copy: get は %lld に戻りました。適宜 put しています\n"
 
-#: src/FileCopy.cc:958
+#: src/FileCopy.cc:968
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy: `%s' へのリダイレクションを受け取りました\n"
 
-#: src/FileCopy.cc:1160
+#: src/FileCopy.cc:1170
 msgid "file name missed in URL"
 msgstr "URL 中にファイル名がありません"
 

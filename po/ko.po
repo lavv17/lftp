@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
-"POT-Creation-Date: 2003-11-19 13:14+0300\n"
+"POT-Creation-Date: 2003-12-11 18:12+0300\n"
 "PO-Revision-Date: 2001-05-27 KST\n"
 "Last-Translator: Dojip Kim <greendrm@greendrm.com>\n"
 "Language-Team: \n"
@@ -43,7 +43,7 @@ msgstr "cd 성공, cwd=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: `%s'으로 리다이렉션을 받음\n"
 
-#: src/CmdExec.cc:396 src/FileCopy.cc:961
+#: src/CmdExec.cc:396 src/FileCopy.cc:971
 msgid "Too many redirections"
 msgstr "리다이렉션이 너무 많습니다"
 
@@ -331,7 +331,7 @@ msgid "invalid pair of numbers"
 msgstr "잘못된 수입니다"
 
 #: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3734
-#: src/Http.cc:1655
+#: src/Http.cc:1666
 msgid "Resolving host address..."
 msgstr "호스트 주소를 찾습니다..."
 
@@ -344,16 +344,16 @@ msgstr "호스트 주소를 찾는데 시간이 초과되었습니다"
 msgid "---- %d address$|es$ found\n"
 msgstr "주소를 찾을 수 없습니다"
 
-#: src/Resolver.cc:787
+#: src/Resolver.cc:788
 msgid "Host name lookup failure"
 msgstr "호스트명 찾기 실패"
 
-#: src/Resolver.cc:819
+#: src/Resolver.cc:820
 #, c-format
 msgid "no such %s service"
 msgstr "그러한 %s는  없습니다"
 
-#: src/Resolver.cc:841
+#: src/Resolver.cc:842
 msgid "No address found"
 msgstr "주소를 찾을 수 없습니다"
 
@@ -1625,7 +1625,7 @@ msgstr ""
 msgid "Closing idle connection"
 msgstr "사용하지 않는 접속을 끊습니다"
 
-#: src/ftpclass.cc:1214 src/Http.cc:921
+#: src/ftpclass.cc:1214 src/Http.cc:926
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "주소 %d의 소켓을 만들 수 없습니다"
@@ -1651,7 +1651,7 @@ msgstr "(%s) 포트 %u에 자료 소켓을 연결합니다"
 msgid "Switching passive mode off"
 msgstr "패시브(passive) 모드 끔"
 
-#: src/ftpclass.cc:2424 src/Http.cc:1009
+#: src/ftpclass.cc:2424 src/Http.cc:1014
 msgid "Peer closed connection"
 msgstr "접속이 끊겼습니다"
 
@@ -1698,15 +1698,15 @@ msgid "Sending commands..."
 msgstr "명령어 전송중..."
 
 #: src/ftpclass.cc:3726 src/ftpclass.cc:3751 src/ftpclass.cc:3764
-#: src/Http.cc:1670
+#: src/Http.cc:1681
 msgid "Waiting for response..."
 msgstr "응답을 기다립니다..."
 
-#: src/ftpclass.cc:3727 src/Http.cc:1663
+#: src/ftpclass.cc:3727 src/Http.cc:1674
 msgid "Connection idle"
 msgstr "사용하지 않는 접속"
 
-#: src/ftpclass.cc:3740 src/Http.cc:1661 src/Http.cc:1668
+#: src/ftpclass.cc:3740 src/Http.cc:1672 src/Http.cc:1679
 msgid "Connecting..."
 msgstr "접속중..."
 
@@ -1753,11 +1753,11 @@ msgstr "자료 보내는 중"
 msgid "Receiving data/TLS"
 msgstr "자료 받는 중"
 
-#: src/ftpclass.cc:3780 src/Http.cc:1666
+#: src/ftpclass.cc:3780 src/Http.cc:1677
 msgid "Sending data"
 msgstr "자료 보내는 중"
 
-#: src/ftpclass.cc:3782 src/Http.cc:1673
+#: src/ftpclass.cc:3782 src/Http.cc:1684
 msgid "Receiving data"
 msgstr "자료 받는 중"
 
@@ -1851,52 +1851,52 @@ msgstr "HTTP 연결을 닫습니다"
 msgid "POST method failed"
 msgstr "POST 메소드 실패"
 
-#: src/Http.cc:877
+#: src/Http.cc:882
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "http상의 ftp는 프락시 없이는 동작할 수 없습니다, http:proxy를 설정하세요"
 
-#: src/Http.cc:1020
+#: src/Http.cc:1030
 msgid "Sending request..."
 msgstr "request 보내는 중..."
 
-#: src/Http.cc:1067
+#: src/Http.cc:1077
 msgid "Hit EOF while fetching headers"
 msgstr "헤더를 읽어 오는 동안 EOF를 입력"
 
-#: src/Http.cc:1151
+#: src/Http.cc:1161
 msgid "Success, but did nothing??"
 msgstr "성공했지만, 아무 변화도 없다??"
 
-#: src/Http.cc:1185
+#: src/Http.cc:1195
 msgid "Could not parse HTTP status line"
 msgstr "HTTP 상태를 파싱할 수 없음"
 
-#: src/Http.cc:1325
+#: src/Http.cc:1335
 msgid "Receiving body..."
 msgstr "body를 받은 중..."
 
-#: src/Http.cc:1451
+#: src/Http.cc:1461
 msgid "Hit EOF"
 msgstr ""
 
-#: src/Http.cc:1454
+#: src/Http.cc:1464
 msgid "Received not enough data, retrying"
 msgstr "충분한 자료를 받지 못해 다시 시도중"
 
-#: src/Http.cc:1462
+#: src/Http.cc:1472
 msgid "Received all"
 msgstr "모두 받았음"
 
-#: src/Http.cc:1467
+#: src/Http.cc:1477
 msgid "Received all (total)"
 msgstr "모두(전체) 받음"
 
-#: src/Http.cc:1490 src/Http.cc:1511
+#: src/Http.cc:1500 src/Http.cc:1521
 msgid "chunked format violated"
 msgstr "쓰지 않는 양식이 문제가 됩니다"
 
-#: src/Http.cc:1671
+#: src/Http.cc:1682
 msgid "Fetching headers..."
 msgstr "헤더를 읽고 있는중.."
 
@@ -1997,12 +1997,12 @@ msgstr ""
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr ""
 
-#: src/FileCopy.cc:958
+#: src/FileCopy.cc:968
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy: `%s'로 재지정하여 받음\n"
 
-#: src/FileCopy.cc:1160
+#: src/FileCopy.cc:1170
 msgid "file name missed in URL"
 msgstr "URL에 파일명이 빠졌습니다"
 
