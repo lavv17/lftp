@@ -125,7 +125,7 @@ static ResDecl
    ResDecl13 ("ftp:sync-mode",		  "on",    ResMgr::BoolValidate,0),
    ResDecl14 ("ftp:use-abor",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl15 ("ftp:use-fxp",		  "yes",   ResMgr::BoolValidate,0),
-   ResDecl16a("ftp:use-site-idle",	  "yes",   ResMgr::BoolValidate,0),
+   ResDecl16a("ftp:use-site-idle",	  "no",    ResMgr::BoolValidate,0),
    ResDecl16 ("ftp:use-stat",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl17 ("ftp:use-quit",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl18 ("ftp:verify-address",	  "no",    ResMgr::BoolValidate,0),
@@ -146,7 +146,7 @@ static ResDecl
    ResDecl29 ("http:put-method",	  "PUT",   PutOrPost,0),
    ResDecl30 ("http:put-content-type",	  "",	   0,0),
 #ifdef USE_SSL
-   ResDecl30a("https:proxy",		  "",	   0,0),
+   ResDecl30a("https:proxy",		  "",	   HttpProxyValidate,0),
 #endif
    ResDecl31 ("net:idle",		  "180",   ResMgr::UNumberValidate,0),
    ResDecl32 ("net:limit-max",		  "0",	   ResMgr::UNumberValidate,0),

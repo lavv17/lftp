@@ -1,3 +1,10 @@
+2000-08-20  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: check data port for ftps-data; all_lines
+	  new member; check all_lines for auto-sync-mode; fix ftps connection
+	  borrowing.
+	* resource.cc: make use-site-idle off by default; validate https:proxy.
+
 2000-08-13  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Http.cc: (MergeCookies) null-terminate cookie properly.

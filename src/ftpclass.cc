@@ -71,13 +71,13 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 # include "lftp_ssl.h"
 #else
 # define control_ssl 0
-# define ftps 0
 #endif
 
 
 #define FTP_DEFAULT_PORT "ftp"
 #define FTPS_DEFAULT_PORT "990"
 #define FTP_DATA_PORT 20
+#define FTPS_DATA_PORT 989
 
 #define super NetAccess
 #define peer_sa (peer[peer_curr])
@@ -201,7 +201,8 @@ bool Ftp::data_address_ok(sockaddr_u *dp,bool verify_this_data_port)
    {
       if(memcmp(&d.in.sin_addr,&c.in6.sin6_addr.s6_addr[12],4))
 	 goto address_mismatch;
-      if(d.in.sin_port!=htons(FTP_DATA_PORT))
+      if(d.in.sin_port!=htons(FTP_DATA_PORT)
+      && d.in.sin_port!=htons(FTPS_DATA_PORT))
 	 goto wrong_port;
    }
 #endif
@@ -212,7 +213,8 @@ bool Ftp::data_address_ok(sockaddr_u *dp,bool verify_this_data_port)
    {
       if(memcmp(&d.in.sin_addr,&c.in.sin_addr,sizeof(d.in.sin_addr)))
 	 goto address_mismatch;
-      if(d.in.sin_port!=htons(FTP_DATA_PORT))
+      if(d.in.sin_port!=htons(FTP_DATA_PORT)
+      && d.in.sin_port!=htons(FTPS_DATA_PORT))
 	 goto wrong_port;
       return true;
    }
@@ -224,7 +226,8 @@ bool Ftp::data_address_ok(sockaddr_u *dp,bool verify_this_data_port)
    {
       if(!IN6_ARE_ADDR_EQUAL(&d.in6.sin6_addr,&c.in6.sin6_addr))
 	 goto address_mismatch;
-      if(d.in6.sin6_port!=htons(FTP_DATA_PORT))
+      if(d.in6.sin6_port!=htons(FTP_DATA_PORT)
+      && d.in6.sin6_port!=htons(FTPS_DATA_PORT))
          goto wrong_port;
       return true;
    }
@@ -790,6 +793,7 @@ void Ftp::InitFtp()
    resp_alloc=0;
    sync_wait=0;
    line=0;
+   all_lines=0;
    eof=false;
    type=FTP_TYPE_A;
    send_cmd_buffer=0;
@@ -859,16 +863,17 @@ Ftp::~Ftp()
    quit_sent=true;
    Disconnect();
 
-   xfree(anon_user); anon_user=0;
-   xfree(anon_pass); anon_pass=0;
+   xfree(anon_user);
+   xfree(anon_pass);
    xfree(list_options);
-   xfree(line); line=0;
-   xfree(resp); resp=0;
+   xfree(line);
+   xfree(all_lines);
+   xfree(resp);
 
-   xfree(RespQueue); RespQueue=0;
-   xfree(send_cmd_buffer); send_cmd_buffer=0;
+   xfree(RespQueue);
+   xfree(send_cmd_buffer);
 
-   xfree(skey_pass); skey_pass=0;
+   xfree(skey_pass);
 
    for(Ftp **scan=&ftp_chain; *scan; scan=&((*scan)->ftp_next))
    {
@@ -2054,6 +2059,14 @@ int  Ftp::ReceiveResp()
 	       LogResp("\n");
 	    }
 
+	    int all_lines_len=xstrlen(all_lines);
+	    if(multiline_code==0 || all_lines_len==0)
+	       all_lines_len=-1; // not continuation
+	    all_lines=(char*)xrealloc(all_lines,all_lines_len+1+strlen(line)+1);
+	    if(all_lines_len>0)
+	       all_lines[all_lines_len]='\n';
+	    strcpy(all_lines+all_lines_len+1,line);
+
 	    if(code==0)
 	       continue;
 
@@ -3039,6 +3052,14 @@ void  Ftp::MoveConnectionHere(Ftp *o)
    type=o->type;
    event_time=o->event_time;
 
+#ifdef USE_SSL
+   control_ssl=o->control_ssl;
+   o->control_ssl=0;
+   control_ssl_connected=o->control_ssl_connected;
+   prot=o->prot;
+   auth_tls_sent=o->auth_tls_sent;
+#endif
+
    size_supported=o->size_supported;
    mdtm_supported=o->mdtm_supported;
    site_chmod_supported=o->site_chmod_supported;
@@ -3064,7 +3085,7 @@ static bool re_match(const char *line,const char *a)
 
 void Ftp::CheckResp(int act)
 {
-   if(act==150)
+   if(act==150 && state==WAITING_STATE && RespQueueSize()==1)
    {
       copy_connection_open=true;
       stat_time=now+2;
@@ -3134,7 +3155,7 @@ void Ftp::CheckResp(int act)
       break;
 
    case CHECK_READY:
-      if(!(flags&SYNC_MODE) && re_match(line,Query("auto-sync-mode",hostname)))
+      if(!(flags&SYNC_MODE) && re_match(all_lines,Query("auto-sync-mode",hostname)))
       {
 	 DebugPrint("---- ","Turning on sync-mode",2);
 	 ResMgr::Set("ftp:sync-mode",hostname,"on");
@@ -3457,7 +3478,8 @@ bool  Ftp::SameSiteAs(FileAccess *fa)
    Ftp *o=(Ftp*)fa;
    return(!xstrcmp(hostname,o->hostname) && !xstrcmp(portname,o->portname)
    && !xstrcmp(user,o->user) && !xstrcmp(pass,o->pass)
-   && !xstrcmp(group,o->group) && !xstrcmp(gpass,o->gpass));
+   && !xstrcmp(group,o->group) && !xstrcmp(gpass,o->gpass)
+   && ftps==o->ftps);
 }
 
 bool  Ftp::SameConnection(const Ftp *o)
@@ -3466,7 +3488,8 @@ bool  Ftp::SameConnection(const Ftp *o)
    && !xstrcmp(user,o->user) && !xstrcmp(pass,o->pass)
    && !xstrcmp(group,o->group) && !xstrcmp(gpass,o->gpass)
    && (user || !xstrcmp(anon_user,o->anon_user))
-   && (pass || !xstrcmp(anon_pass,o->anon_pass)))
+   && (pass || !xstrcmp(anon_pass,o->anon_pass))
+   && ftps==o->ftps)
       return true;
    return false;
 }
@@ -3557,7 +3580,7 @@ void Ftp::Reconfig(const char *name)
 
    super::Reconfig(name);
 
-   if(!xstrcmp(name,"net:idle"))
+   if(!xstrcmp(name,"net:idle") || !xstrcmp(name,"ftp:use-site-idle"))
    {
       if(data_sock==-1 && control_sock!=-1 && state==EOF_STATE && !quit_sent)
 	 SendSiteIdle();

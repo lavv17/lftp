@@ -166,6 +166,8 @@ protected:
    bool	 ftps;	  // ssl and prot='P' by default (port 990)
 private:
    bool	 auth_tls_sent;
+#else
+   static const bool ftps=false; // for convenience
 #endif
 
    /* type of transfer: TYPE_A or TYPE_I */
@@ -178,6 +180,7 @@ private:
    int   resp_size;
    int	 resp_alloc;
    char  *line;
+   char  *all_lines;
 
    bool	 eof;
 
