@@ -44,6 +44,7 @@
 #include "url.h"
 #include "log.h"
 #include "misc.h"
+#include "LsCache.h"
 
 #define skip_threshold 0x1000
 #define debug(a) //Log::global->Format a
@@ -537,6 +538,7 @@ FileCopyPeer::FileCopyPeer(direction m)
    range_start=0;
    range_limit=FILE_END;
    removing=false;
+   use_cache=true;
    Suspend();  // don't do anything too early
 }
 FileCopyPeer::~FileCopyPeer()
@@ -642,7 +644,7 @@ int FileCopyPeerFA::Do()
    case GET:
       if(eof)
 	 return m;
-      res=Get_LL(0x4000);
+      res=Get_LL(GET_BUFSIZE);
       if(res>0)
       {
 	 in_buffer+=res;
@@ -700,6 +702,53 @@ void FileCopyPeerFA::OpenSession()
       eof=true;
       return;
    }
+   if(mode==GET)
+   {
+      char *b;
+      int s;
+      if(use_cache && LsCache::Find(session,file,FAmode,&b,&s))
+      {
+	 if(seek_pos>=s)
+	 {
+	    eof=true;
+	    return;
+	 }
+	 size=s;
+	 b+=seek_pos;
+	 s-=seek_pos;
+	 Save(0);
+	 Allocate(s);
+	 memmove(buffer+buffer_ptr,b,s);
+      #ifndef NATIVE_CRLF
+	 if(ascii)
+	 {
+	    char *buf=buffer+buffer_ptr;
+	    // find where line ends.
+	    char *cr=buf;
+	    for(;;)
+	    {
+	       cr=(char *)memchr(cr,'\r',s-(cr-buf));
+	       if(!cr)
+		  break;
+	       if(cr-buf<s-1 && cr[1]=='\n')
+	       {
+		  memmove(cr,cr+1,s-(cr-buf)-1);
+		  s--;
+		  if(s<=1)
+		     break;
+	       }
+	       else if(cr-buf==s-1)
+		  break;
+	       cr++;
+	    }
+	 }
+      #endif	 // NATIVE_CRLF
+	 in_buffer=s;
+	 pos=seek_pos;
+	 eof=true;
+	 return;
+      }
+   }
    session->Open(file,FAmode,seek_pos);
    if(mode==PUT)
    {
@@ -715,6 +764,7 @@ void FileCopyPeerFA::OpenSession()
       session->WantSize(&size);
    if(want_date)
       session->WantDate(&date);
+   SaveRollback(seek_pos);
 }
 
 void FileCopyPeerFA::RemoveFile()
@@ -748,7 +798,10 @@ int FileCopyPeerFA::Get_LL(int len)
       return -1;
    }
    if(res==0)
+   {
       eof=true;
+      LsCache::Add(session,file,FAmode,this);
+   }
    return res;
 }
 
@@ -802,6 +855,8 @@ long FileCopyPeerFA::GetRealPos()
    }
    else
    {
+      if(eof)
+	 return pos;
       if(session->GetRealPos()==0 && session->GetPos()>0)
       {
 	 can_seek=false;
@@ -809,7 +864,7 @@ long FileCopyPeerFA::GetRealPos()
       }
       if(pos+in_buffer!=session->GetPos())
       {
-	 Empty();
+	 SaveRollback(session->GetPos());
 	 pos=session->GetPos();
       }
    }
@@ -823,6 +878,8 @@ FileCopyPeerFA::FileCopyPeerFA(FileAccess *s,const char *f,int m)
    file=xstrdup(f);
    session=s;
    reuse_later=true;
+   if(FAmode==FA::LIST || FAmode==FA::LONG_LIST)
+      Save(LsCache::SizeLimit());
 }
 FileCopyPeerFA::~FileCopyPeerFA()
 {
@@ -873,6 +930,8 @@ FileCopyPeerFA *FileCopyPeerFA::New(FileAccess *s,const char *url,int m,bool reu
 FileCopyPeerFDStream::FileCopyPeerFDStream(FDStream *o,direction m)
    : FileCopyPeer(m)
 {
+   if(o==0 && m==PUT)
+      o=new FDStream(1,"<stdout>");
    stream=o;
    seek_base=0;
    delete_stream=true;
@@ -952,7 +1011,7 @@ int FileCopyPeerFDStream::Do()
    case GET:
       if(eof)
 	 return m;
-      res=Get_LL(0x4000);
+      res=Get_LL(GET_BUFSIZE);
       if(res>0)
       {
 	 in_buffer+=res;
@@ -1204,6 +1263,46 @@ void FileCopyPeerString::Seek(long new_pos)
    UnSkip(pos-new_pos);
    super::Seek(new_pos);
 }
+
+// FileCopyPeerDirList
+FileCopyPeerDirList::FileCopyPeerDirList(FA *s,ArgV *v)
+   : FileCopyPeer(GET)
+{
+   session=s;
+   dl=session->MakeDirList(v);
+   can_seek=false;
+   can_seek0=false;
+}
+
+FileCopyPeerDirList::~FileCopyPeerDirList()
+{
+   if(dl)
+      delete dl;
+   if(session)
+      SessionPool::Reuse(session);
+}
+
+int FileCopyPeerDirList::Do()
+{
+   if(Done())
+      return STALL;
+   const char *b;
+   int s;
+   dl->Get(&b,&s);
+   if(b==0) // eof
+   {
+      eof=true;
+      return MOVED;
+   }
+   if(s==0)
+      return STALL;
+   Allocate(s);
+   memmove(buffer+buffer_ptr+in_buffer,b,s);
+   in_buffer+=s;
+   dl->Skip(s);
+   return MOVED;
+}
+
 
 // Speedometer
 #undef super

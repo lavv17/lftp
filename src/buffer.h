@@ -28,6 +28,8 @@
 #include "fg.h"
 #include "xstring.h"
 
+#define GET_BUFSIZE 0x4000
+
 class Buffer : public SMTask
 {
 protected:
@@ -75,6 +77,7 @@ public:
    // useful for cache.
    void Save(long m) { save=true; save_max=m; }
    void GetSaved(const char **buf,int *size) const;
+   void SaveRollback(long p);
 
    void Empty();
 

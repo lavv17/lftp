@@ -34,7 +34,7 @@ int CopyJob::Do()
       return STALL;
    if(c->Error())
    {
-      eprintf("%s\n",c->ErrorText());
+      eprintf("%s: %s\n",op,c->ErrorText());
       done=true;
       return MOVED;
    }
@@ -100,10 +100,11 @@ int CopyJob::AcceptSig(int sig)
    return MOVED;
 }
 
-CopyJob::CopyJob(FileCopy *c1,const char *name1)
+CopyJob::CopyJob(FileCopy *c1,const char *name1,const char *op1)
 {
    c=c1;
    name=xstrdup(name1);
+   op=xstrdup(op1);
    done=false;
    no_status=false;
 }
@@ -111,17 +112,16 @@ CopyJob::~CopyJob()
 {
    if(c) delete c;
    xfree(name);
+   xfree(op);
 }
 
-CopyJob *CopyJob::NewEcho(const char *str,int len,FDStream *o)
+CopyJob *CopyJob::NewEcho(const char *str,int len,FDStream *o,const char *op)
 {
-   if(o==0)
-      o=new FDStream(1,"<stdout>");
    return new CopyJob(new FileCopy(
 	 new FileCopyPeerString(str,len),
 	 new FileCopyPeerFDStream(o,FileCopyPeer::PUT),
 	 false
-      ),o->name);
+      ),o->name,op);
 }
 
 // CopyJobEnv
@@ -186,7 +186,7 @@ void CopyJobEnv::SetCopier(FileCopy *c,const char *n)
       return;
    if(ascii)
       c->Ascii();
-   cp=new CopyJob(c,n);
+   cp=new CopyJob(c,n,op);
    cp->parent=this;
    waiting=cp;
    if(fg)

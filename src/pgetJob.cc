@@ -274,7 +274,7 @@ pgetJob::ChunkXfer *pgetJob::NewChunk(FileAccess *session,const char *remote,
 
 pgetJob::ChunkXfer::ChunkXfer(FileCopy *c1,const char *name,
 			      long s,long lim)
-   : CopyJob(c1,name)
+   : CopyJob(c1,name,"pget")
 {
    start=s;
    limit=lim;

@@ -31,11 +31,12 @@ class CopyJob : public Job
 {
    FileCopy *c;
    bool done;
-   char *name;
+   char *name; // file name
+   char *op;   // command name
    bool no_status;
 
 public:
-   CopyJob(FileCopy *c1,const char *n);
+   CopyJob(FileCopy *c1,const char *n,const char *op1);
    ~CopyJob();
 
    void NoStatus() { no_status=true; }
@@ -72,9 +73,9 @@ public:
 
    static CopyJob *NewGet(FileAccess *f,const char *src,const char *dst);
    static CopyJob *NewPut(FileAccess *f,const char *src,const char *dst);
-   static CopyJob *NewEcho(const char *str,int len,FDStream *o);
-   static CopyJob *NewEcho(const char *str,FDStream *o)
-      { return NewEcho(str,strlen(str),o); }
+   static CopyJob *NewEcho(const char *str,int len,FDStream *o,const char *op);
+   static CopyJob *NewEcho(const char *str,FDStream *o,const char *op)
+      { return NewEcho(str,strlen(str),o,op); }
 };
 
 class ArgV;

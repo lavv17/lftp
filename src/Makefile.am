@@ -1,6 +1,6 @@
 localedir = $(datadir)/locale
 
-bin_PROGRAMS = lftp ftpget
+bin_PROGRAMS = lftp
 bin_SCRIPTS = lftpget
 
 pkgdata_SCRIPTS = import-ncftp import-netscape
@@ -8,12 +8,11 @@ pkgdata_SCRIPTS = import-ncftp import-netscape
 EXTRA_DIST = $(pkgdata_SCRIPTS) $(bin_SCRIPTS) example1.cc example2.cc
 
 lftp_SOURCES = lftp.cc complete.h complete.cc lftp_rl.c lftp_rl.h
-ftpget_SOURCES = ftpget.cc
+#ftpget_SOURCES = ftpget.cc
 
 noinst_LIBRARIES = libtasks.a libjobs.a
 
-## this does not work too well as it uses ld for creating shared library;
-## and thus the constructors don't get called.
+## this does not work too well as I need to compile modules with -DMODULE
 # MODULES_LA = proto-ftp.la
 # lib_LTLIBRARIES = $(MODULES_LA)
 # proto_ftp_la_SOURCES = ftpclass.cc FtpListInfo.cc FtpGlob.cc FtpDirList.cc md5.c ftp-opie.c
@@ -23,22 +22,20 @@ libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  ProcWait.h ftpclass.cc ftpclass.h GetPass.cc GetPass.h\
  CharReader.cc CharReader.h LsCache.cc LsCache.h Resolver.cc Resolver.h\
  FileAccess.h FileAccess.cc ResMgr.h ResMgr.cc LocalAccess.h LocalAccess.cc\
- Filter.cc Filter.h SignalHook.cc SignalHook.h\
+ Filter.cc Filter.h SignalHook.cc SignalHook.h FileCopy.cc FileCopy.h\
  xmalloc.cc xmalloc.h FileSet.cc FileSet.h\
  FtpListInfo.cc FtpListInfo.h ftp-opie.c md5.c md5.h log.h log.cc\
  buffer.cc buffer.h url.cc url.h StatusLine.cc StatusLine.h plural.c plural.h\
  misc.h misc.cc Http.cc Http.h fg.cc fg.h module.c module.h modconfig.h\
  resource.cc DummyProto.cc DummyProto.h FtpGlob.cc FtpGlob.h FtpDirList.cc\
  FtpDirList.h ArgV.cc ArgV.h HttpDir.cc HttpDir.h ascii_ctype.h\
- NetAccess.cc NetAccess.h FtpSplitList.h FtpSplitList.cc\
- FileCopy.cc FileCopy.h
+ NetAccess.cc NetAccess.h FtpSplitList.h FtpSplitList.cc
 
 libjobs_a_SOURCES = Job.cc Job.h XferJob.cc XferJob.h CmdExec.cc CmdExec.h\
  commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\
  QuoteJob.cc QuoteJob.h parsecmd.cc MirrorJob.cc MirrorJob.h\
  mvJob.cc mvJob.h alias.cc alias.h netrc.cc netrc.h\
  bookmark.cc bookmark.h CatJob.cc CatJob.h GetJob.cc GetJob.h\
- LsJob.cc LsJob.h \
  mkdirJob.cc mkdirJob.h pgetJob.cc pgetJob.h FileFeeder.cc FileFeeder.h\
  keyvalue.cc keyvalue.h history.cc history.h FtpCopy.cc FtpCopy.h\
  SleepJob.cc SleepJob.h getdate.y getdate.h FindJob.cc FindJob.h\
@@ -47,8 +44,8 @@ libjobs_a_SOURCES = Job.cc Job.h XferJob.cc XferJob.h CmdExec.cc CmdExec.h\
 lftp_LDFLAGS = $(EXPORT_DYNAMIC)
 lftp_LDADD = libjobs.a libtasks.a @READLINE@ @READLINE_SUPPLIB@ $(top_builddir)/lib/liblib.a @INTLLIBS@ @SOCKSLIBS@
 lftp_DEPENDENCIES = libjobs.a libtasks.a @READLINE_DEPEND@ $(top_builddir)/lib/liblib.a
-ftpget_LDFLAGS = $(EXPORT_DYNAMIC)
-ftpget_LDADD = libjobs.a libtasks.a $(top_builddir)/lib/liblib.a @INTLLIBS@ @SOCKSLIBS@
+#ftpget_LDFLAGS = $(EXPORT_DYNAMIC)
+#ftpget_LDADD = libjobs.a libtasks.a $(top_builddir)/lib/liblib.a @INTLLIBS@ @SOCKSLIBS@
 
 confpaths.h: Makefile
 	echo "#define SYSCONFDIR \"$(sysconfdir)\""  > $@

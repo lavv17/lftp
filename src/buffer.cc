@@ -52,6 +52,22 @@ void Buffer::GetSaved(const char **buf,int *size) const
    *size=buffer_ptr+in_buffer;
 }
 
+void Buffer::SaveRollback(long p)
+{
+   if(buffer_ptr<p)
+      save=false;
+   if(!save)
+   {
+      buffer_ptr=0;
+      in_buffer=0;
+   }
+   else
+   {
+      buffer_ptr=p;
+      in_buffer=0;
+   }
+}
+
 void Buffer::Allocate(int size)
 {
    if(in_buffer==0 && !save)
@@ -290,7 +306,7 @@ int FileInputBuffer::Do()
    if(Done() || Error())
       return STALL;
 
-   int res=Get_LL(0x4000);
+   int res=Get_LL(GET_BUFSIZE);
    if(res>0)
    {
       in_buffer+=res;

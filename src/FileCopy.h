@@ -20,6 +20,17 @@
 
 /* $Id$ */
 
+/*
+  classes defined here:
+   FileCopy
+   FileCopyPeer
+   +FileCopyPeerFA
+   +FileCopyPeerFDStream
+   +FileCopyPeerString
+   \FileCopyPeerList
+   Speedometer
+*/
+
 #ifndef FILECOPY_H
 #define FILECOPY_H
 
@@ -50,6 +61,7 @@ protected:
    bool removing;
 
    bool ascii;
+   bool use_cache;
 
 public:
    enum direction { GET, PUT };
@@ -90,6 +102,7 @@ public:
    bool Done();
 
    void Ascii() { ascii=true; }
+   virtual void NoCache() { Save(0); use_cache=false; }
 
    virtual const char *GetStatus() { return 0; }
    virtual bool NeedSizeDateBeforehand() { return false; }
@@ -285,6 +298,20 @@ public:
    FileCopyPeerString(const char *s,int len=-1);
    ~FileCopyPeerString();
    void Seek(long new_pos);
+};
+
+class FileCopyPeerDirList : public FileCopyPeer
+{
+private:
+   FileAccess *session;
+   DirList *dl;
+
+public:
+   FileCopyPeerDirList(FA *s,ArgV *v);
+   ~FileCopyPeerDirList();
+
+   int Do();
+   void NoCache() { dl->UseCache(false); }
 };
 
 #endif

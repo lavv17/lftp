@@ -37,7 +37,6 @@
 #include "CmdExec.h"
 #include "GetJob.h"
 #include "CatJob.h"
-#include "LsJob.h"
 #include "LsCache.h"
 #include "mgetJob.h"
 #include "mkdirJob.h"
@@ -244,7 +243,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Removes specified files with wildcard expansion\n")},
    {"mv",      cmd_mv,	    N_("mv <file1> <file2>"),
 	 N_("Rename <file1> to <file2>\n")},
-   {"nlist",   cmd_ls,	    N_("nlist [<args>]"),
+   {"nlist",   cmd_ls,     N_("nlist [<args>]"),
 	 N_("List remote file names\n")},
    {"open",    cmd_open,   N_("open [OPTS] <site>"),
 	 N_("Select a server, URL or bookmark\n"
@@ -809,16 +808,42 @@ CMD(lcd)
 
 CMD(ls)
 {
-   int mode=FA::LONG_LIST;
+   char *a=args->Combine(1);
+   bool nlist=false;
+   bool re=false;
    if(strstr(args->a0(),"nlist"))
-      mode=FA::LIST;
-   if(mode==FA::LONG_LIST && args->count()==1)
-      args->Append(parent->var_ls);
-   LsJob *j=new LsJob(Clone(),output,args,mode);
+      nlist=true;
    if(!strncmp(args->a0(),"re",2))
-      j->NoCache();
+      re=true;
+
+   if(!nlist && args->count()==1)
+      args->Append(parent->var_ls);
+
+   FileCopyPeer *src_peer=0;
+   if(!nlist)
+      src_peer=new FileCopyPeerDirList(Clone(),args);
+   else
+      src_peer=new FileCopyPeerFA(Clone(),a,FA::LIST);
+
+   if(re)
+      src_peer->NoCache();
+   src_peer->SetDate(NO_DATE);
+   src_peer->SetSize(NO_SIZE);
+   FileCopyPeer *dst_peer=new FileCopyPeerFDStream(output,FileCopyPeer::PUT);
+
+   FileCopy *c=new FileCopy(src_peer,dst_peer,false);
+   c->DontCopyDate();
+   if(nlist)
+      c->Ascii();
+
+   CopyJob *j=new CopyJob(c,a,args->a0());
+   if(!output || output->usesfd(1))
+      j->NoStatus();
+   xfree(a);
    output=0;
-   args=0;
+   if(!nlist)
+      args=0;
+
    return j;
 }
 
@@ -1145,7 +1170,7 @@ CMD(pwd)
    char *url=alloca_strdup(session->GetConnectURL());
    int len=strlen(url);
    url[len++]='\n';  // replaces \0
-   Job *j=CopyJob::NewEcho(url,len,output);
+   Job *j=CopyJob::NewEcho(url,len,output,args->a0());
    output=0;
    return j;
 }
@@ -1370,7 +1395,7 @@ CMD(set)
    if(a==0)
    {
       char *s=ResMgr::Format(with_defaults,only_defaults);
-      Job *j=CopyJob::NewEcho(s,output);
+      Job *j=CopyJob::NewEcho(s,output,args->a0());
       xfree(s);
       output=0;
       return j;
@@ -1414,7 +1439,7 @@ CMD(alias)
    if(args->count()<2)
    {
       char *list=Alias::Format();
-      Job *j=CopyJob::NewEcho(list,output);
+      Job *j=CopyJob::NewEcho(list,output,args->a0());
       xfree(list);
       output=0;
       return j;
@@ -1783,7 +1808,7 @@ CMD(bookmark)
    if(!strcmp(op,"list"))
    {
       char *list=lftp_bookmarks.Format();
-      Job *j=CopyJob::NewEcho(list,output);
+      Job *j=CopyJob::NewEcho(list,output,args->a0());
       xfree(list);
       output=0;
       return j;
@@ -1874,7 +1899,7 @@ CMD(echo)
    {
       s[len++]='\n'; // replaces \0 char
    }
-   Job *j=CopyJob::NewEcho(s,len,output);
+   Job *j=CopyJob::NewEcho(s,len,output,args->a0());
    xfree(s);
    output=0;
    return j;
@@ -2075,5 +2100,5 @@ CMD(get1)
    if(ascii)
       c->Ascii();
 
-   return new CopyJob(c,src);
+   return new CopyJob(c,src,args->a0());
 }

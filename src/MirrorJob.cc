@@ -218,7 +218,7 @@ void  MirrorJob::HandleFile(int how)
 	    FileCopyPeerFDStream::NewPut(local_name,cont_this);
 
 	 CopyJob *cp=
-	    new CopyJob(new FileCopy(src_peer,dst_peer,cont_this),file->name);
+	    new CopyJob(new FileCopy(src_peer,dst_peer,cont_this),file->name,"mirror");
 	 if(file->defined&(file->DATE|file->DATE_UNPREC))
 	    cp->SetDate(file->date);
 	 if(file->defined&file->SIZE)
@@ -558,7 +558,7 @@ int   MirrorJob::Do()
 	 FileCopyPeerFDStream::NewGet(local_name);
 
       CopyJob *cp=
-	 new CopyJob(new FileCopy(src_peer,dst_peer,false),file->name);
+	 new CopyJob(new FileCopy(src_peer,dst_peer,false),file->name,"mirror");
       waiting=cp;
       waiting->parent=this;
       waiting->cmdline=(char*)xmalloc(10+strlen(file->name));
