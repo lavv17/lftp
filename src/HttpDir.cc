@@ -378,6 +378,7 @@ parse_url_again:
       {
 	 if(!eof && end-more<=2*1024)
 	    return less-buf;  // no full line yet
+	 eol=end;
       }
 
       // little workaround for squid's ftp listings
@@ -455,6 +456,8 @@ parse_url_again:
       }
       // skip rest of line, because there may be href to link target.
       skip_len=eol-buf+1;
+      if(eol==end)
+	 skip_len--;
 
       char *ptr;
       ptr=strstr(str," -> <A HREF=\"");
