@@ -33,7 +33,6 @@ class PatternSet
 public:
    enum Type { EXCLUDE,INCLUDE };
 
-private:
    class Pattern
    {
    protected:
@@ -44,6 +43,7 @@ private:
       virtual ~Pattern();
    };
 
+private:
    class PatternLink
    {
       friend class PatternSet;
@@ -63,7 +63,6 @@ private:
    };
 
    PatternLink *chain;
-   PatternLink **add;
 
 public:
    PatternSet();

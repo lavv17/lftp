@@ -775,7 +775,8 @@ MirrorJob::~MirrorJob()
    // session disposal should be done after ListInfo deletion.
    SessionPool::Reuse(source_session);
    SessionPool::Reuse(target_session);
-   delete exclude;
+   if(!parent_mirror)
+      delete exclude;
    if(script && script_needs_closing)
       fclose(script);
    if(parent_mirror)
@@ -884,6 +885,8 @@ CMD(mirror)
       {"allow-chown",no_argument,0,256+'a'},
       {"include",required_argument,0,'i'},
       {"exclude",required_argument,0,'x'},
+      {"include-glob",required_argument,0,'I'},
+      {"exclude-glob",required_argument,0,'X'},
       {"only-newer",no_argument,0,'n'},
       {"no-recursion",no_argument,0,'r'},
       {"no-perms",no_argument,0,'p'},
@@ -913,10 +916,11 @@ CMD(mirror)
    int	 parallel=0;
    bool	 reverse=false;
 
-   PatternSet *exclude=new PatternSet;
+   PatternSet *exclude=0;
+   const char *default_exclude=ResMgr::Query("mirror:exclude-regex",0);
 
    args->rewind();
-   while((opt=args->getopt_long("esi:x:nrpcRvN:LPa",mirror_opts,0))!=EOF)
+   while((opt=args->getopt_long("esi:x:I:X:nrpcRvN:LPa",mirror_opts,0))!=EOF)
    {
       switch(opt)
       {
@@ -946,15 +950,43 @@ CMD(mirror)
 	 break;
       case('x'):
       case('i'):
+      case('X'):
+      case('I'):
       {
-	 PatternSet::Regex *rx=new PatternSet::Regex(optarg);
-	 if(rx->Error())
+	 PatternSet::Type type=
+	    (opt=='x'||opt=='X'?PatternSet::EXCLUDE:PatternSet::INCLUDE);
+	 PatternSet::Pattern *pattern=0;
+	 if(opt=='x' || opt=='i')
 	 {
-	    eprintf("%s: %s: %s\n",args->a0(),optarg,rx->ErrorText());
-	    delete rx;
-	    goto no_job;
+	    PatternSet::Regex *rx=new PatternSet::Regex(optarg);
+	    if(rx->Error())
+	    {
+	       eprintf(_("%s: regular expression `%s': %s\n"),
+		  args->a0(),optarg,rx->ErrorText());
+	       delete rx;
+	       goto no_job;
+	    }
+	    pattern=rx;
 	 }
-	 exclude->Add(opt=='x'?PatternSet::EXCLUDE:PatternSet::INCLUDE,rx);
+	 else // X or I
+	 {
+	    pattern=new PatternSet::Glob(optarg);
+	 }
+	 if(!exclude)
+	 {
+	    exclude=new PatternSet;
+	    /* Make default_exclude the first pattern so that it can be
+	     * overridden by --include later, and do that only when first
+	     * explicit pattern is for exclusion - otherwise all files are
+	     * excluded by default and no default exclusion is needed. */
+	    if(type==PatternSet::EXCLUDE && default_exclude && *default_exclude)
+	       exclude->Add(type,new PatternSet::Regex(default_exclude));
+	    default_exclude=0;
+	    /* Users usually don't want to exclude all directories */
+	    if(type==PatternSet::INCLUDE)
+	       exclude->Add(type,new PatternSet::Regex("/$"));
+	 }
+	 exclude->Add(type,pattern);
 	 break;
       }
       case('R'):
@@ -999,6 +1031,13 @@ CMD(mirror)
 	    SMTask::Delete(target_session);
 	 return 0;
       }
+   }
+
+   /* add default exclusion if no explicit patterns were specified */
+   if(!exclude && default_exclude && *default_exclude)
+   {
+      exclude=new PatternSet;
+      exclude->Add(PatternSet::EXCLUDE,new PatternSet::Regex(default_exclude));
    }
 
    args->back();

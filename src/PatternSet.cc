@@ -28,12 +28,10 @@
 PatternSet::PatternSet()
 {
    chain=0;
-   add=&chain;
 }
 void PatternSet::Add(Type t,Pattern *p)
 {
-   *add=new PatternLink(t,p,*add);
-   add=&((*add)->next);
+   chain=new PatternLink(t,p,chain);
 }
 PatternSet::~PatternSet()
 {
@@ -46,18 +44,14 @@ PatternSet::~PatternSet()
 }
 bool PatternSet::Match(Type type,const char *str) const
 {
-   if(!chain)
-      return false;
-   // want the first pattern to play its role.
-   bool match = (chain->type!=type);
    for(PatternLink *scan=chain; scan; scan=scan->next)
    {
-      if(scan->type==type)
-	 match = match || scan->pattern->Match(str);
-      else
-	 match = match && !scan->pattern->Match(str);
+      if(scan->pattern->Match(str))
+	 return scan->type==type;
+      if(!scan->next)
+	 return scan->type!=type;
    }
-   return match;
+   return false;
 }
 
 PatternSet::Pattern::Pattern(const char *p)
@@ -96,7 +90,7 @@ bool PatternSet::Glob::Match(const char *str)
 	 countdown--;
       }
    }
-   return fnmatch(pattern,scan,FNM_PATHNAME);
+   return fnmatch(pattern,scan,FNM_PATHNAME)==0;
 }
 
 PatternSet::Regex::Regex(const char *p) : Pattern(p)

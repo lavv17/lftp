@@ -4,6 +4,11 @@
 	* Fish.cc, Fish.h, HttpDir.cc, Http.h: add ParseLongList method
 	  (for Http - by Glenn Maynard).
 	* GetFileInfo.cc: call LsCache::SetDirectory.
+	* MirrorJob.cc: don't delete exclude in non-root mirror; add -X/-I
+	  options; handle default exclude setting mirror:exclude-regex;
+	  don't exclude all directories if first pattern is include pattern.
+	* PatternSet.cc, PatternSet.h: simplify matching; fix Glob matching.
+	* resource.cc: remove mirror:include-regex.
 
 2001-12-14  Alexander V. Lukyanov <lav@yars.free.net>
 
