@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "05 Feb 2000"
+.TH lftp 1 "02 Mar 2000"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -236,7 +236,7 @@ mget -O ftp://... ftp://.../*
 .De
 or other combinations.
 
-.BR get " [" -e ]
+.BR get " [" -E ]
 .RB [ -a "] [" -c "] [" -O
 .RB "\fIbase\fP] \fIrfile\fP [" -o " \fIlfile\fP] ..."
 .PP
@@ -247,7 +247,7 @@ instances of \fIrfile\fP [and -o \fIlfile\fP]. Does not expand wildcards, use
 \fBmget\fR for that.
 .Ds
  -c  continue, reget
- -e  delete remote files after successful transfer
+ -E  delete remote files after successful transfer
  -a  use ascii mode (binary is the default)
  -O <base> specifies base directory or URL where files should be placed
 .De
@@ -309,7 +309,7 @@ or
 .B "cache flush."
 
 .BR mget " [" -c "] [" -d "]"
-.RB [ -a "] [" -e "]"
+.RB [ -a "] [" -E "]"
 .RB [ -O " \fIbase\fP] \fIfiles\fP"
 .PP
 Gets selected files with expanded wildcards.
@@ -318,7 +318,7 @@ Gets selected files with expanded wildcards.
  -c  continue, reget.
  -d  create directories the same as file names and get
      the files into them instead of current directory.
- -e  delete remote files after successful transfer
+ -E  delete remote files after successful transfer
  -a  use ascii mode (binary is the default)
  -O <base> specifies base directory or URL where files should be placed
 .De
@@ -389,7 +389,7 @@ Same as `cat \fIfiles\fP | more'. if \fBPAGER\fP is set, it is used as filter.
 (See also \fBcat\fR, \fBzcat\fR and \fBzmore\fR)
 
 .BR mput " [" -c "] [" -d "]"
-.RB [ -a "] [" -e "]"
+.RB [ -a "] [" -E "]"
 .RB [ -O " \fIbase\fP] \fIfiles\fP"
 .PP
 Upload files with wildcard expansion. By default it uses the base name of
@@ -398,7 +398,7 @@ local name as remote one. This can be changed by `-d' option.
  -c  continue, reput
  -d  create directories the same as in file names and put the
      files into them instead of current directory
- -e  delete remote files after successful transfer (dangerous)
+ -E  delete remote files after successful transfer (dangerous)
  -a  use ascii mode (binary is the default)
  -O <base> specifies base directory or URL where files should be placed
 .De
@@ -438,7 +438,7 @@ mad :) Options:
 .De
 .PP
 
-.BR put " [" -e ]
+.BR put " [" -E ]
 .RB [ -a "] [" -c "]"
 .RB "[" -O " \fIbase\fP] \fIlfile\fP [" -o \fIrfile\fP]
 .PP
@@ -448,7 +448,7 @@ of \fIlfile\fP is used as remote name. Does not expand wildcards, use \fBmput\fR
  -o <rfile> specifies remote file name (default - basename of lfile)
  -c  continue, reput
      it requires permission to overwrite remote files
- -e  delete local files after successful transfer (dangerous)
+ -E  delete local files after successful transfer (dangerous)
  -a  use ascii mode (binary is the default)
  -O <base> specifies base directory or URL where files should be placed
 .De
@@ -839,10 +839,17 @@ Default value is taken from environment variable \fBhttp_proxy\fP.
 If your ftp proxy requires authentication, specify user name and password
 in the URL.
 .TP
+.BR net:connection-limit \ (number)
+maximum number of concurrent connections to the same site. 0 means unlimited.
+.TP
+.BR net:connection-takeover \ (bool)
+if true, foreground connections have priority over background ones and can
+interrupt background transfers to complete a foreground operation.
+.TP
 .BR net:idle \ (seconds)
 disconnect from server after that number of idle seconds.
 .TP
-.BR net:limit-rate \ (bytes " " per " " second)
+.BR net:limit-rate " (bytes per second)"
 limit transfer rate on data connection. 0 means unlimited.
 .TP
 .BR net:limit-max \ (bytes)
