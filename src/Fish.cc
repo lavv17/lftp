@@ -70,6 +70,7 @@ int Fish::Do()
 	 SetError(SEE_ERRNO,"pipe()");
 	 return MOVED;
       }
+      DebugPrint("---- ","Running ssh...");
       filter_out=new OutputFilter("ssh gemini \"echo FISH:;/bin/sh\"",pipe_in[1]);   // FIXME
       state=CONNECTING;
       m=MOVED;
@@ -120,6 +121,7 @@ void Fish::Disconnect()
 
 void Fish::Init()
 {
+   state=DISCONNECTED;
    send_buf=0;
    recv_buf=0;
    pipe_in[0]=pipe_in[1]=-1;
@@ -300,3 +302,10 @@ void Fish::ClassInit()
    Register("fish",Fish::New);
 }
 FileAccess *Fish::New() { return new Fish(); }
+
+#ifdef MODULE
+CDECL void module_init()
+{
+   Fish::ClassInit();
+}
+#endif
