@@ -273,7 +273,8 @@ int CmdExec::Do()
 	 if(res==Ftp::OK)
 	 {
 	    // done
-	    status_line->Show("");
+	    if(status_line)
+	       status_line->Show("");
 	    if(interactive)
 	    {
 	       const char *cwd=session->GetCwd();
@@ -289,7 +290,8 @@ int CmdExec::Do()
 	 if(res<0)
 	 {
 	    // error
-	    status_line->Show("");
+	    if(status_line)
+	       status_line->Show("");
 	    eprintf("%s: %s\n",args->getarg(0),session->StrError(res));
 	    session->Close();
 	    waiting=0;
@@ -303,7 +305,8 @@ int CmdExec::Do()
 	 res=session->Done();
 	 if(res==Ftp::OK)
 	 {
-	    status_line->Show("");
+	    if(status_line)
+	       status_line->Show("");
 	    session->Close();
 	    waiting=0;
 	    beep_if_long();
@@ -313,7 +316,8 @@ int CmdExec::Do()
 	 }
 	 if(res<0)
 	 {
-	    status_line->Show("");
+	    if(status_line)
+	       status_line->Show("");
 	    eprintf("%s: %s\n",args->getarg(0),session->StrError(res));
 	    session->Close();
 	    waiting=0;
@@ -327,7 +331,8 @@ int CmdExec::Do()
       {
 	 if(SignalHook::GetCount(SIGINT))
 	 {
-	    status_line->WriteLine(_("Interrupt"));
+	    if(status_line)
+	       status_line->WriteLine(_("Interrupt"));
 	    return AcceptSig(SIGINT);
 	 }
 	 if(SignalHook::GetCount(SIGHUP))
@@ -335,7 +340,8 @@ int CmdExec::Do()
 	    interactive=0;
 	    return MOVED;
 	 }
-	 waiting->ShowRunStatus(status_line);
+	 if(status_line)
+	    waiting->ShowRunStatus(status_line);
       }
       return STALL;
    }
@@ -347,7 +353,8 @@ int CmdExec::Do()
 	 waiting->Bg();
  	 if(interactive)
 	 {
- 	    status_line->Show("");
+ 	    if(status_line)
+	       status_line->Show("");
 	    waiting->SayFinal(); // final phrase like 'rm succeed'
 	 }
 	 exit_code=waiting->ExitCode();
@@ -362,13 +369,15 @@ int CmdExec::Do()
 	 {
 	    waiting->Bg();
 	    SignalHook::ResetCount(SIGINT);
-	    status_line->WriteLine(_("Interrupt"));
+	    if(status_line)
+	       status_line->WriteLine(_("Interrupt"));
 	    return AcceptSig(SIGINT);
 	 }
 	 if(SignalHook::GetCount(SIGTSTP))
 	 {
 	    waiting->Bg();
-	    status_line->WriteLine("[%d] %s &",waiting->jobno,waiting->cmdline);
+	    if(status_line)
+	       status_line->WriteLine("[%d] %s &",waiting->jobno,waiting->cmdline);
 	    waiting->PrintStatus(1);
 	    exit_code=0;
 	    waiting=0;
@@ -379,7 +388,8 @@ int CmdExec::Do()
 	    interactive=0;
 	    return MOVED;
 	 }
-	 waiting->ShowRunStatus(status_line);
+	 if(status_line)
+	    waiting->ShowRunStatus(status_line);
       }
       return STALL;
    }
@@ -462,10 +472,10 @@ void CmdExec::ShowRunStatus(StatusLine *s)
       switch(builtin)
       {
       case(BUILTIN_CD):
-	 s->Show("cd %s [%s]",args->getarg(1),session->CurrentStatus());
+	 s->Show("cd `%s' [%s]",args->getarg(1),session->CurrentStatus());
 	 break;
       case(BUILTIN_OPEN):
-	 s->Show("[%s]",session->CurrentStatus());
+	 s->Show("open `%s' [%s]",session->GetHostName(),session->CurrentStatus());
       	 break;
       }
    }
