@@ -4,6 +4,8 @@
 	* Http.cc: initialize bytes_received; add debug messages;
 	  simulate eof if pos>=entity_size.
 	* HttpDir.cc: fix bug in TR handling, introduced yesterday.
+	* Http.cc: fix no-proxy handling, always use proxy for hftp.
+	* ftpclass.cc: fix no-proxy handling.
 
 2000-03-19  Alexander V. Lukyanov  <lav@yars.free.net>
 
