@@ -42,28 +42,27 @@
 .fi
 .in
 ..
-.TH lftp 1 "23 Apr 1998"
+.TH lftp 1 "19 Aug 1998"
 .SH NAME
 lftp \- Sophisticated ftp program
 .SH SYNTAX
 .B lftp
-[
-.B -d
-] [
-.B -e
-.I cmd
-] [
-.B -p
-.IR port
-] [
-.B -u
-.IR user [\fB,\fP pass "]] [" host ]
+[\fB-d\fR] [\fB-e \fIcmd\fR] [\fB-p \fIport\fR]
+[\fB-u \fIuser\fR[\fB,\fIpass\fR]] [\fIsite\fR]
 .br
-.B lftp
-.B \-f
+.B lftp \-f
 .I script_file
+.br
+.B lftp \-c
+.I commands
+.br
+.B lftp \-\-version
+.br
+.B lftp \-\-help
+
 .SH VERSION
-This man page documents lftp version 1.0.
+This man page documents lftp version 1.1.
+
 .SH "DESCRIPTION"
 \fBlftp\fR is a program that allows sophisticated ftp connection to
 other hosts. If \fIhost\fR is specified then lftp will connect to that
@@ -130,6 +129,8 @@ The bookmark command controls bookmarks.
   add <name> [<loc>] - add current place or given location
                        to bookmarks and bind to given name
   del <name>         - remove bookmark with name
+  edit               - start editor on bookmarks file
+  import <type>      - import foreign bookmarks
   list               - list bookmarks (default)
 .De
 
@@ -168,12 +169,16 @@ so you can do `open site; cd -' even after lftp restart.
 Close idle connections.  By default only with the current server, use
 -a to close all idle connections.
 
-.BR debug " [" -o " file] " level"\fR|\fP\fBoff\fP
+.BR debug " [" -o " file]  level"\fR|\fP\fBoff\fP
 .PP
 Switch debugging to \fIlevel\fP or turn it off.  Use -o to redirect
 the debug output to a file.
 
-.BI exit " code"
+.BR echo " [" -n "] \fIstring\fR"
+.PP
+guess what it does.
+
+.BR exit " code"
 .PP
 exit will exit from lftp or move to background if jobs are active.  If
 no jobs are active, \fIcode\fP is passed to operating system as lftp's
@@ -392,6 +397,11 @@ You can redirect its output.
 .PP
 Execute commands recorded in file \fIfile\fP.
 
+.B suspend
+.PP
+Stop lftp process. Note that transfers will be also stopped until you
+continue the process with shell's fg or bg commands.
+
 .B user
 \fIuser\fP [\fIpass\fP]
 .PP
@@ -432,6 +442,10 @@ There is also a systemwide startup file in
 has the following settable variables (you can also use
 `set' to see all variables and their values):
 .TP
+.BR bmk:save-passwords \ (bool)
+save plain text passwords in ~/.lftp/bookmarks on `bookmark add' command.
+Off by default.
+.TP
 .BR cmd:csh-history \ (bool)
 enables csh-like history expansion.
 .TP
@@ -442,6 +456,9 @@ means off.
 .TP
 .BR cmd:ls-default \ (string)
 default ls argument
+.TP
+.BR cmd:ls-in-completion \ (bool)
+try to extract file list from ls output, if it is cached already.
 .TP
 .BR cmd:prompt \ (string)
 The prompt. lftp recognizes the following backslash-escaped special
@@ -499,6 +516,10 @@ end a sequence of non-printing characters
 .BR cmd:remote-completion \ (bool)
 a boolean to control whether or not lftp uses remote completion.
 .TP
+.BR dns:timeout \ (seconds)
+limit the time for DNS queries. If DNS server is unavailable too long, lftp
+will fail to resolve a given host name. 0 means unlimited, the default.
+.TP
 .BR ftp:idle \ (seconds)
 disconnect from ftp server after that number of idle seconds.
 .TP
@@ -527,6 +548,13 @@ a boolean to control whether or not to lookup host address each time
 before connecting. Can be useful if ftp server uses dynamic ip
 address.
 .TP
+.BR ftp:skey-allow \ (bool)
+allow sending skey/opie reply if server appears to support it. On by default.
+.TP
+.BR ftp:skey-force \ (bool)
+do not send plain text password over the network, use skey/opie instead. If
+skey/opie is not available, assume failed login. Off by default.
+.TP
 .BR ftp:sync-mode \ (bool)
 if set lftp will send one command at a time and wait for
 response. This might be useful if you are using a buggy ftp server or
@@ -534,6 +562,25 @@ router.
 .TP
 .BR ftp:timeout \ (seconds)
 sets the network protocol timeout.
+.TP
+.BR ftp:verify-address \ (bool)
+verify that data connection comes from the network address of control
+connection peer. This can possibly prevent data connection spoofing
+which can lead to data corruption. Unfortunately, this can fail
+for sertain ftp servers with several network interfaces, just disable
+this check for those.
+.TP
+.BR ftp:verify-port \ (bool)
+verify that data connection has port 20 (ftp-data) on its remote end.
+This can possibly prevent data connection spoofing by users of remote
+host. Unfortunately, too many windows and even unix ftp servers forget
+to set proper port on data connection, thus this check is off by default.
+.TP
+.BR xfer:use-urls \ (bool)
+recognize URLs by default in commands get, cat, mget, zcat, zmore.
+If you additionally use -u option, then non-strict URLs will be recognized
+(i.e. ftp.somehost.com/path/to/file).
+
 .PP
 The name of variables can be abbreviated unless it becomes
 ambiguous. The prefix before `:' can be omitted too. You can
@@ -577,8 +624,11 @@ Use the given port to connect
 .BI \-u " user\fR[\fP\fB,\fPpass\fR]\fP"
 Use the given username and password to connect
 .TP
-.B \-f script_file
+.BI \-f " script_file"
 Execute commands in the file and exit
+.TP
+.BI \-c " commands"
+Execute the given commands and exit
 
 .SH ENVIRONMENT VARIABLES
 The following environment variables are processed by \fBlftp\fR:
@@ -624,3 +674,5 @@ lav@yars.free.net
 .SH ACKNOWLEDGMENTS
 This manual page was originally written by Christoph Lameter
 <clameter@debian.org>, for the Debian GNU/Linux system.
+Thanks to Nicolas Lichtmaier <nick@Feedback.com.ar> and
+James Troup <J.J.Troup@comp.brad.ac.uk> for improving this page.
