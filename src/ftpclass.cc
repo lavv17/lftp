@@ -395,7 +395,7 @@ void Ftp::TransferCheck(int act)
 	 real_pos=pos=p;
       return;
    }
-   if(copy_mode!=COPY_NONE && act==425 && strstr(line,"port theft"))
+   if(copy_mode!=COPY_NONE && act==425)
    {
       copy_passive=!copy_passive;
       copy_failed=true;
