@@ -1175,8 +1175,7 @@ msgid ""
 "Same as `ls', but don't look in cache\n"
 msgstr ""
 "Usage: rels [<args>]\n"
-"Même chose que `ls', sauf que le cache n'est pas "
-"utilisé\n"
+"Même chose que `ls', sauf que le cache n'est pas utilisé\n"
 
 #: src/commands.cc:414
 msgid ""
@@ -1184,8 +1183,7 @@ msgid ""
 "Same as `nlist', but don't look in cache\n"
 msgstr ""
 "Usage: renlist [<args>]\n"
-"Même chose que `nlist', sauf que le cache n'est pas "
-"utilisé\n"
+"Même chose que `nlist', sauf que le cache n'est pas utilisé\n"
 
 #: src/commands.cc:416
 msgid "repeat [delay] [command]"
@@ -1573,7 +1571,8 @@ msgstr "%s: `expire' attendu\n"
 
 #: src/commands.cc:2248
 #, c-format
-msgid "%s: %s - no such cached session. Use `scache' to look at session list.\n"
+msgid ""
+"%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr "%s: %s - pas de telle session cachée. Utilisez `scache'\n"
 
 #: src/commands.cc:2265
@@ -1599,12 +1598,14 @@ msgstr "%s est un alias pour `%s'\n"
 #: src/commands.cc:2287
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
-msgstr "Commande inconnue `%s'. Utilisez `help' pour voir la liste des commandes.\n"
+msgstr ""
+"Commande inconnue `%s'. Utilisez `help' pour voir la liste des commandes.\n"
 
 #: src/commands.cc:2289
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
-msgstr "Commande ambiguë `%s'. Utilisez `help' pour voir la liste des commandes.\n"
+msgstr ""
+"Commande ambiguë `%s'. Utilisez `help' pour voir la liste des commandes.\n"
 
 #: src/commands.cc:2340
 #, c-format
@@ -1612,8 +1613,10 @@ msgid "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 msgstr "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 
 #: src/commands.cc:2342
-msgid "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
-msgstr "Ceci est un logiciel libre SANS GARANTIE. Voir COPYING pour les détails.\n"
+msgid ""
+"This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
+msgstr ""
+"Ceci est un logiciel libre SANS GARANTIE. Voir COPYING pour les détails.\n"
 
 #: src/commands.cc:2344
 #, c-format
@@ -1712,7 +1715,8 @@ msgstr "La réponse du serveur est de la forme ftp:retry-530, recommence"
 
 #: src/ftpclass.cc:436
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
-msgstr "La réponse du serveur est de la forme ftp:retry-530-anonymous, recommence"
+msgstr ""
+"La réponse du serveur est de la forme ftp:retry-530-anonymous, recommence"
 
 #: src/ftpclass.cc:460
 msgid "Account is required, set ftp:acct variable"
@@ -1966,7 +1970,8 @@ msgstr "échec de la méthode POST"
 #. problem here: hftp cannot work without proxy
 #: src/Http.cc:841
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
-msgstr "ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
+msgstr ""
+"ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
 
 #: src/Http.cc:984
 msgid "Sending request..."
@@ -2248,4 +2253,3 @@ msgstr "dépendance du module `%s': %s\n"
 #: src/module.cc:201
 msgid "modules are not supported on this system"
 msgstr "les modules ne sont pas supportés sur ce système"
-

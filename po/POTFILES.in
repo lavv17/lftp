@@ -21,7 +21,6 @@ src/plural.c
 src/rmJob.cc
 src/Http.cc
 src/resource.cc
-src/FtpGlob.cc
 src/HttpDir.cc
 src/ChmodJob.cc
 src/TreatFileJob.cc
@@ -32,7 +31,6 @@ src/Speedometer.cc
 src/FileCopyFtp.cc
 src/Filter.cc
 src/FtpDirList.cc
-src/FtpSplitList.cc
 src/LocalAccess.cc
 src/NetAccess.cc
 src/PollVec.cc
