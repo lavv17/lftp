@@ -51,6 +51,10 @@ CDECL int strcasecmp(const char *s1,const char *s2);
 CDECL int strncasecmp(const char *s1,const char *s2,size_t n);
 #endif
 
+#ifndef HAVE_VSNPRINTF_DECL
+CDECL int vsnprintf(char *,size_t,const char *,va_list);
+#endif
+
 static inline int xstrcmp(const char *s1,const char *s2)
 {
    if(s1==s2)
