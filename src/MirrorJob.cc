@@ -38,6 +38,7 @@
 #include "FindJob.h"
 #include "url.h"
 #include "CopyJob.h"
+#include "pgetJob.h"
 
 void  MirrorJob::PrintStatus(int v,const char *tab)
 {
@@ -186,6 +187,9 @@ void  MirrorJob::HandleFile(FileInfo *file)
       {
 	 bool remove_target=false;
 	 bool cont_this=false;
+	 bool use_pget=(pget_n>1) && target_is_local;
+	 if((file->defined&file->SIZE) && file->size<pget_minchunk*2)
+	    use_pget=false;
 	 if(target_is_local)
 	 {
 	    if(lstat(target_name,&st)!=-1)
@@ -209,7 +213,8 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    	((file->defined&file->DATE) && (old->defined&old->DATE)
 	    	&& file->date + file->date_prec < old->date - old->date_prec))
 	    && (file->defined&file->SIZE) && (old->defined&old->SIZE)
-	    && file->size >= old->size)
+	    && file->size >= old->size
+	    && !use_pget)
 	    {
 	       cont_this=true;
 	       if(target_is_local && !script_only)
@@ -240,14 +245,20 @@ void  MirrorJob::HandleFile(FileInfo *file)
 
 	 if(script)
 	 {
-	    ArgV args("get");
+	    ArgV args(use_pget?"pget":"get");
+	    if(use_pget)
+	    {
+	       args.Append("-n");
+	       args.Append(pget_n);
+	    }
 	    if(cont_this)
 	       args.Append("-c");
 	    if(remove_target)
 	       args.Append("-e");
 	    args.Append(source_session->GetFileURL(file->name));
 	    args.Append("-o");
-	    args.Append(target_session->GetFileURL(file->name));
+	    args.Append(target_is_local?dir_file(target_dir,file->name)
+			:target_session->GetFileURL(file->name));
 	    char *cmd=args.CombineQuoted();
 	    fprintf(script,"%s\n",cmd);
 	    xfree(cmd);
@@ -255,26 +266,45 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	       goto skip;
 	 }
 
-	 FileCopyPeerFA *src_peer=
-	    new FileCopyPeerFA(source_session->Clone(),file->name,FA::RETRIEVE);
-	 FileCopyPeerFA *dst_peer=
-	    new FileCopyPeerFA(target_session->Clone(),file->name,FA::STORE);
+	 if(!use_pget)
+	 {
+	    FileCopyPeerFA *src_peer=
+	       new FileCopyPeerFA(source_session->Clone(),file->name,FA::RETRIEVE);
+	    FileCopyPeerFA *dst_peer=
+	       new FileCopyPeerFA(target_session->Clone(),file->name,FA::STORE);
 
-	 FileCopy *c=FileCopy::New(src_peer,dst_peer,cont_this);
-	 if(remove_source_files)
-	    c->RemoveSourceLater();
-	 if(remove_target)
-	    c->RemoveTargetFirst();
-	 CopyJob *cp=
-	    new CopyJob(c,file->name,"mirror");
-	 if(file->defined&file->DATE)
-	    cp->SetDate(file->date);
-	 if(file->defined&file->SIZE)
-	    cp->SetSize(file->size);
-	 AddWaiting(cp);
-	 transfer_count++;
-	 cp->SetParentFg(this);
-	 cp->cmdline=xasprintf("\\transfer %s",file->name);
+	    FileCopy *c=FileCopy::New(src_peer,dst_peer,cont_this);
+	    if(remove_source_files)
+	       c->RemoveSourceLater();
+	    if(remove_target)
+	       c->RemoveTargetFirst();
+	    CopyJob *cp=
+	       new CopyJob(c,file->name,"mirror");
+	    if(file->defined&file->DATE)
+	       cp->SetDate(file->date);
+	    if(file->defined&file->SIZE)
+	       cp->SetSize(file->size);
+	    AddWaiting(cp);
+	    transfer_count++;
+	    cp->SetParentFg(this);
+	    cp->cmdline=xasprintf("\\transfer %s",file->name);
+	 }
+	 else // pget
+	 {
+	    ArgV *get_args=new ArgV("mirror");
+	    get_args->Append(file->name);
+	    get_args->Append(dir_file(target_dir,file->name));
+	    pgetJob *cp=new pgetJob(source_session->Clone(),get_args);
+	    cp->SetMaxConn(pget_n);
+	    if(remove_source_files)
+	       cp->RemoveSourceLater();
+	    if(remove_target)
+	       cp->RemoveTargetFirst();
+	    AddWaiting(cp);
+	    transfer_count++;
+	    cp->SetParentFg(this);
+	    cp->cmdline=xasprintf("\\transfer %s",file->name);
+	 }
 	 state=WAITING_FOR_TRANSFER;
 	 break;
       }
@@ -332,6 +362,8 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 mj->verbose_report=verbose_report;
 	 mj->newer_than=newer_than;
 	 mj->parallel=parallel;
+	 mj->pget_n=pget_n;
+	 mj->pget_minchunk=pget_minchunk;
 	 mj->remove_source_files=remove_source_files;
 	 mj->create_target_dir=create_target_dir;
 	 mj->no_target_dir=no_target_dir;
@@ -746,14 +778,17 @@ int   MirrorJob::Do()
 	 }
 	 if(!file)
 	    break;
-	 if(!(flags&DELETE) && (flags&REPORT_NOT_DELETED))
+	 if(!(flags&DELETE))
 	 {
-	    if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
-	       Report(_("Old directory `%s' is not removed"),
-			dir_file(target_relative_dir,file->name));
-	    else
-	       Report(_("Old file `%s' is not removed"),
-			dir_file(target_relative_dir,file->name));
+	    if(flags&REPORT_NOT_DELETED)
+	    {
+	       if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
+		  Report(_("Old directory `%s' is not removed"),
+			   dir_file(target_relative_dir,file->name));
+	       else
+		  Report(_("Old file `%s' is not removed"),
+			   dir_file(target_relative_dir,file->name));
+	    }
 	    continue;
 	 }
 	 if(script)
@@ -948,6 +983,8 @@ MirrorJob::MirrorJob(MirrorJob *parent,
    remove_source_files=false;
 
    parallel=1;
+   pget_n=1;
+   pget_minchunk=0x10000;
 
    source_redirections=0;
    target_redirections=0;
@@ -1146,6 +1183,7 @@ CMD(mirror)
       {"just-print",optional_argument,0,256+'S'},
       {"dry-run",   optional_argument,0,256+'S'},
       {"delete-first",no_argument,0,256+'e'},
+      {"use-pget-n",optional_argument,0,256+'p'},
       {0}
    };
 
@@ -1161,6 +1199,7 @@ CMD(mirror)
    const char *newer_than=0;
    bool  remove_source_files=false;
    int	 parallel=ResMgr::Query("mirror:parallel-transfer-count",0);
+   int	 use_pget=ResMgr::Query("mirror:use-pget-n",0);
    bool	 reverse=false;
    bool	 script_only=false;
    const char *script_file=0;
@@ -1278,6 +1317,12 @@ CMD(mirror)
 	    parallel=atoi(optarg);
 	 else
 	    parallel=3;
+	 break;
+      case(256+'p'):
+	 if(optarg)
+	    use_pget=atoi(optarg);
+	 else
+	    use_pget=3;
 	 break;
       case(256+'S'):
 	 script_only=true;
@@ -1399,6 +1444,8 @@ CMD(mirror)
       parallel=64;   // a (in)sane limit.
    if(parallel)
       j->SetParallel(parallel);
+   if(use_pget>1)
+      j->SetPGet(use_pget);
 
    if(script_file)
    {

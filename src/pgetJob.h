@@ -48,6 +48,8 @@ class pgetJob : public GetJob
    bool chunks_done:1;
 
    void free_chunks();
+   ChunkXfer *NewChunk(FileAccess *session,const char *remote,
+				FDStream *local,off_t start,off_t limit);
 
    long total_eta;
 
@@ -75,8 +77,6 @@ public:
 
    void SetMaxConn(int n) { max_chunks=n; }
 
-   pgetJob::ChunkXfer *NewChunk(FileAccess *session,const char *remote,
-				FDStream *local,off_t start,off_t limit);
 };
 
 #endif//PGETJOB_H

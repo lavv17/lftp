@@ -1,3 +1,13 @@
+2004-02-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: new option --use-pget-n; implement using pget for
+	  transfers; fixed bug which caused old files to be removed even
+	  if -e option was not specified.
+	* ArgV.h: allow appending numbers.
+	* GetJob.h: (RemoveSourceFiles) add method named as in CopyJob.
+	* pgetJob.h: make NewChunk protected.
+	* resource.cc: add mirror:use-pget-n resource.
+
 2004-02-12  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* StatusLine.cc, StatusLine.h: support multiline status.

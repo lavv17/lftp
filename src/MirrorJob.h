@@ -111,6 +111,8 @@ class MirrorJob : public Job
    bool remove_source_files;
 
    int parallel;
+   int pget_n;
+   int pget_minchunk;
 
    mode_t get_mode_mask();
 
@@ -174,6 +176,7 @@ public:
    void	 RemoveSourceFiles() { remove_source_files=true; }
 
    void  SetParallel(int p) { parallel=p; }
+   void  SetPGet(int n) { pget_n=n; }
 
    void Fg();
    void Bg();

@@ -50,6 +50,7 @@ public:
    int	 Do();
 
    void DeleteFiles() { delete_files=true; }
+   void RemoveSourceLater() { delete_files=true; }
    void Reverse() { reverse=true; } // put
    void RemoveTargetFirst() { remove_target_first=true; }
 };
