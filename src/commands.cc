@@ -888,6 +888,8 @@ Job *CmdExec::builtin_queue()
 
    queue->FeedArgV(args,1);
 
+   last_bg=queue->jobno;
+
    exit_code=0;
 
    return 0;

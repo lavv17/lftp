@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # lftpget - get a file with lftp
-# Copyright (c) 1999 Alexander V. Lukyanov <lav@yars.free.net>
+# Copyright (c) 1999-2000 Alexander V. Lukyanov <lav@yars.free.net>
 # This file is covered by GNU GPL. See file COPYING for details.
 
 # $Id$
@@ -14,7 +14,7 @@ if [ $# -eq 0 ]; then
    exit 1
 fi
 
-INTRO="set cmd:at-exit;"
+INTRO="set cmd:at-exit;set xfer:max-redirections 16;"
 SCRIPT=""
 verbose=false
 
