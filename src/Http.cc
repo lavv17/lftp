@@ -284,15 +284,18 @@ void Http::SendMethod(const char *method,const char *efile)
    Send("Host: %s\r\n",ehost);
    if(user_agent && user_agent[0])
       Send("User-Agent: %s\r\n",user_agent);
-   const char *accept=Query("accept");
-   if(accept && accept[0])
-      Send("Accept: %s\r\n",accept);
-   accept=Query("accept-language");
-   if(accept && accept[0])
-      Send("Accept-Language: %s\r\n",accept);
-   accept=Query("accept-charset");
-   if(accept && accept[0])
-      Send("Accept-Charset: %s\r\n",accept);
+   if(!hftp)
+   {
+      const char *accept=Query("accept");
+      if(accept && accept[0])
+	 Send("Accept: %s\r\n",accept);
+      accept=Query("accept-language");
+      if(accept && accept[0])
+	 Send("Accept-Language: %s\r\n",accept);
+      accept=Query("accept-charset");
+      if(accept && accept[0])
+	 Send("Accept-Charset: %s\r\n",accept);
+   }
 }
 
 

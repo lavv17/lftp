@@ -41,7 +41,10 @@ int pgetJob::Do()
       return super::Do();
 
    if(no_parallel || max_chunks<2)
+   {
+      cp->Resume();
       return super::Do();
+   }
 
    if(cp->Done())
       RemoveBackupFile();
