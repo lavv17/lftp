@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2.1\n"
-"POT-Creation-Date: 2001-01-02 12:45+0300\n"
+"POT-Creation-Date: 2001-01-02 12:50+0300\n"
 "PO-Revision-Date: 2000-08-26 00:01-0300\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "MIME-Version: 1.0\n"

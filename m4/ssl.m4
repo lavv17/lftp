@@ -4,7 +4,7 @@ AC_CACHE_VAL(lftp_cv_ssl,
 [
 	found_loc=none;
 	lftp_cv_ssl=none;
-	for loc in $ssl_loc `eval echo $prefix` default /usr/local/ssl; do
+	for loc in $ssl_loc default /usr/local/ssl; do
 		old_LIBS="$LIBS"
 		old_LDFLAGS="$LDFLAGS"
 		old_CPPFLAGS="$CPPFLAGS"
