@@ -464,6 +464,7 @@ FileInfo *ParseFtpLongList_EPLF(const char *line,int *err)
    time_t date=NO_DATE;
    long date_l;
    bool dir=false;
+   bool type_known=false;
 
    const char *scan=b+1;
    int scan_len=len-1;
@@ -486,9 +487,11 @@ FileInfo *ParseFtpLongList_EPLF(const char *line,int *err)
 	    break;
 	 case '/':
 	    dir=true;
+	    type_known=true;
 	    break;
 	 case 'r':
 	    dir=false;
+	    type_known=true;
 	    break;
 	 case 'i':
 	    break;
@@ -508,7 +511,7 @@ FileInfo *ParseFtpLongList_EPLF(const char *line,int *err)
       else
 	 break;
    }
-   if(name==0)
+   if(name==0 && type_known)
       ERR;
 
    FileInfo *fi=new FileInfo();
@@ -517,10 +520,13 @@ FileInfo *ParseFtpLongList_EPLF(const char *line,int *err)
       fi->SetSize(size);
    if(date!=NO_DATE)
       fi->SetDate(date);
-   if(dir)
-      fi->SetType(fi->DIRECTORY);
-   else
-      fi->SetType(fi->NORMAL);
+   if(type_known)
+   {
+      if(dir)
+	 fi->SetType(fi->DIRECTORY);
+      else
+	 fi->SetType(fi->NORMAL);
+   }
 
    return fi;
 }
