@@ -125,7 +125,7 @@ static ResDecl
    ResDecl33 ("net:limit-rate",		  "0",	   ResMgr::UNumberValidate,0),
    ResDecl34 ("net:limit-total-max",	  "0",	   ResMgr::UNumberValidate,0),
    ResDecl35 ("net:limit-total-rate",	  "0",	   ResMgr::UNumberValidate,0),
-   ResDecl36 ("net:max-retries",	  "0",	   ResMgr::UNumberValidate,0),
+   ResDecl36 ("net:max-retries",	  "4096",  ResMgr::UNumberValidate,0),
    ResDecl36a("net:persist-retries",	  "0",	   ResMgr::UNumberValidate,0),
    ResDecl37 ("net:no-proxy",		  "",	   0,0),
    ResDecl38 ("net:reconnect-interval-base","30",  ResMgr::UNumberValidate,0),

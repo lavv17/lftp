@@ -276,11 +276,6 @@ void Ftp::NoFileCheck(int act)
       // if there were some data received, assume it is temporary error.
       || (mode!=STORE && (flags&IO_FLAG)))
       {
-	 if(copy_mode!=COPY_NONE)
-	 {
-	    copy_failed=true;
-	    return;
-	 }
 	 Disconnect();
 	 return;
       }
@@ -298,10 +293,7 @@ void Ftp::NoFileCheck(int act)
       SetError(NO_FILE,line);
       return;
    }
-   if(copy_mode!=COPY_NONE)
-      copy_failed=true;
-   else
-      SetError(NO_FILE,line);
+   Disconnect();
 }
 
 // 226 Transfer complete.
@@ -2902,7 +2894,7 @@ void Ftp::CheckResp(int act)
       if(copy_mode!=COPY_NONE)
       {
 	 copy_passive=!copy_passive;
-	 copy_failed=true;
+	 Disconnect();
 	 break;
       }
       if(is5XX(act))
@@ -2920,7 +2912,7 @@ void Ftp::CheckResp(int act)
       if(copy_mode!=COPY_NONE)
       {
 	 copy_passive=!copy_passive;
-	 copy_failed=true;
+	 Disconnect();
 	 break;
       }
       if(is5XX(act))
