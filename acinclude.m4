@@ -20,7 +20,7 @@ if test $lftp_cv_precompiled_readline = yes; then
    READLINE_DEPEND=''
    COMPILE_READLINE=no
 else
-   READLINE_DIR=readline-4.0
+   READLINE_DIR=readline-4.1
    AC_MSG_RESULT(no - will compile)
    LINK_SRC="$LINK_SRC $READLINE_DIR"
    LINK_DST="$LINK_DST include/readline"
