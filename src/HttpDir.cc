@@ -568,14 +568,7 @@ int HttpDirList::Do()
    ubuf->Get(&b,&len);
    if(b==0) // eof
    {
-      const char *cache_buffer;
-      int cache_buffer_size;
-      ubuf->GetSaved(&cache_buffer,&cache_buffer_size);
-      if(cache_buffer && cache_buffer_size>0)
-      {
-	 LsCache::Add(session,curr,mode,
-			cache_buffer,cache_buffer_size);
-      }
+      LsCache::Add(session,curr,mode,ubuf);
 
       delete ubuf;
       ubuf=0;
@@ -785,14 +778,7 @@ int HttpGlob::Do()
    }
    xfree(base_href);
 
-   const char *cache_buffer;
-   int cache_buffer_size;
-   ubuf->GetSaved(&cache_buffer,&cache_buffer_size);
-   if(cache_buffer && cache_buffer_size>0)
-   {
-      LsCache::Add(session,curr_dir,FA::LONG_LIST,
-		     cache_buffer,cache_buffer_size);
-   }
+   LsCache::Add(session,curr_dir,FA::LONG_LIST,ubuf);
 
    delete ubuf;
    ubuf=0;
@@ -894,14 +880,7 @@ int HttpListInfo::Do()
       }
       xfree(base_href);
 
-      const char *cache_buffer;
-      int cache_buffer_size;
-      ubuf->GetSaved(&cache_buffer,&cache_buffer_size);
-      if(cache_buffer && cache_buffer_size>0)
-      {
-	 LsCache::Add(session,"",FA::LONG_LIST,
-			cache_buffer,cache_buffer_size);
-      }
+      LsCache::Add(session,"",FA::LONG_LIST,ubuf);
 
       delete ubuf;
       ubuf=0;
@@ -927,7 +906,21 @@ int HttpListInfo::Do()
 
 	 if(file->defined & file->TYPE)
 	 {
-	    if(file->filetype==file->DIRECTORY)
+	    if(file->filetype==file->SYMLINK && follow_symlinks)
+	    {
+	       file->filetype=file->NORMAL;
+	       file->defined &= ~(file->SIZE|file->SYMLINK_DEF|file->MODE|file->DATE_UNPREC);
+	       cur->get_size=true;
+	       cur->get_time=true;
+	    }
+
+	    if(file->filetype==file->SYMLINK)
+	    {
+	       // don't need these for symlinks
+	       cur->get_size=false;
+	       cur->get_time=false;
+	    }
+	    else if(file->filetype==file->DIRECTORY)
 	    {
 	       continue; // FIXME: directories need slash in GetInfoArray.
 #if 0
