@@ -1,8 +1,11 @@
+Version 2.3.1 - 2000-09-25
+
 * fixed cmd:move-background handling.
 * fixed `cd ... &' in queue command.
 * fixed passive mode IPv6 ftp (Arkadiusz Miskiewicz).
 * fixed module configuration for https and ftps.
 * allow ssl path to be specified in --with-ssl=/path (David Champion).
+* spanish translation updated (Nicolás Lichtmaier).
 
 Version 2.3.0 - 2000-09-18
 
