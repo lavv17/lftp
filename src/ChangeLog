@@ -1,5 +1,15 @@
 1999-09-14  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* resource.cc: check if ipv6 is supported at runtime.
+	* FileAccess.cc: better message for system errors, correctly adjust
+	  str_allocated.
+	* NetAccess.cc: (NextPeer) fix off-by-one error; set try_time.
+	* Http.cc, ftpclass.cc: move reconnect delay before Resolve, to avoid
+	  double lookup in case of relookup_always; handle error of socket
+	  creation better, skip address and report error verbosely.
+
+1999-09-14  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* PutJob.cc: unsuspend session; few corrections in size handling;
 	  don't try to use size of pipe.
 

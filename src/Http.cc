@@ -497,6 +497,12 @@ int Http::Do()
 	    return MOVED;
 	 }
       }
+      if(try_time!=0 && now-try_time<reconnect_interval)
+      {
+	 block+=TimeOut(1000*(reconnect_interval-(now-try_time)));
+	 return m;
+      }
+
       if(peer==0 || relookup_always)
       {
 	 if(Resolve(HTTP_DEFAULT_PORT,"http","tcp")==MOVED)
@@ -504,17 +510,10 @@ int Http::Do()
 	 if(!peer)
 	    return m;
       }
-      if(peer_curr>=peer_curr)
-	 peer_curr=0;
 
       if(mode==CONNECT_VERIFY)
 	 return m;
 
-      if(try_time!=0 && now-try_time<reconnect_interval)
-      {
-	 block+=TimeOut(1000*(reconnect_interval-(now-try_time)));
-	 return m;
-      }
       try_time=now;
 
       if(max_retries>0 && retries>=max_retries)
@@ -529,7 +528,25 @@ int Http::Do()
 
       sock=socket(peer[peer_curr].sa.sa_family,SOCK_STREAM,IPPROTO_TCP);
       if(sock==-1)
-	 goto system_error;
+      {
+	 if(peer_curr+1<peer_num)
+	 {
+	    peer_curr++;
+	    retries--;
+	    return MOVED;
+	 }
+	 if(errno==ENFILE || errno==EMFILE)
+	 {
+	    // file table overflow - it could free sometime
+	    block+=TimeOut(1000);
+	    return m;
+	 }
+	 char str[256];
+	 sprintf(str,"cannot create socket of address family %d",
+			peer[peer_curr].sa.sa_family);
+	 SetError(SEE_ERRNO,str);
+	 return MOVED;
+      }
       KeepAlive(sock);
       SetSocketBuffer(sock,socket_buffer);
       SetSocketMaxseg(sock,socket_maxseg);

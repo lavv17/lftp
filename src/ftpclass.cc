@@ -788,18 +788,13 @@ int   Ftp::Do()
       if(state!=INITIAL_STATE)
 	 return MOVED;
 
-      if(peer)
+      if(try_time!=0 && now-try_time<reconnect_interval)
       {
-	 if(peer_curr>=peer_num)
-	 {
-	    if(relookup_always && !proxy)
-	       ClearPeer();
-	    else
-	       peer_curr=0;
-	 }
+	 block+=TimeOut(1000*(reconnect_interval-(now-try_time)));
+	 return m;
       }
 
-      if(!peer)
+      if(!peer || relookup_always)
       {
 	 if(Resolve(FTPPORT,"ftp","tcp")==MOVED)
 	    m=MOVED;
@@ -810,11 +805,6 @@ int   Ftp::Do()
       if(mode==CONNECT_VERIFY)
 	 return m;
 
-      if(try_time!=0 && now-try_time<reconnect_interval)
-      {
-	 block+=TimeOut(1000*(reconnect_interval-(now-try_time)));
-	 return m;
-      }
       try_time=now;
 
       if(max_retries>0 && retries>=max_retries)
@@ -830,9 +820,24 @@ int   Ftp::Do()
       control_sock=socket(peer_sa.sa.sa_family,SOCK_STREAM,IPPROTO_TCP);
       if(control_sock==-1)
       {
+	 if(peer_curr+1<peer_num)
+	 {
+	    peer_curr++;
+	    retries--;
+	    return MOVED;
+	 }
 	 sprintf(str,"socket: %s",strerror(errno));
          DebugPrint("**** ",str,0);
-	 goto system_error;
+	 if(errno==ENFILE || errno==EMFILE)
+	 {
+	    // file table overflow - it could free sometime
+	    block+=TimeOut(1000);
+	    return m;
+	 }
+	 sprintf(str,"cannot create socket of address family %d",
+			peer_sa.sa.sa_family);
+	 SetError(SEE_ERRNO,str);
+	 return MOVED;
       }
       KeepAlive(control_sock);
       SetSocketBuffer(control_sock);
@@ -855,7 +860,7 @@ int   Ftp::Do()
          DebugPrint("**** ",str,0);
          close(control_sock);
 	 control_sock=-1;
-	 Disconnect();
+	 NextPeer();
 	 if(NotSerious(errno))
 	    return MOVED;
 	 goto system_error;
@@ -1779,13 +1784,9 @@ void  Ftp::Disconnect()
    ControlClose();
    AbortedClose();
 
-   if(state==CONNECTING_STATE || state==INITIAL_STATE)
+   if(state==CONNECTING_STATE)
    {
-      peer_curr++; // try next address
-      if(peer_curr<peer_num)
-	 try_time=0; // try next address immediately
-      else if(relookup_always && !proxy)
-	 ClearPeer();
+      NextPeer();
    }
    else
    {
