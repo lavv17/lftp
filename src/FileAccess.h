@@ -288,6 +288,7 @@ public:
    virtual ListInfo *MakeListInfo(const char *path=0);
    virtual Glob *MakeGlob(const char *pattern);
    virtual DirList *MakeDirList(ArgV *a);
+   virtual FileSet *ParseLongList(const char *buf,int len,int *err=0) { return 0; }
 
    static bool NotSerious(int err);
 

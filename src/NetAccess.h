@@ -155,7 +155,8 @@ protected:
    bool get_time_for_dirs;
    bool can_get_prec_time;
 
-   virtual FileSet *Parse(const char *buf,int len)=0;
+   virtual FileSet *Parse(const char *buf,int len)
+      { return session->ParseLongList(buf,len); }
 
 public:
    GenericParseListInfo(FileAccess *session,const char *path);

@@ -302,6 +302,9 @@ private:
 
    const char *encode_eprt(sockaddr_u *);
 
+   typedef FileInfo *(*FtpLineParser)(char *line,int *err,const char *tz);
+   static FtpLineParser line_parsers[];
+
 protected:
    ~Ftp();
 
@@ -373,6 +376,7 @@ public:
    ListInfo *MakeListInfo(const char *path);
    Glob *MakeGlob(const char *pattern);
    DirList *MakeDirList(ArgV *args);
+   FileSet *ParseLongList(const char *buf,int len,int *err=0);
 
    void SetCopyMode(copy_mode_t cm,bool rp,int rnum,time_t tt)
       {

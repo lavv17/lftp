@@ -30,24 +30,35 @@
 #include <ctype.h>
 #include "xalloca.h"
 #include "misc.h"
+#include "ftpclass.h"
 
 #define number_of_parsers 5
 
 FileSet *FtpListInfo::Parse(const char *buf,int len)
 {
    if(mode==FA::LONG_LIST)
-      return ParseLongList(buf,len);
+   {
+      if(len==0)
+      {
+	 mode=FA::LIST;
+	 return 0;
+      }
+      int err;
+      FileSet *set=session->ParseLongList(buf,len,&err);
+      if(!set || err>0)
+	 mode=FA::LIST;
+      return set;
+   }
    else
+   {
       return ParseShortList(buf,len);
+   }
 }
 
-FileSet *FtpListInfo::ParseLongList(const char *buf,int len)
+FileSet *Ftp::ParseLongList(const char *buf,int len,int *err_ret)
 {
-   if(len==0)
-   {
-      mode=FA::LIST;
-      return 0;
-   }
+   if(err_ret)
+      *err_ret=0;
 
    int err[number_of_parsers];
    FileSet *set[number_of_parsers];
@@ -68,7 +79,7 @@ FileSet *FtpListInfo::ParseLongList(const char *buf,int len)
    int *best_err1=&err[0];
    int *best_err2=&err[1];
 
-   const char *tz=ResMgr::Query("ftp:timezone",session->GetHostName());
+   const char *tz=Query("timezone",hostname);
 
    for(;;)
    {
@@ -137,9 +148,8 @@ leave:
    for(i=0; i<number_of_parsers; i++)
       if(&set[i]!=the_set)
 	 delete set[i];
-   // try short list next.
-   if(!the_set || *the_err>0)
-      mode=FA::LIST;
+   if(err_ret && the_err)
+      *err_ret=*the_err;
    return the_set?*the_set:0;
 }
 
@@ -724,7 +734,7 @@ FileInfo *ParseFtpLongList_MacWebStar(char *line,int *err,const char *tz)
    return fi;
 }
 
-FtpListInfo::FtpLineParser FtpListInfo::line_parsers[number_of_parsers+1]={
+Ftp::FtpLineParser Ftp::line_parsers[number_of_parsers+1]={
    ParseFtpLongList_UNIX,
    ParseFtpLongList_NT,
    ParseFtpLongList_EPLF,

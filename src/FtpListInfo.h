@@ -27,9 +27,6 @@
 
 class FtpListInfo : public GenericParseListInfo
 {
-   typedef FileInfo *(*FtpLineParser)(char *line,int *err,const char *tz);
-   static FtpLineParser line_parsers[];
-   FileSet *ParseLongList(const char *buf,int len);
    FileSet *ParseShortList(const char *buf,int len);
 public:
    virtual FileSet *Parse(const char *buf,int len);

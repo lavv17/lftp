@@ -1,5 +1,12 @@
 2001-12-05  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* FileAccess.h: (ParseLongList) new virtual method.
+	* NetAccess.h: call session->ParseLongList by default from
+	  GenericParseListInfo.
+	* FtpListInfo.cc, FtpListInfo.h, ftpclass.h: move parser to Ftp class.
+
+2001-12-05  Alexander V. Lukyanov <lav@yars.free.net>
+
 	* CmdExec.h: include Glob.h.
 	* DummyProto.h, DummyProto.cc: little optimization; new MakeListInfo.
 	* FileAccess.cc, FileAccess.h: ListInfo takes path; move Glob to
