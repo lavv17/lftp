@@ -251,26 +251,28 @@ restart:
       }
       if(background)
       {
-	 exit_code=0;
 	 if(waiting)
 	 {
 	    while(waiting->Do()==MOVED)
 	       ;
 	    if(!waiting->Done())
-	    {
-	       waiting->Bg();
-	       if(interactive)
-	       {
-		  printf("[%d] %s &\n",waiting->jobno,
-		     waiting->cmdline?waiting->cmdline:"?");
-		  waiting->PrintStatus(1);
-	       }
-	       last_bg=waiting->jobno;
-	       waiting=0;
-	    }
+	       SuspendJob();
 	 }
       } // background
    }
+}
+
+void CmdExec::SuspendJob()
+{
+   waiting->Bg();
+   if(status_line)
+      status_line->WriteLine("[%d] %s &",waiting->jobno,
+			waiting->cmdline?waiting->cmdline:"?");
+   if(interactive)
+      waiting->PrintStatus(0);
+   last_bg=waiting->jobno;
+   exit_code=0;
+   waiting=0;
 }
 
 void CmdExec::ExecParsed(ArgV *a,FDStream *o,bool b)
@@ -512,13 +514,7 @@ int CmdExec::Do()
 	 }
 	 if(SignalHook::GetCount(SIGTSTP))
 	 {
-	    waiting->Bg();
-	    if(status_line)
-	       status_line->WriteLine("[%d] %s &",waiting->jobno,waiting->cmdline);
-	    waiting->PrintStatus(1);
-	    exit_code=0;
-	    last_bg=waiting->jobno;
-	    waiting=0;
+	    SuspendJob();
 	    return MOVED;
 	 }
 	 if(SignalHook::GetCount(SIGHUP))
@@ -644,8 +640,6 @@ void CmdExec::ShowRunStatus(StatusLine *s)
 void CmdExec::PrintStatus(int v)
 {
    SessionJob::PrintStatus(v);
-   if(v<1)
-      return;
    if(waiting==this)
    {
       char *s=args->Combine();
@@ -655,6 +649,15 @@ void CmdExec::PrintStatus(int v)
    }
    if(is_queue)
    {
+      if(waiting)
+      {
+	 printf(_("\tNow executing: %s\n"),waiting->cmdline);
+	 if(v==0)
+	 {
+	    waiting->PrintStatus(v);
+	    return;
+	 }
+      }
       if(!(next_cmd && next_cmd[0]))
 	 return;
       printf(_("\tCommands queued:\n"));
@@ -671,6 +674,11 @@ void CmdExec::PrintStatus(int v)
 	 cmd=cmd_end+1;
 	 if(*cmd==0)
 	    break;
+	 if(v<2 && n>4)
+	 {
+	    printf("\t%2d. ...\n",n);
+	    break;
+	 }
       }
       return;
    }

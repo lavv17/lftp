@@ -1,3 +1,9 @@
+1999-11-14  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CmdExec.cc, CmdExec.h: (SuspendJob) new method; (PrintStatus)
+	  don't print all queued commands if not verbose, print current
+	  queue command status if ^Z (v==0).
+
 1999-11-11  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h: add site_chmod_supported flag.

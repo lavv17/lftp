@@ -141,6 +141,8 @@ public:
    void FeedQuoted(const char *c);
    void AtExit();
 
+   void SuspendJob();
+
    CmdExec(FileAccess *s);
    ~CmdExec();
 
