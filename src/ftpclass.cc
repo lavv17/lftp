@@ -1291,14 +1291,14 @@ int   Ftp::Do()
       SendSiteGroup();
       SendSiteIdle();
 
-      if(!home)
+      if(!home_auto)
       {
 	 // if we don't yet know the home location, try to get it
 	 SendCmd("PWD");
 	 AddResp(RESP_PWD_MKD_OK,CHECK_PWD);
-	 set_real_cwd("~");   // starting point
       }
 
+      set_real_cwd(0);
       type=FTP_TYPE_A;	   // just after login we are in TEXT mode
       state=EOF_STATE;
       m=MOVED;
@@ -1331,6 +1331,9 @@ int   Ftp::Do()
 
       if(home==0 && !RespQueueIsEmpty())
 	 goto usual_return;
+
+      if(real_cwd==0)
+	 set_real_cwd(home_auto);
 
       ExpandTildeInCWD();
 

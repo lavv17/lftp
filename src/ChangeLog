@@ -1,3 +1,8 @@
+2001-09-12  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: sometimes CWD was not sent after reconnection
+	  because of missing set_real_cwd - fix it.
+
 2001-09-10  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* lftp_rl.c: print * for modified lines in history (like in bash).
