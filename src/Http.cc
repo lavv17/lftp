@@ -612,7 +612,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       {
 	 if(sscanf(value,"%*[^/]/%lld",&fsize)!=1)
 	    return;
-	 if(opt_size && H_20X(status_code))
+	 if(opt_size)
 	    *opt_size=fsize;
 	 return;
       }
