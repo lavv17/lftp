@@ -55,7 +55,7 @@ void  truncate_file_tree(const char *dir);
 // returns 0 on error.
 char *xgetcwd();
 
-int percent(long offset,long size);
+int percent(off_t offset,off_t size);
 
 #define find_char(buf,len,ch) ((const char *)memchr(buf,ch,len))
 

@@ -305,14 +305,14 @@ int   Ftp::TransferCheck(int act,int exp)
    {
       stat_time=now;
       // find the number.
-      long p;
+      long long p;
       for(char *b=line+4; ; b++)
       {
 	 if(*b==0)
 	    return state;
 	 if(!is_ascii_digit(*b))
 	    continue;
-	 if(sscanf(b,"%ld",&p)==1)
+	 if(sscanf(b,"%lld",&p)==1)
 	    break;
       }
       if(copy_mode==COPY_DEST)
@@ -1507,7 +1507,7 @@ int   Ftp::Do()
       // so check if last_rest was different.
       if(real_pos==-1 || last_rest!=real_pos)
       {
-         sprintf(str,"REST %ld\n",real_pos!=-1?real_pos:pos);
+         sprintf(str,"REST %lld\n",(long long)(real_pos!=-1?real_pos:pos));
 	 real_pos=-1;
 	 SendCmd(str);
 	 AddResp(RESP_REST_OK,INITIAL_STATE,CHECK_REST);

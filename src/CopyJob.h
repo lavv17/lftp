@@ -57,16 +57,16 @@ public:
    const char *ErrorText() { return c->ErrorText(); }
    long GetTimeSpent() { return c->GetTimeSpent(); }
    int  GetTimeSpentMilli() { return c->GetTimeSpentMilli(); }
-   long GetBytesCount() { return c->GetBytesCount(); }
-   long GetSize() { return c->GetSize(); }
-   long GetPos()  { return c->GetPos(); }
+   off_t GetBytesCount() { return c->GetBytesCount(); }
+   off_t GetSize() { return c->GetSize(); }
+   off_t GetPos()  { return c->GetPos(); }
    float GetRate() { return c->GetRate(); }
    long GetETA() { return c->GetETA(); }
-   long GetETA(long rem) { return c->GetETA(rem); }
+   long GetETA(off_t rem) { return c->GetETA(rem); }
    const char *GetETAStrSFromTime(time_t t) { return c->GetETAStrSFromTime(t); }
-   void SetRange(long s,long lim) { c->SetRange(s,lim); }
+   void SetRange(off_t s,off_t lim) { c->SetRange(s,lim); }
    void SetDate(time_t d) { c->SetDate(d); }
-   void SetSize(long s)   { c->SetSize(s); }
+   void SetSize(off_t s)   { c->SetSize(s); }
    FileCopyPeer *GetPut() { return c->put; }
 
    void ShowRunStatus(StatusLine *s);
@@ -90,7 +90,7 @@ protected:
    bool done;
    int errors;
    int count;
-   long bytes;
+   off_t bytes;
    float time_spent;
    const char *op;
    bool no_status;

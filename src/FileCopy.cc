@@ -160,8 +160,8 @@ int FileCopy::Do()
       if(line_buffer)
 	 lbsize=line_buffer->Size();
       /* check if positions are correct */
-      long get_pos=get->GetRealPos()-get->range_start;
-      long put_pos=put->GetRealPos()-put->range_start;
+      off_t get_pos=get->GetRealPos()-get->range_start;
+      off_t put_pos=put->GetRealPos()-put->range_start;
       if(get_pos-lbsize!=put_pos)
       {
 	 if(line_buffer)
@@ -178,22 +178,23 @@ int FileCopy::Do()
 	       SetError("cannot seek on data source");
 	       return MOVED;
 	    }
-	    debug((9,"copy: put rolled back to %ld, seeking get accordingly\n",
-		     put->GetRealPos()));
-	    debug((10,"copy: get position was %ld\n",get->GetRealPos()));
+	    debug((9,"copy: put rolled back to %lld, seeking get accordingly\n",
+		     (long long)put->GetRealPos()));
+	    debug((10,"copy: get position was %lld\n",
+		     (long long)get->GetRealPos()));
 	    get->Seek(put->GetRealPos());
 	    return MOVED;
 	 }
 	 else // put_pos > get_pos
 	 {
-	    long size=get->GetSize();
+	    off_t size=get->GetSize();
 	    if(size>=0 && put->GetRealPos()>=size)
 	    {
 	       // simulate eof, as we have already have the whole file.
 	       debug((9,"copy: all data received, but get rolled back\n"));
 	       goto eof;
 	    }
-	    int skip=put->GetRealPos()-get->GetRealPos();
+	    off_t skip=put->GetRealPos()-get->GetRealPos();
 	    if(!put->CanSeek(get->GetRealPos()) || skip<skip_threshold)
 	    {
 	       // we have to skip some data
@@ -202,13 +203,13 @@ int FileCopy::Do()
 		  skip=s;
 	       if(skip==0)
 		  return m;
-	       debug((9,"copy: skipping %d bytes on get to adjust to put\n",skip));
+	       debug((9,"copy: skipping %d bytes on get to adjust to put\n",(int)skip));
 	       get->Skip(skip);
 	       bytes_count+=skip;
 	       return MOVED;
 	    }
-	    debug((9,"copy: get rolled back to %ld, seeking put accordingly\n",
-		     get->GetRealPos()));
+	    debug((9,"copy: get rolled back to %lld, seeking put accordingly\n",
+		     (long long)get->GetRealPos()));
 	    put->Seek(get->GetRealPos());
 	    return MOVED;
 	 }
@@ -453,7 +454,7 @@ void FileCopy::LineBuffered(int s)
    line_buffer_max=s;
 }
 
-long FileCopy::GetPos()
+off_t FileCopy::GetPos()
 {
    if(put)
       return put->GetRealPos() - put->Buffered();
@@ -462,7 +463,7 @@ long FileCopy::GetPos()
    return 0;
 }
 
-long FileCopy::GetSize()
+off_t FileCopy::GetSize()
 {
    if(get)
       return get->GetSize();
@@ -473,15 +474,15 @@ int FileCopy::GetPercentDone()
 {
    if(!get || !put)
       return 100;
-   long size=get->GetSize();
+   off_t size=get->GetSize();
    if(size==NO_SIZE || size==NO_SIZE_YET)
       return -1;
    if(size==0)
       return 0;
-   long ppos=put->GetRealPos() - put->Buffered() - put->range_start;
+   off_t ppos=put->GetRealPos() - put->Buffered() - put->range_start;
    if(ppos<0)
       return 0;
-   long psize=size-put->range_start;
+   off_t psize=size-put->range_start;
    if(put->range_limit!=FILE_END)
       psize=put->range_limit-put->range_start;
    if(psize<0)
@@ -509,13 +510,13 @@ const char *FileCopy::GetRateStr()
       return "";
    return rate->GetStrS();
 }
-long FileCopy::GetBytesRemaining()
+off_t FileCopy::GetBytesRemaining()
 {
    if(!get)
       return 0;
    if(get->range_limit==FILE_END)
    {
-      long size=get->GetSize();
+      off_t size=get->GetSize();
       if(size<=0 || size<get->GetRealPos() || !rate_for_eta->Valid())
 	 return -1;
       return(size-GetPos());
@@ -524,16 +525,16 @@ long FileCopy::GetBytesRemaining()
 }
 const char *FileCopy::GetETAStr()
 {
-   long b=GetBytesRemaining();
+   off_t b=GetBytesRemaining();
    if(b<0 || !put)
       return "";
    return rate_for_eta->GetETAStrSFromSize(b);
 }
-long FileCopy::GetETA(long b)
+long FileCopy::GetETA(off_t b)
 {
    if(b<0 || !rate_for_eta->Valid())
       return -1;
-   return (long)(b / rate_for_eta->Get() + 0.5);
+   return (long)(double(b) / rate_for_eta->Get() + 0.5);
 }
 const char *FileCopy::GetStatus()
 {
@@ -597,7 +598,7 @@ void FileCopy::Kill(int sig)
 // FileCopyPeer implementation
 #undef super
 #define super Buffer
-void FileCopyPeer::SetSize(long s)
+void FileCopyPeer::SetSize(off_t s)
 {
    want_size=false;
    size=s;
@@ -818,7 +819,7 @@ const char *FileCopyPeerFA::GetStatus()
    return session->CurrentStatus();
 }
 
-void FileCopyPeerFA::Seek(long new_pos)
+void FileCopyPeerFA::Seek(off_t new_pos)
 {
    if(pos==new_pos)
       return;
@@ -838,7 +839,8 @@ void FileCopyPeerFA::OpenSession()
       if(size!=NO_SIZE && size!=NO_SIZE_YET && seek_pos>=size && !ascii)
       {
       past_eof:
-	 debug((10,"copy src: seek past eof (seek_pos=%ld, size=%ld)\n",seek_pos,size));
+	 debug((10,"copy src: seek past eof (seek_pos=%lld, size=%lld)\n",
+		  (long long)seek_pos,(long long)size));
 	 pos=seek_pos;
 	 eof=true;
 	 return;
@@ -930,7 +932,7 @@ int FileCopyPeerFA::Get_LL(int len)
    if(eof)  // OpenSession can set eof=true.
       return 0;
 
-   long io_at=pos;
+   off_t io_at=pos;
    if(GetRealPos()!=io_at) // GetRealPos can alter pos.
       return 0;
 
@@ -958,7 +960,7 @@ int FileCopyPeerFA::Put_LL(const char *buf,int len)
    if(session->IsClosed())
       OpenSession();
 
-   long io_at=pos;
+   off_t io_at=pos;
    if(GetRealPos()!=io_at) // GetRealPos can alter pos.
       return 0;
 
@@ -988,7 +990,7 @@ int FileCopyPeerFA::Put_LL(const char *buf,int len)
    return res;
 }
 
-long FileCopyPeerFA::GetRealPos()
+off_t FileCopyPeerFA::GetRealPos()
 {
    if(session->OpenMode()!=FAmode || fxp)
       return pos;
@@ -1210,7 +1212,7 @@ bool FileCopyPeerFDStream::Done()
    return true;
 }
 
-void FileCopyPeerFDStream::Seek(long new_pos)
+void FileCopyPeerFDStream::Seek(off_t new_pos)
 {
    if(pos==new_pos)
       return;
@@ -1437,7 +1439,7 @@ FileCopyPeerString::FileCopyPeerString(const char *s, int len)
 FileCopyPeerString::~FileCopyPeerString()
 {
 }
-void FileCopyPeerString::Seek(long new_pos)
+void FileCopyPeerString::Seek(off_t new_pos)
 {
    assert(new_pos!=FILE_END);
    UnSkip(pos-new_pos);

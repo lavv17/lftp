@@ -57,8 +57,8 @@ int pgetJob::Do()
    if(Done() || chunks_done)
       return m;
 
-   long offset=cp->GetPos();
-   long size=cp->GetSize();
+   off_t offset=cp->GetPos();
+   off_t size=cp->GetSize();
 
    if(chunks==0)
    {
@@ -75,7 +75,7 @@ int pgetJob::Do()
       cp->GetPut()->NeedSeek(); // seek before writing
 
       /* initialize chunks */
-      long chunk_size=(size-offset)/max_chunks;
+      off_t chunk_size=(size-offset)/max_chunks;
       if(chunk_size<0x10000)
 	 chunk_size=0x10000;
       num_of_chunks=(size-offset)/chunk_size-1;
@@ -85,7 +85,7 @@ int pgetJob::Do()
 	 return MOVED;
       }
       chunks=(ChunkXfer**)xmalloc(sizeof(*chunks)*num_of_chunks);
-      long curr_offs=size;
+      off_t curr_offs=size;
       for(int i=num_of_chunks; i-->0; )
       {
 	 const char *name=cp->GetName();
@@ -102,13 +102,13 @@ int pgetJob::Do()
 	 chunks[i]=NewChunk(s,name,local,curr_offs-chunk_size,curr_offs);
 	 chunks[i]->SetParentFg(this,false);
 	 chunks[i]->cmdline=(char*)xmalloc(7+2*20+1);
-	 sprintf(chunks[i]->cmdline,"\\chunk %ld-%ld",
-				    curr_offs-chunk_size,curr_offs-1);
+	 sprintf(chunks[i]->cmdline,"\\chunk %lld-%lld",
+	    (long long)(curr_offs-chunk_size),(long long)(curr_offs-1));
 	 curr_offs-=chunk_size;
       }
       xfree(cp->cmdline);
       cp->cmdline=(char*)xmalloc(7+2*20+1);
-      sprintf(cp->cmdline,"\\chunk %ld-%ld",0L,chunks[0]->start-1);
+      sprintf(cp->cmdline,"\\chunk 0-%lld",(long long)(chunks[0]->start-1));
       m=MOVED;
    }
 
@@ -121,7 +121,7 @@ int pgetJob::Do()
       total_eta=-2;
    else
    {
-      long rem=chunks[0]->start-cp->GetPos();
+      off_t rem=chunks[0]->start-cp->GetPos();
       if(rem<=0)
 	 total_eta=0;
       else
@@ -175,7 +175,8 @@ int pgetJob::Do()
 
 // xgettext:c-format
 #define PGET_STATUS \
-   _("`%s', got %lu of %lu (%d%%) %s%s"),name,total_xferred,size, \
+   _("`%s', got %lld of %lld (%d%%) %s%s"),name, \
+   (long long)total_xferred,(long long)size, \
    percent(total_xferred,size),Speedometer::GetStrS(total_xfer_rate), \
    cp->GetETAStrSFromTime(total_eta)
 
@@ -191,7 +192,7 @@ void pgetJob::ShowRunStatus(StatusLine *s)
       return;
 
    const char *name=cp->SqueezeName(s->GetWidthDelayed()-40);
-   long size=cp->GetSize();
+   off_t size=cp->GetSize();
    s->Show(PGET_STATUS);
 }
 
@@ -223,7 +224,7 @@ void  pgetJob::PrintStatus(int verbose)
 
    printf("\t");
    const char *name=cp->GetName();
-   long size=cp->GetSize();
+   off_t size=cp->GetSize();
    printf(PGET_STATUS);
    printf("\n");
 }
@@ -264,7 +265,7 @@ void pgetJob::NextFile()
 }
 
 pgetJob::ChunkXfer *pgetJob::NewChunk(FileAccess *session,const char *remote,
-				       FDStream *local,long start,long limit)
+				       FDStream *local,off_t start,off_t limit)
 {
    FileCopyPeerFDStream
 	       	*dst_peer=new FileCopyPeerFDStream(local,FileCopyPeer::PUT);
@@ -284,7 +285,7 @@ pgetJob::ChunkXfer *pgetJob::NewChunk(FileAccess *session,const char *remote,
 }
 
 pgetJob::ChunkXfer::ChunkXfer(FileCopy *c1,const char *name,
-			      long s,long lim)
+			      off_t s,off_t lim)
    : CopyJob(c1,name,"pget")
 {
    start=s;

@@ -247,7 +247,7 @@ void FileAccess::CloseOnExec(int fd)
 }
 
 
-void  FileAccess::Open(const char *fn,int mode,long offs)
+void  FileAccess::Open(const char *fn,int mode,off_t offs)
 {
 #ifdef OPEN_DEBUG
    printf("FA::Open(%s)\n",fn);

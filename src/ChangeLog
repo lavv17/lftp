@@ -1,3 +1,11 @@
+2000-06-08  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CopyJob.cc, CopyJob.h, FileAccess.cc, FileAccess.h, FileCopy.cc,
+	  FileCopy.h, FileSet.h, Filter.cc, Filter.h, Http.cc, Http.h,
+	  LocalAccess.cc, Makefile.in, Speedometer.cc, Speedometer.h,
+	  buffer.cc, buffer.h, ftpclass.cc, ftpclass.h, misc.cc, misc.h,
+	  pgetJob.cc, pgetJob.h, plural.c, plural.h: large file size support.
+
 2000-06-07  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Http.cc: apply `;type=' to hftp urls too.

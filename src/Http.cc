@@ -413,7 +413,7 @@ add_path:
    retrieve:
       SendMethod("GET",efile);
       if(pos>0 && !no_ranges)
-	 Send("Range: bytes=%ld-\r\n",pos);
+	 Send("Range: bytes=%lld-\r\n",(long long)pos);
       break;
 
    case STORE:
@@ -426,11 +426,12 @@ add_path:
 	 pos=0;
       }
       if(entity_size>=0)
-	 Send("Content-length: %ld\r\n",entity_size-pos);
+	 Send("Content-length: %lld\r\n",(long long)(entity_size-pos));
       if(pos>0 && entity_size<0)
-	 Send("Range: bytes=%ld-\r\n",pos);
+	 Send("Range: bytes=%lld-\r\n",(long long)pos);
       else if(pos>0)
-	 Send("Range: bytes=%ld-%ld/%ld\r\n",pos,entity_size-1,entity_size);
+	 Send("Range: bytes=%lld-%lld/%lld\r\n",(long long)pos,
+		     (long long)(entity_size-1),(long long)entity_size);
       if(entity_date!=(time_t)-1)
       {
 	 char d[256];
@@ -528,7 +529,10 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 {
    if(!strcasecmp(name,"Content-length"))
    {
-      sscanf(value,"%ld",&body_size);
+      long long bs=0;
+      if(1!=sscanf(value,"%lld",&bs))
+	 return;
+      body_size=bs;
       if(pos==0 && mode!=STORE)
 	 entity_size=body_size;
       if(pos==0 && opt_size)
@@ -544,8 +548,8 @@ void Http::HandleHeaderLine(const char *name,const char *value)
    }
    if(!strcasecmp(name,"Content-range"))
    {
-      long first,last,fsize;
-      if(sscanf(value,"%*s %ld-%ld/%ld",&first,&last,&fsize)!=3)
+      long long first,last,fsize;
+      if(sscanf(value,"%*s %lld-%lld/%lld",&first,&last,&fsize)!=3)
 	 return;
       real_pos=first;
       body_size=last-first+1;
@@ -1280,7 +1284,7 @@ int Http::Read(void *buf,int size)
 	 return DO_AGAIN;
       if(real_pos<pos)
       {
-	 long to_skip=pos-real_pos;
+	 off_t to_skip=pos-real_pos;
 	 if(to_skip>size1)
 	    to_skip=size1;
 	 recv_buf->Skip(to_skip);

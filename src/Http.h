@@ -81,8 +81,8 @@ class Http : public NetAccess
    int   status_consumed;
    int proto_version;
    char *line;
-   long body_size;
-   long bytes_received;
+   off_t body_size;
+   off_t bytes_received;
    char *location;
    bool sent_eot;
 
@@ -95,7 +95,7 @@ class Http : public NetAccess
 
    bool chunked;
    long chunk_size;
-   long chunk_pos;
+   off_t chunk_pos;
 
    bool no_ranges;
    bool seen_ranges_bytes;

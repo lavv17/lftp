@@ -52,7 +52,7 @@ void Buffer::GetSaved(const char **buf,int *size) const
    *size=buffer_ptr+in_buffer;
 }
 
-void Buffer::SaveRollback(long p)
+void Buffer::SaveRollback(int p)
 {
    if(buffer_ptr<p)
       save=false;

@@ -31,17 +31,17 @@ class pgetJob : public GetJob
    {
       friend class pgetJob;
 
-      long start;
-      long limit;
+      off_t start;
+      off_t limit;
 
-      ChunkXfer(FileCopy *c,const char *remote,long start,long limit);
+      ChunkXfer(FileCopy *c,const char *remote,off_t start,off_t limit);
       ~ChunkXfer();
    };
 
    ChunkXfer   **chunks;
    int	 max_chunks;
    int	 num_of_chunks;
-   long	 total_xferred;
+   off_t total_xferred;
    float total_xfer_rate;
 
    bool	no_parallel:1;
@@ -76,7 +76,7 @@ public:
    void SetMaxConn(int n) { max_chunks=n; }
 
    pgetJob::ChunkXfer *NewChunk(FileAccess *session,const char *remote,
-					  FDStream *local,long start,long limit);
+				FDStream *local,off_t start,off_t limit);
 };
 
 #endif//PGETJOB_H

@@ -61,8 +61,8 @@ const char *CopyJob::SqueezeName(int w)
    return squeeze_file_name(name,w);
 }
 
-#define COPY_STATUS _("`%s' at %lu %s%s%s%s"),name,\
-      c->GetPos(),c->GetPercentDoneStr(),c->GetRateStr(),\
+#define COPY_STATUS _("`%s' at %lld %s%s%s%s"),name,\
+      (long long)c->GetPos(),c->GetPercentDoneStr(),c->GetRateStr(),\
       c->GetETAStr(),c->GetStatus()
 
 void CopyJob::ShowRunStatus(StatusLine *s)
@@ -204,10 +204,10 @@ void CopyJobEnv::SayFinalWithPrefix(const char *p)
       printf("%s",p);
       if(time_spent>=1)
       {
-	 printf(plural("%ld $#l#byte|bytes$ transferred"
+	 printf(plural("%lld $#l#byte|bytes$ transferred"
 			" in %ld $#l#second|seconds$",
-			bytes,long(time_spent+.5)),
-			bytes,long(time_spent+.5));
+			(long long)bytes,long(time_spent+.5)),
+			(long long)bytes,long(time_spent+.5));
 	 double rate=bytes/time_spent;
 	 if(rate>=1)
 	    printf(" (%s)\n",Speedometer::GetStr(rate));
@@ -216,8 +216,8 @@ void CopyJobEnv::SayFinalWithPrefix(const char *p)
       }
       else
       {
-	 printf(plural("%ld $#l#byte|bytes$ transferred\n",
-			bytes),bytes);
+	 printf(plural("%lld $#ll#byte|bytes$ transferred\n",
+			(long long)bytes),(long long)bytes);
       }
    }
    if(errors>0)

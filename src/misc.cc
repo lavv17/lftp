@@ -404,7 +404,7 @@ int guess_year(int month,int day,int hour,int minute)
       year--;
    return year;
 }
-int percent(long offset,long size)
+int percent(off_t offset,off_t size)
 {
    if(offset>=size)
       return 100;

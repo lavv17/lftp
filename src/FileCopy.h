@@ -45,11 +45,11 @@ class FileCopyPeer : public Buffer
 protected:
    bool want_size;
    bool want_date;
-   long size;
-   long e_size;
+   off_t size;
+   off_t e_size;
    time_t date;
 
-   long seek_pos;
+   off_t seek_pos;
    bool can_seek;
    bool can_seek0;
    bool date_set;
@@ -62,8 +62,8 @@ protected:
 public:
    enum direction { GET, PUT };
 
-   long range_start; // NOTE: ranges are implemented only partially. (FIXME)
-   long range_limit;
+   off_t range_start; // NOTE: ranges are implemented only partially. (FIXME)
+   off_t range_limit;
 
 protected:
    enum direction mode;
@@ -73,26 +73,26 @@ protected:
 public:
    bool CanSeek() { return can_seek; }
    bool CanSeek0() { return can_seek0; }
-   bool CanSeek(long p) { return p==0 ? CanSeek0() : CanSeek(); }
-   long GetSeekPos() { return seek_pos; }
-   virtual void Seek(long offs) { seek_pos=offs; Empty(); eof=false; broken=false; }
-   virtual long GetRealPos() { return pos; }
-   virtual long Buffered() { return in_buffer; }
+   bool CanSeek(off_t p) { return p==0 ? CanSeek0() : CanSeek(); }
+   off_t GetSeekPos() { return seek_pos; }
+   virtual void Seek(off_t offs) { seek_pos=offs; Empty(); eof=false; broken=false; }
+   virtual off_t GetRealPos() { return pos; }
+   virtual int Buffered() { return in_buffer; }
    virtual bool IOReady() { return true; }
 
    virtual void WantDate() { want_date=true; date=NO_DATE_YET; }
    virtual void WantSize() { want_size=true; size=NO_SIZE_YET; }
    time_t GetDate() { return date; }
-   long   GetSize() { return size; }
+   off_t  GetSize() { return size; }
 
    void SetDate(time_t d);
-   void SetSize(long s);
-   void SetEntitySize(long s) { e_size=s; }
+   void SetSize(off_t s);
+   void SetEntitySize(off_t s) { e_size=s; }
 
    void DontCopyDate() { do_set_date=false; }
    bool NeedDate() { return do_set_date; }
 
-   void SetRange(long s,long lim) { range_start=s; range_limit=lim; }
+   void SetRange(off_t s,off_t lim) { range_start=s; range_limit=lim; }
 
    FileCopyPeer(direction m);
 
@@ -149,7 +149,7 @@ private:
    Speedometer *rate;
    Speedometer *rate_for_eta;
    int put_buf;
-   long put_eof_pos;
+   off_t put_eof_pos;
 
    time_t start_time;
    int start_time_ms;
@@ -163,7 +163,7 @@ private:
    int  line_buffer_max;
 
 protected:
-   void RateAdd(long a)
+   void RateAdd(int a)
       {
 	 rate->Add(a);
 	 rate_for_eta->Add(a);
@@ -175,32 +175,32 @@ protected:
 	 rate->Reset();
 	 rate_for_eta->Reset();
       }
-   long bytes_count;
+   off_t bytes_count;
 
    ~FileCopy();
 
 public:
-   long GetPos();
-   long GetSize();
+   off_t GetPos();
+   off_t GetSize();
    int  GetPercentDone();
    const char *GetPercentDoneStr();
    float GetRate();
    const char *GetRateStr();
-   long GetBytesRemaining();
+   off_t GetBytesRemaining();
    long GetETA() { return GetETA(GetBytesRemaining()); }
-   long GetETA(long b);
+   long GetETA(off_t b);
    const char *GetETAStr();
    const char *GetETAStrSFromTime(time_t t) { return rate_for_eta->GetETAStrSFromTime(t); }
    const char *GetStatus();
    FgData *GetFgData(bool fg);
    pid_t GetProcGroup();
    void Kill(int sig);
-   long GetBytesCount() { return bytes_count; }
+   off_t GetBytesCount() { return bytes_count; }
    time_t GetTimeSpent();
    int GetTimeSpentMilli();
 
    void SetDate(time_t t) { get->SetDate(t); }
-   void SetSize(long   s) { get->SetSize(s); }
+   void SetSize(off_t  s) { get->SetSize(s); }
 
    bool Done() { return state==ALL_DONE; }
    bool Error() { return error_text!=0; }
@@ -210,7 +210,7 @@ public:
    void DontCopyDate() { put->DontCopyDate(); }
    void Ascii() { get->Ascii(); put->Ascii(); }
    void FailIfCannotSeek() { fail_if_cannot_seek=true; }
-   void SetRange(long s,long lim) { get->SetRange(s,lim); put->SetRange(s,lim); }
+   void SetRange(off_t s,off_t lim) { get->SetRange(s,lim); put->SetRange(s,lim); }
    void RemoveSourceLater() { remove_source_later=true; }
    void LineBuffered(int size=0x1000);
 
@@ -255,10 +255,10 @@ public:
    FileCopyPeerFA(class ParsedURL *u,int m);
    int Do();
    bool IOReady();
-   long GetRealPos();
-   void Seek(long new_pos);
+   off_t GetRealPos();
+   void Seek(off_t new_pos);
 
-   long Buffered() { return in_buffer+session->Buffered(); }
+   int Buffered() { return in_buffer+session->Buffered(); }
 
    void Suspend();
    void Resume();
@@ -282,7 +282,7 @@ public:
 class FileCopyPeerFDStream : public FileCopyPeer
 {
    FDStream *stream;
-   long seek_base;
+   off_t seek_base;
 
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
@@ -301,7 +301,7 @@ public:
    int Do();
    bool Done();
    bool IOReady();
-   void Seek(long new_pos);
+   void Seek(off_t new_pos);
    FgData *GetFgData(bool fg);
    pid_t GetProcGroup() { return stream->GetProcGroup(); }
    void Kill(int sig) { stream->Kill(sig); }
@@ -310,7 +310,7 @@ public:
    void DontCreateFgData() { create_fg_data=false; }
    void NeedSeek() { need_seek=true; }
    void RemoveFile();
-   void SetBase(long b) { seek_base=b; }
+   void SetBase(off_t b) { seek_base=b; }
 
    static FileCopyPeerFDStream *NewPut(const char *file,bool cont=false);
    static FileCopyPeerFDStream *NewGet(const char *file);
@@ -323,7 +323,7 @@ protected:
 
 public:
    FileCopyPeerString(const char *s,int len=-1);
-   void Seek(long new_pos);
+   void Seek(off_t new_pos);
 };
 
 class FileCopyPeerDirList : public FileCopyPeer

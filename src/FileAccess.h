@@ -76,7 +76,7 @@ public:
    struct fileinfo
    {
       const char *file;
-      long size;
+      off_t size;
       time_t time;
       bool get_size:1;
       bool get_time:1;
@@ -99,11 +99,11 @@ protected:
    char	 *file_url;
    char	 *file1;
    int	 mode;
-   long	 pos;
-   long	 real_pos;
+   off_t pos;
+   off_t real_pos;
 
    time_t *opt_date;
-   long	  *opt_size;
+   off_t  *opt_size;
 
    int	 Poll(int fd,int ev);
    int   CheckHangup(struct pollfd *pfd,int num);
@@ -137,7 +137,7 @@ protected:
 
    char *url;
 
-   long   entity_size; // size of file to be sent
+   off_t  entity_size; // size of file to be sent
    time_t entity_date; // date of file to be sent
 
    char *closure;
@@ -186,12 +186,12 @@ public:
    virtual void Login(const char *u,const char *p);
    virtual void GroupLogin(const char *g,const char *p);
 
-   virtual void Open(const char *file,int mode,long pos=0);
+   virtual void Open(const char *file,int mode,off_t pos=0);
    void SetFileURL(const char *u) { xfree(file_url); file_url=xstrdup(u); }
-   void SetSize(long s) { entity_size=s; }
+   void SetSize(off_t s) { entity_size=s; }
    void SetDate(time_t d) { entity_date=d; }
    void WantDate(time_t *d) { opt_date=d; }
-   void WantSize(long *s) { opt_size=s; }
+   void WantSize(off_t *s) { opt_size=s; }
    void AsciiTransfer() { ascii=true; }
    virtual void Close();
 
@@ -217,8 +217,8 @@ public:
    virtual int Buffered();
    virtual int StoreStatus() = 0;
    virtual bool IOReady();
-   long GetPos() { return pos; }
-   long GetRealPos() { return real_pos<0?pos:real_pos; }
+   off_t GetPos() { return pos; }
+   off_t GetRealPos() { return real_pos<0?pos:real_pos; }
    void SeekReal() { pos=GetRealPos(); }
    void RereadManual() { norest_manual=true; }
 

@@ -89,7 +89,7 @@ const char *Speedometer::GetStr(float r)
       sprintf(buf_rate,_("%.2fM/s"),r/1024./1024.);
    return buf_rate;
 }
-const char *Speedometer::GetETAStrFromSize(long size)
+const char *Speedometer::GetETAStrFromSize(off_t size)
 {
    buf_eta[0]=0;
 
@@ -194,7 +194,7 @@ const char *Speedometer::GetStrS(float r)
       strcat(buf_rate," ");
    return buf_rate;
 }
-const char *Speedometer::GetETAStrSFromSize(long s)
+const char *Speedometer::GetETAStrSFromSize(off_t s)
 {
    GetETAStrFromSize(s);
    if(buf_eta[0])

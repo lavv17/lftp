@@ -43,8 +43,8 @@ public:
    const char *GetStr() { return GetStr(Get()); }
    static const char *GetStrS(float r);
    const char *GetStrS() { return GetStrS(Get()); }
-   const char *GetETAStrFromSize(long s);
-   const char *GetETAStrSFromSize(long s);
+   const char *GetETAStrFromSize(off_t s);
+   const char *GetETAStrSFromSize(off_t s);
    const char *GetETAStrFromTime(long t);
    const char *GetETAStrSFromTime(long t);
    bool Valid();

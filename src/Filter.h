@@ -44,7 +44,7 @@ public:
 
    void MakeErrorText();
 
-   virtual long getsize_and_seek_end();
+   virtual off_t getsize_and_seek_end();
    virtual void setmtime(time_t) {}
    virtual bool can_setmtime() { return false; }
    virtual void remove_if_empty() {}
@@ -85,7 +85,7 @@ public:
 
    void SetCwd(const char *);
 
-   long getsize_and_seek_end() { return 0; }
+   off_t getsize_and_seek_end() { return 0; }
 
    int getfd();
    bool Done();

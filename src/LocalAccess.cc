@@ -50,7 +50,7 @@ void LocalAccess::ClassInit()
 
 void LocalAccess::Init()
 {
-   done=true;
+   done=false;
    error_code=OK;
    stream=0;
    xfree(home);

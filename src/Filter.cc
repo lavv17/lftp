@@ -69,12 +69,12 @@ FDStream::~FDStream()
    xfree(error_text);
 };
 
-long FDStream::getsize_and_seek_end()
+off_t FDStream::getsize_and_seek_end()
 {
    int fd=getfd();
    if(fd==-1)
       return -1;
-   long size=lseek(fd,0,SEEK_END);
+   off_t size=lseek(fd,0,SEEK_END);
    if(size<0)
       size=0;
    return size;

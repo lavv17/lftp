@@ -159,7 +159,13 @@ const char *plural(const char *format,...)
 	    if(*s=='l')	/* long */
 	    {
 	       s++;
-	       arg=va_arg(va,long);
+	       if(*s=='l') /* long long */
+	       {
+		  s++;
+		  arg=va_arg(va,long long)%1000000;
+	       }
+	       else
+		  arg=va_arg(va,long);
 	    }
 	    else
 	    {

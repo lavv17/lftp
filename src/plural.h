@@ -18,8 +18,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef NUMERIC_H
-#define NUMERIC_H
+#ifndef PLURAL_H
+#define PLURAL_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,4 +39,4 @@ const char *plural(const char *format,...) FORMAT_ARG(1);
 }
 #endif
 
-#endif /* NUMERIC_H */
+#endif /* PLURAL_H */

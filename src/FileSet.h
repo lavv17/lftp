@@ -40,7 +40,7 @@ public:
    char	    *name;
    mode_t   mode;
    time_t   date;
-   long	    size;
+   off_t    size;
    void	    *data;
 
    enum	 type
@@ -82,7 +82,7 @@ public:
    void SetType(type t) { filetype=t; defined|=TYPE; }
    void SetSymlink(const char *s) { xfree(symlink); symlink=xstrdup(s);
       filetype=SYMLINK; defined|=TYPE|SYMLINK_DEF; }
-   void	SetSize(long s) { size=s; defined|=SIZE; }
+   void	SetSize(off_t s) { size=s; defined|=SIZE; }
 
    void	 Merge(const FileInfo&);
 
@@ -143,7 +143,7 @@ public:
 
    FileInfo *FindByName(const char *name) const;
 
-   void  SetSize(const char *name,long size)
+   void  SetSize(const char *name,off_t size)
    {
       FileInfo *f=FindByName(name);
       if(f)
