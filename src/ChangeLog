@@ -1,3 +1,7 @@
+1999-08-11  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* lftpget: options -c -v -d.
+
 1999-08-10  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* lftpget: turn off final rate printing.

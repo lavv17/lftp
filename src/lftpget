@@ -6,8 +6,35 @@
 
 # $Id$
 
+if [ $# -eq 0 ]; then
+   echo "Usage: $0 [-c] [-d] [-v] URL [URL...]"
+   echo " -c  continue, reget"
+   echo " -d  debug output"
+   echo " -v  verbose messages"
+   exit 1
+fi
+
 INTRO="set cmd:at-exit;"
 SCRIPT=""
+verbose=false
+
+while :
+do
+   case "$1" in
+   -*v*) verbose=true
+	 INTRO="$INTRO set cmd:verbose y;"
+	 ;;
+   esac
+   case "$1" in
+   -*d*) INTRO="$INTRO debug 8;";;
+   esac
+   case "$1" in
+   -*c*) CONT=-c;;
+   -*[dv]*) ;;
+   *)	 break;;
+   esac
+   shift
+done
 
 for f
 do
@@ -23,10 +50,18 @@ do
    "*://*@*")    need_pass=true;;
    esac
 
+   if $verbose; then
+      SCRIPT="$SCRIPT echo Retrieving \`\"$f\"'...;"
+   fi
+
    if $need_pass; then
       SCRIPT="$SCRIPT echo \"$f\" needs password;"
    fi
-   SCRIPT="$SCRIPT get -u \"$f\";"
+   SCRIPT="$SCRIPT get -u $CONT \"$f\";"
+
+   if $verbose; then
+      SCRIPT="$SCRIPT && echo Got \`\"$f\"'.;"
+   fi
 done
 
 if [ "$SCRIPT" = "" ]; then
