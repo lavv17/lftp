@@ -1,7 +1,20 @@
+2001-10-10  Glenn F. Maynard <g_ld@zewt.org>
+
+	* StatusLine.cc, StatusLine.h, Time.cc, Time.h, complete.cc:
+
+	added ms constructor for time; this gives us a free cast from int to
+	Time, which means all of the ms operations can away (they're implicit.)
+
+	Defined negative time values more clearly (in comments).  This usually
+	doesn't matter.
+
+	Fixed Time.h indentation.
+
 2001-10-10  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileSet.cc: (LocalFile) don't set name if already set. This fixes
 	  LocalAccess' ListInfo and mirror.
+	* PollVec.cc: treat AddTimeout(negative) as AddTimeout(0).
 
 2001-10-09  Alexander V. Lukyanov <lav@yars.free.net>
 

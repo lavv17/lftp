@@ -56,6 +56,7 @@ public:
    void Show(const char *f,...) PRINTF_LIKE(2,3);
    void WriteLine(const char *f,...) PRINTF_LIKE(2,3);
    void Clear();
+   void Reconfig(const char *name=0);
 
    int getfd() { return fd; }
 

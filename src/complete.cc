@@ -657,7 +657,7 @@ static char **lftp_completion (const char *text,int start,int end)
 	 if(type==REMOTE_DIR)
 	    rg->glob->DirectoriesOnly();
 	 Timer timer;
-	 int interval = ResMgr::Query("cmd:status-interval", 0);
+	 timer.set_interval((int) ResMgr::Query("cmd:status-interval", 0));
 
 	 for(;;)
 	 {
@@ -672,7 +672,7 @@ static char **lftp_completion (const char *text,int start,int end)
 	       return 0;
 	    }
 
-	    if(!fso.quiet && !timer.go(interval)) {
+	    if(!fso.quiet && timer.go()) {
 	       /* don't set blank status; if we're operating from cache,
 		* that's all we'll get and it'll look ugly: */
 	       const char *ret = rg->Status();

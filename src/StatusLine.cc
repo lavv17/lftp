@@ -41,7 +41,7 @@
 #include "StatusLine.h"
 
 ResDecl status_interval ("cmd:status-interval",        "1000",   ResMgr::UNumberValidate,0);
-	
+
 int  StatusLine::GetWidth()
 {
 #ifdef TIOCGWINSZ
@@ -66,6 +66,7 @@ StatusLine::StatusLine(int new_fd)
    strcpy(def_title,"");
    not_term=!isatty(fd);
    LastWidth=GetWidth();
+   Reconfig();
 }
 
 StatusLine::~StatusLine()
@@ -107,18 +108,23 @@ void StatusLine::Show(const char *f,...)
 
    if(!strcmp(to_be_shown,newstr)) return;
 
-   int res = timer.go(status_interval.Query(0));
-   if(!res)
-   {
+   if(timer.go()) {
       update(newstr);
       update_delayed=false;
+      return;
    }
-   else
-   {
-      strcpy(to_be_shown,newstr);
-      update_delayed=true;
-      Timeout(res);
-   }
+   /* not yet */
+   strcpy(to_be_shown,newstr);
+   update_delayed=true;
+   Timeout(timer.remaining());
+}
+
+void StatusLine::Reconfig(const char *name)
+{
+   if(name && strcmp(name, "cmd:status-interval"))
+      return;
+
+   timer.set_interval((int) status_interval.Query(0));
 }
 
 void StatusLine::WriteTitle(const char *s, int fd) const
@@ -232,13 +238,12 @@ int StatusLine::Do()
 {
    if(!update_delayed)
       return STALL;
-   int res = timer.go(status_interval.Query(0));
-   if(!res)
+   if(timer.go())
    {
       update(to_be_shown);
       update_delayed=false;
       return STALL;
    }
-   Timeout(res);
+   Timeout(timer.remaining());
    return STALL;
 }

@@ -2,49 +2,59 @@
 #define TIME_CLASSES_H
 
 class Time {
-	time_t tsec;
-	int tms;
+   time_t tsec;
+   int tms;
 
 public:
-	/* set the time to now */
-	void set_now();
+   /* set the time to now */
+   void set_now();
 
-	/* clear to the beginning of time */
-	void clear() { tsec = tms = 0; }
+   /* set time to sec,ms */
+   void set(int sec, int ms);
 
-	int sec() const { return tsec; }
-	/* int usec() const { return ms; } */
-	int ms() const { return (tsec * 1000) + tms; }
+   /* clear to the beginning of time */
+   void clear() { set(0,0); }
 
-	/* all integer operations are in milliseconds */
-	/* these are mostly operators which are in use; add others as needed */
-	Time operator + (int ms) const;
-	Time &operator += (int ms);
+   int sec() const { return tsec; }
+   int ms() const { return (tsec * 1000) + tms; }
 
-	Time operator - (Time rhs) const;
-	Time &operator -= (Time rhs);
+   Time operator + (Time rhs) const;
+   Time &operator += (Time rhs);
+   Time operator - (Time rhs) const;
+   Time &operator -= (Time rhs);
 
-	bool operator < (Time cmp) const;
-	bool operator >= (Time cmp) const { return !(*this < cmp); }
+   bool operator < (Time cmp) const;
+   bool operator >= (Time cmp) const { return !(*this < cmp); }
 
-	Time() { clear(); }
+   Time() { clear(); }
+   Time(int ms) { set(0, ms); }
 };
 
 class Timer {
-	Time last;
+   /* last time this timer occured */
+   Time last;
+
+   /* interval between calls */
+   Time interval;
 
 public:
-	Timer();
+   Timer();
 
-	/* return 0 if ms have elapsed since last 0 return or instantiation;
-	 * otherwise return the number of ms left */
-	int go(int ms);
+   void set_interval(Time new_interval) { interval = new_interval; }
 
-	/* reset timer */
-	void reset();
+   /* return the number of ms until next interval; this will be <= 0 if
+    * this event has already occured and not received */
+   int remaining() const;
 
-	/* force timer to go on next call */
-	void force();
+   /* return true if the interval has elapsed, false otherwise;
+    * reset the interval if it's elapsed */
+   bool go();
+
+   /* reset timer */
+   void reset();
+
+   /* force timer to go on next call */
+   void force();
 };
 
 #endif
