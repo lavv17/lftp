@@ -212,15 +212,15 @@ void  pgetJob::ListJobs(int verbose,int indent)
    }
 }
 
-void  pgetJob::PrintStatus(int verbose)
+void  pgetJob::PrintStatus(int verbose,const char *prefix)
 {
    if(!cp || Done() || no_parallel || max_chunks<2 || !chunks)
    {
-      GetJob::PrintStatus(verbose);
+      GetJob::PrintStatus(verbose,prefix);
       return;
    }
 
-   SessionJob::PrintStatus(verbose);
+   SessionJob::PrintStatus(verbose,prefix);
 
    printf("\t");
    const char *name=cp->GetName();

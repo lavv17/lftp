@@ -1,3 +1,14 @@
+2002-07-31  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc, CmdExec.h, commands.cc: allow per-slot queues;
+	  support queue start/stop; rename has_queue to queue_feeder.
+	* CopyJob.cc, CopyJob.h, FileSetOutput.cc, FileSetOutput.h, FindJob.cc,
+	  FindJob.h, Job.cc, Job.h, MirrorJob.cc, MirrorJob.h, QueueFeeder.cc,
+	  QueueFeeder.h, SleepJob.cc, SleepJob.h, TreatFileJob.cc,
+	  TreatFileJob.h, mgetJob.cc, mgetJob.h, mkdirJob.cc, mkdirJob.h,
+	  mvJob.cc, mvJob.h, pgetJob.cc, pgetJob.h: PrintStatus with explicit
+	  prefix.
+
 2002-07-30  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc: don't do SetTryTime(0).

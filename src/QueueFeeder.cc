@@ -361,7 +361,7 @@ QueueFeeder::~QueueFeeder()
 }
 
 
-void QueueFeeder::PrintStatus(int v) const
+void QueueFeeder::PrintStatus(int v,const char *prefix) const
 {
    if(jobs == NULL)
       return;
@@ -372,7 +372,7 @@ void QueueFeeder::PrintStatus(int v) const
       return;
    }
 
-   printf(_("\tCommands queued:\n"));
+   printf("%s%s\n",prefix,_("Commands queued:"));
 
    int n = 1;
 
@@ -380,17 +380,17 @@ void QueueFeeder::PrintStatus(int v) const
    for(const QueueJob *job = jobs; job; job = job->next) {
       if(v<2 && n>4 && job->next)
       {
-	 printf("\t%2d. ...\n",n);
+	 printf("%s%2d. ...\n",prefix,n);
 	 break;
       }
       /* Print pwd/lpwd changes when v >= 2. */
       if(v >= 2 && (!pwd || strcmp(pwd, job->pwd)))
-	 printf("\t    cd %s\n", job->pwd);
+	 printf("%s    cd %s\n",prefix,job->pwd);
       if(v >= 2 && (!lpwd || strcmp(lpwd, job->lpwd)))
-	 printf("\t    lcd %s\n", job->lpwd);
+	 printf("%s    lcd %s\n",prefix,job->lpwd);
       pwd = job->pwd;
       lpwd = job->lpwd;
 
-      printf("\t%2d. %s\n",n++, job->cmd);
+      printf("%s%2d. %s\n",prefix,n++,job->cmd);
    }
 }

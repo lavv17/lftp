@@ -40,7 +40,7 @@ public:
    int	 Done() { return curr==0; }
    int	 ExitCode() { return failed; }
 
-   void	 PrintStatus(int);
+   void	 PrintStatus(int,const char *);
    void	 ShowRunStatus(StatusLine *);
    void	 SayFinal();
 

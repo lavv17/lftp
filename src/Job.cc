@@ -408,13 +408,13 @@ SessionJob::~SessionJob()
    session=0;
 }
 
-void SessionJob::PrintStatus(int v)
+void SessionJob::PrintStatus(int v,const char *prefix)
 {
    if(v<2 || !session)
       return;
    const char *url=session->GetConnectURL();
    if(url && *url)
-      printf("\t%s\n",url);
+      printf("%s%s\n",prefix,url);
 }
 
 void SessionJob::Fg()

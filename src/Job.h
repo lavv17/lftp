@@ -69,7 +69,7 @@ public:
 
    void	 AllocJobno();
 
-   virtual void	  PrintStatus(int) {};
+   virtual void	  PrintStatus(int,const char *prefix="\t") {};
    virtual void	  ShowRunStatus(StatusLine *);
    virtual void	  SayFinal() {}; // final phrase of fg job
    virtual int	  Done()=0;
@@ -119,7 +119,7 @@ public:
    Job();
 
    virtual const char *GetConnectURL() { return 0; }
-   virtual void lftpMovesToBackground() {}
+   virtual void lftpMovesToBackground() { Resume(); }
    static  void lftpMovesToBackground_ToAll();
 };
 
@@ -133,7 +133,7 @@ protected:
    ~SessionJob();
 
 public:
-   void PrintStatus(int v);
+   void PrintStatus(int v,const char *);
    FileAccess *session;
    const char *GetConnectURL()
       {

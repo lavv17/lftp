@@ -147,8 +147,8 @@ public:
    int	 Do();
    int	 Done() { return state==DONE; }
    void	 ShowRunStatus(StatusLine *);
-   void	 PrintStatus(int v);
-   void	 SayFinal() { PrintStatus(-1); }
+   void	 PrintStatus(int v,const char *);
+   void	 SayFinal() { PrintStatus(0,""); }
    int	 ExitCode() { return stats.error_count; }
 
    void SetExclude(PatternSet *x)

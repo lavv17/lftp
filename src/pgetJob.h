@@ -57,7 +57,7 @@ protected:
 public:
    int Do();
    void ShowRunStatus(StatusLine *s);
-   void PrintStatus(int);
+   void PrintStatus(int,const char *);
    void ListJobs(int verbose,int indent=0);
 
    pgetJob(FileAccess *s,ArgV *args)

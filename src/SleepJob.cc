@@ -107,7 +107,7 @@ int SleepJob::Do()
    return STALL;
 }
 
-void SleepJob::PrintStatus(int)
+void SleepJob::PrintStatus(int,const char *prefix)
 {
    if(repeat)
    {

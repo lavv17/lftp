@@ -45,7 +45,7 @@ protected:
    prf_res ProcessFile(const char *d,const FileInfo *fi);
 
 public:
-   void	 PrintStatus(int);
+   void	 PrintStatus(int,const char *);
    void	 ShowRunStatus(StatusLine *);
 
    TreatFileJob(FileAccess *session,ArgV *a);

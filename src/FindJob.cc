@@ -361,9 +361,9 @@ void FinderJob::ShowRunStatus(StatusLine *sl)
    }
 }
 
-void FinderJob::PrintStatus(int v)
+void FinderJob::PrintStatus(int v,const char *prefix)
 {
-   SessionJob::PrintStatus(v);
+   SessionJob::PrintStatus(v,prefix);
 
    char *path=0;
    switch(state)

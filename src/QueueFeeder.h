@@ -39,10 +39,10 @@ class QueueFeeder : public CmdFeeder
 
    /* remove the given job from the list */
    void unlink_job(QueueJob *job);
-      
+
    /* get the n'th job */
    QueueJob *get_job(int n);
-      
+
    /* get the n'th job, removed from the list: */
    QueueJob *grab_job(int n);
 
@@ -57,7 +57,7 @@ class QueueFeeder : public CmdFeeder
    void insert_jobs(QueueJob *job,
 		   QueueJob *&lst_head, QueueJob *&lst_tail,
 		   QueueJob *before);
-      
+
    void FreeList(QueueJob *j);
 
 public:
@@ -75,7 +75,7 @@ public:
    bool MoveJob(const char *cmd, int to, int v = 0);
 
    enum { PrintRequeue = 9999 };
-   void PrintStatus(int v) const;
+   void PrintStatus(int v,const char *prefix="\t") const;
 
    QueueFeeder(const char *pwd, const char *lpwd):
       jobs(0), lastjob(0), cur_pwd(0), cur_lpwd(0), buffer(0)

@@ -438,9 +438,9 @@ void clsJob::ShowRunStatus(StatusLine *s)
 	 s->Show("%s", output->Status(s));
 }
 
-void clsJob::PrintStatus(int v)
+void clsJob::PrintStatus(int v,const char *prefix)
 {
-   Job::PrintStatus(v);
+   Job::PrintStatus(v,prefix);
 
    if(list_info)
    {
@@ -449,6 +449,6 @@ void clsJob::PrintStatus(int v)
 	 curr = ".";
       const char *stat = list_info->Status();
       if(*stat)
-	 printf("\t`%s' %s\n", curr, stat);
+	 printf("%s`%s' %s\n", prefix, curr, stat);
    }
 }

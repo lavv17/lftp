@@ -50,12 +50,12 @@ int mvJob::Do()
    return MOVED;
 }
 
-void  mvJob::PrintStatus(int v)
+void  mvJob::PrintStatus(int v,const char *prefix)
 {
-   SessionJob::PrintStatus(v);
+   SessionJob::PrintStatus(v,prefix);
    if(Done())
       return;
-   printf("\t[%s]\n",session->CurrentStatus());
+   printf("%s[%s]\n",prefix,session->CurrentStatus());
 }
 
 void  mvJob::ShowRunStatus(StatusLine *s)

@@ -93,9 +93,9 @@ TreatFileJob::prf_res TreatFileJob::ProcessFile(const char *d,const FileInfo *fi
    return res<0? PRF_ERR:PRF_OK;
 }
 
-void  TreatFileJob::PrintStatus(int v)
+void  TreatFileJob::PrintStatus(int v,const char *prefix)
 {
-   SessionJob::PrintStatus(v);
+   SessionJob::PrintStatus(v,prefix);
    if(Done() || !curr)
       return;
    printf("\t`%s' [%s]\n",curr->name,session->CurrentStatus());

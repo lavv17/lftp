@@ -40,13 +40,8 @@
 #include "url.h"
 #include "CopyJob.h"
 
-void  MirrorJob::PrintStatus(int v)
+void  MirrorJob::PrintStatus(int v,const char *tab)
 {
-   const char *tab="\t";
-
-   if(v==-1)
-      tab="";
-
    if(Done())
       goto final;
 

@@ -104,7 +104,7 @@ void CopyJob::ShowRunStatus(StatusLine *s)
 
    s->Show("%s", Status(s, false));
 }
-void CopyJob::PrintStatus(int v)
+void CopyJob::PrintStatus(int v,const char *prefix)
 {
    if(c->Done() || c->Error())
       return;
@@ -117,7 +117,7 @@ void CopyJob::PrintStatus(int v)
    if(!*c->GetStatus())
       return;
 
-   printf("\t");
+   printf("%s",prefix);
    const char *name=GetName();
    printf(COPY_STATUS);
    printf("\n");
@@ -268,11 +268,11 @@ void CopyJobEnv::SayFinalWithPrefix(const char *p)
       printf(plural("Total %d $file|files$ transferred\n",count),count);
    }
 }
-void CopyJobEnv::PrintStatus(int v)
+void CopyJobEnv::PrintStatus(int v,const char *prefix)
 {
-   SessionJob::PrintStatus(v);
+   SessionJob::PrintStatus(v,prefix);
    if(Done())
-      SayFinalWithPrefix("\t");
+      SayFinalWithPrefix(prefix);
 }
 
 int CopyJobEnv::AcceptSig(int sig)

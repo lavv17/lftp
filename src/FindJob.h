@@ -107,7 +107,7 @@ public:
    virtual ~FinderJob();
 
    void ShowRunStatus(StatusLine *sl);
-   virtual void PrintStatus(int v);
+   virtual void PrintStatus(int v,const char *);
 
    void BeQuiet() { quiet=true; }
    void SetExclude(PatternSet *p) { exclude = p; }

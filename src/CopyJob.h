@@ -77,7 +77,7 @@ public:
 
    const char *Status(const StatusLine *s,bool base=false);
    void ShowRunStatus(StatusLine *s);
-   void	PrintStatus(int);
+   void	PrintStatus(int,const char *);
 
    const char *GetName() { return name; }
    const char *SqueezeName(int w, bool base=false);
@@ -120,7 +120,7 @@ public:
 
    void SayFinalWithPrefix(const char *p);
    void SayFinal() { SayFinalWithPrefix(""); }
-   void	PrintStatus(int);
+   void	PrintStatus(int,const char *);
 
    void Ascii() { ascii=true; }
 };

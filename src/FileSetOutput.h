@@ -112,7 +112,7 @@ public:
    int ExitCode() { return output->Error()? 1:0; }
 
    void ShowRunStatus(StatusLine *s);
-   void PrintStatus(int v);
+   void PrintStatus(int v,const char *);
 };
 
 #endif

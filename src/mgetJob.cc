@@ -39,7 +39,7 @@ void mgetJob::ShowRunStatus(StatusLine *s)
    }
    GetJob::ShowRunStatus(s);
 }
-void mgetJob::PrintStatus(int v)
+void mgetJob::PrintStatus(int v,const char *prefix)
 {
    if(mkdir_job)
    {
@@ -48,14 +48,14 @@ void mgetJob::PrintStatus(int v)
    }
    if(rg)
    {
-      SessionJob::PrintStatus(v);
+      SessionJob::PrintStatus(v,prefix);
       const char *s=rg->Status();
       if(!s || !s[0])
 	 return;
       printf("\t%s\n",s);
       return;
    }
-   GetJob::PrintStatus(v);
+   GetJob::PrintStatus(v,prefix);
 }
 
 mgetJob::mgetJob(FileAccess *session,ArgV *a,bool c,bool md)

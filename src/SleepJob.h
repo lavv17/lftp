@@ -48,7 +48,7 @@ public:
    SleepJob(const TimeInterval &when,FileAccess *s=0,LocalDirectory *cwd=0,char *what=0);
    ~SleepJob();
 
-   void PrintStatus(int v);
+   void PrintStatus(int v,const char *);
 
    void Repeat() { repeat=true; start_time-=next_time.Seconds(); }
 

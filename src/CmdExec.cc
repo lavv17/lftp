@@ -311,7 +311,8 @@ void CmdExec::RemoveFeeder()
    CmdFeeder *tmp=feeder->prev;
    next_cmd=cmd_buf=feeder->saved_buf;
    partial_cmd=false;
-   if(feeder == has_queue) has_queue = 0;
+   if(feeder==queue_feeder)
+      queue_feeder=0;
    delete feeder;
    feeder=tmp;
 
@@ -711,9 +712,9 @@ void CmdExec::ShowRunStatus(StatusLine *s)
    }
 }
 
-void CmdExec::PrintStatus(int v)
+void CmdExec::PrintStatus(int v,const char *prefix)
 {
-   SessionJob::PrintStatus(v);
+   SessionJob::PrintStatus(v,prefix);
    if(builtin)
    {
       char *s=args->Combine();
@@ -721,19 +722,22 @@ void CmdExec::PrintStatus(int v)
       xfree(s);
       return;
    }
-   if(has_queue)
+   if(queue_feeder)
    {
+      if(suspended)
+	 printf("%s%s\n",prefix,_("Queue is stopped."));
       for(int i=0; i<waiting_num; i++)
       {
-	 if(i == 0) printf("\t%s ",_("Now executing:"));
+	 if(i==0)
+	    printf("%s%s ",prefix,_("Now executing:"));
 	 if(v==0)
 	    waiting[i]->ListOneJob(v);
 	 else
 	    waiting[i]->PrintJobTitle();
 	 if(i+1<waiting_num)
-	    printf("\t\t-");
+	    printf("%s\t-",prefix);
       }
-      has_queue->PrintStatus(v);
+      queue_feeder->PrintStatus(v,prefix);
       return;
    }
    if(waiting_num==1)
@@ -806,7 +810,7 @@ CmdExec::CmdExec(FileAccess *f,LocalDirectory *c) : SessionJob(f)
 
    redirections=0;
 
-   has_queue=0;
+   queue_feeder=0;
 
    saved_session=0;
 
@@ -1293,28 +1297,33 @@ void CmdExec::FeedArgV(const ArgV *args,int start)
    xfree(cmd);
 }
 
+bool CmdExec::SameQueueParameters(CmdExec *scan)
+{
+   return !strcmp(this->session->GetConnectURL(FA::NO_PATH),
+	          scan->session->GetConnectURL(FA::NO_PATH))
+      && !xstrcmp(this->slot,scan->slot);
+}
+
 /* return the CmdExec containing a queue feeder; create if necessary */
 CmdExec  *CmdExec::GetQueue(bool create)
 {
    for(CmdExec *scan=chain; scan; scan=scan->next)
    {
-      if(scan->has_queue
-      && !strcmp(this->session->GetConnectURL(FA::NO_PATH),
-	         scan->session->GetConnectURL(FA::NO_PATH))) {
+      if(scan->queue_feeder && SameQueueParameters(scan))
 	 return scan;
-      }
    }
-   if(!create) return NULL;
+   if(!create)
+      return NULL;
 
    CmdExec *queue=new CmdExec(session->Clone(),cwd->Clone());
+   queue->slot=xstrdup(slot);
 
    queue->SetParentFg(this,false);
    queue->AllocJobno();
    const char *url=session->GetConnectURL(FA::NO_PATH);
-   queue->cmdline=(char*)xmalloc(9+strlen(url));
-   sprintf(queue->cmdline,"queue (%s)",url);
-   queue->has_queue=new QueueFeeder(session->GetCwd(), cwd->GetName());
-   queue->SetCmdFeeder(queue->has_queue);
+   queue->cmdline=xasprintf("queue (%s%s%s)",url,slot?"; ":"",slot?slot:"");
+   queue->queue_feeder=new QueueFeeder(session->GetCwd(), cwd->GetName());
+   queue->SetCmdFeeder(queue->queue_feeder);
 
    return queue;
 }

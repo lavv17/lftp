@@ -42,7 +42,7 @@ class mgetJob : public GetJob
 
 public:
    int	 Do();
-   void	 PrintStatus(int);
+   void	 PrintStatus(int,const char *);
    void	 ShowRunStatus(StatusLine *s);
 
    mgetJob(FileAccess *session,ArgV *args,bool c,bool md);

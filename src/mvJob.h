@@ -34,7 +34,7 @@ public:
    int	 Done() { return session->IsClosed(); }
    int	 ExitCode() { return failed; }
 
-   void	 PrintStatus(int);
+   void	 PrintStatus(int,const char *);
    void	 ShowRunStatus(StatusLine *);
    void	 SayFinal();
 

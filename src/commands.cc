@@ -1057,18 +1057,37 @@ Job *CmdExec::builtin_queue()
    const int args_remaining = args->count() - args->getindex();
    switch(mode) {
       case ins: {
+	 CmdExec *queue=GetQueue(false);
 	 if(args_remaining==0)
-	    goto err;
-
-	 CmdExec *queue=GetQueue();
+	 {
+	    if(!queue)
+	    {
+	       if(verbose)
+		  printf(_("Created a stopped queue.\n"));
+	       queue=GetQueue(true);
+	       queue->Suspend();
+	    }
+	    else
+	       queue->PrintStatus(0,"");
+	    exit_code=0;
+	    break;
+	 }
+	 if(!queue)
+	    queue=GetQueue(true);
 
 	 char *cmd=NULL;
 	 if(args_remaining == 1)
-		 cmd=args->Combine(args->getindex());
+	    cmd=args->Combine(args->getindex());
 	 else
-		 cmd=args->CombineQuoted(args->getindex());
+	    cmd=args->CombineQuoted(args->getindex());
 
-	 queue->has_queue->QueueCmd(cmd, session->GetCwd(), cwd?cwd->GetName():0, pos, verbose);
+	 if(!strcasecmp(cmd,"stop"))
+	    queue->Suspend();
+	 else if(!strcasecmp(cmd,"start"))
+	    queue->Resume();
+	 else
+	    queue->queue_feeder->QueueCmd(cmd, session->GetCwd(),
+					  cwd?cwd->GetName():0, pos, verbose);
 	 xfree(cmd);
 
 	 last_bg=queue->jobno;
@@ -1093,11 +1112,11 @@ Job *CmdExec::builtin_queue()
 	 }
 
 	 if(!arg)
-	    queue->has_queue->DelJob(-1, verbose); /* delete the last job */
+	    queue->queue_feeder->DelJob(-1, verbose); /* delete the last job */
 	 else if(isdigit(arg[0]))
-	    queue->has_queue->DelJob(atoi(arg)-1, verbose);
+	    queue->queue_feeder->DelJob(atoi(arg)-1, verbose);
 	 else
-	    queue->has_queue->DelJob(arg, verbose);
+	    queue->queue_feeder->DelJob(arg, verbose);
 
 	 exit_code=0;
       }
@@ -1123,11 +1142,11 @@ Job *CmdExec::builtin_queue()
 	 }
 
 	 if(isdigit(arg[0])) {
-	    queue->has_queue->MoveJob(atoi(arg)-1, to, verbose);
+	    queue->queue_feeder->MoveJob(atoi(arg)-1, to, verbose);
 	    break;
 	 }
 
-	 queue->has_queue->MoveJob(arg, to, verbose);
+	 queue->queue_feeder->MoveJob(arg, to, verbose);
 	 exit_code=0;
       }
       break;

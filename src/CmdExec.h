@@ -134,8 +134,9 @@ private:
    static CmdExec *chain;
    CmdExec *next;
 
-   QueueFeeder *has_queue;
+   QueueFeeder *queue_feeder;
    CmdExec *GetQueue(bool create = true);
+   bool SameQueueParameters(CmdExec *);
 
    FileAccess *saved_session;
    void ReuseSavedSession();
@@ -164,7 +165,7 @@ public:
    int Done();
    int ExitCode() { return exit_code; }
    int Do();
-   void PrintStatus(int);
+   void PrintStatus(int,const char *prefix="\t");
    void ShowRunStatus(StatusLine *s);
    int AcceptSig(int sig);
 
