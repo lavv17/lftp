@@ -40,6 +40,7 @@
 #include "FileCopyFtp.h"
 
 #include "ascii_ctype.h"
+#include "misc.h"
 
 enum {FTP_TYPE_A,FTP_TYPE_I};
 
