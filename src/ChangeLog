@@ -6,6 +6,11 @@
 
 	* resource.cc: (OrderValidate) fix off by one xmalloc bug.
 
+2001-12-25  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc: assume keep-alive for http/1.1 by default (reported by
+	  Marc Lehmann).
+
 2001-12-14  Albert Chin-A-Young <lftp-devel@thewrittenword.com>
 
 	* FtpDirList.h: compilation fix.

@@ -579,7 +579,6 @@ void Http::SendArrayInfoRequest()
 	 array_for_info[array_send].file);
       array_send++;
    }
-   keep_alive=false;
 }
 
 void Http::HandleHeaderLine(const char *name,const char *value)
@@ -1150,6 +1149,11 @@ int Http::Do()
 		  }
 	       }
 	       proto_version=(ver_major<<4)+ver_minor;
+
+	       // HTTP/1.1 does keep-alive by default
+	       if(proto_version>=0x11)
+		  keep_alive=true;
+
 	       if(!H_20X(status_code))
 	       {
 		  if(H_CONTINUE(status_code))
