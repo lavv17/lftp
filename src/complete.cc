@@ -671,6 +671,10 @@ static char **lftp_completion (const char *text,int start,int end)
 	       SignalHook::ResetCount(SIGINT);
 	       rl_attempted_completion_over = 1;
 	       delete rg;
+
+	       rl_restore_prompt();
+	       rl_clear_message();
+
 	       return 0;
 	    }
 

@@ -1,6 +1,7 @@
 2001-10-19  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: fix typo in cls help. Reported by Nicolas Noble.
+	* complete.cc: restore prompt and clear message on SIGINT.
 
 2001-10-17  Alexander V. Lukyanov <lav@yars.free.net>
 
