@@ -47,6 +47,7 @@
 #include "SignalHook.h"
 #include "url.h"
 #include "ResMgr.h"
+#include <mbswidth.h>
 
 #if defined(HAVE_UNSETENV) && !defined(HAVE_UNSETENV_DECL)
 CDECL void unsetenv(const char *name);
@@ -435,7 +436,7 @@ int guess_year(int month,int day,int hour,int minute)
    const struct tm &now=SMTask::now;
    int year=now.tm_year+1900;
    if(((month     *32+        day)*64+       hour)*64+       minute
-    > ((now.tm_mon*32+now.tm_mday)*64+now.tm_hour)*64+now.tm_min)
+    > ((now.tm_mon*32+now.tm_mday)*64+now.tm_hour)*64+now.tm_min+5)
       year--;
    return year;
 }
@@ -451,28 +452,39 @@ const char *squeeze_file_name(const char *name,int w)
 {
    static char *buf;
    static int buf_len;
+   int mbflags=MBSW_ACCEPT_INVALID|MBSW_ACCEPT_UNPRINTABLE;
 
-   int name_len=strlen(name);
+   int name_width=mbswidth(name,mbflags);
 
-   if(name_len<=w)
+   if(name_width<=w)
       return name;
 
-   if(buf_len<w+20)
-      buf=(char*)xrealloc(buf,buf_len=w+20);
+   if(buf_len<w*4+20)
+      buf=(char*)xrealloc(buf,buf_len=w*4+20);
 
    const char *b=basename_ptr(name);
-   int b_len=name_len-(b-name);
-   if(b_len<=w-4 && b_len>w-15)
+   int b_width=name_width-mbsnwidth(name,b-name,mbflags);
+   if(b_width<=w-4 && b_width>w-15)
    {
       strcpy(buf,".../");
       strcat(buf,b);
       return buf;
    }
-   b=name+name_len-w;
-   if(w<4)
-      return b;
-   strcpy(buf,"...");
-   strcat(buf,b+3);
+   int b_len=strlen(b);
+   while(b_width>(w<3?w-1:w-3) && b_len>0)
+   {
+      int ch_len=mblen(b,b_len);
+      if(ch_len<1)
+	 ch_len=1;
+      b_width-=mbsnwidth(b,ch_len,mbflags);
+      b+=ch_len;
+      b_len-=ch_len;
+   }
+   if(w>=6)
+      strcpy(buf,"...");
+   else
+      strcpy(buf,"<");
+   strcat(buf,b);
    return buf;
 }
 

@@ -22,6 +22,7 @@
 
 #include <config.h>
 #include <math.h>
+#include <stdlib.h>
 #include "Speedometer.h"
 #include "misc.h"
 #include "xstring.h"
@@ -123,14 +124,14 @@ const char *Speedometer::GetETAStrFromTime(long eta)
    long eta2=0;
    long ueta=0;
    long ueta2=0;
-   char letter=0;
-   char letter2=0;
+   const char *letter=0;
+   const char *letter2=0;
 
    // for translator: only first letter matters
-   const char day_c=_("day")[0];
-   const char hour_c=_("hour")[0];
-   const char minute_c=_("minute")[0];
-   const char second_c=_("second")[0];
+   const char *day_c=_("day");
+   const char *hour_c=_("hour");
+   const char *minute_c=_("minute");
+   const char *second_c=_("second");
 
    // for translator: Estimated Time of Arrival.
    const char *tr_eta=_("eta:");
@@ -174,9 +175,10 @@ const char *Speedometer::GetETAStrFromTime(long eta)
 	 letter=second_c;
       }
       if(letter2 && ueta2>0)
-	 sprintf(buf_eta,"%s%ld%c%ld%c",tr_eta,ueta,letter,ueta2,letter2);
+	 sprintf(buf_eta,"%s%ld%.*s%ld%.*s",tr_eta,ueta,mblen(letter,strlen(letter)),letter,
+						   ueta2,mblen(letter2,strlen(letter2)),letter2);
       else
-	 sprintf(buf_eta,"%s%ld%c",tr_eta,ueta,letter);
+	 sprintf(buf_eta,"%s%ld%.*s",tr_eta,ueta,mblen(letter,strlen(letter)),letter);
    }
    else // verbose eta (by Ben Winslow)
    {
@@ -186,20 +188,20 @@ const char *Speedometer::GetETAStrFromTime(long eta)
       if(eta>=DAY)
       {
 	 unit=eta/DAY;
-	 sprintf(buf_eta+strlen(buf_eta), "%ld%c", unit, day_c);
+	 sprintf(buf_eta+strlen(buf_eta),"%ld%.*s",unit,mblen(day_c,strlen(day_c)),day_c);
       }
       if(eta>=HOUR)
       {
 	 unit=(eta/HOUR)%24;
-	 sprintf(buf_eta+strlen(buf_eta), "%ld%c", unit, hour_c);
+	 sprintf(buf_eta+strlen(buf_eta),"%ld%.*s",unit,mblen(hour_c,strlen(hour_c)),hour_c);
       }
       if(eta>=MINUTE)
       {
 	 unit=(eta/MINUTE)%60;
-	 sprintf(buf_eta+strlen(buf_eta), "%ld%c", unit, minute_c);
+	 sprintf(buf_eta+strlen(buf_eta),"%ld%.*s",unit,mblen(minute_c,strlen(minute_c)),minute_c);
       }
       unit=eta%60;
-      sprintf(buf_eta+strlen(buf_eta), "%ld%c", unit, second_c);
+      sprintf(buf_eta+strlen(buf_eta), "%ld%.*s",unit,mblen(second_c,strlen(second_c)),second_c);
    }
    return buf_eta;
 }

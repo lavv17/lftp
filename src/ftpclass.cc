@@ -923,12 +923,14 @@ void Ftp::InitFtp()
    use_mdtm=true;
    use_size=true;
    use_telnet_iac=true;
+   use_pret=true;
 
    dos_path=false;
    vms_path=false;
    mdtm_supported=true;
    size_supported=true;
    site_chmod_supported=true;
+   pret_supported=true;
    last_rest=0;
    rest_pos=0;
 
@@ -1734,20 +1736,21 @@ int   Ftp::Do()
       if((copy_mode==COPY_NONE && (flags&PASSIVE_MODE))
       || (copy_mode!=COPY_NONE && copy_passive))
       {
+	 if(use_pret && pret_supported)
+	 {
+	    char *s=string_alloca(5+strlen(command)+1+strlen(file)+2);
+	    strcpy(s, "PRET ");
+	    strcat(s, command);
+	    strcat(s, " ");
+	    strcat(s, file);
+	    SendCmd(s);
+	    AddResp(200,CHECK_PRET);
+	 }
 	 if(peer_sa.sa.sa_family==AF_INET)
 	 {
 #if INET6
 	 ipv4_pasv:
 #endif
-	    //BEGIN DRFTPD PRET
- 	    char *s=string_alloca(5+strlen(command)+1+strlen(file)+2);
- 	    strcpy(s, "PRET ");
-	    strcat(s, command);
-	    strcat(s, " ");
-	    strcat(s, file);
- 	    SendCmd(s);
- 	    AddResp(200,CHECK_IGNORE);
-	    //END DRFTPD PRET
 	    SendCmd("PASV");
 	    AddResp(227,CHECK_PASV);
 	    addr_received=0;
@@ -2924,6 +2927,7 @@ void Ftp::CloseRespQueue()
       case(CHECK_READY):
       case(CHECK_ABOR):
       case(CHECK_CWD_STALE):
+      case(CHECK_PRET):
       case(CHECK_PASV):
       case(CHECK_EPSV):
       case(CHECK_TRANSFER_CLOSED):
@@ -3534,6 +3538,11 @@ void Ftp::CheckResp(int act)
       NoFileCheck(act);
       break;
 
+   case CHECK_PRET:
+      if(act==500 || act==502)
+	 pret_supported=false;
+      goto ignore;
+
    case CHECK_PASV:
    case CHECK_EPSV:
       if(is2XX(act))
@@ -3924,6 +3933,7 @@ void Ftp::Reconfig(const char *name)
 
    use_mdtm = QueryBool("use-mdtm",c);
    use_size = QueryBool("use-size",c);
+   use_pret = QueryBool("use-pret",c);
 
    use_telnet_iac = QueryBool("use-telnet-iac",c);
 

@@ -83,6 +83,7 @@ class Ftp : public NetAccess
       CHECK_SIZE_OPT,	// check response for SIZE and save size to *opt_size
       CHECK_MDTM,	// check response for MDTM
       CHECK_MDTM_OPT,	// check response for MDTM and save size to *opt_date
+      CHECK_PRET,	// check response for PRET
       CHECK_PASV,	// check response for PASV and save address
       CHECK_EPSV,	// check response for EPSV and save address
       CHECK_PORT,	// check response for PORT or EPRT
@@ -254,6 +255,7 @@ private:
    bool  mdtm_supported;
    bool  size_supported;
    bool  site_chmod_supported;
+   bool	 pret_supported;
    off_t last_rest;	// last successful REST position.
    off_t rest_pos;	// the number sent with REST command.
 
@@ -303,6 +305,7 @@ private:
 
    bool use_mdtm;
    bool use_size;
+   bool use_pret;
 
    bool use_telnet_iac;
 

@@ -199,6 +199,7 @@ static ResDecl
    ResDecl14 ("ftp:use-abor",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl15 ("ftp:use-fxp",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl15b("ftp:use-mdtm",		  "yes",   ResMgr::BoolValidate,0),
+   ResDecl15c("ftp:use-pret",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl15a("ftp:use-site-chmod",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl16a("ftp:use-site-idle",	  "no",    ResMgr::BoolValidate,0),
    ResDecl16b("ftp:use-size",		  "yes",   ResMgr::BoolValidate,0),

@@ -52,6 +52,7 @@ void SignalHook::Restore(int i)
 {
    if(old_saved[i])
       sigaction(i,&old_handlers[i],0);
+   SignalHook::Unblock(i);
 }
 
 void SignalHook::RestoreAll()

@@ -191,7 +191,7 @@ void pgetJob::ShowRunStatus(StatusLine *s)
    if(!cp)
       return;
 
-   const char *name=cp->SqueezeName(s->GetWidthDelayed()-50);
+   const char *name=cp->SqueezeName(s->GetWidthDelayed()-58);
    off_t size=cp->GetSize();
    s->Show(PGET_STATUS);
 }
