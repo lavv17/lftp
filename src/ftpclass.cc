@@ -628,10 +628,10 @@ char *Ftp::ExtractPWD()
    return xstrdup(pwd);
 }
 
-void Ftp::SendCWD(const char *path)
+void Ftp::SendCWD(const char *path,check_case_t c)
 {
    SendCmd2("CWD",path);
-   AddResp(RESP_CWD_RMD_DELE_OK,CHECK_CWD_CURR);
+   AddResp(RESP_CWD_RMD_DELE_OK,c);
    SetRespPath(path);
 }
 
@@ -1396,7 +1396,7 @@ int   Ftp::Do()
 	 if((!last_cwd && xstrcmp(cwd,real_cwd))
 	    || (last_cwd && xstrcmp(last_cwd->path,cwd)))
 	 {
-	    SendCWD(cwd);
+	    SendCWD(cwd,CHECK_CWD_CURR);
 	 }
 	 else if(last_cwd && !xstrcmp(last_cwd->path,cwd))
 	 {
@@ -1587,7 +1587,7 @@ int   Ftp::Do()
 	    if(!vms_path && !AbsolutePath(file) && real_cwd
 	    && !strncmp(file,real_cwd,len) && file[len]=='/')
 	       path_to_use=file+len+1;
-	    SendCWD(path_to_use);
+	    SendCWD(path_to_use,CHECK_CWD);
 	    SetRespPath(file);
 	 }
 	 goto pre_WAITING_STATE;

@@ -140,7 +140,7 @@ class Ftp : public NetAccess
    void	 proxy_LoginCheck(int);
    void	 proxy_NoPassReqCheck(int);
    char *ExtractPWD();
-   void  SendCWD(const char *path);
+   void  SendCWD(const char *path,check_case_t c);
    void	 PropagateHomeAuto();
    const char *FindHomeAuto();
    void	 CatchDATE(int);

@@ -1,3 +1,7 @@
+2002-01-01  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: fix SendCWD to set correct check case.
+
 2001-12-26  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ArgV.h: new ctor.
