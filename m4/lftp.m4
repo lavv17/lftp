@@ -200,4 +200,11 @@ AC_DEFUN(LFTP_CXX_BOOL,
    if test x$lftp_cv_cxx_bool = xyes; then
       AC_DEFINE(HAVE_CXX_BOOL, 1, [define if c++ compiler supports bool])
    fi
+   AH_VERBATIM([OPT_CPP_BOOL], [
+#if defined(__cplusplus) && !defined(HAVE_CXX_BOOL)
+   typedef unsigned _bool;
+#define bool   _bool
+#define false  0U
+#define true   1U
+#endif ])
 ])

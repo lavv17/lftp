@@ -250,13 +250,6 @@ CDECL void SOCKSinit(const char *);
 # define __builtin_expect(expr, val) (expr)
 #endif
 
-#if defined(__cplusplus) && !defined(HAVE_CXX_BOOL)
-typedef unsigned _bool;
-#define bool   _bool
-#define false  0U
-#define true   1U
-#endif
-
 #ifdef __GNUC__
 # define PRINTF_LIKE(n,m) __attribute__((format(printf,n,m)))
 #else

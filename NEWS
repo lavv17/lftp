@@ -1,11 +1,26 @@
-Version 2.5.0 - 2001-1?-??
+Version 2.5.0 - 2002-01-??
 
+* mirror understands URLs now. It can mirror between two ftp sites, for
+  example: `mirror ftp://site1/path1 ftp://site2/path2'. It will use FXP
+  if possible.
 * mirror can now upload/download certain files first based on pattern list,
-  new settings mirror:order-upload and mirror:order-download.
+  new setting mirror:order contains the pattern list.
 * mirror options -t, -T, --time-prec and --loose-time-prec are now obsolete,
   so are settings mirror:time-prec and mirror:loose-time-prec.
+* find can now understand URLs and plain files specified on command line
+  (Glenn Maynard, Alexander Lukyanov)
+* chmod can now handle symbolic modes and can work recursively (Glenn Maynard).
+* now plain ls can also use color for file names.
 * cls improved (Glenn Maynard).
-* fixed a memory leak in cls (Glenn Maynard).
+
+Version 2.4.8 - 2001-12-04
+
+* fixed rm and rmdir - they were actually interchanged in 2.4.7.
+* fixed listing parser in Fish protocol, now it extracts all information.
+* force LC_NUMERIC to C, this fixes floating point settings initialization.
+* fixed assertion failure when setting ftp proxy after establishing
+  connection to an ftp server.
+* fixed a memory leak and some other bugs in cls (Glenn Maynard).
 
 Version 2.4.7 - 2001-11-12
 
