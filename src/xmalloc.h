@@ -35,7 +35,9 @@
 void *xmalloc(size_t);
 void *xrealloc(void *,size_t);
 char *xstrdup(const char *s,int spare=0);
-#define alloca_strdup(s) ((s)?strcpy((char*)alloca(strlen((s))+1),(s)):0)
+#define alloca_strdup(s) alloca_strdup2((s),0)
+#define alloca_strdup2(s,n) ((s)?strcpy((char*)alloca(strlen((s))+1+n),(s)) \
+                                :((n)==0?0:(char*)alloca((n))))
 
 static inline void *xmemdup(const void *m,int len)
 {

@@ -205,7 +205,12 @@ void  MirrorJob::HandleFile(int how)
 	    && (file->defined&(file->DATE|file->DATE_UNPREC))
 	    && file->date + prec.Seconds() < st.st_mtime
 	    && (file->defined&file->SIZE) && file->size >= st.st_size)
+	    {
 	       cont_this=true;
+	       // make it writable
+	       if((st.st_mode&0200)==0)
+		  chmod(local_name,st.st_mode|0200);
+	    }
 	    else
 	    {
 	       Report(_("Removing old local file `%s'"),

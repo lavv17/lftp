@@ -263,6 +263,15 @@ void Http::SendMethod(const char *method,const char *efile)
       else if(!strncmp(efile,"hftp://",7))
 	 efile++;
    }
+
+   if(hftp && mode!=LONG_LIST && mode!=CHANGE_DIR && mode!=MAKE_DIR
+   && (strlen(efile)<7 || strncmp(efile+strlen(efile)-7,";type=",6)))
+   {
+      char *pfile=alloca_strdup2(efile,7);
+      sprintf(pfile,"%s;type=%c",efile,ascii?'a':'i');
+      efile=pfile;
+   }
+
    Send("%s %s HTTP/1.1\r\n",method,efile);
    Send("Host: %s\r\n",ehost);
    if(user_agent && user_agent[0])
@@ -375,14 +384,6 @@ add_path:
       // root directory in ftp urls needs special encoding. (/%2Fpath)
       memmove(path_base+4,path_base+1,strlen(path_base+1)+1);
       memcpy(path_base+1,"%2F",3);
-   }
-
-   if(hftp && mode!=LONG_LIST && mode!=CHANGE_DIR && mode!=MAKE_DIR)
-   {
-      if(ascii)
-	 strcat(pfile,";type=a");
-      else
-	 strcat(pfile,";type=i");
    }
 
    efile=pfile;
