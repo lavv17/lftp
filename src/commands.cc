@@ -1167,10 +1167,10 @@ CMD(cd)
 
 CMD(pwd)
 {
-   char *url=xstrdup(session->GetConnectURL());
+   char *url=alloca_strdup(session->GetConnectURL());
    int len=strlen(url);
    url[len++]='\n';  // replaces \0
-   Job *j=new CatJob(output,url,len);
+   Job *j=CopyJob::NewEcho(url,len,output);
    output=0;
    return j;
 }
@@ -1376,7 +1376,8 @@ CMD(set)
    if(a==0)
    {
       char *s=ResMgr::Format(with_defaults,only_defaults);
-      Job *j=new CatJob(output,s,strlen(s));
+      Job *j=CopyJob::NewEcho(s,output);
+      xfree(s);
       output=0;
       return j;
    }
@@ -1419,7 +1420,8 @@ CMD(alias)
    if(args->count()<2)
    {
       char *list=Alias::Format();
-      Job *j=new CatJob(output,list,strlen(list));
+      Job *j=CopyJob::NewEcho(list,output);
+      xfree(list);
       output=0;
       return j;
    }
@@ -1787,7 +1789,8 @@ CMD(bookmark)
    if(!strcmp(op,"list"))
    {
       char *list=lftp_bookmarks.Format();
-      Job *j=new CatJob(output,list,strlen(list));
+      Job *j=CopyJob::NewEcho(list,output);
+      xfree(list);
       output=0;
       return j;
    }
@@ -1877,7 +1880,8 @@ CMD(echo)
    {
       s[len++]='\n'; // replaces \0 char
    }
-   Job *j=new CatJob(output,s,len);
+   Job *j=CopyJob::NewEcho(s,len,output);
+   xfree(s);
    output=0;
    return j;
 }
