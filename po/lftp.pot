@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 1999-06-11 21:00+0400\n"
+"POT-Creation-Date: 1999-06-15 16:30+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -80,7 +80,7 @@ msgstr ""
 msgid "File cannot be accessed"
 msgstr ""
 
-#: src/FileAccess.cc:294 src/ftpclass.cc:2722 src/ftpclass.cc:2732
+#: src/FileAccess.cc:294 src/ftpclass.cc:2668 src/ftpclass.cc:2678
 msgid "Not connected"
 msgstr ""
 
@@ -97,7 +97,7 @@ msgstr ""
 msgid "Store failed - you have to reput"
 msgstr ""
 
-#: src/FileAccess.cc:307 src/ftpclass.cc:2764
+#: src/FileAccess.cc:307 src/ftpclass.cc:2710
 msgid "Login failed"
 msgstr ""
 
@@ -1158,7 +1158,7 @@ msgstr ""
 msgid "Closing idle connection"
 msgstr ""
 
-#: src/Http.cc:1078 src/ftpclass.cc:888 src/ftpclass.cc:2727
+#: src/Http.cc:1078 src/ftpclass.cc:888 src/ftpclass.cc:2673
 msgid "Resolving host address..."
 msgstr ""
 
@@ -1188,72 +1188,72 @@ msgstr ""
 msgid "Closing data socket"
 msgstr ""
 
-#: src/ftpclass.cc:2532
+#: src/ftpclass.cc:2478
 msgid "saw file size in response"
 msgstr ""
 
-#: src/ftpclass.cc:2541
+#: src/ftpclass.cc:2487
 msgid "remote end closes connection"
 msgstr ""
 
-#: src/ftpclass.cc:2547
+#: src/ftpclass.cc:2493
 msgid "extra server response"
 msgstr ""
 
-#: src/ftpclass.cc:2644
+#: src/ftpclass.cc:2590
 msgid "Switching passive mode off"
 msgstr ""
 
-#: src/ftpclass.cc:2717
+#: src/ftpclass.cc:2663
 msgid "Sending commands..."
 msgstr ""
 
-#: src/Http.cc:1089 src/ftpclass.cc:2719 src/ftpclass.cc:2739
-#: src/ftpclass.cc:2746
+#: src/Http.cc:1089 src/ftpclass.cc:2665 src/ftpclass.cc:2685
+#: src/ftpclass.cc:2692
 msgid "Waiting for response..."
 msgstr ""
 
-#: src/ftpclass.cc:2720
+#: src/ftpclass.cc:2666
 msgid "Connection idle"
 msgstr ""
 
-#: src/Http.cc:1080 src/ftpclass.cc:2729
+#: src/Http.cc:1080 src/ftpclass.cc:2675
 msgid "Delaying before reconnect"
 msgstr ""
 
-#: src/Http.cc:1084 src/ftpclass.cc:2734
+#: src/Http.cc:1084 src/ftpclass.cc:2680
 msgid "Connecting..."
 msgstr ""
 
-#: src/ftpclass.cc:2736
+#: src/ftpclass.cc:2682
 msgid "Logging in..."
 msgstr ""
 
-#: src/ftpclass.cc:2740
+#: src/ftpclass.cc:2686
 msgid "Making data connection..."
 msgstr ""
 
-#: src/ftpclass.cc:2742
+#: src/ftpclass.cc:2688
 msgid "Changing remote directory..."
 msgstr ""
 
-#: src/ftpclass.cc:2745 src/ftpclass.cc:2757
+#: src/ftpclass.cc:2691 src/ftpclass.cc:2703
 msgid "Waiting for transfer to complete"
 msgstr ""
 
-#: src/ftpclass.cc:2748
+#: src/ftpclass.cc:2694
 msgid "Waiting for data connection..."
 msgstr ""
 
-#: src/Http.cc:1087 src/ftpclass.cc:2753
+#: src/Http.cc:1087 src/ftpclass.cc:2699
 msgid "Sending data"
 msgstr ""
 
-#: src/Http.cc:1092 src/ftpclass.cc:2755
+#: src/Http.cc:1092 src/ftpclass.cc:2701
 msgid "Receiving data"
 msgstr ""
 
-#: src/ftpclass.cc:2759
+#: src/ftpclass.cc:2705
 msgid "Fatal protocol error occured"
 msgstr ""
 
@@ -1409,7 +1409,7 @@ msgid "Fetching headers..."
 msgstr ""
 
 #. TODO: && strcmp(url.proto,"http")
-#: src/resource.cc:43 src/resource.cc:60
+#: src/resource.cc:44 src/resource.cc:61
 msgid "Proxy protocol unsupported"
 msgstr ""
 

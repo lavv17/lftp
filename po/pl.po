@@ -15,7 +15,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp\n"
-"POT-Creation-Date: 1999-06-11 21:00+0400\n"
+"POT-Creation-Date: 1999-06-15 16:30+0400\n"
 "PO-Revision-Date: 1998-12-03 18:22+0100\n"
 "Last-Translator: Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -89,7 +89,7 @@ msgstr "Brak dostêpu: %s"
 msgid "File cannot be accessed"
 msgstr "Brak dostêpu do pliku"
 
-#: src/FileAccess.cc:294 src/ftpclass.cc:2722 src/ftpclass.cc:2732
+#: src/FileAccess.cc:294 src/ftpclass.cc:2668 src/ftpclass.cc:2678
 msgid "Not connected"
 msgstr "Brak po³±czenia"
 
@@ -106,7 +106,7 @@ msgstr "B³±d krytyczny"
 msgid "Store failed - you have to reput"
 msgstr "Zapis siê nie powiód³ - musisz u¿yæ reput"
 
-#: src/FileAccess.cc:307 src/ftpclass.cc:2764
+#: src/FileAccess.cc:307 src/ftpclass.cc:2710
 msgid "Login failed"
 msgstr "Logowanie nie uda³o siê"
 
@@ -1325,7 +1325,7 @@ msgstr "Przekroczony limit czasu - ³±czê siê ponownie"
 msgid "Closing idle connection"
 msgstr "Zamykanie bezczynnego po³±czenia"
 
-#: src/Http.cc:1078 src/ftpclass.cc:888 src/ftpclass.cc:2727
+#: src/Http.cc:1078 src/ftpclass.cc:888 src/ftpclass.cc:2673
 msgid "Resolving host address..."
 msgstr "Uzyskiwanie adresu host-a..."
 
@@ -1355,73 +1355,73 @@ msgstr "Zamykanie control socket"
 msgid "Closing data socket"
 msgstr "Zamykam gniazdo danych"
 
-#: src/ftpclass.cc:2532
+#: src/ftpclass.cc:2478
 msgid "saw file size in response"
 msgstr "w odpowiedzi pojawi³ siê rozmiar pliku"
 
-#: src/ftpclass.cc:2541
+#: src/ftpclass.cc:2487
 #, fuzzy
 msgid "remote end closes connection"
 msgstr "Komputer po drugiej stronie zamkn±³ po³±czenie"
 
-#: src/ftpclass.cc:2547
+#: src/ftpclass.cc:2493
 msgid "extra server response"
 msgstr "dodatkowa odpowied¼ serwera"
 
-#: src/ftpclass.cc:2644
+#: src/ftpclass.cc:2590
 msgid "Switching passive mode off"
 msgstr "Wy³±czam tryb pasywny"
 
-#: src/ftpclass.cc:2717
+#: src/ftpclass.cc:2663
 msgid "Sending commands..."
 msgstr "Wysy³anie komend..."
 
-#: src/Http.cc:1089 src/ftpclass.cc:2719 src/ftpclass.cc:2739
-#: src/ftpclass.cc:2746
+#: src/Http.cc:1089 src/ftpclass.cc:2665 src/ftpclass.cc:2685
+#: src/ftpclass.cc:2692
 msgid "Waiting for response..."
 msgstr "Czekanie na odpowied¼..."
 
-#: src/ftpclass.cc:2720
+#: src/ftpclass.cc:2666
 msgid "Connection idle"
 msgstr "Po³±czenie bezczynne"
 
-#: src/Http.cc:1080 src/ftpclass.cc:2729
+#: src/Http.cc:1080 src/ftpclass.cc:2675
 msgid "Delaying before reconnect"
 msgstr "Przerwa przed ponownym po³±czeniem"
 
-#: src/Http.cc:1084 src/ftpclass.cc:2734
+#: src/Http.cc:1084 src/ftpclass.cc:2680
 msgid "Connecting..."
 msgstr "£±czenie siê..."
 
-#: src/ftpclass.cc:2736
+#: src/ftpclass.cc:2682
 msgid "Logging in..."
 msgstr "Logowanie siê..."
 
-#: src/ftpclass.cc:2740
+#: src/ftpclass.cc:2686
 msgid "Making data connection..."
 msgstr "Ustanawianie po³±czenie dla danych..."
 
-#: src/ftpclass.cc:2742
+#: src/ftpclass.cc:2688
 msgid "Changing remote directory..."
 msgstr "Zmiana zdalnego katalogu..."
 
-#: src/ftpclass.cc:2745 src/ftpclass.cc:2757
+#: src/ftpclass.cc:2691 src/ftpclass.cc:2703
 msgid "Waiting for transfer to complete"
 msgstr "Oczekiwanie na zakoñczenie transferu"
 
-#: src/ftpclass.cc:2748
+#: src/ftpclass.cc:2694
 msgid "Waiting for data connection..."
 msgstr "Czekam na po³±czenie dla danych..."
 
-#: src/Http.cc:1087 src/ftpclass.cc:2753
+#: src/Http.cc:1087 src/ftpclass.cc:2699
 msgid "Sending data"
 msgstr ""
 
-#: src/Http.cc:1092 src/ftpclass.cc:2755
+#: src/Http.cc:1092 src/ftpclass.cc:2701
 msgid "Receiving data"
 msgstr ""
 
-#: src/ftpclass.cc:2759
+#: src/ftpclass.cc:2705
 msgid "Fatal protocol error occured"
 msgstr "Zdarzy³ siê b³±d krytyczny protoko³u"
 
@@ -1591,7 +1591,7 @@ msgid "Fetching headers..."
 msgstr ""
 
 #. TODO: && strcmp(url.proto,"http")
-#: src/resource.cc:43 src/resource.cc:60
+#: src/resource.cc:44 src/resource.cc:61
 msgid "Proxy protocol unsupported"
 msgstr "Brak wsparcia dla protoko³u proxy"
 
