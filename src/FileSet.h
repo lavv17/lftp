@@ -146,7 +146,7 @@ public:
    void	 SubtractAny(const FileSet *);
    void  SubtractOlderThan(time_t t);
    void  SubtractNotIn(const FileSet *);
-   void  Sort(sort_e newsort, bool casefold);
+   void  Sort(sort_e newsort, bool casefold=false);
    void  Unsort();
 
    void	 Exclude(const char *prefix,regex_t *exclude,regex_t *include);

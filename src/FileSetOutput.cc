@@ -35,6 +35,10 @@
 
 #include <mbswidth.h>
 
+CDECL_BEGIN
+#include "human.h"
+CDECL_END
+
 #include "misc.h"
 #include "ResMgr.h"
 
@@ -411,10 +415,12 @@ void FileSetOutput::print(FileSet &fs, Buffer *o) const
 
       if((mode & SIZE) && (f->defined&FileInfo::SIZE)) {
 	 char sz[128];
-	 if(f->filetype == FileInfo::NORMAL || !size_filesonly) {
-	    sprintf(sz, "%10lu ", (unsigned long) f->size);
-	 }
-	 else {
+	 if((f->filetype == FileInfo::NORMAL || !size_filesonly)) {
+	    char buffer[128];
+	    sprintf(sz, "%10s ",
+	       human_readable_inexact (f->size, buffer, 1,
+		  -1024 /*output_block_size*/, human_ceiling));
+	 } else {
 	    sprintf(sz, "%10s ", ""); /* pad */
 	 }
 	 c.add(sz, "");
@@ -582,6 +588,7 @@ FileCopyPeerCLS::FileCopyPeerCLS(FA *_session, ArgV *a, const FileSetOutput &_fs
    list_info=0;
    can_seek=false;
    can_seek0=false;
+   init_dir=xstrdup(session->GetCwd());
 }
 
 FileCopyPeerCLS::~FileCopyPeerCLS()
@@ -591,6 +598,7 @@ FileCopyPeerCLS::~FileCopyPeerCLS()
    Delete(list_info);
    SessionPool::Reuse(session);
    xfree(dir);
+   xfree(init_dir);
 }
 
 int FileCopyPeerCLS::Do()
@@ -657,6 +665,7 @@ int FileCopyPeerCLS::Do()
 	 dir = 0;
       }
 
+      session->Chdir(init_dir,false);
       if(dir) session->Chdir(dir);
       state = CHANGING_DIR;
       return MOVED;

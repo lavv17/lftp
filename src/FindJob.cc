@@ -21,6 +21,8 @@
 /* $Id$ */
 
 #include <config.h>
+#include <assert.h>
+#include <fnmatch.h>
 
 #include "FindJob.h"
 #include "CmdExec.h"
@@ -72,7 +74,7 @@ int FinderJob::Do()
 	 //FIXME
 	 abort();
       }
-      li->Need(FileInfo::NAME|FileInfo::TYPE);
+      li->Need(file_info_need|FileInfo::NAME|FileInfo::TYPE);
       if(use_cache)
 	 li->UseCache();
       state=INFO;
@@ -94,9 +96,7 @@ int FinderJob::Do()
       Push(li->GetResult());
       Delete(li);
       li=0;
-      goto pre_LOOP;
 
-   pre_LOOP:
       top.fset->rewind();
       state=LOOP;
       m=MOVED;
@@ -115,6 +115,7 @@ int FinderJob::Do()
 	 if((f->defined&f->TYPE) && f->filetype==f->DIRECTORY)
 	 {
 	    Down(f->name);
+	    Enter(f->name);
 	    return MOVED;
 	 }
       }
@@ -153,6 +154,7 @@ int FinderJob::Do()
 	 {
 	    top.fset->next();
 	    Down(f->name);
+	    Enter(f->name);
 	    return MOVED;
 	 }
       }
@@ -184,6 +186,7 @@ void FinderJob::Up()
       Finish();
       return;
    }
+   Exit();
    delete stack[stack_ptr--];
    if(stack_ptr==-1)
       goto done;
@@ -209,7 +212,15 @@ void FinderJob::Push(FileSet *fset)
       new_path=dir_file(old_path,dir);
 
    fset->ExcludeDots(); // don't need . and ..
+   /* matching exclusions don't include the path, so they operate
+    * on the filename portion only */
+   if(exclude)
+      fset->Exclude(0, exclude,0);
    stack[stack_ptr]=new place(new_path,fset);
+
+   /* give a chance to operate on the list as a whole, and
+    * possibly sort it */
+   ProcessList(fset);
 }
 
 FinderJob::place::place(const char *p,FileSet *f)
@@ -252,20 +263,21 @@ void FinderJob::Init()
    depth_first=false; // useful for rm -r
    depth_done=false;
 
+   file_info_need=0;
    use_cache=true;
 
    quiet=false;
    maxdepth=-1;
+   exclude=0;
 
    state=INIT;
 }
 
-FinderJob::FinderJob(FileAccess *s,const char *d)
+FinderJob::FinderJob(FileAccess *s)
    : SessionJob(s)
 {
    Init();
    init_dir=xstrdup(session->GetCwd());
-   NextDir(d);
 }
 
 void FinderJob::NextDir(const char *d)
@@ -274,6 +286,7 @@ void FinderJob::NextDir(const char *d)
    xfree(start_dir);
    start_dir=xstrdup(dir_file(session->GetCwd(),d));
    Down(start_dir);
+   Enter(d); /* tell derived that we entered the base path */
 }
 
 FinderJob::~FinderJob()
@@ -283,6 +296,7 @@ FinderJob::~FinderJob()
    xfree(stack);
    xfree(start_dir);
    xfree(init_dir);
+   xfree(exclude);
    Delete(li);
 }
 
@@ -297,8 +311,7 @@ void FinderJob::ShowRunStatus(StatusLine *sl)
    case INFO:
       if(stack_ptr>=0)
 	 path=top.path;
-      sl->Show("%s: %s [%s]",dir_file(path,dir),li->Status(),
-			   session->CurrentStatus());
+      sl->Show("%s: %s",dir_file(path,dir),li->Status());
       break;
    case WAIT:
       Job::ShowRunStatus(sl);
@@ -351,11 +364,12 @@ FinderJob::prf_res FinderJob_List::ProcessFile(const char *d,const FileInfo *fi)
    return FinderJob::ProcessFile(d,fi);
 }
 
-FinderJob_List::FinderJob_List(FileAccess *s,const char *d,FDStream *o)
-   : FinderJob(s,d)
+FinderJob_List::FinderJob_List(FileAccess *s,ArgV *a,FDStream *o)
+   : FinderJob(s), args(a)
 {
    show_sl = !o->usesfd(1);
    buf=new IOBufferFDStream(o,IOBuffer::PUT);
+   NextDir(a->getcurr());
 }
 
 FinderJob_List::~FinderJob_List()
@@ -363,6 +377,15 @@ FinderJob_List::~FinderJob_List()
    Delete(buf);
 }
 
+void FinderJob_List::Finish()
+{
+   char *d=args->getnext();
+   if(!d) {
+      buf->PutEOF();
+      return;
+   }
+   NextDir(d);
+}
 
 // FinderJob_Cmd implementation
 // process directory tree
@@ -427,7 +450,7 @@ FinderJob::prf_res FinderJob_Cmd::ProcessFile(const char *d,const FileInfo *f)
 }
 
 FinderJob_Cmd::FinderJob_Cmd(FileAccess *s,ArgV *a,cmd_t c)
-   : FinderJob(s,a->getcurr())
+   : FinderJob(s)
 {
    cmd=c;
    args=a;
@@ -437,6 +460,7 @@ FinderJob_Cmd::FinderJob_Cmd(FileAccess *s,ArgV *a,cmd_t c)
       depth_first=true;
    saved_cwd=xgetcwd();
    removing_last=false;
+   NextDir(a->getcurr());
 }
 FinderJob_Cmd::~FinderJob_Cmd()
 {
@@ -487,3 +511,4 @@ int FinderJob_Cmd::Done()
 {
    return FinderJob::Done() && args->getcurr()==0;
 }
+

@@ -69,6 +69,7 @@ class FileCopyPeerCLS : public FileCopyPeer
 
    char *dir;
    char *mask;
+   char *init_dir;
 
    enum { INIT, GETTING_LIST, CHANGING_DIR } state;
 protected:

@@ -52,7 +52,13 @@ class FinderJob : public SessionJob
    void Down(const char *d);
    void Push(FileSet *f);
 
+   virtual void Enter(const char *d) { }
+   virtual void Exit() { }
+
    bool depth_done;
+   unsigned file_info_need;
+
+   char *exclude;
 
 protected:
    enum state_t { INIT, CD, INFO, LOOP, WAIT, DONE };
@@ -64,6 +70,7 @@ protected:
 
    enum prf_res { PRF_FATAL, PRF_ERR, PRF_OK, PRF_WAIT, PRF_LATER };
    virtual prf_res ProcessFile(const char *d,const FileInfo *fi);
+   virtual void ProcessList(FileSet *f) { }
    virtual void Finish() {};
 
    bool show_sl;
@@ -74,6 +81,8 @@ protected:
    int maxdepth;
 
    void NextDir(const char *d);
+   const char *GetCur() const { return dir; }
+   void Need(unsigned need) { file_info_need=need; }
 
 public:
    int Do();
@@ -81,25 +90,27 @@ public:
    int ExitCode() { return state!=DONE || errors; }
 
    void Init();
-   FinderJob(FileAccess *s,const char *d);
+   FinderJob(FileAccess *s);
    ~FinderJob();
 
    void ShowRunStatus(StatusLine *sl);
    void PrintStatus(int v);
 
    void BeQuiet() { quiet=true; }
+   void SetExclude(const char *excl) { xfree(exclude); exclude = xstrdup(excl); }
    void set_maxdepth(int _maxdepth) { maxdepth = _maxdepth; }
 };
 
 class FinderJob_List : public FinderJob
 {
    Buffer *buf;
+   ArgV *args;
 protected:
    prf_res ProcessFile(const char *d,const FileInfo *fi);
-   void Finish() { buf->PutEOF(); }
+   void Finish();
 
 public:
-   FinderJob_List(FileAccess *s,const char *d,FDStream *o);
+   FinderJob_List(FileAccess *s,ArgV *a,FDStream *o);
    ~FinderJob_List();
 
    int Done() { return FinderJob::Done() && buf->Done(); }

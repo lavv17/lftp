@@ -360,13 +360,16 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
    if(strlen(t)==5)
    {
       sscanf(t,"%2d:%2d",&date.tm_hour,&date.tm_min);
-      date.tm_year=guess_year(date.tm_mon,date.tm_mday,date.tm_hour,date.tm_min,SMTask::now);
+      date.tm_year=guess_year(date.tm_mon,date.tm_mday,date.tm_hour,date.tm_min,SMTask::now) - 1900;
    }
    else
    {
       if(day_of_month+strlen(day_of_month)+1 == t)
 	 year_anomaly=true;
       date.tm_year=atoi(t)-1900;
+      /* We don't know the hour.  Set it to something other than 0, or
+       * DST -1 will end up changing the date. */
+      date.tm_hour = 12;
    }
 
    date.tm_isdst=-1;

@@ -46,6 +46,7 @@
 #include "pgetJob.h"
 #include "SleepJob.h"
 #include "FindJob.h"
+#include "FindJobDu.h"
 #include "ChmodJob.h"
 #include "CopyJob.h"
 
@@ -76,7 +77,7 @@
 Bookmark lftp_bookmarks;
 History	 cwd_history;
 
-CMD(alias); CMD(anon);   CMD(cd);      CMD(debug);
+CMD(alias); CMD(anon);   CMD(cd);      CMD(debug);	CMD(du);
 CMD(exit);  CMD(get);    CMD(help);    CMD(jobs);
 CMD(kill);  CMD(lcd);    CMD(ls);      CMD(cls);
 CMD(open);  CMD(pwd);    CMD(set);
@@ -196,6 +197,22 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"debug",   cmd_debug,  N_("debug [<level>|off] [-o <file>]"),
 	 N_("Set debug level to given value or turn debug off completely.\n"
 	 " -o <file>  redirect debug output to the file.\n")},
+   {"du",      cmd_du,  N_("du [options] <dirs>"),
+	 N_("Summarize disk usage.\n"
+	 " -a, --all             write counts for all files, not just directories\n"
+	 " -b, --bytes           print size in bytes\n"
+	 " -c, --total           produce a grand total\n"
+	 " -d, --max-depth=N     print the total for a directory (or file, with --all)\n"
+	 "                       only if it is N or fewer levels below the command\n"
+	 "                       line argument;  --max-depth=0 is the same as\n"
+	 "                       --summarize\n"
+	 " -h, --human-readable  print sizes in human readable format (e.g., 1K 234M 2G)\n"
+	 " -H, --si              likewise, but use powers of 1000 not 1024\n"
+	 " -k, --kilobytes       like --block-size=1024\n"
+	 " -m, --megabytes       like --block-size=1048576\n"
+	 " -S, --separate-dirs   do not include size of subdirectories\n"
+	 " -s, --summarize       display only a total for each argument\n"
+	 "     --exclude=PAT     exclude files that match PAT\n")},
    {"echo",    cmd_echo,   0},
    {"exit",    cmd_exit,   N_("exit [<code>|bg]"),
 	 N_("exit - exit from lftp or move to background if jobs are active\n\n"
@@ -1530,8 +1547,12 @@ CMD(rm)
    bool silent=false;
    const char *opts="+rf";
 
+   bool rmdir = false;
    if(!strcmp(args->a0(),"rmdir"))
+   {
+      rmdir = true;
       opts="+f";
+   }
 
    while((opt=args->getopt(opts))!=EOF)
    {
@@ -1545,7 +1566,7 @@ CMD(rm)
 	 break;
       case('?'):
       print_usage:
-	 eprintf(_("Usage: %s [-r] [-f] files...\n"),args->a0());
+	 eprintf(_("Usage: %s %s[-f] files...\n"),args->a0(), rmdir? "":"[-r] ");
 	 return 0;
       }
    }
@@ -1563,9 +1584,9 @@ CMD(rm)
       return j;
    }
 
-   rmJob *j=(strcmp(args->a0(),"rmdir")
-	     ?new rmJob(Clone(),new ArgV(args->a0()))
-	     :new rmdirJob(Clone(),new ArgV(args->a0())));
+   rmJob *j=(rmdir?
+	     new rmJob(Clone(),new ArgV(args->a0())):
+	     new rmdirJob(Clone(),new ArgV(args->a0())));
 
    while(curr)
    {
@@ -2415,12 +2436,136 @@ CMD(find)
       }
    }
 
-   const char *path=args->getcurr();
-   if(!path)
-      path=".";
-   FinderJob_List *j=new class FinderJob_List(Clone(),path,
+   if(!args->getcurr())
+      args->Append(".");
+   FinderJob_List *j=new class FinderJob_List(Clone(),args,
       output?output:new FDStream(1,"<stdout>"));
    j->set_maxdepth(maxdepth);
+   output=0;
+   return j;
+}
+
+CMD(du)
+{
+   static struct option du_options[]=
+   {
+      {"all",no_argument,0,'a'},
+      /* alias: both GNU-like max-depth and lftp-like maxdepth;
+       * only document one of them. */
+      {"bytes",no_argument,0,'b'},
+      {"maxdepth",required_argument,0,'d'},
+      {"total",no_argument,0,'c'},
+      {"max-depth",required_argument,0,'d'},
+      {"human-readable",no_argument,0,'h'},
+      {"si",no_argument,0,'H'},
+      {"kilobytes",required_argument,0,'k'},
+      {"megabytes",required_argument,0,'m'},
+      {"separate-dirs",no_argument,0,'S'},
+      {"summarize",no_argument,0,'s'},
+      {"exclude",required_argument,0,0},
+      {0,0,0,0}
+   };
+   int maxdepth = -1;
+   bool max_depth_specified = false;
+   int blocksize = 1024;
+   bool separate_dirs = false;
+   bool summarize_only = false;
+   bool print_totals=false;
+   bool all_files=false;
+   const char *exclude=0;
+
+   exit_code=1;
+
+   const char *op=args->a0();
+
+   args->rewind();
+   int opt, longopt;
+   while((opt=args->getopt_long("+abcd:hHkmsS",du_options,&longopt))!=EOF)
+   {
+      switch(opt)
+      {
+      case 'a':
+	 all_files=true;
+	 break;
+      case 'b':
+	 blocksize = 1;
+	 break;
+      case 'c':
+	 print_totals=true;
+	 break;
+      case 'd':
+	 if(!isdigit((unsigned char)*optarg))
+	 {
+	    eprintf(_("%s: %s - not a number\n"),op,optarg);
+	    return 0;
+	 }
+	 maxdepth = atoi(optarg);
+	 max_depth_specified = true;
+	 break;
+      case 'h':
+	 blocksize = -1024;
+	 break;
+      case 'H':
+	 blocksize = -1000;
+	 break;
+      case 'k': /* the default; here for completeness */
+	 blocksize = 1024;
+	 break;
+      case 'm':
+	 blocksize = 1024*1024;
+	 break;
+      case 's':
+	 summarize_only = true;
+	 break;
+      case 'S':
+	 separate_dirs = true;
+	 break;
+      case 0:
+	 if(!strcmp(du_options[longopt].name, "exclude")) {
+	    exclude=optarg;
+	    break;
+	 }
+	 /* fallthrough */
+      case '?':
+	 eprintf(_("Usage: %s [options] <dirs>\n"),op);
+	 return 0;
+      }
+   }
+
+   if (summarize_only && max_depth_specified && maxdepth == 0)
+      eprintf(_("%s: warning: summarizing is the same as using --max-depth=0\n"), op);
+
+   if (summarize_only && max_depth_specified && maxdepth != 0)
+   {
+      eprintf(_("%s: summarizing conflicts with --max-depth=%i\n"), op, maxdepth);
+      return 0;
+   }
+
+   exit_code=0;
+
+   if (summarize_only)
+      maxdepth = 0;
+
+   if(!args->getcurr())
+      args->Append(".");
+   FinderJob_Du *j=new class FinderJob_Du(Clone(),args,
+      output?output:new FDStream(1,"<stdout>"));
+   args=0;
+   j->PrintDepth(maxdepth);
+   j->SetBlockSize(blocksize);
+   if(print_totals)
+      j->PrintTotals();
+   if(all_files)
+      j->AllFiles();
+   if(separate_dirs)
+      j->SeparateDirs();
+   /* if separate_dirs is on, then there's no point in traversing past
+    * max_print_depth at all */
+   if(separate_dirs && maxdepth != -1)
+      j->set_maxdepth(maxdepth);
+   if(exclude)
+      j->SetExclude(exclude);
+
    output=0;
    return j;
 }

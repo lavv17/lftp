@@ -218,10 +218,11 @@ void FileSet::Unsort()
 
 void FileSet::Empty()
 {
+   Unsort();
    for(int i=0; i<fnum; i++)
       delete files[i];
    xfree(files);
-   files=0;
+   files=0; files_sort=0;
    fnum=0;
    ind=0;
 }

@@ -1,3 +1,41 @@
+2001-11-09  Glenn Maynard <g_ld@zewt.org>
+
+	* FileSet.cc FileSet.h FileSetOutput.cc FileSetOutput.h FindJob.cc
+	FindJob.h FtpListInfo.cc Makefile.am TimeDate.h commands.cc
+	complete.cc ftpclass.cc FindJobDu.cc FindJobDu.h:
+
+	Fixed "cls dir/ dir2/", etc (restore directory.)
+
+	Fixed (my) memleak in FileSet (clear sorted list in Empty(); not sure why
+	this doesn't appear with FileSetOutput.)
+
+	Fixed cosmetic problem with FinderJob (status had [session status] twice.)
+
+	Fixed ParseFtpLongList_UNIX: guess_year needs -1900.  Also, DST rolling
+	around uncovered a bug; set the hour to something other than 0 if we
+	don't know it, or DST -1 will end up changing the date.
+
+	Fixed Time::time_t operator-.  Why -(int) and -(long)?  Also, haing
+	both Set() and set() is strange (and I don't see what the difference is.)
+
+	Added a bit to FinderJob:
+
+	Allow adding to ListInfo()'s Need.
+
+	FinderJob now expects a NextDir() by the child class's constructor.
+	NextDir needs to call a virtual; we can't do that from the base
+	constructor.  (I think it's a little more straightforward, too: always
+	start a find with NextDir, instead of the first path being an
+	exception.)
+
+	Regular find command now accepts multiple arguments.
+
+	Call Enter(dir) when entering a dir and Exit() when leaving;
+	Call ProcessList(fileset) when we have a new fileset, to give opportunity
+	for ops on the whole list, including sorting.
+
+	Added find and du to remote completers.
+
 2001-11-08  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: set debug level 4 for `550 No files found' reply;

@@ -62,9 +62,9 @@ public:
    const Time& operator+=(const TimeDiff &o);
    const Time& operator-=(const TimeDiff &o);
    time_t operator+(int t) { return UnixTime()+t; }
-   time_t operator-(int t) { return UnixTime()+t; }
+   time_t operator-(int t) { return UnixTime()-t; }
    time_t operator+(long t) { return UnixTime()+t; }
-   time_t operator-(long t) { return UnixTime()+t; }
+   time_t operator-(long t) { return UnixTime()-t; }
    bool operator<(const Time &o) const { return this->lt(o); }
    bool operator>=(const Time &o) const { return !(*this<o); }
    bool operator>(const Time &o) const { return *this>=o; }
