@@ -282,7 +282,7 @@ if test "$inetutils_cv_var_h_errno" = yes; then
 fi
 
 # See if the system has hstrerror, and replace it if not
-AC_CHECK_FUNC(hstrerror, , AC_LIBOBJ(hstrerror))
+AC_CHECK_FUNC(hstrerror, , [AC_LIBOBJ(hstrerror)])
 if test "$ac_cv_func_hstrerror" = yes; then
   IU_CHECK_DECL(hstrerror, [#include <netdb.h>])
 else
