@@ -355,7 +355,7 @@ static bool try_netscape_proxy(file_info &info,const char *str)
       debug("Netscape-Proxy 2.53 listing matched");
       return true;
    }
-   n=sscanf(str,"%3s %3s %d %2d:%2d:%2d %4d %s",
+   n=sscanf(str,"%3s %3s %d %2d:%2d:%2d %4d %30s",
 	    week_day,info.month_name,&info.day,
 	    &info.hour,&info.minute,&info.second,&info.year,info.size_str);
    if(n==7 || (n==8 && !is_ascii_digit(info.size_str[0])))
@@ -373,7 +373,7 @@ static bool try_squid_eplf(file_info &info,const char *str)
    info.clear();
 
    char week_day[4];
-   int n=sscanf(str,"%3s %3s %d %2d:%2d:%2d %4d %s",
+   int n=sscanf(str,"%3s %3s %d %2d:%2d:%2d %4d %30s",
 	    week_day,info.month_name,&info.day,
 	    &info.hour,&info.minute,&info.second,&info.year,info.size_str);
    if(n==8) // maybe squid's EPLF listing.
