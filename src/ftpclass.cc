@@ -412,12 +412,12 @@ static void normalize_path_vms(char *path)
       *path=0;
 }
 
-const char *Ftp::ExtractPWD()
+char *Ftp::ExtractPWD()
 {
    char *pwd=string_alloca(strlen(line)+1);
 
    if(sscanf(line,"%*d \"%[^\"]\"",pwd)!=1)
-      return "";
+      return 0;
 
    int dev_len=device_prefix_len(pwd);
    if(pwd[dev_len]=='[')
@@ -437,7 +437,7 @@ const char *Ftp::ExtractPWD()
 	 if(*s=='\\')
 	    *s='/';
    }
-   return pwd;
+   return xstrdup(pwd);
 }
 
 int   Ftp::Handle_PASV()
@@ -2604,7 +2604,7 @@ int   Ftp::CheckResp(int act)
 
    case CHECK_PWD:
       if(match && !home)
-	 home=xstrdup(ExtractPWD());
+	 home=ExtractPWD();   // it allocates space.
       new_state=state;
       break;
 

@@ -1,3 +1,7 @@
+1999-11-15  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: (ExtractPWD) don't return alloca'ed space, strdup it.
+
 1999-11-14  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CmdExec.cc, CmdExec.h: (SuspendJob) new method; (PrintStatus)
