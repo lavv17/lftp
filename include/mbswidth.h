@@ -22,7 +22,7 @@
 #endif
 
 #ifndef PARAMS
-# if defined PROTOTYPES || defined __STDC__
+# if defined PROTOTYPES || defined __STDC__ || defined __cplusplus
 #  define PARAMS(Args) Args
 # else
 #  define PARAMS(Args) ()
