@@ -31,6 +31,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <ctype.h>
+#include <fcntl.h>
 #include "xstring.h"
 #include "xmalloc.h"
 #include "ResMgr.h"
@@ -120,6 +121,9 @@ int   Resolver::Do()
 	 MakeErrMsg("pipe()");
 	 return MOVED;
       }
+      fcntl(pipe_to_child[0],F_SETFL,O_NONBLOCK);
+      fcntl(pipe_to_child[0],F_SETFD,FD_CLOEXEC);
+      fcntl(pipe_to_child[1],F_SETFD,FD_CLOEXEC);
       m=MOVED;
    }
 
@@ -156,6 +160,7 @@ int   Resolver::Do()
    int res=poll(&pfd,1,0);
    if(res!=1)
    {
+   not_ready:
       if(timeout>0)
       {
 	 if(now-start_time > timeout)
@@ -173,18 +178,27 @@ int   Resolver::Do()
    res=read(pipe_to_child[0],&c,1);
    if(res<0)
    {
+      if(errno==EINTR || errno==EAGAIN)
+	 goto not_ready;
    read_error:
       MakeErrMsg("read(pipe)");
       return MOVED;
    }
    if(res<1)
       goto proto_error;
+   // then goes blocking read, data should be ready
+   fcntl(pipe_to_child[0],F_SETFL,0);
    if(c=='E' || c=='P') // error
    {
       char buf[512];
+   read_msg_again:
       res=read(pipe_to_child[0],buf,sizeof(buf)-1);
       if(res<0)
+      {
+	 if(errno==EINTR)
+	    goto read_msg_again;
 	 goto read_error;
+      }
       buf[res]=0;
       err_msg=(char*)xmalloc(strlen(hostname)+res+3);
       sprintf(err_msg,"%s: %s",(c=='E'?hostname:portname),buf);
@@ -193,9 +207,14 @@ int   Resolver::Do()
    }
    res=sizeof(sockaddr_u)*128;
    addr=(sockaddr_u*)xmalloc(res);
+read_addr_again:
    res=read(pipe_to_child[0],addr,res);
    if(res<0)
+   {
+      if(errno==EINTR)
+	 goto read_addr_again;
       goto read_error;
+   }
    if((unsigned)res<sizeof(sockaddr_u))
    {
    proto_error:
