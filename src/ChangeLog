@@ -1,6 +1,10 @@
 2001-12-17  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: encode ' in bookmarks.
+	* MirrorJob.cc: handle mirror:parallel-transfer-count.
+	* bookmark.cc, bookmark.h, keyvalue.cc, keyvalue.h, commands.cc:
+	  don't show bookmarked passwords on `bookmark list', replace them
+	  with XXXX.
 
 2001-12-15  Alexander V. Lukyanov <lav@yars.free.net>
 

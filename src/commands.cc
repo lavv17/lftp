@@ -2349,7 +2349,7 @@ CMD(bookmark)
 
    if(!strcasecmp(op,"list"))
    {
-      char *list=lftp_bookmarks.Format();
+      char *list=lftp_bookmarks.FormatHidePasswords();
       Job *j=CopyJob::NewEcho(list,output,args->a0());
       xfree(list);
       output=0;

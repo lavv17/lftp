@@ -145,7 +145,7 @@ void KeyValueDB::Sort()
    }
 }
 
-char *KeyValueDB::Format()
+char *KeyValueDB::Format(StringMangler value_mangle)
 {
    Sort();
 
@@ -159,7 +159,7 @@ char *KeyValueDB::Format()
       int len=strlen(p->key);
       if(len>max_key_len)
 	 max_key_len=len;
-      size_required+=1+strlen(p->value)+1;
+      size_required+=1+strlen(value_mangle(p->value))+1;
       n++;
    }
    size_required+=max_key_len*n;
@@ -170,7 +170,7 @@ char *KeyValueDB::Format()
 
    for(p=chain; p; p=p->next)
    {
-      sprintf(store,"%-*s\t%s\n",max_key_len,p->key,p->value);
+      sprintf(store,"%-*s\t%s\n",max_key_len,p->key,value_mangle(p->value));
       store+=strlen(store);
    }
    *store=0; // this is for chain==0 case

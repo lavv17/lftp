@@ -44,6 +44,7 @@ public:
    void Remove(const char *id);
    const char *Lookup(const char *id);
    char *Format();
+   char *FormatHidePasswords();
 
    Bookmark();
    ~Bookmark();

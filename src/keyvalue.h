@@ -25,6 +25,15 @@
 
 #include "xmalloc.h"
 
+class StringMangler
+{
+   typedef const char *(*mangle_t)(const char *);
+   mangle_t mangle;
+public:
+   const char *operator()(const char *s) { return mangle?mangle(s):s; }
+   StringMangler(mangle_t m=0) { mangle=m; }
+};
+
 class KeyValueDB
 {
 protected:
@@ -79,7 +88,7 @@ public:
    int Write(int fd);
    int Read(int fd);
    void Sort();
-   char *Format(); // returns formatted contents (malloc'ed)
+   char *Format(StringMangler m=0); // returns formatted contents (malloc'ed)
 
    void Rewind()
       {
