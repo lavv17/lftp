@@ -199,10 +199,13 @@ void  Job::ListJobs(int verbose,int indent)
    {
       if(!scan->Done() && scan->parent==this)
       {
-	 printf("%*s",indent,"");
-	 if(scan->jobno>=0)
-	    printf("[%d] ",scan->jobno);
-	 printf("%s\n",scan->cmdline?scan->cmdline:"?");
+	 if(scan->jobno>=0 || scan->cmdline)
+	 {
+	    printf("%*s",indent,"");
+	    if(scan->jobno>=0)
+	       printf("[%d] ",scan->jobno);
+	    printf("%s\n",scan->cmdline?scan->cmdline:"?");
+	 }
 	 scan->PrintStatus(verbose);
 	 scan->ListJobs(verbose,indent+1);
       }
