@@ -1,4 +1,4 @@
-1999-12-22: Robert de Bath <rdebath@poboxes.com>
+1999-12-22  Robert de Bath <rdebath@poboxes.com>
 
 	* FileAccess.cc, FileAccess.h, Http.cc, LocalAccess.cc, NetAccess.cc,
 	  ftpclass.cc: rehash debug levels.
