@@ -24,17 +24,18 @@
 #define SLEEPJOB_H
 
 #include "Job.h"
+#include "ResMgr.h"
 
 class SleepJob : public SessionJob
 {
-   time_t the_time;
+   time_t start_time;
+   TimeInterval next_time;
    char *cmd;
    int exit_code;
    bool done;
    char *saved_cwd;
    class CmdExec *exec;
    bool   repeat;
-   time_t repeat_delay;
    int    repeat_count;
 
 public:
@@ -42,12 +43,12 @@ public:
    int Done() { return done; }
    int ExitCode() { return exit_code; }
 
-   SleepJob(time_t when,FileAccess *s=0,char *what=0);
+   SleepJob(const TimeInterval &when,FileAccess *s=0,char *what=0);
    ~SleepJob();
 
    void PrintStatus(int v);
 
-   void Repeat(time_t d) { repeat=true; repeat_delay=d; }
+   void Repeat() { repeat=true; start_time-=next_time.Seconds(); }
 };
 
 #endif//SLEEPJOB_H

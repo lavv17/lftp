@@ -136,6 +136,12 @@ class TimeInterval
    const char *error_text;
 public:
    TimeInterval(const char *);
+   TimeInterval(time_t i)
+      {
+	 interval=i;
+	 infty=false;
+	 error_text=0;
+      }
    ~TimeInterval();
    bool Error() { return error_text!=0; };
    const char *ErrorText() { return error_text; }

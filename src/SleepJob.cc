@@ -26,22 +26,21 @@
 #include "CmdExec.h"
 #include "misc.h"
 
-SleepJob::SleepJob(time_t when,FileAccess *s,char *what)
-   : SessionJob(s)
+SleepJob::SleepJob(const TimeInterval &when,FileAccess *s,char *what)
+   : SessionJob(s), next_time(when)
 {
-   the_time=when;
+   start_time=now;
    cmd=what;
    exit_code=0;
    done=false;
    saved_cwd=xgetcwd();
    repeat=false;
-   repeat_delay=1;
    repeat_count=0;
    exec=0;
 }
 SleepJob::~SleepJob()
 {
-   if(exec && exec!=waiting)
+   if(exec)
       delete exec;
    xfree(cmd);
    xfree(saved_cwd);
@@ -66,11 +65,18 @@ int SleepJob::Do()
 	 return MOVED;
       }
       repeat_count++;
-      the_time=now+repeat_delay;
+      start_time=now;
+      exec=(CmdExec*)waiting; // we are sure it is CmdExec.
       waiting=0;
    }
 
-   if(now>=the_time)
+   if(next_time.IsInfty())
+   {
+      Timeout(HOUR*1000);  // to avoid deadlock message
+      return STALL;
+   }
+
+   if(now-start_time>=next_time.Seconds())
    {
       if(cmd)
       {
@@ -81,21 +87,22 @@ int SleepJob::Do()
 	    exec->parent=this;
 	    exec->SetCWD(saved_cwd);
 	    exec->AllocJobno();
-	    exec->cmdline=(char*)xmalloc(2+strlen(cmd));
+	    exec->cmdline=(char*)xmalloc(3+strlen(cmd));
 	    sprintf(exec->cmdline,"(%s)",cmd);
 	 }
-	 waiting=exec;
 	 exec->FeedCmd(cmd);
 	 exec->FeedCmd("\n");
+	 waiting=exec;
+	 exec=0;
 	 return MOVED;
       }
       done=true;
       return MOVED;
    }
-   time_t diff=the_time-now;
+   time_t diff=next_time.Seconds()-(now-start_time);
    if(diff>1024)
       diff=1024;  // prevent overflow
-   block+=TimeOut(diff*1000);
+   Timeout(diff*1000);
    return STALL;
 }
 
@@ -122,13 +129,13 @@ Job *cmd_sleep(CmdExec *parent)
       return 0;
    }
    const char *t=args->getarg(1);
-   time_t delay=decode_delay(t);
-   if(delay==(time_t)-1)
+   TimeInterval delay(t);
+   if(delay.Error())
    {
-      eprintf(_("%s: invalid delay. "),op);
+      eprintf("%s: %s: %s. ",op,t,delay.ErrorText());
       goto err;
    }
-   return new SleepJob(time(0)+delay);
+   return new SleepJob(delay);
 }
 
 Job *cmd_repeat(CmdExec *parent)
@@ -136,14 +143,13 @@ Job *cmd_repeat(CmdExec *parent)
    const char *op=args->a0();
    int cmd_start=1;
    const char *t=args->getarg(1);
-   time_t delay=1;
+   TimeInterval delay(1);
    if(t && isdigit((unsigned char)t[0]))
    {
-      delay=decode_delay(t);
-      if(delay==(time_t)-1)
+      delay=TimeInterval(t);
+      if(delay.Error())
       {
-	 eprintf(_("%s: invalid delay. "),op);
-	 eprintf("\n");
+	 eprintf("%s: %s: %s.\n",op,t,delay.ErrorText());
 	 return 0;
       }
       cmd_start=2;
@@ -151,8 +157,8 @@ Job *cmd_repeat(CmdExec *parent)
 
    char *cmd = (args->count()==cmd_start+1
 	        ? args->Combine(cmd_start) : args->CombineQuoted(cmd_start));
-   SleepJob *s=new SleepJob(time(0),Clone(),cmd);
-   s->Repeat(delay);
+   SleepJob *s=new SleepJob(delay,Clone(),cmd);
+   s->Repeat();
    return s;
 }
 
@@ -206,7 +212,7 @@ Job *cmd_at(CmdExec *parent)
    }
 
    FileAccess *s = cmd ? Clone() : 0;
-   return new SleepJob(when, s, cmd);
+   return new SleepJob(when-now, s, cmd);
 }
 #undef args
 

@@ -1,5 +1,12 @@
 1999-09-19  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* MirrorJob.cc: don't print messages when lftp is not foreground
+	  process.
+	* ResMgr.h: add TimeInterval(time_t) constructor.
+	* SleepJob.cc, SleepJob.h: use TimeInterval; support `sleep forever'.
+
+1999-09-19  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* ResMgr.cc, ResMgr.h: new resource type TimeInterval.
 	* Resolver.cc, Resolver.h: settings cache-{enable,expire,size}.
 	* commands.cc: (set) print more meaningful message for invalid values.
