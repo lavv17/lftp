@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.53)
-AC_INIT([lftp], [3.0.4], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [3.0.5rc2], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
 AM_CONFIG_HEADER(include/config.h)
@@ -228,14 +228,12 @@ LIBTOOL="$LIBTOOL --silent"
 
 dnl Checks for libraries.
 LFTP_CHECK_LIBM
-dnl This won't work for glibc2
-dnl AC_SEARCH_LIBS(md5_process_bytes,crypt,[AC_DEFINE(HAVE_MD5, 1, [md5 support is present in libc or libcrypt])])
-AC_SEARCH_LIBS(socket,socket)
-AC_SEARCH_LIBS(gethostbyname,nsl)
-AC_SEARCH_LIBS(dlopen,dl,[AC_DEFINE(HAVE_DLOPEN, 1, [have dlopen])])
-AC_SEARCH_LIBS(res_9_search,resolv,[AC_DEFINE(HAVE_RES_9_SEARCH, 1, [have res_9_search])])
-AC_SEARCH_LIBS(res_search,resolv bind,[AC_DEFINE(HAVE_RES_SEARCH, 1, [have res_search])])
-IU_CHECK_DECL(res_search, [
+AC_SEARCH_LIBS([socket],[socket])
+AC_SEARCH_LIBS([gethostbyname],[nsl])
+AC_SEARCH_LIBS([dlopen],[dl],[AC_DEFINE(HAVE_DLOPEN, 1, [have dlopen])])
+AC_SEARCH_LIBS([res_9_search],[resolv],[AC_DEFINE(HAVE_RES_9_SEARCH, 1, [have res_9_search])])
+AC_SEARCH_LIBS([res_search],[resolv bind],[AC_DEFINE(HAVE_RES_SEARCH, 1, [have res_search])])
+AC_CHECK_DECLS([res_search],,, [
      #include <stdio.h>
      #include <sys/types.h>
      #include <netinet/in.h>
@@ -275,23 +273,23 @@ AC_HEADER_SYS_WAIT
 AC_HEADER_TIME
 AC_CHECK_HEADERS(fcntl.h sys/time.h errno.h stdlib.h varargs.h dirent.h\
  termios.h termio.h sys/select.h sys/poll.h sys/stropts.h string.h memory.h\
- strings.h sys/ioctl.h dlfcn.h arpa/nameser.h netinet/tcp.h netinet/in.h\
+ strings.h sys/ioctl.h dlfcn.h arpa/inet.h arpa/nameser.h netinet/in.h netinet/tcp.h\
  resolv.h langinfo.h endian.h regex.h locale.h,,,[
 #include <sys/types.h>
 #ifdef HAVE_ARPA_NAMESER_H
-#include <arpa/nameser.h>
+# include <arpa/nameser.h>
 #endif
 #ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
+# include <netinet/in.h>
 #endif
 ])
 
 # See if the system has strerror and replace if not
-AC_CHECK_FUNC(strerror, AC_DEFINE(HAVE_STRERROR, 1, [System has usable strerror]),[
-  AC_LIBOBJ(strerror)
+AC_CHECK_FUNC([strerror], AC_DEFINE(HAVE_STRERROR, 1, [System has usable strerror]),[
+  AC_LIBOBJ([strerror])
   # No strerror, so see if the SYS_ERRLIST variable can be used by ours
-  AC_CHECK_FUNC(sys_errlist,
-    IU_CHECK_DECL(sys_errlist, [
+  AC_CHECK_FUNC([sys_errlist],
+    AC_CHECK_DECLS([sys_errlist],,, [
       #include <stdio.h>
       #ifdef HAVE_ERRNO_H
       #include <errno.h>
@@ -308,18 +306,18 @@ AC_CACHE_CHECK([for h_errno], inetutils_cv_var_h_errno,
       int iu_x = h_errno; ],
     inetutils_cv_var_h_errno=yes, inetutils_cv_var_h_errno=no))
 if test "$inetutils_cv_var_h_errno" = yes; then
-  AC_DEFINE(HAVE_H_ERRNO, 1, [system has h_errno])
-  IU_CHECK_DECL(h_errno, [#include <netdb.h>])
+  AC_DEFINE([HAVE_H_ERRNO], 1, [system has h_errno])
+  AC_CHECK_DECLS([h_errno],,, [#include <netdb.h>])
 fi
 
 # See if the system has hstrerror, and replace it if not
 AC_CHECK_FUNC(hstrerror, , [AC_LIBOBJ(hstrerror)])
 if test "$ac_cv_func_hstrerror" = yes; then
-  IU_CHECK_DECL(hstrerror, [#include <netdb.h>])
+  AC_CHECK_DECLS([hstrerror],,, [#include <netdb.h>])
 else
   # No hstrerror, so see if the H_ERRLIST variable can be used by ours
-  AC_CHECK_FUNC(h_errlist,
-    IU_CHECK_DECL(h_errlist, [#include <netdb.h>]))
+  AC_CHECK_FUNC([h_errlist],
+    AC_CHECK_DECLS([h_errlist],,, [#include <netdb.h>]))
 fi
 if test "$ac_cv_func_hstrerror" = yes -o "$ac_cv_func_h_errlist" = yes; then
   # If there's a system hstrerror, or we can reasonably replace it, say so.
@@ -331,8 +329,6 @@ fi
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_PID_T
-AC_STRUCT_TM
-
 AC_C_CONST
 AC_C_INLINE
 AC_TYPE_OFF_T
@@ -341,8 +337,11 @@ if test x$ac_cv_header_endian_h = xno; then
    AC_C_BIGENDIAN
 fi
 TYPE_SOCKLEN_T
-
+AC_CHECK_MEMBERS([struct sockaddr.sa_len],,,
+                 [#include <sys/types.h>
+                  #include <sys/socket.h>])
 AC_STRUCT_TIMEZONE
+AC_STRUCT_TM
 
 dnl Checks for library functions.
 AC_TYPE_SIGNAL
@@ -354,27 +353,35 @@ LFTP_GNU_FNMATCH
 AC_HEADER_STAT
 LFTP_FUNC_POLL
 LFTP_FUNC_SSCANF_CONST
-AC_CHECK_FUNCS(strdup strstr lstat lchown select regexec glob\
+AC_CHECK_FUNCS([strdup strstr lstat lchown select regexec glob\
  killpg setpgid tcgetattr ftruncate vsnprintf sscanf gettimeofday\
  gethostbyname2 getipnodebyname getaddrinfo getnameinfo setsid random\
- inet_aton unsetenv setlocale nl_langinfo)
+ inet_aton unsetenv setlocale nl_langinfo])
 AC_FUNC_ALLOCA
-IU_CHECK_DECL(vsnprintf, [#include <stdio.h>])
-IU_CHECK_DECL(unsetenv, [#include <stdlib.h>])
-
 lftp_VA_COPY
-
 LFTP_ENVIRON_CHECK
-
-AC_REPLACE_FUNCS(mktime memmove strcasecmp strncasecmp strtol strtoul strptime strtok_r)
-IU_CHECK_DECL(strcasecmp, [#include <string.h>])
-IU_CHECK_DECL(strptime, [#include <time.h>])
-IU_CHECK_DECL(random, [#include <stdlib.h>])
-IU_CHECK_DECL(inet_aton, [
-   #include <sys/types.h>
-   #include <sys/socket.h>
-   #include <netinet/in.h>
-   #include <arpa/inet.h>
+AC_REPLACE_FUNCS([mktime memmove strcasecmp strncasecmp strtol strtoul\
+ strptime strtok_r])
+AC_CHECK_DECLS([vsnprintf,unsetenv,random,inet_aton,strcasecmp,strptime,strtok_r],,,[
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#if STDC_HEADERS || HAVE_STRING_H
+# include <string.h>
+# if !STDC_HEADERS && HAVE_MEMORY_H
+#  include <memory.h>
+# endif
+#else
+# include <strings.h>
+#endif
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
+#ifdef HAVE_ARPA_INET_H
+# include <arpa/inet.h>
+#endif
 ])
 
 # always want GNU getopt
