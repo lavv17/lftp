@@ -24,6 +24,7 @@
 #define CATJOB_H
 
 #include "CopyJob.h"
+#include "StatusLine.h"
 
 class ArgV;
 class OutputJob;
@@ -48,6 +49,7 @@ public:
 
    void Ascii() { ascii=true; }
    void Binary() { ascii=auto_ascii=false; }
+   void ShowRunStatus(StatusLine *s);
 };
 
 #endif /* CATJOB_H */

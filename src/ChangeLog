@@ -1,3 +1,46 @@
+2002-07-12  Glenn Maynard <g_ld@zewt.org>
+
+* OutputJob.cc, OutputJob.h:
+ Update comments.
+
+ Let the input copier own output_fd, so it'll delete it when it's done
+ with it as intended (fixing the delete->close fd->output finished code path).
+ This also means we don't have to deal with fg_data in OutputJob (since
+ the copier owns the fd, CopyJob will do it for us.)
+
+ eof is gone.
+
+ Store width/tty status so we don't need output_fd after initialization.
+ (needed in order to let the copier own it)
+
+ Reversed DontFailIfBroken parameter.
+
+ Disable fail_if_broken correctly; leave incorrect one in place for now
+ (see comments.)  Fixes broken pipe with zcat.
+
+ Use Timer; fixes scheduler problems with updating the statusline.
+
+ Clear the status line on init, since if we have a statusline and
+ we start a filter we won't be able to clear it later (due to changed
+ pgrp.)
+
+* StatusLine.cc, StatusLine.h, OutputJob.cc, all ShowStatusLine users:
+ When we've output to stdout recently, instead of refusing to print a
+ statusline, instead tell the statusline to only send the next update to
+ the title.  This gives us a title status during "cat", etc.
+
+* CmdExec.cc, StatusLine.cc, StatusLine.h: Don't clear the title when
+ we're clearing the statusline due to stdout.
+
+* CatJob.cc: Override ShowRunStatus to call output->ShowStatusLine.  (Any
+ job using an OutputJob should call ShowStatusLine() before it or a child
+ displays a statusline; CopyJob, CatJob's child, was displaying a
+ statusline without doing this.)
+
+* OutputJob.cc, OutputJob.h, CatJob.cc: Don't reenable the statusbar for
+ commands that stream data from the server, since that's annoying when
+ the server is rate-limited per-second.
+
 2002-07-10  Glenn Maynard <g_ld@zewt.org>
 
 	* CmdExec.cc: fd leak fixed.

@@ -20,15 +20,6 @@
 
 /* Usage notes:
  *
- * Set AllowPostpone to true if sending large amounts of data.  Check the
- * result of each Put and Format call to see if a write was postponed.
- * If disabled, writes will always succeed.
- *
- * This is useful for jobs with a lot of output, like "cat". This can be
- * set selectively, where convenient.  For example, a job which outputs a
- * line of formatted text, followed by the contents of a file, can send
- * the first line with AllowPostpone off, then the file with it on.
- *
  * Call PreFilter() to add a filter to the beginning of the chain; these
  * filters are initialized only once for all data.  For example,
  * PreFilter("wc -l")
@@ -37,7 +28,8 @@
 
 /*
  * Implementation notes:
- * Background things we can't get around:
+ *
+ * Background things we can't get around: 
  * We must buffer (via FileCopy) output to a filter, since it might block.
  *
  * We must buffer the output from the filter to an output FileCopyPeer (ie.
@@ -50,14 +42,10 @@
  *
  * In the case where we're outputting to a URL, we set up a FileCopy from a
  * pipe to the URL, and then pretend we're just outputting to an FD (the
- * pipe.)
- *
- * to it and pretend we're just outputting to a file; this simplifies things
- * significantly.  This means in the simple case of having no filters at
- * all, writing to a URL or file, we send the data an extra time through
- * a FileCopy and a pipe.  That's a bit inefficient, but that's
- * "cat file1 > file2"; that's normally done with "get file1 -o file2", so
- * this shouldn't happen often.
+ * pipe.) This means in the simple case of having no filters at all, writing
+ * to a URL or file, we send the data an extra time through a FileCopy and a
+ * pipe.  That's a bit inefficient, but that's "cat file1 > file2"; that's
+ * normally done with "get file1 -o file2", so this shouldn't happen often.
  *
  * It's very important that if the output is stdout, any filters point directly
  * at it, not through an extra copy: a pager, for example, will expect the output
@@ -93,6 +81,18 @@ void OutputJob::InitCopy()
 
    initialized=true;
 
+   if(Error())
+      return;
+
+   /* Clear the statusline, since we might change the pgrp if we create filters. */
+   printf("%s", ""); /* (and avoid gcc warning) */
+
+   /* Some legitimate uses produce broken pipe condition (cat|head).
+    * We still want to produce broken pipe if we're not piping, eg
+    * cat > pipe. */
+   if(IsFiltered())
+      fail_if_broken=false;
+
    if(filter)
    {
       /* Create the global filter: */
@@ -103,9 +103,15 @@ void OutputJob::InitCopy()
 
    /* Use a FileCopy to buffer our output to the filter: */
    FileCopyPeerFDStream *out = new FileCopyPeerFDStream(output_fd, FileCopyPeer::PUT);
-   out->DontDeleteStream();
-
    FileCopy *input_fc = FileCopy::New(new FileCopyPeer(FileCopyPeer::GET), out, false);
+
+   /* out now owns output_fd, and will delete it when it's finished, so
+    * we can't keep it around. */
+   output_fd=0;
+
+   // I don't think we need to do this; the CopyJob picks up the output_fd's
+   // FgData now, since we're not telling it not to delete it.
+   // fg_data=new FgData(output_fd->GetProcGroup(),fg);
 
    if(!fail_if_broken)
       input_fc->DontFailIfBroken();
@@ -148,17 +154,17 @@ void OutputJob::Init(const char *_a0)
    initialized=false;
    error=false;
    no_status=false;
-   eof=false;
    a0=xstrdup(_a0);
-   last.Set(0,0);
    is_stdout=false;
    fail_if_broken=true;
    output_fd=0;
+   is_a_tty=false;
+   width=-1;
+   statusbar_redisplay=true;
 }
 
 /* Local (fd) output. */
-OutputJob::OutputJob(FDStream *output_, const char *a0):
-   inter(1)
+OutputJob::OutputJob(FDStream *output_, const char *a0)
 {
    Init(a0);
 
@@ -167,12 +173,20 @@ OutputJob::OutputJob(FDStream *output_, const char *a0):
    if(!output_fd)
       output_fd=new FDStream(1,"<stdout>");
    else
-      // some legitimate uses produce broken pipe condition (cat|head)
-      // TODO: once actual piping uses OutputJob, set this only when
-      // really doing a pipe, so cat>file can produce broken pipe
+      /* We don't want to produce broken pipe when we're actually
+       * piping, since some legitimate uses produce broken pipe, eg
+       * cat|head.  However, that's actually handled in InitCopy().
+       * User pipes aren't handled by us yet: instead of being set with
+       * SetFilter, they're being set up ahead of time and passed to
+       * us as an FDStream, so we don't really know if we're being filtered.
+       * 
+       * So, until we handle pipes directly, disable broken pipe whenever
+       * we're being sent anywhere but stdout. */
       fail_if_broken=false;
 
    is_stdout=output_fd->usesfd(1);
+   is_a_tty=isatty(output_fd->fd);
+   width=fd_width(output_fd->fd);
 
    /* We don't output status when outputting locally. */
    no_status=true;
@@ -187,8 +201,7 @@ OutputJob::OutputJob(FDStream *output_, const char *a0):
    }
 }
 
-OutputJob::OutputJob(const char *path, const char *a0, FileAccess *fa):
-   inter(1)
+OutputJob::OutputJob(const char *path, const char *a0, FileAccess *fa)
 {
    Init(a0);
 
@@ -200,9 +213,6 @@ OutputJob::OutputJob(const char *path, const char *a0, FileAccess *fa):
       /* FIXME: This can be retryable. */
       eprintf("%s: %s\n", a0, strerror(errno));
       error=true;
-      /* This won't actually be written to, since error is set, but we must set
-       * it to something. */
-      output_fd=new FDStream(1, "<stdout>");
       return;
    }
 
@@ -248,17 +258,10 @@ OutputJob::~OutputJob()
    xfree(filter);
 }
 
-void OutputJob::Reconfig(const char *r)
+/* This is called to ask us "permission" to display a status line. */
+bool OutputJob::ShowStatusLine(StatusLine *s)
 {
-   if(!r || !strcmp(r,"cmd:status-interval"))
-   {
-      inter=TimeInterval((const char*)ResMgr::Query("cmd:status-interval",0));
-   }
-}
-
-bool OutputJob::ShowStatusLine()
-{
-   /* If our output file is gone, or isn't stdout, we don't care, */
+   /* If our output file is gone, or isn't stdout, we don't care. */
    if(!output || !is_stdout)
       return true;
 
@@ -275,22 +278,32 @@ bool OutputJob::ShowStatusLine()
    /* We're line buffered, so we can output a status line without stomping
     * on a partially output line.
     *
-    * Don't display the statusline if the we've output something within the
-    * last status interval, so if we're currently bursting output we won't
-    * flicker status for no reason.  (Actually, we should be concerned about
-    * the last time the output peer has sent something...) */
-   if(now - last < inter)
-      return false;
+    * If we've output something recently, only send the output to the title,
+    * to avoid flickering status for no reason.
+    */
+   if(!update_timer.Stopped()) {
+      s->NextUpdateTitleOnly();
+      return true;
+   }
 
-   last = now;
+   /* If we're not reenabling the status bar, and the statusbar has
+    * been turned off (due to output being reenabled), only send to
+    * the title. */
+   if(!statusbar_redisplay && output->GetCopy()->WriteAllowed())
+   {
+      s->NextUpdateTitleOnly();
+      return true;
+   }
 
-   /* Stop the output again, so the FileCopy will clear the StatusLine
-    * when there's more data. */
+   /* There hasn't been output in a while.  Stop the output again,
+    * so the FileCopy will clear the StatusLine when there's more data. */
    output->GetCopy()->AllowWrite(false);
 
    return true;
 }
 
+/* Get our contribution to the status line, which is just the output
+ * status, if any.  Input status is the job of the user object. */
 const char *OutputJob::Status(const StatusLine *s)
 {
    if(no_status)
@@ -312,9 +325,10 @@ void OutputJob::PutEOF()
     * that we always start the input->output code path. */
    Put("", 0);
 
+   /* Send an EOF to the input peer; it'll send an EOF to the output peer
+    * when all of its data is actually sent. */
    if(InputPeer())
       InputPeer()->PutEOF();
-   eof=true;
 }
 
 /* add a filter to the beginning of the list */
@@ -338,18 +352,23 @@ void OutputJob::SetFilter(const char *newfilter)
    filter=xstrdup(newfilter);
 }
 
+/* Return the width of the output.  If there's a filter, we can either
+ * return -1 (we might be piping through "sed", changing the width),
+ * or the width we know (which is sane for most pagers.)  I'm not sure
+ * which is better. */
 int OutputJob::GetWidth() const
 {
-   if(IsFiltered() || output_fd->getfd() != 1)
+   if(IsFiltered())
       return -1;
-   return fd_width(1);
+   return width;
 }
 
+/* Return true if the output is going directly to a TTY. */
 bool OutputJob::IsTTY() const
 {
-   if(IsFiltered() || output_fd->getfd() != 1)
+   if(IsFiltered())
       return false;
-   return isatty(1);
+   return is_a_tty;
 }
 
 /* Get the input FileCopyPeer; this is the buffer we write to. */
@@ -369,12 +388,7 @@ int OutputJob::Done()
 {
    if(Error())
       return true;
-
-   /* We're always done if the output breaks, regardless of whether
-    * we treat it as an error or not. */
-   if(output_fd->broken())
-      return true;
-
+   
    if(!initialized)
       return false;
 
@@ -382,29 +396,12 @@ int OutputJob::Done()
      return false;
    if(output && !output->Done())
      return false;
-   if(output_fd && !output_fd->Done())
-     return false;
-
-      return true;
-   return false;
-   if(eof && input && input->Done() && output && output->Done())
-//   if(eof && output && output->Done())
-   {
-	   printf("xxxxxx\n");
-      return true;
-   }
-
-   return false;
+   
+   return true;
 }
 
 int OutputJob::Do()
 {
-   if(!fg_data && output_fd && output_fd->GetProcGroup())
-   {
-      fg_data=new FgData(output_fd->GetProcGroup(),fg);
-      return MOVED;
-   }
-
    return STALL;
 }
 
@@ -417,8 +414,6 @@ bool OutputJob::Error()
    if(input && input->Error() && input->Done())
       error=true;
    if(output && input != output && output->Error() && output->Done())
-      error=true;
-   if(fail_if_broken && output_fd->broken())
       error=true;
    return error;
 }
@@ -492,7 +487,7 @@ void OutputJob::Put(const char *buf,int size)
    if(!InputPeer())
       return;
 
-   last.SetToCurrentTime();
+   update_timer.SetResource("cmd:status-interval",0);
 
    int oldpos = InputPeer()->GetPos();
    InputPeer()->Put(buf, size);
@@ -504,6 +499,8 @@ void OutputJob::Format(const char *f,...)
    InitCopy();
    if(!InputPeer())
       return;
+
+   update_timer.SetResource("cmd:status-interval",0);
 
    int oldpos = InputPeer()->GetPos();
 
@@ -525,11 +522,12 @@ int OutputJob::AcceptSig(int sig)
    /* If we have an input copier right now, it'll contain the top filter
     * (which is linked to all other filters), so send it the signal. */
    if(input)
-      m=input->AcceptSig(sig);
+      input->AcceptSig(sig);
    /* Otherwise, the only filters we have running are in output_fd. */
-   else
+   else if(output_fd)
       output_fd->Kill(sig);
    if(sig!=SIGCONT)
       AcceptSig(SIGCONT);
    return m;
 }
+

@@ -58,6 +58,7 @@ StatusLine::StatusLine(int new_fd)
 {
    fd=new_fd;
    update_delayed=false;
+   next_update_title_only=false;
    strcpy(shown,"");
    strcpy(def_title,"");
    not_term=!isatty(fd);
@@ -69,7 +70,7 @@ StatusLine::~StatusLine()
 {
 }
 
-void StatusLine::Clear()
+void StatusLine::Clear(bool title_also)
 {
    char newstr[sizeof(shown)];
 
@@ -78,7 +79,8 @@ void StatusLine::Clear()
    update_delayed=false;
    update_timer.SetMilliSeconds(20);
 
-   WriteTitle(def_title, fd);
+   if(title_also)
+      WriteTitle(def_title, fd);
 }
 
 void StatusLine::DefaultTitle(const char *s)
@@ -147,6 +149,12 @@ void StatusLine::update(char *newstr)
 
    /* Don't write blank titles into the title; let Clear() do that. */
    if(newstr[0]) WriteTitle(newstr, fd);
+
+   if(next_update_title_only)
+   {
+      next_update_title_only=false;
+      return;
+   }
 
    char *end=newstr+strlen(newstr);
 

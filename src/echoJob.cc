@@ -70,7 +70,7 @@ void  echoJob::ShowRunStatus(StatusLine *s)
    /* Never call output->ShowStatusLine unless we're really going
     * to display something. */
    const char *stat = output->Status(s);
-   if(*stat && output->ShowStatusLine())
+   if(*stat && output->ShowStatusLine(s))
       s->Show("echo: %s", stat);
 }
 

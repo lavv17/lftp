@@ -949,7 +949,7 @@ void CmdExec::Reconfig(const char *name)
 void CmdExec::pre_stdout()
 {
    if(status_line)
-      status_line->Clear();
+      status_line->Clear(false);
    if(feeder_called)
       feeder->clear();
    current->TimeoutS(1);

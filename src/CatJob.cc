@@ -95,6 +95,8 @@ CatJob::CatJob(FileAccess *new_session,OutputJob *_output,ArgV *new_args)
    ascii=false;
    auto_ascii=true;
 
+   output->DontRedisplayStatusbar();
+
    if(!strcmp(op,"more") || !strcmp(op,"zmore") || !strcmp(op,"bzmore"))
    {
       const char *pager=getenv("PAGER");
@@ -114,3 +116,12 @@ CatJob::CatJob(FileAccess *new_session,OutputJob *_output,ArgV *new_args)
       Binary();
    }
 }
+
+void CatJob::ShowRunStatus(StatusLine *s)
+{
+   if(cp && cp->HasStatus() && output->ShowStatusLine(s))
+   {
+      cp->ShowRunStatus(s);
+   }
+}
+   

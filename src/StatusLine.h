@@ -37,6 +37,7 @@ class StatusLine : public SMTask
    bool update_delayed;
    void update(char *);
    int LastWidth;
+   bool next_update_title_only;
 
 protected:
    ~StatusLine();
@@ -45,10 +46,11 @@ protected:
 public:
    int GetWidth();
    int GetWidthDelayed() const { return LastWidth; }
+   void NextUpdateTitleOnly() { next_update_title_only=true; }
    void DefaultTitle(const char *s);
    void Show(const char *f,...) PRINTF_LIKE(2,3);
    void WriteLine(const char *f,...) PRINTF_LIKE(2,3);
-   void Clear();
+   void Clear(bool title_also=true);
 
    int getfd() const { return fd; }
 

@@ -422,7 +422,7 @@ void clsJob::ShowRunStatus(StatusLine *s)
    if(fso.quiet)
       return;
 
-   if(!output->ShowStatusLine())
+   if(!output->ShowStatusLine(s))
       return;
 
    if(list_info && !list_info->Done())

@@ -24,7 +24,7 @@
 #include "Job.h"
 #include "FileCopy.h"
 #include "CopyJob.h"
-#include "TimeDate.h"
+#include "Timer.h"
 
 class StatusBar;
 
@@ -46,14 +46,16 @@ class OutputJob : public Job
    bool error;
    bool is_stdout;
    bool fail_if_broken;
-   bool eof;
+   bool statusbar_redisplay;
+
+   int width;
+   bool is_a_tty;
 
    /* if true, we never contribute to the parent job's status
     * (Status() == "") */
    bool no_status;
 
-   Time last;
-   TimeInterval inter;
+   Timer update_timer;
 
    void Init(const char *a0);
    void InitCopy();
@@ -76,7 +78,7 @@ public:
    /* Prepend a filter before the main filter: */
    void PreFilter(const char *filter);
 
-   void DontFailIfBroken(bool n=false) { fail_if_broken=n; }
+   void DontFailIfBroken(bool y=true) { fail_if_broken=!y; }
    bool Error();
 
    int Done();
@@ -87,8 +89,9 @@ public:
    void Format(const char *f,...) PRINTF_LIKE(2,3);
    void PutEOF();
 
-   /* Return true if our buffers don't want any more input.  (They'll always
-    * *accept* more input; this is optional.) */
+   /* If sending large amounts of data, call this function and stop
+    * sending if it returns true.  (This always accept more input;
+    * this is optional.) */
    bool Full();
 
    /* Get properties of the output: */
@@ -101,10 +104,14 @@ public:
 
    /* Call before showing a StatusLine on a job using this class.  If it
     * returns false, don't display it. */
-   bool ShowStatusLine();
+   bool ShowStatusLine(StatusLine *s);
+
+   /* For commands that stream output from servers, redisplaying the
+    * statusbar when output becomes idle can be annoying, especially
+    * if the line is rate-limited. */
+   void DontRedisplayStatusbar() { statusbar_redisplay=false; }
 
    const char *Status(const StatusLine *s);
-   void Reconfig(const char *r);
 
    void Fg();
    void Bg();
