@@ -1,3 +1,7 @@
+2002-01-30  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: give direct parent a priority to continue transfers.
+
 2002-01-29  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* LocalDir.cc, LocalDir.h: add forgotten dtor.

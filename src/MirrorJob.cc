@@ -587,14 +587,14 @@ int   MirrorJob::Do()
       	 if(!file)
 	 {
 	    if(waiting_num>0)
-	       return m;
+	       break;
 	    goto pre_TARGET_REMOVE_OLD;
 	 }
 	 HandleFile(file);
 	 to_transfer->next();
 	 m=MOVED;
       }
-      return m;
+      break;
 
    pre_TARGET_REMOVE_OLD:
       to_rm->Count(&stats.del_dirs,&stats.del_files,&stats.del_symlinks,&stats.del_files);
@@ -650,7 +650,7 @@ int   MirrorJob::Do()
 		     dir_file(target_relative_dir,file->name));
 	 }
       }
-      return m;
+      break;
 
    pre_TARGET_CHMOD:
       if(flags&NO_PERMS)
@@ -687,7 +687,7 @@ int   MirrorJob::Do()
 	 cj->BeQuiet();   // chmod is not supported on all servers; be quiet.
 	 m=MOVED;
       }
-      return m;
+      break;
 
    pre_DONE:
       if(target_is_local)     // FIXME
@@ -711,10 +711,11 @@ int   MirrorJob::Do()
 	 transfer_count--;
 	 m=MOVED;
       }
-      return m;
+      break;
    }
-   /*NOTREACHED*/
-   abort();
+   // give direct parent priority over grand-parents.
+   if(transfer_count<parallel && parent_mirror)
+      m|=Roll(parent_mirror);
    return m;
 }
 
