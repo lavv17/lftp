@@ -1,25 +1,29 @@
-2001-01-10  Alexander V. Lukyanov <lav@yars.free.net>
+2002-01-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* StringPool.cc: handle null pointer.
+
+2002-01-10  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CatJob.cc, CatJob.h: use DontFailIfBroken.
 	* LocalAccess.cc: (CurrentStatus) implemented; use stream->status;
 	  use chdir to verify directories.
 
-2001-01-10  Glenn Maynard <g_ld@zewt.org>
+2002-01-10  Glenn Maynard <g_ld@zewt.org>
 
 	* FileCopy.cc, FileCopy.h: (fail_if_broken) new member.
 	* ftpclass.cc: comments added; cosmetic changes.
 
-2001-01-09  Alexander V. Lukyanov <lav@yars.free.net>
+2002-01-09  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc, FileCopy.h: (FileCopyPeer::done) new member; use it;
 	  (FileCopyPeerFDStream::Done) method removed.
 
-2001-01-08  Alexander V. Lukyanov <lav@yars.free.net>
+2002-01-08  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Job.cc, Job.h: (CheckForWaitLoop) new method.
 	* commands.cc: (wait) use it.
 
-2001-01-04  Alexander V. Lukyanov <lav@yars.free.net>
+2002-01-04  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* LocalDir.cc, LocalDir.h: new files.
 	* CmdExec.cc, CmdExec.h: use new LocalDirectory class; specify local
@@ -31,7 +35,7 @@
 	  redirection.
 	* lftp.cc: new CmdExec ctor.
 
-2001-01-03  jfaith <jfaith@cemsys.com>
+2002-01-03  jfaith <jfaith@cemsys.com>
 
 	* resource.cc: (OrderValidate) fix off by one xmalloc bug.
 

@@ -28,6 +28,9 @@ int StringPool::allocated;
 
 const char *StringPool::Get(const char *s)
 {
+   if(!s)
+      return 0;
+
    int l=0;
    int u=n_strings;
 
