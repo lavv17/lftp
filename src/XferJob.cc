@@ -34,6 +34,9 @@
 #include "ProtoList.h"
 #include "rglob.h"
 
+static ResDecl
+   res_use_urls	("xfer:use-urls",      "no", ResMgr::BoolValidate,0);
+
 char *XferJob::Percent()
 {
    static char p[10];
@@ -180,9 +183,11 @@ void XferJob::NextFile(char *f)
 	 if(url)
 	    delete url;
 	 url=new ParsedURL(curr);
-	 if(url->proto && url->path)
+	 if((url->proto || non_strict_urls) && url->path)
 	 {
-	    FileAccess *new_session=Protocol::NewSession(url->proto);
+	    FileAccess *new_session=session;
+	    if(url->proto)
+	       new_session=Protocol::NewSession(url->proto);
 	    if(!new_session)
 	    {
 	       eprintf(_("%s: %s - not supported protocol\n"),
@@ -211,8 +216,11 @@ void XferJob::NextFile(char *f)
 	       new_session->Connect(url->host,port);
 	    }
 	    curr=url->path;
-	    SessionPool::Reuse(session);
-	    session=new_session;
+	    if(new_session!=session)
+	    {
+	       SessionPool::Reuse(session);
+	       session=new_session;
+	    }
 	 }
       }
    }
@@ -239,7 +247,8 @@ XferJob::XferJob(FileAccess *f) : SessionJob(f)
    line_buf=false;
    op="";
    size=-1;
-   use_urls=false;
+   use_urls=res_use_urls.Query(0);  // Query once, can't change on fly
+   non_strict_urls=false;
    url=0;
    last_status_update=0;
    last_status[0]=0;
