@@ -327,7 +327,7 @@ int FileCopy::Do()
       if(put->Error())
 	 goto put_error;
       /* check if put position is correct */
-      if(put_eof_pos!=put->GetRealPos())
+      if(put_eof_pos!=put->GetRealPos() || put->GetSeekPos()==FILE_END)
       {
 	 state=DO_COPY;
 	 return MOVED;
@@ -889,6 +889,16 @@ void FileCopyPeerFA::OpenSession()
 	 return;
       }
    }
+   else // mode==PUT
+   {
+      if(e_size!=NO_SIZE && seek_pos>=e_size)
+      {
+	 debug((10,"copy dst: seek past eof (seek_pos=%lld, size=%lld)\n",
+		  (long long)seek_pos,(long long)e_size));
+	 eof=true;
+	 return;
+      }
+   }
    session->Open(file,FAmode,seek_pos);
    session->SetFileURL(orig_url);
    if(mode==PUT)
@@ -1045,8 +1055,8 @@ int FileCopyPeerFA::Put_LL(const char *buf,int len)
    if(session->IsClosed())
       OpenSession();
 
-   off_t io_at=pos;
-   if(GetRealPos()!=io_at) // GetRealPos can alter pos.
+   off_t io_at=pos; // GetRealPos can alter pos, save it.
+   if(GetRealPos()!=io_at)
       return 0;
 
    if(len==0 && eof)
