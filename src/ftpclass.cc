@@ -2408,7 +2408,7 @@ void Ftp::SendUTimeRequest()
    {
       char *c=string_alloca(11+strlen(file)+14*3+3+4);
       char d[15];
-      time_t n=now;
+      time_t n=entity_date;
       strftime(d,sizeof(d)-1,"%Y%m%d%H%M%S",gmtime(&n));
       sprintf(c,"SITE UTIME %s %s %s %s UTC",file,d,d,d);
       conn->SendCmd(c);
@@ -2417,7 +2417,7 @@ void Ftp::SendUTimeRequest()
    else if(QueryBool("use-mdtm-overloaded"))
    {
       char *c=string_alloca(5+14+1);
-      time_t n=now;
+      time_t n=entity_date;
       strftime(c,19,"MDTM %Y%m%d%H%M%S",gmtime(&n));
       conn->SendCmd2(c,file);
       expect->Push(Expect::IGNORE);
