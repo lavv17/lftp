@@ -1,3 +1,14 @@
+1999-08-31  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Resolver.cc: add missing \n
+	* ftpclass.cc: fix previous change not to close data_sock.
+	* Http.cc: call SayConnectingTo.
+	* complete.cc, complete.h: move remote_completion here.
+	* CmdExec.cc, CmdExec.h, lftp.cc, log.cc, log.h: make debug output
+	  clear/redraw the prompt.
+
+1999-08-26  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* FileAccess.cc, FileAccess.h, Http.cc, Http.h, LocalAccess.cc,
 	  NetAccess.cc, ftpclass.cc, ftpclass.h: split off NetAccess class;
 	  use Resolver cache; add Resolve method; move rate limiter to

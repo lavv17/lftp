@@ -925,12 +925,17 @@ void CmdExec::Reconfig(const char *)
    verbose=res_verbose.Query(0);
 }
 
-void CmdExec::top_vfprintf(FILE *file,const char *f,va_list v)
+void CmdExec::pre_stdout()
 {
    if(status_line)
       status_line->Clear();
    if(feeder_called)
       feeder->clear();
+}
+
+void CmdExec::top_vfprintf(FILE *file,const char *f,va_list v)
+{
+   pre_stdout();
    ::vfprintf(file,f,v);
 }
 

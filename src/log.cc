@@ -34,8 +34,7 @@ void Log::Init()
 {
    output=-1;
    need_close_output=false;
-   sl=0;
-   sl_cleared=false;
+   tty_cb=0;
    enabled=false;
    level=0;
    tty=false;
@@ -51,26 +50,17 @@ void Log::Write(int l,const char *s)
    {
       pid_t pg=tcgetpgrp(output);
       if(pg==(pid_t)-1)
-      	 tty=false;
+	 tty=false;
       else if(pg!=getpgrp())
 	 return;
    }
-   if(sl && tty)
-   {
-      sl_cleared=true;
-      block+=NoWait();
-      sl->Clear();
-   }
+   if(tty_cb && tty)
+      tty_cb();
    write(output,s,strlen(s));
 }
 
 int Log::Do()
 {
-   if(sl_cleared)
-   {
-      sl_cleared=false;
-      return MOVED;
-   }
    return STALL;
 }
 

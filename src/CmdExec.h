@@ -210,6 +210,8 @@ public:
    static const cmd_rec *CmdByIndex(int i);
 
    int	 last_bg;
+
+   void pre_stdout();
 };
 
 extern const char * const bookmark_subcmd[];

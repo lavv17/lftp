@@ -60,7 +60,9 @@
 #include "lftp_rl.h"
 #include "complete.h"
 
-int   remote_completion=0;
+
+CmdExec	 *top_exec;
+
 
 void  hook_signals()
 {
@@ -255,6 +257,11 @@ void  source_if_exist(CmdExec *exec,const char *rc)
    }
 }
 
+static void tty_clear()
+{
+   top_exec->pre_stdout();
+}
+
 int   main(int argc,char **argv)
 {
 #ifdef SOCKS
@@ -282,10 +289,11 @@ int   main(int argc,char **argv)
    const char *home=getenv("HOME");
    if(!home) home=".";
 
-   CmdExec *top_exec=new CmdExec(new DummyProto());
+   top_exec=new CmdExec(new DummyProto());
    top_exec->jobno=-1;
    top_exec->status_line=new StatusLine(1);
-   Log::global=new Log(top_exec->status_line);
+   Log::global=new Log();
+   Log::global->SetCB(tty_clear);
 
    lftp_readline_init();
 
