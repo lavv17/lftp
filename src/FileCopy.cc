@@ -973,7 +973,7 @@ int FileCopyPeerFA::Get_LL(int len)
 	       reuse_later=true;
 
 	       xfree(file);
-	       file=xstrdup(u.path);
+	       file=xstrdup(u.path?u.path:"");
 	       size=NO_SIZE_YET;
 	       date=NO_DATE_YET;
 
