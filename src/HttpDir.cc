@@ -759,7 +759,7 @@ const char *HttpListInfo::Status()
    static char s[256];
    if(ubuf && !ubuf->Eof() && session->IsOpen())
    {
-      sprintf(s,_("Getting directory contents (%d)"),session->GetPos());
+      sprintf(s,_("Getting directory contents (%ld)"),session->GetPos());
       return s;
    }
    if(get_info)

@@ -223,7 +223,7 @@ const char *FtpListInfo::Status()
       return "";
    case(GETTING_LONG_LIST):
    case(GETTING_SHORT_LIST):
-      sprintf(s,_("Getting directory contents (%d)"),session->GetPos());
+      sprintf(s,_("Getting directory contents (%ld)"),session->GetPos());
       return s;
    case(GETTING_INFO):
       sprintf(s,_("Getting files information (%d%%)"),session->InfoArrayPercentDone());
