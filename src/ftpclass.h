@@ -18,6 +18,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/* $Id$ */
+
 #ifndef FTPCLASS_H
 #define FTPCLASS_H
 
@@ -212,6 +214,10 @@ class Ftp : public FileAccess
       }
 
    char *target_cwd;
+
+   char *skey_pass;
+   bool allow_skey;
+   const char *make_skey_reply(const char *line,const char *pass);
 
 public:
    static void ClassInit();
