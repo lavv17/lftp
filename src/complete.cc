@@ -57,7 +57,7 @@ CDECL_END
 #endif
 
 static char *bash_dequote_filename (char *text, int quote_char);
-static int lftp_char_is_quoted(char *string,int eindex);
+static int lftp_char_is_quoted(const char *string,int eindex);
 
 static int len;    // lenght of the word to complete
 static int cindex; // index in completion array
@@ -315,23 +315,20 @@ enum completion_type
    STRING_ARRAY, VARIABLE, NO_COMPLETION
 };
 
-// cmd: ptr to command line beging completed
+// cmd: ptr to command line being completed
 // start: location of the word being completed
 static completion_type cmd_completion_type(const char *cmd,int start)
 {
-   const char *w=find_word(cmd);
-
-   if(w-cmd == start) // first word is command
-      return COMMAND;
-
-   // try to guess whether the completion word is remote
-
+   const char *w=0;
    char buf[20];  // no commands longer
    TouchedAlias *used_aliases=0;
 
+   // try to guess whether the completion word is remote
    for(;;)
    {
       w=find_word(cmd);
+      if(w-cmd == start) // first word is command
+	 return COMMAND;
       if(w[0]=='!')
 	 shell_cmd=true;
       if(w[0]=='#')
@@ -345,6 +342,7 @@ static completion_type cmd_completion_type(const char *cmd,int start)
 	 return COMMAND;
       if(w[0]=='(')
       {
+	 start-=(w+1-cmd);
 	 cmd=w+1;
 	 continue;
       }
@@ -358,7 +356,11 @@ static completion_type cmd_completion_type(const char *cmd,int start)
       if(alias && !TouchedAlias::IsTouched(alias,used_aliases))
       {
 	 used_aliases=new TouchedAlias(alias,used_aliases);
-	 cmd=alias;
+	 char *cmd1=string_alloca(strlen(alias)+strlen(w)-strlen(buf)+1);
+	 strcpy(cmd1,alias);
+	 strcat(cmd1,w+strlen(buf));
+	 start=start-strlen(buf)+strlen(alias);
+	 cmd=cmd1;
 	 continue;
       }
       const char *full=CmdExec::GetFullCommandName(buf);
@@ -368,11 +370,11 @@ static completion_type cmd_completion_type(const char *cmd,int start)
       break;
    }
 
-   for(char *p=rl_line_buffer+start; p>rl_line_buffer; )
+   for(const char *p=cmd+start; p>cmd; )
    {
       p--;
       if((*p=='>' || *p=='|')
-      && !lftp_char_is_quoted(rl_line_buffer,p-rl_line_buffer))
+      && !lftp_char_is_quoted(cmd,p-cmd))
 	 return LOCAL;
       if(!isspace((unsigned char)*p))
 	 break;
@@ -1190,7 +1192,7 @@ static int skip_quoted(const char *s, int i, char q)
    return i;
 }
 
-int lftp_char_is_quoted(char *string,int eindex)
+int lftp_char_is_quoted(const char *string,int eindex)
 {
   int i, pass_next;
 

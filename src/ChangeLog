@@ -1,3 +1,10 @@
+2004-11-03  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Fish.cc: change command to RETRP to differentiate from plain RETR
+	  in transfer continuation; modify shell command to speed up partial
+	  transfers.
+	* complete.cc, lftp_rl.c, lftp_rl.h: improve completion of aliases.
+
 2004-11-03  Loic Le Loarer <lll+lftp@m4x.org>
 
 	* Fish.cc: add support for continue mode in fish protocol.

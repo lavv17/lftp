@@ -532,13 +532,18 @@ void Fish::SendMethod()
       real_pos=0;
       break;
    case RETRIEVE:
-      if (pos>0) {
-        Send("#RETR %s\n"
-	   "ls -lLd %s; "
-	   "echo '### 100'\n"
-           "dd ibs=1 skip=%lld if=%s; echo '### 200'\n",e,e,(long long)pos,e);
-      } else {
-        Send("#RETR %s\n"
+      if(pos>0)
+      {
+	 Send("#RETRP %lld %s\n"
+	      "ls -lLd %s; "
+	      "echo '### 100'; "
+	      "cat %s|(dd ibs=1 count=%lld of=/dev/null 2>/dev/null;cat); "
+	      "echo '### 200'\n",
+	    (long long)pos,e,e,e,(long long)pos);
+      }
+      else
+      {
+	 Send("#RETR %s\n"
 	   "ls -lLd %s; "
 	   "echo '### 100'; cat %s; echo '### 200'\n",e,e,e);
       }
