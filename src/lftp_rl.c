@@ -51,17 +51,23 @@ static int is_clear=0;
 void lftp_rl_clear()
 {
    extern char *rl_display_prompt;
-   int old_end;
+   extern int _rl_mark_modified_lines;
+   int old_end=rl_end;
+   char *old_prompt=rl_display_prompt;
+   int old_mark=_rl_mark_modified_lines;
 
-   old_end=rl_end;
    rl_end=0;
-   /* better use rl_save_prompt, but it is not available prior to 4.0 */
-   rl_expand_prompt("");
+   rl_display_prompt="";
+   rl_expand_prompt(0);
+   _rl_mark_modified_lines=0;
 
    rl_redisplay();
 
    rl_end=old_end;
-   rl_expand_prompt(rl_display_prompt);
+   rl_display_prompt=old_prompt;
+   _rl_mark_modified_lines=old_mark;
+   if(rl_display_prompt==rl_prompt)
+      rl_expand_prompt(rl_prompt);
 
    is_clear=1;
 }

@@ -1,3 +1,7 @@
+1999-07-11  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* lftp_rl.c: improve lftp_rl_clear.
+
 1999-07-10  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CmdExec.h: (CmdFeeder::clear) new method; (CmdExec::feeder_called)
