@@ -844,7 +844,7 @@ void  Ftp::GetBetterConnection(int level,int count)
 	    o->DataAbort();
 	    o->DataClose();
 	    if(o->control_sock==-1)
-	       continue; // oops...
+	       return; // oops...
 	 }
 	 else
 	 {

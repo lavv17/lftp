@@ -33,6 +33,7 @@ class Http : public NetAccess
    {
       DISCONNECTED,
       CONNECTING,
+      CONNECTED,
       RECEIVING_HEADER,
       RECEIVING_BODY,
       DONE
@@ -48,6 +49,7 @@ class Http : public NetAccess
    FileOutputBuffer *send_buf;
    FileInputBuffer *recv_buf;
    void SendMethod(const char *,const char *);
+   const char *last_method;
    void SendAuth();
    void SendBasicAuth(const char *tag,const char *u,const char *p);
    void SendRequest(const char *connection,const char *f);
@@ -58,9 +60,12 @@ class Http : public NetAccess
    void SendArrayInfoRequest();
    int status_code;
    void HandleHeaderLine(const char *name,const char *value);
+   void GetBetterConnection(int level,int count);
 
    int sock;
    void Disconnect();
+   void ResetRequestData();
+   void MoveConnectionHere(Http *o);
    int IsConnected()
       {
 	 if(sock==-1)

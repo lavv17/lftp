@@ -73,11 +73,12 @@ void Http::Init()
    proto_version=0x10;
    location=0;
    sent_eot=false;
+   last_method=0;
 
    default_cwd="/";
 
    keep_alive=false;
-   keep_alive_max=1;
+   keep_alive_max=-1;
 
    array_send=0;
 
@@ -127,6 +128,15 @@ Http::~Http()
    xfree(location);
 }
 
+void Http::MoveConnectionHere(Http *o)
+{
+   send_buf=o->send_buf; o->send_buf=0;
+   recv_buf=o->recv_buf; o->recv_buf=0;
+   sock=o->sock; o->sock=-1;
+   state=CONNECTED;
+   o->Disconnect();
+}
+
 void Http::Disconnect()
 {
    Delete(send_buf);
@@ -140,9 +150,20 @@ void Http::Disconnect()
    }
    if(sock!=-1)
    {
+      DebugPrint("---- ",_("Closing HTTP connection"),7);
       close(sock);
       sock=-1;
    }
+   last_method=0;
+   ResetRequestData();
+   if(mode==STORE && state!=DONE && !Error())
+      SetError(STORE_FAILED,0);
+   else
+      state=DISCONNECTED;
+}
+
+void Http::ResetRequestData()
+{
    body_size=-1;
    bytes_received=0;
    real_pos=-1;
@@ -153,25 +174,35 @@ void Http::Disconnect()
    location=0;
    sent_eot=false;
    keep_alive=false;
-   keep_alive_max=1;
+   keep_alive_max=-1;
    array_send=array_ptr;
    chunked=false;
    chunk_size=-1;
    chunk_pos=0;
    seen_ranges_bytes=false;
-   if(mode==STORE && state!=DONE && !Error())
-      SetError(STORE_FAILED,0);
-   else
-      state=DISCONNECTED;
 }
 
 void Http::Close()
 {
-   Disconnect();
+   if(mode==CLOSED)
+      return;
+   if(sock!=-1 && keep_alive && (keep_alive_max>1 || keep_alive_max==-1)
+   && mode!=STORE && (!xstrcmp(last_method,"HEAD")
+		      || (body_size>=0 && bytes_received==body_size)))
+   {
+      // can reuse the connection.
+      state=CONNECTED;
+      ResetRequestData();
+      idle_start=now;
+      TimeoutS(idle);
+   }
+   else
+   {
+      Disconnect();
+   }
    array_send=0;
    no_cache_this=false;
    no_ranges=false;
-   bytes_received=0;
    super::Close();
 }
 
@@ -195,6 +226,7 @@ void Http::SendMethod(const char *method,const char *efile)
    url::encode_string(hostname,ehost);
    if(!use_head && !strcmp(method,"HEAD"))
       method="GET";
+   last_method=method;
    if(file_url)
    {
       efile=file_url;
@@ -404,6 +436,8 @@ add_path:
    }
    if(mode==ARRAY_INFO && !use_head)
       connection="close";
+   else
+      connection="keep-alive";
    if(mode!=ARRAY_INFO || connection)
       Send("Connection: %s\r\n",connection?connection:"close");
    Send("\r\n");
@@ -417,8 +451,14 @@ add_path:
 
 void Http::SendArrayInfoRequest()
 {
-   while(array_send-array_ptr<keep_alive_max
-	 && array_send<array_cnt)
+   int m=1;
+   if(keep_alive)
+   {
+      m=keep_alive_max;
+      if(m==-1)
+	 m=100;
+   }
+   while(array_send-array_ptr<m && array_send<array_cnt)
    {
       SendRequest(array_send==array_cnt-1 ? "close" : "keep-alive",
 	 array_for_info[array_send].file);
@@ -484,6 +524,8 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       const char *m=strstr(value,"max=");
       if(m)
 	 sscanf(m+4,"%d",&keep_alive_max);
+      else
+	 keep_alive_max=100;
       return;
    }
    if(!strcasecmp(name,"Connection")
@@ -528,6 +570,48 @@ static const char *find_eol(const char *str,int len)
    return 0;
 }
 
+void Http::GetBetterConnection(int level,int count)
+{
+   if(level==0)
+      return;
+   for(FA *fo=FirstSameSite(); fo!=0; fo=NextSameSite(fo))
+   {
+      Http *o=(Http*)fo; // we are sure it is Http.
+
+      if(o->sock==-1 || o->state==CONNECTING)
+	 continue;
+
+      if(o->state!=CONNECTED || o->mode!=CLOSED)
+      {
+	 if(level<2)
+	    continue;
+	 if(!connection_takeover || o->priority>=priority)
+	    continue;
+	 o->Disconnect();
+	 return;
+      }
+      else
+      {
+	 takeover_time=now;
+      }
+
+      // connected session (o) must have resolved address
+      if(!peer)
+      {
+	 // copy resolved address so that it would be possible to create
+	 // data connection.
+	 xfree(peer);
+	 peer=(sockaddr_u*)xmemdup(o->peer,o->peer_num*sizeof(*o->peer));
+	 peer_num=o->peer_num;
+	 peer_curr=o->peer_curr;
+      }
+
+      // so borrow the connection
+      MoveConnectionHere(o);
+      return;
+   }
+}
+
 int Http::Do()
 {
    int m=STALL;
@@ -535,9 +619,9 @@ int Http::Do()
    const char *buf;
    int len;
    Buffer *data_buf;
+   int count;
 
    // check if idle time exceeded
-   // NOT USED YET.
    if(mode==CLOSED && sock!=-1 && idle>0)
    {
       if(now-idle_start>=idle)
@@ -574,6 +658,18 @@ int Http::Do()
 	    SetError(FATAL,"ftp over http cannot work without proxy, set hftp:proxy.");
 	    return MOVED;
 	 }
+      }
+
+      // walk through Http classes and try to find identical idle session
+      // first try "easy" cases of session take-over.
+      count=CountConnections();
+      for(int i=0; i<3; i++)
+      {
+	 if(i>=2 && (connection_limit==0 || connection_limit>count))
+	    break;
+	 GetBetterConnection(i,count);
+	 if(state!=DISCONNECTED)
+	    return MOVED;
       }
 
       if(!ReconnectAllowed())
@@ -656,9 +752,19 @@ int Http::Do()
       }
 
       m=MOVED;
+      state=CONNECTED;
       send_buf=new FileOutputBuffer(new FDStream(sock,"<output-socket>"));
       recv_buf=new FileInputBuffer(new FDStream(sock,"<input-socket>"));
-
+      /*fallthrough*/
+   case CONNECTED:
+      if(recv_buf->Eof())
+      {
+	 DebugPrint("**** ",_("Peer closed connection"),0);
+	 Disconnect();
+	 return MOVED;
+      }
+      if(mode==CLOSED)
+	 return m;
       DebugPrint("---- ","Sending request...");
       if(mode==ARRAY_INFO)
       {
@@ -722,7 +828,6 @@ int Http::Do()
 		     array_for_info[array_ptr].size=-1;
 		  if(++array_ptr>=array_cnt)
 		  {
-		     Disconnect();
 		     state=DONE;
 		     return MOVED;
 		  }
@@ -866,7 +971,6 @@ int Http::Do()
       {
 	 xfree(cwd);
 	 cwd=xstrdup(file);
-	 Disconnect();
 	 state=DONE;
 	 return MOVED;
       }
@@ -984,8 +1088,6 @@ int Http::Read(void *buf,int size)
 	 }
 	 return 0;
       }
-      if(size1==0)
-	 return DO_AGAIN;
       if(body_size>=0 && bytes_received>=body_size)
       {
 	 DebugPrint("---- ","Received all");
@@ -996,6 +1098,8 @@ int Http::Read(void *buf,int size)
 	 DebugPrint("---- ","Received all (total)");
 	 return 0;
       }
+      if(size1==0)
+	 return DO_AGAIN;
       if(chunked)
       {
 	 if(chunk_size==-1) // expecting first/next chunk
@@ -1041,6 +1145,12 @@ int Http::Read(void *buf,int size)
 	 // ok, now we may get portion of data
 	 if(size1>chunk_size-chunk_pos)
 	    size1=chunk_size-chunk_pos;
+      }
+      else
+      {
+	 // limit by body_size.
+	 if(size1+bytes_received>=body_size)
+	    size1=body_size-bytes_received;
       }
 
       int bytes_allowed=rate_limit->BytesAllowed();
@@ -1176,6 +1286,8 @@ const char *Http::CurrentStatus()
       return "";
    case CONNECTING:
       return(_("Connecting..."));
+   case CONNECTED:
+      return(_("Connection idle"));
    case RECEIVING_HEADER:
       if(mode==STORE && !sent_eot && !status)
 	 return(_("Sending data"));
