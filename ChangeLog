@@ -1,3 +1,7 @@
+2003-12-16	albert chin <china@thewrittenword.com>
+
+	* configure.ac: LOCALE_DIR no longer used; check for sscanf.
+
 2003-11-28	Dmitry V. Levin <ldv@altlinux.org>
 
 	* configure.ac: calls for AC_LIBOBJ should be quoted now

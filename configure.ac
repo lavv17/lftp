@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.53)
-AC_INIT([lftp], [pre3.0.0-20031120], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [pre3.0.0-20031201], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
 AM_CONFIG_HEADER(include/config.h)
@@ -117,13 +117,6 @@ if test x$ac_cv_lib_fl_yywrap = xno; then
    AC_DEFINE(NEED_YYWRAP, 1, [need yywrap]) dnl ?
 fi
 
-
-AC_ARG_WITH(locale-dir,
-  [  --with-locale-dir=DIR   specify locale directory],
-  LOCALE_DIR=$withval)
-test -z "$LOCALE_DIR" && LOCALE_DIR='$(datadir)/locale'
-AC_SUBST(LOCALE_DIR)
-
 ALL_LINGUAS="de es fr it ja ko pl pt_BR ru zh_CN zh_TW"
 AM_GNU_GETTEXT([external])
 if test x$USE_INCLUDED_LIBINTL = xyes; then
@@ -211,6 +204,7 @@ dnl AC_SEARCH_LIBS(md5_process_bytes,crypt,[AC_DEFINE(HAVE_MD5, 1, [md5 support 
 AC_SEARCH_LIBS(socket,socket)
 AC_SEARCH_LIBS(gethostbyname,nsl)
 AC_SEARCH_LIBS(dlopen,dl,[AC_DEFINE(HAVE_DLOPEN, 1, [have dlopen])])
+AC_SEARCH_LIBS(res_9_search,resolv,[AC_DEFINE(HAVE_RES_9_SEARCH, 1, [have res_9_search])])
 AC_SEARCH_LIBS(res_search,resolv bind,[AC_DEFINE(HAVE_RES_SEARCH, 1, [have res_search])])
 IU_CHECK_DECL(res_search, [
      #include <stdio.h>
@@ -324,7 +318,7 @@ AC_HEADER_STAT
 LFTP_FUNC_POLL
 LFTP_FUNC_SSCANF_CONST
 AC_CHECK_FUNCS(strdup strstr lstat lchown select regexec glob\
- killpg setpgid tcgetattr ftruncate vsnprintf gettimeofday\
+ killpg setpgid tcgetattr ftruncate vsnprintf sscanf gettimeofday\
  gethostbyname2 getipnodebyname getaddrinfo getnameinfo setsid random\
  inet_aton unsetenv setlocale)
 AC_FUNC_ALLOCA
