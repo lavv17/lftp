@@ -687,9 +687,9 @@ backslash_quote (char *string)
 	  *r++ = c;
 	  break;
 	case '~':				/* tilde expansion */
+	case '#':				/* comment char */
 	  if(!shell_cmd)
 	    goto def;
-	case '#':				/* comment char */
 	  if (s == string)
 	    *r++ = '\\';
 	  /* FALLTHROUGH */
