@@ -359,11 +359,6 @@ Mirror specified remote directory to local directory.
 -P, --parallel[=N]		download N files in parallel
 -i \fIRX\fP, --include \fIRX\fP	include matching files
 -x \fIRX\fP, --exclude \fIRX\fP	exclude matching files
--t \fINx\fP, --time-prec \fINx\fP	set time precision to \fIN\fP seconds (\fIx\fP=s)
-			minutes (\fIx\fP=m) hours (\fIx\fP=h) or days (\fIx\fP=d)
-			default - mirror:time-precision setting
--T \fINx\fP, --loose-time-prec	set time precision for imprecise time
-			default - mirror:loose-time-precision setting
 -v, --verbose[=level]	verbose operation
     --use-cache		use cached directory listings
 --Remove-source-files	remove files after transfer (use with caution)
@@ -1028,13 +1023,13 @@ the string lftp sends in User-Agent header of HTTP request.
 .BR https:proxy " (string)"
 specifies https proxy. Default value is taken from environment variable \fBhttps_proxy\fP.
 .TP
-.BR mirror:time-precision " (time interval)"
-maximum time difference between files to assume they are the same. File size
-is checked too.
+.BR mirror:order-download " (list of patterns)"
+specifies order of download.
 .TP
-.BR mirror:loose-time-precision " (time interval)"
-same as time-precision, but applies to the case of imprecise time information.
-(e.g. derived from file listing which includes only date without time)
+.BR mirror:order-upload " (list of patterns)"
+specifies order of upload. E.g. setting this to `*.sfv *.sum' makes mirror to
+upload files matching *.sfv first, them ones matching *.sum and them all other
+files.
 .TP
 .BR module:path \ (string)
 colon separated list of directories to look for modules. Can be initialized by

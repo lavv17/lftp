@@ -1,3 +1,12 @@
+Version 2.5.0 - 2001-1?-??
+
+* mirror can now upload/download certain files first based on pattern list,
+  new settings mirror:order-upload and mirror:order-download.
+* mirror options -t, -T, --time-prec and --loose-time-prec are now obsolete,
+  so are settings mirror:time-prec and mirror:loose-time-prec.
+* cls improved (Glenn Maynard).
+* fixed a memory leak in cls (Glenn Maynard).
+
 Version 2.4.7 - 2001-11-12
 
 * du command (Glenn Maynard).

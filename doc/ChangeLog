@@ -1,3 +1,7 @@
+2001-11-14	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document new mirror settings; remove old ones.
+
 2001-10-29	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document fish:shell and ftp:timezone.
