@@ -168,7 +168,8 @@ int FileCopy::Do()
       long put_pos=put->GetRealPos()-put->range_start;
       if(get_pos-lbsize!=put_pos)
       {
-	 line_buffer->Empty();
+	 if(line_buffer)
+	    line_buffer->Empty();
 	 if(get_pos==put_pos)
 	 {  // rare case.
 	    return MOVED;

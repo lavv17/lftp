@@ -1,3 +1,7 @@
+2000-01-02  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileCopy.cc: check if line_buffer!=0 (by Slama YA)
+
 2000-01-01  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CopyJob.h: add GetETA(long remainder) method.
