@@ -2,6 +2,7 @@
 
 	* Http.cc: implement `quote set-cookie'; don't retry POST op if
 	  some data were sent; implement `quote POST path data'.
+	* Http.h: (post, post_data) new members.
 
 2000-05-22  Alexander V. Lukyanov  <lav@yars.free.net>
 
