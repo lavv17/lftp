@@ -1,5 +1,9 @@
 1999-08-05  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* modconfig.h: enable proto-ftp module for real.
+
+1999-08-05  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* ArgV.h, CmdExec.cc: (ArgV::CombineQuoted) new method.
 	* commands.cc: fix `at' command to quote the command to execute.
 	* lftp.cc: use CombineQuoted.
