@@ -404,6 +404,11 @@ void Http::SendCacheControl()
 
 bool Http::ModeSupported()
 {
+#ifndef HAVE_EXPAT_H
+   // without XML parser it is meaningless to retrieve XML file info.
+   if(mode==MP_LIST)
+      return false;
+#endif
    switch((open_mode)mode)
    {
    case CLOSED:

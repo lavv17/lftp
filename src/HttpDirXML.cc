@@ -21,11 +21,13 @@
 /* $Id$ */
 
 #include <config.h>
-#include <expat.h>
 #include "HttpDir.h"
 #include "log.h"
 #include "url.h"
 #include "misc.h"
+
+#ifdef HAVE_EXPAT_H
+#include <expat.h>
 
 struct xml_context
 {
@@ -220,3 +222,7 @@ end:
       xml_ctx=0;
    }
 }
+#else // !HAVE_EXPAT_H
+FileSet *HttpListInfo::ParseProps(const char *b,int len,const char *base_dir) { return 0; }
+void HttpDirList::ParsePropsFormat(const char *b,int len,bool eof) {}
+#endif // !HAVE_EXPAT_H

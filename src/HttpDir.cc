@@ -1276,8 +1276,10 @@ HttpDirList::HttpDirList(ArgV *a,FileAccess *fa)
    session=fa;
    ubuf=0;
    mode=FA::MP_LIST;
+#ifdef HAVE_EXPAT_H
    xml_p=0;
    xml_ctx=0;
+#endif
    args->rewind();
    int opt;
    while((opt=args->getopt("faCFl"))!=EOF)

@@ -24,7 +24,9 @@
 #define HTTPDIR_H
 
 #include "Http.h"
-#include <expat.h>
+#ifdef HAVE_EXPAT_H
+# include <expat.h>
+#endif
 
 class HttpListInfo : public GenericParseListInfo
 {
@@ -50,8 +52,10 @@ class HttpDirList : public DirList
    int mode;
    char *base_href;
 
+#ifdef HAVE_EXPAT_H
    XML_Parser xml_p;
    struct xml_context *xml_ctx;
+#endif
 
    LsOptions ls_options;
 

@@ -440,8 +440,8 @@ int guess_year(int month,int day,int hour,int minute)
 {
    const struct tm &now=SMTask::now;
    int year=now.tm_year+1900;
-   if(((month     *32+        day)*64+       hour)*64+       minute
-    > ((now.tm_mon*32+now.tm_mday)*64+now.tm_hour)*64+now.tm_min+5)
+   if(month     *32+        day
+    > now.tm_mon*32+now.tm_mday+1)
       year--;
    return year;
 }
