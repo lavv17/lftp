@@ -1690,7 +1690,17 @@ int   Ftp::Do()
 	 else if(mode==MAKE_DIR)
 	    AddResp(RESP_PWD_MKD_OK,CHECK_FILE_ACCESS);
 	 else if(mode==QUOTE_CMD)
+	 {
 	    AddResp(0,CHECK_IGNORE,true);
+	    if(!strncasecmp(file,"CWD",3)
+	    || !strncasecmp(file,"CDUP",4)
+	    || !strncasecmp(file,"XCWD",4)
+	    || !strncasecmp(file,"XCUP",4))
+	    {
+	       DebugPrint("---- ","Resetting cwd",9);
+	       set_real_cwd(0);  // we do not know the path now.
+	    }
+	 }
 	 else if(mode==RENAME)
 	    AddResp(350,CHECK_RNFR);
 	 else
