@@ -80,8 +80,18 @@ public:
 
    static SMTask *current;
 
-   static void Enter(SMTask *);
-   static void Leave(SMTask *);
+   static void Enter(SMTask *task)
+      {
+	 task->running++;
+	 task->prev_current=current;
+	 current=task;
+      }
+   static void Leave(SMTask *task)
+      {
+	 current=task->prev_current;
+	 task->prev_current=0;
+	 task->running--;
+      }
    void Enter() { Enter(this); }
    void Leave() { Leave(this); }
 

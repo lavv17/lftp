@@ -60,6 +60,7 @@ public:
    void Show(const StringSet *s) { Show(*s); }
    void WriteLine(const char *f,...) PRINTF_LIKE(2,3);
    void Clear(bool title_also=true);
+   bool CanShowNow() { return update_timer.Stopped(); }
 
    int getfd() const { return fd; }
 

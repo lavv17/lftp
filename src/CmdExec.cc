@@ -538,7 +538,7 @@ int CmdExec::Do()
 	    return MOVED;
 	 }
       }
-      if(status_line)
+      if(status_line && status_line->CanShowNow())
 	 ShowRunStatus(status_line);   // this is only for top level CmdExec.
       return m;
    }
@@ -582,7 +582,7 @@ int CmdExec::Do()
 	    return MOVED;
 	 }
       }
-      if(status_line)
+      if(status_line && status_line->CanShowNow())
 	 ShowRunStatus(status_line);   // this is only for top level CmdExec.
       return m;
    }

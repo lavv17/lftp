@@ -99,25 +99,6 @@ void SMTask::Delete(SMTask *task)
       delete task;
 }
 
-void SMTask::Enter(SMTask *task)
-{
-   task->running++;
-   task->prev_current=current;
-   current=task;
-}
-void SMTask::Leave(SMTask *task)
-{
-   if(current!=task)
-   {
-      fprintf(stderr,"BUG: Leave() called with non-current task\n");
-      return;
-   }
-   assert(task->running);
-   current=task->prev_current;
-   task->prev_current=0;
-   task->running--;
-}
-
 int SMTask::Roll(SMTask *task)
 {
    int m=STALL;

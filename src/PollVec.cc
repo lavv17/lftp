@@ -24,12 +24,6 @@
 #include "PollVec.h"
 #include "xmalloc.h"
 
-void  PollVec::Empty()
-{
-   fds_num=0;
-   timeout=-1;
-}
-
 void PollVec::Init()
 {
    fds=0;

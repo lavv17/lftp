@@ -45,7 +45,11 @@ public:
    void Init();
    PollVec();
 
-   void	 Empty();
+   void	 Empty()
+      {
+	 fds_num=0;
+	 timeout=-1;
+      }
    void	 Merge(const PollVec&);
    void	 Block() const;
 
