@@ -8,6 +8,7 @@
 	  Speedometer.cc, Speedometer.h, StatusLine.cc, StatusLine.h,
 	  complete.cc, ftpclass.cc, misc.cc, misc.h: use new time classes.
 	* commands.cc: (builtin_lcd) don't assume cwd!=0.
+	* FtpDirList.cc: (EPLF) use TimeDate::IsoDateTime; add missing \n.
 
 2001-11-05  Alexander V. Lukyanov <lav@yars.free.net>
 
