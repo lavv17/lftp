@@ -732,7 +732,7 @@ int SFtp::HandlePty()
       if(s>0 && b[s-1]==' ')
 	 s--;
       if(s>=p_len && !strncasecmp(b+s-p_len,p,p_len)
-      || s>10 && !strncmp(b+s-3,"': ",3))
+      || s>10 && !strncmp(b+s-2,"':",2))
       {
 	 if(!pass)
 	 {
