@@ -126,7 +126,7 @@ int LocalAccess::Do()
 	 }
 	 else// if(mode==QUOTE_CMD)
 	    strcpy(cmd,file);
-	 DebugPrint("---- ",cmd);
+	 DebugPrint("---- ",cmd,3);
 	 InputFilter *f_stream=new InputFilter(cmd);
 	 f_stream->SetCwd(cwd);
 	 stream=f_stream;

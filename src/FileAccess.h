@@ -103,7 +103,7 @@ protected:
    static void NonBlock(int fd);
    static void CloseOnExec(int fd);
 
-   void  DebugPrint(const char *prefix,const char *str,int level=0);
+   void  DebugPrint(const char *prefix,const char *str,int level=9);
 
    time_t   try_time;
    time_t   event_time;

@@ -196,7 +196,7 @@ int   Ftp::RestCheck(int act,int exp)
    (void)exp;
    if(act/100==5)
    {
-      DebugPrint("---- ","Switching to NOREST mode");
+      DebugPrint("---- ","Switching to NOREST mode",2);
       flags|=NOREST_MODE;
       real_pos=0;
       if(mode==STORE)
@@ -231,7 +231,7 @@ int   Ftp::NoFileCheck(int act,int exp)
       }
       if(real_pos>0 && !(flags&IO_FLAG) && copy_mode==COPY_NONE)
       {
-	 DebugPrint("---- ","Switching to NOREST mode");
+	 DebugPrint("---- ","Switching to NOREST mode",2);
 	 flags|=NOREST_MODE;
 	 real_pos=0;
 	 if(mode==STORE)
@@ -278,7 +278,7 @@ int   Ftp::LoginCheck(int act,int exp)
       {
 	 if(!user)   // unusual message for anonymous user
 	    goto def_ret;
-	 DebugPrint("---- ",_("Saw `Login incorrect', assume failed login"),9);
+	 DebugPrint("---- ",_("Saw `Login incorrect', assume failed login"));
 	 return(LOGIN_FAILED_STATE);
       }
       return(-1);
@@ -310,7 +310,7 @@ int   Ftp::NoPassReqCheck(int act,int exp) // for USER command
       // PASS and then say `Login incorrect'.
       if(strstr(line,"unknown")) // Don't translate!!!
       {
-	 DebugPrint("---- ",_("Saw `unknown', assume failed login"),9);
+	 DebugPrint("---- ",_("Saw `unknown', assume failed login"));
 	 return(LOGIN_FAILED_STATE);
       }
       try_time=now;	// count the reconnect-interval from this moment
@@ -321,7 +321,7 @@ int   Ftp::NoPassReqCheck(int act,int exp) // for USER command
       // proxy interprets USER as user@host, so we check for host name validity
       if(proxy && (strstr(line,"host") || strstr(line,"resolve")))
       {
-	 DebugPrint("---- ",_("assuming failed host name lookup"),9);
+	 DebugPrint("---- ",_("assuming failed host name lookup"));
 	 SetError(LOOKUP_ERROR,line);
 	 Disconnect();
 	 return(LOOKUP_ERROR_STATE);
@@ -351,7 +351,7 @@ int   Ftp::proxy_LoginCheck(int act,int exp)
    {
       if(strstr(line,"Login incorrect")) // Don't translate!!!
       {
-	 DebugPrint("---- ",_("Saw `Login incorrect', assume failed login"),9);
+	 DebugPrint("---- ",_("Saw `Login incorrect', assume failed login"));
 	 return(LOGIN_FAILED_STATE);
       }
    }
@@ -367,7 +367,7 @@ int   Ftp::proxy_NoPassReqCheck(int act,int exp)
    {
       if(strstr(line,"unknown"))
       {
-	 DebugPrint("---- ",_("Saw `unknown', assume failed login"),9);
+	 DebugPrint("---- ",_("Saw `unknown', assume failed login"));
 	 return(LOGIN_FAILED_STATE);
       }
       return -1;
@@ -508,7 +508,7 @@ int   Ftp::Handle_EPSV()
 
    if(sscanf(c,format,&port)!=1)
    {
-      DebugPrint("**** ","cannot parse EPSV response");
+      DebugPrint("**** ","cannot parse EPSV response",0);
       return INITIAL_STATE;
    }
 
@@ -797,7 +797,7 @@ int   Ftp::Do()
    {
       if(now-idle_start>=idle)
       {
-	 DebugPrint("---- ",_("Closing idle connection"),2);
+	 DebugPrint("---- ",_("Closing idle connection"),1);
 	 Disconnect();
 	 return m;
       }
@@ -1386,7 +1386,7 @@ int   Ftp::Do()
 	    goto usual_return;
 	 if(NotSerious(errno))
 	 {
-	    DebugPrint("**** ",strerror(errno));
+	    DebugPrint("**** ",strerror(errno),0);
 	    Disconnect();
 	    return MOVED;
 	 }
@@ -1438,7 +1438,7 @@ int   Ftp::Do()
 
 	 sprintf(str,_("Connecting data socket to (%s) port %u"),
 	    SocketNumericAddress(&data_sa),SocketPort(&data_sa));
-	 DebugPrint("---- ",str,3);
+	 DebugPrint("---- ",str,5);
 
 	 res=connect(data_sock,(struct sockaddr*)&data_sa,sizeof(data_sa));
 	 UpdateNow(); // if non-blocking don't work
@@ -1487,7 +1487,7 @@ int   Ftp::Do()
 	    // prevent infinite NOOP's
 	    if(nop_offset==pos && nop_count*nop_interval>=timeout)
 	    {
-	       DebugPrint("**** ",_("Timeout - reconnecting"));
+	       DebugPrint("**** ",_("Timeout - reconnecting"),0);
 	       Disconnect();
 	       return MOVED;
 	    }
@@ -1689,9 +1689,11 @@ void  Ftp::ReceiveResp()
 	    && is_ascii_digit(line[1]) && is_ascii_digit(line[2]))
 	       code=atoi(line);
 
-	    int pri=1;
+	    int pri=4;
 	    if(code==220 || code==230
 	    || (code==0 && (multiline_code==220 || multiline_code==230)))
+	       pri=3;
+	    if(code >= 400 || (code==0 && multiline_code >= 400 ))
 	       pri=0;
 
 	    DebugPrint("<--- ",line,pri);
@@ -1744,7 +1746,7 @@ void  Ftp::ReceiveResp()
 		  return;
 	       if(NotSerious(errno))
 	       {
-		  DebugPrint("**** ",strerror(errno));
+		  DebugPrint("**** ",strerror(errno),0);
 		  Disconnect();
 		  return;
 	       }
@@ -1753,7 +1755,7 @@ void  Ftp::ReceiveResp()
 	    }
 	    if(res==0)
 	    {
-	       DebugPrint("**** ",_("Peer closed connection"));
+	       DebugPrint("**** ",_("Peer closed connection"),0);
 	       ControlClose();
 	       Disconnect();
 	       return;
@@ -1832,7 +1834,7 @@ void Ftp::ControlClose()
 {
    if(control_sock!=-1)
    {
-      DebugPrint("---- ",_("Closing control socket"),8);
+      DebugPrint("---- ",_("Closing control socket"),7);
       close(control_sock);
       control_sock=-1;
    }
@@ -1899,7 +1901,7 @@ void  Ftp::DataClose()
 {
    if(data_sock>=0)
    {
-      DebugPrint("---- ",_("Closing data socket"),8);
+      DebugPrint("---- ",_("Closing data socket"),7);
       close(data_sock);
       data_sock=-1;
    }
@@ -1954,7 +1956,7 @@ void  Ftp::FlushSendQueue(bool all)
 	    return;
 	 if(NotSerious(errno) || errno==EPIPE)
 	 {
-	    DebugPrint("**** ",strerror(errno));
+	    DebugPrint("**** ",strerror(errno),0);
 	    Disconnect();
 	    return;
 	 }
@@ -1981,19 +1983,19 @@ void  Ftp::FlushSendQueue(bool all)
 	 if(p>cmd_begin)
 	 {
 	    p[-1]=0;
-	    DebugPrint("---> ",cmd_begin,3);
+	    DebugPrint("---> ",cmd_begin,5);
 	 }
-	 DebugPrint("---> ","PASS XXXX",3);
+	 DebugPrint("---> ","PASS XXXX",5);
 	 char *eol=strchr(p,'\n');
 	 if(eol)
 	 {
 	    *eol=0;
-	    DebugPrint("---> ",eol+1,3);
+	    DebugPrint("---> ",eol+1,5);
 	 }
       }
       else
       {
-	 DebugPrint("---> ",cmd_begin,3);
+	 DebugPrint("---> ",cmd_begin,5);
       }
    }
 }
@@ -2240,7 +2242,7 @@ read_again:
 	 return DO_AGAIN;
       if(NotSerious(errno))
       {
-	 DebugPrint("**** ",strerror(errno));
+	 DebugPrint("**** ",strerror(errno),0);
 	 Disconnect();
 	 return DO_AGAIN;
       }
@@ -2325,7 +2327,7 @@ int   Ftp::Write(const void *buf,int size)
 	 return DO_AGAIN;
       if(NotSerious(errno) || errno==EPIPE)
       {
-	 DebugPrint("**** ",strerror(errno));
+	 DebugPrint("**** ",strerror(errno),0);
 	 Disconnect();
 	 return DO_AGAIN;
       }
@@ -2494,7 +2496,7 @@ int   Ftp::CheckResp(int act)
       if(s && is_ascii_digit(s[1]))
       {
 	 *opt_size=atol(s+1);
-      	 DebugPrint("---- ",_("saw file size in response"));
+      	 DebugPrint("---- ",_("saw file size in response"),7);
       }
    }
 
@@ -2503,13 +2505,13 @@ int   Ftp::CheckResp(int act)
 
    if(act==421)  // timeout or something else
    {
-      DebugPrint("**** ",_("remote end closes connection"));
+      DebugPrint("**** ",_("remote end closes connection"),3);
       return(INITIAL_STATE);
    }
 
    if(RespQueueIsEmpty())
    {
-      DebugPrint("**** ",_("extra server response"));
+      DebugPrint("**** ",_("extra server response"),3);
       if(act/100==2) // some buggy servers send several 226 replies
 	 return -1;  // ignore them.
       return(INITIAL_STATE);
@@ -2533,7 +2535,7 @@ int   Ftp::CheckResp(int act)
       // M$ can't get it right... I'm really tired of setting sync-mode manually.
       if(!(flags&SYNC_MODE) && strstr(line,"Microsoft FTP Service"))
       {
-	 DebugPrint("---- ","Turning on sync-mode",3);
+	 DebugPrint("---- ","Turning on sync-mode",2);
 	 flags|=SYNC_MODE;
 	 ResMgr::Set("ftp:sync-mode",hostname,"on");
 	 try_time=0; // retry immediately
@@ -2614,7 +2616,7 @@ int   Ftp::CheckResp(int act)
       if(act/100==5)
       {
       passive_off:
-	 DebugPrint("---- ",_("Switching passive mode off"));
+	 DebugPrint("---- ",_("Switching passive mode off"),2);
 	 SetFlag(PASSIVE_MODE,0);
 	 new_state=INITIAL_STATE;
       }
@@ -3022,7 +3024,7 @@ const char *Ftp::make_skey_reply()
       }
    }
 
-   DebugPrint("---- ","found s/key substring",9);
+   DebugPrint("---- ","found s/key substring");
 
    int skey_sequence=0;
    char *buf=(char*)alloca(strlen(cp));

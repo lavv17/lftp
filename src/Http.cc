@@ -129,7 +129,7 @@ bool Http::CheckTimeout()
 {
    if(now-event_time>=timeout)
    {
-      DebugPrint("**** ",_("Timeout - reconnecting"));
+      DebugPrint("**** ",_("Timeout - reconnecting"),0);
       Disconnect();
       event_time=now;
       return(true);
@@ -200,7 +200,7 @@ void Http::Send(const char *format,...)
 
    va_end(va);
 
-   DebugPrint("---> ",str,3);
+   DebugPrint("---> ",str,5);
    send_buf->Put(str);
 }
 
@@ -520,7 +520,7 @@ int Http::Do()
    {
       if(now-idle_start>=idle)
       {
-	 DebugPrint("---- ",_("Closing idle connection"),2);
+	 DebugPrint("---- ",_("Closing idle connection"),1);
 	 Disconnect();
 	 return m;
       }
@@ -639,7 +639,7 @@ int Http::Do()
       send_buf=new FileOutputBuffer(new FDStream(sock,"<output-socket>"));
       recv_buf=new FileInputBuffer(new FDStream(sock,"<input-socket>"));
 
-      DebugPrint("---- ","Sending request...",9);
+      DebugPrint("---- ","Sending request...");
       if(mode==ARRAY_INFO)
       {
 	 SendArrayInfoRequest();
@@ -661,9 +661,9 @@ int Http::Do()
       if(send_buf->Error() || recv_buf->Error())
       {
 	 if(send_buf->Error())
-	    DebugPrint("**** ",send_buf->ErrorText());
+	    DebugPrint("**** ",send_buf->ErrorText(),0);
 	 if(recv_buf->Error())
-	    DebugPrint("**** ",recv_buf->ErrorText());
+	    DebugPrint("**** ",recv_buf->ErrorText(),0);
 	 Disconnect();
 	 return MOVED;
       }
@@ -675,7 +675,7 @@ int Http::Do()
       if(!buf)
       {
 	 // eof
-	 DebugPrint("**** ","Hit EOF while fetching headers");
+	 DebugPrint("**** ","Hit EOF while fetching headers",0);
 	 Disconnect();
 	 return MOVED;
       }
@@ -686,7 +686,7 @@ int Http::Do()
 	 {
 	    if(eol==buf)
 	    {
-	       DebugPrint("<--- ","",2);
+	       DebugPrint("<--- ","",4);
 	       recv_buf->Skip(2);
 	       if(mode==ARRAY_INFO)
 	       {
@@ -728,7 +728,7 @@ int Http::Do()
 		  if(!sent_eot && H_20X(status_code))
 		  {
 		     // should never happen
-		     DebugPrint("**** ","Success, but did nothing??");
+		     DebugPrint("**** ","Success, but did nothing??",0);
 		     Disconnect();
 		     return MOVED;
 		  }
@@ -744,7 +744,7 @@ int Http::Do()
 
 	    recv_buf->Skip(len+2);
 
-	    DebugPrint("<--- ",line,2);
+	    DebugPrint("<--- ",line,4);
 	    m=MOVED;
 
 	    if(status==0)
@@ -756,7 +756,7 @@ int Http::Do()
 	       if(3!=sscanf(status,"HTTP/%d.%d %n%d",&ver_major,&ver_minor,
 		     &status_consumed,&status_code))
 	       {
-		  DebugPrint("**** ","Could not parse HTTP status line",1);
+		  DebugPrint("**** ","Could not parse HTTP status line",0);
 		  // simple 0.9 ?
 		  proto_version=0x09;
 		  //FIXME: STORE
@@ -844,7 +844,7 @@ int Http::Do()
 	 return MOVED;
       }
 
-      DebugPrint("---- ","Receiving body...",9);
+      DebugPrint("---- ","Receiving body...");
       assert(rate_limit==0);
       rate_limit=new RateLimit();
       if(real_pos<0) // assume Range: did not work
@@ -856,9 +856,9 @@ int Http::Do()
       if(recv_buf->Error() || send_buf->Error())
       {
 	 if(send_buf->Error())
-	    DebugPrint("**** ",send_buf->ErrorText());
+	    DebugPrint("**** ",send_buf->ErrorText(),0);
 	 if(recv_buf->Error())
-	    DebugPrint("**** ",recv_buf->ErrorText());
+	    DebugPrint("**** ",recv_buf->ErrorText(),0);
 	 Disconnect();
 	 return MOVED;
       }
@@ -933,10 +933,10 @@ int Http::Read(void *buf,int size)
       recv_buf->Get(&buf1,&size1);
       if(buf1==0) // eof
       {
-	 DebugPrint("---- ","Hit EOF",9);
+	 DebugPrint("---- ","Hit EOF");
 	 if(bytes_received<body_size || chunked)
 	 {
-	    DebugPrint("**** ","Received not enough data, retrying",1);
+	    DebugPrint("**** ","Received not enough data, retrying",0);
 	    Disconnect();
 	    return DO_AGAIN;
 	 }
@@ -1070,7 +1070,7 @@ int Http::Write(const void *buf,int size)
 	 return DO_AGAIN;
       if(NotSerious(errno) || errno==EPIPE)
       {
-	 DebugPrint("**** ",strerror(errno));
+	 DebugPrint("**** ",strerror(errno),0);
 	 Disconnect();
 	 return STORE_FAILED;
       }

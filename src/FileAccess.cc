@@ -210,13 +210,13 @@ int   FileAccess::CheckHangup(struct pollfd *pfd,int num)
       {
 	 sprintf(str,_("Socket error (%s) - reconnecting"),
 				    strerror(errno?errno:s_errno));
-	 DebugPrint("**** ",str);
+	 DebugPrint("**** ",str,0);
 	 return 1;
       }
 #endif /* SO_ERROR */
       if(pfd[i].revents&POLLERR)
       {
-	 DebugPrint("**** ","POLLERR");
+	 DebugPrint("**** ","POLLERR",0);
 	 return 1;
       }
    } /* end for */

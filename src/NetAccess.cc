@@ -175,7 +175,7 @@ void NetAccess::SayConnectingTo()
    char *str=string_alloca(256+strlen(h));
    sprintf(str,_("Connecting to %s%s (%s) port %u"),proxy?"proxy ":"",
       h,SocketNumericAddress(&peer[peer_curr]),SocketPort(&peer[peer_curr]));
-   DebugPrint("---- ",str,0);
+   DebugPrint("---- ",str,1);
 }
 
 void NetAccess::SetProxy(const char *px)
@@ -210,7 +210,7 @@ int NetAccess::CheckTimeout()
 {
    if(now-event_time>=timeout)
    {
-      DebugPrint("**** ",_("Timeout - reconnecting"));
+      DebugPrint("**** ",_("Timeout - reconnecting"),0);
       Disconnect();
       event_time=now;
       return(1);

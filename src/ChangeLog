@@ -1,3 +1,16 @@
+1999-12-22: Robert de Bath <rdebath@poboxes.com>
+
+	* FileAccess.cc, FileAccess.h, Http.cc, LocalAccess.cc, NetAccess.cc,
+	  ftpclass.cc: rehash debug levels.
+
+1999-12-22  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Job.cc: don't show job info as ? if there is no info.
+	* CatJob.cc, CatJob.h: use new architecture w/ CopyJobEnv.
+	* CopyJob.cc, CopyJob.h: (CopyJobEnv) new class; misc tweaks.
+	* FileCopy.cc, FileCopy.h: add features for cat command.
+	* commands.cc: new cat command creation.
+
 1999-12-21  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: (DataAbort) Disconnect in copy mode if ABOR is disabled.
