@@ -650,18 +650,18 @@ Ftp::pasv_state_t Ftp::Handle_PASV()
          break;
    }
    unsigned char *a,*p;
-   data_sa.sa.sa_family=conn->peer_sa.sa.sa_family;
-   if(data_sa.sa.sa_family==AF_INET)
+   conn->data_sa.sa.sa_family=conn->peer_sa.sa.sa_family;
+   if(conn->data_sa.sa.sa_family==AF_INET)
    {
-      a=(unsigned char*)&data_sa.in.sin_addr;
-      p=(unsigned char*)&data_sa.in.sin_port;
+      a=(unsigned char*)&conn->data_sa.in.sin_addr;
+      p=(unsigned char*)&conn->data_sa.in.sin_port;
    }
 #if INET6
-   else if(data_sa.sa.sa_family==AF_INET6)
+   else if(conn->data_sa.sa.sa_family==AF_INET6)
    {
-      a=((unsigned char*)&data_sa.in6.sin6_addr)+12;
+      a=((unsigned char*)&conn->data_sa.in6.sin6_addr)+12;
       a[-1]=a[-2]=0xff; // V4MAPPED
-      p=(unsigned char*)&data_sa.in6.sin6_port;
+      p=(unsigned char*)&conn->data_sa.in6.sin6_port;
    }
 #endif
    else
@@ -675,16 +675,16 @@ Ftp::pasv_state_t Ftp::Handle_PASV()
 
    if((a0==0 && a1==0 && a2==0 && a3==0)
    || (QueryBool("fix-pasv-address",hostname) && !conn->proxy_is_http
-       && (InPrivateNetwork(&data_sa) != InPrivateNetwork(&conn->peer_sa)
-	  || IsLoopback(&data_sa) != IsLoopback(&conn->peer_sa))))
+       && (InPrivateNetwork(&conn->data_sa) != InPrivateNetwork(&conn->peer_sa)
+	  || IsLoopback(&conn->data_sa) != IsLoopback(&conn->peer_sa))))
    {
       // broken server, try to fix up
       conn->fixed_pasv=true;
       DebugPrint("---- ","Address returned by PASV seemed to be incorrect and has been fixed",2);
-      if(data_sa.sa.sa_family==AF_INET)
+      if(conn->data_sa.sa.sa_family==AF_INET)
 	 memcpy(a,&conn->peer_sa.in.sin_addr,sizeof(conn->peer_sa.in.sin_addr));
 #if INET6
-      else if(data_sa.in.sin_family==AF_INET6)	// peer_sa should be V4MAPPED
+      else if(conn->data_sa.in.sin_family==AF_INET6) // peer_sa should be V4MAPPED
 	 memcpy(a,&conn->peer_sa.in6.sin6_addr.s6_addr[12],4);
 #endif
    }
@@ -714,13 +714,13 @@ Ftp::pasv_state_t Ftp::Handle_EPSV()
       return PASV_NO_ADDRESS_YET;
    }
 
-   socklen_t len=sizeof(data_sa);
-   getpeername(conn->control_sock,&data_sa.sa,&len);
-   if(data_sa.sa.sa_family==AF_INET)
-      data_sa.in.sin_port=htons(port);
+   socklen_t len=sizeof(conn->data_sa);
+   getpeername(conn->control_sock,&conn->data_sa.sa,&len);
+   if(conn->data_sa.sa.sa_family==AF_INET)
+      conn->data_sa.in.sin_port=htons(port);
 #if INET6
-   else if(data_sa.sa.sa_family==AF_INET6)
-      data_sa.in6.sin6_port=htons(port);
+   else if(conn->data_sa.sa.sa_family==AF_INET6)
+      conn->data_sa.in6.sin6_port=htons(port);
 #endif
    else
    {
@@ -928,8 +928,6 @@ void Ftp::InitFtp()
    stat_time=0;
    copy_allow_store=false;
    copy_failed=false;
-
-   memset(&data_sa,0,sizeof(data_sa));
 
    disconnect_on_close=false;
 
@@ -1524,15 +1522,15 @@ int   Ftp::Do()
 	    && !IsLoopback(&conn->peer_sa))
 	    {
 	       // connect should come from the same address, else server can refuse.
-	       addr_len=sizeof(data_sa);
-	       getsockname(conn->control_sock,&data_sa.sa,&addr_len);
-	       if(data_sa.sa.sa_family==AF_INET)
-		  data_sa.in.sin_port=0;
+	       addr_len=sizeof(conn->data_sa);
+	       getsockname(conn->control_sock,&conn->data_sa.sa,&addr_len);
+	       if(conn->data_sa.sa.sa_family==AF_INET)
+		  conn->data_sa.in.sin_port=0;
       #if INET6
-	       else if(data_sa.sa.sa_family==AF_INET6)
-		  data_sa.in6.sin6_port=0;
+	       else if(conn->data_sa.sa.sa_family==AF_INET6)
+		  conn->data_sa.in6.sin6_port=0;
       #endif
-	       if(bind(conn->data_sock,&data_sa.sa,addr_len)<0)
+	       if(bind(conn->data_sock,&conn->data_sa.sa,addr_len)<0)
 	       {
 		  sprintf(str,"bind(data_sock): %s",strerror(errno));
 		  DebugPrint("**** ",str,10);
@@ -1541,12 +1539,12 @@ int   Ftp::Do()
 	 }
 	 else // !PASSIVE_MODE
 	 {
-	    addr_len=sizeof(data_sa);
+	    addr_len=sizeof(conn->data_sa);
 	    if(copy_mode!=COPY_NONE)
-	       data_sa=copy_addr;
+	       conn->data_sa=copy_addr;
 	    else
 	    {
-	       getsockname(conn->control_sock,&data_sa.sa,&addr_len);
+	       getsockname(conn->control_sock,&conn->data_sa.sa,&addr_len);
 
 	       Range range(Query("port-range"));
 
@@ -1566,19 +1564,19 @@ int   Ftp::Do()
 		  if(!range.IsFull())
 		     port=range.Random();
 
-		  if(data_sa.sa.sa_family==AF_INET)
-		     data_sa.in.sin_port=htons(port);
-   #if INET6
-		  else if(data_sa.sa.sa_family==AF_INET6)
-		     data_sa.in6.sin6_port=htons(port);
-   #endif
+		  if(conn->data_sa.sa.sa_family==AF_INET)
+		     conn->data_sa.in.sin_port=htons(port);
+#if INET6
+		  else if(conn->data_sa.sa.sa_family==AF_INET6)
+		     conn->data_sa.in6.sin6_port=htons(port);
+#endif
 		  else
 		  {
 		     Fatal("unsupported network protocol");
 		     return MOVED;
 		  }
 
-		  if(bind(conn->data_sock,&data_sa.sa,addr_len)==0)
+		  if(bind(conn->data_sock,&conn->data_sa.sa,addr_len)==0)
 		     break;
 
 		  // Fail unless socket was already taken
@@ -1590,7 +1588,7 @@ int   Ftp::Do()
 		  }
 	       }
 	       // get the allocated port
-	       getsockname(conn->data_sock,&data_sa.sa,&addr_len);
+	       getsockname(conn->data_sock,&conn->data_sa.sa,&addr_len);
 	       listen(conn->data_sock,1);
 	    }
 	 }
@@ -1813,11 +1811,11 @@ int   Ftp::Do()
       else // !PASSIVE
       {
 	 if(copy_mode!=COPY_NONE)
-	    data_sa=copy_addr;
-	 if(data_sa.sa.sa_family==AF_INET)
+	    conn->data_sa=copy_addr;
+	 if(conn->data_sa.sa.sa_family==AF_INET)
 	 {
-	    a=(unsigned char*)&data_sa.in.sin_addr;
-	    p=(unsigned char*)&data_sa.in.sin_port;
+	    a=(unsigned char*)&conn->data_sa.in.sin_addr;
+	    p=(unsigned char*)&conn->data_sa.in.sin_port;
 #if INET6
 	 ipv4_port:
 #endif
@@ -1834,14 +1832,14 @@ int   Ftp::Do()
 	 else
 	 {
 #if INET6
-	    if(data_sa.sa.sa_family==AF_INET6
-	       && IN6_IS_ADDR_V4MAPPED(&data_sa.in6.sin6_addr))
+	    if(conn->data_sa.sa.sa_family==AF_INET6
+	       && IN6_IS_ADDR_V4MAPPED(&conn->data_sa.in6.sin6_addr))
 	    {
-	       a=((unsigned char*)&data_sa.in6.sin6_addr)+12;
-	       p=(unsigned char*)&data_sa.in6.sin6_port;
+	       a=((unsigned char*)&conn->data_sa.in6.sin6_addr)+12;
+	       p=(unsigned char*)&conn->data_sa.in6.sin6_port;
 	       goto ipv4_port;
 	    }
-	    conn->SendCmd2("EPRT",encode_eprt(&data_sa));
+	    conn->SendCmd2("EPRT",encode_eprt(&conn->data_sa));
 	    expect->Push(CHECK_PORT);
 #else
 	    Fatal(_("unsupported network protocol"));
@@ -1895,7 +1893,7 @@ int   Ftp::Do()
 	 goto usual_return;
 
       addr_len=sizeof(struct sockaddr);
-      res=accept(conn->data_sock,(struct sockaddr *)&data_sa,&addr_len);
+      res=accept(conn->data_sock,(struct sockaddr *)&conn->data_sa,&addr_len);
       if(res==-1)
       {
 	 if(errno==EWOULDBLOCK)
@@ -1940,7 +1938,7 @@ int   Ftp::Do()
 
       case PASV_HAVE_ADDRESS:
 	 if(copy_mode==COPY_NONE
-	 && !conn->data_address_ok(&data_sa,verify_data_address,/*port_verify*/false))
+	 && !conn->data_address_ok(&conn->data_sa,verify_data_address,/*port_verify*/false))
 	 {
 	    Disconnect();
 	    return MOVED;
@@ -1949,7 +1947,7 @@ int   Ftp::Do()
 	 pasv_state=PASV_DATASOCKET_CONNECTING;
 	 if(copy_mode!=COPY_NONE)
 	 {
-	    memcpy(&copy_addr,&data_sa,sizeof(data_sa));
+	    memcpy(&copy_addr,&conn->data_sa,sizeof(conn->data_sa));
 	    copy_addr_valid=true;
 	    goto pre_WAITING_STATE;
 	 }
@@ -1957,9 +1955,9 @@ int   Ftp::Do()
 	 if(!conn->proxy_is_http)
 	 {
 	    sprintf(str,_("Connecting data socket to (%s) port %u"),
-	       SocketNumericAddress(&data_sa),SocketPort(&data_sa));
+	       SocketNumericAddress(&conn->data_sa),SocketPort(&conn->data_sa));
 	    DebugPrint("---- ",str,5);
-	    res=SocketConnect(conn->data_sock,&data_sa);
+	    res=SocketConnect(conn->data_sock,&conn->data_sa);
 	 }
 	 else // proxy_is_http
 	 {
@@ -2540,8 +2538,8 @@ void Ftp::HttpProxySendConnect()
 }
 void Ftp::HttpProxySendConnectData()
 {
-   const char *the_host=SocketNumericAddress(&data_sa);
-   int the_port=SocketPort(&data_sa);
+   const char *the_host=SocketNumericAddress(&conn->data_sa);
+   int the_port=SocketPort(&conn->data_sa);
    conn->data_iobuf->Format("CONNECT %s:%d HTTP/1.0\r\n\r\n",the_host,the_port);
    Log::global->Format(4,"+--> CONNECT %s:%d HTTP/1.0\n",the_host,the_port);
    http_proxy_status_code=0;
@@ -3505,7 +3503,7 @@ void Ftp::CheckResp(int act)
 	 if(strlen(line)<=4)
 	    goto passive_off;
 
-	 memset(&data_sa,0,sizeof(data_sa));
+	 memset(&conn->data_sa,0,sizeof(conn->data_sa));
 
 	 if(cc==CHECK_PASV)
 	    pasv_state=Handle_PASV();
@@ -3516,7 +3514,7 @@ void Ftp::CheckResp(int act)
 	    goto passive_off;
 
 	 if(conn->aborted_data_sock!=-1)
-	    SocketConnect(conn->aborted_data_sock,&data_sa);
+	    SocketConnect(conn->aborted_data_sock,&conn->data_sa);
 
       	 break;
       }

@@ -105,6 +105,7 @@ class Ftp : public NetAccess
       IOBuffer *data_iobuf;
       int aborted_data_sock;
       sockaddr_u peer_sa;
+      sockaddr_u data_sa; // address for data accepting
       bool quit_sent;
       bool fixed_pasv;	  // had to fix PASV address.
       bool translation_activated;
@@ -158,7 +159,7 @@ class Ftp : public NetAccess
       void SendCmd2(const char *cmd,const char *f);
       void SendCmd2(const char *cmd,int v);
       void SendCmdF(const char *fmt,...) PRINTF_LIKE(2,3);
-      int FlushSendQueueOneCmd();
+      int FlushSendQueueOneCmd(); // sends single command from send_cmd_buffer
    };
 
    Connection *conn;
@@ -254,9 +255,6 @@ private:
 #else
    static const bool ftps; // for convenience
 #endif
-
-   /* address for data accepting */
-   sockaddr_u   data_sa;
 
    char  *line;
    int	 line_len;
