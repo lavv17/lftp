@@ -2,6 +2,7 @@
 
 	* misc.cc: provide errret for setupterm, so that it does not exit
 	  on error, allowing lftp to work without valid TERM.
+	* CmdExec.cc: set slot in ChangeSession, fixes scache+slot combo.
 
 2002-07-24  Alexander V. Lukyanov <lav@yars.free.net>
 

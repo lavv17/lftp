@@ -329,26 +329,20 @@ void CmdExec::RevertToSavedSession()
 {
    if(saved_session==0)
       return;
-   Reuse(session);
-   session=saved_session;
+   ChangeSession(saved_session);
    saved_session=0;
-   if(slot)
-      ConnectionSlot::Set(slot,session);
 }
 void CmdExec::ChangeSlot(const char *n)
 {
+   xfree(slot);
+   slot=0;
    if(!n || !*n)
-   {
-      xfree(slot);
-      slot=0;
       return;
-   }
    FileAccess *s=ConnectionSlot::FindSession(n);
    if(!s)
       ConnectionSlot::Set(n,session);
    else
       ChangeSession(s);
-   xfree(slot);
    slot=xstrdup(n);
 }
 
@@ -1257,6 +1251,8 @@ void CmdExec::ChangeSession(FileAccess *new_session)
    session=new_session;
    session->SetPriority(fg?1:0);
    Reconfig(0);
+   if(slot)
+      ConnectionSlot::Set(slot,session);
 }
 
 const CmdExec::cmd_rec *CmdExec::CmdByIndex(int i)
