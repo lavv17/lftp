@@ -1,3 +1,7 @@
+Version 2.3.0 - 2000-??-??
+
+* better http cookies support: new setting http:set-cookies.
+* two http specific quote commands: ``quote set-cookie'' and ``quote post''.
 * full http keep-alive support.
 * new settings http:put-method (PUT or POST), http:put-content-type.
 * send encoded path in http protocol as it was entered by user in URL.

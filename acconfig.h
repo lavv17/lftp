@@ -184,8 +184,9 @@ CDECL const char *strerror(int);
 # endif
 #endif
 
-#define INET6 (defined(AF_INET6) && defined(HAVE_GETHOSTBYNAME2) \
-	       && defined(HAVE_GETNAMEINFO) && defined(HAVE_GETADDRINFO))
+#define INET6 (defined(AF_INET6) \
+	       && defined(HAVE_GETNAMEINFO) \
+	       && defined(HAVE_GETADDRINFO))
 
 #if defined(SOCKS4) || defined(SOCKS_DANTE)
 # define connect     Rconnect
