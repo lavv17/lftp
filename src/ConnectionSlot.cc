@@ -25,6 +25,12 @@ ConnectionSlot::SlotValue *ConnectionSlot::Find(const char *n)
 }
 void ConnectionSlot::Set(const char *n,FileAccess *fa)
 {
+   const char *url=fa->GetConnectURL();
+   if(!url || !*url)
+   {
+      lftp_slots.KeyValueDB::Remove(n);
+      return;
+   }
    ConnectionSlot::SlotValue *s=Find(n);
    if(!s)
    {
