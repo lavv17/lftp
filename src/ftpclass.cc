@@ -1625,7 +1625,8 @@ void  Ftp::ReceiveResp()
 			      // the same code as it started with.
 	       multiline_code=0;
 	    }
-	    flags&=~SYNC_WAIT; // clear the flag to send next command
+	    if(code/100!=1)
+	       flags&=~SYNC_WAIT; // clear the flag to send next command
 	    break;
 	 }
 	 else
