@@ -42,7 +42,7 @@
 #include "ResMgr.h"
 
 #ifndef T_SRV
-# define T_SRV ns_t_srv
+# define T_SRV 33
 #endif
 
 #if !defined(HAVE_HSTRERROR_DECL)
