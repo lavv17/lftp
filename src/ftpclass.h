@@ -85,6 +85,8 @@ class Ftp : public NetAccess
 
       bool dos_path;
       bool vms_path;
+
+      bool have_feat_info;
       bool mdtm_supported;
       bool size_supported;
       bool rest_supported;
@@ -94,6 +96,9 @@ class Ftp : public NetAccess
       bool utf8_supported;
       bool lang_supported;
       bool mlst_supported;
+      bool clnt_supported;
+      bool host_supported;
+
       off_t last_rest;	// last successful REST position.
       off_t rest_pos;	// the number sent with REST command.
 
@@ -292,6 +297,8 @@ private:
    void	 SendSiteGroup();
    void	 SendUTimeRequest();
    void SendAuth(const char *auth);
+   void TuneConnectionAfterFEAT();
+   void SendOPTS_MLST();
 
    const char *QueryStringWithUserAtHost(const char *);
 

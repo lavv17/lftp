@@ -872,6 +872,7 @@ Ftp::Connection::Connection()
 
    dos_path=false;
    vms_path=false;
+   have_feat_info=false;
    mdtm_supported=true;
    size_supported=true;
    rest_supported=true;
@@ -882,6 +883,8 @@ Ftp::Connection::Connection()
    lang_supported=false;
    mlst_supported=false;
    mlst_attr_supported=0;
+   clnt_supported=false;
+   host_supported=false;
 
    proxy_is_http=false;
    may_show_password=false;
@@ -1319,6 +1322,9 @@ int   Ftp::Do()
       if(conn->auth_sent && !expect->IsEmpty())
 	 goto usual_return;
 #endif
+      // Do connection tuning after AUTH TLS.
+      if(conn->have_feat_info)
+	 TuneConnectionAfterFEAT();
 
       char *user_to_use=(user?user:anon_user);
       if(proxy && !conn->proxy_is_http)
@@ -2071,7 +2077,7 @@ int   Ftp::Do()
 	 IOBuffer::dir_t dir=(mode==STORE?IOBuffer::PUT:IOBuffer::GET);
 	 conn->data_iobuf=new IOBufferFDStream(new FDStream(conn->data_sock,"data-socket"),dir);
       }
-      if(mode==LIST || mode==LONG_LIST)
+      if(mode==LIST || mode==LONG_LIST || mode==MP_LIST)
       {
 	 if(conn->utf8_supported)
 	    conn->data_iobuf->SetTranslation("UTF-8",true);
@@ -3326,6 +3332,82 @@ void  Ftp::MoveConnectionHere(Ftp *o)
    state=EOF_STATE;
 }
 
+void Ftp::SendOPTS_MLST()
+{
+   char *facts=alloca_strdup(conn->mlst_attr_supported);
+   char *store=facts;
+   bool differs=false;
+   for(char *tok=strtok(facts,";"); tok; tok=strtok(0,";"))
+   {
+      bool was_enabled=false;
+      bool want_enable=false;
+      int len=strlen(tok);
+      if(len>0 && tok[len-1]=='*')
+      {
+	 was_enabled=true;
+	 tok[--len]=0;
+      }
+      // "unique" not needed yet.
+      static const char *const needed[]={
+	 "type","size","modify","perm",
+	 "UNIX.mode","UNIX.owner","UNIX.uid","UNIX.group","UNIX.gid",
+	 0};
+      for(const char *const *scan=needed; *scan; scan++)
+      {
+	 if(!strcasecmp(tok,*scan))
+	 {
+	    memmove(store,tok,len);
+	    store+=len;
+	    *store++=';';
+	    want_enable=true;
+	    break;
+	 }
+      }
+      differs|=(was_enabled^want_enable);
+   }
+   if(!differs || store==facts)
+      return;
+   *store=0;
+   conn->SendCmd2("OPTS MLST",facts);
+   expect->Push(Expect::IGNORE);
+}
+
+void Ftp::TuneConnectionAfterFEAT()
+{
+   if(conn->lang_supported)
+   {
+      const char *lang_to_use=Query("lang",hostname);
+      if(lang_to_use && lang_to_use[0])
+	 conn->SendCmd2("LANG",lang_to_use);
+      else
+	 conn->SendCmd("LANG");
+      expect->Push(Expect::IGNORE);
+   }
+   if(conn->utf8_supported)
+   {
+      conn->SetControlConnectionTranslation("UTF-8");
+      // some non-RFC2640 servers require this command.
+      conn->SendCmd("OPTS UTF8 ON");
+      expect->Push(Expect::IGNORE);
+   }
+   if(conn->clnt_supported)
+   {
+      const char *client=Query("client",hostname);
+      if(client && client[0])
+      {
+	 conn->SendCmd2("CLNT",client);
+	 expect->Push(Expect::IGNORE);
+      }
+   }
+   if(conn->host_supported)
+   {
+      conn->SendCmd2("HOST",hostname);
+      expect->Push(Expect::IGNORE);
+   }
+   if(conn->mlst_attr_supported)
+      SendOPTS_MLST();
+}
+
 void Ftp::CheckFEAT(char *reply)
 {
    conn->pret_supported=false;
@@ -3349,30 +3431,16 @@ void Ftp::CheckFEAT(char *reply)
       if(*f==' ')
 	 f++;
       if(!strcasecmp(f,"UTF8"))
-      {
 	 conn->utf8_supported=true;
-	 conn->SetControlConnectionTranslation("UTF-8");
-	 // some non-RFC2640 servers require this command.
-	 conn->SendCmd("OPTS UTF8 ON");
-	 expect->Push(Expect::IGNORE);
-      }
       else if(!strncasecmp(f,"LANG ",5))
-      {
 	 conn->lang_supported=true;
-	 const char *lang_to_use=Query("lang",hostname);
-	 if(lang_to_use && lang_to_use[0])
-	    conn->SendCmd2("LANG",lang_to_use);
-	 else
-	    conn->SendCmd("LANG");
-	 expect->Push(Expect::IGNORE);
-      }
       else if(!strcasecmp(f,"PRET"))
 	 conn->pret_supported=true;
       else if(!strcasecmp(f,"MDTM"))
 	 conn->mdtm_supported=true;
       else if(!strcasecmp(f,"SIZE"))
 	 conn->size_supported=true;
-      else if(!strncasecmp(f,"REST ",5))
+      else if(!strncasecmp(f,"REST ",5)) // FIXME: actually REST STREAM
 	 conn->rest_supported=true;
       else if(!strncasecmp(f,"MLST ",5))
       {
@@ -3389,6 +3457,7 @@ void Ftp::CheckFEAT(char *reply)
       }
 #endif // USE_SSL
    }
+   conn->have_feat_info=true;
 }
 
 void Ftp::CheckResp(int act)
@@ -3655,11 +3724,14 @@ void Ftp::CheckResp(int act)
       }
       break;
    case Expect::FEAT:
-      if(act==530)
+      if(is2XX(act))
+      {
+	 CheckFEAT(all_lines);
+	 if(conn->try_feat_after_login && conn->have_feat_info)
+	    TuneConnectionAfterFEAT();
+      }
+      else if(act==530)
 	 conn->try_feat_after_login=true;
-      if(!is2XX(act))
-	 break;
-      CheckFEAT(all_lines);
       break;
 
    case Expect::SITE_UTIME:

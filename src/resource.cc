@@ -171,6 +171,7 @@ static ResDecl
    ResDecl01a("ftp:auto-sync-mode",	  "",	   ResMgr::ERegExpValidate,0),
    ResDecl01b("ftp:bind-data-socket",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl01f("ftp:charset",		  "",	   ResMgr::CharsetValidate,0),
+   ResDecl01g("ftp:client",		  PACKAGE"/"VERSION,0,0),
    ResDecl01e("ftp:device-prefix",	  "no",	   ResMgr::BoolValidate,0),
    ResDecl01c("ftp:fix-pasv-address",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl01d("ftp:fxp-force",		  "no",	   ResMgr::BoolValidate,0),

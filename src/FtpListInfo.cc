@@ -757,9 +757,21 @@ FileInfo *ParseFtpLongList_MLSD(char *line,int *err,const char *)
    const char *name=0;
    off_t size=NO_SIZE;
    time_t date=NO_DATE;
+   const char *owner=0;
+   const char *group=0;
    bool dir=false;
    bool type_known=false;
    int perms=-1;
+
+   /* NcFTPd does not put a semicolon after last fact, workaround it. */
+   if(!strstr(line,"; "))
+   {
+      char *space=strchr(line,' ');
+      if(!space)
+	 ERR;
+      name=space+1;
+      *space=0;
+   }
 
    for(char *tok=strtok(line,";"); tok; tok=strtok(0,";"))
    {
@@ -812,6 +824,28 @@ FileInfo *ParseFtpLongList_MLSD(char *line,int *err,const char *)
 	 sscanf(tok+10,"%o",&perms);
 	 continue;
       }
+      if(!strncasecmp(tok,"UNIX.owner=",11))
+      {
+	 owner=tok+11;
+	 continue;
+      }
+      if(!strncasecmp(tok,"UNIX.group=",11))
+      {
+	 group=tok+11;
+	 continue;
+      }
+      if(!strncasecmp(tok,"UNIX.uid=",9))
+      {
+	 if(!owner)
+	    owner=tok+9;
+	 continue;
+      }
+      if(!strncasecmp(tok,"UNIX.gid=",9))
+      {
+	 if(!group)
+	    group=tok+9;
+	 continue;
+      }
    }
    if(name==0 || !type_known)
       ERR;
@@ -830,6 +864,10 @@ FileInfo *ParseFtpLongList_MLSD(char *line,int *err,const char *)
    }
    if(perms!=-1)
       fi->SetMode(perms);
+   if(owner)
+      fi->SetUser(owner);
+   if(group)
+      fi->SetGroup(group);
 
    return fi;
 }
