@@ -1,3 +1,7 @@
+2000-02-20  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc: (Rename) correct typo (which caused core dumps).
+
 2000-02-18  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h: fix stupid bug with returning auto pointer
