@@ -859,6 +859,7 @@ bool FileAccess::NotSerious(int e)
 {
    switch(e)
    {
+   case(EPIPE):
    case(ETIMEDOUT):
 #ifdef ECONNRESET
    case(ECONNRESET):

@@ -1473,7 +1473,7 @@ int   Ftp::Do()
 	       if(bind(data_sock,&data_sa.sa,addr_len)<0)
 	       {
 		  sprintf(str,"bind(data_sock): %s",strerror(errno));
-		  DebugPrint("**** ",str,0);
+		  DebugPrint("**** ",str,10);
 	       }
 	    }
 	 }
@@ -2444,7 +2444,7 @@ void Ftp::SendUrgentCmd(const char *cmd)
 
 void  Ftp::DataAbort()
 {
-   if(control_sock==-1 || state==CONNECTING_STATE)
+   if(control_sock==-1 || state==CONNECTING_STATE || quit_sent)
       return;
 
    if(data_sock==-1 && copy_mode==COPY_NONE)
@@ -3069,6 +3069,12 @@ read_again:
 	    return DO_AGAIN;
 	 if(NotSerious(errno))
 	 {
+	    if(errno==ECONNRESET && mode==LIST && real_pos==0)
+	    {
+	       // workaround for some proftpd servers.
+	       DebugPrint("**** ",strerror(errno),0);
+	       goto we_have_eof;
+	    }
 	    DebugPrint("**** ",strerror(errno),0);
 	    quit_sent=true;
 	    Disconnect();
