@@ -88,7 +88,7 @@ static const address_family af_list[]=
    { -1, 0 }
 };
 
-ResolverCache *Resolver::cache=new ResolverCache;
+ResolverCache *Resolver::cache;
 
 Resolver::Resolver(const char *h,const char *p,const char *defp,
 		   const char *ser,const char *pr)
@@ -148,7 +148,7 @@ int   Resolver::Do()
 
    int m=STALL;
 
-   if(!no_cache)
+   if(!no_cache && cache)
    {
       const sockaddr_u *a;
       int n;
@@ -294,6 +294,8 @@ int   Resolver::Do()
    addr=(sockaddr_u*)xmalloc(n);
    memcpy(addr,s,n);
    done=true;
+   if(!cache)
+      cache=new ResolverCache;
    cache->Add(hostname,portname,defport,service,proto,addr,addr_num);
    Log::global->Format(4,plural("---- %d address$|es$ found\n",addr_num),addr_num);
    return MOVED;
@@ -859,7 +861,8 @@ void Resolver::Reconfig(const char *name)
    timeout = ResMgr::Query("dns:fatal-timeout",hostname);
    if(!name || strncmp(name,"dns:",4))
       return;
-   cache->Clear();
+   if(cache)
+      cache->Clear();
 }
 
 

@@ -16,15 +16,17 @@ noinst_LIBRARIES = libtasks.a libjobs.a
 
 EXTRA_LTLIBRARIES = libnetwork.la proto-ftp.la proto-http.la proto-file.la cmd-mirror.la cmd-sleep.la proto-fish.la
 pkgverlib_LTLIBRARIES = $(MODULES_LA)
+noinst_LTLIBRARIES = $(MODULES_LA_STATIC)
 
-proto_ftp_la_SOURCES  = ftpclass.cc FtpListInfo.cc FtpDirList.cc\
- md5.c ftp-opie.c FileCopyFtp.cc
-proto_http_la_SOURCES = Http.cc HttpDir.cc
-proto_file_la_SOURCES = LocalAccess.cc
-proto_fish_la_SOURCES = Fish.cc
-cmd_mirror_la_SOURCES = MirrorJob.cc
-cmd_sleep_la_SOURCES  = SleepJob.cc getdate.c
-libnetwork_la_SOURCES = NetAccess.cc Resolver.cc lftp_ssl.cc buffer_ssl.cc
+proto_ftp_la_SOURCES  = ftpclass.cc ftpclass.h FtpListInfo.cc FtpListInfo.h\
+ FtpDirList.cc FtpDirList.h md5.c md5.h ftp-opie.c FileCopyFtp.cc FileCopyFtp.h
+proto_http_la_SOURCES = Http.cc Http.h HttpDir.cc HttpDir.h
+proto_file_la_SOURCES = LocalAccess.cc LocalAccess.h
+proto_fish_la_SOURCES = Fish.cc Fish.h PtyShell.cc PtyShell.h lftp_pty.c lftp_pty.h
+cmd_mirror_la_SOURCES = MirrorJob.cc MirrorJob.h
+cmd_sleep_la_SOURCES  = SleepJob.cc SleepJob.h getdate.c getdate.y getdate.h
+libnetwork_la_SOURCES = NetAccess.cc NetAccess.h Resolver.cc Resolver.h\
+ lftp_ssl.cc lftp_ssl.h buffer_ssl.cc buffer_ssl.h
 
 proto_ftp_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
 proto_http_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
@@ -40,40 +42,40 @@ proto_http_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) libnetwork.la
 proto_fish_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) libnetwork.la
 
 libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
- ProcWait.h ftpclass.cc ftpclass.h GetPass.cc GetPass.h\
- CharReader.cc CharReader.h LsCache.cc LsCache.h Resolver.cc Resolver.h\
- FileAccess.h FileAccess.cc ResMgr.h ResMgr.cc LocalAccess.h LocalAccess.cc\
+ ProcWait.h GetPass.cc GetPass.h\
+ CharReader.cc CharReader.h LsCache.cc LsCache.h\
+ FileAccess.h FileAccess.cc ResMgr.h ResMgr.cc\
  Filter.cc Filter.h SignalHook.cc SignalHook.h FileCopy.cc FileCopy.h\
- xmalloc.cc xmalloc.h FileSet.cc FileSet.h FileCopyFtp.cc FileCopyFtp.h\
- FtpListInfo.cc FtpListInfo.h ftp-opie.c md5.c md5.h log.h log.cc\
+ xmalloc.cc xmalloc.h FileSet.cc FileSet.h\
+ log.h log.cc\
  buffer.cc buffer.h url.cc url.h StatusLine.cc StatusLine.h plural.c plural.h\
- misc.h misc.cc Http.cc Http.h fg.cc fg.h module.cc module.h modconfig.h\
- resource.cc DummyProto.cc DummyProto.h FtpDirList.cc\
- FtpDirList.h ArgV.cc ArgV.h HttpDir.cc HttpDir.h ascii_ctype.h\
- NetAccess.cc NetAccess.h Speedometer.cc FileGlob.cc FileGlob.h\
- Speedometer.h lftp_ssl.cc lftp_ssl.h netrc.cc netrc.h buffer_ssl.cc\
- buffer_ssl.h Fish.cc Fish.h ColumnOutput.cc ColumnOutput.h FileSetOutput.cc \
- FileSetOutput.h PtyShell.cc PtyShell.h lftp_pty.c lftp_pty.h \
- TimeDate.cc TimeDate.h Timer.cc Timer.h GetFileInfo.cc GetFileInfo.h \
+ misc.h misc.cc fg.cc fg.h module.cc module.h modconfig.h\
+ resource.cc DummyProto.cc DummyProto.h\
+ ArgV.cc ArgV.h ascii_ctype.h\
+ Speedometer.cc FileGlob.cc FileGlob.h\
+ Speedometer.h netrc.cc netrc.h\
+ ColumnOutput.cc ColumnOutput.h FileSetOutput.cc\
+ FileSetOutput.h\
+ TimeDate.cc TimeDate.h Timer.cc Timer.h GetFileInfo.cc GetFileInfo.h\
  StringPool.cc StringPool.h DirColors.cc DirColors.h IdNameCache.cc\
  IdNameCache.h PatternSet.cc PatternSet.h LocalDir.cc LocalDir.h
 
 libjobs_a_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\
- parsecmd.cc MirrorJob.cc MirrorJob.h\
+ parsecmd.cc\
  mvJob.cc mvJob.h alias.cc alias.h\
  bookmark.cc bookmark.h CatJob.cc CatJob.h GetJob.cc GetJob.h\
  mkdirJob.cc mkdirJob.h pgetJob.cc pgetJob.h FileFeeder.cc FileFeeder.h\
  QueueFeeder.cc QueueFeeder.h keyvalue.cc keyvalue.h history.cc history.h\
- SleepJob.cc SleepJob.h getdate.y getdate.h FindJob.cc FindJob.h \
- FindJobDu.cc FindJobDu.h ChmodJob.cc ChmodJob.h \
+ FindJob.cc FindJob.h\
+ FindJobDu.cc FindJobDu.h ChmodJob.cc ChmodJob.h\
  TreatFileJob.cc TreatFileJob.h CopyJob.cc CopyJob.h
 
 lftp_LDFLAGS = -export-dynamic $(LFTP_SSL_LDFLAGS)
 lftp_LDADD = libjobs.a libtasks.a $(READLINE) $(READLINE_SUPPLIB) \
-	$(top_builddir)/lib/liblib.a $(INTLLIBS) $(LFTP_SSL_LIBS)
+	$(top_builddir)/lib/liblib.a $(INTLLIBS) $(LFTP_SSL_LIBS) $(MODULES_LA_STATIC)
 lftp_DEPENDENCIES = libjobs.a libtasks.a $(READLINE_DEPEND) \
-	$(top_builddir)/lib/liblib.a
+	$(top_builddir)/lib/liblib.a $(MODULES_LA_STATIC)
 
 confpaths.h: Makefile
 	echo "#define SYSCONFDIR \"$(sysconfdir)\""  > $@
