@@ -548,8 +548,17 @@ Ftp::Ftp(const Ftp *f) : super(f)
 {
    InitFtp();
 
-   xfree(anon_pass);
-   anon_pass=xstrdup(f->anon_pass);
+   if(f->anon_pass)
+   {
+      xfree(anon_pass);
+      anon_pass=xstrdup(f->anon_pass);
+   }
+   if(f->anon_user)
+   {
+      xfree(anon_user);
+      anon_user=xstrdup(f->anon_user);
+   }
+
    if(f->state!=NO_HOST_STATE)
       state=INITIAL_STATE;
    if(!relookup_always)
@@ -2107,7 +2116,7 @@ const char *Ftp::CurrentStatus()
       return(_("Fatal protocol error occured"));
    case(STORE_FAILED_STATE):
       // this error is supposed to be handled by program
-      return(_("Store failed - reput is needed"));
+      return("Store failed - reput is needed");
    case(LOGIN_FAILED_STATE):
       return(_("Login failed"));
    case(SYSTEM_ERROR_STATE):

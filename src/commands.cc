@@ -688,10 +688,12 @@ CMD(cd)
 
 CMD(pwd)
 {
-   const char *cwd=session->GetCwd();
-   printf("%s\n",cwd?cwd:"~");
-   exit_code=0;
-   return 0;
+   char *url=xstrdup(session->GetConnectURL());
+   int len=strlen(url);
+   url[len++]='\n';  // replaces \0
+   Job *j=new CatJob(output,url,len);
+   output=0;
+   return j;
 }
 
 CMD(exit)
@@ -923,6 +925,9 @@ CMD(open)
 
    const char *bm=0;
 
+   if(cmd_to_exec)
+      PrependCmd(cmd_to_exec);
+
    if(host && (bm=lftp_bookmarks.Lookup(host))!=0)
    {
       char *cmd=(char*)alloca(5+strlen(bm)+1+1);
@@ -1020,11 +1025,6 @@ CMD(open)
       if(nrc)
 	 delete nrc;
    } // !bookmark
-
-   if(cmd_to_exec)
-   {
-      PrependCmd(cmd_to_exec);
-   }
 
    if(path)
    {
@@ -1639,7 +1639,7 @@ CMD(close)
 }
 
 static const char * const bookmark_subcmd[]=
-   {"add","delete","list","edit",0};
+   {"add","delete","list","edit","import",0};
 
 CMD(bookmark)
 {
@@ -1692,6 +1692,8 @@ CMD(bookmark)
       const char *key=args->getnext();
       if(key==0)
 	 eprintf(_("%s: bookmark name required\n"),args->a0());
+      else if(lftp_bookmarks.Lookup(key)==0)
+	 eprintf(_("%s: no such bookmark `%s'\n"),args->a0(),key);
       else
       {
 	 lftp_bookmarks.Remove(key);
@@ -1701,6 +1703,19 @@ CMD(bookmark)
    else if(!strcmp(op,"edit"))
    {
       PrependCmd("shell \"${EDITOR:-vi} $HOME/.lftp/bookmarks\"\n");
+   }
+   else if(!strcmp(op,"import"))
+   {
+      op=args->getnext();
+      if(!op)
+	 eprintf(_("%s: import type required (netscape,ncftp)\n"),args->a0());
+      else
+      {
+	 char *cmd=(char*)alloca(strlen(op)+15);
+	 sprintf(cmd,"shell import-%s\n",op);
+	 PrependCmd(cmd);
+	 exit_code=0;
+      }
    }
    return 0;
 }
