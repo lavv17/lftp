@@ -36,7 +36,9 @@
 #include "url.h"
 #include "HttpDir.h"
 #include "misc.h"
-#include "lftp_ssl.h"
+#ifdef USE_SSL
+# include "lftp_ssl.h"
+#endif
 
 #include "ascii_ctype.h"
 

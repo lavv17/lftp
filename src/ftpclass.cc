@@ -67,9 +67,11 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 
 #include "xalloca.h"
 
-#include "lftp_ssl.h"
-#ifndef USE_SSL
+#ifdef USE_SSL
+# include "lftp_ssl.h"
+#else
 # define control_ssl 0
+# define ftps 0
 #endif
 
 

@@ -22,7 +22,6 @@
 #include "buffer.h"
 #include "xmalloc.h"
 #include "FileAccess.h"
-#include "lftp_ssl.h"
 
 #define BUFFER_INC (8*1024) // should be power of 2
 
@@ -400,6 +399,7 @@ void IOBufferFileAccess::Resume()
 
 #ifdef USE_SSL
 # include <openssl/err.h>
+# include "lftp_ssl.h"
 
 // IOBufferSSL implementation
 #undef super
