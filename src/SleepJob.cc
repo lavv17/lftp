@@ -209,6 +209,9 @@ Job *cmd_at(CmdExec *parent)
    if(when==0 || when==(time_t)-1)
       return 0;
 
+   if(when<now)
+      when+=86400;
+
    char *cmd=0;
    if(cmd_start)
    {

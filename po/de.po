@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Lftp 2.4.5\n"
-"POT-Creation-Date: 2002-02-24 13:37+0300\n"
+"POT-Creation-Date: 2002-04-16 16:52+0400\n"
 "PO-Revision-Date: 2002-01-27 14:40GMT\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: deutsch <de@li.org>\n"
@@ -149,12 +149,12 @@ msgstr "Datei verschoben: %s"
 msgid "File moved to `%s'"
 msgstr "Datei verschoben nach »%s«"
 
-#: src/FtpListInfo.cc:237 src/NetAccess.cc:879
+#: src/FtpListInfo.cc:237 src/NetAccess.cc:873
 #, c-format
 msgid "Getting directory contents (%lld)"
 msgstr "Lese Verzeichnis (%lld) aus"
 
-#: src/FtpListInfo.cc:247 src/NetAccess.cc:885
+#: src/FtpListInfo.cc:247 src/NetAccess.cc:879
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "Lese Dateiinformationen (%d%%)"
@@ -166,7 +166,7 @@ msgstr ""
 "%s: %s: Datei existiert bereits und xfer:clobber (=überschreiben) ist nicht "
 "eingeschaltet\n"
 
-#: src/Job.cc:336
+#: src/Job.cc:338
 #, c-format
 msgid "[%d] Done (%s)"
 msgstr "[%d] Fertig (%s)"
@@ -2041,7 +2041,7 @@ msgid "ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C"
 msgstr "ftp:ssl-auth muss eines der folgenden sein: SSL, TLS, TLS-P, TLS-C"
 
 #: src/FtpDirList.cc:145 src/FtpSplitList.cc:182 src/HttpDir.cc:1116
-#: src/NetAccess.cc:692
+#: src/NetAccess.cc:686
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "Hole Dateiliste (%lld) [%s]"
@@ -2185,15 +2185,15 @@ msgstr "Verbinde mit %s%s (%s) Port %u"
 msgid "Timeout - reconnecting"
 msgstr "Zeitablauf - neu verbinden"
 
-#: src/NetAccess.cc:493
+#: src/NetAccess.cc:487
 msgid "Connections limit reached"
 msgstr "Zahl der Verbindungen hat Grenze erreicht"
 
-#: src/NetAccess.cc:497
+#: src/NetAccess.cc:491
 msgid "Delaying before reconnect"
 msgstr "Pausiere vor erneuter Verbindung"
 
-#: src/NetAccess.cc:508
+#: src/NetAccess.cc:502
 msgid "max-retries exceeded"
 msgstr "max-retries überschritten"
 

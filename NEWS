@@ -1,3 +1,7 @@
+Version 2.4.11 - 2002-04-16
+
+* bug fixes from 2.5 branch.
+
 Version 2.4.10a - 2002-03-10
 
 * missed file triostr.h was added.

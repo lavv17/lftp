@@ -64,11 +64,13 @@ Job::~Job()
 	       scan->parent=this->parent;
 	       scan=scan->next;
 	    }
-	    else
+	    else if(!scan->deleting)
 	    {
 	       Delete(scan);
 	       scan=chain;
 	    }
+	    else
+	       scan=scan->next;
 	 }
 	 else
 	    scan=scan->next;

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
-"POT-Creation-Date: 2002-02-24 13:37+0300\n"
+"POT-Creation-Date: 2002-04-16 16:52+0400\n"
 "PO-Revision-Date: 2001-09-24 00:06+0900\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -146,12 +146,12 @@ msgstr "移動されたファイル: %s"
 msgid "File moved to `%s'"
 msgstr "ファイルを `%s' へ移動しました"
 
-#: src/FtpListInfo.cc:237 src/NetAccess.cc:879
+#: src/FtpListInfo.cc:237 src/NetAccess.cc:873
 #, c-format
 msgid "Getting directory contents (%lld)"
 msgstr "ディレクトリ内容 (%lld) を取得中"
 
-#: src/FtpListInfo.cc:247 src/NetAccess.cc:885
+#: src/FtpListInfo.cc:247 src/NetAccess.cc:879
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "ファイル情報 (%d%%)を取得中"
@@ -162,7 +162,7 @@ msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr ""
 "%s: %s: ファイルはすでに存在し、また xfer:clobber がセットされていません\n"
 
-#: src/Job.cc:336
+#: src/Job.cc:338
 #, c-format
 msgid "[%d] Done (%s)"
 msgstr "[%d] 完了 (%s)"
@@ -1993,7 +1993,7 @@ msgstr ""
 "ftp:ssl-auth は以下のどれかでなければなりません: SSL、TLS、TLS-P、TLS-C"
 
 #: src/FtpDirList.cc:145 src/FtpSplitList.cc:182 src/HttpDir.cc:1116
-#: src/NetAccess.cc:692
+#: src/NetAccess.cc:686
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "ファイルリスト (%lld) [%s] を取得中"
@@ -2137,15 +2137,15 @@ msgstr "%s%s (%s) ポート %u に接続中"
 msgid "Timeout - reconnecting"
 msgstr "タイムアウト - 再接続中"
 
-#: src/NetAccess.cc:493
+#: src/NetAccess.cc:487
 msgid "Connections limit reached"
 msgstr "接続数制限に達しました"
 
-#: src/NetAccess.cc:497
+#: src/NetAccess.cc:491
 msgid "Delaying before reconnect"
 msgstr "再接続を遅延しています"
 
-#: src/NetAccess.cc:508
+#: src/NetAccess.cc:502
 msgid "max-retries exceeded"
 msgstr "最大再試行回数を超えました"
 

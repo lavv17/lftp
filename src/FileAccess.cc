@@ -598,24 +598,24 @@ int FileAccess::device_prefix_len(const char *path)
 
 void FileAccess::Chdir(const char *path,bool verify)
 {
-   char	 *newcwd=(char*)alloca(strlen(cwd)+strlen(path)+2);
+   char	 *newcwd=(char*)alloca(xstrlen(cwd)+strlen(path)+2);
    int	 prefix_size=0;
 
    ExpandTildeInCWD();
 
-   if(cwd[0]=='/')
+   if(cwd && cwd[0]=='/')
    {
       prefix_size=1;
       if(cwd[1]=='/' && cwd[2] && cwd[2]!='/')
 	 prefix_size=2;
    }
-   else if(cwd[0]=='~')
+   else if(cwd && cwd[0]=='~')
    {
       prefix_size=1;
       while(cwd[prefix_size]!='/' && cwd[prefix_size]!='\0')
 	 prefix_size++;
    }
-   else
+   else if(cwd)
    {
       // handle VMS and DOS devices.
       prefix_size=device_prefix_len(cwd);
@@ -644,7 +644,7 @@ void FileAccess::Chdir(const char *path,bool verify)
    }
    else
    {
-      if(cwd[0])
+      if(cwd && cwd[0])
 	 sprintf(newcwd,"%s/%s",cwd,path);
       else
 	 strcpy(newcwd,path);
