@@ -1,0 +1,6 @@
+Makefile
+confpaths.h
+lftp
+ftpget
+.deps
+.libs

@@ -1,0 +1,4 @@
+Makefile
+*.tar.gz
+libtool
+config.*
