@@ -96,6 +96,8 @@ CMD(repeat);CMD(get1);
 # define cmd_repeat 0
 #endif
 
+#define S "\001"
+
 const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 {
    {"!",       cmd_shell,  N_("!<shell_command>"),
@@ -265,7 +267,10 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -a  use ascii mode (binary is the default)\n")},
    {"pwd",     cmd_pwd,    "pwd",
 	 N_("Print current remote directory\n")},
-   {"queue",   cmd_queue,  0,0},
+   {"queue",   cmd_queue,  0,
+	 N_("Usage: queue <command>\n"
+	 "Add the command to queue for current site. Each site has its own\n"
+	 "command queue.\n")},
    {"quit",    cmd_exit,   0,"exit"},
    {"quote",   cmd_ls,	   N_("quote <cmd>"),
 	 N_("Send the command uninterpreted. Use with caution - it can lead to\n"

@@ -5,6 +5,7 @@
 	  job before others.
 	* LocalAccess.cc: expand tilde (finally).
 	* pgetJob.cc, pgetJob.h: re-implement PrintStatus method.
+	* commands.cc: add queue help.
 
 1999-12-30  Alexander V. Lukyanov  <lav@yars.free.net>
 
