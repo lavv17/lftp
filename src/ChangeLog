@@ -3,11 +3,19 @@
 	* FileCopy.cc: (OpenSession) set correct pos in PUT mode;
 	  don't call SaveRollback in PUT mode; handle eof in fxp PUT.
 	* SMTask.h: ensure STALL|MOVED==MOVED.
-	* ftpclass.cc: make FlushSendQueue and ReceiveResp return flag
-	  indicating progress; OR it with m in Ftp::Do; fix condition
-	  of Disconnect in copy mode; fix SwitchToState to not ignore
-	  severe errors in copy mode.
+	* ftpclass.cc, ftpclass.h: make FlushSendQueue and ReceiveResp
+	  return flag indicating progress; OR it with m in Ftp::Do;
+	  fix condition of Disconnect in copy mode; fix SwitchToState
+	  to not ignore severe errors in copy mode; outline New;
+	  (SendCmd2) new method; use it everywhere; new settings use-stat,
+	  stat-interval.
 	* HttpDir.cc: fix spinning on & in file names when no &amp; etc match.
+	* FileCopy.h: make bytes_count protected.
+	* FileCopyFtp.cc: increment bytes_count.
+	* Http.cc, Http.h, LocalAccess.cc, LocalAccess.h: outline (New).
+	* commands.cc: optimize cmd_user; update description for user;
+	  update copyright string for year 2000.
+	* resource.cc: new settings ftp:use-stat, ftp:stat-interval.
 
 2000-01-12  Alexander V. Lukyanov  <lav@yars.free.net>
 
