@@ -392,11 +392,12 @@ bool NetAccess::ReconnectAllowed()
    // cyclic exponential growth.
    float interval = reconnect_interval;
    if(reconnect_interval_multiplier>1
-   && reconnect_interval_max>reconnect_interval*reconnect_interval_multiplier)
+   && reconnect_interval_max>reconnect_interval*reconnect_interval_multiplier
+   && retries>0)
    {
       interval*=pow(reconnect_interval_multiplier,
-	 retries%(int)(log((float)reconnect_interval_max/reconnect_interval)
-		      /log(reconnect_interval_multiplier)));
+	 (retries-1)%(int)(log((float)reconnect_interval_max/reconnect_interval)
+		          /log(reconnect_interval_multiplier)));
    }
    if(now-try_time >= interval)
       return true;
