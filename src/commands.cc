@@ -1009,7 +1009,11 @@ Job *CmdExec::builtin_queue()
       switch(opt)
       {
       case 'n':
-	 if(!isdigit((unsigned char)optarg[0]))
+	 /* Actually, sending pos == -1 will work, but it'll put the
+	  * job at the end; it's confusing for "-n 0" to mean "put
+	  * it at the end", and that's the default anyway, so disallow
+	  * it. */
+	 if(!isdigit((unsigned char)optarg[0]) || atoi(optarg) == 0)
 	 {
 	    eprintf(_("%s: -n: Number expected. "), args->a0());
 	    goto err;
@@ -1113,7 +1117,7 @@ Job *CmdExec::builtin_queue()
 
 	 if(!arg)
 	    queue->queue_feeder->DelJob(-1, verbose); /* delete the last job */
-	 else if(isdigit(arg[0]))
+	 else if(isdigit(arg[0]) && atoi(arg) != 0)
 	    queue->queue_feeder->DelJob(atoi(arg)-1, verbose);
 	 else
 	    queue->queue_feeder->DelJob(arg, verbose);
@@ -1141,7 +1145,7 @@ Job *CmdExec::builtin_queue()
 	    break;
 	 }
 
-	 if(isdigit(arg[0])) {
+	 if(isdigit(arg[0]) && atoi(arg) != 0) {
 	    queue->queue_feeder->MoveJob(atoi(arg)-1, to, verbose);
 	    break;
 	 }
