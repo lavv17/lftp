@@ -21,8 +21,8 @@ opie/skey, fxp transfers, automatic retrying on non-fatal errors and
 timeouts, ipv6, socks. See FEATURES for more detailed list of
 features.
 
-Every operation in lftp is reliable, that is any not fatal error is
-ignored and the operation is repeated. So if downloading breaks, it
+Every operation in lftp is reliable, that is any non-fatal error is
+ignored and the operation is retried. So if downloading breaks, it
 will be restarted from the point automatically. Even if ftp server
 does not support REST command, lftp will try to retrieve the file from
 the very beginning until the file is transferred completely.
@@ -31,7 +31,7 @@ lftp has shell-like command syntax allowing you to launch several
 commands in parallel in background (&). It is also possible to group
 commands within () and execute them in background. All background jobs
 are executed in the same single process. You can bring a foreground
-job to background with ^Z and back with command `wait' (or `fg' which
+job to background with ^Z (c-z) and back with command `wait' (or `fg' which
 is alias to `wait'). To list running jobs, use command `jobs'. Some
 commands allow redirecting their output (cat, ls, ...) to file or via
 pipe to external command. Commands can be executed conditionally based
@@ -52,7 +52,7 @@ for current server, and much more.
 On startup, lftp executes /etc/lftp.conf and then ~/.lftprc and
 ~/.lftp/rc. You can place aliases and `set' commands there. Some
 people prefer to see full protocol debug, use `debug' to turn the
-debug on. Use `debug 0' to see only greeting messages and error
+debug on. Use `debug 3' to see only greeting messages and error
 messages.
 
 lftp has a number of settable variables. You can use `set -a' to see

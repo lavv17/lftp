@@ -34,9 +34,10 @@ LFTP includes the following features (some may be missed in this list):
 * Paging of remote files using external program.
 * `zcat' and `zmore' support.
 * Help for commands.
+* Transfer status includes rate and ETA.
 
 * Background jobs (bash-like).
 * Job output redirection to a file or to a program via pipe.
 * Conditional commands depending on exit status of previous one.
-* Loading of modules at run time (configure option).
+* Loading of binary modules at run time (configure option).
 * `pget' to download a file using several connections.
