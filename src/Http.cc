@@ -298,6 +298,16 @@ void Http::SendMethod(const char *method,const char *efile)
       efile=pfile;
    }
 
+   /*
+      Handle the case when the user has not given us
+      get http://foobar.org (note the absense of the trailing /
+
+      It fixes segfault with a certain webserver which I've
+      seen ... (Geoffrey Lee <glee@gnupilgrims.org>).
+   */
+   if(*efile=='\0')
+      efile="/";
+
    Send("%s %s HTTP/1.1\r\n",method,efile);
    Send("Host: %s\r\n",ehost);
    if(user_agent && user_agent[0])

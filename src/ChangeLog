@@ -1,3 +1,7 @@
+2003-05-14  Geoffrey Lee <glee@gnupilgrims.org>
+
+	* Http.cc: fix a problem with empty path; change it to "/".
+
 2003-04-30  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc: default mode for directories is 0775; raise sane
