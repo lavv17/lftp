@@ -150,7 +150,7 @@ int Fish::Do()
       char *init=alloca_strdup2("echo FISH:;",strlen(shell));
       strcat(init,shell);
 
-      ArgV *cmd=new ArgV("ssh");
+      ArgV *cmd=new ArgV(Query("connect-program",hostname));
       cmd->Add("-x");	// don't forward X11
       cmd->Add("-a");	// don't forward AuthAgent.
       if(user)
@@ -165,9 +165,11 @@ int Fish::Do()
       }
       cmd->Add(hostname);
       cmd->Add(init);
+      {
       char *cmd_str=cmd->Combine(0);
-      Log::global->Format(9,"---- %s (%s)\n",_("Running ssh..."),cmd_str);
+      Log::global->Format(9,"---- %s (%s)\n",_("Running connect program"),cmd_str);
       xfree(cmd_str);
+      }
       ssh=new PtyShell(cmd);
       state=CONNECTING;
       event_time=now;

@@ -156,6 +156,8 @@ int OutputFilter::getfd()
 
    ProcWait::Signal(false);
 
+   bool had_pg=(pg!=0);
+
    fflush(stderr);
    switch(pid=fork())
    {
@@ -186,6 +188,7 @@ int OutputFilter::getfd()
       close(p[1]);
       goto out;
    }
+
    if(pg==0)
       pg=pid;
 
@@ -203,6 +206,9 @@ int OutputFilter::getfd()
    waitpid(pid,&info,WUNTRACED);
 
    w=new ProcWait(pid);
+
+   if(had_pg)
+      kill(pid,SIGCONT);
 out:
    ProcWait::Signal(true);
    return fd;
@@ -285,7 +291,11 @@ bool OutputFilter::Done()
       closed=true;
    }
    if(w->GetState()!=w->RUNNING)
-      return second?second->Done():true;
+   {
+      if(delete_second && second)
+	 return second->Done();
+      return true;
+   }
    return false;
 }
 bool OutputFilter::broken()

@@ -1,3 +1,11 @@
+2002-01-03  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Filter.cc: don't stop process if there is a process group already;
+	  don't call second->Done if !delete_second.
+	* lftpget: quote single quote properly.
+	* Fish.cc: use fish:connect-program setting.
+	* resource.cc: new fish setting; don't send referer by default.
+
 2002-01-01  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h: fix SendCWD to set correct check case.

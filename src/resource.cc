@@ -220,7 +220,7 @@ static ResDecl
    ResDecl29a("http:post-content-type",   "application/x-www-form-urlencoded",0,0),
    ResDecl29 ("http:put-method",	  "PUT",   PutOrPost,0),
    ResDecl30 ("http:put-content-type",	  "",	   0,0),
-   ResDecl30b("http:referer",		  ".",	   0,0),
+   ResDecl30b("http:referer",		  "",	   0,0),
 #ifdef USE_SSL
    ResDecl30a("https:proxy",		  "",	   HttpProxyValidate,0),
 #endif
@@ -261,7 +261,8 @@ static ResDecl
    res_use_fork	   ("dns:use-fork",     "yes", ResMgr::BoolValidate,ResMgr::NoClosure);
 
 static ResDecl
-   fish_shell  ("fish:shell", "/bin/sh",  0,0);
+   fish_shell  ("fish:shell", "/bin/sh",  0,0),
+   fish_connect("fish:connect-program", "ssh", 0,0);
 
 static ResDecl
    res_dir_colors ("color:dir-colors",   "",   0,ResMgr::NoClosure);
