@@ -66,7 +66,7 @@ void FileAccess::Init()
    mode=CLOSED;
    try_time=0;
    retries=0;
-   time(&event_time);
+   event_time=now;
    opt_date=0;
    opt_size=0;
    error=0;
@@ -231,6 +231,7 @@ void  FileAccess::Open(const char *fn,int mode,off_t offs)
    if(IsOpen())
       Close();
    Resume();
+   event_time=now;
    file=xstrdup(fn);
    real_pos=-1;
    pos=offs;
