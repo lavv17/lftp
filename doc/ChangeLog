@@ -1,3 +1,7 @@
+2005-04-04	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document cache: settings, cmd:verify-path-cached.
+
 2005-02-25	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document ftp:ignore-pasv-address.

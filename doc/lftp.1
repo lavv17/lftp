@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "05 Mar 2005"
+.TH lftp 1 "04 Apr 2005"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 3.1.1.
+This man page documents lftp version 3.1.2.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -849,6 +849,21 @@ end a sequence of non-printing characters
 .RE
 
 .TP
+.BR cache:cache-empty-listings \ (boolean)
+When false, empty listings are not cached.
+.TP
+.BR cache:enable \ (boolean)
+When false, cache is disabled.
+.TP
+.BR cache:expire " (time interval)"
+Positive cache entries expire in this time interval.
+.TP
+.BR cache:expire-negative " (time interval)"
+Negative cache entries expire in this time interval.
+.TP
+.BR cache:size " (number)"
+Maximum cache size. When exceeded, oldest cache entries will be removed from cache.
+.TP
 .BR cmd:remote-completion \ (boolean)
 a boolean to control whether or not lftp uses remote completion.
 .TP
@@ -866,6 +881,10 @@ Examples:
 set cmd:verify-path/hftp://* false
 cd directory &
 .De
+.TP
+.BR cmd:verify-path-cached \ (boolean)
+When false, `cd' to a directory known from cache as existent will succeed immediately.
+Otherwise the verification will depend on cmd:verify-path setting.
 .TP
 .BR dns:SRV-query \ (boolean)
 query for SRV records and use them before gethostbyname. The SRV records
