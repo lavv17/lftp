@@ -1,3 +1,7 @@
+2001-11-05  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.h: fix coredump on `mget -E'.
+
 2001-10-30  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc: no need to convert cached data - it is done by other

@@ -235,8 +235,8 @@ public:
    static FileCopy *(*fxp_create)(FileCopyPeer *src,FileCopyPeer *dst,bool cont);
 
    void AllowWrite() { put->AllowWrite(); }
-   bool WriteAllowed() { return put->WriteAllowed(); }
-   bool WritePending() { return put->WritePending(); }
+   bool WriteAllowed() { return !put || put->WriteAllowed(); }
+   bool WritePending() { return put && put->WritePending(); }
 };
 
 class FileCopyPeerFA : public FileCopyPeer
