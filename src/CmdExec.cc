@@ -33,9 +33,9 @@
 #include "misc.h"
 #include "ResMgr.h"
 #include "module.h"
-extern "C" {
-#include <readline/readline.h>
-}
+
+#define RL_PROMPT_START_IGNORE	'\001'
+#define RL_PROMPT_END_IGNORE	'\002'
 
 #define super SessionJob
 
@@ -500,7 +500,7 @@ try_get_cmd:
 	       last_bg=-1;
 	 }
 	 char *prompt=MakePrompt();
-	 char *cmd=feeder->NextCmd(this,prompt);
+	 const char *cmd=feeder->NextCmd(this,prompt);
 	 if(cmd==0)
 	 {
 	    if(next_cmd && *next_cmd && partial_cmd)

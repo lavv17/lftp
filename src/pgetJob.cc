@@ -132,7 +132,7 @@ void pgetJob::ShowRunStatus(StatusLine *s)
    int w=s->GetWidth()-40;
    if(w<=0)
       return;
-   char *n=curr;
+   const char *n=curr;
    if((int)strlen(n)>w)
       n=n+strlen(n)-w;
    // xgettext:c-format
@@ -199,8 +199,8 @@ void pgetJob::NextFile()
    total_xferred=0;
 }
 
-pgetJob::ChunkXfer::ChunkXfer(FileAccess *session,char *remote,FDStream *local,
-		     long start,long limit)
+pgetJob::ChunkXfer::ChunkXfer(FileAccess *session,const char *remote,
+      FDStream *local,long start,long limit)
    : XferJob(session)
 {
    this->curr=remote;

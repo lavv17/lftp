@@ -28,12 +28,14 @@
 #include <assert.h>
 #include <errno.h>
 #include <stdarg.h>
-#include <ctype.h>
 #include <time.h>
 #include "Http.h"
 #include "ResMgr.h"
 #include "log.h"
 #include "url.h"
+#include "HttpDir.h"
+
+#include "ascii_ctype.h"
 
 #define super FileAccess
 
@@ -242,9 +244,9 @@ bool Http::ModeSupported()
    }
 }
 
-void Http::SendRequest(const char *connection)
+void Http::SendRequest(const char *connection,const char *f)
 {
-   char *efile=alloca_strdup(url::encode_string(file));
+   char *efile=alloca_strdup(url::encode_string(f));
    char *ecwd=alloca_strdup(url::encode_string(cwd));
    int efile_len;
 
@@ -295,6 +297,7 @@ void Http::SendRequest(const char *connection)
       abort(); // unsupported
 
    case RETRIEVE:
+   retrieve:
       SendMethod("GET",efile);
       if(pos>0)
 	 Send("Range: bytes=%ld-\r\n",pos);
@@ -318,7 +321,7 @@ void Http::SendRequest(const char *connection)
       if(mode==CHANGE_DIR)
 	 SendMethod("HEAD",efile);
       else if(mode==LONG_LIST)
-	 SendMethod("GET",efile);
+	 goto retrieve;
       else if(mode==MAKE_DIR)
 	 SendMethod("PUT",efile);   // hope it would work
       break;
@@ -545,13 +548,8 @@ int Http::Do()
       DebugPrint("---- ","Sending request...",9);
       if(mode==ARRAY_INFO)
       {
-	 xfree(file);
 	 for(int i=array_ptr; i<array_cnt; i++)
-	 {
-	    file=array_for_info[i].file;
-	    SendRequest(i==array_cnt-1 ? "close" : 0);
-	 }
-	 file=0;
+	    SendRequest(i==array_cnt-1 ? "close" : 0, array_for_info[i].file);
       }
       else
       {
@@ -564,6 +562,10 @@ int Http::Do()
    case RECEIVING_HEADER:
       if(send_buf->Error() || recv_buf->Error())
       {
+	 if(send_buf->Error())
+	    DebugPrint("**** ",send_buf->ErrorText());
+	 if(recv_buf->Error())
+	    DebugPrint("**** ",recv_buf->ErrorText());
 	 Disconnect();
 	 return MOVED;
       }
@@ -575,6 +577,7 @@ int Http::Do()
       if(!buf)
       {
 	 // eof
+	 DebugPrint("**** ","Hit EOF while fetching headers");
 	 Disconnect();
 	 return MOVED;
       }
@@ -737,6 +740,10 @@ int Http::Do()
       data_buf=recv_buf;
       if(recv_buf->Error() || send_buf->Error())
       {
+	 if(send_buf->Error())
+	    DebugPrint("**** ",send_buf->ErrorText());
+	 if(recv_buf->Error())
+	    DebugPrint("**** ",recv_buf->ErrorText());
 	 Disconnect();
 	 return MOVED;
       }
@@ -821,10 +828,7 @@ int Http::Read(void *buf,int size)
 	 return 0;
       }
       if(body_size>=0 && bytes_received>=body_size)
-      {
-	 Disconnect();
 	 return 0; // all received
-      }
       int bytes_allowed=BytesAllowed();
       if(size1>bytes_allowed)
 	 size1=bytes_allowed;
@@ -1052,6 +1056,23 @@ bool Http::SameLocationAs(FileAccess *fa)
    return true;
 }
 
+void Http::Connect(const char *new_host,const char *new_port)
+{
+   super::Connect(new_host,new_port);
+   Reconfig();
+   DontSleep();
+   state=DISCONNECTED;
+   xfree(peer);
+   peer=0;
+   try_time=0;
+}
+
+DirList *Http::MakeDirList(ArgV *args)
+{
+   return new HttpDirList(args,this);
+}
+
+
 /* Converts struct tm to time_t, assuming the data in tm is UTC rather
    than local timezone (mktime assumes the latter).
 
@@ -1070,8 +1091,8 @@ mktime_from_utc (struct tm *t)
 }
 
 /* The functions http_atotm and check_end are taken from wget */
-#define ISSPACE(c) isspace((unsigned char)(c))
-#define ISDIGIT(c) isdigit((unsigned char)(c))
+#define ISSPACE(c) is_ascii_space((c))
+#define ISDIGIT(c) is_ascii_digit((c))
 
 /* Check whether the result of strptime() indicates success.
    strptime() returns the pointer to how far it got to in the string.

@@ -45,7 +45,7 @@ protected:
 
    void	 NextFile();
 
-   char	 *for_each;
+   const char *for_each;
 
 public:
    int	 Do();

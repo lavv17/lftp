@@ -61,7 +61,11 @@ class Http : public FileAccess
    FileInputBuffer *recv_buf;
    void SendMethod(const char *,const char *);
    void SendAuth();
-   void SendRequest(const char *connection=0);
+   void SendRequest(const char *connection,const char *f);
+   void SendRequest(const char *connection=0)
+      {
+	 SendRequest(connection,file);
+      }
    int status_code;
    void HandleHeaderLine(const char *name,const char *value);
 
@@ -120,6 +124,8 @@ public:
    int StoreStatus();
    int SendEOT();
 
+   void	 Connect(const char *h,const char *p);
+
    void Close();
    const char *CurrentStatus();
 
@@ -127,6 +133,8 @@ public:
 
    bool SameSiteAs(FileAccess *fa);
    bool SameLocationAs(FileAccess *fa);
+
+   DirList *MakeDirList(ArgV *a);
 };
 
 #endif//HTTP_H

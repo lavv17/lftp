@@ -64,6 +64,7 @@
 #include "bookmark.h"
 #include "log.h"
 #include "module.h"
+#include "getopt.h"
 
 #include "confpaths.h"
 
@@ -442,12 +443,13 @@ CmdFeeder *lftp_feeder=0;
 Job *CmdExec::builtin_lftp()
 {
    int c;
-   char *cmd=0;
+   const char *cmd=0;
+   char *acmd;
    static struct option lftp_options[]=
    {
       {"help",no_argument,0,'h'},
       {"version",no_argument,0,'v'},
-      {0}
+      {0,0,0,0}
    };
 
    args->rewind();
@@ -463,14 +465,16 @@ Job *CmdExec::builtin_lftp()
 	 cmd="version;";
 	 break;
       case('f'):
-	 cmd=(char*)alloca(20+2*strlen(optarg));
-	 strcpy(cmd,"source \"");
-	 unquote(cmd+strlen(cmd),optarg);
-	 strcat(cmd,"\";");
+	 acmd=(char*)alloca(20+2*strlen(optarg));
+	 strcpy(acmd,"source \"");
+	 unquote(acmd+strlen(acmd),optarg);
+	 strcat(acmd,"\";");
+	 cmd=acmd;
 	 break;
       case('c'):
-	 cmd=(char*)alloca(4+strlen(optarg));
-	 sprintf(cmd,"%s\n\n",optarg);
+	 acmd=(char*)alloca(4+strlen(optarg));
+	 sprintf(acmd,"%s\n\n",optarg);
+	 cmd=acmd;
 	 break;
       }
    }
@@ -705,12 +709,15 @@ CMD(ls)
    int mode=FA::LONG_LIST;
    if(strstr(args->a0(),"nlist"))
       mode=FA::LIST;
+#if 0
    if(mode==FA::LONG_LIST && args->count()==1)
       args->Append(parent->var_ls);
-   LsJob *j=new LsJob(Clone(),output,args->Combine(1),mode);
-   output=0;
+#endif
+   LsJob *j=new LsJob(Clone(),output,args,mode);
    if(!strncmp(args->a0(),"re",2))
       j->NoCache();
+   output=0;
+   args=0;
    return j;
 }
 
@@ -755,8 +762,8 @@ CMD(get)
    int opt;
    bool use_urls=false;
    bool cont=false;
-   char *opts="+ceu";
-   char *op=args->a0();
+   const char *opts="+ceu";
+   const char *op=args->a0();
    ArgV	 *get_args=new ArgV(op);
    int n_conn=0;
    bool del=false;
@@ -864,8 +871,8 @@ CMD(put)
 {
    int opt;
    bool cont=false;
-   char *opts="+c";
-   char *op=args->a0();
+   const char *opts="+c";
+   const char *op=args->a0();
    ArgV	 *get_args=new ArgV(op);
 
    args->rewind();
@@ -982,7 +989,7 @@ CMD(rm)
 
    if(recursive)
    {
-      Job *j=new FindJob_Cmd(Clone(),args,FindJob_Cmd::RM);
+      Job *j=new FinderJob_Cmd(Clone(),args,FinderJob_Cmd::RM);
       args=0;
       return j;
    }
@@ -1410,7 +1417,7 @@ CMD(mv)
    return j;
 }
 
-static char *const cache_subcmd[]={
+static const char *const cache_subcmd[]={
    "status","flush","on","off","size","expire",
    NULL
 };
@@ -1817,10 +1824,10 @@ CMD(at)
 
 CMD(find)
 {
-   char *path=".";
+   const char *path=".";
    if(args->count()>1)
       path=args->getarg(1);
-   Job *j=new class FindJob_List(Clone(),path,
+   Job *j=new class FinderJob_List(Clone(),path,
       output?output:new FDStream(1,"<stdout>"));
    output=0;
    return j;

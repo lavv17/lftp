@@ -44,7 +44,7 @@ class CmdFeeder
 public:
    char *saved_buf;
    CmdFeeder *prev;
-   virtual char *NextCmd(class CmdExec *exec,const char *prompt) = 0;
+   virtual const char *NextCmd(class CmdExec *exec,const char *prompt) = 0;
    virtual ~CmdFeeder() {}
 };
 
@@ -188,7 +188,7 @@ public:
    void print_cmd_help(const char *cmd);
    void print_cmd_index();
 
-   static const cmd_rec *CmdExec::CmdByIndex(int i);
+   static const cmd_rec *CmdByIndex(int i);
 
    int	 last_bg;
 };

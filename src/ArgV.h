@@ -23,8 +23,6 @@
 #ifndef ARGV_H
 #define ARGV_H
 
-#include "getopt.h"
-
 class ArgV
 {
    char **v;
@@ -44,10 +42,11 @@ public:
 
    char *Combine(int start_index=0);
 
+   int getopt_long(const char *opts,const struct option *lopts,int *lind);
    int getopt(const char *opts)
-      { optind=ind; int r=::getopt(c,v,opts); ind=optind; return r; }
-   int getopt_long(const char *opts,const struct option *lopts,int *lind)
-      { optind=ind; int r=::getopt_long(c,v,opts,lopts,lind); ind=optind; return r; }
+      {
+	 return getopt_long(opts,0,0);
+      }
 
    void rewind();
    char *getnext();

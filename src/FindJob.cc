@@ -28,7 +28,7 @@
 
 #define top (*stack[stack_ptr])
 
-int FindJob::Do()
+int FinderJob::Do()
 {
    int m=STALL;
    int res;
@@ -165,7 +165,7 @@ int FindJob::Do()
    return m;
 }
 
-void FindJob::Up()
+void FinderJob::Up()
 {
    if(stack_ptr==-1)
    {
@@ -181,7 +181,7 @@ void FindJob::Up()
    state=LOOP;
 }
 
-void FindJob::Push(FileSet *fset)
+void FinderJob::Push(FileSet *fset)
 {
    const char *old_path=0;
    if(stack_ptr>=0)
@@ -202,29 +202,29 @@ void FindJob::Push(FileSet *fset)
    stack[stack_ptr]=new place(new_path,fset);
 }
 
-FindJob::place::place(const char *p,FileSet *f)
+FinderJob::place::place(const char *p,FileSet *f)
 {
    path=xstrdup(p);
    fset=f;
 }
-FindJob::place::~place()
+FinderJob::place::~place()
 {
    xfree(path);
    if(fset) delete fset;
 }
 
-void FindJob::Down(const char *p)
+void FinderJob::Down(const char *p)
 {
    dir=p;
    state=INIT;
 }
 
-FindJob::prf_res FindJob::ProcessFile(const char *d,const FileInfo *f)
+FinderJob::prf_res FinderJob::ProcessFile(const char *d,const FileInfo *f)
 {
    return PRF_OK;
 }
 
-void FindJob::Init()
+void FinderJob::Init()
 {
    op="find";
    start_dir=0;
@@ -247,7 +247,7 @@ void FindJob::Init()
    state=INIT;
 }
 
-FindJob::FindJob(FileAccess *s,const char *d)
+FinderJob::FinderJob(FileAccess *s,const char *d)
    : SessionJob(s)
 {
    Init();
@@ -255,7 +255,7 @@ FindJob::FindJob(FileAccess *s,const char *d)
    NextDir(d);
 }
 
-void FindJob::NextDir(const char *d)
+void FinderJob::NextDir(const char *d)
 {
    session->Chdir(init_dir,false); // no verification
    xfree(start_dir);
@@ -263,7 +263,7 @@ void FindJob::NextDir(const char *d)
    Down(start_dir);
 }
 
-FindJob::~FindJob()
+FinderJob::~FinderJob()
 {
    while(stack_ptr>=0)
       Up();
@@ -273,7 +273,7 @@ FindJob::~FindJob()
    if(li) delete li;
 }
 
-void FindJob::ShowRunStatus(StatusLine *sl)
+void FinderJob::ShowRunStatus(StatusLine *sl)
 {
    if(!show_sl)
       return;
@@ -296,9 +296,9 @@ void FindJob::ShowRunStatus(StatusLine *sl)
    }
 }
 
-// FindJob_List implementation
+// FinderJob_List implementation
 // find files and write list to a stream
-FindJob::prf_res FindJob_List::ProcessFile(const char *d,const FileInfo *fi)
+FinderJob::prf_res FinderJob_List::ProcessFile(const char *d,const FileInfo *fi)
 {
    if(buf->Broken())
       return PRF_FATAL;
@@ -313,27 +313,27 @@ FindJob::prf_res FindJob_List::ProcessFile(const char *d,const FileInfo *fi)
       return PRF_WAIT;
    buf->Put(dir_file(d,fi->name));
    buf->Put("\n");
-   return FindJob::ProcessFile(d,fi);
+   return FinderJob::ProcessFile(d,fi);
 }
 
-FindJob_List::FindJob_List(FileAccess *s,const char *d,FDStream *o)
-   : FindJob(s,d)
+FinderJob_List::FinderJob_List(FileAccess *s,const char *d,FDStream *o)
+   : FinderJob(s,d)
 {
    show_sl = !o->usesfd(1);
    buf=new FileOutputBuffer(o);
 }
 
-FindJob_List::~FindJob_List()
+FinderJob_List::~FinderJob_List()
 {
    delete buf;
 }
 
 
-// FindJob_Cmd implementation
+// FinderJob_Cmd implementation
 // process directory tree
-#define super FindJob
+#define super FinderJob
 
-FindJob::prf_res FindJob_Cmd::ProcessFile(const char *d,const FileInfo *f)
+FinderJob::prf_res FinderJob_Cmd::ProcessFile(const char *d,const FileInfo *f)
 {
 #define ISDIR  ((f->defined&f->TYPE) && f->filetype==f->DIRECTORY)
 #define ISLINK ((f->defined&f->TYPE) && f->filetype==f->SYMLINK)
@@ -383,8 +383,8 @@ FindJob::prf_res FindJob_Cmd::ProcessFile(const char *d,const FileInfo *f)
 #undef ISLINK
 }
 
-FindJob_Cmd::FindJob_Cmd(FileAccess *s,ArgV *a,cmd_t c)
-   : FindJob(s,a->getcurr())
+FinderJob_Cmd::FinderJob_Cmd(FileAccess *s,ArgV *a,cmd_t c)
+   : FinderJob(s,a->getcurr())
 {
    cmd=c;
    args=a;
@@ -394,7 +394,7 @@ FindJob_Cmd::FindJob_Cmd(FileAccess *s,ArgV *a,cmd_t c)
    saved_cwd=xgetcwd();
    removing_last=false;
 }
-FindJob_Cmd::~FindJob_Cmd()
+FinderJob_Cmd::~FinderJob_Cmd()
 {
    xfree(saved_cwd);
    delete args;
@@ -406,7 +406,7 @@ FindJob_Cmd::~FindJob_Cmd()
    }
 }
 
-void FindJob_Cmd::Finish()
+void FinderJob_Cmd::Finish()
 {
    if(cmd==RM)
    {
@@ -431,10 +431,10 @@ void FindJob_Cmd::Finish()
    char *d=args->getnext();
    if(!d)
       return;
-   FindJob::NextDir(d);
+   FinderJob::NextDir(d);
 }
 
-int FindJob_Cmd::Done()
+int FinderJob_Cmd::Done()
 {
-   return FindJob::Done() && args->getcurr()==0;
+   return FinderJob::Done() && args->getcurr()==0;
 }

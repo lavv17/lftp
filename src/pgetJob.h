@@ -39,7 +39,7 @@ class pgetJob : public GetJob
       bool no_parallel:1;
       FDStream *local;
 
-      ChunkXfer(FileAccess *session,char *remote,FDStream *local,
+      ChunkXfer(FileAccess *session,const char *remote,FDStream *local,
 	        long start,long limit);
       ~ChunkXfer();
 

@@ -27,6 +27,7 @@
 
 class KeyValueDB
 {
+public:
    class Pair
    {
    public:
@@ -50,6 +51,7 @@ class KeyValueDB
 	 }
    };
 
+private:
    void Purge(Pair **p)
       {
 	 Pair *to_free=*p;
@@ -113,6 +115,11 @@ public:
    ~KeyValueDB()
       {
 	 Empty();
+      }
+
+   static int KeyCompare(const Pair *a,const Pair *b)
+      {
+	 return strcmp(a->key,b->key);
       }
 };
 #endif //KEYVALUE_H

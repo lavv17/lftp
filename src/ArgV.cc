@@ -125,3 +125,11 @@ void ArgV::delarg(int n)
       c--;
    }
 }
+
+int ArgV::getopt_long(const char *opts,const struct option *lopts,int *lind)
+{
+   optind=ind;
+   int r=::getopt_long(c,v,opts,lopts,lind);
+   ind=optind;
+   return r;
+}

@@ -116,7 +116,7 @@ static int key_compare(const void *a,const void *b)
 {
    KeyValueDB::Pair *pa=*(KeyValueDB::Pair*const*)a;
    KeyValueDB::Pair *pb=*(KeyValueDB::Pair*const*)b;
-   return strcmp(pa->key,pb->key);
+   return KeyValueDB::KeyCompare(pa,pb);
 }
 
 void KeyValueDB::Sort()

@@ -37,7 +37,7 @@ History::History()
    stamp=0;
    fd=-1;
 
-   char *home=getenv("HOME");
+   const char *home=getenv("HOME");
    if(home==0)
       home=".";
    int home_len=strlen(home);

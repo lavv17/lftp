@@ -34,7 +34,13 @@ class ResValue;
 class ResMgr
 {
    friend class ResDecl;
+   class Resource;
 
+   static Resource *chain;
+   static ResDecl *type_chain;
+
+
+public:
    class Resource
    {
       friend class ResMgr;
@@ -62,12 +68,6 @@ class ResMgr
       }
    };
 
-   static Resource *chain;
-   static ResDecl *type_chain;
-
-   static int ResourceCompare(const void *a,const void *b);
-
-public:
    static const char *SimpleQuery(const char *name,const char *closure);
    static ResValue Query(const char *name,const char *closure);
 
@@ -86,6 +86,8 @@ public:
    static bool str2bool(const char *value);
 
    static void ClassInit();
+
+   static int ResourceCompare(const Resource *a,const Resource *b);
 };
 
 class ResDecl

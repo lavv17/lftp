@@ -35,10 +35,11 @@
 #include "misc.h"
 #include "xalloca.h"
 #include "plural.h"
+#include "getopt.h"
 
 void  MirrorJob::PrintStatus(int v)
 {
-   char *tab="\t";
+   const char *tab="\t";
 
    if(v!=-1)
       SessionJob::PrintStatus(v);
@@ -122,7 +123,7 @@ void  MirrorJob::HandleFile(int how)
    {
       switch(file->filetype)
       {
-      case(file->NORMAL):
+      case(FileInfo::NORMAL):
       {
       try_get:
 	 bool cont_this=false;
@@ -180,7 +181,7 @@ void  MirrorJob::HandleFile(int how)
 	 sprintf(waiting->cmdline,"\\get %s",file->name);
 	 break;
       }
-      case(file->DIRECTORY):
+      case(FileInfo::DIRECTORY):
       {
       try_recurse:
 	 if(how!=1 || (flags&NO_RECURSION))
@@ -263,7 +264,7 @@ void  MirrorJob::HandleFile(int how)
 
 	 break;
       }
-      case(file->SYMLINK):
+      case(FileInfo::SYMLINK):
 	 if(how!=0)
 	    goto skip;
 	 if(flags&REVERSE)

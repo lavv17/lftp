@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include "xmalloc.h"
 
-static void memory_error_and_abort(char *fname,size_t size)
+static void memory_error_and_abort(const char *fname,size_t size)
 {
    fprintf(stderr,"%s: out of virtual memory when trying to get %lu bytes\n",
 	 fname,(long)size);

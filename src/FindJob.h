@@ -27,7 +27,7 @@
 #include "buffer.h"
 #include "ArgV.h"
 
-class FindJob : public SessionJob
+class FinderJob : public SessionJob
 {
    const char *dir;
    int errors;
@@ -35,7 +35,7 @@ class FindJob : public SessionJob
 
    class place
       {
-	 friend class FindJob;
+	 friend class FinderJob;
 
 	 char *path;
 	 FileSet *fset;
@@ -58,7 +58,7 @@ protected:
    enum state_t { INIT, CD, INFO, LOOP, WAIT, DONE };
    state_t state;
 
-   char *op;
+   const char *op;
    char *start_dir;
    char *init_dir;
 
@@ -79,13 +79,13 @@ public:
    int ExitCode() { return state!=DONE || errors; }
 
    void Init();
-   FindJob(FileAccess *s,const char *d);
-   ~FindJob();
+   FinderJob(FileAccess *s,const char *d);
+   ~FinderJob();
 
    void ShowRunStatus(StatusLine *sl);
 };
 
-class FindJob_List : public FindJob
+class FinderJob_List : public FinderJob
 {
    Buffer *buf;
 protected:
@@ -93,18 +93,18 @@ protected:
    void Finish() { buf->PutEOF(); }
 
 public:
-   FindJob_List(FileAccess *s,const char *d,FDStream *o);
-   ~FindJob_List();
+   FinderJob_List(FileAccess *s,const char *d,FDStream *o);
+   ~FinderJob_List();
 
-   int Done() { return FindJob::Done() && buf->Done(); }
+   int Done() { return FinderJob::Done() && buf->Done(); }
 };
 
-class FindJob_Cmd : public FindJob
+class FinderJob_Cmd : public FinderJob
 {
 public:
    enum cmd_t { GET, RM };
-   FindJob_Cmd(FileAccess *s,ArgV *a,cmd_t c);
-   ~FindJob_Cmd();
+   FinderJob_Cmd(FileAccess *s,ArgV *a,cmd_t c);
+   ~FinderJob_Cmd();
    int Done();
 protected:
    cmd_t cmd;

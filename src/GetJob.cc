@@ -36,7 +36,7 @@ int   GetJob::Do()
    RateDrain();
 
    int m=STALL;
-   int fd,res;
+   int res;
 
    if(!curr && args)
       NextFile();
@@ -78,7 +78,7 @@ int   GetJob::Do()
    {
       if(session->IsClosed())
       {
-	 if((fd=local->getfd())==-1)
+	 if(local->getfd()==-1)
 	 {
 	    if(!local->error())
 	    {
