@@ -629,7 +629,8 @@ int Ftp::Handle_PASV()
    p[0]=p0; p[1]=p1;
 
    if((a0==0 && a1==0 && a2==0 && a3==0)
-   || (InPrivateNetwork(&data_sa) && !InPrivateNetwork(&peer_sa)))
+   || ((bool)Query("fix-pasv-address",hostname)
+       && InPrivateNetwork(&data_sa) && !InPrivateNetwork(&peer_sa)))
    {
       // broken server, try to fix up
       fixed_pasv=true;
