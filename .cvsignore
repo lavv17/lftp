@@ -3,3 +3,4 @@ Makefile
 libtool
 config.*
 bak
+.le.ini
