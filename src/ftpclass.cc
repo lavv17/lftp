@@ -2353,7 +2353,8 @@ void  Ftp::DataAbort()
 
    if(!(bool)Query("use-abor",hostname) || control_ssl)
    {
-      if(copy_mode==COPY_NONE)
+      if(copy_mode==COPY_NONE
+      && !((flags&PASSIVE_MODE) && addr_received<2))
 	 DataClose();	// just close data connection
       else
       {
@@ -2757,6 +2758,8 @@ void Ftp::CloseRespQueue()
       case(CHECK_READY):
       case(CHECK_ABOR):
       case(CHECK_CWD_STALE):
+      case(CHECK_PASV):
+      case(CHECK_EPSV):
 #ifdef USE_SSL
       case(CHECK_AUTH_TLS):
       case(CHECK_PROT):
@@ -2777,8 +2780,6 @@ void Ftp::CloseRespQueue()
       case(CHECK_SIZE_OPT):
       case(CHECK_MDTM):
       case(CHECK_MDTM_OPT):
-      case(CHECK_PASV):
-      case(CHECK_EPSV):
       case(CHECK_PORT):
       case(CHECK_FILE_ACCESS):
       case(CHECK_RNFR):
@@ -3179,6 +3180,9 @@ void  Ftp::MoveConnectionHere(Ftp *o)
 
 void Ftp::CheckResp(int act)
 {
+   if(act==150 && flags&PASSIVE_MODE && aborted_data_sock!=-1)
+      AbortedClose();
+
    if(act==150 && state==WAITING_STATE && RespQueueSize()==1)
    {
       copy_connection_open=true;
@@ -3339,6 +3343,10 @@ void Ftp::CheckResp(int act)
 
 	 if(!addr_received)
 	    goto passive_off;
+
+	 if(aborted_data_sock!=-1)
+	    SocketConnect(aborted_data_sock,&data_sa);
+
       	 break;
       }
       if(copy_mode!=COPY_NONE)
