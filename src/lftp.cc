@@ -108,7 +108,14 @@ public:
       char *cmd_buf;
       if(tty)
       {
-	 if(getpgrp()!=tcgetpgrp(0))
+	 pid_t term_pg=tcgetpgrp(0);
+	 if(term_pg==(pid_t)-1 && (errno==EBADF || errno==EIO))
+	 {
+	    // it used to be terminal, but now is not
+	    // assume it hung up -- return EOF
+	    return 0;
+	 }
+	 if(getpgrp()!=term_pg)
 	 {
 	    // looks like we are in background. Can't read from tty
 	    exec->block+=TimeOut(500);
