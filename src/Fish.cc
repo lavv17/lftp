@@ -1085,6 +1085,8 @@ const char *Fish::CurrentStatus()
 	 return DelayingMessage();
       return _("Not connected");
    case CONNECTING:
+      if(ssh && ssh->status)
+	 return ssh->status;
    case CONNECTING_1:
       return _("Connecting...");
    case CONNECTED:

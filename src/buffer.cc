@@ -457,6 +457,10 @@ void IOBufferFileAccess::Resume()
    super::Resume();
    session->Resume();
 }
+const char *IOBufferFileAccess::Status()
+{
+   return session->CurrentStatus();
+}
 
 unsigned long long Buffer::UnpackUINT64BE(int offset)
 {

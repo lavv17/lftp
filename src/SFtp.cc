@@ -952,6 +952,8 @@ const char *SFtp::CurrentStatus()
 	 return DelayingMessage();
       return _("Not connected");
    case CONNECTING:
+      if(ssh && ssh->status)
+	 return ssh->status;
    case CONNECTING_1:
    case CONNECTING_2:
       return _("Connecting...");

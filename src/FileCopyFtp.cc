@@ -215,7 +215,8 @@ FileCopy *FileCopyFtp::New(FileCopyPeer *s,FileCopyPeer *d,bool c)
    FA *d_s=d->GetSession();
    if(!s_s || !d_s)
       return 0;
-   if(strcmp(s_s->GetProto(),"ftp") || strcmp(d_s->GetProto(),"ftp"))
+   if((strcmp(s_s->GetProto(),"ftp") && strcmp(s_s->GetProto(),"ftps"))
+   || (strcmp(d_s->GetProto(),"ftp") && strcmp(d_s->GetProto(),"ftps")))
       return 0;
    if(!ResMgr::QueryBool("ftp:use-fxp",s_s->GetHostName())
    || !ResMgr::QueryBool("ftp:use-fxp",d_s->GetHostName()))
