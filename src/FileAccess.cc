@@ -1063,6 +1063,12 @@ int NoGlob::Do()
 {
    if(!done)
    {
+      if(!HasWildcards(pattern))
+      {
+	 char *p=alloca_strdup(pattern);
+	 UnquoteWildcards(p);
+	 add(p);
+      }
       done=true;
       return MOVED;
    }
@@ -1070,11 +1076,6 @@ int NoGlob::Do()
 }
 NoGlob::NoGlob(const char *p) : Glob(p)
 {
-   char *p1=pattern;
-   pattern=xstrdup("");
-   UnquoteWildcards(p1);
-   add(p1);
-   xfree(p1);
 }
 
 GlobURL::GlobURL(FileAccess *s,const char *p)

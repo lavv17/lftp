@@ -8,8 +8,10 @@
 	* Makefile.am: remove QuoteJob.{cc,h}, XferJob.{cc,h}
 	  (XferJob is dead - long live FileCopy)
 	* parsecmd.cc: handle ? specially.
-	* FileAccess.cc, FileAccess.h: (SetPasswordGlobal) new method.
+	* FileAccess.cc, FileAccess.h: (SetPasswordGlobal) new method;
+	  make NoGlob to produce empty list if pattern contains wildcards.
 	* commands.cc: use it.
+	* complete.cc: few improvements.
 
 1999-12-27  Alexander V. Lukyanov  <lav@yars.free.net>
 

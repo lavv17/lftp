@@ -192,8 +192,9 @@ enum completion_type
 static completion_type cmd_completion_type(int start)
 {
    const char *cmd=rl_line_buffer;
+   const char *w=find_word(cmd);
 
-   if(find_word(cmd)-cmd == start) // first word is command
+   if(w-cmd == start) // first word is command
       return COMMAND;
 
    // try to guess whether the completion word is remote
@@ -203,11 +204,13 @@ static completion_type cmd_completion_type(int start)
 
    for(;;)
    {
-      const char *w=find_word(cmd);
+      w=find_word(cmd);
       if(w[0]=='!')
 	 shell_cmd=true;
       if(w[0]=='!' || w[0]=='#')
 	 return LOCAL;
+      if(w[0]=='?')  // help
+	 return COMMAND;
       if(w[0]=='(')
       {
 	 cmd=w+1;
@@ -272,6 +275,9 @@ static completion_type cmd_completion_type(int start)
    || !strcmp(buf,"lftp"))
       return BOOKMARK;
 
+   if(!strcmp(buf,"help"))
+      return COMMAND;
+
    bool was_o=false;
    bool was_N=false;
    bool second=false;
@@ -290,7 +296,7 @@ static completion_type cmd_completion_type(int start)
 	 break;
       }
    }
-   const char *w=find_word(cmd);
+   w=find_word(cmd);
    while(*w && !isspace(*w))
       w++;
    if(*w)
@@ -301,7 +307,8 @@ static completion_type cmd_completion_type(int start)
    }
 
    if(!strcmp(buf,"get")
-   || !strcmp(buf,"pget"))
+   || !strcmp(buf,"pget")
+   || !strcmp(buf,"get1"))
       if(!was_o)
 	 return REMOTE_FILE;
    if(!strcmp(buf,"put"))
@@ -327,7 +334,8 @@ static completion_type cmd_completion_type(int start)
       else
 	 return REMOTE_FILE;
    }
-   if(!strcmp(buf,"glob"))
+   if(!strcmp(buf,"glob")
+   || !strcmp(buf,"command"))
    {
       if(second)
 	 return COMMAND;
