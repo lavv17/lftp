@@ -125,6 +125,8 @@ public:
    ListInfo *MakeListInfo();
 
    void UseCache(bool use) { no_cache_this=!use; }
+
+   bool NeedSizeDateBeforehand() { return true; }
 };
 
 class HFtp : public Http

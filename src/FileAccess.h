@@ -231,6 +231,7 @@ public:
    virtual bool IsConnected() { return false; }
    virtual void Disconnect() {}
    virtual void UseCache(bool) {}
+   virtual bool NeedSizeDateBeforehand() { return false; }
 
    enum status
    {
