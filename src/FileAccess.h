@@ -170,7 +170,7 @@ public:
    const char  *GetPort() { return portname; }
    const char  *GetConnectURL(int flags=0);
    const char  *GetFileURL(const char *file,int flags=0);
-   enum { NO_PATH=1,WITH_PASSWORD=2 };
+   enum { NO_PATH=1,WITH_PASSWORD=2,NO_PASSWORD=4 };
 
    virtual void Connect(const char *h,const char *p);
    virtual void ConnectVerify();

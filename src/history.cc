@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include "history.h"
 #include "xalloca.h"
+#include "url.h"
 
 #define super KeyValueDB
 
@@ -56,11 +57,23 @@ History::~History()
 
 const char *History::extract_url(const char *res)
 {
+   static char *buf;
+   static int buf_len;
+
    const char *url=strchr(res,':');
    if(url)
-      return url+1;
+      url++;
    else
-      return res;
+      url=res;
+
+   int len=strlen(url);
+   if(len>=buf_len);
+      buf=(char*)xrealloc(buf,buf_len=len+64);
+
+   strcpy(buf,url);
+   url::decode_string(buf);
+
+   return buf;
 }
 
 time_t History::extract_stamp(const char *res)
@@ -70,7 +83,7 @@ time_t History::extract_stamp(const char *res)
 
 const char *History::Lookup(FileAccess *s)
 {
-   const char *url=s->GetConnectURL(s->NO_PATH);
+   const char *url=s->GetConnectURL(s->NO_PATH|s->NO_PASSWORD);
    if(!url)
       return 0;
    const char *res=super::Lookup(url);
@@ -131,9 +144,10 @@ void History::Set(FileAccess *s,const char *cwd)
 {
    if(cwd==0 || !strcmp(cwd,"~") || s->GetHostName()==0)
       return;
-   char *res=(char*)alloca(32+strlen(cwd)+1);
-   sprintf(res,"%lu:%s",(unsigned long)time(0),cwd);
-   super::Add(s->GetConnectURL(s->NO_PATH),res);
+   char *res=(char*)alloca(32+strlen(cwd)*3+1);
+   sprintf(res,"%lu:",(unsigned long)time(0));
+   url::encode_string(cwd,res+strlen(res),URL_PATH_UNSAFE);
+   super::Add(s->GetConnectURL(s->NO_PATH|s->NO_PASSWORD),res);
 }
 
 void History::Save()
