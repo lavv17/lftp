@@ -1,3 +1,10 @@
+2001-10-12  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* complete.cc: add > to remote completion status.
+	* ftpclass.cc: don't add ./ to CWD in extreme case when PWD is not
+	  absolute.
+	* misc.cc: (dir_file) don't return NULL if possible.
+
 2001-10-10  Glenn F. Maynard <g_ld@zewt.org>
 
 	* StatusLine.cc, StatusLine.h, Time.cc, Time.h, complete.cc:
