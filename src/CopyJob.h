@@ -60,6 +60,8 @@ public:
    float GetRate() { return c->GetRate(); }
    long GetETA() { return c->GetETA(); }
    void SetRange(long s,long lim) { c->SetRange(s,lim); }
+   void SetDate(time_t d) { c->SetDate(d); }
+   void SetSize(long s)   { c->SetSize(s); }
    FileCopyPeer *GetPut() { return c->put; }
 
    void ShowRunStatus(StatusLine *s);
