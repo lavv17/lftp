@@ -37,6 +37,8 @@ void NetAccess::Init()
    idle=0;
    idle_start=now;
    max_retries=0;
+   max_persist_retries=0;
+   persist_retries=0;
    socket_buffer=0;
    socket_maxseg=0;
 
@@ -99,6 +101,7 @@ void NetAccess::Reconfig(const char *name)
       reconnect_interval_max=reconnect_interval;
    idle = ResMgr::Query("net:idle",c);
    max_retries = ResMgr::Query("net:max-retries",c);
+   max_persist_retries = ResMgr::Query("net:persist-retries",c);
    socket_buffer = ResMgr::Query("net:socket-buffer",c);
    socket_maxseg = ResMgr::Query("net:socket-maxseg",c);
    connection_limit = ResMgr::Query("net:connection-limit",c);
@@ -505,6 +508,7 @@ bool NetAccess::NextTry()
 void NetAccess::Close()
 {
    retries=0;
+   persist_retries=0;
    takeover_time=NO_DATE;
 
    Delete(resolver);

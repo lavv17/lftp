@@ -38,6 +38,8 @@ protected:
    void	 NextPeer();
 
    int	 max_retries;
+   int	 max_persist_retries;
+   int	 persist_retries;
 
    int	 idle;
    time_t idle_start;
