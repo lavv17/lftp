@@ -45,3 +45,6 @@ currently; some need other work to be done.
  * http: ls -a to see all links, even off-site.
  * mirror: --log=file write actions to file, --script=file prepare script of
    actions to be done.
+
+ * FileCopy class.
+ 
