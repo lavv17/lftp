@@ -44,7 +44,7 @@ int  StatusLine::GetWidth()
       sz.ws_col=80;
    if(sz.ws_row==0)
       sz.ws_row=24;
-   return(sz.ws_col);
+   return(LastWidth=sz.ws_col);
 #else /* !TIOCGWINSZ */
    return 80;
 #endif
@@ -57,6 +57,7 @@ StatusLine::StatusLine(int new_fd)
    update_time=0;
    strcpy(shown,"");
    not_term=!isatty(fd);
+   LastWidth=GetWidth();
 }
 StatusLine::~StatusLine()
 {
@@ -66,24 +67,27 @@ void StatusLine::Show(const char *f,...)
 {
    char newstr[sizeof(shown)];
 
+   if(f==0 || f[0]==0)
+   {
+      newstr[0]=0;
+      update(newstr);
+      update_delayed=false;
+      update_time=0;
+      return;
+   }
+
    va_list v;
    va_start(v,f);
    vsprintf(newstr,f,v);
    va_end(v);
 
-   if(newstr[0]==0)
-   {
-      update(newstr);
-      update_delayed=false;
-      update_time=0;
-   }
-   else if(now>update_time)
+   if(now>update_time)
    {
       update(newstr);
       update_delayed=false;
       update_time=now;
    }
-   else
+   else if(strcmp(to_be_shown,newstr))
    {
       strcpy(to_be_shown,newstr);
       update_delayed=true;
@@ -141,10 +145,11 @@ void StatusLine::WriteLine(const char *f,...)
    vsprintf(newstr,f,v);
    va_end(v);
 
-   if(not_term)
+   if(not_term || shown[0]==0)
    {
       strcat(newstr,"\n");
       write(fd,newstr,strlen(newstr));
+      update_delayed=false;
       return;
    }
 

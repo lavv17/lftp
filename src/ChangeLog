@@ -1,5 +1,11 @@
 1999-08-04  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* StatusLine.h, StatusLine.cc, XferJob.cc, pgetJob.cc:
+	  (StatusLine::GetWidthDelayed) new method; use it to reduce number
+	  of ioctl calls.
+
+1999-08-04  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* LsJob.cc: (NoCache) open with proper mode.
 	* HttpDir.cc: handle another listing format.
 
