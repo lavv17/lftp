@@ -31,6 +31,7 @@
 
 static int lftp_ssl_verify_callback(int ok,X509_STORE_CTX *ctx);
 static int lftp_ssl_verify_crl(X509_STORE_CTX *ctx);
+static int lftp_ssl_passwd_callback(char *buf,int size,int rwflag,void *userdata);
 
 SSL_CTX *ssl_ctx;
 X509_STORE *crl_store;
@@ -72,6 +73,7 @@ void lftp_ssl_ctx_init()
    ssl_ctx=SSL_CTX_new(SSLv23_client_method());
    SSL_CTX_set_options(ssl_ctx, SSL_OP_ALL);
    SSL_CTX_set_verify(ssl_ctx,SSL_VERIFY_PEER,lftp_ssl_verify_callback);
+//    SSL_CTX_set_default_passwd_cb(ssl_ctx,lftp_ssl_passwd_callback);
 
    const char *ca_file=ResMgr::Query("ssl:ca-file",0);
    const char *ca_path=ResMgr::Query("ssl:ca-path",0);

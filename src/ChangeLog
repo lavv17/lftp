@@ -1,3 +1,15 @@
+2003-05-23  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* LocalAccess.cc: move Exclude to after file type setting. This
+	  fixes exclude/include of directories on local side.
+	* commands.cc: new command `.tasks'.
+	* complete.cc: don't show hidden commands in completion.
+	* ftpclass.cc, ftpclass.h: fix borrowing not-logged-in connection.
+
+2003-05-23  Diego Reyes <dreyes@bancofrances.com.ar>
+
+	* ResMgr.cc: (DirReadable, FileReadable) fix a bug.
+
 2003-05-14  Geoffrey Lee <glee@gnupilgrims.org>
 
 	* Http.cc: fix a problem with empty path; change it to "/".
