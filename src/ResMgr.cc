@@ -32,9 +32,9 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <errno.h>
-extern "C" {
+CDECL_BEGIN
 #include <regex.h>
-}
+CDECL_END
 #include "ResMgr.h"
 #include "SMTask.h"
 #include "xmalloc.h"
