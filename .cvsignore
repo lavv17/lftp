@@ -4,3 +4,10 @@ libtool
 config.*
 bak
 .le.ini
+aclocal.m4
+ltconfig
+ltmain.sh
+ltcf-c.sh
+ltcf-cxx.sh
+Makefile.in
+configure

@@ -77,7 +77,7 @@ By CVS:
 	cvs -z9 co -r lftp-2-0-3 lftp (if you omit -r option, you'll get
 		latest development sources)
 
-See also home page `http://ftp.yars.free.net/projects/lftp/'.
+See also home page `http://lftp.yar.ru/'.
 
 Internals
 ~~~~~~~~~
@@ -125,6 +125,10 @@ lftp' in body of message. This is low volume list.
 
 There is also list lftp-devel@uniyar.ac.ru for snapshot announcements
 and other development.
+
+These lists are archived at
+   http://www.mail-archive.com/lftp%40uniyar.ac.ru/
+   http://www.mail-archive.com/lftp-devel%40uniyar.ac.ru/
 
 
 Author
