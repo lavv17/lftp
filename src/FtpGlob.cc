@@ -166,9 +166,11 @@ const char *FtpGlob::Status()
    if(!*st)
       return "";
 
+   if(!*dir)
+      return st;
+
    static char *buf = 0;
    if(buf) xfree(buf);
-   buf=xasprintf("%s: %s", *dir? dir:".", st);
-
+   buf=xasprintf("%s: %s", dir, st);
    return buf;
 }
