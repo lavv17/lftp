@@ -1,3 +1,11 @@
+Version 2.6.10 - 2003-12-??
+
+* security fixes in html parsing code.
+* fxp between ftps session is now possible (unencrypted yet).
+* fixed a rare bug with access to freed memory in ftp.
+* fixed a bug in mirror, now it does not incorrectly append directory name
+  when target directory is the root.
+
 Version 2.6.9 - 2003-11-19
 
 * new setting ftp:ssl-protect-list for encrypting file listings selectively.
