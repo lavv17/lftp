@@ -5,6 +5,7 @@
 #include "ascii_ctype.h"
 #include "FileGlob.h"
 #include "misc.h"
+#include "LsCache.h"
 
 #include <assert.h>
 
@@ -201,7 +202,7 @@ int SFtp::Do()
    case CONNECTING_2:
       if(protocol_version==0)
 	 return m;
-      if(home==0)
+      if(home_auto==0)
 	 SendRequest(new Request_REALPATH("."),EXPECT_HOME_PATH);
       state=CONNECTED;
       m=MOVED;
@@ -256,6 +257,8 @@ void SFtp::MoveConnectionHere(SFtp *o)
    ssh_id=o->ssh_id;
    state=CONNECTED;
    o->Disconnect();
+   if(!home)
+      set_home(home_auto);
 }
 
 void SFtp::Disconnect()
@@ -285,6 +288,7 @@ void SFtp::Init()
    pty_send_buf=0;
    pty_recv_buf=0;
    file_buf=0;
+   file_set=0;
    ssh=0;
    ssh_id=0;
    eof=false;
@@ -306,6 +310,7 @@ SFtp::SFtp()
 SFtp::~SFtp()
 {
    Disconnect();
+   Close();
 }
 
 SFtp::SFtp(const SFtp *o) : super(o)
@@ -450,6 +455,11 @@ void SFtp::SendRequest()
 			SSH_FXF_READ,protocol_version),EXPECT_HANDLE);
       state=WAITING;
       break;
+   case LIST:
+   case LONG_LIST:
+      SendRequest(new Request_OPENDIR(lc_to_utf8(dir_file(cwd,file))),EXPECT_HANDLE);
+      state=WAITING;
+      break;
    }
 }
 
@@ -473,6 +483,7 @@ void SFtp::Close()
    state=(recv_buf?CONNECTED:DISCONNECTED);
    eof=false;
    Delete(file_buf); file_buf=0;
+   delete file_set; file_set=0;
    if(handle)
    {
       SendRequest(new Request_CLOSE(handle,handle_len),EXPECT_IGNORE);
@@ -563,11 +574,13 @@ void SFtp::HandleExpect(Expect *e)
       {
 	 Reply_NAME *r=(Reply_NAME*)reply;
 	 const NameAttrs *a=r->GetNameAttrs(0);
-	 if(a)
+	 if(a && !home_auto)
 	 {
-	    set_home(utf8_to_lc(a->name));
-	    Log::global->Format(9,"---- home set to %s\n",home);
-	    ExpandTildeInCWD();
+	    home_auto=xstrdup(utf8_to_lc(a->name));
+	    Log::global->Format(9,"---- home set to %s\n",home_auto);
+	    PropagateHomeAuto();
+	    if(!home)
+	       set_home(home_auto);
 	 }
       }
       break;
@@ -594,7 +607,7 @@ void SFtp::HandleExpect(Expect *e)
 	 for(int i=0; i<handle_len; i++)
 	    Log::global->Format(9,"%02X",handle[i]);
 	 Log::global->Format(9," (%d)\n",handle_len);
-	 real_pos=pos;
+	 request_pos=real_pos=pos;
 	 if(mode==RETRIEVE)
 	    SendRequest(new Request_FSTAT(handle,handle_len),EXPECT_INFO);
       }
@@ -631,6 +644,41 @@ void SFtp::HandleExpect(Expect *e)
 	    e->next=ooo_chain;
 	    ooo_chain=e;
 	    return;
+	 }
+      }
+      else if(reply->TypeIs(SSH_FXP_NAME))
+      {
+	 Reply_NAME *r=(Reply_NAME*)reply;
+	 Log::global->Format(9,"---- file name count=%d\n",r->GetCount());
+	 for(int i=0; i<r->GetCount(); i++)
+	 {
+	    const NameAttrs *a=r->GetNameAttrs(i);
+	    if(!file_set)
+	       file_set=new FileSet;
+	    FileInfo *info=MakeFileInfo(a);
+	    if(info)
+	       file_set->Add(info);
+	    if(mode==LIST)
+	    {
+	       file_buf->Put(a->name);
+	       if(a->attrs.type==SSH_FILEXFER_TYPE_DIRECTORY)
+		  file_buf->Put("/");
+	       file_buf->Put("\n");
+	    }
+	    else if(mode==LONG_LIST)
+	    {
+	       if(a->longname)
+	       {
+		  file_buf->Put(a->longname);
+		  file_buf->Put("\n");
+	       }
+	       else if(info)
+	       {
+		  info->MakeLongName();
+		  file_buf->Put(info->longname);
+		  file_buf->Put("\n");
+	       }
+	    }
 	 }
       }
       else
@@ -673,12 +721,24 @@ void SFtp::HandleExpect(Expect *e)
    delete e;
 }
 
+void SFtp::RequestMoreData()
+{
+   if(mode==RETRIEVE) {
+      int req_len=max_buf/2;
+      SendRequest(new Request_READ(handle,handle_len,request_pos,req_len),EXPECT_DATA);
+      request_pos+=req_len;
+   } else if(mode==LIST || mode==LONG_LIST) {
+      SendRequest(new Request_READDIR(handle,handle_len),EXPECT_DATA);
+   }
+}
+
 int SFtp::HandleReplies()
 {
    int m=HandlePty();
    if(recv_buf==0)
       return m;
 
+   int i=0;
    Expect *ooo_scan=ooo_chain;
    while(ooo_scan)
    {
@@ -686,6 +746,12 @@ int SFtp::HandleReplies()
       ooo_chain=next;
       HandleExpect(ooo_scan);
       ooo_scan=next;
+      if(++i>64)
+      {
+	 DebugPrint("**** ","Too many out-of-order packets");
+	 Disconnect();
+	 return MOVED;
+      }
    }
 
    if(recv_buf->Size()<4)
@@ -782,7 +848,6 @@ void SFtp::CloseExpectQueue()
 	 break;
       case EXPECT_CWD:
       case EXPECT_INFO:
-      case EXPECT_RETR:
       case EXPECT_DEFAULT:
       case EXPECT_DATA:
 	 e->tag=EXPECT_IGNORE;
@@ -817,14 +882,10 @@ int SFtp::Read(void *buf,int size)
       return 0;	  // eof
    if(state==FILE_RECV)
    {
+      // keep at least two packets in flight.
       if((!expect_chain || !expect_chain->next)
       && !file_buf->Eof())
-      {
-	 int req_len=max_buf/2;
-	 // request more data.
-	 SendRequest(new Request_READ(handle,handle_len,real_pos,req_len),EXPECT_DATA);
-	 real_pos+=req_len;
-      }
+	 RequestMoreData();
 
       const char *buf1;
       int size1;
@@ -844,6 +905,7 @@ int SFtp::Read(void *buf,int size)
       memcpy(buf,buf1,size);
       file_buf->Skip(size);
       pos+=size;
+      real_pos+=size;
       rate_limit->BytesGot(size);
       retries=0;
       return size;
@@ -985,6 +1047,8 @@ bool SFtp::SameLocationAs(FileAccess *fa)
    SFtp *o=(SFtp*)fa;
    if(xstrcmp(cwd,o->cwd))
       return false;
+   if(xstrcmp(home,o->home))
+      return false;
    return true;
 }
 
@@ -1019,8 +1083,7 @@ FileAccess *SFtp::New() { return new SFtp(); }
 
 DirList *SFtp::MakeDirList(ArgV *args)
 {
-//   return new SFtpDirList(args,this);
-// FIXME
+  return new SFtpDirList(args,this);
 }
 
 struct code_text { int code; const char *text; };
@@ -1188,7 +1251,22 @@ SFtp::unpack_status_t SFtp::FileAttrs::Unpack(Buffer *b,int *offset,int limit,in
 	 return res;
    }
    if(flags & SSH_FILEXFER_ATTR_PERMISSIONS)
+   {
       UNPACK32(permissions);
+      if(protocol_version<=3)
+      {
+	 switch(permissions&S_IFMT)
+	 {
+	 case S_IFREG: type=SSH_FILEXFER_TYPE_REGULAR;	 break;
+	 case S_IFDIR: type=SSH_FILEXFER_TYPE_DIRECTORY; break;
+	 case S_IFLNK: type=SSH_FILEXFER_TYPE_SYMLINK;	 break;
+	 case S_IFIFO:
+	 case S_IFCHR:
+	 case S_IFBLK: type=SSH_FILEXFER_TYPE_SPECIAL;	 break;
+	 default:      type=SSH_FILEXFER_TYPE_UNKNOWN;	 break;
+	 }
+      }
+   }
    if(protocol_version<=3 && (flags & SSH_FILEXFER_ATTR_ACMODTIME))
    {
       UNPACK32_SIGNED(atime);
@@ -1385,4 +1463,202 @@ const char *SFtp::lc_to_utf8(const char *s)
 
    //FIXME
    return s;
+}
+
+FileInfo *SFtp::MakeFileInfo(const NameAttrs *na)
+{
+   const FileAttrs *a=&na->attrs;
+   FileInfo *fi=new FileInfo(na->name);
+   switch(a->type)
+   {
+   case SSH_FILEXFER_TYPE_REGULAR:  fi->filetype=fi->NORMAL;    break;
+   case SSH_FILEXFER_TYPE_DIRECTORY:fi->filetype=fi->DIRECTORY; break;
+   case SSH_FILEXFER_TYPE_SYMLINK:  fi->filetype=fi->SYMLINK;   break;
+   default: delete fi; return 0;
+   }
+   if(na->longname)
+      fi->SetLongName(na->longname);
+   if(a->flags&SSH_FILEXFER_ATTR_SIZE)
+      fi->SetSize(a->size);
+   if(a->flags&SSH_FILEXFER_ATTR_UIDGID)
+   {
+      char id[12];
+      sprintf(id,"%u",a->uid);
+      fi->SetUser(id);
+      sprintf(id,"%u",a->gid);
+      fi->SetGroup(id);
+   }
+   if(a->flags&SSH_FILEXFER_ATTR_OWNERGROUP)
+   {
+      fi->SetUser(a->owner);
+      fi->SetGroup(a->group);
+   }
+   if(a->flags&SSH_FILEXFER_ATTR_PERMISSIONS)
+      fi->SetMode(a->permissions&S_IAMB);
+   if(a->flags&SSH_FILEXFER_ATTR_MODIFYTIME)
+      fi->SetDate(a->mtime,0);
+   return fi;
+}
+
+
+#undef super
+#define super DirList
+#include "ArgV.h"
+
+int SFtpDirList::Do()
+{
+   int m=STALL;
+
+   if(done)
+      return m;
+
+   if(buf->Eof())
+   {
+      done=true;
+      return MOVED;
+   }
+
+   if(!ubuf)
+   {
+      const char *cache_buffer=0;
+      int cache_buffer_size=0;
+      if(use_cache && LsCache::Find(session,dir,FA::LONG_LIST,
+				    &cache_buffer,&cache_buffer_size)
+      && !use_file_set)
+      {
+	 ubuf=new Buffer();
+	 ubuf->Put(cache_buffer,cache_buffer_size);
+	 ubuf->PutEOF();
+      }
+      else
+      {
+	 session->Open(dir,FA::LONG_LIST);
+	 ubuf=new IOBufferFileAccess(session);
+	 if(LsCache::IsEnabled())
+	    ubuf->Save(LsCache::SizeLimit());
+      }
+   }
+
+   const char *b;
+   int len;
+   ubuf->Get(&b,&len);
+   if(b==0) // eof
+   {
+      LsCache::Add(session,dir,FA::LONG_LIST, ubuf);
+      if(use_file_set)
+      {
+	 FileSet *fset=((SFtp*)session)->GetFileSet();
+	 fset->Sort(fset->BYNAME,false);
+	 for(fset->rewind(); fset->curr(); fset->next())
+	 {
+	    FileInfo *fi=fset->curr();
+	    buf->Put(fi->GetLongName());
+	    buf->Put("\n");
+	 }
+	 delete fset;
+      }
+      buf->PutEOF();
+      return MOVED;
+   }
+
+   if(len>0)
+   {
+      if(!use_file_set)
+	 buf->Put(b,len);
+      ubuf->Skip(len);
+      m=MOVED;
+   }
+
+   if(ubuf->Error())
+   {
+      SetError(ubuf->ErrorText());
+      m=MOVED;
+   }
+   return m;
+}
+
+SFtpDirList::SFtpDirList(ArgV *a,FileAccess *fa)
+   : DirList(a)
+{
+   session=fa;
+   ubuf=0;
+   use_file_set=true;
+   args->rewind();
+   dir=args->getnext();
+   if(!dir)
+      dir="";
+}
+
+SFtpDirList::~SFtpDirList()
+{
+   Delete(ubuf);
+}
+
+const char *SFtpDirList::Status()
+{
+   static char s[256];
+   if(ubuf && !ubuf->Eof() && session->IsOpen())
+   {
+      sprintf(s,_("Getting file list (%lld) [%s]"),
+		     (long long)session->GetPos(),session->CurrentStatus());
+      return s;
+   }
+   return "";
+}
+
+void SFtpDirList::Suspend()
+{
+   if(ubuf)
+      ubuf->Suspend();
+   super::Suspend();
+}
+void SFtpDirList::Resume()
+{
+   super::Resume();
+   if(ubuf)
+      ubuf->Resume();
+}
+
+
+#undef super
+#define super ListInfo
+int SFtpListInfo::Do()
+{
+   int m=STALL;
+   if(!ubuf)
+   {
+      session->Open("",FA::LIST);
+      ubuf=new IOBufferFileAccess(session);
+   }
+   const char *b;
+   int len;
+   ubuf->Get(&b,&len);
+   if(b==0) // eof
+   {
+      result=((SFtp*)session)->GetFileSet();
+      done=true;
+      m=MOVED;
+   }
+   if(len>0)
+   {
+      ubuf->Skip(len);
+      m=MOVED;
+   }
+   if(ubuf->Error())
+   {
+      SetError(ubuf->ErrorText());
+      m=MOVED;
+   }
+   return m;
+}
+const char *SFtpListInfo::Status()
+{
+   static char s[256];
+   if(ubuf && !ubuf->Eof() && session->IsOpen())
+   {
+      sprintf(s,_("Getting file list (%lld) [%s]"),
+		     (long long)session->GetPos(),session->CurrentStatus());
+      return s;
+   }
+   return "";
 }

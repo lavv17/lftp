@@ -28,6 +28,7 @@
 #include "PtyShell.h"
 #include <sys/types.h>
 #include <sys/stat.h>
+#include "FileSet.h"
 
 class SFtp : public NetAccess
 {
@@ -150,7 +151,8 @@ static bool is_valid_status(int s)
    IOBuffer *pty_send_buf;
    IOBuffer *pty_recv_buf;
 
-   Buffer *file_buf;
+   Buffer   *file_buf;
+   FileSet  *file_set;
 
    PtyShell *ssh;
 
@@ -372,7 +374,6 @@ static bool is_valid_status(int s)
       NameAttrs() { name=0; longname=0; }
       ~NameAttrs() { xfree(name); xfree(longname); }
       unpack_status_t Unpack(Buffer *b,int *offset,int limit,int proto_version);
-/*      void Pack(Buffer *b,int proto_version);*/
    };
    class Reply_NAME : public Packet
    {
@@ -449,6 +450,16 @@ static bool is_valid_status(int s)
    public:
       Request_FSTAT(const char *h,int len) : PacketSTRING(SSH_FXP_FSTAT,h,len) {}
    };
+   class Request_OPENDIR : public PacketSTRING
+   {
+   public:
+      Request_OPENDIR(const char *name) : PacketSTRING(SSH_FXP_OPENDIR,name) {}
+   };
+   class Request_READDIR : public PacketSTRING
+   {
+   public:
+      Request_READDIR(const char *h,int len) : PacketSTRING(SSH_FXP_READDIR,h,len) {}
+   };
    class Reply_STATUS : public Packet
    {
       int protocol_version;
@@ -488,7 +499,6 @@ static bool is_valid_status(int s)
       EXPECT_HANDLE,
       EXPECT_HANDLE_STALE,
       EXPECT_DATA,
-      EXPECT_RETR,
       EXPECT_INFO,
       EXPECT_DEFAULT,
       EXPECT_STOR_PRELIMINARY,
@@ -537,6 +547,10 @@ static bool is_valid_status(int s)
 
    void	 SendRequest();
    void	 SendRequest(Packet *req,expect_t exp);
+   void	 RequestMoreData();
+   off_t request_pos;
+
+   FileInfo *MakeFileInfo(const NameAttrs *a);
 
 protected:
    void SetError(int code,const Packet *reply);
@@ -580,13 +594,16 @@ public:
 
    void Cleanup();
    void CleanupThis();
+
+   FileSet *GetFileSet() { FileSet *fset=file_set; file_set=0; return fset; }
 };
 
 class SFtpDirList : public DirList
 {
    FileAccess *session;
    Buffer *ubuf;
-   char *pattern;
+   const char *dir;
+   bool use_file_set;
 
 public:
    SFtpDirList(ArgV *a,FileAccess *fa);
@@ -598,15 +615,18 @@ public:
    void Resume();
 };
 
-// FIXME
-class SFtpListInfo : public GenericParseListInfo
+class SFtpListInfo : public ListInfo
 {
+   Buffer *ubuf;
 public:
    SFtpListInfo(SFtp *session,const char *dir)
-      : GenericParseListInfo(session,dir)
+      : ListInfo(session,dir)
       {
-	 can_get_prec_time=false;
+	 ubuf=0;
       }
+   ~SFtpListInfo() { Delete(ubuf); }
+   int Do();
+   const char *Status();
 };
 
 #endif

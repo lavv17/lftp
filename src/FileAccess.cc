@@ -1125,10 +1125,13 @@ void ListInfo::SetExclude(const char *p,PatternSet *x)
 #else
 # define _fish
 #endif
+# include "SFtp.h"
+# define _sftp SFtp::ClassInit()
 void FileAccess::ClassInit()
 {
    _ftp;
    _file;
    _http;
    _fish;
+   _sftp;
 }

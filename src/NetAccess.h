@@ -77,6 +77,10 @@ protected:
    char  *proxy_user;
    char  *proxy_pass;
 
+   char	 *home_auto;
+   void	 PropagateHomeAuto();
+   const char *FindHomeAuto();
+
    void SayConnectingTo();
 
    void SetProxy(const char *);

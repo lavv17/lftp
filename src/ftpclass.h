@@ -143,8 +143,6 @@ class Ftp : public NetAccess
    void	 proxy_NoPassReqCheck(int);
    char *ExtractPWD();
    void  SendCWD(const char *path,check_case_t c);
-   void	 PropagateHomeAuto();
-   const char *FindHomeAuto();
    void	 CatchDATE(int);
    void	 CatchDATE_opt(int);
    void	 CatchSIZE(int);
@@ -244,8 +242,6 @@ private:
 
    char	 *anon_user;
    char	 *anon_pass;
-
-   char	 *home_auto;
 
    static const char *DefaultAnonPass();
 

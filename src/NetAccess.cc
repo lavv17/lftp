@@ -66,6 +66,8 @@ void NetAccess::Init()
    connection_limit=0;	// no limit.
    connection_takeover=false;
 
+   home_auto=0;
+
    Reconfig(0);
 }
 
@@ -76,6 +78,8 @@ NetAccess::NetAccess()
 NetAccess::NetAccess(const NetAccess *o) : super(o)
 {
    Init();
+   xfree(home_auto);
+   home_auto=xstrdup(o->home_auto);
 }
 NetAccess::~NetAccess()
 {
@@ -88,6 +92,7 @@ NetAccess::~NetAccess()
    xfree(proxy_port); proxy_port=0;
    xfree(proxy_user); proxy_user=0;
    xfree(proxy_pass); proxy_pass=0;
+   xfree(home_auto);
 }
 
 void NetAccess::Reconfig(const char *name)
@@ -580,6 +585,32 @@ int NetAccess::CountConnections()
 	 count++;
    }
    return count;
+}
+
+void NetAccess::PropagateHomeAuto()
+{
+   if(!home_auto)
+      return;
+   for(FA *fo=FirstSameSite(); fo!=0; fo=NextSameSite(fo))
+   {
+      NetAccess *o=(NetAccess*)fo; // we are sure it is NetAccess.
+      if(!o->home_auto)
+      {
+	 o->home_auto=xstrdup(home_auto);
+	 if(!o->home)
+	    o->set_home(home_auto);
+      }
+   }
+}
+const char *NetAccess::FindHomeAuto()
+{
+   for(FA *fo=FirstSameSite(); fo!=0; fo=NextSameSite(fo))
+   {
+      NetAccess *o=(NetAccess*)fo; // we are sure it is NetAccess.
+      if(o->home_auto)
+	 return o->home_auto;
+   }
+   return 0;
 }
 
 

@@ -152,7 +152,7 @@ FileSet::FileSet(FileSet const *set)
 {
    ind=set->ind;
    fnum=set->fnum;
-   sorted = false;
+   sorted=false;
    if(fnum==0)
       files=files_sort=0;
    else
@@ -222,7 +222,7 @@ void FileSet::Sort(sort_e newsort, bool casefold)
 	 files_sort[i] = files[i];
    }
 
-   sorted = true;
+   sorted=true;
 
    if(casefold) compare = strcasecmp;
    else compare = strcmp;
@@ -242,8 +242,8 @@ void FileSet::Unsort()
 {
    if(!sorted) return;
    xfree(files_sort);
-   files_sort = files;
-   sorted = false;
+   files_sort=files;
+   sorted=false;
 }
 
 void FileSet::Empty()
@@ -605,6 +605,7 @@ void FileInfo::Init()
    data=0;
    user=0; group=0;
    rank=0;
+   longname=0;
 }
 
 FileInfo::FileInfo(const FileInfo &fi)
@@ -621,6 +622,7 @@ FileInfo::FileInfo(const FileInfo &fi)
    date_prec=fi.date_prec;
    size=fi.size;
    nlinks=fi.nlinks;
+   longname=xstrdup(fi.longname);
 }
 
 #ifndef S_ISLNK
@@ -685,6 +687,7 @@ FileInfo::~FileInfo()
    xfree(name);
    xfree(symlink);
    xfree(data);
+   xfree(longname);
 }
 
 int FileSet::Have() const
@@ -720,4 +723,38 @@ void FileSet::SortByPatternList(const char *list_c)
 	 if(files[i]->GetRank()==max_rank && !fnmatch_dir(p,files[i]))
 	    files[i]->SetRank(rank);
    Sort(BYRANK);
+}
+
+void FileInfo::MakeLongName()
+{
+   longname=(char*)xrealloc(longname,80+xstrlen(name)+xstrlen(symlink));
+   char filetype_c='-';
+   switch(defined&TYPE?filetype:NORMAL)
+   {
+   case NORMAL:	   break;
+   case DIRECTORY: filetype_c='d'; break;
+   case SYMLINK:   filetype_c='l'; break;
+   }
+   int mode1=(defined&MODE?mode:
+      (filetype_c=='d'?0755:(filetype_c=='l'?0777:0644)));
+   sprintf(longname,"%c%s  ",filetype_c,format_perms(mode1));
+   char usergroup[33];
+   usergroup[0]=0;
+   if(defined&(USER|GROUP))
+      sprintf(usergroup,"%.16s%s%.16s",defined&USER?user:"?",
+		  defined&GROUP?"/":"",defined&GROUP?group:"");
+   char size_str[20];
+   strcpy(size_str,"-");
+   if(defined&SIZE)
+      sprintf(size_str,"%lld",(long long)size);
+   int w=20-strlen(usergroup);
+   if(w<1)
+      w=1;
+   sprintf(longname+strlen(longname),"%s %*s ",usergroup,w,size_str);
+   const char *date_str="-";
+   if(defined&DATE)
+      date_str=TimeDate(date).IsoDateTime();
+   sprintf(longname+strlen(longname),"%s %s",date_str,name);
+   if(defined&SYMLINK_DEF)
+      sprintf(longname+strlen(longname)," -> %s",symlink);
 }

@@ -941,7 +941,6 @@ void Ftp::InitFtp()
 
    anon_pass=0;
    anon_user=0;	  // will be set by Reconfig()
-   home_auto=0;
 
    copy_mode=COPY_NONE;
    copy_addr_valid=false;
@@ -968,8 +967,6 @@ Ftp::Ftp(const Ftp *f) : super(f)
 
    state=INITIAL_STATE;
    flags=f->flags&MODES_MASK;
-   xfree(home_auto);
-   home_auto=xstrdup(f->home_auto);
 }
 
 Ftp::~Ftp()
@@ -985,7 +982,6 @@ Ftp::~Ftp()
 
    xfree(anon_user);
    xfree(anon_pass);
-   xfree(home_auto);
    xfree(list_options);
    xfree(line);
    xfree(all_lines);
@@ -1005,34 +1001,6 @@ bool Ftp::AbsolutePath(const char *s)
    return(s[0]=='/'
       || (((dos_path && dev_len==3) || (vms_path && dev_len>2))
 	  && s[dev_len-1]=='/'));
-}
-
-void Ftp::PropagateHomeAuto()
-{
-   if(!home_auto)
-      return;
-   for(FA *fo=FirstSameSite(); fo!=0; fo=NextSameSite(fo))
-   {
-      Ftp *o=(Ftp*)fo; // we are sure it is Ftp.
-      if(!o->home_auto)
-      {
-	 o->home_auto=xstrdup(home_auto);
-	 o->dos_path=dos_path;
-	 o->vms_path=vms_path;
-	 if(!o->home)
-	    o->set_home(home_auto);
-      }
-   }
-}
-const char *Ftp::FindHomeAuto()
-{
-   for(FA *fo=FirstSameSite(); fo!=0; fo=NextSameSite(fo))
-   {
-      Ftp *o=(Ftp*)fo; // we are sure it is Ftp.
-      if(o->home_auto)
-	 return o->home_auto;
-   }
-   return 0;
 }
 
 // returns true if we need to sleep instead of moving to higher level.

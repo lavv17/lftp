@@ -3,6 +3,11 @@
 	* PtyShell.cc, PtyShell.h: add pipe support, thus the ability to
 	  separate data and interaction with ssh (passwords etc).
 	* buffer.cc, buffer.h: pack/unpack - signed int, 64 bit, debugging.
+	* FileSet.cc, FileSet.h: add longname.
+	* NetAccess.cc, NetAccess.h, ftpclass.cc, ftpclass.h: move home_auto
+	  to NetAccess.
+	* SFtp.cc, SFtp.h: more work; ls works.
+	* Makefile.am: libpty; add sftp.
 
 2003-11-14  Alexander V. Lukyanov <lav@yars.free.net>
 

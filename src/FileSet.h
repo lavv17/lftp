@@ -65,6 +65,7 @@ public:
    };
 
    int rank;
+   char *longname;
 
    ~FileInfo();
    void Init();
@@ -99,6 +100,9 @@ public:
 
    void SetRank(int r) { rank=r; }
    int GetRank() const { return rank; }
+   void MakeLongName();
+   void SetLongName(const char *s) { xfree(longname); longname=xstrdup(s); }
+   const char *GetLongName() { if(!longname) MakeLongName(); return longname; }
 
    operator const char *() { return name; }
 };
@@ -127,7 +131,7 @@ public:
    FileSet()
    {
       files=files_sort=0;
-      sorted = false;
+      sorted=false;
       fnum=0;
       ind=0;
    }
