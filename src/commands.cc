@@ -593,7 +593,8 @@ Job *CmdExec::builtin_cd()
    xfree(old_cwd);
    old_cwd=xstrdup(session->GetCwd());
 
-   if (!verify_path || background)
+   if(!verify_path || background
+   || (!verify_path_cached && LsCache::IsDirectory(session,dir)==1))
    {
       session->Chdir(dir,false);
       if(slot)
@@ -724,8 +725,18 @@ Job *CmdExec::builtin_open()
    bool insecure=false;
    bool no_bm=false;
 
+   static struct option open_options[]=
+   {
+      {"port",required_argument,0,'p'},
+      {"user",required_argument,0,'u'},
+      {"execute",required_argument,0,'e'},
+      {"debug",optional_argument,0,'d'},
+      {"no-bookmark",no_argument,0,'B'},
+      {0,0,0,0}
+   };
+
    args->rewind();
-   while((c=args->getopt("u:p:e:dB"))!=EOF)
+   while((c=args->getopt_long("u:p:e:dB",open_options,0))!=EOF)
    {
       switch(c)
       {
@@ -1337,6 +1348,7 @@ const char *FileSetOutput::parse_argv(ArgV *a)
 	    if(!strcasecmp(optarg, "name")) sort = FileSet::BYNAME;
 	    else if(!strcasecmp(optarg, "size")) sort = FileSet::BYSIZE;
 	    else if(!strcasecmp(optarg, "date")) sort = FileSet::BYDATE;
+	    else if(!strcasecmp(optarg, "time")) sort = FileSet::BYDATE;
 	    else return _("invalid argument for `--sort'");
 	 } else if(!strcmp(cls_options[longopt].name, "filesize")) {
 	    size_filesonly = true;

@@ -1,3 +1,20 @@
+2003-11-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc: drop size/date if read pos>size.
+	* commands.cc: add --sort=time for cls; add long options for open;
+	  optional verification of cached dirs.
+	* CmdExec.cc, CmdExec.h: optional verification of cached dirs.
+
+2003-11-11  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h, resource.cc: new setting ftp:ssl-protect-list
+	  to selectively protect listings; propagate pret_supported; set
+	  real_pos to 0 always if REST fails.
+
+2003-10-21  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: handle long options in open command.
+
 2003-10-03  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SignalHook.cc: unblock signals upon restoring.
