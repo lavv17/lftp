@@ -96,9 +96,16 @@ void SMTask::Schedule()
       return;
    }
 
+   // now collect all wake up conditions; excluding suspended and
+   // already running tasks, because they can't run again on this
+   // level of recursion, and thus could cause spinning by their wake up
+   // conditions.
    for(sched_scan=chain; sched_scan; sched_scan=sched_scan->next)
-      if(sched_scan->suspended==0)
+   {
+      if(!sched_scan->suspended
+      && !sched_scan->running)
 	 sched_total.Merge(sched_scan->block);
+   }
    return;
 }
 
