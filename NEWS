@@ -1,4 +1,4 @@
-Version 2.0.0 - 1999-06-??
+Version 2.0.0 - 1999-06-15
 
 * command `module' to load shared objects at runtime
 * autoloading modules for protocols and for some commands (only mirror now)
