@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# lftpget - get a file with lftp
+# Copyright (c) 1999 Alexander V. Lukyanov <lav@yars.free.net>
+# This file is covered by GNU GPL. See file COPYING for details.
+
+# $Id$
+
+SCRIPT=""
+
+for f
+do
+   need_pass=false
+   case "$f" in
+   "*\"*|*\\*")
+      # need to quote
+      f="`echo "$f" | sed 's/\([\\\"]\)/\\\1/g'`"
+      ;;
+   esac
+   case "$f" in
+   *://*:*@*)  ;;
+   *://*@*)    need_pass=true;;
+   esac
+
+   if $need_pass; then
+      SCRIPT="$SCRIPT echo \"$f\" needs password;"
+   fi
+   SCRIPT="$SCRIPT get -u \"$f\";"
+done
+
+exec lftp -c "$SCRIPT"

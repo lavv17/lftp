@@ -1,3 +1,8 @@
+1999-07-19  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* lftpget: new file.
+	* Makefile.am: install and distribute lftpget.
+
 1999-07-16  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* LsJob.cc: fixed bug caused by cut-n-paste. This fixes spinning
