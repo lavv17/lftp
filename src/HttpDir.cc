@@ -296,7 +296,8 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
    if(tag_scan->tag==0)
       return tag_len;	// not interesting
 
-   bool hftp=(prefix && !xstrcmp(prefix->proto,"hftp"));
+   bool hftp=(prefix && (!xstrcmp(prefix->proto,"hftp")
+		      || !xstrcmp(prefix->proto,"ftp")));
 
    // ok, found the target.
 

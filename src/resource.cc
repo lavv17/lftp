@@ -45,7 +45,7 @@ static const char *FtpProxyValidate(char **p)
    }
    if(url.proto)
    {
-      if(strcmp(url.proto,"ftp") /* TODO: && strcmp(url.proto,"http")*/)
+      if(strcmp(url.proto,"ftp") && strcmp(url.proto,"http"))
 	 return _("Proxy protocol unsupported");
    }
    if(url.user && !url.pass)

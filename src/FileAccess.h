@@ -85,6 +85,7 @@ public:
    };
 
 protected:
+   char	 *vproto;
    char	 *hostname;
    char	 *portname;
    char  *user;
@@ -172,6 +173,8 @@ public:
    bool SameProtoAs(FileAccess *fa) { return !strcmp(GetProto(),fa->GetProto()); }
    virtual FileAccess *Clone() = 0;
 
+   const char *GetVisualProto() { return vproto?vproto:GetProto(); }
+   void SetVisualProto(const char *p) { xfree(vproto); vproto=xstrdup(p); }
    const char  *GetHome() { return home; }
    const char  *GetHostName() { return hostname; }
    const char  *GetUser() { return user; }
@@ -301,10 +304,7 @@ public:
 	 (void)new Protocol(proto,creator);
       }
 
-   static FileAccess *New(const char *proto)
-      {
-	 return Protocol::NewSession(proto);
-      }
+   static FileAccess *New(const char *proto,const char *host=0);
    static FileAccess *New(const class ParsedURL *u,bool dummy=true);
 
    void SetPasswordGlobal(const char *p);

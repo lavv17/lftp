@@ -1,3 +1,12 @@
+2000-07-20  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h: (GetVisualProto, SetVisualProto)
+	  new methods; handle http proxy on creation of ftp session.
+	* Http.cc: use ftp:proxy if session was created as ftp.
+	* HttpDir.cc: check for ftp too.
+	* commands.cc: create new session everytime.
+	* resource.cc: check ftp:proxy for http://.
+
 2000-07-19  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Job.cc, Job.h: support for several jobs being waited for

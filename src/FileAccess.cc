@@ -50,6 +50,7 @@ FileAccess *FileAccess::chain=0;
 
 void FileAccess::Init()
 {
+   vproto=0;
    home=0;
    portname=0;
    hostname=0;
@@ -119,6 +120,7 @@ FileAccess::FileAccess(const FileAccess *fa)
 
 FileAccess::~FileAccess()
 {
+   xfree(vproto);
    xfree(file);
    xfree(file_url);
    xfree(cwd);
@@ -402,7 +404,7 @@ bool FileAccess::SameSiteAs(FileAccess *fa)
 const char *FileAccess::GetFileURL(const char *f,int flags)
 {
    int len=1;
-   const char *proto=GetProto();
+   const char *proto=GetVisualProto();
    if(proto[0]==0)
       return "";
 
@@ -933,9 +935,27 @@ FileAccess *FileAccess::NextSameSite(FA *scan)
 }
 
 
+FileAccess *FileAccess::New(const char *proto,const char *host)
+{
+   const char *vproto=proto;
+   // very special case for ftp vs hftp
+   if(!strcmp(proto,"ftp"))
+   {
+      const char *proxy=ResMgr::Query("ftp:proxy",host);
+      if(proxy && !strncmp(proxy,"http://",7))
+      {
+	 vproto=proto;
+	 proto="hftp";
+      }
+   }
+   FA *session=Protocol::NewSession(proto);
+   if(session && vproto!=proto)
+      session->SetVisualProto(vproto);
+   return session;
+}
 FileAccess *FileAccess::New(const ParsedURL *u,bool dummy)
 {
-   FileAccess *s=New(u->proto);
+   FileAccess *s=New(u->proto,u->host);
    if(!s)
    {
       if(!dummy)

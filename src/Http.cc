@@ -1500,7 +1500,19 @@ void Http::Reconfig(const char *name)
    if(!hftp && NoProxy())
       SetProxy(0);
    else
-      SetProxy(Query("proxy",c));
+   {
+      const char *p=0;
+      if(hftp && vproto && !strcmp(vproto,"ftp"))
+      {
+	 p=ResMgr::Query("ftp:proxy",c);
+	 if(p && strncmp(p,"http://",7))
+	    p=0;
+      }
+      if(!p)
+      	 p=Query("proxy",c);
+
+      SetProxy(p);
+   }
 
    if(sock!=-1)
       SetSocketBuffer(sock,socket_buffer);

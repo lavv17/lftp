@@ -670,29 +670,20 @@ Job *CmdExec::builtin_open()
 	    cwd_history.Set(session,session->GetCwd());
 
 	    FileAccess *new_session=0;
-	    // get session with specified protocol if protocol differs
-	    if(uc.proto && strcmp(uc.proto,session->GetProto())
-	    || session->GetProto()[0]==0 // or if current session is dummy
-	    || !strcmp(session->GetProto(),"file"))
+
+	    const char *p=uc.proto;
+	    if(!p)
+	       p=ResMgr::Query("cmd:default-protocol",0);
+	    if(!p)
+	       p="ftp";
+	    new_session=FileAccess::New(p,uc.host);
+	    if(!new_session)
 	    {
-	       const char *p=uc.proto;
-	       if(!p)
-		  p=ResMgr::Query("cmd:default-protocol",0);
-	       if(!p)
-		  p="ftp";
-	       new_session=FileAccess::New(p);
-	       if(!new_session)
-	       {
-		  eprintf("%s: %s%s\n",args->a0(),p,
-			   _(" - not supported protocol"));
-		  return 0;
-	       }
+	       eprintf("%s: %s%s\n",args->a0(),p,
+			_(" - not supported protocol"));
+	       return 0;
 	    }
-	    else
-	    {
-	       new_session=session->Clone();
-	       new_session->AnonymousLogin();
-	    }
+
 	    saved_session=session;
 	    session=0;
 	    ChangeSession(new_session);
