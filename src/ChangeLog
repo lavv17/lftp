@@ -1,3 +1,7 @@
+2004-06-02  Marc Bevand <marc.bevand@smartjog.com>
+
+	* FindJobDu.cc: use long long to hold file size.
+
 2004-06-01  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: save old directory when no cd verification is done.

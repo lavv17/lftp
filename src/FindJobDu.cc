@@ -117,7 +117,7 @@ FinderJob::prf_res FinderJob_Du::ProcessFile(const char *d,const FileInfo *fi)
       return PRF_OK; /* can't count this one */
 
    /* add this file to the current dir */
-   int add = fi->size;
+   long long add = fi->size;
    if (file_count)
       add = 1;
    if(stack_ptr != -1)
