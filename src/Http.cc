@@ -157,10 +157,15 @@ void Http::Disconnect()
       close(sock);
       sock=-1;
    }
+   if(mode==STORE && state!=DONE && !Error() && real_pos>0)
+   {
+      if(last_method && !strcmp(last_method,"POST"))
+	 SetError(FATAL,"POST method failed");
+      else
+	 SetError(STORE_FAILED,0);
+   }
    last_method=0;
    ResetRequestData();
-   if(mode==STORE && state!=DONE && !Error())
-      SetError(STORE_FAILED,0);
    state=DISCONNECTED;
 }
 
@@ -680,6 +685,19 @@ int Http::Do()
    case DISCONNECTED:
       if(mode==CLOSED || !hostname)
 	 return m;
+      if(!hftp && mode==QUOTE_CMD)
+      {
+      handle_quote_cmd:
+	 if(file && !strncasecmp(file,"Set-Cookie ",11))
+	    SetCookie(file+11);
+	 else
+	 {
+	    SetError(NOT_SUPP,0);
+	    return MOVED;
+	 }
+	 state=DONE;
+	 return MOVED;
+      }
       if(!ModeSupported())
       {
 	 SetError(NOT_SUPP);
@@ -792,6 +810,8 @@ int Http::Do()
       recv_buf=new FileInputBuffer(new FDStream(sock,"<input-socket>"));
       /*fallthrough*/
    case CONNECTED:
+      if(mode==QUOTE_CMD)
+	 goto handle_quote_cmd;
       if(recv_buf->Eof())
       {
 	 DebugPrint("**** ",_("Peer closed connection"),0);
@@ -1268,7 +1288,7 @@ int Http::Write(const void *buf,int size)
       {
 	 DebugPrint("**** ",strerror(errno),0);
 	 Disconnect();
-	 return STORE_FAILED;
+	 return error_code;
       }
       SetError(SEE_ERRNO,0);
       Disconnect();
