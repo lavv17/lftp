@@ -60,8 +60,9 @@ int FileCopy::Do()
 	 {
 	    put->Suspend();
 	    get->Resume();
-	    get->WantDate();
 	    get->WantSize();
+	    if(put->NeedDate())
+	       get->WantDate();
 	    goto pre_GET_INFO_WAIT;
 	 }
       }
@@ -72,7 +73,10 @@ int FileCopy::Do()
       if(get->GetDate()!=NO_DATE && get->GetDate()!=NO_DATE_YET)
 	 put->SetDate(get->GetDate());
       else if(get->GetDate()==NO_DATE_YET)
-	 get->WantDate();
+      {
+	 if(put->NeedDate())
+	    get->WantDate();
+      }
 
       if(cont && put->CanSeek())
 	 put->Seek(FILE_END);
@@ -95,6 +99,7 @@ int FileCopy::Do()
       get->Resume();
    pre_DO_COPY:
       start_time=now;
+      start_time_ms=now_ms;
       state=DO_COPY;
       m=MOVED;
       /* fallthrough */
@@ -202,6 +207,7 @@ int FileCopy::Do()
       state=GET_DONE_WAIT;
       m=MOVED;
       end_time=now;
+      end_time_ms=now_ms;
       delete put; put=0;
       /* fallthrough */
    case(GET_DONE_WAIT):
@@ -243,7 +249,9 @@ void FileCopy::Init()
    put_buf=0;
    bytes_count=0;
    start_time=0;
+   start_time_ms=0;
    end_time=0;
+   end_time_ms=0;
 }
 
 FileCopy::FileCopy(FileCopyPeer *s,FileCopyPeer *d,bool c)
@@ -341,13 +349,37 @@ time_t FileCopy::GetTimeSpent()
       return 0;
    return end_time-start_time;
 }
+int FileCopy::GetTimeSpentMilli()
+{
+   if(start_time==0 || end_time==0 || end_time<start_time
+   || (end_time==start_time && end_time_ms<start_time_ms))
+      return 0;
+   return end_time_ms-start_time_ms;
+}
 
 FgData *FileCopy::GetFgData(bool fg)
 {
    // NOTE: only one of get/put can have FgData in this implementation.
-   FgData *f=get->GetFgData(fg);
+   FgData *f=0;
+   if(get) f=get->GetFgData(fg);
    if(f) return f;
-   return put->GetFgData(fg);
+   if(put) f=put->GetFgData(fg);
+   return f;
+}
+
+pid_t FileCopy::GetProcGroup()
+{
+   pid_t p=0;
+   if(get) p=get->GetProcGroup();
+   if(p) return p;
+   if(put) p=put->GetProcGroup();
+   return p;
+}
+
+void FileCopy::Kill(int sig)
+{
+   if(get) get->Kill(sig);
+   if(put) put->Kill(sig);
 }
 
 // FileCopyPeer implementation
@@ -399,6 +431,7 @@ FileCopyPeer::FileCopyPeer(direction m)
    seek_pos=0;
    can_seek=true;
    date_set=false;
+   do_set_date=true;
    ascii=false;
    Suspend();  // don't do anything too early
 }
@@ -701,7 +734,8 @@ FileCopyPeerFDStream::FileCopyPeerFDStream(FDStream *o,direction m)
 }
 FileCopyPeerFDStream::~FileCopyPeerFDStream()
 {
-   if(stream) delete stream;
+   if(stream && delete_stream)
+      delete stream;
 }
 int FileCopyPeerFDStream::getfd()
 {
@@ -733,15 +767,16 @@ int FileCopyPeerFDStream::Do()
       {
 	 if(eof)
 	 {
-	    if(!date_set && date!=NO_DATE && date!=NO_DATE_YET)
+	    if(date_set || date==NO_DATE_YET)
+	       return m;
+	    if(date!=NO_DATE && do_set_date)
 	    {
 	       if(getfd()==-1)
 		  return m;
 	       stream->setmtime(date);
-	       date_set=true;
-	       m=MOVED;
 	    }
-	    return m;
+	    date_set=true;
+	    return MOVED;
 	 }
 	 if(seek_pos==0)
 	    return m;
@@ -783,7 +818,11 @@ bool FileCopyPeerFDStream::IOReady()
 
 bool FileCopyPeerFDStream::Done()
 {
-   return super::Done() && stream->Done();
+   if(!super::Done())
+      return false;
+   if(stream && delete_stream && !stream->Done())
+      return false;
+   return true;
 }
 
 void FileCopyPeerFDStream::Seek(long new_pos)
@@ -886,7 +925,9 @@ int FileCopyPeerFDStream::Put_LL(const char *buf,int len)
 }
 FgData *FileCopyPeerFDStream::GetFgData(bool fg)
 {
-   if(getfd()!=-1)
+   if(!delete_stream)
+      return 0;	  // if we don't own the stream, don't create FgData.
+   if(stream->GetProcGroup())
       return new FgData(stream->GetProcGroup(),fg);
    return 0;
 }
@@ -963,11 +1004,11 @@ const char *Speedometer::GetStr()
    if(r<1)
       return "";
    if(r<1024)
-      sprintf(buf_rate,_("%.0fb/s "),r);
+      sprintf(buf_rate,_("%.0fb/s"),r);
    else if(r<1024*1024)
-      sprintf(buf_rate,_("%.1fK/s "),r/1024.);
+      sprintf(buf_rate,_("%.1fK/s"),r/1024.);
    else
-      sprintf(buf_rate,_("%.2fM/s "),r/1024./1024.);
+      sprintf(buf_rate,_("%.2fM/s"),r/1024./1024.);
    return buf_rate;
 }
 const char *Speedometer::GetETAStr(long size)

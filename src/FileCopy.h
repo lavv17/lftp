@@ -45,6 +45,7 @@ protected:
    long seek_pos;
    bool can_seek;
    bool date_set;
+   bool do_set_date;
 
    bool ascii;
 
@@ -71,6 +72,9 @@ public:
    void SetSize(long s);
    void SetEntitySize(long s) { e_size=s; }
 
+   void DontCopyDate() { do_set_date=false; }
+   bool NeedDate() { return do_set_date; }
+
    FileCopyPeer(direction m);
    ~FileCopyPeer();
 
@@ -80,6 +84,9 @@ public:
 
    virtual const char *GetStatus() { return 0; }
    virtual bool NeedSizeDateBeforehand() { return false; }
+
+   virtual pid_t GetProcGroup() { return 0; }
+   virtual void Kill(int sig) {}
 };
 
 class Speedometer : public SMTask
@@ -129,7 +136,9 @@ class FileCopy : public SMTask
    int put_buf;
 
    time_t start_time;
+   int start_time_ms;
    time_t end_time;
+   int end_time_ms;
    long bytes_count;
 
 public:
@@ -142,13 +151,18 @@ public:
    const char *GetETAStr();
    const char *GetStatus();
    FgData *GetFgData(bool fg);
+   pid_t GetProcGroup();
+   void Kill(int sig);
    long GetBytesCount() { return bytes_count; }
    time_t GetTimeSpent();
+   int GetTimeSpentMilli();
 
    bool Done() { return state==ALL_DONE; }
    bool Error() { return error_text!=0; }
    const char *ErrorText() { return error_text; }
    void SetError(const char *str);
+
+   void DontCopyDate() { put->DontCopyDate(); }
 
    FileCopy(FileCopyPeer *src,FileCopyPeer *dst,bool cont);
    ~FileCopy();
@@ -185,7 +199,7 @@ public:
    void Suspend();
    void Resume();
 
-   void ReuseSessionLater();
+   void DontReuseSession() { reuse_later=false; }
 
    const char *GetStatus() { return session->CurrentStatus(); }
 
@@ -202,6 +216,8 @@ class FileCopyPeerFDStream : public FileCopyPeer
 
    int getfd();
 
+   bool delete_stream;
+
 public:
    FileCopyPeerFDStream(FDStream *o,direction m);
    ~FileCopyPeerFDStream();
@@ -210,6 +226,10 @@ public:
    bool IOReady();
    void Seek(long new_pos);
    FgData *GetFgData(bool fg);
+   pid_t GetProcGroup() { return stream->GetProcGroup(); }
+   void Kill(int sig) { stream->Kill(sig); }
+
+   void DontDeleteStream() { delete_stream=false; }
 };
 
 class FileCopyPeerString : public FileCopyPeer
