@@ -1,3 +1,7 @@
+2002-12-19  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* NetAccess.cc: check set!=NULL.
+
 2002-12-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* NetAccess.cc: (GenericParseListInfo) handle ~ here.
@@ -5,6 +9,7 @@
 	* FindJob.cc: revert ~ change.
 	* MirrorJob.cc: handle ~.
 	* misc.cc: handle /dir with ./file concatenation nicely.
+	* lftp_tinfo.cc: compilation fix for certain versions of cygwin.
 
 2002-12-10  Alexander V. Lukyanov <lav@yars.free.net>
 

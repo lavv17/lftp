@@ -600,25 +600,28 @@ int GenericParseListInfo::Do()
       int old_mode=mode;
 
       FileSet *set=Parse(b,len);
-      set->rewind();
-      for(file=set->curr(); file!=0; file=set->next())
+      if(set)
       {
-	 // tilde is special.
-	 if(file->name[0]=='~')
+	 set->rewind();
+	 for(file=set->curr(); file!=0; file=set->next())
 	 {
-	    int len=strlen(file->name);
-	    file->name=(char*)xrealloc(file->name,len+3);
-	    memmove(file->name+2,file->name,len+1);
-	    memcpy(file->name,"./",2);
+	    // tilde is special.
+	    if(file->name[0]=='~')
+	    {
+	       int len=strlen(file->name);
+	       file->name=(char*)xrealloc(file->name,len+3);
+	       memmove(file->name+2,file->name,len+1);
+	       memcpy(file->name,"./",2);
+	    }
 	 }
+	 if(result)
+	 {
+	    result->Merge(set);
+	    delete set;
+	 }
+	 else
+	    result=set;
       }
-      if(result)
-      {
-	 result->Merge(set);
-	 delete set;
-      }
-      else
-	 result=set;
 
       Delete(ubuf);
       ubuf=0;
