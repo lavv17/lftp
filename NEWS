@@ -1,3 +1,17 @@
+Version 2.6.7 - 2003-08-29
+
+* new settings ftp:use-size, ftp:use-mdtm, ftp:use-telnet-iac.
+* optimized writing to local disk by increasing write size.
+* fixed size catching from 150 ftp server reply.
+* correct exit code of commands help, lftp (reported by trancefx).
+* hftp improvements from Johannes Zellner: CSM proxy support; colored listings;
+  do not print hour:minute if not known.
+* translations updated.
+* fixed a bug with saving last working directory for a site.
+* fixed a bug with FXP of zero sized files.
+* fixed a bug happening when a 5xx reply is received after QUIT is sent.
+* readline updated to version 4.3.
+
 Version 2.6.6 - 2003-05-28
 
 * raised sane mirror connection limit to 64.
