@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
-"POT-Creation-Date: 2002-08-10 16:25+0400\n"
+"POT-Creation-Date: 2002-08-10 18:05+0400\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -1744,22 +1744,22 @@ msgstr "正发送数据"
 msgid "Receiving data"
 msgstr "正接收数据"
 
-#: src/lftp.cc:205
+#: src/lftp.cc:206
 #, c-format
 msgid "[%lu] Terminated by signal %d. %s"
 msgstr "[%lu] 被信号 %d 中止. %s"
 
-#: src/lftp.cc:261
+#: src/lftp.cc:262
 #, c-format
 msgid "[%lu] Started.  %s"
 msgstr "[%lu] 启动. %s"
 
-#: src/lftp.cc:270
+#: src/lftp.cc:271
 #, c-format
 msgid "[%lu] Finished. %s"
 msgstr "[%lu] 完成. %s"
 
-#: src/lftp.cc:274
+#: src/lftp.cc:275
 #, c-format
 msgid "[%lu] Moving to background to complete transfers...\n"
 msgstr "[%lu] 转到后台完成传输...\n"

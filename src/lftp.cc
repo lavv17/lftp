@@ -32,6 +32,7 @@
 #include <sys/stat.h> // for mkdir()
 #include "xstring.h"
 #include <fcntl.h>
+#include <locale.h>
 
 #include "xalloca.h"
 #include "xmalloc.h"

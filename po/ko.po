@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
-"POT-Creation-Date: 2002-08-10 16:25+0400\n"
+"POT-Creation-Date: 2002-08-10 18:05+0400\n"
 "PO-Revision-Date: 2001-05-27 KST\n"
 "Last-Translator: Dojip Kim <greendrm@greendrm.com>\n"
 "Language-Team: \n"
@@ -1756,22 +1756,22 @@ msgstr "자료 보내는 중"
 msgid "Receiving data"
 msgstr "자료 받는 중"
 
-#: src/lftp.cc:205
+#: src/lftp.cc:206
 #, c-format
 msgid "[%lu] Terminated by signal %d. %s"
 msgstr "[%lu] 시그널 %d 로 종료되었습니다. %s"
 
-#: src/lftp.cc:261
+#: src/lftp.cc:262
 #, c-format
 msgid "[%lu] Started.  %s"
 msgstr "[%lu] 시작. %s"
 
-#: src/lftp.cc:270
+#: src/lftp.cc:271
 #, c-format
 msgid "[%lu] Finished. %s"
 msgstr "[%lu] 종료. %s"
 
-#: src/lftp.cc:274
+#: src/lftp.cc:275
 #, c-format
 msgid "[%lu] Moving to background to complete transfers...\n"
 msgstr "[%lu] 전송을 완료하도록 백그라운드로 옮기는 중...\n"

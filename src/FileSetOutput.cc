@@ -31,6 +31,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <fnmatch.h>
+#include <locale.h>
 #include <mbswidth.h>
 
 CDECL_BEGIN

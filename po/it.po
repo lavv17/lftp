@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2.3\n"
-"POT-Creation-Date: 2002-08-10 16:25+0400\n"
+"POT-Creation-Date: 2002-08-10 18:05+0400\n"
 "PO-Revision-Date: 2000-06-18 10:46+02:00\n"
 "Last-Translator: Giovanni Bortolozzo <borto@pluto.linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -1799,22 +1799,22 @@ msgstr "Sto inviando i dati"
 msgid "Receiving data"
 msgstr "Sto ricevendo i dati"
 
-#: src/lftp.cc:205
+#: src/lftp.cc:206
 #, c-format
 msgid "[%lu] Terminated by signal %d. %s"
 msgstr "[%lu] Terminato dal signal %d. %s"
 
-#: src/lftp.cc:261
+#: src/lftp.cc:262
 #, c-format
 msgid "[%lu] Started.  %s"
 msgstr "[%lu] Avviato.  %s"
 
-#: src/lftp.cc:270
+#: src/lftp.cc:271
 #, c-format
 msgid "[%lu] Finished. %s"
 msgstr "[%lu] Concluso. %s"
 
-#: src/lftp.cc:274
+#: src/lftp.cc:275
 #, c-format
 msgid "[%lu] Moving to background to complete transfers...\n"
 msgstr "[%lu] Passo in background per completare il trasferimento...\n"
