@@ -40,7 +40,7 @@ void Buffer::Get(const char **buf,int *size)
    *size=in_buffer;
 }
 
-void Buffer::GetSaved(const char **buf,int *size)
+void Buffer::GetSaved(const char **buf,int *size) const
 {
    if(!save)
    {

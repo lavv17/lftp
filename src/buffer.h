@@ -40,7 +40,7 @@ protected:
    int buffer_ptr;
    bool eof;	  // no reads possible (except from mem buffer)
    bool broken;	  // no writes possible
-   
+
    bool save;  // save skipped data
    int save_max;
 
@@ -70,7 +70,7 @@ public:
 
    // useful for cache.
    void Save(long m) { save=true; save_max=m; }
-   void GetSaved(const char **buf,int *size);
+   void GetSaved(const char **buf,int *size) const;
 
    virtual FgData *GetFgData(bool) { return 0; }
 
