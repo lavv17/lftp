@@ -21,6 +21,9 @@ test -z "$LDFLAGS"   && DEFAULT_LDFLAGS=yes
 dnl Checks for programs.
 AC_PROG_CC
 AC_PROG_CXX
+
+AC_SYS_LARGEFILE
+
 AC_PROG_YACC
 
 if test x$ac_cv_lib_fl_yywrap = xno; then
