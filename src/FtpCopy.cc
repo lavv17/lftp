@@ -70,10 +70,12 @@ int FtpCopy::Do()
       src->Open(src_file,src->RETRIEVE,dst_size);
       src->copy_mode=src->COPY_SOURCE;
       src->copy_passive=reverse_passive;
+      src->retries=src_retries;
       // setup dest
       dst->Open(dst_file,dst->STORE,dst_size);
       dst->copy_mode=dst->COPY_DEST;
       dst->copy_passive=!reverse_passive;
+      dst->retries=dst_retries;
       state=WAIT;
       m=MOVED;
    case WAIT:
@@ -84,6 +86,8 @@ int FtpCopy::Do()
 	 if((src->flags&src->NOREST_MODE)
 	 || (dst->flags&dst->NOREST_MODE))
 	    no_rest=true;
+	 src_retries=src->retries;
+	 dst_retries=dst->retries;
 	 Close();
 	 goto pre_GET_SIZE;
       }
@@ -147,6 +151,7 @@ void FtpCopy::Init()
    dst_size=0;
    no_rest=false;
    reverse_passive=false;
+   src_retries=dst_retries=0;
 }
 
 FtpCopy::~FtpCopy()

@@ -41,6 +41,8 @@ class FtpCopy : public Job
    bool no_rest;
    bool reverse_passive;
    long dst_size;
+   int src_retries;
+   int dst_retries;
 
    ArgV *args;
    const char *op;
