@@ -1127,7 +1127,7 @@ int   Ftp::Do()
    {
       m|=FlushSendQueue();
       m|=ReceiveResp();
-      if(expect->IsEmpty())
+      if(expect && expect->IsEmpty())
       {
 	 Disconnect();
 	 return MOVED;
