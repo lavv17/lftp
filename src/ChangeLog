@@ -2,6 +2,10 @@
 
 	* commands.cc: add -O option to help.
 	* Http.cc: declare strptime if needed.
+	* ftpclass.cc: handle "port theft" message in fxp mode.
+	* FileCopyFtp.cc: check for reversing passive-source fixed; add
+	  messages.
+	* FileCopy.cc: add missing \n.
 
 2000-02-01  Alexander V. Lukyanov  <lav@yars.free.net>
 

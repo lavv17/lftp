@@ -25,6 +25,7 @@
 #include <getopt.h>
 
 #include "FileCopyFtp.h"
+#include "log.h"
 
 #define super FileCopy
 
@@ -61,13 +62,14 @@ int FileCopyFtp::Do()
 	 get->CannotSeek(put->GetSize());
 	 put->CannotSeek(put->GetSize());
       }
-      bool new_ps=(!passive_source && ftp_src->IsCopyPassive())
-	       || (passive_source && !ftp_dst->IsCopyPassive());
-      if(new_ps!=passive_source)
+      if((passive_source !=  ftp_src->IsCopyPassive())
+      || (passive_source != !ftp_dst->IsCopyPassive()))
       {
-	 if(new_ps==orig_passive_source)
+	 passive_source=!passive_source;
+	 if(passive_source==orig_passive_source)
 	 {
 	    // both ways failed. Fall back to normal copying.
+	    Log::global->Write(0,"**** FXP: giving up, reverting to plain copy\n");
 	    Close();
 	    disable_fxp=true;
 	    ((FileCopyPeerFA*)get)->SetFXP(false);
@@ -80,7 +82,7 @@ int FileCopyFtp::Do()
 	    RateReset();
 	    return MOVED;
 	 }
-	 passive_source=new_ps;
+	 Log::global->Write(0,"**** FXP: trying to reverse ftp:fxp-passive-source\n");
 	 RateReset();
       }
       src_retries=ftp_src->GetRetries();

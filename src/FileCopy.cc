@@ -139,7 +139,7 @@ int FileCopy::Do()
       }
       if(put->Broken())
       {
-	 debug((9,"copy: put is broken"));
+	 debug((9,"copy: put is broken\n"));
 	 goto pre_GET_DONE_WAIT;
       }
       put->Resume();
