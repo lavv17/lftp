@@ -190,8 +190,7 @@ int FtpListInfo::Do()
       assert(res==Ftp::OK);
       session->Close();
 
-      cur=get_info;
-      while(get_info_cnt-->0)
+      for(cur=get_info; get_info_cnt-->0; cur++)
       {
 	 if(cur->time!=(time_t)-1)
 	    result->SetDate(cur->file,cur->time);
