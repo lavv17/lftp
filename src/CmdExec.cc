@@ -464,7 +464,6 @@ int CmdExec::Do()
 	 }
 	 else if(glob->Done())
 	 {
-	    glob->SortByName();
 	    FileSet &list=*glob->GetResult();
 	    for(int i=0; list[i]; i++)
 	       args_glob->Append(list[i]->name);

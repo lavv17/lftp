@@ -888,7 +888,7 @@ Job *CmdExec::builtin_queue()
 
    exit_code=1; // more failure exits than success exits, so set success explicitely
 
-   while((opt=args->getopt_long("+d::m:n:w",queue_options,0))!=EOF)
+   while((opt=args->getopt_long("+dm:n:w",queue_options,0))!=EOF)
    {
       switch(opt)
       {
@@ -909,7 +909,6 @@ Job *CmdExec::builtin_queue()
 
       case 'd':
 	 mode = del;
-	 arg = optarg;
 	 break;
 
       case '?':
@@ -945,7 +944,12 @@ Job *CmdExec::builtin_queue()
          /* Accept:
 	  * queue -d (delete the last job)
 	  * queue -d 1  (delete entry 1)
-	  * queue -d "get" (delete all *get*) */
+	  * queue -d "get" (delete all *get*)
+	  *
+	  * We want an optional argument, but don't use getopt ::, since
+	  * that'll disallow the space between arguments, which we want. */
+         arg = args->getarg(args->getindex());
+	 
 	 CmdExec *queue=GetQueue(false);
 	 if(!queue) {
 	    eprintf(_("%s: No queue is active.\n"), args->a0());

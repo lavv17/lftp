@@ -1,3 +1,9 @@
+2001-08-27  Glenn F. Maynard <g_ld@zewt.org>
+
+	* FileSet.cc, FileSet.h, FileAccess.h, CmdExec.cc: remove the FileSet
+	  sort stuff.  It's superfluous now.
+	* commands.cc: fix a minor UI bug with queue -d.
+
 2001-08-22  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FtpListInfo.cc: remove erroneous assert, handle error.

@@ -432,18 +432,6 @@ FileInfo *FileSet::next()
    return 0;
 }
 
-static int name_compare(const void *a,const void *b)
-{
-   FileInfo *pa=*(FileInfo*const*)a;
-   FileInfo *pb=*(FileInfo*const*)b;
-   return strcmp(pa->name,pb->name);
-}
-
-void FileSet::SortByName()
-{
-   qsort(files,fnum,sizeof(*files),name_compare);
-}
-
 void FileInfo::Init()
 {
    name=NULL;

@@ -164,8 +164,6 @@ public:
 	 f->SetDate(date);
    }
 
-   void SortByName();
-
    FileInfo * operator[](int i) const { return i<fnum?files[i]:0; }
 };
 

@@ -372,7 +372,6 @@ public:
    void FilesOnly() { files_only=true; }
    void NoMatchPeriod() { match_period=false; }
    void NoInhibitTilde() { inhibit_tilde=false; }
-   void SortByName() { list.SortByName(); }
 
    static bool HasWildcards(const char *);
    static void UnquoteWildcards(char *);
@@ -399,7 +398,6 @@ public:
    bool Error() { return glob->Error(); }
    const char *ErrorText() { return glob->ErrorText(); }
    const char *Status() { return glob->Status(); }
-   void SortByName() { glob->SortByName(); }
 };
 
 #include "FileSet.h"
