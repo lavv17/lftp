@@ -1,6 +1,7 @@
 2000-08-07	Alexander V. Lukyanov <lav@yars.free.net>
 
-	* lftp.1: document several new settings and protocols https and ftps.
+	* lftp.1: document several new settings and protocols https and ftps;
+	  document ftp:auto-sync-mode.
 
 2000-07-27	Alexander V. Lukyanov <lav@yars.free.net>
 

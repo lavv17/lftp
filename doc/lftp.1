@@ -777,6 +777,9 @@ program.
 sets the user name used for anonymous ftp access authentication.
 Default is "anonymous".
 .TP
+.BR ftp:auto-sync-mode \ (regex)
+if first server message metches this regex, turn on sync mode for that host.
+.TP
 .BR ftp:fxp-passive-source \ (bool)
 if true, lftp will try to set up source ftp server in passive mode first,
 otherwise destination one. If first attempt fails, lftp tries to set them up
@@ -1131,7 +1134,7 @@ The file is used to store old working directories for each site visited.
 .TP
 .I "~/.netrc"
 The file is consulted to get default login and password to ftp server.
-Passwords are also searched here is an URL with user name but with no
+Passwords are also searched here if an URL with user name but with no
 password is used.
 
 .SH SEE ALSO
