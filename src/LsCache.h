@@ -58,6 +58,7 @@ class LsCache
       LsCache *expiring;
       int Do();
       ExpireHelper() { expiring=0; }
+      void Reconfig(const char *name);
    };
    static ExpireHelper expire_helper;
 

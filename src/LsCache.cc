@@ -69,7 +69,10 @@ void LsCache::CheckSize()
    }
 }
 
-ResDecl res_cache_empty_listings("cache:cache-empty-listings",  "no",ResMgr::BoolValidate,0);
+ResDecl res_cache_empty_listings("cache:cache-empty-listings","no",ResMgr::BoolValidate,0);
+ResDecl res_cache_enable("cache:enable","yes",ResMgr::BoolValidate,0);
+ResDecl res_cache_expire("cache:expire","60m",ResMgr::TimeIntervalValidate,0);
+ResDecl res_cache_size  ("cache:size","1048576",ResMgr::UNumberValidate,ResMgr::NoClosure);
 
 void LsCache::Add(FileAccess *p_loc,const char *a,int m,const char *d,int l)
 {
@@ -126,7 +129,7 @@ void LsCache::Add(FileAccess *p_loc,const char *a,int m,const Buffer *ubuf)
 
 int LsCache::Find(FileAccess *p_loc,const char *a,int m,const char **d,int *l)
 {
-   if(!use)
+   if(!ResMgr::QueryBool("cache:enable",p_loc->GetHostName()))
       return 0;
 
    LsCache *scan;
@@ -260,6 +263,12 @@ int LsCache::ExpireHelper::Do()
       t_out=1024;
    Timeout(t_out*1000);
    return STALL;
+}
+void LsCache::ExpireHelper::Reconfig(const char *name)
+{
+   SetSizeLimit(ResMgr::Query("cache:size",0));
+   SetExpire(TimeInterval((const char*)ResMgr::Query("cache:expire",0)));
+   use=ResMgr::QueryBool("cache:enable",0);
 }
 
 void LsCache::Changed(change_mode m,FileAccess *f,const char *dir)

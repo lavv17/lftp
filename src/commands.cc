@@ -2185,9 +2185,9 @@ CMD(cache)  // cache control
    else if(!strcasecmp(op,"flush"))
       LsCache::Flush();
    else if(!strcasecmp(op,"on"))
-      LsCache::On();
+      ResMgr::Set("cache:enable",0,"yes");
    else if(!strcasecmp(op,"off"))
-      LsCache::Off();
+      ResMgr::Set("cache:enable",0,"no");
    else if(!strcasecmp(op,"size"))
    {
       op=args->getnext();
@@ -2197,14 +2197,13 @@ CMD(cache)  // cache control
 	 exit_code=1;
 	 return 0;
       }
-      long lim=-1;
-      if(strcasecmp(op,"unlim") && sscanf(op,"%ld",&lim)!=1)
+      const char *err=ResMgr::Set("cache:size",0,op);
+      if(err)
       {
-	 eprintf(_("%s: Invalid number for size\n"),args->a0());
+	 eprintf(_("%s: %s: %s\n"),args->a0(),op,err);
 	 exit_code=1;
 	 return 0;
       }
-      LsCache::SetSizeLimit(lim);
    }
    else if(!strcasecmp(op,"expire"))
    {
@@ -2215,14 +2214,13 @@ CMD(cache)  // cache control
 	 exit_code=1;
 	 return 0;
       }
-      TimeInterval exp(op);
-      if(exp.Error())
+      const char *err=ResMgr::Set("cache:expire",0,op);
+      if(err)
       {
-	 eprintf("%s: %s: %s.\n",args->a0(),op,exp.ErrorText());
+	 eprintf(_("%s: %s: %s\n"),args->a0(),op,err);
 	 exit_code=1;
 	 return 0;
       }
-      LsCache::SetExpire(exp);
    }
    return 0;
 }
