@@ -127,7 +127,7 @@ class Ftp : public NetAccess
    void  AddResp(int exp,int fail,check_case_t ck=CHECK_NONE,bool log=false);
    void  SetRespPath(const char *p);
    int   CheckResp(int resp);
-   static int ReplyLogPriority(int code);
+   int	 ReplyLogPriority(int code);
    void  PopResp();
    void	 EmptyRespQueue();
    void	 CloseRespQueue(); // treat responses on Close()
