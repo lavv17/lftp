@@ -1,3 +1,8 @@
+2004-07-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: remove redundant output default.
+	* FindJobDu.cc: set show_sl properly.
+
 2004-06-12  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* StatusLine.cc: (ShowN) show status line immediately if update_timer

@@ -2604,8 +2604,7 @@ CMD(find)
 
    if(!args->getcurr())
       args->Append(".");
-   FinderJob_List *j=new class FinderJob_List(session->Clone(),args,
-      output?output:new FDStream(1,"<stdout>"));
+   FinderJob_List *j=new class FinderJob_List(session->Clone(),args,output);
    j->set_maxdepth(maxdepth);
    args=0;
    output=0;
