@@ -52,7 +52,7 @@ int FinderJob::Do()
 	    session=FileAccess::New(&u);
 	    session->SetPriority(fg?1:0);
 	    init_dir=xstrdup(session->GetCwd());
-	    Down(u.path?u.path:"/");
+	    Down(u.path?u.path:init_dir);
 	 }
       }
 

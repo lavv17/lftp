@@ -1396,6 +1396,13 @@ static FileSet *ls_to_FileSet(const char *b,int len)
    return set;
 }
 
+FileSet *Fish::ParseLongList(const char *b,int len,int *err)
+{
+   if(err)
+      *err=0;
+   return ls_to_FileSet(b,len);
+}
+
 // FishListInfo implementation
 FileSet *FishListInfo::Parse(const char *b,int len)
 {

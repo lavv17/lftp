@@ -132,6 +132,7 @@ public:
 
    FileAccess *Clone() { return new Http(this); }
    static FileAccess *New();
+   FileSet *ParseLongList(const char *buf,int len,int *err=0);
 
    int Do();
    int Done();

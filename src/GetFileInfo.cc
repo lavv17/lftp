@@ -159,6 +159,8 @@ int GetFileInfo::Do()
 	 return MOVED;
       }
       session->Close();
+      if(!from_cache)
+	 LsCache::SetDirectory(session,"",true);
 
       if(!was_directory)
       {

@@ -145,6 +145,7 @@ public:
    DirList *MakeDirList(ArgV *args);
    Glob *MakeGlob(const char *pattern);
    ListInfo *MakeListInfo(const char *p);
+   FileSet *ParseLongList(const char *buf,int len,int *err=0);
 
    static const char *shell_encode(const char *);
    void DontEncodeFile() { encode_file=false; }

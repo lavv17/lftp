@@ -1160,8 +1160,16 @@ void HttpDirList::Resume()
 // HttpListInfo implementation
 FileSet *HttpListInfo::Parse(const char *b,int len)
 {
+   return session->ParseLongList(b,len);
+}
+
+FileSet *Http::ParseLongList(const char *b,int len,int *err)
+{
+   if(err)
+      *err=0;
+
    FileSet *set=new FileSet;
-   ParsedURL prefix(session->GetConnectURL());
+   ParsedURL prefix(GetConnectURL());
    char *base_href=0;
    for(;;)
    {

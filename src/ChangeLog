@@ -1,3 +1,10 @@
+2001-12-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FindJob.cc: use default session's cwd as default url path.
+	* Fish.cc, Fish.h, HttpDir.cc, Http.h: add ParseLongList method
+	  (for Http - by Glenn Maynard).
+	* GetFileInfo.cc: call LsCache::SetDirectory.
+
 2001-12-14  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileSet.cc: Exclude appends / for directories before matching.
