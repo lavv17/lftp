@@ -243,7 +243,8 @@ private:
    bool  mdtm_supported;
    bool  size_supported;
    bool  site_chmod_supported;
-   off_t last_rest;
+   off_t last_rest;	// last successful REST position.
+   off_t rest_pos;	// the number sent with REST command.
 
    void	 SetError(int code,const char *mess=0);
 

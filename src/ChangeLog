@@ -4,6 +4,8 @@
 	  add notification for moving to background; terminate some never-ending
 	  jobs before moving to bg.
 	* resource.cc: change default for ftp:fix-pasv-address to true.
+	* Http.cc, Http.h: support keep-alive for chunked transfer-encoding.
+	* ftpclass.cc, ftpclass.h: fix reget for non-existent files.
 
 2001-05-29  albert chin (china@thewrittenword.com)
 

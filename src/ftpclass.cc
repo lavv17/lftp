@@ -256,8 +256,8 @@ void Ftp::RestCheck(int act)
 {
    if(is2XX(act) || is3XX(act))
    {
-      real_pos=pos;  // REST successful
-      last_rest=pos;
+      real_pos=rest_pos;  // REST successful
+      last_rest=rest_pos;
       return;
    }
    if(pos==0)
@@ -850,6 +850,7 @@ void Ftp::InitFtp()
    size_supported=true;
    site_chmod_supported=true;
    last_rest=0;
+   rest_pos=0;
 
    RespQueue=0;
    RQ_alloc=0;
@@ -1670,7 +1671,8 @@ int   Ftp::Do()
       // so check if last_rest was different.
       if(real_pos==-1 || last_rest!=real_pos)
       {
-         sprintf(str,"REST %lld\n",(long long)(real_pos!=-1?real_pos:pos));
+         rest_pos=real_pos!=-1?real_pos:pos;
+	 sprintf(str,"REST %lld\n",(long long)rest_pos);
 	 real_pos=-1;
 	 SendCmd(str);
 	 AddResp(RESP_REST_OK,CHECK_REST);
