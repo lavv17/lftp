@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lftp 1.2.4\n"
 "POT-Creation-Date: 1999-08-21 19:01+0400\n"
-"PO-Revision-Date: 1999-07-15 00:17+02:00\n"
+"PO-Revision-Date: 1999-08-23 22:41+02:00\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -57,7 +57,7 @@ msgstr "\tEingebautes`%s' wird ausgeführt [%s]\n"
 
 #: src/CmdExec.cc:660
 msgid "\tCommands queued:\n"
-msgstr ""
+msgstr "        Befehle in Warteschlange:\n"
 
 #: src/CmdExec.cc:679
 #, c-format
@@ -1591,12 +1591,3 @@ msgstr "Proxy Protokoll wird nicht unterstützt"
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "Hole Dateiliste (%ld) [%s]"
-
-#~ msgid "%s: argument required. "
-#~ msgstr "%s: Argument erforderlich. "
-
-#~ msgid "%s: invalid delay. "
-#~ msgstr "%s: unzulässige Verzögerung. "
-
-#~ msgid "Timeout - trying sync mode (is it windoze?)"
-#~ msgstr "Zeitablauf - sync Modus versuchen (Ist es Windoof?)"

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 1999-08-21 19:01+0400\n"
+"POT-Creation-Date: 1999-08-24 20:15+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -84,7 +84,7 @@ msgstr ""
 msgid "File cannot be accessed"
 msgstr ""
 
-#: src/FileAccess.cc:294 src/ftpclass.cc:2666 src/ftpclass.cc:2676
+#: src/FileAccess.cc:294 src/ftpclass.cc:2675 src/ftpclass.cc:2685
 msgid "Not connected"
 msgstr ""
 
@@ -101,7 +101,7 @@ msgstr ""
 msgid "Store failed - you have to reput"
 msgstr ""
 
-#: src/FileAccess.cc:307 src/ftpclass.cc:2708
+#: src/FileAccess.cc:307 src/ftpclass.cc:2717
 msgid "Login failed"
 msgstr ""
 
@@ -1131,122 +1131,122 @@ msgstr ""
 msgid "Data connection peer has mismatching address"
 msgstr ""
 
-#: src/ftpclass.cc:289 src/ftpclass.cc:356
+#: src/ftpclass.cc:289 src/ftpclass.cc:363
 msgid "Saw `Login incorrect', assume failed login"
 msgstr ""
 
-#: src/ftpclass.cc:316 src/ftpclass.cc:372
+#: src/ftpclass.cc:321 src/ftpclass.cc:379
 msgid "Saw `unknown', assume failed login"
 msgstr ""
 
-#: src/ftpclass.cc:326
+#: src/ftpclass.cc:332
 msgid "assuming failed host name lookup"
 msgstr ""
 
-#: src/Http.cc:146 src/ftpclass.cc:706 src/ftpclass.cc:1514
+#: src/Http.cc:146 src/ftpclass.cc:713 src/ftpclass.cc:1521
 msgid "Timeout - reconnecting"
 msgstr ""
 
-#: src/Http.cc:496 src/ftpclass.cc:830
+#: src/Http.cc:496 src/ftpclass.cc:837
 msgid "Closing idle connection"
 msgstr ""
 
-#: src/Http.cc:1104 src/ftpclass.cc:875 src/ftpclass.cc:2671
+#: src/Http.cc:1109 src/ftpclass.cc:882 src/ftpclass.cc:2680
 msgid "Resolving host address..."
 msgstr ""
 
-#: src/Http.cc:574 src/ftpclass.cc:921
+#: src/Http.cc:574 src/ftpclass.cc:928
 msgid "max-retries exceeded"
 msgstr ""
 
-#: src/Http.cc:593 src/ftpclass.cc:942
+#: src/Http.cc:593 src/ftpclass.cc:949
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr ""
 
-#: src/ftpclass.cc:1464
+#: src/ftpclass.cc:1471
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr ""
 
-#: src/ftpclass.cc:1776
+#: src/ftpclass.cc:1783
 msgid "Peer closed connection"
 msgstr ""
 
-#: src/ftpclass.cc:1849
+#: src/ftpclass.cc:1856
 msgid "Closing control socket"
 msgstr ""
 
-#: src/ftpclass.cc:1922
+#: src/ftpclass.cc:1929
 msgid "Closing data socket"
 msgstr ""
 
-#: src/ftpclass.cc:2476
+#: src/ftpclass.cc:2483
 msgid "saw file size in response"
 msgstr ""
 
-#: src/ftpclass.cc:2485
+#: src/ftpclass.cc:2492
 msgid "remote end closes connection"
 msgstr ""
 
-#: src/ftpclass.cc:2491
+#: src/ftpclass.cc:2498
 msgid "extra server response"
 msgstr ""
 
-#: src/ftpclass.cc:2588
+#: src/ftpclass.cc:2597
 msgid "Switching passive mode off"
 msgstr ""
 
-#: src/ftpclass.cc:2661
+#: src/ftpclass.cc:2670
 msgid "Sending commands..."
 msgstr ""
 
-#: src/Http.cc:1115 src/ftpclass.cc:2663 src/ftpclass.cc:2683
-#: src/ftpclass.cc:2690
+#: src/Http.cc:1120 src/ftpclass.cc:2672 src/ftpclass.cc:2692
+#: src/ftpclass.cc:2699
 msgid "Waiting for response..."
 msgstr ""
 
-#: src/ftpclass.cc:2664
+#: src/ftpclass.cc:2673
 msgid "Connection idle"
 msgstr ""
 
-#: src/Http.cc:1106 src/ftpclass.cc:2673
+#: src/Http.cc:1111 src/ftpclass.cc:2682
 msgid "Delaying before reconnect"
 msgstr ""
 
-#: src/Http.cc:1110 src/ftpclass.cc:2678
+#: src/Http.cc:1115 src/ftpclass.cc:2687
 msgid "Connecting..."
 msgstr ""
 
-#: src/ftpclass.cc:2680
+#: src/ftpclass.cc:2689
 msgid "Logging in..."
 msgstr ""
 
-#: src/ftpclass.cc:2684
+#: src/ftpclass.cc:2693
 msgid "Making data connection..."
 msgstr ""
 
-#: src/ftpclass.cc:2686
+#: src/ftpclass.cc:2695
 msgid "Changing remote directory..."
 msgstr ""
 
-#: src/ftpclass.cc:2689 src/ftpclass.cc:2701
+#: src/ftpclass.cc:2698 src/ftpclass.cc:2710
 msgid "Waiting for transfer to complete"
 msgstr ""
 
-#: src/ftpclass.cc:2692
+#: src/ftpclass.cc:2701
 msgid "Waiting for data connection..."
 msgstr ""
 
-#: src/Http.cc:1113 src/ftpclass.cc:2697
+#: src/Http.cc:1118 src/ftpclass.cc:2706
 msgid "Sending data"
 msgstr ""
 
-#: src/Http.cc:1118 src/ftpclass.cc:2699
+#: src/Http.cc:1123 src/ftpclass.cc:2708
 msgid "Receiving data"
 msgstr ""
 
-#: src/ftpclass.cc:2703
+#: src/ftpclass.cc:2712
 msgid "Fatal protocol error occured"
 msgstr ""
 
@@ -1393,11 +1393,11 @@ msgstr ""
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr ""
 
-#: src/Http.cc:953 src/Http.cc:973
+#: src/Http.cc:958 src/Http.cc:978
 msgid "chunked format violated"
 msgstr ""
 
-#: src/Http.cc:1116
+#: src/Http.cc:1121
 msgid "Fetching headers..."
 msgstr ""
 
