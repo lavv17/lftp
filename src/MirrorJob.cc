@@ -908,7 +908,7 @@ void MirrorJob::Statistics::Add(const Statistics &s)
 CMD(mirror)
 {
 #define args (parent->args)
-#define eprintf (parent->eprintf)
+#define eprintf parent->eprintf
    static struct option mirror_opts[]=
    {
       {"delete",no_argument,0,'e'},

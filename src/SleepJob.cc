@@ -127,7 +127,7 @@ void SleepJob::lftpMovesToBackground()
 }
 
 #define args (parent->args)
-#define eprintf (parent->eprintf)
+#define eprintf parent->eprintf
 #define session (parent->session)
 Job *cmd_sleep(CmdExec *parent)
 {
