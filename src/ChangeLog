@@ -1,3 +1,8 @@
+2004-04-19  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: fixed STAT command in FXP mode; fixed coredump when
+	  disconnecting in FXP mode (when DataAbort disconnects too).
+
 2004-04-16  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* misc.h, misc.cc: (last_char) new utility function.

@@ -2217,7 +2217,7 @@ int   Ftp::Do()
 	 goto notimeout_return;
 
       if(copy_mode==COPY_DEST && !copy_done && copy_connection_open
-      && expect->FirstIs(Expect::TRANSFER) && use_stat
+      && expect->Count()==1 && use_stat
       && !conn->ssl_is_activated() && !conn->proxy_is_http)
       {
 	 if(stat_time+stat_interval<=now)
@@ -2753,6 +2753,17 @@ void  Ftp::DisconnectNow()
    ControlClose();
    state=INITIAL_STATE;
    http_proxy_status_code=0;
+
+   if(copy_mode!=COPY_NONE)
+   {
+      if(copy_addr_valid)
+	 copy_failed=true;
+   }
+   else
+   {
+      if(mode==STORE && (flags&IO_FLAG))
+	 SetError(STORE_FAILED,0);
+   }
 }
 
 void  Ftp::Disconnect()
@@ -2777,7 +2788,7 @@ void  Ftp::Disconnect()
    expect->Close();
    DataAbort();
    DataClose();
-   if(state!=CONNECTING_STATE
+   if(conn && state!=CONNECTING_STATE
    && expect->Count()<2 && QueryBool("use-quit",hostname))
    {
       conn->SendCmd("QUIT");
@@ -2790,16 +2801,6 @@ void  Ftp::Disconnect()
    if(state==CONNECTING_STATE || no_greeting)
       NextPeer();
 
-   if(copy_mode!=COPY_NONE)
-   {
-      if(copy_addr_valid)
-	 copy_failed=true;
-   }
-   else
-   {
-      if(mode==STORE && (flags&IO_FLAG))
-	 SetError(STORE_FAILED,0);
-   }
    DisconnectNow();
 
 out:
