@@ -34,6 +34,7 @@
 #include "log.h"
 #include "url.h"
 #include "HttpDir.h"
+#include "misc.h"
 
 #include "ascii_ctype.h"
 
@@ -385,7 +386,10 @@ add_path:
       break;
 
    case STORE:
-      SendMethod("PUT",efile);
+      if(hftp || strcasecmp(Query("put-method",hostname),"POST"))
+	 SendMethod("PUT",efile);
+      else
+	 SendMethod("POST",efile);
       if(entity_size>=0)
 	 Send("Content-length: %ld\r\n",entity_size-pos);
       if(pos>0 && entity_size<0)
@@ -395,8 +399,14 @@ add_path:
       if(entity_date!=(time_t)-1)
       {
 	 char d[256];
-	 if(strftime(d,sizeof(d)-1,"%a, %d %b %Y %T GMT",gmtime(&entity_date)))
-	    Send("Last-Modified: %s",d);
+	 static const char * const weekday_names[]={
+	    "Sun","Mon","Tue","Wed","Thu","Fri","Sat"
+	 };
+	 struct tm *t=gmtime(&entity_date);
+	 sprintf(d,"%s, %2d %s %04d %02d:%02d:%02d GMT",
+	    weekday_names[t->tm_wday],t->tm_mday,month_names[t->tm_mon],
+	    t->tm_year+1900,t->tm_hour,t->tm_min,t->tm_sec);
+	 Send("Last-Modified: %s\r\n",d);
       }
       break;
 

@@ -365,14 +365,14 @@ const char *format_perms(int p)
    return s;
 }
 
+const char *month_names[]={
+   "Jan","Feb","Mar","Apr","May","Jun",
+   "Jul","Aug","Sep","Oct","Nov","Dec",0
+};
 int parse_month(const char *m)
 {
-   static const char *months[]={
-      "Jan","Feb","Mar","Apr","May","Jun",
-      "Jul","Aug","Sep","Oct","Nov","Dec",0
-   };
-   for(int i=0; months[i]; i++)
-      if(!strcasecmp(months[i],m))
+   for(int i=0; month_names[i]; i++)
+      if(!strcasecmp(month_names[i],m))
 	 return(i%12);
    return -1;
 }

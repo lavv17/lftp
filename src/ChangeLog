@@ -1,3 +1,15 @@
+2000-05-01  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.cc: support http:put-method; don't use locale for sending
+	  Last-Modified header line; add \n to Last-Modified line.
+	* resource.cc: add http:put-method.
+	* misc.cc, misc.h: export month_names.
+
+2000-04-30  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.cc, Http.h: finish keep-alive support.
+	* ftpclass.cc: return from GetBetterConnection if a connection breaks.
+
 2000-04-29  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Http.cc: add Cookie support; allow disabling user-agent.
