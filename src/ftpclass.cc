@@ -589,28 +589,18 @@ char *Ftp::ExtractPWD()
    const char *scan=strchr(line,'"');
    if(scan==0)
       return 0;
+   scan++;
+   const char *right_quote=strrchr(scan,'"');
+   if(!right_quote)
+      return 0;
 
    char *store=pwd;
-   scan++;
-   for(;;)
+   while(scan<right_quote)
    {
-      if(*scan==0)
-	 return 0;
-      if(*scan=='"')
-      {
-	 if(scan[1]=='"')
-	 {
-	    *store++='"';
-	    scan++;
-	 }
-	 else if(scan[1]!=0 && scan[1]!=' ') // some ftpd don't encode '"'
-	    *store++=*scan;
-	 else
-	    break;
-      }
-      else
-	 *store++=*scan;
-      scan++;
+      // This is the method of quote encoding.
+      if(*scan=='"' && scan[1]=='"')
+	 scan++;
+      *store++=*scan++;
    }
 
    if(store==pwd)
