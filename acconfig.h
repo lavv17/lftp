@@ -250,7 +250,7 @@ CDECL void SOCKSinit(const char *);
 #endif
 
 #ifdef __GNUC__
-# define PRINTF_LIKE(n,m) __attribute__((format(printf,n,m)))
+# define PRINTF_LIKE(n,m) __attribute__((format(__printf__,n,m)))
 #else
 # define PRINTF_LIKE(n,m)
 #endif
