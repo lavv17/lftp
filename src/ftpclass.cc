@@ -45,8 +45,6 @@
 #include "ascii_ctype.h"
 #include "misc.h"
 
-enum {FTP_TYPE_A,FTP_TYPE_I};
-
 #define TELNET_IAC	255		/* interpret as command: */
 #define	TELNET_IP	244		/* interrupt process--permanently */
 #define	TELNET_DM	242		/* for telfunc calls */
@@ -233,8 +231,8 @@ void Ftp::RestCheck(int act)
 {
    if(is2XX(act) || is3XX(act))
    {
-      real_pos=rest_pos;  // REST successful
-      last_rest=rest_pos;
+      real_pos=conn->rest_pos;  // REST successful
+      conn->last_rest=conn->rest_pos;
       return;
    }
    real_pos=0;
@@ -243,7 +241,7 @@ void Ftp::RestCheck(int act)
    if(is5XX(act))
    {
       if(act==RESP_NOT_IMPLEMENTED || act==RESP_NOT_UNDERSTOOD)
-	 rest_supported=false;
+	 conn->rest_supported=false;
       DebugPrint("---- ",_("Switching to NOREST mode"),2);
       flags|=NOREST_MODE;
       if(mode==STORE)
@@ -581,15 +579,15 @@ char *Ftp::ExtractPWD()
    int dev_len=device_prefix_len(pwd);
    if(pwd[dev_len]=='[')
    {
-      vms_path=true;
+      conn->vms_path=true;
       normalize_path_vms(pwd);
    }
    else if(dev_len==2 || dev_len==3)
    {
-      dos_path=true;
+      conn->dos_path=true;
    }
 
-   if(!strchr(pwd,'/') || dos_path)
+   if(!strchr(pwd,'/') || conn->dos_path)
    {
       // for safety -- against dosish ftpd
       for(char *s=pwd; *s; s++)
@@ -675,7 +673,7 @@ Ftp::pasv_state_t Ftp::Handle_PASV()
    p[0]=p0; p[1]=p1;
 
    if((a0==0 && a1==0 && a2==0 && a3==0)
-   || (QueryBool("fix-pasv-address",hostname) && !proxy_is_http
+   || (QueryBool("fix-pasv-address",hostname) && !conn->proxy_is_http
        && (InPrivateNetwork(&data_sa) != InPrivateNetwork(&conn->peer_sa))))
    {
       // broken server, try to fix up
@@ -745,7 +743,7 @@ void Ftp::CatchDATE(int act)
    else	if(is5XX(act))
    {
       if(act==500 || act==502)
-	 mdtm_supported=false;
+	 conn->mdtm_supported=false;
       array_for_info[array_ptr].time=NO_DATE;
    }
    else
@@ -774,7 +772,7 @@ void Ftp::CatchDATE_opt(int act)
    else
    {
       if(act==500 || act==502)
-	 mdtm_supported=false;
+	 conn->mdtm_supported=false;
       *opt_date=NO_DATE;
    }
 }
@@ -794,7 +792,7 @@ void Ftp::CatchSIZE(int act)
    else	if(is5XX(act))
    {
       if(act==500 || act==502)
-	 size_supported=false;
+	 conn->size_supported=false;
    }
    else
    {
@@ -825,7 +823,7 @@ void Ftp::CatchSIZE_opt(int act)
    else
    {
       if(act==500 || act==502)
-	 size_supported=false;
+	 conn->size_supported=false;
    }
 
    if(size<1)
@@ -854,13 +852,29 @@ Ftp::Connection::Connection()
    data_ssl=0;
    prot='C';  // current protection scheme 'C'lear or 'P'rivate
    auth_sent=false;
+   auth_supported=true;
+   auth_args_supported=0;
 #endif
+   type='A';
+   last_rest=0;
+   rest_pos=0;
 
    quit_sent=false;
    fixed_pasv=false;
    translation_activated=false;
    sync_wait=1;	// expect server greetings
    multiline_code=0;
+
+   dos_path=false;
+   vms_path=false;
+   mdtm_supported=true;
+   size_supported=true;
+   rest_supported=true;
+   site_chmod_supported=true;
+   site_utime_supported=true;
+   pret_supported=false;
+   utf8_supported=false;
+   lang_supported=false;
 }
 
 void Ftp::InitFtp()
@@ -869,8 +883,6 @@ void Ftp::InitFtp()
 
 #ifdef USE_SSL
    ftps=false;	  // ssl and prot='P' by default (port 990)
-   auth_supported=true;
-   auth_args_supported=0;
 #endif
 
    nop_time=0;
@@ -880,7 +892,6 @@ void Ftp::InitFtp()
    line_len=0;
    all_lines=0;
    eof=false;
-   type=FTP_TYPE_A;
    state=INITIAL_STATE;
    flags=SYNC_MODE;
    wait_flush=false;
@@ -898,19 +909,6 @@ void Ftp::InitFtp()
    use_size=true;
    use_telnet_iac=true;
    use_pret=true;
-
-   dos_path=false;
-   vms_path=false;
-   mdtm_supported=true;
-   size_supported=true;
-   rest_supported=true;
-   site_chmod_supported=true;
-   site_utime_supported=true;
-   pret_supported=false;
-   utf8_supported=false;
-   lang_supported=false;
-   last_rest=0;
-   rest_pos=0;
 
    RespQueue=0;
    RQ_alloc=0;
@@ -961,6 +959,9 @@ Ftp::Connection::~Connection()
    Delete(control_send);
    Delete(control_recv);
    delete send_cmd_buffer;
+#ifdef USE_SSL
+   xfree(auth_args_supported);
+#endif
 }
 
 Ftp::~Ftp()
@@ -985,9 +986,6 @@ Ftp::~Ftp()
    xfree(RespQueue);
    xfree(skey_pass);
 
-#ifdef USE_SSL
-   xfree(auth_args_supported);
-#endif
    Leave();
 }
 
@@ -997,7 +995,7 @@ bool Ftp::AbsolutePath(const char *s)
       return false;
    int dev_len=device_prefix_len(s);
    return(s[0]=='/'
-      || (((dos_path && dev_len==3) || (vms_path && dev_len>2))
+      || (((conn->dos_path && dev_len==3) || (conn->vms_path && dev_len>2))
 	  && s[dev_len-1]=='/'));
 }
 
@@ -1177,7 +1175,7 @@ int   Ftp::Do()
       if(!ReconnectAllowed())
 	 return m;
 
-      proxy_is_http=ProxyIsHttp();
+      conn->proxy_is_http=ProxyIsHttp();
 
       if(ftps)
 	 m|=Resolve(FTPS_DEFAULT_PORT,"ftps","tcp");
@@ -1244,15 +1242,6 @@ int   Ftp::Do()
       }
       m=MOVED;
       event_time=now;
-
-      // reset *_supported on reconnect - we can possibly connect
-      // to a different server in fact.
-      size_supported=true;
-      mdtm_supported=true;
-      rest_supported=true;
-      site_chmod_supported=true;
-      site_utime_supported=true;
-      last_rest=0;
    }
 
    case(CONNECTING_STATE):
@@ -1280,7 +1269,7 @@ int   Ftp::Do()
 	 conn->MakeBuffers();
       }
 
-      if(!proxy || !proxy_is_http)
+      if(!proxy || !conn->proxy_is_http)
 	 goto pre_CONNECTED_STATE;
 
       state=HTTP_PROXY_CONNECTED;
@@ -1318,13 +1307,13 @@ int   Ftp::Do()
 	 return m;
 
 #ifdef USE_SSL
-      if(auth_supported && !conn->auth_sent && !conn->control_ssl && !ftps && (!proxy || proxy_is_http)
+      if(conn->auth_supported && !conn->auth_sent && !conn->control_ssl && !ftps && (!proxy || conn->proxy_is_http)
       && QueryBool((user && pass)?"ssl-allow":"ssl-allow-anonymous",hostname))
       {
 	 const char *auth=Query("ssl-auth",hostname);
-	 if(auth_args_supported)
+	 if(conn->auth_args_supported)
 	 {
-	    char *a=alloca_strdup(auth_args_supported);
+	    char *a=alloca_strdup(conn->auth_args_supported);
 	    bool saw_ssl=false;
 	    bool saw_tls=false;
 	    for(a=strtok(a,";"); a; a=strtok(0,";"))
@@ -1361,7 +1350,7 @@ int   Ftp::Do()
 #endif
 
       char *user_to_use=(user?user:anon_user);
-      if(proxy && !proxy_is_http)
+      if(proxy && !conn->proxy_is_http)
       {
 	 char *combined=(char*)alloca(strlen(user_to_use)+1+strlen(hostname)+1+xstrlen(portname)+1);
 	 sprintf(combined,"%s@%s",user_to_use,hostname);
@@ -1435,7 +1424,6 @@ int   Ftp::Do()
 #endif // USE_SSL
 
       set_real_cwd(0);
-      type=FTP_TYPE_A;	   // just after login we are in TEXT mode
       state=EOF_STATE;
       m=MOVED;
 
@@ -1448,13 +1436,13 @@ int   Ftp::Do()
       if(RespQueueHas(CHECK_FEAT))
 	 return m;
 
-      if(!utf8_supported && charset && *charset)
+      if(!conn->utf8_supported && charset && *charset)
 	 conn->SetControlConnectionTranslation(charset);
 
       if(mode==CONNECT_VERIFY)
 	 goto notimeout_return;
 
-      if(mode==CHANGE_MODE && !site_chmod_supported)
+      if(mode==CHANGE_MODE && !conn->site_chmod_supported)
       {
 	 SetError(NO_FILE,_("SITE CHMOD is not supported by this site"));
 	 return MOVED;
@@ -1494,16 +1482,16 @@ int   Ftp::Do()
 #ifdef USE_SSL
       if(conn->control_ssl)
       {
-	 const char *want_prot="P";
+	 char want_prot='P';
 	 if(mode==LIST || mode==LONG_LIST)
-	    want_prot=QueryBool("ssl-protect-list",hostname)?"P":"C";
+	    want_prot=QueryBool("ssl-protect-list",hostname)?'P':'C';
 	 else
-	    want_prot=QueryBool("ssl-protect-data",hostname)?"P":"C";
+	    want_prot=QueryBool("ssl-protect-data",hostname)?'P':'C';
 	 if(copy_mode!=COPY_NONE)
-	    want_prot="C";
-	 if(*want_prot!=conn->prot)
+	    want_prot='C';
+	 if(want_prot!=conn->prot)
 	 {
-	    conn->SendCmd2("PROT",want_prot);
+	    conn->SendCmd2("PROT %c",want_prot);
 	    AddResp(200,CHECK_PROT);
 	 }
       }
@@ -1538,7 +1526,7 @@ int   Ftp::Do()
 	 goto pre_WAITING_STATE; // simulate eof.
       }
 
-      if(!rest_supported)
+      if(!conn->rest_supported)
 	 flags|=NOREST_MODE;
 
       if(mode==STORE && (flags&NOREST_MODE) && pos>0)
@@ -1639,7 +1627,7 @@ int   Ftp::Do()
 	 }
       }
 
-      int old_type=type;
+      char want_type=(ascii?'A':'I');
       if((flags&NOREST_MODE) || pos==0)
 	 real_pos=0;
       else
@@ -1653,12 +1641,10 @@ int   Ftp::Do()
       case(RETRIEVE):
 	 if(file[0]==0)
 	    goto long_list;
-         type=FTP_TYPE_I;
 	 command="RETR";
 	 append_file=true;
          break;
       case(STORE):
-         type=FTP_TYPE_I;
 	 if(!QueryBool("rest-stor",hostname))
 	 {
 	    real_pos=0;	// some old servers don't handle REST/STOR properly.
@@ -1669,7 +1655,7 @@ int   Ftp::Do()
          break;
       long_list:
       case(LONG_LIST):
-         type=FTP_TYPE_A;
+         want_type='A';
          if(!rest_list)
 	    real_pos=0;	// some ftp servers do not do REST/LIST.
 	 command="LIST";
@@ -1683,7 +1669,7 @@ int   Ftp::Do()
 	    append_file=true;
          break;
       case(LIST):
-         type=FTP_TYPE_A;
+         want_type='A';
          real_pos=0; // REST doesn't work for NLST
 	 command="NLST";
 	 if(file && file[0])
@@ -1699,7 +1685,7 @@ int   Ftp::Do()
 	 {
 	    int len=xstrlen(real_cwd);
 	    char *path_to_use=file;
-	    if(!vms_path && !AbsolutePath(file) && real_cwd
+	    if(!conn->vms_path && !AbsolutePath(file) && real_cwd
 	    && !strncmp(file,real_cwd,len) && file[len]=='/')
 	       path_to_use=file+len+1;
 	    SendCWD(path_to_use,CHECK_CWD);
@@ -1732,7 +1718,6 @@ int   Ftp::Do()
 	 append_file=true;
 	 break;
       case(ARRAY_INFO):
-	 type=FTP_TYPE_I;
 	 break;
       case(CHANGE_MODE):
 	 {
@@ -1746,20 +1731,18 @@ int   Ftp::Do()
       case(CLOSED):
 	 abort(); // can't happen
       }
-      if(ascii)
-	 type=FTP_TYPE_A;
-      if(old_type!=type)
+      if(want_type!=conn->type)
       {
-	 conn->SendCmd2("TYPE",type==FTP_TYPE_I?"I":"A");
-	 AddResp(RESP_TYPE_OK);
+	 conn->SendCmdF("TYPE %c",want_type);
+	 AddResp(RESP_TYPE_OK,CHECK_TYPE);
       }
 
-      if(opt_size && size_supported && file[0] && use_size)
+      if(opt_size && conn->size_supported && file[0] && use_size)
       {
 	 conn->SendCmd2("SIZE",file);
 	 AddResp(RESP_RESULT_HERE,CHECK_SIZE_OPT);
       }
-      if(opt_date && mdtm_supported && file[0] && use_mdtm)
+      if(opt_date && conn->mdtm_supported && file[0] && use_mdtm)
       {
 	 conn->SendCmd2("MDTM",file);
 	 AddResp(RESP_RESULT_HERE,CHECK_MDTM_OPT);
@@ -1825,7 +1808,7 @@ int   Ftp::Do()
       if((copy_mode==COPY_NONE && (flags&PASSIVE_MODE))
       || (copy_mode!=COPY_NONE && copy_passive))
       {
-	 if(use_pret && pret_supported)
+	 if(use_pret && conn->pret_supported)
 	 {
 	    char *s=string_alloca(5+strlen(command)+1+strlen(file)+2);
 	    strcpy(s, "PRET ");
@@ -1900,10 +1883,10 @@ int   Ftp::Do()
       }
       // some broken servers don't reset REST after a transfer,
       // so check if last_rest was different.
-      if(real_pos==-1 || last_rest!=real_pos)
+      if(real_pos==-1 || conn->last_rest!=real_pos)
       {
-         rest_pos=(real_pos!=-1?real_pos:pos);
-	 conn->SendCmdF("REST %lld",(long long)rest_pos);
+         conn->rest_pos=(real_pos!=-1?real_pos:pos);
+	 conn->SendCmdF("REST %lld",(long long)conn->rest_pos);
 	 AddResp(RESP_REST_OK,CHECK_REST);
 	 real_pos=-1;
       }
@@ -2003,7 +1986,7 @@ int   Ftp::Do()
 	    goto pre_WAITING_STATE;
 	 }
 
-	 if(!proxy_is_http)
+	 if(!conn->proxy_is_http)
 	 {
 	    sprintf(str,_("Connecting data socket to (%s) port %u"),
 	       SocketNumericAddress(&data_sa),SocketPort(&data_sa));
@@ -2045,7 +2028,7 @@ int   Ftp::Do()
 	 }
 	 if(!(res&POLLOUT))
 	    goto usual_return;
-	 if(!proxy_is_http)
+	 if(!conn->proxy_is_http)
 	    goto pre_data_open;
 
 	 pasv_state=PASV_HTTP_PROXY_CONNECTED;
@@ -2090,7 +2073,7 @@ int   Ftp::Do()
       }
       if(mode==LIST || mode==LONG_LIST)
       {
-	 if(utf8_supported)
+	 if(conn->utf8_supported)
 	    conn->data_iobuf->SetTranslation("UTF-8",true);
 	 else if(charset && *charset)
 	    conn->data_iobuf->SetTranslation(charset,true);
@@ -2229,7 +2212,7 @@ int   Ftp::Do()
 	 goto notimeout_return;
 
       if(copy_mode==COPY_DEST && !copy_done && copy_connection_open
-      && RespQueueSize()==1 && use_stat && !conn->control_ssl && !proxy_is_http)
+      && RespQueueSize()==1 && use_stat && !conn->control_ssl && !conn->proxy_is_http)
       {
 	 if(stat_time+stat_interval<=now)
 	 {
@@ -2297,7 +2280,7 @@ void Ftp::SendUTimeRequest()
 {
    if(entity_date==NO_DATE || !file)
       return;
-   if(QueryBool("use-site-utime") && site_utime_supported)
+   if(QueryBool("use-site-utime") && conn->site_utime_supported)
    {
       char *c=string_alloca(11+strlen(file)+14*3+3+4);
       char d[15];
@@ -2351,7 +2334,7 @@ void Ftp::SendArrayInfoRequests()
    for(int i=array_ptr; i<array_cnt; i++)
    {
       bool sent=false;
-      if(array_for_info[i].get_time && mdtm_supported && use_mdtm)
+      if(array_for_info[i].get_time && conn->mdtm_supported && use_mdtm)
       {
 	 conn->SendCmd2("MDTM",ExpandTildeStatic(array_for_info[i].file));
 	 AddResp(RESP_RESULT_HERE,CHECK_MDTM);
@@ -2361,7 +2344,7 @@ void Ftp::SendArrayInfoRequests()
       {
 	 array_for_info[i].time=NO_DATE;
       }
-      if(array_for_info[i].get_size && size_supported && use_size)
+      if(array_for_info[i].get_size && conn->size_supported && use_size)
       {
 	 conn->SendCmd2("SIZE",ExpandTildeStatic(array_for_info[i].file));
 	 AddResp(RESP_RESULT_HERE,CHECK_SIZE);
@@ -2681,7 +2664,7 @@ void  Ftp::DataAbort()
       return;
 
    if(!QueryBool("use-abor",hostname)
-   || RespQueueSize()>1 || proxy_is_http)
+   || RespQueueSize()>1 || conn->proxy_is_http)
    {
       // check that we have a data socket to close, and the server is not
       // in uninterruptible accept() state.
@@ -3048,6 +3031,7 @@ void Ftp::CloseRespQueue()
       case(CHECK_TRANSFER_CLOSED):
       case(CHECK_FEAT):
       case(CHECK_SITE_UTIME):
+      case(CHECK_TYPE):
 #ifdef USE_SSL
       case(CHECK_AUTH_TLS):
       case(CHECK_PROT):
@@ -3268,8 +3252,6 @@ void  Ftp::EmptyRespQueue()
 }
 void  Ftp::MoveConnectionHere(Ftp *o)
 {
-   assert(conn==0);
-
    RQ_head=o->RQ_head; o->RQ_head=0;
    RQ_tail=o->RQ_tail; o->RQ_tail=0;
    RespQueue=o->RespQueue; o->RespQueue=0;
@@ -3283,24 +3265,7 @@ void  Ftp::MoveConnectionHere(Ftp *o)
    o->conn=0;
    if(peer_curr>=peer_num)
       peer_curr=0;
-   type=o->type;
    event_time=o->event_time;
-
-#ifdef USE_SSL
-   auth_supported=o->auth_supported;
-   auth_args_supported=o->auth_args_supported; o->auth_args_supported=0;
-#endif
-
-   size_supported=o->size_supported;
-   mdtm_supported=o->mdtm_supported;
-   rest_supported=o->rest_supported;
-   site_chmod_supported=o->site_chmod_supported;
-   site_utime_supported=o->site_utime_supported;
-   pret_supported=o->pret_supported;
-   utf8_supported=o->utf8_supported;
-   lang_supported=o->lang_supported;
-   last_rest=o->last_rest;
-   proxy_is_http=o->proxy_is_http;
 
    if(!home)
       set_home(home_auto);
@@ -3313,12 +3278,12 @@ void  Ftp::MoveConnectionHere(Ftp *o)
 
 void Ftp::CheckFEAT(char *reply)
 {
-   pret_supported=false;
-   mdtm_supported=false;
-   size_supported=false;
-   rest_supported=false;
+   conn->pret_supported=false;
+   conn->mdtm_supported=false;
+   conn->size_supported=false;
+   conn->rest_supported=false;
 #ifdef USE_SSL
-   auth_supported=false;
+   conn->auth_supported=false;
 #endif
 
    char *scan=strchr(reply,'\n');
@@ -3335,7 +3300,7 @@ void Ftp::CheckFEAT(char *reply)
 	 f++;
       if(!strcasecmp(f,"UTF8"))
       {
-	 utf8_supported=true;
+	 conn->utf8_supported=true;
 	 conn->SetControlConnectionTranslation("UTF-8");
 	 // some non-RFC2640 servers require this command.
 	 conn->SendCmd("OPTS UTF8 ON");
@@ -3343,7 +3308,7 @@ void Ftp::CheckFEAT(char *reply)
       }
       else if(!strncasecmp(f,"LANG ",5))
       {
-	 lang_supported=true;
+	 conn->lang_supported=true;
 	 const char *lang_to_use=Query("lang",hostname);
 	 if(lang_to_use && lang_to_use[0])
 	    conn->SendCmd2("LANG",lang_to_use);
@@ -3352,19 +3317,19 @@ void Ftp::CheckFEAT(char *reply)
 	 AddResp(200,CHECK_IGNORE);
       }
       else if(!strcasecmp(f,"PRET"))
-	 pret_supported=true;
+	 conn->pret_supported=true;
       else if(!strcasecmp(f,"MDTM"))
-	 mdtm_supported=true;
+	 conn->mdtm_supported=true;
       else if(!strcasecmp(f,"SIZE"))
-	 size_supported=true;
+	 conn->size_supported=true;
       else if(!strncasecmp(f,"REST ",5))
-	 rest_supported=true;
+	 conn->rest_supported=true;
 #ifdef USE_SSL
       else if(!strncasecmp(f,"AUTH ",5))
       {
-	 auth_supported=true;
-	 xfree(auth_args_supported);
-	 auth_args_supported=xstrdup(f+5);
+	 conn->auth_supported=true;
+	 xfree(conn->auth_args_supported);
+	 conn->auth_args_supported=xstrdup(f+5);
       }
 #endif // USE_SSL
    }
@@ -3520,7 +3485,7 @@ void Ftp::CheckResp(int act)
    file_access:
       if(mode==CHANGE_MODE && (act==500 || act==501 || act==502))
       {
-	 site_chmod_supported=false;
+	 conn->site_chmod_supported=false;
 	 SetError(NO_FILE,all_lines);
 	 break;
       }
@@ -3529,7 +3494,7 @@ void Ftp::CheckResp(int act)
 
    case CHECK_PRET:
       if(act==500 || act==502)
-	 pret_supported=false;
+	 conn->pret_supported=false;
       goto ignore;
 
    case CHECK_PASV:
@@ -3650,9 +3615,13 @@ void Ftp::CheckResp(int act)
    case CHECK_SITE_UTIME:
       if(act==500 || act==501 || act==502)
       {
-	 site_utime_supported=false;
+	 conn->site_utime_supported=false;
 	 SendUTimeRequest();  // try another method.
       }
+      break;
+   case CHECK_TYPE:
+      if(is2XX(act))
+	 conn->type^='A'^'I';
       break;
 
 #ifdef USE_SSL
@@ -3901,21 +3870,6 @@ void Ftp::ResetLocationData()
 {
    super::ResetLocationData();
    flags=0;
-   dos_path=false;
-   vms_path=false;
-   mdtm_supported=true;
-   size_supported=true;
-   rest_supported=true;
-   site_chmod_supported=true;
-   site_utime_supported=true;
-   utf8_supported=false;
-   lang_supported=false;
-   pret_supported=false;
-#ifdef USE_SSL
-   auth_supported=true;
-   xfree(auth_args_supported);
-   auth_args_supported=0;
-#endif
    xfree(home_auto); home_auto=0;
    home_auto=xstrdup(FindHomeAuto());
    Reconfig(0);
@@ -3969,7 +3923,7 @@ void Ftp::Reconfig(const char *name)
 
    xfree(charset);
    charset=xstrdup(Query("charset",c));
-   if(conn && !utf8_supported && charset && *charset && !strcmp(name,"ftp:charset"))
+   if(conn && !conn->utf8_supported && charset && *charset && !strcmp(name,"ftp:charset"))
       conn->SetControlConnectionTranslation(charset);
 
    const char *h=QueryStringWithUserAtHost("home");

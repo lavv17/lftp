@@ -83,6 +83,7 @@ class Ftp : public NetAccess
       CHECK_IGNORE,	// ignore response
       CHECK_READY,	// check response after connect
       CHECK_REST,	// check response for REST
+      CHECK_TYPE,	// check response for TYPE
       CHECK_CWD,	// check response for CWD
       CHECK_CWD_CURR,	// check response for CWD into current directory
       CHECK_CWD_STALE,	// check response for CWD when it's not critical
@@ -128,15 +129,33 @@ class Ftp : public NetAccess
       bool quit_sent;
       bool fixed_pasv; // had to fix PASV address.
       bool translation_activated;
+      bool proxy_is_http; // true when connection was established via http proxy.
 
       int multiline_code; // the code of multiline response.
       int sync_wait; // number of commands in flight.
+
+      char type;  // type of transfer: 'A'scii or 'I'mage
+
+      bool dos_path;
+      bool vms_path;
+      bool mdtm_supported;
+      bool size_supported;
+      bool rest_supported;
+      bool site_chmod_supported;
+      bool site_utime_supported;
+      bool pret_supported;
+      bool utf8_supported;
+      bool lang_supported;
+      off_t last_rest;	// last successful REST position.
+      off_t rest_pos;	// the number sent with REST command.
 
 #ifdef USE_SSL
       SSL *control_ssl;
       SSL *data_ssl;
       char prot;  // current data protection scheme 'C'lear or 'P'rivate
       bool auth_sent;
+      bool auth_supported;
+      char *auth_args_supported;
 #endif
 
       Connection();
@@ -230,9 +249,6 @@ private:
    static const bool ftps; // for convenience
 #endif
 
-   /* type of transfer: TYPE_A or TYPE_I */
-   int   type;
-
    /* address for data accepting */
    sockaddr_u   data_sa;
 
@@ -279,7 +295,6 @@ private:
 	 return !strcmp(proxy_proto,"http")
 	     || !strcmp(proxy_proto,"https");
       }
-   bool	 proxy_is_http;	// true when connection was established via http proxy.
    int	 http_proxy_status_code;
    // Send CONNECT method to http proxy.
    void	 HttpProxySendConnect();
@@ -302,23 +317,6 @@ private:
    static const char *DefaultAnonPass();
 
    int	 flags;
-
-   bool  dos_path;
-   bool  vms_path;
-   bool  mdtm_supported;
-   bool  size_supported;
-   bool  rest_supported;
-   bool  site_chmod_supported;
-   bool  site_utime_supported;
-   bool	 pret_supported;
-   bool	 utf8_supported;
-   bool	 lang_supported;
-#ifdef USE_SSL
-   bool	 auth_supported;
-   char	 *auth_args_supported;
-#endif
-   off_t last_rest;	// last successful REST position.
-   off_t rest_pos;	// the number sent with REST command.
 
    void	 SetError(int code,const char *mess=0);
 
