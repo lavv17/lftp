@@ -39,6 +39,7 @@ public:
    ArgV(const char *a0, const char *args);
    void Empty();
    void Append(const char *);
+   void Add(const char *a) { Append(a); } // alias
    ArgV(const ArgV& a) { Init(a.c,a.v); }
    ArgV(int new_c,const char * const *new_v) { Init(new_c,new_v); }
    ~ArgV();
