@@ -88,4 +88,7 @@ void SignalHook::ClassInit()
       old_saved[i]=false;
    }
    Ignore(SIGPIPE);  // want to get EPIPE
+#ifdef SIGXFSZ
+   Ignore(SIGXFSZ);  // and EFBIG
+#endif
 }

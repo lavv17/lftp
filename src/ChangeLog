@@ -1,3 +1,7 @@
+1999-07-29  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* SignalHook.cc: ignore SIGXFSZ, want to get EFBIG.
+
 1999-07-24  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Http.cc: send `Accept: */*', it is needed for some http servers.
