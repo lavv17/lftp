@@ -932,7 +932,12 @@ Ftp::Ftp(const Ftp *f) : super(f)
 Ftp::~Ftp()
 {
    Close();
-   quit_sent=true;
+   Disconnect();
+   if(control_sock!=-1)
+   {
+      FlushSendQueue();
+      ReceiveResp();
+   }
    Disconnect();
 
    xfree(anon_user);

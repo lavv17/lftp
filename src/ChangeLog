@@ -1,6 +1,8 @@
 2001-11-08  Alexander V. Lukyanov <lav@yars.free.net>
 
-	* ftpclass.cc: set debug level 4 for `550 No files found' reply.
+	* ftpclass.cc: set debug level 4 for `550 No files found' reply;
+	  send QUIT from destructor.
+	* buffer.cc: optimize Format method, vsnprintf directly to buffer.
 
 2001-11-08  Glenn Maynard <g_ld@zewt.org>
 

@@ -22,6 +22,10 @@
 #include "buffer.h"
 #include "xmalloc.h"
 #include "FileAccess.h"
+#ifdef NEED_TRIO
+#include "trio.h"
+#define vsnprintf trio_vsnprintf
+#endif
 
 #define BUFFER_INC (8*1024) // should be power of 2
 
@@ -129,12 +133,23 @@ void Buffer::Put(const char *buf,int size)
 void Buffer::Format(const char *f,...)
 {
    va_list v;
-   va_start(v,f);
-   char *buf = xvasprintf(f, v);
-   va_end(v);
-
-   Put(buf, strlen(buf));
-   xfree(buf);
+   int size=64;
+   for(;;)
+   {
+      Allocate(size);
+      va_start(v,f);
+      int res=vsnprintf(buffer+buffer_ptr+in_buffer, size, f, v);
+      va_end(v);
+      if(res>=0 && res<size)
+      {
+	 in_buffer+=res;
+	 return;
+      }
+      if(res>size)   // some vsnprintf's return desired buffer size.
+	 size=res+1;
+      else
+	 size*=2;
+   }
 }
 
 void Buffer::Skip(int len)
