@@ -65,7 +65,7 @@ static inline int xstrcmp(const char *s1,const char *s2)
       return 1;
    return strcmp(s1,s2);
 }
-static inline int xstrlen(const char *s)
+static inline size_t xstrlen(const char *s)
 {
    if(s==0)
       return 0;
