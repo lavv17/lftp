@@ -115,6 +115,9 @@
 /* define if you are building with SOCKS support */
 #undef SOCKS
 
+/* define if you are building with SOCKSv5 support */
+#undef SOCKS5
+
 /* build modular lftp */
 #undef WITH_MODULES
 
