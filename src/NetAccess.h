@@ -59,14 +59,7 @@ protected:
    static void SetSocketBuffer(int sock,int val);
    static void SetSocketMaxseg(int sock,int val);
 
-   // traffic shaper, sort of :)
-   int BytesAllowed();
-   void BytesUsed(int);
-   void BytesReset();
-   int bytes_pool;
-   int bytes_pool_rate;
-   int bytes_pool_max;
-   time_t bytes_pool_time;
+   class RateLimit *rate_limit;
 
    static const char *SocketNumericAddress(const sockaddr_u *u);
    static int SocketPort(const sockaddr_u *u);
@@ -94,6 +87,40 @@ public:
    void Reconfig(const char *name=0);
 
    void Connect(const char *,const char *);
+};
+
+class RateLimit
+{
+public:
+   class BytesPool
+   {
+      friend class RateLimit;
+
+      int pool;
+      int rate;
+      int pool_max;
+      time_t t;
+
+      void AdjustTime();
+      void Reset();
+      void Used(int);
+   };
+
+private:
+   static int total_xfer_number;
+   static bool total_reconfig_needed;
+   static void ReconfigTotal();
+   static BytesPool total;
+   BytesPool one;
+
+public:
+   RateLimit();
+   ~RateLimit();
+
+   int BytesAllowed();
+   void BytesUsed(int);
+
+   void Reconfig(const char *name,const char *c);
 };
 
 #endif//NETACCESS_H

@@ -1321,17 +1321,13 @@ int   Ftp::Do()
       SetSocketBuffer(data_sock);
       SetSocketMaxseg(data_sock);
 
-      state=DATA_OPEN_STATE;
-      m=MOVED;
-
       if(!data_address_ok())
       {
 	 Disconnect();
 	 return MOVED;
       }
 
-      BytesReset();
-      goto data_open_state;
+      goto pre_data_open;
 
    case(DATASOCKET_CONNECTING_STATE):
    datasocket_connecting_state:
@@ -1392,12 +1388,13 @@ int   Ftp::Do()
       if(!(res&POLLOUT))
 	 goto usual_return;
 
+   pre_data_open:
+      assert(rate_limit==0);
+      rate_limit=new RateLimit();
       state=DATA_OPEN_STATE;
       m=MOVED;
-      BytesReset();
 
    case(DATA_OPEN_STATE):
-   data_open_state:
    {
       if(RespQueueIsEmpty())
       {
@@ -1517,7 +1514,7 @@ notimeout_return:
       }
       else if(state==DATA_OPEN_STATE)
       {
-	 int bytes_allowed = BytesAllowed();
+	 int bytes_allowed = rate_limit->BytesAllowed();
 	 // guard against unimplemented REST: if we have sent REST command
 	 // (real_pos==-1) and did not yet receive the response
 	 // (RespQueueSize()>1), don't allow to read/write the data
@@ -1827,6 +1824,11 @@ void  Ftp::DataClose()
    nop_count=0;
    xfree(result);
    result=NULL;
+   if(rate_limit)
+   {
+      delete rate_limit;
+      rate_limit=0;
+   }
 }
 
 void  Ftp::FlushSendQueue(bool all)
@@ -2143,7 +2145,7 @@ read_again:
       return(DO_AGAIN);
    }
    {
-      int allowed=BytesAllowed();
+      int allowed=rate_limit->BytesAllowed();
       if(allowed==0)
 	 return DO_AGAIN;
       if(size>allowed)
@@ -2176,7 +2178,7 @@ read_again:
 	 return DO_AGAIN;
    }
    retries=0;
-   BytesUsed(res);
+   rate_limit->BytesUsed(res);
    real_pos+=res;
    if(real_pos<=pos)
       goto read_again;
@@ -2226,7 +2228,7 @@ int   Ftp::Write(const void *buf,int size)
       return(DO_AGAIN);
    }
    {
-      int allowed=BytesAllowed();
+      int allowed=rate_limit->BytesAllowed();
       if(allowed==0)
 	 return DO_AGAIN;
       if(size>allowed)
@@ -2247,7 +2249,7 @@ int   Ftp::Write(const void *buf,int size)
       return(StateToError());
    }
    retries=0;
-   BytesUsed(res);
+   rate_limit->BytesUsed(res);
    pos+=res;
    real_pos+=res;
    flags|=IO_FLAG;

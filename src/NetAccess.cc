@@ -40,11 +40,6 @@ void NetAccess::Init()
    socket_buffer=0;
    socket_maxseg=0;
 
-   bytes_pool_rate=0; // unlim
-   bytes_pool=bytes_pool_rate;
-   bytes_pool_max=0;
-   bytes_pool_time=now;
-
    peer=0;
    peer_num=0;
    peer_curr=0;
@@ -55,6 +50,8 @@ void NetAccess::Init()
    proxy=0;
    proxy_port=0;
    proxy_user=proxy_pass=0;
+
+   rate_limit=0;
 
    Reconfig(0);
 }
@@ -71,6 +68,8 @@ NetAccess::~NetAccess()
 {
    if(resolver)
       delete resolver;
+   if(rate_limit)
+      delete rate_limit;
    ClearPeer();
 
    xfree(proxy); proxy=0;
@@ -93,9 +92,8 @@ void NetAccess::Reconfig(const char *name)
    socket_buffer = ResMgr::Query("net:socket-buffer",c);
    socket_maxseg = ResMgr::Query("net:socket-maxseg",c);
 
-   bytes_pool_rate = ResMgr::Query("net:limit-rate",c);
-   bytes_pool_max  = ResMgr::Query("net:limit-max",c);
-   BytesReset(); // to cut bytes_pool.
+   if(rate_limit)
+      rate_limit->Reconfig(name,c);
 }
 
 void NetAccess::KeepAlive(int sock)
@@ -200,45 +198,6 @@ void NetAccess::SetProxy(const char *px)
    ClearPeer();
 }
 
-int NetAccess::BytesAllowed()
-{
-#define LARGE 0x10000000
-
-   if(bytes_pool_rate==0) // unlimited
-      return LARGE;
-
-   if(now>bytes_pool_time)
-   {
-      time_t dif=now-bytes_pool_time;
-
-      // prevent overflow
-      if((LARGE-bytes_pool)/dif < bytes_pool_rate)
-	 bytes_pool = bytes_pool_max>0 ? bytes_pool_max : LARGE;
-      else
-	 bytes_pool += dif*bytes_pool_rate;
-
-      if(bytes_pool>bytes_pool_max && bytes_pool_max>0)
-	 bytes_pool=bytes_pool_max;
-
-      bytes_pool_time=now;
-   }
-   return bytes_pool;
-}
-
-void NetAccess::BytesUsed(int bytes)
-{
-   if(bytes_pool<bytes)
-      bytes_pool=0;
-   else
-      bytes_pool-=bytes;
-}
-
-void NetAccess::BytesReset()
-{
-   bytes_pool=bytes_pool_rate;
-   bytes_pool_time=now;
-}
-
 int NetAccess::CheckTimeout()
 {
    if(now-event_time>=timeout)
@@ -319,4 +278,97 @@ int NetAccess::Resolve(const char *defp,const char *ser,const char *pr)
    delete resolver;
    resolver=0;
    return MOVED;
+}
+
+
+// RateLimit class implementation.
+int RateLimit::total_xfer_number;
+RateLimit::BytesPool RateLimit::total;
+bool RateLimit::total_reconfig_needed=true;
+
+RateLimit::RateLimit()
+{
+   total_xfer_number++;
+   Reconfig(0,0);
+}
+RateLimit::~RateLimit()
+{
+   total_xfer_number--;
+}
+
+#define LARGE 0x10000000
+void RateLimit::BytesPool::AdjustTime()
+{
+   if(SMTask::now>t)
+   {
+      time_t dif=SMTask::now-t;
+
+      // prevent overflow
+      if((LARGE-pool)/dif < rate)
+	 pool = pool_max>0 ? pool_max : LARGE;
+      else
+	 pool += dif*rate;
+
+      if(pool>pool_max && pool_max>0)
+	 pool=pool_max;
+
+      t=SMTask::now;
+   }
+}
+
+int RateLimit::BytesAllowed()
+{
+   if(total_reconfig_needed)
+      ReconfigTotal();
+
+   if(one.rate==0 && total.rate==0) // unlimited
+      return LARGE;
+
+   one  .AdjustTime();
+   total.AdjustTime();
+
+   int ret=LARGE;
+   if(total.rate>0)
+      ret=total.pool/total_xfer_number;
+   if(one.rate>0 && ret>one.pool)
+      ret=one.pool;
+   return ret;
+}
+
+void RateLimit::BytesPool::Used(int bytes)
+{
+   if(pool<bytes)
+      pool=0;
+   else
+      pool-=bytes;
+}
+
+void RateLimit::BytesUsed(int bytes)
+{
+   total.Used(bytes);
+   one  .Used(bytes);
+}
+
+void RateLimit::BytesPool::Reset()
+{
+   pool=rate;
+   t=SMTask::now;
+}
+void RateLimit::Reconfig(const char *name,const char *c)
+{
+   if(name && strncmp(name,"net:limit-",10))
+      return;
+   one.rate     = ResMgr::Query("net:limit-rate",c);
+   one.pool_max = ResMgr::Query("net:limit-max",c);
+   one.Reset(); // to cut bytes_pool.
+
+   if(name && !strncmp(name,"net:limit-total-",16))
+      total_reconfig_needed=true;
+}
+void RateLimit::ReconfigTotal()
+{
+   total.rate     = ResMgr::Query("net:limit-total-rate",0);
+   total.pool_max = ResMgr::Query("net:limit-total-max",0);
+   total.Reset();
+   total_reconfig_needed = false;
 }

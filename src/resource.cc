@@ -98,6 +98,8 @@ static ResDecl resources[]={
    ResDecl  ("net:idle",	       "180",   ResMgr::UNumberValidate,0),
    ResDecl  ("net:limit-max",	       "0",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:limit-rate",	       "0",	ResMgr::UNumberValidate,0),
+   ResDecl  ("net:limit-total-max",    "0",	ResMgr::UNumberValidate,0),
+   ResDecl  ("net:limit-total-rate",   "0",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:max-retries",	       "0",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:reconnect-interval", "30",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:relookup-always",    "off",   ResMgr::BoolValidate,0),
@@ -118,7 +120,7 @@ void ResMgr::ClassInit()
       Set("http:proxy",0,http_proxy);
       Set("hftp:proxy",0,http_proxy);
    }
-   
+
    const char *ftp_proxy=getenv("ftp_proxy");
    if(ftp_proxy)
    {

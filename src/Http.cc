@@ -143,6 +143,11 @@ void Http::Disconnect()
       delete recv_buf;
       recv_buf=0;
    }
+   if(rate_limit)
+   {
+      delete rate_limit;
+      rate_limit=0;
+   }
    if(sock!=-1)
    {
       close(sock);
@@ -775,7 +780,8 @@ int Http::Do()
       }
 
       DebugPrint("---- ","Receiving body...",9);
-      BytesReset();
+      assert(rate_limit==0);
+      rate_limit=new RateLimit();
       if(real_pos<0) // assume Range: did not work
 	 real_pos=0;
       state=RECEIVING_BODY;
@@ -791,7 +797,7 @@ int Http::Do()
 	 Disconnect();
 	 return MOVED;
       }
-      if(recv_buf->Size()>=BytesAllowed())
+      if(recv_buf->Size()>=rate_limit->BytesAllowed())
       {
 	 recv_buf->Suspend();
 	 Timeout(1000);
@@ -922,7 +928,7 @@ int Http::Read(void *buf,int size)
 	    size1=chunk_size-chunk_pos;
       }
 
-      int bytes_allowed=BytesAllowed();
+      int bytes_allowed=rate_limit->BytesAllowed();
       if(size1>bytes_allowed)
 	 size1=bytes_allowed;
       if(size1==0)
@@ -948,7 +954,7 @@ int Http::Read(void *buf,int size)
       bytes_received+=size;
       if(chunked)
 	 chunk_pos+=size;
-      BytesUsed(size);
+      rate_limit->BytesUsed(size);
       retries=0;
       return size;
    }
@@ -980,7 +986,7 @@ int Http::Write(const void *buf,int size)
       return DO_AGAIN;
 
    {
-      int allowed=BytesAllowed();
+      int allowed=rate_limit->BytesAllowed();
       if(allowed==0)
 	 return DO_AGAIN;
       if(size>allowed)
@@ -1003,7 +1009,7 @@ int Http::Write(const void *buf,int size)
       return error_code;
    }
    retries=0;
-   BytesUsed(res);
+   rate_limit->BytesUsed(res);
    pos+=res;
    real_pos+=res;
    return(res);
