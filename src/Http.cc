@@ -20,6 +20,11 @@
 
 /* $Id$ */
 
+#ifdef __linux__
+/* to get prototype for strptime, we need this */
+# define _XOPEN_SOURCE 500
+#endif
+
 #include <config.h>
 #include <unistd.h>
 #include <sys/types.h>
