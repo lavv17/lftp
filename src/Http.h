@@ -135,6 +135,7 @@ public:
    bool SameLocationAs(FileAccess *fa);
 
    DirList *MakeDirList(ArgV *a);
+   Glob *MakeGlob(const char *pattern);
 };
 
 #endif//HTTP_H

@@ -1071,6 +1071,10 @@ DirList *Http::MakeDirList(ArgV *args)
 {
    return new HttpDirList(args,this);
 }
+Glob *Http::MakeGlob(const char *pattern)
+{
+   return new HttpGlob(this,pattern);
+}
 
 
 /* Converts struct tm to time_t, assuming the data in tm is UTC rather
