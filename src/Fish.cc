@@ -29,12 +29,15 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <assert.h>
+#include <time.h>
 #include "ascii_ctype.h"
 #include "LsCache.h"
 #include "misc.h"
 #include "log.h"
 
 #define super NetAccess
+
+static FileInfo *ls_to_FileInfo(char *line);
 
 void Fish::GetBetterConnection(int level,int count)
 {
@@ -100,7 +103,16 @@ int Fish::Do()
    if(!hostname)
       return m;
 
+   if(send_buf && send_buf->Error())
+   {
+      Disconnect();
+      return MOVED;
+   }
    m|=HandleReplies();
+   if(send_buf)
+      BumpEventTime(send_buf->EventTime());
+   if(recv_buf)
+      BumpEventTime(recv_buf->EventTime());
 
    if((state==FILE_RECV || state==FILE_SEND)
    && rate_limit==0)
@@ -165,10 +177,11 @@ int Fish::Do()
       strcat(cmd,shell_encode(hostname));
       strcat(cmd," ");
       strcat(cmd,init);
-      Log::global->Format(9,"---- %s (%s)",_("Running ssh..."),cmd);
+      Log::global->Format(9,"---- %s (%s)\n",_("Running ssh..."),cmd);
       filter_out=new OutputFilter(cmd,pipe_in[1]);
-//       filter_out->StderrToStdout();
+      filter_out->StderrToStdout();
       state=CONNECTING;
+      event_time=now;
       m=MOVED;
    }
    case CONNECTING:
@@ -190,6 +203,7 @@ int Fish::Do()
       close(pipe_in[1]);
       pipe_in[1]=-1;
       state=CONNECTED;
+      set_real_cwd("~");
       m=MOVED;
 
       Send("#FISH\n"
@@ -239,9 +253,18 @@ int Fish::Do()
 	 state=FILE_RECV;
 	 m=MOVED;
       }
-      if(RespQueueSize()==0 && (mode==LONG_LIST || mode==LIST))
+      if(RespQueueSize()==1 && mode==STORE)
       {
-	 state=DONE;
+	 state=FILE_SEND;
+	 real_pos=0;
+	 m=MOVED;
+      }
+      if(RespQueueSize()==0)
+      {
+	 if(mode==ARRAY_INFO && array_ptr<array_cnt)
+	    SendArrayInfoRequests();
+	 else
+	    state=DONE;
 	 m=MOVED;
       }
       goto usual_return;
@@ -278,6 +301,7 @@ void Fish::MoveConnectionHere(Fish *o)
    RQ_alloc=o->RQ_alloc; o->RQ_alloc=0;
    RQ_head=o->RQ_head; o->RQ_head=0;
    RQ_tail=o->RQ_tail; o->RQ_tail=0;
+   event_time=o->event_time;
    set_real_cwd(o->real_cwd);
    o->set_real_cwd(0);
    state=CONNECTED;
@@ -302,6 +326,8 @@ void Fish::Disconnect()
    EmptyRespQueue();
    EmptyPathQueue();
    state=DISCONNECTED;
+   if(mode==STORE)
+      SetError(STORE_FAILED,0);
 }
 
 void Fish::EmptyPathQueue()
@@ -360,8 +386,11 @@ void Fish::Close()
    case(CONNECTED):
    case(DONE):
       break;
-   case(FILE_RECV):
    case(FILE_SEND):
+      if(!RespQueueIsEmpty())
+	 Disconnect();
+      break;
+   case(FILE_RECV):
    case(CONNECTING):
       Disconnect();
    }
@@ -369,6 +398,7 @@ void Fish::Close()
 //       Disconnect(); // play safe.
    state=(recv_buf?CONNECTED:DISCONNECTED);
    eof=false;
+   encode_file=true;
    super::Close();
 }
 
@@ -399,6 +429,9 @@ void Fish::Send(const char *format,...)
 
 const char *Fish::shell_encode(const char *string)
 {
+   if(!string)
+      return 0;
+
    int c;
    static char *result=0;
    char *r;
@@ -438,31 +471,103 @@ const char *Fish::shell_encode(const char *string)
    return (result);
 }
 
+void Fish::SendArrayInfoRequests()
+{
+   for(int i=array_ptr; i<array_cnt; i++)
+   {
+      if(array_for_info[i].get_time || array_for_info[i].get_size)
+      {
+	 const char *e=shell_encode(array_for_info[i].file);
+	 Send("#INFO %s\n"
+	      "ls -lLd %s; echo '### 200'\n",array_for_info[i].file,e);
+	 PushExpect(EXPECT_INFO);
+      }
+      else
+      {
+	 if(i==array_ptr)
+	    array_ptr++;   // if it is first one, just skip it.
+	 else
+	    break;	   // otherwise, wait until it is first.
+      }
+   }
+}
+
 void Fish::SendMethod()
 {
    const char *e=shell_encode(file);
+   const char *e1=shell_encode(file1);
    switch((open_mode)mode)
    {
    case CHANGE_DIR:
       Send("#CWD %s\n"
-	   "cd %s; echo '### 000'\n",file,e);
+	   "cd %s; echo '### 000'\n",e,e);
       PushExpect(EXPECT_CWD);
       PushDirectory(file);
       break;
    case LONG_LIST:
+      if(!encode_file)
+	 e=file;
       Send("#DIR %s\n"
-	   "ls -l %s; echo '### 200'\n",file,file);
+	   "ls -l %s; echo '### 200'\n",e,e);
       PushExpect(EXPECT_DIR);
       real_pos=0;
       break;
    case RETRIEVE:
       Send("#RETR %s\n"
 	   "ls -lLd %s; "
-	   "echo '### 100'; cat %s; echo '### 200'\n",file,e,e);
+	   "echo '### 100'; cat %s; echo '### 200'\n",e,e,e);
       PushExpect(EXPECT_RETR_INFO);
       PushExpect(EXPECT_RETR);
       real_pos=0;
       break;
+   case STORE:
+      if(entity_size<0)
+      {
+	 SetError(NO_FILE,"Have to know file size before upload");
+	 break;
+      }
+      #define BUF 1024
+      Send("#STOR %lld %s\n"
+           ">%s;echo '### 001';"
+	   "(dd bs=%d count=%lld;dd bs=%d count=1)2>/dev/null"
+	   "|(cat>%s;cat>/dev/null);echo '### 200'\n",
+	   entity_size,e,
+	   e,BUF,
+	   entity_size/BUF,int(entity_size%BUF),
+	   e);
+      PushExpect(EXPECT_STOR_PRELIMINARY);
+      PushExpect(EXPECT_STOR);
+      break;
+   case ARRAY_INFO:
+      SendArrayInfoRequests();
+      break;
+   case REMOVE:
+      Send("#DELE %s\n"
+	   "rm -f %s; echo '### 000'\n",e,e);
+      PushExpect(EXPECT_DEFAULT);
+      break;
+   case REMOVE_DIR:
+      Send("#RMD %s\n"
+	   "rmdir %s; echo '### 000'\n",e,e);
+      PushExpect(EXPECT_DEFAULT);
+      break;
+   case MAKE_DIR:
+      Send("#MKD %s\n"
+	   "mkdir %s; echo '### 000'\n",e,e);
+      PushExpect(EXPECT_DEFAULT);
+      break;
+   case RENAME:
+      Send("#RENAME %s %s\n"
+	   "mv %s %s; echo '### 000'\n",e,e1,e,e1);
+      PushExpect(EXPECT_DEFAULT);
+      break;
+   case CHANGE_MODE:
+      Send("#CHMOD %04o %s\n"
+	   "chmod %04o %s; echo '### 000'\n",chmod_mode,e,chmod_mode,e);
+      PushExpect(EXPECT_DEFAULT);
+      break;
+
+   case CONNECT_VERIFY:
    case CLOSED:
       abort();
    }
@@ -482,6 +587,12 @@ int Fish::HandleReplies()
       return m;
    if(recv_buf->Size()<5)
    {
+   hup:
+      if(recv_buf->Error())
+      {
+	 Disconnect();
+	 return MOVED;
+      }
       if(recv_buf->Eof())
       {
 	 DebugPrint("**** ",_("Peer closed connection"),0);
@@ -497,7 +608,11 @@ int Fish::HandleReplies()
    recv_buf->Get(&b,&s);
    const char *eol=(const char*)memchr(b,'\n',s);
    if(!eol)
+   {
+      if(recv_buf->Eof() || recv_buf->Error())
+	 goto hup;
       return m;
+   }
    m=MOVED;
    s=eol-b+1;
    xfree(line);
@@ -579,54 +694,60 @@ int Fish::HandleReplies()
       }
       else if(message)
       {
-	 char perms[11];
-	 char year_or_time[6];
-	 char month_name[4];
-	 int n;
-	 long long size_ll;
-	 int year;
-	 int hour=0;
-	 int minute=0;
-	 int day;
-	 int month;
-
-	 n=sscanf(message,"%10s %*d %*31s %*31s %lld %3s %2d %5s",perms,
-	       &size_ll,month_name,&day,year_or_time);
-	 if(n<5) // bsd-like listing without group?
+	 FileInfo *fi=ls_to_FileInfo(message);
+	 if(fi->defined&fi->SIZE)
 	 {
-	    n=sscanf(message,"%10s %*d %*31s %lld %3s %2d %5s",perms,
-		  &size_ll,month_name,&day,year_or_time);
-	 }
-	 if(n==5 && -1!=parse_perms(perms+1)
-	 && -1!=(month=parse_month(month_name))
-	 && -1!=parse_year_or_time(year_or_time,&year,&hour,&minute))
-	 {
-	    entity_size=size_ll;
+	    entity_size=fi->size;
 	    if(opt_size)
 	       *opt_size=entity_size;
-
-	    struct tm date;
-	    memset(&date,0,sizeof(date));
-
-	    date.tm_mon=month;
-	    date.tm_mday=day;
-	    date.tm_hour=hour;
-	    date.tm_min=minute;
-	    date.tm_year=year-1900;
-
-	    date.tm_isdst=0;
-	    date.tm_sec=0;
-
-	    entity_date=mktime_from_utc(&date);
+	 }
+	 if(fi->defined&(fi->DATE|fi->DATE_UNPREC))
+	 {
+	    entity_date=fi->date;
 	    if(opt_date)
 	       *opt_date=entity_date;
 	 }
       }
       state=FILE_RECV;
       break;
+   case EXPECT_INFO:
+   {
+      FileInfo *fi=ls_to_FileInfo(message);
+      if(fi->defined&fi->SIZE)
+	 array_for_info[array_ptr].size=fi->size;
+      else
+	 array_for_info[array_ptr].size=NO_SIZE;
+      if(fi->defined&(fi->DATE|fi->DATE_UNPREC))
+	 array_for_info[array_ptr].time=fi->date;
+      else
+	 array_for_info[array_ptr].time=NO_DATE;
+      array_for_info[array_ptr].get_size=false;
+      array_for_info[array_ptr].get_time=false;
+      array_ptr++;
+      break;
+   }
    case EXPECT_RETR:
    case EXPECT_DIR:
       eof=true;
+      state=DONE;
+      break;
+   case EXPECT_DEFAULT:
+      if(message)
+	 SetError(NO_FILE,message);
+      break;
+   case EXPECT_STOR_PRELIMINARY:
+      if(message)
+      {
+	 Disconnect();
+	 SetError(NO_FILE,message);
+      }
+      break;
+   case EXPECT_STOR:
+      if(message)
+      {
+	 Disconnect();
+	 SetError(NO_FILE,message);
+      }
       break;
    }
 
@@ -724,6 +845,8 @@ int Fish::Read(void *buf,int size)
 	    if(size1==0)
 	    {
 	       state=WAITING;
+	       if(HandleReplies()==MOVED)
+		  current->Timeout(0);
 	       return DO_AGAIN;
 	    }
 	 }
@@ -771,9 +894,55 @@ int Fish::Read(void *buf,int size)
 
 int Fish::Write(const void *buf,int size)
 {
+   if(mode!=STORE)
+      return(0);
+
+   Resume();
+   Do();
+   if(Error())
+      return(error_code);
+
+   if(state!=FILE_SEND || rate_limit==0)
+      return DO_AGAIN;
+
+   {
+      int allowed=rate_limit->BytesAllowed();
+      if(allowed==0)
+	 return DO_AGAIN;
+      if(size+send_buf->Size()>allowed)
+	 size=allowed-send_buf->Size();
+   }
+   if(size+send_buf->Size()>0x4000)
+      size=0x4000-send_buf->Size();
+   if(pos+size>entity_size)
+      size=entity_size-pos;
+   if(size<=0)
+      return 0;
+   send_buf->Put((char*)buf,size);
+   retries=0;
+   rate_limit->BytesUsed(size);
+   pos+=size;
+   real_pos+=size;
+   return(size);
+}
+int Fish::Buffered()
+{
+   if(send_buf==0)
+      return 0;
+   return send_buf->Size();
 }
 int Fish::StoreStatus()
 {
+   if(Error())
+      return error_code;
+   if(real_pos!=entity_size)
+   {
+      Disconnect();
+      return IN_PROGRESS;
+   }
+   if(RespQueueSize()==0)
+      return OK;
+   return IN_PROGRESS;
 }
 
 int Fish::Done()
@@ -782,7 +951,7 @@ int Fish::Done()
       return OK;
    if(Error())
       return error_code;
-   if(eof)
+   if(eof || state==DONE)
       return OK;
    if(mode==CONNECT_VERIFY)
       return OK;
@@ -815,6 +984,7 @@ bool Fish::SameLocationAs(FileAccess *fa)
 
 void Fish::Reconfig(const char *name)
 {
+   super::Reconfig(name);
 }
 
 void Fish::ClassInit()
@@ -828,7 +998,14 @@ DirList *Fish::MakeDirList(ArgV *args)
 {
    return new FishDirList(args,this);
 }
-
+Glob *Fish::MakeGlob(const char *pattern)
+{
+   return new FishGlob(this,pattern);
+}
+ListInfo *Fish::MakeListInfo()
+{
+   return new FishListInfo(this);
+}
 
 #undef super
 #define super DirList
@@ -859,6 +1036,7 @@ int FishDirList::Do()
       else
       {
 	 session->Open(pattern,FA::LONG_LIST);
+	 ((Fish*)session)->DontEncodeFile();
 	 ubuf=new IOBufferFileAccess(session);
 	 if(LsCache::IsEnabled())
 	    ubuf->Save(LsCache::SizeLimit());
@@ -940,6 +1118,139 @@ void FishDirList::Resume()
       ubuf->Resume();
 }
 
+static FileInfo *ls_to_FileInfo(char *line)
+{
+   int year=-1,month=-1,day=0,hour=0,minute=0;
+   char month_name[32]="";
+   char perms[12]="";
+   int perms_code;
+   int n_links;
+   char user[32];
+   char group[32];
+   char year_or_time[6];
+   int consumed;
+   bool is_directory=false;
+   bool is_sym_link=false;
+   char *sym_link=0;
+   long long size;
+   int n;
+
+   n=sscanf(line,"%11s %d %31s %31s %lld %3s %2d %5s%n",perms,&n_links,
+	 user,group,&size,month_name,&day,year_or_time,&consumed);
+   if(n==4) // bsd-like listing without group?
+   {
+      group[0]=0;
+      n=sscanf(line,"%11s %d %31s %lld %3s %2d %5s%n",perms,&n_links,
+	    user,&size,month_name,&day,year_or_time,&consumed);
+   }
+   if(n>=7 && -1!=(perms_code=parse_perms(perms+1))
+   && -1!=(month=parse_month(month_name))
+   && -1!=parse_year_or_time(year_or_time,&year,&hour,&minute))
+   {
+      if(perms[0]=='d')
+	 is_directory=true;
+      else if(perms[0]=='l')
+      {
+	 is_sym_link=true;
+	 sym_link=strstr(line+consumed+1," -> ");
+	 if(sym_link)
+	 {
+	    *sym_link=0;
+	    sym_link+=4;
+	 }
+      }
+
+      if(year!=-1)
+      {
+	 // server's y2000 problem :)
+	 if(year<37)
+	    year+=2000;
+	 else if(year<100)
+	    year+=1900;
+      }
+
+      if(day<1 || day>31 || hour<0 || hour>23 || minute<0 || minute>59
+      || (month==-1 && !is_ascii_alnum((unsigned char)month_name[0])))
+	 return 0;
+
+      if(month==-1)
+	 month=parse_month(month_name);
+      if(month>=0)
+      {
+	 sprintf(month_name,"%02d",month+1);
+	 if(year==-1)
+	    year=guess_year(month,day);
+      }
+
+      FileInfo *fi=new FileInfo;
+      fi->SetName(line+consumed+1);
+      if(sym_link)
+	 fi->SetSymlink(sym_link);
+      else
+	 fi->SetType(is_directory ? fi->DIRECTORY : fi->NORMAL);
+
+      if(year!=-1 && month!=-1 && day!=-1 && hour!=-1 && minute!=-1)
+      {
+	 struct tm date;
+
+	 date.tm_year=year-1900;
+	 date.tm_mon=month;
+	 date.tm_mday=day;
+	 date.tm_hour=hour;
+	 date.tm_min=minute;
+
+	 date.tm_isdst=-1;
+	 date.tm_sec=0;
+
+	 fi->SetDateUnprec(mktime_from_utc(&date));
+      }
+
+      fi->SetSize(size);
+
+      return fi;
+   }
+   return 0;
+}
+
+static FileSet *ls_to_FileSet(const char *b,int len)
+{
+   FileSet *set=new FileSet;
+   char *buf=string_alloca(len+1);
+   memcpy(buf,b,len);
+   buf[len]=0;
+   for(char *line=strtok(buf,"\n"); line; line=strtok(0,"\n"))
+   {
+      int ll=strlen(line);
+      if(ll && line[ll-1]=='\r')
+	 line[--ll]=0;
+      if(ll==0)
+	 continue;
+
+      FileInfo *f=ls_to_FileInfo(line);
+
+      if(!f)
+	 continue;
+
+      set->Add(f);
+   }
+   return set;
+}
+
+// FishGlob implementation
+GenericParseGlob *FishGlob::MakeUpDirGlob()
+{
+   return new FishGlob(session,dir);
+}
+FileSet *FishGlob::Parse(const char *b,int len)
+{
+   return ls_to_FileSet(b,len);
+}
+
+// FishListInfo implementation
+FileSet *FishListInfo::Parse(const char *b,int len)
+{
+   return ls_to_FileSet(b,len);
+}
 
 
 #include "modconfig.h"

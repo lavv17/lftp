@@ -46,6 +46,7 @@ class Fish : public NetAccess
    int max_send;
    void	 Send(const char *format,...) PRINTF_LIKE(2,3);
    void	 SendMethod();
+   void	 SendArrayInfoRequests();
 
    IOBuffer *send_buf;
    IOBuffer *recv_buf;
@@ -74,7 +75,11 @@ class Fish : public NetAccess
       EXPECT_CWD,
       EXPECT_DIR,
       EXPECT_RETR_INFO,
-      EXPECT_RETR
+      EXPECT_RETR,
+      EXPECT_INFO,
+      EXPECT_DEFAULT,
+      EXPECT_STOR_PRELIMINARY,
+      EXPECT_STOR
    };
 
    void PushExpect(expect_t);
@@ -103,8 +108,7 @@ class Fish : public NetAccess
    char  *message;
 
    bool	 eof;
-
-   const char *shell_encode(const char *);
+   bool	 encode_file;
 
 public:
    static void ClassInit();
@@ -123,7 +127,7 @@ public:
    int Read(void *,int);
    int Write(const void *,int);
    int StoreStatus();
-   int SendEOT();
+   int Buffered();
 
    void Close();
    const char *CurrentStatus();
@@ -134,6 +138,13 @@ public:
    bool SameLocationAs(FileAccess *fa);
 
    DirList *MakeDirList(ArgV *args);
+   Glob *MakeGlob(const char *pattern);
+   ListInfo *MakeListInfo();
+
+   static const char *shell_encode(const char *);
+   void DontEncodeFile() { encode_file=false; }
+
+   bool NeedSizeDateBeforehand() { return true; }
 };
 
 class FishDirList : public DirList
@@ -150,6 +161,26 @@ public:
 
    void Suspend();
    void Resume();
+};
+
+class FishGlob : public GenericParseGlob
+{
+   FileSet *Parse(const char *buf,int len);
+   GenericParseGlob *MakeUpDirGlob();
+public:
+   FishGlob(FileAccess *s,const char *n_pattern)
+      : GenericParseGlob(s,n_pattern) {}
+};
+
+class FishListInfo : public GenericParseListInfo
+{
+   FileSet *Parse(const char *buf,int len);
+public:
+   FishListInfo(Fish *session)
+      : GenericParseListInfo(session)
+      {
+	 can_get_prec_time=false;
+      }
 };
 
 #endif
