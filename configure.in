@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.13)
 AC_INIT(src/ftpclass.cc)
-AM_INIT_AUTOMAKE(lftp, 2.3.3)
+AM_INIT_AUTOMAKE(lftp, 2.3.4)
 AM_CONFIG_HEADER(include/config.h)
 
 dnl Default AC_C_INLINE does not know about C++
@@ -215,7 +215,10 @@ fi
 # See if we have h_errno (the test is here so we can use -lresolv if necessary).
 AC_CACHE_CHECK([for h_errno], inetutils_cv_var_h_errno,
   AC_TRY_COMPILE([#include <netdb.h>],
-    [ extern int h_errno; int iu_x = h_errno; ],
+    [ #ifndef h_errno
+      extern int h_errno;
+      #endif
+      int iu_x = h_errno; ],
     inetutils_cv_var_h_errno=yes, inetutils_cv_var_h_errno=no))
 if test "$inetutils_cv_var_h_errno" = yes; then
   AC_DEFINE(HAVE_H_ERRNO)

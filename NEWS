@@ -1,3 +1,8 @@
+Version 2.3.4 - 2000-10-13
+
+* fixed completion and globbing for file names starting with tilde.
+* some compilation fixes.
+
 Version 2.3.3 - 2000-10-01
 
 * fixed `ls|head'.

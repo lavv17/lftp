@@ -1,5 +1,5 @@
 %define name lftp
-%define version 2.3.3
+%define version 2.3.4
 
 Summary: The lftp command line ftp/http client
 Name: %{name}
@@ -34,9 +34,7 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/etc
-make prefix=$RPM_BUILD_ROOT/usr install
-install -c -m 644 lftp.conf $RPM_BUILD_ROOT/etc/lftp.conf
+make DESTDIR=$RPM_BUILD_ROOT install
 
 %clean
 rm -rf $RPM_BUILD_ROOT
