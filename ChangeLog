@@ -1,3 +1,7 @@
+1999-06-14	lav
+
+	* acconfig.h: define __USE_XOPEN on linux
+
 1999-06-05  lav
 
 	* configure.in: snapshot pre2.0.0-990605
