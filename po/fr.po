@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
-"POT-Creation-Date: 2002-01-26 17:02+0300\n"
+"POT-Creation-Date: 2002-01-26 19:15+0300\n"
 "PO-Revision-Date: 2002-01-26 16:00GMT\n"
 "Last-Translator: Nicolas Noble <nicolas@nobis-crew.org>\n"
 "Language-Team: French <fr@li.org>\n"
@@ -262,7 +262,8 @@ msgstr "Création du lien `%s' -> `%s'"
 
 #: src/MirrorJob.cc:487
 msgid "mirror: cannot create `file:' access object, installation error?\n"
-msgstr "mirror: ne peut créer l'objet d'accès `file:', erreur d'installation?\n"
+msgstr ""
+"mirror: ne peut créer l'objet d'accès `file:', erreur d'installation?\n"
 
 #: src/MirrorJob.cc:584
 #, c-format
@@ -605,7 +606,8 @@ msgid ""
 "Set debug level to given value or turn debug off completely.\n"
 " -o <file>  redirect debug output to the file.\n"
 msgstr ""
-"Définit le niveau de déboggage a la valeur indiquée ou désactive le déboggage.\n"
+"Définit le niveau de déboggage a la valeur indiquée ou désactive le "
+"déboggage.\n"
 " -o <fichier>  redirige le déboggage vers un fichier.\n"
 
 #: src/commands.cc:200
@@ -1553,7 +1555,8 @@ msgstr "%s: `expire' attendu\n"
 
 #: src/commands.cc:2151
 #, c-format
-msgid "%s: %s - no such cached session. Use `scache' to look at session list.\n"
+msgid ""
+"%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr "%s: %s - pas de telle session cachée. Utilisez `scache'\n"
 
 #: src/commands.cc:2168
@@ -1579,21 +1582,25 @@ msgstr "%s est un alias pour `%s'\n"
 #: src/commands.cc:2190
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
-msgstr "Commande inconnue `%s'. Utilisez `help' pour voir la liste des commandes.\n"
+msgstr ""
+"Commande inconnue `%s'. Utilisez `help' pour voir la liste des commandes.\n"
 
 #: src/commands.cc:2192
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
-msgstr "Commande ambiguë `%s'. Utilisez `help' pour voir la liste des commandes.\n"
+msgstr ""
+"Commande ambiguë `%s'. Utilisez `help' pour voir la liste des commandes.\n"
 
 #: src/commands.cc:2243
 #, c-format
-msgid "Lftp | Version %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"
-msgstr "Lftp | Version %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"
+msgid "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
+msgstr "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 
 #: src/commands.cc:2245
-msgid "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
-msgstr "Ceci est un logiciel libre SANS GARANTIE. Voir COPYING pour les détails.\n"
+msgid ""
+"This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
+msgstr ""
+"Ceci est un logiciel libre SANS GARANTIE. Voir COPYING pour les détails.\n"
 
 #: src/commands.cc:2247
 #, c-format
@@ -1687,7 +1694,8 @@ msgstr "La réponse du serveur est de la forme ftp:retry-530, recommence"
 
 #: src/ftpclass.cc:410
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
-msgstr "La réponse du serveur est de la forme ftp:retry-530-anonymous, recommence"
+msgstr ""
+"La réponse du serveur est de la forme ftp:retry-530-anonymous, recommence"
 
 #: src/ftpclass.cc:434
 msgid "Account is required, set ftp:acct variable"
@@ -1929,7 +1937,8 @@ msgstr "échec de la méthode POST"
 #. problem here: hftp cannot work without proxy
 #: src/Http.cc:843
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
-msgstr "ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
+msgstr ""
+"ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
 
 #: src/Http.cc:991
 msgid "Sending request..."
@@ -2191,4 +2200,3 @@ msgstr "dépendance du module `%s': %s\n"
 #: src/module.cc:201
 msgid "modules are not supported on this system"
 msgstr "les modules ne sont pas supportés sur ce système"
-
