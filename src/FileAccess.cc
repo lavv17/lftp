@@ -904,6 +904,10 @@ void FileAccess::BumpEventTime(time_t t)
    if(event_time<t)
       event_time=t;
 }
+void FileAccess::SetTryTime(time_t t)
+{
+   try_time=t;
+}
 
 ResValue FileAccess::Query(const char *name,const char *closure)
 {
