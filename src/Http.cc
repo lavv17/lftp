@@ -1186,7 +1186,7 @@ void Http::Reconfig(const char *name)
    if(proxy && proxy_port==0)
       proxy_port=xstrdup(HTTP_DEFAULT_PROXY_PORT);
 
-   user_agent=Query("user-agent");
+   user_agent=ResMgr::Query("http:user-agent",c);
 }
 
 bool Http::SameSiteAs(FileAccess *fa)

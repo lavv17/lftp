@@ -1,6 +1,7 @@
 2000-04-20  Alexander V. Lukyanov  <lav@yars.free.net>
 
-	* resource.cc: add hftp:user-agent.
+	* Http.cc: query http:user-agent explicitly.
+	* MirrorJob.cc: fix compilation problem.
 
 2000-04-19  Alexander V. Lukyanov  <lav@yars.free.net>
 

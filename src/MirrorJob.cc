@@ -1009,8 +1009,8 @@ CMD(mirror)
    if(exclude)
       exclude[0]=0;
 
-   TimeInterval prec      (ResMgr::Query("mirror:time-precision",0));
-   TimeInterval loose_prec(ResMgr::Query("mirror:loose-time-precision",0));
+   TimeInterval prec      ((const char*)ResMgr::Query("mirror:time-precision",0));
+   TimeInterval loose_prec((const char*)ResMgr::Query("mirror:loose-time-precision",0));
    bool	 create_remote_dir=false;
    int	 verbose=0;
    const char *newer_than=0;
