@@ -5,13 +5,13 @@ two, unlike english.
 
 In english language case, programmers often write code like this:
 
-     printf ("you should see %d %s", number_count,
+     printf (gettext("you should see %d %s"), number_count,
              number_count == 1 ? gettext ("number") : gettext ("numbers"))
 
 But obviously it will not work for all languages. It will work for english
 and some other, but russian, polish and maybe others languages have three
 plural forms which cannot be formed just by adding a letter, and the actual
-form of a word depends on its place in sentence.
+form of a word depends on its place in a sentence.
 
 So there is a need for a method for plural form choosing.
 
@@ -48,7 +48,7 @@ Not so complicated, is it? :)
 
 Each condition is boolean expression, the first true condition gives
 the number of plural form. If all conditions are false, the number of
-conditions plus one is taken as form number. The latter is like "default"
+conditions plus one is taken as form number. The later is like "default"
 clause.
 
 There is OR operator '|' which separates subconditions, either of them being

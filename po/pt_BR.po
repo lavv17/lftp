@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
-"POT-Creation-Date: 2003-08-22 16:57+0400\n"
+"POT-Creation-Date: 2003-10-10 13:56+0400\n"
 "PO-Revision-Date: 1999-07-12 00:00+0400\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -106,7 +106,7 @@ msgstr "Falha no acesso: %s"
 msgid "File cannot be accessed"
 msgstr "Arquivo não pode ser acessado"
 
-#: src/FileAccess.cc:322 src/ftpclass.cc:3688 src/ftpclass.cc:3697
+#: src/FileAccess.cc:322 src/ftpclass.cc:3706 src/ftpclass.cc:3715
 msgid "Not connected"
 msgstr "Não conectado"
 
@@ -333,7 +333,7 @@ msgstr ""
 msgid "invalid pair of numbers"
 msgstr "número inválido"
 
-#: src/Resolver.cc:184 src/Resolver.cc:226 src/ftpclass.cc:3693
+#: src/Resolver.cc:184 src/Resolver.cc:226 src/ftpclass.cc:3711
 #: src/Http.cc:1655
 msgid "Resolving host address..."
 msgstr ""
@@ -624,7 +624,7 @@ msgstr ""
 #: src/commands.cc:242
 msgid ""
 "Usage: find [OPTS] [directory]\n"
-"Print contents of specified directory of current directory recursively.\n"
+"Print contents of specified directory or current directory recursively.\n"
 "Directories in the list are marked with trailing slash.\n"
 "You can redirect output of this command.\n"
 " -d, --maxdepth=LEVELS  Descend at most LEVELS of directories.\n"
@@ -1542,140 +1542,140 @@ msgstr ""
 msgid "cannot parse EPSV response"
 msgstr ""
 
-#: src/ftpclass.cc:1132 src/Http.cc:798
+#: src/ftpclass.cc:1134 src/Http.cc:798
 msgid "Closing idle connection"
 msgstr ""
 
-#: src/ftpclass.cc:1212 src/Http.cc:921
+#: src/ftpclass.cc:1214 src/Http.cc:921
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr ""
 
-#: src/ftpclass.cc:1400
+#: src/ftpclass.cc:1402
 msgid "SITE CHMOD is not supported by this site"
 msgstr ""
 
-#: src/ftpclass.cc:1405
+#: src/ftpclass.cc:1407
 msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 msgstr ""
 
-#: src/ftpclass.cc:1756 src/ftpclass.cc:1796
+#: src/ftpclass.cc:1768 src/ftpclass.cc:1808
 #, fuzzy
 msgid "unsupported network protocol"
 msgstr "%s: %s - protocolo não suportado\n"
 
-#: src/ftpclass.cc:1906
+#: src/ftpclass.cc:1918
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr ""
 
-#: src/ftpclass.cc:1931 src/ftpclass.cc:3559
+#: src/ftpclass.cc:1943 src/ftpclass.cc:3577
 msgid "Switching passive mode off"
 msgstr ""
 
-#: src/ftpclass.cc:2398 src/Http.cc:1009
+#: src/ftpclass.cc:2410 src/Http.cc:1009
 msgid "Peer closed connection"
 msgstr ""
 
-#: src/ftpclass.cc:2425
+#: src/ftpclass.cc:2437
 msgid "Persist and retry"
 msgstr ""
 
-#: src/ftpclass.cc:2549
+#: src/ftpclass.cc:2561
 msgid "Closing control socket"
 msgstr ""
 
-#: src/ftpclass.cc:2634
+#: src/ftpclass.cc:2646
 msgid "Closing data socket"
 msgstr ""
 
-#: src/ftpclass.cc:3393
+#: src/ftpclass.cc:3406
 msgid "saw file size in response"
 msgstr ""
 
-#: src/ftpclass.cc:3404
+#: src/ftpclass.cc:3417
 msgid "remote end closed connection"
 msgstr ""
 
-#: src/ftpclass.cc:3412
+#: src/ftpclass.cc:3425
 msgid "extra server response"
 msgstr ""
 
-#: src/ftpclass.cc:3425 src/ftpclass.cc:3454
+#: src/ftpclass.cc:3438 src/ftpclass.cc:3467
 msgid "Turning on sync-mode"
 msgstr ""
 
-#: src/ftpclass.cc:3576
+#: src/ftpclass.cc:3594
 msgid "Switching passive mode on"
 msgstr ""
 
-#: src/ftpclass.cc:3643
+#: src/ftpclass.cc:3661
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 
-#: src/ftpclass.cc:3683
+#: src/ftpclass.cc:3701
 msgid "Sending commands..."
 msgstr ""
 
-#: src/ftpclass.cc:3685 src/ftpclass.cc:3710 src/ftpclass.cc:3723
+#: src/ftpclass.cc:3703 src/ftpclass.cc:3728 src/ftpclass.cc:3741
 #: src/Http.cc:1670
 msgid "Waiting for response..."
 msgstr ""
 
-#: src/ftpclass.cc:3686 src/Http.cc:1663
+#: src/ftpclass.cc:3704 src/Http.cc:1663
 msgid "Connection idle"
 msgstr ""
 
-#: src/ftpclass.cc:3699 src/Http.cc:1661 src/Http.cc:1668
+#: src/ftpclass.cc:3717 src/Http.cc:1661 src/Http.cc:1668
 msgid "Connecting..."
 msgstr ""
 
-#: src/ftpclass.cc:3703
+#: src/ftpclass.cc:3721
 msgid "TLS negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:3705
+#: src/ftpclass.cc:3723
 #, fuzzy
 msgid "Connected"
 msgstr "Não conectado"
 
-#: src/ftpclass.cc:3707
+#: src/ftpclass.cc:3725
 msgid "Logging in..."
 msgstr ""
 
-#: src/ftpclass.cc:3711
+#: src/ftpclass.cc:3729
 msgid "Making data connection..."
 msgstr ""
 
-#: src/ftpclass.cc:3714
+#: src/ftpclass.cc:3732
 msgid "Changing remote directory..."
 msgstr ""
 
-#: src/ftpclass.cc:3720
+#: src/ftpclass.cc:3738
 msgid "Waiting for other copy peer..."
 msgstr ""
 
-#: src/ftpclass.cc:3722 src/ftpclass.cc:3743
+#: src/ftpclass.cc:3740 src/ftpclass.cc:3761
 msgid "Waiting for transfer to complete"
 msgstr ""
 
-#: src/ftpclass.cc:3725
+#: src/ftpclass.cc:3743
 msgid "Waiting for data connection..."
 msgstr ""
 
-#: src/ftpclass.cc:3731
+#: src/ftpclass.cc:3749
 msgid "Sending data/TLS"
 msgstr ""
 
-#: src/ftpclass.cc:3733
+#: src/ftpclass.cc:3751
 msgid "Receiving data/TLS"
 msgstr ""
 
-#: src/ftpclass.cc:3739 src/Http.cc:1666
+#: src/ftpclass.cc:3757 src/Http.cc:1666
 msgid "Sending data"
 msgstr ""
 
-#: src/ftpclass.cc:3741 src/Http.cc:1673
+#: src/ftpclass.cc:3759 src/Http.cc:1673
 msgid "Receiving data"
 msgstr ""
 
@@ -1924,38 +1924,38 @@ msgstr ""
 msgid "file name missed in URL"
 msgstr ""
 
-#: src/Speedometer.cc:98
+#: src/Speedometer.cc:99
 #, c-format
 msgid "%.0fb/s"
 msgstr ""
 
-#: src/Speedometer.cc:101
+#: src/Speedometer.cc:102
 #, c-format
 msgid "%.1fK/s"
 msgstr ""
 
-#: src/Speedometer.cc:104
+#: src/Speedometer.cc:105
 #, c-format
 msgid "%.2fM/s"
 msgstr ""
 
-#: src/Speedometer.cc:130
+#: src/Speedometer.cc:131
 msgid "day"
 msgstr ""
 
-#: src/Speedometer.cc:131
+#: src/Speedometer.cc:132
 msgid "hour"
 msgstr ""
 
-#: src/Speedometer.cc:132
+#: src/Speedometer.cc:133
 msgid "minute"
 msgstr ""
 
-#: src/Speedometer.cc:133
+#: src/Speedometer.cc:134
 msgid "second"
 msgstr ""
 
-#: src/Speedometer.cc:136
+#: src/Speedometer.cc:137
 msgid "eta:"
 msgstr ""
 

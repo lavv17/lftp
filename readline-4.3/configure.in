@@ -12,7 +12,7 @@ dnl make sure we are using a recent autoconf version
 AC_PREREQ(2.50)
 
 AC_CONFIG_SRCDIR(readline.h)
-AC_CONFIG_AUX_DIR(./support)
+AC_CONFIG_AUX_DIR(..)
 AC_CONFIG_HEADERS(config.h)
 
 dnl update the value of RL_READLINE_VERSION in readline.h when this changes
@@ -199,7 +199,7 @@ AC_SUBST(LIBVERSION)
 
 AC_SUBST(TERMCAP_LIB)
 
-AC_OUTPUT([Makefile doc/Makefile examples/Makefile shlib/Makefile],
+AC_OUTPUT([Makefile],
 [
 # Makefile uses this timestamp file to record whether config.h is up to date.
 echo > stamp-h

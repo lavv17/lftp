@@ -240,7 +240,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"fg",      cmd_wait,   0,"wait"},
    {"find",    cmd_find,0,
 	 N_("Usage: find [OPTS] [directory]\n"
-	 "Print contents of specified directory of current directory recursively.\n"
+	 "Print contents of specified directory or current directory recursively.\n"
 	 "Directories in the list are marked with trailing slash.\n"
 	 "You can redirect output of this command.\n"
 	 " -d, --maxdepth=LEVELS  Descend at most LEVELS of directories.\n")},
