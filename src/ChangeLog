@@ -1,3 +1,9 @@
+2005-02-03  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SFtp.cc: don't set error when optional STAT or FSTAT return error.
+	* FileGlob.cc: skip ./ in file names so that globbing works with tildes.
+	* FileSet.cc: allow setting name to tail of itself.
+
 2005-01-21  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Fish.cc, Http.cc, LsCache.cc, SFtp.cc, ftpclass.cc: cast `now' to
