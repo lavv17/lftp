@@ -2367,7 +2367,7 @@ int   Ftp::CheckResp(int act)
 
    case CHECK_READY:
       // M$ can't get it right... I'm really tired of setting sync-mode manually.
-      if(!(flags&SYNC_MODE) && strstr(line,"Microsoft FTP Service (Version 3.0)"))
+      if(!(flags&SYNC_MODE) && strstr(line,"Microsoft FTP Service"))
       {
 	 DebugPrint("---- ","Turning on sync-mode",3);
 	 flags|=SYNC_MODE;
