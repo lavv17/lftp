@@ -1,11 +1,12 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_PREREQ(2.13)
+AC_PREREQ(2.50)
 AC_INIT(src/ftpclass.cc)
-AM_INIT_AUTOMAKE(lftp, 2.3.11)
+AM_INIT_AUTOMAKE(lftp, pre2.4.0)
 AM_CONFIG_HEADER(include/config.h)
 
 dnl Default AC_C_INLINE does not know about C++
-builtin(define,[AC_C_INLINE],[LFTP_C_INLINE])
+m4_undefine([AC_C_INLINE])
+AC_DEFUN([AC_C_INLINE],[LFTP_C_INLINE])
 
 LIBOBJS=''
 AC_SUBST(LIBOBJS)
@@ -61,7 +62,6 @@ if test x$gt_cv_func_gettext_libintl = xyes; then
 fi
 
 CXX_DYNAMIC_INITIALIZERS
-AC_ARG_PROGRAM
 
 AC_ARG_WITH(debug,
 [  --with-debug            enable debug info],
@@ -211,19 +211,22 @@ AC_CHECK_HEADERS(fcntl.h sys/time.h errno.h stdlib.h varargs.h dirent.h\
  strings.h sys/ioctl.h dlfcn.h resolv.h arpa/nameser.h netinet/tcp.h\
  langinfo.h endian.h regex.h)
 
-# See if the system has strerror, and replace it if not
-AC_CHECK_FUNC(strerror, AC_DEFINE(HAVE_STRERROR), LIBOBJS="$LIBOBJS strerror.o")
-if test "$ac_cv_func_strerror" = no; then
+# See if the system has strerror and replace if not
+AC_CHECK_FUNC(strerror, AC_DEFINE(HAVE_STRERROR),[
+  LIBOBJS="$LIBOBJS strerror.o"
   # No strerror, so see if the SYS_ERRLIST variable can be used by ours
-  AC_CHECK_FUNC(sys_errlist)
-  if test "$ac_cv_func_sys_errlist" = yes; then
+  AC_CHECK_FUNC(sys_errlist,
     IU_CHECK_DECL(sys_errlist, [
       #include <stdio.h>
       #ifdef HAVE_ERRNO_H
       #include <errno.h>
-      #endif])
-  fi
-fi
+      #endif]))])
+
+# See if the system has vsnprintf and replace if not
+AC_CHECK_FUNC(vsnprintf, ,[
+  AC_DEFINE_UNQUOTED(NEED_TRIO, 1,
+    [Define if we need the trio replacement *printf() functions])
+  LIBOBJS="$LIBOBJS trio.o strio.o"])
 
 # See if we have h_errno (the test is here so we can use -lresolv if necessary).
 AC_CACHE_CHECK([for h_errno], inetutils_cv_var_h_errno,
@@ -244,10 +247,8 @@ if test "$ac_cv_func_hstrerror" = yes; then
   IU_CHECK_DECL(hstrerror, [#include <netdb.h>])
 else
   # No hstrerror, so see if the H_ERRLIST variable can be used by ours
-  AC_CHECK_FUNC(h_errlist)
-  if test "$ac_cv_func_h_errlist" = yes; then
-    IU_CHECK_DECL(h_errlist, [#include <netdb.h>])
-  fi
+  AC_CHECK_FUNC(h_errlist,
+    IU_CHECK_DECL(h_errlist, [#include <netdb.h>]))
 fi
 if test "$ac_cv_func_hstrerror" = yes -o "$ac_cv_func_h_errlist" = yes; then
   # If there's a system hstrerror, or we can reasonably replace it, say so.
@@ -314,7 +315,7 @@ if test x$ac_cv_func_fnmatch_works = xno; then
    LIBOBJS="$LIBOBJS fnmatch.o"
    LINK_SRC="$LINK_SRC lib/fnmatch.h"
    LINK_DST="$LINK_DST include/fnmatch.h"
-   AC_DEFINE_UNQUOTED(fnmatch, rpl_fnmatch)
+   AC_DEFINE_UNQUOTED(fnmatch, rpl_fnmatch, [Define to rpl_fnmatch if system fnmatch does not work])
 fi
 
 if test "$prefix" = /usr -a "$sysconfdir" = '${prefix}/etc'; then
@@ -322,10 +323,6 @@ if test "$prefix" = /usr -a "$sysconfdir" = '${prefix}/etc'; then
 fi
 
 AC_LINK_FILES($LINK_SRC,$LINK_DST)
-
-dnl Avoid autoconf bug (?)
-builtin(define, [AC_OUTPUT_LINKS_ORIG], defn([AC_OUTPUT_LINKS]))
-builtin(define, [AC_OUTPUT_LINKS], [AC_OUTPUT_LINKS_ORIG([`echo $1`], [`echo $2`])])
 
 AC_OUTPUT(Makefile src/Makefile lib/Makefile include/Makefile doc/Makefile
 	  readline-4.2/Makefile intl/Makefile po/Makefile.in m4/Makefile)

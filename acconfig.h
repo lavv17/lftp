@@ -101,6 +101,8 @@
 
 #undef HAVE_STRERROR
 
+#undef HAVE_HSTRERROR
+
 #undef HAVE_DLOPEN
 
 #undef HAVE_RES_SEARCH
