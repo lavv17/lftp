@@ -80,7 +80,11 @@ FtpGlob::FtpGlob(FileAccess *session,const char *n_pattern)
 FtpGlob::~FtpGlob()
 {
    if(f)
+   {
+      if(base_dir)
+	 f->Chdir(base_dir,false);
       f->Close();
+   }
    if(li)
       delete li;
    if(!dir_list)
@@ -133,6 +137,7 @@ int   FtpGlob::Do()
       if(!dir_list || !*dir_list)
       {
 	 f->Chdir(base_dir,false);
+	 xfree(base_dir); base_dir=0;
 	 done=true;
 	 return MOVED;
       }
