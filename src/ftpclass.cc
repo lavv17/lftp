@@ -771,7 +771,8 @@ void Ftp::InitFtp()
 
    RespQueue=0;
    RQ_alloc=0;
-   EmptyRespQueue();
+   RQ_head=RQ_tail=0;
+   multiline_code=0;
 
    anon_pass=0;
    anon_user=0;	  // will be set by Reconfig()
@@ -2675,6 +2676,8 @@ void  Ftp::AddResp(int exp,check_case_t ck,bool log)
 
 void  Ftp::EmptyRespQueue()
 {
+   while(!RespQueueIsEmpty())
+      PopResp();
    RQ_head=RQ_tail=0;
    multiline_code=0;
    xfree(RespQueue);
