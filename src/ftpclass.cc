@@ -1343,7 +1343,7 @@ int   Ftp::Do()
 	 return MOVED;
 
       if(expect->Has(Expect::FEAT))
-	 return m;
+	 goto usual_return;
 
 #ifdef USE_SSL
       if(QueryBool((user && pass)?"ssl-allow":"ssl-allow-anonymous",hostname)
@@ -1464,7 +1464,7 @@ int   Ftp::Do()
       if(expect->Has(Expect::FEAT)
       || expect->Has(Expect::OPTS_UTF8)
       || expect->Has(Expect::LANG))
-	 return m;
+	 goto usual_return;
 
       if(!conn->utf8_activated && charset && *charset)
 	 conn->SetControlConnectionTranslation(charset);
@@ -2095,7 +2095,7 @@ int   Ftp::Do()
       case PASV_HTTP_PROXY_CONNECTED:
       	 if(HttpProxyReplyCheck(conn->data_iobuf))
 	    goto pre_data_open;
-	 return m;
+	 goto usual_return;
       }
 
    pre_data_open:
