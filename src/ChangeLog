@@ -1,3 +1,7 @@
+2000-09-15  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* pgetJob.cc: fix yet another hang bug (hopefully last).
+
 2000-09-14  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: move out of CONNECTING_DATA_SOCKET after DataClose

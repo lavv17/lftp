@@ -49,12 +49,20 @@ int pgetJob::Do()
    if(cp->Done())
       RemoveBackupFile();
 
+   if(chunks_done && chunks && cp->GetPos()>=chunks[0]->start)
+   {
+      cp->SetRange(0,cp->GetPos());
+      cp->Resume();
+      free_chunks();
+      m=MOVED;
+   }
+
    if(chunks==0 || cp->GetPos()<chunks[0]->start)
    {
       cp->Resume();
       m=super::Do(); // it can call NextFile.
    }
-   else
+   else if(chunks)
       cp->Suspend();
 
    if(Done() || chunks_done)
@@ -157,14 +165,6 @@ int pgetJob::Do()
 
    if(no_parallel)
    {
-      free_chunks();
-      return MOVED;
-   }
-
-   if(chunks_done && cp->GetPos()>=chunks[0]->start)
-   {
-      cp->SetRange(0,cp->GetPos());
-      cp->Resume();
       free_chunks();
       return MOVED;
    }
