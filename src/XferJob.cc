@@ -360,6 +360,12 @@ void  XferJob::RateDrain()
 
 int XferJob::TryWrite(FDStream *f)
 {
+   if(f->broken())
+   {
+      failed++;
+      return -1;
+   }
+
    if(in_buffer==0)
    {
       if(session)

@@ -50,6 +50,7 @@ public:
    virtual bool usesfd(int fd) { return this->fd==fd; }
    virtual void Kill(int=SIGTERM) {}
    virtual pid_t GetProcGroup() { return 0; }
+   virtual bool broken() { return false; }
 };
 
 class OutputFilter : public FDStream
@@ -83,6 +84,8 @@ public:
    bool usesfd(int fd) { return FDStream::usesfd(fd) || fd<=2; }
    void Kill(int sig=SIGTERM) { if(w) w->Kill(sig); }
    pid_t GetProcGroup() { return pg; }
+
+   bool broken();
 };
 
 class InputFilter : public OutputFilter

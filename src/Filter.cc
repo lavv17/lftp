@@ -258,6 +258,17 @@ bool OutputFilter::Done()
       return true;
    return false;
 }
+bool OutputFilter::broken()
+{
+   if(w==0)
+      return false;
+   if(fd==-1)
+      return false;
+//    w->Do();
+   if(w->GetState()!=w->RUNNING)   
+      return true; // filter process terminated - pipe is broken
+   return false;
+}
 
 void FileStream::setmtime(time_t t)
 {
