@@ -903,9 +903,7 @@ int   Ftp::Do()
 
       SayConnectingTo();
 
-      res=connect(control_sock,&peer_sa.sa,sizeof(peer_sa));
-      UpdateNow(); // if non-blocking doesn't work
-
+      res=SocketConnect(control_sock,&peer_sa);
       if(res==-1
 #ifdef EINPROGRESS
       && errno!=EINPROGRESS
@@ -1468,9 +1466,7 @@ int   Ftp::Do()
 	    SocketNumericAddress(&data_sa),SocketPort(&data_sa));
 	 DebugPrint("---- ",str,5);
 
-	 res=connect(data_sock,(struct sockaddr*)&data_sa,sizeof(data_sa));
-	 UpdateNow(); // if non-blocking doesn't work
-
+	 res=SocketConnect(data_sock,&data_sa);
 	 if(res==-1
 #ifdef EINPROGRESS
 	 && errno!=EINPROGRESS

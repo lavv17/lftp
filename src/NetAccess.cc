@@ -168,6 +168,25 @@ int NetAccess::SocketPort(const sockaddr_u *u)
    return 0;
 }
 
+socklen_t NetAccess::SocketAddrLen(const sockaddr_u *u)
+{
+   if(u->sa.sa_family==AF_INET)
+      return sizeof(u->in);
+#if INET6
+   if(u->sa.sa_family==AF_INET6)
+      return sizeof(u->in6);
+#endif
+   return sizeof(*u);
+}
+
+int NetAccess::SocketConnect(int fd,const sockaddr_u *u)
+{
+   int res=connect(fd,&u->sa,SocketAddrLen(u));
+   if(res!=-1)
+      UpdateNow(); // if non-blocking doesn't work
+   return res;
+}
+
 void NetAccess::SayConnectingTo()
 {
    assert(peer_curr<peer_num);

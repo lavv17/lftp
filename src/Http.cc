@@ -602,9 +602,7 @@ int Http::Do()
       CloseOnExec(sock);
 
       SayConnectingTo();
-      res=connect(sock,&peer[peer_curr].sa,sizeof(*peer));
-      UpdateNow(); // if non-blocking don't work
-
+      res=SocketConnect(sock,&peer[peer_curr]);
       if(res==-1
 #ifdef EINPROGRESS
       && errno!=EINPROGRESS
