@@ -1,3 +1,8 @@
+2001-09-07	albert chin <china@thewrittenword.com>
+
+	* configure.in: add trionan.o to LIBOBJS.
+	* Makefile.am: don't distribute ltcf-*.sh.
+
 2001-08-07	lav
 
 	* acconfig.h: define inet_aton if needed.

@@ -1,3 +1,9 @@
+Version 2.4.4 - 2001-09-13
+
+* sometimes lftp forgot to send CWD to restore working directory
+  after reconnect - fixed (bug introduced in 2.4.2).
+* trio updated.
+
 Version 2.4.3 - 2001-09-05
 
 * man page updated.

@@ -18,7 +18,7 @@ LFTP includes the following features (some may be missed in this list):
 * Built-in mirror and reverse mirror (mirror -R).
 * Transfer rate throttling for each connection and for all connections in sum.
 * Limit for number of connections to the same site. Interruption of background
-  transfer to do foreground operation when the limit is reached.
+  transfer to do a foreground operation when the limit is reached.
 * Socket options tuning: buffer size and maximum segment size.
 * Job queueing.
 * Job execution at specified time.

@@ -1,4 +1,3 @@
-noinst_HEADERS = xalloca.h getopt.h xstring.h strio.h trio.h triop.h trionan.h
+TRIO_FILES=strio.h trio.h triop.h trionan.h triodef.h
+noinst_HEADERS = xalloca.h getopt.h xstring.h $(TRIO_FILES)
 DISTCLEANFILES = poll.h regex.h glob.h fnmatch.h readline libintl.h
-
-stamp-h.in: $(top_srcdir)/acconfig.h
