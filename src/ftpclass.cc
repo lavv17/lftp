@@ -2269,6 +2269,7 @@ void Ftp::SendAuth(const char *auth)
    }
    conn->SendCmd2("AUTH",auth);
    expect->Push(CHECK_AUTH_TLS);
+   conn->auth_sent=true;
    if(!strcmp(auth,"TLS")
    || !strcmp(auth,"TLS-C"))
       conn->prot='C';
