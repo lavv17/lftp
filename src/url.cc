@@ -174,7 +174,7 @@ char *url::encode_string (const char *s,char *res,const char *unsafe)
   }
   for (p = res; *s; s++)
   {
-    if (strchr (unsafe, *s))
+    if (iscntrl(*s) || strchr (unsafe, *s))
       {
 	const unsigned char c = *s;
 	*p++ = '%';
