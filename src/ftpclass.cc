@@ -329,8 +329,27 @@ void Ftp::TransferCheck(int act)
    if(act==213)	  // this must be a STAT reply.
    {
       stat_time=now;
-      // find the number.
+
       long long p;
+      // first try Serv-U format:
+      //    Status for user UUU from X.X.X.X
+      //    Stored 1 files, 0 Kbytes
+      //    Retrieved 0 files, 0 Kbytes
+      //    Receiving file XXX (YYY bytes)
+      char *r=strstr(all_lines,"Receiving file");
+      if(r)
+      {
+	 r=strrchr(r,'(');
+	 char c=0;
+	 if(r && sscanf(r,"(%lld bytes%c",&p,&c)==2 && c==')')
+	    goto found_offset;
+      }
+      // wu-ftpd format:
+      //    Status: XXX of YYY bytes transferred
+      // or
+      //    Status: XXX bytes transferred
+      //
+      // find the first number.
       for(char *b=line+4; ; b++)
       {
 	 if(*b==0)
@@ -340,6 +359,7 @@ void Ftp::TransferCheck(int act)
 	 if(sscanf(b,"%lld",&p)==1)
 	    break;
       }
+   found_offset:
       if(copy_mode==COPY_DEST)
 	 real_pos=pos=p;
       return;

@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 2000 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 2000-2001 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
 #include "ascii_ctype.h"
 #include "LsCache.h"
 #include "misc.h"
+#include "log.h"
 
 #define super NetAccess
 
@@ -108,6 +109,7 @@ int Fish::Do()
    switch(state)
    {
    case DISCONNECTED:
+   {
       if(mode==CLOSED)
 	 return m;
       if(mode==CONNECT_VERIFY)
@@ -145,11 +147,30 @@ int Fish::Do()
       CloseOnExec(pipe_in[0]);
       CloseOnExec(pipe_in[1]);
 
-      DebugPrint("---- ",_("Running ssh..."));
-      filter_out=new OutputFilter("ssh gemini \"echo FISH:;/bin/bash\"",pipe_in[1]);   // FIXME
-      filter_out->StderrToStdout();
+      const char *init="\"echo FISH:;/bin/bash\"";
+      char *cmd=string_alloca(xstrlen(hostname)*2+xstrlen(portname)*2
+			      +xstrlen(user)*2+128);
+      strcpy(cmd,"ssh");
+      if(user)
+      {
+	 strcat(cmd," -l ");
+	 strcat(cmd,shell_encode(user));
+      }
+      if(portname)
+      {
+	 strcat(cmd," -p ");
+	 strcat(cmd,shell_encode(portname));
+      }
+      strcat(cmd," ");
+      strcat(cmd,shell_encode(hostname));
+      strcat(cmd," ");
+      strcat(cmd,init);
+      Log::global->Format(9,"---- %s (%s)",_("Running ssh..."),cmd);
+      filter_out=new OutputFilter(cmd,pipe_in[1]);
+//       filter_out->StderrToStdout();
       state=CONNECTING;
       m=MOVED;
+   }
    case CONNECTING:
       fd=filter_out->getfd();
       if(fd==-1)
@@ -172,7 +193,9 @@ int Fish::Do()
       m=MOVED;
 
       Send("#FISH\n"
-	   "echo; start_fish_server; TZ=GMT; export TZ; echo '### 200'\n");
+	   "echo;start_fish_server;"
+	   "TZ=GMT;export TZ;LC_ALL=C;export LC_ALL;"
+	   "echo '### 200'\n");
       PushExpect(EXPECT_FISH);
       Send("#VER 0.0.2\n"
 	   "echo '### 000'\n");
