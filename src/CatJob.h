@@ -23,12 +23,10 @@
 #ifndef CATJOB_H
 #define CATJOB_H
 
-#include "Job.h"
-#include "ProcWait.h"
-#include "Filter.h"
-#include "ArgV.h"
-#include "xmalloc.h"
 #include "XferJob.h"
+
+class ArgV;
+class FDStream;
 
 class CatJob : public XferJob
 {
@@ -40,8 +38,6 @@ protected:
    FDStream *filter_wait;
 
    ArgV	 *args;
-   ArgV	 *args_globbed;
-   Glob	 *rg;
 
    void	 NextFile();
 

@@ -28,10 +28,12 @@
 #include "xmalloc.h"
 
 #include "CatJob.h"
+#include "ArgV.h"
+#include "Filter.h"
 
 int   CatJob::Done()
 {
-   return args==0 && curr==0 && filter_wait==0 && global==0;
+   return curr==0 && filter_wait==0 && global==0;
 }
 
 void  CatJob::ShowRunStatus(StatusLine *s)
@@ -39,11 +41,6 @@ void  CatJob::ShowRunStatus(StatusLine *s)
    if(!print_run_status)
       return;
 
-   if(rg)
-   {
-      s->Show(rg->Status());
-      return;
-   }
    if(curr)
    {
       XferJob::ShowRunStatus(s);
@@ -58,18 +55,7 @@ void  CatJob::PrintStatus(int verbose)
 {
    if(!session)
       return;
-   SessionJob::PrintStatus(verbose);
-   if(Done())
-   {
-      XferJob::PrintStatus(verbose);
-      return;
-   }
-   if(rg)
-   {
-      printf("\t%s\n",rg->Status());
-      return;
-   }
-   if(curr==0)
+   if(!Done() && curr==0)
    {
       putchar('\t');
       puts(_("Waiting for filter to terminate"));
@@ -85,58 +71,20 @@ int   CatJob::Do()
    int m=STALL;
    int res;
 
-   while(args)
-   {
-      // globbing
-      if(!rg)
-      {
-	 char *a=args->getnext();
-	 if(!a)
-	 {
-	    delete args;
-	    args=0;
-	    args_globbed->rewind();
-	    NextFile();
-	    m=MOVED;
-	    break;
-	 }
-	 rg=session->MakeGlob(a);
-	 if(!rg)
-	    rg=new NoGlob(a);
-	 while(rg->Do()==MOVED);
-	 m=MOVED;
-      }
-
-      if(!rg->Done())
-	 return m;
-
-      char **files,**i;
-      m=MOVED;
-
-      files=rg->GetResult();
-      if(rg->Error())
-	 eprintf("rglob: %s\n",rg->ErrorText());
-      else if(!files)
-	 eprintf(_("%s: no files found\n"),rg->GetPattern());
-      else
-      {
-	 for(i=files; *i; i++)
-	    args_globbed->Append(*i);
-      }
-      delete rg;
-      rg=0;
-   }
-
    if(filter_wait)
    {
-      if(filter_wait->Done())
-      {
-	 delete filter_wait;
-	 filter_wait=0;
-   	 m=MOVED;
-      }
-      else
+      if(!filter_wait->Done())
 	 return m;
+      delete filter_wait;
+      filter_wait=0;
+      m=MOVED;
+   }
+
+   if(curr==0)
+   {
+      NextFile();
+      if(curr)
+	 m=MOVED;
    }
 
    if(curr==0)
@@ -179,7 +127,7 @@ int   CatJob::Do()
    if(res<0)
    {
       NextFile();
-      if(local==global)
+      if(local==global) // global filter failed, cannot do anything.
       {
 	 while(curr)
 	 {
@@ -209,13 +157,13 @@ void CatJob::NextFile()
       local=0;
    }
 
-   if(!args_globbed)
+   if(!args)
    {
       XferJob::NextFile(0);
       return;
    }
 
-   XferJob::NextFile(args_globbed->getnext());
+   XferJob::NextFile(args->getnext());
    if(!curr)
       return;
    if(for_each)
@@ -238,10 +186,6 @@ CatJob::~CatJob()
       delete filter_wait;
    if(args)
       delete args;
-   if(args_globbed)
-      delete args_globbed;
-   if(rg)
-      delete rg;
 };
 
 int CatJob::AcceptSig(int sig)
@@ -274,22 +218,21 @@ void CatJob::Init()
    for_each=0;
 
    args=0;
-   rg=0;
-   args_globbed=0;
    op="cat";
 
    print_run_status=false;
 }
 
-CatJob::CatJob(FileAccess *new_session,FDStream *new_global,ArgV *args) : XferJob(new_session)
+CatJob::CatJob(FileAccess *new_session,FDStream *new_global,ArgV *new_args)
+   : XferJob(new_session)
 {
    Init();
 
    global=new_global;
 
-   this->args=args;
-   args_globbed=new ArgV(args->a0());
-   op=args_globbed->a0();
+   args=new_args;
+   args->rewind();
+   op=args->a0();
 
    if(!strcmp(op,"more") || !strcmp(op,"zmore"))
    {

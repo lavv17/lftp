@@ -221,7 +221,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -p  make all levels of path\n")},
    {"module",  cmd_module, N_("module name [args]"),
 	 N_("Load module (shared object). The module should contain function\n"
-	 "   void module_init(int argc,const char *const *argv\n"
+	 "   void module_init(int argc,const char *const *argv)\n"
 	 "If name contains a slash, then the module is searched in current\n"
 	 "directory, otherwise in PKGLIBDIR.\n")},
    {"more",    cmd_cat,    N_("more [-u] <files>"),
@@ -468,14 +468,14 @@ Job *CmdExec::builtin_lftp()
 	 cmd="version;";
 	 break;
       case('f'):
-	 acmd=(char*)alloca(20+2*strlen(optarg));
+	 acmd=string_alloca(20+2*strlen(optarg));
 	 strcpy(acmd,"source \"");
 	 unquote(acmd+strlen(acmd),optarg);
 	 strcat(acmd,"\";");
 	 cmd=acmd;
 	 break;
       case('c'):
-	 acmd=(char*)alloca(4+strlen(optarg));
+	 acmd=string_alloca(4+strlen(optarg));
 	 sprintf(acmd,"%s\n\n",optarg);
 	 cmd=acmd;
 	 break;
@@ -561,7 +561,7 @@ Job *CmdExec::builtin_open()
 
    if(host && (bm=lftp_bookmarks.Lookup(host))!=0)
    {
-      char *cmd=(char*)alloca(5+strlen(bm)+2+1);
+      char *cmd=string_alloca(5+strlen(bm)+2+1);
       sprintf(cmd,"open %s%s\n",bm,background?"&":"");
       PrependCmd(cmd);
    }
@@ -651,7 +651,7 @@ Job *CmdExec::builtin_open()
 
    if(path)
    {
-      char *s=(char*)alloca(strlen(path)*4+40);
+      char *s=string_alloca(strlen(path)*4+40);
       strcpy(s,"&& cd \"");
       unquote(s+strlen(s),path);
       strcat(s,"\"");
@@ -855,7 +855,7 @@ CMD(get)
 	    int res=stat(a,&st);
 	    if(res!=-1 && S_ISDIR(st.st_mode))
 	    {
-	       char *comb=(char*)alloca(strlen(a)+strlen(a1)+2);
+	       char *comb=string_alloca(strlen(a)+strlen(a1)+2);
 	       sprintf(comb,"%s/%s",a,a1);
 	       get_args->Append(comb);
 	    }
@@ -1658,7 +1658,7 @@ CMD(close)
    return 0;
 }
 
-static const char * const bookmark_subcmd[]=
+const char * const bookmark_subcmd[]=
    {"add","delete","list","edit","import",0};
 static ResDecl res_save_passwords
    ("bmk:save-passwords","no",ResMgr::BoolValidate,0);
@@ -1705,7 +1705,14 @@ CMD(bookmark)
 	 if((bool)res_save_passwords.Query(0))
 	    flags|=session->WITH_PASSWORD;
 	 if(value==0)
+	 {
 	    value=session->GetConnectURL(flags);
+	    char *a=string_alloca(strlen(value)+2);
+	    strcpy(a,value);
+	    if(value[0] && value[strlen(value)-1]!='/')
+	       strcat(a,"/");
+	    value=a;
+	 }
 	 if(value==0 || value[0]==0)   // cannot add empty bookmark
 	 {
 	    eprintf(_("%s: cannot add empty bookmark\n"),args->a0());
@@ -1740,7 +1747,7 @@ CMD(bookmark)
       else
       {
 	 const char *fmt="shell " PKGDATADIR "/import-%s\n";
-	 char *cmd=(char*)alloca(strlen(op)+strlen(fmt)+1);
+	 char *cmd=string_alloca(strlen(op)+strlen(fmt)+1);
 	 sprintf(cmd,fmt,op);
 	 parent->PrependCmd(cmd);
 	 exit_code=0;

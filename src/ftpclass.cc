@@ -1796,13 +1796,6 @@ void  Ftp::ReceiveResp()
 	    resp_size+=res;
 	 }
       }
-      if(code==RESP_RESULT_HERE)
-      {
-	 if(result)
-	    free(result);
-	 result=(char*)xmalloc(result_size=strlen(line+4)+1);
-	 strcpy(result,line+4);	 // store the response for reference
-      }
 
       int newstate=CheckResp(code);
       if(newstate!=-1 && newstate!=state)
