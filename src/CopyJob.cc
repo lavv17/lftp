@@ -139,6 +139,7 @@ CopyJobEnv::CopyJobEnv(FileAccess *s,ArgV *a,bool cont1)
    time_spent=0;
    no_status=false;
    cont=cont1;
+   ascii=false;
    cwd=xgetcwd();
 }
 CopyJobEnv::~CopyJobEnv()
@@ -183,6 +184,8 @@ void CopyJobEnv::SetCopier(FileCopy *c,const char *n)
    }
    if(c==0)
       return;
+   if(ascii)
+      c->Ascii();
    cp=new CopyJob(c,n);
    cp->parent=this;
    waiting=cp;

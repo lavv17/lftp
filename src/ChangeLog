@@ -1,3 +1,9 @@
+1999-12-26  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* commands.cc: help update; support get -a for ascii mode;
+	  don't use ascii mode for zcat and zmore.
+	* CopyJob.cc, CopyJob.h: ascii support in CopyJobEnv.
+
 1999-12-25  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CatJob.cc, ChangeLog, CopyJob.cc, CopyJob.h, FileAccess.cc,

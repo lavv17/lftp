@@ -89,6 +89,7 @@ protected:
    bool no_status;
    char *cwd;
    bool cont;
+   bool ascii;
    ArgV *args;
 
    virtual void NextFile() = 0;
@@ -107,6 +108,8 @@ public:
 
    void SayFinal();
    void	PrintStatus(int);
+
+   void Ascii() { ascii=true; }
 };
 
 #endif // COPYJOB_H

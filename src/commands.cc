@@ -134,9 +134,9 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "  size <lim>  - set memory limit, -1 means unlimited\n"
 	 "  expire <Nx> - set cache expiration time to N seconds (x=s)\n"
 	 "                minutes (x=m) hours (x=h) or days (x=d)\n")},
-   {"cat",     cmd_cat,    N_("cat [-u] <files>"),
-	 N_("cat - output remote files to stdout\n"
-	 " -u  try to recognize URLs\n")},
+   {"cat",     cmd_cat,    N_("cat [-b] <files>"),
+	 N_("cat - output remote files to stdout (can be redirected)\n"
+	 " -b  use binary mode (ascii is the default)\n")},
    {"cd",      cmd_cd,     N_("cd <rdir>"),
 	 N_("Change current remote directory to <rdir>. The previous remote directory\n"
 	 "is stored as `-'. You can do `cd -' to change the directory back.\n"
@@ -164,7 +164,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -o <lfile> specifies local file name (default - basename of rfile)\n"
 	 " -c  continue, reget\n"
 	 " -e  delete remote files after successful transfer\n"
-	 " -u  try to recognize URLs\n")},
+	 " -a  use ascii mode (binary is the default)\n")},
    {"get1",    cmd_get1,   0,0},
    {"glob",    cmd_glob,   0,0},
    {"help",    cmd_help,   N_("help [<cmd>]"),
@@ -232,9 +232,8 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "   void module_init(int argc,const char *const *argv)\n"
 	 "If name contains a slash, then the module is searched in current\n"
 	 "directory, otherwise in PKGLIBDIR.\n")},
-   {"more",    cmd_cat,    N_("more [-u] <files>"),
-	 N_("Same as `cat <files> | more'. if PAGER is set, it is used as filter\n"
-	 " -u  try to recognize URLs\n")},
+   {"more",    cmd_cat,    N_("more <files>"),
+	 N_("Same as `cat <files> | more'. if PAGER is set, it is used as filter\n")},
    {"mput",    cmd_mput,   N_("mput [-c] [-d] <files>"),
 	 N_("Upload files with wildcard expansion\n"
 	 " -c  continue, reput\n"
@@ -257,8 +256,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "but loads the net heavily impacting other users. Use only if you really\n"
 	 "have to transfer the file ASAP, or some other user may go mad :)\n"
 	 "\nOptions:\n"
-	 " -n <maxconn>  set maximum number of connections (default 5)\n"
-	 " -u            try to recognize URLs\n")},
+	 " -n <maxconn>  set maximum number of connections (default 5)\n")},
    {"put",     cmd_put,    N_("put [-c] <lfile> [-o <rfile>]"),
 	 N_("Upload <lfile> with remote name <rfile>.\n"
 	 " -o <rfile> specifies remote file name (default - basename of lfile)\n"
@@ -315,9 +313,9 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Shows lftp version\n")},
    {"wait",    cmd_wait,   N_("wait <jobno>"),
 	 N_("Wait for specified job to terminate.\n")},
-   {"zcat",    cmd_cat,    N_("zcat [-u] <files>"),
+   {"zcat",    cmd_cat,    N_("zcat <files>"),
 	 N_("Same as cat, but filter each file through zcat\n")},
-   {"zmore",   cmd_cat,    N_("zmore [-u] <files>"),
+   {"zmore",   cmd_cat,    N_("zmore <files>"),
 	 N_("Same as more, but filter each file through zcat\n")},
 
    {NULL,NULL}
@@ -852,7 +850,7 @@ CMD(cat)
       return 0;
    }
    CatJob *j=new CatJob(Clone(),output,args);
-   if(ascii)
+   if(ascii && args->a0()[0]!='z')
       j->Ascii();
    output=0;
    args=0;
@@ -863,17 +861,18 @@ CMD(get)
 {
    int opt;
    bool cont=false;
-   const char *opts="+ceu";
+   const char *opts="+ceua";
    const char *op=args->a0();
    ArgV	 *get_args=new ArgV(op);
    int n_conn=0;
    bool del=false;
+   bool ascii=false;
 
    args->rewind();
    if(!strncmp(op,"re",2))
    {
       cont=true;
-      opts="+eu";
+      opts="+eua";
    }
    if(!strcmp(op,"pget"))
    {
@@ -897,6 +896,9 @@ CMD(get)
 	 break;
       case('e'):
 	 del=true;
+	 break;
+      case('a'):
+	 ascii=true;
 	 break;
       case('?'):
       err:
@@ -955,6 +957,8 @@ CMD(get)
       GetJob *j=new GetJob(Clone(),get_args,cont);
       if(del)
 	 j->DeleteFiles();
+      if(ascii)
+	 j->Ascii();
       return j;
    }
    else
