@@ -43,6 +43,8 @@ const char *url_file(const char *url,const char *file);
 const char *output_file_name(const char *src,const char *dst,bool dst_local,
 			     const char *dst_base,bool make_dirs);
 
+const char *squeeze_file_name(const char *name,int w);
+
 // mkdir -p
 int   create_directories(char *);
 

@@ -1,3 +1,10 @@
+2000-02-23  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: raise log level of CWD reply to 3.
+	* MirrorJob.cc: log directory if verbose>=3; show directory in status.
+	* misc.cc, misc.h: (squeeze_file_name) new function (from CopyJob).
+	* CopyJob.cc: use it.
+
 2000-02-22  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* complete.cc: implement LOCAL_DIR mode; recognize -O;

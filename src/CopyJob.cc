@@ -58,26 +58,7 @@ int CopyJob::ExitCode()
 
 const char *CopyJob::SqueezeName(int w)
 {
-   if(strlen(name)<=(unsigned)w)
-      return name;
-
-   static char *buf;
-   static int buf_len;
-   if(buf_len<w+20)
-      buf=(char*)xrealloc(buf,buf_len=w+20);
-
-   const char *b=basename_ptr(name);
-   int b_len=strlen(b);
-   if(b_len<=w-4 && b_len>w-15)
-   {
-      sprintf(buf,".../%s",b);
-      return buf;
-   }
-   b=name+strlen(name)-w;
-   if(w<4)
-      return b;
-   sprintf(buf,"...%s",b+3);
-   return buf;
+   return squeeze_file_name(name,w);
 }
 
 #define COPY_STATUS _("`%s' at %lu %s%s%s%s"),name,\
