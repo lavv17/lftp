@@ -4,19 +4,20 @@
 # Korrekturen, KRITIK SEHR willkommen
 # COPYRIGHT:
 # GPL
-# Moritz Moeller-Herrmann <mmh@gmx.net>, 1999,2000,2001,2002,2003
+# Moritz Moeller-Herrmann <mmh@gmx.net>, 1999,2000,2001,2002,2003.
+# Moritz Moeller-Herrmann <mmh@gmx.de>, 2003.
 msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
-"POT-Creation-Date: 2003-11-19 13:14+0300\n"
-"PO-Revision-Date: 2003-03-02 14:56+0100\n"
-"Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
+"POT-Creation-Date: 2003-12-11 18:12+0300\n"
+"PO-Revision-Date: 2003-12-17 20:02+0100\n"
+"Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.de>\n"
 "Language-Team: deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "<moritz@hippokrates.jura.uni-mannheim.de>\n"
-"X-Generator: KBabel 1.0\n"
+"X-Generator: KBabel 1.3\n"
 
 #: src/CmdExec.cc:90
 #, c-format
@@ -48,7 +49,7 @@ msgstr "Verzeichniswechsel OK, cwd=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: Umleitung nach »%s« empfangen\n"
 
-#: src/CmdExec.cc:396 src/FileCopy.cc:961
+#: src/CmdExec.cc:396 src/FileCopy.cc:971
 msgid "Too many redirections"
 msgstr "Zu viele Umleitungen"
 
@@ -338,7 +339,7 @@ msgid "invalid pair of numbers"
 msgstr "Unzulässiges Zahlenpaar."
 
 #: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3734
-#: src/Http.cc:1655
+#: src/Http.cc:1666
 msgid "Resolving host address..."
 msgstr "Löse Hostadresse auf..."
 
@@ -351,16 +352,16 @@ msgstr "Zeitablauf: Rechnernamen nicht aufgelöst"
 msgid "---- %d address$|es$ found\n"
 msgstr "%d  Adresse$|n$ gefunden\n"
 
-#: src/Resolver.cc:787
+#: src/Resolver.cc:788
 msgid "Host name lookup failure"
 msgstr "Nachschlagen des Hostnamen fehlgeschlagen"
 
-#: src/Resolver.cc:819
+#: src/Resolver.cc:820
 #, c-format
 msgid "no such %s service"
 msgstr "kein derartiger %s Dienst"
 
-#: src/Resolver.cc:841
+#: src/Resolver.cc:842
 msgid "No address found"
 msgstr "Keine Adresse gefunden"
 
@@ -687,7 +688,6 @@ msgstr ""
 "Befehls benutzt.\n"
 
 #: src/commands.cc:242
-#, fuzzy
 msgid ""
 "Usage: find [OPTS] [directory]\n"
 "Print contents of specified directory or current directory recursively.\n"
@@ -696,11 +696,11 @@ msgid ""
 " -d, --maxdepth=LEVELS  Descend at most LEVELS of directories.\n"
 msgstr ""
 "Verwendung: find [OPTIONEN] [Verzeichnis]\n"
-"Gibt den Inhalt des angegebenen oder des aktuellen Verzeichnisses rekursiv\n"
+"Gibt rekursiv den Inhalt des angegebenen oder des aktuellen Verzeichnisses \n"
 "aus. Verzeichnisse werden in der Liste durch einen angehängten "
 "Schrägstrich \n"
 "(/) gekennzeichnet. Man kann die Ausgabe dieses Befehls umleiten.\n"
-"       -d, --maxdepth=EBENEN  Maximal bis zu EBENEN tief in "
+"       -d, --maxdepth=EBENEN Maximal bis zu EBENEN tief in "
 "Verzeichnisstruktur\n"
 "        eindringen\n"
 
@@ -782,8 +782,7 @@ msgstr ""
 
 #: src/commands.cc:274
 msgid "List running jobs. -v means verbose, several -v can be specified.\n"
-msgstr ""
-"Aktive Jobs auflisten. -v bedeutet mit Details, mehrere -v sind möglich.\n"
+msgstr "Aktive Jobs auflisten. -v bedeutet mit Details, mehrere -v sind möglich.\n"
 
 #: src/commands.cc:275
 msgid "kill all|<job_no>"
@@ -1600,8 +1599,7 @@ msgstr "%s: Angabe für »expire«(Ablauf) fehlt\n"
 
 #: src/commands.cc:2284
 #, c-format
-msgid ""
-"%s: %s - no such cached session. Use `scache' to look at session list.\n"
+msgid "%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr ""
 "%s: %s - keine derartige Sitzung zwischengespeichert. »scache« zeigt eine "
 "Liste.\n"
@@ -1642,8 +1640,7 @@ msgid "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 msgstr "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 
 #: src/commands.cc:2379
-msgid ""
-"This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
+msgid "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
 msgstr ""
 "Dies ist freie Software OHNE IRGENDWELCHE GARANTIEN ODER GEWÄHRLEISTUNGEN.\n"
 "Die Datei COPYING enthält Details.\n"
@@ -1753,8 +1750,7 @@ msgstr "Eingerichteter Zugang ist erforderlich, ftp:acct Variable setzen."
 
 #: src/ftpclass.cc:486
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
-msgstr ""
-"ftp:skey-force ist gesetzt und Gegenstelle unterstützt weder OPIE noch S/KEY"
+msgstr "ftp:skey-force ist gesetzt und Gegenstelle unterstützt weder OPIE noch S/KEY"
 
 #: src/ftpclass.cc:502
 msgid "Saw `unknown', assume failed login"
@@ -1772,7 +1768,7 @@ msgstr "Kann EPSV Antwort nicht auswerten"
 msgid "Closing idle connection"
 msgstr "Schließe unbenutzte Verbindung"
 
-#: src/ftpclass.cc:1214 src/Http.cc:921
+#: src/ftpclass.cc:1214 src/Http.cc:926
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "Kann kein Socket für die Adressfamilie %d anlegen"
@@ -1798,7 +1794,7 @@ msgstr "Verbinde Daten Socket mit (%s) Port %u"
 msgid "Switching passive mode off"
 msgstr "Schalte Passivmodus ab"
 
-#: src/ftpclass.cc:2424 src/Http.cc:1009
+#: src/ftpclass.cc:2424 src/Http.cc:1014
 msgid "Peer closed connection"
 msgstr "Gegenüber hat Verbindung beendet"
 
@@ -1836,23 +1832,22 @@ msgstr "Schalte Passivmodus ein"
 
 #: src/ftpclass.cc:3684
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
-msgstr ""
-"ftp:ssl-force ist gesetzt und Gegenstelle unterstützt oder erlaubt kein SSL"
+msgstr "ftp:ssl-force ist gesetzt und Gegenstelle unterstützt oder erlaubt kein SSL"
 
 #: src/ftpclass.cc:3724
 msgid "Sending commands..."
 msgstr "Schicke Befehle"
 
 #: src/ftpclass.cc:3726 src/ftpclass.cc:3751 src/ftpclass.cc:3764
-#: src/Http.cc:1670
+#: src/Http.cc:1681
 msgid "Waiting for response..."
 msgstr "Warte auf Antwort"
 
-#: src/ftpclass.cc:3727 src/Http.cc:1663
+#: src/ftpclass.cc:3727 src/Http.cc:1674
 msgid "Connection idle"
 msgstr "Verbindung ruht"
 
-#: src/ftpclass.cc:3740 src/Http.cc:1661 src/Http.cc:1668
+#: src/ftpclass.cc:3740 src/Http.cc:1672 src/Http.cc:1679
 msgid "Connecting..."
 msgstr "Verbinde..."
 
@@ -1896,11 +1891,11 @@ msgstr "Sende Daten/TLS"
 msgid "Receiving data/TLS"
 msgstr "Empfange Daten/TLS"
 
-#: src/ftpclass.cc:3780 src/Http.cc:1666
+#: src/ftpclass.cc:3780 src/Http.cc:1677
 msgid "Sending data"
 msgstr "Sende Daten"
 
-#: src/ftpclass.cc:3782 src/Http.cc:1673
+#: src/ftpclass.cc:3782 src/Http.cc:1684
 msgid "Receiving data"
 msgstr "Empfange Daten"
 
@@ -1994,51 +1989,51 @@ msgstr "Schließe HTTP-Verbindung"
 msgid "POST method failed"
 msgstr "POST - Methode fehlgeschlagen"
 
-#: src/Http.cc:877
+#: src/Http.cc:882
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr "FTP über HTTP funktioniert nur mit Proxy, hftp:proxy Option angeben."
 
-#: src/Http.cc:1020
+#: src/Http.cc:1030
 msgid "Sending request..."
 msgstr "Schicke Anforderung..."
 
-#: src/Http.cc:1067
+#: src/Http.cc:1077
 msgid "Hit EOF while fetching headers"
 msgstr "Dateiende beim Lesen der Kopfzeilen erhalten"
 
-#: src/Http.cc:1151
+#: src/Http.cc:1161
 msgid "Success, but did nothing??"
 msgstr "Erfolg, aber nichts passiert??"
 
-#: src/Http.cc:1185
+#: src/Http.cc:1195
 msgid "Could not parse HTTP status line"
 msgstr "Konnte HTTP Statusanzeige nicht auswerten"
 
-#: src/Http.cc:1325
+#: src/Http.cc:1335
 msgid "Receiving body..."
 msgstr "Empfange BODY"
 
-#: src/Http.cc:1451
+#: src/Http.cc:1461
 msgid "Hit EOF"
 msgstr "Dateiende (EOF) angetroffen"
 
-#: src/Http.cc:1454
+#: src/Http.cc:1464
 msgid "Received not enough data, retrying"
 msgstr "Nicht genug Daten erhalten, neuer Versuch"
 
-#: src/Http.cc:1462
+#: src/Http.cc:1472
 msgid "Received all"
 msgstr "alles empfangen"
 
-#: src/Http.cc:1467
+#: src/Http.cc:1477
 msgid "Received all (total)"
 msgstr "Alles empfangen (insgesamt)"
 
-#: src/Http.cc:1490 src/Http.cc:1511
+#: src/Http.cc:1500 src/Http.cc:1521
 msgid "chunked format violated"
 msgstr "Blockformatierung verletzt"
 
-#: src/Http.cc:1671
+#: src/Http.cc:1682
 msgid "Fetching headers..."
 msgstr "Hole Kopfzeilen..."
 
@@ -2081,8 +2076,7 @@ msgstr "Modus von »%s«  nach %04o (%s) geändert.\n"
 #: src/ChmodJob.cc:85
 #, c-format
 msgid "Failed to change mode of `%s' because no old mode is available.\n"
-msgstr ""
-"Konnte den Modus von »%s« nicht ändern, da kein alter Modus zugänglich war.\n"
+msgstr "Konnte den Modus von »%s« nicht ändern, da kein alter Modus zugänglich war.\n"
 
 #: src/CopyJob.cc:78
 #, c-format
@@ -2139,12 +2133,12 @@ msgstr "copy: Alle Daten empfangen, aber get wurde zurückgesetzt\n"
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr "copy: get wurde zurückgesetzt zu %lld, suche dementsprechendes put\n"
 
-#: src/FileCopy.cc:958
+#: src/FileCopy.cc:968
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy: Umleitung nach »%s« empfangen\n"
 
-#: src/FileCopy.cc:1160
+#: src/FileCopy.cc:1170
 msgid "file name missed in URL"
 msgstr "Dateiname fehlt in der URL"
 
@@ -2265,50 +2259,3 @@ msgstr "Voraussetzung Modul »%s«: %s\n"
 msgid "modules are not supported on this system"
 msgstr "Module sind auf diesem System nicht verwendbar"
 
-#~ msgid "%s: %s: %s\n"
-#~ msgstr "%s: %s: %s\n"
-
-#~ msgid "Query of variable `%s' failed: %s\n"
-#~ msgstr "Abfrage der Variabe »%s« fehgeschlagen: %s\n"
-
-#~ msgid ""
-#~ "Enter date, or blank line to exit.\n"
-#~ "\t> "
-#~ msgstr ""
-#~ "Datum eingeben oder eine Leerzeile zum beenden.\n"
-#~ "\t"
-
-#~ msgid "Bad format - couldn't convert.\n"
-#~ msgstr "Schlechtes Format - konnte es nicht konvertieren,\n"
-
-#~ msgid "%s: Invalid number for size\n"
-#~ msgstr "%s: Ungültige Größenangabe\n"
-
-#~ msgid "Warning: getcwd() failed: %s\n"
-#~ msgstr "Warnung: getcwd() fehlgeschlagen: %s\n"
-
-#~ msgid "No directory to execute commands in - terminating\n"
-#~ msgstr "Verzeichnis zum Ausführen der Befehle existiert nicht - Beende\n"
-
-#~ msgid "chain output error"
-#~ msgstr "chain Ausgabefehler"
-
-#~ msgid "Usage: %s mode file...\n"
-#~ msgstr "Benutzung: %s modus datei ...\n"
-
-#~ msgid "%s: %s - not an octal number\n"
-#~ msgstr "%s: %s - keine Oktalzahl\n"
-
-#~ msgid "Removing old remote file `%s'"
-#~ msgstr "Entferne alte Datei »%s« auf remote - Rechner"
-
-#~ msgid "Retrieving remote file `%s'"
-#~ msgstr "Hole nichtlokale Datei »%s«"
-
-#~ msgid "mirror: cannot create `file:' access object, installation error?\n"
-#~ msgstr ""
-#~ "mirror: Konnte »Datei« nicht anlegen: Zugriffsobjekt,\n"
-#~ "Fehler bei der Installation?\n"
-
-#~ msgid "Old remote file `%s' is not removed"
-#~ msgstr "Bestehende nichtlokale Datei »%s« wird nicht entfernt"
