@@ -26,7 +26,9 @@
 #include <ctype.h>
 #include <unistd.h>
 #include <math.h>
+extern "C" {
 #include <regex.h>
+}
 #include "ResMgr.h"
 #include "SMTask.h"
 #include "xmalloc.h"

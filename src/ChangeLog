@@ -1,3 +1,10 @@
+2000-10-03  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Makefile.am: use C compiler to compile modules, it should use c++
+	  for c++ files automatically.
+	* ResMgr.cc: use extern "C" for regex.h, this fixes linking for some
+	  systems.
+
 2000-09-29  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileCopy.cc: fix for `ls|head'.
