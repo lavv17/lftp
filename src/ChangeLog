@@ -1,3 +1,7 @@
+1999-09-29  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ResMgr.h: include time.h for time_t.
+
 1999-09-27  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* HttpDir.cc: strip leading slash in links to /~user.

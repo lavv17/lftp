@@ -24,6 +24,8 @@
 #define RESMGR_H
 
 #include <stdio.h>
+#include <sys/types.h>
+#include <time.h>
 #include "xmalloc.h"
 
 typedef const char *ResValValid(char **value);
