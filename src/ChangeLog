@@ -1,3 +1,8 @@
+1999-10-02  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CmdExec.cc: fix type mismatch on 64-bit machines.
+	* Makefile.am: don't depend on rlstdc.h
+
 1999-10-01  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Resolver.cc: cast ResValue to (const char *) to avoid ambiguity.

@@ -665,7 +665,7 @@ void CmdExec::PrintStatus(int v)
 	 char *cmd_end=strchr(cmd,'\n');
 	 if(!cmd_end)
 	    cmd_end=cmd+strlen(cmd);
-	 printf("\t%2d. %.*s\n",n++,cmd_end-cmd,cmd);
+	 printf("\t%2d. %.*s\n",n++,int(cmd_end-cmd),cmd);
 	 if(*cmd_end==0)
 	    break;
 	 cmd=cmd_end+1;
