@@ -295,27 +295,32 @@ void  MirrorJob::HandleFile(int how)
 	 else // !REVERSE
 	 {
 	    mode=((file->defined&file->MODE)&&!(flags&NO_PERMS))?file->mode:0755;
-	    res=mkdir(local_name,mode|0700);
-	    if(res==-1 && errno==EEXIST)
+	    struct stat st;
+	    if(stat(local_name,&st)!=-1)
 	    {
-	       struct stat st;
-	       if(stat(local_name,&st)!=-1)
+	       if(S_ISDIR(st.st_mode))
+		  chmod(local_name,st.st_mode|0700);
+	       else
 	       {
-		  if(S_ISDIR(st.st_mode))
-		     chmod(local_name,st.st_mode|0700);
-	    	  else
+		  Report(_("Removing old local file `%s'"),
+			   dir_file(local_relative_dir,file->name));
+		  if(remove(local_name)==-1)
 		  {
-		     Report(_("Removing old local file `%s'"),
-			      dir_file(local_relative_dir,file->name));
-		     remove(local_name);
-		     res=mkdir(local_name,mode|0700);
+		     eprintf("mirror: remove(%s): %s\n",local_name,strerror(errno));
+		     goto skip;
 		  }
+		  goto do_mkdir;
 	       }
 	    }
-	    else if(res==-1) // other error
+	    else // no such directory
 	    {
-	       eprintf("mirror: mkdir(%s): %s\n",local_name,strerror(errno));
-	       goto skip;
+	    do_mkdir:
+	       res=mkdir(local_name,mode|0700);
+	       if(res==-1)
+	       {
+		  eprintf("mirror: mkdir(%s): %s\n",local_name,strerror(errno));
+		  goto skip;
+	       }
 	    }
 	 }
 	 // launch sub-mirror
@@ -369,7 +374,11 @@ void  MirrorJob::HandleFile(int how)
 	       Report(_("Removing old local file `%s'"),
 			dir_file(local_relative_dir,file->name));
 	       mod_symlinks++;
-	       remove(local_name);
+	       if(remove(local_name)==-1)
+	       {
+		  eprintf("mirror: remove(%s): %s\n",local_name,strerror(errno));
+		  goto skip;
+	       }
 	    }
 	    else
 	    {
@@ -379,7 +388,7 @@ void  MirrorJob::HandleFile(int how)
 		     dir_file(local_relative_dir,file->name),file->symlink);
 	    res=symlink(file->symlink,local_name);
 	    if(res==-1)
-	       perror(local_name);
+	       eprintf("mirror: symlink(%s): %s\n",local_name,strerror(errno));
 	 }
 #endif /* LSTAT */
 	 goto skip;

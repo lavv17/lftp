@@ -1,3 +1,7 @@
+2000-04-06  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* MirrorJob.cc: better error messages.
+
 2000-04-03  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileCopy.cc: return m, not STALL.
