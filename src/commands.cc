@@ -2119,7 +2119,7 @@ CMD(wait)
    }
    if(j->Job::CheckForWaitLoop(parent))
    {
-      eprintf(_("%s: wait loop detected\n"),op,n);
+      eprintf(_("%s: wait loop detected\n"),op);
       return 0;
    }
    j->parent=0;
