@@ -2,7 +2,7 @@
   show the cwd in `Done' message.
 * cd and lcd without argument go to remote/local home directory.
 * send User-Agent in http request.
-* http parser improved.
+* html parser improved.
 * dns SRV records support.
 * fixed port representation in URL - colon was missing.
 * fixed completion for nlist command - should use remote completion.
