@@ -257,4 +257,10 @@ typedef unsigned _bool;
 #define true   1U
 #endif
 
+#ifdef __GNUC__
+# define PRINTF_LIKE(n,m) __attribute__((format(printf,n,m)))
+#else
+# define PRINTF_LIKE(n,m)
+#endif
+
 #endif /* CONFIG_H */
