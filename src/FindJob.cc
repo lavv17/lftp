@@ -258,7 +258,7 @@ FinderJob::place::~place()
 void FinderJob::Down(const char *p)
 {
 #ifdef FIND_DEBUG
-printf("Down(%s)\n",p);
+   printf("Down(%s)\n",p);
 #endif
    xfree(dir);
    dir=xstrdup(p);

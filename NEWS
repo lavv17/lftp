@@ -1,11 +1,14 @@
 Version 3.0.0 - 2004-??-??
 
-* sftp protocol support (use `sftp://user@host' URLs).
+* sftp protocol support (use `sftp://user@host' URLs). sftp is a protocol
+  implemented as ssh2 subsystem, it is binary and works over a secure channel.
 * faster directory caching, no re-parsing each time.
-* ftp now follows RFC2640; FEAT, LANG, UTF8 support.
+* ftp now follows RFC2640; FEAT, LANG, UTF8 support; new settings ftp:use-feat
+  and ftp:lang.
 * ftp can set modification time on remote files using either SITE UTIME or two
-  argument MDTM command (off by default).
-* new settings ftp:use-feat, ftp:lang, ftp:use-site-utime, ftp:use-mdtm-overloaded.
+  argument MDTM command (off by default); new settings ftp:use-site-utime and
+  ftp:use-mdtm-overloaded.
+* charset translation in ftp protocol, new setting ftp:charset.
 * fixed put over https protocol.
 
 Version 2.6.11 - 2004-12-22

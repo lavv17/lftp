@@ -1737,8 +1737,6 @@ const char *SFtp::utf8_to_lc(const char *s)
    if(!recv_translate)
       return s;
 
-printf("utf8_to_lc(%s)\n",s);
-
    recv_translate->ResetTranslation();
    recv_translate->PutTranslated(s);
    recv_translate->Buffer::Put("",1);
@@ -1751,8 +1749,6 @@ const char *SFtp::lc_to_utf8(const char *s)
 {
    if(!send_translate)
       return s;
-
-printf("lc_to_utf8(%s)\n",s);
 
    send_translate->ResetTranslation();
    send_translate->PutTranslated(s);
