@@ -2031,6 +2031,8 @@ int SFtpListInfo::Do()
       if(!result && session->IsOpen())
 	 result=((SFtp*)session)->GetFileSet();
       LsCache::Add(session,"",FA::LONG_LIST, ubuf, result);
+      result->ExcludeDots();
+      result->Exclude(exclude_prefix,exclude);
       done=true;
       m=MOVED;
    }

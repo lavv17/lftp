@@ -1,3 +1,8 @@
+2004-11-18  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Fish.cc: fix downloading of growing files.
+	* SFtp.cc: fix excluding in SFtpListInfo (fixes e.g. mirror).
+
 2004-11-16  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Http.cc, NetAccess.cc: don't call Do directly, use Roll.

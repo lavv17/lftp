@@ -951,15 +951,12 @@ int Fish::Read(void *buf,int size)
       }
       if(size1==0)
 	 return DO_AGAIN;
-      if(entity_size>=0 && pos>=entity_size)
+      if(entity_size!=NO_SIZE && real_pos<entity_size)
       {
-	 DebugPrint("---- ",_("Received all (total)"));
-	 state=WAITING;
-	 return 0;
+	 if(real_pos+size1>entity_size)
+	    size1=entity_size-real_pos;
       }
-      if(entity_size>=0 && real_pos+size1>entity_size)
-	 size1=entity_size-real_pos;
-      if(entity_size==NO_SIZE)
+      else
       {
 	 const char *end=memstr(buf1,size1,"### ");
 	 if(end)
