@@ -4,7 +4,7 @@
 	  Solar Designer <solar@openwall.com> - increment *eol_size,
 	  not eol_size; use proper %lld format for size; use larger
 	  buffer for additional_file_info to store trailing \0; some
-	  style mods.
+	  style mods; use %32s instead of %32c.
 
 2003-12-08  Harnhammar, Ulf <Ulf.Harnhammar.9485@student.uu.se>
 
