@@ -337,6 +337,21 @@ const char *ResMgr::NumberValidate(char **value)
    return 0;
 }
 
+const char *ResMgr::FloatValidate(char **value)
+{
+   char *v=*value;
+
+   int n=0;
+
+   double f;
+   if(1>sscanf(v,"%lf%n",&f,&n))
+      return _("invalid floating point number");
+
+   v[n]=0;
+
+   return 0;
+}
+
 const char *ResMgr::UNumberValidate(char **value)
 {
    char *v=*value;

@@ -24,6 +24,7 @@
 
 #include <errno.h>
 #include <assert.h>
+#include <math.h>
 #include "NetAccess.h"
 #include "log.h"
 #include "url.h"
@@ -45,6 +46,8 @@ void NetAccess::Init()
    peer_curr=0;
 
    reconnect_interval=30;  // retry with 30 second interval
+   reconnect_interval_multiplier=1.2;
+   reconnect_interval_max=300;
    timeout=600;		   // 10 minutes with no events = reconnect
 
    proxy=0;
@@ -85,7 +88,13 @@ void NetAccess::Reconfig(const char *name)
    const char *c=hostname;
 
    timeout = ResMgr::Query("net:timeout",c);
-   reconnect_interval = ResMgr::Query("net:reconnect-interval",c);
+   reconnect_interval = ResMgr::Query("net:reconnect-interval-base",c);
+   reconnect_interval_multiplier = ResMgr::Query("net:reconnect-interval-multiplier",c);
+   if(reconnect_interval_multiplier<1)
+      reconnect_interval_multiplier=1;
+   reconnect_interval_max = ResMgr::Query("net:reconnect-interval-max",c);
+   if(reconnect_interval_max<reconnect_interval)
+      reconnect_interval_max=reconnect_interval;
    idle = ResMgr::Query("net:idle",c);
    max_retries = ResMgr::Query("net:max-retries",c);
    socket_buffer = ResMgr::Query("net:socket-buffer",c);
@@ -372,4 +381,36 @@ void RateLimit::ReconfigTotal()
    total.pool_max = ResMgr::Query("net:limit-total-max",0);
    total.Reset();
    total_reconfig_needed = false;
+}
+
+bool NetAccess::ReconnectAllowed()
+{
+   if(max_retries>0 && retries>=max_retries)
+      return true; // it will fault later - no need to wait.
+   if(try_time==0)
+      return true;
+   // cyclic exponential growth.
+   float interval = reconnect_interval*pow(reconnect_interval_multiplier,
+      retries%(int)(log((float)reconnect_interval_max/reconnect_interval)
+		   /log(reconnect_interval_multiplier)));
+   if(now-try_time >= interval)
+      return true;
+   Timeout(1000*(interval-(now-try_time)));
+   return false;
+}
+bool NetAccess::NextTry()
+{
+   try_time=now;
+
+   if(max_retries>0 && retries>=max_retries)
+   {
+      Fatal(_("max-retries exceeded"));
+      return false;
+   }
+   retries++;
+
+   assert(peer!=0);
+   assert(peer_curr<peer_num);
+
+   return true;
 }

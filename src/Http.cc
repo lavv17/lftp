@@ -531,11 +531,9 @@ int Http::Do()
 	    return MOVED;
 	 }
       }
-      if(try_time!=0 && now-try_time<reconnect_interval)
-      {
-	 block+=TimeOut(1000*(reconnect_interval-(now-try_time)));
+
+      if(!ReconnectAllowed())
 	 return m;
-      }
 
       if(Resolve(HTTP_DEFAULT_PORT,"http","tcp")==MOVED)
 	 m=MOVED;
@@ -545,17 +543,8 @@ int Http::Do()
       if(mode==CONNECT_VERIFY)
 	 return m;
 
-      try_time=now;
-
-      if(max_retries>0 && retries>=max_retries)
-      {
-	 Fatal(_("max-retries exceeded"));
+      if(!NextTry())
       	 return MOVED;
-      }
-      retries++;
-
-      assert(peer!=0);
-      assert(peer_curr<peer_num);
 
       sock=socket(peer[peer_curr].sa.sa_family,SOCK_STREAM,IPPROTO_TCP);
       if(sock==-1)
@@ -1107,7 +1096,7 @@ const char *Http::CurrentStatus()
       {
 	 if(resolver)
 	    return(_("Resolving host address..."));
-	 if(now-try_time<reconnect_interval)
+	 if(!ReconnectAllowed())
 	    return(_("Delaying before reconnect"));
       }
       return "";

@@ -82,6 +82,7 @@ public:
    static const char *BoolValidate(char **value);
    static const char *NumberValidate(char **value);
    static const char *UNumberValidate(char **value);
+   static const char *FloatValidate(char **value);
    static const char *TimeIntervalValidate(char **value);
    static bool str2bool(const char *value);
 
@@ -123,6 +124,14 @@ public:
    operator int()
       {
 	 return atoi(s);
+      }
+   operator double()
+      {
+	 return atof(s);
+      }
+   operator float()
+      {
+	 return atof(s);
       }
    operator const char*()
       {

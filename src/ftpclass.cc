@@ -654,6 +654,7 @@ void Ftp::InitFtp()
    allow_skey=true;
    force_skey=false;
    verify_data_address=true;
+   list_options=0;
 
    dos_path=false;
    vms_path=false;
@@ -699,6 +700,7 @@ Ftp::~Ftp()
 
    xfree(anon_user); anon_user=0;
    xfree(anon_pass); anon_pass=0;
+   xfree(list_options);
    xfree(line); line=0;
    xfree(resp); resp=0;
 
@@ -781,7 +783,7 @@ void  Ftp::GetBetterConnection(int level)
 int   Ftp::Do()
 {
    char	 *str =(char*)alloca(xstrlen(cwd)+xstrlen(hostname)+xstrlen(proxy)+256);
-   char	 *str1=(char*)alloca(xstrlen(file)+20);
+   char	 *str1=(char*)alloca(xstrlen(file)+xstrlen(list_options)+20);
    char	 *str2=(char*)alloca(xstrlen(file)+20);
    int   res;
    socklen_t addr_len;
@@ -826,11 +828,8 @@ int   Ftp::Do()
       if(state!=INITIAL_STATE)
 	 return MOVED;
 
-      if(try_time!=0 && now-try_time<reconnect_interval)
-      {
-	 block+=TimeOut(1000*(reconnect_interval-(now-try_time)));
+      if(!ReconnectAllowed())
 	 return m;
-      }
 
       if(Resolve(FTPPORT,"ftp","tcp")==MOVED)
 	 m=MOVED;
@@ -840,17 +839,8 @@ int   Ftp::Do()
       if(mode==CONNECT_VERIFY)
 	 return m;
 
-      try_time=now;
-
-      if(max_retries>0 && retries>=max_retries)
-      {
-	 Fatal(_("max-retries exceeded"));
-      	 return MOVED;
-      }
-      retries++;
-
-      assert(peer!=0);
-      assert(peer_curr<peer_num);
+      if(!NextTry())
+	 return MOVED;
 
       control_sock=socket(peer_sa.sa.sa_family,SOCK_STREAM,IPPROTO_TCP);
       if(control_sock==-1)
@@ -1097,10 +1087,18 @@ int   Ftp::Do()
          type=FTP_TYPE_A;
          if(!rest_list)
 	    real_pos=0;	// some ftp servers do not do REST/LIST.
+	 strcpy(str1,"LIST");
+	 if(list_options && list_options[0])
+	 {
+	    strcat(str1," ");
+	    strcat(str1,list_options);
+	 }
 	 if(file && file[0])
-            sprintf(str1,"LIST %s\n",file);
-         else
-            sprintf(str1,"LIST\n");
+	 {
+	    strcat(str1," ");
+            strcat(str1,file);
+	 }
+	 strcat(str1,"\n");
          break;
       case(LIST):
          type=FTP_TYPE_A;
@@ -2680,7 +2678,7 @@ const char *Ftp::CurrentStatus()
       {
 	 if(resolver)
 	    return(_("Resolving host address..."));
-	 if(now-try_time<reconnect_interval)
+	 if(!ReconnectAllowed())
 	    return(_("Delaying before reconnect"));
       }
    case(NO_HOST_STATE):
@@ -2919,6 +2917,9 @@ void Ftp::Reconfig(const char *name)
    force_skey = Query("skey-force",c);
    verify_data_address = Query("verify-address",c);
    verify_data_port = Query("verify-port",c);
+
+   xfree(list_options);
+   list_options = xstrdup(Query("list-options",c));
 
    xfree(anon_user);
    anon_user=xstrdup(Query("anon-user",c));

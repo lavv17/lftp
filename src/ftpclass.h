@@ -226,6 +226,7 @@ class Ftp : public NetAccess
    bool  verify_data_address:1;
    bool  verify_data_port:1;
    bool	 rest_list:1;
+   char  *list_options;
 
    void	 GetBetterConnection(int level);
    bool  SameConnection(const Ftp *o);

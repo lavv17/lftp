@@ -47,6 +47,8 @@ protected:
    int	 CheckTimeout();
 
    int	 reconnect_interval;
+   float reconnect_interval_multiplier;
+   int   reconnect_interval_max;
 
    int	 socket_buffer;
    int	 socket_maxseg;
@@ -72,6 +74,9 @@ protected:
    void SetProxy(const char *);
 
    int Resolve(const char *defp,const char *ser,const char *pr);
+
+   bool ReconnectAllowed();
+   bool NextTry();   // returns false if max-retries exceeded.
 
 public:
    const char *GetProto() { return "net"; }

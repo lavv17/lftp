@@ -1,6 +1,15 @@
+1999-12-04  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* resource.cc: new resources reconnect-interval-multiplier/max;
+	  reconnect-interval renamed to reconnect-interval-base.
+	* ResMgr.cc, ResMgr.h: (FloatValidate) new method.
+	* NetAccess.cc, NetAccess.h: (ReconnectAllowed) (NextTry) new methods;
+	  implement reconnect-interval-multiplier/max.
+	* Http.cc: use ReconnectAllowed and NextTry.
 	* commands.cc: disallow spaces in bookmark names.
 	* ftpclass.cc, ftpclass.h: (IOReady) implemented; check for space
-	  in last line of multiline response; use is_ascii_digit.
+	  in last line of multiline response; use is_ascii_digit;
+	  use ReconnectAllowed and NextTry.
 	* FileAccess.h: (IOReady) new method.
 
 1999-11-22  Alexander V. Lukyanov  <lav@yars.free.net>

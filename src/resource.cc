@@ -86,6 +86,7 @@ static const char *FtpDefaultAnonPass()
 static ResDecl resources[]={
    ResDecl  ("ftp:anon-pass",	       "-lftp@",0,0),
    ResDecl  ("ftp:anon-user",	       "anonymous",0,0),
+   ResDecl  ("ftp:list-options",       "",0,0),
    ResDecl  ("ftp:nop-interval",       "120",	ResMgr::UNumberValidate,0),
    ResDecl  ("ftp:passive-mode",       "off",   ResMgr::BoolValidate,0),
    ResDecl  ("ftp:proxy",	       "",	FtpProxyValidate,0),
@@ -107,7 +108,9 @@ static ResDecl resources[]={
    ResDecl  ("net:limit-total-max",    "0",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:limit-total-rate",   "0",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:max-retries",	       "0",	ResMgr::UNumberValidate,0),
-   ResDecl  ("net:reconnect-interval", "30",	ResMgr::UNumberValidate,0),
+   ResDecl  ("net:reconnect-interval-base","30",ResMgr::UNumberValidate,0),
+   ResDecl  ("net:reconnect-interval-multiplier","1.5",ResMgr::FloatValidate,0),
+   ResDecl  ("net:reconnect-interval-max","600",ResMgr::UNumberValidate,0),
    ResDecl  ("net:socket-buffer",      "0",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:socket-maxseg",      "0",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:timeout",	       "300",   ResMgr::UNumberValidate,0),
