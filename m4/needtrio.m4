@@ -36,7 +36,7 @@ AC_DEFUN([LFTP_NEED_TRIO],[
    ])
    case $ac_cv_need_trio in
    yes*)
-      LIBOBJS="$LIBOBJS strio.o trio.o trionan.o"
+      LIBOBJS="$LIBOBJS trio.o trionan.o triostr.o"
       AC_DEFINE(TRIO_REPLACE_STDIO, 1, [replace system's printf functions])
       ;;
    esac
