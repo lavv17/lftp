@@ -25,6 +25,7 @@
 #include "buffer.h"
 
 DirColors *DirColors::instance;
+const char DirColors::resource[]="color:dir-colors";
 
 /* Parse a string as part of the LS_COLORS variable; this may involve
    decoding all kinds of escape characters.  If equals_end is set an

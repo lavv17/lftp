@@ -1,3 +1,8 @@
+2001-11-20  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* DirColors.cc, DirColors.h: move resource definition to make it
+	  compile on irix.
+
 2001-11-19  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.cc: don't set LC_NUMERIC. It breaks default float settings
@@ -6,6 +11,7 @@
 	* FileSet.cc, FileSet.h: (SubtractCurr) new method; cosmetics.
 	* FtpListInfo.cc: remove FileInfo copying.
 	* LocalAccess.cc: remove files of unknown type from the set.
+	* misc.cc: use va_copy, should help powerpc.
 
 2001-11-15  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -31,7 +31,7 @@ class DirColors : public SMTask, public KeyValueDB
 {
    static DirColors *instance;
 
-   static const char * const resource="color:dir-colors";
+   static const char resource[];
    void Parse(const char *);
 
 public:
