@@ -2,7 +2,7 @@
 
 	* Http.cc, Http.h: init https properly; rework cookie sending/receiving,
 	  now cookies are joined from all matching closures, path is
-	  also checked; use lftp_ssl_new.
+	  also checked; use lftp_ssl_new; don't disconnect in some cases.
 	* ResMgr.cc, ResMgr.h: (QueryNext) new method for cookies merging.
 	* buffer.cc: use service lftp_ssl* functions.
 
