@@ -1,5 +1,5 @@
-EXTRA_DIST = lftp.conf lftp.lsm FAQ acconfig.h README.*\
- MIRRORS BUGS FEATURES
+EXTRA_DIST = lftp.conf lftp.lsm FAQ acconfig.h README README.debug-levels\
+ README.modules MIRRORS BUGS FEATURES
 SUBDIRS = include readline-4.1 lib doc intl src po m4
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
@@ -7,7 +7,7 @@ ACLOCAL_AMFLAGS = -I m4
 install-data-local:
 	if [ ! -f $(DESTDIR)$(sysconfdir)/lftp.conf ]; then \
 		$(mkinstalldirs) $(DESTDIR)$(sysconfdir); \
-		$(INSTALL_DATA) lftp.conf $(DESTDIR)$(sysconfdir)/lftp.conf; \
+		$(INSTALL_DATA) $(srcdir)/lftp.conf $(DESTDIR)$(sysconfdir)/lftp.conf; \
 	fi
 
 uninstall-local:
