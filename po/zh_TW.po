@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.3.9\n"
-"POT-Creation-Date: 2001-05-24 14:47+0400\n"
+"POT-Creation-Date: 2001-07-02 18:28+0400\n"
 "PO-Revision-Date: 2001-04-22 06:01+0800\n"
 "Last-Translator: Abel Cheung <maddog@linux.org.hk>\n"
 "Language-Team: Traditional Chinese <zh-l10n@linux.org.tw>\n"
@@ -96,7 +96,7 @@ msgstr "\t正在執行\n"
 msgid "\tWaiting for command\n"
 msgstr "\t等待輸入指令\n"
 
-#: src/CmdExec.cc:1320
+#: src/CmdExec.cc:1317
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: 指令 `%s' 並沒有被編譯到程式中。\n"
@@ -115,7 +115,7 @@ msgstr "存取失敗: %s"
 msgid "File cannot be accessed"
 msgstr "不能存取檔案"
 
-#: src/FileAccess.cc:325 src/ftpclass.cc:3402 src/ftpclass.cc:3411
+#: src/FileAccess.cc:325 src/ftpclass.cc:3456 src/ftpclass.cc:3465
 msgid "Not connected"
 msgstr "並未連線"
 
@@ -150,12 +150,12 @@ msgstr "檔案已移動: %s"
 msgid "File moved to `%s'"
 msgstr "檔案被移動到 `%s'"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:1341
+#: src/FtpListInfo.cc:230 src/NetAccess.cc:882
 #, c-format
 msgid "Getting directory contents (%lld)"
 msgstr "正在擷取目錄內容 (%lld)"
 
-#: src/FtpListInfo.cc:240 src/HttpDir.cc:1347
+#: src/FtpListInfo.cc:240 src/NetAccess.cc:888
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "正在擷取檔案資訊 (%d%%)"
@@ -292,7 +292,7 @@ msgstr "刪除舊的遠端目錄 `%s'"
 msgid "Old remote file `%s' is not removed"
 msgstr "舊的遠端檔案 `%s' 沒有被刪除"
 
-#: src/MirrorJob.cc:1153 src/MirrorJob.cc:1201 src/SleepJob.cc:128
+#: src/MirrorJob.cc:1153 src/MirrorJob.cc:1201 src/SleepJob.cc:138
 #: src/commands.cc:827 src/commands.cc:1000 src/commands.cc:1095
 #: src/commands.cc:1353 src/commands.cc:1547 src/commands.cc:1714
 #: src/commands.cc:1721 src/commands.cc:1905 src/commands.cc:1934
@@ -301,75 +301,84 @@ msgstr "舊的遠端檔案 `%s' 沒有被刪除"
 msgid "Try `help %s' for more information.\n"
 msgstr "輸入 `help %s' 查看更多資料。\n"
 
-#: src/ResMgr.cc:114
+#: src/ResMgr.cc:118
 msgid "no such variable"
 msgstr "沒有這個變數"
 
-#: src/ResMgr.cc:118
+#: src/ResMgr.cc:122
 msgid "ambiguous variable name"
 msgstr "變數名稱過於模糊"
 
-#: src/ResMgr.cc:341
+#: src/ResMgr.cc:396
 msgid "invalid boolean value"
 msgstr "不正確的布林值"
 
-#: src/ResMgr.cc:364 src/ResMgr.cc:395
+#: src/ResMgr.cc:419 src/ResMgr.cc:450
 msgid "invalid number"
 msgstr "不正確的數字"
 
-#: src/ResMgr.cc:379
+#: src/ResMgr.cc:434
 msgid "invalid floating point number"
 msgstr "不正確的浮點數"
 
 #. debug only
-#: src/ResMgr.cc:469
+#: src/ResMgr.cc:524
 #, c-format
 msgid "Query of variable `%s' failed: %s\n"
 msgstr "詢問變數 `%s' 失敗: %s\n"
 
-#: src/ResMgr.cc:593
+#: src/ResMgr.cc:648
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "不正確的時間單位，只允許 [smhd]。"
 
-#: src/ResMgr.cc:601
+#: src/ResMgr.cc:656
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "不正確的時間格式。格式是 <time><unit>，例如: 2h30m。"
 
-#: src/ResMgr.cc:629
+#: src/ResMgr.cc:684
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "區段的格式不正確。格式是 min-max，例如 10-20。"
 
-#: src/ResMgr.cc:694
+#: src/ResMgr.cc:753
+msgid "Invalid IPv4 numeric address"
+msgstr ""
+
+#: src/ResMgr.cc:759
 msgid "no closure defined for this setting"
 msgstr "此設定值並沒有定義 closure"
 
-#: src/Resolver.cc:157
+#: src/Resolver.cc:158
 msgid "dns cache hit\n"
 msgstr "找到 DNS 暫存資料\n"
 
-#: src/Http.cc:1537 src/Resolver.cc:184 src/ftpclass.cc:3407
+#: src/Http.cc:1563 src/Resolver.cc:185 src/ftpclass.cc:3461
 msgid "Resolving host address..."
 msgstr "正在解析主機地址..."
 
-#: src/Resolver.cc:247
+#: src/Resolver.cc:248
 msgid "host name resolve timeout"
 msgstr "逾時仍找不到主機地址"
 
 #. protocol error
-#: src/Resolver.cc:281
+#: src/Resolver.cc:282
 msgid "child returned invalid data"
 msgstr "子程式所接收的資料不正確"
 
-#: src/Resolver.cc:756
+#: src/Resolver.cc:291
+#, fuzzy, c-format
+msgid "---- %d address$|es$ found\n"
+msgstr "沒有地址"
+
+#: src/Resolver.cc:762
 msgid "Host name lookup failure"
 msgstr "不能檢查主機名稱"
 
-#: src/Resolver.cc:788
+#: src/Resolver.cc:794
 #, c-format
 msgid "no such %s service"
 msgstr "沒有這種 %s 服務"
 
-#: src/Resolver.cc:813
+#: src/Resolver.cc:819
 msgid "No address found"
 msgstr "沒有地址"
 
@@ -1404,142 +1413,151 @@ msgstr "對方使用了不匹配的地址"
 msgid "Switching to NOREST mode"
 msgstr "切換到 NOREST 模式"
 
-#: src/ftpclass.cc:379
+#: src/ftpclass.cc:399
 msgid "Server reply matched ftp:retry-530[-anonymous], retrying"
 msgstr ""
 
-#: src/ftpclass.cc:419
+#: src/ftpclass.cc:422
+msgid "Account is required, set ftp:acct variable"
+msgstr ""
+
+#: src/ftpclass.cc:447
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
 msgstr "設定了 ftp:skey-force 但伺服器不支援 OPIE 或 S/KEY"
 
-#: src/ftpclass.cc:435
+#: src/ftpclass.cc:463
 msgid "Saw `unknown', assume failed login"
 msgstr "看到 `unknown'，假設登入已失敗"
 
-#: src/ftpclass.cc:446
+#: src/ftpclass.cc:474
 msgid "assuming failed host name lookup"
 msgstr "假設查看主機名稱已失敗"
 
-#: src/ftpclass.cc:677
+#: src/ftpclass.cc:705
 msgid "cannot parse EPSV response"
 msgstr "不能分析 EPSV 回應內容"
 
-#: src/Http.cc:753 src/ftpclass.cc:1027
+#: src/Http.cc:764 src/ftpclass.cc:1044
 msgid "Closing idle connection"
 msgstr "關閉了閒置的連線"
 
-#: src/Http.cc:881 src/ftpclass.cc:1106
+#: src/Http.cc:892 src/ftpclass.cc:1123
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "不能建立地址族群 %d 的 socket"
 
-#: src/ftpclass.cc:1283
+#: src/ftpclass.cc:1302
 msgid "SITE CHMOD is not supported by this site"
 msgstr "這個站台不支援 SITE CHMOD"
 
-#: src/ftpclass.cc:1631 src/ftpclass.cc:1664
+#: src/ftpclass.cc:1650 src/ftpclass.cc:1690
 msgid "unsupported network protocol"
 msgstr "不受支援的網絡協定"
 
-#: src/ftpclass.cc:1773
+#: src/ftpclass.cc:1800
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "連接資料 socket 到 (%s) 連接埠 %u"
 
-#: src/ftpclass.cc:1798 src/ftpclass.cc:3290
+#: src/ftpclass.cc:1825 src/ftpclass.cc:3344
 msgid "Switching passive mode off"
 msgstr "關閉了 passive 模式"
 
-#: src/Http.cc:960 src/ftpclass.cc:2212
+#: src/Http.cc:971 src/ftpclass.cc:2266
 msgid "Peer closed connection"
 msgstr "對方節點關閉了連線"
 
-#: src/ftpclass.cc:2239
+#: src/ftpclass.cc:2293
 msgid "Persist and retry"
 msgstr "繼續重試"
 
-#: src/ftpclass.cc:2336
+#: src/ftpclass.cc:2390
 msgid "Closing control socket"
 msgstr "正在關閉控制 socket"
 
-#: src/ftpclass.cc:2417
+#: src/ftpclass.cc:2471
 msgid "Closing data socket"
 msgstr "正在關閉資料 socket"
 
-#: src/ftpclass.cc:3135
+#: src/ftpclass.cc:3189
 msgid "saw file size in response"
 msgstr "回應包括檔案的大小"
 
-#: src/ftpclass.cc:3146
+#: src/ftpclass.cc:3200
 msgid "remote end closes connection"
 msgstr "遠端終止了連線"
 
-#: src/ftpclass.cc:3154
+#: src/ftpclass.cc:3208
 msgid "extra server response"
 msgstr "額外的伺服器回應"
 
-#: src/ftpclass.cc:3166 src/ftpclass.cc:3191
+#: src/ftpclass.cc:3220 src/ftpclass.cc:3245
 msgid "Turning on sync-mode"
 msgstr "啟動 sync-mode"
 
-#: src/ftpclass.cc:3307
+#: src/ftpclass.cc:3361
 msgid "Switching passive mode on"
 msgstr "開啟 passive 模式"
 
-#: src/ftpclass.cc:3358
+#: src/ftpclass.cc:3412
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr "已設定 ftp:ssl-force 但伺服器不支援/不使用 SSL"
 
-#: src/ftpclass.cc:3397
+#: src/ftpclass.cc:3451
 msgid "Sending commands..."
 msgstr "正在送出指令..."
 
-#: src/Http.cc:1550 src/ftpclass.cc:3399 src/ftpclass.cc:3424
-#: src/ftpclass.cc:3431
+#: src/Http.cc:1576 src/ftpclass.cc:3453 src/ftpclass.cc:3478
+#: src/ftpclass.cc:3490
 msgid "Waiting for response..."
 msgstr "正在等待回應..."
 
-#: src/Http.cc:1545 src/ftpclass.cc:3400
+#: src/Http.cc:1571 src/ftpclass.cc:3454
 msgid "Connection idle"
 msgstr "連線閒置了"
 
-#: src/Http.cc:1543 src/ftpclass.cc:3413
+#: src/Http.cc:1569 src/ftpclass.cc:3467
 msgid "Connecting..."
 msgstr "正在連線..."
 
-#: src/ftpclass.cc:3417
+#: src/ftpclass.cc:3471
 msgid "TLS negotiation..."
 msgstr "使用 TLS 協定通訊中…"
 
-#: src/ftpclass.cc:3419
+#: src/ftpclass.cc:3473
 msgid "Connected"
 msgstr "已經連接"
 
-#: src/ftpclass.cc:3421
+#: src/ftpclass.cc:3475
 msgid "Logging in..."
 msgstr "正在登入..."
 
-#: src/ftpclass.cc:3425
+#: src/ftpclass.cc:3479
 msgid "Making data connection..."
 msgstr "正在建立資料傳送的連線..."
 
-#: src/ftpclass.cc:3427
+#: src/ftpclass.cc:3481
 msgid "Changing remote directory..."
 msgstr "改變遠端目錄..."
 
-#: src/ftpclass.cc:3430 src/ftpclass.cc:3442
+#: src/ftpclass.cc:3486
+#, fuzzy
+msgid "Waiting for other copy peer..."
+msgstr "正在等待回應..."
+
+#: src/ftpclass.cc:3489 src/ftpclass.cc:3501
 msgid "Waiting for transfer to complete"
 msgstr "等待傳送完成"
 
-#: src/ftpclass.cc:3433
+#: src/ftpclass.cc:3492
 msgid "Waiting for data connection..."
 msgstr "等待資料傳送的連線..."
 
-#: src/Http.cc:1548 src/ftpclass.cc:3438
+#: src/Http.cc:1574 src/ftpclass.cc:3497
 msgid "Sending data"
 msgstr "正在傳送資料"
 
-#: src/Http.cc:1553 src/ftpclass.cc:3440
+#: src/Http.cc:1579 src/ftpclass.cc:3499
 msgid "Receiving data"
 msgstr "正在接收資料"
 
@@ -1548,18 +1566,18 @@ msgstr "正在接收資料"
 msgid "[%lu] Terminated by signal %d. %s"
 msgstr "[%lu] 以訊號 %d 終結。%s"
 
-#: src/lftp.cc:251
+#: src/lftp.cc:260
 #, c-format
 msgid "[%lu] Started.  %s"
 msgstr "[%lu] 開始。%s"
 
-#: src/lftp.cc:260
+#: src/lftp.cc:269
 #, c-format
 msgid "[%lu] Finished. %s"
 msgstr "[%lu] 完成。%s"
 
 #. parent
-#: src/lftp.cc:264
+#: src/lftp.cc:273
 #, c-format
 msgid "[%lu] Moving to background to complete transfers...\n"
 msgstr "[%lu] 將傳送工作移到背景繼續執行\n"
@@ -1629,63 +1647,63 @@ msgstr "%s 成功，刪除了 %d 個目錄\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s 成功，刪除了 %d 個檔案\n"
 
-#: src/Http.cc:160
+#: src/Http.cc:167
 msgid "Closing HTTP connection"
 msgstr "正在關閉 HTTP 連線"
 
-#: src/Http.cc:168
+#: src/Http.cc:175
 msgid "POST method failed"
 msgstr "使用 POST 方法失敗"
 
 #. problem here: hftp cannot work without proxy
-#: src/Http.cc:832
+#: src/Http.cc:843
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "若沒有代理伺服器，是不可能在 http 連線上使用 ftp 的，請設定 http:proxy。"
 
-#: src/Http.cc:971
+#: src/Http.cc:982
 msgid "Sending request..."
 msgstr "正在送出要求..."
 
 #. eof
-#: src/Http.cc:1009
+#: src/Http.cc:1020
 msgid "Hit EOF while fetching headers"
 msgstr "讀取標頭時檔案已終結了"
 
 #. should never happen
-#: src/Http.cc:1071
+#: src/Http.cc:1089
 msgid "Success, but did nothing??"
 msgstr "成功，但沒有動作？"
 
-#: src/Http.cc:1105
+#: src/Http.cc:1123
 msgid "Could not parse HTTP status line"
 msgstr "不能分析 HTTP 狀態"
 
-#: src/Http.cc:1199
+#: src/Http.cc:1224
 msgid "Receiving body..."
 msgstr "正在接收內容…"
 
-#: src/Http.cc:1335
+#: src/Http.cc:1359
 msgid "Hit EOF"
 msgstr "檔案終結"
 
-#: src/Http.cc:1338
+#: src/Http.cc:1362
 msgid "Received not enough data, retrying"
 msgstr "接收的資料不足，繼續嘗試"
 
-#: src/Http.cc:1346
+#: src/Http.cc:1370
 msgid "Received all"
 msgstr "已接收所有資料"
 
-#: src/Http.cc:1351
+#: src/Http.cc:1375
 msgid "Received all (total)"
 msgstr "已接收所有資料"
 
-#: src/Http.cc:1372 src/Http.cc:1393
+#: src/Http.cc:1398 src/Http.cc:1419
 msgid "chunked format violated"
 msgstr "資料格式錯誤"
 
-#: src/Http.cc:1551
+#: src/Http.cc:1577
 msgid "Fetching headers..."
 msgstr "正在讀取標頭…"
 
@@ -1706,37 +1724,8 @@ msgstr "只允許使用 PUT 或 POST"
 msgid "unknown address family `%s'"
 msgstr "未知的地址族群 `%s'"
 
-#: src/HttpDir.cc:587
-msgid "apache listing matched"
-msgstr "apache 形式列表"
-
-#: src/HttpDir.cc:597
-msgid "unusual apache listing matched"
-msgstr "不尋常的 apache 形式列表"
-
-#: src/HttpDir.cc:614
-msgid "Netscape-Proxy 2.53 listing matched"
-msgstr "Netscape-Proxy 2.53 形式列表"
-
-#: src/HttpDir.cc:624
-msgid "Netscape-Proxy 2.53 listing matched (dir/symlink)"
-msgstr "Netscape-Proxy 2.53 形式列表 (檔案/符號連結)"
-
-#. no symlinks here.
-#: src/HttpDir.cc:632
-msgid "squid EPLF listing matched"
-msgstr "squid EPLF 形式列表"
-
-#: src/HttpDir.cc:654
-msgid "Mini-Proxy web server listing matched"
-msgstr "Mini-Proxy 網頁伺服器形式列表"
-
-#: src/HttpDir.cc:694
-msgid "apache ftp over http proxy listing matched"
-msgstr "apache 經 http 代理伺服器的 ftp 形式列表"
-
-#: src/FtpDirList.cc:223 src/FtpSplitList.cc:182 src/HttpDir.cc:961
-#: src/HttpDir.cc:1140
+#: src/FtpDirList.cc:223 src/FtpSplitList.cc:182 src/HttpDir.cc:1116
+#: src/NetAccess.cc:695
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "正在擷取檔案列表 (%lld) [%s]"
@@ -1869,11 +1858,11 @@ msgid "eta:"
 msgstr "估計距離完成時間:"
 
 #. both ways failed. Fall back to normal copying.
-#: src/FileCopyFtp.cc:77
+#: src/FileCopyFtp.cc:87
 msgid "**** FXP: giving up, reverting to plain copy\n"
 msgstr "**** FXP: 放棄，使用普通複製\n"
 
-#: src/FileCopyFtp.cc:90
+#: src/FileCopyFtp.cc:100
 msgid "**** FXP: trying to reverse ftp:fxp-passive-source\n"
 msgstr "**** FXP: 嘗試改變 ftp:fxp-passive-source 設定值\n"
 
@@ -1897,24 +1886,24 @@ msgstr "chdir(%s) 失敗: %s\n"
 msgid "execl(/bin/sh) failed: %s\n"
 msgstr "execl(/bin/sh) 失敗: %s\n"
 
-#: src/NetAccess.cc:208
+#: src/NetAccess.cc:210
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "連線到 %s%s (%s) 連接埠 %u"
 
-#: src/NetAccess.cc:263
+#: src/NetAccess.cc:265
 msgid "Timeout - reconnecting"
 msgstr "逾時 - 重新連線"
 
-#: src/NetAccess.cc:491
+#: src/NetAccess.cc:493
 msgid "Connections limit reached"
 msgstr "到達連線數目的上限"
 
-#: src/NetAccess.cc:495
+#: src/NetAccess.cc:497
 msgid "Delaying before reconnect"
 msgstr "重新連接前延遲(秒)"
 
-#: src/NetAccess.cc:506
+#: src/NetAccess.cc:508
 msgid "max-retries exceeded"
 msgstr "超過 max-retries 上限"
 
@@ -1929,7 +1918,7 @@ msgstr "%s: 錯誤 - 偵測到資源鎖定\n"
 msgid "\tRepeat count: %d\n"
 msgstr "\t重複次數: %d\n"
 
-#: src/SleepJob.cc:126
+#: src/SleepJob.cc:136
 #, c-format
 msgid "%s: argument required. "
 msgstr "%s: 需要參數。"
@@ -1952,6 +1941,27 @@ msgstr "需要模組 `%s': %s\n"
 #: src/module.cc:201
 msgid "modules are not supported on this system"
 msgstr "此系統不支援模組"
+
+#~ msgid "apache listing matched"
+#~ msgstr "apache 形式列表"
+
+#~ msgid "unusual apache listing matched"
+#~ msgstr "不尋常的 apache 形式列表"
+
+#~ msgid "Netscape-Proxy 2.53 listing matched"
+#~ msgstr "Netscape-Proxy 2.53 形式列表"
+
+#~ msgid "Netscape-Proxy 2.53 listing matched (dir/symlink)"
+#~ msgstr "Netscape-Proxy 2.53 形式列表 (檔案/符號連結)"
+
+#~ msgid "squid EPLF listing matched"
+#~ msgstr "squid EPLF 形式列表"
+
+#~ msgid "Mini-Proxy web server listing matched"
+#~ msgstr "Mini-Proxy 網頁伺服器形式列表"
+
+#~ msgid "apache ftp over http proxy listing matched"
+#~ msgstr "apache 經 http 代理伺服器的 ftp 形式列表"
 
 #~ msgid "Saw `Login incorrect', assume failed login"
 #~ msgstr "看到 `Login incorrect'，假設登入已失敗"

@@ -1,8 +1,29 @@
+Version 2.4.0 - 2001-07-??
+
+* fish protocol support (over plain ssh/rsh connection).
+* support for variable name completion (Nicolas Noble).
+* support http keep-alive in case of chunked transfer encoding.
+* terminate some never-ending jobs before moving to background.
+* included trio for systems lacking vsnprintf (Albert Chin).
+* support for HTTP/1.1 416 reply code.
+* support for ftp ACCT command (ftp:acct variable) and for SITE GROUP command
+  (ftp:site-group variable). E.g. `set ftp:acct/user@host account/password'.
+* new setting ftp:port-ipv4 to specify explicitly IP address send with PORT
+  command (suggested by Julien Oster and Jonas Jensen with patches).
+* roxen directory listing support.
+* fixed reget of non-existent files.
+* fixed restart of transfer in FXP mode.
+* fixed rare live-lock in open (it required dns:use-fork=no and happened
+  rarely).
+* fixed a memory leak happening in resolver when dns:use-fork=no.
+* fixed debug redirection to a file (debug LEVEL -o log).
+* fixed glob for */* in http.
+
 Version 2.3.11 - 2001-05-24
 
 * new settings ftp:retry-530 and ftp:retry-530-anonymous. Retry on server
   reply 530 for PASS command if text matches these regular expressions.
-  This settings should be useful to distinguish between overloaded server
+  These settings should be useful to distinguish between overloaded server
   (temporary condition) and incorrect password (permanent condition).
 * retry ftp login quickly on next address if the server has many (works
   well on ftp.redhat.com, for example).

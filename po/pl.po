@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp\n"
-"POT-Creation-Date: 2001-05-24 14:47+0400\n"
+"POT-Creation-Date: 2001-07-02 18:28+0400\n"
 "PO-Revision-Date: 1999-06-08 15:27+02:00\n"
 "Last-Translator: Arkadiusz Mi¶kiewicz <misiek@pld.org.pl>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -96,7 +96,7 @@ msgstr "\tUruchamianie\n"
 msgid "\tWaiting for command\n"
 msgstr "\tOczekiwanie na komendê\n"
 
-#: src/CmdExec.cc:1320
+#: src/CmdExec.cc:1317
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: komenda `%s' nie zosta³a wkompilowana.\n"
@@ -115,7 +115,7 @@ msgstr "Brak dostêpu: %s"
 msgid "File cannot be accessed"
 msgstr "Brak dostêpu do pliku"
 
-#: src/FileAccess.cc:325 src/ftpclass.cc:3402 src/ftpclass.cc:3411
+#: src/FileAccess.cc:325 src/ftpclass.cc:3456 src/ftpclass.cc:3465
 msgid "Not connected"
 msgstr "Brak po³±czenia"
 
@@ -150,12 +150,12 @@ msgstr "Plik przeniesiony: %s"
 msgid "File moved to `%s'"
 msgstr "Plik przeniesiony do `%s'"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:1341
+#: src/FtpListInfo.cc:230 src/NetAccess.cc:882
 #, c-format
 msgid "Getting directory contents (%lld)"
 msgstr "Pobieranie informacji o zawarto¶ci katalogu (%lld)"
 
-#: src/FtpListInfo.cc:240 src/HttpDir.cc:1347
+#: src/FtpListInfo.cc:240 src/NetAccess.cc:888
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "Pobieranie informcji o plikach (%d%%)"
@@ -305,7 +305,7 @@ msgstr "Usuwanie starego zdalnego katalogu `%s'"
 msgid "Old remote file `%s' is not removed"
 msgstr "Stary zdalny plik `%s' nie zosta³ usuniêty"
 
-#: src/MirrorJob.cc:1153 src/MirrorJob.cc:1201 src/SleepJob.cc:128
+#: src/MirrorJob.cc:1153 src/MirrorJob.cc:1201 src/SleepJob.cc:138
 #: src/commands.cc:827 src/commands.cc:1000 src/commands.cc:1095
 #: src/commands.cc:1353 src/commands.cc:1547 src/commands.cc:1714
 #: src/commands.cc:1721 src/commands.cc:1905 src/commands.cc:1934
@@ -314,75 +314,84 @@ msgstr "Stary zdalny plik `%s' nie zosta³ usuniêty"
 msgid "Try `help %s' for more information.\n"
 msgstr "W celu uzyskania wiêcej informacji spróbuj `help %s' .\n"
 
-#: src/ResMgr.cc:114
+#: src/ResMgr.cc:118
 msgid "no such variable"
 msgstr "nie ma takiej zmiennej"
 
-#: src/ResMgr.cc:118
+#: src/ResMgr.cc:122
 msgid "ambiguous variable name"
 msgstr "dwuznaczna nazwa zmiennej"
 
-#: src/ResMgr.cc:341
+#: src/ResMgr.cc:396
 msgid "invalid boolean value"
 msgstr "nieprawid³owa warto¶æ zmiennej bool"
 
-#: src/ResMgr.cc:364 src/ResMgr.cc:395
+#: src/ResMgr.cc:419 src/ResMgr.cc:450
 msgid "invalid number"
 msgstr "nieprawid³owy numer"
 
-#: src/ResMgr.cc:379
+#: src/ResMgr.cc:434
 msgid "invalid floating point number"
 msgstr "nieprawid³owy numer jednostki zmiennoprzecinkowej"
 
 #. debug only
-#: src/ResMgr.cc:469
+#: src/ResMgr.cc:524
 #, c-format
 msgid "Query of variable `%s' failed: %s\n"
 msgstr "Zapytanie o zmienn± `%s' niepowiod³o siê: %s\n"
 
-#: src/ResMgr.cc:593
+#: src/ResMgr.cc:648
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "Nieprawid³owa litera-jednostka czasu, wy³±cznie [shmd] s± dozwolone."
 
-#: src/ResMgr.cc:601
+#: src/ResMgr.cc:656
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "Nieprawid³owy format czasu. FOrmat to <czas><jednostka>, np. 2h30m."
 
-#: src/ResMgr.cc:629
+#: src/ResMgr.cc:684
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Nieprawid³owy format zakresu. Format to min-maks, np. 10-20."
 
-#: src/ResMgr.cc:694
+#: src/ResMgr.cc:753
+msgid "Invalid IPv4 numeric address"
+msgstr ""
+
+#: src/ResMgr.cc:759
 msgid "no closure defined for this setting"
 msgstr "nie zdefiniowano zamkniêcia dla tego ustawienia"
 
-#: src/Resolver.cc:157
+#: src/Resolver.cc:158
 msgid "dns cache hit\n"
 msgstr "trafiony cel w pamiêci podrêcznej\n"
 
-#: src/Http.cc:1537 src/Resolver.cc:184 src/ftpclass.cc:3407
+#: src/Http.cc:1563 src/Resolver.cc:185 src/ftpclass.cc:3461
 msgid "Resolving host address..."
 msgstr "Uzyskiwanie adresu hosta..."
 
-#: src/Resolver.cc:247
+#: src/Resolver.cc:248
 msgid "host name resolve timeout"
 msgstr "przekroczony czas badania nazwy hosta"
 
 #. protocol error
-#: src/Resolver.cc:281
+#: src/Resolver.cc:282
 msgid "child returned invalid data"
 msgstr "proces potomny zwróci³ niew³a¶ciwe dane"
 
-#: src/Resolver.cc:756
+#: src/Resolver.cc:291
+#, fuzzy, c-format
+msgid "---- %d address$|es$ found\n"
+msgstr "Nie znaleziono adresu"
+
+#: src/Resolver.cc:762
 msgid "Host name lookup failure"
 msgstr "Rozwi±zywanie nazwy hosta niepowiod³o siê"
 
-#: src/Resolver.cc:788
+#: src/Resolver.cc:794
 #, c-format
 msgid "no such %s service"
 msgstr "nie ma takiej us³ugi %s"
 
-#: src/Resolver.cc:813
+#: src/Resolver.cc:819
 msgid "No address found"
 msgstr "Nie znaleziono adresu"
 
@@ -1452,144 +1461,153 @@ msgstr "Po³±czenie dla danych ma nieprawid³owy adres"
 msgid "Switching to NOREST mode"
 msgstr "Prze³±czam siê w tryb NOREST"
 
-#: src/ftpclass.cc:379
+#: src/ftpclass.cc:399
 msgid "Server reply matched ftp:retry-530[-anonymous], retrying"
 msgstr ""
 
-#: src/ftpclass.cc:419
+#: src/ftpclass.cc:422
+msgid "Account is required, set ftp:acct variable"
+msgstr ""
+
+#: src/ftpclass.cc:447
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
 msgstr "ftp:skey-force jest ustawione i serwer nie obs³uguje OPIE ani S/KEY"
 
-#: src/ftpclass.cc:435
+#: src/ftpclass.cc:463
 msgid "Saw `unknown', assume failed login"
 msgstr "Pojawi³o siê `unknown', przypuszczalnie logowanie nie powiod³o siê"
 
-#: src/ftpclass.cc:446
+#: src/ftpclass.cc:474
 msgid "assuming failed host name lookup"
 msgstr "przypuszalnie nie powiod³o siê wyszukiwanie IP hosta"
 
-#: src/ftpclass.cc:677
+#: src/ftpclass.cc:705
 msgid "cannot parse EPSV response"
 msgstr "nie mo¿na przeanalizowaæ odpowiedzi EPSV"
 
-#: src/Http.cc:753 src/ftpclass.cc:1027
+#: src/Http.cc:764 src/ftpclass.cc:1044
 msgid "Closing idle connection"
 msgstr "Zamykanie bezczynnego po³±czenia"
 
-#: src/Http.cc:881 src/ftpclass.cc:1106
+#: src/Http.cc:892 src/ftpclass.cc:1123
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "nie mo¿na utworzyæ gniazda dla rodziny adresu %d"
 
-#: src/ftpclass.cc:1283
+#: src/ftpclass.cc:1302
 msgid "SITE CHMOD is not supported by this site"
 msgstr "SITE CHMOD nie jest obs³ugiwane przez ten serwer"
 
-#: src/ftpclass.cc:1631 src/ftpclass.cc:1664
+#: src/ftpclass.cc:1650 src/ftpclass.cc:1690
 msgid "unsupported network protocol"
 msgstr "protokó³ nie jest obs³ugiwany"
 
-#: src/ftpclass.cc:1773
+#: src/ftpclass.cc:1800
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "£±cznie siê (data socket) z (%s) port %u"
 
-#: src/ftpclass.cc:1798 src/ftpclass.cc:3290
+#: src/ftpclass.cc:1825 src/ftpclass.cc:3344
 msgid "Switching passive mode off"
 msgstr "Wy³±czam tryb pasywny"
 
-#: src/Http.cc:960 src/ftpclass.cc:2212
+#: src/Http.cc:971 src/ftpclass.cc:2266
 msgid "Peer closed connection"
 msgstr "Komputer po drugiej stronie zamkn±³ po³±czenie"
 
-#: src/ftpclass.cc:2239
+#: src/ftpclass.cc:2293
 msgid "Persist and retry"
 msgstr "Ponowne wznawianie"
 
-#: src/ftpclass.cc:2336
+#: src/ftpclass.cc:2390
 msgid "Closing control socket"
 msgstr "Zamykanie control socket"
 
-#: src/ftpclass.cc:2417
+#: src/ftpclass.cc:2471
 msgid "Closing data socket"
 msgstr "Zamykam gniazdo danych"
 
-#: src/ftpclass.cc:3135
+#: src/ftpclass.cc:3189
 msgid "saw file size in response"
 msgstr "w odpowiedzi pojawi³ siê rozmiar pliku"
 
-#: src/ftpclass.cc:3146
+#: src/ftpclass.cc:3200
 msgid "remote end closes connection"
 msgstr "komputer po drugiej stronie zamkn±³ po³±czenie"
 
-#: src/ftpclass.cc:3154
+#: src/ftpclass.cc:3208
 msgid "extra server response"
 msgstr "dodatkowa odpowied¼ serwera"
 
-#: src/ftpclass.cc:3166 src/ftpclass.cc:3191
+#: src/ftpclass.cc:3220 src/ftpclass.cc:3245
 msgid "Turning on sync-mode"
 msgstr "W³±czanie trybu sync"
 
-#: src/ftpclass.cc:3307
+#: src/ftpclass.cc:3361
 msgid "Switching passive mode on"
 msgstr "W³±czam tryb pasywny"
 
-#: src/ftpclass.cc:3358
+#: src/ftpclass.cc:3412
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force jest ustawione i serwer nie wspiera lub nie zezwala\n"
 "na po³±czenia SSL"
 
-#: src/ftpclass.cc:3397
+#: src/ftpclass.cc:3451
 msgid "Sending commands..."
 msgstr "Wysy³anie komend..."
 
-#: src/Http.cc:1550 src/ftpclass.cc:3399 src/ftpclass.cc:3424
-#: src/ftpclass.cc:3431
+#: src/Http.cc:1576 src/ftpclass.cc:3453 src/ftpclass.cc:3478
+#: src/ftpclass.cc:3490
 msgid "Waiting for response..."
 msgstr "Czekanie na odpowied¼..."
 
-#: src/Http.cc:1545 src/ftpclass.cc:3400
+#: src/Http.cc:1571 src/ftpclass.cc:3454
 msgid "Connection idle"
 msgstr "Po³±czenie bezczynne"
 
-#: src/Http.cc:1543 src/ftpclass.cc:3413
+#: src/Http.cc:1569 src/ftpclass.cc:3467
 msgid "Connecting..."
 msgstr "£±czenie siê..."
 
-#: src/ftpclass.cc:3417
+#: src/ftpclass.cc:3471
 msgid "TLS negotiation..."
 msgstr "Negocjacja TLS..."
 
-#: src/ftpclass.cc:3419
+#: src/ftpclass.cc:3473
 msgid "Connected"
 msgstr "Po³±czono"
 
-#: src/ftpclass.cc:3421
+#: src/ftpclass.cc:3475
 msgid "Logging in..."
 msgstr "Logowanie siê..."
 
-#: src/ftpclass.cc:3425
+#: src/ftpclass.cc:3479
 msgid "Making data connection..."
 msgstr "Ustanawianie po³±czenie dla danych..."
 
-#: src/ftpclass.cc:3427
+#: src/ftpclass.cc:3481
 msgid "Changing remote directory..."
 msgstr "Zmiana zdalnego katalogu..."
 
-#: src/ftpclass.cc:3430 src/ftpclass.cc:3442
+#: src/ftpclass.cc:3486
+#, fuzzy
+msgid "Waiting for other copy peer..."
+msgstr "Czekanie na odpowied¼..."
+
+#: src/ftpclass.cc:3489 src/ftpclass.cc:3501
 msgid "Waiting for transfer to complete"
 msgstr "Oczekiwanie na zakoñczenie transferu"
 
-#: src/ftpclass.cc:3433
+#: src/ftpclass.cc:3492
 msgid "Waiting for data connection..."
 msgstr "Czekam na po³±czenie dla danych..."
 
-#: src/Http.cc:1548 src/ftpclass.cc:3438
+#: src/Http.cc:1574 src/ftpclass.cc:3497
 msgid "Sending data"
 msgstr "Wysy³am dane"
 
-#: src/Http.cc:1553 src/ftpclass.cc:3440
+#: src/Http.cc:1579 src/ftpclass.cc:3499
 msgid "Receiving data"
 msgstr "Otrzymujê dane"
 
@@ -1598,18 +1616,18 @@ msgstr "Otrzymujê dane"
 msgid "[%lu] Terminated by signal %d. %s"
 msgstr "[%lu] Przerwany przez sygna³ %d. %s"
 
-#: src/lftp.cc:251
+#: src/lftp.cc:260
 #, c-format
 msgid "[%lu] Started.  %s"
 msgstr "[%lu] Zosta³ uruchomiony.  %s"
 
-#: src/lftp.cc:260
+#: src/lftp.cc:269
 #, c-format
 msgid "[%lu] Finished. %s"
 msgstr "[%lu] Zakoñczono. %s"
 
 #. parent
-#: src/lftp.cc:264
+#: src/lftp.cc:273
 #, c-format
 msgid "[%lu] Moving to background to complete transfers...\n"
 msgstr "[%lu] Przechodzenie w t³o w celu dokoñczenia transferów...\n"
@@ -1679,62 +1697,62 @@ msgstr "%s ok, %d katalog$|i|ów$ usuniêto\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d plik$|i|ów$ usuniêto\n"
 
-#: src/Http.cc:160
+#: src/Http.cc:167
 msgid "Closing HTTP connection"
 msgstr "Zamykanie po³±czenia HTTP"
 
-#: src/Http.cc:168
+#: src/Http.cc:175
 msgid "POST method failed"
 msgstr "nie powiod³a siê metoda POST"
 
 #. problem here: hftp cannot work without proxy
-#: src/Http.cc:832
+#: src/Http.cc:843
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr "ftp poprzez http mo¿e nie dzia³aæ bez proxy, ustaw hftp:proxy"
 
-#: src/Http.cc:971
+#: src/Http.cc:982
 msgid "Sending request..."
 msgstr "Wysy³anie ¿±dania..."
 
 #. eof
-#: src/Http.cc:1009
+#: src/Http.cc:1020
 msgid "Hit EOF while fetching headers"
 msgstr "Natrafiono na EOF podczas przesy³ania nag³ówków"
 
 #. should never happen
-#: src/Http.cc:1071
+#: src/Http.cc:1089
 msgid "Success, but did nothing??"
 msgstr "Sukcjes, ale nic nie zrobiono??"
 
-#: src/Http.cc:1105
+#: src/Http.cc:1123
 msgid "Could not parse HTTP status line"
 msgstr "Nie mo¿na zanalizowaæ lini statusu HTTP"
 
-#: src/Http.cc:1199
+#: src/Http.cc:1224
 msgid "Receiving body..."
 msgstr "Otrzymujê dane..."
 
-#: src/Http.cc:1335
+#: src/Http.cc:1359
 msgid "Hit EOF"
 msgstr "Natrafiono na EOF"
 
-#: src/Http.cc:1338
+#: src/Http.cc:1362
 msgid "Received not enough data, retrying"
 msgstr "Przes³anie nie wystarczaj±c± ilo¶æ danych, próbujê ponownie"
 
-#: src/Http.cc:1346
+#: src/Http.cc:1370
 msgid "Received all"
 msgstr "Przes³ano wszystko"
 
-#: src/Http.cc:1351
+#: src/Http.cc:1375
 msgid "Received all (total)"
 msgstr "Przes³ano wszystko (ca³o¶æ)"
 
-#: src/Http.cc:1372 src/Http.cc:1393
+#: src/Http.cc:1398 src/Http.cc:1419
 msgid "chunked format violated"
 msgstr "naruszony format"
 
-#: src/Http.cc:1551
+#: src/Http.cc:1577
 msgid "Fetching headers..."
 msgstr "Przesy³am nag³ówki..."
 
@@ -1755,37 +1773,8 @@ msgstr "tylko warto¶ci PUT i POST s± dozwolone"
 msgid "unknown address family `%s'"
 msgstr "nieznana rodzina adresu `%s'"
 
-#: src/HttpDir.cc:587
-msgid "apache listing matched"
-msgstr "listowanie apache pasuje"
-
-#: src/HttpDir.cc:597
-msgid "unusual apache listing matched"
-msgstr "nietypowy listing apache pasuje"
-
-#: src/HttpDir.cc:614
-msgid "Netscape-Proxy 2.53 listing matched"
-msgstr "Netscape-Proxy 2.53 listing pasuje"
-
-#: src/HttpDir.cc:624
-msgid "Netscape-Proxy 2.53 listing matched (dir/symlink)"
-msgstr "Netscape-Proxy 2.53 listing pasuje (katalog/dowi±zanie symboliczne)"
-
-#. no symlinks here.
-#: src/HttpDir.cc:632
-msgid "squid EPLF listing matched"
-msgstr "squid EPLF listowanie pasuje"
-
-#: src/HttpDir.cc:654
-msgid "Mini-Proxy web server listing matched"
-msgstr "Mini-Proxy serwera web listing pasuje"
-
-#: src/HttpDir.cc:694
-msgid "apache ftp over http proxy listing matched"
-msgstr "apache ftp poprzez http proxy listing pasuje"
-
-#: src/FtpDirList.cc:223 src/FtpSplitList.cc:182 src/HttpDir.cc:961
-#: src/HttpDir.cc:1140
+#: src/FtpDirList.cc:223 src/FtpSplitList.cc:182 src/HttpDir.cc:1116
+#: src/NetAccess.cc:695
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "Pobieranie listy plików (%lld) [%s]"
@@ -1920,11 +1909,11 @@ msgid "eta:"
 msgstr "pozosta³o: "
 
 #. both ways failed. Fall back to normal copying.
-#: src/FileCopyFtp.cc:77
+#: src/FileCopyFtp.cc:87
 msgid "**** FXP: giving up, reverting to plain copy\n"
 msgstr "**** FXP: poddawanie siê, powracanie do prostego kopiowania\n"
 
-#: src/FileCopyFtp.cc:90
+#: src/FileCopyFtp.cc:100
 msgid "**** FXP: trying to reverse ftp:fxp-passive-source\n"
 msgstr ""
 
@@ -1947,24 +1936,24 @@ msgstr "chdir(%s) niepowiod³o siê: %s\n"
 msgid "execl(/bin/sh) failed: %s\n"
 msgstr "execlp(/bin/sh) nieudane: %s\n"
 
-#: src/NetAccess.cc:208
+#: src/NetAccess.cc:210
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "£±cznie siê z %s%s (%s) port %u"
 
-#: src/NetAccess.cc:263
+#: src/NetAccess.cc:265
 msgid "Timeout - reconnecting"
 msgstr "Przekroczony limit czasu - ³±czê siê ponownie"
 
-#: src/NetAccess.cc:491
+#: src/NetAccess.cc:493
 msgid "Connections limit reached"
 msgstr "Osi±gniêto limit po³±czeñ"
 
-#: src/NetAccess.cc:495
+#: src/NetAccess.cc:497
 msgid "Delaying before reconnect"
 msgstr "Przerwa przed ponownym po³±czeniem"
 
-#: src/NetAccess.cc:506
+#: src/NetAccess.cc:508
 msgid "max-retries exceeded"
 msgstr "przekroczona maksymalna liczba prób"
 
@@ -1979,7 +1968,7 @@ msgstr "%s: B£¡D - wykryto zastój\n"
 msgid "\tRepeat count: %d\n"
 msgstr "\tLicznik powtórek: %d\n"
 
-#: src/SleepJob.cc:126
+#: src/SleepJob.cc:136
 #, c-format
 msgid "%s: argument required. "
 msgstr "%s: wymagany jest argument. "
@@ -2002,6 +1991,27 @@ msgstr "zale¿no¶ciu modu³u `%s': %s\n"
 #: src/module.cc:201
 msgid "modules are not supported on this system"
 msgstr "modu³y nie s± wspierane na tym systemie"
+
+#~ msgid "apache listing matched"
+#~ msgstr "listowanie apache pasuje"
+
+#~ msgid "unusual apache listing matched"
+#~ msgstr "nietypowy listing apache pasuje"
+
+#~ msgid "Netscape-Proxy 2.53 listing matched"
+#~ msgstr "Netscape-Proxy 2.53 listing pasuje"
+
+#~ msgid "Netscape-Proxy 2.53 listing matched (dir/symlink)"
+#~ msgstr "Netscape-Proxy 2.53 listing pasuje (katalog/dowi±zanie symboliczne)"
+
+#~ msgid "squid EPLF listing matched"
+#~ msgstr "squid EPLF listowanie pasuje"
+
+#~ msgid "Mini-Proxy web server listing matched"
+#~ msgstr "Mini-Proxy serwera web listing pasuje"
+
+#~ msgid "apache ftp over http proxy listing matched"
+#~ msgstr "apache ftp poprzez http proxy listing pasuje"
 
 #~ msgid "Saw `Login incorrect', assume failed login"
 #~ msgstr ""

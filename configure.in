@@ -44,6 +44,9 @@ AC_ARG_WITH(locale-dir,
 test -z "$LOCALE_DIR" && LOCALE_DIR='$(datadir)/locale'
 AC_SUBST(LOCALE_DIR)
 
+# workaround for incompatibility between gettext-0.10.38 and autoconf-2.50.
+AC_OUTPUT_COMMANDS([test "$ac_given_srcdir" || ac_given_srcdir=$srcdir])
+
 ALL_LINGUAS="de es fr it ja ko pl pt_BR ru zh_CN zh_TW"
 AM_GNU_GETTEXT
 if test x$USE_INCLUDED_LIBINTL = xyes; then
