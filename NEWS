@@ -23,12 +23,13 @@ Version 2.3.0 - 2000-??-??
 * new setting ftp:use-quit.
 * new setting net:persist-retries (ignore this number of hard errors).
 * add workarounds for hftp over apache proxy.
-* use getaddrinfo when gethostbyname2 is unavailable.
+* use getipnodebyname or getaddrinfo when gethostbyname2 is unavailable.
+* invalidate dir listing cache on chmod.
 * fixed max-retries and reconnect delay handling when uploading.
+* fixed `open -u ... -p ... bookmark_name'.
 * fixed coredump on `mirror -x' on BSD. Reported by Andriy I Pilipenko
   <bamby@marka.net.ua>
-* fixed `open -u ... -p ... bookmark_name'.
-* invalidate dir listing cache on chmod.
+* fixed a long standing bug with coredump on completion in some directories.
 
 Version 2.2.4 - 2000-07-12
 
