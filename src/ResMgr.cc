@@ -555,6 +555,11 @@ bool Range::Match(int n)
    return full || (n>=start && n<=end);
 }
 
+#ifndef HAVE_RANDOM_DECL
+CDECL long random();
+CDECL void srandom(unsigned seed);
+#endif
+
 int Range::Random()
 {
    if(full)

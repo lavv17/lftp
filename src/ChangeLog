@@ -1,6 +1,8 @@
 2000-03-09  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: (GetBetterConnection) don't touch CONNECTING_STATE.
+	* CmdExec.cc: fix prompt space allocation.
+	* ResMgr.cc: declare random if needed.
 
 2000-03-07  Alexander V. Lukyanov  <lav@yars.free.net>
 

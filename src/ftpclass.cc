@@ -1015,6 +1015,7 @@ int   Ftp::Do()
 
    case(CONNECTING_STATE):
    {
+      assert(control_sock!=-1);
       res=Poll(control_sock,POLLOUT);
       if(res==-1)
       {
