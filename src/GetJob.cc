@@ -80,20 +80,22 @@ int   GetJob::Do()
    {
       if(session->IsClosed())
       {
-	 if(local->getfd()==-1)
-	 {
-	    if(!local->error())
-	    {
-	       block+=TimeOut(1000);
-	       return m;
-	    }
-	    fprintf(stderr,"%s: %s\n",op,local->error_text);
-	    failed++;
-	    NextFile();
-	    return MOVED;
-	 }
 	 if(cont)
 	 {
+	    // need to get current file size.
+	    // ensure the file is opened.
+	    if(local->getfd()==-1)
+	    {
+	       if(!local->error())
+	       {
+		  block+=TimeOut(1000);
+		  return m;
+	       }
+	       fprintf(stderr,"%s: %s\n",op,local->error_text);
+	       failed++;
+	       NextFile();
+	       return MOVED;
+	    }
 	    offset=local->getsize_and_seek_end();
 	    if(offset<0)
 	       offset=0;
