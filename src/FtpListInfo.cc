@@ -188,7 +188,12 @@ int FtpListInfo::Do()
 	 return m;
       if(res==Ftp::IN_PROGRESS)
 	 return m;
-      assert(res==Ftp::OK);
+      if(res!=Ftp::OK)
+      {
+	 SetError(session->StrError(res));
+	 session->Close();
+	 return MOVED;
+      }
       session->Close();
 
       for(cur=get_info; get_info_cnt-->0; cur++)
