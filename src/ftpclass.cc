@@ -592,7 +592,7 @@ int   Ftp::CatchSIZE(int act,int)
    else
    {
       if(act==500 || act==502)
-	 mdtm_supported=false;
+	 size_supported=false;
       array_for_info[array_ptr].size=-1;
    }
 
@@ -617,7 +617,7 @@ int   Ftp::CatchSIZE_opt(int act,int)
    else
    {
       if(act==500 || act==502)
-	 mdtm_supported=false;
+	 size_supported=false;
       *opt_size=-1;
    }
    return state;
