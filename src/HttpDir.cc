@@ -234,6 +234,9 @@ public:
    char month_name[32];
    char size_str[32];
    char perms[12];
+   char user[32];
+   char group[32];
+   int nlink;
 
    void clear();
    bool validate();
@@ -261,6 +264,9 @@ void file_info::clear()
       xfree(sym_link);
    sym_link=0;
    is_sym_link=false;
+   user[0]=0;
+   group[0]=0;
+   nlink=0;
 }
 bool file_info::validate()
 {
@@ -401,20 +407,17 @@ static bool try_apache_unixlike(file_info &info,const char *buf,
    // Apache Unix-like listing (from apache proxy):
    //   Perms Nlnk user [group] size Mon DD (YYYY or hh:mm)
    int perms_code;
-   int n_links;
-   char user[32];
-   char group[32];
    char year_or_time[6];
    int consumed;
 
-   int n=sscanf(buf,"%11s %d %31s %31s %lld %3s %2d %5s%n",info.perms,&n_links,
-	       user,group,&info.size,info.month_name,&info.day,
+   int n=sscanf(buf,"%11s %d %31s %31s %lld %3s %2d %5s%n",info.perms,&info.nlink,
+	       info.user,info.group,&info.size,info.month_name,&info.day,
 	       year_or_time,&consumed);
    if(n==4) // bsd-like listing without group?
    {
-      group[0]=0;
-      n=sscanf(buf,"%11s %d %31s %lld %3s %2d %5s%n",info.perms,&n_links,
-	    user,&info.size,info.month_name,&info.day,year_or_time,&consumed);
+      info.group[0]=0;
+      n=sscanf(buf,"%11s %d %31s %lld %3s %2d %5s%n",info.perms,&info.nlink,
+	    info.user,&info.size,info.month_name,&info.day,year_or_time,&consumed);
    }
    if(n>=7 && -1!=(perms_code=parse_perms(info.perms+1))
    && -1!=(info.month=parse_month(info.month_name))
@@ -967,6 +970,20 @@ parse_url_again:
 	 fi->SetSymlink(info.sym_link);
       else
 	 fi->SetType(info.is_directory ? fi->DIRECTORY : fi->NORMAL);
+      if(info.nlink>0)
+	 fi->SetNlink(info.nlink);
+      if(info.user[0])
+	 fi->SetUser(info.user);
+      if(info.group[0])
+	 fi->SetGroup(info.group);
+      if(info.size!=-1)
+	 fi->SetSize(info.size);
+      if(info.perms[0])
+      {
+	 int m=parse_perms(info.perms);
+	 if(m>=0)
+	    fi->SetMode(m);
+      }
 
       set->Add(fi);
    }
