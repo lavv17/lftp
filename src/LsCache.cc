@@ -181,13 +181,12 @@ int LsCache::ExpireHelper::Do()
 {
    if(ttl.IsInfty() || ttl.Seconds()==0)
       return STALL;
-   time_t ct=time(0);
-   if(!expiring || expiring->timestamp+ttl.Seconds() <= ct)
+   if(!expiring || expiring->timestamp+ttl.Seconds() <= now)
    {
       LsCache **scan=&LsCache::chain;
       while(*scan)
       {
-	 if((*scan)->timestamp+ttl.Seconds() <= ct)
+	 if((*scan)->timestamp+ttl.Seconds() <= now)
 	 {
 	    LsCache *tmp=*scan;
 	    *scan=tmp->next;
@@ -201,7 +200,7 @@ int LsCache::ExpireHelper::Do()
       if(!expiring)
 	 return STALL;
    }
-   time_t t_out=expiring->timestamp+ttl.Seconds()-ct;
+   time_t t_out=expiring->timestamp+ttl.Seconds()-now;
    if(t_out>1024)
       t_out=1024;
    Timeout(t_out*1000);
