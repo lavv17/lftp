@@ -2,7 +2,7 @@
 %define version 2.1.4
 
 Summary: The lftp command line ftp/http client
-Name: %{name} 
+Name: %{name}
 Version: %{version}
 Release: 1
 Copyright: GPL
@@ -62,7 +62,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc README README.modules FAQ THANKS COPYING TODO lftp.lsm NEWS INSTALL
+%doc README README.modules FAQ THANKS COPYING TODO lftp.lsm NEWS INSTALL FEATURES
 %doc /usr/man/man1/ftpget.1
 %doc /usr/man/man1/lftp.1
 %config /etc/lftp.conf
