@@ -4,6 +4,10 @@ AC_INIT(src/ftpclass.cc)
 AM_INIT_AUTOMAKE(lftp, pre2.5.0)
 AM_CONFIG_HEADER(include/config.h)
 
+# This doesn't *require* GNU extensions; it merely enables them if
+# they're there.
+AC__GNU_SOURCE
+
 dnl Default AC_C_INLINE does not know about C++
 m4_undefine([AC_C_INLINE])
 AC_DEFUN([AC_C_INLINE],[LFTP_C_INLINE])

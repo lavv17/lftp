@@ -263,8 +263,4 @@ typedef unsigned _bool;
 # define PRINTF_LIKE(n,m)
 #endif
 
-#ifndef VA_COPY
-# define VA_COPY(to,from) (memcpy(&(to),&(from),sizeof((to))))
-#endif
-
 #endif /* CONFIG_H */

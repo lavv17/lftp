@@ -1,7 +1,3 @@
 This file describes some limitations or misfeatures lftp has.
 
-
-* Glob over ftp is unreliable (server dependent) when not only last path
-  component contains wildcards, e.g. */*.
-
-FIXED in 2.2.0.
+* cls status bar does not show progress of the list download.
