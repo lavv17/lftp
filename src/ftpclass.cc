@@ -2418,9 +2418,9 @@ void Ftp::Reconfig()
    if(nop_interval<30)
       nop_interval=30;
 
-   if(control_sock)
+   if(control_sock!=-1)
       SetSocketBuffer(control_sock);
-   if(data_sock)
+   if(data_sock!=-1)
       SetSocketBuffer(data_sock);
 }
 
