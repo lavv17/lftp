@@ -186,6 +186,13 @@ int FileCopy::Do()
 	 }
 	 else // put_pos > get_pos
 	 {
+	    long size=get->GetSize();
+	    if(size>=0 && put->GetRealPos()>=size)
+	    {
+	       // simulate eof, as we have already have the whole file.
+	       debug((9,"copy: all data received, but get rolled back\n"));
+	       goto eof;
+	    }
 	    int skip=put->GetRealPos()-get->GetRealPos();
 	    if(!put->CanSeek(get->GetRealPos()) || skip<skip_threshold)
 	    {
@@ -222,6 +229,7 @@ int FileCopy::Do()
 	 put->SetDate(get->GetDate());
 	 put->PutEOF();
 	 get->Suspend();
+	 put_eof_pos=put->GetRealPos();
 	 state=CONFIRM_WAIT;
 	 return MOVED;
       }
@@ -290,8 +298,8 @@ int FileCopy::Do()
    case(CONFIRM_WAIT):
       if(put->Error())
 	 goto put_error;
-      /* check if positions are correct */
-      if(get->GetRealPos()!=put->GetRealPos())
+      /* check if put position is correct */
+      if(put_eof_pos!=put->GetRealPos())
       {
 	 state=DO_COPY;
 	 return MOVED;
@@ -358,6 +366,7 @@ void FileCopy::Init()
    rate        =new Speedometer("xfer:rate-period");
    rate_for_eta=new Speedometer("xfer:eta-period");
    put_buf=0;
+   put_eof_pos=0;
    bytes_count=0;
    start_time=0;
    start_time_ms=0;

@@ -3,6 +3,12 @@
 	* MirrorJob.cc, MirrorJob.h: check --no-perms in reverse mirror;
 	  take umask into account in reverse mirror (unless --no-umask
 	  is specified).
+	* Http.cc, Http.h: when there is "Accept-Ranges: none", don't send
+	  Ranges: again; catch size of the file when Ranges: did not work;
+	  workaround squid feature when server does not support Ranges:
+	  but squid emulates it and thus lftp gets timeout.
+	* FileCopy.cc, FileCopy.h: emulate eof when regetting a file which
+	  is already complete and source does not support restarting.
 
 2000-03-24  Alexander V. Lukyanov  <lav@yars.free.net>
 

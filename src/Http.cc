@@ -85,6 +85,9 @@ void Http::Init()
    chunk_size=-1;
    chunk_pos=0;
 
+   no_ranges=false;
+   seen_ranges_bytes=false;
+
    no_cache_this=false;
    no_cache=false;
 
@@ -153,6 +156,7 @@ void Http::Disconnect()
    chunked=false;
    chunk_size=-1;
    chunk_pos=0;
+   seen_ranges_bytes=false;
    if(mode==STORE && state!=DONE && !Error())
       SetError(STORE_FAILED,0);
    else
@@ -164,6 +168,7 @@ void Http::Close()
    Disconnect();
    array_send=0;
    no_cache_this=false;
+   no_ranges=false;
    bytes_received=0;
    super::Close();
 }
@@ -332,7 +337,7 @@ add_path:
    case RETRIEVE:
    retrieve:
       SendMethod("GET",efile);
-      if(pos>0)
+      if(pos>0 && !no_ranges)
 	 Send("Range: bytes=%ld-\r\n",pos);
       break;
 
@@ -390,6 +395,7 @@ add_path:
    chunked=false;
    chunk_size=-1;
    chunk_pos=0;
+   no_ranges=false;
 }
 
 void Http::SendArrayInfoRequest()
@@ -470,6 +476,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 	 keep_alive=true;
       else if(!strcasecmp(value,"close"))
 	 keep_alive=false;
+      return;
    }
    if(!strcasecmp(name,"Transfer-Encoding"))
    {
@@ -479,6 +486,15 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 	 chunk_size=-1;	// to indicate "before first chunk"
 	 chunk_pos=0;
       }
+      return;
+   }
+   if(!strcasecmp(name,"Accept-Ranges"))
+   {
+      if(!strcasecmp(value,"none"))
+	 no_ranges=true;
+      if(strstr(value,"bytes"))
+	 seen_ranges_bytes=true;
+      return;
    }
 }
 
@@ -836,7 +852,15 @@ int Http::Do()
       assert(rate_limit==0);
       rate_limit=new RateLimit();
       if(real_pos<0) // assume Range: did not work
+      {
+	 if(mode!=STORE && body_size>=0)
+	 {
+	    entity_size=body_size;
+	    if(opt_size)
+	       *opt_size=entity_size;
+	 }
 	 real_pos=0;
+      }
       state=RECEIVING_BODY;
       m=MOVED;
    case RECEIVING_BODY:
@@ -870,7 +894,12 @@ int Http::Do()
 	 else
 	 {
 	    if(CheckTimeout())
+	    {
+	       // check if ranges were emulated by squid
+	       if(bytes_received==0 && !seen_ranges_bytes)
+		  no_ranges=true;
 	       return MOVED;
+	    }
 	 }
       }
       return m;

@@ -90,6 +90,9 @@ class Http : public NetAccess
    long chunk_size;
    long chunk_pos;
 
+   bool no_ranges;
+   bool seen_ranges_bytes;
+
    bool no_cache;
    bool no_cache_this;
 

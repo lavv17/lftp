@@ -149,6 +149,7 @@ private:
    Speedometer *rate;
    Speedometer *rate_for_eta;
    int put_buf;
+   long put_eof_pos;
 
    time_t start_time;
    int start_time_ms;
