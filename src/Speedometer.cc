@@ -150,7 +150,7 @@ const char *Speedometer::GetETAStrFromTime(long eta)
 	       ueta--;
 	 }
       }
-      else if(eta>=MINUTE)
+      else if(eta>=100)
       {
 	 ueta=(eta+MINUTE/2)/MINUTE;
 	 letter=minute_c;
