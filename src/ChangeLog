@@ -1,6 +1,7 @@
 2000-02-22  Alexander V. Lukyanov  <lav@yars.free.net>
 
-	* complete.cc: implement LOCAL_DIR mode.
+	* complete.cc: implement LOCAL_DIR mode; recognize -O;
+	  use LOCAL_DIR for lcd.
 
 2000-02-20  Alexander V. Lukyanov  <lav@yars.free.net>
 
