@@ -1,3 +1,9 @@
+Version 3.0.13 - 2004-12-20
+
+* man page updated.
+* fixed mirror option --no-symlinks (sense reversed).
+* fixed a coredump.
+
 Version 3.0.12 - 2004-12-03
 
 * new setting ftps:initial-prot to workaround broken ftps servers.

@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "18 May 2004"
+.TH lftp 1 "20 Dec 2004"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 3.0.4.
+This man page documents lftp version 3.0.13.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -1126,6 +1126,12 @@ to set proper port on data connection, thus this check is off by default.
 disconnect after closing data connection. This can be useful for totally
 broken ftp servers. Default is false.
 .TP
+.BR ftps:initial-prot \ (string)
+specifies initial PROT setting for FTPS connections. Should be one of: C, S,
+E, P, or empty. Default is empty which means unknown, so that lftp will use
+PROT command unconditionally. If PROT command turns out to be unsupported,
+then Clear mode would be assumed.
+.TP
 .BR hftp:cache \ (bool)
 allow server/proxy side caching for ftp-over-http protocol.
 .TP
@@ -1307,7 +1313,7 @@ for user name, `-p' for port number. Default is `ssh -ax'. You can set it to
 .TP
 .BR sftp:max-packets-in-flight \ (number)
 The maximum number of unreplied packets in flight. If round trip time is
-significant, you should increase this and size-read/size-write. Default is 3.
+significant, you should increase this and size-read/size-write. Default is 16.
 .TP
 .BR sftp:protocol-version \ (number)
 The protocol number to negotiate. Default is 4. The actual protocol version

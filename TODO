@@ -66,3 +66,6 @@ implemented.
  * support keys with passphrases (sftp and fish).
 
  * APPE support.
+
+ * cmd:parallel for scripting - execute several commands in parallel
+   (change CmdExec::Done to return true when waiting_num<cmd:parallel)
