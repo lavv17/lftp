@@ -438,10 +438,9 @@ public:
       SYNC_MODE=1,
       NOREST_MODE=4,
       IO_FLAG=8,
-      DOSISH_PATH=16,
       PASSIVE_MODE=32,
 
-      MODES_MASK=SYNC_MODE|PASSIVE_MODE|DOSISH_PATH
+      MODES_MASK=SYNC_MODE|PASSIVE_MODE
    };
 
    void Reconfig(const char *name=0);
