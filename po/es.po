@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2.1\n"
-"POT-Creation-Date: 2002-03-12 20:01+0300\n"
+"POT-Creation-Date: 2002-04-16 17:30+0400\n"
 "PO-Revision-Date: 2000-08-26 00:01-0300\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -139,7 +139,7 @@ msgstr "Archivo movido a `%s'"
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr "%s: %s: el archivo ya existe y xfer:clobber no está definido\n"
 
-#: src/Job.cc:336
+#: src/Job.cc:338
 #, c-format
 msgid "[%d] Done (%s)"
 msgstr "[%d] Hecho (%s)"
@@ -2119,25 +2119,25 @@ msgstr "Conectándose a %s%s (%s) port %u"
 msgid "Timeout - reconnecting"
 msgstr "Tiempo fuera - reconectando"
 
-#: src/NetAccess.cc:493
+#: src/NetAccess.cc:487
 #, fuzzy
 msgid "Connection limit reached"
 msgstr "Límite de conexiones alcanzado"
 
-#: src/NetAccess.cc:497
+#: src/NetAccess.cc:491
 msgid "Delaying before reconnect"
 msgstr "Esperando antes de reintentar"
 
-#: src/NetAccess.cc:508
+#: src/NetAccess.cc:502
 msgid "max-retries exceeded"
 msgstr "variable max-retries excedida"
 
-#: src/NetAccess.cc:741
+#: src/NetAccess.cc:735
 #, fuzzy, c-format
 msgid "Getting directory contents (%lld) %s[%s]"
 msgstr "Obteniendo el contenido del directorio (%lld)"
 
-#: src/NetAccess.cc:748
+#: src/NetAccess.cc:742
 #, fuzzy, c-format
 msgid "Getting files information (%d%%) [%s]"
 msgstr "Obteniendo información sobre los archivos (%d%%)"

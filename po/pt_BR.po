@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
-"POT-Creation-Date: 2002-03-12 20:01+0300\n"
+"POT-Creation-Date: 2002-04-16 17:30+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -142,7 +142,7 @@ msgstr ""
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr ""
 
-#: src/Job.cc:336
+#: src/Job.cc:338
 #, c-format
 msgid "[%d] Done (%s)"
 msgstr "[%d] Feito (%s)"
@@ -2008,24 +2008,24 @@ msgstr ""
 msgid "Timeout - reconnecting"
 msgstr ""
 
-#: src/NetAccess.cc:493
+#: src/NetAccess.cc:487
 msgid "Connection limit reached"
 msgstr ""
 
-#: src/NetAccess.cc:497
+#: src/NetAccess.cc:491
 msgid "Delaying before reconnect"
 msgstr ""
 
-#: src/NetAccess.cc:508
+#: src/NetAccess.cc:502
 msgid "max-retries exceeded"
 msgstr ""
 
-#: src/NetAccess.cc:741
+#: src/NetAccess.cc:735
 #, fuzzy, c-format
 msgid "Getting directory contents (%lld) %s[%s]"
 msgstr "Buscando conteúdo do diretório (%ld)"
 
-#: src/NetAccess.cc:748
+#: src/NetAccess.cc:742
 #, fuzzy, c-format
 msgid "Getting files information (%d%%) [%s]"
 msgstr "Buscando informações dos arquivos (%d%%)"

@@ -1,3 +1,12 @@
+Version 2.5.1 - 2002-04-16
+
+* translations updated.
+* fixed a failed assertion when cls redirection could not create file.
+* fixed a rare coredump when host name becomes unresolvable.
+* fixed occasional spinning in mirror.
+* fixed some bugs in trio_sscanf function.
+* fixed flood of waitpid errors when lftp forks into background.
+
 Version 2.5.0a - 2002-03-12
 
 * make it compile without ssl.
@@ -18,7 +27,7 @@ Version 2.5.0 - 2002-03-06
   (Glenn Maynard, Alexander Lukyanov)
 * chmod can now handle symbolic modes and can work recursively (Glenn Maynard).
 * now plain ls can also use color for file names.
-* new setting xfer:full-disk-fatal. When it is false, lftp waits for more disk
+* new setting xfer:disk-full-fatal. When it is false, lftp waits for more disk
   space instead of cancelling transfers in case of full disk (Glenn Maynard,
   Alexander Lukyanov).
 * cls improved (Glenn Maynard).

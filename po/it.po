@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2.3\n"
-"POT-Creation-Date: 2002-03-12 20:01+0300\n"
+"POT-Creation-Date: 2002-04-16 17:30+0400\n"
 "PO-Revision-Date: 2000-06-18 10:46+02:00\n"
 "Last-Translator: Giovanni Bortolozzo <borto@pluto.linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -143,7 +143,7 @@ msgstr ""
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr "%s: %s: il file esiste già e xfer:clobber non è impostato\n"
 
-#: src/Job.cc:336
+#: src/Job.cc:338
 #, c-format
 msgid "[%d] Done (%s)"
 msgstr "[%d] Fatto (%s)"
@@ -2137,25 +2137,25 @@ msgstr "Connessione del socket dei dati a (%s) porta %u"
 msgid "Timeout - reconnecting"
 msgstr "Timeout - riconnessione in corso"
 
-#: src/NetAccess.cc:493
+#: src/NetAccess.cc:487
 #, fuzzy
 msgid "Connection limit reached"
 msgstr "Connessione inattiva"
 
-#: src/NetAccess.cc:497
+#: src/NetAccess.cc:491
 msgid "Delaying before reconnect"
 msgstr ""
 
-#: src/NetAccess.cc:508
+#: src/NetAccess.cc:502
 msgid "max-retries exceeded"
 msgstr ""
 
-#: src/NetAccess.cc:741
+#: src/NetAccess.cc:735
 #, fuzzy, c-format
 msgid "Getting directory contents (%lld) %s[%s]"
 msgstr "Scarico il contenuto della directory (%ld)"
 
-#: src/NetAccess.cc:748
+#: src/NetAccess.cc:742
 #, fuzzy, c-format
 msgid "Getting files information (%d%%) [%s]"
 msgstr "Scarico le informazioni sui file (%d%%)"

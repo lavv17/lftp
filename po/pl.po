@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp\n"
-"POT-Creation-Date: 2002-02-27 14:59+0300\n"
+"POT-Creation-Date: 2002-04-16 17:30+0400\n"
 "PO-Revision-Date: 1999-06-08 15:27+02:00\n"
 "Last-Translator: Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -141,7 +141,7 @@ msgstr "Plik przeniesiony do `%s'"
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr "%s: %s: plik aktualnie istnieje i xfer:clobber jest nie ustawione\n"
 
-#: src/Job.cc:336
+#: src/Job.cc:338
 #, c-format
 msgid "[%d] Done (%s)"
 msgstr "[%d] Zakoñczono (%s)"
@@ -1861,7 +1861,7 @@ msgstr "Zmiana zdalnego katalogu..."
 msgid "Waiting for other copy peer..."
 msgstr "Oczekiwanie na inne kopiowanie..."
 
-#: src/ftpclass.cc:3654 src/ftpclass.cc:3673
+#: src/ftpclass.cc:3654 src/ftpclass.cc:3675
 msgid "Waiting for transfer to complete"
 msgstr "Oczekiwanie na zakoñczenie transferu"
 
@@ -1869,19 +1869,19 @@ msgstr "Oczekiwanie na zakoñczenie transferu"
 msgid "Waiting for data connection..."
 msgstr "Czekam na po³±czenie dla danych..."
 
-#: src/ftpclass.cc:3662
+#: src/ftpclass.cc:3663
 msgid "Sending data/TLS"
 msgstr "Wysy³am dane/TLS"
 
-#: src/ftpclass.cc:3664
+#: src/ftpclass.cc:3665
 msgid "Receiving data/TLS"
 msgstr "Otrzymujê dane/TLS"
 
-#: src/Http.cc:1591 src/ftpclass.cc:3669
+#: src/Http.cc:1591 src/ftpclass.cc:3671
 msgid "Sending data"
 msgstr "Wysy³am dane"
 
-#: src/Http.cc:1598 src/ftpclass.cc:3671
+#: src/Http.cc:1598 src/ftpclass.cc:3673
 msgid "Receiving data"
 msgstr "Otrzymujê dane"
 
@@ -2208,24 +2208,24 @@ msgstr "£±cznie siê z %s%s (%s) port %u"
 msgid "Timeout - reconnecting"
 msgstr "Przekroczony limit czasu - ³±czê siê ponownie"
 
-#: src/NetAccess.cc:493
+#: src/NetAccess.cc:487
 msgid "Connection limit reached"
 msgstr "Osi±gniêto limit po³±czeñ"
 
-#: src/NetAccess.cc:497
+#: src/NetAccess.cc:491
 msgid "Delaying before reconnect"
 msgstr "Przerwa przed ponownym po³±czeniem"
 
-#: src/NetAccess.cc:508
+#: src/NetAccess.cc:502
 msgid "max-retries exceeded"
 msgstr "przekroczona maksymalna liczba prób"
 
-#: src/NetAccess.cc:741
+#: src/NetAccess.cc:735
 #, c-format
 msgid "Getting directory contents (%lld) %s[%s]"
 msgstr "Pobieranie informacji o zawarto¶ci katalogu (%lld) %s[%s]"
 
-#: src/NetAccess.cc:748
+#: src/NetAccess.cc:742
 #, c-format
 msgid "Getting files information (%d%%) [%s]"
 msgstr "Pobieranie informcji o plikach (%d%%) [%s]"

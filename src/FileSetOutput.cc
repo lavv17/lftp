@@ -30,7 +30,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#include <assert.h>
 #include <fnmatch.h>
 #include <mbswidth.h>
 
