@@ -1,3 +1,12 @@
+Version 3.1.1 - 2005-03-23
+
+* new setting ftp:ignore-pasv-address.
+* use IP TOS for ftp connections.
+* new `quote' command extentions for http: `quote move' and `quote copy'
+  for DAV operations. E.g. `quote copy index.html http://x.org/index2.html'.
+* fixed timeout handling when waiting for FXP source confirmation.
+* fixed http DAV method MOVE (use full URL in Destination; fixed stall).
+
 Version 3.1.0 - 2005-02-25
 
 * http DAV support added (PROPFIND, MKCOL, DELETE, MOVE).
