@@ -19,7 +19,9 @@ public:
    bool color;
 
    enum { NONE=0, PERMS = 0x1, SIZE = 0x2, DATE = 0x4, LINKS = 0x8,
-      ALL=PERMS|SIZE|DATE|LINKS
+	  USER = 0x10, GROUP = 0x20, NLINKS = 0x40,
+
+	  ALL=PERMS|SIZE|DATE|LINKS|USER|GROUP|NLINKS
    };
    int mode;
 

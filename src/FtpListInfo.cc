@@ -311,11 +311,13 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
    t = NEXT_TOKEN;
    if(!t)
       ERR;
+   fi.SetNlink(atoi(t));
 
    // user
    t = NEXT_TOKEN;
    if(!t)
       ERR;
+   fi.SetUser(t);
 
    // group or size
    char *group_or_size = NEXT_TOKEN;
@@ -326,7 +328,8 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
       ERR;
    if(isdigit(*t))
    {
-      // size
+      // it's size, so the previous was group:
+      fi.SetGroup(group_or_size);
       fi.SetSize(atol(t));
       t = NEXT_TOKEN;
       if(!t)
@@ -334,7 +337,7 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
    }
    else
    {
-      // it was month
+      // it was month, so the previous was size:
       fi.SetSize(atol(group_or_size));
    }
 

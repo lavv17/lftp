@@ -388,6 +388,11 @@ void FileSetOutput::print(FileSet &fs, Buffer *o) const
 
    const char *suffix_color = "";
 
+   /* Most fields are only printed if at least one file has that
+    * information; if no files have perm information, for example,
+    * discard the entire field. */
+   int have = fs.Have();
+
    for(int i = 0; fs[i]; i++) {
       const FileInfo *f = fs[i];
       if(!showdots && (!strcmp(basename_ptr(f->name),".") || !strcmp(basename_ptr(f->name),"..")))
@@ -413,15 +418,30 @@ void FileSetOutput::print(FileSet &fs, Buffer *o) const
 	 c.add(mode, "");
       }
 
-      if((mode & SIZE) && (f->defined&FileInfo::SIZE)) {
+      if((have & FileInfo::NLINKS) && (mode & NLINKS)) {
+	 if(f->defined&f->NLINKS)
+	    c.addf("%4i ", "", f->nlinks);
+	 else
+	    c.addf("%4i ", "", "");
+      }
+
+      if((have & FileInfo::USER) && (mode & USER)) {
+	 c.addf("%-8.8s ", "", (f->defined&f->USER)? f->user: "");
+      }
+
+      if((have & FileInfo::GROUP) && (mode & GROUP)) {
+	 c.addf("%-8.8s ", "", (f->defined&f->GROUP)? f->group: "");
+      }
+
+      if((mode & SIZE) && (have&FileInfo::SIZE)) {
 	 char sz[128];
 	 if((f->filetype == FileInfo::NORMAL || !size_filesonly)) {
 	    char buffer[128];
-	    sprintf(sz, "%10s ",
+	    sprintf(sz, "%8s ",
 	       human_readable_inexact (f->size, buffer, 1,
 		  output_block_size? output_block_size:1024, human_ceiling));
 	 } else {
-	    sprintf(sz, "%10s ", ""); /* pad */
+	    sprintf(sz, "%8s ", ""); /* pad */
 	 }
 	 c.add(sz, "");
       }
@@ -430,7 +450,7 @@ void FileSetOutput::print(FileSet &fs, Buffer *o) const
        * slow.  If someone actually wants that (to get dates on servers with
        * unparsable dates, or more accurate dates), it wouldn't be
        * difficult.  If we did this, we could also support --full-time. */
-      if(mode & DATE) {
+      if((mode & DATE) && (have & (f->DATE_UNPREC|f->DATE))) {
 	 /* Consider a time to be recent if it is within the past six
 	  * months.  A Gregorian year has 365.2425 * 24 * 60 * 60 ==
 	  * 31556952 seconds on the average.  Write this value as an

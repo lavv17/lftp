@@ -26,9 +26,9 @@
 #include <sys/types.h>
 #include "xmalloc.h"
 
-extern "C" {
+CDECL_BEGIN
 #include <regex.h>
-}
+CDECL_END
 
 #undef TYPE
 
@@ -42,6 +42,8 @@ public:
    time_t   date;
    off_t    size;
    void	    *data;
+   char     *user, *group;
+   int      nlinks;
 
    enum	 type
    {
@@ -57,12 +59,12 @@ public:
    enum defined_bits
    {
       NAME=001,MODE=002,DATE=004,TYPE=010,SYMLINK_DEF=020,
-      DATE_UNPREC=040,SIZE=0100,
+      DATE_UNPREC=040,SIZE=0100,USER=0200,GROUP=0400,NLINKS=01000,
 
-      IGNORE_SIZE_IF_OLDER=0200, // for ignore mask
-      IGNORE_DATE_IF_OLDER=0400, // for ignore mask
+      IGNORE_SIZE_IF_OLDER=02000, // for ignore mask
+      IGNORE_DATE_IF_OLDER=04000, // for ignore mask
 
-      ALL_INFO=NAME|MODE|DATE|TYPE|SYMLINK_DEF|DATE_UNPREC|SIZE
+      ALL_INFO=NAME|MODE|DATE|TYPE|SYMLINK_DEF|DATE_UNPREC|SIZE|USER|GROUP|NLINKS
    };
 
    ~FileInfo();
@@ -74,6 +76,8 @@ public:
    FileInfo(const FileInfo &fi);
 
    void SetName(const char *n);
+   void SetUser(const char *n);
+   void SetGroup(const char *n);
    FileInfo(const char *n) { Init(); SetName(n); }
    void LocalFile(const char *name, bool follow_symlinks);
 
@@ -89,6 +93,7 @@ public:
    void SetSymlink(const char *s) { xfree(symlink); symlink=xstrdup(s);
       filetype=SYMLINK; defined|=TYPE|SYMLINK_DEF; }
    void	SetSize(off_t s) { size=s; defined|=SIZE; }
+   void	SetNlink(int n) { nlinks=n; defined|=NLINKS; }
 
    void	 Merge(const FileInfo&);
 
@@ -181,7 +186,10 @@ public:
 
    /* add a path to all files */
    void PrependPath(const char *path);
-   
+
+   /* get all defined_bits used by this fileset */
+   int Have() const;
+
    FileInfo * operator[](int i) const;
 };
 

@@ -174,6 +174,8 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	    " -D, --dirsfirst      - list directories first\n"
 	    "     --sort=OPT       - \"name\", \"size\"\n"
 	    " -S                   - sort by file size\n"
+	    " --user, --group, --perms, --date, --linkcount, --links\n"
+	    "                      - show individual fields\n"
 	    "\n"
 	    "By default, cls output is cached, to see new listing use `recls' or\n"
 	    "`cache flush'.\n"
@@ -188,11 +190,10 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	     * add --filesize; it won't have any effect unless -s is also used, so
 	     * it can be enabled all the time. (that's also poorly worded, and too
 	     * long.) */
-	    "Tips: Use --filesize and -D to pack the listing better.  If you don't\n"
+	    "Tips: Use --filesize with -D to pack the listing better.  If you don't\n"
 	    "always want to see file sizes, --filesize in cls-default will affect the\n"
-	    "-s flag on the commandline as well.  All flags work in\n"
-	    "cls-completion-default.  -i in cls-completion-default makes filename\n"
-	    "completion case-insensitive."
+	    "-s flag on the commandline as well.  Add `-i' to cls-completion-default\n"
+	    "to make filename completion case-insensitive.\n"
 	   )},
    {"connect", cmd_open,   0,"open"},
    {"command", cmd_command},
@@ -1220,6 +1221,12 @@ const char *FileSetOutput::parse_argv(ArgV *a)
       {"dirsfirst", no_argument,0,'D'},
 
       {"sort", required_argument,0, 0},
+      {"user", no_argument,0, 0},
+      {"group", no_argument,0, 0},
+      {"perms", no_argument,0, 0},
+      {"date", no_argument,0, 0},
+      {"linkcount", no_argument,0, 0},
+      {"links", no_argument,0, 0},
       {0, no_argument, 0, 'S'}, // sort by size
       {0,0,0,0}
    };
@@ -1236,6 +1243,18 @@ const char *FileSetOutput::parse_argv(ArgV *a)
 	    else return _("invalid argument for `--sort'");
 	 } else if(!strcmp(cls_options[longopt].name, "filesize")) {
 	    size_filesonly = true;
+	 } else if(!strcmp(cls_options[longopt].name, "user")) {
+	    mode |= USER;
+	 } else if(!strcmp(cls_options[longopt].name, "group")) {
+	    mode |= GROUP;
+	 } else if(!strcmp(cls_options[longopt].name, "perms")) {
+	    mode |= PERMS;
+	 } else if(!strcmp(cls_options[longopt].name, "date")) {
+	    mode |= DATE;
+	 } else if(!strcmp(cls_options[longopt].name, "linkcount")) {
+	    mode |= NLINKS;
+	 } else if(!strcmp(cls_options[longopt].name, "links")) {
+	    mode |= LINKS;
 	 } else if(!strcmp(cls_options[longopt].name, "si")) {
 	    output_block_size = -1000;
 	 } else if(!strcmp(cls_options[longopt].name, "block-size")) {

@@ -32,6 +32,9 @@
 #include <fnmatch.h>
 #include <assert.h>
 
+#include <grp.h>
+#include <pwd.h>
+
 #include "misc.h"
 #include "ResMgr.h"
 
@@ -62,6 +65,23 @@ void FileInfo::SetName(const char *n)
    defined|=NAME;
 }
 
+void FileInfo::SetUser(const char *u)
+{
+   if(u==user)
+      return;
+   xfree(user);
+   user=xstrdup(u);
+   defined|=USER;
+}
+
+void FileInfo::SetGroup(const char *g)
+{
+   if(g==group)
+      return;
+   xfree(group);
+   group=xstrdup(g);
+   defined|=GROUP;
+}
 
 void FileSet::Add(FileInfo *fi)
 {
@@ -143,7 +163,7 @@ void FileSet::PrependPath(const char *path)
       files[i]->SetName(dir_file(path, files[i]->name));
    }
 }
-   
+
 /* we don't copy the sort state--nothing needs it, and it'd
  * be a bit of a pain to implement. */
 FileSet::FileSet(FileSet const *set)
@@ -537,21 +557,26 @@ FileInfo *FileSet::next()
 
 void FileInfo::Init()
 {
-   name=NULL;
+   name=0;
    defined=0;
-   symlink=NULL;
+   symlink=0;
    data=0;
+   user=0; group=0;
 }
+
 FileInfo::FileInfo(const FileInfo &fi)
 {
    Init();
    name=xstrdup(fi.name);
    symlink=xstrdup(fi.symlink);
+   user=xstrdup(fi.user);
+   group=xstrdup(fi.group);
    defined=fi.defined;
    filetype=fi.filetype;
    mode=fi.mode;
    date=fi.date;
    size=fi.size;
+   nlinks=fi.nlinks;
 }
 
 #ifndef S_ISLNK
@@ -592,7 +617,26 @@ check_again:
    SetDate(st.st_mtime);
    SetMode(st.st_mode&07777);
    SetType(t);
+   SetNlink(st.st_nlink);
 
+   struct passwd *user = getpwuid(st.st_uid);
+   if(user)
+      SetUser(user->pw_name);
+   else
+   {
+      char buf[32];
+      sprintf(buf, "%ld", (long)st.st_uid);
+      SetUser(buf);
+   }
+
+   struct group *gr = getgrgid(st.st_gid);
+   if(gr)
+      SetGroup(gr->gr_name);
+   else {
+      char buf[32];
+      sprintf(buf, "%ld", (long)st.st_gid);
+      SetGroup(buf);
+   }
 #ifdef HAVE_LSTAT
    if(t==SYMLINK)
    {
@@ -612,4 +656,16 @@ FileInfo::~FileInfo()
    xfree(name);
    xfree(symlink);
    xfree(data);
+   xfree(user);
+   xfree(group);
+}
+
+int FileSet::Have() const
+{
+   int bits=0;
+
+   for(int i=0; i<fnum; i++)
+      bits |= files[i]->defined;
+
+   return bits;
 }

@@ -1,5 +1,25 @@
 2001-11-13  Glenn Maynard <g_ld@zewt.org>
 
+	* FileSet.cc, FileSet.h, FileSetOutput.cc, FileSetOutput.h,
+	FtpListInfo.cc, commands.cc:
+
+	*user and *group field to FileInfo, parser support in ParseFtpLongList_UNIX
+	and LocalFile.
+
+	Added link count; cls -l output now has all expected fields (except for
+	the ACL indicator.)
+
+	All cls -l fields can now be enabled individually, to let people disable
+	them selectively.
+
+	Cleaned cls "tips" a little (not enough); added a forgotton \n.
+
+	cls will now remove entire fields if no files have it, instead of
+	padding every file.  (ColumnOutput only does this for the left side of
+	an entire entry.)
+
+2001-11-13  Glenn Maynard <g_ld@zewt.org>
+
 	* FileSet.cc, FileSet.h: (PrependPath) new FileSet method.
 
 	* FileSetOutput.cc, FileSetOutput.h, FindJobDu.cc, GetFileInfo.cc,
