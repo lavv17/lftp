@@ -2,6 +2,7 @@
 
 	* CopyJob.cc, CopyJob.h, pgetJob.cc: add and use dispname to hide
 	  passwords in urls.
+	* commands.cc, MirrorJob.cc, MirrorJob.h: add --ignore-time option.
 
 2002-08-29  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -204,9 +204,9 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 {
 	    if((flags&CONTINUE)
 	    && (old->defined&file->TYPE) && old->filetype==old->NORMAL
-	    && (file->defined&file->DATE)
-	    && (old->defined&old->DATE)
-	    && file->date + file->date_prec < old->date - old->date_prec
+	    && (flags&IGNORE_TIME ||
+	    	((file->defined&file->DATE) && (old->defined&old->DATE)
+	    	&& file->date + file->date_prec < old->date - old->date_prec))
 	    && (file->defined&file->SIZE) && (old->defined&old->SIZE)
 	    && file->size >= old->size)
 	    {
@@ -391,6 +391,8 @@ void  MirrorJob::InitSets(FileSet *source,FileSet *dest)
       ignore|=FileInfo::IGNORE_SIZE_IF_OLDER|FileInfo::IGNORE_DATE_IF_OLDER;
    if(strcmp(target_session->GetProto(),"file"))
       ignore|=FileInfo::IGNORE_DATE_IF_OLDER;
+   if(flags&IGNORE_TIME)
+      ignore|=FileInfo::DATE;
    to_transfer->SubtractSame(dest,ignore);
 
    same->SubtractAny(to_transfer);
@@ -941,6 +943,7 @@ CMD(mirror)
       {"use-cache",no_argument,0,256+'C'},
       {"Remove-source-files",no_argument,0,256+'R'},
       {"parallel",optional_argument,0,'P'},
+      {"ignore-time",no_argument,0,256+'i'},
       {0}
    };
 
@@ -1056,6 +1059,9 @@ CMD(mirror)
 	 break;
       case(256+'R'):
 	 remove_source_files=true;
+	 break;
+      case(256+'i'):
+	 flags|=MirrorJob::IGNORE_TIME;
 	 break;
       case('P'):
 	 if(optarg)

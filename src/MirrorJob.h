@@ -121,16 +121,17 @@ class MirrorJob : public Job
 public:
    enum
    {
-      ALLOW_SUID=1,
-      DELETE=2,
-      NO_RECURSION=4,
-      ONLY_NEWER=8,
-      NO_PERMS=16,
-      CONTINUE=32,
-      REPORT_NOT_DELETED=128,
-      RETR_SYMLINKS=256,
-      NO_UMASK=512,
-      ALLOW_CHOWN=1024
+      ALLOW_SUID=1<<0,
+      DELETE=1<<1,
+      NO_RECURSION=1<<2,
+      ONLY_NEWER=1<<3,
+      NO_PERMS=1<<4,
+      CONTINUE=1<<5,
+      REPORT_NOT_DELETED=1<<6,
+      RETR_SYMLINKS=1<<7,
+      NO_UMASK=1<<8,
+      ALLOW_CHOWN=1<<9,
+      IGNORE_TIME=1<<10
    };
 
    void SetFlags(int f,int v)
