@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
 "POT-Creation-Date: 2001-03-22 17:41+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Nicolas Noble <nicolas.n.@wanadoo.fr>\n"
+"Last-Translator: Nicolas Noble <nicolas@nobis-crew.org>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -792,7 +792,6 @@ msgid "module name [args]"
 msgstr "module nom [args]"
 
 #: src/commands.cc:247
-#, fuzzy
 msgid ""
 "Load module (shared object). The module should contain function\n"
 "   void module_init(int argc,const char *const *argv)\n"
@@ -802,7 +801,7 @@ msgstr ""
 "Charge le module (objet 'shared'). Ce module doit contenir la fonction\n"
 "   void module_init(int argc, const char *const argv)\n"
 "Si le nom contient un slash, le module est cherché dans le répertoire\n"
-"en cours, sinon PKGLIBDIR est utilisé.\n"
+"en cours, ou bien dans les répertoires spécifiés par module:path.\n"
 
 #: src/commands.cc:251
 msgid "more <files>"
@@ -1286,7 +1285,7 @@ msgstr "%s: pas de travail en cours\n"
 #: src/commands.cc:1484 src/commands.cc:1514 src/commands.cc:1654
 #, c-format
 msgid "%s: %d - no such job\n"
-msgstr ""
+msgstr "%s: %d - travail inconnu\n"
 
 #: src/commands.cc:1486
 #, c-format
