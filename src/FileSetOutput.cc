@@ -1,6 +1,6 @@
 /* lftp and utils
  *
- * Copyright (c) 2001-2002 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 2001-2004 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * Portions from GNU fileutils.
  *
