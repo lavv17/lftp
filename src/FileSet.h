@@ -59,6 +59,9 @@ public:
       NAME=001,MODE=002,DATE=004,TYPE=010,SYMLINK_DEF=020,
       DATE_UNPREC=040,SIZE=0100,
 
+      IGNORE_SIZE_IF_OLDER=0200, // for ignore mask
+      IGNORE_DATE_IF_OLDER=0400, // for ignore mask
+
       ALL_INFO=NAME|MODE|DATE|TYPE|SYMLINK_DEF|DATE_UNPREC|SIZE
    };
 
@@ -87,7 +90,7 @@ public:
 
    void	 Merge(const FileInfo&);
 
-   bool	 SameAs(const FileInfo *,bool only_newer,
+   bool	 SameAs(const FileInfo *,
 	    const TimeInterval *prec,const TimeInterval *loose_prec,int ignore);
    bool	 OlderThan(time_t t);
 
@@ -126,7 +129,7 @@ public:
    void	 Add(FileInfo *);
    void	 Merge(const FileSet *);
    void	 Merge(char **);   // file list
-   void	 SubtractSame(const FileSet *,bool only_newer,
+   void	 SubtractSame(const FileSet *,
 	    const TimeInterval *prec,const TimeInterval *loose_prec,int ignore);
    void	 SubtractAny(const FileSet *);
    void  SubtractOlderThan(time_t t);

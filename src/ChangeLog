@@ -1,3 +1,10 @@
+2000-10-19  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: don't call Poll on data socket (no real need).
+	* FileSet.h, FileSet.cc: eliminate only_newer argument, use ignore mask.
+	* MirrorJob.cc: use the new ignore mask values; don't assume only-newer
+	  for reverse mirror.
+
 2000-10-16  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* mgetJob.cc: fix mput for directory case (continue loop instead

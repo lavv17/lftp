@@ -156,13 +156,13 @@ FileSet::~FileSet()
    Empty();
 }
 
-void FileSet::SubtractSame(const FileSet *set,bool only_newer,
+void FileSet::SubtractSame(const FileSet *set,
       const TimeInterval *prec,const TimeInterval *loose_prec,int ignore)
 {
    for(int i=0; i<fnum; i++)
    {
       FileInfo *f=set->FindByName(files[i]->name);
-      if(f && files[i]->SameAs(f,only_newer,prec,loose_prec,ignore))
+      if(f && files[i]->SameAs(f,prec,loose_prec,ignore))
 	 Sub(i--);
    }
 }
@@ -208,7 +208,7 @@ void FileSet::ExcludeDots()
    }
 }
 
-bool  FileInfo::SameAs(const FileInfo *fi,bool only_newer,
+bool  FileInfo::SameAs(const FileInfo *fi,
 	 const TimeInterval *prec,const TimeInterval *loose_prec,int ignore)
 {
    if(defined&NAME && fi->defined&NAME)
@@ -240,15 +240,19 @@ bool  FileInfo::SameAs(const FileInfo *fi,bool only_newer,
 	 p=prec->Seconds();
 	 inf=prec->IsInfty();
       }
-      if(only_newer && date<fi->date)
-	    return true;
-      if(!inf && abs((long)date-(long)(fi->date))>p)
+      if(!(ignore&IGNORE_DATE_IF_OLDER && date<fi->date)
+      && (!inf && abs((long)date-(long)(fi->date))>p))
 	 return false;
    }
 
    if(defined&SIZE && fi->defined&SIZE && !(ignore&SIZE))
-      if(size!=fi->size)
+   {
+      if(!(ignore&IGNORE_SIZE_IF_OLDER
+      && defined&(DATE|DATE_UNPREC) && fi->defined&(DATE|DATE_UNPREC)
+      && date<fi->date)
+      && (size!=fi->size))
 	 return false;
+   }
 
    return true;
 }

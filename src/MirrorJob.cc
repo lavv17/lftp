@@ -433,7 +433,13 @@ void  MirrorJob::InitSets(FileSet *source,FileSet *dest)
 
    same=new FileSet(source);
    to_transfer=new FileSet(source);
-   to_transfer->SubtractSame(dest,flags&ONLY_NEWER,&prec,&loose_prec,0);
+
+   int ignore=0;
+   if(flags&ONLY_NEWER)
+      ignore|=FileInfo::IGNORE_SIZE_IF_OLDER|FileInfo::IGNORE_DATE_IF_OLDER;
+   if(flags&REVERSE)
+      ignore|=FileInfo::IGNORE_DATE_IF_OLDER;
+   to_transfer->SubtractSame(dest,&prec,&loose_prec,ignore);
 
    same->SubtractAny(to_transfer);
 
@@ -1143,7 +1149,7 @@ CMD(mirror)
 	 APPEND_STRING(include,include_alloc,optarg);
 	 break;
       case('R'):
-	 flags|=MirrorJob::REVERSE|MirrorJob::ONLY_NEWER;
+	 flags|=MirrorJob::REVERSE;
 	 break;
       case('L'):
 	 flags|=MirrorJob::RETR_SYMLINKS;

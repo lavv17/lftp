@@ -1832,7 +1832,6 @@ int   Ftp::Do()
 	 TimeoutS(nop_interval-(now-nop_time));
       }
 
-      int ev=(mode==STORE?POLLOUT:POLLIN);
       oldstate=state;
 
       m|=FlushSendQueue();
@@ -1841,15 +1840,6 @@ int   Ftp::Do()
       if(state!=oldstate)
          return MOVED;
 
-      if(data_sock!=-1)
-      {
-	 if(Poll(data_sock,ev)==-1)
-	 {
-	    DataClose();
-	    Disconnect();
-	    return MOVED;
-	 }
-      }
       CheckTimeout();
 
       if(state!=oldstate)
