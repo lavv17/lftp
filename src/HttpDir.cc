@@ -205,6 +205,11 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
    && !strcasecmp(tag_scan->link,"src"))
       icon=true;
 
+   bool a_href=false;
+   if(!strcasecmp(tag_scan->tag,"a")
+   && !strcasecmp(tag_scan->link,"href"))
+      a_href=true;
+
    // check if the target is a relative and not a cgi
    if(strchr(link_target,'?'))
       return tag_len;	// cgi
@@ -322,8 +327,13 @@ parse_url_again:
       int n;
       char *line_add=(char*)alloca(link_len+128);
       bool data_available=false;
+
+      if(!a_href)
+	 goto add_file;	// only <a href> tags can have useful info.
+
       // try to extract file information
-      const char *eol=find_char(more+1,end-more-1,'\n');
+      const char *eol;
+      eol=find_char(more+1,end-more-1,'\n');
       if(!eol)
       {
 	 if(eof)

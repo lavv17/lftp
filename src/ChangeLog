@@ -1,3 +1,7 @@
+1999-08-08  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* HttpDir.cc: only try to get info for href links.
+
 1999-08-06  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* commands.cc: (cmd_get) decode %xx in default output file name.
