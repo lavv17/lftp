@@ -1,5 +1,10 @@
 1999-07-10  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* complete.cc: add nlist to list of commands taking remote file as
+	  an argument.
+
+1999-07-10  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* Job.cc, Job.h: (GetConnectURL) virtual new method. (ListDoneJobs)
 	  compare urls and print job url if different.
 
