@@ -1,3 +1,9 @@
+2002-12-10  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FindJob.cc: handle ~ directories properly.
+	* Fish.cc: fix rename.
+	* resource.cc: make verify-certificate off by default.
+
 2002-10-23  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Speedometer.cc: fixed wrong eta calculation (reported by Haas

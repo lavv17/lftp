@@ -456,7 +456,7 @@ done:
    case DONE:
       if(!done)
       {
-	 if(result && showdir && result->get_fnum())
+	 if(result && showdir && result->get_fnum()>0)
 	 {
 	    FileInfo *f = (*result)[0];
 	    /* Make sure the filename is what was requested (ie ".."). */
