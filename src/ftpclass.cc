@@ -1802,6 +1802,13 @@ void  Ftp::DataAbort()
    if(data_sock!=-1 && RespQueueIsEmpty())
 	 return;
 
+   if(!(bool)Query("use-abor",hostname))
+   {
+      // just close data connection
+      DataClose();
+      return;
+   }
+
    FlushSendQueue(/*all=*/true);
    /* Send ABOR command, don't care of result */
    static const char pre_abort[]={TELNET_IAC,TELNET_IP,TELNET_IAC,TELNET_SYNCH};

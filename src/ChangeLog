@@ -1,3 +1,7 @@
+1999-12-11  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: check use-abor before sending ABOR.
+
 1999-12-10  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileAccess.cc, Http.cc, url.cc: fix ftp url handling (%2F for root)
