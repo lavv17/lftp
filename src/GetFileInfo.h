@@ -51,7 +51,7 @@ class GetFileInfo: public ListInfo
    /* and whether we've tried to cd to the basename (treating it as a file): */
    bool tried_file;
    /* and the last-ditch GetArrayInfo */
-   bool tried_array;
+   bool tried_info;
    /* whether we found out the file type from cache */
    bool from_cache;
    /* whether the given path was a file or directory. */

@@ -89,7 +89,7 @@ GetFileInfo::GetFileInfo(FileAccess *a, const char *_dir, bool _showdir)
 
    showdir=_showdir;
    state=INITIAL;
-   tried_dir=tried_file=tried_array=false;
+   tried_dir=tried_file=tried_info=false;
    result=0;
    path_to_prefix=0;
    verify_fn=0;
@@ -144,11 +144,11 @@ int GetFileInfo::Do()
 	 }
       }
 
-      assert(!tried_dir || !tried_file); /* always do at least one */
+      assert(!tried_dir || !tried_file || !tried_info); /* always do at least one */
 
    case CHANGE_DIR:
    {
-      if(tried_dir && tried_file && tried_array) {
+      if(tried_dir && tried_file && tried_info) {
 	 /* We tried everything; no luck.  Fail. */
 	 if(saved_error_text)
 	 {
@@ -189,9 +189,9 @@ int GetFileInfo::Do()
 	 path_to_prefix=dirname_alloc(dir);
 	 was_directory=false;
       }
-      else if(!tried_array)
+      else if(!tried_info)
       {
-	 tried_array=true;
+	 tried_info=true;
 	 /* This is always done after tried_file or a failed tried_dir,
 	  * so we should be in the parent, but let's make sure: */
 	 session->Chdir(dir, false);
@@ -244,7 +244,7 @@ int GetFileInfo::Do()
 	    /* If this is a CWD to the parent, and it failed, we
 	     * can't do GetArrayInfo. */
 	    if(!was_directory)
-	       tried_array=true;
+	       tried_info=true;
 
 	    state=CHANGE_DIR;
 	    return MOVED;
