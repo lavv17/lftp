@@ -1,3 +1,7 @@
+1999-09-20	lav
+
+	* acconfig.h: remove __USE_XOPEN.
+
 1999-08-11	lav
 
 	* configure.in, acconfig.h, acinclude.m4: define LFTP_C_INLINE,
