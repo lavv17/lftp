@@ -1,3 +1,10 @@
+2002-08-05  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* misc.cc, misc.h: split off terminfo stuff.
+	* lftp_tinfo.cc, lftp_tinfo.h: new files.
+	* StatusLine.cc: use new header lftp_tinfo.h.
+	* Makefile.am: add new files.
+
 2002-08-02  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* misc.cc: include termios.h for solaris 9.

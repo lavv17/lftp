@@ -55,7 +55,7 @@ libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  Speedometer.cc FileGlob.cc FileGlob.h\
  Speedometer.h netrc.cc netrc.h\
  ColumnOutput.cc ColumnOutput.h FileSetOutput.cc\
- FileSetOutput.h\
+ FileSetOutput.h lftp_tinfo.cc lftp_tinfo.h\
  TimeDate.cc TimeDate.h Timer.cc Timer.h GetFileInfo.cc GetFileInfo.h\
  StringPool.cc StringPool.h DirColors.cc DirColors.h IdNameCache.cc\
  IdNameCache.h PatternSet.cc PatternSet.h LocalDir.cc LocalDir.h
@@ -73,8 +73,8 @@ libjobs_a_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  OutputJob.cc OutputJob.h
 
 lftp_LDFLAGS = -export-dynamic $(LFTP_SSL_LDFLAGS)
-lftp_LDADD = libjobs.a libtasks.a $(READLINE) $(READLINE_SUPPLIB) \
-	$(top_builddir)/lib/liblib.a $(INTLLIBS) $(LFTP_SSL_LIBS) $(MODULES_LA_STATIC)
+lftp_LDADD = libjobs.a libtasks.a $(MODULES_LA_STATIC) $(READLINE) \
+	$(top_builddir)/lib/liblib.a $(LFTP_SSL_LIBS) $(INTLLIBS)
 lftp_DEPENDENCIES = libjobs.a libtasks.a $(READLINE_DEPEND) \
 	$(top_builddir)/lib/liblib.a $(MODULES_LA_STATIC)
 

@@ -36,6 +36,8 @@
 #include "misc.h"
 #include "StatusLine.h"
 
+#include "lftp_tinfo.h"
+
 ResDecl res_status_interval ("cmd:status-interval", "0.8s", ResMgr::TimeIntervalValidate,ResMgr::NoClosure);
 
 int  StatusLine::GetWidth()

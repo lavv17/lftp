@@ -111,6 +111,4 @@ char *xasprintf(const char *format, ...);
 
 char *dirname_alloc(const char *fn);
 
-const char *get_string_term_cap(const char *terminfo_cap, const char *tcap_cap=NULL);
-
 #endif // MISC_H
