@@ -94,7 +94,7 @@ CMD(ver);   CMD(close);  CMD(bookmark);CMD(lftp);
 CMD(echo);  CMD(suspend);CMD(sleep);   CMD(slot);
 CMD(at);    CMD(find);   CMD(command); CMD(module);
 CMD(lpwd);  CMD(glob);	 CMD(chmod);   CMD(queue);
-CMD(repeat);CMD(get1);   CMD(history);
+CMD(repeat);CMD(get1);   CMD(history); CMD(tasks);
 
 #ifdef MODULE_CMD_MIRROR
 # define cmd_mirror 0
@@ -468,6 +468,8 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Same as cat, but filter each file through bzcat\n")},
    {"bzmore",   cmd_cat,    0,
 	 N_("Same as more, but filter each file through bzcat\n")},
+
+   {".tasks",  cmd_tasks,  0,0},
 
    {NULL,NULL}
 };
@@ -3063,4 +3065,11 @@ CMD(slot)
       output=0;
       return j;
    }
+}
+
+CMD(tasks)
+{
+   printf("task_count=%d\n",SMTask::TaskCount());
+   exit_code=0;
+   return 0;
 }

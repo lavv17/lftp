@@ -86,6 +86,8 @@ char *command_generator(const char *text,int state)
    while ((name=CmdExec::CmdByIndex(cindex)->name)!=0)
    {
       cindex++;
+      if(name[0]=='.' && len==0)
+	 continue;   // skip hidden commands
       if(strncasecmp(name,text,len)==0)
 	 return(xstrdup(name));
    }
