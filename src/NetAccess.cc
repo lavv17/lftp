@@ -269,7 +269,7 @@ void NetAccess::HandleTimeout()
 
 bool NetAccess::CheckTimeout()
 {
-   if(now >= event_time+timeout)
+   if(time_t(now) >= event_time+timeout)
    {
       HandleTimeout();
       return(true);
@@ -480,7 +480,7 @@ bool NetAccess::ReconnectAllowed()
    if(try_time==0)
       return true;
    long interval = ReconnectInterval();
-   if(now >= try_time+interval)
+   if(time_t(now) >= try_time+interval)
       return true;
    TimeoutS(interval-(time_t(now)-try_time));
    return false;
