@@ -124,17 +124,27 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
 
    char *link_target=(char*)alloca(more-less+1+2);
 
-   if(token_eq(less+1,end-less-1,"a"))
+   static const struct tag_link
+	 { const char *tag, *link; }
+      tag_list[]={
+	 {"A",	     "HREF"},
+	 {"AREA",    "HREF"},
+	 {"FRAME",   "SRC"},
+	 {0,0}
+      };
+
+   const struct tag_link *tag_scan;
+   for(tag_scan=tag_list; tag_scan->tag; tag_scan++)
    {
-      if(!find_value(less+2,more,"href",link_target))
-	 return tag_len;   // error
+      if(token_eq(less+1,end-less-1,tag_scan->tag))
+      {
+	 if(!find_value(less+1+strlen(tag_scan->tag),more,
+			tag_scan->link,link_target))
+	    return tag_len;   // error
+	 break;
+      }
    }
-   else if(token_eq(less+1,end-less-1,"frame"))
-   {
-      if(!find_value(less+6,more,"src",link_target))
-	 return tag_len;   // error
-   }
-   else
+   if(tag_scan->tag==0)
       return tag_len;	// not interesting
 
    // ok, found the target.
