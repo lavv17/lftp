@@ -199,7 +199,7 @@ int   FileAccess::Poll(int fd,int ev)
    if(CheckHangup(&pfd,1))
       return -1;
    if(pfd.revents)
-      time(&event_time);
+      event_time=now;
    return pfd.revents;
 }
 

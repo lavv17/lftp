@@ -2855,6 +2855,7 @@ read_again:
 	 return(error_code);
       }
    }
+   event_time=now;
    if(res==0)
    {
    we_have_eof:
@@ -2979,6 +2980,7 @@ int   Ftp::Write(const void *buf,int size)
 	 return(error_code);
       }
    }
+   event_time=now;
    retries=0;
    persist_retries=0;
    assert(rate_limit!=0);

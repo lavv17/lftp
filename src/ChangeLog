@@ -1,3 +1,8 @@
+2000-10-23  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: set event_time in Read/Write.
+	* FileAccess.cc: use `now' instead of time().
+
 2000-10-19  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: don't call Poll on data socket (no real need).
