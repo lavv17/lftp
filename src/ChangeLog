@@ -3,6 +3,7 @@
 	* ftpclass.cc: set debug level 4 for `550 No files found' reply;
 	  send QUIT from destructor.
 	* buffer.cc: optimize Format method, vsnprintf directly to buffer.
+	* Job.cc: let the job run once before showing status.
 
 2001-11-08  Glenn Maynard <g_ld@zewt.org>
 

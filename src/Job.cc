@@ -510,13 +510,16 @@ void Job::ShowRunStatus(StatusLine *sl)
 {
    if(waiting_num==0)
       return;
-   if(waiting_num==1)
-      waiting[0]->ShowRunStatus(sl);
-   else
+   Job *j=waiting[0];
+   if(waiting_num>1)
    {
-      waiting[(now/3)%waiting_num]->ShowRunStatus(sl);
+      j=waiting[(now/3)%waiting_num];
       current->TimeoutS(3);
    }
+   // let the job do something. Otherwise we can get 'idle' status.
+   if(j->Do()==MOVED)
+      current->Timeout(0);
+   j->ShowRunStatus(sl);
 }
 
 Job *Job::FindAnyChild()
