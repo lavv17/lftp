@@ -64,6 +64,7 @@ static int cindex; // index in completion array
 static const char *const *array;
 static char **vars=NULL;
 static FileSet *glob_res=NULL;
+static bool inhibit_tilde;
 
 static bool shell_cmd;
 static bool quote_glob;
@@ -545,6 +546,7 @@ static char **lftp_completion (const char *text,int start,int end)
    rl_ignore_some_completions_function=0;
    shell_cmd=false;
    quote_glob=false;
+   inhibit_tilde=false;
    delete glob_res;
    glob_res=0;
 
@@ -585,8 +587,24 @@ static char **lftp_completion (const char *text,int start,int end)
       ArgV arg("", ResMgr::Query("cmd:cls-completion-default", 0));
       fso.parse_argv(&arg);
 
-      pat=(char*)alloca(len*2+10);
-      glob_quote(pat,text,len);
+      bool tilde_expanded=false;
+      const char *home=getenv("HOME");
+      int home_len=xstrlen(home);
+      pat=(char*)alloca((len+home_len)*2+10);
+      if(len>0 && home_len>0 && text[0]=='~' && (len==1 || text[1]=='/'))
+      {
+	 glob_quote(pat,home,home_len);
+	 glob_quote(pat+strlen(pat),text+1,len-1);
+	 if(len==1)
+	    strcat(pat,"/");
+	 tilde_expanded=true;
+	 inhibit_tilde=false;
+      }
+      else
+      {
+	 glob_quote(pat,text,len);
+	 inhibit_tilde=true;
+      }
 
       /* if we want case-insensitive matching, we need to match everything
        * in the dir and weed it ourselves (let the generator do it), since
@@ -610,6 +628,11 @@ static char **lftp_completion (const char *text,int start,int end)
       for(int i=0; i<(int)pglob.gl_pathc; i++)
       {
 	 char *src=pglob.gl_pathv[i];
+	 if(tilde_expanded && home_len>0)
+	 {
+	    src+=home_len-1;
+	    *src='~';
+	 }
 	 if(!strcmp(basename_ptr(src), ".")) continue;
 	 if(!strcmp(basename_ptr(src), "..")) continue;
 	 if(type==LOCAL_DIR && not_dir(src)) continue;
@@ -634,6 +657,13 @@ static char **lftp_completion (const char *text,int start,int end)
       pat=(char*)alloca(len*2+10);
       glob_quote(pat,text,len);
 
+      if(pat[0]=='~' && pat[1]==0)
+	 strcat(pat,"/");
+
+      if(pat[0]=='~' && pat[1]=='/')
+	 inhibit_tilde=false;
+      else
+	 inhibit_tilde=true;
       strcat(pat,"*");
 
       completion_shell->session->DontSleep();
@@ -851,7 +881,7 @@ backslash_quote (char *string)
 	  *r++ = c;
 	  break;
 	case '~':				/* tilde expansion */
-	  if (s == string && glob_res)
+	  if (s == string && inhibit_tilde)
 	    *r++ = '.', *r++ = '/';
 	  goto def;
 	case '#':				/* comment char */

@@ -255,6 +255,8 @@ static ResDecl
    res_query_srv   ("dns:SRV-query",    "no",  ResMgr::BoolValidate,0),
    res_use_fork	   ("dns:use-fork",     "yes", ResMgr::BoolValidate,ResMgr::NoClosure);
 
+static ResDecl
+   fish_shell  ("fish:shell", "/bin/sh",  0,0);
 
 void ResMgr::ClassInit()
 {

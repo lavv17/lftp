@@ -152,7 +152,10 @@ int Fish::Do()
       if(!NextTry())
 	 return MOVED;
 
-      const char *init="echo FISH:;/bin/bash";
+      const char *shell=Query("shell",hostname);
+      char *init=alloca_strdup2("echo FISH:;",strlen(shell));
+      strcat(init,shell);
+
       ArgV *cmd=new ArgV("ssh");
       cmd->Add("-x");	// don't forward X11
       cmd->Add("-a");	// don't forward AuthAgent.

@@ -1,3 +1,10 @@
+2001-10-22  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* complete.cc: fix local tilde completion.
+	* Fish.cc, resource.cc: add fish:shell setting.
+	* SMTask.cc, misc.cc: include time.h first.
+	* Makefile.am: distribute convert-netscape-cookies.
+
 2001-10-19  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: fix typo in cls help. Reported by Nicolas Noble.

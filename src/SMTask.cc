@@ -22,11 +22,11 @@
 
 #include <config.h>
 #include <assert.h>
-#include <sys/types.h>
-#include <sys/time.h>
+#include <time.h>
 #include <stdio.h>
 #ifdef TIME_WITH_SYS_TIME
-# include <time.h>
+# include <sys/types.h>
+# include <sys/time.h>
 #endif
 
 #include "SMTask.h"

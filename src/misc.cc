@@ -41,9 +41,8 @@
 #include <termios.h>
 #endif
 
-#include <sys/time.h>
 #ifdef TIME_WITH_SYS_TIME
-# include <time.h>
+# include <sys/time.h>
 #endif
 
 #include <regex.h>
