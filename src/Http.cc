@@ -1209,6 +1209,38 @@ int Http::Do()
 
 	 if(H_REDIRECTED(status_code))
 	 {
+	    if(mode==QUOTE_CMD && !strncasecmp(file,"POST ",5))
+	    {
+	       if(location[0]!='/' && !strstr(location,"://"))
+	       {
+		  const char *scan=file+5;
+		  while(*scan==' ')
+		     scan++;
+		  char *the_post_file=alloca_strdup(scan);
+		  char *space=strchr(the_post_file,' ');
+		  if(space)
+		     *space=0;
+		  char *new_location=alloca_strdup2(GetConnectURL(),
+				       strlen(the_post_file)+strlen(location));
+		  int p_ind=url::path_index(new_location);
+		  if(location[0]=='/')
+		     strcpy(new_location+p_ind,location);
+		  else
+		  {
+		     if(the_post_file[0]=='/')
+			strcpy(new_location+p_ind,the_post_file);
+		     else
+		     {
+			char *slash=strrchr(new_location,'/');
+			strcpy(slash+1,the_post_file);
+		     }
+		     char *slash=strrchr(new_location,'/');
+		     strcpy(slash+1,location);
+		  }
+		  xfree(location);
+		  location=xstrdup(new_location);
+	       }
+	    }
 	    sprintf(err,"%s (%s -> %s)",status+status_consumed,file,
 				    location?location:"nowhere");
 	    code=FILE_MOVED;

@@ -1,3 +1,9 @@
+2002-05-07  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: move to next peer if no greeting received.
+	* Http.cc: handle redirection to non-absolute url specially.
+	* FileCopy.cc: change FAmode to RETRIEVE when redirecting from QUOTE_CMD.
+
 2002-05-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* LsCache.cc, LsCache.h, commands.cc: add cache:enable, cache:expire

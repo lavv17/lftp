@@ -936,6 +936,8 @@ int FileCopyPeerFA::Get_LL(int len)
 	       SetError(_("Too many redirections"));
 	       return -1;
 	    }
+	    if(FAmode==FA::QUOTE_CMD)
+	       FAmode=FA::RETRIEVE;
 
 	    char *loc=alloca_strdup(loc_c);
 	    session->Close(); // loc_c is no longer valid.

@@ -2367,7 +2367,7 @@ int  Ftp::ReceiveResp()
 	    if(res==0)
 	    {
 	       DebugPrint("**** ",_("Peer closed connection"),0);
-	       ControlClose();
+	       quit_sent=true;
 	       Disconnect();
 	       return MOVED;
 	    }
@@ -2519,6 +2519,8 @@ void  Ftp::Disconnect()
       return;
    disconnect_in_progress=true;
 
+   bool no_greeting=(!RespQueueIsEmpty() && RespQueue[RQ_head].check_case==CHECK_READY);
+
    DataAbort();
    DataClose();
    if(control_sock>=0 && state!=CONNECTING_STATE && !quit_sent
@@ -2532,7 +2534,7 @@ void  Ftp::Disconnect()
    ControlClose();
    AbortedClose();
 
-   if(state==CONNECTING_STATE)
+   if(state==CONNECTING_STATE || no_greeting)
       NextPeer();
 
    if(copy_mode!=COPY_NONE)
