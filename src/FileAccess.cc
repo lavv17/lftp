@@ -311,6 +311,11 @@ const char *FileAccess::StrError(int err)
       }
       return(_("Login failed"));
    case(NOT_SUPP):
+      if(error)
+      {
+   	 sprintf(str,"%s: %s",_("Operation not supported"),error);
+	 return(str);
+      }
       return(_("Operation not supported"));
    case(FILE_MOVED):
       if(error)

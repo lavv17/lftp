@@ -1195,7 +1195,18 @@ int HttpDirList::Do()
 	 buf->Put(curr);
 	 buf->Put(":\n");
       }
+      if(curr_url)
+	 delete curr_url;
+      curr_url=new ParsedURL(session->GetFileURL(curr));
+      if(mode==FA::RETRIEVE)
+      {
+	 // strip file name, directory remains.
+	 char *slash=strrchr(curr_url->path,'/');
+	 if(slash && slash>curr_url->path)
+	    *slash=0;
+      }
 
+   retry:
       const char *cache_buffer=0;
       int cache_buffer_size=0;
       if(use_cache && LsCache::Find(session,curr,mode,
@@ -1213,16 +1224,6 @@ int HttpDirList::Do()
 	 if(LsCache::IsEnabled())
 	    ubuf->Save(LsCache::SizeLimit());
       }
-      if(curr_url)
-	 delete curr_url;
-      curr_url=new ParsedURL(session->GetFileURL(curr));
-      if(mode==FA::RETRIEVE)
-      {
-	 // strip file name, directory remains.
-	 char *slash=strrchr(curr_url->path,'/');
-	 if(slash && slash>curr_url->path)
-	    *slash=0;
-      }
    }
 
    const char *b;
@@ -1239,15 +1240,30 @@ int HttpDirList::Do()
 
    int m=STALL;
 
-   int n=parse_html(b,len,ubuf->Eof(),buf,0,&all_links,curr_url,&base_href,&ls_options, color);
-   if(n>0)
+   if(mode!=FA::MP_LIST)
    {
-      ubuf->Skip(n);
-      m=MOVED;
+      int n=parse_html(b,len,ubuf->Eof(),buf,0,&all_links,curr_url,&base_href,&ls_options, color);
+      if(n>0)
+      {
+	 ubuf->Skip(n);
+	 m=MOVED;
+      }
+   }
+   else
+   {
+      ParsePropsFormat(b,len,ubuf->Eof());
+      ubuf->Skip(len);
    }
 
    if(ubuf->Error())
    {
+      if(mode==FA::MP_LIST)
+      {
+	 mode=FA::LONG_LIST;
+	 Delete(ubuf);
+	 ubuf=0;
+	 goto retry;
+      }
       SetError(ubuf->ErrorText());
       m=MOVED;
    }
@@ -1259,7 +1275,9 @@ HttpDirList::HttpDirList(ArgV *a,FileAccess *fa)
 {
    session=fa;
    ubuf=0;
-   mode=FA::LONG_LIST;
+   mode=FA::MP_LIST;
+   xml_p=0;
+   xml_ctx=0;
    args->rewind();
    int opt;
    while((opt=args->getopt("faCFl"))!=EOF)
@@ -1292,6 +1310,7 @@ HttpDirList::HttpDirList(ArgV *a,FileAccess *fa)
 
 HttpDirList::~HttpDirList()
 {
+   ParsePropsFormat(0,0,true);
    Delete(ubuf);
    if(curr_url)
       delete curr_url;

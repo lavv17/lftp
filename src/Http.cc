@@ -506,8 +506,6 @@ void Http::SendRequest(const char *connection,const char *f)
    if(mode==STORE)    // can't seek before writing
       real_pos=pos;
 
-if(mode==RETRIEVE && file[0]==0) mode=MP_LIST; // TESTING
-
    switch((open_mode)mode)
    {
    case CLOSED:
@@ -1419,8 +1417,15 @@ int Http::Do()
 	 }
 	 else
 	 {
-	    if(file && file[0])
-	       sprintf(err,"%s (%s)",status+status_consumed,file);
+	    const char *closure=file;
+	    if(status_code==400  // Bad request
+	    || status_code==405) // Method Not Allowed
+	    {
+	       code=NOT_SUPP;
+	       closure=last_method;
+	    }
+	    if(closure && closure[0])
+	       sprintf(err,"%s (%s)",status+status_consumed,closure);
 	    else
 	       sprintf(err,"%s (%s%s)",status+status_consumed,cwd,
 				       (last_char(cwd)=='/')?"":"/");

@@ -24,6 +24,7 @@
 #define HTTPDIR_H
 
 #include "Http.h"
+#include <expat.h>
 
 class HttpListInfo : public GenericParseListInfo
 {
@@ -49,7 +50,12 @@ class HttpDirList : public DirList
    int mode;
    char *base_href;
 
+   XML_Parser xml_p;
+   struct xml_context *xml_ctx;
+
    LsOptions ls_options;
+
+   void ParsePropsFormat(const char *b,int len,bool eof);
 
 public:
    HttpDirList(ArgV *a,FileAccess *fa);

@@ -2034,7 +2034,8 @@ int   Ftp::Do()
 
    case(DATASOCKET_CONNECTING_STATE):
    datasocket_connecting_state:
-      m|=FlushSendQueue();
+      if(pasv_state!=PASV_DATASOCKET_CONNECTING)
+	 m|=FlushSendQueue();
       m|=ReceiveResp();
 
       if(state!=DATASOCKET_CONNECTING_STATE || Error())
@@ -2103,6 +2104,7 @@ int   Ftp::Do()
 	 }
 	 if(!(res&POLLOUT))
 	    goto usual_return;
+	 DebugPrint("---- ",_("Data connection established"),9);
 	 if(!conn->proxy_is_http)
 	    goto pre_data_open;
 
