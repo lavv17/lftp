@@ -496,8 +496,16 @@ entry in the queue is deleted.
 
 .B queue
 .BR "--move|-m " "<\fIindex or wildcard expression\fP> [\fIindex\fP]"
+.PP
 Move the given items before the given queue index, or to the end if no
 destination is given.
+.PP
+.Ds
+-q	Be quiet.
+-v	Be verbose.
+-Q	Output in a format that can be used to re-queue.
+	Useful with --delete.
+.De
 .PP
 .Ds
 > get file &

@@ -1,3 +1,7 @@
+2001-12-19  Glenn Maynard <g_ld@zewt.org>
+
+	* lftp.1: document new queue options.
+
 2001-12-17	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document new mirror settings.
