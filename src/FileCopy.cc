@@ -50,15 +50,37 @@ int FileCopy::Do()
       return m;
    switch(state)
    {
+   pre_INITIAL:
+      state=INITIAL;
+      m=MOVED;
    case(INITIAL):
-      if(!put->CanSeek())
-	 goto pre_DO_COPY;
-      if(cont)
+      if(put->NeedSizeDateBeforehand())
+      {
+	 if(get->GetSize()==NO_SIZE_YET || get->GetDate()==NO_DATE_YET)
+	 {
+	    put->Suspend();
+	    get->Resume();
+	    get->WantDate();
+	    get->WantSize();
+	    goto pre_GET_INFO_WAIT;
+	 }
+      }
+      if(get->GetSize()!=NO_SIZE && get->GetSize()!=NO_SIZE_YET)
+	 put->SetEntitySize(get->GetSize());
+      else if(get->GetSize()==NO_SIZE_YET)
+	 get->WantSize();
+      if(get->GetDate()!=NO_DATE && get->GetDate()!=NO_DATE_YET)
+	 put->SetDate(get->GetDate());
+      else if(get->GetDate()==NO_DATE_YET)
+	 get->WantDate();
+
+      if(cont && put->CanSeek())
 	 put->Seek(FILE_END);
-      cont=true;  // after a failure we'll have to restart
-      get->WantDate();
-      get->WantSize();
+      else
+	 goto pre_DO_COPY;
+
       get->Suspend();
+      put->Resume();
       state=PUT_WAIT;
       m=MOVED;
       /* fallthrough */
@@ -88,13 +110,13 @@ int FileCopy::Do()
 	 SetError(get->ErrorText());
 	 return MOVED;
       }
+      put->Resume();
       if(put->GetSeekPos()==FILE_END)   // put position is not known yet.
       {
 	 get->Suspend();
 	 return m;
       }
       get->Resume();
-      put->Resume();
       /* check if positions are correct */
       if(get->GetRealPos()!=put->GetRealPos())
       {
@@ -140,6 +162,7 @@ int FileCopy::Do()
 	 debug((9,"copy: get hit eof\n"));
 	 put->SetDate(get->GetDate());
 	 put->PutEOF();
+	 get->Suspend();
 	 state=CONFIRM_WAIT;
 	 return MOVED;
       }
@@ -185,6 +208,16 @@ int FileCopy::Do()
       state=ALL_DONE;
       delete get; get=0;
       return MOVED;
+
+   pre_GET_INFO_WAIT:
+      state=GET_INFO_WAIT;
+      m=MOVED;
+   case(GET_INFO_WAIT):
+      if(get->Error())
+	 goto get_error;
+      if(get->GetSize()==NO_SIZE_YET || get->GetDate()==NO_DATE_YET)
+	 return m;
+      goto pre_INITIAL;
 
    case(ALL_DONE):
       return m;
@@ -440,12 +473,14 @@ FileCopyPeer::FileCopyPeer(direction m)
    mode=m;
    want_size=false;
    want_date=false;
-   size=NO_SIZE;
-   date=NO_DATE;
+   size=NO_SIZE_YET;
+   e_size=NO_SIZE;
+   date=NO_DATE_YET;
    seek_pos=0;
    can_seek=true;
    date_set=false;
    ascii=false;
+   Suspend();  // don't do anything too early
 }
 FileCopyPeer::~FileCopyPeer()
 {
@@ -500,6 +535,8 @@ int FileCopyPeerFA::Do()
       {
 	 if(eof)
 	 {
+	    if(date!=NO_DATE && date!=NO_DATE_YET)
+	       session->SetDate(date);
 	    res=session->StoreStatus();
 	    if(res==FA::OK)
 	    {
@@ -577,24 +614,31 @@ void FileCopyPeerFA::Seek(long new_pos)
 {
    if(pos==new_pos)
       return;
-   session->Close();
-   if(new_pos!=FILE_END)
-   {
-      session->Open(file,FAmode,new_pos);
-      session->RereadManual();
-      if(ascii)
-	 session->AsciiTransfer();
-      if(want_size)
-	 session->WantSize(&size);
-      if(want_date)
-	 session->WantDate(&date);
-   }
-   else
-   {
-      session->Close();
-      WantSize();
-   }
    super::Seek(new_pos);
+   session->Close();
+   if(seek_pos!=FILE_END)
+      OpenSession();
+   else
+      WantSize();
+}
+
+void FileCopyPeerFA::OpenSession()
+{
+   session->Open(file,FAmode,seek_pos);
+   if(mode==PUT)
+   {
+      if(e_size!=NO_SIZE && e_size!=NO_SIZE_YET)
+	 session->SetSize(e_size);
+      if(date!=NO_DATE && date!=NO_DATE_YET)
+	 session->SetDate(date);
+   }
+   session->RereadManual();
+   if(ascii)
+      session->AsciiTransfer();
+   if(want_size)
+      session->WantSize(&size);
+   if(want_date)
+      session->WantDate(&date);
 }
 
 int FileCopyPeerFA::Get_LL(int len)
@@ -602,16 +646,8 @@ int FileCopyPeerFA::Get_LL(int len)
    int res=0;
 
    if(session->IsClosed())
-   {
-      session->Open(file,FAmode,seek_pos);
-      session->RereadManual();
-      if(ascii)
-	 session->AsciiTransfer();
-      if(want_size)
-	 session->WantSize(&size);
-      if(want_date)
-	 session->WantDate(&date);
-   }
+      OpenSession();
+
    long io_at=pos;
    if(GetRealPos()!=io_at) // GetRealPos can alter pos.
       return 0;

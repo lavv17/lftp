@@ -39,6 +39,7 @@ protected:
    bool want_size;
    bool want_date;
    long size;
+   long e_size;
    time_t date;
 
    long seek_pos;
@@ -68,6 +69,7 @@ public:
 
    void SetDate(time_t d);
    void SetSize(long s);
+   void SetEntitySize(long s) { e_size=s; }
 
    FileCopyPeer(direction m);
    ~FileCopyPeer();
@@ -77,6 +79,7 @@ public:
    void Ascii() { ascii=true; }
 
    virtual const char *GetStatus() { return 0; }
+   virtual bool NeedSizeDateBeforehand() { return false; }
 };
 
 class Speedometer : public SMTask
@@ -102,6 +105,7 @@ class FileCopy : public SMTask
    enum state_t
       {
 	 INITIAL,
+	 GET_INFO_WAIT,
 	 PUT_WAIT,
 	 DO_COPY,
 	 CONFIRM_WAIT,
@@ -146,6 +150,7 @@ class FileCopyPeerFA : public FileCopyPeer
    char *file;
    int FAmode;
    FileAccess *session;
+   void OpenSession();
 
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
@@ -171,6 +176,8 @@ public:
    void ReuseSessionLater();
 
    const char *GetStatus() { return session->CurrentStatus(); }
+
+   bool NeedSizeDateBeforehand() { return session->NeedSizeDateBeforehand(); }
 };
 
 class FileCopyPeerFDStream : public FileCopyPeer
