@@ -136,6 +136,7 @@ public:
    in_CMD(mput);  in_CMD(mv);	 in_CMD(cat);     in_CMD(cache);
    in_CMD(mkdir); in_CMD(quote); in_CMD(scache);  in_CMD(mrm);
    in_CMD(ver);	  in_CMD(close); in_CMD(bookmark);in_CMD(lftp);
+   in_CMD(echo);
 
    static const char * const var_list[];
 
@@ -165,6 +166,7 @@ public:
    bool	 remote_completion;
    int	 long_running;
    bool	 csh_history;
+   bool	 save_passwords;
 
    void	 Reconfig();
 
