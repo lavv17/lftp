@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "17 Nov 1998"
+.TH lftp 1 "02 Jun 1999"
 .SH NAME
 lftp \- Sophisticated ftp program
 .SH SYNTAX
@@ -61,14 +61,13 @@ lftp \- Sophisticated ftp program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 1.2.
+This man page documents lftp version 2.0.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a program that allows sophisticated ftp connection to
 other hosts. If \fIhost\fR is specified then lftp will connect to that
 host otherwise a connection has to be established with the open
-command.
-.PP
+command..PP
 \fBlftp\fR is quite a powerful ftp client. It uses GNU readline to
 read commands. It uses shell-like command syntax allowing you to
 launch several commands in parallel in the background (&).
@@ -80,17 +79,22 @@ conditionally based on termination status of previous command (&&,
 in the background. All background jobs are executed in the same single
 process. You can send a foreground job to the background with ^Z (C-z)
 and back with the command `wait'.
-
 .PP
 When you think you are done but some background jobs are not yet finished,
 you can just exit and lftp will move itself to nohup mode in
-background, allowing you to use your shell or logout.
+background and continue transfers. Records about moving to background
+and termination of backgrounded precesses are logged in \fI~/.lftp/log\fP file,
+along with other messages from backgrounded processes.
 .PP
 \fBlftp\fR has reliable put, reput, and mirror, along with many other
 commands.
 .PP
 \fBlftp\fR does reconnect and reget automatically when the
 connection broke and there is something to do.
+.PP
+Since version 2.0.0 lftp can handle three file access methods -
+ftp, http and file. You can specify method to use in ``open URL'' command,
+e.g. ``open http://www.us.kernel.org/pub/linux''.
 
 .SS Commands
 .PP
@@ -161,12 +165,16 @@ The following subcommands are recognized:
 cat outputs the remote file(s) to stdout.  (See also \fBmore\fR,
 \fBzcat\fR and \fBzmore\fR)
 
-.BI cd " rdir"
+.BR cd " rdir"
 .PP
 Change current remote directory.  The previous remote directory is
 stored as `-'. You can do `cd -' to change the directory back.
 The previous directory for each site is also stored on disk,
 so you can do `open site; cd -' even after lftp restart.
+
+.BR chmod " \fImode files\fP"
+.PP
+Change permission mask on remote files. The mode must be an octal number.
 
 .BR close " [" -a "]"
 .PP
@@ -177,7 +185,8 @@ Close idle connections.  By default only with the current server, use
 .PP
 execute given command ignoring aliases.
 
-.BR debug " [" -o " file]  level"\fR|\fP\fBoff\fP
+.BR debug " [" -o
+.IR file "] "  level "|\fBoff\fP"
 .PP
 Switch debugging to \fIlevel\fP or turn it off.  Use -o to redirect
 the debug output to a file.
@@ -193,7 +202,12 @@ no jobs are active, \fIcode\fP is passed to operating system as lftp's
 termination status. If \fIcode\fP is omitted, the exit code of last
 command is used.
 
-.BR find " [" directory "] "
+.B fg
+.PP
+Alias for `wait'.
+
+.B find
+.RI " [" directory "] "
 .PP
 List files in the directory (current directory by default) recursively.
 This can help with servers lacking ls -R support. You can redirect output
@@ -207,7 +221,8 @@ and file name from URL1 is appended. By default, source server is used in
 active mode, and target one in passive. Option -p reverses that. Option -c
 requests continuation of transfer.
 
-.BR get " [" -e "] [" -u "] [" -c "] \fIrfile\fP [" -o " \fIlfile\fP]"
+.BR get " [" -e "] [" -u "]"
+.RB [ -c "] \fIrfile\fP [" -o " \fIlfile\fP]"
 .PP
 Retrieve the remote file \fIrfile\fP and store it as the local file
 \fIlfile\fP.  If -o is omitted, the file is stored to local file named as
@@ -222,6 +237,11 @@ get README -o debian.README
 get README README.mirrors
 get README -o debian.README README.mirrors -o debian.mirrors
 .De
+
+.BR glob " \fIcommand patterns\fP"
+.PP
+Glob given patterns containing metacharacters and pass result to given command.
+E.g. ``glob echo *''.
 
 .B help
 [\fIcmd\fP]
@@ -247,6 +267,10 @@ Delete specified job with \fIjob_no\fP or all jobs.  (For \fIjob_no\fP see
 Change current local directory \fIldir\fP. The previous local
 directory is stored as `-'. You can do `lcd -' to change the directory back.
 
+.B lpwd
+.PP
+Print current working directory on local machine.
+
 .B ls
 \fIparams\fP
 .PP
@@ -257,7 +281,8 @@ new listing use
 or
 .B "cache flush."
 
-.BR mget " [" -c "] [" -d "] [" -e "] \fIfiles\fP"
+.BR mget " [" -c "] [" -d "]"
+.RB "[" -e "] \fIfiles\fP"
 .PP
 Gets selected files with expanded wildcards.
 .PP
@@ -269,7 +294,8 @@ Gets selected files with expanded wildcards.
 .De
 
 .B mirror
-.RI [ OPTS "] [" remote " [" local ]]
+.RI [ OPTS "] [" remote
+.RI "[" local "]]"
 .PP
 Mirror specified remote directory to local directory.
 .PP
@@ -280,6 +306,7 @@ Mirror specified remote directory to local directory.
  -n, --only-newer       download only newer files (-c won't work)
  -r, --no-recursion     don't go to subdirectories
  -p, --no-perms         don't set file permissions
+     --no-umask         don't apply umask to file modes
  -R, --reverse          reverse mirror (put files)
  -L, --dereference      download symbolic links as files
  -N, --newer-than FILE  download only files newer than the file
@@ -301,6 +328,15 @@ If both directories are omitted, current local and remote directories are used.
 .RB "[" -p "] " \fIdir(s)\fP
 .PP
 Make remote directories. If -p is used, make all components of paths.
+
+.B module 
+.IR "module " [ " args " ]
+.PP
+Load given module using dlopen(3) function. If module name does not contain
+a slash, it is searched in PKGLIBDIR, usually
+.IR /usr/lib/lftp " or " /usr/local/lib/lftp.
+Arguments are passed to module_init function. See README.modules for technical
+details.
 
 .B more
 \fIfiles\fP
@@ -331,12 +367,15 @@ Rename \fIfile1\fP to \fIfile2\fP.
 List remote file names
 
 .B open
-.RB [ -e " \fIcmd\fP] [" -u " \fIuser\fP[" , "\fIpass\fP]] [" -p " \fIport\fP] \fIhost\fP|\fIurl\fP"
+.RB [ -e " \fIcmd\fP]"
+.BR "[" -u " \fIuser\fP[", "\fIpass\fP]]"
+.BR "[" -p " \fIport\fP] \fIhost\fP|\fIurl\fP"
 .PP
 Select an ftp server.
 
 .B pget
-.RI [ OPTS "] " rfile " [" "\fB-o\fP lfile" ]
+.RI [ OPTS "] " rfile " [" "\fB-o\fP lfile"
+.RI ]
 
 Gets the specified file using several connections. This can speed up
 transfer, but loads the net heavily impacting other users. Use only if
@@ -350,7 +389,8 @@ mad :) Options:
 .PP
 
 .B put
-.RB [ -c "] " \fIlfile\fP " [" -o " \fIrfile\fP]"
+.RB [ -c "] " \fIlfile\fP " [" -o
+.RB \fIrfile\fP]
 .PP
 Upload \fIlfile\fP with remote name \fIrfile\fP. If -o omitted, the basename
 of \fIlfile\fP is used as remote name. -c means reput, which requires you
@@ -387,7 +427,7 @@ Same as `nlist', but ignores the cache.
 .PP
 Same as `put -c'.
 
-.BR rm " [ -r ] "
+.BR rm " [" -r "]"
 \fIfiles\fP
 .PP
 Remove remote files.  Does not expand wildcards, use \fBmrm\fR for
@@ -426,6 +466,7 @@ Execute site command \fIsite_cmd\fP and output the result.
 You can redirect its output.
 
 .BR sleep " \fIinterval\fP "
+.PP
 Sleep given time interval and exit. Interval is in seconds by default, but
 can be suffixed with 'm', 'h', 'd' for minutes, hours and days respectively.
 See also \fBat\fP.
@@ -450,9 +491,10 @@ Use specified info for remote login.
 Print \fBlftp\fR version.
 
 .B wait
-\fIjobno\fP
+[\fIjobno\fP]
 .PP
-Wait for specified job to terminate.
+Wait for specified job to terminate. If jobno is omitted, wait for last
+backgrounded job.
 
 .B zcat
 \fIfiles\fP
@@ -500,9 +542,6 @@ means off.
 .TP
 .BR cmd:ls-default \ (string)
 default ls argument
-.TP
-.BR cmd:ls-in-completion \ (bool)
-try to extract file list from ls output, if it is cached already.
 .TP
 .BR cmd:prompt \ (string)
 The prompt. lftp recognizes the following backslash-escaped special
@@ -563,22 +602,13 @@ end a sequence of non-printing characters
 .BR cmd:remote-completion \ (bool)
 a boolean to control whether or not lftp uses remote completion.
 .TP
-.BR dns:timeout \ (seconds)
+.BR dns:fatal-timeout \ (seconds)
 limit the time for DNS queries. If DNS server is unavailable too long, lftp
 will fail to resolve a given host name. 0 means unlimited, the default.
 .TP
-.BR ftp:idle \ (seconds)
-disconnect from ftp server after that number of idle seconds.
-.TP
-.BR ftp:limit-rate \ (bytes per second)
-timit transfer rate on data connection. 0 means unlimited.
-.TP
-.BR ftp:limit-max \ (bytes)
-limit accumulating of limit-rate in time. 0 means unlimited.
-.TP
-.BR ftp:max-retries \ (number)
-the maximum number of sequential retries of an operation without success.
-0 means unlimited.
+.BR dns:order " (list of protocol names)"
+sets the order of DNS queries. Default is ``inet inet6'' which means first
+look up address in inet family, then inet6 and use first matched.
 .TP
 .BR ftp:nop-interval \ (seconds)
 delay between NOOP commands when downloading tail of a file. This is useful
@@ -594,14 +624,6 @@ specifies ftp proxy to use. The format currently is `proxy_host:port'.
 To disable proxy set this to empty string. Note that it is an ftp proxy which
 uses ftp protocol, not ftp over http.
 .TP
-.BR ftp:reconnect-interval \ (seconds)
-sets the minimal time between reconnects.
-.TP
-.BR ftp:relookup-always \ (bool)
-a boolean to control whether to lookup host address each time
-before connecting or not. Can be useful if ftp server uses dynamic ip
-address.
-.TP
 .BR ftp:skey-allow \ (bool)
 allow sending skey/opie reply if server appears to support it. On by default.
 .TP
@@ -609,21 +631,10 @@ allow sending skey/opie reply if server appears to support it. On by default.
 do not send plain text password over the network, use skey/opie instead. If
 skey/opie is not available, assume failed login. Off by default.
 .TP
-.BR ftp:socket-buffer \ (bytes)
-use given size for SO_SNDBUF and SO_RCVBUF socket options. 0 means system
-default.
-.TP
-.BR ftp:socket-maxseg \ (bytes)
-use given size for TCP_MAXSEG socket option. Not all operating systems support
-setting this option, but linux does.
-.TP
 .BR ftp:sync-mode \ (bool)
 if set lftp will send one command at a time and wait for
 response. This might be useful if you are using a buggy ftp server or
 router.
-.TP
-.BR ftp:timeout \ (seconds)
-sets the network protocol timeout.
 .TP
 .BR ftp:verify-address \ (bool)
 verify that data connection comes from the network address of control
@@ -637,6 +648,41 @@ verify that data connection has port 20 (ftp-data) on its remote end.
 This can possibly prevent data connection spoofing by users of remote
 host. Unfortunately, too many windows and even unix ftp servers forget
 to set proper port on data connection, thus this check is off by default.
+.TP
+.BR http:proxy
+specifies http proxy. It is used when lftp works over http protocol.
+.TP
+.BR net:idle \ (seconds)
+disconnect from ftp server after that number of idle seconds.
+.TP
+.BR net:limit-rate \ (bytes per second)
+timit transfer rate on data connection. 0 means unlimited.
+.TP
+.BR net:limit-max \ (bytes)
+limit accumulating of limit-rate in time. 0 means unlimited.
+.TP
+.BR net:max-retries \ (number)
+the maximum number of sequential retries of an operation without success.
+0 means unlimited.
+.TP
+.BR net:reconnect-interval \ (seconds)
+sets the minimal time between reconnects.
+.TP
+.BR net:relookup-always \ (bool)
+a boolean to control whether to lookup host address each time
+before connecting or not. Can be useful if server uses dynamic ip
+address and dynamic DNS.
+.TP
+.BR net:socket-buffer \ (bytes)
+use given size for SO_SNDBUF and SO_RCVBUF socket options. 0 means system
+default.
+.TP
+.BR net:socket-maxseg \ (bytes)
+use given size for TCP_MAXSEG socket option. Not all operating systems support
+this option, but linux does.
+.TP
+.BR net:timeout \ (seconds)
+sets the network protocol timeout.
 .TP
 .BR xfer:use-urls \ (bool)
 recognize URLs by default in commands get, cat, mget, zcat, zmore.
@@ -741,5 +787,6 @@ lav@yars.free.net
 .SH ACKNOWLEDGMENTS
 This manual page was originally written by Christoph Lameter
 <clameter@debian.org>, for the Debian GNU/Linux system.
-Thanks to Nicolas Lichtmaier <nick@Feedback.com.ar> and
-James Troup <J.J.Troup@comp.brad.ac.uk> for improving this page.
+The page was improved by Nicolas Lichtmaier <nick@Feedback.com.ar>,
+James Troup <J.J.Troup@comp.brad.ac.uk> and
+Alexander V. Lukyanov <lav@yars.free.net>.
