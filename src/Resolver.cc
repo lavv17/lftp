@@ -740,12 +740,14 @@ void Resolver::LookupOne(const char *name)
 	 break;
 
       struct hostent *ha;
+      bool free_ha=false;
 # if defined(HAVE_GETIPNODEBYNAME)
 #  ifndef HAVE_H_ERRNO
 #   define HAVE_H_ERRNO 1
 #  endif
       int h_errno=0;
       ha=getipnodebyname(name,af,0,&h_errno);
+      free_ha=true;
 # elif defined(HAVE_GETHOSTBYNAME2)
       ha=gethostbyname2(name,af);
 # else
@@ -764,6 +766,10 @@ void Resolver::LookupOne(const char *name)
 	 for(a=ha->h_addr_list; *a; a++)
 	    AddAddress(ha->h_addrtype, *a, ha->h_length);
 	 af_index++;
+# if defined(HAVE_GETIPNODEBYNAME)
+	 if(free_ha)
+	    freehostent(ha);
+# endif
 	 continue;
       }
 

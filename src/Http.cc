@@ -1047,6 +1047,13 @@ int Http::Do()
 		  state=DONE;
 		  return MOVED;
 	       }
+	       if(H_CONTINUE(status_code))
+	       {
+		  xfree(status);
+		  status=0;
+		  status_code=0;
+		  return MOVED;
+	       }
 	       if(mode==ARRAY_INFO)
 	       {
 		  // we'll have to receive next header
@@ -1076,13 +1083,6 @@ int Http::Do()
 	       }
 	       else if(mode==STORE)
 	       {
-		  if(H_CONTINUE(status_code))
-		  {
-		     xfree(status);
-		     status=0;
-		     status_code=0;
-		     return MOVED;
-		  }
 		  if((sent_eot || pos==entity_size) && H_20X(status_code))
 		  {
 		     state=DONE;

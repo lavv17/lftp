@@ -1,3 +1,8 @@
+2002-05-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc: handle '100 Continue' independently of open mode.
+	* Resolver.cc: free hostent structure from getipnodebyname.
+
 2002-05-14  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* StatusLine.cc: fix for terminals with am and with no xenl (a space
