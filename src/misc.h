@@ -47,6 +47,8 @@ void  truncate_file_tree(const char *dir);
 // returns 0 on error.
 char *xgetcwd();
 
+int percent(long offset,long size);
+
 #define MINUTE (60)
 #define HOUR   (60*MINUTE)
 #define DAY    (24*HOUR)

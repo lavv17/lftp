@@ -23,6 +23,7 @@
 #include <config.h>
 #include "pgetJob.h"
 #include "url.h"
+#include "misc.h"
 
 #undef MIN
 #define MIN(a,b) ((a)<(b)?(a):(b))
@@ -184,9 +185,6 @@ void pgetJob::ShowRunStatus(StatusLine *s)
 
    if(!cp)
       return;
-
-#define percent(offset,size) ((offset)>(size)?100: \
-				 int(float(offset)*100/(size)))
 
    const char *name=cp->SqueezeName(s->GetWidthDelayed()-40);
    long size=cp->GetSize();

@@ -303,3 +303,10 @@ int guess_year(int month,int day,int hour,int minute)
       year--;
    return year;
 }
+int percent(long offset,long size)
+{
+   if(offset>=size)
+      return 100;
+   // use floating point to avoid integer overflow.
+   return int(double(offset)*100/size);
+}

@@ -436,7 +436,7 @@ int FileCopy::GetPercentDone()
       return -1;
    if(size==0)
       return 0;
-   return (put->GetRealPos() - put->Buffered())*100/size;
+   return percent(put->GetRealPos() - put->Buffered(),size);
 }
 const char *FileCopy::GetPercentDoneStr()
 {

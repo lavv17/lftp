@@ -1,3 +1,10 @@
+2000-01-03  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* misc.cc, misc.h: (percent) new function.
+	* pgetJob.cc: use it.
+	* FileCopy.cc: use it - and thus avoid integer overflow.
+	  (reported by Slama YA).
+
 2000-01-02  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileCopy.cc: check if line_buffer!=0 (by Slama YA)
