@@ -226,6 +226,7 @@ const char *FtpListInfo::Status()
       sprintf(s,_("Getting directory contents (%ld)"),session->GetPos());
       return s;
    case(GETTING_INFO):
+      // xgettext:c-format
       sprintf(s,_("Getting files information (%d%%)"),session->InfoArrayPercentDone());
       return s;
    }

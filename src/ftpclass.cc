@@ -1292,7 +1292,7 @@ int   Ftp::Do()
 	 goto pre_WAITING_STATE;
       }
 
-      if((flags&PASSIVE_MODE)
+      if((copy_mode==COPY_NONE && (flags&PASSIVE_MODE))
       || (copy_mode!=COPY_NONE && copy_passive))
       {
 	 if(peer_sa.sa.sa_family==AF_INET)
@@ -1382,7 +1382,7 @@ int   Ftp::Do()
       m=MOVED;
       if(copy_mode!=COPY_NONE && !copy_passive)
 	 goto pre_WAITING_STATE;
-      if((flags&PASSIVE_MODE)
+      if((copy_mode==COPY_NONE && (flags&PASSIVE_MODE))
       || (copy_mode!=COPY_NONE && copy_passive))
       {
 	 state=DATASOCKET_CONNECTING_STATE;
