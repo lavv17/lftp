@@ -263,7 +263,7 @@ int   Ftp::NoFileCheck(int act,int exp)
       || (strstr(line,"Too many")    && (!file || !strstr(file,"Too many")))
       || (strstr(line,"timed out")   && (!file || !strstr(file,"timed out")))
       // if there were some data received, assume it is temporary error.
-      || (flags&IO_FLAG))
+      || (mode!=STORE && (flags&IO_FLAG)))
       {
 	 if(copy_mode!=COPY_NONE)
 	    return COPY_FAILED;

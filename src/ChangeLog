@@ -1,3 +1,8 @@
+2000-04-14  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: (TransferCheck) fix wrong error handling in passive
+	  STORE mode, it lead to infinite loops.
+
 2000-04-12  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CmdExec.cc, CmdExec.h, lftp.cc: add cmd:interactive setting.
