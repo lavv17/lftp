@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-10-18 11:49+0400\n"
+"POT-Creation-Date: 2004-10-20 22:54+0400\n"
 "PO-Revision-Date: 2002-04-12 00:06+0900\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -44,7 +44,7 @@ msgstr "cd 成功、cwd=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: `%s'へのリダイレクションを受け取りました\n"
 
-#: src/CmdExec.cc:394 src/FileCopy.cc:992
+#: src/CmdExec.cc:394 src/FileCopy.cc:991
 msgid "Too many redirections"
 msgstr "リダイレクションが多すぎます"
 
@@ -2116,12 +2116,12 @@ msgstr "copy: データをすべて受信しましたが、get は戻りました\n"
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr "copy: get は %lld に戻りました。適宜 put しています\n"
 
-#: src/FileCopy.cc:989
+#: src/FileCopy.cc:988
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy: `%s' へのリダイレクションを受け取りました\n"
 
-#: src/FileCopy.cc:1191
+#: src/FileCopy.cc:1190
 msgid "file name missed in URL"
 msgstr "URL 中にファイル名がありません"
 

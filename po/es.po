@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.6.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-10-18 11:49+0400\n"
+"POT-Creation-Date: 2004-10-20 22:54+0400\n"
 "PO-Revision-Date: 2002-08-08 19:01+0000\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -45,7 +45,7 @@ msgstr "cd ok, dir actual=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: se recibió redirección a `%s'\n"
 
-#: src/CmdExec.cc:394 src/FileCopy.cc:992
+#: src/CmdExec.cc:394 src/FileCopy.cc:991
 msgid "Too many redirections"
 msgstr "Demasiadas redirecciones"
 
@@ -2085,12 +2085,12 @@ msgstr ""
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr ""
 
-#: src/FileCopy.cc:989
+#: src/FileCopy.cc:988
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy: se recibió redirección a `%s'\n"
 
-#: src/FileCopy.cc:1191
+#: src/FileCopy.cc:1190
 msgid "file name missed in URL"
 msgstr "nombre de archivo no encontrado em URL"
 

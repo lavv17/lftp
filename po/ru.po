@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-10-18 11:49+0400\n"
+"POT-Creation-Date: 2004-10-20 22:54+0400\n"
 "PO-Revision-Date: 2000-09-07 09:36+08:00\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -45,7 +45,7 @@ msgstr "cd ok, каталог=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: получено перенаправление на `%s'\n"
 
-#: src/CmdExec.cc:394 src/FileCopy.cc:992
+#: src/CmdExec.cc:394 src/FileCopy.cc:991
 msgid "Too many redirections"
 msgstr "Слишком много перенаправлений"
 
@@ -2084,12 +2084,12 @@ msgstr ""
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr ""
 
-#: src/FileCopy.cc:989
+#: src/FileCopy.cc:988
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr ""
 
-#: src/FileCopy.cc:1191
+#: src/FileCopy.cc:1190
 msgid "file name missed in URL"
 msgstr "пропущено имя файла в URL"
 

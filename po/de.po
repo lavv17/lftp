@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-10-18 11:49+0400\n"
+"POT-Creation-Date: 2004-10-20 22:54+0400\n"
 "PO-Revision-Date: 2004-05-21 12:53+0200\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: deutsch <de@li.org>\n"
@@ -50,7 +50,7 @@ msgstr "Verzeichniswechsel OK, cwd=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: Umleitung nach »%s« empfangen\n"
 
-#: src/CmdExec.cc:394 src/FileCopy.cc:992
+#: src/CmdExec.cc:394 src/FileCopy.cc:991
 msgid "Too many redirections"
 msgstr "Zu viele Umleitungen"
 
@@ -2184,12 +2184,12 @@ msgstr "copy: Alle Daten empfangen, aber get wurde zurückgesetzt\n"
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr "copy: get wurde zurückgesetzt zu %lld, suche dementsprechendes put\n"
 
-#: src/FileCopy.cc:989
+#: src/FileCopy.cc:988
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy: Umleitung nach »%s« empfangen\n"
 
-#: src/FileCopy.cc:1191
+#: src/FileCopy.cc:1190
 msgid "file name missed in URL"
 msgstr "Dateiname fehlt in der URL"
 
