@@ -2,6 +2,7 @@ The following people contributed to lftp in various ways: testing,
 suggesting useful improvements, sending patches. Listed in abc order.
 
 Andy Eskilsson <x-aes@telelogic.se> for testing and suggestions.
+Arkadiusz Miskiewicz <misiek@pld.org.pl>
 Artur Frysiak <wiget@t17.ds.pwr.wroc.pl>
 Bozo Dragojevic <bozzo@hermes.si> for testing with an ftp proxy, patch.
 Brandon Hume <hume@Den.BOFH.Halifax.NS.Ca>
