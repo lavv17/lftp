@@ -124,6 +124,8 @@ int FileCopy::Do()
       && put->GetSeekPos()>=get->GetSize())
       {
 	 debug((9,_("copy: destination file is already complete\n")));
+	 if(get->GetDate()!=NO_DATE)
+	    goto pre_CONFIRM_WAIT;  // have to set the date.
 	 goto pre_GET_DONE_WAIT;
       }
       if(!put->IOReady())
@@ -246,22 +248,7 @@ int FileCopy::Do()
       if(b==0) // eof
       {
 	 debug((10,"copy: get hit eof\n"));
-      eof:
-	 put->Resume();
-	 if(line_buffer)
-	 {
-	    line_buffer->Get(&b,&s);
-	    put->Put(b,s);
-	    line_buffer->Skip(s);
-	 }
-	 put->SetDate(get->GetDate());
-	 if(get->GetSize()!=NO_SIZE && get->GetSize()!=NO_SIZE_YET)
-	    put->SetEntitySize(get->GetSize());
-	 put->PutEOF();
-	 get->Suspend();
-	 put_eof_pos=put->GetRealPos();
-	 state=CONFIRM_WAIT;
-	 return MOVED;
+	 goto eof;
       }
 
       rate_add=put_buf;
@@ -325,6 +312,25 @@ int FileCopy::Do()
       }
       return m;
    }
+
+   eof:
+      if(line_buffer)
+      {
+	 line_buffer->Get(&b,&s);
+	 put->Put(b,s);
+	 line_buffer->Skip(s);
+      }
+   pre_CONFIRM_WAIT:
+      put->SetDate(get->GetDate());
+      if(get->GetSize()!=NO_SIZE && get->GetSize()!=NO_SIZE_YET)
+	 put->SetEntitySize(get->GetSize());
+      put->PutEOF();
+      get->Suspend();
+      put->Resume();
+      put_eof_pos=put->GetRealPos();
+      debug((10,"copy: waiting for put confirmation\n"));
+      state=CONFIRM_WAIT;
+      m=MOVED;
    case(CONFIRM_WAIT):
       if(put->Error())
 	 goto put_error;
@@ -899,7 +905,8 @@ void FileCopyPeerFA::OpenSession()
 	 debug((10,"copy dst: seek past eof (seek_pos=%lld, size=%lld)\n",
 		  (long long)seek_pos,(long long)e_size));
 	 eof=true;
-	 return;
+	 if(date==NO_DATE || date==NO_DATE_YET)
+	    return;
       }
    }
    session->Open(file,FAmode,seek_pos);

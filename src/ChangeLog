@@ -1,3 +1,11 @@
+2004-03-19  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc: still wait for put confirmation to set file mtime
+	  even if target file is already complete - this fixes repeated
+	  transferring a file in mirror -c.
+	* ftpclass.cc: handle storing 0 bytes by skipping data connection
+	  establishment and still set the file mtime.
+
 2004-03-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: set proper timeout for retry_time; better error handling

@@ -1490,8 +1490,10 @@ int   Ftp::Do()
 	 goto usual_return;
 
       if(entity_size!=NO_SIZE && entity_size!=NO_SIZE_YET && entity_size<=pos
-      && mode==RETRIEVE)
+      && (mode==RETRIEVE || mode==STORE))
       {
+	 if(mode==STORE)
+	    SendUTimeRequest();
 	 eof=true;
 	 goto pre_WAITING_STATE; // simulate eof.
       }
