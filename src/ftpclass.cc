@@ -233,8 +233,8 @@ int   Ftp::NoFileCheck(int act,int exp)
    if(act/100==5)
    {
       // retry on these errors (ftp server ought to send 4xx code instead)
-      if((strstr(line,"Broken pipe") && !strstr(file,"Broken pipe"))
-      || (strstr(line,"Too many")    && !strstr(file,"Too many")))
+      if((strstr(line,"Broken pipe") && (!file || !strstr(file,"Broken pipe")))
+      || (strstr(line,"Too many")    && (!file || !strstr(file,"Too many"))))
       {
 	 if(copy_mode!=COPY_NONE)
 	    return COPY_FAILED;
