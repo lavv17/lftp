@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.53)
-AC_INIT([lftp], [pre3.0.0], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [pre3.0.0-20031120], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
 AM_CONFIG_HEADER(include/config.h)
@@ -282,7 +282,7 @@ if test "$inetutils_cv_var_h_errno" = yes; then
 fi
 
 # See if the system has hstrerror, and replace it if not
-AC_CHECK_FUNC(hstrerror, , AC_LIBOBJ(hstrerror))
+AC_CHECK_FUNC(hstrerror, , [AC_LIBOBJ(hstrerror)])
 if test "$ac_cv_func_hstrerror" = yes; then
   IU_CHECK_DECL(hstrerror, [#include <netdb.h>])
 else
