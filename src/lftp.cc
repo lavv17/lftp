@@ -285,6 +285,9 @@ static void tty_clear()
    top_exec->pre_stdout();
 }
 
+ResDecl res_save_cwd_history
+   ("cmd:save-cwd-history","yes",ResMgr::BoolValidate,ResMgr::NoClosure);
+
 int   main(int argc,char **argv)
 {
 #ifdef SOCKS4
@@ -348,7 +351,8 @@ int   main(int argc,char **argv)
    top_exec->AtExit();
    WaitDone(top_exec);
 
-   cwd_history.Save();
+   if((bool)res_save_cwd_history.Query(0))
+      cwd_history.Save();
 
    if(Job::NumberOfJobs()>0)
    {
