@@ -78,6 +78,7 @@ public:
    static void Flush();
    static void On() { use=true; }
    static void Off() { use=false; }
+   static bool IsCacheOn() { return use; }
    static void SetSizeLimit(long l) { sizelimit=l; }
    static void SetExpire(time_t t) { ttl=t; }
 

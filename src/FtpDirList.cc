@@ -63,10 +63,10 @@ int FtpDirList::Do()
    const char *b;
    int len;
    ubuf->Get(&b,&len);
-   if(ubuf->Eof() && len==upos) // eof
+   if(ubuf->Eof() && (len==upos || (len==0 && !cache_on))) // eof
    {
       buf->PutEOF();
-      if(!from_cache)
+      if(!from_cache && cache_on)
       {
 	 const char *cache_buffer;
 	 int cache_buffer_size;
@@ -80,8 +80,10 @@ int FtpDirList::Do()
       return MOVED;
    }
    int m=STALL;
-   b+=upos;
-   len-=upos;
+   if(cache_on) {
+      b+=upos;
+      len-=upos;
+   }
    while(len>0)
    {
       const char *cr=(const char *)memchr(b,'\r',len);
@@ -89,6 +91,8 @@ int FtpDirList::Do()
       {
 	 buf->Put(b,len);
 	 upos+=len;
+	 if (!cache_on)
+	    ubuf->Skip(len);
 	 m=MOVED;
 	 break;
       }
@@ -98,6 +102,8 @@ int FtpDirList::Do()
 	 {
 	    buf->Put(b,cr-b);
 	    upos+=(cr-b);
+	    if (!cache_on)
+	       ubuf->Skip(cr-b);
 	    m=MOVED;
 	    len-=cr-b;
 	    b=cr;
@@ -110,6 +116,8 @@ int FtpDirList::Do()
 	    m=MOVED;
 	 }
 	 upos++;
+	 if (!cache_on)
+	    ubuf->Skip(1);
 	 b++,len--;
       }
    }
@@ -128,6 +136,7 @@ FtpDirList::FtpDirList(ArgV *a,FileAccess *fa)
    ubuf=0;
    upos=0;
    from_cache=false;
+   cache_on=LsCache::IsCacheOn();
    pattern=args->Combine(1);
 }
 

@@ -29,6 +29,7 @@ class FtpDirList : public DirList
    Buffer *ubuf;
    int upos;
    bool from_cache;
+   bool cache_on;
    char *pattern;
 
 public:
