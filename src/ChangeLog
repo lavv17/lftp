@@ -1,3 +1,14 @@
+2005-02-04  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h: move entity_content_type here; add
+	  entity_charset.
+	* FileSet.cc, FileSet.h: (allocated) new member; optimize memory
+	  allocation.
+	* Http.cc, Http.h: make atotm a static method; implement MP_LIST
+	  as PROPFIND; extract entity charset.
+	* HttpDir.cc, HttpDir.h: try MP_LIST; call ParseProps.
+	* HttpDirXML.cc: new file; implement ParseProps.
+
 2005-02-03  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.cc: don't set error when optional STAT or FSTAT return error.

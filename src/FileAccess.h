@@ -172,6 +172,9 @@ protected:
    char *suggested_filename;
    void SetSuggestedFileName(const char *fn);
 
+   char *entity_content_type;
+   char *entity_charset;
+
    FileAccess *next;
    static FileAccess *chain;
    FileAccess *FirstSameSite() { return NextSameSite(0); }
@@ -302,6 +305,8 @@ public:
 
    const char *GetNewLocation() { return location; }
    const char *GetSuggestedFileName() { return suggested_filename; }
+   const char *GetEntityContentType() { return entity_content_type; }
+   const char *GetEntityCharset() { return entity_charset; }
 
    void Reconfig(const char *);
 

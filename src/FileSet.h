@@ -123,6 +123,7 @@ private:
    FileInfo **files_sort;
 
    int	 fnum;
+   int	 allocated;
 
    int	 ind;
 
@@ -135,6 +136,7 @@ public:
       files=files_sort=0;
       sorted=false;
       fnum=0;
+      allocated=0;
       ind=0;
    }
    FileSet(const FileSet *s);

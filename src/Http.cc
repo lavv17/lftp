@@ -54,8 +54,6 @@ CDECL char *strptime(const char *buf, const char *format, struct tm *tm);
 #define HTTP_DEFAULT_PROXY_PORT	 "3128"
 #define HTTPS_DEFAULT_PORT	 "443"
 
-static time_t http_atotm (const char *time_string);
-
 /* Some status code validation macros: */
 #define H_20X(x)        (((x) >= 200) && ((x) < 300))
 #define H_PARTIAL(x)    ((x) == 206)
@@ -81,7 +79,6 @@ void Http::Init()
    proto_version=0x10;
    sent_eot=false;
    last_method=0;
-   entity_content_type=0;
 
    default_cwd="/";
 
@@ -196,8 +193,6 @@ void Http::ResetRequestData()
    chunk_pos=0;
    chunked_trailer=false;
    seen_ranges_bytes=false;
-   xfree(entity_content_type);
-   entity_content_type=0;
 }
 
 void Http::Close()
@@ -414,7 +409,6 @@ bool Http::ModeSupported()
    case CLOSED:
    case QUOTE_CMD:
    case LIST:
-   case MP_LIST:
    case CHANGE_MODE:
       return false;
    case CONNECT_VERIFY:
@@ -427,6 +421,7 @@ bool Http::ModeSupported()
    case REMOVE:
    case LONG_LIST:
    case RENAME:
+   case MP_LIST:
       return true;
    }
    abort(); // should not happen
@@ -467,6 +462,12 @@ void Http::SendRequest(const char *connection,const char *f)
 			      strlen(hostname)*3+1+xstrlen(portname)*3+1+
 			      strlen(ecwd)+1+strlen(efile)+1+6+1);
 
+   const char *allprop=	// PROPFIND request
+      "<?xml version=\"1.0\" ?>"
+      "<propfind xmlns=\"DAV:\">"
+        "<allprop/>"
+      "</propfind>\r\n";
+
    if(proxy && !https)
    {
       const char *proto="http";
@@ -505,6 +506,8 @@ void Http::SendRequest(const char *connection,const char *f)
    if(mode==STORE)    // can't seek before writing
       real_pos=pos;
 
+if(mode==RETRIEVE && file[0]==0) mode=MP_LIST; // TESTING
+
    switch((open_mode)mode)
    {
    case CLOSED:
@@ -516,7 +519,6 @@ void Http::SendRequest(const char *connection,const char *f)
 	 goto send_post;
       }
    case LIST:
-   case MP_LIST:
    case CHANGE_MODE:
       abort(); // unsupported
 
@@ -559,6 +561,7 @@ void Http::SendRequest(const char *connection,const char *f)
 
    case CHANGE_DIR:
    case LONG_LIST:
+   case MP_LIST:
    case MAKE_DIR:
       if(efile_len<1 || efile[efile_len-1]!='/')
 	 strcat(efile,"/");
@@ -569,8 +572,15 @@ void Http::SendRequest(const char *connection,const char *f)
       else if(mode==MAKE_DIR)
       {
 	 SendMethod("MKCOL",efile);
-	 Send("Content-length: 0\r\n");
 	 pos=entity_size=0;
+      }
+      else if(mode==MP_LIST)
+      {
+	 SendMethod("PROPFIND",efile);
+	 Send("Depth: 1\r\n"); // directory listing required
+	 Send("Content-Type: text/xml\r\n");
+	 Send("Content-Length: %d\r\n",strlen(allprop));
+	 pos=0;
       }
       break;
 
@@ -612,6 +622,10 @@ void Http::SendRequest(const char *connection,const char *f)
 	 Send("%s",post_data);
       entity_size=NO_SIZE;
    }
+   else if(mode==MP_LIST)
+   {
+      Send("%s",allprop);
+   }
 
    keep_alive=false;
    chunked=false;
@@ -638,6 +652,31 @@ void Http::SendArrayInfoRequest()
 	 array_for_info[array_send].file);
       array_send++;
    }
+}
+
+static const char *extract_quoted_header_value(const char *value)
+{
+   static char *value1;
+   xfree(value1);
+   if(*value=='"')
+   {
+      value++;
+      value1=(char*)xmalloc(strlen(value));
+      char *store=value1;
+      while(*value && *value!='"')
+      {
+	 if(*value=='\\' && value[1])
+	    value++;
+	 *store++=*value++;
+      }
+   }
+   else
+   {
+      int end=strcspn(value,"()<>@,;:\\\"/[]?={} \t");
+      value1=xstrdup(value);
+      value1[end]=0;
+   }
+   return value1;
 }
 
 void Http::HandleHeaderLine(const char *name,const char *value)
@@ -687,7 +726,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
    }
    if(!strcasecmp(name,"Last-Modified"))
    {
-      time_t t=http_atotm(value);
+      time_t t=Http::atotm(value);
       if(opt_date && H_20X(status_code))
 	 *opt_date=t;
 
@@ -757,26 +796,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       const char *filename=strstr(value,"filename=");
       if(!filename)
 	 return;
-      filename+=9;
-      if(*filename=='"')
-      {
-	 filename++;
-	 char *filename1=string_alloca(strlen(filename));
-	 while(*filename && *filename!='"')
-	 {
-	    if(*filename=='\\' && filename[1])
-	       filename++;
-	    *filename1++=*filename++;
-	 }
-	 filename=filename1;
-      }
-      else
-      {
-	 int end=strcspn(filename,"()<>@,;:\\\"/[]?={} \t");
-	 char *filename1=alloca_strdup(filename);
-	 filename1[end]=0;
-	 filename=filename1;
-      }
+      filename=extract_quoted_header_value(filename+9);
       SetSuggestedFileName(filename);
       return;
    }
@@ -784,7 +804,13 @@ void Http::HandleHeaderLine(const char *name,const char *value)
    {
       xfree(entity_content_type);
       entity_content_type=xstrdup(value);
-//       const char *cs=strstr(value,"charset=");
+      const char *cs=strstr(value,"charset=");
+      if(cs)
+      {
+	 cs=extract_quoted_header_value(cs+8);
+	 xfree(entity_charset);
+	 entity_charset=xstrdup(cs);
+      }
    }
 }
 
@@ -2186,8 +2212,8 @@ check_end (const char *p)
    Marcus Hennecke's atotm(), which is forgiving, fast, to-the-point,
    and does not use strptime().  atotm() is to be found in the sources
    of `phttpd', a little-known HTTP server written by Peter Erikson.  */
-static time_t
-http_atotm (const char *time_string)
+time_t
+Http::atotm (const char *time_string)
 {
   struct tm t;
 

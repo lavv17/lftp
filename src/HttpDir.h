@@ -34,6 +34,7 @@ public:
       {
 	 get_time_for_dirs=false;
       }
+   static FileSet *ParseProps(const char *buf,int len,const char *base_dir);
 };
 
 class ParsedURL;

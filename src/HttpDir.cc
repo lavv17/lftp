@@ -1327,6 +1327,13 @@ void HttpDirList::Resume()
 // HttpListInfo implementation
 FileSet *HttpListInfo::Parse(const char *b,int len)
 {
+   if(mode==FA::MP_LIST)
+   {
+      FileSet *fs=ParseProps(b,len,session->GetCwd());
+      if(!fs)
+	 mode=FA::LONG_LIST;
+      return fs;
+   }
    return session->ParseLongList(b,len);
 }
 

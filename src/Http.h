@@ -119,8 +119,6 @@ class Http : public NetAccess
 
    const char *user_agent;
 
-   char *entity_content_type;
-
 protected:
    bool hftp;  // ftp over http proxy.
    bool https; // secure http
@@ -170,6 +168,8 @@ public:
 
    void Cleanup();
    void CleanupThis();
+
+   static time_t atotm (const char *time_string);
 };
 
 class HFtp : public Http

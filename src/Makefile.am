@@ -19,7 +19,7 @@ noinst_LTLIBRARIES = liblftp-tasks.la liblftp-jobs.la $(MODULES_LA_STATIC)
 
 proto_ftp_la_SOURCES  = ftpclass.cc ftpclass.h FtpListInfo.cc FtpListInfo.h\
  FtpDirList.cc FtpDirList.h md5.c md5.h ftp-opie.c FileCopyFtp.cc FileCopyFtp.h
-proto_http_la_SOURCES = Http.cc Http.h HttpDir.cc HttpDir.h
+proto_http_la_SOURCES = Http.cc Http.h HttpDir.cc HttpDir.h HttpDirXML.cc
 proto_file_la_SOURCES = LocalAccess.cc LocalAccess.h
 proto_fish_la_SOURCES = Fish.cc Fish.h
 proto_sftp_la_SOURCES = SFtp.cc SFtp.h
@@ -41,7 +41,7 @@ liblftp_network_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir) $(SSL_LDFLAGS
 liblftp_network_la_LIBADD  = $(SOCKSLIBS) $(SSL_LIBS)
 
 proto_ftp_la_LIBADD  = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la
-proto_http_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la
+proto_http_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la $(EXPAT_LIBS)
 proto_fish_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la liblftp-pty.la
 proto_sftp_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la liblftp-pty.la
 
@@ -78,7 +78,7 @@ liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
 
 lftp_LDFLAGS = -export-dynamic $(LFTP_SSL_LDFLAGS)
 lftp_LDADD = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC) $(READLINE)\
-	$(top_builddir)/lib/liblib.a $(LFTP_SSL_LIBS) $(SOCKSLIBS) $(LTLIBINTL) $(LTLIBICONV)
+	$(top_builddir)/lib/liblib.a $(LFTP_SSL_LIBS) $(SOCKSLIBS) $(EXPAT_LIBS) $(LTLIBINTL) $(LTLIBICONV)
 lftp_DEPENDENCIES = liblftp-jobs.la liblftp-tasks.la $(READLINE_DEPEND) \
 	$(top_builddir)/lib/liblib.a $(MODULES_LA_STATIC)
 

@@ -77,6 +77,8 @@ void FileAccess::Init()
    norest_manual=false;
    location=0;
    suggested_filename=0;
+   entity_content_type=0;
+   entity_charset=0;
    array_ptr=array_cnt=0;
 
    url=0;
@@ -131,6 +133,8 @@ FileAccess::~FileAccess()
    xfree(url);
    xfree(closure);
    xfree(location);
+   xfree(entity_content_type);
+   xfree(entity_charset);
    for(FileAccess **scan=&chain; *scan; scan=&((*scan)->next))
    {
       if(*scan==this)
@@ -339,6 +343,10 @@ void FileAccess::Close()
    ascii=false;
    norest_manual=false;
    xfree(location); location=0;
+   xfree(entity_content_type);
+   entity_content_type=0;
+   xfree(entity_charset);
+   entity_charset=0;
    ClearError();
 }
 

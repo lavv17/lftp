@@ -111,9 +111,14 @@ void FileSet::Add(FileInfo *fi)
       delete fi;
       return;
    }
-   files=files_sort=(FileInfo**)xrealloc(files,(++fnum)*sizeof(*files));
-   memmove(files+pos+1, files+pos, sizeof(*files)*(fnum-pos-1));
+   if(fnum==allocated)
+   {
+      allocated=allocated?allocated*2:16;
+      files=files_sort=(FileInfo**)xrealloc(files,allocated*sizeof(*files));
+   }
+   memmove(files+pos+1, files+pos, sizeof(*files)*(fnum-pos));
    files[pos]=fi;
+   fnum++;
 }
 
 void FileSet::Sub(int i)
@@ -163,7 +168,7 @@ FileSet::FileSet(FileSet const *set)
    if(fnum==0)
       files=files_sort=0;
    else
-      files=files_sort=(FileInfo**)xmalloc(fnum*sizeof(*files));
+      files=files_sort=(FileInfo**)xmalloc((allocated=fnum)*sizeof(*files));
    for(int i=0; i<fnum; i++)
       files[i]=new FileInfo(*(set->files[i]));
 }
@@ -261,6 +266,7 @@ void FileSet::Empty()
    xfree(files);
    files=0; files_sort=0;
    fnum=0;
+   allocated=0;
    ind=0;
 }
 
@@ -950,7 +956,7 @@ void FileInfo::MakeLongName()
 
 int FileSet::EstimateMemory() const
 {
-   int size=sizeof(FileSet)+sizeof(FileInfo*)*fnum;
+   int size=sizeof(FileSet)+sizeof(FileInfo*)*allocated;
    for(int i=0; i<fnum; i++)
    {
       size+=sizeof(FileInfo);
