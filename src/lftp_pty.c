@@ -80,6 +80,7 @@ const char *open_pty(int *ptyfd, int *ttyfd)
    if(*ptyfd<0)
       goto fail;
    name=ttyname(*ptyfd);
+}
 #else /* HAVE_DEV_PTS_AND_PTC */
 {
    /* BSD-style pty code. */

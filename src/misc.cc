@@ -52,6 +52,10 @@
 #include "url.h"
 #include "ResMgr.h"
 
+#if defined(HAVE_UNSETENV) && !defined(HAVE_UNSETENV_DECL)
+CDECL void unsetenv(const char *name);
+#endif
+
 const char *dir_file(const char *dir,const char *file)
 {
    if(dir==0 || dir[0]==0)
