@@ -501,7 +501,7 @@ Command may be ``set-cookie'' or ``post''.
 .Ds
 open http://www.site.net
 quote set-cookie "variable=value; othervar=othervalue"
-set http:put-content-type application/x-www-form-urlencoded
+set http:post-content-type application/x-www-form-urlencoded
 quote post /cgi-bin/script.cgi "var=value&othervar=othervalue" > local_file
 .De
 
@@ -891,6 +891,10 @@ allow server/proxy side caching.
 send this cookie to server. A closure is useful here:
      set cookie/www.somehost.com "param=value"
 .TP
+.BR http:post-content-type " (string)"
+specifies value of Content-Type http request header for POST method.
+Default is ``application/x-www-form-urlencoded''.
+.TP
 .BR http:proxy \ (URL)
 specifies http proxy. It is used when lftp works over http protocol.
 Default value is taken from environment variable \fBhttp_proxy\fP.
@@ -901,9 +905,7 @@ in the URL.
 specifies which http method to use on put.
 .TP
 .BR http:put-content-type " (string)"
-specifies value of Content-Type http request header for PUT and POST methods.
-It can be useful to set this to application/x-www-form-urlencoded if you are
-going to use POST method.
+specifies value of Content-Type http request header for PUT method.
 .TP
 .BR http:set-cookies " (boolean)"
 if true, lftp modifies http:cookie variables when Set-Cookie header is received.

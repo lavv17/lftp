@@ -1,3 +1,7 @@
+2000-07-27	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document http:post-content-type.
+
 2000-07-21	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document a lot of new settings.
