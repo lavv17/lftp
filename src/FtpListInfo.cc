@@ -561,7 +561,10 @@ FileSet *FtpListInfo::ParseFtpLongList(const char * const *lines_c,int *err_ret)
       {
 	 FileInfo *fi=(*parser)(line,&err);
 	 if(fi)
-	    result->Add(fi);
+	 {
+	    if(!strchr(fi->name,'/'))
+	       result->Add(fi);
+	 }
 	 if(err>=best_err)
 	    break;
       }

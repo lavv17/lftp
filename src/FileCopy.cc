@@ -449,7 +449,15 @@ int FileCopy::GetPercentDone()
       return -1;
    if(size==0)
       return 0;
-   return percent(put->GetRealPos() - put->Buffered(),size);
+   long ppos=put->GetRealPos() - put->Buffered() - put->range_start;
+   if(ppos<0)
+      return 0;
+   long psize=size-put->range_start;
+   if(put->range_limit!=FILE_END)
+      psize=put->range_limit-put->range_start;
+   if(psize<0)
+      return 100;
+   return percent(ppos,psize);
 }
 const char *FileCopy::GetPercentDoneStr()
 {
