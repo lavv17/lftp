@@ -118,6 +118,7 @@ protected:
    int	 saved_errno;
 
    void	 ExpandTildeInCWD();
+   const char *ExpandTildeStatic(const char *s);
 
    char *real_cwd;
    void set_real_cwd(const char *c)
@@ -284,6 +285,7 @@ public:
       {
 	 return Protocol::NewSession(proto);
       }
+   static FileAccess *New(const class ParsedURL *u);
 };
 
 class FileAccessOperation : public SMTask
