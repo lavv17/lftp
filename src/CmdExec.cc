@@ -232,7 +232,7 @@ restart:
       {
 	 new_job=c->creator(this);
       }
-      if(new_job==this && builtin!=BUILTIN_NONE)
+      if(new_job==this || builtin)
       {
 	 if(builtin==BUILTIN_EXEC_RESTART)
 	 {
