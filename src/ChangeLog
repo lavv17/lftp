@@ -4,6 +4,8 @@
 	  new member; check all_lines for auto-sync-mode; fix ftps connection
 	  borrowing.
 	* resource.cc: make use-site-idle off by default; validate https:proxy.
+	* HttpDir.cc: fix unterminated comment handling; handle bsd-like
+	  ftp listings from apache proxy.
 
 2000-08-13  Alexander V. Lukyanov  <lav@yars.free.net>
 

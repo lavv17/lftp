@@ -245,7 +245,11 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
       {
 	 const char *eoc=find_char(scan,end-scan,'>');
 	 if(!eoc)
+	 {
+	    if(eof)  // unterminated comment.
+	       return len;
 	    return less-buf;
+	 }
 	 if(eoc>=less+4+2 && eoc[-1]=='-' && eoc[-2]=='-')
 	    return eoc+1-buf;
 	 scan=eoc+1;
@@ -652,7 +656,7 @@ parse_url_again:
       }
 
       // Apache Unix-like listing (from apache proxy):
-      //   Perms Nlnk user group size Mon DD (YYYY or hh:mm)
+      //   Perms Nlnk user [group] size Mon DD (YYYY or hh:mm)
       int perms_code;
       int n_links;
       char user[32];
@@ -662,7 +666,13 @@ parse_url_again:
 
       n=sscanf(buf,"%10s %d %31s %31s %lld %3s %2d %5s%n",perms,&n_links,
 	    user,group,&size,month_name,&day,year_or_time,&consumed);
-      if(n==8 && -1!=(perms_code=parse_perms(perms+1))
+      if(n==4) // bsd-like listing without group?
+      {
+	 group[0]=0;
+	 n=sscanf(buf,"%10s %d %31s %lld %3s %2d %5s%n",perms,&n_links,
+	       user,&size,month_name,&day,year_or_time,&consumed);
+      }
+      if(n>=7 && -1!=(perms_code=parse_perms(perms+1))
       && -1!=(month=parse_month(month_name))
       && -1!=parse_year_or_time(year_or_time,&year,&hour,&minute))
       {
