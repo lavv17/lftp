@@ -50,7 +50,7 @@ ColumnOutput::~ColumnOutput()
 {
    for(int i = 0; i < lst_cnt; i++)
       delete lst[i];
-   free(lst);
+   xfree(lst);
 }
 
 void ColumnOutput::add(const char *name, const char *color)

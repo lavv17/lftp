@@ -430,6 +430,7 @@ public:
 
    virtual void SetExclude(const char *p,regex_t *x,regex_t *i);
 
+   // caller has to delete the resulting FileSet itself.
    FileSet *GetResult()
       {
 	 FileSet *tmp=result;

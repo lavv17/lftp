@@ -350,7 +350,7 @@ parse_ls_color (const char *p, KeyValueDB &out)
       out.Empty();
    }
 
-   free (color_buf);
+   xfree (color_buf);
    // if (color_indicator[C_LINK].len == 6
    //     && !strncmp (color_indicator[C_LINK].string, "target", 6))
    //   color_symlink_as_referent = 1;
@@ -586,6 +586,7 @@ FileCopyPeerCLS::FileCopyPeerCLS(FA *_session, ArgV *a, const FileSetOutput &_fs
 FileCopyPeerCLS::~FileCopyPeerCLS()
 {
    delete f;
+   delete args;
    Delete(list_info);
    SessionPool::Reuse(session);
    xfree(dir);
@@ -613,11 +614,12 @@ int FileCopyPeerCLS::Do()
 	 int oldpos = pos;
 	 fso.pat = mask;
 	 FileSet *res = list_info->GetResult();
+	 Delete(list_info);
+	 list_info=0;
 	 fso.print(*res, this);
 	 fso.pat = 0;
+	 delete res;
 	 pos = oldpos;
-	 if(list_info) Delete(list_info);
-	 list_info=0;
       }
 
       /* next: */

@@ -1264,7 +1264,8 @@ CMD(cls)
    const char *op=args->a0();
    bool re=false;
 
-   if(!output) output=new FDStream(1,"<stdout>");
+   if(!output)
+      output=new FDStream(1,"<stdout>");
 
    FileSetOutput fso;
    fso.config(output);
@@ -1278,17 +1279,16 @@ CMD(cls)
       return 0;
    }
 
-
    ArgV arg("", ResMgr::Query("cmd:cls-default", 0));
    fso.parse_argv(&arg);
 
-   fso.quiet = true;
+   fso.quiet=true;
 
    char *a=args->Combine(0);
 
    FileCopyPeer *src_peer=0;
-   src_peer=new FileCopyPeerCLS(Clone(), args, fso);
-   args = 0;
+   src_peer=new FileCopyPeerCLS(Clone(),args,fso);
+   args=0;
 
    if(re)
       src_peer->NoCache();
@@ -1302,7 +1302,8 @@ CMD(cls)
    c->Ascii();
 
    CopyJob *j=new CopyJob(c,a,op);
-   if(fso.quiet) j->NoStatus();
+   if(fso.quiet)
+      j->NoStatus();
 
    xfree(a);
    output=0;

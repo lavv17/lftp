@@ -1,5 +1,12 @@
 2001-10-15  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* ColumnOutput.cc: use xfree.
+	* FileAccess.h: add comment about ListInfo::GetResult.
+	* FileSetOutput.cc: fix memory leaks; use xfree.
+	* commands.cc: cosmetics.
+
+2001-10-15  Alexander V. Lukyanov <lav@yars.free.net>
+
 	* misc.cc, misc.h: conding style; safety precautions (better checking
 	  on vsnprintf return value); just double buffer size; include stdarg.h
 	  in misc.h.
