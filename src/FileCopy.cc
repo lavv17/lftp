@@ -1262,6 +1262,7 @@ int FileCopyPeerFDStream::getfd()
       }
       return -1;
    }
+   pos=0;
    Seek_LL();
    return fd;
 }
