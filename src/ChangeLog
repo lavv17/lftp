@@ -2,6 +2,8 @@
 
 	* Http.cc: use vsnprintf only if available.
 	* log.cc: move vsnprintf declaration to xstring.h.
+	* ftpclass.cc, ftpclass.h, resource.cc: wait for QUIT reply before
+	  closing the socket; ftp:use-quit new setting.
 
 2000-05-04  Alexander V. Lukyanov  <lav@yars.free.net>
 

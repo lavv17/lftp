@@ -711,6 +711,7 @@ void Ftp::InitFtp()
    control_sock=-1;
    data_sock=-1;
    aborted_data_sock=-1;
+   quit_sent=false;
 
    nop_time=0;
    nop_count=0;
@@ -784,6 +785,7 @@ Ftp::Ftp(const Ftp *f) : super(f)
 Ftp::~Ftp()
 {
    Close();
+   quit_sent=true;
    Disconnect();
 
    xfree(anon_user); anon_user=0;
@@ -826,7 +828,7 @@ void  Ftp::GetBetterConnection(int level,int count)
    {
       if(o==this)
 	 continue;
-      if(o->control_sock==-1 || o->state==CONNECTING_STATE)
+      if(o->IsConnected()<2)
 	 continue;
       if(!SameConnection(o))
 	 continue;
@@ -912,6 +914,8 @@ int   Ftp::Do()
       {
 	 DebugPrint("---- ",_("Closing idle connection"),1);
 	 Disconnect();
+	 if(control_sock!=-1)
+	    idle_start=now+timeout;
 	 return m;
       }
       TimeoutS(idle_start+idle-now);
@@ -1100,6 +1104,16 @@ int   Ftp::Do()
       m|=ReceiveResp();
       if(state!=EOF_STATE)
 	 return MOVED;
+
+      if(quit_sent)
+      {
+	 if(RespQueueIsEmpty())
+	 {
+	    Disconnect();
+	    return MOVED;
+	 }
+	 goto usual_return;
+      }
 
       if(mode==CLOSED || mode==CONNECT_VERIFY)
 	 goto notimeout_return;
@@ -1644,6 +1658,7 @@ int   Ftp::Do()
 	    if(nop_offset==pos && nop_count*nop_interval>=timeout)
 	    {
 	       DebugPrint("**** ",_("Timeout - reconnecting"),0);
+	       quit_sent=true;
 	       Disconnect();
 	       return MOVED;
 	    }
@@ -1822,7 +1837,7 @@ int Ftp::ReplyLogPriority(int code)
       return 4;
    // Error messages
    // 221 is the reply to QUIT, but we don't expect it.
-   if(code>=400 || code==221)
+   if(code>=400 || (code==221 && RespQueue[RQ_head].expect!=221))
       return 0;
    return 4;
 }
@@ -1917,6 +1932,7 @@ int  Ftp::ReceiveResp()
 	       if(NotSerious(errno))
 	       {
 		  DebugPrint("**** ",strerror(errno),0);
+		  quit_sent=true;
 		  Disconnect();
 		  return MOVED;
 	       }
@@ -1994,6 +2010,7 @@ void  Ftp::DataAbort()
       if(!copy_connection_open && RespQueueSize()==1)
       {
 	 // wu-ftpd-2.6.0 cannot interrupt accept() or connect().
+	 quit_sent=true;
 	 Disconnect();
 	 return;
       }
@@ -2011,12 +2028,16 @@ void  Ftp::DataAbort()
       if(copy_mode==COPY_NONE)
 	 DataClose();	// just close data connection
       else
+      {
+	 quit_sent=true;
 	 Disconnect();	// nothing to close but control connection.
+      }
       return;
    }
 
    if(aborted_data_sock!=-1)  // don't allow double ABOR.
    {
+      quit_sent=true;
       Disconnect();
       return;
    }
@@ -2044,6 +2065,7 @@ void Ftp::ControlClose()
    resp_size=0;
    EmptyRespQueue();
    EmptySendQueue();
+   quit_sent=false;
 }
 
 void Ftp::AbortedClose()
@@ -2065,11 +2087,16 @@ void  Ftp::Disconnect()
 
    DataAbort();
    DataClose();
-   if(control_sock>=0 && state!=CONNECTING_STATE)
+   if(control_sock>=0 && state!=CONNECTING_STATE && !quit_sent
+   && RespQueueSize()<2 && (bool)Query("use-quit",hostname))
    {
-      EmptySendQueue();
+//       EmptySendQueue();
       SendCmd("QUIT");
-      FlushSendQueue(true);
+      AddResp(221,INITIAL_STATE);
+//       FlushSendQueue(true);
+      quit_sent=true;
+      state=EOF_STATE;
+      goto out;
    }
    ControlClose();
    AbortedClose();
@@ -2088,7 +2115,7 @@ void  Ftp::Disconnect()
       state=STORE_FAILED_STATE;
    else
       state=INITIAL_STATE;
-
+out:
    disconnect_in_progress=false;
 }
 
@@ -2162,6 +2189,7 @@ int  Ftp::FlushSendQueue(bool all)
 	 if(NotSerious(errno) || errno==EPIPE)
 	 {
 	    DebugPrint("**** ",strerror(errno),0);
+	    quit_sent=true;
 	    Disconnect();
 	    return MOVED;
 	 }
@@ -2485,6 +2513,7 @@ read_again:
       if(NotSerious(errno))
       {
 	 DebugPrint("**** ",strerror(errno),0);
+	 quit_sent=true;
 	 Disconnect();
 	 return DO_AGAIN;
       }
@@ -2570,6 +2599,7 @@ int   Ftp::Write(const void *buf,int size)
       if(NotSerious(errno) || errno==EPIPE)
       {
 	 DebugPrint("**** ",strerror(errno),0);
+	 quit_sent=true;
 	 Disconnect();
 	 return DO_AGAIN;
       }
@@ -2614,6 +2644,9 @@ void  Ftp::SwitchToState(automate_state ns)
    if(ns==state)
       return;
 
+   if(quit_sent)
+      return;
+
    switch(ns)
    {
    // Error states that require Disconnect(). Set state here; don't check
@@ -2638,9 +2671,6 @@ void  Ftp::SwitchToState(automate_state ns)
       break;
    case(NO_FILE_STATE):
       break;
-      Disconnect();
-      state=ns;
-      return;
    case(LOOKUP_ERROR_STATE):
       break;
    case(COPY_FAILED):
@@ -2763,8 +2793,10 @@ int   Ftp::CheckResp(int act)
 
    if(act==421 || act==221)  // timeout or something else
    {
-      DebugPrint("**** ",_("remote end closes connection"),3);
-      return(INITIAL_STATE);
+      if(RespQueueIsEmpty() || RespQueue[RQ_head].expect!=221)
+	 DebugPrint("**** ",_("remote end closes connection"),3);
+      Disconnect();
+      return(state);
    }
 
    if(RespQueueIsEmpty())

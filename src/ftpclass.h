@@ -155,6 +155,7 @@ class Ftp : public NetAccess
    int   control_sock;
    int   data_sock;
    int	 aborted_data_sock;
+   bool	 quit_sent;
 
    /* type of transfer: TYPE_A or TYPE_I */
    int   type;
@@ -288,7 +289,7 @@ public:
    {
       if(control_sock==-1)
 	 return 0;
-      if(state==CONNECTING_STATE)
+      if(state==CONNECTING_STATE || quit_sent)
 	 return 1;
       return 2;
    }

@@ -101,6 +101,7 @@ static ResDecl resources[]={
    ResDecl  ("ftp:use-abor",	       "yes",   ResMgr::BoolValidate,0),
    ResDecl  ("ftp:use-fxp",	       "yes",   ResMgr::BoolValidate,0),
    ResDecl  ("ftp:use-stat",	       "yes",   ResMgr::BoolValidate,0),
+   ResDecl  ("ftp:use-quit",	       "yes",	ResMgr::BoolValidate,0),
    ResDecl  ("ftp:verify-address",     "no",    ResMgr::BoolValidate,0),
    ResDecl  ("ftp:verify-port",	       "no",    ResMgr::BoolValidate,0),
    ResDecl  ("ftp:web-mode",	       "off",	ResMgr::BoolValidate,0),
