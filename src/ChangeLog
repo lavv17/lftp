@@ -1,3 +1,8 @@
+2000-02-17  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: workaround server's y2k bug in MDTM.
+	  (reported by Robert de Bath <rdebath@poboxes.com>)
+
 2000-02-15  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CmdExec.cc: (SuspendJob) print a better status for CopyJobEnv.

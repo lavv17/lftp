@@ -2950,11 +2950,23 @@ time_t	 Ftp::ConvertFtpDate(const char *s)
    memset(&tm,0,sizeof(tm));
    int year,month,day,hour,minute,second;
 
-   int n=sscanf(s,"%4d%2d%2d%2d%2d%2d",
-		  &year,&month,&day,&hour,&minute,&second);
+   int skip=0;
+   int n=sscanf(s,"%4d%n",&year,&skip);
 
-   if(n!=6)
-      return(NO_DATE);
+   if(n==1 && year==1910)  // try to workaround server's y2k bug
+   {
+      n=sscanf(s,"%5d%n",&year,&skip);
+      if(year>=19100)
+	 year=year-19100+2000;
+   }
+
+   if(n!=1)
+      return NO_DATE;
+
+   n=sscanf(s+skip,"%2d%2d%2d%2d%2d",&month,&day,&hour,&minute,&second);
+
+   if(n!=5)
+      return NO_DATE;
 
    tm.tm_year=year-1900;
    tm.tm_mon=month-1;
