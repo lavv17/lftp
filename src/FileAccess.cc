@@ -41,6 +41,8 @@
 # include "module.h"
 #endif
 
+FileAccess *FileAccess::chain=0;
+
 void FileAccess::Init()
 {
    home=0;
@@ -74,6 +76,9 @@ void FileAccess::Init()
    closure=0;
 
    chmod_mode=0644;
+
+   next=chain;
+   chain=this;
 }
 
 FileAccess::FileAccess(const FileAccess *fa)
@@ -113,6 +118,14 @@ FileAccess::~FileAccess()
    xfree(portname); portname=0;
    xfree(url); url=0;
    xfree(closure); closure=0;
+   for(FileAccess **scan=&chain; *scan; scan=&((*scan)->next))
+   {
+      if(*scan==this)
+      {
+	 *scan=next;
+	 break;
+      }
+   }
 }
 
 void  FileAccess::DebugPrint(const char *prefix,const char *str,int level)
@@ -751,6 +764,12 @@ ResValue FileAccess::Query(const char *name,const char *closure)
 
 void FileAccess::Reconfig(const char *)
 {
+}
+
+void FileAccess::CleanupAll()
+{
+   for(FileAccess *o=chain; o!=0; o=o->next)
+      o->CleanupThis();
 }
 
 // FileAccess::Protocol implementation

@@ -1741,7 +1741,10 @@ CMD(close)
 	 return 0;
       }
    }
-   session->Cleanup(all);
+   if(all)
+      session->CleanupAll();
+   else
+      session->Cleanup();
    exit_code=0;
    return 0;
 }

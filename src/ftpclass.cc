@@ -2803,18 +2803,24 @@ void Ftp::Reconfig(const char *name)
       SetSocketBuffer(data_sock);
 }
 
-void Ftp::Cleanup(bool all)
+void Ftp::Cleanup()
 {
-   if(!all && hostname==0)
+   if(hostname==0)
       return;
 
    for(Ftp *o=ftp_chain; o!=0; o=o->ftp_next)
    {
       if(o->control_sock==-1 || o->mode!=CLOSED)
 	 continue;
-      if(all || !xstrcmp(hostname,o->hostname))
+      if(!xstrcmp(hostname,o->hostname))
 	 o->Disconnect();
    }
+}
+void Ftp::CleanupThis()
+{
+   if(control_sock==-1 || mode!=CLOSED)
+      return;
+   Disconnect();
 }
 
 ListInfo *Ftp::MakeListInfo()

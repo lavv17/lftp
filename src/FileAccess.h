@@ -143,6 +143,9 @@ protected:
    char *error;
    int error_code;
 
+   FileAccess *next;
+   static FileAccess *chain;
+
 public:
    virtual const char *GetProto() = 0; // http, ftp, file etc
    bool SameProtoAs(FileAccess *fa) { return !strcmp(GetProto(),fa->GetProto()); }
@@ -238,7 +241,9 @@ public:
    };
 
    const char *StrError(int err);
-   virtual void Cleanup(bool all=false) { (void)all; }
+   virtual void Cleanup() {}
+   virtual void CleanupThis() {}
+   void CleanupAll();
       // ^^ close idle connections, etc.
    virtual ListInfo *MakeListInfo() { return 0; }
    virtual Glob *MakeGlob(const char *pattern) { return 0; }

@@ -1,5 +1,10 @@
 1999-09-30  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* FileAccess.cc, FileAccess.h, ftpclass.cc, ftpclass.h, commands.cc:
+	  (CleanupAll, CleanupThis) new methods; use it in cmd_close.
+
+1999-09-30  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* FileAccess.cc, log.h: extra info in debug output when it goes
 	  to a file. (suggested by Caleb Epstein <cae@home.com>)
 
