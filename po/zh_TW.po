@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.3.9\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-02-25 15:17+0300\n"
+"POT-Creation-Date: 2005-02-25 16:13+0300\n"
 "PO-Revision-Date: 2001-04-22 06:01+0800\n"
 "Last-Translator: Abel Cheung <maddog@linux.org.hk>\n"
 "Language-Team: Traditional Chinese <zh-l10n@linux.org.tw>\n"
@@ -345,7 +345,7 @@ msgid "invalid pair of numbers"
 msgstr "不正確的數字"
 
 #: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3931
-#: src/Http.cc:1793
+#: src/Http.cc:1801
 msgid "Resolving host address..."
 msgstr "正在解析主機地址..."
 
@@ -1636,7 +1636,7 @@ msgstr "不能分析 EPSV 回應內容"
 msgid "Closing control socket"
 msgstr "正在關閉控制 socket"
 
-#: src/ftpclass.cc:1137 src/Http.cc:890
+#: src/ftpclass.cc:1137 src/Http.cc:897
 msgid "Closing idle connection"
 msgstr "關閉了閒置的連線"
 
@@ -1650,7 +1650,7 @@ msgstr "這個站台不支援 SITE CHMOD"
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "這個站台不支援 SITE CHMOD"
 
-#: src/ftpclass.cc:1244 src/Http.cc:1018
+#: src/ftpclass.cc:1244 src/Http.cc:1025
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "不能建立地址族群 %d 的 socket"
@@ -1691,7 +1691,7 @@ msgstr "對方使用了不匹配的地址"
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr "已設定 ftp:ssl-force 但伺服器不支援/不使用 SSL"
 
-#: src/ftpclass.cc:2565 src/ftpclass.cc:2700 src/Http.cc:1106
+#: src/ftpclass.cc:2565 src/ftpclass.cc:2700 src/Http.cc:1113
 msgid "Peer closed connection"
 msgstr "對方節點關閉了連線"
 
@@ -1734,7 +1734,7 @@ msgid "Sending commands..."
 msgstr "正在送出指令..."
 
 #: src/ftpclass.cc:3921 src/ftpclass.cc:3949 src/ftpclass.cc:3962
-#: src/Http.cc:1808
+#: src/Http.cc:1816
 msgid "Waiting for response..."
 msgstr "正在等待回應..."
 
@@ -1743,11 +1743,11 @@ msgstr "正在等待回應..."
 msgid "Delaying before retry"
 msgstr "重新連接前延遲(秒)"
 
-#: src/ftpclass.cc:3924 src/Http.cc:1801
+#: src/ftpclass.cc:3924 src/Http.cc:1809
 msgid "Connection idle"
 msgstr "連線閒置了"
 
-#: src/ftpclass.cc:3938 src/Http.cc:1799 src/Http.cc:1806
+#: src/ftpclass.cc:3938 src/Http.cc:1807 src/Http.cc:1814
 msgid "Connecting..."
 msgstr "正在連線..."
 
@@ -1794,11 +1794,11 @@ msgstr "正在傳送資料"
 msgid "Receiving data/TLS"
 msgstr "正在接收資料"
 
-#: src/ftpclass.cc:3978 src/Http.cc:1804
+#: src/ftpclass.cc:3978 src/Http.cc:1812
 msgid "Sending data"
 msgstr "正在傳送資料"
 
-#: src/ftpclass.cc:3980 src/Http.cc:1811
+#: src/ftpclass.cc:3980 src/Http.cc:1819
 msgid "Receiving data"
 msgstr "正在接收資料"
 
@@ -1892,52 +1892,52 @@ msgstr "正在關閉 HTTP 連線"
 msgid "POST method failed"
 msgstr "使用 POST 方法失敗"
 
-#: src/Http.cc:974
+#: src/Http.cc:981
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "若沒有代理伺服器，是不可能在 http 連線上使用 ftp 的，請設定 http:proxy。"
 
-#: src/Http.cc:1122
+#: src/Http.cc:1129
 msgid "Sending request..."
 msgstr "正在送出要求..."
 
-#: src/Http.cc:1169
+#: src/Http.cc:1176
 msgid "Hit EOF while fetching headers"
 msgstr "讀取標頭時檔案已終結了"
 
-#: src/Http.cc:1285
+#: src/Http.cc:1292
 msgid "Could not parse HTTP status line"
 msgstr "不能分析 HTTP 狀態"
 
-#: src/Http.cc:1316
+#: src/Http.cc:1323
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr ""
 
-#: src/Http.cc:1451
+#: src/Http.cc:1459
 msgid "Receiving body..."
 msgstr "正在接收內容…"
 
-#: src/Http.cc:1580
+#: src/Http.cc:1588
 msgid "Hit EOF"
 msgstr "檔案終結"
 
-#: src/Http.cc:1583
+#: src/Http.cc:1591
 msgid "Received not enough data, retrying"
 msgstr "接收的資料不足，繼續嘗試"
 
-#: src/Http.cc:1591
+#: src/Http.cc:1599
 msgid "Received all"
 msgstr "已接收所有資料"
 
-#: src/Http.cc:1596
+#: src/Http.cc:1604
 msgid "Received all (total)"
 msgstr "已接收所有資料"
 
-#: src/Http.cc:1619 src/Http.cc:1640
+#: src/Http.cc:1627 src/Http.cc:1648
 msgid "chunked format violated"
 msgstr "資料格式錯誤"
 
-#: src/Http.cc:1809
+#: src/Http.cc:1817
 msgid "Fetching headers..."
 msgstr "正在讀取標頭…"
 

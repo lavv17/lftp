@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-02-25 15:17+0300\n"
+"POT-Creation-Date: 2005-02-25 16:13+0300\n"
 "PO-Revision-Date: 2000-06-18 10:46+02:00\n"
 "Last-Translator: Giovanni Bortolozzo <borto@pluto.linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -345,7 +345,7 @@ msgid "invalid pair of numbers"
 msgstr "numero non valido"
 
 #: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3931
-#: src/Http.cc:1793
+#: src/Http.cc:1801
 msgid "Resolving host address..."
 msgstr "Risoluzione dell'indirizzo dell'host..."
 
@@ -1684,7 +1684,7 @@ msgstr ""
 msgid "Closing control socket"
 msgstr "Chiusura del socket di controllo"
 
-#: src/ftpclass.cc:1137 src/Http.cc:890
+#: src/ftpclass.cc:1137 src/Http.cc:897
 msgid "Closing idle connection"
 msgstr "Chiusura della connessione inattiva"
 
@@ -1698,7 +1698,7 @@ msgstr "SITE CHMOD non è supportato da questo sito"
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "SITE CHMOD non è supportato da questo sito"
 
-#: src/ftpclass.cc:1244 src/Http.cc:1018
+#: src/ftpclass.cc:1244 src/Http.cc:1025
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr ""
@@ -1741,7 +1741,7 @@ msgstr ""
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 
-#: src/ftpclass.cc:2565 src/ftpclass.cc:2700 src/Http.cc:1106
+#: src/ftpclass.cc:2565 src/ftpclass.cc:2700 src/Http.cc:1113
 msgid "Peer closed connection"
 msgstr "Connessione chiusa dal peer"
 
@@ -1783,7 +1783,7 @@ msgid "Sending commands..."
 msgstr "Invio comandi..."
 
 #: src/ftpclass.cc:3921 src/ftpclass.cc:3949 src/ftpclass.cc:3962
-#: src/Http.cc:1808
+#: src/Http.cc:1816
 msgid "Waiting for response..."
 msgstr "In attesa della risposta..."
 
@@ -1791,11 +1791,11 @@ msgstr "In attesa della risposta..."
 msgid "Delaying before retry"
 msgstr ""
 
-#: src/ftpclass.cc:3924 src/Http.cc:1801
+#: src/ftpclass.cc:3924 src/Http.cc:1809
 msgid "Connection idle"
 msgstr "Connessione inattiva"
 
-#: src/ftpclass.cc:3938 src/Http.cc:1799 src/Http.cc:1806
+#: src/ftpclass.cc:3938 src/Http.cc:1807 src/Http.cc:1814
 msgid "Connecting..."
 msgstr "Connessione in corso..."
 
@@ -1843,11 +1843,11 @@ msgstr "Sto inviando i dati"
 msgid "Receiving data/TLS"
 msgstr "Sto ricevendo i dati"
 
-#: src/ftpclass.cc:3978 src/Http.cc:1804
+#: src/ftpclass.cc:3978 src/Http.cc:1812
 msgid "Sending data"
 msgstr "Sto inviando i dati"
 
-#: src/ftpclass.cc:3980 src/Http.cc:1811
+#: src/ftpclass.cc:3980 src/Http.cc:1819
 msgid "Receiving data"
 msgstr "Sto ricevendo i dati"
 
@@ -1942,55 +1942,55 @@ msgstr "Chiusura della connessione inattiva"
 msgid "POST method failed"
 msgstr ""
 
-#: src/Http.cc:974
+#: src/Http.cc:981
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 
-#: src/Http.cc:1122
+#: src/Http.cc:1129
 #, fuzzy
 msgid "Sending request..."
 msgstr "Invio comandi..."
 
-#: src/Http.cc:1169
+#: src/Http.cc:1176
 #, fuzzy
 msgid "Hit EOF while fetching headers"
 msgstr "Scarico gli header..."
 
-#: src/Http.cc:1285
+#: src/Http.cc:1292
 msgid "Could not parse HTTP status line"
 msgstr ""
 
-#: src/Http.cc:1316
+#: src/Http.cc:1323
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr ""
 
-#: src/Http.cc:1451
+#: src/Http.cc:1459
 #, fuzzy
 msgid "Receiving body..."
 msgstr "Sto ricevendo i dati"
 
-#: src/Http.cc:1580
+#: src/Http.cc:1588
 msgid "Hit EOF"
 msgstr ""
 
-#: src/Http.cc:1583
+#: src/Http.cc:1591
 msgid "Received not enough data, retrying"
 msgstr ""
 
-#: src/Http.cc:1591
+#: src/Http.cc:1599
 #, fuzzy
 msgid "Received all"
 msgstr "Sto ricevendo i dati"
 
-#: src/Http.cc:1596
+#: src/Http.cc:1604
 msgid "Received all (total)"
 msgstr ""
 
-#: src/Http.cc:1619 src/Http.cc:1640
+#: src/Http.cc:1627 src/Http.cc:1648
 msgid "chunked format violated"
 msgstr "violato il formato chunked"
 
-#: src/Http.cc:1809
+#: src/Http.cc:1817
 msgid "Fetching headers..."
 msgstr "Scarico gli header..."
 

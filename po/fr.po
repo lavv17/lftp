@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-02-25 15:17+0300\n"
+"POT-Creation-Date: 2005-02-25 16:13+0300\n"
 "PO-Revision-Date: 2003-06-08 00:26+0200\n"
 "Last-Translator: Nicolas Noble <nicolas@nobis-crew.org>\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -345,7 +345,7 @@ msgid "invalid pair of numbers"
 msgstr "paire de nombre invalide"
 
 #: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3931
-#: src/Http.cc:1793
+#: src/Http.cc:1801
 msgid "Resolving host address..."
 msgstr "Résolution de l'adresse..."
 
@@ -1759,7 +1759,7 @@ msgstr "ne peut analyser la réponse EPSV"
 msgid "Closing control socket"
 msgstr "Fermeture du socket de contrôle"
 
-#: src/ftpclass.cc:1137 src/Http.cc:890
+#: src/ftpclass.cc:1137 src/Http.cc:897
 msgid "Closing idle connection"
 msgstr "Fermeture de la connexion inutile"
 
@@ -1772,7 +1772,7 @@ msgstr "SITE CHMOD est désactivé par ftp:use-site-chmod"
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "SITE CHMOD est désactivé par ftp:use-site-chmod"
 
-#: src/ftpclass.cc:1244 src/Http.cc:1018
+#: src/ftpclass.cc:1244 src/Http.cc:1025
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "ne peut créer un socket de la famille %d"
@@ -1813,7 +1813,7 @@ msgstr "La connexion de données du tiers a une adresse incorrecte"
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr "ftp:ssl-force est défini et le serveur ne supporte pas SSL"
 
-#: src/ftpclass.cc:2565 src/ftpclass.cc:2700 src/Http.cc:1106
+#: src/ftpclass.cc:2565 src/ftpclass.cc:2700 src/Http.cc:1113
 msgid "Peer closed connection"
 msgstr "Connexion interrompue par un tiers"
 
@@ -1856,7 +1856,7 @@ msgid "Sending commands..."
 msgstr "Émission des commandes..."
 
 #: src/ftpclass.cc:3921 src/ftpclass.cc:3949 src/ftpclass.cc:3962
-#: src/Http.cc:1808
+#: src/Http.cc:1816
 msgid "Waiting for response..."
 msgstr "En attente de réponse..."
 
@@ -1865,11 +1865,11 @@ msgstr "En attente de réponse..."
 msgid "Delaying before retry"
 msgstr "Attente avant reconnexion"
 
-#: src/ftpclass.cc:3924 src/Http.cc:1801
+#: src/ftpclass.cc:3924 src/Http.cc:1809
 msgid "Connection idle"
 msgstr "Connexion stagnante"
 
-#: src/ftpclass.cc:3938 src/Http.cc:1799 src/Http.cc:1806
+#: src/ftpclass.cc:3938 src/Http.cc:1807 src/Http.cc:1814
 msgid "Connecting..."
 msgstr "Connexion..."
 
@@ -1913,11 +1913,11 @@ msgstr "Émission des données/TLS"
 msgid "Receiving data/TLS"
 msgstr "Réception des données/TLS"
 
-#: src/ftpclass.cc:3978 src/Http.cc:1804
+#: src/ftpclass.cc:3978 src/Http.cc:1812
 msgid "Sending data"
 msgstr "Émission des données"
 
-#: src/ftpclass.cc:3980 src/Http.cc:1811
+#: src/ftpclass.cc:3980 src/Http.cc:1819
 msgid "Receiving data"
 msgstr "Réception des données"
 
@@ -2011,52 +2011,52 @@ msgstr "Fermeture de la connexion HTTP"
 msgid "POST method failed"
 msgstr "échec de la méthode POST"
 
-#: src/Http.cc:974
+#: src/Http.cc:981
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
 
-#: src/Http.cc:1122
+#: src/Http.cc:1129
 msgid "Sending request..."
 msgstr "Émission des requêtes..."
 
-#: src/Http.cc:1169
+#: src/Http.cc:1176
 msgid "Hit EOF while fetching headers"
 msgstr "Reçu une fin de fichier en lisant les entêtes"
 
-#: src/Http.cc:1285
+#: src/Http.cc:1292
 msgid "Could not parse HTTP status line"
 msgstr "Ne peut analyser la ligne d'état HTTP"
 
-#: src/Http.cc:1316
+#: src/Http.cc:1323
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr ""
 
-#: src/Http.cc:1451
+#: src/Http.cc:1459
 msgid "Receiving body..."
 msgstr "Réception du corps..."
 
-#: src/Http.cc:1580
+#: src/Http.cc:1588
 msgid "Hit EOF"
 msgstr "Fin de fichier atteinte"
 
-#: src/Http.cc:1583
+#: src/Http.cc:1591
 msgid "Received not enough data, retrying"
 msgstr "Pas assez de données reçues, recommence"
 
-#: src/Http.cc:1591
+#: src/Http.cc:1599
 msgid "Received all"
 msgstr "Tout reçu"
 
-#: src/Http.cc:1596
+#: src/Http.cc:1604
 msgid "Received all (total)"
 msgstr "Tout reçu (total)"
 
-#: src/Http.cc:1619 src/Http.cc:1640
+#: src/Http.cc:1627 src/Http.cc:1648
 msgid "chunked format violated"
 msgstr "format en 'chunk' violé"
 
-#: src/Http.cc:1809
+#: src/Http.cc:1817
 msgid "Fetching headers..."
 msgstr "Réception des entêtes..."
 

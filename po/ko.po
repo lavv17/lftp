@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-02-25 15:17+0300\n"
+"POT-Creation-Date: 2005-02-25 16:13+0300\n"
 "PO-Revision-Date: 2001-05-27 KST\n"
 "Last-Translator: Dojip Kim <greendrm@greendrm.com>\n"
 "Language-Team: \n"
@@ -345,7 +345,7 @@ msgid "invalid pair of numbers"
 msgstr "잘못된 수입니다"
 
 #: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3931
-#: src/Http.cc:1793
+#: src/Http.cc:1801
 msgid "Resolving host address..."
 msgstr "호스트 주소를 찾습니다..."
 
@@ -1645,7 +1645,7 @@ msgstr ""
 msgid "Closing control socket"
 msgstr "제어 소켓 닫음"
 
-#: src/ftpclass.cc:1137 src/Http.cc:890
+#: src/ftpclass.cc:1137 src/Http.cc:897
 msgid "Closing idle connection"
 msgstr "사용하지 않는 접속을 끊습니다"
 
@@ -1657,7 +1657,7 @@ msgstr ""
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr ""
 
-#: src/ftpclass.cc:1244 src/Http.cc:1018
+#: src/ftpclass.cc:1244 src/Http.cc:1025
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "주소 %d의 소켓을 만들 수 없습니다"
@@ -1699,7 +1699,7 @@ msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force가 설정되어있지만 서버가 지원하지 않거나 SSL을 허용하지 않음"
 
-#: src/ftpclass.cc:2565 src/ftpclass.cc:2700 src/Http.cc:1106
+#: src/ftpclass.cc:2565 src/ftpclass.cc:2700 src/Http.cc:1113
 msgid "Peer closed connection"
 msgstr "접속이 끊겼습니다"
 
@@ -1742,7 +1742,7 @@ msgid "Sending commands..."
 msgstr "명령어 전송중..."
 
 #: src/ftpclass.cc:3921 src/ftpclass.cc:3949 src/ftpclass.cc:3962
-#: src/Http.cc:1808
+#: src/Http.cc:1816
 msgid "Waiting for response..."
 msgstr "응답을 기다립니다..."
 
@@ -1751,11 +1751,11 @@ msgstr "응답을 기다립니다..."
 msgid "Delaying before retry"
 msgstr "재접속하기 위하여 기다립니다"
 
-#: src/ftpclass.cc:3924 src/Http.cc:1801
+#: src/ftpclass.cc:3924 src/Http.cc:1809
 msgid "Connection idle"
 msgstr "사용하지 않는 접속"
 
-#: src/ftpclass.cc:3938 src/Http.cc:1799 src/Http.cc:1806
+#: src/ftpclass.cc:3938 src/Http.cc:1807 src/Http.cc:1814
 msgid "Connecting..."
 msgstr "접속중..."
 
@@ -1802,11 +1802,11 @@ msgstr "자료 보내는 중"
 msgid "Receiving data/TLS"
 msgstr "자료 받는 중"
 
-#: src/ftpclass.cc:3978 src/Http.cc:1804
+#: src/ftpclass.cc:3978 src/Http.cc:1812
 msgid "Sending data"
 msgstr "자료 보내는 중"
 
-#: src/ftpclass.cc:3980 src/Http.cc:1811
+#: src/ftpclass.cc:3980 src/Http.cc:1819
 msgid "Receiving data"
 msgstr "자료 받는 중"
 
@@ -1900,52 +1900,52 @@ msgstr "HTTP 연결을 닫습니다"
 msgid "POST method failed"
 msgstr "POST 메소드 실패"
 
-#: src/Http.cc:974
+#: src/Http.cc:981
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "http상의 ftp는 프락시 없이는 동작할 수 없습니다, http:proxy를 설정하세요"
 
-#: src/Http.cc:1122
+#: src/Http.cc:1129
 msgid "Sending request..."
 msgstr "request 보내는 중..."
 
-#: src/Http.cc:1169
+#: src/Http.cc:1176
 msgid "Hit EOF while fetching headers"
 msgstr "헤더를 읽어 오는 동안 EOF를 입력"
 
-#: src/Http.cc:1285
+#: src/Http.cc:1292
 msgid "Could not parse HTTP status line"
 msgstr "HTTP 상태를 파싱할 수 없음"
 
-#: src/Http.cc:1316
+#: src/Http.cc:1323
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr ""
 
-#: src/Http.cc:1451
+#: src/Http.cc:1459
 msgid "Receiving body..."
 msgstr "body를 받은 중..."
 
-#: src/Http.cc:1580
+#: src/Http.cc:1588
 msgid "Hit EOF"
 msgstr ""
 
-#: src/Http.cc:1583
+#: src/Http.cc:1591
 msgid "Received not enough data, retrying"
 msgstr "충분한 자료를 받지 못해 다시 시도중"
 
-#: src/Http.cc:1591
+#: src/Http.cc:1599
 msgid "Received all"
 msgstr "모두 받았음"
 
-#: src/Http.cc:1596
+#: src/Http.cc:1604
 msgid "Received all (total)"
 msgstr "모두(전체) 받음"
 
-#: src/Http.cc:1619 src/Http.cc:1640
+#: src/Http.cc:1627 src/Http.cc:1648
 msgid "chunked format violated"
 msgstr "쓰지 않는 양식이 문제가 됩니다"
 
-#: src/Http.cc:1809
+#: src/Http.cc:1817
 msgid "Fetching headers..."
 msgstr "헤더를 읽고 있는중.."
 

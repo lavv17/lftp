@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-02-25 15:17+0300\n"
+"POT-Creation-Date: 2005-02-25 16:13+0300\n"
 "PO-Revision-Date: 2002-04-12 00:06+0900\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -351,7 +351,7 @@ msgid "invalid pair of numbers"
 msgstr "不正な数"
 
 #: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3931
-#: src/Http.cc:1793
+#: src/Http.cc:1801
 msgid "Resolving host address..."
 msgstr "ホストアドレスを解決しています..."
 
@@ -1717,7 +1717,7 @@ msgstr "EPSV レスポンスを解析できません"
 msgid "Closing control socket"
 msgstr "コントロールソケットを閉じています"
 
-#: src/ftpclass.cc:1137 src/Http.cc:890
+#: src/ftpclass.cc:1137 src/Http.cc:897
 msgid "Closing idle connection"
 msgstr "アイドル状態の接続を閉じます"
 
@@ -1731,7 +1731,7 @@ msgstr "SITE CHMOD はこのサイトではサポートされていません"
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "SITE CHMOD はこのサイトではサポートされていません"
 
-#: src/ftpclass.cc:1244 src/Http.cc:1018
+#: src/ftpclass.cc:1244 src/Http.cc:1025
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "アドレスファミリ %d のソケットを作れません"
@@ -1774,7 +1774,7 @@ msgstr ""
 "ftp:ssl-force がセットされていますが、サーバは SSL をサポートあるいは許可して"
 "いません"
 
-#: src/ftpclass.cc:2565 src/ftpclass.cc:2700 src/Http.cc:1106
+#: src/ftpclass.cc:2565 src/ftpclass.cc:2700 src/Http.cc:1113
 msgid "Peer closed connection"
 msgstr "ピアが接続を閉じました"
 
@@ -1817,7 +1817,7 @@ msgid "Sending commands..."
 msgstr "コマンドを送信中..."
 
 #: src/ftpclass.cc:3921 src/ftpclass.cc:3949 src/ftpclass.cc:3962
-#: src/Http.cc:1808
+#: src/Http.cc:1816
 msgid "Waiting for response..."
 msgstr "応答を待っています..."
 
@@ -1826,11 +1826,11 @@ msgstr "応答を待っています..."
 msgid "Delaying before retry"
 msgstr "再接続を遅延しています"
 
-#: src/ftpclass.cc:3924 src/Http.cc:1801
+#: src/ftpclass.cc:3924 src/Http.cc:1809
 msgid "Connection idle"
 msgstr "接続アイドル"
 
-#: src/ftpclass.cc:3938 src/Http.cc:1799 src/Http.cc:1806
+#: src/ftpclass.cc:3938 src/Http.cc:1807 src/Http.cc:1814
 msgid "Connecting..."
 msgstr "接続中..."
 
@@ -1876,11 +1876,11 @@ msgstr "データ送信中"
 msgid "Receiving data/TLS"
 msgstr "データ受信中"
 
-#: src/ftpclass.cc:3978 src/Http.cc:1804
+#: src/ftpclass.cc:3978 src/Http.cc:1812
 msgid "Sending data"
 msgstr "データ送信中"
 
-#: src/ftpclass.cc:3980 src/Http.cc:1811
+#: src/ftpclass.cc:3980 src/Http.cc:1819
 msgid "Receiving data"
 msgstr "データ受信中"
 
@@ -1974,53 +1974,53 @@ msgstr "HTTP 接続を閉じています"
 msgid "POST method failed"
 msgstr "POST メソッド失敗"
 
-#: src/Http.cc:974
+#: src/Http.cc:981
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "ftp over http はプロキシ無しでは利用できません。hftp:proxy をセットしてくださ"
 "い。"
 
-#: src/Http.cc:1122
+#: src/Http.cc:1129
 msgid "Sending request..."
 msgstr "リクエストを送信中..."
 
-#: src/Http.cc:1169
+#: src/Http.cc:1176
 msgid "Hit EOF while fetching headers"
 msgstr "ヘッダの取得中に EOF に達しました"
 
-#: src/Http.cc:1285
+#: src/Http.cc:1292
 msgid "Could not parse HTTP status line"
 msgstr "HTTP ステータスラインを解析できませんでした"
 
-#: src/Http.cc:1316
+#: src/Http.cc:1323
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr ""
 
-#: src/Http.cc:1451
+#: src/Http.cc:1459
 msgid "Receiving body..."
 msgstr "ボディを受信中..."
 
-#: src/Http.cc:1580
+#: src/Http.cc:1588
 msgid "Hit EOF"
 msgstr "EOF に達しました"
 
-#: src/Http.cc:1583
+#: src/Http.cc:1591
 msgid "Received not enough data, retrying"
 msgstr "十分なデータを受信できなかったので、再試行します"
 
-#: src/Http.cc:1591
+#: src/Http.cc:1599
 msgid "Received all"
 msgstr "すべて受信しました"
 
-#: src/Http.cc:1596
+#: src/Http.cc:1604
 msgid "Received all (total)"
 msgstr "すべて受信しました (合計)"
 
-#: src/Http.cc:1619 src/Http.cc:1640
+#: src/Http.cc:1627 src/Http.cc:1648
 msgid "chunked format violated"
 msgstr "chunked フォーマットに違反しています"
 
-#: src/Http.cc:1809
+#: src/Http.cc:1817
 msgid "Fetching headers..."
 msgstr "ヘッダを取得中..."
 
