@@ -1,3 +1,8 @@
+2004-12-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: fixed mirror --no-symlinks.
+	* ftpclass.cc: fixed a core dump.
+
 2004-12-01  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: add debug message about EOF on data socket.

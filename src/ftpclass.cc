@@ -1091,7 +1091,8 @@ bool Ftp::GetBetterConnection(int level,bool limit_reached)
 
 void  Ftp::HandleTimeout()
 {
-   conn->quit_sent=true;
+   if(conn)
+      conn->quit_sent=true;
    super::HandleTimeout();
 }
 

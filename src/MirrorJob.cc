@@ -380,7 +380,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
       }
       case(FileInfo::SYMLINK):
       {
-	 if(!(flags&NO_SYMLINKS))
+	 if(flags&NO_SYMLINKS)
 	    goto skip;
 
 	 if(!target_is_local)
