@@ -839,7 +839,7 @@ flush:
    buf->PutEOF();
    if(use_fork)
    {
-      while(buf->Size()>0)
+      while(buf->Size()>0 && !buf->Error() && !buf->Broken())
 	 Roll(buf);  // should flush quickly.
    }
    return;
