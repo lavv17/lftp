@@ -82,10 +82,13 @@ const char *Speedometer::GetStr(float r)
    if(r<1)
       return "";
    if(r<1024)
+      // for translator: those are the units. This is 'byte per second'
       sprintf(buf_rate,_("%.0fb/s"),r);
    else if(r<1024*1024)
+      // for translator: This is 'kilobyte per second'
       sprintf(buf_rate,_("%.1fK/s"),r/1024.);
    else
+      // for translator: This is 'Megabyte per second'
       sprintf(buf_rate,_("%.2fM/s"),r/1024./1024.);
    return buf_rate;
 }

@@ -74,7 +74,7 @@ int FileCopyFtp::Do()
 	 if(passive_source==orig_passive_source)
 	 {
 	    // both ways failed. Fall back to normal copying.
-	    Log::global->Write(0,"**** FXP: giving up, reverting to plain copy\n");
+	    Log::global->Write(0,_("**** FXP: giving up, reverting to plain copy\n"));
 	    Close();
 	    disable_fxp=true;
 	    ((FileCopyPeerFA*)get)->SetFXP(false);
@@ -87,7 +87,7 @@ int FileCopyFtp::Do()
 	    RateReset();
 	    return MOVED;
 	 }
-	 Log::global->Write(0,"**** FXP: trying to reverse ftp:fxp-passive-source\n");
+	 Log::global->Write(0,_("**** FXP: trying to reverse ftp:fxp-passive-source\n"));
 	 RateReset();
       }
       src_retries=ftp_src->GetRetries();

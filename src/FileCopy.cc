@@ -45,6 +45,7 @@
 #include "log.h"
 #include "misc.h"
 #include "LsCache.h"
+#include "plural.h"
 
 #define skip_threshold 0x1000
 #define debug(a) Log::global->Format a
@@ -140,7 +141,7 @@ int FileCopy::Do()
       }
       if(put->Broken())
       {
-	 debug((9,"copy: put is broken\n"));
+	 debug((9,_("copy: put is broken\n")));
 	 goto pre_GET_DONE_WAIT;
       }
       put->Resume();
@@ -154,7 +155,7 @@ int FileCopy::Do()
 			      || put->GetRealPos()<put->range_start
 			      || get->GetRealPos()!=put->GetRealPos()))
       {
-	 SetError("seek failed");
+	 SetError(_("seek failed"));
 	 return MOVED;
       }
       long lbsize=0;
@@ -176,12 +177,12 @@ int FileCopy::Do()
 	    if(!get->CanSeek(put->GetRealPos()))
 	    {
 	       // we lose... How about a large buffer?
-	       SetError("cannot seek on data source");
+	       SetError(_("cannot seek on data source"));
 	       return MOVED;
 	    }
-	    debug((9,"copy: put rolled back to %lld, seeking get accordingly\n",
+	    debug((9,_("copy: put rolled back to %lld, seeking get accordingly\n"),
 		     (long long)put->GetRealPos()));
-	    debug((10,"copy: get position was %lld\n",
+	    debug((10,_("copy: get position was %lld\n"),
 		     (long long)get->GetRealPos()));
 	    get->Seek(put->GetRealPos());
 	    return MOVED;
@@ -192,7 +193,7 @@ int FileCopy::Do()
 	    if(size>=0 && put->GetRealPos()>=size)
 	    {
 	       // simulate eof, as we have already have the whole file.
-	       debug((9,"copy: all data received, but get rolled back\n"));
+	       debug((9,_("copy: all data received, but get rolled back\n")));
 	       goto eof;
 	    }
 	    off_t skip=put->GetRealPos()-get->GetRealPos();
@@ -204,12 +205,11 @@ int FileCopy::Do()
 		  skip=s;
 	       if(skip==0)
 		  return m;
-	       debug((9,"copy: skipping %d bytes on get to adjust to put\n",(int)skip));
 	       get->Skip(skip);
 	       bytes_count+=skip;
 	       return MOVED;
 	    }
-	    debug((9,"copy: get rolled back to %lld, seeking put accordingly\n",
+	    debug((9,_("copy: get rolled back to %lld, seeking put accordingly\n"),
 		     (long long)get->GetRealPos()));
 	    put->Seek(get->GetRealPos());
 	    return MOVED;
@@ -220,7 +220,7 @@ int FileCopy::Do()
       get->Get(&b,&s);
       if(b==0) // eof
       {
-	 debug((10,"copy: get hit eof\n"));
+	 debug((10,_("copy: get hit eof\n")));
       eof:
 	 put->Resume();
 	 if(line_buffer)
@@ -293,7 +293,7 @@ int FileCopy::Do()
 
       if(get->range_limit!=FILE_END && get->range_limit<=get->GetRealPos())
       {
-	 debug((10,"copy: get reached range limit\n"));
+	 debug((10,_("copy: get reached range limit\n")));
 	 goto eof;
       }
       return m;
@@ -315,7 +315,7 @@ int FileCopy::Do()
 
       if(!put->Done())
 	 return m;
-      debug((10,"copy: put confirmed store\n"));
+      debug((10,_("copy: put confirmed store\n")));
 
    pre_GET_DONE_WAIT:
       get->Empty();
@@ -337,7 +337,7 @@ int FileCopy::Do()
       }
       if(!get->Done())
 	 return m;
-      debug((10,"copy: get is finished - all done\n"));
+      debug((10,_("copy: get is finished - all done\n")));
       state=ALL_DONE;
       Delete(get); get=0;
       return MOVED;
@@ -841,7 +841,7 @@ void FileCopyPeerFA::OpenSession()
       if(size!=NO_SIZE && size!=NO_SIZE_YET && seek_pos>=size && !ascii)
       {
       past_eof:
-	 debug((10,"copy src: seek past eof (seek_pos=%lld, size=%lld)\n",
+	 debug((10,_("copy src: seek past eof (seek_pos=%lld, size=%lld)\n"),
 		  (long long)seek_pos,(long long)size));
 	 pos=seek_pos;
 	 eof=true;
@@ -1029,7 +1029,6 @@ int FileCopyPeerFA::Get_LL(int len)
    }
    if(res==0)
    {
-      debug((10,"copy src: Read returned 0\n"));
       eof=true;
       LsCache::Add(session,file,FAmode,this);
    }

@@ -284,9 +284,9 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -E  delete local files after successful transfer (dangerous)\n"
 	 " -a  use ascii mode (binary is the default)\n"
 	 " -O <base> specifies base directory or URL where files should be placed\n")},
-   {"pwd",     cmd_pwd,    "pwd [-u]",
+   {"pwd",     cmd_pwd,    "pwd [-p]",
 	 N_("Print current remote URL.\n"
-	 " -u  show password\n")},
+	 " -p  show password\n")},
    {"queue",   cmd_queue,  0,
 	 N_("Usage: queue <command>\n"
 	 "Add the command to queue for current site. Each site has its own\n"
@@ -340,7 +340,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"suspend", cmd_suspend},
    {"user",    cmd_user,   N_("user <user|URL> [<pass>]"),
 	 N_("Use specified info for remote login. If you specify URL, the password\n"
-	 "will be cached for future usage.")},
+	 "will be cached for future usage.\n")},
    {"version", cmd_ver,    "version",
 	 N_("Shows lftp version\n")},
    {"wait",    cmd_wait,   N_("wait [<jobno>]"),
@@ -2076,7 +2076,7 @@ CMD(lpwd)
 {
    if(!parent->cwd)
    {
-      eprintf("%s: cannot get current directory\n",args->a0());
+      eprintf(_("%s: cannot get current directory\n"),args->a0());
       return 0;
    }
    printf("%s\n",parent->cwd);

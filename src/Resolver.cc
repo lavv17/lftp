@@ -161,7 +161,7 @@ int   Resolver::Do()
       cache->Find(hostname,portname,defport,service,proto,&a,&n);
       if(a && n>0)
       {
-	 Log::global->Write(10,"dns cache hit\n");
+	 Log::global->Write(10,_("dns cache hit\n"));
 	 addr_num=n;
 	 addr=(sockaddr_u*)xmalloc(n*sizeof(*addr));
 	 memcpy(addr,a,n*sizeof(*addr));
@@ -769,7 +769,7 @@ void Resolver::LookupOne(const char *name)
 # ifdef HAVE_H_ERRNO
 	    error=hstrerror(h_errno);
 # else
-	    error="Host name lookup failure";
+	    error=_("Host name lookup failure");
 # endif
 	 }
 	 af_index++;
@@ -801,7 +801,7 @@ void Resolver::DoGethostbyname()
 	 {
 	    buf->Put("P");
 	    char *msg=string_alloca(64+strlen(tproto));
-	    sprintf(msg,"no such %s service",tproto);
+	    sprintf(msg,_("no such %s service"),tproto);
 	    buf->Put(msg);
 	    goto flush;
 	 }
@@ -826,7 +826,7 @@ void Resolver::DoGethostbyname()
    {
       buf->Put("E");
       if(error==0)
-	 error="No address found";
+	 error=_("No address found");
       buf->Put(error);
       goto flush;
    }

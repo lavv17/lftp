@@ -153,7 +153,7 @@ void *module_load(const char *path,int argc,const char *const *argv)
 	 {
 	    void *dep=module_load(*depend,0,0);
 	    if(!dep)
-	       fprintf(stderr,"depend module `%s': %s\n",*depend,module_error_message());
+	       fprintf(stderr,_("depend module `%s': %s\n"),*depend,module_error_message());
 	 }
 	 depend++;
       }
@@ -183,6 +183,6 @@ const char *module_error_message()
 #ifdef HAVE_DLOPEN
    return dlerror();
 #else
-   return "modules are not supported on this system";
+   return _("modules are not supported on this system");
 #endif
 }

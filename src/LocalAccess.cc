@@ -596,7 +596,7 @@ int LocalGlob::Do()
    char *oldcwd=xgetcwd();
    if(!oldcwd)
    {
-      SetError("cannot get current directory");
+      SetError(_("cannot get current directory"));
       return MOVED;
    }
    if(chdir(cwd)==-1)

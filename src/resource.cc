@@ -51,7 +51,7 @@ static const char *FtpProxyValidate(char **p)
    }
    if(url.user && !url.pass)
    {
-      url.pass=GetPass("ftp:proxy password: ");
+      url.pass=GetPass(_("ftp:proxy password: "));
       *p=(char*)xrealloc(*p,3*strlen(*p)+3*xstrlen(url.pass)+2);
       url.Combine(*p);
    }

@@ -2059,7 +2059,7 @@ main (ac, av)
   char buff[MAX_BUFF_LEN + 1];
   time_t d;
 
-  (void) printf ("Enter date, or blank line to exit.\n\t> ");
+  (void) printf _(("Enter date, or blank line to exit.\n\t> "));
   (void) fflush (stdout);
 
   buff[MAX_BUFF_LEN] = 0;
@@ -2067,7 +2067,7 @@ main (ac, av)
     {
       d = get_date (buff, (time_t *) NULL);
       if (d == -1)
-	(void) printf ("Bad format - couldn't convert.\n");
+	(void) printf _(("Bad format - couldn't convert.\n"));
       else
 	(void) printf ("%s", ctime (&d));
       (void) printf ("\t> ");

@@ -95,7 +95,7 @@ void  PollVec::Block() const
       if(/*async==0 && */ timeout==-1)
       {
 	 /* dead lock */
-	 fprintf(stderr,"%s: BUG - deadlock detected\n","PollVec::Block");
+	 fprintf(stderr,_("%s: BUG - deadlock detected\n"),"PollVec::Block");
       	 poll(0,0,1000);
 	 return;
       }

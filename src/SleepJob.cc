@@ -110,7 +110,7 @@ void SleepJob::PrintStatus(int)
 {
    if(repeat)
    {
-      printf("\tRepeat count: %d\n",repeat_count);
+      printf(_("\tRepeat count: %d\n"),repeat_count);
       return;
    }
 }

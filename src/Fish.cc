@@ -85,7 +85,7 @@ int Fish::Do()
       CloseOnExec(pipe_in[0]);
       CloseOnExec(pipe_in[1]);
 
-      DebugPrint("---- ","Running ssh...");
+      DebugPrint("---- ",_("Running ssh..."));
       filter_out=new OutputFilter("ssh gemini \"echo FISH:;/bin/bash\"",pipe_in[1]);   // FIXME
       filter_out->StderrToStdout();
       state=CONNECTING;
@@ -172,7 +172,7 @@ notimeout_return:
 void Fish::Disconnect()
 {
    if(send_buf)
-      DebugPrint("---- ","Disconnecting",9);
+      DebugPrint("---- ",_("Disconnecting"),9);
    Delete(send_buf); send_buf=0;
    Delete(recv_buf); recv_buf=0;
    if(pipe_in[0]!=-1)
@@ -526,7 +526,7 @@ int Fish::Read(void *buf,int size)
 	 return DO_AGAIN;
       if(entity_size>=0 && pos>=entity_size)
       {
-	 DebugPrint("---- ","Received all (total)");
+	 DebugPrint("---- ",_("Received all (total)"));
 	 return 0;
       }
       if(entity_size==NO_SIZE)

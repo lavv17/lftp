@@ -462,7 +462,7 @@ int   MirrorJob::Do()
 	 local_session=FileAccess::New("file");
 	 if(!local_session)
 	 {
-	    eprintf("mirror: cannot create `file:' access object, installation error?\n");
+	    eprintf(_("mirror: cannot create `file:' access object, installation error?\n"));
 	    state=DONE;
 	    return MOVED;
 	 }

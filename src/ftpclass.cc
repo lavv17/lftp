@@ -262,7 +262,7 @@ void Ftp::RestCheck(int act)
       return;
    if(is5XX(act))
    {
-      DebugPrint("---- ","Switching to NOREST mode",2);
+      DebugPrint("---- ",_("Switching to NOREST mode"),2);
       flags|=NOREST_MODE;
       real_pos=0;
       if(mode==STORE)
@@ -298,7 +298,7 @@ void Ftp::NoFileCheck(int act)
       if(real_pos>0 && !(flags&IO_FLAG) && copy_mode==COPY_NONE)
       {
 	 DataClose();
-	 DebugPrint("---- ","Switching to NOREST mode",2);
+	 DebugPrint("---- ",_("Switching to NOREST mode"),2);
 	 flags|=NOREST_MODE;
 	 real_pos=0;
 	 if(mode==STORE)
@@ -444,7 +444,7 @@ void Ftp::NoPassReqCheck(int act) // for USER command
       FreeResult();
       if(force_skey && skey_pass==0)
       {
-	 SetError(LOGIN_FAILED,"ftp:skey-force is set and server does not support OPIE nor S/KEY");
+	 SetError(LOGIN_FAILED,_("ftp:skey-force is set and server does not support OPIE nor S/KEY"));
 	 return;
       }
    }
@@ -657,7 +657,7 @@ int Ftp::Handle_EPSV()
 
    if(sscanf(c,format,&port)!=1)
    {
-      DebugPrint("**** ","cannot parse EPSV response",0);
+      DebugPrint("**** ",_("cannot parse EPSV response"),0);
       Disconnect();
       return 0;
    }
@@ -1077,7 +1077,7 @@ int   Ftp::Do()
 	    TimeoutS(1);
 	    return m;
 	 }
-	 sprintf(str,"cannot create socket of address family %d",
+	 sprintf(str,_("cannot create socket of address family %d"),
 			peer_sa.sa.sa_family);
 	 SetError(SEE_ERRNO,str);
 	 return MOVED;
@@ -1523,7 +1523,7 @@ int   Ftp::Do()
 	    SendCmd("EPSV");
 	    AddResp(229,CHECK_EPSV);
 #else
-	    Fatal("unsupported network protocol");
+	    Fatal(_("unsupported network protocol"));
 	    return MOVED;
 #endif
 	 }
@@ -1561,7 +1561,7 @@ int   Ftp::Do()
 #endif
 	       else
 	       {
-	          Fatal("unsupported network protocol");
+	          Fatal(_("unsupported network protocol"));
 	          return MOVED;
 	       }
 
@@ -1603,7 +1603,7 @@ int   Ftp::Do()
 	    SendCmd2("EPRT",encode_eprt(&data_sa));
 	    AddResp(RESP_PORT_OK,CHECK_PORT);
 #else
-	    Fatal("unsupported network protocol");
+	    Fatal(_("unsupported network protocol"));
 	    return MOVED;
 #endif
 	 }
@@ -2180,7 +2180,7 @@ int  Ftp::ReceiveResp()
 	 {
 	    error_code=OK;
 	    Disconnect();
-	    DebugPrint("---- ","Persist and retry",4);
+	    DebugPrint("---- ",_("Persist and retry"),4);
 	    return m;
 	 }
       }
@@ -3114,7 +3114,7 @@ void Ftp::CheckResp(int act)
    // some servers mess all up
    if(act==331 && exp==220 && !(flags&SYNC_MODE) && RespQueueSize()>1)
    {
-      DebugPrint("---- ","Turning on sync-mode",2);
+      DebugPrint("---- ",_("Turning on sync-mode"),2);
       ResMgr::Set("ftp:sync-mode",hostname,"on");
       Disconnect();
       try_time=0; // retry immediately
@@ -3139,7 +3139,7 @@ void Ftp::CheckResp(int act)
    case CHECK_READY:
       if(!(flags&SYNC_MODE) && re_match(all_lines,Query("auto-sync-mode",hostname)))
       {
-	 DebugPrint("---- ","Turning on sync-mode",2);
+	 DebugPrint("---- ",_("Turning on sync-mode"),2);
 	 ResMgr::Set("ftp:sync-mode",hostname,"on");
 	 assert(flags&SYNC_MODE);
 	 Disconnect();
@@ -3304,7 +3304,7 @@ void Ftp::CheckResp(int act)
       else
       {
 	 if((bool)Query("ssl-force"))
-	    SetError(LOGIN_FAILED,"ftp:ssl-force is set and server does not support or allow SSL");
+	    SetError(LOGIN_FAILED,_("ftp:ssl-force is set and server does not support or allow SSL"));
       }
       break;
    case CHECK_PROT_P:

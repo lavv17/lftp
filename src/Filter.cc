@@ -131,7 +131,7 @@ int OutputFilter::getfd()
       if(second_fd==-1)
       {
 	 if(second->error())
-	    error_text=xstrdup("chain output error");
+	    error_text=xstrdup(_("chain output error"));
 	 return -1;
       }
       if(pg==0)
@@ -146,7 +146,7 @@ int OutputFilter::getfd()
    {
       if(errno==EMFILE || errno==ENFILE)
 	 return -1;
-      sprintf(s,"pipe() failed: %s",strerror(errno));
+      sprintf(s,_("pipe() failed: %s"),strerror(errno));
       error_text=xstrdup(s);
       return -1;
    }
@@ -167,7 +167,7 @@ int OutputFilter::getfd()
       {
 	 if(chdir(oldcwd)==-1)
 	 {
-	    fprintf(stderr,"chdir(%s) failed: %s\n",oldcwd,strerror(errno));
+	    fprintf(stderr,_("chdir(%s) failed: %s\n"),oldcwd,strerror(errno));
 	    fflush(stderr);
 	    _exit(1);
 	 }
@@ -175,7 +175,7 @@ int OutputFilter::getfd()
       if(a)
 	 execvp(a->a0(),a->GetV());
       execl("/bin/sh","sh","-c",name,NULL);
-      fprintf(stderr,"execl(/bin/sh) failed: %s\n",strerror(errno));
+      fprintf(stderr,_("execl(/bin/sh) failed: %s\n"),strerror(errno));
       fflush(stderr);
       _exit(1);
    case(-1): /* error */

@@ -165,7 +165,7 @@ void Http::Disconnect()
    && !Error())
    {
       if(last_method && !strcmp(last_method,"POST"))
-	 SetError(FATAL,"POST method failed");
+	 SetError(FATAL,_("POST method failed"));
       else
 	 SetError(STORE_FAILED,0);
    }
@@ -803,7 +803,7 @@ int Http::Do()
 	 if(!proxy)
 	 {
 	    // problem here: hftp cannot work without proxy
-	    SetError(FATAL,"ftp over http cannot work without proxy, set hftp:proxy.");
+	    SetError(FATAL,_("ftp over http cannot work without proxy, set hftp:proxy."));
 	    return MOVED;
 	 }
       }
@@ -852,7 +852,7 @@ int Http::Do()
 	    return m;
 	 }
 	 char str[256];
-	 sprintf(str,"cannot create socket of address family %d",
+	 sprintf(str,_("cannot create socket of address family %d"),
 			peer[peer_curr].sa.sa_family);
 	 SetError(SEE_ERRNO,str);
 	 return MOVED;
@@ -872,7 +872,7 @@ int Http::Do()
       )
       {
 	 NextPeer();
-	 Log::global->Format(0,"connect: %s",strerror(errno));
+	 Log::global->Format(0,_("connect: %s"),strerror(errno));
 	 Disconnect();
 	 if(NotSerious(errno))
 	    return MOVED;
@@ -939,7 +939,7 @@ int Http::Do()
 	 SetError(NOT_SUPP);
 	 return MOVED;
       }
-      DebugPrint("---- ","Sending request...");
+      DebugPrint("---- ",_("Sending request..."));
       if(mode==ARRAY_INFO)
       {
 	 SendArrayInfoRequest();
@@ -977,7 +977,7 @@ int Http::Do()
       if(!buf)
       {
 	 // eof
-	 DebugPrint("**** ","Hit EOF while fetching headers",0);
+	 DebugPrint("**** ",_("Hit EOF while fetching headers"),0);
 	 // workaround some broken servers
 	 if(H_REDIRECTED(status_code) && location)
 	    goto pre_RECEIVING_BODY;
@@ -1032,7 +1032,7 @@ int Http::Do()
 		  if(!sent_eot && H_20X(status_code))
 		  {
 		     // should never happen
-		     DebugPrint("**** ","Success, but did nothing??",0);
+		     DebugPrint("**** ",_("Success, but did nothing??"),0);
 		     Disconnect();
 		     return MOVED;
 		  }
@@ -1066,7 +1066,7 @@ int Http::Do()
 		  status_code=200;
 		  if(1!=sscanf(status,"HTTP %n%d",&status_consumed,&status_code))
 		  {
-		     DebugPrint("**** ","Could not parse HTTP status line",0);
+		     DebugPrint("**** ",_("Could not parse HTTP status line"),0);
 		     //FIXME: STORE
 		     goto pre_RECEIVING_BODY;
 		  }
@@ -1164,7 +1164,7 @@ int Http::Do()
 	 return MOVED;
       }
 
-      DebugPrint("---- ","Receiving body...");
+      DebugPrint("---- ",_("Receiving body..."));
       assert(rate_limit==0);
       rate_limit=new RateLimit();
       if(real_pos<0) // assume Range: did not work
@@ -1299,10 +1299,10 @@ int Http::Read(void *buf,int size)
       recv_buf->Get(&buf1,&size1);
       if(buf1==0) // eof
       {
-	 DebugPrint("---- ","Hit EOF");
+	 DebugPrint("---- ",_("Hit EOF"));
 	 if(bytes_received<body_size || chunked)
 	 {
-	    DebugPrint("**** ","Received not enough data, retrying",0);
+	    DebugPrint("**** ",_("Received not enough data, retrying"),0);
 	    Disconnect();
 	    return DO_AGAIN;
 	 }
@@ -1310,12 +1310,12 @@ int Http::Read(void *buf,int size)
       }
       if(body_size>=0 && bytes_received>=body_size)
       {
-	 DebugPrint("---- ","Received all");
+	 DebugPrint("---- ",_("Received all"));
 	 return 0; // all received
       }
       if(entity_size>=0 && pos>=entity_size)
       {
-	 DebugPrint("---- ","Received all (total)");
+	 DebugPrint("---- ",_("Received all (total)"));
 	 return 0;
       }
       if(size1==0)

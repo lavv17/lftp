@@ -97,7 +97,7 @@ int  CmdExec::RestoreCWD()
       eprintf(_("Warning: chdir(%s) failed: %s\n"),cwd,strerror(errno));
    fail:
       // can't run further commands in wrong directory
-      eprintf("No directory to execute commands in - terminating\n");
+      eprintf(_("No directory to execute commands in - terminating\n"));
       while(!Done())
 	 RemoveFeeder();
       exit_code=1;
@@ -222,7 +222,7 @@ restart:
       {
 	 if(did_default)
 	 {
-	    eprintf("Module for command `%s' did not register the command.\n",cmd_name);
+	    eprintf(_("Module for command `%s' did not register the command.\n"),cmd_name);
 	    exit_code=1;
 	    return;
 	 }
@@ -1297,7 +1297,7 @@ Job *CmdExec::default_cmd()
    builtin=BUILTIN_EXEC_RESTART;
    return this;
 #else
-   eprintf("%s: command `%s' is not compiled in.\n",op,op);
+   eprintf(_("%s: command `%s' is not compiled in.\n"),op,op);
    return 0;
 #endif
 }
