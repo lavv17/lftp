@@ -917,6 +917,10 @@ the character set used by ftp server in requests, replies and file listings.
 Default is empty which means the same as local. This setting is only used
 when the server does not support UTF8.
 .TP
+.BR ftp:client \ (string)
+the name of ftp client to send with CLNT command, if supported by server.
+If it is empty, then no CLNT command will be sent.
+.TP
 .BR ftp:bind-data-socket \ (bool)
 bind data socket to the interface of control connection (in passive mode).
 Default is true, exception is the loopback interface.

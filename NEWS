@@ -1,3 +1,14 @@
+Version 3.0.2 - 2004-04-15
+
+* support for ftp commands CLNT, HOST and OPTS MLST added.
+* ftp command MLSD disabled by default as it does not return symlink info.
+* added workaround for MLSD format bug in NcFTPd.
+* fixed spinning in cls when output stalls (e.g. cls|less).
+* fixed coredump when ftp:proxy was specified without protocol name.
+* fixed assertion failure when using ftp over http proxy with CONNECT method.
+* fixed timeout message in sftp when it is disconnected.
+* fixed compilation on systems lacking atoll function.
+
 Version 3.0.1 - 2004-04-06
 
 * fixed timeout handling in sftp.
