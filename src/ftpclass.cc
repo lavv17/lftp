@@ -260,7 +260,10 @@ int   Ftp::NoFileCheck(int act,int exp)
    {
       // retry on these errors (ftp server ought to send 4xx code instead)
       if((strstr(line,"Broken pipe") && (!file || !strstr(file,"Broken pipe")))
-      || (strstr(line,"Too many")    && (!file || !strstr(file,"Too many"))))
+      || (strstr(line,"Too many")    && (!file || !strstr(file,"Too many")))
+      || (strstr(line,"timed out")   && (!file || !strstr(file,"timed out")))
+      // if there were some data received, assume it is temporary error.
+      || (flags&IO_FLAG))
       {
 	 if(copy_mode!=COPY_NONE)
 	    return COPY_FAILED;
