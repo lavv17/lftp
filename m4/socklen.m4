@@ -16,12 +16,13 @@ AC_DEFUN(TYPE_SOCKLEN_T,
       ],
       [
 	 lftp_cv_socklen_t=yes
+	 lftp_cv_socklen_t_equiv=socklen_t
       ])
       AC_LANG_POP(C++)
    ])
    AC_MSG_RESULT($lftp_cv_socklen_t)
    if test $lftp_cv_socklen_t = no; then
-      AC_MSG_CHECKING(for socklen_t equivalent)
+      AC_MSG_CHECKING([for socklen_t equivalent for socket functions])
       AC_CACHE_VAL(lftp_cv_socklen_t_equiv,
       [
 	 lftp_cv_socklen_t_equiv=int
@@ -43,7 +44,7 @@ AC_DEFUN(TYPE_SOCKLEN_T,
 	 AC_LANG_POP(C++)
       ])
       AC_MSG_RESULT($lftp_cv_socklen_t_equiv)
-      AC_DEFINE_UNQUOTED(socklen_t, $lftp_cv_socklen_t_equiv,
-                        [type to use in place of socklen_t if not defined])
    fi
+   AC_DEFINE_UNQUOTED(lftp_socklen_t, $lftp_cv_socklen_t_equiv,
+                     [type to use in place of socklen_t if not defined])
 ])
