@@ -3,9 +3,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 1.2\n"
-"POT-Creation-Date: 2000-07-12 20:51+0400\n"
-"PO-Revision-Date: 1999-10-09 21:45-0300\n"
+"Project-Id-Version: lftp 2.2.1\n"
+"POT-Creation-Date: 2000-07-15 22:52-0300\n"
+"PO-Revision-Date: 2000-07-15 22:56-0300\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
@@ -51,7 +51,7 @@ msgstr "\tEjecutando primitiva `%s' [%s]\n"
 
 #: src/CmdExec.cc:666
 msgid "Now executing:"
-msgstr ""
+msgstr "Ejecutando ahora:"
 
 #: src/CmdExec.cc:674
 msgid "\tCommands queued:\n"
@@ -79,7 +79,7 @@ msgstr "Falló el acceso: %s"
 
 #: src/FileAccess.cc:314
 msgid "File cannot be accessed"
-msgstr "El fichero no puede ser accedido"
+msgstr "El archivo no puede ser accedido"
 
 #: src/FileAccess.cc:316 src/ftpclass.cc:2986 src/ftpclass.cc:2996
 msgid "Not connected"
@@ -114,12 +114,12 @@ msgstr "Obteniendo el contenido del directorio (%ld)"
 #: src/FtpListInfo.cc:239 src/HttpDir.cc:1317
 #, c-format
 msgid "Getting files information (%d%%)"
-msgstr "Obteniendo información sobre los ficheros (%d%%)"
+msgstr "Obteniendo información sobre los archivos (%d%%)"
 
 #: src/GetJob.cc:87
 #, c-format
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
-msgstr "%s: %s: el fichero ya existe y xfer:clobber no está definido\n"
+msgstr "%s: %s: el archivo ya existe y xfer:clobber no está definido\n"
 
 #: src/Job.cc:246
 #, c-format
@@ -166,44 +166,44 @@ msgstr "Las entradas del caché expiran en %ld minuto$#l#|s$\n"
 #: src/MirrorJob.cc:84
 #, c-format
 msgid "%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
-msgstr "%sTotal: %d directorio$|s$, %d fichero$|s$, %d enlace$|s$\n"
+msgstr "%sTotal: %d directorio$|s$, %d archivo$|s$, %d enlace$|s$\n"
 
 #: src/MirrorJob.cc:88
 #, c-format
 msgid "%sNew: %d file$|s$, %d symlink$|s$\n"
-msgstr "%sNuevos: %d fichero$|s$, %d enlace$|s$\n"
+msgstr "%sNuevos: %d archivo$|s$, %d enlace$|s$\n"
 
 #: src/MirrorJob.cc:92
 #, c-format
 msgid "%sModified: %d file$|s$, %d symlink$|s$\n"
-msgstr "%sModificados: %d fichero$|s$, %d enlace$|s$\n"
+msgstr "%sModificados: %d archivo$|s$, %d enlace$|s$\n"
 
 #: src/MirrorJob.cc:97
 #, c-format
 msgid "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
-msgstr "%sBorrados: %d directorio$|s$, %d fichero$|s$, %d enlace$|s$\n"
+msgstr "%sBorrados: %d directorio$|s$, %d archivo$|s$, %d enlace$|s$\n"
 
 #: src/MirrorJob.cc:98
 #, c-format
 msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
-msgstr "%sSerán borrados: %d directorio$|s$, %d fichero$|s$, %d enlace$|s$\n"
+msgstr "%sSerán borrados: %d directorio$|s$, %d archivo$|s$, %d enlace$|s$\n"
 
 #: src/MirrorJob.cc:168 src/MirrorJob.cc:756
 #, c-format
 msgid "Removing old remote file `%s'"
-msgstr "Borrando fichero remoto viejo `%s'"
+msgstr "Borrando archivo remoto viejo `%s'"
 
 #: src/MirrorJob.cc:216 src/MirrorJob.cc:312 src/MirrorJob.cc:381
 #: src/MirrorJob.cc:696
 #, c-format
 msgid "Removing old local file `%s'"
-msgstr "Borrando fichero local viejo `%s'"
+msgstr "Borrando archivo local viejo `%s'"
 
 #. launch get job
 #: src/MirrorJob.cc:234
 #, c-format
 msgid "Retrieving remote file `%s'"
-msgstr "Obteniendo fichero remoto `%s'"
+msgstr "Obteniendo archivo remoto `%s'"
 
 #: src/MirrorJob.cc:287
 #, c-format
@@ -228,22 +228,22 @@ msgstr "mirror: el protocolo `%s' no es adecuado para mirror\n"
 #: src/MirrorJob.cc:585
 #, c-format
 msgid "Sending local file `%s'"
-msgstr "Enviando fichero local `%s'"
+msgstr "Enviando archivo local `%s'"
 
 #: src/MirrorJob.cc:715
 #, c-format
 msgid "Old local file `%s' is not removed"
-msgstr "Viejo fichero local `%s' no removido"
+msgstr "Viejo archivo local `%s' no removido"
 
 #: src/MirrorJob.cc:749
-#, fuzzy, c-format
+#, c-format
 msgid "Removing old remote directory `%s'"
-msgstr "Borrando fichero remoto viejo `%s'"
+msgstr "Borrando directorio remoto viejo `%s'"
 
 #: src/MirrorJob.cc:768
 #, c-format
 msgid "Old remote file `%s' is not removed"
-msgstr "Viejo fichero remoro `%s' no removido"
+msgstr "Viejo archivo remoto `%s' no removido"
 
 #: src/MirrorJob.cc:1069 src/MirrorJob.cc:1111 src/commands.cc:784
 #: src/commands.cc:954 src/commands.cc:1044 src/commands.cc:1298
@@ -369,7 +369,7 @@ msgstr ""
 "  add <nombre> [<loc>] - agrega el lugar actual o la ubicación dada a los\n"
 "                         señaladores y lo vincula con el nombre dado\n"
 "  del <nombre>         - borra el señalador con ese nombre\n"
-"  edit                 - lanza editor con el fichero de señaladores\n"
+"  edit                 - lanza editor con el archivo de señaladores\n"
 "  import <tipo>        - importa señaladores foráneos\n"
 "  list                 - lista los señaladores (por omisión)\n"
 
@@ -401,14 +401,14 @@ msgstr ""
 
 #: src/commands.cc:134
 msgid "cat [-b] <files>"
-msgstr "cat [-b] <ficheros>"
+msgstr "cat [-b] <archivos>"
 
 #: src/commands.cc:135
 msgid ""
 "cat - output remote files to stdout (can be redirected)\n"
 " -b  use binary mode (ascii is the default)\n"
 msgstr ""
-"cat - envía ficheros remotos a la salida estándar (puede redireccionarse)\n"
+"cat - envía archivos remotos a la salida estándar (puede redireccionarse)\n"
 " -b  usa modo binario (por omisión se usa modo ascii)\n"
 
 #: src/commands.cc:137
@@ -430,7 +430,7 @@ msgstr ""
 
 #: src/commands.cc:142
 msgid "chmod mode file..."
-msgstr "chmod modo fichero..."
+msgstr "chmod modo archivo..."
 
 #: src/commands.cc:144
 msgid ""
@@ -442,7 +442,7 @@ msgstr ""
 
 #: src/commands.cc:148
 msgid "debug [<level>|off] [-o <file>]"
-msgstr "debug [<nivel>|off] [-o <fichero>]"
+msgstr "debug [<nivel>|off] [-o <archivo>]"
 
 #: src/commands.cc:149
 msgid ""
@@ -450,7 +450,7 @@ msgid ""
 " -o <file>  redirect debug output to the file.\n"
 msgstr ""
 "Asigna el nivel de depuración al valor dado, o la desconecta completamente.\n"
-" -o <fichero>  redirecciona la salida de depuración al fichero.\n"
+" -o <archivo>  redirecciona la salida de depuración al archivo.\n"
 
 #: src/commands.cc:152
 msgid "exit [<code>]"
@@ -483,7 +483,7 @@ msgstr ""
 
 #: src/commands.cc:162
 msgid "get [OPTS] <rfile> [-o <lfile>]"
-msgstr "get [OPCS] <fich_r> [-o <fich_l>]"
+msgstr "get [OPCS] <arch_r> [-o <arch_l>]"
 
 #: src/commands.cc:163
 msgid ""
@@ -494,15 +494,15 @@ msgid ""
 " -a  use ascii mode (binary is the default)\n"
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
-"Obtiene el fichero remoto <fich_r> y lo almacena en el\n"
-"fichero local <fich_l>.\n"
-" -o <fich_l> se usará como nombre del fichero local (por omisión: sólo\n"
-"     el componente nombre de fich_r)\n"
+"Obtiene el archivo remoto <arch_r> y lo almacena en el\n"
+"archivo local <arch_l>.\n"
+" -o <arch_l> se usará como nombre del archivo local (por omisión: sólo\n"
+"     el componente nombre de arch_r)\n"
 " -c  continúa (como con reget)\n"
-" -E  borra los ficheros remotos después de una transferencia exitosa\n"
+" -E  borra los archivos remotos después de una transferencia exitosa\n"
 " -a  usa modo ascii (por omisión se usa modo binario)\n"
 " -O <base> especifica un directorio base, o un URL, en el que se colocarán\n"
-"     los ficheros\n"
+"     los archivos\n"
 
 #: src/commands.cc:171
 msgid ""
@@ -517,11 +517,11 @@ msgid ""
 msgstr ""
 "Uso: glob [OPCS] orden parámetros...\n"
 "Expande comodines y ejecuta la orden especificada.\n"
-"Se pueden usar opcione para expandir los comodines a listas de ficheros,\n"
+"Se pueden usar opcione para expandir los comodines a listas de archivos,\n"
 "directorios, o a ambos tipos. La selección del tipo no es muy robusta\n"
 "y depende del servidor. Si el tipo de una entrada no puede ser determinado,\n"
 "esta será incluida en la lista.\n"
-" -f  ficheros comunes (por omisión)\n"
+" -f  archivos comunes (por omisión)\n"
 " -d  directorios\n"
 " -a  todos los tipos\n"
 
@@ -579,7 +579,7 @@ msgid ""
 msgstr ""
 "`lftp' es la primera orden ejecutada por lftp después de los archivos\n"
 "de configuración.\n"
-" -f <fichero>           ejecuta órdenes del fichero y sale\n"
+" -f <archivo>           ejecuta órdenes del archivo y sale\n"
 " -c <ords>              ejecuta las órdenes y sale\n"
 " --help                 muestra esta ayuda y sale\n"
 " --version              muestra la versión de lftp y sale\n"
@@ -600,14 +600,14 @@ msgid ""
 "By default, ls output is cached, to see new listing use `rels' or\n"
 "`cache flush'.\n"
 msgstr ""
-"Lista ficheros remotos. Puede redirigir la salida de este comando a un\n"
-"fichero o, a través de un pipe, a una orden externa.\n"
+"Lista archivos remotos. Puede redirigir la salida de este comando a un\n"
+"archivo o, a través de un pipe, a una orden externa.\n"
 "Por omisión la salida de ls se mantiene en un caché. Para ver un listado\n"
 "nuevo use `rels' o `cache flush'.\n"
 
 #: src/commands.cc:206
 msgid "mget [OPTS] <files>"
-msgstr "mget [OPCS] <ficheros>"
+msgstr "mget [OPCS] <archivos>"
 
 #: src/commands.cc:207
 msgid ""
@@ -619,21 +619,20 @@ msgid ""
 " -a  use ascii mode (binary is the default)\n"
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
-"Obtiene los ficheros seleccionados mediante el patrón\n"
+"Obtiene los archivos seleccionados mediante el patrón\n"
 " -c  continúa (como con reget)\n"
-" -d  crea directorios como los haya en los nombres de los ficheros\n"
-"     y coloca los ficheros en ellos en vez de en el directorio actual\n"
-" -E  borra los ficheros remotos después de una transferencia exitosa\n"
+" -d  crea directorios como los haya en los nombres de los archivos\n"
+"     y coloca los archivos en ellos en vez de en el directorio actual\n"
+" -E  borra los archivos remotos después de una transferencia exitosa\n"
 " -a  usa modo ascii (por omisión se usa modo binario)\n"
 " -O <base> especifica un directorio base, o un URL, en el que se colocarán\n"
-"     los ficheros\n"
+"     los archivos\n"
 
 #: src/commands.cc:214
 msgid "mirror [OPTS] [remote [local]]"
 msgstr "mirror [OPCS] [remoto [local]]"
 
 #: src/commands.cc:215
-#, fuzzy
 msgid ""
 "\n"
 "Mirror specified remote directory to local directory\n"
@@ -668,24 +667,26 @@ msgstr ""
 "Duplica el directorio remoto especificado en uno local\n"
 "\n"
 " -c, --continue         si es posible continúa una tarea de duplicación\n"
-" -e, --delete           borra ficheros locales ausentes en el sitio remoto\n"
+" -e, --delete           borra archivos locales ausentes en el sitio remoto\n"
 " -s, --allow-suid       asigna los bits suid/sgid según sea su estado en el\n"
 "                        sitio remoto\n"
-" -n, --only-newer       transfiere sólo los ficheros que sean más recientes\n"
+" -n, --only-newer       transfiere sólo los archivos que sean más recientes\n"
 "                        (-c no funciona)\n"
 " -r, --no-recursion     no descender por los subdirectorios\n"
-" -p, --no-perms         no asignar permisos en los ficheros locales\n"
-"     --no-umask         no aplicar umask a los modos de los ficheros\n"
-" -R, --reverse          revertir duplicación (`put' de ficheros)\n"
-" -L, --dereference      transfiere enlaces simbólicos como ficheros comunes\n"
-" -N, --newer-than FICH  transfiere sólo ficheros más nuevos que FICH\n"
-" -i RX, --include RX    incluye ficheros según patrón (sólo una vez)\n"
-" -x RX, --include RX    excluye ficheros según patrón (sólo una vez)\n"
+" -p, --no-perms         no asignar permisos en los archivos locales\n"
+"     --no-umask         no aplicar umask a los modos de los archivos\n"
+" -R, --reverse          revertir duplicación (`put' de archivos)\n"
+" -L, --dereference      transfiere enlaces simbólicos como archivos comunes\n"
+" -N, --newer-than FICH  transfiere sólo archivos más nuevos que FICH\n"
+" -i RX, --include RX    incluye archivos según patrón\n"
+" -x RX, --include RX    excluye archivos según patrón\n"
 "                        RX es una expresióno regular extendida\n"
 " -t Nx, --time-prec Nx  asigna la precision del tiempo a N segundos (x=s)\n"
 "                        minutos (x=m) horas (x=h) o días (x=d)\n"
-"                        por omisión - 12 horas\n"
-" -v, --verbose          mayor detalle en la infomación\n"
+"                        por omisión el valor de mirror:time-precision\n"
+" -T Nx, --loose-time-prec  asigna la precisión usada para fechas imprecisas\n"
+"                        por omisión el valor de mirror:loose-time-precision\n"
+" -v, --verbose[=N]      mayor detalle en la infomación\n"
 "     --use-cache        retener y reusar los los directorios obtenidos\n"
 "\n"
 "Al usar -R, el primer directorio es local y el segundo es remoto.\n"
@@ -722,17 +723,17 @@ msgstr ""
 
 #: src/commands.cc:249
 msgid "more <files>"
-msgstr "more <ficheros>"
+msgstr "more <archivos>"
 
 #: src/commands.cc:250
 msgid "Same as `cat <files> | more'. if PAGER is set, it is used as filter\n"
 msgstr ""
-"Igual que `cat <ficheros> | more'.\n"
+"Igual que `cat <archivos> | more'.\n"
 "Si PAGER está asignada, se usa como filtro\n"
 
 #: src/commands.cc:251
 msgid "mput [OPTS] <files>"
-msgstr "mput [OPCS] <ficheros>"
+msgstr "mput [OPCS] <archivos>"
 
 #: src/commands.cc:252
 msgid ""
@@ -744,31 +745,31 @@ msgid ""
 " -a  use ascii mode (binary is the default)\n"
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
-"Envía los ficheros seleccionados mediante el patrón\n"
+"Envía los archivos seleccionados mediante el patrón\n"
 " -c  continúa (como con reput)\n"
-" -d  crea directorios como los haya en los nombres de los ficheros\n"
-"     y coloca los ficheros en ellos en vez de en el directorio actual\n"
-" -E  borra los ficheros remotos después de una transferencia exitosa\n"
+" -d  crea directorios como los haya en los nombres de los archivos\n"
+"     y coloca los archivos en ellos en vez de en el directorio actual\n"
+" -E  borra los archivos locales después de una transferencia exitosa\n"
 "     (peligroso)\n"
 " -a  usa modo ascii (por omisión se usa modo binario)\n"
 " -O <base> especifica un directorio base, o un URL, en el que se colocarán\n"
-"     los ficheros\n"
+"     los archivos\n"
 
 #: src/commands.cc:259
 msgid "mrm <files>"
-msgstr "mrm <ficheros>"
+msgstr "mrm <archivos>"
 
 #: src/commands.cc:260
 msgid "Removes specified files with wildcard expansion\n"
-msgstr "Borra los ficheros especificados mediante la expanión del patrón\n"
+msgstr "Borra los archivos especificados mediante la expanión del patrón\n"
 
 #: src/commands.cc:261
 msgid "mv <file1> <file2>"
-msgstr "mv <fichero1> <fichero2>"
+msgstr "mv <archivo1> <archivo2>"
 
 #: src/commands.cc:262
 msgid "Rename <file1> to <file2>\n"
-msgstr "Renombra <fichero1> a <fichero2>\n"
+msgstr "Renombra <archivo1> a <archivo2>\n"
 
 #: src/commands.cc:263
 msgid "nlist [<args>]"
@@ -776,7 +777,7 @@ msgstr ""
 
 #: src/commands.cc:264
 msgid "List remote file names\n"
-msgstr "Lista nombres de ficheros remotos\n"
+msgstr "Lista nombres de archivos remotos\n"
 
 #: src/commands.cc:265
 msgid "open [OPTS] <site>"
@@ -798,7 +799,7 @@ msgstr ""
 
 #: src/commands.cc:271
 msgid "pget [OPTS] <rfile> [-o <lfile>]"
-msgstr "pget [OPCS] <fich_r> [-o <fich_l>]"
+msgstr "pget [OPCS] <arch_r> [-o <arch_l>]"
 
 #: src/commands.cc:272
 msgid ""
@@ -810,11 +811,11 @@ msgid ""
 "Options:\n"
 " -n <maxconn>  set maximum number of connections (default 5)\n"
 msgstr ""
-"Obtiene el fichero especificado usando varias conexiones. Esto puede "
+"Obtiene el archivo especificado usando varias conexiones. Esto puede "
 "acelerar\n"
 "la transferencia, pero carga fuertemente la red impactando a otros "
 "usuarios.\n"
-"Úselo sólo si realmente tiene que transferir el fichero tan rápido como sea\n"
+"Úselo sólo si realmente tiene que transferir el archivo tan rápido como sea\n"
 "posible, o algún otro usuario podría enojarse :)\n"
 "\n"
 "Opciones:\n"
@@ -822,7 +823,7 @@ msgstr ""
 
 #: src/commands.cc:277
 msgid "put [OPTS] <lfile> [-o <rfile>]"
-msgstr "put [OPCS] <fich_l> [-o <fich_r>]"
+msgstr "put [OPCS] <arch_l> [-o <arch_r>]"
 
 #: src/commands.cc:278
 msgid ""
@@ -834,16 +835,16 @@ msgid ""
 " -a  use ascii mode (binary is the default)\n"
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
-"Envía <fich_l> con nombre remoto <fich_r>.\n"
-" -o <fich_r> especifica el nombre remoto del fichero (por omisión - nombre\n"
-"    base de <fich_l>).\n"
+"Envía <arch_l> con nombre remoto <arch_r>.\n"
+" -o <arch_r> especifica el nombre remoto del archivo (por omisión - nombre\n"
+"    base de <arch_l>).\n"
 " -c continuar, reput\n"
-"    requiere tener permiso para sobreescribir ficheros remotos.\n"
-" -E  borra los ficheros remotos después de una transferencia exitosa\n"
+"    requiere tener permiso para sobreescribir archivos remotos.\n"
+" -E  borra los archivos remotos después de una transferencia exitosa\n"
 "     (peligroso)\n"
 " -a  usa modo ascii (por omisión se usa modo binario)\n"
 " -O <base> especifica un directorio base, o un URL, en el que se colocarán\n"
-"     los ficheros\n"
+"     los archivos\n"
 
 #: src/commands.cc:286
 msgid ""
@@ -878,7 +879,7 @@ msgstr ""
 
 #: src/commands.cc:299
 msgid "reget [OPTS] <rfile> [-o <lfile>]"
-msgstr "reget [OPCS] <fich_r> [-o <fich_l>]"
+msgstr "reget [OPCS] <arch_r> [-o <arch_l>]"
 
 #: src/commands.cc:300
 msgid "Same as `get -c'\n"
@@ -906,10 +907,13 @@ msgid ""
 "Repeat specified command with a delay between iterations.\n"
 "Default delay is one second, default command is empty.\n"
 msgstr ""
+"Uso: repeat [demora] [orden]\n"
+"Repite la orden especificada con una demora entre iteraciones.\n"
+"La demora por omisión es de un segundo, la orden por omisión es nada.\n"
 
 #: src/commands.cc:309
 msgid "reput <lfile> [-o <rfile>]"
-msgstr "reput <fich_l> [-o <fich_r>]"
+msgstr "reput <arch_l> [-o <arch_r>]"
 
 #: src/commands.cc:310
 msgid "Same as `put -c'\n"
@@ -917,7 +921,7 @@ msgstr "Igual que `put -c'\n"
 
 #: src/commands.cc:311
 msgid "rm [-r] [-f] <files>"
-msgstr "rm [-r] [-f] <ficheros>"
+msgstr "rm [-r] [-f] <archivos>"
 
 #: src/commands.cc:312
 msgid ""
@@ -925,7 +929,7 @@ msgid ""
 " -r  recursive directory removal, be careful\n"
 " -f  work quietly\n"
 msgstr ""
-"Borra ficheros remotos\n"
+"Borra archivos remotos\n"
 " -r  borrado recursivo de directorios, sea cuidadoso\n"
 " -f  trabaja en silencio\n"
 
@@ -996,11 +1000,11 @@ msgstr ""
 
 #: src/commands.cc:336
 msgid "source <file>"
-msgstr "source <fichero>"
+msgstr "source <archivo>"
 
 #: src/commands.cc:337
 msgid "Execute commands recorded in file <file>\n"
-msgstr "Ejecuta las órdenes almacenadas en el fichero <fichero>\n"
+msgstr "Ejecuta las órdenes almacenadas en el archivo <archivo>\n"
 
 #: src/commands.cc:339
 msgid "user <user|URL> [<pass>]"
@@ -1032,19 +1036,19 @@ msgstr ""
 
 #: src/commands.cc:347
 msgid "zcat <files>"
-msgstr "zcat <ficheros>"
+msgstr "zcat <archivos>"
 
 #: src/commands.cc:348
 msgid "Same as cat, but filter each file through zcat\n"
-msgstr "Igual que cat, pero filtra cada fichero a través de zcat\n"
+msgstr "Igual que cat, pero filtra cada archivo a través de zcat\n"
 
 #: src/commands.cc:349
 msgid "zmore <files>"
-msgstr "zmore <ficheros>"
+msgstr "zmore <archivos>"
 
 #: src/commands.cc:350
 msgid "Same as more, but filter each file through zcat\n"
-msgstr "Igual que more, pero filtra cada fichero a través de zcat\n"
+msgstr "Igual que more, pero filtra cada archivo a través de zcat\n"
 
 #: src/commands.cc:399
 #, c-format
@@ -1112,7 +1116,7 @@ msgstr "Uso: %s <orden>\n"
 #: src/commands.cc:963
 #, c-format
 msgid "Usage: %s [OPTS] files...\n"
-msgstr "Uso: %s [OPCS] ficheros...\n"
+msgstr "Uso: %s [OPCS] archivos...\n"
 
 #: src/commands.cc:1025
 #, c-format
@@ -1122,17 +1126,17 @@ msgstr "%s: -n: Se esperaba un número. "
 #: src/commands.cc:1055
 #, c-format
 msgid "File name missed. "
-msgstr "Nombre de fichero no encontrado. "
+msgstr "Nombre de archivo no encontrado. "
 
 #: src/commands.cc:1158
 #, c-format
 msgid "Usage: %s [-r] [-f] files...\n"
-msgstr "Uso: %s [-r] [-f] ficheros...\n"
+msgstr "Uso: %s [-r] [-f] archivos...\n"
 
 #: src/commands.cc:1203
 #, c-format
 msgid "Usage: %s <file>\n"
-msgstr "Uso: %s <fichero>\n"
+msgstr "Uso: %s <archivo>\n"
 
 #: src/commands.cc:1225
 #, c-format
@@ -1161,7 +1165,7 @@ msgstr "Uso: %s id_usuario [clave]\n"
 #: src/commands.cc:1426 src/commands.cc:1590
 #, c-format
 msgid "%s: no current job\n"
-msgstr "%s: no hay tarea actual\n"
+msgstr "%s: no hay una tarea seleccionada\n"
 
 #: src/commands.cc:1436 src/commands.cc:1466 src/commands.cc:1598
 #, c-format
@@ -1196,7 +1200,7 @@ msgstr "%s: hay otra tarea esperando por la tarea %d\n"
 #: src/commands.cc:1628
 #, c-format
 msgid "Usage: mv <file1> <file2>\n"
-msgstr "Uso: mv <fichero1> <fichero2>\n"
+msgstr "Uso: mv <archivo1> <archivo2>\n"
 
 #: src/commands.cc:1650 src/commands.cc:1870
 #, c-format
@@ -1308,7 +1312,7 @@ msgstr "Uso: %s módulo [args...]\n"
 #: src/commands.cc:2051
 #, c-format
 msgid "Usage: %s mode file...\n"
-msgstr "Uso: %s modo fichero...\n"
+msgstr "Uso: %s modo archivo...\n"
 
 #: src/commands.cc:2057
 #, c-format
@@ -1318,7 +1322,7 @@ msgstr "%s: %s - no es un número octal\n"
 #: src/commands.cc:2106
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
-msgstr "Uso: %s [OPCS] fichero\n"
+msgstr "Uso: %s [OPCS] archivo\n"
 
 #: src/ftpclass.cc:218
 msgid "Data connection peer has wrong port number"
@@ -1347,7 +1351,7 @@ msgstr "Cerrando conexión ociosa"
 
 #: src/ftpclass.cc:1109
 msgid "SITE CHMOD is not supported by this site"
-msgstr ""
+msgstr "El servidor no soporta el comando SITE CHMOD"
 
 #: src/ftpclass.cc:1597
 #, c-format
@@ -1372,7 +1376,7 @@ msgstr "Cerrando socket de datos"
 
 #: src/ftpclass.cc:2757
 msgid "saw file size in response"
-msgstr "vi tamaño del fichero en la respuesta"
+msgstr "vi tamaño del archivo en la respuesta"
 
 #: src/ftpclass.cc:2766
 msgid "remote end closes connection"
@@ -1463,7 +1467,7 @@ msgstr "[%lu] Pasando a segundo plano para completar las transferencias...\n"
 #: src/mgetJob.cc:124 src/mgetJob.cc:209
 #, c-format
 msgid "%s: no files found\n"
-msgstr "%s: no se encontraron ficheros\n"
+msgstr "%s: no se encontraron archivos\n"
 
 #. A directory has just been created
 #: src/mkdirJob.cc:126
@@ -1492,7 +1496,7 @@ msgstr "parse: falta orden de filtro\n"
 
 #: src/parsecmd.cc:296
 msgid "parse: missing redirection filename\n"
-msgstr "parse: falta fichero de redirección\n"
+msgstr "parse: falta archivo de redirección\n"
 
 #. This is the rule for plural form choice (last condition can be omitted)
 #. Operators: = > < ! | %
@@ -1508,7 +1512,7 @@ msgstr "%s ok, `%s' borrado\n"
 #: src/rmJob.cc:46
 #, c-format
 msgid "%s failed for %d of %d files\n"
-msgstr "%s falló para %d de %d ficheros\n"
+msgstr "%s falló para %d de %d archivos\n"
 
 #: src/rmJob.cc:51
 #, c-format
@@ -1518,7 +1522,7 @@ msgstr "%s ok, %d directorio$|s$ borrado$|s$\n"
 #: src/rmJob.cc:54
 #, c-format
 msgid "%s ok, %d file$|s$ removed\n"
-msgstr "%s ok, %d fichero$|s$ borrado$|s$\n"
+msgstr "%s ok, %d archivo$|s$ borrado$|s$\n"
 
 #: src/Http.cc:1035 src/Http.cc:1055
 msgid "chunked format violated"
@@ -1536,39 +1540,37 @@ msgstr "Protocolo de proxy no soportado"
 #: src/HttpDir.cc:932 src/HttpDir.cc:1115
 #, c-format
 msgid "Getting file list (%ld) [%s]"
-msgstr "Obteniendo lista de ficheros (%ld) [%s]"
+msgstr "Obteniendo lista de archivos (%ld) [%s]"
 
 #: src/CopyJob.cc:207
 #, c-format
 msgid "%ld $#l#byte|bytes$ transferred in %ld $#l#second|seconds$"
-msgstr "%ld byte$#l#|s$ transferidos en %ld segundo$#l#|s$"
+msgstr "%ld byte$#l#|s$ transferidos en %ld segundo$#l#|s$."
 
 #: src/CopyJob.cc:219
 #, c-format
 msgid "%ld $#l#byte|bytes$ transferred\n"
-msgstr "%ld byte$#l#|s$ transferidos\n"
+msgstr "%ld byte$#l#|s$ transferidos.\n"
 
 #: src/CopyJob.cc:226
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
-msgstr "Falló la transferencia de %d de %d fichero$|s$\n"
+msgstr "Falló la transferencia de %d de %d archivo$|s$.\n"
 
 #: src/CopyJob.cc:232
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
-msgstr "%d fichero$|s$ transferido$|s$ en total\n"
+msgstr "%d archivo$|s$ transferido$|s$ en total.\n"
 
 #: src/FileCopy.cc:1047
-#, fuzzy
 msgid "file name missed in URL"
-msgstr "Nombre de fichero no encontrado. "
+msgstr "nombre de archivo no encontrado em URL"
 
 #~ msgid "Usage: %s files...\n"
-#~ msgstr "Uso: %s ficheros...\n"
+#~ msgstr "Uso: %s archivos...\n"
 
-#, fuzzy
 #~ msgid "`%s' at %lu %s%s%s%s"
-#~ msgstr "`%s' en %lu %s%s%s[%s]"
+#~ msgstr "`%s' en %lu %s%s%s%s"
 
 #~ msgid "Delaying before reconnect"
 #~ msgstr "Esperando antes de reintentar"
@@ -1604,13 +1606,11 @@ msgstr "Nombre de fichero no encontrado. "
 #~ msgid "Copying of `%s' in progress (%c)"
 #~ msgstr "Copiado de `%s' en progreso (%c)"
 
-#, fuzzy
 #~ msgid "%s: no such files\n"
-#~ msgstr "%s: no se encontraron ficheros\n"
+#~ msgstr "%s: no se encontraron esos archivos\n"
 
-#, fuzzy
 #~ msgid " - not supported protocol\n"
-#~ msgstr "%s: %s - protocolo no soportado\n"
+#~ msgstr " - protocolo no soportado\n"
 
 #~ msgid "%s: %s - not supported protocol\n"
 #~ msgstr "%s: %s - protocolo no soportado\n"
@@ -1622,7 +1622,7 @@ msgstr "Nombre de fichero no encontrado. "
 #~ msgstr "rm(%s) remoto - %s\n"
 
 #~ msgid "\tNo files transferred successfully :(\n"
-#~ msgstr "\tNingún fichero fue transferido exitosamente :(\n"
+#~ msgstr "\tNingún archivo fue transferido exitosamente :(\n"
 
 #~ msgid "Average transfer rate %g bytes/s\n"
 #~ msgstr "Tasa promedio de transferencia %g bytes/s\n"
@@ -1631,7 +1631,7 @@ msgstr "Nombre de fichero no encontrado. "
 #~ msgstr "%s: no se puede escribir -- ¿disco lleno?\n"
 
 #~ msgid "mget [-c] [-d] [-e] <files>"
-#~ msgstr "mget [-c] [-d] [-e] <ficheros>"
+#~ msgstr "mget [-c] [-d] [-e] <archivos>"
 
 #~ msgid ""
 #~ "Upload files with wildcard expansion\n"
@@ -1639,10 +1639,10 @@ msgstr "Nombre de fichero no encontrado. "
 #~ " -d  create directories the same as in file names and put the\n"
 #~ "     files into them instead of current directory\n"
 #~ msgstr ""
-#~ "Envía los ficheros seleccionados mediante el patrón\n"
+#~ "Envía los archivos seleccionados mediante el patrón\n"
 #~ " -c  continúa, `reput'\n"
-#~ " -d  crea directorios como los haya en los nombres de los ficheros\n"
-#~ "     y coloca los ficheros en ellos en vez de en el directorio actual\n"
+#~ " -d  crea directorios como los haya en los nombres de los archivos\n"
+#~ "     y coloca los archivos en ellos en vez de en el directorio actual\n"
 
 #~ msgid "Wait for specified job to terminate.\n"
 #~ msgstr "Espera que termine la tarea especificada.\n"
@@ -1672,19 +1672,19 @@ msgstr "Nombre de fichero no encontrado. "
 #~ "\n"
 #~ "-o  output to local file `local' (default - base name of filename)\n"
 #~ msgstr ""
-#~ "Uso: ftpget [OPCIONES] host fichero [-o local] [fichero...]\n"
+#~ "Uso: ftpget [OPCIONES] host archivo [-o local] [archivo...]\n"
 #~ "\n"
 #~ "-p  --port         asigna el número de port\n"
 #~ "-u  --user         se identifica como ususario usando clav como clave\n"
 #~ "-l  --list         obtiene el listado de los directorios especificados\n"
-#~ "-c  --continue     continúa el get de ficheros\n"
+#~ "-c  --continue     continúa el get de archivos\n"
 #~ "-q  --quiet        operación silenciosa (sin mensajes de salida)\n"
 #~ "-v  --verbose      verborrágico (muchos mensajes)\n"
 #~ "    --async-mode   usa modo asíncrono (más rápido)\n"
 #~ "    --sync-mode    usa modo síncrónico (compatible con bugs)\n"
 #~ "\n"
-#~ "-o  salida hacia el fichero local (por omisión: nombre base de cada "
-#~ "fichero)\n"
+#~ "-o  salida hacia el archivo local (por omisión: nombre base de cada "
+#~ "archivo)\n"
 
 #~ msgid "Usage: %s [-c] [-d] [-e] pattern ...\n"
 #~ msgstr "Uso: %s [-c] [-d] [-e] patrón ...\n"
@@ -1697,10 +1697,6 @@ msgstr "Nombre de fichero no encontrado. "
 
 #~ msgid "\tDone\n"
 #~ msgstr "\tHecho\n"
-
-#, fuzzy
-#~ msgid "%s: %s.\n"
-#~ msgstr "Uso: %s\n"
 
 #~ msgid "%s: %s - invalid time precision\n"
 #~ msgstr "%s: %s - precisión de tiempo inválida\n"
@@ -1722,13 +1718,6 @@ msgstr "Nombre de fichero no encontrado. "
 #~ msgid "Timeout - trying sync mode (is it windoze?)"
 #~ msgstr ""
 #~ "Tiempo fuera - probando con modo `sync' (¿es windoze del otro lado?)"
-
-#, fuzzy
-#~ msgid "eta:%ld%c%ld%c "
-#~ msgstr "falta:%ld%c "
-
-#~ msgid "eta:%ld%c "
-#~ msgstr "falta:%ld%c "
 
 #~ msgid "Operation is in progress"
 #~ msgstr "Operación en progreso"
@@ -1763,7 +1752,7 @@ msgstr "Nombre de fichero no encontrado. "
 #~ msgstr "%s falló para %d de %d directorio$|s$\n"
 
 #~ msgid "Remove remote files\n"
-#~ msgstr "Borra ficheros remotos\n"
+#~ msgstr "Borra archivos remotos\n"
 
 #~ msgid "SwitchToState called with invalid state\n"
 #~ msgstr "SwitchToState llamada con estado inválido\n"
@@ -1786,7 +1775,7 @@ msgstr "Nombre de fichero no encontrado. "
 
 # , c-format
 #~ msgid "%d files total\n"
-#~ msgstr "%d ficheros en total\n"
+#~ msgstr "%d archivos en total\n"
 
 #~ msgid ""
 #~ "open - select an ftp server\n"
