@@ -1,3 +1,13 @@
+2000-01-13  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileCopy.cc: (OpenSession) set correct pos in PUT mode;
+	  don't call SaveRollback in PUT mode.
+	* SMTask.h: ensure STALL|MOVED==MOVED.
+	* ftpclass.cc: make FlushSendQueue and ReceiveResp return flag
+	  indicating progress; OR it with m in Ftp::Do; fix condition
+	  of Disconnect in copy mode; fix SwitchToState to not ignore
+	  severe errors in copy mode.
+
 2000-01-12  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h, FileCopyFtp.cc: fixes for FXP.

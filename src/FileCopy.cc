@@ -839,8 +839,15 @@ void FileCopyPeerFA::OpenSession()
       session->WantSize(&size);
    if(want_date && date==NO_DATE_YET)
       session->WantDate(&date);
-   SaveRollback(seek_pos);
-   pos=seek_pos;
+   if(mode==GET)
+   {
+      SaveRollback(seek_pos);
+      pos=seek_pos;
+   }
+   else
+   {
+      pos=seek_pos+in_buffer;
+   }
 }
 
 void FileCopyPeerFA::RemoveFile()

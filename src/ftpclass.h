@@ -185,16 +185,13 @@ class Ftp : public NetAccess
 
    void  SendCmd(const char *cmd);
    void  SendUrgentCmd(const char *cmd);
-   void	 FlushSendQueue(bool all=false);
+   int	 FlushSendQueue(bool all=false);
 
-   void	 ReceiveResp();
+   int	 ReceiveResp();
 	 // If a response is received, it checks it for accordance with
 	 // response_queue and switch to a state if necessary
 
-   int	 Poll(int fd,int ev) { return FileAccess::Poll(fd,ev); }
-   int	 Poll();
-
-   int	 AbsolutePath(const char *p);
+   bool	 AbsolutePath(const char *p);
 
    char	 *send_cmd_buffer;
    int   send_cmd_count;   // in buffer

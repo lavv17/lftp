@@ -40,9 +40,9 @@ protected:
 
    enum
    {
-      STALL,
-      MOVED,
-      WANTDIE
+      STALL=0,
+      MOVED=1,	  // STALL|MOVED==MOVED.
+      WANTDIE=2
    };
 
 public:

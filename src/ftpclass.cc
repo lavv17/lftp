@@ -749,13 +749,14 @@ Ftp::~Ftp()
    }
 }
 
-int   Ftp::AbsolutePath(const char *s)
+bool Ftp::AbsolutePath(const char *s)
 {
    if(!s)
-      return 0;
+      return false;
    int dev_len=device_prefix_len(s);
    return(s[0]=='/'
-      || ((dos_path && dev_len==3) || (vms_path && dev_len>2) && s[dev_len-1]=='/'));
+      || (((dos_path && dev_len==3) || (vms_path && dev_len>2))
+	  && s[dev_len-1]=='/'));
 }
 
 void  Ftp::GetBetterConnection(int level)
@@ -982,8 +983,8 @@ int   Ftp::Do()
       if(((flags&SYNC_MODE) || (user && pass && allow_skey))
       && !RespQueueIsEmpty())
       {
-	 FlushSendQueue();
-	 ReceiveResp();
+	 m|=FlushSendQueue();
+	 m|=ReceiveResp();
 	 if(state!=USER_RESP_WAITING_STATE)
 	    return MOVED;
 	 if(!RespQueueIsEmpty())
@@ -1016,8 +1017,8 @@ int   Ftp::Do()
       m=MOVED;
 
    case(EOF_STATE):
-      FlushSendQueue();
-      ReceiveResp();
+      m|=FlushSendQueue();
+      m|=ReceiveResp();
       if(state!=EOF_STATE)
 	 return MOVED;
 
@@ -1062,8 +1063,8 @@ int   Ftp::Do()
 
    case CWD_CWD_WAITING_STATE:
    {
-      FlushSendQueue();
-      ReceiveResp();
+      m|=FlushSendQueue();
+      m|=ReceiveResp();
       if(state!=CWD_CWD_WAITING_STATE)
 	 return MOVED;
 
@@ -1394,8 +1395,8 @@ int   Ftp::Do()
       state=ACCEPTING_STATE;
    }
    case(ACCEPTING_STATE):
-      FlushSendQueue();
-      ReceiveResp();
+      m|=FlushSendQueue();
+      m|=ReceiveResp();
 
       if(state!=ACCEPTING_STATE)
          return MOVED;
@@ -1443,8 +1444,8 @@ int   Ftp::Do()
 
    case(DATASOCKET_CONNECTING_STATE):
    datasocket_connecting_state:
-      FlushSendQueue();
-      ReceiveResp();
+      m|=FlushSendQueue();
+      m|=ReceiveResp();
 
       if(state!=DATASOCKET_CONNECTING_STATE)
          return MOVED;
@@ -1539,8 +1540,8 @@ int   Ftp::Do()
       int ev=(mode==STORE?POLLOUT:POLLIN);
       oldstate=state;
 
-      FlushSendQueue();
-      ReceiveResp();
+      m|=FlushSendQueue();
+      m|=ReceiveResp();
 
       if(state!=oldstate)
          return MOVED;
@@ -1580,9 +1581,8 @@ int   Ftp::Do()
    {
       oldstate=state;
 
-      FlushSendQueue();
-      bool was_empty=RespQueueIsEmpty();
-      ReceiveResp();
+      m|=FlushSendQueue();
+      m|=ReceiveResp();
 
       if(state!=oldstate)
          return MOVED;
@@ -1593,12 +1593,6 @@ int   Ftp::Do()
 
       if(copy_mode==COPY_DEST && !copy_allow_store)
 	 goto notimeout_return;
-
-      if(!was_empty && RespQueueIsEmpty())
-      {
-	 // we've got the last response
-	 m=MOVED;
-      }
 
       if(copy_mode==COPY_DEST && !copy_done && copy_connection_open
       && RespQueueSize()==1)
@@ -1703,14 +1697,15 @@ void  Ftp::LogResp(const char *l)
    result_size+=strlen(l);
 }
 
-void  Ftp::ReceiveResp()
+int  Ftp::ReceiveResp()
 {
    char  *store;
    char  *nl;
    int   code;
+   int	 m=STALL;
 
    if(control_sock==-1)
-      return;
+      return m;
 
    for(;;)
    {
@@ -1780,34 +1775,34 @@ void  Ftp::ReceiveResp()
 	    pfd.events=POLLIN;
 	    int res=poll(&pfd,1,0);
 	    if(res<=0)
-	       return;
+	       return m;
 	    if(CheckHangup(&pfd,1))
 	    {
 	       ControlClose();
 	       Disconnect();
-	       return;
+	       return MOVED;
 	    }
 
 	    res=read(control_sock,resp+resp_size,resp_alloc-resp_size-1);
 	    if(res==-1)
 	    {
 	       if(errno==EAGAIN || errno==EINTR)
-		  return;
+		  return m;
 	       if(NotSerious(errno))
 	       {
 		  DebugPrint("**** ",strerror(errno),0);
 		  Disconnect();
-		  return;
+		  return MOVED;
 	       }
 	       SwitchToState(SYSTEM_ERROR_STATE);
-	       return;
+	       return MOVED;
 	    }
 	    if(res==0)
 	    {
 	       DebugPrint("**** ",_("Peer closed connection"),0);
 	       ControlClose();
 	       Disconnect();
-	       return;
+	       return MOVED;
 	    }
 
 	    // workaround for \0 characters in response
@@ -1817,6 +1812,7 @@ void  Ftp::ReceiveResp()
 
 	    event_time=now;
 	    resp_size+=res;
+	    m=MOVED;
 	 }
       }
 
@@ -1839,9 +1835,10 @@ void  Ftp::ReceiveResp()
 	 }
 	 SwitchToState((automate_state)newstate);
 	 if(resp_size==0)
-	    return;
+	    return m;
       }
    }
+   return m;
 }
 
 void Ftp::SendUrgentCmd(const char *cmd)
@@ -1868,7 +1865,7 @@ void  Ftp::DataAbort()
 	 return; // the transfer seems to be finished
       if(!copy_addr_valid)
 	 return; // data connection cannot be established at this time
-      if(!copy_connection_open)
+      if(!copy_connection_open && RespQueueSize()==1)
       {
 	 // wu-ftpd-2.6.0 cannot interrupt accept() or connect().
 	 Disconnect();
@@ -1986,24 +1983,25 @@ void  Ftp::DataClose()
    }
 }
 
-void  Ftp::FlushSendQueue(bool all)
+int  Ftp::FlushSendQueue(bool all)
 {
    int res;
    struct pollfd pfd;
+   int m=STALL;
 
    pfd.events=POLLOUT;
    pfd.fd=control_sock;
    res=poll(&pfd,1,0);
    if(res<=0)
-      return;
+      return m;
    if(CheckHangup(&pfd,1))
    {
       ControlClose();
       Disconnect();
-      return;
+      return MOVED;
    }
    if(!(pfd.revents&POLLOUT))
-      return;
+      return m;
 
    char *cmd_begin=send_cmd_ptr;
 
@@ -2013,24 +2011,24 @@ void  Ftp::FlushSendQueue(bool all)
 
       char *line_end=(char*)memchr(send_cmd_ptr,'\n',send_cmd_count);
       if(line_end==NULL)
-	 return;
+	 return m;
       to_write=line_end+1-send_cmd_ptr;
 
       res=write(control_sock,send_cmd_ptr,to_write);
       if(res==0)
-	 return;
+	 return m;
       if(res==-1)
       {
 	 if(errno==EAGAIN || errno==EINTR)
-	    return;
+	    return m;
 	 if(NotSerious(errno) || errno==EPIPE)
 	 {
 	    DebugPrint("**** ",strerror(errno),0);
 	    Disconnect();
-	    return;
+	    return MOVED;
 	 }
 	 SwitchToState(SYSTEM_ERROR_STATE);
-	 return;
+	 return MOVED;
       }
       send_cmd_count-=res;
       send_cmd_ptr+=res;
@@ -2067,6 +2065,7 @@ void  Ftp::FlushSendQueue(bool all)
 	 DebugPrint("---> ",cmd_begin,5);
       }
    }
+   return m;
 }
 
 void  Ftp::SendCmd(const char *cmd)
@@ -2452,18 +2451,26 @@ int   Ftp::StoreStatus()
 
 void  Ftp::SwitchToState(automate_state ns)
 {
+   if(ns==SYSTEM_ERROR_STATE)
+      saved_errno=errno;
+
    if(ns==state)
       return;
 
    switch(ns)
    {
-   case(INITIAL_STATE):
-      Disconnect();
-      break;
+   // Error states that require Disconnect(). Set state here; don't check
+   // for STORE_FAILED_STATE or COPY_FAILED possibly set by Disconnect.
+   case(SYSTEM_ERROR_STATE):
    case(FATAL_STATE):
-   case(STORE_FAILED_STATE):
    case(LOGIN_FAILED_STATE):
       Disconnect();
+      state=ns;
+      return;
+
+   case(INITIAL_STATE):
+   case(STORE_FAILED_STATE):
+      Disconnect();  // this is not an error, but Disconnect can set state.
       break;
    case(EOF_STATE):
       DataAbort();
@@ -2474,10 +2481,9 @@ void  Ftp::SwitchToState(automate_state ns)
       break;
    case(NO_FILE_STATE):
       break;
-   case(SYSTEM_ERROR_STATE):
-      saved_errno=errno;
       Disconnect();
-      break;
+      state=ns;
+      return;
    case(LOOKUP_ERROR_STATE):
       break;
    case(COPY_FAILED):
