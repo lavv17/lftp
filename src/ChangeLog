@@ -1,3 +1,7 @@
+2004-04-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* resource.cc: don't enable mlsd by default.
+
 2004-04-13  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.cc: don't check timeout if there should be no activity.
