@@ -74,7 +74,7 @@ liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  FindJob.cc FindJob.h \
  FindJobDu.cc FindJobDu.h ChmodJob.cc ChmodJob.h\
  TreatFileJob.cc TreatFileJob.h CopyJob.cc CopyJob.h echoJob.cc echoJob.h \
- OutputJob.cc OutputJob.h
+ OutputJob.cc OutputJob.h buffer_std.cc buffer_std.h
 
 lftp_LDFLAGS = -export-dynamic $(LFTP_SSL_LDFLAGS)
 lftp_LDADD = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC) $(READLINE)\

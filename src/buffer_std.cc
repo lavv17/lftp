@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 2004 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,24 +18,31 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef SYSCMDJOB_H
-#define SYSCMDJOB_H
+/* $Id$ */
 
-#include "trio.h"
-#include "Job.h"
-#include "ProcWait.h"
+#include <config.h>
+#include "buffer_std.h"
 
-class SysCmdJob : public Job
+int IOBuffer_STDOUT::Put_LL(const char *buf,int size)
 {
-   char *cmd;
-   ProcWait *w;
-public:
-   SysCmdJob(const char *new_cmd);
-   ~SysCmdJob();
-   int Do();
-   int Done() { return(w && w->GetState()!=w->RUNNING); }
-   int AcceptSig(int);
-   int ExitCode() { return w?w->GetInfo()>>8:1; }
-};
-
-#endif//SYSCMDJOB_H
+   if(size==0)
+      return 0;
+   if(!eof)
+   {
+      for(int i=size; i>0; i--)
+      {
+	 if(buf[i-1]=='\n')
+	 {
+	    size=i;
+	    break;
+	 }
+	 if(i==1)
+	    return 0;
+      }
+   }
+   char *str=string_alloca(size+1);
+   memcpy(str,buf,size);
+   str[size]=0;
+   master->printf("%s",str);
+   return size;
+}

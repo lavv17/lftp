@@ -1587,7 +1587,7 @@ int   Ftp::Do()
       && (mode==RETRIEVE || mode==STORE || mode==LIST || mode==LONG_LIST || mode==MP_LIST))
       {
 	 assert(conn->data_sock==-1);
-	 conn->data_sock=SocketCreateTCP(conn->peer_sa.sa.sa_family);
+	 conn->data_sock=socket(conn->peer_sa.sa.sa_family,SOCK_STREAM,IPPROTO_TCP);
 	 if(conn->data_sock==-1)
 	 {
 	    sprintf(str,"socket(data): %s",strerror(errno));
@@ -1611,7 +1611,7 @@ int   Ftp::Do()
 	    {
 	       close(conn->data_sock);
 	       conn->data_sock=-1;
-	       TimeoutS(10);	 // retry later.
+	       TimeoutS(1);	 // retry later.
 	       return m;
 	    }
 	    if(t==9)
@@ -1623,6 +1623,9 @@ int   Ftp::Do()
 
 	    bool do_addr_bind=QueryBool("bind-data-socket")
 			   && !IsLoopback(&conn->peer_sa);
+
+	    if(!do_addr_bind && !port)
+		break;	// nothing to bind
 
 	    if(conn->data_sa.sa.sa_family==AF_INET)
 	    {
@@ -1646,11 +1649,13 @@ int   Ftp::Do()
 
 	    if(bind(conn->data_sock,&conn->data_sa.sa,addr_len)==0)
 	       break;
+	    int saved_errno=errno;
 
 	    // Fail unless socket was already taken
 	    if(errno!=EINVAL && errno!=EADDRINUSE)
 	    {
-	       Log::global->Format(0,"**** bind(data_sock): %s\n",strerror(errno));
+	       Log::global->Format(0,"**** bind(data_sock,[%s]:%d): %s\n",
+		  SocketNumericAddress(&conn->data_sa),port,strerror(saved_errno));
 	       close(conn->data_sock);
 	       conn->data_sock=-1;
 	       if(NonFatalError(errno))
@@ -1661,13 +1666,16 @@ int   Ftp::Do()
 	       SetError(SEE_ERRNO,"Cannot bind data socket for ftp:port-range");
 	       return MOVED;
 	    }
+	    Log::global->Format(10,"**** bind(data_sock,[%s]:%d): %s\n",
+	       SocketNumericAddress(&conn->data_sa),port,strerror(saved_errno));
 	 }
-
-	 // get the allocated port
-	 getsockname(conn->data_sock,&conn->data_sa.sa,&addr_len);
 
 	 if(!(flags&PASSIVE_MODE))
 	    listen(conn->data_sock,1);
+
+	 // get the allocated port
+	 addr_len=sizeof(conn->data_sa);
+	 getsockname(conn->data_sock,&conn->data_sa.sa,&addr_len);
       }
 
       char want_type=(ascii?'A':'I');
@@ -1904,6 +1912,14 @@ int   Ftp::Do()
 	 {
 	    a=(unsigned char*)&conn->data_sa.in.sin_addr;
 	    p=(unsigned char*)&conn->data_sa.in.sin_port;
+	    sockaddr_u control_sa;
+	    // check if data socket address is unbound
+	    if(a[0]|a[1]|a[2]|a[3]==0)
+	    {
+	       socklen_t addr_len=sizeof(control_sa);
+	       getsockname(conn->control_sock,&control_sa.sa,&addr_len);
+	       a=(unsigned char*)&control_sa.in.sin_addr;
+	    }
 #if INET6
 	 ipv4_port:
 #endif

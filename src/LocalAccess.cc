@@ -454,7 +454,23 @@ int LocalAccess::Write(const void *vbuf,int len)
    if(res<0)
    {
       if(stream->NonFatalError(errno))
+      {
+	 // in case of full disk, check file correctness.
+	 if(errno==ENOSPC)
+	 {
+	    struct stat st;
+	    if(fstat(fd,&st)!=-1)
+	    {
+	       if(st.st_size<pos)
+	       {
+		  // workaround solaris nfs bug. It can lose data if disk is full.
+		  pos=real_pos=st.st_size;
+		  return DO_AGAIN;
+	       }
+	    }
+	 }
 	 return DO_AGAIN;
+      }
       saved_errno=errno;
       return SEE_ERRNO;
    }

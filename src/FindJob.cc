@@ -30,6 +30,7 @@
 #include "GetFileInfo.h"
 #include "url.h"
 #include "PatternSet.h"
+#include "buffer_std.h"
 
 #define top (*stack[stack_ptr])
 #define super SessionJob
@@ -427,8 +428,11 @@ FinderJob::prf_res FinderJob_List::ProcessFile(const char *d,const FileInfo *fi)
 FinderJob_List::FinderJob_List(FileAccess *s,ArgV *a,FDStream *o)
    : FinderJob(s), args(a)
 {
-   show_sl = !o->usesfd(1);
-   buf=new IOBufferFDStream(o,IOBuffer::PUT);
+   if(o)
+      buf=new IOBufferFDStream(o,IOBuffer::PUT);
+   else
+      buf=new IOBuffer_STDOUT(this);
+   show_sl = !o || !o->usesfd(1);
    NextDir(a->getcurr());
    ValidateArgs();
 }

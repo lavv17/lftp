@@ -861,10 +861,7 @@ do_again:
 	 return m;
       if(res==FA::IN_PROGRESS)
 	 return m;
-      assert(res==FA::OK);
       session->Close();
-
-      cur=get_info;
       for(cur=get_info; get_info_cnt-->0; cur++)
       {
 	 if(cur->time!=(time_t)-1)

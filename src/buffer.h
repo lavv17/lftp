@@ -173,7 +173,8 @@ public:
       {
 	 return(broken || Error() || (eof && (mode==GET || in_buffer==0)));
       }
-   int Do() { return STALL; }
+   virtual int Get_LL(int size) { return 0; }
+   virtual int Do();
 
    virtual FgData *GetFgData(bool) { return 0; }
    virtual const char *Status() { return ""; }
@@ -209,7 +210,6 @@ protected:
 public:
    IOBufferFDStream(FDStream *o,dir_t m,Timer *t=0)
       : IOBuffer(m) { stream=o; put_ll_timer=t; }
-   int Do();
    bool Done();
    FgData *GetFgData(bool fg);
    const char *Status() { return stream->status; }
@@ -228,7 +228,6 @@ protected:
 
 public:
    IOBufferFileAccess(FileAccess *i) : IOBuffer(GET) { session=i; }
-   int Do();
 
    void Suspend();
    void Resume();

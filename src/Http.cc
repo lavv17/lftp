@@ -371,6 +371,32 @@ void Http::SendAuth()
    if(user && pass && !(hftp && !QueryBool("use-authorization",proxy)))
       SendBasicAuth("Authorization",user,pass);
 }
+void Http::SendCacheControl()
+{
+   const char *cc_setting=Query("cache-control");
+   const char *cc_no_cache=(no_cache || no_cache_this)?"no-cache":0;
+   if(!cc_setting && !cc_no_cache)
+      return;
+   int cc_no_cache_len=xstrlen(cc_no_cache);
+   if(cc_no_cache && cc_setting)
+   {
+      const char *pos=strstr(cc_setting,cc_no_cache);
+      if(pos && (pos==cc_setting || pos[-1]==' ')
+	     && (pos[cc_no_cache_len]==0 || pos[cc_no_cache_len]==' '))
+	 cc_no_cache=0, cc_no_cache_len=0;
+   }
+   char *cc=string_alloca(xstrlen(cc_setting)+1+cc_no_cache_len+1);
+   cc[0]=0;
+   if(cc_no_cache)
+      strcpy(cc,cc_no_cache);
+   if(cc_setting)
+   {
+      if(cc[0])
+	 strcat(cc," ");
+      strcat(cc,cc_setting);
+   }
+   Send("Cache-Control: %s\r\n",cc);
+}
 
 bool Http::ModeSupported()
 {
@@ -547,10 +573,8 @@ void Http::SendRequest(const char *connection,const char *f)
    }
    SendAuth();
    if(no_cache || no_cache_this)
-   {
       Send("Pragma: no-cache\r\n"); // for HTTP/1.0 compatibility
-      Send("Cache-Control: no-cache\r\n");
-   }
+   SendCacheControl();
    if(mode==ARRAY_INFO && !use_head)
       connection="close";
    else if(mode!=STORE)
@@ -1228,11 +1252,24 @@ int Http::Do()
 
 		  if(status_code/100==5) // server failed, try another
 		     NextPeer();
+		  if(status_code==504) // Gateway Timeout
+		  {
+		     const char *cc=Query("cache-control");
+		     if(cc && strstr(cc,"only-if-cached"))
+		     {
+			if(mode!=ARRAY_INFO)
+			{
+			   SetError(NO_FILE,_("Object is not cached and http:cache-control has only-if-cached"));
+			   return MOVED;
+			}
+			status_code=406;  // so that no retry will be attempted
+		     }
+		  }
 		  // check for retriable codes
-		  if(status_code==408 // Request Timeout
-		  || status_code==502 // Bad Gateway
-		  || status_code==503 // Service Unavailable
-		  || status_code==504)// Gateway Timeout
+		  if(status_code==408  // Request Timeout
+		  || status_code==502  // Bad Gateway
+		  || status_code==503  // Service Unavailable
+		  || status_code==504) // Gateway Timeout
 		  {
 		     Disconnect();
 		     return MOVED;

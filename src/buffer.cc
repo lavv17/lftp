@@ -357,6 +357,50 @@ void DirectedBuffer::EmbraceNewData(int len)
    SaveMaxCheck(0);
 }
 
+int IOBuffer::Do()
+{
+   if(Done() || Error())
+      return STALL;
+   int res=0;
+   switch(mode)
+   {
+   case PUT:
+      if(in_buffer==0)
+	 return STALL;
+      res=Put_LL(buffer+buffer_ptr,in_buffer);
+      if(res>0)
+      {
+	 RateAdd(res);
+	 in_buffer-=res;
+	 buffer_ptr+=res;
+	 event_time=now;
+	 return MOVED;
+      }
+      break;
+
+   case GET:
+      res=Get_LL(GET_BUFSIZE);
+      if(res>0)
+      {
+	 EmbraceNewData(res);
+	 event_time=now;
+	 return MOVED;
+      }
+      if(eof)
+      {
+	 event_time=now;
+	 return MOVED;
+      }
+      break;
+   }
+   if(res<0)
+   {
+      event_time=now;
+      return MOVED;
+   }
+   return STALL;
+}
+
 // IOBufferStacked implementation
 #undef super
 #define super IOBuffer
@@ -453,59 +497,11 @@ bool IOBufferStacked::Done()
 #include <unistd.h>
 #undef super
 #define super IOBuffer
-int IOBufferFDStream::Do()
-{
-   if(Done() || Error())
-      return STALL;
-   int res=0;
-   switch(mode)
-   {
-   case PUT:
-      if(in_buffer==0)
-	 return STALL;
-      if(put_ll_timer && !eof && in_buffer<PUT_LL_MIN
-      && !put_ll_timer->Stopped())
-	 return STALL;
-      res=Put_LL(buffer+buffer_ptr,in_buffer);
-      if(res>0)
-      {
-	 RateAdd(res);
-	 in_buffer-=res;
-	 buffer_ptr+=res;
-	 event_time=now;
-	 return MOVED;
-      }
-      break;
-
-   case GET:
-      res=Get_LL(GET_BUFSIZE);
-      if(res>0)
-      {
-	 EmbraceNewData(res);
-	 event_time=now;
-	 return MOVED;
-      }
-      if(eof)
-      {
-	 event_time=now;
-	 return MOVED;
-      }
-      break;
-   }
-   if(res<0)
-   {
-      event_time=now;
-      return MOVED;
-   }
-   int fd=stream->getfd();
-   if(fd>=0)
-      Block(fd,mode==PUT?POLLOUT:POLLIN);
-   else
-      TimeoutS(1);
-   return STALL;
-}
 int IOBufferFDStream::Put_LL(const char *buf,int size)
 {
+   if(put_ll_timer && !eof && in_buffer<PUT_LL_MIN
+   && !put_ll_timer->Stopped())
+      return 0;
    if(stream->broken())
    {
       broken=true;
@@ -519,6 +515,7 @@ int IOBufferFDStream::Put_LL(const char *buf,int size)
    {
       if(stream->error())
 	 goto stream_err;
+      TimeoutS(1);
       event_time=now;
       return 0;
    }
@@ -527,7 +524,10 @@ int IOBufferFDStream::Put_LL(const char *buf,int size)
    if(res==-1)
    {
       if(NonFatalError(errno))
+      {
+	 Block(fd,POLLOUT);
 	 return 0;
+      }
       if(errno==EPIPE)
       {
 	 broken=true;
@@ -555,6 +555,7 @@ int IOBufferFDStream::Get_LL(int size)
    {
       if(stream->error())
 	 goto stream_err;
+      TimeoutS(1);
       return 0;
    }
 
@@ -564,7 +565,10 @@ int IOBufferFDStream::Get_LL(int size)
    if(res==-1)
    {
       if(NonFatalError(errno))
+      {
+	 Block(fd,POLLIN);
 	 return 0;
+      }
       saved_errno=errno;
       stream->MakeErrorText();
       goto stream_err;
@@ -602,30 +606,6 @@ IOBufferFileAccess::~IOBufferFileAccess()
 {
    session->Resume();
    session->Close();
-}
-int IOBufferFileAccess::Do()
-{
-   if(Done() || Error())
-      return STALL;
-
-   int res=Get_LL(GET_BUFSIZE);
-   if(res>0)
-   {
-      EmbraceNewData(res);
-      event_time=now;
-      return MOVED;
-   }
-   if(res<0)
-   {
-      event_time=now;
-      return MOVED;
-   }
-   if(eof)
-   {
-      event_time=now;
-      return MOVED;
-   }
-   return STALL;
 }
 int IOBufferFileAccess::Get_LL(int size)
 {
@@ -706,7 +686,9 @@ unsigned Buffer::UnpackUINT8(int offset)
 }
 void Buffer::PackUINT64BE(unsigned long long data)
 {
+#ifndef NDEBUG
    Log::global->Format(11,"PackUINT64BE(0x%016llX)\n",data);
+#endif
    Allocate(8);
    PackUINT32BE((unsigned)(data>>32));
    PackUINT32BE((unsigned)(data&0xFFFFFFFFU));
@@ -722,7 +704,9 @@ void Buffer::PackINT64BE(long long data)
 }
 void Buffer::PackUINT32BE(unsigned data)
 {
+#ifndef NDEBUG
    Log::global->Format(11,"PackUINT32BE(0x%08X)\n",data);
+#endif
    Allocate(4);
    char *b=buffer+buffer_ptr+in_buffer;
    b[0]=(data>>24)&255;
@@ -750,7 +734,9 @@ void Buffer::PackUINT16BE(unsigned data)
 }
 void Buffer::PackUINT8(unsigned data)
 {
+#ifndef NDEBUG
    Log::global->Format(11,"PackUINT8(0x%02X)\n",data);
+#endif
    Allocate(1);
    char *b=buffer+buffer_ptr+in_buffer;
    b[0]=(data)&255;

@@ -236,6 +236,7 @@ static ResDecl
    ResDecl24b("http:accept-language",	  "",	   0,0),
    ResDecl24c("http:accept-charset",	  "",	   0,0),
    ResDecl24 ("http:cache",		  "yes",   ResMgr::BoolValidate,0),
+   ResDecl24d("http:cache-control",	  "",	   0,0),
    ResDecl25 ("http:proxy",		  "",	   HttpProxyValidate,0),
    ResDecl26 ("http:user-agent",	  PACKAGE"/"VERSION,0,0),
    ResDecl27 ("http:cookie",		  "",	   0,0),

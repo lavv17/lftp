@@ -24,6 +24,7 @@
 #include "FindJobDu.h"
 #include "CmdExec.h"
 #include "misc.h"
+#include "buffer_std.h"
 
 CDECL_BEGIN
 #include "human.h"
@@ -35,8 +36,11 @@ FinderJob_Du::FinderJob_Du(FileAccess *s,ArgV *a,FDStream *o):
    args=a;
    op=args->a0();
 
-   buf=new IOBufferFDStream(o,IOBuffer::PUT);
-   show_sl = !o->usesfd(1);
+   if(o)
+      buf=new IOBufferFDStream(o,IOBuffer::PUT);
+   else
+      buf=new IOBuffer_STDOUT(this);
+   show_sl = !o || !o->usesfd(1);
 
    Need(FileInfo::SIZE);
 

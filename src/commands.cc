@@ -2740,8 +2740,7 @@ CMD(du)
 
    if(!args->getcurr())
       args->Append(".");
-   FinderJob_Du *j=new class FinderJob_Du(session->Clone(),args,
-      output?output:new FDStream(1,"<stdout>"));
+   FinderJob_Du *j=new class FinderJob_Du(session->Clone(),args,output);
    args=0;
    j->PrintDepth(maxdepth);
    j->SetBlockSize(blocksize);

@@ -1,3 +1,21 @@
+2004-08-03  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* buffer_std.cc, buffer_std.h: new files.
+	* Makefile.am: add buffer_std.* files.
+	* FindJob.cc, FindJobDu.cc: use IOBuffer_STDOUT.
+	* LocalAccess.cc: workaround solaris nfs bug in case of ENOSPC.
+	* SMTask.cc: little optimization for timeout==0.
+	* SysCmdJob.cc: return proper error code.
+	* buffer.cc, buffer.h: add generic IOBuffer::Do, remove
+	  IOBufferFDStream::Do and IOBufferFileAccess::Do.
+	* commands.cc: don't create FDStream for stdout in CMD(du).
+	* ftpclass.cc: don't bind data socket according to net:socket-bind-*;
+	  move verbose debug for bind(); take control socket address if data
+	  socket is not bound to a particular address.
+	* resource.cc: new setting http:cache-control.
+	* Http.cc: use new setting http:cache-control; handle 503 Gateway
+	  timeout specially if only-if-cached is specified.
+
 2004-07-26  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: handle network timeout after FEAT and in some other

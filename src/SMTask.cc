@@ -152,6 +152,12 @@ void SMTask::Schedule()
       SMTask *to_delete=0;
       if(current->deleting)
 	 to_delete=current;
+      if(res!=MOVED && current->block.GetTimeout()==0)
+	 res=MOVED;
+#if 0
+      if(res==MOVED)
+	 printf("MOVED:%p\n",current);
+#endif
       Leave(current);	// unmark it running and change current.
 
       delete to_delete;
