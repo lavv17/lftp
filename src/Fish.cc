@@ -1086,7 +1086,7 @@ bool Fish::SameSiteAs(FileAccess *fa)
    if(!SameProtoAs(fa))
       return false;
    Fish *o=(Fish*)fa;
-   return(!xstrcmp(hostname,o->hostname) && !xstrcmp(portname,o->portname)
+   return(!xstrcasecmp(hostname,o->hostname) && !xstrcmp(portname,o->portname)
    && !xstrcmp(user,o->user) && !xstrcmp(pass,o->pass));
 }
 

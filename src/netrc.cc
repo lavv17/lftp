@@ -105,7 +105,7 @@ NetRC::Entry *NetRC::LookupHost(const char *h)
 	 if(fscanf(f,"%255s",str)!=1)
 	    break;
 	 strcpy(chost,str);
-	 if(!strcmp(chost,h))
+	 if(!strcasecmp(chost,h))
 	    found=true;
 	 continue;
       }
@@ -113,7 +113,7 @@ NetRC::Entry *NetRC::LookupHost(const char *h)
       {
 	 if(fscanf(f,"%255s",str)!=1)
 	    break;
-	 if(strcmp(chost,h) || cuser[0])
+	 if(strcasecmp(chost,h) || cuser[0])
 	    continue;
 	 strcpy(cuser,str);
 	 continue;
@@ -122,7 +122,7 @@ NetRC::Entry *NetRC::LookupHost(const char *h)
       {
 	 if(fscanf(f,"%255s",str)!=1)
 	    break;
-	 if(strcmp(chost,h) || cpass[0])
+	 if(strcasecmp(chost,h) || cpass[0])
 	    continue;
 	 strcpy(cpass,str);
 	 for(char *s=cpass; *s; s++)
@@ -144,7 +144,7 @@ NetRC::Entry *NetRC::LookupHost(const char *h)
       {
 	 if(fscanf(f,"%255s",str)!=1)
 	    break;
-	 if(strcmp(chost,h) || cacct[0])
+	 if(strcasecmp(chost,h) || cacct[0])
 	    continue;
 	 strcpy(cacct,str);
 	 continue;

@@ -1,3 +1,10 @@
+2001-07-03  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h, ftpclass.cc, ftpclass.h:
+	  get rid of group/gpass.
+	* Resolver.cc, netrc.cc, Fish.cc, Http.cc: use case-insensitive
+	  hostname comparision.
+
 2001-07-02  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Resolve.cc: update SRV support for RFC2782.

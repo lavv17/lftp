@@ -1624,7 +1624,7 @@ bool Http::SameSiteAs(FileAccess *fa)
    if(!SameProtoAs(fa))
       return false;
    Http *o=(Http*)fa;
-   return(!xstrcmp(hostname,o->hostname) && !xstrcmp(portname,o->portname)
+   return(!xstrcasecmp(hostname,o->hostname) && !xstrcmp(portname,o->portname)
    && !xstrcmp(user,o->user) && !xstrcmp(pass,o->pass));
 }
 

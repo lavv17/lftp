@@ -869,7 +869,7 @@ ResolverCache::Entry **ResolverCache::FindPtr(const char *h,const char *p,
    while(*scan)
    {
       Entry *s=*scan;
-      if(!xstrcmp(s->hostname,h)
+      if(!xstrcasecmp(s->hostname,h)
       && !xstrcmp(s->portname,p)
       && !xstrcmp(s->defport,defp)
       && !xstrcmp(s->service,ser)
