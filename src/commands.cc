@@ -75,20 +75,20 @@ History	 cwd_history;
 
 const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
 {
-   {"!",       &do_shell,  N_("!<shell_command>"),
+   {"!",       &CmdExec::do_shell,  N_("!<shell_command>"),
 	 N_("Launch shell or shell command\n")},
-   {"(",       &do_subsh,  N_("(commands)"),
+   {"(",       &CmdExec::do_subsh,  N_("(commands)"),
 	 N_("Group commands together to be executed as one command\n"
 	 "You can launch such a group in background\n")},
-   {"?",       &do_help,   0,"help"},
-   {"alias",   &do_alias,  N_("alias [<name> [<value>]]"),
+   {"?",       &CmdExec::do_help,   0,"help"},
+   {"alias",   &CmdExec::do_alias,  N_("alias [<name> [<value>]]"),
 	 N_("Define or undefine alias <name>. If <value> omitted,\n"
 	 "the alias is undefined, else is takes the value <value>.\n"
          "If no argument is given the current aliases are listed.\n")},
-   {"anon",    &do_anon,   "anon",
+   {"anon",    &CmdExec::do_anon,   "anon",
 	 N_("anon - login anonymously (by default)\n")},
-   {"at",      &do_at},
-   {"bookmark",&do_bookmark,N_("bookmark [SUBCMD]"),
+   {"at",      &CmdExec::do_at},
+   {"bookmark",&CmdExec::do_bookmark,N_("bookmark [SUBCMD]"),
 	 N_("bookmark command controls bookmarks\n\n"
 	 "The following subcommands are recognized:\n"
 	 "  add <name> [<loc>] - add current place or given location to bookmarks\n"
@@ -97,8 +97,8 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
 	 "  edit               - start editor on bookmarks file\n"
 	 "  import <type>      - import foreign bookmarks\n"
 	 "  list               - list bookmarks (default)\n")},
-   {"bye",     &do_exit,   0,"exit"},
-   {"cache",   &do_cache,  N_("cache [SUBCMD]"),
+   {"bye",     &CmdExec::do_exit,   0,"exit"},
+   {"cache",   &CmdExec::do_cache,  N_("cache [SUBCMD]"),
 	 N_("cache command controls local memory cache\n\n"
 	 "The following subcommands are recognized:\n"
 	 "  stat        - print cache status (default)\n"
@@ -107,46 +107,46 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
 	 "  size <lim>  - set memory limit, -1 means unlimited\n"
 	 "  expire <Nx> - set cache expiration time to N seconds (x=s)\n"
 	 "                minutes (x=m) hours (x=h) or days (x=d)\n")},
-   {"cat",     &do_cat,    N_("cat [-u] <files>"),
+   {"cat",     &CmdExec::do_cat,    N_("cat [-u] <files>"),
 	 N_("cat - output remote files to stdout\n"
 	 " -u  try to recognize URLs\n")},
-   {"cd",      &do_cd,     N_("cd <rdir>"),
+   {"cd",      &CmdExec::do_cd,     N_("cd <rdir>"),
 	 N_("Change current remote directory to <rdir>. The previous remote directory\n"
 	 "is stored as `-'. You can do `cd -' to change the directory back.\n"
 	 "The previous directory for each site is also stored on disk, so you can\n"
 	 "do `open site; cd -' even after lftp restart.\n")},
-   {"close",   &do_close,   "close [-a]",
+   {"close",   &CmdExec::do_close,   "close [-a]",
 	 N_("Close idle connections. By default only with current server.\n"
 	 " -a  close idle connections with all servers\n")},
-   {"connect", &do_open,	   0,"open"},
-   {"command", &do_command},
-   {"debug",   &do_debug,  N_("debug [<level>|off] [-o <file>]"),
+   {"connect", &CmdExec::do_open,   0,"open"},
+   {"command", &CmdExec::do_command},
+   {"debug",   &CmdExec::do_debug,  N_("debug [<level>|off] [-o <file>]"),
 	 N_("Set debug level to given value or turn debug off completely.\n"
 	 " -o <file>  redirect debug output to the file.\n")},
-   {"echo",    &do_echo,   0},
-   {"exit",    &do_exit,   N_("exit [<code>]"),
+   {"echo",    &CmdExec::do_echo,   0},
+   {"exit",    &CmdExec::do_exit,   N_("exit [<code>]"),
 	 N_("exit - exit from lftp or move to background if jobs are active\n\n"
 	 "If no jobs active, the code is passed to operating system as lftp\n"
 	 "termination status. If omitted, exit code of last command is used.\n")},
-   {"fg",      &do_wait,	   0,"wait"},
-   {"find",    &do_find},
-   {"ftpcopy", &do_ftpcopy},
-   {"get",     &do_get,	   N_("get [OPTS] <rfile> [-o <lfile>]"),
+   {"fg",      &CmdExec::do_wait,   0,"wait"},
+   {"find",    &CmdExec::do_find},
+   {"ftpcopy", &CmdExec::do_ftpcopy},
+   {"get",     &CmdExec::do_get,    N_("get [OPTS] <rfile> [-o <lfile>]"),
 	 N_("Retrieve remote file <rfile> and store it to local file <lfile>.\n"
 	 " -o <lfile> specifies local file name (default - basename of rfile)\n"
 	 " -c  continue, reget\n"
 	 " -e  delete remote files after successful transfer\n"
 	 " -u  try to recognize URLs\n")},
-   {"help",    &do_help,   N_("help [<cmd>]"),
+   {"help",    &CmdExec::do_help,   N_("help [<cmd>]"),
 	 N_("Print help for command <cmd>, or list of available commands\n")},
-   {"jobs",    &do_jobs,    "jobs [-v]",
+   {"jobs",    &CmdExec::do_jobs,   "jobs [-v]",
 	 N_("List running jobs. -v means verbose, several -v can be specified.\n")},
-   {"kill",    &do_kill,   N_("kill all|<job_no>"),
+   {"kill",    &CmdExec::do_kill,   N_("kill all|<job_no>"),
 	 N_("Delete specified job with <job_no> or all jobs\n")},
-   {"lcd",     &do_lcd,    N_("lcd <ldir>"),
+   {"lcd",     &CmdExec::do_lcd,    N_("lcd <ldir>"),
 	 N_("Change current local directory to <ldir>. The previous local directory\n"
 	 "is stored as `-'. You can do `lcd -' to change the directory back.\n")},
-   {"lftp",    &do_lftp,   N_("lftp [OPTS] <site>"),
+   {"lftp",    &CmdExec::do_lftp,   N_("lftp [OPTS] <site>"),
 	 N_("`lftp' is the first command executed by lftp after rc files\n"
 	 " -f <file>           execute commands from the file and exit\n"
 	 " -c <cmd>            execute the commands and exit\n"
@@ -155,19 +155,19 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
 	 " -u <user>[,<pass>]  use the user/password for authentication\n"
 	 " -p <port>           use the port for connection\n"
 	 " <site>              host name, URL or bookmark name\n")},
-   {"login",   &do_user,	   0,"user"},
-   {"ls",      &do_ls,	   N_("ls [<args>]"),
+   {"login",   &CmdExec::do_user,   0,"user"},
+   {"ls",      &CmdExec::do_ls,	    N_("ls [<args>]"),
 	 N_("List remote files. You can redirect output of this command to file\n"
 	 "or via pipe to external command.\n"
 	 "By default, ls output is cached, to see new listing use `rels' or\n"
 	 "`cache flush'.\n")},
-   {"mget",    &do_mget,   N_("mget [-c] [-d] [-e] <files>"),
+   {"mget",    &CmdExec::do_mget,   N_("mget [-c] [-d] [-e] <files>"),
 	 N_("Gets selected files with expanded wildcards\n"
 	 " -c  continue, reget\n"
 	 " -d  create directories the same as in file names and get the\n"
 	 "     files into them instead of current directory\n"
 	 " -e  delete remote files after successful transfer\n")},
-   {"mirror",  &do_mirror, N_("mirror [OPTS] [remote [local]]"),
+   {"mirror",  &CmdExec::do_mirror, N_("mirror [OPTS] [remote [local]]"),
 	 N_("\nMirror specified remote directory to local directory\n\n"
 	 " -c, --continue         continue a mirror job if possible\n"
 	 " -e, --delete           delete files not present at remote site\n"
@@ -190,84 +190,84 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
 	 "If the second directory is omitted, basename of first directory is used.\n"
 	 "If both directories are omitted, current local and remote directories are used.\n"
 	 )},
-   {"mkdir",   &do_mkdir,  N_("mkdir [-p] <dirs>"),
+   {"mkdir",   &CmdExec::do_mkdir,  N_("mkdir [-p] <dirs>"),
 	 N_("Make remote directories\n"
 	 " -p  make all levels of path\n")},
-   {"more",    &do_cat,    N_("more [-u] <files>"),
+   {"more",    &CmdExec::do_cat,    N_("more [-u] <files>"),
 	 N_("Same as `cat <files> | more'. if PAGER is set, it is used as filter\n"
 	 " -u  try to recognize URLs\n")},
-   {"mput",    &do_mput,   N_("mput [-c] [-d] <files>"),
+   {"mput",    &CmdExec::do_mput,   N_("mput [-c] [-d] <files>"),
 	 N_("Upload files with wildcard expansion\n"
 	 " -c  continue, reput\n"
 	 " -d  create directories the same as in file names and put the\n"
 	 "     files into them instead of current directory\n")},
-   {"mrm",     &do_mrm,	   N_("mrm <files>"),
+   {"mrm",     &CmdExec::do_mrm,    N_("mrm <files>"),
 	 N_("Removes specified files with wildcard expansion\n")},
-   {"mv",      &do_mv,	   N_("mv <file1> <file2>"),
+   {"mv",      &CmdExec::do_mv,	    N_("mv <file1> <file2>"),
 	 N_("Rename <file1> to <file2>\n")},
-   {"nlist",   &do_ls,	   N_("nlist [<args>]"),
+   {"nlist",   &CmdExec::do_ls,	    N_("nlist [<args>]"),
 	 N_("List remote file names\n")},
-   {"open",    &do_open,   N_("open [OPTS] <site>"),
+   {"open",    &CmdExec::do_open,   N_("open [OPTS] <site>"),
 	 N_("Select a server, URL or bookmark\n"
 	 " -e <cmd>            execute the command just after selecting\n"
 	 " -u <user>[,<pass>]  use the user/password for authentication\n"
 	 " -p <port>           use the port for connection\n"
 	 " <site>              host name, URL or bookmark name\n")},
-   {"pget",    &do_get,	   N_("pget [OPTS] <rfile> [-o <lfile>]"),
+   {"pget",    &CmdExec::do_get,    N_("pget [OPTS] <rfile> [-o <lfile>]"),
 	 N_("Gets the specified file using several connections. This can speed up transfer,\n"
 	 "but loads the net heavily impacting other users. Use only if you really\n"
 	 "have to transfer the file ASAP, or some other user may go mad :)\n"
 	 "\nOptions:\n"
 	 " -n <maxconn>  set maximum number of connections (default 5)\n"
 	 " -u            try to recognize URLs\n")},
-   {"put",     &do_put,	   N_("put [-c] <lfile> [-o <rfile>]"),
+   {"put",     &CmdExec::do_put,    N_("put [-c] <lfile> [-o <rfile>]"),
 	 N_("Upload <lfile> with remote name <rfile>.\n"
 	 " -o <rfile> specifies remote file name (default - basename of lfile)\n"
 	 " -c  continue, reput\n"
 	 "     it requires permission to overwrite remote files\n")},
-   {"pwd",     &do_pwd,    "pwd",
+   {"pwd",     &CmdExec::do_pwd,    "pwd",
 	 N_("Print current remote directory\n")},
-   {"quit",    &do_exit,   0,"exit"},
-   {"quote",   &do_quote,  N_("quote <cmd>"),
+   {"quit",    &CmdExec::do_exit,   0,"exit"},
+   {"quote",   &CmdExec::do_quote,  N_("quote <cmd>"),
 	 N_("Send the command uninterpreted. Use with caution - it can lead to\n"
 	 "unknown remote state and thus will cause reconnect. You cannot\n"
 	 "be sure that any change of remote state because of quoted command\n"
 	 "is solid - it can be reset by reconnect at any time.\n")},
-   {"reget",   &do_get,	   N_("reget [OPTS] <rfile> [-o <lfile>]"),
+   {"reget",   &CmdExec::do_get,    N_("reget [OPTS] <rfile> [-o <lfile>]"),
 	 N_("Same as `get -c'\n")},
-   {"rels",    &do_ls,	   N_("rels [<args>]"),
+   {"rels",    &CmdExec::do_ls,	    N_("rels [<args>]"),
 	 N_("Same as `ls', but don't look in cache\n")},
-   {"renlist", &do_ls,	   N_("renlist [<args>]"),
+   {"renlist", &CmdExec::do_ls,	    N_("renlist [<args>]"),
 	 N_("Same as `nlist', but don't look in cache\n")},
-   {"reput",   &do_put,	   N_("reput <lfile> [-o <rfile>]"),
+   {"reput",   &CmdExec::do_put,    N_("reput <lfile> [-o <rfile>]"),
 	 N_("Same as `put -c'\n")},
-   {"rm",      &do_rm,	   N_("rm [-r] <files>"),
+   {"rm",      &CmdExec::do_rm,	    N_("rm [-r] <files>"),
 	 N_("Remove remote files\n"
 	    " -r  recursive directory remove, be careful\n")},
-   {"rmdir",   &do_rm,	   N_("rmdir <dirs>"),
+   {"rmdir",   &CmdExec::do_rm,	    N_("rmdir <dirs>"),
 	 N_("Remove remote directories\n")},
-   {"scache",  &do_scache, N_("scache [<session_no>]"),
+   {"scache",  &CmdExec::do_scache, N_("scache [<session_no>]"),
 	 N_("List cached sessions or switch to specified session number\n")},
-   {"set",     &do_set,    N_("set [<var> [<val>]]"),
+   {"set",     &CmdExec::do_set,    N_("set [<var> [<val>]]"),
 	 N_("Set variable to given value. If the value is omitted, unset the variable.\n"
          "If called with no variable, currently set variables are listed.\n")},
-   {"shell",   &do_shell,  0,"!"},
-   {"site",    &do_site,   N_("site <site_cmd>"),
+   {"shell",   &CmdExec::do_shell,  0,"!"},
+   {"site",    &CmdExec::do_site,   N_("site <site_cmd>"),
 	 N_("Execute site command <site_cmd> and output the result\n"
 	 "You can redirect its output\n")},
-   {"sleep",   &do_sleep},
-   {"source",  &do_source, N_("source <file>"),
+   {"sleep",   &CmdExec::do_sleep},
+   {"source",  &CmdExec::do_source, N_("source <file>"),
 	 N_("Execute commands recorded in file <file>\n")},
-   {"suspend", &do_suspend},
-   {"user",    &do_user,   N_("user <user> [<pass>]"),
+   {"suspend", &CmdExec::do_suspend},
+   {"user",    &CmdExec::do_user,   N_("user <user> [<pass>]"),
 	 N_("Use specified info for remote login\n")},
-   {"version", &do_ver,	   "version",
+   {"version", &CmdExec::do_ver,    "version",
 	 N_("Shows lftp version\n")},
-   {"wait",    &do_wait,   N_("wait <jobno>"),
+   {"wait",    &CmdExec::do_wait,   N_("wait <jobno>"),
 	 N_("Wait for specified job to terminate.\n")},
-   {"zcat",    &do_cat,    N_("zcat [-u] <files>"),
+   {"zcat",    &CmdExec::do_cat,    N_("zcat [-u] <files>"),
 	 N_("Same as cat, but filter each file through zcat\n")},
-   {"zmore",   &do_cat,    N_("zmore [-u] <files>"),
+   {"zmore",   &CmdExec::do_cat,    N_("zmore [-u] <files>"),
 	 N_("Same as more, but filter each file through zcat\n")},
 
    {NULL,NULL}

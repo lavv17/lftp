@@ -386,6 +386,7 @@ int CmdExec::Do()
 	       session->Chdir(session->GetFile(),false);
 	    }
 	    session->Close();
+	    exit_code=0;
 	    waiting=0;
 	    return MOVED;
 	 }
