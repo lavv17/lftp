@@ -1087,7 +1087,8 @@ int Http::Do()
 	 const char *eol=find_eol(buf,len,&eol_size);
 	 if(eol)
 	 {
-	    if(eol==buf)
+	    // empty line indicates end of headers.
+	    if(eol==buf && status)
 	    {
 	       DebugPrint("<--- ","",4);
 	       recv_buf->Skip(eol_size);
@@ -1158,7 +1159,7 @@ int Http::Do()
 		  if(H_20X(status_code))
 		  {
 		     // should never happen
-		     DebugPrint("**** ",_("Success, but did nothing??"),0);
+		     DebugPrint("**** ","Success, but did nothing??",0);
 		     Disconnect();
 		     return MOVED;
 		  }
@@ -1187,15 +1188,18 @@ int Http::Do()
 		     &status_consumed,&status_code))
 	       {
 		  // simple 0.9 ?
-		  ver_major=0;
-		  ver_minor=9;
+		  proto_version=0x09;
 		  status_code=200;
-		  if(1!=sscanf(status,"HTTP %n%d",&status_consumed,&status_code))
+		  DebugPrint("**** ",_("Could not parse HTTP status line"),0);
+		  if(mode==STORE)
 		  {
-		     DebugPrint("**** ",_("Could not parse HTTP status line"),0);
-		     //FIXME: STORE
-		     goto pre_RECEIVING_BODY;
+		     state=DONE;
+		     Disconnect();
+		     state=DONE;
+		     return MOVED;
 		  }
+		  recv_buf->UnSkip(len+eol_size);
+		  goto pre_RECEIVING_BODY;
 	       }
 	       proto_version=(ver_major<<4)+ver_minor;
 
@@ -1638,8 +1642,11 @@ int Http::SendEOT()
    {
       if(state==RECEIVING_HEADER && send_buf->Size()==0)
       {
-	 if(entity_size==NO_SIZE)
+	 if(entity_size==NO_SIZE || pos<entity_size)
+	 {
 	    shutdown(sock,1);
+	    keep_alive=false;
+	 }
 	 sent_eot=true;
       	 return(OK);
       }
