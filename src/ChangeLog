@@ -1,3 +1,8 @@
+2004-09-06  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.cc: reduce number of left over tasks after cleaning due to
+	  Luke Macken modifications.
+
 2004-09-06  Luke Macken <lewk@csh.rit.edu>
 
 	* SMTask.cc, SMTask.h, SignalHook.cc, SignalHook.h, log.cc, log.h:

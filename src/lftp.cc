@@ -425,9 +425,9 @@ int   main(int argc,char **argv)
    Log::Cleanup();
    SMTask::Cleanup();
 
-   // the tasks left: SMTaskInit, LsCache::ExpireHelper, Log::global.
+   // the tasks left: LsCache::ExpireHelper
    int task_count=SMTask::TaskCount();
-   if(task_count>3)
+   if(task_count>1)
       printf("WARNING: task_count=%d\n",task_count);
 
    return exit_code;
