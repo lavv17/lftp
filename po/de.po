@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lftp 2.1.3\n"
 "POT-Creation-Date: 2000-01-01 13:58+0300\n"
-"PO-Revision-Date: 1999-10-19 22:21+02:00\n"
+"PO-Revision-Date: 2000-01-01 21:37+01:00\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -54,7 +54,7 @@ msgstr "\tEingebautes`%s' wird ausgeführt [%s]\n"
 #: src/CmdExec.cc:652
 #, c-format
 msgid "\tNow executing: %s\n"
-msgstr ""
+msgstr "Momentan läuft: %s\n"
 
 #: src/CmdExec.cc:661
 msgid "\tCommands queued:\n"
@@ -266,9 +266,8 @@ msgid "invalid number"
 msgstr "Unzulässige Zahl"
 
 #: src/ResMgr.cc:348
-#, fuzzy
 msgid "invalid floating point number"
-msgstr "Unzulässige Zahl"
+msgstr "Unzulässige Gleitkommazahl"
 
 #: src/ResMgr.cc:504
 msgid "Invalid time unit letter, only [smhd] are allowed."
@@ -392,18 +391,16 @@ msgstr ""
 "                Minuten (x=m), Stunden (x=h) oder Tage (x=d)\n"
 
 #: src/commands.cc:135
-#, fuzzy
 msgid "cat [-b] <files>"
-msgstr "cat [-u] <Dateien>"
+msgstr "cat [-b] <Dateien>"
 
 #: src/commands.cc:136
-#, fuzzy
 msgid ""
 "cat - output remote files to stdout (can be redirected)\n"
 " -b  use binary mode (ascii is the default)\n"
 msgstr ""
-"cat - nichtlokale Dateien an STDOUT ausgeben\n"
-" -u versucht URLs zu erkennen\n"
+"cat - nichtlokale Dateien an STDOUT ausgeben. (Kann umgeleitet werden)\n"
+" -b Binärmodus verwenden (Textmodus ascii ist der Standardwert)\n"
 
 #: src/commands.cc:138
 msgid "cd <rdir>"
@@ -472,7 +469,6 @@ msgid "get [OPTS] <rfile> [-o <lfile>]"
 msgstr "get [OPTS] <nldatei> [-o <ldatei>"
 
 #: src/commands.cc:161
-#, fuzzy
 msgid ""
 "Retrieve remote file <rfile> and store it to local file <lfile>.\n"
 " -o <lfile> specifies local file name (default - basename of rfile)\n"
@@ -480,13 +476,11 @@ msgid ""
 " -e  delete remote files after successful transfer\n"
 " -a  use ascii mode (binary is the default)\n"
 msgstr ""
-"Nichtlokale Datei <nldatei> holen und es als lokale Datei <ldatei> "
-"speichern.\n"
-" -o <ldatei> gibt den Namen der lokalen Datei an (Vorgabe - Name der "
-"nldatei)\n"
+"Nichtlokale Datei <nldatei> holen und es als lokale Datei <ldatei> speichern.\n"
+" -o <ldatei> gibt den Namen der lokalen Datei an (Vorgabe - Name der nldatei)\n"
 " -c continue, nach Abbruch an alter Stelle fortfahren\n"
 " -e lösche nichtlokale Dateien nach erfolgreicher Übertragung\n"
-" -u versuche URLs zu erkennen\n"
+" -a ascii / Textmodus verwenden (Binärmodus ist der Standardwert)\n"
 
 #: src/commands.cc:168
 msgid "help [<cmd>]"
@@ -566,12 +560,10 @@ msgstr ""
 "dient entweder `rels' oder `cache flush'.\n"
 
 #: src/commands.cc:195
-#, fuzzy
 msgid "mget [OPTS] <files>"
-msgstr "more [-u] <dateien>"
+msgstr "mget [OPTS] <Dateien>"
 
 #: src/commands.cc:196
-#, fuzzy
 msgid ""
 "Gets selected files with expanded wildcards\n"
 " -c  continue, reget\n"
@@ -585,6 +577,7 @@ msgstr ""
 " -d  Verzeichnisse mit dem Namen der ausgewählten Dateien erstellen und\n"
 "     die Dateien dort ablegen statt im normalen Verzeichnis\n"
 " -e  nichtlokale Dateien nach erfolgreicher Übertragung löschen\n"
+" -a ascii / Textmodus verwenden (Binärmodus ist die Voreinstellung)\n"
 
 #: src/commands.cc:202
 msgid "mirror [OPTS] [remote [local]]"
@@ -678,25 +671,18 @@ msgstr ""
 "Verzeichnis gesucht, sonst im PKGLIBDIR\n"
 
 #: src/commands.cc:234
-#, fuzzy
 msgid "more <files>"
-msgstr "mrm <dateien>"
+msgstr "more <Dateien>"
 
 #: src/commands.cc:235
-#, fuzzy
 msgid "Same as `cat <files> | more'. if PAGER is set, it is used as filter\n"
-msgstr ""
-"Entspricht `cat <dateien>|more>. Wenn PAGER gesetzt ist, wird dieser als "
-"Filter benutzt\n"
-" -u  versuche URLs zu erkennen\n"
+msgstr "Entspricht `cat <dateien> | more'. Wenn PAGER gesetzt ist, wird dieser als Filter benutzt.\n"
 
 #: src/commands.cc:236
-#, fuzzy
 msgid "mput [OPTS] <files>"
-msgstr "mput [-c] [-d] <dateien>"
+msgstr "mput [OPTS] <Dateien>"
 
 #: src/commands.cc:237
-#, fuzzy
 msgid ""
 "Upload files with wildcard expansion\n"
 " -c  continue, reput\n"
@@ -710,6 +696,7 @@ msgstr ""
 " -d  Verzeichnisse mit dem Namen der ausgewählten Dateien erstellen und\n"
 "     die Dateien dort ablegen statt im normalen Verzeichnis\n"
 " -e  nichtlokale Dateien nach erfolgreicher Übertragung löschen\n"
+" -a  ascii / Textmodus verwenden (Binärmodus ist die Vorgabe)\n"
 
 #: src/commands.cc:243
 msgid "mrm <files>"
@@ -759,7 +746,6 @@ msgid "pget [OPTS] <rfile> [-o <lfile>]"
 msgstr "pget [OPTS] <nlfile> [-o <lfile>]"
 
 #: src/commands.cc:256
-#, fuzzy
 msgid ""
 "Gets the specified file using several connections. This can speed up "
 "transfer,\n"
@@ -772,20 +758,16 @@ msgstr ""
 "Holt die angegebene Datei über mehrere Verbindungen gleichzeitig\n"
 "Dies kann die Übertragung beschleunigen, aber führt zu hoher Netzlast,\n"
 "die andere Benutzer beeinträchtigt. Nur verwenden, wenn eine Datei wirklich\n"
-"SOFORT übertragen werden muß, oder andere Benutzer könnten sich beschweren "
-":-)\n"
+"SOFORT übertragen werden muß, oder andere Benutzer könnten sich beschweren :-)\n"
 "\n"
 "Optionen:\n"
 " -n <maxconn>  Höchstzahl an Verbindungen angeben (Vorgabe 5)\n"
-" -u            versuche URLs zu erkennen\n"
 
 #: src/commands.cc:261
-#, fuzzy
 msgid "put [OPTS] <lfile> [-o <rfile>]"
-msgstr "put [-c] <lfile> [-o <nlfile>]"
+msgstr "put [OPTS] <lfile> [-o <nlfile>]"
 
 #: src/commands.cc:262
-#, fuzzy
 msgid ""
 "Upload <lfile> with remote name <rfile>.\n"
 " -o <rfile> specifies remote file name (default - basename of lfile)\n"
@@ -794,11 +776,13 @@ msgid ""
 " -e  delete local files after successful transfer (dangerous)\n"
 " -a  use ascii mode (binary is the default)\n"
 msgstr ""
-"Lade <lfile> hoch unter dem Namen <nlfile>.\n"
-" -o <rfile> gibt den Namen der nichtlokalen Datei an. (Vorgabe - Name von "
-"lfile)\n"
+"Lade <ldatei> hoch unter dem Namen <nldatei>.\n"
+" -o <nldatei> gibt den Namen der nichtlokalen Datei an. \n"
+"    (Vorgabe - Name von ldatei)\n"
 " -c  nach Abbruch fortfahren, erneut schicken\n"
-"     man braucht die Berechtigung nichtlokale Dateien zu überschreiben.\n"
+"     man braucht die Berechtigung Dateien auf dem Server zu überschreiben.\n"
+" -e  Lokal vorliegende Dateien nach erfolgreicher Übertragung löschen (riskant)\n"
+" -a  ascii / Textmodus verwenden (Binärmodus ist die Vorgabe)\n"
 
 #: src/commands.cc:269
 msgid "Print current remote directory\n"
@@ -810,6 +794,9 @@ msgid ""
 "Add the command to queue for current site. Each site has its own\n"
 "command queue.\n"
 msgstr ""
+"Benutzung: queue <befehl>\n"
+"Den Befehl in die Warteschlange für die momentane Gegenstelle einreihen.\n"
+"Jede Gegenstelle hat ihre eigene Befehlswarteschlange.\n"
 
 #: src/commands.cc:275
 msgid "quote <cmd>"
@@ -961,7 +948,6 @@ msgid "Shows lftp version\n"
 msgstr "Gibt die Lftp - Version an\n"
 
 #: src/commands.cc:320
-#, fuzzy
 msgid "wait [<jobno>]"
 msgstr "wait <jobnr.>"
 
@@ -970,20 +956,20 @@ msgid ""
 "Wait for specified job to terminate. If jobno is omitted, wait\n"
 "for last backgrounded job.\n"
 msgstr ""
+"Darauf warten, daß der angegebene Job beendet ist. Wird keine jobnr angegeben,\n"
+"wartet lftp auf den letzten in den Hintergrund gestellten Job.\n"
 
 #: src/commands.cc:323
-#, fuzzy
 msgid "zcat <files>"
-msgstr "zcat [-u] <dateien>"
+msgstr "zcat <Dateien>"
 
 #: src/commands.cc:324
 msgid "Same as cat, but filter each file through zcat\n"
 msgstr "Entspricht cat, aber filtert jede Datei durch zcat\n"
 
 #: src/commands.cc:325
-#, fuzzy
 msgid "zmore <files>"
-msgstr "zmore [-u] <dateien>"
+msgstr "zmore <Dateien>"
 
 #: src/commands.cc:326
 msgid "Same as more, but filter each file through zcat\n"
@@ -1026,9 +1012,8 @@ msgstr "Benutzung: %s [-e befehl] [-p port] [-u user[,passwt]] <Host|URL>\n"
 
 #: src/FileCopy.cc:967 src/FtpCopy.cc:182 src/commands.cc:616
 #: src/commands.cc:1309
-#, fuzzy
 msgid " - not supported protocol"
-msgstr "%s: %s - Protokoll nicht unterstützt\n"
+msgstr " - Protokoll nicht unterstützt"
 
 #: src/commands.cc:660 src/commands.cc:1292
 msgid "Password: "
@@ -1045,14 +1030,14 @@ msgid "Usage: %s command args...\n"
 msgstr "Benutzung: %s befehl argumente..\n"
 
 #: src/commands.cc:831
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s <cmd>\n"
-msgstr "Benutzung: %s <unbearbeiteter_befehl>\n"
+msgstr "Benutzung: %s <Befehl>\n"
 
 #: src/commands.cc:900
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [OPTS] files...\n"
-msgstr "Benutzung: %s Dateien ...\n"
+msgstr "Benutzung: %s [OPTS] Dateien ...\n"
 
 #: src/commands.cc:961
 #, c-format
@@ -1223,9 +1208,9 @@ msgid "%s: cannot add empty bookmark\n"
 msgstr "%s: leeres Lesezeichen wird nicht angelegt\n"
 
 #: src/commands.cc:1839
-#, fuzzy, c-format
+#, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
-msgstr "%s: Name des Lesezeichens notwendig\n"
+msgstr "%s: Leerstellen sind im Namen von Lesezeichen nicht zulässig\n"
 
 #: src/commands.cc:1852
 #, c-format
@@ -1253,9 +1238,9 @@ msgid "%s: %s - not an octal number\n"
 msgstr "%s: %s - keine Oktalzahl\n"
 
 #: src/commands.cc:2029
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [OPTS] file\n"
-msgstr "Benutzung: %s <datei>\n"
+msgstr "Benutzung: %s [OPTS] <Datei>\n"
 
 #: src/ftpclass.cc:182
 msgid "Data connection peer has wrong port number"
@@ -1283,7 +1268,7 @@ msgstr "Schließe unbenutzte Verbindung"
 
 #: src/ftpclass.cc:1001
 msgid "SITE CHMOD is not supported by this site"
-msgstr ""
+msgstr "SITE CHMOD wird von dieser Gegenstelle nicht unterstützt"
 
 #: src/ftpclass.cc:1440
 #, c-format
@@ -1496,9 +1481,9 @@ msgid "Getting file list (%ld) [%s]"
 msgstr "Hole Dateiliste (%ld) [%s]"
 
 #: src/CopyJob.cc:90 src/CopyJob.cc:101
-#, fuzzy, c-format
+#, c-format
 msgid "`%s' at %lu %s%s%s%s"
-msgstr "`%s' bei %lu %s%s%s[%s]"
+msgstr "`%s' bei %lu %s%s%s%s"
 
 #: src/CopyJob.cc:226
 #, c-format
@@ -1523,22 +1508,21 @@ msgid "Total %d $file|files$ transferred\n"
 msgstr "Insgesamt %d $Datei|Dateien$ übertragen\n"
 
 #: src/FileCopy.cc:975
-#, fuzzy
 msgid "file name missed in URL"
-msgstr "Dateiname fehlt."
+msgstr "Dateiname fehlt in der URL"
 
 #: src/FileCopy.cc:1424
-#, fuzzy, c-format
+#, c-format
 msgid "%.0fb/s"
 msgstr "%.0fB/s "
 
 #: src/FileCopy.cc:1426
-#, fuzzy, c-format
+#, c-format
 msgid "%.1fK/s"
 msgstr "%.1fK/s "
 
 #: src/FileCopy.cc:1428
-#, fuzzy, c-format
+#, c-format
 msgid "%.2fM/s"
 msgstr "%.2fM/s "
 
@@ -1562,96 +1546,3 @@ msgstr "sekunde"
 #: src/FileCopy.cc:1459
 msgid "eta:"
 msgstr "übrig(ca.):"
-
-#, fuzzy
-#~ msgid "%s: no such files\n"
-#~ msgstr "%s: keine Dateien gefunden\n"
-
-#, fuzzy
-#~ msgid " - not supported protocol\n"
-#~ msgstr "%s: %s - Protokoll nicht unterstützt\n"
-
-#~ msgid "%s: %s - not supported protocol\n"
-#~ msgstr "%s: %s - Protokoll nicht unterstützt\n"
-
-#~ msgid "Waiting for filter to terminate"
-#~ msgstr "Warte auf Filter"
-
-#~ msgid "remote rm(%s) - %s\n"
-#~ msgstr "nichtlokales rm(%s) -%s\n"
-
-#~ msgid "\tNo files transferred successfully :(\n"
-#~ msgstr "\tKeine Datei erfolgreich übertragen :(\n"
-
-#~ msgid "Average transfer rate %g bytes/s\n"
-#~ msgstr "Durchschnittliche Übertragungsrate %g Bytes/s\n"
-
-#~ msgid "%s: cannot write -- disk full?\n"
-#~ msgstr "%s: kann nicht schreiben -- Festplatte voll?\n"
-
-#~ msgid "mget [-c] [-d] [-e] <files>"
-#~ msgstr "mget [-c] [-d] [-e] <dateien>"
-
-#~ msgid ""
-#~ "Upload files with wildcard expansion\n"
-#~ " -c  continue, reput\n"
-#~ " -d  create directories the same as in file names and put the\n"
-#~ "     files into them instead of current directory\n"
-#~ msgstr ""
-#~ "Dateien, die den Platzhaltern entsprechen, hochladen\n"
-#~ " -c  nach Abbruch fortfahren, erneut hochladen\n"
-#~ " -d  Verzeichnisse nach den Namen der Dateien erstellen und die Dateien\n"
-#~ "     dort ablegen anstatt im normalen Verzeichnis\n"
-
-#~ msgid "Wait for specified job to terminate.\n"
-#~ msgstr "Auf Beendigung des angegeben Jobs warten\n"
-
-#~ msgid "Usage: site <site_cmd>\n"
-#~ msgstr "Benutzung: site <site_cmd>\n"
-
-#~ msgid "max-retries exceeded"
-#~ msgstr "Zahl der Wiederholungsversuche überschritten"
-
-#~ msgid ""
-#~ "FtpGet | Version %s | Copyright (C) 1996-1999 Alexander V. Lukyanov\n"
-#~ msgstr "FtpGet | Version %s | Copyright (C) 1996-99 Alexander V. Lukyanov\n"
-
-#~ msgid ""
-#~ "Usage: ftpget [OPTIONS] host filename [-o local] [filename...]\n"
-#~ "\n"
-#~ "-p  --port         set port number\n"
-#~ "-u  --user         login as user using pass as password\n"
-#~ "-l  --list         get listing of specified directory(ies)\n"
-#~ "-c  --continue     reget specified file(s)\n"
-#~ "-q  --quiet        quiet (no output)\n"
-#~ "-v  --verbose      verbose (lots of output)\n"
-#~ "    --async-mode   use asynchronous mode (faster)\n"
-#~ "    --sync-mode    use synchronous mode (compatible with bugs)\n"
-#~ "\n"
-#~ "-o  output to local file `local' (default - base name of filename)\n"
-#~ msgstr ""
-#~ "Benutzung: ftpget [OPTIONS] host dateiname [-o lokal] [dateiname...]\n"
-#~ "\n"
-#~ "-p  --port          Portnummer setzen\n"
-#~ "-u  --user          als user einloggen, pass als Passwort benutzen\n"
-#~ "-l  --list          angegebene(s) Verzeichnis(se) auflisten\n"
-#~ "-c  --continue      bei angegebenen Dateien Download fortsetzen\n"
-#~ "-q  --quiet         ruhig (keine Ausgabe)\n"
-#~ "-v  --verbose       gesprächig (viele Informationen ausgeben)\n"
-#~ "    --async-mode    asynchronen Modus benutzen(schneller)\n"
-#~ "    --sync-mode     synchronen Modus benutzen (kompatibel mit Fehlern)\n"
-#~ "\n"
-#~ "-o  Ausgabe in das lokale File `lokal' (Vorgabe - Name der heruntergeladenen "
-#~ "Datei)\n"
-
-#~ msgid "Usage: %s [-c] [-d] [-e] pattern ...\n"
-#~ msgstr "Benutzung: %s [-c] [-d] [-e] muster ...\n"
-
-#~ msgid "`%s', got %lu of %lu (%d%%) %s%s"
-#~ msgstr "`%s', habe %lu von %lu (%d%%) %s%s"
-
-#~ msgid "\tat %ld (%d%%) [%s]\n"
-#~ msgstr "\tbei %ld (%d%%) [%s]\n"
-
-#~ msgid "\tDone\n"
-#~ msgstr "\tFertig\n"
