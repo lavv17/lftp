@@ -1,5 +1,9 @@
 2005-02-25	Alexander V. Lukyanov <lav@yars.free.net>
 
+	* lftp.1: document ftp:ignore-pasv-address.
+
+2005-02-25	Alexander V. Lukyanov <lav@yars.free.net>
+
 	* lftp.1: document use-mkcol and use-propfind options; add short
 	  cls description; use boolean instead of bool.
 
