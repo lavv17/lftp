@@ -1,3 +1,10 @@
+2001-12-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* LsCache.h: rename Find to FindFileSet.
+	* LsCache.cc: fixed test for fset reusability in FindFileSet;
+	  fixed FindFileSet calling in IsDirectory - restore cwd first and
+	  don't delete fset.
+
 2001-12-11  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ChmodJob.cc: handle undefined mode correctly.

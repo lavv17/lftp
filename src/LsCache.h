@@ -70,7 +70,7 @@ public:
    static void Add(FileAccess *p_loc,const char *a,int m,const char *d,int l);
    static void Add(FileAccess *p_loc,const char *a,int m,const Buffer *ubuf);
    static int Find(FileAccess *p_loc,const char *a,int m,const char **d, int *l);
-   static FileSet *Find(FileAccess *p_loc,const char *a,int m);
+   static FileSet *FindFileSet(FileAccess *p_loc,const char *a,int m);
 
    static int IsDirectory(FileAccess *p_loc,const char *dir);
    static void SetDirectory(FileAccess *p_loc, const char *path, bool dir);
