@@ -20,12 +20,6 @@
 
 /* $Id$ */
 
-#ifdef __linux__
-/* to get prototype for strptime, we need this */
-# define _XOPEN_SOURCE 500
-# define _XOPEN_SOURCE_EXTENDED 1
-#endif
-
 #include <config.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -42,6 +36,10 @@
 #include "HttpDir.h"
 
 #include "ascii_ctype.h"
+
+#ifndef HAVE_STRPTIME_DECL
+CDECL char *strptime(const char *buf, const char *format, struct tm *tm);
+#endif
 
 #define super NetAccess
 
