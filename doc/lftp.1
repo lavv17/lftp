@@ -20,13 +20,13 @@
 .\" $Id$
 .\"
 .\"-------
-.\" Sp	space down the interparagraph distance
+.\" Sp  space down the interparagraph distance
 .\"-------
 .de Sp
 .sp \\n(Ddu
 ..
 .\"-------
-.\" Ds	begin a display, indented .5 inches from the surrounding text.
+.\" Ds  begin a display, indented .5 inches from the surrounding text.
 .\"
 .\" Note that uses of Ds and De may NOT be nested.
 .\"-------
@@ -36,13 +36,13 @@
 .nf
 ..
 .\"-------
-.\" De	end a display (no trailing vertical spacing)
+.\" De  end a display (no trailing vertical spacing)
 .\"-------
 .de De
 .fi
 .in
 ..
-.TH lftp 1 "21 Mar 2000"
+.TH lftp 1 "19 Apr 2000"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 2.2.0.
+This man page documents lftp version 2.2.1.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a program that allows sophisticated ftp and http connections to
@@ -340,10 +340,13 @@ Mirror specified remote directory to local directory.
  -R, --reverse          reverse mirror (put files)
  -L, --dereference      download symbolic links as files
  -N, --newer-than FILE  download only files newer than the file
- -i \fIRX\fP, --include \fIRX\fP    include matching files (only one allowed)
- -x \fIRX\fP, --exclude \fIRX\fP    exclude matching files (only one allowed)
+ -i \fIRX\fP, --include \fIRX\fP    include matching files
+ -x \fIRX\fP, --exclude \fIRX\fP    exclude matching files
  -t \fINx\fP, --time-prec \fINx\fP  set time precision to \fIN\fP seconds (\fIx\fP=s)
                         minutes (\fIx\fP=m) hours (\fIx\fP=h) or days (\fIx\fP=d)
+                        default - mirror:time-precision setting
+ -T \fINx\fP, --loose-time-prec  set time precision for imprecise time
+                        default - mirror:loose-time-precision setting
  -v, --verbose[=level]  verbose operation
      --use-cache        use cached directory listings
 .De
@@ -850,6 +853,14 @@ specifies http proxy. It is used when lftp works over http protocol.
 Default value is taken from environment variable \fBhttp_proxy\fP.
 If your ftp proxy requires authentication, specify user name and password
 in the URL.
+.TP
+.BR mirror:time-precision " (time interval)"
+maximum time difference between files to assume they are the same. File size
+is checked too.
+.TP
+.BR mirror:loose-time-precision " (time interval)"
+same as time-precision, but applies to the case of imprecise time information.
+(e.g. derived from file listing which includes only date without time)
 .TP
 .BR net:connection-limit \ (number)
 maximum number of concurrent connections to the same site. 0 means unlimited.
