@@ -47,6 +47,18 @@ int FinderJob::Do()
    {
    case START_INFO:
    {
+      if(stack_ptr==-1)
+      {
+	 ParsedURL u(dir,true);
+	 if(u.proto)
+	 {
+	    session=FileAccess::New(&u);
+	    session->SetPriority(fg?1:0);
+	    init_dir=xstrdup(session->GetCwd());
+	    Down(u.path?u.path:"/");
+	 }
+      }
+
       /* If we're not validating, and this is an argument (first-level path),
        * pretend the file exists. */
       if((file_info_need|FileInfo::NAME) == FileInfo::NAME &&
@@ -113,7 +125,8 @@ int FinderJob::Do()
 	 return MOVED;
       }
 
-      session->Chdir(dir_file(init_dir, top.path),false);
+      session->SetCwd(init_dir);
+      session->Chdir(top.path,false);
       // at this point either is true:
       // 1. we just process another file (!depth_done)
       // 2. we just returned from a subdir (depth_done)
@@ -221,7 +234,7 @@ void FinderJob::Push(FileSet *fset)
 
    const char *new_path="";
    if(old_path) // the first path will be empty
-      new_path=dir_file(old_path,dir);
+      new_path=xstrdup(dir_file(old_path,dir));
 
    /* matching exclusions don't include the path, so they operate
     * on the filename portion only */
@@ -247,6 +260,9 @@ FinderJob::place::~place()
 
 void FinderJob::Down(const char *p)
 {
+#ifdef FIND_DEBUG
+printf("Down(%s)\n",p);
+#endif
    xfree(dir);
    dir=xstrdup(p);
    state=START_INFO;
@@ -259,6 +275,9 @@ FinderJob::prf_res FinderJob::ProcessFile(const char *d,const FileInfo *f)
 
 void FinderJob::Init()
 {
+   orig_session=0;
+   orig_init_dir=0;
+
    op="find";
    init_dir=0;
    dir=0;
@@ -290,25 +309,21 @@ FinderJob::FinderJob(FileAccess *s)
 {
    Init();
    init_dir=xstrdup(session->GetCwd());
+   orig_session=session;
+   orig_init_dir=init_dir;
 }
 
 void FinderJob::NextDir(const char *d)
 {
-   session->Chdir(init_dir,false); // no verification
-
-#if 0
-   ParsedURL u(d,true);
-   if(u.proto)
+   if(session!=orig_session)
    {
-      session->Close();
       Reuse(session);
-      FileAccess *newsession=FileAccess::New(&u);
-      newsession->SetPriority(session->GetPriority());
-      session=newsession;
-      d=u.path;
+      session=orig_session;
+      assert(orig_init_dir!=init_dir);
+      xfree(init_dir);
+      init_dir=orig_init_dir;
    }
-#endif
-
+   session->SetCwd(init_dir);
    Down(d);
 }
 
@@ -316,6 +331,10 @@ FinderJob::~FinderJob()
 {
    while(stack_ptr>=0)
       Up();
+   if(orig_session!=session)
+      Reuse(orig_session);
+   if(orig_init_dir!=init_dir)
+      xfree(orig_init_dir);
    xfree(stack);
    xfree(init_dir);
    xfree(exclude);
@@ -502,9 +521,6 @@ FinderJob_Cmd::~FinderJob_Cmd()
 
 void FinderJob_Cmd::Finish()
 {
-   if(cmd==RM)
-   {
-   }
    char *d=args->getnext();
    if(!d)
       return;

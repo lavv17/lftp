@@ -73,12 +73,15 @@ int GetFileInfo::Do()
    {
    case INITIAL:
       state=CHANGE_DIR;
+      m=MOVED;
 
       if(showdir)
 	 tried_dir=true;
       /* if we're not showing directories, try to skip tests we don't need */
-      if(use_cache && !showdir) switch(LsCache::IsDirectory(session,dir))
+      if(use_cache && !showdir)
       {
+	 switch(LsCache::IsDirectory(session,dir))
+	 {
 	 case 0:
 	    tried_dir = true; /* it's a file */
 	    from_cache = true;
@@ -87,6 +90,7 @@ int GetFileInfo::Do()
 	    tried_file = true; /* it's a dir */
 	    from_cache = true;
 	    break;
+	 }
       }
 
       assert(!tried_dir || !tried_file); /* always do at least one */
@@ -119,6 +123,11 @@ int GetFileInfo::Do()
 	 session->Chdir(dir, false);
 	 verify_fn = xstrdup(basename_ptr(session->GetCwd()));
 
+	 /* Special case: looking up home dir. We won't find ~ in the listing
+	  * anyway, so make a phony entry. */
+	 if(showdir && verify_fn[0]=='~' && !strcmp(verify_fn,session->GetCwd()))
+	    goto phony_dir;
+
 	 /* Now go to the parent directory to list the directory we now
 	  * have a name for: */
 	 cd_path = "..";
@@ -129,6 +138,7 @@ int GetFileInfo::Do()
 	 /* Special case: looking up "/". Make a phony "/" entry. */
 	 if(showdir && !strcmp(verify_fn, "/"))
 	 {
+	 phony_dir:
 	    FileInfo *fi = new FileInfo(verify_fn);
 	    fi->SetType(fi->DIRECTORY);
 

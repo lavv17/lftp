@@ -30,6 +30,9 @@
 
 class FinderJob : public SessionJob
 {
+   FileAccess *orig_session;
+   char *orig_init_dir;
+
    char *dir;
    int errors;
    GetFileInfo *li;

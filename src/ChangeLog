@@ -3,6 +3,7 @@
 	* ChmodJob.cc: handle undefined mode correctly.
 	* misc.cc: fix dirname_alloc to strip all trailing slashes and
 	  return / for /file.
+	* FindJob.cc, FindJob.h, GetFileInfo.cc: support URLs and ~ in find.
 
 2001-12-11  Glenn Maynard <g_ld@zewt.org>
 
