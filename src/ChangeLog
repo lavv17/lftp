@@ -2,6 +2,7 @@
 
 	* FileAccess.h, Http.h: (FA::UseCache) new method.
 	* LsJob.cc, HttpDir.cc: use it in rels.
+	* Http.cc: send Cache-Control too.
 
 1999-06-25  Alexander V. Lukyanov  <lav@yars.free.net>
 
