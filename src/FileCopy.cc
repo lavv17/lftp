@@ -774,13 +774,14 @@ void FileCopyPeerFA::Seek(long new_pos)
 
 void FileCopyPeerFA::OpenSession()
 {
-   if(size!=NO_SIZE && size!=NO_SIZE_YET && seek_pos>=size && !ascii)
-   {
-      eof=true;
-      return;
-   }
    if(mode==GET)
    {
+      if(size!=NO_SIZE && size!=NO_SIZE_YET && seek_pos>=size && !ascii)
+      {
+	 pos=seek_pos;
+	 eof=true;
+	 return;
+      }
       char *b;
       int s;
       if(use_cache && LsCache::Find(session,file,FAmode,&b,&s))
