@@ -43,8 +43,8 @@ libjobs_a_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  SleepJob.cc SleepJob.h getdate.y getdate.h FindJob.cc FindJob.h\
  ChmodJob.cc ChmodJob.h TreatFileJob.cc TreatFileJob.h CopyJob.cc CopyJob.h
 
-lftp_LDFLAGS = $(EXPORT_DYNAMIC)
-lftp_LDADD = libjobs.a libtasks.a $(READLINE) $(READLINE_SUPPLIB) $(top_builddir)/lib/liblib.a $(INTLLIBS) $(SOCKSLIBS)
+lftp_LDFLAGS = $(EXPORT_DYNAMIC) $(SSL_LDFLAGS)
+lftp_LDADD = libjobs.a libtasks.a $(READLINE) $(READLINE_SUPPLIB) $(top_builddir)/lib/liblib.a $(INTLLIBS) $(SOCKSLIBS) $(SSL_LIBS)
 lftp_DEPENDENCIES = libjobs.a libtasks.a $(READLINE_DEPEND) $(top_builddir)/lib/liblib.a
 #ftpget_LDFLAGS = $(EXPORT_DYNAMIC)
 #ftpget_LDADD = libjobs.a libtasks.a $(top_builddir)/lib/liblib.a $(INTLLIBS) $(SOCKSLIBS)
@@ -57,7 +57,7 @@ confpaths.h: Makefile
 
 DISTCLEANFILES = confpaths.h
 
-INCLUDES = -I$(top_srcdir)/include
+INCLUDES = -I$(top_srcdir)/include $(SSL_CPPFLAGS)
 
 # These files can be linked to ../include by configure, but not always.
 OMIT_DEPENDENCIES = readline.h keymaps.h chardefs.h tilde.h history.h libintl.h\
