@@ -40,12 +40,12 @@
 
 #include "xmalloc.h"
 #include "ResMgr.h"
+#include "ArgV.h"
 
 class ListInfo;
 class Glob;
 class NoGlob;
 class DirList;
-class ArgV;
 
 class FileAccess : public SMTask
 {
@@ -165,7 +165,7 @@ public:
    enum { NO_PATH=1,WITH_PASSWORD=2 };
 
    virtual void Connect(const char *h,const char *p);
-   virtual void ConnectVerify() {}
+   virtual void ConnectVerify();
 
    virtual void AnonymousLogin();
 
@@ -195,13 +195,13 @@ public:
 	 return array_ptr*100/array_cnt;
       }
 
-   virtual const char *CurrentStatus() { return(""); }
+   virtual const char *CurrentStatus();
 
    virtual int Read(void *buf,int size) = 0;
    virtual int Write(const void *buf,int size) = 0;
-   virtual int Buffered() { return 0; }
+   virtual int Buffered();
    virtual int StoreStatus() = 0;
-   virtual bool IOReady() { return IsOpen(); }
+   virtual bool IOReady();
    long GetPos() { return pos; }
    long GetRealPos() { return real_pos<0?pos:real_pos; }
    void SeekReal() { pos=GetRealPos(); }
@@ -215,7 +215,7 @@ public:
 
    virtual bool SameLocationAs(FileAccess *fa);
    virtual bool SameSiteAs(FileAccess *fa);
-   virtual bool IsBetterThan(FileAccess *fa) { (void)fa; return false; }
+   virtual bool IsBetterThan(FileAccess *fa);
 
    void Init();
    FileAccess() { Init(); }
@@ -227,11 +227,10 @@ public:
    bool	 IsClosed() { return mode==CLOSED; }
    bool	 IsOpen() { return !IsClosed(); }
 
-   virtual void CopyOptions(FileAccess *fa) { (void)fa; }
-   virtual bool IsConnected() { return false; }
-   virtual void Disconnect() {}
-   virtual void UseCache(bool) {}
-   virtual bool NeedSizeDateBeforehand() { return false; }
+   virtual bool IsConnected();
+   virtual void Disconnect();
+   virtual void UseCache(bool);
+   virtual bool NeedSizeDateBeforehand();
 
    enum status
    {
@@ -250,13 +249,13 @@ public:
    };
 
    const char *StrError(int err);
-   virtual void Cleanup() {}
-   virtual void CleanupThis() {}
+   virtual void Cleanup();
+   virtual void CleanupThis();
    void CleanupAll();
       // ^^ close idle connections, etc.
-   virtual ListInfo *MakeListInfo() { return 0; }
-   virtual Glob *MakeGlob(const char *pattern) { return 0; }
-   virtual DirList *MakeDirList(ArgV *arg) { return 0; }
+   virtual ListInfo *MakeListInfo();
+   virtual Glob *MakeGlob(const char *pattern);
+   virtual DirList *MakeDirList(ArgV *a);
 
    static bool NotSerious(int err);
 
@@ -414,6 +413,8 @@ public:
       {
 	 if(buf)
 	    delete buf;
+	 if(args)
+	    delete args;
       }
 
    virtual int Do() = 0;

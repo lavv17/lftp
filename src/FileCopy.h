@@ -311,11 +311,11 @@ private:
    DirList *dl;
 
 public:
-   FileCopyPeerDirList(FA *s,ArgV *v);
+   FileCopyPeerDirList(FA *s,ArgV *v); // consumes s and v.
    ~FileCopyPeerDirList();
 
    int Do();
-   void NoCache() { dl->UseCache(false); }
+   void NoCache() { if(dl) dl->UseCache(false); }
 };
 
 #endif

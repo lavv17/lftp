@@ -320,16 +320,6 @@ public:
       MODES_MASK=SYNC_MODE|PASSIVE_MODE|DOSISH_PATH
    };
 
-   void CopyOptions(FileAccess *fa)
-   {
-      if(SameProtoAs(fa))
-      {
-	 flags=(flags&~MODES_MASK)|(((Ftp*)fa)->flags&MODES_MASK);
-	 if(((Ftp*)fa)->try_time==0)
-	    try_time=0;
-      }
-   }
-
    void Reconfig(const char *name=0);
    void Cleanup();
    void CleanupThis();

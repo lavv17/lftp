@@ -1340,6 +1340,8 @@ FileCopyPeerDirList::FileCopyPeerDirList(FA *s,ArgV *v)
 {
    session=s;
    dl=session->MakeDirList(v);
+   if(dl==0)
+      eof=true;
    can_seek=false;
    can_seek0=false;
 }
@@ -1356,6 +1358,12 @@ int FileCopyPeerDirList::Do()
 {
    if(Done())
       return STALL;
+   if(dl->Error())
+   {
+      SetError(dl->ErrorText());
+      return MOVED;
+   }
+
    const char *b;
    int s;
    dl->Get(&b,&s);

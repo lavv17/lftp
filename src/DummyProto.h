@@ -36,6 +36,8 @@ public:
    int Write(const void *buf,int size);
    int StoreStatus();
    void Reconfig() {}
+
+   DirList *MakeDirList(ArgV *);
 };
 
 #endif

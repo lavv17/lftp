@@ -1,3 +1,11 @@
+2000-01-04  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h: delete args in DirList; outline virtual
+	  functions; remove CopyOptions.
+	* DummyProto.cc, DummyProto.h: implement DummyDirList.
+	* FileCopy.cc, FileCopy.h: handle errors in DirList.
+	* ftpclass.h: remove CopyOptions.
+
 2000-01-03  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* misc.cc, misc.h: (percent) new function.

@@ -31,3 +31,16 @@ FileAccess *DummyProto::Clone() { return new DummyProto; }
 int DummyProto::Read(void *buf,int size) { return NO_HOST; };
 int DummyProto::Write(const void *buf,int size) { return NO_HOST; };
 int DummyProto::StoreStatus() { return NO_HOST; }
+
+class DummyDirList : public DirList
+{
+   DummyProto *p;
+public:
+   DummyDirList(DummyProto *p1,ArgV *a) : DirList(a) { p=p1; }
+   int Do() { SetError(p->StrError(FA::NO_HOST)); return STALL; }
+   const char *Status() { return ""; }
+};
+DirList *DummyProto::MakeDirList(ArgV *a)
+{
+   return new DummyDirList(this,a);
+}

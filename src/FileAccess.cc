@@ -847,9 +847,21 @@ ResValue FileAccess::Query(const char *name,const char *closure)
    return ResMgr::Query(fullname,closure);
 }
 
-void FileAccess::Reconfig(const char *)
-{
-}
+void FileAccess::Reconfig(const char *) {}
+void FileAccess::ConnectVerify() {}
+const char *FileAccess::CurrentStatus() { return ""; }
+int FileAccess::Buffered() { return 0; }
+bool FileAccess::IOReady() { return IsOpen(); }
+bool FileAccess::IsBetterThan(FileAccess *) { return false; }
+bool FileAccess::IsConnected() { return false; }
+void FileAccess::Disconnect() {}
+void FileAccess::UseCache(bool) {}
+bool FileAccess::NeedSizeDateBeforehand() { return false; }
+void FileAccess::Cleanup() {}
+void FileAccess::CleanupThis() {}
+ListInfo *FileAccess::MakeListInfo() { return 0; }
+Glob *FileAccess::MakeGlob(const char *pattern) { return 0; }
+DirList *FileAccess::MakeDirList(ArgV *a) { if(a) delete a; return 0; }
 
 void FileAccess::CleanupAll()
 {
