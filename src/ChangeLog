@@ -1,3 +1,8 @@
+1999-06-15  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: remove prehistoric methods DataReady
+	  and Block.
+
 1999-06-08  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: fix for ftpcopy in passive mode.

@@ -2434,60 +2434,6 @@ void Ftp::Fatal(const char *msg)
    SwitchToState(FATAL_STATE);
 }
 
-int   Ftp::DataReady()
-{
-   int	 res;
-
-   res=StateToError();
-   if(res!=OK)
-      return(1);  // say data ready and let'em get an error
-
-   if(mode==CLOSED)
-      return(1);
-
-   if(state==WAITING_STATE)
-      return(RespQueueIsEmpty());
-
-   if(state==DATA_OPEN_STATE)
-   {
-      if(data_sock==-1)
-	 return(1);  // eof
-      if(BytesAllowed()<=0)
-	 return 0;
-      if(real_pos==-1 && RespQueueSize()>1)
-	 return(0);  // disallow reading/writing
-      int ev=(mode==STORE?POLLOUT:POLLIN);
-      res=Poll(data_sock,ev);
-      if(res==-1)
-      {
-	 DataClose();
-	 Disconnect();
-      }
-      if(res&ev)
-	 return(1);
-   }
-   return(0);
-}
-// Wait until requested data is available or operation is completed
-int   Ftp::Block()
-{
-   int res;
-
-   for(;;)
-   {
-      SMTask::Schedule();
-
-      res=StateToError();
-      if(res!=OK)
-	 return res;
-
-      if(DataReady())
-	 return(OK);
-
-      SMTask::Block();
-   }
-}
-
 void  Ftp::AddResp(int exp,int fail,check_case_t ck,bool log)
 {
    int newtail=RQ_tail+1;

@@ -317,8 +317,6 @@ public:
    int	 SendEOT();
    int	 StoreStatus();
 
-   int	 Block();
-   int	 DataReady();
    int	 Do();
    void  Disconnect();
 
