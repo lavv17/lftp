@@ -78,8 +78,8 @@ void FileAccess::Init()
 
    url=0;
 
-   entity_size=-1;
-   entity_date=(time_t)-1;
+   entity_size=NO_SIZE;
+   entity_date=NO_DATE;
 
    closure=0;
 
@@ -337,8 +337,8 @@ void FileAccess::Close()
    opt_date=0;
    opt_size=0;
    array_for_info=0;
-   entity_size=-1;
-   entity_date=(time_t)-1;
+   entity_size=NO_SIZE;
+   entity_date=NO_DATE;
    ascii=false;
    norest_manual=false;
    ClearError();

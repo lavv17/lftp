@@ -685,19 +685,20 @@ int   Ftp::CatchSIZE(int act,int)
 }
 int   Ftp::CatchSIZE_opt(int act,int)
 {
-   if(!opt_size)
-      return state;
-
    if(act/100==2 && strlen(line)>4 && is_ascii_digit(line[4]))
    {
-      *opt_size=atol(line+4);
-      opt_size=0;
+      entity_size=atol(line+4);
    }
    else
    {
       if(act==500 || act==502)
 	 size_supported=false;
-      *opt_size=-1;
+      entity_size=NO_SIZE;
+   }
+   if(opt_size)
+   {
+      *opt_size=entity_size;
+      opt_size=0;
    }
    return state;
 }
@@ -1146,6 +1147,9 @@ int   Ftp::Do()
       if(copy_mode!=COPY_NONE && !copy_passive && !copy_addr_valid)
 	 goto usual_return;
 
+      if(entity_size!=NO_SIZE && entity_size!=NO_SIZE_YET && entity_size<=pos)
+	 goto pre_WAITING_STATE; // simulate eof.
+
       if(mode==STORE && (flags&NOREST_MODE) && pos>0)
 	 pos=0;
 
@@ -1430,8 +1434,8 @@ int   Ftp::Do()
       // so check if last_rest was different.
       if(real_pos==-1 || last_rest!=real_pos)
       {
+         sprintf(str,"REST %ld\n",real_pos!=-1?real_pos:pos);
 	 real_pos=-1;
-         sprintf(str,"REST %ld\n",pos);
 	 SendCmd(str);
 	 AddResp(RESP_REST_OK,INITIAL_STATE,CHECK_REST);
       }

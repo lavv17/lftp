@@ -1,3 +1,9 @@
+2000-03-05  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc: use NO_SIZE and NO_DATE.
+	* ftpclass.cc: save size in entity_size and simulate eof on pos>=size;
+	  send proper offset for REST.
+
 2000-03-02  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: don't take over a connection if it has NOREST_MODE;
