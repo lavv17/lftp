@@ -993,10 +993,13 @@ int CmdExec::AcceptSig(int sig)
       if(res==WANTDIE)
       {
 	 exit_code=1;
-	 Job *new_waiting=waiting->waiting;
-	 waiting->waiting=0;
+	 int j=-1;
+	 if(waiting->waiting)
+	    j=waiting->waiting->jobno;
 	 delete waiting;
-	 waiting=new_waiting;
+	 waiting=0;
+	 if(j>=0)
+	    waiting=FindJob(j);
       }
       if(waiting==0 && parent!=0)
 	 return WANTDIE;
