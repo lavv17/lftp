@@ -25,7 +25,6 @@
 
 #include "NetAccess.h"
 #include "StatusLine.h"
-/*#include "buffer.h"*/
 
 class Fish : public NetAccess
 {
@@ -74,7 +73,7 @@ class Fish : public NetAccess
       EXPECT_PWD,
       EXPECT_CWD,
       EXPECT_DIR,
-      EXPECT_RETR_SIZE,
+      EXPECT_RETR_INFO,
       EXPECT_RETR
    };
 
@@ -91,10 +90,14 @@ class Fish : public NetAccess
    int	 path_queue_len;
    void  PushDirectory(const char *);
    char  *PopDirectory();
+   void	 EmptyPathQueue();
 
    int   RespQueueIsEmpty() { return RQ_head==RQ_tail; }
    int	 RespQueueSize() { return RQ_tail-RQ_head; }
    void  EmptyRespQueue() { RQ_head=RQ_tail=0; }
+
+   void GetBetterConnection(int level,int count);
+   void MoveConnectionHere(Fish *o);
 
    char  *line;
    char  *message;
@@ -129,6 +132,24 @@ public:
 
    bool SameSiteAs(FileAccess *fa);
    bool SameLocationAs(FileAccess *fa);
+
+   DirList *MakeDirList(ArgV *args);
+};
+
+class FishDirList : public DirList
+{
+   FileAccess *session;
+   Buffer *ubuf;
+   char *pattern;
+
+public:
+   FishDirList(ArgV *a,FileAccess *fa);
+   ~FishDirList();
+   const char *Status();
+   int Do();
+
+   void Suspend();
+   void Resume();
 };
 
 #endif

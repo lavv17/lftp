@@ -25,13 +25,56 @@
 #include <stdarg.h>
 #include <assert.h>
 #include "ascii_ctype.h"
+#include "LsCache.h"
+#include "misc.h"
 
 #define super NetAccess
+
+void Fish::GetBetterConnection(int level,int count)
+{
+   for(FA *fo=FirstSameSite(); fo!=0; fo=NextSameSite(fo))
+   {
+      Fish *o=(Fish*)fo; // we are sure it is Fish.
+
+      if(!o->recv_buf)
+	 continue;
+
+      if(o->state!=CONNECTED || o->mode!=CLOSED)
+      {
+	 if(level<2)
+	    continue;
+	 if(!connection_takeover || o->priority>=priority)
+	    continue;
+	 o->Disconnect();
+	 return;
+      }
+      else
+      {
+	 takeover_time=now;
+      }
+
+      if(home && !o->home)
+	 o->home=xstrdup(home);
+      else if(!home && o->home)
+	 home=xstrdup(o->home);
+
+      o->ExpandTildeInCWD();
+      ExpandTildeInCWD();
+
+      if(level==0 && xstrcmp(real_cwd,o->real_cwd))
+	 continue;
+
+      // borrow the connection
+      MoveConnectionHere(o);
+      return;
+   }
+}
 
 int Fish::Do()
 {
    int m=STALL;
    int fd;
+   int count;
 
    // check if idle time exceeded
    if(mode==CLOSED && send_buf && idle>0)
@@ -64,6 +107,18 @@ int Fish::Do()
 	 return m;
       if(mode==CONNECT_VERIFY)
 	 return m;
+
+      // walk through Fish classes and try to find identical idle session
+      // first try "easy" cases of session take-over.
+      count=CountConnections();
+      for(int i=0; i<3; i++)
+      {
+	 if(i>=2 && (connection_limit==0 || connection_limit>count))
+	    break;
+	 GetBetterConnection(i,count);
+	 if(state!=DISCONNECTED)
+	    return MOVED;
+      }
 
       if(!ReconnectAllowed())
 	 return m;
@@ -112,7 +167,7 @@ int Fish::Do()
       m=MOVED;
 
       Send("#FISH\n"
-	   "echo; start_fish_server; echo '### 200'\n");
+	   "echo; start_fish_server; TZ=GMT; export TZ; echo '### 200'\n");
       PushExpect(EXPECT_FISH);
       Send("#VER 0.0.2\n"
 	   "echo '### 000'\n");
@@ -142,16 +197,29 @@ int Fish::Do()
 	    goto usual_return;
       }
       SendMethod();
+      if(mode==LONG_LIST || mode==LIST)
+      {
+	 state=FILE_RECV;
+	 m=MOVED;
+	 goto usual_return;
+      }
       state=WAITING;
       m=MOVED;
    case WAITING:
-      if(RespQueueIsEmpty() && (mode==LONG_LIST || mode==LIST || mode==RETRIEVE))
+      if(RespQueueSize()==1 && mode==RETRIEVE)
       {
 	 state=FILE_RECV;
 	 m=MOVED;
       }
+      if(RespQueueSize()==0 && (mode==LONG_LIST || mode==LIST))
+      {
+	 state=DONE;
+	 m=MOVED;
+      }
       goto usual_return;
    case FILE_RECV:
+   case FILE_SEND:
+   case DONE:
       goto usual_return;
    }
 usual_return:
@@ -163,10 +231,29 @@ usual_return:
       BumpEventTime(recv_buf->EventTime());
    if(CheckTimeout())
       return MOVED;
-notimeout_return:
+// notimeout_return:
    if(m==MOVED)
       return MOVED;
    return m;
+}
+
+void Fish::MoveConnectionHere(Fish *o)
+{
+   send_buf=o->send_buf; o->send_buf=0;
+   recv_buf=o->recv_buf; o->recv_buf=0;
+   pipe_in[0]=o->pipe_in[0]; o->pipe_in[0]=-1;
+   pipe_in[1]=o->pipe_in[1]; o->pipe_in[1]=-1;
+   rate_limit=o->rate_limit; o->rate_limit=0;
+   path_queue=o->path_queue; o->path_queue=0;
+   path_queue_len=o->path_queue_len; o->path_queue_len=0;
+   RespQueue=o->RespQueue; o->RespQueue=0;
+   RQ_alloc=o->RQ_alloc; o->RQ_alloc=0;
+   RQ_head=o->RQ_head; o->RQ_head=0;
+   RQ_tail=o->RQ_tail; o->RQ_tail=0;
+   set_real_cwd(o->real_cwd);
+   o->set_real_cwd(0);
+   state=CONNECTED;
+   o->Disconnect();
 }
 
 void Fish::Disconnect()
@@ -185,7 +272,15 @@ void Fish::Disconnect()
       delete filter_out;
    filter_out=0;
    EmptyRespQueue();
+   EmptyPathQueue();
    state=DISCONNECTED;
+}
+
+void Fish::EmptyPathQueue()
+{
+   for(int i=0; i<path_queue_len; i++)
+      xfree(path_queue[i]);
+   path_queue_len=0;
 }
 
 void Fish::Init()
@@ -219,6 +314,8 @@ Fish::~Fish()
    xfree(message);
    EmptyRespQueue();
    xfree(RespQueue);
+   EmptyPathQueue();
+   xfree(path_queue);
 }
 
 Fish::Fish(const Fish *o) : super(o)
@@ -240,8 +337,8 @@ void Fish::Close()
    case(CONNECTING):
       Disconnect();
    }
-   if(!RespQueueIsEmpty())
-      Disconnect(); // play safe.
+//    if(!RespQueueIsEmpty())
+//       Disconnect(); // play safe.
    state=(recv_buf?CONNECTED:DISCONNECTED);
    eof=false;
    super::Close();
@@ -335,12 +432,14 @@ void Fish::SendMethod()
       break;
    case RETRIEVE:
       Send("#RETR %s\n"
-	   "ls -l %s | ( read a b c d x e; echo $x );"
+	   "ls -lLd %s; "
 	   "echo '### 100'; cat %s; echo '### 200'\n",file,e,e);
-      PushExpect(EXPECT_RETR_SIZE);
+      PushExpect(EXPECT_RETR_INFO);
       PushExpect(EXPECT_RETR);
       real_pos=0;
       break;
+   case CLOSED:
+      abort();
    }
 }
 
@@ -442,7 +541,7 @@ int Fish::HandleReplies()
 	 SetError(NO_FILE,message);
       xfree(p);
       break;
-   case EXPECT_RETR_SIZE:
+   case EXPECT_RETR_INFO:
       if(message && is_ascii_digit(message[0]))
       {
 	 long long size_ll;
@@ -453,9 +552,55 @@ int Fish::HandleReplies()
 	       *opt_size=entity_size;
 	 }
       }
+      else if(message)
+      {
+	 char perms[11];
+	 char year_or_time[6];
+	 char month_name[4];
+	 int n;
+	 long long size_ll;
+	 int year;
+	 int hour=0;
+	 int minute=0;
+	 int day;
+	 int month;
+
+	 n=sscanf(message,"%10s %*d %*31s %*31s %lld %3s %2d %5s",perms,
+	       &size_ll,month_name,&day,year_or_time);
+	 if(n<5) // bsd-like listing without group?
+	 {
+	    n=sscanf(message,"%10s %*d %*31s %lld %3s %2d %5s",perms,
+		  &size_ll,month_name,&day,year_or_time);
+	 }
+	 if(n==5 && -1!=parse_perms(perms+1)
+	 && -1!=(month=parse_month(month_name))
+	 && -1!=parse_year_or_time(year_or_time,&year,&hour,&minute))
+	 {
+	    entity_size=size_ll;
+	    if(opt_size)
+	       *opt_size=entity_size;
+
+	    struct tm date;
+	    memset(&date,0,sizeof(date));
+
+	    date.tm_mon=month;
+	    date.tm_mday=day;
+	    date.tm_hour=hour;
+	    date.tm_min=minute;
+	    date.tm_year=year-1900;
+
+	    date.tm_isdst=0;
+	    date.tm_sec=0;
+
+	    entity_date=mktime_from_utc(&date);
+	    if(opt_date)
+	       *opt_date=entity_date;
+	 }
+      }
       state=FILE_RECV;
       break;
    case EXPECT_RETR:
+   case EXPECT_DIR:
       eof=true;
       break;
    }
@@ -498,6 +643,19 @@ char *Fish::PopDirectory()
    return p; // caller should free it.
 }
 
+const char *memstr(const char *mem,size_t len,const char *str)
+{
+   size_t str_len=strlen(str);
+   while(len>=str_len)
+   {
+      if(!memcmp(mem,str,str_len))
+	 return mem;
+      mem++;
+      len--;
+   }
+   return 0;
+}
+
 int Fish::Read(void *buf,int size)
 {
    if(Error())
@@ -527,11 +685,34 @@ int Fish::Read(void *buf,int size)
       if(entity_size>=0 && pos>=entity_size)
       {
 	 DebugPrint("---- ",_("Received all (total)"));
+	 state=WAITING;
 	 return 0;
       }
+      if(entity_size>=0 && real_pos+size1>entity_size)
+	 size1=entity_size-real_pos;
       if(entity_size==NO_SIZE)
       {
-	 // FIXME memstr(
+	 const char *end=memstr(buf1,size1,"### ");
+	 if(end)
+	 {
+	    size1=end-buf1;
+	    if(size1==0)
+	    {
+	       state=WAITING;
+	       return DO_AGAIN;
+	    }
+	 }
+	 else
+	 {
+	    for(int j=0; j<3; j++)
+	       if(size1>0 && buf1[size1-1]=='#')
+		  size1--;
+	    if(size1==0 && recv_buf->Eof())
+	    {
+	       Disconnect();
+	       return DO_AGAIN;
+	    }
+	 }
       }
 
       int bytes_allowed=rate_limit->BytesAllowed();
@@ -617,6 +798,124 @@ void Fish::ClassInit()
    Register("fish",Fish::New);
 }
 FileAccess *Fish::New() { return new Fish(); }
+
+DirList *Fish::MakeDirList(ArgV *args)
+{
+   return new FishDirList(args,this);
+}
+
+
+#undef super
+#define super DirList
+#include "ArgV.h"
+
+int FishDirList::Do()
+{
+   if(done)
+      return STALL;
+
+   if(buf->Eof())
+   {
+      done=true;
+      return MOVED;
+   }
+
+   if(!ubuf)
+   {
+      const char *cache_buffer=0;
+      int cache_buffer_size=0;
+      if(use_cache && LsCache::Find(session,pattern,FA::LONG_LIST,
+				    &cache_buffer,&cache_buffer_size))
+      {
+	 ubuf=new Buffer();
+	 ubuf->Put(cache_buffer,cache_buffer_size);
+	 ubuf->PutEOF();
+      }
+      else
+      {
+	 session->Open(pattern,FA::LONG_LIST);
+	 ubuf=new IOBufferFileAccess(session);
+	 if(LsCache::IsEnabled())
+	    ubuf->Save(LsCache::SizeLimit());
+      }
+   }
+
+   const char *b;
+   int len;
+   ubuf->Get(&b,&len);
+   if(b==0) // eof
+   {
+      buf->PutEOF();
+
+      const char *cache_buffer;
+      int cache_buffer_size;
+      ubuf->GetSaved(&cache_buffer,&cache_buffer_size);
+      if(cache_buffer && cache_buffer_size>0)
+      {
+	 LsCache::Add(session,pattern,FA::LONG_LIST,
+		      cache_buffer,cache_buffer_size);
+      }
+
+      return MOVED;
+   }
+
+   int m=STALL;
+
+   if(len>0)
+   {
+      buf->Put(b,len);
+      ubuf->Skip(len);
+      m=MOVED;
+   }
+
+   if(ubuf->Error())
+   {
+      SetError(ubuf->ErrorText());
+      m=MOVED;
+   }
+   return m;
+}
+
+FishDirList::FishDirList(ArgV *a,FileAccess *fa)
+   : DirList(a)
+{
+   session=fa;
+   ubuf=0;
+   pattern=args->Combine(1);
+}
+
+FishDirList::~FishDirList()
+{
+   Delete(ubuf);
+   xfree(pattern);
+}
+
+const char *FishDirList::Status()
+{
+   static char s[256];
+   if(ubuf && !ubuf->Eof() && session->IsOpen())
+   {
+      sprintf(s,_("Getting file list (%lld) [%s]"),
+		     (long long)session->GetPos(),session->CurrentStatus());
+      return s;
+   }
+   return "";
+}
+
+void FishDirList::Suspend()
+{
+   if(ubuf)
+      ubuf->Suspend();
+   super::Suspend();
+}
+void FishDirList::Resume()
+{
+   super::Resume();
+   if(ubuf)
+      ubuf->Resume();
+}
+
+
 
 #include "modconfig.h"
 #ifdef MODULE_PROTO_FISH
