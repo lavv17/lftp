@@ -31,12 +31,14 @@ public:
    bool sort_casefold;
    bool sort_dirs_first;
    bool size_filesonly;
+   bool single_column;
 
    FileSet::sort_e sort;
    FileSetOutput(): classify(0), width(0), color(false), mode(NONE),
       pat(NULL), basenames(false), showdots(false),
       quiet(false), patterns_casefold(false), sort_casefold(false),
-      sort_dirs_first(false), size_filesonly(false), sort(FileSet::BYNAME) { }
+      sort_dirs_first(false), size_filesonly(false), single_column(false),
+      sort(FileSet::BYNAME) { }
    ~FileSetOutput() { xfree(pat); }
    FileSetOutput(const FileSetOutput &cp);
    const FileSetOutput &FileSetOutput::operator = (const FileSetOutput &cp);

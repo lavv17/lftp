@@ -486,7 +486,7 @@ void FileSetOutput::print(FileSet &fs, Buffer *o) const
       }
    }
 
-   c.print(o, width, color);
+   c.print(o, single_column? 0:width, color);
 }
 
 const char *FileSetOutput::FileInfoSuffix(const FileInfo &fi) const
@@ -547,8 +547,8 @@ void FileSetOutput::config(FDStream *fd)
 
 void FileSetOutput::long_list()
 {
+   single_column = true;
    mode = ALL;
-   width = 0; /* one column */
 }
 
 const char *FileSetOutput::ValidateArgv(char **s)

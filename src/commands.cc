@@ -156,10 +156,11 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	     * available for options more commonly used manually.  -s/-S is an
 	     * exception; they both seem to be options used manually, so I made
 	     * them align with GNU ls options. */
+	    " -1                   - single-column output\n"
 	    " -B, --basename       - show basename of files only\n"
 	    " -F, --classify       - append indicator (one of /@) to entries\n"
 	    " -l, --long           - use a long listing format\n"
-//	    " -q, --quiet          - don't show status\n"
+	    " -q, --quiet          - don't show status\n"
 	    " -s, --size           - print size of each file\n"
 	    "     --filesize       - if printing size, only print size for files\n"
 	    " -i, --nocase         - case-insensitive pattern matching\n"
@@ -184,7 +185,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	    "Tips: Use --filesize and -D to pack the listing better.  If you don't\n"
 	    "always want to see file sizes, --filesize in cls-default will affect the\n"
 	    "-s flag on the commandline as well.  All flags work in\n"
-	    "cls-completion-default.  -i in cls-completion-default makes filename"
+	    "cls-completion-default.  -i in cls-completion-default makes filename\n"
 	    "completion case-insensitive."
 	    "\n"
 	    "Usage note: directory names must have a trailing slash; \"cls pub/\" to\n"
@@ -1202,7 +1203,7 @@ const char *FileSetOutput::parse_argv(ArgV *a)
 
    a->rewind();
    int opt, longopt;
-   while((opt=a->getopt_long(":BFilqsDIS", cls_options, &longopt))!=EOF)
+   while((opt=a->getopt_long(":1BFilqsDIS", cls_options, &longopt))!=EOF)
    {
       switch(opt) {
       case 0:
@@ -1214,6 +1215,9 @@ const char *FileSetOutput::parse_argv(ArgV *a)
 	    size_filesonly = true;
 	 }
 	 break;
+      case('1'):
+	 single_column = true;
+         break;
       case('B'):
 	 basenames = true;
          break;
