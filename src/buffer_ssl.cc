@@ -87,8 +87,7 @@ int IOBufferSSL::Do()
       res=Get_LL(GET_BUFSIZE);
       if(res>0)
       {
-	 in_buffer+=res;
-	 SaveMaxCheck(0);
+	 EmbraceNewData(res);
 	 event_time=now;
 	 return MOVED;
       }

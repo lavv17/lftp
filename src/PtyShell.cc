@@ -123,8 +123,8 @@ int PtyShell::getfd()
       setsid();
       /* make the pseudo-tty our controlling tty */
 #ifdef TIOCSCTTY
-      /* use ioctl if available */
-      ioctl(0, TIOCSCTTY, NULL);
+      /* use ioctl if available. FD 2 is tty even if use_pipes==true */
+      ioctl(2, TIOCSCTTY, NULL);
 #else
       /* otherwise open the tty without O_NOCTTY flag */
       ttyfd=open(tty_name, O_RDWR);

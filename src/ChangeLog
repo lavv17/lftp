@@ -1,3 +1,12 @@
+2004-01-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* PtyShell.cc: call TIOCSCTTY on FD 2 instead of FD 0, as it is a tty
+	  even if use_pipes==true.
+	* ResMgr.cc, ResMgr.h: (CharsetValidate) new static method.
+	* buffer_ssl.cc: allow translation.
+	* ftpclass.cc, ftpclass.h: implement recoding from any server charset.
+	* resource.cc: new setting ftp:charset.
+
 2004-01-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* buffer.h: use CDECL around iconv.h.

@@ -105,6 +105,7 @@ public:
    static const char *UNumberPairValidate(char **value);
    static const char *FileReadable(char **value);
    static const char *DirReadable(char **value);
+   static const char *CharsetValidate(char **value);
    static const char *NoClosure(char **);
    static bool str2bool(const char *value);
 

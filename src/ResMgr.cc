@@ -860,6 +860,20 @@ const char *ResMgr::DirReadable(char **value)
    return 0;
 }
 
+CDECL_BEGIN
+#include <iconv.h>
+CDECL_END
+const char *ResMgr::CharsetValidate(char **value)
+{
+   if(!**value)
+      return 0;
+   iconv_t ic=iconv_open(*value,"char");
+   if(ic==(iconv_t)-1)
+      return _("this encoding is not supported");
+   iconv_close(ic);
+   return 0;
+}
+
 const char *ResMgr::NoClosure(char **)
 {
    return _("no closure defined for this setting");

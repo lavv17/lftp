@@ -255,6 +255,10 @@ private:
    char	 *anon_user;
    char	 *anon_pass;
 
+   char	 *charset;
+   bool	 translation_activated;
+   void  SetControlConnectionTranslation(const char *cs);
+
    static const char *DefaultAnonPass();
 
    int	 flags;
