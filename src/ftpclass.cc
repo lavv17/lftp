@@ -1577,7 +1577,31 @@ void  Ftp::FlushSendQueue()
    if(send_cmd_ptr>cmd_begin)
    {
       send_cmd_ptr[-1]=0;
-      DebugPrint("---> ",cmd_begin,3);
+      char *p=strstr(cmd_begin,"PASS ");
+
+      bool may_show = (skey_pass!=0) || (user==0);
+      if(proxy && proxy_user) // can't distinguish here
+	 may_show=false;
+      if(p && !may_show)
+      {
+	 // try to hide password
+	 if(p>cmd_begin)
+	 {
+	    p[-1]=0;
+	    DebugPrint("---> ",cmd_begin,3);
+	 }
+	 DebugPrint("---> ","PASS XXXX",3);
+	 char *eol=strchr(p,'\n');
+	 if(eol)
+	 {
+	    *eol=0;
+	    DebugPrint("---> ",eol+1,3);
+	 }
+      }
+      else
+      {
+	 DebugPrint("---> ",cmd_begin,3);
+      }
    }
 }
 
@@ -2342,11 +2366,10 @@ const char *Ftp::make_skey_reply()
    DebugPrint("---- ","found s/key substring",9);
 
    int skey_sequence=0;
-   while ('0'<=*cp && *cp<='9')
-      skey_sequence = skey_sequence*10 + (*(cp++) - '0');
+   char *buf=(char*)alloca(strlen(cp));
 
-   if(*cp!=' ')
+   if(sscanf(cp,"%d %s",&skey_sequence,buf)!=2 || skey_sequence<1)
       return 0;
 
-   return calculate_skey_response(skey_sequence,cp+1,pass);
+   return calculate_skey_response(skey_sequence,buf,pass);
 }
