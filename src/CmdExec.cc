@@ -473,8 +473,9 @@ int CmdExec::Do()
 	       if(builtin==BUILTIN_CD)
 	       {
 		  // accept the path
-		  const char *f_c=session->GetFile();
-		  session->Chdir(alloca_strdup(f_c),false);
+		  const char *f=session->GetFile();
+		  f=alloca_strdup(f);
+		  session->Chdir(f,false);
 	       }
 	       session->Close();
 	       exit_code=0;

@@ -1,3 +1,8 @@
+2000-04-23  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.cc: handle old servers version 0.9 correctly.
+	* CmdExec.cc: actually commit the change for ^Z handling in `cd' command.
+
 2000-04-20  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Http.cc: query http:user-agent explicitly.
