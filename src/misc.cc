@@ -40,6 +40,10 @@ const char *dir_file(const char *dir,const char *file)
 
    static char *buf=0;
    static int buf_size=0;
+
+   if(buf && dir==buf) // it is possible to dir_file(dir_file(dir,dir),file)
+      dir=alloca_strdup(dir);
+
    int len=strlen(dir)+1+strlen(file)+1;
    if(buf_size<len)
       buf=(char*)xrealloc(buf,buf_size=len);

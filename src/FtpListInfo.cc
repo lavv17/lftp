@@ -30,6 +30,9 @@
 #include <ctype.h>
 #include "xalloca.h"
 
+#define need_size (need&FileInfo::SIZE)
+#define need_time (need&FileInfo::DATE)
+
 FtpListInfo::FtpListInfo(Ftp *s)
 {
    session=s;
@@ -54,6 +57,7 @@ int FtpListInfo::Do()
    int res;
    int m=STALL;
    char	**glob_res;
+   int err;
 
    if(done)
       state=DONE;
@@ -62,7 +66,8 @@ int FtpListInfo::Do()
    {
    case(INITIAL):
       glob=new RemoteGlob(session,"",session->LONG_LIST);
-      glob->NoCache();
+      if(!use_cache)
+	 glob->NoCache();
       state=GETTING_LONG_LIST;
       m=MOVED;
 
@@ -77,11 +82,16 @@ int FtpListInfo::Do()
 	 return MOVED;
       }
       glob_res=glob->GetResult();
-      result=ParseFtpLongList(glob_res);
+      err=0;
+      result=ParseFtpLongList_UNIX(glob_res,&err);
       delete glob;
+      glob=0;
+      if(err==0)
+	 goto pre_GETTING_INFO;
 
       glob=new RemoteGlob(session,"",session->LIST);
-      glob->NoCache();
+      if(!use_cache)
+	 glob->NoCache();
       state=GETTING_SHORT_LIST;
       m=MOVED;
 
@@ -106,56 +116,53 @@ int FtpListInfo::Do()
       state=GETTING_INFO;
       m=MOVED;
 
-   case(GETTING_INFO):
-      if(session->IsClosed())
+   pre_GETTING_INFO:
+      get_info_cnt=result->get_fnum();
+      if(get_info_cnt==0)
+	 goto info_done;
+
+      get_info=(Ftp::fileinfo*)xmalloc(sizeof(*get_info)*get_info_cnt);
+      cur=get_info;
+
+      get_info_cnt=0;
+      result->rewind();
+      for(file=result->curr(); file!=0; file=result->next())
       {
-	 get_info_cnt=result->get_fnum();
-	 if(get_info_cnt==0)
-	    goto info_done;
+	 cur->get_size = !(file->defined & file->SIZE) && need_size;
+	 cur->get_time = !(file->defined & file->DATE) && need_time;
 
-	 get_info=(Ftp::fileinfo*)xmalloc(sizeof(*get_info)*get_info_cnt);
-	 cur=get_info;
-
-	 get_info_cnt=0;
-	 result->rewind();
-	 for(file=result->curr(); file!=0; file=result->next())
+	 if(file->defined & file->TYPE)
 	 {
-	    cur->get_size = !(file->defined & file->SIZE);
-	    cur->get_time = !(file->defined & file->DATE);
-
-	    if(file->defined & file->TYPE)
+	    if(file->filetype==file->SYMLINK)
 	    {
-	       if(file->filetype==file->SYMLINK)
-	       {
-		  // don't need these for symlinks
-		  cur->get_size=false;
-		  cur->get_time=false;
-	       }
-	       else if(file->filetype==file->DIRECTORY)
-	       {
-		  // don't need size for directories
-		  cur->get_size=false;
-	       }
+	       // don't need these for symlinks
+	       cur->get_size=false;
+	       cur->get_time=false;
 	    }
-
-	    if(cur->get_size || cur->get_time)
+	    else if(file->filetype==file->DIRECTORY)
 	    {
-	       cur->file=file->name;
-	       if(!cur->get_size)
-		  cur->size=-1;
-	       if(!cur->get_time)
-		  cur->time=(time_t)-1;
-	       cur++;
-	       get_info_cnt++;
+	       // don't need size for directories
+	       cur->get_size=false;
 	    }
 	 }
 
-	 if(get_info_cnt==0)
-	    goto info_done;
-
-	 session->GetInfoArray(get_info,get_info_cnt);
-	 m=MOVED;
+	 if(cur->get_size || cur->get_time)
+	 {
+	    cur->file=file->name;
+	    if(!cur->get_size)
+	       cur->size=-1;
+	    if(!cur->get_time)
+	       cur->time=(time_t)-1;
+	    cur++;
+	    get_info_cnt++;
+	 }
       }
+      if(get_info_cnt==0)
+	 goto info_done;
+      session->GetInfoArray(get_info,get_info_cnt);
+      state=GETTING_INFO;
+      m=MOVED;
+   case(GETTING_INFO):
       res=session->Done();
       if(res==Ftp::DO_AGAIN)
 	 return m;
@@ -273,10 +280,11 @@ int   parse_month(char *m)
    return -1;
 }
 
-FileSet *FtpListInfo::ParseFtpLongList(char **lines)
+FileSet *FtpListInfo::ParseFtpLongList_UNIX(char **lines,int *err)
 {
 #define FIRST_TOKEN strtok(line," \t")
 #define NEXT_TOKEN  strtok(NULL," \t")
+#define ERR do{if(err) (*err)++;}while(0)
    char	 *line;
    int	 base_dir_len=-1;
    char	 *curr_dir=xstrdup("");
@@ -322,7 +330,10 @@ FileSet *FtpListInfo::ParseFtpLongList(char **lines)
       /* parse perms */
       char *t = FIRST_TOKEN;
       if(t==0)
+      {
+	 ERR;
 	 continue;
+      }
       FileInfo fi;
       switch(t[0])
       {
@@ -335,7 +346,13 @@ FileSet *FtpListInfo::ParseFtpLongList(char **lines)
       case('-'):  // plain file
 	 fi.SetType(fi.NORMAL);
       	 break;
+      case('b'): // block
+      case('c'): // char
+      case('p'): // pipe
+      case('s'): // sock
+	 continue;   // ignore
       default:
+	 ERR;
 	 continue;   // unknown
       }
       mode_t mode=parse_perms(t+1);
@@ -345,12 +362,18 @@ FileSet *FtpListInfo::ParseFtpLongList(char **lines)
       // link count
       t = NEXT_TOKEN;
       if(!t)
+      {
+	 ERR;
 	 continue;
+      }
 
       // user
       t = NEXT_TOKEN;
       if(!t)
+      {
+	 ERR;
 	 continue;
+      }
 
       // group or size
       char *group_or_size = NEXT_TOKEN;
@@ -358,14 +381,20 @@ FileSet *FtpListInfo::ParseFtpLongList(char **lines)
       // size or month
       t = NEXT_TOKEN;
       if(!t)
+      {
+	 ERR;
 	 continue;
+      }
       if(isdigit(*t))
       {
 	 // size
       	 fi.SetSize(atol(t));
 	 t = NEXT_TOKEN;
 	 if(!t)
+	 {
+	    ERR;
 	    continue;
+	 }
       }
       else
       {
@@ -390,7 +419,10 @@ FileSet *FtpListInfo::ParseFtpLongList(char **lines)
       // time or year
       t = NEXT_TOKEN;
       if(!t)
+      {
+	 ERR;
 	 continue;
+      }
       date.tm_hour=date.tm_min=0;
       if(strlen(t)==5)
       {
@@ -414,8 +446,11 @@ FileSet *FtpListInfo::ParseFtpLongList(char **lines)
       fi.SetDateUnprec(mktime(&date));
 
       char *name=strtok(NULL,"");
-      if(!name || !strcmp(name,".") || !strcmp(name,".."))
+      if(!name)
+      {
+	 ERR;
 	 continue;
+      }
 
       // there are ls which outputs extra space after year.
       if(year_anomaly && *name==' ')

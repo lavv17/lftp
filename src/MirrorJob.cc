@@ -391,6 +391,7 @@ int   MirrorJob::Do()
       	 state=DONE;
       	 return MOVED;
       }
+      list_info->Need(FileInfo::ALL_INFO);
 
       list_info->SetExclude(remote_relative_dir,
 		     rx_exclude?&rxc_exclude:0,rx_include?&rxc_include:0);
