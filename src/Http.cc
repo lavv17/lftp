@@ -735,12 +735,10 @@ void Http::GetBetterConnection(int level,int count)
 	 takeover_time=now;
       }
 
-      // connected session (o) must have resolved address
-      if(!peer)
+      if(!peer && o->peer)
       {
 	 // copy resolved address so that it would be possible to create
 	 // data connection.
-	 xfree(peer);
 	 peer=(sockaddr_u*)xmemdup(o->peer,o->peer_num*sizeof(*o->peer));
 	 peer_num=o->peer_num;
 	 peer_curr=o->peer_curr;
@@ -1504,7 +1502,7 @@ int Http::Done()
       return error_code;
    if(state==DONE)
       return OK;
-   if(mode==CONNECT_VERIFY && peer)
+   if(mode==CONNECT_VERIFY && (peer || sock!=-1))
       return OK;
    return IN_PROGRESS;
 }
