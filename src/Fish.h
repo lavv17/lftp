@@ -106,7 +106,7 @@ class Fish : public NetAccess
    int	 RespQueueSize() { return RQ_tail-RQ_head; }
    void  EmptyRespQueue() { RQ_head=RQ_tail=0; }
 
-   void GetBetterConnection(int level,int count);
+   void GetBetterConnection(int level);
    void MoveConnectionHere(Fish *o);
 
    char  *line;

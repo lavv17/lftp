@@ -42,7 +42,7 @@
 
 static FileInfo *ls_to_FileInfo(char *line);
 
-void Fish::GetBetterConnection(int level,int count)
+void Fish::GetBetterConnection(int level)
 {
    for(FA *fo=FirstSameSite(); fo!=0; fo=NextSameSite(fo))
    {
@@ -59,10 +59,6 @@ void Fish::GetBetterConnection(int level,int count)
 	    continue;
 	 o->Disconnect();
 	 return;
-      }
-      else
-      {
-	 takeover_time=now;
       }
 
       if(home && !o->home)
@@ -86,7 +82,6 @@ int Fish::Do()
 {
    int m=STALL;
    int fd;
-   int count;
 
    // check if idle time exceeded
    if(mode==CLOSED && send_buf && idle>0)
@@ -136,12 +131,11 @@ int Fish::Do()
 
       // walk through Fish classes and try to find identical idle session
       // first try "easy" cases of session take-over.
-      count=CountConnections();
       for(int i=0; i<3; i++)
       {
-	 if(i>=2 && (connection_limit==0 || connection_limit>count))
+	 if(i>=2 && (connection_limit==0 || connection_limit>CountConnections()))
 	    break;
-	 GetBetterConnection(i,count);
+	 GetBetterConnection(i);
 	 if(state!=DISCONNECTED)
 	    return MOVED;
       }

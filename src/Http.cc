@@ -713,7 +713,7 @@ static const char *find_eol(const char *str,int len)
    return 0;
 }
 
-void Http::GetBetterConnection(int level,int count)
+void Http::GetBetterConnection(int level)
 {
    if(level==0)
       return;
@@ -735,10 +735,6 @@ void Http::GetBetterConnection(int level,int count)
 	    continue;
 	 o->Disconnect();
 	 return;
-      }
-      else
-      {
-	 takeover_time=now;
       }
 
       if(!peer && o->peer)
@@ -762,7 +758,6 @@ int Http::Do()
    int res;
    const char *buf;
    int len;
-   int count;
 
    // check if idle time exceeded
    if(mode==CLOSED && sock!=-1 && idle>0)
@@ -855,12 +850,11 @@ int Http::Do()
 
       // walk through Http classes and try to find identical idle session
       // first try "easy" cases of session take-over.
-      count=CountConnections();
       for(int i=0; i<3; i++)
       {
-	 if(i>=2 && (connection_limit==0 || connection_limit>count))
+	 if(i>=2 && (connection_limit==0 || connection_limit>CountConnections()))
 	    break;
-	 GetBetterConnection(i,count);
+	 GetBetterConnection(i);
 	 if(state!=DISCONNECTED)
 	    return MOVED;
       }

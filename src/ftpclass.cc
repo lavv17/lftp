@@ -1019,10 +1019,13 @@ const char *Ftp::FindHomeAuto()
    return 0;
 }
 
-void  Ftp::GetBetterConnection(int level,int count)
+// returns true if we need to sleep instead of moving to higher level.
+bool Ftp::GetBetterConnection(int level,bool limit_reached)
 {
+   bool need_sleep=false;
+
    if(level==0 && cwd==0)
-      return;
+      return need_sleep;
 
    for(FA *fo=FirstSameSite(); fo!=0; fo=NextSameSite(fo))
    {
@@ -1031,6 +1034,9 @@ void  Ftp::GetBetterConnection(int level,int count)
       if(o->IsConnected()<2)
 	 continue;
       if(!SameConnection(o))
+	 continue;
+
+      if(level==0 && xstrcmp(real_cwd,o->real_cwd))
 	 continue;
 
       if(o->data_sock!=-1 || o->state!=EOF_STATE || o->mode!=CLOSED)
@@ -1048,7 +1054,7 @@ void  Ftp::GetBetterConnection(int level,int count)
 	    o->DataAbort();
 	    o->DataClose();
 	    if(o->control_sock==-1)
-	       return; // oops...
+	       return need_sleep; // oops...
 	 }
 	 else
 	 {
@@ -1058,16 +1064,27 @@ void  Ftp::GetBetterConnection(int level,int count)
       }
       else
       {
-	 takeover_time=now;
+	 if(limit_reached)
+	 {
+	    int diff=o->last_priority-priority;
+	    if(diff>0)
+	    {
+	       int have_idle=now-o->idle_start;
+	       if(have_idle<diff)
+	       {
+		  TimeoutS(diff-have_idle);
+		  need_sleep=true;
+		  continue;
+	       }
+	    }
+	 }
       }
-
-      if(level==0 && xstrcmp(real_cwd,o->real_cwd))
-	 continue;
 
       // so borrow the connection
       MoveConnectionHere(o);
-      return;
+      return false;
    }
+   return need_sleep;
 }
 
 void  Ftp::HandleTimeout()
@@ -1129,14 +1146,17 @@ int   Ftp::Do()
    {
       // walk through ftp classes and try to find identical idle ftp session
       // first try "easy" cases of session take-over.
-      int count=CountConnections();
       for(int i=0; i<3; i++)
       {
-	 if(i>=2 && (connection_limit==0 || connection_limit>count))
+	 bool limit_reached=(connection_limit>0
+			    && connection_limit<=CountConnections());
+	 if(i>=2 && !limit_reached)
 	    break;
-	 GetBetterConnection(i,count);
+	 bool need_sleep=GetBetterConnection(i,limit_reached);
 	 if(state!=INITIAL_STATE)
 	    return MOVED;
+	 if(need_sleep)
+	    return m;
       }
 
       if(!ReconnectAllowed())
@@ -1365,14 +1385,6 @@ int   Ftp::Do()
 	 return MOVED;
       }
 
-      if(takeover_time!=NO_DATE && takeover_time+1-priority>now
-      && connection_limit>0 && connection_limit<=CountConnections()+1)
-      {
-	 TimeoutS(takeover_time+1-priority-now);
-	 goto notimeout_return;
-      }
-      takeover_time=NO_DATE;
-
       if(home==0 && !RespQueueIsEmpty())
 	 goto usual_return;
 
@@ -1527,6 +1539,7 @@ int   Ftp::Do()
 	 real_pos=-1;	// we don't yet know if REST will succeed
 
       flags&=~IO_FLAG;
+      last_priority=priority;
 
       switch((enum open_mode)mode)
       {

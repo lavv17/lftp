@@ -68,7 +68,7 @@ class Http : public NetAccess
    void SendArrayInfoRequest();
    int status_code;
    void HandleHeaderLine(const char *name,const char *value);
-   void GetBetterConnection(int level,int count);
+   void GetBetterConnection(int level);
    void SetCookie(const char *val);
    char *MakeCookie(const char *host,const char *path);
    void CookieMerge(char **c,const char *add);

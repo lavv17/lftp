@@ -267,7 +267,7 @@ private:
    bool	 rest_list;
    char  *list_options;
 
-   void	 GetBetterConnection(int level,int count);
+   bool	 GetBetterConnection(int level,bool limit_reached);
    bool  SameConnection(const Ftp *o);
 
    int	 nop_interval;

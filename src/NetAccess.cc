@@ -62,7 +62,6 @@ void NetAccess::Init()
 
    connection_limit=0;	// no limit.
    connection_takeover=false;
-   takeover_time=NO_DATE;
 
    Reconfig(0);
 }
@@ -524,7 +523,6 @@ void NetAccess::Close()
 
    retries=0;
    persist_retries=0;
-   takeover_time=NO_DATE;
 
    Delete(resolver);
    resolver=0;
