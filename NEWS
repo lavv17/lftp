@@ -4,6 +4,7 @@ Version 2.1.0 - 1999-09-??
 * new command `queue' to queue commands for sequential execution.
 * rate limit for all connections in sum: settings net:limit-total-rate and
   net:limit-total-max.
+* dns cache implemented: settings dns:cache-{enable,expire,size}.
 * improved completion of file names with wildcards.
 * debug output now clears and redraws the prompt.
 * mirror now does not overwrite just appeared/changed files.
