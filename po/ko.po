@@ -1,32 +1,32 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Dojip Kim <greendrm@kamsi.yonsei.ac.kr>, 1999.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 1999-10-02 23:37+0400\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Project-Id-Version: lftp 2.1.1\n"
+"POT-Creation-Date: 1999-10-02 23:37+KST\n"
+"PO-Revision-Date: 1999-10-04 \n"
+"Last-Translator: Dojip Kim <greendrm@kamsi.yonsei.ac.kr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
-"Content-Transfer-Encoding: ENCODING\n"
+"Content-Type: text/plain; charset=euc-kr\n"
+"Content-Transfer-Encoding: 8-bit\n"
 
 #: src/CatJob.cc:50 src/CatJob.cc:61
 msgid "Waiting for filter to terminate"
-msgstr ""
+msgstr "필터 종료를 위하여 기다립니다"
 
 #: src/CmdExec.cc:71
 #, c-format
 msgid "Warning: getcwd() failed: %s\n"
-msgstr "경고: getcwd() failed: %s\n"
+msgstr "경고: getcwd() 실패: %s\n"
 
 #: src/CmdExec.cc:93
 #, c-format
 msgid "Warning: chdir(%s) failed: %s\n"
-msgstr "경고: chdir(%s) failed: %s\n"
+msgstr "경고: chdir(%s) 실패: %s\n"
 
 #: src/CmdExec.cc:201
 #, c-format
@@ -63,7 +63,7 @@ msgstr "\t명령어 대기:\n"
 #: src/CmdExec.cc:679
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
-msgstr "\t작업 [%d]의 종료를 기다림\n"
+msgstr "\t작업 [%d]의 종료를 기다립니다\n"
 
 #: src/CmdExec.cc:683
 #, c-format
@@ -86,7 +86,7 @@ msgstr "파일을 읽을 수 없습니다"
 
 #: src/FileAccess.cc:300 src/ftpclass.cc:2545 src/ftpclass.cc:2555
 msgid "Not connected"
-msgstr "접속상태가 아닙니다"
+msgstr "접속되지 않았습니다"
 
 #: src/FileAccess.cc:306
 #, c-format
@@ -107,7 +107,7 @@ msgstr "로그인 실패"
 
 #: src/FileAccess.cc:315
 msgid "Operation not supported"
-msgstr ""
+msgstr "지원되지 않는 오퍼레이션입니다"
 
 #: src/FtpListInfo.cc:226 src/HttpDir.cc:1006
 #, c-format
@@ -127,7 +127,7 @@ msgstr "원거리 rm(%s) -%s\n"
 #: src/GetJob.cc:162
 #, c-format
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
-msgstr ""
+msgstr "%s: %s: 파일이 이미 존재하고 xfer: clobber is unset\n"
 
 #: src/Job.cc:222
 #, c-format
@@ -521,7 +521,7 @@ msgstr ""
 
 #: src/commands.cc:168
 msgid "Print help for command <cmd>, or list of available commands\n"
-msgstr "명령어 <cmd> 에 도움말, 또는 이용 가능한 명령어의 목록을 보여줍니다\n"
+msgstr "명령어 <cmd> 의 도움말, 또는 이용 가능한 명령어의 목록을 보여줍니다\n"
 
 #: src/commands.cc:170
 msgid "List running jobs. -v means verbose, several -v can be specified.\n"
@@ -1273,7 +1273,7 @@ msgstr ""
 #: src/lftp.cc:189
 #, c-format
 msgid "[%lu] Terminated by signal %d. %s"
-msgstr ""
+msgstr "[%lu] 신호 %d 로 종료되었습니다. %s"
 
 #: src/lftp.cc:235
 #, c-format
@@ -1375,7 +1375,7 @@ msgstr ""
 #: src/rmJob.cc:39
 #, c-format
 msgid "%s ok, `%s' removed\n"
-msgstr ""
+msgstr "%s 성공, `%s' 삭제했습니다\n"
 
 #: src/rmJob.cc:45
 #, c-format
@@ -1385,12 +1385,12 @@ msgstr ""
 #: src/rmJob.cc:50
 #, c-format
 msgid "%s ok, %d director$y|ies$ removed\n"
-msgstr ""
+msgstr "%s 성공, %d director$y|ies$ 삭제했습니다\n"
 
 #: src/rmJob.cc:53
 #, c-format
 msgid "%s ok, %d file$|s$ removed\n"
-msgstr ""
+msgstr "%s 성공, %d file$|s$ 삭제했습니다\n"
 
 #: src/Http.cc:926 src/Http.cc:946
 msgid "chunked format violated"
@@ -1408,4 +1408,4 @@ msgstr "프락시 전송규약은 지원하지 않아요"
 #: src/FtpGlob.cc:258 src/HttpDir.cc:630 src/HttpDir.cc:807
 #, c-format
 msgid "Getting file list (%ld) [%s]"
-msgstr ""
+msgstr "파일 목록을 가져옵니다 (%ld) [%s]"
