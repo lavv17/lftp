@@ -564,8 +564,6 @@ parse_url_again:
 	 goto got_info;
       }
 
-      printf("str=%s\n",str);
-
       hour=0;
       minute=0;
       // unusual apache listing: size DD-Mon-YYYY
