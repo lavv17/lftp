@@ -1329,7 +1329,7 @@ static FileInfo *ls_to_FileInfo(char *line)
       {
 	 sprintf(month_name,"%02d",month+1);
 	 if(year==-1)
-	    year=guess_year(month,day,hour,minute,SMTask::now);
+	    year=guess_year(month,day,hour,minute);
 	 else
 	 {
 	    hour=12;

@@ -53,7 +53,7 @@ int PtyShell::getfd()
    const char *tty_name=open_pty(&ptyfd,&ttyfd);
    if(!tty_name)
    {
-      if(errno==EMFILE || errno==ENFILE || E_RETRY(errno))
+      if(NonFatalError(errno))
       	 return -1;
       char s[256];
       sprintf(s,_("pseudo-tty allocation failed: %s"),strerror(errno));

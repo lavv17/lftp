@@ -918,7 +918,7 @@ parse_url_again:
       {
 	 sprintf(info.month_name,"%02d",info.month+1);
 	 if(info.year==-1)
-	    info.year=guess_year(info.month,info.day,info.hour,info.minute,SMTask::now);
+	    info.year=guess_year(info.month,info.day,info.hour,info.minute);
       }
       if(info.perms[0]==0)
       {

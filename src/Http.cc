@@ -887,12 +887,8 @@ int Http::Do()
 	    retries--;
 	    return MOVED;
 	 }
-	 if(errno==ENFILE || errno==EMFILE)
-	 {
-	    // file table overflow - it could free sometime
-	    TimeoutS(1);
+	 if(NonFatalError(errno))
 	    return m;
-	 }
 	 char str[256];
 	 sprintf(str,_("cannot create socket of address family %d"),
 			peer[peer_curr].sa.sa_family);
@@ -1314,12 +1310,8 @@ int Http::Do()
    return m;
 
 system_error:
-   if(errno==ENFILE || errno==EMFILE)
-   {
-      // file table overflow - it could free sometime
-      Timeout(1000);
+   if(NonFatalError(errno))
       return m;
-   }
    SetError(SEE_ERRNO,0);
    Disconnect();
    return MOVED;
@@ -1535,7 +1527,7 @@ int Http::Write(const void *buf,int size)
    int res=write(sock,buf,size);
    if(res==-1)
    {
-      if(E_RETRY(errno))
+      if(NonFatalError(errno))
 	 return DO_AGAIN;
       if(NotSerious(errno) || errno==EPIPE)
       {

@@ -172,11 +172,8 @@ int   Resolver::Do()
 	 int res=pipe(pipe_to_child);
 	 if(res==-1)
 	 {
-	    if(errno==ENFILE || errno==EMFILE)
-	    {
-	       TimeoutS(1);
+	    if(NonFatalError(errno))
 	       return m;
-	    }
 	    MakeErrMsg("pipe()");
 	    return MOVED;
 	 }

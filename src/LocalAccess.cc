@@ -323,7 +323,7 @@ read_again:
 
    if(res<0)
    {
-      if(E_RETRY(errno))
+      if(NonFatalError(errno))
 	 return DO_AGAIN;
       saved_errno=errno;
       return SEE_ERRNO;
@@ -424,7 +424,7 @@ int LocalAccess::Write(const void *vbuf,int len)
    int res=write(fd,buf,len);
    if(res<0)
    {
-      if(E_RETRY(errno))
+      if(NonFatalError(errno))
 	 return DO_AGAIN;
       saved_errno=errno;
       return SEE_ERRNO;

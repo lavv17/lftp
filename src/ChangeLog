@@ -1,3 +1,11 @@
+2001-11-26  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc, FileFeeder.cc, Filter.cc, Filter.h, Http.cc,
+	  LocalAccess.cc, ProcWait.cc, PtyShell.cc, Resolver.cc, SMTask.cc,
+	  SMTask.h, buffer.cc, ftpclass.cc, misc.cc, misc.h:
+	  (NonFatalError) new function; use it; new setting xfer:full-disk-fatal;
+	  use SMTask::now from guess_year.
+
 2001-11-23  Glenn Maynard <g_ld@zewt.org>
 
 	* ftpclass.cc: fix query for ftp:web-mode.

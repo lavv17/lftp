@@ -362,7 +362,7 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
    if(strlen(t)==5)
    {
       sscanf(t,"%2d:%2d",&date.tm_hour,&date.tm_min);
-      date.tm_year=guess_year(date.tm_mon,date.tm_mday,date.tm_hour,date.tm_min,SMTask::now) - 1900;
+      date.tm_year=guess_year(date.tm_mon,date.tm_mday,date.tm_hour,date.tm_min) - 1900;
    }
    else
    {
@@ -763,7 +763,7 @@ FileInfo *ParseFtpLongList_MacWebStar(const char *line_c,int *err,const char *tz
    int prec=30;
 
    if(date.tm_year==-1)
-      date.tm_year=guess_year(date.tm_mon,date.tm_mday,date.tm_hour,date.tm_min,SMTask::now) - 1900;
+      date.tm_year=guess_year(date.tm_mon,date.tm_mday,date.tm_hour,date.tm_min) - 1900;
    else
    {
       date.tm_hour=12;

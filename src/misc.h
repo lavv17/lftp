@@ -80,7 +80,7 @@ int parse_month(const char *);
 int parse_perms(const char *);
 const char *format_perms(int p);
 int parse_year_or_time(const char *year_or_time,int *year,int *hour,int *minute);
-int guess_year(int month,int day,int hour,int minute,const struct tm *now);
+int guess_year(int month,int day,int hour,int minute);
 
 time_t mktime_from_utc(const struct tm *);
 time_t mktime_from_tz(struct tm *,const char *tz);
@@ -108,8 +108,5 @@ char *xstrftime(const char *format, const struct tm *tm);
 /* returns malloc'd formatted string */
 char *xvasprintf(const char *format, va_list ap);
 char *xasprintf(const char *format, ...);
-
-/* convert \r\n -> \n in buf; return new size */
-int crlf_to_lf(char *buf, int s);
 
 #endif // MISC_H

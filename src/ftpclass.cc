@@ -1142,12 +1142,8 @@ int   Ftp::Do()
 	 }
 	 sprintf(str,"socket: %s",strerror(errno));
          DebugPrint("**** ",str,0);
-	 if(errno==ENFILE || errno==EMFILE)
-	 {
-	    // file table overflow - it could free sometime
-	    TimeoutS(1);
+	 if(NonFatalError(errno))
 	    return m;
-	 }
 	 sprintf(str,_("cannot create socket of address family %d"),
 			peer_sa.sa.sa_family);
 	 SetError(SEE_ERRNO,str);
@@ -2030,12 +2026,8 @@ notimeout_return:
    return m;
 
 system_error:
-   if(errno==ENFILE || errno==EMFILE)
-   {
-      // file table overflow - it could free sometime
-      TimeoutS(1);
+   if(NonFatalError(errno))
       return m;
-   }
    quit_sent=true;
    Disconnect();
    SetError(SEE_ERRNO,0);
@@ -2289,7 +2281,7 @@ int  Ftp::ReceiveResp()
 	       res=read(control_sock,resp+resp_size,resp_alloc-resp_size-1);
 	       if(res==-1)
 	       {
-		  if(E_RETRY(errno))
+		  if(NonFatalError(errno))
 		     return m;
 		  if(NotSerious(errno))
 		     DebugPrint("**** ",strerror(errno),0);
@@ -2594,7 +2586,7 @@ int  Ftp::FlushSendQueue(bool all)
 	    return m;
 	 if(res==-1)
 	 {
-	    if(E_RETRY(errno))
+	    if(NonFatalError(errno))
 	       return m;
 	    if(NotSerious(errno) || errno==EPIPE)
 	       DebugPrint("**** ",strerror(errno),0);
@@ -2960,7 +2952,7 @@ read_again:
       res=read(data_sock,buf,size);
       if(res==-1)
       {
-	 if(E_RETRY(errno))
+	 if(NonFatalError(errno))
 	    return DO_AGAIN;
 	 if(NotSerious(errno))
 	 {
@@ -3085,7 +3077,7 @@ int   Ftp::Write(const void *buf,int size)
       res=write(data_sock,buf,size);
       if(res==-1)
       {
-	 if(E_RETRY(errno))
+	 if(NonFatalError(errno))
 	    return DO_AGAIN;
 	 if(NotSerious(errno) || errno==EPIPE)
 	 {

@@ -86,6 +86,7 @@ public:
    TimeDate(time_t s,int ms=0) : Time(s,ms) { local_time_unix=0; }
 
    operator const struct tm *() { set_local_time(); return &local_time; }
+   operator const struct tm &() { set_local_time(); return local_time; }
    int Year()	     { set_local_time(); return local_time.tm_year+1900; }
    int Month()	     { set_local_time(); return local_time.tm_mon+1; }
    int DayOfMonth()  { set_local_time(); return local_time.tm_mday; }

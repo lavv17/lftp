@@ -78,6 +78,7 @@ public:
    static SMTask *current;
 
    static int TaskCount();
+   static bool NonFatalError(int err);
 };
 
 class SMTaskInit : public SMTask

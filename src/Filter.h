@@ -43,6 +43,7 @@ public:
    virtual ~FDStream();
 
    void MakeErrorText();
+   bool NonFatalError(int err);
 
    virtual off_t get_size() { return -1; }
    virtual void setmtime(time_t) {}

@@ -56,7 +56,7 @@ FDStream::FDStream()
 }
 void FDStream::MakeErrorText()
 {
-   if(errno==ENFILE || errno==EMFILE || E_RETRY(errno))
+   if(NonFatalError(errno))
       return;  // not a serious error - can be retried
    char *syserr=strerror(errno);
    error_text=(char*)xmalloc(strlen(name)+strlen(syserr)+3);
@@ -145,7 +145,7 @@ int OutputFilter::getfd()
 
    if(pipe(p)==-1)
    {
-      if(errno==EMFILE || errno==ENFILE)
+      if(NonFatalError(errno))
 	 return -1;
       sprintf(s,_("pipe() failed: %s"),strerror(errno));
       error_text=xstrdup(s);
@@ -364,4 +364,10 @@ off_t FileStream::get_size()
       return -1;
    }
    return st.st_size;
+}
+
+#include "SMTask.h"
+bool FDStream::NonFatalError(int err)
+{
+   return SMTask::NonFatalError(err);
 }

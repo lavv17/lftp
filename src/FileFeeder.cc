@@ -33,7 +33,6 @@ const char *FileFeeder::NextCmd(CmdExec *exec, const char *)
 	 fprintf(stderr,"source: %s\n",in->error_text);
 	 return 0;
       }
-      exec->TimeoutS(1);
       return "";
    }
    int res=read(fd,buffer,buffer_size-1);
@@ -48,6 +47,8 @@ const char *FileFeeder::NextCmd(CmdExec *exec, const char *)
 	 exec->Block(fd,POLLIN);
 	 return "";
       }
+      if(SMTask::NonFatalError(errno))
+	 return "";
       perror("source");
       return 0;
    }

@@ -50,6 +50,7 @@
 #include "ProcWait.h"
 #include "SignalHook.h"
 #include "url.h"
+#include "ResMgr.h"
 
 const char *dir_file(const char *dir,const char *file)
 {
@@ -426,9 +427,9 @@ int parse_year_or_time(const char *year_or_time,int *year,int *hour,int *minute)
    }
    return 0;
 }
-int guess_year(int month,int day,int hour,int minute,const struct tm *now_p)
+int guess_year(int month,int day,int hour,int minute)
 {
-   const struct tm &now=*now_p;
+   const struct tm &now=SMTask::now;
    int year=now.tm_year+1900;
    if(((month     *32+        day)*64+       hour)*64+       minute
     > ((now.tm_mon*32+now.tm_mday)*64+now.tm_hour)*64+now.tm_min)
@@ -726,7 +727,7 @@ char *xvasprintf(const char *format, va_list ap)
    {
       ret = (char *) xrealloc(ret, siz);
       va_list tmp;
-      va_copy(tmp,ap);
+      VA_COPY(tmp,ap);
       int res=vsnprintf(ret, siz, format, tmp);
       va_end(tmp);
       if(res>=0 && res<siz)

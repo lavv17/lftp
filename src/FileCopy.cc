@@ -1401,6 +1401,8 @@ int FileCopyPeerFDStream::Get_LL(int len)
 	 Block(fd,POLLIN);
 	 return 0;
       }
+      if(NonFatalError(errno))
+	 return 0;
       stream->MakeErrorText();
       SetError(stream->error_text);
       return -1;
@@ -1486,6 +1488,8 @@ int FileCopyPeerFDStream::Put_LL(const char *buf,int len)
 	 broken=true;
 	 return -1;
       }
+      if(NonFatalError(errno))
+	 return 0;
       stream->MakeErrorText();
       SetError(stream->error_text);
       return -1;
