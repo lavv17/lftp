@@ -26,6 +26,10 @@
 extern "C" {
 #endif
 
+#if defined _AIX && !defined __GNUC__
+ #pragma alloca
+#endif
+
 #ifdef __GNUC__
 # ifndef alloca
 #  define alloca __builtin_alloca
@@ -34,12 +38,8 @@ extern "C" {
 # if HAVE_ALLOCA_H
 #  include <alloca.h>
 # else
-#  ifdef _AIX
- #pragma alloca
-#  else
-#   ifndef alloca /* predefined by HP cc +Olibcalls */
-char *alloca (size_t);
-#   endif
+#  ifndef _AIX
+    char *alloca (size_t);
 #  endif
 # endif
 #endif

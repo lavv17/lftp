@@ -23,9 +23,19 @@
 # define CDECL_END
 #endif
 
+// should be included before any real code.
+#include "xalloca.h"
+
 #ifndef HAVE_STRERROR
 /* there is substitute in lib/ */
 CDECL const char *strerror(int);
+#endif
+
+#include <sys/types.h>
+#include <sys/socket.h>
+#ifdef lftp_socklen_t
+# undef  socklen_t
+# define socklen_t lftp_socklen_t
 #endif
 
 #include <gettext.h>
