@@ -768,6 +768,7 @@ void FileCopyPeerFA::Seek(long new_pos)
    session->Close();
    if(seek_pos==FILE_END)
       WantSize();
+   pos=new_pos;
 }
 
 void FileCopyPeerFA::OpenSession()

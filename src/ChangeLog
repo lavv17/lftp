@@ -5,6 +5,7 @@
 	* LocalAccess.cc, LocalAccess.h: accept current system cwd as default;
 	  log errors; implemented LocalDirList.
 	* commands.cc: don't append var_ls if empty.
+	* FileCopy.cc: set pos in FileCopyPeerFA::Seek.
 
 2000-01-10  Alexander V. Lukyanov  <lav@yars.free.net>
 
