@@ -36,7 +36,7 @@ void lftp_add_history_nodups(const char *cmd_buf)
    using_history();
 }
 
-const char *lftp_readline(const char *prompt)
+char *lftp_readline(const char *prompt)
 {
    return readline(prompt);
 }

@@ -27,7 +27,7 @@ CDECL_BEGIN
 
 void lftp_readline_init (void);
 int  lftp_history_expand (const char *, char **);
-const char *lftp_readline (const char *prompt);
+char *lftp_readline (const char *prompt);
 void lftp_add_history_nodups(const char *cmd);
 void lftp_rl_clear(void);
 void lftp_rl_redisplay_maybe(void);

@@ -12,6 +12,9 @@
 	* misc.cc: (xgetcwd) call xmalloc_register_block.
 	* xmalloc.cc, xmalloc.h: count memory blocks;
 	  add xmalloc_register_block.
+	* NetAccess.cc: workaround gcc bug, this fixes mem leak.
+	* buffer.cc: clean up gotos.
+	* lftp.cc, lftp_rl.c, lftp_rl.h: readline result must be freed.
 
 2000-02-12  Alexander V. Lukyanov  <lav@yars.free.net>
 

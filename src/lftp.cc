@@ -114,7 +114,7 @@ public:
       ::completion_shell=exec;
       ::remote_completion=exec->remote_completion;
 
-      const char *cmd_buf;
+      char *cmd_buf;
       if(tty)
       {
 	 if(ctty) // controlling terminal
@@ -161,9 +161,9 @@ public:
       }
       else
       {
-	 to_free=readline_from_file(stdin);
-	 cmd_buf=to_free;
+	 cmd_buf=readline_from_file(stdin);
       }
+      to_free=cmd_buf;
 
       ::completion_shell=0;
 

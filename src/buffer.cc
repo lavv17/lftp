@@ -229,20 +229,17 @@ int FileOutputBuffer::Put_LL(const char *buf,int size)
       return -1;
    }
 
+   int res;
    int fd=out->getfd();
    if(fd==-1)
    {
       if(out->error())
-      {
-      err:
-	 SetError(out->error_text);
-	 return -1;
-      }
+	 goto out_err;
       event_time=now;
       return 0;
    }
 
-   int res=write(fd,buf,size);
+   res=write(fd,buf,size);
    if(res==-1)
    {
       if(errno==EAGAIN)
@@ -254,9 +251,13 @@ int FileOutputBuffer::Put_LL(const char *buf,int size)
       }
       saved_errno=errno;
       out->MakeErrorText();
-      goto err;
+      goto out_err;
    }
    return res;
+
+out_err:
+   SetError(out->error_text);
+   return -1;
 }
 
 FgData *FileOutputBuffer::GetFgData(bool fg)
@@ -357,11 +358,7 @@ int FileInputBuffer::Get_LL(int size)
       if(fd==-1)
       {
 	 if(in->error())
-	 {
-	 err:
-	    SetError(in->error_text);
-	    return -1;
-	 }
+	    goto in_err;
 	 return 0;
       }
 
@@ -374,12 +371,16 @@ int FileInputBuffer::Get_LL(int size)
 	    return 0;
 	 saved_errno=errno;
 	 in->MakeErrorText();
-	 goto err;
+	 goto in_err;
       }
    }
    if(res==0)
       eof=true;
    return res;
+
+in_err:
+   SetError(in->error_text);
+   return -1;
 }
 
 FgData *FileInputBuffer::GetFgData(bool fg)

@@ -208,16 +208,15 @@ void NetAccess::SetProxy(const char *px)
    xfree(proxy_pass); proxy_pass=0;
 
    if(!px)
+      px="";
+
+   ParsedURL url(px);
+   if(!url.host || url.host[0]==0)
    {
-   no_proxy:
       if(was_proxied)
 	 ClearPeer();
       return;
    }
-
-   ParsedURL url(px);
-   if(!url.host || url.host[0]==0)
-      goto no_proxy;
 
    proxy=xstrdup(url.host);
    proxy_port=xstrdup(url.port);
