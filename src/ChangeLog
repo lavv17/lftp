@@ -1,7 +1,7 @@
 2000-05-23  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Http.cc: implement `quote set-cookie'; don't retry POST op if
-	  some data were sent.
+	  some data were sent; implement `quote POST path data'.
 
 2000-05-22  Alexander V. Lukyanov  <lav@yars.free.net>
 

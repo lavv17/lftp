@@ -97,6 +97,8 @@ void Http::Init()
    use_head=true;
 
    user_agent=0;
+   post_data=0;
+   post=false;
 }
 
 Http::Http() : super()
@@ -120,13 +122,8 @@ Http::Http(const Http *f) : super(f)
 
 Http::~Http()
 {
-   Delete(send_buf);
-   Delete(recv_buf);
-   if(sock!=-1)
-      close(sock);
-   xfree(line);
-   xfree(status);
-   xfree(location);
+   Close();
+   Disconnect();
 }
 
 void Http::MoveConnectionHere(Http *o)
@@ -177,6 +174,8 @@ void Http::ResetRequestData()
    xfree(status);
    status=0;
    status_consumed=0;
+   xfree(line);
+   line=0;
    xfree(location);
    location=0;
    sent_eot=false;
@@ -213,6 +212,9 @@ void Http::Close()
    array_send=0;
    no_cache_this=false;
    no_ranges=false;
+   post=false;
+   xfree(post_data);
+   post_data=0;
    super::Close();
 }
 
@@ -394,6 +396,11 @@ add_path:
    case CLOSED:
    case CONNECT_VERIFY:
    case QUOTE_CMD:
+      if(post)
+      {
+	 entity_size=xstrlen(post_data);
+	 goto send_post;
+      }
    case RENAME:
    case LIST:
    case CHANGE_MODE:
@@ -410,7 +417,11 @@ add_path:
       if(hftp || strcasecmp(Query("put-method",hostname),"POST"))
 	 SendMethod("PUT",efile);
       else
+      {
+      send_post:
 	 SendMethod("POST",efile);
+	 pos=0;
+      }
       if(entity_size>=0)
 	 Send("Content-length: %ld\r\n",entity_size-pos);
       if(pos>0 && entity_size<0)
@@ -464,7 +475,7 @@ add_path:
       const char *cookie=Query("cookie",hostname);
       if(cookie && cookie[0])
 	 Send("Cookie: %s\r\n",cookie);
-      if(mode==STORE)
+      if(mode==STORE || post)
       {
 	 const char *content_type=Query("put-content-type",hostname);
 	 if(content_type && content_type[0])
@@ -478,6 +489,12 @@ add_path:
    if(mode!=ARRAY_INFO || connection)
       Send("Connection: %s\r\n",connection?connection:"close");
    Send("\r\n");
+   if(post)
+   {
+      if(post_data)
+	 Send(post_data);
+      entity_size=NO_SIZE;
+   }
 
    keep_alive=false;
    chunked=false;
@@ -685,11 +702,31 @@ int Http::Do()
    case DISCONNECTED:
       if(mode==CLOSED || !hostname)
 	 return m;
-      if(!hftp && mode==QUOTE_CMD)
+      if(!hftp && mode==QUOTE_CMD && !post)
       {
       handle_quote_cmd:
 	 if(file && !strncasecmp(file,"Set-Cookie ",11))
 	    SetCookie(file+11);
+	 else if(file && !strncasecmp(file,"POST ",5))
+	 {
+	    // POST encoded_path data
+	    const char *scan=file+5;
+	    while(*scan==' ')
+	       scan++;
+	    const char *url=GetConnectURL(*scan=='/'?NO_PATH:0);
+	    char *path=xstrdup(dir_file(url,scan));
+	    char *space=strchr(path,' ');
+	    if(space)
+	       *space=0;
+	    space=strchr(scan,' ');
+	    while(space && *space==' ')
+	       space++;
+	    post=true;
+	    post_data=xstrdup(space);
+	    xfree(file_url);
+	    file_url=path;
+	    return MOVED;
+	 }
 	 else
 	 {
 	    SetError(NOT_SUPP,0);
@@ -698,7 +735,7 @@ int Http::Do()
 	 state=DONE;
 	 return MOVED;
       }
-      if(!ModeSupported())
+      if(!post && !ModeSupported())
       {
 	 SetError(NOT_SUPP);
 	 return MOVED;
@@ -810,8 +847,13 @@ int Http::Do()
       recv_buf=new FileInputBuffer(new FDStream(sock,"<input-socket>"));
       /*fallthrough*/
    case CONNECTED:
-      if(mode==QUOTE_CMD)
+      if(mode==QUOTE_CMD && !post)
 	 goto handle_quote_cmd;
+      if(!post && !ModeSupported())
+      {
+	 SetError(NOT_SUPP);
+	 return MOVED;
+      }
       if(recv_buf->Eof())
       {
 	 DebugPrint("**** ",_("Peer closed connection"),0);
@@ -841,7 +883,7 @@ int Http::Do()
    case RECEIVING_HEADER:
       if(send_buf->Error() || recv_buf->Error())
       {
-	 if(mode==STORE && status_code && !H_20X(status_code))
+	 if((mode==STORE || post) && status_code && !H_20X(status_code))
 	    goto pre_RECEIVING_BODY;   // assume error.
 	 if(send_buf->Error())
 	    DebugPrint("**** ",send_buf->ErrorText(),0);
