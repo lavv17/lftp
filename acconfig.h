@@ -31,13 +31,22 @@
 /* Define if inline functions a la GCC are available.  */
 #undef HAVE_INLINE
 
+/* Define as __inline if that's what the C compiler calls it.  */
+#undef c_inline
+
+#ifndef __cplusplus
+# ifdef c_inline
+#  define inline c_inline
+# endif
+#endif
+
 /* Define if sysinfo is available.  */
 #undef HAVE_SYSINFO
 
 /* Define if __NR_sysinfo is available.  */
 #undef HAVE_NRSYSINFO
 
-/* Define if inline functions a la GCC are available.  */
+/* Define if ???.  */
 #undef HAVE_ALPHASORT_DECLARATION
 
 /* Define if function attributes a la GCC 2.5 and higher are available.  */

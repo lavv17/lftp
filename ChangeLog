@@ -1,3 +1,8 @@
+1999-08-11	lav
+
+	* configure.in, acconfig.h, acinclude.m4: define LFTP_C_INLINE,
+	  use it instead of AC_C_INLINE to protect c++ inline.
+
 1999-08-02	lav
 
 	* configure.in, acconfig.h: check for res_search, vsnprintf

@@ -2,11 +2,14 @@ dnl Process this file with autoconf to produce a configure script.
 # $Id$
 AC_PREREQ(2.13)
 AC_INIT(src/ftpclass.cc)
-AM_INIT_AUTOMAKE(lftp, 2.0.3)
+AM_INIT_AUTOMAKE(lftp, pre2.0.4-990807)
 AM_CONFIG_HEADER(include/config.h)
 
-# iumacros.m4 is stolen from inetutils-1.3a
+dnl iumacros.m4 is stolen from inetutils-1.3a
 builtin(include,iumacros.m4)
+
+dnl Default AC_C_INLINE does not know about C++
+builtin(define,[AC_C_INLINE],[LFTP_C_INLINE])
 
 LIBOBJS=''
 AC_SUBST(LIBOBJS)
