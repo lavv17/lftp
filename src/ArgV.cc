@@ -110,7 +110,18 @@ void ArgV::setarg(int n,const char *s)
       Append(s);
    else if(n<count() && n>=0)
    {
-      free(v[n]);
+      xfree(v[n]);
       v[n]=xstrdup(s);
+   }
+}
+
+void ArgV::delarg(int n)
+{
+   if(n<count() && n>=0)
+   {
+      xfree(v[n]);
+      // copy with trailing null pointer
+      memmove(v+n,v+n+1,(count()-n)*sizeof(*v));
+      c--;
    }
 }

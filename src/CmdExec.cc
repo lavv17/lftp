@@ -181,6 +181,8 @@ void  CmdExec::exec_parsed_command()
    SignalHook::ResetCount(SIGHUP);
    SignalHook::ResetCount(SIGTSTP);
 
+restart:
+
    const struct cmd_rec *c;
    const char *cmd_name=args->getarg(0);
    int part=find_cmd(cmd_name,&c);
@@ -201,7 +203,14 @@ void  CmdExec::exec_parsed_command()
       Job *(CmdExec::*func)()=c->func;
       waiting=(this->*func)();
       if(waiting==this) // builtin
+      {
+	 if(builtin==BUILTIN_EXEC_RESTART)
+	 {
+	    waiting=0;
+	    goto restart;
+	 }
 	 return;
+      }
       if(waiting)
       {
 	 waiting->parent=this;
@@ -356,6 +365,8 @@ int CmdExec::Do()
 	    return MOVED;
 	 }
 	 break;
+      case(BUILTIN_EXEC_RESTART):
+	 abort(); // can't happen
       }
       if(interactive)
       {
@@ -518,6 +529,8 @@ void CmdExec::ShowRunStatus(StatusLine *s)
       case(BUILTIN_OPEN):
 	 s->Show("open `%s' [%s]",session->GetHostName(),session->CurrentStatus());
       	 break;
+      case(BUILTIN_EXEC_RESTART):
+	 abort(); // can't happen
       }
    }
    else if(Done())

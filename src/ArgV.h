@@ -60,6 +60,7 @@ public:
       }
    char *getcurr() { return ind<c?getarg(ind):0; }
    void setarg(int n,const char *s);
+   void delarg(int n);
    char *a0() { return getarg(0); }
    void back();
    int count() { return c; }

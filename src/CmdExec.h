@@ -108,7 +108,8 @@ class CmdExec : public SessionJob
    enum builtins
    {
       BUILTIN_OPEN,
-      BUILTIN_CD
+      BUILTIN_CD,
+      BUILTIN_EXEC_RESTART
    }
       builtin;
 
@@ -127,7 +128,7 @@ class CmdExec : public SessionJob
    in_CMD(mkdir); in_CMD(quote);  in_CMD(scache);  in_CMD(mrm);
    in_CMD(ver);	  in_CMD(close);  in_CMD(bookmark);in_CMD(lftp);
    in_CMD(echo);  in_CMD(suspend);in_CMD(ftpcopy); in_CMD(sleep);
-   in_CMD(at);	  in_CMD(find);
+   in_CMD(at);	  in_CMD(find);   in_CMD(command);
 
 public:
    void FeedCmd(const char *c);

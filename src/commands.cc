@@ -119,6 +119,7 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
 	 N_("Close idle connections. By default only with current server.\n"
 	 " -a  close idle connections with all servers\n")},
    {"connect", &do_open,	   0,"open"},
+   {"command", &do_command},
    {"debug",   &do_debug,  N_("debug [<level>|off] [-o <file>]"),
 	 N_("Set debug level to given value or turn debug off completely.\n"
 	 " -o <file>  redirect debug output to the file.\n")},
@@ -909,7 +910,6 @@ CMD(lftp)
    if(!cmd)
    {
       /* if no lftp-specific options were found, call open */
-      args->setarg(0,"open");
       return do_open();
    }
    return 0;
@@ -926,6 +926,7 @@ CMD(open)
    int	 c;
    NetRC::Entry *nrc=0;
    char  *cmd_to_exec=0;
+   char  *op=args->a0();
 
    args->rewind();
    while((c=args->getopt("u:p:e:d"))!=EOF)
@@ -952,8 +953,11 @@ CMD(open)
 	 cmd_to_exec=optarg;
 	 break;
       case('?'):
-	 eprintf(_("Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"),
-	    args->a0());
+	 if(!strcmp(op,"lftp"))
+	    eprintf(_("Try `%s --help' for more information\n"),op);
+	 else
+	    eprintf(_("Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"),
+	       op);
 	 return 0;
       }
    }
@@ -1050,7 +1054,7 @@ CMD(open)
 	       struct servent *serv=getservbyname(port,"tcp");
 	       if(serv==NULL)
 	       {
-		  eprintf(_("%s: %s - no such tcp service\n"),args->a0(),port);
+		  eprintf(_("%s: %s - no such tcp service\n"),op,port);
 		  return 0;
 	       }
 	       port_num=serv->s_port;
@@ -1201,28 +1205,29 @@ CMD(alias)
 
 CMD(wait)
 {
+   char *op=args->a0();
    if(args->count()!=2)
    {
-      eprintf(_("Usage: %s <jobno>\n"),args->a0());
+      eprintf(_("Usage: %s <jobno>\n"),op);
       return 0;
    }
    args->rewind();
    char *jn=args->getnext();
    if(!isdigit(jn[0]))
    {
-      eprintf(_("%s: %s - not a number\n"),args->a0(),jn);
+      eprintf(_("%s: %s - not a number\n"),op,jn);
       return 0;
    }
    int n=atoi(jn);
    Job *j=FindJob(n);
    if(j==0)
    {
-      eprintf(_("%s: %d - no such job\n"),args->a0(),n);
+      eprintf(_("%s: %d - no such job\n"),op,n);
       return 0;
    }
    if(j->parent && j->parent->waiting==j)
    {
-      eprintf(_("%s: some other job waits for job %d\n"),args->a0(),n);
+      eprintf(_("%s: some other job waits for job %d\n"),op,n);
       return 0;
    }
    j->parent=0;
@@ -1912,4 +1917,11 @@ CMD(find)
       output?output:new FDStream(1,"<stdout>"));
    output=0;
    return j;
+}
+
+CMD(command)
+{
+   args->delarg(0);
+   builtin=BUILTIN_EXEC_RESTART;
+   return this;
 }
