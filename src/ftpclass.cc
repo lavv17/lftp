@@ -3171,6 +3171,9 @@ void  Ftp::MoveConnectionHere(Ftp *o)
    site_chmod_supported=o->site_chmod_supported;
    last_rest=o->last_rest;
 
+   if(!home)
+      home=xstrdup(home_auto);
+
    set_real_cwd(o->real_cwd);
    o->set_real_cwd(0);
    o->Disconnect();

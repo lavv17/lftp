@@ -1,3 +1,7 @@
+2001-08-27  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: (MoveConnectionHere) set home if null.
+
 2001-08-27  Glenn F. Maynard <g_ld@zewt.org>
 
 	* FileSet.cc, FileSet.h, FileAccess.h, CmdExec.cc: remove the FileSet

@@ -81,8 +81,8 @@ DISTCLEANFILES = confpaths.h
 INCLUDES = -I$(top_srcdir)/include $(SSL_CPPFLAGS)
 
 # These files can be linked to ../include by configure, but not always.
-OMIT_DEPENDENCIES = readline.h keymaps.h chardefs.h tilde.h rltypedefs.h\
-	history.h libintl.hregex.h glob.h fnmatch.h poll.h rlstdc.h
+#OMIT_DEPENDENCIES = readline.h keymaps.h chardefs.h tilde.h rltypedefs.h\
+#	history.h libintl.hregex.h glob.h fnmatch.h poll.h rlstdc.h
 
 lftp.o commands.o module.o: confpaths.h
 
