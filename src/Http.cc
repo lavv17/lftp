@@ -750,11 +750,11 @@ int Http::Do()
 	    char *space=strchr(path,' ');
 	    if(space)
 	       *space=0;
-	    space=strchr(scan,' ');
-	    while(space && *space==' ')
-	       space++;
+	    scan=strchr(scan,' ');
+	    while(scan && *scan==' ')
+	       scan++;
 	    post=true;
-	    post_data=xstrdup(space);
+	    post_data=xstrdup(scan);
 	    xfree(file_url);
 	    file_url=path;
 	    return MOVED;
@@ -1236,9 +1236,10 @@ int Http::Read(void *buf,int size)
 	 return DO_AGAIN;
       if(chunked)
       {
+	 const char *nl;
 	 if(chunk_size==-1) // expecting first/next chunk
 	 {
-	    const char *nl=(const char*)memchr(buf1,'\n',size1);
+	    nl=(const char*)memchr(buf1,'\n',size1);
 	    if(nl==0)  // not yet
 	    {
 	    not_yet:

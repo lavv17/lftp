@@ -1,3 +1,7 @@
+2000-07-03  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.cc: fix compilation problem on IRIX.
+
 2000-06-29  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileCopy.cc: don't Open NULL file, use "".
