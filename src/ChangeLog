@@ -3,6 +3,7 @@
 	* StatusLine.cc: don't redisplay status line if not needed.
 	* ftpclass.cc: check loopback match in Handle_PASV; Connection
 	  and ExpectQueue subclasses.
+	* commands.cc: rewind args before calling builtin_open from builtin_lftp.
 
 2004-03-04  Alexander V. Lukyanov <lav@yars.free.net>
 
