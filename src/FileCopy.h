@@ -135,6 +135,8 @@ public:
 
    void DontStartTransferYet() { start_transfer=false; }
    void StartTransfer() { start_transfer=true; }
+
+   const char *GetDescriptionForLog() { return 0; }
 };
 
 class FileCopy : public SMTask
@@ -302,6 +304,11 @@ public:
    void Fg() { session->SetPriority(1); }
    void Bg() { session->SetPriority(0); }
    void SetFXP(bool on) { fxp=on; }
+
+   const char *GetDescriptionForLog()
+      {
+	 return orig_url ? orig_url : session->GetFileURL(file);
+      }
 };
 
 class FileCopyPeerFDStream : public FileCopyPeer
@@ -342,6 +349,11 @@ public:
 
    static FileCopyPeerFDStream *NewPut(const char *file,bool cont=false);
    static FileCopyPeerFDStream *NewGet(const char *file);
+
+   const char *GetDescriptionForLog()
+      {
+	 return stream->name;
+      }
 };
 
 class FileCopyPeerDirList : public FileCopyPeer
@@ -377,6 +389,11 @@ public:
    int Do();
    void Fg();
    void Bg();
+
+   const char *GetDescriptionForLog()
+      {
+	 return "[pipe to other job]";
+      }
 };
 
 #endif
