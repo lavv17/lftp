@@ -1,3 +1,10 @@
+2001-11-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc, MirrorJob.h: --allow-chown and -a - new options.
+	* FileSet.cc, FileSet.h: (LocalChown) new method.
+	* commands.cc: add --allow-chown to mirror help.
+	* ftpclass.cc, ftpclass.h: fix web-mode.
+
 2001-11-14  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileSet.cc, FileSet.h: add rank member; sorting by it;

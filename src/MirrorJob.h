@@ -132,7 +132,8 @@ public:
       REVERSE=64,
       REPORT_NOT_DELETED=128,
       RETR_SYMLINKS=256,
-      NO_UMASK=512
+      NO_UMASK=512,
+      ALLOW_CHOWN=1024
    };
 
    void SetFlags(int f,int v)

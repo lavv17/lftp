@@ -34,6 +34,7 @@
 
 #include <grp.h>
 #include <pwd.h>
+#include <ctype.h>
 
 #include "misc.h"
 #include "ResMgr.h"
@@ -531,6 +532,56 @@ void FileSet::LocalChmod(const char *dir,mode_t mask)
 
 	 if(stat(local_name,&st)!=-1 && st.st_mode!=new_mode)
 	    chmod(local_name,new_mode);
+      }
+   }
+}
+void FileSet::LocalChown(const char *dir)
+{
+   FileInfo *file;
+   for(int i=0; i<fnum; i++)
+   {
+      file=files[i];
+      if(file->defined & (file->USER|file->GROUP))
+      {
+#ifndef HAVE_LCHOWN
+	 if(file->defined & file->TYPE
+	 && file->filetype==file->SYMLINK)
+	    continue;
+#define lchown chown
+#endif
+
+	 const char *local_name=dir_file(dir,file->name);
+
+	 struct stat st;
+
+	 if(lstat(local_name,&st)==-1)
+	    continue;
+	 uid_t new_uid=st.st_uid;
+	 gid_t new_gid=st.st_gid;
+	 if(file->defined&file->USER)
+	 {
+	    if(isdigit((unsigned char)file->user[0]))
+	       new_uid=atol(file->user);
+	    else
+	    {
+	       const struct passwd *p=getpwnam(file->user);
+	       if(p)
+		  new_uid=p->pw_uid;
+	    }
+	 }
+	 if(file->defined&file->GROUP)
+	 {
+	    if(isdigit((unsigned char)file->group[0]))
+	       new_uid=atol(file->group);
+	    else
+	    {
+	       const struct group *g=getgrnam(file->group);
+	       if(g)
+		  new_gid=g->gr_gid;
+	    }
+	 }
+	 if(new_uid!=st.st_uid || new_gid!=st.st_gid)
+	    lchown(local_name,new_uid,new_gid);
       }
    }
 }

@@ -913,6 +913,8 @@ void Ftp::InitFtp()
 
    memset(&data_sa,0,sizeof(data_sa));
 
+   disconnect_on_close=false;
+
    Reconfig();
 }
 Ftp::Ftp() : super()
@@ -1016,6 +1018,8 @@ void  Ftp::GetBetterConnection(int level,int count)
 	 {
 	    if((o->flags&NOREST_MODE) && o->real_pos>0x1000)
 	       continue;
+	    if(QueryBool("ftp:web-mode",o->hostname))
+	       continue;
 	    o->DataAbort();
 	    o->DataClose();
 	    if(o->control_sock==-1)
@@ -1023,7 +1027,7 @@ void  Ftp::GetBetterConnection(int level,int count)
 	 }
 	 else
 	 {
-	    if(o->RespQueueSize()>0)
+	    if(o->RespQueueSize()>0 || o->disconnect_on_close)
 	       continue;
 	 }
       }
@@ -2489,6 +2493,7 @@ void  Ftp::Disconnect()
    state=INITIAL_STATE;
 
 out:
+   disconnect_on_close=false;
    Timeout(0);
 
    disconnect_in_progress=false;
@@ -2518,7 +2523,7 @@ void  Ftp::DataClose()
       close(data_sock);
       data_sock=-1;
       if(QueryBool("web-mode"))
-	 Disconnect();
+	 disconnect_on_close=true;
    }
    nop_time=0;
    nop_offset=0;
@@ -2776,6 +2781,8 @@ void  Ftp::Close()
    copy_failed=false;
    CloseRespQueue();
    super::Close();
+   if(disconnect_on_close)
+      Disconnect();
 }
 
 void Ftp::CloseRespQueue()

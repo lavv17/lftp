@@ -294,6 +294,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -c, --continue         continue a mirror job if possible\n"
 	 " -e, --delete           delete files not present at remote site\n"
 	 " -s, --allow-suid       set suid/sgid bits according to remote site\n"
+	 "     --allow-chown      try to set owner and group on files\n"
 	 " -n, --only-newer       download only newer files (-c won't work)\n"
 	 " -r, --no-recursion     don't go to subdirectories\n"
 	 " -p, --no-perms         don't set file permissions\n"

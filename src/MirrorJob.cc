@@ -795,8 +795,12 @@ int   MirrorJob::Do()
 	    if(!(flags&NO_PERMS))
 	       to_transfer->LocalChmod(local_dir,mode_mask);
 	    to_transfer->LocalUtime(local_dir,/*only_dirs=*/true);
+	    if(flags&ALLOW_CHOWN)
+	       to_transfer->LocalChown(local_dir);
 	    if(!(flags&NO_PERMS))
 	       same->LocalChmod(local_dir,mode_mask);
+	    if(flags&ALLOW_CHOWN)
+	       same->LocalChown(local_dir);
 #if 0 // this can cause problems if files really differ
 	    same->LocalUtime(local_dir); // the old mtime can differ up to prec
 #endif
@@ -1062,6 +1066,7 @@ CMD(mirror)
    {
       {"delete",no_argument,0,'e'},
       {"allow-suid",no_argument,0,'s'},
+      {"allow-chown",no_argument,0,256+'a'},
       {"include",required_argument,0,'i'},
       {"exclude",required_argument,0,'x'},
       {"only-newer",no_argument,0,'n'},
@@ -1119,7 +1124,7 @@ CMD(mirror)
    int	 parallel=0;
 
    args->rewind();
-   while((opt=args->getopt_long("esi:x:nrpcRvN:LP",mirror_opts,0))!=EOF)
+   while((opt=args->getopt_long("esi:x:nrpcRvN:LPa",mirror_opts,0))!=EOF)
    {
       switch(opt)
       {
@@ -1128,6 +1133,12 @@ CMD(mirror)
 	 break;
       case('s'):
 	 flags|=MirrorJob::ALLOW_SUID;
+	 break;
+      case(256+'a'):
+	 flags|=MirrorJob::ALLOW_CHOWN;
+	 break;
+      case('a'):
+	 flags|=MirrorJob::ALLOW_SUID|MirrorJob::ALLOW_CHOWN|MirrorJob::NO_UMASK;
 	 break;
       case('r'):
 	 flags|=MirrorJob::NO_RECURSION;
