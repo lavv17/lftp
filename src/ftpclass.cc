@@ -570,6 +570,18 @@ char *Ftp::ExtractPWD()
    return xstrdup(pwd);
 }
 
+static bool InPrivateNetwork(const sockaddr_u *u)
+{
+   if(u->sa.sa_family==AF_INET)
+   {
+      unsigned char *a=(unsigned char *)&u->in.sin_addr;
+      return (a[0]==10)
+	  || (a[0]==172 && a[1]>=16 && a[1]<32)
+	  || (a[0]==192 && a[1]==168);
+   }
+   return false;
+}
+
 int Ftp::Handle_PASV()
 {
    unsigned a0,a1,a2,a3,p0,p1;
@@ -610,7 +622,11 @@ int Ftp::Handle_PASV()
       return 0;
    }
 
-   if(a0==0 && a1==0 && a2==0 && a3==0)
+   a[0]=a0; a[1]=a1; a[2]=a2; a[3]=a3;
+   p[0]=p0; p[1]=p1;
+
+   if((a0==0 && a1==0 && a2==0 && a3==0)
+   || (InPrivateNetwork(&data_sa) && !InPrivateNetwork(&peer_sa)))
    {
       // broken server, try to fix up
       if(data_sa.sa.sa_family==AF_INET)
@@ -620,11 +636,7 @@ int Ftp::Handle_PASV()
 	 memcpy(a,&peer_sa.in6.sin6_addr.s6_addr[12],4);
 #endif
    }
-   else
-   {
-      a[0]=a0; a[1]=a1; a[2]=a2; a[3]=a3;
-   }
-   p[0]=p0; p[1]=p1;
+
    return 1;
 }
 

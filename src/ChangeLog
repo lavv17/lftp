@@ -1,3 +1,9 @@
+2000-08-21  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: if server returned address from private network
+	  and its own address is not in private network, don't beleave it
+	  and use original server address.
+
 2000-08-20  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h: check data port for ftps-data; all_lines
