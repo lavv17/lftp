@@ -58,9 +58,9 @@ int FindJob::Do()
       }
       // cd error
       eprintf("%s: cd %s: %s\n",op,dir,session->StrError(res));
-   err:
       errors++;
-      Up();
+      depth_done=true;
+      state=LOOP;
       return MOVED;
 
    pre_INFO:
@@ -83,7 +83,10 @@ int FindJob::Do()
 	 eprintf("%s: %s\n",op,li->ErrorText());
 	 delete li;
 	 li=0;
-	 goto err;
+	 errors++;
+	 depth_done=true;
+	 state=LOOP;
+	 return MOVED;
       }
       Push(li->GetResult());
       delete li;
@@ -281,7 +284,8 @@ void FindJob::ShowRunStatus(StatusLine *sl)
    case INFO:
       if(stack_ptr>=0)
 	 path=top.path;
-      sl->Show("getting listing for `%s' [%s]",dir_file(path,dir),li->Status());
+      sl->Show("%s: %s [%s]",dir_file(path,dir),li->Status(),
+			   session->CurrentStatus());
       break;
    case WAIT:
       waiting->ShowRunStatus(sl);
