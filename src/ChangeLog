@@ -2,6 +2,9 @@
 
 	* CmdExec.cc: don't clear signals if not interactive (suggested by
 	  Glenn Maynard <g_ld@zewt.org>)
+	* Fish.cc, Http.cc, NetAccess.cc, NetAccess.h, ResMgr.cc, ResMgr.h,
+	  ftpclass.cc, resource.cc: separate rate limitations for download
+	  and upload.
 
 2002-07-17  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -228,9 +228,9 @@ static ResDecl
 #endif
    ResDecl31 ("net:idle",		  "180",   ResMgr::UNumberValidate,0),
    ResDecl32 ("net:limit-max",		  "0",	   ResMgr::UNumberValidate,0),
-   ResDecl33 ("net:limit-rate",		  "0",	   ResMgr::UNumberValidate,0),
+   ResDecl33 ("net:limit-rate",		  "0:0",   ResMgr::UNumberPairValidate,0),
    ResDecl34 ("net:limit-total-max",	  "0",	   ResMgr::UNumberValidate,ResMgr::NoClosure),
-   ResDecl35 ("net:limit-total-rate",	  "0",	   ResMgr::UNumberValidate,ResMgr::NoClosure),
+   ResDecl35 ("net:limit-total-rate",	  "0:0",   ResMgr::UNumberPairValidate,ResMgr::NoClosure),
    ResDecl36 ("net:max-retries",	  "4096",  ResMgr::UNumberValidate,0),
    ResDecl36a("net:persist-retries",	  "0",	   ResMgr::UNumberValidate,0),
    ResDecl37 ("net:no-proxy",		  "",	   0,ResMgr::NoClosure),

@@ -1322,7 +1322,7 @@ int Http::Do()
    case RECEIVING_BODY:
       if(recv_buf->Error() || send_buf->Error())
 	 goto handle_buf_error;
-      if(recv_buf->Size()>=rate_limit->BytesAllowed())
+      if(recv_buf->Size()>=rate_limit->BytesAllowedToGet())
       {
 	 recv_buf->Suspend();
 	 Timeout(1000);
@@ -1508,7 +1508,7 @@ int Http::Read(void *buf,int size)
 	    size1=body_size-bytes_received;
       }
 
-      int bytes_allowed=rate_limit->BytesAllowed();
+      int bytes_allowed=rate_limit->BytesAllowedToGet();
       if(size1>bytes_allowed)
 	 size1=bytes_allowed;
       if(size1==0)
@@ -1536,7 +1536,7 @@ int Http::Read(void *buf,int size)
       bytes_received+=size;
       if(chunked)
 	 chunk_pos+=size;
-      rate_limit->BytesUsed(size);
+      rate_limit->BytesGot(size);
       retries=0;
       return size;
    }
@@ -1570,7 +1570,7 @@ int Http::Write(const void *buf,int size)
       return DO_AGAIN;
 
    {
-      int allowed=rate_limit->BytesAllowed();
+      int allowed=rate_limit->BytesAllowedToPut();
       if(allowed==0)
 	 return DO_AGAIN;
       if(size>allowed)
@@ -1594,7 +1594,7 @@ int Http::Write(const void *buf,int size)
       return error_code;
    }
    retries=0;
-   rate_limit->BytesUsed(res);
+   rate_limit->BytesPut(res);
    pos+=res;
    real_pos+=res;
    return(res);

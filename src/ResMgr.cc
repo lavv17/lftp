@@ -842,3 +842,21 @@ const char *ResMgr::NoClosure(char **)
 {
    return _("no closure defined for this setting");
 }
+
+const char *ResMgr::UNumberPairValidate(char **value)
+{
+   char *v=*value;
+
+   int n=0;
+
+   unsigned a,b;
+   if(2>sscanf(v,"%u%*c%u%n",&a,&b,&n))
+   {
+      if(UNumberValidate(value))
+	 return _("invalid pair of numbers");
+   }
+
+   v[n]=0;
+
+   return 0;
+}

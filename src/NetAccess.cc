@@ -351,13 +351,16 @@ int NetAccess::Resolve(const char *defp,const char *ser,const char *pr)
 
 // RateLimit class implementation.
 int RateLimit::total_xfer_number;
-RateLimit::BytesPool RateLimit::total;
+RateLimit::BytesPool RateLimit::total[2];
 bool RateLimit::total_reconfig_needed=true;
 
 RateLimit::RateLimit(const char *c)
 {
    if(total_xfer_number==0)
-      total.Reset();
+   {
+      total[GET].Reset();
+      total[PUT].Reset();
+   }
    total_xfer_number++;
    Reconfig(0,c);
 }
@@ -389,22 +392,22 @@ void RateLimit::BytesPool::AdjustTime()
    }
 }
 
-int RateLimit::BytesAllowed()
+int RateLimit::BytesAllowed(dir_t dir)
 {
    if(total_reconfig_needed)
       ReconfigTotal();
 
-   if(one.rate==0 && total.rate==0) // unlimited
+   if(one[dir].rate==0 && total[dir].rate==0) // unlimited
       return LARGE;
 
-   one  .AdjustTime();
-   total.AdjustTime();
+   one  [dir].AdjustTime();
+   total[dir].AdjustTime();
 
    int ret=LARGE;
-   if(total.rate>0)
-      ret=total.pool/total_xfer_number;
-   if(one.rate>0 && ret>one.pool)
-      ret=one.pool;
+   if(total[dir].rate>0)
+      ret=total[dir].pool/total_xfer_number;
+   if(one[dir].rate>0 && ret>one[dir].pool)
+      ret=one[dir].pool;
    return ret;
 }
 
@@ -416,10 +419,10 @@ void RateLimit::BytesPool::Used(int bytes)
       pool-=bytes;
 }
 
-void RateLimit::BytesUsed(int bytes)
+void RateLimit::BytesUsed(int bytes,dir_t dir)
 {
-   total.Used(bytes);
-   one  .Used(bytes);
+   total[dir].Used(bytes);
+   one  [dir].Used(bytes);
 }
 
 void RateLimit::BytesPool::Reset()
@@ -431,18 +434,20 @@ void RateLimit::Reconfig(const char *name,const char *c)
 {
    if(name && strncmp(name,"net:limit-",10))
       return;
-   one.rate     = ResMgr::Query("net:limit-rate",c);
-   one.pool_max = ResMgr::Query("net:limit-max",c);
-   one.Reset(); // to cut bytes_pool.
+   ResMgr::Query("net:limit-rate",c).ToNumberPair(one[GET].rate,one[PUT].rate);
+   ResMgr::Query("net:limit-max",c) .ToNumberPair(one[GET].pool_max,one[PUT].pool_max);
+   one[GET].Reset(); // to cut bytes_pool.
+   one[PUT].Reset();
 
    if(name && !strncmp(name,"net:limit-total-",16))
       total_reconfig_needed=true;
 }
 void RateLimit::ReconfigTotal()
 {
-   total.rate     = ResMgr::Query("net:limit-total-rate",0);
-   total.pool_max = ResMgr::Query("net:limit-total-max",0);
-   total.Reset();
+   ResMgr::Query("net:limit-total-rate",0).ToNumberPair(total[GET].rate,total[PUT].rate);
+   ResMgr::Query("net:limit-total-max",0) .ToNumberPair(total[GET].pool_max,total[PUT].pool_max);
+   total[GET].Reset();
+   total[PUT].Reset();
    total_reconfig_needed = false;
 }
 

@@ -129,15 +129,21 @@ private:
    static int total_xfer_number;
    static bool total_reconfig_needed;
    static void ReconfigTotal();
-   static BytesPool total;
-   BytesPool one;
+   static BytesPool total[2];
+   BytesPool one[2];
 
 public:
    RateLimit(const char *closure);
    ~RateLimit();
 
-   int BytesAllowed();
-   void BytesUsed(int);
+   enum dir_t { GET=0, PUT=1 };
+
+   int BytesAllowed(dir_t how);
+   int BytesAllowedToGet() { return BytesAllowed(GET); }
+   int BytesAllowedToPut() { return BytesAllowed(PUT); }
+   void BytesUsed(int,dir_t);
+   void BytesGot(int b) { BytesUsed(b,GET); }
+   void BytesPut(int b) { BytesUsed(b,PUT); }
 
    void Reconfig(const char *name,const char *c);
 };

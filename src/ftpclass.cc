@@ -2060,7 +2060,8 @@ notimeout_return:
       else if(state==DATA_OPEN_STATE)
       {
 	 assert(rate_limit!=0);
-	 int bytes_allowed = rate_limit->BytesAllowed();
+	 int bytes_allowed = rate_limit->BytesAllowed(
+			      mode==STORE?rate_limit->PUT:rate_limit->GET);
 	 // guard against unimplemented REST: if we have sent REST command
 	 // (real_pos==-1) and did not yet receive the response
 	 // (RespQueueSize()>1), don't allow to read/write the data
@@ -2996,7 +2997,7 @@ read_again:
 
    {
       assert(rate_limit!=0);
-      int allowed=rate_limit->BytesAllowed();
+      int allowed=rate_limit->BytesAllowedToGet();
       if(allowed==0)
 	 return DO_AGAIN;
       if(size>allowed)
@@ -3092,7 +3093,7 @@ read_again:
    retries=0;
    persist_retries=0;
    assert(rate_limit!=0);
-   rate_limit->BytesUsed(res);
+   rate_limit->BytesGot(res);
    real_pos+=res;
    if(real_pos<=pos)
       goto read_again;
@@ -3131,7 +3132,7 @@ int   Ftp::Write(const void *buf,int size)
 
    {
       assert(rate_limit!=0);
-      int allowed=rate_limit->BytesAllowed();
+      int allowed=rate_limit->BytesAllowedToPut();
       if(allowed==0)
 	 return DO_AGAIN;
       if(size>allowed)
@@ -3212,7 +3213,7 @@ int   Ftp::Write(const void *buf,int size)
    retries=0;
    persist_retries=0;
    assert(rate_limit!=0);
-   rate_limit->BytesUsed(res);
+   rate_limit->BytesPut(res);
    pos+=res;
    real_pos+=res;
    flags|=IO_FLAG;

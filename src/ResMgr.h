@@ -99,6 +99,7 @@ public:
    static const char *RangeValidate(char **value);
    static const char *ERegExpValidate(char **value);
    static const char *IPv4AddrValidate(char **value);
+   static const char *UNumberPairValidate(char **value);
    static const char *FileReadable(char **value);
    static const char *DirReadable(char **value);
    static const char *NoClosure(char **);
@@ -162,6 +163,10 @@ public:
 	 return s;
       }
    bool is_nil() { return s==0; }
+   void ToNumberPair(int &a,int &b)
+      {
+	 sscanf(s,"%d%*c%d",&a,&b);
+      }
 };
 
 inline bool ResDecl::QueryBool(const char *closure)

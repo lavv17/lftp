@@ -260,7 +260,7 @@ int Fish::Do()
       }
       goto usual_return;
    case FILE_RECV:
-      if(recv_buf->Size()>=rate_limit->BytesAllowed())
+      if(recv_buf->Size()>=rate_limit->BytesAllowedToGet())
       {
 	 recv_buf->Suspend();
 	 Timeout(1000);
@@ -943,7 +943,7 @@ int Fish::Read(void *buf,int size)
 	 }
       }
 
-      int bytes_allowed=rate_limit->BytesAllowed();
+      int bytes_allowed=rate_limit->BytesAllowedToGet();
       if(size1>bytes_allowed)
 	 size1=bytes_allowed;
       if(size1==0)
@@ -965,7 +965,7 @@ int Fish::Read(void *buf,int size)
       recv_buf->Skip(size);
       pos+=size;
       real_pos+=size;
-      rate_limit->BytesUsed(size);
+      rate_limit->BytesGot(size);
       retries=0;
       return size;
    }
@@ -986,7 +986,7 @@ int Fish::Write(const void *buf,int size)
       return DO_AGAIN;
 
    {
-      int allowed=rate_limit->BytesAllowed();
+      int allowed=rate_limit->BytesAllowedToPut();
       if(allowed==0)
 	 return DO_AGAIN;
       if(size+send_buf->Size()>allowed)
@@ -1000,7 +1000,7 @@ int Fish::Write(const void *buf,int size)
       return 0;
    send_buf->Put((char*)buf,size);
    retries=0;
-   rate_limit->BytesUsed(size);
+   rate_limit->BytesPut(size);
    pos+=size;
    real_pos+=size;
    return(size);
