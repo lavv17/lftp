@@ -1,3 +1,11 @@
+2001-05-11	lav
+
+	* config.guess, config.sub: update.
+
+2001-04-04	lav
+
+	* configure.in: migrate to libtool completely.
+
 2000-11-30	Matthias Andree <matthias.andree@stud.uni-dortmund.de>
 
 	* lftp.spec: fix for mandir!=/usr/man.
