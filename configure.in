@@ -42,6 +42,7 @@ if test x$with_debug = xno; then
       case "`uname -s`" in
       Darwin)  ;;
       *)       LDFLAGS="$LDFLAGS -s";;
+      esac
    fi
 fi
 
@@ -60,11 +61,11 @@ if test x$GCC = xyes; then
 fi
 if test x$GXX = xyes; then
    CXXFLAGS="$CXXFLAGS -Wall -Wwrite-strings -Woverloaded-virtual"
-   # save some bytes
-   LFTP_CHECK_CXX_FLAGS([-fno-exceptions -fno-rtti])
    if test x$DEFAULT_CXX = xyes; then
       LFTP_PROG_CXXLINK
    fi
+   # save some bytes
+   LFTP_CHECK_CXX_FLAGS([-fno-exceptions -fno-rtti])
    # check for -fno-implement-inline (doesn't work without -O in gcc 2.95.4; functions are never inlined)
    if test x$with_debug = xno; then
       LFTP_NOIMPLEMENTINLINE
@@ -74,6 +75,7 @@ fi
 dnl Make sure C++ build environment is sane.
 LFTP_CXX_TEST
 CXX_DYNAMIC_INITIALIZERS
+LFTP_CXX_BOOL
 
 AC_ISC_POSIX
 
