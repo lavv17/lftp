@@ -1,3 +1,7 @@
+2004-04-05	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:list-empty-ok.
+
 2004-02-18	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document source -e.

@@ -939,6 +939,10 @@ Initial directory. Default is empty string which means auto. Set this to `/'
 if you don't like the look of %2F in ftp URLs. The closure for this setting
 has format \fIuser@host\fP.
 .TP
+.BR ftp:list-empty-ok \ (bool)
+if set to false, empty lists from LIST command will be treated as incorrect,
+and another method (NLST) will be used.
+.TP
 .BR ftp:list-options \ (string)
 sets options which are always appended to LIST command. It can be
 useful to set this to `-a' if server does not show dot (hidden) files by default.
