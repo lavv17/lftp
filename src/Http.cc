@@ -814,6 +814,11 @@ int Http::Do()
    case DISCONNECTED:
       if(mode==CLOSED || !hostname)
 	 return m;
+      if(mode==STORE && pos>0 && entity_size>=0 && pos>=entity_size)
+      {
+	 state=DONE;
+	 return MOVED;
+      }
       if(!hftp && mode==QUOTE_CMD && !post)
       {
       handle_quote_cmd:
@@ -1015,6 +1020,11 @@ int Http::Do()
       if(!post && !ModeSupported())
       {
 	 SetError(NOT_SUPP);
+	 return MOVED;
+      }
+      if(mode==STORE && pos>0 && entity_size>=0 && pos>=entity_size)
+      {
+	 state=DONE;
 	 return MOVED;
       }
       DebugPrint("---- ",_("Sending request..."));
@@ -1628,7 +1638,8 @@ int Http::SendEOT()
    {
       if(state==RECEIVING_HEADER && send_buf->Size()==0)
       {
-	 shutdown(sock,1);
+	 if(entity_size==NO_SIZE)
+	    shutdown(sock,1);
 	 sent_eot=true;
       	 return(OK);
       }

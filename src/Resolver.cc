@@ -749,6 +749,7 @@ void Resolver::LookupOne(const char *name)
 #  ifndef HAVE_H_ERRNO
 #   define HAVE_H_ERRNO 1
 #  endif
+#  undef h_errno // it could be a macro, but we want it to be local variable.
       int h_errno=0;
       ha=getipnodebyname(name,af,0,&h_errno);
 # elif defined(HAVE_GETHOSTBYNAME2)

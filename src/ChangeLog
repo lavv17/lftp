@@ -1,3 +1,11 @@
+2003-12-11  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc: handle the case when put retry seeks to the eof.
+	* Http.cc: don't try to send empty body to non-zero offset; don't
+	  shutdown socket when done sending data (PUT/POST) and data size
+	  was known beforehand.
+	* Resolver.cc: fixed compilation on AIX, where h_errno is a macro.
+
 2003-12-08  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* buffer.cc, buffer.h, SFtp.cc, SFtp.h: (DirectedBuffer) new buffer
