@@ -25,8 +25,9 @@
 # include <openssl/ssl.h>
 # include <openssl/err.h>
 
-SSL *lftp_ssl_new(int fd);
+SSL *lftp_ssl_new(int fd,const char *host=0);
 const char *lftp_ssl_strerror(const char *s);
+int lftp_ssl_connect(SSL *,const char *host=0);
 
 #endif//USE_SSL
 

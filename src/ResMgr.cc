@@ -790,17 +790,23 @@ const char *ResMgr::FileReadable(char **value)
    if(!**value)
       return 0;
    const char *f=expand_home_relative(*value);
+   char *cwd=0;
+   const char *error=0;
    if(f[0]!='/')
    {
-      char *cwd=xgetcwd();
+      cwd=xgetcwd();
       if(cwd)
 	 f=dir_file(cwd,f);
    }
    if(access(f,R_OK)<0)
-      return strerror(errno);
-   xfree(*value);
-   *value=xstrdup(f);
-   return 0;
+      error=strerror(errno);
+   else
+   {
+      xfree(*value);
+      *value=xstrdup(f);
+   }
+   xfree(cwd);
+   return error;
 }
 
 const char *ResMgr::DirReadable(char **value)
@@ -808,21 +814,27 @@ const char *ResMgr::DirReadable(char **value)
    if(!**value)
       return 0;
    const char *f=expand_home_relative(*value);
+   char *cwd=0;
+   const char *error=0;
    if(f[0]!='/')
    {
-      char *cwd=xgetcwd();
+      cwd=xgetcwd();
       if(cwd)
 	 f=dir_file(cwd,f);
    }
    struct stat st;
    if(stat(f,&st)<0)
-      return strerror(errno);
-   if(!S_ISDIR(st.st_mode))
-      return strerror(ENOTDIR);
-   if(access(f,R_OK|X_OK)<0)
-      return strerror(errno);
-   xfree(*value);
-   *value=xstrdup(f);
+      error=strerror(errno);
+   else if(!S_ISDIR(st.st_mode))
+      error=strerror(ENOTDIR);
+   else if(access(f,R_OK|X_OK)<0)
+      error=strerror(errno);
+   else
+   {
+      xfree(*value);
+      *value=xstrdup(f);
+   }
+   xfree(cwd);
    return 0;
 }
 

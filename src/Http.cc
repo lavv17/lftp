@@ -995,10 +995,19 @@ int Http::Do()
       {
 	 if((mode==STORE || post) && status_code && !H_20X(status_code))
 	    goto pre_RECEIVING_BODY;   // assume error.
+      handle_buf_error:
 	 if(send_buf->Error())
+	 {
 	    DebugPrint("**** ",send_buf->ErrorText(),0);
+	    if(send_buf->ErrorFatal())
+	       SetError(FATAL,send_buf->ErrorText());
+	 }
 	 if(recv_buf->Error())
+	 {
 	    DebugPrint("**** ",recv_buf->ErrorText(),0);
+	    if(recv_buf->ErrorFatal())
+	       SetError(FATAL,recv_buf->ErrorText());
+	 }
 	 Disconnect();
 	 return MOVED;
       }
@@ -1284,14 +1293,7 @@ int Http::Do()
       m=MOVED;
    case RECEIVING_BODY:
       if(recv_buf->Error() || send_buf->Error())
-      {
-	 if(send_buf->Error())
-	    DebugPrint("**** ",send_buf->ErrorText(),0);
-	 if(recv_buf->Error())
-	    DebugPrint("**** ",recv_buf->ErrorText(),0);
-	 Disconnect();
-	 return MOVED;
-      }
+	 goto handle_buf_error;
       if(recv_buf->Size()>=rate_limit->BytesAllowed())
       {
 	 recv_buf->Suspend();
@@ -1392,6 +1394,8 @@ int Http::Read(void *buf,int size)
       if(recv_buf->Size()==0 && recv_buf->Error())
       {
 	 DebugPrint("**** ",recv_buf->ErrorText(),0);
+	 if(recv_buf->ErrorFatal())
+	    SetError(FATAL,recv_buf->ErrorText());
 	 Disconnect();
 	 return DO_AGAIN;
       }
@@ -1651,6 +1655,9 @@ void Http::Reconfig(const char *name)
 	    p=ResMgr::Query("https:proxy",c);
 	 else
 	    p=Query("proxy",c);
+	 // if no hftp:proxy is specified, try http:proxy.
+	 if(hftp && !p)
+	    p=ResMgr::Query("http:proxy",c);
       }
       SetProxy(p);
    }
@@ -1924,9 +1931,9 @@ void Http::MakeSSLBuffers()
    Delete(send_buf);
    Delete(recv_buf);
 
-   SSL *ssl=lftp_ssl_new(sock);
-   IOBufferSSL *send_buf_ssl=new IOBufferSSL(ssl,IOBuffer::PUT);
-   IOBufferSSL *recv_buf_ssl=new IOBufferSSL(ssl,IOBuffer::GET);
+   SSL *ssl=lftp_ssl_new(sock,hostname);
+   IOBufferSSL *send_buf_ssl=new IOBufferSSL(ssl,IOBuffer::PUT,hostname);
+   IOBufferSSL *recv_buf_ssl=new IOBufferSSL(ssl,IOBuffer::GET,hostname);
    send_buf_ssl->DoConnect();
    recv_buf_ssl->CloseLater();
    send_buf=send_buf_ssl;

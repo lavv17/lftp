@@ -202,7 +202,7 @@ static ResDecl
    ResDecl20 ("ftp:web-mode",		  "off",   ResMgr::BoolValidate,0),
 #define RETRY_530 \
    "too many|overloaded|try (again |back )?later|is restricted to|"\
-   "maximum number|number of connect|only.*session.*allowed"
+   "maximum number|number of connect|only.*session.*allowed|more connection"
    ResDecl20a("ftp:retry-530",		  RETRY_530,ResMgr::ERegExpValidate,0),
    ResDecl20b("ftp:retry-530-anonymous",  "Login incorrect",ResMgr::ERegExpValidate,0),
    ResDecl21 ("hftp:cache",		  "yes",   ResMgr::BoolValidate,0),
@@ -245,6 +245,17 @@ static ResDecl
    ResDecl47 ("mirror:parallel-directories", "yes", ResMgr::BoolValidate,ResMgr::NoClosure),
    ResDecl48 ("mirror:parallel-transfer-count", "1", ResMgr::UNumberValidate,ResMgr::NoClosure),
    ResDecl49 ("mirror:exclude-regex",	  "(^|/)(\\.in\\.|\\.nfs)",ResMgr::ERegExpValidate,ResMgr::NoClosure);
+
+#ifdef USE_SSL
+static ResDecl
+   res_ssl_ca_file    ("ssl:ca-file",  "", ResMgr::FileReadable,ResMgr::NoClosure),
+   res_ssl_ca_path    ("ssl:ca-path",  "", ResMgr::DirReadable, ResMgr::NoClosure),
+   res_ssl_crl_file   ("ssl:crl-file", "", ResMgr::FileReadable,ResMgr::NoClosure),
+   res_ssl_crl_path   ("ssl:crl-path", "", ResMgr::DirReadable, ResMgr::NoClosure),
+   res_ssl_key_file   ("ssl:key-file", "", ResMgr::FileReadable,0),
+   res_ssl_cert_file  ("ssl:cert-file","", ResMgr::FileReadable,0),
+   res_ssl_verify_cert("ssl:verify-certificate","yes",ResMgr::BoolValidate,0);
+#endif
 
 #if INET6
 # define DEFAULT_ORDER "inet inet6"

@@ -1250,7 +1250,7 @@ int   Ftp::Do()
 #ifdef USE_SSL
       if(proxy?!strncmp(proxy,"ftps://",7):ftps)
       {
-	 control_ssl=lftp_ssl_new(control_sock);
+	 control_ssl=lftp_ssl_new(control_sock,hostname);
 	 control_ssl_connected=false;
 	 prot='P';
       }
@@ -1927,7 +1927,7 @@ int   Ftp::Do()
 #ifdef USE_SSL
       if(prot=='P')
       {
-	 data_ssl=lftp_ssl_new(data_sock);
+	 data_ssl=lftp_ssl_new(data_sock,hostname);
 	 // share session id between control and data connections.
 	 SSL_copy_session_id(data_ssl,control_ssl);
 	 data_ssl_connected=false;
@@ -2316,7 +2316,8 @@ int  Ftp::ReceiveResp()
 	    {
 	       if(!control_ssl_connected)
 	       {
-		  res=SSL_connect(control_ssl);
+		  errno=0;
+		  res=lftp_ssl_connect(control_ssl,hostname);
 		  if(res<=0)
 		  {
 		     if(BIO_sock_should_retry(res))
@@ -2328,12 +2329,16 @@ int  Ftp::ReceiveResp()
 			return m;
 		     else // error
 		     {
-			SetError(FATAL,lftp_ssl_strerror("SSL connect"));
+			if(errno && TemporaryNetworkError(errno))
+			   Disconnect();
+			else
+			   SetError(FATAL,lftp_ssl_strerror("SSL connect"));
 			return MOVED;
 		     }
 		  }
 		  control_ssl_connected=true;
 	       }
+	       errno=0;
 	       res=SSL_read(control_ssl,resp+resp_size,resp_alloc-resp_size-1);
 	       if(res<0)
 	       {
@@ -2410,12 +2415,27 @@ int  Ftp::ReceiveResp()
 
 void Ftp::SendUrgentCmd(const char *cmd)
 {
-   assert(!control_ssl);   // no way to send urgent data over ssl
-   FlushSendQueue(/*all=*/true);
    static const char pre_cmd[]={TELNET_IAC,TELNET_IP,TELNET_IAC,TELNET_SYNCH};
-   /* send only first byte as OOB due to OOB braindamage in many unices */
-   send(control_sock,pre_cmd,1,MSG_OOB);
-   send(control_sock,pre_cmd+1,sizeof(pre_cmd)-1,0);
+
+   int fl;
+   fcntl(control_sock,F_GETFL,&fl);
+   fcntl(control_sock,F_SETFL,fl&~O_NONBLOCK);
+   FlushSendQueue(/*all=*/true);
+#ifdef USE_SSL
+   if(control_ssl)
+   {
+      // no way to send urgent data over ssl, send normally.
+      SSL_write(control_ssl,pre_cmd,4);
+   }
+   else
+#endif
+   {
+      /* send only first byte as OOB due to OOB braindamage in many unices */
+      send(control_sock,pre_cmd,1,MSG_OOB);
+      send(control_sock,pre_cmd+1,sizeof(pre_cmd)-1,0);
+   }
+   fcntl(control_sock,F_SETFL,fl);
+
    SendCmd(cmd);
 }
 
@@ -2449,7 +2469,7 @@ void  Ftp::DataAbort()
 
    CloseRespQueue();
 
-   if(!QueryBool("use-abor",hostname) || control_ssl
+   if(!QueryBool("use-abor",hostname)
    || RespQueueSize()>1)
    {
       if(copy_mode==COPY_NONE
@@ -2621,7 +2641,8 @@ int  Ftp::FlushSendQueue(bool all)
       {
 	 if(!control_ssl_connected)
 	 {
-	    res=SSL_connect(control_ssl);
+	    errno=0;
+	    res=lftp_ssl_connect(control_ssl,hostname);
 	    if(res<=0)
 	    {
 	       if(BIO_sock_should_retry(res))
@@ -2633,7 +2654,10 @@ int  Ftp::FlushSendQueue(bool all)
 		  return m;
 	       else // error
 	       {
-		  SetError(FATAL,lftp_ssl_strerror("SSL connect"));
+		  if(errno && TemporaryNetworkError(errno))
+		     Disconnect();
+		  else
+		     SetError(FATAL,lftp_ssl_strerror("SSL connect"));
 		  return MOVED;
 	       }
 	    }
@@ -2987,7 +3011,7 @@ read_again:
       if(!data_ssl_connected)
       {
 	 errno=0;
-	 res=SSL_connect(data_ssl);
+	 res=lftp_ssl_connect(data_ssl,hostname);
 	 if(res<=0)
 	 {
 	    if(BIO_sock_should_retry(res))
@@ -3122,7 +3146,7 @@ int   Ftp::Write(const void *buf,int size)
       if(!data_ssl_connected)
       {
 	 errno=0;
-	 res=SSL_connect(data_ssl);
+	 res=lftp_ssl_connect(data_ssl,hostname);
 	 if(res<0)
 	 {
 	    if(BIO_sock_should_retry(res))

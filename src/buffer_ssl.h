@@ -34,6 +34,8 @@ class IOBufferSSL : public IOBuffer
    bool do_connect;
    bool close_later;
 
+   char *hostname;
+
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
 
@@ -41,8 +43,7 @@ protected:
    ~IOBufferSSL();
 
 public:
-   IOBufferSSL(SSL *s,dir_t m) : IOBuffer(m)
-      { ssl=s; ssl_connected=false; do_connect=false; close_later=false; }
+   IOBufferSSL(SSL *s,dir_t m,const char *h=0);
    void DoConnect()	{ ssl_connected=false; do_connect=true; }
    void SetConnected()	{ ssl_connected=true; }
    void CloseLater()	{ close_later=true; }

@@ -193,6 +193,7 @@ Buffer::Buffer()
 {
    error_text=0;
    saved_errno=0;
+   error_fatal=false;
    buffer=0;
    buffer_allocated=0;
    in_buffer=0;
@@ -224,10 +225,11 @@ void Buffer::RateAdd(int n)
    rate->Add(n);
 }
 
-void Buffer::SetError(const char *e)
+void Buffer::SetError(const char *e,bool fatal)
 {
    xfree(error_text);
    error_text=xstrdup(e);
+   error_fatal=fatal;
 }
 #if 0
 void Buffer::SetError2(const char *e1,const char *e2)
@@ -333,7 +335,7 @@ int IOBufferFDStream::Put_LL(const char *buf,int size)
    return res;
 
 stream_err:
-   SetError(stream->error_text);
+   SetError(stream->error_text,!TemporaryNetworkError(saved_errno));
    return -1;
 }
 
@@ -366,7 +368,7 @@ int IOBufferFDStream::Get_LL(int size)
    return res;
 
 stream_err:
-   SetError(stream->error_text);
+   SetError(stream->error_text,!TemporaryNetworkError(saved_errno));
    return -1;
 }
 

@@ -79,6 +79,7 @@ public:
 
    static int TaskCount();
    static bool NonFatalError(int err);
+   static bool TemporaryNetworkError(int err);
 };
 
 class SMTaskInit : public SMTask

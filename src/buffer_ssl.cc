@@ -42,7 +42,8 @@ int IOBufferSSL::Do()
    {
       if(!do_connect)
 	 return STALL;
-      int res=SSL_connect(ssl);
+      errno=0;
+      int res=lftp_ssl_connect(ssl,hostname);
       if(res<=0)
       {
 	 if(BIO_sock_should_retry(res))
@@ -51,7 +52,8 @@ int IOBufferSSL::Do()
 	    return STALL;
 	 else // error
 	 {
-	    SetError(lftp_ssl_strerror("SSL connect"));
+	    SetError(lftp_ssl_strerror("SSL connect"),
+		     errno?!TemporaryNetworkError(errno):true);
 	    return MOVED;
 	 }
       }
@@ -107,6 +109,7 @@ int IOBufferSSL::Get_LL(int size)
    if(!ssl_connected)
       return 0;
    Allocate(size);
+   errno=0;
    int res=SSL_read(ssl,buffer+buffer_ptr+in_buffer,size);
    if(res<0)
    {
@@ -116,7 +119,8 @@ int IOBufferSSL::Get_LL(int size)
 	 return 0;
       else // error
       {
-	 SetError(lftp_ssl_strerror("SSL read"));
+	 SetError(lftp_ssl_strerror("SSL read"),
+		  errno?!TemporaryNetworkError(errno):true);
 	 return -1;
       }
    }
@@ -132,6 +136,7 @@ int IOBufferSSL::Put_LL(const char *buf,int size)
 
    int res=0;
 
+   errno=0;
    res=SSL_write(ssl,buf,size);
    if(res<0)
    {
@@ -141,19 +146,28 @@ int IOBufferSSL::Put_LL(const char *buf,int size)
 	 return 0;
       else // error
       {
-	 SetError(lftp_ssl_strerror("SSL write"));
+	 SetError(lftp_ssl_strerror("SSL write"),
+		  errno?!TemporaryNetworkError(errno):true);
 	 return -1;
       }
    }
    return res;
 }
 
+IOBufferSSL::IOBufferSSL(SSL *s,dir_t m,const char *h)
+ : IOBuffer(m)
+{
+   ssl=s;
+   ssl_connected=false;
+   do_connect=false;
+   close_later=false;
+   hostname=xstrdup(h);
+}
 IOBufferSSL::~IOBufferSSL()
 {
+   xfree(hostname);
    if(close_later)
-   {
       SSL_free(ssl);
-   }
 }
 
 #endif // USE_SSL

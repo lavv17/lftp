@@ -266,3 +266,35 @@ bool SMTask::NonFatalError(int err)
    current->Timeout(0);
    return false; /* fatal error */
 }
+
+bool SMTask::TemporaryNetworkError(int err)
+{
+   switch(err)
+   {
+   case(ETIMEDOUT):
+#ifdef ECONNRESET
+   case(ECONNRESET):
+#endif
+   case(ECONNREFUSED):
+#ifdef EHOSTUNREACH
+   case(EHOSTUNREACH):
+#endif
+#ifdef EHOSTDOWN
+   case(EHOSTDOWN):
+#endif
+#ifdef ENETRESET
+   case(ENETRESET):
+#endif
+#ifdef ENETUNREACH
+   case(ENETUNREACH):
+#endif
+#ifdef ENETDOWN
+   case(ENETDOWN):
+#endif
+#ifdef ECONNABORTED
+   case(ECONNABORTED):
+#endif
+      return true;
+   }
+   return false;
+}

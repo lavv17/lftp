@@ -39,6 +39,7 @@ class Buffer : public SMTask
 protected:
    char *error_text;
    int  saved_errno;
+   bool error_fatal;
 
    char *buffer;
    int buffer_allocated;
@@ -69,9 +70,9 @@ public:
    virtual int Do();
    virtual bool Done() { return in_buffer==0; }
    bool Error() { return error_text!=0; }
-   void SetError(const char *e);
-   void SetError2(const char *e1,const char *e2);
-   int  Errno() { return saved_errno; }
+   bool ErrorFatal() { return error_fatal; }
+   void SetError(const char *e,bool fatal=false);
+   void SetError2(const char *e1,const char *e2,bool fatal=false);
    const char *ErrorText() { return error_text; }
    int Size() { return in_buffer; }
    bool Eof() { return eof; }
