@@ -85,7 +85,8 @@ int FtpListInfo::Do()
 
       // don't consider empty list to be valid
       if(slist_res->get_fnum()>0)
-	 result=ParseFtpLongList(*slist_res,&err);
+	 result=ParseFtpLongList(*slist_res,&err,
+	    ResMgr::Query("ftp:timezone",session->GetHostName()));
       else
 	 err=1;
 
@@ -262,7 +263,7 @@ lrwxrwxrwx   1 lav      root           33 Feb 14 17:45 ltconfig -> /usr/share/li
 NOTE: group may be missing.
 */
 static
-FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err)
+FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
 {
 #define FIRST_TOKEN strtok(line," \t")
 #define NEXT_TOKEN  strtok(NULL," \t")
@@ -374,7 +375,7 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err)
    date.tm_isdst=-1;
    date.tm_sec=0;
 
-   fi.SetDateUnprec(mktime(&date));
+   fi.SetDateUnprec(mktime_from_tz(&date,tz));
 
    char *name=strtok(NULL,"");
    if(!name)
@@ -413,7 +414,7 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err)
 07-02-98  11:17AM                13844 Whatsnew.txt
 */
 static
-FileInfo *ParseFtpLongList_NT(const char *line_c,int *err)
+FileInfo *ParseFtpLongList_NT(const char *line_c,int *err,const char *tz)
 {
    char	 *line=alloca_strdup(line_c);
    int 	 len=strlen(line);
@@ -457,7 +458,7 @@ FileInfo *ParseFtpLongList_NT(const char *line_c,int *err)
    tms.tm_mon=month-1;     /* months since January [0, 11] */
    tms.tm_year=year-1900;  /* years since 1900 */
    tms.tm_isdst=-1;
-   fi.SetDateUnprec(mktime(&tms));
+   fi.SetDateUnprec(mktime_from_tz(&tms,tz));
 
    long long size;
    if(!strcmp(t,"<DIR>"))
@@ -498,7 +499,7 @@ first character of field is type:
  \t - file name follows.
 */
 static
-FileInfo *ParseFtpLongList_EPLF(const char *line,int *err)
+FileInfo *ParseFtpLongList_EPLF(const char *line,int *err,const char *)
 {
    int len=strlen(line);
    const char *b=line;
@@ -594,7 +595,7 @@ FileInfo *ParseFtpLongList_EPLF(const char *line,int *err)
                169               11-29-94  09:20  SYSLEVEL.MPT
 */
 static
-FileInfo *ParseFtpLongList_OS2(const char *line_c,int *err)
+FileInfo *ParseFtpLongList_OS2(const char *line_c,int *err,const char *tz)
 {
    char	 *line=alloca_strdup(line_c);
    int 	 len=strlen(line);
@@ -646,7 +647,7 @@ FileInfo *ParseFtpLongList_OS2(const char *line_c,int *err)
    tms.tm_mon=month-1;     /* months since January [0, 11] */
    tms.tm_year=year-1900;  /* years since 1900 */
    tms.tm_isdst=-1;
-   fi.SetDateUnprec(mktime(&tms));
+   fi.SetDateUnprec(mktime_from_tz(&tms,tz));
 
    t=strtok(NULL,"");
    if(t==0)
@@ -661,7 +662,7 @@ FileInfo *ParseFtpLongList_OS2(const char *line_c,int *err)
 }
 
 static
-FileInfo *ParseFtpLongList_MacWebStar(const char *line_c,int *err)
+FileInfo *ParseFtpLongList_MacWebStar(const char *line_c,int *err,const char *tz)
 {
    char	 *line=alloca_strdup(line_c);
    int 	 len=strlen(line);
@@ -752,7 +753,7 @@ FileInfo *ParseFtpLongList_MacWebStar(const char *line_c,int *err)
    date.tm_isdst=-1;
    date.tm_sec=0;
 
-   fi.SetDateUnprec(mktime(&date));
+   fi.SetDateUnprec(mktime_from_tz(&date,tz));
 
    char *name=strtok(NULL,"");
    if(!name)
@@ -778,7 +779,7 @@ FileInfo *ParseFtpLongList_MacWebStar(const char *line_c,int *err)
    return new FileInfo(fi);
 }
 
-typedef FileInfo *(*ListParser)(const char *line,int *err);
+typedef FileInfo *(*ListParser)(const char *line,int *err,const char *tz);
 static ListParser list_parsers[]={
    ParseFtpLongList_UNIX,
    ParseFtpLongList_NT,
@@ -788,7 +789,7 @@ static ListParser list_parsers[]={
    0
 };
 
-FileSet *FtpListInfo::ParseFtpLongList(const FileSet &lines,int *err_ret)
+FileSet *FtpListInfo::ParseFtpLongList(const FileSet &lines,int *err_ret,const char *tz)
 {
    FileSet *result;
    int err;
@@ -802,7 +803,7 @@ FileSet *FtpListInfo::ParseFtpLongList(const FileSet &lines,int *err_ret)
 
       for(int i=0; lines[i]; i++)
       {
-	 FileInfo *fi=(*parser)(lines[i]->name,&err);
+	 FileInfo *fi=(*parser)(lines[i]->name,&err,tz);
 	 if(fi)
 	 {
 	    if(!strchr(fi->name,'/'))

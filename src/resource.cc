@@ -178,6 +178,7 @@ static ResDecl
    ResDecl07 ("ftp:proxy",		  "",	   FtpProxyValidate,0),
    ResDecl08 ("ftp:rest-list",		  "no",	   ResMgr::BoolValidate,0),
    ResDecl09 ("ftp:rest-stor",		  "yes",   ResMgr::BoolValidate,0),
+   ResDecl09a("ftp:timezone",		  "GMT",   0,0),
    ResDecl10 ("ftp:skey-allow",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl11 ("ftp:skey-force",		  "no",    ResMgr::BoolValidate,0),
 #ifdef USE_SSL

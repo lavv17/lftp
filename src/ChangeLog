@@ -1,5 +1,20 @@
 2001-10-25  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* misc.cc, misc.h: (mktime_from_tz) new function.
+	* FtpListInfo.cc, FtpListInfo.h: use it.
+	* resource.cc: (ftp:timezone) new setting.
+
+2001-10-25  Glenn Maynard <g_ld@zewt.org>
+
+	* FileSetOutput.cc, FileSetOutput.h, commands.cc: -1 option for cls;
+	  readded -q to help cls; added missing \n.
+	* misc.cc, misc.h: -rwxr-xr-t implies S_IXOTH; -rwxr-xr-T does not;
+	  mktime_from_utc has a problem when isdst is -1; the returned time is
+	  off by an hour if the local timezone is in DST.
+	* FtpListInfo.cc: assume unix server's timezone to be GMT.
+
+2001-10-25  Alexander V. Lukyanov <lav@yars.free.net>
+
 	* CmdExec.cc, FileAccess.h, FileCopyFtp.cc, FileSetOutput.cc, Fish.cc,
 	  GetJob.cc, Http.cc, NetAccess.cc, ResMgr.h, Resolver.cc,
 	  Speedometer.cc, StatusLine.cc, commands.cc, ftpclass.cc, ftpclass.h,

@@ -44,7 +44,7 @@ class FtpListInfo : public ListInfo
    class FtpSplitList *slist;
 
 public:
-   static FileSet *ParseFtpLongList(const FileSet &lines,int *err);
+   static FileSet *ParseFtpLongList(const FileSet &lines,int *err,const char *tz);
 
 public:
    FtpListInfo(Ftp *session);

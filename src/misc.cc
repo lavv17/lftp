@@ -366,9 +366,10 @@ int parse_perms(const char *s)
    }
    switch(s[2])
    {
-   case('T'): case('t'): p|=S_ISVTX; break;
-   case('l'): case('L'): p|=S_ISGID; p&=~S_IXGRP; break;
+   case('T'): p|=S_ISVTX; break;
+   case('t'): p|=S_ISVTX; // fall-through
    case('x'): p|=S_IXOTH; break;
+   case('l'): case('L'): p|=S_ISGID; p&=~S_IXGRP; break;
    case('-'): break;
    default: goto bad;
    }
@@ -478,17 +479,58 @@ const char *squeeze_file_name(const char *name,int w)
    Contributed by Roger Beeman <beeman@cisco.com>, with the help of
    Mark Baushke <mdb@cisco.com> and the rest of the Gurus at CISCO.  */
 time_t
-mktime_from_utc (struct tm *t)
+mktime_from_utc (const struct tm *t)
 {
-  time_t tl, tb;
+   struct tm tc;
+   memcpy(&tc, t, sizeof(struct tm));
 
-  tl = mktime (t);
-  if (tl == -1)
-    return -1;
-  tb = mktime (gmtime (&tl));
-  return (tl <= tb ? (tl + (tl - tb)) : (tl - (tb - tl)));
+   /* UTC times are never DST; if we say -1, we'll introduce odd localtime-
+    * dependant errors. */
+
+   tc.tm_isdst = 0;
+
+   time_t tl = mktime (&tc);
+   if (tl == -1)
+      return -1;
+   time_t tb = mktime (gmtime (&tl));
+
+   return (tl <= tb ? (tl + (tl - tb)) : (tl - (tb - tl)));
 }
 
+static char put_tz[64];
+static void set_tz(const char *tz)
+{
+   if(!tz)
+      tz="";
+   sprintf(put_tz,"TZ=%.60s",tz);
+   putenv(put_tz);
+}
+static char *saved_tz=0;
+static void save_tz()
+{
+   xfree(saved_tz);
+   saved_tz=xstrdup(getenv("TZ"));
+}
+static void restore_tz()
+{
+   set_tz(saved_tz);
+}
+time_t mktime_from_tz(struct tm *t,const char *tz)
+{
+   if(!tz || !*tz)
+      return mktime(t);
+   if(isdigit((unsigned char)*tz) || *tz=='+' || *tz=='-')
+   {
+      char *tz1=string_alloca(strlen(tz)+4);
+      sprintf(tz1,"GMT%s",tz);
+      tz=tz1;
+   }
+   save_tz();
+   set_tz(tz);
+   time_t res=mktime(t);
+   restore_tz();
+   return res;
+}
 
 bool re_match(const char *line,const char *a,int flags)
 {
