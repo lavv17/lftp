@@ -1,3 +1,7 @@
+2002-09-09  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.cc: save readline history conditionally.
+
 2002-09-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Http.cc: allow single LF as EOL (suggested by Peter Vreman

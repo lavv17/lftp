@@ -311,6 +311,8 @@ static void tty_clear()
 
 ResDecl res_save_cwd_history
    ("cmd:save-cwd-history","yes",ResMgr::BoolValidate,ResMgr::NoClosure);
+ResDecl res_save_rl_history
+   ("cmd:save-rl-history","yes",ResMgr::BoolValidate,ResMgr::NoClosure);
 
 int   main(int argc,char **argv)
 {
@@ -379,7 +381,8 @@ int   main(int argc,char **argv)
 
    if(res_save_cwd_history.QueryBool(0))
       cwd_history.Save();
-   lftp_rl_write_history();
+   if(res_save_rl_history.QueryBool(0))
+      lftp_rl_write_history();
 
    if(Job::NumberOfJobs()>0)
    {
