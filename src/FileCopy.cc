@@ -1186,7 +1186,7 @@ void FileCopyPeerFDStream::Seek(long new_pos)
    if(pos==new_pos)
       return;
 #ifndef NATIVE_CRLF
-   if(ascii)
+   if(ascii && new_pos!=0)
    {
       // it is possible to read file to determine right position,
       // but it is costly.

@@ -177,16 +177,33 @@ void Http::Close()
 
 void Http::Send(const char *format,...)
 {
-   char *str=(char*)alloca(max_send);
    va_list va;
    va_start(va,format);
 
+   char *str;
+#ifdef HAVE_VSNPRINTF
+   static int max_send=256;
+   for(;;)
+   {
+      str=string_alloca(max_send);
+      int res=vsnprintf(str,max_send,format,va);
+      if(res>=0 && res<max_send)
+      {
+	 if(res<max_send/16)
+	    max_send/=2;
+	 break;
+      }
+      max_send*=2;
+   }
+#else // !HAVE_VSNPRINTF
+   str=string_alloca(2048);
    vsprintf(str,format,va);
-
-   va_end(va);
+#endif
 
    DebugPrint("---> ",str,5);
    send_buf->Put(str);
+
+   va_end(va);
 }
 
 void Http::SendMethod(const char *method,const char *efile)
@@ -320,8 +337,6 @@ add_path:
    efile=pfile;
    efile_len=strlen(efile);
 
-   max_send=efile_len+40;
-
    if(pos==0)
       real_pos=0;
    if(mode==STORE)    // can't seek before writing
@@ -355,8 +370,18 @@ add_path:
       if(entity_date!=(time_t)-1)
       {
 	 char d[256];
-	 if(strftime(d,sizeof(d)-1,"%a, %d %b %Y %T GMT",gmtime(&entity_date)))
-	    Send("Last-Modified: %s",d);
+	 static const char weekday_names[][4]={
+	    "Sun","Mon","Tue","Wed","Thu","Fri","Sat"
+	 };
+	 static const char month_names[][4]={
+	    "Jan","Feb","Mar","Apr","May","Jun",
+	    "Jul","Aug","Sep","Oct","Nov","Dec",
+	 };
+	 struct tm *t=gmtime(&entity_date);
+	 sprintf(d,"%s, %2d %s %04d %02d:%02d:%02d GMT",
+	    weekday_names[t->tm_wday],t->tm_mday,month_names[t->tm_mon],
+	    t->tm_year+1900,t->tm_hour,t->tm_min,t->tm_sec);
+	 Send("Last-Modified: %s\r\n",d);
       }
       break;
 
