@@ -1,15 +1,15 @@
 # Polish translation of lftp.
 # Copyright (C) 1998-2000 Free Software Foundation, Inc.
 # Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>, 1998-2000
-# Jakub Bogusz <qboosh@pld.org.pl>, 2002-2003
-# Tomasz K³oczko <kloczek@pld.org.pl>, 2003
+# Jakub Bogusz <qboosh@pld-linux.org>, 2002-2003
+# some updates by Tomasz K³oczko <kloczek@pld.org.pl>, 2003
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 2.6.6\n"
+"Project-Id-Version: lftp 2.6.9\n"
 "POT-Creation-Date: 2003-11-19 13:14+0300\n"
-"PO-Revision-Date: 2003-06-10 22:53+0200\n"
-"Last-Translator: Jakub Bogusz <qboosh@pld.org.pl>\n"
+"PO-Revision-Date: 2003-11-20 22:57+0100\n"
+"Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-2\n"
@@ -689,7 +689,6 @@ msgstr ""
 "ustawione na fa³sz.\n"
 
 #: src/commands.cc:242
-#, fuzzy
 msgid ""
 "Usage: find [OPTS] [directory]\n"
 "Print contents of specified directory or current directory recursively.\n"
@@ -698,10 +697,10 @@ msgid ""
 " -d, --maxdepth=LEVELS  Descend at most LEVELS of directories.\n"
 msgstr ""
 "U¿ycie: find [OPCJE] [katalog]\n"
-"Wy¶wietl zawarto¶æ podanego katalogu rekursywnie. Katalogi znajduj±ce siê\n"
-"na li¶cie s± zaznaczone przez slash. Mo¿esz przekierowaæ wyj¶cie dowolnej\n"
-"komendy.\n"
-" -d, --maxdepth=POZIOMY  Zag³êbianie maksymalnie do POZIOMÓW.\n"
+"Wy¶wietl rekursywnie zawarto¶æ podanego katalogu lub katalogu bie¿±cego.\n"
+"Katalogi znajduj±ce siê na li¶cie s± zaznaczone przez slash. Mo¿na\n"
+"przekierowaæ wyj¶cie tej komendy.\n"
+" -d, --maxdepth=POZIOMY  Zag³êbianie maksymalnie do tylu POZIOMÓW.\n"
 
 #: src/commands.cc:247
 msgid "get [OPTS] <rfile> [-o <lfile>]"
