@@ -1,6 +1,6 @@
-Version 2.3.0 - 2000-??-??
+Version 2.3.0 - 2000-09-??
 
-* https and ftps protocols support (openssl library is needed).
+* https and ftps protocols support (openssl library is needed for that).
 * completion now appends a slash to remote directories (finally!).
 * new mirror option --parallel=[N] to download several files in parallel.
 * ask for password for ftp:proxy if not supplied.
@@ -25,6 +25,8 @@ Version 2.3.0 - 2000-??-??
 * new setting ftp:use-quit.
 * new setting net:persist-retries (ignore this number of hard errors).
 * new setting ftp:auto-sync-mode (extended regex) to match first server reply.
+* try to connect to original IP when PASV returns address from private
+  network and original IP is not in private network.
 * mirror can return error code now.
 * add workarounds for hftp over apache proxy.
 * use getipnodebyname or getaddrinfo when gethostbyname2 is unavailable.
@@ -32,6 +34,14 @@ Version 2.3.0 - 2000-??-??
 * fixed pget's eta (sometimes it was not shown).
 * fixed max-retries and reconnect delay handling when uploading.
 * fixed `open -u ... -p ... bookmark_name'.
+
+Version 2.2.6 - 2000-09-07
+
+* compile fix for AIX (Gombas Gabor).
+* reformat EPLF even if modification time if absent (Matthias Andree).
+* russian translation updated (Alexander Lukyanov).
+* deutsch translation updated (Moritz Moeller-Herrmann).
+* french translation included (Nicolas Noble).
 
 Version 2.2.5 - 2000-07-31
 
