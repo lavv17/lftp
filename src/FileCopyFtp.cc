@@ -40,7 +40,11 @@ int FileCopyFtp::Do()
    int src_res,dst_res;
    int m=super::Do();
 
-   if(disable_fxp || Error())
+   if(disable_fxp || Error() || !put || !get)
+      return m;
+
+   if(put->GetSeekPos()!=FILE_END && get->GetSize()>=0
+   && put->GetSeekPos()>=get->GetSize())
       return m;
 
    if(state==PUT_WAIT && put->GetSeekPos()!=FILE_END && ftp_dst->IsClosed())

@@ -120,6 +120,12 @@ int FileCopy::Do()
    case(PUT_WAIT):
       if(put->Error())
 	 goto put_error;
+      if(put->GetSeekPos()!=FILE_END && get->GetSize()>=0
+      && put->GetSeekPos()>=get->GetSize())
+      {
+	 debug((9,_("copy: destination file is already complete\n")));
+	 goto pre_GET_DONE_WAIT;
+      }
       if(!put->IOReady())
 	 return m;
       /* now we know if put's seek failed. Seek get accordingly. */
@@ -697,7 +703,7 @@ int FileCopyPeerFA::Do()
 
    if(Done() || Error())
       return m;
-   if(want_size && (mode==PUT || !start_transfer))
+   if(want_size && size==NO_SIZE_YET && (mode==PUT || !start_transfer))
    {
       if(session->IsClosed())
       {
