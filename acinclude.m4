@@ -107,7 +107,7 @@ AC_DEFUN(TYPE_SOCKLEN_T,
 	 AC_LANG_RESTORE
       ])
       AC_MSG_RESULT($lftp_cv_socklen_t_equiv)
-      AC_DEFINE(socklen_t, $lftp_cv_socklen_t_equiv)
+      AC_DEFINE_UNQUOTED(socklen_t, $lftp_cv_socklen_t_equiv)
    fi
 ])
 
