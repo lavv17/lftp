@@ -1,3 +1,5 @@
+Version 2.0.3 - 1999-07-25
+
 * added lftpget (get an URL) script to distribution.
 * fixed rare spining in ls (when pipe stalls).
 * fixed handling of HREF=/ in http ls.
