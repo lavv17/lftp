@@ -30,6 +30,7 @@ class ArgV
    int ind;
 
    void Init(int,const char * const *);
+   void GetRoom(int);
 
 public:
    ArgV() { Init(0,0); }
@@ -38,7 +39,7 @@ public:
    void Append(const char *);
    ArgV(const ArgV& a) { Init(a.c,a.v); }
    ArgV(int new_c,const char * const *new_v) { Init(new_c,new_v); }
-   ~ArgV() { Empty(); }
+   ~ArgV();
 
    char *Combine(int start_index=0) const;
    char *CombineQuoted(int start_index=0) const;

@@ -26,10 +26,17 @@
 #include "xmalloc.h"
 #include "ArgV.h"
 
+void ArgV::GetRoom(int n)
+{
+   // alloc one extra for trailing zero
+   v=(char**)xrealloc(v,sizeof(*v)*((n+4)&~3));
+}
+
 void ArgV::Init(int new_c,const char * const *new_v)
 {
    c=new_c;
-   v=(char**)xmalloc(sizeof(char*)*(c+1));
+   v=0;
+   GetRoom(c);
    int i;
    for(i=0; i<c; i++)
       v[i]=xstrdup(new_v[i]);
@@ -37,12 +44,20 @@ void ArgV::Init(int new_c,const char * const *new_v)
    ind=0;
 }
 
+ArgV::~ArgV()
+{
+   int i;
+   for(i=0; i<c; i++)
+      xfree(v[i]);
+   xfree(v);
+}
+
 void ArgV::Empty()
 {
    int i;
    for(i=0; i<c; i++)
-      free(v[i]);
-   v=(char**)xrealloc(v,sizeof(*v));
+      xfree(v[i]);
+   GetRoom(0);
    v[0]=0;
    c=0;
    ind=0;
@@ -99,7 +114,7 @@ char *ArgV::Combine(int start) const
 
 void ArgV::Append(const char *s)
 {
-   v=(char**)xrealloc(v,sizeof(*v)*(c+2));
+   GetRoom(c+1);
    v[c++]=xstrdup(s);
    v[c]=0;
 }
@@ -133,7 +148,7 @@ void ArgV::insarg(int n,const char *s)
       Append(s);
    else
    {
-      v=(char**)xrealloc(v,sizeof(*v)*(c+2));
+      GetRoom(c+1);
       // copy with trailing null pointer
       memmove(v+n+1,v+n,(count()-n+1)*sizeof(*v));
       c++;
