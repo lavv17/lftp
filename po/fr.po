@@ -552,7 +552,6 @@ msgstr ""
 "`bg' force le passage en tâche de fond si cmd:move-background est faux.\n"
 
 #: src/commands.cc:161
-#, fuzzy
 msgid ""
 "Usage: find [OPTS] [directory]\n"
 "Print contents of specified directory of current directory recursively.\n"
@@ -560,11 +559,11 @@ msgid ""
 "You can redirect output of this command.\n"
 " -d, --maxdepth=LEVELS  Descend at most LEVELS of directories.\n"
 msgstr ""
-"Usage: find [répertoire]\n"
-"Affiche le contenu du répertoire spécifié ou du répertoire en cours de "
-"manière\n"
-"récursive. Les répertoires dans la listes sont marqués aec un slash final.\n"
-"Vous pouvez rediriger la sortie de cette commande.\n"
+"Usage: find [OPTS] [répertoire]\n"
+"Affiche le contenu du répertoire spécifié ou du répertoire en cours de\n"
+"manière récursive. Les répertoires dans la listes sont marqués avec un\n"
+"slash final. Vous pouvez rediriger la sortie de cette commande.\n"
+" -d, --maxdepth=LEVELS  Descend au plus LEVELS répertoires.\n"
 
 #: src/commands.cc:166
 msgid "get [OPTS] <rfile> [-o <lfile>]"
@@ -955,6 +954,25 @@ msgid ""
 "Move the given items before the given queue index, or to the end if no\n"
 "destination is given.\n"
 msgstr ""
+"Usage:\n"
+"       queue [-n num] <commande>\n"
+"\n"
+"Ajoute la commande a la queue pour le site en cours. Chaque site a sa "
+"propre\n"
+"queue de commandes. `-n' ajoute la commande avant l'élément indiqué dans la\n"
+"queue. Il est possible de rajouter en tête de queue un travail en cours "
+"avec\n"
+"la commande `queue wait <jobno>'.\n"
+"\n"
+"       queue --delete|-d [index ou jocker]\n"
+"\n"
+"Efface un ou plusieurs éléments de la queue. Si aucun argument n'est donné,\n"
+"le dernier élément de la queue est effacé.\n"
+"\n"
+"       queue --move|-m <index ou jocker> [index]\n"
+"\n"
+"Déplace les éléments donnés avant la place indiquée dans la queue, ou à la\n"
+"fin si aucune destination n'est donnée.\n"
 
 #: src/commands.cc:310
 msgid "quote <cmd>"
@@ -1061,8 +1079,8 @@ msgid ""
 " -d  list only default values, not necessary current ones\n"
 msgstr ""
 "Définit la variable à la valeur indiquée. Si la valeur est omise, cela\n"
-"va effacer la variable. Le format d'un nom de variable est ``nom/"
-"restriction''\n"
+"va effacer la variable. Le format d'un nom de variable est "
+"``nom/restriction''\n"
 "où la restriction permet de spécifier l'application exacte de la "
 "définition.\n"
 "Regardez lftp(1) pour les détails.\n"
@@ -1235,26 +1253,26 @@ msgstr "%s: -n: Nombre attendu. "
 #: src/commands.cc:951 src/commands.cc:981
 #, c-format
 msgid "%s: No queue is active.\n"
-msgstr ""
+msgstr "%s: Aucune queue active.\n"
 
 #: src/commands.cc:973
-#, fuzzy, c-format
+#, c-format
 msgid "%s: -m: Number expected as second argument. "
-msgstr "%s: -n: Nombre attendu. "
+msgstr "%s: -m: Nombre attendu en tant que second argument. "
 
 #: src/commands.cc:1004
 msgid "Can only edit plain queues.\n"
-msgstr ""
+msgstr "Ne peut éditer que des queues entières.\n"
 
 #: src/commands.cc:1017
 #, c-format
 msgid "Couldn't create temporary file `%s': %s.\n"
-msgstr ""
+msgstr "Ne peut créer le fichier temporaire `%s': %s.\n"
 
 #: src/commands.cc:1023
 #, c-format
 msgid "%s: error writing %s: %s\n"
-msgstr ""
+msgstr "%s: erreur à l'écriture de %s: %s\n"
 
 #: src/commands.cc:1078
 #, c-format
@@ -1418,7 +1436,7 @@ msgstr "Lftp | Version %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"
 msgid ""
 "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
 msgstr ""
-"Ceci est un programme libre SANS GARANTIE. Voir COPYING pour les détails.\n"
+"Ceci est un logiciel libre SANS GARANTIE. Voir COPYING pour les détails.\n"
 
 #: src/commands.cc:2027
 #, c-format
@@ -1446,9 +1464,9 @@ msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: type d'import requis (netscape,ncftp)\n"
 
 #: src/commands.cc:2214
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [-d #] dir\n"
-msgstr "Usage: %s [-p]\n"
+msgstr "Usage: %s [-d #] rep\n"
 
 #: src/commands.cc:2233
 #, c-format
@@ -1804,7 +1822,7 @@ msgstr "famille d'adresse inconnue `%s'"
 
 #: src/resource.cc:156
 msgid "ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C"
-msgstr ""
+msgstr "ftp:ssl-auth doit être un de la liste: SSL, TLS, TLS-P, TLS-C"
 
 #: src/FtpDirList.cc:223 src/FtpSplitList.cc:183 src/HttpDir.cc:1116
 #: src/NetAccess.cc:695
@@ -2025,27 +2043,3 @@ msgstr "dépendence du module `%s': %s\n"
 #: src/module.cc:201
 msgid "modules are not supported on this system"
 msgstr "les modules ne sont pas supportés sur ce système"
-
-#~ msgid "\tCommands queued:\n"
-#~ msgstr "\tCommandes dans la file d'attente:\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "Usage: queue -e|-s <file>|<command>\n"
-#~ " -e|--edit    Edit the queue\n"
-#~ " -s|--source <file> adds the contents of a file to the end of the queue\n"
-#~ "<command>     Add the command to queue for current site. Each site has "
-#~ "its\n"
-#~ "own command queue. It is possible to queue up a running job by using\n"
-#~ "command `queue wait <jobno>'.\n"
-#~ msgstr ""
-#~ "Usage: queue <commande>\n"
-#~ "Ajoute la commande à la file d'attente pour le site en cours.\n"
-#~ "Chaque site possède sa propre file d'attente. Il est possible d'ajouter "
-#~ "un\n"
-#~ "travail actif à la queue en utilisant la commande `queue wait "
-#~ "<num_travail>.\n"
-
-#, fuzzy
-#~ msgid "Usage: %s -e|-s|command args...\n"
-#~ msgstr "Usage: %s commande args...\n"
