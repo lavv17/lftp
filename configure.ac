@@ -1,8 +1,8 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.53)
-AC_INIT([lftp], [2.6.5], [lftp-bugs@lftp.yar.ru])
-AC_CONFIG_SRCDIR([src/ftpclass.cc])
+AC_INIT([lftp], [2.6.6], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
+AC_CONFIG_SRCDIR([src/ftpclass.cc])
 AM_CONFIG_HEADER(include/config.h)
 
 # This doesn't *require* GNU extensions; it merely enables them if

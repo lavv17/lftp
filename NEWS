@@ -1,3 +1,23 @@
+Version 2.6.6 - 2003-05-28
+
+* raised sane mirror connection limit to 64.
+* fixed hftp file information retrieval when use-head is off (reported by
+  Robert A. Thompson).
+* ignore zero size reported by SIZE (for sunsolve.sun.com).
+* fixed a bug with exclude/include of directories in reverse mirror.
+* several bugs with mirror --script fixed (reported by Olaf Kaehler).
+* fixed a bug with unterminated string in HTML parsing; add wwwoffle support
+  (AIDA Shinra).
+* fixed a bug with ssl settings pointing to files and directories (Diego
+  Reyes).
+* fixed a bug with sending empty path in HTTP protocol (Geoffrey Lee).
+* fixed catching of file size from ftp server message 150.
+* fixed hftp with password - now it should work with all proxies as it
+  sends password in URI even when Authorization header is used.
+* new debugging command .tasks to show number of tasks.
+* now lftp does not load/save histories until it interacts with user.
+  E.g. `lftp -c command' does not update ~/.lftp/rl_history now.
+
 Version 2.6.5 - 2003-02-28
 
 * new mirror options --log=<file> and --script=<file> to produce lftp commands
@@ -11,7 +31,7 @@ Version 2.6.5 - 2003-02-28
 * added cls option --sort=date (Oskar Liljeblad).
 * fixed compilation on OpenBSD and older Solaris.
 * fixed handling of symbolic links in find.
-* lftp -f and -c options can now be combined
+* lftp -f and -c options can now be combined with -d.
 * fixed slot handling in non-interactive mode.
 * fixed large file support in cat command.
 * fixed dante socks compilation (now lftp does not use poll with dante).
