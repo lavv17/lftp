@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "31 Jul 1999"
+.TH lftp 1 "06 Aug 1999"
 .SH NAME
 lftp \- Sophisticated ftp program
 .SH SYNTAX
@@ -633,6 +633,10 @@ specifies ftp proxy to use. The format currently is `proxy_host:port'.
 To disable proxy set this to empty string. Note that it is an ftp proxy which
 uses ftp protocol, not ftp over http.
 .TP
+.BR ftp:rest-list \ (bool)
+allow usage of REST command before LIST command. This might be useful for
+large directories, but some ftp servers silently ignore REST before LIST.
+.TP
 .BR ftp:skey-allow \ (bool)
 allow sending skey/opie reply if server appears to support it. On by default.
 .TP
@@ -701,8 +705,6 @@ show terse ETA (only high order parts). Default is true.
 .TP
 .BR xfer:use-urls \ (bool)
 recognize URLs by default in commands get, cat, mget, zcat, zmore.
-If you additionally use -u option, then non-strict URLs will be recognized
-(i.e. ftp.somehost.com/path/to/file).
 
 .PP
 The name of variables can be abbreviated unless it becomes

@@ -1,3 +1,8 @@
+1999-08-06	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:rest-list; remove statement about non-strict
+	  URLs.
+
 1999-07-31	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: correct few typos and obsolete statements.
