@@ -383,7 +383,14 @@ HttpDirList::~HttpDirList()
 
 const char *HttpDirList::Status()
 {
-   return "HttpDirList";	// FIXME
+   static char s[256];
+   if(ubuf && !ubuf->Eof() && session->IsOpen())
+   {
+      sprintf(s,_("Getting file list (%ld) [%s]"),
+		     session->GetPos(),session->CurrentStatus());
+      return s;
+   }
+   return "";
 }
 
 void HttpDirList::Suspend()
@@ -560,7 +567,7 @@ const char *HttpGlob::Status()
       return updir_glob->Status();
 
    static char s[256];
-   if(!ubuf->Eof() && session->IsOpen())
+   if(ubuf && !ubuf->Eof() && session->IsOpen())
    {
       sprintf(s,_("Getting file list (%ld) [%s]"),
 		     session->GetPos(),session->CurrentStatus());

@@ -434,3 +434,18 @@ bool ResMgr::str2bool(const char *s)
 {
    return(strchr("TtYy1+",s[0])!=0 || !strcasecmp(s,"on"));
 }
+
+ResDecl::ResDecl(const char *a_name,const char *a_defvalue,
+		  ResValValid *a_val_valid,ResClValid *a_closure_valid)
+{
+   name=a_name;
+   defvalue=a_defvalue;
+   val_valid=a_val_valid;
+   closure_valid=a_closure_valid;
+   next=ResMgr::type_chain;
+   ResMgr::type_chain=this;
+#if 0
+   if(defvalue)
+      ResMgr::Set(name,0,defvalue);
+#endif
+}

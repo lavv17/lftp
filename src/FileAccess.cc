@@ -74,6 +74,8 @@ void FileAccess::Init()
    entity_date=(time_t)-1;
 
    closure=0;
+
+   chmod_mode=0644;
 }
 
 FileAccess::FileAccess(const FileAccess *fa)
@@ -603,6 +605,11 @@ void FileAccess::Chdir(const char *path,bool verify)
    }
 }
 
+void FileAccess::Chmod(const char *file,int m)
+{
+   chmod_mode=m;
+   Open(file,CHANGE_MODE);
+}
 
 FileAccess *SessionPool::pool[pool_size];
 

@@ -52,6 +52,8 @@ public:
    ~LsJob();
 
    void	 NoCache();
+
+   void	 ShowRunStatus(StatusLine *s);
 };
 
 #endif /* LSJOB_H */

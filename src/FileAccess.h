@@ -64,7 +64,8 @@ public:
       QUOTE_CMD,
       RENAME,
       ARRAY_INFO,
-      CONNECT_VERIFY
+      CONNECT_VERIFY,
+      CHANGE_MODE
    };
 
    struct fileinfo
@@ -148,6 +149,8 @@ protected:
    char *closure;
    ResValue Query(const char *name,const char *closure=0);
 
+   int chmod_mode;
+
 public:
    virtual const char *GetProto() = 0; // http, ftp, file etc
    bool SameProtoAs(FileAccess *fa) { return !strcmp(GetProto(),fa->GetProto()); }
@@ -181,6 +184,7 @@ public:
    virtual void Chdir(const char *dir,bool verify=true);
    void Remove(const char *rfile)    { Open(rfile,REMOVE); }
    void RemoveDir(const char *dir)  { Open(dir,REMOVE_DIR); }
+   void Chmod(const char *file,int m);
 
    void	 GetInfoArray(struct fileinfo *info,int count);
    int	 InfoArrayPercentDone()

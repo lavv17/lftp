@@ -238,10 +238,19 @@ bool Http::ModeSupported()
    case QUOTE_CMD:
    case RENAME:
    case LIST:
+   case CHANGE_MODE:
       return false;
-   default:
+   case RETRIEVE:
+   case STORE:
+   case MAKE_DIR:
+   case CHANGE_DIR:
+   case ARRAY_INFO:
+   case REMOVE_DIR:
+   case REMOVE:
+   case LONG_LIST:
       return true;
    }
+   abort(); // should not happen
 }
 
 void Http::SendRequest(const char *connection,const char *f)
@@ -294,6 +303,7 @@ void Http::SendRequest(const char *connection,const char *f)
    case QUOTE_CMD:
    case RENAME:
    case LIST:
+   case CHANGE_MODE:
       abort(); // unsupported
 
    case RETRIEVE:

@@ -40,11 +40,11 @@
 #define super SessionJob
 
 static ResDecl
-   res_long_running	   ("cmd:long-running","30",ResMgr::UNumberValidate,0),
+   res_long_running	   ("cmd:long-running",	"30",ResMgr::UNumberValidate,0),
    res_remote_completion   ("cmd:remote-completion","on",ResMgr::BoolValidate,0),
-   res_prompt		   ("cmd:prompt","lftp> ",0,0),
-   res_default_ls	   ("cmd:ls-default","",0,0),
-   res_csh_history	   ("cmd:csh-history","off",ResMgr::BoolValidate,0),
+   res_prompt		   ("cmd:prompt",	"lftp> ",0,0),
+   res_default_ls	   ("cmd:ls-default",	"",0,0),
+   res_csh_history	   ("cmd:csh-history",	"off",ResMgr::BoolValidate,0),
    res_verify_path	   ("cmd:verify-path",	"yes",ResMgr::BoolValidate,0),
    res_verify_host	   ("cmd:verify-host",	"yes",ResMgr::BoolValidate,0),
    res_at_exit		   ("cmd:at-exit",	"",   0,0),
@@ -112,7 +112,6 @@ void CmdExec::FeedCmd(const char *c)
    memmove(cmd_buf,next_cmd,len);
    cmd_buf=next_cmd=(char*)xrealloc(cmd_buf,len+strlen(c)+1);
    strcpy(next_cmd+len,c);
-//    printf("after feed: next_cmd=`%s'\n",next_cmd);
 };
 
 void CmdExec::PrependCmd(const char *c)
@@ -395,6 +394,51 @@ int CmdExec::Do()
 	    return MOVED;
 	 }
 	 break;
+      case(BUILTIN_GLOB):
+	 if(glob->Error())
+	 {
+	    if(status_line)
+	       status_line->Show("");
+	    eprintf("%s: %s\n",args->getarg(0),glob->ErrorText());
+	 }
+	 else if(glob->Done())
+	 {
+	    const char *const* glob_res=glob->GetResult();
+	    if(glob_res)
+	    {
+	       while(*glob_res)
+	       {
+		  args_glob->Append(*glob_res);
+		  glob_res++;
+	       }
+	    }
+	 }
+	 if(glob->Done() || glob->Error())
+	 {
+	    delete glob;
+	    glob=0;
+	    const char *pat=args->getnext();
+	    if(!pat)
+	    {
+	       // it was last argument
+	       delete args;
+	       args=args_glob;
+	       args_glob=0;
+	       waiting=0;
+	       builtin=BUILTIN_NONE;
+	       if(status_line)
+		  status_line->Show("");
+	       exit_code=prev_exit_code;
+	       exec_parsed_command();
+	       return MOVED;
+	    }
+	    glob=session->MakeGlob(pat);
+	    if(!glob)
+	       glob=new NoGlob(pat);
+	    m=MOVED;
+	 }
+	 break;
+
       case(BUILTIN_NONE):
       case(BUILTIN_EXEC_RESTART):
 	 abort(); // can't happen
@@ -409,18 +453,25 @@ int CmdExec::Do()
 	 }
 	 if(SignalHook::GetCount(SIGTSTP))
 	 {
-	    if(status_line)
-	       status_line->Show("");
-	    if(builtin==BUILTIN_CD)
+	    if(builtin==BUILTIN_CD || builtin==BUILTIN_OPEN)
 	    {
-	       // accept the path
-	       session->Chdir(session->GetFile(),false);
+	       if(status_line)
+		  status_line->Show("");
+	       if(builtin==BUILTIN_CD)
+	       {
+		  // accept the path
+		  session->Chdir(session->GetFile(),false);
+	       }
+	       session->Close();
+	       exit_code=0;
+	       waiting=0;
+	       builtin=BUILTIN_NONE;
+	       return MOVED;
 	    }
-	    session->Close();
-	    exit_code=0;
-	    waiting=0;
-	    builtin=BUILTIN_NONE;
-	    return MOVED;
+	    else
+	    {
+	       SignalHook::ResetCount(SIGTSTP);
+	    }
 	 }
 	 if(SignalHook::GetCount(SIGHUP))
 	 {
@@ -577,6 +628,9 @@ void CmdExec::ShowRunStatus(StatusLine *s)
       case(BUILTIN_OPEN):
 	 s->Show("open `%s' [%s]",session->GetHostName(),session->CurrentStatus());
       	 break;
+      case(BUILTIN_GLOB):
+	 s->Show("%s",glob->Status());
+	 break;
       case(BUILTIN_NONE):
       case(BUILTIN_EXEC_RESTART):
 	 abort(); // can't happen
@@ -644,6 +698,9 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
    start_time=0;
    old_cwd=0;
    old_lcwd=0;
+
+   glob=0;
+   args_glob=0;
 }
 
 CmdExec::~CmdExec()
@@ -660,6 +717,10 @@ CmdExec::~CmdExec()
       cwd_owner=0;
    xfree(old_cwd);
    xfree(old_lcwd);
+   if(glob)
+      delete glob;
+   if(args_glob)
+      delete args_glob;
 }
 
 char *CmdExec::MakePrompt()
@@ -812,7 +873,7 @@ void CmdExec::Reconfig()
    remote_completion = res_remote_completion.Query(0);
    csh_history = res_csh_history.Query(0);
    xfree(var_ls);
-   var_ls=xstrdup(res_default_ls.Query(session->GetHostName()));
+   var_ls=xstrdup(res_default_ls.Query(session->GetConnectURL(FA::NO_PATH)));
    xfree(var_prompt);
    var_prompt=xstrdup(res_prompt.Query(0));
    verify_path=res_verify_path.Query(0);
@@ -847,7 +908,22 @@ int CmdExec::AcceptSig(int sig)
       return STALL;
    if(waiting==this) // builtin
    {
-      session->Close();
+      switch(builtin)
+      {
+      case(BUILTIN_CD):
+      case(BUILTIN_OPEN):
+	 session->Close();
+	 break;
+      case(BUILTIN_GLOB):
+	 delete glob;
+	 glob=0;
+	 delete args_glob;
+	 args_glob=0;
+	 break;
+      case(BUILTIN_NONE):
+      case(BUILTIN_EXEC_RESTART):
+	 abort(); // should not happen
+      }
       waiting=0;
       builtin=BUILTIN_NONE;
       exit_code=1;
@@ -893,6 +969,19 @@ void CmdExec::unquote(char *buf,const char *str)
       *buf++=*str++;
    }
    *buf=0;
+}
+
+bool CmdExec::needs_quotation(const char *buf)
+{
+   while(*buf)
+   {
+      if(isspace(*buf))
+	 return true;
+      if(*buf=='"' || *buf=='\\')
+	 return true;
+      buf++;
+   }
+   return false;
 }
 
 void CmdExec::FeedQuoted(const char *c)

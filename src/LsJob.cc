@@ -27,6 +27,8 @@
 #include <unistd.h>
 #endif
 
+#define super XferJob
+
 int   LsJob::Done()
 {
    return curr==0 && local==0;
@@ -233,4 +235,20 @@ void LsJob::NoCache()
       }
       from_cache=false;
    }
+}
+
+void  LsJob::ShowRunStatus(StatusLine *s)
+{
+   if(!print_run_status)
+      return;
+   if(Done())
+   {
+      s->Show("");
+      return;
+   }
+
+   if(!dl)
+      super::ShowRunStatus(s);
+   else
+      s->Show("%s",dl->Status());
 }

@@ -278,10 +278,12 @@ int   Ftp::LoginCheck(int act,int exp)
    if(ignore_pass)
       return state;
    (void)exp;
-   if(act==RESP_LOGIN_FAILED)
+   if(act==530) // login incorrect or overloaded server
    {
       if(strstr(line,"Login incorrect")) // Don't translate!!!
       {
+	 if(!user)   // unusual message for anonymous user
+	    return(-1);
 	 DebugPrint("---- ",_("Saw `Login incorrect', assume failed login"),9);
 	 return(LOGIN_FAILED_STATE);
       }
@@ -303,6 +305,10 @@ int   Ftp::NoPassReqCheck(int act,int exp) // for USER command
    }
    if(act==530)	  // no such user or overloaded server
    {
+      // Unfortunately, at this point we cannot tell if it is
+      // really incorrect login or overloaded server, because
+      // many overloaded servers return hard error 530...
+      // So try to check the message for 'user unknown'.
       if(strstr(line,"unknown")) // Don't translate!!!
       {
 	 DebugPrint("---- ",_("Saw `unknown', assume failed login"),9);
@@ -1197,6 +1203,9 @@ int   Ftp::Do()
       case(ARRAY_INFO):
 	 type=FTP_TYPE_I;
 	 break;
+      case(CHANGE_MODE):
+	 sprintf(str1,"SITE CHMOD %03o %s\n",chmod_mode,file);
+	 break;
       case(CONNECT_VERIFY):
       case(CLOSED):
 	 abort(); // can't happen
@@ -1242,7 +1251,7 @@ int   Ftp::Do()
 	 goto pre_WAITING_STATE;
       }
 
-      if(mode==QUOTE_CMD
+      if(mode==QUOTE_CMD || mode==CHANGE_MODE
       || mode==REMOVE || mode==REMOVE_DIR || mode==MAKE_DIR || mode==RENAME)
       {
 	 if(mode==MAKE_DIR && mkdir_p)
@@ -1271,6 +1280,8 @@ int   Ftp::Do()
 	    AddResp(0,INITIAL_STATE,CHECK_IGNORE,true);
 	 else if(mode==RENAME)
 	    AddResp(350,INITIAL_STATE,CHECK_RNFR);
+	 else
+	    AddResp(200,INITIAL_STATE,CHECK_FILE_ACCESS);
 
 	 if(result)
 	 {
@@ -2905,7 +2916,7 @@ int   Ftp::Done()
       return OK;
 
    if(mode==CHANGE_DIR || mode==RENAME || mode==ARRAY_INFO
-   || mode==MAKE_DIR || mode==REMOVE_DIR || mode==REMOVE
+   || mode==MAKE_DIR || mode==REMOVE_DIR || mode==REMOVE || mode==CHANGE_MODE
    || copy_mode!=COPY_NONE)
    {
       if(state==WAITING_STATE && RespQueueIsEmpty())

@@ -54,8 +54,8 @@ SMTask::SMTask()
    running=false;
 }
 
-void  SMTask::Suspend() { suspended=1; }
-void  SMTask::Resume()  { suspended=0; }
+void  SMTask::Suspend() { suspended=true; }
+void  SMTask::Resume()  { suspended=false; }
 
 SMTask::~SMTask()
 {

@@ -306,8 +306,28 @@ int   main(int argc,char **argv)
    args->setarg(0,"lftp");
    if(args->count()>1)
    {
-      char *line=args->Combine();   // FIXME: proper quoting
-      lftp_add_history_nodups(line);
+      char *line=args->Combine();
+      char *qline=(char*)alloca(strlen(line)*3+1);
+      char *store=qline;
+      args->rewind();
+      for(const char *a=args->a0(); a; a=args->getnext())
+      {
+	 if(CmdExec::needs_quotation(a))
+	 {
+	    *store++='"';
+	    CmdExec::unquote(store,a);
+	    store+=strlen(store);
+	    *store++='"';
+	 }
+	 else
+	 {
+	    strcpy(store,a);
+	    store+=strlen(store);
+	 }
+	 *store++=' ';
+      }
+      *store=0;
+      lftp_add_history_nodups(qline);
       free(line);
    }
    lftp_feeder=new ReadlineFeeder;

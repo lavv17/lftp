@@ -27,6 +27,7 @@
 
 class KeyValueDB
 {
+protected:
    class Pair
    {
    public:
@@ -60,7 +61,6 @@ class KeyValueDB
       }
    Pair **LookupPair(const char *key);
 
-protected:
    int Lock(int fd,int type);
 
    Pair *chain;

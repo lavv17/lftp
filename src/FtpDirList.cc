@@ -139,7 +139,14 @@ FtpDirList::~FtpDirList()
 
 const char *FtpDirList::Status()
 {
-   return "FtpDirList";	// FIXME
+   static char s[256];
+   if(ubuf && !ubuf->Eof() && session->IsOpen())
+   {
+      sprintf(s,_("Getting file list (%ld) [%s]"),
+		     session->GetPos(),session->CurrentStatus());
+      return s;
+   }
+   return "";
 }
 
 void FtpDirList::Suspend()

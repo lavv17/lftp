@@ -77,7 +77,7 @@ const char *expand_home_relative(const char *s)
    if(s[0]=='~')
    {
       const char *home=0;
-      char *sl;
+      const char *sl=strchr(s+1,'/');;
       static char *ret_path=0;
 
       if(s[1]==0 || s[1]=='/')
@@ -86,12 +86,11 @@ const char *expand_home_relative(const char *s)
       }
       else
       {
-	 char name[9];
-	 strncpy(name,s+1,8);
-	 name[8]=0;
-	 sl=strchr(name,'/');
-	 if(sl)
-	    *sl=0;
+	 // extract user name and find the home
+	 int name_len=(sl?sl-s-1:strlen(s+1));
+	 char *name=(char*)alloca(name_len+1);
+	 strncpy(name,s+1,name_len);
+	 name[name_len]=0;
 
 	 struct passwd *pw=getpwnam(name);
 	 if(pw)
@@ -100,7 +99,6 @@ const char *expand_home_relative(const char *s)
       if(home==0)
 	 return s;
 
-      sl=strchr(s,'/');
       if(sl)
       {
 	 ret_path=(char*)xrealloc(ret_path,strlen(sl)+strlen(home)+1);

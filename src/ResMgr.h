@@ -100,17 +100,7 @@ public:
    const char *defvalue;
 
    ResDecl(const char *name,const char *defvalue,
-	   ResValValid *val_valid,ResClValid *closure_valid=0)
-   {
-      this->name=name;
-      this->defvalue=defvalue;
-      this->val_valid=val_valid;
-      this->closure_valid=closure_valid;
-      this->next=ResMgr::type_chain;
-      ResMgr::type_chain=this;
-/*      if(defvalue)*/
-/*	 ResMgr::Set(name,0,defvalue);*/
-   }
+	   ResValValid *val_valid,ResClValid *closure_valid=0);
 
    ResValue Query(const char *closure);
 };
