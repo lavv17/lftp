@@ -19,6 +19,12 @@ GetFileInfo::GetFileInfo(FileAccess *a, const char *_dir, bool _showdir)
 
    if(_showdir) tried_dir = true;
 
+   /* if it ends with a slash and we're not showing directories,
+    * don't try it as a file at all */
+   if(!_showdir && *dir && dir[strlen(dir)-1] == '/')
+      tried_file = true;
+
+   assert(!tried_dir || !tried_file); /* always do at least one */
    saved_error_text=0;
 }
 
@@ -129,7 +135,9 @@ int GetFileInfo::Do()
 
 	 if(!file) {
 	    /* The file doesn't exist; fail. */
-	    SetError(strerror(ENOENT));
+	    char *buf = xasprintf("%s: %s", dir, strerror(ENOENT));
+	    SetError(buf);
+	    xfree(buf);
 	    delete result; result=0;
 	    return MOVED;
 	 }
@@ -138,7 +146,9 @@ int GetFileInfo::Do()
 	  * directory, we should have been able to Chdir into it to begin
 	  * with.  We probably got Access Denied.  Fail. */
 	 if(!showdir && file->filetype==FileInfo::DIRECTORY) {
-	    SetError(strerror(EACCES));
+	    char *buf = xasprintf("%s: %s", dir, strerror(EACCES));
+	    SetError(buf);
+	    xfree(buf);
 	    delete result; result=0;
 	    return MOVED;
 	 }

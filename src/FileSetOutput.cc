@@ -283,60 +283,66 @@ FileCopyPeerCLS::~FileCopyPeerCLS()
 int FileCopyPeerCLS::Do()
 {
    if(Done()) return STALL;
-      /* one currently processing? */
-      if(list_info) {
-	 if(list_info->Error()) {
-	    SetError(list_info->ErrorText());
-	    return MOVED;
-	 }
 
-	 if(!list_info->Done())
-	    return STALL;
-
-	 /* one just finished */
-	 int oldpos = pos;
-	 fso.pat = mask;
-	 FileSet *res = list_info->GetResult();
-	 Delete(list_info);
-	 list_info=0;
-	 fso.print(*res, this);
-	 fso.pat = 0;
-	 delete res;
-	 pos = oldpos;
-      }
-
-      /* next: */
-      xfree(dir); dir = 0;
-      xfree(mask); mask = 0;
-
-      dir = args->getnext();
-      if(!dir) {
-	 /* done */
-	 PutEOF();
+   /* one currently processing? */
+   if(list_info) {
+      if(list_info->Error()) {
+	 SetError(list_info->ErrorText());
 	 return MOVED;
       }
-      dir = xstrdup(dir);
 
-      /* If the basename contains wildcards, move the basename into mask. */
-      mask = strrchr(dir, '/');
-      if(!mask) mask=dir;
-      if(strspn(mask, "*?")) {
-	 if(mask == dir)
-	    dir = xstrdup("");
-	 else {
-	    mask[-1] = 0;
-	    mask = xstrdup(mask);
-	 }
-      } else mask=0;
+      if(!list_info->Done())
+	 return STALL;
 
-      mask = 0;
+      /* one just finished */
+      int oldpos = pos;
+      fso.pat = mask;
+      FileSet *res = list_info->GetResult();
+      Delete(list_info);
+      list_info=0;
+      fso.print(*res, this);
+      fso.pat = 0;
+      delete res;
+      pos = oldpos;
+   }
 
-      list_info=new GetFileInfo(session, dir, fso.list_directories);
-      if(!list_info) {
-	 PutEOF();
-	 return MOVED;
+   /* next: */
+   xfree(dir); dir = 0;
+   xfree(mask); mask = 0;
+
+   dir = args->getnext();
+   if(!dir) {
+      /* done */
+      PutEOF();
+      return MOVED;
+   }
+   dir = xstrdup(dir);
+
+   /* If the basename contains wildcards, move the basename into mask. */
+   mask = strrchr(dir, '/');
+   if(!mask) mask=dir;
+   if(Glob::HasWildcards(mask)) {
+      if(mask == dir)
+	 dir = xstrdup("");
+      else {
+	 /* The mask is the whole argument, not just the basename; this is
+	  * because the whole relative paths will end up in the FileSet, and
+	  * that's what this pattern will be matched against. */
+	 char *newmask = xstrdup(dir);
+
+	 // leave the final / on the path, to prevent the dirname of
+	 // "file/*" from being treated as a file
+	 mask[1] = 0;
+	 mask = newmask;
       }
-      list_info->UseCache(use_cache);
+   } else mask=0;
+
+   list_info=new GetFileInfo(session, dir, fso.list_directories);
+   if(!list_info) {
+      PutEOF();
+      return MOVED;
+   }
+   list_info->UseCache(use_cache);
 
    return MOVED;
 }
