@@ -184,3 +184,20 @@ AC_DEFUN(LFTP_CHECK_LIBM,
       AC_SEARCH_LIBS(exp,m)
    fi
 ])
+dnl try to build and run a dummy program
+AC_DEFUN(LFTP_CXX_BOOL,
+[
+   AC_MSG_CHECKING(whether $CXX supports bool type)
+   AC_CACHE_VAL(lftp_cv_cxx_bool,
+   [
+      AC_LANG_SAVE
+      AC_LANG_CPLUSPLUS
+      AC_TRY_COMPILE([bool t=true;bool f=false;],[],
+	 [lftp_cv_cxx_bool=yes],[lftp_cv_cxx_bool=no])
+      AC_LANG_RESTORE
+   ])
+   AC_MSG_RESULT($lftp_cv_cxx_bool)
+   if test x$lftp_cv_cxx_bool = xyes; then
+      AC_DEFINE(HAVE_CXX_BOOL, 1, [define if c++ compiler supports bool])
+   fi
+])
