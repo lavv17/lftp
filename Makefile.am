@@ -1,7 +1,8 @@
 EXTRA_DIST = lftp.conf lftp.lsm iumacros.m4 FAQ acconfig.h README.*\
  MIRRORS BUGS FEATURES
-SUBDIRS = include readline-4.1 lib doc intl src po
+SUBDIRS = include readline-4.1 lib doc intl src po m4
 AUTOMAKE_OPTIONS = foreign
+ACLOCAL_AMFLAGS = -I m4
 
 install-data-local:
 	if [ ! -f $(DESTDIR)$(sysconfdir)/lftp.conf ]; then \
