@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1999 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1999-2000 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ protected:
 public:
    enum direction { GET, PUT };
 
-   long range_start; // NOTE: ranges are implemented only partially.
+   long range_start; // NOTE: ranges are implemented only partially. (FIXME)
    long range_limit;
 
 protected:
@@ -112,6 +112,14 @@ public:
 
    virtual void RemoveFile() {}
    virtual void NeedSeek() {} // fd is shared, seek before access.
+
+   void CannotSeek(int p)
+      {
+	 can_seek=false;
+	 if(p==0)
+	    can_seek0=false;
+      }
+   virtual FA *GetSession() { return 0; }
 };
 
 class Speedometer : public SMTask
@@ -147,7 +155,7 @@ public:
    FileCopyPeer *get;
    FileCopyPeer *put;
 
-private:
+protected:
    enum state_t
       {
 	 INITIAL,
@@ -158,6 +166,8 @@ private:
 	 GET_DONE_WAIT,
 	 ALL_DONE
       } state;
+
+private:
 
    int max_buf;
    bool cont;
@@ -179,6 +189,13 @@ private:
 
    Buffer *line_buffer;
    int  line_buffer_max;
+
+protected:
+   void RateAdd(long a)
+      {
+	 rate->Add(a);
+	 rate_for_eta->Add(a);
+      }
 
 public:
    long GetPos();
@@ -221,6 +238,9 @@ public:
    int Do();
    void Suspend();
    void Resume();
+
+   static FileCopy *New(FileCopyPeer *src,FileCopyPeer *dst,bool cont);
+   static FileCopy *(*fxp_create)(FileCopyPeer *src,FileCopyPeer *dst,bool cont);
 };
 
 class FileCopyPeerFA : public FileCopyPeer
@@ -228,7 +248,6 @@ class FileCopyPeerFA : public FileCopyPeer
    char *file;
    int FAmode;
    FileAccess *session;
-   void OpenSession();
 
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
@@ -260,6 +279,10 @@ public:
    void RemoveFile();
 
    static FileCopyPeerFA *New(FA *s,const char *url,int m,bool reuse=false);
+
+   void OpenSession();
+   FA *GetSession() { return session; }
+   void SetFXP() { fxp=true; }
 };
 
 class FileCopyPeerFDStream : public FileCopyPeer

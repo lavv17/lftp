@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1999 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1999-2000 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -277,8 +277,7 @@ int FileCopy::Do()
 
       put_buf=put->Buffered();
       rate_add-=put_buf-s;
-      rate->Add(rate_add);
-      rate_for_eta->Add(rate_add);
+      RateAdd(rate_add);
 
       if(get->range_limit!=FILE_END && get->range_limit<=get->GetRealPos())
       {
@@ -374,6 +373,15 @@ FileCopy::~FileCopy()
    if(get) delete get;
    if(put) delete put;
    if(line_buffer) delete line_buffer;
+}
+FileCopy *FileCopy::New(FileCopyPeer *s,FileCopyPeer *d,bool c)
+{
+   FileCopy *res=0;
+   if(fxp_create)
+      res=fxp_create(s,d,c);
+   if(res)
+      return res;
+   return new FileCopy(s,d,c);
 }
 void FileCopy::Suspend()
 {
@@ -757,15 +765,8 @@ void FileCopyPeerFA::Seek(long new_pos)
    if(pos==new_pos)
       return;
    super::Seek(new_pos);
-   if(fxp)
-   {
-      session->Disconnect();
-      return;
-   }
    session->Close();
-   if(seek_pos!=FILE_END)
-      OpenSession();
-   else
+   if(seek_pos==FILE_END)
       WantSize();
 }
 
@@ -855,7 +856,7 @@ int FileCopyPeerFA::Get_LL(int len)
    if(session->IsClosed())
       OpenSession();
 
-   if(eof)
+   if(eof)  // OpenSession can set eof=true.
       return 0;
 
    long io_at=pos;
@@ -1579,3 +1580,5 @@ void Speedometer::Reset()
    rate=0;
    last_bytes=0;
 }
+
+FileCopy *(*FileCopy::fxp_create)(FileCopyPeer *src,FileCopyPeer *dst,bool cont);

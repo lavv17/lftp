@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1999 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1999-2000 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,7 +137,7 @@ CopyJob *CopyJob::NewEcho(const char *str,int len,FDStream *o,const char *op)
 {
    if(o==0)
       o=new FDStream(1,"<stdout>");
-   return new CopyJob(new FileCopy(
+   return new CopyJob(FileCopy::New(
 	 new FileCopyPeerString(str,len),
 	 new FileCopyPeerFDStream(o,FileCopyPeer::PUT),
 	 false

@@ -250,7 +250,9 @@ class Ftp : public NetAccess
 
    bool data_address_ok(sockaddr_u *d=0,bool verify_this_data_port=true);
 
+public:
    enum copy_mode_t { COPY_NONE, COPY_SOURCE, COPY_DEST };
+private:
    copy_mode_t copy_mode;
    sockaddr_u copy_addr;
    bool copy_addr_valid;
@@ -332,6 +334,24 @@ public:
    ListInfo *MakeListInfo();
    Glob *MakeGlob(const char *pattern);
    DirList *MakeDirList(ArgV *args);
+
+   void SetCopyMode(copy_mode_t cm,bool rp,int rnum)
+      {
+	 copy_mode=cm;
+	 copy_passive=rp;
+	 retries=rnum;
+      }
+   bool SetCopyAddress(Ftp *o)
+      {
+	 if(copy_addr_valid || !o->copy_addr_valid)
+	    return false;
+	 memcpy(&copy_addr,&o->copy_addr,sizeof(copy_addr));
+	 copy_addr_valid=true;
+	 return true;
+      }
+   bool CopyFailed() { return state==COPY_FAILED; }
+   bool RestartFailed() { return flags&NOREST_MODE; }
+   bool IsPassive() { return flags&PASSIVE_MODE; }
 };
 
 #endif /* FTPCLASS_H */

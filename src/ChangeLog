@@ -1,3 +1,22 @@
+2000-01-09  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileCopyFtp.cc, FileCopyFtp.h: new files
+	  (FXP implementation over FileCopy class).
+	* CatJob.cc, CopyJob.cc, GetJob.cc, commands.cc, pgetJob.cc:
+	  use FileCopy::New; update year.
+	* DummyProto.cc, DummyProto.h, FileAccess.cc, FileAccess.h, FindJob.cc,
+	  FtpDirList.cc, Http.cc, MirrorJob.cc, NetAccess.h, Resolver.cc,
+	  SMTask.h, bookmark.cc, history.cc, lftp.cc, misc.cc, misc.h,
+	  netrc.cc: update year.
+	* FileCopy.cc, FileCopy.h: support for fxp; (New) new method;
+	  (RateAdd) new method; (..Peer::CannotSeek) new method; (GetSession)
+	  new method; (SetFXP) new method.
+	* Makefile.am: add FileCopyFtp.{cc,h}.
+	* buffer.h: (SetPos) new method.
+	* ftpclass.cc: register FXP creator.
+	* ftpclass.h: add FXP support methods.
+	* resource.cc: new fxp resources (ftp:use-fxp, ftp:fxp-passive-source).
+
 2000-01-08  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* NetAccess.h, NetAccess.cc, ftpclass.cc, Http.cc: (SocketConnect,

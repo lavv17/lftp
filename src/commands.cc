@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1999 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2000 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -865,7 +865,7 @@ CMD(ls)
    src_peer->SetSize(NO_SIZE);
    FileCopyPeer *dst_peer=new FileCopyPeerFDStream(output,FileCopyPeer::PUT);
 
-   FileCopy *c=new FileCopy(src_peer,dst_peer,false);
+   FileCopy *c=FileCopy::New(src_peer,dst_peer,false);
    c->DontCopyDate();
    c->LineBuffered();
    c->Ascii();
@@ -2123,7 +2123,7 @@ CMD(get1)
    else
       dst_peer=new FileCopyPeerFA(&dst_url,FA::STORE);
 
-   FileCopy *c=new FileCopy(src_peer,dst_peer,cont);
+   FileCopy *c=FileCopy::New(src_peer,dst_peer,cont);
 
    if(ascii)
       c->Ascii();

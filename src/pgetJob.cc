@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2000 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -270,7 +270,7 @@ pgetJob::ChunkXfer *pgetJob::NewChunk(FileAccess *session,const char *remote,
    dst_peer->NeedSeek(); // seek before writing
    dst_peer->SetBase(0);
 
-   FileCopy *c=new FileCopy(src_peer,dst_peer,false);
+   FileCopy *c=FileCopy::New(src_peer,dst_peer,false);
    c->SetRange(start,limit);
    c->SetSize(cp->GetSize());
    c->DontCopyDate();

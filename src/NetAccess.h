@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1999 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1999-2000 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,6 +93,9 @@ public:
 
    void Connect(const char *,const char *);
    void ConnectVerify();
+
+   int GetRetries() { return retries; }
+   void SetRetries(int r) { retries=r; }
 };
 
 class RateLimit

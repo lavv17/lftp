@@ -23,7 +23,7 @@ libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  CharReader.cc CharReader.h LsCache.cc LsCache.h Resolver.cc Resolver.h\
  FileAccess.h FileAccess.cc ResMgr.h ResMgr.cc LocalAccess.h LocalAccess.cc\
  Filter.cc Filter.h SignalHook.cc SignalHook.h FileCopy.cc FileCopy.h\
- xmalloc.cc xmalloc.h FileSet.cc FileSet.h\
+ xmalloc.cc xmalloc.h FileSet.cc FileSet.h FileCopyFtp.cc FileCopyFtp.h\
  FtpListInfo.cc FtpListInfo.h ftp-opie.c md5.c md5.h log.h log.cc\
  buffer.cc buffer.h url.cc url.h StatusLine.cc StatusLine.h plural.c plural.h\
  misc.h misc.cc Http.cc Http.h fg.cc fg.h module.c module.h modconfig.h\
@@ -92,7 +92,7 @@ proto-file.so: LocalAccess.cc
 	@-rm -f $@
 	$(CXXMODLINK) $^ -o $@
 proto-ftp.so: ftpclass.cc FtpListInfo.cc FtpGlob.cc FtpDirList.cc\
- md5.c ftp-opie.c NetAccess.cc FtpSplitList.cc
+ md5.c ftp-opie.c NetAccess.cc FtpSplitList.cc FileCopyFtp.cc
 	@-rm -f $@
 	$(CXXMODLINK) $^ -o $@
 cmd-mirror.so: MirrorJob.cc

@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1999 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2000 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@
 #include "FtpGlob.h"
 #include "FtpDirList.h"
 #include "log.h"
+#include "FileCopyFtp.h"
 
 #include "ascii_ctype.h"
 
@@ -75,6 +76,7 @@ void  Ftp::ClassInit()
 {
    // register the class
    Register("ftp",Ftp::New);
+   FileCopy::fxp_create=FileCopyFtp::New;
 }
 
 Ftp *Ftp::ftp_chain=0;

@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2000 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,7 +147,7 @@ try_next:
    else
       src_peer=new FileCopyPeerFA(&src_url,FA::RETRIEVE);
 
-   FileCopy *c=new FileCopy(src_peer,dst_peer,cont);
+   FileCopy *c=FileCopy::New(src_peer,dst_peer,cont);
 
    if(delete_files)
       c->RemoveSourceLater();

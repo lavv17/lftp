@@ -20,24 +20,32 @@
 
 /* $Id$ */
 
-#ifndef DUMMYPROTO_H
-#define DUMMYPROTO_H
+#ifndef FILECOPYFTP_H
+#define FILECOPYFTP_H
 
-#include "FileAccess.h"
+#include "FileCopy.h"
+#include "ftpclass.h"
 
-class DummyProto : public FileAccess
+class FileCopyFtp : public FileCopy
 {
-public:
-   int Do();
-   int Done();
-   const char *GetProto();
-   FileAccess *Clone();
-   int Read(void *buf,int size);
-   int Write(const void *buf,int size);
-   int StoreStatus();
-   void Reconfig() {}
+   Ftp *ftp_src;
+   Ftp *ftp_dst;
+   bool no_rest;
+   bool reverse_passive;
+   int src_retries;
+   int dst_retries;
 
-   DirList *MakeDirList(ArgV *);
+   void Close();
+
+public:
+   void Init();
+   FileCopyFtp(FileCopyPeer *src,FileCopyPeer *dst,bool cont,bool rp);
+   ~FileCopyFtp();
+
+   int Do();
+
+   static FileCopy *New(FileCopyPeer *src,FileCopyPeer *dst,bool cont);
+/*   void ShowRunStatus(StatusLine *sl);*/
 };
 
-#endif
+#endif // FILECOPYFTP_H

@@ -79,6 +79,8 @@ public:
    void GetSaved(const char **buf,int *size) const;
    void SaveRollback(long p);
 
+   void SetPos(long p) { pos=p; }
+
    void Empty();
 
    virtual FgData *GetFgData(bool) { return 0; }

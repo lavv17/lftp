@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1999 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1999-2000 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,6 +86,7 @@ static const char *FtpDefaultAnonPass()
 static ResDecl resources[]={
    ResDecl  ("ftp:anon-pass",	       "-lftp@",0,0),
    ResDecl  ("ftp:anon-user",	       "anonymous",0,0),
+   ResDecl  ("ftp:fxp-passive-source", "no",	ResMgr::BoolValidate,0),
    ResDecl  ("ftp:list-options",       "",0,0),
    ResDecl  ("ftp:nop-interval",       "120",	ResMgr::UNumberValidate,0),
    ResDecl  ("ftp:passive-mode",       "off",   ResMgr::BoolValidate,0),
@@ -95,7 +96,8 @@ static ResDecl resources[]={
    ResDecl  ("ftp:skey-allow",	       "yes",   ResMgr::BoolValidate,0),
    ResDecl  ("ftp:skey-force",	       "no",    ResMgr::BoolValidate,0),
    ResDecl  ("ftp:sync-mode",	       "on",    ResMgr::BoolValidate,0),
-   ResDecl  ("ftp:use-abor",	       "on",    ResMgr::BoolValidate,0),
+   ResDecl  ("ftp:use-abor",	       "yes",   ResMgr::BoolValidate,0),
+   ResDecl  ("ftp:use-fxp",	       "yes",   ResMgr::BoolValidate,0),
    ResDecl  ("ftp:verify-address",     "no",    ResMgr::BoolValidate,0),
    ResDecl  ("ftp:verify-port",	       "no",    ResMgr::BoolValidate,0),
    ResDecl  ("hftp:cache",	       "yes",	ResMgr::BoolValidate,0),

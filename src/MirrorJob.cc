@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2000 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -218,7 +218,7 @@ void  MirrorJob::HandleFile(int how)
 	    FileCopyPeerFDStream::NewPut(local_name,cont_this);
 
 	 CopyJob *cp=
-	    new CopyJob(new FileCopy(src_peer,dst_peer,cont_this),file->name,"mirror");
+	    new CopyJob(FileCopy::New(src_peer,dst_peer,cont_this),file->name,"mirror");
 	 if(file->defined&(file->DATE|file->DATE_UNPREC))
 	    cp->SetDate(file->date);
 	 if(file->defined&file->SIZE)
@@ -558,7 +558,7 @@ int   MirrorJob::Do()
 	 FileCopyPeerFDStream::NewGet(local_name);
 
       CopyJob *cp=
-	 new CopyJob(new FileCopy(src_peer,dst_peer,false),file->name,"mirror");
+	 new CopyJob(FileCopy::New(src_peer,dst_peer,false),file->name,"mirror");
       waiting=cp;
       waiting->parent=this;
       waiting->cmdline=(char*)xmalloc(10+strlen(file->name));
