@@ -105,7 +105,7 @@ CDECL void SOCKSinit(const char *);
 # define inet_aton(host,addr) (((addr)->s_addr=inet_addr(host))!=-1)
 #endif
 
-#ifndef HAVE_STRTOK_R /* prototype for lib/strtok_r.c */
+#if !HAVE_DECL_STRTOK_R /* prototype for lib/strtok_r.c */
 CDECL char *strtok_r(char *str, const char *sep, char **lasts);
 #endif
 

@@ -1,3 +1,10 @@
+Version 3.0.4 - 2004-05-31
+
+* new URL scheme bm:bookmark_name[/path] to specify bookmarked URLs.
+* fixed encrypted FXP in certain server combinations.
+* fixed ftp retrying on 4xx code when data connection was already closed.
+* fixed compilation without SSL.
+
 Version 3.0.4 - 2004-05-24
 
 * encrypted FXP is now supported with CPSV or SSCN commands.

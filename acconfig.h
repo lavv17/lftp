@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2004 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,19 +21,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 @TOP@
-
-#undef HAVE_HSTRERROR_DECL
-#undef HAVE_H_ERRLIST_DECL
-#undef HAVE_H_ERRNO_DECL
-#undef HAVE_INET_ATON_DECL
-#undef HAVE_RANDOM_DECL
-#undef HAVE_RES_SEARCH_DECL
-#undef HAVE_STRCASECMP_DECL
-#undef HAVE_STRPTIME_DECL
-#undef HAVE_SYS_ERRLIST_DECL
-#undef HAVE_UNSETENV_DECL
-#undef HAVE_VSNPRINTF_DECL
-
 @BOTTOM@
 
 #include <post-config.h>

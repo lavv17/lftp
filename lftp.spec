@@ -1,4 +1,4 @@
-%define version 3.0.4
+%define version 3.0.5rc2
 %define release 1
 %define use_modules 0
 
@@ -6,17 +6,18 @@ Summary: Sophisticated CLI file transfer program
 Name: lftp
 Version: %{version}
 Release: %{release}
-URL: http://ftp.yars.free.net/projects/lftp/
-Source: ftp://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/lftp-%{version}.tar.gz
+URL: http://lftp.yar.ru/
+Source: ftp://lftp.yar.ru/lftp/lftp-%{version}.tar.gz
 Group: Applications/Internet
 BuildRoot: %{_tmppath}/%{name}-buildroot
 Copyright: GPL
 #Packager: Manoj Kasichainula <manojk+rpm@io.com>
 
 %description
-lftp is CLI file transfer program. It supports FTP and HTTP
-protocols, has lots of features. It was designed with reliability in mind.
-GNU Readline library is used for input.
+lftp is CLI file transfer program. It supports FTP, HTTP, FISH and
+SFTP protocols, has lots of features including mirror. It was designed
+with reliability in mind. GNU Readline library is used for input.
+There is also support for secure variants of FTP and HTTP.
 
 %prep
 %setup
