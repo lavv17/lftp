@@ -528,7 +528,6 @@ int   MirrorJob::Do()
       xfree(source_dir);
       source_dir=xstrdup(source_session->GetCwd());
 
-   pre_MAKE_TARGET_DIR:
       if(!create_target_dir || !strcmp(target_dir,".") || !strcmp(target_dir,".."))
 	 goto pre_CHANGING_DIR_TARGET;
       if(target_relative_dir)
