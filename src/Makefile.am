@@ -42,7 +42,7 @@ libjobs_a_SOURCES = Job.cc Job.h XferJob.cc XferJob.h CmdExec.cc CmdExec.h\
  mkdirJob.cc mkdirJob.h pgetJob.cc pgetJob.h FileFeeder.cc FileFeeder.h\
  keyvalue.cc keyvalue.h history.cc history.h FtpCopy.cc FtpCopy.h\
  SleepJob.cc SleepJob.h getdate.y getdate.h FindJob.cc FindJob.h\
- ChmodJob.cc ChmodJob.h TreatFileJob.cc TreatFileJob.h
+ ChmodJob.cc ChmodJob.h TreatFileJob.cc TreatFileJob.h CopyJob.cc CopyJob.h
 
 lftp_LDFLAGS = $(EXPORT_DYNAMIC)
 lftp_LDADD = libjobs.a libtasks.a @READLINE@ @READLINE_SUPPLIB@ $(top_builddir)/lib/liblib.a @INTLLIBS@ @SOCKSLIBS@
