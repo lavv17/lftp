@@ -80,6 +80,7 @@ CDECL void SOCKSinit(const char *);
 #ifdef SOCKS5
 # define SOCKS
 # include <socks.h>
+# undef getc /* fix a problem with redefined getc */
 #endif
 
 #include <sys/types.h>
