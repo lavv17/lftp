@@ -1,5 +1,10 @@
 2003-12-08  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* buffer.cc, buffer.h, SFtp.cc, SFtp.h: (DirectedBuffer) new buffer
+	  layer; add iconv support in DirectedBuffer, almost transparent.
+
+2003-12-08  Alexander V. Lukyanov <lav@yars.free.net>
+
 	* HttpDir.cc: (find_eol, try_csm_proxy) fix bugs found by
 	  Solar Designer <solar@openwall.com> - increment *eol_size,
 	  not eol_size; use proper %lld format for size; use larger

@@ -30,6 +30,7 @@
 #include "xstring.h"
 
 #include <stdarg.h>
+#include <iconv.h>
 
 #define GET_BUFSIZE 0x10000
 #define PUT_LL_MIN  0x2000
@@ -121,20 +122,43 @@ public:
    virtual ~Buffer();
 };
 
-class IOBuffer : public Buffer, public SMTask
+class DirectedBuffer : public Buffer
 {
 public:
    enum dir_t { GET, PUT };
+   iconv_t backend_translate;
+   Buffer *untranslated;
 
 protected:
-   time_t event_time; // used to detect timeouts
    dir_t mode;
+   void EmbraceNewData(int len);
 
 public:
-   IOBuffer(dir_t m)
+   DirectedBuffer(dir_t m) { mode=m; backend_translate=0; untranslated=0; }
+   ~DirectedBuffer();
+   void SetTranslation(const char *be_encoding,bool translit=true);
+   void PutTranslated(const char *buf,int size);
+   void PutTranslated(const char *buf) { PutTranslated(buf,strlen(buf)); }
+   void ResetTranslation();
+   void Put(const char *buf,int size)
+      {
+	 if(mode==PUT && backend_translate)
+	    PutTranslated(buf,size);
+	 else
+	    Buffer::Put(buf,size);
+      }
+   void Put(const char *buf) { Put(buf,strlen(buf)); }
+};
+
+class IOBuffer : public DirectedBuffer, public SMTask
+{
+protected:
+   time_t event_time; // used to detect timeouts
+
+public:
+   IOBuffer(dir_t m) : DirectedBuffer(m)
       {
 	 event_time=now;
-	 mode=m;
       }
    virtual time_t EventTime()
       {

@@ -239,6 +239,116 @@ void Buffer::SetError2(const char *e1,const char *e2)
 }
 #endif
 
+void DirectedBuffer::SetTranslation(const char *enc,bool translit)
+{
+   if(backend_translate)
+      iconv_close(backend_translate);
+   backend_translate=0;
+   if(!enc)
+      return;
+   const char *from_code=(mode==GET?enc:"char");
+   const char *to_code  =(mode==GET?"char":enc);
+   if(translit)
+   {
+      const char *add="//TRANSLIT";
+      char *tmp_enc=alloca_strdup2(to_code,strlen(add));
+      strcat(tmp_enc,add);
+      to_code=tmp_enc;
+   }
+   backend_translate=iconv_open(to_code,from_code);
+   if(backend_translate==(iconv_t)-1)
+   {
+      Log::global->Format(0,"iconv_open(%s,%s) failed: %s\n",
+			      to_code,from_code,strerror(errno));
+      backend_translate=0;
+   }
+}
+DirectedBuffer::~DirectedBuffer()
+{
+   SetTranslation(0);
+   delete untranslated;
+}
+void DirectedBuffer::ResetTranslation()
+{
+   if(!backend_translate)
+      return;
+   iconv(backend_translate,0,0,0,0);
+   delete untranslated;
+   untranslated=0;
+}
+void DirectedBuffer::PutTranslated(const char *put_buf,int size)
+{
+   if(!backend_translate)
+   {
+      Buffer::Put(put_buf,size);
+      return;
+   }
+   if(untranslated && untranslated->Size()>0)
+   {
+      untranslated->Put(put_buf,size);
+      untranslated->Get(&put_buf,&size);
+   }
+   if(size<=0)
+      return;
+   size_t put_size=size;
+
+try_again:
+   if(put_size==0)
+      return;
+   size_t store_size=6*put_size;
+   Allocate(store_size);
+   char *store_buf=buffer+buffer_ptr+in_buffer;
+   store_size=buffer_allocated-(store_buf-buffer);
+   const char *base_buf=put_buf;
+   // do the translation
+   size_t res=iconv(backend_translate,&put_buf,&put_size,&store_buf,&store_size);
+   in_buffer+=store_buf-(buffer+buffer_ptr+in_buffer);
+   if(untranslated)
+      untranslated->Skip(put_buf-base_buf);
+   if(res==(size_t)-1)
+   {
+      switch(errno)
+      {
+      case EINVAL: // incomplete character
+	 if(!untranslated)
+	    untranslated=new Buffer;
+	 untranslated->Put(put_buf,put_size);
+	 break;
+      case EILSEQ: // invalid character
+	 Buffer::Put("?");
+	 put_buf++;
+	 put_size--;
+	 goto try_again;
+      case E2BIG:  // no room to store result
+	 if(store_size>=6*put_size)
+	    Allocate(store_size*2);
+	 goto try_again;
+      default:
+	 break;
+      }
+   }
+   return;
+}
+void DirectedBuffer::EmbraceNewData(int len)
+{
+   if(len<=0)
+      return;
+   RateAdd(len);
+   if(backend_translate)
+   {
+      if(!untranslated)
+	 untranslated=new Buffer;
+      // copy the data to free room for translated data
+      untranslated->Put(buffer+buffer_ptr+in_buffer,len);
+      PutTranslated(0,0);
+   }
+   else
+   {
+      in_buffer+=len;
+   }
+   SaveMaxCheck(0);
+}
+
 // IOBufferFDStream implementation
 #include <fcntl.h>
 #include <unistd.h>
@@ -273,9 +383,7 @@ int IOBufferFDStream::Do()
       res=Get_LL(GET_BUFSIZE);
       if(res>0)
       {
-	 RateAdd(res);
-	 in_buffer+=res;
-	 SaveMaxCheck(0);
+	 EmbraceNewData(res);
 	 event_time=now;
 	 return MOVED;
       }
@@ -405,9 +513,7 @@ int IOBufferFileAccess::Do()
    int res=Get_LL(GET_BUFSIZE);
    if(res>0)
    {
-      RateAdd(res);
-      in_buffer+=res;
-      SaveMaxCheck(0);
+      EmbraceNewData(res);
       event_time=now;
       return MOVED;
    }

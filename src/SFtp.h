@@ -151,6 +151,8 @@ static bool is_valid_status(int s)
    bool recv_buf_suspended;
    IOBuffer *pty_send_buf;
    IOBuffer *pty_recv_buf;
+   DirectedBuffer *send_translate;
+   DirectedBuffer *recv_translate;
 
    Buffer   *file_buf;
    FileSet  *file_set;
@@ -166,6 +168,9 @@ static bool is_valid_status(int s)
 	    return 1;
 	 return 2;
       }
+
+   const char *SkipHome(const char *path);
+   const char *WirePath(const char *path);
 
    enum unpack_status_t
    {

@@ -304,6 +304,8 @@ int SFtp::Do()
 void SFtp::MoveConnectionHere(SFtp *o)
 {
    protocol_version=o->protocol_version;
+   recv_translate=o->recv_translate; o->recv_translate=0;
+   send_translate=o->send_translate; o->send_translate=0;
    send_buf=o->send_buf; o->send_buf=0;
    recv_buf=o->recv_buf; o->recv_buf=0;
    pty_send_buf=o->pty_send_buf; o->pty_send_buf=0;
@@ -340,6 +342,8 @@ void SFtp::Disconnect()
       SetError(STORE_FAILED);
    received_greeting=false;
    protocol_version=0;
+   delete send_translate; send_translate=0;
+   delete recv_translate; recv_translate=0;
    ssh_id=0;
    xfree(home_auto); home_auto=0;
    home_auto=xstrdup(FindHomeAuto());
@@ -364,6 +368,8 @@ void SFtp::Init()
    expect_chain_end=&expect_chain;
    ooo_chain=0;
    protocol_version=0;
+   send_translate=0;
+   recv_translate=0;
    handle=0;
    handle_len=0;
    max_packets_in_flight=3;
@@ -547,6 +553,24 @@ void SFtp::SendRequest(Packet *request,expect_t tag,int i)
    PushExpect(new Expect(request,tag,i));
 }
 
+const char *SFtp::SkipHome(const char *path)
+{
+   if(!home)
+      return path;
+   int home_len=strlen(home);
+   if(strncmp(home,path,home_len))
+      return path;
+   if(path[home_len]=='/' && path[home_len+1] && path[home_len+1]!='/')
+      return path+home_len;
+   if(!path[home_len])
+      return ".";
+   return path;
+}
+const char *SFtp::WirePath(const char *path)
+{
+   return lc_to_utf8(SkipHome(dir_file(cwd,path)));
+}
+
 void SFtp::SendRequest()
 {
    ExpandTildeInCWD();
@@ -558,17 +582,17 @@ void SFtp::SendRequest()
       state=WAITING;
       break;
    case RETRIEVE:
-      SendRequest(new Request_OPEN(lc_to_utf8(dir_file(cwd,file)),
+      SendRequest(new Request_OPEN(WirePath(file),
 			SSH_FXF_READ,protocol_version),EXPECT_HANDLE);
       state=WAITING;
       break;
    case LIST:
    case LONG_LIST:
-      SendRequest(new Request_OPENDIR(lc_to_utf8(dir_file(cwd,file))),EXPECT_HANDLE);
+      SendRequest(new Request_OPENDIR(WirePath(file)),EXPECT_HANDLE);
       state=WAITING;
       break;
    case STORE:
-      SendRequest(new Request_OPEN(lc_to_utf8(dir_file(cwd,file)),
+      SendRequest(new Request_OPEN(WirePath(file),
 			SSH_FXF_WRITE|SSH_FXF_CREAT,protocol_version),EXPECT_HANDLE);
       state=WAITING;
       break;
@@ -582,16 +606,15 @@ void SFtp::SendRequest()
 	 SetError(NOT_SUPP);
 	 break;
       }
-      char *file1_path=alloca_strdup(dir_file(cwd,file1));
-      SendRequest(new Request_RENAME(lc_to_utf8(dir_file(cwd,file)),
-				     lc_to_utf8(file1_path)),
-				    EXPECT_DEFAULT);
+      char *file1_wire_path=alloca_strdup(WirePath(file1));
+      SendRequest(new Request_RENAME(WirePath(file),
+				     file1_wire_path),EXPECT_DEFAULT);
       state=WAITING;
       break;
    }
    case CHANGE_MODE:
    {
-      Request_SETSTAT *req=new Request_SETSTAT(lc_to_utf8(dir_file(cwd,file)),protocol_version);
+      Request_SETSTAT *req=new Request_SETSTAT(WirePath(file),protocol_version);
       req->attrs.permissions=chmod_mode;
       req->attrs.flags|=SSH_FILEXFER_ATTR_PERMISSIONS;
       SendRequest(req,EXPECT_DEFAULT);
@@ -599,15 +622,15 @@ void SFtp::SendRequest()
       break;
    }
    case MAKE_DIR:
-      SendRequest(new Request_MKDIR(lc_to_utf8(dir_file(cwd,file)),protocol_version),EXPECT_DEFAULT);
+      SendRequest(new Request_MKDIR(WirePath(file),protocol_version),EXPECT_DEFAULT);
       state=WAITING;
       break;
    case REMOVE_DIR:
-      SendRequest(new Request_RMDIR(lc_to_utf8(dir_file(cwd,file))),EXPECT_DEFAULT);
+      SendRequest(new Request_RMDIR(WirePath(file)),EXPECT_DEFAULT);
       state=WAITING;
       break;
    case REMOVE:
-      SendRequest(new Request_REMOVE(lc_to_utf8(dir_file(cwd,file))),EXPECT_DEFAULT);
+      SendRequest(new Request_REMOVE(WirePath(file)),EXPECT_DEFAULT);
       state=WAITING;
       break;
    case QUOTE_CMD:
@@ -737,6 +760,13 @@ void SFtp::HandleExpect(Expect *e)
       {
 	 protocol_version=((Reply_VERSION*)reply)->GetVersion();
 	 Log::global->Format(9,"---- protocol version set to %d\n",protocol_version);
+	 if(protocol_version>=4)
+	 {
+	    send_translate=new DirectedBuffer(DirectedBuffer::PUT);
+	    recv_translate=new DirectedBuffer(DirectedBuffer::GET);
+	    send_translate->SetTranslation("UTF-8",false);
+	    recv_translate->SetTranslation("UTF-8",true);
+	 }
       }
       else
       {
@@ -886,7 +916,7 @@ void SFtp::HandleExpect(Expect *e)
 		  Log::global->Write(9,"---- eof\n");
 	       eof=true;
 	       state=DONE;
-	       if(file_buf)
+	       if(file_buf && !ooo_chain)
 		  file_buf->PutEOF();
 	       break;
 	    }
@@ -978,6 +1008,8 @@ int SFtp::HandleReplies()
 	 return MOVED;
       }
    }
+   if(!ooo_chain && eof && file_buf && !file_buf->Eof())
+      file_buf->PutEOF();
 
    if(recv_buf->Size()<4)
    {
@@ -1675,7 +1707,7 @@ SFtp::unpack_status_t SFtp::Reply_STATUS::Unpack(Buffer *b)
    int *offset=&unpacked;
    int limit=length+4;
    UNPACK32(code);
-   if(protocol_version>=4)
+   if(protocol_version>=3)
    {
       res=Packet::UnpackString(b,offset,limit,&message);
       if(res!=UNPACK_SUCCESS)
@@ -1700,74 +1732,44 @@ void SFtp::Request_WRITE::Pack(Buffer *b)
    b->Put(data,len);
 }
 
-static char *iconv_buf=0;
-static int iconv_buf_size=0;
-static iconv_t lc_to_utf8_iconv;
-static bool lc_to_utf8_iconv_opened=false;
-static iconv_t utf8_to_lc_iconv;
-static bool utf8_to_lc_iconv_opened=false;
-
 const char *SFtp::utf8_to_lc(const char *s)
 {
-   if(protocol_version<4)
+   if(!recv_translate)
       return s;
 
-   if(!utf8_to_lc_iconv_opened)
-   {
-      utf8_to_lc_iconv=iconv_open("char//TRANSLIT","UTF-8");
-      utf8_to_lc_iconv_opened=true;
-   }
-   if(utf8_to_lc_iconv==(iconv_t)(-1))
-      return s;
+printf("utf8_to_lc(%s)\n",s);
 
-   int len=strlen(s);
-   if(iconv_buf_size<len+1)
-      iconv_buf=(char*)xrealloc(iconv_buf,iconv_buf_size=len+1);
-
-   const char *conv_in=s;
-   char *conv_out=iconv_buf;
-   size_t conv_in_len=len;
-   size_t conv_out_len=iconv_buf_size;
-   iconv(utf8_to_lc_iconv,0,0,0,0); // reset iconv state
-   size_t res=iconv(utf8_to_lc_iconv,&conv_in,&conv_in_len,&conv_out,&conv_out_len);
-   if(res==(size_t)-1)
-      return s;	  // cannot convert
-   *conv_out=0;
-   return iconv_buf;
+   recv_translate->ResetTranslation();
+   recv_translate->PutTranslated(s);
+   recv_translate->Buffer::Put("",1);
+   int len;
+   recv_translate->Get(&s,&len);
+   recv_translate->Skip(len);
+   return s;
 }
 const char *SFtp::lc_to_utf8(const char *s)
 {
-   if(protocol_version<4)
+   if(!send_translate)
       return s;
 
-   if(!lc_to_utf8_iconv_opened)
-   {
-      lc_to_utf8_iconv=iconv_open("UTF-8","char");
-      lc_to_utf8_iconv_opened=true;
-   }
-   if(lc_to_utf8_iconv==(iconv_t)(-1))
-      return s;
+printf("lc_to_utf8(%s)\n",s);
 
-   int len=strlen(s);
-   if(iconv_buf_size<len+1)
-      iconv_buf=(char*)xrealloc(iconv_buf,iconv_buf_size=len+1);
-
-   const char *conv_in=s;
-   char *conv_out=iconv_buf;
-   size_t conv_in_len=len;
-   size_t conv_out_len=iconv_buf_size;
-   iconv(lc_to_utf8_iconv,0,0,0,0); // reset iconv state
-   size_t res=iconv(lc_to_utf8_iconv,&conv_in,&conv_in_len,&conv_out,&conv_out_len);
-   if(res==(size_t)-1)
-      return s;	  // cannot convert
-   *conv_out=0;
-   return iconv_buf;
+   send_translate->ResetTranslation();
+   send_translate->PutTranslated(s);
+   send_translate->Buffer::Put("",1);
+   int len;
+   send_translate->Get(&s,&len);
+   send_translate->Skip(len);
+   return s;
 }
 
 FileInfo *SFtp::MakeFileInfo(const NameAttrs *na)
 {
    const FileAttrs *a=&na->attrs;
-   FileInfo *fi=new FileInfo(utf8_to_lc(na->name));
+   const char *name=utf8_to_lc(na->name);
+   if(!name || !name[0])
+      return 0;
+   FileInfo *fi=new FileInfo(name);
    switch(a->type)
    {
    case SSH_FILEXFER_TYPE_REGULAR:  fi->SetType(fi->NORMAL);    break;
@@ -1776,7 +1778,7 @@ FileInfo *SFtp::MakeFileInfo(const NameAttrs *na)
    default: delete fi; return 0;
    }
    if(na->longname)
-      fi->SetLongName(na->longname);
+      fi->SetLongName(utf8_to_lc(na->longname));
    if(a->flags&SSH_FILEXFER_ATTR_SIZE)
       fi->SetSize(a->size);
    if(a->flags&SSH_FILEXFER_ATTR_UIDGID)
