@@ -496,12 +496,20 @@ parse_url_again:
 	    sprintf(size_str,"%ld%s",size,size_unit);
 	 goto got_info;
       }
-      if(7==sscanf(str,"%3s %3s %d %2d:%2d:%2d %4d",
-	       week_day,month_name,&day,&hour,&minute,&second,&year))
+      n=sscanf(str,"%3s %3s %d %2d:%2d:%2d %4d %s",
+	       week_day,month_name,&day,&hour,&minute,&second,&year,size_str);
+      if(n==7 || (n==8 && !is_ascii_digit(size_str[0])))
       {
 	 strcpy(size_str,"-");
 	 if(!is_directory)
 	    is_sym_link=true;
+	 goto got_info;
+      }
+      if(n==8) // maybe squid's EPLF listing.
+      {
+	 // skip rest of line, because there may be href to link target.
+	 skip_len=eol-buf+eol_len;
+	 // no symlinks here.
 	 goto got_info;
       }
 
@@ -570,6 +578,7 @@ parse_url_again:
 	 strcpy(size_str,"-");
       if(-1==parse_year_or_time(year_or_time,&year,&hour,&minute))
 	 goto add_file;
+
       // skip rest of line, because there may be href to link target.
       skip_len=eol-buf+eol_len;
 

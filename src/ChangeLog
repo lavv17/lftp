@@ -7,7 +7,7 @@
 	* FtpDirList.cc: parse EPLF listing and show it pretty.
 	* FtpListInfo.cc: parse EPLF listing.
 	* misc.h: move find_char here.
-	* HttpDir.cc: from here.
+	* HttpDir.cc: from here; parse EPLF listings from squid.
 	* ftpclass.cc: use NO_SIZE and NO_DATE macros.
 
 2000-01-13  Alexander V. Lukyanov  <lav@yars.free.net>
