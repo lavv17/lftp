@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 # $Id$
 AC_PREREQ(2.13)
 AC_INIT(src/ftpclass.cc)
-AM_INIT_AUTOMAKE(lftp, pre2.1.0-990919)
+AM_INIT_AUTOMAKE(lftp, 2.1.0)
 AM_CONFIG_HEADER(include/config.h)
 
 dnl iumacros.m4 is stolen from inetutils-1.3a
@@ -230,7 +230,7 @@ LFTP_FUNC_POLL
 LFTP_FUNC_SSCANF_CONST
 AC_CHECK_FUNCS(strdup strstr lstat select regexec glob\
  killpg setpgid tcgetattr ftruncate vsnprintf gettimeofday strptime\
- gethostbyname2 getaddrinfo getnameinfo)
+ gethostbyname2 getaddrinfo getnameinfo setsid)
 IU_CHECK_DECL(vsnprintf, [#include <stdio.h>])
 
 AC_REPLACE_FUNCS(mktime memmove strcasecmp strtol strtoul)

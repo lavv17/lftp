@@ -20,11 +20,7 @@ currently; some need other work to be done.
 
  * ftpcopy glob, multiple files
 
--* progress indicator for ftpcopy
-
- * glob each directory component in FtpGlob
--  problem: have to assume server does globbing and support backslash-quotes,
-   or that it does neither
+-* progress indicator for ftpcopy (hard)
 
  * update process title
  * at-exit-bg
@@ -61,4 +57,4 @@ currently; some need other work to be done.
  * in Glob and FileInfo: set a flag that if REST does not work to report
    an error, and in case of such error restart from beginning.
 
- * use TimeInterval where needed instead of decode_delay.
+ * tail command

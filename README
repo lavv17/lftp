@@ -1,4 +1,4 @@
-** lftp-2.0
+** lftp-2.1
 
 This package `lftp' contains the following components:
 
@@ -11,7 +11,7 @@ This package `lftp' contains the following components:
    ftpget
       a simple non-interactive tool for downloading files (deprecated)
 
-These programs are written in C++ and are cooperative-threaded.
+These programs are written in C++, in a cooperative-threaded model.
 
 
 lftp

@@ -1,5 +1,5 @@
 %define name lftp
-%define version 2.0.4
+%define version 2.1.0
 
 Summary: The lftp command line ftp/http client
 Name: %{name} 
@@ -42,13 +42,17 @@ install -c -m 644 lftp.conf $RPM_BUILD_ROOT/etc/lftp.conf
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
-* Tue Jul 27 1999 Adrian Likins <alikins@redhat.com>
+* Mon Sep 27 1999 Alexander Lukyanov <lav@yars.free.net>
 
--initial release
+- 2.1.0 release
 
 * Tue Sep 14 1999 Alexander Lukyanov <lav@yars.free.net>
 
 - add lftpget
+
+* Tue Jul 27 1999 Adrian Likins <alikins@redhat.com>
+
+-initial release
 
 
 %files
