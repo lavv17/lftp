@@ -31,6 +31,7 @@ class SleepJob : public SessionJob
    char *cmd;
    int exit_code;
    bool done;
+   char *saved_cwd;
 
 public:
    int Do();

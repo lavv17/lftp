@@ -1416,11 +1416,9 @@ int   Ftp::Do()
 	 m=MOVED;
       }
 
-      if(RespQueueSize()==0)
-	 block+=NoWait();     // ???
-
       // store mode is special - the data can be buffered
-      if(mode==STORE)
+      // so is COPY_* - no data connection al all.
+      if(mode==STORE || copy_mode!=COPY_NONE)
 	 goto notimeout_return;
 
       goto usual_return;

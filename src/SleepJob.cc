@@ -23,6 +23,7 @@
 #include <config.h>
 #include "SleepJob.h"
 #include "CmdExec.h"
+#include "misc.h"
 
 SleepJob::SleepJob(time_t when,FileAccess *s,char *what)
    : SessionJob(s)
@@ -31,10 +32,12 @@ SleepJob::SleepJob(time_t when,FileAccess *s,char *what)
    cmd=what;
    exit_code=0;
    done=false;
+   saved_cwd=xgetcwd();
 }
 SleepJob::~SleepJob()
 {
    xfree(cmd);
+   xfree(saved_cwd);
 }
 
 int SleepJob::Do()
@@ -60,6 +63,8 @@ int SleepJob::Do()
       {
 	 CmdExec *exec=new CmdExec(session);
 	 session=0;
+	 exec->parent=this;
+	 exec->SetCWD(saved_cwd);
 	 exec->FeedCmd(cmd);
 	 exec->FeedCmd("\n");
 	 waiting=exec;
