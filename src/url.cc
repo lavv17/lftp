@@ -96,7 +96,8 @@ ParsedURL::ParsedURL(const char *url,bool proto_required)
 	    }
 	    else
 	    {
-	       memmove(scan+2,scan+5,strlen(scan+5)+1);
+	       char *p=scan+5+(scan[5]=='/');
+	       memmove(scan+2,p,strlen(p)+1);
 	    }
 	 }
       }
