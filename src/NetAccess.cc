@@ -473,4 +473,6 @@ void NetAccess::Close()
 
    Delete(resolver);
    resolver=0;
+
+   super::Close();
 }
