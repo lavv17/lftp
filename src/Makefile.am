@@ -11,6 +11,13 @@ ftpget_SOURCES = ftpget.cc
 
 noinst_LIBRARIES = libtasks.a libjobs.a
 
+## this does not work too well as it uses ld for creating shared library;
+## and thus the constructors don't get called.
+# MODULES_LA = proto-ftp.la
+# lib_LTLIBRARIES = $(MODULES_LA)
+# proto_ftp_la_SOURCES = ftpclass.cc FtpListInfo.cc FtpGlob.cc FtpDirList.cc md5.c ftp-opie.c
+# proto_ftp_la_LDFLAGS = -module -avoid-version
+
 libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  ProcWait.h ftpclass.cc ftpclass.h GetPass.cc GetPass.h\
  CharReader.cc CharReader.h LsCache.cc LsCache.h Resolver.cc Resolver.h\
