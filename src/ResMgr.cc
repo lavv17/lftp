@@ -472,6 +472,11 @@ const char *ResMgr::UNumberValidate(char **value)
    char *v=*value;
 
    v+=strspn(v," \t");
+   memmove(*value,v,strlen(v)+1);   // drop leading space
+
+   v=*value;
+   if(!strncasecmp(v,"0x",2))
+      v+=2;
 
    int n=strspn(v,"1234567890");
 

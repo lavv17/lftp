@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 2000 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 2003 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,9 +166,6 @@ static bool is_valid_status(int s)
 	    return 1;
 	 return 2;
       }
-
-   off_t body_size;
-   off_t bytes_received;
 
    enum unpack_status_t
    {
@@ -553,6 +550,7 @@ static bool is_valid_status(int s)
    void CloseHandle(expect_t e);
    int ReplyLogPriority(int);
 
+   int expect_queue_size;
    Expect *expect_chain;
    Expect **expect_chain_end;
    Expect **FindExpect(Packet *reply);
@@ -561,7 +559,7 @@ static bool is_valid_status(int s)
    Expect *ooo_chain; 	// out of order replies buffered
 
    int   RespQueueIsEmpty() { return expect_chain==0; }
-   int	 RespQueueSize() { /*FIXME*/ }
+   int	 RespQueueSize() { return expect_queue_size; }
    void  EmptyRespQueue()
       {
 	 while(expect_chain)
@@ -581,6 +579,10 @@ static bool is_valid_status(int s)
    off_t request_pos;
 
    FileInfo *MakeFileInfo(const NameAttrs *a);
+
+   int max_packets_in_flight;
+   int size_read;
+   int size_write;
 
 protected:
    void SetError(int code,const Packet *reply);

@@ -1,3 +1,11 @@
+2003-11-20  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Fish.cc: add Reconfig to clone ctor.
+	* ResMgr.cc: allow 0x numbers.
+	* ResMgr.h: use strtol.
+	* SFtp.cc, SFtp.h: use new resources.
+	* resource.cc: new sftp resources.
+
 2003-11-19  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* PtyShell.cc, PtyShell.h: add pipe support, thus the ability to

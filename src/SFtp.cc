@@ -1,3 +1,25 @@
+/*
+ * lftp - file transfer program
+ *
+ * Copyright (c) 2003 by Alexander V. Lukyanov (lav@yars.free.net)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+/* $Id$ */
+
 #include <config.h>
 #include "SFtp.h"
 #include "ArgV.h"
@@ -197,7 +219,7 @@ int SFtp::Do()
    case CONNECTING_1:
       if(!received_greeting)
 	 return m;
-      SendRequest(new Request_INIT(4),EXPECT_VERSION);
+      SendRequest(new Request_INIT(Query("protocol-version")),EXPECT_VERSION);
       state=CONNECTING_2;
       return MOVED;
 
@@ -240,7 +262,7 @@ int SFtp::Do()
    case FILE_SEND:
       // pack data from file_buf.
       file_buf->Get(&b,&s);
-      if(s<max_buf/2 && !eof)
+      if(s<size_write && !eof)
 	 return m;   // wait for more data before sending.
       if(s==0)
       {
@@ -254,6 +276,8 @@ int SFtp::Do()
 	 m=MOVED;
 	 break;
       }
+      if(RespQueueSize()>max_packets_in_flight)
+	 return m;
       SendRequest(new Request_WRITE(handle,handle_len,request_pos,b,s),EXPECT_WRITE_STATUS);
       file_buf->Skip(s);
       request_pos+=s;
@@ -273,6 +297,7 @@ void SFtp::MoveConnectionHere(SFtp *o)
    pty_send_buf=o->pty_send_buf; o->pty_send_buf=0;
    pty_recv_buf=o->pty_recv_buf; o->pty_recv_buf=0;
    rate_limit=o->rate_limit; o->rate_limit=0;
+   expect_queue_size=o->expect_queue_size; o->expect_queue_size=0;
    expect_chain=o->expect_chain; o->expect_chain=0;
    expect_chain_end=o->expect_chain_end;
    if(expect_chain_end==&o->expect_chain)
@@ -318,12 +343,16 @@ void SFtp::Init()
    ssh_id=0;
    eof=false;
    received_greeting=false;
+   expect_queue_size=0;
    expect_chain=0;
    expect_chain_end=&expect_chain;
    ooo_chain=0;
    protocol_version=0;
    handle=0;
    handle_len=0;
+   max_packets_in_flight=3;
+   size_read=0x8000;
+   size_write=0x8000;
 }
 
 SFtp::SFtp()
@@ -341,6 +370,7 @@ SFtp::~SFtp()
 SFtp::SFtp(const SFtp *o) : super(o)
 {
    Init();
+   Reconfig(0);
 }
 
 
@@ -786,7 +816,7 @@ void SFtp::HandleExpect(Expect *e)
 void SFtp::RequestMoreData()
 {
    if(mode==RETRIEVE) {
-      int req_len=max_buf/2;
+      int req_len=size_read;
       SendRequest(new Request_READ(handle,handle_len,request_pos,req_len),EXPECT_DATA);
       request_pos+=req_len;
    } else if(mode==LIST || mode==LONG_LIST) {
@@ -877,6 +907,7 @@ void SFtp::PushExpect(Expect *e)
    e->next=*expect_chain_end;
    *expect_chain_end=e;
    expect_chain_end=&e->next;
+   expect_queue_size++;
 }
 void SFtp::DeleteExpect(Expect **e)
 {
@@ -885,6 +916,7 @@ void SFtp::DeleteExpect(Expect **e)
    Expect *d=*e;
    *e=e[0]->next;
    delete d;
+   expect_queue_size--;
 }
 SFtp::Expect *SFtp::FindExpectExclusive(Packet *p)
 {
@@ -895,6 +927,7 @@ SFtp::Expect *SFtp::FindExpectExclusive(Packet *p)
    if(expect_chain_end==&res->next)
       expect_chain_end=e;
    *e=res->next;
+   expect_queue_size--;
    return res;
 }
 void SFtp::CloseExpectQueue()
@@ -941,10 +974,13 @@ int SFtp::Read(void *buf,int size)
       return 0;	  // eof
    if(state==FILE_RECV)
    {
-      // keep at least two packets in flight.
-      if((!expect_chain || !expect_chain->next)
-      && !file_buf->Eof())
-	 RequestMoreData();
+      // keep some packets in flight.
+      if(RespQueueSize()<max_packets_in_flight && !file_buf->Eof())
+      {
+	 // but don't request much after possible EOF.
+	 if(entity_size<0 || request_pos<entity_size || RespQueueSize()<2)
+	    RequestMoreData();
+      }
 
       const char *buf1;
       int size1;
@@ -983,7 +1019,7 @@ int SFtp::Write(const void *buf,int size)
       return(error_code);
 
    if(state!=FILE_SEND || rate_limit==0
-   || send_buf->Size()>3*max_buf)
+   || send_buf->Size()>2*max_buf)
       return DO_AGAIN;
 
    {
@@ -993,8 +1029,8 @@ int SFtp::Write(const void *buf,int size)
       if(size+file_buf->Size()>allowed)
 	 size=allowed-send_buf->Size();
    }
-   if(size+file_buf->Size()>max_buf/2)
-      size=max_buf/2-file_buf->Size();
+   if(size+file_buf->Size()>max_buf)
+      size=max_buf-file_buf->Size();
    if(entity_size>=0 && pos+size>entity_size)
       size=entity_size-pos;
    if(size<=0)
@@ -1130,6 +1166,16 @@ void SFtp::CleanupThis()
 void SFtp::Reconfig(const char *name)
 {
    super::Reconfig(name);
+   const char *c=hostname;
+   max_packets_in_flight=Query("max-packets-in-flight",c);
+   if(max_packets_in_flight<1)
+      max_packets_in_flight=1;
+   size_read=Query("size-read",c);
+   size_write=Query("size-write",c);
+   if(size_read<16)
+      size_read=16;
+   if(size_write<16)
+      size_write=16;
 }
 
 void SFtp::ClassInit()

@@ -260,6 +260,12 @@ static ResDecl
    ResDecl48 ("mirror:parallel-transfer-count", "1", ResMgr::UNumberValidate,ResMgr::NoClosure),
    ResDecl49 ("mirror:exclude-regex",	  "(^|/)(\\.in\\.|\\.nfs)",ResMgr::ERegExpValidate,ResMgr::NoClosure);
 
+static ResDecl
+   res_sftp_packets  ("sftp:max-packets-in-flight","3",ResMgr::UNumberValidate,0),
+   res_sftp_proto_ver("sftp:protocol-version","4",ResMgr::UNumberValidate,0),
+   res_sftp_rsize    ("sftp:size-read", "0x8000",ResMgr::UNumberValidate,0),
+   res_sftp_wsize    ("sftp:size-write","0x8000",ResMgr::UNumberValidate,0);
+
 #ifdef USE_SSL
 static ResDecl
    res_ssl_ca_file    ("ssl:ca-file",  "", ResMgr::FileReadable,ResMgr::NoClosure),

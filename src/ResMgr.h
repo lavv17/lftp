@@ -147,11 +147,11 @@ public:
       }
    operator int()
       {
-	 return atoi(s);
+	 return strtol(s,0,0);
       }
    operator long()
       {
-	 return atol(s);
+	 return strtol(s,0,0);
       }
    operator double()
       {

@@ -376,6 +376,7 @@ Fish::~Fish()
 Fish::Fish(const Fish *o) : super(o)
 {
    Init();
+   Reconfig(0);
 }
 
 void Fish::Close()
