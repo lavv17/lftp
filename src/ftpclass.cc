@@ -3656,6 +3656,13 @@ const char *Ftp::CurrentStatus()
    case(ACCEPTING_STATE):
       return(_("Waiting for data connection..."));
    case(DATA_OPEN_STATE):
+      if(data_ssl)
+      {
+	 if(mode==STORE)
+	    return(_("Sending data/TLS"));
+         else
+	    return(_("Receiving data/TLS"));
+      }
       if(data_sock!=-1)
       {
 	 if(mode==STORE)
