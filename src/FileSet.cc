@@ -27,6 +27,7 @@
 #include <sys/stat.h>
 #include <utime.h>
 #include "misc.h"
+#include "ResMgr.h"
 
 void  FileInfo::Merge(const FileInfo& f)
 {
@@ -137,12 +138,13 @@ FileSet::~FileSet()
    xfree(files);
 }
 
-void FileSet::SubtractSame(const FileSet *set,bool only_newer,time_t prec,int ignore)
+void FileSet::SubtractSame(const FileSet *set,bool only_newer,
+      const TimeInterval *prec,const TimeInterval *loose_prec,int ignore)
 {
    for(int i=0; i<fnum; i++)
    {
       FileInfo *f=set->FindByName(files[i]->name);
-      if(f && files[i]->SameAs(f,only_newer,prec,ignore))
+      if(f && files[i]->SameAs(f,only_newer,prec,loose_prec,ignore))
 	 Sub(i--);
    }
 }
@@ -188,7 +190,8 @@ void FileSet::ExcludeDots()
    }
 }
 
-bool  FileInfo::SameAs(const FileInfo *fi,bool only_newer,time_t prec,int ignore)
+bool  FileInfo::SameAs(const FileInfo *fi,bool only_newer,
+	 const TimeInterval *prec,const TimeInterval *loose_prec,int ignore)
 {
    if(defined&NAME && fi->defined&NAME)
       if(strcmp(name,fi->name))
@@ -207,9 +210,21 @@ bool  FileInfo::SameAs(const FileInfo *fi,bool only_newer,time_t prec,int ignore
    if(defined&(DATE|DATE_UNPREC) && fi->defined&(DATE|DATE_UNPREC)
    && !(ignore&DATE))
    {
+      time_t p;
+      bool inf;
+      if((defined&DATE_UNPREC) || (fi->defined&DATE_UNPREC))
+      {
+	 p=loose_prec->Seconds();
+	 inf=loose_prec->IsInfty();
+      }
+      else
+      {
+	 p=prec->Seconds();
+	 inf=prec->IsInfty();
+      }
       if(only_newer && date<fi->date)
 	    return true;
-      if(abs((long)date-(long)(fi->date))>prec)
+      if(!inf && abs((long)date-(long)(fi->date))>p)
 	 return false;
    }
 

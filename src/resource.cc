@@ -125,6 +125,8 @@ static ResDecl resources[]={
    ResDecl  ("net:timeout",	       "300",   ResMgr::UNumberValidate,0),
    ResDecl  ("net:connection-limit",   "0",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:connection-takeover","yes",	ResMgr::BoolValidate,0),
+   ResDecl  ("mirror:time-precision",  "1s",    ResMgr::TimeIntervalValidate,0),
+   ResDecl  ("mirror:loose-time-precision","24h",ResMgr::TimeIntervalValidate,0),
 };
 
 void ResMgr::ClassInit()

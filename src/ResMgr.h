@@ -155,11 +155,11 @@ public:
 	 error_text=0;
       }
    ~TimeInterval();
-   bool Error() { return error_text!=0; };
-   const char *ErrorText() { return error_text; }
+   bool Error() const { return error_text!=0; };
+   const char *ErrorText() const { return error_text; }
 
-   bool IsInfty() { return infty; }
-   time_t Seconds() { return interval; }
+   bool IsInfty() const { return infty; }
+   time_t Seconds() const { return interval; }
 };
 
 class Range

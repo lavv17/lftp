@@ -1817,6 +1817,9 @@ int Ftp::ReplyLogPriority(int code)
       return 3;
    if(code==250 && mode==CHANGE_DIR)
       return 3;
+   if(code==550 && mode==ARRAY_INFO
+   && !RespQueueIsEmpty() && RespQueue[RQ_head].check_case==CHECK_MDTM)
+      return 4;
    // Error messages
    // 221 is the reply to QUIT, but we don't expect it.
    if(code>=400 || code==221)

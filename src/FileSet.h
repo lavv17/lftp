@@ -32,6 +32,8 @@ extern "C" {
 
 #undef TYPE
 
+class TimeInterval;
+
 class FileInfo
 {
 public:
@@ -84,7 +86,8 @@ public:
 
    void	 Merge(const FileInfo&);
 
-   bool	 SameAs(const FileInfo *,bool only_newer,time_t prec,int ignore);
+   bool	 SameAs(const FileInfo *,bool only_newer,
+	    const TimeInterval *prec,const TimeInterval *loose_prec,int ignore);
    bool	 OlderThan(time_t t);
 
    void	 SetAssociatedData(void *d,int len)
@@ -119,7 +122,8 @@ public:
    void	 Add(FileInfo *);
    void	 Merge(const FileSet *);
    void	 Merge(char **);   // file list
-   void	 SubtractSame(const FileSet *,bool only_newer,time_t prec,int ignore);
+   void	 SubtractSame(const FileSet *,bool only_newer,
+	    const TimeInterval *prec,const TimeInterval *loose_prec,int ignore);
    void	 SubtractAny(const FileSet *);
    void  SubtractOlderThan(time_t t);
    void  SubtractNotIn(const FileSet *);

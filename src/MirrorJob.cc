@@ -79,9 +79,10 @@ void  MirrorJob::PrintStatus(int v)
    return;
 
 final:
-   printf(plural(N_("%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"),
+   if(dirs>0)
+      printf(plural(N_("%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"),
 		     dirs,tot_files,tot_symlinks),
-      tab,dirs,tot_files,tot_symlinks);
+	 tab,dirs,tot_files,tot_symlinks);
    if(new_files || new_symlinks)
       printf(plural(N_("%sNew: %d file$|s$, %d symlink$|s$\n"),
 		     new_files,new_symlinks),
@@ -334,7 +335,7 @@ void  MirrorJob::HandleFile(int how)
 
 	 // inherit flags and other things
 	 mj->SetFlags(flags,1);
-	 mj->SetPrec(prec);
+	 mj->SetPrec(prec,loose_prec);
 	 mj->UseCache(use_cache);
 
 	 if(rx_include)	mj->SetInclude(rx_include);
@@ -422,10 +423,7 @@ void  MirrorJob::InitSets(FileSet *source,FileSet *dest)
 
    same=new FileSet(source);
    to_transfer=new FileSet(source);
-   int ignore=0;
-   if(prec.IsInfty())
-      ignore|=FileInfo::DATE;
-   to_transfer->SubtractSame(dest,flags&ONLY_NEWER,prec.Seconds(),ignore);
+   to_transfer->SubtractSame(dest,flags&ONLY_NEWER,&prec,&loose_prec,0);
 
    same->SubtractAny(to_transfer);
 
@@ -556,6 +554,7 @@ int   MirrorJob::Do()
       remote_set->ExcludeDots(); // don't need .. and .
 
       // now we have both local and remote file sets.
+      dirs++;
 
       if(flags&REVERSE)
 	 InitSets(local_set,remote_set);
@@ -804,7 +803,7 @@ int   MirrorJob::Do()
 }
 
 MirrorJob::MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_remote_dir)
-   : SessionJob(f), prec("0")
+   : SessionJob(f), prec("0"), loose_prec("0")
 {
    verbose_report=0;
    parent_mirror=0;
@@ -823,7 +822,7 @@ MirrorJob::MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_rem
 
    tot_files=new_files=mod_files=del_files=
    tot_symlinks=new_symlinks=mod_symlinks=del_symlinks=0;
-   dirs=1; del_dirs=0;
+   dirs=0; del_dirs=0;
 
    flags=0;
 
@@ -962,6 +961,7 @@ CMD(mirror)
       {"include",required_argument,0,'i'},
       {"exclude",required_argument,0,'x'},
       {"time-prec",required_argument,0,'t'},
+      {"loose-time-prec",required_argument,0,256+'T'},
       {"only-newer",no_argument,0,'n'},
       {"no-recursion",no_argument,0,'r'},
       {"no-perms",no_argument,0,'p'},
@@ -1009,7 +1009,8 @@ CMD(mirror)
    if(exclude)
       exclude[0]=0;
 
-   TimeInterval prec("12h");
+   TimeInterval prec      (ResMgr::Query("mirror:time-precision",0));
+   TimeInterval loose_prec(ResMgr::Query("mirror:loose-time-precision",0));
    bool	 create_remote_dir=false;
    int	 verbose=0;
    const char *newer_than=0;
@@ -1039,14 +1040,21 @@ CMD(mirror)
 	 flags|=MirrorJob::CONTINUE;
 	 break;
       case('t'):
-	 prec=TimeInterval(optarg);
-	 if(prec.Error())
+      case(256+'T'):
+      {
+	 TimeInterval p(optarg);
+	 if(p.Error())
 	 {
-	    parent->eprintf("%s: %s: %s\n",args->a0(),optarg,prec.ErrorText());
+	    parent->eprintf("%s: %s: %s\n",args->a0(),optarg,p.ErrorText());
 	    parent->eprintf(_("Try `help %s' for more information.\n"),args->a0());
 	    return 0;
 	 }
+	 if(opt=='t')
+	    prec=p;
+	 else
+	    loose_prec=p;
 	 break;
+      }
       case('x'):
 	 APPEND_STRING(exclude,exclude_alloc,optarg);
 	 break;
@@ -1166,7 +1174,7 @@ CMD(mirror)
    if(exclude && exclude[0] && (err=j->SetExclude(exclude)))
       goto err_out;
 
-   j->SetPrec(prec);
+   j->SetPrec(prec,loose_prec);
    if(newer_than)
       j->SetNewerThan(newer_than);
    j->UseCache(use_cache);

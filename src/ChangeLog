@@ -1,3 +1,12 @@
+2000-04-15  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileSet.cc, FileSet.h: use class TimeInterval; add loose_prec arg.
+	* MirrorJob.cc, MirrorJob.h: add --loose-time-prec; handle new mirror:
+	  settings.
+	* ResMgr.h: make some TimeInterval methods const.
+	* ftpclass.cc: lower priority of messages for failed MDTM.
+	* resource.cc: new settings mirror:time-prec and loose-time-prec.
+
 2000-04-14  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Resolver.cc: workaround for `class' in nameser.h (freebsd3.2).

@@ -92,6 +92,7 @@ class MirrorJob : public SessionJob
    regex_t rxc_include,rxc_exclude;
 
    TimeInterval prec;
+   TimeInterval loose_prec;
 
    bool	 dir_made;
    bool	 create_remote_dir;
@@ -158,7 +159,8 @@ public:
 
    void	 SetVerbose(int v) { verbose_report=v; }
 
-   void	 SetPrec(const TimeInterval &p) { prec=p; }
+   void	 SetPrec(const TimeInterval &p,const TimeInterval &lp)
+      { prec=p; loose_prec=lp; }
    void	 CreateRemoteDir() { create_remote_dir=true; }
 
    void	 SetNewerThan(const char *file);
