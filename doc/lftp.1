@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "18 Jan 2004"
+.TH lftp 1 "28 Jan 2004"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -1016,6 +1016,10 @@ ftp server.
 .TP
 .BR ftp:use-fxp \ (bool)
 if true, lftp will try to set up direct connection between two ftp servers.
+.TP
+.BR ftp:use-hftp \ (bool)
+when ftp:proxy points to an http proxy, this setting selects hftp method (GET,
+HEAD) when true, and CONNECT method when false. Default is true.
 .TP
 .BR ftp:lang \ (bool)
 the language selected with LANG command, if supported as indicated by FEAT

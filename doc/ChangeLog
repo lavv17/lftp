@@ -1,3 +1,7 @@
+2004-01-28	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:use-hftp.
+
 2004-01-24	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: mirror updates: --delete-first, --log, --script.
