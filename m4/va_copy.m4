@@ -114,7 +114,7 @@ AC_DEFUN(lftp_VA_COPY,
    fi
 
    dnl ZZZ for autoheader sorting.
-   AH_VERBATIM([VA_ZZZ_COPY],
+   AH_VERBATIM([_VA_ZZZ_COPY],
 [#if !defined (VA_COPY)
 #  if defined (VA_PTR_COPY)
 #    define VA_COPY(ap1, ap2)   (*(ap1) = *(ap2))
