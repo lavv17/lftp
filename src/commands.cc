@@ -59,7 +59,6 @@
 #include "url.h"
 #include "GetPass.h"
 #include "SignalHook.h"
-#include "ProtoList.h"
 #include "FileFeeder.h"
 #include "xalloca.h"
 #include "bookmark.h"
@@ -168,6 +167,8 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("`lftp' is the first command executed by lftp after rc files\n"
 	 " -f <file>           execute commands from the file and exit\n"
 	 " -c <cmd>            execute the commands and exit\n"
+	 " --help              print this help and exit\n"
+	 " --version           print lftp version and exit\n"
 	 "Other options are the same as in `open' command\n"
 	 " -e <cmd>            execute the command just after selecting\n"
 	 " -u <user>[,<pass>]  use the user/password for authentication\n"
@@ -568,7 +569,7 @@ Job *CmdExec::builtin_open()
 	       const char *p=uc.proto;
 	       if(!p)
 		  p="ftp";
-	       new_session=Protocol::NewSession(p);
+	       new_session=FileAccess::New(p);
 	       if(!new_session)
 	       {
 		  eprintf(N_("%s: %s - not supported protocol\n"),
@@ -1529,6 +1530,8 @@ CMD(ver)
       _("Lftp | Version %s | Copyright (c) 1996-1999 Alexander V. Lukyanov\n"),VERSION);
    printf(
       _("This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"));
+   printf(
+      _("Send bug reports and questions to <%s>.\n"),"lftp@uniyar.ac.ru");
    exit_code=0;
    return 0;
 }

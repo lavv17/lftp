@@ -130,7 +130,7 @@ void pgetJob::ShowRunStatus(StatusLine *s)
       return;
    last_status_update=now;
 
-   int w=s->GetWidth()-30;
+   int w=s->GetWidth()-40;
    if(w<=0)
       return;
    char *n=curr;
@@ -161,8 +161,8 @@ void  pgetJob::PrintStatus(int verbose)
    if(curr && session->IsOpen())
    {
       putchar('\t');
-      printf(_("`%s', got %lu of %lu (%d%%) %s"),curr,total_xferred,size,
-	    percent(total_xferred,size),CurrRate(total_xfer_rate));
+      printf(_("`%s', got %lu of %lu (%d%%) %s %s"),curr,total_xferred,size,
+	    percent(total_xferred,size),CurrRate(total_xfer_rate),CurrETA(total_xfer_rate));
       putchar('\n');
       if(verbose>1)
       {

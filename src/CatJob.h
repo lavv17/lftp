@@ -29,7 +29,6 @@
 #include "ArgV.h"
 #include "xmalloc.h"
 #include "XferJob.h"
-#include "rglob.h"
 
 class CatJob : public XferJob
 {
@@ -42,7 +41,7 @@ protected:
 
    ArgV	 *args;
    ArgV	 *args_globbed;
-   RemoteGlob *rg;
+   Glob	 *rg;
 
    void	 NextFile();
 

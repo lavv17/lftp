@@ -27,7 +27,6 @@
 #include <errno.h>
 #include <unistd.h>
 #include <assert.h>
-#include "ProtoList.h"
 #include "MirrorJob.h"
 #include "CmdExec.h"
 #include "rmJob.h"
@@ -391,6 +390,7 @@ int   MirrorJob::Do()
       	 state=DONE;
       	 return MOVED;
       }
+      list_info->UseCache(false);
       list_info->Need(FileInfo::ALL_INFO);
       if(flags&RETR_SYMLINKS)
 	 list_info->FollowSymlinks();
@@ -422,9 +422,10 @@ int   MirrorJob::Do()
 
       remote_set->ExcludeDots(); // don't need .. and .
 
-      local_session=Protocol::NewSession("file");
+      local_session=FileAccess::New("file");
       local_session->Chdir(local_dir,false);
       list_info=local_session->MakeListInfo();
+      list_info->UseCache(false);
       if(flags&RETR_SYMLINKS)
 	 list_info->FollowSymlinks();
       list_info->SetExclude(local_relative_dir,

@@ -92,8 +92,7 @@ int   CatJob::Do()
 	       break;
 	    if(has_wildcard(a))
 	    {
-	       rg=new RemoteGlob(session,a);
-	       rg->RestrictPath();
+	       rg=session->MakeGlob(a);
 	       m=MOVED;
 	       break;
 	    }
@@ -118,9 +117,9 @@ int   CatJob::Do()
 
 	 files=rg->GetResult();
 	 if(rg->Error())
-	    eprintf("rglob: %s - %s\n",rg->pattern,session->StrError(rg->ErrorCode()));
+	    eprintf("rglob: %s\n",rg->ErrorText());
 	 else if(!files)
-	    eprintf(_("%s: no files found\n"),rg->pattern);
+	    eprintf(_("%s: no files found\n"),rg->GetPattern());
 	 else
 	 {
 	    for(i=files; *i; i++)

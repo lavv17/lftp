@@ -24,7 +24,6 @@
 #define FINDJOB_H
 
 #include "Job.h"
-#include "ListInfo.h"
 #include "buffer.h"
 #include "ArgV.h"
 

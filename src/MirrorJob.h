@@ -23,7 +23,6 @@
 #ifndef MIRRORJOB_H
 #define MIRRORJOB_H
 
-#include "ListInfo.h"
 #include "GetJob.h"
 
 
