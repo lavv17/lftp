@@ -76,7 +76,7 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 #define FTP_DATA_PORT 20
 
 #ifndef SOL_TCP
-# define SOL_TCP 6
+# define SOL_TCP IPPROTO_TCP
 #endif
 
 #define super FileAccess
@@ -614,6 +614,7 @@ void Ftp::InitFtp()
    force_skey=false;
    verify_data_address=true;
    socket_buffer=0;
+   socket_maxseg=0;
 
    RespQueue=0;
    RQ_alloc=0;
@@ -786,10 +787,12 @@ void  Ftp::SetSocketBuffer(int sock)
 
 void  Ftp::SetSocketMaxseg(int sock)
 {
+#ifdef TCP_MAXSEG
    if(socket_maxseg==0)
       return;
    if(-1==setsockopt(sock,SOL_TCP,TCP_MAXSEG,(char*)&socket_maxseg,sizeof(socket_maxseg)))
       Log::global->Format(1,"setsockopt(TCP_MAXSEG,%d): %s\n",socket_maxseg,strerror(errno));
+#endif
 }
 
 void  Ftp::SetKeepAlive(int sock)
