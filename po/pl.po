@@ -6,10 +6,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 2.6.9\n"
+"Project-Id-Version: lftp 3.0.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-04-06 13:23+0400\n"
-"PO-Revision-Date: 2003-11-20 22:57+0100\n"
+"PO-Revision-Date: 2004-04-07 08:01+0200\n"
 "Last-Translator: Arkadiusz Miskiewicz <arekm@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -1790,14 +1790,12 @@ msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 msgstr "SITE CHMOD jest zablokowane przez ftp:use-site-chmod"
 
 #: src/ftpclass.cc:1428
-#, fuzzy
 msgid "MLST and MLSD are not supported by this site"
-msgstr "SITE CHMOD nie jest obs³ugiwane przez ten serwer"
+msgstr "MLST i MLSD nie s± obs³ugiwane przez ten serwer"
 
 #: src/ftpclass.cc:1433
-#, fuzzy
 msgid "MLSD is disabled by ftp:use-mlsd"
-msgstr "SITE CHMOD jest zablokowane przez ftp:use-site-chmod"
+msgstr "MLSD jest zablokowane przez ftp:use-mlsd"
 
 #: src/ftpclass.cc:1841 src/ftpclass.cc:1880
 msgid "unsupported network protocol"
