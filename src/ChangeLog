@@ -1,3 +1,9 @@
+1999-12-19  Alexander V. Lukyanov  <lav@yars.free.net>
+
+        * HttpDir.cc: decode &amp; and similar; don't accept ~ for ListInfo.
+
+1999-12-18  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* commands.cc: get1 command.
 	* XferJob.cc: move xfer:eta-terse to CopyJob.
 	* FtpCopy.cc, FtpCopy.h: save retries count.
