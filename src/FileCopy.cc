@@ -1418,7 +1418,7 @@ int FileCopyPeerFDStream::Get_LL(int len)
    res=read(fd,buffer+buffer_ptr+in_buffer,len);
    if(res==-1)
    {
-      if(errno==EAGAIN || errno==EINTR)
+      if(E_RETRY(errno))
       {
 	 Block(fd,POLLIN);
 	 return 0;
@@ -1498,7 +1498,7 @@ int FileCopyPeerFDStream::Put_LL(const char *buf,int len)
    int res=write(fd,buf,len);
    if(res<0)
    {
-      if(errno==EAGAIN || errno==EINTR)
+      if(E_RETRY(errno))
       {
 	 Block(fd,POLLOUT);
 	 return 0;
