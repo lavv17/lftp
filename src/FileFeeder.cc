@@ -33,7 +33,7 @@ const char *FileFeeder::NextCmd(CmdExec *exec, const char *)
 	 fprintf(stderr,"source: %s\n",in->error_text);
 	 return 0;
       }
-      exec->block+=TimeOut(1000);
+      exec->TimeoutS(1);
       return "";
    }
    int res=read(fd,buffer,buffer_size-1);
@@ -45,7 +45,7 @@ const char *FileFeeder::NextCmd(CmdExec *exec, const char *)
    {
       if(errno==EAGAIN || errno==EWOULDBLOCK)
       {
-	 exec->block+=PollVec(fd,POLLIN);
+	 exec->Block(fd,POLLIN);
 	 return "";
       }
       perror("source");

@@ -123,19 +123,6 @@ Http::~Http()
    xfree(location);
 }
 
-bool Http::CheckTimeout()
-{
-   if(now-event_time>=timeout)
-   {
-      DebugPrint("**** ",_("Timeout - reconnecting"),0);
-      Disconnect();
-      event_time=now;
-      return(true);
-   }
-   block+=TimeOut((timeout-(now-event_time))*1000);
-   return(false);
-}
-
 void Http::Disconnect()
 {
    Delete(send_buf);
@@ -577,7 +564,7 @@ int Http::Do()
 	 if(errno==ENFILE || errno==EMFILE)
 	 {
 	    // file table overflow - it could free sometime
-	    block+=TimeOut(1000);
+	    TimeoutS(1);
 	    return m;
 	 }
 	 char str[256];

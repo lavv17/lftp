@@ -39,7 +39,7 @@ int CharReader::Do()
    }
    if(res==0)
    {
-      block.Merge(PollVec(fd,POLLIN));
+      Block(fd,POLLIN);
       return STALL;
    }
    unsigned char c;

@@ -151,11 +151,11 @@ int LocalAccess::Do()
 	    Fatal(stream->error_text);
 	    return MOVED;
 	 }
-	 block+=TimeOut(1000);
+	 TimeoutS(1);
 	 return m;
       }
       stream->Kill(SIGCONT);
-      block+=PollVec(stream->getfd(),POLLIN);
+      Block(stream->getfd(),POLLIN);
       return m;
    case(CHANGE_DIR):
       if(access(file,X_OK)==-1)
@@ -240,7 +240,7 @@ int LocalAccess::Do()
 	    SetError(NO_FILE,stream->error_text);
 	    return MOVED;
 	 }
-	 block+=TimeOut(1000);
+	 TimeoutS(1);
 	 return m;
       }
       stream->Kill(SIGCONT);
@@ -260,7 +260,7 @@ int LocalAccess::Do()
 	 opt_size=0;
 	 opt_date=0;
       }
-      block+=PollVec(stream->getfd(),(mode==STORE?POLLOUT:POLLIN));
+      Block(stream->getfd(),(mode==STORE?POLLOUT:POLLIN));
       return m;
 
    case(CONNECT_VERIFY):

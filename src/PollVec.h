@@ -33,50 +33,28 @@
 # include <poll.h>
 #endif
 
-class SMTask;
-
-class Waiting
-{
-public:
-   enum	Type { POLLFD,TIMEOUT,ASYNCWAIT,NOWAIT };
-
-private:
-   friend class PollVec;
-   Type	    wait_type;
-   struct pollfd pfd;
-   int	    timeout;
-   Waiting  *next;
-
-   Waiting  *DupChain();
-};
-
 class PollVec
 {
-   Waiting  *chain;
+   struct pollfd *fds;
+   int fds_num;
+   int fds_allocated;
+
+   int timeout;
+
 public:
-   PollVec(int fd,int events);
-   PollVec(int timeout);
-   PollVec(Waiting::Type);
-   PollVec() { chain=0; }
+   void Init();
+   PollVec();
 
    void	 Empty();
    void	 Merge(const PollVec&);
    void	 Block() const;
-   void	 operator+=(const PollVec& p) { Merge(p); }
 
-   ~PollVec() { Empty(); }
-};
+   void SetTimeout(int t);
+   void AddTimeout(int t);
+   void AddFD(int fd,int events);
+   void NoWait() { SetTimeout(0); }
 
-class TimeOut : public PollVec
-{
-public:
-   TimeOut(int t) : PollVec(t) {}
-};
-
-class NoWait : public PollVec
-{
-public:
-   NoWait() : PollVec(Waiting::NOWAIT) {}
+   ~PollVec();
 };
 
 #endif /* POLLVEC_H */

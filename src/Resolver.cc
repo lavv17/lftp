@@ -176,7 +176,7 @@ int   Resolver::Do()
       {
 	 if(errno==ENFILE || errno==EMFILE)
 	 {
-	    block+=TimeOut(1000);
+	    TimeoutS(1);
 	    return m;
 	 }
 	 MakeErrMsg("pipe()");
@@ -196,7 +196,7 @@ int   Resolver::Do()
 	 pid_t proc=fork();
 	 if(proc==-1)
 	 {
-	    block+=TimeOut(1000);
+	    TimeoutS(1);
 	    return m;
 	 }
 	 if(proc==0)
@@ -254,7 +254,7 @@ int   Resolver::Do()
 	    done=true;
 	    return MOVED;
 	 }
-	 block+=TimeOut((timeout-(now-start_time))*1000);
+	 TimeoutS(timeout-(now-start_time));
       }
       return m;
    }
@@ -478,6 +478,12 @@ void Resolver::LookupSRV_RR()
    int len;
    for(;;)
    {
+      if(!use_fork)
+      {
+	 Schedule();
+	 if(deleting)
+	    return;
+      }
       time(&try_time);
       len=res_search(srv_name, C_IN, T_SRV, (u_char*)answer, sizeof(answer));
       if(len>=0)
@@ -667,7 +673,7 @@ void Resolver::LookupOne(const char *name)
       else
       {
 	 af_index++;
-	 goto next;
+	 continue;
       }
 #endif
 
@@ -677,7 +683,7 @@ void Resolver::LookupOne(const char *name)
 	 for(a=ha->h_addr_list; *a; a++)
 	    AddAddress(ha->h_addrtype, *a, ha->h_length);
 	 af_index++;
-	 goto next;
+	 continue;
       }
 #ifdef HAVE_H_ERRNO
       if(h_errno!=TRY_AGAIN)
@@ -692,22 +698,11 @@ void Resolver::LookupOne(const char *name)
 #endif
 	 }
 	 af_index++;
-	 goto next; // try other address families
+	 continue; // try other address families
       }
       time_t t;
       if((t=time(0))-try_time<5)
-      {
-	 if(use_fork)
-	    sleep(5-(t-try_time));
-	 else
-	    TimeoutS(5-(t-try_time));
-      }
-      else
-      {
-      next:
-	 if(!use_fork)
-	    block+=NoWait();
-      }
+	 sleep(5-(t-try_time));
    }
 }
 

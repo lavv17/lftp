@@ -39,7 +39,7 @@ int ProcWait::Do()
 	 deleting=true;
 	 return MOVED;
       }
-      block+=NoWait();
+      Timeout(0);
       return m;
    }
 
@@ -60,7 +60,7 @@ int ProcWait::Do()
 	 goto final;
       }
    }
-   block+=TimeOut(500); // check from time to time, in case SIGCHLD fails
+   Timeout(500); // check from time to time, in case SIGCHLD fails
    return m;
 }
 

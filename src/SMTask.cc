@@ -126,6 +126,8 @@ void SMTask::Schedule()
 	 continue;
       }
       sched_scan->block.Empty();
+      if(repeat)
+	 sched_scan->block.SetTimeout(0); // little optimization
       SMTask *tmp=sched_scan;
       int res=STALL;
       if(!sched_scan->deleting)
@@ -147,7 +149,7 @@ void SMTask::Schedule()
    sched_total.Empty();
    if(repeat)
    {
-      sched_total+=NoWait();
+      sched_total.SetTimeout(0);
       return;
    }
 
@@ -169,5 +171,5 @@ void SMTask::ReconfigAll(const char *name)
    UpdateNow();
    for(SMTask *scan=chain; scan; scan=scan->next)
       scan->Reconfig(name);
-   sched_total+=NoWait();  // for new values handling
+   sched_total.SetTimeout(0);  // for new values handling
 }

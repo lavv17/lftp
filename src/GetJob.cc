@@ -77,7 +77,7 @@ FileCopyPeer *GetJob::NoProtoDst(const char *dst)
       struct stat st;
       if(stat(f,&st)!=-1)
       {
-	 if(st.st_size>0)
+	 if(st.st_size>0 && S_ISREG(st.st_mode))
 	 {
 	    if(!(bool)res_clobber.Query(0))
 	    {

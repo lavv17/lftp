@@ -79,7 +79,7 @@ int SysCmdJob::Do()
       fflush(stderr);
       _exit(1);
    case(-1): /* error */
-      block+=TimeOut(1000);   // wait a second and retry
+      TimeoutS(1);   // wait a second and retry
       goto out;
    }
    /* parent */

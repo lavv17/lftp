@@ -98,7 +98,7 @@ void StatusLine::Show(const char *f,...)
    {
       strcpy(to_be_shown,newstr);
       update_delayed=true;
-      SMTask::block+=TimeOut(1000);
+      TimeoutS(1);
    }
 }
 

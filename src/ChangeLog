@@ -1,7 +1,17 @@
 2000-01-29  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: check for "timed out" in reply; check if data were
-	  sent or received before 5xx reply.
+	  sent or received before 5xx reply; don't spin on errors (not a bug).
+	* PollVec.cc, PollVec.h: simplify.
+	* CharReader.cc, FileCopy.cc, FileFeeder.cc, LocalAccess.cc,
+	  ProcWait.cc, Resolver.cc, StatusLine.cc, SysCmdJob.cc, buffer.cc,
+	  lftp.cc: don't use block directly.
+	* GetJob.cc: check if output file is normal before renaming it.
+	* Http.cc, Http.h: remove redundant CheckTimeout;
+	  don't use block directly.
+	* NetAccess.cc, NetAccess.h: bool CheckTimeout; don't use block
+	  directly.
+	* SMTask.cc, SMTask.h: use simplified PollVec.
 
 2000-01-28  Alexander V. Lukyanov  <lav@yars.free.net>
 

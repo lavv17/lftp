@@ -123,7 +123,7 @@ public:
 	    if(term_pg!=(pid_t)-1 && getpgrp()!=term_pg)
 	    {
 	       // looks like we are in background. Can't read from tty
-	       exec->block+=TimeOut(500);
+	       exec->Timeout(500);
 	       return "";
 	    }
 	 }
@@ -145,7 +145,7 @@ public:
 		  /* If there was an error, return nothing. */
 		  if (expanded < 0 || expanded == 2)	/* 2 == print only */
 		  {
-		     exec->block+=NoWait();  // and retry immediately
+		     exec->Timeout(0);  // and retry immediately
 		     xfree(history_value);
 		     return "";
 		  }
@@ -170,7 +170,7 @@ public:
       if(cmd_buf &&
 	    (*cmd_buf==0 || cmd_buf[strlen(cmd_buf)-1]!='\n'))
       {
-	 exec->block+=NoWait();
+	 exec->Timeout(0);
 	 add_newline=true;
       }
       return cmd_buf;

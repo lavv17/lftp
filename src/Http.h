@@ -71,8 +71,6 @@ class Http : public NetAccess
    char *location;
    bool sent_eot;
 
-   bool CheckTimeout();
-
    bool ModeSupported();
 
    int  keep_alive_max;

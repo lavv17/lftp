@@ -44,7 +44,7 @@ protected:
    time_t idle_start;
 
    int	 timeout;
-   int	 CheckTimeout();
+   bool	 CheckTimeout();
 
    int	 reconnect_interval;
    float reconnect_interval_multiplier;

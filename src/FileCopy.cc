@@ -1071,11 +1071,11 @@ int FileCopyPeerFDStream::getfd()
       if(stream->error())
       {
 	 SetError(stream->error_text);
-	 block+=NoWait();
+	 Timeout(0);
       }
       else
       {
-	 Timeout(1000);
+	 TimeoutS(1);
       }
    }
    return fd;

@@ -216,9 +216,9 @@ int FileOutputBuffer::Do()
    }
    int fd=out->getfd();
    if(fd>=0)
-      block+=PollVec(fd,POLLOUT);
+      Block(fd,POLLOUT);
    else
-      block+=TimeOut(1000);
+      TimeoutS(1);
    return STALL;
 }
 int FileOutputBuffer::Put_LL(const char *buf,int size)

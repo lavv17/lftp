@@ -878,11 +878,7 @@ int   Ftp::Do()
    }
 
    if(Error())
-   {
-      if(mode!=CLOSED)
-	 block+=NoWait();  // ???
       return m;
-   }
 
    if(!hostname)
       return m;
@@ -1590,10 +1586,7 @@ int   Ftp::Do()
       if(data_sock==-1)
       {
 	 if(RespQueueIsEmpty())
-	 {
-	    block+=NoWait();
 	    return m;
-	 }
       }
 
       goto usual_return;
@@ -1645,8 +1638,6 @@ int   Ftp::Do()
    }
    default:
       // error state - need intervension of other task
-      if(mode!=CLOSED)
-	 block+=NoWait();
       return m;
    }
    return m;

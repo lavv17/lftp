@@ -22,132 +22,96 @@
 #include <stdio.h>
 #include <assert.h>
 #include "PollVec.h"
-#include "xalloca.h"
+#include "xmalloc.h"
 
 void  PollVec::Empty()
 {
-   Waiting *scan,*next;
-   for(scan=chain; scan; scan=next)
+   fds_num=0;
+   timeout=-1;
+}
+
+void PollVec::Init()
+{
+   fds=0;
+   fds_num=0;
+   fds_allocated=0;
+   timeout=-1;
+}
+
+PollVec::PollVec()
+{
+   Init();
+}
+PollVec::~PollVec()
+{
+   xfree(fds);
+}
+
+void PollVec::SetTimeout(int t)
+{
+   if(t==0)
+      Empty();
+   timeout=t;
+}
+
+void PollVec::AddTimeout(int t)
+{
+   if(t==-1)
+      return;
+   if(timeout!=-1 && timeout<t)
+      return;
+   SetTimeout(t);
+}
+
+void PollVec::AddFD(int fd,int mask)
+{
+   if(timeout==0)
+      return;
+   for(int i=0; i<fds_num; i++)
    {
-      next=scan->next;
-      delete scan;
+      if(fds[i].fd==fd)
+      {
+	 fds[i].events|=mask;
+	 return;
+      }
    }
-   chain=0;
-}
-
-Waiting *Waiting::DupChain()
-{
-   Waiting *new_chain;
-   Waiting **new_ptr=&new_chain;
-   Waiting *w=this;
-
-   while(w)
+   if(fds_num+1>fds_allocated)
    {
-      *new_ptr=new Waiting(*w);
-      new_ptr=&((*new_ptr)->next);
-      w=w->next;
+      fds_allocated=fds_num+16;
+      fds=(struct pollfd*)xrealloc(fds,fds_allocated*sizeof(*fds));
    }
-   *new_ptr=0;
-   return new_chain;
-}
-
-void  PollVec::Merge(const PollVec& p)
-{
-   Waiting **scan;
-   for(scan=&chain; *scan; scan=&((*scan)->next));
-   *scan=p.chain->DupChain();
-}
-
-PollVec::PollVec(Waiting::Type t)
-{
-   chain=new Waiting;
-   chain->wait_type=t;
-   chain->next=0;
-}
-
-PollVec::PollVec(int fd,int ev)
-{
-   assert(fd>=0);
-   chain=new Waiting;
-   chain->wait_type=Waiting::POLLFD;
-   chain->next=0;
-   chain->pfd.fd=fd;
-   chain->pfd.events=ev;
-}
-
-PollVec::PollVec(int t)
-{
-   chain=new Waiting;
-   chain->wait_type=Waiting::TIMEOUT;
-   chain->next=0;
-   chain->timeout=t;
+   fds[fds_num].fd=fd;
+   fds[fds_num].events=mask;
+   fds_num++;
 }
 
 void  PollVec::Block() const
 {
-   int nfd=0;
-   Waiting *scan;
-   int	 cur_timeout=-1;
-   int	 async=0;
+   if(timeout==0)
+      return;
 
-   for(scan=chain; scan; scan=scan->next)
+   if(fds_num==0)
    {
-      switch(scan->wait_type)
-      {
-      case(Waiting::POLLFD):
-	 nfd++;
-	 break;
-      case(Waiting::TIMEOUT):
-	 if(cur_timeout>scan->timeout || cur_timeout==-1)
-	 {
-	    cur_timeout=scan->timeout;
-	    if(cur_timeout==0)
-	       return;
-	 }
-	 break;
-      case(Waiting::ASYNCWAIT):
-	 async++;
-	 break;
-      case(Waiting::NOWAIT):
-	 return;
-      }
-   }
-
-   if(nfd==0)
-   {
-      if(async==0 && cur_timeout==-1)
+      if(/*async==0 && */ timeout==-1)
       {
 	 /* dead lock */
-	 fprintf(stderr,"%s: deadlock detected\n","PollVec::Block");
-      	 cur_timeout=1000;
+	 fprintf(stderr,"%s: BUG - deadlock detected\n","PollVec::Block");
+      	 poll(0,0,1000);
+	 return;
       }
-      poll(0,0,cur_timeout);
+      poll(0,0,timeout);
       return;
    }
 
-   pollfd *pfd=(pollfd*)alloca(nfd*sizeof(pollfd));
-   int i;
-
-   for(i=0,scan=chain; scan; scan=scan->next)
-   {
-      if(scan->wait_type==Waiting::POLLFD)
-      {
-	 int j;
-	 for(j=0; j<i; j++)
-	 {
-	    if(pfd[j].fd==scan->pfd.fd)
-	    {
-	       // merge two pollfd's (workaround for some systems)
-	       pfd[j].events|=scan->pfd.events;
-	       nfd--;
-	       break;
-	    }
-	 }
-	 if(j>=i)
-	    pfd[i++]=scan->pfd;
-      }
-   }
-
-   poll(pfd,nfd,cur_timeout);
+   poll(fds,fds_num,timeout);
    return;
+}
+
+void PollVec::Merge(const PollVec &p)
+{
+   AddTimeout(p.timeout);
+   if(timeout==0)
+      return;
+   for(int i=0; i<p.fds_num; i++)
+      AddFD(p.fds[i].fd,p.fds[i].events);
 }

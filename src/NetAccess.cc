@@ -247,17 +247,17 @@ bool NetAccess::NoProxy()
    return false;
 }
 
-int NetAccess::CheckTimeout()
+bool NetAccess::CheckTimeout()
 {
    if(now-event_time>=timeout)
    {
       DebugPrint("**** ",_("Timeout - reconnecting"),0);
       Disconnect();
       event_time=now;
-      return(1);
+      return(true);
    }
-   block+=TimeOut((timeout-(now-event_time))*1000);
-   return(0);
+   TimeoutS(timeout-(now-event_time));
+   return(false);
 }
 
 void NetAccess::ClearPeer()
