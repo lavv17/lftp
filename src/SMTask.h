@@ -32,7 +32,6 @@ class SMTask
    SMTask *prev_current;   // stack of running tasks
 
    static SMTask *chain;
-   static SMTask *sched_scan;
    static PollVec sched_total;
 
 protected:

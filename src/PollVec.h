@@ -50,6 +50,10 @@ public:
 	 fds_num=0;
 	 timeout=-1;
       }
+   bool IsEmpty()
+      {
+	 return fds_num==0 && timeout==-1;
+      }
    void	 Merge(const PollVec&);
    void	 Block() const;
 

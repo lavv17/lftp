@@ -1380,12 +1380,15 @@ int Http::Do()
       }
       else
       {
-	 recv_buf->Resume();
+	 if(recv_buf->IsSuspended())
+	 {
+	    recv_buf->Resume();
+	    if(recv_buf->Size()>0 || (recv_buf->Size()==0 && recv_buf->Eof()))
+	       m=MOVED;
+	 }
 	 BumpEventTime(send_buf->EventTime());
 	 BumpEventTime(recv_buf->EventTime());
-	 if(recv_buf->Size()>0 || (recv_buf->Size()==0 && recv_buf->Eof()))
-	    m=MOVED;
-	 else
+	 if(recv_buf->Size()==0)
 	 {
 	    // check if ranges were emulated by squid
 	    bool no_ranges_if_timeout=(bytes_received==0 && !seen_ranges_bytes);

@@ -1,3 +1,12 @@
+2004-05-21  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SMTask.cc, SMTask.h: get rid of static sched_scan; don't Merge empty
+	  PollVec-s.
+	* PollVec.h: (IsEmpty) new method.
+	* SFtp.cc: don't return MOVED if recv_buf contains data and was not
+	  suspended (reduces cpu usage).
+	* Http.cc: check if buffer was suspended before Resume.
+
 2004-05-20  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h: SSCN support added.

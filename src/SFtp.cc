@@ -264,7 +264,7 @@ int SFtp::Do()
 	 recv_buf->Suspend();
 	 m=MOVED;
       }
-      else
+      else if(recv_buf->IsSuspended())
       {
 	 recv_buf->Resume();
 	 if(recv_buf->Size()>0 || (recv_buf->Size()==0 && recv_buf->Eof()))

@@ -32,7 +32,6 @@
 #include "SMTask.h"
 
 SMTask	 *SMTask::chain=0;
-SMTask	 *SMTask::sched_scan=0;
 SMTask	 *SMTask::current=0;
 PollVec	 SMTask::sched_total;
 TimeDate SMTask::now;
@@ -43,11 +42,11 @@ static SMTask *init_task=new SMTaskInit;
 SMTask::SMTask()
 {
    // insert in the chain
-   if(sched_scan)
+   if(current)
    {
       // insert it so that it would be scanned next
-      next=sched_scan->next;
-      sched_scan->next=this;
+      next=current->next;
+      current->next=this;
    }
    else
    {
@@ -74,7 +73,6 @@ SMTask::~SMTask()
 #endif
    task_count--;
    assert(!running);
-   assert(this!=sched_scan);
    // remove from the chain
    SMTask **scan=&chain;
    while(*scan)
@@ -121,54 +119,43 @@ void SMTask::RollAll(int max_time)
 
 void SMTask::Schedule()
 {
-   assert(!current || current->running);
+   SMTask *scan;
 
-   for(sched_scan=chain; sched_scan; sched_scan=sched_scan->next)
+   for(scan=chain; scan; scan=scan->next)
    {
-      if(!sched_scan->running)
-	 sched_scan->block.Empty();
+      if(!scan->running)
+	 scan->block.Empty();
    }
-
    sched_total.Empty();
 
    // get time once and assume Do() don't take much time
    UpdateNow();
 
    bool repeat=false;
-   sched_scan=chain;
-   while(sched_scan)
+   scan=chain;
+   while(scan)
    {
-      if(sched_scan->running || sched_scan->suspended)
+      if(scan->running || scan->suspended)
       {
-	 sched_scan=sched_scan->next;
+	 scan=scan->next;
 	 continue;
       }
       if(repeat)
-	 sched_scan->block.SetTimeout(0); // little optimization
+	 scan->block.SetTimeout(0); // little optimization
 
       int res=STALL;
 
-      Enter(sched_scan);		  // mark it current and running.
-      SMTask *sched_current=current;	  // remember what we ran.
-      if(!current->deleting)		  // let it run unless it is dying.
-	 res=current->Do();
-#if 0 // for spin debug
-      if(res==MOVED)
-	 printf("MOVED: %p\n",current);
-      if(!repeat && current->block.GetTimeout()==0)
-	 printf("timeout==0: %p\n",current);
-#endif
-      if(!sched_scan)			  // nested Schedule can clear sched_scan.
-      	 sched_scan=current;
-      sched_scan=sched_scan->next;	  // move to a next task.
-      Leave(current);			  // unmark it running and change current.
+      Enter(scan);	// mark it current and running.
+      if(!current->deleting)
+	 res=current->Do(); // let it run unless it is dying.
+      scan=scan->next;	// move to a next task.
+      SMTask *to_delete=0;
+      if(current->deleting)
+	 to_delete=current;
+      Leave(current);	// unmark it running and change current.
 
-      if(sched_current->deleting)
-      {
-	 delete sched_current;		  // delete it if it's dying.
-	 res=MOVED;
-      }
-      if(res==MOVED)
+      delete to_delete;
+      if(res==MOVED || to_delete)
 	 repeat=true;
    }
    if(repeat)
@@ -181,11 +168,10 @@ void SMTask::Schedule()
    // already running tasks, because they can't run again on this
    // level of recursion, and thus could cause spinning by their wake up
    // conditions.
-   for(sched_scan=chain; sched_scan; sched_scan=sched_scan->next)
+   for(scan=chain; scan; scan=scan->next)
    {
-      if(!sched_scan->suspended
-      && !sched_scan->running)
-	 sched_total.Merge(sched_scan->block);
+      if(!scan->suspended && !scan->running && !scan->block.IsEmpty())
+	 sched_total.Merge(scan->block);
    }
 }
 
