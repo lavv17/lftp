@@ -172,12 +172,14 @@ class Ftp : public FileAccess
 
    automate_state state;
 
+   char	 *anon_user;
    char	 *anon_pass;
    char	 *proxy;
    int	 proxy_port;
    char  *proxy_user;
    char  *proxy_pass;
 
+   static const char *DefaultAnonPass();
    void	 SetProxy(const char *px);
 
    int	 flags;
@@ -192,6 +194,7 @@ class Ftp : public FileAccess
    bool	 ignore_pass:1;	// logged in just with user
 
    void	 GetBetterConnection(int level);
+   bool  SameConnection(const Ftp *o);
 
    int	 nop_interval;
 
@@ -243,6 +246,8 @@ public:
 
    void	 Connect(const char *,int);
    void	 ConnectVerify();
+
+   void	 Login(const char*,const char*);
 
    int   Read(void *buf,int size);
    int   Write(const void *buf,int size);

@@ -68,6 +68,8 @@ enum {TYPE_A,TYPE_I};
 #define FTPUSER "anonymous"
 #define FTPPORT 21
 
+#define super FileAccess
+
 static const char *ProxyValidate(char **p)
 {
    ParsedURL url(*p);
@@ -96,12 +98,16 @@ static ResDecl
    res_idle		("ftp:idle",	       "180",ResMgr::UNumberValidate,0),
    res_max_retries	("ftp:max-retries",    "0",  ResMgr::UNumberValidate,0),
    res_allow_skey	("ftp:allow-skey",     "yes",ResMgr::BoolValidate,0),
-   res_force_skey	("ftp:force-skey",     "no", ResMgr::BoolValidate,0);
+   res_force_skey	("ftp:force-skey",     "no", ResMgr::BoolValidate,0),
+   res_anon_user	("ftp:anon-user",      "anonymous",0,0),
+   res_anon_pass	("ftp:anon-pass",      0,    0,0);
 
 void  Ftp::ClassInit()
 {
    // register the class
    (void)new Protocol("ftp",Ftp::New);
+   if(res_anon_pass.Query(0)==(const char *)0)
+      ResMgr::Set(res_anon_pass.name,0,DefaultAnonPass());
 }
 
 static int  one=1;
@@ -526,21 +532,19 @@ void Ftp::InitFtp()
    RQ_alloc=0;
    EmptyRespQueue();
 
-   struct passwd *pw=getpwuid(getuid());
-   char *u=pw?pw->pw_name:"unknown";
-   anon_pass=(char*)xmalloc(strlen(u)+3);
-   sprintf(anon_pass,"-%s@",u);
+   anon_pass=0;
+   anon_user=0;	  // will be set by Reconfig()
 
    ftp_next=ftp_chain;
    ftp_chain=this;
 
    Reconfig();
 }
-Ftp::Ftp() : FileAccess()
+Ftp::Ftp() : super()
 {
    InitFtp();
 }
-Ftp::Ftp(const Ftp *f) : FileAccess(f)
+Ftp::Ftp(const Ftp *f) : super(f)
 {
    InitFtp();
 
@@ -561,6 +565,7 @@ Ftp::~Ftp()
    Close();
    Disconnect();
 
+   xfree(anon_user); anon_user=0;
    xfree(anon_pass); anon_pass=0;
    xfree(line); line=0;
    xfree(resp); resp=0;
@@ -626,9 +631,7 @@ void  Ftp::GetBetterConnection(int level)
       if(o->control_sock==-1 || o->data_sock!=-1 || o->state!=EOF_STATE
       || !o->RespQueueIsEmpty() || o->mode!=CLOSED)
 	 continue;
-      if(!xstrcmp(hostname,o->hostname) && port==o->port
-      && !xstrcmp(user,o->user) && !xstrcmp(pass,o->pass)
-      && !xstrcmp(group,o->group) && !xstrcmp(gpass,o->gpass))
+      if(SameConnection(o))
       {
 	 if(!relookup_always)
 	 {
@@ -813,7 +816,7 @@ int   Ftp::Do()
 
       AddResp(RESP_READY,INITIAL_STATE);
 
-      char *user_to_use=(user?user:FTPUSER);
+      char *user_to_use=(user?user:anon_user);
       if(proxy)
       {
 	 char *combined=(char*)alloca(strlen(user_to_use)+1+strlen(hostname)+20+1);
@@ -1711,7 +1714,7 @@ void  Ftp::Close()
       else
 	 state=NO_HOST_STATE;
    }
-   FileAccess::Close();
+   super::Close();
 }
 
 int   Ftp::Read(void *buf,int size)
@@ -2179,6 +2182,17 @@ void  Ftp::SetFlag(int flag,bool val)
       flags&=~SYNC_WAIT;   // if SYNC_MODE is off, we don't need to wait
 }
 
+bool  Ftp::SameConnection(const Ftp *o)
+{
+   if(!strcmp(hostname,o->hostname) && port==o->port
+   && !xstrcmp(user,o->user) && !xstrcmp(pass,o->pass)
+   && !xstrcmp(group,o->group) && !xstrcmp(gpass,o->gpass)
+   && (user || !xstrcmp(anon_user,o->anon_user))
+   && (pass || !xstrcmp(anon_pass,o->anon_pass)))
+      return true;
+   return false;
+}
+
 bool  Ftp::SameLocationAs(FileAccess *fa)
 {
    if(!SameProtoAs(fa))
@@ -2186,9 +2200,7 @@ bool  Ftp::SameLocationAs(FileAccess *fa)
    Ftp *o=(Ftp*)fa;
    if(!hostname || !o->hostname)
       return false;
-   if(!strcmp(hostname,o->hostname) && port==o->port
-   && !xstrcmp(user,o->user) && !xstrcmp(pass,o->pass)
-   && !xstrcmp(group,o->group) && !xstrcmp(gpass,o->gpass))
+   if(SameConnection(o))
    {
       if(home && !o->home)
 	 o->home=xstrdup(home);
@@ -2301,6 +2313,15 @@ void Ftp::Reconfig()
    allow_skey = res_allow_skey.Query(c);
    force_skey = res_force_skey.Query(c);
 
+   xfree(anon_user);
+   anon_user=xstrdup(res_anon_user.Query(c));
+   xfree(anon_pass);
+   anon_pass=xstrdup(res_anon_pass.Query(c));
+   if(anon_user==0)
+      anon_user=xstrdup(FTPUSER);
+   if(anon_pass==0)
+      anon_pass=xstrdup(DefaultAnonPass());
+
    SetProxy(res_proxy.Query(c));
 
    if(nop_interval<30)
@@ -2362,4 +2383,40 @@ const char *Ftp::make_skey_reply()
       return 0;
 
    return calculate_skey_response(skey_sequence,buf,pass);
+}
+
+void Ftp::Login(const char *u,const char *p)
+{
+   if(u)
+   {
+      if(!strcasecmp(u,"ftp")
+      || !strcasecmp(u,"anonymous"))
+      {
+	 xfree(anon_user);
+	 anon_user=xstrdup(u);
+	 u=0;
+	 if(p)
+	 {
+	    xfree(anon_pass);
+      	    anon_pass=xstrdup(p);
+	    p=0;
+	 }
+      }
+   }
+   super::Login(u,p);
+}
+
+const char *Ftp::DefaultAnonPass()
+{
+   static char *pass=0;
+
+   if(pass)
+      return pass;
+
+   struct passwd *pw=getpwuid(getuid());
+   char *u=pw?pw->pw_name:"unknown";
+   pass=(char*)xmalloc(strlen(u)+3);
+   sprintf(pass,"-%s@",u);
+
+   return pass;
 }
