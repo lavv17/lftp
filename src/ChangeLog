@@ -1,3 +1,7 @@
+2003-12-15  Mark Blackburn <marklist@fangorn.ca>
+
+	* parsecmd.cc: skip \r character for dos-like script files.
+
 2003-12-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* HttpDir.cc: fix a compilation error (reported by Albert Chin).

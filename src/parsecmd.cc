@@ -93,6 +93,9 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
 	 continue;   // and continue skipping space
       }
 
+      if(line[0]=='\r' && line[1]=='\n')
+	 line++;
+
       if(*line==0 || *line=='\n'
       || *line=='|' || *line=='>' || *line==';' || *line=='&')
 	 break;
@@ -201,6 +204,8 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
 	    line+=2;
 	    continue;
 	 }
+	 if(line[0]=='\r' && line[1]=='\n')
+	    line++;
 	 if(*line=='\\' && quotable(line[1]))
 	 {
 	    line++;
