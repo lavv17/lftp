@@ -317,6 +317,8 @@ void Job::puts(const char *s)
 
 void Job::Bg()
 {
+   if(waiting)
+      waiting->Bg();
    fg=false;
    if(fg_data)
       fg_data->Bg();
@@ -326,4 +328,6 @@ void Job::Fg()
    fg=true;
    if(fg_data)
       fg_data->Fg();
+   if(waiting)
+      waiting->Fg();
 }

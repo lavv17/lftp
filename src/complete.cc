@@ -96,6 +96,8 @@ char *remote_generator(char *text,int state)
 
    while((name=glob_res[cindex++])!=NULL)
    {
+      if(!name[0])
+	 continue;
       if(!strchr(name,'/') && memchr(text,'/',len))
       {
 	 // workaround for servers returning only names without dir
@@ -301,7 +303,10 @@ char **lftp_completion (char *text,int start,int end)
 	 {
 	    char *s=glob_res[i];
 	    if(!strncmp(s,"total ",6))
+	    {
+	       s[0]=0;
 	       continue;
+	    }
 	    char *space=strrchr(s,' ');
 	    if(space && s[0]=='l' && space>s+5
 	    && !strncmp(space-3," ->",3))
