@@ -148,10 +148,14 @@ int   FtpGlob::Do()
    set->rewind();
    for(FileInfo *info=set->curr(); info!=NULL; info=set->next())
    {
-      if(dirs_only && (info->defined&info->TYPE)
-		     && info->filetype==info->NORMAL)
-	 continue;   // note that symlinks can point to directories,
-		     // so skip normal files only.
+      if(info->defined&info->TYPE)
+      {
+	 if(dirs_only && info->filetype==info->NORMAL)
+	    continue;   // note that symlinks can point to directories,
+			// so skip normal files only.
+	 if(files_only && info->filetype==info->DIRECTORY)
+	    continue;
+      }
       add(dir_file(dir,info->name));
    }
    delete set;

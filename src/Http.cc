@@ -989,6 +989,8 @@ int Http::Read(void *buf,int size)
 	 size1=bytes_allowed;
       if(size1==0)
 	 return DO_AGAIN;
+      if(norest_manual && real_pos==0 && pos>0)
+	 return DO_AGAIN;
       if(real_pos<pos)
       {
 	 long to_skip=pos-real_pos;

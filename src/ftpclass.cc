@@ -378,25 +378,59 @@ int   Ftp::proxy_NoPassReqCheck(int act,int exp)
    return(-1);
 }
 
+static void normalize_path_vms(char *path)
+{
+   for(char *s=path; *s; s++)
+      *s=to_ascii_lower(*s);
+   char *colon=strchr(path,':');
+   if(colon)
+   {
+      memmove(path+1,path,strlen(path)+1);
+      path[0]='/';
+      path=colon+1;
+      if(path[1]=='[')
+	 memmove(path,path+1,strlen(path));
+   }
+   else
+   {
+      path=strchr(path,'[');
+      if(!*path)
+	 return;
+   }
+   *path++='/';
+   while(*path && *path!=']')
+   {
+      if(*path=='.')
+	 *path='/';
+      path++;
+   }
+   if(!*path)
+      return;
+   if(path[1])
+      *path='/';
+   else
+      *path=0;
+}
+
 const char *Ftp::ExtractPWD()
 {
-   static char pwd[1024];
+   char *pwd=string_alloca(strlen(line)+1);
 
    if(sscanf(line,"%*d \"%[^\"]\"",pwd)!=1)
       return "";
 
-   if(isalpha(pwd[0]) && pwd[1]==':')
-      flags|=DOSISH_PATH;
-   int slash=0;
-   for(char *s=pwd; *s; s++)
+   int dev_len=device_prefix_len(pwd);
+   if(pwd[dev_len]=='[')
    {
-      if(*s=='/')
-      {
-	 slash=1;
-	 break;
-      }
+      vms_path=true;
+      normalize_path_vms(pwd);
    }
-   if(slash==0 || (flags&DOSISH_PATH))
+   else if(dev_len==2 || dev_len==3)
+   {
+      dos_path=true;
+   }
+
+   if(!strchr(pwd,'/') || dos_path)
    {
       // for safety -- against dosish ftpd
       for(char *s=pwd; *s; s++)
@@ -508,7 +542,11 @@ int   Ftp::CatchDATE(int act,int)
    else if(act/100!=5)
       return -1;
    else
+   {
+      if(act==500 || act==502)
+	 mdtm_supported=false;
       array_for_info[array_ptr].time=(time_t)-1;
+   }
 
    array_for_info[array_ptr].get_time=false;
    if(!array_for_info[array_ptr].get_size)
@@ -529,7 +567,11 @@ int   Ftp::CatchDATE_opt(int act,int)
       opt_date=0;
    }
    else
+   {
+      if(act==500 || act==502)
+	 mdtm_supported=false;
       *opt_date=(time_t)-1;
+   }
    return state;
 }
 
@@ -548,7 +590,11 @@ int   Ftp::CatchSIZE(int act,int)
    else if(act/100!=5)
       return -1;
    else
+   {
+      if(act==500 || act==502)
+	 mdtm_supported=false;
       array_for_info[array_ptr].size=-1;
+   }
 
    array_for_info[array_ptr].get_size=false;
    if(!array_for_info[array_ptr].get_time)
@@ -569,7 +615,11 @@ int   Ftp::CatchSIZE_opt(int act,int)
       opt_size=0;
    }
    else
+   {
+      if(act==500 || act==502)
+	 mdtm_supported=false;
       *opt_size=-1;
+   }
    return state;
 }
 
@@ -604,6 +654,11 @@ void Ftp::InitFtp()
    allow_skey=true;
    force_skey=false;
    verify_data_address=true;
+
+   dos_path=false;
+   vms_path=false;
+   mdtm_supported=true;
+   size_supported=true;
 
    RespQueue=0;
    RQ_alloc=0;
@@ -665,8 +720,9 @@ int   Ftp::AbsolutePath(const char *s)
 {
    if(!s)
       return 0;
+   int dev_len=device_prefix_len(s);
    return(s[0]=='/'
-      || ((flags&DOSISH_PATH) && isalpha(s[0]) && s[1]==':' && s[2]=='/'));
+      || ((dos_path && dev_len==3) || (vms_path && dev_len>2) && s[dev_len-1]=='/'));
 }
 
 void  Ftp::GetBetterConnection(int level)
@@ -695,9 +751,17 @@ void  Ftp::GetBetterConnection(int level)
 	 }
 
 	 if(home && !o->home)
+	 {
 	    o->home=xstrdup(home);
+	    o->dos_path=dos_path;
+	    o->vms_path=vms_path;
+	 }
 	 else if(!home && o->home)
+	 {
 	    home=xstrdup(o->home);
+	    dos_path=o->dos_path;
+	    vms_path=o->vms_path;
+	 }
 
 	 o->ExpandTildeInCWD();
 	 ExpandTildeInCWD();
@@ -714,6 +778,9 @@ void  Ftp::GetBetterConnection(int level)
 	    peer_curr=0;
 	 type=o->type;
 	 event_time=o->event_time;
+
+	 size_supported=o->size_supported;
+	 mdtm_supported=o->mdtm_supported;
 
 	 set_real_cwd(o->real_cwd);
 	 o->set_real_cwd(0);
@@ -960,7 +1027,7 @@ int   Ftp::Do()
 	    || (last_cwd && xstrcmp(last_cwd->path,cwd)))
 	 {
 	    char *s=(char*)alloca(strlen(cwd)+5);
-	    sprintf(s,"CWD %s",cwd);
+	    sprintf(s,"CWD %s\n",cwd);
 	    SendCmd(s);
 	    AddResp(RESP_CWD_RMD_DELE_OK,INITIAL_STATE,CHECK_CWD_CURR);
 	    SetRespPath(cwd);
@@ -1025,6 +1092,8 @@ int   Ftp::Do()
          break;
       case(STORE):
          type=FTP_TYPE_I;
+	 if((bool)Query("rest-stor",hostname))
+	    real_pos=0;	// some old servers don't handle REST/STOR properly.
          sprintf(str1,"STOR %s\n",file);
          break;
       case(LONG_LIST):
@@ -1053,12 +1122,11 @@ int   Ftp::Do()
 	 else
 	 {
 	    int len=xstrlen(real_cwd);
-	    if(!AbsolutePath(file) && real_cwd
+	    if(!vms_path && !AbsolutePath(file) && real_cwd
 	    && !strncmp(file,real_cwd,len) && file[len]=='/')
 	       sprintf(str1,"CWD .%s\n",file+len);
 	    else
-	       sprintf(str1,"CWD %s\n",file);
-
+	       sprintf(str1,"CWD %s\n",cwd);
 	    SendCmd(str1);
 	    AddResp(RESP_CWD_RMD_DELE_OK,INITIAL_STATE,CHECK_CWD);
 	    SetRespPath(file);
@@ -1098,13 +1166,13 @@ int   Ftp::Do()
 	 AddResp(RESP_TYPE_OK,INITIAL_STATE);
       }
 
-      if(opt_size)
+      if(opt_size && size_supported)
       {
 	 sprintf(str2,"SIZE %s\n",file);
 	 SendCmd(str2);
 	 AddResp(RESP_RESULT_HERE,INITIAL_STATE,CHECK_SIZE_OPT);
       }
-      if(opt_date)
+      if(opt_date && mdtm_supported)
       {
 	 sprintf(str2,"MDTM %s\n",file);
 	 SendCmd(str2);
@@ -1114,20 +1182,34 @@ int   Ftp::Do()
       if(mode==ARRAY_INFO)
       {
       array_info_send_more:
+	 size_t max_len=0;
+	 for(int i=array_ptr; i<array_cnt; i++)
+	    if(max_len<strlen(array_for_info[i].file))
+	       max_len=strlen(array_for_info[i].file);
+	 char *s=(char*)alloca(max_len+20);
 	 for(int i=array_ptr; i<array_cnt; i++)
 	 {
-	    char *s=(char*)alloca(strlen(array_for_info[i].file)+20);
-	    if(array_for_info[i].get_time)
+	    bool sent=false;
+	    if(array_for_info[i].get_time && mdtm_supported)
 	    {
 	       sprintf(s,"MDTM %s\n",array_for_info[i].file);
 	       SendCmd(s);
 	       AddResp(RESP_RESULT_HERE,INITIAL_STATE,CHECK_MDTM);
+	       sent=true;
 	    }
-	    if(array_for_info[i].get_size)
+	    if(array_for_info[i].get_size && size_supported)
 	    {
 	       sprintf(s,"SIZE %s\n",array_for_info[i].file);
 	       SendCmd(s);
 	       AddResp(RESP_RESULT_HERE,INITIAL_STATE,CHECK_SIZE);
+	       sent=true;
+	    }
+	    if(!sent)
+	    {
+	       if(i==array_ptr)
+		  array_ptr++;
+	       else
+		  break;
 	    }
 	 }
 	 goto pre_WAITING_STATE;
@@ -2132,6 +2214,8 @@ read_again:
       if(size>allowed)
 	 size=allowed;
    }
+   if(norest_manual && real_pos==0 && pos>0)
+      return DO_AGAIN;
    res=read(data_sock,buf,size);
    if(res==-1)
    {
@@ -2760,6 +2844,12 @@ void Ftp::Connect(const char *new_host,const char *new_port)
 {
    super::Connect(new_host,new_port);
    flags=0;
+
+   dos_path=false;
+   vms_path=false;
+   mdtm_supported=true;
+   size_supported=true;
+
    Reconfig();
    state=INITIAL_STATE;
 }
@@ -2782,7 +2872,7 @@ void Ftp::Reconfig(const char *name)
 
    SetFlag(SYNC_MODE,	Query("sync-mode",c));
    SetFlag(PASSIVE_MODE,Query("passive-mode",c));
-   rest_list = Query("rest-list");
+   rest_list = Query("rest-list",c);
 
    nop_interval = Query("nop-interval",c);
 

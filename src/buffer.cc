@@ -116,6 +116,14 @@ void Buffer::Skip(int len)
    buffer_ptr+=len;
 }
 
+void Buffer::Empty()
+{
+   in_buffer=0;
+   buffer_ptr=0;
+   if(save_max>0)
+      save=true;
+}
+
 int Buffer::Do()
 {
    return STALL;

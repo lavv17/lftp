@@ -72,6 +72,8 @@ public:
    void Save(long m) { save=true; save_max=m; }
    void GetSaved(const char **buf,int *size) const;
 
+   void Empty();
+
    virtual FgData *GetFgData(bool) { return 0; }
 
    virtual time_t EventTime() { return now; }

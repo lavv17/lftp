@@ -208,6 +208,11 @@ class Ftp : public NetAccess
 
    int	 flags;
 
+   bool  dos_path;
+   bool  vms_path;
+   bool  mdtm_supported;
+   bool  size_supported;
+
    int	 StateToError();
 
    int	 addr_received;	// state of PASV

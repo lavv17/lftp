@@ -136,6 +136,7 @@ protected:
 
    int chmod_mode;
    bool ascii;
+   bool norest_manual;
 
    bool Error() { return error_code!=OK; }
    void ClearError();
@@ -146,6 +147,8 @@ protected:
 
    FileAccess *next;
    static FileAccess *chain;
+
+   static int device_prefix_len(const char *path);
 
 public:
    virtual const char *GetProto() = 0; // http, ftp, file etc
@@ -200,6 +203,7 @@ public:
    long GetPos() { return pos; }
    long GetRealPos() { return real_pos<0?pos:real_pos; }
    void SeekReal() { pos=GetRealPos(); }
+   void RereadManual() { norest_manual=true; }
 
    const char *GetCwd() { return cwd; }
    const char *GetFile() { return file; }
@@ -312,6 +316,7 @@ protected:
    int	 list_size;
    int	 list_alloc;
    bool	 dirs_only;
+   bool	 files_only;
    void	 add(const char *ptr,int len);
    void	 add_force(const char *ptr,int len);
    void	 add(const char *ptr) { add(ptr,strlen(ptr)); }
@@ -322,6 +327,7 @@ public:
    Glob(const char *p);
    virtual ~Glob();
    void DirectoriesOnly() { dirs_only=true; }
+   void FilesOnly() { files_only=true; }
 
    static bool HasWildcards(const char *);
    static void UnquoteWildcards(char *);

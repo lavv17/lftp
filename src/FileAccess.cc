@@ -29,7 +29,7 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <errno.h>
-#include <ctype.h>
+#include "ascii_ctype.h"
 #include <fcntl.h>
 #include <fnmatch.h>
 #include "LsCache.h"
@@ -68,6 +68,7 @@ void FileAccess::Init()
    saved_errno=0;
    mkdir_p=false;
    ascii=false;
+   norest_manual=false;
 
    url=0;
 
@@ -329,6 +330,7 @@ void FileAccess::Close()
    entity_size=-1;
    entity_date=(time_t)-1;
    ascii=false;
+   norest_manual=false;
    ClearError();
 }
 
@@ -504,6 +506,16 @@ int last_element_is_doubledot(char *path,char *end)
         || (end>path+2 && !strncmp(end-3,"/..",3)));
 }
 
+int FileAccess::device_prefix_len(const char *path)
+{
+   int i=0;
+   while(path[i] && (is_ascii_alnum(path[i]) || strchr("$_-",path[i])))
+      i++;
+   if(i>0 && path[i]==':')
+      return i+1+(path[i+1]=='/');
+   return 0;
+}
+
 void FileAccess::Chdir(const char *path,bool verify)
 {
    char	 *newcwd=(char*)alloca(strlen(cwd)+strlen(path)+2);
@@ -513,24 +525,24 @@ void FileAccess::Chdir(const char *path,bool verify)
 
    if(cwd[0]=='/')
       prefix_size=1;
-   else if(isalpha(cwd[0]) && cwd[1]==':')
-      prefix_size=2+(cwd[2]=='/');
    else if(cwd[0]=='~')
    {
       prefix_size=1;
       while(cwd[prefix_size]!='/' && cwd[prefix_size]!='\0')
 	 prefix_size++;
    }
+   else
+   {
+      // handle VMS and DOS devices.
+      prefix_size=device_prefix_len(cwd);
+   }
+
+   int dev_prefix=0;
 
    if(path[0]=='/')
    {
       strcpy(newcwd,path);
       prefix_size=1;
-   }
-   else if(isalpha(path[0]) && path[1]==':')
-   {
-      strcpy(newcwd,path);
-      prefix_size=2+(path[2]=='/');
    }
    else if(path[0]=='~')
    {
@@ -538,6 +550,11 @@ void FileAccess::Chdir(const char *path,bool verify)
       prefix_size=1;
       while(newcwd[prefix_size]!='/' && newcwd[prefix_size]!='\0')
 	 prefix_size++;
+   }
+   else if((dev_prefix=device_prefix_len(path))>0)
+   {
+      strcpy(newcwd,path);
+      prefix_size=dev_prefix;
    }
    else
    {
@@ -883,6 +900,7 @@ Glob::Glob(const char *p)
    list_size=0;
    list_alloc=0;
    dirs_only=false;
+   files_only=false;
 }
 
 void Glob::free_list()

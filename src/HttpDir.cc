@@ -889,6 +889,7 @@ int HttpGlob::Do()
       {
 	 session->Open(curr_dir,FA::LONG_LIST);
 	 session->UseCache(use_cache);
+	 session->RereadManual();
 	 ubuf=new FileInputBuffer(session);
 	 if(LsCache::IsEnabled())
 	    ubuf->Save(LsCache::SizeLimit());
@@ -905,7 +906,15 @@ int HttpGlob::Do()
    }
 
    if(!ubuf->Eof())
+   {
+      if(session->GetRealPos()==0 && session->GetPos()>0)
+      {
+	 session->SeekReal();
+	 ubuf->Empty();
+	 return MOVED;
+      }
       return m;
+   }
 
    // now we have all the index in ubuf; parse it.
    const char *b;

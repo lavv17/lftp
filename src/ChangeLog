@@ -1,3 +1,20 @@
+1999-11-04  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h: (RereadManual) new method to stop
+	  the driver wasting data when REST is not supported;
+	  (norest_manual) new member; (device_prefix_len) new protected method;
+	  use it in Chdir.
+	* FtpGlob.cc: implement files_only.
+	* FtpSplitList.cc, HttpDir.cc: use RereadManual.
+	* Http.cc: support norest_manual.
+	* ascii_ctype.h: add to_ascii_lower.
+	* buffer.cc, buffer.h: (Empty) new method.
+	* complete.cc: use DirectoriesOnly for `cd' command.
+	* ftpclass.cc, ftpclass.h: better support for vms; remember that
+	  MDTM or SIZE is not supported; implement ftp:rest-stor setting;
+	  add closure to ftp:rest-list setting.
+	* resource.cc: ftp:rest-stor setting.
+
 1999-11-02  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileAccess.cc, FileAccess.h, FtpGlob.cc, FtpGlob.h, FtpListInfo.cc,

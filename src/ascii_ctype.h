@@ -61,4 +61,9 @@ static inline bool is_ascii_alnum(char ch)
    return is_ascii_alpha(ch) || is_ascii_digit(ch);
 }
 
+static inline char to_ascii_lower(char ch)
+{
+   return is_ascii_upper(ch) ? ch-'A'+'a' : ch;
+}
+
 #endif//ASCII_CTYPE_H

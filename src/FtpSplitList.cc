@@ -86,7 +86,10 @@ int   FtpSplitList::Do()
 	 }
       }
       if(!from_cache)
+      {
 	 f->Open("",mode);
+	 f->RereadManual();
+      }
       state=GETTING_DATA;
       m=MOVED;
    }
@@ -94,6 +97,13 @@ int   FtpSplitList::Do()
    if(!from_cache)
    {
       char tmpbuf[0x1000];
+      if(f->GetRealPos()==0 && f->GetPos()>0)
+      {
+	 f->SeekReal();
+	 inbuf=0;
+	 ptr=buf;
+	 free_list();
+      }
       res=f->Read(tmpbuf,sizeof(tmpbuf));
       if(res==f->DO_AGAIN)
 	 return m;
