@@ -1912,7 +1912,7 @@ int   Ftp::Do()
 	    p=(unsigned char*)&conn->data_sa.in.sin_port;
 	    sockaddr_u control_sa;
 	    // check if data socket address is unbound
-	    if(a[0]|a[1]|a[2]|a[3]==0)
+	    if((a[0]|a[1]|a[2]|a[3])==0)
 	    {
 	       socklen_t addr_len=sizeof(control_sa);
 	       getsockname(conn->control_sock,&control_sa.sa,&addr_len);

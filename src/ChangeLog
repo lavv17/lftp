@@ -1,3 +1,7 @@
+2004-11-01  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: fix condition for unbound data socket (this fixes FXP).
+
 2004-10-28  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc, MirrorJob.h: add --no-symlinks option.
