@@ -24,6 +24,8 @@
 # include <config.h>
 #endif
 
+#ifndef HAVE_MD5
+
 /* Wget */
 /*#if STDC_HEADERS || defined _LIBC*/
 # include <stdlib.h>
@@ -405,3 +407,5 @@ md5_process_block (const void *buffer, size_t len, struct md5_ctx *ctx)
   ctx->C = C;
   ctx->D = D;
 }
+
+#endif /* HAVE_MD5 */
