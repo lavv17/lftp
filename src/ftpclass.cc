@@ -115,7 +115,9 @@ static ResDecl
    res_socket_buffer	("ftp:socket-buffer",  "0",  ResMgr::UNumberValidate,0),
    res_socket_maxseg	("ftp:socket-maxseg",  "0",  ResMgr::UNumberValidate,0),
    res_address_verify	("ftp:verify-address", "no", ResMgr::BoolValidate,0),
-   res_port_verify      ("ftp:verify-port",    "no", ResMgr::BoolValidate,0);
+   res_port_verify      ("ftp:verify-port",    "no", ResMgr::BoolValidate,0),
+   res_limit_rate	("ftp:limit-rate",     "0",  ResMgr::UNumberValidate,0),
+   res_limit_max	("ftp:limit-max",      "0",  ResMgr::UNumberValidate,0);
 
 void  Ftp::ClassInit()
 {
@@ -159,15 +161,25 @@ static bool NotSerious(int e)
    return false;
 }
 
-bool Ftp::data_address_ok()
+bool Ftp::data_address_ok(struct sockaddr *dp)
 {
    struct sockaddr d;
    struct sockaddr c;
    ADDRLEN_TYPE len;
    len=sizeof(d);
-   getpeername(data_sock,&d,&len);
+   if(dp)
+      memcpy(&d,dp,len);
+   else if(getpeername(data_sock,&d,&len)==-1)
+   {
+      perror("getpeername(data_sock)");
+      return false;
+   }
    len=sizeof(c);
-   getpeername(control_sock,&c,&len);
+   if(getpeername(control_sock,&c,&len)==-1)
+   {
+      perror("getpeername(control_sock)");
+      return false;
+   }
    if(d.sa_family!=c.sa_family)
       return false;
    if(d.sa_family==AF_INET)
@@ -241,7 +253,7 @@ int   Ftp::NoFileCheck(int act,int exp)
       return(FATAL_STATE);
    if(act/100==5)
    {
-      if(strstr(line,"Broken pipe"))
+      if(strstr(line,"Broken pipe")) // retry on that error
       {
 	 if(copy_mode!=COPY_NONE)
 	    return COPY_FAILED;
@@ -297,7 +309,10 @@ int   Ftp::TransferCheck(int act,int exp)
    if(mode==CLOSED || RespQueueSize()>1)
       return state;
    if(act==RESP_NO_FILE && mode==LIST)
+   {
+      DataClose();
       return(DATA_OPEN_STATE); // simulate eof
+   }
    if(act==RESP_BROKEN_PIPE && copy_mode==COPY_NONE)
    {
       if(data_sock==-1 && strstr(line,"Broken pipe"))
@@ -452,7 +467,7 @@ char *Ftp::ExtractPWD()
 
 int   Ftp::PASV_Catch(int act,int)
 {
-   if(act==RESP_NOT_IMPLEMENTED || act==RESP_NOT_UNDERSTOOD || act==504)
+   if(act/100==5)
    {
    sw_off:
       DebugPrint("---- ",_("Switching passive mode off"));
@@ -461,12 +476,23 @@ int   Ftp::PASV_Catch(int act,int)
    }
    if(act/100!=2)
       return(-1);
-   char *b=strchr(line,'(');
-   if(b==0)
+   if(strlen(line)<=4)
       goto sw_off;
+
    unsigned a0,a1,a2,a3,p0,p1;
-   if(sscanf(b,"(%u,%u,%u,%u,%u,%u)",&a0,&a1,&a2,&a3,&p0,&p1)!=6)
-      goto sw_off;
+   /*
+    * Extract address. RFC1123 says:
+    * "...must scan the reply for the first digit..."
+    */
+   for(char *b=line+4; ; b++)
+   {
+      if(*b==0)
+	 goto sw_off;
+      if(!isdigit((unsigned char)*b))
+	 continue;
+      if(sscanf(b,"%u,%u,%u,%u,%u,%u",&a0,&a1,&a2,&a3,&p0,&p1)==6)
+         break;
+   }
    data_sa.sin_family=AF_INET;
    unsigned char *a,*p;
    a=(unsigned char*)&data_sa.sin_addr;
@@ -577,17 +603,15 @@ int   Ftp::CatchSIZE_opt(int act,int)
 
 int   Ftp::ABOR_Check(int,int)
 {
-   if(aborted_data_sock!=-1)
-   {
-      close(aborted_data_sock);
-      aborted_data_sock=-1;
-   }
+   AbortedClose();
    return state;
 }
 
 
 void Ftp::InitFtp()
 {
+   UpdateNow();
+
    control_sock=-1;
    data_sock=-1;
    aborted_data_sock=-1;
@@ -617,7 +641,7 @@ void Ftp::InitFtp()
    proxy_port=0;
    proxy_user=proxy_pass=0;
    idle=0;
-   idle_start=time(0);
+   idle_start=now;
    max_retries=0;
    retries=0;
    target_cwd=0;
@@ -641,6 +665,11 @@ void Ftp::InitFtp()
    copy_mode=COPY_NONE;
    copy_addr_valid=false;
    copy_passive=false;
+
+   bytes_pool_rate=0; // unlim
+   bytes_pool=bytes_pool_rate;
+   bytes_pool_max=0;
+   bytes_pool_time=now;
 
    Reconfig();
 }
@@ -703,7 +732,7 @@ Ftp::~Ftp()
 
 int   Ftp::CheckTimeout()
 {
-   if(time(NULL)-event_time>=timeout)
+   if(now-event_time>=timeout)
    {
       /* try to autodetect faulty ftp server */
       /* Some Windows based ftp servers seem to clear input queue
@@ -717,7 +746,7 @@ int   Ftp::CheckTimeout()
       else
 	 DebugPrint("**** ",_("Timeout - reconnecting"));
       Disconnect();
-      time(&event_time);
+      event_time=now;
       return(1);
    }
    block+=TimeOut(timeout*1000);
@@ -822,14 +851,12 @@ int   Ftp::Do()
    ADDRLEN_TYPE addr_len;
    unsigned char *a;
    unsigned char *p;
-   time_t   t;
    automate_state oldstate;
    int	 m=STALL;
 
    // check if idle time exceeded
    if(mode==CLOSED && control_sock!=-1 && idle>0)
    {
-      time_t now=time(0);
       if(now-idle_start>=idle)
       {
 	 DebugPrint("---- ",_("Closing idle connection"),2);
@@ -891,13 +918,12 @@ int   Ftp::Do()
       if(mode==CONNECT_VERIFY)
 	 return m;
 
-      time(&t);
-      if(try_time!=0 && t-try_time<sleep_time)
+      if(try_time!=0 && now-try_time<sleep_time)
       {
-	 block+=TimeOut(1000*(sleep_time-(t-try_time)));
+	 block+=TimeOut(1000*(sleep_time-(now-try_time)));
 	 return m;
       }
-      time(&try_time);
+      try_time=now;
 
       if(max_retries>0 && retries>=max_retries)
       {
@@ -923,6 +949,7 @@ int   Ftp::Do()
       DebugPrint("---- ",str,0);
 
       res=connect(control_sock,(struct sockaddr*)&peer_sa,sizeof(peer_sa));
+      UpdateNow(); // if non-blocking don't work
 
       if(relookup_always && !proxy)
 	 lookup_done=false;
@@ -944,14 +971,17 @@ int   Ftp::Do()
       }
       state=CONNECTING_STATE;
       m=MOVED;
-      time(&event_time);
+      event_time=now;
    }
 
    case(CONNECTING_STATE):
    {
       res=Poll(control_sock,POLLOUT);
-      if(state!=CONNECTING_STATE)
+      if(res==-1)
+      {
+	 Disconnect();
 	 return MOVED;
+      }
       if(!(res&POLLOUT))
 	 goto usual_return;
 
@@ -1293,9 +1323,11 @@ int   Ftp::Do()
          return MOVED;
 
       res=Poll(data_sock,POLLIN);
-
-      if(state!=ACCEPTING_STATE)
+      if(res==-1)
+      {
+	 Disconnect();
          return MOVED;
+      }
 
       if(!(res&POLLIN))
 	 goto usual_return;
@@ -1332,6 +1364,7 @@ int   Ftp::Do()
 	 return MOVED;
       }
 
+      BytesReset();
       goto data_open_state;
 
    case(DATASOCKET_CONNECTING_STATE):
@@ -1347,6 +1380,12 @@ int   Ftp::Do()
 
       if(addr_received==1)
       {
+	 if(!data_address_ok((struct sockaddr*)&data_sa))
+	 {
+	    Disconnect();
+	    return MOVED;
+	 }
+
 	 addr_received=2;
 	 if(copy_mode!=COPY_NONE)
 	 {
@@ -1358,7 +1397,10 @@ int   Ftp::Do()
 	 sprintf(str,_("Connecting data socket to (%d.%d.%d.%d) port %u"),
 			      a[0],a[1],a[2],a[3],ntohs(data_sa.sin_port));
 	 DebugPrint("---- ",str,3);
-	 if(connect(data_sock,(struct sockaddr*)&data_sa,sizeof(data_sa))==-1
+	 res=connect(data_sock,(struct sockaddr*)&data_sa,sizeof(data_sa));
+	 UpdateNow(); // if non-blocking don't work
+
+	 if(res==-1
 #ifdef EINPROGRESS
 	 && errno!=EINPROGRESS
 #endif
@@ -1374,15 +1416,18 @@ int   Ftp::Do()
 	 m=MOVED;
       }
       res=Poll(data_sock,POLLOUT);
-
-      if(state!=DATASOCKET_CONNECTING_STATE)
+      if(res==-1)
+      {
+	 Disconnect();
          return MOVED;
+      }
 
       if(!(res&POLLOUT))
 	 goto usual_return;
 
       state=DATA_OPEN_STATE;
       m=MOVED;
+      BytesReset();
 
    case(DATA_OPEN_STATE):
    data_open_state:
@@ -1393,8 +1438,7 @@ int   Ftp::Do()
 	 // but the data can be still unsent in server side kernel buffer.
 	 // So the ftp server can decide the connection is idle for too long
 	 // time and disconnect. This hack is to prevent the above.
-	 time_t t=time(0);
-	 if(t-nop_time>=nop_interval)
+	 if(now-nop_time>=nop_interval)
 	 {
 	    // prevent infinite NOOP's
 	    if(nop_offset==pos && nop_count*nop_interval>=timeout)
@@ -1409,12 +1453,12 @@ int   Ftp::Do()
 	       SendCmd("NOOP");
 	       AddResp(0,0,&IgnoreCheck);
 	    }
-	    nop_time=t;
+	    nop_time=now;
 	    if(nop_offset!=pos)
 	       nop_count=0;
 	    nop_offset=pos;
 	 }
-	 block+=TimeOut((nop_interval-(t-nop_time))*1000);
+	 block+=TimeOut((nop_interval-(now-nop_time))*1000);
       }
 
       int ev=(mode==STORE?POLLOUT:POLLIN);
@@ -1422,8 +1466,19 @@ int   Ftp::Do()
 
       FlushSendQueue();
       ReceiveResp();
+
+      if(state!=oldstate)
+         return MOVED;
+
       if(data_sock!=-1)
-	 Poll(data_sock,ev);
+      {
+	 if(Poll(data_sock,ev)==-1)
+	 {
+	    DataClose();
+	    Disconnect();
+	    return MOVED;
+	 }
+      }
       CheckTimeout();
 
       if(state!=oldstate)
@@ -1495,12 +1550,16 @@ notimeout_return:
       }
       else if(state==DATA_OPEN_STATE)
       {
+	 int bytes_allowed = BytesAllowed();
 	 // guard against unimplemented REST: if we have sent REST command
 	 // (real_pos==-1) and did not yet receive the response
 	 // (RespQueueSize()>1), don't allow to read/write the data
 	 // since REST could fail.
-	 if(!(RespQueueSize()>1 && real_pos==-1))
+	 if(!(RespQueueSize()>1 && real_pos==-1)
+	 && bytes_allowed>0) // and we are allowed to xfer
 	    block+=PollVec(data_sock,(mode==STORE?POLLOUT:POLLIN));
+	 if(bytes_allowed==0)
+	    block+=TimeOut(1000);
       }
       else
       {
@@ -1624,7 +1683,11 @@ void  Ftp::ReceiveResp()
 	    if(res<=0)
 	       return;
 	    if(CheckHangup(&pfd,1))
+	    {
+	       ControlClose();
+	       Disconnect();
 	       return;
+	    }
 
 	    res=read(control_sock,resp+resp_size,resp_alloc-resp_size-1);
 	    if(res==-1)
@@ -1652,7 +1715,7 @@ void  Ftp::ReceiveResp()
 	       if(resp[resp_size+i]==0)
 		  resp[resp_size+i]='!';
 
-	    time(&event_time);
+	    event_time=now;
 	    resp_size+=res;
 	 }
       }
@@ -1711,11 +1774,34 @@ void  Ftp::DataAbort()
    SendCmd("ABOR");
    AddResp(226,0,&ABOR_Check);
    FlushSendQueue(true);
-   if(aborted_data_sock!=-1)
-      close(aborted_data_sock);
+   AbortedClose();
    // don't close it now, wait for ABOR result
    aborted_data_sock=data_sock;
    data_sock=-1;
+}
+
+void Ftp::ControlClose()
+{
+   if(control_sock!=-1)
+   {
+      DebugPrint("---- ",_("Closing control socket"),8);
+      close(control_sock);
+      control_sock=-1;
+      if(relookup_always && !proxy)
+	 lookup_done=false;
+   }
+   resp_size=0;
+   EmptyRespQueue();
+   EmptySendQueue();
+}
+
+void Ftp::AbortedClose()
+{
+   if(aborted_data_sock!=-1)
+   {
+      close(aborted_data_sock);
+      aborted_data_sock=-1;
+   }
 }
 
 void  Ftp::Disconnect()
@@ -1728,34 +1814,20 @@ void  Ftp::Disconnect()
 
    DataAbort();
    DataClose();
-   if(control_sock>=0)
+   if(control_sock>=0 && state!=CONNECTING_STATE)
    {
-      if(state!=CONNECTING_STATE)
-      {
-	 SendCmd("QUIT");
-	 FlushSendQueue(true);
-      }
-      DebugPrint("---- ",_("Closing control socket"),2);
-      close(control_sock);
-      control_sock=-1;
-      if(relookup_always && !proxy)
-	 lookup_done=false;
+      SendCmd("QUIT");
+      FlushSendQueue(true);
    }
-   resp_size=0;
+   ControlClose();
+   AbortedClose();
+
    if(copy_mode!=COPY_NONE)
       state=COPY_FAILED;
    else if(mode==STORE && (flags&IO_FLAG))
       state=STORE_FAILED_STATE;
    else
       state=INITIAL_STATE;
-   EmptyRespQueue();
-   EmptySendQueue();
-
-   if(aborted_data_sock!=-1)
-   {
-      close(aborted_data_sock);
-      aborted_data_sock=-1;
-   }
 
    disconnect_in_progress=false;
 }
@@ -1772,7 +1844,7 @@ void  Ftp::DataClose()
 {
    if(data_sock>=0)
    {
-      DebugPrint("---- ",_("Closing data socket"),2);
+      DebugPrint("---- ",_("Closing data socket"),8);
       close(data_sock);
       data_sock=-1;
    }
@@ -1799,7 +1871,11 @@ void  Ftp::FlushSendQueue(bool all)
    if(res<=0)
       return;
    if(CheckHangup(&pfd,1))
+   {
+      ControlClose();
+      Disconnect();
       return;
+   }
    if(!(pfd.revents&POLLOUT))
       return;
 
@@ -1833,7 +1909,7 @@ void  Ftp::FlushSendQueue(bool all)
       }
       send_cmd_count-=res;
       send_cmd_ptr+=res;
-      time(&event_time);
+      event_time=now;
 
       if(flags&SYNC_MODE)
 	 flags|=SYNC_WAIT;
@@ -2014,62 +2090,73 @@ int   Ftp::Read(void *buf,int size)
    }
 
 read_again:
-   if(state==DATA_OPEN_STATE)
+   if(state!=DATA_OPEN_STATE)
+      return DO_AGAIN;
+
+   if(data_sock==-1)
+      goto we_have_eof;
+
+   if(RespQueueSize()>1 && real_pos==-1)
+      return(DO_AGAIN);
+
+   struct pollfd pfd;
+   pfd.fd=data_sock;
+   pfd.events=POLLIN;
+   res=poll(&pfd,1,0);
+   if(res<=0)
+      return(DO_AGAIN);
+   if(CheckHangup(&pfd,1))
    {
-      if(data_sock==-1)
-	 goto we_have_eof;
-
-      if(RespQueueSize()>1 && real_pos==-1)
-	 return(DO_AGAIN);
-
-      struct pollfd pfd;
-      pfd.fd=data_sock;
-      pfd.events=POLLIN;
-      res=poll(&pfd,1,0);
-      if(res<=0)
-	 return(DO_AGAIN);
-      if(CheckHangup(&pfd,1))
-	 return(DO_AGAIN);
-      res=read(data_sock,buf,size);
-      if(res==-1)
-      {
-	 if(errno==EAGAIN || errno==EINTR)
-	    return DO_AGAIN;
-	 if(NotSerious(errno))
-	 {
-	    DebugPrint("**** ",strerror(errno));
-	    Disconnect();
-	    return DO_AGAIN;
-	 }
-	 SwitchToState(SYSTEM_ERROR_STATE);
-	 return(StateToError());
-      }
-      if(res==0)
-      {
-      we_have_eof:
-	 DataClose();
-	 if(RespQueueIsEmpty())
-	 {
-	    SwitchToState(EOF_STATE);
-	    return(0);
-	 }
-	 else
-	    return DO_AGAIN;
-      }
-      retries=0;
-      real_pos+=res;
-      if(real_pos<=pos)
-	 goto read_again;
-      flags|=IO_FLAG;
-      if((shift=pos+res-real_pos)>0)
-      {
-	 memmove(buf,(char*)buf+shift,size-shift);
-	 res-=shift;
-      }
-      pos+=res;
-      return(res);
+      DataClose();
+      Disconnect();
+      return(DO_AGAIN);
    }
-   return(DO_AGAIN);
+   {
+      int allowed=BytesAllowed();
+      if(allowed==0)
+	 return DO_AGAIN;
+      if(size>allowed)
+	 size=allowed;
+   }
+   res=read(data_sock,buf,size);
+   if(res==-1)
+   {
+      if(errno==EAGAIN || errno==EINTR)
+	 return DO_AGAIN;
+      if(NotSerious(errno))
+      {
+	 DebugPrint("**** ",strerror(errno));
+	 Disconnect();
+	 return DO_AGAIN;
+      }
+      SwitchToState(SYSTEM_ERROR_STATE);
+      return(StateToError());
+   }
+   if(res==0)
+   {
+   we_have_eof:
+      DataClose();
+      if(RespQueueIsEmpty())
+      {
+	 SwitchToState(EOF_STATE);
+	 return(0);
+      }
+      else
+	 return DO_AGAIN;
+   }
+   retries=0;
+   BytesUsed(res);
+   real_pos+=res;
+   if(real_pos<=pos)
+      goto read_again;
+   flags|=IO_FLAG;
+   if((shift=pos+res-real_pos)>0)
+   {
+      memmove(buf,(char*)buf+shift,size-shift);
+      res-=shift;
+   }
+   pos+=res;
+   return(res);
 }
 
 /*
@@ -2102,7 +2189,18 @@ int   Ftp::Write(const void *buf,int size)
    if(res<=0)
       return(DO_AGAIN);
    if(CheckHangup(&pfd,1))
+   {
+      DataClose();
+      Disconnect();
       return(DO_AGAIN);
+   }
+   {
+      int allowed=BytesAllowed();
+      if(allowed==0)
+	 return DO_AGAIN;
+      if(size>allowed)
+	 size=allowed;
+   }
    res=write(data_sock,buf,size);
    if(res==-1)
    {
@@ -2118,6 +2216,7 @@ int   Ftp::Write(const void *buf,int size)
       return(StateToError());
    }
    retries=0;
+   BytesUsed(res);
    pos+=res;
    real_pos+=res;
    flags|=IO_FLAG;
@@ -2212,10 +2311,18 @@ int   Ftp::DataReady()
    {
       if(data_sock==-1)
 	 return(1);  // eof
+      if(BytesAllowed()<=0)
+	 return 0;
       if(real_pos==-1 && RespQueueSize()>1)
 	 return(0);  // disallow reading/writing
       int ev=(mode==STORE?POLLOUT:POLLIN);
-      if(Poll(data_sock,ev)&ev)
+      res=Poll(data_sock,ev);
+      if(res==-1)
+      {
+	 DataClose();
+	 Disconnect();
+      }
+      if(res&ev)
 	 return(1);
    }
    return(0);
@@ -2335,8 +2442,7 @@ const char *Ftp::CurrentStatus()
       {
 	 if(resolver)
 	    return(_("Resolving host address..."));
-	 time_t	t=time(NULL);
-	 if(t-try_time<sleep_time)
+	 if(now-try_time<sleep_time)
 	    return(_("Delaying before reconnect"));
       }
    case(NO_HOST_STATE):
@@ -2543,6 +2649,8 @@ void Ftp::ConnectVerify()
 
 void Ftp::SetProxy(const char *px)
 {
+   bool was_proxied=(proxy!=0);
+
    xfree(proxy); proxy=0;
    proxy_port=0;
    xfree(proxy_user); proxy_user=0;
@@ -2550,11 +2658,16 @@ void Ftp::SetProxy(const char *px)
    lookup_done=false;
 
    if(!px)
+   {
+   no_proxy:
+      if(was_proxied)
+	 lookup_done=false;
       return;
+   }
 
    ParsedURL url(px);
    if(!url.host || url.host[0]==0)
-      return;
+      goto no_proxy;
 
    // FIXME: check url.proto
 
@@ -2587,6 +2700,8 @@ void Ftp::Reconfig()
    verify_data_port = res_port_verify.Query(c);
    socket_buffer = res_socket_buffer.Query(c);
    socket_maxseg = res_socket_maxseg.Query(c);
+   bytes_pool_rate = res_limit_rate.Query(c);
+   bytes_pool_max  = res_limit_max.Query(c);
 
    xfree(anon_user);
    anon_user=xstrdup(res_anon_user.Query(c));
@@ -2699,4 +2814,43 @@ const char *Ftp::DefaultAnonPass()
    sprintf(pass,"-%s@",u);
 
    return pass;
+}
+
+int Ftp::BytesAllowed()
+{
+#define LARGE 0x10000000
+
+   if(bytes_pool_rate==0) // unlimited
+      return LARGE;
+
+   if(now>bytes_pool_time)
+   {
+      time_t dif=now-bytes_pool_time;
+
+      // prevent overflow
+      if((LARGE-bytes_pool)/dif < bytes_pool_rate)
+	 bytes_pool = bytes_pool_max;
+      else
+	 bytes_pool += dif*bytes_pool_rate;
+
+      if(bytes_pool>bytes_pool_max && bytes_pool_max>0)
+	 bytes_pool=bytes_pool_max;
+
+      bytes_pool_time=now;
+   }
+   return bytes_pool;
+}
+
+void Ftp::BytesUsed(int bytes)
+{
+   if(bytes_pool<bytes)
+      bytes_pool=0;
+   else
+      bytes_pool-=bytes;
+}
+
+void Ftp::BytesReset()
+{
+   bytes_pool=bytes_pool_rate;
+   bytes_pool_time=now;
 }

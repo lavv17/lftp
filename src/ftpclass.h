@@ -159,6 +159,9 @@ class Ftp : public FileAccess
    void	 DataAbort();
    void  DataClose();
 
+   void  ControlClose();
+   void  AbortedClose();
+
    void	 SwitchToState(automate_state);
 
    void  SendCmd(const char *cmd);
@@ -235,7 +238,7 @@ class Ftp : public FileAccess
    void	 SetSocketMaxseg(int sock);
    static void SetKeepAlive(int sock);
 
-   bool data_address_ok();
+   bool data_address_ok(struct sockaddr *dp=0);
 
    enum copy_mode_t { COPY_NONE, COPY_SOURCE, COPY_DEST };
    copy_mode_t copy_mode;
@@ -243,6 +246,15 @@ class Ftp : public FileAccess
    bool copy_addr_valid;
    bool copy_passive;
    friend class FtpCopy;
+
+   // traffic shaper, sort of :)
+   int BytesAllowed();
+   void BytesUsed(int);
+   void BytesReset();
+   int bytes_pool;
+   int bytes_pool_rate;
+   int bytes_pool_max;
+   time_t bytes_pool_time;
 
 public:
    static void ClassInit();
