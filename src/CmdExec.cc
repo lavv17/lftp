@@ -39,7 +39,8 @@ static ResDecl
    res_remote_completion   ("cmd:remote-completion","on",ResMgr::BoolValidate,0),
    res_prompt		   ("cmd:prompt","lftp> ",0,0),
    res_default_ls	   ("cmd:ls-default","",0,0),
-   res_csh_history	   ("cmd:csh-history","off",ResMgr::BoolValidate,0);
+   res_csh_history	   ("cmd:csh-history","off",ResMgr::BoolValidate,0),
+   res_save_passwords	   ("bmk:save-passwords","no",ResMgr::BoolValidate,0);
 
 CmdExec	 *CmdExec::cwd_owner=0;
 
@@ -531,6 +532,7 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
    remote_completion=false;
    long_running=0;
    csh_history=false;
+   save_passwords=false;
 
    Reconfig();
 
@@ -708,6 +710,7 @@ void CmdExec::Reconfig()
    var_ls=xstrdup(res_default_ls.Query(0));
    xfree(var_prompt);
    var_prompt=xstrdup(res_prompt.Query(0));
+   save_passwords=res_save_passwords.Query(0);
 }
 
 void CmdExec::vfprintf(FILE *file,const char *f,va_list v)
