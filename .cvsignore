@@ -2,3 +2,4 @@ Makefile
 *.tar.gz
 libtool
 config.*
+bak
