@@ -63,7 +63,7 @@ void LsCache::CheckSize()
    }
 }
 
-void LsCache::Add(FileAccess *p_loc,const char *a,int m,char *d,int l)
+void LsCache::Add(FileAccess *p_loc,const char *a,int m,const char *d,int l)
 {
    if(!strcmp(p_loc->GetProto(),"file"))
       return;  // don't cache local objects

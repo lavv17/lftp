@@ -41,7 +41,7 @@ void  CatJob::ShowRunStatus(StatusLine *s)
 
    if(rg)
    {
-      s->Show(_("Getting file list [%s|%s]"),rg->Status(),session->CurrentStatus());
+      s->Show(rg->Status());
       return;
    }
    if(curr)
@@ -66,9 +66,7 @@ void  CatJob::PrintStatus(int verbose)
    }
    if(rg)
    {
-      putchar('\t');
-      printf(_("Getting file list [%s|%s]"),rg->Status(),session->CurrentStatus());
-      putchar('\n');
+      printf("\t%s\n",rg->Status());
       return;
    }
    if(curr==0)

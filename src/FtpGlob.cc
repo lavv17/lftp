@@ -241,7 +241,8 @@ const char *FtpGlob::Status()
    static char s[256];
    if(state==GETTING_DATA)
    {
-      sprintf(s,_("Receiving (%d)"),f->GetPos());
+      sprintf(s,_("Getting file list (%ld) [%s]"),
+		     f->GetPos(),f->CurrentStatus());
       return s;
    }
    return "";

@@ -29,7 +29,7 @@ void mgetJob::ShowRunStatus(StatusLine *s)
 {
    if(rg)
    {
-      s->Show(_("Getting file list [%s|%s]"),rg->Status(),session->CurrentStatus());
+      s->Show(rg->Status());
       return;
    }
    GetJob::ShowRunStatus(s);
@@ -39,9 +39,7 @@ void mgetJob::PrintStatus(int v)
    if(rg)
    {
       SessionJob::PrintStatus(v);
-      putchar('\t');
-      printf(_("Getting file list [%s|%s]"),rg->Status(),session->CurrentStatus());
-      putchar('\n');
+      printf("\t%s\n",rg->Status());
       return;
    }
    GetJob::PrintStatus(v);
