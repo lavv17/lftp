@@ -1,3 +1,8 @@
+2000-10-16  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* mgetJob.cc: fix mput for directory case (continue loop instead
+	  of returning).
+
 2000-10-15  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: use service name `ftps' for ftps; don't queue up

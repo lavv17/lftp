@@ -130,7 +130,7 @@ void mgetJob::LocalGlob(const char *p)
 
       struct stat st;
       if(stat(src,&st)!=-1 && !S_ISREG(st.st_mode))
-	 return;	// put only regular files
+	 continue;	// put only regular files
 
       args->Append(src);
       make_directory(src);
