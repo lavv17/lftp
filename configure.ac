@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.53)
-AC_INIT([lftp], [3.0.13], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [3.1.0rc1], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_LIBOBJ_DIR(lib)
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
@@ -211,17 +211,20 @@ if test "$with_modules" = yes; then
    MODULES_LA="liblftp-pty.la liblftp-network.la proto-ftp.la proto-http.la proto-file.la proto-fish.la proto-sftp.la cmd-mirror.la cmd-sleep.la"
    LFTP_SSL_LDFLAGS=
    LFTP_SSL_LIBS=
+   LFTP_EXPAT_LIBS=
 else
    enable_static=yes
    enable_shared=no
    MODULES_LA_STATIC="liblftp-pty.la liblftp-network.la proto-ftp.la proto-http.la proto-file.la proto-fish.la proto-sftp.la cmd-mirror.la cmd-sleep.la"
    LFTP_SSL_LDFLAGS='$(SSL_LDFLAGS)'
    LFTP_SSL_LIBS='$(SSL_LIBS)'
+   LFTP_EXPAT_LIBS='$(EXPAT_LIBS)'
 fi
 AC_SUBST(MODULES_LA)
 AC_SUBST(MODULES_LA_STATIC)
 AC_SUBST(LFTP_SSL_LDFLAGS)
 AC_SUBST(LFTP_SSL_LIBS)
+AC_SUBST(LFTP_EXPAT_LIBS)
 
 #test -z "$enable_static" && enable_static=no
 AM_PROG_LIBTOOL
@@ -264,6 +267,11 @@ esac
 if test x$with_ssl = xyes; then
    LFTP_SSL_CHECK
 fi
+AC_CHECK_LIB(expat, XML_ParserCreateNS, [
+   EXPAT_LIBS=-lexpat
+   AC_SUBST(EXPAT_LIBS)
+   AC_DEFINE(HAVE_LIBEXPAT, 1, [Define if you have expat library])
+])
 
 LFTP_PTY_CHECK
 
@@ -275,7 +283,7 @@ AC_HEADER_TIME
 AC_CHECK_HEADERS(fcntl.h sys/time.h errno.h stdlib.h varargs.h dirent.h\
  termios.h termio.h sys/select.h sys/poll.h sys/stropts.h string.h memory.h\
  strings.h sys/ioctl.h dlfcn.h arpa/inet.h arpa/nameser.h netinet/in.h netinet/tcp.h\
- resolv.h langinfo.h endian.h regex.h locale.h,,,[
+ resolv.h langinfo.h endian.h regex.h locale.h expat.h,,,[
 #include <sys/types.h>
 #ifdef HAVE_ARPA_NAMESER_H
 # include <arpa/nameser.h>
