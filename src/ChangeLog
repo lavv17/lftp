@@ -1,3 +1,7 @@
+2002-07-06  Albert Chin <lftp-devel@thewrittenword.com>
+
+	* ChmodJob.h: make HP-UX C++ happy.
+
 2002-06-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Http.cc, ResMgr.cc, SMTask.cc, SMTask.h, buffer.cc, buffer.h,

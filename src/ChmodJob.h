@@ -52,7 +52,7 @@ public:
    ChmodJob(FileAccess *s,ArgV *a);
    /* simple "chmod 123" interface: */
    ChmodJob(FileAccess *s,int m,ArgV *a);
-   ChmodJob::~ChmodJob();
+   ~ChmodJob();
 
    void SetVerbosity(verbosity v);
    void SetMode(mode_change *newm);
