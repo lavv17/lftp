@@ -498,6 +498,8 @@ int FileCopy::GetPercentDone()
       psize=put->range_limit-put->range_start;
    if(psize<0)
       return 100;
+   if(ppos>psize)
+      return -1;
    return percent(ppos,psize);
 }
 const char *FileCopy::GetPercentDoneStr()

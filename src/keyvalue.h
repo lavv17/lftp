@@ -36,7 +36,7 @@ public:
 
 class KeyValueDB
 {
-protected:
+public:
    class Pair
    {
    public:
@@ -65,6 +65,7 @@ protected:
 	 }
    };
 
+protected:
    void Purge(Pair **p)
       {
 	 Pair *to_free=*p;
