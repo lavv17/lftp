@@ -1,3 +1,10 @@
+2003-05-28  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc: send password always in hftp, even along with Authorization
+	  header. This is required for some proxies (reported by Onno Benschop).
+	* ftpclass.cc: fixed catching of file size from 150 server message.
+	* lftp.cc: load and save histories only when user interaction happens.
+
 2003-05-23  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* LocalAccess.cc: move Exclude to after file type setting. This

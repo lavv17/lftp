@@ -3369,7 +3369,7 @@ void Ftp::CheckResp(int act)
       stat_time=now+2;
    }
 
-   if(act==150 && mode==RETRIEVE && opt_size && *opt_size==-1)
+   if(act==150 && mode==RETRIEVE && opt_size && *opt_size<0)
    {
       // try to catch size
       char *s=strrchr(line,'(');

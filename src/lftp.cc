@@ -77,6 +77,11 @@ void WaitDone(CmdExec *exec)
    }
 }
 
+ResDecl res_save_cwd_history
+   ("cmd:save-cwd-history","yes",ResMgr::BoolValidate,ResMgr::NoClosure);
+ResDecl res_save_rl_history
+   ("cmd:save-rl-history","yes",ResMgr::BoolValidate,ResMgr::NoClosure);
+
 class ReadlineFeeder : public CmdFeeder
 {
    bool tty:1;
@@ -84,17 +89,46 @@ class ReadlineFeeder : public CmdFeeder
    bool add_newline:1;
    char *to_free;
    int eof_count;
+   char *for_history;
+
+   static bool readline_inited;
+   void readline_init()
+   {
+      if(readline_inited)
+	 return;
+      readline_inited=true;
+      lftp_readline_init();
+      lftp_rl_read_history();
+      if(for_history)
+      {
+	 lftp_add_history_nodups(for_history);
+	 xfree(for_history);
+	 for_history=0;
+      }
+   }
+
 public:
-   ReadlineFeeder()
+   ReadlineFeeder(const ArgV *args)
    {
       tty=isatty(0);
       ctty=(tcgetpgrp(0)!=(pid_t)-1);
       to_free=0;
       eof_count=0;
+      for_history=0;
+      if(args && args->count()>1)
+	 for_history=args->CombineQuoted();
    }
    virtual ~ReadlineFeeder()
    {
+      if(readline_inited)
+      {
+	 if(res_save_cwd_history.QueryBool(0))
+	    cwd_history.Save();
+	 if(res_save_rl_history.QueryBool(0))
+	    lftp_rl_write_history();
+      }
       xfree(to_free);
+      xfree(for_history);
    }
    bool RealEOF()
    {
@@ -118,6 +152,8 @@ public:
       char *cmd_buf;
       if(tty)
       {
+	 readline_init();
+
 	 if(ctty) // controlling terminal
 	 {
 	    pid_t term_pg=tcgetpgrp(0);
@@ -166,7 +202,7 @@ public:
 	 else
 	    eof_count=0;
       }
-      else
+      else // not a tty
       {
 	 if(exec->interactive)
 	 {
@@ -199,6 +235,7 @@ public:
 	 lftp_rl_clear();
       }
 };
+bool ReadlineFeeder::readline_inited;
 
 static void sig_term(int sig)
 {
@@ -309,11 +346,6 @@ static void tty_clear()
       top_exec->pre_stdout();
 }
 
-ResDecl res_save_cwd_history
-   ("cmd:save-cwd-history","yes",ResMgr::BoolValidate,ResMgr::NoClosure);
-ResDecl res_save_rl_history
-   ("cmd:save-rl-history","yes",ResMgr::BoolValidate,ResMgr::NoClosure);
-
 int   main(int argc,char **argv)
 {
 #ifdef SOCKS4
@@ -357,32 +389,20 @@ int   main(int argc,char **argv)
 
    WaitDone(top_exec);
 
-   lftp_readline_init();
-   lftp_rl_read_history();
-
    top_exec->SetTopLevel();
    top_exec->Fg();
 
    ArgV *args=new ArgV(argc,argv);
    args->setarg(0,"lftp");
-   if(args->count()>1)
-   {
-      char *line=args->CombineQuoted();
-      lftp_add_history_nodups(line);
-      xfree(line);
-   }
-   lftp_feeder=new ReadlineFeeder;
+
+   lftp_feeder=new ReadlineFeeder(args);
+
    top_exec->ExecParsed(args);
 
    WaitDone(top_exec);
 
    top_exec->AtExit();
    WaitDone(top_exec);
-
-   if(res_save_cwd_history.QueryBool(0))
-      cwd_history.Save();
-   if(res_save_rl_history.QueryBool(0))
-      lftp_rl_write_history();
 
    if(Job::NumberOfJobs()>0)
    {
