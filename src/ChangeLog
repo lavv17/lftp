@@ -1,3 +1,7 @@
+2000-02-02  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* commands.cc: add -O option to help.
+
 2000-02-01  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CopyJob.h: add GetETAStrSFromTime.

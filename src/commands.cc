@@ -164,7 +164,8 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -o <lfile> specifies local file name (default - basename of rfile)\n"
 	 " -c  continue, reget\n"
 	 " -e  delete remote files after successful transfer\n"
-	 " -a  use ascii mode (binary is the default)\n")},
+	 " -a  use ascii mode (binary is the default)\n"
+	 " -O <base> specifies base directory or URL where files should be placed\n")},
    {"get1",    cmd_get1,   0,0},
    {"glob",    cmd_glob,   0,
 	 N_("Usage: glob [OPTS] command args...\n"
@@ -208,7 +209,8 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -d  create directories the same as in file names and get the\n"
 	 "     files into them instead of current directory\n"
 	 " -e  delete remote files after successful transfer\n"
-	 " -a  use ascii mode (binary is the default)\n")},
+	 " -a  use ascii mode (binary is the default)\n"
+	 " -O <base> specifies base directory or URL where files should be placed\n")},
    {"mirror",  cmd_mirror, N_("mirror [OPTS] [remote [local]]"),
 	 N_("\nMirror specified remote directory to local directory\n\n"
 	 " -c, --continue         continue a mirror job if possible\n"
@@ -250,7 +252,8 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -d  create directories the same as in file names and put the\n"
 	 "     files into them instead of current directory\n"
 	 " -e  delete remote files after successful transfer (dangerous)\n"
-	 " -a  use ascii mode (binary is the default)\n")},
+	 " -a  use ascii mode (binary is the default)\n"
+	 " -O <base> specifies base directory or URL where files should be placed\n")},
    {"mrm",     cmd_mrm,    N_("mrm <files>"),
 	 N_("Removes specified files with wildcard expansion\n")},
    {"mv",      cmd_mv,	    N_("mv <file1> <file2>"),
@@ -275,7 +278,8 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -c  continue, reput\n"
 	 "     it requires permission to overwrite remote files\n"
 	 " -e  delete local files after successful transfer (dangerous)\n"
-	 " -a  use ascii mode (binary is the default)\n")},
+	 " -a  use ascii mode (binary is the default)\n"
+	 " -O <base> specifies base directory or URL where files should be placed\n")},
    {"pwd",     cmd_pwd,    "pwd [-u]",
 	 N_("Print current remote URL.\n"
 	 " -u  show password\n")},
@@ -1331,6 +1335,11 @@ CMD(user)
    bool insecure=(pass!=0);
 
    ParsedURL u(user,true);
+   if(u.proto && !u.user)
+   {
+      exit_code=0;
+      return 0;
+   }
    if(u.proto && u.user && u.pass)
    {
       pass=u.pass;
