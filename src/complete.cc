@@ -676,7 +676,8 @@ static char **lftp_completion (const char *text,int start,int end)
 
       SignalHook::ResetCount(SIGINT);
       glob_res=NULL;
-      rg=new GlobURL(completion_shell->session,pat);
+      rg=new GlobURL(completion_shell->session,pat,
+		     type==REMOTE_DIR?GlobURL::DIRS_ONLY:GlobURL::ALL);
 
       rl_save_prompt();
 
@@ -692,8 +693,6 @@ static char **lftp_completion (const char *text,int start,int end)
 	    rg->glob->CaseFold();
 	 } else
 	    rl_variable_bind("completion-ignore-case", "0");
-	 if(type==REMOTE_DIR)
-	    rg->glob->DirectoriesOnly();
 
 	 Timer status_timer;
 	 status_timer.SetMilliSeconds(20);

@@ -474,11 +474,11 @@ int CmdExec::Do()
 	 }
 	 if(glob->Done() || glob->Error())
 	 {
-	    delete glob;
-	    glob=0;
 	    const char *pat=args->getnext();
 	    if(!pat)
 	    {
+	       delete glob;
+	       glob=0;
 	       // it was last argument
 	       delete args;
 	       args=args_glob;
@@ -491,7 +491,7 @@ int CmdExec::Do()
 	       exec_parsed_command();
 	       return MOVED;
 	    }
-	    glob=new GlobURL(session,pat);
+	    glob->NewGlob(pat);
 	    m=MOVED;
 	 }
 	 break;

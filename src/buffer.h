@@ -30,7 +30,7 @@
 
 #include <stdarg.h>
 
-#define GET_BUFSIZE 0x4000
+#define GET_BUFSIZE 0x10000
 
 class Speedometer;
 

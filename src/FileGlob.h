@@ -60,18 +60,32 @@ public:
 };
 class GlobURL
 {
+   FileAccess *orig_session;
    FileAccess *session;
-   bool reuse;
    char *url_prefix;
 public:
    Glob *glob;
-   GlobURL(FileAccess *s,const char *p);
+
+   enum type_select
+   {
+      ALL,
+      FILES_ONLY,
+      DIRS_ONLY
+   };
+
+   GlobURL(FileAccess *s,const char *p,type_select t=ALL);
    ~GlobURL();
    FileSet *GetResult();
    bool Done()  { return glob->Done(); }
    bool Error() { return glob->Error(); }
    const char *ErrorText() { return glob->ErrorText(); }
    const char *Status() { return glob->Status(); }
+
+   void NewGlob(const char *p);
+   const char *GetPattern() { return glob->GetPattern(); }
+
+private:
+   type_select type;
 };
 
 class GenericGlob : public Glob

@@ -182,10 +182,7 @@ int mgetJob::Do()
       if(reverse && !url::is_url(p))
 	 LocalGlob(expand_home_relative(p));
       else
-      {
-	 rg=new GlobURL(session,p);
-	 rg->glob->FilesOnly();
-      }
+	 rg=new GlobURL(session,p,GlobURL::FILES_ONLY);
       m=MOVED;
    }
 
@@ -206,7 +203,7 @@ int mgetJob::Do()
    FileSet *files=rg->GetResult();
    if(files->get_fnum()==0)
    {
-      fprintf(stderr,_("%s: no files found\n"),rg->glob->GetPattern());
+      fprintf(stderr,_("%s: no files found\n"),rg->GetPattern());
       goto next;
    }
    do {

@@ -1043,7 +1043,9 @@ CMD(mirror)
       {"parallel",optional_argument,0,'P'},
       {"ignore-time",no_argument,0,256+'i'},
       {"log",required_argument,0,256+'s'},
-      {"script",required_argument,0,256+'S'},
+      {"script",    required_argument,0,256+'S'},
+      {"just-print",optional_argument,0,256+'S'},
+      {"dry-run",   optional_argument,0,256+'S'},
       {0}
    };
 
@@ -1175,6 +1177,8 @@ CMD(mirror)
 	 script_only=true;
       case(256+'s'):
 	 script_file=optarg;
+	 if(script_file==0)
+	    script_file="-";
 	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());

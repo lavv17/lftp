@@ -179,11 +179,15 @@ NoGlob::NoGlob(const char *p) : Glob(p)
 {
 }
 
-GlobURL::GlobURL(FileAccess *s,const char *p)
+void GlobURL::NewGlob(const char *p)
 {
-   session=s;
-   reuse=false;
+   SMTask::Delete(glob);
    glob=0;
+   if(session!=orig_session)
+      SessionPool::Reuse(session);
+   session=orig_session;
+   xfree(url_prefix);
+
    url_prefix=xstrdup(p);
    url_prefix[url::path_index(p)]=0;
 
@@ -192,10 +196,7 @@ GlobURL::GlobURL(FileAccess *s,const char *p)
    {
       session=FA::New(&p_url);
       if(session)
-      {
 	 glob=session->MakeGlob(p_url.path);
-	 reuse=true;
-      }
    }
    else
    {
@@ -203,18 +204,32 @@ GlobURL::GlobURL(FileAccess *s,const char *p)
    }
    if(!glob)
       glob=new NoGlob(p);
+   if(type==FILES_ONLY)
+      glob->FilesOnly();
+   else if(type==DIRS_ONLY)
+      glob->DirectoriesOnly();
+}
+
+GlobURL::GlobURL(FileAccess *s,const char *p,type_select t)
+{
+   orig_session=session=s;
+   glob=0;
+   url_prefix=0;
+   type=t;
+
+   NewGlob(p);
 }
 GlobURL::~GlobURL()
 {
    SMTask::Delete(glob);
-   if(session && reuse)
+   if(session!=orig_session)
       SessionPool::Reuse(session);
    xfree(url_prefix);
 }
 FileSet *GlobURL::GetResult()
 {
    FileSet &list=*glob->GetResult();
-   if(!reuse)
+   if(session==orig_session)
       return &list;
    for(int i=0; list[i]; i++)
       list[i]->SetName(url_file(url_prefix,list[i]->name));

@@ -1,6 +1,10 @@
 2003-02-28  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: close data connection when sending ABOR over ssl.
+	* MirrorJob.cc: add --just-print and --dry-run options.
+	* CmdExec.cc, FileGlob.cc, FileGlob.h, commands.cc, complete.cc, mgetJob.cc:
+	  (GlobURL::NewGlob) new method; save some glob options and use this.
+	* buffer.h: increase GET_BUFSIZE.
 
 2003-02-26  Alexander V. Lukyanov <lav@yars.free.net>
 

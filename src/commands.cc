@@ -938,24 +938,21 @@ Job *CmdExec::builtin_restart()
 Job *CmdExec::builtin_glob()
 {
    const char *op=args->a0();
-   bool files_only=true;
-   bool dirs_only=false;
    int opt;
+   GlobURL::type_select glob_type=GlobURL::FILES_ONLY;
 
    while((opt=args->getopt("+adf"))!=EOF)
    {
       switch(opt)
       {
       case('a'):
-	 files_only=dirs_only=false;
+	 glob_type=GlobURL::ALL;
 	 break;
       case('d'):
-	 dirs_only=true;
-	 files_only=false;
+	 glob_type=GlobURL::DIRS_ONLY;
 	 break;
       case('f'):
-	 files_only=true;
-	 dirs_only=false;
+	 glob_type=GlobURL::FILES_ONLY;
 	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),op);
@@ -981,11 +978,7 @@ Job *CmdExec::builtin_glob()
       args->rewind();
       return cmd_command(this);
    }
-   glob=new GlobURL(session,pat);
-   if(dirs_only)
-      glob->glob->DirectoriesOnly();
-   if(files_only)
-      glob->glob->FilesOnly();
+   glob=new GlobURL(session,pat,glob_type);
    builtin=BUILTIN_GLOB;
    return this;
 }
