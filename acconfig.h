@@ -181,4 +181,8 @@ CDECL const char *strerror(int);
 /* select, poll ? */
 #endif
 
+#ifdef SOCKS5
+# include <socks.h>
+#endif
+
 #endif /* CONFIG_H */

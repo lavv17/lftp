@@ -28,7 +28,7 @@ if test x$ac_cv_lib_fl_yywrap = xno; then
    AC_DEFINE(NEED_YYWRAP)
 fi
 
-ALL_LINGUAS="es ru it pt_BR pl de zh_CN"
+ALL_LINGUAS="es ru it pt_BR pl de zh_CN ko"
 AM_GNU_GETTEXT
 if test x$USE_INCLUDED_LIBINTL = xyes; then
    LINK_SRC="$LINK_SRC intl/libgettext.h"
@@ -106,6 +106,16 @@ AC_ARG_WITH(socks,
 if test x$with_socks = xyes; then
    AC_DEFINE(SOCKS)
    SOCKSLIBS=-lsocks
+fi
+
+AC_ARG_WITH(socks5,
+[  --with-socks5           build with SOCKSv5 library],
+[  with_socks5=$withval;],
+[  with_socks5=no;	])
+
+if test x$with_socks5 = xyes; then
+   AC_DEFINE(SOCKS5)
+   SOCKSLIBS=-lsocks5
 fi
 AC_SUBST(SOCKSLIBS)
 
