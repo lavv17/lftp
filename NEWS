@@ -1,3 +1,12 @@
+* when background job terminates and its cwd is different from current one,
+  show the cwd in `Done' message.
+* cd and lcd without argument go to remote/local home directory.
+* send User-Agent in http request.
+* http parser improved.
+* dns SRV records support.
+* fixed port representation in URL - colon was missing.
+* fixed completion for nlist command - should use remote completion.
+
 Version 2.0.1 - 1999-06-27
 
 * report ETA more precisely (e.g. 2h15m)
