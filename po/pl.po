@@ -2,21 +2,11 @@
 # Copyright (C) 1998 Free Software Foundation, Inc.
 # Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>, 1998.
 #
-# Aktualizacja:
-# 1998-09-03 13:22+0100 Tomasz Szymczak <szymczak@bg.univ.gda.pl>
-# - wiele poprawek
-# 1998-12-03 18:22+0100 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
-# - .pot zsynchronizowany z lftp-pre1.2_981127
-# 1998-12-10 13:13:26+0100 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
-# - synchronized with lftp 1.2
-# 1999-02-19 		Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
-# - synchronized with lftp-990204 snapshot
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp\n"
 "POT-Creation-Date: 1999-06-15 16:30+0400\n"
-"PO-Revision-Date: 1998-12-03 18:22+0100\n"
+"PO-Revision-Date: 1999-06-08 15:27+02:00\n"
 "Last-Translator: Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>\n"
 "Language-Team: Polish <pl@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -58,7 +48,7 @@ msgstr "Przerwanie"
 
 #: src/CmdExec.cc:565
 msgid "Warning: discarding incomplete command\n"
-msgstr "Uwaga: odrzucenie niekompletnej komendy\n"
+msgstr "Ostrze¿enie: niekompletna komenda zosta³a odrzucona\n"
 
 #: src/CmdExec.cc:651
 #, c-format
@@ -73,7 +63,7 @@ msgstr "\tOczekiwanie na zakoñczenie zadania [%d]\n"
 #: src/CmdExec.cc:661
 #, c-format
 msgid "\tRunning\n"
-msgstr "\tUruchamiam\n"
+msgstr "\tUruchamianie\n"
 
 #: src/FileAccess.cc:185
 #, c-format
@@ -136,16 +126,16 @@ msgstr "[%d] Zakoñczono (%s)\n"
 
 #: src/LsCache.cc:143
 msgid "Cache is on"
-msgstr "Cache jest aktywny"
+msgstr "Pamiêæ cache jest w³±czona"
 
 #: src/LsCache.cc:145
 msgid "Cache is off"
-msgstr "Cache jest nieaktywny"
+msgstr "Pamiêæ cache jest wy³±czona"
 
 #: src/LsCache.cc:151
 #, fuzzy, c-format
 msgid "%ld $#l#byte|bytes$ cached"
-msgstr "%ld bajt$|y|ów$ w pamiêci buforowej"
+msgstr "%ld bajt$|y|ów$ w pamiêci cache"
 
 #: src/LsCache.cc:154
 msgid ", no size limit"
@@ -158,17 +148,17 @@ msgstr ", maksymalny rozmiar %ld\n"
 
 #: src/LsCache.cc:159
 msgid "Cache entries do not expire"
-msgstr "Wpisy w buforze nie deaktualizuj± siê"
+msgstr "Wpisy w pamiêci cache nie deaktualizuj± siê"
 
 #: src/LsCache.cc:161
 #, fuzzy, c-format
 msgid "Cache entries expire in %ld $#l#second|seconds$\n"
-msgstr "Wpisy w buforze deaktualizuj± siê po %ld sekund$zie|ach|ach$\n"
+msgstr "Wpisy w pamiêci cache deaktualizuj± siê po %ld sekund$zie|ach|ach$\n"
 
 #: src/LsCache.cc:166
 #, fuzzy, c-format
 msgid "Cache entries expire in %ld $#l#minute|minutes$\n"
-msgstr "Wpisy w buforze deaktualizuj± siê po %ld minu$cie|tach|tach$\n"
+msgstr "Wpisy w pamiêci cache deaktualizuj± siê po %ld minu$cie|tach|tach$\n"
 
 #: src/MirrorJob.cc:53
 #, c-format
@@ -339,7 +329,7 @@ msgstr "sekunda"
 #: src/XferJob.cc:108
 #, c-format
 msgid "eta:%ld%c "
-msgstr ""
+msgstr "pozosta³o:%ld%c "
 
 #: src/XferJob.cc:134 src/XferJob.cc:209
 #, c-format
@@ -366,7 +356,7 @@ msgstr "Transfer %d z %d plik$u|ów|ów$ nie powiod³ siê\n"
 #: src/XferJob.cc:168 src/XferJob.cc:195
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
-msgstr "Sumuj±c: przes³ano %d plik$|i|ów$\n"
+msgstr "Podsumowuj±c: przes³ano %d plik$|i|ów$\n"
 
 #: src/XferJob.cc:183
 #, c-format
@@ -381,7 +371,7 @@ msgstr "¦redni transfer: %g bajtów/s\n"
 #: src/FtpCopy.cc:177 src/XferJob.cc:250 src/commands.cc:589
 #, c-format
 msgid "%s: %s - not supported protocol\n"
-msgstr "%s: %s - brak wsparcia dla protoko³u\n"
+msgstr "%s: %s - protokó³ nie jest obs³ugiwany\n"
 
 #: src/XferJob.cc:460
 #, c-format
@@ -418,7 +408,7 @@ msgid ""
 "the alias is undefined, else is takes the value <value>.\n"
 "If no argument is given the current aliases are listed.\n"
 msgstr ""
-"Zdefiniuj lub usuñ definicjê aliasu <nazwa>. Je¿eli opu¶cisz <warto¶æ>\n"
+"Dodaj lub usuñ alias <nazwa>. Je¿eli opu¶cisz <warto¶æ>\n"
 "definicja aliasu zostanie usuniêta, w przeciwnym razie, przyjmie warto¶æ\n"
 "<value>. Je¿eli nie podasz argumentu, uzyskasz listê wszystkich aliasów.\n"
 
@@ -488,7 +478,7 @@ msgid ""
 " -u  try to recognize URLs\n"
 msgstr ""
 "cat - wy¶wietla zdalne pliki do stdout\n"
-" -u  próbuje rozpoznaæ URL-e\n"
+" -u  próbuje rozpoznawaæ URL-e\n"
 
 #: src/commands.cc:132
 msgid "cd <rdir>"
@@ -511,7 +501,7 @@ msgstr ""
 
 #: src/commands.cc:137
 msgid "chmod mode file..."
-msgstr ""
+msgstr "chmod tryb plik..."
 
 #: src/commands.cc:139
 msgid ""
@@ -567,7 +557,7 @@ msgstr ""
 "odleg³ego)\n"
 " -c  kontynuowanie, reget\n"
 " -e  kasowanie zdalnego pliku po zakoñczonej pomy¶lnie operacji\n"
-" -u  próbuje rozpoznaæ URL-e\n"
+" -u  próbuje rozpoznawaæ URL-e\n"
 
 #: src/commands.cc:161
 msgid "help [<cmd>]"
@@ -630,7 +620,7 @@ msgstr ""
 " -e <komenda>        wykonanie polecenia <komenda> od razu po wybieraniu\n"
 " -u <user>[,<has³o>] u¿yj user/has³o do autentyfikacji\n"
 " -p <port>           u¿yj portu <port> do po³±czeniu\n"
-" <site>              nazwa host-a, URL lub nazwa zak³adki\n"
+" <site>              nazwa hosta, URL lub nazwa zak³adki\n"
 
 #: src/commands.cc:183
 msgid "ls [<args>]"
@@ -644,7 +634,7 @@ msgid ""
 "`cache flush'.\n"
 msgstr ""
 "Wypisz listê odleg³ych plików. Mo¿esz przekierowaæ wyj¶cie do pliku lub\n"
-"przez potok do zewnêtrznej polecenia.\n"
+"przez potok do zewnêtrznego polecenia.\n"
 "Domy¶lnie, wyj¶cie ls jest buforowane, by zobaczyæ nowy spis u¿yj `rels' "
 "lub\n"
 "`cache flush'.\n"
@@ -661,7 +651,7 @@ msgid ""
 "     files into them instead of current directory\n"
 " -e  delete remote files after successful transfer\n"
 msgstr ""
-"Pobiera wskazane pliki z pasuj±c± mask±\n"
+"Pobiera wskazane pliki pasuj±ce do maski\n"
 " -c  kontynuacja, reget\n"
 " -d  utwórz katalogi o nazwie takiej samej jak pliki i pobierz pliki do\n"
 "     nich zamiast do bie¿±cego katalogu\n"
@@ -749,7 +739,7 @@ msgid ""
 "If name contains a slash, then the module is searched in current\n"
 "directory, otherwise in PKGLIBDIR.\n"
 msgstr ""
-"£adowanie modu³u (wspó³dzielony obiekt). Modu³ powinien zawierac funckjê\n"
+"£adowanie modu³u (wspó³dzielony obiekt). Modu³ powinien zawieraæ funkcjê\n"
 "   void module_init(int argc,const char *const *argv\n"
 "Je¶li nazwa zawiera znak \"slash\" wtedy modu³ szukany jest w aktualnym\n"
 "katalogu, a nastêpnie w PKGLIBDIR.\n"
@@ -824,7 +814,7 @@ msgstr ""
 " -e <cmd>            wykonaj zaraz po wyborze polecenie <cmd>\n"
 " -u <user>[,<pass>]  u¿yj user/pass do autentyfikacji\n"
 " -p <port>           u¿yj portu <port> do po³±czenia\n"
-" <site>              nazwa host-a, URL lub zak³adka\n"
+" <site>              nazwa hosta, URL lub zak³adka\n"
 
 #: src/commands.cc:246
 msgid "pget [OPTS] <rfile> [-o <lfile>]"
@@ -844,11 +834,12 @@ msgstr ""
 "Pobiera wybrany plik u¿ywaj±c kilku po³±czeñ. Mo¿e to przyspieszyæ "
 "transfer,\n"
 "lecz bardziej obci±¿a sieæ, uderzaj±c w innych u¿ytkowników. U¿ywaj tylko\n"
-"je¿eli naprawdê musisz szybko ¶ci±gn±æ plik, bo inny user mo¿e oszaleæ :)\n"
+"je¿eli naprawdê musisz szybko ¶ci±gn±æ plik, bo inny u¿ytkownik mo¿e oszaleæ "
+":)\n"
 "\n"
 "Opcje:\n"
 " -n <maxconn>  ustaw maksymaln± liczbê po³±czeñ (domy¶lnie 5)\n"
-" -u            próbuje rozpoznaæ URL-e\n"
+" -u            próbuje rozpoznawaæ URL-e\n"
 
 #: src/commands.cc:253
 msgid "put [-c] <lfile> [-o <rfile>]"
@@ -966,6 +957,14 @@ msgid ""
 " -a  list all settings, including default values\n"
 " -d  list only default values, not necessary current ones\n"
 msgstr ""
+"Ustaw zmienn± na podan± warto¶æ. Je¶li nie podano warto¶ci usuñ zmienn±.\n"
+"Nazwa zmiennej wystêpuje w formacie ``nazwa/elem_zamykaj±cy'', gdzie "
+"elem_zamykaj±cy mo¿e byæ\n"
+"dok³adnym ustawieniem aplikacji. Zobacz lftp(1) po szczegó³y.\n"
+"Je¶li komenda wywo³ywana jest bez podawania nazwy zmiennej wtedy tylko\n"
+"zmienione ustawienia s± wy¶wietlane. Jako opcje mo¿na podaæ:\n"
+" -a  wy¶wietl wszystkie ustawienia w³±czaj±æ ustawienia standardowe\n"
+" -d  wy¶wietl tylko standardowe ustawienia, niekoniecznie aktualne\n"
 
 #: src/commands.cc:290
 msgid "site <site_cmd>"
@@ -985,7 +984,7 @@ msgstr "source <plik>"
 
 #: src/commands.cc:295
 msgid "Execute commands recorded in file <file>\n"
-msgstr "Wykonujê polecenia zawarte w pliku <plik>\n"
+msgstr "Wykonuje polecenia zawarte w pliku <plik>\n"
 
 #: src/commands.cc:297
 msgid "user <user> [<pass>]"
@@ -1056,7 +1055,8 @@ msgstr "Spróbuj `%s --help' by uzyskaæ wiêcej informacji\n"
 #: src/commands.cc:545
 #, c-format
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
-msgstr "U¿ycie: %s [-e polecenie] [-p port] [-u u¿ytk[,has³o]] <host|url>\n"
+msgstr ""
+"U¿ycie: %s [-e polecenie] [-p port] [-u u¿ytkownik[,has³o]] <host|url>\n"
 
 #: src/commands.cc:631 src/commands.cc:1183 src/ftpget.cc:149
 msgid "Password: "
@@ -1070,7 +1070,7 @@ msgstr "%s: GetPass() nie powiod³o siê -- logowanie anonimowe\n"
 #: src/commands.cc:698
 #, fuzzy, c-format
 msgid "Usage: %s command args...\n"
-msgstr "U¿ycie: %s modu³ [argumenty]\n"
+msgstr "U¿ycie: %s module [argumenty]\n"
 
 #: src/commands.cc:774 src/commands.cc:1005
 #, c-format
@@ -1134,7 +1134,7 @@ msgstr "%s: %s - nie jest numerem\n"
 #: src/commands.cc:1314
 #, fuzzy, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
-msgstr "%s: %s. U¿yj `set' by sprawdziæ wszystkie zmienne.\n"
+msgstr "%s: %s. U¿yj `set -a' by sprawdziæ wszystkie zmienne.\n"
 
 #: src/commands.cc:1349
 #, fuzzy, c-format
@@ -1245,7 +1245,7 @@ msgstr "To jest darmowy program bez JAKIEJKOLWIEK GWARANCJI. Zobacz COPYING.\n"
 #: src/commands.cc:1633
 #, c-format
 msgid "Send bug reports and questions to <%s>.\n"
-msgstr ""
+msgstr "Raporty o b³êdach oraz pytania ¶lij do <%s>.\n"
 
 #: src/commands.cc:1699 src/commands.cc:1728
 #, c-format
@@ -1280,7 +1280,7 @@ msgstr "%s: niew³a¶ciwe opó¼nienie"
 #: src/commands.cc:1878
 #, fuzzy, c-format
 msgid "Usage: %s module [args...]\n"
-msgstr "U¿ycie: %s modu³ [argumenty]\n"
+msgstr "U¿ycie: %s module [argumenty]\n"
 
 #: src/commands.cc:1913
 #, fuzzy, c-format
@@ -1327,7 +1327,7 @@ msgstr "Zamykanie bezczynnego po³±czenia"
 
 #: src/Http.cc:1078 src/ftpclass.cc:888 src/ftpclass.cc:2673
 msgid "Resolving host address..."
-msgstr "Uzyskiwanie adresu host-a..."
+msgstr "Uzyskiwanie adresu hosta..."
 
 #: src/Http.cc:550 src/ftpclass.cc:931
 msgid "max-retries exceeded"
@@ -1415,20 +1415,20 @@ msgstr "Czekam na po³±czenie dla danych..."
 
 #: src/Http.cc:1087 src/ftpclass.cc:2699
 msgid "Sending data"
-msgstr ""
+msgstr "Wysy³am dane"
 
 #: src/Http.cc:1092 src/ftpclass.cc:2701
 msgid "Receiving data"
-msgstr ""
+msgstr "Otrzymujê dane"
 
 #: src/ftpclass.cc:2705
 msgid "Fatal protocol error occured"
-msgstr "Zdarzy³ siê b³±d krytyczny protoko³u"
+msgstr "Wyst±pi³ b³±d krytyczny protoko³u"
 
 #: src/ftpget.cc:57
 #, fuzzy, c-format
 msgid "FtpGet | Version %s | Copyright (C) 1996-1999 Alexander V. Lukyanov\n"
-msgstr "FtpGet | Wersja %s PL | Copyright (C) 1996-97 Alexander V. Lukyanov\n"
+msgstr "FtpGet | Wersja %s | Copyright (C) 1996-1999 Alexander V. Lukyanov\n"
 
 #: src/ftpget.cc:61
 #, fuzzy
@@ -1450,7 +1450,7 @@ msgstr ""
 "\n"
 "-p  --port         ustawienie numeru portu\n"
 "-u  --user         loguj siê jako user u¿ywaj±c jako has³a pass\n"
-"-l  --list         pobierz listê plików w podanym katalogu(ach)\n"
+"-l  --list         pobierz list± plików w podanym katalogu(ach)\n"
 "-c  --continue     kontynuuj ¶ci±ganie pliku(ów) - reget\n"
 "-q  --quiet        tryb cichy (brak komunikatów)\n"
 "-v  --verbose      dodatkowe informacje (wiêcej komunikatów)\n"
@@ -1479,7 +1479,7 @@ msgstr "[%lu] Zakoñczono. %s"
 #: src/lftp.cc:233
 #, c-format
 msgid "[%lu] Moving to background to complete transfers...\n"
-msgstr "[%lu] Przechodzenie w t³o w celu zakoñczenia transferów...\n"
+msgstr "[%lu] Przechodzenie w t³o w celu dokoñczenia transferów...\n"
 
 #: src/mgetJob.cc:72
 #, c-format
@@ -1544,7 +1544,7 @@ msgstr "=1 >1<5|>20%10>1<5"
 #: src/FtpCopy.cc:170
 #, c-format
 msgid "Sorry, %s can work with only ftp protocol\n"
-msgstr "Wybacz, %s mo¿e pracowaæ wy³±cznie z protoko³em ftp\n"
+msgstr "Wybacz, %s mogê pracowaæ wy³±cznie z protoko³em ftp\n"
 
 #. 	 eprintf(_("Try `help %s' for more information.\n"),op);
 #: src/FtpCopy.cc:229
@@ -1584,11 +1584,11 @@ msgstr "%s ok, %d plik$|i|ów$ usuniêto\n"
 
 #: src/Http.cc:928 src/Http.cc:948
 msgid "chunked format violated"
-msgstr ""
+msgstr "naruszony format"
 
 #: src/Http.cc:1090
 msgid "Fetching headers..."
-msgstr ""
+msgstr "Przesy³am nag³ówki..."
 
 #. TODO: && strcmp(url.proto,"http")
 #: src/resource.cc:44 src/resource.cc:61
@@ -1599,31 +1599,3 @@ msgstr "Brak wsparcia dla protoko³u proxy"
 #, fuzzy, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "Pobieranie listy plików [%s]"
-
-#~ msgid "Operation is in progress"
-#~ msgstr "Operacja w toku"
-
-#~ msgid "Error 0"
-#~ msgstr "B³±d 0"
-
-#~ msgid "Class is not Open()ed"
-#~ msgstr "Klasa nie jest Otwarta - Open()"
-
-#~ msgid ""
-#~ "Set variable to given value. If the value is omitted, unset the variable.\n"
-#~ "If called with no variable, currently set variables are listed.\n"
-#~ msgstr ""
-#~ "Przypisz zmiennej podan± warto¶æ. Je¿eli warto¶æ jest pominiêta, wy³±cza\n"
-#~ "zmienn±. Podana bez argumentów podaje aktualne ustawione zmienne.\n"
-
-#~ msgid "remote timeout"
-#~ msgstr "przekroczenie limitu czasu przez zdalny host"
-
-#~ msgid "Data connection open"
-#~ msgstr "Po³±czenie dla danych ustanowione"
-
-#~ msgid "Usage: %s <pattern> ...\n"
-#~ msgstr "U¿ycie: %s <wzór> ...\n"
-
-#~ msgid "`%s', got %lu of %lu (%d%%) %s"
-#~ msgstr "`%s', mam %lu z %lu (%d%%) %s"
