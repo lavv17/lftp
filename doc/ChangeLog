@@ -1,3 +1,8 @@
+2002-07-31	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document new queue features (stop/start); -I/-X options
+	  of mirror.
+
 2002-07-24	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document ssl vars, slot command, \? in prompt, new limit-rate
