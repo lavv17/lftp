@@ -390,6 +390,11 @@ static
 int extract_domain(const unsigned char *answer,const unsigned char *scan,int len,
 		     char *store,int store_len)
 {
+#ifdef HAVE_DN_EXPAND // newer resolver versions have dn_expand and dn_skipname
+   if(store)
+      dn_expand(answer,scan+len,scan,store,store_len);
+   return dn_skipname(scan,scan+len);
+#else // ...older don't.
    int count=1;	  // reserve space for \0
    int refs=0;
    int consumed=0;
@@ -446,11 +451,19 @@ int extract_domain(const unsigned char *answer,const unsigned char *scan,int len
    if(refs==0)
       consumed=scan-start;
    return consumed;
+#endif // DN_EXPAND
 }
+
+#ifndef NS_MAXDNAME
+# define NS_MAXDNAME 1025
+#endif
+#ifndef NS_HFIXEDSZ
+# define NS_HFIXEDSZ 12
+#endif
 
 struct SRV
 {
-   char domain[256];
+   char domain[NS_MAXDNAME];
    int port;
    int priority;
    int weight;
@@ -516,20 +529,22 @@ void Resolver::LookupSRV_RR()
    if(len>(int)sizeof(answer))
       len=sizeof(answer);
 
-   if(len<12)
+   if(len<NS_HFIXEDSZ)
       return;
 
    int question_count=(answer[4]<<8)+answer[5];
    int answer_count  =(answer[6]<<8)+answer[7];
 
    // skip header
-   unsigned char *scan=answer+12;
-   len-=12;
+   unsigned char *scan=answer+NS_HFIXEDSZ;
+   len-=NS_HFIXEDSZ;
 
    // skip questions section
    for( ; question_count>0; question_count--)
    {
       int dom_len=extract_domain(answer,scan,len,0,0);
+      if(dom_len<0)
+	 return;
       scan+=dom_len;
       len-=dom_len;
       if(len<4)
@@ -545,6 +560,11 @@ void Resolver::LookupSRV_RR()
    for( ; answer_count>0; answer_count--)
    {
       int dom_len=extract_domain(answer,scan,len,0,0);
+      if(dom_len<0)
+      {
+	 xfree(SRVs);
+	 return;
+      }
       scan+=dom_len;
       len-=dom_len;
       if(len<8)
@@ -579,6 +599,11 @@ void Resolver::LookupSRV_RR()
       len-=6;
 
       dom_len=extract_domain(answer,scan,len,t->domain,sizeof(t->domain));
+      if(dom_len<0)
+      {
+	 xfree(SRVs);
+	 return;
+      }
       scan+=dom_len;
       len-=dom_len;
 
@@ -643,6 +668,7 @@ void Resolver::LookupSRV_RR()
    }
    port_number=oldport;
 
+   xfree(SRVs);
 #endif // HAVE_RES_SEARCH
 }
 

@@ -1,3 +1,7 @@
+2004-09-06  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Resolver.cc: use dn_expand if available.
+
 2004-08-31  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc: make sure the file is created in FileCopyPeerFDStream
