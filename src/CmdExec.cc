@@ -944,6 +944,8 @@ char *CmdExec::FormatPrompt(const char *scan)
 	 case 'w': // working directory
 	 {
 	    to_add=session->GetCwd();
+            if(to_add==0 || to_add[0]==0)
+               to_add="~";
 	    const char *home=session->GetHome();
 	    if(home && strcmp(home,"/") && !strncmp(to_add,home,strlen(home))
 	    && (to_add[strlen(home)]=='/' || to_add[strlen(home)]==0))
@@ -952,17 +954,12 @@ char *CmdExec::FormatPrompt(const char *scan)
 	       sprintf(buf,"~%s",to_add+strlen(home));
 	       to_add=buf;
 	    }
-	    else
-	    {
-	       if(to_add[0]==0)
-		  to_add="~";
-	    }
 	    break;
 	 }
  	 case 'W': // working directory basename
 	 {
 	    to_add=session->GetCwd();
-            if(to_add[0]==0)
+            if(to_add==0 || to_add[0]==0)
                to_add="~";
  	    const char *p=strrchr(to_add,'/');
 	    if(p && p>to_add)
