@@ -61,6 +61,10 @@ float Speedometer::Get()
 }
 void Speedometer::Add(int b)
 {
+   // This makes Speedometer start only when first data come.
+   if(rate==0)
+      Reset();
+
    double div=period;
 
    if(start>now)
