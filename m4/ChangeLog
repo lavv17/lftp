@@ -1,0 +1,3 @@
+2000-12-18	Joerg Dorchain <jd@europeonline.net>
+
+	* ssl.m4: look for ssl library in $prefix.
