@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "28 Jan 2004"
+.TH lftp 1 "18 Feb 2004"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -683,8 +683,15 @@ Meta-0 - Meta-9 keys (often you can use Alt instead of Meta).
 
 .B source
 \fIfile\fP
+.br
+.B source -e
+\fIcommand\fP
 .PP
-Execute commands recorded in file \fIfile\fP.
+Execute commands recorded in file \fIfile\fP or returned by specified external command.
+.Ds
+source ~/.lftp/rc
+source -e echo help
+.De
 
 .B suspend
 .PP
