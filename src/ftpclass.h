@@ -128,6 +128,10 @@ class Ftp : public NetAccess
       bool quit_sent;
       bool fixed_pasv; // had to fix PASV address.
       bool translation_activated;
+
+      int multiline_code; // the code of multiline response.
+      int sync_wait; // number of commands in flight.
+
 #ifdef USE_SSL
       SSL *control_ssl;
       SSL *data_ssl;
@@ -145,6 +149,8 @@ class Ftp : public NetAccess
       void MakeSSLBuffers(const char *h);
       void InitTelnetLayer();
       void SetControlConnectionTranslation(const char *cs);
+
+      void CloseDataConnection();
    };
 
    Connection *conn;
@@ -162,9 +168,6 @@ class Ftp : public NetAccess
 
    int	 RQ_head;
    int	 RQ_tail;
-
-   int	 multiline_code;// the code of multiline response.
-   int	 sync_wait;	// number of commands in flight.
 
    void  AddResp(int exp,check_case_t ck=CHECK_NONE);
    void  SetRespPath(const char *p);
@@ -284,8 +287,6 @@ private:
    bool	 HttpProxyReplyCheck(IOBuffer *buf);
 
    bool	 AbsolutePath(const char *p);
-
-   void EmptySendQueue();
 
    void MoveConnectionHere(Ftp *o);
 

@@ -859,6 +859,8 @@ Ftp::Connection::Connection()
    quit_sent=false;
    fixed_pasv=false;
    translation_activated=false;
+   sync_wait=1;	// expect server greetings
+   multiline_code=0;
 }
 
 void Ftp::InitFtp()
@@ -874,7 +876,6 @@ void Ftp::InitFtp()
    nop_time=0;
    nop_count=0;
    nop_offset=0;
-   sync_wait=0;
    line=0;
    line_len=0;
    all_lines=0;
@@ -914,7 +915,6 @@ void Ftp::InitFtp()
    RespQueue=0;
    RQ_alloc=0;
    RQ_head=RQ_tail=0;
-   multiline_code=0;
 
    anon_pass=0;
    anon_user=0;	  // will be set by Reconfig()
@@ -952,6 +952,7 @@ Ftp::Ftp(const Ftp *f) : super(f)
 
 Ftp::Connection::~Connection()
 {
+   CloseDataConnection();
    if(control_sock!=-1)
    {
       Log::global->Format(7,"---- %s\n",_("Closing control socket"));
@@ -1296,7 +1297,6 @@ int   Ftp::Do()
 
       state=CONNECTED_STATE;
       m=MOVED;
-      sync_wait=1; // we need to wait for RESP_READY
       AddResp(RESP_READY,CHECK_READY);
 
       try_feat_after_login=false;
@@ -2489,7 +2489,7 @@ int  Ftp::ReceiveResp()
 	 code=atoi(line);
 
       DebugPrint("<--- ",line,
-	    ReplyLogPriority(multiline_code?multiline_code:code));
+	    ReplyLogPriority(conn->multiline_code?conn->multiline_code:code));
       if(!RespQueueIsEmpty() && RespQueue[RQ_head].check_case==CHECK_QUOTED && conn->data_iobuf)
       {
 	 conn->data_iobuf->Put(line);
@@ -2497,7 +2497,7 @@ int  Ftp::ReceiveResp()
       }
 
       int all_lines_len=xstrlen(all_lines);
-      if(multiline_code==0 || all_lines_len==0)
+      if(conn->multiline_code==0 || all_lines_len==0)
 	 all_lines_len=-1; // not continuation
       all_lines=(char*)xrealloc(all_lines,all_lines_len+1+strlen(line)+1);
       if(all_lines_len>0)
@@ -2509,20 +2509,20 @@ int  Ftp::ReceiveResp()
 
       if(line[3]=='-')
       {
-	 if(multiline_code==0)
-	    multiline_code=code;
+	 if(conn->multiline_code==0)
+	    conn->multiline_code=code;
 	 continue;
       }
-      if(multiline_code)
+      if(conn->multiline_code)
       {
-	 if(multiline_code!=code || line[3]!=' ')
+	 if(conn->multiline_code!=code || line[3]!=' ')
 	    continue;   // Multiline response can terminate only with
 			// the same code as it started with.
 			// The space is required.
-	 multiline_code=0;
+	 conn->multiline_code=0;
       }
-      if(sync_wait>0 && code/100!=1)
-	 sync_wait--; // clear the flag to send next command
+      if(conn->sync_wait>0 && code/100!=1)
+	 conn->sync_wait--; // clear the flag to send next command
 
       CheckResp(code);
       m=MOVED;
@@ -2789,26 +2789,25 @@ out:
    disconnect_in_progress=false;
 }
 
-void  Ftp::EmptySendQueue()
+void Ftp::Connection::CloseDataConnection()
 {
-   sync_wait=0;
-   if(conn && conn->send_cmd_buffer)
-      conn->send_cmd_buffer->Empty();
+   Delete(data_iobuf); data_iobuf=0;
+   if(data_sock!=-1)
+   {
+      Log::global->Format(7,"---- %s\n",_("Closing data socket"));
+      close(data_sock);
+      data_sock=-1;
+   }
+   fixed_pasv=false;
 }
 
 void  Ftp::DataClose()
 {
    if(!conn)
       return;
-   Delete(conn->data_iobuf); conn->data_iobuf=0;
-   if(conn->data_sock!=-1)
-   {
-      DebugPrint("---- ",_("Closing data socket"),7);
-      close(conn->data_sock);
-      conn->data_sock=-1;
-      if(QueryBool("web-mode"))
-	 disconnect_on_close=true;
-   }
+   if(conn->data_sock!=-1 && QueryBool("web-mode"))
+      disconnect_on_close=true;
+   conn->CloseDataConnection();
    nop_time=0;
    nop_offset=0;
    nop_count=0;
@@ -2817,7 +2816,6 @@ void  Ftp::DataClose()
       delete rate_limit;
       rate_limit=0;
    }
-   conn->fixed_pasv=false;
    if(state==DATA_OPEN_STATE || state==DATASOCKET_CONNECTING_STATE)
       state=WAITING_STATE;
 }
@@ -2839,7 +2837,7 @@ int Ftp::FlushSendQueueOneCmd()
    int to_write=line_end+1-send_cmd_ptr;
    conn->control_send->Put(send_cmd_ptr,to_write);
    conn->send_cmd_buffer->Skip(to_write);
-   sync_wait++;
+   conn->sync_wait++;
 
    int log_level=5;
 
@@ -2890,7 +2888,7 @@ int  Ftp::FlushSendQueue(bool all)
       return MOVED;
    }
 
-   while(sync_wait<=0 || all || !(flags&SYNC_MODE))
+   while(conn->sync_wait<=0 || all || !(flags&SYNC_MODE))
    {
       int res=FlushSendQueueOneCmd();
       if(res==STALL)
@@ -3256,25 +3254,20 @@ void  Ftp::EmptyRespQueue()
    while(!RespQueueIsEmpty())
       PopResp();
    RQ_head=RQ_tail=0;
-   multiline_code=0;
    xfree(RespQueue);
    RespQueue=0;
    RQ_alloc=0;
 }
 void  Ftp::MoveConnectionHere(Ftp *o)
 {
-   EmptyRespQueue();
-   EmptySendQueue();
+   assert(conn==0);
 
    RQ_head=o->RQ_head; o->RQ_head=0;
    RQ_tail=o->RQ_tail; o->RQ_tail=0;
-   multiline_code=o->multiline_code; o->multiline_code=0;
    RespQueue=o->RespQueue; o->RespQueue=0;
    RQ_alloc=o->RQ_alloc; o->RQ_alloc=0;
 
    CloseRespQueue(); // we need not handle other session's replies.
-
-   sync_wait=o->sync_wait; o->sync_wait=0;
 
    o->state=INITIAL_STATE;
    assert(!conn);
