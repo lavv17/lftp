@@ -85,7 +85,7 @@ char *command_generator(const char *text,int state)
    while ((name=CmdExec::CmdByIndex(cindex)->name)!=0)
    {
       cindex++;
-      if(strncmp(name,text,len)==0)
+      if(strncasecmp(name,text,len)==0)
 	 return(xstrdup(name));
    }
 
@@ -93,7 +93,7 @@ char *command_generator(const char *text,int state)
    {
       const Alias *tmp=alias;
       alias=alias->next;
-      if(strncmp(tmp->alias,text,len)==0)
+      if(strncasecmp(tmp->alias,text,len)==0)
          return(xstrdup(tmp->alias));
    }
 
@@ -101,7 +101,6 @@ char *command_generator(const char *text,int state)
    return(NULL);
 }
 
-/* this is used for both remote and local gen now; rename */
 static char *file_generator(const char *text,int state)
 {
    /* If this is a new word to complete, initialize now. */

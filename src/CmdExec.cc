@@ -153,12 +153,12 @@ int CmdExec::find_cmd(const char *cmd_name,const struct cmd_rec **ret)
    const cmd_rec *c;
    for(c=dyn_cmd_table?dyn_cmd_table:static_cmd_table; c->name; c++)
    {
-      if(!strcmp(c->name,cmd_name))
+      if(!strcasecmp(c->name,cmd_name))
       {
 	 *ret=c;
 	 return 1;
       }
-      if(!strncmp(c->name,cmd_name,strlen(cmd_name)))
+      if(!strncasecmp(c->name,cmd_name,strlen(cmd_name)))
       {
 	 part++;
 	 *ret=c;

@@ -48,7 +48,7 @@ void Alias::Add(const char *alias,const char *value)
    Alias **scan=&base;
    while(*scan)
    {
-      int dif=strcmp((*scan)->alias,alias);
+      int dif=strcasecmp((*scan)->alias,alias);
       if(dif==0)
       {
 	 xfree((*scan)->value);
@@ -67,7 +67,7 @@ void Alias::Del(const char *alias)
    Alias **scan=&base;
    while(*scan)
    {
-      int dif=strcmp((*scan)->alias,alias);
+      int dif=strcasecmp((*scan)->alias,alias);
       if(dif==0)
       {
 	 Alias *tmp=(*scan)->next;
@@ -84,7 +84,7 @@ const char *Alias::Find(const char *alias)
    Alias *scan=base;
    while(scan)
    {
-      int dif=strcmp(scan->alias,alias);
+      int dif=strcasecmp(scan->alias,alias);
       if(dif==0)
 	 return(scan->value);
       if(dif>0)

@@ -450,6 +450,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {NULL,NULL}
 };
 
+#define charcasecmp(a,b) (tolower((unsigned char)(a))-tolower((unsigned char)(b)))
 // returns:
 //    0 - no match
 //    1 - found, if *res==0 then ambiguous
@@ -461,7 +462,7 @@ int find_command(const char *unprec_name,const char * const *names,
    for( ; *names; names++)
    {
       const char *s,*u;
-      for(s=*names,u=unprec_name; *s && *u==*s; s++,u++)
+      for(s=*names,u=unprec_name; *s && !charcasecmp(*u,*s); s++,u++)
 	 ;
       if(*s && !*u)
       {
@@ -1901,7 +1902,7 @@ CMD(kill)
 #endif
       return 0;
    }
-   if(!strcmp(args->getarg(1),"all"))
+   if(!strcasecmp(args->getarg(1),"all"))
    {
       parent->KillAll();
       exit_code=0;
@@ -2037,7 +2038,7 @@ CMD(wait)
    char *jn=args->getnext();
    if(jn)
    {
-      if(!strcmp(jn,"all"))
+      if(!strcasecmp(jn,"all"))
       {
 	 parent->WaitForAllChildren();
 	 for(int i=0; i<parent->waiting_num; i++)
@@ -2103,7 +2104,7 @@ CMD(mv)
 }
 
 const char *const cache_subcmd[]={
-   "status","flush","on","off","size","expire",
+   "status","flush","on","off","size","expire","dump",
    NULL
 };
 
@@ -2130,15 +2131,17 @@ CMD(cache)  // cache control
    }
 
    exit_code=0;
-   if(!op || !strcmp(op,"status"))
+   if(!op || !strcasecmp(op,"status"))
       LsCache::List();
-   else if(!strcmp(op,"flush"))
+   else if(!strcasecmp(op,"dump"))
+      LsCache::Dump();
+   else if(!strcasecmp(op,"flush"))
       LsCache::Flush();
-   else if(!strcmp(op,"on"))
+   else if(!strcasecmp(op,"on"))
       LsCache::On();
-   else if(!strcmp(op,"off"))
+   else if(!strcasecmp(op,"off"))
       LsCache::Off();
-   else if(!strcmp(op,"size"))
+   else if(!strcasecmp(op,"size"))
    {
       op=args->getnext();
       if(!op)
@@ -2148,7 +2151,7 @@ CMD(cache)  // cache control
 	 return 0;
       }
       long lim=-1;
-      if(strcmp(op,"unlim") && sscanf(op,"%ld",&lim)!=1)
+      if(strcasecmp(op,"unlim") && sscanf(op,"%ld",&lim)!=1)
       {
 	 eprintf(_("%s: Invalid number for size\n"),args->a0());
 	 exit_code=1;
@@ -2156,7 +2159,7 @@ CMD(cache)  // cache control
       }
       LsCache::SetSizeLimit(lim);
    }
-   else if(!strcmp(op,"expire"))
+   else if(!strcasecmp(op,"expire"))
    {
       op=args->getnext();
       if(!op)
@@ -2348,7 +2351,7 @@ CMD(bookmark)
       return 0;
    }
 
-   if(!strcmp(op,"list"))
+   if(!strcasecmp(op,"list"))
    {
       char *list=lftp_bookmarks.Format();
       Job *j=CopyJob::NewEcho(list,output,args->a0());
@@ -2356,7 +2359,7 @@ CMD(bookmark)
       output=0;
       return j;
    }
-   else if(!strcmp(op,"add"))
+   else if(!strcasecmp(op,"add"))
    {
       const char *key=args->getnext();
       if(key==0 || key[0]==0)
@@ -2388,7 +2391,7 @@ CMD(bookmark)
    	 exit_code=0;
       }
    }
-   else if(!strcmp(op,"delete"))
+   else if(!strcasecmp(op,"delete"))
    {
       const char *key=args->getnext();
       if(key==0 || key[0]==0)
@@ -2401,11 +2404,11 @@ CMD(bookmark)
 	 exit_code=0;
       }
    }
-   else if(!strcmp(op,"edit"))
+   else if(!strcasecmp(op,"edit"))
    {
       parent->PrependCmd("shell \"/bin/sh -c 'exec ${EDITOR:-vi} $HOME/.lftp/bookmarks'\"\n");
    }
-   else if(!strcmp(op,"import"))
+   else if(!strcasecmp(op,"import"))
    {
       op=args->getnext();
       if(!op)

@@ -1,3 +1,8 @@
+2001-11-29  Glenn Maynard <g_ld@zewt.org>
+
+	* CmdExec.cc, alias.cc, commands.cc, complete.cc: case insensitive
+	  commands and aliases.
+
 2001-11-26  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc, FileFeeder.cc, Filter.cc, Filter.h, Http.cc,
