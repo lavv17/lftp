@@ -17,6 +17,11 @@ Version 2.2.0 - 2000-??-??
   be useful for some sites to set it to `-a'. Default is empty.
 * new setting ftp:rest-stor (default: yes) to avoid file corruption
   on some old and buggy ftp servers after restarted upload.
+* new setting net:no-proxy. It contains comma separated list of domains.
+  Environment variable no_proxy is copied to net:no-proxy on startup.
+* ftp to ftp (FXP) copying is now easy, e.g. `get ftp://... -o ftp://...'.
+  New settings: ftp:use-fxp, ftp:fxp-passive-source. It does not work
+  for some servers, so use `set ftp:use-fxp no' for them.
 * now lftp remembers that commands MDTM, SIZE or SITE CHMOD are not supported
   by the server, and does not send them again.
 * if password is entered on command line it is supposed to be insecure and is

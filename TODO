@@ -80,13 +80,9 @@ currently; some need other work to be done.
 
  * parse anonftpd listings (ftp://vgsn.glasnet.ru)
 
-+* help for queue
-
  * use FileSet in Glob.
 
  * specify directory for ListInfo.
-
-+* login ftp://user@host to remember password for the site.
 
  * optimize help text, introduce a phrase separator for separate translations.
 
@@ -94,5 +90,7 @@ currently; some need other work to be done.
    the best way would be to return a error from Http to FileCopy, and
    FileCopy would change get or put accordingly.
 
- * make FtpCopy a child of FileCopy. Put a code for its creation in various
-   places. An utility function for this?
+ * get -O dir, mget -O dir.
+ * Reconfig Speedometer.
+
+ * glob -f, glob -d to get files/directories only.
