@@ -1,3 +1,8 @@
+2002-03-18  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ProcWait.cc: don't flood stdout with waitpid errors, it can be
+	  possible if lftp forks into background.
+
 2002-03-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Job.cc: fix occasional spinning when mirror terminates.

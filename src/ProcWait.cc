@@ -56,11 +56,10 @@ int ProcWait::Do()
       {
 	 status=TERMINATED;
 	 term_info=255;
-	 return MOVED;
+	 m=MOVED;
+	 goto final;
       }
-      perror("waitpid");
-      TimeoutS(30);
-      return STALL;
+      goto leave;
    }
    if(res==pid)
    {
