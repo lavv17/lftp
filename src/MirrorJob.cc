@@ -511,7 +511,7 @@ int   MirrorJob::Do()
 	 goto pre_CHANGING_DIR;
       if(target_relative_dir)
 	 Report(_("Making directory `%s'"),target_relative_dir);
-      target_session->Mkdir(target_dir);
+      target_session->Mkdir(target_dir,(parent_mirror==0));
       state=MAKE_TARGET_DIR;
       m=MOVED;
    case(MAKE_TARGET_DIR):
