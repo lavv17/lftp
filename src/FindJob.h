@@ -70,6 +70,7 @@ protected:
 
    bool depth_first;
    bool use_cache;
+   bool quiet;
 
    void NextDir(const char *d);
 
@@ -84,6 +85,8 @@ public:
 
    void ShowRunStatus(StatusLine *sl);
    void PrintStatus(int v);
+
+   void BeQuiet() { quiet=true; }
 };
 
 class FinderJob_List : public FinderJob

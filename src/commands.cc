@@ -1134,10 +1134,11 @@ CMD(rm)
 {
    int opt;
    bool recursive=false;
-   const char *opts="+r";
+   bool silent=false;
+   const char *opts="+rf";
 
    if(!strcmp(args->a0(),"rmdir"))
-      opts="+";
+      opts="+f";
 
    while((opt=args->getopt(opts))!=EOF)
    {
@@ -1146,9 +1147,12 @@ CMD(rm)
       case('r'):
 	 recursive=true;
 	 break;
+      case('f'):
+	 silent=true;
+	 break;
       case('?'):
       print_usage:
-	 eprintf(_("Usage: %s files...\n"),args->a0());
+	 eprintf(_("Usage: %s [-r] [-f] files...\n"),args->a0());
 	 return 0;
       }
    }
@@ -1159,8 +1163,10 @@ CMD(rm)
 
    if(recursive)
    {
-      Job *j=new FinderJob_Cmd(Clone(),args,FinderJob_Cmd::RM);
+      FinderJob *j=new FinderJob_Cmd(Clone(),args,FinderJob_Cmd::RM);
       args=0;
+      if(silent)
+	 j->BeQuiet();
       return j;
    }
 
@@ -1173,6 +1179,9 @@ CMD(rm)
       j->AddFile(curr);
       curr=args->getnext();
    }
+
+   if(silent)
+      j->BeQuiet();
 
    return j;
 }

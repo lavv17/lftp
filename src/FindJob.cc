@@ -57,7 +57,8 @@ int FinderJob::Do()
 	 goto pre_INFO;
       }
       // cd error
-      eprintf("%s: cd %s: %s\n",op,dir,session->StrError(res));
+      if(!quiet)
+	 eprintf("%s: cd %s: %s\n",op,dir,session->StrError(res));
       errors++;
       depth_done=true;
       state=LOOP;
@@ -80,7 +81,8 @@ int FinderJob::Do()
 	 return m;
       if(li->Error())
       {
-	 eprintf("%s: %s\n",op,li->ErrorText());
+	 if(!quiet)
+	    eprintf("%s: %s\n",op,li->ErrorText());
 	 Delete(li);
 	 li=0;
 	 errors++;
@@ -250,6 +252,8 @@ void FinderJob::Init()
 
    use_cache=true;
 
+   quiet=false;
+
    state=INIT;
 }
 
@@ -372,6 +376,8 @@ FinderJob::prf_res FinderJob_Cmd::ProcessFile(const char *d,const FileInfo *f)
    CmdExec *exec=new CmdExec(s);
    exec->parent=this;
    exec->SetCWD(saved_cwd);
+   if(fg)
+      exec->Fg();
 
    char *file=f->name;
 
@@ -380,13 +386,19 @@ FinderJob::prf_res FinderJob_Cmd::ProcessFile(const char *d,const FileInfo *f)
    case RM:
       if(ISDIR)
       {
-	 exec->FeedCmd("rmdir -- ");
+	 exec->FeedCmd("rmdir ");
+	 if(quiet)
+	    exec->FeedCmd("-f ");
+	 exec->FeedCmd("-- ");
 	 exec->FeedQuoted(file);
 	 exec->FeedCmd("\n");
       }
       else
       {
-	 exec->FeedCmd("rm -- ");
+	 exec->FeedCmd("rm ");
+	 if(quiet)
+	    exec->FeedCmd("-f ");
+	 exec->FeedCmd("-- ");
 	 exec->FeedQuoted(file);
 	 exec->FeedCmd("\n");
       }
@@ -448,7 +460,12 @@ void FinderJob_Cmd::Finish()
 	 session->Chdir(init_dir,false); // to leave the directory
 	 CmdExec *exec=new CmdExec(session->Clone());
 	 exec->parent=this;
-	 exec->FeedCmd("rmdir -- ");
+	 if(fg)
+	    exec->Fg();
+	 exec->FeedCmd("rmdir ");
+	 if(quiet)
+	    exec->FeedCmd("-f ");
+	 exec->FeedCmd("-- ");
 	 exec->FeedQuoted(start_dir);
 	 exec->FeedCmd("\n");
 	 waiting=exec;

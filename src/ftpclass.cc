@@ -1110,7 +1110,8 @@ int   Ftp::Do()
 	 return MOVED;
       }
 
-      if(takeover_time!=NO_DATE && takeover_time+1-priority>now)
+      if(takeover_time!=NO_DATE && takeover_time+1-priority>now
+      && connection_limit>0 && connection_limit<=CountConnections()+1)
       {
 	 TimeoutS(takeover_time+1-priority-now);
 	 goto notimeout_return;
@@ -1824,6 +1825,8 @@ int  Ftp::ReceiveResp()
 	 nl=strchr(resp,'\n');
 	 if(nl!=NULL)
 	 {
+	    m=MOVED;
+
 	    *nl=0;
 	    xfree(line);
 	    line=xstrdup(resp);

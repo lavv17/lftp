@@ -1,3 +1,12 @@
+2000-03-17  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc: debug code added.
+	* FindJob.cc, FindJob.h: (quiet) new member; use it; set child jobs fg
+	  if needed.
+	* commands.cc: rm -f.
+	* ftpclass.cc: don't delay session re-usage if connection limit is not
+	  reached.
+
 2000-03-16  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ResMgr.cc: call srandom if range is full.
