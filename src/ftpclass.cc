@@ -2834,6 +2834,7 @@ void  Ftp::DisconnectNow()
       if(mode==STORE && (flags&IO_FLAG))
 	 SetError(STORE_FAILED,0);
    }
+   copy_addr_valid=false;
 }
 
 void  Ftp::Disconnect()

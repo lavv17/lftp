@@ -508,6 +508,8 @@ public:
    bool CopyStoreAllowed() { return copy_allow_store; }
    bool CopyIsReadyForStore()
       {
+	 if(!expect)
+	    return false;
 	 if(copy_mode==COPY_SOURCE)
 	    return copy_addr_valid && expect->FirstIs(Expect::TRANSFER);
 	 return state==WAITING_STATE && expect->IsEmpty();
