@@ -47,19 +47,14 @@ currently; some need other work to be done.
 
  * mirror: add settings like mirror:default-time-prec. make default 0?.
 
- * ascii mode?
+ * ascii mode
 
  * intelligently squeeze file name in status line.
 
  * parallel get's in mirror, mget
  * make a command get1 to get single file with extra options.
 
- * in Glob and FileInfo: set a flag that if REST does not work to report
-   an error, and in case of such error restart from beginning.
-
  * tail command
-
- * ftp:rest-stor
 
  * ability to bind source address of sockets. (for those with several
    interfaces)
@@ -71,8 +66,6 @@ currently; some need other work to be done.
    net:source-address-ipv6. Or a closure can be used.
      Maybe it is better to specify interface instead of address, then address
    family can be used to get proper address off the interface. (?)
-
- * don't send MDTM/SIZE commands if it is known that server does not support them.
 
  * make a class FileAccessLocation
 
@@ -90,3 +83,13 @@ currently; some need other work to be done.
  * xfer:avg-rate, xfer:avg-eta (number of seconds to get average on).
 
  * use NDIR (from RFC1127) in FtpListInfo, when long list cannot be parsed.
+
+ * parse anonftpd listings (ftp://vgsn.glasnet.ru)
+
+ * growth of reconnect-interval. net:reconnect-interval-multiplier, max.
+
+ * in get,cat, etc (FileCopy class) try RereadManual if output is seekable.
+
+ * check mget -e -- REMOVE mode was Close()'d too early.
+
+ * help queue
