@@ -270,7 +270,7 @@ void Http::SendRequest(const char *connection,const char *f)
 	 if(user && pass)
 	 {
 	    strcpy(pfile,"ftp://");
-	    url::encode_string(user,pfile+strlen(pfile));
+	    url::encode_string(user,pfile+strlen(pfile),"/:@"URL_UNSAFE);
 	    strcat(pfile,":");
 	    url::encode_string(pass,pfile+strlen(pfile),0);
 	    strcat(pfile,"@");
