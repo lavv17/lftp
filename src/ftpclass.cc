@@ -1255,6 +1255,9 @@ int   Ftp::Do()
       FlushSendQueue();
       ReceiveResp();
 
+      if(state!=ACCEPTING_STATE)
+         return MOVED;
+
       res=Poll(data_sock,POLLIN);
 
       if(state!=ACCEPTING_STATE)
@@ -1450,8 +1453,11 @@ notimeout_return:
    {
       if(state==ACCEPTING_STATE)
 	 block+=PollVec(data_sock,POLLIN);
-      else if(state==DATASOCKET_CONNECTING_STATE && addr_received==2)
-      	 block+=PollVec(data_sock,POLLOUT);
+      else if(state==DATASOCKET_CONNECTING_STATE)
+      {
+	 if(addr_received==2) // that is connect in progress
+	    block+=PollVec(data_sock,POLLOUT);
+      }
       else if(state==DATA_OPEN_STATE)
       {
 	 // guard against unimplemented REST: if we have sent REST command
@@ -1460,6 +1466,11 @@ notimeout_return:
 	 // since REST could fail.
 	 if(!(RespQueueSize()>1 && real_pos==-1))
 	    block+=PollVec(data_sock,(mode==STORE?POLLOUT:POLLIN));
+      }
+      else
+      {
+	 // should not get here
+	 abort();
       }
    }
    if(control_sock!=-1)
@@ -2155,13 +2166,12 @@ int   Ftp::DataReady()
 	 return(1);  // eof
       if(real_pos==-1 && RespQueueSize()>1)
 	 return(0);  // disallow reading/writing
-      int ev=(mode==RETRIEVE?POLLIN:POLLOUT);
+      int ev=(mode==STORE?POLLOUT:POLLIN);
       if(Poll(data_sock,ev)&ev)
 	 return(1);
    }
    return(0);
 }
-
 // Wait until requested data is available or operation is completed
 int   Ftp::Block()
 {

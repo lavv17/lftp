@@ -182,6 +182,7 @@ int   main(int argc,char **argv)
       Log::global=new Log();
       Log::global->SetOutput(2,false);
       Log::global->SetLevel(5);
+      Log::global->Enable();
    }
    f->SetFlag(flags,1);
 
