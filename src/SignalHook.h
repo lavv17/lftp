@@ -39,8 +39,11 @@ public:
    static void ResetCount(int sig) { counts[sig]=0; }
    static void IncreaseCount(int sig) { counts[sig]++; }
    static void Handle(int sig,void (*h)(int)) { set_signal(sig,h); }
-   static void Ignore(int sig) { set_signal(sig,(void (*)(int))SIG_IGN); }
+   static void Ignore(int sig)  { set_signal(sig,(void (*)(int))SIG_IGN); }
+   static void Default(int sig) { set_signal(sig,(void (*)(int))SIG_DFL); }
    static void Restore(int sig);
+   static void Block(int sig);
+   static void Unblock(int sig);
    static void RestoreAll();
 };
 

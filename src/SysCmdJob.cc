@@ -52,12 +52,16 @@ SysCmdJob::~SysCmdJob()
 
 int SysCmdJob::Do()
 {
+   int m=STALL;
+
    if(w)
-      return STALL;
+      return m;
 
    char *shell=getenv("SHELL");
    if(!shell)
       shell="/bin/sh";
+
+   ProcWait::Signal(false);
 
    pid_t pid;
    fflush(stderr);
@@ -75,15 +79,18 @@ int SysCmdJob::Do()
       fflush(stderr);
       _exit(1);
    case(-1): /* error */
-      block+=TimeOut(1000);   // wait a second
-      return STALL;
+      block+=TimeOut(1000);   // wait a second and retry
+      goto out;
    }
    /* parent */
    int info;
    waitpid(pid,&info,WUNTRACED); // wait until the process stops
    w=new ProcWait(pid);
    fg_data=new FgData(pid,fg);
-   return MOVED;
+   m=MOVED;
+out:
+   ProcWait::Signal(true);
+   return m;
 }
 
 int SysCmdJob::AcceptSig(int sig)

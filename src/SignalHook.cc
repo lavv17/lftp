@@ -59,3 +59,18 @@ void SignalHook::RestoreAll()
    for(int i=0; i<256; i++)
       Restore(i);
 }
+
+void SignalHook::Block(int sig)
+{
+   sigset_t s;
+   sigemptyset(&s);
+   sigaddset(&s,sig);
+   sigprocmask(SIG_BLOCK,&s,0);
+}
+void SignalHook::Unblock(int sig)
+{
+   sigset_t s;
+   sigemptyset(&s);
+   sigaddset(&s,sig);
+   sigprocmask(SIG_UNBLOCK,&s,0);
+}

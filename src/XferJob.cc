@@ -141,15 +141,15 @@ void  XferJob::SayFinal()
       if(end_time>start_time+1)
       {
 	 long sec=end_time-start_time;
-	 printf(plural("%ld $byte|bytes$ transferred"
-			" in %ld $second|seconds$ (%g bytes/s)\n",
-			int(bytes_transferred%100),int(sec%100)),
+	 printf(plural("%ld $#l#byte|bytes$ transferred"
+			" in %ld $#l#second|seconds$ (%g bytes/s)\n",
+			bytes_transferred,sec),
 	    bytes_transferred,sec,xfer_rate());
       }
       else
       {
-	 printf(plural("%ld $byte|bytes$ transferred\n",
-			int(bytes_transferred%100)),
+	 printf(plural("%ld $#l#byte|bytes$ transferred\n",
+			bytes_transferred),
 	    bytes_transferred);
       }
    }

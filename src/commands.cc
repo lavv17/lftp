@@ -50,6 +50,7 @@
 #include "pgetJob.h"
 #include "FtpCopy.h"
 #include "SleepJob.h"
+#include "FindJob.h"
 
 #include "misc.h"
 #include "alias.h"
@@ -127,7 +128,8 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
 	 "If no jobs active, the code is passed to operating system as lftp\n"
 	 "termination status. If omitted, exit code of last command is used.\n")},
    {"fg",      &do_wait,	   0,"wait"},
-   {"ftpcopy", &do_ftpcopy, 0},
+   {"find",    &do_find},
+   {"ftpcopy", &do_ftpcopy},
    {"get",     &do_get,	   N_("get [OPTS] <rfile> [-o <lfile>]"),
 	 N_("Retrieve remote file <rfile> and store it to local file <lfile>.\n"
 	 " -o <lfile> specifies local file name (default - basename of rfile)\n"
@@ -143,7 +145,7 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
    {"lcd",     &do_lcd,    N_("lcd <ldir>"),
 	 N_("Change current local directory to <ldir>. The previous local directory\n"
 	 "is stored as `-'. You can do `lcd -' to change the directory back.\n")},
-   {"lftp",    &do_lftp,   "lftp [OPTS] <site>",
+   {"lftp",    &do_lftp,   N_("lftp [OPTS] <site>"),
 	 N_("`lftp' is the first command executed by lftp after rc files\n"
 	 " -f <file>           execute commands from the file and exit\n"
 	 " -c <cmd>            execute the commands and exit\n"
@@ -1262,7 +1264,7 @@ time_t decode_delay(const char *s)
       prec*=HOUR;
    else if(ch=='d')
       prec*=DAY;
-   else
+   else if(ch!='s')
       return -1;
    return prec;
 }
@@ -1812,36 +1814,22 @@ CMD(ftpcopy)
 
 CMD(sleep)
 {
+   char *op=args->a0();
    if(args->count()!=2)
    {
-      eprintf(_("%s: argument required\n"),args->a0());
+      eprintf(_("%s: argument required. "),op);
+   err:
+      eprintf(_("Try `help %s' for more information.\n"),op);
       return 0;
    }
    char *t=args->getarg(1);
-   if(!isdigit((unsigned char)*t))
+   time_t delay=decode_delay(t);
+   if(delay==(time_t)-1)
    {
-      eprintf(_("%s: %s - not a number\n"),args->a0(),t);
-      return 0;
+      eprintf(_("%s: invalid delay. "),op);
+      goto err;
    }
-   time_t when=time(0);
-   int delay=atoi(t);
-   char c='s';
-   if(strlen(t)>1)
-      c=t[strlen(t)-1];
-   switch(c)
-   {
-   case 'm':
-      delay*=MINUTE;
-      break;
-   case 'h':
-      delay*=HOUR;
-      break;
-   case 'd':
-      delay*=DAY;
-      break;
-   }
-   when+=delay;
-   return new SleepJob(when);
+   return new SleepJob(time(0)+delay);
 }
 
 #include "parsetime-i.h"
@@ -1873,4 +1861,15 @@ CMD(at)
    char *cmd = cmd_start ? args->Combine(cmd_start) : 0;
    FileAccess *s = cmd ? Clone() : 0;
    return new SleepJob(when, s, cmd);
+}
+
+CMD(find)
+{
+   char *path=".";
+   if(args->count()>1)
+      path=args->getarg(1);
+   Job *j=new class FindJob_List(Clone(),path,
+      output?output:new FDStream(1,"<stdout>"));
+   output=0;
+   return j;
 }

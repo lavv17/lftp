@@ -125,7 +125,7 @@ void InputFilter::Child(int *p)
 
 int OutputFilter::getfd()
 {
-   if(fd!=-1 || error())
+   if(fd!=-1 || error() || closed)
       return fd;
 
    if(second && second_fd==-1)
@@ -154,6 +154,8 @@ int OutputFilter::getfd()
       return -1;
    }
 
+   ProcWait::Signal(false);
+
    fflush(stderr);
    switch(pid=fork())
    {
@@ -178,7 +180,7 @@ int OutputFilter::getfd()
    case(-1): /* error */
       close(p[0]);
       close(p[1]);
-      return -1;
+      goto out;
    }
    /* parent */
    Parent(p);
@@ -193,9 +195,9 @@ int OutputFilter::getfd()
 
    int info;
    waitpid(pid,&info,WUNTRACED);
-
    w=new ProcWait(pid);
-
+out:
+   ProcWait::Signal(true);
    return fd;
 }
 
@@ -211,6 +213,7 @@ void OutputFilter::Init()
       oldcwd=0;
    }
    pg=0;
+   closed=false;
 }
 
 void OutputFilter::SetCwd(const char *cwd)
@@ -252,6 +255,7 @@ bool OutputFilter::Done()
    {
       close(fd);
       fd=-1;
+      closed=true;
    }
    w->Do();
    if(w->GetState()!=w->RUNNING)
@@ -265,7 +269,7 @@ bool OutputFilter::broken()
    if(fd==-1)
       return false;
 //    w->Do();
-   if(w->GetState()!=w->RUNNING)   
+   if(w->GetState()!=w->RUNNING)
       return true; // filter process terminated - pipe is broken
    return false;
 }

@@ -63,7 +63,7 @@ void  hook_signals()
    SignalHook::DoCount(SIGHUP);
    SignalHook::DoCount(SIGPIPE);
    SignalHook::Ignore(SIGTTOU);
-   SignalHook::Handle(SIGCHLD,&ProcWait::SIGCHLD_handler);
+   ProcWait::Signal(true);
 }
 
 void WaitDone(CmdExec *exec)

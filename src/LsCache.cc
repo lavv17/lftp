@@ -144,7 +144,7 @@ void LsCache::List()
    for(LsCache *scan=chain; scan; scan=scan->next)
       vol+=scan->data_len;
 
-   printf(plural("%ld $byte|bytes$ cached",int(vol%100)),vol);
+   printf(plural("%ld $#l#byte|bytes$ cached",vol),vol);
 
    if(sizelimit<0)
       puts(_(", no size limit"));
@@ -154,13 +154,13 @@ void LsCache::List()
    if(ttl==0)
       puts(_("Cache entries do not expire"));
    else if(ttl<60)
-      printf(plural("Cache entries expire in %ld $second|seconds$\n",
-		     int(ttl%100)),(long)ttl);
+      printf(plural("Cache entries expire in %ld $#l#second|seconds$\n",
+		     long(ttl)),long(ttl));
    else
    {
       long ttl_min=(long)(ttl+30)/60;
-      printf(plural("Cache entries expire in %ld $minute|minutes$\n",
-		     int(ttl_min%100)),ttl_min);
+      printf(plural("Cache entries expire in %ld $#l#minute|minutes$\n",
+		     ttl_min),ttl_min);
    }
 }
 
