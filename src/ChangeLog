@@ -1,3 +1,8 @@
+2003-06-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: set exit_code in CMD(help) (reported
+	  by trancefx@mindspring.com).
+
 2003-06-03  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: don't assign NO_SIZE when SIZE returned 0.

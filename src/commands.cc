@@ -2355,6 +2355,7 @@ CMD(help)
 
    parent->print_cmd_index();
 
+   exit_code=0;
    return 0;
 }
 
