@@ -217,11 +217,11 @@ void  pgetJob::PrintStatus(int verbose)
 
    SessionJob::PrintStatus(verbose);
 
-   putchar('\t');
+   printf("\t");
    const char *name=cp->GetName();
    long size=cp->GetSize();
    printf(PGET_STATUS);
-   putchar('\n');
+   printf("\n");
 }
 
 void pgetJob::free_chunks()

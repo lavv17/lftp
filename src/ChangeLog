@@ -1,3 +1,9 @@
+2000-02-09  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CopyJob.cc, CopyJob.h: don't use putchar; print summary when Done().
+	* pgetJob.cc: don't use putchar.
+	* mgetJob.cc: don't print empty line.
+
 2000-02-08  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileCopy.cc: don't show rate when put==0.

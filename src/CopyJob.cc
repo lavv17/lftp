@@ -80,6 +80,10 @@ const char *CopyJob::SqueezeName(int w)
    return buf;
 }
 
+#define COPY_STATUS _("`%s' at %lu %s%s%s%s"),name,\
+      c->GetPos(),c->GetPercentDoneStr(),c->GetRateStr(),\
+      c->GetETAStr(),c->GetStatus()
+
 void CopyJob::ShowRunStatus(StatusLine *s)
 {
    if(no_status)
@@ -87,21 +91,18 @@ void CopyJob::ShowRunStatus(StatusLine *s)
    if(c->Done() || c->Error())
       return;
 
-   s->Show(_("`%s' at %lu %s%s%s%s"),
-      SqueezeName(s->GetWidthDelayed()-50),c->GetPos(),
-      c->GetPercentDoneStr(),c->GetRateStr(),
-      c->GetETAStr(),c->GetStatus());
+   const char *name=SqueezeName(s->GetWidthDelayed()-50);
+   s->Show(COPY_STATUS);
 }
 void CopyJob::PrintStatus(int v)
 {
    if(c->Done() || c->Error())
       return;
 
-   putchar('\t');
-   printf(_("`%s' at %lu %s%s%s%s"),name,c->GetPos(),
-      c->GetPercentDoneStr(),c->GetRateStr(),
-      c->GetETAStr(),c->GetStatus());
-   putchar('\n');
+   printf("\t");
+   const char *name=GetName();
+   printf(COPY_STATUS);
+   printf("\n");
 }
 
 int CopyJob::AcceptSig(int sig)
@@ -213,7 +214,7 @@ void CopyJobEnv::SetCopier(FileCopy *c,const char *n)
       cp->Fg();
 }
 
-void CopyJobEnv::SayFinal()
+void CopyJobEnv::SayFinalWithPrefix(const char *p)
 {
    if(no_status)
       return;
@@ -221,6 +222,7 @@ void CopyJobEnv::SayFinal()
       return;
    if(bytes)
    {
+      printf("%s",p);
       if(time_spent>=1)
       {
 	 printf(plural("%ld $#l#byte|bytes$ transferred"
@@ -236,17 +238,21 @@ void CopyJobEnv::SayFinal()
    }
    if(errors>0)
    {
+      printf("%s",p);
       printf(plural("Transfer of %d of %d $file|files$ failed\n",count),
 	 errors,count);
    }
    else if(count>1)
    {
+      printf("%s",p);
       printf(plural("Total %d $file|files$ transferred\n",count),count);
    }
 }
 void CopyJobEnv::PrintStatus(int v)
 {
    SessionJob::PrintStatus(v);
+   if(Done())
+      SayFinalWithPrefix("\t");
 }
 
 int CopyJobEnv::AcceptSig(int sig)

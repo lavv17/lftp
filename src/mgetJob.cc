@@ -49,7 +49,10 @@ void mgetJob::PrintStatus(int v)
    if(rg)
    {
       SessionJob::PrintStatus(v);
-      printf("\t%s\n",rg->Status());
+      const char *s=rg->Status();
+      if(!s || !s[0])
+	 return;
+      printf("\t%s\n",s);
       return;
    }
    GetJob::PrintStatus(v);

@@ -111,7 +111,8 @@ public:
    CopyJobEnv(FileAccess *s,ArgV *a,bool c=false);
    ~CopyJobEnv();
 
-   void SayFinal();
+   void SayFinalWithPrefix(const char *p);
+   void SayFinal() { SayFinalWithPrefix(""); }
    void	PrintStatus(int);
 
    void Ascii() { ascii=true; }
