@@ -2,12 +2,13 @@ dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.53)
 AC_INIT([lftp], [3.0.6], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
+AC_CONFIG_LIBOBJ_DIR(lib)
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
 AM_CONFIG_HEADER(include/config.h)
 
 # This doesn't *require* GNU extensions; it merely enables them if
 # they're there.
-AC__GNU_SOURCE
+AC_GNU_SOURCE
 
 test -z "$CXX"	     && DEFAULT_CXX=yes
 test -z "$CFLAGS"    && DEFAULT_CFLAGS=yes
@@ -348,8 +349,7 @@ AC_TYPE_SIGNAL
 AC_FUNC_UTIME_NULL
 AC_FUNC_GETPGRP
 AC_FUNC_VPRINTF
-AC_FUNC_FNMATCH
-LFTP_GNU_FNMATCH
+AC_FUNC_FNMATCH_GNU
 AC_HEADER_STAT
 LFTP_FUNC_POLL
 LFTP_FUNC_SSCANF_CONST
@@ -400,9 +400,9 @@ if test x$ac_cv_func_glob = xno; then
    AC_LIBOBJ(glob)
    AC_CONFIG_LINKS([include/glob.h:lib/glob.h])
 fi
-if test x$ac_cv_func_fnmatch_works = xno -o x$lftp_cv_gnu_fnmatch = xno; then
+if test x$ac_cv_func_fnmatch_gnu = xno; then
    AC_LIBOBJ(fnmatch)
-   AC_CONFIG_LINKS([include/fnmatch.h:lib/fnmatch.h])
+   AC_CONFIG_LINKS([include/fnmatch.h:lib/fnmatch_.h])
    AC_DEFINE_UNQUOTED(fnmatch, rpl_fnmatch, [Define to rpl_fnmatch if system fnmatch does not work])
 fi
 
@@ -410,5 +410,24 @@ if test "$prefix" = /usr -a "$sysconfdir" = '${prefix}/etc'; then
    sysconfdir=/etc
 fi
 
-AC_CONFIG_FILES([Makefile src/Makefile lib/Makefile include/Makefile doc/Makefile readline-4.3/Makefile po/Makefile.in m4/Makefile contrib/Makefile])
+AH_TOP([
+#ifndef CONFIG_H
+#define CONFIG_H
+])
+
+AH_BOTTOM([
+#include <post-config.h>
+#endif /* CONFIG_H */
+])
+
+AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([src/Makefile])
+AC_CONFIG_FILES([lib/Makefile])
+AC_CONFIG_FILES([include/Makefile])
+AC_CONFIG_FILES([doc/Makefile])
+AC_CONFIG_FILES([readline-4.3/Makefile])
+AC_CONFIG_FILES([po/Makefile.in])
+AC_CONFIG_FILES([m4/Makefile])
+AC_CONFIG_FILES([contrib/Makefile])
+
 AC_OUTPUT
