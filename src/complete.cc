@@ -815,6 +815,7 @@ int   lftp_rl_getc(FILE *file)
 	 return EOF;
       if(res!=r.NOCHAR)
 	 return res;
+      lftp_rl_redisplay_maybe();
       SMTask::Block();
       if(SignalHook::GetCount(SIGINT)>0)
       {
