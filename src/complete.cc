@@ -557,8 +557,7 @@ static char **lftp_completion (char *text,int start,int end)
 	 if(info->defined&info->TYPE && info->filetype==info->DIRECTORY)
 	    rl_completion_append_character='/';
       }
-      else
-	 rl_filename_completion_desired=1;
+      rl_filename_completion_desired=1;
       generator = remote_generator;
       break;
 

@@ -1145,6 +1145,7 @@ bool Glob::HasWildcards(const char *s)
 	 break;
       case '*':
       case '[':
+      case ']':
       case '?':
 	 return true;
       }
@@ -1162,6 +1163,7 @@ void Glob::UnquoteWildcards(char *s)
       {
 	 if(s[1]=='*'
 	 || s[1]=='['
+	 || s[1]==']'
 	 || s[1]=='?'
 	 || s[1]=='\\')
 	    s++;

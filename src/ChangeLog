@@ -1,3 +1,9 @@
+2000-07-31  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc: add ] to list of wildcards.
+	* FtpGlob.cc: fix coredump on empty directories.
+	* complete.cc: fix filename quotation.
+
 2000-07-30  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileAccess.cc, FileAccess.h: res_prefix new member.
