@@ -906,9 +906,9 @@ static int skip_double_quoted(char *s, int i)
 
 int lftp_char_is_quoted(char *string,int eindex)
 {
-  int i, pass_next, quoted;
+  int i, pass_next;
 
-  for (i = pass_next = quoted = 0; i <= eindex; i++)
+  for (i = pass_next = 0; i <= eindex; i++)
     {
       if (pass_next)
         {

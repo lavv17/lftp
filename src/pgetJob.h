@@ -75,7 +75,7 @@ public:
 
    void SetMaxConn(int n) { max_chunks=n; }
 
-   pgetJob::ChunkXfer *pgetJob::NewChunk(FileAccess *session,const char *remote,
+   pgetJob::ChunkXfer *NewChunk(FileAccess *session,const char *remote,
 					  FDStream *local,long start,long limit);
 };
 

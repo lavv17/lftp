@@ -3,6 +3,7 @@
 	* Http.cc: query http:user-agent explicitly.
 	* MirrorJob.cc: fix compilation problem.
 	* CmdExec.cc: fix stall problem with glob.
+	* DummyProto.h, complete.cc, pgetJob.h: fix warnings.
 
 2000-04-19  Alexander V. Lukyanov  <lav@yars.free.net>
 

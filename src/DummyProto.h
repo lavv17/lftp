@@ -35,7 +35,7 @@ public:
    int Read(void *buf,int size);
    int Write(const void *buf,int size);
    int StoreStatus();
-   void Reconfig() {}
+   void Reconfig(const char *) {}
 
    DirList *MakeDirList(ArgV *);
 };
@@ -54,7 +54,7 @@ public:
    int Read(void *buf,int size);
    int Write(const void *buf,int size);
    int StoreStatus();
-   void Reconfig() {}
+   void Reconfig(const char *) {}
    const char *StrError(int err);
 
    DirList *MakeDirList(ArgV *);
