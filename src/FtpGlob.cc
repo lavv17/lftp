@@ -110,9 +110,8 @@ int   FtpGlob::Do()
 	 return m;
       dir_list=updir_glob->GetResult();
       xfree(dir);
-      dir=*dir_list;
       m=MOVED;
-      if(dir==0)
+      if(dir_list==0 || (dir=*dir_list)==0)
       {
 	 done=true;
 	 return m;

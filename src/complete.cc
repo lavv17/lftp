@@ -963,8 +963,8 @@ int   lftp_rl_getc(FILE *file)
       SMTask::Block();
       if(SignalHook::GetCount(SIGINT)>0)
       {
-	 rl_kill_text(0,rl_end);
-	 rl_line_buffer[0]=0;
+	 if(rl_line_buffer && rl_end>0)
+	    rl_kill_full_line(0,0);
 	 return '\n';
       }
    }
