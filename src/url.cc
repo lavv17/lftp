@@ -56,6 +56,9 @@ ParsedURL::ParsedURL(const char *url,bool proto_required,bool use_rfc1738)
       proto=base;
 
       base=scan;
+
+      if(!strcmp(proto,"file") && scan[0]=='/')
+	 goto file_with_no_host;
    }
    else if(scan[0]==':' && !strncmp(base,"file:",5))
    {
@@ -63,6 +66,7 @@ ParsedURL::ParsedURL(const char *url,bool proto_required,bool use_rfc1738)
       *scan=0;
       scan++;
       proto=base;
+   file_with_no_host:
       memmove(scan+10,scan,strlen(scan)+1);
       host=scan;
       strcpy(host,"localhost");

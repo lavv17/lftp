@@ -1,3 +1,7 @@
+2001-06-30  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* url.cc: use host=localhost for urls like file:///path.
+
 2001-06-26  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: fix closure generation for user==0.
