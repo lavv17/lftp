@@ -728,7 +728,7 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
 
    glob=0;
    args_glob=0;
-   
+
    is_queue=false;
    queue_cwd=0;
    queue_lcwd=0;
@@ -745,7 +745,7 @@ CmdExec::~CmdExec()
 	 break;
       }
    }
-   
+
    free_used_aliases();
    xfree(cmd);
    if(args)
@@ -762,7 +762,7 @@ CmdExec::~CmdExec()
       delete glob;
    if(args_glob)
       delete args_glob;
-      
+
    xfree(queue_cwd);
    xfree(queue_lcwd);
 }
@@ -911,7 +911,7 @@ void CmdExec::beep_if_long()
       write(1,"\007",1);
 }
 
-void CmdExec::Reconfig()
+void CmdExec::Reconfig(const char *)
 {
    long_running = res_long_running.Query(0);
    remote_completion = res_remote_completion.Query(0);
@@ -1174,12 +1174,12 @@ Job *CmdExec::default_cmd()
 void CmdExec::FeedArgV(const ArgV *args,int start)
 {
    char *cmd;
-   
+
    if(start+1==args->count())
       cmd=args->Combine(start);
    else
       cmd=args->CombineQuoted(start);
-      
+
    FeedCmd(cmd);
    FeedCmd("\n");
    xfree(cmd);

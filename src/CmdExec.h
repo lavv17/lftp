@@ -125,7 +125,7 @@ private:
 
    static CmdExec *chain;
    CmdExec *next;
-   
+
    bool is_queue;
    char *queue_cwd;
    char *queue_lcwd;
@@ -171,7 +171,7 @@ public:
    bool	 verify_host;
    bool	 verify_path;
 
-   void	 Reconfig();
+   void	 Reconfig(const char *name=0);
 
    void	 beep_if_long();
    time_t start_time;
