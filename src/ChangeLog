@@ -1,3 +1,7 @@
+2001-12-11  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* mkdirJob.cc: set priority on newly created url_session.
+
 2001-12-10  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* LsCache.cc: don't assume the listing to be parseable; call free_fset

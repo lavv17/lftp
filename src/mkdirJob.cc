@@ -77,7 +77,10 @@ int mkdirJob::Do()
       if(u.proto)
 	 url_session=FileAccess::New(&u);
       if(url_session)
+      {
+	 url_session->SetPriority(fg?1:0);
 	 url_session->Mkdir(u.path,opt_p);
+      }
       else
 	 session->Mkdir(curr,opt_p);
    }
