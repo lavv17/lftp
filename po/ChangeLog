@@ -1,3 +1,7 @@
+2001-03-02	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update
+
 2001-02-16	Albert Chin-A-Young <china@thewrittenword.com>
 
 	* Makefile.in.in: Add --with-locale-dir=DIR and 
