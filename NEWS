@@ -1,3 +1,12 @@
+Version 3.0.10 - 2004-10-20
+
+* better mirror -R completion added.
+* fixed upload retry corruption bug.
+* fixed rare coredump in parallel mirror.
+* don't retry on wrong password in fish and sftp protocols.
+* don't send empty Cache-Control http header.
+* don't unconditionally chmod files in mirror.
+
 Version 3.0.9 - 2004-09-20
 
 * fixed a hang up when filtering output via an external command (the bug

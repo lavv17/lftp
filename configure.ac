@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.53)
-AC_INIT([lftp], [3.0.9], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [3.0.10], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_LIBOBJ_DIR(lib)
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
@@ -228,7 +228,7 @@ AM_PROG_LIBTOOL
 LIBTOOL="$LIBTOOL --silent"
 
 dnl Checks for libraries.
-LFTP_CHECK_LIBM
+dnl LFTP_CHECK_LIBM
 AC_SEARCH_LIBS([socket],[socket])
 AC_SEARCH_LIBS([gethostbyname],[nsl])
 AC_SEARCH_LIBS([dlopen],[dl],[AC_DEFINE(HAVE_DLOPEN, 1, [have dlopen])])
