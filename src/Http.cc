@@ -1050,8 +1050,10 @@ int Http::Do()
 	       {
 		  if(H_20X(status_code))
 		  {
+#ifdef USE_SSL
 		     if(https)
 			MakeSSLBuffers();
+#endif
 		     tunnel_state=TUNNEL_ESTABLISHED;
 		     ResetRequestData();
 		     state=CONNECTED;
