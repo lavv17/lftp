@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
-"POT-Creation-Date: 2001-12-04 15:19+0300\n"
-"PO-Revision-Date: 2001-10-18 20:38GMT\n"
+"POT-Creation-Date: 2002-01-26 17:02+0300\n"
+"PO-Revision-Date: 2002-01-26 16:00GMT\n"
 "Last-Translator: Nicolas Noble <nicolas@nobis-crew.org>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -112,7 +112,7 @@ msgstr "L'accès a échoué: %s"
 msgid "File cannot be accessed"
 msgstr "Le fichier ne peut être adressé"
 
-#: src/FileAccess.cc:321 src/ftpclass.cc:3530 src/ftpclass.cc:3539
+#: src/FileAccess.cc:321 src/ftpclass.cc:3563 src/ftpclass.cc:3572
 msgid "Not connected"
 msgstr "Non connecté"
 
@@ -150,7 +150,7 @@ msgstr "Fichier déplacé vers `%s'"
 #: src/FtpListInfo.cc:237 src/NetAccess.cc:879
 #, c-format
 msgid "Getting directory contents (%lld)"
-msgstr "Récupération du contenu du répertoire (%ld)"
+msgstr "Récupération du contenu du répertoire (%lld)"
 
 #: src/FtpListInfo.cc:247 src/NetAccess.cc:885
 #, c-format
@@ -262,8 +262,7 @@ msgstr "Création du lien `%s' -> `%s'"
 
 #: src/MirrorJob.cc:487
 msgid "mirror: cannot create `file:' access object, installation error?\n"
-msgstr ""
-"mirror: ne peut créer l'objet d'accès `file:', erreur d'installation?\n"
+msgstr "mirror: ne peut créer l'objet d'accès `file:', erreur d'installation?\n"
 
 #: src/MirrorJob.cc:584
 #, c-format
@@ -306,7 +305,7 @@ msgstr "variable inconnue"
 
 #: src/ResMgr.cc:122
 msgid "ambiguous variable name"
-msgstr "nom de variable ambigu"
+msgstr "nom de variable ambigü"
 
 #: src/ResMgr.cc:396
 msgid "invalid boolean value"
@@ -350,30 +349,30 @@ msgstr "Adresse numérique IPv4 invalide"
 msgid "no closure defined for this setting"
 msgstr "aucune restriction pour ce paramètre"
 
-#: src/Http.cc:1591 src/Resolver.cc:187 src/Resolver.cc:228
-#: src/ftpclass.cc:3535
+#: src/Http.cc:1591 src/Resolver.cc:187 src/Resolver.cc:229
+#: src/ftpclass.cc:3568
 msgid "Resolving host address..."
 msgstr "Résolution de l'adresse..."
 
-#: src/Resolver.cc:249
+#: src/Resolver.cc:250
 msgid "host name resolve timeout"
 msgstr "résolution de l'adresse trop longue"
 
-#: src/Resolver.cc:300
+#: src/Resolver.cc:301
 #, c-format
 msgid "---- %d address$|es$ found\n"
 msgstr "---- %d: adress$e trouvée|es trouvées$\n"
 
-#: src/Resolver.cc:771
+#: src/Resolver.cc:772
 msgid "Host name lookup failure"
 msgstr "La résolution du nom a échouée"
 
-#: src/Resolver.cc:803
+#: src/Resolver.cc:804
 #, c-format
 msgid "no such %s service"
 msgstr "service %s inconnu"
 
-#: src/Resolver.cc:828
+#: src/Resolver.cc:826
 msgid "No address found"
 msgstr "Adresse non trouvée"
 
@@ -513,8 +512,7 @@ msgid ""
 "Close idle connections. By default only with current server.\n"
 " -a  close idle connections with all servers\n"
 msgstr ""
-"Ferme les connexions inutiles. Par défaut, uniquement pour le serveur "
-"actif.\n"
+"Ferme les connexions inutiles. Par défaut, n'agit que sur le serveur actif.\n"
 " -a  ferme les connexion inutiles de tous les serveurs\n"
 
 #: src/commands.cc:151
@@ -532,7 +530,6 @@ msgstr "[re]cls [opts] [chemin/][expression]"
 #. * it can be enabled all the time. (that's also poorly worded, and too
 #. * long.)
 #: src/commands.cc:152
-#, fuzzy
 msgid ""
 "List remote files. You can redirect output of this command to file\n"
 "or via pipe to external command.\n"
@@ -566,39 +563,37 @@ msgid ""
 "Usage note: directory names must have a trailing slash; \"cls pub/\" to\n"
 "be recognized as a directory.\n"
 msgstr ""
-"Liste les fichiers distant. Vous pouvez rediriger la sortie de cette "
-"commande\n"
-"vers un fichier ou vers un pipe sur une commande externe.\n"
+"Liste les fichiers distant. Vous pouvez rediriger la sortie de cette\n"
+"commande vers un fichier ou vers un pipe sur une commande externe.\n"
 "\n"
+" -1                   - sortie sur une seule colonne\n"
 " -B, --basename       - affiche les noms des fichiers uniquement\n"
 " -F, --classify       - ajoute un indicateur ('/' ou '@') aux entrées\n"
 " -l, --long           - utilise un format de liste long\n"
+" -q, --quiet          - n'affiche pas l'état\n"
 " -s, --size           - affiche les tailles des fichiers\n"
-"     --filesize       - avec -s, affiche uniquement les tailles pour les "
-"fichiers\n"
+"     --filesize       - avec -s, n'affiche que les tailles des fichiers\n"
 " -i, --nocase         - la recherche ne fait pas attention à la casse\n"
 " -I, --sortnocase     - trie sans tenir compte de la casse\n"
 " -D, --dirsfirst      - affiche les répertoires en premier\n"
 "     --sort=OPT       - \"name\" (par nom), \"size\" (par taille)\n"
 " -S                   - trie par la taille des fichiers\n"
 "\n"
-"Par défaut, la sortie de cls est cachée, pour voir un nouveau listing, "
-"utilisez\n"
-"`recls' ou `cache flush'.\n"
+"Par défaut, la sortie de cls est cachée, pour voir un nouveau listing,\n"
+"utilisez `recls' ou `cache flush'.\n"
 "\n"
 "Les variables cls-default et cls-completion-default peuvent être utilisées\n"
-"pour spécifier les défauts pour les listings cls et les listings de "
-"complétion,\n"
-"respectivement. Par exemple, pour que les listings de complétion affichent "
-"les\n"
-"tailles de fichiers, mettez cls-completion-default à \"-s\".\n"
+"pour spécifier les défauts pour les listings cls et les listings de\n"
+"complétion, respectivement. Par exemple, pour que les listings de\n"
+"complétion affichent les tailles de fichiers, mettez\n"
+"cls-completion-default à \"-s\".\n"
 "\n"
 "Astices: Utilisez --filesize et -D pour de meilleurs listings. Si vous\n"
 "ne voulez pas toujours voir les tailles des fichiers, --filesize pour\n"
 "cls-default affectera l'option -s de la ligne de commande. Toutes les\n"
 "options fonctionnent pour cls-completion-default. -i pour\n"
 "pour cls-completion-default va désactiver la casse pour la complétion.\n"
-"Nota: les noms des répertoires doivent avoir un slash final; \"cls pub/"
+"Nota: les noms des répertoires doivent avoir un slash final; \"cls pub/\n"
 "\"pour être reconnu en tant que répertoire.\n"
 
 #: src/commands.cc:197
@@ -610,14 +605,12 @@ msgid ""
 "Set debug level to given value or turn debug off completely.\n"
 " -o <file>  redirect debug output to the file.\n"
 msgstr ""
-"Définit le niveau de déboggage a la valeur indiquée ou désactive le "
-"déboggage.\n"
+"Définit le niveau de déboggage a la valeur indiquée ou désactive le déboggage.\n"
 " -o <fichier>  redirige le déboggage vers un fichier.\n"
 
 #: src/commands.cc:200
-#, fuzzy
 msgid "du [options] <dirs>"
-msgstr "mkdir [-p] <reps>"
+msgstr "du [options] <reps>"
 
 #: src/commands.cc:201
 msgid ""
@@ -639,6 +632,21 @@ msgid ""
 " -s, --summarize       display only a total for each argument\n"
 "     --exclude=PAT     exclude files that match PAT\n"
 msgstr ""
+"Produit un sommaire de l'utilisation de l'espace disque\n"
+" -a, --all             affiche les résultats pour les fichiers aussi\n"
+" -b, --bytes           affiche les tailles en octets\n"
+" -c, --total           produit un total final\n"
+" -d, --max-depth=N     affiche la taille d'un répertoire uniquement\n"
+"                       s'il est à un niveau inférieur ou égal à N\n"
+"                       de l'argument de la ligne de commande;\n"
+"                       --max-depth=0 a le même effet que --summarize\n"
+" -h, --human-readable  affiche les tailles au format \"humain\"\n"
+" -H, --si              même chose mais utilise des puissance de 1000\n"
+" -k, --kilobytes       même chose que --block-size=1024\n"
+" -m, --megabytes       même chose que --block-size=1048576\n"
+" -S, --separate-dirs   ne pas inclure la taille des sous-répertoires\n"
+" -s, --summarize       affiche uniquement un total général\n"
+"     --exclude=PAT     exclus les fichiers qui matchent PAT\n"
 
 #: src/commands.cc:217
 msgid "exit [<code>|bg]"
@@ -739,13 +747,12 @@ msgid ""
 "or \"all\" to list all entries.\n"
 msgstr ""
 " -w <fichier> Écrit l'historique dans le fichier.\n"
-" -r <fichier> Lit l'historique depuis le fichier et l'ajoute à l'historique "
-"en cours.\n"
+" -r <fichier> Lit l'historique depuis le fichier et l'ajoute à\n"
+"     l'historique en cours.\n"
 " -c  Efface l'historique.\n"
 " -l  Liste l'historique (défaut).\n"
-"L'argument optionnel nb spécifie le nombre de lignes d'historique à "
-"afficher,\n"
-"ou \"all\" pour lister toutes les entrées.\n"
+"L'argument optionnel nb spécifie le nombre de lignes d'historique\n"
+"à afficher, ou \"all\" pour lister toutes les entrées.\n"
 
 #: src/commands.cc:256
 msgid "List running jobs. -v means verbose, several -v can be specified.\n"
@@ -944,9 +951,8 @@ msgstr "more <fichiers>"
 #: src/commands.cc:326
 msgid "Same as `cat <files> | more'. if PAGER is set, it is used as filter\n"
 msgstr ""
-"Même chose que `cat <fichiers> | more'. Si PAGER est définit, il est "
-"utilisé\n"
-"en temps que filtre.\n"
+"Même chose que `cat <fichiers> | more'. Si PAGER est définit, il est\n"
+"utilisé en temps que filtre.\n"
 
 #: src/commands.cc:327
 msgid "mput [OPTS] <files>"
@@ -1133,26 +1139,36 @@ msgstr ""
 "remis a zéro par une reconnexion a tout moment.\n"
 
 #: src/commands.cc:388
-msgid "recls [<args>]Same as `cls', but don't look in cache\n"
+msgid ""
+"recls [<args>]\n"
+"Same as `cls', but don't look in cache\n"
 msgstr ""
-"recls [<args>]Même chose que `cls', sauf que le cache n'est pas utilisé\n"
+"recls [<args>]\n"
+"Même chose que `cls', sauf que le cache n'est pas utilisé\n"
 
 #: src/commands.cc:391
-msgid "Usage: reget [OPTS] <rfile> [-o <lfile>]Same as `get -c'\n"
+msgid ""
+"Usage: reget [OPTS] <rfile> [-o <lfile>]\n"
+"Same as `get -c'\n"
 msgstr ""
-"Usage: reget [OPTS] <fichierd> [-o <fichierl>]Même chose que `get -c'\n"
+"Usage: reget [OPTS] <fichierd> [-o <fichierl>]\n"
+"Même chose que `get -c'\n"
 
 #: src/commands.cc:394
-msgid "Usage: rels [<args>]Same as `ls', but don't look in cache\n"
+msgid ""
+"Usage: rels [<args>]\n"
+"Same as `ls', but don't look in cache\n"
 msgstr ""
-"Usage: rels [<args>]Même chose que `ls', sauf que le cache n'est pas "
-"utilisé\n"
+"Usage: rels [<args>]\n"
+"Même chose que `ls', sauf que le cache n'est pas utilisé\n"
 
 #: src/commands.cc:397
-msgid "Usage: renlist [<args>]Same as `nlist', but don't look in cache\n"
+msgid ""
+"Usage: renlist [<args>]\n"
+"Same as `nlist', but don't look in cache\n"
 msgstr ""
-"Usage: renlist [<args>]Même chose que `nlist', sauf que le cache n'est pas "
-"utilisé\n"
+"Usage: renlist [<args>]\n"
+"Même chose que `nlist', sauf que le cache n'est pas utilisé\n"
 
 #: src/commands.cc:399
 msgid "repeat [delay] [command]"
@@ -1168,8 +1184,12 @@ msgstr ""
 "par défaut est la commande vide.\n"
 
 #: src/commands.cc:403
-msgid "Usage: reput <lfile> [-o <rfile>]Same as `put -c'\n"
-msgstr "Usage: reput <fichierl> [-o <fichierd>]Même chose que `put -c'\n"
+msgid ""
+"Usage: reput <lfile> [-o <rfile>]\n"
+"Same as `put -c'\n"
+msgstr ""
+"Usage: reput <fichierl> [-o <fichierd>]\n"
+"Même chose que `put -c'\n"
 
 #: src/commands.cc:405
 msgid "rm [-r] [-f] <files>"
@@ -1216,14 +1236,11 @@ msgid ""
 " -d  list only default values, not necessary current ones\n"
 msgstr ""
 "Définit la variable à la valeur indiquée. Si la valeur est omise, cela\n"
-"va effacer la variable. Le format d'un nom de variable est ``nom/"
-"restriction''\n"
-"où la restriction permet de spécifier l'application exacte de la "
-"définition.\n"
-"Regardez lftp(1) pour les détails.\n"
-"Si set est appelée sans nom de variable, alors seuls les définitions "
-"modifiées\n"
-"sont affichées. Cela peut être changé par les options:\n"
+"va effacer la variable. Le format d'un nom de variable est\n"
+"``nom/restriction'' où la restriction permet de spécifier l'application\n"
+"exacte de la définition. Voir lftp(1) pour plus de détails.\n"
+"Si set est appelée sans nom de variable, alors seuls les définitions\n"
+"modifiées sont affichées. Cela peut être changé par les options:\n"
 " -a  liste toutes les définitions, même les valeurs par défaut\n"
 " -d  liste uniquement les valeurs par défaut\n"
 
@@ -1435,9 +1452,9 @@ msgid "File name missed. "
 msgstr "Nom de fichier manquant. "
 
 #: src/commands.cc:1569
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s %s[-f] files...\n"
-msgstr "Usage: %s [-r] [-f] fichiers...\n"
+msgstr "Usage: %s %s [-f] fichiers...\n"
 
 #: src/commands.cc:1618
 #, c-format
@@ -1536,8 +1553,7 @@ msgstr "%s: `expire' attendu\n"
 
 #: src/commands.cc:2151
 #, c-format
-msgid ""
-"%s: %s - no such cached session. Use `scache' to look at session list.\n"
+msgid "%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr "%s: %s - pas de telle session cachée. Utilisez `scache'\n"
 
 #: src/commands.cc:2168
@@ -1563,14 +1579,12 @@ msgstr "%s est un alias pour `%s'\n"
 #: src/commands.cc:2190
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
-msgstr ""
-"Commande inconnue `%s'. Utilisez `help' pour voir la liste des commandes.\n"
+msgstr "Commande inconnue `%s'. Utilisez `help' pour voir la liste des commandes.\n"
 
 #: src/commands.cc:2192
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
-msgstr ""
-"Commande ambiguë `%s'. Utilisez `help' pour voir la liste des commandes.\n"
+msgstr "Commande ambiguë `%s'. Utilisez `help' pour voir la liste des commandes.\n"
 
 #: src/commands.cc:2243
 #, c-format
@@ -1578,10 +1592,8 @@ msgid "Lftp | Version %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"
 msgstr "Lftp | Version %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"
 
 #: src/commands.cc:2245
-msgid ""
-"This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
-msgstr ""
-"Ceci est un logiciel libre SANS GARANTIE. Voir COPYING pour les détails.\n"
+msgid "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
+msgstr "Ceci est un logiciel libre SANS GARANTIE. Voir COPYING pour les détails.\n"
 
 #: src/commands.cc:2247
 #, c-format
@@ -1614,19 +1626,19 @@ msgid "Usage: %s [-d #] dir\n"
 msgstr "Usage: %s [-d #] rep\n"
 
 #: src/commands.cc:2530
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [options] <dirs>\n"
-msgstr "Usage: %s [-d #] rep\n"
+msgstr "Usage: %s [options] <reps>\n"
 
 #: src/commands.cc:2536
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
-msgstr ""
+msgstr "%s: attention --summarize revient au même que --max-depth=0\n"
 
 #: src/commands.cc:2540
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
-msgstr ""
+msgstr "%s: --summarize et --max-depth=%i sont exclusif\n"
 
 #: src/commands.cc:2577
 #, c-format
@@ -1675,8 +1687,7 @@ msgstr "La réponse du serveur est de la forme ftp:retry-530, recommence"
 
 #: src/ftpclass.cc:410
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
-msgstr ""
-"La réponse du serveur est de la forme ftp:retry-530-anonymous, recommence"
+msgstr "La réponse du serveur est de la forme ftp:retry-530-anonymous, recommence"
 
 #: src/ftpclass.cc:434
 msgid "Account is required, set ftp:acct variable"
@@ -1698,11 +1709,11 @@ msgstr "la résolution du nom du host a échouée"
 msgid "cannot parse EPSV response"
 msgstr "ne peut analyser la réponse EPSV"
 
-#: src/Http.cc:769 src/ftpclass.cc:1070
+#: src/Http.cc:764 src/ftpclass.cc:1070
 msgid "Closing idle connection"
 msgstr "Fermeture de la connexion inutile"
 
-#: src/Http.cc:897 src/ftpclass.cc:1151
+#: src/Http.cc:892 src/ftpclass.cc:1151
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "ne peut créer un socket de la famille %d"
@@ -1720,104 +1731,104 @@ msgstr "protocole non supporté"
 msgid "Connecting data socket to (%s) port %u"
 msgstr "Connexion du socket de données à (%s) port %u"
 
-#: src/ftpclass.cc:1856 src/ftpclass.cc:3403
+#: src/ftpclass.cc:1856 src/ftpclass.cc:3436
 msgid "Switching passive mode off"
 msgstr "Désactivation du mode passif"
 
-#: src/Http.cc:985 src/ftpclass.cc:2306
+#: src/Http.cc:980 src/ftpclass.cc:2320
 msgid "Peer closed connection"
 msgstr "Connexion interrompue par un tiers"
 
-#: src/ftpclass.cc:2333
+#: src/ftpclass.cc:2347
 msgid "Persist and retry"
 msgstr "Persiste et réessaye"
 
-#: src/ftpclass.cc:2432
+#: src/ftpclass.cc:2446
 msgid "Closing control socket"
 msgstr "Fermeture du socket de contrôle"
 
-#: src/ftpclass.cc:2514
+#: src/ftpclass.cc:2528
 msgid "Closing data socket"
 msgstr "Fermeture du socket de données"
 
-#: src/ftpclass.cc:3244
+#: src/ftpclass.cc:3277
 msgid "saw file size in response"
 msgstr "taille du fichier détectée dans la réponse"
 
-#: src/ftpclass.cc:3255
+#: src/ftpclass.cc:3288
 msgid "remote end closes connection"
 msgstr "le serveur a fermé la connexion"
 
-#: src/ftpclass.cc:3263
+#: src/ftpclass.cc:3296
 msgid "extra server response"
 msgstr "réponse du serveur supplémentaire"
 
-#: src/ftpclass.cc:3275 src/ftpclass.cc:3300
+#: src/ftpclass.cc:3308 src/ftpclass.cc:3333
 msgid "Turning on sync-mode"
 msgstr "Activation de sync-mode"
 
-#: src/ftpclass.cc:3420
+#: src/ftpclass.cc:3453
 msgid "Switching passive mode on"
 msgstr "Activation du mode passif"
 
-#: src/ftpclass.cc:3486
+#: src/ftpclass.cc:3519
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr "ftp:ssl-force est défini et le serveur ne supporte pas SSL"
 
-#: src/ftpclass.cc:3525
+#: src/ftpclass.cc:3558
 msgid "Sending commands..."
 msgstr "Émission des commandes..."
 
-#: src/Http.cc:1606 src/ftpclass.cc:3527 src/ftpclass.cc:3552
-#: src/ftpclass.cc:3564
+#: src/Http.cc:1606 src/ftpclass.cc:3560 src/ftpclass.cc:3585
+#: src/ftpclass.cc:3597
 msgid "Waiting for response..."
 msgstr "En attente de réponse..."
 
-#: src/Http.cc:1599 src/ftpclass.cc:3528
+#: src/Http.cc:1599 src/ftpclass.cc:3561
 msgid "Connection idle"
 msgstr "Connexion stagnante"
 
-#: src/Http.cc:1597 src/Http.cc:1604 src/ftpclass.cc:3541
+#: src/Http.cc:1597 src/Http.cc:1604 src/ftpclass.cc:3574
 msgid "Connecting..."
 msgstr "Connexion..."
 
-#: src/ftpclass.cc:3545
+#: src/ftpclass.cc:3578
 msgid "TLS negotiation..."
 msgstr "négociation TLS..."
 
-#: src/ftpclass.cc:3547
+#: src/ftpclass.cc:3580
 msgid "Connected"
 msgstr "Connecté"
 
-#: src/ftpclass.cc:3549
+#: src/ftpclass.cc:3582
 msgid "Logging in..."
 msgstr "Login en cours..."
 
-#: src/ftpclass.cc:3553
+#: src/ftpclass.cc:3586
 msgid "Making data connection..."
 msgstr "Établissement de la connexion de données..."
 
-#: src/ftpclass.cc:3555
+#: src/ftpclass.cc:3588
 msgid "Changing remote directory..."
 msgstr "Changement de répertoire distant..."
 
-#: src/ftpclass.cc:3560
+#: src/ftpclass.cc:3593
 msgid "Waiting for other copy peer..."
 msgstr "En attente de la copie distante..."
 
-#: src/ftpclass.cc:3563 src/ftpclass.cc:3575
+#: src/ftpclass.cc:3596 src/ftpclass.cc:3608
 msgid "Waiting for transfer to complete"
 msgstr "En attente de la fin du transfert"
 
-#: src/ftpclass.cc:3566
+#: src/ftpclass.cc:3599
 msgid "Waiting for data connection..."
 msgstr "En attente de la connexion de données..."
 
-#: src/Http.cc:1602 src/ftpclass.cc:3571
+#: src/Http.cc:1602 src/ftpclass.cc:3604
 msgid "Sending data"
 msgstr "Émission des données"
 
-#: src/Http.cc:1609 src/ftpclass.cc:3573
+#: src/Http.cc:1609 src/ftpclass.cc:3606
 msgid "Receiving data"
 msgstr "Réception des données"
 
@@ -1907,35 +1918,34 @@ msgstr "%s ok, %d répertoire$ supprimé|s supprimés$\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d fichier$ supprimé|s supprimés$\n"
 
-#: src/Http.cc:168
+#: src/Http.cc:164
 msgid "Closing HTTP connection"
 msgstr "Fermeture de la connexion HTTP"
 
-#: src/Http.cc:176
+#: src/Http.cc:172
 msgid "POST method failed"
 msgstr "échec de la méthode POST"
 
 #. problem here: hftp cannot work without proxy
-#: src/Http.cc:848
+#: src/Http.cc:843
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
-msgstr ""
-"ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
+msgstr "ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
 
-#: src/Http.cc:996
+#: src/Http.cc:991
 msgid "Sending request..."
 msgstr "Émission des requêtes..."
 
 #. eof
-#: src/Http.cc:1034
+#: src/Http.cc:1029
 msgid "Hit EOF while fetching headers"
 msgstr "Reçu une fin de fichier en lisant les entêtes"
 
 #. should never happen
-#: src/Http.cc:1117
+#: src/Http.cc:1112
 msgid "Success, but did nothing??"
 msgstr "Terminé, mais rien ne s'est produit?!?"
 
-#: src/Http.cc:1151
+#: src/Http.cc:1146
 msgid "Could not parse HTTP status line"
 msgstr "Ne peut analyser la ligne d'état HTTP"
 
@@ -2182,21 +2192,3 @@ msgstr "dépendance du module `%s': %s\n"
 msgid "modules are not supported on this system"
 msgstr "les modules ne sont pas supportés sur ce système"
 
-#~ msgid "copy: get position was %lld\n"
-#~ msgstr "copy: la position de 'get' était %lld\n"
-
-#~ msgid "copy: get hit eof\n"
-#~ msgstr "copy: 'get' a atteint la fin de fichier\n"
-
-#~ msgid "copy: get reached range limit\n"
-#~ msgstr "copy: 'get' a atteint la limite\n"
-
-#~ msgid "copy: put confirmed store\n"
-#~ msgstr "copy: 'put' a confirmé l'émission\n"
-
-#~ msgid "copy: get is finished - all done\n"
-#~ msgstr "copy: 'get' a fini - travail achevé\n"
-
-#~ msgid "copy src: seek past eof (seek_pos=%lld, size=%lld)\n"
-#~ msgstr ""
-#~ "copy src: se situe après la fin de fichier (seek_pos=%lld, size=%lld)\n"
