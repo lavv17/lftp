@@ -688,12 +688,9 @@ static char **lftp_completion (const char *text,int start,int end)
 	    rl_variable_bind("completion-ignore-case", "0");
 	 if(type==REMOTE_DIR)
 	    rg->glob->DirectoriesOnly();
-	 Timer timer;
-	 timer.set_interval((int) ResMgr::Query("cmd:status-interval", 0));
-	 // The timer triggers immediately, but we don't want to show
-	 // status right away, the globbing can be quite fast.
-	 // Make the timer go, then it sleeps for the interval.
-	 timer.go();
+
+	 TimeDiff status_interval(0,ResMgr::Query("cmd:status-interval", 0));
+	 Time last_status;
 
 	 for(;;)
 	 {
@@ -712,12 +709,20 @@ static char **lftp_completion (const char *text,int start,int end)
 	       return 0;
 	    }
 
-	    if(!fso.quiet && timer.go()) {
+	    if(!fso.quiet)
+	    {
 	       /* don't set blank status; if we're operating from cache,
 		* that's all we'll get and it'll look ugly: */
 	       const char *ret = rg->Status();
 	       if(*ret)
-		  rl_message ("%s> ", ret);
+	       {
+		  TimeDiff elapsed(SMTask::now,last_status);
+		  if(elapsed>status_interval)
+		  {
+		     rl_message ("%s> ", ret);
+		     last_status=SMTask::now;
+		  }
+	       }
 	    }
 
 	    SMTask::Block();
@@ -867,7 +872,6 @@ backslash_quote (char *string)
     {
       switch (c)
 	{
- 	case '\'':
  	case '(': case ')':
  	case '!': case '{': case '}':		/* reserved words */
  	case '^':
@@ -878,7 +882,7 @@ backslash_quote (char *string)
 	  if(!shell_cmd && !quote_glob)
 	    goto def;
 	case ' ': case '\t': case '\n':		/* IFS white space */
-	case '"': case '\\':		/* quoting chars */
+	case '"': case '\'': case '\\':		/* quoting chars */
 	case '|': case '&': case ';':		/* shell metacharacters */
 	case '<': case '>':
 	  *r++ = '\\';
@@ -1092,9 +1096,9 @@ bash_quote_filename (char *s, int rtype, char *qcp)
   return ret;
 }
 
-static int skip_double_quoted(char *s, int i)
+static int skip_quoted(const char *s, int i, char q)
 {
-   while(s[i] && s[i]!='"')
+   while(s[i] && s[i]!=q)
    {
       if(s[i]=='\\' && s[i+1])
 	 i++;
@@ -1118,9 +1122,10 @@ int lftp_char_is_quoted(char *string,int eindex)
             return 1;
           continue;
         }
-      else if (string[i] == '"')
+      else if (string[i] == '"' || string[i] == '\'')
         {
-          i = skip_double_quoted (string, ++i);
+	  char quote = string[i];
+          i = skip_quoted (string, ++i, quote);
           if (i > eindex)
             return 1;
           i--;  /* the skip functions increment past the closing quote. */
@@ -1180,9 +1185,9 @@ void lftp_readline_init ()
       "lftp",		      // rl_readline_name
       lftp_completion,	      // rl_attempted_completion_function
       lftp_rl_getc,	      // rl_getc_function
-      "\"",		      // rl_completer_quote_characters
-      " \t\n\"",	      // rl_completer_word_break_characters
-      " \t\n\\\">;|&()*?[]~", // rl_filename_quote_characters
+      "\"'",		      // rl_completer_quote_characters
+      " \t\n\"'",	      // rl_completer_word_break_characters
+      " \t\n\\\"'>;|&()*?[]~",// rl_filename_quote_characters
       bash_quote_filename,    // rl_filename_quoting_function
       bash_dequote_filename,  // rl_filename_dequoting_function
       lftp_char_is_quoted);   // rl_char_is_quoted_p

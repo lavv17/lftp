@@ -1,6 +1,8 @@
 2001-11-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.h: fix coredump on `mget -E'.
+	* complete.cc, parsecmd.cc: accept single quote as well as double
+	  quote, no difference between the two yet.
 
 2001-10-30  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -30,10 +30,10 @@
 
 CmdExec::parse_result CmdExec::parse_one_cmd()
 {
-   int	 in_quotes;
+   char	 in_quotes;
 
-#define quotable(ch) (ch && (strchr("\"\\",ch) \
-		             || (!in_quotes && strchr(" \t>|;&",ch))))
+#define quotable(ch) (ch && (ch=='\\' || ch==in_quotes \
+			     || (!in_quotes && strchr("\"' \t>|;&",ch))))
 
    char *line=next_cmd;
    static char *nextarg=0;
@@ -170,8 +170,10 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
 		  else if(*line=='(')
 		     level++;
 	       }
-	       if(*line=='"')
-		  in_quotes=!in_quotes;
+	       if(in_quotes && *line==in_quotes)
+		  in_quotes=0;
+	       else if(!in_quotes && (*line=='\'' || *line=='"'))
+		  in_quotes=*line;
 	    }
 	    *endarg++=*line++;
 	 }
@@ -209,9 +211,15 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
 	    || (!in_quotes && (*line==' ' || *line=='\t'
 		     || *line=='>' || *line=='|' || *line==';' || *line=='&')))
 	       break;
-	    if(*line=='"')
+	    if(!in_quotes && (*line=='"' || *line=='\''))
 	    {
-	       in_quotes=!in_quotes;
+	       in_quotes=*line;
+	       line++;
+	       continue;
+	    }
+	    if(in_quotes && *line==in_quotes)
+	    {
+	       in_quotes=0;
 	       line++;
 	       continue;
 	    }
@@ -322,9 +330,15 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
 		  && ((redir_type!='|' && (*line==' '||*line=='\t'))
 		      || *line==';' || *line=='&')))
 	       break;
-	    if(*line=='"')
+	    if(!in_quotes && (*line=='"' || *line=='\''))
 	    {
-	       in_quotes=!in_quotes;
+	       in_quotes=*line;
+	       line++;
+	       continue;
+	    }
+	    if(in_quotes && *line==in_quotes)
+	    {
+	       in_quotes=0;
 	       line++;
 	       continue;
 	    }
