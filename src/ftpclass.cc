@@ -1116,6 +1116,7 @@ int   Ftp::Do()
       if(copy_mode==COPY_NONE
       && (mode==RETRIEVE || mode==STORE || mode==LIST || mode==LONG_LIST))
       {
+	 assert(data_sock==-1);
 	 data_sock=socket(peer_sa.sa.sa_family,SOCK_STREAM,IPPROTO_TCP);
 	 if(data_sock==-1)
 	 {
@@ -1586,7 +1587,7 @@ int   Ftp::Do()
       if(data_sock==-1)
       {
 	 if(RespQueueIsEmpty())
-	    return m;
+	    return m;	// ???
       }
 
       goto usual_return;
