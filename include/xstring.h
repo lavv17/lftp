@@ -46,6 +46,8 @@
 # endif
 #endif
 
+#include <stdarg.h>
+
 #ifndef HAVE_STRCASECMP_DECL
 CDECL int strcasecmp(const char *s1,const char *s2);
 CDECL int strncasecmp(const char *s1,const char *s2,size_t n);
