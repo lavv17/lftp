@@ -1323,8 +1323,15 @@ int   Ftp::Do()
 
       if(use_feat)
       {
-	 conn->SendCmd("FEAT");
-	 expect->Push(Expect::FEAT);
+	 if(!proxy || conn->proxy_is_http)
+	 {
+	    conn->SendCmd("FEAT");
+	    expect->Push(Expect::FEAT);
+	 }
+	 else
+	 {
+	    conn->try_feat_after_login=true;
+	 }
       }
 
       /* fallthrough */
