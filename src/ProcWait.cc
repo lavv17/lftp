@@ -23,7 +23,7 @@
 #include <config.h>
 #include <sys/wait.h>
 #include <errno.h>
-#include <stdio.h>
+#include "trio.h"
 #include "ProcWait.h"
 #include "SignalHook.h"
 

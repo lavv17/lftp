@@ -19,7 +19,7 @@
  */
 
 #include <config.h>
-#include <stdio.h>
+#include "trio.h"
 #include <assert.h>
 #include "PollVec.h"
 #include "xmalloc.h"

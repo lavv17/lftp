@@ -22,7 +22,7 @@
 
 #include <config.h>
 
-#include <stdio.h>
+#include "trio.h"
 #include <stdlib.h>
 #include "xstring.h"
 #include "netrc.h"

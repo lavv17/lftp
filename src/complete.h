@@ -23,7 +23,7 @@
 #ifndef COMPLETE_H
 #define COMPLETE_H
 
-#include <stdio.h>
+#include "trio.h"
 #include "CmdExec.h"
 
 extern CmdExec *completion_shell;

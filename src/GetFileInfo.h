@@ -21,7 +21,7 @@
 #ifndef GETFILEINFO_H
 #define GETFILEINFO_H
 
-#include <stdio.h>
+#include "trio.h"
 
 #include "SMTask.h"
 #include "FileAccess.h"

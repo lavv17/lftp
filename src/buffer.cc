@@ -23,10 +23,7 @@
 #include "xmalloc.h"
 #include "FileAccess.h"
 #include "misc.h"
-#ifdef NEED_TRIO
 #include "trio.h"
-#define vsnprintf trio_vsnprintf
-#endif
 #include "Speedometer.h"
 
 #define BUFFER_INC (8*1024) // should be power of 2

@@ -24,7 +24,7 @@
 
 #include "modconfig.h"
 
-#include <stdio.h>
+#include "trio.h"
 #include <unistd.h>
 #include <errno.h>
 #include <ctype.h>

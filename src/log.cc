@@ -23,11 +23,7 @@
 #include <config.h>
 
 #include <stdarg.h>
-#include <stdio.h>
-#ifdef NEED_TRIO
 #include "trio.h"
-#define vsnprintf trio_vsnprintf
-#endif
 #include "xmalloc.h"
 #include "xstring.h"
 #include "log.h"

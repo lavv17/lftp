@@ -23,7 +23,7 @@
 #ifndef MISC_H
 #define MISC_H
 
-#include <stdio.h>
+#include "trio.h"
 #include <sys/types.h>
 #include <sys/time.h>
 #ifdef TIME_WITH_SYS_TIME

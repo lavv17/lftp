@@ -27,11 +27,7 @@
 #endif
 #include <unistd.h>
 #include <sys/ioctl.h>
-#include <stdio.h>
-#ifdef NEED_TRIO
 #include "trio.h"
-#define vsnprintf trio_vsnprintf
-#endif
 #include <stdarg.h>
 #include "xstring.h"
 #include "xmalloc.h"
