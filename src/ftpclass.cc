@@ -30,12 +30,12 @@
 #include <assert.h>
 
 #include "ftpclass.h"
-#include "ProtoList.h"
 #include "xstring.h"
 #include "xmalloc.h"
 #include "xalloca.h"
 #include "url.h"
 #include "FtpListInfo.h"
+#include "FtpGlob.h"
 #include "log.h"
 
 enum {FTP_TYPE_A,FTP_TYPE_I};
@@ -85,7 +85,7 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 void  Ftp::ClassInit()
 {
    // register the class
-   Protocol::Register("ftp",Ftp::New);
+   Register("ftp",Ftp::New);
    if(ResMgr::Query("ftp:anon-pass",0)==(const char *)0)
       ResMgr::Set("ftp:anon-pass",0,DefaultAnonPass());
 }
@@ -738,28 +738,16 @@ void  Ftp::GetBetterConnection(int level)
 	 continue;
       if(SameConnection(o))
       {
-	 if(!relookup_always)
+	 // connected session must have resolved address
+	 if(/*o->lookup_done &&*/ !lookup_done)
 	 {
-	    if(lookup_done && !o->lookup_done)
-	    {
-	       xfree(o->peer);
-	       o->peer=(sockaddr_u*)xmemdup(peer,peer_num*sizeof(*peer));
-	       o->peer_num=peer_num;
-	       o->peer_curr=peer_curr;
-	       if(o->peer_curr>=o->peer_num)
-		  o->peer_curr=0;
-	       o->lookup_done=true;
-	    }
-	    else if(o->lookup_done && !lookup_done)
-	    {
-	       xfree(peer);
-	       peer=(sockaddr_u*)xmemdup(o->peer,o->peer_num*sizeof(*o->peer));
-	       peer_num=o->peer_num;
-	       peer_curr=o->peer_curr;
-	       if(peer_curr>=peer_num)
-		  peer_curr=0;
-	       lookup_done=true;
-	    }
+	    xfree(peer);
+	    peer=(sockaddr_u*)xmemdup(o->peer,o->peer_num*sizeof(*o->peer));
+	    peer_num=o->peer_num;
+	    peer_curr=o->peer_curr;
+	    if(peer_curr>=peer_num)
+	       peer_curr=0;
+	    lookup_done=true;
 	 }
 
 	 if(home && !o->home)
@@ -2835,6 +2823,16 @@ void  Ftp::SetFlag(int flag,bool val)
       flags&=~SYNC_WAIT;   // if SYNC_MODE is off, we don't need to wait
 }
 
+bool  Ftp::SameSiteAs(FileAccess *fa)
+{
+   if(!SameProtoAs(fa))
+      return false;
+   Ftp *o=(Ftp*)fa;
+   return(!xstrcmp(hostname,o->hostname) && !xstrcmp(portname,o->portname)
+   && !xstrcmp(user,o->user) && !xstrcmp(pass,o->pass)
+   && !xstrcmp(group,o->group) && !xstrcmp(gpass,o->gpass));
+}
+
 bool  Ftp::SameConnection(const Ftp *o)
 {
    if(!strcmp(hostname,o->hostname) && !xstrcmp(portname,o->portname)
@@ -3016,6 +3014,10 @@ ListInfo *Ftp::MakeListInfo()
 {
    return new FtpListInfo(this);
 }
+Glob *Ftp::MakeGlob(const char *pattern)
+{
+   return new FtpGlob(this,pattern);
+}
 
 
 extern "C"
@@ -3096,7 +3098,6 @@ int Ftp::Buffered()
    return 0;
 #endif
 }
-
 
 #ifdef MODULE
 CDECL void module_init()

@@ -31,9 +31,13 @@
 #include <errno.h>
 #include <ctype.h>
 #include <fcntl.h>
+#include "LsCache.h"
 #include "xalloca.h"
 #include "log.h"
 #include "url.h"
+#ifdef WITH_MODULES
+# include "module.h"
+#endif
 
 void FileAccess::Init()
 {
@@ -240,7 +244,21 @@ void  FileAccess::Open(const char *fn,int mode,long offs)
    this->mode=mode;
    mkdir_p=false;
    try_time=0;
-   return;
+
+   switch((open_mode)mode)
+   {
+   case STORE:
+   case REMOVE:
+   case MAKE_DIR:
+      LsCache::FileChanged(this,file);
+      break;
+   case REMOVE_DIR:
+      LsCache::FileChanged(this,file);
+      LsCache::TreeChanged(this,file);
+      break;
+   default:
+      break;
+   }
 }
 
 const char *FileAccess::StrError(int err)
@@ -308,6 +326,10 @@ void FileAccess::Rename(const char *f,const char *f1)
    file=xstrdup(f);
    file1=xstrdup(f1);
    mode=RENAME;
+
+   LsCache::TreeChanged(this,file);
+   LsCache::FileChanged(this,file);
+   LsCache::FileChanged(this,file1);
 }
 
 void FileAccess::Mkdir(const char *fn,bool allp)
@@ -321,6 +343,10 @@ bool FileAccess::SameLocationAs(FileAccess *fa)
    if(strcmp(this->GetProto(),fa->GetProto()))
       return false;
    return true;
+}
+bool FileAccess::SameSiteAs(FileAccess *fa)
+{
+   return SameLocationAs(fa);
 }
 
 const char *FileAccess::GetConnectURL(int flags)
@@ -733,4 +759,136 @@ void FileAccess::Reconfig()
    bytes_pool_rate = Query("limit-rate",closure);
    bytes_pool_max  = Query("limit-max",closure);
    BytesReset(); // to cut bytes_pool.
+}
+
+// FileAccess::Protocol implementation
+FileAccess::Protocol *FileAccess::Protocol::chain=0;
+
+FileAccess::Protocol::Protocol(const char *proto, SessionCreator *creator)
+{
+   this->proto=proto;
+   this->New=creator;
+   this->next=chain;
+   chain=this;
+}
+
+FileAccess::Protocol *FileAccess::Protocol::FindProto(const char *proto)
+{
+   for(Protocol *scan=chain; scan; scan=scan->next)
+      if(!strcmp(scan->proto,proto))
+	 return scan;
+   return 0;
+}
+
+FileAccess *FileAccess::Protocol::NewSession(const char *proto)
+{
+   Protocol *p;
+
+   p=FindProto(proto);
+   if(p)
+      return p->New();
+
+#ifdef WITH_MODULES
+#define PROTO_PREFIX "proto-"
+   char *mod=(char*)alloca(strlen(PROTO_PREFIX)+strlen(proto)+1);
+   sprintf(mod,"%s%s",PROTO_PREFIX,proto);
+   void *map=module_load(mod,0,0);
+   if(map==0)
+   {
+      fprintf(stderr,"%s\n",module_error_message());
+      return 0;
+   }
+   p=FindProto(proto);
+   if(p)
+      return p->New();
+#endif
+   return 0;
+}
+
+// FileAccessOperation implementation
+FileAccessOperation::FileAccessOperation()
+{
+   done=false;
+   error_text=0;
+   use_cache=true;
+}
+
+FileAccessOperation::~FileAccessOperation()
+{
+   xfree(error_text);
+}
+
+void FileAccessOperation::SetError(const char *e)
+{
+   xfree(error_text);
+   error_text=xstrdup(e);
+   done=true;
+}
+
+
+// ListInfo implementation
+ListInfo::ListInfo()
+{
+   result=0;
+
+   rxc_exclude=0;
+   rxc_include=0;
+   path=0;
+
+   need=0;
+
+   follow_symlinks=false;
+}
+
+ListInfo::~ListInfo()
+{
+   if(result)
+      delete result;
+}
+
+void ListInfo::SetExclude(const char *p,regex_t *x,regex_t *i)
+{
+   rxc_exclude=x;
+   rxc_include=i;
+   path=p;
+}
+
+// Glob implementation
+Glob::~Glob()
+{
+   free_list();
+   xfree(pattern);
+}
+
+Glob::Glob(const char *p)
+{
+   pattern=xstrdup(p);
+   list=0;
+   list_size=0;
+   list_alloc=0;
+}
+
+void Glob::free_list()
+{
+   for(int i=0; i<list_size; i++)
+      xfree(list[i]);
+   xfree(list);
+   list=0;
+   list_alloc=0;
+   list_size=0;
+}
+
+void Glob::add(const char *ptr,int len)
+{
+   // insert new file name into list
+   if(list_size>=list_alloc-1)
+   {
+      if(list_alloc==0)
+	 list_alloc=32;
+      list=(char**)xrealloc(list,(list_alloc*=2)*sizeof(*list));
+   }
+   list[list_size]=(char*)xmalloc(len+1);
+   memcpy(list[list_size],ptr,len);
+   list[list_size][len]=0;
+   list[++list_size]=0;
 }

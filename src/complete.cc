@@ -29,7 +29,6 @@
 #include "xmalloc.h"
 #include "FileAccess.h"
 #include "lftp.h"
-#include "rglob.h"
 #include "CmdExec.h"
 #include "alias.h"
 #include "SignalHook.h"
@@ -285,7 +284,7 @@ static bool force_remote=false;
    array of matches, or NULL if there aren't any. */
 char **lftp_completion (char *text,int start,int end)
 {
-   RemoteGlob *rg=0;
+   Glob *rg=0;
 
    rl_completion_append_character=' ';
    shell_cmd=false;
@@ -320,37 +319,12 @@ char **lftp_completion (char *text,int start,int end)
       if(strchr(pat,'*') || strchr(pat,'?'))
 	 return(NULL);
 
-      // get directory from the pattern (strip file name)
-      char *sl=pat+strlen(pat);
-      while(sl>pat && sl[-1]!='/')
-	 sl--;
-      while(sl>pat && sl[-1]=='/')
-	 sl--;
-      if(sl>pat)  // 'dir///file'
-	 sl[0]=0;
-      else if(pat[0]=='/')
-	 pat[1]=0;	// '///'
-      else
-	 pat[0]=0;	// no slashes
-
-      FileAccess::open_mode mode=FA::LIST;
-
-      // try to find in cache
-      if(completion_shell->completion_use_ls
-      && !LsCache::Find(completion_shell->session,pat,mode,0,0)
-      &&  LsCache::Find(completion_shell->session,pat,FA::LONG_LIST,0,0))
-      {
-	 // this is a bad hack, but often requested by people
-	 // and it's actually useful :)
-	 mode=FA::LONG_LIST;
-      }
+      strcat(pat,"*");
 
       completion_shell->session->DontSleep();
 
       SignalHook::ResetCount(SIGINT);
-      rg=new RemoteGlob(completion_shell->session,pat,mode);
-      if(mode==FA::LIST)
-	 rg->SetSlashFilter(1);
+      rg=completion_shell->session->MakeGlob(pat);
       for(;;)
       {
 	 SMTask::Schedule();
@@ -365,35 +339,6 @@ char **lftp_completion (char *text,int start,int end)
 	 SMTask::Block();
       }
       glob_res=rg->GetResult();
-
-      if(mode==FA::LONG_LIST)
-      {
-	 // bad hack
-	 // try to extract file names
-	 for(int i=0; glob_res[i]; i++)
-	 {
-	    char *s=glob_res[i];
-	    if(!strncmp(s,"total ",6))
-	    {
-	       s[0]=0;
-	       continue;
-	    }
-	    char *space=strrchr(s,' ');
-	    if(space && s[0]=='l' && space>s+5
-	    && !strncmp(space-3," ->",3))
-	    {
-	       space[-3]=0;
-	       space=strrchr(s,' ');
-	    }
-	    if(space)
-	       memmove(s,space+1,strlen(space));
-	    int len=strlen(s);
-	    if(len>1 && (s[len-1]=='@' || s[len-1]=='*' || s[len-1]=='/'))
-	    {
-	       s[len-1]=0;
-	    }
-	 }
-      }
 
       rl_filename_completion_desired=1;
       generator = remote_generator;

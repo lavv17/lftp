@@ -24,6 +24,7 @@
 #include "LsCache.h"
 #include "xmalloc.h"
 #include "plural.h"
+#include "misc.h"
 
 LsCache *LsCache::chain=0;
 bool	 LsCache::use=true;
@@ -64,6 +65,9 @@ void LsCache::CheckSize()
 
 void LsCache::Add(FileAccess *p_loc,const char *a,int m,char *d,int l)
 {
+   if(!strcmp(p_loc->GetProto(),"file"))
+      return;  // don't cache local objects
+
    CheckSize();
 
    LsCache *scan;
@@ -190,4 +194,37 @@ int LsCache::ExpireHelper::Do()
    }
    block+=TimeOut(expiring->timestamp+ttl-ct);
    return STALL;
+}
+
+void LsCache::Changed(change_mode m,FileAccess *f,const char *dir)
+{
+   char *fdir=alloca_strdup(dir_file(f->GetCwd(),dir));
+   if(m==FILE_CHANGED)
+   {
+      char *slash=strrchr(fdir,'/');
+      if(!slash)
+	 fdir[0]=0;
+      else if(slash>fdir)
+	 *slash=0;
+      else
+	 fdir[1]=0;
+   }
+   int fdir_len=strlen(fdir);
+
+   LsCache **scan=&LsCache::chain;
+   while(*scan)
+   {
+      FileAccess *sloc=(*scan)->loc;
+      if(f->SameLocationAs(sloc) || (f->SameSiteAs(sloc)
+	       && (m==TREE_CHANGED?
+		     !strncmp(fdir,dir_file(sloc->GetCwd(),(*scan)->arg),fdir_len)
+		   : !strcmp (fdir,dir_file(sloc->GetCwd(),(*scan)->arg)))))
+      {
+	 LsCache *tmp=*scan;
+	 *scan=tmp->next;
+	 delete tmp;
+	 continue;
+      }
+      scan=&scan[0]->next;
+   }
 }

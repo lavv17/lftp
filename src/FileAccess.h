@@ -39,8 +39,10 @@
 #endif
 
 #include "xmalloc.h"
-#include "ListInfo.h"
 #include "ResMgr.h"
+
+class ListInfo;
+class Glob;
 
 class FileAccess : public SMTask
 {
@@ -147,7 +149,6 @@ public:
    virtual const char *GetProto() = 0; // http, ftp, file etc
    bool SameProtoAs(FileAccess *fa) { return !strcmp(GetProto(),fa->GetProto()); }
    virtual FileAccess *Clone() = 0;
-   static FileAccess *New();
 
    const char  *GetHome() { return home; }
    const char  *GetHostName() { return hostname; }
@@ -196,6 +197,7 @@ public:
    virtual int Done() = 0;
 
    virtual bool SameLocationAs(FileAccess *fa);
+   virtual bool SameSiteAs(FileAccess *fa);
    virtual bool IsBetterThan(FileAccess *fa) { (void)fa; return false; }
 
    void Init();
@@ -232,10 +234,109 @@ public:
    virtual void Cleanup(bool all=false) { (void)all; }
       // close idle connections, etc.
    virtual ListInfo *MakeListInfo() { return 0; }
+   virtual Glob *MakeGlob(const char *pattern) { return 0; }
 
    static bool NotSerious(int err);
 
    void Reconfig();
+
+
+   typedef FileAccess *SessionCreator();
+   class Protocol
+   {
+      static Protocol *chain;
+      Protocol *next;
+      const char *proto;
+      SessionCreator *New;
+
+      static Protocol *FindProto(const char *proto);
+   public:
+      static FileAccess *NewSession(const char *proto);
+      Protocol(const char *proto,SessionCreator *creator);
+   };
+
+   static void Register(const char *proto,SessionCreator *creator)
+      {
+	 (void)new Protocol(proto,creator);
+      }
+
+   static FileAccess *New(const char *proto)
+      {
+	 return Protocol::NewSession(proto);
+      }
+};
+
+class FileAccessOperation : public SMTask
+{
+protected:
+   bool done;
+   char *error_text;
+   void SetError(const char *);
+
+   bool use_cache;
+
+public:
+   FileAccessOperation();
+   virtual ~FileAccessOperation();
+
+   virtual int Do() = 0;
+   bool Done() { return done; }
+   bool Error() { return error_text!=0; }
+   const char *ErrorText() { return error_text; }
+
+   virtual const char *Status() = 0;
+
+   void UseCache(bool y=true) { use_cache=y; }
+};
+
+class Glob : public FileAccessOperation
+{
+protected:
+   char  *pattern;
+   char	 **list;
+   int	 list_size;
+   int	 list_alloc;
+   void	 add(const char *ptr,int len);
+   void	 free_list();
+public:
+   const char *GetPattern() { return pattern; }
+   char **GetResult() { return list; }
+   Glob(const char *p);
+   virtual ~Glob();
+};
+
+#include "FileSet.h"
+
+class ListInfo : public FileAccessOperation
+{
+protected:
+   FileSet *result;
+
+   const char *path;
+   regex_t *rxc_exclude;
+   regex_t *rxc_include;
+
+   unsigned need;
+   bool follow_symlinks;
+
+public:
+   ListInfo();
+   virtual ~ListInfo();
+
+   virtual void SetExclude(const char *p,regex_t *x,regex_t *i);
+
+   FileSet *GetResult()
+      {
+	 FileSet *tmp=result;
+      	 result=0;
+	 return tmp;
+	 // miss := (assign and return old value) :(
+      	 // return result:=0;
+      }
+
+   void Need(unsigned mask) { need|=mask; }
+   void NoNeed(unsigned mask) { need&=~mask; }
+   void FollowSymlinks() { follow_symlinks=true; }
 };
 
 // shortcut

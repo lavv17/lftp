@@ -287,6 +287,7 @@ public:
    static FileAccess *New() { return new Ftp(); }
 
    bool	 SameLocationAs(FileAccess *);
+   bool	 SameSiteAs(FileAccess *);
 
    bool	 IsConnected()
    {
@@ -352,7 +353,9 @@ public:
 
    void Reconfig();
    void Cleanup(bool all);
-   class ListInfo *MakeListInfo();
+
+   ListInfo *MakeListInfo();
+   Glob *MakeGlob(const char *pattern);
 };
 
 #endif /* FTPCLASS_H */

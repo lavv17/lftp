@@ -57,6 +57,21 @@ public:
    static void Add(FileAccess *p_loc,const char *a,int m,char *d,int l);
    static int Find(FileAccess *p_loc,const char *a,int m,char **d,int *l);
 
+   enum change_mode { FILE_CHANGED, DIR_CHANGED, TREE_CHANGED };
+   static void Changed(change_mode m,FileAccess *f,const char *what);
+   static void FileChanged(FileAccess *f,const char *file)
+      {
+	 Changed(FILE_CHANGED,f,file);
+      }
+   static void DirectoryChanged(FileAccess *f,const char *dir)
+      {
+	 Changed(DIR_CHANGED,f,dir);
+      }
+   static void TreeChanged(FileAccess *f,const char *dir)
+      {
+	 Changed(TREE_CHANGED,f,dir);
+      }
+
    static void List();
    static void Flush();
    static void On() { use=true; }
