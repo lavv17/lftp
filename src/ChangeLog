@@ -3,6 +3,8 @@
 	* FileCopy.cc: no need to convert cached data - it is done by other
 	  copy peer; don't translate really debugging messages.
 	* misc.cc: no need for crlf_to_lf.
+	* complete.cc: don't show completion status right after the tab since
+	  the listing can come from cache fast.
 
 2001-10-29  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -690,6 +690,10 @@ static char **lftp_completion (const char *text,int start,int end)
 	    rg->glob->DirectoriesOnly();
 	 Timer timer;
 	 timer.set_interval((int) ResMgr::Query("cmd:status-interval", 0));
+	 // The timer triggers immediately, but we don't want to show
+	 // status right away, the globbing can be quite fast.
+	 // Make the timer go, then it sleeps for the interval.
+	 timer.go();
 
 	 for(;;)
 	 {
