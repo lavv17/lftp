@@ -20,7 +20,7 @@ VPATH = @srcdir@
 prefix = @prefix@
 exec_prefix = @exec_prefix@
 datadir = $(prefix)/share
-localedir = $(datadir)/locale
+localedir = @LOCALE_DIR@
 gettextsrcdir = $(prefix)/share/gettext/po
 subdir = po
 
