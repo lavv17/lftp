@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
 "POT-Creation-Date: 2001-09-13 19:38+0400\n"
-"PO-Revision-Date: 2000-09-27 14:22+09:00\n"
+"PO-Revision-Date: 2001-09-24 00:06+0900\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -345,7 +345,7 @@ msgstr "範囲フォーマットが不正です。正しいフォーマットは 最小-最大 例) 10-20"
 
 #: src/ResMgr.cc:767
 msgid "Invalid IPv4 numeric address"
-msgstr ""
+msgstr "不正なIPv4番号アドレス"
 
 #: src/ResMgr.cc:773
 msgid "no closure defined for this setting"
@@ -361,9 +361,9 @@ msgid "host name resolve timeout"
 msgstr "ホスト名解決がタイムアウトしました"
 
 #: src/Resolver.cc:300
-#, fuzzy, c-format
+#, c-format
 msgid "---- %d address$|es$ found\n"
-msgstr "アドレスが見つかりません"
+msgstr "---- %d 個のアドレスが見つかりました\n"
 
 #: src/Resolver.cc:771
 msgid "Host name lookup failure"
@@ -549,7 +549,6 @@ msgstr ""
 "移行させます。\n"
 
 #: src/commands.cc:162
-#, fuzzy
 msgid ""
 "Usage: find [OPTS] [directory]\n"
 "Print contents of specified directory of current directory recursively.\n"
@@ -557,10 +556,11 @@ msgid ""
 "You can redirect output of this command.\n"
 " -d, --maxdepth=LEVELS  Descend at most LEVELS of directories.\n"
 msgstr ""
-"使い方: find [directory]\n"
+"使い方: find [OPTS] [directory]\n"
 "現在のディレクトリ内にある指定のディレクトリの内容を再帰的に表示します。\n"
 "リストにあるディレクトリには後ろにスラッシュが付けられて表示されます。\n"
 "このコマンドの出力をリダイレクトすることが可能です。\n"
+" -d, --maxdepth=LEVELS 最深で深さLEVELSのディレクトリまで降下します。\n"
 
 #: src/commands.cc:167
 msgid "get [OPTS] <rfile> [-o <lfile>]"
@@ -617,7 +617,7 @@ msgstr ""
 
 #: src/commands.cc:186
 msgid "history -w file|-r file|-c|-l [cnt]"
-msgstr ""
+msgstr "history -w file|-r file|-c|-l [cnt]"
 
 #: src/commands.cc:187
 msgid ""
@@ -628,6 +628,11 @@ msgid ""
 "Optional argument cnt specifies the number of history lines to list,\n"
 "or \"all\" to list all entries.\n"
 msgstr ""
+" -w <file> 履歴をファイルに書き込みます。\n"
+" -r <file> 履歴をファイルから読み込み、現在の履歴に追加します。\n"
+" -c 履歴を消去します。\n"
+" -l 履歴を列挙します(デフォルト)。\n"
+" オプション引数 cnt では列挙する履歴の行数を指定します。\"all\"を指定すると全てのエントリが列挙されます。\n"
 
 #: src/commands.cc:194
 msgid "List running jobs. -v means verbose, several -v can be specified.\n"
@@ -810,7 +815,6 @@ msgid "module name [args]"
 msgstr "module name [args]"
 
 #: src/commands.cc:258
-#, fuzzy
 msgid ""
 "Load module (shared object). The module should contain function\n"
 "   void module_init(int argc,const char *const *argv)\n"
@@ -819,9 +823,8 @@ msgid ""
 msgstr ""
 "モジュール (共有オブジェクト) を読み込みます。モジュールには\n"
 "   void module_init(int argc,const char *const *argv)\n"
-"という関数が含まれている必要があります。名前にスラッシュが含まれていた場"
-"合、\n"
-"現在のディレクトリから探します。そうでなければ PKGLIBDIR を探します。\n"
+"という関数が含まれている必要があります。名前にスラッシュが含まれていた場合、\n"
+"現在のディレクトリから探します。そうでなければ module:path で設定されたディレクトリから探します。\n"
 
 #: src/commands.cc:262
 msgid "more <files>"
@@ -970,6 +973,22 @@ msgid ""
 "Move the given items before the given queue index, or to the end if no\n"
 "destination is given.\n"
 msgstr ""
+"使い方:\n"
+"       queue [-n num] <command>\n"
+"\n"
+"コマンドを現在のサイトのキューに追加します。サイトはそれぞれ自分のコマンドキューを持っています。\n"
+"`-n' はコマンドをキューの指定アイテムの前に追加します。キューを実行中のジョブの後に実行させるには\n"
+"コマンド `queue wait <jobno>' を使います。\n"
+"\n"
+"       queue --delete|-d [index or wildcard expression]\n"
+"\n"
+"キューからアイテムを削除します。引数が指定されなかった場合、\n"
+"キューの最後のエントリを削除します。\n"
+"\n"
+"       queue --move|-m <index or wildcard expression> [index]\n"
+"\n"
+"指定のアイテムを指定のキューインデックスの前に移動します。\n"
+"移動先が指定されていなかった場合最後に移動します。\n"
 
 #: src/commands.cc:318
 msgid "quote <cmd>"
@@ -1164,24 +1183,20 @@ msgid "Same as more, but filter each file through zcat\n"
 msgstr "more と同じですが、それぞれのファイルを zcat にかけます\n"
 
 #: src/commands.cc:375
-#, fuzzy
 msgid "bzcat <files>"
-msgstr "zcat <files>"
+msgstr "bzcat <files>"
 
 #: src/commands.cc:376
-#, fuzzy
 msgid "Same as cat, but filter each file through bzcat\n"
-msgstr "cat と同じですが、それぞれのファイルを zcat にかけます\n"
+msgstr "cat と同じですが、それぞれのファイルを bzcat にかけます\n"
 
 #: src/commands.cc:377
-#, fuzzy
 msgid "bzmore <files>"
-msgstr "zmore <files>"
+msgstr "bzmore <files>"
 
 #: src/commands.cc:378
-#, fuzzy
 msgid "Same as more, but filter each file through bzcat\n"
-msgstr "more と同じですが、それぞれのファイルを zcat にかけます\n"
+msgstr "more と同じですが、それぞれのファイルを bzcat にかけます\n"
 
 #: src/commands.cc:427
 #, c-format
@@ -1254,26 +1269,26 @@ msgstr "%s: -n: 数字が必要です。"
 #: src/commands.cc:963 src/commands.cc:993
 #, c-format
 msgid "%s: No queue is active.\n"
-msgstr ""
+msgstr "%s: アクティブなキューはありません。\n"
 
 #: src/commands.cc:985
-#, fuzzy, c-format
+#, c-format
 msgid "%s: -m: Number expected as second argument. "
-msgstr "%s: -n: 数字が必要です。"
+msgstr "%s: -m: 第二の引数として数字が必要です。"
 
 #: src/commands.cc:1016
 msgid "Can only edit plain queues.\n"
-msgstr ""
+msgstr "プレーンなキューのみ編集できます。\n"
 
 #: src/commands.cc:1029
 #, c-format
 msgid "Couldn't create temporary file `%s': %s.\n"
-msgstr ""
+msgstr "一時ファイル `%s' が作成できませんでした: %s。\n"
 
 #: src/commands.cc:1035
 #, c-format
 msgid "%s: error writing %s: %s\n"
-msgstr ""
+msgstr "%s: %s の書き込みでエラー: %s\n"
 
 #: src/commands.cc:1090
 #, c-format
@@ -1470,9 +1485,9 @@ msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: インポートタイプ(netscape,ncftp)を指定してください\n"
 
 #: src/commands.cc:2226
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [-d #] dir\n"
-msgstr "使い方: %s [-p]\n"
+msgstr "使い方: %s [-d #] dir\n"
 
 #: src/commands.cc:2245
 #, c-format
@@ -1506,7 +1521,7 @@ msgstr "使い方: %s [OPTS] file\n"
 #: src/commands.cc:2474 src/commands.cc:2481
 #, c-format
 msgid "%s: %s: %s\n"
-msgstr ""
+msgstr "%s: %s: %s\n"
 
 #: src/ftpclass.cc:246
 msgid "Data connection peer has wrong port number"
@@ -1522,15 +1537,15 @@ msgstr "NOREST モードに切り替えます"
 
 #: src/ftpclass.cc:403
 msgid "Server reply matched ftp:retry-530, retrying"
-msgstr ""
+msgstr "サーバの返答が ftp:retry-530 とマッチしました。再試行中"
 
 #: src/ftpclass.cc:411
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
-msgstr ""
+msgstr "サーバの返答が ftp:retry-530-anonymous とマッチしました。再試行中"
 
 #: src/ftpclass.cc:435
 msgid "Account is required, set ftp:acct variable"
-msgstr ""
+msgstr "アカウントが必要です。ftp:acct 変数を設定してください"
 
 #: src/ftpclass.cc:460
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
@@ -1656,9 +1671,8 @@ msgid "Changing remote directory..."
 msgstr "リモートディレクトリを変更中..."
 
 #: src/ftpclass.cc:3522
-#, fuzzy
 msgid "Waiting for other copy peer..."
-msgstr "応答を待っています..."
+msgstr "他のコピー相手を待っています..."
 
 #: src/ftpclass.cc:3525 src/ftpclass.cc:3537
 msgid "Waiting for transfer to complete"
@@ -1842,7 +1856,7 @@ msgstr "アドレスファミリー `%s' は不明です"
 
 #: src/resource.cc:156
 msgid "ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C"
-msgstr ""
+msgstr "ftp:ssl-auth は以下のどれかでなければなりません: SSL、TLS、TLS-P、TLS-C"
 
 #: src/FtpDirList.cc:223 src/FtpSplitList.cc:183 src/HttpDir.cc:1116
 #: src/NetAccess.cc:695
@@ -2047,10 +2061,12 @@ msgid ""
 "Enter date, or blank line to exit.\n"
 "\t> "
 msgstr ""
+"日付を入力してください。空行で終了します。\n"
+"\t> "
 
 #: getdate.y:1020
 msgid "Bad format - couldn't convert.\n"
-msgstr ""
+msgstr "不正な形式 -  変換できません。\n"
 
 #: src/module.cc:181
 #, c-format
@@ -2060,68 +2076,3 @@ msgstr "モジュール `%s' に依存しています: %s\n"
 #: src/module.cc:201
 msgid "modules are not supported on this system"
 msgstr "モジュールはこのシステムではサポートされていません"
-
-#~ msgid "dns cache hit\n"
-#~ msgstr "DNS キャッシュがヒットしました\n"
-
-#~ msgid "child returned invalid data"
-#~ msgstr "子プロセスが不正なデータを返しました"
-
-#~ msgid "\tCommands queued:\n"
-#~ msgstr "\tキューされているコマンド:\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "Usage: queue -e|-s <file>|<command>\n"
-#~ " -e|--edit    Edit the queue\n"
-#~ " -s|--source <file> adds the contents of a file to the end of the queue\n"
-#~ "<command>     Add the command to queue for current site. Each site has "
-#~ "its\n"
-#~ "own command queue. It is possible to queue up a running job by using\n"
-#~ "command `queue wait <jobno>'.\n"
-#~ msgstr ""
-#~ "使い方: queue <command>\n"
-#~ "現在のサイトについて、コマンドをキューに加えます。それぞれのサイトは自身"
-#~ "の\n"
-#~ "コマンドキューを持っています。`queue wait <jobno>' を使うことで、実行中の"
-#~ "ジョブを\n"
-#~ "待たせることができます。\n"
-
-#, fuzzy
-#~ msgid "Usage: %s -e|-s|command args...\n"
-#~ msgstr "使い方: %s command args...\n"
-
-#~ msgid "apache listing matched"
-#~ msgstr "apache リスティングにマッチしました"
-
-#~ msgid "unusual apache listing matched"
-#~ msgstr "一般的ではない apache リスティングにマッチしました"
-
-#~ msgid "Netscape-Proxy 2.53 listing matched"
-#~ msgstr "Netscape-Proxy 2.53 リスティングにマッチしました"
-
-#~ msgid "Netscape-Proxy 2.53 listing matched (dir/symlink)"
-#~ msgstr ""
-#~ "Netscape-Proxy 2.53 リスティングにマッチしました (ディレクトリ/シンボリッ"
-#~ "クリンク)"
-
-#~ msgid "squid EPLF listing matched"
-#~ msgstr "squid EPLF リスティングにマッチしました"
-
-#~ msgid "Mini-Proxy web server listing matched"
-#~ msgstr "Mini-Proxy web サーバリスティングにマッチしました"
-
-#~ msgid "apache ftp over http proxy listing matched"
-#~ msgstr "apache ftp over http proxy リスティングにマッチしました"
-
-#~ msgid "Saw `Login incorrect', assume failed login"
-#~ msgstr ""
-#~ "`Login incorrect' を検出しましたので、ログインに失敗したと仮定します"
-
-#~ msgid "%s: cannot add empty bookmark\n"
-#~ msgstr ""
-#~ "%s: 空のブックマークを追加することはできません\n"
-#~ "\n"
-
-#~ msgid "connect: %s"
-#~ msgstr "接続: %s"
