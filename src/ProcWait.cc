@@ -52,10 +52,7 @@ int ProcWait::Do()
       if(errno==EINTR || errno==EAGAIN)
 	 goto leave;
       perror("waitpid");
-      saved_errno=errno;
-      status=ERROR;
-      m=MOVED;
-      goto final;
+      goto leave;
    }
    if(res==pid)
    {
