@@ -46,9 +46,39 @@ void  MirrorJob::PrintStatus(int v)
    else
       tab="";
 
-   if(!Done())
-      return;
+   if(Done())
+      goto final;
 
+   switch(state)
+   {
+   case(INITIAL_STATE):
+   case(DONE):
+   case(WAITING_FOR_SUBGET):
+   case(WAITING_FOR_SUBMIRROR):
+   case(WAITING_FOR_RM_BEFORE_PUT):
+   case(WAITING_FOR_MKDIR_BEFORE_SUBMIRROR):
+   case(REMOTE_REMOVE_OLD):
+   case(REMOTE_CHMOD):
+      break;
+
+   case(MAKE_REMOTE_DIR):
+      printf("\tmkdir `%s' [%s]\n",remote_dir,session->CurrentStatus());
+      break;
+
+   case(CHANGING_REMOTE_DIR):
+      printf("\tcd `%s' [%s]\n",remote_dir,session->CurrentStatus());
+      break;
+
+   case(GETTING_LIST_INFO):
+      if(remote_relative_dir)
+	 printf("\t%s: %s\n",remote_relative_dir,list_info->Status());
+      else
+	 printf("\t%s\n",list_info->Status());
+      break;
+   }
+   return;
+
+final:
    printf(plural(N_("%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"),
 		     dirs,tot_files,tot_symlinks),
       tab,dirs,tot_files,tot_symlinks);
@@ -66,6 +96,7 @@ void  MirrorJob::PrintStatus(int v)
 	      :N_("%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"),
 	      del_dirs,del_files,del_symlinks),
 	 tab,del_dirs,del_files,del_symlinks);
+   return;
 }
 
 void  MirrorJob::ShowRunStatus(StatusLine *s)
