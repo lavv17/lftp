@@ -21,6 +21,7 @@
 /* $Id$ */
 
 #ifndef FILECOPY_H
+#define FILECOPY_H
 
 #include "SMTask.h"
 #include "buffer.h"
@@ -44,6 +45,8 @@ protected:
    bool can_seek;
    bool date_set;
 
+   bool ascii;
+
 public:
    enum direction { GET, PUT };
 
@@ -52,6 +55,7 @@ protected:
 
 public:
    bool CanSeek() { return can_seek; }
+   long GetSeekPos() { return seek_pos; }
    virtual void Seek(long offs) { seek_pos=offs; Empty(); eof=false; broken=false; }
    virtual long GetRealPos() { return pos; }
    virtual long Buffered() { return in_buffer; }
@@ -69,6 +73,25 @@ public:
    ~FileCopyPeer();
 
    bool Done();
+
+   void Ascii() { ascii=true; }
+
+   virtual const char *GetStatus() { return 0; }
+};
+
+class Speedometer : public SMTask
+{
+   int period;
+   float rate;
+   time_t last_second;
+   time_t last_bytes;
+   time_t start;
+public:
+   Speedometer(int p);
+   float Get();
+   bool Valid();
+   void Add(int bytes);
+   int Do();
 };
 
 class FileCopy : public SMTask
@@ -91,11 +114,20 @@ class FileCopy : public SMTask
 
    char *error_text;
 
+   Speedometer *rate;
+   Speedometer *rate_for_eta;
+   int put_buf;
+
 public:
    long GetPos();
    int  GetPercentDone();
+   const char *GetPercentDoneStr();
    float GetRate();
-   time_t GetETA();
+   const char *GetRateStr();
+   long GetETA();
+   const char *GetETAStr();
+   const char *GetStatus();
+
    bool Done() { return state==ALL_DONE; }
    bool Error() { return error_text!=0; }
    const char *ErrorText() { return error_text; }
@@ -119,8 +151,11 @@ class FileCopyPeerFA : public FileCopyPeer
 
    FileAccess::fileinfo info;
 
+   bool reuse_later;
+
 public:
    FileCopyPeerFA(FileAccess *s,const char *f,int m);
+   FileCopyPeerFA(class ParsedURL *u,int m);
    ~FileCopyPeerFA();
    int Do();
    bool IOReady();
@@ -131,6 +166,10 @@ public:
 
    void Suspend();
    void Resume();
+
+   void ReuseSessionLater();
+
+   const char *GetStatus() { return session->CurrentStatus(); }
 };
 
 class FileCopyPeerFDStream : public FileCopyPeer
