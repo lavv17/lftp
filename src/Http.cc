@@ -94,6 +94,9 @@ void Http::Init()
    chunked=false;
    chunk_size=-1;
    chunk_pos=0;
+
+   no_cache_this=false;
+   no_cache=false;
 }
 
 Http::Http() : super()
@@ -209,6 +212,7 @@ void Http::Close()
    retries=0;
    Disconnect();
    array_send=0;
+   no_cache_this=false;
    super::Close();
 }
 
@@ -362,7 +366,8 @@ void Http::SendRequest(const char *connection,const char *f)
       break;
    }
    SendAuth();
-//    Send("Accept: */*\r\n");
+   if(no_cache || no_cache_this)
+      Send("Pragma: no-cache\r\n");
    if(mode!=ARRAY_INFO || connection)
       Send("Connection: %s\r\n",connection?connection:"close");
    Send("\r\n");
@@ -1115,6 +1120,8 @@ void Http::Reconfig()
    socket_maxseg = Query("socket-maxseg",c);
 
    SetProxy(Query("proxy",c));
+
+   no_cache = !(bool)Query("cache",c);
 
    if(sock!=-1)
       SetSocketBuffer(sock,socket_buffer);

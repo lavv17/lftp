@@ -90,6 +90,7 @@ static ResDecl resources[]={
    ResDecl  ("ftp:sync-mode",	       "on",    ResMgr::BoolValidate,0),
    ResDecl  ("ftp:verify-address",     "no",    ResMgr::BoolValidate,0),
    ResDecl  ("ftp:verify-port",	       "no",    ResMgr::BoolValidate,0),
+   ResDecl  ("http:cache",	       "yes",	ResMgr::BoolValidate,0),
    ResDecl  ("http:proxy",	       "",	HttpProxyValidate,0),
    ResDecl  ("net:idle",	       "180",   ResMgr::UNumberValidate,0),
    ResDecl  ("net:limit-max",	       "0",	ResMgr::UNumberValidate,0),

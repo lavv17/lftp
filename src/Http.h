@@ -115,6 +115,9 @@ class Http : public FileAccess
    long chunk_size;
    long chunk_pos;
 
+   bool no_cache;
+   bool no_cache_this;
+
 public:
    static void ClassInit();
 

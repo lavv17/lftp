@@ -1,5 +1,9 @@
 1999-06-25  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* Http.cc, Http.h, resource.cc: implement http:cache (pragma:no-cache)
+
+1999-06-25  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* complete.cc: workaround for readline bug (reported by
 	  <sniffer@pamela.prograd.ufrgs.br>); make few functions static.
 	* Makefile.am: add READLINE_DEPEND to lftp_DEPENDENCIES.
