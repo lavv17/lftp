@@ -1,5 +1,5 @@
 %define name lftp
-%define version 2.1.4
+%define version A00209
 
 Summary: The lftp command line ftp/http client
 Name: %{name}
@@ -29,7 +29,7 @@ http protocol.
 rm -rf $RPM_BUILD_ROOT
 
 %setup
-CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=/usr
+CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=/usr --with-modules
 make
 
 %install
@@ -63,12 +63,13 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc README README.modules FAQ THANKS COPYING TODO lftp.lsm NEWS INSTALL FEATURES
-%doc /usr/man/man1/ftpget.1
+#%doc /usr/man/man1/ftpget.1
 %doc /usr/man/man1/lftp.1
 %config /etc/lftp.conf
 %dir /usr/share/lftp
 %attr(755,root,root) /usr/share/lftp/import-*
 /usr/share/locale/*/*/*
 %attr(755,root,root) /usr/bin/lftp
-%attr(755,root,root) /usr/bin/ftpget
+#%attr(755,root,root) /usr/bin/ftpget
 %attr(755,root,root) /usr/bin/lftpget
+%attr(644,root,root) /usr/lib/lftp/*
