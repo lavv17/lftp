@@ -48,6 +48,7 @@ Version 2.2.0 - 2000-??-??
   to allow instant interrupting and asynchronousity. (default is true)
 * new setting cmd:default-protocol. The value is used when open is used
   with just host name without protocol. Default is `ftp'.
+* new setting ftp:port-range for active mode port range (useful for firewalls).
 * mirror --use-cache to allow mirror to use directory listing cache.
 * check file names in ftp listings for slashes, don't use file names with
   slashes.
@@ -55,6 +56,10 @@ Version 2.2.0 - 2000-??-??
 * ftp server's 19100 in MDTM bug workaround.
 * fixed completion and file name globbing for wu-ftpd-2.6.0. A long standing
   bug with multiple path component globbing over ftp has also been fixed.
+
+Version 2.1.10 - 2000-03-09
+
+* fixed core dump on very long prompt.
 
 Version 2.1.9 - 2000-02-22
 
