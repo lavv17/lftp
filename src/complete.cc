@@ -324,22 +324,25 @@ char **lftp_completion (char *text,int start,int end)
       completion_shell->session->DontSleep();
 
       SignalHook::ResetCount(SIGINT);
+      glob_res=NULL;
       rg=completion_shell->session->MakeGlob(pat);
-      for(;;)
+      if(rg)
       {
-	 SMTask::Schedule();
-	 if(rg->Done())
-	    break;
-	 if(SignalHook::GetCount(SIGINT))
+	 for(;;)
 	 {
-	    rl_attempted_completion_over = 1;
-	    delete rg;
-	    return 0;
+	    SMTask::Schedule();
+	    if(rg->Done())
+	       break;
+	    if(SignalHook::GetCount(SIGINT))
+	    {
+	       rl_attempted_completion_over = 1;
+	       delete rg;
+	       return 0;
+	    }
+	    SMTask::Block();
 	 }
-	 SMTask::Block();
+	 glob_res=rg->GetResult();
       }
-      glob_res=rg->GetResult();
-
       rl_filename_completion_desired=1;
       generator = remote_generator;
       break;

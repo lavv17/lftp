@@ -46,6 +46,11 @@ static time_t http_atotm (const char *time_string);
 static int  base64_length (int len);
 static void base64_encode (const char *s, char *store, int length);
 
+/* Some status code validation macros: */
+#define H_20X(x)        (((x) >= 200) && ((x) < 300))
+#define H_PARTIAL(x)    ((x) == 206)
+#define H_REDIRECTED(x) (((x) == 301) || ((x) == 302))
+
 
 void Http::Init()
 {
@@ -60,6 +65,7 @@ void Http::Init()
    line=0;
    status=0;
    status_code=0;
+   status_consumed=0;
    proto_version=0x10;
 
    idle=0;
@@ -113,6 +119,7 @@ Http::~Http()
       close(sock);
    xfree(line);
    xfree(status);
+   xfree(location);
 
    xfree(proxy); proxy=0;
    xfree(proxy_port); proxy_port=0;
@@ -169,6 +176,9 @@ void Http::Disconnect()
    real_pos=-1;
    xfree(status);
    status=0;
+   status_consumed=0;
+   xfree(location);
+   location=0;
 }
 
 void Http::Close()
@@ -230,6 +240,7 @@ void Http::SendRequest(const char *connection)
 {
    char *efile=alloca_strdup(url::encode_string(file));
    char *ecwd=alloca_strdup(url::encode_string(cwd));
+   int efile_len;
 
    char *pfile=(char*)alloca(4+3+strlen(hostname)*3+1
 			      +strlen(cwd)*3+1+strlen(efile)+1+1);
@@ -253,12 +264,15 @@ void Http::SendRequest(const char *connection)
       sprintf(pfile+strlen(pfile),"/%s",efile);
    else if(cwd[0]==0 || ((cwd[0]=='/' || cwd[0]=='~') && cwd[1]==0))
       sprintf(pfile+strlen(pfile),"/%s",efile);
+   else if(cwd[0]=='~')
+      sprintf(pfile+strlen(pfile),"/%s/%s",ecwd,efile);
    else
       sprintf(pfile+strlen(pfile),"%s/%s",ecwd,efile);
 
    efile=pfile;
+   efile_len=strlen(efile);
 
-   max_send=strlen(efile)+40;
+   max_send=efile_len+40;
 
    if(pos==0)
       real_pos=0;
@@ -291,7 +305,7 @@ void Http::SendRequest(const char *connection)
    case CHANGE_DIR:
    case LONG_LIST:
    case MAKE_DIR:
-      if(efile[0]==0 || !(efile[0]=='/' && efile[1]==0))
+      if(efile[0]==0 || efile[efile_len-1]!='/')
 	 strcat(efile,"/");
       if(mode==CHANGE_DIR)
 	 SendMethod("HEAD",efile);
@@ -324,7 +338,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       if(pos==0 && opt_size)
 	 *opt_size=body_size;
 
-      if(mode==ARRAY_INFO && status_code/100==2)
+      if(mode==ARRAY_INFO && H_20X(status_code))
       {
 	 array_for_info[array_ptr].size=body_size;
 	 array_for_info[array_ptr].get_size=false;
@@ -349,12 +363,18 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       if(opt_date)
 	 *opt_date=t;
 
-      if(mode==ARRAY_INFO && status_code/100==2)
+      if(mode==ARRAY_INFO && H_20X(status_code))
       {
 	 array_for_info[array_ptr].time=t;
 	 array_for_info[array_ptr].get_time=false;
 	 retries=0;
       }
+      return;
+   }
+   if(!strcasecmp(name,"Location"))
+   {
+      xfree(location);
+      location=xstrdup(value);
       return;
    }
 }
@@ -581,6 +601,8 @@ int Http::Do()
 	    memcpy(line,buf,len);
 	    line[len]=0;
 
+	    recv_buf->Skip(len+2);
+
 	    DebugPrint("<--- ",line,2);
 	    m=MOVED;
 
@@ -589,9 +611,9 @@ int Http::Do()
 	       // it's status line
 	       status=line;
 	       line=0;
-	       int ver_major,ver_minor,consumed;
+	       int ver_major,ver_minor;
 	       if(3!=sscanf(status,"HTTP/%d.%d %n%d",&ver_major,&ver_minor,
-		     &consumed,&status_code))
+		     &status_consumed,&status_code))
 	       {
 		  DebugPrint("**** ","Could not parse HTTP status line",1);
 		  // simple 0.9 ?
@@ -599,7 +621,7 @@ int Http::Do()
 		  goto pre_RECEIVING_BODY;
 	       }
 	       proto_version=(ver_major<<4)+ver_minor;
-	       if(status_code/100>2)
+	       if(!H_20X(status_code))
 	       {
 		  if(status_code/100==5) // server failed, try another
 		     NextPeer();
@@ -613,18 +635,12 @@ int Http::Do()
 		     return MOVED;
 		  }
 
-		  // FIXME: handle 3xx codes
-
 		  if(mode==ARRAY_INFO)
 		  {
 		     retries=0;
-		     recv_buf->Skip(len+2);
 		     return MOVED;
 		  }
 
-		  char *err=(char*)alloca(strlen(status+consumed)+strlen(file)+10);
-		  sprintf(err,"%s (%s)",status+consumed,file);
-		  SetError(NO_FILE,err);
 		  return MOVED;
 	       }
 	       if(mode==CHANGE_DIR)
@@ -649,8 +665,6 @@ int Http::Do()
 		  HandleHeaderLine(line,colon);
 	       }
 	    }
-
-	    recv_buf->Skip(len+2);
 	 }
 	 else
 	    return m;
@@ -659,6 +673,21 @@ int Http::Do()
       return m;
 
    pre_RECEIVING_BODY:
+
+      if(status_code/100!=200)
+      {
+	 char *err=(char*)alloca(strlen(status)+strlen(file)+xstrlen(location)+20);
+
+	 if(H_REDIRECTED(status_code))
+	    sprintf(err,"%s (%s -> %s)",status+status_consumed,file,
+				    location?location:"nowhere");
+	 else
+	    sprintf(err,"%s (%s)",status+status_consumed,file);
+	 Disconnect();
+	 SetError(NO_FILE,err);
+	 return MOVED;
+      }
+
       DebugPrint("---- ","Receiving body...",9);
       BytesReset();
       if(real_pos<0) // assume Range: did not work
@@ -746,7 +775,8 @@ int Http::Read(void *buf,int size)
 	 DebugPrint("---- ","Hit EOF",9);
 	 if(bytes_received<body_size)
 	 {
-	    Disconnect();  // received not enough, try again.
+	    DebugPrint("**** ","Received not enough data, retrying",1);
+	    Disconnect();
 	    return DO_AGAIN;
 	 }
 	 return 0;

@@ -81,6 +81,8 @@ mgetJob::mgetJob(FileAccess *session,ArgV *args) : GetJob(session,new ArgV(args-
       goto print_usage;
 
    rg=session->MakeGlob(p);
+   if(!rg)
+      rg=new NoGlob(p);
    while(rg->Do()==MOVED);
 }
 
@@ -145,9 +147,11 @@ next:
    }
 
    rg=session->MakeGlob(p);
+   if(!rg)
+      rg=new NoGlob(p);
    while(rg->Do()==MOVED);
 
-   return m;
+   return MOVED;
 }
 
 mgetJob::~mgetJob()

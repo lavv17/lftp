@@ -85,19 +85,14 @@ int   CatJob::Do()
       // globbing
       if(!rg)
       {
-	 for(;;)
-	 {
-	    char *a=args->getnext();
-	    if(!a)
-	       break;
-	    if(has_wildcard(a))
-	    {
-	       rg=session->MakeGlob(a);
-	       m=MOVED;
-	       break;
-	    }
-	    args_globbed->Append(a);
-	 }
+	 char *a=args->getnext();
+	 if(!a)
+	    break;
+	 rg=session->MakeGlob(a);
+	 if(!rg)
+	    rg=new NoGlob(a);
+	 while(!rg->Done());
+	 m=MOVED;
       }
       if(!rg)
       {

@@ -69,10 +69,12 @@ class Http : public FileAccess
    void Disconnect();
 
    char *status;
+   int   status_consumed;
    int proto_version;
    char *line;
    long body_size;
    long bytes_received;
+   char *location;
 
    void SetError(int code,const char *mess=0);
    void Fatal(const char *mess);

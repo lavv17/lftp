@@ -68,6 +68,8 @@ mrmJob::mrmJob(FileAccess *session,ArgV *args) : rmJob(session,new ArgV(args->a0
       goto print_usage;
 
    rg=session->MakeGlob(p);
+   if(!rg)
+      rg=new NoGlob(p);
    while(rg->Do()==MOVED);
 }
 
@@ -114,9 +116,11 @@ next:
    }
 
    rg=session->MakeGlob(p);
+   if(!rg)
+      rg=new NoGlob(p);
    while(rg->Do()==MOVED);
 
-   return m;
+   return MOVED;
 }
 
 mrmJob::~mrmJob()

@@ -81,6 +81,7 @@ Resolver::Resolver(const char *h,const char *p)
    time(&start_time);
    addr=0;
    addr_num=0;
+   buf=0;
 }
 
 Resolver::~Resolver()
@@ -99,6 +100,8 @@ Resolver::~Resolver()
       w->Kill(SIGKILL);
       w->Auto();
    }
+   if(buf)
+      delete buf;
 }
 
 int   Resolver::Do()
@@ -154,13 +157,25 @@ int   Resolver::Do()
       pipe_to_child[1]=-1;
 
       w=new ProcWait(proc);
+      m=MOVED;
    }
 
-   struct pollfd pfd={pipe_to_child[0],POLLIN};
-   int res=poll(&pfd,1,0);
-   if(res!=1)
+   if(!buf)
    {
-   not_ready:
+      buf=new FileInputBuffer(new FDStream(pipe_to_child[0],"<pipe>"));
+      while(buf->Do()==MOVED);
+      m=MOVED;
+   }
+
+   if(buf->Error())
+   {
+      err_msg=xstrdup(buf->ErrorText());
+      done=true;
+      return MOVED;
+   }
+
+   if(!buf->Eof())   // wait for all data to arrive (not too much)
+   {
       if(timeout>0)
       {
 	 if(now-start_time > timeout)
@@ -171,51 +186,30 @@ int   Resolver::Do()
 	 }
 	 block+=TimeOut((timeout-(now-start_time))*1000);
       }
-      block+=PollVec(pipe_to_child[0],POLLIN);
       return m;
    }
+
+   const char *s;
    char c;
-   res=read(pipe_to_child[0],&c,1);
-   if(res<0)
-   {
-      if(errno==EINTR || errno==EAGAIN)
-	 goto not_ready;
-   read_error:
-      MakeErrMsg("read(pipe)");
-      return MOVED;
-   }
-   if(res<1)
+   int n;
+
+   buf->Get(&s,&n);
+   if(n<1)
       goto proto_error;
-   // then goes blocking read, data should be ready
-   fcntl(pipe_to_child[0],F_SETFL,0);
+   c=*s;
+   buf->Skip(1);
+   buf->Get(&s,&n);
    if(c=='E' || c=='P') // error
    {
-      char buf[512];
-   read_msg_again:
-      res=read(pipe_to_child[0],buf,sizeof(buf)-1);
-      if(res<0)
-      {
-	 if(errno==EINTR)
-	    goto read_msg_again;
-	 goto read_error;
-      }
-      buf[res]=0;
-      err_msg=(char*)xmalloc(strlen(hostname)+res+3);
-      sprintf(err_msg,"%s: %s",(c=='E'?hostname:portname),buf);
+      err_msg=(char*)xmalloc(strlen(hostname)+strlen(portname)+n+3);
+      sprintf(err_msg,"%s: ",(c=='E'?hostname:portname));
+      char *e=err_msg+strlen(err_msg);
+      memcpy(e,s,n);
+      e[n]=0;
       done=true;
       return MOVED;
    }
-   res=sizeof(sockaddr_u)*128;
-   addr=(sockaddr_u*)xmalloc(res);
-read_addr_again:
-   res=read(pipe_to_child[0],addr,res);
-   if(res<0)
-   {
-      if(errno==EINTR)
-	 goto read_addr_again;
-      goto read_error;
-   }
-   if((unsigned)res<sizeof(sockaddr_u))
+   if((unsigned)n<sizeof(sockaddr_u))
    {
    proto_error:
       // protocol error
@@ -223,8 +217,9 @@ read_addr_again:
       done=true;
       return MOVED;
    }
-   addr_num=res/sizeof(*addr);
-   addr=(sockaddr_u*)xrealloc(addr,addr_num*sizeof(*addr));
+   addr_num=n/sizeof(*addr);
+   addr=(sockaddr_u*)xmalloc(n);
+   memcpy(addr,s,n);
    done=true;
    return MOVED;
 }

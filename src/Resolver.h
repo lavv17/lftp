@@ -29,6 +29,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include "buffer.h"
 
 union sockaddr_u
 {
@@ -48,6 +49,7 @@ class Resolver : public SMTask
 
    int pipe_to_child[2];
    ProcWait *w;
+   FileInputBuffer *buf;
    int timeout;
 
    time_t start_time;
