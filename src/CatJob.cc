@@ -323,6 +323,8 @@ CatJob::CatJob(FDStream *g,char *data,int data_len) : XferJob(0)
 {
    Init();
    global=g;
+   if(!global)
+      global=new FDStream(1,"<stdout>");
    buffer=data;
    in_buffer=data_len;
    got_eof=true;
