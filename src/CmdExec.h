@@ -137,6 +137,7 @@ public:
    void ExecParsed(ArgV *a,FDStream *o=0,bool b=false);
    void unquote(char *buf,const char *str);
    void FeedQuoted(const char *c);
+   void AtExit();
 
    CmdExec(FileAccess *s);
    ~CmdExec();

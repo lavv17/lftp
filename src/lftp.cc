@@ -298,6 +298,9 @@ int   main(int argc,char **argv)
 
    WaitDone(top_exec);
 
+   top_exec->AtExit();
+   WaitDone(top_exec);
+
    cwd_history.Save();
 
    if(Job::NumberOfJobs()>0)

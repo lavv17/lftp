@@ -47,6 +47,7 @@ static ResDecl
    res_csh_history	   ("cmd:csh-history","off",ResMgr::BoolValidate,0),
    res_verify_path	   ("cmd:verify-path",	"yes",ResMgr::BoolValidate,0),
    res_verify_host	   ("cmd:verify-host",	"yes",ResMgr::BoolValidate,0),
+   res_at_exit		   ("cmd:at-exit",	"",   0,0),
    res_save_passwords	   ("bmk:save-passwords","no",ResMgr::BoolValidate,0);
 
 CmdExec	 *CmdExec::cwd_owner=0;
@@ -865,4 +866,10 @@ const char *CmdExec::GetFullCommandName(const char *cmd)
    if(part==1)
       return c->name;
    return cmd;
+}
+
+void CmdExec::AtExit()
+{
+   FeedCmd(res_at_exit.Query(0));
+   FeedCmd("\n");
 }

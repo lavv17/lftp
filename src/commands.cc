@@ -904,7 +904,8 @@ CMD(lftp)
       SetCmdFeeder(lftp_feeder);
       lftp_feeder=0;
       SetInteractive(isatty(0));
-      FeedCmd("||exit\n");   // if the command fails, quit
+      if(cmd)
+	 FeedCmd("||exit\n");   // if the command fails, quit
    }
 
    if(!cmd)
@@ -1150,13 +1151,6 @@ CMD(set)
 {
    if(args->count()<2)
    {
-/* can't happen
-      if(args->count()!=1)
-      {
-	 eprintf(_("Usage: %s <variable> [<value>]\n"),args->getarg(0));
-	 return 0;
-      }
-*/
       char *s=ResMgr::Format();
       Job *j=new CatJob(output,s,strlen(s));
       output=0;
@@ -1767,7 +1761,7 @@ CMD(bookmark)
    else if(!strcmp(op,"add"))
    {
       const char *key=args->getnext();
-      if(key==0)
+      if(key==0 || key[0]==0)
 	 eprintf(_("%s: bookmark name required\n"),args->a0());
       else
       {
@@ -1777,6 +1771,11 @@ CMD(bookmark)
 	    flags|=session->WITH_PASSWORD;
 	 if(value==0)
 	    value=session->GetConnectURL(flags);
+	 if(value==0 || value[0]==0)   // cannot add empty bookmark
+	 {
+	    eprintf(_("%s: cannot add empty bookmark\n"),args->a0());
+	    return 0;
+	 }
 	 lftp_bookmarks.Add(key,value);
    	 exit_code=0;
       }
@@ -1784,7 +1783,7 @@ CMD(bookmark)
    else if(!strcmp(op,"delete"))
    {
       const char *key=args->getnext();
-      if(key==0)
+      if(key==0 || key[0]==0)
 	 eprintf(_("%s: bookmark name required\n"),args->a0());
       else if(lftp_bookmarks.Lookup(key)==0)
 	 eprintf(_("%s: no such bookmark `%s'\n"),args->a0(),key);
