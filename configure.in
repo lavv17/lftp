@@ -116,7 +116,7 @@ AC_ARG_WITH(modules,
 
 if test "$with_modules" = yes; then
    AC_DEFINE(WITH_MODULES)
-   MODULES="proto-ftp.so proto-http.so proto-file.so cmd-mirror.so"
+   MODULES="proto-ftp.so proto-http.so proto-file.so cmd-mirror.so cmd-sleep.so"
 fi
 AC_SUBST(MODULES)
 
