@@ -58,7 +58,7 @@ public:
 	    return 0;
 	 return v[n];
       }
-   char *getcurr() { return getarg(ind); }
+   char *getcurr() { return ind<c?getarg(ind):0; }
    void setarg(int n,const char *s);
    char *a0() { return getarg(0); }
    void back();

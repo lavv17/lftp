@@ -344,3 +344,19 @@ void FileSet::LocalChmod(const char *dir,mode_t mask)
       }
    }
 }
+
+FileInfo *FileSet::curr()
+{
+   if(ind<fnum)
+      return files[ind];
+   return 0;
+}
+FileInfo *FileSet::next()
+{
+   if(ind<fnum)
+   {
+      ind++;
+      return curr();
+   }
+   return 0;
+}

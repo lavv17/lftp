@@ -171,3 +171,17 @@ void  truncate_file_tree(const char *dir)
       (new ProcWait(pid))->Auto();  // don't wait for termination
    }
 }
+
+char *xgetcwd()
+{
+   int size=256;
+   for(;;)
+   {
+      char *cwd=getcwd(0,size);
+      if(cwd)
+	 return cwd;
+      if(errno!=ERANGE)
+	 return 0;
+      size*=2;
+   }
+}

@@ -30,6 +30,7 @@
 #include "xstring.h"
 #include "SignalHook.h"
 #include "alias.h"
+#include "misc.h"
 extern "C" {
 #include <readline/readline.h>
 }
@@ -47,16 +48,22 @@ static ResDecl
 
 CmdExec	 *CmdExec::cwd_owner=0;
 
+void  CmdExec::SetCWD(const char *c)
+{
+   xfree(cwd);
+   cwd=xstrdup(c);
+   if(cwd_owner==this)
+      cwd_owner=0;
+}
+
 void  CmdExec::SaveCWD()
 {
+   cwd=xgetcwd();
    if(cwd==0)
-      cwd=(char*)xmalloc(1024);
-   if(getcwd(cwd,1024)==0)
    {
       // A bad case, but we can do nothing ( xgettext:c-format )
-      eprintf(_("Warning: getcwd() failed\n"));
-      free(cwd);
-      cwd=0;
+      eprintf(_("Warning: getcwd() failed: %s\n"),strerror(errno));
+      cwd_owner=this;
    }
    else
    {
@@ -64,12 +71,27 @@ void  CmdExec::SaveCWD()
 	 cwd_owner=this;
    }
 }
-void  CmdExec::RestoreCWD()
+int  CmdExec::RestoreCWD()
 {
-   if(cwd==0 || cwd_owner==this)
-      return;
+   if(cwd_owner==this)
+      return 0;
+   if(cwd==0)
+      goto fail;
    if(chdir(cwd)==0)
+   {
       cwd_owner=this;
+      return 0;
+   }
+   else
+   {
+      eprintf(_("Warning: chdir(%s) failed: %s\n"),cwd,strerror(errno));
+   fail:
+      // can't run further commands in wrong directory
+      while(!Done())
+	 RemoveFeeder();
+      exit_code=1;
+      return -1;
+   }
 }
 
 void CmdExec::FeedCmd(const char *c)
@@ -166,7 +188,8 @@ void  CmdExec::exec_parsed_command()
       eprintf(_("Ambiguous command `%s'.\n"),cmd_name);
    else
    {
-      RestoreCWD();
+      if(RestoreCWD()==-1)
+	 return;
 
       args->setarg(0,c->name); // in case it was abbreviated
 
@@ -780,4 +803,22 @@ void CmdExec::SetInteractive(bool i)
       SignalHook::Restore(SIGTSTP);
    }
    interactive=i;
+}
+
+void CmdExec::unquote(char *buf,const char *str)
+{
+   while(*str)
+   {
+      if(*str=='"' || *str=='\\')
+	 *buf++='\\';
+      *buf++=*str++;
+   }
+   *buf=0;
+}
+
+void CmdExec::FeedQuoted(const char *c)
+{
+   char *buf=(char*)alloca(strlen(c)*2+1);
+   unquote(buf,c);
+   FeedCmd(buf);
 }

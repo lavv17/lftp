@@ -57,9 +57,7 @@ char *ArgV::getnext()
 {
    if(++ind>=c)
    {
-      ind=c-1;
-      if(ind<0)
-	 ind=0;
+      ind=c; // so that getcurr will return 0
       return 0;
    }
    return v[ind];

@@ -20,7 +20,10 @@
 
 /* $Id$ */
 
+#include <config.h>
+
 #include "FindJob.h"
+#include "CmdExec.h"
 #include "misc.h"
 
 #define top (*stack[stack_ptr])
@@ -68,7 +71,8 @@ int FindJob::Do()
 	 abort();
       }
       li->Need(FileInfo::NAME|FileInfo::TYPE);
-      li->UseCache();
+      if(use_cache)
+	 li->UseCache();
       state=INFO;
       m=MOVED;
    case INFO:
@@ -91,7 +95,7 @@ int FindJob::Do()
       state=LOOP;
       m=MOVED;
    case LOOP:
-      if(top.fset->curr()==0)
+      if(stack_ptr==-1 || top.fset->curr()==0)
       {
 	 Up();
 	 return MOVED;
@@ -122,11 +126,14 @@ int FindJob::Do()
 	 errors++;
 	 break;
       case(PRF_WAIT):
-	 return m;
+	 state=WAIT;
+	 return MOVED;
       case(PRF_OK):
 	 break;
       }
    post_WAIT:
+      if(stack_ptr==-1)
+	 return m;
       if(!depth_first)
       {
 	 FileInfo *f=top.fset->curr();
@@ -218,6 +225,7 @@ void FindJob::Init()
 {
    op="find";
    start_dir=0;
+   init_dir=0;
    dir=0;
    errors=0;
    li=0;
@@ -231,6 +239,8 @@ void FindJob::Init()
    depth_first=false; // useful for rm -r
    depth_done=false;
 
+   use_cache=true;
+
    state=INIT;
 }
 
@@ -238,6 +248,14 @@ FindJob::FindJob(FileAccess *s,const char *d)
    : SessionJob(s)
 {
    Init();
+   init_dir=xstrdup(session->GetCwd());
+   NextDir(d);
+}
+
+void FindJob::NextDir(const char *d)
+{
+   session->Chdir(init_dir,false); // no verification
+   xfree(start_dir);
    start_dir=xstrdup(dir_file(session->GetCwd(),d));
    Down(start_dir);
 }
@@ -248,6 +266,7 @@ FindJob::~FindJob()
       Up();
    xfree(stack);
    xfree(start_dir);
+   xfree(init_dir);
    if(li) delete li;
 }
 
@@ -259,13 +278,13 @@ void FindJob::ShowRunStatus(StatusLine *sl)
    char *path=0;
    switch(state)
    {
-   case CD:
-      sl->Show("cd `%s' [%s]",dir,session->CurrentStatus());
-      break;
    case INFO:
       if(stack_ptr>=0)
 	 path=top.path;
       sl->Show("getting listing for `%s' [%s]",dir_file(path,dir),li->Status());
+      break;
+   case WAIT:
+      waiting->ShowRunStatus(sl);
       break;
    default:
       sl->Show("");
@@ -303,4 +322,115 @@ FindJob_List::FindJob_List(FileAccess *s,const char *d,FDStream *o)
 FindJob_List::~FindJob_List()
 {
    delete buf;
+}
+
+
+// FindJob_Cmd implementation
+// process directory tree
+#define super FindJob
+
+FindJob::prf_res FindJob_Cmd::ProcessFile(const char *d,const FileInfo *f)
+{
+#define ISDIR  ((f->defined&f->TYPE) && f->filetype==f->DIRECTORY)
+#define ISLINK ((f->defined&f->TYPE) && f->filetype==f->SYMLINK)
+
+   FileAccess *s=session->Clone();
+   s->Chdir(dir_file(start_dir,d),false);
+
+   CmdExec *exec=new CmdExec(s);
+   exec->parent=this;
+   exec->SetCWD(saved_cwd);
+
+   char *file=f->name;
+
+   switch(cmd)
+   {
+   case RM:
+      if(ISDIR)
+      {
+	 exec->FeedCmd("rmdir \"");
+	 exec->FeedQuoted(file);
+	 exec->FeedCmd("\"\n");
+      }
+      else
+      {
+	 exec->FeedCmd("rm \"");
+	 exec->FeedQuoted(file);
+	 exec->FeedCmd("\"\n");
+      }
+      break;
+   case GET:
+      if(ISDIR)
+      {
+// 	 mkdir(dir_file(saved_cwd,
+      }
+      else if(ISLINK)
+      {
+      }
+      else
+      {
+      }
+      break;
+   }
+   waiting=exec;
+   return PRF_WAIT;
+
+#undef ISDIR
+#undef ISLINK
+}
+
+FindJob_Cmd::FindJob_Cmd(FileAccess *s,ArgV *a,cmd_t c)
+   : FindJob(s,a->getcurr())
+{
+   cmd=c;
+   args=a;
+   use_cache=false;
+   if(cmd==RM)
+      depth_first=true;
+   saved_cwd=xgetcwd();
+   removing_last=false;
+}
+FindJob_Cmd::~FindJob_Cmd()
+{
+   xfree(saved_cwd);
+   delete args;
+   if(waiting)
+   {
+      if(waiting->waiting)
+	 waiting->waiting->jobno=-1; // prevent reparenting
+      delete waiting;
+   }
+}
+
+void FindJob_Cmd::Finish()
+{
+   if(cmd==RM)
+   {
+      if(removing_last)
+	 removing_last=false;
+      else
+      {
+	 /* remove the specified directory at the last */
+	 session->Chdir(init_dir,false); // to leave the directory
+	 CmdExec *exec=new CmdExec(session->Clone());
+	 exec->parent=this;
+	 exec->FeedCmd("rmdir \"");
+	 exec->FeedQuoted(start_dir);
+	 exec->FeedCmd("\"\n");
+	 waiting=exec;
+	 removing_last=true;
+	 state=WAIT; // it will wait for termination, try to process
+		     // next file and call Finish() again
+	 return;
+      }
+   }
+   char *d=args->getnext();
+   if(!d)
+      return;
+   FindJob::NextDir(d);
+}
+
+int FindJob_Cmd::Done()
+{
+   return FindJob::Done() && args->getcurr()==0;
 }

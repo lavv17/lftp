@@ -26,6 +26,7 @@
 #include "Job.h"
 #include "ListInfo.h"
 #include "buffer.h"
+#include "ArgV.h"
 
 class FindJob : public SessionJob
 {
@@ -52,21 +53,26 @@ class FindJob : public SessionJob
    void Down(const char *d);
    void Push(FileSet *f);
 
-   bool depth_first;
    bool depth_done;
 
+protected:
    enum state_t { INIT, CD, INFO, LOOP, WAIT, DONE };
    state_t state;
 
-protected:
    char *op;
    char *start_dir;
+   char *init_dir;
 
    enum prf_res { PRF_FATAL, PRF_ERR, PRF_OK, PRF_WAIT };
    virtual prf_res ProcessFile(const char *d,const FileInfo *fi);
    virtual void Finish() {};
 
    bool show_sl;
+
+   bool depth_first;
+   bool use_cache;
+
+   void NextDir(const char *d);
 
 public:
    int Do();
@@ -92,6 +98,23 @@ public:
    ~FindJob_List();
 
    int Done() { return FindJob::Done() && buf->Done(); }
+};
+
+class FindJob_Cmd : public FindJob
+{
+public:
+   enum cmd_t { GET, RM };
+   FindJob_Cmd(FileAccess *s,ArgV *a,cmd_t c);
+   ~FindJob_Cmd();
+   int Done();
+protected:
+   cmd_t cmd;
+   ArgV *args;
+   char *saved_cwd;
+   bool removing_last;
+
+   prf_res ProcessFile(const char *d,const FileInfo *fi);
+   void Finish();
 };
 
 #endif //FINDJOB_H

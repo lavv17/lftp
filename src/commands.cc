@@ -603,10 +603,19 @@ CMD(mrm)
 CMD(rm)
 {
    int opt;
-   while((opt=args->getopt("+"))!=EOF)
+   bool recursive=false;
+   const char *opts="+r";
+
+   if(!strcmp(args->a0(),"rmdir"))
+      opts="+";
+
+   while((opt=args->getopt(opts))!=EOF)
    {
       switch(opt)
       {
+      case('r'):
+	 recursive=true;
+	 break;
       case('?'):
       print_usage:
 	 eprintf(_("Usage: %s files...\n"),args->a0());
@@ -617,6 +626,13 @@ CMD(rm)
    char *curr=args->getnext();
    if(curr==0)
       goto print_usage;
+
+   if(recursive)
+   {
+      Job *j=new FindJob_Cmd(Clone(),args,FindJob_Cmd::RM);
+      args=0;
+      return j;
+   }
 
    rmJob *j=(strcmp(args->a0(),"rmdir")
 	     ?new rmJob(Clone(),new ArgV(args->a0()))

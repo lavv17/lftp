@@ -115,11 +115,6 @@ class CmdExec : public SessionJob
    char *old_cwd;
    char *old_lcwd;
 
-public:
-   void FeedCmd(const char *c);
-   void PrependCmd(const char *c);
-   void ExecParsed(ArgV *a,FDStream *o=0,bool b=false);
-
    in_CMD(alias); in_CMD(anon);   in_CMD(cd);      in_CMD(debug);
    in_CMD(exit);  in_CMD(get);    in_CMD(help);    in_CMD(jobs);
    in_CMD(kill);  in_CMD(lcd);    in_CMD(ls);      in_CMD(mget);
@@ -132,7 +127,12 @@ public:
    in_CMD(echo);  in_CMD(suspend);in_CMD(ftpcopy); in_CMD(sleep);
    in_CMD(at);	  in_CMD(find);
 
-   static const char * const var_list[];
+public:
+   void FeedCmd(const char *c);
+   void PrependCmd(const char *c);
+   void ExecParsed(ArgV *a,FDStream *o=0,bool b=false);
+   void unquote(char *buf,const char *str);
+   void FeedQuoted(const char *c);
 
    CmdExec(FileAccess *s);
    ~CmdExec();
@@ -171,7 +171,8 @@ public:
    static CmdExec *cwd_owner;
    char	 *cwd;
    void	 SaveCWD();
-   void	 RestoreCWD();
+   int	 RestoreCWD();
+   void  SetCWD(const char *c);
 
    FDStream *default_output;
 

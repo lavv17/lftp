@@ -42,4 +42,8 @@ int   create_directories(char *);
 // rm -rf
 void  truncate_file_tree(const char *dir);
 
+// returns malloc'ed cwd no matter how long it is
+// returns 0 on error.
+char *xgetcwd();
+
 #endif // MISC_H

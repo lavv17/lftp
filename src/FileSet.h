@@ -134,8 +134,8 @@ public:
    void	 ExcludeDots();
 
    void	 rewind() { ind=0; }
-   FileInfo *curr() { return (ind<fnum ? files[ind] : 0); }
-   FileInfo *next() { return (ind<fnum&&++ind<fnum ? files[ind] : 0); }
+   FileInfo *curr();
+   FileInfo *next();
 
    void	 LocalRemove(const char *dir);
    void	 LocalUtime(const char *dir);
