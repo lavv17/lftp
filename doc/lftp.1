@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "10 Oct 1999"
+.TH lftp 1 "22 Oct 1999"
 .SH NAME
 lftp \- Sophisticated ftp program
 .SH SYNTAX
@@ -61,7 +61,7 @@ lftp \- Sophisticated ftp program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 2.1.2.
+This man page documents lftp version 2.1.4.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a program that allows sophisticated ftp connection to
@@ -227,7 +227,7 @@ requests continuation of transfer.
 .PP
 Retrieve the remote file \fIrfile\fP and store it as the local file
 \fIlfile\fP.  If -o is omitted, the file is stored to local file named as
-basename of \fIrfile\fP. If the option [-c] is specified, try to reget
+base name of \fIrfile\fP. If the option [-c] is specified, try to reget
 specified files.  You can get multiple files by specifying multiple
 instances of \fIrfile\fP [and -o \fIlfile\fP]. Does not expand wildcards, use
 \fBmget\fR for that.
@@ -319,7 +319,7 @@ Mirror specified remote directory to local directory.
 .De
 .PP
 When using -R, the first directory is local and the second is remote.
-If the second directory is omitted, basename of first directory is used.
+If the second directory is omitted, base name of first directory is used.
 If both directories are omitted, current local and remote directories are used.
 .PP
 \fIRX\fP is an extended regular expression, just like in
@@ -354,7 +354,7 @@ Same as `cat \fIfiles\fP | more'. if \fBPAGER\fP is set, it is used as filter.
 .PP
 Upload files with wildcard expansion. -c means reput, -d means to
 create remote directories and use the same remote name as local
-one. By default it uses the basename of local name as remote one.
+one. By default it uses the base name of local name as remote one.
 
 .B mrm
 \fIfile(s)\fP
@@ -397,7 +397,7 @@ mad :) Options:
 .RB [ -c "] " \fIlfile\fP " [" -o
 .RB \fIrfile\fP]
 .PP
-Upload \fIlfile\fP with remote name \fIrfile\fP. If -o omitted, the basename
+Upload \fIlfile\fP with remote name \fIrfile\fP. If -o omitted, the base name
 of \fIlfile\fP is used as remote name. -c means reput, which requires you
 to have permission to overwrite remote files in current
 directory. Does not expand wildcards, use \fBmput\fR for that.
@@ -611,7 +611,7 @@ the version of \fBlftp\fP (e.g., 2.0.3)
 the current working directory at the remote site
 .TP
 .B \eW
-the basename of the current working directory at the remote site
+the base name of the current working directory at the remote site
 .TP
 .B \e\fInnn\fP
 the character corresponding to the octal number \fInnn\fP

@@ -1,3 +1,7 @@
+1999-12-04	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: use `base name' instead of basename.
+
 1999-10-22	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document hftp:use-head.
