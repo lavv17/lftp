@@ -219,6 +219,7 @@ class Ftp : public NetAccess
    bool  mdtm_supported;
    bool  size_supported;
    bool  site_chmod_supported;
+   long	 last_rest;
 
    int	 StateToError();
 

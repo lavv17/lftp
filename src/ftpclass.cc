@@ -230,7 +230,7 @@ address_mismatch:
 int   Ftp::RestCheck(int act,int exp)
 {
    (void)exp;
-   if(act/100==5)
+   if(act/100==5 && pos>0)
    {
       DebugPrint("---- ","Switching to NOREST mode",2);
       flags|=NOREST_MODE;
@@ -247,6 +247,7 @@ int   Ftp::RestCheck(int act,int exp)
       return -1;
    }
    real_pos=pos;  // REST successful
+   last_rest=pos;
    return state;
 }
 
@@ -742,6 +743,7 @@ void Ftp::InitFtp()
    mdtm_supported=true;
    size_supported=true;
    site_chmod_supported=true;
+   last_rest=0;
 
    RespQueue=0;
    RQ_alloc=0;
@@ -982,6 +984,7 @@ int   Ftp::Do()
       size_supported=true;
       mdtm_supported=true;
       site_chmod_supported=true;
+      last_rest=0;
    }
 
    case(CONNECTING_STATE):
@@ -1402,8 +1405,11 @@ int   Ftp::Do()
 #endif
 	 }
       }
-      if(real_pos==-1)
+      // some broken servers don't reset REST after a transfer,
+      // so check if last_rest was different.
+      if(real_pos==-1 || last_rest!=real_pos)
       {
+	 real_pos=-1;
          sprintf(str,"REST %ld\n",pos);
 	 SendCmd(str);
 	 AddResp(RESP_REST_OK,INITIAL_STATE,CHECK_REST);
@@ -2597,6 +2603,7 @@ void  Ftp::MoveConnectionHere(Ftp *o)
    size_supported=o->size_supported;
    mdtm_supported=o->mdtm_supported;
    site_chmod_supported=o->site_chmod_supported;
+   last_rest=o->last_rest;
 
    set_real_cwd(o->real_cwd);
    o->set_real_cwd(0);
