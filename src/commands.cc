@@ -2195,7 +2195,7 @@ CMD(cache)  // cache control
       const char *err=ResMgr::Set("cache:size",0,op);
       if(err)
       {
-	 eprintf(_("%s: %s: %s\n"),args->a0(),op,err);
+	 eprintf("%s: %s: %s\n",args->a0(),op,err);
 	 exit_code=1;
 	 return 0;
       }
@@ -2212,7 +2212,7 @@ CMD(cache)  // cache control
       const char *err=ResMgr::Set("cache:expire",0,op);
       if(err)
       {
-	 eprintf(_("%s: %s: %s\n"),args->a0(),op,err);
+	 eprintf("%s: %s: %s\n",args->a0(),op,err);
 	 exit_code=1;
 	 return 0;
       }
