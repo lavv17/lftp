@@ -39,7 +39,14 @@ class Http : public NetAccess
       DONE
    };
 
+   enum tunnel_state_t {
+      NO_TUNNEL,
+      TUNNEL_WAITING,
+      TUNNEL_ESTABLISHED
+   };
+
    state_t state;
+   tunnel_state_t tunnel_state;
 
    void Init();
 
@@ -80,6 +87,7 @@ class Http : public NetAccess
 	    return 1;
 	 return 2;
       }
+   void MakeSSLBuffers();
 
    char *status;
    int   status_consumed;

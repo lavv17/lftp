@@ -73,6 +73,7 @@ static void base64_encode (const char *s, char *store, int length);
 void Http::Init()
 {
    state=DISCONNECTED;
+   tunnel_state=NO_TUNNEL;
    sock=-1;
    send_buf=0;
    recv_buf=0;
@@ -398,7 +399,7 @@ void Http::SendRequest(const char *connection,const char *f)
 			      strlen(hostname)*3+1+strlen(cwd)*3+1+
 			      strlen(efile)+1+6+1);
 
-   if(proxy)
+   if(proxy && !https)
    {
       const char *proto="http";
       if(https)
@@ -717,6 +718,9 @@ void Http::GetBetterConnection(int level,int count)
       if(o->sock==-1 || o->state==CONNECTING)
 	 continue;
 
+      if(o->tunnel_state==TUNNEL_WAITING)
+	 continue;
+
       if(o->state!=CONNECTED || o->mode!=CLOSED)
       {
 	 if(level<2)
@@ -943,13 +947,7 @@ int Http::Do()
 #ifdef USE_SSL
       if(proxy?!strncmp(proxy,"https://",8):https)
       {
-	 SSL *ssl=lftp_ssl_new(sock);
-	 IOBufferSSL *send_buf_ssl=new IOBufferSSL(ssl,IOBuffer::PUT);
-	 IOBufferSSL *recv_buf_ssl=new IOBufferSSL(ssl,IOBuffer::GET);
-	 send_buf_ssl->DoConnect();
-	 recv_buf_ssl->CloseLater();
-	 send_buf=send_buf_ssl;
-	 recv_buf=recv_buf_ssl;
+	 MakeSSLBuffers();
       }
       else
 #endif
@@ -958,6 +956,21 @@ int Http::Do()
 	    new FDStream(sock,"<output-socket>"),IOBuffer::PUT);
 	 recv_buf=new IOBufferFDStream(
 	    new FDStream(sock,"<input-socket>"),IOBuffer::GET);
+#ifdef USE_SSL
+	 if(proxy && https)
+	 {
+	    // have to setup a tunnel.
+	    char *ehost=string_alloca(strlen(hostname)*3+1);
+	    const char *port_to_use=portname?portname:HTTPS_DEFAULT_PORT;
+	    char *eport=string_alloca(strlen(port_to_use)*3+1);
+	    url::encode_string(hostname,ehost,URL_HOST_UNSAFE);
+	    url::encode_string(port_to_use,eport,URL_PORT_UNSAFE);
+	    Send("CONNECT %s:%s HTTP/1.1\r\n\r\n",ehost,eport);
+	    tunnel_state=TUNNEL_WAITING;
+	    state=RECEIVING_HEADER;
+	    return MOVED;
+	 }
+#endif // USE_SSL
       }
       /*fallthrough*/
    case CONNECTED:
@@ -1033,6 +1046,18 @@ int Http::Do()
 	    {
 	       DebugPrint("<--- ","",4);
 	       recv_buf->Skip(2);
+	       if(tunnel_state==TUNNEL_WAITING)
+	       {
+		  if(H_20X(status_code))
+		  {
+		     if(https)
+			MakeSSLBuffers();
+		     tunnel_state=TUNNEL_ESTABLISHED;
+		     ResetRequestData();
+		     state=CONNECTED;
+		     return MOVED;
+		  }
+	       }
 	       if(chunked_trailer)
 	       {
 		  chunked_trailer=false;
@@ -1572,6 +1597,8 @@ const char *Http::CurrentStatus()
    case RECEIVING_HEADER:
       if(mode==STORE && !sent_eot && !status)
 	 return(_("Sending data"));
+      if(tunnel_state==TUNNEL_WAITING)
+	 return(_("Connecting..."));
       if(!status)
 	 return(_("Waiting for response..."));
       return(_("Fetching headers..."));
@@ -1871,6 +1898,20 @@ Https::Https(const Https *o) : super(o)
    Reconfig(0);
 }
 FileAccess *Https::New(){ return new Https();}
+
+void Http::MakeSSLBuffers()
+{
+   Delete(send_buf);
+   Delete(recv_buf);
+
+   SSL *ssl=lftp_ssl_new(sock);
+   IOBufferSSL *send_buf_ssl=new IOBufferSSL(ssl,IOBuffer::PUT);
+   IOBufferSSL *recv_buf_ssl=new IOBufferSSL(ssl,IOBuffer::GET);
+   send_buf_ssl->DoConnect();
+   recv_buf_ssl->CloseLater();
+   send_buf=send_buf_ssl;
+   recv_buf=recv_buf_ssl;
+}
 #endif
 
 #undef super

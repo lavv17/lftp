@@ -4,6 +4,7 @@
 	  get rid of group/gpass.
 	* Resolver.cc, netrc.cc, Fish.cc, Http.cc: use case-insensitive
 	  hostname comparision.
+	* Http.cc, Http.h: support CONNECT method for https over http proxy.
 
 2001-07-02  Alexander V. Lukyanov  <lav@yars.free.net>
 
