@@ -1,4 +1,4 @@
-TRIO_FILES=trio.h triop.h trionan.h triodef.h
+TRIO_FILES=trio.h triop.h trionan.h triodef.h triostr.h
 noinst_HEADERS = xalloca.h getopt.h xstring.h filemode.h mbswidth.h \
 		 human.h xstrtol.h \
 		 $(TRIO_FILES)
