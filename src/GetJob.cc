@@ -40,6 +40,9 @@ int   GetJob::Do()
    int m=STALL;
    int res;
 
+   if(deleting)
+      goto handle_deleting;
+
    if(!curr && args)
       NextFile();
 
@@ -59,6 +62,7 @@ int   GetJob::Do()
 	    session->Open(curr,FA::REMOVE);
 	    m=MOVED;
 	 }
+      handle_deleting:
 	 res=session->Done();
 	 if(res<=0)
 	 {
