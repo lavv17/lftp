@@ -35,6 +35,12 @@ Version 2.2.0 - 2000-??-??
   rather use it instead of previously received.
 * ftp and hftp URLs are now assumed to have home-relative path. To write
   root-relative path in such URLs, use ftp://site/%2Fpath.
+* new setting dns:use-fork. When true, lftp does fork before gethostbyname
+  to allow instant interrupting and asynchronousity. (default is true)
+* new setting cmd:default-protocol. The value is used when open is used
+  with just host name without protocol. Default is `ftp'.
+* check file names in ftp listings for slashes, don't use file names with
+  slashes.
 * fixed completion and file name globbing for wu-ftpd-2.6.0. A long standing
   bug with multiple path component globbing over ftp has also been fixed.
 

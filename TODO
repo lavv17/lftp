@@ -84,13 +84,13 @@ currently; some need other work to be done.
    the best way would be to return a error from Http to FileCopy, and
    FileCopy would change get or put accordingly.
 
- * get -O dir, mget -O dir.
- * Reconfig Speedometer.
++* get -O dir, mget -O dir.
+   Make them work correctly on urls.
 
  * glob -f, glob -d to get files/directories only.
 
- * check file names for validity in FtpListInfo (e.g. no slashes allowed)
-
- * check for md5 in -lcrypt
-
  * check TIOCOUTQ - it can work in two ways.
+
++* make mkdir etc work on urls.
+
++* DummyProtoNoProto
