@@ -97,6 +97,7 @@ void Http::Init()
    chunked=false;
    chunk_size=-1;
    chunk_pos=0;
+   chunked_trailer=false;
 
    no_ranges=false;
    seen_ranges_bytes=false;
@@ -196,6 +197,7 @@ void Http::ResetRequestData()
    chunked=false;
    chunk_size=-1;
    chunk_pos=0;
+   chunked_trailer=false;
    seen_ranges_bytes=false;
 }
 
@@ -205,7 +207,7 @@ void Http::Close()
       return;
    if(recv_buf)
       recv_buf->Do();	// try to read any remaining data
-   if(sock!=-1 && keep_alive && (keep_alive_max>1 || keep_alive_max==-1)
+   if(sock!=-1 && keep_alive && (keep_alive_max>0 || keep_alive_max==-1)
    && mode!=STORE && !recv_buf->Eof() && (state==RECEIVING_BODY || state==DONE))
    {
       recv_buf->Resume();
@@ -562,6 +564,7 @@ add_path:
    chunked=false;
    chunk_size=-1;
    chunk_pos=0;
+   chunked_trailer=false;
    no_ranges=false;
 }
 
@@ -663,6 +666,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 	 chunked=true;
 	 chunk_size=-1;	// to indicate "before first chunk"
 	 chunk_pos=0;
+	 chunked_trailer=false;
       }
       return;
    }
@@ -1020,6 +1024,13 @@ int Http::Do()
 	    {
 	       DebugPrint("<--- ","",4);
 	       recv_buf->Skip(2);
+	       if(chunked_trailer)
+	       {
+		  chunked_trailer=false;
+		  chunked=false;
+		  state=DONE;
+		  return MOVED;
+	       }
 	       if(mode==ARRAY_INFO)
 	       {
 		  // we'll have to receive next header
@@ -1353,6 +1364,8 @@ int Http::Read(void *buf,int size)
 	 return DO_AGAIN;
       if(chunked)
       {
+	 if(chunked_trailer && state==RECEIVING_HEADER)
+	    return DO_AGAIN;
 	 const char *nl;
 	 if(chunk_size==-1) // expecting first/next chunk
 	 {
@@ -1376,11 +1389,11 @@ int Http::Read(void *buf,int size)
 	 }
 	 if(chunk_size==0) // eof
 	 {
-	    // FIXME: headers may follow
-	    // to avoid messing with headers, we close connection.
-	    Disconnect();
-	    state=DONE;
-	    return 0;
+	    // headers may follow
+	    chunked_trailer=true;
+	    state=RECEIVING_HEADER;
+	    body_size=bytes_received;
+	    return DO_AGAIN;
 	 }
 	 if(chunk_pos==chunk_size)
 	 {

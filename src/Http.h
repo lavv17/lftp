@@ -99,6 +99,7 @@ class Http : public NetAccess
    bool chunked;
    long chunk_size;
    off_t chunk_pos;
+   bool chunked_trailer;
 
    bool no_ranges;
    bool seen_ranges_bytes;
