@@ -1160,6 +1160,17 @@ int   Ftp::Do()
    if(!hostname)
       return m;
 
+   if(mode==CHANGE_MODE && !QueryBool("use-site-chmod"))
+   {
+      SetError(NOT_SUPP,_("SITE CHMOD is disabled by ftp:use-site-chmod"));
+      return MOVED;
+   }
+   if(mode==MP_LIST && !use_mlsd)
+   {
+      SetError(NOT_SUPP,_("MLSD is disabled by ftp:use-mlsd"));
+      return MOVED;
+   }
+
    switch(state)
    {
    case(INITIAL_STATE):
@@ -1425,19 +1436,9 @@ int   Ftp::Do()
 	 SetError(NOT_SUPP,_("SITE CHMOD is not supported by this site"));
 	 return MOVED;
       }
-      if(mode==CHANGE_MODE && !QueryBool("use-site-chmod"))
-      {
-	 SetError(NOT_SUPP,_("SITE CHMOD is disabled by ftp:use-site-chmod"));
-	 return MOVED;
-      }
       if(mode==MP_LIST && !conn->mlst_supported)
       {
 	 SetError(NOT_SUPP,_("MLST and MLSD are not supported by this site"));
-	 return MOVED;
-      }
-      if(mode==MP_LIST && !use_mlsd)
-      {
-	 SetError(NOT_SUPP,_("MLSD is disabled by ftp:use-mlsd"));
 	 return MOVED;
       }
 
