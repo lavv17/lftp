@@ -1,3 +1,14 @@
+2005-01-04  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* LocalAccess.cc: move Block'ing to Read and Write, this fixes spinning
+	  if disk is full.
+
+2004-12-28  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc, Http.h: (DirFile) new method; use MKCOL, MOVE, add Depth
+	  header for DELETE and support 102 reply (WebDAV preliminary support).
+	* MirrorJob.cc, resource.cc: add mirror:set-permissions setting.
+
 2004-12-17  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc: use get -O to reduce log size.

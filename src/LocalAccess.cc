@@ -155,7 +155,6 @@ int LocalAccess::Do()
 	 return m;
       }
       stream->Kill(SIGCONT);
-      Block(stream->getfd(),POLLIN);
       return m;
    case(CHANGE_DIR):
    {
@@ -285,7 +284,6 @@ int LocalAccess::Do()
 	 opt_size=0;
 	 opt_date=0;
       }
-      Block(stream->getfd(),(mode==STORE?POLLOUT:POLLIN));
       return m;
 
    case(CONNECT_VERIFY):
@@ -351,6 +349,11 @@ read_again:
 
    if(res<0)
    {
+      if(E_RETRY(errno))
+      {
+	 Block(stream->getfd(),POLLIN);
+	 return DO_AGAIN;
+      }
       if(stream->NonFatalError(errno))
 	 return DO_AGAIN;
       saved_errno=errno;
@@ -453,6 +456,11 @@ int LocalAccess::Write(const void *vbuf,int len)
    int res=write(fd,buf,len);
    if(res<0)
    {
+      if(E_RETRY(errno))
+      {
+	 Block(stream->getfd(),POLLOUT);
+	 return DO_AGAIN;
+      }
       if(stream->NonFatalError(errno))
       {
 	 // in case of full disk, check file correctness.
