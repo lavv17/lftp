@@ -1,3 +1,13 @@
+2000-07-30  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h: res_prefix new member.
+	* FindJob.cc, Fish.cc, Fish.h, FtpDirList.cc, LocalAccess.cc,
+	  Resolver.cc: use new IOBuffer.
+	* Http.cc, Http.h: implement https; use IOBuffer.
+	* HttpDir.cc: skip comments in html; use IOBuffer.
+	* buffer.cc, buffer.h: IOBuffer class; IOBufferSSL for ssl IO.
+	* resource.cc: add https:proxy setting.
+
 2000-07-29  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* complete.cc: fix # quoting.
