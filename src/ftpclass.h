@@ -270,15 +270,6 @@ class Ftp : public FileAccess
    bool copy_passive;
    friend class FtpCopy;
 
-   // traffic shaper, sort of :)
-   int BytesAllowed();
-   void BytesUsed(int);
-   void BytesReset();
-   int bytes_pool;
-   int bytes_pool_rate;
-   int bytes_pool_max;
-   time_t bytes_pool_time;
-
    const char *encode_eprt(sockaddr_u *);
 
    void Fatal(const char *);

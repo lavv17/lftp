@@ -73,6 +73,7 @@ class MirrorJob : public SessionJob
    void	 HandleFile(int);
 
    ListInfo *list_info;
+   FileAccess *local_session;
 
    char	 *local_dir;
    char	 *local_relative_dir;

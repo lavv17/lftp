@@ -22,6 +22,8 @@
 
 #include <config.h>
 
+#include "modconfig.h"
+
 #include <stdio.h>
 #include <unistd.h>
 #include <errno.h>
@@ -45,7 +47,6 @@
 #include "mrmJob.h"
 #include "SysCmdJob.h"
 #include "QuoteJob.h"
-#include "MirrorJob.h"
 #include "mvJob.h"
 #include "pgetJob.h"
 #include "FtpCopy.h"
@@ -73,22 +74,38 @@
 Bookmark lftp_bookmarks;
 History	 cwd_history;
 
-const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
+CMD(alias); CMD(anon);   CMD(cd);      CMD(debug);
+CMD(exit);  CMD(get);    CMD(help);    CMD(jobs);
+CMD(kill);  CMD(lcd);    CMD(ls);      CMD(mget);
+CMD(open);  CMD(pwd);    CMD(put);     CMD(set);
+CMD(shell); CMD(source); CMD(user);    CMD(rm);
+CMD(wait);  CMD(site);   CMD(subsh);   CMD(mirror);
+CMD(mput);  CMD(mv);	 CMD(cat);     CMD(cache);
+CMD(mkdir); CMD(quote);  CMD(scache);  CMD(mrm);
+CMD(ver);   CMD(close);  CMD(bookmark);CMD(lftp);
+CMD(echo);  CMD(suspend);CMD(ftpcopy); CMD(sleep);
+CMD(at);    CMD(find);   CMD(command);
+
+#ifdef MODULE_CMD_MIRROR
+# define cmd_mirror 0
+#endif
+
+const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 {
-   {"!",       &CmdExec::do_shell,  N_("!<shell_command>"),
+   {"!",       cmd_shell,  N_("!<shell_command>"),
 	 N_("Launch shell or shell command\n")},
-   {"(",       &CmdExec::do_subsh,  N_("(commands)"),
+   {"(",       cmd_subsh,  N_("(commands)"),
 	 N_("Group commands together to be executed as one command\n"
 	 "You can launch such a group in background\n")},
-   {"?",       &CmdExec::do_help,   0,"help"},
-   {"alias",   &CmdExec::do_alias,  N_("alias [<name> [<value>]]"),
+   {"?",       cmd_help,   0,"help"},
+   {"alias",   cmd_alias,  N_("alias [<name> [<value>]]"),
 	 N_("Define or undefine alias <name>. If <value> omitted,\n"
 	 "the alias is undefined, else is takes the value <value>.\n"
          "If no argument is given the current aliases are listed.\n")},
-   {"anon",    &CmdExec::do_anon,   "anon",
+   {"anon",    cmd_anon,   "anon",
 	 N_("anon - login anonymously (by default)\n")},
-   {"at",      &CmdExec::do_at},
-   {"bookmark",&CmdExec::do_bookmark,N_("bookmark [SUBCMD]"),
+   {"at",      cmd_at},
+   {"bookmark",cmd_bookmark,N_("bookmark [SUBCMD]"),
 	 N_("bookmark command controls bookmarks\n\n"
 	 "The following subcommands are recognized:\n"
 	 "  add <name> [<loc>] - add current place or given location to bookmarks\n"
@@ -97,8 +114,8 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
 	 "  edit               - start editor on bookmarks file\n"
 	 "  import <type>      - import foreign bookmarks\n"
 	 "  list               - list bookmarks (default)\n")},
-   {"bye",     &CmdExec::do_exit,   0,"exit"},
-   {"cache",   &CmdExec::do_cache,  N_("cache [SUBCMD]"),
+   {"bye",     cmd_exit,   0,"exit"},
+   {"cache",   cmd_cache,  N_("cache [SUBCMD]"),
 	 N_("cache command controls local memory cache\n\n"
 	 "The following subcommands are recognized:\n"
 	 "  stat        - print cache status (default)\n"
@@ -107,46 +124,46 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
 	 "  size <lim>  - set memory limit, -1 means unlimited\n"
 	 "  expire <Nx> - set cache expiration time to N seconds (x=s)\n"
 	 "                minutes (x=m) hours (x=h) or days (x=d)\n")},
-   {"cat",     &CmdExec::do_cat,    N_("cat [-u] <files>"),
+   {"cat",     cmd_cat,    N_("cat [-u] <files>"),
 	 N_("cat - output remote files to stdout\n"
 	 " -u  try to recognize URLs\n")},
-   {"cd",      &CmdExec::do_cd,     N_("cd <rdir>"),
+   {"cd",      cmd_cd,     N_("cd <rdir>"),
 	 N_("Change current remote directory to <rdir>. The previous remote directory\n"
 	 "is stored as `-'. You can do `cd -' to change the directory back.\n"
 	 "The previous directory for each site is also stored on disk, so you can\n"
 	 "do `open site; cd -' even after lftp restart.\n")},
-   {"close",   &CmdExec::do_close,   "close [-a]",
+   {"close",   cmd_close,   "close [-a]",
 	 N_("Close idle connections. By default only with current server.\n"
 	 " -a  close idle connections with all servers\n")},
-   {"connect", &CmdExec::do_open,   0,"open"},
-   {"command", &CmdExec::do_command},
-   {"debug",   &CmdExec::do_debug,  N_("debug [<level>|off] [-o <file>]"),
+   {"connect", cmd_open,   0,"open"},
+   {"command", cmd_command},
+   {"debug",   cmd_debug,  N_("debug [<level>|off] [-o <file>]"),
 	 N_("Set debug level to given value or turn debug off completely.\n"
 	 " -o <file>  redirect debug output to the file.\n")},
-   {"echo",    &CmdExec::do_echo,   0},
-   {"exit",    &CmdExec::do_exit,   N_("exit [<code>]"),
+   {"echo",    cmd_echo,   0},
+   {"exit",    cmd_exit,   N_("exit [<code>]"),
 	 N_("exit - exit from lftp or move to background if jobs are active\n\n"
 	 "If no jobs active, the code is passed to operating system as lftp\n"
 	 "termination status. If omitted, exit code of last command is used.\n")},
-   {"fg",      &CmdExec::do_wait,   0,"wait"},
-   {"find",    &CmdExec::do_find},
-   {"ftpcopy", &CmdExec::do_ftpcopy},
-   {"get",     &CmdExec::do_get,    N_("get [OPTS] <rfile> [-o <lfile>]"),
+   {"fg",      cmd_wait,   0,"wait"},
+   {"find",    cmd_find},
+   {"ftpcopy", cmd_ftpcopy},
+   {"get",     cmd_get,    N_("get [OPTS] <rfile> [-o <lfile>]"),
 	 N_("Retrieve remote file <rfile> and store it to local file <lfile>.\n"
 	 " -o <lfile> specifies local file name (default - basename of rfile)\n"
 	 " -c  continue, reget\n"
 	 " -e  delete remote files after successful transfer\n"
 	 " -u  try to recognize URLs\n")},
-   {"help",    &CmdExec::do_help,   N_("help [<cmd>]"),
+   {"help",    cmd_help,   N_("help [<cmd>]"),
 	 N_("Print help for command <cmd>, or list of available commands\n")},
-   {"jobs",    &CmdExec::do_jobs,   "jobs [-v]",
+   {"jobs",    cmd_jobs,   "jobs [-v]",
 	 N_("List running jobs. -v means verbose, several -v can be specified.\n")},
-   {"kill",    &CmdExec::do_kill,   N_("kill all|<job_no>"),
+   {"kill",    cmd_kill,   N_("kill all|<job_no>"),
 	 N_("Delete specified job with <job_no> or all jobs\n")},
-   {"lcd",     &CmdExec::do_lcd,    N_("lcd <ldir>"),
+   {"lcd",     cmd_lcd,    N_("lcd <ldir>"),
 	 N_("Change current local directory to <ldir>. The previous local directory\n"
 	 "is stored as `-'. You can do `lcd -' to change the directory back.\n")},
-   {"lftp",    &CmdExec::do_lftp,   N_("lftp [OPTS] <site>"),
+   {"lftp",    cmd_lftp,   N_("lftp [OPTS] <site>"),
 	 N_("`lftp' is the first command executed by lftp after rc files\n"
 	 " -f <file>           execute commands from the file and exit\n"
 	 " -c <cmd>            execute the commands and exit\n"
@@ -155,19 +172,19 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
 	 " -u <user>[,<pass>]  use the user/password for authentication\n"
 	 " -p <port>           use the port for connection\n"
 	 " <site>              host name, URL or bookmark name\n")},
-   {"login",   &CmdExec::do_user,   0,"user"},
-   {"ls",      &CmdExec::do_ls,	    N_("ls [<args>]"),
+   {"login",   cmd_user,   0,"user"},
+   {"ls",      cmd_ls,	    N_("ls [<args>]"),
 	 N_("List remote files. You can redirect output of this command to file\n"
 	 "or via pipe to external command.\n"
 	 "By default, ls output is cached, to see new listing use `rels' or\n"
 	 "`cache flush'.\n")},
-   {"mget",    &CmdExec::do_mget,   N_("mget [-c] [-d] [-e] <files>"),
+   {"mget",    cmd_mget,   N_("mget [-c] [-d] [-e] <files>"),
 	 N_("Gets selected files with expanded wildcards\n"
 	 " -c  continue, reget\n"
 	 " -d  create directories the same as in file names and get the\n"
 	 "     files into them instead of current directory\n"
 	 " -e  delete remote files after successful transfer\n")},
-   {"mirror",  &CmdExec::do_mirror, N_("mirror [OPTS] [remote [local]]"),
+   {"mirror",  cmd_mirror, N_("mirror [OPTS] [remote [local]]"),
 	 N_("\nMirror specified remote directory to local directory\n\n"
 	 " -c, --continue         continue a mirror job if possible\n"
 	 " -e, --delete           delete files not present at remote site\n"
@@ -190,84 +207,84 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
 	 "If the second directory is omitted, basename of first directory is used.\n"
 	 "If both directories are omitted, current local and remote directories are used.\n"
 	 )},
-   {"mkdir",   &CmdExec::do_mkdir,  N_("mkdir [-p] <dirs>"),
+   {"mkdir",   cmd_mkdir,  N_("mkdir [-p] <dirs>"),
 	 N_("Make remote directories\n"
 	 " -p  make all levels of path\n")},
-   {"more",    &CmdExec::do_cat,    N_("more [-u] <files>"),
+   {"more",    cmd_cat,    N_("more [-u] <files>"),
 	 N_("Same as `cat <files> | more'. if PAGER is set, it is used as filter\n"
 	 " -u  try to recognize URLs\n")},
-   {"mput",    &CmdExec::do_mput,   N_("mput [-c] [-d] <files>"),
+   {"mput",    cmd_mput,   N_("mput [-c] [-d] <files>"),
 	 N_("Upload files with wildcard expansion\n"
 	 " -c  continue, reput\n"
 	 " -d  create directories the same as in file names and put the\n"
 	 "     files into them instead of current directory\n")},
-   {"mrm",     &CmdExec::do_mrm,    N_("mrm <files>"),
+   {"mrm",     cmd_mrm,    N_("mrm <files>"),
 	 N_("Removes specified files with wildcard expansion\n")},
-   {"mv",      &CmdExec::do_mv,	    N_("mv <file1> <file2>"),
+   {"mv",      cmd_mv,	    N_("mv <file1> <file2>"),
 	 N_("Rename <file1> to <file2>\n")},
-   {"nlist",   &CmdExec::do_ls,	    N_("nlist [<args>]"),
+   {"nlist",   cmd_ls,	    N_("nlist [<args>]"),
 	 N_("List remote file names\n")},
-   {"open",    &CmdExec::do_open,   N_("open [OPTS] <site>"),
+   {"open",    cmd_open,   N_("open [OPTS] <site>"),
 	 N_("Select a server, URL or bookmark\n"
 	 " -e <cmd>            execute the command just after selecting\n"
 	 " -u <user>[,<pass>]  use the user/password for authentication\n"
 	 " -p <port>           use the port for connection\n"
 	 " <site>              host name, URL or bookmark name\n")},
-   {"pget",    &CmdExec::do_get,    N_("pget [OPTS] <rfile> [-o <lfile>]"),
+   {"pget",    cmd_get,    N_("pget [OPTS] <rfile> [-o <lfile>]"),
 	 N_("Gets the specified file using several connections. This can speed up transfer,\n"
 	 "but loads the net heavily impacting other users. Use only if you really\n"
 	 "have to transfer the file ASAP, or some other user may go mad :)\n"
 	 "\nOptions:\n"
 	 " -n <maxconn>  set maximum number of connections (default 5)\n"
 	 " -u            try to recognize URLs\n")},
-   {"put",     &CmdExec::do_put,    N_("put [-c] <lfile> [-o <rfile>]"),
+   {"put",     cmd_put,    N_("put [-c] <lfile> [-o <rfile>]"),
 	 N_("Upload <lfile> with remote name <rfile>.\n"
 	 " -o <rfile> specifies remote file name (default - basename of lfile)\n"
 	 " -c  continue, reput\n"
 	 "     it requires permission to overwrite remote files\n")},
-   {"pwd",     &CmdExec::do_pwd,    "pwd",
+   {"pwd",     cmd_pwd,    "pwd",
 	 N_("Print current remote directory\n")},
-   {"quit",    &CmdExec::do_exit,   0,"exit"},
-   {"quote",   &CmdExec::do_quote,  N_("quote <cmd>"),
+   {"quit",    cmd_exit,   0,"exit"},
+   {"quote",   cmd_quote,  N_("quote <cmd>"),
 	 N_("Send the command uninterpreted. Use with caution - it can lead to\n"
 	 "unknown remote state and thus will cause reconnect. You cannot\n"
 	 "be sure that any change of remote state because of quoted command\n"
 	 "is solid - it can be reset by reconnect at any time.\n")},
-   {"reget",   &CmdExec::do_get,    N_("reget [OPTS] <rfile> [-o <lfile>]"),
+   {"reget",   cmd_get,    N_("reget [OPTS] <rfile> [-o <lfile>]"),
 	 N_("Same as `get -c'\n")},
-   {"rels",    &CmdExec::do_ls,	    N_("rels [<args>]"),
+   {"rels",    cmd_ls,	    N_("rels [<args>]"),
 	 N_("Same as `ls', but don't look in cache\n")},
-   {"renlist", &CmdExec::do_ls,	    N_("renlist [<args>]"),
+   {"renlist", cmd_ls,	    N_("renlist [<args>]"),
 	 N_("Same as `nlist', but don't look in cache\n")},
-   {"reput",   &CmdExec::do_put,    N_("reput <lfile> [-o <rfile>]"),
+   {"reput",   cmd_put,    N_("reput <lfile> [-o <rfile>]"),
 	 N_("Same as `put -c'\n")},
-   {"rm",      &CmdExec::do_rm,	    N_("rm [-r] <files>"),
+   {"rm",      cmd_rm,	    N_("rm [-r] <files>"),
 	 N_("Remove remote files\n"
 	    " -r  recursive directory remove, be careful\n")},
-   {"rmdir",   &CmdExec::do_rm,	    N_("rmdir <dirs>"),
+   {"rmdir",   cmd_rm,	    N_("rmdir <dirs>"),
 	 N_("Remove remote directories\n")},
-   {"scache",  &CmdExec::do_scache, N_("scache [<session_no>]"),
+   {"scache",  cmd_scache, N_("scache [<session_no>]"),
 	 N_("List cached sessions or switch to specified session number\n")},
-   {"set",     &CmdExec::do_set,    N_("set [<var> [<val>]]"),
+   {"set",     cmd_set,    N_("set [<var> [<val>]]"),
 	 N_("Set variable to given value. If the value is omitted, unset the variable.\n"
          "If called with no variable, currently set variables are listed.\n")},
-   {"shell",   &CmdExec::do_shell,  0,"!"},
-   {"site",    &CmdExec::do_site,   N_("site <site_cmd>"),
+   {"shell",   cmd_shell,  0,"!"},
+   {"site",    cmd_site,   N_("site <site_cmd>"),
 	 N_("Execute site command <site_cmd> and output the result\n"
 	 "You can redirect its output\n")},
-   {"sleep",   &CmdExec::do_sleep},
-   {"source",  &CmdExec::do_source, N_("source <file>"),
+   {"sleep",   cmd_sleep},
+   {"source",  cmd_source, N_("source <file>"),
 	 N_("Execute commands recorded in file <file>\n")},
-   {"suspend", &CmdExec::do_suspend},
-   {"user",    &CmdExec::do_user,   N_("user <user> [<pass>]"),
+   {"suspend", cmd_suspend},
+   {"user",    cmd_user,   N_("user <user> [<pass>]"),
 	 N_("Use specified info for remote login\n")},
-   {"version", &CmdExec::do_ver,    "version",
+   {"version", cmd_ver,    "version",
 	 N_("Shows lftp version\n")},
-   {"wait",    &CmdExec::do_wait,   N_("wait <jobno>"),
+   {"wait",    cmd_wait,   N_("wait <jobno>"),
 	 N_("Wait for specified job to terminate.\n")},
-   {"zcat",    &CmdExec::do_cat,    N_("zcat [-u] <files>"),
+   {"zcat",    cmd_cat,    N_("zcat [-u] <files>"),
 	 N_("Same as cat, but filter each file through zcat\n")},
-   {"zmore",   &CmdExec::do_cat,    N_("zmore [-u] <files>"),
+   {"zmore",   cmd_cat,    N_("zmore [-u] <files>"),
 	 N_("Same as more, but filter each file through zcat\n")},
 
    {NULL,NULL}
@@ -310,7 +327,7 @@ int find_command(const char *unprec_name,const char * const *names,
    return 0;
 }
 
-CMD(lcd)
+Job *CmdExec::builtin_lcd()
 {
    if(args->count()<2)
    {
@@ -350,13 +367,330 @@ CMD(lcd)
    return 0;
 }
 
+Job *CmdExec::builtin_cd()
+{
+   if(args->count()!=2)
+   {
+      // xgettext:c-format
+      eprintf(_("Usage: cd remote-dir\n"));
+      return 0;
+   }
+
+   const char *dir=args->getarg(1);
+
+   char c;
+   if(sscanf(dir,"%*[a-z]://%*[^/]%c",&c)==1)
+      return builtin_open();
+
+   if(!strcmp(dir,"-"))
+   {
+      dir=cwd_history.Lookup(session);
+      if(!dir)
+      {
+	 eprintf(_("%s: no old directory for this site\n"),args->a0());
+	 return 0;
+      }
+      args->setarg(1,dir); // for status line
+   }
+
+   xfree(old_cwd);
+   old_cwd=xstrdup(session->GetCwd());
+
+   if (!verify_path || background)
+   {
+      session->Chdir(dir,false);
+      return 0;
+   }
+   session->Chdir(dir);
+   builtin=BUILTIN_CD;
+   return this;
+}
+
+Job *CmdExec::builtin_exit()
+{
+   if(args->count()>=2)
+   {
+      if(sscanf(args->getarg(1),"%i",&prev_exit_code)!=1)
+      {
+	 eprintf(_("Usage: %s [<exit_code>]\n"),args->a0());
+	 return 0;
+      }
+   }
+   while(!Done())
+      RemoveFeeder();
+   exit_code=prev_exit_code;
+   return 0;
+}
+
+CmdFeeder *lftp_feeder=0;
+Job *CmdExec::builtin_lftp()
+{
+   int c;
+   char *cmd=0;
+   static struct option lftp_options[]=
+   {
+      {"help",no_argument,0,'h'},
+      {"version",no_argument,0,'v'},
+      {0}
+   };
+
+   args->rewind();
+   opterr=false;
+   while((c=args->getopt_long("+f:c:vh",lftp_options,0))!=EOF)
+   {
+      switch(c)
+      {
+      case('h'):
+	 cmd="help lftp;";
+	 break;
+      case('v'):
+	 cmd="version;";
+	 break;
+      case('f'):
+	 cmd=(char*)alloca(20+2*strlen(optarg));
+	 strcpy(cmd,"source \"");
+	 unquote(cmd+strlen(cmd),optarg);
+	 strcat(cmd,"\";");
+	 break;
+      case('c'):
+	 cmd=(char*)alloca(4+strlen(optarg));
+	 sprintf(cmd,"%s\n\n",optarg);
+	 break;
+      }
+   }
+   opterr=true;
+
+   if(cmd)
+      PrependCmd(cmd);
+
+   if(Done() && lftp_feeder)  // no feeder and no commands
+   {
+      SetCmdFeeder(lftp_feeder);
+      lftp_feeder=0;
+      SetInteractive(isatty(0));
+      FeedCmd("||command exit\n");   // if the command fails, quit
+   }
+
+   if(!cmd)
+   {
+      /* if no lftp-specific options were found, call open */
+      return builtin_open();
+   }
+   return 0;
+}
+
+Job *CmdExec::builtin_open()
+{
+   bool	 debug=false;
+   char	 *port=NULL;
+   char	 *host=NULL;
+   char  *path=NULL;
+   char	 *user=NULL;
+   char	 *pass=NULL;
+   int	 c;
+   NetRC::Entry *nrc=0;
+   char  *cmd_to_exec=0;
+   char  *op=args->a0();
+
+   args->rewind();
+   while((c=args->getopt("u:p:e:d"))!=EOF)
+   {
+      switch(c)
+      {
+      case('p'):
+	 port=optarg;
+	 break;
+      case('u'):
+         user=optarg;
+         pass=strchr(optarg,',');
+	 if(pass==NULL)
+	    pass=strchr(optarg,' ');
+	 if(pass==NULL)
+   	    break;
+	 *pass=0;
+	 pass++;
+         break;
+      case('d'):
+	 debug=true;
+	 break;
+      case('e'):
+	 cmd_to_exec=optarg;
+	 break;
+      case('?'):
+	 if(!strcmp(op,"lftp"))
+	    eprintf(_("Try `%s --help' for more information\n"),op);
+	 else
+	    eprintf(_("Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"),
+	       op);
+	 return 0;
+      }
+   }
+
+   if(optind<args->count())
+      host=args->getarg(optind++);
+
+   ParsedURL *url=0;
+
+   const char *bm=0;
+
+   if(cmd_to_exec)
+      PrependCmd(cmd_to_exec);
+
+   if(host && (bm=lftp_bookmarks.Lookup(host))!=0)
+   {
+      char *cmd=(char*)alloca(5+strlen(bm)+2+1);
+      sprintf(cmd,"open %s%s\n",bm,background?"&":"");
+      PrependCmd(cmd);
+   }
+   else
+   {
+      if(host)
+      {
+	 url=new ParsedURL(host);
+
+	 const ParsedURL &uc=*url;
+	 if(uc.host)
+	 {
+	    cwd_history.Set(session,session->GetCwd());
+
+	    FileAccess *new_session=0;
+	    // get session with specified protocol if protocol differs
+	    if(uc.proto && strcmp(uc.proto,session->GetProto())
+	    || session->GetProto()[0]==0) // or if current session is dummy
+	    {
+	       const char *p=uc.proto;
+	       if(!p)
+		  p="ftp";
+	       new_session=Protocol::NewSession(p);
+	       if(!new_session)
+	       {
+		  eprintf(N_("%s: %s - not supported protocol\n"),
+			   args->getarg(0),p);
+		  return 0;
+	       }
+	    }
+	    else
+	    {
+	       new_session=session->Clone();
+	       new_session->AnonymousLogin();
+	    }
+	    Reuse(session);
+	    session=new_session;
+
+	    if(uc.user && !user)
+	       user=uc.user;
+	    if(uc.pass && !pass)
+	       pass=uc.pass;
+	    host=uc.host;
+	    if(uc.port!=0 && port==0)
+	       port=uc.port;
+	    if(uc.path && !path)
+	       path=uc.path;
+	 }
+
+	 if(!strcmp(session->GetProto(),"ftp"))
+	 {
+	    nrc=NetRC::LookupHost(host);
+	    if(nrc)
+	    {
+	       if(nrc->user && !user
+	       || (nrc->user && user && !strcmp(nrc->user,user) && !pass))
+	       {
+		  user=nrc->user;
+		  if(nrc->pass)
+		     pass=nrc->pass;
+	       }
+	    }
+	 }
+      }
+      if(user)
+      {
+	 if(!pass)
+	    pass=GetPass(_("Password: "));
+	 if(!pass)
+	    eprintf(_("%s: GetPass() failed -- assume anonymous login\n"),
+	       args->getarg(0));
+	 else
+	    session->Login(user,pass);
+      }
+      if(host)
+      {
+	 session->Connect(host,port);
+	 if(verify_host && !background)
+	 {
+	    session->ConnectVerify();
+	    builtin=BUILTIN_OPEN;
+	 }
+      }
+      if(nrc)
+	 delete nrc;
+   } // !bookmark
+
+   if(path)
+   {
+      char *s=(char*)alloca(strlen(path)*4+40);
+      strcpy(s,"&& cd \"");
+      unquote(s+strlen(s),path);
+      strcat(s,"\"");
+      if(background)
+	 strcat(s,"&");
+      strcat(s,"\n");
+#if 0
+      char *slash=strrchr(path,'/');
+      if(slash && slash[1])
+      {
+	 *slash=0;
+	 strcat(s,"|| (cd \"");
+	 unquote(s+strlen(s),path);
+	 strcat(s,"\" && get -- \"");
+	 unquote(s+strlen(s),slash+1);
+	 strcat(s,"\")\n");
+      }
+#endif
+      PrependCmd(s);
+   }
+
+   if(debug)
+      PrependCmd("debug\n");
+
+   if(url)
+      delete url;
+
+   if(builtin==BUILTIN_OPEN)
+      return this;
+
+   exit_code=0;
+   return 0;
+}
+
+Job *CmdExec::builtin_command()
+{
+   args->delarg(0);
+   builtin=BUILTIN_EXEC_RESTART;
+   return this;
+}
+
+
+// below are only non-builtin commands
+#define args	  (parent->args)
+#define exit_code (parent->exit_code)
+#define output	  (parent->output)
+#define session	  (parent->session)
+#define Clone()	  session->Clone()
+#define eprintf	  parent->eprintf
+
+CMD(lcd)
+{
+   return parent->builtin_lcd();
+}
+
 CMD(ls)
 {
    int mode=Ftp::LONG_LIST;
    if(strstr(args->a0(),"nlist"))
       mode=Ftp::LIST;
    if(mode==Ftp::LONG_LIST && args->count()==1)
-      args->Append(var_ls);
+      args->Append(parent->var_ls);
    LsJob *j=new LsJob(Clone(),output,args->Combine(1),mode);
    output=0;
    if(!strncmp(args->a0(),"re",2))
@@ -664,7 +998,7 @@ CMD(source)
       eprintf(_("Usage: %s <file>\n"),args->a0());
       return 0;
    }
-   SetCmdFeeder(new FileFeeder(new FileStream(args->getarg(1),O_RDONLY)));
+   parent->SetCmdFeeder(new FileFeeder(new FileStream(args->getarg(1),O_RDONLY)));
    exit_code=0;
    return 0;
 }
@@ -687,48 +1021,14 @@ CMD(jobs)
 	 return 0;
       }
    }
-   Job::ListJobs(v);
+   parent->ListJobs(v);
    exit_code=0;
    return 0;
 }
 
 CMD(cd)
 {
-   if(args->count()!=2)
-   {
-      // xgettext:c-format
-      eprintf(_("Usage: cd remote-dir\n"));
-      return 0;
-   }
-
-   const char *dir=args->getarg(1);
-
-   char c;
-   if(sscanf(dir,"%*[a-z]://%*[^/]%c",&c)==1)
-      return do_open();
-
-   if(!strcmp(dir,"-"))
-   {
-      dir=cwd_history.Lookup(session);
-      if(!dir)
-      {
-	 eprintf(_("%s: no old directory for this site\n"),args->a0());
-	 return 0;
-      }
-      args->setarg(1,dir); // for status line
-   }
-
-   xfree(old_cwd);
-   old_cwd=xstrdup(session->GetCwd());
-
-   if (!verify_path || background)
-   {
-      session->Chdir(dir,false);
-      return 0;
-   }
-   session->Chdir(dir);
-   builtin=BUILTIN_CD;
-   return this;
+   return parent->builtin_cd();
 }
 
 CMD(pwd)
@@ -743,18 +1043,7 @@ CMD(pwd)
 
 CMD(exit)
 {
-   if(args->count()>=2)
-   {
-      if(sscanf(args->getarg(1),"%i",&prev_exit_code)!=1)
-      {
-	 eprintf(_("Usage: %s [<exit_code>]\n"),args->a0());
-	 return 0;
-      }
-   }
-   while(!Done())
-      RemoveFeeder();
-   exit_code=prev_exit_code;
-   return 0;
+   return parent->builtin_exit();
 }
 
 CMD(debug)
@@ -821,6 +1110,7 @@ CMD(debug)
       Log::global->Disable();
 
 
+#if 0
    if(interactive)
    {
       if(enabled)
@@ -829,6 +1119,7 @@ CMD(debug)
       else
 	 printf(_("debug is off\n"));
    }
+#endif
    exit_code=0;
    return 0;
 }
@@ -857,246 +1148,14 @@ CMD(anon)
    return 0;
 }
 
-CmdFeeder *lftp_feeder=0;
-static struct option lftp_options[]=
-{
-   {"help",no_argument,0,'h'},
-   {"version",no_argument,0,'v'},
-   {0}
-};
-
 CMD(lftp)
 {
-   int c;
-   char *cmd=0;
-
-   args->rewind();
-   opterr=false;
-   while((c=args->getopt_long("+f:c:vh",lftp_options,0))!=EOF)
-   {
-      switch(c)
-      {
-      case('h'):
-	 cmd="help lftp;";
-	 break;
-      case('v'):
-	 cmd="version;";
-	 break;
-      case('f'):
-	 cmd=(char*)alloca(20+2*strlen(optarg));
-	 strcpy(cmd,"source \"");
-	 unquote(cmd+strlen(cmd),optarg);
-	 strcat(cmd,"\";");
-	 break;
-      case('c'):
-	 cmd=(char*)alloca(4+strlen(optarg));
-	 sprintf(cmd,"%s\n\n",optarg);
-	 break;
-      }
-   }
-   opterr=true;
-
-   if(cmd)
-      PrependCmd(cmd);
-
-   if(Done() && lftp_feeder)  // no feeder and no commands
-   {
-      SetCmdFeeder(lftp_feeder);
-      lftp_feeder=0;
-      SetInteractive(isatty(0));
-      FeedCmd("||command exit\n");   // if the command fails, quit
-   }
-
-   if(!cmd)
-   {
-      /* if no lftp-specific options were found, call open */
-      return do_open();
-   }
-   return 0;
+   return parent->builtin_lftp();
 }
 
 CMD(open)
 {
-   bool	 debug=false;
-   char	 *port=NULL;
-   char	 *host=NULL;
-   char  *path=NULL;
-   char	 *user=NULL;
-   char	 *pass=NULL;
-   int	 c;
-   NetRC::Entry *nrc=0;
-   char  *cmd_to_exec=0;
-   char  *op=args->a0();
-
-   args->rewind();
-   while((c=args->getopt("u:p:e:d"))!=EOF)
-   {
-      switch(c)
-      {
-      case('p'):
-	 port=optarg;
-	 break;
-      case('u'):
-         user=optarg;
-         pass=strchr(optarg,',');
-	 if(pass==NULL)
-	    pass=strchr(optarg,' ');
-	 if(pass==NULL)
-   	    break;
-	 *pass=0;
-	 pass++;
-         break;
-      case('d'):
-	 debug=true;
-	 break;
-      case('e'):
-	 cmd_to_exec=optarg;
-	 break;
-      case('?'):
-	 if(!strcmp(op,"lftp"))
-	    eprintf(_("Try `%s --help' for more information\n"),op);
-	 else
-	    eprintf(_("Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"),
-	       op);
-	 return 0;
-      }
-   }
-
-   if(optind<args->count())
-      host=args->getarg(optind++);
-
-   ParsedURL *url=0;
-
-   const char *bm=0;
-
-   if(cmd_to_exec)
-      PrependCmd(cmd_to_exec);
-
-   if(host && (bm=lftp_bookmarks.Lookup(host))!=0)
-   {
-      char *cmd=(char*)alloca(5+strlen(bm)+2+1);
-      sprintf(cmd,"open %s%s\n",bm,background?"&":"");
-      PrependCmd(cmd);
-   }
-   else
-   {
-      if(host)
-      {
-	 url=new ParsedURL(host);
-
-	 const ParsedURL &uc=*url;
-	 if(uc.host)
-	 {
-	    cwd_history.Set(session,session->GetCwd());
-
-	    FileAccess *new_session=0;
-	    // get session with specified protocol if protocol differs
-	    if(uc.proto && strcmp(uc.proto,session->GetProto())
-	    || session->GetProto()[0]==0) // or if current session is dummy
-	    {
-	       const char *p=uc.proto;
-	       if(!p)
-		  p="ftp";
-	       new_session=Protocol::NewSession(p);
-	       if(!new_session)
-	       {
-		  eprintf(N_("%s: %s - not supported protocol\n"),
-			   args->getarg(0),p);
-		  return 0;
-	       }
-	    }
-	    else
-	    {
-	       new_session=session->Clone();
-	       new_session->AnonymousLogin();
-	    }
-	    Reuse(session);
-	    session=new_session;
-
-	    if(uc.user && !user)
-	       user=uc.user;
-	    if(uc.pass && !pass)
-	       pass=uc.pass;
-	    host=uc.host;
-	    if(uc.port!=0 && port==0)
-	       port=uc.port;
-	    if(uc.path && !path)
-	       path=uc.path;
-	 }
-
-	 if(!strcmp(session->GetProto(),"ftp"))
-	 {
-	    nrc=NetRC::LookupHost(host);
-	    if(nrc)
-	    {
-	       if(nrc->user && !user
-	       || (nrc->user && user && !strcmp(nrc->user,user) && !pass))
-	       {
-		  user=nrc->user;
-		  if(nrc->pass)
-		     pass=nrc->pass;
-	       }
-	    }
-	 }
-      }
-      if(user)
-      {
-	 if(!pass)
-	    pass=GetPass(_("Password: "));
-	 if(!pass)
-	    eprintf(_("%s: GetPass() failed -- assume anonymous login\n"),
-	       args->getarg(0));
-	 else
-	    session->Login(user,pass);
-      }
-      if(host)
-      {
-	 session->Connect(host,port);
-	 if(verify_host && !background)
-	 {
-	    session->ConnectVerify();
-	    builtin=BUILTIN_OPEN;
-	 }
-      }
-      if(nrc)
-	 delete nrc;
-   } // !bookmark
-
-   if(path)
-   {
-      char *s=(char*)alloca(strlen(path)*4+40);
-      strcpy(s,"&& cd \"");
-      unquote(s+strlen(s),path);
-      strcat(s,"\"");
-      if(background)
-	 strcat(s,"&");
-      strcat(s,"\n");
-#if 0
-      char *slash=strrchr(path,'/');
-      if(slash && slash[1])
-      {
-	 *slash=0;
-	 strcat(s,"|| (cd \"");
-	 unquote(s+strlen(s),path);
-	 strcat(s,"\" && get -- \"");
-	 unquote(s+strlen(s),slash+1);
-	 strcat(s,"\")\n");
-      }
-#endif
-      PrependCmd(s);
-   }
-
-   if(debug)
-      PrependCmd("debug\n");
-
-   if(url)
-      delete url;
-
-   if(builtin==BUILTIN_OPEN)
-      return this;
-
-   exit_code=0;
-   return 0;
+   return parent->builtin_open();
 }
 
 CMD(kill)
@@ -1108,7 +1167,7 @@ CMD(kill)
    }
    if(!strcmp(args->getarg(1),"all"))
    {
-      Job::KillAll();
+      parent->KillAll();
       exit_code=0;
       return 0;
    }
@@ -1125,7 +1184,7 @@ CMD(kill)
       }
       int n=atoi(arg);
       if(Job::Running(n))
-	 Job::Kill(n);
+	 parent->Kill(n);
       else
 	 eprintf(_("%s: %d - no such job\n"),args->getarg(0),n);
    }
@@ -1135,6 +1194,7 @@ CMD(kill)
 
 CMD(set)
 {
+   // TODO: -a and show only non-defaults by default
    if(args->count()<2)
    {
       char *s=ResMgr::Format();
@@ -1204,7 +1264,7 @@ CMD(wait)
       return 0;
    }
    int n=atoi(jn);
-   Job *j=FindJob(n);
+   Job *j=parent->FindJob(n);
    if(j==0)
    {
       eprintf(_("%s: %d - no such job\n"),op,n);
@@ -1260,235 +1320,6 @@ CMD(subsh)
    e->cmdline=(char*)xmalloc(strlen(c)+3);
    sprintf(e->cmdline,"(%s)",c);
    return e;
-}
-
-time_t decode_delay(const char *s)
-{
-   long prec;
-   char ch;
-   int n=sscanf(s,"%lu%c",&prec,&ch);
-   if(n<1)
-      return -1;
-   if(n==1)
-      ch='s';
-   else if(ch=='m')
-      prec*=MINUTE;
-   else if(ch=='h')
-      prec*=HOUR;
-   else if(ch=='d')
-      prec*=DAY;
-   else if(ch!='s')
-      return -1;
-   return prec;
-}
-
-CMD(mirror)
-{
-   static struct option mirror_opts[]=
-   {
-      {"delete",no_argument,0,'e'},
-      {"allow-suid",no_argument,0,'s'},
-      {"include",required_argument,0,'i'},
-      {"exclude",required_argument,0,'x'},
-      {"time-prec",required_argument,0,'t'},
-      {"only-newer",no_argument,0,'n'},
-      {"no-recursion",no_argument,0,'r'},
-      {"no-perms",no_argument,0,'p'},
-      {"continue",no_argument,0,'c'},
-      {"reverse",no_argument,0,'R'},
-      {"verbose",optional_argument,0,'v'},
-      {"newer-than",required_argument,0,'N'},
-      {"dereference",no_argument,0,'L'},
-      {0}
-   };
-
-   char cwd[2*1024];
-   const char *rcwd;
-   int opt;
-   int	 flags=0;
-
-   static char *include=0;
-   static int include_alloc=0;
-   static char *exclude=0;
-   static int exclude_alloc=0;
-#define APPEND_STRING(s,a,s1) \
-   {			                  \
-      int len,len1=strlen(s1);            \
-      if(!s)		                  \
-      {			                  \
-	 s=(char*)xmalloc(a = len1+1);    \
-      	 strcpy(s,s1);	                  \
-      }			                  \
-      else				  \
-      {					  \
-	 len=strlen(s);		       	  \
-	 if(a < len+1+len1+1)		  \
-	    s=(char*)xrealloc(s, a = len+1+len1+1); \
-	 if(s[0]) strcat(s,"|");	  \
-	 strcat(s,s1);			  \
-      }					  \
-   } /* END OF APPEND_STRING */
-
-   if(include)
-      include[0]=0;
-   if(exclude)
-      exclude[0]=0;
-
-   time_t prec=12*HOUR;
-   bool	 create_remote_dir=false;
-   int	 verbose=0;
-   const char *newer_than=0;
-
-   args->rewind();
-   while((opt=args->getopt_long("esi:x:t:nrpcRvN:L",mirror_opts,0))!=EOF)
-   {
-      switch(opt)
-      {
-      case('e'):
-	 flags|=MirrorJob::DELETE;
-	 break;
-      case('s'):
-	 flags|=MirrorJob::ALLOW_SUID;
-	 break;
-      case('r'):
-	 flags|=MirrorJob::NO_RECURSION;
-	 break;
-      case('n'):
-	 flags|=MirrorJob::ONLY_NEWER;
-	 break;
-      case('p'):
-	 flags|=MirrorJob::NO_PERMS;
-	 break;
-      case('c'):
-	 flags|=MirrorJob::CONTINUE;
-	 break;
-      case('t'):
-	 prec=decode_delay(optarg);
-	 if(prec==(time_t)-1)
-	 {
-	    eprintf(_("%s: %s - invalid time precision\n"),args->a0(),optarg);
-	    eprintf(_("Try `help %s' for more information.\n"),args->a0());
-	    return 0;
-	 }
-	 break;
-      case('x'):
-	 APPEND_STRING(exclude,exclude_alloc,optarg);
-	 break;
-      case('i'):
-	 APPEND_STRING(include,include_alloc,optarg);
-	 break;
-      case('R'):
-	 flags|=MirrorJob::REVERSE;
-	 break;
-      case('L'):
-	 flags|=MirrorJob::RETR_SYMLINKS;
-	 break;
-      case('v'):
-	 if(optarg)
-	    verbose=atoi(optarg);
-	 else
-	    verbose++;
-	 if(verbose>1)
-	    flags|=MirrorJob::REPORT_NOT_DELETED;
-	 break;
-      case('N'):
-	 newer_than=optarg;
-	 break;
-      case('?'):
-	 return 0;
-      }
-   }
-
-   if(getcwd(cwd,sizeof(cwd)/2)==0)
-   {
-      perror("getcwd()");
-      return 0;
-   }
-
-   args->back();
-   if(flags&MirrorJob::REVERSE)
-   {
-      char *arg=args->getnext();
-      if(!arg)
-	 rcwd=".";
-      else
-      {
-	 if(arg[0]=='/')
-	    strcpy(cwd,arg);
-	 else
-	 {
-	    strcat(cwd,"/");
-	    strcat(cwd,arg);
-	 }
-	 rcwd=args->getnext();
-	 if(!rcwd)
-	 {
-	    rcwd=basename_ptr(cwd);
-	    if(rcwd[0]=='/')
-	       rcwd=".";
-	    else
-	       create_remote_dir=true;
-	 }
-	 else
-	    create_remote_dir=true;
-      }
-   }
-   else	/* !REVERSE (normal) */
-   {
-      rcwd=args->getnext();
-      if(!rcwd)
-	 rcwd=".";
-      else
-      {
-	 strcat(cwd,"/");
-	 char *arg=args->getnext();
-	 if(arg)
-	 {
-	    if(arg[0]=='/')
-	       strcpy(cwd,arg);
-	    else
-	       strcat(cwd,arg);
-	    if(create_directories(arg)==-1)
-	       return 0;
-	 }
-	 else
-	 {
-	    int len=strlen(cwd);
-	    const char *base=basename_ptr(rcwd);
-	    if(base[0]!='/')
-	    {
-	       strcat(cwd,base);
-	       if(create_directories(cwd+len)==-1)
-		  return 0;
-	    }
-	 }
-      }
-   }
-   MirrorJob *j=new MirrorJob(Clone(),cwd,rcwd);
-   j->SetFlags(flags,1);
-   j->SetVerbose(verbose);
-   if(create_remote_dir)
-      j->CreateRemoteDir();
-
-   const char *err;
-   const char *err_tag;
-
-   err_tag="include";
-   if(include && include[0] && (err=j->SetInclude(include)))
-      goto err_out;
-   err_tag="exclude";
-   if(exclude && exclude[0] && (err=j->SetExclude(exclude)))
-      goto err_out;
-
-   j->SetPrec((time_t)prec);
-   if(newer_than)
-      j->SetNewerThan(newer_than);
-   return j;
-
-err_out:
-   eprintf("%s: %s: %s\n",args->a0(),err_tag,err);
-   delete j;
-   return 0;
 }
 
 CMD(mv)
@@ -1599,8 +1430,7 @@ CMD(scache)
 	 eprintf(_("%s: %s - no such cached session. Use `scache' to look at session list.\n"),args->a0(),a);
 	 return 0;
       }
-      Reuse(session);
-      session=new_session;
+      parent->ChangeSession(new_session);
    }
    return 0;
 }
@@ -1641,6 +1471,31 @@ void CmdExec::print_cmd_help(const char *cmd)
       printf(_("Ambiguous command `%s'. Use `help' to see available commands.\n"),cmd);
 }
 
+void CmdExec::print_cmd_index()
+{
+   int i=0;
+   const char *c1;
+   const cmd_rec *cmd_table=dyn_cmd_table?dyn_cmd_table:static_cmd_table;
+   while(cmd_table[i].name)
+   {
+      while(cmd_table[i].name && !cmd_table[i].short_desc)
+	 i++;
+      if(!cmd_table[i].name)
+	 break;
+      c1=cmd_table[i].short_desc;
+      i++;
+      while(cmd_table[i].name && !cmd_table[i].short_desc)
+	 i++;
+      if(cmd_table[i].name)
+      {
+	 printf("\t%-35s %s\n",gettext(c1),gettext(cmd_table[i].short_desc));
+	 i++;
+      }
+      else
+	 printf("\t%s\n",_(c1));
+   }
+}
+
 CMD(help)
 {
    if(args->count()>1)
@@ -1651,32 +1506,13 @@ CMD(help)
 	 char *cmd=args->getnext();
 	 if(cmd==0)
 	    break;
-	 print_cmd_help(cmd);
+	 parent->print_cmd_help(cmd);
       }
       return 0;
    }
 
-   int i=0;
-   const char *c1;
-   while(cmd_table[i].name)
-   {
-      while(cmd_table[i].name && !cmd_table[i].short_desc)
-	 i++;
-      if(cmd_table[i].name)
-      {
-	 c1=cmd_table[i].short_desc;
-	 i++;
-	 while(cmd_table[i].name && !cmd_table[i].short_desc)
-	    i++;
-	 if(cmd_table[i].name)
-	 {
-	    printf("\t%-35s %s\n",_(c1),_(cmd_table[i].short_desc));
-	    i++;
-	 }
-	 else
-	    printf("\t%s\n",_(c1));
-      }
-   }
+   parent->print_cmd_index();
+
    return 0;
 }
 
@@ -1717,6 +1553,8 @@ static const char * const bookmark_subcmd[]=
 
 CMD(bookmark)
 {
+   static ResDecl res_save_passwords("bmk:save-passwords","no",ResMgr::BoolValidate,0);
+
    args->rewind();
    const char *op=args->getnext();
 
@@ -1753,7 +1591,7 @@ CMD(bookmark)
       {
 	 const char *value=args->getnext();
 	 int flags=0;
-	 if(save_passwords)
+	 if((bool)res_save_passwords.Query(0))
 	    flags|=session->WITH_PASSWORD;
 	 if(value==0)
 	    value=session->GetConnectURL(flags);
@@ -1781,7 +1619,7 @@ CMD(bookmark)
    }
    else if(!strcmp(op,"edit"))
    {
-      PrependCmd("shell \"/bin/sh -c \\\"exec ${EDITOR:-vi} $HOME/.lftp/bookmarks\\\"\"\n");
+      parent->PrependCmd("shell \"/bin/sh -c \\\"exec ${EDITOR:-vi} $HOME/.lftp/bookmarks\\\"\"\n");
    }
    else if(!strcmp(op,"import"))
    {
@@ -1793,7 +1631,7 @@ CMD(bookmark)
 	 const char *fmt="shell " PKGDATADIR "/import-%s\n";
 	 char *cmd=(char*)alloca(strlen(op)+strlen(fmt)+1);
 	 sprintf(cmd,fmt,op);
-	 PrependCmd(cmd);
+	 parent->PrependCmd(cmd);
 	 exit_code=0;
       }
    }
@@ -1911,7 +1749,5 @@ CMD(find)
 
 CMD(command)
 {
-   args->delarg(0);
-   builtin=BUILTIN_EXEC_RESTART;
-   return this;
+   return parent->builtin_command();
 }

@@ -460,3 +460,11 @@ check_again:
    done=true;
    return MOVED;
 }
+
+
+#ifdef MODULE
+CDECL void module_init()
+{
+   LocalAccess::ClassInit();
+}
+#endif

@@ -27,8 +27,9 @@
 #include <errno.h>
 #include <unistd.h>
 #include <assert.h>
-#include "LocalAccess.h"
+#include "ProtoList.h"
 #include "MirrorJob.h"
+#include "CmdExec.h"
 #include "rmJob.h"
 #include "mkdirJob.h"
 #include "PutJob.h"
@@ -421,7 +422,9 @@ int   MirrorJob::Do()
 
       remote_set->ExcludeDots(); // don't need .. and .
 
-      list_info=new LocalListInfo(local_dir);
+      local_session=Protocol::NewSession("file");
+      local_session->Chdir(local_dir,false);
+      list_info=local_session->MakeListInfo();
       if(flags&RETR_SYMLINKS)
 	 list_info->FollowSymlinks();
       list_info->SetExclude(local_relative_dir,
@@ -436,6 +439,8 @@ int   MirrorJob::Do()
       local_set=list_info->GetResult();
       delete list_info;
       list_info=0;
+      delete local_session;
+      local_session=0;
 
       local_set->ExcludeDots();  // don't need .. and .
 
@@ -634,6 +639,7 @@ MirrorJob::MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_rem
    remote_set=local_set=0;
    file=0;
    list_info=0;
+   local_session=0;
 
    tot_files=new_files=mod_files=del_files=
    tot_symlinks=new_symlinks=mod_symlinks=del_symlinks=0;
@@ -673,6 +679,8 @@ MirrorJob::~MirrorJob()
    // don't delete this->file -- it is a reference
    if(list_info)
       delete list_info;
+   if(local_session)
+      delete local_session;
    if(rx_include)
    {
       free(rx_include);
@@ -749,3 +757,223 @@ void MirrorJob::SetNewerThan(const char *f)
    }
    newer_than=st.st_mtime;
 }
+
+
+CMD(mirror)
+{
+#define args (parent->args)
+   static struct option mirror_opts[]=
+   {
+      {"delete",no_argument,0,'e'},
+      {"allow-suid",no_argument,0,'s'},
+      {"include",required_argument,0,'i'},
+      {"exclude",required_argument,0,'x'},
+      {"time-prec",required_argument,0,'t'},
+      {"only-newer",no_argument,0,'n'},
+      {"no-recursion",no_argument,0,'r'},
+      {"no-perms",no_argument,0,'p'},
+      {"continue",no_argument,0,'c'},
+      {"reverse",no_argument,0,'R'},
+      {"verbose",optional_argument,0,'v'},
+      {"newer-than",required_argument,0,'N'},
+      {"dereference",no_argument,0,'L'},
+      {0}
+   };
+
+   char cwd[2*1024];
+   const char *rcwd;
+   int opt;
+   int	 flags=0;
+
+   static char *include=0;
+   static int include_alloc=0;
+   static char *exclude=0;
+   static int exclude_alloc=0;
+#define APPEND_STRING(s,a,s1) \
+   {			                  \
+      int len,len1=strlen(s1);            \
+      if(!s)		                  \
+      {			                  \
+	 s=(char*)xmalloc(a = len1+1);    \
+      	 strcpy(s,s1);	                  \
+      }			                  \
+      else				  \
+      {					  \
+	 len=strlen(s);		       	  \
+	 if(a < len+1+len1+1)		  \
+	    s=(char*)xrealloc(s, a = len+1+len1+1); \
+	 if(s[0]) strcat(s,"|");	  \
+	 strcat(s,s1);			  \
+      }					  \
+   } /* END OF APPEND_STRING */
+
+   if(include)
+      include[0]=0;
+   if(exclude)
+      exclude[0]=0;
+
+   time_t prec=12*HOUR;
+   bool	 create_remote_dir=false;
+   int	 verbose=0;
+   const char *newer_than=0;
+
+   args->rewind();
+   while((opt=args->getopt_long("esi:x:t:nrpcRvN:L",mirror_opts,0))!=EOF)
+   {
+      switch(opt)
+      {
+      case('e'):
+	 flags|=MirrorJob::DELETE;
+	 break;
+      case('s'):
+	 flags|=MirrorJob::ALLOW_SUID;
+	 break;
+      case('r'):
+	 flags|=MirrorJob::NO_RECURSION;
+	 break;
+      case('n'):
+	 flags|=MirrorJob::ONLY_NEWER;
+	 break;
+      case('p'):
+	 flags|=MirrorJob::NO_PERMS;
+	 break;
+      case('c'):
+	 flags|=MirrorJob::CONTINUE;
+	 break;
+      case('t'):
+	 prec=decode_delay(optarg);
+	 if(prec==(time_t)-1)
+	 {
+	    parent->eprintf(_("%s: %s - invalid time precision\n"),args->a0(),optarg);
+	    parent->eprintf(_("Try `help %s' for more information.\n"),args->a0());
+	    return 0;
+	 }
+	 break;
+      case('x'):
+	 APPEND_STRING(exclude,exclude_alloc,optarg);
+	 break;
+      case('i'):
+	 APPEND_STRING(include,include_alloc,optarg);
+	 break;
+      case('R'):
+	 flags|=MirrorJob::REVERSE;
+	 break;
+      case('L'):
+	 flags|=MirrorJob::RETR_SYMLINKS;
+	 break;
+      case('v'):
+	 if(optarg)
+	    verbose=atoi(optarg);
+	 else
+	    verbose++;
+	 if(verbose>1)
+	    flags|=MirrorJob::REPORT_NOT_DELETED;
+	 break;
+      case('N'):
+	 newer_than=optarg;
+	 break;
+      case('?'):
+	 return 0;
+      }
+   }
+
+   if(getcwd(cwd,sizeof(cwd)/2)==0)
+   {
+      perror("getcwd()");
+      return 0;
+   }
+
+   args->back();
+   if(flags&MirrorJob::REVERSE)
+   {
+      char *arg=args->getnext();
+      if(!arg)
+	 rcwd=".";
+      else
+      {
+	 if(arg[0]=='/')
+	    strcpy(cwd,arg);
+	 else
+	 {
+	    strcat(cwd,"/");
+	    strcat(cwd,arg);
+	 }
+	 rcwd=args->getnext();
+	 if(!rcwd)
+	 {
+	    rcwd=basename_ptr(cwd);
+	    if(rcwd[0]=='/')
+	       rcwd=".";
+	    else
+	       create_remote_dir=true;
+	 }
+	 else
+	    create_remote_dir=true;
+      }
+   }
+   else	/* !REVERSE (normal) */
+   {
+      rcwd=args->getnext();
+      if(!rcwd)
+	 rcwd=".";
+      else
+      {
+	 strcat(cwd,"/");
+	 char *arg=args->getnext();
+	 if(arg)
+	 {
+	    if(arg[0]=='/')
+	       strcpy(cwd,arg);
+	    else
+	       strcat(cwd,arg);
+	    if(create_directories(arg)==-1)
+	       return 0;
+	 }
+	 else
+	 {
+	    int len=strlen(cwd);
+	    const char *base=basename_ptr(rcwd);
+	    if(base[0]!='/')
+	    {
+	       strcat(cwd,base);
+	       if(create_directories(cwd+len)==-1)
+		  return 0;
+	    }
+	 }
+      }
+   }
+   MirrorJob *j=new MirrorJob(parent->session->Clone(),cwd,rcwd);
+   j->SetFlags(flags,1);
+   j->SetVerbose(verbose);
+   if(create_remote_dir)
+      j->CreateRemoteDir();
+
+   const char *err;
+   const char *err_tag;
+
+   err_tag="include";
+   if(include && include[0] && (err=j->SetInclude(include)))
+      goto err_out;
+   err_tag="exclude";
+   if(exclude && exclude[0] && (err=j->SetExclude(exclude)))
+      goto err_out;
+
+   j->SetPrec((time_t)prec);
+   if(newer_than)
+      j->SetNewerThan(newer_than);
+   return j;
+
+err_out:
+   parent->eprintf("%s: %s: %s\n",args->a0(),err_tag,err);
+   delete j;
+   return 0;
+#undef args
+}
+
+
+#ifdef MODULE
+CDECL void module_init()
+{
+   CmdExec::RegisterCommand("mirror",cmd_mirror);
+}
+#endif

@@ -35,8 +35,9 @@
 extern History cwd_history;
 extern Bookmark lftp_bookmarks;
 
-#define	CMD(name) Job *CmdExec::do_##name()
-#define	in_CMD(name) Job *do_##name()
+#define	CMD(name) Job *cmd_##name(CmdExec *parent)
+
+typedef Job * (*cmd_creator_t)(class CmdExec *parent);
 
 class CmdFeeder
 {
@@ -51,27 +52,22 @@ extern CmdFeeder *lftp_feeder;	 // feeder to use after 'lftp' command
 
 class CmdExec : public SessionJob
 {
+public:
 // current command data
    char *cmd;
    ArgV *args;
    FDStream *output;
    bool background;
+   int	 exit_code;
 
+private:
    char *next_cmd;
    char *cmd_buf;
    bool partial_cmd;
    int alias_field; // length of expanded alias (and ttl for used_aliases)
 
    TouchedAlias *used_aliases;
-   void free_used_aliases()
-      {
-	 if(used_aliases)
-	 {
-	    TouchedAlias::FreeChain(used_aliases);
-	    used_aliases=0;
-	 }
-	 alias_field=0;
-      }
+   void free_used_aliases();
 
    enum
    {
@@ -81,19 +77,17 @@ class CmdExec : public SessionJob
    }
       condition;
 
-   int	 prev_exit_code;
-   int	 exit_code;
-
    struct cmd_rec
    {
       const char  *name;
-      Job   *(CmdExec::*func)();
+      cmd_creator_t creator;
       const char  *short_desc;
       const char  *long_desc;
    };
-   static const cmd_rec cmd_table[];
+   static const cmd_rec static_cmd_table[];
+   static cmd_rec *dyn_cmd_table;
+   static int dyn_cmd_table_count;
 
-   void print_cmd_help(const char *cmd);
    static int find_cmd(const char *cmd_name,const cmd_rec **ret);
 
    void exec_parsed_command();
@@ -106,6 +100,10 @@ class CmdExec : public SessionJob
    };
    parse_result parse_one_cmd();
 
+   CmdFeeder *feeder;
+
+   int	 prev_exit_code;
+
    enum builtins
    {
       BUILTIN_NONE,
@@ -115,22 +113,8 @@ class CmdExec : public SessionJob
    }
       builtin;
 
-   CmdFeeder *feeder;
-
    char *old_cwd;
    char *old_lcwd;
-
-   in_CMD(alias); in_CMD(anon);   in_CMD(cd);      in_CMD(debug);
-   in_CMD(exit);  in_CMD(get);    in_CMD(help);    in_CMD(jobs);
-   in_CMD(kill);  in_CMD(lcd);    in_CMD(ls);      in_CMD(mget);
-   in_CMD(open);  in_CMD(pwd);    in_CMD(put);     in_CMD(set);
-   in_CMD(shell); in_CMD(source); in_CMD(user);    in_CMD(rm);
-   in_CMD(wait);  in_CMD(site);   in_CMD(subsh);   in_CMD(mirror);
-   in_CMD(mput);  in_CMD(mv);	  in_CMD(cat);     in_CMD(cache);
-   in_CMD(mkdir); in_CMD(quote);  in_CMD(scache);  in_CMD(mrm);
-   in_CMD(ver);	  in_CMD(close);  in_CMD(bookmark);in_CMD(lftp);
-   in_CMD(echo);  in_CMD(suspend);in_CMD(ftpcopy); in_CMD(sleep);
-   in_CMD(at);	  in_CMD(find);   in_CMD(command);
 
 public:
    void FeedCmd(const char *c);
@@ -168,7 +152,6 @@ public:
    bool	 completion_use_ls;
    int	 long_running;
    bool	 csh_history;
-   bool	 save_passwords;
    bool	 verify_host;
    bool	 verify_path;
 
@@ -188,6 +171,25 @@ public:
    void vfprintf(FILE *file,const char *f,va_list v);
 
    void SetInteractive(bool i);
+
+   static void RegisterCommand(const char *name,cmd_creator_t creator,
+      const char *short_name=0,const char *long_name=0);
+
+   Job *builtin_lcd();
+   Job *builtin_cd();
+   Job *builtin_open();
+   Job *builtin_exit();
+   Job *builtin_lftp();
+   Job *builtin_command();
+
+   Job *default_cmd();
+
+   void ChangeSession(FileAccess *new_session);
+
+   void print_cmd_help(const char *cmd);
+   void print_cmd_index();
+
+   static const cmd_rec *CmdExec::CmdByIndex(int i);
 };
 
 #endif//CMDEXEC_H

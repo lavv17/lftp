@@ -79,6 +79,7 @@ protected:
    char	 *gpass;
 
    char	 *home;
+   const char *default_cwd;
    char  *cwd;
    char  *file;
    char	 *file1;
@@ -91,6 +92,11 @@ protected:
 
    int	 Poll(int fd,int ev);
    int   CheckHangup(struct pollfd *pfd,int num);
+   static void NonBlock(int fd);
+   static void CloseOnExec(int fd);
+   static void KeepAlive(int sock);
+   static void SetSocketBuffer(int sock,int val);
+   static void SetSocketMaxseg(int sock,int val);
 
    char	 *last_error_resp;
 
@@ -121,6 +127,18 @@ protected:
 
    char *url;
 
+   // traffic shaper, sort of :)
+   int BytesAllowed();
+   void BytesUsed(int);
+   void BytesReset();
+   int bytes_pool;
+   int bytes_pool_rate;
+   int bytes_pool_max;
+   time_t bytes_pool_time;
+
+   long   entity_size; // size of file to be sent
+   time_t entity_date; // date of file to be sent
+
 public:
    virtual const char *GetProto() = 0; // http, ftp, file etc
    bool SameProtoAs(FileAccess *fa) { return !strcmp(GetProto(),fa->GetProto()); }
@@ -143,6 +161,8 @@ public:
    virtual void GroupLogin(const char *g,const char *p);
 
    virtual void Open(const char *file,int mode,long pos=0);
+   void SetSize(long s) { entity_size=s; }
+   void SetDate(time_t d) { entity_date=d; }
    void WantDate(time_t *d) { opt_date=d; }
    void WantSize(long *s) { opt_size=s; }
    virtual void Close();
@@ -208,6 +228,8 @@ public:
    virtual void Cleanup(bool all=false) { (void)all; }
       // close idle connections, etc.
    virtual ListInfo *MakeListInfo() { return 0; }
+
+   static bool NotSerious(int err);
 };
 
 // shortcut

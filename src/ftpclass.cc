@@ -24,7 +24,6 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <netinet/tcp.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -79,10 +78,6 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 #define FTPPORT "ftp"
 #define FTP_DATA_PORT 20
 
-#ifndef SOL_TCP
-# define SOL_TCP IPPROTO_TCP
-#endif
-
 #define super FileAccess
 #define peer_sa (peer[peer_curr])
 
@@ -134,37 +129,6 @@ void  Ftp::ClassInit()
 
 Ftp *Ftp::ftp_chain=0;
 
-static bool NotSerious(int e)
-{
-   switch(e)
-   {
-   case(ETIMEDOUT):
-#ifdef ECONNRESET
-   case(ECONNRESET):
-#endif
-   case(ECONNREFUSED):
-#ifdef EHOSTUNREACH
-   case(EHOSTUNREACH):
-#endif
-#ifdef EHOSTDOWN
-   case(EHOSTDOWN):
-#endif
-#ifdef ENETRESET
-   case(ENETRESET):
-#endif
-#ifdef ENETUNREACH
-   case(ENETUNREACH):
-#endif
-#ifdef ENETDOWN
-   case(ENETDOWN):
-#endif
-#ifdef ECONNABORTED
-   case(ECONNABORTED):
-#endif
-      return true;
-   }
-   return false;
-}
 
 #if INET6
 
@@ -751,6 +715,8 @@ Ftp::~Ftp()
 
    xfree(proxy); proxy=0;
    xfree(proxy_port); proxy_port=0;
+   xfree(proxy_user); proxy_user=0;
+   xfree(proxy_pass); proxy_pass=0;
 
    xfree(skey_pass); skey_pass=0;
 
@@ -783,7 +749,7 @@ int   Ftp::CheckTimeout()
       event_time=now;
       return(1);
    }
-   block+=TimeOut(timeout*1000);
+   block+=TimeOut((timeout-(now-event_time))*1000);
    return(0);
 }
 
@@ -862,28 +828,12 @@ void  Ftp::GetBetterConnection(int level)
 
 void  Ftp::SetSocketBuffer(int sock)
 {
-   if(socket_buffer==0)
-      return;
-   if(-1==setsockopt(sock,SOL_SOCKET,SO_SNDBUF,(char*)&socket_buffer,sizeof(socket_buffer)))
-      Log::global->Format(1,"setsockopt(SO_SNDBUF,%d): %s\n",socket_buffer,strerror(errno));
-   if(-1==setsockopt(sock,SOL_SOCKET,SO_RCVBUF,(char*)&socket_buffer,sizeof(socket_buffer)))
-      Log::global->Format(1,"setsockopt(SO_RCVBUF,%d): %s\n",socket_buffer,strerror(errno));
+   super::SetSocketBuffer(sock,socket_buffer);
 }
 
 void  Ftp::SetSocketMaxseg(int sock)
 {
-#ifdef TCP_MAXSEG
-   if(socket_maxseg==0)
-      return;
-   if(-1==setsockopt(sock,SOL_TCP,TCP_MAXSEG,(char*)&socket_maxseg,sizeof(socket_maxseg)))
-      Log::global->Format(1,"setsockopt(TCP_MAXSEG,%d): %s\n",socket_maxseg,strerror(errno));
-#endif
-}
-
-void  Ftp::SetKeepAlive(int sock)
-{
-   static int one=1;
-   setsockopt(sock,SOL_SOCKET,SO_KEEPALIVE,(char*)&one,sizeof(one));
+   super::SetSocketBuffer(sock,socket_maxseg);
 }
 
 static const char *numeric_address(const sockaddr_u *u)
@@ -1030,11 +980,11 @@ int   Ftp::Do()
       control_sock=socket(peer_sa.sa.sa_family,SOCK_STREAM,IPPROTO_TCP);
       if(control_sock==-1)
 	 goto system_error;
-      SetKeepAlive(control_sock);
+      KeepAlive(control_sock);
       SetSocketBuffer(control_sock);
       SetSocketMaxseg(control_sock);
-      fcntl(control_sock,F_SETFL,O_NONBLOCK);
-      fcntl(control_sock,F_SETFD,FD_CLOEXEC);
+      NonBlock(control_sock);
+      CloseOnExec(control_sock);
 
       a=(unsigned char*)&peer_sa.in.sin_addr;
       sprintf(str,_("Connecting to %s%s (%s) port %u"),proxy?"proxy ":"",
@@ -1206,9 +1156,9 @@ int   Ftp::Do()
 	 data_sock=socket(peer_sa.sa.sa_family,SOCK_STREAM,IPPROTO_TCP);
 	 if(data_sock==-1)
 	    goto system_error;
-   	 fcntl(data_sock,F_SETFL,O_NONBLOCK);
-	 fcntl(data_sock,F_SETFD,FD_CLOEXEC);
-	 SetKeepAlive(data_sock);
+   	 NonBlock(data_sock);
+	 CloseOnExec(data_sock);
+	 KeepAlive(data_sock);
 	 SetSocketBuffer(data_sock);
 	 SetSocketMaxseg(data_sock);
       }
@@ -1499,9 +1449,9 @@ int   Ftp::Do()
 
       close(data_sock);
       data_sock=res;
-      fcntl(data_sock,F_SETFL,O_NONBLOCK);
-      fcntl(data_sock,F_SETFD,FD_CLOEXEC);
-      SetKeepAlive(data_sock);
+      NonBlock(data_sock);
+      CloseOnExec(data_sock);
+      KeepAlive(data_sock);
       SetSocketBuffer(data_sock);
       SetSocketMaxseg(data_sock);
 
@@ -3015,7 +2965,6 @@ void Ftp::SetProxy(const char *px)
    xfree(proxy_port); proxy_port=0;
    xfree(proxy_user); proxy_user=0;
    xfree(proxy_pass); proxy_pass=0;
-   lookup_done=false;
 
    if(!px)
    {
@@ -3153,45 +3102,6 @@ const char *Ftp::DefaultAnonPass()
    sprintf(pass,"-%s@",u);
 
    return pass;
-}
-
-int Ftp::BytesAllowed()
-{
-#define LARGE 0x10000000
-
-   if(bytes_pool_rate==0) // unlimited
-      return LARGE;
-
-   if(now>bytes_pool_time)
-   {
-      time_t dif=now-bytes_pool_time;
-
-      // prevent overflow
-      if((LARGE-bytes_pool)/dif < bytes_pool_rate)
-	 bytes_pool = bytes_pool_max>0 ? bytes_pool_max : LARGE;
-      else
-	 bytes_pool += dif*bytes_pool_rate;
-
-      if(bytes_pool>bytes_pool_max && bytes_pool_max>0)
-	 bytes_pool=bytes_pool_max;
-
-      bytes_pool_time=now;
-   }
-   return bytes_pool;
-}
-
-void Ftp::BytesUsed(int bytes)
-{
-   if(bytes_pool<bytes)
-      bytes_pool=0;
-   else
-      bytes_pool-=bytes;
-}
-
-void Ftp::BytesReset()
-{
-   bytes_pool=bytes_pool_rate;
-   bytes_pool_time=now;
 }
 
 int Ftp::Buffered()

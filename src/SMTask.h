@@ -48,6 +48,9 @@ protected:
 public:
    PollVec  block;
 
+   void Block(int fd,int mask) { block+=PollVec(fd,mask); }
+   void Timeout(int ms) { block+=TimeOut(ms); }
+
    static time_t now;
    static int now_ms;
    static void UpdateNow();

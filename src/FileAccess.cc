@@ -26,8 +26,11 @@
 #include "xmalloc.h"
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <errno.h>
 #include <ctype.h>
+#include <fcntl.h>
 #include "xalloca.h"
 #include "log.h"
 #include "url.h"
@@ -43,7 +46,8 @@ void FileAccess::Init()
    file=0;
    file1=0;
    real_cwd=0;
-   cwd=xstrdup("~");
+   default_cwd="~";
+   cwd=xstrdup(default_cwd);
    real_pos=-1;
    pos=0;
    mode=CLOSED;
@@ -59,6 +63,9 @@ void FileAccess::Init()
    timeout=600;	  // 10 minutes with no events = reconnect
 
    url=0;
+
+   entity_size=-1;
+   entity_date=(time_t)-1;
 }
 
 FileAccess::FileAccess(const FileAccess *fa)
@@ -104,7 +111,8 @@ void  FileAccess::DebugPrint(const char *prefix,const char *str,int level)
    if(!Log::global)
       return;
    char *msg=(char*)alloca(strlen(prefix)+strlen(str)+6);
-   while(*str)
+
+   do
    {
       strcpy(msg,prefix);
       int msglen=strlen(msg);
@@ -122,6 +130,7 @@ void  FileAccess::DebugPrint(const char *prefix,const char *str,int level)
       if(!*str++)
          break;
    }
+   while(*str);
 }
 
 int   FileAccess::Poll(int fd,int ev)
@@ -179,6 +188,44 @@ int   FileAccess::CheckHangup(struct pollfd *pfd,int num)
 #endif /* SO_ERROR */
    return 0;
 }
+
+void FileAccess::NonBlock(int fd)
+{
+   int fl=0;
+   fcntl(fd,F_GETFL,&fl);
+   fcntl(fd,F_SETFL,fl|O_NONBLOCK);
+}
+void FileAccess::CloseOnExec(int fd)
+{
+   fcntl(fd,F_SETFD,FD_CLOEXEC);
+}
+void FileAccess::KeepAlive(int sock)
+{
+   static int one=1;
+   setsockopt(sock,SOL_SOCKET,SO_KEEPALIVE,(char*)&one,sizeof(one));
+}
+void FileAccess::SetSocketBuffer(int sock,int socket_buffer)
+{
+   if(socket_buffer==0)
+      return;
+   if(-1==setsockopt(sock,SOL_SOCKET,SO_SNDBUF,(char*)&socket_buffer,sizeof(socket_buffer)))
+      Log::global->Format(1,"setsockopt(SO_SNDBUF,%d): %s\n",socket_buffer,strerror(errno));
+   if(-1==setsockopt(sock,SOL_SOCKET,SO_RCVBUF,(char*)&socket_buffer,sizeof(socket_buffer)))
+      Log::global->Format(1,"setsockopt(SO_RCVBUF,%d): %s\n",socket_buffer,strerror(errno));
+}
+void FileAccess::SetSocketMaxseg(int sock,int socket_maxseg)
+{
+#ifndef SOL_TCP
+# define SOL_TCP IPPROTO_TCP
+#endif
+#ifdef TCP_MAXSEG
+   if(socket_maxseg==0)
+      return;
+   if(-1==setsockopt(sock,SOL_TCP,TCP_MAXSEG,(char*)&socket_maxseg,sizeof(socket_maxseg)))
+      Log::global->Format(1,"setsockopt(TCP_MAXSEG,%d): %s\n",socket_maxseg,strerror(errno));
+#endif
+}
+
 
 void  FileAccess::Open(const char *fn,int mode,long offs)
 {
@@ -248,6 +295,8 @@ void FileAccess::Close()
    opt_date=0;
    opt_size=0;
    array_for_info=0;
+   entity_size=-1;
+   entity_date=(time_t)-1;
 }
 
 void FileAccess::Rename(const char *f,const char *f1)
@@ -323,7 +372,7 @@ void FileAccess::Connect(const char *host1,const char *port1)
    xfree(portname);
    portname=xstrdup(port1);
    xfree(cwd);
-   cwd=xstrdup("~");
+   cwd=xstrdup(default_cwd);
    xfree(home); home=0;
 }
 
@@ -335,7 +384,7 @@ void FileAccess::Login(const char *user1,const char *pass1)
    xfree(pass);
    pass=xstrdup(pass1);
    xfree(cwd);
-   cwd=xstrdup("~");
+   cwd=xstrdup(default_cwd);
    xfree(home);
    home=0;
 }
@@ -594,4 +643,76 @@ FileAccess *SessionPool::Walk(int *n,const char *proto)
 	 return pool[*n];
    }
    return 0;
+}
+
+bool FileAccess::NotSerious(int e)
+{
+   switch(e)
+   {
+   case(ETIMEDOUT):
+#ifdef ECONNRESET
+   case(ECONNRESET):
+#endif
+   case(ECONNREFUSED):
+#ifdef EHOSTUNREACH
+   case(EHOSTUNREACH):
+#endif
+#ifdef EHOSTDOWN
+   case(EHOSTDOWN):
+#endif
+#ifdef ENETRESET
+   case(ENETRESET):
+#endif
+#ifdef ENETUNREACH
+   case(ENETUNREACH):
+#endif
+#ifdef ENETDOWN
+   case(ENETDOWN):
+#endif
+#ifdef ECONNABORTED
+   case(ECONNABORTED):
+#endif
+      return true;
+   }
+   return false;
+}
+
+
+int FileAccess::BytesAllowed()
+{
+#define LARGE 0x10000000
+
+   if(bytes_pool_rate==0) // unlimited
+      return LARGE;
+
+   if(now>bytes_pool_time)
+   {
+      time_t dif=now-bytes_pool_time;
+
+      // prevent overflow
+      if((LARGE-bytes_pool)/dif < bytes_pool_rate)
+	 bytes_pool = bytes_pool_max>0 ? bytes_pool_max : LARGE;
+      else
+	 bytes_pool += dif*bytes_pool_rate;
+
+      if(bytes_pool>bytes_pool_max && bytes_pool_max>0)
+	 bytes_pool=bytes_pool_max;
+
+      bytes_pool_time=now;
+   }
+   return bytes_pool;
+}
+
+void FileAccess::BytesUsed(int bytes)
+{
+   if(bytes_pool<bytes)
+      bytes_pool=0;
+   else
+      bytes_pool-=bytes;
+}
+
+void FileAccess::BytesReset()
+{
+   bytes_pool=bytes_pool_rate;
+   bytes_pool_time=now;
 }

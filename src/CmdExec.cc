@@ -32,6 +32,7 @@
 #include "alias.h"
 #include "misc.h"
 #include "ResMgr.h"
+#include "module.h"
 extern "C" {
 #include <readline/readline.h>
 }
@@ -49,8 +50,7 @@ static ResDecl
    res_verify_host	   ("cmd:verify-host",	"yes",ResMgr::BoolValidate,0),
    res_at_exit		   ("cmd:at-exit",	"",   0,0),
    res_fail_exit	   ("cmd:fail-exit",	"no", ResMgr::BoolValidate,0),
-   res_verbose		   ("cmd:verbose",	"no", ResMgr::BoolValidate,0),
-   res_save_passwords	   ("bmk:save-passwords","no",ResMgr::BoolValidate,0);
+   res_verbose		   ("cmd:verbose",	"no", ResMgr::BoolValidate,0);
 
 CmdExec	 *CmdExec::cwd_owner=0;
 
@@ -143,8 +143,7 @@ int CmdExec::find_cmd(const char *cmd_name,const struct cmd_rec **ret)
 {
    int part=0;
    const cmd_rec *c;
-
-   for(c=cmd_table; c->name; c++)
+   for(c=dyn_cmd_table?dyn_cmd_table:static_cmd_table; c->name; c++)
    {
       if(!strcmp(c->name,cmd_name))
       {
@@ -157,6 +156,7 @@ int CmdExec::find_cmd(const char *cmd_name,const struct cmd_rec **ret)
 	 *ret=c;
       }
    }
+
    if(part!=1)
       *ret=0;
    return part;
@@ -191,6 +191,8 @@ void  CmdExec::exec_parsed_command()
    SignalHook::ResetCount(SIGHUP);
    SignalHook::ResetCount(SIGTSTP);
 
+   bool did_default=false;
+
 restart:
 
    const struct cmd_rec *c;
@@ -210,8 +212,21 @@ restart:
       if(cmd==0)
 	 cmd=args->Combine();
 
-      Job *(CmdExec::*func)()=c->func;
-      waiting=(this->*func)();
+      if(c->creator==0)
+      {
+	 if(did_default)
+	 {
+	    eprintf("Module for command `%s' did not register the command.\n",cmd_name);
+	    exit_code=1;
+	    return;
+	 }
+	 waiting=default_cmd();
+	 did_default=true;
+      }
+      else
+      {
+	 waiting=c->creator(this);
+      }
       if(waiting==this) // builtin
       {
 	 if(builtin==BUILTIN_EXEC_RESTART)
@@ -607,7 +622,6 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
    completion_use_ls=true;
    long_running=0;
    csh_history=false;
-   save_passwords=false;
    verify_host=verify_path=true;
 
    Reconfig();
@@ -787,7 +801,6 @@ void CmdExec::Reconfig()
    var_ls=xstrdup(res_default_ls.Query(session->GetHostName()));
    xfree(var_prompt);
    var_prompt=xstrdup(res_prompt.Query(0));
-   save_passwords=res_save_passwords.Query(0);
    verify_path=res_verify_path.Query(0);
    verify_host=res_verify_host.Query(0);
    verbose=res_verbose.Query(0);
@@ -890,4 +903,81 @@ void CmdExec::AtExit()
 {
    FeedCmd(res_at_exit.Query(0));
    FeedCmd("\n");
+}
+
+void CmdExec::free_used_aliases()
+{
+   if(used_aliases)
+   {
+      TouchedAlias::FreeChain(used_aliases);
+      used_aliases=0;
+   }
+   alias_field=0;
+}
+
+
+CmdExec::cmd_rec *CmdExec::dyn_cmd_table=0;
+int CmdExec::dyn_cmd_table_count=0;
+void CmdExec::RegisterCommand(const char *name,cmd_creator_t creator,const char *short_desc,const char *long_desc)
+{
+   if(dyn_cmd_table==0)
+   {
+      dyn_cmd_table_count=1;
+      for(const cmd_rec *c=static_cmd_table; c->name; c++)
+	 dyn_cmd_table_count++;
+      dyn_cmd_table=(cmd_rec*)xmemdup(static_cmd_table,dyn_cmd_table_count*sizeof(cmd_rec));
+   }
+   else
+   {
+      dyn_cmd_table_count++;
+      dyn_cmd_table=(cmd_rec*)xrealloc(dyn_cmd_table,dyn_cmd_table_count*sizeof(cmd_rec));
+   }
+   for(cmd_rec *c=dyn_cmd_table; c->name; c++)
+   {
+      if(!strcmp(c->name,name))
+      {
+	 c->creator=creator;
+	 if(short_desc)
+	    c->short_desc=short_desc;
+	 if(long_desc)
+	    c->long_desc=long_desc;
+	 dyn_cmd_table_count--;
+	 return;
+      }
+   }
+   dyn_cmd_table[dyn_cmd_table_count-2].name=name;
+   dyn_cmd_table[dyn_cmd_table_count-2].creator=creator;
+   dyn_cmd_table[dyn_cmd_table_count-2].short_desc=short_desc;
+   dyn_cmd_table[dyn_cmd_table_count-2].long_desc=long_desc;
+   memset(&dyn_cmd_table[dyn_cmd_table_count-1],0,sizeof(cmd_rec));
+}
+
+void CmdExec::ChangeSession(FileAccess *new_session)
+{
+   Reuse(session);
+   session=new_session;
+}
+
+const CmdExec::cmd_rec *CmdExec::CmdByIndex(int i)
+{
+   return (dyn_cmd_table?dyn_cmd_table:static_cmd_table)+i;
+}
+
+Job *CmdExec::default_cmd()
+{
+   const char *op=args->a0();
+#ifdef WITH_MODULES
+   char *modname=(char*)alloca(4+strlen(op)+1);
+   sprintf(modname,"cmd-%s",op);
+   if(module_load(modname,0,0)==0)
+   {
+      eprintf("%s\n",module_error_message());
+      return 0;
+   }
+   builtin=BUILTIN_EXEC_RESTART;
+   return this;
+#else
+   eprintf("%s: command `%s' is not compiled in.\n",args->a0(),args->a0());
+   return 0;
+#endif
 }

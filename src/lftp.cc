@@ -22,6 +22,8 @@
 
 #include <config.h>
 
+#include "modconfig.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -36,8 +38,10 @@
 
 #include "xalloca.h"
 #include "ftpclass.h"
-#include "LocalAccess.h"
-#ifndef MODULE_HTTP
+#ifndef MODULE_PROTO_FILE
+# include "LocalAccess.h"
+#endif
+#ifndef MODULE_PROTO_HTTP
 # include "Http.h"
 #endif
 #include "lftp.h"
@@ -261,11 +265,13 @@ int   main(int argc,char **argv)
    bindtextdomain (PACKAGE, LOCALEDIR);
    textdomain (PACKAGE);
 
+#ifndef MODULE_PROTO_FILE
    LocalAccess::ClassInit();
-   Ftp::ClassInit();
-#ifndef MODULE_HTTP
+#endif
+#ifndef MODULE_PROTO_HTTP
    Http::ClassInit();
 #endif
+   Ftp::ClassInit();
 
    const char  *home=getenv("HOME")?:".";
 

@@ -95,7 +95,7 @@ void SMTask::Schedule()
    sched_scan=chain;
    while(sched_scan)
    {
-      if(sched_scan->running)
+      if(sched_scan->running || sched_scan->suspended)
       {
 	 sched_scan=sched_scan->next;
 	 continue;

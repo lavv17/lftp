@@ -79,6 +79,8 @@ int   PutJob::Do()
 	 }
 	 m=MOVED;
 	 session->Open(curr,FA::STORE,remote_size<0?0:remote_size);
+	 if(size>=0)
+	    session->SetSize(size);
       }
    }
    // in store mode position can jump back
@@ -175,7 +177,11 @@ remote_error:
 	 if(res==-1)
 	    size=-2;
 	 else
+	 {
 	    size=st.st_size;
+	    session->SetSize(size);
+	    session->SetDate(st.st_mtime);
+	 }
       }
 
       block+=PollVec(fd,POLLIN);

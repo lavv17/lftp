@@ -64,7 +64,7 @@ char *command_generator(char *text,int state)
    }
 
    /* Return the next name which partially matches from the command list. */
-   while ((name=CmdExec::cmd_table[cindex].name)!=0)
+   while ((name=CmdExec::CmdByIndex(cindex)->name)!=0)
    {
       cindex++;
       if(strncmp(name,text,len)==0)

@@ -32,6 +32,7 @@ class Buffer : public SMTask
 {
 protected:
    char *error_text;
+   int  saved_errno;
 
    char *buffer;
    int buffer_allocated;
@@ -44,10 +45,13 @@ protected:
    virtual int Put_LL(const char *buf,int size) { return 0; }
    virtual int PutEOF_LL() { return 0; }
 
+   void Allocate(int size);
+
 public:
    virtual int Do();
    virtual bool Done() { return in_buffer==0; }
    bool Error() { return error_text!=0; }
+   int  Errno() { return saved_errno; }
    const char *ErrorText() { return error_text; }
    int Size() { return in_buffer; }
    bool Eof() { return eof; }
@@ -61,6 +65,8 @@ public:
 
    virtual FgData *GetFgData(bool) { return 0; }
 
+   virtual time_t EventTime() { return now; }
+
    Buffer();
    virtual ~Buffer();
 };
@@ -71,12 +77,34 @@ class FileOutputBuffer : public Buffer
 
    int Put_LL(const char *buf,int size);
 
+   time_t event_time; // used to detect timeouts
+
 public:
    FileOutputBuffer(FDStream *o);
    ~FileOutputBuffer();
    int Do();
    bool Done();
    FgData *GetFgData(bool fg);
+
+   time_t EventTime();
+};
+
+class FileInputBuffer : public Buffer
+{
+   FDStream *in;
+
+   int Get_LL(int size);
+
+   time_t event_time; // used to detect timeouts
+
+public:
+   FileInputBuffer(FDStream *i);
+   ~FileInputBuffer();
+   int Do();
+   bool Done();
+   FgData *GetFgData(bool fg);
+
+   time_t EventTime();
 };
 
 #endif // BUFFER_H
