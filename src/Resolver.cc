@@ -553,6 +553,10 @@ void Resolver::LookupSRV_RR()
       dom_len=extract_domain(answer,scan,len,t->domain,sizeof(t->domain));
       scan+=dom_len;
       len-=dom_len;
+
+      // check if the service is decidedly not available at this domain.
+      if(!strcmp(t->domain,"."))
+	 SRV_num--;
    }
 
    // now sort and randomize the list.
