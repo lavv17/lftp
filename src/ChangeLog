@@ -1,3 +1,13 @@
+2000-07-27  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ResMgr.cc, ResMgr.h: NoClosure validator.
+	* CmdExec.cc, FileCopy.cc, GetJob.cc, Resolver.cc, Speedometer.cc,
+	  resource.cc: use NoClosure where needed.
+	* commands.cc: add closure for cmd:default-protocol and
+	  bmk:save-passwords.
+	* resource.cc: add http:post-content-type; validate http:put-method.
+	* Http.cc: use http:post-content-type.
+
 2000-07-26  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileCopy.cc: apply non-absolute redirection to orig_url.

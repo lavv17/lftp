@@ -501,12 +501,14 @@ add_path:
       const char *cookie=Query("cookie",hostname);
       if(cookie && cookie[0])
 	 Send("Cookie: %s\r\n",cookie);
-      if(mode==STORE || post)
-      {
-	 const char *content_type=Query("put-content-type",hostname);
-	 if(content_type && content_type[0])
-	    Send("Content-Type: %s\r\n",content_type);
-      }
+
+      const char *content_type=0;
+      if(!strcmp(last_method,"PUT"))
+	 content_type=Query("put-content-type",hostname);
+      else if(!strcmp(last_method,"POST"))
+	 content_type=Query("post-content-type",hostname);
+      if(content_type && content_type[0])
+	 Send("Content-Type: %s\r\n",content_type);
    }
    if(mode==ARRAY_INFO && !use_head)
       connection="close";
