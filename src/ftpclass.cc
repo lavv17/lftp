@@ -1333,6 +1333,11 @@ int   Ftp::Do()
 	 SetError(NO_FILE,_("SITE CHMOD is not supported by this site"));
 	 return MOVED;
       }
+      if(mode==CHANGE_MODE && !QueryBool("use-site-chmod"))
+      {
+	 SetError(NO_FILE,_("SITE CHMOD is disabled by ftp:use-site-chmod"));
+	 return MOVED;
+      }
 
       if(takeover_time!=NO_DATE && takeover_time+1-priority>now
       && connection_limit>0 && connection_limit<=CountConnections()+1)
@@ -1384,7 +1389,8 @@ int   Ftp::Do()
       if(copy_mode!=COPY_NONE && !copy_passive && !copy_addr_valid)
 	 goto usual_return;
 
-      if(entity_size!=NO_SIZE && entity_size!=NO_SIZE_YET && entity_size<=pos)
+      if(entity_size!=NO_SIZE && entity_size!=NO_SIZE_YET && entity_size<=pos
+      && mode==RETRIEVE)
       {
 	 eof=true;
 	 goto pre_WAITING_STATE; // simulate eof.
@@ -1618,15 +1624,17 @@ int   Ftp::Do()
       {
 	 if(mode==MAKE_DIR && mkdir_p)
 	 {
-	    char *sl;
-	    sl=strchr(file,'/');
+	    char *sl=strchr(file,'/');
 	    while(sl)
 	    {
 	       if(sl>file)
 	       {
 		  *sl=0;
-		  SendCmd2("MKD",file);
-		  AddResp(0,CHECK_IGNORE);
+		  if(strcmp(file,".") && strcmp(file,".."))
+		  {
+		     SendCmd2("MKD",file);
+		     AddResp(0,CHECK_IGNORE);
+		  }
 		  *sl='/';
 	       }
 	       sl=strchr(sl+1,'/');

@@ -57,25 +57,30 @@ void  MirrorJob::PrintStatus(int v)
    case(DONE):
    case(WAITING_FOR_SUBGET):
    case(WAITING_FOR_SUBMIRROR):
-   case(WAITING_FOR_RM_BEFORE_PUT):
+   case(WAITING_FOR_RM_BEFORE_TRANSFER):
    case(WAITING_FOR_MKDIR_BEFORE_SUBMIRROR):
-   case(REMOTE_REMOVE_OLD):
-   case(REMOTE_CHMOD):
+   case(TARGET_REMOVE_OLD):
+   case(TARGET_CHMOD):
       break;
 
-   case(MAKE_REMOTE_DIR):
-      printf("\tmkdir `%s' [%s]\n",remote_dir,session->CurrentStatus());
+   case(MAKE_TARGET_DIR):
+      printf("\tmkdir `%s' [%s]\n",target_dir,target_session->CurrentStatus());
       break;
 
-   case(CHANGING_REMOTE_DIR):
-      printf("\tcd `%s' [%s]\n",remote_dir,session->CurrentStatus());
+   case(CHANGING_DIR):
+      printf("\tcd `%s' [%s]\n",target_dir,target_session->CurrentStatus());
+      printf("\tcd `%s' [%s]\n",source_dir,session->CurrentStatus());
       break;
 
    case(GETTING_LIST_INFO):
-      if(remote_relative_dir)
-	 printf("\t%s: %s\n",remote_relative_dir,list_info->Status());
+      if(target_relative_dir)
+	 printf("\t%s: %s\n",target_relative_dir,target_list_info->Status());
       else
-	 printf("\t%s\n",list_info->Status());
+	 printf("\t%s\n",target_list_info->Status());
+      if(source_relative_dir)
+	 printf("\t%s: %s\n",source_relative_dir,source_list_info->Status());
+      else
+	 printf("\t%s\n",source_list_info->Status());
       break;
    }
    return;
@@ -113,27 +118,41 @@ void  MirrorJob::ShowRunStatus(StatusLine *s)
    // these have a sub-job
    case(WAITING_FOR_SUBGET):
    case(WAITING_FOR_SUBMIRROR):
-   case(WAITING_FOR_RM_BEFORE_PUT):
+   case(WAITING_FOR_RM_BEFORE_TRANSFER):
    case(WAITING_FOR_MKDIR_BEFORE_SUBMIRROR):
-   case(REMOTE_REMOVE_OLD):
-   case(REMOTE_CHMOD):
+   case(TARGET_REMOVE_OLD):
+   case(TARGET_CHMOD):
       Job::ShowRunStatus(s);
       break;
 
-   case(MAKE_REMOTE_DIR):
-      s->Show("mkdir `%s' [%s]",remote_dir,session->CurrentStatus());
+   case(MAKE_TARGET_DIR):
+      s->Show("mkdir `%s' [%s]",target_dir,target_session->CurrentStatus());
       break;
 
-   case(CHANGING_REMOTE_DIR):
-      s->Show("cd `%s' [%s]",remote_dir,session->CurrentStatus());
+   case(CHANGING_DIR):
+      if(target_session->IsOpen() && (!session->IsOpen() || now%4>=2))
+	 s->Show("cd `%s' [%s]",target_dir,target_session->CurrentStatus());
+      else if(session->IsOpen())
+	 s->Show("cd `%s' [%s]",source_dir,session->CurrentStatus());
       break;
 
    case(GETTING_LIST_INFO):
-      if(remote_relative_dir)
-	 s->Show("%s: %s",squeeze_file_name(remote_relative_dir,20),
-	    list_info->Status());
-      else
-	 s->Show("%s",list_info->Status());
+      if(target_list_info && (!source_list_info || now%4>=2))
+      {
+	 if(target_relative_dir)
+	    s->Show("%s: %s",squeeze_file_name(target_relative_dir,20),
+	       target_list_info->Status());
+	 else
+	    s->Show("%s",target_list_info->Status());
+      }
+      else if(source_list_info)
+      {
+	 if(source_relative_dir)
+	    s->Show("%s: %s",squeeze_file_name(source_relative_dir,20),
+	       source_list_info->Status());
+	 else
+	    s->Show("%s",source_list_info->Status());
+      }
       break;
    }
 }
@@ -142,14 +161,14 @@ void  MirrorJob::HandleFile(int how)
 {
    ArgV *args;
    int	 res;
-   mode_t mode;
    struct stat st;
 
+   // TODO: get rid of local hacks.
    // dir_name returns pointer to static data - need to dup it.
-   const char *local_name=dir_file(local_dir,file->name);
-   local_name=alloca_strdup(local_name);
-   const char *remote_name=dir_file(remote_dir,file->name);
-   remote_name=alloca_strdup(remote_name);
+   const char *source_name=dir_file(source_dir,file->name);
+   source_name=alloca_strdup(source_name);
+   const char *target_name=dir_file(target_dir,file->name);
+   target_name=alloca_strdup(target_name);
 
    if(file->defined&file->TYPE)
    {
@@ -161,127 +180,60 @@ void  MirrorJob::HandleFile(int how)
 	 cont_this=false;
 	 if(how!=0)
 	    goto skip;
-	 if(flags&REVERSE)
+	 if(target_is_local)
 	 {
-	    FileInfo *old=remote_set->FindByName(file->name);
-	    if(old)
+	    if(lstat(target_name,&st)!=-1)
 	    {
-	       if((flags&CONTINUE)
-	       && (old->defined&file->TYPE) && old->filetype==old->NORMAL
-	       && (file->defined&file->DATE)
-	       && (old->defined&old->DATE)
-	       && file->date + file->date_prec < old->date - old->date_prec
-	       && (file->defined&file->SIZE) && (old->defined&old->SIZE)
-	       && file->size >= old->size)
-	       {
-		  cont_this=true;
-	       }
-	       else
-	       {
-		  Report(_("Removing old remote file `%s'"),
-			   dir_file(remote_relative_dir,file->name));
-		  args=new ArgV("rm");
-		  args->Append(file->name);
-		  if(script)
-		  {
-		     char *cmd=args->CombineQuoted();
-		     fprintf(script,"%s",cmd);
-		     xfree(cmd);
-		     if(script_only)
-		     {
-			delete args;
-			goto skip;
-		     }
-		  }
-		  Job *j=new rmJob(Clone(),args);
-		  j->SetParentFg(this);
-		  j->cmdline=args->Combine();
-		  AddWaiting(j);
-	       }
-	       mod_files++;
+	       // few safety checks.
+	       FileInfo *old=new_files_set->FindByName(file->name);
+	       if(old)
+		  goto skip;  // file has appeared after mirror start
+	       old=old_files_set->FindByName(file->name);
+	       if(old && ((old->defined&old->SIZE && old->size!=st.st_size)
+			||(old->defined&old->DATE && old->date!=st.st_mtime)))
+		  goto skip;  // the file has changed after mirror start
 	    }
-	    else
-	       new_files++;
-	    state=WAITING_FOR_RM_BEFORE_PUT;
-	    break;
 	 }
-	 if(lstat(local_name,&st)!=-1)
+	 FileInfo *old=target_set->FindByName(file->name);
+	 if(old)
 	 {
-	    // few safety checks.
-	    FileInfo *old=new_files_set->FindByName(file->name);
-	    if(old)
-	       goto skip;  // file has appeared after mirror start
-	    old=old_files_set->FindByName(file->name);
-	    if(old && ((old->defined&old->SIZE && old->size!=st.st_size)
-		     ||(old->defined&old->DATE && old->date!=st.st_mtime)))
-	       goto skip;  // the file has changed after mirror start
-
-	    if((flags&CONTINUE) && S_ISREG(st.st_mode)
+	    if((flags&CONTINUE)
+	    && (old->defined&file->TYPE) && old->filetype==old->NORMAL
 	    && (file->defined&file->DATE)
-	    && file->date + file->date_prec < st.st_mtime
-	    && (file->defined&file->SIZE) && file->size >= st.st_size)
+	    && (old->defined&old->DATE)
+	    && file->date + file->date_prec < old->date - old->date_prec
+	    && (file->defined&file->SIZE) && (old->defined&old->SIZE)
+	    && file->size >= old->size)
 	    {
 	       cont_this=true;
-	       // make it writable
-	       if((st.st_mode&0200)==0)
-		  chmod(local_name,st.st_mode|0200);
 	    }
 	    else
 	    {
-	       Report(_("Removing old local file `%s'"),
-			dir_file(local_relative_dir,file->name));
+	       Report(_("Removing old file `%s'"),
+			dir_file(target_relative_dir,file->name));
+	       args=new ArgV("rm");
+	       args->Append(file->name);
 	       if(script)
 	       {
-		  // FIXME: shell-quote file name.
-		  fprintf(script,"! rm %s",file->name);
+		  char *cmd=args->CombineQuoted();
+		  fprintf(script,"%s",cmd);
+		  xfree(cmd);
 		  if(script_only)
+		  {
+		     delete args;
 		     goto skip;
+		  }
 	       }
-	       remove(local_name);
+	       Job *j=new rmJob(target_session->Clone(),args);
+	       j->SetParentFg(this);
+	       j->cmdline=args->Combine();
+	       AddWaiting(j);
 	    }
 	    mod_files++;
 	 }
 	 else
-	 {
 	    new_files++;
-	 }
-	 // launch get job
-	 Report(_("Retrieving remote file `%s'"),
-		  dir_file(remote_relative_dir,file->name));
-	 if(script)
-	 {
-	    args=new ArgV("get1");
-	    if(cont_this)
-	       args->Append("-c");
-	    args->Append(file->name);
-	    args->Append("-o");
-	    args->Append(local_name);
-	    char *cmd=args->CombineQuoted();
-	    fprintf(script,"%s",cmd);
-	    xfree(cmd);
-	    delete args; args=0;
-	    if(script_only)
-	       goto skip;
-	 }
-
-	 FileCopyPeerFA *src_peer=
-	    new FileCopyPeerFA(session->Clone(),file->name,FA::RETRIEVE);
-	 FileCopyPeer *dst_peer=
-	    FileCopyPeerFDStream::NewPut(local_name,cont_this);
-
-	 FileCopy *c=FileCopy::New(src_peer,dst_peer,cont_this);
-	 if(remove_source_files)
-	    c->RemoveSourceLater();
-	 CopyJob *cp=
-	    new CopyJob(c,file->name,"mirror");
-	 if(file->defined&file->DATE)
-	    cp->SetDate(file->date);
-	 if(file->defined&file->SIZE)
-	    cp->SetSize(file->size);
-	 AddWaiting(cp);
-	 cp->SetParentFg(this);
-	 cp->cmdline=(char*)xmalloc(10+strlen(file->name));
-	 sprintf(cp->cmdline,"\\get %s",file->name);
+	 state=WAITING_FOR_RM_BEFORE_TRANSFER;
 	 break;
       }
       case(FileInfo::DIRECTORY):
@@ -289,70 +241,52 @@ void  MirrorJob::HandleFile(int how)
       try_recurse:
 	 if(how!=1 || (flags&NO_RECURSION))
 	    goto skip;
-	 if(!strcmp(file->name,".") || !strcmp(file->name,".."))
-	    goto skip;
-	 if(flags&REVERSE)
+	 if(target_is_local)
 	 {
-	    if(!dir_made)
-	    {
-	       FileInfo *f=remote_set->FindByName(file->name);
-	       if(f==0)
-	       {
-		  Report(_("Making remote directory `%s'"),
-			   dir_file(remote_relative_dir,file->name));
-		  args=new ArgV("mkdir");
-		  args->Append("--");
-		  args->Append(file->name);
-		  Job *j=new mkdirJob(Clone(),args);
-		  j->SetParentFg(this);
-		  j->cmdline=args->Combine();
-		  AddWaiting(j);
-	       }
-	       else
-		  dir_made=true;
-	       state=WAITING_FOR_MKDIR_BEFORE_SUBMIRROR;
-	       break;
-	    }
-	 }
-	 else // !REVERSE
-	 {
-	    mode=((file->defined&file->MODE)&&!(flags&NO_PERMS))?file->mode:0755;
-	    struct stat st;
-	    if(lstat(local_name,&st)!=-1)
+	    if(lstat(target_name,&st)!=-1)
 	    {
 	       if(S_ISDIR(st.st_mode))
-		  chmod(local_name,st.st_mode|0700);
+		  chmod(target_name,st.st_mode|0700);
 	       else
 	       {
 		  Report(_("Removing old local file `%s'"),
-			   dir_file(local_relative_dir,file->name));
-		  if(remove(local_name)==-1)
+			   dir_file(target_relative_dir,file->name));
+		  if(remove(target_name)==-1)
 		  {
-		     eprintf("mirror: remove(%s): %s\n",local_name,strerror(errno));
+		     eprintf("mirror: remove(%s): %s\n",target_name,strerror(errno));
 		     goto skip;
 		  }
-		  goto do_mkdir;
-	       }
-	    }
-	    else // no such directory
-	    {
-	    do_mkdir:
-	       res=mkdir(local_name,mode|0700);
-	       if(res==-1)
-	       {
-		  eprintf("mirror: mkdir(%s): %s\n",local_name,strerror(errno));
-		  goto skip;
 	       }
 	    }
 	 }
+	 if(!dir_made)
+	 {
+	    FileInfo *f=target_set->FindByName(file->name);
+	    if(f==0)
+	    {
+	       Report(_("Making directory `%s'"),
+			dir_file(target_relative_dir,file->name));
+	       args=new ArgV("mkdir");
+	       args->Append("--");
+	       args->Append(file->name);
+	       Job *j=new mkdirJob(target_session->Clone(),args);
+	       j->SetParentFg(this);
+	       j->cmdline=args->Combine();
+	       AddWaiting(j);
+	    }
+	    else
+	       dir_made=true;
+	    state=WAITING_FOR_MKDIR_BEFORE_SUBMIRROR;
+	    break;
+	 }
+
 	 // launch sub-mirror
-	 MirrorJob *mj=new MirrorJob(Clone(),local_name,remote_name);
+	 MirrorJob *mj=new MirrorJob(Clone(),target_session->Clone(),
+				       source_name,target_name);
 	 mj->parent_mirror=this;
 	 AddWaiting(mj);
 	 mj->SetParentFg(this);
-	 mj->cmdline=(char*)xmalloc(strlen("\\mirror")+1+
-					 strlen(file->name)+1);
-	 sprintf(mj->cmdline,"\\mirror %s",file->name);
+	 mj->cmdline=xasprintf("\\mirror %s",file->name);
 
 	 // inherit flags and other things
 	 mj->SetFlags(flags,1);
@@ -361,10 +295,10 @@ void  MirrorJob::HandleFile(int how)
 	 if(rx_include)	mj->SetInclude(rx_include);
 	 if(rx_exclude)	mj->SetExclude(rx_exclude);
 
-	 mj->local_relative_dir=
-	       xstrdup(dir_file(local_relative_dir,file->name));
-	 mj->remote_relative_dir=
-	       xstrdup(dir_file(remote_relative_dir,file->name));
+	 mj->source_relative_dir=
+	       xstrdup(dir_file(source_relative_dir,file->name));
+	 mj->target_relative_dir=
+	       xstrdup(dir_file(target_relative_dir,file->name));
 
 	 mj->verbose_report=verbose_report;
 	 mj->newer_than=newer_than;
@@ -372,8 +306,7 @@ void  MirrorJob::HandleFile(int how)
 	 mj->remove_source_files=remove_source_files;
 
 	 if(verbose_report>=3)
-	    Report(_("Mirroring directory `%s'"),
-	       (flags&REVERSE)?mj->local_relative_dir:mj->remote_relative_dir);
+	    Report(_("Mirroring directory `%s'"),mj->target_relative_dir);
 
 	 dir_made=false;   // for next directory
 
@@ -382,7 +315,7 @@ void  MirrorJob::HandleFile(int how)
       case(FileInfo::SYMLINK):
 	 if(how!=0)
 	    goto skip;
-	 if(flags&REVERSE)
+	 if(!target_is_local)
 	 {
 	    // can't create symlink remotely
 	    goto skip;
@@ -392,14 +325,14 @@ void  MirrorJob::HandleFile(int how)
 	 if(file->defined&file->SYMLINK)
 	 {
 	    struct stat st;
-	    if(lstat(local_name,&st)!=-1)
+	    if(lstat(target_name,&st)!=-1)
 	    {
 	       Report(_("Removing old local file `%s'"),
-			dir_file(local_relative_dir,file->name));
+			dir_file(target_relative_dir,file->name));
 	       mod_symlinks++;
-	       if(remove(local_name)==-1)
+	       if(remove(target_name)==-1)
 	       {
-		  eprintf("mirror: remove(%s): %s\n",local_name,strerror(errno));
+		  eprintf("mirror: remove(%s): %s\n",target_name,strerror(errno));
 		  goto skip;
 	       }
 	    }
@@ -408,10 +341,10 @@ void  MirrorJob::HandleFile(int how)
 	       new_symlinks++;
 	    }
 	    Report(_("Making symbolic link `%s' to `%s'"),
-		     dir_file(local_relative_dir,file->name),file->symlink);
-	    res=symlink(file->symlink,local_name);
+		     dir_file(target_relative_dir,file->name),file->symlink);
+	    res=symlink(file->symlink,target_name);
 	    if(res==-1)
-	       eprintf("mirror: symlink(%s): %s\n",local_name,strerror(errno));
+	       eprintf("mirror: symlink(%s): %s\n",target_name,strerror(errno));
 	 }
 #endif /* LSTAT */
 	 goto skip;
@@ -419,9 +352,9 @@ void  MirrorJob::HandleFile(int how)
    }
    else
    {
-      FileInfo *local=local_set->FindByName(file->name);
-      if(local && (local->defined&local->TYPE)
-      && local->filetype==local->DIRECTORY)
+      FileInfo *target=target_set->FindByName(file->name);
+      if(target && (target->defined&target->TYPE)
+      && target->filetype==target->DIRECTORY)
       {
 	 // assume it's a directory
 	 goto try_recurse;
@@ -450,7 +383,7 @@ void  MirrorJob::InitSets(FileSet *source,FileSet *dest)
    int ignore=0;
    if(flags&ONLY_NEWER)
       ignore|=FileInfo::IGNORE_SIZE_IF_OLDER|FileInfo::IGNORE_DATE_IF_OLDER;
-   if(flags&REVERSE)
+   if(strcmp(target_session->GetProto(),"file"))
       ignore|=FileInfo::IGNORE_DATE_IF_OLDER;
    to_transfer->SubtractSame(dest,ignore);
 
@@ -464,8 +397,97 @@ void  MirrorJob::InitSets(FileSet *source,FileSet *dest)
    old_files_set=new FileSet(dest);
    old_files_set->SubtractNotIn(to_transfer);
 
-   to_transfer->SortByPatternList(ResMgr::Query(
-      flags&REVERSE?"mirror:order-upload":"mirror:order-download",0));
+   to_transfer->SortByPatternList(ResMgr::Query("mirror:order",0));
+}
+
+void MirrorJob::HandleChdir(FileAccess * &session, int &redirections)
+{
+   if(!session->IsOpen())
+      return;
+   int res=session->Done();
+   if(res<0)
+   {
+      if(res==FA::FILE_MOVED)
+      {
+	 // cd to another url.
+	 const char *loc_c=session->GetNewLocation();
+	 int max_redirections=ResMgr::Query("xfer:max-redirections",0);
+	 if(loc_c && loc_c[0] && max_redirections>0
+	 && loc_c[strlen(loc_c)-1]=='/')
+	 {
+	    if(++redirections>max_redirections)
+	       goto cd_err_normal;
+	    eprintf(_("%s: received redirection to `%s'\n"),"mirror",loc_c);
+
+	    char *loc=alloca_strdup(loc_c);
+	    session->Close(); // loc_c is no longer valid.
+
+	    ParsedURL u(loc,true);
+
+	    if(!u.proto)
+	    {
+	       url::decode_string(loc);
+	       session->Chdir(loc);
+	       return;
+	    }
+	    SessionPool::Reuse(session);
+	    session=FA::New(&u);
+	    session->Chdir(u.path);
+	    return;
+	 }
+      }
+   cd_err_normal:
+      eprintf("mirror: %s\n",session->StrError(res));
+      error_count++;
+      state=DONE;
+      this->session->Close();
+      target_session->Close();
+      return;
+   }
+   if(res==FA::OK)
+      session->Close();
+}
+void MirrorJob::HandleListInfoCreation(FileAccess * &session,ListInfo * &list_info,const char *relative_dir)
+{
+   list_info=session->MakeListInfo();
+   if(list_info==0)
+   {
+      eprintf(_("mirror: protocol `%s' is not suitable for mirror\n"),
+	       session->GetProto());
+      state=DONE;
+      return;
+   }
+   list_info->UseCache(use_cache);
+   list_info->Need(FileInfo::ALL_INFO);
+   if(flags&RETR_SYMLINKS)
+      list_info->FollowSymlinks();
+
+   list_info->SetExclude(relative_dir,
+		  rx_exclude?&rxc_exclude:0,rx_include?&rxc_include:0);
+   Roll(list_info);
+}
+
+void MirrorJob::HandleListInfo(ListInfo * &list_info, FileSet * &set)
+{
+   if(!list_info)
+      return;
+   if(!list_info->Done())
+      return;
+   if(list_info->Error())
+   {
+      eprintf("mirror: %s\n",list_info->ErrorText());
+      error_count++;
+      state=DONE;
+      Delete(source_list_info);
+      source_list_info=0;
+      Delete(target_list_info);
+      target_list_info=0;
+      return;
+   }
+   set=list_info->GetResult();
+   Delete(list_info);
+   list_info=0;
+   set->ExcludeDots(); // don't need .. and .
 }
 
 int   MirrorJob::Do()
@@ -477,163 +499,69 @@ int   MirrorJob::Do()
 
    switch(state)
    {
-   case(DONE):
-      return STALL;
-
    case(INITIAL_STATE):
-      if(!local_set)
-      {
-	 local_session=FileAccess::New("file");
-	 if(!local_session)
-	 {
-	    eprintf(_("mirror: cannot create `file:' access object, installation error?\n"));
-	    state=DONE;
-	    return MOVED;
-	 }
-	 local_session->Chdir(local_dir,false);
-	 list_info=local_session->MakeListInfo();
-	 list_info->UseCache(use_cache);
-	 if(flags&RETR_SYMLINKS)
-	    list_info->FollowSymlinks();
-	 list_info->SetExclude(local_relative_dir,
-			rx_exclude?&rxc_exclude:0,rx_include?&rxc_include:0);
 
-	 while(!list_info->Done())
-	    Roll(list_info);  // this should be fast
-
-	 if(list_info->Error())
-	    goto list_info_error;
-
-	 local_set=list_info->GetResult();
-	 Delete(list_info);
-	 list_info=0;
-	 Delete(local_session);
-	 local_session=0;
-
-	 local_set->ExcludeDots();  // don't need .. and .
-      }
-      if(create_remote_dir)
-      {
-	 create_remote_dir=false;
-	 session->Mkdir(remote_dir,true);
-	 state=MAKE_REMOTE_DIR;
-	 return MOVED;
-      }
-      session->Chdir(remote_dir);
-      redirections=0;
-      Roll(session);
-      state=CHANGING_REMOTE_DIR;
-      return MOVED;
-
-   case(MAKE_REMOTE_DIR):
-      res=session->Done();
+      target_session->Mkdir(target_dir,true);
+      state=MAKE_TARGET_DIR;
+      m=MOVED;
+   case(MAKE_TARGET_DIR):
+      res=target_session->Done();
       if(res==FA::IN_PROGRESS)
 	 return m;
-      session->Close();
-      state=INITIAL_STATE;
-      return MOVED;
+      target_session->Close();
 
-   case(CHANGING_REMOTE_DIR):
-      res=session->Done();
-      if(res==FA::IN_PROGRESS)
-	 return STALL;
-      if(res<0)
+      session->Chdir(source_dir);
+      target_session->Chdir(target_dir);
+      redirections=0;
+      target_redirections=0;
+      Roll(session);
+      Roll(target_session);
+      state=CHANGING_DIR;
+      m=MOVED;
+   case(CHANGING_DIR):
+      HandleChdir(session,redirections);
+      HandleChdir(target_session,target_redirections);
+      if(state!=CHANGING_DIR)
+	 return MOVED;
+      if(session->IsOpen() || target_session->IsOpen())
+	 return m;
+
+      xfree(target_dir);
+      target_dir=xstrdup(target_session->GetCwd());
+      xfree(source_dir);
+      source_dir=xstrdup(session->GetCwd());
+
+      HandleListInfoCreation(session,source_list_info,source_relative_dir);
+      HandleListInfoCreation(target_session,target_list_info,target_relative_dir);
+      if(state!=CHANGING_DIR)
       {
-	 if(res==FA::FILE_MOVED)
-	 {
-	    // cd to another url.
-	    const char *loc_c=session->GetNewLocation();
-	    int max_redirections=ResMgr::Query("xfer:max-redirections",0);
-	    if(loc_c && loc_c[0] && max_redirections>0
-	    && loc_c[strlen(loc_c)-1]=='/')
-	    {
-	       if(++redirections>max_redirections)
-		  goto cd_err_normal;
-	       eprintf(_("%s: received redirection to `%s'\n"),"mirror",loc_c);
-
-	       char *loc=alloca_strdup(loc_c);
-	       session->Close(); // loc_c is no longer valid.
-
-	       ParsedURL u(loc,true);
-
-	       if(!u.proto)
-	       {
-		  url::decode_string(loc);
-		  session->Chdir(loc);
-		  return MOVED;
-	       }
-	       SessionPool::Reuse(session);
-	       session=FA::New(&u);
-	       session->Chdir(u.path);
-	       return MOVED;
-	    }
-	 }
-      cd_err_normal:
-	 eprintf("mirror: %s\n",session->StrError(res));
-	 error_count++;
-	 state=DONE;
-	 session->Close();
+	 Delete(source_list_info); source_list_info=0;
+	 Delete(target_list_info); target_list_info=0;
 	 return MOVED;
       }
-      session->Close();
-
-      xfree(remote_dir);
-      remote_dir=xstrdup(session->GetCwd());
-
-      list_info=session->MakeListInfo();
-      if(list_info==0)
-      {
-	 eprintf(_("mirror: protocol `%s' is not suitable for mirror\n"),
-		  session->GetProto());
-      	 state=DONE;
-      	 return MOVED;
-      }
-      list_info->UseCache(use_cache);
-      list_info->Need(FileInfo::ALL_INFO);
-      if(flags&RETR_SYMLINKS)
-	 list_info->FollowSymlinks();
-
-      list_info->SetExclude(remote_relative_dir,
-		     rx_exclude?&rxc_exclude:0,rx_include?&rxc_include:0);
-      Roll(list_info);
       state=GETTING_LIST_INFO;
-      return MOVED;
+      m=MOVED;
 
    case(GETTING_LIST_INFO):
    {
-      if(!list_info->Done())
-	 return STALL;
-      if(list_info->Error())
-      {
-      list_info_error:
-	 eprintf("mirror: %s\n",list_info->ErrorText());
-	 error_count++;
-	 state=DONE;
-      	 Delete(list_info);
-	 list_info=0;
+      HandleListInfo(source_list_info,source_set);
+      HandleListInfo(target_list_info,target_set);
+      if(state!=GETTING_LIST_INFO)
 	 return MOVED;
-      }
-      remote_set=list_info->GetResult();
-      Delete(list_info);
-      list_info=0;
-
-      remote_set->ExcludeDots(); // don't need .. and .
+      if(source_list_info || target_list_info)
+	 return m;
 
       // now we have both local and remote file sets.
       dirs++;
 
-      if(flags&REVERSE)
-	 InitSets(local_set,remote_set);
-      else
-	 InitSets(remote_set,local_set);
+      InitSets(source_set,target_set);
 
       to_transfer->rewind();
-//       waiting=0; ???
       state=WAITING_FOR_SUBGET;
       return MOVED;
    }
 
-   case(WAITING_FOR_RM_BEFORE_PUT):
+   case(WAITING_FOR_RM_BEFORE_TRANSFER):
    {
       if(waiting_num>0)
       {
@@ -646,9 +574,8 @@ int   MirrorJob::Do()
 	 if(waiting_num>0)
 	    return m;
       }
-      Report(_("Sending local file `%s'"),
-	       dir_file(local_relative_dir,file->name));
-      const char *local_name=dir_file(local_dir,file->name);
+      Report(_("Transferring file `%s'"),
+	       dir_file(source_relative_dir,file->name));
 
 #if 0 // unfinished
       if(script)
@@ -669,19 +596,22 @@ int   MirrorJob::Do()
 #endif
 
       FileCopyPeerFA *dst_peer=
-	 new FileCopyPeerFA(session->Clone(),file->name,FA::STORE);
-      FileCopyPeer *src_peer=
-	 FileCopyPeerFDStream::NewGet(local_name);
+	 new FileCopyPeerFA(target_session->Clone(),file->name,FA::STORE);
+      FileCopyPeerFA *src_peer=
+	 new FileCopyPeerFA(Clone(),file->name,FA::RETRIEVE);
 
       FileCopy *c=FileCopy::New(src_peer,dst_peer,cont_this);
       if(remove_source_files)
 	 c->RemoveSourceLater();
       CopyJob *cp=
 	 new CopyJob(c,file->name,"mirror");
+      if(file->defined&file->DATE && file->date_prec<1)
+	 cp->SetDate(file->date);
+      if(file->defined&file->SIZE)
+	 cp->SetSize(file->size);
       AddWaiting(cp);
       cp->SetParentFg(this);
-      cp->cmdline=(char*)xmalloc(10+strlen(file->name));
-      sprintf(cp->cmdline,"\\put %s",file->name);
+      cp->cmdline=xasprintf("\\transfer %s",file->name);
       state=WAITING_FOR_SUBGET;
       return MOVED;
    }
@@ -715,7 +645,7 @@ int   MirrorJob::Do()
    case(WAITING_FOR_MKDIR_BEFORE_SUBMIRROR):
       j=FindDoneAwaitedJob();
       if(j==0 && waiting_num>0)
-	 return STALL;
+	 return m;
       if(j)
       {
 	 if(j->ExitCode()==0)
@@ -731,7 +661,7 @@ int   MirrorJob::Do()
    case(WAITING_FOR_SUBMIRROR):
       j=FindDoneAwaitedJob();
       if(j==0 && waiting_num>0)
-	 return STALL;
+	 return m;
       if(j)
       {
 	 MirrorJob &mj=*(MirrorJob*)j; // we are sure it is a MirrorJob
@@ -758,52 +688,9 @@ int   MirrorJob::Do()
 	 {
 	    to_rm->Count(&del_dirs,&del_files,&del_symlinks,&del_files);
 	    to_rm->rewind();
-	    if(flags&REVERSE)
-	    {
-	       state=REMOTE_REMOVE_OLD;
-	       return MOVED;
-	    }
-	    // else not REVERSE
-	    if(flags&DELETE)
-	    {
-	       while((file=to_rm->curr())!=0)
-	       {
-		  Report(_("Removing old local file `%s'"),
-			   dir_file(local_relative_dir,file->name));
-		  const char *local_name=dir_file(local_dir,file->name);
-		  if(remove(local_name)==-1)
-		  {
-		     if(!(file->defined & file->TYPE)
-		     || file->filetype==file->DIRECTORY)
-			// try this
-			truncate_file_tree(local_name);
-		     else
-			perror(local_name);
-		  }
-		  to_rm->next();
-	       }
-	    }
-	    else if(flags&REPORT_NOT_DELETED)
-	    {
-	       for(file=to_rm->curr(); file; file=to_rm->next())
-	       {
-		  Report(_("Old local file `%s' is not removed"),
-			   dir_file(local_relative_dir,file->name));
-	       }
-	    }
-	    mode_t mode_mask=get_mode_mask();
-	    if(!(flags&NO_PERMS))
-	       to_transfer->LocalChmod(local_dir,mode_mask);
-	    to_transfer->LocalUtime(local_dir,/*only_dirs=*/true);
-	    if(flags&ALLOW_CHOWN)
-	       to_transfer->LocalChown(local_dir);
-	    if(!(flags&NO_PERMS))
-	       same->LocalChmod(local_dir,mode_mask);
-	    if(flags&ALLOW_CHOWN)
-	       same->LocalChown(local_dir);
-#if 0 // this can cause problems if files really differ
-	    same->LocalUtime(local_dir); // the old mtime can differ up to prec
-#endif
+	    state=TARGET_REMOVE_OLD;
+	    return MOVED;
+
 	    state=DONE;
 	    return MOVED;
 	 }
@@ -812,7 +699,7 @@ int   MirrorJob::Do()
       }
       return m;
 
-   case(REMOTE_REMOVE_OLD):
+   case(TARGET_REMOVE_OLD):
       if(waiting_num==0)
       {
 	 if(flags&DELETE)
@@ -825,16 +712,16 @@ int   MirrorJob::Do()
 	       to_rm->next();
 	       if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
 	       {
-		  Report(_("Removing old remote directory `%s'"),
-			   dir_file(remote_relative_dir,file->name));
+		  Report(_("Removing old directory `%s'"),
+			   dir_file(target_relative_dir,file->name));
 		  args->getnext(); // prepare args position.
-	       	  j=new FinderJob_Cmd(Clone(),args,FinderJob_Cmd::RM);
+	       	  j=new FinderJob_Cmd(target_session->Clone(),args,FinderJob_Cmd::RM);
 	       }
 	       else
 	       {
-		  Report(_("Removing old remote file `%s'"),
-			   dir_file(remote_relative_dir,file->name));
-		  j=new rmJob(Clone(),args);
+		  Report(_("Removing old file `%s'"),
+			   dir_file(target_relative_dir,file->name));
+		  j=new rmJob(target_session->Clone(),args);
 	       }
 	       j->SetParentFg(this);
 	       j->cmdline=args->Combine();
@@ -845,12 +732,12 @@ int   MirrorJob::Do()
 	 {
 	    for(file=to_rm->curr(); file; file=to_rm->next())
 	    {
-	       Report(_("Old remote file `%s' is not removed"),
-			dir_file(remote_relative_dir,file->name));
+	       Report(_("Old file `%s' is not removed"),
+			dir_file(target_relative_dir,file->name));
 	    }
 	 }
 	 if(waiting_num==0)
-	    goto pre_REMOTE_CHMOD;
+	    goto pre_TARGET_CHMOD;
       }
       j=FindDoneAwaitedJob();
       if(j)
@@ -861,36 +748,31 @@ int   MirrorJob::Do()
       }
       return m;
 
-   pre_REMOTE_CHMOD:
+   pre_TARGET_CHMOD:
       if(flags&NO_PERMS)
-      {
-	 state=DONE;
-	 return MOVED;
-      }
+	 goto pre_DONE;
+
       to_transfer->rewind();
-      state=REMOTE_CHMOD;
+      state=TARGET_CHMOD;
       m=MOVED;
-      goto remote_chmod_next;
-   case(REMOTE_CHMOD):
+      goto target_chmod_next;
+   case(TARGET_CHMOD):
       j=FindDoneAwaitedJob();
       if(j)
       {
 	 RemoveWaiting(j);
 	 Delete(j);
 
-      remote_chmod_next:
+      target_chmod_next:
 	 fi=to_transfer->curr();
 	 if(!fi)
-	 {
-	    state=DONE;
-	    return MOVED;
-	 }
+	    goto pre_DONE;
 	 to_transfer->next();
 	 if(!(fi->defined&fi->MODE))
-	    goto remote_chmod_next;
+	    goto target_chmod_next;
 	 ArgV *a=new ArgV("chmod");
 	 a->Append(fi->name);
-	 ChmodJob *cj=new ChmodJob(Clone(),fi->mode&~get_mode_mask(),a);
+	 ChmodJob *cj=new ChmodJob(target_session->Clone(),fi->mode&~get_mode_mask(),a);
 	 AddWaiting(cj);
 	 cj->SetParentFg(this);
 	 cj->cmdline=a->Combine();
@@ -899,29 +781,51 @@ int   MirrorJob::Do()
 	 m=MOVED;
       }
       return m;
+
+   pre_DONE:
+      if(target_is_local)     // FIXME
+      {
+	 to_transfer->LocalUtime(target_dir,/*only_dirs=*/true);
+	 if(flags&ALLOW_CHOWN)
+	    to_transfer->LocalChown(target_dir);
+	 if(!(flags&NO_PERMS))
+	    same->LocalChmod(target_dir,get_mode_mask());
+	 if(flags&ALLOW_CHOWN)
+	    same->LocalChown(target_dir);
+      }
+      state=DONE;
+      m=MOVED;
+   case(DONE):
+      return m;
    }
    /*NOTREACHED*/
    abort();
+   return m;
 }
 
-MirrorJob::MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_remote_dir)
+MirrorJob::MirrorJob(FileAccess *f,FileAccess *target,const char *new_source_dir,const char *new_target_dir)
    : SessionJob(f)
 {
    verbose_report=0;
    parent_mirror=0;
 
-   local_dir=xstrdup(new_local_dir);
-   remote_dir=xstrdup(new_remote_dir);
-   local_relative_dir=0;
-   remote_relative_dir=0;
+   target_session=target;
+   // TODO: get rid of this.
+   source_is_local=!strcmp(session       ->GetProto(),"file");
+   target_is_local=!strcmp(target_session->GetProto(),"file");
+
+   source_dir=xstrdup(new_source_dir);
+   target_dir=xstrdup(new_target_dir);
+   source_relative_dir=0;
+   target_relative_dir=0;
 
    to_transfer=to_rm=same=0;
-   remote_set=local_set=0;
+   source_set=target_set=0;
    new_files_set=old_files_set=0;
    file=0;
    cont_this=false;
-   list_info=0;
-   local_session=0;
+   source_list_info=0;
+   target_list_info=0;
 
    tot_files=new_files=mod_files=del_files=
    tot_symlinks=new_symlinks=mod_symlinks=del_symlinks=0;
@@ -937,7 +841,6 @@ MirrorJob::MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_rem
    state=INITIAL_STATE;
 
    dir_made=false;
-   create_remote_dir=false;
    newer_than=(time_t)-1;
 
    script=0;
@@ -950,31 +853,26 @@ MirrorJob::MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_rem
    parallel=1;
 
    redirections=0;
+   target_redirections=0;
 }
 
 MirrorJob::~MirrorJob()
 {
-   xfree(local_dir);
-   xfree(remote_dir);
-   xfree(local_relative_dir);
-   xfree(remote_relative_dir);
-   if(local_set)
-      delete local_set;
-   if(remote_set)
-      delete remote_set;
-   if(to_transfer)
-      delete to_transfer;
-   if(to_rm)
-      delete to_rm;
-   if(same)
-      delete same;
-   if(new_files_set)
-      delete new_files_set;
-   if(old_files_set)
-      delete old_files_set;
+   Reuse(target_session);
+   xfree(source_dir);
+   xfree(target_dir);
+   xfree(source_relative_dir);
+   xfree(target_relative_dir);
+   delete source_set;
+   delete target_set;
+   delete to_transfer;
+   delete to_rm;
+   delete same;
+   delete new_files_set;
+   delete old_files_set;
    // don't delete this->file -- it is a reference
-   Delete(list_info);
-   Delete(local_session);
+   Delete(source_list_info);
+   Delete(target_list_info);
    if(rx_include)
    {
       xfree(rx_include);
@@ -1062,6 +960,7 @@ void MirrorJob::SetNewerThan(const char *f)
 CMD(mirror)
 {
 #define args (parent->args)
+#define eprintf parent->eprintf
    static struct option mirror_opts[]=
    {
       {"delete",no_argument,0,'e'},
@@ -1084,10 +983,8 @@ CMD(mirror)
       {0}
    };
 
-   char *cwd;
-   const char *rcwd;
    int opt;
-   int	 flags=0;
+   int flags=0;
 
    static char *include=0;
    static int include_alloc=0;
@@ -1117,11 +1014,14 @@ CMD(mirror)
    if(exclude)
       exclude[0]=0;
 
-   bool	 create_remote_dir=false;
+   FileAccess *source_session=0;
+   FileAccess *target_session=0;
+
    int	 verbose=0;
    const char *newer_than=0;
    bool  remove_source_files=false;
    int	 parallel=0;
+   bool	 reverse=false;
 
    args->rewind();
    while((opt=args->getopt_long("esi:x:nrpcRvN:LPa",mirror_opts,0))!=EOF)
@@ -1159,7 +1059,7 @@ CMD(mirror)
 	 APPEND_STRING(include,include_alloc,optarg);
 	 break;
       case('R'):
-	 flags|=MirrorJob::REVERSE;
+	 reverse=true;
 	 break;
       case('L'):
 	 flags|=MirrorJob::RETR_SYMLINKS;
@@ -1196,86 +1096,70 @@ CMD(mirror)
       }
    }
 
-   cwd=string_alloca(1024);
-   if(getcwd(cwd,1024)==0)
+   args->back();
+
+   const char *source_dir=".";
+   const char *target_dir=".";
+
+   const char *arg=args->getnext();
+   if(arg)
    {
-      perror("getcwd()");
-      return 0;
+      source_dir=arg;
+      ParsedURL source_url(source_dir);
+      if(source_url.proto && source_url.path)
+      {
+	 source_session=FileAccess::New(&source_url);
+	 if(!source_session)
+	 {
+	    eprintf("%s: %s%s\n",args->a0(),source_url.proto,
+		     _(" - not supported protocol"));
+	    return 0;
+	 }
+	 source_dir=alloca_strdup(source_url.path);
+      }
+      arg=args->getnext();
+      if(arg)
+      {
+	 target_dir=arg;
+	 ParsedURL target_url(target_dir);
+	 if(target_url.proto && target_url.path)
+	 {
+	    target_session=FileAccess::New(&target_url);
+	    if(!target_session)
+	    {
+	       eprintf("%s: %s%s\n",args->a0(),target_url.proto,
+			_(" - not supported protocol"));
+	       return 0;
+	    }
+	    target_dir=alloca_strdup(target_url.path);
+	 }
+      }
+      else
+      {
+	 target_dir=basename_ptr(source_dir);
+	 if(target_dir[0]=='/')
+	    target_dir=".";
+      }
    }
 
-   args->back();
-   if(flags&MirrorJob::REVERSE)
+   if(!reverse)
    {
-      char *arg=args->getnext();
-      if(!arg)
-	 rcwd=".";
-      else
-      {
-	 if(arg[0]=='/')
-	    cwd=arg;
-	 else
-	 {
-	    char *cwd1=alloca_strdup2(cwd,strlen(arg)+1);
-	    strcat(cwd1,"/");
-	    strcat(cwd1,arg);
-	    cwd=cwd1;
-	 }
-	 rcwd=args->getnext();
-	 if(!rcwd)
-	 {
-	    rcwd=basename_ptr(cwd);
-	    if(rcwd[0]=='/')
-	       rcwd=".";
-	    else
-	       create_remote_dir=true;
-	 }
-	 else
-	    create_remote_dir=true;
-      }
+      if(!source_session)
+	 source_session=parent->session->Clone();
+      if(!target_session)
+	 target_session=FileAccess::New("file");
    }
-   else	/* !REVERSE (normal) */
+   else //reverse
    {
-      rcwd=args->getnext();
-      if(!rcwd)
-	 rcwd=".";
-      else
-      {
-	 char *arg=args->getnext();
-	 if(arg)
-	 {
-	    if(arg[0]=='/')
-	       cwd=arg;
-	    else
-	    {
-	       char *cwd1=alloca_strdup2(cwd,strlen(arg)+1);
-	       strcat(cwd1,"/");
-	       strcat(cwd1,arg);
-	       cwd=cwd1;
-	    }
-	    if(create_directories(arg)==-1)
-	       return 0;
-	 }
-	 else
-	 {
-	    const char *base=basename_ptr(rcwd);
-	    if(base[0]!='/')
-	    {
-	       int len=strlen(cwd);
-	       char *cwd1=alloca_strdup2(cwd,strlen(base)+1);
-	       strcat(cwd1,"/");
-	       strcat(cwd1,base);
-	       cwd=cwd1;
-	       if(create_directories(cwd+len+1)==-1)
-		  return 0;
-	    }
-	 }
-      }
+      if(!source_session)
+	 source_session=FileAccess::New("file");
+      if(!target_session)
+	 target_session=parent->session->Clone();
    }
-   MirrorJob *j=new MirrorJob(parent->session->Clone(),cwd,rcwd);
+
+   MirrorJob *j=new MirrorJob(source_session,target_session,source_dir,target_dir);
    j->SetFlags(flags,1);
    j->SetVerbose(verbose);
-   if(create_remote_dir)
-      j->CreateRemoteDir();
 
    const char *err;
    const char *err_tag;

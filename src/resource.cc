@@ -192,6 +192,7 @@ static ResDecl
    ResDecl13 ("ftp:sync-mode",		  "on",    ResMgr::BoolValidate,0),
    ResDecl14 ("ftp:use-abor",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl15 ("ftp:use-fxp",		  "yes",   ResMgr::BoolValidate,0),
+   ResDecl15a("ftp:use-site-chmod",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl16a("ftp:use-site-idle",	  "no",    ResMgr::BoolValidate,0),
    ResDecl16 ("ftp:use-stat",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl17 ("ftp:use-quit",		  "yes",   ResMgr::BoolValidate,0),
@@ -239,8 +240,7 @@ static ResDecl
    ResDecl43 ("net:timeout",		  "300",   ResMgr::UNumberValidate,0),
    ResDecl44 ("net:connection-limit",	  "0",	   ResMgr::UNumberValidate,0),
    ResDecl45 ("net:connection-takeover",  "yes",   ResMgr::BoolValidate,0),
-   ResDecl47 ("mirror:order-download",	  "",	   0,ResMgr::NoClosure),
-   ResDecl48 ("mirror:order-upload",	  "*.sfv *.sig *.md5* *.sum", 0,ResMgr::NoClosure);
+   ResDecl48 ("mirror:order",		  "*.sfv *.sig *.md5* *.sum", 0,ResMgr::NoClosure);
 
 #if INET6
 # define DEFAULT_ORDER "inet inet6"
