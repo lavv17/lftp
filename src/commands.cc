@@ -1639,7 +1639,7 @@ CMD(wait)
       eprintf(_("%s: %d - no such job\n"),op,n);
       return 0;
    }
-   if(j->parent && j->parent->waiting==j)
+   if(Job::FindWhoWaitsFor(j)!=0)
    {
       eprintf(_("%s: some other job waits for job %d\n"),op,n);
       return 0;

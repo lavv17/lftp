@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <assert.h>
 #include "Job.h"
 #include "xalloca.h"
 
@@ -36,6 +37,8 @@ Job::Job()
    cmdline=0;
    parent=0;
    waiting=0;
+   waiting_num=0;
+   waiting_alloc=0;
    jobno=-1;
    fg=false;
    fg_data=0;
@@ -99,6 +102,72 @@ Job *Job::FindJob(int n)
    return 0;
 }
 
+Job *Job::FindWhoWaitsFor(Job *j)
+{
+   for(Job *scan=chain; scan; scan=scan->next)
+   {
+      if(scan->WaitsFor(j))
+	 return scan;
+   }
+   return 0;
+}
+
+bool Job::WaitsFor(Job *j)
+{
+   for(int i=0; i<waiting_num; i++)
+   {
+      if(waiting[i]==j)
+	 return true;
+   }
+   return false;
+}
+
+Job *Job::FindDoneAwaitedJob()
+{
+   for(int i=0; i<waiting_num; i++)
+   {
+      if(waiting[i]->Done())
+	 return waiting[i];
+   }
+   return 0;
+}
+
+void Job::ReplaceWaiting(Job *from,Job *to)
+{
+   for(int i=0; i<waiting_num; i++)
+   {
+      if(waiting[i]==from)
+      {
+	 waiting[i]=to;
+	 return;
+      }
+   }
+}
+
+void Job::AddWaiting(Job *j)
+{
+   if(j==0)
+      return;
+   assert(FindWhoWaitsFor(j)==0);
+   waiting_num++;
+   if(waiting_alloc<waiting_num)
+      waiting=(Job**)xrealloc(waiting,(waiting_alloc+=4)*sizeof(*waiting));
+   waiting[waiting_num-1]=j;
+}
+void Job::RemoveWaiting(Job *j)
+{
+   for(int i=0; i<waiting_num; i++)
+   {
+      if(waiting[i]==j)
+      {
+	 waiting_num--;
+	 if(i<waiting_num)
+	    memmove(waiting+i,waiting+i+1,(waiting_num-i)*sizeof(*waiting));
+	 return;
+      }
+   }
+}
+
 class KilledJob : public Job
 {
 public:
@@ -112,7 +181,7 @@ void Job::Kill(int n)
    Job *j=FindJob(n);
    if(j)
    {
-      if(j->parent && j->parent->waiting==j)
+      if(j->parent && j->parent->WaitsFor(j))
       {
 	 // someone waits for termination of this job, so
 	 // we have to simulate normal death...
@@ -120,8 +189,9 @@ void Job::Kill(int n)
 	 r->parent=j->parent;
 	 r->cmdline=j->cmdline;
 	 j->cmdline=0;
-	 j->parent->waiting=r;
+	 j->parent->ReplaceWaiting(j,r);
       }
+      assert(FindWhoWaitsFor(j)==0);
       Delete(j);
    }
 }
@@ -187,6 +257,12 @@ void  Job::SortJobs()
       arr[count]->next=chain;
       chain=arr[count];
    }
+
+   for(scan=chain; scan; scan=scan->next)
+   {
+      if(scan->waiting_num>1)
+	 qsort(scan->waiting,scan->waiting_num,sizeof(*scan->waiting),jobno_compare);
+   }
 }
 
 void Job::PrintJobTitle(int indent,const char *suffix)
@@ -206,8 +282,11 @@ void Job::ListOneJob(int verbose,int indent,const char *suffix)
 {
    PrintJobTitle(indent,suffix);
    PrintStatus(verbose);
-   if(waiting && waiting->jobno<0 && waiting->cmdline==0)
-      waiting->ListOneJob(verbose,indent+1);
+   for(int i=0; i<waiting_num; i++)
+   {
+      if(waiting[i]->jobno<0 && waiting[i]!=this && waiting[i]->cmdline==0)
+	 waiting[i]->ListOneJob(verbose,indent+1);
+   }
 }
 
 void Job::ListOneJobRecursively(int verbose,int indent)
@@ -223,12 +302,15 @@ void  Job::ListJobs(int verbose,int indent)
       SortJobs();
 
    // list the foreground job first.
-   if(waiting && waiting!=this && waiting->parent==this)
-      waiting->ListOneJobRecursively(verbose,indent);
+   for(int i=0; i<waiting_num; i++)
+   {
+      if(waiting[i]!=this && waiting[i]->parent==this)
+	 waiting[i]->ListOneJobRecursively(verbose,indent);
+   }
 
    for(Job *scan=chain; scan; scan=scan->next)
    {
-      if(!scan->Done() && scan->parent==this && waiting!=scan)
+      if(scan->parent==this && !scan->Done() && !this->WaitsFor(scan))
 	 scan->ListOneJobRecursively(verbose,indent);
    }
 }
@@ -371,8 +453,11 @@ void Job::Bg()
    if(!fg)
       return;
    fg=false;
-   if(waiting && waiting!=this)
-      waiting->Bg();
+   for(int i=0; i<waiting_num; i++)
+   {
+      if(waiting[i]!=this)
+	 waiting[i]->Bg();
+   }
    if(fg_data)
       fg_data->Bg();
 }
@@ -383,20 +468,31 @@ void Job::Fg()
    fg=true;
    if(fg_data)
       fg_data->Fg();
-   if(waiting && waiting!=this)
-      waiting->Fg();
+   for(int i=0; i<waiting_num; i++)
+   {
+      if(waiting[i]!=this)
+	 waiting[i]->Fg();
+   }
 }
 
 int Job::AcceptSig(int s)
 {
-   if(waiting && waiting!=this)
+   for(int i=0; i<waiting_num; i++)
    {
-      if(waiting->AcceptSig(s)==WANTDIE)
+      if(waiting[i]==this)
+	 continue;
+      if(waiting[i]->AcceptSig(s)==WANTDIE)
       {
-	 Job *new_waiting=waiting->waiting;
-	 waiting->waiting=0;
-	 Delete(waiting);
-	 waiting=new_waiting;
+	 while(waiting[i]->waiting_num>0)
+	 {
+	    Job *new_waiting=waiting[i]->waiting[0];
+	    waiting[i]->RemoveWaiting(new_waiting);
+	    AddWaiting(new_waiting);
+	 }
+	 Job *j=waiting[i];
+	 RemoveWaiting(j);
+	 Delete(j);
+	 i--;
       }
    }
    return WANTDIE;
@@ -404,8 +500,12 @@ int Job::AcceptSig(int s)
 
 void Job::ShowRunStatus(StatusLine *sl)
 {
-   if(waiting)
-      waiting->ShowRunStatus(sl);
+   if(waiting_num==0)
+      return;
+   if(waiting_num==1)
+      waiting[0]->ShowRunStatus(sl);
+   else
+      waiting[(time(0)/3)%waiting_num]->ShowRunStatus(sl);
 }
 
 Job *Job::FindAnyChild()

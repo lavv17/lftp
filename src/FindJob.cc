@@ -33,6 +33,7 @@ int FinderJob::Do()
    int m=STALL;
    int res;
    prf_res pres;
+   Job *j;
 
    switch(state)
    {
@@ -159,10 +160,11 @@ int FinderJob::Do()
       return MOVED;
 
    case WAIT:
-      if(!waiting->Done())
+      j=FindDoneAwaitedJob();
+      if(!j)
 	 return m;
-      Delete(waiting);
-      waiting=0;
+      RemoveWaiting(j);
+      Delete(j);
       state=LOOP;
       m=MOVED;
       goto post_WAIT;
@@ -298,7 +300,7 @@ void FinderJob::ShowRunStatus(StatusLine *sl)
 			   session->CurrentStatus());
       break;
    case WAIT:
-      waiting->ShowRunStatus(sl);
+      Job::ShowRunStatus(sl);
       break;
    default:
       sl->Clear();
@@ -416,7 +418,7 @@ FinderJob::prf_res FinderJob_Cmd::ProcessFile(const char *d,const FileInfo *f)
 #endif
       break;
    }
-   waiting=exec;
+   AddWaiting(exec);
    return PRF_WAIT;
 
 #undef ISDIR
@@ -439,11 +441,13 @@ FinderJob_Cmd::~FinderJob_Cmd()
 {
    xfree(saved_cwd);
    delete args;
-   if(waiting)
+   while(waiting_num>0)
    {
-      if(waiting->waiting)
-	 waiting->waiting->jobno=-1; // prevent reparenting
-      Delete(waiting);
+      Job *r=waiting[0];
+      for(int k=0; k<r->waiting_num; k++)
+	 r->waiting[k]->jobno=-1; // prevent reparenting
+      RemoveWaiting(r);
+      Delete(r);
    }
 }
 
@@ -465,7 +469,7 @@ void FinderJob_Cmd::Finish()
 	 exec->FeedCmd("-- ");
 	 exec->FeedQuoted(start_dir);
 	 exec->FeedCmd("\n");
-	 waiting=exec;
+	 AddWaiting(exec);
 	 removing_last=true;
 	 state=WAIT; // it will wait for termination, try to process
 		     // next file and call Finish() again

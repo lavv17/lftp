@@ -147,9 +147,9 @@ int mgetJob::Do()
    {
       if(mkdir_job->Done())
       {
+	 RemoveWaiting(mkdir_job);
 	 Delete(mkdir_job);
 	 mkdir_job=0;
-	 waiting=0;
       }
       else
 	 return STALL;
@@ -171,9 +171,9 @@ int mgetJob::Do()
 	 {
 	    mkdir_job=new mkdirJob(Clone(),mkdir_args);
 	    mkdir_job->BeQuiet();
-	    waiting=mkdir_job;
-	    waiting->SetParentFg(this);
-	    waiting->cmdline=mkdir_args->Combine();
+	    AddWaiting(mkdir_job);
+	    mkdir_job->SetParentFg(this);
+	    mkdir_job->cmdline=mkdir_args->Combine();
 	    // don't delete mkdir_args; -- mkdirJob does it
 	    mkdir_args=0;
 	 }

@@ -50,23 +50,24 @@ int SleepJob::Do()
    if(Done())
       return STALL;
 
-   if(waiting)
+   if(waiting_num>0)
    {
-      if(!waiting->Done())
+      Job *j=FindDoneAwaitedJob();
+      if(!j)
 	 return STALL;
       if(!repeat)
       {
-	 exit_code=waiting->ExitCode();
-	 Delete(waiting);
-	 waiting=0;
+	 exit_code=j->ExitCode();
+	 RemoveWaiting(j);
+	 Delete(j);
 	 exec=0;
 	 done=true;
 	 return MOVED;
       }
       repeat_count++;
       start_time=now;
-      exec=(CmdExec*)waiting; // we are sure it is CmdExec.
-      waiting=0;
+      exec=(CmdExec*)j; // we are sure it is CmdExec.
+      RemoveWaiting(j);
    }
 
    if(next_time.IsInfty())
@@ -91,7 +92,7 @@ int SleepJob::Do()
 	 }
 	 exec->FeedCmd(cmd);
 	 exec->FeedCmd("\n");
-	 waiting=exec;
+	 AddWaiting(exec);
 	 exec=0;
 	 return MOVED;
       }

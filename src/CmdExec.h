@@ -110,7 +110,7 @@ private:
 
    enum builtins
    {
-      BUILTIN_NONE,
+      BUILTIN_NONE=0,
       BUILTIN_OPEN,
       BUILTIN_CD,
       BUILTIN_EXEC_RESTART,
@@ -146,7 +146,7 @@ public:
    void FeedQuoted(const char *c);
    void AtExit();
 
-   void SuspendJob();
+   void SuspendJob(Job *j);
 
    CmdExec(FileAccess *s);
    ~CmdExec();

@@ -215,6 +215,8 @@ restart:
       if(cmd==0)
 	 cmd=args->Combine();
 
+      Job *new_job=0;
+
       if(c->creator==0)
       {
 	 if(did_default)
@@ -223,54 +225,54 @@ restart:
 	    exit_code=1;
 	    return;
 	 }
-	 waiting=default_cmd();
+	 new_job=default_cmd();
 	 did_default=true;
       }
       else
       {
-	 waiting=c->creator(this);
+	 new_job=c->creator(this);
       }
-      if(waiting==this) // builtin
+      if(new_job==this && builtin!=BUILTIN_NONE)
       {
 	 if(builtin==BUILTIN_EXEC_RESTART)
 	 {
-	    waiting=0;
 	    builtin=BUILTIN_NONE;
 	    goto restart;
 	 }
 	 return;
       }
-      if(waiting)
+      if(new_job)
       {
-	 if(waiting->jobno<0)
-	    waiting->AllocJobno();
-	 if(cmd && waiting->cmdline==0)
+	 if(new_job->jobno<0)
+	    new_job->AllocJobno();
+	 if(cmd && new_job->cmdline==0)
 	 {
-	    waiting->cmdline=cmd;
+	    new_job->cmdline=cmd;
 	    cmd=0;
       	 }
-	 waiting->SetParentFg(this,!background);
+	 new_job->SetParentFg(this,!background);
       }
+      AddWaiting(new_job);
       if(background)
       {
-	 if(waiting)
+	 if(new_job)
 	 {
-	    Roll(waiting);
-	    if(!waiting->Done())
-	       SuspendJob();
+	    Roll(new_job);
+	    if(!new_job->Done())
+	       SuspendJob(new_job);
 	 }
       } // background
    }
 }
 
-void CmdExec::SuspendJob()
+void CmdExec::SuspendJob(Job *j)
 {
-   waiting->Bg();
+   j->Bg();
    if(interactive)
-      waiting->ListOneJob(0,0,"&");
-   last_bg=waiting->jobno;
+      j->ListOneJob(0,0,"&");
+   last_bg=j->jobno;
    exit_code=0;
-   waiting=0;
+   RemoveWaiting(j);
 }
 
 void CmdExec::ExecParsed(ArgV *a,FDStream *o,bool b)
@@ -295,7 +297,7 @@ void CmdExec::ExecParsed(ArgV *a,FDStream *o,bool b)
 
 bool CmdExec::Idle()
 {
-   return(waiting==0 && (next_cmd==0 || *next_cmd==0 || partial_cmd));
+   return(waiting_num==0 && (next_cmd==0 || *next_cmd==0 || partial_cmd));
 }
 
 int CmdExec::Done()
@@ -341,7 +343,7 @@ int CmdExec::Do()
 {
    int m=STALL;
 
-   if(waiting==this)
+   if(builtin!=BUILTIN_NONE)
    {
       int res;
       switch(builtin)
@@ -361,7 +363,6 @@ int CmdExec::Do()
 	    }
 	    session->Close();
 	    exit_code=0;
-	    waiting=0;
 	    builtin=BUILTIN_NONE;
 	    beep_if_long();
 	    return MOVED;
@@ -373,7 +374,6 @@ int CmdExec::Do()
 	       status_line->Clear();
 	    eprintf("%s: %s\n",args->getarg(0),session->StrError(res));
 	    session->Close();
-	    waiting=0;
 	    builtin=BUILTIN_NONE;
 	    beep_if_long();
 	    exit_code=1;
@@ -389,7 +389,6 @@ int CmdExec::Do()
 	       status_line->Clear();
 	    session->Close();
 	    ReuseSavedSession();
-	    waiting=0;
 	    builtin=BUILTIN_NONE;
 	    beep_if_long();
 	    exit_code=0;
@@ -403,7 +402,6 @@ int CmdExec::Do()
 	    eprintf("%s: %s\n",args->getarg(0),session->StrError(res));
 	    session->Close();
 	    RevertToSavedSession();
-	    waiting=0;
 	    builtin=BUILTIN_NONE;
 	    beep_if_long();
 	    exit_code=1;
@@ -435,7 +433,6 @@ int CmdExec::Do()
 	       delete args;
 	       args=args_glob;
 	       args_glob=0;
-	       waiting=0;
 	       builtin=BUILTIN_NONE;
 	       if(status_line)
 		  status_line->Clear();
@@ -475,7 +472,6 @@ int CmdExec::Do()
 	       }
 	       session->Close();
 	       exit_code=0;
-	       waiting=0;
 	       builtin=BUILTIN_NONE;
 	       return MOVED;
 	    }
@@ -491,22 +487,23 @@ int CmdExec::Do()
 	 }
       }
       if(status_line)
-	 waiting->ShowRunStatus(status_line);
+	 ShowRunStatus(status_line);   // this is only for top level CmdExec.
       return m;
    }
 
-   if(waiting)
+   if(waiting_num>0)
    {
-      if(waiting->Done())
+      Job *j;
+      while((j=FindDoneAwaitedJob())!=0)
       {
-	 waiting->Bg();
+	 j->Bg();
 	 if(status_line)
 	    status_line->Clear();
  	 if(interactive || verbose)
-	    waiting->SayFinal(); // final phrase like 'rm succeed'
-	 exit_code=waiting->ExitCode();
-	 Delete(waiting);
-	 waiting=0;
+	    j->SayFinal(); // final phrase like 'rm succeed'
+	 exit_code=j->ExitCode();
+	 RemoveWaiting(j);
+	 Delete(j);
 	 beep_if_long();
       	 return MOVED;
       }
@@ -514,7 +511,8 @@ int CmdExec::Do()
       {
 	 if(SignalHook::GetCount(SIGINT))
 	 {
-	    waiting->Bg();
+	    for(int i=0; i<waiting_num; i++)
+	       waiting[i]->Bg();
 	    SignalHook::ResetCount(SIGINT);
 	    if(status_line)
 	       status_line->WriteLine(_("Interrupt"));
@@ -522,7 +520,8 @@ int CmdExec::Do()
 	 }
 	 if(SignalHook::GetCount(SIGTSTP))
 	 {
-	    SuspendJob();
+	    while(waiting_num>0)
+	       SuspendJob(waiting[0]);
 	    return MOVED;
 	 }
 	 if(SignalHook::GetCount(SIGHUP))
@@ -532,18 +531,8 @@ int CmdExec::Do()
 	 }
       }
       if(status_line)
-	 waiting->ShowRunStatus(status_line);
+	 ShowRunStatus(status_line);   // this is only for top level CmdExec.
       return m;
-   }
-   else // !waiting
-   {
-      if(wait_all)
-      {
-	 waiting=FindAnyChild();
-	 if(waiting)
-	    return MOVED;
-	 wait_all=false;
-      }
    }
 
    if(!interactive)
@@ -639,36 +628,34 @@ try_get_cmd:
 
 void CmdExec::ShowRunStatus(StatusLine *s)
 {
-   if(waiting && waiting!=this)
-      waiting->ShowRunStatus(s);
-   else if(waiting==this)
+   switch(builtin)
    {
-      switch(builtin)
-      {
-      case(BUILTIN_CD):
-	 if(session->IsOpen())
-	    s->Show("cd `%s' [%s]",args->getarg(1),session->CurrentStatus());
-	 break;
-      case(BUILTIN_OPEN):
-	 if(session->IsOpen())
-	    s->Show("open `%s' [%s]",session->GetHostName(),session->CurrentStatus());
-      	 break;
-      case(BUILTIN_GLOB):
-	 s->Show("%s",glob->Status());
-	 break;
-      case(BUILTIN_NONE):
-      case(BUILTIN_EXEC_RESTART):
-	 abort(); // can't happen
-      }
+   case(BUILTIN_CD):
+      if(session->IsOpen())
+	 s->Show("cd `%s' [%s]",args->getarg(1),session->CurrentStatus());
+      break;
+   case(BUILTIN_OPEN):
+      if(session->IsOpen())
+	 s->Show("open `%s' [%s]",session->GetHostName(),session->CurrentStatus());
+      break;
+   case(BUILTIN_GLOB):
+      s->Show("%s",glob->Status());
+      break;
+   case(BUILTIN_EXEC_RESTART):
+      abort(); // can't happen
+   case(BUILTIN_NONE):
+      if(waiting_num>0)
+	 Job::ShowRunStatus(s);
+      else
+	 s->Clear();
+      break;
    }
-   else
-      s->Clear();
 }
 
 void CmdExec::PrintStatus(int v)
 {
    SessionJob::PrintStatus(v);
-   if(waiting==this)
+   if(builtin)
    {
       char *s=args->Combine();
       printf(_("\tExecuting builtin `%s' [%s]\n"),s,session->CurrentStatus());
@@ -677,13 +664,18 @@ void CmdExec::PrintStatus(int v)
    }
    if(is_queue)
    {
-      if(waiting)
+      if(waiting_num>0)
       {
 	 printf("\t%s ",_("Now executing:"));
-	 if(v==0)
-	    waiting->ListOneJob(v);
-	 else
-	    waiting->PrintJobTitle();
+	 for(int i=0; i<waiting_num; i++)
+	 {
+	    if(v==0)
+	       waiting[i]->ListOneJob(v);
+	    else
+	       waiting[i]->PrintJobTitle();
+	    if(i+1<waiting_num)
+	       printf("\t\t-");
+	 }
       }
       if(!(next_cmd && next_cmd[0]))
 	 return;
@@ -709,10 +701,19 @@ void CmdExec::PrintStatus(int v)
       }
       return;
    }
-   if(waiting)
+   if(waiting_num==1)
    {
-      printf(_("\tWaiting for job [%d] to terminate\n"),waiting->jobno);
+      printf(_("\tWaiting for job [%d] to terminate\n"),waiting[0]->jobno);
       return;
+   }
+   else if(waiting_num>1)
+   {
+      printf(_("\tWaiting for termination of jobs: "));
+      for(int i=0; i<waiting_num; i++)
+      {
+	 printf("[%d]",waiting[i]->jobno);
+	 printf("%c",i+1<waiting_num?' ':'\n');
+      }
    }
    if(next_cmd && next_cmd[0])
    {
@@ -733,7 +734,6 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
 
    cmd=0;
    args=0;
-   waiting=0;
    output=0;
    background=false;
 
@@ -1011,7 +1011,7 @@ int CmdExec::AcceptSig(int sig)
 {
    if(sig!=SIGINT)
       return STALL;
-   if(waiting==this) // builtin
+   if(builtin)
    {
       switch(builtin)
       {
@@ -1032,26 +1032,36 @@ int CmdExec::AcceptSig(int sig)
       case(BUILTIN_EXEC_RESTART):
 	 abort(); // should not happen
       }
-      waiting=0;
       builtin=BUILTIN_NONE;
       exit_code=1;
       return MOVED;
    }
-   if(waiting)
+   if(waiting_num>0)
    {
-      int res=waiting->AcceptSig(sig);
-      if(res==WANTDIE)
+      int limit=waiting_num;
+      for(int i=0; i<limit; i++)
       {
-	 exit_code=1;
-	 int j=-1;
-	 if(waiting->waiting)
-	    j=waiting->waiting->jobno;
-	 Delete(waiting);
-	 waiting=0;
-	 if(j>=0)
-	    waiting=FindJob(j);
+	 Job *r=waiting[i];
+	 int res=r->AcceptSig(sig);
+	 if(res==WANTDIE)
+	 {
+	    exit_code=1;
+	    int jn=r->waiting_num;
+	    int *j=(int *)alloca(jn*sizeof(int));
+	    for(int k=0; k<jn; k++)
+	       j[k]=r->waiting[k]->jobno;
+	    RemoveWaiting(r);
+	    Delete(r);
+	    i--;
+	    limit--;
+	    for(int k=0; k<jn; k++)
+	    {
+	       if(j[k]>=0)
+		  AddWaiting(FindJob(j[k])); // in case some jobs survived
+	    }
+	 }
       }
-      if(waiting==0 && parent!=0)
+      if(waiting_num==0 && parent!=0)
 	 return WANTDIE;
       return MOVED;
    }

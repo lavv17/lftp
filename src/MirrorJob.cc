@@ -116,8 +116,7 @@ void  MirrorJob::ShowRunStatus(StatusLine *s)
    case(WAITING_FOR_MKDIR_BEFORE_SUBMIRROR):
    case(REMOTE_REMOVE_OLD):
    case(REMOTE_CHMOD):
-      if(waiting && !waiting->Done())
-	 waiting->ShowRunStatus(s);
+      Job::ShowRunStatus(s);
       break;
 
    case(MAKE_REMOTE_DIR):
@@ -180,9 +179,10 @@ void  MirrorJob::HandleFile(int how)
 		     goto skip;
 		  }
 	       }
-	       waiting=new rmJob(Clone(),args);
-	       waiting->SetParentFg(this);
-	       waiting->cmdline=args->Combine();
+	       Job *j=new rmJob(Clone(),args);
+	       j->SetParentFg(this);
+	       j->cmdline=args->Combine();
+	       AddWaiting(j);
 	       mod_files++;
 	    }
 	    else
@@ -264,10 +264,10 @@ void  MirrorJob::HandleFile(int how)
 	    cp->SetDate(file->date);
 	 if(file->defined&file->SIZE)
 	    cp->SetSize(file->size);
-	 waiting=cp;
-	 waiting->SetParentFg(this);
-	 waiting->cmdline=(char*)xmalloc(10+strlen(file->name));
-	 sprintf(waiting->cmdline,"\\get %s",file->name);
+	 AddWaiting(cp);
+	 cp->SetParentFg(this);
+	 cp->cmdline=(char*)xmalloc(10+strlen(file->name));
+	 sprintf(cp->cmdline,"\\get %s",file->name);
 	 break;
       }
       case(FileInfo::DIRECTORY):
@@ -289,9 +289,10 @@ void  MirrorJob::HandleFile(int how)
 		  args=new ArgV("mkdir");
 		  args->Append("--");
 		  args->Append(file->name);
-		  waiting=new mkdirJob(Clone(),args);
-		  waiting->SetParentFg(this);
-		  waiting->cmdline=args->Combine();
+		  Job *j=new mkdirJob(Clone(),args);
+		  j->SetParentFg(this);
+		  j->cmdline=args->Combine();
+		  AddWaiting(j);
 	       }
 	       else
 		  dir_made=true;
@@ -333,11 +334,11 @@ void  MirrorJob::HandleFile(int how)
 	 // launch sub-mirror
 	 MirrorJob *mj=new MirrorJob(Clone(),local_name,remote_name);
 	 mj->parent_mirror=this;
-	 waiting=mj;
-	 waiting->SetParentFg(this);
-	 waiting->cmdline=(char*)xmalloc(strlen("\\mirror")+1+
+	 AddWaiting(mj);
+	 mj->SetParentFg(this);
+	 mj->cmdline=(char*)xmalloc(strlen("\\mirror")+1+
 					 strlen(file->name)+1);
-	 sprintf(waiting->cmdline,"\\mirror %s",file->name);
+	 sprintf(mj->cmdline,"\\mirror %s",file->name);
 
 	 // inherit flags and other things
 	 mj->SetFlags(flags,1);
@@ -447,6 +448,7 @@ int   MirrorJob::Do()
    int	 res;
    int	 m=STALL;
    FileInfo *fi;
+   Job	 *j;
 
    switch(state)
    {
@@ -568,19 +570,23 @@ int   MirrorJob::Do()
 	 InitSets(remote_set,local_set);
 
       to_transfer->rewind();
-      waiting=0;
+//       waiting=0; ???
       state=WAITING_FOR_SUBGET;
       return MOVED;
    }
 
    case(WAITING_FOR_RM_BEFORE_PUT):
    {
-      if(waiting)
+      if(waiting_num>0)
       {
-	 if(!waiting->Done())
-	    return STALL;
-	 Delete(waiting);
-	 waiting=0;
+	 while((j=FindDoneAwaitedJob())!=0)
+	 {
+	    m=MOVED;
+	    RemoveWaiting(j);
+	    Delete(j);
+	 }
+	 if(waiting_num>0)
+	    return m;
       }
       Report(_("Sending local file `%s'"),
 	       dir_file(local_relative_dir,file->name));
@@ -613,22 +619,23 @@ int   MirrorJob::Do()
 	 c->RemoveSourceLater();
       CopyJob *cp=
 	 new CopyJob(c,file->name,"mirror");
-      waiting=cp;
-      waiting->SetParentFg(this);
-      waiting->cmdline=(char*)xmalloc(10+strlen(file->name));
-      sprintf(waiting->cmdline,"\\put %s",file->name);
+      AddWaiting(cp);
+      cp->SetParentFg(this);
+      cp->cmdline=(char*)xmalloc(10+strlen(file->name));
+      sprintf(cp->cmdline,"\\put %s",file->name);
       state=WAITING_FOR_SUBGET;
       return MOVED;
    }
 
    case(WAITING_FOR_SUBGET):
-      if(waiting && waiting->Done())
+      j=FindDoneAwaitedJob();
+      if(j)
       {
 	 to_transfer->next();
-	 Delete(waiting);
-	 waiting=0;
+	 RemoveWaiting(j);
+	 Delete(j);
       }
-      while(!waiting && state==WAITING_FOR_SUBGET)
+      while(waiting_num<1 && state==WAITING_FOR_SUBGET)
       {
 	 file=to_transfer->curr();
       	 if(!file)
@@ -643,14 +650,15 @@ int   MirrorJob::Do()
       return m;
 
    case(WAITING_FOR_MKDIR_BEFORE_SUBMIRROR):
-      if(waiting)
+      j=FindDoneAwaitedJob();
+      if(j==0 && waiting_num>0)
+	 return STALL;
+      if(j)
       {
-	 if(!waiting->Done())
-	    return STALL;
-	 if(waiting->ExitCode()==0)
+	 if(j->ExitCode()==0)
 	    dir_made=true;
-	 Delete(waiting);
-	 waiting=0;
+	 RemoveWaiting(j);
+	 Delete(j);
 	 if(!dir_made)
 	    to_transfer->next();
       }
@@ -658,9 +666,12 @@ int   MirrorJob::Do()
       return MOVED;
 
    case(WAITING_FOR_SUBMIRROR):
-      if(waiting && waiting->Done())
+      j=FindDoneAwaitedJob();
+      if(j==0 && waiting_num>0)
+	 return STALL;
+      if(j)
       {
-	 MirrorJob &mj=*(MirrorJob*)waiting; // we are sure it is a MirrorJob
+	 MirrorJob &mj=*(MirrorJob*)j; // we are sure it is a MirrorJob
 	 tot_files+=mj.tot_files;
 	 new_files+=mj.new_files;
 	 mod_files+=mj.mod_files;
@@ -673,10 +684,10 @@ int   MirrorJob::Do()
 	 del_dirs+=mj.del_dirs;
 
 	 to_transfer->next();
-	 Delete(waiting);
-	 waiting=0;
+	 RemoveWaiting(j);
+	 Delete(j);
       }
-      while(!waiting && state==WAITING_FOR_SUBMIRROR)
+      while(waiting_num<1 && state==WAITING_FOR_SUBMIRROR)
       {
 	 file=to_transfer->curr();
       	 if(!file)
@@ -734,7 +745,7 @@ int   MirrorJob::Do()
       return m;
 
    case(REMOTE_REMOVE_OLD):
-      if(!waiting)
+      if(waiting_num==0)
       {
 	 if(flags&DELETE)
 	 {
@@ -749,16 +760,17 @@ int   MirrorJob::Do()
 		  Report(_("Removing old remote directory `%s'"),
 			   dir_file(remote_relative_dir,file->name));
 		  args->getnext(); // prepare args position.
-	       	  waiting=new FinderJob_Cmd(Clone(),args,FinderJob_Cmd::RM);
+	       	  j=new FinderJob_Cmd(Clone(),args,FinderJob_Cmd::RM);
 	       }
 	       else
 	       {
 		  Report(_("Removing old remote file `%s'"),
 			   dir_file(remote_relative_dir,file->name));
-		  waiting=new rmJob(Clone(),args);
+		  j=new rmJob(Clone(),args);
 	       }
-	       waiting->SetParentFg(this);
-	       waiting->cmdline=args->Combine();
+	       j->SetParentFg(this);
+	       j->cmdline=args->Combine();
+	       AddWaiting(j);
 	    }
 	 }
 	 else if(flags&REPORT_NOT_DELETED)
@@ -769,13 +781,14 @@ int   MirrorJob::Do()
 			dir_file(remote_relative_dir,file->name));
 	    }
 	 }
-	 if(!waiting)
+	 if(waiting_num==0)
 	    goto pre_REMOTE_CHMOD;
       }
-      if(waiting->Done())
+      j=FindDoneAwaitedJob();
+      if(j)
       {
-	 Delete(waiting);
-	 waiting=0;
+	 RemoveWaiting(j);
+	 Delete(j);
 	 return MOVED;
       }
       return m;
@@ -791,10 +804,11 @@ int   MirrorJob::Do()
       m=MOVED;
       goto remote_chmod_next;
    case(REMOTE_CHMOD):
-      if(waiting->Done())
+      j=FindDoneAwaitedJob();
+      if(j)
       {
-	 Delete(waiting);
-	 waiting=0;
+	 RemoveWaiting(j);
+	 Delete(j);
 
       remote_chmod_next:
 	 fi=to_transfer->curr();
@@ -809,9 +823,9 @@ int   MirrorJob::Do()
 	 ArgV *a=new ArgV("chmod");
 	 a->Append(fi->name);
 	 ChmodJob *cj=new ChmodJob(Clone(),fi->mode&~get_mode_mask(),a);
-	 waiting=cj;
-	 waiting->SetParentFg(this);
-	 waiting->cmdline=a->Combine();
+	 AddWaiting(cj);
+	 cj->SetParentFg(this);
+	 cj->cmdline=a->Combine();
 	 cj->BeQuiet();   // chmod is not supported on all servers; be quiet.
 
 	 m=MOVED;

@@ -36,8 +36,8 @@ class Job : public SMTask
    static void SortJobs();
 
    Job	 *next;
-
    static Job *chain;
+   int	 waiting_alloc;
 
 protected:
    bool fg;
@@ -48,7 +48,13 @@ protected:
 public:
    int	 jobno;
    Job	 *parent;
-   Job	 *waiting;
+
+   Job	 **waiting;
+   int	 waiting_num;
+
+   void AddWaiting(Job *);
+   void RemoveWaiting(Job *);
+   void ReplaceWaiting(Job *from,Job *to);
 
    void SetParent(Job *j) { parent=j; }
    void SetParentFg(Job *j, bool f=true)
@@ -78,6 +84,10 @@ public:
    void ListDoneJobs();
    void BuryDoneJobs();
    Job *FindAnyChild();
+   bool WaitsFor(Job *);
+   static Job *FindWhoWaitsFor(Job *);
+   int NumAwaitedJobs() { return waiting_num; }
+   Job *FindDoneAwaitedJob();
 
    static int NumberOfJobs();
    static Job *FindJob(int n);

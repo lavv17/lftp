@@ -181,7 +181,8 @@ int CopyJobEnv::Do()
 }
 void CopyJobEnv::SetCopier(FileCopy *c,const char *n)
 {
-   waiting=0;
+   while(waiting_num>0)
+      RemoveWaiting(waiting[0]);
    Delete(cp);
    cp=0;
    if(c==0)
@@ -190,7 +191,7 @@ void CopyJobEnv::SetCopier(FileCopy *c,const char *n)
       c->Ascii();
    cp=new CopyJob(c,n,op);
    cp->SetParentFg(this);
-   waiting=cp;
+   AddWaiting(cp);
 }
 
 void CopyJobEnv::SayFinalWithPrefix(const char *p)
