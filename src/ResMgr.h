@@ -99,6 +99,8 @@ public:
    static const char *RangeValidate(char **value);
    static const char *ERegExpValidate(char **value);
    static const char *IPv4AddrValidate(char **value);
+   static const char *FileReadable(char **value);
+   static const char *DirReadable(char **value);
    static const char *NoClosure(char **);
    static bool str2bool(const char *value);
 

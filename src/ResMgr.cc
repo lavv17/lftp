@@ -27,9 +27,11 @@
 #include <unistd.h>
 #include <math.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <errno.h>
 extern "C" {
 #include <regex.h>
 }
@@ -37,6 +39,7 @@ extern "C" {
 #include "SMTask.h"
 #include "xmalloc.h"
 #include "xalloca.h"
+#include "misc.h"
 
 ResMgr::Resource  *ResMgr::chain=0;
 ResDecl		  *ResMgr::type_chain=0;
@@ -779,6 +782,47 @@ const char *ResMgr::IPv4AddrValidate(char **value)
    struct in_addr addr;
    if(!inet_aton(*value,&addr))
       return _("Invalid IPv4 numeric address");
+   return 0;
+}
+
+const char *ResMgr::FileReadable(char **value)
+{
+   if(!**value)
+      return 0;
+   const char *f=expand_home_relative(*value);
+   if(f[0]!='/')
+   {
+      char *cwd=xgetcwd();
+      if(cwd)
+	 f=dir_file(cwd,f);
+   }
+   if(access(f,R_OK)<0)
+      return strerror(errno);
+   xfree(*value);
+   *value=xstrdup(f);
+   return 0;
+}
+
+const char *ResMgr::DirReadable(char **value)
+{
+   if(!**value)
+      return 0;
+   const char *f=expand_home_relative(*value);
+   if(f[0]!='/')
+   {
+      char *cwd=xgetcwd();
+      if(cwd)
+	 f=dir_file(cwd,f);
+   }
+   struct stat st;
+   if(stat(f,&st)<0)
+      return strerror(errno);
+   if(!S_ISDIR(st.st_mode))
+      return strerror(ENOTDIR);
+   if(access(f,R_OK|X_OK)<0)
+      return strerror(errno);
+   xfree(*value);
+   *value=xstrdup(f);
    return 0;
 }
 
