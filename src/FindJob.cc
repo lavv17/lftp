@@ -20,10 +20,6 @@
 
 /* $Id$ */
 
-/* Ideally, this is simple:
- *
- * Queue FileInfo;
- */
 #include <config.h>
 #include <assert.h>
 #include <fnmatch.h>
