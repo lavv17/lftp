@@ -929,6 +929,7 @@ int   Ftp::Do()
    unsigned char *p;
    automate_state oldstate;
    int	 m=STALL;
+   int 	 old_type;
 
    // check if idle time exceeded
    if(mode==CLOSED && control_sock!=-1 && idle>0)
@@ -1226,7 +1227,7 @@ int   Ftp::Do()
 	 SetSocketMaxseg(data_sock);
       }
 
-      int old_type=type;
+      old_type=type;
       if((flags&NOREST_MODE) || pos==0)
 	 real_pos=0;
       else

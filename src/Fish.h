@@ -50,7 +50,6 @@ class Fish : public NetAccess
 
    FileOutputBuffer *send_buf;
    FileInputBuffer *recv_buf;
-   int expected_responses;
 
    OutputFilter *filter_out;  // used in connecting
    int pipe_in[2];	      // used in connecting
@@ -72,18 +71,37 @@ class Fish : public NetAccess
    {
       EXPECT_FISH,
       EXPECT_VER,
+      EXPECT_PWD,
+      EXPECT_CWD,
+      EXPECT_DIR,
+      EXPECT_RETR_SIZE,
+      EXPECT_RETR,
    };
 
    void PushExpect(expect_t);
    int HandleReplies();
+   int ReplyLogPriority(int);
 
    expect_t *RespQueue;
    int	 RQ_alloc;   // memory allocated
    int	 RQ_head;
    int	 RQ_tail;
 
+   char  **path_queue;
+   int	 path_queue_len;
+   void  PushDirectory(const char *);
+   char  *PopDirectory();
+
    int   RespQueueIsEmpty() { return RQ_head==RQ_tail; }
    int	 RespQueueSize() { return RQ_tail-RQ_head; }
+   void  EmptyRespQueue() { RQ_head=RQ_tail=0; }
+
+   char  *line;
+   char  *message;
+
+   bool	 eof;
+
+   const char *shell_encode(const char *);
 
 public:
    static void ClassInit();

@@ -23,6 +23,8 @@
 #include <unistd.h>
 #include <errno.h>
 #include <stdarg.h>
+#include <assert.h>
+#include "ascii_ctype.h"
 
 #define super NetAccess
 
@@ -51,12 +53,19 @@ int Fish::Do()
 
    m|=HandleReplies();
 
+   if((state==FILE_RECV || state==FILE_SEND)
+   && rate_limit==0)
+      rate_limit=new RateLimit();
+
    switch(state)
    {
    case DISCONNECTED:
       if(mode==CLOSED)
 	 return m;
       if(mode==CONNECT_VERIFY)
+	 return m;
+
+      if(!ReconnectAllowed())
 	 return m;
 
       if(!NextTry())
@@ -72,8 +81,12 @@ int Fish::Do()
 	 SetError(SEE_ERRNO,"pipe()");
 	 return MOVED;
       }
+      NonBlock(pipe_in[0]);
+      CloseOnExec(pipe_in[0]);
+      CloseOnExec(pipe_in[1]);
+
       DebugPrint("---- ","Running ssh...");
-      filter_out=new OutputFilter("ssh gemini \"echo FISH:;/bin/sh\"",pipe_in[1]);   // FIXME
+      filter_out=new OutputFilter("ssh gemini \"echo FISH:;/bin/bash\"",pipe_in[1]);   // FIXME
       filter_out->StderrToStdout();
       state=CONNECTING;
       m=MOVED;
@@ -101,26 +114,78 @@ int Fish::Do()
       Send("#FISH\n"
 	   "echo; start_fish_server; echo '### 200'\n");
       PushExpect(EXPECT_FISH);
+      Send("#VER 0.0.2\n"
+	   "echo '### 000'\n");
+      PushExpect(EXPECT_VER);
+      if(home==0)
+      {
+	 Send("#PWD\n"
+	      "pwd; echo '### 200'\n");
+	 PushExpect(EXPECT_PWD);
+      }
    case CONNECTED:
       if(mode==CLOSED)
 	 return m;
+      if(home==0 && !RespQueueIsEmpty())
+	 goto usual_return;
+      ExpandTildeInCWD();
+      if(mode!=CHANGE_DIR && xstrcmp(cwd,real_cwd))
+      {
+	 if(path_queue_len==0 || strcmp(path_queue[path_queue_len-1],cwd))
+	 {
+	    Send("#CWD %s\n"
+		 "cd %s; echo '### 000'\n",cwd,shell_encode(cwd));
+	    PushExpect(EXPECT_CWD);
+	    PushDirectory(cwd);
+	 }
+	 if(!RespQueueIsEmpty())
+	    goto usual_return;
+      }
       SendMethod();
-
+      state=WAITING;
+      m=MOVED;
+   case WAITING:
+      if(RespQueueIsEmpty() && (mode==LONG_LIST || mode==LIST || mode==RETRIEVE))
+      {
+	 state=FILE_RECV;
+	 m=MOVED;
+      }
+      goto usual_return;
+   case FILE_RECV:
+      goto usual_return;
    }
+usual_return:
+   if(m==MOVED)
+      return MOVED;
+   if(send_buf)
+      BumpEventTime(send_buf->EventTime());
+   if(recv_buf)
+      BumpEventTime(recv_buf->EventTime());
+   if(CheckTimeout())
+      return MOVED;
+notimeout_return:
+   if(m==MOVED)
+      return MOVED;
    return m;
 }
 
 void Fish::Disconnect()
 {
-   Delete(send_buf);
-   Delete(recv_buf);
+   if(send_buf)
+      DebugPrint("---- ","Disconnecting",9);
+   Delete(send_buf); send_buf=0;
+   Delete(recv_buf); recv_buf=0;
    if(pipe_in[0]!=-1)
       close(pipe_in[0]);
+   pipe_in[0]=-1;
    if(pipe_in[1]!=-1)
       close(pipe_in[1]);
+   pipe_in[1]=-1;
    if(filter_out)
       delete filter_out;
-   expected_responses=0;
+   filter_out=0;
+   EmptyRespQueue();
+   state=DISCONNECTED;
 }
 
 void Fish::Init()
@@ -130,8 +195,15 @@ void Fish::Init()
    recv_buf=0;
    pipe_in[0]=pipe_in[1]=-1;
    filter_out=0;
-   expected_responses=0;
    max_send=0;
+   line=0;
+   message=0;
+   RespQueue=0;
+   RQ_alloc=0;
+   RQ_head=RQ_tail=0;
+   eof=false;
+   path_queue=0;
+   path_queue_len=0;
 }
 
 Fish::Fish()
@@ -143,6 +215,10 @@ Fish::Fish()
 Fish::~Fish()
 {
    Disconnect();
+   xfree(line);
+   xfree(message);
+   EmptyRespQueue();
+   xfree(RespQueue);
 }
 
 Fish::Fish(const Fish *o) : super(o)
@@ -164,9 +240,11 @@ void Fish::Close()
    case(CONNECTING):
       Disconnect();
    }
-   if(expected_responses>0)
+   if(!RespQueueIsEmpty())
       Disconnect(); // play safe.
    state=(recv_buf?CONNECTED:DISCONNECTED);
+   eof=false;
+   super::Close();
 }
 
 void Fish::Send(const char *format,...)
@@ -197,8 +275,80 @@ void Fish::Send(const char *format,...)
    va_end(va);
 }
 
+const char *Fish::shell_encode(const char *string)
+{
+   int c;
+   static char *result=0;
+   char *r;
+   const char *s;
+
+   result = (char*)xrealloc (result, 2 * strlen (string) + 1);
+
+   for (r = result, s = string; s && (c = *s); s++)
+   {
+      switch (c)
+      {
+      case '\'':
+      case '(': case ')':
+      case '!': case '{': case '}':		/* reserved words */
+      case '^':
+      case '$': case '`':			/* expansion chars */
+      case '*': case '[': case '?': case ']':	/* globbing chars */
+      case ' ': case '\t': case '\n':		/* IFS white space */
+      case '"': case '\\':		/* quoting chars */
+      case '|': case '&': case ';':		/* shell metacharacters */
+      case '<': case '>':
+	 *r++ = '\\';
+	 *r++ = c;
+	 break;
+      case '~':				/* tilde expansion */
+      case '#':				/* comment char */
+	 if (s == string)
+	    *r++ = '\\';
+	 /* FALLTHROUGH */
+      default:
+	 *r++ = c;
+	 break;
+      }
+   }
+
+   *r = '\0';
+   return (result);
+}
+
 void Fish::SendMethod()
 {
+   const char *e=shell_encode(file);
+   switch((open_mode)mode)
+   {
+   case CHANGE_DIR:
+      Send("#CWD %s\n"
+	   "cd %s; echo '### 000'\n",file,e);
+      PushExpect(EXPECT_CWD);
+      PushDirectory(file);
+      break;
+   case LONG_LIST:
+      Send("#DIR %s\n"
+	   "ls -l %s; echo '### 200'\n",file,file);
+      PushExpect(EXPECT_DIR);
+      real_pos=0;
+      break;
+   case RETRIEVE:
+      Send("#RETR %s\n"
+	   "ls -l %s | ( read a b c d x e; echo $x );"
+	   "echo '### 100'; cat %s; echo '### 200'\n",file,e,e);
+      PushExpect(EXPECT_RETR_SIZE);
+      PushExpect(EXPECT_RETR);
+      real_pos=0;
+      break;
+   }
+}
+
+int Fish::ReplyLogPriority(int code)
+{
+   if(code==-1)
+      return 3;
+   return 4;
 }
 
 int Fish::HandleReplies()
@@ -207,12 +357,145 @@ int Fish::HandleReplies()
    if(recv_buf==0 || state==FILE_RECV)
       return m;
    if(recv_buf->Size()<5)
+   {
+      if(recv_buf->Eof())
+      {
+	 DebugPrint("**** ",_("Peer closed connection"),0);
+	 if(!RespQueueIsEmpty() && RespQueue[RQ_head]==EXPECT_CWD && message)
+	    SetError(NO_FILE,message);
+	 Disconnect();
+	 m=MOVED;
+      }
       return m;
-   // ...
+   }
+   const char *b;
+   int s;
+   recv_buf->Get(&b,&s);
+   const char *eol=(const char*)memchr(b,'\n',s);
+   if(!eol)
+      return m;
+   m=MOVED;
+   s=eol-b+1;
+   xfree(line);
+   line=(char*)xmemdup(b,s);
+   line[s-1]=0;
+   recv_buf->Skip(s);
+
+   int code=-1;
+   if(s>7 && !memcmp(line,"### ",4) && is_ascii_digit(line[4]))
+      sscanf(line+4,"%3d",&code);
+
+   DebugPrint("<--- ",line,ReplyLogPriority(code));
+   if(code==-1)
+   {
+      if(message==0)
+	 message=xstrdup(line);
+      else
+      {
+	 message=(char*)xrealloc(message,xstrlen(message)+s+1);
+	 strcat(message,"\n");
+	 strcat(message,line);
+      }
+      return m;
+   }
+
+   if(RespQueueIsEmpty())
+   {
+      DebugPrint("**** ",_("extra server response"),3);
+      xfree(message);
+      message=0;
+      return m;
+   }
+   expect_t &e=RespQueue[RQ_head];
+   RQ_head++;
+
+   bool keep_message=false;
+   char *p;
+
+   switch(e)
+   {
+   case EXPECT_FISH:
+   case EXPECT_VER:
+      // nothing (yet).
+      break;;
+   case EXPECT_PWD:
+      if(!message)
+	 break;
+      xfree(home);
+      home=message;
+      message=0;
+      break;
+   case EXPECT_CWD:
+      p=PopDirectory();
+      if(message==0)
+      {
+	 set_real_cwd(p);
+	 if(mode==CHANGE_DIR && RespQueueIsEmpty())
+	 {
+	    xfree(cwd);
+	    cwd=p;
+	    p=0;
+	    eof=true;
+	 }
+      }
+      else
+	 SetError(NO_FILE,message);
+      xfree(p);
+      break;
+   case EXPECT_RETR_SIZE:
+      if(message && is_ascii_digit(message[0]))
+      {
+	 long long size_ll;
+	 if(1==sscanf(message,"%lld",&size_ll))
+	 {
+	    entity_size=size_ll;
+	    if(opt_size)
+	       *opt_size=entity_size;
+	 }
+      }
+      state=FILE_RECV;
+      break;
+   case EXPECT_RETR:
+      eof=true;
+      break;
+   }
+
+   if(!keep_message)
+   {
+      xfree(message);
+      message=0;
+   }
+
+   return m;
 }
-void Fish::PushExpect(expect_t)
+void Fish::PushExpect(expect_t e)
 {
-   // ...
+   int newtail=RQ_tail+1;
+   if(newtail>RQ_alloc)
+   {
+      if(RQ_head-0<newtail-RQ_alloc)
+	 RespQueue=(expect_t*)
+	    xrealloc(RespQueue,(RQ_alloc=newtail+16)*sizeof(*RespQueue));
+      memmove(RespQueue,RespQueue+RQ_head,(RQ_tail-RQ_head)*sizeof(*RespQueue));
+      RQ_tail=0+(RQ_tail-RQ_head);
+      RQ_head=0;
+      newtail=RQ_tail+1;
+   }
+   RespQueue[RQ_tail]=e;
+   RQ_tail=newtail;
+}
+
+void Fish::PushDirectory(const char *p)
+{
+   path_queue=(char**)xrealloc(path_queue,++path_queue_len*sizeof(*path_queue));
+   path_queue[path_queue_len-1]=xstrdup(p);
+}
+char *Fish::PopDirectory()
+{
+   assert(path_queue_len>0);
+   char *p=path_queue[0];
+   memmove(path_queue,path_queue+1,--path_queue_len*sizeof(*path_queue));
+   return p; // caller should free it.
 }
 
 int Fish::Read(void *buf,int size)
@@ -293,7 +576,7 @@ int Fish::Done()
       return OK;
    if(Error())
       return error_code;
-   if(state==DONE)
+   if(eof)
       return OK;
    if(mode==CONNECT_VERIFY)
       return OK;
