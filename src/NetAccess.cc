@@ -25,6 +25,7 @@
 #include <errno.h>
 #include <assert.h>
 #include <math.h>
+#include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include "NetAccess.h"

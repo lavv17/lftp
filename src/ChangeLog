@@ -1,3 +1,8 @@
+2003-01-19  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* NetAccess.cc: include sys/types.h as suggested by Camille Huot
+	  <cam@cameuh.net> to make it compile on OpenBSD.
+
 2003-01-16  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* GetFileInfo.cc: don't check if `..', `.' and `/' are files.
