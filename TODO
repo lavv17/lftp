@@ -59,3 +59,6 @@ currently; some need other work to be done.
 
  * parallel get's in mirror, mget
  * make a command get1 to get single file with extra options.
+
+ * in Glob and FileInfo: set a flag that if REST does not work to report
+   an error, and in case of such error restart from beginning.
