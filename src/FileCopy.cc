@@ -22,10 +22,18 @@
 
 #include <config.h>
 #include "FileCopy.h"
+#include <assert.h>
+
+#define skip_threshold 0x1000
 
 int FileCopy::Do()
 {
    int m=STALL;
+   const char *b;
+   int s;
+
+   if(Error() || Done())
+      return m;
    switch(state)
    {
    case(INITIAL):
@@ -34,6 +42,7 @@ int FileCopy::Do()
       cont=true;  // after a failure we'll have to restart
       get->WantDate();
       get->WantSize();
+      get->Suspend();
       state=PUT_WAIT;
       m=MOVED;
       /* fallthrough */
@@ -44,6 +53,7 @@ int FileCopy::Do()
 	 return m;
       /* now we know if put's seek failed. Seek get accordingly. */
       get->Seek(put->GetRealPos());
+      get->Resume();
       state=DO_COPY;
       m=MOVED;
       /* fallthrough */
@@ -51,29 +61,57 @@ int FileCopy::Do()
       if(put->Error())
       {
       put_error:
-	 ...
+	 SetError(put->ErrorText());
+	 return MOVED;
       }
       if(get->Error())
       {
       get_error:
-	 ...
+	 SetError(get->ErrorText());
+	 return MOVED;
       }
       /* check if positions are correct */
       if(get->GetRealPos()!=put->GetRealPos())
       {
-	 ...
+	 if(put->GetRealPos()<get->GetRealPos())
+	 {
+	    if(!get->CanSeek())
+	    {
+	       // we lose... How about a large buffer?
+	       SetError("cannot seek on data source");
+	       return MOVED;
+	    }
+	    get->Seek(put->GetRealPos());
+	    return MOVED;
+	 }
+	 else // put->GetRealPos() > get->GetRealPos()
+	 {
+	    int skip=put->GetRealPos()-get->GetRealPos();
+	    if(!put->CanSeek() || skip<skip_threshold)
+	    {
+	       // we have to skip some data
+	       get->Get(&b,&s);
+	       if(skip>s)
+		  skip=s;
+	       get->Skip(skip);
+	       return MOVED;
+	    }
+	    put->Seek(get->GetRealPos());
+	    return MOVED;
+	 }
       }
       get->Get(&b,&s);
       if(b==0) // eof
       {
-	 put->SetDate(date);
-	 put->PutEof();
+	 put->SetDate(get->GetDate());
+	 put->PutEOF();
 	 state=CONFIRM_WAIT;
 	 return MOVED;
       }
       if(s==0)
 	 return m;
       put->Put(b,s);
+      get->Skip(s);
       return MOVED;
 
    case(CONFIRM_WAIT):
@@ -101,9 +139,69 @@ int FileCopy::Do()
    case(ALL_DONE):
       return m;
    }
+   return m;
+}
+
+void FileCopy::Init()
+{
+   get=0;
+   put=0;
+   state=INITIAL;
+   max_buf=0x10000;
+   cont=false;
+   error_text=0;
+}
+
+FileCopy::FileCopy(FileCopyPeer *s,FileCopyPeer *d,bool c)
+{
+   Init();
+   get=s;
+   put=d;
+   cont=c;
+}
+FileCopy::~FileCopy()
+{
+   if(get) delete get;
+   if(put) delete put;
+}
+void FileCopy::SetError(const char *str)
+{
+   xfree(error_text);
+   error_text=xstrdup(str);
+   if(get) { delete get; get=0; }
+   if(put) { delete put; put=0; }
 }
 
 
+// FileCopyPeer implementation
+#undef super
+#define super Buffer
+void FileCopyPeer::Skip(int n)
+{
+   assert(n<=in_buffer);
+   real_pos+=n;
+   seek_pos+=n;
+   super::Skip(n);
+}
+FileCopyPeer::FileCopyPeer(direction m)
+{
+   mode=m;
+   want_size=false;
+   want_date=false;
+   size=NO_SIZE;
+   date=NO_DATE;
+   real_pos=0;
+   seek_pos=0;
+   can_seek=true;
+   date_set=false;
+}
+FileCopyPeer::~FileCopyPeer()
+{
+}
+
+// FileCopyPeerFA implementation
+#undef super
+#define super FileCopyPeer
 int FileCopyPeerFA::Do()
 {
    int m=STALL;
@@ -173,4 +271,68 @@ void FileCopyPeerFA::Resume()
 {
    super::Resume();
    session->Resume();
+}
+
+void FileCopyPeerFA::Seek(long pos)
+{
+   if(pos==real_pos)
+      return;
+   session->Close();
+   if(pos!=FILE_END)
+   {
+      session->Open(file,FAmode,pos);
+      session->RereadManual();
+   }
+   else
+   {
+      WantSize();
+   }
+   super::Seek(pos);
+}
+
+int FileCopyPeerFA::Get_LL(int size)
+{
+   int res=0;
+
+   if(session->IsClosed())
+   {
+      session->Open(file,FAmode,seek_pos);
+      session->RereadManual();
+   }
+   if(session->GetRealPos()==0 && session->GetPos()>0)
+   {
+      can_seek=false;
+      session->SeekReal();
+   }
+   if(real_pos+in_buffer!=session->GetPos())
+   {
+      Empty();
+      real_pos=session->GetPos();
+   }
+
+   Allocate(size);
+
+   res=session->Read(buffer+buffer_ptr+in_buffer,size);
+   if(res<0)
+   {
+      if(res==FA::DO_AGAIN)
+	 return 0;
+      error_text=xstrdup(session->StrError(res));
+      return -1;
+   }
+   if(res==0)
+      eof=true;
+   return res;
+}
+
+FileCopyPeerFA::FileCopyPeerFA(FileAccess *s,const char *f,int m)
+   : FileCopyPeer(m==FA::STORE ? PUT : GET)
+{
+   FAmode=m;
+   file=xstrdup(f);
+   session=s;
+}
+FileCopyPeerFA::~FileCopyPeerFA()
+{
+   xfree(file);
 }

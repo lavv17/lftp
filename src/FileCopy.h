@@ -24,6 +24,7 @@
 
 #include "SMTask.h"
 #include "buffer.h"
+#include "FileAccess.h"
 
 #define NO_SIZE	     (-1L)
 #define NO_SIZE_YET  (-2L)
@@ -33,31 +34,47 @@
 
 class FileCopyPeer : public Buffer
 {
+protected:
    bool want_size;
    bool want_date;
    long size;
    time_t date;
 
+   long real_pos;
    long seek_pos;
-
-   enum mode_t { GET, PUT } mode;
+   bool can_seek;
+   bool date_set;
 
 public:
-   virtual bool CanSeek() { return true; } // ???
+   enum direction { GET, PUT };
+
+protected:
+   enum direction mode;
+
+public:
+   bool CanSeek() { return can_seek; }
    virtual void Seek(long offs) { seek_pos=offs; Empty(); eof=false; }
-   virtual long GetRealPos() = 0;
+   virtual long GetRealPos() { return real_pos; }
    virtual long Buffered() { return in_buffer; }
    virtual bool IOReady() { return true; }
+   virtual void Skip(int);
 
    virtual void WantDate() { want_date=true; date=NO_DATE_YET; }
    virtual void WantSize() { want_size=true; size=NO_SIZE_YET; }
    time_t GetDate() { return date; }
    long   GetSize() { return size; }
 
-   void SetDate(time_t d) { date=d; }
-   void SetSize(long s)   { size=s; }
+   void SetDate(time_t d)
+      {
+	 date=d;
+	 if(date==NO_DATE || date==NO_DATE_YET)
+	    date_set=true;
+	 else
+	    date_set=false;
+      }
+   void SetSize(long s) { size=s; }
 
-   FileCopyPeer(mode_t m);
+   FileCopyPeer(direction m);
    ~FileCopyPeer();
 };
 
@@ -66,19 +83,32 @@ class FileCopy : public SMTask
    FileCopyPeer *get;
    FileCopyPeer *put;
 
+   enum state_t
+      {
+	 INITIAL,
+	 PUT_WAIT,
+	 DO_COPY,
+	 CONFIRM_WAIT,
+	 GET_DONE_WAIT,
+	 ALL_DONE
+      } state;
+
    int max_buf;
    bool cont;
+
+   char *error_text;
 
 public:
    long GetPos();
    int  GetPercentDone();
    float GetRate();
    time_t GetETA();
-   bool Done();
-   bool Error();
-   const char *ErrorText();
+   bool Done() { return state==ALL_DONE; }
+   bool Error() { return error_text!=0; }
+   const char *ErrorText() { return error_text; }
+   void SetError(const char *str);
 
-   FileCopy(FileCopyPeer *src,FileCopyPeer *dst);
+   FileCopy(FileCopyPeer *src,FileCopyPeer *dst,bool cont);
    ~FileCopy();
    void Init();
 
@@ -90,8 +120,6 @@ class FileCopyPeerFA : public FileCopyPeer
    char *file;
    int FAmode;
    FileAccess *session;
-   bool can_seek;
-   bool date_set;
 
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
@@ -103,6 +131,7 @@ public:
    bool Done();
    bool IOReady()    { return session->IOReady(); }
    long GetRealPos() { return session->GetRealPos(); }
+   void Seek(long pos);
 
    long Buffered() { return in_buffer+session->Buffered(); }
 
@@ -113,15 +142,12 @@ public:
 class FileCopyPeerFDStream : public FileCopyPeer
 {
    FDStream *stream;
-   bool can_seek;
-   bool date_set;
-   long real_pos;
 
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
 
 public:
-   FileCopyPeerFDStream(FDStream *o);
+   FileCopyPeerFDStream(FDStream *o,direction m);
    ~FileCopyPeerFDStream();
    int Do();
    bool Done();
