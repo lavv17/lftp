@@ -68,7 +68,6 @@ AC_DEFUN(TYPE_SOCKLEN_T,
    [
       AC_LANG_SAVE
       AC_LANG_CPLUSPLUS
-      old_CXXFLAGS="$CXXFLAGS"
       lftp_cv_socklen_t=no
       AC_TRY_COMPILE([
 	 #include <sys/types.h>
@@ -82,11 +81,33 @@ AC_DEFUN(TYPE_SOCKLEN_T,
 	 lftp_cv_socklen_t=yes
       ])
       AC_LANG_RESTORE
-      CXXFLAGS="$old_CXXFLAGS"
    ])
    AC_MSG_RESULT($lftp_cv_socklen_t)
    if test $lftp_cv_socklen_t = no; then
-      AC_DEFINE(socklen_t, int)
+      AC_MSG_CHECKING(for socklen_t equivalent)
+      AC_CACHE_VAL(lftp_cv_socklen_t_equiv,
+      [
+	 lftp_cv_socklen_t_equiv=int
+	 AC_LANG_SAVE
+	 AC_LANG_CPLUSPLUS
+	 for t in int size_t unsigned long "unsigned long"; do
+	    AC_TRY_COMPILE([
+	       #include <sys/types.h>
+	       #include <sys/socket.h>
+	    ],
+	    [
+	       $t len;
+	       getpeername(0,0,&len);
+	    ],
+	    [
+	       lftp_cv_socklen_t_equiv="$t"
+	       break
+	    ])
+	 done
+	 AC_LANG_RESTORE
+      ])
+      AC_MSG_RESULT($lftp_cv_socklen_t_equiv)
+      AC_DEFINE(socklen_t, $lftp_cv_socklen_t_equiv)
    fi
 ])
 
