@@ -31,6 +31,7 @@ protected:
    void	 NextFile();
 
    bool delete_files;
+   bool remove_target_first;
    char *backup_file;
    mode_t file_mode;
    FileStream *local;
@@ -49,6 +50,7 @@ public:
 
    void DeleteFiles() { delete_files=true; }
    void Reverse() { reverse=true; } // put
+   void RemoveTargetFirst() { remove_target_first=true; }
 };
 
 #endif /* GETJOB_H */

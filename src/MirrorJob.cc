@@ -114,13 +114,13 @@ void  MirrorJob::ShowRunStatus(StatusLine *s)
    switch(state)
    {
    case(INITIAL_STATE):
-   case(DONE):
       break;
 
    // these have a sub-job
    case(WAITING_FOR_TRANSFER):
    case(TARGET_REMOVE_OLD):
    case(TARGET_CHMOD):
+   case(DONE):
       Job::ShowRunStatus(s);
       break;
 
@@ -225,23 +225,22 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 Report(_("Transferring file `%s'"),
 		  dir_file(source_relative_dir,file->name));
 
-   #if 0 // unfinished
 	 if(script)
 	 {
-	    args=new ArgV("put1");
+	    ArgV args("get");
 	    if(cont_this)
-	       args->Append("-c");
-	    args->Append(local_name);
-	    args->Append("-o");
-	    args->Append(file->name);
-	    char *cmd=args->CombineQuoted();
-	    fprintf(script,"%s",cmd);
+	       args.Append("-c");
+	    if(remove_target)
+	       args.Append("-e");
+	    args.Append(source_session->GetFileURL(file->name));
+	    args.Append("-o");
+	    args.Append(target_session->GetFileURL(file->name));
+	    char *cmd=args.CombineQuoted();
+	    fprintf(script,"%s\n",cmd);
 	    xfree(cmd);
-	    delete args; args=0;
 	    if(script_only)
 	       goto skip;
 	 }
-   #endif
 
 	 FileCopyPeerFA *src_peer=
 	    new FileCopyPeerFA(source_session->Clone(),file->name,FA::RETRIEVE);
@@ -494,7 +493,7 @@ int   MirrorJob::Do()
 {
    int	 res;
    int	 m=STALL;
-   FileInfo *fi;
+   FileInfo *file;
    Job	 *j;
 
    switch(state)
@@ -572,10 +571,11 @@ int   MirrorJob::Do()
 	 RemoveWaiting(j);
 	 Delete(j);
 	 transfer_count--;
+	 m=MOVED;
       }
       while(transfer_count<parallel && state==WAITING_FOR_TRANSFER)
       {
-	 FileInfo *file=to_transfer->curr();
+	 file=to_transfer->curr();
       	 if(!file)
 	 {
 	    if(waiting_num>0)
@@ -593,52 +593,53 @@ int   MirrorJob::Do()
       to_rm->rewind();
       state=TARGET_REMOVE_OLD;
       m=MOVED;
-   case(TARGET_REMOVE_OLD):
-      if(waiting_num==0)
+
+      if(!(flags&DELETE))
       {
-	 if(flags&DELETE)
+	 if(flags&REPORT_NOT_DELETED)
 	 {
-	    ArgV *args=new ArgV("rm");
-	    FileInfo *file=to_rm->curr();
-	    if(file)
-	    {
-	       args->Append(file->name);
-	       to_rm->next();
-	       if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
-	       {
-		  Report(_("Removing old directory `%s'"),
-			   dir_file(target_relative_dir,file->name));
-		  args->getnext(); // prepare args position.
-	       	  j=new FinderJob_Cmd(target_session->Clone(),args,FinderJob_Cmd::RM);
-	       }
-	       else
-	       {
-		  Report(_("Removing old file `%s'"),
-			   dir_file(target_relative_dir,file->name));
-		  j=new rmJob(target_session->Clone(),args);
-	       }
-	       j->SetParentFg(this);
-	       j->cmdline=args->Combine();
-	       AddWaiting(j);
-	    }
-	 }
-	 else if(flags&REPORT_NOT_DELETED)
-	 {
-	    for(FileInfo *file=to_rm->curr(); file; file=to_rm->next())
+	    for(file=to_rm->curr(); file; file=to_rm->next())
 	    {
 	       Report(_("Old file `%s' is not removed"),
 			dir_file(target_relative_dir,file->name));
 	    }
 	 }
-	 if(waiting_num==0)
-	    goto pre_TARGET_CHMOD;
+	 goto pre_TARGET_CHMOD;
       }
+      /*fallthrough*/
+   case(TARGET_REMOVE_OLD):
       j=FindDoneAwaitedJob();
       if(j)
       {
 	 RemoveWaiting(j);
 	 Delete(j);
-	 return MOVED;
+	 transfer_count--;
+	 m=MOVED;
+      }
+      while(transfer_count<parallel && state==TARGET_REMOVE_OLD)
+      {
+	 file=to_rm->curr();
+	 if(!file)
+	    goto pre_TARGET_CHMOD;
+	 to_rm->next();
+	 ArgV *args=new ArgV("rm");
+	 args->Append(file->name);
+	 rmJob *j=new rmJob(target_session->Clone(),args);
+	 j->SetParentFg(this);
+	 j->cmdline=args->Combine();
+	 AddWaiting(j);
+	 transfer_count++;
+	 if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
+	 {
+	    Report(_("Removing old directory `%s'"),
+		     dir_file(target_relative_dir,file->name));
+	    j->Recurse();
+	 }
+	 else
+	 {
+	    Report(_("Removing old file `%s'"),
+		     dir_file(target_relative_dir,file->name));
+	 }
       }
       return m;
 
@@ -649,29 +650,31 @@ int   MirrorJob::Do()
       to_transfer->rewind();
       state=TARGET_CHMOD;
       m=MOVED;
-      goto target_chmod_next;
    case(TARGET_CHMOD):
       j=FindDoneAwaitedJob();
       if(j)
       {
 	 RemoveWaiting(j);
 	 Delete(j);
-
-      target_chmod_next:
-	 fi=to_transfer->curr();
-	 if(!fi)
+	 transfer_count--;
+	 m=MOVED;
+      }
+      while(transfer_count<parallel && state==TARGET_CHMOD)
+      {
+	 file=to_transfer->curr();
+	 if(!file)
 	    goto pre_DONE;
 	 to_transfer->next();
-	 if(!(fi->defined&fi->MODE))
-	    goto target_chmod_next;
+	 if(!(file->defined&file->MODE))
+	    continue;
 	 ArgV *a=new ArgV("chmod");
-	 a->Append(fi->name);
-	 ChmodJob *cj=new ChmodJob(target_session->Clone(),fi->mode&~get_mode_mask(),a);
+	 a->Append(file->name);
+	 ChmodJob *cj=new ChmodJob(target_session->Clone(),file->mode&~get_mode_mask(),a);
 	 AddWaiting(cj);
+	 transfer_count++;
 	 cj->SetParentFg(this);
 	 cj->cmdline=a->Combine();
 	 cj->BeQuiet();   // chmod is not supported on all servers; be quiet.
-
 	 m=MOVED;
       }
       return m;
@@ -690,6 +693,14 @@ int   MirrorJob::Do()
       state=DONE;
       m=MOVED;
    case(DONE):
+      j=FindDoneAwaitedJob();
+      if(j)
+      {
+	 RemoveWaiting(j);
+	 Delete(j);
+	 transfer_count--;
+	 m=MOVED;
+      }
       return m;
    }
    /*NOTREACHED*/

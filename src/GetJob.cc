@@ -163,6 +163,8 @@ try_next:
 
    if(delete_files)
       c->RemoveSourceLater();
+   if(remove_target_first)
+      c->RemoveTargetFirst();
 
    SetCopier(c,src);
 }
@@ -181,6 +183,7 @@ GetJob::GetJob(FileAccess *s,ArgV *a,bool c)
    : CopyJobEnv(s,a,c)
 {
    delete_files=false;
+   remove_target_first=false;
    backup_file=0;
    file_mode=NO_MODE;
    local=0;

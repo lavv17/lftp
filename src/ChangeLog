@@ -1,5 +1,12 @@
 2001-12-17  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* MirrorJob.cc, MirrorJob.h: clean up removing/chmod-ing; allow them
+	  to be excuted in parallel; start scripting support.
+	* GetJob.cc, GetJob.h, commands.cc: get -e option to remove target
+	  file first.
+
+2001-12-17  Alexander V. Lukyanov <lav@yars.free.net>
+
 	* commands.cc: encode ' in bookmarks.
 	* CmdExec.cc: quote ' properly.
 	* MirrorJob.cc: handle mirror:parallel-transfer-count.

@@ -1439,11 +1439,12 @@ CMD(get)
 {
    int opt;
    bool cont=false;
-   const char *opts="+cEuaO:";
+   const char *opts="+cEeuaO:";
    const char *op=args->a0();
    ArgV	 *get_args=new ArgV(op);
    int n_conn=0;
    bool del=false;
+   bool del_target=false;
    bool ascii=false;
    bool glob=false;
    bool make_dirs=false;
@@ -1468,12 +1469,12 @@ CMD(get)
    else if(!strcmp(op,"mget"))
    {
       glob=true;
-      opts="cEadO:";
+      opts="cEeadO:";
    }
    else if(!strcmp(op,"mput"))
    {
       glob=true;
-      opts="cEadO:";
+      opts="cEeadO:";
       reverse=true;
    }
    while((opt=args->getopt(opts))!=EOF)
@@ -1493,6 +1494,9 @@ CMD(get)
 	 break;
       case('E'):
 	 del=true;
+	 break;
+      case('e'):
+	 del_target=true;
 	 break;
       case('a'):
 	 ascii=true;
@@ -1562,6 +1566,8 @@ CMD(get)
       GetJob *j=new GetJob(Clone(),get_args,cont);
       if(del)
 	 j->DeleteFiles();
+      if(del_target)
+	 j->RemoveTargetFirst();
       if(ascii)
 	 j->Ascii();
       if(reverse)
@@ -2772,9 +2778,12 @@ CMD(get1)
    static struct option get1_options[]=
    {
       {"ascii",no_argument,0,'a'},
-      {"region",required_argument,0,'r'},
+      {"source-region",required_argument,0,'r'},
+      {"target-region",required_argument,0,'R'},
       {"continue",no_argument,0,'c'},
       {"output",required_argument,0,'o'},
+      {"remove-source-later",no_argument,0,'E'},
+      {"remove-target-first",no_argument,0,'e'},
       {0,0,0,0}
    };
    int opt;
