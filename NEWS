@@ -1,3 +1,16 @@
+Version 2.4.5 - 2001-10-17
+
+* fish protocol support improved. Now password can be used for authentication.
+* new command `cls' - colored ls (Glenn Maynard).
+* colored completion file list, like cls (Glenn Maynard).
+* `ls' and `cls' now display status before listing is printed.
+* accept @ in URL passwords (Jonas Jensen).
+* added a workaround for WarFTPD ABOR glitch.
+* new configure option --with-included-readline.
+* powerpc fixes (Aaron Schrab).
+* fixed a coredump on exit.
+* fixed home directory glitches (reported by Glenn Maynard).
+
 Version 2.4.4 - 2001-09-13
 
 * sometimes lftp forgot to send CWD to restore working directory

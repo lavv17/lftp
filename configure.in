@@ -210,7 +210,7 @@ AC_CHECK_FUNC(tgetent,
    ])
 READLINE_CHECK
 
-AC_ARG_WITH(ssl, [  --with-ssl[=/path]      use SSL [at /path]
+AC_ARG_WITH(ssl, [  --with-ssl[=/path]        use SSL [at /path]
   --without-ssl           don't use SSL],
       [with_ssl=$withval], [with_ssl=yes])
 case "$with_ssl" in

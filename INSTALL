@@ -1,5 +1,9 @@
 Some hints about lftp compilation
 ---------------------------------
+   * invalid exception specifications in rltypedefs.h
+Solution: use configure --with-included-readline or copy
+readline-4.2/rlstdc.h and readline-4.2/tilde.h to your system include
+directory /usr/include/readline.
    * multiple declarations of rl_dispatching during linking
 This is a bug in readline/readline.h header. Replace `int rl_dispatching'
 with `extern int rl_dispatching' in /usr/include/readline/readline.h

@@ -441,7 +441,8 @@ void FileSetOutput::print(FileSet &fs, Buffer *o) const
 	 const char *fmt = long_time_format[recent];
 	 struct tm *when_local;
 	 char *dt;
-	 if ((f->defined&FileInfo::DATE_UNPREC) && (when_local = localtime (&f->date))) {
+	 if ((f->defined&(f->DATE_UNPREC|f->DATE))
+	 && (when_local = localtime (&f->date))) {
 	    dt = xstrftime(fmt, when_local);
 	 } else {
 	    /* put an empty field; make sure it's the same width */

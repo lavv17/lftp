@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.3.9\n"
-"POT-Creation-Date: 2001-09-13 19:38+0400\n"
+"POT-Creation-Date: 2001-10-01 12:13+0400\n"
 "PO-Revision-Date: 2001-04-22 06:01+0800\n"
 "Last-Translator: Abel Cheung <maddog@linux.org.hk>\n"
 "Language-Team: Traditional Chinese <zh-l10n@linux.org.tw>\n"
@@ -1444,11 +1444,6 @@ msgstr "%s: %s - 非八進位數字\n"
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "使用方法: %s [選項] 檔案\n"
-
-#: src/commands.cc:2474 src/commands.cc:2481
-#, c-format
-msgid "%s: %s: %s\n"
-msgstr ""
 
 #: src/ftpclass.cc:246
 msgid "Data connection peer has wrong port number"
