@@ -173,8 +173,8 @@ int pgetJob::Do()
 }
 
 // xgettext:c-format
-#define PGET_STATUS \
-   _("`%s', got %lld of %lld (%d%%) %s%s"),name, \
+static const char pget_status_format[]=N_("`%s', got %lld of %lld (%d%%) %s%s");
+#define PGET_STATUS _(pget_status_format),name, \
    (long long)total_xferred,(long long)size, \
    percent(total_xferred,size),Speedometer::GetStrS(total_xfer_rate), \
    cp->GetETAStrSFromTime(total_eta)

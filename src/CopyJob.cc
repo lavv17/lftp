@@ -61,7 +61,9 @@ const char *CopyJob::SqueezeName(int w)
    return squeeze_file_name(name,w);
 }
 
-#define COPY_STATUS _("`%s' at %lld %s%s%s%s"),name,\
+// xgettext:c-format
+static const char copy_status_format[]=N_("`%s' at %lld %s%s%s%s");
+#define COPY_STATUS _(copy_status_format),name,\
       (long long)c->GetPos(),c->GetPercentDoneStr(),c->GetRateStr(),\
       c->GetETAStr(),c->GetStatus()
 

@@ -1,9 +1,15 @@
+2000-08-26  Nicolas Noble <nicolas.n.@wanadoo.fr>
+
+	* command.cc: fix N_ for queue help.
+
 2000-08-26  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CmdExec.cc, CmdExec.h: follow redirections in `cd'.
 	* mkdirJob.cc, rmJob.cc: add forgotten plural.
 	* module.cc: define RTLD_GLOBAL to 0 if needed.
 	* url.cc: set path=/ by default for http urls.
+	* CopyJob.cc, pgetJob.cc: move string out of #define to help
+	  xgettext to extract it (reported by Nicolas Noble).
 
 2000-08-25  Alexander V. Lukyanov  <lav@yars.free.net>
 
