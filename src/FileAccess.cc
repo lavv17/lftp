@@ -81,6 +81,7 @@ void FileAccess::Init()
    norest_manual=false;
    location=0;
    suggested_filename=0;
+   array_ptr=array_cnt=0;
 
    url=0;
 
@@ -362,6 +363,7 @@ void FileAccess::Close()
    opt_date=0;
    opt_size=0;
    array_for_info=0;
+   array_ptr=array_cnt=0;
    entity_size=NO_SIZE;
    entity_date=NO_DATE;
    ascii=false;

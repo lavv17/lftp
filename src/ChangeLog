@@ -2,7 +2,8 @@
 
 	* ftpclass.cc: lower bind error message level; work around for proftpd;
 	  don't send ABOR if disconnecting immediately (quit_sent).
-	* FileAccess.cc: handle EPIPE as temporary.
+	* FileAccess.cc: handle EPIPE as temporary; properly initialize
+	  array_cnt and array_ptr.
 
 2003-01-27  Oskar Liljeblad <oskar@osk.mine.nu>
 
