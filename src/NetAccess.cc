@@ -237,7 +237,7 @@ void NetAccess::SetProxy(const char *px)
    ClearPeer();
 }
 
-bool NetAccess::NoProxy()
+bool NetAccess::NoProxy(const char *hostname)
 {
    // match hostname against no-proxy var.
    if(!hostname)

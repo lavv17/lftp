@@ -173,6 +173,7 @@ public:
    virtual const char *GetProto() = 0; // http, ftp, file etc
    bool SameProtoAs(FileAccess *fa) { return !strcmp(GetProto(),fa->GetProto()); }
    virtual FileAccess *Clone() = 0;
+   virtual const char *ProtocolSubstitution(const char *host) { return 0; }
 
    const char *GetVisualProto() { return vproto?vproto:GetProto(); }
    void SetVisualProto(const char *p) { xfree(vproto); vproto=xstrdup(p); }

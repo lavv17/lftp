@@ -943,23 +943,24 @@ FileAccess *FileAccess::NextSameSite(FA *scan)
    return 0;
 }
 
-
 FileAccess *FileAccess::New(const char *proto,const char *host)
 {
-   const char *vproto=proto;
-   // very special case for ftp vs hftp
-   if(!strcmp(proto,"ftp"))
+   FA *session=Protocol::NewSession(proto);
+   if(!session)
+      return 0;
+
+   const char *n_proto=session->ProtocolSubstitution(host);
+   if(n_proto && strcmp(n_proto,proto))
    {
-      const char *proxy=ResMgr::Query("ftp:proxy",host);
-      if(proxy && !strncmp(proxy,"http://",7))
+      FA *n_session=Protocol::NewSession(n_proto);
+      if(n_session)
       {
-	 vproto=proto;
-	 proto="hftp";
+	 delete session;
+	 session=n_session;
+	 session->SetVisualProto(proto);
       }
    }
-   FA *session=Protocol::NewSession(proto);
-   if(session && vproto!=proto)
-      session->SetVisualProto(vproto);
+
    return session;
 }
 FileAccess *FileAccess::New(const ParsedURL *u,bool dummy)

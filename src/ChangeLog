@@ -1,3 +1,9 @@
+2000-11-27  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h, Http.cc, ftpclass.cc, ftpclass.h,
+	  NetAccess.cc, NetAccess.h: (ProtocolSubstitution) new virtual
+	  method; check net:no-proxy before changing ftp to hftp.
+
 2000-11-20  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* url.cc: implement [ipv6::address]:port as specified by rfc2732.

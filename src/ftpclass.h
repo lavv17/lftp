@@ -304,6 +304,8 @@ public:
    FileAccess *Clone() { return new Ftp(this); }
    static FileAccess *New();
 
+   const char *ProtocolSubstitution(const char *host);
+
    bool	 SameLocationAs(FileAccess *);
    bool	 SameSiteAs(FileAccess *);
 

@@ -3635,7 +3635,7 @@ void Ftp::Reconfig(const char *name)
    xfree(anon_pass);
    anon_pass=xstrdup(Query("anon-pass",c));
 
-   if(NoProxy())
+   if(NoProxy(hostname))
       SetProxy(0);
    else
       SetProxy(Query("proxy",c));
@@ -3780,6 +3780,17 @@ int Ftp::Buffered()
    return 0;
 #endif
 }
+
+const char *Ftp::ProtocolSubstitution(const char *host)
+{
+   if(NoProxy(host))
+      return 0;
+   const char *proxy=ResMgr::Query("ftp:proxy",host);
+   if(proxy && !strncmp(proxy,"http://",7))
+      return "hftp";
+   return 0;
+}
+
 
 #ifdef USE_SSL
 #undef super

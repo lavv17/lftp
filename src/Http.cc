@@ -288,6 +288,7 @@ void Http::SendMethod(const char *method,const char *efile)
    }
 
    if(hftp && mode!=LONG_LIST && mode!=CHANGE_DIR && mode!=MAKE_DIR
+   && mode!=REMOVE && mode!=REMOVE_DIR
    && (strlen(efile)<7 || strncmp(efile+strlen(efile)-7,";type=",6)))
    {
       char *pfile=alloca_strdup2(efile,7);
@@ -1539,7 +1540,7 @@ void Http::Reconfig(const char *name)
    super::Reconfig(name);
 
    no_cache = !(bool)Query("cache",c);
-   if(!hftp && NoProxy())
+   if(!hftp && NoProxy(hostname))
       SetProxy(0);
    else
    {
