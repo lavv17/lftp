@@ -144,8 +144,24 @@ ParsedURL::ParsedURL(const char *url,bool proto_required,bool use_rfc1738)
    // extract host name/password
    scan=base;
    host=base;
-   while(*scan && *scan!=':')
-      scan++;
+   if(*scan=='[') // RFC2732 [ipv6]
+   {
+      while(*scan && *scan!=']')
+	 scan++;
+      if(*scan==']')
+      {
+	 *scan++=0;
+	 host++;
+      }
+      else
+	 scan=base;
+   }
+
+   if(scan==base)
+   {
+      while(*scan && *scan!=':')
+	 scan++;
+   }
 
    if(*scan==':') // port found
    {

@@ -1,3 +1,8 @@
+2000-11-20  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* url.cc: implement [ipv6::address]:port as specified by rfc2732.
+	* complete.cc: fix local tilde globbing.
+
 2000-11-14  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* bookmark.cc, bookmark.h, keyvalue.cc, history.cc: don't wait for

@@ -109,7 +109,7 @@ static char *remote_generator(char *text,int state)
 	 return(xstrdup(name));
    }
 
-   glob_res=NULL;
+   //glob_res=NULL;
    return NULL;
 }
 
@@ -575,6 +575,7 @@ static char **lftp_completion (char *text,int start,int end)
 
    char **matches=completion_matches(text,(CPFunction*)generator);
 
+   glob_res=0;
    if(rg)
       delete rg;
 
@@ -698,7 +699,7 @@ backslash_quote (char *string)
 	  *r++ = c;
 	  break;
 	case '~':				/* tilde expansion */
-	  if (s == string)
+	  if (s == string && glob_res)
 	    *r++ = '.', *r++ = '/';
 	  goto def;
 	case '#':				/* comment char */
