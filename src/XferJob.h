@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id$	*/
+/* $Id$ */
 
 #ifndef XFERJOB_H
 #define XFERJOB_H
@@ -73,6 +73,7 @@ protected:
    int	 TryWrite(FDStream *f);
 
    bool	 use_urls;
+   bool  non_strict_urls;
    ParsedURL *url;
 
    void  CountBytes(long);
@@ -95,7 +96,13 @@ public:
    void	 PrintStatus(int);
    void	 SayFinal();
 
-   void UseURLs() { use_urls=true; }
+   void UseURLs()
+      {
+	 if(use_urls)
+	    non_strict_urls=true;
+	 else
+	    use_urls=true;
+      }
 };
 
 #endif /* XFERJOB_H */
