@@ -1,3 +1,7 @@
+2003-02-11  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: another workaround for proftpd.
+
 2003-02-10  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: lower bind error message level; work around for proftpd;

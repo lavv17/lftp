@@ -322,7 +322,9 @@ void Ftp::NoFileCheck(int act)
 /* 5xx that aren't errors at all */
 bool Ftp::NonError5XX(int act)
 {
-   return (mode==LIST && act==RESP_NO_FILE && (!file || !file[0]));
+   return (mode==LIST && act==RESP_NO_FILE && (!file || !file[0]))
+       // ...and proftpd workaround.
+       || (mode==LIST && act==450 && strstr(line,"No files found"));
 }
 
 /* 5xx that are really transient like 4xx */
