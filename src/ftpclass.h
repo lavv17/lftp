@@ -41,18 +41,9 @@ class Ftp : public NetAccess
       WAITING_STATE,	   // we're waiting for a response with data
       ACCEPTING_STATE,	   // we're waiting for an incoming data connection
       DATA_OPEN_STATE,	   // data connection is open, for read or write
-      FATAL_STATE,	   // fatal error occured (e.g. command not implemented)
-      NO_FILE_STATE,	   // file access is impossible - no such file
-      NO_HOST_STATE,	   // host not found or not specified
-      STORE_FAILED_STATE,  // STOR failed - you have to reput
-      LOGIN_FAILED_STATE,  // login failed due to invalid password
-      SYSTEM_ERROR_STATE,  // system error occured, errno saved to saved_errno
-      LOOKUP_ERROR_STATE,  // unsuccessful host name lookup
-/*      ERROR_STATE,	   // see error_code.*/
       CWD_CWD_WAITING_STATE,  // waiting until 'CWD $cwd' finishes
       USER_RESP_WAITING_STATE,// waiting until 'USER $user' finishes
-      DATASOCKET_CONNECTING_STATE,   // waiting for data_sock to connect
-      COPY_FAILED
+      DATASOCKET_CONNECTING_STATE  // waiting for data_sock to connect
    };
 
    enum response
@@ -108,7 +99,6 @@ class Ftp : public NetAccess
    struct expected_response
    {
       int   expect;
-      int   fail_state;
       check_case_t check_case;
       bool  log_resp;
       char  *path;
@@ -124,9 +114,9 @@ class Ftp : public NetAccess
 
    void	 LogResp(const char *line);
 
-   void  AddResp(int exp,int fail,check_case_t ck=CHECK_NONE,bool log=false);
+   void  AddResp(int exp,check_case_t ck=CHECK_NONE,bool log=false);
    void  SetRespPath(const char *p);
-   int   CheckResp(int resp);
+   void  CheckResp(int resp);
    int	 ReplyLogPriority(int code);
    void  PopResp();
    void	 EmptyRespQueue();
@@ -135,18 +125,18 @@ class Ftp : public NetAccess
    int	 RespQueueSize() { return RQ_tail-RQ_head; }
    expected_response *FindLastCWD();
 
-   int	 RestCheck(int,int);
-   int   NoFileCheck(int,int);
-   int	 TransferCheck(int,int);
-   int	 LoginCheck(int,int);
-   int	 NoPassReqCheck(int,int);
-   int	 proxy_LoginCheck(int,int);
-   int	 proxy_NoPassReqCheck(int,int);
+   void	 RestCheck(int);
+   void  NoFileCheck(int);
+   void	 TransferCheck(int);
+   void	 LoginCheck(int);
+   void	 NoPassReqCheck(int);
+   void	 proxy_LoginCheck(int);
+   void	 proxy_NoPassReqCheck(int);
    char *ExtractPWD();
-   int	 CatchDATE(int,int);
-   int	 CatchDATE_opt(int,int);
-   int	 CatchSIZE(int,int);
-   int	 CatchSIZE_opt(int,int);
+   void	 CatchDATE(int);
+   void	 CatchDATE_opt(int);
+   void	 CatchSIZE(int);
+   void	 CatchSIZE_opt(int);
    int	 Handle_PASV();
    int	 Handle_EPSV();
 
@@ -167,6 +157,8 @@ class Ftp : public NetAccess
    int   resp_size;
    int	 resp_alloc;
    char  *line;
+
+   bool	 eof;
 
    time_t   nop_time;
    off_t    nop_offset;
@@ -222,7 +214,7 @@ class Ftp : public NetAccess
    bool  site_chmod_supported;
    off_t last_rest;
 
-   int	 StateToError();
+   void	 SetError(int code,const char *mess=0);
 
    int	 addr_received;	// state of PASV
 
@@ -262,6 +254,7 @@ private:
    bool	copy_done;
    bool	copy_connection_open;
    bool copy_allow_store;
+   bool copy_failed;
 
    bool use_stat;
    int  stat_interval;
@@ -353,15 +346,14 @@ public:
 	 copy_addr_valid=true;
 	 return true;
       }
-   bool CopyFailed() { return state==COPY_FAILED; }
+   bool CopyFailed() { return copy_failed; }
    bool RestartFailed() { return flags&NOREST_MODE; }
    bool IsPassive() { return flags&PASSIVE_MODE; }
-/*   void SetPos(long p) { pos=real_pos=p; }*/
    bool IsCopyPassive() { return copy_passive; }
    void CopyAllowStore()
       {
 	 SendCmd2("STOR",file);
-	 AddResp(RESP_TRANSFER_OK,STORE_FAILED_STATE,CHECK_TRANSFER);
+	 AddResp(RESP_TRANSFER_OK,CHECK_TRANSFER);
 	 copy_allow_store=true;
       }
    bool CopyStoreAllowed() { return copy_allow_store; }
