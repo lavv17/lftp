@@ -41,6 +41,10 @@
 #include "xmalloc.h"
 #include "ResMgr.h"
 
+#ifndef T_SRV
+# define T_SRV ns_t_srv
+#endif
+
 #if !defined(HAVE_HSTRERROR_DECL)
 extern "C" { const char *hstrerror(int); }
 #endif
