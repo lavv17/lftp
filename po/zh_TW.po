@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.3.9\n"
-"POT-Creation-Date: 2001-11-12 16:39+0300\n"
+"POT-Creation-Date: 2001-12-04 15:19+0300\n"
 "PO-Revision-Date: 2001-04-22 06:01+0800\n"
 "Last-Translator: Abel Cheung <maddog@linux.org.hk>\n"
 "Language-Team: Traditional Chinese <zh-l10n@linux.org.tw>\n"
@@ -111,7 +111,7 @@ msgstr "存取失敗: %s"
 msgid "File cannot be accessed"
 msgstr "不能存取檔案"
 
-#: src/FileAccess.cc:321 src/ftpclass.cc:3527 src/ftpclass.cc:3536
+#: src/FileAccess.cc:321 src/ftpclass.cc:3530 src/ftpclass.cc:3539
 msgid "Not connected"
 msgstr "並未連線"
 
@@ -146,12 +146,12 @@ msgstr "檔案已移動: %s"
 msgid "File moved to `%s'"
 msgstr "檔案被移動到 `%s'"
 
-#: src/FtpListInfo.cc:237 src/NetAccess.cc:882
+#: src/FtpListInfo.cc:237 src/NetAccess.cc:879
 #, c-format
 msgid "Getting directory contents (%lld)"
 msgstr "正在擷取目錄內容 (%lld)"
 
-#: src/FtpListInfo.cc:247 src/NetAccess.cc:888
+#: src/FtpListInfo.cc:247 src/NetAccess.cc:885
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "正在擷取檔案資訊 (%d%%)"
@@ -350,7 +350,7 @@ msgid "no closure defined for this setting"
 msgstr "此設定值並沒有定義 closure"
 
 #: src/Http.cc:1591 src/Resolver.cc:187 src/Resolver.cc:228
-#: src/ftpclass.cc:3532
+#: src/ftpclass.cc:3535
 msgid "Resolving host address..."
 msgstr "正在解析主機地址..."
 
@@ -1566,81 +1566,81 @@ msgstr "%s: %s - 非八進位數字\n"
 msgid "Usage: %s [OPTS] file\n"
 msgstr "使用方法: %s [選項] 檔案\n"
 
-#: src/ftpclass.cc:246
+#: src/ftpclass.cc:245
 msgid "Data connection peer has wrong port number"
 msgstr "對方使用了錯誤的連接埠號碼"
 
-#: src/ftpclass.cc:252
+#: src/ftpclass.cc:251
 msgid "Data connection peer has mismatching address"
 msgstr "對方使用了不匹配的地址"
 
-#: src/ftpclass.cc:271 src/ftpclass.cc:307
+#: src/ftpclass.cc:270 src/ftpclass.cc:306
 msgid "Switching to NOREST mode"
 msgstr "切換到 NOREST 模式"
 
-#: src/ftpclass.cc:403
+#: src/ftpclass.cc:402
 msgid "Server reply matched ftp:retry-530, retrying"
 msgstr ""
 
-#: src/ftpclass.cc:411
+#: src/ftpclass.cc:410
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
 msgstr ""
 
-#: src/ftpclass.cc:435
+#: src/ftpclass.cc:434
 msgid "Account is required, set ftp:acct variable"
 msgstr ""
 
-#: src/ftpclass.cc:460
+#: src/ftpclass.cc:459
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
 msgstr "設定了 ftp:skey-force 但伺服器不支援 OPIE 或 S/KEY"
 
-#: src/ftpclass.cc:476
+#: src/ftpclass.cc:475
 msgid "Saw `unknown', assume failed login"
 msgstr "看到 `unknown'，假設登入已失敗"
 
-#: src/ftpclass.cc:487
+#: src/ftpclass.cc:486
 msgid "assuming failed host name lookup"
 msgstr "假設查看主機名稱已失敗"
 
-#: src/ftpclass.cc:718
+#: src/ftpclass.cc:717
 msgid "cannot parse EPSV response"
 msgstr "不能分析 EPSV 回應內容"
 
-#: src/Http.cc:769 src/ftpclass.cc:1078
+#: src/Http.cc:769 src/ftpclass.cc:1070
 msgid "Closing idle connection"
 msgstr "關閉了閒置的連線"
 
-#: src/Http.cc:897 src/ftpclass.cc:1157
+#: src/Http.cc:897 src/ftpclass.cc:1151
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "不能建立地址族群 %d 的 socket"
 
-#: src/ftpclass.cc:1339
+#: src/ftpclass.cc:1336
 msgid "SITE CHMOD is not supported by this site"
 msgstr "這個站台不支援 SITE CHMOD"
 
-#: src/ftpclass.cc:1687 src/ftpclass.cc:1727
+#: src/ftpclass.cc:1681 src/ftpclass.cc:1721
 msgid "unsupported network protocol"
 msgstr "不受支援的網絡協定"
 
-#: src/ftpclass.cc:1837
+#: src/ftpclass.cc:1831
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "連接資料 socket 到 (%s) 連接埠 %u"
 
-#: src/ftpclass.cc:1862 src/ftpclass.cc:3400
+#: src/ftpclass.cc:1856 src/ftpclass.cc:3403
 msgid "Switching passive mode off"
 msgstr "關閉了 passive 模式"
 
-#: src/Http.cc:985 src/ftpclass.cc:2307
+#: src/Http.cc:985 src/ftpclass.cc:2306
 msgid "Peer closed connection"
 msgstr "對方節點關閉了連線"
 
-#: src/ftpclass.cc:2334
+#: src/ftpclass.cc:2333
 msgid "Persist and retry"
 msgstr "繼續重試"
 
-#: src/ftpclass.cc:2433
+#: src/ftpclass.cc:2432
 msgid "Closing control socket"
 msgstr "正在關閉控制 socket"
 
@@ -1648,85 +1648,85 @@ msgstr "正在關閉控制 socket"
 msgid "Closing data socket"
 msgstr "正在關閉資料 socket"
 
-#: src/ftpclass.cc:3241
+#: src/ftpclass.cc:3244
 msgid "saw file size in response"
 msgstr "回應包括檔案的大小"
 
-#: src/ftpclass.cc:3252
+#: src/ftpclass.cc:3255
 msgid "remote end closes connection"
 msgstr "遠端終止了連線"
 
-#: src/ftpclass.cc:3260
+#: src/ftpclass.cc:3263
 msgid "extra server response"
 msgstr "額外的伺服器回應"
 
-#: src/ftpclass.cc:3272 src/ftpclass.cc:3297
+#: src/ftpclass.cc:3275 src/ftpclass.cc:3300
 msgid "Turning on sync-mode"
 msgstr "啟動 sync-mode"
 
-#: src/ftpclass.cc:3417
+#: src/ftpclass.cc:3420
 msgid "Switching passive mode on"
 msgstr "開啟 passive 模式"
 
-#: src/ftpclass.cc:3483
+#: src/ftpclass.cc:3486
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr "已設定 ftp:ssl-force 但伺服器不支援/不使用 SSL"
 
-#: src/ftpclass.cc:3522
+#: src/ftpclass.cc:3525
 msgid "Sending commands..."
 msgstr "正在送出指令..."
 
-#: src/Http.cc:1606 src/ftpclass.cc:3524 src/ftpclass.cc:3549
-#: src/ftpclass.cc:3561
+#: src/Http.cc:1606 src/ftpclass.cc:3527 src/ftpclass.cc:3552
+#: src/ftpclass.cc:3564
 msgid "Waiting for response..."
 msgstr "正在等待回應..."
 
-#: src/Http.cc:1599 src/ftpclass.cc:3525
+#: src/Http.cc:1599 src/ftpclass.cc:3528
 msgid "Connection idle"
 msgstr "連線閒置了"
 
-#: src/Http.cc:1597 src/Http.cc:1604 src/ftpclass.cc:3538
+#: src/Http.cc:1597 src/Http.cc:1604 src/ftpclass.cc:3541
 msgid "Connecting..."
 msgstr "正在連線..."
 
-#: src/ftpclass.cc:3542
+#: src/ftpclass.cc:3545
 msgid "TLS negotiation..."
 msgstr "使用 TLS 協定通訊中…"
 
-#: src/ftpclass.cc:3544
+#: src/ftpclass.cc:3547
 msgid "Connected"
 msgstr "已經連接"
 
-#: src/ftpclass.cc:3546
+#: src/ftpclass.cc:3549
 msgid "Logging in..."
 msgstr "正在登入..."
 
-#: src/ftpclass.cc:3550
+#: src/ftpclass.cc:3553
 msgid "Making data connection..."
 msgstr "正在建立資料傳送的連線..."
 
-#: src/ftpclass.cc:3552
+#: src/ftpclass.cc:3555
 msgid "Changing remote directory..."
 msgstr "改變遠端目錄..."
 
-#: src/ftpclass.cc:3557
+#: src/ftpclass.cc:3560
 #, fuzzy
 msgid "Waiting for other copy peer..."
 msgstr "正在等待回應..."
 
-#: src/ftpclass.cc:3560 src/ftpclass.cc:3572
+#: src/ftpclass.cc:3563 src/ftpclass.cc:3575
 msgid "Waiting for transfer to complete"
 msgstr "等待傳送完成"
 
-#: src/ftpclass.cc:3563
+#: src/ftpclass.cc:3566
 msgid "Waiting for data connection..."
 msgstr "等待資料傳送的連線..."
 
-#: src/Http.cc:1602 src/ftpclass.cc:3568
+#: src/Http.cc:1602 src/ftpclass.cc:3571
 msgid "Sending data"
 msgstr "正在傳送資料"
 
-#: src/Http.cc:1609 src/ftpclass.cc:3570
+#: src/Http.cc:1609 src/ftpclass.cc:3573
 msgid "Receiving data"
 msgstr "正在接收資料"
 
@@ -1898,7 +1898,7 @@ msgid "ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C"
 msgstr ""
 
 #: src/FtpDirList.cc:145 src/FtpSplitList.cc:182 src/HttpDir.cc:1116
-#: src/NetAccess.cc:695
+#: src/NetAccess.cc:692
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "正在擷取檔案列表 (%lld) [%s]"
