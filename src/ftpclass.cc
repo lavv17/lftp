@@ -62,6 +62,9 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 #ifdef HAVE_SYS_IOCTL_H
 # include <sys/ioctl.h>
 #endif
+#ifdef HAVE_TERMIOS_H
+# include <termios.h>
+#endif
 
 #include "xalloca.h"
 
@@ -71,6 +74,31 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 #define super NetAccess
 #define peer_sa (peer[peer_curr])
 
+#ifdef TIOCOUTQ
+static bool TIOCOUTQ_returns_free_space;
+static bool TIOCOUTQ_works;
+static void test_TIOCOUTQ()
+{
+   int sock=socket(PF_INET,SOCK_STREAM,IPPROTO_TCP);
+   if(sock==-1)
+      return;
+   int avail=-1;
+   socklen_t len=sizeof(avail);
+   if(getsockopt(sock,SOL_SOCKET,SO_SNDBUF,&avail,&len)==-1)
+      avail=-1;
+   int buf=-1;
+   if(ioctl(sock,TIOCOUTQ,&buf)==-1)
+      buf=-1;
+   if(buf>=0 && avail>0 && (buf==0 || buf==avail))
+   {
+      TIOCOUTQ_works=true;
+      TIOCOUTQ_returns_free_space=(buf==avail);
+   }
+   close(sock);
+}
+#else
+# define test_TIOCOUTQ()
+#endif
 
 FileAccess *Ftp::New() { return new Ftp(); }
 
@@ -79,6 +107,8 @@ void  Ftp::ClassInit()
    // register the class
    Register("ftp",Ftp::New);
    FileCopy::fxp_create=FileCopyFtp::New;
+
+   test_TIOCOUTQ();
 }
 
 Ftp *Ftp::ftp_chain=0;
@@ -3166,22 +3196,29 @@ const char *Ftp::make_skey_reply()
 int Ftp::Buffered()
 {
 #ifdef TIOCOUTQ
-   // Unfortunately, this is not precise. Is there any other way to know
-   // amount of data buffered on socket? OTOH, nothing should break if
-   // we say there are more buffered data than actually are.
+   if(!TIOCOUTQ_works)
+      return 0;
    if(state!=DATA_OPEN_STATE || data_sock==-1 || mode!=STORE)
       return 0;
    int buffer=0;
-   socklen_t len=sizeof(buffer);
-   if(getsockopt(data_sock,SOL_SOCKET,SO_SNDBUF,&buffer,&len)==-1)
-      return 0;
-   int avail=buffer;
-   if(ioctl(data_sock,TIOCOUTQ,&avail)==-1)
-      return 0;
-   if(avail>buffer)
-      return 0; // something wrong
-   buffer-=avail;
-   buffer=buffer*5/6; // approx...
+   if(TIOCOUTQ_returns_free_space)
+   {
+      socklen_t len=sizeof(buffer);
+      if(getsockopt(data_sock,SOL_SOCKET,SO_SNDBUF,&buffer,&len)==-1)
+	 return 0;
+      int avail=buffer;
+      if(ioctl(data_sock,TIOCOUTQ,&avail)==-1)
+	 return 0;
+      if(avail>buffer)
+	 return 0; // something wrong
+      buffer-=avail;
+      buffer=buffer*3/4; // approx...
+   }
+   else
+   {
+      if(ioctl(data_sock,TIOCOUTQ,&buffer)==-1)
+	 return 0;
+   }
    if(pos>=0 && buffer>pos)
       buffer=pos;
    return buffer;

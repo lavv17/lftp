@@ -1,3 +1,7 @@
+2000-01-25  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: runtime test for TIOCOUTQ.
+
 2000-01-22  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ChmodJob.cc, TreatFileJob.cc, TreatFileJob.h, mkdirJob.cc,
