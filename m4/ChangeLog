@@ -1,3 +1,7 @@
+2003-12-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* socklen.m4: don't define lftp_socklen_t if socklen_t is available.
+
 2003-12-17  albert chin <china@thewrittenword.com>
 
 	* socklen.m4: define lftp_socklen_t instead of socklen_t.
