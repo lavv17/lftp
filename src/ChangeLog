@@ -7,6 +7,8 @@
 	  bmk:save-passwords.
 	* resource.cc: add http:post-content-type; validate http:put-method.
 	* Http.cc: use http:post-content-type.
+	* FileSet.cc: (FileSet::Merge) fix long standing bug, which caused
+	  rare coredumps on completion.
 
 2000-07-26  Alexander V. Lukyanov  <lav@yars.free.net>
 

@@ -102,7 +102,7 @@ void FileSet::Merge(const FileSet *set)
       }
       if(j==fnum)
       {
-	 Add(set->files[i]);
+	 Add(new FileInfo(*set->files[i]));
       }
    }
 }
