@@ -153,6 +153,9 @@ public:
 
    void Suspend();
    void Resume();
+
+   void Cleanup();
+   void CleanupThis();
 };
 
 class HFtp : public Http

@@ -1891,6 +1891,24 @@ void HFtp::Reconfig(const char *name)
    use_head=Query("use-head");
 }
 
+void Http::Cleanup()
+{
+   if(hostname==0)
+      return;
+
+   for(FA *fo=FirstSameSite(); fo!=0; fo=NextSameSite(fo))
+      fo->CleanupThis();
+
+   CleanupThis();
+}
+void Http::CleanupThis()
+{
+   if(mode!=CLOSED)
+      return;
+   Disconnect();
+}
+
+
 
 /* The functions http_atotm and check_end are taken from wget */
 #define ISSPACE(c) is_ascii_space((c))
