@@ -192,6 +192,11 @@ const char *find_eol(const char *buf,int len,bool eof,int *eol_size)
       return 0;
    }
    *eol_size=1;
+   if(real_eol>buf && real_eol[-1]=='\r')
+   {
+      real_eol--;
+      *eol_size++;
+   }
    return real_eol;
 }
 

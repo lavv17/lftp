@@ -368,9 +368,9 @@ int CmdExec::Do()
 	       const char *cwd=session->GetCwd();
 	       eprintf(_("cd ok, cwd=%s\n"),cwd?cwd:"~");
 	       cwd_history.Set(session,old_cwd);
-	       if(slot)
-		  ConnectionSlot::SetCwd(slot,cwd);
 	    }
+	    if(slot)
+	       ConnectionSlot::SetCwd(slot,session->GetCwd());
 	    session->Close();
 	    exit_code=0;
 	    builtin=BUILTIN_NONE;

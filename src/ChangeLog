@@ -1,6 +1,8 @@
 2003-02-26  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* OutputJob.cc: fixed large file support (should have used off_t).
+	* HttpDir.cc: handle \r just in case.
+	* CmdExec.cc: set slot's cwd even if non-interactive.
 
 2003-02-14  Alexander V. Lukyanov <lav@yars.free.net>
 
