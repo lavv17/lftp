@@ -1,13 +1,13 @@
 # LFTP -  deutsche Übersetzung
 # Korrekturen, KRITIK SEHR willkommen
 # COPYRIGHT:
-# Moritz Moeller-Herrmann <mmh@gmx.net>, 1999,2000,2001
+# Moritz Moeller-Herrmann <mmh@gmx.net>, 1999,2000,2001,2002
 # GPL
 msgid ""
 msgstr ""
-"Project-Id-Version: Lftp 2.4.5\n"
+"Project-Id-Version: Lftp 2.6.2\n"
 "POT-Creation-Date: 2002-09-10 16:55+0400\n"
-"PO-Revision-Date: 2002-05-17 12:37+0200\n"
+"PO-Revision-Date: 2002-09-16 15:43+0200\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -65,7 +65,7 @@ msgstr "\tEingebautes»%s« wird ausgeführt [%s]\n"
 
 #: src/CmdExec.cc:728
 msgid "Queue is stopped."
-msgstr ""
+msgstr "Warteschlange wurde angehalten."
 
 #: src/CmdExec.cc:732
 msgid "Now executing:"
@@ -328,9 +328,8 @@ msgid "no closure defined for this setting"
 msgstr "kein Gültigkeitsbereich (closure) für diese Einstellung definiert"
 
 #: src/ResMgr.cc:856
-#, fuzzy
 msgid "invalid pair of numbers"
-msgstr "Unzulässige Zahl"
+msgstr "Unzulässiges Zahlenpaar."
 
 #: src/Resolver.cc:184 src/Resolver.cc:226 src/ftpclass.cc:3654
 #: src/Http.cc:1645
@@ -776,8 +775,7 @@ msgstr ""
 
 #: src/commands.cc:274
 msgid "List running jobs. -v means verbose, several -v can be specified.\n"
-msgstr ""
-"Aktive Jobs auflisten. -v bedeutet mit Details, mehrere -v sind möglich.\n"
+msgstr "Aktive Jobs auflisten. -v bedeutet mit Details, mehrere -v sind möglich.\n"
 
 #: src/commands.cc:275
 msgid "kill all|<job_no>"
@@ -873,7 +871,6 @@ msgid "mirror [OPTS] [remote [local]]"
 msgstr "mirror [OPTS] [nichtlokal [lokal]]"
 
 #: src/commands.cc:308
-#, fuzzy
 msgid ""
 "\n"
 "Mirror specified remote directory to local directory\n"
@@ -910,17 +907,16 @@ msgstr ""
 "                        liegen löschen\n"
 " -s, --allow-suid       SUID/SGID Berechtigungen setzen wie auf dem\n"
 "                        Server\n"
-"     --allow-chown      wenn möglich Benutzer und Gruppe setzen -n, --only-"
-"newer       nur neuere Dateien herunterladen (schließt -c aus)\n"
+"     --allow-chown      wenn möglich Benutzer und Gruppe setzen -n,\n"
+"     --only-newer       nur neuere Dateien herunterladen (schließt -c aus)\n"
 " -r, --no-recursion     Unterverzeichnisse nicht mit einschließen\n"
 " -p, --no-perms         keine Dateiberechtigungen setzen\n"
 "     --no-umask         umask nicht auf Dateiattribute anwenden\n"
-" -P, --parallel[=N]     N Dateien gleichzeitig herunterladen\n"
 " -R, --reverse          umgedrehter Spiegel (Dateien schicken)\n"
 " -L, --dereference      symbolische Links als Files herunterladen\n"
 " -N, --newer-than DATEI nur Dateien die neuer sind als DATEI herunterladen\n"
-" -i RA, --include RA    zum regulären Ausdruck passende Dateien "
-"einschließen\n"
+" -P, --parallel[=N]     N Dateien gleichzeitig herunterladen\n"
+" -i RA, --include RA    zum regulären Ausdruck passende Dateien einschließen\n"
 " -x RA, --exclude RA    zum regulären Ausdruck passende Dateien\n"
 "                        ausschließen\n"
 "                        RA sind erweiterte reguläre Ausdrücke (Joker)\n"
@@ -929,8 +925,7 @@ msgstr ""
 "\n"
 "Gibt man -R an, so ist das erste Verzeichnis lokal und das andere auf dem \n"
 "Host.\n"
-"Wird das zweite Verzeichnis nicht angegeben, wird die Namenswurzel"
-"(basename)\n"
+"Wird das zweite Verzeichnis nicht angegeben, wird die Namenswurzel(basename)\n"
 "des ersten Verzeichnisses verwendet.\n"
 "Werden beide Verzeichnisse weggelassen, so werden das aktuelle lokale und\n"
 "nichtlokale Verzeichnis verwendet.\n"
@@ -1437,7 +1432,7 @@ msgstr "%s: -n: Zahl erwartet."
 
 #: src/commands.cc:1071
 msgid "Created a stopped queue.\n"
-msgstr ""
+msgstr "Angehaltene Warteschlange erzeugt.\n"
 
 #: src/commands.cc:1115 src/commands.cc:1145
 #, c-format
@@ -1592,10 +1587,8 @@ msgstr "%s: Angabe für »expire«(Ablauf) fehlt\n"
 
 #: src/commands.cc:2267
 #, c-format
-msgid ""
-"%s: %s - no such cached session. Use `scache' to look at session list.\n"
-msgstr ""
-"%s: %s - keine derartige Sitzung gecached. »scache« zeigt eine Liste.\n"
+msgid "%s: %s - no such cached session. Use `scache' to look at session list.\n"
+msgstr "%s: %s - keine derartige Sitzung gecached. »scache« zeigt eine Liste.\n"
 
 #: src/commands.cc:2284
 #, c-format
@@ -1633,8 +1626,7 @@ msgid "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 msgstr "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 
 #: src/commands.cc:2361
-msgid ""
-"This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
+msgid "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
 msgstr ""
 "Dies ist freie Software OHNE IRGENDWELCHE GARANTIEN ODER GEWÄHRLEISTUNGEN.\n"
 "Die Datei COPYING enthält Details.\n"
@@ -1744,8 +1736,7 @@ msgstr "Eingerichteter Zugang ist erforderlich, ftp:acct Variable setzen."
 
 #: src/ftpclass.cc:484
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
-msgstr ""
-"ftp:skey-force ist gesetzt und Gegenstelle unterstützt weder OPIE noch S/KEY"
+msgstr "ftp:skey-force ist gesetzt und Gegenstelle unterstützt weder OPIE noch S/KEY"
 
 #: src/ftpclass.cc:500
 msgid "Saw `unknown', assume failed login"
@@ -1827,8 +1818,7 @@ msgstr "Schalte Passivmodus ein"
 
 #: src/ftpclass.cc:3604
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
-msgstr ""
-"ftp:ssl-force ist gesetzt und Gegenstelle unterstützt oder erlaubt kein SSL"
+msgstr "ftp:ssl-force ist gesetzt und Gegenstelle unterstützt oder erlaubt kein SSL"
 
 #: src/ftpclass.cc:3644
 msgid "Sending commands..."
@@ -2072,8 +2062,7 @@ msgstr "Modus von »%s«  nach %04o (%s) geändert.\n"
 #: src/ChmodJob.cc:85
 #, c-format
 msgid "Failed to change mode of `%s' because no old mode is available.\n"
-msgstr ""
-"Konnte den Modus von »%s« nicht ändern, da kein alter Modus zugänglich war.\n"
+msgstr "Konnte den Modus von »%s« nicht ändern, da kein alter Modus zugänglich war.\n"
 
 #: src/CopyJob.cc:78
 #, c-format
@@ -2299,3 +2288,4 @@ msgstr "Module sind auf diesem System nicht verwendbar"
 
 #~ msgid "Old remote file `%s' is not removed"
 #~ msgstr "Bestehende nichtlokale Datei »%s« wird nicht entfernt"
+
