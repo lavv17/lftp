@@ -208,6 +208,7 @@ int FtpListInfo::Do()
 
 const char *FtpListInfo::Status()
 {
+   static char s[256];
    switch(state)
    {
    case(DONE):
@@ -215,9 +216,11 @@ const char *FtpListInfo::Status()
       return "";
    case(GETTING_LONG_LIST):
    case(GETTING_SHORT_LIST):
-      return _("Getting directory contents...");
+      sprintf(s,_("Getting directory contents (%d)"),session->GetPos());
+      return s;
    case(GETTING_INFO):
-      return _("Getting files information...");
+      sprintf(s,_("Getting files information (%d%%)"),session->InfoArrayPercentDone());
+      return s;
    }
    // cat't happen
    abort();

@@ -238,5 +238,11 @@ int   FtpGlob::Do()
 
 const char *FtpGlob::Status()
 {
+   static char s[256];
+   if(state==GETTING_DATA)
+   {
+      sprintf(s,_("Receiving (%d)"),f->GetPos());
+      return s;
+   }
    return "";
 }

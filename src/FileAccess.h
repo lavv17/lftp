@@ -180,6 +180,12 @@ public:
    void RemoveDir(const char *dir)  { Open(dir,REMOVE_DIR); }
 
    void	 GetInfoArray(struct fileinfo *info,int count);
+   int	 InfoArrayPercentDone()
+      {
+	 if(array_cnt==0)
+	    return 100;
+	 return array_ptr*100/array_cnt;
+      }
 
    virtual const char *CurrentStatus() { return(""); }
 

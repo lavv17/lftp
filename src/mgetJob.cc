@@ -40,7 +40,7 @@ void mgetJob::PrintStatus(int v)
    {
       SessionJob::PrintStatus(v);
       putchar('\t');
-      printf(_("Getting file list [%s]"),session->CurrentStatus());
+      printf(_("Getting file list [%s|%s]"),rg->Status(),session->CurrentStatus());
       putchar('\n');
       return;
    }

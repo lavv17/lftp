@@ -29,11 +29,6 @@
 
 #include "CatJob.h"
 
-bool has_wildcard(char *s)
-{
-   return strchr(s,'*') || strchr(s,'?');
-}
-
 int   CatJob::Done()
 {
    return args==0 && curr==0 && filter_wait==0 && global==0;
@@ -44,6 +39,11 @@ void  CatJob::ShowRunStatus(StatusLine *s)
    if(!print_run_status)
       return;
 
+   if(rg)
+   {
+      s->Show(_("Getting file list [%s|%s]"),rg->Status(),session->CurrentStatus());
+      return;
+   }
    if(curr)
    {
       XferJob::ShowRunStatus(s);
@@ -62,6 +62,13 @@ void  CatJob::PrintStatus(int verbose)
    if(Done())
    {
       XferJob::PrintStatus(verbose);
+      return;
+   }
+   if(rg)
+   {
+      putchar('\t');
+      printf(_("Getting file list [%s|%s]"),rg->Status(),session->CurrentStatus());
+      putchar('\n');
       return;
    }
    if(curr==0)
