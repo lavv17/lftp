@@ -75,6 +75,7 @@ class Http : public FileAccess
    long body_size;
    long bytes_received;
    char *location;
+   bool sent_eot;
 
    void SetError(int code,const char *mess=0);
    void Fatal(const char *mess);
@@ -117,6 +118,7 @@ public:
    int Read(void *,int);
    int Write(const void *,int);
    int StoreStatus();
+   int SendEOT();
 
    void Close();
    const char *CurrentStatus();

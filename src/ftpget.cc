@@ -34,7 +34,6 @@
 #include "log.h"
 #include "FileAccess.h"
 #include "Resolver.h"
-#include "resource.h"
 #include "SignalHook.h"
 #include "ResMgr.h"
 #include "modconfig.h"

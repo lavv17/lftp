@@ -68,6 +68,7 @@ void Http::Init()
    status_consumed=0;
    proto_version=0x10;
    location=0;
+   sent_eot=false;
 
    idle=0;
    idle_start=now;
@@ -171,7 +172,6 @@ void Http::Disconnect()
       close(sock);
       sock=-1;
    }
-   state=DISCONNECTED;
    body_size=-1;
    bytes_received=0;
    real_pos=-1;
@@ -180,6 +180,11 @@ void Http::Disconnect()
    status_consumed=0;
    xfree(location);
    location=0;
+   sent_eot=false;
+   if(mode==STORE && state!=DONE && state!=ERROR)
+      SetError(STORE_FAILED,0);
+   else
+      state=DISCONNECTED;
 }
 
 void Http::Close()
@@ -277,6 +282,8 @@ void Http::SendRequest(const char *connection)
 
    if(pos==0)
       real_pos=0;
+   if(mode==STORE)    // can't seek before writing
+      real_pos=pos;
 
    switch((open_mode)mode)
    {
@@ -594,6 +601,24 @@ int Http::Do()
 		  }
 		  return MOVED;
 	       }
+	       else if(mode==STORE)
+	       {
+		  if(sent_eot && H_20X(status_code))
+		  {
+		     state=DONE;
+		     Disconnect();
+		     state=DONE;
+		     return MOVED;
+		  }
+		  if(!sent_eot && H_20X(status_code))
+		  {
+		     // should never happen
+		     DebugPrint("**** ","Success, but did nothing??");
+		     Disconnect();
+		     return MOVED;
+		  }
+		  // going to pre_RECEIVING_BODY to catch error
+	       }
 	       goto pre_RECEIVING_BODY;
 	    }
 	    len=eol-buf;
@@ -619,6 +644,7 @@ int Http::Do()
 		  DebugPrint("**** ","Could not parse HTTP status line",1);
 		  // simple 0.9 ?
 		  proto_version=0x09;
+		  //FIXME: STORE
 		  goto pre_RECEIVING_BODY;
 	       }
 	       proto_version=(ver_major<<4)+ver_minor;
@@ -659,9 +685,10 @@ int Http::Do()
 	       }
 	    }
 	 }
-	 else
-	    return m;
       }
+
+      if(mode==STORE && !status && !sent_eot)
+	 Block(sock,POLLOUT);
 
       return m;
 
@@ -835,12 +862,69 @@ int Http::Done()
 
 int Http::Write(const void *buf,int size)
 {
-   //FIXME
+   if(mode!=STORE)
+      return(0);
+
+   Resume();
+   Do();
+   if(state==ERROR)
+      return(error_code);
+
+   if(state!=RECEIVING_HEADER || status!=0)
+      return DO_AGAIN;
+
+   {
+      int allowed=BytesAllowed();
+      if(allowed==0)
+	 return DO_AGAIN;
+      if(size>allowed)
+	 size=allowed;
+   }
+   int res=write(sock,buf,size);
+   if(res==-1)
+   {
+      if(errno==EAGAIN || errno==EINTR)
+	 return DO_AGAIN;
+      if(NotSerious(errno) || errno==EPIPE)
+      {
+	 DebugPrint("**** ",strerror(errno));
+	 Disconnect();
+	 return STORE_FAILED;
+      }
+      saved_errno=errno;
+      Disconnect();
+      SetError(SEE_ERRNO,strerror(saved_errno));
+      return error_code;
+   }
+   retries=0;
+   BytesUsed(res);
+   pos+=res;
+   real_pos+=res;
+   return(res);
+}
+
+int Http::SendEOT()
+{
+   if(sent_eot)
+      return OK;
+   if(mode==STORE)
+   {
+      if(state==RECEIVING_HEADER)
+      {
+	 shutdown(sock,1);
+	 sent_eot=true;
+      	 return(OK);
+      }
+      return(DO_AGAIN);
+   }
+   return(OK);
 }
 
 int Http::StoreStatus()
 {
-   //FIXME
+   if(!sent_eot && state==RECEIVING_HEADER)
+      SendEOT();
+   return Done();
 }
 
 const char *Http::CurrentStatus()
@@ -859,6 +943,8 @@ const char *Http::CurrentStatus()
    case CONNECTING:
       return(_("Connecting..."));
    case RECEIVING_HEADER:
+      if(mode==STORE && !sent_eot && !status)
+	 return(_("Sending data"));
       if(!status)
 	 return(_("Waiting for response..."));
       return(_("Fetching headers..."));

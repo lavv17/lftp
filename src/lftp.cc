@@ -53,8 +53,8 @@
 #include "history.h"
 #include "log.h"
 #include "DummyProto.h"
-#include "resource.h"
 #include "Resolver.h"
+#include "ResMgr.h"
 
 #include "confpaths.h"
 

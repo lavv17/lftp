@@ -25,7 +25,6 @@
 #include <pwd.h>
 #include <unistd.h>
 
-#include "resource.h"
 #include "ResMgr.h"
 #include "url.h"
 

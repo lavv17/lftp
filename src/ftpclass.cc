@@ -48,7 +48,6 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 #include <ctype.h>
 #include <time.h>
 #include <assert.h>
-#include <pwd.h>
 
 #ifdef TM_IN_SYS_TIME
 # include <sys/time.h>
@@ -74,7 +73,6 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 
 #include "xalloca.h"
 
-#define FTPUSER "anonymous"
 #define FTPPORT "ftp"
 #define FTP_DATA_PORT 20
 
@@ -86,8 +84,6 @@ void  Ftp::ClassInit()
 {
    // register the class
    Register("ftp",Ftp::New);
-   if(ResMgr::Query("ftp:anon-pass",0)==(const char *)0)
-      ResMgr::Set("ftp:anon-pass",0,DefaultAnonPass());
 }
 
 Ftp *Ftp::ftp_chain=0;
@@ -2733,7 +2729,12 @@ const char *Ftp::CurrentStatus()
       return(_("Waiting for data connection..."));
    case(DATA_OPEN_STATE):
       if(data_sock!=-1)
-         return(_("Data connection open"));
+      {
+	 if(mode==STORE)
+	    return(_("Sending data"));
+         else
+	    return(_("Receiving data"));
+      }
       return(_("Waiting for transfer to complete"));
    case(FATAL_STATE):
       return(_("Fatal protocol error occured"));
@@ -2980,10 +2981,6 @@ void Ftp::Reconfig()
    anon_user=xstrdup(Query("anon-user",c));
    xfree(anon_pass);
    anon_pass=xstrdup(Query("anon-pass",c));
-   if(anon_user==0)
-      anon_user=xstrdup(FTPUSER);
-   if(anon_pass==0)
-      anon_pass=xstrdup(DefaultAnonPass());
 
    SetProxy(Query("proxy",c));
 
@@ -3055,21 +3052,6 @@ const char *Ftp::make_skey_reply()
       return 0;
 
    return calculate_skey_response(skey_sequence,buf,pass);
-}
-
-const char *Ftp::DefaultAnonPass()
-{
-   static char *pass=0;
-
-   if(pass)
-      return pass;
-
-   struct passwd *pw=getpwuid(getuid());
-   const char *u=pw?pw->pw_name:"unknown";
-   pass=(char*)xmalloc(strlen(u)+3);
-   sprintf(pass,"-%s@",u);
-
-   return pass;
 }
 
 int Ftp::Buffered()
