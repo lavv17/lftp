@@ -32,6 +32,10 @@
 #include <errno.h>
 #include "misc.h"
 
+#ifndef S_ISREG
+# define S_ISREG(mode) (S_IFREG==(mode&S_IFMT))
+#endif
+
 int   PutJob::Do()
 {
    RateDrain();
@@ -45,6 +49,8 @@ int   PutJob::Do()
 
    if(Done())
       return m;
+
+   session->Resume(); // later we can suspend it again if needed.
 
    // now deal with next todo
    if(remote_size==-1)
@@ -73,7 +79,7 @@ int   PutJob::Do()
    {
       if(size!=-1)
       {
-	 if(remote_size>=size)	  // assume done
+	 if(size>=0 && remote_size>=size) // assume done
 	 {
 	    NextFile();
 	    return MOVED;
@@ -173,11 +179,11 @@ remote_error:
 	 }
       }
 
-      if(size==-1 || size<offset)
+      if(size==-1 || (size>=0 && size<offset))
       {
 	 struct stat st;
 	 res=fstat(fd,&st);
-	 if(res==-1)
+	 if(res==-1 || (st.st_size<=0 && !S_ISREG(st.st_mode)))
 	    size=-2;
 	 else
 	 {
