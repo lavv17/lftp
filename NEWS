@@ -1,3 +1,17 @@
+Version 2.3.10 - 2001-05-11
+
+* used libtool to build modules (finally).
+* allow open "" to switch to disconnected dummy session.
+* allow adding bookmark for disconnected dummy session.
+* fixed ftp listing time conversion for DST.
+* fixed http Referer generation: don't add extra /.
+* fixed two buffer overflows (reported by Julie PELAT <42@wanadoo.fr>)
+* fixed rare deadlock message in case of ftp timeout.
+* included gettext-0.10.37.
+* included readline-4.2.
+* new translation zh_TW (by R.I.P. Deaddog <maddog@linuxhall.org>).
+* made `lftp@' the default ftp password.
+
 Version 2.3.9 - 2001-03-22
 
 * new setting module:path, path to look for modules.

@@ -1,8 +1,8 @@
-%define version 2.3.9
+%define version 2.3.10
 %define release 1
-%define use_modules 1
+%define use_modules 0
 
-Summary: sophisticated command line file transfer program
+Summary: Sophisticated CLI file transfer program
 Name: lftp
 Version: %{version}
 Release: %{release}
@@ -14,30 +14,30 @@ Copyright: GPL
 #Packager: Manoj Kasichainula <manojk+rpm@io.com>
 
 %description
-lftp is command line file transfer program. It supports FTP and HTTP
-protocols. GNU Readline library is used for input.
+lftp is CLI file transfer program. It supports FTP and HTTP
+protocols, has lots of features. It was designed with reliability in mind.
+GNU Readline library is used for input.
 
 %prep
 %setup
-#%setup -n %{name}
 
 %build
 
 # Make sure that all message catalogs are built
-if [ $LINGUAS ]; then
+if [ "$LINGUAS" ]; then
     unset LINGUAS
 fi
 
 # The lftp maintainer seems to use a newer version of libtool than Red
 # Hat (even 7.0) ships with. So make sure that we don't muck with
 # ltconfig
-%define __libtoolize true
+%define __libtoolize :
 %if %use_modules
-    %configure --with-modules --mandir=%{_mandir}
+    %configure --with-modules
 %else
-    %configure --mandir=%{_mandir}
+    %configure
 %endif
-make
+make DESTDIR=%{buildroot}
 
 %install
 rm -rf %{buildroot}
@@ -52,7 +52,7 @@ rm -rf %{buildroot}
 %config /etc/lftp.conf
 %attr(755 root root) %{_bindir}/*
 %if %use_modules
-%{_libdir}/*
+%{_libdir}/lftp/*/*.so
 %endif
 %{_mandir}/man*/*
 %attr(- root root) %{_datadir}/lftp
