@@ -159,41 +159,38 @@ int   FileAccess::Poll(int fd,int ev)
 
 int   FileAccess::CheckHangup(struct pollfd *pfd,int num)
 {
-#ifdef SO_ERROR
    for(int i=0; i<num; i++)
    {
+#ifdef SO_ERROR
       char  str[256];
       int   s_errno=0;
       socklen_t len;
 
       errno=0;
 
-/* When the poll() is emulated by select(), there is no error condition
-   flag, so we can only check for socket errors */
-
 // Where does the error number go - to errno or to the pointer?
 // It seems that to errno, but if the pointer is NULL it dumps core.
 // (solaris 2.5)
 // It seems to be different on glibc 2.0 - check both errno and s_errno
 
-#ifdef HAVE_POLL
-      if(pfd[i].revents&POLLERR)
-#endif
+      len=sizeof(s_errno);
+      getsockopt(pfd[i].fd,SOL_SOCKET,SO_ERROR,(char*)&s_errno,&len);
+      if(errno==ENOTSOCK)
+	 return 0;
+      if(errno!=0 || s_errno!=0)
       {
-	 len=sizeof(s_errno);
-	 getsockopt(pfd[i].fd,SOL_SOCKET,SO_ERROR,(char*)&s_errno,&len);
-	 if(errno==ENOTSOCK)
-	    return 0;
-	 if(errno!=0 || s_errno!=0)
-	 {
-	    sprintf(str,_("Socket error (%s) - reconnecting"),
-				       strerror(errno?errno:s_errno));
-	    DebugPrint("**** ",str);
-	    return 1;
-	 }
+	 sprintf(str,_("Socket error (%s) - reconnecting"),
+				    strerror(errno?errno:s_errno));
+	 DebugPrint("**** ",str);
+	 return 1;
+      }
+#endif /* SO_ERROR */
+      if(pfd[i].revents&POLLERR)
+      {
+	 DebugPrint("**** ","POLLERR");
+	 return 1;
       }
    } /* end for */
-#endif /* SO_ERROR */
    return 0;
 }
 
@@ -750,9 +747,18 @@ void FileAccess::BytesReset()
 ResValue FileAccess::Query(const char *name,const char *closure)
 {
    const char *prefix=GetProto();
-   char *fullname=(char*)alloca(strlen(prefix)+1+strlen(name)+1);
+   char *fullname=(char*)alloca(3+strlen(prefix)+1+strlen(name)+1);
    sprintf(fullname,"%s:%s",prefix,name);
-   return ResMgr::Query(fullname,closure);
+   ResDecl *type;
+   ResValue res(0);
+   if(ResMgr::FindVar(fullname,&type)==0)
+      res=ResMgr::Query(fullname,closure);
+   else
+   {
+      sprintf(fullname,"net:%s",name);
+      res=ResMgr::Query(fullname,closure);
+   }
+   return res;
 }
 
 void FileAccess::Reconfig()

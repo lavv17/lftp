@@ -34,7 +34,7 @@ class SignalHook
    static void cnt_handler(int sig);
    static void set_signal(int sig,void (*handler)(int));
 public:
-   static void DoCount(int sig) { set_signal(sig,cnt_handler); }
+   static void DoCount(int sig) { set_signal(sig,&SignalHook::cnt_handler); }
    static int GetCount(int sig) { return counts[sig]; }
    static void ResetCount(int sig) { counts[sig]=0; }
    static void IncreaseCount(int sig) { counts[sig]++; }

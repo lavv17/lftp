@@ -135,6 +135,7 @@ public:
       {
 	 return s;
       }
+   bool is_nil() { return s==0; }
 };
 
 #endif //RESMGR_H

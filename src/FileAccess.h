@@ -365,12 +365,13 @@ public:
 
 class DirList : public FileAccessOperation
 {
+protected:
    Buffer *buf;
    char *arg;
 public:
    DirList(const char *a)
       {
-	 buf=0;
+	 buf=new Buffer();
 	 arg=xstrdup(a);
       }
    ~DirList()
