@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-04-12 13:52+0400\n"
+"POT-Creation-Date: 2004-04-21 15:58+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,58 +41,58 @@ msgstr ""
 msgid "cd ok, cwd=%s\n"
 msgstr ""
 
-#: src/CmdExec.cc:392 src/MirrorJob.cc:497
+#: src/CmdExec.cc:391 src/MirrorJob.cc:496
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
 
-#: src/CmdExec.cc:395 src/FileCopy.cc:981
+#: src/CmdExec.cc:394 src/FileCopy.cc:981
 msgid "Too many redirections"
 msgstr ""
 
-#: src/CmdExec.cc:509 src/CmdExec.cc:571
+#: src/CmdExec.cc:508 src/CmdExec.cc:570
 msgid "Interrupt"
 msgstr ""
 
-#: src/CmdExec.cc:632
+#: src/CmdExec.cc:631
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr ""
 
-#: src/CmdExec.cc:722
+#: src/CmdExec.cc:721
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr ""
 
-#: src/CmdExec.cc:729
+#: src/CmdExec.cc:728
 msgid "Queue is stopped."
 msgstr ""
 
-#: src/CmdExec.cc:733
+#: src/CmdExec.cc:732
 msgid "Now executing:"
 msgstr ""
 
-#: src/CmdExec.cc:746
+#: src/CmdExec.cc:745
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr ""
 
-#: src/CmdExec.cc:751
+#: src/CmdExec.cc:750
 #, c-format
 msgid "\tWaiting for termination of jobs: "
 msgstr ""
 
-#: src/CmdExec.cc:762
+#: src/CmdExec.cc:761
 #, c-format
 msgid "\tRunning\n"
 msgstr ""
 
-#: src/CmdExec.cc:766
+#: src/CmdExec.cc:765
 #, c-format
 msgid "\tWaiting for command\n"
 msgstr ""
 
-#: src/CmdExec.cc:1285
+#: src/CmdExec.cc:1284
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr ""
@@ -111,7 +111,7 @@ msgstr ""
 msgid "File cannot be accessed"
 msgstr ""
 
-#: src/FileAccess.cc:292 src/ftpclass.cc:3791 src/ftpclass.cc:3800
+#: src/FileAccess.cc:292 src/ftpclass.cc:3800 src/ftpclass.cc:3809
 msgid "Not connected"
 msgstr ""
 
@@ -217,7 +217,7 @@ msgstr ""
 msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 
-#: src/MirrorJob.cc:232 src/MirrorJob.cc:824
+#: src/MirrorJob.cc:232 src/MirrorJob.cc:823
 #, c-format
 msgid "Removing old file `%s'"
 msgstr ""
@@ -227,7 +227,7 @@ msgstr ""
 msgid "Transferring file `%s'"
 msgstr ""
 
-#: src/MirrorJob.cc:331 src/MirrorJob.cc:409 src/MirrorJob.cc:630
+#: src/MirrorJob.cc:331 src/MirrorJob.cc:409 src/MirrorJob.cc:629
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr ""
@@ -242,47 +242,47 @@ msgstr ""
 msgid "Making symbolic link `%s' to `%s'"
 msgstr ""
 
-#: src/MirrorJob.cc:550
+#: src/MirrorJob.cc:549
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr ""
 
-#: src/MirrorJob.cc:648
+#: src/MirrorJob.cc:647
 #, c-format
 msgid "Making directory `%s'"
 msgstr ""
 
-#: src/MirrorJob.cc:786
+#: src/MirrorJob.cc:785
 #, c-format
 msgid "Old directory `%s' is not removed"
 msgstr ""
 
-#: src/MirrorJob.cc:789
+#: src/MirrorJob.cc:788
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr ""
 
-#: src/MirrorJob.cc:819
+#: src/MirrorJob.cc:818
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr ""
 
-#: src/MirrorJob.cc:1252
+#: src/MirrorJob.cc:1251
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1338 src/commands.cc:976 src/commands.cc:1064
+#: src/MirrorJob.cc:1337 src/commands.cc:976 src/commands.cc:1064
 #: src/commands.cc:1450 src/commands.cc:1484 src/commands.cc:1583
 #: src/commands.cc:1871 src/commands.cc:2067 src/commands.cc:2240
 #: src/commands.cc:2247 src/commands.cc:2429 src/commands.cc:2456
-#: src/commands.cc:2463 src/commands.cc:2789 src/commands.cc:3071
+#: src/commands.cc:2463 src/commands.cc:2789 src/commands.cc:3070
 #: src/SleepJob.cc:139
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1372 src/MirrorJob.cc:1388 src/commands.cc:841
+#: src/MirrorJob.cc:1371 src/MirrorJob.cc:1387 src/commands.cc:841
 #: src/commands.cc:1962 src/DummyProto.cc:73
 msgid " - not supported protocol"
 msgstr ""
@@ -343,7 +343,7 @@ msgstr ""
 msgid "invalid pair of numbers"
 msgstr ""
 
-#: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3796
+#: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3805
 #: src/Http.cc:1685
 msgid "Resolving host address..."
 msgstr ""
@@ -1231,7 +1231,7 @@ msgid "Usage: %s <jobno> ... | all\n"
 msgstr ""
 
 #: src/commands.cc:2033 src/commands.cc:2165 src/commands.cc:2309
-#: src/commands.cc:2594 src/commands.cc:2668 src/commands.cc:3083
+#: src/commands.cc:2594 src/commands.cc:2668 src/commands.cc:3082
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr ""
@@ -1460,150 +1460,150 @@ msgstr ""
 msgid "cannot create socket of address family %d"
 msgstr ""
 
-#: src/ftpclass.cc:1423
+#: src/ftpclass.cc:1425
 msgid "SITE CHMOD is not supported by this site"
 msgstr ""
 
-#: src/ftpclass.cc:1428
+#: src/ftpclass.cc:1430
 msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 msgstr ""
 
-#: src/ftpclass.cc:1433
+#: src/ftpclass.cc:1435
 msgid "MLST and MLSD are not supported by this site"
 msgstr ""
 
-#: src/ftpclass.cc:1438
+#: src/ftpclass.cc:1440
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr ""
 
-#: src/ftpclass.cc:1846 src/ftpclass.cc:1885
+#: src/ftpclass.cc:1848 src/ftpclass.cc:1887
 msgid "unsupported network protocol"
 msgstr ""
 
-#: src/ftpclass.cc:1997
+#: src/ftpclass.cc:1999
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr ""
 
-#: src/ftpclass.cc:2004
+#: src/ftpclass.cc:2006
 #, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr ""
 
-#: src/ftpclass.cc:2029 src/ftpclass.cc:3650
+#: src/ftpclass.cc:2031 src/ftpclass.cc:3659
 msgid "Switching passive mode off"
 msgstr ""
 
-#: src/ftpclass.cc:2487 src/ftpclass.cc:2606 src/Http.cc:1028
-msgid "Peer closed connection"
-msgstr ""
-
-#: src/ftpclass.cc:2567
-msgid "Persist and retry"
-msgstr ""
-
-#: src/ftpclass.cc:2821
-msgid "Closing data socket"
-msgstr ""
-
-#: src/ftpclass.cc:2837
-msgid "Closing aborted data socket"
-msgstr ""
-
-#: src/ftpclass.cc:3484
-msgid "saw file size in response"
-msgstr ""
-
-#: src/ftpclass.cc:3495
-msgid "remote end closed connection"
-msgstr ""
-
-#: src/ftpclass.cc:3503
-msgid "extra server response"
-msgstr ""
-
-#: src/ftpclass.cc:3517 src/ftpclass.cc:3540
-msgid "Turning on sync-mode"
-msgstr ""
-
-#: src/ftpclass.cc:3667
-msgid "Switching passive mode on"
-msgstr ""
-
-#: src/ftpclass.cc:3758
+#: src/ftpclass.cc:2290 src/ftpclass.cc:3767
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 
-#: src/ftpclass.cc:3777
+#: src/ftpclass.cc:2495 src/ftpclass.cc:2614 src/Http.cc:1028
+msgid "Peer closed connection"
+msgstr ""
+
+#: src/ftpclass.cc:2575
+msgid "Persist and retry"
+msgstr ""
+
+#: src/ftpclass.cc:2830
+msgid "Closing data socket"
+msgstr ""
+
+#: src/ftpclass.cc:2846
+msgid "Closing aborted data socket"
+msgstr ""
+
+#: src/ftpclass.cc:3493
+msgid "saw file size in response"
+msgstr ""
+
+#: src/ftpclass.cc:3504
+msgid "remote end closed connection"
+msgstr ""
+
+#: src/ftpclass.cc:3512
+msgid "extra server response"
+msgstr ""
+
+#: src/ftpclass.cc:3526 src/ftpclass.cc:3549
+msgid "Turning on sync-mode"
+msgstr ""
+
+#: src/ftpclass.cc:3676
+msgid "Switching passive mode on"
+msgstr ""
+
+#: src/ftpclass.cc:3786
 msgid "FEAT negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:3784
+#: src/ftpclass.cc:3793
 msgid "Sending commands..."
 msgstr ""
 
-#: src/ftpclass.cc:3786 src/ftpclass.cc:3814 src/ftpclass.cc:3827
+#: src/ftpclass.cc:3795 src/ftpclass.cc:3823 src/ftpclass.cc:3836
 #: src/Http.cc:1700
 msgid "Waiting for response..."
 msgstr ""
 
-#: src/ftpclass.cc:3788
+#: src/ftpclass.cc:3797
 msgid "Delaying before retry"
 msgstr ""
 
-#: src/ftpclass.cc:3789 src/Http.cc:1693
+#: src/ftpclass.cc:3798 src/Http.cc:1693
 msgid "Connection idle"
 msgstr ""
 
-#: src/ftpclass.cc:3803 src/Http.cc:1691 src/Http.cc:1698
+#: src/ftpclass.cc:3812 src/Http.cc:1691 src/Http.cc:1698
 msgid "Connecting..."
 msgstr ""
 
-#: src/ftpclass.cc:3807
+#: src/ftpclass.cc:3816
 msgid "TLS negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:3809
+#: src/ftpclass.cc:3818
 msgid "Connected"
 msgstr ""
 
-#: src/ftpclass.cc:3811
+#: src/ftpclass.cc:3820
 msgid "Logging in..."
 msgstr ""
 
-#: src/ftpclass.cc:3815
+#: src/ftpclass.cc:3824
 msgid "Making data connection..."
 msgstr ""
 
-#: src/ftpclass.cc:3818
+#: src/ftpclass.cc:3827
 msgid "Changing remote directory..."
 msgstr ""
 
-#: src/ftpclass.cc:3824
+#: src/ftpclass.cc:3833
 msgid "Waiting for other copy peer..."
 msgstr ""
 
-#: src/ftpclass.cc:3826 src/ftpclass.cc:3847
+#: src/ftpclass.cc:3835 src/ftpclass.cc:3856
 msgid "Waiting for transfer to complete"
 msgstr ""
 
-#: src/ftpclass.cc:3829
+#: src/ftpclass.cc:3838
 msgid "Waiting for data connection..."
 msgstr ""
 
-#: src/ftpclass.cc:3835
+#: src/ftpclass.cc:3844
 msgid "Sending data/TLS"
 msgstr ""
 
-#: src/ftpclass.cc:3837
+#: src/ftpclass.cc:3846
 msgid "Receiving data/TLS"
 msgstr ""
 
-#: src/ftpclass.cc:3843 src/Http.cc:1696
+#: src/ftpclass.cc:3852 src/Http.cc:1696
 msgid "Sending data"
 msgstr ""
 
-#: src/ftpclass.cc:3845 src/Http.cc:1703
+#: src/ftpclass.cc:3854 src/Http.cc:1703
 msgid "Receiving data"
 msgstr ""
 

@@ -1,3 +1,12 @@
+Version 3.0.3 - 2004-04-23
+
+* cls for sftp can now print symbolic user, group and number of hard links.
+* make `cd dir/' check if dir exists.
+* follow ftp:ssl-force even if ftp server does not advertise AUTH in FEAT reply.
+* fixed excessive STAT commands in FXP transfer.
+* fixed core dump when disconnecting with active FXP transfer.
+* fixed memory leak in sftp uploading and file renaming.
+
 Version 3.0.2 - 2004-04-15
 
 * support for ftp commands CLNT, HOST and OPTS MLST added.

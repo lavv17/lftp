@@ -1,4 +1,4 @@
-** lftp-2.6.x
+** lftp-3.0.x
 
 This package `lftp' contains the following components:
 
@@ -14,13 +14,14 @@ lftp is written in C++ and uses a cooperative-threaded model.
 
 lftp
 ~~~~
-lftp is command line file transfer program. It supports FTP and HTTP
-protocols. GNU Readline library is used for input.
+lftp is command line file transfer program. It supports FTP, HTTP,
+FISH, SFTP and FILE (local FS) protocols. GNU Readline library is used
+for input.
 
 Low level stuff supported: ftp proxy, http proxy, ftp over http,
 opie/skey, fxp transfers, automatic retrying on non-fatal errors and
-timeouts, ipv6, socks. See FEATURES for more detailed list of
-features.
+timeouts, ipv6, socks, http/1.1, sftp v3-4. See FEATURES for more
+detailed list of features.
 
 Every operation in lftp is reliable, that is any non-fatal error is
 ignored and the operation is retried. So if downloading breaks, it
