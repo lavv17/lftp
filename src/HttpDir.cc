@@ -96,6 +96,12 @@ void remove_tags(char *buf)
       char *less=strchr(buf,'<');
       if(!less)
 	 break;
+      if(token_eq(less+1,strlen(less+1),"a"))
+      {
+	 // don't allow anchors to be skipped.
+      	 *less=0;
+	 break;
+      }
       char *more=strchr(less+1,'>');
       if(!more)
 	 break;
