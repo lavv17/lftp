@@ -29,7 +29,7 @@
 /*
  * Implementation notes:
  *
- * Background things we can't get around: 
+ * Background things we can't get around:
  * We must buffer (via FileCopy) output to a filter, since it might block.
  *
  * We must buffer the output from the filter to an output FileCopyPeer (ie.
@@ -61,7 +61,6 @@
 #include "url.h"
 #include "misc.h"
 #include "StatusLine.h"
-#include "LocalAccess.h"
 
 #include <assert.h>
 #include <unistd.h>
@@ -179,7 +178,7 @@ OutputJob::OutputJob(FDStream *output_, const char *a0)
        * User pipes aren't handled by us yet: instead of being set with
        * SetFilter, they're being set up ahead of time and passed to
        * us as an FDStream, so we don't really know if we're being filtered.
-       * 
+       *
        * So, until we handle pipes directly, disable broken pipe whenever
        * we're being sent anywhere but stdout. */
       fail_if_broken=false;
@@ -219,7 +218,9 @@ OutputJob::OutputJob(const char *path, const char *a0, FileAccess *fa)
    bool reuse = false;
    if(!fa)
    {
-      fa = new LocalAccess;
+      fa = FileAccess::New("file");
+      if(!fa)
+	 fa = new DummyNoProto("file");
       reuse = true;
    }
 
@@ -388,7 +389,7 @@ int OutputJob::Done()
 {
    if(Error())
       return true;
-   
+
    if(!initialized)
       return false;
 
@@ -396,7 +397,7 @@ int OutputJob::Done()
      return false;
    if(output && !output->Done())
      return false;
-   
+
    return true;
 }
 
@@ -530,4 +531,3 @@ int OutputJob::AcceptSig(int sig)
       AcceptSig(SIGCONT);
    return m;
 }
-
