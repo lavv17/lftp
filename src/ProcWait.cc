@@ -51,8 +51,16 @@ int ProcWait::Do()
 	 return MOVED;
       if(errno==EINTR || errno==EAGAIN)
 	 goto leave;
+      // waitpid failed, check the process existence
+      if(kill(pid,0)==-1)
+      {
+	 status=TERMINATED;
+	 term_info=255;
+	 return MOVED;
+      }
       perror("waitpid");
-      goto leave;
+      TimeoutS(30);
+      return STALL;
    }
    if(res==pid)
    {
