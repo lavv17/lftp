@@ -962,7 +962,7 @@ Job *CmdExec::builtin_queue()
    static struct option queue_options[]=
    {
       {"move",required_argument,0,'m'},
-      {"delete",optional_argument,0,'d'},
+      {"delete",no_argument,0,'d'},
       {0,0,0,0}
    };
    enum { ins, del, move } mode = ins;
