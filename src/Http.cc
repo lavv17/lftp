@@ -1209,9 +1209,10 @@ int Http::Do()
 
 	 if(H_REDIRECTED(status_code))
 	 {
-	    if(mode==QUOTE_CMD && !strncasecmp(file,"POST ",5))
+	    if(location && !url::is_url(location))
 	    {
-	       if(location[0]!='/' && !strstr(location,"://"))
+	       const char *the_file=file;
+	       if(mode==QUOTE_CMD && !strncasecmp(file,"POST ",5))
 	       {
 		  const char *scan=file+5;
 		  while(*scan==' ')
@@ -1220,26 +1221,27 @@ int Http::Do()
 		  char *space=strchr(the_post_file,' ');
 		  if(space)
 		     *space=0;
-		  char *new_location=alloca_strdup2(GetConnectURL(),
-				       strlen(the_post_file)+strlen(location));
-		  int p_ind=url::path_index(new_location);
-		  if(location[0]=='/')
-		     strcpy(new_location+p_ind,location);
+		  the_file=the_post_file;
+	       }
+	       char *new_location=alloca_strdup2(GetConnectURL(),
+				    strlen(the_file)+strlen(location));
+	       int p_ind=url::path_index(new_location);
+	       if(location[0]=='/')
+		  strcpy(new_location+p_ind,location);
+	       else
+	       {
+		  if(the_file[0]=='/')
+		     strcpy(new_location+p_ind,the_file);
 		  else
 		  {
-		     if(the_post_file[0]=='/')
-			strcpy(new_location+p_ind,the_post_file);
-		     else
-		     {
-			char *slash=strrchr(new_location,'/');
-			strcpy(slash+1,the_post_file);
-		     }
 		     char *slash=strrchr(new_location,'/');
-		     strcpy(slash+1,location);
+		     strcpy(slash+1,the_file);
 		  }
-		  xfree(location);
-		  location=xstrdup(new_location);
+		  char *slash=strrchr(new_location,'/');
+		  strcpy(slash+1,location);
 	       }
+	       xfree(location);
+	       location=xstrdup(new_location);
 	    }
 	    sprintf(err,"%s (%s -> %s)",status+status_consumed,file,
 				    location?location:"nowhere");

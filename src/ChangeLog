@@ -1,3 +1,7 @@
+2002-05-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc: more generic non-absolute Location: handling; use url::is_url.
+
 2002-05-07  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: move to next peer if no greeting received.
