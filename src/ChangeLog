@@ -1,6 +1,7 @@
 2004-04-05  Alexander V. Lukyanov <lav@yars.free.net>
 
-	* SFtp.cc: fix data packet debug message (s was not initialized).
+	* SFtp.cc: fix data packet debug message (s was not initialized);
+	  call CheckTimeout properly, so that net timeout will be handled.
 
 2004-04-04  Alexander V. Lukyanov <lav@yars.free.net>
 
