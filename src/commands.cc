@@ -60,6 +60,8 @@
 #include "xalloca.h"
 #include "bookmark.h"
 
+#include "confpaths.h"
+
 Bookmark lftp_bookmarks;
 History	 cwd_history;
 
@@ -83,6 +85,8 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
 	 "  add <name> [<loc>] - add current place or given location to bookmarks\n"
 	 "                       and bind to given name\n"
 	 "  del <name>         - remove bookmark with the name\n"
+	 "  edit               - start editor on bookmarks file\n"
+	 "  import <type>      - import foreign bookmarks\n"
 	 "  list               - list bookmarks (default)\n")},
    {"bye",     &do_exit,   0,"exit"},
    {"cache",   &do_cache,  N_("cache [SUBCMD]"),
@@ -1711,8 +1715,9 @@ CMD(bookmark)
 	 eprintf(_("%s: import type required (netscape,ncftp)\n"),args->a0());
       else
       {
-	 char *cmd=(char*)alloca(strlen(op)+15);
-	 sprintf(cmd,"shell import-%s\n",op);
+	 const char *fmt="shell " PKGDATADIR "/import-%s\n";
+	 char *cmd=(char*)alloca(strlen(op)+strlen(fmt)+1);
+	 sprintf(cmd,fmt,op);
 	 PrependCmd(cmd);
 	 exit_code=0;
       }
