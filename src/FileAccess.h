@@ -93,11 +93,6 @@ protected:
 
    char	 *last_error_resp;
 
-   // these items are controlled globally
-   static FILE *debug_file;
-   static void (*debug_callback)(char *msg);
-   static int  debug_level;
-
    void  DebugPrint(const char *prefix,const char *str,int level=0);
 
    time_t   try_time;
@@ -185,13 +180,6 @@ public:
 
    bool	 IsClosed() { return mode==CLOSED; }
    bool	 IsOpen() { return !IsClosed(); }
-
-   static void SetDebug(FILE *new_debug_file,int new_debug_level,void (*cb)(char*)=0)
-   {
-      debug_file=new_debug_file;
-      debug_callback=cb;
-      debug_level=new_debug_level;
-   }
 
    virtual void CopyOptions(FileAccess *fa) { (void)fa; }
    virtual bool IsConnected() { return false; }

@@ -29,11 +29,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include "xalloca.h"
-
-
-FILE  *FileAccess::debug_file=0;
-void  (*FileAccess::debug_callback)(char *msg)=0;
-int   FileAccess::debug_level=0;
+#include "log.h"
 
 void FileAccess::Init()
 {
@@ -102,11 +98,8 @@ FileAccess::~FileAccess()
 
 void  FileAccess::DebugPrint(const char *prefix,const char *str,int level)
 {
-   if(level>debug_level)
+   if(!Log::global)
       return;
-   if(!debug_file && !debug_callback)
-      return;
-
    char *msg=(char*)alloca(strlen(prefix)+strlen(str)+6);
    while(*str)
    {
@@ -118,21 +111,14 @@ void  FileAccess::DebugPrint(const char *prefix,const char *str,int level)
 	    msg[msglen++]=*str;
 	 str++;
       }
+      msg[msglen++]='\n';
       msg[msglen]=0;
 
-      if(debug_file)
-      {
-	 fputs(msg,debug_file);
-	 fputc('\n',debug_file);
-      }
-      if(debug_callback)
-	 (*debug_callback)(msg);
+      Log::global->Write(level,msg);
 
       if(!*str++)
          break;
    }
-   if(debug_file)
-      fflush(debug_file);
 }
 
 int   FileAccess::Poll(int fd,int ev)
