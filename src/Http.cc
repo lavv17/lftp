@@ -287,7 +287,12 @@ void Http::SendRequest(const char *connection,const char *f)
 	 proto="ftp";
       }
       sprintf(pfile,"%s://",proto);
-      url::encode_string(hostname,pfile+strlen(pfile));
+      url::encode_string(hostname,pfile+strlen(pfile),URL_HOST_UNSAFE);
+      if(portname)
+      {
+	 strcat(pfile,":");
+	 url::encode_string(portname,pfile+strlen(pfile),URL_PORT_UNSAFE);
+      }
    }
    else
    {
@@ -1055,6 +1060,8 @@ int Http::Write(const void *buf,int size)
       if(size>allowed)
 	 size=allowed;
    }
+   if(size==0)
+      return 0;
    int res=write(sock,buf,size);
    if(res==-1)
    {
