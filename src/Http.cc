@@ -21,6 +21,11 @@
 /* $Id$ */
 
 #include <config.h>
+#include <stdio.h>
+#ifdef NEED_TRIO
+#include "trio.h"
+#define vsnprintf trio_vsnprintf
+#endif
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -239,16 +244,12 @@ void Http::Close()
    super::Close();
 }
 
-#if defined(HAVE_VSNPRINTF) && !defined(HAVE_VSNPRINTF_DECL)
-CDECL int vsnprintf(char *,size_t,const char *,va_list);
-#endif
-
 void Http::Send(const char *format,...)
 {
    va_list va;
    va_start(va,format);
    char *str;
-#ifdef HAVE_VSNPRINTF
+
    static int max_send=256;
    for(;;)
    {
@@ -262,10 +263,7 @@ void Http::Send(const char *format,...)
       }
       max_send*=2;
    }
-#else // !HAVE_VSNPRINTF
-   str=string_alloca(2048);
-   vsprintf(str,format,va);
-#endif
+
    DebugPrint("---> ",str,5);
    send_buf->Put(str);
    va_end(va);

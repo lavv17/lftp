@@ -24,6 +24,10 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+#ifdef NEED_TRIO
+#include "trio.h"
+#define vsnprintf trio_vsnprintf
+#endif
 #include "xmalloc.h"
 #include "xstring.h"
 #include "log.h"
@@ -75,7 +79,6 @@ void Log::Format(int l,const char *f,...)
    if(buf==0)
       buf=(char*)xmalloc(buf_alloc=1024);
 
-#ifdef HAVE_VSNPRINTF
    for(;;)
    {
       int res=vsnprintf(buf,buf_alloc,f,v);
@@ -87,9 +90,6 @@ void Log::Format(int l,const char *f,...)
 	 res=buf_alloc*2;
       buf=(char*)xrealloc(buf,buf_alloc=res);
    }
-#else
-   vsprintf(buf,f,v);
-#endif
 
    va_end(v);
    Write(l,buf);

@@ -20,6 +20,11 @@
 
 #include <config.h>
 #include "Fish.h"
+#include <stdio.h>
+#ifdef NEED_TRIO
+#include "trio.h"
+#define vsnprintf trio_vsnprintf
+#endif
 #include <unistd.h>
 #include <errno.h>
 #include <stdarg.h>
@@ -349,7 +354,7 @@ void Fish::Send(const char *format,...)
    va_list va;
    va_start(va,format);
    char *str;
-#ifdef HAVE_VSNPRINTF
+
    static int max_send=256;
    for(;;)
    {
@@ -363,10 +368,7 @@ void Fish::Send(const char *format,...)
       }
       max_send*=2;
    }
-#else // !HAVE_VSNPRINTF
-   str=string_alloca(2048);
-   vsprintf(str,format,va);
-#endif
+
    DebugPrint("---> ",str,5);
    send_buf->Put(str);
    va_end(va);
