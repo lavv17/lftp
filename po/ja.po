@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
-"POT-Creation-Date: 2002-09-10 16:55+0400\n"
+"POT-Creation-Date: 2002-11-04 21:26+0300\n"
 "PO-Revision-Date: 2002-04-12 00:06+0900\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -43,7 +43,7 @@ msgstr "cd 成功、cwd=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: `%s'へのリダイレクションを受け取りました\n"
 
-#: src/CmdExec.cc:394 src/FileCopy.cc:946
+#: src/CmdExec.cc:394 src/FileCopy.cc:948
 msgid "Too many redirections"
 msgstr "リダイレクションが多すぎます"
 
@@ -105,7 +105,7 @@ msgstr "アクセス失敗: %s"
 msgid "File cannot be accessed"
 msgstr "ファイルにアクセスできません"
 
-#: src/FileAccess.cc:321 src/ftpclass.cc:3649 src/ftpclass.cc:3658
+#: src/FileAccess.cc:321 src/ftpclass.cc:3652 src/ftpclass.cc:3661
 msgid "Not connected"
 msgstr "接続されていません"
 
@@ -331,7 +331,7 @@ msgstr "この設定では終止が定義されていません"
 msgid "invalid pair of numbers"
 msgstr "不正な数"
 
-#: src/Resolver.cc:184 src/Resolver.cc:226 src/ftpclass.cc:3654
+#: src/Resolver.cc:184 src/Resolver.cc:226 src/ftpclass.cc:3657
 #: src/Http.cc:1645
 msgid "Resolving host address..."
 msgstr "ホストアドレスを解決しています..."
@@ -1705,126 +1705,126 @@ msgstr "SITE CHMOD はこのサイトではサポートされていません"
 msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 msgstr "SITE CHMOD はこのサイトではサポートされていません"
 
-#: src/ftpclass.cc:1736 src/ftpclass.cc:1776
+#: src/ftpclass.cc:1739 src/ftpclass.cc:1779
 msgid "unsupported network protocol"
 msgstr "サポートされていないネットワークプロトコルです"
 
-#: src/ftpclass.cc:1886
+#: src/ftpclass.cc:1889
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "データソケットを (%s) のポート %u に接続中"
 
-#: src/ftpclass.cc:1911 src/ftpclass.cc:3520
+#: src/ftpclass.cc:1914 src/ftpclass.cc:3523
 msgid "Switching passive mode off"
 msgstr "パッシヴモードをオフに切り替えました"
 
-#: src/ftpclass.cc:2379 src/Http.cc:999
+#: src/ftpclass.cc:2382 src/Http.cc:999
 msgid "Peer closed connection"
 msgstr "ピアが接続を閉じました"
 
-#: src/ftpclass.cc:2406
+#: src/ftpclass.cc:2409
 msgid "Persist and retry"
 msgstr "持続的に再試行します"
 
-#: src/ftpclass.cc:2519
+#: src/ftpclass.cc:2522
 msgid "Closing control socket"
 msgstr "コントロールソケットを閉じています"
 
-#: src/ftpclass.cc:2603
+#: src/ftpclass.cc:2606
 msgid "Closing data socket"
 msgstr "データソケットを閉じています"
 
-#: src/ftpclass.cc:3354
+#: src/ftpclass.cc:3357
 msgid "saw file size in response"
 msgstr "レスポンス中にファイルサイズがありました"
 
-#: src/ftpclass.cc:3365
+#: src/ftpclass.cc:3368
 #, fuzzy
 msgid "remote end closed connection"
 msgstr "リモートエンドが接続を閉じました"
 
-#: src/ftpclass.cc:3373
+#: src/ftpclass.cc:3376
 msgid "extra server response"
 msgstr "余分なサーバレスポンスです"
 
-#: src/ftpclass.cc:3386 src/ftpclass.cc:3415
+#: src/ftpclass.cc:3389 src/ftpclass.cc:3418
 msgid "Turning on sync-mode"
 msgstr "sync モードを有効にしました"
 
-#: src/ftpclass.cc:3537
+#: src/ftpclass.cc:3540
 msgid "Switching passive mode on"
 msgstr "パッシヴモードをオンに切り替えました"
 
-#: src/ftpclass.cc:3604
+#: src/ftpclass.cc:3607
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force がセットされていますが、サーバは SSL をサポートあるいは許可して"
 "いません"
 
-#: src/ftpclass.cc:3644
+#: src/ftpclass.cc:3647
 msgid "Sending commands..."
 msgstr "コマンドを送信中..."
 
-#: src/ftpclass.cc:3646 src/ftpclass.cc:3671 src/ftpclass.cc:3684
+#: src/ftpclass.cc:3649 src/ftpclass.cc:3674 src/ftpclass.cc:3687
 #: src/Http.cc:1660
 msgid "Waiting for response..."
 msgstr "応答を待っています..."
 
-#: src/ftpclass.cc:3647 src/Http.cc:1653
+#: src/ftpclass.cc:3650 src/Http.cc:1653
 msgid "Connection idle"
 msgstr "接続アイドル"
 
-#: src/ftpclass.cc:3660 src/Http.cc:1651 src/Http.cc:1658
+#: src/ftpclass.cc:3663 src/Http.cc:1651 src/Http.cc:1658
 msgid "Connecting..."
 msgstr "接続中..."
 
-#: src/ftpclass.cc:3664
+#: src/ftpclass.cc:3667
 msgid "TLS negotiation..."
 msgstr "TLS ネゴシエーション..."
 
-#: src/ftpclass.cc:3666
+#: src/ftpclass.cc:3669
 msgid "Connected"
 msgstr "接続しました"
 
-#: src/ftpclass.cc:3668
+#: src/ftpclass.cc:3671
 msgid "Logging in..."
 msgstr "ログインしています..."
 
-#: src/ftpclass.cc:3672
+#: src/ftpclass.cc:3675
 msgid "Making data connection..."
 msgstr "データ接続を確立中..."
 
-#: src/ftpclass.cc:3675
+#: src/ftpclass.cc:3678
 msgid "Changing remote directory..."
 msgstr "リモートディレクトリを変更中..."
 
-#: src/ftpclass.cc:3681
+#: src/ftpclass.cc:3684
 msgid "Waiting for other copy peer..."
 msgstr "他のコピー相手を待っています..."
 
-#: src/ftpclass.cc:3683 src/ftpclass.cc:3704
+#: src/ftpclass.cc:3686 src/ftpclass.cc:3707
 msgid "Waiting for transfer to complete"
 msgstr "送受信の完了を待っています"
 
-#: src/ftpclass.cc:3686
+#: src/ftpclass.cc:3689
 msgid "Waiting for data connection..."
 msgstr "データ接続を待っています..."
 
-#: src/ftpclass.cc:3692
+#: src/ftpclass.cc:3695
 #, fuzzy
 msgid "Sending data/TLS"
 msgstr "データ送信中"
 
-#: src/ftpclass.cc:3694
+#: src/ftpclass.cc:3697
 #, fuzzy
 msgid "Receiving data/TLS"
 msgstr "データ受信中"
 
-#: src/ftpclass.cc:3700 src/Http.cc:1656
+#: src/ftpclass.cc:3703 src/Http.cc:1656
 msgid "Sending data"
 msgstr "データ送信中"
 
-#: src/ftpclass.cc:3702 src/Http.cc:1663
+#: src/ftpclass.cc:3705 src/Http.cc:1663
 msgid "Receiving data"
 msgstr "データ受信中"
 
@@ -2061,12 +2061,12 @@ msgstr "copy: データをすべて受信しましたが、get は戻りました\n"
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr "copy: get は %lld に戻りました。適宜 put しています\n"
 
-#: src/FileCopy.cc:943
+#: src/FileCopy.cc:945
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy: `%s' へのリダイレクションを受け取りました\n"
 
-#: src/FileCopy.cc:1144
+#: src/FileCopy.cc:1146
 msgid "file name missed in URL"
 msgstr "URL 中にファイル名がありません"
 

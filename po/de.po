@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Lftp 2.6.2\n"
-"POT-Creation-Date: 2002-09-10 16:55+0400\n"
+"POT-Creation-Date: 2002-11-04 21:26+0300\n"
 "PO-Revision-Date: 2002-09-16 15:43+0200\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: deutsch <de@li.org>\n"
@@ -46,7 +46,7 @@ msgstr "Verzeichniswechsel OK, cwd=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: Umleitung nach »%s« empfangen\n"
 
-#: src/CmdExec.cc:394 src/FileCopy.cc:946
+#: src/CmdExec.cc:394 src/FileCopy.cc:948
 msgid "Too many redirections"
 msgstr "Zu viele Umleitungen"
 
@@ -108,7 +108,7 @@ msgstr "Zugriff nicht möglich: %s"
 msgid "File cannot be accessed"
 msgstr "Dateizugriff nicht möglich"
 
-#: src/FileAccess.cc:321 src/ftpclass.cc:3649 src/ftpclass.cc:3658
+#: src/FileAccess.cc:321 src/ftpclass.cc:3652 src/ftpclass.cc:3661
 msgid "Not connected"
 msgstr "Keine Verbindung"
 
@@ -331,7 +331,7 @@ msgstr "kein Gültigkeitsbereich (closure) für diese Einstellung definiert"
 msgid "invalid pair of numbers"
 msgstr "Unzulässiges Zahlenpaar."
 
-#: src/Resolver.cc:184 src/Resolver.cc:226 src/ftpclass.cc:3654
+#: src/Resolver.cc:184 src/Resolver.cc:226 src/ftpclass.cc:3657
 #: src/Http.cc:1645
 msgid "Resolving host address..."
 msgstr "Löse Hostadresse auf..."
@@ -775,7 +775,8 @@ msgstr ""
 
 #: src/commands.cc:274
 msgid "List running jobs. -v means verbose, several -v can be specified.\n"
-msgstr "Aktive Jobs auflisten. -v bedeutet mit Details, mehrere -v sind möglich.\n"
+msgstr ""
+"Aktive Jobs auflisten. -v bedeutet mit Details, mehrere -v sind möglich.\n"
 
 #: src/commands.cc:275
 msgid "kill all|<job_no>"
@@ -916,7 +917,8 @@ msgstr ""
 " -L, --dereference      symbolische Links als Files herunterladen\n"
 " -N, --newer-than DATEI nur Dateien die neuer sind als DATEI herunterladen\n"
 " -P, --parallel[=N]     N Dateien gleichzeitig herunterladen\n"
-" -i RA, --include RA    zum regulären Ausdruck passende Dateien einschließen\n"
+" -i RA, --include RA    zum regulären Ausdruck passende Dateien "
+"einschließen\n"
 " -x RA, --exclude RA    zum regulären Ausdruck passende Dateien\n"
 "                        ausschließen\n"
 "                        RA sind erweiterte reguläre Ausdrücke (Joker)\n"
@@ -925,7 +927,8 @@ msgstr ""
 "\n"
 "Gibt man -R an, so ist das erste Verzeichnis lokal und das andere auf dem \n"
 "Host.\n"
-"Wird das zweite Verzeichnis nicht angegeben, wird die Namenswurzel(basename)\n"
+"Wird das zweite Verzeichnis nicht angegeben, wird die Namenswurzel"
+"(basename)\n"
 "des ersten Verzeichnisses verwendet.\n"
 "Werden beide Verzeichnisse weggelassen, so werden das aktuelle lokale und\n"
 "nichtlokale Verzeichnis verwendet.\n"
@@ -1587,8 +1590,10 @@ msgstr "%s: Angabe für »expire«(Ablauf) fehlt\n"
 
 #: src/commands.cc:2267
 #, c-format
-msgid "%s: %s - no such cached session. Use `scache' to look at session list.\n"
-msgstr "%s: %s - keine derartige Sitzung gecached. »scache« zeigt eine Liste.\n"
+msgid ""
+"%s: %s - no such cached session. Use `scache' to look at session list.\n"
+msgstr ""
+"%s: %s - keine derartige Sitzung gecached. »scache« zeigt eine Liste.\n"
 
 #: src/commands.cc:2284
 #, c-format
@@ -1626,7 +1631,8 @@ msgid "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 msgstr "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 
 #: src/commands.cc:2361
-msgid "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
+msgid ""
+"This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
 msgstr ""
 "Dies ist freie Software OHNE IRGENDWELCHE GARANTIEN ODER GEWÄHRLEISTUNGEN.\n"
 "Die Datei COPYING enthält Details.\n"
@@ -1736,7 +1742,8 @@ msgstr "Eingerichteter Zugang ist erforderlich, ftp:acct Variable setzen."
 
 #: src/ftpclass.cc:484
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
-msgstr "ftp:skey-force ist gesetzt und Gegenstelle unterstützt weder OPIE noch S/KEY"
+msgstr ""
+"ftp:skey-force ist gesetzt und Gegenstelle unterstützt weder OPIE noch S/KEY"
 
 #: src/ftpclass.cc:500
 msgid "Saw `unknown', assume failed login"
@@ -1767,121 +1774,122 @@ msgstr "SITE CHMOD wird von dieser Gegenstelle nicht unterstützt"
 msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 msgstr "SITE CHMOD abgeschaltet durch ftp:use-site-chmod"
 
-#: src/ftpclass.cc:1736 src/ftpclass.cc:1776
+#: src/ftpclass.cc:1739 src/ftpclass.cc:1779
 msgid "unsupported network protocol"
 msgstr "nicht unterstütztes Netzwerkprotokoll"
 
-#: src/ftpclass.cc:1886
+#: src/ftpclass.cc:1889
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "Verbinde Daten socket mit (%s) Port %u"
 
-#: src/ftpclass.cc:1911 src/ftpclass.cc:3520
+#: src/ftpclass.cc:1914 src/ftpclass.cc:3523
 msgid "Switching passive mode off"
 msgstr "Schalte Passivmodus ab"
 
-#: src/ftpclass.cc:2379 src/Http.cc:999
+#: src/ftpclass.cc:2382 src/Http.cc:999
 msgid "Peer closed connection"
 msgstr "Gegenüber hat Verbindung beendet"
 
-#: src/ftpclass.cc:2406
+#: src/ftpclass.cc:2409
 msgid "Persist and retry"
 msgstr "Verbleibe und versuche es weiter"
 
-#: src/ftpclass.cc:2519
+#: src/ftpclass.cc:2522
 msgid "Closing control socket"
 msgstr "Schließe den Kontroll - Socket"
 
-#: src/ftpclass.cc:2603
+#: src/ftpclass.cc:2606
 msgid "Closing data socket"
 msgstr "Schließe den Daten Socket"
 
-#: src/ftpclass.cc:3354
+#: src/ftpclass.cc:3357
 msgid "saw file size in response"
 msgstr "Dateigröße in Antwort empfangen"
 
-#: src/ftpclass.cc:3365
+#: src/ftpclass.cc:3368
 msgid "remote end closed connection"
 msgstr "Gegenstelle hat die Verbindung geschlossen"
 
-#: src/ftpclass.cc:3373
+#: src/ftpclass.cc:3376
 msgid "extra server response"
 msgstr "zusätzliche Server Antwort"
 
-#: src/ftpclass.cc:3386 src/ftpclass.cc:3415
+#: src/ftpclass.cc:3389 src/ftpclass.cc:3418
 msgid "Turning on sync-mode"
 msgstr "sync - Modus eingeschaltet"
 
-#: src/ftpclass.cc:3537
+#: src/ftpclass.cc:3540
 msgid "Switching passive mode on"
 msgstr "Schalte Passivmodus ein"
 
-#: src/ftpclass.cc:3604
+#: src/ftpclass.cc:3607
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
-msgstr "ftp:ssl-force ist gesetzt und Gegenstelle unterstützt oder erlaubt kein SSL"
+msgstr ""
+"ftp:ssl-force ist gesetzt und Gegenstelle unterstützt oder erlaubt kein SSL"
 
-#: src/ftpclass.cc:3644
+#: src/ftpclass.cc:3647
 msgid "Sending commands..."
 msgstr "Schicke Befehle"
 
-#: src/ftpclass.cc:3646 src/ftpclass.cc:3671 src/ftpclass.cc:3684
+#: src/ftpclass.cc:3649 src/ftpclass.cc:3674 src/ftpclass.cc:3687
 #: src/Http.cc:1660
 msgid "Waiting for response..."
 msgstr "Warte auf Antwort"
 
-#: src/ftpclass.cc:3647 src/Http.cc:1653
+#: src/ftpclass.cc:3650 src/Http.cc:1653
 msgid "Connection idle"
 msgstr "Verbindung ruht"
 
-#: src/ftpclass.cc:3660 src/Http.cc:1651 src/Http.cc:1658
+#: src/ftpclass.cc:3663 src/Http.cc:1651 src/Http.cc:1658
 msgid "Connecting..."
 msgstr "Verbinde..."
 
-#: src/ftpclass.cc:3664
+#: src/ftpclass.cc:3667
 msgid "TLS negotiation..."
 msgstr "TLS Verbindungsaufbau..."
 
-#: src/ftpclass.cc:3666
+#: src/ftpclass.cc:3669
 msgid "Connected"
 msgstr "Verbunden"
 
-#: src/ftpclass.cc:3668
+#: src/ftpclass.cc:3671
 msgid "Logging in..."
 msgstr "Logge ein..."
 
-#: src/ftpclass.cc:3672
+#: src/ftpclass.cc:3675
 msgid "Making data connection..."
 msgstr "Stelle Datenverbindung her..."
 
-#: src/ftpclass.cc:3675
+#: src/ftpclass.cc:3678
 msgid "Changing remote directory..."
 msgstr "Wechsle nichtlokales Verzeichnis"
 
-#: src/ftpclass.cc:3681
+#: src/ftpclass.cc:3684
 msgid "Waiting for other copy peer..."
 msgstr "Warte auf die Gegenstelle für die andere Kopie..."
 
-#: src/ftpclass.cc:3683 src/ftpclass.cc:3704
+#: src/ftpclass.cc:3686 src/ftpclass.cc:3707
 msgid "Waiting for transfer to complete"
 msgstr "Warte auf Übertragungsende"
 
-#: src/ftpclass.cc:3686
+#: src/ftpclass.cc:3689
 msgid "Waiting for data connection..."
 msgstr "Warte auf Datenverbindung"
 
-#: src/ftpclass.cc:3692
+#: src/ftpclass.cc:3695
 msgid "Sending data/TLS"
 msgstr "Sende Daten/TLS"
 
-#: src/ftpclass.cc:3694
+#: src/ftpclass.cc:3697
 msgid "Receiving data/TLS"
 msgstr "Empfange Daten/TLS"
 
-#: src/ftpclass.cc:3700 src/Http.cc:1656
+#: src/ftpclass.cc:3703 src/Http.cc:1656
 msgid "Sending data"
 msgstr "Sende Daten"
 
-#: src/ftpclass.cc:3702 src/Http.cc:1663
+#: src/ftpclass.cc:3705 src/Http.cc:1663
 msgid "Receiving data"
 msgstr "Empfange Daten"
 
@@ -2062,7 +2070,8 @@ msgstr "Modus von »%s«  nach %04o (%s) geändert.\n"
 #: src/ChmodJob.cc:85
 #, c-format
 msgid "Failed to change mode of `%s' because no old mode is available.\n"
-msgstr "Konnte den Modus von »%s« nicht ändern, da kein alter Modus zugänglich war.\n"
+msgstr ""
+"Konnte den Modus von »%s« nicht ändern, da kein alter Modus zugänglich war.\n"
 
 #: src/CopyJob.cc:78
 #, c-format
@@ -2115,12 +2124,12 @@ msgstr "copy: Alle Daten empfangen, aber get wurde zurückgesetzt\n"
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr "copy: get wurde zurückgesetzt zu %lld, suche dementsprechendes put\n"
 
-#: src/FileCopy.cc:943
+#: src/FileCopy.cc:945
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy: Umleitung nach »%s« empfangen\n"
 
-#: src/FileCopy.cc:1144
+#: src/FileCopy.cc:1146
 msgid "file name missed in URL"
 msgstr "Dateiname fehlt in der URL"
 
@@ -2288,4 +2297,3 @@ msgstr "Module sind auf diesem System nicht verwendbar"
 
 #~ msgid "Old remote file `%s' is not removed"
 #~ msgstr "Bestehende nichtlokale Datei »%s« wird nicht entfernt"
-
