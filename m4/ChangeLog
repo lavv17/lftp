@@ -1,6 +1,7 @@
 2003-12-17  albert chin <china@thewrittenword.com>
 
 	* socklen.m4: define lftp_socklen_t instead of socklen_t.
+	* va_copy.m4: rename VA_ZZZ_COPY section for proper sorting.
 
 2003-05-27  Alexander V. Lukyanov <lav@yars.free.net>
 
