@@ -854,6 +854,7 @@ const char *ResMgr::UNumberPairValidate(char **value)
    {
       if(UNumberValidate(value))
 	 return _("invalid pair of numbers");
+      return 0;
    }
 
    v[n]=0;
