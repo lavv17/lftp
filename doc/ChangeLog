@@ -1,3 +1,11 @@
+2004-02-12	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: change "delete remote" and "delete local" to "delete source",
+	  as URL notation can specify both local and remote files;
+	  document get1; document --ignore-size, --only-missing options of
+	  mirror; delete spurious `\n"'; document new feature of --newer-than
+	  mirror option.
+
 2004-01-28	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document ftp:use-hftp; add rfc and drafts.

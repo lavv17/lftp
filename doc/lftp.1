@@ -263,7 +263,7 @@ instances of \fIrfile\fP [and -o \fIlfile\fP]. Does not expand wildcards, use
 \fBmget\fR for that.
 .Ds
 -c		continue, reget
--E		delete remote files after successful transfer
+-E		delete source files after successful transfer
 -a		use ascii mode (binary is the default)
 -O <base>	specifies base directory or URL where files should be placed
 .De
@@ -276,6 +276,21 @@ get README README.mirrors
 get README -o debian.README README.mirrors -o debian.mirrors
 get README -o ftp://some.host.org/debian.README
 get README -o ftp://some.host.org/debian-dir/ (end slash is important)
+.De
+
+.BR get1
+.RI [ OPTS "] " rfile
+.PP
+Transfer a single file. Options:
+.Ds
+-o <lfile>	destination file name (default - basename of rfile)
+-c		continue, reget
+-E		delete source files after successful transfer
+-a		use ascii mode (binary is the default)
+--source-region=<from-to>
+		transfer specified region of source file
+--target-position=<pos>
+		position in target file to write data at
 .De
 
 .BR glob " [" -d "] [" -a "]"
@@ -336,7 +351,7 @@ Gets selected files with expanded wildcards.
 -c		continue, reget.
 -d		create directories the same as file names and get
 		the files into them instead of current directory.
--E		delete remote files after successful transfer
+-E		delete source files after successful transfer
 -a		use ascii mode (binary is the default)
 -O <base>	specifies base directory or URL where files should be placed
 .De
@@ -352,26 +367,28 @@ directory name. Source and/or target can be URLs pointing to directories.
 .Ds
 -c, --continue		continue a mirror job if possible
 -e, --delete		delete files not present at remote site
-    --delete-first	delete old files before transferring new ones
+    --delete-first		delete old files before transferring new ones
 -s, --allow-suid		set suid/sgid bits according to remote site
     --allow-chown		try to set owner and group on files
     --ignore-time		ignore time when deciding whether to download
+    --ignore-size		ignore size when deciding whether to download
+    --only-missing		download only missing files
 -n, --only-newer		download only newer files (-c won't work)
 -r, --no-recursion		don't go to subdirectories
 -p, --no-perms		don't set file permissions
     --no-umask		don't apply umask to file modes
 -R, --reverse		reverse mirror (put files)
 -L, --dereference		download symbolic links as files
--N, --newer-than FILE	download only files newer than the file
+-N, --newer-than=SPEC	download only files newer than specified time
 -P, --parallel[=N]		download N files in parallel
 -i \fIRX\fP, --include \fIRX\fP	include matching files
 -x \fIRX\fP, --exclude \fIRX\fP	exclude matching files
 -I \fIGP\fP, --include-glob \fIGP\fP	include matching files
 -X \fIGP\fP, --exclude-glob \fIGP\fP	exclude matching files
 -v, --verbose[=level]	verbose operation
-    --log=FILE		write lftp commands being executed to FILE\n"
-    --script=FILE	write lftp commands to FILE, but don't execute them\n"
-    --just-print, --dry-run	same as --script=-\n"
+    --log=FILE		write lftp commands being executed to FILE
+    --script=FILE	write lftp commands to FILE, but don't execute them
+    --just-print, --dry-run	same as --script=-
     --use-cache		use cached directory listings
 --Remove-source-files	remove files after transfer (use with caution)
 -a			same as --allow-chown --allow-suid --no-umask
@@ -394,6 +411,10 @@ and the first check is exclude. Directories are matched with a slash appended.
 Note that when -R is used (reverse mirror), symbolic links are not created
 on server, because ftp protocol cannot do it. To upload files the links refer
 to, use `mirror -RL' command (treat symbolic links as files).
+.PP
+For option --newer-than you can either specify a file or time specification
+like that used by at(1) command, e.g. `now-7days' or `week ago'. If you
+specify a file, then modification time of that file will be used.
 .PP
 Verbosity level can be selected using \-\-verbose=level option or by several
 \-v options, e.g. \-vvv. Levels are:
@@ -439,7 +460,7 @@ local name as remote one. This can be changed by `-d' option.
 -c		continue, reput
 -d		create directories the same as in file names and put the
 		files into them instead of current directory
--E		delete remote files after successful transfer (dangerous)
+-E		delete source files after successful transfer (dangerous)
 -a		use ascii mode (binary is the default)
 -O <base>	specifies base directory or URL where files should be placed
 .De
@@ -489,7 +510,7 @@ of \fIlfile\fP is used as remote name. Does not expand wildcards, use \fBmput\fR
 -o <rfile>	specifies remote file name (default - basename of lfile)
 -c		continue, reput
 		it requires permission to overwrite remote files
--E		delete local files after successful transfer (dangerous)
+-E		delete source files after successful transfer (dangerous)
 -a		use ascii mode (binary is the default)
 -O <base>	specifies base directory or URL where files should be placed
 .De
