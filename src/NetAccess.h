@@ -58,8 +58,8 @@ protected:
    int	 socket_maxseg;
    void	 SetSocketBuffer(int sock);
    void	 SetSocketMaxseg(int sock);
-   static void SetKeepAlive(int sock);
    static void KeepAlive(int sock);
+   static void ReuseAddress(int sock);
    static void SetSocketBuffer(int sock,int val);
    static void SetSocketMaxseg(int sock,int val);
 

@@ -1,3 +1,12 @@
+2000-03-15  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: disallow filenames with NL;
+	  call ReuseAddress if could not get available port.
+	* FileAccess.cc: (Rename) assign file1 before Open; (Open) don't Close
+	  if not needed.
+	* buffer.cc: ignore EINTR from write.
+	* NetAccess.cc, NetAccess.h: (ReuseAddress) new method.
+
 2000-03-14  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc, resource.cc: add ftp:web-mode.

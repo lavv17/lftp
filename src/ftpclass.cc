@@ -1408,6 +1408,9 @@ int   Ftp::Do()
 		  Fatal("could not allocate port from ftp:port-range set");
 		  return MOVED;
 	       }
+	       if(t==9)
+		  ReuseAddress(data_sock);   // try to reuse address.
+
 	       int port=0;
 	       if(!range.IsFull())
 		  port=range.Random();
@@ -3326,6 +3329,13 @@ int Ftp::Buffered()
 #else
    return 0;
 #endif
+}
+
+void Ftp::Open(const char *f,int m,long offs)
+{
+   super::Open(f,m,offs);
+   if((file && strchr(file,'\n')) || (file1 && strchr(file1,'\n')))
+      Fatal("cannot access file with <NL> in its name");
 }
 
 #ifdef MODULE

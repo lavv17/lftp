@@ -109,10 +109,14 @@ void NetAccess::Reconfig(const char *name)
       rate_limit->Reconfig(name,c);
 }
 
+static int one=1;
 void NetAccess::KeepAlive(int sock)
 {
-   static int one=1;
    setsockopt(sock,SOL_SOCKET,SO_KEEPALIVE,(char*)&one,sizeof(one));
+}
+void NetAccess::ReuseAddress(int sock)
+{
+   setsockopt(sock,SOL_SOCKET,SO_REUSEADDR,(char*)&one,sizeof(one));
 }
 void NetAccess::SetSocketBuffer(int sock,int socket_buffer)
 {

@@ -246,7 +246,8 @@ void FileAccess::CloseOnExec(int fd)
 
 void  FileAccess::Open(const char *fn,int mode,long offs)
 {
-   Close();
+   if(IsOpen())
+      Close();
    Resume();
    file=xstrdup(fn);
    real_pos=-1;
@@ -346,8 +347,9 @@ void FileAccess::Close()
 
 void FileAccess::Rename(const char *f,const char *f1)
 {
-   Open(f,RENAME);
+   Close();
    file1=xstrdup(f1);
+   Open(f,RENAME);
 
    LsCache::TreeChanged(this,file);
    LsCache::FileChanged(this,file);

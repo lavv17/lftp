@@ -294,6 +294,7 @@ public:
    }
 
    void	 Connect(const char *h,const char *p);
+   void	 Open(const char *file,int mode,long pos=0);
 
    int   Read(void *buf,int size);
    int   Write(const void *buf,int size);

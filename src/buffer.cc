@@ -242,7 +242,7 @@ int FileOutputBuffer::Put_LL(const char *buf,int size)
    res=write(fd,buf,size);
    if(res==-1)
    {
-      if(errno==EAGAIN)
+      if(errno==EAGAIN || errno==EINTR)
 	 return 0;
       if(errno==EPIPE)
       {
