@@ -1,3 +1,8 @@
+2001-07-26  Glenn F. Maynard <g_ld@zewt.org>
+
+	* CmdExec.cc, CmdExec.h, Job.cc, Makefile.am, commands.cc: queue
+	  editing support (QueueFeeder class).
+
 2001-07-25  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FtpSplitList.cc: fix mem leak (reported by Glenn F. Maynard).

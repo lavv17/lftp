@@ -60,7 +60,7 @@ libjobs_a_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  mvJob.cc mvJob.h alias.cc alias.h\
  bookmark.cc bookmark.h CatJob.cc CatJob.h GetJob.cc GetJob.h\
  mkdirJob.cc mkdirJob.h pgetJob.cc pgetJob.h FileFeeder.cc FileFeeder.h\
- keyvalue.cc keyvalue.h history.cc history.h\
+ QueueFeeder.cc QueueFeeder.h keyvalue.cc keyvalue.h history.cc history.h\
  SleepJob.cc SleepJob.h getdate.y getdate.h FindJob.cc FindJob.h\
  ChmodJob.cc ChmodJob.h TreatFileJob.cc TreatFileJob.h CopyJob.cc CopyJob.h
 

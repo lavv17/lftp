@@ -63,6 +63,7 @@
 #include "getopt.h"
 #include "FileCopy.h"
 #include "DummyProto.h"
+#include "QueueFeeder.h"
 
 #include "confpaths.h"
 
@@ -290,12 +291,26 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Print current remote URL.\n"
 	 " -p  show password\n")},
    {"queue",   cmd_queue,  0,
-	 N_("Usage: queue -e|-s <file>|<command>\n"
-	 " -e|--edit    Edit the queue\n"
-	 " -s|--source <file> adds the contents of a file to the end of the queue\n"
-	 "<command>     Add the command to queue for current site. Each site has its\n"
-	 "own command queue. It is possible to queue up a running job by using\n"
-	 "command `queue wait <jobno>'.\n")},
+	 N_(
+	 "Usage:\n"
+	 "       queue [-n num] <command>\n\n"
+	 "Add the command to queue for current site. Each site has its own command queue.\n"
+	 "-n adds the command before the given item in the queue.  It is possible to queue up\n"
+	 "a running job by using command `queue wait <jobno>'.\n"
+	 "\n"
+	 "       queue --del|-d [index or wildcard expression]\n\n"
+	 "Delete one or more items from the queue.  If no argument is given, the last entry in\n"
+	 "the queue is deleted.\n"
+	 "\n"
+	 "       queue --move|-m <index or wildcard expression> [index]\n\n"
+	 "Move the given items before the given queue index, or to the end if no destination is\n"
+	 "given.\n"
+	 "Examples: queue -d 3           Delete the third item in the queue.\n"
+	 "          queue -m 6 4         Move the sixth item in the queue before the fourth.\n"
+	 "          queue -m \"get*zip\" 1  Move all commands matching \"get*zip\" to the beginning\n"
+	 "                               of the queue.  (The order of the items is preserved.)\n"
+	 "          queue -d \"get*zip\"   Delete all commands matching \"get*zip\".\n"
+	 )},
    {"quit",    cmd_exit,   0,"exit"},
    {"quote",   cmd_ls,	   N_("quote <cmd>"),
 	 N_("Send the command uninterpreted. Use with caution - it can lead to\n"
@@ -863,85 +878,125 @@ Job *CmdExec::builtin_queue()
 {
    static struct option queue_options[]=
    {
-      {"edit",no_argument,0,'e'},
-      {"source",required_argument,0,'s'},
+      {"move",required_argument,0,'m'},
+      {"del",optional_argument,0,'d'},
       {0,0,0,0}
    };
-   int opt;
-   bool edit=false;
-   const char *src = NULL;
+   enum { ins, del, move } mode = ins;
 
-   /* note to future options: if there are any options that can actually
-    * affect regular queue adding, this needs adjustment since we just
-    * pass args along untouched */
+   const char *arg = NULL;
+   /* position to insert at (ins only) */
+   int pos = -1; /* default to the end */
+
    args->rewind();
-   while((opt=args->getopt_long("+es:",queue_options,0))!=EOF)
+   int opt;
+   
+   exit_code=1; // more failure exits than success exits, so set success explicitely
+
+   while((opt=args->getopt_long("+d::m:n:w",queue_options,0))!=EOF)
    {
       switch(opt)
       {
-      case 'e':
-	 edit=true;
+      case 'n':
+	 if(!isdigit((unsigned char)optarg[0]))
+	 {
+	    eprintf(_("%s: -n: Number expected. "), args->a0());
+	    goto err;
+	 }
+	 /* make offsets match the jobs output (starting at 1) */
+	 pos = atoi(optarg) - 1;
 	 break;
-      case 's':
-	 src = optarg;
+
+      case 'm':
+	 mode = move;
+	 arg = optarg;
 	 break;
+	 
+      case 'd':
+	 mode = del;
+	 arg = optarg;
+	 break;
+	 
       case '?':
-	 eprintf(_("Usage: %s -e|-s|command args...\n"),args->a0());
+	 err:
+	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
 	 return 0;
       }
    }
 
-   if(edit)
-      return builtin_queue_edit();
+   const int args_remaining = args->count() - args->getindex();
+   switch(mode) {
+      case ins: {
+	 if(args_remaining==0)
+	    goto err;
 
-   if(src != NULL) {
-      int q_fd=open(src,O_RDONLY);
-      if(q_fd==-1) {
-	 eprintf(_("%s: %s: %s\n"), args->a0(), src, strerror(errno));
-	 return 0;
+	 CmdExec *queue=GetQueue();
+
+	 char *cmd=NULL;
+	 if(args_remaining == 1)
+		 cmd=args->Combine(args->getindex());
+	 else
+		 cmd=args->CombineQuoted(args->getindex());
+
+	 queue->has_queue->QueueCmd(cmd, session->GetCwd(), cwd, pos);
+	 xfree(cmd);
+
+	 last_bg=queue->jobno;
+	 exit_code=0;
       }
+      break;
 
-      CmdExec *queue=GetQueue();
-      if(!queue->ReadCmds(q_fd)) {
-	 eprintf(_("%s: error reading %s: %s\n"), args->a0(), src, strerror(errno));
+      case del: {
+         /* Accept:
+	  * queue -d (delete the last job)
+	  * queue -d 1  (delete entry 1)
+	  * queue -d "get" (delete all *get*) */
+	 CmdExec *queue=GetQueue(false);
+	 if(!queue) {
+	    eprintf(_("%s: No queue is active.\n"), args->a0());
+	    break;
+	 }
+
+	 if(!arg)
+	    queue->has_queue->DelJob(-1); /* delete the last job */
+	 else if(isdigit(arg[0]))
+	    queue->has_queue->DelJob(atoi(arg)-1);
+	 else
+	    queue->has_queue->DelJob(arg);
+	
+	 exit_code=0;
       }
+      break;
 
-      close(q_fd);
+      case move: {
+         /* Accept:
+	  * queue -m 1 2  (move entry 1 to position 2)
+	  * queue -m "*get*" 1
+	  * queue -m 3    (move entry 3 to the end) */
+         char *a1 = args->getarg(args->getindex());
+	 if(a1 && !isdigit(a1[0])) {
+	    eprintf(_("%s: -m: Number expected as second argument. "), args->a0());
+	    goto err;
+	 }
+	 /* default to moving to the end */
+	 int to = a1? atoi(a1)-1:-1;
+	 
+	 CmdExec *queue=GetQueue(false);
+	 if(!queue) {
+	    eprintf(_("%s: No queue is active.\n"), args->a0());
+	    break;
+	 }
 
-      return 0;
+	 if(isdigit(arg[0])) {
+	    queue->has_queue->MoveJob(atoi(arg)-1, to);
+	    break;
+	 }
+
+	 queue->has_queue->MoveJob(arg, to);
+	 exit_code=0;
+      }
+      break;
    }
-
-   if(args->count()==1)
-   {
-      eprintf(_("Usage: %s -e|-s|command args...\n"),args->a0());
-      return 0;
-   }
-
-   CmdExec *queue=GetQueue();
-   if(xstrcmp(queue->queue_cwd,session->GetCwd()))
-   {
-      queue->FeedCmd("cd ");
-      queue->FeedQuoted(session->GetCwd());
-      queue->FeedCmd(" &\n");
-
-      xfree(queue->queue_cwd);
-      queue->queue_cwd=xstrdup(session->GetCwd());
-   }
-   if(xstrcmp(queue->queue_lcwd,cwd))
-   {
-      queue->FeedCmd("lcd ");
-      queue->FeedQuoted(cwd);
-      queue->FeedCmd(" &\n");
-
-      xfree(queue->queue_lcwd);
-      queue->queue_lcwd=xstrdup(cwd);
-   }
-
-   queue->FeedArgV(args,1);
-
-   last_bg=queue->jobno;
-
-   exit_code=0;
 
    return 0;
 }

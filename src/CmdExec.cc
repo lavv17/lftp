@@ -34,6 +34,7 @@
 #include "ResMgr.h"
 #include "module.h"
 #include "url.h"
+#include "QueueFeeder.h"
 
 #define RL_PROMPT_START_IGNORE	'\001'
 #define RL_PROMPT_END_IGNORE	'\002'
@@ -321,6 +322,7 @@ void CmdExec::RemoveFeeder()
    CmdFeeder *tmp=feeder->prev;
    next_cmd=cmd_buf=feeder->saved_buf;
    partial_cmd=false;
+   if(feeder == has_queue) has_queue = 0;
    delete feeder;
    feeder=tmp;
 
@@ -717,43 +719,19 @@ void CmdExec::PrintStatus(int v)
       xfree(s);
       return;
    }
-   if(is_queue)
+   if(has_queue)
    {
-      if(waiting_num>0)
+      for(int i=0; i<waiting_num; i++)
       {
-	 printf("\t%s ",_("Now executing:"));
-	 for(int i=0; i<waiting_num; i++)
-	 {
-	    if(v==0)
-	       waiting[i]->ListOneJob(v);
-	    else
-	       waiting[i]->PrintJobTitle();
-	    if(i+1<waiting_num)
-	       printf("\t\t-");
-	 }
+	 if(i == 0) printf("\t%s ",_("Now executing:"));
+	 if(v==0)
+	    waiting[i]->ListOneJob(v);
+	 else
+	    waiting[i]->PrintJobTitle();
+	 if(i+1<waiting_num)
+	    printf("\t\t-");
       }
-      if(!(next_cmd && next_cmd[0]))
-	 return;
-      printf(_("\tCommands queued:\n"));
-      char *cmd=next_cmd;
-      int n=1;
-      for(;;)
-      {
-	 char *cmd_end=strchr(cmd,'\n');
-	 if(!cmd_end)
-	    cmd_end=cmd+strlen(cmd);
-	 printf("\t%2d. %.*s\n",n++,int(cmd_end-cmd),cmd);
-	 if(*cmd_end==0)
-	    break;
-	 cmd=cmd_end+1;
-	 if(*cmd==0)
-	    break;
-	 if(v<2 && n>4)
-	 {
-	    printf("\t%2d. ...\n",n);
-	    break;
-	 }
-      }
+      has_queue->PrintStatus(v);
       return;
    }
    if(waiting_num==1)
@@ -769,6 +747,7 @@ void CmdExec::PrintStatus(int v)
 	 printf("[%d]",waiting[i]->jobno);
 	 printf("%c",i+1<waiting_num?' ':'\n');
       }
+      return;
    }
    if(next_cmd && next_cmd[0])
    {
@@ -826,9 +805,7 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
 
    redirections=0;
 
-   is_queue=false;
-   queue_cwd=0;
-   queue_lcwd=0;
+   has_queue=0;
 
    saved_session=0;
 
@@ -865,9 +842,6 @@ CmdExec::~CmdExec()
       delete glob;
    if(args_glob)
       delete args_glob;
-
-   xfree(queue_cwd);
-   xfree(queue_lcwd);
 
    Reuse(saved_session);
 
@@ -1378,27 +1352,29 @@ void CmdExec::FeedArgV(const ArgV *args,int start)
    xfree(cmd);
 }
 
-CmdExec *CmdExec::GetQueue()
+/* return the CmdExec containing a queue feeder; create if necessary */
+CmdExec  *CmdExec::GetQueue(bool create)
 {
    for(CmdExec *scan=chain; scan; scan=scan->next)
    {
-      if(scan->is_queue
+      if(scan->has_queue
       && !strcmp(this->session->GetConnectURL(FA::NO_PATH),
-	         scan->session->GetConnectURL(FA::NO_PATH)))
+	         scan->session->GetConnectURL(FA::NO_PATH))) {
 	 return scan;
+      }
    }
+   if(!create) return NULL;
 
    CmdExec *queue=new CmdExec(session->Clone());
+
    queue->SetParentFg(this,false);
    queue->AllocJobno();
    const char *url=session->GetConnectURL(FA::NO_PATH);
    queue->cmdline=(char*)xmalloc(9+strlen(url));
    sprintf(queue->cmdline,"queue (%s)",url);
-   queue->is_queue=true;
-   queue->queue_cwd=xstrdup(session->GetCwd());
-   queue->queue_lcwd=xstrdup(cwd);
-
-//   assert(FindQueue()==queue);
+   queue->has_queue=new QueueFeeder(session->GetCwd(), cwd);
+   queue->SetCmdFeeder(queue->has_queue);
 
    return queue;
 }
+

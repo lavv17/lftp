@@ -409,7 +409,7 @@ void SessionJob::PrintStatus(int v)
    if(v<2 || !session)
       return;
    const char *url=session->GetConnectURL();
-   if(url)
+   if(url && *url)
       printf("\t%s\n",url);
 }
 

@@ -32,6 +32,8 @@
 #include "history.h"
 #include "bookmark.h"
 
+class QueueFeeder;
+
 extern History cwd_history;
 extern Bookmark lftp_bookmarks;
 
@@ -129,10 +131,8 @@ private:
    static CmdExec *chain;
    CmdExec *next;
 
-   bool is_queue;
-   char *queue_cwd;
-   char *queue_lcwd;
-   CmdExec *GetQueue();
+   QueueFeeder *has_queue;
+   CmdExec *GetQueue(bool create = true);
 
    FileAccess *saved_session;
    void ReuseSavedSession();
