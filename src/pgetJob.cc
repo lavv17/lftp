@@ -46,19 +46,20 @@ int pgetJob::Do()
    if(cp->Done())
       RemoveBackupFile();
 
-   long size=cp->GetSize();
-   long offset=cp->GetPos();
-
-   if(chunks==0 || offset<chunks[0]->start)
-      m=super::Do();
+   if(chunks==0 || cp->GetPos()<chunks[0]->start)
+      m=super::Do(); // it can call NextFile.
    else
       cp->Suspend();
 
-   if(chunks_done)
+   if(Done() || chunks_done)
       return m;
+
+   long offset=cp->GetPos();
+   long size=cp->GetSize();
 
    if(chunks==0)
    {
+
       if(size==NO_SIZE_YET)
 	 return m;
 
