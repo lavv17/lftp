@@ -132,7 +132,7 @@ private:
    bool is_queue;
    char *queue_cwd;
    char *queue_lcwd;
-   CmdExec *FindQueue();
+   CmdExec *GetQueue();
 
    FileAccess *saved_session;
    void ReuseSavedSession();
@@ -147,6 +147,9 @@ public:
    static bool needs_quotation(const char *buf);
    void FeedQuoted(const char *c);
    void AtExit();
+   void EmptyCmds();
+   bool WriteCmds(int fd) const;
+   bool ReadCmds(int fd); // does not clear queue before reading (appends)
 
    void SuspendJob(Job *j);
 
@@ -219,6 +222,7 @@ public:
    Job *builtin_restart();
    Job *builtin_glob();
    Job *builtin_queue();
+   Job *builtin_queue_edit();
 
    Job *default_cmd();
 

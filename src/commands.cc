@@ -289,9 +289,11 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Print current remote URL.\n"
 	 " -p  show password\n")},
    {"queue",   cmd_queue,  0,
-	 N_("Usage: queue <command>\n"
-	 "Add the command to queue for current site. Each site has its own\n"
-	 "command queue. It is possible to queue up a running job by using\n"
+	 N_("Usage: queue -e|-s <file>|<command>\n"
+	 " -e|--edit    Edit the queue\n"
+	 " -s|--source <file> adds the contents of a file to the end of the queue\n"
+	 "<command>     Add the command to queue for current site. Each site has its\n"
+	 "own command queue. It is possible to queue up a running job by using\n"
 	 "command `queue wait <jobno>'.\n")},
    {"quit",    cmd_exit,   0,"exit"},
    {"quote",   cmd_ls,	   N_("quote <cmd>"),
@@ -858,28 +860,63 @@ Job *CmdExec::builtin_glob()
 
 Job *CmdExec::builtin_queue()
 {
-   if(args->count()==1)
+   static struct option queue_options[]=
    {
-      eprintf(_("Usage: %s command args...\n"),args->a0());
+      {"edit",no_argument,0,'e'},
+      {"source",required_argument,0,'s'},
+      {0,0,0,0}
+   };
+   int opt;
+   bool edit=false;
+   const char *src = NULL;
+
+   /* note to future options: if there are any options that can actually
+    * affect regular queue adding, this needs adjustment since we just
+    * pass args along untouched */
+   args->rewind();
+   while((opt=args->getopt_long("+es:",queue_options,0))!=EOF)
+   {
+      switch(opt)
+      {
+      case 'e':
+	 edit=true;
+	 break;
+      case 's':
+	 src = optarg;
+	 break;
+      case '?':
+	 eprintf(_("Usage: %s -e|-s|command args...\n"),args->a0());
+	 return 0;
+      }
+   }
+
+   if(edit) 
+      return builtin_queue_edit();
+
+   if(src != NULL) {
+      int q_fd=open(src,O_RDONLY);
+      if(q_fd==-1) {
+	 eprintf(_("%s: %s: %s\n"), args->a0(), src, strerror(errno));
+	 return 0;
+      }
+
+      CmdExec *queue=GetQueue();
+      if(!queue->ReadCmds(q_fd)) {
+	 eprintf(_("%s: error reading %s: %s\n"), args->a0(), src, strerror(errno));
+      }
+
+      close(q_fd);
+
       return 0;
    }
 
-   CmdExec *queue=FindQueue();
-   if(queue==0)
+   if(args->count()==1)
    {
-      queue=new CmdExec(session->Clone());
-      queue->SetParentFg(this,false);
-      queue->AllocJobno();
-      const char *url=session->GetConnectURL(FA::NO_PATH);
-      queue->cmdline=(char*)xmalloc(9+strlen(url));
-      sprintf(queue->cmdline,"queue (%s)",url);
-      queue->is_queue=true;
-      queue->queue_cwd=xstrdup(session->GetCwd());
-      queue->queue_lcwd=xstrdup(cwd);
-
-      assert(FindQueue()==queue);
+      eprintf(_("Usage: %s -e|-s|command args...\n"),args->a0());
+      return 0;
    }
 
+   CmdExec *queue=GetQueue();
    if(xstrcmp(queue->queue_cwd,session->GetCwd()))
    {
       queue->FeedCmd("cd ");
@@ -904,6 +941,58 @@ Job *CmdExec::builtin_queue()
    last_bg=queue->jobno;
 
    exit_code=0;
+
+   return 0;
+}
+
+Job *CmdExec::builtin_queue_edit()
+{
+   CmdExec *queue=GetQueue();
+
+   if(queue->feeder) {
+      eprintf(_("Can only edit plain queues.\n"));
+      return 0;
+   }
+   
+   const char *home=getenv("HOME");
+   if(home==0)
+      home="";
+   char *q_file = (char *) xmalloc(strlen(home)+32);
+   /* if we have $HOME, use $HOME/.lftp/file; otherwise just file */
+   sprintf(q_file, "%s%slftp-queue-%i", home, home? "/.lftp/":"", (int) getpid());
+
+   int q_fd=open(q_file,O_RDWR|O_CREAT,0600);
+   if(q_fd==-1) {
+      eprintf(_("Couldn't create temporary file `%s': %s.\n"), q_file, strerror(errno));
+      xfree(q_file);
+      return 0;
+   }
+
+   if(!queue->WriteCmds(q_fd)) {
+      eprintf(_("%s: error writing %s: %s\n"), args->a0(), q_file, strerror(errno));
+
+      /* abort without clearing the queue */
+      close(q_fd);
+      xfree(q_file);
+
+      return 0;
+   }
+
+   queue->EmptyCmds();
+
+   close(q_fd);
+
+   /* empty the queue; when this command exits, it'll re-source the queue.
+    * this also effectively "suspends" this queue until it's done editing. */
+
+   {
+      char *editcmd = (char *) xmalloc(strlen(q_file)*3+128);
+      sprintf(editcmd, "shell \"/bin/sh -c 'exec ${EDITOR:-vi} %s'\"; queue -s %s; shell rm '%s'\n", q_file, q_file, q_file);
+      PrependCmd(editcmd);
+      xfree(editcmd);
+   }
+
+   xfree(q_file);
 
    return 0;
 }

@@ -1,3 +1,8 @@
+2001-07-19  Glenn F. Maynard <g_ld@zewt.org>
+
+	* CmdExec.cc, CmdExec.h, commands.cc: implement queue editing -
+	  queue -s and queue -e commands.
+
 2001-07-18  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h, resource.cc: allow to choose AUTH argument;

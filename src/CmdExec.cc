@@ -1240,6 +1240,51 @@ void CmdExec::AtExit()
    FeedCmd("\n");
 }
 
+void CmdExec::EmptyCmds()
+{
+   xfree(cmd_buf);
+   next_cmd=cmd_buf=0;
+}
+
+bool CmdExec::WriteCmds(int fd) const
+{
+   // FIXME: handle short writes.
+
+   if(next_cmd)
+      return write(fd, next_cmd, strlen(next_cmd)) != -1;
+
+   return true;
+}
+
+bool CmdExec::ReadCmds(int fd)
+{
+   // FIXME: use loop over read until eof.
+
+   int fpos = lseek(fd, 0, SEEK_CUR);
+   if(fpos == -1) return false;
+
+   int size = lseek(fd, 0, SEEK_END) - fpos;
+
+   /* restore the file pos */
+   lseek(fd, fpos, SEEK_SET);
+
+   /* realloc */
+   int len=0;
+   if(next_cmd) {
+      len=strlen(next_cmd);
+      memmove(cmd_buf,next_cmd,len);
+   }
+   cmd_buf=next_cmd=(char*)xrealloc(cmd_buf,size+len+1);
+
+   if(read(fd, cmd_buf+len, size) == -1) {
+      cmd_buf[len] = 0; /* leave it in a sane state */
+      return false;
+   }
+
+   cmd_buf[len+size] = 0;
+   return true;
+}
+
 void CmdExec::free_used_aliases()
 {
    if(used_aliases)
@@ -1333,7 +1378,7 @@ void CmdExec::FeedArgV(const ArgV *args,int start)
    xfree(cmd);
 }
 
-CmdExec *CmdExec::FindQueue()
+CmdExec *CmdExec::GetQueue()
 {
    for(CmdExec *scan=chain; scan; scan=scan->next)
    {
@@ -1342,5 +1387,18 @@ CmdExec *CmdExec::FindQueue()
 	         scan->session->GetConnectURL(FA::NO_PATH)))
 	 return scan;
    }
-   return 0;
+
+   CmdExec *queue=new CmdExec(session->Clone());
+   queue->SetParentFg(this,false);
+   queue->AllocJobno();
+   const char *url=session->GetConnectURL(FA::NO_PATH);
+   queue->cmdline=(char*)xmalloc(9+strlen(url));
+   sprintf(queue->cmdline,"queue (%s)",url);
+   queue->is_queue=true;
+   queue->queue_cwd=xstrdup(session->GetCwd());
+   queue->queue_lcwd=xstrdup(cwd);
+
+//   assert(FindQueue()==queue);
+
+   return queue;
 }
