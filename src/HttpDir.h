@@ -79,23 +79,15 @@ public:
    void Resume();
 };
 
-class HttpGlob : public Glob
+class HttpGlob : public GenericParseGlob
 {
-   FileAccess *session;
-   char	 *dir;
-   const char *curr_dir;
-   FileSet *dir_list;
-   int   dir_index;
-   HttpGlob *updir_glob;
-
-   Buffer *ubuf;
+   FileSet *Parse(const char *buf,int len);
+   GenericParseGlob *MakeUpDirGlob()
+      { return new HttpGlob(session,dir); }
 
 public:
-   int	 Do();
-   const char *Status();
-
-   HttpGlob(FileAccess *s,const char *n_pattern);
-   virtual ~HttpGlob();
+   HttpGlob(FileAccess *s,const char *n_pattern)
+      : GenericParseGlob(s,n_pattern) {}
 };
 
 #endif//HTTPDIR_H

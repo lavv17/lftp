@@ -3434,7 +3434,12 @@ const char *Ftp::CurrentStatus()
    case(CWD_CWD_WAITING_STATE):
       return(_("Changing remote directory..."));
    case(WAITING_STATE):
-      if(mode==STORE)
+      if(copy_mode!=COPY_NONE)
+      {
+	 if(RespQueueIsEmpty())
+	    return _("Waiting for other copy peer...");
+      }
+      if(mode==STORE && copy_mode==COPY_NONE)
 	 return(_("Waiting for transfer to complete"));
       return(_("Waiting for response..."));
    case(ACCEPTING_STATE):

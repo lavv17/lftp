@@ -143,4 +143,27 @@ public:
    void Reconfig(const char *name,const char *c);
 };
 
+class GenericParseGlob : public Glob
+{
+protected:
+   FileAccess *session;
+   char	 *dir;
+   const char *curr_dir;
+   FileSet *dir_list;
+   int   dir_index;
+   GenericParseGlob *updir_glob;
+
+   Buffer *ubuf;
+
+   virtual FileSet *Parse(const char *buf,int len)=0;
+   virtual GenericParseGlob *MakeUpDirGlob()=0;
+
+public:
+   int	 Do();
+   const char *Status();
+
+   GenericParseGlob(FileAccess *s,const char *n_pattern);
+   virtual ~GenericParseGlob();
+};
+
 #endif//NETACCESS_H

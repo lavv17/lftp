@@ -1,3 +1,11 @@
+2001-06-12  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileCopyFtp.cc: fix restart in fxp mode.
+	* HttpDir.cc, HttpDir.h, NetAccess.cc, NetAccess.h: (GenericParseGlob)
+	  new class; use it.
+	* Fish.cc, Fish.h: implement Glob, ListInfo.
+	* ftpclass.cc: better status for fxp.
+
 2001-06-07  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileAccess.cc, FileAccess.h: NO_USER new GetFileURL option.
