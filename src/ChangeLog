@@ -5,6 +5,9 @@
 	  also checked; use lftp_ssl_new; don't disconnect in some cases.
 	* ResMgr.cc, ResMgr.h: (QueryNext) new method for cookies merging.
 	* buffer.cc: use service lftp_ssl* functions.
+	* ftpclass.cc, ftpclass.h: send SITE IDLE.
+	* resource.cc: new setting ftp:use-site-idle.
+	* ResMgr.cc: quote ;& properly.
 
 2000-07-31  Alexander V. Lukyanov  <lav@yars.free.net>
 

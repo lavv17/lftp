@@ -119,6 +119,7 @@ static ResDecl
    ResDecl13 ("ftp:sync-mode",		  "on",    ResMgr::BoolValidate,0),
    ResDecl14 ("ftp:use-abor",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl15 ("ftp:use-fxp",		  "yes",   ResMgr::BoolValidate,0),
+   ResDecl16a("ftp:use-site-idle",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl16 ("ftp:use-stat",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl17 ("ftp:use-quit",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl18 ("ftp:verify-address",	  "no",    ResMgr::BoolValidate,0),

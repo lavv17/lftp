@@ -1144,6 +1144,8 @@ int   Ftp::Do()
 	 SendCmd2("PASS",pass_to_use);
       }
 
+      SendSiteIdle();
+
       // FIXME: site group/site gpass
 
       if(!home)
@@ -1838,6 +1840,14 @@ system_error:
    return MOVED;
 }
 
+void Ftp::SendSiteIdle()
+{
+   if(!(bool)Query("use-site-idle"))
+      return;
+   SendCmd2("SITE IDLE",idle);
+   AddResp(0,CHECK_IGNORE);
+}
+
 void Ftp::SendArrayInfoRequests()
 {
    for(int i=array_ptr; i<array_cnt; i++)
@@ -2346,6 +2356,13 @@ void Ftp::SendCmd2(const char *cmd,const char *f)
       f++;
    }
    SendCmd(s,store-s);
+}
+
+void Ftp::SendCmd2(const char *cmd,int v)
+{
+   char buf[32];
+   sprintf(buf,"%d",v);
+   SendCmd2(cmd,buf);
 }
 
 int   Ftp::SendEOT()
@@ -3247,6 +3264,13 @@ void Ftp::Reconfig(const char *name)
    closure=xstrdup(hostname);
 
    super::Reconfig(name);
+
+   if(!xstrcmp(name,"net:idle"))
+   {
+      if(data_sock==-1 && control_sock!=-1 && state==EOF_STATE && !quit_sent)
+	 SendSiteIdle();
+      return;
+   }
 
    const char *c=closure;
 

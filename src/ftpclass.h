@@ -180,9 +180,11 @@ class Ftp : public NetAccess
 
    void  SendCmd(const char *cmd,int len=-1);
    void  SendCmd2(const char *cmd,const char *f);
+   void  SendCmd2(const char *cmd,int v);
    void  SendUrgentCmd(const char *cmd);
    int	 FlushSendQueue(bool all=false);
    void	 SendArrayInfoRequests();
+   void	 SendSiteIdle();
 
    int	 ReceiveResp();
 	 // If a response is received, it checks it for accordance with

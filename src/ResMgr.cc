@@ -198,7 +198,7 @@ char *ResMgr::Format(bool with_defaults,bool only_defaults)
       {
 	 size+=4+strlen(scan->type->name);
 	 if(scan->closure)
-	    size+=1+2*strlen(scan->closure);
+	    size+=1+1+2*strlen(scan->closure)+1;
 	 size+=1+1+2*strlen(scan->value)+1+1;
 	 n++;
       }
@@ -256,18 +256,25 @@ char *ResMgr::Format(bool with_defaults,bool only_defaults)
       if(s)
       {
 	 *store++='/';
+	 bool par=false;
+	 if(strcspn(s," \t>|;&")!=strlen(s))
+	    par=true;
+	 if(par)
+	    *store++='"';
 	 while(*s)
 	 {
-	    if(strchr("\" \t\\>|",*s))
+	    if(strchr("\"\\",*s))
 	       *store++='\\';
 	    *store++=*s++;
 	 }
+	 if(par)
+	    *store++='"';
       }
       *store++=' ';
       s=arr[i]->value;
 
       bool par=false;
-      if(*s==0 || strcspn(s," \t>|")!=strlen(s))
+      if(*s==0 || strcspn(s," \t>|;&")!=strlen(s))
 	 par=true;
       if(par)
 	 *store++='"';
