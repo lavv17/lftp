@@ -516,6 +516,11 @@ public:
 	    return copy_addr_valid && expect->FirstIs(Expect::TRANSFER);
 	 return state==WAITING_STATE && expect->IsEmpty();
       }
+   void CopyCheckTimeout(Ftp *o)
+      {
+	 BumpEventTime(o->event_time);
+	 CheckTimeout();
+      }
 };
 
 class FtpS : public Ftp
