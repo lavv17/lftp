@@ -60,30 +60,13 @@ public:
       ALL_INFO=NAME|MODE|DATE|TYPE|SYMLINK_DEF|DATE_UNPREC|SIZE
    };
 
-   ~FileInfo()
-   {
-      xfree(name);
-      xfree(symlink);
-      xfree(data);
-   }
-
+   ~FileInfo();
+   void Init();
    FileInfo()
-   {
-      name=NULL;
-      defined=0;
-      symlink=NULL;
-      data=0;
-   }
-   FileInfo(const FileInfo &fi)
-   {
-      name=xstrdup(fi.name);
-      symlink=xstrdup(fi.symlink);
-      defined=fi.defined;
-      filetype=fi.filetype;
-      mode=fi.mode;
-      date=fi.date;
-      size=fi.size;
-   }
+      {
+	 Init();
+      }
+   FileInfo(const FileInfo &fi);
 
    void SetName(const char *n) { xfree(name); name=xstrdup(n); defined|=NAME; }
    void SetMode(mode_t m) { mode=m; defined|=MODE; }

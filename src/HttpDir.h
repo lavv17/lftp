@@ -31,6 +31,8 @@ class HttpListInfo : public ListInfo
 };
 #endif
 
+class ParsedURL;
+
 class HttpDirList : public DirList
 {
    FileAccess *session;
@@ -38,6 +40,8 @@ class HttpDirList : public DirList
    int upos;
    bool from_cache;
    const char *curr;
+   ParsedURL *curr_url;
+   FileSet all_links;
 
 public:
    HttpDirList(ArgV *a,FileAccess *fa);

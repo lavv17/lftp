@@ -359,7 +359,7 @@ char **lftp_completion (char *text,int start,int end)
    text=bash_dequote_filename(text, quoted);
    len=strlen(text);
 
-   char **matches=completion_matches(text,generator);
+   char **matches=completion_matches(text,(CPFunction*)generator);
 
    if(rg)
       delete rg;
@@ -728,7 +728,7 @@ int   lftp_complete_remote(int count,int key)
    extern Function *rl_last_func;
 
    if(rl_last_func == (Function*)lftp_complete_remote)
-      rl_last_func = rl_complete;
+      rl_last_func = (Function*)rl_complete;
 
    force_remote = true;
    int ret=rl_complete(count,key);
@@ -765,21 +765,21 @@ int   lftp_rl_getc(FILE *file)
 void lftp_readline_init ()
 {
    /* Allow conditional parsing of the ~/.inputrc file. */
-   rl_readline_name = "lftp";
+   rl_readline_name = (char*)"lftp";
 
    /* Tell the completer that we want a crack first. */
    rl_attempted_completion_function = (CPPFunction *)lftp_completion;
 
-   rl_getc_function = (int (*)(...))lftp_rl_getc;
+   rl_getc_function = (Function*)lftp_rl_getc;
 
-   rl_completer_quote_characters = "\"";
-   rl_completer_word_break_characters = " \t\n\"";
-   rl_filename_quote_characters = " \t\n\\\">;|&()";
-   rl_filename_quoting_function = (char* (*)(...))bash_quote_filename;
-   rl_filename_dequoting_function = (char* (*)(...))bash_dequote_filename;
-   rl_char_is_quoted_p = (int (*)(...))lftp_char_is_quoted;
+   rl_completer_quote_characters = (char*)"\"";
+   rl_completer_word_break_characters = (char*)" \t\n\"";
+   rl_filename_quote_characters = (char*)" \t\n\\\">;|&()";
+   rl_filename_quoting_function = (CPFunction*)bash_quote_filename;
+   rl_filename_dequoting_function = (CPFunction*)bash_dequote_filename;
+   rl_char_is_quoted_p = (Function*)lftp_char_is_quoted;
 
-   rl_add_defun("complete-remote",(Function*)lftp_complete_remote,-1);
+   rl_add_defun((char*)"complete-remote",(Function*)lftp_complete_remote,-1);
    static char line[]="Meta-Tab: complete-remote";
    rl_parse_and_bind(line); /* this function writes to the string */
 }

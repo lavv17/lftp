@@ -172,7 +172,7 @@ int ResMgr::ResourceCompare(const Resource *ar,const Resource *br)
    return strcmp(ar->closure,br->closure);
 }
 
-static int resource_compare(const void *a,const void *b)
+int ResMgr::VResourceCompare(const void *a,const void *b)
 {
    const ResMgr::Resource *ar=*(const ResMgr::Resource*const*)a;
    const ResMgr::Resource *br=*(const ResMgr::Resource*const*)b;
@@ -243,7 +243,7 @@ char *ResMgr::Format(bool with_defaults,bool only_defaults)
 	 arr[n++]=created[i];
    }
 
-   qsort(arr,n,sizeof(*arr),resource_compare);
+   qsort(arr,n,sizeof(*arr),&ResMgr::VResourceCompare);
 
    for(i=0; i<n; i++)
    {

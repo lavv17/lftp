@@ -384,3 +384,28 @@ void FileSet::SortByName()
 {
    qsort(files,fnum,sizeof(*files),name_compare);
 }
+
+void FileInfo::Init()
+{
+   name=NULL;
+   defined=0;
+   symlink=NULL;
+   data=0;
+}
+FileInfo::FileInfo(const FileInfo &fi)
+{
+   Init();
+   name=xstrdup(fi.name);
+   symlink=xstrdup(fi.symlink);
+   defined=fi.defined;
+   filetype=fi.filetype;
+   mode=fi.mode;
+   date=fi.date;
+   size=fi.size;
+}
+FileInfo::~FileInfo()
+{
+   xfree(name);
+   xfree(symlink);
+   xfree(data);
+}

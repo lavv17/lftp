@@ -56,9 +56,9 @@ static int parse_month(const char *m)
 }
 
 
-static int parse_html(const char *buf,int len,bool eof,Buffer *list,FileSet *set)
+static int parse_html(const char *buf,int len,bool eof,Buffer *list,
+      FileSet *set,FileSet *all_links,ParsedURL *prefix)
 {
-   FileSet all_links;
    const char *end=buf+len;
    const char *less=find_char(buf,len,'<');
    if(less==0)
@@ -93,7 +93,7 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,FileSet *set
    if(*scan=='"' || *scan=='\'')
       quote=*scan++;
 
-   char *link_target=(char*)alloca(more-scan+1);
+   char *link_target=(char*)alloca(more-scan+1+2);
    char *store=link_target;
    while(scan<more && (quote ? *scan!=quote : !is_ascii_space(*scan)))
       *store++=*scan++;
@@ -108,22 +108,79 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,FileSet *set
       *c=0; // strip pointer inside document.
    if(*link_target==0)
       return tag_len;	// no target ?
-   const char *scan_link=link_target;
-   while(*scan_link)
+
+   ParsedURL link_url(link_target,/*proto_required=*/true);
+   if(link_url.proto)
    {
-      if(scan_link>link_target && *scan_link==':')
-	 return tag_len;   // url
-      if(!is_ascii_alpha(*scan_link))
-	 break;
-      scan_link++;
+      if(!prefix)
+	 return tag_len;	// no way
+
+      if(xstrcmp(link_url.proto,prefix->proto)
+      || xstrcmp(link_url.host,prefix->host)
+      || xstrcmp(link_url.user,prefix->user)
+      || xstrcmp(link_url.port,prefix->port))
+	 return tag_len;	// no match
+   }
+   else
+   {
+      const char *scan_link=link_target;
+      while(*scan_link)
+      {
+	 if(scan_link>link_target && *scan_link==':')
+	    return tag_len;   // special url, like mailto:
+	 if(!is_ascii_alpha(*scan_link))
+	    break;
+	 scan_link++;
+      }
    }
 
    // ok, it is good relative link
-   url::decode_string(link_target);
+   strcpy(link_target,link_url.path);
    int link_len=strlen(link_target);
    bool is_directory=(link_len>0 && link_target[link_len-1]=='/');
    if(is_directory && link_len>1)
       link_target[--link_len]=0;
+
+   if(prefix && prefix->path)
+   {
+      const char *p_path=prefix->path;
+      int p_len=strlen(p_path);
+
+      if(p_len==1 && p_path[0]=='/' && link_target[0]=='/')
+      {
+	 // strip leading slash
+	 link_len--;
+	 memmove(link_target,link_target+1,link_len+1);
+      }
+      else if(p_len>0 && !strncmp(link_target,p_path,p_len))
+      {
+	 if(link_target[p_len]=='/')
+	 {
+	    link_len=strlen(link_target+p_len+1);
+	    memmove(link_target,link_target+p_len+1,link_len+1);
+	 }
+	 else if(link_target[p_len]==0)
+	 {
+	    strcpy(link_target,".");
+	    link_len=1;
+	 }
+      }
+      else
+      {
+	 // try ..
+	 const char *rslash=strrchr(p_path,'/');
+	 if(rslash)
+	 {
+	    p_len=rslash-p_path;
+	    if(p_len>0 && !strncmp(link_target,p_path,p_len)
+	    && link_target[p_len]==0)
+	    {
+	       strcpy(link_target,"..");
+	       link_len=2;
+	    }
+	 }
+      }
+   }
 
    if(list)
    {
@@ -142,13 +199,28 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,FileSet *set
 	    goto add_file;
 	 return less-buf;  // not full line yet
       }
-      more1=find_char(more+1,end-more-1,'>');
-      if(!more1)
-	 goto add_file;
+
+      more1=more;
+      for(;;)
+      {
+	 more1++;
+	 more1=find_char(more1,eol-more1,'>');
+	 if(!more1)
+	    goto add_file;
+	 if(more1[-1]!='.')   // apache bug?
+	    break;
+      }
+
       n=sscanf(more1+1,"%2d-%3s-%4d %2d:%2d %30s",
 		     &day,month_name,&year,&hour,&minute,size_str);
       if(n!=6)
 	 goto add_file;
+
+      // y2000 problem :)
+      if(year<37)
+	 year+=2000;
+      else if(year<100)
+	 year+=1900;
 
       data_available=true;
 
@@ -168,12 +240,12 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,FileSet *set
 	    is_directory?"drwxr-xr-x":"-rw-r--r--",link_target);
       }
 
-      if(!all_links.FindByName(link_target))
+      if(!all_links->FindByName(link_target))
       {
 	 list->Put(line_add);
 	 FileInfo *fi=new FileInfo;
 	 fi->SetName(link_target);
-	 all_links.Add(fi);
+	 all_links->Add(fi);
       }
    }
 
@@ -243,6 +315,9 @@ int HttpDirList::Do()
 	 session->Open(curr,FA::LONG_LIST);
 	 ubuf=new FileInputBuffer(session);
       }
+      if(curr_url)
+	 delete curr_url;
+      curr_url=new ParsedURL(session->GetFileURL(curr));
    }
 
    const char *b;
@@ -270,7 +345,7 @@ int HttpDirList::Do()
    b+=upos;
    len-=upos;
 
-   int n=parse_html(b,len,ubuf->Eof(),buf,0);
+   int n=parse_html(b,len,ubuf->Eof(),buf,0,&all_links,curr_url);
    if(n>0)
    {
       upos+=n;
@@ -296,11 +371,14 @@ HttpDirList::HttpDirList(ArgV *a,FileAccess *fa)
       args->Append("");
    args->rewind();
    curr=0;
+   curr_url=0;
 }
 
 HttpDirList::~HttpDirList()
 {
    delete ubuf;
+   if(curr_url)
+      delete curr_url;
 }
 
 const char *HttpDirList::Status()
@@ -442,9 +520,10 @@ int HttpGlob::Do()
    ubuf->Get(&b,&len);
 
    FileSet set;
+   ParsedURL prefix(session->GetFileURL(curr_dir));
    for(;;)
    {
-      int n=parse_html(b,len,true,0,&set);
+      int n=parse_html(b,len,true,0,&set,0,&prefix);
       if(n==0)
 	 break;
       b+=n;

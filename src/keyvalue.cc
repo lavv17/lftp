@@ -112,7 +112,7 @@ int KeyValueDB::Read(int fd)
    return 0;
 }
 
-static int key_compare(const void *a,const void *b)
+int KeyValueDB::VKeyCompare(const void *a,const void *b)
 {
    KeyValueDB::Pair *pa=*(KeyValueDB::Pair*const*)a;
    KeyValueDB::Pair *pb=*(KeyValueDB::Pair*const*)b;
@@ -134,7 +134,7 @@ void KeyValueDB::Sort()
    for(scan=chain; scan; scan=scan->next)
       arr[count++]=scan;
 
-   qsort(arr,count,sizeof(*arr),key_compare);
+   qsort(arr,count,sizeof(*arr),&KeyValueDB::VKeyCompare);
 
    chain=0;
    while(count--)

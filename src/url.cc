@@ -30,7 +30,7 @@
    CONNECT -> [USER[:PASS]@]HOST[:PORT]
 */
 
-ParsedURL::ParsedURL(const char *url)
+ParsedURL::ParsedURL(const char *url,bool proto_required)
 {
    memory=(char*)xmalloc(strlen(url)*2+1);
    strcpy(memory,url);
@@ -61,9 +61,17 @@ ParsedURL::ParsedURL(const char *url)
       *scan=0;
       scan++;
       proto=base;
-      path=scan;
-      host="localhost";
-      return;
+      memmove(scan+10,scan,strlen(scan)+1);
+      host=scan;
+      strcpy(host,"localhost");
+      path=scan+10;
+      goto decode;
+   }
+   else if(proto_required)
+   {
+      // all the rest is path, if protocol is required.
+      path=base;
+      goto decode;
    }
 
    scan=base;
@@ -119,6 +127,7 @@ ParsedURL::ParsedURL(const char *url)
       }
    }
 
+decode:
    url::decode_string(user);
    url::decode_string(pass);
    url::decode_string(host);

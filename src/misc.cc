@@ -35,7 +35,11 @@
 
 const char *dir_file(const char *dir,const char *file)
 {
-   if(dir==0 || dir[0]==0 || file[0]=='/')
+   if(dir==0 || dir[0]==0)
+      return file;
+   if(file==0 || file[0]==0)
+      return dir;
+   if(file[0]=='/')
       return file;
 
    static char *buf=0;

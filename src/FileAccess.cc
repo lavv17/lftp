@@ -36,6 +36,7 @@
 #include "xalloca.h"
 #include "log.h"
 #include "url.h"
+#include "misc.h"
 #ifdef WITH_MODULES
 # include "module.h"
 #endif
@@ -347,7 +348,7 @@ bool FileAccess::SameSiteAs(FileAccess *fa)
    return SameLocationAs(fa);
 }
 
-const char *FileAccess::GetConnectURL(int flags)
+const char *FileAccess::GetFileURL(const char *f,int flags)
 {
    int len=1;
    const char *proto=GetProto();
@@ -364,8 +365,8 @@ const char *FileAccess::GetConnectURL(int flags)
       len+=strlen(hostname)*3;
    if(portname)
       len+=1+strlen(portname);
-   if(cwd)
-      len+=1+strlen(cwd)*3;
+   f=dir_file(cwd?cwd:"~",f);
+   len+=1+strlen(f)*3;
    url=(char*)xrealloc(url,len);
    sprintf(url,"%s://",proto);
    if(user)
@@ -382,13 +383,18 @@ const char *FileAccess::GetConnectURL(int flags)
       url::encode_string(hostname,url+strlen(url),"/:"URL_UNSAFE);
    if(portname)
       url::encode_string(portname,url+strlen(url),"/"URL_UNSAFE);
-   if(cwd && strcmp(cwd,"~") && !(flags&NO_CWD))
+   if(strcmp(f,"~") && !(flags&NO_PATH))
    {
-      if(cwd[0]!='/') // e.g. ~/path
+      if(f[0]!='/') // e.g. ~/path
 	 strcat(url,"/");
-      url::encode_string(cwd,url+strlen(url));
+      url::encode_string(f,url+strlen(url));
    }
    return url;
+}
+
+const char *FileAccess::GetConnectURL(int flags)
+{
+   return GetFileURL(0,flags);
 }
 
 void FileAccess::Connect(const char *host1,const char *port1)

@@ -70,7 +70,7 @@ time_t History::extract_stamp(const char *res)
 
 const char *History::Lookup(FileAccess *s)
 {
-   const char *url=s->GetConnectURL(s->NO_CWD);
+   const char *url=s->GetConnectURL(s->NO_PATH);
    if(!url)
       return 0;
    const char *res=super::Lookup(url);
@@ -133,7 +133,7 @@ void History::Set(FileAccess *s,const char *cwd)
       return;
    char *res=(char*)alloca(32+strlen(cwd)+1);
    sprintf(res,"%lu:%s",(unsigned long)time(0),cwd);
-   super::Add(s->GetConnectURL(s->NO_CWD),res);
+   super::Add(s->GetConnectURL(s->NO_PATH),res);
 }
 
 void History::Save()

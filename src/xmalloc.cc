@@ -65,3 +65,14 @@ void *xrealloc(void *pointer,size_t bytes)
 #endif
    return(temp);
 }
+
+void xfree(void *p)
+{
+   if(p)
+   {
+#ifdef MEM_DEBUG
+      printf("xfree %p\n",p);
+#endif
+      free(p);
+   }
+}

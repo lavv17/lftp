@@ -157,8 +157,9 @@ public:
    const char  *GetHostName() { return hostname; }
    const char  *GetUser() { return user; }
    const char  *GetPort() { return portname; }
-   virtual const char *GetConnectURL(int flags=0);
-   enum { NO_CWD=1,WITH_PASSWORD=2 };
+   const char  *GetConnectURL(int flags=0);
+   const char  *GetFileURL(const char *file,int flags=0);
+   enum { NO_PATH=1,WITH_PASSWORD=2 };
 
    virtual void Connect(const char *h,const char *p);
    virtual void ConnectVerify() {}

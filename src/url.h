@@ -34,7 +34,7 @@ public:
    char	 *port;
    char  *path;
 
-   ParsedURL(const char *url);
+   ParsedURL(const char *url,bool proto_required=false);
    ~ParsedURL()
    {
       xfree(memory);
