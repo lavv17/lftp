@@ -102,10 +102,6 @@ void Http::Init()
 Http::Http() : super()
 {
    Init();
-   xfree(home);
-   home=xstrdup("/");
-   xfree(cwd);
-   cwd=xstrdup(default_cwd);
    Reconfig();
 }
 Http::Http(const Http *f) : super(f)
@@ -500,6 +496,10 @@ int Http::Do()
       }
       Timeout((idle_start+idle-now)*1000);
    }
+
+   if(home==0)
+      home=xstrdup("/");
+   ExpandTildeInCWD();
 
    switch(state)
    {
