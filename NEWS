@@ -1,35 +1,3 @@
-Version 2.1.4 - 1999-10-23
-
-* hftp support for non-anonymous user added
-* http Proxy-Authorization support added.
-* new setting hftp:use-head for proxies that don't properly handle HEAD
-  requests for ftp:// URLs.
-* memory leak in http code fixed.
-* http/hftp PUT fixed.
-* a bug in parsing squid ftp listing fixed (some files were shown
-  without info).
-* fixed handling of base-href in hftp listings.
-
-Version 2.1.3 - 1999-10-16
-
-* documentation update.
-* get: don't create output file early.
-* http: check if extracted file info is valid.
-* http: list parser for Mini-Proxy added.
-* http: fixed core dump on certain html pages.
-* fixed closure handling in cmd: veriables.
-* fixed a bug with setting variables using shortened name.
-* fixed completion for files with spaces in name.
-
-Version 2.1.2 - 1999-10-09
-
-* http: ls -F implemented, accept some other options.
-* hftp: parser for Netscape proxy added.
-* socks5 and dante support added (--with-socks5, --with-socksdante).
-* korean translation.
-* mget -d now uses 0777 mode on directories.
-* fixed a SEGV due to double freed memory.
-
 Version 2.1.1 - 1999-10-02
 
 * close -a now really closes all connections, even if current protocol is http.

@@ -131,7 +131,7 @@ int   create_directories(char *path)
 	 *sl=0;
       if(access(path,0)==-1)
       {
-	 res=mkdir(path,0777);
+	 res=mkdir(path,0755);
 	 if(res==-1)
 	 {
 	    if(errno!=EEXIST)

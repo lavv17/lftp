@@ -1,16 +1,3 @@
-1999-10-22	Alexander V. Lukyanov <lav@yars.free.net>
-
-	* lftp.1: document hftp:use-head.
-
-1999-10-12	Alexander V. Lukyanov <lav@yars.free.net>
-
-	* lftp.1: correct example with verify-path.
-
-1999-10-10	Alexander V. Lukyanov <lav@yars.free.net>
-
-	* lftp.1: add hftp to protocol list, document cmd:verify-*
-	  variables, document closure for cmd: domain.
-
 1999-09-22      Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: add subsections headings `Settings' and

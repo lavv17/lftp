@@ -1,5 +1,5 @@
 %define name lftp
-%define version 2.1.4
+%define version 2.1.1
 
 Summary: The lftp command line ftp/http client
 Name: %{name} 
@@ -45,7 +45,6 @@ rm -rf $RPM_BUILD_ROOT
 * Sat Oct 02 1999 Alexander Lukyanov <lav@yars.free.net>
 
 - 2.1.1 release
-- removed ChangeLog from doc.
 
 * Mon Sep 27 1999 Alexander Lukyanov <lav@yars.free.net>
 
@@ -62,7 +61,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc README README.modules FAQ THANKS COPYING TODO lftp.lsm NEWS INSTALL
+%doc README README.modules FAQ ChangeLog THANKS COPYING TODO lftp.lsm NEWS INSTALL
 %doc /usr/man/man1/ftpget.1
 %doc /usr/man/man1/lftp.1
 %config /etc/lftp.conf

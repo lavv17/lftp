@@ -135,7 +135,6 @@ protected:
    ResValue Query(const char *name,const char *closure=0);
 
    int chmod_mode;
-   bool ascii;
 
    bool Error() { return error_code!=OK; }
    void ClearError();
@@ -173,7 +172,6 @@ public:
    void SetDate(time_t d) { entity_date=d; }
    void WantDate(time_t *d) { opt_date=d; }
    void WantSize(long *s) { opt_size=s; }
-   void AsciiTransfer() { ascii=true; }
    virtual void Close();
 
    virtual void	Rename(const char *rfile,const char *to);

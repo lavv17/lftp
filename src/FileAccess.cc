@@ -67,7 +67,6 @@ void FileAccess::Init()
    error_code=OK;
    saved_errno=0;
    mkdir_p=false;
-   ascii=false;
 
    url=0;
 
@@ -328,7 +327,6 @@ void FileAccess::Close()
    array_for_info=0;
    entity_size=-1;
    entity_date=(time_t)-1;
-   ascii=false;
    ClearError();
 }
 
@@ -454,9 +452,6 @@ void FileAccess::AnonymousLogin()
    xfree(pass); pass=0;
    xfree(group); group=0;
    xfree(gpass); gpass=0;
-   xfree(cwd);
-   cwd=xstrdup(default_cwd);
-   xfree(home);  home=0;
 }
 
 void FileAccess::GetInfoArray(struct fileinfo *info,int count)

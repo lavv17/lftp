@@ -913,19 +913,15 @@ void CmdExec::beep_if_long()
 
 void CmdExec::Reconfig(const char *)
 {
-   const char *c=0;
-   if(session)
-      c = session->GetConnectURL(FA::NO_PATH);
-
-   long_running = res_long_running.Query(c);
-   remote_completion = res_remote_completion.Query(c);
+   long_running = res_long_running.Query(0);
+   remote_completion = res_remote_completion.Query(0);
    csh_history = res_csh_history.Query(0);
    xfree(var_ls);
-   var_ls=xstrdup(res_default_ls.Query(c));
+   var_ls=xstrdup(res_default_ls.Query(session->GetConnectURL(FA::NO_PATH)));
    xfree(var_prompt);
-   var_prompt=xstrdup(res_prompt.Query(c));
-   verify_path=res_verify_path.Query(c);
-   verify_host=res_verify_host.Query(c);
+   var_prompt=xstrdup(res_prompt.Query(0));
+   verify_path=res_verify_path.Query(0);
+   verify_host=res_verify_host.Query(0);
    verbose=res_verbose.Query(0);
 }
 
@@ -1154,7 +1150,6 @@ void CmdExec::ChangeSession(FileAccess *new_session)
 {
    Reuse(session);
    session=new_session;
-   Reconfig(0);
 }
 
 const CmdExec::cmd_rec *CmdExec::CmdByIndex(int i)

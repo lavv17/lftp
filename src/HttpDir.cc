@@ -28,7 +28,6 @@
 #include "ArgV.h"
 #include "LsCache.h"
 #include "misc.h"
-#include <ctype.h>
 
 static const char *find_char(const char *buf,int len,char ch)
 {
@@ -105,68 +104,20 @@ static bool find_value(const char *scan,const char *more,const char *name,char *
    return false;
 }
 
-static
-const char *find_eol(const char *buf,int len,bool eof,int *eol_size)
-{
-   const char *real_eol=find_char(buf,len,'\n');
-   const char *less=find_char(buf,len,'<');
-   const char *more=0;
-   if(less)
-   {
-      more=find_char(less+1,len-(less+1-buf),'>');
-      if(more && !token_eq(less+1,len-(less+1-buf),"br"))
-      {
-	 // if the tag is finished and not BR, ignore it.
-	 less=0;
-	 more=0;
-      }
-   }
-   // is real_eol past the tag?
-   if(real_eol && less && real_eol>less)
-      real_eol=0;  // then ignore it.
-   // real_eol not found?
-   if(!real_eol)
-   {
-      // BR found?
-      if(less && more)
-      {
-	 *eol_size=more-less+1;
-	 return less;
-      }
-      *eol_size=0;
-      if(eof)
-	 return buf+len;
-      return 0;
-   }
-   *eol_size=1;
-   return real_eol;
-}
-
 static int parse_html(const char *buf,int len,bool eof,Buffer *list,
-      FileSet *set,FileSet *all_links,ParsedURL *prefix,char **base_href,
-      LsOptions *lsopt=0)
+      FileSet *set,FileSet *all_links,ParsedURL *prefix,char **base_href)
 {
    const char *end=buf+len;
    const char *less=find_char(buf,len,'<');
-   int eol_len=0;
-   int skip_len=0;
-   const char *eol;
-
-   eol=find_eol(buf,len,eof,&eol_len);
-   if(eol)
-      skip_len=eol-buf+eol_len;
-
    if(less==0)
-      return skip_len;
-   if(skip_len>0 && eol<less)
-      return skip_len;
+      return len;
    // FIXME: a > sign can be inside quoted value. (?)
    const char *more=find_char(less+1,end-less-1,'>');
    if(more==0)
    {
       if(eof)
 	 return len;
-      return 0;
+      return less-buf;
    }
    // we have found a tag
    int tag_len=more-buf+1;
@@ -268,10 +219,6 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
    if(*link_target==0)
       return tag_len;	// no target ?
 
-   // netscape internal icons
-   if(icon && !strncasecmp(link_target,"internal-gopher",15))
-      return tag_len;
-
    if(link_target[0]=='/' && link_target[1]=='~')
       link_target++;
 
@@ -284,11 +231,7 @@ parse_url_again:
       if(!prefix)
 	 return tag_len;	// no way
 
-      const char *pproto=prefix->proto;
-      if(!xstrcmp(pproto,"hftp"))
-	 pproto++;
-
-      if(xstrcmp(link_url.proto,pproto)
+      if(xstrcmp(link_url.proto,prefix->proto)
       || xstrcmp(link_url.host,prefix->host)
       || xstrcmp(link_url.user,prefix->user)
       || xstrcmp(link_url.port,prefix->port))
@@ -387,15 +330,14 @@ parse_url_again:
    if(icon && link_target[0]=='/')
       show_in_list=false;  // makes apache listings look better.
 
-   skip_len=tag_len;
+   int skip_len=tag_len;
    char *sym_link=0;
-   bool is_sym_link=false;
 
    if(list && show_in_list)
    {
-      int year=-1,month=-1,day=0,hour=0,minute=0;
-      char month_name[32]="";
-      char size_str[32]="";
+      int year,month,day,hour,minute;
+      char month_name[32];
+      char size_str[32];
       const char *more1;
       char *str;
       int n;
@@ -406,31 +348,27 @@ parse_url_again:
 	 goto add_file;	// only <a href> tags can have useful info.
 
       // try to extract file information
+      const char *eol;
+      eol=find_char(more+1,end-more-1,'\n');
+      if(!eol)
+      {
+	 if(eof)
+	    goto add_file;
+	 if(end-more>2*1024) // too long line
+	    goto add_file;
+	 return less-buf;  // no full line yet
+      }
+
       more1=more;
    find_a_end:
       for(;;)
       {
 	 more1++;
-	 more1=find_char(more1,end-more1,'>');
+	 more1=find_char(more1,eol-more1,'>');
 	 if(!more1)
-	 {
-	    if(eof)
-	       goto add_file;
-	    if(end-more>2*1024) // too long a-href
-	       goto add_file;
-	    return 0;  // no full a-href yet
-	 }
+	    goto add_file;
 	 if(!strncasecmp(more1-3,"</a",3))
 	    break;
-      }
-      // get a whole line in buffer if possible.
-      eol=find_eol(more1+1,end-more1-1,eof,&eol_len);
-      if(!eol)
-      {
-	 if(!eof && end-more<=2*1024)
-	    return 0;  // no full line yet
-	 eol=end;
-	 eol_len=0;
       }
 
       // little workaround for squid's ftp listings
@@ -453,101 +391,48 @@ parse_url_again:
       // usual apache listing: DD-Mon-YYYY hh:mm size
       n=sscanf(str,"%2d-%3s-%4d %2d:%2d %30s",
 		    &day,month_name,&year,&hour,&minute,size_str);
-      if(n==6)
-	 goto got_info;
-
-      hour=0;
-      minute=0;
-      // unusual apache listing: size DD-Mon-YYYY
-      n=sscanf(str,"%30s %2d-%3s-%4d",size_str,&day,month_name,&year);
-      if(n==4)
-	 goto got_info;
-
-      char size_unit[7];
-      long size;
-      char week_day[4];
-      int second;
-      // Netscape-Proxy 2.53
-      if(9==sscanf(str,"%ld %6s %3s %3s %d %2d:%2d:%2d %4d",&size,size_unit,
-	       week_day,month_name,&day,&hour,&minute,&second,&year))
+      if(n!=6)
       {
-	 if(!strcasecmp(size_unit,"bytes")
-	 || !strcasecmp(size_unit,"byte"))
-	    sprintf(size_str,"%ld",size);
-	 else
-	    sprintf(size_str,"%ld%s",size,size_unit);
-	 goto got_info;
-      }
-      if(7==sscanf(str,"%3s %3s %d %2d:%2d:%2d %4d",
-	       week_day,month_name,&day,&hour,&minute,&second,&year))
-      {
-	 strcpy(size_str,"-");
-	 if(!is_directory)
-	    is_sym_link=true;
-	 goto got_info;
-      }
-
-      char PM[3];
-      // Mini-Proxy web server.
-      if(7==sscanf(buf,"%d/%d/%d %d:%d %2s %30s",&month,&day,&year,&hour,
-			&minute,PM,size_str))
-      {
-	 if(!strcasecmp(PM,"PM"))
+	 hour=0;
+	 minute=0;
+	 // unusual apache listing: size DD-Mon-YYYY
+	 n=sscanf(str,"%30s %2d-%3s-%4d",size_str,&day,month_name,&year);
+	 if(n!=4)
 	 {
-	    hour+=12;
-	    if(hour==24)
-	       hour=0;
-	 }
-	 if(!isdigit((unsigned char)size_str[0]))
-	 {
-	    if(!strcasecmp(size_str,"<dir>"))
-	       is_directory=true;
 	    strcpy(size_str,"-");
-	 }
-	 month--;
-	 goto got_info;
-      }
+	    char year_or_time[6];
+	    // squid's ftp listing: Mon DD (YYYY or hh:mm) [size]
+	    n=sscanf(str,"%3s %2d %5s %30s",month_name,&day,year_or_time,size_str);
+	    if(n<3)
+	       goto add_file;
+	    if(!is_ascii_digit(size_str[0]))
+	       strcpy(size_str,"-");
+	    if(year_or_time[2]==':')
+	    {
+	       sscanf(year_or_time,"%2d:%2d",&hour,&minute);
+	       year=-1;
+	    }
+	    else
+	       sscanf(year_or_time,"%d",&year);
+	    // skip rest of line, because there may be href to link target.
+	    skip_len=eol-buf+1;
 
-      strcpy(size_str,"-");
-      char year_or_time[6];
-      // squid's ftp listing: Mon DD (YYYY or hh:mm) [size]
-      n=sscanf(str,"%3s %2d %5s %30s",month_name,&day,year_or_time,size_str);
-      if(n<3)
-	 goto add_file;
-      if(!is_ascii_digit(size_str[0]))
-	 strcpy(size_str,"-");
-      if(year_or_time[2]==':')
-      {
-	 if(2!=sscanf(year_or_time,"%2d:%2d",&hour,&minute))
-	    goto add_file;
-	 year=-1;
-      }
-      else
-      {
-	 if(1!=sscanf(year_or_time,"%d",&year))
-	    goto add_file;
-	 hour=minute=0;
-      }
-      // skip rest of line, because there may be href to link target.
-      skip_len=eol-buf+eol_len;
-
-      char *ptr;
-      ptr=strstr(str," -> <A HREF=\"");
-      if(ptr)
-      {
-	 is_sym_link=true;
-	 sym_link=ptr+13;
-	 ptr=strchr(sym_link,'"');
-	 if(!ptr)
-	    sym_link=0;
-	 else
-	 {
-	    *ptr=0;
-	    url::decode_string(sym_link);
+	    char *ptr=strstr(str," -> <A HREF=\"");
+	    if(ptr)
+	    {
+	       sym_link=ptr+13;
+	       ptr=strchr(sym_link,'"');
+	       if(!ptr)
+		  sym_link=0;
+	       else
+	       {
+		  *ptr=0;
+		  url::decode_string(sym_link);
+	       }
+	    }
 	 }
       }
 
-   got_info:
       if(year!=-1)
       {
 	 // server's y2000 problem :)
@@ -557,17 +442,12 @@ parse_url_again:
 	    year+=1900;
       }
 
-      if(day<1 || day>31 || hour<0 || hour>23 || minute<0 || minute>59
-      || (month==-1 && !isalnum((unsigned char)month_name[0])))
-	 goto add_file;	// invalid data
-
       data_available=true;
 
    add_file:
       if(data_available)
       {
-	 if(month==-1)
-	    month=parse_month(month_name);
+	 month=parse_month(month_name);
 	 if(month>=0)
 	 {
 	    sprintf(month_name,"%02d",month+1);
@@ -581,24 +461,17 @@ parse_url_again:
 	    }
 	 }
 	 sprintf(line_add,"%s  %10s  %04d-%s-%02d %02d:%02d  %s",
-	    is_directory?"drwxr-xr-x":(is_sym_link?"lrwxrwxrwx":"-rw-r--r--"),
+	    is_directory?"drwxr-xr-x":(sym_link?"lrwxrwxrwx":"-rw-r--r--"),
 	    size_str,year,month_name,day,hour,minute,link_target);
 	 if(sym_link)
 	    sprintf(line_add+strlen(line_add)," -> %s",sym_link);
+	 strcat(line_add,"\n");
       }
       else
       {
-	 sprintf(line_add,"%s    %s",
+	 sprintf(line_add,"%s    %s\n",
 	    is_directory?"drwxr-xr-x":"-rw-r--r--",link_target);
       }
-      if(lsopt && lsopt->append_type)
-      {
-	 if(is_directory)
-	    strcat(line_add,"/");
-	 if(is_sym_link && !sym_link)
-	    strcat(line_add,"@");
-      }
-      strcat(line_add,"\n");
 
       if(!all_links->FindByName(link_target))
       {
@@ -707,7 +580,7 @@ int HttpDirList::Do()
 
    int m=STALL;
 
-   int n=parse_html(b,len,ubuf->Eof(),buf,0,&all_links,curr_url,&base_href,&ls_options);
+   int n=parse_html(b,len,ubuf->Eof(),buf,0,&all_links,curr_url,&base_href);
    if(n>0)
    {
       ubuf->Skip(n);
@@ -729,30 +602,13 @@ HttpDirList::HttpDirList(ArgV *a,FileAccess *fa)
    ubuf=0;
    mode=FA::LONG_LIST;
    args->rewind();
-   int opt;
-   while((opt=args->getopt("faCFl"))!=EOF)
-   {
-      switch(opt)
-      {
-      case('f'):
-	 mode=FA::RETRIEVE;
-	 break;
-      case('a'):
-	 ls_options.show_all=true;
-	 break;
-      case('C'):
-	 ls_options.multi_column=true;
-	 break;
-      case('F'):
-	 ls_options.append_type=true;
-	 break;
-      }
-   }
-   while(args->getindex()>1)
-      args->delarg(1);	// remove options.
    if(args->count()<2)
       args->Append("");
-   args->rewind();
+   else if(args->count()>2 && !strcmp(args->getarg(1),"-f"))
+   {
+      args->delarg(1);	// del -f
+      mode=FA::RETRIEVE;
+   }
    curr=0;
    curr_url=0;
    base_href=0;
