@@ -48,6 +48,7 @@ static ResDecl
    res_verify_path	   ("cmd:verify-path",	"yes",ResMgr::BoolValidate,0),
    res_verify_host	   ("cmd:verify-host",	"yes",ResMgr::BoolValidate,0),
    res_at_exit		   ("cmd:at-exit",	"",   0,0),
+   res_fail_exit	   ("cmd:fail-exit",	"no", ResMgr::BoolValidate,0),
    res_save_passwords	   ("bmk:save-passwords","no",ResMgr::BoolValidate,0);
 
 CmdExec	 *CmdExec::cwd_owner=0;
@@ -165,6 +166,12 @@ void  CmdExec::exec_parsed_command()
    switch(condition)
    {
    case(COND_ANY):
+      if(exit_code!=0 && bool(res_fail_exit.Query(0)))
+      {
+	 while(!Done())
+	    RemoveFeeder();
+	 return;
+      }
       break;
    case(COND_AND):
       if(exit_code!=0)

@@ -86,6 +86,7 @@ int   PutJob::Do()
    {
       got_eof=false;
       offset+=in_buffer;
+      CountBytes(in_buffer);
       in_buffer=0;
    }
 
@@ -101,6 +102,7 @@ remote_error:
       if(res==FA::STORE_FAILED)
       {
 	 offset+=in_buffer;
+	 CountBytes(in_buffer);
 	 in_buffer=0;	// flush buffer
 	 remote_size=-1;
 	 session->Close();
@@ -150,8 +152,11 @@ remote_error:
 
 	 offset+=diff;
 
-	 if(diff<0)
-	    CountBytes(diff);
+	 // don't subtract too much.
+	 if(offset<remote_size && offset-diff>=remote_size)
+	    diff+=remote_size-offset;
+
+	 CountBytes(diff);
 
 	 res=lseek(fd,offset,SEEK_SET);
 	 if(res==-1)
