@@ -85,9 +85,6 @@ protected:
    void  CountBytes(long);
    void	 RateDrain();
 
-   time_t   last_status_update;
-   char	    last_status[80];
-
    char *Percent(); // return either string ending with a space or empty string
    char *CurrRate(float);
    char *CurrRate() { return CurrRate(minute_xfer_rate); }

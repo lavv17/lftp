@@ -1562,10 +1562,11 @@ CMD(close)
 
 static const char * const bookmark_subcmd[]=
    {"add","delete","list","edit","import",0};
+static ResDecl res_save_passwords
+   ("bmk:save-passwords","no",ResMgr::BoolValidate,0);
 
 CMD(bookmark)
 {
-   static ResDecl res_save_passwords("bmk:save-passwords","no",ResMgr::BoolValidate,0);
 
    args->rewind();
    const char *op=args->getnext();

@@ -115,12 +115,6 @@ void  XferJob::ShowRunStatus(StatusLine *s)
 
    const char *st=session->CurrentStatus();
 
-   if(now==last_status_update && !strncmp(st,last_status,sizeof(last_status)))
-      return;
-
-   strncpy(last_status,st,sizeof(last_status));
-   last_status_update=now;
-
    if(curr && session->IsOpen())
    {
       int w=s->GetWidth()-40;
@@ -292,8 +286,6 @@ XferJob::XferJob(FileAccess *f) : SessionJob(f)
    use_urls=res_use_urls.Query(0);  // Query once, can't change on fly
    non_strict_urls=false;
    url=0;
-   last_status_update=0;
-   last_status[0]=0;
    session_buffered=0;
 }
 

@@ -29,6 +29,7 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <errno.h>
 #include "misc.h"
 
 int   PutJob::Do()
@@ -184,26 +185,26 @@ remote_error:
 	 }
       }
 
-      block+=PollVec(fd,POLLIN);
-      struct pollfd pfd={fd,POLLIN};
-      int res=poll(&pfd,1,0);
-      if(res==1 && pfd.revents&(POLLIN|POLLNVAL))
+      res=read(fd,buffer+in_buffer,buffer_size-in_buffer);
+      if(res==-1)
       {
-	 res=read(fd,buffer+in_buffer,buffer_size-in_buffer);
-	 if(res==-1)
+	 if(errno==EAGAIN || errno==EINTR)
 	 {
-	    perror(local->name);
-	    failed++;
-	    NextFile();
-	    return MOVED;
+	    block+=PollVec(fd,POLLIN);
+	    goto try_write;
 	 }
-	 if(res==0)
-	 {
-	    // EOF
-	    got_eof=true;
-	 }
-	 in_buffer+=res;
+	 perror(local->name);
+	 failed++;
+	 NextFile();
+	 return MOVED;
       }
+      if(res==0)
+      {
+	 // EOF
+	 got_eof=true;
+      }
+      in_buffer+=res;
+      m=MOVED;
    }
 
 try_write:
@@ -211,7 +212,7 @@ try_write:
    {
       if(!got_eof)
 	 session->Suspend();
-      return MOVED;
+      return m;
    }
    res=session->Write(buffer,in_buffer);
    if(res==FA::DO_AGAIN)

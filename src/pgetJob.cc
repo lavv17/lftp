@@ -129,11 +129,6 @@ void pgetJob::ShowRunStatus(StatusLine *s)
    if(!curr || !session->IsOpen())
       return;
 
-   time_t now=time(0);
-   if(now==last_status_update)
-      return;
-   last_status_update=now;
-
    int w=s->GetWidth()-40;
    if(w<=0)
       return;

@@ -82,13 +82,17 @@ int FtpListInfo::Do()
       }
       glob_res=glob->GetResult();
 
-      result=ParseFtpLongList(glob_res,&err);
+      // don't consider empty list to be valid
+      if(glob_res && glob_res[0])
+	 result=ParseFtpLongList(glob_res,&err);
+      else
+	 err=1;
 
       delete glob;
       glob=0;
+      glob_res=0; // note: glob_res is pointer to part of glob
 
-      // note: don't consider empty list to be valid
-      if(err==0 && glob_res && glob_res[0])
+      if(err==0)
 	 goto pre_GETTING_INFO;
 
       // there were parse errors, try another method
@@ -112,6 +116,7 @@ int FtpListInfo::Do()
       result->Merge(glob_res);
       delete glob;
       glob=0;
+      glob_res=0;
 
    pre_GETTING_INFO:
       if(rxc_exclude || rxc_include)
@@ -315,315 +320,224 @@ int   parse_month(char *m)
 }
 
 static
-FileSet *ParseFtpLongList_UNIX(char **lines,int *err)
+FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err)
 {
 #define FIRST_TOKEN strtok(line," \t")
 #define NEXT_TOKEN  strtok(NULL," \t")
-#define ERR do{if(err) (*err)++;}while(0)
-   char	 *line;
-   int	 base_dir_len=-1;
-   char	 *curr_dir=xstrdup("");
-   int 	 len;
+#define ERR do{(*err)++;return(0);}while(0)
+   char	 *line=alloca_strdup(line_c);
+   int 	 len=strlen(line);
+   int	 tmp;
 
-   FileSet *set=new FileSet;
+   if(len==0)
+      return 0;
+   if(sscanf(line,"total %d",&tmp)==1)
+      return 0;
 
-   if(lines==0)
-      return set;
+   /* parse perms */
+   char *t = FIRST_TOKEN;
+   if(t==0)
+      ERR;
 
-   while((line=*lines++)!=0)
+   FileInfo fi;
+   switch(t[0])
    {
-      if(sscanf(line,"total %d",&len)==1)
-	 continue;
-      len=strlen(line);
-      if(len==0)
-	 continue;
-
-      /* dir1/dir2/dir3: */
-      if(line[len-1]==':' && strchr(line,' ')==0 && strchr(line,'\t')==0)
-      {
-	 // we got directory name
-	 line[--len]=0;
-	 if(base_dir_len>=0)
-	 {
-	    xfree(curr_dir);
-	    if(len<=base_dir_len)
-	       curr_dir=xstrdup("");   // unlikely case
-	    else
-	       curr_dir=xstrdup(line+base_dir_len);
-	 }
-   	 else
-	 {
-	    char *b=strrchr(line,'/');
-	    if(b)
-	       base_dir_len=b-line+1;
-	    else
-	       base_dir_len=0;
-	 }
-	 continue;
-      }
-
-      /* parse perms */
-      char *t = FIRST_TOKEN;
-      if(t==0)
-      {
-	 ERR;
-	 continue;
-      }
-      FileInfo fi;
-      switch(t[0])
-      {
-      case('l'):  // symlink
-	 fi.SetType(fi.SYMLINK);
-      	 break;
-      case('d'):  // directory
-	 fi.SetType(fi.DIRECTORY);
-      	 break;
-      case('-'):  // plain file
-	 fi.SetType(fi.NORMAL);
-      	 break;
-      case('b'): // block
-      case('c'): // char
-      case('p'): // pipe
-      case('s'): // sock
-	 continue;   // ignore
-      default:
-	 ERR;
-	 continue;   // unknown
-      }
-      mode_t mode=parse_perms(t+1);
-      if(mode!=(mode_t)-1)
-	 fi.SetMode(mode);
-
-      // link count
-      t = NEXT_TOKEN;
-      if(!t)
-      {
-	 ERR;
-	 continue;
-      }
-
-      // user
-      t = NEXT_TOKEN;
-      if(!t)
-      {
-	 ERR;
-	 continue;
-      }
-
-      // group or size
-      char *group_or_size = NEXT_TOKEN;
-
-      // size or month
-      t = NEXT_TOKEN;
-      if(!t)
-      {
-	 ERR;
-	 continue;
-      }
-      if(isdigit(*t))
-      {
-	 // size
-      	 fi.SetSize(atol(t));
-	 t = NEXT_TOKEN;
-	 if(!t)
-	 {
-	    ERR;
-	    continue;
-	 }
-      }
-      else
-      {
-	 // it was month
-	 fi.SetSize(atol(group_or_size));
-      }
-
-      struct tm date;
-      memset(&date,0,sizeof(date));
-
-      date.tm_mon=parse_month(t);
-      if(date.tm_mon==-1)
-	 date.tm_mon=0;
-
-      const char *day_of_month = NEXT_TOKEN;
-      if(!day_of_month)
-	 continue;
-      date.tm_mday=atoi(day_of_month);
-
-      bool year_anomaly=false;
-
-      // time or year
-      t = NEXT_TOKEN;
-      if(!t)
-      {
-	 ERR;
-	 continue;
-      }
-      date.tm_hour=date.tm_min=0;
-      if(strlen(t)==5)
-      {
-	 sscanf(t,"%2d:%2d",&date.tm_hour,&date.tm_min);
-	 time_t curr=time(0);
-      	 struct tm &now=*localtime(&curr);
-	 date.tm_year=now.tm_year;
-	 if(date.tm_mon*64+date.tm_mday>now.tm_mon*64+now.tm_mday)
-	    date.tm_year--;
-      }
-      else
-      {
-	 if(day_of_month+strlen(day_of_month)+1 == t)
-	    year_anomaly=true;
-	 date.tm_year=atoi(t)-1900;
-      }
-
-      date.tm_isdst=0;
-      date.tm_sec=0;
-
-      fi.SetDateUnprec(mktime(&date));
-
-      char *name=strtok(NULL,"");
-      if(!name)
-      {
-	 ERR;
-	 continue;
-      }
-
-      // there are ls which outputs extra space after year.
-      if(year_anomaly && *name==' ')
-	 name++;
-
-      if(fi.filetype==fi.SYMLINK)
-      {
-	 char *arrow=name;
-	 while((arrow=strstr(arrow," -> "))!=0)
-	 {
-	    if(arrow!=name && arrow[4]!=0)
-	    {
-	       *arrow=0;
-	       fi.SetSymlink(arrow+4);
-	       break;
-	    }
-	 }
-      }
-      if(curr_dir[0])
-      {
-	 char *fullname=(char*)alloca(strlen(curr_dir)+1+strlen(name)+1);
-	 sprintf(fullname,"%s/%s",curr_dir,name);
-	 fi.SetName(fullname);
-      }
-      else
-	 fi.SetName(name);
-
-      set->Add(new FileInfo(fi));
+   case('l'):  // symlink
+      fi.SetType(fi.SYMLINK);
+      break;
+   case('d'):  // directory
+      fi.SetType(fi.DIRECTORY);
+      break;
+   case('-'):  // plain file
+      fi.SetType(fi.NORMAL);
+      break;
+   case('b'): // block
+   case('c'): // char
+   case('p'): // pipe
+   case('s'): // sock
+      return 0;  // ignore
+   default:
+      ERR;
    }
-   return set;
+   mode_t mode=parse_perms(t+1);
+   if(mode!=(mode_t)-1)
+      fi.SetMode(mode);
+
+   // link count
+   t = NEXT_TOKEN;
+   if(!t)
+      ERR;
+
+   // user
+   t = NEXT_TOKEN;
+   if(!t)
+      ERR;
+
+   // group or size
+   char *group_or_size = NEXT_TOKEN;
+
+   // size or month
+   t = NEXT_TOKEN;
+   if(!t)
+      ERR;
+   if(isdigit(*t))
+   {
+      // size
+      fi.SetSize(atol(t));
+      t = NEXT_TOKEN;
+      if(!t)
+	 ERR;
+   }
+   else
+   {
+      // it was month
+      fi.SetSize(atol(group_or_size));
+   }
+
+   struct tm date;
+   memset(&date,0,sizeof(date));
+
+   date.tm_mon=parse_month(t);
+   if(date.tm_mon==-1)
+      date.tm_mon=0;
+
+   const char *day_of_month = NEXT_TOKEN;
+   if(!day_of_month)
+      ERR;
+   date.tm_mday=atoi(day_of_month);
+
+   bool year_anomaly=false;
+
+   // time or year
+   t = NEXT_TOKEN;
+   if(!t)
+      ERR;
+   date.tm_hour=date.tm_min=0;
+   if(strlen(t)==5)
+   {
+      sscanf(t,"%2d:%2d",&date.tm_hour,&date.tm_min);
+      time_t curr=time(0);
+      struct tm &now=*localtime(&curr);
+      date.tm_year=now.tm_year;
+      if(date.tm_mon*64+date.tm_mday>now.tm_mon*64+now.tm_mday)
+	 date.tm_year--;
+   }
+   else
+   {
+      if(day_of_month+strlen(day_of_month)+1 == t)
+	 year_anomaly=true;
+      date.tm_year=atoi(t)-1900;
+   }
+
+   date.tm_isdst=0;
+   date.tm_sec=0;
+
+   fi.SetDateUnprec(mktime(&date));
+
+   char *name=strtok(NULL,"");
+   if(!name)
+      ERR;
+
+   // there are ls which outputs extra space after year.
+   if(year_anomaly && *name==' ')
+      name++;
+
+   if(fi.filetype==fi.SYMLINK)
+   {
+      char *arrow=name;
+      while((arrow=strstr(arrow," -> "))!=0)
+      {
+	 if(arrow!=name && arrow[4]!=0)
+	 {
+	    *arrow=0;
+	    fi.SetSymlink(arrow+4);
+	    break;
+	 }
+      }
+   }
+   fi.SetName(name);
+
+   return new FileInfo(fi);
 }
 
 static
-FileSet *ParseFtpLongList_NT(char **lines,int *err)
+FileInfo *ParseFtpLongList_NT(const char *line_c,int *err)
 {
-   char	 *line;
-   int 	 len;
+   char	 *line=alloca_strdup(line_c);
+   int 	 len=strlen(line);
 
-   FileSet *set=new FileSet;
+   if(len==0)
+      return 0;
+   char *t = FIRST_TOKEN;
+   if(t==0)
+      ERR;
+   FileInfo fi;
+   int month,day,year;
+   if(sscanf(t,"%2d-%2d-%2d",&month,&day,&year)!=3)
+      ERR;
+   if(year>=70)
+      year+=1900;
+   else
+      year+=2000;
 
-   if(lines==0)
-      return set;
+   t = NEXT_TOKEN;
+   if(t==0)
+      ERR;
+   int hour,minute;
+   char am;
+   if(sscanf(t,"%2d:%2d%c",&hour,&minute,&am)!=3)
+      ERR;
+   t = NEXT_TOKEN;
+   if(t==0)
+      ERR;
 
-   while((line=*lines++)!=0)
+   if(am=='P') // PM - after noon
    {
-      len=strlen(line);
-      if(len==0)
-	 continue;
-      char *t = FIRST_TOKEN;
-      if(t==0)
-      {
-	 ERR;
-	 continue;
-      }
-      FileInfo fi;
-      int month,day,year;
-      if(sscanf(t,"%2d-%2d-%2d",&month,&day,&year)!=3)
-      {
-	 ERR;
-	 continue;
-      }
-      if(year>=70)
-	 year+=1900;
-      else
-	 year+=2000;
-
-      t = NEXT_TOKEN;
-      if(t==0)
-      {
-	 ERR;
-	 continue;
-      }
-      int hour,minute;
-      char am;
-      if(sscanf(t,"%2d:%2d%c",&hour,&minute,&am)!=3)
-      {
-	 ERR;
-	 continue;
-      }
-      t = NEXT_TOKEN;
-      if(t==0)
-      {
-	 ERR;
-	 continue;
-      }
-
-      if(am=='P') // PM - after noon
-      {
-	 hour+=12;
-	 if(hour==24)
-	    hour=0;
-      }
-      struct tm tms;
-      tms.tm_sec=0;	      /* seconds after the minute [0, 61]  */
-      tms.tm_min=minute;      /* minutes after the hour [0, 59] */
-      tms.tm_hour=hour;	      /* hour since midnight [0, 23] */
-      tms.tm_mday=day;	      /* day of the month [1, 31] */
-      tms.tm_mon=month-1;     /* months since January [0, 11] */
-      tms.tm_year=year-1900;  /* years since 1900 */
-      tms.tm_isdst=0;
-      fi.SetDateUnprec(mktime(&tms));
-
-      unsigned long size;
-      if(!strcmp(t,"<DIR>"))
-	 fi.SetType(fi.DIRECTORY);
-      else
-      {
-	 fi.SetType(fi.NORMAL);
-	 if(sscanf(t,"%lu",&size)!=1)
-	 {
-	    ERR;
-	    continue;
-	 }
-	 fi.SetSize(size);
-      }
-
-      t = NEXT_TOKEN;
-      if(t==0)
-      {
-	 ERR;
-	 continue;
-      }
-      fi.SetName(t);
-
-      set->Add(new FileInfo(fi));
+      hour+=12;
+      if(hour==24)
+	 hour=0;
    }
-   return set;
+   struct tm tms;
+   tms.tm_sec=0;	      /* seconds after the minute [0, 61]  */
+   tms.tm_min=minute;      /* minutes after the hour [0, 59] */
+   tms.tm_hour=hour;	      /* hour since midnight [0, 23] */
+   tms.tm_mday=day;	      /* day of the month [1, 31] */
+   tms.tm_mon=month-1;     /* months since January [0, 11] */
+   tms.tm_year=year-1900;  /* years since 1900 */
+   tms.tm_isdst=0;
+   fi.SetDateUnprec(mktime(&tms));
+
+   unsigned long size;
+   if(!strcmp(t,"<DIR>"))
+      fi.SetType(fi.DIRECTORY);
+   else
+   {
+      fi.SetType(fi.NORMAL);
+      if(sscanf(t,"%lu",&size)!=1)
+	 ERR;
+      fi.SetSize(size);
+   }
+
+   t = NEXT_TOKEN;
+   if(t==0)
+      ERR;
+   fi.SetName(t);
+
+   return new FileInfo(fi);
 }
 
-typedef FileSet *(*ListParser)(char **lines,int *err);
+typedef FileInfo *(*ListParser)(const char *line,int *err);
 static ListParser list_parsers[]={
    ParseFtpLongList_UNIX,
    ParseFtpLongList_NT,
    0
 };
 
-FileSet *FtpListInfo::ParseFtpLongList(char **lines,int *err_ret)
+FileSet *FtpListInfo::ParseFtpLongList(const char * const *lines_c,int *err_ret)
 {
+   if(lines_c==0)
+      return new FileSet;
+
    FileSet *result;
    int err;
    FileSet *best_result=0;
@@ -632,7 +546,20 @@ FileSet *FtpListInfo::ParseFtpLongList(char **lines,int *err_ret)
    for(ListParser *parser=list_parsers; *parser; parser++)
    {
       err=0;
-      result=(*parser)(lines,&err);
+
+      const char *line;
+      const char * const *lines = lines_c;
+      result=new FileSet;
+
+      while((line=*lines++)!=0)
+      {
+	 FileInfo *fi=(*parser)(line,&err);
+	 if(fi)
+	    result->Add(fi);
+	 if(err>=best_err)
+	    break;
+      }
+
       if(err<best_err)
       {
 	 if(best_result)

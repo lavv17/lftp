@@ -45,7 +45,7 @@ class FtpListInfo : public ListInfo
    FtpGlob *glob;
 
 public:
-   static FileSet *ParseFtpLongList(char **lines,int *err);
+   static FileSet *ParseFtpLongList(const char * const *lines,int *err);
 
 public:
    FtpListInfo(Ftp *session);
