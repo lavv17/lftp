@@ -1131,7 +1131,7 @@ CMD(mirror)
       {"script",    required_argument,0,256+'S'},
       {"just-print",optional_argument,0,256+'S'},
       {"dry-run",   optional_argument,0,256+'S'},
-      {"remove-first",no_argument,0,256+'r'},
+      {"delete-first",no_argument,0,256+'e'},
       {0}
    };
 
@@ -1266,8 +1266,8 @@ CMD(mirror)
 	 if(script_file==0)
 	    script_file="-";
 	 break;
-      case(256+'r'):
-	 flags|=MirrorJob::REMOVE_FIRST;
+      case(256+'e'):
+	 flags|=MirrorJob::REMOVE_FIRST|MirrorJob::DELETE;
 	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
