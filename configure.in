@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.13)
 AC_INIT(src/ftpclass.cc)
-AM_INIT_AUTOMAKE(lftp, A00629)
+AM_INIT_AUTOMAKE(lftp, A00716)
 AM_CONFIG_HEADER(include/config.h)
 
 dnl Default AC_C_INLINE does not know about C++
@@ -139,7 +139,7 @@ fi
 AC_SUBST(MODULES)
 
 dnl Checks for libraries.
-AC_SEARCH_LIBS(exp,m)
+LFTP_CHECK_LIBM
 dnl This won't work for glibc2
 dnl AC_SEARCH_LIBS(md5_process_bytes,crypt,[AC_DEFINE(HAVE_MD5)])
 AC_SEARCH_LIBS(socket,socket)
