@@ -59,16 +59,6 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 # include <fcntl.h>
 #endif
 
-#ifdef HAVE_SYS_STROPTS_H
-# include <sys/stropts.h>
-#endif
-
-#ifdef HAVE_SYS_POLL_H
-# include <sys/poll.h>
-#else
-# include <poll.h>
-#endif
-
 #ifdef HAVE_SYS_IOCTL_H
 # include <sys/ioctl.h>
 #endif
@@ -1644,11 +1634,6 @@ void  Ftp::ReceiveResp()
 	    pfd.fd=control_sock;
 	    pfd.events=POLLIN;
 	    int res=poll(&pfd,1,0);
-	    if(res==-1 && errno!=EAGAIN && errno!=EINTR)
-	    {
-	       SwitchToState(SYSTEM_ERROR_STATE);
-	       return;
-	    }
 	    if(res<=0)
 	       return;
 	    if(CheckHangup(&pfd,1))
@@ -1840,11 +1825,6 @@ void  Ftp::FlushSendQueue(bool all)
    pfd.events=POLLOUT;
    pfd.fd=control_sock;
    res=poll(&pfd,1,0);
-   if(res==-1 && errno!=EAGAIN && errno!=EINTR)
-   {
-      SwitchToState(SYSTEM_ERROR_STATE);
-      return;
-   }
    if(res<=0)
       return;
    if(CheckHangup(&pfd,1))

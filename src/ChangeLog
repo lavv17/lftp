@@ -1,3 +1,16 @@
+1999-09-18  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* SleepJob.cc, SleepJob.h: add repeat functionality;
+	  implement PrintStatus.
+	* commands.cc: add repeat command.
+	* module.c: another module alias.
+	* XferJob.cc: remove unneeded poll call.
+	* ftpclass.cc: remove unneeded error checks.
+
+1999-09-15  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Job.cc: (SessionJob::PrintStatus) check if session!=0.
+
 1999-09-14  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* resource.cc: check if ipv6 is supported at runtime.
