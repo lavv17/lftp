@@ -28,7 +28,7 @@ void Timer::set_timeout()
    else
    {
       TimeDiff remains(stop,now);
-      Timeout(remains.MilliSeconds());
+      current->Timeout(remains.MilliSeconds());
    }
 }
 
