@@ -2364,6 +2364,8 @@ void Ftp::Connect(const char *new_host,int new_port)
    state=INITIAL_STATE;
    lookup_done=false;
    try_time=0;
+   if(hostname[0]==0)
+      state=NO_HOST_STATE; // no need to lookup
 }
 
 void Ftp::ConnectVerify()
