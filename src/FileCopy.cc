@@ -342,16 +342,9 @@ int FileCopyPeerFA::Get_LL(int size)
       session->Open(file,FAmode,seek_pos);
       session->RereadManual();
    }
-   if(session->GetRealPos()==0 && session->GetPos()>0)
-   {
-      can_seek=false;
-      session->SeekReal();
-   }
-   if(real_pos+in_buffer!=session->GetPos())
-   {
-      Empty();
-      real_pos=session->GetPos();
-   }
+   long io_at=real_pos;
+   if(GetRealPos()!=io_at) // GetRealPos can alter real_pos.
+      return 0;
 
    Allocate(size);
 
@@ -382,13 +375,9 @@ int FileCopyPeerFA::Put_LL(const char *buf,int size)
       session->Open(file,FAmode,seek_pos);
       real_pos=seek_pos;
    }
-   if(real_pos+in_buffer!=session->GetPos())
-   {
-      Empty();
-      can_seek=false;
-      real_pos=session->GetPos();
+   long io_at=real_pos;
+   if(GetRealPos()!=io_at) // GetRealPos can alter real_pos.
       return 0;
-   }
 
    int res=session->Write(buf,size);
    if(res<0)
@@ -405,6 +394,33 @@ int FileCopyPeerFA::Put_LL(const char *buf,int size)
       return -1;
    }
    return res;
+}
+
+long FileCopyPeerFA::GetRealPos()
+{
+   if(mode==PUT)
+   {
+      if(real_pos-in_buffer!=session->GetPos())
+      {
+	 Empty();
+	 can_seek=false;
+	 real_pos=session->GetPos();
+      }
+   }
+   else
+   {
+      if(session->GetRealPos()==0 && session->GetPos()>0)
+      {
+	 can_seek=false;
+	 session->SeekReal();
+      }
+      if(real_pos+in_buffer!=session->GetPos())
+      {
+	 Empty();
+	 real_pos=session->GetPos();
+      }
+   }
+   return real_pos;
 }
 
 FileCopyPeerFA::FileCopyPeerFA(FileAccess *s,const char *f,int m)

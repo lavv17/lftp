@@ -133,7 +133,7 @@ public:
    int Do();
    bool Done();
    bool IOReady()    { return seek_pos!=FILE_END && session->IOReady(); }
-   long GetRealPos() { return session->GetRealPos(); }
+   long GetRealPos();
    void Seek(long pos);
 
    long Buffered() { return in_buffer+session->Buffered(); }
