@@ -1,3 +1,7 @@
+2001-01-03  jfaith <jfaith@cemsys.com>
+
+	* resource.cc: (OrderValidate) fix off by one xmalloc bug.
+
 2002-01-03  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Filter.cc: don't stop process if there is a process group already;

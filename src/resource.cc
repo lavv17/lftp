@@ -117,7 +117,7 @@ const char *OrderValidate(char **s)
 
    const char * const delim="\t ";
    char *s1=alloca_strdup(*s);
-   char *fixed=(char*)xmalloc(strlen(s1));
+   char *fixed=(char*)xmalloc(strlen(s1)+1);
    fixed[0]=0;
 
    for(s1=strtok(s1,delim); s1; s1=strtok(0,delim))
