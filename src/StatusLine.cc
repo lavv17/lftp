@@ -29,6 +29,8 @@
 #include <sys/ioctl.h>
 #include "trio.h"
 #include <stdarg.h>
+#include <stdlib.h>
+#include <mbswidth.h>
 #include "xstring.h"
 #include "xmalloc.h"
 
@@ -173,14 +175,32 @@ void StatusLine::update(char *newstr)
       return;
    }
 
-   char *end=newstr+strlen(newstr);
-
    int w=GetWidth();
-   if(end-newstr>=w)
-      end=newstr+w-1;
+   int mbflags=MBSW_ACCEPT_INVALID|MBSW_ACCEPT_UNPRINTABLE;
+   char *end=newstr;
+   int len=strlen(newstr);
+   int wpos=0;
+   while(len>0)
+   {
+      int ch_len=mblen(end,len);
+      if(ch_len<1)
+	 ch_len=1;
+      int ch_width=mbsnwidth(end,ch_len,mbflags);
+      if(wpos+ch_width>w-1)
+	 break;
+      end+=ch_len;
+      len-=ch_len;
+      wpos+=ch_width;
+      if(wpos>=w-1)
+	 break;
+   }
 
+   // FIXME: this assumes that multibyte chars cannot include ' '.
    while(end>newstr && end[-1]==' ')
+   {
       end--;
+      wpos--;  // FIXME: assumption - space width is 1
+   }
 
    *end=0;
 
@@ -191,8 +211,11 @@ void StatusLine::update(char *newstr)
 
    strcpy(shown,newstr);
 
-   while(dif-->0 && end-newstr<w-1)
+   while(dif-->0 && wpos<w-1)
+   {
       *end++=' ';
+      wpos++;  // FIXME: assumption - space width is 1
+   }
 
    *end=0;
 
@@ -203,7 +226,7 @@ void StatusLine::update(char *newstr)
    *end=0;
 
    write(fd,"\r",1);
-   write(fd,newstr,strlen(newstr));
+   write(fd,newstr,end-newstr);
 
    update_timer.SetResource("cmd:status-interval",0);
 }

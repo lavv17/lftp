@@ -1,6 +1,7 @@
 2003-10-03  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SignalHook.cc: unblock signals upon restoring.
+	* StatusLine.cc: (update) support multibyte characters.
 	* Speedometer.cc: (GetETAStrFromTime) support multibyte characters.
 	* misc.cc: (squeeze_file_name) support multibyte characters.
 	* ftpclass.cc, ftpclass.h, resources.cc: add use_pret and
