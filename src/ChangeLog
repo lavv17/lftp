@@ -1,6 +1,7 @@
 2004-01-14  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ProcWait.cc: don't call NonFatalError, as it causes ProcWait to spin.
+	* commands.cc: fix compilation with IRIX compiler.
 
 2003-12-22  Alexander V. Lukyanov <lav@yars.free.net>
 
