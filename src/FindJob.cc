@@ -435,6 +435,7 @@ void FinderJob_List::Finish()
    NextDir(d);
 }
 
+#if 0 // unused
 // FinderJob_Cmd implementation
 // process directory tree
 #undef super
@@ -536,3 +537,4 @@ int FinderJob_Cmd::Done()
 {
    return FinderJob::Done() && args->getcurr()==0;
 }
+#endif

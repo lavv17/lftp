@@ -129,6 +129,7 @@ public:
    int Done() { return FinderJob::Done() && buf->Done(); }
 };
 
+#if 0
 class FinderJob_Cmd : public FinderJob
 {
 public:
@@ -145,5 +146,6 @@ protected:
    prf_res ProcessFile(const char *d,const FileInfo *fi);
    void Finish();
 };
+#endif
 
 #endif //FINDJOB_H
