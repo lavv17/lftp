@@ -4,7 +4,7 @@ This package `lftp' contains the following components:
 
    lftp
       cool command line ftp client.
-      
+
    lftpget
       shell script for downloading by URL, calls `lftp -c'.
 
@@ -18,7 +18,8 @@ lftp
 ~~~~
 lftp is quite a powerful ftp client. It uses GNU readline to read
 commands. It uses shell-like command syntax allowing you to launch
-several commands in parallel in background (&).
+several commands in parallel in background (&). See FEATURES for
+list of features.
 
 Some commands allow redirecting its output (cat, ls) to file or via
 pipe to external command. Commands can be started conditionally based
@@ -93,7 +94,7 @@ By CVS:
 	cvs login (empty password, just hit enter)
 	cvs -z9 co -r lftp-2-0-3 lftp (if you omit -r option, you'll get
 		latest development sources)
-		
+
 See also home page `http://ftp.yars.free.net/projects/lftp/'.
 
 Internals

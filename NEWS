@@ -22,8 +22,10 @@ Version 2.2.0 - 2000-??-??
 * `glob' command can now select files by type. By default wildcards are
   expanded to list of plain files, option `-d' makes it expand to directories
   and `-a' - to files and directories.
+* Commands `get', `put', `mget' and `mput' now have an option `-O base'
+  which specifies base directory or URL to which the files should be placed.
 * ftp to ftp (FXP) copying is now easy, e.g. `get ftp://... -o ftp://...' or
-  `put ftp://...'.
+  `put ftp://...'. The command `ftpcopy' is now obsolete.
   New settings: ftp:use-fxp, ftp:fxp-passive-source. It does not work
   for some servers, so use `set ftp:use-fxp no' for them. FXP is also tried
   both ways - with passive and active source, if both fail it falls back to

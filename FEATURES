@@ -1,0 +1,42 @@
+LFTP includes the following features (some may be missed in this list):
+
+* FTP and HTTP protocols support.
+* FTP (e.g. TIS FWTK) proxy support.
+* HTTP proxy support.
+* FTP over HTTP proxy support (hftp).
+* Automatic OPIE/SKEY support in FTP protocol.
+* FXP transfers support (between two FTP servers, bypassing client machine).
+* FTP listings support: unix-style, NT, EPLF.
+* Automatic reconnect and retry of an operation on retriable errors or timeout.
+* IPv6 support in both FTP and HTTP.
+* Experimental support for SRV DNS records.
+* SOCKS support (configure option).
+
+* Modification time preservation (if server can report it).
+* `reget' and `reput' support.
+* Built-in mirror and reverse mirror (mirror -R).
+* Transfer rate throttling for each connection and for all connections in sum.
+* Socket options tuning: buffer size and maximum segment size.
+* Job queueing.
+* Job execution at specified time.
+* Comprehensive scripting support.
+* URL recognition in most operations.
+* Readline library is used for input.
+* Context sensitive completion.
+* Bash-like prompt extensions.
+* Launching of local shell commands.
+* Suspend support.
+* Bookmarks.
+* Aliases.
+* Saving of last directory on each site. `cd -' to go there.
+* Copying of files between two servers, e.g. between FTP and HTTP.
+* Numerous settings which can be associated with a specific server or a group.
+* Paging of remote files using external program.
+* `zcat' and `zmore' support.
+* Help for commands.
+
+* Background jobs (bash-like).
+* Job output redirection to a file or to a program via pipe.
+* Conditional commands depending on exit status of previous one.
+* Loading of modules at run time (configure option).
+* `pget' to download a file using several connections.
