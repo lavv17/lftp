@@ -1,0 +1,921 @@
+1999-06-08  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: fix for ftpcopy in passive mode.
+
+1999-06-04  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* commands.cc: prevent coredump when short_desc!=0 && long_desc==0.
+
+1999-06-02  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* module.c: handle case with RTLD_NOW undefined (SunOS4)
+	* FtpListInfo.cc, HttpDir.cc: correct format string.
+
+1999-06-01  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Makefile.am: remove module before its re-creation.
+	* ascii_ctype.h: add is_ascii_xdigit.
+	* Http.cc, Http.h: support for keep-alive getting info; support
+	  for chunked transfer encoding.
+	* url.cc: always encode control characters.
+
+1999-05-31  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.cc, Http.h: hook up HttpListInfo
+	* HttpDir.cc, HttpDir.h: HttpListInfo implemented
+	* FtpListInfo.cc: fixed bug with setting precise file time.
+	* FileAccess.cc: untranslate some messages which indicate bug in app.
+	* complete.cc: completion for new commands; add cache completion;
+	  reset SIGINT count so that interrupted completion does not clear
+	  line; call Open from GetInfoArray, Rename to avoid code duplication.
+	* PutJob.cc, PutJob.h: add entity_date member; set date after Open.
+	* LocalAccess.cc: don't use Poll; set file time in StoreStatus.
+	* CmdExec.h: extern bookmark_subcmd, cache_subcmd.
+	* ftpclass.cc: don't save line for every 213 response - this fixes
+	  quote stat .
+	* CatJob.cc, CatJob.h: removed globbing support,
+	  now glob cat can be used.
+	* commands.cc: use string_alloca; add slash for new bookmarks.
+	* FtpGlob.cc: fix workarounds to check original; move workaround
+	  for "no /" bug here from complete.cc.
+
+1999-05-26  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* MirrorJob.cc, MirrorJob.h: do chmod on remote files.
+	* commands.cc: (glob, chmod) new commands.
+	* rmJob.cc, rmJob.h: use TreatFileJob as base class.
+	* TreatFileJob.cc, TreatFileJob.h, ChmodJob.cc, ChmodJob.h: new files.
+	* ArgV.cc, ArgV.h: (insarg) new method.
+	* LocalAccess.cc: support chmod.
+	* ftpclass.cc: support chmod; tune overloaded server recognition.
+	* FileAccess.h, FileAccess.cc: CHANGE_MODE new open mode;
+	  (Chmod) new method.
+	* lftp.cc: quote cmd line before adding it to history.
+	* CmdExec.cc, CmdExec.h: (BUILTIN_GLOB) new builtin;
+	  (needs_quotation) new method.
+	* FtpDirList.cc: (Status) implemented.
+	* LsJob.cc: (ShowRunStatus) implemented.
+	* HttpDir.cc: implement FtpDirList::Status; check ubuf==0 before usage.
+	* Http.cc: handle chmod.
+	* keyvalue.h: make Pair protected
+	* ResMgr.cc, ResMgr.h: outline ResDecl constructor.
+	* misc.cc: clean const usage; optimize.
+	* SMTask.cc: use true/false for bool.
+
+1999-05-22  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* complete.cc: make better function pointer casts.
+	* ResMgr.cc, ResMgr.h, keyvalue.cc, keyvalue.h: few fixes for other
+	  compilers.
+	* FileSet.cc, FileSet.h: initialize FileInfo::data; outline few funcs.
+	* xmalloc.cc, xmalloc.h: outline xfree to simplify debugging.
+	* misc.cc: (dir_file) handle file==0.
+	* HttpDir.cc, HttpDir.h: remove prefix if present; workaround apache
+	  bug.
+	* history.cc: use NO_PATH.
+	* FileAccess.cc, FileAccess.h: (GetFileURL) new method; rename NO_CWD
+	  to NO_PATH.
+	* url.cc, url.h: add proto_required option; don't assign const char *
+	  to char *.
+
+1999-05-20  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* HttpDir.cc, HttpDir.h: new files.
+	* lftp.cc: use const; readline wrappers.
+	* complete.cc: include complete.h, lftp_rl.h
+	* complete.h: renamed from lftp.h
+	* lftp_rl.c, lftp_rl.h: new files.
+	* commands.cc: use const; use FinderJob.
+	* FindJob.cc, FindJob.h: rename class FindJob to FinderJob, to avoid
+	  conflict with Job::FindJob method.
+	* ArgV.cc, ArgV.h: don't call getopt, because its prototype is
+	  uncertain.
+	* GetJob.cc: remove unused variable
+	* MirrorJob.cc: use const; satisfy non-gcc compilers in case(file->...)
+	* GetPass.cc: don't include readline.
+	* buffer.cc: close session in ~FileInputBuffer.
+	* Http.cc, Http.h: fix LONG_LIST mode to restart transfer;
+	  change SendRequest to accept file name; add Connect method;
+	  add MakeDirList, MakeGlob methods.
+	* CmdExec.h, CmdExec.cc: use const char * where needed; remove
+	  CmdExec:: inside CmdExec definition.
+	* ResMgr.cc, ResMgr.h: make ResMgr::Resource public; add
+	  ResourceCompare method.
+	* keyvalue.cc, keyvalue.h: make KeyValueDB::Pair public; add
+	  KeyValueDB::KeyCompare method.
+	* bookmark.cc, CatJob.cc, XferJob.cc, XferJob.h, pgetJob.cc,
+	  pgetJob.h, FileFeeder.cc, FileFeeder.h, xmalloc.cc, CatJob.h,
+	  history.cc, SysCmdJob.cc:
+	  use const char * where needed.
+	* netrc.cc: avoid gcc'ism.
+	* Filter.h: kill a warning
+	* FileSet.cc, FileSet.h: (Add) merge info if already added.
+	  (SortByName) mew method; few consts; add associated data.
+	* SignalHook.cc, SignalHook.h: declare signal_handler type.
+	* LocalAccess.cc, StatusLine.cc: use alloca instead of variable size
+	  array.
+	* ftpclass.cc, ftpclass.h: fix sscanf to work with int's instead of
+	  members of struct tm; add const to several pointers; declare
+	  friend struct expected_response properly for other compilers.
+	  Fix bug with wrong address family for data socket in rare cases.
+	  Add more error messages; assertions.
+	* LsCache.h: declare friend class ExpireHelper properly for other
+	  compilers.
+	* misc.cc, misc.h: add static for inline basename_ptr, use const as
+	  main version.
+	* FtpCopy.cc: no need for ctype.h
+	* ascii_ctype.h: new file
+	* ftpget.cc: use ArgV for LsJob
+	* LsJob.cc, LsJob.h: use ArgV
+	* FtpDirList.cc, FtpDirList.h: use ArgV
+	* FileAccess.h: pass ArgV to MakeDirList; add const; kill a warning.
+
+1999-05-19  Albert Chin-A-Young <china@thewrittenword.com>
+
+	* ftp-opie.c, module.c, getdate.y: include xalloca.h to allow
+	  compilation by Sun C compiler.
+
+1999-05-17  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* XferJob.cc, XferJob.h: (CanShowRate) new function; optimize timeout.
+	* FileAccess.cc: encode some unsafe chars in url
+	* url.cc, url.h: take extra argument for unsafe chars.
+	* mgetJob.cc, CatJob.cc, mrmJob.cc: use the changed Glob::Status.
+	* FtpGlob.cc: change Status to include session status.
+	* Resolver.cc: change timeout to fatal-timeout
+	* FtpDirList.cc, FtpDirList.h: new files
+	* LsCache.cc, LsCache.h: add const
+	* LsJob.cc, LsJob.h: support for DirList.
+	* Http.cc: unset hostname if resolution cannot be done.
+	* ftpclass.cc, ftpclass.h: add FtpDirList support, unset hostname
+	  if resolution cannot be done.
+	* buffer.h, buffer.cc: allow for FileInputBuffer to read data from
+	  a session; support suspend/resume.
+	* SignalHook.h: fix for some compilers/systems
+	* resource.cc: add net: variables; removed duplicates in ftp: and http:;
+	  make ftp:anon-pass visible.
+	* FileAccess.cc: check for socket errors every time;
+	  query net:variable too.
+	* FileAccess.h: (DirList::DirList) create the buffer.
+	* ResMgr.h: (ResValue::is_nil) new method.
+
+1999-04-30  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.cc, Http.h: complete support for put (untested).
+	* ftpclass.cc: move DefaultAnonPass to resource.cc
+	* commands.cc: add set -a, set -d support; last_bg is default for wait.
+	* lftp.cc: use ResMgr::ClassInit
+	* ftpget.cc: support SOCKS, use ResMgr::ClassInit
+	* resource.cc: initialize default for ftp:anon-user;
+	  add ResMgr::ClassInit.
+	* pgetJob.cc: use total_xferred in CurrETA.
+	* XferJob.cc, XferJob.h: add offset argument for CurrETA
+	* CmdExec.cc: add last_bg member
+	* FtpListInfo.cc: create empty FileSet to avoid NULL access; handle L
+	  in file permissions.
+	* MirrorJob.cc: run session after Chdir to avoid 'idle' status
+	* FileAccess.h: add virtual class DirList
+	* ResMgr.cc, ResMgr.h: support for printing with defaults/only defaults
+	* ArgV.h: add getindex method
+
+1999-04-22  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FindJob.cc: don't go uplevel if there are cd/list errors.
+	* FtpListInfo.cc, FtpListInfo.h: change format-specific
+	  parsers to process single line at a time; copy line
+	  before processing.
+	* PutJob.cc: remove poll on input file.
+	* XferJob.cc, XferJob.h, pgetJob.cc: remove obsolete slow status
+	  line update.
+	* CmdExec.cc, CmdExec.h: remove obsolete ls-in-completion
+	* StatusLine.cc, StatusLine.h: implement delayed update.
+	* commands.cc: move res_save_passwords to top level.
+
+1999-04-15  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: use INET6 instead of AF_INET6
+	* MirrorJob.cc: check if LocalAccess has been created
+	* CmdExec.cc: add missing \n at end of input file
+	* complete.cc: add mv to list of remote commands
+	* commands.cc: add lpwd command
+	* mgetJob.cc: more verbose status
+	* CatJob.cc: more verbose status; remove unused has_wildcards
+	* mrmJob.cc: more verbose status
+	* FileAccess.h: (ArrayInfoPercentDone) new method
+	* FtpGlob.cc: more verbose status
+	* FtpListInfo.cc: more verbose status
+
+1999-03-29  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FtpGlob.cc: fix handling of long lists
+	* FileAccess.cc, FileAccess.h: add Glob::add_force
+	* Http.cc: handle cd errors, deal with documents with no length
+	* CatJob.cc: (Do) fix stupid bug introduced by Glob change
+
+1999-03-27  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.cc, Http.h: add Location handling, get whole header on errors,
+	  misc improvements.
+	* Resolver.cc, Resolver.h: use FileInputBuffer to be reliable.
+	* mrmJob.cc, mgetJob.cc: use NoGlob as last resort.
+	* CatJob.cc: do glob always (because FtpGlob is now smart)
+	* complete.cc: support MakeGlob==0
+	* FileAccess.h, FileAccess.cc: implemented Glob::HasWildcards,
+	  Glob::UnquoteWildcards, new class NoGlob.
+	* pgetJob.cc: correct status lines and rate calculations.
+	* FtpGlob.cc, FtpGlob.h: fnmatch inside of add(), don't access ftp
+	  server if there are no wildcards.
+	* FtpListInfo.cc: list parsing restructured; added NT list parser
+	* LocalAccess.cc: (Glob) do chdir to cwd before glob.
+
+1999-03-17  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpget.cc: support modules
+	* Http.cc, Http.h: many changes, still unfinished.
+	* FtpGlob.cc, FtpGlob.h: new files
+	* LocalAccess.cc, LocalAccess.h: implement LocalGlob; more verbose
+	  error messages.
+	* lftp.cc: don't call obsolete ListInfo::ClassInit
+	* ftpclass.cc, ftpclass.h: always copy resolved address
+	  to connected session along with socket; implement SameSiteAs,
+	  MakeGlob.
+	* LsCache.cc, LsCache.h: implemented partial cache flush.
+	* FileAccess.cc, FileAccess.h: add class FileAccessOperation;
+	  move ListInfo here; add class Glob; move class Protocol here;
+	  call LsCache flushing routines on certain operations;
+	  add SameSiteAs method (almost th same sa SameLocationAs,
+	  but don't check cwd).
+	* complete.cc: use Glob
+	* XferJob.cc: use FileAccess::New, don't include obsolete headers
+	* mputJob.cc, mputJob.cc: don't include rglob.h, localize
+	* FtpListInfo.cc, FtpListInfo.h: use FtpGlob
+	* CatJob.cc, CatJob.h, mgetJob.cc, mgetJob.h, mrmJob.cc, mrmJob.h:
+	  use new class Glob.
+	* MirrorJob.h, MirrorJob.cc: don't include ListInfo.h;
+	  use FileAccess::New; explicitly use UseCache(false).
+	* FindJob.h: don't include ListInfo.h
+	* ListInfo.h, ListInfo.cc, ProtoList.cc, ProtoList.h: removed; contents
+	  moved to FileAccess
+	* pgetJob.cc: use only 40 chars for file name; print eta in jobs output
+	* commands.cc: use FileAccess::New; add list address to version output;
+	  add --help and --version to `help lftp' output.
+	* SignalHook.cc, SignalHook.h: don't use static arrays; add ClassInit
+	* FtpCopy.cc: use FileAccess::New
+
+1999-02-23  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.cc: Basic auth, new resource usage
+	* lftp.cc: modular proto-ftp support
+	* LocalAccess.cc: use Protocol::Register
+	* ftpclass.cc: module support, new resource usage
+	* commands.cc: module command, --no-umask in help for mirror,
+	  use single quotes in 'bookmark edit' shell command.
+	* DummyProto.h: add Reconfig
+	* ResMgr.cc, ResMgr.h: renamed Query to SimpleQuery, add complex
+	  Query method.
+	* Resolver.cc, Resolver.h: add ClassInit
+	* resource.cc, resource.h: new files
+	* FileAccess.cc, FileAccess.h: move traffic shaper here, add Query and
+	  Reconfig methods; add closure member.
+	* ProtoList.h: add static Register member
+	* ListInfo.cc, ListInfo.h: add ClassInit
+	* FtpCopy.cc: don't use StateToError
+	* MirrorJob.cc, MirrorJob.h: implement --no-umask, apply umask
+	  by default.
+	* CmdExec.cc: use op instead of args->a0().
+
+1999-02-04  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* commands.cc, CmdExec.cc, CmdExec.h: module support
+	* lftp.cc: module support
+	* complete.cc: don't use cmd_table directly
+	* misc.cc, misc.h: (decode_delay) moved here
+	* MirrorJob.cc: don't create LocalListInfo directly, module support
+	* LocalAccess.cc: module support
+	* ProtoList.cc: module support
+	* PutJob.cc: call SetTime and SetDate
+	* module.cc, module.h, modconfig.h: new files
+	* Http.cc, Http.h: new files
+	* buffer.cc, buffer.h: (FileInputBuffer) new class; (Errno) new method;
+	  (EventTime) new method.
+	* FileAccess.cc, FileAccess.h: (default_cwd) new member; stuff from
+	  ftpclass; (SetTime, SetDate) new methods.
+	* ftpclass.h, ftpclass.cc: move traffic shaper and other common with
+	  Http things to FileAccess.
+	* SMTask.h: add Timeout and Block methods for convenience
+	* SMTask.cc: don't run suspended tasks.
+
+1999-01-23  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* MirrorJob.cc: fix Report condition
+	* ftpclass.cc: change format for EPSV response
+	* Resolver.cc: set flags on pipe (O_NONBLOCK, FD_CLOEXEC); check
+	  for non-fatal errors.
+
+1999-01-21  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Resolver.cc, Resolver.h: use string portname
+	* FileAccess.h, FileAccess.cc: use string portname; implement base
+	  Connect.
+	* FtpCopy.cc, commands.cc, ftpget.cc, XferJob.cc: use symbolic port
+	  in Connect.
+	* ftpclass.h, ftpclass.cc: use string portname and proxy_port;
+	  print "connecting..." messages for ipv6; set peer_curr properly to
+	  less than peer_num; parse EPSV response correctly - search for '('.
+	* MirrorJob.cc: always report to non-tty
+	* CmdExec.cc, CmdExec.h: add cmd:verbose, useful for scripts.
+	* ftpclass.cc: set peer_curr properly <peer_num.
+
+1999-01-19  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* PollVec.cc: merge pollfd's with the same descriptor (workaround for
+	  problems in some systems' poll)
+	* ftpclass.cc: support for multiple addresses and ipv6; fixed bugs in
+	  CloseRespQueue; don't check port in passive mode.
+	* ftpclass.h: support for multiple addresses and ipv6
+	* Resolver.cc, Resolver.h: support for multiple addresses, multiple
+	  address families, dns:order variable.
+	* url.cc: check for multiple colons (ipv6 numeric)
+
+1999-01-08  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* complete.cc: check for mirror -N
+	* CmdExec.cc, CmdExec.h: add BUILTIN_NONE, reset builtin to it.
+	* commands.cc: (do_open) (do_cd) don't verify host or cwd if background
+	* ftpclass.cc, ftpclass.h: (FindLastCWD) new method;
+	  remove target_cwd; (CloseRespQueue) handle CHECK_{USER,PASS}*
+	  correctly, don't ignore them; fix waiting for cwd to
+	  proper directory.
+
+1998-12-22  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* PutJob.cc: correct bytes count when position changes (negative
+	  count is obviously incorrect)
+	* plural.c: use absolute value
+	* commands.cc: fix to exit if initial open fails (that from lftp call)
+	* CmdExec.cc: cmd:fail-exit to exit if a command fails.
+
+1998-12-19  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* rglob.cc: (path_match) treat empty pattern specially
+	* CmdExec.cc, CmdExec.h: (AtExit) new function, (cmd:at-exit) new
+	  setting.
+	* lftp.cc: call top_exec->AtExit() and wait before exit
+	* commands.cc: (do_lftp) feed "||exit" only if have fed command;
+	  (do_bookmark) don't add empty bookmark or bookmark with empty
+	  name.
+
+1998-12-17  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* MirrorJob.cc: clear waiting properly
+
+1998-12-04  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: use socklen_t instead of ADDRLEN_TYPE; correct Buffered.
+	* FileAccess.cc: use socklen_t instead of ADDRLEN_TYPE.
+	* XferJob.cc: (Offset) implemented, used; (CountBytes) use Buffered
+	  and session_buffered to correct transfer rate.
+	* XferJob.h: (Offset) new method, (session_buffered) new member
+	* ftpclass.h, ftpclass.cc: (Buffered) new method
+	* FileAccess.h: (Buffered) new virtual method
+
+1998-12-03  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* XferJob.cc: add i18n for K/s etc.
+	* commands.cc: (open) create new session if current protocol is dummy
+	* FileAccess.cc: (GetConnectURL) return empty url for dummy protocol
+	* lftp.cc: (main) use DummyProto instead of Ftp.
+	* DummyProto.cc, DummyProto.h: (new files) dummy protocol, will help
+	  in future to support dynamic loadable protocols.
+	* xmalloc.h: don't rely on memcpy return value
+	* LocalAccess.cc: when follow_links don't remove dangling links
+
+1998-11-27  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* lftp.cc: remove extra \n
+	* ftpclass.cc: (Reconfig) call ResetBytes to reset accumulated count
+	* SMTask.cc: call UpdateNow in ReconfigAll
+
+1998-11-25  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* XferJob.cc: add i18n for eta
+	* complete.cc, rglob.cc, rglob.h, Job.h, LsCache.h, XferJob.cc,
+	  CmdExec.cc, mgetJob.cc, rmJob.h, rmJob.cc, QuoteJob.h, QuoteJob.cc,
+	  LsJob.h, mvJob.cc, PutJob.cc, MirrorJob.cc, CatJob.cc, GetJob.cc,
+	  LsJob.cc, mkdirJob.cc, mrmJob.cc, pgetJob.cc, ftpget.cc: remove
+	  dependency on ftpclass.h, use FileAccess.h instead; use FA.
+	* rmJob.cc: support i18n; use FA
+	* FileAccess.h: add FA shortcut to FileAccess
+	* log.cc: cast void* to char*
+	* ResMgr.cc, netrc.cc, lftp.cc: use const char *, avoid error with
+	  new egcs
+	* ftpclass.cc, ftpclass.h: use enum for various response checks;
+	  clear resp queue on Close; associate path with CWD response handle.
+	* commands.cc: use &CmdExec::do_... to compile with recent egcs
+	* CmdExec.cc: set exit_code to zero when cd or open is stopped.
+
+1998-11-22  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CmdExec.h: add ~CmdFeeder destructor, this fixes problem with
+	  feeders not destroyed, open fd's in particular.
+
+1998-11-20  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: don't try to handle anon users specially,
+	  it did not work anyway; one has to use anon-user and anon-pass
+	  settings.
+	* netrc.cc: ignore default; handle comments
+	* SMTask.cc: include sys/time.h
+	* commands.cc: add `command' command; replace args->a0() with op in
+	  several places.
+	* CmdExec.cc, CmdExec.h: (BUILTIN_EXEC_RESTART) new builtin.
+	* ArgV.cc, ArgV.h: (delarg) new method
+
+1998-11-18  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* XferJob.cc: add start_time_ms, end_time_ms; use now and now_ms.
+	* LocalAccess.cc: check Poll return value for -1
+	* commands.cc: updated help for rm, mirror.
+	* ftpclass.cc, ftpclass.h: ftp:limit-rate, ftp:limit-max new settings;
+	  traffic limit implemented (BytesAllowed, BytesUsed, BytesReset);
+	  allow passing data peer address to data_address_ok for verification
+	  of PASV response; scan PASV response for address (as recommended in
+	  RFC1123; thanks to Michael Handler <handler@sub-rosa.com> for patch);
+	  verify data peer address in passive mode; check return value of Poll
+	  for -1; (AbortedClose, ControlClose) new functions; rearrange code
+	  in Read; clear lookup_done in SetProxy only if proxy changed.
+	* lftp.cc: log SIGTERM when in background.
+	* Resolver.cc: use static now.
+	* SMTask.cc, SMTask.h: add static members: now, now_ms; (UpdateNow)
+	  new static method; call UpdateNow from Schedule.
+	* FileAccess.cc: don't call Disconnect from CheckHangup; return -1
+	  from Poll if hangup.
+
+1998-11-12  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* MirrorJob.cc: set time only on directories; get sets it on files;
+	  don't print report messages if there is parent_mirror, this
+	  fixes multiple messages in nested directories after fg.
+	* FileSet.cc, FileSet.h: add option to set time for only directories.
+	* ftpclass.cc, ftpclass.h: add aborted_data_sock member; don't
+	  close data connection right after sending ABOR, wait for answer;
+	  send only first byte before ABOR as OOB to workaround recv()
+	  braindamage; clear lookup_done in Reconfig since proxy could change.
+	* CmdExec.cc: set verify_path, verify_host; handle ^Z in open/cd
+	* commands.cc: use verify_path, verify_host
+	* CmdExec.h: (verify_path, verify_host) new members
+
+1998-11-05  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FtpListInfo.cc, QuoteJob.cc, netrc.cc, Resolver.cc, misc.cc,
+	  parsecmd.cc, rglob.cc, url.cc, StatusLine.cc, ftpget.cc, buffer.h,
+	  xmalloc.h, lftp.cc: use xstring.h instead of string.h to improve
+	  portability.
+	* Job.cc: (Fg, Bg) protect against infinite recursion
+
+1998-10-31  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* log.cc: (Format) implemented, added sl_cleared flag.
+	* ftpget.cc: enable log when verbose
+	* ftpclass.cc: add state check in ACCEPTING_STATE, fixes rare coredump.
+	  socket-maxseg experimental setting for TCP_MAXSEG. Print errors from
+	  setsockopt.
+	* PollVec.cc: add assert(fd>=0).
+
+1998-10-27  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* commands.cc: (do_mirror) fix include/exclude setting, add -L option
+	* FtpListInfo.cc: fix follow_symlinks handling, clear MODE, SIZE, etc.
+	* ftpclass.cc: check for 4xx response for REST
+	* ftpclass.h: comment fix
+	* FtpCopy.cc: fix setting dst_size (was -2, need 0)
+
+1998-10-23  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FtpListInfo.cc: fix exclude/include, implement follow_symlinks
+	* commands.cc: (do_lftp) call do_open only if no lftp-specific options
+	  were found; (do_mirror) add --dereference (-L) option;
+	  (do_at) use get_date function
+	* log.cc: fix logging after tty disconnect, clear tty flag
+	* LocalAccess.cc: implement follow_symlinks semantics
+	* ListInfo.cc, ListInfo.h: add follow_symlinks flag
+	* MirrorJob.cc, MirrorJob.h: add RETR_SYMLINKS flag
+	* getdate.y, getdate.h: new files (replace parsetime*)
+
+1998-10-13  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* complete.cc: fix remote completion (automatic class was deleted too
+	  early); fix typo.
+	* commands.cc: (do_mirror) don't use ONLY_NEWER for reverse mirror.
+	* FileSet.cc, FileSet.h: (SameAs) add ignore argument,
+	  (SubtractSame) same.
+	* MirrorJob.cc: ignore date in reverse mode. (HandleFile) skip: label;
+	  report errors in mkdir
+	* ftpclass.cc: check only first digit in response.
+	* parsetime.y: use mktime_from_utc for portability
+
+1998-10-07  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: prevent re-entering to Disconnect, this fixes stack
+	  overflow. (FlushSendQueue) new method. close control_sock if connect
+	  failed. check for try_time==0. Change default for verify-address,
+	  seems quite a bit of servers fail the check.
+
+1998-10-03  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* complete.cc: bookmark completion. cleanup.
+	* CmdExec.cc: make FeedQuoted insert quotes, (GetFullCommandName) new
+	  method.
+	* keyvalue.h: (CurrentKey) (CurrentValue) (Next) (Rewind) new methods,
+	  (current) new member
+	* bookmark.h, bookmark.cc: (Rewind) new method, comment unused List()
+	* history.h: (Rewind) new method
+	* PutJob.cc, PutJob.h: (delete_files) new member, use it.
+	* FindJob.cc: quote arguments and use --
+	* mputJob.cc: recognize -e
+	* FtpCopy.cc: include url in status
+	* commands.cc: remove unused unquote(), fix do_lftp to call do_open.
+	* FileAccess.cc: encode url parts
+	* url.h, url.cc: (url) new class, (url::decode_sctring)
+	  (url::encode_string) new functions, use the functions.
+	* ftpclass.cc: typo corrected
+	* GetJob.cc, GetJob.h: (RemoveBackupFile) new function
+	* pgetJob.cc: use RemoveBackupFile
+
+1998-09-15  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FindJob.cc, FindJob.h: add FindJob_Cmd class;
+	  (class FindJob) use_cache, init_dir - new members, NextDir - new
+	  method; show status in WAIT state, don't show it in CD.
+	* FileSet.cc, FileSet.h: outline next() and curr().
+	* ArgV.cc, ArgV.h: make getcurr return 0 after getnext returns 0
+	* commands.cc: add rm -r support
+	* misc.cc, misc.h: (xgetcwd) new function
+	* CmdExec.cc, CmdExec.h: don't execute commands if chdir failed;
+	  (FeedQuoted, unquote) new methods
+	* ftpclass.cc: disable timeout for ftpcopy, remove NoWait.
+	* SleepJob.h, SleepJob.cc: save and restore cwd, set parent of exec
+	* FindJob.cc: include config.h
+
+1998-09-08  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CmdExec.cc: (MakePrompt) add \@ handling
+	* commands.cc: limit debug level to 0-9 range
+	* keyvalue.cc: (Format) add \0 for empty case
+
+1998-09-06  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* rglob.cc: don't ignore NO_FILE
+	* ftpclass.cc, ftpclass.h: remove unused ChdirStatus,
+	  ignore NO_FILE for NLST and simulate eof; don't set state
+	  in SwitchToState if we have failed smth (or else infinite loop
+	  is possible).
+	* FileAccess.cc, FileAccess.h: add 'verify' to Chdir
+	* FindJob.cc, FindJob.h: support depth-first search, don't verify cd's
+
+1998-09-05  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ListInfo.cc, ListInfo.h: add 'need' and 'use_cache' members
+	* XferJob.cc, LsCache.cc: use #l# for longs in plural()
+	* lftp.cc: use ProcWait::Signal
+	* buffer.cc, buffer.h: new files
+	* FindJob.cc, FindJob.h: new files
+	* SignalHook.cc, SignalHook.h: add Block, Unblock, Default methods
+	* commands.cc: use decode_delay in sleep, add CMD(find)
+	* MirrorJob.cc: request ALL_INFO
+	* FileSet.h: add ALL_INFO
+	* misc.cc: support dir_file(dir_file(),)
+	* FtpListInfo.cc: handle 'need' and 'use_cache'. If there were no
+	  errors in long list, don't get short one. count errors in
+	  ParseLongList_UNIX.
+	* FileAccess.h: add GetFile method, include ListInfo.h
+	* Resolver.h: include string.h
+	* CmdExec.h: add CMD(find)
+	* ProcWait.h, ProcWait.cc: add Signal method
+	* Filter.h, Filter.cc: add closed member to avoid spawning a process
+	  when done and waiting for termination; block SIGCHLD while spawning
+	  process to prevent races.
+	* SysCmdJob.cc: same for SIGCHLD
+	* FtpCopy.cc: fix rolling stick :)
+	* FileSet.h: add ALL_INFO
+	* mgetJob.cc: don't use cache for rglob
+
+1998-08-31  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: fix connection leak in GetBetterConnection (missing
+	  return); add conditions to DataAbort to avoid unneeded ABOR;
+	  close data connection in Read on EOF to avoid ABOR;
+	  SwitchToState - remove bogus condition for COPY_FAILED
+
+1998-08-28  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileXfer.cc: fix setting op when args->count()==1
+	* ArgV.h: add GetV method
+	* SignalHook.cc, SignalHook.h: move to posix sigaction; add old_saved[]
+	* ProcWait.cc, ProcWait.h: add SIGCHLD_handler, chain, destructor
+	* log.cc, log.h: new files (log facility)
+	* lftp.cc: use SIGCHLD_handler, use Log
+	* SleepJob.cc, SleepJob.h: new files (sleep and at commands)
+	* parsetime.y, parsetime-lex.l, parsetime-i.h: new files (from at-3.1.7)
+	* FtpCopy.cc, FtpCopy.h: new files (copy between ftp servers)
+	* Job.cc: call Bg() and Fg() for waiting
+	* complete.cc: avoid "total xxx" in completion
+	* FtpListInfo.cc: use int for base_dir_len
+	* FileAccess.cc, FileAccess.h: use new log facility
+	* ftpget.cc: use new log facility
+	* CmdExec.cc, CmdExec.h: get rid of old debugging, Bg, Fg;
+	  add new commands
+	* commands.cc: use new log facility; add new commands
+	* XferJob.cc, XferJob.h, pgetJob.cc: add eta reporting
+	  (original by jaeger@tekniq.net)
+	* ftpclass.cc, ftpclass.h: add COPY_FAILED state, DataAbort method,
+	  abort data connection properly, send QUIT before control socket
+	  close, copy_* members for ftpcopy support, FlushSendQueue flushes
+	  all optionally
+
+1998-08-19  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* lftp.cc: (ReadlineFeeder) added ctty (is control tty) member;
+	  removed hung-up check, since readline() should report eof in
+	  the case; modified check for background state.
+	* SMTask.cc: (Schedule) fix block collecting to exclude already
+	  running tasks.
+
+1998-08-17  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* lftp.cc: (ReadlineFeeder::NextCmd) check for hung-up terminal
+
+1998-08-17  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* fg.cc: add debug printf's
+	* Job.h, Job.cc: make Fg() and Bg() outline virtual
+	* lftp.cc: (ReadlineFeeder::NextCmd) don't call readline()
+	  if in background; (main) call top_exec->Fg() to make it foreground.
+	* CmdExec.cc, CmdExec.h: (Fg, Bg) new functions; call waiting->Fg()
+	  for only foreground jobs
+
+Fri Aug 14 19:00:54 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.h, commands.cc: (suspend) new command
+	* GetJob.cc: rename old file to file~ if it exists, and remove
+	  backup upon getting the new file; this is useful for accidently
+	  forgotten 're' or '-c'.
+	* ftpclass.cc: fix warning about old_type; improve
+	  error reporting; ignore extra 2xx responses for buggy servers
+	* fg.h, fg.cc: (cont) new function; (Fg) cont the process even
+	  if we don't own the terminal.
+	* SysCmdJob.cc, SysCmdJob.h: (AcceptSig) implemented; (~) call
+	  Bg() to release terminal properly, kill process in destructor
+	* ProcWait.cc: (Kill) check if process still running
+
+Mon Aug  3 19:18:51 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: (mirror) increase verbose instead of setting to 1
+	* ftpclass.cc: (PASV_Catch) fix for broken servers returning 0,0,0,0
+
+Wed Jul 29 17:35:15 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc: (~CmdExec) clear debug_shell if destroying it
+	* CmdExec.h: make debug_shell public
+	* commands.cc: (do_debug) don't set debug_shell
+	* lftp.cc: (main) set debug_shell to top_exec
+	Note: debug subsystem must be rewritten
+	* complete.cc: remote completion by default for mirror
+	* ftpclass.cc, ftpclass.h: ReadyCheck, check for m$ server and turn on
+	  sync mode if it was not; check for hostname==""
+
+Fri Jul 24 16:45:41 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: verify address before port
+
+Thu Jul 23 00:54:11 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* mkdirJob.cc: include plural.h, one more message is preprocessed
+	  by plural().
+	* FileAccess.cc: (expand_tilde) fix memmove bound violation in
+	  shrink case
+
+Mon Jul 20 21:04:06 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Filter.cc, Filter.h: new broken() method
+	* XferJob.cc: use it to prevent spinning when output is broken
+	  and data is not available yet
+
+Wed Jul  1 11:31:22 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: rename some settings for better sorting;
+	  (verify-port) new setting, (data_port_verify) new member;
+	  set buffer size in Reconfig; some tweaks
+	* commands.cc: set arg1 in cd command for status line when dir=="-"
+
+Mon Jun 22 16:31:09 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: fix data_address_ok DebugPrint's;
+	  add ftp:socket-buffer variable to tune tcp window
+
+Thu Jun 18 18:19:20 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* alias.cc, alias.h: (Format) new function
+	* commands.cc: use it
+	* complete.cc: ls hack - ignore "total xxx", don't add /
+
+Sun Jun 14 14:28:09 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: if file type is unknown and local directory exists,
+	  assume the remote file is a directory
+	* ResMgr.cc, ResMgr.h: (Format) new function
+	* commands.cc: use ResMgr::Format
+	* ftpclass.cc, ftpclass.h: address-verify - new setting;
+	  (data_address_ok) new function
+
+Thu Jun 11 16:55:57 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Filter.cc: expand tilde in file name.
+	* misc.cc, misc.h: (expand_home_relative) take and return const
+	* commands.cc: use const for expand_home_relative
+	* LocalAccess.cc: (Write) fix to adjust pos correctly
+	* CmdExec.cc: (completion_use_ls) new member, new setting
+	  cmd:ls-in-completion; use host name for ls-default.
+	* complete.cc: several fixes, use complation_use_ls.
+
+Tue Jun  9 19:25:50 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* XferJob.cc: plural support
+	* MirrorJob.cc: report not deleted files if flag set;
+	  (SetRX) new method, replaces SetInclude and SetExclude;
+	  plural support
+	* commands.cc: (do_mirror) support several -i/-x; add optional
+	  argument for --verbose; use new interface to MirrorJob
+	* lftp.cc: (ReadlineFeeder) fix memory leak
+	* xmalloc.h: (xfree) not report xfree(0) when debugging
+
+Fri Jun  5 17:24:04 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: update help for bookmark, fix bo import to look in
+	  proper directory.
+
+Fri Jun  5 15:19:31 MSD 1998
+
+	* ftpclass.cc: (Ftp(Ftp*)) copy anon_user/anon_pass if available
+	(StrError) don't translate string that can't be seen by user
+
+Fri Jun  5 14:42:15 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: (do_pwd) print url, allow redirection,
+	  (do_open) prepend cmd_to_exec before bookmark expansion,
+	  (do_bookmark) add import subcommand, complain if bookmark to delete
+	  does not exist.
+
+Fri Jun  5 14:37:26 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* complete.cc: try to use cached LONG_LIST for completion
+	* LsCache.cc: (Lookup) don't copy out contents of cache if d==NULL
+
+Wed Jun  3 17:18:04 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc, CmdExec.h: (save_passwords) new member,
+	  (bmk:save-passwords) new setting
+	* commands.cc: use save_passwords, (echo) new command
+	* CatJob.cc: if output==0 use stdout
+
+Fri May 29 18:32:47 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+	* XferJob.cc, XferJob.h: add xfer:use_urls, unstrict urls
+
+Mon May 25 23:42:14 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FtpListInfo.cc: close session in destructor (fixes coredump)
+
+Mon May 25 23:24:09 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc: use status_line even if !interactive
+
+Mon May 25 15:52:08 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileAccess.h, FileAccess.cc: add WITH_PASSWORD flag to GetConnectURL
+
+Sun May 24 23:30:00 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.h: make print_cmd_help non static, (do_lftp) new
+	  function
+	* commands.cc: (do_lftp) new function, remove -f option from
+	  do_open, print_cmd_help changes, `open' help change
+	* lftp.cc: use do_lftp (indirectly)
+
+Sun May 24 23:00:16 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc: don't reference status_line when it's zero,
+	  change status for cd and open commands
+
+Sat May 23 03:06:25 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: pass newer_than to child mirror jobs
+	* FileSet.cc: (SubtractOlderThan) subtract only plain files
+
+Thu May 21 22:56:22 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: (mktime_from_utc) new function (from wget)
+	  (ConvertFtpDate) use mktime_from_utc instead of old hack.
+
+Thu May 21 22:21:50 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileAccess.h: make Login() virtual
+	* ftpclass.cc: (Login) new function, add anon-user/anon-pass,
+	  (SameConnection) new function, differenciate connections with,
+	  different anonymous login. (DefaultAnonUser) new function,
+	  (ClassInit) set default anon-pass, (anon_user) new member
+	* ftpclass.h: same
+
+Thu May 21 13:55:20 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* PutJob.cc: fix for new buffer allocation
+
+Tue May 19 16:53:36 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: (find_command) new function (from vars.cc)
+	* vars.cc, vars.h: remove
+
+Fri May 15 19:25:49 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+	* commands.cc: don't use errno in GetPass() error message
+
+Fri May 15 18:17:31 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Resolver.cc: handle timeout, fix sleep, (Reconfig) new function
+	* Resolver.h: (timeout) new member, (Reconfig) new decl
+
+Fri May 15 18:11:44 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ResMgr.cc: (ResDecl::Query) new function
+	* ResMgr.h: (ResValue) new class
+	* ftpclass.cc: (Reconfig) use it, (ResQuery) remove
+	* ftpclass.h: (ResQuery) remove, (SetFlag) take bool arg
+	* CmdExec.cc: (Reconfig) use it, (ResQuery) remove
+	* CmdExec.h: (ResQuery) remove
+
+Fri May 15 16:49:35 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+	* SMTask.cc (ReconfigAll): add NoWait
+
+Fri May 15 16:31:14 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+	* LsJob.cc: Fix cached listing printing
+	* LsJob.h: remove unused variable cache_buffer_ptr
+
+Tue May 12 22:24:38 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: move pass hiding	here, where it belongs, show pass
+	  when s/key is used or anonymous
+	* FileAccess.cc: ...and remove from here
+
+Tue May 12 21:45:02 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* XferJob.cc, XferJob.h: add support for variable sized buffer
+	* CatJob.cc, CatJob.h: add support for cat'ing from memory
+	* command.cc: (bookmark) use CatJob for bookmark list
+	* bookmark.cc, bookmark.h: add Format
+
+Tue May 12 19:19:54 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: tune memory use
+
+Tue May 12 19:00:06 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* xmalloc.cc, xmalloc.h: support for debug
+
+Tue May 12 16:31:07 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* keyvalue.cc: (Format) new function
+	  (Write) use Format
+	* keyvalue.h: ajust accordingly
+
+Mon May 11 01:08:37 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: (open) use password from .netrc if user name matches
+
+Sat May  9 01:47:41 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.c: add "S/Key MD5" string to list of skey strings
+	  (make_skey_reply) use `result' to catch multiline responses.
+
+Fri May  8 02:47:11 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: add force_skey, allow_skey defaults to yes
+	  (make_skey_reply) rewrite, add otp-md5 string
+	* ftpclass.cc: wait for pass prompt only when user given (no anon)
+
+Thu May  7 21:55:17 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* parsecmd.cc: fix alias_field calculation
+
+Wed May  6 21:13:41 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc (make_skey_reply): implement (base from wget) and use it;
+	  (skey_pass, allow_skey): new members of class Ftp
+	* ftpclass.h: likewise
+	* Makefile.am: add md5.c, md5.h, ftp-opie.c to sources
+
+Wed May  6 20:38:55 MSD 1998  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc (LoginCheck): assume non-fatal error when
+	got RESP_LOGIN_FAILED, but without "Login incorrect" string.
+
+Wed May  6 15:19:00 MSD 1998 Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc (bookmark): add `bookmark edit' command
