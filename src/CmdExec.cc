@@ -52,6 +52,7 @@ static ResDecl
    res_default_ls	   ("cmd:ls-default",	"",0,0),
    res_csh_history	   ("cmd:csh-history",	"off",ResMgr::BoolValidate,ResMgr::NoClosure),
    res_verify_path	   ("cmd:verify-path",	"yes",ResMgr::BoolValidate,0),
+   res_verify_path_cached  ("cmd:verify-path-cached","no",ResMgr::BoolValidate,0),
    res_verify_host	   ("cmd:verify-host",	"yes",ResMgr::BoolValidate,0),
    res_at_exit		   ("cmd:at-exit",	"",   0,0),
    res_fail_exit	   ("cmd:fail-exit",	"no", ResMgr::BoolValidate,ResMgr::NoClosure),
@@ -800,6 +801,7 @@ CmdExec::CmdExec(FileAccess *f,LocalDirectory *c) : SessionJob(f)
    long_running=0;
    csh_history=false;
    verify_host=verify_path=true;
+   verify_path_cached=false;
 
    start_time=0;
    old_cwd=0;
@@ -938,6 +940,7 @@ void CmdExec::Reconfig(const char *name)
    remote_completion = res_remote_completion.QueryBool(c);
    csh_history = res_csh_history.QueryBool(0);
    verify_path=res_verify_path.QueryBool(c);
+   verify_path_cached=res_verify_path_cached.QueryBool(c);
    verify_host=res_verify_host.QueryBool(c);
    verbose=res_verbose.QueryBool(0);
    // only allow explicit setting of cmd:interactive to change interactiveness.

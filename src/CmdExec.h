@@ -187,6 +187,7 @@ public:
    bool	 csh_history;
    bool	 verify_host;
    bool	 verify_path;
+   bool	 verify_path_cached;
 
    void	 Reconfig(const char *name=0);
 
