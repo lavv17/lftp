@@ -28,7 +28,6 @@
 #include <sys/stat.h>
 #include "xstring.h"
 #include <ctype.h>
-#include "xalloca.h"
 #include "misc.h"
 #include "ftpclass.h"
 

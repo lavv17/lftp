@@ -32,7 +32,6 @@
 
 #include "LocalAccess.h"
 #include "xmalloc.h"
-#include "xalloca.h"
 #include "xstring.h"
 #include "misc.h"
 #include "log.h"

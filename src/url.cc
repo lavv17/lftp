@@ -22,7 +22,6 @@
 #include "trio.h"
 #include "xstring.h"
 #include <ctype.h>
-#include "xalloca.h"
 #include "url.h"
 #include "ascii_ctype.h"
 #include "ConnectionSlot.h"

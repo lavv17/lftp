@@ -59,7 +59,6 @@
 #include "GetPass.h"
 #include "SignalHook.h"
 #include "FileFeeder.h"
-#include "xalloca.h"
 #include "bookmark.h"
 #include "log.h"
 #include "module.h"

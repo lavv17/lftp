@@ -33,7 +33,6 @@
 #include "mkdirJob.h"
 #include "ChmodJob.h"
 #include "misc.h"
-#include "xalloca.h"
 #include "plural.h"
 #include "getopt.h"
 #include "FindJob.h"

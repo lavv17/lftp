@@ -38,7 +38,6 @@ extern "C" {
 #include "ResMgr.h"
 #include "SMTask.h"
 #include "xmalloc.h"
-#include "xalloca.h"
 #include "misc.h"
 
 ResMgr::Resource  *ResMgr::chain=0;

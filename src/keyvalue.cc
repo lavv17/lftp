@@ -26,7 +26,6 @@
 #include "trio.h"
 #include <fcntl.h>
 #include <errno.h>
-#include "xalloca.h"
 
 int KeyValueDB::Read(int fd)
 {

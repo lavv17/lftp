@@ -36,7 +36,6 @@
 #include "ascii_ctype.h"
 #include <fcntl.h>
 #include "LsCache.h"
-#include "xalloca.h"
 #include "log.h"
 #include "url.h"
 #include "misc.h"

@@ -27,7 +27,6 @@
 #include <unistd.h>
 #include "trio.h"
 #include "history.h"
-#include "xalloca.h"
 #include "url.h"
 
 #define super KeyValueDB
