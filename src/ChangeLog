@@ -1,3 +1,7 @@
+2004-01-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ProcWait.cc: don't call NonFatalError, as it causes ProcWait to spin.
+
 2003-12-22  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Http.cc, Http.h: add Buffered method; allow storing in https mode;
