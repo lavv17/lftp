@@ -878,7 +878,6 @@ void FileCopyPeerFA::Seek(off_t new_pos)
 
 void FileCopyPeerFA::OpenSession()
 {
-   assert(in_buffer==0);
    current->Timeout(0);	// mark it MOVED.
    if(mode==GET)
    {
@@ -947,7 +946,7 @@ void FileCopyPeerFA::OpenSession()
    }
    else
    {
-      pos=seek_pos;
+      pos=seek_pos+in_buffer;
    }
 }
 
