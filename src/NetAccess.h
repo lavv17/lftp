@@ -77,6 +77,7 @@ protected:
    char	 *proxy_port;
    char  *proxy_user;
    char  *proxy_pass;
+   char  *proxy_proto;
 
    char	 *home_auto;
    void	 PropagateHomeAuto();

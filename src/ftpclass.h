@@ -46,6 +46,7 @@ class Ftp : public NetAccess
       EOF_STATE,	   // control connection is open, idle state
       INITIAL_STATE,	   // all connections are closed
       CONNECTING_STATE,	   // we are connecting the control socket
+      HTTP_PROXY_CONNECTED,// connected to http proxy, but have no reply yet
       CONNECTED_STATE,	   // just after connect
       WAITING_STATE,	   // we're waiting for a response with data
       ACCEPTING_STATE,	   // we're waiting for an incoming data connection
@@ -157,8 +158,18 @@ class Ftp : public NetAccess
    void	 CatchDATE_opt(int);
    void	 CatchSIZE(int);
    void	 CatchSIZE_opt(int);
-   int	 Handle_PASV();
-   int	 Handle_EPSV();
+
+   enum pasv_state_t
+   {
+      PASV_NO_ADDRESS_YET,
+      PASV_HAVE_ADDRESS,
+      PASV_DATASOCKET_CONNECTING,
+      PASV_HTTP_PROXY_CONNECTED
+   };
+   pasv_state_t pasv_state;	// state of PASV, when state==DATASOCKET_CONNECTING_STATE
+
+   pasv_state_t Handle_PASV();
+   pasv_state_t Handle_EPSV();
 
    bool NonError5XX(int act);
    bool Transient5XX(int act);
@@ -240,9 +251,25 @@ private:
 
    const char *QueryStringWithUserAtHost(const char *);
 
+   // If a response is received, it checks it for accordance with
+   // response_queue and switch to a state if necessary
    int	 ReceiveResp();
-	 // If a response is received, it checks it for accordance with
-	 // response_queue and switch to a state if necessary
+
+   bool ProxyIsHttp()
+      {
+	 if(!proxy_proto)
+	    return false;
+	 return !strcmp(proxy_proto,"http")
+	     || !strcmp(proxy_proto,"https");
+      }
+   bool	 proxy_is_http;	// true when connection was established via http proxy.
+   int	 http_proxy_status_code;
+   // Send CONNECT method to http proxy.
+   void	 HttpProxySendConnect();
+   void	 HttpProxySendConnectData();
+   // Check if proxy returned a reply, returns true if reply is ok.
+   // May disconnect.
+   bool	 HttpProxyReplyCheck(IOBuffer *buf);
 
    bool	 AbsolutePath(const char *p);
 
@@ -281,8 +308,6 @@ private:
    off_t rest_pos;	// the number sent with REST command.
 
    void	 SetError(int code,const char *mess=0);
-
-   int	 addr_received;	// state of PASV
 
    bool	 wait_flush;	// wait until all responces come
    bool	 ignore_pass;	// logged in just with user

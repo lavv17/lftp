@@ -1,3 +1,12 @@
+2004-01-28  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* NetAccess.cc, NetAccess.h: (proxy_proto) new member.
+	* ftpclass.cc, ftpclass.h: close data socket on temp transfer errors;
+	  enum pasv_state instead of addr_received; http proxy support with
+	  CONNECT method.
+	* resource.cc: new setting ftp:use-hftp to select between GET and
+	  CONNECT methods when ftp:proxy points to http:// url.
+
 2004-01-24  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc, commands.cc: --delete-first, not --remove-first;

@@ -66,7 +66,7 @@ void NetAccess::Init()
    reconnect_interval_max=300;
    timeout=600;		   // 10 minutes with no events = reconnect
 
-   proxy=0;
+   proxy=proxy_proto=0;
    proxy_port=0;
    proxy_user=proxy_pass=0;
 
@@ -97,10 +97,11 @@ NetAccess::~NetAccess()
       delete rate_limit;
    ClearPeer();
 
-   xfree(proxy); proxy=0;
-   xfree(proxy_port); proxy_port=0;
-   xfree(proxy_user); proxy_user=0;
-   xfree(proxy_pass); proxy_pass=0;
+   xfree(proxy);
+   xfree(proxy_port);
+   xfree(proxy_user);
+   xfree(proxy_pass);
+   xfree(proxy_proto);
    xfree(home_auto);
 }
 
@@ -347,6 +348,7 @@ void NetAccess::SetProxy(const char *px)
    proxy_port=xstrdup(url.port);
    proxy_user=xstrdup(url.user);
    proxy_pass=xstrdup(url.pass);
+   proxy_proto=xstrdup(url.proto);
    ClearPeer();
 }
 

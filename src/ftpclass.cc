@@ -81,10 +81,11 @@ const bool Ftp::ftps=false;
 
 #define max_buf 0x10000
 
-#define FTP_DEFAULT_PORT "ftp"
+#define FTP_DEFAULT_PORT "21"
 #define FTPS_DEFAULT_PORT "990"
 #define FTP_DATA_PORT 20
 #define FTPS_DATA_PORT 989
+#define HTTP_DEFAULT_PROXY_PORT "3128"
 
 #define super NetAccess
 
@@ -279,6 +280,7 @@ void Ftp::NoFileCheck(int act)
       SetError(NO_FILE,line);
       return;
    }
+   DataClose();
    state=EOF_STATE;
    retry_time=now+2; // retry after 2 seconds
 }
@@ -635,7 +637,7 @@ static bool IsLoopback(const sockaddr_u *u)
    return false;
 }
 
-int Ftp::Handle_PASV()
+Ftp::pasv_state_t Ftp::Handle_PASV()
 {
    unsigned a0,a1,a2,a3,p0,p1;
    /*
@@ -647,7 +649,7 @@ int Ftp::Handle_PASV()
       if(*b==0)
       {
 	 Disconnect();
-	 return 0;
+	 return PASV_NO_ADDRESS_YET;
       }
       if(!is_ascii_digit(*b))
 	 continue;
@@ -672,14 +674,14 @@ int Ftp::Handle_PASV()
    else
    {
       Disconnect();
-      return 0;
+      return PASV_NO_ADDRESS_YET;
    }
 
    a[0]=a0; a[1]=a1; a[2]=a2; a[3]=a3;
    p[0]=p0; p[1]=p1;
 
    if((a0==0 && a1==0 && a2==0 && a3==0)
-   || (QueryBool("fix-pasv-address",hostname)
+   || (QueryBool("fix-pasv-address",hostname) && !proxy_is_http
        && (InPrivateNetwork(&data_sa) != InPrivateNetwork(&peer_sa))))
    {
       // broken server, try to fix up
@@ -693,10 +695,10 @@ int Ftp::Handle_PASV()
 #endif
    }
 
-   return 1;
+   return PASV_HAVE_ADDRESS;
 }
 
-int Ftp::Handle_EPSV()
+Ftp::pasv_state_t Ftp::Handle_EPSV()
 {
    char delim;
    char *format=alloca_strdup("|||%u|");
@@ -715,7 +717,7 @@ int Ftp::Handle_EPSV()
    {
       DebugPrint("**** ",_("cannot parse EPSV response"),0);
       Disconnect();
-      return 0;
+      return PASV_NO_ADDRESS_YET;
    }
 
    socklen_t len=sizeof(data_sa);
@@ -729,9 +731,9 @@ int Ftp::Handle_EPSV()
    else
    {
       Disconnect();
-      return 0;
+      return PASV_NO_ADDRESS_YET;
    }
-   return 1;
+   return PASV_HAVE_ADDRESS;
 }
 
 void Ftp::CatchDATE(int act)
@@ -1136,6 +1138,8 @@ int   Ftp::Do()
       if(!ReconnectAllowed())
 	 return m;
 
+      proxy_is_http=ProxyIsHttp();
+
       if(ftps)
 	 m|=Resolve(FTPS_DEFAULT_PORT,"ftps","tcp");
       else
@@ -1226,7 +1230,7 @@ int   Ftp::Do()
       getpeername(control_sock,&peer_sa.sa,&addr_len);
 
 #ifdef USE_SSL
-      if(proxy?!strncmp(proxy,"ftps://",7):ftps)
+      if(proxy?!strcmp(proxy_proto,"ftps")||!strcmp(proxy_proto,"https"):ftps)
       {
 	 MakeSSLBuffers();
 	 prot='P';
@@ -1234,20 +1238,28 @@ int   Ftp::Do()
       else // note the following block
 #endif
       {
-	 if(use_telnet_iac)
-	 {
-	    control_send=telnet_layer_send=new IOBufferTelnet(
-	       new IOBufferFDStream(new FDStream(control_sock,"control-socket"),IOBuffer::PUT));
-	    control_recv=new IOBufferTelnet(
-	       new IOBufferFDStream(new FDStream(control_sock,"control-socket"),IOBuffer::GET));
-	 }
-	 else
-	 {
-	    control_send=new IOBufferFDStream(
-	       new FDStream(control_sock,"control-socket"),IOBuffer::PUT);
-	    control_recv=new IOBufferFDStream(
-	       new FDStream(control_sock,"control-socket"),IOBuffer::GET);
-	 }
+	 control_send=new IOBufferFDStream(
+	    new FDStream(control_sock,"control-socket"),IOBuffer::PUT);
+	 control_recv=new IOBufferFDStream(
+	    new FDStream(control_sock,"control-socket"),IOBuffer::GET);
+      }
+
+      if(!proxy || !proxy_is_http)
+	 goto pre_CONNECTED_STATE;
+
+      state=HTTP_PROXY_CONNECTED;
+      m=MOVED;
+      HttpProxySendConnect();
+
+   case HTTP_PROXY_CONNECTED:
+      if(!HttpProxyReplyCheck(control_recv))
+	 goto usual_return;
+
+   pre_CONNECTED_STATE:
+      if(use_telnet_iac && !telnet_layer_send)
+      {
+	 control_send=telnet_layer_send=new IOBufferTelnet(control_send);
+	 control_recv=new IOBufferTelnet(control_recv);
       }
 
       state=CONNECTED_STATE;
@@ -1274,7 +1286,7 @@ int   Ftp::Do()
 	 return m;
 
 #ifdef USE_SSL
-      if(auth_supported && !auth_sent && !control_ssl && !ftps && !proxy
+      if(auth_supported && !auth_sent && !control_ssl && !ftps && (!proxy || proxy_is_http)
       && QueryBool((user && pass)?"ssl-allow":"ssl-allow-anonymous",hostname))
       {
 	 const char *auth=Query("ssl-auth",hostname);
@@ -1318,7 +1330,7 @@ int   Ftp::Do()
 #endif
 
       char *user_to_use=(user?user:anon_user);
-      if(proxy)
+      if(proxy && !proxy_is_http)
       {
 	 char *combined=(char*)alloca(strlen(user_to_use)+1+strlen(hostname)+1+xstrlen(portname)+1);
 	 sprintf(combined,"%s@%s",user_to_use,hostname);
@@ -1796,7 +1808,7 @@ int   Ftp::Do()
 #endif
 	    SendCmd("PASV");
 	    AddResp(227,CHECK_PASV);
-	    addr_received=0;
+	    pasv_state=PASV_NO_ADDRESS_YET;
 	 }
 	 else
 	 {
@@ -1806,14 +1818,14 @@ int   Ftp::Do()
 	       goto ipv4_pasv;
 	    SendCmd("EPSV");
 	    AddResp(229,CHECK_EPSV);
-	    addr_received=0;
+	    pasv_state=PASV_NO_ADDRESS_YET;
 #else
 	    Fatal(_("unsupported network protocol"));
 	    return MOVED;
 #endif
 	 }
       }
-      else
+      else // !PASSIVE
       {
 	 if(copy_mode!=COPY_NONE)
 	    data_sa=copy_addr;
@@ -1938,11 +1950,12 @@ int   Ftp::Do()
       if(state!=DATASOCKET_CONNECTING_STATE || Error())
          return MOVED;
 
-      if(addr_received==0)
+      switch(pasv_state)
+      {
+      case PASV_NO_ADDRESS_YET:
 	 goto usual_return;
 
-      if(addr_received==1)
-      {
+      case PASV_HAVE_ADDRESS:
 	 if(copy_mode==COPY_NONE
 	 && !data_address_ok(&data_sa,/*port_verify*/false))
 	 {
@@ -1950,7 +1963,7 @@ int   Ftp::Do()
 	    return MOVED;
 	 }
 
-	 addr_received=2;
+	 pasv_state=PASV_DATASOCKET_CONNECTING;
 	 if(copy_mode!=COPY_NONE)
 	 {
 	    memcpy(&copy_addr,&data_sa,sizeof(data_sa));
@@ -1958,11 +1971,20 @@ int   Ftp::Do()
 	    goto pre_WAITING_STATE;
 	 }
 
-	 sprintf(str,_("Connecting data socket to (%s) port %u"),
-	    SocketNumericAddress(&data_sa),SocketPort(&data_sa));
-	 DebugPrint("---- ",str,5);
-
-	 res=SocketConnect(data_sock,&data_sa);
+	 if(!proxy_is_http)
+	 {
+	    sprintf(str,_("Connecting data socket to (%s) port %u"),
+	       SocketNumericAddress(&data_sa),SocketPort(&data_sa));
+	    DebugPrint("---- ",str,5);
+	    res=SocketConnect(data_sock,&data_sa);
+	 }
+	 else // proxy_is_http
+	 {
+	    sprintf(str,_("Connecting data socket to proxy %s (%s) port %u"),
+	       proxy,SocketNumericAddress(&peer_sa),SocketPort(&peer_sa));
+	    DebugPrint("---- ",str,5);
+	    res=SocketConnect(data_sock,&peer_sa);
+	 }
 	 if(res==-1
 #ifdef EINPROGRESS
 	 && errno!=EINPROGRESS
@@ -1977,21 +1999,35 @@ int   Ftp::Do()
 	    goto system_error;
 	 }
 	 m=MOVED;
-      }
-      res=Poll(data_sock,POLLOUT);
-      if(res==-1)
-      {
-	 if(fixed_pasv)
+      case PASV_DATASOCKET_CONNECTING:
+	 res=Poll(data_sock,POLLOUT);
+	 if(res==-1)
 	 {
-	    DebugPrint("---- ",_("Switching passive mode off"),2);
-	    SetFlag(PASSIVE_MODE,0);
+	    if(fixed_pasv)
+	    {
+	       DebugPrint("---- ",_("Switching passive mode off"),2);
+	       SetFlag(PASSIVE_MODE,0);
+	    }
+	    Disconnect();
+	    return MOVED;
 	 }
-	 Disconnect();
-         return MOVED;
-      }
+	 if(!(res&POLLOUT))
+	    goto usual_return;
+	 if(!proxy_is_http)
+	    goto pre_data_open;
 
-      if(!(res&POLLOUT))
-	 goto usual_return;
+	 pasv_state=PASV_HTTP_PROXY_CONNECTED;
+	 m=MOVED;
+	 data_iobuf=new IOBufferFDStream(new FDStream(data_sock,"data-socket"),IOBuffer::PUT);
+	 HttpProxySendConnectData();
+	 Roll(data_iobuf);
+	 Delete(data_iobuf); // FIXME, it could be not done yet
+	 data_iobuf=new IOBufferFDStream(new FDStream(data_sock,"data-socket"),IOBuffer::GET);
+      case PASV_HTTP_PROXY_CONNECTED:
+      	 if(HttpProxyReplyCheck(data_iobuf))
+	    goto pre_data_open;
+	 return m;
+      }
 
    pre_data_open:
       assert(rate_limit==0);
@@ -1999,6 +2035,8 @@ int   Ftp::Do()
       state=DATA_OPEN_STATE;
       m=MOVED;
 
+      Delete(data_iobuf);
+      data_iobuf=0;
 #ifdef USE_SSL
       if(prot=='P')
       {
@@ -2134,7 +2172,7 @@ int   Ftp::Do()
 	 goto notimeout_return;
 
       if(copy_mode==COPY_DEST && !copy_done && copy_connection_open
-      && RespQueueSize()==1 && use_stat && !control_ssl)
+      && RespQueueSize()==1 && use_stat && !control_ssl && !proxy_is_http)
       {
 	 if(stat_time+stat_interval<=now)
 	 {
@@ -2171,7 +2209,7 @@ notimeout_return:
 	 Block(data_sock,POLLIN);
       else if(state==DATASOCKET_CONNECTING_STATE)
       {
-	 if(addr_received==2) // that is connect in progress
+	 if(pasv_state==PASV_DATASOCKET_CONNECTING)
 	    Block(data_sock,POLLOUT);
       }
    }
@@ -2458,6 +2496,79 @@ int  Ftp::ReceiveResp()
    return m;
 }
 
+void Ftp::HttpProxySendConnect()
+{
+   const char *the_port=portname?portname:ftps?FTPS_DEFAULT_PORT:FTP_DEFAULT_PORT;
+   control_send->Format("CONNECT %s:%s HTTP/1.0\r\n\r\n",hostname,the_port);
+   Log::global->Format(4,"+--> CONNECT %s:%s HTTP/1.0\n",hostname,the_port);
+   http_proxy_status_code=0;
+}
+void Ftp::HttpProxySendConnectData()
+{
+   const char *the_host=SocketNumericAddress(&data_sa);
+   int the_port=SocketPort(&data_sa);
+   data_iobuf->Format("CONNECT %s:%d HTTP/1.0\r\n\r\n",the_host,the_port);
+   Log::global->Format(4,"+--> CONNECT %s:%d HTTP/1.0\n",the_host,the_port);
+   http_proxy_status_code=0;
+}
+// Check reply and return true when the reply is received and is ok.
+bool Ftp::HttpProxyReplyCheck(IOBuffer *buf)
+{
+   const char *b;
+   int s;
+   buf->Get(&b,&s);
+   const char *nl=b?(const char*)memchr(b,'\n',s):0;
+   if(!nl)
+   {
+      if(buf->Error())
+      {
+	 DebugPrint("**** ",buf->ErrorText(),0);
+	 if(buf->ErrorFatal())
+	    SetError(FATAL,buf->ErrorText());
+      }
+      else if(buf->Eof())
+	 DebugPrint("**** ",_("Peer closed connection"),0);
+      if(buf->Eof() || buf->Error())
+      {
+	 quit_sent=true;
+	 Disconnect();
+      }
+      return false;
+   }
+
+   char *line=string_alloca(nl-b);
+   memcpy(line,b,nl-b-1);	 // don't copy \r
+   line[nl-b-1]=0;
+   buf->Skip(nl-b+1);	 // skip \r\n too.
+
+   DebugPrint("<--+ ",line,4);
+
+   if(!http_proxy_status_code)
+   {
+      if(1!=sscanf(line,"HTTP/%*d.%*d %d",&http_proxy_status_code)
+      || !is2XX(http_proxy_status_code))
+      {
+	 // check for retriable codes
+	 if(http_proxy_status_code==408 // Request Timeout
+	 || http_proxy_status_code==502 // Bad Gateway
+	 || http_proxy_status_code==503 // Service Unavailable
+	 || http_proxy_status_code==504)// Gateway Timeout
+	 {
+	    quit_sent=true;
+	    Disconnect();
+	    return false;
+	 }
+	 SetError(FATAL,line);
+	 quit_sent=true;
+	 Disconnect();
+	 return false;
+      }
+   }
+   if(!*line)
+      return true;
+   return false;
+}
+
 void Ftp::SendUrgentCmd(const char *cmd)
 {
    if(!use_telnet_iac || !telnet_layer_send)
@@ -2526,15 +2637,19 @@ void  Ftp::DataAbort()
       return;
 
    if(!QueryBool("use-abor",hostname)
-   || RespQueueSize()>1)
+   || RespQueueSize()>1 || proxy_is_http)
    {
+      // check that we have a data socket to close, and the server is not
+      // in uninterruptible accept() state.
       if(copy_mode==COPY_NONE
-      && !((flags&PASSIVE_MODE) && addr_received<2))
+      && !((flags&PASSIVE_MODE) && state==DATASOCKET_CONNECTING_STATE
+           && (pasv_state==PASV_NO_ADDRESS_YET || pasv_state==PASV_HAVE_ADDRESS)))
 	 DataClose();	// just close data connection
       else
       {
+	 // otherwise, just close control connection.
 	 quit_sent=true;
-	 Disconnect();	// nothing to close but control connection.
+	 Disconnect();
       }
       return;
    }
@@ -2639,6 +2754,7 @@ void  Ftp::Disconnect()
 	 SetError(STORE_FAILED,0);
    }
    state=INITIAL_STATE;
+   http_proxy_status_code=0;
 
 out:
    disconnect_on_close=false;
@@ -2835,6 +2951,7 @@ void  Ftp::Close()
       switch(state)
       {
       case(CONNECTING_STATE):
+      case(HTTP_PROXY_CONNECTED):
       case(CONNECTED_STATE):
       case(USER_RESP_WAITING_STATE):
 	 Disconnect();
@@ -3213,6 +3330,7 @@ void  Ftp::MoveConnectionHere(Ftp *o)
    utf8_supported=o->utf8_supported;
    lang_supported=o->lang_supported;
    last_rest=o->last_rest;
+   proxy_is_http=o->proxy_is_http;
 
    if(!home)
       set_home(home_auto);
@@ -3453,11 +3571,11 @@ void Ftp::CheckResp(int act)
 	 memset(&data_sa,0,sizeof(data_sa));
 
 	 if(cc==CHECK_PASV)
-	    addr_received=Handle_PASV();
+	    pasv_state=Handle_PASV();
 	 else // cc==CHECK_EPSV
-	    addr_received=Handle_EPSV();
+	    pasv_state=Handle_EPSV();
 
-	 if(!addr_received)
+	 if(pasv_state==PASV_NO_ADDRESS_YET)
 	    goto passive_off;
 
 	 if(aborted_data_sock!=-1)
@@ -3635,6 +3753,7 @@ const char *Ftp::CurrentStatus()
       }
       return(_("Not connected"));
    case(CONNECTING_STATE):
+   case(HTTP_PROXY_CONNECTED):
       return(_("Connecting..."));
    case(CONNECTED_STATE):
 #ifdef USE_SSL
@@ -3645,7 +3764,7 @@ const char *Ftp::CurrentStatus()
    case(USER_RESP_WAITING_STATE):
       return(_("Logging in..."));
    case(DATASOCKET_CONNECTING_STATE):
-      if(addr_received==0)
+      if(pasv_state==PASV_NO_ADDRESS_YET)
 	 return(_("Waiting for response..."));
       return(_("Making data connection..."));
    case(CWD_CWD_WAITING_STATE):
@@ -3895,7 +4014,12 @@ void Ftp::Reconfig(const char *name)
       SetProxy(Query("proxy",c));
 
    if(proxy && proxy_port==0)
-      proxy_port=xstrdup(FTP_DEFAULT_PORT);
+   {
+      if(ProxyIsHttp())
+	 proxy_port=xstrdup(HTTP_DEFAULT_PROXY_PORT);
+      else
+	 proxy_port=xstrdup(FTP_DEFAULT_PORT);
+   }
 
    if(nop_interval<30)
       nop_interval=30;
@@ -3951,7 +4075,7 @@ Ftp::ConnectLevel Ftp::GetConnectLevel()
 {
    if(control_sock==-1)
       return CL_NOT_CONNECTED;
-   if(state==CONNECTING_STATE)
+   if(state==CONNECTING_STATE || state==HTTP_PROXY_CONNECTED)
       return CL_CONNECTING;
    if(state==CONNECTED_STATE)
       return CL_JUST_CONNECTED;
@@ -4027,7 +4151,8 @@ const char *Ftp::ProtocolSubstitution(const char *host)
    if(NoProxy(host))
       return 0;
    const char *proxy=ResMgr::Query("ftp:proxy",host);
-   if(proxy && !strncmp(proxy,"http://",7))
+   if(proxy && QueryBool("use-hftp",host)
+   && (!strncmp(proxy,"http://",7) || !strncmp(proxy,"https://",8)))
       return "hftp";
    return 0;
 }
@@ -4062,16 +4187,9 @@ void Ftp::MakeSSLBuffers()
    IOBufferSSL *recv_ssl=new IOBufferSSL(control_ssl,IOBufferSSL::GET,hostname);
    send_ssl->DoConnect();
    recv_ssl->CloseLater();
-   if(use_telnet_iac)
-   {
-      control_send=telnet_layer_send=new IOBufferTelnet(send_ssl);
-      control_recv=new IOBufferTelnet(recv_ssl);
-   }
-   else
-   {
-      control_send=send_ssl;
-      control_recv=recv_ssl;
-   }
+
+   control_send=send_ssl;
+   control_recv=recv_ssl;
 }
 #endif
 
