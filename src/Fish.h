@@ -68,6 +68,15 @@ class Fish : public NetAccess
    off_t body_size;
    off_t bytes_received;
 
+   enum expect_t
+   {
+      EXPECT_FISH,
+      EXPECT_VER,
+   };
+
+   void PushExpect(expect_t);
+   int HandleReplies();
+
 public:
    static void ClassInit();
 

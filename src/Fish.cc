@@ -49,6 +49,8 @@ int Fish::Do()
    if(!hostname)
       return m;
 
+   m|=HandleReplies();
+
    switch(state)
    {
    case DISCONNECTED:
@@ -72,6 +74,7 @@ int Fish::Do()
       }
       DebugPrint("---- ","Running ssh...");
       filter_out=new OutputFilter("ssh gemini \"echo FISH:;/bin/sh\"",pipe_in[1]);   // FIXME
+      filter_out->StderrToStdout();
       state=CONNECTING;
       m=MOVED;
    case CONNECTING:
@@ -86,6 +89,7 @@ int Fish::Do()
 	 TimeoutS(1);
 	 return m;
       }
+      filter_out->Kill(SIGCONT);
       send_buf=new FileOutputBuffer(filter_out);
       filter_out=0;
       recv_buf=new FileInputBuffer(new FDStream(pipe_in[0],"pipe in"));
@@ -96,7 +100,7 @@ int Fish::Do()
 
       Send("#FISH\n"
 	   "echo; start_fish_server; echo '### 200'\n");
-      expected_responses++;
+      PushExpect(EXPECT_FISH);
    case CONNECTED:
       if(mode==CLOSED)
 	 return m;
@@ -167,20 +171,48 @@ void Fish::Close()
 
 void Fish::Send(const char *format,...)
 {
-   char *str=(char*)alloca(max_send);
    va_list va;
    va_start(va,format);
-
+   char *str;
+#ifdef HAVE_VSNPRINTF
+   static int max_send=256;
+   for(;;)
+   {
+      str=string_alloca(max_send);
+      int res=vsnprintf(str,max_send,format,va);
+      if(res>=0 && res<max_send)
+      {
+	 if(res<max_send/16)
+	    max_send/=2;
+	 break;
+      }
+      max_send*=2;
+   }
+#else // !HAVE_VSNPRINTF
+   str=string_alloca(2048);
    vsprintf(str,format,va);
-
-   va_end(va);
-
+#endif
    DebugPrint("---> ",str,5);
    send_buf->Put(str);
+   va_end(va);
 }
 
 void Fish::SendMethod()
 {
+}
+
+int Fish::HandleReplies()
+{
+   int m=STALL;
+   if(recv_buf==0 || state==FILE_RECV)
+      return m;
+   if(recv_buf->Size()<5)
+      return m;
+   // ...
+}
+void Fish::PushExpect(expect_t)
+{
+   // ...
 }
 
 int Fish::Read(void *buf,int size)
