@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 1.2.4\n"
+"Project-Id-Version: lftp 2.0\n"
 "POT-Creation-Date: 1999-06-27 20:55+0400\n"
-"PO-Revision-Date: 1999-06-02 14:40+08:00\n"
+"PO-Revision-Date: 1999-07-01 09:54+08:00\n"
 "Last-Translator: Const Kaplinsky <const@ce.cctpu.edu.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -982,6 +982,10 @@ msgid ""
 "followed by unit specifier: d - days, h - hours, m - minutes, s - seconds.\n"
 "By default time is assumed to be seconds.\n"
 msgstr ""
+"Использование: sleep <время>[единицы_измерения]\n"
+"Перейти в режим сна на заданный промежуток времени. После аргумента,\n"
+"задающего время, допускается указание единиц измерения: d - дни, h - часы,\n"
+"m - минуты, s - секунды. По умолчанию предполагается время в секундах.\n"
 
 #: src/commands.cc:298
 msgid "source <file>"
@@ -1607,10 +1611,3 @@ msgstr "Данный протокол для прокси не поддерживается"
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "Получение списка файлов (%ld) [%s]"
-
-#, fuzzy
-#~ msgid "eta:%ld%c%ld%c "
-#~ msgstr "овп:%ld%c "
-
-#~ msgid "eta:%ld%c "
-#~ msgstr "овп:%ld%c "
