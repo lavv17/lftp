@@ -330,7 +330,9 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
    {
       // it's size, so the previous was group:
       fi.SetGroup(group_or_size);
-      fi.SetSize(atol(t));
+      long long size;
+      if(sscanf(t,"%lld",&size)==1)
+	 fi.SetSize(size);
       t = NEXT_TOKEN;
       if(!t)
 	 ERR;
@@ -338,7 +340,9 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
    else
    {
       // it was month, so the previous was size:
-      fi.SetSize(atol(group_or_size));
+      long long size;
+      if(sscanf(group_or_size,"%lld",&size)==1)
+	 fi.SetSize(size);
    }
 
    struct tm date;
@@ -717,7 +721,11 @@ FileInfo *ParseFtpLongList_MacWebStar(const char *line_c,int *err,const char *tz
       if(!t)
 	 ERR;
       if(isdigit((unsigned char)*t))
-	 fi.SetSize(atol(t));
+      {
+	 long long size;
+	 if(sscanf(t,"%lld",&size)==1)
+	    fi.SetSize(size);
+      }
       else
 	 ERR;
    }
