@@ -395,9 +395,13 @@ bool NetAccess::ReconnectAllowed()
    && reconnect_interval_max>=reconnect_interval*reconnect_interval_multiplier
    && retries>0)
    {
-      interval*=pow(reconnect_interval_multiplier,
-	 (retries-1)%(int)(log((float)reconnect_interval_max/reconnect_interval)
-		          /log(reconnect_interval_multiplier)));
+      int modval = (int)(log((float)reconnect_interval_max/reconnect_interval)
+                              / log(reconnect_interval_multiplier) + 1.999);
+
+      interval *= pow(reconnect_interval_multiplier, (retries-1)%modval);
+
+      if( interval > reconnect_interval_max )
+         interval = reconnect_interval_max;
    }
    if(now-try_time >= interval)
       return true;
