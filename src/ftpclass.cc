@@ -1806,8 +1806,10 @@ void  Ftp::DataAbort()
 
    if(!(bool)Query("use-abor",hostname))
    {
-      // just close data connection
-      DataClose();
+      if(copy_mode==COPY_NONE)
+	 DataClose();	// just close data connection
+      else
+	 Disconnect();	// nothing to close but control connection.
       return;
    }
 
