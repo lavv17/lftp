@@ -550,6 +550,7 @@ private:
       char *data;
       Request_WRITE(const char *h,int hlen,off_t p,const char *d,unsigned l)
        : PacketSTRING(SSH_FXP_WRITE,h,hlen) { pos=p; len=l; data=(char*)xmemdup(d,l); }
+      ~Request_WRITE() { xfree(data); }
       void ComputeLength() { PacketSTRING::ComputeLength(); length+=8+4+len; }
       void Pack(Buffer *b);
    };
@@ -584,6 +585,11 @@ private:
 	 {
 	    oldpath=xstrdup(o);
 	    newpath=xstrdup(n);
+	 }
+      ~Request_RENAME()
+	 {
+	    xfree(oldpath);
+	    xfree(newpath);
 	 }
       void ComputeLength()
 	 {
