@@ -110,7 +110,6 @@ class CmdExec : public SessionJob
    }
       builtin;
 
-   static CmdExec *debug_shell;
    static void debug_callback(char *);
 
    CmdFeeder *feeder;
@@ -184,6 +183,8 @@ public:
    void vfprintf(FILE *file,const char *f,va_list v);
 
    void SetInteractive(bool i);
+
+   static CmdExec *debug_shell;	 // to be zapped
 };
 
 #endif//CMDEXEC_H

@@ -730,8 +730,7 @@ void CmdExec::debug_callback(char *msg)
    if(isatty(1) && tcgetpgrp(1)!=getpgrp())
       return;
    debug_shell->status_line->WriteLine(msg);
-   if(debug_shell->waiting && debug_shell->interactive)
-      debug_shell->ShowRunStatus(debug_shell->status_line);
+   debug_shell->block+=NoWait(); // force resched
 }
 
 CMD(debug)
@@ -741,11 +740,10 @@ CMD(debug)
    int	 new_dlevel=9;
    char	 *debug_file_name=0;
 
-   if(debug_shell)
-      debug_shell->CloseDebug();
+   if(!debug_shell)
+      return 0;
 
-   debug_shell=this;
-   CloseDebug();
+   debug_shell->CloseDebug();
 
    int opt;
    while((opt=args->getopt("o:"))!=EOF)
@@ -754,7 +752,7 @@ CMD(debug)
       {
       case('o'):
 	 debug_file_name=optarg;
-	 if(OpenDebug(debug_file_name)==-1)
+	 if(debug_shell->OpenDebug(debug_file_name)==-1)
 	    return 0;
 	 break;
       case('?'):
@@ -767,7 +765,7 @@ CMD(debug)
    {
       if(!strcasecmp(args->getarg(1),"off"))
       {
-	 CloseDebug();
+	 debug_shell->CloseDebug();
 	 new_cb=0;
 	 new_dlevel=0;
       }
@@ -777,18 +775,18 @@ CMD(debug)
       }
    }
 
-   if(debug_file)
+   if(debug_shell->debug_file)
       new_cb=0;
 
    if(interactive)
    {
-      if(new_cb || debug_file)
+      if(new_cb || debug_shell->debug_file)
 	 printf(_("debug level is %d, output goes to %s\n"),new_dlevel,
-		     debug_file?debug_file_name:"<stdout>");
+		     debug_shell->debug_file?debug_file_name:"<stdout>");
       else
 	 printf(_("debug is off\n"));
    }
-   session->SetDebug(debug_file,new_dlevel,new_cb);
+   FileAccess::SetDebug(debug_shell->debug_file,new_dlevel,new_cb);
    exit_code=0;
    return 0;
 }
@@ -861,7 +859,7 @@ CMD(lftp)
 	 break;
       case('c'):
 	 cmd=(char*)alloca(4+strlen(optarg));
-	 sprintf(cmd,"(%s);",optarg);
+	 sprintf(cmd,"%s\n\n",optarg);
 	 break;
       }
    }

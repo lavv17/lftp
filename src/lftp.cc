@@ -242,6 +242,7 @@ int   main(int argc,char **argv)
    top_exec->session->SetDebug(NULL,0);
    top_exec->jobno=-1;
    top_exec->status_line=new StatusLine(1);
+   CmdExec::debug_shell=top_exec;
 
    initialize_readline();
 

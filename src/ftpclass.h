@@ -100,9 +100,10 @@ class Ftp : public FileAccess
    int   RespQueueIsEmpty() { return RQ_head==RQ_tail; }
    int	 RespQueueSize() { return RQ_tail-RQ_head; }
 
-   int	 IgnoreCheck(int act,int exp);
-   int	 RestCheck(int act,int exp);
-   int   NoFileCheck(int act,int exp);
+   int	 ReadyCheck(int,int);
+   int	 IgnoreCheck(int,int);
+   int	 RestCheck(int,int);
+   int   NoFileCheck(int,int);
    int	 CWD_Check(int,int);
    int	 CwdCwd_Check(int,int);
    int	 TransferCheck(int,int);

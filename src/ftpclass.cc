@@ -186,6 +186,20 @@ address_mismatch:
 
 /* Procedures for checking for a special answers */
 
+int Ftp::ReadyCheck(int,int)
+{
+   // M$ can't get it right... I'm really tired of setting sync-mode manually.
+   if(!(flags&SYNC_MODE) && strstr(line,"Microsoft FTP Service (Version 3.0)"))
+   {
+      DebugPrint("---- ","Turning on sync-mode",3);
+      flags|=SYNC_MODE;
+      ResMgr::Set("ftp:sync-mode",hostname,"on");
+      try_time=0; // retry immediately
+      return INITIAL_STATE;
+   }
+   return -1;
+}
+
 int   Ftp::RestCheck(int act,int exp)
 {
    (void)exp;
@@ -878,7 +892,7 @@ int   Ftp::Do()
       if(flags&SYNC_MODE)
 	 flags|=SYNC_WAIT; // we need to wait for RESP_READY
 
-      AddResp(RESP_READY,INITIAL_STATE);
+      AddResp(RESP_READY,INITIAL_STATE,&ReadyCheck);
 
       char *user_to_use=(user?user:anon_user);
       if(proxy)

@@ -32,7 +32,6 @@
 #include "rglob.h"
 #include "CmdExec.h"
 #include "alias.h"
-// #include "GetPass.h"
 #include "SignalHook.h"
 #include "CharReader.h"
 #include "LsCache.h"
@@ -190,6 +189,7 @@ int   remote_cmd(int start)
    || !strcmp(buf,"mget")
    || !strcmp(buf,"rm")
    || !strcmp(buf,"mrm")
+   || !strcmp(buf,"mirror")
    || !strcmp(buf,"rmdir")
    || !strcmp(buf,"more")
    || !strcmp(buf,"cat")

@@ -548,6 +548,8 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
 CmdExec::~CmdExec()
 {
    CloseDebug();
+   if(debug_shell==this)
+      debug_shell=0; // unfortunately, we lose debug with this shell
    free_used_aliases();
    xfree(cmd);
    if(args)
@@ -786,7 +788,6 @@ void CmdExec::CloseDebug()
       fclose(debug_file);
       debug_file=0;
    }
-
 }
 
 int CmdExec::OpenDebug(const char *file)
