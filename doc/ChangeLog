@@ -1,3 +1,9 @@
+2000-02-25	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document --verbose[=level] option of mirror.
+
+**** missed some.
+
 1999-12-04	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: use `base name' instead of basename.
