@@ -221,7 +221,7 @@ int   Resolver::Do()
 	 m=MOVED;
       }
    }
-   else
+   else /* !use_fork */
    {
       if(!buf)
       {
@@ -818,6 +818,8 @@ void Resolver::DoGethostbyname()
    }
    buf->Put("O");
    buf->Put((char*)addr,addr_num*sizeof(*addr));
+   xfree(addr);
+   addr=0;
 
 flush:
    buf->PutEOF();
@@ -826,7 +828,6 @@ flush:
       while(buf->Size()>0 && !buf->Error() && !buf->Broken())
 	 Roll(buf);  // should flush quickly.
    }
-   return;
 }
 
 void Resolver::Reconfig(const char *name)
