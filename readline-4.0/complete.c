@@ -624,6 +624,11 @@ find_completion_word (fp, dp)
   /* If we are at an unquoted word break, then advance past it. */
   scan = rl_line_buffer[rl_point];
 
+  /* If we are at end of line, it means we have an empty word with leading
+     quote. Skip further tests. */
+  if (scan == 0)
+    goto out;
+
   /* If there is an application-specific function to say whether or not
      a character is quoted and we found a quote character, let that
      function decide whether or not a character is a word break, even
@@ -648,6 +653,7 @@ find_completion_word (fp, dp)
 	rl_point++;
     }
 
+out:
   if (fp)
     *fp = found_quote;
   if (dp)
