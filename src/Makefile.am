@@ -17,7 +17,7 @@ noinst_LIBRARIES = libtasks.a libjobs.a
 EXTRA_LTLIBRARIES = libnetwork.la proto-ftp.la proto-http.la proto-file.la cmd-mirror.la cmd-sleep.la proto-fish.la
 pkgverlib_LTLIBRARIES = $(MODULES_LA)
 
-proto_ftp_la_SOURCES  = ftpclass.cc FtpListInfo.cc FtpGlob.cc FtpDirList.cc\
+proto_ftp_la_SOURCES  = ftpclass.cc FtpListInfo.cc FtpDirList.cc\
  md5.c ftp-opie.c FileCopyFtp.cc
 proto_http_la_SOURCES = Http.cc HttpDir.cc
 proto_file_la_SOURCES = LocalAccess.cc
