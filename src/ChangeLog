@@ -1,3 +1,7 @@
+2002-06-03  Glenn Maynard <g_ld@zewt.org>
+
+	* Resolver.cc: free_ha is not actually needed.
+
 2002-05-31  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc: (GetStatus) don't use fixed buffer - it can be overflowed.
