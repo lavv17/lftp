@@ -24,6 +24,7 @@
 
 #include <stdio.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <time.h>
 #include "xalloca.h"
 #include "xmalloc.h"
@@ -164,6 +165,42 @@ static char *array_generator(char *text,int state)
    return NULL;
 }
 
+static bool not_dir(char *f)
+{
+   struct stat st;
+   f=tilde_expand(f);
+   bool res=(stat(f,&st)==-1 || !S_ISDIR(st.st_mode));
+   free(f);
+   return res;
+}
+
+void ignore_non_dirs(char **matches)
+{
+   // filter out non-dirs.
+   int out=1;
+   for(int i=1; matches[i]; i++)
+   {
+      if(!not_dir(matches[i]))
+	 matches[out++]=matches[i];
+      else
+	 free(matches[i]);
+   }
+   matches[out]=0;
+   if(out==1)
+   {
+      // we have only the LCD prefix. Handle it carefully.
+      char *f=matches[0];
+      int len=strlen(f);
+      if((len>2 && f[len-1]=='/') // all files, no dirs.
+      || not_dir(f))		 // or single non dir.
+      {
+	 // all files, no dirs.
+	 free(f);
+	 matches[0]=0;
+      }
+   }
+}
+
 static const char *find_word(const char *p)
 {
    while(*p && isspace(*p))
@@ -186,7 +223,7 @@ static bool copy_word(char *buf,const char *p,int n)
 
 enum completion_type
 {
-   LOCAL, REMOTE_FILE, REMOTE_DIR, BOOKMARK, COMMAND,
+   LOCAL, LOCAL_DIR, REMOTE_FILE, REMOTE_DIR, BOOKMARK, COMMAND,
    STRING_ARRAY, NO_COMPLETION
 };
 
@@ -207,8 +244,13 @@ static completion_type cmd_completion_type(const char *cmd,int start)
       w=find_word(cmd);
       if(w[0]=='!')
 	 shell_cmd=true;
-      if(w[0]=='!' || w[0]=='#')
+      if(w[0]=='#')
+	 return NO_COMPLETION;
+      if(w[0]=='!')
+      {
+	 shell_cmd=quote_glob=true;
 	 return LOCAL;
+      }
       if(w[0]=='?')  // help
 	 return COMMAND;
       if(w[0]=='(')
@@ -247,7 +289,7 @@ static completion_type cmd_completion_type(const char *cmd,int start)
    }
 
    if(!strcmp(buf,"shell"))
-      shell_cmd=true;
+      shell_cmd=quote_glob=true;
    if(!strcmp(buf,"glob")
    || !strcmp(buf,"mget")
    || !strcmp(buf,"mput")
@@ -260,7 +302,6 @@ static completion_type cmd_completion_type(const char *cmd,int start)
 
    if(!strcmp(buf,"cat")
    || !strcmp(buf,"ls")
-   || !strcmp(buf,"mget")
    || !strcmp(buf,"more")
    || !strcmp(buf,"mrm")
    || !strcmp(buf,"mv")
@@ -280,6 +321,7 @@ static completion_type cmd_completion_type(const char *cmd,int start)
 
    bool was_o=false;
    bool was_N=false;
+   bool was_O=false;
    bool second=false;
    int second_start=-1;
    for(int i=start; i>4; i--)
@@ -294,6 +336,11 @@ static completion_type cmd_completion_type(const char *cmd,int start)
       if(!strncmp(rl_line_buffer+i-3,"-N",2) && isspace(rl_line_buffer[i-4]))
       {
 	 was_N=true;
+	 break;
+      }
+      if(!strncmp(rl_line_buffer+i-3,"-O",2) && isspace(rl_line_buffer[i-4]))
+      {
+	 was_O=true;
 	 break;
       }
    }
@@ -311,14 +358,28 @@ static completion_type cmd_completion_type(const char *cmd,int start)
    if(!strcmp(buf,"get")
    || !strcmp(buf,"pget")
    || !strcmp(buf,"get1"))
+   {
+      if(was_O)
+	 return LOCAL_DIR;
       if(!was_o)
+	 return REMOTE_FILE;
+   }
+   if(!strcmp(buf,"mget"))
+      if(!was_O)
 	 return REMOTE_FILE;
    if(!strcmp(buf,"put"))
       if(was_o)
 	 return REMOTE_FILE;
+   if(!strcmp(buf,"put")
+   || !strcmp(buf,"mput"))
+      if(was_O)
+	 return REMOTE_DIR;
    if(!strcmp(buf,"mirror"))
+   {
+      // FIXME: guess -R and take arg number into account.
       if(!was_N)
-	 return REMOTE_FILE;
+	 return REMOTE_DIR;
+   }
    if(!strcmp(buf,"bookmark"))
    {
       if(second)
@@ -360,6 +421,9 @@ static completion_type cmd_completion_type(const char *cmd,int start)
       else
 	 return NO_COMPLETION;
    }
+
+   if(!strcmp(buf,"lcd"))
+      return LOCAL_DIR;
 
    return LOCAL;
 }
@@ -404,12 +468,15 @@ static bool force_remote=false;
    array of matches, or NULL if there aren't any. */
 static char **lftp_completion (char *text,int start,int end)
 {
+   completion_shell->RestoreCWD();
+
    if(start>end)  // workaround for a bug in readline
       start=end;
 
    GlobURL *rg=0;
 
    rl_completion_append_character=' ';
+   rl_ignore_some_completions_function=0;
    shell_cmd=false;
    quote_glob=false;
 
@@ -434,8 +501,15 @@ static char **lftp_completion (char *text,int start,int end)
       generator = array_generator;
       break;
    case LOCAL:
+   case LOCAL_DIR:
       if(force_remote || (url::is_url(text) && remote_completion))
+      {
+	 if(type==LOCAL_DIR)
+	    type=REMOTE_DIR;
 	 goto really_remote;
+      }
+      if(type==LOCAL_DIR)
+	 rl_ignore_some_completions_function = (Function*)ignore_non_dirs;
       break;
    case REMOTE_FILE:
    case REMOTE_DIR:
@@ -493,14 +567,17 @@ static char **lftp_completion (char *text,int start,int end)
    if(rg)
       delete rg;
 
-   xfree(text);
    if(!matches)
    {
       rl_attempted_completion_over = 1;
-      return 0;
+      goto leave;
    }
+
    if(type==REMOTE_DIR)
       rl_completion_append_character='/';
+
+leave:
+   xfree(text);
    return matches;
 }
 
