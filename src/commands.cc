@@ -109,6 +109,7 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
    {"debug",   &do_debug,  N_("debug [<level>|off] [-o <file>]"),
 	 N_("Set debug level to given value or turn debug off completely.\n"
 	 " -o <file>  redirect debug output to the file.\n")},
+   {"echo",    &do_echo,   0},
    {"exit",    &do_exit,   N_("exit [<code>]"),
 	 N_("exit - exit from lftp or move to background if jobs are active\n\n"
 	 "If no jobs active, the code is passed to operating system as lftp\n"
@@ -1665,8 +1666,6 @@ CMD(bookmark)
    if(!strcmp(op,"list"))
    {
       char *list=lftp_bookmarks.Format();
-      if(!output)
-	 output=new FDStream(1,"<stdout>");
       Job *j=new CatJob(output,list,strlen(list));
       output=0;
       return j;
@@ -1679,8 +1678,11 @@ CMD(bookmark)
       else
       {
 	 const char *value=args->getnext();
+	 int flags=0;
+	 if(save_passwords)
+	    flags|=session->WITH_PASSWORD;
 	 if(value==0)
-	    value=session->GetConnectURL();
+	    value=session->GetConnectURL(flags);
 	 lftp_bookmarks.Add(key,value);
    	 exit_code=0;
       }
@@ -1701,4 +1703,27 @@ CMD(bookmark)
       PrependCmd("shell \"${EDITOR:-vi} $HOME/.lftp/bookmarks\"\n");
    }
    return 0;
+}
+
+CMD(echo)
+{
+   char *s=args->Combine(1);
+   int len=strlen(s);
+   if(args->count()>1 && !strcmp(args->getarg(1),"-n"))
+   {
+      if(len<=3)
+      {
+	 exit_code=0;
+	 xfree(s);
+	 return 0;
+      }
+      memmove(s,s+3,len-=3);
+   }
+   else
+   {
+      s[len++]='\n'; // replaces \0 char
+   }
+   Job *j=new CatJob(output,s,len);
+   output=0;
+   return j;
 }
