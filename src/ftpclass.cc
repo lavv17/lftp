@@ -1984,7 +1984,7 @@ void  Ftp::FlushSendQueue(bool all)
       send_cmd_ptr[-1]=0;
       char *p=strstr(cmd_begin,"PASS ");
 
-      bool may_show = (skey_pass!=0) || (user==0);
+      bool may_show = (skey_pass!=0) || (user==0) || pass_open;
       if(proxy && proxy_user) // can't distinguish here
 	 may_show=false;
       if(p && !may_show)

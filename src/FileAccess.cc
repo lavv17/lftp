@@ -50,6 +50,7 @@ void FileAccess::Init()
    hostname=0;
    group=gpass=0;
    user=pass=0;
+   pass_open=false;
 
    file=0;
    file1=0;
@@ -95,6 +96,7 @@ FileAccess::FileAccess(const FileAccess *fa)
    user=xstrdup(fa->user);
    xfree(pass);
    pass=xstrdup(fa->pass);
+   pass_open=fa->pass_open;
    xfree(group);
    group=xstrdup(fa->group);
    xfree(gpass);
@@ -386,7 +388,7 @@ const char *FileAccess::GetFileURL(const char *f,int flags)
    if(user)
    {
       url::encode_string(user,url+strlen(url),URL_USER_UNSAFE);
-      if(pass && (flags&WITH_PASSWORD))
+      if(pass && (pass_open || (flags&WITH_PASSWORD)))
       {
 	 strcat(url,":");
 	 url::encode_string(pass,url+strlen(url),URL_PASS_UNSAFE);
@@ -445,6 +447,7 @@ void FileAccess::Login(const char *user1,const char *pass1)
    user=xstrdup(user1);
    xfree(pass);
    pass=xstrdup(pass1);
+   pass_open=false;
    xfree(cwd);
    cwd=xstrdup(default_cwd);
    xfree(home);
@@ -499,6 +502,7 @@ void FileAccess::AnonymousLogin()
    Disconnect();
    xfree(user); user=0;
    xfree(pass); pass=0;
+   pass_open=false;
    xfree(group); group=0;
    xfree(gpass); gpass=0;
    xfree(cwd);

@@ -83,6 +83,7 @@ protected:
    char	 *portname;
    char  *user;
    char  *pass;
+   bool	 pass_open;
    char	 *group;
    char	 *gpass;
 
@@ -226,6 +227,7 @@ public:
 
    bool	 IsClosed() { return mode==CLOSED; }
    bool	 IsOpen() { return !IsClosed(); }
+   int	 OpenMode() { return mode; }
 
    virtual bool IsConnected();
    virtual void Disconnect();
@@ -288,6 +290,10 @@ public:
    static FileAccess *New(const class ParsedURL *u);
 
    void SetPasswordGlobal(const char *p);
+   void InsecurePassword(bool i)
+      {
+	 pass_open=i;
+      }
 };
 
 class FileAccessOperation : public SMTask

@@ -265,8 +265,9 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "     it requires permission to overwrite remote files\n"
 	 " -e  delete local files after successful transfer (dangerous)\n"
 	 " -a  use ascii mode (binary is the default)\n")},
-   {"pwd",     cmd_pwd,    "pwd",
-	 N_("Print current remote directory\n")},
+   {"pwd",     cmd_pwd,    "pwd [-u]",
+	 N_("Print current remote URL.\n"
+	 " -u  show password\n")},
    {"queue",   cmd_queue,  0,
 	 N_("Usage: queue <command>\n"
 	 "Add the command to queue for current site. Each site has its own\n"
@@ -539,9 +540,11 @@ Job *CmdExec::builtin_open()
    NetRC::Entry *nrc=0;
    char  *cmd_to_exec=0;
    char  *op=args->a0();
+   bool insecure=false;
+   bool no_bm=false;
 
    args->rewind();
-   while((c=args->getopt("u:p:e:d"))!=EOF)
+   while((c=args->getopt("u:p:e:dB"))!=EOF)
    {
       switch(c)
       {
@@ -557,12 +560,16 @@ Job *CmdExec::builtin_open()
    	    break;
 	 *pass=0;
 	 pass++;
+	 insecure=true;
          break;
       case('d'):
 	 debug=true;
 	 break;
       case('e'):
 	 cmd_to_exec=optarg;
+	 break;
+      case('B'):
+	 no_bm=true;
 	 break;
       case('?'):
 	 if(!strcmp(op,"lftp"))
@@ -584,10 +591,10 @@ Job *CmdExec::builtin_open()
    if(cmd_to_exec)
       PrependCmd(cmd_to_exec);
 
-   if(host && (bm=lftp_bookmarks.Lookup(host))!=0)
+   if(!no_bm && host && (bm=lftp_bookmarks.Lookup(host))!=0)
    {
-      char *cmd=string_alloca(5+strlen(bm)+2+1);
-      sprintf(cmd,"open %s%s\n",bm,background?"&":"");
+      char *cmd=string_alloca(5+3+strlen(bm)+2+1);
+      sprintf(cmd,"open -B %s%s\n",bm,background?"&":"");
       PrependCmd(cmd);
    }
    else
@@ -628,7 +635,10 @@ Job *CmdExec::builtin_open()
 	    if(uc.user && !user)
 	       user=uc.user;
 	    if(uc.pass && !pass)
+	    {
 	       pass=uc.pass;
+	       insecure=true;
+	    }
 	    host=uc.host;
 	    if(uc.port!=0 && port==0)
 	       port=uc.port;
@@ -666,6 +676,7 @@ Job *CmdExec::builtin_open()
 	    session->Login(user,0);
 	    // assume the new password is the correct one.
 	    session->SetPasswordGlobal(pass);
+	    session->InsecurePassword(insecure && !no_bm);
 	 }
       }
       if(host)
@@ -1191,7 +1202,23 @@ CMD(cd)
 
 CMD(pwd)
 {
-   char *url=alloca_strdup(session->GetConnectURL());
+   int opt;
+   args->rewind();
+   int flags=0;
+   while((opt=args->getopt("p"))!=EOF)
+   {
+      switch(opt)
+      {
+      case('p'):
+	 flags|=FA::WITH_PASSWORD;
+	 break;
+      case('?'):
+         // xgettext:c-format
+	 eprintf(_("Usage: %s [-p]\n"),args->a0());
+	 return 0;
+      }
+   }
+   char *url=alloca_strdup(session->GetConnectURL(flags));
    int len=strlen(url);
    url[len++]='\n';  // replaces \0
    Job *j=CopyJob::NewEcho(url,len,output,args->a0());
@@ -1288,10 +1315,14 @@ CMD(user)
       eprintf(_("Usage: %s userid [pass]\n"),args->getarg(0));
       return 0;
    }
+   bool insecure=false;
    if(args->count()==2)
       pass=GetPass(_("Password: "));
    else
+   {
       pass=args->getarg(2);
+      insecure=true;
+   }
    if(pass)
    {
       ParsedURL u(args->getarg(1),true);
@@ -1301,6 +1332,7 @@ CMD(user)
 	 if(s)
 	 {
 	    s->SetPasswordGlobal(pass);
+	    s->InsecurePassword(insecure);
 	    SessionPool::Reuse(s);
 	 }
 	 else
@@ -1314,6 +1346,7 @@ CMD(user)
       {
 	 session->Login(args->getarg(1),0);
 	 session->SetPasswordGlobal(pass);
+	 session->InsecurePassword(insecure);
       }
    }
    exit_code=0;

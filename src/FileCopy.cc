@@ -908,6 +908,8 @@ int FileCopyPeerFA::Put_LL(const char *buf,int len)
 
 long FileCopyPeerFA::GetRealPos()
 {
+   if(session->OpenMode()!=FAmode)
+      return pos;
    if(mode==PUT)
    {
       if(pos-in_buffer!=session->GetPos())
