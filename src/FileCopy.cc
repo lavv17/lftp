@@ -546,7 +546,7 @@ long FileCopy::GetETA(off_t b)
 const char *FileCopy::GetStatus()
 {
    static char *buf;
-   xfree(buf);
+   xfree(buf); buf=0;
    const char *get_st=0;
    if(get)
       get_st=get->GetStatus();

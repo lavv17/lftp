@@ -1,3 +1,7 @@
+2002-06-05  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc: set buf to 0 after xfree; this fixes double free.
+
 2002-06-03  Glenn Maynard <g_ld@zewt.org>
 
 	* Resolver.cc: free_ha is not actually needed.
