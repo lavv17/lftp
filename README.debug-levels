@@ -9,7 +9,7 @@ Level 0
    => Anything that causes a Discon+Retry or a "giveup" message.
 
 Level 1
-   Important or inaccessable state information.
+   Important or inaccessible state information.
    => Connection start, Idle disconnection.
 
 Level 2
