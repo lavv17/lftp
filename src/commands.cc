@@ -2076,7 +2076,7 @@ CMD(lpwd)
 {
    if(!parent->cwd)
    {
-      eprintf(_("%s: cannot get current directory\n"),args->a0());
+      eprintf("%s: %s\n",args->a0(),_("cannot get current directory"));
       return 0;
    }
    printf("%s\n",parent->cwd);
