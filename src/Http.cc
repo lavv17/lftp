@@ -207,7 +207,10 @@ void Http::Close()
       {
 	 // check if all data are in buffer
 	 if(!chunked)	// chunked is a bit complex, so don't handle it
+	 {
 	    bytes_received+=recv_buf->Size();
+	    recv_buf->Skip(recv_buf->Size());
+	 }
 	 if(!(body_size>=0 && bytes_received==body_size))
 	    goto disconnect;
       }
