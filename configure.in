@@ -256,9 +256,6 @@ fi
 
 AC_LINK_FILES($LINK_SRC,$LINK_DST)
 
-# avoid autoconf bug
-ac_sources="`echo $ac_sources`";
-
 AC_OUTPUT(Makefile src/Makefile lib/Makefile include/Makefile doc/Makefile
 	  readline-4.0/Makefile intl/Makefile po/Makefile.in
 	,[sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile])
