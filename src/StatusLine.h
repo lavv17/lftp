@@ -38,6 +38,7 @@ class StatusLine : public SMTask
    void update(char *);
    int LastWidth;
    bool next_update_title_only;
+   static const char *to_status_line, *from_status_line;
 
 protected:
    ~StatusLine();

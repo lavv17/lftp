@@ -68,6 +68,8 @@ StatusLine::StatusLine(int new_fd)
 
 StatusLine::~StatusLine()
 {
+   /* Don't leave a title behind. */
+   WriteTitle("", fd);
 }
 
 void StatusLine::Clear(bool title_also)
@@ -119,6 +121,9 @@ void StatusLine::Show(const char *f,...)
    update_delayed=true;
 }
 
+const char *StatusLine::to_status_line = get_string_term_cap("tsl", "ts");
+const char *StatusLine::from_status_line = get_string_term_cap("fsl", "fs");
+
 void StatusLine::WriteTitle(const char *s, int fd) const
 {
    if(!ResMgr::QueryBool("cmd:set-term-status", getenv("TERM")))
@@ -134,7 +139,17 @@ void StatusLine::WriteTitle(const char *s, int fd) const
       { 'T', s },
       { 0, "" }
    };
-   char *disp = Subst(ResMgr::Query("cmd:term-status", getenv("TERM")), subst);
+
+   const char *status_format = ResMgr::Query("cmd:term-status", getenv("TERM"));
+
+   char *disp;
+
+   /* If we have no format, and we have both tsl and fsl, use them: */
+   if((!status_format || !*status_format) && to_status_line && from_status_line)
+      disp = xasprintf("%s%s%s", to_status_line, s, from_status_line);
+   else
+      disp = Subst(status_format, subst);
+
    write(fd, disp, strlen(disp));
    xfree(disp);
 }

@@ -785,3 +785,47 @@ char *dirname_alloc(const char *fn)
       *slash=0;
    return ret;
 }
+
+#if defined(HAVE_TERM_H)
+#include <term.h>
+#elif defined(HAVE_NCURSES_TERM_H)
+#include <ncurses/term.h>
+#endif
+
+#if defined(HAVE_CURSES_H)
+#include <curses.h>
+#elif defined(HAVE_NCURSES_CURSES_H)
+#include <ncurses/curses.h>
+#endif
+
+#if defined(HAVE_TIGETSTR)
+static bool terminfo_ok = true;
+static void init_terminfo()
+{
+   static bool initted = false;
+   if(initted) return;
+   initted = true;
+   
+   if(setupterm(NULL, 1, NULL) == ERR)
+      terminfo_ok = false;
+}
+#endif
+
+const char *get_string_term_cap(const char *terminfo_cap, const char *tcap_cap)
+{
+#if defined(HAVE_TIGETSTR)
+   init_terminfo();
+   if(terminfo_ok) {
+      /* Cast to work around missing const def in some ncurses installations: */
+      const char *ret = tigetstr(const_cast<char *>(terminfo_cap));
+      if(ret && ret != (char *)-1) return ret;
+   }
+#elif defined(HAVE_TGETSTR)
+   char buf[1024], *p = buf;
+   const char *ret = tgetstr(const_cast<char *>(tcap_cap), &p);
+   if(ret && ret != (char *)-1) return buf;
+#endif
+
+   return NULL;
+}
+

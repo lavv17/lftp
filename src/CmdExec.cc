@@ -1149,6 +1149,14 @@ void CmdExec::AtExit()
 {
    FeedCmd(res_at_exit.Query(0));
    FeedCmd("\n");
+
+   if(status_line)
+   {
+      /* Clear the title, and ensure we don't write anything else
+       * to it in case we're being backgrounded. */
+      Delete(status_line);
+      status_line = 0;
+   }
 }
 
 void CmdExec::EmptyCmds()

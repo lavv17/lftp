@@ -1,3 +1,19 @@
+2002-07-23  Glenn Maynard <g_ld@zewt.org>
+
+* misc.cc, misc.h: Add get_string_term_cap; tries both terminfo and termcap.
+(We could probably get away with only termcap names, but it's nice to
+have them side-by-side, since the terminfo names are more useful.)
+
+StatusLine.cc, StatusLine.h: Add tsl/dsl cap support.  Used only if
+*  cmd:term-status is blank.  Clear title in dtor, so we don't leave
+ it behind if the user's shell (or invoking program) doesn't know
+ to clear it.
+
+* CmdExec.cc: Delete the statusbar on exit, so it doesn't stick around
+ if we move to background.  This triggers the title clear.  (It also
+ ensures nothing gets written to the title--now the log--though I don't
+ think that ever happens.)
+
 2002-07-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CmdExec.cc: don't clear signals if not interactive (suggested by
