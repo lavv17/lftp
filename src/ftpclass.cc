@@ -1287,18 +1287,7 @@ int   Ftp::Do()
 #ifdef USE_SSL
       if(auth_tls_sent && !RespQueueIsEmpty())
 	 goto usual_return;
-      if(control_ssl)
-      {
-	 SendCmd("PBSZ 0");
-	 AddResp(0,CHECK_IGNORE);
-	 const char *want_prot=QueryBool("ssl-protect-data",hostname)?"P":"C";
-	 if(*want_prot!=prot)
-	 {
-	    SendCmd2("PROT",want_prot);
-	    AddResp(200,CHECK_PROT);
-	 }
-      }
-#endif // USE_SSL
+#endif
 
       char *user_to_use=(user?user:anon_user);
       if(proxy)
@@ -1360,6 +1349,20 @@ int   Ftp::Do()
 	 SendCmd("PWD");
 	 AddResp(RESP_PWD_MKD_OK,CHECK_PWD);
       }
+
+#ifdef USE_SSL
+      if(control_ssl)
+      {
+	 SendCmd("PBSZ 0");
+	 AddResp(0,CHECK_IGNORE);
+	 const char *want_prot=QueryBool("ssl-protect-data",hostname)?"P":"C";
+	 if(*want_prot!=prot)
+	 {
+	    SendCmd2("PROT",want_prot);
+	    AddResp(200,CHECK_PROT);
+	 }
+      }
+#endif // USE_SSL
 
       set_real_cwd(0);
       type=FTP_TYPE_A;	   // just after login we are in TEXT mode
@@ -2922,7 +2925,6 @@ int   Ftp::Read(void *buf,int size)
    int res,shift;
 
    Resume();
-   Do();
    if(Error())
       return(error_code);
 
@@ -3098,7 +3100,6 @@ int   Ftp::Write(const void *buf,int size)
       return(0);
 
    Resume();
-   Do();
    if(Error())
       return(error_code);
 

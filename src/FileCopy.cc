@@ -545,7 +545,8 @@ long FileCopy::GetETA(off_t b)
 }
 const char *FileCopy::GetStatus()
 {
-   static char buf[256];
+   static char *buf;
+   xfree(buf);
    const char *get_st=0;
    if(get)
       get_st=get->GetStatus();
@@ -553,11 +554,11 @@ const char *FileCopy::GetStatus()
    if(put)
       put_st=put->GetStatus();
    if(get_st && get_st[0] && put_st && put_st[0])
-      sprintf(buf,"[%s->%s]",get_st,put_st);
+      buf=xasprintf("[%s->%s]",get_st,put_st);
    else if(get_st && get_st[0])
-      sprintf(buf,"[%s]",get_st);
+      buf=xasprintf("[%s]",get_st);
    else if(put_st && put_st[0])
-      sprintf(buf,"[%s]",put_st);
+      buf=xasprintf("[%s]",put_st);
    else
       return "";
    return buf;

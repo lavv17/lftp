@@ -1,3 +1,10 @@
+2002-05-31  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc: (GetStatus) don't use fixed buffer - it can be overflowed.
+	  (reported by Lethal Weapon <lethalwp@linuxbe.org>).
+	* ftpclass.cc: move PROT and PBSZ commands to after USER/PASS.
+	  Requested by Nick Leuta <skynick@stu.lipetsk.ru>.
+
 2002-05-29  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: fixed pasv address fixation.
