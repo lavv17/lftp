@@ -1,5 +1,12 @@
 2002-07-17  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* commands.cc, CmdExec.cc, CmdExec.h: fix mem leak by eliminating
+	  var_ls member (it was not freed).
+	* Speedometer.cc: count speed starting from first data byte.
+	* ProcWait.cc: propagete SIGINT to main lftp process.
+
+2002-07-17  Alexander V. Lukyanov <lav@yars.free.net>
+
 	* ResMgr.cc, resource.cc, FileAccess.cc, FileAccess.h: ftp:device-prefix
 	  setting (default off).
 

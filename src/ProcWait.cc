@@ -83,6 +83,8 @@ bool ProcWait::handle_info(int info)
    }
    else
    {
+      if(WIFSIGNALED(info) && WTERMSIG(info)==SIGINT)
+	 SignalHook::IncreaseCount(SIGINT);
       status=TERMINATED;
       term_info=info;
       return true;
