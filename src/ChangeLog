@@ -1,3 +1,7 @@
+2004-10-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Fish.cc: prepend ./ to file names starting with - or ~
+
 2004-10-14  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc: don't chmod if not needed.

@@ -443,9 +443,16 @@ const char *Fish::shell_encode(const char *string)
    char *r;
    const char *s;
 
-   result = (char*)xrealloc (result, 2 * strlen (string) + 1);
+   result = (char*)xrealloc (result, 2 + 2 * strlen (string) + 1);
 
-   for (r = result, s = string; s && (c = *s); s++)
+   r = result;
+   if(string[0]=='-' || string[0]=='~')
+   {
+      *r++='.';
+      *r++='/';
+   }
+
+   for (s = string; s && (c = *s); s++)
    {
       switch (c)
       {
@@ -459,14 +466,10 @@ const char *Fish::shell_encode(const char *string)
       case '"': case '\\':		/* quoting chars */
       case '|': case '&': case ';':		/* shell metacharacters */
       case '<': case '>':
+      case '#':				/* comment char */
 	 *r++ = '\\';
 	 *r++ = c;
 	 break;
-      case '~':				/* tilde expansion */
-      case '#':				/* comment char */
-	 if (s == string)
-	    *r++ = '\\';
-	 /* FALLTHROUGH */
       default:
 	 *r++ = c;
 	 break;
