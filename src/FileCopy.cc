@@ -41,6 +41,8 @@ int FileCopy::Do()
    switch(state)
    {
    case(INITIAL):
+      if(!put->CanSeek())
+	 goto pre_DO_COPY;
       if(cont)
 	 put->Seek(FILE_END);
       cont=true;  // after a failure we'll have to restart
@@ -56,8 +58,10 @@ int FileCopy::Do()
       if(!put->IOReady())
 	 return m;
       /* now we know if put's seek failed. Seek get accordingly. */
-      get->Seek(put->GetRealPos());
+      if(get->CanSeek())
+	 get->Seek(put->GetRealPos());
       get->Resume();
+   pre_DO_COPY:
       state=DO_COPY;
       m=MOVED;
       /* fallthrough */
@@ -180,6 +184,11 @@ void FileCopy::SetError(const char *str)
    error_text=xstrdup(str);
    if(get) { delete get; get=0; }
    if(put) { delete put; put=0; }
+}
+
+long FileCopy::GetPos()
+{
+   return get->GetRealPos();
 }
 
 
@@ -487,6 +496,17 @@ FileCopyPeerFDStream::FileCopyPeerFDStream(FDStream *o,direction m)
    : FileCopyPeer(m)
 {
    stream=o;
+   seek_base=0;
+   can_seek=stream->can_seek();
+   if(can_seek && stream->fd!=-1)
+   {
+      seek_base=lseek(stream->fd,0,SEEK_CUR);
+      if(seek_base==-1)
+      {
+	 can_seek=false;
+	 seek_base=0;
+      }
+   }
 }
 FileCopyPeerFDStream::~FileCopyPeerFDStream()
 {
@@ -585,11 +605,16 @@ void FileCopyPeerFDStream::Seek(long new_pos)
 	 can_seek=false;
 	 return;
       }
-      SetSize(pos=new_pos);
+      SetSize(new_pos);
+      if(new_pos>seek_base)
+	 new_pos-=seek_base;
+      else
+	 new_pos=0;
+      pos=new_pos;
    }
    else
    {
-      if(lseek(getfd(),new_pos,SEEK_SET)==-1)
+      if(lseek(getfd(),new_pos+seek_base,SEEK_SET)==-1)
       {
 	 can_seek=false;
 	 return;
@@ -668,4 +693,23 @@ FgData *FileCopyPeerFDStream::GetFgData(bool fg)
    if(getfd()!=-1)
       return new FgData(stream->GetProcGroup(),fg);
    return 0;
+}
+
+// FileCopyPeerString
+#undef super
+#define super FileCopyPeer
+FileCopyPeerString::FileCopyPeerString(const char *s, int len)
+   : super(GET)
+{
+   if(len==-1)
+      len=strlen(s);
+   Put(s,len);
+}
+FileCopyPeerString::~FileCopyPeerString()
+{
+}
+void FileCopyPeerString::Seek(long new_pos)
+{
+   assert(new_pos!=FILE_END);
+   UnSkip(pos-new_pos);
 }

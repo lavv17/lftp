@@ -136,18 +136,28 @@ public:
 class FileCopyPeerFDStream : public FileCopyPeer
 {
    FDStream *stream;
+   long seek_base;
 
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
 
+   int getfd();
+
 public:
    FileCopyPeerFDStream(FDStream *o,direction m);
    ~FileCopyPeerFDStream();
-   int getfd();
    int Do();
    bool IOReady();
    void Seek(long new_pos);
    FgData *GetFgData(bool fg);
+};
+
+class FileCopyPeerString : public FileCopyPeer
+{
+public:
+   FileCopyPeerString(const char *s,int len=-1);
+   ~FileCopyPeerString();
+   void Seek(long new_pos);
 };
 
 #endif
