@@ -671,6 +671,7 @@ private:
    FileInfo *MakeFileInfo(const NameAttrs *a);
 
    int max_packets_in_flight;
+   int max_packets_in_flight_slow_start;
    int size_read;
    int size_write;
 
