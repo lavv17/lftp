@@ -1813,6 +1813,11 @@ CMD(bookmark)
 	    eprintf(_("%s: cannot add empty bookmark\n"),args->a0());
 	    return 0;
 	 }
+	 if(strchr(key,' ') || strchr(key,'\t'))
+	 {
+	    eprintf(_("%s: spaces in bookmark name are not allowed\n"),args->a0());
+	    return 0;
+	 }
 	 lftp_bookmarks.Add(key,value);
    	 exit_code=0;
       }
