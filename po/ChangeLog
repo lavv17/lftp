@@ -1,3 +1,9 @@
+2001-02-16	Albert Chin-A-Young <china@thewrittenword.com>
+
+	* Makefile.in.in: Add --with-locale-dir=DIR and 
+	  --with-gnu-locale-dir=DIR for more precise placement of GNU locale
+	  files.
+
 2001-01-04	Nicolas Noble <Pixel@the-babel-tower.nobis.phear.org>
 
 	* fr.po: update
