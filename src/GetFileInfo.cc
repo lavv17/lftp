@@ -242,7 +242,7 @@ int GetFileInfo::Do()
 	 if(res==FA::NO_FILE)
 	 {
 	    /* If this is a CWD to the parent, and it failed, we
-	     * can't do GetArrayInfo. */
+	     * can't do GetInfoArray. */
 	    if(!was_directory)
 	       tried_info=true;
 

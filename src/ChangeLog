@@ -1,3 +1,12 @@
+2002-04-18  Glenn Maynard <g_ld@zewt.org>
+
+	* Job.cc: Free waiting on dtor.
+	* GetFileInfo.cc, GetFileInfo.h: fix comment.
+
+2002-04-17  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: create first target directory with all parent dirs.
+
 2002-04-15  Glenn Maynard <g_ld@zewt.org>
 
 	* TreatFileJob.cc: remove unneeded return.

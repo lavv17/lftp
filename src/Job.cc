@@ -53,7 +53,9 @@ void  Job::AllocJobno()
 
 Job::~Job()
 {
-   // first, reparent or kill children (hm, that's sadistic)
+   xfree(waiting);
+
+   // reparent or kill children (hm, that's sadistic)
    {
       for(Job *scan=chain; scan; )
       {
