@@ -1,3 +1,9 @@
+2002-07-31  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc, MirrorJob.h: do cd on source session first to check
+	  if the directory exists. This fixes creation of directory if source
+	  dir does not exist.
+
 2002-07-31  Ayamura KIKUCHI <ayamura@ayamura.org>
 
 	* misc.cc: <curses.h> should be included before <term.h> on IRIX.

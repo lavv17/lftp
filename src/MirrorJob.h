@@ -34,7 +34,8 @@ class MirrorJob : public Job
    {
       INITIAL_STATE,
       MAKE_TARGET_DIR,
-      CHANGING_DIR,
+      CHANGING_DIR_SOURCE,
+      CHANGING_DIR_TARGET,
       GETTING_LIST_INFO,
       WAITING_FOR_TRANSFER,
       TARGET_REMOVE_OLD,

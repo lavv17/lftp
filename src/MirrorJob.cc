@@ -59,7 +59,8 @@ void  MirrorJob::PrintStatus(int v,const char *tab)
       printf("\tmkdir `%s' [%s]\n",target_dir,target_session->CurrentStatus());
       break;
 
-   case(CHANGING_DIR):
+   case(CHANGING_DIR_SOURCE):
+   case(CHANGING_DIR_TARGET):
       if(target_session->IsOpen())
 	 printf("\tcd `%s' [%s]\n",target_dir,target_session->CurrentStatus());
       if(source_session->IsOpen())
@@ -127,7 +128,8 @@ void  MirrorJob::ShowRunStatus(StatusLine *s)
       s->Show("mkdir `%s' [%s]",target_dir,target_session->CurrentStatus());
       break;
 
-   case(CHANGING_DIR):
+   case(CHANGING_DIR_SOURCE):
+   case(CHANGING_DIR_TARGET):
       if(target_session->IsOpen() && (!source_session->IsOpen() || now%4>=2))
 	 s->Show("cd `%s' [%s]",target_dir,target_session->CurrentStatus());
       else if(source_session->IsOpen())
@@ -457,6 +459,8 @@ void MirrorJob::HandleChdir(FileAccess * &session, int &redirections)
 }
 void MirrorJob::HandleListInfoCreation(FileAccess * &session,ListInfo * &list_info,const char *relative_dir)
 {
+   if(state!=GETTING_LIST_INFO)
+      return;
    list_info=session->MakeListInfo();
    if(list_info==0)
    {
@@ -509,8 +513,24 @@ int   MirrorJob::Do()
    switch(state)
    {
    case(INITIAL_STATE):
+      source_session->Chdir(source_dir);
+      source_redirections=0;
+      Roll(source_session);
+      state=CHANGING_DIR_SOURCE;
+      m=MOVED;
+   case(CHANGING_DIR_SOURCE):
+      HandleChdir(source_session,source_redirections);
+      if(state!=CHANGING_DIR_SOURCE)
+	 return MOVED;
+      if(source_session->IsOpen())
+	 return m;
+
+      xfree(source_dir);
+      source_dir=xstrdup(source_session->GetCwd());
+
+   pre_MAKE_TARGET_DIR:
       if(!create_target_dir || !strcmp(target_dir,".") || !strcmp(target_dir,".."))
-	 goto pre_CHANGING_DIR;
+	 goto pre_CHANGING_DIR_TARGET;
       if(target_relative_dir)
 	 Report(_("Making directory `%s'"),target_relative_dir);
       target_session->Mkdir(target_dir,(parent_mirror==0));
@@ -522,38 +542,32 @@ int   MirrorJob::Do()
 	 return m;
       target_session->Close();
 
-   pre_CHANGING_DIR:
-      source_session->Chdir(source_dir);
+   pre_CHANGING_DIR_TARGET:
       target_session->Chdir(target_dir);
-      source_redirections=0;
       target_redirections=0;
-      Roll(source_session);
       Roll(target_session);
-      state=CHANGING_DIR;
+      state=CHANGING_DIR_TARGET;
       m=MOVED;
-   case(CHANGING_DIR):
-      HandleChdir(source_session,source_redirections);
+   case(CHANGING_DIR_TARGET):
       HandleChdir(target_session,target_redirections);
-      if(state!=CHANGING_DIR)
+      if(state!=CHANGING_DIR_TARGET)
 	 return MOVED;
-      if(source_session->IsOpen() || target_session->IsOpen())
+      if(target_session->IsOpen())
 	 return m;
 
       xfree(target_dir);
       target_dir=xstrdup(target_session->GetCwd());
-      xfree(source_dir);
-      source_dir=xstrdup(source_session->GetCwd());
 
+      state=GETTING_LIST_INFO;
+      m=MOVED;
       HandleListInfoCreation(source_session,source_list_info,source_relative_dir);
       HandleListInfoCreation(target_session,target_list_info,target_relative_dir);
-      if(state!=CHANGING_DIR)
+      if(state!=GETTING_LIST_INFO)
       {
 	 Delete(source_list_info); source_list_info=0;
 	 Delete(target_list_info); target_list_info=0;
 	 return MOVED;
       }
-      state=GETTING_LIST_INFO;
-      m=MOVED;
 
    case(GETTING_LIST_INFO):
       HandleListInfo(source_list_info,source_set);
