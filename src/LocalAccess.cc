@@ -29,9 +29,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <dirent.h>
+#include <glob.h>
 
 #include "LocalAccess.h"
-#include "ProtoList.h"
 #include "xmalloc.h"
 #include "xalloca.h"
 #include "xstring.h"
@@ -40,7 +40,7 @@
 void LocalAccess::ClassInit()
 {
    // register the class
-   Protocol::Register("file",LocalAccess::New);
+   Register("file",LocalAccess::New);
 }
 
 void LocalAccess::Init()
@@ -69,7 +69,12 @@ LocalAccess::~LocalAccess()
 void LocalAccess::errno_handle()
 {
    xfree(last_error_resp);
-   last_error_resp=xstrdup(strerror(errno));
+   const char *err=strerror(errno);
+   last_error_resp=(char*)xmalloc(xstrlen(file)+xstrlen(file1)+strlen(err)+20);
+   if(mode==RENAME)
+      sprintf(last_error_resp,"rename(%s, %s): %s",file,file1,err);
+   else
+      sprintf(last_error_resp,"%s: %s",file,err);
 }
 
 int LocalAccess::Done()
@@ -461,6 +466,29 @@ check_again:
    return MOVED;
 }
 
+Glob *LocalAccess::MakeGlob(const char *pattern)
+{
+   return new LocalGlob(cwd,pattern);
+}
+
+LocalGlob::LocalGlob(const char *cwd,const char *pattern)
+   : Glob(pattern)
+{
+   glob_t g;
+   glob(dir_file(cwd,pattern), 0, NULL, &g);
+   for(unsigned i=0; i<g.gl_pathc; i++)
+      add(g.gl_pathv[i],strlen(g.gl_pathv[i]));
+   globfree(&g);
+}
+int LocalGlob::Do()
+{
+   if(!done)
+   {
+      done=true;
+      return MOVED;
+   }
+   return STALL;
+}
 
 #ifdef MODULE
 CDECL void module_init()

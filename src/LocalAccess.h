@@ -24,7 +24,6 @@
 #define LOCALACCESS_H
 
 #include "FileAccess.h"
-#include "ListInfo.h"
 #include "Filter.h"
 
 class LocalAccess : public FileAccess
@@ -56,6 +55,7 @@ public:
    static void ClassInit();
 
    ListInfo *MakeListInfo();
+   Glob	    *MakeGlob(const char *pattern);
 };
 
 class LocalListInfo : public ListInfo
@@ -63,6 +63,14 @@ class LocalListInfo : public ListInfo
    const char *dir;
 public:
    LocalListInfo(const char *d) { dir=d; }
+   const char *Status() { return "..."; }
+   int Do();
+};
+
+class LocalGlob : public Glob
+{
+public:
+   LocalGlob(const char *cwd,const char *pattern);
    const char *Status() { return "..."; }
    int Do();
 };

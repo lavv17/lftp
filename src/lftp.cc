@@ -68,7 +68,6 @@ int   remote_completion=0;
 void  hook_signals()
 {
    SignalHook::DoCount(SIGHUP);
-   SignalHook::DoCount(SIGPIPE);
    SignalHook::Ignore(SIGTTOU);
    ProcWait::Signal(true);
 }
@@ -269,6 +268,7 @@ int   main(int argc,char **argv)
 
    resources_init(); // resources must be inited before other classes
 
+   SignalHook::ClassInit();
    Resolver::ClassInit();
 
 #ifndef MODULE_PROTO_FILE
@@ -280,7 +280,6 @@ int   main(int argc,char **argv)
 #ifndef MODULE_PROTO_FTP
    Ftp::ClassInit();
 #endif
-   ListInfo::ClassInit();
 
    const char  *home=getenv("HOME")?:".";
 
