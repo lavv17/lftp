@@ -4,7 +4,7 @@ bin_PROGRAMS = lftp ftpget
 
 pkgdata_SCRIPTS = import-ncftp import-netscape
 
-EXTRA_DIST = $(pkgdata_SCRIPTS) example1.cc
+EXTRA_DIST = $(pkgdata_SCRIPTS) example*.cc
 
 lftp_SOURCES = lftp.cc complete.h complete.cc lftp_rl.c lftp_rl.h
 ftpget_SOURCES = ftpget.cc
