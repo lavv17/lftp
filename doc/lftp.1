@@ -98,7 +98,8 @@ real modem hangup or when you close an xterm.
 .PP
 \fBlftp\fP has builtin mirror which can download or update a whole directory
 tree. There is also reverse mirror (mirror -R) which uploads or
-updates a directory tree on server.
+updates a directory tree on server. Mirror can also synchronize directories
+between two remote servers, using FXP if available.
 .PP
 There is command `at' to launch a job at specified time in current
 context, command `queue' to queue commands for sequential execution
@@ -389,6 +390,8 @@ Verbosity level can be selected using \-\-verbose=level option or by several
 \-\-only\-newer turns off file size comparision and uploads/downloads
 only newer files even if size is different. By default older files are downloaded/uploaded
 if size is different.
+.PP
+You can mirror between two servers if you specify URLs instead of directories.
 
 .B mkdir
 .RB "[" -p "] " \fIdir(s)\fP
