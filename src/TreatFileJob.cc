@@ -73,7 +73,6 @@ TreatFileJob::prf_res TreatFileJob::ProcessFile(const char *d,const FileInfo *fi
 	 first=new FileInfo(*fi);
 
       TreatCurrent(d,fi);
-      return PRF_LATER;
    }
    int res=session->Done();
    if(res==FA::IN_PROGRESS)
@@ -86,7 +85,7 @@ TreatFileJob::prf_res TreatFileJob::ProcessFile(const char *d,const FileInfo *fi
    {
       failed++;
       if(!quiet)
-         fprintf(stderr,"%s: %s\n",op,session->StrError(res));
+         eprintf("%s: %s\n",op,session->StrError(res));
    }
    CurrentFinished(d,fi);
 
@@ -107,4 +106,3 @@ void  TreatFileJob::ShowRunStatus(StatusLine *s)
    if(curr && !Done())
       s->Show("%s `%s' [%s]",op,curr->name,session->CurrentStatus());
 }
-
