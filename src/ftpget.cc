@@ -187,9 +187,9 @@ int   main(int argc,char **argv)
    if(optind+2>argc)
       PrintUsage(1);
 
+   Log::global=new Log();
    if(verbose)
    {
-      Log::global=new Log();
       Log::global->SetOutput(2,false);
       Log::global->SetLevel(5);
       Log::global->Enable();

@@ -4,6 +4,7 @@
 	* ftpclass.cc, Http.cc: use RateLimit.
 	* resource.cc: new resources net:limit-total-rate
 	  and net:limit-total-max.
+	* ftpget.cc: create Log::global.
 
 1999-09-10  Alexander V. Lukyanov  <lav@yars.free.net>
 
