@@ -88,16 +88,22 @@ class ReadlineFeeder : public CmdFeeder
    bool ctty:1;
    bool add_newline:1;
    char *to_free;
+   int eof_count;
 public:
    ReadlineFeeder()
    {
       tty=isatty(0);
       ctty=(tcgetpgrp(0)!=(pid_t)-1);
       to_free=0;
+      eof_count=0;
    }
    virtual ~ReadlineFeeder()
    {
       xfree(to_free);
+   }
+   bool RealEOF()
+   {
+      return !tty || eof_count>3;
    }
 
    const char *NextCmd(class CmdExec *exec,const char *prompt)
@@ -159,6 +165,11 @@ public:
 	 else if(cmd_buf==0 && exec->interactive)
 	    puts("exit");
 	 xmalloc_register_block(cmd_buf);
+
+	 if(cmd_buf==0)
+	    eof_count++;
+	 else
+	    eof_count=0;
       }
       else
       {

@@ -48,6 +48,7 @@ public:
    virtual ~CmdFeeder() {}
 
    virtual void clear() {}
+   virtual bool RealEOF() { return true; }
 };
 
 extern CmdFeeder *lftp_feeder;	 // feeder to use after 'lftp' command

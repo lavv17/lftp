@@ -477,17 +477,31 @@ Job *CmdExec::builtin_cd()
 
 Job *CmdExec::builtin_exit()
 {
+   bool bg=false;
+   int code=prev_exit_code;
    if(args->count()>=2)
    {
-      if(sscanf(args->getarg(1),"%i",&prev_exit_code)!=1)
+      const char *a=args->getarg(1);
+      if(!strcmp(a,"bg"))
+	 bg=true;
+      else if(sscanf(a,"%i",&code)!=1)
       {
 	 eprintf(_("Usage: %s [<exit_code>]\n"),args->a0());
 	 return 0;
       }
    }
+   if(!bg && top_level
+   && !(bool)ResMgr::Query("cmd:move-background",0) && NumberOfJobs()>0)
+   {
+      eprintf(_(
+	 "There are running jobs and `cmd:move-background' is not set.\n"
+	 "Use `exit bg' to force moving to background or `kill all' to terminate jobs.\n"
+      ));
+      return 0;
+   }
    while(!Done())
       RemoveFeeder();
-   exit_code=prev_exit_code;
+   exit_code=prev_exit_code=code;
    return 0;
 }
 

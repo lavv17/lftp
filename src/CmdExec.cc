@@ -51,7 +51,8 @@ static ResDecl
    res_at_exit		   ("cmd:at-exit",	"",   0,0),
    res_fail_exit	   ("cmd:fail-exit",	"no", ResMgr::BoolValidate,0),
    res_verbose		   ("cmd:verbose",	"no", ResMgr::BoolValidate,0),
-   res_interactive	   ("cmd:interactive",	"no", ResMgr::BoolValidate,0);
+   res_interactive	   ("cmd:interactive",	"no", ResMgr::BoolValidate,0),
+   res_move_background	   ("cmd:move-background","yes", ResMgr::BoolValidate,0);
 
 CmdExec	 *CmdExec::cwd_owner=0;
 CmdExec	 *CmdExec::chain=0;
@@ -574,6 +575,12 @@ try_get_cmd:
 		  goto try_get_cmd;
 	       }
 	       fprintf(stderr,_("Warning: discarding incomplete command\n"));
+	    }
+	    if(!feeder->RealEOF() && top_level)
+	    {
+	       *next_cmd=0;
+	       FeedCmd("exit;");
+	       return MOVED;
 	    }
 	    RemoveFeeder();
 	    m=MOVED;
