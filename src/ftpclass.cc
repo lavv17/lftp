@@ -1113,6 +1113,7 @@ int   Ftp::Do()
 
       if(mode==ARRAY_INFO)
       {
+      array_info_send_more:
 	 for(int i=array_ptr; i<array_cnt; i++)
 	 {
 	    char *s=(char*)alloca(strlen(array_for_info[i].file)+20);
@@ -1463,6 +1464,10 @@ int   Ftp::Do()
 
       if(state!=oldstate)
          return MOVED;
+
+      // more work to do?
+      if(RespQueueIsEmpty() && mode==ARRAY_INFO && array_ptr<array_cnt)
+	 goto array_info_send_more;
 
       if(!was_empty && RespQueueIsEmpty())
       {
@@ -2727,7 +2732,14 @@ int   Ftp::Done()
    if(mode==CLOSED)
       return OK;
 
-   if(mode==CHANGE_DIR || mode==RENAME || mode==ARRAY_INFO
+   if(mode==ARRAY_INFO)
+   {
+      if(state==WAITING_STATE && RespQueueIsEmpty() && array_ptr==array_cnt)
+	 return(OK);
+      return(IN_PROGRESS);
+   }
+
+   if(mode==CHANGE_DIR || mode==RENAME
    || mode==MAKE_DIR || mode==REMOVE_DIR || mode==REMOVE || mode==CHANGE_MODE
    || copy_mode!=COPY_NONE)
    {
