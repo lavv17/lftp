@@ -22,8 +22,6 @@ class ConnectionSlot : public KeyValueDB
 	 return new SlotValue(n,v);
       }
 
-   ~ConnectionSlot() {}
-
 public:
    static ConnectionSlot::SlotValue *Find(const char *n);
    static FileAccess *FindSession(const char *n);
