@@ -3082,6 +3082,8 @@ void Ftp::ExpectQueue::Push(Expect *e)
 }
 Ftp::Expect *Ftp::ExpectQueue::Pop()
 {
+   if(!first)
+      return 0;
    Expect *res=first;
    first=first->next;
    if(last==&res->next)
@@ -3510,18 +3512,14 @@ void Ftp::CheckResp(int act)
    if(is1XX(act)) // intermediate responses are ignored
       return;
 
-   if(act==421 || act==221)  // timeout or something else
-   {
-      if(expect->IsEmpty() || !conn->quit_sent)
-	 DebugPrint("**** ",_("remote end closed connection"),3);
-      DisconnectNow();
-      return;
-   }
+   if(act==421)	  // server is going to disconnect, don't try sending QUIT.
+      conn->quit_sent=true;
 
    Expect *exp=expect->Pop();
    if(!exp)
    {
-      DebugPrint("**** ",_("extra server response"),3);
+      if(act!=421)
+	 DebugPrint("**** ",_("extra server response"),3);
       if(is2XX(act)) // some buggy servers send several 226 replies
 	 return;
       Disconnect();

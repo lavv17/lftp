@@ -1,3 +1,9 @@
+2004-05-06  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: fixed core dump in case of extra server reply; don't
+	  unconditionally disconnect on 221 as some broken servers use it for
+	  FEAT reply. (reported by Wang WenRui <wangwr@ustc.edu>)
+
 2004-05-04  SHIOTA Shoichi <Shoichi.Shiota@lightwell.co.jp>
 
 	* StatusLine.cc: don't write zero bytes to terminal - it can produce
