@@ -1,40 +1,25 @@
-** lftp-2.1
+** lftp-2.2
 
 This package `lftp' contains the following components:
 
    lftp
-      cool command line ftp client.
+      sophisticated command line file transfer program (ftp/http client).
 
    lftpget
       shell script for downloading by URL, calls `lftp -c'.
 
-   ftpget
-      a simple non-interactive tool for downloading files (deprecated)
-
-These programs are written in C++, in a cooperative-threaded model.
+lftp is written in C++ and uses a cooperative-threaded model.
 
 
 lftp
 ~~~~
-lftp is quite a powerful ftp client. It uses GNU readline to read
-commands. It uses shell-like command syntax allowing you to launch
-several commands in parallel in background (&). See FEATURES for
-list of features.
+lftp is command line file transfer program. It supports FTP and HTTP
+protocols. GNU Readline library is used for input.
 
-Some commands allow redirecting its output (cat, ls) to file or via
-pipe to external command. Commands can be started conditionally based
-on termination status of previous command (&&, ||). Also, it is
-possible to group commands within () and execute them in background.
-All background jobs are executed in the same single process. You can
-bring a foreground job to background with ^Z and back with command
-`wait' (or `fg' which is alias to `wait').
-
-When you think you are done but some jobs are not yet finished, you
-can just exit and lftp will move itself to nohup mode in background.
-The same happens when you have a real hangup.
-
-lftp has reliable put, reput, mirror, and many other commands. Use
-command `help' or read documentation to learn more.
+Low level stuff supported: ftp proxy, http proxy, ftp over http,
+opie/skey, fxp transfers, automatic retrying on non-fatal errors and
+timeouts, ipv6, socks. See FEATURES for more detailed list of
+features.
 
 Every operation in lftp is reliable, that is any not fatal error is
 ignored and the operation is repeated. So if downloading breaks, it
@@ -42,6 +27,27 @@ will be restarted from the point automatically. Even if ftp server
 does not support REST command, lftp will try to retrieve the file from
 the very beginning until the file is transferred completely.
 
+lftp has shell-like command syntax allowing you to launch several
+commands in parallel in background (&). It is also possible to group
+commands within () and execute them in background. All background jobs
+are executed in the same single process. You can bring a foreground
+job to background with ^Z and back with command `wait' (or `fg' which
+is alias to `wait'). To list running jobs, use command `jobs'. Some
+commands allow redirecting their output (cat, ls, ...) to file or via
+pipe to external command. Commands can be executed conditionally based
+on termination status of previous command (&&, ||).
+
+If you exit lftp when some jobs are not finished yet, lftp will move
+itself to nohup mode in background. The same happens when you have a
+real modem hangup or when you close an xterm.
+
+lftp has builtin mirror which can download or update a whole directory
+tree. There is also reverse mirror (mirror -R) which uploads or
+updates a directory tree on server.
+
+There is command `at' to launch a job at specified time in current
+context, command `queue' to queue commands for sequential execution
+for current server, and much more.
 
 On startup, lftp executes /etc/lftp.conf and then ~/.lftprc and
 ~/.lftp/rc. You can place aliases and `set' commands there. Some
@@ -49,36 +55,12 @@ people prefer to see full protocol debug, use `debug' to turn the
 debug on. Use `debug 0' to see only greeting messages and error
 messages.
 
-lftp has a number of settable variables (you can use `set -a' to
-see all variables and their values), here are some:
- * cmd:csh-history - (bool) enables csh-like history expansion
- * cmd:long-running - (seconds) time of command execution, which is
-considered as `long' and a beep is done before next prompt. 0 means
-off.
- * cmd:ls-default - (string) default ls argument
- * cmd:prompt - (string) prompt. lftp recognizes some bash escapes,
-such as \u, \h, \w.
- * cmd:remote-completion - (bool) whether to use remote completion.
- * net:idle - (seconds) close idle connections locally after this time
- * net:max-retries - (num) limit maximum number of operation retries
-(default 0=unlimited)
- * ftp:passive-mode - (bool) passive mode ftp
- * ftp:proxy - (string) ftp proxy
- * net:reconnect-interval - (seconds) minimal time between reconnects.
- * net:relookup-always - (bool) relookup host address each time before
-connecting
- * ftp:sync-mode - (bool) send one command at a time and wait for
-response. Might be necessary to set it to `on' if buggy ftp server or
-router is used. Setting it to `off' speeds up command/response
-exchange with server, especially if ping time is significant.
- * net:timeout - (seconds) network protocol timeout
-
+lftp has a number of settable variables. You can use `set -a' to see
+all variables and their values or `set -d' to see list of defaults.
 Variable names can be abbreviated and prefix can be omitted unless the
 rest becomes ambiguous.
 
-See man page for other variables. You can also use `set -a' to see all
-current valiables and their values, and `set -d' to see default values
-of all variables.
+Use command `help' or read documentation (man lftp) to learn more.
 
 Where to get
 ~~~~~~~~~~~~
@@ -125,11 +107,11 @@ network packet.
 Systems
 ~~~~~~~
 The package is known to compile on Solaris2.5(gcc), Linux, FreeBSD,
-SCO v5.0(gcc), IRIX(gcc) and other systems. If you can't compile it on
-your system, let me know. It is possible that lftp version 2.0 can be
-compiled with non-gcc compilers since it does not have gcc-isms, and
-it was successfully compiled by Sun C++ v5.0 compiler using
-CXXFLAGS="-compat=4 -features=bool".
+SCO v5.0(gcc), IRIX(gcc), Tru64(gcc) and other systems. If you can't
+compile it on your system, let me know. It is possible that lftp
+version 2.0 can be compiled with non-gcc compilers since it does not
+have gcc-isms, and it was successfully compiled by Sun C++ v5.0
+compiler using CXXFLAGS="-compat=4 -features=bool".
 
 
 Mailing list
