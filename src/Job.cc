@@ -317,17 +317,21 @@ void Job::puts(const char *s)
 
 void Job::Bg()
 {
-   if(waiting)
-      waiting->Bg();
+   if(!fg)
+      return;
    fg=false;
+   if(waiting && waiting!=this)
+      waiting->Bg();
    if(fg_data)
       fg_data->Bg();
 }
 void Job::Fg()
 {
+   if(fg)
+      return;
    fg=true;
    if(fg_data)
       fg_data->Fg();
-   if(waiting)
+   if(waiting && waiting!=this)
       waiting->Fg();
 }
