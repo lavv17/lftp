@@ -1,6 +1,7 @@
 2003-02-11  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: another workaround for proftpd.
+	* FileCopy.cc: re-get file size/date after redirect.
 
 2003-02-10  Alexander V. Lukyanov <lav@yars.free.net>
 

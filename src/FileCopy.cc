@@ -609,7 +609,6 @@ void FileCopy::Kill(int sig)
 #define super Buffer
 void FileCopyPeer::SetSize(off_t s)
 {
-   want_size=false;
    size=s;
    if(seek_pos==FILE_END)
    {
@@ -621,7 +620,6 @@ void FileCopyPeer::SetSize(off_t s)
 }
 void FileCopyPeer::SetDate(time_t d)
 {
-   want_date=false;
    date=d;
    if(date==NO_DATE || date==NO_DATE_YET)
       date_set=true;
@@ -896,7 +894,7 @@ void FileCopyPeerFA::OpenSession()
    session->RereadManual();
    if(ascii)
       session->AsciiTransfer();
-   if(want_size)
+   if(want_size && size==NO_SIZE_YET)
       session->WantSize(&size);
    if(want_date && date==NO_DATE_YET)
       session->WantDate(&date);
@@ -970,9 +968,6 @@ int FileCopyPeerFA::Get_LL(int len)
 
 	       xfree(file);
 	       file=xstrdup(u.path?u.path:"");
-	       size=NO_SIZE_YET;
-	       date=NO_DATE_YET;
-
 	       xfree(orig_url);
 	       orig_url=xstrdup(loc);
 	    }
@@ -1013,6 +1008,10 @@ int FileCopyPeerFA::Get_LL(int len)
 	       xfree(file);
 	       file=new_file;
 	    }
+
+	    size=NO_SIZE_YET;
+	    date=NO_DATE_YET;
+
 	    try_time=0;
 	    retries=0;
 	    current->Timeout(0); // retry with new location.
@@ -1397,7 +1396,8 @@ int FileCopyPeerFDStream::Get_LL(int len)
    if(fd==-1)
       return 0;
 
-   if(want_date || want_size)
+   if((want_date && date==NO_DATE_YET)
+   || (want_size && size==NO_SIZE_YET))
    {
       struct stat st;
       if(fstat(fd,&st)==-1)
