@@ -409,6 +409,8 @@ void Http::HandleHeaderLine(const char *name,const char *value)
    if(!strcasecmp(name,"Content-length"))
    {
       sscanf(value,"%ld",&body_size);
+      if(pos==0 && mode!=STORE)
+	 entity_size=body_size;
       if(pos==0 && opt_size)
 	 *opt_size=body_size;
 
@@ -427,6 +429,8 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 	 return;
       real_pos=first;
       body_size=last-first+1;
+      if(mode!=STORE)
+	 entity_size=fsize;
       if(opt_size)
 	 *opt_size=fsize;
       return;
@@ -935,6 +939,11 @@ int Http::Read(void *buf,int size)
       {
 	 DebugPrint("---- ","Received all");
 	 return 0; // all received
+      }
+      if(entity_size>=0 && pos>=entity_size)
+      {
+	 DebugPrint("---- ","Received all (total)");
+	 return 0;
       }
       if(chunked)
       {

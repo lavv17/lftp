@@ -1,7 +1,8 @@
 2000-03-20  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileCopy.cc: add debug messages.
-	* Http.cc: initialize bytes_received; add debug messages.
+	* Http.cc: initialize bytes_received; add debug messages;
+	  simulate eof if pos>=entity_size.
 
 2000-03-19  Alexander V. Lukyanov  <lav@yars.free.net>
 
