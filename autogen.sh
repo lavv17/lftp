@@ -119,8 +119,9 @@ do
 	else
 	  echo "Creating $dr/aclocal.m4 ..."
 	  test -r $dr/aclocal.m4 || touch $dr/aclocal.m4
-#	  echo "Running gettextize...  Ignore non-fatal messages."
-#	  echo "no" | gettextize --force --copy
+	  echo "Running gettextize...  Ignore non-fatal messages."
+	  echo "no" | gettextize --force --copy
+	  patch -p0 < gettext.diff || exit 1
 	  echo "Making $dr/aclocal.m4 writable ..."
 	  test -r $dr/aclocal.m4 && chmod u+w $dr/aclocal.m4
         fi
@@ -145,7 +146,7 @@ do
   fi
 done
 
-conf_flags="--enable-maintainer-mode --enable-compile-warnings --with-debug" #--enable-iso-c
+conf_flags="--enable-maintainer-mode --enable-compile-warnings --cache-file=config.cache" #--enable-iso-c
 if [ `uname` = SunOS ]; then
    conf_flags="$conf_flags --with-included-gettext"
 fi
