@@ -4,7 +4,10 @@
 	  path to cd to in ExpandTildeInCWD.
 	* GetFileInfo.cc: try the file as directory even if showdir, to
 	  return type info; use server returned error message; don't give up
-	  if the file is not in FileSet.
+	  if the file is not in FileSet; try directory to get error message
+	  if we know from cache that there is no such file; try another
+	  method only if we get NO_FILE error; strip all trailing slashes;
+	  don't assume result!=0.
 
 2001-12-13  Glenn Maynard <g_ld@zewt.org>
 

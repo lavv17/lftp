@@ -95,15 +95,20 @@ int GetFileInfo::Do()
    {
       if(tried_dir && tried_file) {
 	 /* We tried both; no luck.  Fail. */
-	 SetError(saved_error_text);
-	 state=DONE;
-	 return MOVED;
+	 if(saved_error_text)
+	 {
+	    SetError(saved_error_text);
+	    state=DONE;
+	    return MOVED;
+	 }
+	 tried_dir=false;  // this will get error message.
       }
 
       const char *cd_path;
       if(!tried_dir && (tried_file || !showdir))
       {
-	 /* First, try to treat the path as a directory. */
+	 /* First, try to treat the path as a directory,
+	  * if we are going to show its contents */
 	 tried_dir=true;
 	 cd_path = dir;
 	 path_to_prefix=xstrdup(dir);
@@ -141,7 +146,12 @@ int GetFileInfo::Do()
 	 if(!saved_error_text)
 	    saved_error_text = xstrdup(session->StrError(res));
 	 session->Close();
-	 state=CHANGE_DIR;
+	 if(res==FA::NO_FILE)
+	 {
+	    state=CHANGE_DIR;
+	    return MOVED;
+	 }
+	 state=DONE;
 	 return MOVED;
       }
       session->Close();
@@ -202,8 +212,9 @@ int GetFileInfo::Do()
 
       /* If this was a listing of the basename: */
       if(!was_directory) {
-	 if(verify_fn[strlen(verify_fn)-1] == '/')
-	    verify_fn[strlen(verify_fn)-1] = 0;
+	 int len=strlen(verify_fn);
+	 while(len>0 && verify_fn[len-1] == '/')
+	    verify_fn[--len] = 0;
 
 	 /* Find the file with our filename: */
 	 const FileInfo *file = result->FindByName(verify_fn);
@@ -236,7 +247,7 @@ done:
    case DONE:
       if(!done)
       {
-	 if(showdir && result->get_fnum())
+	 if(result && showdir && result->get_fnum())
 	 {
 	    FileInfo *f = (*result)[0];
 	    /* Make sure the filename is what was requested (ie ".."). */
@@ -248,8 +259,7 @@ done:
 	    if(f->defined&f->TYPE)
 	       was_directory = (f->filetype == f->DIRECTORY);
 	 }
-
-	 if(prepend_path)
+	 if(result && prepend_path)
 	    result->PrependPath(path_to_prefix);
 	 done=true;
 	 session->SetCwd(origdir);
