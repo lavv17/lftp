@@ -7,15 +7,18 @@
 	* FtpGlob.cc: handle updir errors; handle dir starting with '~'.
 	* GetJob.cc, GetJob.h: (NoProtoSrc, NoProtoDst) new methods;
 	  handle reverse transfers (put).
-	* LocalAccess.cc, LocalAccess.h: preserve home by ignoring Connect().
+	* LocalAccess.cc, LocalAccess.h: preserve home by ignoring Connect();
+	  support ascii transfers.
 	* Makefile.am: remove mputJob.cc, mputJob.h, PutJob.cc, PutJob.h,
 	  FileXfer.cc, FileXfer.h.
 	* MirrorJob.cc: don't include PutJob.h.
 	* commands.cc: don't include PutJob.h, mputJob.h; move put, mput, mget
-	  functionality to cmd_get; update help; use GlobURL.
+	  functionality to cmd_get; update help; use GlobURL;
+	  support `login URL'.
 	* mgetJob.cc, mgetJob.h: support mput.
 	* url.h: (is_url) new method.
 	* complete.cc: use GlobURL.
+	* FileCopy.cc: don't open session if seek_pos>=size.
 
 1999-12-26  Alexander V. Lukyanov  <lav@yars.free.net>
 

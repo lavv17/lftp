@@ -20,6 +20,18 @@
 
 /* $Id$ */
 
+/* FileCopyPeer behaviour:
+    1) when suspended, does nothing
+    2) tries to read some data at seek_pos, sets pos to position of Get (get).
+    2.5) tries to position to seek_pos and gets ready to write (put).
+    3) if it cannot seek to seek_pos, changes pos to what it can seek.
+    4) if it knows that it cannot seek to pos>0, CanSeek()==false
+    5) if it knows that it cannot seek to pos==0, CanSeek0()==false
+    6) it tries to get date/size if told to. (get)
+    7) it sets date on the file if eof is reached and date is known (put).
+    8) if put needs size/date before it writes data, NeedSizeDateBeforehand()==true.
+ */
+
 #include <config.h>
 #include <assert.h>
 #include <unistd.h>
@@ -683,6 +695,11 @@ void FileCopyPeerFA::Seek(long new_pos)
 
 void FileCopyPeerFA::OpenSession()
 {
+   if(size!=NO_SIZE && size!=NO_SIZE_YET && seek_pos>=size && !ascii)
+   {
+      eof=true;
+      return;
+   }
    session->Open(file,FAmode,seek_pos);
    if(mode==PUT)
    {
@@ -712,6 +729,9 @@ int FileCopyPeerFA::Get_LL(int len)
 
    if(session->IsClosed())
       OpenSession();
+
+   if(eof)
+      return 0;
 
    long io_at=pos;
    if(GetRealPos()!=io_at) // GetRealPos can alter pos.

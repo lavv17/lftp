@@ -633,7 +633,8 @@ Job *CmdExec::builtin_open()
 	       path=uc.path;
 	 }
 
-	 if(!strcmp(session->GetProto(),"ftp"))
+	 if(!strcmp(session->GetProto(),"ftp")
+	 || !strcmp(session->GetProto(),"hftp"))
 	 {
 	    nrc=NetRC::LookupHost(host);
 	    if(nrc)
@@ -1243,7 +1244,26 @@ CMD(user)
    else
       pass=args->getarg(2);
    if(pass)
-      session->Login(args->getarg(1),pass);
+   {
+      ParsedURL u(args->getarg(1),true);
+      if(u.proto)
+      {
+	 FA *s=FA::New(&u);
+	 if(s)
+	 {
+	    s->Login(s->GetUser(),pass);
+	    SessionPool::Reuse(s);
+	 }
+	 else
+	 {
+	    eprintf("%s: %s%s",args->a0(),u.proto,
+		     _(" - not supported protocol\n"));
+	    return 0;
+	 }
+      }
+      else
+	 session->Login(args->getarg(1),pass);
+   }
    exit_code=0;
    return 0;
 }

@@ -298,14 +298,22 @@ int LocalAccess::Read(void *buf,int size)
       return DO_AGAIN;
    if(real_pos==-1)
    {
-      if(lseek(fd,pos,SEEK_SET)==-1)
+      if(ascii || lseek(fd,pos,SEEK_SET)==-1)
 	 real_pos=0;
       else
 	 real_pos=pos;
    }
    stream->Kill(SIGCONT);
 read_again:
-   int res=read(fd,buf,size);
+   int res;
+
+#ifndef NATIVE_CRLF
+   if(ascii)
+      res=read(fd,buf,size/2);
+   else
+#endif
+      res=read(fd,buf,size);
+
    if(res<0)
    {
       if(errno==EINTR || errno==EAGAIN)
@@ -315,10 +323,28 @@ read_again:
    }
    if(res==0)
       return res; // eof
+
+#ifndef NATIVE_CRLF
+   if(ascii)
+   {
+      char *p=(char*)buf;
+      for(int i=res; i>0; i--)
+      {
+	 if(*p=='\n')
+	 {
+	    memmove(p+1,p,i);
+	    *p++='\r';
+	    res++;
+	 }
+	 p++;
+      }
+   }
+#endif
+
    real_pos+=res;
    if(real_pos<=pos)
       goto read_again;
-   int shift;
+   long shift;
    if((shift=pos+res-real_pos)>0)
    {
       memmove(buf,(char*)buf+shift,size-shift);
@@ -328,8 +354,9 @@ read_again:
    return(res);
 }
 
-int LocalAccess::Write(const void *buf,int size)
+int LocalAccess::Write(const void *vbuf,int len)
 {
+   const char *buf=(const char *)vbuf;
    if(error_code<0)
       return error_code;
    if(stream==0)
@@ -339,7 +366,7 @@ int LocalAccess::Write(const void *buf,int size)
       return DO_AGAIN;
    if(real_pos==-1)
    {
-      if(lseek(fd,pos,SEEK_SET)==-1)
+      if(ascii || lseek(fd,pos,SEEK_SET)==-1)
 	 real_pos=0;
       else
 	 real_pos=pos;
@@ -351,7 +378,43 @@ int LocalAccess::Write(const void *buf,int size)
    }
    stream->Kill(SIGCONT);
 
-   int res=write(fd,buf,size);
+   int skip_cr=0;
+
+#ifndef NATIVE_CRLF
+   if(ascii)
+   {
+      // find where line ends.
+      const char *cr=buf;
+      for(;;)
+      {
+	 cr=(const char *)memchr(cr,'\r',len-(cr-buf));
+	 if(!cr)
+	    break;
+	 if(cr-buf<len-1 && cr[1]=='\n')
+	 {
+	    skip_cr=1;
+	    len=cr-buf;
+	    break;
+	 }
+	 if(cr-buf==len-1)
+	 {
+	    if(len==1)	   // last CR in stream will be lost. (FIX?)
+	       skip_cr=1;
+	    len--;
+	    break;
+	 }
+	 cr++;
+      }
+   }
+#endif	 // NATIVE_CRLF
+
+   if(len==0)
+   {
+      pos=(real_pos+=skip_cr);
+      return skip_cr;
+   }
+
+   int res=write(fd,buf,len);
    if(res<0)
    {
       if(errno==EINTR || errno==EAGAIN)
@@ -360,6 +423,8 @@ int LocalAccess::Write(const void *buf,int size)
       return SEE_ERRNO;
    }
 
+   if(res==len)
+      res+=skip_cr;
    pos=(real_pos+=res);
    return res;
 }
