@@ -43,15 +43,16 @@ int FileCopyFtp::Do()
    if(disable_fxp || Error() || !put || !get)
       return m;
 
-   if(put->GetSeekPos()!=FILE_END && get->GetSize()>=0
-   && put->GetSeekPos()>=get->GetSize())
-      return m;
-
-   if(state==PUT_WAIT && put->GetSeekPos()!=FILE_END && ftp_dst->IsClosed())
+   if(state==PUT_WAIT && put->GetSeekPos()!=FILE_END)
    {
-      ((FileCopyPeerFA*)put)->OpenSession();
-      ftp_dst->SetCopyMode(Ftp::COPY_DEST,!passive_source,dst_retries,dst_try_time);
-      m=MOVED;
+      if(get->GetSize()>=0 && put->GetSeekPos()>=get->GetSize())
+	 return m;
+      if(ftp_dst->IsClosed())
+      {
+	 ((FileCopyPeerFA*)put)->OpenSession();
+	 ftp_dst->SetCopyMode(Ftp::COPY_DEST,!passive_source,dst_retries,dst_try_time);
+	 m=MOVED;
+      }
    }
 
    if(state!=DO_COPY || put->GetSeekPos()==FILE_END || get->Eof())

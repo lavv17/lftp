@@ -1,3 +1,9 @@
+2003-08-21  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: (Disconnect) ignore replies when Disconnect is called,
+	  call CloseRespQueue for that.
+	* FileCopyFtp.cc: fixed fxp for zero sized files.
+
 2003-08-11  Johannes Zellner <johannes@zellner.org>
 
 	* HttpDir.cc:

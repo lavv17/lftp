@@ -2575,6 +2575,7 @@ void  Ftp::Disconnect()
 
    bool no_greeting=(!RespQueueIsEmpty() && RespQueue[RQ_head].check_case==CHECK_READY);
 
+   CloseRespQueue();
    DataAbort();
    DataClose();
    if(control_sock>=0 && state!=CONNECTING_STATE && !quit_sent
