@@ -100,7 +100,7 @@ void SMTask::Delete(SMTask *task)
 int SMTask::Roll(SMTask *task)
 {
    int m=STALL;
-   if(task->running)
+   if(task->running || task->deleting)
       return m;
    Enter(task);
    while(!task->deleting && task->Do()==MOVED)
@@ -146,8 +146,10 @@ void SMTask::Schedule()
       int res=STALL;
 
       Enter(scan);	// mark it current and running.
+      SMTask *entered=current;
       if(!current->deleting)
 	 res=current->Do(); // let it run unless it is dying.
+      assert(current==entered);
       scan=scan->next;	// move to a next task.
       SMTask *to_delete=0;
       if(current->deleting)

@@ -1,3 +1,11 @@
+2004-10-20  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc: remove bogus assert.
+	* MirrorJob.cc: fix permissions comarision; don't Roll parent mirror
+	  if DONE (this fixes a mysterious corruption - looks like trouble
+	  when MirrorJob's are deleted in wrong order).
+	* SMTask.cc: add assert; check deleting before Roll loop.
+
 2004-10-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Fish.cc, Fish.h, SFtp.cc, SFtp.h: don't sent password several times,

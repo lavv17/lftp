@@ -873,7 +873,7 @@ int   MirrorJob::Do()
 	 }
 	 FileInfo *target=target_set->FindByName(file->name);
 	 if(target && target->filetype==file->DIRECTORY && file->filetype==file->DIRECTORY
-	 && target->mode==file->mode && target->mode&0200)
+	 && target->mode==(file->mode&~mode_mask) && (target->mode&0200))
 	    continue;
 	 if(script)
 	 {
@@ -936,7 +936,7 @@ int   MirrorJob::Do()
       m=MOVED;
       /*fallthrough*/
    case(DONE):
-      break;
+      return m;
    }
    // give direct parent priority over grand-parents.
    if(transfer_count<parallel && parent_mirror)
