@@ -73,17 +73,13 @@ if test x$GCC = xyes; then
 fi
 if test x$GXX = xyes; then
    CXXFLAGS="$CXXFLAGS -Wall -Wwrite-strings -Woverloaded-virtual"
-   CXXFLAGS="$CXXFLAGS -fno-implement-inlines -Winline"
    # save some bytes
-   case "`$CXX --version`" in
-   egcs*|2.8*|2.9*|3*|pgcc*)
-	 CXXFLAGS="$CXXFLAGS -fno-exceptions -fno-rtti"
-	 ;;
-   esac
-fi
-
-if test x$DEFAULT_CXX = xyes; then
-   LFTP_PROG_CXXLINK
+   LFTP_CHECK_CXX_FLAGS([-fno-exceptions -fno-rtti])
+   if test x$DEFAULT_CXX = xyes; then
+      LFTP_PROG_CXXLINK
+   fi
+   # checl for -fno-implement-inline
+   LFTP_NOIMPLEMENTINLINE
 fi
 
 AC_PROG_LIBTOOL
