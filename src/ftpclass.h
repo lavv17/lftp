@@ -113,6 +113,38 @@ class Ftp : public NetAccess
 #endif
    };
 
+   class Connection
+   {
+   public:
+      int control_sock;
+      IOBuffer *control_recv;
+      IOBuffer *control_send;
+      IOBufferTelnet *telnet_layer_send;
+      Buffer *send_cmd_buffer; // holds unsent commands.
+      int data_sock;
+      IOBuffer *data_iobuf;
+      int aborted_data_sock;
+      sockaddr_u peer_sa;
+      bool quit_sent;
+      bool fixed_pasv; // had to fix PASV address.
+#ifdef USE_SSL
+      SSL *control_ssl;
+      SSL *data_ssl;
+      char prot;  // current data protection scheme 'C'lear or 'P'rivate
+      bool auth_sent;
+#endif
+
+      Connection();
+      ~Connection();
+
+      bool data_address_ok(sockaddr_u *d,bool verify_address,bool verify_port);
+      void SavePeerAddress();
+      void MakeBuffers();
+      void MakeSSLBuffers(const char *h);
+   };
+
+   Connection *conn;
+
    struct expected_response;
    friend struct Ftp::expected_response;
    struct expected_response
@@ -176,29 +208,11 @@ class Ftp : public NetAccess
 
    void	 HandleTimeout();
 
-   int   control_sock;
-   IOBuffer *control_recv;
-   IOBuffer *control_send;
-   IOBufferTelnet *telnet_layer_send;
-   Buffer *send_cmd_buffer; // holds unsent commands.
-   int   data_sock;
-   IOBuffer *data_iobuf;
-   int	 aborted_data_sock;
-   sockaddr_u peer_sa;
-   bool	 quit_sent;
-   bool	 fixed_pasv; // had to fix PASV address.
-
 #ifdef USE_SSL
-   SSL	 *control_ssl;
-   SSL	 *data_ssl;
-   bool	 data_ssl_connected;
-   char	 prot;	  // current data protection scheme 'C'lear or 'P'rivate
    void	 BlockOnSSL(SSL*);
-   void	 MakeSSLBuffers();
 protected:
    bool	 ftps;	  // ssl and prot='P' by default (port 990)
 private:
-   bool	 auth_sent;
 #else
    static const bool ftps; // for convenience
 #endif
@@ -319,7 +333,7 @@ private:
    void set_idle_start()
       {
 	 idle_start=now;
-	 if(control_sock!=-1 && idle>0)
+	 if(conn && idle>0)
 	    TimeoutS(idle);
       }
 
@@ -327,8 +341,6 @@ private:
    bool allow_skey;
    bool force_skey;
    const char *make_skey_reply();
-
-   bool data_address_ok(sockaddr_u *d=0,bool verify_this_data_port=true);
 
    bool disconnect_on_close;
 
