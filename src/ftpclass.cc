@@ -4004,25 +4004,6 @@ void Ftp::CleanupThis()
 
 void Ftp::SetError(int ec,const char *e)
 {
-   switch((status)ec)
-   {
-   case(SEE_ERRNO):
-   case(LOOKUP_ERROR):
-   case(NO_HOST):
-   case(FATAL):
-   case(LOGIN_FAILED):
-      Disconnect();
-      break;
-   case(IN_PROGRESS):
-   case(OK):
-   case(NOT_OPEN):
-   case(NO_FILE):
-   case(FILE_MOVED):
-   case(STORE_FAILED):
-   case(DO_AGAIN):
-   case(NOT_SUPP):
-      break;
-   }
    // join multiline error message into single line, removing `550-' prefix.
    if(e && strchr(e,'\n'))
    {
@@ -4048,6 +4029,26 @@ void Ftp::SetError(int ec,const char *e)
       e=joined;
    }
    super::SetError(ec,e);
+
+   switch((status)ec)
+   {
+   case(SEE_ERRNO):
+   case(LOOKUP_ERROR):
+   case(NO_HOST):
+   case(FATAL):
+   case(LOGIN_FAILED):
+      Disconnect();
+      break;
+   case(IN_PROGRESS):
+   case(OK):
+   case(NOT_OPEN):
+   case(NO_FILE):
+   case(FILE_MOVED):
+   case(STORE_FAILED):
+   case(DO_AGAIN):
+   case(NOT_SUPP):
+      break;
+   }
 }
 
 Ftp::ConnectLevel Ftp::GetConnectLevel()

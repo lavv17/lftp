@@ -396,6 +396,11 @@ SFtp::SFtp(const SFtp *o) : super(o)
 }
 
 
+bool SFtp::Packet::HasID()
+{
+   return(type!=SSH_FXP_INIT && type!=SSH_FXP_VERSION);
+}
+
 void SFtp::Packet::PackString(Buffer *b,const char *str,int len)
 {
    if(len==-1)

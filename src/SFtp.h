@@ -189,7 +189,7 @@ enum sftp_status_t {
 	    if(HasID())
 	       length+=4;
 	 }
-      bool HasID() { return(type!=SSH_FXP_INIT && type!=SSH_FXP_VERSION); }
+      bool HasID();
    public:
       Packet() { length=0; }
       virtual void ComputeLength() { length=1+4*HasID(); }

@@ -1,7 +1,14 @@
+2004-04-04  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SFtp.cc, SFtp.h: outline HasID as it fails to inline on certain
+	  compilers.
+
 2004-04-02  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h: fix compilation without ssl; fixed coredump
-	  in case of some network errors.
+	  in case of some network errors; copy error message before Disconnect,
+	  so that it won't be lost and a freed memory won't be referenced.
+	* Makefile.am: add SOCKSLIBS to lftp_LDADD.
 
 2004-03-25  Alexander V. Lukyanov <lav@yars.free.net>
 
