@@ -1,3 +1,8 @@
+Version 2.6.9 - 2003-11-??
+
+* new setting ftp:ssl-protect-list for encrypting file listings selectively.
+* don't use PRET again if it is not supported.
+
 Version 2.6.8 - 2003-10-10
 
 * better multibyte character support.
