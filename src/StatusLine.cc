@@ -134,7 +134,7 @@ void StatusLine::update(char *newstr)
 
 void StatusLine::WriteLine(const char *f,...)
 {
-   char newstr[sizeof(shown)+strlen(f)+64];
+   char *newstr=(char*)alloca(sizeof(shown)+strlen(f)+64);
 
    va_list v;
    va_start(v,f);

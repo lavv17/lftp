@@ -127,7 +127,7 @@ void  XferJob::ShowRunStatus(StatusLine *s)
       int w=s->GetWidth()-40;
       if(w<=0)
 	 return;
-      char *n=curr;
+      const char *n=curr;
       if((int)strlen(n)>w-2)
 	 n+=strlen(n)-(w-2);
 

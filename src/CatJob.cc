@@ -295,7 +295,7 @@ CatJob::CatJob(FileAccess *new_session,FDStream *new_global,ArgV *args) : XferJo
    {
       if(!global)
       {
-	 char *pager=getenv("PAGER");
+	 const char *pager=getenv("PAGER");
 	 if(pager==NULL)
 	    pager="more";
 	 global=new OutputFilter(pager);

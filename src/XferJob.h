@@ -35,9 +35,9 @@
 class XferJob : public SessionJob
 {
 protected:
-   char	 *op;
+   const char *op;
 
-   char	 *curr;
+   const char *curr;
 
    size_t buffer_size;
    char  *buffer;

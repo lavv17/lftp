@@ -31,7 +31,7 @@
 
 Bookmark::Bookmark()
 {
-   char *home=getenv("HOME");
+   const char *home=getenv("HOME");
    if(home==0)
       home=".";
    int home_len=strlen(home);

@@ -47,7 +47,7 @@ public:
    virtual bool can_setmtime() { return false; }
    virtual void remove_if_empty() {}
    virtual bool Done() { return true; }
-   virtual bool usesfd(int fd) { return this->fd==fd; }
+   virtual bool usesfd(int n_fd) { return fd==n_fd; }
    virtual void Kill(int=SIGTERM) {}
    virtual pid_t GetProcGroup() { return 0; }
    virtual bool broken() { return false; }
@@ -83,7 +83,7 @@ public:
    int getfd();
    bool Done();
 
-   bool usesfd(int fd) { return FDStream::usesfd(fd) || fd<=2; }
+   bool usesfd(int n_fd) { return FDStream::usesfd(n_fd) || n_fd<=2; }
    void Kill(int sig=SIGTERM) { if(w) w->Kill(sig); }
    pid_t GetProcGroup() { return pg; }
 
