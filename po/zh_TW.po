@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.3.9\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-04-06 13:23+0400\n"
+"POT-Creation-Date: 2004-04-12 13:52+0400\n"
 "PO-Revision-Date: 2001-04-22 06:01+0800\n"
 "Last-Translator: Abel Cheung <maddog@linux.org.hk>\n"
 "Language-Team: Traditional Chinese <zh-l10n@linux.org.tw>\n"
@@ -109,7 +109,7 @@ msgstr "存取失敗: %s"
 msgid "File cannot be accessed"
 msgstr "不能存取檔案"
 
-#: src/FileAccess.cc:292 src/ftpclass.cc:3717 src/ftpclass.cc:3726
+#: src/FileAccess.cc:292 src/ftpclass.cc:3791 src/ftpclass.cc:3800
 msgid "Not connected"
 msgstr "並未連線"
 
@@ -344,7 +344,7 @@ msgstr "此設定值並沒有定義 closure"
 msgid "invalid pair of numbers"
 msgstr "不正確的數字"
 
-#: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3722
+#: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3796
 #: src/Http.cc:1685
 msgid "Resolving host address..."
 msgstr "正在解析主機地址..."
@@ -1632,173 +1632,173 @@ msgstr "假設查看主機名稱已失敗"
 msgid "cannot parse EPSV response"
 msgstr "不能分析 EPSV 回應內容"
 
-#: src/ftpclass.cc:960
+#: src/ftpclass.cc:963
 msgid "Closing control socket"
 msgstr "正在關閉控制 socket"
 
-#: src/ftpclass.cc:1123 src/Http.cc:812
+#: src/ftpclass.cc:1126 src/Http.cc:812
 msgid "Closing idle connection"
 msgstr "關閉了閒置的連線"
 
-#: src/ftpclass.cc:1219 src/Http.cc:940
+#: src/ftpclass.cc:1222 src/Http.cc:940
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "不能建立地址族群 %d 的 socket"
 
-#: src/ftpclass.cc:1418
-msgid "SITE CHMOD is not supported by this site"
-msgstr "這個站台不支援 SITE CHMOD"
-
 #: src/ftpclass.cc:1423
-#, fuzzy
-msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
+msgid "SITE CHMOD is not supported by this site"
 msgstr "這個站台不支援 SITE CHMOD"
 
 #: src/ftpclass.cc:1428
 #, fuzzy
-msgid "MLST and MLSD are not supported by this site"
+msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 msgstr "這個站台不支援 SITE CHMOD"
 
 #: src/ftpclass.cc:1433
 #, fuzzy
+msgid "MLST and MLSD are not supported by this site"
+msgstr "這個站台不支援 SITE CHMOD"
+
+#: src/ftpclass.cc:1438
+#, fuzzy
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "這個站台不支援 SITE CHMOD"
 
-#: src/ftpclass.cc:1841 src/ftpclass.cc:1880
+#: src/ftpclass.cc:1846 src/ftpclass.cc:1885
 msgid "unsupported network protocol"
 msgstr "不受支援的網絡協定"
 
-#: src/ftpclass.cc:1992
+#: src/ftpclass.cc:1997
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "連接資料 socket 到 (%s) 連接埠 %u"
 
-#: src/ftpclass.cc:1999
+#: src/ftpclass.cc:2004
 #, fuzzy, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "連接資料 socket 到 (%s) 連接埠 %u"
 
-#: src/ftpclass.cc:2024 src/ftpclass.cc:3579
+#: src/ftpclass.cc:2029 src/ftpclass.cc:3650
 msgid "Switching passive mode off"
 msgstr "關閉了 passive 模式"
 
-#: src/ftpclass.cc:2482 src/ftpclass.cc:2601 src/Http.cc:1028
+#: src/ftpclass.cc:2487 src/ftpclass.cc:2606 src/Http.cc:1028
 msgid "Peer closed connection"
 msgstr "對方節點關閉了連線"
 
-#: src/ftpclass.cc:2562
+#: src/ftpclass.cc:2567
 msgid "Persist and retry"
 msgstr "繼續重試"
 
-#: src/ftpclass.cc:2816
+#: src/ftpclass.cc:2821
 msgid "Closing data socket"
 msgstr "正在關閉資料 socket"
 
-#: src/ftpclass.cc:2832
+#: src/ftpclass.cc:2837
 #, fuzzy
 msgid "Closing aborted data socket"
 msgstr "正在關閉資料 socket"
 
-#: src/ftpclass.cc:3413
+#: src/ftpclass.cc:3484
 msgid "saw file size in response"
 msgstr "回應包括檔案的大小"
 
-#: src/ftpclass.cc:3424
+#: src/ftpclass.cc:3495
 #, fuzzy
 msgid "remote end closed connection"
 msgstr "遠端終止了連線"
 
-#: src/ftpclass.cc:3432
+#: src/ftpclass.cc:3503
 msgid "extra server response"
 msgstr "額外的伺服器回應"
 
-#: src/ftpclass.cc:3446 src/ftpclass.cc:3469
+#: src/ftpclass.cc:3517 src/ftpclass.cc:3540
 msgid "Turning on sync-mode"
 msgstr "啟動 sync-mode"
 
-#: src/ftpclass.cc:3596
+#: src/ftpclass.cc:3667
 msgid "Switching passive mode on"
 msgstr "開啟 passive 模式"
 
-#: src/ftpclass.cc:3684
+#: src/ftpclass.cc:3758
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr "已設定 ftp:ssl-force 但伺服器不支援/不使用 SSL"
 
-#: src/ftpclass.cc:3703
+#: src/ftpclass.cc:3777
 #, fuzzy
 msgid "FEAT negotiation..."
 msgstr "使用 TLS 協定通訊中…"
 
-#: src/ftpclass.cc:3710
+#: src/ftpclass.cc:3784
 msgid "Sending commands..."
 msgstr "正在送出指令..."
 
-#: src/ftpclass.cc:3712 src/ftpclass.cc:3740 src/ftpclass.cc:3753
+#: src/ftpclass.cc:3786 src/ftpclass.cc:3814 src/ftpclass.cc:3827
 #: src/Http.cc:1700
 msgid "Waiting for response..."
 msgstr "正在等待回應..."
 
-#: src/ftpclass.cc:3714
+#: src/ftpclass.cc:3788
 #, fuzzy
 msgid "Delaying before retry"
 msgstr "重新連接前延遲(秒)"
 
-#: src/ftpclass.cc:3715 src/Http.cc:1693
+#: src/ftpclass.cc:3789 src/Http.cc:1693
 msgid "Connection idle"
 msgstr "連線閒置了"
 
-#: src/ftpclass.cc:3729 src/Http.cc:1691 src/Http.cc:1698
+#: src/ftpclass.cc:3803 src/Http.cc:1691 src/Http.cc:1698
 msgid "Connecting..."
 msgstr "正在連線..."
 
-#: src/ftpclass.cc:3733
+#: src/ftpclass.cc:3807
 msgid "TLS negotiation..."
 msgstr "使用 TLS 協定通訊中…"
 
-#: src/ftpclass.cc:3735
+#: src/ftpclass.cc:3809
 msgid "Connected"
 msgstr "已經連接"
 
-#: src/ftpclass.cc:3737
+#: src/ftpclass.cc:3811
 msgid "Logging in..."
 msgstr "正在登入..."
 
-#: src/ftpclass.cc:3741
+#: src/ftpclass.cc:3815
 msgid "Making data connection..."
 msgstr "正在建立資料傳送的連線..."
 
-#: src/ftpclass.cc:3744
+#: src/ftpclass.cc:3818
 msgid "Changing remote directory..."
 msgstr "改變遠端目錄..."
 
-#: src/ftpclass.cc:3750
+#: src/ftpclass.cc:3824
 #, fuzzy
 msgid "Waiting for other copy peer..."
 msgstr "正在等待回應..."
 
-#: src/ftpclass.cc:3752 src/ftpclass.cc:3773
+#: src/ftpclass.cc:3826 src/ftpclass.cc:3847
 msgid "Waiting for transfer to complete"
 msgstr "等待傳送完成"
 
-#: src/ftpclass.cc:3755
+#: src/ftpclass.cc:3829
 msgid "Waiting for data connection..."
 msgstr "等待資料傳送的連線..."
 
-#: src/ftpclass.cc:3761
+#: src/ftpclass.cc:3835
 #, fuzzy
 msgid "Sending data/TLS"
 msgstr "正在傳送資料"
 
-#: src/ftpclass.cc:3763
+#: src/ftpclass.cc:3837
 #, fuzzy
 msgid "Receiving data/TLS"
 msgstr "正在接收資料"
 
-#: src/ftpclass.cc:3769 src/Http.cc:1696
+#: src/ftpclass.cc:3843 src/Http.cc:1696
 msgid "Sending data"
 msgstr "正在傳送資料"
 
-#: src/ftpclass.cc:3771 src/Http.cc:1703
+#: src/ftpclass.cc:3845 src/Http.cc:1703
 msgid "Receiving data"
 msgstr "正在接收資料"
 
