@@ -176,6 +176,8 @@ class Ftp : public FileAccess
    int	 send_cmd_alloc;   // total allocated
    char  *send_cmd_ptr;	   // start
 
+   void EmptySendQueue();
+
    automate_state state;
 
    char	 *anon_user;

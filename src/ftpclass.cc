@@ -855,7 +855,7 @@ int   Ftp::Do()
 	 return m;
 
       time(&t);
-      if(t-try_time<sleep_time)
+      if(try_time!=0 && t-try_time<sleep_time)
       {
 	 block+=TimeOut(1000*(sleep_time-(t-try_time)));
 	 return m;
@@ -897,7 +897,9 @@ int   Ftp::Do()
       {
 	 sprintf(str,"connect: %s",strerror(errno));
          DebugPrint("**** ",str,0);
-         Disconnect();
+         close(control_sock);
+	 control_sock=-1;
+	 Disconnect();
 	 if(NotSerious(errno))
 	    return MOVED;
 	 goto system_error;
@@ -1660,12 +1662,21 @@ void  Ftp::DataAbort()
 
 void  Ftp::Disconnect()
 {
+   /* protect against re-entering from FlushSendQueue */
+   static bool disconnect_in_progress=false;
+   if(disconnect_in_progress)
+      return;
+   disconnect_in_progress=true;
+
    DataAbort();
    DataClose();
    if(control_sock>=0)
    {
-      SendCmd("QUIT");
-      FlushSendQueue(true);
+      if(state!=CONNECTING_STATE)
+      {
+	 SendCmd("QUIT");
+	 FlushSendQueue(true);
+      }
       DebugPrint("---- ",_("Closing control socket"),2);
       close(control_sock);
       control_sock=-1;
@@ -1679,9 +1690,15 @@ void  Ftp::Disconnect()
       state=STORE_FAILED_STATE;
    else
       state=INITIAL_STATE;
-   send_cmd_count=0;
-   flags&=~SYNC_WAIT;
    EmptyRespQueue();
+   EmptySendQueue();
+
+   disconnect_in_progress=false;
+}
+
+void  Ftp::EmptySendQueue()
+{
+   flags&=~SYNC_WAIT;
    xfree(send_cmd_buffer);
    send_cmd_buffer=send_cmd_ptr=0;
    send_cmd_alloc=send_cmd_count=0;
