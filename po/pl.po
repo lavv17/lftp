@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp\n"
-"POT-Creation-Date: 2002-08-01 16:37+0400\n"
+"POT-Creation-Date: 2002-08-02 12:43+0400\n"
 "PO-Revision-Date: 1999-06-08 15:27+02:00\n"
 "Last-Translator: Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -223,7 +223,7 @@ msgstr ""
 "%sDo usuniêcia: %d katalog$|i|ów$, %d plik$|i|ów$, %d $dowi±zanie "
 "symboliczne|dowi±zania symboliczne|dowi±zañ symbolicznych$.\n"
 
-#: src/MirrorJob.cc:225 src/MirrorJob.cc:665
+#: src/MirrorJob.cc:225 src/MirrorJob.cc:664
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "Usuwanie starego pliku `%s'"
@@ -253,27 +253,27 @@ msgstr "Tworzenie dowi±zania symbolicznego `%s' do `%s'"
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: protokó³ `%s' nieodpowiedni dla mirror-a\n"
 
-#: src/MirrorJob.cc:535
+#: src/MirrorJob.cc:534
 #, c-format
 msgid "Making directory `%s'"
 msgstr "Tworzenie katalogu `%s'"
 
-#: src/MirrorJob.cc:627
+#: src/MirrorJob.cc:626
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "Stary plik `%s' nie zosta³ usuniêty"
 
-#: src/MirrorJob.cc:659
+#: src/MirrorJob.cc:658
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "Usuwanie starego katalogu `%s'"
 
-#: src/MirrorJob.cc:1007
+#: src/MirrorJob.cc:1006
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s: wyra¿enie regularne `%s': %s\n"
 
-#: src/MirrorJob.cc:1068 src/commands.cc:952 src/commands.cc:1044
+#: src/MirrorJob.cc:1067 src/commands.cc:952 src/commands.cc:1044
 #: src/commands.cc:1429 src/commands.cc:1463 src/commands.cc:1563
 #: src/commands.cc:1819 src/commands.cc:2013 src/commands.cc:2187
 #: src/commands.cc:2194 src/commands.cc:2376 src/commands.cc:2404
@@ -283,7 +283,7 @@ msgstr "%s: wyra¿enie regularne `%s': %s\n"
 msgid "Try `help %s' for more information.\n"
 msgstr "W celu uzyskania wiêkszej ilo¶ci informacji spróbuj `help %s' .\n"
 
-#: src/MirrorJob.cc:1102 src/MirrorJob.cc:1118 src/commands.cc:817
+#: src/MirrorJob.cc:1101 src/MirrorJob.cc:1117 src/commands.cc:817
 #: src/commands.cc:1907 src/DummyProto.cc:73
 msgid " - not supported protocol"
 msgstr " - protokó³ nie jest obs³ugiwany"

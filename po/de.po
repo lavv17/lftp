@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Lftp 2.4.5\n"
-"POT-Creation-Date: 2002-08-01 16:37+0400\n"
+"POT-Creation-Date: 2002-08-02 12:43+0400\n"
 "PO-Revision-Date: 2002-05-17 12:37+0200\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: deutsch <de@li.org>\n"
@@ -218,7 +218,7 @@ msgstr ""
 "%sZur Löschung vorgesehen: %d Verzeichnis$|se$, %d Datei$|en$, %d Symlink$|s"
 "$\n"
 
-#: src/MirrorJob.cc:225 src/MirrorJob.cc:665
+#: src/MirrorJob.cc:225 src/MirrorJob.cc:664
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "Entferne alte Datei »%s«"
@@ -248,27 +248,27 @@ msgstr "Erzeuge symbolische Verknüpfung »%s« nach »%s«"
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: Protokoll »%s« ist nicht für das spiegeln geeignet\n"
 
-#: src/MirrorJob.cc:535
+#: src/MirrorJob.cc:534
 #, c-format
 msgid "Making directory `%s'"
 msgstr "Lege Verzeichnis »%s« an"
 
-#: src/MirrorJob.cc:627
+#: src/MirrorJob.cc:626
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "Bestehende Datei »%s« wird nicht entfernt"
 
-#: src/MirrorJob.cc:659
+#: src/MirrorJob.cc:658
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "Entferne alte Datei »%s«"
 
-#: src/MirrorJob.cc:1007
+#: src/MirrorJob.cc:1006
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s: Regulärer Ausdruck (regular expression) %s: %s\n"
 
-#: src/MirrorJob.cc:1068 src/commands.cc:952 src/commands.cc:1044
+#: src/MirrorJob.cc:1067 src/commands.cc:952 src/commands.cc:1044
 #: src/commands.cc:1429 src/commands.cc:1463 src/commands.cc:1563
 #: src/commands.cc:1819 src/commands.cc:2013 src/commands.cc:2187
 #: src/commands.cc:2194 src/commands.cc:2376 src/commands.cc:2404
@@ -278,7 +278,7 @@ msgstr "%s: Regulärer Ausdruck (regular expression) %s: %s\n"
 msgid "Try `help %s' for more information.\n"
 msgstr "»help %s« gibt mehr Informationen aus.\n"
 
-#: src/MirrorJob.cc:1102 src/MirrorJob.cc:1118 src/commands.cc:817
+#: src/MirrorJob.cc:1101 src/MirrorJob.cc:1117 src/commands.cc:817
 #: src/commands.cc:1907 src/DummyProto.cc:73
 msgid " - not supported protocol"
 msgstr " - Protokoll nicht unterstützt"

@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
-"POT-Creation-Date: 2002-08-01 16:37+0400\n"
+"POT-Creation-Date: 2002-08-02 12:43+0400\n"
 "PO-Revision-Date: 1999-07-12 00:00+0400\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -212,7 +212,7 @@ msgstr ""
 msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 
-#: src/MirrorJob.cc:225 src/MirrorJob.cc:665
+#: src/MirrorJob.cc:225 src/MirrorJob.cc:664
 #, fuzzy, c-format
 msgid "Removing old file `%s'"
 msgstr "Removendo arquivo local antigo `%s'"
@@ -242,27 +242,27 @@ msgstr "Criando link simbólico de `%s' para `%s'"
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: o protocolo `%s' não pode ser espelhado\n"
 
-#: src/MirrorJob.cc:535
+#: src/MirrorJob.cc:534
 #, fuzzy, c-format
 msgid "Making directory `%s'"
 msgstr "Criando diretório remoto `%s'"
 
-#: src/MirrorJob.cc:627
+#: src/MirrorJob.cc:626
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr ""
 
-#: src/MirrorJob.cc:659
+#: src/MirrorJob.cc:658
 #, fuzzy, c-format
 msgid "Removing old directory `%s'"
 msgstr "Removendo arquivo remoto antigo `%s'"
 
-#: src/MirrorJob.cc:1007
+#: src/MirrorJob.cc:1006
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1068 src/commands.cc:952 src/commands.cc:1044
+#: src/MirrorJob.cc:1067 src/commands.cc:952 src/commands.cc:1044
 #: src/commands.cc:1429 src/commands.cc:1463 src/commands.cc:1563
 #: src/commands.cc:1819 src/commands.cc:2013 src/commands.cc:2187
 #: src/commands.cc:2194 src/commands.cc:2376 src/commands.cc:2404
@@ -272,7 +272,7 @@ msgstr ""
 msgid "Try `help %s' for more information.\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1102 src/MirrorJob.cc:1118 src/commands.cc:817
+#: src/MirrorJob.cc:1101 src/MirrorJob.cc:1117 src/commands.cc:817
 #: src/commands.cc:1907 src/DummyProto.cc:73
 #, fuzzy
 msgid " - not supported protocol"

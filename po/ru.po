@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2\n"
-"POT-Creation-Date: 2002-08-01 16:37+0400\n"
+"POT-Creation-Date: 2002-08-02 12:43+0400\n"
 "PO-Revision-Date: 2000-09-07 09:36+08:00\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -216,7 +216,7 @@ msgstr ""
 "%sПодлежат удалению: %d каталог$|а|ов$, %d файл$|а|ов$, %d $ссылка|ссылки|"
 "ссылок$\n"
 
-#: src/MirrorJob.cc:225 src/MirrorJob.cc:665
+#: src/MirrorJob.cc:225 src/MirrorJob.cc:664
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "Удаление старого файла `%s'"
@@ -246,27 +246,27 @@ msgstr "Создание символьной ссылки `%s' на `%s'"
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: протокол `%s' не подходит для зеркалирования\n"
 
-#: src/MirrorJob.cc:535
+#: src/MirrorJob.cc:534
 #, c-format
 msgid "Making directory `%s'"
 msgstr "Создание каталога `%s'"
 
-#: src/MirrorJob.cc:627
+#: src/MirrorJob.cc:626
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "Старый файл `%s' не удален"
 
-#: src/MirrorJob.cc:659
+#: src/MirrorJob.cc:658
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "Удаление старого каталога `%s'"
 
-#: src/MirrorJob.cc:1007
+#: src/MirrorJob.cc:1006
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1068 src/commands.cc:952 src/commands.cc:1044
+#: src/MirrorJob.cc:1067 src/commands.cc:952 src/commands.cc:1044
 #: src/commands.cc:1429 src/commands.cc:1463 src/commands.cc:1563
 #: src/commands.cc:1819 src/commands.cc:2013 src/commands.cc:2187
 #: src/commands.cc:2194 src/commands.cc:2376 src/commands.cc:2404
@@ -276,7 +276,7 @@ msgstr ""
 msgid "Try `help %s' for more information.\n"
 msgstr "Запустите `help %s' для получения дополнительной информации.\n"
 
-#: src/MirrorJob.cc:1102 src/MirrorJob.cc:1118 src/commands.cc:817
+#: src/MirrorJob.cc:1101 src/MirrorJob.cc:1117 src/commands.cc:817
 #: src/commands.cc:1907 src/DummyProto.cc:73
 msgid " - not supported protocol"
 msgstr " - протокол не поддерживается"

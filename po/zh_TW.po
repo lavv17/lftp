@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.3.9\n"
-"POT-Creation-Date: 2002-08-01 16:37+0400\n"
+"POT-Creation-Date: 2002-08-02 12:43+0400\n"
 "PO-Revision-Date: 2001-04-22 06:01+0800\n"
 "Last-Translator: Abel Cheung <maddog@linux.org.hk>\n"
 "Language-Team: Traditional Chinese <zh-l10n@linux.org.tw>\n"
@@ -211,7 +211,7 @@ msgstr "%s刪除︰%d 個目錄，%d 個檔案，%d 個軟連結\n"
 msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%s將會刪除︰%d 個目錄，%d 個檔案，%d 個軟連結\n"
 
-#: src/MirrorJob.cc:225 src/MirrorJob.cc:665
+#: src/MirrorJob.cc:225 src/MirrorJob.cc:664
 #, fuzzy, c-format
 msgid "Removing old file `%s'"
 msgstr "刪除舊的本機檔案 `%s'"
@@ -241,27 +241,27 @@ msgstr "建立軟連結 `%s' 到 `%s'"
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror : 協定 `%s' 不適合作為映射\n"
 
-#: src/MirrorJob.cc:535
+#: src/MirrorJob.cc:534
 #, fuzzy, c-format
 msgid "Making directory `%s'"
 msgstr "在遠端建立目錄 `%s'"
 
-#: src/MirrorJob.cc:627
+#: src/MirrorJob.cc:626
 #, fuzzy, c-format
 msgid "Old file `%s' is not removed"
 msgstr "舊的本機檔案 `%s' 沒有被刪除"
 
-#: src/MirrorJob.cc:659
+#: src/MirrorJob.cc:658
 #, fuzzy, c-format
 msgid "Removing old directory `%s'"
 msgstr "刪除舊的遠端目錄 `%s'"
 
-#: src/MirrorJob.cc:1007
+#: src/MirrorJob.cc:1006
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1068 src/commands.cc:952 src/commands.cc:1044
+#: src/MirrorJob.cc:1067 src/commands.cc:952 src/commands.cc:1044
 #: src/commands.cc:1429 src/commands.cc:1463 src/commands.cc:1563
 #: src/commands.cc:1819 src/commands.cc:2013 src/commands.cc:2187
 #: src/commands.cc:2194 src/commands.cc:2376 src/commands.cc:2404
@@ -271,7 +271,7 @@ msgstr ""
 msgid "Try `help %s' for more information.\n"
 msgstr "輸入 `help %s' 查看更多資料。\n"
 
-#: src/MirrorJob.cc:1102 src/MirrorJob.cc:1118 src/commands.cc:817
+#: src/MirrorJob.cc:1101 src/MirrorJob.cc:1117 src/commands.cc:817
 #: src/commands.cc:1907 src/DummyProto.cc:73
 msgid " - not supported protocol"
 msgstr " - 不支援此協定"
