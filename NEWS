@@ -8,6 +8,10 @@ Version 2.2.0 - 2000-??-??
 * new settings xfer:eta-period and xfer:rate-period for calculation of eta
   and current rate.
 * ascii mode transfers - `get -a', `put -a' etc.
+* number of connections to the same site can now be limited using the setting
+  `net:connection-limit'. Background FTP connections being in use can still
+  be used for foreground operations if the setting `net:connection-takeover'
+  is set to `yes' (default).
 * new setting ftp:use-abor. (default: yes) If set to no, lftp does not send
   ABOR command but closes data connection immediately.
 * new settings net:reconnect-interval-multiplier and net:reconnect-interval-max,

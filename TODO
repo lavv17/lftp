@@ -61,14 +61,11 @@ currently; some need other work to be done.
      Maybe it is better to specify interface instead of address, then address
    family can be used to get proper address off the interface. (?)
 
- * make a class FileAccessLocation
+ * make a class FileAccessLocation (class url?)
 
  * mirror --remove-first
 
  * job suspend/resume.
-
- * connection number limit, connection takeover even if it is used(?).
-   foreground session should have priority over bg ones.
 
  * motd. if it is not yet known, connect/login and get it. (use class Buffer).
 
@@ -86,8 +83,13 @@ currently; some need other work to be done.
 
  * add url support for mirror, find... This can wait for 2.3.
 
- * improve glob status (show directory).
+ * improve glob status (show directory/pattern).
 
  * completion: when single file matches and it is directory, add /
 
  * use Buffer in FtpSplitList
+
+ * implement class url, introduce encoded_path so that lftp does not encode
+   unneeded characters, e.g. `?'. Use the class as location in FileAccess.
+
+ * a setting to make commands quiet (cmd:quiet? or cmd:verbose with int value)
