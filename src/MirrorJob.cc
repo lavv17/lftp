@@ -303,7 +303,7 @@ void  MirrorJob::HandleFile(int how)
 	 {
 	    mode=((file->defined&file->MODE)&&!(flags&NO_PERMS))?file->mode:0755;
 	    struct stat st;
-	    if(stat(local_name,&st)!=-1)
+	    if(lstat(local_name,&st)!=-1)
 	    {
 	       if(S_ISDIR(st.st_mode))
 		  chmod(local_name,st.st_mode|0700);

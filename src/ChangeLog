@@ -1,3 +1,9 @@
+2000-06-26  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* MirrorJob.cc: use lstat instead of stat on local file before mkdir.
+	* Job.cc, Job.h: (FindAnyChild) new method.
+	* CmdExec.cc, CmdExec.h, commands.cc: support for `wait all'.
+
 2000-06-22  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileCopy.cc, FileCopy.h: log redirections; fix init of redirections;
