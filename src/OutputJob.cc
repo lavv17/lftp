@@ -158,6 +158,10 @@ void OutputJob::Init(const char *_a0)
    is_stdout=false;
    fail_if_broken=true;
    output_fd=0;
+   fa=0;
+   fa_path=0;
+   fa_reuse=false;
+   tmp_buf=0;
    is_a_tty=false;
    width=-1;
    statusbar_redisplay=true;
@@ -257,6 +261,10 @@ OutputJob::~OutputJob()
    if(input != output)
       Delete(output);
    delete output_fd;
+   if(fa && fa_reuse)
+      SessionPool::Reuse(fa);
+   xfree(fa_path);
+   Delete(tmp_buf);
 
    xfree(a0);
    xfree(filter);
@@ -346,7 +354,6 @@ void OutputJob::PreFilter(const char *newfilter)
 
    char *newstr = xasprintf("%s | %s", newfilter, filter);
    SetFilter(newstr);
-   printf("new: '%s'\n", newstr);
    xfree(newstr);
 }
 
@@ -460,24 +467,26 @@ void OutputJob::Resume()
 
 bool OutputJob::Full()
 {
-   if(input == 0)
-      return false;
-
    /* It'd be nicer to just check copy->GetGet()->IsSuspended(), since
     * the FileCopy will suspend the Get end if the Put end gets filled.
     * However, it won't do that until it actually tries to send something. */
    int size = 0;
-   if(input->GetPut())
-      size += input->GetPut()->Buffered();
-   if(input->GetGet())
-      size += input->GetGet()->Buffered();
-   if(input != output)
+   if(input)
    {
-      if(output->GetPut())
-	 size += output->GetPut()->Buffered();
-      if(output->GetGet())
-	 size += output->GetGet()->Buffered();
+      if(input->GetPut())
+	 size += input->GetPut()->Buffered();
+      if(input->GetGet())
+	 size += input->GetGet()->Buffered();
+      if(input != output)
+      {
+	 if(output->GetPut())
+	    size += output->GetPut()->Buffered();
+	 if(output->GetGet())
+	    size += output->GetGet()->Buffered();
+      }
    }
+   if(tmp_buf)
+      size += tmp_buf->Size();
 
    return size >= 0x10000;
 }
@@ -488,8 +497,28 @@ bool OutputJob::Full()
 void OutputJob::Put(const char *buf,int size)
 {
    InitCopy();
-   if(!InputPeer())
+   if(Error())
       return;
+   if(!InputPeer())
+   {
+      if(!tmp_buf)
+	 tmp_buf=new Buffer;
+      tmp_buf->Put(buf,size);
+      return;
+   }
+
+   // InputPeer was inited, flush tmp_buf.
+   if(InputPeer() && tmp_buf)
+   {
+      Buffer *saved_buf=tmp_buf;
+      tmp_buf=0;
+      const char *b=0;
+      int s=0;
+      saved_buf->Get(&b,&s);
+      if(b && s>0)
+	 Put(b,s);
+      Delete(saved_buf);
+   }
 
    update_timer.SetResource("cmd:status-interval",0);
 
@@ -500,20 +529,12 @@ void OutputJob::Put(const char *buf,int size)
 
 void OutputJob::Format(const char *f,...)
 {
-   InitCopy();
-   if(!InputPeer())
-      return;
-
-   update_timer.SetResource("cmd:status-interval",0);
-
-   int oldpos = InputPeer()->GetPos();
-
    va_list v;
    va_start(v,f);
-   InputPeer()->vFormat(f, v);
+   char *str=xvasprintf(f,v);
    va_end(v);
-
-   InputPeer()->SetPos(oldpos);
+   Put(str);
+   xfree(str);
 }
 
 /* Propagate signals down to our child processes. */
