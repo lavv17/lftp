@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp\n"
-"POT-Creation-Date: 2001-01-02 12:50+0300\n"
+"POT-Creation-Date: 2001-01-15 11:58+0300\n"
 "PO-Revision-Date: 1999-06-08 15:27+02:00\n"
 "Last-Translator: Arkadiusz Mi¶kiewicz <misiek@pld.org.pl>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -360,7 +360,7 @@ msgstr "nie zdefiniowano zamkniêcia dla tego ustawienia"
 msgid "dns cache hit\n"
 msgstr "trafiony cel w pamiêci podrêcznej\n"
 
-#: src/Http.cc:1523 src/Resolver.cc:193 src/ftpclass.cc:3400
+#: src/Http.cc:1527 src/Resolver.cc:193 src/ftpclass.cc:3400
 msgid "Resolving host address..."
 msgstr "Uzyskiwanie adresu hosta..."
 
@@ -1466,27 +1466,27 @@ msgid "Saw `Login incorrect', assume failed login"
 msgstr ""
 "Pojawi³o siê `Login incorrect', przypuszczalnie logowanie nie powiod³o siê"
 
-#: src/ftpclass.cc:426
+#: src/ftpclass.cc:420
+msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
+msgstr "ftp:skey-force jest ustawione i serwer nie obs³uguje OPIE ani S/KEY"
+
+#: src/ftpclass.cc:436
 msgid "Saw `unknown', assume failed login"
 msgstr "Pojawi³o siê `unknown', przypuszczalnie logowanie nie powiod³o siê"
 
-#: src/ftpclass.cc:437
+#: src/ftpclass.cc:447
 msgid "assuming failed host name lookup"
 msgstr "przypuszalnie nie powiod³o siê wyszukiwanie IP hosta"
-
-#: src/ftpclass.cc:450
-msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
-msgstr "ftp:skey-force jest ustawione i serwer nie obs³uguje OPIE ani S/KEY"
 
 #: src/ftpclass.cc:665
 msgid "cannot parse EPSV response"
 msgstr "nie mo¿na przeanalizowaæ odpowiedzi EPSV"
 
-#: src/Http.cc:743 src/ftpclass.cc:1009
+#: src/Http.cc:744 src/ftpclass.cc:1009
 msgid "Closing idle connection"
 msgstr "Zamykanie bezczynnego po³±czenia"
 
-#: src/Http.cc:871 src/ftpclass.cc:1088
+#: src/Http.cc:872 src/ftpclass.cc:1088
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "nie mo¿na utworzyæ gniazda dla rodziny adresu %d"
@@ -1512,7 +1512,7 @@ msgstr "Wy³±czam tryb pasywny"
 msgid "Timeout - reconnecting"
 msgstr "Przekroczony limit czasu - ³±czê siê ponownie"
 
-#: src/Http.cc:950 src/ftpclass.cc:2195
+#: src/Http.cc:951 src/ftpclass.cc:2195
 msgid "Peer closed connection"
 msgstr "Komputer po drugiej stronie zamkn±³ po³±czenie"
 
@@ -1558,16 +1558,16 @@ msgstr ""
 msgid "Sending commands..."
 msgstr "Wysy³anie komend..."
 
-#: src/Http.cc:1536 src/ftpclass.cc:3392 src/ftpclass.cc:3417
+#: src/Http.cc:1540 src/ftpclass.cc:3392 src/ftpclass.cc:3417
 #: src/ftpclass.cc:3424
 msgid "Waiting for response..."
 msgstr "Czekanie na odpowied¼..."
 
-#: src/Http.cc:1531 src/ftpclass.cc:3393
+#: src/Http.cc:1535 src/ftpclass.cc:3393
 msgid "Connection idle"
 msgstr "Po³±czenie bezczynne"
 
-#: src/Http.cc:1529 src/ftpclass.cc:3406
+#: src/Http.cc:1533 src/ftpclass.cc:3406
 msgid "Connecting..."
 msgstr "£±czenie siê..."
 
@@ -1599,11 +1599,11 @@ msgstr "Oczekiwanie na zakoñczenie transferu"
 msgid "Waiting for data connection..."
 msgstr "Czekam na po³±czenie dla danych..."
 
-#: src/Http.cc:1534 src/ftpclass.cc:3431
+#: src/Http.cc:1538 src/ftpclass.cc:3431
 msgid "Sending data"
 msgstr "Wysy³am dane"
 
-#: src/Http.cc:1539 src/ftpclass.cc:3433
+#: src/Http.cc:1543 src/ftpclass.cc:3433
 msgid "Receiving data"
 msgstr "Otrzymujê dane"
 
@@ -1693,67 +1693,67 @@ msgstr "%s ok, %d katalog$|i|ów$ usuniêto\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d plik$|i|ów$ usuniêto\n"
 
-#: src/Http.cc:160
+#: src/Http.cc:161
 msgid "Closing HTTP connection"
 msgstr "Zamykanie po³±czenia HTTP"
 
-#: src/Http.cc:168
+#: src/Http.cc:169
 msgid "POST method failed"
 msgstr "nie powiod³a siê metoda POST"
 
 #. problem here: hftp cannot work without proxy
-#: src/Http.cc:822
+#: src/Http.cc:823
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr "ftp poprzez http mo¿e nie dzia³aæ bez proxy, ustaw hftp:proxy"
 
-#: src/Http.cc:891
+#: src/Http.cc:892
 #, c-format
 msgid "connect: %s"
 msgstr "po³±czenie: %s"
 
-#: src/Http.cc:961
+#: src/Http.cc:962
 msgid "Sending request..."
 msgstr "Wysy³anie ¿±dania..."
 
 #. eof
-#: src/Http.cc:999
+#: src/Http.cc:1000
 msgid "Hit EOF while fetching headers"
 msgstr "Natrafiono na EOF podczas przesy³ania nag³ówków"
 
 #. should never happen
-#: src/Http.cc:1054
+#: src/Http.cc:1062
 msgid "Success, but did nothing??"
 msgstr "Sukcjes, ale nic nie zrobiono??"
 
-#: src/Http.cc:1088
+#: src/Http.cc:1096
 msgid "Could not parse HTTP status line"
 msgstr "Nie mo¿na zanalizowaæ lini statusu HTTP"
 
-#: src/Http.cc:1186
+#: src/Http.cc:1190
 msgid "Receiving body..."
 msgstr "Otrzymujê dane..."
 
-#: src/Http.cc:1321
+#: src/Http.cc:1325
 msgid "Hit EOF"
 msgstr "Natrafiono na EOF"
 
-#: src/Http.cc:1324
+#: src/Http.cc:1328
 msgid "Received not enough data, retrying"
 msgstr "Przes³anie nie wystarczaj±c± ilo¶æ danych, próbujê ponownie"
 
-#: src/Http.cc:1332
+#: src/Http.cc:1336
 msgid "Received all"
 msgstr "Przes³ano wszystko"
 
-#: src/Http.cc:1337
+#: src/Http.cc:1341
 msgid "Received all (total)"
 msgstr "Przes³ano wszystko (ca³o¶æ)"
 
-#: src/Http.cc:1358 src/Http.cc:1379
+#: src/Http.cc:1362 src/Http.cc:1383
 msgid "chunked format violated"
 msgstr "naruszony format"
 
-#: src/Http.cc:1537
+#: src/Http.cc:1541
 msgid "Fetching headers..."
 msgstr "Przesy³am nag³ówki..."
 

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2\n"
-"POT-Creation-Date: 2001-01-02 12:50+0300\n"
+"POT-Creation-Date: 2001-01-15 11:58+0300\n"
 "PO-Revision-Date: 2000-09-07 09:36+08:00\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -352,7 +352,7 @@ msgstr ""
 msgid "dns cache hit\n"
 msgstr ""
 
-#: src/Http.cc:1523 src/Resolver.cc:193 src/ftpclass.cc:3400
+#: src/Http.cc:1527 src/Resolver.cc:193 src/ftpclass.cc:3400
 msgid "Resolving host address..."
 msgstr "Преобразование адреса сервера..."
 
@@ -1444,27 +1444,27 @@ msgstr "Включение режима NOREST"
 msgid "Saw `Login incorrect', assume failed login"
 msgstr "Получена строка `Login incorrect', подразумевается неудача регистрации"
 
-#: src/ftpclass.cc:426
+#: src/ftpclass.cc:420
+msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
+msgstr ""
+
+#: src/ftpclass.cc:436
 msgid "Saw `unknown', assume failed login"
 msgstr "Получена строка `unknown', подразумевается неудача регистрации"
 
-#: src/ftpclass.cc:437
+#: src/ftpclass.cc:447
 msgid "assuming failed host name lookup"
 msgstr "подразумевается ошибка преобразования адреса машины"
-
-#: src/ftpclass.cc:450
-msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
-msgstr ""
 
 #: src/ftpclass.cc:665
 msgid "cannot parse EPSV response"
 msgstr ""
 
-#: src/Http.cc:743 src/ftpclass.cc:1009
+#: src/Http.cc:744 src/ftpclass.cc:1009
 msgid "Closing idle connection"
 msgstr "Закрытие неиспользуемого соединения"
 
-#: src/Http.cc:871 src/ftpclass.cc:1088
+#: src/Http.cc:872 src/ftpclass.cc:1088
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr ""
@@ -1490,7 +1490,7 @@ msgstr "Отключение пассивного режима"
 msgid "Timeout - reconnecting"
 msgstr "Превышение лимита времени ожидания - повторное соединение"
 
-#: src/Http.cc:950 src/ftpclass.cc:2195
+#: src/Http.cc:951 src/ftpclass.cc:2195
 msgid "Peer closed connection"
 msgstr "Соединение закрыто удаленной машиной"
 
@@ -1534,16 +1534,16 @@ msgstr ""
 msgid "Sending commands..."
 msgstr "Передача команд..."
 
-#: src/Http.cc:1536 src/ftpclass.cc:3392 src/ftpclass.cc:3417
+#: src/Http.cc:1540 src/ftpclass.cc:3392 src/ftpclass.cc:3417
 #: src/ftpclass.cc:3424
 msgid "Waiting for response..."
 msgstr "Ожидание ответа..."
 
-#: src/Http.cc:1531 src/ftpclass.cc:3393
+#: src/Http.cc:1535 src/ftpclass.cc:3393
 msgid "Connection idle"
 msgstr "Соединение не используется"
 
-#: src/Http.cc:1529 src/ftpclass.cc:3406
+#: src/Http.cc:1533 src/ftpclass.cc:3406
 msgid "Connecting..."
 msgstr "Установка соединения..."
 
@@ -1575,11 +1575,11 @@ msgstr "Ожидание окончания пересылки"
 msgid "Waiting for data connection..."
 msgstr "Ожидание установки соединения данных..."
 
-#: src/Http.cc:1534 src/ftpclass.cc:3431
+#: src/Http.cc:1538 src/ftpclass.cc:3431
 msgid "Sending data"
 msgstr "Отправка данных"
 
-#: src/Http.cc:1539 src/ftpclass.cc:3433
+#: src/Http.cc:1543 src/ftpclass.cc:3433
 msgid "Receiving data"
 msgstr "Получение данных"
 
@@ -1669,67 +1669,67 @@ msgstr "%s ok, %d каталог$|а|ов$ удалено\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d файл$|а|ов$ удалено\n"
 
-#: src/Http.cc:160
+#: src/Http.cc:161
 msgid "Closing HTTP connection"
 msgstr "Закрытие соединения HTTP"
 
-#: src/Http.cc:168
+#: src/Http.cc:169
 msgid "POST method failed"
 msgstr ""
 
 #. problem here: hftp cannot work without proxy
-#: src/Http.cc:822
+#: src/Http.cc:823
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 
-#: src/Http.cc:891
+#: src/Http.cc:892
 #, c-format
 msgid "connect: %s"
 msgstr ""
 
-#: src/Http.cc:961
+#: src/Http.cc:962
 msgid "Sending request..."
 msgstr "Передача запроса..."
 
 #. eof
-#: src/Http.cc:999
+#: src/Http.cc:1000
 msgid "Hit EOF while fetching headers"
 msgstr "Получил конец файла (EOF) при чтении заголовков"
 
 #. should never happen
-#: src/Http.cc:1054
+#: src/Http.cc:1062
 msgid "Success, but did nothing??"
 msgstr ""
 
-#: src/Http.cc:1088
+#: src/Http.cc:1096
 msgid "Could not parse HTTP status line"
 msgstr ""
 
-#: src/Http.cc:1186
+#: src/Http.cc:1190
 msgid "Receiving body..."
 msgstr "Получение тела ответа..."
 
-#: src/Http.cc:1321
+#: src/Http.cc:1325
 msgid "Hit EOF"
 msgstr ""
 
-#: src/Http.cc:1324
+#: src/Http.cc:1328
 msgid "Received not enough data, retrying"
 msgstr ""
 
-#: src/Http.cc:1332
+#: src/Http.cc:1336
 msgid "Received all"
 msgstr "Все получил"
 
-#: src/Http.cc:1337
+#: src/Http.cc:1341
 msgid "Received all (total)"
 msgstr ""
 
-#: src/Http.cc:1358 src/Http.cc:1379
+#: src/Http.cc:1362 src/Http.cc:1383
 msgid "chunked format violated"
 msgstr "формат данных `chunked' нарушен"
 
-#: src/Http.cc:1537
+#: src/Http.cc:1541
 msgid "Fetching headers..."
 msgstr "Получение заголовков HTTP..."
 

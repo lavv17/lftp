@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2.1\n"
-"POT-Creation-Date: 2001-01-02 12:50+0300\n"
+"POT-Creation-Date: 2001-01-15 11:58+0300\n"
 "PO-Revision-Date: 2000-08-26 00:01-0300\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -347,7 +347,7 @@ msgstr ""
 msgid "dns cache hit\n"
 msgstr "acierto en el cache dns\n"
 
-#: src/Http.cc:1523 src/Resolver.cc:193 src/ftpclass.cc:3400
+#: src/Http.cc:1527 src/Resolver.cc:193 src/ftpclass.cc:3400
 msgid "Resolving host address..."
 msgstr "Resolviendo dirección del servidor..."
 
@@ -1460,27 +1460,27 @@ msgstr "Conectando modo NOREST"
 msgid "Saw `Login incorrect', assume failed login"
 msgstr "Vi `Login incorrect', asumiendo indentificación fallida"
 
-#: src/ftpclass.cc:426
+#: src/ftpclass.cc:420
+msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
+msgstr "ftp:está definido skey-force y el servidor no soporta ni OPIE ni S/KEY"
+
+#: src/ftpclass.cc:436
 msgid "Saw `unknown', assume failed login"
 msgstr "Vi `unknown', asumiendo identificación fallida"
 
-#: src/ftpclass.cc:437
+#: src/ftpclass.cc:447
 msgid "assuming failed host name lookup"
 msgstr "asumiendo falla en la búsqueda del nombre de servidor"
-
-#: src/ftpclass.cc:450
-msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
-msgstr "ftp:está definido skey-force y el servidor no soporta ni OPIE ni S/KEY"
 
 #: src/ftpclass.cc:665
 msgid "cannot parse EPSV response"
 msgstr "no se pudo interpretar la respuesta EPSV"
 
-#: src/Http.cc:743 src/ftpclass.cc:1009
+#: src/Http.cc:744 src/ftpclass.cc:1009
 msgid "Closing idle connection"
 msgstr "Cerrando conexión ociosa"
 
-#: src/Http.cc:871 src/ftpclass.cc:1088
+#: src/Http.cc:872 src/ftpclass.cc:1088
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "no se pudo crear un socket de la familia %d de direcciones"
@@ -1506,7 +1506,7 @@ msgstr "Desconectando modo pasivo"
 msgid "Timeout - reconnecting"
 msgstr "Tiempo fuera - reconectando"
 
-#: src/Http.cc:950 src/ftpclass.cc:2195
+#: src/Http.cc:951 src/ftpclass.cc:2195
 msgid "Peer closed connection"
 msgstr "El otro extremo cerró la conexión"
 
@@ -1551,16 +1551,16 @@ msgstr ""
 msgid "Sending commands..."
 msgstr "Enviando comandos..."
 
-#: src/Http.cc:1536 src/ftpclass.cc:3392 src/ftpclass.cc:3417
+#: src/Http.cc:1540 src/ftpclass.cc:3392 src/ftpclass.cc:3417
 #: src/ftpclass.cc:3424
 msgid "Waiting for response..."
 msgstr "Esperando respuesta..."
 
-#: src/Http.cc:1531 src/ftpclass.cc:3393
+#: src/Http.cc:1535 src/ftpclass.cc:3393
 msgid "Connection idle"
 msgstr "Conexión ociosa"
 
-#: src/Http.cc:1529 src/ftpclass.cc:3406
+#: src/Http.cc:1533 src/ftpclass.cc:3406
 msgid "Connecting..."
 msgstr "Conectándose..."
 
@@ -1592,11 +1592,11 @@ msgstr "Esperando que finalice la transferencia"
 msgid "Waiting for data connection..."
 msgstr "Esperando la conexión de datos..."
 
-#: src/Http.cc:1534 src/ftpclass.cc:3431
+#: src/Http.cc:1538 src/ftpclass.cc:3431
 msgid "Sending data"
 msgstr "Enviando datos"
 
-#: src/Http.cc:1539 src/ftpclass.cc:3433
+#: src/Http.cc:1543 src/ftpclass.cc:3433
 msgid "Receiving data"
 msgstr "Recibiendo datos"
 
@@ -1686,68 +1686,68 @@ msgstr "%s ok, %d directorio$|s$ borrado$|s$\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d archivo$|s$ borrado$|s$\n"
 
-#: src/Http.cc:160
+#: src/Http.cc:161
 msgid "Closing HTTP connection"
 msgstr "Cerrando conexión HTTP"
 
-#: src/Http.cc:168
+#: src/Http.cc:169
 msgid "POST method failed"
 msgstr "falló el método POST"
 
 #. problem here: hftp cannot work without proxy
-#: src/Http.cc:822
+#: src/Http.cc:823
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr "ftp no funciona sobre http sin usar un proxy, configure hftp:proxy."
 
-#: src/Http.cc:891
+#: src/Http.cc:892
 #, c-format
 msgid "connect: %s"
 msgstr "connect: %s"
 
-#: src/Http.cc:961
+#: src/Http.cc:962
 msgid "Sending request..."
 msgstr "Enviando requerimiento..."
 
 #. eof
-#: src/Http.cc:999
+#: src/Http.cc:1000
 msgid "Hit EOF while fetching headers"
 msgstr "Encontré EOF mientras traía encabezados"
 
 # Esto no se internacionaliza.
 #. should never happen
-#: src/Http.cc:1054
+#: src/Http.cc:1062
 msgid "Success, but did nothing??"
 msgstr ""
 
-#: src/Http.cc:1088
+#: src/Http.cc:1096
 msgid "Could not parse HTTP status line"
 msgstr "No se pudo interpretar la línea de estado HTTP"
 
-#: src/Http.cc:1186
+#: src/Http.cc:1190
 msgid "Receiving body..."
 msgstr "Recibiendo cuerpo..."
 
-#: src/Http.cc:1321
+#: src/Http.cc:1325
 msgid "Hit EOF"
 msgstr "Encontré EOF"
 
-#: src/Http.cc:1324
+#: src/Http.cc:1328
 msgid "Received not enough data, retrying"
 msgstr "No se recibió suficiente, reintentando"
 
-#: src/Http.cc:1332
+#: src/Http.cc:1336
 msgid "Received all"
 msgstr "Se recibió todo"
 
-#: src/Http.cc:1337
+#: src/Http.cc:1341
 msgid "Received all (total)"
 msgstr "Se recibió todo (total)"
 
-#: src/Http.cc:1358 src/Http.cc:1379
+#: src/Http.cc:1362 src/Http.cc:1383
 msgid "chunked format violated"
 msgstr "formato `chunked' violado"
 
-#: src/Http.cc:1537
+#: src/Http.cc:1541
 msgid "Fetching headers..."
 msgstr "Trayendo encabezados..."
 

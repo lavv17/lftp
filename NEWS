@@ -1,3 +1,8 @@
+Version 2.3.7 - 2001-01-15
+
+* fixed OPIE/SKEY automatic password generation.
+* fixed put over http or hftp when server replies `100 Continue'.
+
 Version 2.3.6 - 2001-01-02
 
 * new setting cmd:save-cwd-history.
