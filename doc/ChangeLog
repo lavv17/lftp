@@ -1,3 +1,7 @@
+2003-08-25	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document new settings.
+
 2003-05-15	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: minor corrections.

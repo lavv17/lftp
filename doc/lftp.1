@@ -903,8 +903,11 @@ for ftp servers which send "Transfer complete" message before flushing
 data transfer. In such cases NOOP commands can prevent connection timeout.
 .TP
 .BR ftp:passive-mode \ (bool)
-sets passive ftp mode. This can be useful if you are behind a firewall
-or a dumb masquerading router.
+sets passive ftp mode. This can be useful if you are behind a firewall or a
+dumb masquerading router. In passive mode lftp uses PASV command, not the
+PORT command which is used in active mode. In passive mode lftp itself
+makes the data connection to the server; in active mode the server connects
+to lftp for data transfer. Passive mode is the default.
 .TP
 .BR ftp:port-ipv4 " (ipv4 address)"
 specifies an IPv4 address to send with PORT command. Default is empty which
@@ -992,13 +995,26 @@ immediately.
 .BR ftp:use-fxp \ (bool)
 if true, lftp will try to set up direct connection between two ftp servers.
 .TP
+.BR ftp:use-mdtm \ (bool)
+when true (default), lftp uses MDTM command to determine file modification
+time.
+.TP
 .BR ftp:use-site-idle \ (bool)
 when true, lftp sends `SITE IDLE' command with net:idle argument. Default
 is false.
 .TP
+.BR ftp:use-size \ (bool)
+when true (default), lftp uses SIZE command to determine file size.
+.TP
 .BR ftp:use-stat \ (bool)
 if true, lftp sends STAT command in FXP mode transfer to know how much
 data has been transferred. See also ftp:stat-interval. Default is true.
+.TP
+.BR ftp:use-telnet-iac \ (bool)
+when true (default), lftp uses TELNET IAC command and follows TELNET protocol
+as specified in RFC959. When false, it does not follow TELNET protocol and
+thus does not double 255 (0xFF, 0377) character and does not prefix ABOR and
+STAT commands with TELNET IP+SYNCH signal.
 .TP
 .BR ftp:use-quit " (bool)"
 if true, lftp sends QUIT before disconnecting from ftp server. Default is true.
