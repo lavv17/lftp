@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.53)
-AC_INIT([lftp], [2.6.9], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [pre3.0.0], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
 AM_CONFIG_HEADER(include/config.h)
@@ -185,13 +185,13 @@ if test "$with_modules" = yes; then
    enable_static=no
    enable_shared=yes
    AC_DEFINE(WITH_MODULES, 1, [build modular lftp])
-   MODULES_LA="libnetwork.la proto-ftp.la proto-http.la proto-file.la proto-fish.la cmd-mirror.la cmd-sleep.la"
+   MODULES_LA="libpty.la libnetwork.la proto-ftp.la proto-http.la proto-file.la proto-fish.la proto-sftp.la cmd-mirror.la cmd-sleep.la"
    LFTP_SSL_LDFLAGS=
    LFTP_SSL_LIBS=
 else
    enable_static=yes
    enable_shared=no
-   MODULES_LA_STATIC="libnetwork.la proto-ftp.la proto-http.la proto-file.la proto-fish.la cmd-mirror.la cmd-sleep.la"
+   MODULES_LA_STATIC="libpty.la libnetwork.la proto-ftp.la proto-http.la proto-file.la proto-fish.la proto-sftp.la cmd-mirror.la cmd-sleep.la"
    LFTP_SSL_LDFLAGS='$(SSL_LDFLAGS)'
    LFTP_SSL_LIBS='$(SSL_LIBS)'
 fi
