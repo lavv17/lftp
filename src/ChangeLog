@@ -1,3 +1,8 @@
+2004-11-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h, Http.cc, misc.cc, misc.h: send authorization
+	  to http proxy in CONNECT requests.
+
 2004-11-13  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Http.cc: fixed mkdir.

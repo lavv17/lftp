@@ -115,4 +115,7 @@ char *dirname_modify(char *fn);
 /* returns last character of string or \0 if string is empty */
 char last_char(const char *str);
 
+int  base64_length (int len);
+void base64_encode (const char *s, char *store, int length);
+
 #endif // MISC_H

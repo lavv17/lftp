@@ -2644,19 +2644,35 @@ int  Ftp::ReceiveResp()
    return m;
 }
 
+void Ftp::HttpProxySendAuth(IOBuffer *buf)
+{
+   if(!proxy_user || !proxy_pass)
+      return;
+   char *auth=string_alloca(strlen(proxy_user)+1+strlen(proxy_pass)+1);
+   sprintf(auth,"%s:%s",proxy_user,proxy_pass);
+   int auth_len=strlen(auth);
+   char *buf64=string_alloca(base64_length(auth_len)+1);
+   base64_encode(auth,buf64,auth_len);
+   buf->Format("Proxy-Authorization: Basic %s\r\n",buf64);
+   Log::global->Format(4,"+--> Proxy-Authorization: Basic %s\r\n",buf64);
+}
 void Ftp::HttpProxySendConnect()
 {
    const char *the_port=portname?portname:ftps?FTPS_DEFAULT_PORT:FTP_DEFAULT_PORT;
-   conn->control_send->Format("CONNECT %s:%s HTTP/1.0\r\n\r\n",hostname,the_port);
+   conn->control_send->Format("CONNECT %s:%s HTTP/1.0\r\n",hostname,the_port);
    Log::global->Format(4,"+--> CONNECT %s:%s HTTP/1.0\n",hostname,the_port);
+   HttpProxySendAuth(conn->control_send);
+   conn->control_send->Put("\r\n");
    http_proxy_status_code=0;
 }
 void Ftp::HttpProxySendConnectData()
 {
    const char *the_host=SocketNumericAddress(&conn->data_sa);
    int the_port=SocketPort(&conn->data_sa);
-   conn->data_iobuf->Format("CONNECT %s:%d HTTP/1.0\r\n\r\n",the_host,the_port);
+   conn->data_iobuf->Format("CONNECT %s:%d HTTP/1.0\r\n",the_host,the_port);
    Log::global->Format(4,"+--> CONNECT %s:%d HTTP/1.0\n",the_host,the_port);
+   HttpProxySendAuth(conn->data_iobuf);
+   conn->data_iobuf->Put("\r\n");
    http_proxy_status_code=0;
 }
 // Check reply and return true when the reply is received and is ok.
@@ -2702,7 +2718,7 @@ bool Ftp::HttpProxyReplyCheck(IOBuffer *buf)
 	    DisconnectNow();
 	    return false;
 	 }
-	 SetError(FATAL,all_lines);
+	 SetError(FATAL,line);
 	 return false;
       }
    }
@@ -2861,7 +2877,7 @@ void  Ftp::Disconnect()
    expect->Close();
    DataAbort();
    DataClose();
-   if(conn && state!=CONNECTING_STATE
+   if(conn && state!=CONNECTING_STATE && state!=HTTP_PROXY_CONNECTED
    && expect->Count()<2 && QueryBool("use-quit",hostname))
    {
       conn->SendCmd("QUIT");

@@ -324,6 +324,8 @@ private:
    // Send CONNECT method to http proxy.
    void	 HttpProxySendConnect();
    void	 HttpProxySendConnectData();
+   // Send http proxy auth.
+   void	 HttpProxySendAuth(IOBuffer *);
    // Check if proxy returned a reply, returns true if reply is ok.
    // May disconnect.
    bool	 HttpProxyReplyCheck(IOBuffer *buf);
