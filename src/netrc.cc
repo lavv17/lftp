@@ -45,6 +45,20 @@ NetRC::Entry::~Entry()
    free(acct);
 }
 
+static bool comment(const char *s, FILE *f)
+{
+   if(s[0]!='#')
+      return false;
+   // skip entire line
+   for(;;)
+   {
+      int ch=getc(f);
+      if(ch==EOF || ch=='\n')
+	 break;
+   }
+   return true;
+}
+
 NetRC::Entry *NetRC::LookupHost(const char *h)
 {
    char str[256];
@@ -63,6 +77,8 @@ NetRC::Entry *NetRC::LookupHost(const char *h)
 
    while(fscanf(f,"%255s",str)==1)
    {
+      if(comment(str,f))
+	 continue;
       if(!strcmp(str,"macdef"))
       {
 	 // currently macdef is ignored
@@ -72,15 +88,14 @@ NetRC::Entry *NetRC::LookupHost(const char *h)
 	 {
 	    if(fgets(str,255,f)==0)
 	       break;
-	    if(str[strspn(str," \t\n")]==0)
+	    if(str[strspn(str," \t\n")]==0) // macdef ends with empty line
 	       break;
 	 }
 	 continue;
       }
       if(!strcmp(str,"default"))
       {
-	 found=true;
-	 strcpy(chost,h);
+	 strcpy(chost,""); // ignore the default
 	 continue;
       }
       if(!strcmp(str,"machine"))

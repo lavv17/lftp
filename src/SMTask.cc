@@ -22,6 +22,12 @@
 
 #include <config.h>
 #include <assert.h>
+#include <sys/types.h>
+#include <sys/time.h>
+#ifdef TIME_WITH_SYS_TIME
+# include <time.h>
+#endif
+
 #include "SMTask.h"
 
 SMTask	 *SMTask::chain=0;

@@ -681,6 +681,7 @@ Ftp::Ftp(const Ftp *f) : super(f)
 {
    InitFtp();
 
+#if 0 // this proved to be useless
    if(f->anon_pass)
    {
       xfree(anon_pass);
@@ -691,6 +692,7 @@ Ftp::Ftp(const Ftp *f) : super(f)
       xfree(anon_user);
       anon_user=xstrdup(f->anon_user);
    }
+#endif
 
    if(f->state!=NO_HOST_STATE)
       state=INITIAL_STATE;
@@ -2780,6 +2782,7 @@ const char *Ftp::make_skey_reply()
    return calculate_skey_response(skey_sequence,buf,pass);
 }
 
+#if 0
 void Ftp::Login(const char *u,const char *p)
 {
    if(u)
@@ -2800,6 +2803,7 @@ void Ftp::Login(const char *u,const char *p)
    }
    super::Login(u,p);
 }
+#endif
 
 const char *Ftp::DefaultAnonPass()
 {

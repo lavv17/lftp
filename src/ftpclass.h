@@ -286,7 +286,9 @@ public:
    void	 Connect(const char *,int);
    void	 ConnectVerify();
 
+#if 0
    void	 Login(const char*,const char*);
+#endif
 
    int   Read(void *buf,int size);
    int   Write(const void *buf,int size);
