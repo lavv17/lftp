@@ -222,6 +222,7 @@ public:
    static const cmd_rec *CmdByIndex(int i);
 
    int	 last_bg;
+   bool	 wait_all;
 
    void pre_stdout();
 };

@@ -77,6 +77,7 @@ public:
    void ListOneJobRecursively(int verbose,int indent);
    void ListDoneJobs();
    void BuryDoneJobs();
+   Job *FindAnyChild();
 
    static int NumberOfJobs();
    static Job *FindJob(int n);

@@ -540,6 +540,16 @@ int CmdExec::Do()
 	 waiting->ShowRunStatus(status_line);
       return m;
    }
+   else // !waiting
+   {
+      if(wait_all)
+      {
+	 waiting=FindAnyChild();
+	 if(waiting)
+	    return MOVED;
+	 wait_all=false;
+      }
+   }
 
    if(!interactive)
    {

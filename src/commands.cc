@@ -1589,6 +1589,11 @@ CMD(wait)
    char *jn=args->getnext();
    if(jn)
    {
+      if(!strcmp(jn,"all"))
+      {
+	 parent->wait_all=true;
+	 return 0;
+      }
       if(!isdigit(jn[0]))
       {
 	 eprintf(_("%s: %s - not a number\n"),op,jn);

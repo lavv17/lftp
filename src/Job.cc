@@ -407,3 +407,13 @@ void Job::ShowRunStatus(StatusLine *sl)
    if(waiting)
       waiting->ShowRunStatus(sl);
 }
+
+Job *Job::FindAnyChild()
+{
+   for(Job *scan=chain; scan; scan=scan->next)
+   {
+      if(scan->parent==this && scan->jobno>=0)
+      	 return scan;
+   }
+   return 0;
+}
