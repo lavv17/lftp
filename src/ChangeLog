@@ -2,6 +2,7 @@
 
 	* HttpDir.cc: support base href, refresh, take list of tags from wget;
 	  show relative icon links in ls.
+	* HttpDir.h: (class HttpDirList) add base_href member.
 	* Http.cc: set home to / properly.
 
 1999-07-05  Alexander V. Lukyanov  <lav@yars.free.net>

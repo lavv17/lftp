@@ -54,6 +54,7 @@ class HttpDirList : public DirList
    ParsedURL *curr_url;
    FileSet all_links;
    int mode;
+   char *base_href;
 
 public:
    HttpDirList(ArgV *a,FileAccess *fa);
