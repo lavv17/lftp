@@ -66,9 +66,10 @@ AC_DEFUN(AC_SYS_LARGEFILE,
      AC_SYS_LARGEFILE_MACRO_VALUE(_LARGE_FILES, 1,
        ac_cv_sys_large_files,
        [Define for large files, on AIX-style hosts.])
-     AC_SYS_LARGEFILE_MACRO_VALUE(_XOPEN_SOURCE, 500,
-       ac_cv_sys_xopen_source,
-       [Define to make ftello visible on some hosts (e.g. glibc 2.1.3).],
-       [#include <stdio.h>], [return !ftello;])
+dnl	lftp does not need ftello, and _XOPEN_SOURCE=500 makes resolv.h fail.
+dnl     AC_SYS_LARGEFILE_MACRO_VALUE(_XOPEN_SOURCE, 500,
+dnl       ac_cv_sys_xopen_source,
+dnl       [Define to make ftello visible on some hosts (e.g. glibc 2.1.3).],
+dnl       [#include <stdio.h>], [return !ftello;])
    fi
   ])
