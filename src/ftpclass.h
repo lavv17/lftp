@@ -56,42 +56,6 @@ class Ftp : public NetAccess
       DATASOCKET_CONNECTING_STATE  // waiting for data_sock to connect
    };
 
-   enum expect_t
-   {
-      CHECK_NONE,	// no special check
-      CHECK_IGNORE,	// ignore response
-      CHECK_READY,	// check response after connect
-      CHECK_REST,	// check response for REST
-      CHECK_TYPE,	// check response for TYPE
-      CHECK_CWD,	// check response for CWD
-      CHECK_CWD_CURR,	// check response for CWD into current directory
-      CHECK_CWD_STALE,	// check response for CWD when it's not critical
-      CHECK_ABOR,	// check response for ABOR
-      CHECK_SIZE,	// check response for SIZE
-      CHECK_SIZE_OPT,	// check response for SIZE and save size to *opt_size
-      CHECK_MDTM,	// check response for MDTM
-      CHECK_MDTM_OPT,	// check response for MDTM and save size to *opt_date
-      CHECK_PRET,	// check response for PRET
-      CHECK_PASV,	// check response for PASV and save address
-      CHECK_EPSV,	// check response for EPSV and save address
-      CHECK_PORT,	// check response for PORT or EPRT
-      CHECK_FILE_ACCESS,// generic check for file access
-      CHECK_PWD,	// check response for PWD and save it to home
-      CHECK_RNFR,	// check RNFR and issue RNTO
-      CHECK_USER,	// check response for USER
-      CHECK_USER_PROXY,	// check response for USER sent to proxy
-      CHECK_PASS,	// check response for PASS
-      CHECK_PASS_PROXY,	// check response for PASS sent to proxy
-      CHECK_TRANSFER,	// generic check for transfer
-      CHECK_TRANSFER_CLOSED, // check for transfer complete when Close()d.
-      CHECK_FEAT,	// check response for FEAT
-      CHECK_SITE_UTIME,	// check response for SITE UTIME
-      CHECK_QUOTED	// check response for any command submitted by QUOTE_CMD
-#ifdef USE_SSL
-      ,CHECK_AUTH_TLS,
-      CHECK_PROT
-#endif
-   };
 
    class Connection
    {
@@ -159,6 +123,8 @@ class Ftp : public NetAccess
       void SetControlConnectionTranslation(const char *cs);
 
       void CloseDataConnection();
+      void AbortDataConnection();
+      void CloseAbortedDataConnection();
 
       void Send(const char *cmd,int len);
       void SendCmd(const char *cmd);
@@ -172,6 +138,42 @@ class Ftp : public NetAccess
 
    struct Expect
    {
+      enum expect_t
+      {
+	 NONE,		// no special check, reconnect if reply>=400.
+	 IGNORE,	// ignore response
+	 READY,		// check response after connect
+	 REST,		// check response for REST
+	 TYPE,		// check response for TYPE
+	 CWD,		// check response for CWD
+	 CWD_CURR,	// check response for CWD into current directory
+	 CWD_STALE,	// check response for CWD when it's not critical
+	 ABOR,		// check response for ABOR
+	 SIZE,		// check response for SIZE
+	 SIZE_OPT,	// check response for SIZE and save size to *opt_size
+	 MDTM,		// check response for MDTM
+	 MDTM_OPT,	// check response for MDTM and save size to *opt_date
+	 PRET,
+	 PASV,		// check response for PASV and save address
+	 EPSV,		// check response for EPSV and save address
+	 PORT,		// check response for PORT or EPRT
+	 FILE_ACCESS,	// generic check for file access
+	 PWD,		// check response for PWD and save it to home
+	 RNFR,
+	 USER,		// check response for USER
+	 USER_PROXY,	// check response for USER sent to proxy
+	 PASS,		// check response for PASS
+	 PASS_PROXY,	// check response for PASS sent to proxy
+	 TRANSFER,	// generic check for transfer
+	 TRANSFER_CLOSED, // check for transfer complete when Close()d.
+	 FEAT,
+	 SITE_UTIME,
+	 QUOTED		// check response for any command submitted by QUOTE_CMD
+#ifdef USE_SSL
+	 ,AUTH_TLS,PROT
+#endif
+      };
+
       expect_t check_case;
       char *arg;
       Expect *next;
@@ -193,6 +195,8 @@ class Ftp : public NetAccess
 	    xfree(arg);
 	 }
    };
+   class ExpectQueue;
+   friend class Ftp::ExpectQueue; // grant access to Expect
    class ExpectQueue
    {
       Expect *first; // next to expect
@@ -204,13 +208,13 @@ class Ftp : public NetAccess
       ~ExpectQueue();
 
       void Push(Expect *e);
-      void Push(expect_t e) { Push(new Expect(e)); }
+      void Push(Expect::expect_t e) { Push(new Expect(e)); }
       Expect *Pop();
       Expect *FindLastCWD();
       int Count() { return count; }
       bool IsEmpty() { return count==0; }
-      bool Has(expect_t);
-      bool FirstIs(expect_t);
+      bool Has(Expect::expect_t);
+      bool FirstIs(Expect::expect_t);
       void Close();
    };
 
@@ -228,7 +232,7 @@ class Ftp : public NetAccess
    void	 proxy_NoPassReqCheck(int);
    void	 CheckFEAT(char *reply);
    char *ExtractPWD();
-   void  SendCWD(const char *path,expect_t c,const char *arg=0);
+   void  SendCWD(const char *path,Expect::expect_t c,const char *arg=0);
    void	 CatchDATE(int);
    void	 CatchDATE_opt(int);
    void	 CatchSIZE(int);
@@ -277,9 +281,7 @@ private:
 
    void	 DataAbort();
    void  DataClose();
-
    void  ControlClose();
-   void  AbortedClose();
 
    void  SendUrgentCmd(const char *cmd);
    int	 FlushSendQueueOneCmd();
@@ -430,6 +432,7 @@ public:
 
    int	 Do();
    void  Disconnect();
+   void  DisconnectNow();
 
    void	 SetFlag(int flag,bool val);
    int	 GetFlag(int flag) { return flags&flag; }
@@ -481,14 +484,14 @@ public:
    void CopyAllowStore()
       {
 	 conn->SendCmd2("STOR",file);
-	 expect->Push(new Expect(CHECK_TRANSFER));
+	 expect->Push(new Expect(Expect::TRANSFER));
 	 copy_allow_store=true;
       }
    bool CopyStoreAllowed() { return copy_allow_store; }
    bool CopyIsReadyForStore()
       {
 	 if(copy_mode==COPY_SOURCE)
-	    return copy_addr_valid && expect->FirstIs(CHECK_TRANSFER);
+	    return copy_addr_valid && expect->FirstIs(Expect::TRANSFER);
 	 return state==WAITING_STATE && expect->IsEmpty();
       }
 };

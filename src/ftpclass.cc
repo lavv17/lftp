@@ -318,7 +318,7 @@ void Ftp::TransferCheck(int act)
    if(act==225 || act==226) // data connection is still open or ABOR worked.
    {
       copy_done=true;
-      AbortedClose();
+      conn->CloseAbortedDataConnection();
    }
    if(act==211)
    {
@@ -599,7 +599,7 @@ char *Ftp::ExtractPWD()
    return xstrdup(pwd);
 }
 
-void Ftp::SendCWD(const char *path,expect_t c,const char *arg)
+void Ftp::SendCWD(const char *path,Expect::expect_t c,const char *arg)
 {
    conn->SendCmd2("CWD",path);
    expect->Push(new Expect(c,arg?arg:path));
@@ -952,6 +952,7 @@ Ftp::Ftp(const Ftp *f) : super(f)
 
 Ftp::Connection::~Connection()
 {
+   CloseAbortedDataConnection();
    CloseDataConnection();
    if(control_sock!=-1)
    {
@@ -1290,12 +1291,12 @@ int   Ftp::Do()
 
       state=CONNECTED_STATE;
       m=MOVED;
-      expect->Push(CHECK_READY);
+      expect->Push(Expect::READY);
 
       if(use_feat)
       {
 	 conn->SendCmd("FEAT");
-	 expect->Push(CHECK_FEAT);
+	 expect->Push(Expect::FEAT);
       }
 
       /* fallthrough */
@@ -1306,7 +1307,7 @@ int   Ftp::Do()
       if(state!=CONNECTED_STATE || Error())
 	 return MOVED;
 
-      if(expect->Has(CHECK_FEAT))
+      if(expect->Has(Expect::FEAT))
 	 return m;
 
 #ifdef USE_SSL
@@ -1329,9 +1330,9 @@ int   Ftp::Do()
 
       	 if(proxy_user && proxy_pass)
 	 {
-	    expect->Push(CHECK_USER_PROXY);
+	    expect->Push(Expect::USER_PROXY);
 	    conn->SendCmd2("USER",proxy_user);
-	    expect->Push(CHECK_PASS_PROXY);
+	    expect->Push(Expect::PASS_PROXY);
 	    conn->SendCmd2("PASS",proxy_pass);
 	 }
       }
@@ -1339,7 +1340,7 @@ int   Ftp::Do()
       xfree(skey_pass);
       skey_pass=0;
 
-      expect->Push(CHECK_USER);
+      expect->Push(Expect::USER);
       conn->SendCmd2("USER",user_to_use);
 
       state=USER_RESP_WAITING_STATE;
@@ -1364,14 +1365,14 @@ int   Ftp::Do()
 	 const char *pass_to_use=pass?pass:anon_pass;
 	 if(allow_skey && skey_pass)
 	    pass_to_use=skey_pass;
-	 expect->Push(CHECK_PASS);
+	 expect->Push(Expect::PASS);
 	 conn->SendCmd2("PASS",pass_to_use);
       }
 
       if(conn->try_feat_after_login)
       {
 	 conn->SendCmd("FEAT");
-	 expect->Push(CHECK_FEAT);
+	 expect->Push(Expect::FEAT);
       }
       SendAcct();
       SendSiteGroup();
@@ -1381,14 +1382,14 @@ int   Ftp::Do()
       {
 	 // if we don't yet know the home location, try to get it
 	 conn->SendCmd("PWD");
-	 expect->Push(CHECK_PWD);
+	 expect->Push(Expect::PWD);
       }
 
 #ifdef USE_SSL
       if(conn->control_ssl)
       {
 	 conn->SendCmd("PBSZ 0");
-	 expect->Push(CHECK_IGNORE);
+	 expect->Push(Expect::IGNORE);
       }
 #endif // USE_SSL
 
@@ -1402,7 +1403,7 @@ int   Ftp::Do()
       if(state!=EOF_STATE || Error())
 	 return MOVED;
 
-      if(expect->Has(CHECK_FEAT))
+      if(expect->Has(Expect::FEAT))
 	 return m;
 
       if(!conn->utf8_supported && charset && *charset)
@@ -1455,12 +1456,12 @@ int   Ftp::Do()
 	 if((!last_cwd && xstrcmp(cwd,real_cwd) && !(real_cwd==0 && !xstrcmp(cwd,"~")))
 	    || (last_cwd && xstrcmp(last_cwd->arg,cwd)))
 	 {
-	    SendCWD(cwd,CHECK_CWD_CURR);
+	    SendCWD(cwd,Expect::CWD_CURR);
 	 }
 	 else if(last_cwd && !xstrcmp(last_cwd->arg,cwd))
 	 {
 	    // no need for extra CWD, one's already sent.
-	    last_cwd->check_case=CHECK_CWD_CURR;
+	    last_cwd->check_case=Expect::CWD_CURR;
 	 }
       }
 #ifdef USE_SSL
@@ -1476,7 +1477,7 @@ int   Ftp::Do()
 	 if(want_prot!=conn->prot)
 	 {
 	    conn->SendCmdF("PROT %c",want_prot);
-	    expect->Push(new Expect(CHECK_PROT,want_prot));
+	    expect->Push(new Expect(Expect::PROT,want_prot));
 	 }
       }
 #endif
@@ -1495,7 +1496,7 @@ int   Ftp::Do()
 	 goto usual_return;
 #ifdef USE_SSL
       // PROT is critical for data transfers
-      if(expect->Has(CHECK_PROT))
+      if(expect->Has(Expect::PROT))
 	 goto usual_return;
 #endif
 
@@ -1688,7 +1689,7 @@ int   Ftp::Do()
 	    if(!conn->vms_path && !AbsolutePath(file) && real_cwd
 	    && !strncmp(file,real_cwd,len) && file[len]=='/')
 	       path_to_use=file+len+1;
-	    SendCWD(path_to_use,CHECK_CWD,file);
+	    SendCWD(path_to_use,Expect::CWD,file);
 	 }
 	 goto pre_WAITING_STATE;
       case(MAKE_DIR):
@@ -1733,18 +1734,18 @@ int   Ftp::Do()
       if(want_type!=conn->type)
       {
 	 conn->SendCmdF("TYPE %c",want_type);
-	 expect->Push(new Expect(CHECK_TYPE,want_type));
+	 expect->Push(new Expect(Expect::TYPE,want_type));
       }
 
       if(opt_size && conn->size_supported && file[0] && use_size)
       {
 	 conn->SendCmd2("SIZE",file);
-	 expect->Push(CHECK_SIZE_OPT);
+	 expect->Push(Expect::SIZE_OPT);
       }
       if(opt_date && conn->mdtm_supported && file[0] && use_mdtm)
       {
 	 conn->SendCmd2("MDTM",file);
-	 expect->Push(CHECK_MDTM_OPT);
+	 expect->Push(Expect::MDTM_OPT);
       }
 
       if(mode==ARRAY_INFO)
@@ -1767,7 +1768,7 @@ int   Ftp::Do()
 		  if(strcmp(file,".") && strcmp(file,".."))
 		  {
 		     conn->SendCmd2("MKD",file);
-		     expect->Push(CHECK_IGNORE);
+		     expect->Push(Expect::IGNORE);
 		  }
 		  *sl='/';
 	       }
@@ -1781,12 +1782,12 @@ int   Ftp::Do()
 	    conn->SendCmd(command);
 
 	 if(mode==REMOVE_DIR || mode==REMOVE)
-	    expect->Push(CHECK_FILE_ACCESS);
+	    expect->Push(Expect::FILE_ACCESS);
 	 else if(mode==MAKE_DIR)
-	    expect->Push(CHECK_FILE_ACCESS);
+	    expect->Push(Expect::FILE_ACCESS);
 	 else if(mode==QUOTE_CMD)
 	 {
-	    expect->Push(CHECK_QUOTED);
+	    expect->Push(Expect::QUOTED);
 	    if(!strncasecmp(file,"CWD",3)
 	    || !strncasecmp(file,"CDUP",4)
 	    || !strncasecmp(file,"XCWD",4)
@@ -1797,9 +1798,9 @@ int   Ftp::Do()
 	    }
 	 }
 	 else if(mode==RENAME)
-	    expect->Push(CHECK_RNFR);
+	    expect->Push(Expect::RNFR);
 	 else
-	    expect->Push(CHECK_FILE_ACCESS);
+	    expect->Push(Expect::FILE_ACCESS);
 
 	 goto pre_WAITING_STATE;
       }
@@ -1815,7 +1816,7 @@ int   Ftp::Do()
 	    strcat(s, " ");
 	    strcat(s, file);
 	    conn->SendCmd(s);
-	    expect->Push(CHECK_PRET);
+	    expect->Push(Expect::PRET);
 	 }
 	 if(conn->peer_sa.sa.sa_family==AF_INET)
 	 {
@@ -1823,7 +1824,7 @@ int   Ftp::Do()
 	 ipv4_pasv:
 #endif
 	    conn->SendCmd("PASV");
-	    expect->Push(CHECK_PASV);
+	    expect->Push(Expect::PASV);
 	    pasv_state=PASV_NO_ADDRESS_YET;
 	 }
 	 else
@@ -1833,7 +1834,7 @@ int   Ftp::Do()
 	    && IN6_IS_ADDR_V4MAPPED(&conn->peer_sa.in6.sin6_addr))
 	       goto ipv4_pasv;
 	    conn->SendCmd("EPSV");
-	    expect->Push(CHECK_EPSV);
+	    expect->Push(Expect::EPSV);
 	    pasv_state=PASV_NO_ADDRESS_YET;
 #else
 	    Fatal(_("unsupported network protocol"));
@@ -1860,7 +1861,7 @@ int   Ftp::Do()
 		  a=(unsigned char*)&fake_ip;
 	    }
 	    conn->SendCmdF("PORT %d,%d,%d,%d,%d,%d",a[0],a[1],a[2],a[3],p[0],p[1]);
-	    expect->Push(CHECK_PORT);
+	    expect->Push(Expect::PORT);
 	 }
 	 else
 	 {
@@ -1873,7 +1874,7 @@ int   Ftp::Do()
 	       goto ipv4_port;
 	    }
 	    conn->SendCmd2("EPRT",encode_eprt(&conn->data_sa));
-	    expect->Push(CHECK_PORT);
+	    expect->Push(Expect::PORT);
 #else
 	    Fatal(_("unsupported network protocol"));
 	    return MOVED;
@@ -1886,7 +1887,7 @@ int   Ftp::Do()
       {
          conn->rest_pos=(real_pos!=-1?real_pos:pos);
 	 conn->SendCmdF("REST %lld",(long long)conn->rest_pos);
-	 expect->Push(CHECK_REST);
+	 expect->Push(Expect::REST);
 	 real_pos=-1;
       }
       if(copy_mode!=COPY_DEST || copy_allow_store)
@@ -1895,7 +1896,7 @@ int   Ftp::Do()
 	    conn->SendCmd2(command,file);
 	 else
 	    conn->SendCmd(command);
-	 expect->Push(CHECK_TRANSFER);
+	 expect->Push(Expect::TRANSFER);
       }
       m=MOVED;
       if(copy_mode!=COPY_NONE && !copy_passive)
@@ -2098,7 +2099,7 @@ int   Ftp::Do()
 	    {
 	       nop_count++;
 	       conn->SendCmd("NOOP");
-	       expect->Push(CHECK_IGNORE);
+	       expect->Push(Expect::IGNORE);
 	    }
 	    nop_time=now;
 	    if(nop_offset!=pos)
@@ -2120,10 +2121,9 @@ int   Ftp::Do()
       if(conn->data_iobuf->Error())
       {
 	 DebugPrint("**** ",conn->data_iobuf->ErrorText(),0);
-	 conn->quit_sent=true;
 	 if(conn->data_iobuf->ErrorFatal())
 	    SetError(FATAL,conn->data_iobuf->ErrorText());
-	 Disconnect();
+	 DisconnectNow();
 	 return MOVED;
       }
       if(mode!=STORE)
@@ -2211,14 +2211,14 @@ int   Ftp::Do()
 	 goto notimeout_return;
 
       if(copy_mode==COPY_DEST && !copy_done && copy_connection_open
-      && expect->FirstIs(CHECK_TRANSFER) && use_stat
+      && expect->FirstIs(Expect::TRANSFER) && use_stat
       && !conn->ssl_is_activated() && !conn->proxy_is_http)
       {
 	 if(stat_time+stat_interval<=now)
 	 {
 	    // send STAT to know current position.
 	    SendUrgentCmd("STAT");
-	    expect->Push(CHECK_TRANSFER);
+	    expect->Push(Expect::TRANSFER);
 	    FlushSendQueue(true);
 	    m=MOVED;
 	 }
@@ -2266,8 +2266,7 @@ system_error:
       TimeoutS(1);
       return m;
    }
-   conn->quit_sent=true;
-   Disconnect();
+   DisconnectNow();
    SetError(SEE_ERRNO,0);
    return MOVED;
 }
@@ -2305,7 +2304,7 @@ void Ftp::SendAuth(const char *auth)
       }
    }
    conn->SendCmd2("AUTH",auth);
-   expect->Push(CHECK_AUTH_TLS);
+   expect->Push(Expect::AUTH_TLS);
    conn->auth_sent=true;
    if(!strcmp(auth,"TLS")
    || !strcmp(auth,"TLS-C"))
@@ -2320,7 +2319,7 @@ void Ftp::SendSiteIdle()
    if(!QueryBool("use-site-idle"))
       return;
    conn->SendCmd2("SITE IDLE",idle);
-   expect->Push(CHECK_IGNORE);
+   expect->Push(Expect::IGNORE);
 }
 void Ftp::SendUTimeRequest()
 {
@@ -2334,7 +2333,7 @@ void Ftp::SendUTimeRequest()
       strftime(d,sizeof(d)-1,"%Y%m%d%H%M%S",gmtime(&n));
       sprintf(c,"SITE UTIME %s %s %s %s UTC",file,d,d,d);
       conn->SendCmd(c);
-      expect->Push(CHECK_SITE_UTIME);
+      expect->Push(Expect::SITE_UTIME);
    }
    else if(QueryBool("use-mdtm-overloaded"))
    {
@@ -2342,7 +2341,7 @@ void Ftp::SendUTimeRequest()
       time_t n=now;
       strftime(c,19,"MDTM %Y%m%d%H%M%S",gmtime(&n));
       conn->SendCmd2(c,file);
-      expect->Push(CHECK_IGNORE);
+      expect->Push(Expect::IGNORE);
    }
 }
 const char *Ftp::QueryStringWithUserAtHost(const char *var)
@@ -2364,7 +2363,7 @@ void Ftp::SendAcct()
    if(!acct)
       return;
    conn->SendCmd2("ACCT",acct);
-   expect->Push(CHECK_IGNORE);
+   expect->Push(Expect::IGNORE);
 }
 void Ftp::SendSiteGroup()
 {
@@ -2372,7 +2371,7 @@ void Ftp::SendSiteGroup()
    if(!group)
       return;
    conn->SendCmd2("SITE GROUP",group);
-   expect->Push(CHECK_IGNORE);
+   expect->Push(Expect::IGNORE);
 }
 
 void Ftp::SendArrayInfoRequests()
@@ -2383,7 +2382,7 @@ void Ftp::SendArrayInfoRequests()
       if(array_for_info[i].get_time && conn->mdtm_supported && use_mdtm)
       {
 	 conn->SendCmd2("MDTM",ExpandTildeStatic(array_for_info[i].file));
-	 expect->Push(CHECK_MDTM);
+	 expect->Push(Expect::MDTM);
 	 sent=true;
       }
       else
@@ -2393,7 +2392,7 @@ void Ftp::SendArrayInfoRequests()
       if(array_for_info[i].get_size && conn->size_supported && use_size)
       {
 	 conn->SendCmd2("SIZE",ExpandTildeStatic(array_for_info[i].file));
-	 expect->Push(CHECK_SIZE);
+	 expect->Push(Expect::SIZE);
 	 sent=true;
       }
       else
@@ -2463,10 +2462,9 @@ int  Ftp::ReceiveResp()
    if(conn->control_recv->Error())
    {
       DebugPrint("**** ",conn->control_recv->ErrorText(),0);
-      conn->quit_sent=true;
       if(conn->control_recv->ErrorFatal())
 	 SetError(FATAL,conn->control_recv->ErrorText());
-      Disconnect();
+      DisconnectNow();
       return MOVED;
    }
 
@@ -2481,8 +2479,7 @@ int  Ftp::ReceiveResp()
       if(resp==0) // eof
       {
 	 DebugPrint("**** ",_("Peer closed connection"),0);
-	 conn->quit_sent=true;
-	 Disconnect();
+	 DisconnectNow();
 	 return MOVED;
       }
       const char *nl=(const char*)memchr(resp,'\n',resp_size);
@@ -2517,7 +2514,7 @@ int  Ftp::ReceiveResp()
 
       DebugPrint("<--- ",line,
 	    ReplyLogPriority(conn->multiline_code?conn->multiline_code:code));
-      if(!expect->IsEmpty() && expect->FirstIs(CHECK_QUOTED) && conn->data_iobuf)
+      if(!expect->IsEmpty() && expect->FirstIs(Expect::QUOTED) && conn->data_iobuf)
       {
 	 conn->data_iobuf->Put(line);
 	 conn->data_iobuf->Put("\n");
@@ -2602,10 +2599,7 @@ bool Ftp::HttpProxyReplyCheck(IOBuffer *buf)
       else if(buf->Eof())
 	 DebugPrint("**** ",_("Peer closed connection"),0);
       if(conn && (buf->Eof() || buf->Error()))
-      {
-	 conn->quit_sent=true;
-	 Disconnect();
-      }
+	 DisconnectNow();
       return false;
    }
 
@@ -2627,8 +2621,7 @@ bool Ftp::HttpProxyReplyCheck(IOBuffer *buf)
 	 || http_proxy_status_code==503 // Service Unavailable
 	 || http_proxy_status_code==504)// Gateway Timeout
 	 {
-	    conn->quit_sent=true;
-	    Disconnect();
+	    DisconnectNow();
 	    return false;
 	 }
 	 SetError(FATAL,all_lines);
@@ -2688,11 +2681,10 @@ void  Ftp::DataAbort()
 	 return; // the transfer seems to be finished
       if(!copy_addr_valid)
 	 return; // data connection cannot be established at this time
-      if(!copy_connection_open && expect->FirstIs(CHECK_TRANSFER))
+      if(!copy_connection_open && expect->FirstIs(Expect::TRANSFER))
       {
 	 // wu-ftpd-2.6.0 cannot interrupt accept() or connect().
-	 conn->quit_sent=true;
-	 Disconnect();
+	 DisconnectNow();
 	 return;
       }
    }
@@ -2716,33 +2708,28 @@ void  Ftp::DataAbort()
       else
       {
 	 // otherwise, just close control connection.
-	 conn->quit_sent=true;
-	 Disconnect();
+	 DisconnectNow();
       }
       return;
    }
 
    if(conn->aborted_data_sock!=-1)  // don't allow double ABOR.
    {
-      conn->quit_sent=true;
-      Disconnect();
+      DisconnectNow();
       return;
    }
 
    SendUrgentCmd("ABOR");
-   expect->Push(CHECK_ABOR);
+   expect->Push(Expect::ABOR);
    FlushSendQueue(true);
-   AbortedClose();
+
    // don't close it now, wait for ABOR result
-   conn->aborted_data_sock=conn->data_sock;
-   conn->data_sock=-1;
-   Delete(conn->data_iobuf);
-   conn->data_iobuf=0;
+   conn->AbortDataConnection();
 
    // ABOR over SSL connection does not always work,
    // closing data socket should help it.
    if(conn->ssl_is_activated())
-      AbortedClose();
+      conn->CloseAbortedDataConnection();
 
    if(QueryBool("web-mode"))
       Disconnect();
@@ -2754,14 +2741,14 @@ void Ftp::ControlClose()
    delete expect; expect=0;
 }
 
-void Ftp::AbortedClose()
+void  Ftp::DisconnectNow()
 {
-   if(conn && conn->aborted_data_sock!=-1)
-   {
-      DebugPrint("---- ",_("Closing aborted data socket"));
-      close(conn->aborted_data_sock);
-      conn->aborted_data_sock=-1;
-   }
+   if(!conn)
+      return;
+   DataClose();
+   ControlClose();
+   state=INITIAL_STATE;
+   http_proxy_status_code=0;
 }
 
 void  Ftp::Disconnect()
@@ -2775,21 +2762,26 @@ void  Ftp::Disconnect()
       return;
    disconnect_in_progress=true;
 
-   bool no_greeting=(!expect->IsEmpty() && expect->FirstIs(CHECK_READY));
+   if(conn->quit_sent)
+   {
+      DisconnectNow();
+      return;
+   }
+
+   bool no_greeting=(!expect->IsEmpty() && expect->FirstIs(Expect::READY));
 
    expect->Close();
    DataAbort();
    DataClose();
-   if(state!=CONNECTING_STATE && !conn->quit_sent
+   if(state!=CONNECTING_STATE
    && expect->Count()<2 && QueryBool("use-quit",hostname))
    {
       conn->SendCmd("QUIT");
-      expect->Push(CHECK_IGNORE);
+      expect->Push(Expect::IGNORE);
       conn->quit_sent=true;
       goto out;
    }
    ControlClose();
-   AbortedClose();
 
    if(state==CONNECTING_STATE || no_greeting)
       NextPeer();
@@ -2804,8 +2796,7 @@ void  Ftp::Disconnect()
       if(mode==STORE && (flags&IO_FLAG))
 	 SetError(STORE_FAILED,0);
    }
-   state=INITIAL_STATE;
-   http_proxy_status_code=0;
+   DisconnectNow();
 
 out:
    disconnect_on_close=false;
@@ -2820,13 +2811,29 @@ void Ftp::Connection::CloseDataConnection()
 #ifdef USE_SSL
    data_ssl=0; // it is free'd by data_iobuf dtor.
 #endif
+   fixed_pasv=false;
    if(data_sock!=-1)
    {
       Log::global->Format(7,"---- %s\n",_("Closing data socket"));
       close(data_sock);
       data_sock=-1;
    }
-   fixed_pasv=false;
+}
+void Ftp::Connection::AbortDataConnection()
+{
+   CloseAbortedDataConnection();
+   aborted_data_sock=data_sock;
+   data_sock=-1;
+   CloseDataConnection(); // clean up all other members.
+}
+void Ftp::Connection::CloseAbortedDataConnection()
+{
+   if(aborted_data_sock!=-1)
+   {
+      Log::global->Format(9,"---- %s\n",_("Closing aborted data socket"));
+      close(aborted_data_sock);
+      aborted_data_sock=-1;
+   }
 }
 
 void  Ftp::DataClose()
@@ -2906,10 +2913,9 @@ int  Ftp::FlushSendQueue(bool all)
    if(conn->control_send->Error())
    {
       DebugPrint("**** ",conn->control_send->ErrorText(),0);
-      conn->quit_sent=true;
       if(conn->control_send->ErrorFatal())
 	 SetError(FATAL,conn->control_send->ErrorText());
-      Disconnect();
+      DisconnectNow();
       return MOVED;
    }
 
@@ -3073,14 +3079,14 @@ Ftp::Expect *Ftp::ExpectQueue::Pop()
    count--;
    return res;
 }
-bool Ftp::ExpectQueue::Has(expect_t cc)
+bool Ftp::ExpectQueue::Has(Expect::expect_t cc)
 {
    for(Expect *scan=first; scan; scan=scan->next)
       if(cc==scan->check_case)
 	 return true;
    return false;
 }
-bool Ftp::ExpectQueue::FirstIs(expect_t cc)
+bool Ftp::ExpectQueue::FirstIs(Expect::expect_t cc)
 {
    if(first && first->check_case==cc)
       return true;
@@ -3092,45 +3098,45 @@ void Ftp::ExpectQueue::Close()
    {
       switch(scan->check_case)
       {
-      case(CHECK_IGNORE):
-      case(CHECK_PWD):
-      case(CHECK_USER):
-      case(CHECK_USER_PROXY):
-      case(CHECK_PASS):
-      case(CHECK_PASS_PROXY):
-      case(CHECK_READY):
-      case(CHECK_ABOR):
-      case(CHECK_CWD_STALE):
-      case(CHECK_PRET):
-      case(CHECK_PASV):
-      case(CHECK_EPSV):
-      case(CHECK_TRANSFER_CLOSED):
-      case(CHECK_FEAT):
-      case(CHECK_SITE_UTIME):
-      case(CHECK_TYPE):
+      case(Expect::IGNORE):
+      case(Expect::PWD):
+      case(Expect::USER):
+      case(Expect::USER_PROXY):
+      case(Expect::PASS):
+      case(Expect::PASS_PROXY):
+      case(Expect::READY):
+      case(Expect::ABOR):
+      case(Expect::CWD_STALE):
+      case(Expect::PRET):
+      case(Expect::PASV):
+      case(Expect::EPSV):
+      case(Expect::TRANSFER_CLOSED):
+      case(Expect::FEAT):
+      case(Expect::SITE_UTIME):
+      case(Expect::TYPE):
 #ifdef USE_SSL
-      case(CHECK_AUTH_TLS):
-      case(CHECK_PROT):
+      case(Expect::AUTH_TLS):
+      case(Expect::PROT):
 #endif
 	 break;
-      case(CHECK_CWD_CURR):
-      case(CHECK_CWD):
-	 scan->check_case=CHECK_CWD_STALE;
+      case(Expect::CWD_CURR):
+      case(Expect::CWD):
+	 scan->check_case=Expect::CWD_STALE;
 	 break;
-      case(CHECK_NONE):
-      case(CHECK_REST):
-      case(CHECK_SIZE):
-      case(CHECK_SIZE_OPT):
-      case(CHECK_MDTM):
-      case(CHECK_MDTM_OPT):
-      case(CHECK_PORT):
-      case(CHECK_FILE_ACCESS):
-      case(CHECK_RNFR):
-      case(CHECK_QUOTED):
-	 scan->check_case=CHECK_IGNORE;
+      case(Expect::NONE):
+      case(Expect::REST):
+      case(Expect::SIZE):
+      case(Expect::SIZE_OPT):
+      case(Expect::MDTM):
+      case(Expect::MDTM_OPT):
+      case(Expect::PORT):
+      case(Expect::FILE_ACCESS):
+      case(Expect::RNFR):
+      case(Expect::QUOTED):
+	 scan->check_case=Expect::IGNORE;
 	 break;
-      case(CHECK_TRANSFER):
-	 scan->check_case=CHECK_TRANSFER_CLOSED;
+      case(Expect::TRANSFER):
+	 scan->check_case=Expect::TRANSFER_CLOSED;
 	 break;
       }
    }
@@ -3141,9 +3147,9 @@ Ftp::Expect *Ftp::ExpectQueue::FindLastCWD()
    {
       switch(scan->check_case)
       {
-      case(CHECK_CWD_CURR):
-      case(CHECK_CWD_STALE):
-      case(CHECK_CWD):
+      case(Expect::CWD_CURR):
+      case(Expect::CWD_STALE):
+      case(Expect::CWD):
 	 return scan;
       default:
 	 ;
@@ -3174,7 +3180,7 @@ int   Ftp::Read(void *buf,int size)
    if(!conn || !conn->data_iobuf)
       return DO_AGAIN;
 
-   if(expect->Has(CHECK_REST) && real_pos==-1)
+   if(expect->Has(Expect::REST) && real_pos==-1)
       return DO_AGAIN;
 
    if(state==DATA_OPEN_STATE)
@@ -3235,7 +3241,7 @@ int   Ftp::Write(const void *buf,int size)
    if(Error())
       return(error_code);
 
-   if(!conn || state!=DATA_OPEN_STATE || (expect->Has(CHECK_REST) && real_pos==-1))
+   if(!conn || state!=DATA_OPEN_STATE || (expect->Has(Expect::REST) && real_pos==-1))
       return DO_AGAIN;
 
    IOBuffer *iobuf=conn->data_iobuf;
@@ -3349,7 +3355,7 @@ void Ftp::CheckFEAT(char *reply)
 	 conn->SetControlConnectionTranslation("UTF-8");
 	 // some non-RFC2640 servers require this command.
 	 conn->SendCmd("OPTS UTF8 ON");
-	 expect->Push(CHECK_IGNORE);
+	 expect->Push(Expect::IGNORE);
       }
       else if(!strncasecmp(f,"LANG ",5))
       {
@@ -3359,7 +3365,7 @@ void Ftp::CheckFEAT(char *reply)
 	    conn->SendCmd2("LANG",lang_to_use);
 	 else
 	    conn->SendCmd("LANG");
-	 expect->Push(CHECK_IGNORE);
+	 expect->Push(Expect::IGNORE);
       }
       else if(!strcasecmp(f,"PRET"))
 	 conn->pret_supported=true;
@@ -3389,9 +3395,9 @@ void Ftp::CheckFEAT(char *reply)
 void Ftp::CheckResp(int act)
 {
    if(act==150 && flags&PASSIVE_MODE && conn->aborted_data_sock!=-1)
-      AbortedClose();
+      conn->CloseAbortedDataConnection();
 
-   if(act==150 && state==WAITING_STATE && expect->FirstIs(CHECK_TRANSFER))
+   if(act==150 && state==WAITING_STATE && expect->FirstIs(Expect::TRANSFER))
    {
       copy_connection_open=true;
       stat_time=now+2;
@@ -3419,8 +3425,7 @@ void Ftp::CheckResp(int act)
    {
       if(expect->IsEmpty() || !conn->quit_sent)
 	 DebugPrint("**** ",_("remote end closed connection"),3);
-      conn->quit_sent=true;
-      Disconnect();
+      DisconnectNow();
       return;
    }
 
@@ -3434,11 +3439,11 @@ void Ftp::CheckResp(int act)
       return;
    }
 
-   expect_t cc=exp->check_case;
+   Expect::expect_t cc=exp->check_case;
    const char *arg=exp->arg;
 
    // some servers mess all up
-   if(act==331 && cc==CHECK_READY && !(flags&SYNC_MODE) && expect->Count()>1)
+   if(act==331 && cc==Expect::READY && !(flags&SYNC_MODE) && expect->Count()>1)
    {
       delete expect->Pop();
       DebugPrint("---- ",_("Turning on sync-mode"),2);
@@ -3450,18 +3455,18 @@ void Ftp::CheckResp(int act)
 
    switch(cc)
    {
-   case CHECK_NONE:
+   case Expect::NONE:
       if(is2XX(act)) // default rule.
 	 break;
       Disconnect();
       break;
 
-   case CHECK_IGNORE:
-   case CHECK_QUOTED:
+   case Expect::IGNORE:
+   case Expect::QUOTED:
    ignore:
       break;
 
-   case CHECK_READY:
+   case Expect::READY:
       if(!(flags&SYNC_MODE) && re_match(all_lines,Query("auto-sync-mode",hostname)))
       {
 	 DebugPrint("---- ",_("Turning on sync-mode"),2);
@@ -3479,15 +3484,15 @@ void Ftp::CheckResp(int act)
       }
       break;
 
-   case CHECK_REST:
+   case Expect::REST:
       RestCheck(act);
       break;
 
-   case CHECK_CWD:
-   case CHECK_CWD_CURR:
+   case Expect::CWD:
+   case Expect::CWD_CURR:
       if(is2XX(act))
       {
-	 if(cc==CHECK_CWD)
+	 if(cc==Expect::CWD)
 	 {
 	    xfree(cwd);
 	    cwd=xstrdup(arg);
@@ -3505,29 +3510,29 @@ void Ftp::CheckResp(int act)
       Disconnect();
       break;
 
-   case CHECK_CWD_STALE:
+   case Expect::CWD_STALE:
       if(is2XX(act))
 	 set_real_cwd(arg);
       goto ignore;
 
-   case CHECK_ABOR:
-      AbortedClose();
+   case Expect::ABOR:
+      conn->CloseAbortedDataConnection();
       goto ignore;
 
-   case CHECK_SIZE:
+   case Expect::SIZE:
       CatchSIZE(act);
       break;
-   case CHECK_SIZE_OPT:
+   case Expect::SIZE_OPT:
       CatchSIZE_opt(act);
       break;
-   case CHECK_MDTM:
+   case Expect::MDTM:
       CatchDATE(act);
       break;
-   case CHECK_MDTM_OPT:
+   case Expect::MDTM_OPT:
       CatchDATE_opt(act);
       break;
 
-   case CHECK_FILE_ACCESS:
+   case Expect::FILE_ACCESS:
    file_access:
       if(mode==CHANGE_MODE && site_cmd_unsupported(act))
       {
@@ -3538,13 +3543,13 @@ void Ftp::CheckResp(int act)
       NoFileCheck(act);
       break;
 
-   case CHECK_PRET:
+   case Expect::PRET:
       if(cmd_unsupported(act))
 	 conn->pret_supported=false;
       goto ignore;
 
-   case CHECK_PASV:
-   case CHECK_EPSV:
+   case Expect::PASV:
+   case Expect::EPSV:
       if(is2XX(act))
       {
 	 if(strlen(line)<=4)
@@ -3552,9 +3557,9 @@ void Ftp::CheckResp(int act)
 
 	 memset(&conn->data_sa,0,sizeof(conn->data_sa));
 
-	 if(cc==CHECK_PASV)
+	 if(cc==Expect::PASV)
 	    pasv_state=Handle_PASV();
-	 else // cc==CHECK_EPSV
+	 else // cc==Expect::EPSV
 	    pasv_state=Handle_EPSV();
 
 	 if(pasv_state==PASV_NO_ADDRESS_YET)
@@ -3580,7 +3585,7 @@ void Ftp::CheckResp(int act)
       Disconnect();
       break;
 
-   case CHECK_PORT:
+   case Expect::PORT:
       if(is2XX(act))
 	 break;
       if(copy_mode!=COPY_NONE)
@@ -3597,7 +3602,7 @@ void Ftp::CheckResp(int act)
       Disconnect();
       break;
 
-   case CHECK_PWD:
+   case Expect::PWD:
       if(is2XX(act))
       {
 	 if(!home_auto)
@@ -3612,45 +3617,45 @@ void Ftp::CheckResp(int act)
       }
       break;
 
-   case CHECK_RNFR:
+   case Expect::RNFR:
       if(is3XX(act))
       {
 	 conn->SendCmd2("RNTO",file1);
-	 expect->Push(CHECK_FILE_ACCESS);
+	 expect->Push(Expect::FILE_ACCESS);
       	 break;
       }
       goto file_access;
 
-   case CHECK_USER_PROXY:
+   case Expect::USER_PROXY:
       proxy_NoPassReqCheck(act);
       break;
-   case CHECK_USER:
+   case Expect::USER:
       NoPassReqCheck(act);
       break;
-   case CHECK_PASS_PROXY:
+   case Expect::PASS_PROXY:
       proxy_LoginCheck(act);
       break;
-   case CHECK_PASS:
+   case Expect::PASS:
       LoginCheck(act);
       break;
 
-   case CHECK_TRANSFER:
+   case Expect::TRANSFER:
       TransferCheck(act);
       if(mode==STORE && is2XX(act)
       && entity_size==real_pos)
 	 SendUTimeRequest();
       break;
 
-   case CHECK_TRANSFER_CLOSED:
+   case Expect::TRANSFER_CLOSED:
       if(strstr(line,"ABOR")
-      && expect->Count()>=2 && expect->FirstIs(CHECK_ABOR))
+      && expect->Count()>=2 && expect->FirstIs(Expect::ABOR))
       {
 	 DebugPrint("**** ","server bug: 426 reply missed",1);
 	 delete expect->Pop();
-	 AbortedClose();
+	 conn->CloseAbortedDataConnection();
       }
       break;
-   case CHECK_FEAT:
+   case Expect::FEAT:
       if(act==530)
 	 conn->try_feat_after_login=true;
       if(!is2XX(act))
@@ -3658,20 +3663,20 @@ void Ftp::CheckResp(int act)
       CheckFEAT(all_lines);
       break;
 
-   case CHECK_SITE_UTIME:
+   case Expect::SITE_UTIME:
       if(site_cmd_unsupported(act))
       {
 	 conn->site_utime_supported=false;
 	 SendUTimeRequest();  // try another method.
       }
       break;
-   case CHECK_TYPE:
+   case Expect::TYPE:
       if(is2XX(act))
 	 conn->type=arg[0];
       break;
 
 #ifdef USE_SSL
-   case CHECK_AUTH_TLS:
+   case Expect::AUTH_TLS:
       if(is2XX(act))
       {
 	 conn->MakeSSLBuffers(hostname);
@@ -3682,7 +3687,7 @@ void Ftp::CheckResp(int act)
 	    SetError(LOGIN_FAILED,_("ftp:ssl-force is set and server does not support or allow SSL"));
       }
       break;
-   case CHECK_PROT:
+   case Expect::PROT:
       if(is2XX(act))
 	 conn->prot=arg[0];
       break;
@@ -3697,7 +3702,7 @@ const char *Ftp::CurrentStatus()
 {
    if(Error())
       return StrError(error_code);
-   if(expect && expect->Has(CHECK_FEAT))
+   if(expect && expect->Has(Expect::FEAT))
       return _("FEAT negotiation...");
    switch(state)
    {

@@ -2,11 +2,15 @@
 
 	* SFtp.cc: fix data packet debug message (s was not initialized);
 	  call CheckTimeout properly, so that net timeout will be handled.
+	* ftpclass.cc, ftpclass.h: move expect_t to Expect; make ExpectQueue
+	  a friend so that it can access Expect; (Ftp::DisconnectNow) new method;
+	  (Connection::AbortDataConnection, CloseAbortedDataConnection) new methods;
+	  use DisconnectNow instead of setting quit_sent.
 
 2004-04-04  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.cc, SFtp.h: outline HasID as it fails to inline on certain
-	  compilers.
+	  compilers (e.g. gcc-2.95.2).
 
 2004-04-02  Alexander V. Lukyanov <lav@yars.free.net>
 
