@@ -26,7 +26,6 @@
 #include <unistd.h>
 #include <assert.h>
 #include <ctype.h>
-#include <netdb.h>
 
 #include "xmalloc.h"
 

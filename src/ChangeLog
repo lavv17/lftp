@@ -1,5 +1,13 @@
 1999-07-04  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* ftpclass.cc: use new Resolver constructor; fix relookup
+	  in case of net:relookup-always=true to lookup only after
+	  trying last address.
+	* Resolver.cc: finish SRV support; don't close stderr.
+	* XferJob.cc: don't include netdb.h
+
+1999-07-04  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* Resolver.cc, Resolver.h: about to support SRV dns records.
 	* Http.cc: use new Resolver constructor.
 

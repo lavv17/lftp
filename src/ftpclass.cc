@@ -859,11 +859,6 @@ int   Ftp::Do()
       if(state!=INITIAL_STATE)
 	 return MOVED;
 
-      const char *host_to_connect=(proxy?proxy:hostname);
-      const char *port_to_connect=(proxy?proxy_port:portname);
-      if(port_to_connect==0)
-	 port_to_connect=FTPPORT;
-
       if(lookup_done && peer)
       {
 	 if(peer_curr>=peer_num)
@@ -886,7 +881,10 @@ int   Ftp::Do()
 	 if(!resolver)
 	 {
 	    DebugPrint("---- ",_("Resolving host address..."),4);
-	    resolver=new Resolver(host_to_connect,port_to_connect);
+	    if(proxy)
+	       resolver=new Resolver(proxy,proxy_port,FTPPORT);
+	    else
+	       resolver=new Resolver(hostname,portname,FTPPORT,"ftp","tcp");
 	    m=MOVED;
 	 }
 	 if(!resolver->Done())
@@ -950,7 +948,7 @@ int   Ftp::Do()
       CloseOnExec(control_sock);
 
       sprintf(str,_("Connecting to %s%s (%s) port %u"),proxy?"proxy ":"",
-	 host_to_connect,numeric_address(&peer_sa),get_port(&peer_sa));
+	 proxy?proxy:hostname,numeric_address(&peer_sa),get_port(&peer_sa));
       DebugPrint("---- ",str,0);
 
       res=connect(control_sock,&peer_sa.sa,sizeof(peer_sa));
@@ -1857,8 +1855,6 @@ void Ftp::ControlClose()
       DebugPrint("---- ",_("Closing control socket"),8);
       close(control_sock);
       control_sock=-1;
-      if(relookup_always && !proxy)
-	 lookup_done=false;
    }
    resp_size=0;
    EmptyRespQueue();
@@ -1886,6 +1882,7 @@ void  Ftp::Disconnect()
    DataClose();
    if(control_sock>=0 && state!=CONNECTING_STATE)
    {
+      EmptySendQueue();
       SendCmd("QUIT");
       FlushSendQueue(true);
    }
@@ -1897,6 +1894,13 @@ void  Ftp::Disconnect()
       peer_curr++; // try next address
       if(peer_curr<peer_num)
 	 try_time=0; // try next address immediately
+      else if(relookup_always && !proxy)
+	 lookup_done=false;
+   }
+   else
+   {
+      if(relookup_always && !proxy)
+	 lookup_done=false;
    }
 
    if(copy_mode!=COPY_NONE)

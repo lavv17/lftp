@@ -32,6 +32,10 @@
 #include <sys/socket.h>
 #include <ctype.h>
 #include <fcntl.h>
+
+#include <resolv.h>
+#include <arpa/nameser.h>
+
 #include "xstring.h"
 #include "xmalloc.h"
 #include "ResMgr.h"
@@ -162,7 +166,7 @@ int   Resolver::Do()
 	 SignalHook::Ignore(SIGQUIT);
 	 SignalHook::Ignore(SIGHUP);
 	 close(0);
-	 close(2);
+// 	 close(2);
 	 dup2(pipe_to_child[1],1);
 	 close(pipe_to_child[1]);
 	 close(pipe_to_child[0]);
@@ -218,8 +222,9 @@ int   Resolver::Do()
    buf->Get(&s,&n);
    if(c=='E' || c=='P') // error
    {
-      err_msg=(char*)xmalloc(strlen(hostname)+strlen(portname)+n+3);
-      sprintf(err_msg,"%s: ",(c=='E'?hostname:portname));
+      const char *tport=portname?portname:defport;
+      err_msg=(char*)xmalloc(strlen(hostname)+strlen(tport)+n+3);
+      sprintf(err_msg,"%s: ",(c=='E'?hostname:tport));
       char *e=err_msg+strlen(err_msg);
       memcpy(e,s,n);
       e[n]=0;
@@ -316,14 +321,251 @@ const char *Resolver::OrderValidate(char **s)
    return ParseOrder(*s,0);
 }
 
+static
+int extract_domain(const unsigned char *answer,const unsigned char *scan,int len,
+		     char *store,int store_len)
+{
+   int count=1;	  // reserve space for \0
+   int refs=0;
+   int consumed=0;
+   const unsigned char *start=scan;
+   for(;;)
+   {
+      if(len<=0)
+	 break;
+      int label_len=*scan;
+      scan++;
+      len--;
+
+      if((label_len & 0xC0) == 0xC0)   // compression
+      {
+	 if(len<=0)
+	    break;
+	 int offset=((label_len&0x3F)<<8) + *scan;
+	 scan++;
+	 len--;
+
+	 if(refs==0)
+	    consumed=scan-start;
+
+	 if(answer+offset>=scan+len)
+	    break; // error
+
+	 len=scan+len-answer+offset;
+	 scan=answer+offset;
+	 if(++refs > 256)
+	    break;   // too many hops.
+	 continue;
+      }
+
+      if(label_len==0)
+	 break;
+
+      while(label_len>0)
+      {
+	 if(len<=0)
+	    break;
+	 if(store && count<store_len)
+	    *store++=*scan;
+	 count++;
+	 scan++;
+	 len--;
+	 label_len--;
+      }
+      if(store && count<store_len)
+	 *store++='.';
+      count++;
+   }
+   if(store)
+      *store=0;
+   if(refs==0)
+      consumed=scan-start;
+   return consumed;
+}
+
+struct SRV
+{
+   char domain[256];
+   int port;
+   int priority;
+   int weight;
+   int order;
+};
+
+int SRV_compare(const void *a,const void *b)
+{
+   struct SRV *sa=(struct SRV*)a;
+   struct SRV *sb=(struct SRV*)b;
+   if(sa->priority < sb->priority)
+      return -1;
+   if(sa->priority > sb->priority)
+      return 1;
+   if(sa->order < sb->order)
+      return -1;
+   if(sa->order > sb->order)
+      return 1;
+   if(sa->weight > sb->weight)
+      return -1;
+   if(sa->weight < sb->weight)
+      return 1;
+   return 0;
+}
+
 void Resolver::LookupSRV_RR()
 {
    if(!(bool)res_query_srv.Query(hostname))
       return;
-#if 0 //def HAVE_RES_SEARCH
+#ifdef HAVE_RES_SEARCH
+   const char *tproto=proto?proto:"tcp";
+   time_t try_time;
+   unsigned char answer[0x1000];
    char *srv_name=string_alloca(strlen(service)+1+strlen(tproto)+1+strlen(hostname)+1);
    sprintf(srv_name,"%s.%s.%s",service,tproto,hostname);
-   int n=res_search(srv_name, ns_c_in, ns_t_srv, (u_char *) &answer, sizeof(answer));
+
+   int len;
+   for(;;)
+   {
+      time(&try_time);
+      len=res_search(srv_name, C_IN, T_SRV, (u_char*)answer, sizeof(answer));
+      if(len>=0)
+	 break;
+#ifdef HAVE_H_ERRNO
+      if(h_errno!=TRY_AGAIN)
+	 return;
+      time_t t=time(0);
+      if(t-try_time<5)
+	 sleep(5-(t-try_time));
+#else // no h_errno
+      return;
+#endif
+   }
+
+   if(len>(int)sizeof(answer))
+      len=sizeof(answer);
+
+   if(len<12)
+      return;
+
+   int question_count=(answer[4]<<8)+answer[5];
+   int answer_count  =(answer[6]<<8)+answer[7];
+
+   // skip header
+   unsigned char *scan=answer+12;
+   len-=12;
+
+   // skip questions section
+   for( ; question_count>0; question_count--)
+   {
+      int dom_len=extract_domain(answer,scan,len,0,0);
+      scan+=dom_len;
+      len-=dom_len;
+      if(len<4)
+	 return;
+      scan+=4;
+      len-=4;
+   }
+
+   struct SRV *SRVs=0;
+   int SRV_num=0;
+
+   // now process answers section
+   for( ; answer_count>0; answer_count--)
+   {
+      int dom_len=extract_domain(answer,scan,len,0,0);
+      scan+=dom_len;
+      len-=dom_len;
+      if(len<8)
+	 return;
+      scan+=8;
+      len-=8;  // skip type,class,ttl
+
+      if(len<2)
+	 return;
+
+      int data_len=(scan[0]<<8)+scan[1];
+      scan+=2;
+      len-=2;
+
+      if(len<data_len)
+	 return;
+
+      if(data_len<6)
+	 return;
+
+      SRV_num++;
+      SRVs=(struct SRV*)xrealloc(SRVs,sizeof(*SRVs)*SRV_num);
+      struct SRV *t=SRVs+SRV_num-1;
+
+      t->priority=(scan[0]<<8)+scan[1];
+      t->weight  =(scan[2]<<8)+scan[3];
+      t->port    =(scan[4]<<8)+scan[5];
+
+      t->order=0;
+
+      scan+=6;
+      len-=6;
+
+      dom_len=extract_domain(answer,scan,len,t->domain,sizeof(t->domain));
+      scan+=dom_len;
+      len-=dom_len;
+   }
+
+   // now sort and randomize the list.
+   qsort(SRVs,SRV_num,sizeof(*SRVs),SRV_compare);
+
+   srand(time(0));
+
+   struct SRV *SRVscan,*base=0;
+   int curr_priority=-1;
+   int weight_sum=0;
+   for(SRVscan=SRVs; ; SRVscan++)
+   {
+      if(SRVscan-SRVs==SRV_num || SRVscan->priority!=curr_priority)
+      {
+	 if(base)
+	 {
+	    int o=1;
+	    struct SRV *s;
+	    while(weight_sum>0)
+	    {
+	       int r=int((float(rand())/RAND_MAX)*weight_sum);
+	       if(r==weight_sum)
+		  r=weight_sum-1;
+	       int w=0;
+	       for(s=base; s<SRVscan; s++)
+	       {
+		  if(s->order!=0)
+		     continue;
+		  w+=s->weight;
+		  if(r<w)
+		  {
+		     s->order=o;
+		     o++;
+		     weight_sum-=s->weight;
+		     break;
+		  }
+	       }
+	    }
+	 }
+	 if(SRVscan-SRVs==SRV_num)
+	    break;
+	 base=SRVscan;
+	 curr_priority=SRVscan->priority;
+	 weight_sum=0;
+      }
+      weight_sum+=SRVscan->weight;
+   }
+
+   qsort(SRVs,SRV_num,sizeof(*SRVs),SRV_compare);
+
+   int oldport=port_number;
+   for(SRVscan=SRVs; SRVscan-SRVs<SRV_num; SRVscan++)
+   {
+      port_number=htons(SRVscan->port);
+      LookupOne(SRVscan->domain);
+   }
+   port_number=oldport;
+
 #endif // HAVE_RES_SEARCH
 }
 
@@ -410,7 +652,7 @@ void Resolver::DoGethostbyname()
       }
    }
 
-   if(service)
+   if(service && !portname)
       LookupSRV_RR();
 
    LookupOne(hostname);
