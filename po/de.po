@@ -4,9 +4,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Lftp 1.2.4\n"
+"Project-Id-Version: Lftp 2.1.3\n"
 "POT-Creation-Date: 1999-10-13 21:45+0400\n"
-"PO-Revision-Date: 1999-08-23 22:41+02:00\n"
+"PO-Revision-Date: 1999-10-19 22:21+02:00\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -126,7 +126,7 @@ msgstr "nichtlokales rm(%s) -%s\n"
 #: src/GetJob.cc:164
 #, c-format
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
-msgstr ""
+msgstr "%s: %s: Datei existiert bereits und xfer:clobber (=überschreiben) ist nicht eingeschaltet\n"
 
 #: src/Job.cc:222
 #, c-format
@@ -269,11 +269,11 @@ msgstr "Unzulässige Zahl"
 
 #: src/ResMgr.cc:489
 msgid "Invalid time unit letter, only [smhd] are allowed."
-msgstr ""
+msgstr "Ungültige Zeiteinheit, nur [smhd] sind zulässig."
 
 #: src/ResMgr.cc:497
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
-msgstr ""
+msgstr "Ungültige Zeitangabe. Das Format ist <Zeit><Einheit> - z.B. 2h30m."
 
 #: src/Http.cc:1078 src/Resolver.cc:184 src/ftpclass.cc:2550
 msgid "Resolving host address..."
@@ -1586,19 +1586,3 @@ msgstr "Proxy Protokoll wird nicht unterstützt"
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "Hole Dateiliste (%ld) [%s]"
-
-#, fuzzy
-#~ msgid "%s: %s.\n"
-#~ msgstr "Benutzung: %s\n"
-
-#~ msgid "%s: %s - invalid time precision\n"
-#~ msgstr "%s: %s - ungültige Zeitpräzisierung\n"
-
-#~ msgid ""
-#~ "%s: Invalid expire period (use Ns - in sec, Nm - in min, Nh - in hours)\n"
-#~ msgstr ""
-#~ "%s: Ungültige Ablaufperiode (man verwendet NS -  in sek, Nm in min, Nh in "
-#~ "Stunden)\n"
-
-#~ msgid "Connecting to %s%s (%s) port %u"
-#~ msgstr "Verbinde mit %s%s (%s)  Port %u"
