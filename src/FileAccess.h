@@ -42,6 +42,11 @@
 #include "ResMgr.h"
 #include "ArgV.h"
 
+#define NO_SIZE	     (-1L)
+#define NO_SIZE_YET  (-2L)
+#define NO_DATE	     ((time_t)-1L)
+#define NO_DATE_YET  ((time_t)-2L)
+
 class ListInfo;
 class Glob;
 class NoGlob;

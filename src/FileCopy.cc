@@ -762,6 +762,13 @@ void FileCopyPeerFA::Resume()
    session->Resume();
 }
 
+const char *FileCopyPeerFA::GetStatus()
+{
+   if(!session->IsOpen())
+      return 0;
+   return session->CurrentStatus();
+}
+
 void FileCopyPeerFA::Seek(long new_pos)
 {
    if(pos==new_pos)

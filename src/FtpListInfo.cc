@@ -449,10 +449,87 @@ FileInfo *ParseFtpLongList_NT(const char *line_c,int *err)
    return new FileInfo(fi);
 }
 
+static
+FileInfo *ParseFtpLongList_EPLF(const char *line,int *err)
+{
+   int len=strlen(line);
+   const char *b=line;
+
+   if(len<2 || b[0]!='+')
+      ERR;
+
+   const char *name=0;
+   int name_len=0;
+   long size=NO_SIZE;
+   time_t date=NO_DATE;
+   long date_l;
+   bool dir=false;
+
+   const char *scan=b+1;
+   int scan_len=len-1;
+   while(scan && scan_len>0)
+   {
+      switch(*scan)
+      {
+	 case '\t':  // the rest is file name.
+	    name=scan+1;
+	    name_len=scan_len-1;
+	    scan=0;
+	    break;
+	 case 's':
+	    sscanf(scan+1,"%ld",&size);
+	    break;
+	 case 'm':
+	    if(1 != sscanf(scan+1,"%ld",&date_l))
+	       break;
+	    date = date_l;
+	    break;
+	 case '/':
+	    dir=true;
+	    break;
+	 case 'r':
+	    dir=false;
+	    break;
+	 case 'i':
+	    break;
+	 default:
+	    name=0;
+	    scan=0;
+	    break;
+      }
+      if(scan==0 || scan_len==0)
+	 break;
+      const char *comma=find_char(scan,scan_len,',');
+      if(comma)
+      {
+	 scan_len-=comma+1-scan;
+	 scan=comma+1;
+      }
+      else
+	 break;
+   }
+   if(name==0)
+      ERR;
+
+   FileInfo *fi=new FileInfo();
+   fi->SetName(name);
+   if(size!=NO_SIZE)
+      fi->SetSize(size);
+   if(date!=NO_DATE)
+      fi->SetDate(date);
+   if(dir)
+      fi->SetType(fi->DIRECTORY);
+   else
+      fi->SetType(fi->NORMAL);
+
+   return fi;
+}
+
 typedef FileInfo *(*ListParser)(const char *line,int *err);
 static ListParser list_parsers[]={
    ParseFtpLongList_UNIX,
    ParseFtpLongList_NT,
+   ParseFtpLongList_EPLF,
    0
 };
 

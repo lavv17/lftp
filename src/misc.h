@@ -49,6 +49,8 @@ char *xgetcwd();
 
 int percent(long offset,long size);
 
+#define find_char(buf,len,ch) ((const char *)memchr(buf,ch,len))
+
 #define MINUTE (60)
 #define HOUR   (60*MINUTE)
 #define DAY    (24*HOUR)

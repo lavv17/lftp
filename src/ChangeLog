@@ -1,3 +1,15 @@
+2000-01-15  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.h: move NO_DATE, NO_SIZE here.
+	* FileCopy.h: from here.
+	* FileCopy.cc: (FileCopyPeerFA::GetStatus) don't return status if
+	  session is not open.
+	* FtpDirList.cc: parse EPLF listing and show it pretty.
+	* FtpListInfo.cc: parse EPLF listing.
+	* misc.h: move find_char here.
+	* HttpDir.cc: from here.
+	* ftpclass.cc: use NO_SIZE and NO_DATE macros.
+
 2000-01-13  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileCopy.cc: (OpenSession) set correct pos in PUT mode;

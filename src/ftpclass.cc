@@ -564,7 +564,7 @@ int   Ftp::CatchDATE(int act,int)
       if(strlen(line)>4 && is_ascii_digit(line[4]))
 	 array_for_info[array_ptr].time=ConvertFtpDate(line+4);
       else
-	 array_for_info[array_ptr].time=(time_t)-1;
+	 array_for_info[array_ptr].time=NO_DATE;
    }
    else if(act/100!=5)
       return -1;
@@ -572,7 +572,7 @@ int   Ftp::CatchDATE(int act,int)
    {
       if(act==500 || act==502)
 	 mdtm_supported=false;
-      array_for_info[array_ptr].time=(time_t)-1;
+      array_for_info[array_ptr].time=NO_DATE;
    }
 
    array_for_info[array_ptr].get_time=false;
@@ -597,7 +597,7 @@ int   Ftp::CatchDATE_opt(int act,int)
    {
       if(act==500 || act==502)
 	 mdtm_supported=false;
-      *opt_date=(time_t)-1;
+      *opt_date=NO_DATE;
    }
    return state;
 }
@@ -1219,7 +1219,7 @@ int   Ftp::Do()
 	    }
 	    else
 	    {
-	       array_for_info[i].time=(time_t)-1;
+	       array_for_info[i].time=NO_DATE;
 	    }
 	    if(array_for_info[i].get_size && size_supported)
 	    {
@@ -2915,7 +2915,7 @@ time_t	 Ftp::ConvertFtpDate(const char *s)
 		  &year,&month,&day,&hour,&minute,&second);
 
    if(n!=6)
-      return((time_t)-1);
+      return(NO_DATE);
 
    tm.tm_year=year-1900;
    tm.tm_mon=month-1;

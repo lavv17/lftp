@@ -26,6 +26,13 @@
 #include "FtpDirList.h"
 #include "LsCache.h"
 #include "ArgV.h"
+#include "misc.h"
+
+#include <sys/types.h>
+#include <time.h>
+#ifdef TM_IN_SYS_TIME
+# include <sys/time.h>
+#endif
 
 #define super DirList
 
@@ -82,12 +89,97 @@ int FtpDirList::Do()
 
    int m=STALL;
 
-   if(len==0)
-      return m;
+   if(len>0)
+   {
+      const char *eol=find_char(b,len,'\n');
+      if(!eol && !ubuf->Eof() && len<0x1000)
+	 return m;
+      int skip_len=len;
+      if(eol)
+      {
+	 skip_len=eol+1-b;
+	 len=skip_len;
 
-   buf->Put(b,len);
-   ubuf->Skip(len);
-   m=MOVED;
+	 const char *name=0;
+	 int name_len=0;
+	 long size=NO_SIZE;
+	 time_t date=NO_DATE;
+	 long date_l;
+	 bool dir=false;
+	 // check for EPLF listing
+	 if(eol>b+1 && b[0]=='+')
+	 {
+	    const char *scan=b+1;
+	    int scan_len=len-1;
+	    while(scan && scan_len>0)
+	    {
+	       switch(*scan)
+	       {
+		  case '\t':  // the rest is file name.
+		     name=scan+1;
+		     name_len=scan_len-1;
+		     scan=0;
+		     break;
+		  case 's':
+		     sscanf(scan+1,"%ld",&size);
+		     break;
+		  case 'm':
+		     if(1 != sscanf(scan+1,"%ld",&date_l))
+			break;
+		     date = date_l;
+		     break;
+		  case '/':
+		     dir=true;
+		     break;
+		  case 'r':
+		     dir=false;
+		     break;
+		  case 'i':
+		     break;
+		  default:
+		     name=0;
+		     scan=0;
+		     break;
+	       }
+	       if(scan==0 || scan_len==0)
+		  break;
+	       const char *comma=find_char(scan,scan_len,',');
+	       if(comma)
+	       {
+		  scan_len-=comma+1-scan;
+		  scan=comma+1;
+	       }
+	       else
+		  break;
+	    }
+	    if(name && name_len>0 && date!=NO_DATE)
+	    {
+	       // ok, this is EPLF. Format new string.
+	       char *line_add=string_alloca(80+name_len);
+	       const char *perms=0;
+	       if(dir)
+		  perms="drwxr-xr-x";
+	       else
+		  perms="-rw-r--r--";
+	       char size_str[32];
+	       if(size==NO_SIZE)
+		  strcpy(size_str,"-");
+	       else
+		  sprintf(size_str,"%ld",size);
+	       struct tm *t=localtime(&date);
+	       sprintf(line_add,"%s  %10s  %04d-%02d-%02d %02d:%02d  %.*s",
+		  perms,size_str,t->tm_year+1900,t->tm_mon+1,t->tm_mday,
+		  t->tm_hour,t->tm_min,name_len,name);
+	       b=line_add;
+	       len=strlen(b);
+	    }
+	 } // end if(+).
+      } // end if(eol)
+
+      buf->Put(b,len);
+      ubuf->Skip(skip_len);
+      m=MOVED;
+   }
 
    if(ubuf->Error())
    {

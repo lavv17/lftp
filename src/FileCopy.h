@@ -38,10 +38,6 @@
 #include "buffer.h"
 #include "FileAccess.h"
 
-#define NO_SIZE	     (-1L)
-#define NO_SIZE_YET  (-2L)
-#define NO_DATE	     ((time_t)-1L)
-#define NO_DATE_YET  ((time_t)-2L)
 #define FILE_END     (-1L)
 
 class FileCopyPeer : public Buffer
@@ -280,7 +276,7 @@ public:
 
    void DontReuseSession() { reuse_later=false; }
 
-   const char *GetStatus() { return session->CurrentStatus(); }
+   const char *GetStatus();
 
    bool NeedSizeDateBeforehand() { return session->NeedSizeDateBeforehand(); }
    void RemoveFile();

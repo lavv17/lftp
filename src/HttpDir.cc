@@ -30,11 +30,6 @@
 #include "misc.h"
 #include <ctype.h>
 
-static const char *find_char(const char *buf,int len,char ch)
-{
-   return (const char *)memchr(buf,ch,len);
-}
-
 static bool token_eq(const char *buf,int len,const char *token)
 {
    int token_len=strlen(token);
