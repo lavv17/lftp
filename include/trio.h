@@ -13,6 +13,10 @@
  * MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE AUTHORS AND
  * CONTRIBUTORS ACCEPT NO RESPONSIBILITY IN ANY CONCEIVABLE MANNER.
  *
+ *************************************************************************
+ *
+ * http://ctrio.sourceforge.net/
+ *
  ************************************************************************/
 
 #ifndef TRIO_TRIO_H

@@ -36,6 +36,7 @@ static const char rcsid[] = "@(#)$Id$";
 
 #include "strio.h"
 #include <string.h>
+#include <locale.h>
 #include <ctype.h>
 #include <stdarg.h>
 #include <time.h>
@@ -195,6 +196,21 @@ int StrEqualCaseMax(const char *first, size_t max, const char *second)
       return (0 == strncmp(first, second, max));
     }
   return FALSE;
+}
+
+/*************************************************************************
+ * StrEqualLocale
+ */
+int StrEqualLocale(const char *first, const char *second)
+{
+  assert(VALID(first));
+  assert(VALID(second));
+
+#if defined(LC_COLLATE)
+  return (strcoll(first, second) == 0);
+#else
+  return StrEqual(first, second);
+#endif
 }
 
 /*************************************************************************
@@ -420,7 +436,7 @@ char *StrSubstringMax(const char *string, size_t max, const char *find)
 double StrToDouble(const char *source, const char **endp)
 {
 #if defined(TRIO_C99)
-  return strtod(source, endp);
+  return strtod(source, (char **)endp);
 #else
   /* Preliminary code */
   int isNegative = FALSE;
@@ -540,7 +556,7 @@ double StrToDouble(const char *source, const char **endp)
 float StrToFloat(const char *source, const char **endp)
 {
 #if defined(TRIO_C99)
-  return strtof(source, endp);
+  return strtof(source, (char **)endp);
 #else
   return (float)StrToDouble(source, endp);
 #endif

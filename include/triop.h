@@ -33,11 +33,7 @@ extern "C" {
 #endif
 
 #ifndef TRIO_C99
-# if defined(__STDC__) && (__STDC_VERSION__ >= 199901L)
-#  define TRIO_C99 1
-# else
-#  define TRIO_C99 0
-# endif
+# define TRIO_C99 1
 #endif
 #ifndef TRIO_BSD
 # define TRIO_BSD 1
@@ -56,9 +52,6 @@ extern "C" {
 #endif
 #ifndef TRIO_EXTENSION
 # define TRIO_EXTENSION 1
-#endif
-#ifndef TRIO_WIDECHAR
-# define TRIO_WIDECHAR 0
 #endif
 #ifndef TRIO_ERRORS
 # define TRIO_ERRORS 1

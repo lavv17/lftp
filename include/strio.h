@@ -211,6 +211,7 @@ char *StrDuplicateMax(const char *source, size_t max);
 int StrEqual(const char *first, const char *second);
 int StrEqualCase(const char *first, const char *second);
 int StrEqualCaseMax(const char *first, size_t max, const char *second);
+int StrEqualLocale(const char *first, const char *second);
 int StrEqualMax(const char *first, size_t max, const char *second);
 const char *StrError(int);
 size_t StrFormatDateMax(char *target, size_t max, const char *format, const struct tm *datetime);
