@@ -1,3 +1,16 @@
+2002-09-30  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* misc.cc: call tzset for glibc.
+
+2002-09-26  Albert Chin <lftp-devel@thewrittenword.com>
+
+	* FileAccess.cc: fix const mismatch (found with HP C++).
+
+2002-09-23  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* keyvalue.h: make Pair public.
+	* FileCopy.cc: don't report percent if pos>size.
+
 2002-09-09  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.cc: save readline history conditionally.

@@ -527,6 +527,7 @@ static void set_tz(const char *tz)
    if(!tz)
    {
       unsetenv("TZ");
+      tzset();
       return;
    }
    static char *put_tz;
@@ -542,6 +543,8 @@ static void set_tz(const char *tz)
       xfree(put_tz);
       put_tz=new_tz;
    }
+   // now initialize libc variables from env TZ.
+   tzset();
 }
 static char *saved_tz=0;
 static void save_tz()
