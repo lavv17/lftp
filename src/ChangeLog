@@ -2,6 +2,8 @@
 
 	* ftpclass.cc: accept multiple AUTH lines in FEAT reply; check if
 	  ssl is activavted before trying to make protected data connection.
+	* NetAccess.cc: retry after NOT_SUPP fast so that the status message
+	  won't appear on the screen.
 
 2004-04-22  Alexander V. Lukyanov <lav@yars.free.net>
 

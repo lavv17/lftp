@@ -691,6 +691,7 @@ int GenericParseListInfo::Do()
    int res;
    int m=STALL;
 
+do_again:
    if(done)
       return m;
 
@@ -713,6 +714,8 @@ int GenericParseListInfo::Do()
 	 ubuf->SetSpeedometer(new Speedometer());
 	 if(LsCache::IsEnabled())
 	    ubuf->Save(LsCache::SizeLimit());
+	 session->Do();
+	 ubuf->Do();
       }
       m=MOVED;
    }
@@ -727,7 +730,8 @@ int GenericParseListInfo::Do()
 	       mode=FA::LONG_LIST;
 	       delete ubuf;
 	       ubuf=0;
-	       return MOVED;
+	       m=MOVED;
+	       goto do_again;
 	    }
 	 }
 	 SetError(ubuf->ErrorText());
