@@ -3,6 +3,9 @@
 * improved completion of file names with wildcards.
 * debug output now clears and redraws the prompt.
 * mirror now does not overwrite just appeared/changed files.
+* added a possibility to specify protocol family explicitly in host name:
+  inet6,ftp.hostname.com will resolve to only inet6 address. This can be
+  also acheived by `set dns:order/ftp.hostname.com inet6'.
 * fixed unlimited memory usage on `ls -R' when the listing is too large to be
   cached.
 

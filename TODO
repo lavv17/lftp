@@ -66,5 +66,3 @@ currently; some need other work to be done.
 
  * parallel get's in mirror, mget
  * make a command get1 to get single file with extra options.
-
- * open inet6,host
