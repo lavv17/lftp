@@ -341,6 +341,10 @@ void OutputJob::PutEOF()
     * when all of its data is actually sent. */
    if(InputPeer())
       InputPeer()->PutEOF();
+   else if(tmp_buf)
+      tmp_buf->PutEOF();
+   else
+      abort();
 }
 
 /* add a filter to the beginning of the list */
@@ -413,6 +417,8 @@ int OutputJob::Done()
 
 int OutputJob::Do()
 {
+   if(!initialized && tmp_buf)
+      InitCopy();
    return STALL;
 }
 
@@ -517,6 +523,8 @@ void OutputJob::Put(const char *buf,int size)
       saved_buf->Get(&b,&s);
       if(b && s>0)
 	 Put(b,s);
+      if(saved_buf->Eof())
+	 PutEOF();
       Delete(saved_buf);
    }
 
