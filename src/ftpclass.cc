@@ -1974,6 +1974,8 @@ void  Ftp::DataAbort()
    if(data_sock!=-1 && RespQueueIsEmpty())
       return;
 
+   CloseRespQueue();
+
    if(!(bool)Query("use-abor",hostname))
    {
       if(copy_mode==COPY_NONE)
@@ -1989,7 +1991,6 @@ void  Ftp::DataAbort()
       return;
    }
 
-   CloseRespQueue();
    SendUrgentCmd("ABOR");
    AddResp(226,0,CHECK_ABOR);
    FlushSendQueue(true);
