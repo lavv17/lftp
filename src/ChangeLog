@@ -1,3 +1,7 @@
+2001-11-22  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: fix - rmdir/rm were interchanged.
+
 2001-11-21  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h: don't assume peer!=0, copy control socket
