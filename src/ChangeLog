@@ -1,3 +1,9 @@
+2000-06-22  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileCopy.cc: log redirections; fix init of redirections.
+	* Http.cc, resource.cc: new settings http:accept, http:accept-charset,
+	  http:accept-language.
+
 2000-06-21  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CmdExec.cc, CmdExec.h, commands.cc, lftp.cc: new setting

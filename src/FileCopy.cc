@@ -952,6 +952,7 @@ int FileCopyPeerFA::Get_LL(int len)
 	 int max_redirections=max_redir.Query(0);
 	 if(loc_c && loc_c[0] && max_redirections>0)
 	 {
+	    Log::global->Format(3,_("copy: received redirection to `%s'\n"),loc_c);
 	    if(++redirections>max_redirections)
 	    {
 	       SetError(_("Too many redirections"));
@@ -1122,6 +1123,7 @@ FileCopyPeerFA::FileCopyPeerFA(ParsedURL *u,int m)
    fxp=false;
    try_time=0;
    retries=0;
+   redirections=0;
    if(!file)
    {
       SetError(_("file name missed in URL"));

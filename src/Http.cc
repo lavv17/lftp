@@ -153,8 +153,7 @@ void Http::Disconnect()
       close(sock);
       sock=-1;
    }
-   if(((mode==STORE && state!=DONE && real_pos>0)
-       || (post && (state==RECEIVING_BODY || state==RECEIVING_HEADER)))
+   if((mode==STORE && state!=DONE && real_pos>0)
    && !Error())
    {
       if(last_method && !strcmp(last_method,"POST"))
@@ -217,6 +216,10 @@ void Http::Close()
    super::Close();
 }
 
+#if defined(HAVE_VSNPRINTF) && !defined(HAVE_VSNPRINTF_DECL)
+CDECL int vsnprintf(char *,size_t,const char *,va_list);
+#endif
+
 void Http::Send(const char *format,...)
 {
    va_list va;
@@ -273,7 +276,15 @@ void Http::SendMethod(const char *method,const char *efile)
    Send("Host: %s\r\n",ehost);
    if(user_agent && user_agent[0])
       Send("User-Agent: %s\r\n",user_agent);
-   Send("Accept: */*\r\n");
+   const char *accept=Query("accept");
+   if(accept && accept[0])
+      Send("Accept: %s\r\n",accept);
+   accept=Query("accept-language");
+   if(accept && accept[0])
+      Send("Accept-Language: %s\r\n",accept);
+   accept=Query("accept-charset");
+   if(accept && accept[0])
+      Send("Accept-Charset: %s\r\n",accept);
 }
 
 
