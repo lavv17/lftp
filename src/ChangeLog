@@ -1,3 +1,8 @@
+2000-07-17  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileSet.cc: don't pass REG_NOSUB to regexec, this fixes
+	  coredump on BSD. Reported by Andriy I Pilipenko <bamby@marka.net.ua>
+
 2000-07-16  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileAccess.cc: invalidate dir listing cache on chmod.
