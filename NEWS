@@ -1,13 +1,17 @@
-Version 2.0.4 - 1999-08-??
+Version 2.0.4 - 1999-08-11
 
 * added ftp:rest-list setting to allow using of REST/LIST pair. By default
   it is off, since some ftp servers silently ignore REST before LIST.
+* ignore SIGXFSZ signal, print an error instead.
+* try to catch ftp server error "Too many open files".
+* added options -c, -v, -d to lftpget script.
+* in mirror, don't reset time stamps on unchanged files.
+* few fixes in html parser.
 * fixed get -u to decode %XX in default output file name.
 * fixed interrupting (^C) of `at' command.
 * fixed `at' command to quote its arguments for execution.
 * fixed NT listing parser for files with space in name.
 * fixed renlist, it was printing long list instead of short one.
-* ignore SIGXFSZ signal, print an error instead.
 
 Version 2.0.3 - 1999-07-25
 
