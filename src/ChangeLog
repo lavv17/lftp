@@ -1,3 +1,8 @@
+2000-02-18  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: fix stupid bug with returning auto pointer
+	  int ExtractPWD.
+
 2000-02-14  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: close data socket when switching to no-rest mode.

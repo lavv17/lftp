@@ -140,7 +140,7 @@ class Ftp : public NetAccess
    int	 NoPassReqCheck(int,int);
    int	 proxy_LoginCheck(int,int);
    int	 proxy_NoPassReqCheck(int,int);
-   const char *ExtractPWD();
+   char *ExtractPWD();
    int	 CatchDATE(int,int);
    int	 CatchDATE_opt(int,int);
    int	 CatchSIZE(int,int);

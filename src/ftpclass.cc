@@ -379,7 +379,7 @@ int   Ftp::proxy_NoPassReqCheck(int act,int exp)
    return(-1);
 }
 
-const char *Ftp::ExtractPWD()
+char *Ftp::ExtractPWD()
 {
    char *pwd=string_alloca(strlen(line));
 
@@ -407,7 +407,7 @@ const char *Ftp::ExtractPWD()
 	 if(*s=='\\')
 	    *s='/';
    }
-   return pwd;
+   return xstrdup(pwd);
 }
 
 int   Ftp::Handle_PASV()
@@ -2471,7 +2471,7 @@ int   Ftp::CheckResp(int act)
 
    case CHECK_PWD:
       if(match && !home)
-	 home=xstrdup(ExtractPWD());
+	 home=ExtractPWD();
       new_state=state;
       break;
 
