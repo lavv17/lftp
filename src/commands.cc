@@ -145,14 +145,14 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "The previous directory for each site is also stored on disk, so you can\n"
 	 "do `open site; cd -' even after lftp restart.\n")},
    {"chmod",   cmd_chmod,   N_("chmod [OPTS] mode file..."),
-	 N_("Usage: chmod [OPTION]... MODE[,MODE]... FILE...\n"
-	    "or:  chmod [OPTION]... OCTAL-MODE FILE...\n"
-	    "Change the mode of each FILE to MODE.\n"
+	 N_("Change the mode of each FILE to MODE.\n"
 	    "\n"
 	    " -c, --changes        - like verbose but report only when a change is made\n"
 	    " -f, --quiet          - suppress most error messages\n"
 	    " -v, --verbose        - output a diagnostic for every file processed\n"
-	    " -R, --recursive      - change files and directories recursively\n")},
+	    " -R, --recursive      - change files and directories recursively\n"
+	    "\n"
+	    "MODE can be an octal number or symbolic mode (see chmod(1))\n")},
    {"close",   cmd_close,   "close [-a]",
 	 N_("Close idle connections. By default only with current server.\n"
 	 " -a  close idle connections with all servers\n")},
