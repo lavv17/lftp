@@ -1,4 +1,4 @@
-Version 3.0.0 - 2004-03-??
+Version 3.0.0 - 2004-04-02
 
 * sftp protocol support (use `sftp://user@host' URLs). sftp is a protocol
   implemented as ssh2 subsystem, it is binary and works over a secure channel.
@@ -8,6 +8,7 @@ Version 3.0.0 - 2004-03-??
 * ftp can set modification time on remote files using either SITE UTIME or two
   argument MDTM command (off by default); new settings ftp:use-site-utime and
   ftp:use-mdtm-overloaded.
+* ftp can now use MLSD to get machine parseable file listing (ftp:use-mlsd).
 * charset translation in ftp protocol, new setting ftp:charset.
 * new mirror option --delete-first to remove old files before transferring new
   files. By default mirror removes old files after the transfers.
@@ -28,6 +29,7 @@ Version 3.0.0 - 2004-03-??
 * pget has now a progress bar which shows file download state.
 * new source option -e to execute output of an external program.
 * chmod -R fixed.
+* fixed cache invalidation when file name being invalidated ends with a slash.
 
 Version 2.6.12 - 2004-01-23
 

@@ -39,13 +39,10 @@ implemented.
 
  * parallel get's in mget
 +* make a command get1 to get single file with extra options.
-   implement ranges properly.
 
  * tail command
 
  * make a class FileAccessLocation (class url?)
-
- * mirror --remove-first
 
  * job suspend/resume.
 
@@ -58,12 +55,10 @@ implemented.
  * a setting to make commands quiet (cmd:quiet? or cmd:verbose with int value)
 
  * redirect error messages
- * stdout/stderr analogues, use class Buffer.
+ * stdout/stderr analogues, use class IOBuffer.
 
  * remember user-specified URL path from open/cd.
  * flag to mark cwd as a file, not a directory. (for http).
 
  * mirror option to check an alternative directory(ies) for existing files.
    (overlay filesystem replacement?)
-
- * use MLST/MLSD when supported.

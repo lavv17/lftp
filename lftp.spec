@@ -1,4 +1,4 @@
-%define version pre3.0.0-20040115
+%define version pre3.0.0-20040325
 %define release 1
 %define use_modules 0
 
