@@ -194,6 +194,10 @@ socklen_t NetAccess::SocketAddrLen(const sockaddr_u *u)
    return sizeof(*u);
 }
 
+#if defined(HAVE_INET_ATON) && !defined(HAVE_INET_ATON_DECL)
+CDECL int inet_aton(const char *,struct in_addr *);
+#endif
+
 int NetAccess::SocketCreate(int af,int type,int proto)
 {
    int s=socket(af,type,proto);
@@ -697,8 +701,8 @@ int GenericParseListInfo::Do()
 	 {
 	    if(file->filetype==file->SYMLINK && follow_symlinks)
 	    {
-	       file->filetype=file->NORMAL;
-	       file->defined &= ~(file->SIZE|file->SYMLINK_DEF|file->MODE|file->DATE);
+	       //file->filetype=file->NORMAL;
+	       file->defined &= ~(file->SIZE|file->SYMLINK_DEF|file->MODE|file->DATE|file->TYPE);
 	       cur->get_size=true;
 	       cur->get_time=true;
 	    }

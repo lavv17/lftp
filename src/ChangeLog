@@ -1,3 +1,9 @@
+2003-01-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* GetFileInfo.cc: don't check if `..', `.' and `/' are files.
+	* NetAccess.cc: don't set filetype to NORMAL, unset it instead when
+	  following a link; fix compilation on solaris 2.6.
+
 2003-01-10  Paul Lew <paullew@cisco.com>
 
 	* resource.cc: fix build on solaris 2.6.
