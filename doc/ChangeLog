@@ -1,3 +1,7 @@
+2004-01-18	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document file:charset.
+
 2004-01-16	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document sftp, mirror --ignore-time, ftp:use-feat, ftp:lang,

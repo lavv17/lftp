@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "16 Jan 2004"
+.TH lftp 1 "18 Jan 2004"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -849,6 +849,9 @@ look up address in inet family, then inet6 and use first matched.
 .TP
 .BR dns:use-fork \ (bool)
 if true, lftp will fork before resolving host address. Default is true.
+.TP
+.BR file:charset \ (string)
+local character set. It is set from current locale initially.
 .TP
 .BR fish:connect-program \ (string)
 the program to use for connecting to remote server. It should support `-l' option
