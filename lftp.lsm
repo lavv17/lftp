@@ -1,7 +1,7 @@
 Begin3
 Title:		LFTP command line file transfer program
-Version:	pre2.4.2-2
-Entered-date:	2001-08-20
+Version:	2.4.2
+Entered-date:	2001-08-23
 Description:	LFTP is a shell-like command line ftp client. It is
 		reliable: can retry operations and does reget automatically.
 		It can do several transfers simultaneously in background.
