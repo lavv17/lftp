@@ -1458,7 +1458,7 @@ int   Ftp::Do()
 	    want_prot='C';
 	 if(want_prot!=conn->prot)
 	 {
-	    conn->SendCmd2("PROT %c",want_prot);
+	    conn->SendCmdF("PROT %c",want_prot);
 	    expect->Push(new Expect(CHECK_PROT,want_prot));
 	 }
       }
