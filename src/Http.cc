@@ -392,32 +392,25 @@ void Http::SendRequest(const char *connection,const char *f)
    int efile_len;
 
    char *pfile=(char*)alloca(4+3+xstrlen(user)*6+3+xstrlen(pass)*3+1+
-			      strlen(hostname)*3+1+strlen(cwd)*3+1+
-			      strlen(efile)+1+6+1);
+			      strlen(hostname)*3+1+xstrlen(portname)*3+1+
+			      strlen(cwd)*3+1+strlen(efile)+1+6+1);
 
    if(proxy && !https)
    {
       const char *proto="http";
-      if(https)
-	 proto="https";
       if(hftp)
-      {
-	 if(user && pass)
-	 {
-	    strcpy(pfile,"ftp://");
-	    url::encode_string(user,pfile+strlen(pfile),URL_USER_UNSAFE);
-	    if(!QueryBool("use-authorization",proxy))
-	    {
-	       strcat(pfile,":");
-	       url::encode_string(pass,pfile+strlen(pfile),URL_PASS_UNSAFE);
-	    }
-	    strcat(pfile,"@");
-	    url::encode_string(hostname,pfile+strlen(pfile),URL_HOST_UNSAFE);
-	    goto add_path;
-	 }
 	 proto="ftp";
-      }
       sprintf(pfile,"%s://",proto);
+      if(hftp && user && pass)
+      {
+	 url::encode_string(user,pfile+strlen(pfile),URL_USER_UNSAFE);
+	 if(!QueryBool("use-authorization",proxy))
+	 {
+	    strcat(pfile,":");
+	    url::encode_string(pass,pfile+strlen(pfile),URL_PASS_UNSAFE);
+	 }
+	 strcat(pfile,"@");
+      }
       url::encode_string(hostname,pfile+strlen(pfile),URL_HOST_UNSAFE);
       if(portname)
       {
@@ -429,8 +422,6 @@ void Http::SendRequest(const char *connection,const char *f)
    {
       pfile[0]=0;
    }
-
-add_path:
 
    char *path_base=pfile+strlen(pfile);
 

@@ -322,8 +322,7 @@ void Ftp::NoFileCheck(int act)
 /* 5xx that aren't errors at all */
 bool Ftp::NonError5XX(int act)
 {
-   /* don't strstr; we might have done "NLST No files found" */
-   return (mode==LIST && act==RESP_NO_FILE && !strcmp(line,"550 No files found."));
+   return (mode==LIST && act==RESP_NO_FILE && (!file || !file[0]));
 }
 
 /* 5xx that are really transient like 4xx */
