@@ -1,3 +1,7 @@
+2000-10-15  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: use service name `ftps' for ftps.
+
 2000-10-12  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileAccess.cc, FileAccess.h: fix globbing for tilde; optimize

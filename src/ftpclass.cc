@@ -1053,8 +1053,10 @@ int   Ftp::Do()
       if(!ReconnectAllowed())
 	 return m;
 
-      if(Resolve(ftps?FTPS_DEFAULT_PORT:FTP_DEFAULT_PORT,"ftp","tcp")==MOVED)
-	 m=MOVED;
+      if(ftps)
+	 m|=Resolve(FTPS_DEFAULT_PORT,"ftps","tcp");
+      else
+	 m|=Resolve(FTP_DEFAULT_PORT,"ftp","tcp");
       if(!peer)
 	 return m;
 
