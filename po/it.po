@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.0.1\n"
-"POT-Creation-Date: 1999-10-02 23:37+0400\n"
+"POT-Creation-Date: 1999-10-09 18:18+0400\n"
 "PO-Revision-Date: 1999-07-11 13:02+02:00\n"
 "Last-Translator: Giovanni Bortolozzo <borto@pluto.linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -69,51 +69,51 @@ msgstr "\tAttendo la fine del job [%d] per terminare\n"
 msgid "\tRunning\n"
 msgstr "\tIn esecuzione\n"
 
-#: src/FileAccess.cc:209
+#: src/FileAccess.cc:210
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "Errore di socket (%s) - riconnessione in corso"
 
-#: src/FileAccess.cc:295
+#: src/FileAccess.cc:296
 #, c-format
 msgid "Access failed: %s"
 msgstr "Accesso fallito: %s"
 
-#: src/FileAccess.cc:298
+#: src/FileAccess.cc:299
 msgid "File cannot be accessed"
 msgstr "Impossibile accedere al file"
 
-#: src/FileAccess.cc:300 src/ftpclass.cc:2545 src/ftpclass.cc:2555
+#: src/FileAccess.cc:301 src/ftpclass.cc:2545 src/ftpclass.cc:2555
 msgid "Not connected"
 msgstr "Non connesso"
 
-#: src/FileAccess.cc:306
+#: src/FileAccess.cc:307
 #, c-format
 msgid "Fatal error: %s"
 msgstr "Errore fatale: %s"
 
-#: src/FileAccess.cc:309
+#: src/FileAccess.cc:310
 msgid "Fatal error"
 msgstr "Errore fatale"
 
-#: src/FileAccess.cc:311
+#: src/FileAccess.cc:312
 msgid "Store failed - you have to reput"
 msgstr "Salvataggio fallito - si deve fare reput"
 
-#: src/FileAccess.cc:313 src/ftpclass.cc:2587
+#: src/FileAccess.cc:314 src/ftpclass.cc:2587
 msgid "Login failed"
 msgstr "Login fallito"
 
-#: src/FileAccess.cc:315
+#: src/FileAccess.cc:316
 msgid "Operation not supported"
 msgstr "Operazione non supportata"
 
-#: src/FtpListInfo.cc:226 src/HttpDir.cc:1006
+#: src/FtpListInfo.cc:226 src/HttpDir.cc:1069
 #, c-format
 msgid "Getting directory contents (%ld)"
 msgstr "Scarico il contenuto della directory (%ld)"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:1011
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:1074
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "Scarico le informazioni sui file (%d%%)"
@@ -273,7 +273,7 @@ msgstr ""
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr ""
 
-#: src/Http.cc:1077 src/Resolver.cc:184 src/ftpclass.cc:2550
+#: src/Http.cc:1078 src/Resolver.cc:184 src/ftpclass.cc:2550
 msgid "Resolving host address..."
 msgstr "Risoluzione dell'indirizzo dell'host..."
 
@@ -1308,20 +1308,20 @@ msgstr "Ottenuto `unknown', assumo login fallita"
 msgid "assuming failed host name lookup"
 msgstr "dò per fallita la ricerca del nome host"
 
-#: src/Http.cc:472 src/ftpclass.cc:750
+#: src/Http.cc:473 src/ftpclass.cc:743
 msgid "Closing idle connection"
 msgstr "Chiusura della connessione inattiva"
 
-#: src/Http.cc:526 src/ftpclass.cc:802
+#: src/Http.cc:527 src/ftpclass.cc:795
 msgid "max-retries exceeded"
 msgstr "superato il numero massimo di tentativi"
 
-#: src/ftpclass.cc:1354
+#: src/ftpclass.cc:1350
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "Connessione del socket dei dati a (%s) porta %u"
 
-#: src/Http.cc:130 src/ftpclass.cc:1405
+#: src/Http.cc:131 src/ftpclass.cc:1401
 msgid "Timeout - reconnecting"
 msgstr "Timeout - riconnessione in corso"
 
@@ -1357,7 +1357,7 @@ msgstr "Metto ad off (disabilito) la modalità passiva"
 msgid "Sending commands..."
 msgstr "Invio comandi..."
 
-#: src/Http.cc:1088 src/ftpclass.cc:2542 src/ftpclass.cc:2562
+#: src/Http.cc:1089 src/ftpclass.cc:2542 src/ftpclass.cc:2562
 #: src/ftpclass.cc:2569
 msgid "Waiting for response..."
 msgstr "In attesa della risposta..."
@@ -1366,11 +1366,11 @@ msgstr "In attesa della risposta..."
 msgid "Connection idle"
 msgstr "Connessione inattiva"
 
-#: src/Http.cc:1079 src/ftpclass.cc:2552
+#: src/Http.cc:1080 src/ftpclass.cc:2552
 msgid "Delaying before reconnect"
 msgstr "Aspetto un po' prima di riconnettermi"
 
-#: src/Http.cc:1083 src/ftpclass.cc:2557
+#: src/Http.cc:1084 src/ftpclass.cc:2557
 msgid "Connecting..."
 msgstr "Connessione in corso..."
 
@@ -1394,11 +1394,11 @@ msgstr "Attendo la fine del trasferimento"
 msgid "Waiting for data connection..."
 msgstr "In attesa della connessione dati..."
 
-#: src/Http.cc:1086 src/ftpclass.cc:2576
+#: src/Http.cc:1087 src/ftpclass.cc:2576
 msgid "Sending data"
 msgstr "Sto inviando i dati"
 
-#: src/Http.cc:1091 src/ftpclass.cc:2578
+#: src/Http.cc:1092 src/ftpclass.cc:2578
 msgid "Receiving data"
 msgstr "Sto ricevendo i dati"
 
@@ -1561,11 +1561,11 @@ msgstr "%s ok, rimosse %d directory$|$\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, rimossi %d file$|$\n"
 
-#: src/Http.cc:926 src/Http.cc:946
+#: src/Http.cc:927 src/Http.cc:947
 msgid "chunked format violated"
 msgstr "violato il formato del chunked"
 
-#: src/Http.cc:1089
+#: src/Http.cc:1090
 msgid "Fetching headers..."
 msgstr "Scarico gli header..."
 
@@ -1574,7 +1574,7 @@ msgstr "Scarico gli header..."
 msgid "Proxy protocol unsupported"
 msgstr "Protocollo di proxy non supportato"
 
-#: src/FtpGlob.cc:258 src/HttpDir.cc:630 src/HttpDir.cc:807
+#: src/FtpGlob.cc:258 src/HttpDir.cc:693 src/HttpDir.cc:870
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "Scarico la lista dei file (%ld) [%s]"
