@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
-"POT-Creation-Date: 2002-05-16 18:22+0400\n"
+"POT-Creation-Date: 2002-06-02 14:22+0400\n"
 "PO-Revision-Date: 1999-07-12 00:00+0400\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -42,7 +42,7 @@ msgstr ""
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
 
-#: src/CmdExec.cc:375 src/FileCopy.cc:936
+#: src/CmdExec.cc:375 src/FileCopy.cc:937
 msgid "Too many redirections"
 msgstr ""
 
@@ -102,7 +102,7 @@ msgstr "Falha no acesso: %s"
 msgid "File cannot be accessed"
 msgstr "Arquivo não pode ser acessado"
 
-#: src/FileAccess.cc:317 src/ftpclass.cc:3623 src/ftpclass.cc:3632
+#: src/FileAccess.cc:317 src/ftpclass.cc:3625 src/ftpclass.cc:3634
 msgid "Not connected"
 msgstr "Não conectado"
 
@@ -325,7 +325,7 @@ msgstr ""
 msgid "no closure defined for this setting"
 msgstr ""
 
-#: src/Resolver.cc:184 src/Resolver.cc:226 src/ftpclass.cc:3628
+#: src/Resolver.cc:184 src/Resolver.cc:226 src/ftpclass.cc:3630
 #: src/Http.cc:1605
 msgid "Resolving host address..."
 msgstr ""
@@ -1530,144 +1530,144 @@ msgstr ""
 msgid "assuming failed host name lookup"
 msgstr ""
 
-#: src/ftpclass.cc:739
+#: src/ftpclass.cc:740
 msgid "cannot parse EPSV response"
 msgstr ""
 
-#: src/ftpclass.cc:1114 src/Http.cc:753
+#: src/ftpclass.cc:1115 src/Http.cc:753
 msgid "Closing idle connection"
 msgstr ""
 
-#: src/ftpclass.cc:1194 src/Http.cc:876
+#: src/ftpclass.cc:1195 src/Http.cc:876
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr ""
 
-#: src/ftpclass.cc:1379
+#: src/ftpclass.cc:1383
 msgid "SITE CHMOD is not supported by this site"
 msgstr ""
 
-#: src/ftpclass.cc:1384
+#: src/ftpclass.cc:1388
 msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 msgstr ""
 
-#: src/ftpclass.cc:1732 src/ftpclass.cc:1772
+#: src/ftpclass.cc:1736 src/ftpclass.cc:1776
 #, fuzzy
 msgid "unsupported network protocol"
 msgstr "%s: %s - protocolo não suportado\n"
 
-#: src/ftpclass.cc:1882
+#: src/ftpclass.cc:1886
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr ""
 
-#: src/ftpclass.cc:1907 src/ftpclass.cc:3494
+#: src/ftpclass.cc:1911 src/ftpclass.cc:3496
 msgid "Switching passive mode off"
 msgstr ""
 
-#: src/ftpclass.cc:2369 src/Http.cc:964
+#: src/ftpclass.cc:2373 src/Http.cc:964
 msgid "Peer closed connection"
 msgstr ""
 
-#: src/ftpclass.cc:2396
+#: src/ftpclass.cc:2400
 msgid "Persist and retry"
 msgstr ""
 
-#: src/ftpclass.cc:2495
+#: src/ftpclass.cc:2499
 msgid "Closing control socket"
 msgstr ""
 
-#: src/ftpclass.cc:2579
+#: src/ftpclass.cc:2583
 msgid "Closing data socket"
 msgstr ""
 
-#: src/ftpclass.cc:3328
+#: src/ftpclass.cc:3330
 msgid "saw file size in response"
 msgstr ""
 
-#: src/ftpclass.cc:3339
+#: src/ftpclass.cc:3341
 msgid "remote end closed connection"
 msgstr ""
 
-#: src/ftpclass.cc:3347
+#: src/ftpclass.cc:3349
 msgid "extra server response"
 msgstr ""
 
-#: src/ftpclass.cc:3360 src/ftpclass.cc:3389
+#: src/ftpclass.cc:3362 src/ftpclass.cc:3391
 msgid "Turning on sync-mode"
 msgstr ""
 
-#: src/ftpclass.cc:3511
+#: src/ftpclass.cc:3513
 msgid "Switching passive mode on"
 msgstr ""
 
-#: src/ftpclass.cc:3578
+#: src/ftpclass.cc:3580
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 
-#: src/ftpclass.cc:3618
+#: src/ftpclass.cc:3620
 msgid "Sending commands..."
 msgstr ""
 
-#: src/ftpclass.cc:3620 src/ftpclass.cc:3645 src/ftpclass.cc:3658
+#: src/ftpclass.cc:3622 src/ftpclass.cc:3647 src/ftpclass.cc:3660
 #: src/Http.cc:1620
 msgid "Waiting for response..."
 msgstr ""
 
-#: src/ftpclass.cc:3621 src/Http.cc:1613
+#: src/ftpclass.cc:3623 src/Http.cc:1613
 msgid "Connection idle"
 msgstr ""
 
-#: src/ftpclass.cc:3634 src/Http.cc:1611 src/Http.cc:1618
+#: src/ftpclass.cc:3636 src/Http.cc:1611 src/Http.cc:1618
 msgid "Connecting..."
 msgstr ""
 
-#: src/ftpclass.cc:3638
+#: src/ftpclass.cc:3640
 msgid "TLS negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:3640
+#: src/ftpclass.cc:3642
 #, fuzzy
 msgid "Connected"
 msgstr "Não conectado"
 
-#: src/ftpclass.cc:3642
+#: src/ftpclass.cc:3644
 msgid "Logging in..."
 msgstr ""
 
-#: src/ftpclass.cc:3646
+#: src/ftpclass.cc:3648
 msgid "Making data connection..."
 msgstr ""
 
-#: src/ftpclass.cc:3649
+#: src/ftpclass.cc:3651
 msgid "Changing remote directory..."
 msgstr ""
 
-#: src/ftpclass.cc:3655
+#: src/ftpclass.cc:3657
 msgid "Waiting for other copy peer..."
 msgstr ""
 
-#: src/ftpclass.cc:3657 src/ftpclass.cc:3678
+#: src/ftpclass.cc:3659 src/ftpclass.cc:3680
 msgid "Waiting for transfer to complete"
 msgstr ""
 
-#: src/ftpclass.cc:3660
+#: src/ftpclass.cc:3662
 msgid "Waiting for data connection..."
 msgstr ""
 
-#: src/ftpclass.cc:3666
+#: src/ftpclass.cc:3668
 msgid "Sending data/TLS"
 msgstr ""
 
-#: src/ftpclass.cc:3668
+#: src/ftpclass.cc:3670
 msgid "Receiving data/TLS"
 msgstr ""
 
-#: src/ftpclass.cc:3674 src/Http.cc:1616
+#: src/ftpclass.cc:3676 src/Http.cc:1616
 msgid "Sending data"
 msgstr ""
 
-#: src/ftpclass.cc:3676 src/Http.cc:1623
+#: src/ftpclass.cc:3678 src/Http.cc:1623
 msgid "Receiving data"
 msgstr ""
 
@@ -1725,7 +1725,7 @@ msgstr "Atenção: descartando comando incompleto\n"
 msgid "parse: missing redirection filename\n"
 msgstr ""
 
-#: src/pgetJob.cc:176
+#: src/pgetJob.cc:177
 #, fuzzy, c-format
 msgid "`%s', got %lld of %lld (%d%%) %s%s"
 msgstr "`%s' em %lu %s%s[%s]"
@@ -1903,12 +1903,12 @@ msgstr ""
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr ""
 
-#: src/FileCopy.cc:933
+#: src/FileCopy.cc:934
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr ""
 
-#: src/FileCopy.cc:1133
+#: src/FileCopy.cc:1134
 msgid "file name missed in URL"
 msgstr ""
 
@@ -1959,17 +1959,17 @@ msgstr ""
 msgid "**** FXP: trying to reverse ftp:fxp-passive-source\n"
 msgstr ""
 
-#: src/Filter.cc:152
+#: src/Filter.cc:151
 #, fuzzy, c-format
 msgid "pipe() failed: %s"
 msgstr "falha em execlp(%s): %s\n"
 
-#: src/Filter.cc:175
+#: src/Filter.cc:173
 #, fuzzy, c-format
 msgid "chdir(%s) failed: %s\n"
 msgstr "Atenção: chdir() falhou: %s\n"
 
-#: src/Filter.cc:183
+#: src/Filter.cc:181
 #, fuzzy, c-format
 msgid "execl(/bin/sh) failed: %s\n"
 msgstr "falha em execlp(%s): %s\n"

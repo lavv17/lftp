@@ -35,7 +35,11 @@ AC_DEFUN(LFTP_PROG_CXXLINK,
       CXX="$CC"
       AC_LANG_PUSH(C++)
       AC_TRY_LINK([],[char *a=new char[10];delete[] a;],
-	 [],[CXX="$old_CXX";])
+	 [],[
+	 old_LIBS="$LIBS"
+	 LIBS="-lsupc++ $LIBS"
+	 AC_TRY_LINK([],[char *a=new char[10];delete[] a;],[],[LIBS="$old_LIBS"; CXX="$old_CXX";])
+	 ])
       AC_LANG_POP(C++)
    fi
    AC_MSG_RESULT(using $CXX)

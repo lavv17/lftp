@@ -1,7 +1,11 @@
+Version 2.5.3 - 2002-06-02
+
+* security fix: long error message from ftp server could cause buffer overflow.
+* fixed ftp:fix-pasv-address. Now the address should be fixed properly.
 * handle HTTP `100 Continue' in any open mode.
 * status line fixed: don't write a space to last screen column.
 * security fix: check that addresses have proper length (Michail Litvak).
-* migrated to gettext-0.11.2 and automake-1.6.
+* migrated to gettext-0.11.2 and automake-1.6.1.
 
 Version 2.5.2 - 2002-05-07
 

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
-"POT-Creation-Date: 2002-05-16 18:22+0400\n"
+"POT-Creation-Date: 2002-06-02 14:22+0400\n"
 "PO-Revision-Date: 2001-05-27 KST\n"
 "Last-Translator: Dojip Kim <greendrm@greendrm.com>\n"
 "Language-Team: \n"
@@ -43,7 +43,7 @@ msgstr "cd 성공, cwd=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: `%s'으로 리다이렉션을 받음\n"
 
-#: src/CmdExec.cc:375 src/FileCopy.cc:936
+#: src/CmdExec.cc:375 src/FileCopy.cc:937
 msgid "Too many redirections"
 msgstr "리다이렉션이 너무 많습니다"
 
@@ -101,7 +101,7 @@ msgstr "접속 실패: %s"
 msgid "File cannot be accessed"
 msgstr "파일을 읽을 수 없습니다"
 
-#: src/FileAccess.cc:317 src/ftpclass.cc:3623 src/ftpclass.cc:3632
+#: src/FileAccess.cc:317 src/ftpclass.cc:3625 src/ftpclass.cc:3634
 msgid "Not connected"
 msgstr "접속되지 않았습니다"
 
@@ -322,7 +322,7 @@ msgstr ""
 msgid "no closure defined for this setting"
 msgstr "이 설정에 대한 종결이 정의되어 있지 않습니다"
 
-#: src/Resolver.cc:184 src/Resolver.cc:226 src/ftpclass.cc:3628
+#: src/Resolver.cc:184 src/Resolver.cc:226 src/ftpclass.cc:3630
 #: src/Http.cc:1605
 msgid "Resolving host address..."
 msgstr "호스트 주소를 찾습니다..."
@@ -1609,147 +1609,147 @@ msgstr "`알수 없는' 보면, 로그인에 실패한 듯 합니다"
 msgid "assuming failed host name lookup"
 msgstr "호스트 이름을 찾는데 실패한 듯 합니다"
 
-#: src/ftpclass.cc:739
+#: src/ftpclass.cc:740
 msgid "cannot parse EPSV response"
 msgstr ""
 
-#: src/ftpclass.cc:1114 src/Http.cc:753
+#: src/ftpclass.cc:1115 src/Http.cc:753
 msgid "Closing idle connection"
 msgstr "사용하지 않는 접속을 끊습니다"
 
-#: src/ftpclass.cc:1194 src/Http.cc:876
+#: src/ftpclass.cc:1195 src/Http.cc:876
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "주소 %d의 소켓을 만들 수 없습니다"
 
-#: src/ftpclass.cc:1379
+#: src/ftpclass.cc:1383
 msgid "SITE CHMOD is not supported by this site"
 msgstr ""
 
-#: src/ftpclass.cc:1384
+#: src/ftpclass.cc:1388
 msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 msgstr ""
 
-#: src/ftpclass.cc:1732 src/ftpclass.cc:1772
+#: src/ftpclass.cc:1736 src/ftpclass.cc:1776
 msgid "unsupported network protocol"
 msgstr "지원하지 않는 네트워크 프로토콜입니다"
 
-#: src/ftpclass.cc:1882
+#: src/ftpclass.cc:1886
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "(%s) 포트 %u에 자료 소켓을 연결합니다"
 
-#: src/ftpclass.cc:1907 src/ftpclass.cc:3494
+#: src/ftpclass.cc:1911 src/ftpclass.cc:3496
 msgid "Switching passive mode off"
 msgstr "패시브(passive) 모드 끔"
 
-#: src/ftpclass.cc:2369 src/Http.cc:964
+#: src/ftpclass.cc:2373 src/Http.cc:964
 msgid "Peer closed connection"
 msgstr "접속이 끊겼습니다"
 
-#: src/ftpclass.cc:2396
+#: src/ftpclass.cc:2400
 msgid "Persist and retry"
 msgstr "계속 재시도함"
 
-#: src/ftpclass.cc:2495
+#: src/ftpclass.cc:2499
 msgid "Closing control socket"
 msgstr "제어 소켓 닫음"
 
-#: src/ftpclass.cc:2579
+#: src/ftpclass.cc:2583
 msgid "Closing data socket"
 msgstr "데이터 소켓 닫음"
 
-#: src/ftpclass.cc:3328
+#: src/ftpclass.cc:3330
 msgid "saw file size in response"
 msgstr "응답에서 파일 크기를 봅니다"
 
-#: src/ftpclass.cc:3339
+#: src/ftpclass.cc:3341
 #, fuzzy
 msgid "remote end closed connection"
 msgstr "원거리 끝이 접속을 끊습니다"
 
-#: src/ftpclass.cc:3347
+#: src/ftpclass.cc:3349
 msgid "extra server response"
 msgstr "임시 서버 응답"
 
-#: src/ftpclass.cc:3360 src/ftpclass.cc:3389
+#: src/ftpclass.cc:3362 src/ftpclass.cc:3391
 msgid "Turning on sync-mode"
 msgstr "동기 모드로 전환"
 
-#: src/ftpclass.cc:3511
+#: src/ftpclass.cc:3513
 msgid "Switching passive mode on"
 msgstr "패시브(passive) 모드로 전환"
 
-#: src/ftpclass.cc:3578
+#: src/ftpclass.cc:3580
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force가 설정되어있지만 서버가 지원하지 않거나 SSL을 허용하지 않음"
 
-#: src/ftpclass.cc:3618
+#: src/ftpclass.cc:3620
 msgid "Sending commands..."
 msgstr "명령어 전송중..."
 
-#: src/ftpclass.cc:3620 src/ftpclass.cc:3645 src/ftpclass.cc:3658
+#: src/ftpclass.cc:3622 src/ftpclass.cc:3647 src/ftpclass.cc:3660
 #: src/Http.cc:1620
 msgid "Waiting for response..."
 msgstr "응답을 기다립니다..."
 
-#: src/ftpclass.cc:3621 src/Http.cc:1613
+#: src/ftpclass.cc:3623 src/Http.cc:1613
 msgid "Connection idle"
 msgstr "사용하지 않는 접속"
 
-#: src/ftpclass.cc:3634 src/Http.cc:1611 src/Http.cc:1618
+#: src/ftpclass.cc:3636 src/Http.cc:1611 src/Http.cc:1618
 msgid "Connecting..."
 msgstr "접속중..."
 
-#: src/ftpclass.cc:3638
+#: src/ftpclass.cc:3640
 msgid "TLS negotiation..."
 msgstr "TLS 협상중..."
 
-#: src/ftpclass.cc:3640
+#: src/ftpclass.cc:3642
 msgid "Connected"
 msgstr "접속되었음"
 
-#: src/ftpclass.cc:3642
+#: src/ftpclass.cc:3644
 msgid "Logging in..."
 msgstr "로그인 중..."
 
-#: src/ftpclass.cc:3646
+#: src/ftpclass.cc:3648
 msgid "Making data connection..."
 msgstr "접속 하는 중..."
 
-#: src/ftpclass.cc:3649
+#: src/ftpclass.cc:3651
 msgid "Changing remote directory..."
 msgstr "원거리 디렉토리 변경중..."
 
-#: src/ftpclass.cc:3655
+#: src/ftpclass.cc:3657
 #, fuzzy
 msgid "Waiting for other copy peer..."
 msgstr "응답을 기다립니다..."
 
-#: src/ftpclass.cc:3657 src/ftpclass.cc:3678
+#: src/ftpclass.cc:3659 src/ftpclass.cc:3680
 msgid "Waiting for transfer to complete"
 msgstr "전송 완료를 기다립니다"
 
-#: src/ftpclass.cc:3660
+#: src/ftpclass.cc:3662
 msgid "Waiting for data connection..."
 msgstr "접속을 기다리는 중..."
 
-#: src/ftpclass.cc:3666
+#: src/ftpclass.cc:3668
 #, fuzzy
 msgid "Sending data/TLS"
 msgstr "자료 보내는 중"
 
-#: src/ftpclass.cc:3668
+#: src/ftpclass.cc:3670
 #, fuzzy
 msgid "Receiving data/TLS"
 msgstr "자료 받는 중"
 
-#: src/ftpclass.cc:3674 src/Http.cc:1616
+#: src/ftpclass.cc:3676 src/Http.cc:1616
 msgid "Sending data"
 msgstr "자료 보내는 중"
 
-#: src/ftpclass.cc:3676 src/Http.cc:1623
+#: src/ftpclass.cc:3678 src/Http.cc:1623
 msgid "Receiving data"
 msgstr "자료 받는 중"
 
@@ -1806,7 +1806,7 @@ msgstr "parse: 필터 명령어가 빠졌습니다\n"
 msgid "parse: missing redirection filename\n"
 msgstr "parse: 재지정 파일명이 빠졌습니다\n"
 
-#: src/pgetJob.cc:176
+#: src/pgetJob.cc:177
 #, c-format
 msgid "`%s', got %lld of %lld (%d%%) %s%s"
 msgstr ""
@@ -1985,12 +1985,12 @@ msgstr ""
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr ""
 
-#: src/FileCopy.cc:933
+#: src/FileCopy.cc:934
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy: `%s'로 재지정하여 받음\n"
 
-#: src/FileCopy.cc:1133
+#: src/FileCopy.cc:1134
 msgid "file name missed in URL"
 msgstr "URL에 파일명이 빠졌습니다"
 
@@ -2041,17 +2041,17 @@ msgstr ""
 msgid "**** FXP: trying to reverse ftp:fxp-passive-source\n"
 msgstr "**** FXP: 역 ftp:fxp-passive-source 시도\n"
 
-#: src/Filter.cc:152
+#: src/Filter.cc:151
 #, c-format
 msgid "pipe() failed: %s"
 msgstr "pipe() 실패: %s"
 
-#: src/Filter.cc:175
+#: src/Filter.cc:173
 #, c-format
 msgid "chdir(%s) failed: %s\n"
 msgstr "chdir(%s) 실패: %s\n"
 
-#: src/Filter.cc:183
+#: src/Filter.cc:181
 #, c-format
 msgid "execl(/bin/sh) failed: %s\n"
 msgstr "execl(/bin/sh) 실패: %s\n"

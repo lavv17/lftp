@@ -6,7 +6,7 @@ Q: How can I see greeting message from server?
 A: Try `debug 3'. It is disabled by default to keep screen clear in case
    of several simultaneous connections.
 
-Q: Why does'nt lftp download files like this: `lftp ftp://host/path/file'?
+Q: Why doesn't lftp download files like this: `lftp ftp://host/path/file'?
 A: It expects an URL of directory. To download a file use `lftpget URL'.
 
 Q: What is the %2F in ftp URL's?
@@ -22,8 +22,12 @@ A: Your system probably lacks /dev/random-like device. Create ~/.rnd file
 Q: Why does lftp say that locking fails all the time? (on linux)
 A: You have compiled lftp with large file support (>2G) but your kernel
    does not support 64 bit file locking. Either install a better kernel
-   (e.g. linux-2.4.0) or compile lftp without large file support
+   (e.g. linux-2.4.x) or compile lftp without large file support
    (configure --disable-largefile)
 
 Q: Where is lls?
 A: !ls
+
+Q: Why doesn't mirror download files starting with a dot? I can see the files
+   using `ls -a'.
+A: Try `set ftp:list-options -a'.
