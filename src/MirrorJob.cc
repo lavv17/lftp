@@ -1012,7 +1012,7 @@ CMD(mirror)
       {"dereference",no_argument,0,'L'},
       {"use-cache",no_argument,0,256+'C'},
       {"Remove-source-files",no_argument,0,256+'R'},
-      {"parallel",optional_argument},
+      {"parallel",optional_argument,0,'P'},
       {0}
    };
 
