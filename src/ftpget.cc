@@ -76,7 +76,7 @@ void  PrintUsage(int p)
 
 int   main(int argc,char **argv)
 {
-#ifdef SOCKS
+#ifdef SOCKS4
    SOCKSinit(argv[0]);
 #endif
 
