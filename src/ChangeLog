@@ -2,6 +2,7 @@
 
 	* ftpclass.cc, lftp_ssl.cc: fix random SSL_write errors
 	  (bad write retry); fix ftp spinning in ssl mode.
+	* ftpclass.cc: don't use AUTH TLS for ftp proxy.
 
 2002-01-17  Glenn Maynard <g_ld@zewt.org>
 

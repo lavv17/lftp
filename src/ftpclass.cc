@@ -1262,8 +1262,7 @@ int   Ftp::Do()
       AddResp(RESP_READY,CHECK_READY);
 
 #ifdef USE_SSL
-      // ssl for anonymous does not make sense.
-      if(!ftps && QueryBool("ssl-allow",hostname) &&
+      if(!ftps && !proxy && QueryBool("ssl-allow",hostname) &&
 		   ((user && pass) || QueryBool("ssl-allow-anonymous",hostname)))
       {
 	 const char *auth=Query("ssl-auth",hostname);
