@@ -44,18 +44,6 @@ static bool token_eq(const char *buf,int len,const char *token)
 	    && (token_len==len || !is_ascii_alnum(buf[token_len]));
 }
 
-static int parse_month(const char *m)
-{
-   static const char *months[]={
-      "Jan","Feb","Mar","Apr","May","Jun",
-      "Jul","Aug","Sep","Oct","Nov","Dec",0
-   };
-   for(int i=0; months[i]; i++)
-      if(!strcasecmp(months[i],m))
-	 return(i%12);
-   return -1;
-}
-
 static bool find_value(const char *scan,const char *more,const char *name,char *store)
 {
    for(;;)
@@ -396,11 +384,14 @@ parse_url_again:
       int year=-1,month=-1,day=0,hour=0,minute=0;
       char month_name[32]="";
       char size_str[32]="";
+      char perms[10]="";
       const char *more1;
       char *str;
       int n;
       char *line_add=(char*)alloca(link_len+128+2*1024);
       bool data_available=false;
+      const char *info_string=0;
+      int         info_string_len=0;
 
       if(!a_href)
 	 goto add_file;	// only <a href> tags can have useful info.
@@ -508,26 +499,50 @@ parse_url_again:
 	 goto got_info;
       }
 
-      strcpy(size_str,"-");
+      // Apache Unix-like listing (from apache proxy):
+      //   Perms Nlnk user group size Mon DD (YYYY or hh:mm)
+      int perms_code;
+      int n_links;
+      char user[32];
+      char group[32];
       char year_or_time[6];
+      int consumed;
+
+      n=sscanf(buf,"%10s %d %31s %31s %ld %3s %2d %5s%n",perms,&n_links,
+	    user,group,&size,month_name,&day,year_or_time,&consumed);
+      if(n==8 && -1!=(perms_code=parse_perms(perms+1))
+      && -1!=(month=parse_month(month_name))
+      && -1!=parse_year_or_time(year_or_time,&year,&hour,&minute))
+      {
+	 sprintf(size_str,"%ld",size);
+	 if(perms[0]=='d')
+	    is_directory=true;
+	 else if(perms[0]=='l')
+	 {
+	    is_sym_link=true;
+	    str=string_alloca(more1-more);
+	    memcpy(str,more+1,more1-more-4);
+	    str[more1-more-4]=0;
+	    sym_link=strstr(str," -> ");
+	    if(sym_link)
+	       sym_link+=4;
+	 }
+	 info_string=buf;
+	 info_string_len=consumed;
+	 goto got_info;
+      }
+      perms[0]=0;
+      size=-1;
+      strcpy(size_str,"-");
+
       // squid's ftp listing: Mon DD (YYYY or hh:mm) [size]
       n=sscanf(str,"%3s %2d %5s %30s",month_name,&day,year_or_time,size_str);
       if(n<3)
 	 goto add_file;
       if(!is_ascii_digit(size_str[0]))
 	 strcpy(size_str,"-");
-      if(year_or_time[2]==':')
-      {
-	 if(2!=sscanf(year_or_time,"%2d:%2d",&hour,&minute))
-	    goto add_file;
-	 year=-1;
-      }
-      else
-      {
-	 if(1!=sscanf(year_or_time,"%d",&year))
-	    goto add_file;
-	 hour=minute=0;
-      }
+      if(-1==parse_year_or_time(year_or_time,&year,&hour,&minute))
+	 goto add_file;
       // skip rest of line, because there may be href to link target.
       skip_len=eol-buf+eol_len;
 
@@ -566,29 +581,37 @@ parse_url_again:
    add_file:
       if(data_available)
       {
+	 if(info_string)
+	 {
+	    sprintf(line_add,"%.*s %s",info_string_len,info_string,link_target);
+	    goto append_symlink_maybe;
+	 }
 	 if(month==-1)
 	    month=parse_month(month_name);
 	 if(month>=0)
 	 {
 	    sprintf(month_name,"%02d",month+1);
 	    if(year==-1)
-	    {
-	       time_t curr=time(0);
-	       struct tm &now=*localtime(&curr);
-	       year=now.tm_year+1900;
-	       if(month*64+day>now.tm_mon*64+now.tm_mday)
-		  year--;
-	    }
+	       year=guess_year(month,day);
+	 }
+	 if(perms[0]==0)
+	 {
+	    if(is_directory)
+	       strcpy(perms,"drwxr-xr-x");
+	    else if(is_sym_link)
+	       strcpy(perms,"lrwxrwxrwx");
+	    else
+	       strcpy(perms,"-rw-r--r--");
 	 }
 	 sprintf(line_add,"%s  %10s  %04d-%s-%02d %02d:%02d  %s",
-	    is_directory?"drwxr-xr-x":(is_sym_link?"lrwxrwxrwx":"-rw-r--r--"),
-	    size_str,year,month_name,day,hour,minute,link_target);
+	    perms,size_str,year,month_name,day,hour,minute,link_target);
+      append_symlink_maybe:
 	 if(sym_link)
 	    sprintf(line_add+strlen(line_add)," -> %s",sym_link);
       }
       else
       {
-	 sprintf(line_add,"%s    %s",
+	 sprintf(line_add,"%s  --  %s",
 	    is_directory?"drwxr-xr-x":"-rw-r--r--",link_target);
       }
       if(lsopt && lsopt->append_type)
