@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "14 Mar 2000"
+.TH lftp 1 "21 Mar 2000"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -406,7 +406,7 @@ local name as remote one. This can be changed by `-d' option.
 .B mrm
 \fIfile(s)\fP
 .PP
-Removes specified file(s) with wildcard expansion.
+Same as `glob rm'. Removes specified file(s) with wildcard expansion.
 
 .B mv
 \fIfile1\fP \fIfile2\fP
@@ -511,12 +511,12 @@ repeat 1d mirror
 .PP
 Same as `put -c'.
 
-.BR rm " [" -r "]"
+.BR rm " [" -r "] [" -f ]
 \fIfiles\fP
 .PP
 Remove remote files.  Does not expand wildcards, use \fBmrm\fR for
 that. -r is for recursive directory remove. Be careful, if something goes
-wrong you can lose files.
+wrong you can lose files. -f supress error messages.
 
 .B rmdir
 \fIdir(s)\fP
