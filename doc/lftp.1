@@ -89,7 +89,7 @@ background, allowing you to use your shell or logout.
 \fBlftp\fR has reliable put, reput, and mirror, along with many other
 commands.
 .PP
-\fBlftp\fR does redial and reget automatically when the
+\fBlftp\fR does reconnect and reget automatically when the
 connection broke and there is something to do.
 
 .SS Commands
@@ -407,9 +407,17 @@ List cached sessions or switch to specified session.
 .B set
 [\fIvar\fP [\fIval\fP]]
 .PP
-Set variable to given value. If the value is omitted, unset the
-variable.  If no argument is given, the currently set variables are
-listed.
+Set variable to given value. If the value is omitted, unset the variable.
+Variable name has format ``name/closure'', where closure can specify
+exact application of the setting. See below for details.
+If set is called with no variable then only altered settings are listed.
+It can be changed by options:
+.PP
+.Ds
+ -a  list all settings, including default values
+ -d  list only default values, not necessary current ones
+.De
+.PP
 
 .B site
 \fIsite_cmd\fP
@@ -481,6 +489,9 @@ the commands in string are executed before lftp exits.
 .TP
 .BR cmd:csh-history \ (bool)
 enables csh-like history expansion.
+.TP
+.BR cmd:fail-exit \ (bool)
+if true, exit when an unconditional (without || and && at begin) command fails.
 .TP
 .BR cmd:long-running \ (seconds)
 time of command execution, which is
@@ -583,7 +594,7 @@ specifies ftp proxy to use. The format currently is `proxy_host:port'.
 To disable proxy set this to empty string. Note that it is an ftp proxy which
 uses ftp protocol, not ftp over http.
 .TP
-.BR ftp:redial-interval \ (seconds)
+.BR ftp:reconnect-interval \ (seconds)
 sets the minimal time between reconnects.
 .TP
 .BR ftp:relookup-always \ (bool)
