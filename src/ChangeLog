@@ -1,3 +1,9 @@
+1999-09-19  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ResMgr.cc, ResMgr.h: new resource type TimeInterval.
+	* Resolver.cc, Resolver.h: settings cache-{enable,expire,size}.
+	* commands.cc: (set) print more meaningful message for invalid values.
+
 1999-09-18  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* SleepJob.cc, SleepJob.h: add repeat functionality;

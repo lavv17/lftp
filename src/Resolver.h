@@ -154,6 +154,8 @@ class ResolverCache
    Entry **FindPtr(const char *h,const char *p,const char *defp,
          const char *ser,const char *pr);
 
+   void CacheCheck(); // prune cache as needed
+
 public:
    void Add(const char *h,const char *p,const char *defp,
          const char *ser,const char *pr,const sockaddr_u *a,int n);

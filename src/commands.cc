@@ -1382,16 +1382,27 @@ CMD(set)
       closure=sl+1;
    }
 
-   args->getnext();
-   char *val=(args->getcurr()==0?0:args->Combine(args->getindex()));
-   const char *msg=ResMgr::Set(a,closure,val);
-   xfree(val);
-
+   ResDecl *type;
+   // find type of given variable
+   const char *msg=ResMgr::FindVar(a,&type);
    if(msg)
    {
       eprintf(_("%s: %s. Use `set -a' to look at all variables.\n"),a,msg);
       return 0;
    }
+
+   args->getnext();
+   char *val=(args->getcurr()==0?0:args->Combine(args->getindex()));
+   msg=ResMgr::Set(a,closure,val);
+
+   if(msg)
+   {
+      eprintf(_("%s: %s.\n"),val,msg);
+      xfree(val);
+      return 0;
+   }
+   xfree(val);
+
    exit_code=0;
    return 0;
 }

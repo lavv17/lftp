@@ -65,9 +65,12 @@ CDECL int res_search(const char*,int,int,unsigned char*,int);
 #endif
 
 static ResDecl
-   res_timeout	  ("dns:fatal-timeout","0", ResMgr::UNumberValidate,0),
-   res_order	  ("dns:order",	       DEFAULT_ORDER, Resolver::OrderValidate,0),
-   res_query_srv  ("dns:SRV-query",    "no", ResMgr::BoolValidate,0);
+   res_cache_enable("dns:cache-enable", "yes", ResMgr::BoolValidate,0),
+   res_cache_expire("dns:cache-expire", "24h", ResMgr::TimeIntervalValidate,0),
+   res_cache_size  ("dns:cache-size",   "256", ResMgr::UNumberValidate,0),
+   res_timeout	   ("dns:fatal-timeout","0",   ResMgr::UNumberValidate,0),
+   res_order	   ("dns:order",	DEFAULT_ORDER, Resolver::OrderValidate,0),
+   res_query_srv   ("dns:SRV-query",    "no",  ResMgr::BoolValidate,0);
 
 
 struct address_family
@@ -738,6 +741,7 @@ void ResolverCache::Add(const char *h,const char *p,const char *defp,
    Entry **ptr=FindPtr(h,p,defp,ser,pr);
    if(ptr && *ptr)
    {
+      // delete old
       Entry *next=(*ptr)->next;
       delete *ptr;
       *ptr=next;
@@ -747,6 +751,7 @@ void ResolverCache::Add(const char *h,const char *p,const char *defp,
 ResolverCache::Entry **ResolverCache::FindPtr(const char *h,const char *p,
 	 const char *defp,const char *ser,const char *pr)
 {
+   CacheCheck();
    Entry **scan=&chain;
    while(*scan)
    {
@@ -773,6 +778,13 @@ void ResolverCache::Clear()
 void ResolverCache::Find(const char *h,const char *p,const char *defp,
 	 const char *ser,const char *pr,const sockaddr_u **a,int *n)
 {
+   *a=0;
+   *n=0;
+
+   // if cache is disabled for this host, return nothing.
+   if(!(bool)res_cache_enable.Query(h))
+      return;
+
    Entry **ptr=FindPtr(h,p,defp,ser,pr);
    if(ptr && *ptr)
    {
@@ -780,9 +792,26 @@ void ResolverCache::Find(const char *h,const char *p,const char *defp,
       *a=s->addr;
       *n=s->addr_num;
    }
-   else
+}
+
+// FIXME: this function can be speed-optimized.
+void ResolverCache::CacheCheck()
+{
+   int countlimit=res_cache_size.Query(0);
+   int count=0;
+   Entry **scan=&chain;
+   while(*scan)
    {
-      *a=0;
-      *n=0;
+      Entry *s=*scan;
+      TimeInterval expire(res_cache_expire.Query(s->hostname));
+      if((!expire.IsInfty() && SMTask::now-s->timestamp>expire.Seconds())
+      || (count>=countlimit))
+      {
+	 *scan=s->next;
+	 delete s;
+	 continue;
+      }
+      scan=&s->next;
+      count++;
    }
 }
