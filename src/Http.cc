@@ -279,9 +279,9 @@ void Http::SendRequest(const char *connection,const char *f)
 	 if(user && pass)
 	 {
 	    strcpy(pfile,"ftp://");
-	    url::encode_string(user,pfile+strlen(pfile),"/:@"URL_UNSAFE);
+	    url::encode_string(user,pfile+strlen(pfile),URL_USER_UNSAFE);
 	    strcat(pfile,"@");
-	    url::encode_string(hostname,pfile+strlen(pfile));
+	    url::encode_string(hostname,pfile+strlen(pfile),URL_HOST_UNSAFE);
 	    goto add_path;
 	 }
 	 proto="ftp";
@@ -828,7 +828,8 @@ int Http::Do()
 	    if(file && file[0])
 	       sprintf(err,"%s (%s)",status+status_consumed,file);
 	    else
-	       sprintf(err,"%s (%s/)",status+status_consumed,cwd);
+	       sprintf(err,"%s (%s%s)",status+status_consumed,cwd,
+		  (cwd[0] && cwd[strlen(cwd)-1]=='/')?"":"/");
 	 }
 	 Disconnect();
 	 SetError(NO_FILE,err);
