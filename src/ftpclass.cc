@@ -3018,6 +3018,7 @@ void Ftp::ExpectQueue::Push(Expect *e)
 {
    *last=e;
    last=&e->next;
+   e->next=0;
    count++;
 }
 Ftp::Expect *Ftp::ExpectQueue::Pop()
