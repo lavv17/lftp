@@ -2967,6 +2967,7 @@ void  Ftp::Close()
    DataClose();
    if(conn)
    {
+      expect->Close();
       switch(state)
       {
       case(CONNECTING_STATE):
@@ -2986,7 +2987,6 @@ void  Ftp::Close()
       case(EOF_STATE):
 	 break;
       }
-      expect->Close();
    }
    else
    {
@@ -4070,7 +4070,7 @@ const char *Ftp::make_skey_reply()
 
 int Ftp::Buffered()
 {
-   if(!conn->data_iobuf)
+   if(!conn || !conn->data_iobuf)
       return 0;
    if(state!=DATA_OPEN_STATE || conn->data_sock==-1 || mode!=STORE)
       return 0;
