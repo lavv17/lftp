@@ -1,4 +1,11 @@
-Version 3.0.4 - 2004-05-31
+Version 3.0.6 - 2004-06-??
+
+* completion for bm: URL scheme implemented.
+* fixed `du' command with large files >2Gb.
+* fixed saving old directory when no cd verification is performed.
+* compilation on HP-UX fixed.
+
+Version 3.0.5 - 2004-05-31
 
 * new URL scheme bm:bookmark_name[/path] to specify bookmarked URLs.
 * fixed encrypted FXP in certain server combinations.

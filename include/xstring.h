@@ -56,6 +56,9 @@ CDECL int strncasecmp(const char *s1,const char *s2,size_t n);
 #if !HAVE_DECL_VSNPRINTF
 CDECL int vsnprintf(char *,size_t,const char *,va_list);
 #endif
+#if !HAVE_DECL_SNPRINTF
+CDECL int snprintf(char *,size_t,const char *,...);
+#endif
 
 static inline int xstrcmp(const char *s1,const char *s2)
 {
