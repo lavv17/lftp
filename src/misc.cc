@@ -524,14 +524,21 @@ void unsetenv(const char *env)
 
 static void set_tz(const char *tz)
 {
+   static char *put_tz;
+   static int put_tz_alloc;
+
    if(!tz)
    {
       unsetenv("TZ");
+
+      xfree(put_tz);
+      put_tz=0;
+      put_tz_alloc=0;
+
       tzset();
       return;
    }
-   static char *put_tz;
-   static int put_tz_alloc;
+
    int tz_len=strlen(tz)+4;
    char *new_tz=put_tz;
    if(tz_len>put_tz_alloc)
