@@ -36,6 +36,8 @@ int pgetJob::Do()
    if(no_parallel || max_chunks<2)
       return GetJob::Do();
 
+   RateDrain();
+
    if(chunks==0 || offset<chunks[0]->start)
       m=GetJob::Do();
    else
@@ -86,11 +88,13 @@ int pgetJob::Do()
 	 break;
       }
       total_xferred+=MIN(chunks[i]->offset,chunks[i]->limit)-chunks[i]->start;
-      total_xfer_rate+=chunks[i]->minute_xfer_rate;
       if(last_bytes<chunks[i]->last_bytes)
 	 last_bytes=chunks[i]->last_bytes;
       if(!chunks[i]->Done())
+      {
+	 total_xfer_rate+=chunks[i]->minute_xfer_rate;
 	 chunks_done=false;
+      }
    }
 
    if(no_parallel)
@@ -137,7 +141,7 @@ void pgetJob::ShowRunStatus(StatusLine *s)
    if((int)strlen(n)>w)
       n=n+strlen(n)-w;
    // xgettext:c-format
-   s->Show(_("`%s', got %lu of %lu (%d%%) %s %s"),n,total_xferred,size,
+   s->Show(_("`%s', got %lu of %lu (%d%%) %s%s"),n,total_xferred,size,
 	 percent(total_xferred,size),CurrRate(total_xfer_rate),CurrETA(total_xfer_rate));
 }
 
@@ -161,7 +165,7 @@ void  pgetJob::PrintStatus(int verbose)
    if(curr && session->IsOpen())
    {
       putchar('\t');
-      printf(_("`%s', got %lu of %lu (%d%%) %s %s"),curr,total_xferred,size,
+      printf(_("`%s', got %lu of %lu (%d%%) %s%s"),curr,total_xferred,size,
 	    percent(total_xferred,size),CurrRate(total_xfer_rate),CurrETA(total_xfer_rate));
       putchar('\n');
       if(verbose>1)

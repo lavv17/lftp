@@ -26,7 +26,6 @@
 #include <sys/types.h>
 #include <errno.h>
 #include <stdlib.h>
-#include <fnmatch.h>
 
 #include "xalloca.h"
 #include "FileAccess.h"
@@ -49,6 +48,9 @@ void FtpGlob::Init(FileAccess *session,FA::open_mode n_mode)
    state=INITIAL;
    ptr=buf;
    use_long_list=true;
+   dir_list=0;
+   dir_index=0;
+   updir_glob=0;
    if(n_mode!=FA::LIST)
    {
       NoLongList();
@@ -70,6 +72,23 @@ FtpGlob::FtpGlob(FileAccess *session,const char *n_pattern,FA::open_mode n_mode)
       *slash=0;	  // non-root directory
    else
       dir[1]=0;	  // root directory
+
+   if(pattern[0] && !HasWildcards(pattern))
+   {
+      // no need to glob, just unquote
+      char *u=alloca_strdup(pattern);
+      UnquoteWildcards(u);
+      add(u);
+      state=DONE;
+      return;
+   }
+
+#if 0
+   if(dir[0] && mode==FA::LIST)
+   {
+      updir_glob=new FtpGlob(session,dir,mode);
+   }
+#endif
 }
 
 FtpGlob::~FtpGlob()
@@ -176,15 +195,10 @@ int   FtpGlob::Do()
 
 	 strncpy(name,ptr,len);
 	 name[len]=0;
-
-	 if(pattern[0]!=0
-	 && fnmatch(pattern, name, FNM_PATHNAME|FNM_PERIOD)!=0)
-	    goto next;
       }
 
       add(ptr,len);
 
-   next:
       ptr=nl+1;
    }
 
@@ -194,7 +208,7 @@ int   FtpGlob::Do()
       {
 	 // ok, now try to parse the long list.
 	 int err=0;
-	 FileSet *set=FtpListInfo::ParseFtpLongList_UNIX(list,&err);
+	 FileSet *set=FtpListInfo::ParseFtpLongList(list,&err);
 	 if(err>0) // ouch, there were errors. Revert to short list
 	 {
 	    if(set)
@@ -214,14 +228,8 @@ int   FtpGlob::Do()
 	 free_list();
 	 set->ExcludeDots();
 	 set->rewind();
-	 FileInfo *info=set->curr();
-	 for( ; info!=NULL; info=set->next())
-	 {
-	    const char *dirf=dir_file(dir,info->name);
-	    if(pattern[0]==0
-	    || fnmatch(pattern, dirf, FNM_PATHNAME|FNM_PERIOD)==0)
-	       add(dirf,strlen(dirf));
-	 }
+	 for(FileInfo *info=set->curr(); info!=NULL; info=set->next())
+	    add(dir_file(dir,info->name));
 	 delete set;
       }
       state=DONE;

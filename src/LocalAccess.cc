@@ -475,7 +475,27 @@ LocalGlob::LocalGlob(const char *cwd,const char *pattern)
    : Glob(pattern)
 {
    glob_t g;
-   glob(dir_file(cwd,pattern), 0, NULL, &g);
+   char *oldcwd=xgetcwd();
+   if(!oldcwd)
+   {
+      SetError("cannot get current directory");
+      return;
+   }
+   if(chdir(cwd)==-1)
+   {
+      const char *se=strerror(errno);
+      char *err=(char*)alloca(strlen(cwd)+strlen(se)+20);
+      sprintf(err,"chdir(%s): %s",cwd,se);
+      SetError(err);
+      xfree(oldcwd);
+      return;
+   }
+
+   glob(pattern, 0, NULL, &g);
+
+   if(chdir(oldcwd)==-1)
+      fprintf(stderr,"chdir(%s): %s",oldcwd,strerror(errno));
+   xfree(oldcwd);
    for(unsigned i=0; i<g.gl_pathc; i++)
       add(g.gl_pathv[i],strlen(g.gl_pathv[i]));
    globfree(&g);

@@ -43,6 +43,7 @@
 
 class ListInfo;
 class Glob;
+class NoGlob;
 
 class FileAccess : public SMTask
 {
@@ -297,13 +298,25 @@ protected:
    int	 list_size;
    int	 list_alloc;
    void	 add(const char *ptr,int len);
+   void	 add(const char *ptr) { add(ptr,strlen(ptr)); }
    void	 free_list();
 public:
    const char *GetPattern() { return pattern; }
    char **GetResult() { return list; }
    Glob(const char *p);
    virtual ~Glob();
+
+   static bool HasWildcards(const char *);
+   static void UnquoteWildcards(char *);
 };
+class NoGlob : public Glob
+{
+public:
+   NoGlob(const char *p);
+   const char *Status() { return ""; }
+   int Do();
+};
+
 
 #include "FileSet.h"
 

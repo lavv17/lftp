@@ -37,6 +37,9 @@ class FtpGlob : public Glob
 
    FileAccess::open_mode mode;
    char	 *dir;
+   char  **dir_list;
+   int   dir_index;
+   FtpGlob *updir_glob;
 
    int	 inbuf;
    char	 *buf;

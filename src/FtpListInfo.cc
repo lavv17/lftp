@@ -81,13 +81,17 @@ int FtpListInfo::Do()
 	 return MOVED;
       }
       glob_res=glob->GetResult();
-      err=0;
-      result=ParseFtpLongList_UNIX(glob_res,&err);
+
+      result=ParseFtpLongList(glob_res,&err);
+
       delete glob;
       glob=0;
-      if(err==0)
+
+      // note: don't consider empty list to be valid
+      if(err==0 && glob_res && glob_res[0])
 	 goto pre_GETTING_INFO;
 
+      // there were parse errors, try another method
       glob=new FtpGlob(session,"",session->LIST);
       glob->UseCache(use_cache);
       glob->NoLongList();
@@ -202,6 +206,26 @@ int FtpListInfo::Do()
    abort();
 }
 
+const char *FtpListInfo::Status()
+{
+   switch(state)
+   {
+   case(DONE):
+   case(INITIAL):
+      return "";
+   case(GETTING_LONG_LIST):
+   case(GETTING_SHORT_LIST):
+      return _("Getting directory contents...");
+   case(GETTING_INFO):
+      return _("Getting files information...");
+   }
+   // cat't happen
+   abort();
+}
+
+
+
+
 mode_t	 parse_perms(const char *s)
 {
    mode_t   p=0;
@@ -287,7 +311,8 @@ int   parse_month(char *m)
    return -1;
 }
 
-FileSet *FtpListInfo::ParseFtpLongList_UNIX(char **lines,int *err)
+static
+FileSet *ParseFtpLongList_UNIX(char **lines,int *err)
 {
 #define FIRST_TOKEN strtok(line," \t")
 #define NEXT_TOKEN  strtok(NULL," \t")
@@ -490,19 +515,137 @@ FileSet *FtpListInfo::ParseFtpLongList_UNIX(char **lines,int *err)
    return set;
 }
 
-const char *FtpListInfo::Status()
+static
+FileSet *ParseFtpLongList_NT(char **lines,int *err)
 {
-   switch(state)
+   char	 *line;
+   int 	 len;
+
+   FileSet *set=new FileSet;
+
+   if(lines==0)
+      return set;
+
+   while((line=*lines++)!=0)
    {
-   case(DONE):
-   case(INITIAL):
-      return "";
-   case(GETTING_LONG_LIST):
-   case(GETTING_SHORT_LIST):
-      return _("Getting directory contents...");
-   case(GETTING_INFO):
-      return _("Getting files information...");
+      len=strlen(line);
+      if(len==0)
+	 continue;
+      char *t = FIRST_TOKEN;
+      if(t==0)
+      {
+	 ERR;
+	 continue;
+      }
+      FileInfo fi;
+      int month,day,year;
+      if(sscanf(t,"%2d-%2d-%2d",&month,&day,&year)!=3)
+      {
+	 ERR;
+	 continue;
+      }
+      if(year>=70)
+	 year+=1900;
+      else
+	 year+=2000;
+
+      t = NEXT_TOKEN;
+      if(t==0)
+      {
+	 ERR;
+	 continue;
+      }
+      int hour,minute;
+      char am;
+      if(sscanf(t,"%2d:%2d%c",&hour,&minute,&am)!=3)
+      {
+	 ERR;
+	 continue;
+      }
+      t = NEXT_TOKEN;
+      if(t==0)
+      {
+	 ERR;
+	 continue;
+      }
+
+      if(am=='P') // PM - after noon
+      {
+	 hour+=12;
+	 if(hour==24)
+	    hour=0;
+      }
+      struct tm tms;
+      tms.tm_sec=0;	      /* seconds after the minute [0, 61]  */
+      tms.tm_min=minute;      /* minutes after the hour [0, 59] */
+      tms.tm_hour=hour;	      /* hour since midnight [0, 23] */
+      tms.tm_mday=day;	      /* day of the month [1, 31] */
+      tms.tm_mon=month-1;     /* months since January [0, 11] */
+      tms.tm_year=year-1900;  /* years since 1900 */
+      tms.tm_isdst=0;
+      fi.SetDateUnprec(mktime(&tms));
+
+      unsigned long size;
+      if(!strcmp(t,"<DIR>"))
+	 fi.SetType(fi.DIRECTORY);
+      else
+      {
+	 fi.SetType(fi.NORMAL);
+	 if(sscanf(t,"%lu",&size)!=1)
+	 {
+	    ERR;
+	    continue;
+	 }
+	 fi.SetSize(size);
+      }
+
+      t = NEXT_TOKEN;
+      if(t==0)
+      {
+	 ERR;
+	 continue;
+      }
+      fi.SetName(t);
+
+      set->Add(new FileInfo(fi));
    }
-   // cat't happen
-   abort();
+   return set;
+}
+
+typedef FileSet *(*ListParser)(char **lines,int *err);
+static ListParser list_parsers[]={
+   ParseFtpLongList_UNIX,
+   ParseFtpLongList_NT,
+   0
+};
+
+FileSet *FtpListInfo::ParseFtpLongList(char **lines,int *err_ret)
+{
+   FileSet *result;
+   int err;
+   FileSet *best_result=0;
+   int best_err=0x10000000;
+
+   for(ListParser *parser=list_parsers; *parser; parser++)
+   {
+      err=0;
+      result=(*parser)(lines,&err);
+      if(err<best_err)
+      {
+	 if(best_result)
+	    delete best_result;
+	 best_result=result;
+	 best_err=err;
+	 result=0;
+      }
+      else
+      {
+	 delete result;
+	 result=0;
+      }
+      if(best_err==0)
+	 break;   // look no further
+   }
+   *err_ret=best_err;
+   return best_result;
 }

@@ -31,6 +31,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <fcntl.h>
+#include <fnmatch.h>
 #include "LsCache.h"
 #include "xalloca.h"
 #include "log.h"
@@ -880,6 +881,10 @@ void Glob::free_list()
 
 void Glob::add(const char *ptr,int len)
 {
+   if(pattern[0]!=0
+   && fnmatch(pattern, ptr, FNM_PATHNAME|FNM_PERIOD)!=0)
+      return; // unmatched
+
    // insert new file name into list
    if(list_size>=list_alloc-1)
    {
@@ -891,4 +896,63 @@ void Glob::add(const char *ptr,int len)
    memcpy(list[list_size],ptr,len);
    list[list_size][len]=0;
    list[++list_size]=0;
+}
+
+bool Glob::HasWildcards(const char *s)
+{
+   while(*s)
+   {
+      switch(*s)
+      {
+      case '\\':
+	 if(s[1])
+	    s++;
+	 break;
+      case '*':
+      case '[':
+      case '?':
+	 return true;
+      }
+      s++;
+   }
+   return false;
+}
+
+void Glob::UnquoteWildcards(char *s)
+{
+   char *store=s;
+   for(;;)
+   {
+      if(*s=='\\')
+      {
+	 if(s[1]=='*'
+	 || s[1]=='['
+	 || s[1]=='?'
+	 || s[1]=='\\')
+	    s++;
+      }
+      *store=*s;
+      if(*s==0)
+	 break;
+      s++;
+      store++;
+   }
+}
+
+int NoGlob::Do()
+{
+   if(!done)
+   {
+      done=true;
+      return MOVED;
+   }
+   return STALL;
+}
+NoGlob::NoGlob(const char *p) : Glob(p)
+{
+   char *p1=pattern;
+   pattern=xstrdup("");
+   UnquoteWildcards(p1);
+   add(p1);
+   xfree(p1);
 }
