@@ -1,4 +1,9 @@
-2000-02-01  Alexander V. Lukyanov  <lav@yars.free.net>
+2000-03-02  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: don't take over a connection if it has NOREST_MODE.
+	* commands.cc: -E for get, put, mget, mput.
+
+2000-03-01  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CmdExec.cc, CopyJob.h, FileAccess.cc, FileCopy.cc, FileCopy.h,
 	  Job.cc, Job.h, NetAccess.cc, commands.cc, ftpclass.cc, resource.cc:

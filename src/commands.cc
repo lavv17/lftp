@@ -163,7 +163,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Retrieve remote file <rfile> and store it to local file <lfile>.\n"
 	 " -o <lfile> specifies local file name (default - basename of rfile)\n"
 	 " -c  continue, reget\n"
-	 " -e  delete remote files after successful transfer\n"
+	 " -E  delete remote files after successful transfer\n"
 	 " -a  use ascii mode (binary is the default)\n"
 	 " -O <base> specifies base directory or URL where files should be placed\n")},
    {"get1",    cmd_get1,   0,0},
@@ -208,7 +208,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -c  continue, reget\n"
 	 " -d  create directories the same as in file names and get the\n"
 	 "     files into them instead of current directory\n"
-	 " -e  delete remote files after successful transfer\n"
+	 " -E  delete remote files after successful transfer\n"
 	 " -a  use ascii mode (binary is the default)\n"
 	 " -O <base> specifies base directory or URL where files should be placed\n")},
    {"mirror",  cmd_mirror, N_("mirror [OPTS] [remote [local]]"),
@@ -251,7 +251,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -c  continue, reput\n"
 	 " -d  create directories the same as in file names and put the\n"
 	 "     files into them instead of current directory\n"
-	 " -e  delete local files after successful transfer (dangerous)\n"
+	 " -E  delete local files after successful transfer (dangerous)\n"
 	 " -a  use ascii mode (binary is the default)\n"
 	 " -O <base> specifies base directory or URL where files should be placed\n")},
    {"mrm",     cmd_mrm,    N_("mrm <files>"),
@@ -277,7 +277,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -o <rfile> specifies remote file name (default - basename of lfile)\n"
 	 " -c  continue, reput\n"
 	 "     it requires permission to overwrite remote files\n"
-	 " -e  delete local files after successful transfer (dangerous)\n"
+	 " -E  delete local files after successful transfer (dangerous)\n"
 	 " -a  use ascii mode (binary is the default)\n"
 	 " -O <base> specifies base directory or URL where files should be placed\n")},
    {"pwd",     cmd_pwd,    "pwd [-u]",
@@ -972,7 +972,7 @@ CMD(get)
 {
    int opt;
    bool cont=false;
-   const char *opts="+ceuaO:";
+   const char *opts="+cEuaO:";
    const char *op=args->a0();
    ArgV	 *get_args=new ArgV(op);
    int n_conn=0;
@@ -987,7 +987,7 @@ CMD(get)
    if(!strncmp(op,"re",2))
    {
       cont=true;
-      opts="+euaO:";
+      opts="+EuaO:";
    }
    if(!strcmp(op,"pget"))
    {
@@ -1001,12 +1001,12 @@ CMD(get)
    else if(!strcmp(op,"mget"))
    {
       glob=true;
-      opts="ceadO:";
+      opts="cEadO:";
    }
    else if(!strcmp(op,"mput"))
    {
       glob=true;
-      opts="ceadO:";
+      opts="cEadO:";
       reverse=true;
    }
    while((opt=args->getopt(opts))!=EOF)
@@ -1024,7 +1024,7 @@ CMD(get)
 	 }
 	 n_conn=atoi(optarg);
 	 break;
-      case('e'):
+      case('E'):
 	 del=true;
 	 break;
       case('a'):

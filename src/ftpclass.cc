@@ -832,10 +832,14 @@ void  Ftp::GetBetterConnection(int level)
 
       if(o->data_sock!=-1 || o->state!=EOF_STATE || o->mode!=CLOSED)
       {
-	 if(level<2 || !connection_takeover || o->priority>=priority)
+	 if(level<2)
+	    continue;
+	 if(!connection_takeover || o->priority>=priority)
 	    continue;
 	 if(o->data_sock!=-1 && o->RespQueueSize()<=1)
 	 {
+	    if((o->flags&NOREST_MODE) && o->real_pos>0x1000)
+	       continue;
 	    o->DataAbort();
 	    o->DataClose();
 	    if(o->control_sock==-1)
