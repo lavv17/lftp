@@ -1,3 +1,7 @@
+1999-08-10	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: add a note about sysconfdir.
+
 1999-08-06	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document ftp:rest-list; remove statement about non-strict

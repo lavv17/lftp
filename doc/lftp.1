@@ -61,7 +61,7 @@ lftp \- Sophisticated ftp program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 2.0.3.
+This man page documents lftp version 2.0.4.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a program that allows sophisticated ftp connection to
@@ -520,8 +520,9 @@ You can place aliases
 and `set' commands there. Some people prefer to see full protocol
 debug, use `debug' to turn the debug on.
 .PP
-There is also a systemwide startup file in
+There is also a system-wide startup file in
 .IR /etc/lftp.conf .
+It can be in different directory, see FILES section.
 .PP
 .B lftp
 has the following settable variables (you can also use
@@ -775,7 +776,10 @@ This should be the name of the pager to use.  It's used by the
 .SH FILES
 .TP
 .I "/etc/lftp.conf"
-system-wide startup file
+system-wide startup file. Actual location depends on \-\-sysconfdir
+configure option. It is \fI/etc\fR when prefix is \fI/usr\fR,
+\fI/usr/local/etc\fR by default.
+
 .TP
 .I "~/.lftp/rc," "~/.lftprc"
 These files are executed on lftp startup after \fI/etc/lftp.conf\fR.
