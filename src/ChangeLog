@@ -1,6 +1,8 @@
 2000-01-26  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* md5.c: check for HAVE_ENDIAN_H
+	* commands.cc: options for glob; add help for glob and find.
+	* ftpclass.cc: compilation fix for solaris251.
 
 2000-01-25  Alexander V. Lukyanov  <lav@yars.free.net>
 

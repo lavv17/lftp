@@ -154,7 +154,11 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "If no jobs active, the code is passed to operating system as lftp\n"
 	 "termination status. If omitted, exit code of last command is used.\n")},
    {"fg",      cmd_wait,   0,"wait"},
-   {"find",    cmd_find},
+   {"find",    cmd_find,0,
+	 N_("Usage: find [directory]\n"
+	 "Print contents of specified directory of current directory recursively.\n"
+	 "Directories in the list are marked with trailing slash.\n"
+	 "You can redirect output of this command.\n")},
    {"get",     cmd_get,    N_("get [OPTS] <rfile> [-o <lfile>]"),
 	 N_("Retrieve remote file <rfile> and store it to local file <lfile>.\n"
 	 " -o <lfile> specifies local file name (default - basename of rfile)\n"
@@ -162,7 +166,15 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -e  delete remote files after successful transfer\n"
 	 " -a  use ascii mode (binary is the default)\n")},
    {"get1",    cmd_get1,   0,0},
-   {"glob",    cmd_glob,   0,0},
+   {"glob",    cmd_glob,   0,
+	 N_("Usage: glob [OPTS] command args...\n"
+	 "Expand wildcards and run specified command.\n"
+	 "Options can be used to expand wildcards to list of files, directories,\n"
+	 "or both types. Type selection is not very reliable and depends on server.\n"
+	 "If entry type cannot be determined, it will be included in the list.\n"
+	 " -f  plain files (default)\n"
+	 " -d  directories\n"
+	 " -a  all types\n")},
    {"help",    cmd_help,   N_("help [<cmd>]"),
 	 N_("Print help for command <cmd>, or list of available commands\n")},
    {"jobs",    cmd_jobs,   "jobs [-v]",
@@ -739,9 +751,36 @@ Job *CmdExec::builtin_restart()
 
 Job *CmdExec::builtin_glob()
 {
+   const char *op=args->a0();
+   bool files_only=true;
+   bool dirs_only=false;
+   int opt;
+
+   while((opt=args->getopt("+adf"))!=EOF)
+   {
+      switch(opt)
+      {
+      case('a'):
+	 files_only=dirs_only=false;
+	 break;
+      case('d'):
+	 dirs_only=true;
+	 files_only=false;
+	 break;
+      case('f'):
+	 files_only=true;
+	 dirs_only=false;
+	 break;
+      case('?'):
+	 eprintf(_("Try `help %s' for more information.\n"),op);
+	 return 0;
+      }
+   }
+   while(args->getindex()>1)
+      args->delarg(1);	   // remove options.
    if(args->count()<2)
    {
-      eprintf(_("Usage: %s command args...\n"),args->a0());
+      eprintf(_("Usage: %s [OPTS] command args...\n"),op);
       return 0;
    }
    assert(args_glob==0 && glob==0);
@@ -757,6 +796,10 @@ Job *CmdExec::builtin_glob()
       return cmd_command(this);
    }
    glob=new GlobURL(session,pat);
+   if(dirs_only)
+      glob->glob->DirectoriesOnly();
+   if(files_only)
+      glob->glob->FilesOnly();
    builtin=BUILTIN_GLOB;
    return this;
 }

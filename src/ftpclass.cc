@@ -84,7 +84,7 @@ static void test_TIOCOUTQ()
       return;
    int avail=-1;
    socklen_t len=sizeof(avail);
-   if(getsockopt(sock,SOL_SOCKET,SO_SNDBUF,&avail,&len)==-1)
+   if(getsockopt(sock,SOL_SOCKET,SO_SNDBUF,(char*)&avail,&len)==-1)
       avail=-1;
    int buf=-1;
    if(ioctl(sock,TIOCOUTQ,&buf)==-1)
@@ -3204,7 +3204,7 @@ int Ftp::Buffered()
    if(TIOCOUTQ_returns_free_space)
    {
       socklen_t len=sizeof(buffer);
-      if(getsockopt(data_sock,SOL_SOCKET,SO_SNDBUF,&buffer,&len)==-1)
+      if(getsockopt(data_sock,SOL_SOCKET,SO_SNDBUF,(char*)&buffer,&len)==-1)
 	 return 0;
       int avail=buffer;
       if(ioctl(data_sock,TIOCOUTQ,&avail)==-1)
