@@ -66,7 +66,7 @@ mputJob::mputJob(FileAccess *session,ArgV *args) : PutJob(session,new ArgV(args-
    {
       glob(p,0,0,&pglob);
       if(pglob.gl_pathc==0)
-	 fprintf(stderr,"%s: no such files\n",p);
+	 fprintf(stderr,_("%s: no such files\n"),p);
       for(i=0; i<(int)pglob.gl_pathc; i++)
       {
 	 char *local_name=pglob.gl_pathv[i];

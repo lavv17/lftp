@@ -31,8 +31,6 @@
 #include "xmalloc.h"
 
 #include "XferJob.h"
-#include "ProtoList.h"
-#include "rglob.h"
 #include "plural.h"
 #include "ResMgr.h"
 
@@ -245,7 +243,7 @@ void XferJob::NextFile(char *f)
 	 {
 	    FileAccess *new_session=session;
 	    if(url->proto)
-	       new_session=Protocol::NewSession(url->proto);
+	       new_session=FileAccess::New(url->proto);
 	    if(!new_session)
 	    {
 	       eprintf(_("%s: %s - not supported protocol\n"),
