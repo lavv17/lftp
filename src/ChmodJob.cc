@@ -82,7 +82,7 @@ void ChmodJob::CurrentFinished(const char *d,const FileInfo *fi)
    int mode=GetMode(fi);
    if(mode==-1)
    {
-      eprintf(_("Failed to change mode of `%s' because no old mode is available."),fi->name);
+      eprintf(_("Failed to change mode of `%s' because no old mode is available.\n"),fi->name);
       return;
    }
    if(verbose == V_ALL || (verbose == V_CHANGES
