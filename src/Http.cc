@@ -528,7 +528,10 @@ add_path:
       else if(mode==LONG_LIST)
 	 goto retrieve;
       else if(mode==MAKE_DIR)
+      {
 	 SendMethod("PUT",efile);   // hope it would work
+	 Send("Content-length: 0\r\n");
+      }
       break;
 
    case(REMOVE):

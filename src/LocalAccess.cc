@@ -77,14 +77,16 @@ LocalAccess::~LocalAccess()
 
 void LocalAccess::errno_handle()
 {
+   int e=errno;
    xfree(error);
-   const char *err=strerror(errno);
+   const char *err=strerror(e);
    error=(char*)xmalloc(xstrlen(file)+xstrlen(file1)+strlen(err)+20);
    if(mode==RENAME)
       sprintf(error,"rename(%s, %s): %s",file,file1,err);
    else
       sprintf(error,"%s: %s",file,err);
-   Log::global->Format(0,"**** %s\n",error);
+   if(e!=EEXIST)
+      Log::global->Format(0,"**** %s\n",error);
 }
 
 int LocalAccess::Done()
@@ -202,7 +204,21 @@ int LocalAccess::Do()
       return MOVED;
    }
    case(MAKE_DIR):
-      if(mkdir(dir_file(cwd,file),0755)==-1)
+      if(mkdir_p)
+      {
+	 char *sl=strchr(file,'/');
+	 while(sl)
+	 {
+	    if(sl>file)
+	    {
+	       *sl=0;
+	       mkdir(dir_file(cwd,file),0775);
+	       *sl='/';
+	    }
+	    sl=strchr(sl+1,'/');
+	 }
+      }
+      if(mkdir(dir_file(cwd,file),0775)==-1)
       {
 	 errno_handle();
 	 error_code=NO_FILE;

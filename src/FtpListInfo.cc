@@ -141,8 +141,9 @@ int FtpListInfo::Do()
       result->rewind();
       for(file=result->curr(); file!=0; file=result->next())
       {
-	 cur->get_size = !(file->defined & file->SIZE) && need_size;
-	 cur->get_time = !(file->defined & file->DATE) && need_time;
+	 cur->get_size = need_size && !(file->defined & file->SIZE);
+	 cur->get_time = need_time && (!(file->defined & file->DATE)
+				       || file->date_prec>0);
 
 	 if(file->defined & file->TYPE)
 	 {
