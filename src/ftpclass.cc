@@ -380,10 +380,13 @@ int   Ftp::proxy_NoPassReqCheck(int act,int exp)
 
 const char *Ftp::ExtractPWD()
 {
-   static char pwd[1024];
+   char *pwd=string_alloca(strlen(line));
 
    if(sscanf(line,"%*d \"%[^\"]\"",pwd)!=1)
-      return "";
+      return 0;
+      
+   if(pwd[0]==0)
+      return 0;
 
    if(isalpha(pwd[0]) && pwd[1]==':')
       flags|=DOSISH_PATH;
