@@ -1552,7 +1552,28 @@ int FileCopyPeerFDStream::Put_LL(const char *buf,int len)
 	 return -1;
       }
       if(stream->NonFatalError(errno))
+      {
+	 // in case of full disk, check file correctness.
+	 if(errno==ENOSPC && can_seek)
+	 {
+	    struct stat st;
+	    if(fstat(fd,&st)!=-1)
+	    {
+	       if(st.st_size<seek_base+pos-in_buffer)
+	       {
+		  // workaround solaris nfs bug. It can lose data if disk is full.
+		  if(buffer_ptr>=seek_base+pos-in_buffer-buffer_ptr-st.st_size)
+		     UnSkip(seek_base+pos-in_buffer-st.st_size);
+		  else
+		  {
+		     Empty();
+		     pos=st.st_size;
+		  }
+	       }
+	    }
+	 }
 	 return 0;
+      }
       stream->MakeErrorText();
       SetError(stream->error_text);
       return -1;

@@ -1,3 +1,8 @@
+2004-01-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* buffer.cc: use ICONV_CONST.
+	* FileCopy.cc: workaround solaris nfs bug in case of ENOSPC.
+
 2004-01-15  Glenn Maynard <g_ld@zewt.org>
 
 	* buffer.cc: include errno.h early.

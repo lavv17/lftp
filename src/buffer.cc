@@ -304,7 +304,7 @@ try_again:
    store_size=buffer_allocated-(store_buf-buffer);
    const char *base_buf=put_buf;
    // do the translation
-   size_t res=iconv(backend_translate,&put_buf,&put_size,&store_buf,&store_size);
+   size_t res=iconv(backend_translate,(ICONV_CONST char**)&put_buf,&put_size,&store_buf,&store_size);
    in_buffer+=store_buf-(buffer+buffer_ptr+in_buffer);
    if(from_untranslated)
       untranslated->Skip(put_buf-base_buf);
