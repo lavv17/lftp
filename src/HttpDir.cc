@@ -284,7 +284,11 @@ parse_url_again:
       if(!prefix)
 	 return tag_len;	// no way
 
-      if(xstrcmp(link_url.proto,prefix->proto)
+      const char *pproto=prefix->proto;
+      if(!xstrcmp(pproto,"hftp"))
+	 pproto++;
+
+      if(xstrcmp(link_url.proto,pproto)
       || xstrcmp(link_url.host,prefix->host)
       || xstrcmp(link_url.user,prefix->user)
       || xstrcmp(link_url.port,prefix->port))

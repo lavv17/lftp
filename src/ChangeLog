@@ -1,3 +1,7 @@
+1999-10-21  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* HttpDir.cc: compare ftp:// with hftp:// properly.
+
 1999-10-20  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileAccess.cc: (AnonymousLogin) reset cwd and home.
