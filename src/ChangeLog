@@ -1,3 +1,11 @@
+2000-07-25  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* MirrorJob.cc, MirrorJob.h: count errors; (ExitCode) implemented.
+	* Resolver.cc: use getipnodebyname when available (for solaris8).
+	* ftpclass.cc: handle "" in PWD reply; fix NextPeer selection.
+	* NetAccess.cc: don't reset peer_curr on Resolve.
+	* pgetJob.cc: fix eta.
+
 2000-07-21  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CopyJob.cc: fix duplicate error messages.

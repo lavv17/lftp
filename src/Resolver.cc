@@ -661,7 +661,10 @@ void Resolver::LookupOne(const char *name)
 
       time(&try_time);
 
-#if defined(HAVE_GETADDRINFO) && INET6 && !defined(HAVE_GETHOSTBYNAME2)
+#if defined(HAVE_GETADDRINFO) && INET6 \
+   && !defined(HAVE_GETHOSTBYNAME2) \
+   && !defined(HAVE_GETIPNODEBYNAME)
+
       // getaddrinfo support by Brandon Hume
       struct addrinfo	    *ainfo=0,
 			    *a_res,
@@ -730,7 +733,13 @@ void Resolver::LookupOne(const char *name)
 	 break;
 
       struct hostent *ha;
-# ifdef HAVE_GETHOSTBYNAME2
+# if defined(HAVE_GETIPNODEBYNAME)
+#  ifndef HAVE_H_ERRNO
+#   define HAVE_H_ERRNO 1
+#  endif
+      int h_errno=0;
+      ha=getipnodebyname(name,af,0,&h_errno);
+# elif defined(HAVE_GETHOSTBYNAME2)
       ha=gethostbyname2(name,af);
 # else
       if(af==AF_INET)

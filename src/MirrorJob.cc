@@ -551,6 +551,7 @@ int   MirrorJob::Do()
       {
       list_info_error:
 	 eprintf("mirror: %s\n",list_info->ErrorText());
+	 error_count++;
 	 state=DONE;
       	 Delete(list_info);
 	 list_info=0;
@@ -632,6 +633,8 @@ int   MirrorJob::Do()
       j=FindDoneAwaitedJob();
       if(j)
       {
+	 if(j->ExitCode()!=0)
+	    error_count++;
 	 RemoveWaiting(j);
 	 Delete(j);
       }
@@ -685,6 +688,7 @@ int   MirrorJob::Do()
 	 del_symlinks+=mj.del_symlinks;
 	 dirs+=mj.dirs;
 	 del_dirs+=mj.del_dirs;
+	 error_count+=mj.error_count;
 
 	 to_transfer->next();
 	 RemoveWaiting(j);
@@ -860,6 +864,7 @@ MirrorJob::MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_rem
    tot_files=new_files=mod_files=del_files=
    tot_symlinks=new_symlinks=mod_symlinks=del_symlinks=0;
    dirs=0; del_dirs=0;
+   error_count=0;
 
    flags=0;
 

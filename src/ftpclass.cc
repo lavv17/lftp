@@ -502,11 +502,36 @@ char *Ftp::ExtractPWD()
 {
    char *pwd=string_alloca(strlen(line)+1);
 
-   if(sscanf(line,"%*d \"%[^\"]\"",pwd)!=1)
+   const char *scan=strchr(line,'"');
+   if(scan==0)
       return 0;
 
-   if(pwd[0]==0)
+   char *store=pwd;
+   scan++;
+   for(;;)
+   {
+      if(*scan==0)
+	 return 0;
+      if(*scan=='"')
+      {
+	 if(scan[1]=='"')
+	 {
+	    *store++='"';
+	    scan++;
+	 }
+	 else if(scan[1]!=0 && scan[1]!=' ') // some ftpd don't encode '"'
+	    *store++=*scan;
+	 else
+	    break;
+      }
+      else
+	 *store++=*scan;
+      scan++;
+   }
+
+   if(store==pwd)
       return 0;	  // empty home not allowed.
+   *store=0;
 
    int dev_len=device_prefix_len(pwd);
    if(pwd[dev_len]=='[')
@@ -1026,6 +1051,7 @@ int   Ftp::Do()
       SayConnectingTo();
 
       res=SocketConnect(control_sock,&peer_sa);
+      state=CONNECTING_STATE;
       if(res==-1
 #ifdef EINPROGRESS
       && errno!=EINPROGRESS
@@ -1034,14 +1060,13 @@ int   Ftp::Do()
       {
 	 sprintf(str,"connect: %s",strerror(errno));
          DebugPrint("**** ",str,0);
-         close(control_sock);
-	 control_sock=-1;
-	 NextPeer();
 	 if(NotSerious(errno))
+	 {
+	    Disconnect();
 	    return MOVED;
+	 }
 	 goto system_error;
       }
-      state=CONNECTING_STATE;
       m=MOVED;
       event_time=now;
 

@@ -119,17 +119,13 @@ int pgetJob::Do()
    chunks_done=true;
    total_xferred=MIN(offset,chunks[0]->start);
    total_xfer_rate=cp->GetRate();
-   total_eta=-1;
-   if(total_xfer_rate<1)
-      total_eta=-2;
+
+   off_t rem=chunks[0]->start-cp->GetPos();
+   if(rem<=0)
+      total_eta=0;
    else
-   {
-      off_t rem=chunks[0]->start-cp->GetPos();
-      if(rem<=0)
-	 total_eta=0;
-      else
-	 total_eta=cp->GetETA(rem);
-   }
+      total_eta=cp->GetETA(rem);
+
    for(int i=0; i<num_of_chunks; i++)
    {
       if(chunks[i]->Error())
@@ -142,11 +138,11 @@ int pgetJob::Do()
 	 if(chunks[i]->GetPos()>=chunks[i]->start)
 	    total_xferred+=MIN(chunks[i]->GetPos(),chunks[i]->limit)
 			   -chunks[i]->start;
-	 if(total_eta!=-2)
+	 if(total_eta>=0)
 	 {
 	    long eta=chunks[i]->GetETA();
 	    if(eta<0)
-	       total_eta=-2;
+	       total_eta=-1;
 	    else if(eta>total_eta)
 	       total_eta=eta;	// total eta is the maximum.
 	 }

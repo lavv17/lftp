@@ -306,7 +306,8 @@ int NetAccess::Resolve(const char *defp,const char *ser,const char *pr)
 
    if(!resolver)
    {
-      ClearPeer();
+      xfree(peer);
+      peer_num=0;
       if(proxy)
 	 resolver=new Resolver(proxy,proxy_port,defp);
       else
@@ -336,7 +337,8 @@ int NetAccess::Resolve(const char *defp,const char *ser,const char *pr)
    peer=(sockaddr_u*)xmalloc(resolver->GetResultSize());
    peer_num=resolver->GetResultNum();
    resolver->GetResult(peer);
-   peer_curr=0;
+   if(peer_curr>=peer_num)
+      peer_curr=0;
 
    Delete(resolver);
    resolver=0;

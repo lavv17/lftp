@@ -85,6 +85,7 @@ class MirrorJob : public SessionJob
    int	 tot_files,new_files,mod_files,del_files;
    int	 dirs,del_dirs;
    int	 tot_symlinks,new_symlinks,mod_symlinks,del_symlinks;
+   int	 error_count;
 
    int	 flags;
 
@@ -149,6 +150,7 @@ public:
    void	 ShowRunStatus(StatusLine *);
    void	 PrintStatus(int v);
    void	 SayFinal() { PrintStatus(-1); }
+   int	 ExitCode() { return error_count; }
 
    const char *SetInclude(const char *s)
       {
