@@ -67,9 +67,13 @@ other hosts. If \fIhost\fR is specified then lftp will connect to that
 host otherwise a connection has to be established with the open
 command.
 .PP
-\fBlftp\fP can handle four file access methods - ftp, http, hftp and file. You
-can specify the method to use in ``open URL'' command, e.g. ``open
-http://www.us.kernel.org/pub/linux''. hftp is ftp-over-http-proxy protocol.
+\fBlftp\fP can handle six file access methods - ftp, ftps, http, https,
+hftp and file (https and ftps are only available when lftp is compiled with
+openssl library). You can specify the method to use in `open URL' command,
+e.g. `open http://www.us.kernel.org/pub/linux'. hftp is
+ftp-over-http-proxy protocol. It can be used automatically instead of
+ftp if ftp:proxy is set to `http://proxy[:port]'.
+
 .PP
 Every operation in \fBlftp\fP is reliable, that is any not fatal error is
 ignored and the operation is repeated. So if downloading breaks, it
@@ -823,6 +827,21 @@ allow sending skey/opie reply if server appears to support it. On by default.
 do not send plain text password over the network, use skey/opie instead. If
 skey/opie is not available, assume failed login. Off by default.
 .TP
+.BR ftp:ssl-allow \ (bool)
+if true, try to negotiate SSL connection with ftp server for non-anonymous
+access. Default is true. This setting is only available if lftp was compiled
+with openssl.
+.TP
+.BR ftp:ssl-force \ (bool)
+if trus, refuse to send password in clear when server does not support SSL.
+Default is false. This setting is only available if lftp was compiled with
+openssl.
+.TP
+.BR ftp:ssl-protect-data \ (bool)
+if true, request ssl connection for data transfers. This is cpu-intensive
+but provides privacy. Default is false. This setting is only available if
+lftp was compiled with openssl.
+.TP
 .BR ftp:stat-interval \ (seconds)
 interval between STAT commands. Default is 1.
 .TP
@@ -840,6 +859,10 @@ immediately.
 .TP
 .BR ftp:use-fxp \ (bool)
 if true, lftp will try to set up direct connection between two ftp servers.
+.TP
+.BR ftp:use-site-idle \ (bool)
+when true, lftp sends `SITE IDLE' command with net:idle argument. Default
+is true.
 .TP
 .BR ftp:use-stat \ (bool)
 if true, lftp sends STAT command in FXP mode transfer to know how much
@@ -912,6 +935,9 @@ if true, lftp modifies http:cookie variables when Set-Cookie header is received.
 .TP
 .BR http:user-agent " (string)"
 the string lftp sends in User-Agent header of HTTP request.
+.TP
+.BR https:proxy " (string)"
+specifies https proxy. Default value is taken from environment variable \fBhttps_proxy\fP.
 .TP
 .BR mirror:time-precision " (time interval)"
 maximum time difference between files to assume they are the same. File size
@@ -1073,8 +1099,8 @@ Used by the \fB!\fR command to determine the shell to run.
 .IP "\fBPAGER\fP"
 This should be the name of the pager to use.  It's used by the
 \fBmore\fR and \fBzmore\fR commands.
-.IP "\fBhttp_proxy\fP"
-Used to set initial http:proxy and hftp:proxy variables.
+.IP "\fBhttp_proxy\fP, \fBhttps_proxy\fP"
+Used to set initial http:proxy, hftp:proxy and https:proxy variables.
 .IP "\fBftp_proxy\fP"
 Used to set initial ftp:proxy or hftp:proxy variables, depending
 on URL protocol used in this environment variable.
@@ -1118,6 +1144,8 @@ RFC1945 (http/1.0),
 RFC2052 (SRV RR),
 RFC2068 (http/1.1),
 RFC2428 (ftp/ipv6).
+.br
+http://search.ietf.org/internet-drafts/draft-murray-auth-ftp-ssl-05.txt
 
 .SH AUTHOR
 .nf
