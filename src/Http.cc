@@ -1149,7 +1149,7 @@ int Http::Read(void *buf,int size)
       else
       {
 	 // limit by body_size.
-	 if(size1+bytes_received>=body_size)
+	 if(body_size>=0 && size1+bytes_received>=body_size)
 	    size1=body_size-bytes_received;
       }
 
