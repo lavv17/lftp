@@ -48,7 +48,7 @@
 
 #ifndef HAVE_STRCASECMP_DECL
 CDECL int strcasecmp(const char *s1,const char *s2);
-CDECL int strcasecmp(const char *s1,const char *s2,size_t n);
+CDECL int strncasecmp(const char *s1,const char *s2,size_t n);
 #endif
 
 static inline int xstrcmp(const char *s1,const char *s2)
