@@ -3085,7 +3085,7 @@ void  Ftp::Close()
       case(CWD_CWD_WAITING_STATE):
       case(WAITING_STATE):
       case(DATA_OPEN_STATE):
-	 state=(conn->control_sock==-1 ? INITIAL_STATE : EOF_STATE);
+	 state=EOF_STATE;
 	 break;
       case(INITIAL_STATE):
       case(EOF_STATE):
