@@ -64,7 +64,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc README README.modules FAQ THANKS COPYING TODO lftp.lsm NEWS INSTALL FEATURES
 #%doc /usr/man/man1/ftpget.1
-%doc /usr/man/man1/lftp.1
+%doc /usr/man/man1/lftp.1*
 %config /etc/lftp.conf
 %dir /usr/share/lftp
 %attr(755,root,root) /usr/share/lftp/import-*
