@@ -1,6 +1,8 @@
 1999-12-11  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: check use-abor before sending ABOR.
+	* LsCache.cc: use SMTask::now.
+	* misc.cc: include time.h
 
 1999-12-10  Alexander V. Lukyanov  <lav@yars.free.net>
 

@@ -29,6 +29,10 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <time.h>
+#ifdef TM_IN_SYS_TIME
+# include <sys/time.h>
+#endif
 #include "misc.h"
 #include "ProcWait.h"
 #include "SignalHook.h"
