@@ -2,6 +2,7 @@
 
 	* ftpclass.cc: set copy_failed in NoFileCheck and TransferCheck on 4xx codes;
 	  do CPSV only when copy_tls_connect is set.
+	* FileCopyFtp.cc: fix compilation without ssl.
 
 2004-05-28  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -237,11 +237,10 @@ FileCopyFtp::FileCopyFtp(FileCopyPeer *s,FileCopyPeer *d,bool c,bool rp)
       passive_source=false;
    orig_passive_source=passive_source;
 
+#if USE_SSL
    if(ResMgr::QueryBool("ftp:ssl-protect-fxp",ftp_src->GetHostName())
    || ResMgr::QueryBool("ftp:ssl-protect-fxp",ftp_dst->GetHostName()))
       protect=true;
-
-#if USE_SSL
    passive_ssl_connect=ResMgr::QueryBool("ftp:fxp-passive-sscn",0);
    orig_passive_ssl_connect=passive_ssl_connect;
 #endif
