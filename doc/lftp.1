@@ -487,10 +487,19 @@ the first in queue.
 .B quote
 \fIcmd\fP
 .PP
-Send the command uninterpreted. Use with caution - it can lead to
+For FTP - send the command uninterpreted. Use with caution - it can lead to
 unknown remote state and thus will cause reconnect. You cannot
 be sure that any change of remote state because of quoted command
 is solid - it can be reset by reconnect at any time.
+.PP
+For HTTP - specific to HTTP action. Syntax: ``quote <command> [<args>]''.
+Command may be ``set-cookie'' or ``post''.
+.Ds
+open http://www.site.net
+quote set-cookie "variable=value; othervar=othervalue"
+set http:put-content-type application/x-www-form-urlencoded
+quote post /cgi-bin/script.cgi "var=value&othervar=othervalue" > local_file
+.De
 
 .BR "reget \fIrfile\fP " [ -o " \fIlfile\fP]"
 .PP
