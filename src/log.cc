@@ -22,6 +22,9 @@
 
 #include <config.h>
 
+#include <stdarg.h>
+#include <stdio.h>
+#include "xmalloc.h"
 #include "log.h"
 #include "SMTask.h"
 
@@ -32,6 +35,7 @@ void Log::Init()
    output=-1;
    need_close_output=false;
    sl=0;
+   sl_cleared=false;
    enabled=false;
    level=0;
    tty=false;
@@ -52,9 +56,52 @@ void Log::Write(int l,const char *s)
 	 return;
    }
    if(sl && tty)
+   {
+      sl_cleared=true;
+      block+=NoWait();
       sl->Show("");
+   }
    write(output,s,strlen(s));
-   block+=NoWait();
+}
+
+int Log::Do()
+{
+   if(sl_cleared)
+   {
+      sl_cleared=false;
+      return MOVED;
+   }
+   return STALL;
+}
+
+void Log::Format(int l,const char *f,...)
+{
+   static char *buf=0;
+   static int buf_alloc;
+   va_list v;
+   va_start(v,f);
+
+   if(buf==0)
+      buf=(char*)xmalloc(buf_alloc=1024);
+
+#ifdef HAVE_VSNPRINTF
+   for(;;)
+   {
+      int res=vsnprintf(buf,buf_alloc,f,v);
+      if(res>=0 && res<buf_alloc)
+	 break;
+      if(res==buf_alloc)
+	 res*=2;
+      if(res==-1)
+	 res=buf_alloc*2;
+      buf=xrealloc(buf,buf_alloc=res);
+   }
+#else
+   vsprintf(buf,f,v);
+#endif
+
+   va_end(v);
+   Write(l,buf);
 }
 
 Log::~Log()

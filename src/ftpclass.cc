@@ -24,6 +24,7 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/tcp.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -36,6 +37,7 @@
 #include "xalloca.h"
 #include "url.h"
 #include "FtpListInfo.h"
+#include "log.h"
 
 enum {FTP_TYPE_A,FTP_TYPE_I};
 
@@ -73,6 +75,10 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 #define FTPPORT 21
 #define FTP_DATA_PORT 20
 
+#ifndef SOL_TCP
+# define SOL_TCP 6
+#endif
+
 #define super FileAccess
 
 static const char *ProxyValidate(char **p)
@@ -107,6 +113,7 @@ static ResDecl
    res_anon_user	("ftp:anon-user",      "anonymous",0,0),
    res_anon_pass	("ftp:anon-pass",      0,    0,0),
    res_socket_buffer	("ftp:socket-buffer",  "0",  ResMgr::UNumberValidate,0),
+   res_socket_maxseg	("ftp:socket-maxseg",  "0",  ResMgr::UNumberValidate,0),
    res_address_verify	("ftp:verify-address", "no", ResMgr::BoolValidate,0),
    res_port_verify      ("ftp:verify-port",    "no", ResMgr::BoolValidate,0);
 
@@ -771,8 +778,18 @@ void  Ftp::SetSocketBuffer(int sock)
 {
    if(socket_buffer==0)
       return;
-   setsockopt(sock,SOL_SOCKET,SO_SNDBUF,(char*)&socket_buffer,sizeof(socket_buffer));
-   setsockopt(sock,SOL_SOCKET,SO_RCVBUF,(char*)&socket_buffer,sizeof(socket_buffer));
+   if(-1==setsockopt(sock,SOL_SOCKET,SO_SNDBUF,(char*)&socket_buffer,sizeof(socket_buffer)))
+      Log::global->Format(1,"setsockopt(SO_SNDBUF,%d): %s\n",socket_buffer,strerror(errno));
+   if(-1==setsockopt(sock,SOL_SOCKET,SO_RCVBUF,(char*)&socket_buffer,sizeof(socket_buffer)))
+      Log::global->Format(1,"setsockopt(SO_RCVBUF,%d): %s\n",socket_buffer,strerror(errno));
+}
+
+void  Ftp::SetSocketMaxseg(int sock)
+{
+   if(socket_maxseg==0)
+      return;
+   if(-1==setsockopt(sock,SOL_TCP,TCP_MAXSEG,(char*)&socket_maxseg,sizeof(socket_maxseg)))
+      Log::global->Format(1,"setsockopt(TCP_MAXSEG,%d): %s\n",socket_maxseg,strerror(errno));
 }
 
 void  Ftp::SetKeepAlive(int sock)
@@ -881,6 +898,7 @@ int   Ftp::Do()
 	 goto system_error;
       SetKeepAlive(control_sock);
       SetSocketBuffer(control_sock);
+      SetSocketMaxseg(control_sock);
       fcntl(control_sock,F_SETFL,O_NONBLOCK);
       fcntl(control_sock,F_SETFD,FD_CLOEXEC);
 
@@ -1046,6 +1064,7 @@ int   Ftp::Do()
 	 fcntl(data_sock,F_SETFD,FD_CLOEXEC);
 	 SetKeepAlive(data_sock);
 	 SetSocketBuffer(data_sock);
+	 SetSocketMaxseg(data_sock);
       }
 
       int old_type=type;
@@ -1287,6 +1306,7 @@ int   Ftp::Do()
       fcntl(data_sock,F_SETFD,FD_CLOEXEC);
       SetKeepAlive(data_sock);
       SetSocketBuffer(data_sock);
+      SetSocketMaxseg(data_sock);
 
       state=DATA_OPEN_STATE;
       m=MOVED;
@@ -2537,6 +2557,7 @@ void Ftp::Reconfig()
    verify_data_address = res_address_verify.Query(c);
    verify_data_port = res_port_verify.Query(c);
    socket_buffer = res_socket_buffer.Query(c);
+   socket_maxseg = res_socket_maxseg.Query(c);
 
    xfree(anon_user);
    anon_user=xstrdup(res_anon_user.Query(c));

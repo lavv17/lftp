@@ -34,6 +34,7 @@ class Log : public SMTask
    bool need_close_output;
    bool tty;
    StatusLine *sl;
+   bool sl_cleared;
 
    void CloseOutput()
       {
@@ -50,7 +51,7 @@ public:
    int level;
 
    void Write(int l,const char *str);
-   void Format(int l,const char *fmt,...);
+   void Format(int l,const char *fmt,...) PRINTF_LIKE(3,4);
 
    void SetLevel(int l) { level=l; }
    void Enable()  { enabled=true;  }
@@ -75,7 +76,7 @@ public:
       }
    ~Log();
 
-   int Do() { return STALL; }
+   int Do();
 };
 
 #endif // LOG_H

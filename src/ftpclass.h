@@ -228,7 +228,9 @@ class Ftp : public FileAccess
    const char *make_skey_reply();
 
    int	 socket_buffer;
+   int	 socket_maxseg;
    void	 SetSocketBuffer(int sock);
+   void	 SetSocketMaxseg(int sock);
    static void SetKeepAlive(int sock);
 
    bool data_address_ok();
