@@ -1,5 +1,9 @@
 2001-07-19  Glenn F. Maynard <g_ld@zewt.org>
 
+	* FindJob.cc, FindJob.h, commands.cc: add find --maxdepth option.
+
+2001-07-19  Glenn F. Maynard <g_ld@zewt.org>
+
 	* CmdExec.cc, CmdExec.h, commands.cc: implement queue editing -
 	  queue -s and queue -e commands.
 

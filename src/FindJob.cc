@@ -109,7 +109,7 @@ int FinderJob::Do()
       // at this point either is true:
       // 1. we just process another file (!depth_done)
       // 2. we just returned from a subdir (depth_done)
-      if(depth_first && !depth_done)
+      if(depth_first && !depth_done && (maxdepth == -1 || stack_ptr+1 < maxdepth))
       {
 	 FileInfo *f=top.fset->curr();
 	 if((f->defined&f->TYPE) && f->filetype==f->DIRECTORY)
@@ -146,7 +146,7 @@ int FinderJob::Do()
    post_WAIT:
       if(stack_ptr==-1)
 	 return m;
-      if(!depth_first)
+      if(!depth_first && (maxdepth == -1 || stack_ptr+1 < maxdepth))
       {
 	 FileInfo *f=top.fset->curr();
 	 if((f->defined&f->TYPE) && f->filetype==f->DIRECTORY)
@@ -255,6 +255,7 @@ void FinderJob::Init()
    use_cache=true;
 
    quiet=false;
+   maxdepth=-1;
 
    state=INIT;
 }

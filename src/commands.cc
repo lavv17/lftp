@@ -157,10 +157,11 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "`bg' forces moving to background if cmd:move-background is false.\n")},
    {"fg",      cmd_wait,   0,"wait"},
    {"find",    cmd_find,0,
-	 N_("Usage: find [directory]\n"
+	 N_("Usage: find [OPTS] [directory]\n"
 	 "Print contents of specified directory of current directory recursively.\n"
 	 "Directories in the list are marked with trailing slash.\n"
-	 "You can redirect output of this command.\n")},
+	 "You can redirect output of this command.\n"
+	 " -d, --maxdepth=LEVELS  Descend at most LEVELS of directories.\n")},
    {"get",     cmd_get,    N_("get [OPTS] <rfile> [-o <lfile>]"),
 	 N_("Retrieve remote file <rfile> and store it to local file <lfile>.\n"
 	 " -o <lfile> specifies local file name (default - basename of rfile)\n"
@@ -2137,11 +2138,34 @@ CMD(suspend)
 
 CMD(find)
 {
+   static struct option find_options[]=
+   {
+      {"maxdepth",required_argument,0,'d'},
+      {0,0,0,0}
+   };
+   int opt;
+   int maxdepth = -1;
+
+   args->rewind();
+   while((opt=args->getopt_long("+d:",find_options,0))!=EOF)
+   {
+      switch(opt)
+      {
+      case 'd':
+	 maxdepth = atoi(optarg);
+	 break;
+      case '?':
+	 eprintf(_("Usage: %s [-d #] dir\n"),args->a0());
+	 return 0;
+      }
+   }
+
    const char *path=".";
-   if(args->count()>1)
-      path=args->getarg(1);
-   Job *j=new class FinderJob_List(Clone(),path,
+   if(args->getcurr())
+      path=args->getcurr();
+   FinderJob_List *j=new class FinderJob_List(Clone(),path,
       output?output:new FDStream(1,"<stdout>"));
+   j->set_maxdepth(maxdepth);
    output=0;
    return j;
 }

@@ -71,6 +71,7 @@ protected:
    bool depth_first;
    bool use_cache;
    bool quiet;
+   int maxdepth;
 
    void NextDir(const char *d);
 
@@ -87,6 +88,7 @@ public:
    void PrintStatus(int v);
 
    void BeQuiet() { quiet=true; }
+   void set_maxdepth(int _maxdepth) { maxdepth = _maxdepth; }
 };
 
 class FinderJob_List : public FinderJob
