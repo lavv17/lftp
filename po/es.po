@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.2\n"
 "POT-Creation-Date: 1999-10-09 18:18+0400\n"
-"PO-Revision-Date: 1999-06-05 14:51-0300\n"
+"PO-Revision-Date: 1999-10-09 21:45-0300\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
@@ -55,7 +55,7 @@ msgstr "\tEjecutando primitiva `%s' [%s]\n"
 
 #: src/CmdExec.cc:660
 msgid "\tCommands queued:\n"
-msgstr ""
+msgstr "\tComandos encolados:\n"
 
 #: src/CmdExec.cc:679
 #, c-format
@@ -124,7 +124,7 @@ msgstr "rm(%s) remoto - %s\n"
 #: src/GetJob.cc:162
 #, c-format
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
-msgstr ""
+msgstr "%s: %s: el fichero ya existe y xfer:clobber no está definido\n"
 
 #: src/Job.cc:222
 #, c-format
@@ -266,11 +266,11 @@ msgstr "número inválido"
 
 #: src/ResMgr.cc:489
 msgid "Invalid time unit letter, only [smhd] are allowed."
-msgstr ""
+msgstr "Unidad de tiempo inválida, sólo se permiten [smhd]."
 
 #: src/ResMgr.cc:497
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
-msgstr ""
+msgstr "Formato de tiempo inválido, debe ser <tiempo><unidad>, p.ej. 2h30m."
 
 #: src/Http.cc:1078 src/Resolver.cc:184 src/ftpclass.cc:2550
 msgid "Resolving host address..."
@@ -632,7 +632,7 @@ msgid ""
 "`cache flush'.\n"
 msgstr ""
 "Lista ficheros remotos. Puede redirigir la salida de este comando a un\n"
-"ficheero o, a través de un pipe, a una orden externa.\n"
+"fichero o, a través de un pipe, a una orden externa.\n"
 "Por omisión la salida de ls se mantiene en un caché. Para ver un listado\n"
 "nuevo use `rels' o `cache flush'.\n"
 
@@ -978,6 +978,10 @@ msgid ""
 "followed by unit specifier: d - days, h - hours, m - minutes, s - seconds.\n"
 "By default time is assumed to be seconds.\n"
 msgstr ""
+"Uso: sleep <lapso>[unidad]\n"
+"Espera la cantidad de tiempo dada. El argumento lapso puede ser seguido\n"
+"opcionalmente por una unidad: d - días, h - horas, m - minutos, s - segundos.\n"
+"Por omisión se asume que el tiempo se da en segundos.\n"
 
 #: src/commands.cc:306
 msgid "source <file>"
