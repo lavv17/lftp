@@ -318,7 +318,7 @@ parse_url_again:
    if(type && type[6] && !type[7])
    {
       type[0]=0;
-      if(all_links && all_links->FindByName(link_target))
+      if(!all_links || all_links->FindByName(link_target))
 	 return tag_len;
       type[0]=';';
    }
