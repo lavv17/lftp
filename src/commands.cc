@@ -593,6 +593,8 @@ Job *CmdExec::builtin_cd()
    if (!verify_path || background)
    {
       session->Chdir(dir,false);
+      if(slot)
+	 ConnectionSlot::SetCwd(slot,session->GetCwd());
       exit_code=0;
       return 0;
    }

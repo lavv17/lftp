@@ -1,6 +1,8 @@
 2002-07-30  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc: don't do SetTryTime(0).
+	* ConnectionSlot.cc: fix SetCwd; Clone session properly.
+	* commands.cc: call ConnectionSlot::SetCwd when not verifying in cd.
 
 2002-07-25  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -29,7 +29,7 @@ ConnectionSlot ConnectionSlot::lftp_slots;
 ConnectionSlot::SlotValue::SlotValue(const char *n,FileAccess *s)
    : KeyValueDB::Pair(n,s->GetConnectURL())
 {
-   session=s;
+   session=s->Clone();
 }
 ConnectionSlot::SlotValue::SlotValue(const char *n,const char *v)
    : KeyValueDB::Pair(n,v)
@@ -65,10 +65,14 @@ void ConnectionSlot::Set(const char *n,FileAccess *fa)
 }
 void ConnectionSlot::SetCwd(const char *n,const char *cwd)
 {
-   FileAccess *fa=FindSession(n);
+   ConnectionSlot::SlotValue *s=Find(n);
+   if(!s)
+      return;
+   FileAccess *fa=s->session;
    if(!fa)
       return;
    fa->SetCwd(cwd);
+   s->SetValue(fa->GetConnectURL());
 }
 FileAccess *ConnectionSlot::FindSession(const char *n)
 {
