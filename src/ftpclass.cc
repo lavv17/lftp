@@ -232,7 +232,9 @@ int   Ftp::NoFileCheck(int act,int exp)
       return(FATAL_STATE);
    if(act/100==5)
    {
-      if(strstr(line,"Broken pipe")) // retry on that error
+      // retry on these errors (ftp server ought to send 4xx code instead)
+      if((strstr(line,"Broken pipe") && !strstr(file,"Broken pipe"))
+      || (strstr(line,"Too many")    && !strstr(file,"Too many")))
       {
 	 if(copy_mode!=COPY_NONE)
 	    return COPY_FAILED;
@@ -701,17 +703,7 @@ int   Ftp::CheckTimeout()
 {
    if(now-event_time>=timeout)
    {
-      /* try to autodetect faulty ftp server */
-      /* Some Windows based ftp servers seem to clear input queue
-	    after USER command */
-      if(!RespQueueIsEmpty() && RespQueue[RQ_head].expect==RESP_LOGGED_IN
-      && !(flags&SYNC_MODE))
-      {
-	 flags|=SYNC_MODE;
-	 DebugPrint("**** ",_("Timeout - trying sync mode (is it windoze?)"));
-      }
-      else
-	 DebugPrint("**** ",_("Timeout - reconnecting"));
+      DebugPrint("**** ",_("Timeout - reconnecting"));
       Disconnect();
       event_time=now;
       return(1);

@@ -1,5 +1,11 @@
 1999-08-11  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* ftpclass.cc: try to catch "Too many open files" server error;
+	  check for the substring in file name too; remove old code for
+	  switching to sync mode.
+
+1999-08-11  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* lftpget: options -c -v -d.
 	* Http.cc: change level of Connecting message.
 
