@@ -1,3 +1,8 @@
+2004-10-21  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: fixed file removing with --delete-first option;
+	  optimized done job deletion.
+
 2004-10-20  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc: remove bogus assert.

@@ -713,18 +713,17 @@ int   MirrorJob::Do()
       to_rm->rewind();
       to_rm_mismatched->Count(&stats.del_dirs,&stats.del_files,&stats.del_symlinks,&stats.del_files);
       to_rm_mismatched->rewind();
+      transfer_count-=root_transfer_count; // leave room for transfers.
       state=TARGET_REMOVE_OLD_FIRST;
       return MOVED;
 
    pre_WAITING_FOR_TRANSFER:
       to_transfer->rewind();
-      transfer_count-=root_transfer_count; // leave room for transfers.
       state=WAITING_FOR_TRANSFER;
       m=MOVED;
       /*fallthrough*/
    case(WAITING_FOR_TRANSFER):
-      j=FindDoneAwaitedJob();
-      if(j)
+      while(j=FindDoneAwaitedJob())
       {
 	 if(j->ExitCode()!=0)
 	    stats.error_count++;
@@ -756,8 +755,7 @@ int   MirrorJob::Do()
       /*fallthrough*/
    case(TARGET_REMOVE_OLD):
    case(TARGET_REMOVE_OLD_FIRST):
-      j=FindDoneAwaitedJob();
-      if(j)
+      while(j=FindDoneAwaitedJob())
       {
 	 RemoveWaiting(j);
 	 Delete(j);
@@ -778,7 +776,13 @@ int   MirrorJob::Do()
 	    to_rm->next();
 	 }
 	 if(!file)
-	    break;
+	 {
+	    if(waiting_num>0)
+	       break;
+	    if(state==TARGET_REMOVE_OLD)
+	       goto pre_TARGET_CHMOD;
+	    goto pre_WAITING_FOR_TRANSFER;
+	 }
 	 if(!(flags&DELETE))
 	 {
 	    if(flags&REPORT_NOT_DELETED)
@@ -826,12 +830,6 @@ int   MirrorJob::Do()
 		     dir_file(target_relative_dir,file->name));
 	 }
       }
-      if(waiting_num==0)
-      {
-	 if(state==TARGET_REMOVE_OLD)
-	    goto pre_TARGET_CHMOD;
-	 goto pre_WAITING_FOR_TRANSFER;
-      }
       break;
 
    pre_TARGET_CHMOD:
@@ -843,8 +841,7 @@ int   MirrorJob::Do()
       m=MOVED;
       /*fallthrough*/
    case(TARGET_CHMOD):
-      j=FindDoneAwaitedJob();
-      if(j)
+      while(j=FindDoneAwaitedJob())
       {
 	 RemoveWaiting(j);
 	 Delete(j);
@@ -918,8 +915,7 @@ int   MirrorJob::Do()
       m=MOVED;
       /*fallthrough*/
    case(FINISHING):
-      j=FindDoneAwaitedJob();
-      if(j)
+      while(j=FindDoneAwaitedJob())
       {
 	 RemoveWaiting(j);
 	 Delete(j);
