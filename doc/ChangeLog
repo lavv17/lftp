@@ -1,3 +1,7 @@
+2004-05-24	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:ssl-protect-{list,fxp}.
+
 2004-04-05	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document ftp:list-empty-ok.

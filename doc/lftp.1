@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "18 Feb 2004"
+.TH lftp 1 "18 May 2004"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 3.0.0.
+This man page documents lftp version 3.0.4.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -388,7 +388,7 @@ directory name. Source and/or target can be URLs pointing to directories.
 -X \fIGP\fP, --exclude-glob \fIGP\fP	exclude matching files
 -v, --verbose[=level]	verbose operation
     --log=FILE		write lftp commands being executed to FILE
-    --script=FILE	write lftp commands to FILE, but don't execute them
+    --script=FILE		write lftp commands to FILE, but don't execute them
     --just-print, --dry-run	same as --script=-
     --use-cache		use cached directory listings
 --Remove-source-files	remove files after transfer (use with caution)
@@ -1024,6 +1024,15 @@ openssl.
 if true, request ssl connection for data transfers. This is cpu-intensive
 but provides privacy. Default is false. This setting is only available if
 lftp was compiled with openssl.
+.TP
+.BR ftp:ssl-protect-fxp \ (bool)
+if true, request ssl connection for data transfer between two ftp servers
+in FXP mode. CPSV or SSCN command will be used in that case. If ssl connection
+fails for some reason, lftp would try unprotected FXP transfer unless
+ftp:ssl-force is set for any of the two servers. Default is false.
+.TP
+.BR ftp:ssl-protect-list \ (bool)
+if true, request ssl connection for file list transfers. Default is true.
 .TP
 .BR ftp:stat-interval \ (seconds)
 interval between STAT commands. Default is 1.
