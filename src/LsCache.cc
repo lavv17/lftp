@@ -134,9 +134,9 @@ LsCache::~LsCache()
 {
    if(expire_helper.expiring==this)
       expire_helper.expiring=0;
-   free(data);
    SMTask::Delete(loc);
-   free(arg);
+   xfree(data);
+   xfree(arg);
 }
 
 void LsCache::Flush()

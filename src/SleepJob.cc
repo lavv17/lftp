@@ -71,7 +71,7 @@ int SleepJob::Do()
 
    if(next_time.IsInfty())
    {
-      Timeout(HOUR*1000);  // to avoid deadlock message
+      TimeoutS(HOUR);  // to avoid deadlock message
       return STALL;
    }
 
@@ -101,7 +101,7 @@ int SleepJob::Do()
    time_t diff=next_time.Seconds()-(now-start_time);
    if(diff>1024)
       diff=1024;  // prevent overflow
-   Timeout(diff*1000);
+   TimeoutS(diff);
    return STALL;
 }
 

@@ -283,8 +283,7 @@ void CmdExec::ExecParsed(ArgV *a,FDStream *o,bool b)
    if(args)
       delete args;
    args=a;
-   if(cmd)
-      free(cmd);
+   xfree(cmd);
    cmd=args->Combine();
    if(output)
       delete output;
@@ -642,7 +641,7 @@ void CmdExec::PrintStatus(int v)
    {
       char *s=args->Combine();
       printf(_("\tExecuting builtin `%s' [%s]\n"),s,session->CurrentStatus());
-      free(s);
+      xfree(s);
       return;
    }
    if(is_queue)

@@ -360,6 +360,13 @@ def_ret:
    return(-1);
 }
 
+void Ftp::FreeResult()
+{
+   xfree(result);
+   result=0;
+   result_size=0;
+}
+
 int   Ftp::NoPassReqCheck(int act,int exp) // for USER command
 {
    (void)exp;
@@ -399,7 +406,7 @@ int   Ftp::NoPassReqCheck(int act,int exp) // for USER command
    if(act==331 && allow_skey && user && pass && result)
    {
       skey_pass=xstrdup(make_skey_reply());
-      free(result); result=0; result_size=0;
+      FreeResult();
       if(force_skey && skey_pass==0)
       {
 	 // FIXME - make proper err msg
@@ -1313,12 +1320,7 @@ int   Ftp::Do()
 	 else
 	    AddResp(200,INITIAL_STATE,CHECK_FILE_ACCESS);
 
-	 if(result)
-	 {
-	    free(result);
-	    result=0;
-	    result_size=0;
-	 }
+	 FreeResult();
 	 goto pre_WAITING_STATE;
       }
 
@@ -1997,8 +1999,7 @@ void  Ftp::DataClose()
    nop_time=0;
    nop_offset=0;
    nop_count=0;
-   xfree(result);
-   result=NULL;
+   FreeResult();
    if(rate_limit)
    {
       delete rate_limit;

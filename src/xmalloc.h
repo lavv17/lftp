@@ -46,4 +46,6 @@ static inline void *xmemdup(const void *m,int len)
 }
 void xfree(void *p);
 
+void xmalloc_register_block(void *);
+
 #endif /* XMALLOC_H */

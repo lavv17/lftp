@@ -493,7 +493,7 @@ static char **lftp_completion (char *text,int start,int end)
    if(rg)
       delete rg;
 
-   free(text);
+   xfree(text);
    if(!matches)
    {
       rl_attempted_completion_over = 1;

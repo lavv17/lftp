@@ -133,16 +133,16 @@ const char *ResMgr::Set(const char *name,const char *cclosure,const char *cvalue
    {
       if(value)
       {
-	 free((*scan)->value);
+	 xfree((*scan)->value);
 	 (*scan)->value=value;
-	 free(closure);
+	 xfree(closure);
       }
       else
       {
 	 Resource *to_free=*scan;
 	 *scan=(*scan)->next;
-	 free(to_free);
-	 free(closure);
+	 xfree(to_free);
+	 xfree(closure);
       }
       SMTask::ReconfigAll(type->name);
    }
@@ -154,7 +154,7 @@ const char *ResMgr::Set(const char *name,const char *cclosure,const char *cvalue
 	 SMTask::ReconfigAll(type->name);
       }
       else
-	 free(closure);
+	 xfree(closure);
    }
    return 0;
 }
@@ -311,7 +311,7 @@ const char *ResMgr::BoolValidate(char **value)
    }
    if(strcmp(v,newval))
    {
-      free(v);
+      xfree(v);
       *value=xstrdup(newval);
    }
 

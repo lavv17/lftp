@@ -1114,7 +1114,7 @@ CMD(shell)
    {
       char *a=args->Combine(1);
       j=new SysCmdJob(a);
-      free(a);
+      xfree(a);
    }
    return j;
 }
@@ -1538,7 +1538,7 @@ CMD(alias)
    {
       char *val=args->Combine(2);
       Alias::Add(args->getarg(1),val);
-      free(val);
+      xfree(val);
    }
    exit_code=0;
    return 0;

@@ -262,7 +262,10 @@ char *xgetcwd()
    {
       char *cwd=getcwd(0,size);
       if(cwd)
+      {
+	 xmalloc_register_block(cwd);
 	 return cwd;
+      }
       if(errno!=ERANGE)
 	 return 0;
       size*=2;

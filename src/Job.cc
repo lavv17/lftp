@@ -84,8 +84,7 @@ Job::~Job()
       }
    }
 
-   if(cmdline)
-      free(cmdline);
+   xfree(cmdline);
    if(fg_data)
       delete fg_data;
 }

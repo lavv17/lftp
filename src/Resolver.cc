@@ -205,10 +205,9 @@ int   Resolver::Do()
 	    SignalHook::Ignore(SIGTSTP);
 	    SignalHook::Ignore(SIGQUIT);
 	    SignalHook::Ignore(SIGHUP);
-	    close(0);
-	    dup2(pipe_to_child[1],1);
-	    close(pipe_to_child[1]);
+	    close(0);	// no input will be needed.
 	    close(pipe_to_child[0]);
+	    pipe_to_child[0]=-1;
 	    DoGethostbyname();
 	    _exit(0);
 	 }
@@ -221,7 +220,7 @@ int   Resolver::Do()
       }
       if(!buf)
       {
-	 buf=new FileInputBuffer(new FDStream(pipe_to_child[0],"<pipe>"));
+	 buf=new FileInputBuffer(new FDStream(pipe_to_child[0],"<pipe-in>"));
 // 	 Roll(buf);
 	 m=MOVED;
       }
@@ -743,7 +742,7 @@ void Resolver::DoGethostbyname()
       return;
 
    if(!buf)
-      buf=new FileOutputBuffer(new FDStream(1,"<pipe>"));
+      buf=new FileOutputBuffer(new FDStream(pipe_to_child[1],"<pipe-out>"));
 
    if(addr_num==0)
    {

@@ -39,8 +39,8 @@ Alias::Alias(const char *alias,const char *value,Alias *next)
 
 Alias::~Alias()
 {
-   free(this->alias);
-   free(this->value);
+   xfree(this->alias);
+   xfree(this->value);
 }
 
 void Alias::Add(const char *alias,const char *value)
@@ -51,7 +51,7 @@ void Alias::Add(const char *alias,const char *value)
       int dif=strcmp((*scan)->alias,alias);
       if(dif==0)
       {
-	 free((*scan)->value);
+	 xfree((*scan)->value);
 	 (*scan)->value=xstrdup(value);
 	 return;
       }

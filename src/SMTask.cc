@@ -38,6 +38,8 @@ PollVec	 SMTask::sched_total;
 time_t	 SMTask::now=time(0);
 int	 SMTask::now_ms; // milliseconds
 
+static int task_count=0;
+
 SMTask::SMTask()
 {
    // insert in the chain
@@ -55,6 +57,10 @@ SMTask::SMTask()
    suspended=false;
    running=false;
    deleting=false;
+   task_count++;
+#ifdef TASK_DEBUG
+   printf("new SMTask %p (count=%d)\n",this,task_count);
+#endif
 }
 
 void  SMTask::Suspend() { suspended=true; }
@@ -62,6 +68,10 @@ void  SMTask::Resume()  { suspended=false; }
 
 SMTask::~SMTask()
 {
+#ifdef TASK_DEBUG
+   printf("delete SMTask %p (count=%d)\n",this,task_count);
+#endif
+   task_count--;
    assert(!running);
    // remove from the chain
    SMTask **scan=&chain;

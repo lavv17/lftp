@@ -175,6 +175,7 @@ class Ftp : public NetAccess
 
    char	 *result;
    int	 result_size;
+   void  FreeResult();
 
    void	 DataAbort();
    void  DataClose();

@@ -45,11 +45,10 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
       args->Empty();
    else
       args=new ArgV;
-   if(cmd)
-   {
-      free(cmd);
-      cmd=0;
-   }
+
+   xfree(cmd);
+   cmd=0;
+
    if(output)
    {
       delete output;

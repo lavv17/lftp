@@ -24,6 +24,8 @@
 #include <stdio.h>
 #include "xmalloc.h"
 
+static int memory_count=0;
+
 static void memory_error_and_abort(const char *fname,size_t size)
 {
    fprintf(stderr,"%s: out of virtual memory when trying to get %lu bytes\n",
@@ -38,8 +40,9 @@ void *xmalloc (size_t bytes)
    void *temp=(void*)malloc(bytes);
    if(temp==0)
       memory_error_and_abort("xmalloc",bytes);
+   memory_count++;
 #ifdef MEM_DEBUG
-   printf("xmalloc %p %lu\n",temp,(long)bytes);
+   printf("xmalloc %p %lu (count=%d)\n",temp,(long)bytes,memory_count);
 #endif
    return(temp);
 }
@@ -51,17 +54,23 @@ void *xrealloc(void *pointer,size_t bytes)
       return 0;
    if(bytes==0)
    {
+      memory_count--;
       free(pointer);
-      return 0;
+      temp=0;
+      goto leave;
    }
    if(pointer==0)
+   {
       temp=(void*)malloc(bytes);
+      memory_count++;
+   }
    else
       temp=(void*)realloc(pointer,bytes);
    if(temp==0)
       memory_error_and_abort ("xrealloc",bytes);
+leave:
 #ifdef MEM_DEBUG
-   printf("xrealloc %p %p %lu\n",pointer,temp,(long)bytes);
+   printf("xrealloc %p %p %lu (count=%d)\n",pointer,temp,(long)bytes,memory_count);
 #endif
    return(temp);
 }
@@ -70,8 +79,9 @@ void xfree(void *p)
 {
    if(!p)
       return;
+   memory_count--;
 #ifdef MEM_DEBUG
-   printf("xfree %p\n",p);
+   printf("xfree %p (count=%d)\n",p,memory_count);
 #endif
    free(p);
 }
@@ -88,3 +98,22 @@ char *xstrdup(const char *s)
    memcpy(mem,s,len);
    return mem;
 }
+
+void xmalloc_register_block(void *b)
+{
+   memory_count++;
+#ifdef MEM_DEBUG
+   printf("xmalloc %p (count=%d)\n",b,memory_count);
+#endif
+}
+
+#ifdef MEM_DEBUG
+void *__builtin_new(size_t s)
+{
+   return xmalloc(s);
+}
+void __builtin_delete(void *p)
+{
+   xfree(p);
+}
+#endif

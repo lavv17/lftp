@@ -39,10 +39,10 @@ NetRC::Entry::Entry(const char *h,const char *u,const char *p,const char *a)
 
 NetRC::Entry::~Entry()
 {
-   free(host);
-   free(user);
-   free(pass);
-   free(acct);
+   xfree(host);
+   xfree(user);
+   xfree(pass);
+   xfree(acct);
 }
 
 static bool comment(const char *s, FILE *f)

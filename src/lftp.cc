@@ -331,7 +331,7 @@ int   main(int argc,char **argv)
    {
       char *line=args->CombineQuoted();
       lftp_add_history_nodups(line);
-      free(line);
+      xfree(line);
    }
    lftp_feeder=new ReadlineFeeder;
    top_exec->ExecParsed(args);

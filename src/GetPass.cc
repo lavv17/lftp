@@ -35,11 +35,8 @@ char *GetPass(const char *prompt)
    static int tty_fd=-2;
    static FILE *f=0;
 
-   if(oldpass)
-   {
-      free(oldpass);
-      oldpass=0;
-   }
+   xfree(oldpass);
+   oldpass=0;
 
    if(tty_fd==-2)
    {
@@ -99,13 +96,13 @@ char *readline_from_file(FILE *f)
 	 SMTask::Block();
 	 if(SignalHook::GetCount(SIGINT)>0)
 	 {
-	    free(line);
+	    xfree(line);
 	    return(NULL);
 	 }
       }
       if(c==r.EOFCHAR && ptr==line)
       {
-	 free(line);
+	 xfree(line);
 	 return(NULL);
       }
       if(c==r.EOFCHAR || c=='\n')

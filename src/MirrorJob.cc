@@ -817,12 +817,12 @@ MirrorJob::~MirrorJob()
    Delete(local_session);
    if(rx_include)
    {
-      free(rx_include);
+      xfree(rx_include);
       regfree(&rxc_include);
    }
    if(rx_exclude)
    {
-      free(rx_exclude);
+      xfree(rx_exclude);
       regfree(&rxc_exclude);
    }
    if(script && script_needs_closing)

@@ -197,7 +197,8 @@ int OutputFilter::getfd()
    fcntl(fd,F_SETFD,FD_CLOEXEC);
    fcntl(fd,F_SETFL,O_NONBLOCK);
 
-   free(oldcwd); oldcwd=0;
+   xfree(oldcwd);
+   oldcwd=0;
 
    int info;
    waitpid(pid,&info,WUNTRACED);
@@ -213,12 +214,7 @@ void OutputFilter::Init()
    w=0;
    second=0;
    second_fd=-1;
-   oldcwd=(char *)xmalloc(1024);
-   if(getcwd(oldcwd,1024)==0)
-   {
-      free(oldcwd);
-      oldcwd=0;
-   }
+   oldcwd=xgetcwd();
    pg=0;
    closed=false;
 }
@@ -313,18 +309,15 @@ FileStream::FileStream(const char *fname,int new_mode) : FDStream(-1,fname)
       full_name=name;
    else
    {
-      char cwd[1024];
-      if(getcwd(cwd,sizeof(cwd)))
-      {
-	 full_name=(char*)xmalloc(strlen(cwd)+1+strlen(name)+1);
-	 sprintf(full_name,"%s/%s",cwd,name);
-      }
+      char *cwd=xgetcwd();
+      full_name=xstrdup(dir_file(cwd,name));
+      xfree(cwd);
    }
 }
 FileStream::~FileStream()
 {
    if(full_name!=name)
-      free(full_name);
+      xfree(full_name);
    if(fd!=-1)
       close(fd);
    fd=-1;
