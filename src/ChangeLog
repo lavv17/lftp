@@ -2,6 +2,7 @@
 
 	* IdNameCache.cc, IdNameCache.h: fixed a bug which caused a single
 	  object to be put on two lists (rare); fixed a memory leak.
+	  Reported by Tillmann Steinbrecher <tillmann.steinbrecher@anandtech.com>.
 
 2002-09-03  Alexander V. Lukyanov <lav@yars.free.net>
 
