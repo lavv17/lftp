@@ -89,6 +89,14 @@ int FileCopyFtp::Do()
 	    disable_fxp=true;
 	    ((FileCopyPeerFA*)get)->SetFXP(false);
 	    ((FileCopyPeerFA*)put)->SetFXP(false);
+
+	    if(ResMgr::QueryBool("ftp:fxp-force",ftp_src->GetHostName())
+	    || ResMgr::QueryBool("ftp:fxp-force",ftp_dst->GetHostName()))
+	    {
+	       SetError(_("ftp:fxp-force is set but FXP is not available"));
+	       return MOVED;
+	    }
+
 	    off_t pos=put->GetRealPos();
 	    if(!get->CanSeek(pos) || !put->CanSeek(pos))
 	       pos=0;

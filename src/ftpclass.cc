@@ -3644,7 +3644,9 @@ const char *Ftp::CurrentStatus()
 	 return(_("Waiting for response..."));
       return(_("Making data connection..."));
    case(CWD_CWD_WAITING_STATE):
-      return(_("Changing remote directory..."));
+      if(FindLastCWD())
+	 return(_("Changing remote directory..."));
+      /*fallthrough*/
    case(WAITING_STATE):
       if(copy_mode==COPY_SOURCE)
 	 return "";
