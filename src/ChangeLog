@@ -1,3 +1,7 @@
+2000-01-11  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* NetAccess.cc: cast off const for solaris 2.5.1.
+
 2000-01-08  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* NetAccess.h, NetAccess.cc, ftpclass.cc, Http.cc: (SocketConnect,
