@@ -39,6 +39,7 @@ void rmJob::Recurse()
 {
    set_maxdepth(-1);
    Need(FileInfo::TYPE);
+   recurse=true;
 }
 
 void  rmJob::SayFinal()
