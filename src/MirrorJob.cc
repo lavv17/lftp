@@ -211,7 +211,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    && file->size >= old->size)
 	    {
 	       cont_this=true;
-	       if(target_is_local)
+	       if(target_is_local && !script_only)
 	       {
 		  if(access(target_name,W_OK)==-1)
 		  {
@@ -278,11 +278,12 @@ void  MirrorJob::HandleFile(FileInfo *file)
       {
 	 if(flags&NO_RECURSION)
 	    goto skip;
+
 	 bool create_target_dir=true;
 	 FileInfo *old=target_set->FindByName(file->name);
 	 if(old && old->defined&old->TYPE && old->filetype==old->DIRECTORY)
 	    create_target_dir=false;
-	 if(target_is_local)
+	 if(target_is_local && !script_only)
 	 {
 	    if(lstat(target_name,&st)!=-1)
 	    {
@@ -329,6 +330,12 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 mj->parallel=parallel;
 	 mj->remove_source_files=remove_source_files;
 	 mj->create_target_dir=create_target_dir;
+	 mj->no_target_dir=no_target_dir;
+
+	 mj->script=script;
+	 mj->script_needs_closing=false;
+	 mj->script_name=xstrdup(script_name);
+	 mj->script_only=script_only;
 
 	 if(verbose_report>=3)
 	    Report(_("Mirroring directory `%s'"),mj->target_relative_dir);
@@ -339,8 +346,22 @@ void  MirrorJob::HandleFile(FileInfo *file)
       {
 	 if(!target_is_local)
 	 {
-	    // can't create symlink remotely
+	    // can't create symlink remotely (FIXME?)
 	    goto skip;
+	 }
+
+	 if(script)
+	 {
+	    ArgV args("shell");
+	    args.Append("ln");
+	    args.Append("-sf");
+	    args.Append(file->symlink);
+	    args.Append(target_name);
+	    char *cmd=args.CombineQuoted();
+	    fprintf(script,"%s\n",cmd);
+	    xfree(cmd);
+	    if(script_only)
+	       goto skip;
 	 }
 
 #ifdef HAVE_LSTAT
@@ -448,6 +469,14 @@ void MirrorJob::HandleChdir(FileAccess * &session, int &redirections)
 	 }
       }
    cd_err_normal:
+      if(session==target_session && script_only)
+      {
+	 char *dir=alloca_strdup(session->GetFile());
+	 session->Close();
+	 session->Chdir(dir,false);
+	 no_target_dir=true;
+	 return;
+      }
       eprintf("mirror: %s\n",session->StrError(res));
       stats.error_count++;
       transfer_count-=root_transfer_count;
@@ -463,6 +492,13 @@ void MirrorJob::HandleListInfoCreation(FileAccess * &session,ListInfo * &list_in
 {
    if(state!=GETTING_LIST_INFO)
       return;
+
+   if(session==target_session && no_target_dir)
+   {
+      target_set=new FileSet();
+      return;
+   }
+
    list_info=session->MakeListInfo();
    if(list_info==0)
    {
@@ -532,8 +568,50 @@ int   MirrorJob::Do()
 
       if(!create_target_dir || !strcmp(target_dir,".") || !strcmp(target_dir,".."))
 	 goto pre_CHANGING_DIR_TARGET;
+      if(target_is_local)
+      {
+	 struct stat st;
+	 if(lstat(target_dir,&st)!=-1)
+	 {
+	    if(S_ISDIR(st.st_mode))
+	    {
+	       if(!script_only)
+		  chmod(target_dir,st.st_mode|0700);
+	       goto pre_CHANGING_DIR_TARGET;
+	    }
+	    else
+	    {
+	       Report(_("Removing old local file `%s'"),target_dir);
+	       if(script)
+	       {
+		  ArgV args("rm");
+		  args.Append(target_session->GetFileURL(target_dir));
+		  char *cmd=args.CombineQuoted();
+		  fprintf(script,"%s\n",cmd);
+		  xfree(cmd);
+	       }
+	       if(!script_only)
+	       {
+		  if(remove(target_dir)==-1)
+		     eprintf("mirror: remove(%s): %s\n",target_dir,strerror(errno));
+	       }
+	    }
+	 }
+      }
       if(target_relative_dir)
 	 Report(_("Making directory `%s'"),target_relative_dir);
+      if(script)
+      {
+	 ArgV args("mkdir");
+	 if(parent_mirror==0)
+	    args.Append("-p");
+	 args.Append(target_session->GetFileURL(target_dir));
+	 char *cmd=args.CombineQuoted();
+	 fprintf(script,"%s\n",cmd);
+	 xfree(cmd);
+	 if(script_only)
+	    goto pre_CHANGING_DIR_TARGET;
+      }
       target_session->Mkdir(target_dir,(parent_mirror==0));
       state=MAKE_TARGET_DIR;
       m=MOVED;
@@ -768,6 +846,7 @@ MirrorJob::MirrorJob(MirrorJob *parent,
    source_set=target_set=0;
    new_files_set=old_files_set=0;
    create_target_dir=true;
+   no_target_dir=false;
    source_list_info=0;
    target_list_info=0;
 
@@ -779,6 +858,7 @@ MirrorJob::MirrorJob(MirrorJob *parent,
 
    newer_than=(time_t)-1;
 
+   script_name=0;
    script=0;
    script_only=false;
    script_needs_closing=false;
@@ -918,6 +998,24 @@ void MirrorJob::Statistics::Add(const Statistics &s)
    error_count +=s.error_count;
 }
 
+char *MirrorJob::SetScriptFile(const char *n)
+{
+   script_name=xstrdup(n);
+   if(strcmp(n,"-"))
+   {
+      script=fopen(n,"w");
+      script_needs_closing=true;
+   }
+   else
+   {
+      script=stdout;
+      script_needs_closing=false;
+   }
+   if(script)
+      return 0;
+   return xasprintf("%s: %s",n,strerror(errno));
+}
+
 CMD(mirror)
 {
 #define args (parent->args)
@@ -944,6 +1042,8 @@ CMD(mirror)
       {"Remove-source-files",no_argument,0,256+'R'},
       {"parallel",optional_argument,0,'P'},
       {"ignore-time",no_argument,0,256+'i'},
+      {"log",required_argument,0,256+'s'},
+      {"script",required_argument,0,256+'S'},
       {0}
    };
 
@@ -960,6 +1060,8 @@ CMD(mirror)
    bool  remove_source_files=false;
    int	 parallel=ResMgr::Query("mirror:parallel-transfer-count",0);
    bool	 reverse=false;
+   bool	 script_only=false;
+   const char *script_file=0;
 
    PatternSet *exclude=0;
    const char *default_exclude=ResMgr::Query("mirror:exclude-regex",0);
@@ -1068,6 +1170,11 @@ CMD(mirror)
 	    parallel=atoi(optarg);
 	 else
 	    parallel=3;
+	 break;
+      case(256+'S'):
+	 script_only=true;
+      case(256+'s'):
+	 script_file=optarg;
 	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
@@ -1178,6 +1285,24 @@ CMD(mirror)
       parallel=16;   // a sane limit.
    if(parallel)
       j->SetParallel(parallel);
+
+   if(script_file)
+   {
+      char *err=j->SetScriptFile(script_file);
+      if(err)
+      {
+	 eprintf("%s: %s\n",args->a0(),err);
+	 xfree(err);
+	 delete j;
+	 return 0;
+      }
+   }
+   if(script_only)
+   {
+      j->ScriptOnly();
+      if(!script_file)
+	 j->SetScriptFile("-");
+   }
 
    return j;
 

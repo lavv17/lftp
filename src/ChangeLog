@@ -1,3 +1,10 @@
+2003-02-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc, FileCopyFtp.cc: don't start "put" peer if target file
+	  is already complete; don't get size multiple times (occasionally).
+	* MirrorJob.cc: new options --log and --script. Implement producing
+	  command log or script file with commands to do mirroring.
+
 2003-02-11  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: another workaround for proftpd.

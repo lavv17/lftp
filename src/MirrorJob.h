@@ -62,6 +62,7 @@ class MirrorJob : public Job
    void	 HandleFile(FileInfo *);
 
    bool create_target_dir;
+   bool	no_target_dir;	   // target directory does not exist (for script_only)
 
    ListInfo *source_list_info;
    ListInfo *target_list_info;
@@ -98,6 +99,7 @@ class MirrorJob : public Job
 
    time_t newer_than;
 
+   char *script_name;
    FILE *script;
    bool script_only;
    bool script_needs_closing;
@@ -171,6 +173,12 @@ public:
 
    void Fg();
    void Bg();
+
+   char	 *SetScriptFile(const char *n);
+   void	 ScriptOnly(bool yes=true)
+      {
+	 script_only=yes;
+      }
 };
 
 #endif//MIRRORJOB_H
