@@ -2,7 +2,8 @@
 
         * HttpDir.cc: decode &amp; and similar; don't accept ~ for ListInfo.
 	* FileCopy.h, FileCopy.cc, CopyJob.cc: (GetFgData) implemented;
-	  fill CopyJob::fg_data.
+	  fill CopyJob::fg_data; handle NeedSizeDateBeforehand.
+	* FileAccess.h, Http.h: add NeedSizeDateBeforehand.
 
 1999-12-18  Alexander V. Lukyanov  <lav@yars.free.net>
 
