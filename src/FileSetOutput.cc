@@ -137,7 +137,7 @@ void FileSetOutput::print(FileSet &fs, OutputJob *o) const
 	 bool recent = six_months_ago <= f->date;
 
 	 /* We assume all time outputs are equal-width. */
-	 static const char *long_time_format[] = {
+	 const char *const long_time_format[] = {
 	    dcgettext (NULL, "%b %e  %Y", LC_TIME),
 	    dcgettext (NULL, "%b %e %H:%M", LC_TIME)
 	 };

@@ -2259,17 +2259,23 @@ Http::atotm (const char *time_string)
      whitespace instead of just one (it works that way on all the
      systems I've tested it on).  */
 
-  /* RFC1123: Thu, 29 Jan 1998 22:12:57 */
-  if (check_end (strptime (time_string, "%a, %d %b %Y %T", &t)))
-    return mktime_from_utc (&t);
-  /* RFC850:  Thu, 29-Jan-98 22:12:57 */
-  if (check_end (strptime (time_string, "%a, %d-%b-%y %T", &t)))
-    return mktime_from_utc (&t);
-  /* asctime: Thu Jan 29 22:12:57 1998 */
-  if (check_end (strptime (time_string, "%a %b %d %T %Y", &t)))
-    return mktime_from_utc (&t);
-  /* Failure.  */
-  return -1;
+   time_t ut=-1;
+
+   setlocale(LC_TIME,"C"); // we need english month and week day names
+
+   /* RFC1123: Thu, 29 Jan 1998 22:12:57 */
+   if (check_end (strptime (time_string, "%a, %d %b %Y %T", &t)))
+      ut=mktime_from_utc (&t);
+   /* RFC850:  Thu, 29-Jan-98 22:12:57 */
+   else if (check_end (strptime (time_string, "%a, %d-%b-%y %T", &t)))
+      ut=mktime_from_utc (&t);
+   /* asctime: Thu Jan 29 22:12:57 1998 */
+   else if (check_end (strptime (time_string, "%a %b %d %T %Y", &t)))
+      ut=mktime_from_utc (&t);
+
+   setlocale(LC_TIME,"");  // restore locale
+
+   return ut;
 }
 
 

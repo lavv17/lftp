@@ -1,3 +1,9 @@
+2005-02-25  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc: set C locale before time conversion (fixes Last-Modified
+	  parsing).
+	* FileSetOutput.cc: get time format at run time, not statically.
+
 2005-02-23  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Http.cc, HttpDir.cc, HttpDir.h, HttpDirXML.cc: compile without
