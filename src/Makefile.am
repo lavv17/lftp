@@ -63,7 +63,7 @@ INCLUDES = -I$(top_srcdir)/include
 OMIT_DEPENDENCIES = readline.h keymaps.h chardefs.h tilde.h history.h libintl.h\
  regex.h glob.h fnmatch.h poll.h rlstdc.h
 
-lftp.o ftpget.o commands.o module.o: confpaths.h
+lftp.o commands.o module.o: confpaths.h
 
 
 all-local: $(MODULES)

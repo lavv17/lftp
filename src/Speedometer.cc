@@ -50,13 +50,13 @@ bool Speedometer::Valid()
 }
 int Speedometer::Do()
 {
-   if(Valid())
-      Timeout(1000);
    return STALL;
 }
 float Speedometer::Get()
 {
    Add(0);
+   if(Valid())
+      current->TimeoutS(1);
    return rate;
 }
 void Speedometer::Add(int b)

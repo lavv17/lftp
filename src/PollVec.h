@@ -54,6 +54,8 @@ public:
    void AddFD(int fd,int events);
    void NoWait() { SetTimeout(0); }
 
+   int GetTimeout() { return timeout; }
+
    ~PollVec();
 };
 

@@ -464,7 +464,7 @@ const char *NetAccess::DelayingMessage()
    if(remains<=0)
       return "";
    sprintf(buf,"%s: %ld",_("Delaying before reconnect"),remains);
-   TimeoutS(1);
+   current->TimeoutS(1);
    return buf;
 }
 

@@ -465,13 +465,13 @@ const char *FileCopy::GetPercentDoneStr()
 }
 float FileCopy::GetRate()
 {
-   if(!rate->Valid())
+   if(!rate->Valid() || !put)
       return 0;
    return rate->Get();
 }
 const char *FileCopy::GetRateStr()
 {
-   if(!rate->Valid())
+   if(!rate->Valid() || !put)
       return "";
    return rate->GetStrS();
 }
@@ -491,7 +491,7 @@ long FileCopy::GetBytesRemaining()
 const char *FileCopy::GetETAStr()
 {
    long b=GetBytesRemaining();
-   if(b<0)
+   if(b<0 || !put)
       return "";
    return rate_for_eta->GetETAStrSFromSize(b);
 }

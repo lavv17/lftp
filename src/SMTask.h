@@ -71,6 +71,8 @@ public:
 
    static void Delete(SMTask *);
    static int Roll(SMTask *);
+
+   static SMTask *current;
 };
 
 #endif /* SMTASK_H */

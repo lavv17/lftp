@@ -33,6 +33,7 @@
 
 SMTask	 *SMTask::chain=0;
 SMTask	 *SMTask::sched_scan=0;
+SMTask	 *SMTask::current=0;
 PollVec	 SMTask::sched_total;
 time_t	 SMTask::now=time(0);
 int	 SMTask::now_ms; // milliseconds
@@ -114,7 +115,18 @@ int SMTask::Roll(SMTask *task)
 
 void SMTask::Schedule()
 {
-   // get time onec and assume Do() don't take much time
+   SMTask *old_current=current;
+   assert(!current || current->running);
+
+   for(sched_scan=chain; sched_scan; sched_scan=sched_scan->next)
+   {
+      if(!sched_scan->running)
+	 sched_scan->block.Empty();
+   }
+
+   sched_total.Empty();
+
+   // get time once and assume Do() don't take much time
    UpdateNow();
 
    bool repeat=false;
@@ -126,36 +138,37 @@ void SMTask::Schedule()
 	 sched_scan=sched_scan->next;
 	 continue;
       }
-      sched_scan->block.Empty();
       if(repeat)
 	 sched_scan->block.SetTimeout(0); // little optimization
-      SMTask *tmp=sched_scan;
       int res=STALL;
-      if(!sched_scan->deleting)
+      current=sched_scan;
+      if(!current->deleting)
       {
-	 tmp->running=true;
-	 res=tmp->Do();
-	 tmp->running=false;
+	 current->running=true;
+	 res=current->Do();
+	 current->running=false;
       }
 #if 0
       if(res==MOVED)
-	 printf("MOVED: %p\n",tmp);
+	 printf("MOVED: %p\n",current);
+      if(!repeat && current->block.GetTimeout()==0)
+	 printf("timeout==0: %p\n",current);
 #endif
-      if(sched_scan)
+      if(sched_scan) // if the task called Schedule recursively, sched_scan==0.
 	 sched_scan=sched_scan->next;
-      if(tmp->deleting)
+      if(current->deleting)
       {
-	 delete tmp;
+	 delete current;
 	 res=MOVED;
       }
       if(res==MOVED)
 	 repeat=true;
+      current=0;
    }
-   sched_total.Empty();
    if(repeat)
    {
       sched_total.SetTimeout(0);
-      return;
+      goto out;
    }
 
    // now collect all wake up conditions; excluding suspended and
@@ -168,6 +181,8 @@ void SMTask::Schedule()
       && !sched_scan->running)
 	 sched_total.Merge(sched_scan->block);
    }
+out:
+   current=old_current;
    return;
 }
 

@@ -197,6 +197,6 @@ int StatusLine::Do()
       update_time=now;
       return STALL;
    }
-   Timeout(1000);
+   TimeoutS(1);
    return STALL;
 }
