@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp\n"
-"POT-Creation-Date: 2001-03-22 13:20+0300\n"
+"POT-Creation-Date: 2001-03-22 17:41+0300\n"
 "PO-Revision-Date: 1999-06-08 15:27+02:00\n"
 "Last-Translator: Arkadiusz Mi¶kiewicz <misiek@pld.org.pl>\n"
 "Language-Team: Polish <pl@li.org>\n"

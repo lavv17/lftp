@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
-"POT-Creation-Date: 2001-03-22 13:20+0300\n"
+"POT-Creation-Date: 2001-03-22 17:41+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Nicolas Noble <nicolas.n.@wanadoo.fr>\n"
 "Language-Team: French <fr@li.org>\n"
