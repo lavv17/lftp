@@ -730,6 +730,12 @@ Job *CmdExec::builtin_glob()
 
 Job *CmdExec::builtin_queue()
 {
+   if(args->count()==1)
+   {
+      eprintf(_("Usage: %s command args...\n"),args->a0());
+      return 0;
+   }
+
    if(queue==0)
    {
       queue=new CmdExec(session->Clone());
@@ -748,6 +754,8 @@ Job *CmdExec::builtin_queue()
    queue->FeedCmd("\n");
 
    xfree(cmd);
+   
+   exit_code=0;
 
    return 0;
 }
