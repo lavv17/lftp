@@ -1,3 +1,8 @@
+2000-07-17  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileSet.cc: don't pass REG_NOSUB to regexec, this fixes
+	  coredump on BSD. Reported by Andriy I Pilipenko <bamby@marka.net.ua>
+
 2000-04-29  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Http.cc: add Cookie support; allow disabling user-agent.

@@ -275,8 +275,8 @@ void  FileSet::Exclude(const char *prefix,regex_t *exclude,regex_t *include)
    for(int i=0; i<fnum; i++)
    {
       const char *name=dir_file(prefix,files[i]->name);
-      if(!(include && regexec(include,name,0,0,REG_NOSUB)==0)
-       && ((exclude && regexec(exclude,name,0,0,REG_NOSUB)==0)
+      if(!(include && regexec(include,name,0,0,0)==0)
+       && ((exclude && regexec(exclude,name,0,0,0)==0)
 	   || (include && !exclude)))
       {
 	 Sub(i);
