@@ -136,6 +136,7 @@ public:
 
    DirList *MakeDirList(ArgV *a);
    Glob *MakeGlob(const char *pattern);
+   ListInfo *MakeListInfo();
 };
 
 #endif//HTTP_H

@@ -23,13 +23,24 @@
 #ifndef HTTPDIR_H
 #define HTTPDIR_H
 
-#include "FileAccess.h"
+#include "Http.h"
 
-#if 0
 class HttpListInfo : public ListInfo
 {
+   Http *session;
+
+   FA::fileinfo *get_info;
+   int get_info_cnt;
+
+   Buffer *ubuf;
+   bool from_cache;
+
+public:
+   HttpListInfo(Http *session);
+   virtual ~HttpListInfo();
+   int Do();
+   const char *Status();
 };
-#endif
 
 class ParsedURL;
 

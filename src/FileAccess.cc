@@ -325,10 +325,8 @@ void FileAccess::Close()
 
 void FileAccess::Rename(const char *f,const char *f1)
 {
-   Close();
-   file=xstrdup(f);
+   Open(file,RENAME);
    file1=xstrdup(f1);
-   mode=RENAME;
 
    LsCache::TreeChanged(this,file);
    LsCache::FileChanged(this,file);
@@ -446,11 +444,10 @@ void FileAccess::AnonymousLogin()
 
 void FileAccess::GetInfoArray(struct fileinfo *info,int count)
 {
-   Close();
+   Open(0,ARRAY_INFO);
    array_for_info=info;
    array_ptr=0;
    array_cnt=count;
-   mode=ARRAY_INFO;
 }
 
 static void expand_tilde(char **path, const char *home)

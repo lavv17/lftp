@@ -551,6 +551,7 @@ int Http::Do()
 	 Block(sock,POLLOUT);
 	 return m;
       }
+
       m=MOVED;
       send_buf=new FileOutputBuffer(new FDStream(sock,"<output-socket>"));
       recv_buf=new FileInputBuffer(new FDStream(sock,"<input-socket>"));
@@ -558,8 +559,8 @@ int Http::Do()
       DebugPrint("---- ","Sending request...",9);
       if(mode==ARRAY_INFO)
       {
-	 for(int i=array_ptr; i<array_cnt; i++)
-	    SendRequest(i==array_cnt-1 ? "close" : 0, array_for_info[i].file);
+	 SendRequest(array_ptr==array_cnt-1 ? "close" : "keep-alive",
+	    array_for_info[array_ptr].file);
       }
       else
       {
@@ -616,6 +617,14 @@ int Http::Do()
 		     state=DONE;
 		     return MOVED;
 		  }
+#if 0
+		  // FIXME: this does not work. Why?
+		  SendRequest(array_ptr==array_cnt-1 ? "close" : "keep-alive",
+		     array_for_info[array_ptr].file);
+#else
+		  Disconnect();
+		  try_time=0;
+#endif
 		  return MOVED;
 	       }
 	       else if(mode==STORE)
@@ -1084,6 +1093,10 @@ DirList *Http::MakeDirList(ArgV *args)
 Glob *Http::MakeGlob(const char *pattern)
 {
    return new HttpGlob(this,pattern);
+}
+ListInfo *Http::MakeListInfo()
+{
+   return new HttpListInfo(this);
 }
 
 
