@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-10 17:05+0400\n"
+"POT-Creation-Date: 2004-08-04 14:52+0400\n"
 "PO-Revision-Date: 2003-06-08 00:26+0200\n"
 "Last-Translator: Nicolas Noble <nicolas@nobis-crew.org>\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -111,7 +111,7 @@ msgstr "L'accès a échoué: %s"
 msgid "File cannot be accessed"
 msgstr "Le fichier ne peut être adressé"
 
-#: src/FileAccess.cc:292 src/ftpclass.cc:3863 src/ftpclass.cc:3872
+#: src/FileAccess.cc:292 src/ftpclass.cc:3903 src/ftpclass.cc:3912
 msgid "Not connected"
 msgstr "Non connecté"
 
@@ -276,7 +276,7 @@ msgstr "%s: expression régulière `%s': %s\n"
 #: src/commands.cc:1450 src/commands.cc:1484 src/commands.cc:1583
 #: src/commands.cc:1871 src/commands.cc:2067 src/commands.cc:2240
 #: src/commands.cc:2247 src/commands.cc:2429 src/commands.cc:2456
-#: src/commands.cc:2463 src/commands.cc:2789 src/commands.cc:3070
+#: src/commands.cc:2463 src/commands.cc:2787 src/commands.cc:3068
 #: src/SleepJob.cc:139
 #, c-format
 msgid "Try `help %s' for more information.\n"
@@ -319,7 +319,7 @@ msgstr "Unité de temps invalide, seules [smhd] sont permises."
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "Format de temps invalide. Le format est <temps><unité>, ex: 2h30m."
 
-#: src/ResMgr.cc:715 src/commands.cc:2947 src/commands.cc:2956
+#: src/ResMgr.cc:715 src/commands.cc:2945 src/commands.cc:2954
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Format de domaine invalide. Le format est min-max, ex: 10-20"
 
@@ -344,8 +344,8 @@ msgstr "aucune restriction pour ce paramètre"
 msgid "invalid pair of numbers"
 msgstr "paire de nombre invalide"
 
-#: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3868
-#: src/Http.cc:1688
+#: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3908
+#: src/Http.cc:1725
 msgid "Resolving host address..."
 msgstr "Résolution de l'adresse..."
 
@@ -1535,7 +1535,7 @@ msgid "Usage: %s <jobno> ... | all\n"
 msgstr "Usage: %s <num_travail> | all\n"
 
 #: src/commands.cc:2033 src/commands.cc:2165 src/commands.cc:2309
-#: src/commands.cc:2594 src/commands.cc:2668 src/commands.cc:3082
+#: src/commands.cc:2594 src/commands.cc:2667 src/commands.cc:3080
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s: %s - n'est pas un nombre\n"
@@ -1665,51 +1665,51 @@ msgstr "%s: type d'import requis (netscape,ncftp)\n"
 msgid "Usage: %s [-d #] dir\n"
 msgstr "Usage: %s [-d #] rep\n"
 
-#: src/commands.cc:2699
+#: src/commands.cc:2698
 #, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "%s: taille de block invalide `%s'\n"
 
-#: src/commands.cc:2714
+#: src/commands.cc:2713
 #, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "Usage: %s [options] <reps>\n"
 
-#: src/commands.cc:2720
+#: src/commands.cc:2719
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr "%s: attention: summarize revient à faire --max-depth=0\n"
 
-#: src/commands.cc:2724
+#: src/commands.cc:2723
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr "%s: summarize est en conflit avec --max-depth=%i\n"
 
-#: src/commands.cc:2776
+#: src/commands.cc:2774
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "Usage: %s commande args...\n"
 
-#: src/commands.cc:2788
+#: src/commands.cc:2786
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "Usage: %s module [args...]\n"
 
-#: src/commands.cc:2806 src/LocalAccess.cc:607
+#: src/commands.cc:2804 src/LocalAccess.cc:623
 msgid "cannot get current directory"
 msgstr "ne peut lire le répertoire en cours"
 
-#: src/commands.cc:2867
+#: src/commands.cc:2865
 #, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "Usage: %s [OPTS] mode du fichier...\n"
 
-#: src/commands.cc:2887
+#: src/commands.cc:2885
 #, c-format
 msgid "invalid mode string: %s\n"
 msgstr "chaîne de mode invalide: %s\n"
 
-#: src/commands.cc:2962
+#: src/commands.cc:2960
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "Usage: %s [OPTS] fichier\n"
@@ -1759,7 +1759,7 @@ msgstr "ne peut analyser la réponse EPSV"
 msgid "Closing control socket"
 msgstr "Fermeture du socket de contrôle"
 
-#: src/ftpclass.cc:1139 src/Http.cc:812
+#: src/ftpclass.cc:1139 src/Http.cc:836
 msgid "Closing idle connection"
 msgstr "Fermeture de la connexion inutile"
 
@@ -1772,147 +1772,147 @@ msgstr "SITE CHMOD est désactivé par ftp:use-site-chmod"
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "SITE CHMOD est désactivé par ftp:use-site-chmod"
 
-#: src/ftpclass.cc:1246 src/Http.cc:940
+#: src/ftpclass.cc:1246 src/Http.cc:964
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "ne peut créer un socket de la famille %d"
 
-#: src/ftpclass.cc:1453
+#: src/ftpclass.cc:1477
 msgid "SITE CHMOD is not supported by this site"
 msgstr "SITE CHMOD n'est pas supportée par ce site"
 
-#: src/ftpclass.cc:1458
+#: src/ftpclass.cc:1482
 #, fuzzy
 msgid "MLST and MLSD are not supported by this site"
 msgstr "SITE CHMOD n'est pas supportée par ce site"
 
-#: src/ftpclass.cc:1870 src/ftpclass.cc:1909
+#: src/ftpclass.cc:1902 src/ftpclass.cc:1949
 msgid "unsupported network protocol"
 msgstr "protocole non supporté"
 
-#: src/ftpclass.cc:2021
+#: src/ftpclass.cc:2061
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "Connexion du socket de données à (%s) port %u"
 
-#: src/ftpclass.cc:2028
+#: src/ftpclass.cc:2068
 #, fuzzy, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "Connexion du socket de données à (%s) port %u"
 
-#: src/ftpclass.cc:2053 src/ftpclass.cc:3705
+#: src/ftpclass.cc:2093 src/ftpclass.cc:3745
 msgid "Switching passive mode off"
 msgstr "Désactivation du mode passif"
 
-#: src/ftpclass.cc:2312 src/ftpclass.cc:3823
+#: src/ftpclass.cc:2352 src/ftpclass.cc:3863
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr "ftp:ssl-force est défini et le serveur ne supporte pas SSL"
 
-#: src/ftpclass.cc:2517 src/ftpclass.cc:2636 src/Http.cc:1028
+#: src/ftpclass.cc:2557 src/ftpclass.cc:2676 src/Http.cc:1052
 msgid "Peer closed connection"
 msgstr "Connexion interrompue par un tiers"
 
-#: src/ftpclass.cc:2597
+#: src/ftpclass.cc:2637
 msgid "Persist and retry"
 msgstr "Persiste et réessaye"
 
-#: src/ftpclass.cc:2852
+#: src/ftpclass.cc:2892
 msgid "Closing data socket"
 msgstr "Fermeture du socket de données"
 
-#: src/ftpclass.cc:2868
+#: src/ftpclass.cc:2908
 #, fuzzy
 msgid "Closing aborted data socket"
 msgstr "Fermeture du socket de données"
 
-#: src/ftpclass.cc:3543
+#: src/ftpclass.cc:3583
 msgid "saw file size in response"
 msgstr "taille du fichier détectée dans la réponse"
 
-#: src/ftpclass.cc:3558
+#: src/ftpclass.cc:3598
 msgid "extra server response"
 msgstr "réponse du serveur supplémentaire"
 
-#: src/ftpclass.cc:3572 src/ftpclass.cc:3595
+#: src/ftpclass.cc:3612 src/ftpclass.cc:3635
 msgid "Turning on sync-mode"
 msgstr "Activation de sync-mode"
 
-#: src/ftpclass.cc:3722
+#: src/ftpclass.cc:3762
 msgid "Switching passive mode on"
 msgstr "Activation du mode passif"
 
-#: src/ftpclass.cc:3849
+#: src/ftpclass.cc:3889
 #, fuzzy
 msgid "FEAT negotiation..."
 msgstr "négociation TLS..."
 
-#: src/ftpclass.cc:3856
+#: src/ftpclass.cc:3896
 msgid "Sending commands..."
 msgstr "Émission des commandes..."
 
-#: src/ftpclass.cc:3858 src/ftpclass.cc:3886 src/ftpclass.cc:3899
-#: src/Http.cc:1703
+#: src/ftpclass.cc:3898 src/ftpclass.cc:3926 src/ftpclass.cc:3939
+#: src/Http.cc:1740
 msgid "Waiting for response..."
 msgstr "En attente de réponse..."
 
-#: src/ftpclass.cc:3860
+#: src/ftpclass.cc:3900
 #, fuzzy
 msgid "Delaying before retry"
 msgstr "Attente avant reconnexion"
 
-#: src/ftpclass.cc:3861 src/Http.cc:1696
+#: src/ftpclass.cc:3901 src/Http.cc:1733
 msgid "Connection idle"
 msgstr "Connexion stagnante"
 
-#: src/ftpclass.cc:3875 src/Http.cc:1694 src/Http.cc:1701
+#: src/ftpclass.cc:3915 src/Http.cc:1731 src/Http.cc:1738
 msgid "Connecting..."
 msgstr "Connexion..."
 
-#: src/ftpclass.cc:3879
+#: src/ftpclass.cc:3919
 msgid "TLS negotiation..."
 msgstr "négociation TLS..."
 
-#: src/ftpclass.cc:3881
+#: src/ftpclass.cc:3921
 msgid "Connected"
 msgstr "Connecté"
 
-#: src/ftpclass.cc:3883
+#: src/ftpclass.cc:3923
 msgid "Logging in..."
 msgstr "Login en cours..."
 
-#: src/ftpclass.cc:3887
+#: src/ftpclass.cc:3927
 msgid "Making data connection..."
 msgstr "Établissement de la connexion de données..."
 
-#: src/ftpclass.cc:3890
+#: src/ftpclass.cc:3930
 msgid "Changing remote directory..."
 msgstr "Changement de répertoire distant..."
 
-#: src/ftpclass.cc:3896
+#: src/ftpclass.cc:3936
 msgid "Waiting for other copy peer..."
 msgstr "En attente de la copie distante..."
 
-#: src/ftpclass.cc:3898 src/ftpclass.cc:3919
+#: src/ftpclass.cc:3938 src/ftpclass.cc:3959
 msgid "Waiting for transfer to complete"
 msgstr "En attente de la fin du transfert"
 
-#: src/ftpclass.cc:3901
+#: src/ftpclass.cc:3941
 msgid "Waiting for data connection..."
 msgstr "En attente de la connexion de données..."
 
-#: src/ftpclass.cc:3907
+#: src/ftpclass.cc:3947
 msgid "Sending data/TLS"
 msgstr "Émission des données/TLS"
 
-#: src/ftpclass.cc:3909
+#: src/ftpclass.cc:3949
 msgid "Receiving data/TLS"
 msgstr "Réception des données/TLS"
 
-#: src/ftpclass.cc:3915 src/Http.cc:1699
+#: src/ftpclass.cc:3955 src/Http.cc:1736
 msgid "Sending data"
 msgstr "Émission des données"
 
-#: src/ftpclass.cc:3917 src/Http.cc:1706
+#: src/ftpclass.cc:3957 src/Http.cc:1743
 msgid "Receiving data"
 msgstr "Réception des données"
 
@@ -2006,48 +2006,52 @@ msgstr "Fermeture de la connexion HTTP"
 msgid "POST method failed"
 msgstr "échec de la méthode POST"
 
-#: src/Http.cc:896
+#: src/Http.cc:920
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
 
-#: src/Http.cc:1044
+#: src/Http.cc:1068
 msgid "Sending request..."
 msgstr "Émission des requêtes..."
 
-#: src/Http.cc:1091
+#: src/Http.cc:1115
 msgid "Hit EOF while fetching headers"
 msgstr "Reçu une fin de fichier en lisant les entêtes"
 
-#: src/Http.cc:1207
+#: src/Http.cc:1231
 msgid "Could not parse HTTP status line"
 msgstr "Ne peut analyser la ligne d'état HTTP"
 
-#: src/Http.cc:1353
+#: src/Http.cc:1262
+msgid "Object is not cached and http:cache-control has only-if-cached"
+msgstr ""
+
+#: src/Http.cc:1390
 msgid "Receiving body..."
 msgstr "Réception du corps..."
 
-#: src/Http.cc:1482
+#: src/Http.cc:1519
 msgid "Hit EOF"
 msgstr "Fin de fichier atteinte"
 
-#: src/Http.cc:1485
+#: src/Http.cc:1522
 msgid "Received not enough data, retrying"
 msgstr "Pas assez de données reçues, recommence"
 
-#: src/Http.cc:1493
+#: src/Http.cc:1530
 msgid "Received all"
 msgstr "Tout reçu"
 
-#: src/Http.cc:1498
+#: src/Http.cc:1535
 msgid "Received all (total)"
 msgstr "Tout reçu (total)"
 
-#: src/Http.cc:1521 src/Http.cc:1542
+#: src/Http.cc:1558 src/Http.cc:1579
 msgid "chunked format violated"
 msgstr "format en 'chunk' violé"
 
-#: src/Http.cc:1704
+#: src/Http.cc:1741
 msgid "Fetching headers..."
 msgstr "Réception des entêtes..."
 
@@ -2250,12 +2254,12 @@ msgstr "Attente avant reconnexion"
 msgid "max-retries exceeded"
 msgstr "max-retries atteint"
 
-#: src/NetAccess.cc:908
+#: src/NetAccess.cc:907
 #, c-format
 msgid "Getting directory contents (%lld) %s[%s]"
 msgstr "Récupération du contenu du répertoire (%lld) %s[%s]"
 
-#: src/NetAccess.cc:915
+#: src/NetAccess.cc:914
 #, c-format
 msgid "Getting files information (%d%%) [%s]"
 msgstr "Lecture des informations de fichiers (%d%%) [%s]"

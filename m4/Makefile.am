@@ -2,4 +2,4 @@ EXTRA_DIST= intmax.m4 longdouble.m4 longlong.m4 nls.m4 po.m4 printf-posix.m4 sig
  cxx-dynamic-initializers.m4\
  lftp.m4 readline.m4 socklen.m4 ssl.m4 mbrtowc.m4 mbstate_t.m4 mbswidth.m4\
  human.m4 inttypes_h.m4 uintmax_t.m4 ulonglong.m4 needtrio.m4 gnu-source.m4\
- pty.m4 va_copy.m4 terminfo.m4 fnmatch.m4
+ pty.m4 va_copy.m4 terminfo.m4

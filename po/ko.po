@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-10 17:05+0400\n"
+"POT-Creation-Date: 2004-08-04 14:52+0400\n"
 "PO-Revision-Date: 2001-05-27 KST\n"
 "Last-Translator: Dojip Kim <greendrm@greendrm.com>\n"
 "Language-Team: \n"
@@ -109,7 +109,7 @@ msgstr "접속 실패: %s"
 msgid "File cannot be accessed"
 msgstr "파일을 읽을 수 없습니다"
 
-#: src/FileAccess.cc:292 src/ftpclass.cc:3863 src/ftpclass.cc:3872
+#: src/FileAccess.cc:292 src/ftpclass.cc:3903 src/ftpclass.cc:3912
 msgid "Not connected"
 msgstr "접속되지 않았습니다"
 
@@ -274,7 +274,7 @@ msgstr ""
 #: src/commands.cc:1450 src/commands.cc:1484 src/commands.cc:1583
 #: src/commands.cc:1871 src/commands.cc:2067 src/commands.cc:2240
 #: src/commands.cc:2247 src/commands.cc:2429 src/commands.cc:2456
-#: src/commands.cc:2463 src/commands.cc:2789 src/commands.cc:3070
+#: src/commands.cc:2463 src/commands.cc:2787 src/commands.cc:3068
 #: src/SleepJob.cc:139
 #, c-format
 msgid "Try `help %s' for more information.\n"
@@ -318,7 +318,7 @@ msgstr "잘못된 시간 단위입니다, [smhd] 만 허용합니다."
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "잘못된 시간 양식입니다. 양식은 <time><unit> 입니다, 예. 2h30m."
 
-#: src/ResMgr.cc:715 src/commands.cc:2947 src/commands.cc:2956
+#: src/ResMgr.cc:715 src/commands.cc:2945 src/commands.cc:2954
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "범위를 벗어난 양식. 양식은 최소-최대 입니다, 예. 10-20."
 
@@ -344,8 +344,8 @@ msgstr "이 설정에 대한 종결이 정의되어 있지 않습니다"
 msgid "invalid pair of numbers"
 msgstr "잘못된 수입니다"
 
-#: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3868
-#: src/Http.cc:1688
+#: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3908
+#: src/Http.cc:1725
 msgid "Resolving host address..."
 msgstr "호스트 주소를 찾습니다..."
 
@@ -1421,7 +1421,7 @@ msgid "Usage: %s <jobno> ... | all\n"
 msgstr "사용법: %s <jobno> ... | all\n"
 
 #: src/commands.cc:2033 src/commands.cc:2165 src/commands.cc:2309
-#: src/commands.cc:2594 src/commands.cc:2668 src/commands.cc:3082
+#: src/commands.cc:2594 src/commands.cc:2667 src/commands.cc:3080
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s %s - 숫자가 아닙니다\n"
@@ -1552,51 +1552,51 @@ msgstr "%s: (netscape,ncftp)에서 가져온 양식이 필요합니다\n"
 msgid "Usage: %s [-d #] dir\n"
 msgstr "사용법: %s [-p]\n"
 
-#: src/commands.cc:2699
+#: src/commands.cc:2698
 #, fuzzy, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "잘못된 수입니다"
 
-#: src/commands.cc:2714
+#: src/commands.cc:2713
 #, fuzzy, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "사용법: %s [-p]\n"
 
-#: src/commands.cc:2720
+#: src/commands.cc:2719
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr ""
 
-#: src/commands.cc:2724
+#: src/commands.cc:2723
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr ""
 
-#: src/commands.cc:2776
+#: src/commands.cc:2774
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "사용법: %s command args...\n"
 
-#: src/commands.cc:2788
+#: src/commands.cc:2786
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "사용법: %s module [args...]\n"
 
-#: src/commands.cc:2806 src/LocalAccess.cc:607
+#: src/commands.cc:2804 src/LocalAccess.cc:623
 msgid "cannot get current directory"
 msgstr "현재 디렉토리에 접근할 수 없습니다"
 
-#: src/commands.cc:2867
+#: src/commands.cc:2865
 #, fuzzy, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "사용법: %s [OPTS] files...\n"
 
-#: src/commands.cc:2887
+#: src/commands.cc:2885
 #, fuzzy, c-format
 msgid "invalid mode string: %s\n"
 msgstr "잘못된 수입니다"
 
-#: src/commands.cc:2962
+#: src/commands.cc:2960
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "사용법: %s [OPTS] file\n"
@@ -1645,7 +1645,7 @@ msgstr ""
 msgid "Closing control socket"
 msgstr "제어 소켓 닫음"
 
-#: src/ftpclass.cc:1139 src/Http.cc:812
+#: src/ftpclass.cc:1139 src/Http.cc:836
 msgid "Closing idle connection"
 msgstr "사용하지 않는 접속을 끊습니다"
 
@@ -1657,151 +1657,151 @@ msgstr ""
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr ""
 
-#: src/ftpclass.cc:1246 src/Http.cc:940
+#: src/ftpclass.cc:1246 src/Http.cc:964
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "주소 %d의 소켓을 만들 수 없습니다"
 
-#: src/ftpclass.cc:1453
+#: src/ftpclass.cc:1477
 msgid "SITE CHMOD is not supported by this site"
 msgstr ""
 
-#: src/ftpclass.cc:1458
+#: src/ftpclass.cc:1482
 #, fuzzy
 msgid "MLST and MLSD are not supported by this site"
 msgstr "모듈은 이 시스템에서 지원되지 않음"
 
-#: src/ftpclass.cc:1870 src/ftpclass.cc:1909
+#: src/ftpclass.cc:1902 src/ftpclass.cc:1949
 msgid "unsupported network protocol"
 msgstr "지원하지 않는 네트워크 프로토콜입니다"
 
-#: src/ftpclass.cc:2021
+#: src/ftpclass.cc:2061
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "(%s) 포트 %u에 자료 소켓을 연결합니다"
 
-#: src/ftpclass.cc:2028
+#: src/ftpclass.cc:2068
 #, fuzzy, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "(%s) 포트 %u에 자료 소켓을 연결합니다"
 
-#: src/ftpclass.cc:2053 src/ftpclass.cc:3705
+#: src/ftpclass.cc:2093 src/ftpclass.cc:3745
 msgid "Switching passive mode off"
 msgstr "패시브(passive) 모드 끔"
 
-#: src/ftpclass.cc:2312 src/ftpclass.cc:3823
+#: src/ftpclass.cc:2352 src/ftpclass.cc:3863
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force가 설정되어있지만 서버가 지원하지 않거나 SSL을 허용하지 않음"
 
-#: src/ftpclass.cc:2517 src/ftpclass.cc:2636 src/Http.cc:1028
+#: src/ftpclass.cc:2557 src/ftpclass.cc:2676 src/Http.cc:1052
 msgid "Peer closed connection"
 msgstr "접속이 끊겼습니다"
 
-#: src/ftpclass.cc:2597
+#: src/ftpclass.cc:2637
 msgid "Persist and retry"
 msgstr "계속 재시도함"
 
-#: src/ftpclass.cc:2852
+#: src/ftpclass.cc:2892
 msgid "Closing data socket"
 msgstr "데이터 소켓 닫음"
 
-#: src/ftpclass.cc:2868
+#: src/ftpclass.cc:2908
 #, fuzzy
 msgid "Closing aborted data socket"
 msgstr "데이터 소켓 닫음"
 
-#: src/ftpclass.cc:3543
+#: src/ftpclass.cc:3583
 msgid "saw file size in response"
 msgstr "응답에서 파일 크기를 봅니다"
 
-#: src/ftpclass.cc:3558
+#: src/ftpclass.cc:3598
 msgid "extra server response"
 msgstr "임시 서버 응답"
 
-#: src/ftpclass.cc:3572 src/ftpclass.cc:3595
+#: src/ftpclass.cc:3612 src/ftpclass.cc:3635
 msgid "Turning on sync-mode"
 msgstr "동기 모드로 전환"
 
-#: src/ftpclass.cc:3722
+#: src/ftpclass.cc:3762
 msgid "Switching passive mode on"
 msgstr "패시브(passive) 모드로 전환"
 
-#: src/ftpclass.cc:3849
+#: src/ftpclass.cc:3889
 #, fuzzy
 msgid "FEAT negotiation..."
 msgstr "TLS 협상중..."
 
-#: src/ftpclass.cc:3856
+#: src/ftpclass.cc:3896
 msgid "Sending commands..."
 msgstr "명령어 전송중..."
 
-#: src/ftpclass.cc:3858 src/ftpclass.cc:3886 src/ftpclass.cc:3899
-#: src/Http.cc:1703
+#: src/ftpclass.cc:3898 src/ftpclass.cc:3926 src/ftpclass.cc:3939
+#: src/Http.cc:1740
 msgid "Waiting for response..."
 msgstr "응답을 기다립니다..."
 
-#: src/ftpclass.cc:3860
+#: src/ftpclass.cc:3900
 #, fuzzy
 msgid "Delaying before retry"
 msgstr "재접속하기 위하여 기다립니다"
 
-#: src/ftpclass.cc:3861 src/Http.cc:1696
+#: src/ftpclass.cc:3901 src/Http.cc:1733
 msgid "Connection idle"
 msgstr "사용하지 않는 접속"
 
-#: src/ftpclass.cc:3875 src/Http.cc:1694 src/Http.cc:1701
+#: src/ftpclass.cc:3915 src/Http.cc:1731 src/Http.cc:1738
 msgid "Connecting..."
 msgstr "접속중..."
 
-#: src/ftpclass.cc:3879
+#: src/ftpclass.cc:3919
 msgid "TLS negotiation..."
 msgstr "TLS 협상중..."
 
-#: src/ftpclass.cc:3881
+#: src/ftpclass.cc:3921
 msgid "Connected"
 msgstr "접속되었음"
 
-#: src/ftpclass.cc:3883
+#: src/ftpclass.cc:3923
 msgid "Logging in..."
 msgstr "로그인 중..."
 
-#: src/ftpclass.cc:3887
+#: src/ftpclass.cc:3927
 msgid "Making data connection..."
 msgstr "접속 하는 중..."
 
-#: src/ftpclass.cc:3890
+#: src/ftpclass.cc:3930
 msgid "Changing remote directory..."
 msgstr "원거리 디렉토리 변경중..."
 
-#: src/ftpclass.cc:3896
+#: src/ftpclass.cc:3936
 #, fuzzy
 msgid "Waiting for other copy peer..."
 msgstr "응답을 기다립니다..."
 
-#: src/ftpclass.cc:3898 src/ftpclass.cc:3919
+#: src/ftpclass.cc:3938 src/ftpclass.cc:3959
 msgid "Waiting for transfer to complete"
 msgstr "전송 완료를 기다립니다"
 
-#: src/ftpclass.cc:3901
+#: src/ftpclass.cc:3941
 msgid "Waiting for data connection..."
 msgstr "접속을 기다리는 중..."
 
-#: src/ftpclass.cc:3907
+#: src/ftpclass.cc:3947
 #, fuzzy
 msgid "Sending data/TLS"
 msgstr "자료 보내는 중"
 
-#: src/ftpclass.cc:3909
+#: src/ftpclass.cc:3949
 #, fuzzy
 msgid "Receiving data/TLS"
 msgstr "자료 받는 중"
 
-#: src/ftpclass.cc:3915 src/Http.cc:1699
+#: src/ftpclass.cc:3955 src/Http.cc:1736
 msgid "Sending data"
 msgstr "자료 보내는 중"
 
-#: src/ftpclass.cc:3917 src/Http.cc:1706
+#: src/ftpclass.cc:3957 src/Http.cc:1743
 msgid "Receiving data"
 msgstr "자료 받는 중"
 
@@ -1895,48 +1895,52 @@ msgstr "HTTP 연결을 닫습니다"
 msgid "POST method failed"
 msgstr "POST 메소드 실패"
 
-#: src/Http.cc:896
+#: src/Http.cc:920
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "http상의 ftp는 프락시 없이는 동작할 수 없습니다, http:proxy를 설정하세요"
 
-#: src/Http.cc:1044
+#: src/Http.cc:1068
 msgid "Sending request..."
 msgstr "request 보내는 중..."
 
-#: src/Http.cc:1091
+#: src/Http.cc:1115
 msgid "Hit EOF while fetching headers"
 msgstr "헤더를 읽어 오는 동안 EOF를 입력"
 
-#: src/Http.cc:1207
+#: src/Http.cc:1231
 msgid "Could not parse HTTP status line"
 msgstr "HTTP 상태를 파싱할 수 없음"
 
-#: src/Http.cc:1353
+#: src/Http.cc:1262
+msgid "Object is not cached and http:cache-control has only-if-cached"
+msgstr ""
+
+#: src/Http.cc:1390
 msgid "Receiving body..."
 msgstr "body를 받은 중..."
 
-#: src/Http.cc:1482
+#: src/Http.cc:1519
 msgid "Hit EOF"
 msgstr ""
 
-#: src/Http.cc:1485
+#: src/Http.cc:1522
 msgid "Received not enough data, retrying"
 msgstr "충분한 자료를 받지 못해 다시 시도중"
 
-#: src/Http.cc:1493
+#: src/Http.cc:1530
 msgid "Received all"
 msgstr "모두 받았음"
 
-#: src/Http.cc:1498
+#: src/Http.cc:1535
 msgid "Received all (total)"
 msgstr "모두(전체) 받음"
 
-#: src/Http.cc:1521 src/Http.cc:1542
+#: src/Http.cc:1558 src/Http.cc:1579
 msgid "chunked format violated"
 msgstr "쓰지 않는 양식이 문제가 됩니다"
 
-#: src/Http.cc:1704
+#: src/Http.cc:1741
 msgid "Fetching headers..."
 msgstr "헤더를 읽고 있는중.."
 
@@ -2140,12 +2144,12 @@ msgstr "재접속하기 위하여 기다립니다"
 msgid "max-retries exceeded"
 msgstr "최대-재시도를 초과했습니다"
 
-#: src/NetAccess.cc:908
+#: src/NetAccess.cc:907
 #, fuzzy, c-format
 msgid "Getting directory contents (%lld) %s[%s]"
 msgstr "디렉토리 정보를 가져오는 중 (%lld)"
 
-#: src/NetAccess.cc:915
+#: src/NetAccess.cc:914
 #, fuzzy, c-format
 msgid "Getting files information (%d%%) [%s]"
 msgstr "파일 정보를 가져오는 중 (%d%%)"
