@@ -49,6 +49,8 @@ public:
    void PrintStatus(int v);
 
    void Repeat() { repeat=true; start_time-=next_time.Seconds(); }
+
+   void lftpMovesToBackground();
 };
 
 #endif//SLEEPJOB_H

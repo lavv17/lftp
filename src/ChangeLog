@@ -1,3 +1,24 @@
+2001-05-29  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* lftp.cc, Job.cc, Job.h, SMTask.cc, SMTask.h, SleepJob.cc, SleepJob.h:
+	  add notification for moving to background; terminate some never-ending
+	  jobs before moving to bg.
+	* resource.cc: change default for ftp:fix-pasv-address to true.
+
+2001-05-29  albert chin (china@thewrittenword.com)
+
+	* Fish.cc, Http.cc, StatusLine.cc, log.cc: use trio functions if needed.
+
+2001-05-29  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* complete.cc: (vars_generator) special generator for variable
+	  names to match variable name using ResMgr::VarNameCmp.
+
+2001-05-29  Nicolas Noble <Pixel@the-babel-tower.nobis-crew.org>
+
+	* complete.cc, ResMgr.cc, ResMgr.h: add variable name completion
+	  support.
+
 2001-05-24  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* MirrorJob.cc, MirrorJob.h: support `mirror -R -c'.

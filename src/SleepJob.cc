@@ -115,6 +115,16 @@ void SleepJob::PrintStatus(int)
    }
 }
 
+void SleepJob::lftpMovesToBackground()
+{
+   if(next_time.IsInfty()
+   || (repeat && cmd[0]==0))
+   {
+      // terminate
+      done=true;
+   }
+}
+
 #define args (parent->args)
 #define eprintf parent->eprintf
 #define Clone() parent->session->Clone()
@@ -222,5 +232,6 @@ void module_init()
 {
    CmdExec::RegisterCommand("sleep",cmd_sleep);
    CmdExec::RegisterCommand("at",cmd_at);
+   CmdExec::RegisterCommand("repeat",cmd_repeat);
 }
 #endif

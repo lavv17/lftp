@@ -124,6 +124,14 @@ int SMTask::Roll(SMTask *task)
    return m;
 }
 
+void SMTask::RollAll(int max_time)
+{
+   time_t time_limit=now+(now_ms+500)/1000+max_time;
+   do { Schedule(); }
+   while(sched_total.GetTimeout()==0
+	 && (max_time==0 || now<time_limit));
+}
+
 void SMTask::Schedule()
 {
    SMTask *old_current=current;

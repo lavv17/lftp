@@ -528,3 +528,9 @@ Job *Job::FindAnyChild()
    }
    return 0;
 }
+
+void Job::lftpMovesToBackground_ToAll()
+{
+   for(Job *scan=chain; scan; scan=scan->next)
+      scan->lftpMovesToBackground();
+}

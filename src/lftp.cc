@@ -207,8 +207,17 @@ static void sig_term(int sig)
 
 static void move_to_background()
 {
+   // notify jobs
+   Job::lftpMovesToBackground_ToAll();
+   // wait they do something, but no more than 1 sec.
+   SMTask::RollAll(1);
+   // if all jobs terminated, don't really move to bg.
+   if(Job::NumberOfJobs()==0)
+      return;
+
    fflush(stdout);
    fflush(stderr);
+
    pid_t pid=fork();
    switch(pid)
    {
