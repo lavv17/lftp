@@ -18,6 +18,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/* $Id$ */
+
 #include <config.h>
 #include <stdio.h>
 #include <errno.h>
@@ -159,7 +161,8 @@ void XferJob::NextFile(char *f)
    if(curr)
       file_count++;
 
-   session->Close();
+   if(session)
+      session->Close();
    offset=0;
    size=-1;
    got_eof=false;
@@ -320,7 +323,7 @@ void XferJob::CountBytes(long res)
 
 void  XferJob::RateDrain()
 {
-   if(session->IsOpen())
+   if(!session || session->IsOpen())
    {
       CountBytes(0);
       block+=TimeOut(4000);
@@ -335,7 +338,8 @@ int XferJob::TryWrite(FDStream *f)
 {
    if(in_buffer==0)
    {
-      session->Resume();
+      if(session)
+	 session->Resume();
       return 0;
    }
 
@@ -402,7 +406,7 @@ int XferJob::TryWrite(FDStream *f)
    }
    if(in_buffer>0)
       block+=PollVec(fd,POLLOUT);
-   if(in_buffer<buffer_size)
+   if(in_buffer<buffer_size && session)
       session->Resume();
    return res;
 }
