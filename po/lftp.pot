@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 1999-08-02 00:59+0400\n"
+"POT-Creation-Date: 1999-08-04 21:03+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,17 +51,17 @@ msgstr ""
 msgid "Warning: discarding incomplete command\n"
 msgstr ""
 
-#: src/CmdExec.cc:653
+#: src/CmdExec.cc:651
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr ""
 
-#: src/CmdExec.cc:659
+#: src/CmdExec.cc:657
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr ""
 
-#: src/CmdExec.cc:663
+#: src/CmdExec.cc:661
 #, c-format
 msgid "\tRunning\n"
 msgstr ""
@@ -105,12 +105,12 @@ msgstr ""
 msgid "Operation not supported"
 msgstr ""
 
-#: src/FtpListInfo.cc:226 src/HttpDir.cc:908
+#: src/FtpListInfo.cc:226 src/HttpDir.cc:914
 #, c-format
 msgid "Getting directory contents (%ld)"
 msgstr ""
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:913
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:919
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr ""
@@ -186,59 +186,59 @@ msgstr ""
 msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 
-#: src/MirrorJob.cc:138 src/MirrorJob.cc:562
+#: src/MirrorJob.cc:137 src/MirrorJob.cc:561
 #, c-format
 msgid "Removing old remote file `%s'"
 msgstr ""
 
-#: src/MirrorJob.cc:161 src/MirrorJob.cc:228 src/MirrorJob.cc:284
-#: src/MirrorJob.cc:587
+#: src/MirrorJob.cc:160 src/MirrorJob.cc:227 src/MirrorJob.cc:283
+#: src/MirrorJob.cc:586
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr ""
 
 #. launch get job
-#: src/MirrorJob.cc:172
+#: src/MirrorJob.cc:171
 #, c-format
 msgid "Retrieving remote file `%s'"
 msgstr ""
 
-#: src/MirrorJob.cc:200
+#: src/MirrorJob.cc:199
 #, c-format
 msgid "Making remote directory `%s'"
 msgstr ""
 
-#: src/MirrorJob.cc:293
+#: src/MirrorJob.cc:292
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr ""
 
-#: src/MirrorJob.cc:393
+#: src/MirrorJob.cc:392
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr ""
 
-#: src/MirrorJob.cc:479
+#: src/MirrorJob.cc:478
 #, c-format
 msgid "Sending local file `%s'"
 msgstr ""
 
-#: src/MirrorJob.cc:575
+#: src/MirrorJob.cc:574
 #, c-format
 msgid "Old remote file `%s' is not removed"
 msgstr ""
 
-#: src/MirrorJob.cc:606
+#: src/MirrorJob.cc:605
 #, c-format
 msgid "Old local file `%s' is not removed"
 msgstr ""
 
-#: src/MirrorJob.cc:902
+#: src/MirrorJob.cc:901
 #, c-format
 msgid "%s: %s - invalid time precision\n"
 msgstr ""
 
-#: src/MirrorJob.cc:903 src/commands.cc:775 src/commands.cc:840
+#: src/MirrorJob.cc:902 src/commands.cc:775 src/commands.cc:840
 #: src/commands.cc:928 src/commands.cc:1134 src/commands.cc:1295
 #: src/commands.cc:1471 src/commands.cc:1478 src/commands.cc:1662
 #: src/commands.cc:1688 src/commands.cc:1695 src/commands.cc:1812
@@ -318,48 +318,48 @@ msgstr ""
 msgid "eta:"
 msgstr ""
 
-#: src/XferJob.cc:188 src/XferJob.cc:263
+#: src/XferJob.cc:185 src/XferJob.cc:260
 #, c-format
 msgid "`%s' at %lu %s%s%s[%s]"
 msgstr ""
 
-#: src/XferJob.cc:203
+#: src/XferJob.cc:200
 #, c-format
 msgid ""
 "%ld $#l#byte|bytes$ transferred in %ld $#l#second|seconds$ (%g bytes/s)\n"
 msgstr ""
 
-#: src/XferJob.cc:210
+#: src/XferJob.cc:207
 #, c-format
 msgid "%ld $#l#byte|bytes$ transferred\n"
 msgstr ""
 
-#: src/XferJob.cc:217 src/XferJob.cc:243
+#: src/XferJob.cc:214 src/XferJob.cc:240
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr ""
 
-#: src/XferJob.cc:222 src/XferJob.cc:249
+#: src/XferJob.cc:219 src/XferJob.cc:246
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr ""
 
-#: src/XferJob.cc:237
+#: src/XferJob.cc:234
 #, c-format
 msgid "\tNo files transferred successfully :(\n"
 msgstr ""
 
-#: src/XferJob.cc:255
+#: src/XferJob.cc:252
 #, c-format
 msgid "Average transfer rate %g bytes/s\n"
 msgstr ""
 
-#: src/FtpCopy.cc:177 src/XferJob.cc:304 src/commands.cc:599
+#: src/FtpCopy.cc:177 src/XferJob.cc:301 src/commands.cc:599
 #, c-format
 msgid "%s: %s - not supported protocol\n"
 msgstr ""
 
-#: src/XferJob.cc:514
+#: src/XferJob.cc:511
 #, c-format
 msgid "%s: cannot write -- disk full?\n"
 msgstr ""
@@ -1314,22 +1314,22 @@ msgid "%s: no files found\n"
 msgstr ""
 
 #. A directory has just been created
-#: src/mkdirJob.cc:108
+#: src/mkdirJob.cc:106
 #, c-format
 msgid "%s ok, `%s' created\n"
 msgstr ""
 
-#: src/mkdirJob.cc:110 src/rmJob.cc:43
+#: src/mkdirJob.cc:108 src/rmJob.cc:43
 #, c-format
 msgid "%s failed for %d of %d directories\n"
 msgstr ""
 
-#: src/mkdirJob.cc:112
+#: src/mkdirJob.cc:110
 #, c-format
 msgid "%s ok, %d director$y|ies$ created\n"
 msgstr ""
 
-#: src/mvJob.cc:74
+#: src/mvJob.cc:72
 #, c-format
 msgid "rename successful\n"
 msgstr ""
@@ -1417,7 +1417,7 @@ msgstr ""
 msgid "Proxy protocol unsupported"
 msgstr ""
 
-#: src/FtpGlob.cc:258 src/HttpDir.cc:529 src/HttpDir.cc:715
+#: src/FtpGlob.cc:258 src/HttpDir.cc:535 src/HttpDir.cc:721
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr ""
