@@ -29,6 +29,7 @@
 #ifdef TIME_WITH_SYS_TIME
 # include <time.h>
 #endif
+#include <stdarg.h>
 
 // expands tilde; returns pointer to static data
 const char *expand_home_relative(const char *);
@@ -102,9 +103,9 @@ void xgettimeofday(time_t *sec, int *usec);
 
 /* returns malloc'd date */
 char *xstrftime(const char *format, const struct tm *tm);
-	
+
 /* returns malloc'd formatted string */
 char *xvasprintf(const char *format, va_list ap);
 char *xasprintf(const char *format, ...);
-	
+
 #endif // MISC_H

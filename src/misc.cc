@@ -28,7 +28,6 @@
 #include "xmalloc.h"
 #include "xstring.h"
 #include <stdio.h>
-#include <stdarg.h>
 #include <pwd.h>
 #include <unistd.h>
 #include <errno.h>
@@ -623,18 +622,21 @@ void xgettimeofday(time_t *sec, int *usec)
 char *xstrftime(const char *format, const struct tm *tm)
 {
    char *ret = NULL;
-   int siz = 128;
+   int siz = 32;
 
-   struct tm dummy = { 0,0,0,0,0,0,0,0,0 };
-   if(tm == NULL) tm = &dummy;
+   struct tm dummy;
+   memset(&dummy, 0, sizeof(dummy));
+   if(tm == NULL)
+      tm = &dummy;
 
-   while(1) {
+   for(;;)
+   {
       ret = (char *) xrealloc(ret, siz);
-      if(strftime(ret, siz, format, tm) != 0)
+      size_t res=strftime(ret, siz, format, tm);
+      if(res>0 && res<siz)
 	 return ret; /* success */
-
       /* more space */
-      siz += siz / 2;
+      siz*=2;
    }
 }
 
@@ -643,10 +645,16 @@ char *xvasprintf(const char *format, va_list ap)
    char *ret = NULL;
    int siz = 128;
 
-   while(1) {
+   for(;;)
+   {
       ret = (char *) xrealloc(ret, siz);
-      if(vsnprintf(ret, siz, format, ap) != -1) return ret;
-      siz += siz / 2;
+      int res=vsnprintf(ret, siz, format, ap);
+      if(res>=0 && res<siz)
+	 return ret;
+      if(res>siz)
+	 siz=res+1;
+      else
+	 siz*=2;
    }
 }
 
@@ -659,4 +667,3 @@ char *xasprintf(const char *format, ...)
    va_end(&va);
    return ret;
 }
-
