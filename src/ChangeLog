@@ -1,3 +1,10 @@
+1999-10-05  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* HttpDir.cc: handle Netscape-proxy listing; handle parse errors
+	  better.
+	* lftp.cc: use SOCKS4 define.
+	* CmdExec.cc: use URL closure on several settings.
+
 1999-10-04  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ArgV.cc: (delarg) decrement ind if needed.

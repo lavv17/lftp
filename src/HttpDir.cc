@@ -220,6 +220,10 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
    if(*link_target==0)
       return tag_len;	// no target ?
 
+   // netscape internal icons
+   if(icon && !strncasecmp(link_target,"internal-gopher",15))
+      return tag_len;
+
    if(link_target[0]=='/' && link_target[1]=='~')
       link_target++;
 
@@ -336,9 +340,9 @@ parse_url_again:
 
    if(list && show_in_list)
    {
-      int year,month,day,hour,minute;
-      char month_name[32];
-      char size_str[32];
+      int year=-1,month=0,day=0,hour=0,minute=0;
+      char month_name[32]="";
+      char size_str[32]="";
       const char *more1;
       char *str;
       int n;
@@ -349,27 +353,29 @@ parse_url_again:
 	 goto add_file;	// only <a href> tags can have useful info.
 
       // try to extract file information
-      const char *eol;
-      eol=find_char(more+1,end-more-1,'\n');
-      if(!eol)
-      {
-	 if(eof)
-	    goto add_file;
-	 if(end-more>2*1024) // too long line
-	    goto add_file;
-	 return less-buf;  // no full line yet
-      }
-
       more1=more;
    find_a_end:
       for(;;)
       {
 	 more1++;
-	 more1=find_char(more1,eol-more1,'>');
+	 more1=find_char(more1,end-more1,'>');
 	 if(!more1)
-	    goto add_file;
+	 {
+	    if(eof)
+	       goto add_file;
+	    if(end-more>2*1024) // too long a-href
+	       goto add_file;
+	    return less-buf;  // no full a-href yet
+	 }
 	 if(!strncasecmp(more1-3,"</a",3))
 	    break;
+      }
+      const char *eol;	// get a whole line in buffer if possible.
+      eol=find_char(more1+1,end-more1-1,'\n');
+      if(!eol)
+      {
+	 if(!eof && end-more<=2*1024)
+	    return less-buf;  // no full line yet
       }
 
       // little workaround for squid's ftp listings
@@ -392,48 +398,76 @@ parse_url_again:
       // usual apache listing: DD-Mon-YYYY hh:mm size
       n=sscanf(str,"%2d-%3s-%4d %2d:%2d %30s",
 		    &day,month_name,&year,&hour,&minute,size_str);
-      if(n!=6)
-      {
-	 hour=0;
-	 minute=0;
-	 // unusual apache listing: size DD-Mon-YYYY
-	 n=sscanf(str,"%30s %2d-%3s-%4d",size_str,&day,month_name,&year);
-	 if(n!=4)
-	 {
-	    strcpy(size_str,"-");
-	    char year_or_time[6];
-	    // squid's ftp listing: Mon DD (YYYY or hh:mm) [size]
-	    n=sscanf(str,"%3s %2d %5s %30s",month_name,&day,year_or_time,size_str);
-	    if(n<3)
-	       goto add_file;
-	    if(!is_ascii_digit(size_str[0]))
-	       strcpy(size_str,"-");
-	    if(year_or_time[2]==':')
-	    {
-	       sscanf(year_or_time,"%2d:%2d",&hour,&minute);
-	       year=-1;
-	    }
-	    else
-	       sscanf(year_or_time,"%d",&year);
-	    // skip rest of line, because there may be href to link target.
-	    skip_len=eol-buf+1;
+      if(n==6)
+	 goto got_info;
 
-	    char *ptr=strstr(str," -> <A HREF=\"");
-	    if(ptr)
-	    {
-	       sym_link=ptr+13;
-	       ptr=strchr(sym_link,'"');
-	       if(!ptr)
-		  sym_link=0;
-	       else
-	       {
-		  *ptr=0;
-		  url::decode_string(sym_link);
-	       }
-	    }
+      hour=0;
+      minute=0;
+      // unusual apache listing: size DD-Mon-YYYY
+      n=sscanf(str,"%30s %2d-%3s-%4d",size_str,&day,month_name,&year);
+      if(n==4)
+	 goto got_info;
+
+      char size_unit[7];
+      long size;
+      char week_day[4];
+      int second;
+      // Netscape-Proxy 2.53
+      if(9==sscanf(str,"%ld %6s %3s %3s %d %2d:%2d:%2d %4d",&size,size_unit,
+	       week_day,month_name,&day,&hour,&minute,&second,&year))
+      {
+	 if(!strcasecmp(size_unit,"bytes")
+	 || !strcasecmp(size_unit,"byte"))
+	    sprintf(size_str,"%ld",size);
+	 else
+	    sprintf(size_str,"%ld%s",size,size_unit);
+	 goto got_info;
+      }
+      if(7==sscanf(str,"%3s %3s %d %2d:%2d:%2d %4d",
+	       week_day,month_name,&day,&hour,&minute,&second,&year))
+      {
+	 strcpy(size_str,"-");
+	 goto got_info;
+      }
+
+      strcpy(size_str,"-");
+      char year_or_time[6];
+      // squid's ftp listing: Mon DD (YYYY or hh:mm) [size]
+      n=sscanf(str,"%3s %2d %5s %30s",month_name,&day,year_or_time,size_str);
+      if(n<3)
+	 goto add_file;
+      if(!is_ascii_digit(size_str[0]))
+	 strcpy(size_str,"-");
+      if(year_or_time[2]==':')
+      {
+	 if(2!=sscanf(year_or_time,"%2d:%2d",&hour,&minute))
+	    goto add_file;
+	 year=-1;
+      }
+      else
+      {
+	 if(1!=sscanf(year_or_time,"%d",&year))
+	    goto add_file;
+      }
+      // skip rest of line, because there may be href to link target.
+      skip_len=eol-buf+1;
+
+      char *ptr;
+      ptr=strstr(str," -> <A HREF=\"");
+      if(ptr)
+      {
+	 sym_link=ptr+13;
+	 ptr=strchr(sym_link,'"');
+	 if(!ptr)
+	    sym_link=0;
+	 else
+	 {
+	    *ptr=0;
+	    url::decode_string(sym_link);
 	 }
       }
 
+   got_info:
       if(year!=-1)
       {
 	 // server's y2000 problem :)

@@ -913,15 +913,19 @@ void CmdExec::beep_if_long()
 
 void CmdExec::Reconfig(const char *)
 {
-   long_running = res_long_running.Query(0);
-   remote_completion = res_remote_completion.Query(0);
+   const char *c=0;
+   if(session)
+      session->GetConnectURL(FA::NO_PATH);
+
+   long_running = res_long_running.Query(c);
+   remote_completion = res_remote_completion.Query(c);
    csh_history = res_csh_history.Query(0);
    xfree(var_ls);
-   var_ls=xstrdup(res_default_ls.Query(session->GetConnectURL(FA::NO_PATH)));
+   var_ls=xstrdup(res_default_ls.Query(c));
    xfree(var_prompt);
-   var_prompt=xstrdup(res_prompt.Query(0));
-   verify_path=res_verify_path.Query(0);
-   verify_host=res_verify_host.Query(0);
+   var_prompt=xstrdup(res_prompt.Query(c));
+   verify_path=res_verify_path.Query(c);
+   verify_host=res_verify_host.Query(c);
    verbose=res_verbose.Query(0);
 }
 
