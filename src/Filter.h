@@ -63,6 +63,7 @@ class OutputFilter : public FDStream
    ProcWait *w;
    pid_t pg;
    FDStream *second;
+   bool stderr_to_stdout;
 
    char *oldcwd;
 
@@ -84,6 +85,7 @@ public:
    virtual ~OutputFilter();
 
    void SetCwd(const char *);
+   void StderrToStdout() { stderr_to_stdout=true; }
 
    off_t getsize_and_seek_end() { return 0; }
 

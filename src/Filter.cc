@@ -172,6 +172,8 @@ int OutputFilter::getfd()
       kill(getpid(),SIGSTOP);
       SignalHook::RestoreAll();
       Child(p);
+      if(stderr_to_stdout)
+	 dup2(1,2);
       if(oldcwd)
       {
 	 if(chdir(oldcwd)==-1)
@@ -221,6 +223,7 @@ void OutputFilter::Init()
    oldcwd=xgetcwd();
    pg=0;
    closed=false;
+   stderr_to_stdout=false;
 }
 
 void OutputFilter::SetCwd(const char *cwd)
