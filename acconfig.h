@@ -163,6 +163,10 @@
 CDECL const char *strerror(int);
 #endif
 
+#ifdef HAVE_LOCALE_H
+# include <locale.h>
+#endif
+
 #ifndef HAVE_SETLOCALE
 # define setlocale(Category, Locale)
 #endif
