@@ -497,6 +497,8 @@ void FileSetOutput::print(FileSet &fs, Buffer *o) const
 
 const char *FileSetOutput::FileInfoSuffix(const FileInfo &fi) const
 {
+   if(!(fi.defined&fi.TYPE))
+      return "";
    if(fi.filetype == FileInfo::DIRECTORY)
       return "/";
    else if(fi.filetype == FileInfo::SYMLINK)

@@ -912,6 +912,8 @@ void Ftp::InitFtp()
 
    memset(&data_sa,0,sizeof(data_sa));
 
+   disconnect_on_close=false;
+
    Reconfig();
 }
 Ftp::Ftp() : super()
@@ -1015,6 +1017,8 @@ void  Ftp::GetBetterConnection(int level,int count)
 	 {
 	    if((o->flags&NOREST_MODE) && o->real_pos>0x1000)
 	       continue;
+	    if(o->QueryBool("web-mode",o->hostname))
+	       continue;
 	    o->DataAbort();
 	    o->DataClose();
 	    if(o->control_sock==-1)
@@ -1022,7 +1026,7 @@ void  Ftp::GetBetterConnection(int level,int count)
 	 }
 	 else
 	 {
-	    if(o->RespQueueSize()>0)
+	    if(o->RespQueueSize()>0 || o->disconnect_on_close)
 	       continue;
 	 }
       }
@@ -1217,7 +1221,7 @@ int   Ftp::Do()
       // ssl for anonymous does not make sense.
       if(!ftps && QueryBool("ssl-allow") && user && pass)
       {
-	 const char *auth=Query("ssl-auth");
+	 const char *auth=Query("ssl-auth",hostname);
 	 SendCmd2("AUTH",auth);
 	 AddResp(234,CHECK_AUTH_TLS);
 	 auth_tls_sent=true;
@@ -2134,11 +2138,16 @@ int Ftp::ReplyLogPriority(int code)
       return 3;
    if(code==250 && mode==CHANGE_DIR)
       return 3;
+   if(code==451 && mode==CLOSED)
+      return 4;
    if(code==550 && mode==ARRAY_INFO
    && !RespQueueIsEmpty() && RespQueue[RQ_head].check_case==CHECK_MDTM)
       return 4;
    if(code==550 && mode==LIST && line && strstr(line,"No files found"))
       return 4;
+   if(code==550 && mode==CHANGE_DIR)
+      return 4;
+
    // Error messages
    // 221 is the reply to QUIT, but we don't expect it.
    if(code>=400 || (code==221 && RespQueue[RQ_head].expect!=221))
@@ -2476,6 +2485,7 @@ void  Ftp::Disconnect()
    state=INITIAL_STATE;
 
 out:
+   disconnect_on_close=false;
    Timeout(0);
 
    disconnect_in_progress=false;
@@ -2505,7 +2515,7 @@ void  Ftp::DataClose()
       close(data_sock);
       data_sock=-1;
       if(QueryBool("web-mode"))
-	 Disconnect();
+	 disconnect_on_close=true;
    }
    nop_time=0;
    nop_offset=0;
@@ -2763,6 +2773,8 @@ void  Ftp::Close()
    copy_failed=false;
    CloseRespQueue();
    super::Close();
+   if(disconnect_on_close)
+      Disconnect();
 }
 
 void Ftp::CloseRespQueue()
@@ -3470,7 +3482,7 @@ void Ftp::CheckResp(int act)
       }
       else
       {
-	 if(QueryBool("ssl-force"))
+	 if(QueryBool("ssl-force",hostname))
 	    SetError(LOGIN_FAILED,_("ftp:ssl-force is set and server does not support or allow SSL"));
       }
       break;
