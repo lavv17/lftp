@@ -99,6 +99,7 @@ FileSet *Ftp::ParseLongList(const char *buf,int len,int *err_ret)
 	 line=string_alloca(line_alloc=line_len+128);
       memcpy(line,buf,line_len);
       line[line_len]=0;
+      const char *buf_line=buf;
 
       len-=nl+1-buf;
       buf=nl+1;
@@ -127,6 +128,9 @@ FileSet *Ftp::ParseLongList(const char *buf,int len,int *err_ret)
 	    }
 	    if(*best_err1>16)
 	       goto leave; // too many errors with best parser.
+	    // Restore line contents. It could be clobbered by parser.
+	    memcpy(line,buf_line,line_len);
+	    line[line_len]=0;
 	 }
       }
       else
