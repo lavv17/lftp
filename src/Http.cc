@@ -531,14 +531,7 @@ int Http::Do()
       NonBlock(sock);
       CloseOnExec(sock);
 
-#if 0
-      a=(unsigned char*)&peer_sa.in.sin_addr;
-      sprintf(str,_("Connecting to %s%s (%s) port %u"),proxy?"proxy ":"",
-	 host_to_connect,numeric_address(&peer_sa),get_port(&peer_sa));
-      DebugPrint("---- ",str,0);
-#endif
-
-      DebugPrint("---- ","Connecting...",2);
+      SayConnectingTo();
       res=connect(sock,&peer[peer_curr].sa,sizeof(*peer));
       UpdateNow(); // if non-blocking don't work
 
