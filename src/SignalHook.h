@@ -27,9 +27,9 @@
 
 class SignalHook
 {
-   static int counts[256];
-   static struct sigaction old_handlers[256];
-   static bool old_saved[256];
+   static int *counts;
+   static struct sigaction *old_handlers;
+   static bool *old_saved;
 
    static void cnt_handler(int sig);
    static void set_signal(int sig,void (*handler)(int));
@@ -45,6 +45,8 @@ public:
    static void Block(int sig);
    static void Unblock(int sig);
    static void RestoreAll();
+
+   static void ClassInit();
 };
 
 #endif//SIGNALHOOK_H

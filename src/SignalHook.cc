@@ -23,9 +23,9 @@
 #include <config.h>
 #include "SignalHook.h"
 
-int  SignalHook::counts[256];
-struct sigaction SignalHook::old_handlers[256];
-bool SignalHook::old_saved[256];
+int  *SignalHook::counts=0;
+struct sigaction *SignalHook::old_handlers=0;
+bool *SignalHook::old_saved=0;
 
 void SignalHook::cnt_handler(int sig)
 {
@@ -73,4 +73,19 @@ void SignalHook::Unblock(int sig)
    sigemptyset(&s);
    sigaddset(&s,sig);
    sigprocmask(SIG_UNBLOCK,&s,0);
+}
+
+void SignalHook::ClassInit()
+{
+   if(counts)
+      return;
+   counts=new int[256];
+   old_handlers=new struct sigaction[256];
+   old_saved=new bool[256];
+   for(int i=0; i<256; i++)
+   {
+      counts[i]=0;
+      old_saved[i]=false;
+   }
+   Ignore(SIGPIPE);  // want to get EPIPE
 }
