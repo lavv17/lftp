@@ -1,3 +1,10 @@
+Version 2.4.8 - 2001-1?-??
+
+* force LC_NUMERIC to C, this fixes floating point settings initialization.
+* fixed assertion failure when setting ftp proxy after establishing
+  connection to an ftp server.
+* fixed a memory leak in cls (Glenn Maynard).
+
 Version 2.4.7 - 2001-11-12
 
 * du command (Glenn Maynard).
