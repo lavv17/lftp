@@ -94,7 +94,8 @@ class Ftp : public FileAccess
       CHECK_SIZE_OPT,	// check response for SIZE and save size to *opt_size
       CHECK_MDTM,	// check response for MDTM
       CHECK_MDTM_OPT,	// check response for MDTM and save size to *opt_date
-      CHECK_PASV,	// check response for PASV
+      CHECK_PASV,	// check response for PASV and save address
+      CHECK_EPSV,	// check response for EPSV and save address
       CHECK_FILE_ACCESS,// generic check for file access
       CHECK_PWD,	// check response for PWD and save it to home
       CHECK_RNFR,	// check RNFR and issue RNTO
@@ -145,7 +146,8 @@ class Ftp : public FileAccess
    int	 CatchDATE_opt(int,int);
    int	 CatchSIZE(int,int);
    int	 CatchSIZE_opt(int,int);
-   int	 PASV_Catch(int,int);
+   int	 Handle_PASV();
+   int	 Handle_EPSV();
 
    void	 InitFtp();
 
@@ -158,10 +160,12 @@ class Ftp : public FileAccess
 
    Resolver *resolver;
 
-   /* address to connect */
-   struct sockaddr_in   peer_sa;
+   sockaddr_u *peer;
+   int	 peer_num;
+   int	 peer_curr;
+
    /* address for data accepting */
-   struct sockaddr_in   data_sa;
+   sockaddr_u   data_sa;
 
    char  *resp;
    int   resp_size;
@@ -261,7 +265,7 @@ class Ftp : public FileAccess
 
    enum copy_mode_t { COPY_NONE, COPY_SOURCE, COPY_DEST };
    copy_mode_t copy_mode;
-   struct sockaddr copy_addr;
+   sockaddr_u copy_addr;
    bool copy_addr_valid;
    bool copy_passive;
    friend class FtpCopy;
@@ -274,6 +278,8 @@ class Ftp : public FileAccess
    int bytes_pool_rate;
    int bytes_pool_max;
    time_t bytes_pool_time;
+
+   const char *encode_eprt(sockaddr_u *);
 
 public:
    static void ClassInit();

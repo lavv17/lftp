@@ -108,8 +108,15 @@ ParsedURL::ParsedURL(const char *url)
 
    if(*scan==':') // port found
    {
-      *scan++=0;
-      port=scan;
+      if(strchr(scan+1,':')==0)
+      {
+	 *scan++=0;
+	 port=scan;
+      }
+      else
+      {
+	 /* more than one colon - maybe it is ipv6 digital address */
+      }
    }
 
    url::decode_string(user);

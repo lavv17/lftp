@@ -26,9 +26,11 @@
 #include "SignalHook.h"
 #include <errno.h>
 #include <unistd.h>
-#include "xstring.h"
 #include <stdio.h>
 #include <time.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include "xstring.h"
 #include "xmalloc.h"
 #include "ResMgr.h"
 
@@ -36,8 +38,31 @@
 extern "C" { const char *hstrerror(int); }
 #endif
 
+#if INET6
+# define DEFAULT_ORDER "inet inet6"
+#else
+# define DEFAULT_ORDER "inet"
+#endif
+
 static ResDecl
-   res_timeout	  ("dns:timeout",      "0", ResMgr::UNumberValidate,0);
+   res_timeout	  ("dns:timeout",      "0", ResMgr::UNumberValidate,0),
+   res_order	  ("dns:order",	       DEFAULT_ORDER, Resolver::OrderValidate,0);
+
+
+struct address_family
+{
+   int number;
+   const char *name;
+};
+static const address_family af_list[]=
+{
+   { AF_INET,  "inet"  },
+#if INET6
+   { AF_INET6, "inet6" },
+#endif
+   { -1, 0 }
+};
+
 
 Resolver::Resolver(const char *h,int p)
 {
@@ -46,12 +71,13 @@ Resolver::Resolver(const char *h,int p)
 
    pipe_to_child[0]=pipe_to_child[1]=-1;
    w=0;
-   memset(&sa,0,sizeof(sa));
    err_msg=0;
    done=false;
    timeout=0;
    Reconfig();
    time(&start_time);
+   addr=0;
+   addr_num=0;
 }
 
 Resolver::~Resolver()
@@ -61,15 +87,14 @@ Resolver::~Resolver()
    if(pipe_to_child[1]!=-1)
       close(pipe_to_child[1]);
 
-   if(hostname)
-      free(hostname);
+   xfree(hostname);
+   xfree(err_msg);
+   xfree(addr);
    if(w)
    {
       w->Kill(SIGKILL);
       w->Auto();
    }
-   if(err_msg)
-      free(err_msg);
 }
 
 int   Resolver::Do()
@@ -163,10 +188,12 @@ int   Resolver::Do()
       done=true;
       return MOVED;
    }
-   res=read(pipe_to_child[0],&sa,sizeof(sa));
+   res=sizeof(sockaddr_u)*128;
+   addr=(sockaddr_u*)xmalloc(res);
+   res=read(pipe_to_child[0],addr,res);
    if(res<0)
       goto read_error;
-   if((unsigned)res<sizeof(sa))
+   if((unsigned)res<sizeof(sockaddr_u))
    {
    proto_error:
       // protocol error
@@ -174,6 +201,8 @@ int   Resolver::Do()
       done=true;
       return MOVED;
    }
+   addr_num=res/sizeof(*addr);
+   addr=(sockaddr_u*)xrealloc(addr,addr_num*sizeof(*addr));
    done=true;
    return MOVED;
 }
@@ -186,45 +215,145 @@ void Resolver::MakeErrMsg(const char *f)
    done=true;
 }
 
+void Resolver::AddAddress(int family,const char *address,int len)
+{
+   addr=(sockaddr_u*)xrealloc(addr,(addr_num+1)*sizeof(*addr));
+   sockaddr_u *add=addr+addr_num;
+   addr_num++;
+
+   memset(add,0,sizeof(*add));
+
+   add->sa.sa_family=family;
+   switch(family)
+   {
+   case AF_INET:
+      memcpy(&add->in.sin_addr,address,len);
+      add->in.sin_port=htons(port);
+      break;
+
+#if INET6
+   case AF_INET6:
+      memcpy(&add->in6.sin6_addr,address,len);
+      add->in6.sin6_port=htons(port);
+      break;
+#endif
+
+   default:
+      addr_num--;
+      return;
+   }
+}
+
+const char *Resolver::ParseOrder(const char *s,int *o)
+{
+   static char *error=0;
+
+   const char * const delim="\t ";
+   char *s1=alloca_strdup(s);
+   int idx=0;
+
+   for(s1=strtok(s1,delim); s1; s1=strtok(0,delim))
+   {
+      const address_family *f;
+      for(f=af_list; f->name; f++)
+      {
+	 if(!strcasecmp(s1,f->name))
+	    break;
+      }
+      if(!f->name)
+      {
+	 const char * const format=_("unknown address family `%s'");
+	 error=(char*)xrealloc(error,strlen(format)+strlen(s1));
+	 sprintf(error,format,s1);
+	 return error;
+      }
+      if(idx<15)
+      {
+	 if(o) o[idx]=f->number;
+	 idx++;
+      }
+   }
+   if(o) o[idx]=-1;
+   return 0;
+}
+
+const char *Resolver::OrderValidate(char **s)
+{
+   return ParseOrder(*s,0);
+}
+
 void Resolver::DoGethostbyname()
 {
    time_t try_time;
+   const char *error=0;
 #ifndef HAVE_H_ERRNO_DECL
    extern int h_errno;
 #endif
+   int af_index=0;
+   int af_order[16];
+
+   ParseOrder(res_order.Query(hostname),af_order);
+
    for(;;)
    {
       time(&try_time);
-      struct hostent *ha=gethostbyname(hostname);
+
+      int af=af_order[af_index];
+      if(af==-1)
+	 break;
+
+      struct hostent *ha;
+#ifdef HAVE_GETHOSTBYNAME2
+      ha=gethostbyname2(hostname,af);
+#else
+      if(af==AF_INET)
+	 ha=gethostbyname(hostname);
+      else
+      {
+	 af_index++;
+	 continue;
+      }
+#endif
+
       if(ha)
       {
-	 sa.sin_family=ha->h_addrtype;
-	 memcpy(&sa.sin_addr,ha->h_addr,ha->h_length);
-	 sa.sin_port=htons(port);
-	 write(1,"O",1);
-	 write(1,&sa,sizeof(sa));
-	 return;
+	 const char * const *a;
+	 for(a=ha->h_addr_list; *a; a++)
+	    AddAddress(ha->h_addrtype, *a, ha->h_length);
+	 af_index++;
+	 continue;
       }
-      if(ha==NULL
 #ifdef HAVE_H_ERRNO
-	 && h_errno!=TRY_AGAIN
+      if(h_errno!=TRY_AGAIN)
 #endif
-	)
       {
-	 write(1,"E",1);
-	 const char *e=
+	 if(error==0)
+	 {
 #ifdef HAVE_H_ERRNO
-	    hstrerror(h_errno);
+	    error=hstrerror(h_errno);
 #else
-	    "Host name lookup failure";
+	    error="Host name lookup failure";
 #endif
-	 write(1,e,strlen(e));
-	 return;
+	 }
+	 af_index++;
+	 continue; // try other address families
       }
       time_t t=time(0);
       if(t-try_time<5)
 	 sleep(5-(t-try_time));
    }
+
+   if(addr_num==0)
+   {
+      write(1,"E",1);
+      if(error==0)
+	 error="No address found";
+      write(1,error,strlen(error));
+      return;
+   }
+   write(1,"O",1);
+   write(1,addr,addr_num*sizeof(*addr));
+   return;
 }
 
 void Resolver::Reconfig()

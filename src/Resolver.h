@@ -27,6 +27,17 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+
+union sockaddr_u
+{
+	struct sockaddr		sa;
+	struct sockaddr_in	in;
+#if INET6
+	struct sockaddr_in6	in6;
+#endif
+};
 
 class Resolver : public SMTask
 {
@@ -39,7 +50,10 @@ class Resolver : public SMTask
 
    time_t start_time;
 
-   struct sockaddr_in sa;
+   int addr_num;
+   sockaddr_u *addr;
+
+   void AddAddress(int family,const char *a,int len);
 
    char *err_msg;
    bool done;
@@ -47,18 +61,24 @@ class Resolver : public SMTask
    void  MakeErrMsg(const char *f);
    void	 DoGethostbyname();
 
+   static const char *ParseOrder(const char *s,int *o);
+
 public:
    int	 Do();
    bool	 Done() { return done; }
    bool	 Error() { return err_msg!=0; }
    const char *ErrorMsg() { return err_msg; }
-   struct sockaddr_in *Result() { return &sa; }
-   void  GetResult(void *m) { memcpy(m,&sa,sizeof(sa)); }
+   sockaddr_u *Result() { return addr; }
+   size_t GetResultSize() { return addr_num*sizeof(*addr); }
+   int	 GetResultNum() { return addr_num; }
+   void  GetResult(void *m) { memcpy(m,addr,GetResultSize()); }
 
    Resolver(const char *h,int port);
    ~Resolver();
 
    void Reconfig();
+
+   static const char *OrderValidate(char **s);
 };
 
 #endif // RESOLVER_H
