@@ -1,0 +1,41 @@
+1999-06-05  lav
+
+	* configure.in: snapshot pre2.0.0-990605
+
+1999-06-02  lav
+
+	* configure.in: snapshot pre2.0.0-990602
+
+1999-06-01  lav
+
+	* configure.in: snapshot 990601
+
+1999-05-31  lav
+
+	* configure.in: snapshot 990531
+
+1999-05-26  lav
+
+	* configure.in: snapshot 990526
+
+1999-05-22  lav
+
+	* configure.in: snapshot 990522
+
+1999-05-20  lav
+
+	* readline-4.0: new directory
+	* configure.in, Makefile.am, acinclude.m4: change for readline-4.0
+
+1999-05-17  lav
+
+	* configure.in: snapshot 990517
+
+1999-04-30  lav
+
+	* configure.in: snapshot 990430
+
+1999-04-01  lav
+
+	* configure.in, acinclude.m4: add check for sscanf working on const
+	  strings. (for hpux9.x, report by Marko Macek)
