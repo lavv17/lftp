@@ -1,5 +1,24 @@
 1999-12-26  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* CmdExec.cc, CmdExec.h: use GlobURL.
+	* FileAccess.cc: (GetFileURL) handle file starting with '~';
+	  (GlobURL::GetResult) implemented.
+	* FileAccess.h: few methods for GlobURL added.
+	* FtpGlob.cc: handle updir errors; handle dir starting with '~'.
+	* GetJob.cc, GetJob.h: (NoProtoSrc, NoProtoDst) new methods;
+	  handle reverse transfers (put).
+	* LocalAccess.cc, LocalAccess.h: preserve home by ignoring Connect().
+	* Makefile.am: remove mputJob.cc, mputJob.h, PutJob.cc, PutJob.h,
+	  FileXfer.cc, FileXfer.h.
+	* MirrorJob.cc: don't include PutJob.h.
+	* commands.cc: don't include PutJob.h, mputJob.h; move put, mput, mget
+	  functionality to cmd_get; update help; use GlobURL.
+	* mgetJob.cc, mgetJob.h: support mput.
+	* url.h: (is_url) new method.
+	* complete.cc: use GlobURL.
+
+1999-12-26  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* commands.cc: help update; support get -a for ascii mode;
 	  don't use ascii mode for zcat and zmore.
 	* CopyJob.cc, CopyJob.h: ascii support in CopyJobEnv; add SetDate and
