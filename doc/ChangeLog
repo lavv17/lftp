@@ -1,3 +1,7 @@
+1999-09-15	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document repeat command.
+
 1999-09-12	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document command `queue'; settings xfer:clobber,

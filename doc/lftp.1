@@ -442,6 +442,15 @@ Same as `ls', but ignores the cache.
 .PP
 Same as `nlist', but ignores the cache.
 
+.BR repeat " [\fIdelay\fP] [\fIcommand\fP]"
+.PP
+Repeat the command. Between the commands a delay inserted, by default 1 second.
+Example:
+.Ds
+repeat at tomorrow -- mirror
+repeat 1d mirror
+.De
+
 .BR reput " \fIlfile\fP [" -o " \fIrfile\fP]"
 .PP
 Same as `put -c'.
