@@ -1206,7 +1206,7 @@ int   Ftp::Do()
    {
       m|=FlushSendQueue();
       m|=ReceiveResp();
-      if(state!=CONNECTED_STATE)
+      if(state!=CONNECTED_STATE || Error())
 	 return MOVED;
 
 #ifdef USE_SSL
@@ -1260,7 +1260,7 @@ int   Ftp::Do()
       {
 	 m|=FlushSendQueue();
 	 m|=ReceiveResp();
-	 if(state!=USER_RESP_WAITING_STATE)
+	 if(state!=USER_RESP_WAITING_STATE || Error())
 	    return MOVED;
 	 if(!RespQueueIsEmpty())
 	    goto usual_return;
@@ -1295,7 +1295,7 @@ int   Ftp::Do()
    case(EOF_STATE):
       m|=FlushSendQueue();
       m|=ReceiveResp();
-      if(state!=EOF_STATE)
+      if(state!=EOF_STATE || Error())
 	 return MOVED;
 
       if(mode==CONNECT_VERIFY)
@@ -1346,7 +1346,7 @@ int   Ftp::Do()
    {
       m|=FlushSendQueue();
       m|=ReceiveResp();
-      if(state!=CWD_CWD_WAITING_STATE)
+      if(state!=CWD_CWD_WAITING_STATE || Error())
 	 return MOVED;
 
       // wait for all CWD to finish
@@ -1729,7 +1729,7 @@ int   Ftp::Do()
       m|=FlushSendQueue();
       m|=ReceiveResp();
 
-      if(state!=ACCEPTING_STATE)
+      if(state!=ACCEPTING_STATE || Error())
          return MOVED;
 
       res=Poll(data_sock,POLLIN);
@@ -1778,7 +1778,7 @@ int   Ftp::Do()
       m|=FlushSendQueue();
       m|=ReceiveResp();
 
-      if(state!=DATASOCKET_CONNECTING_STATE)
+      if(state!=DATASOCKET_CONNECTING_STATE || Error())
          return MOVED;
 
       if(addr_received==0)
@@ -1887,7 +1887,7 @@ int   Ftp::Do()
       m|=FlushSendQueue();
       m|=ReceiveResp();
 
-      if(state!=oldstate)
+      if(state!=oldstate || Error())
          return MOVED;
 
       CheckTimeout();
@@ -1913,7 +1913,7 @@ int   Ftp::Do()
       m|=FlushSendQueue();
       m|=ReceiveResp();
 
-      if(state!=oldstate)
+      if(state!=oldstate || Error())
          return MOVED;
 
       // more work to do?
