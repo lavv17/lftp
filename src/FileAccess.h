@@ -143,8 +143,8 @@ public:
 
    virtual void AnonymousLogin();
 
-   void Login(const char *u,const char *p);
-   void GroupLogin(const char *g,const char *p);
+   virtual void Login(const char *u,const char *p);
+   virtual void GroupLogin(const char *g,const char *p);
 
    virtual void Open(const char *file,int mode,long pos=0);
    void WantDate(time_t *d) { opt_date=d; }
