@@ -35,7 +35,8 @@
 #include "ResMgr.h"
 
 static ResDecl
-   res_use_urls	("xfer:use-urls",      "no", ResMgr::BoolValidate,0);
+   res_use_urls	  ("xfer:use-urls",    "no", ResMgr::BoolValidate,0),
+   res_eta_terse  ("xfer:eta-terse",   "yes",ResMgr::BoolValidate,0);
 
 char *XferJob::Percent()
 {
@@ -86,50 +87,80 @@ char *XferJob::CurrETA(float rate,long offs)
       char letter=0;
       char letter2=0;
 
-      if(eta>=DAY)
+      // for translator: only first letter matters
+      const char day_c=_("day")[0];
+      const char hour_c=_("hour")[0];
+      const char minute_c=_("minute")[0];
+      const char second_c=_("second")[0];
+
+      const char *tr_eta=_("eta:");
+
+      if((bool)res_eta_terse.Query(0))
       {
-	 ueta=(eta+DAY/2)/DAY;
-	 eta2=eta-ueta*DAY;
-	 // for translator: only first letter matters
-	 letter=_("day")[0];
-	 if(ueta<10)
+	 if(eta>=DAY)
 	 {
-	    letter2=_("hour")[0];
-	    ueta2=((eta2<0?eta2+DAY:eta2)+HOUR/2)/HOUR;
-	    if(ueta2>0 && eta2<0)
-	       ueta--;
+	    ueta=(eta+DAY/2)/DAY;
+	    eta2=eta-ueta*DAY;
+	    letter=day_c;
+	    if(ueta<10)
+	    {
+	       letter2=hour_c;
+	       ueta2=((eta2<0?eta2+DAY:eta2)+HOUR/2)/HOUR;
+	       if(ueta2>0 && eta2<0)
+		  ueta--;
+	    }
 	 }
-      }
-      else if(eta>=HOUR)
-      {
-	 ueta=(eta+HOUR/2)/HOUR;
-	 eta2=eta-ueta*HOUR;
-	 // for translator: only first letter matters
-	 letter=_("hour")[0];
-	 if(ueta<10)
+	 else if(eta>=HOUR)
 	 {
-	    letter2=_("minute")[0];
-	    ueta2=((eta2<0?eta2+HOUR:eta2)+MINUTE/2)/MINUTE;
-	    if(ueta2>0 && eta2<0)
-	       ueta--;
+	    ueta=(eta+HOUR/2)/HOUR;
+	    eta2=eta-ueta*HOUR;
+	    letter=hour_c;
+	    if(ueta<10)
+	    {
+	       letter2=minute_c;
+	       ueta2=((eta2<0?eta2+HOUR:eta2)+MINUTE/2)/MINUTE;
+	       if(ueta2>0 && eta2<0)
+		  ueta--;
+	    }
 	 }
+	 else if(eta>=MINUTE)
+	 {
+	    ueta=(eta+MINUTE/2)/MINUTE;
+	    letter=minute_c;
+	 }
+	 else
+	 {
+	    ueta=eta;
+	    letter=second_c;
+	 }
+	 if(letter2 && ueta2>0)
+	    sprintf(eta_str,"%s%ld%c%ld%c ",tr_eta,ueta,letter,ueta2,letter2);
+	 else
+	    sprintf(eta_str,"%s%ld%c ",tr_eta,ueta,letter);
       }
-      else if(eta>=MINUTE)
+      else // verbose eta (by Ben Winslow)
       {
-	 ueta=(eta+MINUTE/2)/MINUTE;
-	 // for translator: only first letter matters
-	 letter=_("minute")[0];
+	 long unit;
+	 strcpy(eta_str, tr_eta);
+
+	 if(eta>=DAY)
+	 {
+	    unit=eta/DAY;
+	    sprintf(eta_str+strlen(eta_str), "%ld%c", unit, day_c);
+	 }
+	 if(eta>=HOUR)
+	 {
+	    unit=(eta/HOUR)%24;
+	    sprintf(eta_str+strlen(eta_str), "%ld%c", unit, hour_c);
+	 }
+	 if(eta>=MINUTE)
+	 {
+	    unit=(eta/MINUTE)%60;
+	    sprintf(eta_str+strlen(eta_str), "%ld%c", unit, minute_c);
+	 }
+	 unit=eta%60;
+	 sprintf(eta_str+strlen(eta_str), "%ld%c ", unit, second_c);
       }
-      else
-      {
-	 ueta=eta;
-	 // for translator: only first letter matters
-	 letter=_("second")[0];
-      }
-      if(letter2 && ueta2>0)
-	 sprintf(eta_str,_("eta:%ld%c%ld%c "),ueta,letter,ueta2,letter2);
-      else
-	 sprintf(eta_str,_("eta:%ld%c "),ueta,letter);
    }
    return eta_str;
 }
