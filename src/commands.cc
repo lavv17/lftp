@@ -1297,7 +1297,7 @@ CMD(cls)
 
    if(const char *err = fso.parse_argv(args)) {
       if(strcmp(err, "ERR"))
-	      eprintf(_("%s: %s.\n"), op, err);
+	      eprintf("%s: %s.\n", op, err);
       eprintf(_("Try `help %s' for more information.\n"),op);
       return 0;
    }
