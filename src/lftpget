@@ -40,9 +40,9 @@ for f
 do
    need_pass=false
    case "$f" in
-   "*[\"\\]*")
+   "*[\"'\\]*")
       # need to quote
-      f="`echo "$f" | sed 's/\([\\\"]\)/\\\1/g'`"
+      f="`echo "$f" | sed 's/\([\\\"'\'']\)/\\\1/g'`"
       ;;
    esac
    case "$f" in
