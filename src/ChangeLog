@@ -1,3 +1,8 @@
+2001-03-20  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* keyvalue.cc: ignore certain lock errors.
+	* Makefile.am: install modules into pkglibdir/version dir.
+
 2001-03-13  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Http.cc: add \n to connect: message.

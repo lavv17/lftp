@@ -243,5 +243,7 @@ int KeyValueDB::Lock(int fd,int type)
       }
       write(2,"\r",1);
    }
+   if(res==-1 && E_LOCK_IGNORE(errno))
+      return 0;
    return res;
 }

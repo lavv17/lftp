@@ -74,18 +74,19 @@ clean-local:
 
 install-exec-local:
 	@$(NORMAL_INSTALL)
-	@if [ '$(MODULES)' ]; then $(mkinstalldirs) $(DESTDIR)$(pkglibdir); \
+	@if [ '$(MODULES)' ]; then $(mkinstalldirs) $(DESTDIR)$(pkglibdir)/$(VERSION); \
 	list='$(MODULES)'; for p in $$list; do \
 	  if test -f $$p; then \
-	    echo "  $(INSTALL_DATA) $$p $(DESTDIR)$(pkglibdir)/$$p"; \
-	     $(INSTALL_DATA) $$p $(DESTDIR)$(pkglibdir)/$$p; \
+	    echo "  $(INSTALL_DATA) $$p $(DESTDIR)$(pkglibdir)/$(VERSION)/$$p"; \
+	     $(INSTALL_DATA) $$p $(DESTDIR)$(pkglibdir)/$(VERSION)/$$p; \
 	  else :; fi; \
 	done; fi
 uninstall-local:
 	@$(NORMAL_UNINSTALL)
 	@list='$(MODULES)'; for p in $$list; do \
-	    rm -f $(DESTDIR)$(pkglibdir)/$$p; \
+	    rm -f $(DESTDIR)$(pkglibdir)/$(VERSION)/$$p; \
 	done
+	-@rmdir $(DESTDIR)$(pkglibdir)/$(VERSION)
 
 MODULEFLAGS=$(PIC_FLAG) -shared -nostdlib
 CXXMODLINK=$(CXXCOMPILE) $(LDFLAGS) $(MODULEFLAGS)
