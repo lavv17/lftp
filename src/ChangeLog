@@ -1,6 +1,6 @@
 2000-06-18  Alexander V. Lukyanov  <lav@yars.free.net>
 
-	* Http.cc: use strncasecmp for special cookie checking.
+	* Http.cc: use strncasecmp for special cookie checking; handle domain=.
 
 2000-06-15  Alexander V. Lukyanov  <lav@yars.free.net>
 
