@@ -125,8 +125,8 @@ int FileCopy::Do()
       /* now we know if put's seek failed. Seek get accordingly. */
       if(get->CanSeek())
 	 get->Seek(put->GetRealPos());
-      get->Resume();
    pre_DO_COPY:
+      get->Resume();
       get->StartTransfer();
       RateReset();
       state=DO_COPY;
