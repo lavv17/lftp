@@ -1047,8 +1047,8 @@ msgid ""
 " -d  list only default values, not necessary current ones\n"
 msgstr ""
 "Définit la variable à la valeur indiquée. Si la valeur est omise, cela\n"
-"va effacer la variable. Le format d'un nom de variable est ``nom/"
-"restriction''\n"
+"va effacer la variable. Le format d'un nom de variable est "
+"``nom/restriction''\n"
 "où la restriction permet de spécifier l'application exacte de la "
 "définition.\n"
 "Regardez lftp(1) pour les détails.\n"
@@ -1678,7 +1678,7 @@ msgstr "Fermeture de la connexion HTTP"
 
 #: src/Http.cc:168
 msgid "POST method failed"
-msgstr ""
+msgstr "échec de la méthode POST"
 
 #. problem here: hftp cannot work without proxy
 #: src/Http.cc:832
@@ -1982,10 +1982,12 @@ msgid ""
 "Enter date, or blank line to exit.\n"
 "\t> "
 msgstr ""
+"Entrez la date ou une ligne vierge pour quitter.\n"
+"\t> "
 
 #: getdate.y:1020
 msgid "Bad format - couldn't convert.\n"
-msgstr ""
+msgstr "Mauvais format - n'a pu convertir.\n"
 
 #: src/module.cc:181
 #, c-format
@@ -1995,15 +1997,3 @@ msgstr "dépendence du module `%s': %s\n"
 #: src/module.cc:201
 msgid "modules are not supported on this system"
 msgstr "les modules ne sont pas supportés sur ce système"
-
-#~ msgid "%s: cannot add empty bookmark\n"
-#~ msgstr "%s: ne peut ajouter un signet vide\n"
-
-#~ msgid "connect: %s"
-#~ msgstr "connexion: %s"
-
-#~ msgid "%s: cannot get current directory\n"
-#~ msgstr "%s: ne peut lire le répertoire en cours\n"
-
-#~ msgid "cd: received redirection to `%s'\n"
-#~ msgstr "copy: reçu une redirection vers `%s'\n"
