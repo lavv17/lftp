@@ -381,6 +381,7 @@ directory name. Source and/or target can be URLs pointing to directories.
 -L, --dereference		download symbolic links as files
 -N, --newer-than=SPEC	download only files newer than specified time
 -P, --parallel[=N]		download N files in parallel
+    --use-pget[-n=N]	use pget to transfer every single file
 -i \fIRX\fP, --include \fIRX\fP	include matching files
 -x \fIRX\fP, --exclude \fIRX\fP	exclude matching files
 -I \fIGP\fP, --include-glob \fIGP\fP	include matching files
@@ -1176,6 +1177,10 @@ directory before moving to other directories.
 .BR mirror:parallel-transfer-count " (number)"
 specifies number of parallel transfers mirror is allowed to start. Default is 1.
 You can override it with --parallel option.
+.TP
+.BR mirror:use-pget-n " (number)"
+specifies -n option for pget command used to transfer every single file under
+mirror. Default is 1 which disables pget.
 .TP
 .BR module:path \ (string)
 colon separated list of directories to look for modules. Can be initialized by
