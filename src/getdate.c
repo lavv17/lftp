@@ -1681,13 +1681,19 @@ static TABLE const MilitaryTable[] = {
 
 
 
+static char *get_date_error_buf;
+const char *get_date_error()
+{
+   return get_date_error_buf;
+}
 
 /* ARGSUSED */
 static int
 yyerror (s)
      char *s;
 {
-  fprintf (stderr, "get_date: %s\n", s);
+  xfree(get_date_error_buf);
+  get_date_error_buf=strdup(s);
   return 0;
 }
 

@@ -317,7 +317,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "     --no-umask         don't apply umask to file modes\n"
 	 " -R, --reverse          reverse mirror (put files)\n"
 	 " -L, --dereference      download symbolic links as files\n"
-	 " -N, --newer-than=FILE  download only files newer than the file\n"
+	 " -N, --newer-than=SPEC  download only files newer than specified time\n"
 	 " -P, --parallel[=N]     download N files in parallel\n"
 	 " -i RX, --include RX    include matching files\n"
 	 " -x RX, --exclude RX    exclude matching files\n"
@@ -2900,7 +2900,7 @@ CMD(get1)
    {
       {"ascii",no_argument,0,'a'},
       {"source-region",required_argument,0,256+'r'},
-      {"target-region",required_argument,0,256+'R'},
+      {"target-position",required_argument,0,256+'R'},
       {"continue",no_argument,0,'c'},
       {"output",required_argument,0,'o'},
       {"remove-source-later",no_argument,0,'E'},
@@ -2941,8 +2941,8 @@ CMD(get1)
 	 break;
       case 256+'R':
 	 target_region_end=FILE_END;
-	 n=sscanf(optarg,"%lld%n-%lld",&target_region_begin,&p,&target_region_end);
-	 if(n<1 || (n==1 && (optarg[p] && (optarg[p]!='-' || optarg[p+1]))))
+	 n=sscanf(optarg,"%lld",&target_region_begin);
+	 if(n<1)
 	 {
 	    eprintf("%s\n",_("Invalid range format. Format is min-max, e.g. 10-20."));
 	    goto usage;

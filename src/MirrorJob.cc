@@ -1018,8 +1018,18 @@ void MirrorJob::Report(const char *fmt,...)
    va_end(v);
 }
 
+extern "C" {
+#include "getdate.h"
+}
 void MirrorJob::SetNewerThan(const char *f)
 {
+   time_t t=now;
+   t=get_date(f,&t);
+   if(t>0)
+   {
+      newer_than=t;
+      return;
+   }
    struct stat st;
    if(stat(f,&st)==-1)
    {

@@ -208,7 +208,11 @@ Job *cmd_at(CmdExec *parent)
    xfree(date);
 
    if(when==0 || when==(time_t)-1)
+   {
+      const char *e=get_date_error();
+      eprintf("%s: %s\n",args->a0(),e?e:"unknown parse error");
       return 0;
+   }
 
    if(when<now)
       when+=86400;

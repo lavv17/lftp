@@ -25,7 +25,7 @@ proto_file_la_SOURCES = LocalAccess.cc LocalAccess.h
 proto_fish_la_SOURCES = Fish.cc Fish.h
 proto_sftp_la_SOURCES = SFtp.cc SFtp.h
 cmd_mirror_la_SOURCES = MirrorJob.cc MirrorJob.h
-cmd_sleep_la_SOURCES  = SleepJob.cc SleepJob.h getdate.y getdate.h
+cmd_sleep_la_SOURCES  = SleepJob.cc SleepJob.h
 liblftp_pty_la_SOURCES     = PtyShell.cc PtyShell.h lftp_pty.c lftp_pty.h
 liblftp_network_la_SOURCES = NetAccess.cc NetAccess.h Resolver.cc Resolver.h\
  lftp_ssl.cc lftp_ssl.h buffer_ssl.cc buffer_ssl.h
@@ -63,7 +63,8 @@ libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  FileSetOutput.h lftp_tinfo.cc lftp_tinfo.h\
  TimeDate.cc TimeDate.h Timer.cc Timer.h GetFileInfo.cc GetFileInfo.h\
  StringPool.cc StringPool.h DirColors.cc DirColors.h IdNameCache.cc\
- IdNameCache.h PatternSet.cc PatternSet.h LocalDir.cc LocalDir.h
+ IdNameCache.h PatternSet.cc PatternSet.h LocalDir.cc LocalDir.h\
+ getdate.y getdate.h
 
 libjobs_a_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\

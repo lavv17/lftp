@@ -44,3 +44,4 @@
 #endif /* defined (vms) */
 
 time_t get_date PARAMS ((const char *p, const time_t *now));
+const char *get_date_error();

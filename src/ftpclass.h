@@ -105,7 +105,8 @@ class Ftp : public NetAccess
       CHECK_TRANSFER,	// generic check for transfer
       CHECK_TRANSFER_CLOSED, // check for transfer complete when Close()d.
       CHECK_FEAT,	// check response for FEAT
-      CHECK_SITE_UTIME	// check response for SITE UTIME
+      CHECK_SITE_UTIME,	// check response for SITE UTIME
+      CHECK_QUOTED	// check response for any command submitted by QUOTE_CMD
 #ifdef USE_SSL
       ,CHECK_AUTH_TLS,
       CHECK_PROT
@@ -118,7 +119,6 @@ class Ftp : public NetAccess
    {
       int   expect;
       check_case_t check_case;
-      bool  log_resp;
       char  *path;
    };
    expected_response *RespQueue;
@@ -130,9 +130,7 @@ class Ftp : public NetAccess
    int	 multiline_code;// the code of multiline response.
    int	 sync_wait;	// number of commands in flight.
 
-   void	 LogResp(const char *line);
-
-   void  AddResp(int exp,check_case_t ck=CHECK_NONE,bool log=false);
+   void  AddResp(int exp,check_case_t ck=CHECK_NONE);
    void  SetRespPath(const char *p);
    void  CheckResp(int resp);
    int	 ReplyLogPriority(int code);
@@ -223,10 +221,6 @@ private:
 
    time_t   stat_time;
    time_t   retry_time;
-
-   char	 *result;
-   int	 result_size;
-   void  FreeResult();
 
    void	 DataAbort();
    void  DataClose();

@@ -429,13 +429,6 @@ void Ftp::LoginCheck(int act)
    }
 }
 
-void Ftp::FreeResult()
-{
-   xfree(result);
-   result=0;
-   result_size=0;
-}
-
 void Ftp::NoPassReqCheck(int act) // for USER command
 {
    if(is2XX(act)) // in some cases, ftpd does not ask for pass.
@@ -443,10 +436,9 @@ void Ftp::NoPassReqCheck(int act) // for USER command
       ignore_pass=true;
       return;
    }
-   if(act==331 && allow_skey && user && pass && result)
+   if(act==331 && allow_skey && user && pass)
    {
       skey_pass=xstrdup(make_skey_reply());
-      FreeResult();
       if(force_skey && skey_pass==0)
       {
 	 SetError(LOGIN_FAILED,_("ftp:skey-force is set and server does not support OPIE nor S/KEY"));
@@ -880,8 +872,6 @@ void Ftp::InitFtp()
    eof=false;
    type=FTP_TYPE_A;
    send_cmd_buffer=0;
-   result=NULL;
-   result_size=0;
    state=INITIAL_STATE;
    flags=SYNC_MODE;
    wait_flush=false;
@@ -1353,7 +1343,7 @@ int   Ftp::Do()
       skey_pass=0;
 
       ignore_pass=false;
-      AddResp(RESP_PASS_REQ,CHECK_USER,allow_skey);
+      AddResp(RESP_PASS_REQ,CHECK_USER);
       SendCmd2("USER",user_to_use);
 
       state=USER_RESP_WAITING_STATE;
@@ -1693,6 +1683,10 @@ int   Ftp::Do()
 	 real_pos=0;
 	 command="";
 	 append_file=true;
+	 assert(!data_iobuf);
+	 assert(!rate_limit);
+	 data_iobuf=new IOBuffer(IOBuffer::GET);
+	 rate_limit=new RateLimit(hostname);
 	 break;
       case(RENAME):
 	 command="RNFR";
@@ -1771,7 +1765,7 @@ int   Ftp::Do()
 	    AddResp(RESP_PWD_MKD_OK,CHECK_FILE_ACCESS);
 	 else if(mode==QUOTE_CMD)
 	 {
-	    AddResp(0,CHECK_IGNORE,true);
+	    AddResp(0,CHECK_QUOTED);
 	    if(!strncasecmp(file,"CWD",3)
 	    || !strncasecmp(file,"CDUP",4)
 	    || !strncasecmp(file,"XCWD",4)
@@ -1786,7 +1780,6 @@ int   Ftp::Do()
 	 else
 	    AddResp(200,CHECK_FILE_ACCESS);
 
-	 FreeResult();
 	 goto pre_WAITING_STATE;
       }
 
@@ -2179,6 +2172,21 @@ int   Ftp::Do()
 	 return MOVED;
       }
 
+      if(RespQueueIsEmpty() && data_sock==-1 && data_iobuf && !data_iobuf->Eof())
+      {
+	 data_iobuf->PutEOF();
+	 m=MOVED;
+      }
+      if(data_iobuf && data_iobuf->Eof() && data_iobuf->Size()==0)
+      {
+	 state=EOF_STATE;
+	 DataAbort();
+	 DataClose();
+	 set_idle_start();
+	 eof=true;
+	 return MOVED;
+      }
+
       if(copy_mode==COPY_DEST && !copy_allow_store)
 	 goto notimeout_return;
 
@@ -2340,19 +2348,6 @@ void Ftp::SendArrayInfoRequests()
    }
 }
 
-void  Ftp::LogResp(const char *l)
-{
-   if(result==0)
-   {
-      result=xstrdup(l);
-      result_size=strlen(result);
-      return;
-   }
-   result=(char*)xrealloc(result,result_size+strlen(l)+1);
-   strcpy(result+result_size,l);
-   result_size+=strlen(l);
-}
-
 int Ftp::ReplyLogPriority(int code)
 {
    // Greeting messages
@@ -2455,10 +2450,10 @@ int  Ftp::ReceiveResp()
 
       DebugPrint("<--- ",line,
 	    ReplyLogPriority(multiline_code?multiline_code:code));
-      if(!RespQueueIsEmpty() && RespQueue[RQ_head].log_resp)
+      if(!RespQueueIsEmpty() && RespQueue[RQ_head].check_case==CHECK_QUOTED && data_iobuf)
       {
-	 LogResp(line);
-	 LogResp("\n");
+	 data_iobuf->Put(line);
+	 data_iobuf->Put("\n");
       }
 
       int all_lines_len=xstrlen(all_lines);
@@ -2795,7 +2790,6 @@ void  Ftp::DataClose()
    nop_time=0;
    nop_offset=0;
    nop_count=0;
-   FreeResult();
    if(rate_limit)
    {
       delete rate_limit;
@@ -3049,14 +3043,13 @@ void Ftp::CloseRespQueue()
       case(CHECK_PORT):
       case(CHECK_FILE_ACCESS):
       case(CHECK_RNFR):
+      case(CHECK_QUOTED):
 	 RespQueue[i].check_case=CHECK_IGNORE;
 	 break;
       case(CHECK_TRANSFER):
 	 RespQueue[i].check_case=CHECK_TRANSFER_CLOSED;
 	 break;
       }
-      if(cc!=CHECK_USER)
-	 RespQueue[i].log_resp=false;
    }
 }
 
@@ -3096,42 +3089,13 @@ int   Ftp::Read(void *buf,int size)
    if(mode==CLOSED || eof)
       return(0);
 
-   if(state==WAITING_STATE && RespQueueIsEmpty())
-   {
-      if(result_size==0)
-      {
-	 state=EOF_STATE;
-	 DataAbort();
-	 DataClose();
-	 set_idle_start();
-	 eof=true;
-	 return(0);
-      }
-      if(result_size<size)
-	 size=result_size;
-      if(norest_manual && real_pos==0 && pos>0)
-	 return DO_AGAIN;
-      if(real_pos<pos)
-      {
-	 int skip=pos-real_pos;
-	 if(skip>result_size)
-	    skip=result_size;
-	 size=skip;
-      }
-      memcpy(buf,result,size);
-      memmove(result,result+size,result_size-=size);
-      if(real_pos==pos)
-	 pos+=size;
-      real_pos+=size;
-      return(size);
-   }
-
-   if(state!=DATA_OPEN_STATE || data_sock==-1)
+   if(!data_iobuf)
       return DO_AGAIN;
 
    if(RespQueueSize()>1 && real_pos==-1)
       return DO_AGAIN;
 
+   if(state==DATA_OPEN_STATE)
    {
       assert(rate_limit!=0);
       int allowed=rate_limit->BytesAllowedToGet();
@@ -3177,7 +3141,8 @@ int   Ftp::Read(void *buf,int size)
    Well, not less reliable than in any usual ftp client.
 
    The reason for this is uncheckable receiving of data on the remote end.
-   Since that, we have to leave re-putting up to caller
+   Since that, we have to leave re-putting up to caller.
+   Fortunately, class FileCopy does it.
 */
 int   Ftp::Write(const void *buf,int size)
 {
@@ -3245,7 +3210,7 @@ int   Ftp::StoreStatus()
    return(IN_PROGRESS);
 }
 
-void  Ftp::AddResp(int exp,check_case_t ck,bool log)
+void  Ftp::AddResp(int exp,check_case_t ck)
 {
    int newtail=RQ_tail+1;
    if(newtail>RQ_alloc)
@@ -3260,7 +3225,6 @@ void  Ftp::AddResp(int exp,check_case_t ck,bool log)
    }
    RespQueue[RQ_tail].expect=exp;
    RespQueue[RQ_tail].check_case=ck;
-   RespQueue[RQ_tail].log_resp=log;
    RespQueue[RQ_tail].path=0;
    RQ_tail=newtail;
 }
@@ -3472,6 +3436,7 @@ void Ftp::CheckResp(int act)
       break;
 
    case CHECK_IGNORE:
+   case CHECK_QUOTED:
    ignore:
       break;
 
@@ -4114,7 +4079,7 @@ const char *Ftp::make_skey_reply()
    {
       if(skey_head[i]==0)
 	 return 0;
-      cp=strstr(result,skey_head[i]);
+      cp=strstr(all_lines,skey_head[i]);
       if(cp)
       {
 	 cp+=strlen(skey_head[i]);

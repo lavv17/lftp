@@ -1,3 +1,15 @@
+2004-02-09  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: (SetNewerThan) try get_date first.
+	* SleepJob.cc: print get_date error.
+	* commands.cc: fix mirror help; get1 --target-position instead of
+	  --target-region.
+	* getdate.y, getdate.h: save error string instead of printing.
+	* ftpclass.h, ftpclass.cc: drop log_resp and result; use data_iobuf
+	  for QUOTE_CMD and all_lines for OPIE/SKEY.
+	* Makefile.am: move getdate.y and getdate.h to libtasks (it is used in
+	  two separate modules).
+
 2004-02-04  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.cc: (SkipHome) fix it to skip / too; handle ~.
