@@ -30,146 +30,68 @@
 #include "CatJob.h"
 #include "ArgV.h"
 #include "Filter.h"
+#include "url.h"
 
-int   CatJob::Done()
+#define super CopyJobEnv
+
+int CatJob::Done()
 {
-   return curr==0 && filter_wait==0 && global==0;
-}
-
-void  CatJob::ShowRunStatus(StatusLine *s)
-{
-   if(!print_run_status)
-      return;
-
-   if(curr)
-   {
-      XferJob::ShowRunStatus(s);
-   }
-   else
-   {
-      s->Show(_("Waiting for filter to terminate"));
-   }
-}
-
-void  CatJob::PrintStatus(int verbose)
-{
-   if(!session)
-      return;
-   if(!Done() && curr==0)
-   {
-      putchar('\t');
-      puts(_("Waiting for filter to terminate"));
-      return;
-   }
-   XferJob::PrintStatus(verbose);
+   return super::Done() && global==0;
 }
 
 int   CatJob::Do()
 {
-   RateDrain();
-
-   int m=STALL;
-   int res;
-
-   if(filter_wait)
+   if(!fg_data && global && global->GetProcGroup())
+      fg_data=new FgData(global->GetProcGroup(),fg);
+   if(Done())
+      return STALL;
+   if(super::Done())
    {
-      if(!filter_wait->Done())
-	 return m;
-      delete filter_wait;
-      filter_wait=0;
-      m=MOVED;
-   }
-
-   if(curr==0)
-   {
-      NextFile();
-      if(curr)
-	 m=MOVED;
-   }
-
-   if(curr==0)
-   {
-      if(global)
+      if(global->Done())
       {
-	 filter_wait=global;
+	 delete global;
 	 global=0;
-	 m=MOVED;
-      }
-      return m;
-   }
-
-   // now we can get to data...
-   if(in_buffer==0 && got_eof)
-   {
-      NextFile();
-      m=MOVED;
-      return m;
-   }
-   if(!got_eof)
-   {
-      if(session->IsClosed())
-      {
-	 offset=0;
-	 m=MOVED;
-	 session->Open(curr,FA::RETRIEVE,offset);
-      }
-      res=TryRead(session);
-      if(res<0 && res!=FA::DO_AGAIN)
-      {
-	 NextFile();
 	 return MOVED;
       }
-      if(res>=0)
-	 m=MOVED;
    }
-
-   res=TryWrite(local);
-   if(res<0)
-   {
-      NextFile();
-      if(local==global) // global filter failed, cannot do anything.
-      {
-	 while(curr)
-	 {
-	    failed++;
-	    NextFile();
-	 }
-      }
-      return MOVED;
-   }
-   if(res>0)
-      m=MOVED;
-
-   return m;
+   return super::Do();
 }
 
 void CatJob::NextFile()
 {
-   if(curr)
-   {
-      if(filter_wait)
-      {
-	 delete filter_wait;
-	 filter_wait=0;
-      }
-      if(local!=global)
-	 filter_wait=local;
-      local=0;
-   }
+   const char *src=args->getnext();
 
-   if(!args)
+   if(src==0)
    {
-      XferJob::NextFile(0);
+      SetCopier(0,0);
       return;
    }
 
-   XferJob::NextFile(args->getnext());
-   if(!curr)
-      return;
-   if(for_each)
-      local=new OutputFilter(for_each,global);
+   ParsedURL src_url(src,true);
+   FileCopyPeerFA *src_peer=0;
+   if(src_url.proto==0)
+   {
+      src_peer=new FileCopyPeerFA(session,src,FA::RETRIEVE);
+      src_peer->DontReuseSession();
+   }
    else
-      local=global;
+      src_peer=new FileCopyPeerFA(&src_url,FA::RETRIEVE);
+
+   FileCopyPeerFDStream *dst_peer=0;
+   if(for_each)
+      dst_peer=new FileCopyPeerFDStream(new OutputFilter(for_each,global),FileCopyPeer::PUT);
+   else
+   {
+      dst_peer=new FileCopyPeerFDStream(global,FileCopyPeer::PUT);
+      dst_peer->DontDeleteStream();
+   }
+
+   FileCopy *copier=new FileCopy(src_peer,dst_peer,false);
+   copier->DontCopyDate();
+   SetCopier(copier,src);
+
+   if(no_status)
+      cp->NoStatus();
 }
 
 CatJob::~CatJob()
@@ -178,61 +100,37 @@ CatJob::~CatJob()
 
    AcceptSig(SIGTERM);
 
-   if(local && local!=global)
-      delete local;
    if(global)
       delete global;
-   if(filter_wait)
-      delete filter_wait;
-   if(args)
-      delete args;
 };
 
 int CatJob::AcceptSig(int sig)
 {
-   FDStream *s=0;
-   if(local)
-      s=local;
-   else if(global)
-      s=global;
-   else if(filter_wait)
-      s=filter_wait;
-   if(!s || s->GetProcGroup()==0)
+   pid_t grp=0;
+   if(cp)
+      grp=cp->GetProcGroup();
+   if(global && grp==0)
+      grp=global->GetProcGroup();
+   if(grp==0)
    {
       if(sig==SIGINT)
 	 return WANTDIE;
       return STALL;
    }
-   if(sig!=SIGINT)
-      s->Kill(sig);
+   if(cp)
+      cp->AcceptSig(sig);
+   if(global && !cp)
+      global->Kill(sig);
    if(sig!=SIGCONT)
       AcceptSig(SIGCONT);
    return MOVED;
 }
 
-void CatJob::Init()
-{
-   global=0;
-   filter_wait=0;
-   local=0;
-   for_each=0;
-
-   args=0;
-   op="cat";
-
-   print_run_status=false;
-}
-
 CatJob::CatJob(FileAccess *new_session,FDStream *new_global,ArgV *new_args)
-   : XferJob(new_session)
+   : CopyJobEnv(new_session,new_args)
 {
-   Init();
-
    global=new_global;
-
-   args=new_args;
-   args->rewind();
-   op=args->a0();
+   for_each=0;
 
    if(!strcmp(op,"more") || !strcmp(op,"zmore"))
    {
@@ -254,19 +152,5 @@ CatJob::CatJob(FileAccess *new_session,FDStream *new_global,ArgV *new_args)
       else
 	 global=new FDStream(1,"<stdout>");
    }
-
-   print_run_status=!global->usesfd(1);
-}
-
-CatJob::CatJob(FDStream *g,char *data,int data_len) : XferJob(0)
-{
-   Init();
-   global=g;
-   if(!global)
-      global=new FDStream(1,"<stdout>");
-   buffer=data;
-   in_buffer=data_len;
-   got_eof=true;
-   local=global;
-   curr="<memory>";
+   no_status=global->usesfd(1);
 }

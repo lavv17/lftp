@@ -23,38 +23,26 @@
 #ifndef CATJOB_H
 #define CATJOB_H
 
-#include "XferJob.h"
+#include "CopyJob.h"
 
 class ArgV;
 class FDStream;
 
-class CatJob : public XferJob
+class CatJob : public CopyJobEnv
 {
-   void Init();
-
 protected:
    FDStream *global;
-   FDStream *local;
-   FDStream *filter_wait;
-
-   ArgV	 *args;
-
-   void	 NextFile();
-
    const char *for_each;
 
-public:
-   int	 Do();
-   int	 Done();
-   int	 ExitCode() { return failed; }
-   int	 AcceptSig(int sig);
+   void	NextFile();
 
-   void	 ShowRunStatus(StatusLine *);
-   void	 PrintStatus(int);
+public:
+   int Do();
+   int Done();
+   int AcceptSig(int sig);
 
    CatJob(FileAccess *s,FDStream *global,ArgV *args);
-   CatJob(FDStream *global,char *buffer,int size);
-   virtual ~CatJob();
+   ~CatJob();
 };
 
 #endif /* CATJOB_H */
