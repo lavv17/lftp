@@ -915,7 +915,7 @@ void CmdExec::Reconfig(const char *)
 {
    const char *c=0;
    if(session)
-      session->GetConnectURL(FA::NO_PATH);
+      c = session->GetConnectURL(FA::NO_PATH);
 
    long_running = res_long_running.Query(c);
    remote_completion = res_remote_completion.Query(c);

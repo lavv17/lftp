@@ -3,6 +3,8 @@
 	* ftpclass.cc: don't free peer, it is freed in parent class, and so
 	  don't free proxy* (the later was harmless since proxy was set to 0).
 	* Http.cc: use ClearPeer.
+	* CmdExec.cc: actually assign c.
+	* HttpDir.cc: better handle symlinks.
 
 1999-10-05  Alexander V. Lukyanov  <lav@yars.free.net>
 

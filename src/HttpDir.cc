@@ -337,6 +337,7 @@ parse_url_again:
 
    int skip_len=tag_len;
    char *sym_link=0;
+   bool is_sym_link=false;
 
    if(list && show_in_list)
    {
@@ -427,6 +428,8 @@ parse_url_again:
 	       week_day,month_name,&day,&hour,&minute,&second,&year))
       {
 	 strcpy(size_str,"-");
+	 if(!is_directory)
+	    is_sym_link=true;
 	 goto got_info;
       }
 
@@ -456,6 +459,7 @@ parse_url_again:
       ptr=strstr(str," -> <A HREF=\"");
       if(ptr)
       {
+	 is_sym_link=true;
 	 sym_link=ptr+13;
 	 ptr=strchr(sym_link,'"');
 	 if(!ptr)
@@ -496,7 +500,7 @@ parse_url_again:
 	    }
 	 }
 	 sprintf(line_add,"%s  %10s  %04d-%s-%02d %02d:%02d  %s",
-	    is_directory?"drwxr-xr-x":(sym_link?"lrwxrwxrwx":"-rw-r--r--"),
+	    is_directory?"drwxr-xr-x":(is_sym_link?"lrwxrwxrwx":"-rw-r--r--"),
 	    size_str,year,month_name,day,hour,minute,link_target);
 	 if(sym_link)
 	    sprintf(line_add+strlen(line_add)," -> %s",sym_link);
@@ -510,6 +514,8 @@ parse_url_again:
       {
 	 if(is_directory)
 	    strcat(line_add,"/");
+	 if(is_sym_link && !sym_link)
+	    strcat(line_add,"@");
       }
       strcat(line_add,"\n");
 
