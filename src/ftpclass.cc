@@ -1226,9 +1226,10 @@ int   Ftp::Do()
 
 #ifdef USE_SSL
       // ssl for anonymous does not make sense.
-      if(!ftps && QueryBool("ssl-allow") && user && pass)
+      if(!ftps && QueryBool("ssl-allow",hostname) &&
+		   ((user && pass) || QueryBool("ssl-allow-anonymous",hostname)))
       {
-	 const char *auth=Query("ssl-auth");
+	 const char *auth=Query("ssl-auth",hostname);
 	 SendCmd2("AUTH",auth);
 	 AddResp(234,CHECK_AUTH_TLS);
 	 auth_tls_sent=true;
@@ -3489,7 +3490,7 @@ void Ftp::CheckResp(int act)
       }
       else
       {
-	 if(QueryBool("ssl-force"))
+	 if(QueryBool("ssl-force",hostname))
 	    SetError(LOGIN_FAILED,_("ftp:ssl-force is set and server does not support or allow SSL"));
       }
       break;

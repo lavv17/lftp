@@ -1,3 +1,10 @@
+2001-11-15  Glenn Maynard <g_ld@zewt.org>
+
+	* FindJobDu.cc, FindJobDu.h, commands.cc: du --files implemented.
+	* ftpclass.cc, resource.cc: ftp:ssl-allow-anonymous new setting;
+	  add host closure for ftp:ssl-* settings.
+	* FtpListInfo.cc: optimize unix list parser by not copying FileInfo.
+
 2001-11-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc, MirrorJob.h: --allow-chown and -a - new options.

@@ -33,6 +33,7 @@ class FinderJob_Du : public FinderJob
    int output_block_size;
    bool all_files;
    bool separate_dirs;
+   bool file_count;
 
    bool success;
 
@@ -63,6 +64,7 @@ public:
    void PrintDepth(int n) { max_print_depth = n; }
    void AllFiles() { all_files=true; }
    void SeparateDirs() { separate_dirs=true; }
+   void FileCount() { file_count=true; }
 
 protected:
    /* virtuals */

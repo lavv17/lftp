@@ -209,6 +209,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "                       only if it is N or fewer levels below the command\n"
 	 "                       line argument;  --max-depth=0 is the same as\n"
 	 "                       --summarize\n"
+	 " -F, --files           print number of files instead of sizes\n"
 	 " -h, --human-readable  print sizes in human readable format (e.g., 1K 234M 2G)\n"
 	 " -H, --si              likewise, but use powers of 1000 not 1024\n"
 	 " -k, --kilobytes       like --block-size=1024\n"
@@ -2492,6 +2493,7 @@ CMD(du)
       {"maxdepth",required_argument,0,'d'},
       {"total",no_argument,0,'c'},
       {"max-depth",required_argument,0,'d'},
+      {"files",no_argument,0,'F'},
       {"human-readable",no_argument,0,'h'},
       {"si",no_argument,0,'H'},
       {"kilobytes",required_argument,0,'k'},
@@ -2508,6 +2510,7 @@ CMD(du)
    bool summarize_only = false;
    bool print_totals=false;
    bool all_files=false;
+   bool file_count=false;
    const char *exclude=0;
 
    exit_code=1;
@@ -2516,7 +2519,7 @@ CMD(du)
 
    args->rewind();
    int opt, longopt;
-   while((opt=args->getopt_long("+abcd:hHkmsS",du_options,&longopt))!=EOF)
+   while((opt=args->getopt_long("+abcd:FhHkmsS",du_options,&longopt))!=EOF)
    {
       switch(opt)
       {
@@ -2537,6 +2540,9 @@ CMD(du)
 	 }
 	 maxdepth = atoi(optarg);
 	 max_depth_specified = true;
+	 break;
+      case 'F':
+	 file_count=true;
 	 break;
       case 'h':
 	 blocksize = -1024;
@@ -2563,6 +2569,7 @@ CMD(du)
 	 }
 	 /* fallthrough */
       case '?':
+      default:
 	 eprintf(_("Usage: %s [options] <dirs>\n"),op);
 	 return 0;
       }
@@ -2576,6 +2583,15 @@ CMD(du)
       eprintf(_("%s: summarizing conflicts with --max-depth=%i\n"), op, maxdepth);
       return 0;
    }
+
+   /* It doesn't really make sense to show all files when doing a file count.
+    * We might have -a in an alias as defaults, so let's just silently turn
+    * it off.  (I'm not sure if we should do this for summarize_only and
+    * max_depth_specified, too.) */
+   if (file_count && all_files)
+      all_files=false;
+   if (file_count)
+      blocksize=1;
 
    exit_code=0;
 
@@ -2595,6 +2611,8 @@ CMD(du)
       j->AllFiles();
    if(separate_dirs)
       j->SeparateDirs();
+   if(file_count)
+      j->FileCount();
    /* if separate_dirs is on, then there's no point in traversing past
     * max_print_depth at all */
    if(separate_dirs && maxdepth != -1)

@@ -45,6 +45,7 @@ FinderJob_Du::FinderJob_Du(FileAccess *s,ArgV *a,FDStream *o):
    output_block_size = 1024;
    all_files = false;
    separate_dirs = false;
+   file_count = false;
 
    tot_size=0;
    size_stack=0;
@@ -109,16 +110,19 @@ FinderJob::prf_res FinderJob_Du::ProcessFile(const char *d,const FileInfo *fi)
       fg_data=buf->GetFgData(fg);
    if(buf->Size()>0x10000)
       return PRF_LATER;
-   
-   if(fi->filetype==fi->DIRECTORY || !(fi->defined&fi->SIZE)) {
-      /* don't care */
-      return PRF_OK;
-   }
+
+   if(fi->filetype==fi->DIRECTORY)
+      return PRF_OK; /* don't care */
+   if(!file_count && !(fi->defined&fi->SIZE))
+      return PRF_OK; /* can't count this one */
 
    /* add this file to the current dir */
+   int add = fi->size;
+   if (file_count)
+      add = 1;
    if(stack_ptr != -1)
-      size_stack[stack_ptr].size += fi->size;
-   tot_size += fi->size;
+      size_stack[stack_ptr].size += add;
+   tot_size += add;
 
    if(all_files) {
       /* this is <, where Pop() is <=, since the file counts in depth */
@@ -186,4 +190,3 @@ void FinderJob_Du::Enter(const char *d)
 {
    Push(d);
 }
-

@@ -268,7 +268,7 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
 {
 #define FIRST_TOKEN strtok(line," \t")
 #define NEXT_TOKEN  strtok(NULL," \t")
-#define ERR do{(*err)++;return(0);}while(0)
+#define ERR do{(*err)++;delete fi;return(0);}while(0)
    char	 *line=alloca_strdup(line_c);
    int 	 len=strlen(line);
    int	 tmp;
@@ -278,22 +278,23 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
    if(sscanf(line,"total %d",&tmp)==1)
       return 0;
 
+   FileInfo *fi=0; /* don't instantiate until we at least have something */
    /* parse perms */
    char *t = FIRST_TOKEN;
    if(t==0)
       ERR;
 
-   FileInfo fi;
+   fi = new FileInfo;
    switch(t[0])
    {
    case('l'):  // symlink
-      fi.SetType(fi.SYMLINK);
+      fi->SetType(fi->SYMLINK);
       break;
    case('d'):  // directory
-      fi.SetType(fi.DIRECTORY);
+      fi->SetType(fi->DIRECTORY);
       break;
    case('-'):  // plain file
-      fi.SetType(fi.NORMAL);
+      fi->SetType(fi->NORMAL);
       break;
    case('b'): // block
    case('c'): // char
@@ -305,19 +306,19 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
    }
    mode_t mode=parse_perms(t+1);
    if(mode!=(mode_t)-1)
-      fi.SetMode(mode);
+      fi->SetMode(mode);
 
    // link count
    t = NEXT_TOKEN;
    if(!t)
       ERR;
-   fi.SetNlink(atoi(t));
+   fi->SetNlink(atoi(t));
 
    // user
    t = NEXT_TOKEN;
    if(!t)
       ERR;
-   fi.SetUser(t);
+   fi->SetUser(t);
 
    // group or size
    char *group_or_size = NEXT_TOKEN;
@@ -329,10 +330,10 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
    if(isdigit(*t))
    {
       // it's size, so the previous was group:
-      fi.SetGroup(group_or_size);
+      fi->SetGroup(group_or_size);
       long long size;
       if(sscanf(t,"%lld",&size)==1)
-	 fi.SetSize(size);
+	 fi->SetSize(size);
       t = NEXT_TOKEN;
       if(!t)
 	 ERR;
@@ -342,7 +343,7 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
       // it was month, so the previous was size:
       long long size;
       if(sscanf(group_or_size,"%lld",&size)==1)
-	 fi.SetSize(size);
+	 fi->SetSize(size);
    }
 
    struct tm date;
@@ -384,7 +385,7 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
    date.tm_isdst=-1;
    date.tm_sec=30;
 
-   fi.SetDate(mktime_from_tz(&date,tz),prec);
+   fi->SetDate(mktime_from_tz(&date,tz),prec);
 
    char *name=strtok(NULL,"");
    if(!name)
@@ -394,7 +395,7 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
    if(year_anomaly && *name==' ')
       name++;
 
-   if(fi.filetype==fi.SYMLINK)
+   if(fi->filetype==fi->SYMLINK)
    {
       char *arrow=name;
       while((arrow=strstr(arrow," -> "))!=0)
@@ -402,15 +403,15 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
 	 if(arrow!=name && arrow[4]!=0)
 	 {
 	    *arrow=0;
-	    fi.SetSymlink(arrow+4);
+	    fi->SetSymlink(arrow+4);
 	    break;
 	 }
 	 arrow++;
       }
    }
-   fi.SetName(name);
+   fi->SetName(name);
 
-   return new FileInfo(fi);
+   return fi;
 }
 
 /*
@@ -422,6 +423,8 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
 03-18-98  06:01AM              2109440 nlxb318e.tar
 07-02-98  11:17AM                13844 Whatsnew.txt
 */
+#undef ERR
+#define ERR do{(*err)++;return(0);}while(0)
 static
 FileInfo *ParseFtpLongList_NT(const char *line_c,int *err,const char *tz)
 {
