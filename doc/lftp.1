@@ -61,7 +61,7 @@ lftp \- Sophisticated ftp program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 2.0.1.
+This man page documents lftp version 2.0.2.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a program that allows sophisticated ftp connection to
@@ -606,6 +606,10 @@ end a sequence of non-printing characters
 .BR cmd:remote-completion \ (bool)
 a boolean to control whether or not lftp uses remote completion.
 .TP
+.BR dns:SRV-query \ (bool)
+query for SRV records and use them before gethostbyname. The SRV records
+are only used if port is not explicitly specified. See RFC2052 for details.
+.TP
 .BR dns:fatal-timeout \ (seconds)
 limit the time for DNS queries. If DNS server is unavailable too long, lftp
 will fail to resolve a given host name. 0 means unlimited, the default.
@@ -784,6 +788,14 @@ The file is consulted to get default login to ftp server.
 
 .SH SEE ALSO
 .BR ftpd "(8), " ftp (1)
+.br 
+RFC854 (telnet),
+RFC959 (ftp),
+RFC1123,
+RFC1945 (http/1.0),
+RFC2052 (SRV RR),
+RFC2068 (http/1.1),
+RFC2428 (ftp/ipv6).
 
 .SH AUTHOR
 .nf
