@@ -49,7 +49,7 @@ int ProcWait::Do()
    {
       if(status!=RUNNING)
 	 return MOVED;
-      if(errno==EINTR || errno==EAGAIN)
+      if(E_RETRY(errno))
 	 goto leave;
       // waitpid failed, check the process existence
       if(kill(pid,0)==-1)

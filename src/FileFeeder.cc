@@ -43,7 +43,7 @@ const char *FileFeeder::NextCmd(CmdExec *exec, const char *)
    }
    if(res<0)
    {
-      if(errno==EAGAIN || errno==EWOULDBLOCK)
+      if(E_RETRY(errno))
       {
 	 exec->Block(fd,POLLIN);
 	 return "";

@@ -2179,7 +2179,7 @@ int  Ftp::ReceiveResp()
 	       res=read(control_sock,resp+resp_size,resp_alloc-resp_size-1);
 	       if(res==-1)
 	       {
-		  if(errno==EAGAIN || errno==EINTR)
+		  if(E_RETRY(errno))
 		     return m;
 		  if(NotSerious(errno))
 		     DebugPrint("**** ",strerror(errno),0);
@@ -2481,7 +2481,7 @@ int  Ftp::FlushSendQueue(bool all)
 	    return m;
 	 if(res==-1)
 	 {
-	    if(errno==EAGAIN || errno==EINTR)
+	    if(E_RETRY(errno))
 	       return m;
 	    if(NotSerious(errno) || errno==EPIPE)
 	       DebugPrint("**** ",strerror(errno),0);
@@ -2842,7 +2842,7 @@ read_again:
       res=read(data_sock,buf,size);
       if(res==-1)
       {
-	 if(errno==EAGAIN || errno==EINTR)
+	 if(E_RETRY(errno))
 	    return DO_AGAIN;
 	 if(NotSerious(errno))
 	 {
@@ -2967,7 +2967,7 @@ int   Ftp::Write(const void *buf,int size)
       res=write(data_sock,buf,size);
       if(res==-1)
       {
-	 if(errno==EAGAIN || errno==EINTR)
+	 if(E_RETRY(errno))
 	    return DO_AGAIN;
 	 if(NotSerious(errno) || errno==EPIPE)
 	 {

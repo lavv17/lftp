@@ -1,3 +1,9 @@
+2001-02-03  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileCopy.cc, FileFeeder.cc, Filter.cc, Http.cc, LocalAccess.cc,
+	  ProcWait.cc, buffer.cc, ftpclass.cc, keyvalue.cc: use E_RETRY macro.
+	* FileCopy.h: drop size information if pos>size.
+
 2001-01-25  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Http.cc: print error to debug output from Http::Read.

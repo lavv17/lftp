@@ -56,7 +56,7 @@ FDStream::FDStream()
 }
 void FDStream::MakeErrorText()
 {
-   if(errno==ENFILE || errno==EMFILE || errno==EAGAIN || errno==EWOULDBLOCK)
+   if(errno==ENFILE || errno==EMFILE || E_RETRY(errno))
       return;  // not a serious error - can be retried
    char *syserr=strerror(errno);
    error_text=(char*)xmalloc(strlen(name)+strlen(syserr)+3);

@@ -269,7 +269,7 @@ int IOBufferFDStream::Put_LL(const char *buf,int size)
    res=write(fd,buf,size);
    if(res==-1)
    {
-      if(errno==EAGAIN || errno==EINTR)
+      if(E_RETRY(errno))
 	 return 0;
       if(errno==EPIPE)
       {
@@ -304,7 +304,7 @@ int IOBufferFDStream::Get_LL(int size)
    res=read(fd,buffer+buffer_ptr+in_buffer,size);
    if(res==-1)
    {
-      if(errno==EAGAIN || errno==EINTR)
+      if(E_RETRY(errno))
 	 return 0;
       saved_errno=errno;
       stream->MakeErrorText();

@@ -1472,7 +1472,7 @@ int Http::Write(const void *buf,int size)
    int res=write(sock,buf,size);
    if(res==-1)
    {
-      if(errno==EAGAIN || errno==EINTR)
+      if(E_RETRY(errno))
 	 return DO_AGAIN;
       if(NotSerious(errno) || errno==EPIPE)
       {

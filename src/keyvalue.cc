@@ -230,7 +230,7 @@ int KeyValueDB::Lock(int fd,int type)
    lk.l_start=0;
    lk.l_len=0;
    int res=fcntl(fd,F_SETLK,&lk);
-   if(res==-1 && errno==EAGAIN)
+   if(res==-1 && E_RETRY(errno))
    {
       int retries=5;
       for(int i=0; i<retries; i++)
