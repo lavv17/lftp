@@ -1119,6 +1119,17 @@ CMD(mirror)
 	    }
 	    target_dir=alloca_strdup(target_url.path);
 	 }
+	 if(target_dir[0] && target_dir[strlen(target_dir)-1]=='/')
+	 {
+	    // user wants source dir name appended.
+	    const char *base=basename_ptr(source_dir);
+	    if(base[0]!='/')
+	    {
+	       char *target_dir1=alloca_strdup2(target_dir,strlen(base));
+	       strcat(target_dir1,base);
+	       target_dir=target_dir1;
+	    }
+	 }
       }
       else
       {

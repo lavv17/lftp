@@ -1,3 +1,8 @@
+2002-08-02  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: append source basename to target if target ends with
+	  a slash.
+
 2002-08-01  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* url.cc: allow a path in slot pseudo-url.
