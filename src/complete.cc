@@ -872,7 +872,7 @@ backslash_quote (char *string)
       switch (c)
 	{
  	case '(': case ')':
- 	case '!': case '{': case '}':		/* reserved words */
+ 	case '{': case '}':			/* reserved words */
  	case '^':
  	case '$': case '`':			/* expansion chars */
 	  if(!shell_cmd)
@@ -883,7 +883,7 @@ backslash_quote (char *string)
 	case ' ': case '\t': case '\n':		/* IFS white space */
 	case '"': case '\'': case '\\':		/* quoting chars */
 	case '|': case '&': case ';':		/* shell metacharacters */
-	case '<': case '>':
+	case '<': case '>': case '!':
 	  *r++ = '\\';
 	  *r++ = c;
 	  break;
@@ -1186,7 +1186,7 @@ void lftp_readline_init ()
       lftp_rl_getc,	      // rl_getc_function
       "\"'",		      // rl_completer_quote_characters
       " \t\n\"'",	      // rl_completer_word_break_characters
-      " \t\n\\\"'>;|&()*?[]~",// rl_filename_quote_characters
+      " \t\n\\\"'>;|&()*?[]~!",// rl_filename_quote_characters
       bash_quote_filename,    // rl_filename_quoting_function
       bash_dequote_filename,  // rl_filename_dequoting_function
       lftp_char_is_quoted);   // rl_char_is_quoted_p

@@ -32,7 +32,7 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
 {
    char	 in_quotes;
 
-#define quotable(ch) (ch && (ch=='\\' || ch==in_quotes \
+#define quotable(ch) (ch && (ch=='\\' || ch=='!' || ch==in_quotes \
 			     || (!in_quotes && strchr("\"' \t>|;&",ch))))
 
    char *line=next_cmd;
