@@ -1,4 +1,4 @@
-# translation of de.po to 
+# translation of de.po to
 # translation of de.po to deutsch
 # LFTP -  deutsche Übersetzung
 # Korrekturen, KRITIK SEHR willkommen
@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "POT-Creation-Date: 2003-02-28 10:14+0300\n"
-"PO-Revision-Date: 2003-02-06 16:34+0100\n"
-"Last-Translator: \n"
-"Language-Team:  <de@li.org>\n"
+"PO-Revision-Date: 2003-03-02 14:56+0100\n"
+"Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
+"Language-Team: deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -528,7 +528,6 @@ msgid "[re]cls [opts] [path/][pattern]"
 msgstr "[re]cls [Optionen] [Pfad/][Muster]"
 
 #: src/commands.cc:165
-#, fuzzy
 msgid ""
 "List remote files. You can redirect output of this command to file\n"
 "or via pipe to external command.\n"
@@ -566,19 +565,17 @@ msgid ""
 "-s flag on the commandline as well.  Add `-i' to cls-completion-default\n"
 "to make filename completion case-insensitive.\n"
 msgstr ""
-"Dateien auf der Gegenstelle auflisten. Man kann die Ausgabe des Befehls\n"
+"Dateien der Gegenstelle auflisten. Man kann die Ausgabe des Befehls\n"
 "in eine Datei umleiten oder mittels einer Pipe in ein Programm einspeisen.\n"
 "\n"
 " -1                   - einspaltige Ausgabe\n"
 " -B, --basename       - nur die Namenswurzel anzeigen\n"
-"\n"
-"     --block-size=GRÖßE                       - Blocks in der GRÖßE in "
-"Bytes\n"
+"   --block-size=GRÖßE - Blocks in der GRÖßE in Bytes\n"
 " -d, --directory      - Verzeichnisnamen statt Verzeichnisinhalt ausgeben\n"
 " -F, --classify       - Indikator (einen aus /@) an Einträge hängen\n"
-" -h, --human-readable - Dateigrößen in verständlichem Format ausgeben(z.B. "
-"1k)\n"
+" -h, --human-readable - Dateigrößen in verständlichem Format ausgeben(z.B. 1k)\n"
 "     --si             - ebenso, aber 1000 statt 1024 als Grundlage nehmen\n"
+" -k  --kilobytes      - entspricht --block-size=1024\n"
 " -l, --long           - ausführliches Format der Listenausgabe\n"
 " -q, --quiet          - keine Statusmeldungen\n"
 " -s, --size           - Größe jeder Datei ausgeben\n"
@@ -586,7 +583,7 @@ msgstr ""
 " -i, --nocase         - Groß/Kleinschreibung für Joker nicht beachten\n"
 " -I, --sortnocase     - Groß/Kleinschreibung beim Sortieren nicht beachten\n"
 "  -D, --dirsfirst      - Verzeichnisse zuerst aufführen\n"
-"      --sort=OPT       - \"name\", \"size\"\n"
+"      --sort=OPT       - \"name\", \"size\", \"date\"\n"
 " -S                   - nach Dateigröße sortieren\n"
 " --user, --group, --perms, --date, --linkcount, --links\n"
 "                      - einzelne Felder ausgeben\n"
@@ -602,8 +599,7 @@ msgstr ""
 "\n"
 "Tips: --filesize und -D verwenden um eine kompaktere Ausgabe zu erzielen.\n"
 "Wenn Sie nicht immer Dateigrößen sehen wollen: --filesize in cls-default\n"
-"erfaßt auch die -s Option bei der Befehlseingabe. Alle Optionen "
-"funktionieren\n"
+"erfaßt auch die -s Option bei der Befehlseingabe. Alle Optionen funktionieren\n"
 "in cls-completion-default: -i  in cls-completion-default macht die\n"
 "automatische Vervollständigung unabhängig von Groß/Kleinschreibung.\n"
 
@@ -783,8 +779,7 @@ msgstr ""
 
 #: src/commands.cc:274
 msgid "List running jobs. -v means verbose, several -v can be specified.\n"
-msgstr ""
-"Aktive Jobs auflisten. -v bedeutet mit Details, mehrere -v sind möglich.\n"
+msgstr "Aktive Jobs auflisten. -v bedeutet mit Details, mehrere -v sind möglich.\n"
 
 #: src/commands.cc:275
 msgid "kill all|<job_no>"
@@ -1601,8 +1596,7 @@ msgstr "%s: Angabe für »expire«(Ablauf) fehlt\n"
 
 #: src/commands.cc:2276
 #, c-format
-msgid ""
-"%s: %s - no such cached session. Use `scache' to look at session list.\n"
+msgid "%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr ""
 "%s: %s - keine derartige Sitzung zwischengespeichert. »scache« zeigt eine "
 "Liste.\n"
@@ -1643,8 +1637,7 @@ msgid "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 msgstr "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 
 #: src/commands.cc:2370
-msgid ""
-"This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
+msgid "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
 msgstr ""
 "Dies ist freie Software OHNE IRGENDWELCHE GARANTIEN ODER GEWÄHRLEISTUNGEN.\n"
 "Die Datei COPYING enthält Details.\n"
@@ -1754,8 +1747,7 @@ msgstr "Eingerichteter Zugang ist erforderlich, ftp:acct Variable setzen."
 
 #: src/ftpclass.cc:486
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
-msgstr ""
-"ftp:skey-force ist gesetzt und Gegenstelle unterstützt weder OPIE noch S/KEY"
+msgstr "ftp:skey-force ist gesetzt und Gegenstelle unterstützt weder OPIE noch S/KEY"
 
 #: src/ftpclass.cc:502
 msgid "Saw `unknown', assume failed login"
@@ -1837,8 +1829,7 @@ msgstr "Schalte Passivmodus ein"
 
 #: src/ftpclass.cc:3622
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
-msgstr ""
-"ftp:ssl-force ist gesetzt und Gegenstelle unterstützt oder erlaubt kein SSL"
+msgstr "ftp:ssl-force ist gesetzt und Gegenstelle unterstützt oder erlaubt kein SSL"
 
 #: src/ftpclass.cc:3662
 msgid "Sending commands..."
@@ -2082,8 +2073,7 @@ msgstr "Modus von »%s«  nach %04o (%s) geändert.\n"
 #: src/ChmodJob.cc:85
 #, c-format
 msgid "Failed to change mode of `%s' because no old mode is available.\n"
-msgstr ""
-"Konnte den Modus von »%s« nicht ändern, da kein alter Modus zugänglich war.\n"
+msgstr "Konnte den Modus von »%s« nicht ändern, da kein alter Modus zugänglich war.\n"
 
 #: src/CopyJob.cc:78
 #, c-format
@@ -2112,7 +2102,7 @@ msgstr "Insgesamt %d $Datei|Dateien$ übertragen\n"
 
 #: src/FileCopy.cc:126
 msgid "copy: destination file is already complete\n"
-msgstr ""
+msgstr "copy: Zieldatei ist bereits vollständig\n"
 
 #: src/FileCopy.cc:159
 msgid "copy: put is broken\n"
@@ -2313,3 +2303,4 @@ msgstr "Module sind auf diesem System nicht verwendbar"
 
 #~ msgid "Old remote file `%s' is not removed"
 #~ msgstr "Bestehende nichtlokale Datei »%s« wird nicht entfernt"
+
