@@ -1,3 +1,8 @@
+1999-10-08  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h, ftpclass.cc: low level ascii-mode
+	  support.
+
 1999-10-07  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: don't free peer, it is freed in parent class, and so

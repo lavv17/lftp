@@ -67,6 +67,7 @@ void FileAccess::Init()
    error_code=OK;
    saved_errno=0;
    mkdir_p=false;
+   ascii=false;
 
    url=0;
 
@@ -327,6 +328,7 @@ void FileAccess::Close()
    array_for_info=0;
    entity_size=-1;
    entity_date=(time_t)-1;
+   ascii=false;
    ClearError();
 }
 

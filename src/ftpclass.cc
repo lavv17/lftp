@@ -1089,6 +1089,8 @@ int   Ftp::Do()
       case(CLOSED):
 	 abort(); // can't happen
       }
+      if(ascii)
+	 type=FTP_TYPE_A;
       if(old_type!=type)
       {
          strcpy(str,type==FTP_TYPE_I?"TYPE I\n":"TYPE A\n");
