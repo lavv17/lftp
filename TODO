@@ -33,3 +33,7 @@ currently; some need other work to be done.
  * at-exit-bg
 
  * implement Queueing in FileAccess. fa->AddQueue(new FAQueueOp(args)).
+
+ * there are many interesting protocols: smb, fsp, fish, ...
+
+ * DNS SRV RR support

@@ -1,3 +1,7 @@
+1999-06-27	lav
+
+	* configure.in: version 2.0.1
+
 1999-06-22	lav
 
 	* configure.in: workaround autoconf feature with multiple AC_LINK_FILES

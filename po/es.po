@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.2\n"
-"POT-Creation-Date: 1999-06-25 16:47+0400\n"
+"POT-Creation-Date: 1999-06-27 20:55+0400\n"
 "PO-Revision-Date: 1999-06-05 14:51-0300\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -102,12 +102,12 @@ msgstr "Falló la identificación con el servidor"
 msgid "Operation not supported"
 msgstr "Operación no soportada"
 
-#: src/FtpListInfo.cc:226 src/HttpDir.cc:811
+#: src/FtpListInfo.cc:226 src/HttpDir.cc:825
 #, c-format
 msgid "Getting directory contents (%ld)"
 msgstr "Obteniendo el contenido del directorio (%ld)"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:816
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:830
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "Obteniendo información sobre los ficheros (%d%%)"
@@ -1302,23 +1302,23 @@ msgstr "asumiendo falla en la búsqueda del nombre de servidor"
 msgid "Timeout - trying sync mode (is it windoze?)"
 msgstr "Tiempo fuera - probando con modo `sync' (¿es windoze del otro lado?)"
 
-#: src/Http.cc:147 src/ftpclass.cc:714 src/ftpclass.cc:1522
+#: src/Http.cc:150 src/ftpclass.cc:714 src/ftpclass.cc:1522
 msgid "Timeout - reconnecting"
 msgstr "Tiempo fuera - reconectando"
 
-#: src/Http.cc:488 src/ftpclass.cc:838
+#: src/Http.cc:496 src/ftpclass.cc:838
 msgid "Closing idle connection"
 msgstr "Cerrando conexión ociosa"
 
-#: src/Http.cc:1079 src/ftpclass.cc:888 src/ftpclass.cc:2673
+#: src/Http.cc:1087 src/ftpclass.cc:888 src/ftpclass.cc:2673
 msgid "Resolving host address..."
 msgstr "Resolviendo dirección del servidor..."
 
-#: src/Http.cc:550 src/ftpclass.cc:931
+#: src/Http.cc:558 src/ftpclass.cc:931
 msgid "max-retries exceeded"
 msgstr "variable max-retries excedida"
 
-#: src/Http.cc:569 src/ftpclass.cc:952
+#: src/Http.cc:577 src/ftpclass.cc:952
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Conectándose a %s%s (%s) port %u"
@@ -1360,7 +1360,7 @@ msgstr "Desconectando modo pasivo"
 msgid "Sending commands..."
 msgstr "Enviando comandos..."
 
-#: src/Http.cc:1090 src/ftpclass.cc:2665 src/ftpclass.cc:2685
+#: src/Http.cc:1098 src/ftpclass.cc:2665 src/ftpclass.cc:2685
 #: src/ftpclass.cc:2692
 msgid "Waiting for response..."
 msgstr "Esperando respuesta..."
@@ -1369,11 +1369,11 @@ msgstr "Esperando respuesta..."
 msgid "Connection idle"
 msgstr "Conexión ociosa"
 
-#: src/Http.cc:1081 src/ftpclass.cc:2675
+#: src/Http.cc:1089 src/ftpclass.cc:2675
 msgid "Delaying before reconnect"
 msgstr "Esperando antes de reintentar"
 
-#: src/Http.cc:1085 src/ftpclass.cc:2680
+#: src/Http.cc:1093 src/ftpclass.cc:2680
 msgid "Connecting..."
 msgstr "Conectándose..."
 
@@ -1397,11 +1397,11 @@ msgstr "Esperando que finalice la transferencia"
 msgid "Waiting for data connection..."
 msgstr "Esperando la conexión de datos..."
 
-#: src/Http.cc:1088 src/ftpclass.cc:2699
+#: src/Http.cc:1096 src/ftpclass.cc:2699
 msgid "Sending data"
 msgstr "Enviando datos"
 
-#: src/Http.cc:1093 src/ftpclass.cc:2701
+#: src/Http.cc:1101 src/ftpclass.cc:2701
 msgid "Receiving data"
 msgstr "Recibiendo datos"
 
@@ -1565,11 +1565,11 @@ msgstr "%s ok, %d directorio$|s$ borrado$|s$\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d fichero$|s$ borrado$|s$\n"
 
-#: src/Http.cc:928 src/Http.cc:948
+#: src/Http.cc:936 src/Http.cc:956
 msgid "chunked format violated"
 msgstr "formato `chunked' violado"
 
-#: src/Http.cc:1091
+#: src/Http.cc:1099
 msgid "Fetching headers..."
 msgstr "Trayendo encabezados..."
 
@@ -1578,7 +1578,7 @@ msgstr "Trayendo encabezados..."
 msgid "Proxy protocol unsupported"
 msgstr "Protocolo de proxy no soportado"
 
-#: src/FtpGlob.cc:258 src/HttpDir.cc:438 src/HttpDir.cc:621
+#: src/FtpGlob.cc:258 src/HttpDir.cc:450 src/HttpDir.cc:634
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "Obteniendo lista de ficheros (%ld) [%s]"

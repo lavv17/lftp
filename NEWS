@@ -1,15 +1,18 @@
-Version 2.0.1 - 1999-06-??
+Version 2.0.1 - 1999-06-27
 
 * report ETA more precisely (e.g. 2h15m)
+* added verbose ETA option (set eta-terse no)
 * http ls -f file.html to extract links just as from index.
-* extract http links from frame src too.
+* extract http links from frame src and area href too.
+* added http:cache option to disable server/proxy side cache.
 * fixed core dump in http ls on certain documents.
+* workaround for a readline bug causing core dump on certain completions.
 
 Version 2.0.0 - 1999-06-15
 
 * command `module' to load shared objects at runtime
 * autoloading modules for protocols and for some commands (only mirror now)
-  To built with modules use `configure --with-modules'.
+  To build with modules use `configure --with-modules'.
 * http protocol support (via ipv6 too)
 * socks support (configure --with-socks)
 * cmd:verbose - show command's summary even in non-interactive mode.

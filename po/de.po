@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Lftp 1.2.4\n"
-"POT-Creation-Date: 1999-06-25 16:47+0400\n"
+"POT-Creation-Date: 1999-06-27 20:55+0400\n"
 "PO-Revision-Date: 1999-06-03 00:59+02:00\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: German <de@li.org>\n"
@@ -104,12 +104,12 @@ msgstr "Login fehlgeschlagen"
 msgid "Operation not supported"
 msgstr "Operation wird nicht unterstützt"
 
-#: src/FtpListInfo.cc:226 src/HttpDir.cc:811
+#: src/FtpListInfo.cc:226 src/HttpDir.cc:825
 #, fuzzy, c-format
 msgid "Getting directory contents (%ld)"
 msgstr "Lese Verzeichnis (%d) aus"
 
-#: src/FtpListInfo.cc:230 src/HttpDir.cc:816
+#: src/FtpListInfo.cc:230 src/HttpDir.cc:830
 #, c-format
 msgid "Getting files information (%d%%)"
 msgstr "Lese Dateiinformationen (%d%%)"
@@ -1317,23 +1317,23 @@ msgstr "nehme fehlgeschlagene Auflösung des Hostnamens an"
 msgid "Timeout - trying sync mode (is it windoze?)"
 msgstr "Zeitablauf - sync Modus versuchen (Ist es Windoof?)"
 
-#: src/Http.cc:147 src/ftpclass.cc:714 src/ftpclass.cc:1522
+#: src/Http.cc:150 src/ftpclass.cc:714 src/ftpclass.cc:1522
 msgid "Timeout - reconnecting"
 msgstr "Zeitablauf - neu verbinden"
 
-#: src/Http.cc:488 src/ftpclass.cc:838
+#: src/Http.cc:496 src/ftpclass.cc:838
 msgid "Closing idle connection"
 msgstr "Schließe unbenutzte Verbindung"
 
-#: src/Http.cc:1079 src/ftpclass.cc:888 src/ftpclass.cc:2673
+#: src/Http.cc:1087 src/ftpclass.cc:888 src/ftpclass.cc:2673
 msgid "Resolving host address..."
 msgstr "Löse Hostadresse auf..."
 
-#: src/Http.cc:550 src/ftpclass.cc:931
+#: src/Http.cc:558 src/ftpclass.cc:931
 msgid "max-retries exceeded"
 msgstr "Zahl der Wiederholungsversuche überschritten"
 
-#: src/Http.cc:569 src/ftpclass.cc:952
+#: src/Http.cc:577 src/ftpclass.cc:952
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Verbinde mit %s%s (%s)  Port %u"
@@ -1375,7 +1375,7 @@ msgstr "Schalte Passivmodus ab"
 msgid "Sending commands..."
 msgstr "Schicke Befehle"
 
-#: src/Http.cc:1090 src/ftpclass.cc:2665 src/ftpclass.cc:2685
+#: src/Http.cc:1098 src/ftpclass.cc:2665 src/ftpclass.cc:2685
 #: src/ftpclass.cc:2692
 msgid "Waiting for response..."
 msgstr "Warte auf Antwort"
@@ -1384,11 +1384,11 @@ msgstr "Warte auf Antwort"
 msgid "Connection idle"
 msgstr "Verbindung ruht"
 
-#: src/Http.cc:1081 src/ftpclass.cc:2675
+#: src/Http.cc:1089 src/ftpclass.cc:2675
 msgid "Delaying before reconnect"
 msgstr "Pause vor Verbindungsneuaufbau"
 
-#: src/Http.cc:1085 src/ftpclass.cc:2680
+#: src/Http.cc:1093 src/ftpclass.cc:2680
 msgid "Connecting..."
 msgstr "Verbinde..."
 
@@ -1412,11 +1412,11 @@ msgstr "Warte auf Übertragungsende"
 msgid "Waiting for data connection..."
 msgstr "Warte auf Datenverbindung"
 
-#: src/Http.cc:1088 src/ftpclass.cc:2699
+#: src/Http.cc:1096 src/ftpclass.cc:2699
 msgid "Sending data"
 msgstr "Sende Daten"
 
-#: src/Http.cc:1093 src/ftpclass.cc:2701
+#: src/Http.cc:1101 src/ftpclass.cc:2701
 msgid "Receiving data"
 msgstr "Empfange Daten"
 
@@ -1580,11 +1580,11 @@ msgstr "%s OK, %d Verzeichnis$|se$ gelöscht\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s OK, %d Datei$|en$ gelöscht\n"
 
-#: src/Http.cc:928 src/Http.cc:948
+#: src/Http.cc:936 src/Http.cc:956
 msgid "chunked format violated"
 msgstr "Blockformatierung verletzt"
 
-#: src/Http.cc:1091
+#: src/Http.cc:1099
 msgid "Fetching headers..."
 msgstr "Hole Kopfzeilen..."
 
@@ -1593,7 +1593,7 @@ msgstr "Hole Kopfzeilen..."
 msgid "Proxy protocol unsupported"
 msgstr "Proxy Protokoll wird nicht unterstützt"
 
-#: src/FtpGlob.cc:258 src/HttpDir.cc:438 src/HttpDir.cc:621
+#: src/FtpGlob.cc:258 src/HttpDir.cc:450 src/HttpDir.cc:634
 #, c-format
 msgid "Getting file list (%ld) [%s]"
 msgstr "Hole Dateiliste (%ld) [%s]"
