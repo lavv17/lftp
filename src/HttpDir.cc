@@ -522,6 +522,7 @@ parse_url_again:
       {
 	 if(1!=sscanf(year_or_time,"%d",&year))
 	    goto add_file;
+	 hour=minute=0;
       }
       // skip rest of line, because there may be href to link target.
       skip_len=eol-buf+eol_len;

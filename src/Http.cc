@@ -205,8 +205,10 @@ void Http::Send(const char *format,...)
 
 void Http::SendMethod(const char *method,const char *efile)
 {
+   char *ehost=string_alloca(strlen(hostname)*3+1);
+   url::encode_string(hostname,ehost);
    Send("%s %s HTTP/1.1\r\n",method,efile);
-   Send("Host: %s\r\n",url::encode_string(hostname));
+   Send("Host: %s\r\n",ehost);
    Send("User-Agent: %s/%s\r\n","lftp",VERSION);
    Send("Accept: */*\r\n");
 }
@@ -250,25 +252,42 @@ bool Http::ModeSupported()
 
 void Http::SendRequest(const char *connection,const char *f)
 {
-   char *efile=alloca_strdup(url::encode_string(f));
-   char *ecwd=alloca_strdup(url::encode_string(cwd));
+   char *efile=string_alloca(strlen(f)*3+1);
+   url::encode_string(f,efile);
+   char *ecwd=string_alloca(strlen(cwd)*3+1);
+   url::encode_string(cwd,ecwd);
    int efile_len;
 
-   char *pfile=(char*)alloca(4+3+strlen(hostname)*3+1
-			      +strlen(cwd)*3+1+strlen(efile)+1+1);
+   char *pfile=(char*)alloca(4+3+xstrlen(user)*6+3+xstrlen(pass)*3+1+
+			      strlen(hostname)*3+1+strlen(cwd)*3+1+
+			      strlen(efile)+1+1);
 
    if(proxy)
    {
       const char *proto="http";
       if(hftp)
+      {
+	 if(user && pass)
+	 {
+	    strcpy(pfile,"ftp://");
+	    url::encode_string(user,pfile+strlen(pfile));
+	    strcat(pfile,":");
+	    url::encode_string(pass,pfile+strlen(pfile),0);
+	    strcat(pfile,"@");
+	    url::encode_string(hostname,pfile+strlen(pfile));
+	    goto add_path;
+	 }
 	 proto="ftp";
-      sprintf(pfile,"%s://%s",proto,url::encode_string(hostname));
+      }
+      sprintf(pfile,"%s://",proto);
+      url::encode_string(hostname,pfile+strlen(pfile));
    }
    else
    {
       pfile[0]=0;
    }
 
+add_path:
    if(ecwd[0]=='~' && ecwd[1]=='/')
       ecwd+=1;
 

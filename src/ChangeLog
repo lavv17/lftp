@@ -1,5 +1,13 @@
 1999-10-19  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* HttpDir.cc: set hour/minute to 0 if they are not available.
+	* Http.cc: avoid memory leak in encode_string; add support for
+	  non-anonymous ftp over http.
+	* url.cc: (url::encode_string) don't malloc buffer;
+	  quote all if quote==0.
+
+1999-10-19  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* Http.cc: don't send data in STORE mode until header is sent.
 	  (reported by Brian Ristuccia)
 
