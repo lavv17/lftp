@@ -86,7 +86,6 @@ public:
    static const char *FindVar(const char *name,ResDecl **type);
    static const char *Set(const char *name,const char *closure,const char *value);
 
-   static void Print(FILE *);
    static char *Format(bool with_defaults,bool only_defaults);
    static char **Generator(void);
 

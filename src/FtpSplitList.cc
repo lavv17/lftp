@@ -30,7 +30,6 @@
 #include "xalloca.h"
 #include "FileAccess.h"
 #include "FtpSplitList.h"
-#include "FtpListInfo.h"
 #include "xmalloc.h"
 #include "LsCache.h"
 #include "misc.h"

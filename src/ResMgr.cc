@@ -420,7 +420,7 @@ const char *ResMgr::TriBoolValidate(char **value)
    default:
       return _("invalid boolean/auto value");
    }
-   
+
    if(strcmp(v,newval))
    {
       xfree(v);
