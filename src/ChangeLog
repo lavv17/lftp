@@ -1,3 +1,8 @@
+1999-07-06  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* HttpDir.cc: support base href, refresh, take list of tags from wget;
+	  show relative icon links in ls.
+
 1999-07-05  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* commands.cc: cd and lcd without arguments go to home.

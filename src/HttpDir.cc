@@ -103,13 +103,15 @@ static bool find_value(const char *scan,const char *more,const char *name,char *
    }
    return false;
 }
+
 static int parse_html(const char *buf,int len,bool eof,Buffer *list,
-      FileSet *set,FileSet *all_links,ParsedURL *prefix)
+      FileSet *set,FileSet *all_links,ParsedURL *prefix,char **base_href)
 {
    const char *end=buf+len;
    const char *less=find_char(buf,len,'<');
    if(less==0)
       return len;
+   // FIXME: a > sign can be inside quoted value. (?)
    const char *more=find_char(less+1,end-less-1,'>');
    if(more==0)
    {
@@ -122,33 +124,86 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
    if(more-less<3)
       return tag_len;   // too small
 
-   char *link_target=(char*)alloca(more-less+1+2);
+   int max_link_len=more-less+1+2;
+   if(base_href && *base_href)
+      max_link_len+=strlen(*base_href)+1;
+   char *link_target=(char*)alloca(max_link_len);
 
    static const struct tag_link
 	 { const char *tag, *link; }
       tag_list[]={
-	 {"A",	     "HREF"},
-	 {"AREA",    "HREF"},
-	 {"FRAME",   "SRC"},
-// 	 {"IMG",     "SRC"},
-	 {0,0}
+      /* taken from wget-1.5.3: */
+      /* NULL-terminated list of tags and modifiers someone would want to
+	 follow -- feel free to edit to suit your needs: */
+	 { "a", "href" },
+	 { "img", "src" },
+	 { "img", "href" },
+	 { "body", "background" },
+	 { "frame", "src" },
+	 { "iframe", "src" },
+	 { "fig", "src" },
+	 { "overlay", "src" },
+	 { "applet", "code" },
+	 { "script", "src" },
+	 { "embed", "src" },
+	 { "bgsound", "src" },
+	 { "area", "href" },
+	 { "img", "lowsrc" },
+	 { "input", "src" },
+	 { "layer", "src" },
+	 { "table", "background"},
+	 { "th", "background"},
+	 { "td", "background"},
+	 /* Tags below this line are treated specially.  */
+	 { "base", "href" },
+	 { "meta", "content" },
+	 { NULL, NULL }
       };
 
+   // FIXME: a tag can have many links.
    const struct tag_link *tag_scan;
    for(tag_scan=tag_list; tag_scan->tag; tag_scan++)
    {
       if(token_eq(less+1,end-less-1,tag_scan->tag))
       {
-	 if(!find_value(less+1+strlen(tag_scan->tag),more,
+	 if(find_value(less+1+strlen(tag_scan->tag),more,
 			tag_scan->link,link_target))
-	    return tag_len;   // error
-	 break;
+	    break;
       }
    }
    if(tag_scan->tag==0)
       return tag_len;	// not interesting
 
    // ok, found the target.
+
+   if(!strcasecmp(tag_scan->tag,"base"))
+   {
+      if(base_href)
+      {
+	 xfree(*base_href);
+	 *base_href=xstrdup(link_target);
+      }
+      return tag_len;
+   }
+   if(!strcasecmp(tag_scan->tag,"meta"))
+   {
+      // skip 0; URL=
+      while(*link_target && is_ascii_digit(*link_target))
+	 link_target++;
+      if(*link_target!=';')
+	 return tag_len;
+      link_target++;
+      while(*link_target && is_ascii_space(*link_target))
+	 link_target++;
+      if(strncasecmp(link_target,"URL=",4))
+	 return tag_len;
+      link_target+=4;
+   }
+
+   bool icon=false;
+   if(!strcasecmp(tag_scan->tag,"img")
+   && !strcasecmp(tag_scan->link,"src"))
+      icon=true;
 
    // check if the target is a relative and not a cgi
    if(strchr(link_target,'?'))
@@ -159,6 +214,9 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
    if(*link_target==0)
       return tag_len;	// no target ?
 
+   bool base_href_applied=false;
+
+parse_url_again:
    ParsedURL link_url(link_target,/*proto_required=*/true);
    if(link_url.proto)
    {
@@ -181,6 +239,18 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
 	 if(!is_ascii_alpha(*scan_link))
 	    break;
 	 scan_link++;
+      }
+      if(*link_target!='/' && base_href && *base_href && !base_href_applied)
+      {
+	 char *base_end=strrchr(*base_href,'/');
+	 if(base_end)
+	 {
+	    memmove(link_target+(base_end-*base_href+1),link_target,
+	       strlen(link_target)+1);
+	    memcpy(link_target,*base_href,(base_end-*base_href+1));
+	    base_href_applied=true;
+	    goto parse_url_again;
+	 }
       }
    }
 
@@ -236,7 +306,11 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
       }
    }
 
-   if(list)
+   bool show_in_list=true;
+   if(icon && link_target[0]=='/')
+      show_in_list=false;  // makes apache listings look better.
+
+   if(list && show_in_list)
    {
       int year,month,day,hour,minute;
       char month_name[32];
@@ -400,7 +474,7 @@ int HttpDirList::Do()
    b+=upos;
    len-=upos;
 
-   int n=parse_html(b,len,ubuf->Eof(),buf,0,&all_links,curr_url);
+   int n=parse_html(b,len,ubuf->Eof(),buf,0,&all_links,curr_url,&base_href);
    if(n>0)
    {
       upos+=n;
@@ -433,6 +507,7 @@ HttpDirList::HttpDirList(ArgV *a,FileAccess *fa)
    }
    curr=0;
    curr_url=0;
+   base_href=0;
 }
 
 HttpDirList::~HttpDirList()
@@ -440,6 +515,7 @@ HttpDirList::~HttpDirList()
    delete ubuf;
    if(curr_url)
       delete curr_url;
+   xfree(base_href);
 }
 
 const char *HttpDirList::Status()
@@ -590,14 +666,16 @@ int HttpGlob::Do()
 
    FileSet set;
    ParsedURL prefix(session->GetFileURL(curr_dir));
+   char *base_href=0;
    for(;;)
    {
-      int n=parse_html(b,len,true,0,&set,0,&prefix);
+      int n=parse_html(b,len,true,0,&set,0,&prefix,&base_href);
       if(n==0)
 	 break;
       b+=n;
       len-=n;
    }
+   xfree(base_href);
 
    if(!from_cache)
    {
@@ -698,14 +776,16 @@ int HttpListInfo::Do()
 
       result=new FileSet;
       ParsedURL prefix(session->GetConnectURL());
+      char *base_href=0;
       for(;;)
       {
-	 int n=parse_html(b,len,true,0,result,0,&prefix);
+	 int n=parse_html(b,len,true,0,result,0,&prefix,&base_href);
 	 if(n==0)
 	    break;
 	 b+=n;
 	 len-=n;
       }
+      xfree(base_href);
 
       if(!from_cache)
       {
