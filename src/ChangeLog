@@ -2,7 +2,7 @@
 
 	* ftpclass.cc, ftpclass.h: support for ssl (AUTH TLS).
 	* resource.cc: new settings ftp:ssl-allow, ssl-force, ssl-protect-data;
-	  allow https for http:proxy.
+	  allow https for http:proxy; set https:proxy by https_proxy.
 	* Http.cc: move Https::New to ifdef; fix cookie closure match.
 
 2000-08-04  Alexander V. Lukyanov  <lav@yars.free.net>

@@ -116,9 +116,11 @@ static ResDecl
    ResDecl09 ("ftp:rest-stor",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl10 ("ftp:skey-allow",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl11 ("ftp:skey-force",		  "no",    ResMgr::BoolValidate,0),
+#ifdef USE_SSL
    ResDecl11a("ftp:ssl-allow",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl11b("ftp:ssl-force",		  "no",	   ResMgr::BoolValidate,0),
    ResDecl11c("ftp:ssl-protect-data",	  "no",	   ResMgr::BoolValidate,0),
+#endif
    ResDecl12 ("ftp:stat-interval",	  "1",	   ResMgr::UNumberValidate,0),
    ResDecl13 ("ftp:sync-mode",		  "on",    ResMgr::BoolValidate,0),
    ResDecl14 ("ftp:use-abor",		  "yes",   ResMgr::BoolValidate,0),
@@ -143,7 +145,9 @@ static ResDecl
    ResDecl29a("http:post-content-type",   "application/x-www-form-urlencoded",0,0),
    ResDecl29 ("http:put-method",	  "PUT",   PutOrPost,0),
    ResDecl30 ("http:put-content-type",	  "",	   0,0),
+#ifdef USE_SSL
    ResDecl30a("https:proxy",		  "",	   0,0),
+#endif
    ResDecl31 ("net:idle",		  "180",   ResMgr::UNumberValidate,0),
    ResDecl32 ("net:limit-max",		  "0",	   ResMgr::UNumberValidate,0),
    ResDecl33 ("net:limit-rate",		  "0",	   ResMgr::UNumberValidate,0),
@@ -175,6 +179,12 @@ void ResMgr::ClassInit()
       Set("http:proxy",0,http_proxy);
       Set("hftp:proxy",0,http_proxy);
    }
+
+#ifdef USE_SSL
+   const char *https_proxy=getenv("https_proxy");
+   if(https_proxy)
+      Set("https:proxy",0,https_proxy);
+#endif
 
    const char *ftp_proxy=getenv("ftp_proxy");
    if(ftp_proxy)
