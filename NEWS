@@ -1,3 +1,13 @@
+Version 2.3.8 - 2001-02-16
+
+* miscellaneous improvements.
+* fixed rate limit with closure (net:limit-rate/ftp.host.com).
+* don't bind data socket to loopback address.
+* fixed core dump after asking for ftp:proxy password.
+* fixed rare spinning in dns child process when parent terminates.
+* portability fix: make it work on SCO UNIX.
+* CygWin port: allow command files to be in ascii mode (CRLF).
+
 Version 2.3.7 - 2001-01-15
 
 * fixed OPIE/SKEY automatic password generation.

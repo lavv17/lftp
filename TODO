@@ -85,7 +85,7 @@ implemented.
  * a setting to make commands quiet (cmd:quiet? or cmd:verbose with int value)
 
  * redirect error messages
- * stdout/stderr analogues, class Buffer.
+ * stdout/stderr analogues, use class Buffer.
 
  * remember user-specified URL path from open/cd.
  * flag to mark cwd as a file, not a directory. (for http).
