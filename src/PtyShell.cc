@@ -29,6 +29,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
+#include <termios.h>
 
 #include "PtyShell.h"
 #include "lftp_pty.h"
@@ -55,6 +56,15 @@ int PtyShell::getfd()
       error_text=xstrdup(s);
       return -1;
    }
+
+   struct termios tc;
+   tcgetattr(ttyfd,&tc);
+   tc.c_lflag=0;
+   tc.c_oflag=0;
+   tc.c_iflag=0;
+   tc.c_cc[VMIN]=1;
+   tc.c_cc[VTIME]=0;
+   tcsetattr(ttyfd,TCSANOW,&tc);
 
    ProcWait::Signal(false);
 
@@ -94,6 +104,9 @@ int PtyShell::getfd()
 	    _exit(1);
 	 }
       }
+      putenv("LC_ALL=C");
+      putenv("LANG=C");
+      putenv("LANGUAGE=C");
       if(a)
 	 execvp(a->a0(),a->GetV());
       execl("/bin/sh","sh","-c",name,NULL);
