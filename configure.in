@@ -28,7 +28,7 @@ if test x$ac_cv_lib_fl_yywrap = xno; then
    AC_DEFINE(NEED_YYWRAP)
 fi
 
-ALL_LINGUAS="es ru it pt_BR pl de"
+ALL_LINGUAS="es ru it pt_BR pl de zh_CN"
 AM_GNU_GETTEXT
 if test x$USE_INCLUDED_LIBINTL = xyes; then
    LINK_SRC="$LINK_SRC intl/libgettext.h"
