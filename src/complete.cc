@@ -1141,7 +1141,6 @@ int lftp_char_is_quoted(char *string,int eindex)
 extern "C" int (*rl_last_func)(int,int);
 static int lftp_complete_remote(int count,int key)
 {
-
    if(rl_last_func == lftp_complete_remote)
       rl_last_func = rl_complete;
 
@@ -1175,6 +1174,8 @@ int lftp_rl_getc(FILE *file)
    }
 }
 
+extern int lftp_slot(int,int);
+
 /* Tell the GNU Readline library how to complete.  We want to try to complete
    on command names if this is the first word in the line, or on filenames
    if not. */
@@ -1193,6 +1194,17 @@ void lftp_readline_init ()
 
    lftp_rl_add_defun("complete-remote",lftp_complete_remote,-1);
    lftp_rl_bind("Meta-Tab","complete-remote");
+
+   char fn[7];
+   strcpy(fn,"slot-N");
+   char key[7];
+   strcpy(key,"Meta-N");
+   for(int i=0; i<10; i++)
+   {
+      key[5]=fn[5]='0'+i;
+      lftp_rl_add_defun(fn,lftp_slot,-1);
+      lftp_rl_bind(key,fn);
+   }
 }
 
 extern "C" void completion_display_list (char **matches, int len)

@@ -36,6 +36,7 @@
 #include "url.h"
 #include "QueueFeeder.h"
 #include "LocalDir.h"
+#include "ConnectionSlot.h"
 
 #define RL_PROMPT_START_IGNORE	'\001'
 #define RL_PROMPT_END_IGNORE	'\002'
@@ -46,7 +47,7 @@ static ResDecl
    res_default_proto	   ("cmd:default-protocol","ftp",0,0),
    res_long_running	   ("cmd:long-running",	"30",ResMgr::UNumberValidate,0),
    res_remote_completion   ("cmd:remote-completion","on",ResMgr::BoolValidate,0),
-   res_prompt		   ("cmd:prompt",	"lftp> ",0,0),
+   res_prompt		   ("cmd:prompt",	"lftp \\S\\? \\u\\@\\h:\\w> ",0,0),
    res_default_title	   ("cmd:default-title","lftp \\h:\\w",0,0),
    res_default_ls	   ("cmd:ls-default",	"",0,0),
    res_csh_history	   ("cmd:csh-history",	"off",ResMgr::BoolValidate,ResMgr::NoClosure),
@@ -328,6 +329,18 @@ void CmdExec::RevertToSavedSession()
    Reuse(session);
    session=saved_session;
    saved_session=0;
+   if(slot)
+      ConnectionSlot::Set(slot,session);
+}
+void CmdExec::ChangeSlot(const char *n)
+{
+   FileAccess *s=ConnectionSlot::FindSession(n);
+   if(!s)
+      ConnectionSlot::Set(n,session);
+   else
+      ChangeSession(s);
+   xfree(slot);
+   slot=xstrdup(n);
 }
 
 int CmdExec::Do()
@@ -351,6 +364,8 @@ int CmdExec::Do()
 	       const char *cwd=session->GetCwd();
 	       eprintf(_("cd ok, cwd=%s\n"),cwd?cwd:"~");
 	       cwd_history.Set(session,old_cwd);
+	       if(slot)
+		  ConnectionSlot::SetCwd(slot,cwd);
 	    }
 	    session->Close();
 	    exit_code=0;
@@ -782,6 +797,7 @@ CmdExec::CmdExec(FileAccess *f,LocalDirectory *c) : SessionJob(f)
    start_time=0;
    old_cwd=0;
    old_lcwd=0;
+   slot=0;
 
    glob=0;
    args_glob=0;
@@ -872,6 +888,7 @@ char *CmdExec::FormatPrompt(const char *scan)
  // @ if non-default user
       { '@', session->GetUser()?"@":"" },
       { 'U', session->GetConnectURL() },
+      { 'S', slot?slot:"" },
       { 'w', cwd },
       { 'W', cwdb },
       { '[', StartIgn },

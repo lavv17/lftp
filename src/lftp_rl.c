@@ -140,7 +140,7 @@ void lftp_rl_display_match_list (char **matches, int len, int max)
    completion_display_list(matches, len);
    rl_forced_update_display(); /* redraw input line */
 }
- 
+
 void lftp_rl_init(
    const char *readline_name,
    char **(*attempted_completion_function)(const char *,int,int),
@@ -174,4 +174,10 @@ void lftp_rl_bind(const char *key,const char *func)
    char *line=alloca(strlen(key)+2+strlen(func)+1);
    sprintf(line,"%s: %s",key,func);
    rl_parse_and_bind(line);
+}
+
+void lftp_rl_set_prompt(const char *p)
+{
+   rl_set_prompt(p);
+/*   rl_redisplay();*/
 }

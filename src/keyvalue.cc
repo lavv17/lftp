@@ -191,12 +191,9 @@ void KeyValueDB::Add(const char *key,const char *value)
 {
    Pair **p=LookupPair(key);
    if(!p)
-      chain=new Pair(key,value,chain);
+      AddPair(NewPair(key,value));
    else
-   {
-      xfree((*p)->value);
-      (*p)->value=xstrdup(value);
-   }
+      p[0]->SetValue(value);
 }
 
 void KeyValueDB::Remove(const char *key)

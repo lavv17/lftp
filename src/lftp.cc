@@ -47,6 +47,7 @@
 #include "DirColors.h"
 #include "IdNameCache.h"
 #include "LocalDir.h"
+#include "ConnectionSlot.h"
 
 #include "confpaths.h"
 
@@ -279,6 +280,18 @@ static void move_to_background()
    }
 }
 
+int lftp_slot(int count,int key)
+{
+   if(!top_exec)
+      return 0;
+   char slot[2];
+   slot[0]=key;
+   slot[1]=0;
+   top_exec->ChangeSlot(slot);
+   lftp_rl_set_prompt(top_exec->MakePrompt());
+   return 0;
+}
+
 void  source_if_exist(CmdExec *exec,const char *rc)
 {
    if(access(rc,R_OK)!=-1)
@@ -374,6 +387,7 @@ int   main(int argc,char **argv)
    int exit_code=top_exec->ExitCode();
    SMTask::Delete(top_exec);
    top_exec=0;
+   ConnectionSlot::Cleanup();
    SessionPool::ClearAll();
    LsCache::Flush();
    ProcWait::DeleteAll();

@@ -69,6 +69,7 @@
 #include "FileSetOutput.h"
 #include "PatternSet.h"
 #include "LocalDir.h"
+#include "ConnectionSlot.h"
 
 #include "confpaths.h"
 
@@ -88,7 +89,7 @@ CMD(wait);  CMD(subsh);  CMD(mirror);
 CMD(mv);    CMD(cat);    CMD(cache);
 CMD(mkdir); CMD(scache); CMD(mrm);
 CMD(ver);   CMD(close);  CMD(bookmark);CMD(lftp);
-CMD(echo);  CMD(suspend);CMD(sleep);
+CMD(echo);  CMD(suspend);CMD(sleep);   CMD(slot);
 CMD(at);    CMD(find);   CMD(command); CMD(module);
 CMD(lpwd);  CMD(glob);	 CMD(chmod);   CMD(queue);
 CMD(repeat);CMD(get1);   CMD(history);
@@ -444,6 +445,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "Sleep for given amount of time. The time argument can be optionally\n"
 	 "followed by unit specifier: d - days, h - hours, m - minutes, s - seconds.\n"
 	 "By default time is assumed to be seconds.\n")},
+   {"slot",    cmd_slot,   0,0},
    {"source",  cmd_source, N_("source <file>"),
 	 N_("Execute commands recorded in file <file>\n")},
    {"suspend", cmd_suspend},
@@ -849,7 +851,7 @@ Job *CmdExec::builtin_open()
       {
 	 ChangeSession(new DummyProto);
       }
-      if(host && host[0])
+      if(host && host[0] && session->GetHostName()==0)
 	 session->Connect(host,port);
       if(user)
       {
@@ -884,7 +886,7 @@ Job *CmdExec::builtin_open()
       if(old)
 	 session->Chdir(old,false);
 
-      char *s=string_alloca(strlen(path)*4+40);
+      char *s=string_alloca(strlen(path)*2+40);
       strcpy(s,"&& cd \"");
       unquote(s+strlen(s),path);
       strcat(s,"\"");
@@ -899,6 +901,9 @@ Job *CmdExec::builtin_open()
 
    if(url)
       delete url;
+
+   if(slot)
+      ConnectionSlot::Set(slot,session);
 
    Reconfig(0);
 
@@ -3017,4 +3022,22 @@ CMD(history)
    }
 
    return 0;
+}
+
+CMD(slot)
+{
+   const char *n=args->getarg(1);
+   if(n)
+   {
+      parent->ChangeSlot(n);
+      return 0;
+   }
+   else
+   {
+      char *slots=ConnectionSlot::Format();
+      Job *j=CopyJob::NewEcho(slots,strlen(slots),output,args->a0());
+      xfree(slots);
+      output=0;
+      return j;
+   }
 }

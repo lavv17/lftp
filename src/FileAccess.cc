@@ -42,6 +42,7 @@
 #include "DummyProto.h"
 #include "netrc.h"
 #include "ArgV.h"
+#include "ConnectionSlot.h"
 #ifdef WITH_MODULES
 # include "module.h"
 #endif
@@ -959,6 +960,12 @@ FileAccess *FileAccess::NextSameSite(FA *scan)
 
 FileAccess *FileAccess::New(const char *proto,const char *host)
 {
+   if(!strcmp(proto,"slot"))
+   {
+      FA *session=ConnectionSlot::FindSession(host);
+      return session?session->Clone():0;
+   }
+
    FA *session=Protocol::NewSession(proto);
    if(!session)
       return 0;
@@ -986,7 +993,8 @@ FileAccess *FileAccess::New(const ParsedURL *u,bool dummy)
 	 return 0;
       return new DummyNoProto(u->proto);
    }
-   s->Connect(u->host,u->port);
+   if(strcmp(u->proto,"slot"))
+      s->Connect(u->host,u->port);
    if(u->user)
       s->Login(u->user,u->pass);
    // path?

@@ -124,6 +124,7 @@ private:
 
    char *old_cwd;
    char *old_lcwd;
+   char *slot;
 
    GlobURL *glob;
    ArgV *args_glob;
@@ -239,6 +240,8 @@ public:
    bool	 wait_all;
 
    void pre_stdout();
+
+   void ChangeSlot(const char *n);
 };
 
 extern const char * const bookmark_subcmd[];

@@ -43,13 +43,13 @@ protected:
       char *key;
       char *value;
       Pair *next;
-      Pair(const char *k,const char *v,Pair *n)
+      Pair(const char *k,const char *v)
 	 {
 	    key=xstrdup(k);
 	    value=xstrdup(v);
-	    next=n;
+	    next=0;
 	 }
-      ~Pair()
+      virtual ~Pair()
 	 {
 	    xfree(key);
 	    xfree(value);
@@ -57,6 +57,11 @@ protected:
       int KeyCompare(const char *s) const
 	 {
 	    return strcmp(s,key);
+	 }
+      void SetValue(const char *v)
+	 {
+	    xfree(value);
+	    value=xstrdup(v);
 	 }
    };
 
@@ -69,6 +74,15 @@ protected:
 	 delete to_free;
       }
    Pair **LookupPair(const char *key) const;
+   void AddPair(Pair *p)
+      {
+	 p->next=chain;
+	 chain=p;
+      }
+   virtual Pair *NewPair(const char *id,const char *value)
+      {
+	 return new Pair(id,value);
+      }
 
    int Lock(int fd,int type);
 
@@ -119,7 +133,7 @@ public:
 	 chain=0;
 	 current=0;
       }
-   ~KeyValueDB()
+   virtual ~KeyValueDB()
       {
 	 Empty();
       }

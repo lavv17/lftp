@@ -25,6 +25,7 @@
 #include "xalloca.h"
 #include "url.h"
 #include "ascii_ctype.h"
+#include "ConnectionSlot.h"
 
 /*
    URL -> [PROTO://]CONNECT[[:]/PATH]
@@ -71,6 +72,15 @@ ParsedURL::ParsedURL(const char *url,bool proto_required,bool use_rfc1738)
       host=scan;
       strcpy(host,"localhost");
       path=scan+10;
+      goto decode;
+   }
+   else if(scan[0]==':' && !strncmp(base,"slot:",5) && ConnectionSlot::Find(scan+1))
+   {
+      // special form for selecting a connection slot
+      *scan=0;
+      scan++;
+      proto=base;
+      host=scan;
       goto decode;
    }
    else if(proto_required)
