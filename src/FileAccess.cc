@@ -556,6 +556,8 @@ void  FileAccess::ExpandTildeInCWD()
 	 expand_tilde(&file,home);
       if(file1)
 	 expand_tilde(&file1,home);
+      if(mode==CHANGE_DIR)
+	 OptimizePath(file);
    }
 }
 
@@ -590,6 +592,95 @@ int FileAccess::device_prefix_len(const char *path)
    if(i>0 && path[i]==':')
       return i+1+(path[i+1]=='/');
    return 0;
+}
+
+void FileAccess::OptimizePath(char *path)
+{
+   int	 prefix_size=0;
+
+   if(path[0]=='/')
+   {
+      prefix_size=1;
+      if(path[1]=='/' && path[2] && path[2]!='/')
+	 prefix_size=2;
+   }
+   else if(path[0]=='~')
+   {
+      prefix_size=1;
+      while(path[prefix_size]!='/' && path[prefix_size]!='\0')
+	 prefix_size++;
+   }
+   else
+   {
+      // handle VMS and DOS devices.
+      prefix_size=device_prefix_len(path);
+   }
+
+   char	 *in;
+   char	 *out;
+
+   in=out=path+prefix_size;
+
+   while((in[0]=='.' && (in[1]=='/' || in[1]==0))
+   || (in>path && in[-1]=='/' && (in[0]=='/'
+	 || (in[0]=='.' && in[1]=='.' && (in[2]=='/' || in[2]==0)))))
+   {
+      if(in[0]=='.' && in[1]=='.')
+	 in++;
+      in++;
+      if(*in=='/')
+	 in++;
+   }
+
+   for(;;)
+   {
+      if(in[0]=='/')
+      {
+	 // double slash or a slash on the end
+	 if(in[1]=='/' || in[1]=='\0')
+	 {
+	    in++;
+	    continue;
+	 }
+	 if(in[1]=='.')
+	 {
+	    // . - cur dir
+	    if(in[2]=='/' || in[2]=='\0')
+	    {
+	       in+=2;
+	       continue;
+	    }
+	    // .. - prev dir
+	    if(in[2]=='.' && (in[3]=='/' || in[3]=='\0'))
+	    {
+	       if(last_element_is_doubledot(path+prefix_size,out)
+	       || out==path
+	       || (out==path+prefix_size && out[-1]!='/'))
+	       {
+		  if(out>path && out[-1]!='/')
+		     *out++='/';
+		  *out++='.';
+		  *out++='.';
+	       }
+	       else
+	       {
+		  while(out>path+prefix_size && *--out!='/')
+		     ;
+	       }
+	       in+=3;
+	       continue;
+	    }
+	 }
+	 // don't add slash after prefix with slash
+	 if(out>path && out[-1]=='/')
+	 {
+	    in++;
+	    continue;
+	 }
+      }
+      if((*out++=*in++)=='\0')
+	 break;
+   }
 }
 
 void FileAccess::Chdir(const char *path,bool verify)
@@ -646,71 +737,8 @@ void FileAccess::Chdir(const char *path,bool verify)
 	 strcpy(newcwd,path);
    }
 
-   char	 *in;
-   char	 *out;
+   OptimizePath(newcwd);
 
-   in=out=newcwd+prefix_size;
-
-   while((in[0]=='.' && (in[1]=='/' || in[1]==0))
-   || (in>newcwd && in[-1]=='/' && (in[0]=='/'
-	 || (in[0]=='.' && in[1]=='.' && (in[2]=='/' || in[2]==0)))))
-   {
-      if(in[0]=='.' && in[1]=='.')
-	 in++;
-      in++;
-      if(*in=='/')
-	 in++;
-   }
-
-   for(;;)
-   {
-      if(in[0]=='/')
-      {
-	 // double slash or a slash on the end
-	 if(in[1]=='/' || in[1]=='\0')
-	 {
-	    in++;
-	    continue;
-	 }
-	 if(in[1]=='.')
-	 {
-	    // . - cur dir
-	    if(in[2]=='/' || in[2]=='\0')
-	    {
-	       in+=2;
-	       continue;
-	    }
-	    // .. - prev dir
-	    if(in[2]=='.' && (in[3]=='/' || in[3]=='\0'))
-	    {
-	       if(last_element_is_doubledot(newcwd+prefix_size,out)
-	       || out==newcwd
-	       || (out==newcwd+prefix_size && out[-1]!='/'))
-	       {
-		  if(out>newcwd && out[-1]!='/')
-		     *out++='/';
-		  *out++='.';
-		  *out++='.';
-	       }
-	       else
-	       {
-		  while(out>newcwd+prefix_size && *--out!='/')
-		     ;
-	       }
-	       in+=3;
-	       continue;
-	    }
-	 }
-	 // don't add slash after prefix with slash
-	 if(out>newcwd && out[-1]=='/')
-	 {
-	    in++;
-	    continue;
-	 }
-      }
-      if((*out++=*in++)=='\0')
-	 break;
-   }
    if(verify)
       Open(newcwd,CHANGE_DIR);
    else

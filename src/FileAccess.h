@@ -213,6 +213,7 @@ public:
    virtual void	Rename(const char *rfile,const char *to);
    virtual void Mkdir(const char *rfile,bool allpath=false);
    virtual void Chdir(const char *dir,bool verify=true);
+   void OptimizePath(char *path);
    void SetCwd(const char *dir) { xfree(cwd); cwd=xstrdup(dir); }
    void Remove(const char *rfile)    { Open(rfile,REMOVE); }
    void RemoveDir(const char *dir)  { Open(dir,REMOVE_DIR); }
