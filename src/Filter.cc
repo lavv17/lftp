@@ -403,6 +403,12 @@ off_t FileStream::get_size()
 #include "SMTask.h"
 bool FDStream::NonFatalError(int err)
 {
+   if(err==EDQUOT || err==ENOSPC)
+   {
+      struct stat st;
+      if(fd>=0 && fstat(fd,&st)!=-1 && st.st_nlink==0)
+	 return false;
+   }
    bool non_fatal=SMTask::NonFatalError(err);
    if(non_fatal)
       set_status(strerror(err));

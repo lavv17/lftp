@@ -40,6 +40,8 @@ char **lftp_rl_completion_matches(const char *text,char *(*compentry)(const char
 void lftp_rl_add_defun(const char *name,int (*func)(int,int),int key);
 void lftp_rl_bind(const char *key,const char *func);
 void lftp_rl_set_prompt(const char *p);
+void lftp_rl_write_history();
+void lftp_rl_read_history();
 
 void lftp_rl_init(
    const char *readline_name,

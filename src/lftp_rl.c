@@ -24,6 +24,8 @@
 #include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <stdlib.h>
+#include <string.h>
 #include "lftp_rl.h"
 #include "xalloca.h"
 
@@ -179,5 +181,22 @@ void lftp_rl_bind(const char *key,const char *func)
 void lftp_rl_set_prompt(const char *p)
 {
    rl_set_prompt(p);
-/*   rl_redisplay();*/
+}
+
+static char *lftp_history_file;
+void lftp_rl_read_history()
+{
+   if(!lftp_history_file)
+   {
+      const char *home=getenv("HOME");
+      const char *add="/.lftp/rl_history";
+      if(!home) home="";
+      lftp_history_file=(char*)malloc(strlen(home)+strlen(add)+1);
+      strcat(strcpy(lftp_history_file,home),add);
+   }
+   read_history(lftp_history_file);
+}
+void lftp_rl_write_history()
+{
+   write_history(lftp_history_file);
 }

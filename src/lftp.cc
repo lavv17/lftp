@@ -328,8 +328,6 @@ int   main(int argc,char **argv)
    ResMgr::ClassInit();
    FileAccess::ClassInit();
 
-   lftp_readline_init();
-
    hook_signals();
 
    LocalDirectory *cwd=new LocalDirectory;
@@ -357,6 +355,9 @@ int   main(int argc,char **argv)
 
    WaitDone(top_exec);
 
+   lftp_readline_init();
+   lftp_rl_read_history();
+
    top_exec->SetTopLevel();
    top_exec->Fg();
 
@@ -378,6 +379,7 @@ int   main(int argc,char **argv)
 
    if(res_save_cwd_history.QueryBool(0))
       cwd_history.Save();
+   lftp_rl_write_history();
 
    if(Job::NumberOfJobs()>0)
    {
