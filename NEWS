@@ -1,4 +1,4 @@
-Version 2.2.0 - 2000-??-??
+Version 2.2.0 - 2000-03-28
 
 * URLs are now handled in more places: `get URL1 -o URL2', `login URL',
   `glob URL', `cat URL', `mget URL/*', etc. Setting xfer:use-urls is obsolete,
@@ -45,7 +45,8 @@ Version 2.2.0 - 2000-??-??
 * ftp and hftp URLs are now assumed to have home-relative path. To write
   root-relative path in such URLs, use ftp://site/%2Fpath.
 * new setting dns:use-fork. When true, lftp does fork before gethostbyname
-  to allow instant interrupting and asynchronousity. (default is true)
+  (as in previous versions) to allow instant interrupting and asynchronousity.
+  (default is true)
 * new setting cmd:default-protocol. The value is used when open is used
   with just host name without protocol. Default is `ftp'.
 * new setting ftp:port-range for active mode port range (useful for firewalls).

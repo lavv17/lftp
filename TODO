@@ -95,3 +95,5 @@ currently; some need other work to be done.
  * a setting to make commands quiet (cmd:quiet? or cmd:verbose with int value)
 
  * handle "" in PWD reply.
+
+ * redirect error messages
