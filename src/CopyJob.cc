@@ -47,7 +47,7 @@ int CopyJob::Do()
 }
 int CopyJob::Done()
 {
-   return done || Error();
+   return done;
 }
 int CopyJob::ExitCode()
 {
@@ -174,11 +174,8 @@ int CopyJobEnv::Do()
    if(j==0)
       return m;
    RemoveWaiting(j);
-   if(j->Error())
-   {
+   if(j->ExitCode()!=0)
       errors++;
-      eprintf("%s: %s\n",op,j->ErrorText());
-   }
    count++;
    bytes+=j->GetBytesCount();
    time_spent+=j->GetTimeSpent();

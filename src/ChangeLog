@@ -1,3 +1,7 @@
+2000-07-21  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CopyJob.cc: fix duplicate error messages.
+
 2000-07-20  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileAccess.cc, FileAccess.h: (GetVisualProto, SetVisualProto)
@@ -14,6 +18,10 @@
 	* CmdExec.cc, CmdExec.h, CopyJob.cc, FindJob.cc, MirrorJob.cc,
 	  SleepJob.cc, commands.cc, mgetJob.cc: according to Job.cc.
 	* MirrorJob.cc, MirrorJob.h: --parallel option (finally!).
+	* CatJob.cc, CatJob.h, commands.cc: auto ascii for cat; wait all
+	  for new waiting scheme.
+	* CopyJob.cc, CopyJob.h: support several CopyJob's in CopyJobEnv.
+	* Job.cc, Job.h: (WaitForAllChildren) new method for `wait all'.
 
 2000-07-18  Alexander V. Lukyanov  <lav@yars.free.net>
 
