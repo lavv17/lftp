@@ -51,7 +51,7 @@ do
    esac
 
    if $verbose; then
-      SCRIPT="$SCRIPT echo Retrieving \`\"$f\"'...;"
+      SCRIPT="$SCRIPT echo Retrieving \`\"$f\"\'...;"
    fi
 
    if $need_pass; then
@@ -60,7 +60,7 @@ do
    SCRIPT="$SCRIPT get $CONT \"$f\";"
 
    if $verbose; then
-      SCRIPT="$SCRIPT && echo Got \`\"$f\"'.;"
+      SCRIPT="$SCRIPT && echo Got \`\"$f\"\'.;"
    fi
 done
 
