@@ -270,6 +270,7 @@ int   Ftp::NoFileCheck(int act,int exp)
       }
       if(real_pos>0 && !(flags&IO_FLAG) && copy_mode==COPY_NONE)
       {
+	 DataClose();
 	 DebugPrint("---- ","Switching to NOREST mode",2);
 	 flags|=NOREST_MODE;
 	 real_pos=0;
