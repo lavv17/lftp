@@ -162,6 +162,9 @@ const char *AuthArgValidate(char **s)
 static
 const char *ProtValidate(char **s)
 {
+   if(!**s)
+      return 0;
+
    for(char *i=*s; *i; i++)
       *i=to_ascii_upper(*i);
 
@@ -169,7 +172,7 @@ const char *ProtValidate(char **s)
    && strcmp(*s,"C")
    && strcmp(*s,"S")
    && strcmp(*s,"E"))
-      return _("must be one of: C, S, E, P");
+      return _("must be one of: C, S, E, P, or empty");
 
    return 0;
 }
@@ -215,7 +218,7 @@ static ResDecl
    ResDecl11f("ftp:ssl-protect-list",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl11d("ftp:ssl-auth",		  "TLS",   AuthArgValidate,0),
    ResDecl11e("ftp:ssl-allow-anonymous",  "no",	   ResMgr::BoolValidate,0),
-   ResDecl11h("ftps:initial-prot",	  "P",	   ProtValidate,0),
+   ResDecl11h("ftps:initial-prot",	  "",	   ProtValidate,0),
 #endif
    ResDecl12 ("ftp:stat-interval",	  "1",	   ResMgr::UNumberValidate,0),
    ResDecl13 ("ftp:sync-mode",		  "on",    ResMgr::BoolValidate,0),

@@ -268,6 +268,7 @@ static void test_TIOCOUTQ()
    int sock=socket(PF_INET,SOCK_STREAM,IPPROTO_TCP);
    if(sock==-1)
       return;
+   TIOCOUTQ_tested=true;
    int avail=-1;
    socklen_t len=sizeof(avail);
    if(getsockopt(sock,SOL_SOCKET,SO_SNDBUF,(char*)&avail,&len)==-1)

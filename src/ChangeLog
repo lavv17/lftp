@@ -1,3 +1,9 @@
+2004-11-19  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* NetAccess.cc: set TIOCOUTQ_tested so that it is not tested each time.
+	* resource.cc: make ftps:initial-prot empty so that PROT would be always
+	  used for ftps connections.
+
 2004-11-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Fish.cc: fix downloading of growing files.
