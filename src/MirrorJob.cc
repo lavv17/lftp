@@ -592,7 +592,7 @@ int   MirrorJob::Do()
 	    }
 	    if(!(flags&NO_PERMS))
 	       to_transfer->LocalChmod(local_dir,flags&ALLOW_SUID?0:S_ISUID|S_ISGID);
-	    to_transfer->LocalUtime(local_dir);
+	    to_transfer->LocalUtime(local_dir,/*only_dirs=*/true);
 	    if(!(flags&NO_PERMS))
 	       same->LocalChmod(local_dir,flags&ALLOW_SUID?0:S_ISUID|S_ISGID);
 	    same->LocalUtime(local_dir); // the old mtime can differ up to prec
@@ -714,7 +714,10 @@ const char *MirrorJob::SetRX(const char *s,char **rx,regex_t *rxc)
 void MirrorJob::va_Report(const char *fmt,va_list v)
 {
    if(parent_mirror)
+   {
       parent_mirror->va_Report(fmt,v);
+      return;
+   }
 
    if(verbose_report && fg)
    {

@@ -48,6 +48,8 @@ protected:
 
    time_t start_time;
    time_t end_time;
+   int	 start_time_ms;
+   int	 end_time_ms;
 
    long	 offset;
    long	 size;
@@ -56,7 +58,7 @@ protected:
    time_t last_second;
    time_t last_bytes;
 
-   float xfer_rate() { return (float)bytes_transferred/(end_time-start_time); }
+   float xfer_rate();
 
    bool	 got_eof;
    bool	 print_run_status;

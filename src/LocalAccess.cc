@@ -267,7 +267,7 @@ int LocalAccess::Read(void *buf,int size)
    stream->Kill(SIGCONT);
 read_again:
    int res=Poll(fd,POLLIN);
-   if(res&(POLLIN|POLLNVAL))
+   if(res==-1 || (res&(POLLIN|POLLNVAL)))
    {
       int res=read(fd,buf,size);
       if(res<0)
@@ -320,7 +320,7 @@ int LocalAccess::Write(const void *buf,int size)
    }
    stream->Kill(SIGCONT);
    int res=Poll(fd,POLLOUT);
-   if(res&(POLLOUT|POLLNVAL))
+   if(res==-1 || (res&(POLLOUT|POLLNVAL)))
    {
       int res=write(fd,buf,size);
       if(res>=0)

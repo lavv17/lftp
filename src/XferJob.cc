@@ -50,7 +50,6 @@ char *XferJob::Percent()
 char *XferJob::CurrRate(float rate)
 {
    static char speed[40];
-   time_t now=time(0);
    speed[0]=0;
    if(now-start_time>3 && now-last_bytes<30 && rate!=0)
    {
@@ -71,7 +70,6 @@ char *XferJob::CurrRate(float rate)
 char *XferJob::CurrETA(float rate)
 {
    static char eta_str[20];
-   time_t now=time(0);
    eta_str[0]=0;
    if(size>0 && rate>1 && now-last_bytes<30 && now-start_time>3 && size>=offset)
    {
@@ -108,7 +106,6 @@ void  XferJob::ShowRunStatus(StatusLine *s)
       return;
    }
 
-   time_t now=time(0);
    const char *st=session->CurrentStatus();
 
    if(now==last_status_update && !strncmp(st,last_status,sizeof(last_status)))
@@ -138,7 +135,7 @@ void  XferJob::SayFinal()
       return;
    if(bytes_transferred)
    {
-      if(end_time>start_time+1)
+      if(end_time>start_time)
       {
 	 long sec=end_time-start_time;
 	 printf(plural("%ld $#l#byte|bytes$ transferred"
@@ -224,7 +221,8 @@ void XferJob::NextFile(char *f)
 
    if(!curr)
    {
-      time(&end_time);
+      end_time=now;
+      end_time_ms=now_ms;
    }
    else
    {
@@ -284,8 +282,11 @@ XferJob::XferJob(FileAccess *f) : SessionJob(f)
    file_count=0;
    failed=0;
    offset=0;
-   time(&start_time);
-   end_time=start_time;
+   UpdateNow();
+   start_time=now;
+   start_time_ms=now_ms;
+   end_time=now;
+   end_time_ms=now_ms;
    last_second=start_time;
    last_bytes=0;
    bytes_transferred=0;
@@ -364,20 +365,18 @@ void XferJob::CountBytes(long res)
       return;
    }
 
-   time_t t=time(0);
-
    float div=60;
-   if(t-start_time<div)
-      div=t-start_time+1;
-   if(t-last_second>div)
-      div=t-last_second;
+   if(now-start_time<div)
+      div=now-start_time+1;
+   if(now-last_second>div)
+      div=now-last_second;
 
-   minute_xfer_rate*=1.-(t-last_second)/div;
+   minute_xfer_rate*=1.-(now-last_second)/div;
    minute_xfer_rate+=res/div;
-   last_second=t;
+   last_second=now;
 
    if(res>0)
-      last_bytes=t;
+      last_bytes=now;
 }
 
 void  XferJob::RateDrain()
@@ -385,11 +384,11 @@ void  XferJob::RateDrain()
    if(!session || session->IsOpen())
    {
       CountBytes(0);
-      block+=TimeOut(4000);
+      block+=TimeOut(1000);
    }
    else
    {
-      last_second=time(0);
+      last_second=now;
    }
 }
 
@@ -482,4 +481,10 @@ int   XferJob::Done()
       return false;
    NextFile();
    return curr==0;
+}
+
+float XferJob::xfer_rate()
+{
+   float how_long = (end_time-start_time) + (end_time_ms-start_time_ms)/1000.0;
+   return bytes_transferred/how_long;
 }

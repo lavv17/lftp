@@ -175,6 +175,7 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
 	 " -r, --no-recursion     don't go to subdirectories\n"
 	 " -p, --no-perms         don't set file permissions\n"
 	 " -R, --reverse          reverse mirror (put files)\n"
+	 " -L, --dereference      download symbolic links as files\n"
 	 " -N, --newer-than FILE  download only files newer than the file\n"
 	 " -i RX, --include RX    include matching files (only one allowed)\n"
 	 " -x RX, --exclude RX    exclude matching files (only one allowed)\n"
@@ -239,8 +240,9 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
 	 N_("Same as `nlist', but don't look in cache\n")},
    {"reput",   &do_put,	   N_("reput <lfile> [-o <rfile>]"),
 	 N_("Same as `put -c'\n")},
-   {"rm",      &do_rm,	   N_("rm <files>"),
-	 N_("Remove remote files\n")},
+   {"rm",      &do_rm,	   N_("rm [-r] <files>"),
+	 N_("Remove remote files\n"
+	    " -r  recursive directory remove, be careful\n")},
    {"rmdir",   &do_rm,	   N_("rmdir <dirs>"),
 	 N_("Remove remote directories\n")},
    {"scache",  &do_scache, N_("scache [<session_no>]"),
