@@ -1,3 +1,11 @@
+2005-03-05  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileAccess.cc: don't strip trailing slash in OptimizePath.
+	* Http.cc: send full URL in Destination header; fix Done for a number
+	  of methods.
+	* misc.cc, misc.h: (strip_trailing_slashes) new function.
+	* mvJob.cc: append basename of target ends with a slash.
+
 2005-03-01  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* NetAccess.cc: make TOS changes compile on solaris.

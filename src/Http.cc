@@ -609,11 +609,7 @@ void Http::SendRequest(const char *connection,const char *f)
    case RENAME:
       {
 	 SendMethod("MOVE",efile);
-	 char *efile1=string_alloca(strlen(file1)*3+1);
-	 url::encode_string(file1,efile1,URL_PATH_UNSAFE);
-	 char *pfile1=string_alloca(strlen(ecwd)+1+strlen(efile1)+1+6+1);
-	 DirFile(pfile1,ecwd,efile1);
-	 Send("Destination: %s\r\n",pfile1);
+	 Send("Destination: %s\r\n",GetFileURL(file1));
       }
    }
    SendAuth();
@@ -1707,6 +1703,9 @@ int Http::Done()
    if(state==DONE)
       return OK;
    if(mode==CONNECT_VERIFY && (peer || sock!=-1))
+      return OK;
+   if((mode==REMOVE || mode==REMOVE_DIR || mode==RENAME)
+   && state==RECEIVING_BODY)
       return OK;
    return IN_PROGRESS;
 }

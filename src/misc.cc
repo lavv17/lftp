@@ -804,14 +804,17 @@ char *dirname_alloc(const char *fn)
    char *ret=xstrdup(fn);
    return dirname_modify(ret);
 }
-char *dirname_modify(char *ret)
+char *strip_trailing_slashes(char *ret)
 {
    int len=strlen(ret);
-
-   /* remove trailing slashes */
    while(len>0 && ret[len-1]=='/')
-      ret[--len] = 0;
-
+      len--;
+   ret[len]=0;
+   return ret;
+}
+char *dirname_modify(char *ret)
+{
+   strip_trailing_slashes(ret);
    char *slash=strrchr(ret,'/');
    if(!slash)
       ret[0]=0; /* file with no path */

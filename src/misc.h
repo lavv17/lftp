@@ -111,6 +111,7 @@ char *xasprintf(const char *format, ...);
 
 char *dirname_alloc(const char *fn);
 char *dirname_modify(char *fn);
+char *strip_trailing_slashes(char *fn);
 
 /* returns last character of string or \0 if string is empty */
 char last_char(const char *str);

@@ -22,10 +22,18 @@
 #include <errno.h>
 #include "trio.h"
 #include "mvJob.h"
+#include "misc.h"
 
 mvJob::mvJob(FileAccess *session,const char *from,const char *to) : SessionJob(session)
 {
    failed=0;
+   if(last_char(to)=='/')
+   {
+      const char *from_bn=basename_ptr(from);
+      char *to1=alloca_strdup2(to,strlen(from_bn));
+      strcat(to1,from_bn);
+      to=to1;
+   }
    session->Rename(from,to);
 }
 

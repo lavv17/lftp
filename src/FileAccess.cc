@@ -613,8 +613,8 @@ void FileAccess::OptimizePath(char *path)
    {
       if(in[0]=='/')
       {
-	 // double slash or a slash on the end
-	 if(in[1]=='/' || in[1]=='\0')
+	 // double slash
+	 if(in[1]=='/') // || (strip_trailing_slash && in[1]=='\0'))
 	 {
 	    in++;
 	    continue;
@@ -686,6 +686,7 @@ void FileAccess::Chdir(const char *path,bool verify)
    }
 
    OptimizePath(newcwd);
+   strip_trailing_slashes(newcwd);
 
    if(verify)
       Open(newcwd,CHANGE_DIR);
