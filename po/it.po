@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2.3\n"
-"POT-Creation-Date: 2002-08-02 12:43+0400\n"
+"POT-Creation-Date: 2002-08-06 16:36+0400\n"
 "PO-Revision-Date: 2000-06-18 10:46+02:00\n"
 "Last-Translator: Giovanni Bortolozzo <borto@pluto.linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -263,18 +263,18 @@ msgstr "Cancellazione del vecchio file remoto `%s'"
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1067 src/commands.cc:952 src/commands.cc:1044
-#: src/commands.cc:1429 src/commands.cc:1463 src/commands.cc:1563
-#: src/commands.cc:1819 src/commands.cc:2013 src/commands.cc:2187
-#: src/commands.cc:2194 src/commands.cc:2376 src/commands.cc:2404
-#: src/commands.cc:2411 src/commands.cc:2738 src/commands.cc:2999
+#: src/MirrorJob.cc:1067 src/commands.cc:952 src/commands.cc:1048
+#: src/commands.cc:1433 src/commands.cc:1467 src/commands.cc:1567
+#: src/commands.cc:1823 src/commands.cc:2017 src/commands.cc:2191
+#: src/commands.cc:2198 src/commands.cc:2380 src/commands.cc:2408
+#: src/commands.cc:2415 src/commands.cc:2742 src/commands.cc:3003
 #: src/SleepJob.cc:139
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Usare `help %s' per maggiori informazioni.\n"
 
 #: src/MirrorJob.cc:1101 src/MirrorJob.cc:1117 src/commands.cc:817
-#: src/commands.cc:1907 src/DummyProto.cc:73
+#: src/commands.cc:1911 src/DummyProto.cc:73
 msgid " - not supported protocol"
 msgstr "- protocollo non supportato"
 
@@ -1308,7 +1308,7 @@ msgstr "Usare `%s --help' per maggiori informazioni\n"
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 msgstr "Uso: %s [-e cmd] [-p porta] [-u utente,[password]] <host|url>\n"
 
-#: src/commands.cc:863 src/commands.cc:1891
+#: src/commands.cc:863 src/commands.cc:1895
 msgid "Password: "
 msgstr "Password: "
 
@@ -1322,169 +1322,169 @@ msgstr "%s: GetPass() fallita -- assumo login anonimo\n"
 msgid "Usage: %s [OPTS] command args...\n"
 msgstr "Uso: %s [OPZ] comando arg...\n"
 
-#: src/commands.cc:1014 src/commands.cc:1541
+#: src/commands.cc:1018 src/commands.cc:1545
 #, c-format
 msgid "%s: -n: Number expected. "
 msgstr "%s: -n: Ci vuole un numero. "
 
-#: src/commands.cc:1066
+#: src/commands.cc:1070
 msgid "Created a stopped queue.\n"
 msgstr ""
 
-#: src/commands.cc:1110 src/commands.cc:1140
+#: src/commands.cc:1114 src/commands.cc:1144
 #, c-format
 msgid "%s: No queue is active.\n"
 msgstr ""
 
-#: src/commands.cc:1132
+#: src/commands.cc:1136
 #, fuzzy, c-format
 msgid "%s: -m: Number expected as second argument. "
 msgstr "%s: -n: Ci vuole un numero. "
 
-#: src/commands.cc:1164
+#: src/commands.cc:1168
 msgid "Can only edit plain queues.\n"
 msgstr ""
 
-#: src/commands.cc:1177
+#: src/commands.cc:1181
 #, c-format
 msgid "Couldn't create temporary file `%s': %s.\n"
 msgstr ""
 
-#: src/commands.cc:1183
+#: src/commands.cc:1187
 #, c-format
 msgid "%s: error writing %s: %s\n"
 msgstr ""
 
-#: src/commands.cc:1238
+#: src/commands.cc:1242
 #, c-format
 msgid "Usage: %s <cmd>\n"
 msgstr "Uso: %s <cmd>\n"
 
-#: src/commands.cc:1330
+#: src/commands.cc:1334
 msgid "invalid argument for `--sort'"
 msgstr ""
 
-#: src/commands.cc:1349
+#: src/commands.cc:1353
 #, fuzzy
 msgid "invalid block size"
 msgstr "numero non valido"
 
-#: src/commands.cc:1397
+#: src/commands.cc:1401
 #, fuzzy
 msgid "invalid option"
 msgstr "numero non valido"
 
-#: src/commands.cc:1472
+#: src/commands.cc:1476
 #, c-format
 msgid "Usage: %s [OPTS] files...\n"
 msgstr "Uso: %s [OPZ] file...\n"
 
-#: src/commands.cc:1574
+#: src/commands.cc:1578
 #, c-format
 msgid "File name missed. "
 msgstr "Manca il nome del file. "
 
-#: src/commands.cc:1683
+#: src/commands.cc:1687
 #, fuzzy, c-format
 msgid "Usage: %s %s[-f] files...\n"
 msgstr "Uso: %s [-r] [-f] file...\n"
 
-#: src/commands.cc:1721
+#: src/commands.cc:1725
 #, c-format
 msgid "Usage: %s <file>\n"
 msgstr "Uso: %s <file>\n"
 
-#: src/commands.cc:1743
+#: src/commands.cc:1747
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
 msgstr "Uso: %s [-v] [-v] ...\n"
 
-#: src/commands.cc:1771
+#: src/commands.cc:1775
 #, c-format
 msgid "Usage: %s [-p]\n"
 msgstr "Uso: %s [-p]\n"
 
-#: src/commands.cc:1858
+#: src/commands.cc:1862
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
 msgstr "il livello di debug è %d, l'output va su %s\n"
 
-#: src/commands.cc:1861
+#: src/commands.cc:1865
 msgid "debug is off\n"
 msgstr "il debug è off\n"
 
-#: src/commands.cc:1872
+#: src/commands.cc:1876
 #, c-format
 msgid "Usage: %s userid [pass]\n"
 msgstr "Uso: %s userid [pass]\n"
 
-#: src/commands.cc:1947 src/commands.cc:2121
+#: src/commands.cc:1951 src/commands.cc:2125
 #, c-format
 msgid "%s: no current job\n"
 msgstr "%s: nessun job corrente\n"
 
-#: src/commands.cc:1957 src/commands.cc:1987 src/commands.cc:2129
+#: src/commands.cc:1961 src/commands.cc:1991 src/commands.cc:2133
 #, c-format
 msgid "%s: %d - no such job\n"
 msgstr "%s: %d - job non esistente\n"
 
-#: src/commands.cc:1959
+#: src/commands.cc:1963
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
 msgstr "Uso: %s <numjob> ...| all\n"
 
-#: src/commands.cc:1978 src/commands.cc:2111 src/commands.cc:2256
-#: src/commands.cc:2542 src/commands.cc:2617 src/commands.cc:3011
+#: src/commands.cc:1982 src/commands.cc:2115 src/commands.cc:2260
+#: src/commands.cc:2546 src/commands.cc:2621 src/commands.cc:3015
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s: %s - non è un numero\n"
 
-#: src/commands.cc:2043
+#: src/commands.cc:2047
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr "%s: %s. Usare `set -a' per vedere tutte le variabili.\n"
 
-#: src/commands.cc:2093
+#: src/commands.cc:2097
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
 msgstr "Uso: %s [<numjob>]\n"
 
-#: src/commands.cc:2134
+#: src/commands.cc:2138
 #, c-format
 msgid "%s: some other job waits for job %d\n"
 msgstr "%s: qualche altro job è in attesa del job %d\n"
 
-#: src/commands.cc:2139
+#: src/commands.cc:2143
 #, c-format
 msgid "%s: wait loop detected\n"
 msgstr ""
 
-#: src/commands.cc:2164
+#: src/commands.cc:2168
 #, c-format
 msgid "Usage: mv <file1> <file2>\n"
 msgstr "Uso: mv <file1> <file2>\n"
 
-#: src/commands.cc:2186 src/commands.cc:2403
+#: src/commands.cc:2190 src/commands.cc:2407
 #, c-format
 msgid "Invalid command. "
 msgstr "Comando non valido. "
 
-#: src/commands.cc:2193 src/commands.cc:2410
+#: src/commands.cc:2197 src/commands.cc:2414
 #, c-format
 msgid "Ambiguous command. "
 msgstr "Comando ambiguo."
 
-#: src/commands.cc:2212
+#: src/commands.cc:2216
 #, c-format
 msgid "%s: Operand missed for size\n"
 msgstr "%s: Manca l'operando per la dimensione\n"
 
-#: src/commands.cc:2229
+#: src/commands.cc:2233
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
 msgstr "%s: Manca l'operando per `expire'\n"
 
-#: src/commands.cc:2262
+#: src/commands.cc:2266
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
@@ -1492,125 +1492,125 @@ msgstr ""
 "%s: %s - non c'è questa sessione in cache. Usare `scache' per vedere\n"
 "un elenco delle sessioni.\n"
 
-#: src/commands.cc:2279
+#: src/commands.cc:2283
 #, c-format
 msgid "Sorry, no help for %s\n"
 msgstr "Spiacente, nessun aiuto per %s\n"
 
-#: src/commands.cc:2284
+#: src/commands.cc:2288
 #, c-format
 msgid "%s is a built-in alias for %s\n"
 msgstr "%s è un alias interno per %s\n"
 
-#: src/commands.cc:2289
+#: src/commands.cc:2293
 #, c-format
 msgid "Usage: %s\n"
 msgstr "Uso: %s\n"
 
-#: src/commands.cc:2297
+#: src/commands.cc:2301
 #, c-format
 msgid "%s is an alias to `%s'\n"
 msgstr "%s è un alias per `%s'\n"
 
-#: src/commands.cc:2301
+#: src/commands.cc:2305
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr ""
 "`%s' comando inesistente. Usare `help' per vedere i comandi disponibili.\n"
 
-#: src/commands.cc:2303
+#: src/commands.cc:2307
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr "`%s' comando ambiguo. Usare `help' per vedere i comandi disponibili.\n"
 
-#: src/commands.cc:2354
+#: src/commands.cc:2358
 #, fuzzy, c-format
 msgid "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 msgstr "Lftp | Versione %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"
 
-#: src/commands.cc:2356
+#: src/commands.cc:2360
 msgid ""
 "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
 msgstr ""
 "Questo è un software libero ASSOLUTAMENTE NON GARANTITO. Si veda il file\n"
 "COPYNG per i dettagli.\n"
 
-#: src/commands.cc:2358
+#: src/commands.cc:2362
 #, c-format
 msgid "Send bug reports and questions to <%s>.\n"
 msgstr "Inviare segnalazioni di bug e domande a <%s>.\n"
 
-#: src/commands.cc:2428 src/commands.cc:2460
+#: src/commands.cc:2432 src/commands.cc:2464
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s: serve un nome di bookmark\n"
 
-#: src/commands.cc:2449
+#: src/commands.cc:2453
 #, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
 msgstr "%s: non sono permessi gli spazi bianchi nei nomi dei bookmark\n"
 
-#: src/commands.cc:2462
+#: src/commands.cc:2466
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s: bookmark `%s' inesistente\n"
 
-#: src/commands.cc:2477
+#: src/commands.cc:2481
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: importa il tipo richiesto (netscape, ncftp)\n"
 
-#: src/commands.cc:2548
+#: src/commands.cc:2552
 #, fuzzy, c-format
 msgid "Usage: %s [-d #] dir\n"
 msgstr "Uso: %s [-p]\n"
 
-#: src/commands.cc:2648
+#: src/commands.cc:2652
 #, fuzzy, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "numero non valido"
 
-#: src/commands.cc:2663
+#: src/commands.cc:2667
 #, fuzzy, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "Uso: %s [-p]\n"
 
-#: src/commands.cc:2669
+#: src/commands.cc:2673
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr ""
 
-#: src/commands.cc:2673
+#: src/commands.cc:2677
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr ""
 
-#: src/commands.cc:2725
+#: src/commands.cc:2729
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "Uso: %s comando arg...\n"
 
-#: src/commands.cc:2737
+#: src/commands.cc:2741
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "Uso: %s modulo [arg...]\n"
 
-#: src/commands.cc:2755 src/LocalAccess.cc:600
+#: src/commands.cc:2759 src/LocalAccess.cc:600
 #, fuzzy
 msgid "cannot get current directory"
 msgstr "Cambio la directory remota..."
 
-#: src/commands.cc:2816
+#: src/commands.cc:2820
 #, fuzzy, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "Uso: %s [OPZ] file...\n"
 
-#: src/commands.cc:2835
+#: src/commands.cc:2839
 #, fuzzy, c-format
 msgid "invalid mode string: %s\n"
 msgstr "numero non valido"
 
-#: src/commands.cc:2893
+#: src/commands.cc:2897
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "Uso: %s [OPZ] <file>\n"
