@@ -787,16 +787,18 @@ char *dirname_alloc(const char *fn)
    return ret;
 }
 
+#include <termios.h>
+
 #if defined(HAVE_CURSES_H)
-#include <curses.h>
+# include <curses.h>
+# if defined(HAVE_TERM_H)
+#  include <term.h>
+# endif
 #elif defined(HAVE_NCURSES_CURSES_H)
 #include <ncurses/curses.h>
-#endif
-
-#if defined(HAVE_TERM_H)
-#include <term.h>
-#elif defined(HAVE_NCURSES_TERM_H)
-#include <ncurses/term.h>
+# if defined(HAVE_NCURSES_TERM_H)
+#  include <ncurses/term.h>
+# endif
 #endif
 
 #if defined(HAVE_TIGETSTR)

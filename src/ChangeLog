@@ -1,5 +1,9 @@
 2002-08-02  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* misc.cc: include termios.h for solaris 9.
+
+2002-08-02  Alexander V. Lukyanov <lav@yars.free.net>
+
 	* MirrorJob.cc: append source basename to target if target ends with
 	  a slash.
 
