@@ -303,6 +303,7 @@ bool Ftp::Transient5XX(int act)
    if((strstr(line,"Broken pipe") && (!file || !strstr(file,"Broken pipe")))
    || (strstr(line,"Too many")    && (!file || !strstr(file,"Too many")))
    || (strstr(line,"timed out")   && (!file || !strstr(file,"timed out")))
+   || (strstr(line,"closed by the remote host"))
    // if there were some data received, assume it is temporary error.
    || (mode!=STORE && (flags&IO_FLAG)))
       return true;
