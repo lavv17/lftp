@@ -231,6 +231,7 @@ void Http::SendMethod(const char *method,const char *efile)
    Send("%s %s HTTP/1.1\r\n",method,efile);
    Send("Host: %s\r\n",url::encode_string(hostname));
    Send("User-Agent: %s/%s\r\n","lftp",VERSION);
+   Send("Accept: */*\r\n");
 }
 
 

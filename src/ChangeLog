@@ -1,3 +1,7 @@
+1999-07-24  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Http.cc: send `Accept: */*', it is needed for some http servers.
+
 1999-07-20  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Resolver.cc: make it compile on sunos551.
