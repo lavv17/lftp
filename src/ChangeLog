@@ -1,6 +1,7 @@
 2004-04-02  Alexander V. Lukyanov <lav@yars.free.net>
 
-	* ftpclass.cc, ftpclass.h: fix compilation without ssl.
+	* ftpclass.cc, ftpclass.h: fix compilation without ssl; fixed coredump
+	  in case of some network errors.
 
 2004-03-25  Alexander V. Lukyanov <lav@yars.free.net>
 

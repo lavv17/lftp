@@ -2120,9 +2120,9 @@ int   Ftp::Do()
       if(conn->data_iobuf->Error())
       {
 	 DebugPrint("**** ",conn->data_iobuf->ErrorText(),0);
+	 conn->quit_sent=true;
 	 if(conn->data_iobuf->ErrorFatal())
 	    SetError(FATAL,conn->data_iobuf->ErrorText());
-	 conn->quit_sent=true;
 	 Disconnect();
 	 return MOVED;
       }
@@ -2463,9 +2463,9 @@ int  Ftp::ReceiveResp()
    if(conn->control_recv->Error())
    {
       DebugPrint("**** ",conn->control_recv->ErrorText(),0);
+      conn->quit_sent=true;
       if(conn->control_recv->ErrorFatal())
 	 SetError(FATAL,conn->control_recv->ErrorText());
-      conn->quit_sent=true;
       Disconnect();
       return MOVED;
    }
@@ -2601,7 +2601,7 @@ bool Ftp::HttpProxyReplyCheck(IOBuffer *buf)
       }
       else if(buf->Eof())
 	 DebugPrint("**** ",_("Peer closed connection"),0);
-      if(buf->Eof() || buf->Error())
+      if(conn && (buf->Eof() || buf->Error()))
       {
 	 conn->quit_sent=true;
 	 Disconnect();
@@ -2632,8 +2632,6 @@ bool Ftp::HttpProxyReplyCheck(IOBuffer *buf)
 	    return false;
 	 }
 	 SetError(FATAL,all_lines);
-	 conn->quit_sent=true;
-	 Disconnect();
 	 return false;
       }
    }
@@ -2908,9 +2906,9 @@ int  Ftp::FlushSendQueue(bool all)
    if(conn->control_send->Error())
    {
       DebugPrint("**** ",conn->control_send->ErrorText(),0);
+      conn->quit_sent=true;
       if(conn->control_send->ErrorFatal())
 	 SetError(FATAL,conn->control_send->ErrorText());
-      conn->quit_sent=true;
       Disconnect();
       return MOVED;
    }
