@@ -79,7 +79,10 @@ void CatJob::NextFile()
 
    FileCopyPeerFDStream *dst_peer=0;
    if(for_each)
+   {
       dst_peer=new FileCopyPeerFDStream(new OutputFilter(for_each,global),FileCopyPeer::PUT);
+      dst_peer->DontCreateFgData();
+   }
    else
    {
       dst_peer=new FileCopyPeerFDStream(global,FileCopyPeer::PUT);
