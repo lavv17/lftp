@@ -289,6 +289,7 @@ public:
    int   Write(const void *buf,int size);
    int   Buffered();
    void  Close();
+   bool	 IOReady();
 
 	 // When you are putting a file, call SendEOT to terminate
 	 // transfer and then call StoreStatus until OK or error.

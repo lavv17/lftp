@@ -1,3 +1,8 @@
+	* commands.cc: disallow spaces in bookmark names.
+	* ftpclass.cc, ftpclass.h: (IOReady) implemented; check for space
+	  in last line of multiline response; use is_ascii_digit.
+	* FileAccess.h: (IOReady) new method.
+
 1999-11-22  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileAccess.cc: try_time=0 is the same as DontSleep().

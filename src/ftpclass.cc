@@ -47,7 +47,6 @@ enum {FTP_TYPE_A,FTP_TYPE_I};
 #define	TELNET_SYNCH	242		/* for telfunc calls */
 
 #include <errno.h>
-#include <ctype.h>
 #include <time.h>
 #include <assert.h>
 
@@ -451,7 +450,7 @@ int   Ftp::Handle_PASV()
    {
       if(*b==0)
 	 return INITIAL_STATE;
-      if(!isdigit((unsigned char)*b))
+      if(!is_ascii_digit(*b))
 	 continue;
       if(sscanf(b,"%u,%u,%u,%u,%u,%u",&a0,&a1,&a2,&a3,&p0,&p1)==6)
          break;
@@ -582,7 +581,7 @@ int   Ftp::CatchSIZE(int act,int)
 
    if(act/100==2)
    {
-      if(strlen(line)>4 && isdigit(line[4]))
+      if(strlen(line)>4 && is_ascii_digit(line[4]))
 	 array_for_info[array_ptr].size=atol(line+4);
       else
 	 array_for_info[array_ptr].size=-1;
@@ -609,7 +608,7 @@ int   Ftp::CatchSIZE_opt(int act,int)
    if(!opt_size)
       return state;
 
-   if(act/100==2 && strlen(line)>4 && isdigit(line[4]))
+   if(act/100==2 && strlen(line)>4 && is_ascii_digit(line[4]))
    {
       *opt_size=atol(line+4);
       opt_size=0;
@@ -1682,8 +1681,9 @@ void  Ftp::ReceiveResp()
 
 	    code=0;
 
-	    if(strlen(line)>=3 && isdigit(line[0]))
-	       sscanf(line,"%3d",&code);
+	    if(strlen(line)>=3 && is_ascii_digit(line[0])
+	    && is_ascii_digit(line[1]) && is_ascii_digit(line[2]))
+	       code=atoi(line);
 
 	    int pri=1;
 	    if(code==220 || code==230
@@ -1708,9 +1708,10 @@ void  Ftp::ReceiveResp()
 	    }
 	    if(multiline_code)
 	    {
-	       if(multiline_code!=code)
+	       if(multiline_code!=code || line[3]!=' ')
 		  continue;   // Multiline response can terminate only with
 			      // the same code as it started with.
+			      // The space is required.
 	       multiline_code=0;
 	    }
 	    if(sync_wait>0 && code/100!=1)
@@ -2150,6 +2151,12 @@ Ftp::expected_response *Ftp::FindLastCWD()
    return 0;
 }
 
+bool  Ftp::IOReady()
+{
+   return (state==DATA_OPEN_STATE || state==WAITING_STATE)
+      && real_pos!=-1;
+}
+
 int   Ftp::Read(void *buf,int size)
 {
    int res,shift;
@@ -2162,9 +2169,6 @@ int   Ftp::Read(void *buf,int size)
 
    if(mode==CLOSED)
       return(0);
-
-   if(mode==CHANGE_DIR || mode==MAKE_DIR || mode==REMOVE_DIR || mode==REMOVE)
-      abort();
 
    if(state==WAITING_STATE && RespQueueIsEmpty())
    {
@@ -2467,7 +2471,7 @@ int   Ftp::CheckResp(int act)
    {
       // try to catch size
       char *s=strrchr(line,'(');
-      if(s && isdigit(s[1]))
+      if(s && is_ascii_digit(s[1]))
       {
 	 *opt_size=atol(s+1);
       	 DebugPrint("---- ",_("saw file size in response"));
