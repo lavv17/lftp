@@ -80,7 +80,7 @@ void StatusLine::Clear()
    newstr[0]=0;
    update(newstr);
    update_delayed=false;
-   update_timer.SetMilliSeconds(0);
+   update_timer.SetMilliSeconds(20);
 
    WriteTitle(def_title, fd);
 }

@@ -150,6 +150,7 @@ public:
    void  Unsort();
 
    void	 Exclude(const char *prefix,regex_t *exclude,regex_t *include);
+   void  Exclude(const char *prefix,const char *exclude,const char *include);
    void	 ExcludeDots();
 
    void	 rewind() { ind=0; }

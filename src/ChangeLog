@@ -1,3 +1,14 @@
+2001-11-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: set debug level 4 for `550 No files found' reply.
+
+2001-11-08  Glenn Maynard <g_ld@zewt.org>
+
+	* FileSet.cc, FileSet.h: Added a pattern-exclude() for FileSets.
+	* Fish.h, Http.h, log.h: no need for StatusLine.
+	* StatusLine.cc: StatusLine doesn't update for the first 20ms.
+	* buffer.cc, buffer.h: Added Buffer::Format().
+
 2001-11-06  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* PtyShell.cc: include sys/types.h and sys/ioctl.h.

@@ -126,6 +126,17 @@ void Buffer::Put(const char *buf,int size)
    pos+=size;
 }
 
+void Buffer::Format(const char *f,...)
+{
+   va_list v;
+   va_start(v,f);
+   char *buf = xvasprintf(f, v);
+   va_end(v);
+
+   Put(buf, strlen(buf));
+   xfree(buf);
+}
+
 void Buffer::Skip(int len)
 {
    if(len>in_buffer)

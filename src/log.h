@@ -25,7 +25,6 @@
 
 #include <unistd.h>
 #include <stdlib.h>
-#include "StatusLine.h"
 #include "SMTask.h"
 
 class Log : public SMTask

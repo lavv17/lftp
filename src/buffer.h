@@ -75,6 +75,7 @@ public:
    void UnSkip(int len); // this only works if there were no Put's.
    void Put(const char *buf,int size);
    void Put(const char *buf) { Put(buf,strlen(buf)); }
+   void Format(const char *f,...) PRINTF_LIKE(2,3);
    void PutEOF() { eof=true; PutEOF_LL(); }
 
    // useful for cache.

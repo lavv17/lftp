@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <fnmatch.h>
 #include <assert.h>
 
 #include "misc.h"
@@ -402,6 +403,21 @@ void  FileSet::Exclude(const char *prefix,regex_t *exclude,regex_t *include)
       const char *name=dir_file(prefix,files[i]->name);
       if(!(include && regexec(include,name,0,0,0)==0)
        && ((exclude && regexec(exclude,name,0,0,0)==0)
+	   || (include && !exclude)))
+      {
+	 Sub(i);
+	 i--;
+      }
+   }
+}
+
+void  FileSet::Exclude(const char *prefix,const char *exclude,const char *include)
+{
+   for(int i=0; i<fnum; i++)
+   {
+      const char *name=dir_file(prefix,files[i]->name);
+      if(!(include && fnmatch(include,name,0)==0)
+       && ((exclude && fnmatch(exclude,name,0)==0)
 	   || (include && !exclude)))
       {
 	 Sub(i);

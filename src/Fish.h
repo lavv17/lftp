@@ -24,7 +24,6 @@
 #define FISH_H
 
 #include "NetAccess.h"
-#include "StatusLine.h"
 #include "PtyShell.h"
 
 class Fish : public NetAccess

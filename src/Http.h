@@ -25,7 +25,6 @@
 
 #include "NetAccess.h"
 #include "buffer.h"
-#include "StatusLine.h"
 
 class Http : public NetAccess
 {
