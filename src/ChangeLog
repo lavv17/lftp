@@ -1,3 +1,11 @@
+2001-12-04  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* NetAccess.cc, NetAccess.h: improve GenericParseListInfo so that
+	  multiple modes can be tried.
+	* FtpListInfo.cc, FtpListInfo.h: make it subclass of GenericParseListInfo;
+	  try to guess listing type quickly.
+	* FtpSplitList.cc, FtpSplitList.h: files removed.
+
 2001-12-03  Glenn Maynard <g_ld@zewt.org>
 
 	* FileSetOutput.cc: don't add type suffix if type is not defined.

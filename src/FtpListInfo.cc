@@ -29,225 +29,167 @@
 #include "xstring.h"
 #include <ctype.h>
 #include "xalloca.h"
-#include "FtpSplitList.h"
 #include "misc.h"
 
-#define need_size (need&FileInfo::SIZE)
-#define need_time (need&FileInfo::DATE)
+#define number_of_parsers 5
 
-FtpListInfo::FtpListInfo(Ftp *s)
+FileSet *FtpListInfo::Parse(const char *buf,int len)
 {
-   session=s;
-   get_info=0;
-   get_info_cnt=0;
-   slist=0;
-   state=INITIAL;
+   if(mode==FA::LONG_LIST)
+      return ParseLongList(buf,len);
+   else
+      return ParseShortList(buf,len);
 }
 
-FtpListInfo::~FtpListInfo()
+FileSet *FtpListInfo::ParseLongList(const char *buf,int len)
 {
-   Delete(slist);
-   session->Close();
-   xfree(get_info);
-}
-
-int FtpListInfo::Do()
-{
-   Ftp::fileinfo *cur;
-   FileInfo *file;
-   int res;
-   int m=STALL;
-   FileSet *slist_res;
-   int err;
-
-   if(done)
-      state=DONE;
-
-   switch(state)
+   if(len==0)
    {
-   case(INITIAL):
-      slist=new FtpSplitList(session,session->LONG_LIST);
-      slist->UseCache(use_cache);
-      state=GETTING_LONG_LIST;
-      m=MOVED;
+      mode=FA::LIST;
+      return 0;
+   }
 
-   case(GETTING_LONG_LIST):
-      if(!slist->Done())
-	 return m;
-      if(slist->Error())
+   int err[number_of_parsers];
+   FileSet *set[number_of_parsers];
+   int i;
+   for(i=0; i<number_of_parsers; i++)
+   {
+      err[i]=0;
+      set[i]=new FileSet;
+   }
+
+   char *line=0;
+   int line_alloc=0;
+   int line_len;
+
+   FtpLineParser guessed_parser=0;
+   FileSet **the_set=0;
+   int *the_err=0;
+   int *best_err1=&err[0];
+   int *best_err2=&err[1];
+
+   const char *tz=ResMgr::Query("ftp:timezone",session->GetHostName());
+
+   for(;;)
+   {
+      char *nl=(char*)memchr(buf,'\n',len);
+      if(!nl)
+	 break;
+      line_len=nl-buf;
+      if(line_len>0 && buf[line_len-1]=='\r')
+	 line_len--;
+      if(line_len==0)
       {
-	 SetError(slist->ErrorText());
-      	 Delete(slist);
-	 slist=0;
-	 return MOVED;
+	 len-=nl+1-buf;
+	 buf=nl+1;
+	 continue;
       }
-      slist_res=slist->GetResult();
+      if(line_alloc<line_len+1)
+	 line=string_alloca(line_alloc=line_len+128);
+      memcpy(line,buf,line_len);
+      line[line_len]=0;
 
-      // don't consider empty list to be valid
-      if(slist_res->get_fnum()>0)
-	 result=ParseFtpLongList(*slist_res,&err,
-	    ResMgr::Query("ftp:timezone",session->GetHostName()));
+      len-=nl+1-buf;
+      buf=nl+1;
+
+      if(!guessed_parser)
+      {
+	 for(i=0; i<number_of_parsers; i++)
+	 {
+	    FileInfo *info=(*line_parsers[i])(line,&err[i],tz);
+	    if(info && !strchr(info->name,'/'))
+	       set[i]->Add(info);
+	    else
+	       delete info;
+
+	    if(*best_err1>err[i])
+	       best_err1=&err[i];
+	    if(*best_err2>err[i] && best_err1!=&err[i])
+	       best_err2=&err[i];
+	    if(*best_err2 > (*best_err1+1)*16)
+	    {
+	       i=best_err1-err;
+	       guessed_parser=line_parsers[i];
+	       the_set=&set[i];
+	       the_err=&err[i];
+	       break;
+	    }
+	    if(*best_err1>16)
+	       goto leave; // too many errors with best parser.
+	 }
+      }
       else
-	 err=1;
-
-      if(!result)
-	 result=new FileSet;
-
-      Delete(slist);
-      slist=0;
-      slist_res=0; // note: slist_res is pointer to part of slist
-
-      if(err==0)
-	 goto pre_GETTING_INFO;
-
-      // there were parse errors, try another method
-      slist=new FtpSplitList(session,session->LIST);
-      slist->UseCache(use_cache);
-      state=GETTING_SHORT_LIST;
-      m=MOVED;
-
-   case(GETTING_SHORT_LIST):
-      if(!slist->Done())
-	 return m;
-      if(slist->Error())
       {
-	 SetError(slist->ErrorText());
-      	 Delete(slist);
-	 slist=0;
-	 return MOVED;
+	 FileInfo *info=(*guessed_parser)(line,the_err,tz);
+	 if(info && !strchr(info->name,'/'))
+	    (*the_set)->Add(info);
+	 else
+	    delete info;
       }
-      slist_res=slist->GetResult();
-      result->Merge(slist_res);
-      Delete(slist);
-      slist=0;
-      slist_res=0;
-
-   pre_GETTING_INFO:
-      result->ExcludeDots();
-      if(rxc_exclude || rxc_include)
-	 result->Exclude(path,rxc_exclude,rxc_include);
-
-      state=GETTING_INFO;
-      m=MOVED;
-
-      get_info_cnt=result->get_fnum();
-      if(get_info_cnt==0)
-	 goto info_done;
-
-      get_info=(Ftp::fileinfo*)xmalloc(sizeof(*get_info)*get_info_cnt);
-      cur=get_info;
-
-      get_info_cnt=0;
-      result->rewind();
-      for(file=result->curr(); file!=0; file=result->next())
-      {
-	 cur->get_size = need_size && !(file->defined & file->SIZE);
-	 cur->get_time = need_time && (!(file->defined & file->DATE)
-				       || file->date_prec>0);
-
-	 if(file->defined & file->TYPE)
-	 {
-	    if(file->filetype==file->SYMLINK && follow_symlinks)
-	    {
-	       file->filetype=file->NORMAL;
-	       file->defined &= ~(file->SIZE|file->SYMLINK_DEF|file->MODE|file->DATE);
-	       cur->get_size=true;
-	       cur->get_time=true;
-	    }
-
-	    if(file->filetype==file->SYMLINK)
-	    {
-	       // don't need these for symlinks
-	       cur->get_size=false;
-	       cur->get_time=false;
-	    }
-	    else if(file->filetype==file->DIRECTORY)
-	    {
-	       // don't need size for directories
-	       cur->get_size=false;
-	    }
-	 }
-
-	 if(cur->get_size || cur->get_time)
-	 {
-	    cur->file=file->name;
-	    if(!cur->get_size)
-	       cur->size=-1;
-	    if(!cur->get_time)
-	       cur->time=(time_t)-1;
-	    cur++;
-	    get_info_cnt++;
-	 }
-      }
-      if(get_info_cnt==0)
-	 goto info_done;
-      session->GetInfoArray(get_info,get_info_cnt);
-      state=GETTING_INFO;
-      m=MOVED;
-   case(GETTING_INFO):
-      res=session->Done();
-      if(res==Ftp::DO_AGAIN)
-	 return m;
-      if(res==Ftp::IN_PROGRESS)
-	 return m;
-      if(res!=Ftp::OK)
-      {
-	 SetError(session->StrError(res));
-	 session->Close();
-	 return MOVED;
-      }
-      session->Close();
-
-      for(cur=get_info; get_info_cnt-->0; cur++)
-      {
-	 if(cur->time!=(time_t)-1)
-	    result->SetDate(cur->file,cur->time,0);
-	 if(cur->size!=-1)
-	    result->SetSize(cur->file,cur->size);
-      }
-
-   info_done:
-      xfree(get_info);
-      get_info=0;
-
-      done=true;
-      state=DONE;
-      m=MOVED;
-
-   case(DONE):
-      return m;
    }
-   // can't happen
-   abort();
-   return m;
-}
-
-const char *FtpListInfo::Status()
-{
-   static char s[256];
-   const char *status;
-   switch(state)
+   if(!the_set)
    {
-   case(DONE):
-   case(INITIAL):
-      return "";
-   case(GETTING_LONG_LIST):
-   case(GETTING_SHORT_LIST):
-      if(!slist)
-	 return "";
-      return slist->Status();
-   case(GETTING_INFO):
-      // xgettext:c-format
-      sprintf(s,_("Getting files information (%d%%)"),session->InfoArrayPercentDone());
-      status=session->CurrentStatus();
-      if(status && status[0])
-	 sprintf(s+strlen(s)," [%s]",status);
-      return s;
+      i=best_err1-err;
+      the_set=&set[i];
+      the_err=&err[i];
    }
-   // cat't happen
-   abort();
+leave:
+   for(i=0; i<number_of_parsers; i++)
+      if(&set[i]!=the_set)
+	 delete set[i];
+   // try short list next.
+   if(!the_set || *the_err>0)
+      mode=FA::LIST;
+   return the_set?*the_set:0;
 }
 
+FileSet *FtpListInfo::ParseShortList(const char *buf,int len)
+{
+   FileSet *set=new FileSet;
+   char *line=0;
+   int line_alloc=0;
+   int line_len;
+   for(;;)
+   {
+      // workaround for some ftp servers
+      if(len>=2 && buf[0]=='.' && buf[1]=='/')
+      {
+	 buf+=2;
+	 len-=2;
+      }
+#if 0 // not possible here
+      if(len>=2 && buf[0]=='/' && buf[1]=='/')
+      {
+	 buf++;
+	 len--;
+      }
+#endif
+
+      char *nl=(char*)memchr(buf,'\n',len);
+      if(!nl)
+	 break;
+      line_len=nl-buf;
+      if(line_len>0 && buf[line_len-1]=='\r')
+	 line_len--;
+      if(line_len==0)
+      {
+	 len-=nl+1-buf;
+	 buf=nl+1;
+	 continue;
+      }
+      if(line_alloc<line_len+1)
+	 line=string_alloca(line_alloc=line_len+128);
+      memcpy(line,buf,line_len);
+      line[line_len]=0;
+
+      len-=nl+1-buf;
+      buf=nl+1;
+
+      if(!strchr(line,'/'))
+	 set->Add(new FileInfo(line));
+   }
+   return set;
+}
 
 /*
 total 123
@@ -258,17 +200,13 @@ lrwxrwxrwx   1 lav      root           33 Feb 14 17:45 ltconfig -> /usr/share/li
 NOTE: group may be missing.
 */
 static
-FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
+FileInfo *ParseFtpLongList_UNIX(char *line,int *err,const char *tz)
 {
 #define FIRST_TOKEN strtok(line," \t")
 #define NEXT_TOKEN  strtok(NULL," \t")
 #define ERR do{(*err)++;delete fi;return(0);}while(0)
-   char	 *line=alloca_strdup(line_c);
-   int 	 len=strlen(line);
    int	 tmp;
 
-   if(len==0)
-      return 0;
    if(sscanf(line,"total %d",&tmp)==1)
       return 0;
 
@@ -418,13 +356,8 @@ FileInfo *ParseFtpLongList_UNIX(const char *line_c,int *err,const char *tz)
 07-02-98  11:17AM                13844 Whatsnew.txt
 */
 static
-FileInfo *ParseFtpLongList_NT(const char *line_c,int *err,const char *tz)
+FileInfo *ParseFtpLongList_NT(char *line,int *err,const char *tz)
 {
-   char	 *line=alloca_strdup(line_c);
-   int 	 len=strlen(line);
-
-   if(len==0)
-      return 0;
    char *t = FIRST_TOKEN;
    FileInfo *fi=0;
    if(t==0)
@@ -505,7 +438,7 @@ first character of field is type:
  \t - file name follows.
 */
 static
-FileInfo *ParseFtpLongList_EPLF(const char *line,int *err,const char *)
+FileInfo *ParseFtpLongList_EPLF(char *line,int *err,const char *)
 {
    int len=strlen(line);
    const char *b=line;
@@ -601,14 +534,10 @@ FileInfo *ParseFtpLongList_EPLF(const char *line,int *err,const char *)
                169               11-29-94  09:20  SYSLEVEL.MPT
 */
 static
-FileInfo *ParseFtpLongList_OS2(const char *line_c,int *err,const char *tz)
+FileInfo *ParseFtpLongList_OS2(char *line,int *err,const char *tz)
 {
-   char	 *line=alloca_strdup(line_c);
-   int 	 len=strlen(line);
    FileInfo *fi=0;
 
-   if(len==0)
-      return 0;
    char *t = FIRST_TOKEN;
    if(t==0)
       ERR;
@@ -668,14 +597,10 @@ FileInfo *ParseFtpLongList_OS2(const char *line_c,int *err,const char *tz)
 }
 
 static
-FileInfo *ParseFtpLongList_MacWebStar(const char *line_c,int *err,const char *tz)
+FileInfo *ParseFtpLongList_MacWebStar(char *line,int *err,const char *tz)
 {
-   char	 *line=alloca_strdup(line_c);
-   int 	 len=strlen(line);
    FileInfo *fi=0;
 
-   if(len==0)
-      return 0;
    char *t = FIRST_TOKEN;
    if(t==0)
       ERR;
@@ -799,8 +724,7 @@ FileInfo *ParseFtpLongList_MacWebStar(const char *line_c,int *err,const char *tz
    return fi;
 }
 
-typedef FileInfo *(*ListParser)(const char *line,int *err,const char *tz);
-static ListParser list_parsers[]={
+FtpListInfo::FtpLineParser FtpListInfo::line_parsers[number_of_parsers+1]={
    ParseFtpLongList_UNIX,
    ParseFtpLongList_NT,
    ParseFtpLongList_EPLF,
@@ -808,47 +732,3 @@ static ListParser list_parsers[]={
    ParseFtpLongList_MacWebStar,
    0
 };
-
-FileSet *FtpListInfo::ParseFtpLongList(const FileSet &lines,int *err_ret,const char *tz)
-{
-   FileSet *result;
-   int err;
-   FileSet *best_result=0;
-   int best_err=0x10000000;
-
-   for(ListParser *parser=list_parsers; *parser; parser++)
-   {
-      err=0;
-      result=new FileSet;
-
-      for(int i=0; lines[i]; i++)
-      {
-	 FileInfo *fi=(*parser)(lines[i]->name,&err,tz);
-	 if(fi)
-	 {
-	    if(!strchr(fi->name,'/'))
-	       result->Add(fi);
-	 }
-	 if(err>=best_err)
-	    break;
-      }
-
-      if(err<best_err)
-      {
-	 if(best_result)
-	    delete best_result;
-	 best_result=result;
-	 best_err=err;
-	 result=0;
-      }
-      else
-      {
-	 delete result;
-	 result=0;
-      }
-      if(best_err==0)
-	 break;   // look no further
-   }
-   *err_ret=best_err;
-   return best_result;
-}

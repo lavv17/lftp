@@ -714,7 +714,7 @@ int GenericParseListInfo::Do()
    {
       const char *cache_buffer=0;
       int cache_buffer_size=0;
-      if(use_cache && LsCache::Find(session,"",FA::LONG_LIST,
+      if(use_cache && LsCache::Find(session,"",mode,
 				    &cache_buffer,&cache_buffer_size))
       {
 	 ubuf=new Buffer();
@@ -723,7 +723,7 @@ int GenericParseListInfo::Do()
       }
       else
       {
-	 session->Open("",FA::LONG_LIST);
+	 session->Open("",mode);
 	 session->UseCache(use_cache);
 	 ubuf=new IOBufferFileAccess(session);
 	 if(LsCache::IsEnabled())
@@ -744,18 +744,34 @@ int GenericParseListInfo::Do()
       if(!ubuf->Eof())
 	 return m;
 
-      LsCache::Add(session,"",FA::LONG_LIST,ubuf);
+      LsCache::Add(session,"",mode,ubuf);
 
       // now we have all the index in ubuf; parse it.
       const char *b;
       int len;
       ubuf->Get(&b,&len);
 
-      result=Parse(b,len);
+      int old_mode=mode;
+
+      FileSet *set=Parse(b,len);
+      if(result)
+      {
+	 result->Merge(set);
+	 delete set;
+      }
+      else
+	 result=set;
 
       Delete(ubuf);
       ubuf=0;
       m=MOVED;
+
+      // try another mode? Parse() can set mode to indicate it wants to try it.
+      if(mode!=old_mode)
+	 return m;
+
+      if(!result)
+	 result=new FileSet;
 
       result->ExcludeDots();
       if(rxc_exclude || rxc_include)
@@ -862,6 +878,8 @@ GenericParseListInfo::GenericParseListInfo(FileAccess *s)
 
    get_time_for_dirs=true;
    can_get_prec_time=true;
+
+   mode=FA::LONG_LIST;
 }
 
 GenericParseListInfo::~GenericParseListInfo()

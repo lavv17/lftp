@@ -174,6 +174,7 @@ protected:
    FA::fileinfo *get_info;
    int get_info_cnt;
 
+   int mode;
    Buffer *ubuf;
 
    bool get_time_for_dirs;

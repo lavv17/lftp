@@ -18,7 +18,7 @@ EXTRA_LTLIBRARIES = libnetwork.la proto-ftp.la proto-http.la proto-file.la cmd-m
 pkgverlib_LTLIBRARIES = $(MODULES_LA)
 
 proto_ftp_la_SOURCES  = ftpclass.cc FtpListInfo.cc FtpGlob.cc FtpDirList.cc\
- md5.c ftp-opie.c FtpSplitList.cc FileCopyFtp.cc
+ md5.c ftp-opie.c FileCopyFtp.cc
 proto_http_la_SOURCES = Http.cc HttpDir.cc
 proto_file_la_SOURCES = LocalAccess.cc
 proto_fish_la_SOURCES = Fish.cc
@@ -50,7 +50,7 @@ libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  misc.h misc.cc Http.cc Http.h fg.cc fg.h module.cc module.h modconfig.h\
  resource.cc DummyProto.cc DummyProto.h FtpGlob.cc FtpGlob.h FtpDirList.cc\
  FtpDirList.h ArgV.cc ArgV.h HttpDir.cc HttpDir.h ascii_ctype.h\
- NetAccess.cc NetAccess.h FtpSplitList.h FtpSplitList.cc Speedometer.cc\
+ NetAccess.cc NetAccess.h Speedometer.cc\
  Speedometer.h lftp_ssl.cc lftp_ssl.h netrc.cc netrc.h buffer_ssl.cc\
  buffer_ssl.h Fish.cc Fish.h ColumnOutput.cc ColumnOutput.h FileSetOutput.cc \
  FileSetOutput.h PtyShell.cc PtyShell.h lftp_pty.c lftp_pty.h \

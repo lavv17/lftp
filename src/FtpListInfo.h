@@ -23,34 +23,17 @@
 #ifndef FTPLISTINFO_H
 #define FTPLISTINFO_H
 
-#include "ftpclass.h"
+#include "NetAccess.h"
 
-class FtpListInfo : public ListInfo
+class FtpListInfo : public GenericParseListInfo
 {
-   enum state_t
-      {
-	 INITIAL,
-	 GETTING_LONG_LIST,
-	 GETTING_SHORT_LIST,
-	 GETTING_INFO,
-	 DONE
-      };
-   state_t state;
-   Ftp *session;
-
-   Ftp::fileinfo *get_info;
-   int get_info_cnt;
-
-   class FtpSplitList *slist;
-
+   typedef FileInfo *(*FtpLineParser)(char *line,int *err,const char *tz);
+   static FtpLineParser line_parsers[];
+   FileSet *ParseLongList(const char *buf,int len);
+   FileSet *ParseShortList(const char *buf,int len);
 public:
-   static FileSet *ParseFtpLongList(const FileSet &lines,int *err,const char *tz);
-
-public:
-   FtpListInfo(Ftp *session);
-   virtual ~FtpListInfo();
-   int Do();
-   const char *Status();
+   virtual FileSet *Parse(const char *buf,int len);
+   FtpListInfo(FileAccess *session) : GenericParseListInfo(session) {}
 };
 
 #endif//FTPLISTINFO_H
