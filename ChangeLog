@@ -1,3 +1,7 @@
+1999-09-30	lav
+
+	* acinclude.m4: (READLINE_CHECK) check for header readline/readline.h.
+
 1999-09-29	Andreas Ley <andy@rz.uni-karlsruhe.de>
 
 	* configure.in: fix check for res_search for AIX.
