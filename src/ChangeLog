@@ -1,5 +1,9 @@
 1999-10-13  Alexander V. Lukyanov  <lav@yars.free.net>
 
+	* HttpDir.cc: don't skip line begin early; parse Mini-Proxy listings.
+
+1999-10-13  Alexander V. Lukyanov  <lav@yars.free.net>
+
 	* ResMgr.cc: pass canonic resource name to Reconfig.
 
 1999-10-12  Alexander V. Lukyanov  <lav@yars.free.net>
