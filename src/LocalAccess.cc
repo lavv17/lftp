@@ -681,7 +681,8 @@ LocalDirList::~LocalDirList()
       delete fg_data;
 }
 
-#ifdef MODULE
+#include "modconfig.h"
+#ifdef MODULE_PROTO_FILE
 CDECL void module_init()
 {
    LocalAccess::ClassInit();

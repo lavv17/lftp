@@ -618,7 +618,8 @@ void Fish::ClassInit()
 }
 FileAccess *Fish::New() { return new Fish(); }
 
-#ifdef MODULE
+#include "modconfig.h"
+#ifdef MODULE_PROTO_FISH
 CDECL void module_init()
 {
    Fish::ClassInit();

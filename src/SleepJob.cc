@@ -216,7 +216,8 @@ Job *cmd_at(CmdExec *parent)
 }
 #undef args
 
-#ifdef MODULE
+#include "modconfig.h"
+#ifdef MODULE_CMD_SLEEP
 CDECL void module_init()
 {
    CmdExec::RegisterCommand("sleep",cmd_sleep);

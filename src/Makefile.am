@@ -87,7 +87,7 @@ uninstall-local:
 	    rm -f $(DESTDIR)$(pkglibdir)/$$p; \
 	done
 
-MODULEFLAGS=$(PIC_FLAG) -shared -nostdlib -DMODULE
+MODULEFLAGS=$(PIC_FLAG) -shared -nostdlib
 CXXMODLINK=$(CXXCOMPILE) $(LDFLAGS) $(MODULEFLAGS)
 proto-http.so: Http.cc HttpDir.cc NetAccess.cc
 	@-rm -f $@

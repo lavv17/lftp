@@ -37,6 +37,7 @@
 #include "plural.h"
 #include "getopt.h"
 #include "FindJob.h"
+#include "url.h"
 
 void  MirrorJob::PrintStatus(int v)
 {
@@ -496,6 +497,7 @@ int   MirrorJob::Do()
 	 return MOVED;
       }
       session->Chdir(remote_dir);
+      redirections=0;
       Roll(session);
       state=CHANGING_REMOTE_DIR;
       return MOVED;
@@ -514,6 +516,36 @@ int   MirrorJob::Do()
 	 return STALL;
       if(res<0)
       {
+	 if(res==FA::FILE_MOVED)
+	 {
+	    // cd to another url.
+	    const char *loc_c=session->GetNewLocation();
+	    int max_redirections=ResMgr::Query("xfer:max-redirections",0);
+	    if(loc_c && loc_c[0] && max_redirections>0
+	    && loc_c[strlen(loc_c)-1]=='/')
+	    {
+	       if(++redirections>max_redirections)
+		  goto cd_err_normal;
+	       eprintf(_("%s: received redirection to `%s'\n"),"mirror",loc_c);
+
+	       char *loc=alloca_strdup(loc_c);
+	       session->Close(); // loc_c is no longer valid.
+
+	       ParsedURL u(loc,true);
+
+	       if(!u.proto)
+	       {
+		  url::decode_string(loc);
+		  session->Chdir(loc);
+		  return MOVED;
+	       }
+	       SessionPool::Reuse(session);
+	       session=FA::New(&u);
+	       session->Chdir(u.path);
+	       return MOVED;
+	    }
+	 }
+      cd_err_normal:
 	 eprintf("mirror: %s\n",session->StrError(res));
 	 error_count++;
 	 state=DONE;
@@ -887,6 +919,8 @@ MirrorJob::MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_rem
    remove_source_files=false;
 
    parallel=1;
+
+   redirections=0;
 }
 
 MirrorJob::~MirrorJob()
@@ -1262,7 +1296,8 @@ mode_t MirrorJob::get_mode_mask()
    return mode_mask;
 }
 
-#ifdef MODULE
+#include "modconfig.h"
+#ifdef MODULE_CMD_MIRROR
 CDECL void module_init()
 {
    CmdExec::RegisterCommand("mirror",cmd_mirror);

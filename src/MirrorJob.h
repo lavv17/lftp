@@ -119,6 +119,8 @@ class MirrorJob : public SessionJob
 
    mode_t get_mode_mask();
 
+   int redirections;
+
 public:
    enum
    {

@@ -2011,8 +2011,8 @@ base64_encode (const char *s, char *store, int length)
 }
 
 
-
-#ifdef MODULE
+#include "modconfig.h"
+#ifdef MODULE_PROTO_HTTP
 CDECL void module_init()
 {
    Http::ClassInit();
