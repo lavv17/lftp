@@ -168,7 +168,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	    "     --sort=OPT       - \"name\", \"size\"\n"
 	    " -S                   - sort by file size\n"
 	    "\n"
-	    "By default, ls output is cached, to see new listing use `recls' or\n"
+	    "By default, cls output is cached, to see new listing use `recls' or\n"
 	    "`cache flush'.\n"
 	    "\n"
 	    "The variables cls-default and cls-completion-default can be used to\n"
