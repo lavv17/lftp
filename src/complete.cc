@@ -300,6 +300,8 @@ char **lftp_completion (char *text,int start,int end)
 	 for(int i=0; glob_res[i]; i++)
 	 {
 	    char *s=glob_res[i];
+	    if(!strncmp(s,"total ",6))
+	       continue;
 	    char *space=strrchr(s,' ');
 	    if(space && s[0]=='l' && space>s+5
 	    && !strncmp(space-3," ->",3))
@@ -307,15 +309,11 @@ char **lftp_completion (char *text,int start,int end)
 	       space[-3]=0;
 	       space=strrchr(s,' ');
 	    }
-	    if(s[0]=='d')
-	       rl_completion_append_character='/';
 	    if(space)
 	       memmove(s,space+1,strlen(space));
 	    int len=strlen(s);
 	    if(len>1 && (s[len-1]=='@' || s[len-1]=='*' || s[len-1]=='/'))
 	    {
-	       if(s[len-1]=='/')
-		  rl_completion_append_character='/';
 	       s[len-1]=0;
 	    }
 	 }

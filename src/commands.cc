@@ -1144,7 +1144,10 @@ CMD(alias)
 {
    if(args->count()<2)
    {
-      Alias::List();
+      char *list=Alias::Format();
+      Job *j=new CatJob(output,list,strlen(list));
+      output=0;
+      return j;
    }
    else if(args->count()==2)
    {
