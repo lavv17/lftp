@@ -206,11 +206,15 @@ int url::path_index(const char *base)
 
 void ParsedURL::Combine(char *url,const char *home,bool use_rfc1738)
 {
-   bool is_file=!strcmp(proto,"file");
-   bool is_ftp=(!strcmp(proto,"ftp") || !strcmp(proto,"hftp"));
+   bool is_file=!xstrcmp(proto,"file");
+   bool is_ftp=(!xstrcmp(proto,"ftp") || !xstrcmp(proto,"hftp"));
 
-   strcpy(url,proto);
-   strcat(url,is_file?":":"://");
+   url[0]=0;
+   if(proto)
+   {
+      strcpy(url,proto);
+      strcat(url,is_file?":":"://");
+   }
    if(user && !is_file)
    {
       url::encode_string(user,url+strlen(url),URL_USER_UNSAFE);

@@ -1,3 +1,7 @@
+2001-02-04  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* url.cc: fix Combine when proto==NULL.
+
 2001-02-03  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileCopy.cc, FileFeeder.cc, Filter.cc, Http.cc, LocalAccess.cc,
