@@ -102,16 +102,7 @@ fi
 
 test -z "$enable_static" && enable_static=no
 AM_PROG_LIBTOOL
-
-## get the values out of libtool
-eval `grep '^wl=' libtool`
-eval `grep '^export_dynamic_flag_spec=' libtool`
-eval `grep '^pic_flag=' libtool`
-eval EXPORT_DYNAMIC=\"$export_dynamic_flag_spec\"
-AC_SUBST(EXPORT_DYNAMIC)
-PIC_FLAG="$pic_flag"
-AC_SUBST(PIC_FLAG)
-
+LIBTOOL="$LIBTOOL --silent"
 
 AC_ARG_WITH(socks,
 [  --with-socks            build with SOCKSv4 library],
@@ -148,11 +139,17 @@ AC_ARG_WITH(modules,
 
 if test "$with_modules" = yes; then
    AC_DEFINE(WITH_MODULES)
-   MODULES="proto-ftp.so proto-http.so proto-file.so cmd-mirror.so cmd-sleep.so"
-   MODULES_LA="proto-ftp.la proto-http.la proto-file.la cmd-mirror.la cmd-sleep.la"
+   MODULES_LA="proto-ftp.la proto-http.la proto-file.la cmd-mirror.la cmd-sleep.la libnetwork.la"
+   LFTP_SSL_LDFLAGS=
+   LFTP_SSL_LIBS=
+else
+   LFTP_SSL_LDFLAGS='$(SSL_LDFLAGS)'
+   LFTP_SSL_LIBS='$(SSL_LIBS)'
 fi
 AC_SUBST(MODULES)
 AC_SUBST(MODULES_LA)
+AC_SUBST(LFTP_SSL_LDFLAGS)
+AC_SUBST(LFTP_SSL_LIBS)
 
 dnl Checks for libraries.
 LFTP_CHECK_LIBM
