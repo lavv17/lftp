@@ -27,7 +27,7 @@ libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  xmalloc.cc xmalloc.h FileSet.cc FileSet.h FileCopyFtp.cc FileCopyFtp.h\
  FtpListInfo.cc FtpListInfo.h ftp-opie.c md5.c md5.h log.h log.cc\
  buffer.cc buffer.h url.cc url.h StatusLine.cc StatusLine.h plural.c plural.h\
- misc.h misc.cc Http.cc Http.h fg.cc fg.h module.c module.h modconfig.h\
+ misc.h misc.cc Http.cc Http.h fg.cc fg.h module.cc module.h modconfig.h\
  resource.cc DummyProto.cc DummyProto.h FtpGlob.cc FtpGlob.h FtpDirList.cc\
  FtpDirList.h ArgV.cc ArgV.h HttpDir.cc HttpDir.h ascii_ctype.h\
  NetAccess.cc NetAccess.h FtpSplitList.h FtpSplitList.cc Speedometer.cc\
