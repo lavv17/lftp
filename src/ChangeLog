@@ -1,6 +1,7 @@
 2005-03-09  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopyFtp.cc, ftpclass.h: handle timeout when waiting for ack.
+	* misc.cc: (strip_trailing_slashes) don't strip last slash in root directory.
 
 2005-03-05  Alexander V. Lukyanov <lav@yars.free.net>
 

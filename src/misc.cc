@@ -809,7 +809,10 @@ char *strip_trailing_slashes(char *ret)
    int len=strlen(ret);
    while(len>0 && ret[len-1]=='/')
       len--;
-   ret[len]=0;
+   if(len==0 && ret[0]=='/')
+      len=1+(ret[1]=='/');
+   if(len>0)
+      ret[len]=0;
    return ret;
 }
 char *dirname_modify(char *ret)
