@@ -1190,10 +1190,15 @@ int   Ftp::Do()
       // ssl for anonymous does not make sense.
       if(!ftps && (bool)Query("ssl-allow") && user && pass)
       {
-	 SendCmd("AUTH TLS");
+	 const char *auth=Query("ssl-auth");
+	 SendCmd2("AUTH",auth);
 	 AddResp(234,CHECK_AUTH_TLS);
 	 auth_tls_sent=true;
-	 prot='C';
+	 if(!strcmp(auth,"TLS")
+	 || !strcmp(auth,"TLS-C"))
+	    prot='C';
+	 else
+	    prot='P';
       }
 #endif
       /* fallthrough */
@@ -1211,10 +1216,11 @@ int   Ftp::Do()
       {
 	 SendCmd("PBSZ 0");
 	 AddResp(0,CHECK_IGNORE);
-	 if((bool)Query("ssl-protect-data",hostname))
+	 const char *want_prot=(bool)Query("ssl-protect-data",hostname)?"P":"C";
+	 if(*want_prot!=prot)
 	 {
-	    SendCmd("PROT P");
-	    AddResp(200,CHECK_PROT_P);
+	    SendCmd2("PROT",want_prot);
+	    AddResp(200,CHECK_PROT);
 	 }
       }
 #endif // USE_SSL
@@ -2748,7 +2754,7 @@ void Ftp::CloseRespQueue()
       case(CHECK_CWD_STALE):
 #ifdef USE_SSL
       case(CHECK_AUTH_TLS):
-      case(CHECK_PROT_P):
+      case(CHECK_PROT):
 #endif
 	 break;
       case(CHECK_CWD_CURR):
@@ -3410,9 +3416,9 @@ void Ftp::CheckResp(int act)
 	    SetError(LOGIN_FAILED,_("ftp:ssl-force is set and server does not support or allow SSL"));
       }
       break;
-   case CHECK_PROT_P:
+   case CHECK_PROT:
       if(is2XX(act))
-	 prot='P';
+	 prot^='C'^'P';
       break;
 #endif // USE_SSL
 

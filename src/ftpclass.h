@@ -96,7 +96,7 @@ class Ftp : public NetAccess
       CHECK_TRANSFER	// generic check for transfer
 #ifdef USE_SSL
       ,CHECK_AUTH_TLS,
-      CHECK_PROT_P
+      CHECK_PROT
 #endif
    };
 

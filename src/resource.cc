@@ -110,6 +110,7 @@ static const char *const af_list[]=
 #endif
    0
 };
+static
 const char *OrderValidate(char **s)
 {
    static char *error=0;
@@ -142,6 +143,20 @@ const char *OrderValidate(char **s)
    *s=fixed;
    return 0;
 }
+static
+const char *AuthArgValidate(char **s)
+{
+   for(char *i=*s; *i; i++)
+      *i=to_ascii_upper(*i);
+
+   if(strcmp(*s,"SSL")
+   && strcmp(*s,"TLS")
+   && strcmp(*s,"TLS-P")
+   && strcmp(*s,"TLS-C"))
+      return _("ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C");
+
+   return 0;
+}
 
 // Static array of objects is wrongly initialized by IRIX CC and Unixware c++.
 // So here goes list of arbitrarily named objects, they are not refered by name.
@@ -168,6 +183,7 @@ static ResDecl
    ResDecl11a("ftp:ssl-allow",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl11b("ftp:ssl-force",		  "no",	   ResMgr::BoolValidate,0),
    ResDecl11c("ftp:ssl-protect-data",	  "no",	   ResMgr::BoolValidate,0),
+   ResDecl11d("ftp:ssl-auth",		  "TLS",   ResMgr::BoolValidate,AuthArgValidate),
 #endif
    ResDecl12 ("ftp:stat-interval",	  "1",	   ResMgr::UNumberValidate,0),
    ResDecl13 ("ftp:sync-mode",		  "on",    ResMgr::BoolValidate,0),
