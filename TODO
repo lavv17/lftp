@@ -58,3 +58,7 @@ currently; some need other work to be done.
  * safety: options for permanent backup, maybe complain instead of overwriting.
 
  * mirror: add settings like mirror:default-time-prec. make default 0?.
+
+ * ascii mode?
+
+ * intelligently squeeze file name in status line.
