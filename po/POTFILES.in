@@ -9,10 +9,8 @@ src/MirrorJob.cc
 src/ResMgr.cc
 src/Resolver.cc
 src/SysCmdJob.cc
-src/XferJob.cc
 src/commands.cc
 src/ftpclass.cc
-src/ftpget.cc
 src/lftp.cc
 src/mgetJob.cc
 src/mkdirJob.cc
@@ -28,3 +26,5 @@ src/FtpGlob.cc
 src/HttpDir.cc
 src/ChmodJob.cc
 src/TreatFileJob.cc
+src/CopyJob.cc
+src/FileCopy.cc

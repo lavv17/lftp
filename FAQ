@@ -3,5 +3,5 @@ A: Some common installation problems are described in the INSTALL file.
    If your case is not covered, please send problem report.
 
 Q: How can I see greeting message from server?
-A: Try `debug 0'. It is disabled by default to keep screen clear in case
+A: Try `debug 3'. It is disabled by default to keep screen clear in case
    of several simultaneous connections.

@@ -179,8 +179,7 @@ int FtpCopy::ProcessURL(const char *url,Ftp **session,char **file,FileAccess *de
       new_session=FileAccess::New(pu.proto);
       if(!new_session)
       {
-	 eprintf(_("%s: %s - not supported protocol\n"),
-		  op,pu.proto);
+	 eprintf("%s: %s%s\n",op,pu.proto,_(" - not supported protocol"));
 	 return -1;
       }
       char *pass=pu.pass;

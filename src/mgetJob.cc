@@ -74,7 +74,7 @@ void mgetJob::LocalGlob(const char *p)
    glob(p,0,0,&pglob);
    if(pglob.gl_pathc==0)
    {
-      fprintf(stderr,_("%s: no such files\n"),p);
+      fprintf(stderr,_("%s: no files found\n"),p);
       return;
    }
    for(i=0; i<(int)pglob.gl_pathc; i++)

@@ -612,8 +612,8 @@ Job *CmdExec::builtin_open()
 	       new_session=FileAccess::New(p);
 	       if(!new_session)
 	       {
-		  eprintf("%s: %s%s",args->a0(),p,
-			   _(" - not supported protocol\n"));
+		  eprintf("%s: %s%s\n",args->a0(),p,
+			   _(" - not supported protocol"));
 		  return 0;
 	       }
 	    }
@@ -1305,8 +1305,8 @@ CMD(user)
 	 }
 	 else
 	 {
-	    eprintf("%s: %s%s",args->a0(),u.proto,
-		     _(" - not supported protocol\n"));
+	    eprintf("%s: %s%s\n",args->a0(),u.proto,
+		     _(" - not supported protocol"));
 	    return 0;
 	 }
       }

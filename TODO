@@ -37,8 +37,6 @@ currently; some need other work to be done.
  * mirror: --log=file write actions to file, --script=file prepare script of
    actions to be done.
 
-+* FileCopy class. (use it in get, put)
-
  * `local' command to swap local/remote, e.g.
       mirror -R = local mirror
       put = local get
@@ -47,9 +45,7 @@ currently; some need other work to be done.
 
  * mirror: add settings like mirror:default-time-prec. make default 0?.
 
-+* ascii mode
-
- * intelligently squeeze file name in status line.
+ * more intelligently squeeze file name in status line.
 
  * parallel get's in mirror, mget
 +* make a command get1 to get single file with extra options.
@@ -80,25 +76,23 @@ currently; some need other work to be done.
 
  * motd. if it is not yet known, connect/login and get it. (use class Buffer).
 
-+* xfer:avg-rate, xfer:avg-eta (number of seconds to get average on).
-+* class speedometer.
-
  * use NDIR (from RFC1127) in FtpListInfo, when long list cannot be parsed.
 
  * parse anonftpd listings (ftp://vgsn.glasnet.ru)
 
-+* in get,cat, etc (FileCopy class) try RereadManual if output is seekable.
-
- * help for queue
++* help for queue
 
  * use FileSet in Glob.
 
  * specify directory for ListInfo.
 
-+* glob urls; completion in URLs.
-
-+* password migration between sessions.
 +* login ftp://user@host to remember password for the site.
 
-+* ascii conversion. (in file: too)
-+* url globbing finish; url completion.
+ * optimize help text, introduce a phrase separator for separate translations.
+
+ * optionally follow http redirections
+   the best way would be to return a error from Http to FileCopy, and
+   FileCopy would change get or put accordingly.
+
+ * make FtpCopy a child of FileCopy. Put a code for its creation in various
+   places. An utility function for this?
