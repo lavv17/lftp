@@ -1,3 +1,16 @@
+Version 3.0.4 - 2004-05-24
+
+* encrypted FXP is now supported with CPSV or SSCN commands.
+* new setting ftp:ssl-protect-fxp (default is no).
+* cpu usage optimizations, sftp speed-up.
+* fixed uploading of zero sized files over ftp.
+* fixed coredump when AUTH SSL was used and the server refused to setup
+  ssl connection.
+* fixed coredump on unexpected extra ftp server reply.
+* added workaround for ftp servers violating RFC2389 (format of FEAT reply).
+* added workaround for ftp servers which refuse to switch to utf-8 before login.
+* fixed compilation on systems without strtok_r.
+
 Version 3.0.3 - 2004-04-23
 
 * cls for sftp can now print symbolic user, group and number of hard links.

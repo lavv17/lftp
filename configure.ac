@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.53)
-AC_INIT([lftp], [3.0.3], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [3.0.4], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
 AM_CONFIG_HEADER(include/config.h)
@@ -138,32 +138,55 @@ if test x$gt_cv_func_gettext_libintl = xyes; then
 fi
 
 AC_ARG_WITH(socks,
-[  --with-socks            build with SOCKSv4 library],
+[  --with-socks[=/path]    build with SOCKSv4 library],
 [  with_socks=$withval;	],
 [  with_socks=no;	])
+AC_ARG_WITH(socks5,
+[  --with-socks5[=/path]   build with SOCKSv5 library],
+[  with_socks5=$withval;],
+[  with_socks5=no;	])
+AC_ARG_WITH(socksdante,
+[  --with-socksdante[=/path]  build with SOCKS-Dante library],
+[  with_socksdante=$withval;],
+[  with_socksdante=no;	])
+
+case "$with_socks" in
+yes|no|"") ;;
+*)	 socks_loc=$with_socks
+	 with_socks=yes;;
+esac
+case "$with_socks5" in
+yes|no|"") ;;
+*)	 socks_loc=$with_socks5
+	 with_socks5=yes;;
+esac
+case "$with_socksdante" in
+yes|no|"") ;;
+*)	 socks_loc=$with_socksdante
+	 with_socksdante=yes;;
+esac
+
+if test x$socks_loc != x; then
+   LDFLAGS="$LDFLAGS -L$socks_loc/lib"
+   CPPFLAGS="$CPPFLAGS -L$socks_loc/include"
+fi
+
 if test x$with_socks = xyes; then
    AC_DEFINE(SOCKS4, 1, [define if you are building with SOCKS support])
    AC_CHECK_LIB(socks, main, [SOCKSLIBS=-lsocks],
       [AC_MSG_ERROR(cannot find -lsocks library)])
 fi
-AC_ARG_WITH(socks5,
-[  --with-socks5           build with SOCKSv5 library],
-[  with_socks5=$withval;],
-[  with_socks5=no;	])
 if test x$with_socks5 = xyes; then
    AC_DEFINE(SOCKS5, 1, [define if you are building with SOCKSv5 support])
    AC_CHECK_LIB(socks5, main, [SOCKSLIBS=-lsocks5],
       [AC_MSG_ERROR(cannot find -lsocks5 library)])
 fi
-AC_ARG_WITH(socksdante,
-[  --with-socksdante       build with SOCKS-Dante library],
-[  with_socksdante=$withval;],
-[  with_socksdante=no;	])
 if test x$with_socksdante = xyes; then
    AC_DEFINE(SOCKS_DANTE, 1, [define if you are building with SOCKS-Dante support])
    AC_CHECK_LIB(socks, main, [SOCKSLIBS=-lsocks],
       [AC_MSG_ERROR(cannot find -lsocks library)])
 fi
+
 AC_SUBST(SOCKSLIBS)
 if test -n "$SOCKSLIBS"; then
    old_LIBS="$LIBS"
@@ -343,7 +366,7 @@ lftp_VA_COPY
 
 LFTP_ENVIRON_CHECK
 
-AC_REPLACE_FUNCS(mktime memmove strcasecmp strncasecmp strtol strtoul strptime)
+AC_REPLACE_FUNCS(mktime memmove strcasecmp strncasecmp strtol strtoul strptime strtok_r)
 IU_CHECK_DECL(strcasecmp, [#include <string.h>])
 IU_CHECK_DECL(strptime, [#include <time.h>])
 IU_CHECK_DECL(random, [#include <stdlib.h>])
