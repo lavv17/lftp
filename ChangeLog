@@ -1,6 +1,11 @@
+2000-01-13	lav
+
+	* configure.in: check for md5; add CXX flags -fno-implement-inlines,
+	  -Winline.
+
 2000-01-07	lav
 
-	* check for more headers; replace strptime if not found.
+	* configure.in: check for more headers; replace strptime if not found.
 
 1999-10-09	lav
 

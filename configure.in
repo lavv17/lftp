@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 # $Id$
 AC_PREREQ(2.13)
 AC_INIT(src/ftpclass.cc)
-AM_INIT_AUTOMAKE(lftp, A00111)
+AM_INIT_AUTOMAKE(lftp, A00113)
 AM_CONFIG_HEADER(include/config.h)
 
 dnl iumacros.m4 is stolen from inetutils-1.3a
@@ -73,7 +73,7 @@ if test x$GCC = xyes; then
 fi
 if test x$GXX = xyes; then
    CXXFLAGS="$CXXFLAGS -Wall -Wwrite-strings -Woverloaded-virtual"
-
+   CXXFLAGS="$CXXFLAGS -fno-implement-inlines -Winline"
    # save some bytes
    case "`$CXX --version`" in
    egcs*|2.8*|2.9*|3*|pgcc*)
@@ -139,7 +139,8 @@ fi
 AC_SUBST(MODULES)
 
 dnl Checks for libraries.
-AC_CHECK_LIB(m,exp)
+AC_SEARCH_LIBS(exp,m)
+AC_SEARCH_LIBS(md5_process_bytes,crypt)
 AC_SEARCH_LIBS(socket,socket)
 AC_SEARCH_LIBS(gethostbyname,nsl)
 AC_SEARCH_LIBS(dlopen,dl,[AC_DEFINE(HAVE_DLOPEN)])
