@@ -12,6 +12,7 @@
 	  protected; (SMTask::deleting) new member; don't show rate if it is
 	  not valid; don't call SMTask::Do directly; (NetAccess::Close) new
 	  method.
+	* ftpclass.cc: turn on sync mode when 331 precedes 220. (for vftpd)
 
 2000-01-26  Alexander V. Lukyanov  <lav@yars.free.net>
 

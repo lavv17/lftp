@@ -2642,6 +2642,16 @@ int   Ftp::CheckResp(int act)
    }
 
    int exp=RespQueue[RQ_head].expect;
+
+   // some servers mess all up
+   if(act==331 && exp==220 && !(flags&SYNC_MODE) && RespQueueSize()>1)
+   {
+      DebugPrint("---- ","Turning on sync-mode",2);
+      ResMgr::Set("ftp:sync-mode",hostname,"on");
+      try_time=0; // retry immediately
+      return INITIAL_STATE;
+   }
+
    bool match=(act/100==exp/100);
    check_case_t cc=RespQueue[RQ_head].check_case;
 
