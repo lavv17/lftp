@@ -956,7 +956,13 @@ int   Ftp::Do()
          DebugPrint("**** ",str,0);
          close(control_sock);
 	 control_sock=-1;
-	 Disconnect();
+	 
+	 peer_curr++; // try next address
+	 if(peer_curr<peer_num)
+	    try_time=0; // try next address immediately
+	 else if(relookup_always && !proxy)
+	    lookup_done=false;
+	 
 	 if(NotSerious(errno))
 	    return MOVED;
 	 goto system_error;
@@ -1883,7 +1889,7 @@ void  Ftp::Disconnect()
    ControlClose();
    AbortedClose();
 
-   if(state==CONNECTING_STATE || state==INITIAL_STATE)
+   if(state==CONNECTING_STATE)
    {
       peer_curr++; // try next address
       if(peer_curr<peer_num)
