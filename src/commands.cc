@@ -2533,6 +2533,7 @@ CMD(find)
    FinderJob_List *j=new class FinderJob_List(session->Clone(),args,
       output?output:new FDStream(1,"<stdout>"));
    j->set_maxdepth(maxdepth);
+   args=0;
    output=0;
    return j;
 }

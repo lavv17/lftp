@@ -1,5 +1,9 @@
 2002-07-12  Glenn Maynard <g_ld@zewt.org>
 
+	* FindJob.cc, commands.cc: delete args properly. This fixes a coredump.
+
+2002-07-12  Glenn Maynard <g_ld@zewt.org>
+
 * OutputJob.cc, OutputJob.h:
  Update comments.
 

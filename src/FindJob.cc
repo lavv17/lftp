@@ -436,6 +436,7 @@ FinderJob_List::FinderJob_List(FileAccess *s,ArgV *a,FDStream *o)
 FinderJob_List::~FinderJob_List()
 {
    Delete(buf);
+   delete args;
 }
 
 void FinderJob_List::Finish()
