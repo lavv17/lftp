@@ -89,6 +89,36 @@ static bool find_value(const char *scan,const char *more,const char *name,char *
 }
 
 static
+void remove_tags(char *buf)
+{
+   for(;;)
+   {
+      char *less=strchr(buf,'<');
+      if(!less)
+	 break;
+      char *more=strchr(less+1,'>');
+      if(!more)
+	 break;
+      memmove(less,more+1,strlen(more+1)+1);
+      buf=less;
+   }
+}
+
+static
+const char *strncasestr(const char *buf,int len,const char *str)
+{
+   int str_len=strlen(str);
+   while(len>=str_len)
+   {
+      if(!strncasecmp(buf,str,str_len))
+	 return buf;
+      buf++;
+      len--;
+   }
+   return 0;
+}
+
+static
 const char *find_eol(const char *buf,int len,bool eof,int *eol_size)
 {
    const char *real_eol=find_char(buf,len,'\n');
@@ -97,6 +127,18 @@ const char *find_eol(const char *buf,int len,bool eof,int *eol_size)
    if(less)
    {
       more=find_char(less+1,len-(less+1-buf),'>');
+      if(more && !token_eq(less+1,len-(less+1-buf),"tr"))
+      {
+	 // now only </tr> can finish the line, treat table row as a line.
+	 less=strncasestr(more+1,len-(more+1-buf),"</tr>");
+	 if(less==0)
+	 {
+	    *eol_size=0;
+	    return 0;
+	 }
+	 *eol_size=5;
+	 return less;
+      }
       if(more && !token_eq(less+1,len-(less+1-buf),"br"))
       {
 	 // if the tag is finished and not BR, ignore it.
@@ -475,6 +517,7 @@ parse_url_again:
       str=string_alloca(eol-more1);
       memcpy(str,more1+1,eol-more1-1);
       str[eol-more1-1]=0;
+      remove_tags(str);
 
       // usual apache listing: DD-Mon-YYYY hh:mm size
       n=sscanf(str,"%2d-%3s-%4d %2d:%2d %30s",
