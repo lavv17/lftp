@@ -196,7 +196,7 @@ const char *find_eol(const char *buf,int len,bool eof,int *eol_size)
    if(real_eol>buf && real_eol[-1]=='\r')
    {
       real_eol--;
-      *eol_size++;
+      (*eol_size)++;
    }
    return real_eol;
 }
@@ -594,13 +594,13 @@ static bool try_csm_proxy(file_info &info,const char *str)
 
    int n;
    int status = false;
-   char additional_file_info[32];
+   char additional_file_info[33];
    int has_additional_file_info = false;
 
    memset(additional_file_info, '\0', sizeof (additional_file_info));
 
    // try to match hour:minute
-   if (5 <= (n = sscanf(str,"%d %3s %d %2d:%2d%32c",
+   if (5 <= (n = sscanf(str,"%lld %3s %d %2d:%2d%32c",
 	       &info.size, info.month_name, &info.day, &info.hour, &info.minute, additional_file_info))) {
       status = true;
       if (6 == n)
@@ -608,7 +608,7 @@ static bool try_csm_proxy(file_info &info,const char *str)
    } else {
        // try to match year instead of hour:minute
        info.clear();
-       if (4 <= (n = sscanf(str,"%d %3s %d %4d%32c",
+       if (4 <= (n = sscanf(str,"%lld %3s %d %4d%32c",
 		       &info.size, info.month_name, &info.day, &info.year, additional_file_info))) {
 	   status = true;
 	   if (5 == n)
@@ -616,13 +616,13 @@ static bool try_csm_proxy(file_info &info,const char *str)
        }
    }
 
-   if (true == status) {
+   if (status) {
       debug("csm_proxy listing matched");
-      sprintf(info.size_str, "%ld", info.size);
-      if (true == has_additional_file_info && strlen(additional_file_info)) {
-	  if (!strcmp("Symbolic Link", additional_file_info)) {
+      sprintf(info.size_str, "%lld", info.size);
+      if (has_additional_file_info && additional_file_info[0]) {
+	  if (!strncasecmp("Symbolic Link",additional_file_info,13)) {
 	      info.is_sym_link = true;
-	  } else if (!strcmp("Directory", additional_file_info)) {
+	  } else if (!strncasecmp("Directory",additional_file_info,9)) {
 	      info.is_directory = true;
 	  } else {
 	      // fprintf(stderr, "try_csm_proxy: |%s|\n", additional_file_info);
