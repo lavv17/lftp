@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-04-21 15:58+0400\n"
+"POT-Creation-Date: 2004-04-23 23:38+0400\n"
 "PO-Revision-Date: 2003-06-08 00:26+0200\n"
 "Last-Translator: Nicolas Noble <nicolas@nobis-crew.org>\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -41,7 +41,7 @@ msgstr "Le module pour la commande `%s' ne s'est pas enregistré.\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, cwd=%s\n"
 
-#: src/CmdExec.cc:391 src/MirrorJob.cc:496
+#: src/CmdExec.cc:391 src/MirrorJob.cc:498
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: reçu une redirection vers `%s'\n"
@@ -217,7 +217,7 @@ msgstr "%sSupprimé: %d répertoire$|s$, %d fichier$|s$, %d lien$|s$\n"
 msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%sA supprimer: %d répertoire$|s$, %d fichier$|s$, %d lien$|s$\n"
 
-#: src/MirrorJob.cc:232 src/MirrorJob.cc:823
+#: src/MirrorJob.cc:232 src/MirrorJob.cc:825
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "Suppression de l'ancien fichier `%s'"
@@ -227,7 +227,7 @@ msgstr "Suppression de l'ancien fichier `%s'"
 msgid "Transferring file `%s'"
 msgstr "Émission du fichier `%s'"
 
-#: src/MirrorJob.cc:331 src/MirrorJob.cc:409 src/MirrorJob.cc:629
+#: src/MirrorJob.cc:331 src/MirrorJob.cc:409 src/MirrorJob.cc:631
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Suppression de l'ancien fichier local `%s'"
@@ -242,37 +242,37 @@ msgstr "Duplication du répertoire `%s'"
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Création du lien `%s' -> `%s'"
 
-#: src/MirrorJob.cc:549
+#: src/MirrorJob.cc:551
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: le protocole `%s' ne convient pas pour une duplication\n"
 
-#: src/MirrorJob.cc:647
+#: src/MirrorJob.cc:649
 #, c-format
 msgid "Making directory `%s'"
 msgstr "Création du répertoire `%s'"
 
-#: src/MirrorJob.cc:785
+#: src/MirrorJob.cc:787
 #, fuzzy, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "L'ancien fichier `%s' n'est pas supprimé"
 
-#: src/MirrorJob.cc:788
+#: src/MirrorJob.cc:790
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "L'ancien fichier `%s' n'est pas supprimé"
 
-#: src/MirrorJob.cc:818
+#: src/MirrorJob.cc:820
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "Suppression de l'ancien répertoire `%s'"
 
-#: src/MirrorJob.cc:1251
+#: src/MirrorJob.cc:1253
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s: expression régulière `%s': %s\n"
 
-#: src/MirrorJob.cc:1337 src/commands.cc:976 src/commands.cc:1064
+#: src/MirrorJob.cc:1339 src/commands.cc:976 src/commands.cc:1064
 #: src/commands.cc:1450 src/commands.cc:1484 src/commands.cc:1583
 #: src/commands.cc:1871 src/commands.cc:2067 src/commands.cc:2240
 #: src/commands.cc:2247 src/commands.cc:2429 src/commands.cc:2456
@@ -282,7 +282,7 @@ msgstr "%s: expression régulière `%s': %s\n"
 msgid "Try `help %s' for more information.\n"
 msgstr "Essayez `help %s' pour plus d'informations.\n"
 
-#: src/MirrorJob.cc:1371 src/MirrorJob.cc:1387 src/commands.cc:841
+#: src/MirrorJob.cc:1373 src/MirrorJob.cc:1389 src/commands.cc:841
 #: src/commands.cc:1962 src/DummyProto.cc:73
 msgid " - not supported protocol"
 msgstr " - protocole non supporté"

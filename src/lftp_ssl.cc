@@ -31,7 +31,7 @@
 
 static int lftp_ssl_verify_callback(int ok,X509_STORE_CTX *ctx);
 static int lftp_ssl_verify_crl(X509_STORE_CTX *ctx);
-static int lftp_ssl_passwd_callback(char *buf,int size,int rwflag,void *userdata);
+//static int lftp_ssl_passwd_callback(char *buf,int size,int rwflag,void *userdata);
 
 SSL_CTX *ssl_ctx;
 X509_STORE *crl_store;
