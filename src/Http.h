@@ -45,8 +45,8 @@ class Http : public NetAccess
 
    void	Send(const char *format,...) PRINTF_LIKE(2,3);
 
-   FileOutputBuffer *send_buf;
-   FileInputBuffer *recv_buf;
+   IOBuffer *send_buf;
+   IOBuffer *recv_buf;
    bool recv_buf_suspended;
    void SendMethod(const char *,const char *);
    const char *last_method;
@@ -107,6 +107,7 @@ class Http : public NetAccess
 
 protected:
    bool hftp;  // ftp over http proxy.
+   bool https; // secure http
    bool use_head;
 
 public:
@@ -164,6 +165,19 @@ public:
 
    virtual void Login(const char *,const char *);
    virtual void Reconfig(const char *);
+};
+
+class Https : public Http
+{
+public:
+   Https();
+   Https(const Https *);
+   ~Https();
+
+   const char *GetProto() { return "https"; }
+
+   FileAccess *Clone() { return new Https(this); }
+   static FileAccess *New();
 };
 
 #endif//HTTP_H

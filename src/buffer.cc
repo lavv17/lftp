@@ -181,60 +181,85 @@ void Buffer::SetError(const char *e)
    xfree(error_text);
    error_text=xstrdup(e);
 }
+void Buffer::SetError2(const char *e1,const char *e2)
+{
+   xfree(error_text);
+   int len1=strlen(e1);
+   int len2=strlen(e2);
+   error_text=(char*)xmalloc(len1+len2+1);
+   strcpy(error_text,e1);
+   strcat(error_text,e2);
+}
 
-// FileOutputBuffer implementation
+// IOBufferFDStream implementation
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
-FileOutputBuffer::FileOutputBuffer(FDStream *o)
-{
-   out=o;
-   event_time=now;
-}
-FileOutputBuffer::~FileOutputBuffer()
-{
-   delete out;
-}
-int FileOutputBuffer::Do()
+#undef super
+#define super IOBuffer
+int IOBufferFDStream::Do()
 {
    if(Done() || Error())
       return STALL;
-   if(in_buffer==0)
-      return STALL;
-   int res=Put_LL(buffer+buffer_ptr,in_buffer);
-   if(res>0)
+   int res=0;
+   switch(mode)
    {
-      in_buffer-=res;
-      buffer_ptr+=res;
-      event_time=now;
-      return MOVED;
+   case PUT:
+      if(in_buffer==0)
+	 return STALL;
+      res=Put_LL(buffer+buffer_ptr,in_buffer);
+      if(res>0)
+      {
+	 in_buffer-=res;
+	 buffer_ptr+=res;
+	 event_time=now;
+	 return MOVED;
+      }
+      break;
+
+   case GET:
+      res=Get_LL(GET_BUFSIZE);
+      if(res>0)
+      {
+	 in_buffer+=res;
+	 SaveMaxCheck(0);
+	 event_time=now;
+	 return MOVED;
+      }
+      if(eof)
+      {
+	 event_time=now;
+	 return MOVED;
+      }
+      break;
    }
    if(res<0)
    {
       event_time=now;
       return MOVED;
    }
-   int fd=out->getfd();
+   int fd=stream->getfd();
    if(fd>=0)
-      Block(fd,POLLOUT);
+      Block(fd,mode==PUT?POLLOUT:POLLIN);
    else
       TimeoutS(1);
    return STALL;
 }
-int FileOutputBuffer::Put_LL(const char *buf,int size)
+int IOBufferFDStream::Put_LL(const char *buf,int size)
 {
-   if(out->broken())
+   if(stream->broken())
    {
       broken=true;
       return -1;
    }
 
-   int res;
-   int fd=out->getfd();
+   int res=0;
+
+   int fd=stream->getfd();
    if(fd==-1)
    {
-      if(out->error())
-	 goto out_err;
+      if(stream->error())
+	 goto stream_err;
       event_time=now;
       return 0;
    }
@@ -250,62 +275,72 @@ int FileOutputBuffer::Put_LL(const char *buf,int size)
 	 return -1;
       }
       saved_errno=errno;
-      out->MakeErrorText();
-      goto out_err;
+      stream->MakeErrorText();
+      goto stream_err;
    }
    return res;
 
-out_err:
-   SetError(out->error_text);
+stream_err:
+   SetError(stream->error_text);
    return -1;
 }
 
-FgData *FileOutputBuffer::GetFgData(bool fg)
+int IOBufferFDStream::Get_LL(int size)
 {
-   if(out->getfd()!=-1)
-      return new FgData(out->GetProcGroup(),fg);
+   int res=0;
+
+   int fd=stream->getfd();
+   if(fd==-1)
+   {
+      if(stream->error())
+	 goto stream_err;
+      return 0;
+   }
+
+   Allocate(size);
+
+   res=read(fd,buffer+buffer_ptr+in_buffer,size);
+   if(res==-1)
+   {
+      if(errno==EAGAIN || errno==EINTR)
+	 return 0;
+      saved_errno=errno;
+      stream->MakeErrorText();
+      goto stream_err;
+   }
+
+   if(res==0)
+      eof=true;
+   return res;
+
+stream_err:
+   SetError(stream->error_text);
+   return -1;
+}
+
+FgData *IOBufferFDStream::GetFgData(bool fg)
+{
+   if(stream->getfd()!=-1)
+      return new FgData(stream->GetProcGroup(),fg);
    return 0;
 }
 
-bool FileOutputBuffer::Done()
+bool IOBufferFDStream::Done()
 {
-   if(broken || Error()
-   || (eof && Buffer::Done()))
-      return out->Done(); // out->Done indicates if sub-process finished
+   if(super::Done())
+      return stream->Done(); // stream->Done indicates if sub-process finished
    return false;
-}
-
-time_t FileOutputBuffer::EventTime()
-{
-   return event_time;
 }
 
 // FileInputBuffer implementation
 #undef super
-#define super Buffer
-FileInputBuffer::FileInputBuffer(FDStream *i)
+#define super IOBuffer
+IOBufferFileAccess::~IOBufferFileAccess()
 {
-   in=i;
-   in_FA=0;
-   event_time=now;
+   session->Resume();
+   session->Close();
 }
-FileInputBuffer::FileInputBuffer(FileAccess *i)
-{
-   in=0;
-   in_FA=i;
-   event_time=now;
-}
-FileInputBuffer::~FileInputBuffer()
-{
-   if(in)
-      delete in;
-   if(in_FA)
-   {
-      in_FA->Resume();
-      in_FA->Close();
-   }
-}
-int FileInputBuffer::Do()
+int IOBufferFileAccess::Do()
 {
    if(Done() || Error())
       return STALL;
@@ -328,100 +363,167 @@ int FileInputBuffer::Do()
       event_time=now;
       return MOVED;
    }
-   if(in)
-   {
-      int fd=in->getfd();
-      if(fd>=0)
-	 Block(fd,POLLIN);
-      else
-	 Timeout(1000);
-   }
    return STALL;
 }
-int FileInputBuffer::Get_LL(int size)
+int IOBufferFileAccess::Get_LL(int size)
 {
    int res=0;
 
-   if(in_FA)
-   {
-      Allocate(size);
+   Allocate(size);
 
-      res=in_FA->Read(buffer+buffer_ptr+in_buffer,size);
-      if(res<0)
-      {
-	 if(res==FA::DO_AGAIN)
-	    return 0;
-	 SetError(in_FA->StrError(res));
-	 return -1;
-      }
-   }
-   else if(in)
+   res=session->Read(buffer+buffer_ptr+in_buffer,size);
+   if(res<0)
    {
-      int fd=in->getfd();
-      if(fd==-1)
-      {
-	 if(in->error())
-	    goto in_err;
+      if(res==FA::DO_AGAIN)
 	 return 0;
-      }
-
-      Allocate(size);
-
-      res=read(fd,buffer+buffer_ptr+in_buffer,size);
-      if(res==-1)
-      {
-	 if(errno==EAGAIN || errno==EINTR)
-	    return 0;
-	 saved_errno=errno;
-	 in->MakeErrorText();
-	 goto in_err;
-      }
+      SetError(session->StrError(res));
+      return -1;
    }
    if(res==0)
       eof=true;
    return res;
-
-in_err:
-   SetError(in->error_text);
-   return -1;
 }
 
-FgData *FileInputBuffer::GetFgData(bool fg)
+void IOBufferFileAccess::Suspend()
 {
-   if(!in)
-      return 0;
-   if(in->getfd()!=-1)
-      return new FgData(in->GetProcGroup(),fg);
-   return 0;
-}
-
-bool FileInputBuffer::Done()
-{
-   if(broken || Error() || eof)
-   {
-      if(in_FA)
-	 return true;
-      return in->Done(); // in->Done indicates if sub-process finished
-   }
-   return false;
-}
-
-time_t FileInputBuffer::EventTime()
-{
-   if(suspended)
-      return now;
-   return event_time;
-}
-
-void FileInputBuffer::Suspend()
-{
-   if(in_FA)
-      in_FA->Suspend();
+   session->Suspend();
    super::Suspend();
 }
-void FileInputBuffer::Resume()
+void IOBufferFileAccess::Resume()
 {
    super::Resume();
-   if(in_FA)
-      in_FA->Resume();
+   session->Resume();
 }
+
+#ifdef USE_SSL
+# include <openssl/err.h>
+
+// IOBufferSSL implementation
+#undef super
+#define super IOBuffer
+int IOBufferSSL::Do()
+{
+   if(Done() || Error())
+      return STALL;
+
+   int res=0;
+
+   if(!ssl_connected && SSL_is_init_finished(ssl))
+      ssl_connected=true;
+   if(!ssl_connected)
+   {
+      if(!do_connect)
+	 return STALL;
+      int res=SSL_connect(ssl);
+      if(res<=0)
+      {
+	 if(BIO_sock_should_retry(res))
+	    goto blocks;
+	 else if (SSL_want_x509_lookup(ssl))
+	    return STALL;
+	 else // error
+	 {
+	    SetError2("SSL connect: ",ERR_error_string(ERR_get_error(),NULL));
+	    return MOVED;
+	 }
+      }
+      ssl_connected=true;
+      event_time=now;
+   }
+   switch(mode)
+   {
+   case PUT:
+      if(in_buffer==0)
+	 return STALL;
+      res=Put_LL(buffer+buffer_ptr,in_buffer);
+      if(res>0)
+      {
+	 in_buffer-=res;
+	 buffer_ptr+=res;
+	 event_time=now;
+	 return MOVED;
+      }
+      break;
+
+   case GET:
+      res=Get_LL(GET_BUFSIZE);
+      if(res>0)
+      {
+	 in_buffer+=res;
+	 SaveMaxCheck(0);
+	 event_time=now;
+	 return MOVED;
+      }
+      if(eof)
+      {
+	 event_time=now;
+	 return MOVED;
+      }
+      break;
+   }
+   if(res<0)
+   {
+      event_time=now;
+      return MOVED;
+   }
+blocks:
+   if(SSL_want_read(ssl))
+      Block(SSL_get_fd(ssl),POLLIN);
+   if(SSL_want_write(ssl))
+      Block(SSL_get_fd(ssl),POLLOUT);
+   return STALL;
+}
+
+int IOBufferSSL::Get_LL(int size)
+{
+   if(!ssl_connected)
+      return 0;
+   Allocate(size);
+   int res=SSL_read(ssl,buffer+buffer_ptr+in_buffer,size);
+   if(res<0)
+   {
+      if(BIO_sock_should_retry(res))
+	 return 0;
+      else if (SSL_want_x509_lookup(ssl))
+	 return 0;
+      else // error
+      {
+	 SetError2("SSL read: ",ERR_error_string(ERR_get_error(),NULL));
+	 return -1;
+      }
+   }
+   return res;
+}
+
+int IOBufferSSL::Put_LL(const char *buf,int size)
+{
+   if(!ssl_connected)
+      return 0;
+
+   int res=0;
+
+   res=SSL_write(ssl,buf,size);
+   if(res<0)
+   {
+      if(BIO_sock_should_retry(res))
+	 return 0;
+      else if (SSL_want_x509_lookup(ssl))
+	 return 0;
+      else // error
+      {
+	 SetError2("SSL write: ",ERR_error_string(ERR_get_error(),NULL));
+	 return -1;
+      }
+   }
+   return res;
+}
+
+IOBufferSSL::~IOBufferSSL()
+{
+   if(close_later)
+   {
+      SSL_free(ssl);
+   }
+}
+
+#endif // USE_SSL

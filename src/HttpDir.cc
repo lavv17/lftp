@@ -215,6 +215,8 @@ static void decode_amps(char *s)
 
 #define debug(str) Log::global->Format(10,"* %s\n",str)
 
+// this procedure is highly inefficient in some cases,
+// esp. when it has to return for more data many times.
 static int parse_html(const char *buf,int len,bool eof,Buffer *list,
       FileSet *set,FileSet *all_links,ParsedURL *prefix,char **base_href,
       LsOptions *lsopt=0)
@@ -233,6 +235,22 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
       return skip_len;
    if(skip_len>0 && eol<less)
       return skip_len;
+   if(end-less-1>=3 && less[1]=='!' && less[2]=='-' && less[3]=='-')
+   {
+      // found comment
+      if(end-less-4<3)
+	 return less-buf;
+      const char *scan=less+4;
+      for(;;)
+      {
+	 const char *eoc=find_char(scan,end-scan,'>');
+	 if(!eoc)
+	    return less-buf;
+	 if(eoc>=less+4+2 && eoc[-1]=='-' && eoc[-2]=='-')
+	    return eoc+1-buf;
+	 scan=eoc+1;
+      }
+   }
    // FIXME: a > sign can be inside quoted value. (?)
    const char *more=find_char(less+1,end-less-1,'>');
    if(more==0)
@@ -836,7 +854,7 @@ int HttpDirList::Do()
       {
 	 session->Open(curr,mode);
 	 session->UseCache(use_cache);
-	 ubuf=new FileInputBuffer(session);
+	 ubuf=new IOBufferFileAccess(session);
 	 if(LsCache::IsEnabled())
 	    ubuf->Save(LsCache::SizeLimit());
       }
@@ -1046,7 +1064,7 @@ int HttpGlob::Do()
 	 session->Open(curr_dir,FA::LONG_LIST);
 	 session->UseCache(use_cache);
 	 session->RereadManual();
-	 ubuf=new FileInputBuffer(session);
+	 ubuf=new IOBufferFileAccess(session);
 	 if(LsCache::IsEnabled())
 	    ubuf->Save(LsCache::SizeLimit());
       }
@@ -1157,7 +1175,7 @@ int HttpListInfo::Do()
       {
 	 session->Open("",FA::LONG_LIST);
 	 session->UseCache(use_cache);
-	 ubuf=new FileInputBuffer(session);
+	 ubuf=new IOBufferFileAccess(session);
 	 if(LsCache::IsEnabled())
 	    ubuf->Save(LsCache::SizeLimit());
       }

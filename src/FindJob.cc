@@ -354,7 +354,7 @@ FinderJob_List::FinderJob_List(FileAccess *s,const char *d,FDStream *o)
    : FinderJob(s,d)
 {
    show_sl = !o->usesfd(1);
-   buf=new FileOutputBuffer(o);
+   buf=new IOBufferFDStream(o,IOBuffer::PUT);
 }
 
 FinderJob_List::~FinderJob_List()

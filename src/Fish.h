@@ -48,8 +48,8 @@ class Fish : public NetAccess
    void	 Send(const char *format,...) PRINTF_LIKE(2,3);
    void	 SendMethod();
 
-   FileOutputBuffer *send_buf;
-   FileInputBuffer *recv_buf;
+   IOBuffer *send_buf;
+   IOBuffer *recv_buf;
 
    OutputFilter *filter_out;  // used in connecting
    int pipe_in[2];	      // used in connecting

@@ -653,7 +653,7 @@ LocalDirList::LocalDirList(ArgV *a,const char *cwd)
    InputFilter *f=new InputFilter(a);
    f->SetCwd(cwd);
    Delete(buf);
-   buf=new FileInputBuffer(f);
+   buf=new IOBufferFDStream(f,IOBuffer::GET);
 }
 int LocalDirList::Do()
 {

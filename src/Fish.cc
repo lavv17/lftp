@@ -103,9 +103,9 @@ int Fish::Do()
 	 return m;
       }
       filter_out->Kill(SIGCONT);
-      send_buf=new FileOutputBuffer(filter_out);
+      send_buf=new IOBufferFDStream(filter_out,IOBuffer::PUT);
       filter_out=0;
-      recv_buf=new FileInputBuffer(new FDStream(pipe_in[0],"pipe in"));
+      recv_buf=new IOBufferFDStream(new FDStream(pipe_in[0],"pipe in"),IOBuffer::GET);
       close(pipe_in[1]);
       pipe_in[1]=-1;
       state=CONNECTED;

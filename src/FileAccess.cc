@@ -86,6 +86,7 @@ void FileAccess::Init()
    entity_date=NO_DATE;
 
    closure=0;
+   res_prefix=0;
 
    chmod_mode=0644;
 
@@ -883,7 +884,9 @@ void FileAccess::BumpEventTime(time_t t)
 
 ResValue FileAccess::Query(const char *name,const char *closure)
 {
-   const char *prefix=GetProto();
+   const char *prefix=res_prefix;
+   if(!prefix)
+      prefix=GetProto();
    char *fullname=(char*)alloca(3+strlen(prefix)+1+strlen(name)+1);
    sprintf(fullname,"%s:%s",prefix,name);
    return ResMgr::Query(fullname,closure);

@@ -143,6 +143,7 @@ protected:
    time_t entity_date; // date of file to be sent
 
    char *closure;
+   const char *res_prefix;
    ResValue Query(const char *name,const char *closure=0);
 
    int chmod_mode;

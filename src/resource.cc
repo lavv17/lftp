@@ -138,6 +138,7 @@ static ResDecl
    ResDecl29a("http:post-content-type",   "application/x-www-form-urlencoded",0,0),
    ResDecl29 ("http:put-method",	  "PUT",   PutOrPost,0),
    ResDecl30 ("http:put-content-type",	  "",	   0,0),
+   ResDecl30a("https:proxy",		  "",	   0,0),
    ResDecl31 ("net:idle",		  "180",   ResMgr::UNumberValidate,0),
    ResDecl32 ("net:limit-max",		  "0",	   ResMgr::UNumberValidate,0),
    ResDecl33 ("net:limit-rate",		  "0",	   ResMgr::UNumberValidate,0),

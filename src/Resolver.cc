@@ -222,7 +222,7 @@ int   Resolver::Do()
       }
       if(!buf)
       {
-	 buf=new FileInputBuffer(new FDStream(pipe_to_child[0],"<pipe-in>"));
+	 buf=new IOBufferFDStream(new FDStream(pipe_to_child[0],"<pipe-in>"),IOBuffer::GET);
 // 	 Roll(buf);
 	 m=MOVED;
       }
@@ -820,7 +820,7 @@ void Resolver::DoGethostbyname()
       return;
 
    if(!buf)
-      buf=new FileOutputBuffer(new FDStream(pipe_to_child[1],"<pipe-out>"));
+      buf=new IOBufferFDStream(new FDStream(pipe_to_child[1],"<pipe-out>"),IOBuffer::PUT);
 
    if(addr_num==0)
    {

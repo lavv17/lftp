@@ -48,6 +48,7 @@ CDECL char *strptime(const char *buf, const char *format, struct tm *tm);
 
 #define HTTP_DEFAULT_PORT	 "80"
 #define HTTP_DEFAULT_PROXY_PORT	 "3128"
+#define HTTPS_DEFAULT_PORT	 "443"
 
 static time_t http_atotm (const char *time_string);
 static int  base64_length (int len);
@@ -359,6 +360,8 @@ void Http::SendRequest(const char *connection,const char *f)
    if(proxy)
    {
       const char *proto="http";
+      if(https)
+	 proto="https";
       if(hftp)
       {
 	 if(user && pass)
@@ -700,6 +703,30 @@ void Http::GetBetterConnection(int level,int count)
    }
 }
 
+#ifdef USE_SSL
+static SSL *NewSSL(int fd)
+{
+   static SSL_CTX *ssl_ctx=0;
+
+   if(!ssl_ctx)
+   {
+#if SSLEAY_VERSION_NUMBER < 0x0800
+      ssl_ctx=SSL_CTX_new();
+      X509_set_default_verify_paths(ssl_ctx->cert);
+#else
+      SSLeay_add_ssl_algorithms();
+      ssl_ctx=SSL_CTX_new(SSLv23_client_method());
+      SSL_CTX_set_options(ssl_ctx, SSL_OP_ALL);
+      SSL_CTX_set_default_verify_paths(ssl_ctx);
+#endif /* SSLEAY_VERSION_NUMBER < 0x0800 */
+   }
+
+   SSL *ssl=SSL_new(ssl_ctx);
+   SSL_set_fd(ssl,fd);
+   return ssl;
+}
+#endif
+
 int Http::Do()
 {
    int m=STALL;
@@ -746,7 +773,7 @@ int Http::Do()
 	       scan++;
 	    char *url=string_alloca(5+xstrlen(hostname)*3+1+xstrlen(portname)*3
 				    +1+xstrlen(cwd)*3+1+strlen(scan)+1);
-	    strcpy(url,"http://");
+	    strcpy(url,https?"https://":"http://");
 	    url::encode_string(hostname,url+strlen(url),URL_HOST_UNSAFE);
 	    if(portname)
 	    {
@@ -813,8 +840,10 @@ int Http::Do()
       if(!ReconnectAllowed())
 	 return m;
 
-      if(Resolve(HTTP_DEFAULT_PORT,"http","tcp")==MOVED)
-	 m=MOVED;
+      if(https)
+	 m|=Resolve(HTTPS_DEFAULT_PORT,"https","tcp");
+      else
+	 m|=Resolve(HTTP_DEFAULT_PORT,"http","tcp");
       if(!peer)
 	 return m;
 
@@ -891,8 +920,25 @@ int Http::Do()
 
       m=MOVED;
       state=CONNECTED;
-      send_buf=new FileOutputBuffer(new FDStream(sock,"<output-socket>"));
-      recv_buf=new FileInputBuffer(new FDStream(sock,"<input-socket>"));
+#ifdef USE_SSL
+      if(proxy?!strncmp(proxy,"https://",8):https)
+      {
+	 SSL *ssl=NewSSL(sock);
+	 IOBufferSSL *send_buf_ssl=new IOBufferSSL(ssl,IOBuffer::PUT);
+	 IOBufferSSL *recv_buf_ssl=new IOBufferSSL(ssl,IOBuffer::GET);
+	 send_buf_ssl->DoConnect();
+	 recv_buf_ssl->CloseLater();
+	 send_buf=send_buf_ssl;
+	 recv_buf=recv_buf_ssl;
+      }
+      else
+#endif
+      {
+	 send_buf=new IOBufferFDStream(
+	    new FDStream(sock,"<output-socket>"),IOBuffer::PUT);
+	 recv_buf=new IOBufferFDStream(
+	    new FDStream(sock,"<input-socket>"),IOBuffer::GET);
+      }
       /*fallthrough*/
    case CONNECTED:
       if(mode==QUOTE_CMD && !post)
@@ -1213,6 +1259,7 @@ system_error:
 }
 
 FileAccess *Http::New() { return new Http(); }
+FileAccess *Https::New(){ return new Https();}
 FileAccess *HFtp::New() { return new HFtp(); }
 
 void  Http::ClassInit()
@@ -1220,6 +1267,9 @@ void  Http::ClassInit()
    // register the class
    Register("http",Http::New);
    Register("hftp",HFtp::New);
+#ifdef USE_SSL
+   Register("https",Https::New);
+#endif
 }
 
 void Http::Suspend()
@@ -1507,12 +1557,16 @@ void Http::Reconfig(const char *name)
       if(hftp && vproto && !strcmp(vproto,"ftp"))
       {
 	 p=ResMgr::Query("ftp:proxy",c);
-	 if(p && strncmp(p,"http://",7))
+	 if(p && strncmp(p,"http://",7) && strncmp(p,"https://",8))
 	    p=0;
       }
       if(!p)
-      	 p=Query("proxy",c);
-
+      {
+	 if(https)
+	    p=ResMgr::Query("https:proxy",c);
+	 else
+	    p=Query("proxy",c);
+      }
       SetProxy(p);
    }
 
@@ -1652,6 +1706,25 @@ void Http::SetCookie(const char *value_const)
    }
    ResMgr::Set("http:cookie",domain,c);
 }
+
+#ifdef USE_SSL
+#undef super
+#define super Http
+Https::Https()
+{
+   https=true;
+   res_prefix="http";
+}
+Https::~Https()
+{
+}
+Https::Https(const Https *o) : super(o)
+{
+   https=true;
+   res_prefix="http";
+   Reconfig(0);
+}
+#endif
 
 #undef super
 #define super Http

@@ -63,6 +63,7 @@ public:
    virtual bool Done() { return in_buffer==0; }
    bool Error() { return error_text!=0; }
    void SetError(const char *e);
+   void SetError2(const char *e1,const char *e2);
    int  Errno() { return saved_errno; }
    const char *ErrorText() { return error_text; }
    int Size() { return in_buffer; }
@@ -92,51 +93,92 @@ public:
    Buffer();
 };
 
-class FileOutputBuffer : public Buffer
+class IOBuffer : public Buffer
 {
-   FDStream *out;
-
-   int Put_LL(const char *buf,int size);
-
-   time_t event_time; // used to detect timeouts
+public:
+   enum dir_t { GET, PUT };
 
 protected:
-   ~FileOutputBuffer();
+   time_t event_time; // used to detect timeouts
+   dir_t mode;
 
 public:
-   FileOutputBuffer(FDStream *o);
+   IOBuffer(dir_t m)
+      {
+	 event_time=now;
+	 mode=m;
+      }
+   time_t EventTime()
+      {
+	 if(suspended)
+	    return now;
+	 return event_time;
+      }
+   bool Done()
+      {
+	 return(broken || Error() || (eof && (mode==GET || in_buffer==0)));
+      }
+};
+
+class IOBufferFDStream : public IOBuffer
+{
+   FDStream *stream;
+
+   int Get_LL(int size);
+   int Put_LL(const char *buf,int size);
+
+protected:
+   ~IOBufferFDStream() { delete stream; }
+
+public:
+   IOBufferFDStream(FDStream *o,dir_t m) : IOBuffer(m) { stream=o; }
    int Do();
    bool Done();
    FgData *GetFgData(bool fg);
-
-   time_t EventTime();
 };
 
 class FileAccess;
 
-class FileInputBuffer : public Buffer
+class IOBufferFileAccess : public IOBuffer
 {
-   FDStream *in;
-   FileAccess *in_FA;
+   FileAccess *session;
 
    int Get_LL(int size);
 
-   time_t event_time; // used to detect timeouts
-
 protected:
-   ~FileInputBuffer();
+   ~IOBufferFileAccess();
 
 public:
-   FileInputBuffer(FDStream *i);
-   FileInputBuffer(FileAccess *i);
+   IOBufferFileAccess(FileAccess *i) : IOBuffer(GET) { session=i; }
    int Do();
-   bool Done();
-   FgData *GetFgData(bool fg);
-
-   time_t EventTime();
 
    void Suspend();
    void Resume();
 };
+
+#ifdef USE_SSL
+# include <openssl/ssl.h>
+class IOBufferSSL : public IOBuffer
+{
+   SSL *ssl;
+   bool ssl_connected;
+   bool do_connect;
+   bool close_later;
+
+   int Get_LL(int size);
+   int Put_LL(const char *buf,int size);
+
+protected:
+   ~IOBufferSSL();
+
+public:
+   IOBufferSSL(SSL *s,dir_t m) : IOBuffer(m)
+      { ssl=s; ssl_connected=false; do_connect=false; close_later=false; }
+   void DoConnect()	{ ssl_connected=false; do_connect=true; }
+   void SetConnected()	{ ssl_connected=true; }
+   void CloseLater()	{ close_later=true; }
+   int Do();
+};
+#endif
 
 #endif // BUFFER_H
