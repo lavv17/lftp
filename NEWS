@@ -1,3 +1,8 @@
+Version 2.5.4 - 2002-06-05
+
+* fixed double free problem introduced in version 2.5.3.
+* compilation fixes (Glenn Maynard).
+
 Version 2.5.3 - 2002-06-02
 
 * security fix: long error message from ftp server could cause buffer overflow.
