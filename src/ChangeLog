@@ -1,3 +1,7 @@
+2002-07-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* complete.cc: no need for multiple functions slot-N.
+
 2002-07-23  Glenn Maynard <g_ld@zewt.org>
 
 * misc.cc, misc.h: Add get_string_term_cap; tries both terminfo and termcap.

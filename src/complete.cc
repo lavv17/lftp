@@ -1201,15 +1201,13 @@ void lftp_readline_init ()
    lftp_rl_add_defun("complete-remote",lftp_complete_remote,-1);
    lftp_rl_bind("Meta-Tab","complete-remote");
 
-   char fn[7];
-   strcpy(fn,"slot-N");
+   lftp_rl_add_defun("slot-change",lftp_slot,-1);
    char key[7];
    strcpy(key,"Meta-N");
    for(int i=0; i<10; i++)
    {
-      key[5]=fn[5]='0'+i;
-      lftp_rl_add_defun(fn,lftp_slot,-1);
-      lftp_rl_bind(key,fn);
+      key[5]='0'+i;
+      lftp_rl_bind(key,"slot-change");
    }
 }
 
