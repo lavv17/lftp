@@ -1,3 +1,8 @@
+1999-07-12	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* de.po, es.po, it.po, pl.po, pt_BR.po, ru.po: remove \n in Done
+	  message.
+
 1999-07-11	Giovanni Bortolozzo <borto@dei.unipd.it>
 
 	* it.po: update for 2.0.1
