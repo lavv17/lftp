@@ -135,7 +135,7 @@ public:
    in_CMD(mput);  in_CMD(mv);	 in_CMD(cat);     in_CMD(cache);
    in_CMD(mkdir); in_CMD(quote); in_CMD(scache);  in_CMD(mrm);
    in_CMD(ver);	  in_CMD(close); in_CMD(bookmark);in_CMD(lftp);
-   in_CMD(echo);
+   in_CMD(echo);  in_CMD(suspend);
 
    static const char * const var_list[];
 

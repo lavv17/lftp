@@ -18,12 +18,17 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/* $Id$ */
+
 #include <config.h>
-#include "GetJob.h"
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <fcntl.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+
+#include "GetJob.h"
 #include "misc.h"
 
 int   GetJob::Do()
@@ -137,10 +142,23 @@ void GetJob::NextFile()
       return;
    }
    int flags=O_WRONLY|O_CREAT|(cont?0:O_TRUNC);
-   if(saved_cwd && l[0]!='/')
-      local=new FileStream(dir_file(saved_cwd,l),flags);
-   else
-      local=new FileStream(l,flags);
+   const char *f=(saved_cwd && l[0]!='/') ? dir_file(saved_cwd,l) : l;
+   if(!cont)
+   {
+      /* rename old file if exists */
+      struct stat st;
+      if(stat(f,&st)!=-1)
+      {
+	 if(st.st_size>0)
+	 {
+	    char *b=(char*)alloca(strlen(f)+2);
+	    strcpy(b,f);
+	    strcat(b,"~");
+	    rename(f,b);
+	 }
+      }
+   }
+   local=new FileStream(f,flags);
    XferJob::NextFile(r);
    file_time=(time_t)-2;
    if(set_file_time!=(time_t)-1)

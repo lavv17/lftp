@@ -243,6 +243,7 @@ const struct CmdExec::cmd_rec CmdExec::cmd_table[]=
 	 "You can redirect its output\n")},
    {"source",  &do_source, N_("source <file>"),
 	 N_("Execute commands recorded in file <file>\n")},
+   {"suspend", &do_suspend},
    {"user",    &do_user,   N_("user <user> [<pass>]"),
 	 N_("Use specified info for remote login\n")},
    {"version", &do_ver,	   "version",
@@ -1783,4 +1784,10 @@ CMD(echo)
    Job *j=new CatJob(output,s,len);
    output=0;
    return j;
+}
+
+CMD(suspend)
+{
+   kill(getpid(),SIGSTOP);
+   return 0;
 }
