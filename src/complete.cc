@@ -47,6 +47,8 @@
 #include "misc.h"
 
 CDECL_BEGIN
+#define USE_VARARGS 1
+#define PREFER_STDARG 1
 #include "readline/readline.h"
 CDECL_END
 

@@ -5,6 +5,7 @@
 	* commands.cc: use it.
 	* FileSetOutput.cc, FileSetOutput.h: fix recls.
 	* misc.cc: (xasprinf) fix va_end argument.
+	* complete.cc: make readline define correct rl_message prototype.
 
 2001-10-16  Alexander V. Lukyanov <lav@yars.free.net>
 
