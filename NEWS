@@ -1,3 +1,21 @@
+Version 2.6.5 - 2003-02-27
+
+* new mirror options --log=<file> and --script=<file> to produce lftp commands
+  equivalent to the actions done (log) or to be done (script) by mirror.
+  `-' as file name means stdout.
+* fixed a dead-lock when resuming FXP with passive source.
+* re-get file size and date after HTTP redirect.
+* added workarounds for proftpd.
+* handle EPIPE (Broken pipe) error as temporary network error.
+* fixed a dead-lock in HTTP retrieval after redirect.
+* added cls option --sort=date (Oskar Liljeblad).
+* fixed compilation on OpenBSD and older Solaris.
+* fixed handling of symbolic links in find.
+* lftp -f and -c options can now be combined
+* fixed slot handling in non-interactive mode.
+* fixed large file support in cat command.
+* fixed dante socks compilation (now lftp does not use poll with dante).
+
 Version 2.6.4 - 2002-12-26
 
 * new settings net:socket-bind-ipv4 and net:socket-bind-ipv6 to bind sockets

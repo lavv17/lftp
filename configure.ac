@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.53)
-AC_INIT([lftp], [2.6.4], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [2.6.5], [lftp-bugs@lftp.yar.ru])
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(include/config.h)
@@ -171,7 +171,7 @@ LIBS="$LIBS $SOCKSLIBS"
 if test "$SOCKSLIBS" = "-lsocks"; then
    AC_CHECK_FUNCS([Rpoll])
    if test "$ac_cv_func_Rpoll" != yes; then
-      lftp_cv_func_poll_works = no
+      lftp_cv_func_poll_works=no
    fi
 fi
 
