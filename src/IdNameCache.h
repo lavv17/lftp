@@ -39,7 +39,7 @@ class IdNameCache : public SMTask
 {
    Timer *expire_timer;
 
-   static const int table_size=131;
+   enum { table_size=131 };
    unsigned hash(const char *);
    unsigned hash(int);
 

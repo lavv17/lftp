@@ -460,7 +460,7 @@ public:
 // cache of used sessions
 class SessionPool
 {
-   static const int pool_size=64;
+   enum { pool_size=64 };
    static FileAccess *pool[pool_size];
 
 public:

@@ -32,8 +32,7 @@ class CharReader : public SMTask
    int	 Do();
 
 public:
-   static const int NOCHAR=-2;
-   static const int EOFCHAR=-1;
+   enum { NOCHAR=-2, EOFCHAR=-1 };
 
    int	 GetChar() { return ch; };
 

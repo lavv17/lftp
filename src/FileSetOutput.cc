@@ -18,12 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-#include <filemode.h>
 
 
 #include <config.h>
 #include "FileSet.h"
 
+#include <filemode.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <utime.h>
