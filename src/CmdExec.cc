@@ -497,7 +497,15 @@ try_get_cmd:
 	 if(cmd==0)
 	 {
 	    if(next_cmd && *next_cmd && partial_cmd)
+	    {
+	       if(next_cmd[strlen(next_cmd)-1]!='\n')
+	       {
+		  // missing EOL on last line, add it
+		  FeedCmd("\n");
+		  goto try_get_cmd;
+	       }
 	       fprintf(stderr,_("Warning: discarding incomplete command\n"));
+	    }
 	    RemoveFeeder();
 	    m=MOVED;
 	    goto try_get_cmd;

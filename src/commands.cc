@@ -85,6 +85,7 @@ CMD(mkdir); CMD(quote);  CMD(scache);  CMD(mrm);
 CMD(ver);   CMD(close);  CMD(bookmark);CMD(lftp);
 CMD(echo);  CMD(suspend);CMD(ftpcopy); CMD(sleep);
 CMD(at);    CMD(find);   CMD(command); CMD(module);
+CMD(lpwd);
 
 #ifdef MODULE_CMD_MIRROR
 # define cmd_mirror 0
@@ -174,6 +175,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -u <user>[,<pass>]  use the user/password for authentication\n"
 	 " -p <port>           use the port for connection\n"
 	 " <site>              host name, URL or bookmark name\n")},
+   {"lpwd",    cmd_lpwd},
    {"login",   cmd_user,   0,"user"},
    {"ls",      cmd_ls,	    N_("ls [<args>]"),
 	 N_("List remote files. You can redirect output of this command to file\n"
@@ -1777,6 +1779,18 @@ CMD(module)
       eprintf("%s\n",module_error_message());
       return 0;
    }
+   exit_code=0;
+   return 0;
+}
+
+CMD(lpwd)
+{
+   if(!parent->cwd)
+   {
+      eprintf("%s: cannot get current directory\n",args->a0());
+      return 0;
+   }
+   printf("%s\n",parent->cwd);
    exit_code=0;
    return 0;
 }

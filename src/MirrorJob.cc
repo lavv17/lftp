@@ -423,6 +423,12 @@ int   MirrorJob::Do()
       remote_set->ExcludeDots(); // don't need .. and .
 
       local_session=FileAccess::New("file");
+      if(!local_session)
+      {
+	 eprintf("mirror: cannot create `file:' access object, installation error?\n");
+	 state=DONE;
+	 return MOVED;
+      }
       local_session->Chdir(local_dir,false);
       list_info=local_session->MakeListInfo();
       list_info->UseCache(false);

@@ -234,7 +234,8 @@ static completion_type cmd_completion_type(int start)
    || !strcmp(buf,"more")
    || !strcmp(buf,"cat")
    || !strcmp(buf,"zcat")
-   || !strcmp(buf,"zmore"))
+   || !strcmp(buf,"zmore")
+   || !strcmp(buf,"mv"))
       return REMOTE_FILE;
 
    if(!strcmp(buf,"open")

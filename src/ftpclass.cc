@@ -807,7 +807,7 @@ static int get_port(const sockaddr_u *u)
 {
    if(u->sa.sa_family==AF_INET)
       return ntohs(u->in.sin_port);
-#ifdef AF_INET6
+#if INET6
    if(u->sa.sa_family==AF_INET6)
       return ntohs(u->in6.sin6_port);
 #endif
