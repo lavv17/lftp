@@ -285,6 +285,12 @@ const char *FileAccess::StrError(int err)
    static char *str=0;
    static unsigned str_allocated=0;
 
+   if(error)
+   {
+      if(str_allocated<128+strlen(error))
+	 str=(char*)xrealloc(str,str_allocated=128+strlen(error));
+   }
+
    // note to translators: several errors should not be displayed to user;
    // so no need to translate them.
    switch(err)
@@ -296,10 +302,7 @@ const char *FileAccess::StrError(int err)
    case(SEE_ERRNO):
       if(error)
       {
-	 const char *e=strerror(saved_errno);
-	 if(str_allocated<strlen(e)+64+strlen(error))
-	    str=(char*)xrealloc(str,str_allocated=strlen(e)+64+strlen(error));
-   	 sprintf(str,"%s: %s",error,e);
+   	 sprintf(str,"%s: %s",error,strerror(saved_errno));
 	 return(str);
       }
       return(strerror(saved_errno));
@@ -310,8 +313,6 @@ const char *FileAccess::StrError(int err)
    case(NO_FILE):
       if(error)
       {
-	 if(str_allocated<64+strlen(error))
-	    str=(char*)xrealloc(str,64+strlen(error));
    	 sprintf(str,_("Access failed: %s"),error);
 	 return(str);
       }
@@ -321,8 +322,6 @@ const char *FileAccess::StrError(int err)
    case(FATAL):
       if(error)
       {
-	 if(str_allocated<64+strlen(error))
-	    str=(char*)xrealloc(str,str_allocated=64+strlen(error));
    	 sprintf(str,_("Fatal error: %s"),error);
 	 return(str);
       }
@@ -330,14 +329,17 @@ const char *FileAccess::StrError(int err)
    case(STORE_FAILED):
       return(_("Store failed - you have to reput"));
    case(LOGIN_FAILED):
+      if(error)
+      {
+   	 sprintf(str,"%s: %s",_("Login failed"),error);
+	 return(str);
+      }
       return(_("Login failed"));
    case(NOT_SUPP):
       return(_("Operation not supported"));
    case(FILE_MOVED):
       if(error)
       {
-	 if(str_allocated<64+strlen(error))
-	    str=(char*)xrealloc(str,64+strlen(error));
    	 sprintf(str,_("File moved: %s"),error);
       }
       else
@@ -737,6 +739,12 @@ void FileAccess::SetError(int ec,const char *e)
 {
    if(ec==SEE_ERRNO)
       saved_errno=errno;
+   if(ec==NO_FILE && file && file[0] && !strstr(e,file))
+   {
+      char *m=string_alloca(strlen(e)+2+strlen(file)+2);
+      sprintf(m,"%s (%s)",e,file);
+      e=m;
+   }
    xfree(error);
    error=xstrdup(e);
    error_code=ec;
