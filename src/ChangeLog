@@ -1,3 +1,7 @@
+2001-04-17  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* MirrorJob.cc, mkdirJob.cc, StatusLine.cc: fix overflows.
+
 2001-04-04  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Fish.cc, SleepJob.cc, ftpclass.cc: move CDECL to modconfig.h.
