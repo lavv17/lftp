@@ -1,3 +1,7 @@
+1999-07-12  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Resolver.cc: don't search for SRV RR if address is numeric.
+
 1999-07-11  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* lftp_rl.c: improve lftp_rl_clear.

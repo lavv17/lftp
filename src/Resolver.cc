@@ -652,7 +652,7 @@ void Resolver::DoGethostbyname()
       }
    }
 
-   if(service && !portname)
+   if(service && !portname && !isdigit((unsigned char)hostname[0]))
       LookupSRV_RR();
 
    LookupOne(hostname);
