@@ -3,6 +3,7 @@
 	* ftpclass.cc, ftpclass.h: don't assume peer!=0, copy control socket
 	  name to member peer_sa.
 	* NetAccess.cc: remove obsolete commented out asserts.
+	* Fish.cc: set user, group, nlinks and mode in FileInfo class.
 
 2001-11-19  Alexander V. Lukyanov <lav@yars.free.net>
 
