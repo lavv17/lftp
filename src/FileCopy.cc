@@ -182,7 +182,7 @@ int FileCopy::Do()
 	    }
 	    debug((9,_("copy: put rolled back to %lld, seeking get accordingly\n"),
 		     (long long)put->GetRealPos()));
-	    debug((10,_("copy: get position was %lld\n"),
+	    debug((10,"copy: get position was %lld\n",
 		     (long long)get->GetRealPos()));
 	    get->Seek(put->GetRealPos());
 	    return MOVED;
@@ -220,7 +220,7 @@ int FileCopy::Do()
       get->Get(&b,&s);
       if(b==0) // eof
       {
-	 debug((10,_("copy: get hit eof\n")));
+	 debug((10,"copy: get hit eof\n"));
       eof:
 	 put->Resume();
 	 if(line_buffer)
@@ -293,7 +293,7 @@ int FileCopy::Do()
 
       if(get->range_limit!=FILE_END && get->range_limit<=get->GetRealPos())
       {
-	 debug((10,_("copy: get reached range limit\n")));
+	 debug((10,"copy: get reached range limit\n"));
 	 goto eof;
       }
       return m;
@@ -315,7 +315,7 @@ int FileCopy::Do()
 
       if(!put->Done())
 	 return m;
-      debug((10,_("copy: put confirmed store\n")));
+      debug((10,"copy: put confirmed store\n"));
 
    pre_GET_DONE_WAIT:
       get->Empty();
@@ -337,7 +337,7 @@ int FileCopy::Do()
       }
       if(!get->Done())
 	 return m;
-      debug((10,_("copy: get is finished - all done\n")));
+      debug((10,"copy: get is finished - all done\n"));
       state=ALL_DONE;
       Delete(get); get=0;
       return MOVED;
@@ -842,7 +842,7 @@ void FileCopyPeerFA::OpenSession()
       if(size!=NO_SIZE && size!=NO_SIZE_YET && seek_pos>=size && !ascii)
       {
       past_eof:
-	 debug((10,_("copy src: seek past eof (seek_pos=%lld, size=%lld)\n"),
+	 debug((10,"copy src: seek past eof (seek_pos=%lld, size=%lld)\n",
 		  (long long)seek_pos,(long long)size));
 	 pos=seek_pos;
 	 eof=true;
@@ -860,10 +860,6 @@ void FileCopyPeerFA::OpenSession()
 	 Save(0);
 	 Allocate(s);
 	 memmove(buffer+buffer_ptr,b,s);
-      #ifndef NATIVE_CRLF
-	 if(ascii)
-	    s=crlf_to_lf(buffer+buffer_ptr,s);
-      #endif	 // NATIVE_CRLF
 	 in_buffer=s;
 	 pos=seek_pos;
 	 eof=true;

@@ -1,3 +1,9 @@
+2001-10-30  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc: no need to convert cached data - it is done by other
+	  copy peer; don't translate really debugging messages.
+	* misc.cc: no need for crlf_to_lf.
+
 2001-10-29  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* misc.cc: use dynamic allocation in set_tz; use unsetenv to unset TZ;
