@@ -10,6 +10,8 @@
 	* url.cc: set path=/ by default for http urls.
 	* CopyJob.cc, pgetJob.cc: move string out of #define to help
 	  xgettext to extract it (reported by Nicolas Noble).
+	* FileAccess.cc: allow //path (required by posix and needed for
+	  novell). Reported by Andreas Quitzow <u042415@xham.dlh.de>.
 
 2000-08-25  Alexander V. Lukyanov  <lav@yars.free.net>
 

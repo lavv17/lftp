@@ -619,7 +619,11 @@ void FileAccess::Chdir(const char *path,bool verify)
    ExpandTildeInCWD();
 
    if(cwd[0]=='/')
+   {
       prefix_size=1;
+      if(cwd[1]=='/' && cwd[2] && cwd[2]!='/')
+	 prefix_size=2;
+   }
    else if(cwd[0]=='~')
    {
       prefix_size=1;
@@ -638,6 +642,8 @@ void FileAccess::Chdir(const char *path,bool verify)
    {
       strcpy(newcwd,path);
       prefix_size=1;
+      if(path[1]=='/' && path[2] && path[2]!='/')
+	 prefix_size=2;
    }
    else if(path[0]=='~')
    {
