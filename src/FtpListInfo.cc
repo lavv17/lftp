@@ -29,6 +29,7 @@
 #include "xstring.h"
 #include <ctype.h>
 #include "xalloca.h"
+#include "FtpSplitList.h"
 
 #define need_size (need&FileInfo::SIZE)
 #define need_time (need&FileInfo::DATE)
@@ -38,14 +39,14 @@ FtpListInfo::FtpListInfo(Ftp *s)
    session=s;
    get_info=0;
    get_info_cnt=0;
-   glob=0;
+   slist=0;
    state=INITIAL;
 }
 
 FtpListInfo::~FtpListInfo()
 {
-   if(glob)
-      delete glob;
+   if(slist)
+      delete slist;
    session->Close();
    xfree(get_info);
 }
@@ -56,7 +57,7 @@ int FtpListInfo::Do()
    FileInfo *file;
    int res;
    int m=STALL;
-   char	**glob_res;
+   char	**slist_res;
    int err;
 
    if(done)
@@ -65,63 +66,63 @@ int FtpListInfo::Do()
    switch(state)
    {
    case(INITIAL):
-      glob=new FtpGlob(session,"",session->LONG_LIST);
-      glob->UseCache(use_cache);
+      slist=new FtpSplitList(session,session->LONG_LIST);
+      slist->UseCache(use_cache);
       state=GETTING_LONG_LIST;
       m=MOVED;
 
    case(GETTING_LONG_LIST):
-      if(!glob->Done())
+      if(!slist->Done())
 	 return m;
-      if(glob->Error())
+      if(slist->Error())
       {
-	 SetError(glob->ErrorText());
-      	 delete glob;
-	 glob=0;
+	 SetError(slist->ErrorText());
+      	 delete slist;
+	 slist=0;
 	 return MOVED;
       }
-      glob_res=glob->GetResult();
+      slist_res=slist->GetResult();
 
       // don't consider empty list to be valid
-      if(glob_res && glob_res[0])
-	 result=ParseFtpLongList(glob_res,&err);
+      if(slist_res && slist_res[0])
+	 result=ParseFtpLongList(slist_res,&err);
       else
 	 err=1;
 
       if(!result)
 	 result=new FileSet;
 
-      delete glob;
-      glob=0;
-      glob_res=0; // note: glob_res is pointer to part of glob
+      delete slist;
+      slist=0;
+      slist_res=0; // note: slist_res is pointer to part of slist
 
       if(err==0)
 	 goto pre_GETTING_INFO;
 
       // there were parse errors, try another method
-      glob=new FtpGlob(session,"",session->LIST);
-      glob->UseCache(use_cache);
-      glob->NoLongList();
+      slist=new FtpSplitList(session,session->LIST);
+      slist->UseCache(use_cache);
       state=GETTING_SHORT_LIST;
       m=MOVED;
 
    case(GETTING_SHORT_LIST):
-      if(!glob->Done())
+      if(!slist->Done())
 	 return m;
-      if(glob->Error())
+      if(slist->Error())
       {
-	 SetError(glob->ErrorText());
-      	 delete glob;
-	 glob=0;
+	 SetError(slist->ErrorText());
+      	 delete slist;
+	 slist=0;
 	 return MOVED;
       }
-      glob_res=glob->GetResult();
-      result->Merge(glob_res);
-      delete glob;
-      glob=0;
-      glob_res=0;
+      slist_res=slist->GetResult();
+      result->Merge(slist_res);
+      delete slist;
+      slist=0;
+      slist_res=0;
 
    pre_GETTING_INFO:
+      result->ExcludeDots();
       if(rxc_exclude || rxc_include)
 	 result->Exclude(path,rxc_exclude,rxc_include);
 

@@ -311,6 +311,7 @@ protected:
    char	 **list;
    int	 list_size;
    int	 list_alloc;
+   bool	 dirs_only;
    void	 add(const char *ptr,int len);
    void	 add_force(const char *ptr,int len);
    void	 add(const char *ptr) { add(ptr,strlen(ptr)); }
@@ -320,6 +321,7 @@ public:
    char **GetResult() { return list; }
    Glob(const char *p);
    virtual ~Glob();
+   void DirectoriesOnly() { dirs_only=true; }
 
    static bool HasWildcards(const char *);
    static void UnquoteWildcards(char *);

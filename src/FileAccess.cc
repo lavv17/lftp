@@ -882,6 +882,7 @@ Glob::Glob(const char *p)
    list=0;
    list_size=0;
    list_alloc=0;
+   dirs_only=false;
 }
 
 void Glob::free_list()

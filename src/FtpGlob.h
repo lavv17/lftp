@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-1999 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,53 +27,23 @@
 
 class FtpGlob : public Glob
 {
-   enum state_t
-      {
-	 INITIAL,
-	 GETTING_DATA,
-	 DONE
-      };
-   state_t state;
-
-   FileAccess::open_mode mode;
    char	 *dir;
    char  **dir_list;
-   int   dir_index;
    FtpGlob *updir_glob;
+   char	 *base_dir;
 
-   int	 inbuf;
-   char	 *buf;
-   char	 *ptr;
-   bool	 from_cache;
-   bool	 use_long_list;
+   ListInfo *li;
 
    FileAccess  *f;
 
-   int	 flags;
-   enum { RESTRICT_SLASHES=1,RESTRICT_PATH=2,NO_CHANGE=4 };
-   int	 extra_slashes;
-
-   void Init(FileAccess *session,FA::open_mode n_mode);
+   void Init(FileAccess *session);
 
 public:
    int	 Do();
    const char *Status();
 
-   FtpGlob(FileAccess *session,const char *n_pattern,
-	    FileAccess::open_mode n_mode=FileAccess::LIST);
+   FtpGlob(FileAccess *session,const char *n_pattern);
    virtual ~FtpGlob();
-
-
-   void	 SetSlashFilter(int num)
-   {
-      extra_slashes=num;
-      flags|=RESTRICT_SLASHES;
-   }
-   void RestrictPath() { flags|=RESTRICT_PATH; }
-/*   void NoCache() { use_cache=false; }*/
-   void NoCheck() { flags&=~(RESTRICT_SLASHES|RESTRICT_PATH); }
-   void NoChange() { flags|=NO_CHANGE; }
-   void NoLongList() { use_long_list=false; }
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-1999 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,35 +35,20 @@
 #include "LsCache.h"
 #include "misc.h"
 
-void FtpGlob::Init(FileAccess *session,FA::open_mode n_mode)
+void FtpGlob::Init(FileAccess *session)
 {
    dir=0;
-   mode=n_mode;
    f=session;
-   inbuf=0;
-   buf=0;
-   flags=0;
-   extra_slashes=0;
-   from_cache=false;
-   state=INITIAL;
-   ptr=buf;
-   use_long_list=true;
    dir_list=0;
-   dir_index=0;
    updir_glob=0;
-   if(n_mode!=FA::LIST)
-   {
-      NoLongList();
-      NoChange();
-   }
+   li=0;
+   base_dir=0;
 }
 
-FtpGlob::FtpGlob(FileAccess *session,const char *n_pattern,FA::open_mode n_mode)
+FtpGlob::FtpGlob(FileAccess *session,const char *n_pattern)
    : Glob(n_pattern)
 {
-   Init(session,n_mode);
-   if(n_mode==FA::LIST)
-      RestrictPath();
+   Init(session);
    dir=xstrdup(pattern);
    char *slash=strrchr(dir,'/');
    if(!slash)
@@ -79,185 +64,105 @@ FtpGlob::FtpGlob(FileAccess *session,const char *n_pattern,FA::open_mode n_mode)
       char *u=alloca_strdup(pattern);
       UnquoteWildcards(u);
       add(u);
-      state=DONE;
+      done=true;
       return;
    }
 
-#if 0
-   // Unfortunately, we don't know if remote server itself does globbing.
-   // So we can't pass it strings with * ? reliably.
-   if(dir[0] && mode==FA::LIST)
+   base_dir=xstrdup(f->GetCwd());
+
+   if(dir[0])
    {
-      updir_glob=new FtpGlob(session,dir,mode);
+      updir_glob=new FtpGlob(session,dir);
+      updir_glob->DirectoriesOnly();
    }
-#endif
 }
 
 FtpGlob::~FtpGlob()
 {
    if(f)
       f->Close();
-   xfree(buf);
-   xfree(dir);
+   if(li)
+      delete li;
+   if(!dir_list)
+      xfree(dir);
+   if(updir_glob)
+      delete updir_glob;
+   xfree(base_dir);
 }
 
 int   FtpGlob::Do()
 {
-   int	 res;
-   char	 *nl;
    int   m=STALL;
 
-   if(state==DONE)
+   if(done)
+      return m;
+
+   if(!dir_list && updir_glob)
    {
-      if(!done)
+      if(updir_glob->Error())
       {
+// 	 ...
+      }
+      if(!updir_glob->Done())
+	 return m;
+      dir_list=updir_glob->GetResult();
+      xfree(dir);
+      dir=*dir_list;
+      m=MOVED;
+      if(dir==0)
+      {
+	 done=true;
+	 return m;
+      }
+   }
+
+   if(!li)
+   {
+   create_li:
+      f->Chdir(dir_file(base_dir,dir),false);
+      li=f->MakeListInfo();
+      li->UseCache(use_cache);
+   }
+
+   if(li->Error())
+   {
+      // no need for error message
+   next_dir:
+      if(dir_list)
+	 dir_list++;
+      if(!dir_list || !*dir_list)
+      {
+	 f->Chdir(base_dir,false);
 	 done=true;
 	 return MOVED;
       }
+      dir=*dir_list;
+      delete li; li=0;
+      goto create_li;
+   }
+   if(!li->Done())
       return m;
-   }
 
-   if(state==INITIAL)
+   FileSet *set=li->GetResult();
+   set->ExcludeDots();
+   set->rewind();
+   for(FileInfo *info=set->curr(); info!=NULL; info=set->next())
    {
-      if(use_cache)
-      {
-	 if(LsCache::Find(f,dir,mode,&buf,&inbuf))
-	 {
-	    from_cache=true;
-	    ptr=buf;
-	    use_long_list=false;
-	 }
-	 else if(mode==FA::LIST && use_long_list && (flags&RESTRICT_PATH)
-	 && !(flags&NO_CHANGE)
-	 && LsCache::Find(f,dir,FA::LONG_LIST,&buf,&inbuf))
-	 {
-	    from_cache=true;
-	    ptr=buf;
-	    NoChange();
-	 }
-      }
-      if(!from_cache)
-	 f->Open(dir,mode);
-      state=GETTING_DATA;
-      m=MOVED;
+      if(dirs_only && (info->defined&info->TYPE)
+		     && info->filetype==info->NORMAL)
+	 continue;   // note that symlinks can point to directories,
+		     // so skip normal files only.
+      add(dir_file(dir,info->name));
    }
-
-   if(!from_cache)
-   {
-      char tmpbuf[0x1000];
-      res=f->Read(tmpbuf,sizeof(tmpbuf));
-      if(res==f->DO_AGAIN)
-	 return m;
-      if(res<0)
-      {
-	 SetError(f->StrError(res));
-	 state=DONE;
-	 return MOVED;
-      }
-
-      if(res==0)
-      {
-	 // EOF
-	 f->Close();
-
-	 LsCache::Add(f,dir,mode,buf,inbuf);
-
-	 f=0;
-	 state=DONE;
-	 return MOVED;
-      }
-      int offs=ptr-buf;
-      buf=(char*)xrealloc(buf,inbuf+res);
-      ptr=buf+offs;
-      memcpy(buf+inbuf,tmpbuf,res);
-      inbuf+=res;
-   }
-
-   for( ; 0!=(nl=(char*)memchr(ptr,'\n',inbuf-(ptr-buf))); ptr=nl+1 )
-   {
-      int len=nl-ptr;
-      if(nl[-1]=='\r')
-	 len--;
-
-      if(!(flags&NO_CHANGE) && mode==FA::LIST)
-      {
-	 // workaround for some ftp servers
-	 if(!(dir[0]=='.' && dir[1]=='/')
-	  && (ptr[0]=='.' && ptr[1]=='/'))
-	 {
-	    ptr+=2;
-	    len-=2;
-	 }
-	 if(!(dir[0]=='/' && dir[1]=='/')
-	  && (ptr[0]=='/' && ptr[1]=='/'))
-	 {
-	    ptr++;
-	    len--;
-	 }
-	 if(dir[0] && !memchr(ptr,'/',len))
-	 {
-	    // workaround for servers returning only names without dir
-	    int dir_len=strlen(dir);
-	    char *combined=(char*)xmalloc(dir_len+len+2);
-	    strcpy(combined,dir);
-	    if(dir[dir_len-1]!='/')
-	       strcat(combined,"/");
-	    int c_len=strlen(combined)+len;
-	    strncat(combined,ptr,len);
-	    add(combined,c_len);
-	    continue;
-	 }
-      }
-      if(from_cache && use_long_list)
-	 add_force(ptr,len);
-      else
-	 add(ptr,len);
-   }
-
-   if(from_cache)
-   {
-      if(use_long_list && from_cache)
-      {
-	 // ok, now try to parse the long list.
-	 int err=0;
-	 FileSet *set=FtpListInfo::ParseFtpLongList(list,&err);
-	 if(err>0) // ouch, there were errors. Revert to short list
-	 {
-	    if(set)
-	       delete set;
-	    free_list();
-	    xfree(buf);
-	    buf=ptr=0;
-	    inbuf=0;
-
-	    flags&=~NO_CHANGE;
-	    use_long_list=false;
-	    from_cache=false;
-	    state=INITIAL;
-	    return MOVED;
-	 }
-	 // all ok, transform the set
-	 free_list();
-	 set->ExcludeDots();
-	 set->rewind();
-	 for(FileInfo *info=set->curr(); info!=NULL; info=set->next())
-	    add(dir_file(dir,info->name));
-	 delete set;
-      }
-      state=DONE;
-   }
-
-   return MOVED;
+   delete set;
+   goto next_dir;
 }
 
 const char *FtpGlob::Status()
 {
-   static char s[256];
-   if(state==GETTING_DATA)
-   {
-      sprintf(s,_("Getting file list (%ld) [%s]"),
-		     f->GetPos(),f->CurrentStatus());
-      return s;
-   }
+   if(updir_glob && !dir_list)
+      return updir_glob->Status();
+   if(li)
+      return li->Status();
    return "";
 }

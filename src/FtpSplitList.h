@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1998 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-1999 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,37 +20,39 @@
 
 /* $Id$ */
 
-#ifndef FTPLISTINFO_H
-#define FTPLISTINFO_H
+#ifndef FTPGLOB_H
+#define FTPGLOB_H
 
-#include "ftpclass.h"
+#include "FileAccess.h"
 
-class FtpListInfo : public ListInfo
+class FtpSplitList : public Glob
 {
    enum state_t
       {
 	 INITIAL,
-	 GETTING_LONG_LIST,
-	 GETTING_SHORT_LIST,
-	 GETTING_INFO,
+	 GETTING_DATA,
 	 DONE
       };
    state_t state;
-   Ftp *session;
 
-   Ftp::fileinfo *get_info;
-   int get_info_cnt;
+   FileAccess::open_mode mode;
 
-   class FtpSplitList *slist;
+   int	 inbuf;
+   char	 *buf;
+   char	 *ptr;
+   bool	 from_cache;
+
+   FileAccess  *f;
+
+   void Init(FileAccess *session,FA::open_mode n_mode);
 
 public:
-   static FileSet *ParseFtpLongList(const char * const *lines,int *err);
-
-public:
-   FtpListInfo(Ftp *session);
-   virtual ~FtpListInfo();
-   int Do();
+   int	 Do();
    const char *Status();
+
+   FtpSplitList(FileAccess *session,
+	    FileAccess::open_mode n_mode=FileAccess::LIST);
+   virtual ~FtpSplitList();
 };
 
-#endif//FTPLISTINFO_H
+#endif
