@@ -133,13 +133,16 @@ const char *find_eol(const char *buf,int len,bool eof,int *eol_size)
 /* This function replaces &amp; &lt; &gt; &quot; to appropriate characters */
 static void decode_amps(char *s)
 {
-   static struct { char str[7]; char ch; } table[]={
+   static const struct pair
+      { char str[7]; char ch; }
+   table[]={
       { "&amp;",  '&' },
       { "&lt;",   '<' },
       { "&gt;",   '>' },
       { "&quot;", '"' },
-      { 0, 0 }
-   }, *scan;
+      { "", 0 }
+   };
+   const struct pair *scan;
 
    for(char *a=s; a; a=strchr(a,'&'))
    {
