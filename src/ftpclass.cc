@@ -928,6 +928,9 @@ int   Ftp::Do()
       // first try "easy" cases of session take-over.
       for(int i=0; i<3; i++)
       {
+	 if(i>=2 && (connection_limit==0
+		  || connection_limit>CountConnections()))
+	    break;
 	 GetBetterConnection(i);
 	 if(state!=INITIAL_STATE)
 	    return MOVED;

@@ -1,6 +1,7 @@
 2000-03-02  Alexander V. Lukyanov  <lav@yars.free.net>
 
-	* ftpclass.cc: don't take over a connection if it has NOREST_MODE.
+	* ftpclass.cc: don't take over a connection if it has NOREST_MODE;
+	  check if connection_limit is reached before interrupting a transfer.
 	* commands.cc: -E for get, put, mget, mput.
 
 2000-03-01  Alexander V. Lukyanov  <lav@yars.free.net>
