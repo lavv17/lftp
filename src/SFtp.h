@@ -26,10 +26,11 @@
 #include "NetAccess.h"
 #include "StatusLine.h"
 #include "PtyShell.h"
+#include <sys/types.h>
+#include <sys/stat.h>
 
 class SFtp : public NetAccess
 {
-   static const int PROTOCOL_VERSION=4;
    int	 protocol_version;
 
    const char *lc_to_utf8(const char *);
@@ -98,15 +99,20 @@ static bool is_valid_reply(int p)
 #define SSH_FXF_EXCL		       0x00000020
 
 enum sftp_status_t {
-   SSH_FX_OK		   =0,
-   SSH_FX_EOF		   =1,
-   SSH_FX_NO_SUCH_FILE	   =2,
-   SSH_FX_PERMISSION_DENIED=3,
-   SSH_FX_FAILURE	   =4,
-   SSH_FX_BAD_MESSAGE	   =5,
-   SSH_FX_NO_CONNECTION    =6,
-   SSH_FX_CONNECTION_LOST  =7,
-   SSH_FX_OP_UNSUPPORTED   =8
+   SSH_FX_OK		     =0,
+   SSH_FX_EOF		     =1,
+   SSH_FX_NO_SUCH_FILE	     =2,
+   SSH_FX_PERMISSION_DENIED  =3,
+   SSH_FX_FAILURE	     =4,
+   SSH_FX_BAD_MESSAGE	     =5,
+   SSH_FX_NO_CONNECTION      =6,
+   SSH_FX_CONNECTION_LOST    =7,
+   SSH_FX_OP_UNSUPPORTED     =8,
+   SSH_FX_INVALID_HANDLE     =9,
+   SSH_FX_NO_SUCH_PATH       =10,
+   SSH_FX_FILE_ALREADY_EXISTS=11,
+   SSH_FX_WRITE_PROTECT      =12,
+   SSH_FX_NO_MEDIA           =13
 };
 static bool is_valid_status(int s)
 {
@@ -118,6 +124,7 @@ static bool is_valid_status(int s)
       DISCONNECTED,
       CONNECTING,
       CONNECTING_1,
+      CONNECTING_2,
       CONNECTED,
       FILE_RECV,
       FILE_SEND,
@@ -127,9 +134,9 @@ static bool is_valid_status(int s)
 
    state_t state;
    bool received_greeting;
-   int ssh_id;
-   int reply_length;
-   int handle;
+   unsigned ssh_id;
+   char *handle;
+   int handle_len;
 
    void Init();
 
@@ -140,6 +147,10 @@ static bool is_valid_status(int s)
    IOBuffer *send_buf;
    IOBuffer *recv_buf;
    bool recv_buf_suspended;
+   IOBuffer *pty_send_buf;
+   IOBuffer *pty_recv_buf;
+
+   Buffer *file_buf;
 
    PtyShell *ssh;
 
@@ -177,10 +188,10 @@ static bool is_valid_status(int s)
 	    if(HasID())
 	       length+=4;
 	 }
-      static unpack_status_t DecodeString(Buffer *b,int *offset,int max_len,char **str_out,int *len_out);
       bool HasID() { return(type!=SSH_FXP_INIT && type!=SSH_FXP_VERSION); }
    public:
       Packet() { length=0; }
+      virtual void ComputeLength() { length=1+4*HasID(); }
       virtual void Pack(Buffer *b)
 	 {
 	    b->PackUINT32BE(length);
@@ -192,10 +203,13 @@ static bool is_valid_status(int s)
       virtual ~Packet() {}
       int GetLength() { return length; }
       packet_type GetPacketType() { return type; }
-      int GetID() { return id; }
+      const char *GetPacketTypeText();
+      unsigned GetID() { return id; }
       void SetID(unsigned new_id) { id=new_id; }
       void DropData(Buffer *b) { b->Skip(4+(length>0?length:0)); }
-      bool TypeIs(packet_type t) { return type==t; }
+      bool TypeIs(packet_type t) const { return type==t; }
+      static unpack_status_t UnpackString(Buffer *b,int *offset,int limit,char **str_out,int *len_out=0);
+      static void PackString(Buffer *b,const char *str,int len=-1);
    };
    unpack_status_t UnpackPacket(Buffer *,Packet **);
    class PacketUINT32 : public Packet
@@ -214,6 +228,8 @@ static bool is_valid_status(int s)
 	    unpacked+=4;
 	    return UNPACK_SUCCESS;
 	 }
+      void ComputeLength() { Packet::ComputeLength(); length+=4; }
+      void Pack(Buffer *b) { Packet::Pack(b); b->PackUINT32BE(data); }
    };
    class PacketSTRING : public Packet
    {
@@ -225,7 +241,9 @@ static bool is_valid_status(int s)
 	    if(l==-1)
 	       l=xstrlen(s);
 	    string_len=l;
-	    string=(char*)xmemdup(s,l);
+	    string=(char*)xmalloc(l+1);
+	    memcpy(string,s,l);
+	    string[l]=0;
 	    length+=4+l;
 	 }
       unpack_status_t Unpack(Buffer *b)
@@ -234,14 +252,14 @@ static bool is_valid_status(int s)
 	    res=Packet::Unpack(b);
 	    if(res!=UNPACK_SUCCESS)
 	       return res;
-	    res=DecodeString(b,&unpacked,0x10000,&string,&string_len);
+	    res=UnpackString(b,&unpacked,length+4,&string,&string_len);
 	    return res;
 	 }
+      void ComputeLength() { Packet::ComputeLength(); length+=4+string_len; }
       void Pack(Buffer *b)
 	 {
 	    Packet::Pack(b);
-	    b->PackUINT32BE(string_len);
-	    b->Put(string,string_len);
+	    Packet::PackString(b,string,string_len);
 	 }
       const char *GetString() { return string; }
       int GetStringLength() { return string_len; }
@@ -249,7 +267,7 @@ static bool is_valid_status(int s)
    class Request_INIT : public PacketUINT32
    {
    public:
-      Request_INIT() : PacketUINT32(SSH_FXP_INIT,PROTOCOL_VERSION) {}
+      Request_INIT(int v) : PacketUINT32(SSH_FXP_INIT,v) {}
    };
    class Reply_VERSION : public PacketUINT32
    {
@@ -273,13 +291,31 @@ static bool is_valid_status(int s)
    public:
       Request_REALPATH(const char *p) : PacketSTRING(SSH_FXP_REALPATH,p) {}
    };
+   class Request_STAT : public PacketSTRING
+   {
+   public:
+      Request_STAT(const char *p) : PacketSTRING(SSH_FXP_STAT,p) {}
+      const char *GetName() { return string; }
+   };
    struct ExtFileAttr
    {
       char *extended_type;
       char *extended_data;
       ExtFileAttr() { extended_type=extended_data=0; }
       ~ExtFileAttr() { xfree(extended_type); xfree(extended_data); }
-      unpack_status_t Unpack(Buffer *b,int *offset);
+      unpack_status_t Unpack(Buffer *b,int *offset,int limit);
+      void Pack(Buffer *b);
+   };
+   struct FileACE
+   {
+      unsigned ace_type;
+      unsigned ace_flag;
+      unsigned ace_mask;
+      char     *who;
+      FileACE() { ace_type=ace_flag=ace_mask=0; who=0; }
+      ~FileACE() { xfree(who); }
+      unpack_status_t Unpack(Buffer *b,int *offset,int limit);
+      void Pack(Buffer *b);
    };
    struct FileAttrs
    {
@@ -292,30 +328,41 @@ static bool is_valid_status(int s)
       gid_t    gid;		    // present only if flag UIDGID // v3
       unsigned permissions;	    // present only if flag PERMISSIONS
       time_t   atime;		    // present only if flag ACCESSTIME (ACMODTIME)
-      int      atime_nseconds;	    // present only if flag SUBSECOND_TIMES
+      unsigned atime_nseconds;	    // present only if flag SUBSECOND_TIMES
       time_t   createtime;	    // present only if flag CREATETIME
-      int      createtime_nseconds; // present only if flag SUBSECOND_TIMES
+      unsigned createtime_nseconds; // present only if flag SUBSECOND_TIMES
       time_t   mtime;		    // present only if flag MODIFYTIME (ACMODTIME)
-      int      mtime_nseconds;	    // present only if flag SUBSECOND_TIMES
-      char     *acl;		    // present only if flag ACL
+      unsigned mtime_nseconds;	    // present only if flag SUBSECOND_TIMES
+      unsigned ace_count;	    // present only if flag ACL
+      FileACE  *ace;
       unsigned extended_count;	    // present only if flag EXTENDED
       ExtFileAttr *extended_attrs;
 
       FileAttrs()
       {
-	 flags=0; type=0; size=NO_SIZE; owner=group=acl=0; uid=gid=0;
+	 flags=0; type=0; size=NO_SIZE; owner=group=0; uid=gid=0;
 	 permissions=0;
 	 atime=createtime=mtime=NO_DATE;
 	 atime_nseconds=createtime_nseconds=mtime_nseconds=0;
 	 extended_count=0; extended_attrs=0;
+	 ace_count=0; ace=0;
       }
       ~FileAttrs()
       {
-	 xfree(owner); xfree(group); xfree(acl);
+	 xfree(owner); xfree(group);
 	 delete[] extended_attrs;
+	 delete[] ace;
       }
-      unpack_status_t Unpack(Buffer *b,int *offset,int proto_version);
-/*      void Pack(Buffer *b,int proto_version);*/
+      unpack_status_t Unpack(Buffer *b,int *offset,int limit,int proto_version);
+      void Pack(Buffer *b,int proto_version);
+      int ComputeLength(int v)
+	 {
+	    Buffer *b=new Buffer;
+	    Pack(b,v);
+	    int size=b->Size();
+	    Delete(b);
+	    return size;
+	 }
    };
    struct NameAttrs
    {
@@ -324,7 +371,7 @@ static bool is_valid_status(int s)
       FileAttrs attrs;
       NameAttrs() { name=0; longname=0; }
       ~NameAttrs() { xfree(name); xfree(longname); }
-      unpack_status_t Unpack(Buffer *b,int *offset,int proto_version);
+      unpack_status_t Unpack(Buffer *b,int *offset,int limit,int proto_version);
 /*      void Pack(Buffer *b,int proto_version);*/
    };
    class Reply_NAME : public Packet
@@ -344,21 +391,108 @@ static bool is_valid_status(int s)
 	    return &names[index];
 	 }
    };
+   class Reply_ATTRS : public Packet
+   {
+      int protocol_version;
+      FileAttrs attrs;
+   public:
+      Reply_ATTRS(int pv) : Packet(SSH_FXP_ATTRS) { protocol_version=pv; }
+      unpack_status_t Unpack(Buffer *b);
+      const FileAttrs *GetAttrs() { return &attrs; }
+   };
+   class Request_OPEN : public Packet
+   {
+      int protocol_version;
+      char *filename;
+      unsigned pflags;
+   public:
+      FileAttrs attrs;
+      Request_OPEN(const char *fn,unsigned fl,int pv) : Packet(SSH_FXP_OPEN)
+	 {
+	    filename=xstrdup(fn);
+	    pflags=fl;
+	    protocol_version=pv;
+	 }
+      ~Request_OPEN() { xfree(filename); }
+      void ComputeLength()
+	 {
+	    Packet::ComputeLength();
+	    length+=4+strlen(filename)+4+attrs.ComputeLength(protocol_version);
+	 }
+      void Pack(Buffer *b)
+	 {
+	    Packet::Pack(b);
+	    Packet::PackString(b,filename);
+	    b->PackUINT32BE(pflags);
+	    attrs.Pack(b,protocol_version);
+	 }
+   };
+   class Reply_HANDLE : public PacketSTRING
+   {
+   public:
+      Reply_HANDLE() : PacketSTRING(SSH_FXP_HANDLE) {}
+      char *GetHandle(int *out_len=0)
+	 {
+	    char *out=(char*)xmemdup(string,string_len+1);
+	    if(out_len)
+	       *out_len=string_len;
+	    return out;
+	 }
+   };
+   class Request_CLOSE : public PacketSTRING
+   {
+   public:
+      Request_CLOSE(const char *h,int len) : PacketSTRING(SSH_FXP_CLOSE,h,len) {}
+   };
+   class Request_FSTAT : public PacketSTRING
+   {
+   public:
+      Request_FSTAT(const char *h,int len) : PacketSTRING(SSH_FXP_FSTAT,h,len) {}
+   };
+   class Reply_STATUS : public Packet
+   {
+      int protocol_version;
+      unsigned code;
+      char *message;
+      char *language;
+   public:
+      Reply_STATUS(int pv) { protocol_version=pv; code=0; message=0; language=0; }
+      ~Reply_STATUS() { xfree(message); xfree(language); }
+      unpack_status_t Unpack(Buffer *b);
+      int GetCode() { return code; }
+      const char *GetCodeText();
+      const char *GetMessage() { return message; }
+   };
+   class Request_READ : public PacketSTRING
+   {
+   public:
+      off_t pos;
+      unsigned len;
+      Request_READ(const char *h,int hlen,off_t p,unsigned l)
+       : PacketSTRING(SSH_FXP_READ,h,hlen) { pos=p; len=l; }
+      void ComputeLength() { PacketSTRING::ComputeLength(); length+=8+4; }
+      void Pack(Buffer *b);
+   };
+   class Reply_DATA : public PacketSTRING
+   {
+   public:
+      Reply_DATA() : PacketSTRING(SSH_FXP_DATA) {}
+      void GetData(const char **b,int *s) { *b=string; *s=string_len; }
+   };
 
    enum expect_t
    {
       EXPECT_HOME_PATH,
       EXPECT_VERSION,
-      EXPECT_PWD,
       EXPECT_CWD,
-      EXPECT_DIR,
-      EXPECT_RETR_INFO,
+      EXPECT_HANDLE,
+      EXPECT_HANDLE_STALE,
+      EXPECT_DATA,
       EXPECT_RETR,
       EXPECT_INFO,
       EXPECT_DEFAULT,
       EXPECT_STOR_PRELIMINARY,
       EXPECT_STOR,
-      EXPECT_QUOTE,
       EXPECT_IGNORE
    };
 
@@ -374,24 +508,29 @@ static bool is_valid_status(int s)
 
    void PushExpect(Expect *);
    int HandleReplies();
+   int HandlePty();
+   void HandleExpect(Expect *);
    void CloseExpectQueue();
    int ReplyLogPriority(int);
 
    Expect *expect_chain;
+   Expect **expect_chain_end;
    Expect **FindExpect(Packet *reply);
    void DeleteExpect(Expect **);
-
-   char  **path_queue;
-   int	 path_queue_len;
-   void  PushDirectory(const char *);
-   char  *PopDirectory();
-   void	 EmptyPathQueue();
+   Expect *FindExpectExclusive(Packet *reply);
+   Expect *ooo_chain; 	// out of order replies buffered
 
    int   RespQueueIsEmpty() { return expect_chain==0; }
    int	 RespQueueSize() { /*FIXME*/ }
-   void  EmptyRespQueue() { /*FIXME*/ }
+   void  EmptyRespQueue()
+      {
+	 while(expect_chain)
+	    DeleteExpect(&expect_chain);
+	 while(ooo_chain)
+	    DeleteExpect(&ooo_chain);
+      }
 
-   void GetBetterConnection(int level,int count);
+   bool GetBetterConnection(int level,bool limit_reached);
    void MoveConnectionHere(SFtp *o);
 
    bool	 eof;
@@ -459,9 +598,9 @@ public:
    void Resume();
 };
 
+// FIXME
 class SFtpListInfo : public GenericParseListInfo
 {
-   FileSet *Parse(const char *buf,int len);
 public:
    SFtpListInfo(SFtp *session,const char *dir)
       : GenericParseListInfo(session,dir)
