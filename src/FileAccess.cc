@@ -80,6 +80,7 @@ void FileAccess::Init()
    ascii=false;
    norest_manual=false;
    location=0;
+   suggested_filename=0;
 
    url=0;
 
@@ -765,6 +766,7 @@ void FileAccess::SetSuggestedFileName(const char *fn)
    }
    if(!*fn)
       return;
+   suggested_filename=xstrdup(fn);
 }
 
 FileAccess *SessionPool::pool[pool_size];

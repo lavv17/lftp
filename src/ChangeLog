@@ -1,3 +1,8 @@
+2002-08-09  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc, FileAccess.cc: fixed core dump when Content-Disposition
+	  is handled (suggested_filename was not properly initialized).
+
 2002-08-07  Glenn Maynard <g_ld@zewt.org>
 
 	* lftp_tinfo.cc: use extern "C".

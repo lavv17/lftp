@@ -689,7 +689,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
    }
    if(!strcasecmp(name,"Content-Disposition"))
    {
-      char *filename=strstr(value,"filename=");
+      const char *filename=strstr(value,"filename=");
       if(!filename)
 	 return;
       if(*filename=='"')
@@ -707,7 +707,9 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       else
       {
 	 int end=strcspn(filename,"()<>@,;:\\\"/[]?={} \t");
-	 filename[end]=0;
+	 char *filename1=alloca_strdup(filename);
+	 filename1[end]=0;
+	 filename=filename1;
       }
       SetSuggestedFileName(filename);
       return;
