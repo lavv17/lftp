@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
 "POT-Creation-Date: 2001-10-17 10:43+0400\n"
-"PO-Revision-Date: 2001-09-15 22:57GMT\n"
+"PO-Revision-Date: 2001-10-18 20:38GMT\n"
 "Last-Translator: Nicolas Noble <nicolas@nobis-crew.org>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -312,9 +312,8 @@ msgid "invalid boolean value"
 msgstr "valeur booléenne invalide"
 
 #: src/ResMgr.cc:421
-#, fuzzy
 msgid "invalid boolean/auto value"
-msgstr "valeur booléenne invalide"
+msgstr "booléen/valeur automatique invalide"
 
 #: src/ResMgr.cc:445 src/ResMgr.cc:476
 msgid "invalid number"
@@ -383,7 +382,7 @@ msgid "execlp(%s) failed: %s\n"
 msgstr "execlp(%s) a échouée: %s\n"
 
 #: src/commands.cc:106
-#, fuzzy
+
 msgid "!<shell-command>"
 msgstr "!<commande_de_shell>"
 
@@ -514,12 +513,13 @@ msgid ""
 "Close idle connections. By default only with current server.\n"
 " -a  close idle connections with all servers\n"
 msgstr ""
-"Ferme les connexions inutiles. Par défaut, uniquement pour le serveur actif.\n"
+"Ferme les connexions inutiles. Par défaut, uniquement pour le serveur "
+"actif.\n"
 " -a  ferme les connexion inutiles de tous les serveurs\n"
 
 #: src/commands.cc:150
 msgid "[re]cls [opts] [path/][pattern]"
-msgstr ""
+msgstr "[re]cls [opts] [chemin/][expression]"
 
 #. note: I've tried to keep options which are likely to be always
 #. * turned on (via cmd:cls-default, etc) capital, to leave lowercase
@@ -564,6 +564,35 @@ msgid ""
 "Usage note: directory names must have a trailing slash; \"cls pub/\" to\n"
 "be recognized as a directory.\n"
 msgstr ""
+"Liste les fichiers distant. Vous pouvez rediriger la sortie de cette commande\n"
+"vers un fichier ou vers un pipe sur une commande externe.\n"
+"\n"
+" -B, --basename       - affiche les noms des fichiers uniquement\n"
+" -F, --classify       - ajoute un indicateur ('/' ou '@') aux entrées\n"
+" -l, --long           - utilise un format de liste long\n"
+" -s, --size           - affiche les tailles des fichiers\n"
+"     --filesize       - avec -s, affiche uniquement les tailles pour les fichiers\n"
+" -i, --nocase         - la recherche ne fait pas attention à la casse\n"
+" -I, --sortnocase     - trie sans tenir compte de la casse\n"
+" -D, --dirsfirst      - affiche les répertoires en premier\n"
+"     --sort=OPT       - \"name\" (par nom), \"size\" (par taille)\n"
+" -S                   - trie par la taille des fichiers\n"
+"\n"
+"Par défaut, la sortie de cls est cachée, pour voir un nouveau listing, utilisez\n"
+"`recls' ou `cache flush'.\n"
+"\n"
+"Les variables cls-default et cls-completion-default peuvent être utilisées\n"
+"pour spécifier les défauts pour les listings cls et les listings de complétion,\n"
+"respectivement. Par exemple, pour que les listings de complétion affichent les\n"
+"tailles de fichiers, mettez cls-completion-default à \"-s\".\n"
+"\n"
+"Astices: Utilisez --filesize et -D pour de meilleurs listings. Si vous\n"
+"ne voulez pas toujours voir les tailles des fichiers, --filesize pour\n"
+"cls-default affectera l'option -s de la ligne de commande. Toutes les\n"
+"options fonctionnent pour cls-completion-default. -i pour\n"
+"pour cls-completion-default va désactiver la casse pour la complétion.\n"
+"Nota: les noms des répertoires doivent avoir un slash final; \"cls pub/\""
+"pour être reconnu en tant que répertoire.\n"
 
 #: src/commands.cc:195
 msgid "debug [<level>|off] [-o <file>]"
@@ -574,7 +603,8 @@ msgid ""
 "Set debug level to given value or turn debug off completely.\n"
 " -o <file>  redirect debug output to the file.\n"
 msgstr ""
-"Définit le niveau de déboggage a la valeur indiquée ou désactive le déboggage.\n"
+"Définit le niveau de déboggage a la valeur indiquée ou désactive le "
+"déboggage.\n"
 " -o <fichier>  redirige le déboggage vers un fichier.\n"
 
 #: src/commands.cc:199
@@ -633,10 +663,9 @@ msgstr ""
 
 #: src/commands.cc:219
 msgid "glob [OPTS] <cmd> <args>"
-msgstr ""
+msgstr "glob [OPTS] <cmd> <args>"
 
 #: src/commands.cc:221
-#, fuzzy
 msgid ""
 "Expand wildcards and run specified command.\n"
 "Options can be used to expand wildcards to list of files, directories,\n"
@@ -646,12 +675,11 @@ msgid ""
 " -d  directories\n"
 " -a  all types\n"
 msgstr ""
-"Usage: glob [OPTS] commande args...\n"
 "Étend les jokers et lance la commande spécifiée.\n"
 "Les options peuvent être utilisées pour étendre les jokers à une liste de\n"
 "fichiers, de répertoires ou des deux types. La détermination du type n'est\n"
-"pas très fiable et dépend du serveur. Si une entrée ne peut être déterminée,\n"
-"elle sera incluse dans la liste.\n"
+"pas très fiable et dépend du serveur. Si une entrée ne peut être \n"
+"déterminée, elle sera incluse dans la liste.\n"
 " -f  fichiers (défaut)\n"
 " -d  répertoires\n"
 " -a  tous les types\n"
@@ -678,10 +706,12 @@ msgid ""
 "or \"all\" to list all entries.\n"
 msgstr ""
 " -w <fichier> Écrit l'historique dans le fichier.\n"
-" -r <fichier> Lit l'historique depuis le fichier et l'ajoute à l'historique en cours.\n"
+" -r <fichier> Lit l'historique depuis le fichier et l'ajoute à l'historique "
+"en cours.\n"
 " -c  Efface l'historique.\n"
 " -l  Liste l'historique (défaut).\n"
-"L'argument optionnel nb spécifie le nombre de lignes d'historique à afficher,\n"
+"L'argument optionnel nb spécifie le nombre de lignes d'historique à "
+"afficher,\n"
 "ou \"all\" pour lister toutes les entrées.\n"
 
 #: src/commands.cc:238
@@ -742,7 +772,6 @@ msgid "ls [<args>]"
 msgstr "ls [<args>]"
 
 #: src/commands.cc:258
-#, fuzzy
 msgid ""
 "List remote files. You can redirect output of this command to file\n"
 "or via pipe to external command.\n"
@@ -754,6 +783,7 @@ msgstr ""
 "commande vers un fichier ou faire un pipe vers une commande externe.\n"
 "Par défaut, la sortie de ls est cachée. Pour voir un nouveau listing,\n"
 "utilisez `rels' ou `cache flush'.\n"
+"Voir aussi `help cls'.\n"
 
 #: src/commands.cc:263
 msgid "mget [OPTS] <files>"
@@ -842,7 +872,8 @@ msgstr ""
 "\n"
 "Lorsque vous utilisez -R, le premier répertoire est local et le second est\n"
 "distant. Si le second répertoire est omis, le nom de base du premier est\n"
-"utilisé. Si les deux répertoires sont omis, les répertoires local et distants\n"
+"utilisé. Si les deux répertoires sont omis, les répertoires local et "
+"distants\n"
 "en cours sont utilisés.\n"
 
 #: src/commands.cc:299
@@ -880,7 +911,8 @@ msgstr "more <fichiers>"
 #: src/commands.cc:308
 msgid "Same as `cat <files> | more'. if PAGER is set, it is used as filter\n"
 msgstr ""
-"Même chose que `cat <fichiers> | more'. Si PAGER est définit, il est utilisé\n"
+"Même chose que `cat <fichiers> | more'. Si PAGER est définit, il est "
+"utilisé\n"
 "en temps que filtre.\n"
 
 #: src/commands.cc:309
@@ -924,21 +956,18 @@ msgid "Rename <file1> to <file2>\n"
 msgstr "Renomme <fichier1> en <fichier2>\n"
 
 #: src/commands.cc:321
-#, fuzzy
 msgid "[re]nlist [<args>]"
-msgstr "renlist [<args>]"
+msgstr "[re]nlist [<args>]"
 
 #: src/commands.cc:322
-#, fuzzy
 msgid ""
 "List remote file names.\n"
 "By default, nlist output is cached, to see new listing use `renlist' or\n"
 "`cache flush'.\n"
 msgstr ""
-"Liste les fichiers distants. Vous pouvez rediriger la sortie de cette\n"
-"commande vers un fichier ou faire un pipe vers une commande externe.\n"
-"Par défaut, la sortie de ls est cachée. Pour voir un nouveau listing,\n"
-"utilisez `rels' ou `cache flush'.\n"
+"Liste les fichiers distants."
+"Par défault, la sortie de nlist est cachée. Pour voir un nouveau listing,\n"
+"utilisez `renlist' ou `cache flush'.\n"
 
 #: src/commands.cc:325
 msgid "open [OPTS] <site>"
@@ -1014,10 +1043,9 @@ msgstr ""
 
 #: src/commands.cc:348
 msgid "queue [OPTS] [<cmd>]"
-msgstr ""
+msgstr "queue [OPTS] [<cmd>]"
 
 #: src/commands.cc:349
-#, fuzzy
 msgid ""
 "\n"
 "       queue [-n num] <command>\n"
@@ -1036,14 +1064,13 @@ msgid ""
 "Move the given items before the given queue index, or to the end if no\n"
 "destination is given.\n"
 msgstr ""
-"Usage:\n"
+"\n"
 "       queue [-n num] <commande>\n"
 "\n"
-"Ajoute la commande a la queue pour le site en cours. Chaque site a sa "
-"propre\n"
-"queue de commandes. `-n' ajoute la commande avant l'élément indiqué dans la\n"
-"queue. Il est possible de rajouter en tête de queue un travail en cours avec\n"
-"la commande `queue wait <jobno>'.\n"
+"Ajoute la commande a la queue pour le site en cours. Chaque site a sa \n"
+"propre queue de commandes. `-n' ajoute la commande avant l'élément indiqué\n"
+"dans la queue. Il est possible de rajouter en tête de queue un travail en\n"
+"cours avec la commande `queue wait <jobno>'.\n"
 "\n"
 "       queue --delete|-d [index ou joker]\n"
 "\n"
@@ -1073,44 +1100,37 @@ msgstr ""
 "remis a zéro par une reconnexion a tout moment.\n"
 
 #: src/commands.cc:370
-#, fuzzy
 msgid "recls [<args>]Same as `cls', but don't look in cache\n"
-msgstr "Même chose que `ls', sauf que le cache n'est pas utilisé\n"
+msgstr "recls [<args>]Même chose que `cls', sauf que le cache n'est pas utilisé\n"
 
 #: src/commands.cc:373
-#, fuzzy
 msgid "Usage: reget [OPTS] <rfile> [-o <lfile>]Same as `get -c'\n"
-msgstr "reget [OPTS] <fichierd> [-o <fichierl>]"
+msgstr "Usage: reget [OPTS] <fichierd> [-o <fichierl>]Même chose que `get -c'\n"
 
 #: src/commands.cc:376
-#, fuzzy
 msgid "Usage: rels [<args>]Same as `ls', but don't look in cache\n"
-msgstr "Même chose que `ls', sauf que le cache n'est pas utilisé\n"
+msgstr "Usage: rels [<args>]Même chose que `ls', sauf que le cache n'est pas utilisé\n"
 
 #: src/commands.cc:379
-#, fuzzy
 msgid "Usage: renlist [<args>]Same as `nlist', but don't look in cache\n"
-msgstr "Même chose que `nlist', sauf que le cache n'est pas utilisé\n"
+msgstr "Usage: renlist [<args>]Même chose que `nlist', sauf que le cache n'est pas utilisé\n"
 
 #: src/commands.cc:381
 msgid "repeat [delay] [command]"
-msgstr ""
+msgstr "repeat [delay] [command]"
 
 #: src/commands.cc:382
-#, fuzzy
 msgid ""
 "Repeat specified command with a delay between iterations.\n"
 "Default delay is one second, default command is empty.\n"
 msgstr ""
-"Usage: repeat [délai] [commande]\n"
 "Répète la commande spécifiée en respectant un délai entre chaque\n"
 "répétition. Le délai par défaut est d'une seconde, la commande\n"
 "par défaut est la commande vide.\n"
 
 #: src/commands.cc:385
-#, fuzzy
 msgid "Usage: reput <lfile> [-o <rfile>]Same as `put -c'\n"
-msgstr "reput <fichierl> [-o <fichierd>]"
+msgstr "Usage: reput <fichierl> [-o <fichierd>]Même chose que `put -c'\n"
 
 #: src/commands.cc:387
 msgid "rm [-r] [-f] <files>"
@@ -1157,11 +1177,13 @@ msgid ""
 " -d  list only default values, not necessary current ones\n"
 msgstr ""
 "Définit la variable à la valeur indiquée. Si la valeur est omise, cela\n"
-"va effacer la variable. Le format d'un nom de variable est ``nom/"
-"restriction''\n"
-"où la restriction permet de spécifier l'application exacte de la définition.\n"
+"va effacer la variable. Le format d'un nom de variable est "
+"``nom/restriction''\n"
+"où la restriction permet de spécifier l'application exacte de la "
+"définition.\n"
 "Regardez lftp(1) pour les détails.\n"
-"Si set est appelée sans nom de variable, alors seuls les définitions modifiées\n"
+"Si set est appelée sans nom de variable, alors seuls les définitions "
+"modifiées\n"
 "sont affichées. Cela peut être changé par les options:\n"
 " -a  liste toutes les définitions, même les valeurs par défaut\n"
 " -d  liste uniquement les valeurs par défaut\n"
@@ -1349,20 +1371,19 @@ msgstr "Usage: %s <cmd>\n"
 
 #: src/commands.cc:1212
 msgid "invalid argument for `--sort'"
-msgstr ""
+msgstr "argument invalide pur `--sort'"
 
 #. silly getopt won't give us its error instead of printing it, oh well.
 #. * we only need to never print errors for completion and validation; for
 #. * cls itself we could do it, but that'd be a special case ...
 #: src/commands.cc:1249
-#, fuzzy
 msgid "invalid option"
-msgstr "nombre invalide"
+msgstr "option invalide"
 
 #: src/commands.cc:1278
-#, fuzzy, c-format
+#, c-format
 msgid "%s: %s.\n"
-msgstr "%s: %s: %s\n"
+msgstr "%s: %s.\n"
 
 #: src/commands.cc:1344
 #, c-format
@@ -1476,8 +1497,7 @@ msgstr "%s: `expire' attendu\n"
 
 #: src/commands.cc:2126
 #, c-format
-msgid ""
-"%s: %s - no such cached session. Use `scache' to look at session list.\n"
+msgid "%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr "%s: %s - pas de telle session cachée. Utilisez `scache'\n"
 
 #: src/commands.cc:2143
@@ -1503,8 +1523,7 @@ msgstr "%s est un alias pour `%s'\n"
 #: src/commands.cc:2165
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
-msgstr ""
-"Commande inconnue `%s'. Utilisez `help' pour voir la liste des commandes.\n"
+msgstr "Commande inconnue `%s'. Utilisez `help' pour voir la liste des commandes.\n"
 
 #: src/commands.cc:2167
 #, c-format
@@ -1517,8 +1536,7 @@ msgid "Lftp | Version %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"
 msgstr "Lftp | Version %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"
 
 #: src/commands.cc:2220
-msgid ""
-"This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
+msgid "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
 msgstr "Ceci est un logiciel libre SANS GARANTIE. Voir COPYING pour les détails.\n"
 
 #: src/commands.cc:2222
@@ -2128,23 +2146,3 @@ msgstr "dépendance du module `%s': %s\n"
 msgid "modules are not supported on this system"
 msgstr "les modules ne sont pas supportés sur ce système"
 
-#~ msgid "nlist [<args>]"
-#~ msgstr "nlist [<args>]"
-
-#~ msgid "List remote file names\n"
-#~ msgstr "Liste les fichiers distants\n"
-
-#~ msgid "Same as `get -c'\n"
-#~ msgstr "Même chose que `get -c'\n"
-
-#~ msgid "rels [<args>]"
-#~ msgstr "rels [<args>]"
-
-#~ msgid "Same as `put -c'\n"
-#~ msgstr "Même chose que `put -c'\n"
-
-#~ msgid "bzcat <files>"
-#~ msgstr "bzcat <fichiers>"
-
-#~ msgid "bzmore <files>"
-#~ msgstr "bzmore <fichiers>"

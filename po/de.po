@@ -1,20 +1,20 @@
 # LFTP -  deutsche Übersetzung
 # Korrekturen, KRITIK SEHR willkommen
 # COPYRIGHT:
-# Moritz Moeller-Herrmann <mmh@gmx.net>, 1999,2000
-#
+# Moritz Moeller-Herrmann <mmh@gmx.net>, 1999,2000,2001
+#GPL
 msgid ""
 msgstr ""
-"Project-Id-Version: Lftp 2.1.3\n"
+"Project-Id-Version: Lftp 2.4.5\n"
 "POT-Creation-Date: 2001-10-17 10:43+0400\n"
-"PO-Revision-Date: 2001-07-31 16:55GMT\n"
+"PO-Revision-Date: 2001-10-18 10:41CET\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "<moritz@hippokrates.jura.uni-mannheim.de>\n"
-"X-Generator: KBabel 0.9.2\n"
+"X-Generator: KBabel 0.9.5\n"
 
 #: src/CmdExec.cc:79
 #, c-format
@@ -316,9 +316,8 @@ msgid "invalid boolean value"
 msgstr "unzulässiger boolescher Wert"
 
 #: src/ResMgr.cc:421
-#, fuzzy
 msgid "invalid boolean/auto value"
-msgstr "unzulässiger boolescher Wert"
+msgstr "unzulässiger boolescher/automatischer Wert"
 
 #: src/ResMgr.cc:445 src/ResMgr.cc:476
 msgid "invalid number"
@@ -387,9 +386,8 @@ msgid "execlp(%s) failed: %s\n"
 msgstr "execlp(%s) fehlgeschlagen: %s\n"
 
 #: src/commands.cc:106
-#, fuzzy
 msgid "!<shell-command>"
-msgstr "!<Shell_Befehl>"
+msgstr "!<Shell-Befehl>"
 
 #: src/commands.cc:107
 msgid "Launch shell or shell command\n"
@@ -520,7 +518,7 @@ msgstr ""
 
 #: src/commands.cc:150
 msgid "[re]cls [opts] [path/][pattern]"
-msgstr ""
+msgstr "[re]cls [Optionen] [Pfad/][Muster]"
 
 #. note: I've tried to keep options which are likely to be always
 #. * turned on (via cmd:cls-default, etc) capital, to leave lowercase
@@ -565,6 +563,36 @@ msgid ""
 "Usage note: directory names must have a trailing slash; \"cls pub/\" to\n"
 "be recognized as a directory.\n"
 msgstr ""
+"Dateien auf der Gegenstelle auflisten. Man kann die Ausgabe des Befehls\n"
+"in eine Datei umleiten oder mittels einer pipe in ein Programm einspeisen.\n"
+"\n"
+" -B, --basename       - nur die Namenswurzel anzeigen\n"
+" -F, --classify       - Indikator (einen aus /@) an Einträge hängen\n"
+" -l, --long           - ausführliches Format der Listenausgabe\n"
+" -s, --size           - Größe jeder Datei ausgeben\n"
+"     --filesize       - Größe nur für Dateien ausgeben\n"
+" -i, --nocase         - Groß/Kleinschreibung beim Suchen nicht beachten "
+" -I, --sortnocase     - Groß/Kleinschreibung beim Sortieren nicht beachten "
+" -D, --dirsfirst      - Verzeichnisse zuerst aufführen "
+"     --sort=OPT       - \"nme\", \"size\"\n"
+" -S                   - nach Dateigröße sortieren\n"
+"\n"
+"Standardmäßig wird die Ausgabe von ls zwischengespeichert. Um eine neue Liste\n"
+"anzufordern kann man »recls« oder »cache flush« verwenden\n"
+"\n"
+"Die Variablen cls-default und cls-completion-default können verwendet werden,\n"
+"um die Einstellung jeweils für die Ausgabe von cls und die Ausgabe der\n"
+"automatischen Vervollständigung einzustellen.\n"
+"Um zum Beispiel bei letzterem die Dateigröße mit auszugeben, setzt man\n"
+"cls-completion-default auf »-s«.\n"
+"\n"
+"Tips: --filesize und -D verwenden um eine kompaktere Ausgabe zu erzielen. Wenn\n"
+"Sie nicht immer Dateigrößen sehen wollen: --filesize in cls-default erfaßt auch\n"
+"die -s Option bei der Befehlseingabe. Alle Optionen funktioniern in\n"
+"xls-completion-default: -i  in cls-completion-default macht die automatische\n"
+"Vervollständigung unabhängig von Groß/Kleinschreibung.\n"
+"Verwendungshinweis: Verzeichnisnamen müssen mit einem slash (/) enden\n"
+"(»cls pub/«), damit ein Verzeichnis erkannt wird.\n"
 
 #: src/commands.cc:195
 msgid "debug [<level>|off] [-o <file>]"
@@ -639,10 +667,9 @@ msgstr ""
 
 #: src/commands.cc:219
 msgid "glob [OPTS] <cmd> <args>"
-msgstr ""
+msgstr "glob [OPTIONEN] <Befehle> <Argumente>"
 
 #: src/commands.cc:221
-#, fuzzy
 msgid ""
 "Expand wildcards and run specified command.\n"
 "Options can be used to expand wildcards to list of files, directories,\n"
@@ -652,10 +679,9 @@ msgid ""
 " -d  directories\n"
 " -a  all types\n"
 msgstr ""
-"Verwendung: glob [OPTS] befehl argumente\n"
 "Platzhalter (Joker) ausfüllen und angegebenen Befehl ausführen.\n"
 "Optionen können die Joker auf Verzeichnisse, Dateien oder beides erstrecken.\n"
-"Die Unterscheidung der Typen ist ungenau und hängt vom Server ab.\n"
+"Die Unterscheidung der Typen ist unzuverlässig und hängt von der Gegenstelle ab.\n"
 "Wenn keine Unterscheidung getroffen werden kann, wird ein  Eintrag im \n"
 "Zweifel in die Liste aufgenommen.\n"
 "  -f  einfache Dateien (Standardwert)\n"
@@ -672,7 +698,7 @@ msgstr "Zeige die Hilfe für den Befehl <cmd>, sonst zeige verfügbare Befehle\n"
 
 #: src/commands.cc:230
 msgid "history -w file|-r file|-c|-l [cnt]"
-msgstr ""
+msgstr "history -w Datei|-r Datei|-c|-l [Zahl]"
 
 #: src/commands.cc:231
 msgid ""
@@ -683,6 +709,12 @@ msgid ""
 "Optional argument cnt specifies the number of history lines to list,\n"
 "or \"all\" to list all entries.\n"
 msgstr ""
+" -w <Datei> Verlauf in eine Datei schreiben.\n"
+" -r <Datei> Verlauf aus einer Datei lesen, an aktuellen Verlauf anhängen.\n"
+" -c  Verlauf löschen.\n"
+" -l  Verlauf anzeigen (Vorgabe).\n"
+"Das entbehrliche Argument »Zahl« gibt die Anzahl der aufzulistenden\n"
+"Verlaufszeilen an. »all« gibt alle Einträge aus.\n"
 
 #: src/commands.cc:238
 msgid "List running jobs. -v means verbose, several -v can be specified.\n"
@@ -740,7 +772,6 @@ msgid "ls [<args>]"
 msgstr "ls [<args>]"
 
 #: src/commands.cc:258
-#, fuzzy
 msgid ""
 "List remote files. You can redirect output of this command to file\n"
 "or via pipe to external command.\n"
@@ -752,6 +783,7 @@ msgstr ""
 "eine Datei oder mittels einer Pipe zu einem externen Befehl umleiten.\n"
 "Als Standardvorgabe, wird die Ausgabe gecached, um die Liste zu erneuern\n"
 "dient entweder »rels« oder »cache flush«.\n"
+"Siehe auch »help cls«.\n"
 
 #: src/commands.cc:263
 msgid "mget [OPTS] <files>"
@@ -923,19 +955,16 @@ msgid "Rename <file1> to <file2>\n"
 msgstr "<datei1> in <datei2> umbenennen\n"
 
 #: src/commands.cc:321
-#, fuzzy
 msgid "[re]nlist [<args>]"
-msgstr "renlist [<args>]"
+msgstr "[re]nlist [<args>]"
 
 #: src/commands.cc:322
-#, fuzzy
 msgid ""
 "List remote file names.\n"
 "By default, nlist output is cached, to see new listing use `renlist' or\n"
 "`cache flush'.\n"
 msgstr ""
-"Nichtlokale Dateien auflisten. Man kann die Ausgabe dieses Befehls in\n"
-"eine Datei oder mittels einer Pipe zu einem externen Befehl umleiten.\n"
+"Nichtlokale Dateien auflisten.\n"
 "Als Standardvorgabe, wird die Ausgabe gecached, um die Liste zu erneuern\n"
 "dient entweder »rels« oder »cache flush«.\n"
 
@@ -1015,10 +1044,9 @@ msgstr ""
 
 #: src/commands.cc:348
 msgid "queue [OPTS] [<cmd>]"
-msgstr ""
+msgstr "queue [OPTIONEN] [<Befehl>]"
 
 #: src/commands.cc:349
-#, fuzzy
 msgid ""
 "\n"
 "       queue [-n num] <command>\n"
@@ -1037,19 +1065,19 @@ msgid ""
 "Move the given items before the given queue index, or to the end if no\n"
 "destination is given.\n"
 msgstr ""
-"Benutzung:\n"
+"\n"
 "        queue [-n num] <Befehl>\n"
 "\n"
 "Den Befehl in die Warteschlange für die aktuelle Gegenstelle einfügen.\n"
-"Jede Gegen Stelle hat ihre eigene Warteschlange für Befehle.\n"
+"Jede Gegenstelle hat ihre eigene Warteschlange für Befehle.\n"
 "»-n« fügt den Befehl vor dem angegebenen Eintrag in die Warteschlange ein. Es\n"
 "ist möglich einen bereits laufenden Job wieder in die Warteschlange zu stellen\n"
-"mit »queue wait <befehlsnr.>«.\n"
+"mit »queue wait <Jobnr.>«.\n"
 "\n"
 "        queue --delete|-d <Index oder Joker-Ausdruck>\n"
 "\n"
-"Ein oder mehrere Einträge in der Warteschlange löschen. Ohne Angaben wird\n"
-"der letzte Eintrag entfernt.\n"
+"Ein oder mehrere Einträge in der Warteschlange löschen. Ohne genaue Angabe\n"
+"wird der letzte Eintrag entfernt.\n"
 "\n"
 "        queue --move|-m <Index oder Joker-Ausdruck> [Index]\n"
 "\n"
@@ -1075,43 +1103,38 @@ msgstr ""
 "Verbindungsneuaufbau überschrieben werden kann.\n"
 
 #: src/commands.cc:370
-#, fuzzy
 msgid "recls [<args>]Same as `cls', but don't look in cache\n"
-msgstr "Entspricht »ls«, aber schaut nicht in den Cache\n"
+msgstr "recls [<Argumente>] Entspricht »ls«, aber schaut nicht in den Zwischenspeicher\n"
 
 #: src/commands.cc:373
-#, fuzzy
 msgid "Usage: reget [OPTS] <rfile> [-o <lfile>]Same as `get -c'\n"
-msgstr "reget [OPTS] <nlfile> [-o <lfile>]"
+msgstr "Verwendung: reget [OPTIONEN] <nlfile> [-o <lfile>] Entspricht »get -c«\n"
 
 #: src/commands.cc:376
-#, fuzzy
 msgid "Usage: rels [<args>]Same as `ls', but don't look in cache\n"
-msgstr "Entspricht »ls«, aber schaut nicht in den Cache\n"
+msgstr "Verwendung: rels [<Argumente>] Entspricht »ls«, aber schaut nicht in den Cache\n"
 
 #: src/commands.cc:379
-#, fuzzy
 msgid "Usage: renlist [<args>]Same as `nlist', but don't look in cache\n"
-msgstr "Entspricht »nlist«, aber schaut nicht in den Cache\n"
+msgstr ""
+"Verwendung: renlist [<Argumente] Entspricht »nlist«, aber schaut nicht\n"
+"in den Cache\n"
 
 #: src/commands.cc:381
 msgid "repeat [delay] [command]"
-msgstr ""
+msgstr "repeat [Verzögerung] [Befehl]"
 
 #: src/commands.cc:382
-#, fuzzy
 msgid ""
 "Repeat specified command with a delay between iterations.\n"
 "Default delay is one second, default command is empty.\n"
 msgstr ""
-"Verwendung: repeat [verzögerung] [befehl]\n"
 "Den angegebenen Befehl mit der angegebenen Verzögung wiederholt ausführen.\n"
-"Standardverzögerung ist 1 Sekunde. Standardbefehl ist nichts.\n"
+"Standardverzögerung ist 1 Sekunde. Standardbefehl ist leer.\n"
 
 #: src/commands.cc:385
-#, fuzzy
 msgid "Usage: reput <lfile> [-o <rfile>]Same as `put -c'\n"
-msgstr "reput <ldatei> [-o <nldatei>]"
+msgstr "Verwendung: reput <ldatei> [-o <nldatei>] Entspricht »put -c«\n"
 
 #: src/commands.cc:387
 msgid "rm [-r] [-f] <files>"
@@ -1350,20 +1373,19 @@ msgstr "Benutzung: %s <Befehl>\n"
 
 #: src/commands.cc:1212
 msgid "invalid argument for `--sort'"
-msgstr ""
+msgstr "ungültiges Argument für »--sort«"
 
 #. silly getopt won't give us its error instead of printing it, oh well.
 #. * we only need to never print errors for completion and validation; for
 #. * cls itself we could do it, but that'd be a special case ...
 #: src/commands.cc:1249
-#, fuzzy
 msgid "invalid option"
-msgstr "Unzulässige Zahl"
+msgstr "Ungültige Option"
 
 #: src/commands.cc:1278
-#, fuzzy, c-format
+#, c-format
 msgid "%s: %s.\n"
-msgstr "%s: Fehler beim Schreiben von %s: %s\n"
+msgstr "%s: %s.\n"
 
 #: src/commands.cc:1344
 #, c-format
@@ -1477,8 +1499,7 @@ msgstr "%s: Angabe für »expire«(Ablauf) fehlt\n"
 
 #: src/commands.cc:2126
 #, c-format
-msgid ""
-"%s: %s - no such cached session. Use `scache' to look at session list.\n"
+msgid "%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr "%s: %s - keine derartige Sitzung gecached. »scache« zeigt eine Liste.\n"
 
 #: src/commands.cc:2143
@@ -1517,8 +1538,7 @@ msgid "Lftp | Version %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"
 msgstr "Lftp | Version %s | Copyright (c) 1996-2001 Alexander V. Lukyanov\n"
 
 #: src/commands.cc:2220
-msgid ""
-"This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
+msgid "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"
 msgstr ""
 "Dies ist freie Software OHNE IRGENDWELCHE GARANTIEN ODER GEWÄHRLEISTUNGEN.\n"
 "Die Datei COPYING enthält Details.\n"
@@ -1595,14 +1615,12 @@ msgid "Switching to NOREST mode"
 msgstr "Schalte NOREST - Modus ein"
 
 #: src/ftpclass.cc:403
-#, fuzzy
 msgid "Server reply matched ftp:retry-530, retrying"
-msgstr "Server Antwort entspricht ftp:retry-530[-anonymous]. neuer Versuch."
+msgstr "Server Antwort entspricht ftp:retry-530, neuer Versuch"
 
 #: src/ftpclass.cc:411
-#, fuzzy
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
-msgstr "Server Antwort entspricht ftp:retry-530[-anonymous]. neuer Versuch."
+msgstr "Server Antwort entspricht ftp:retry-530-anonymous. neuer Versuch."
 
 #: src/ftpclass.cc:435
 msgid "Account is required, set ftp:acct variable"
@@ -2132,29 +2150,3 @@ msgstr "Vorraussetzung Modul »%s«: %s\n"
 msgid "modules are not supported on this system"
 msgstr "Module sind auf diesem System nicht verwendbar"
 
-#~ msgid "nlist [<args>]"
-#~ msgstr "nlist [<args>]"
-
-#~ msgid "List remote file names\n"
-#~ msgstr "Namen der nichtlokalen dateien auflisten\n"
-
-#~ msgid "Same as `get -c'\n"
-#~ msgstr "Entspricht »get -c«\n"
-
-#~ msgid "rels [<args>]"
-#~ msgstr "rels [<args>]"
-
-#~ msgid "Same as `put -c'\n"
-#~ msgstr "Entspricht »put -c«\n"
-
-#~ msgid "bzcat <files>"
-#~ msgstr "bzcat <Dateien>"
-
-#~ msgid "bzmore <files>"
-#~ msgstr "bzmore <Dateien>"
-
-#~ msgid "dns cache hit\n"
-#~ msgstr "dns-Zwischenspeicher Treffer\n"
-
-#~ msgid "child returned invalid data"
-#~ msgstr "Kindprozeß gab ungültige Daten zurück"
