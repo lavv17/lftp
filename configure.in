@@ -73,8 +73,13 @@ dnl Make sure C++ build environment is sane.
 LFTP_CXX_TEST
 CXX_DYNAMIC_INITIALIZERS
 
-dnl AC_CANONICAL_HOST
 AC_ISC_POSIX
+
+# for lib/mbswidth.{c,h}
+jm_PREREQ_MBSWIDTH
+
+jm_FUNC_MBRTOWC
+AC_MBSTATE_T
 
 if test "`uname`" = Linux; then
    case "`uname -r`" in
