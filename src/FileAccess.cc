@@ -851,13 +851,17 @@ ResValue FileAccess::Query(const char *name,const char *closure)
    return ResMgr::Query(fullname,closure);
 }
 
+bool FileAccess::IsBetterThan(FileAccess *fa)
+{
+   return(SameProtoAs(fa) && this->IsConnected() > fa->IsConnected());
+}
+
 void FileAccess::Reconfig(const char *) {}
 void FileAccess::ConnectVerify() {}
 const char *FileAccess::CurrentStatus() { return ""; }
 int FileAccess::Buffered() { return 0; }
 bool FileAccess::IOReady() { return IsOpen(); }
-bool FileAccess::IsBetterThan(FileAccess *) { return false; }
-bool FileAccess::IsConnected() { return false; }
+int FileAccess::IsConnected() { return 0; }
 void FileAccess::Disconnect() {}
 void FileAccess::UseCache(bool) {}
 bool FileAccess::NeedSizeDateBeforehand() { return false; }

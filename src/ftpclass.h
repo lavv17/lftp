@@ -284,17 +284,13 @@ public:
    bool	 SameLocationAs(FileAccess *);
    bool	 SameSiteAs(FileAccess *);
 
-   bool	 IsConnected()
+   int IsConnected()
    {
       if(control_sock==-1)
-	 return false;
-      Do();
-      return(control_sock!=-1 && state!=CONNECTING_STATE);
-   }
-   bool	 IsBetterThan(FileAccess *fa)
-   {
-      return(SameProtoAs(fa)
-	     && this->IsConnected() && !((Ftp*)fa)->IsConnected());
+	 return 0;
+      if(state==CONNECTING_STATE)
+	 return 1;
+      return 2;
    }
 
    void	 Connect(const char *h,const char *p);

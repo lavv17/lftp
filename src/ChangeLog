@@ -1,3 +1,10 @@
+2000-03-06  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h: make IsConnected int; simpler
+	  IsBetterThan implementation.
+	* Http.h, ftpclass.h: better IsConnected - assign to conneting state
+	  connect level 1.
+
 2000-03-05  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileAccess.cc: use NO_SIZE and NO_DATE.

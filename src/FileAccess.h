@@ -239,7 +239,7 @@ public:
    bool	 IsOpen() { return !IsClosed(); }
    int	 OpenMode() { return mode; }
 
-   virtual bool IsConnected();
+   virtual int  IsConnected(); // level of connection (0 - not connected).
    virtual void Disconnect();
    virtual void UseCache(bool);
    virtual bool NeedSizeDateBeforehand();
