@@ -75,9 +75,13 @@ public:
    static const char *SimpleQuery(const char *name,const char *closure);
    static ResValue Query(const char *name,const char *closure);
 
-   enum CmpRes { EXACT,SUBSTR,DIFFERENT };
+   enum CmpRes {
+      EXACT_PREFIX=0x00,SUBSTR_PREFIX=0x01,
+      EXACT_NAME  =0x00,SUBSTR_NAME  =0x10,
+      DIFFERENT=-1
+   };
 
-   static CmpRes VarNameCmp(const char *name1,const char *name2);
+   static int VarNameCmp(const char *name1,const char *name2);
    static const char *FindVar(const char *name,ResDecl **type);
    static const char *Set(const char *name,const char *closure,const char *value);
 

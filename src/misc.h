@@ -73,4 +73,6 @@ int guess_year(int month,int day,int hour=0,int minute=0);
 
 time_t mktime_from_utc(struct tm *);
 
+bool re_match(const char *line,const char *a,int flags=0);
+
 #endif // MISC_H

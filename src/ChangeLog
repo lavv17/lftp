@@ -1,3 +1,18 @@
+2001-05-15  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* resource.cc: new settings ftp:retry-530 and ftp:retry-530-anonymous.
+	  This settings should be useful to distinguish between overloaded
+	  server (temporary condition) and incorrect password (permanent
+	  condition).
+	* ftpclass.cc: retry on server reply 530 for PASS command if text
+	  matches above regular expressions. Retry ftp login quickly on next
+	  address if the server has many (works well on ftp.redhat.com, for
+	  example).
+	* ResMgr.cc, ResMgr.h: improved fuzzy variable name matching. Exact
+	  prefix and exact name after prefix are taken into account separately.
+	  E.g. http:pro is not ambigous now between http:proxy and https:proxy.
+	* misc.cc, misc.h: move re_match here.
+
 2001-05-10  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CmdExec.cc: delete status_line in dtor.

@@ -37,14 +37,14 @@ extern "C" {
 ResMgr::Resource  *ResMgr::chain=0;
 ResDecl		  *ResMgr::type_chain=0;
 
-ResMgr::CmpRes ResMgr::VarNameCmp(const char *good_name,const char *name)
+int ResMgr::VarNameCmp(const char *good_name,const char *name)
 {
-   CmpRes res=EXACT;
+   int res=EXACT_PREFIX+EXACT_NAME;
    const char *colon=strchr(good_name,':');
    if(colon && !strchr(name,':'))
    {
       good_name=colon+1;
-      res=SUBSTR;
+      res|=SUBSTR_PREFIX;
    }
    while(*good_name || *name)
    {
@@ -61,7 +61,10 @@ ResMgr::CmpRes ResMgr::VarNameCmp(const char *good_name,const char *name)
       || (strchr("-_:",*name) && !strchr("-_:",*good_name)))
       {
 	 good_name++;
-	 res=SUBSTR;
+	 if(strchr(name,':'))
+	    res|=SUBSTR_PREFIX;
+	 else
+	    res|=SUBSTR_NAME;
 	 continue;
       }
       return DIFFERENT;
@@ -71,6 +74,9 @@ ResMgr::CmpRes ResMgr::VarNameCmp(const char *good_name,const char *name)
 
 const char *ResMgr::FindVar(const char *name,ResDecl **type)
 {
+   ResDecl *exact_proto=0;
+   ResDecl *exact_name=0;
+
    *type=0;
 
    int sub=0;
@@ -79,14 +85,28 @@ const char *ResMgr::FindVar(const char *name,ResDecl **type)
    {
       switch(VarNameCmp(type_scan->name,name))
       {
-      case EXACT:
+      case EXACT_PREFIX+EXACT_NAME:
 	 *type=type_scan;
 	 return 0;
-      case SUBSTR:
+      case EXACT_PREFIX+SUBSTR_NAME:
+	 if(!exact_proto && !exact_name)
+	    sub=0;
+	 exact_proto=*type=type_scan;
+	 sub++;
+	 break;
+      case SUBSTR_PREFIX+EXACT_NAME:
+	 if(!exact_proto && !exact_name)
+	    sub=0;
+	 exact_name=*type=type_scan;
+	 sub++;
+	 break;
+      case SUBSTR_PREFIX+SUBSTR_NAME:
+	 if(exact_proto || exact_name)
+	    break;
 	 sub++;
 	 *type=type_scan;
 	 break;
-      case DIFFERENT:
+      default:
 	 break;
       }
    }

@@ -33,6 +33,7 @@
 #ifdef TM_IN_SYS_TIME
 # include <sys/time.h>
 #endif
+#include <regex.h>
 #include "misc.h"
 #include "ProcWait.h"
 #include "SignalHook.h"
@@ -452,4 +453,17 @@ mktime_from_utc (struct tm *t)
     return -1;
   tb = mktime (gmtime (&tl));
   return (tl <= tb ? (tl + (tl - tb)) : (tl - (tb - tl)));
+}
+
+
+bool re_match(const char *line,const char *a,int flags)
+{
+   if(!a || !*a)
+      return false;
+   regex_t re;
+   if(regcomp(&re,a,REG_EXTENDED|REG_NOSUB|flags))
+      return false;
+   bool res=(0==regexec(&re,line,0,0,0));
+   regfree(&re);
+   return res;
 }

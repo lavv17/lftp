@@ -373,15 +373,12 @@ void Ftp::LoginCheck(int act)
       return;
    if(act==530) // login incorrect or overloaded server
    {
-      if(strstr(line,"Login incorrect")) // Don't translate!!!
+      const char *rexp=Query(user?"retry-530":"retry-530-anonymous",hostname);
+      if(re_match(all_lines,rexp,REG_ICASE))
       {
-	 if(!user)   // unusual message for anonymous user
-	    goto def_ret;
-	 DebugPrint("---- ",_("Saw `Login incorrect', assume failed login"));
-	 SetError(LOGIN_FAILED,line);
-	 return;
+	 DebugPrint("---- ",_("Server reply matched ftp:retry-530[-anonymous], retrying"));
+	 goto retry;
       }
-      goto def_ret;
    }
    if(is5XX(act))
    {
@@ -389,11 +386,13 @@ void Ftp::LoginCheck(int act)
       return;
    }
 
-def_ret:
    if(!is2XX(act))
    {
+   retry:
       Disconnect();
-      try_time=now;	// count the reconnect-interval from this moment
+      NextPeer();
+      if(peer_curr==0)
+	 try_time=now;	// count the reconnect-interval from this moment
    }
 }
 
@@ -3115,18 +3114,6 @@ void  Ftp::MoveConnectionHere(Ftp *o)
    state=EOF_STATE;
 }
 
-static bool re_match(const char *line,const char *a)
-{
-   if(!a || !*a)
-      return false;
-   regex_t re;
-   if(regcomp(&re,a,REG_EXTENDED|REG_NOSUB))
-      return false;
-   bool res=(0==regexec(&re,line,0,0,0));
-   regfree(&re);
-   return res;
-}
-
 void Ftp::CheckResp(int act)
 {
    if(act==150 && state==WAITING_STATE && RespQueueSize()==1)
@@ -3210,7 +3197,9 @@ void Ftp::CheckResp(int act)
       if(!match)
       {
 	 Disconnect();
-	 try_time=now;	// count the reconnect-interval from this moment
+	 NextPeer();
+	 if(peer_curr==0)
+	    try_time=now;  // count the reconnect-interval from this moment
       }
       break;
 
