@@ -43,6 +43,20 @@ public:
 
 class ParsedURL;
 
+class LsOptions
+{
+public:
+   bool append_type:1;
+   bool multi_column:1;
+   bool show_all:1;
+   LsOptions()
+      {
+	 append_type=false;
+	 multi_column=false;
+	 show_all=false;
+      }
+};
+
 class HttpDirList : public DirList
 {
    FileAccess *session;
@@ -52,6 +66,8 @@ class HttpDirList : public DirList
    FileSet all_links;
    int mode;
    char *base_href;
+
+   LsOptions ls_options;
 
 public:
    HttpDirList(ArgV *a,FileAccess *fa);

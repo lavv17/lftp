@@ -1,3 +1,9 @@
+1999-10-04  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ArgV.cc: (delarg) decrement ind if needed.
+	* HttpDir.h, HttpDir.cc: (LsOptions) new class, use it, implement
+	  -F ls option, accept -alC but ignore them for now.
+
 1999-10-02  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CmdExec.cc: fix type mismatch on 64-bit machines.

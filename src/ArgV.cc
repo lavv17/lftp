@@ -119,6 +119,8 @@ void ArgV::delarg(int n)
 {
    if(n<count() && n>=0)
    {
+      if(n<ind)
+	 ind--;
       xfree(v[n]);
       // copy with trailing null pointer
       memmove(v+n,v+n+1,(count()-n)*sizeof(*v));

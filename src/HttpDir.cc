@@ -105,7 +105,8 @@ static bool find_value(const char *scan,const char *more,const char *name,char *
 }
 
 static int parse_html(const char *buf,int len,bool eof,Buffer *list,
-      FileSet *set,FileSet *all_links,ParsedURL *prefix,char **base_href)
+      FileSet *set,FileSet *all_links,ParsedURL *prefix,char **base_href,
+      LsOptions *lsopt=0)
 {
    const char *end=buf+len;
    const char *less=find_char(buf,len,'<');
@@ -465,13 +466,18 @@ parse_url_again:
 	    size_str,year,month_name,day,hour,minute,link_target);
 	 if(sym_link)
 	    sprintf(line_add+strlen(line_add)," -> %s",sym_link);
-	 strcat(line_add,"\n");
       }
       else
       {
-	 sprintf(line_add,"%s    %s\n",
+	 sprintf(line_add,"%s    %s",
 	    is_directory?"drwxr-xr-x":"-rw-r--r--",link_target);
       }
+      if(lsopt && lsopt->append_type)
+      {
+	 if(is_directory)
+	    strcat(line_add,"/");
+      }
+      strcat(line_add,"\n");
 
       if(!all_links->FindByName(link_target))
       {
@@ -580,7 +586,7 @@ int HttpDirList::Do()
 
    int m=STALL;
 
-   int n=parse_html(b,len,ubuf->Eof(),buf,0,&all_links,curr_url,&base_href);
+   int n=parse_html(b,len,ubuf->Eof(),buf,0,&all_links,curr_url,&base_href,&ls_options);
    if(n>0)
    {
       ubuf->Skip(n);
@@ -602,13 +608,30 @@ HttpDirList::HttpDirList(ArgV *a,FileAccess *fa)
    ubuf=0;
    mode=FA::LONG_LIST;
    args->rewind();
+   int opt;
+   while((opt=args->getopt("faCFl"))!=EOF)
+   {
+      switch(opt)
+      {
+      case('f'):
+	 mode=FA::RETRIEVE;
+	 break;
+      case('a'):
+	 ls_options.show_all=true;
+	 break;
+      case('C'):
+	 ls_options.multi_column=true;
+	 break;
+      case('F'):
+	 ls_options.append_type=true;
+	 break;
+      }
+   }
+   while(args->getindex()>1)
+      args->delarg(1);	// remove options.
    if(args->count()<2)
       args->Append("");
-   else if(args->count()>2 && !strcmp(args->getarg(1),"-f"))
-   {
-      args->delarg(1);	// del -f
-      mode=FA::RETRIEVE;
-   }
+   args->rewind();
    curr=0;
    curr_url=0;
    base_href=0;
