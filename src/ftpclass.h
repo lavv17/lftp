@@ -156,6 +156,7 @@ class Ftp : public NetAccess
    int   control_sock;
    int   data_sock;
    int	 aborted_data_sock;
+   sockaddr_u peer_sa;
    bool	 quit_sent;
    bool	 fixed_pasv; // had to fix PASV address.
 

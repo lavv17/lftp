@@ -1,3 +1,9 @@
+2001-11-21  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: don't assume peer!=0, copy control socket
+	  name to member peer_sa.
+	* NetAccess.cc: remove obsolete commented out asserts.
+
 2001-11-19  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.cc: don't set LC_NUMERIC. It breaks default float settings
