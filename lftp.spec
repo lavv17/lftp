@@ -1,5 +1,5 @@
 %define name lftp
-%define version 2.1.2
+%define version 2.1.3
 
 Summary: The lftp command line ftp/http client
 Name: %{name} 
