@@ -1,3 +1,7 @@
+2000-09-05  Matthias Andree <matthias.andree@gmx.de>
+
+	* FtpDirList.cc: reformat EPLF even if mtime if absent.
+
 2000-07-17  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileSet.cc: don't pass REG_NOSUB to regexec, this fixes

@@ -156,7 +156,7 @@ int FtpDirList::Do()
 	       else
 		  break;
 	    }
-	    if(name && name_len>0 && date!=NO_DATE)
+	    if(name && name_len>0)
 	    {
 	       // ok, this is EPLF. Format new string.
 	       char *line_add=string_alloca(80+name_len);
@@ -167,11 +167,18 @@ int FtpDirList::Do()
 		  strcpy(size_str,"-");
 	       else
 		  sprintf(size_str,"%ld",size);
-	       struct tm *t=localtime(&date);
-	       sprintf(line_add,"%c%s  %10s  %04d-%02d-%02d %02d:%02d  %.*s",
-		  dir?'d':'-',format_perms(perms),size_str,
-		  t->tm_year+1900,t->tm_mon+1,t->tm_mday,
-		  t->tm_hour,t->tm_min,name_len,name);
+	       char date_str[21];
+	       if(date == NO_DATE)
+		  strcpy(date_str,"-");
+	       else {
+		  struct tm *t=localtime(&date);
+		  sprintf(date_str, "%04d-%02d-%02d %02d:%02d",
+			  t->tm_year+1900,t->tm_mon+1,t->tm_mday,
+			  t->tm_hour,t->tm_min);
+	       }
+	       sprintf(line_add, "%c%s  %10s  %16s  %.*s", 
+		       dir ? 'd':'-', format_perms(perms), size_str,
+		       date_str, name_len, name);
 	       b=line_add;
 	       len=strlen(b);
 	    }
