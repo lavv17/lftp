@@ -557,8 +557,7 @@ msgstr ""
 "Je¿eli nie ma aktywnych zadañ, kod jest przekazany systemowi jako status\n"
 "zakonczenia lftp. Je¿eli go pominiêto, u¿yty jest kod wyj¶ciowy ostatniego\n"
 "polecenia. `bg' wymusza przej¶cie w t³o nawet gdy cmd:move-background jest\n"
-"ustawione na fa³sz\n"
-"."
+"ustawione na fa³sz.\n"
 
 #: src/commands.cc:159
 msgid ""
@@ -1188,7 +1187,7 @@ msgstr ""
 
 #: src/DummyProto.cc:67 src/commands.cc:686 src/commands.cc:1422
 msgid " - not supported protocol"
-msgstr " - protokó³ nie jest obs³ugiwany\n"
+msgstr " - protokó³ nie jest obs³ugiwany"
 
 #: src/commands.cc:728 src/commands.cc:1406
 msgid "Password: "
@@ -1477,7 +1476,7 @@ msgstr "SITE CHMOD nie jest obs³ugiwane przez ten serwer"
 
 #: src/ftpclass.cc:1610 src/ftpclass.cc:1643
 msgid "unsupported network protocol"
-msgstr "protokó³ nie jest obs³ugiwany\n"
+msgstr "protokó³ nie jest obs³ugiwany"
 
 #: src/ftpclass.cc:1752
 #, c-format
@@ -1927,7 +1926,7 @@ msgstr "b³±d wyj¶cia ³añcucha"
 #: src/Filter.cc:149
 #, c-format
 msgid "pipe() failed: %s"
-msgstr "pipe() niepowiod³o siê: %s\n"
+msgstr "pipe() niepowiod³o siê: %s"
 
 #: src/Filter.cc:170
 #, c-format
