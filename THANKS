@@ -12,6 +12,7 @@ Hugo Van den Berg <hbe@cypres.nl> for tip about quote command, patch.
 Igor Vinokurov <igor@zynaps.ru> for suggestions.
 James Troup <J.J.Troup@comp.brad.ac.uk> for documentation update, other patches.
 Jim Pick <jim@jimpick.com>
+Mark Pulford <mark@kyne.com.au>
 Matt E Richards <v2matt@btv.ibm.com> for a fix.
 Michael Handler <handler@sub-rosa.com>
 Nicolas Lichtmaier <nick@Feedback.com.ar> for i18n, Debian package maintenace.
@@ -20,6 +21,7 @@ Sam Steingold <sds@usa.net>
 Serge Bezzubov <gray@yars.free.net> for extensive testing.
 Slama YA <slamaya@netscape.net>
 Uhus <uhus@cnit.uniyar.ac.ru> for testing and suggestions.
+
 bash developers for pieces of code and example of how to use readline.
 
 Thanks to all who wrote to me about lftp.
