@@ -3,6 +3,9 @@
 	* StatusLine.cc, StatusLine.h: support multiline status.
 	* ftpclass.cc: fix hang on data eof (introduced in last change set).
 	* MirrorJob.cc: --ignore-size and --only-missing options added.
+	* netrc.cc, netrc.h: allow user matching.
+	* commands.cc: user netrc user matching; log netrc actions;
+	  set password immediately to skip looking up netrc second time.
 
 2004-02-09  Alexander V. Lukyanov <lav@yars.free.net>
 

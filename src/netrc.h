@@ -33,5 +33,5 @@ public:
       ~Entry();
    };
 
-   static Entry	  *LookupHost(const char *host);
+   static Entry	  *LookupHost(const char *host,const char *user=0);
 };

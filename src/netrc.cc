@@ -24,9 +24,11 @@
 
 #include "trio.h"
 #include <stdlib.h>
+#include <errno.h>
 #include "xstring.h"
 #include "netrc.h"
 #include "xmalloc.h"
+#include "log.h"
 
 NetRC::Entry::Entry(const char *h,const char *u,const char *p,const char *a)
 {
@@ -58,7 +60,7 @@ static bool comment(const char *s, FILE *f)
    return true;
 }
 
-NetRC::Entry *NetRC::LookupHost(const char *h)
+NetRC::Entry *NetRC::LookupHost(const char *h,const char *u)
 {
    char str[256];
    char chost[256]="";
@@ -71,10 +73,14 @@ NetRC::Entry *NetRC::LookupHost(const char *h)
    char *netrc=(char*)alloca(strlen(home)+8);
    sprintf(netrc,"%s/.netrc",home);
    FILE *f=fopen(netrc,"r");
-   bool found=false;
+   bool host_found=false;
+   bool user_found=false;
 
    if(f==NULL)
+   {
+      Log::global->Format(10,"notice: cannot open %s: %s\n",netrc,strerror(errno));
       return NULL;
+   }
 
    while(fscanf(f,"%255s",str)==1)
    {
@@ -101,27 +107,36 @@ NetRC::Entry *NetRC::LookupHost(const char *h)
       }
       if(!strcmp(str,"machine"))
       {
+	 if(host_found && user_found)
+	    break;
 	 if(fscanf(f,"%255s",str)!=1)
 	    break;
 	 strcpy(chost,str);
-	 if(!strcasecmp(chost,h))
-	    found=true;
+	 // reset data for new machine.
+	 cuser[0]=0;
+	 cpass[0]=0;
+	 cacct[0]=0;
+	 host_found=!strcasecmp(chost,h);
+	 user_found=false;
 	 continue;
       }
       if(!strcmp(str,"login"))
       {
 	 if(fscanf(f,"%255s",str)!=1)
 	    break;
-	 if(strcasecmp(chost,h) || cuser[0])
+	 if(strcasecmp(chost,h))
 	    continue;
 	 strcpy(cuser,str);
+	 cpass[0]=0;
+	 cacct[0]=0;
+	 user_found=(!u || !strcasecmp(cuser,u));
 	 continue;
       }
       if(!strcmp(str,"password"))
       {
 	 if(fscanf(f,"%255s",str)!=1)
 	    break;
-	 if(strcasecmp(chost,h) || cpass[0])
+	 if(strcasecmp(chost,h) || (u && strcasecmp(cuser,u)) || cpass[0])
 	    continue;
 	 strcpy(cpass,str);
 	 for(char *s=cpass; *s; s++)
@@ -143,14 +158,17 @@ NetRC::Entry *NetRC::LookupHost(const char *h)
       {
 	 if(fscanf(f,"%255s",str)!=1)
 	    break;
-	 if(strcasecmp(chost,h) || cacct[0])
+	 if(strcasecmp(chost,h) || (u && strcasecmp(cuser,u)) || cacct[0])
 	    continue;
 	 strcpy(cacct,str);
 	 continue;
       }
    }
    fclose(f);
-   if(found)
+   if(host_found && user_found)
+   {
+      Log::global->Format(10,"found netrc entry: host=%s, user=%s, pass=%s, acct=%s\n",h,cuser,cpass,cacct);
       return new Entry(h,cuser[0]?cuser:0,cpass[0]?cpass:0,cacct[0]?cacct:0);
+   }
    return 0;
 }

@@ -432,12 +432,9 @@ void FileAccess::Login(const char *user1,const char *pass1)
       }
       if(pass==0 && hostname) // still no pass? Try .netrc
       {
-	 NetRC::Entry *nrc=NetRC::LookupHost(hostname);
+	 NetRC::Entry *nrc=NetRC::LookupHost(hostname,user);
 	 if(nrc)
-	 {
-	    if(nrc->user && !strcmp(nrc->user,user))
-	       pass=xstrdup(nrc->pass);
-	 }
+	    pass=xstrdup(nrc->pass);
       }
    }
    ResetLocationData();

@@ -861,18 +861,18 @@ Job *CmdExec::builtin_open()
 	       path=uc.path;
 	 }
 
-	 if(!pass)
+	 // user gets substituted only if no proto is specified.
+	 if(!pass && (user || !uc.proto))
 	 {
-	    nrc=NetRC::LookupHost(host);
+	    nrc=NetRC::LookupHost(host,user);
 	    if(nrc)
 	    {
-	       if((!uc.proto && nrc->user && !user)
-	       || (nrc->user && user && !strcmp(nrc->user,user) && !pass))
-	       {
-		  user=nrc->user;
-		  if(nrc->pass)
-		     pass=nrc->pass;
-	       }
+	       if(!user)
+		  Log::global->Format(3,"---- using user `%s' and password from ~/.netrc\n",nrc->user);
+	       else
+		  Log::global->Format(3,"---- using password from ~/.netrc\n");
+	       user=nrc->user;
+	       pass=nrc->pass;
 	    }
 	 }
       }
@@ -891,7 +891,7 @@ Job *CmdExec::builtin_open()
 	       args->getarg(0));
 	 else
 	 {
-	    session->Login(user,0);
+	    session->Login(user,pass);
 	    // assume the new password is the correct one.
 	    session->SetPasswordGlobal(pass);
 	    session->InsecurePassword(insecure && !no_bm);
