@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
-"POT-Creation-Date: 2002-02-27 14:59+0300\n"
+"POT-Creation-Date: 2002-03-12 20:01+0300\n"
 "PO-Revision-Date: 2001-09-24 00:06+0900\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -1812,7 +1812,7 @@ msgstr "リモートディレクトリを変更中..."
 msgid "Waiting for other copy peer..."
 msgstr "他のコピー相手を待っています..."
 
-#: src/ftpclass.cc:3654 src/ftpclass.cc:3673
+#: src/ftpclass.cc:3654 src/ftpclass.cc:3675
 msgid "Waiting for transfer to complete"
 msgstr "送受信の完了を待っています"
 
@@ -1820,21 +1820,21 @@ msgstr "送受信の完了を待っています"
 msgid "Waiting for data connection..."
 msgstr "データ接続を待っています..."
 
-#: src/ftpclass.cc:3662
+#: src/ftpclass.cc:3663
 #, fuzzy
 msgid "Sending data/TLS"
 msgstr "データ送信中"
 
-#: src/ftpclass.cc:3664
+#: src/ftpclass.cc:3665
 #, fuzzy
 msgid "Receiving data/TLS"
 msgstr "データ受信中"
 
-#: src/Http.cc:1591 src/ftpclass.cc:3669
+#: src/Http.cc:1591 src/ftpclass.cc:3671
 msgid "Sending data"
 msgstr "データ送信中"
 
-#: src/Http.cc:1598 src/ftpclass.cc:3671
+#: src/Http.cc:1598 src/ftpclass.cc:3673
 msgid "Receiving data"
 msgstr "データ受信中"
 

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
-"POT-Creation-Date: 2002-02-27 14:59+0300\n"
+"POT-Creation-Date: 2002-03-12 20:01+0300\n"
 "PO-Revision-Date: 2002-03-03 23:34GMT\n"
 "Last-Translator: Nicolas Noble <nicolas@nobis-crew.org>\n"
 "Language-Team: French <fr@li.org>\n"
@@ -1849,7 +1849,7 @@ msgstr "Changement de répertoire distant..."
 msgid "Waiting for other copy peer..."
 msgstr "En attente de la copie distante..."
 
-#: src/ftpclass.cc:3654 src/ftpclass.cc:3673
+#: src/ftpclass.cc:3654 src/ftpclass.cc:3675
 msgid "Waiting for transfer to complete"
 msgstr "En attente de la fin du transfert"
 
@@ -1857,19 +1857,19 @@ msgstr "En attente de la fin du transfert"
 msgid "Waiting for data connection..."
 msgstr "En attente de la connexion de données..."
 
-#: src/ftpclass.cc:3662
+#: src/ftpclass.cc:3663
 msgid "Sending data/TLS"
 msgstr "Émission des données/TLS"
 
-#: src/ftpclass.cc:3664
+#: src/ftpclass.cc:3665
 msgid "Receiving data/TLS"
 msgstr "Réception des données/TLS"
 
-#: src/Http.cc:1591 src/ftpclass.cc:3669
+#: src/Http.cc:1591 src/ftpclass.cc:3671
 msgid "Sending data"
 msgstr "Émission des données"
 
-#: src/Http.cc:1598 src/ftpclass.cc:3671
+#: src/Http.cc:1598 src/ftpclass.cc:3673
 msgid "Receiving data"
 msgstr "Réception des données"
 

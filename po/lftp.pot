@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-02-27 14:59+0300\n"
+"POT-Creation-Date: 2002-03-12 20:01+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1545,7 +1545,7 @@ msgstr ""
 msgid "Waiting for other copy peer..."
 msgstr ""
 
-#: src/ftpclass.cc:3654 src/ftpclass.cc:3673
+#: src/ftpclass.cc:3654 src/ftpclass.cc:3675
 msgid "Waiting for transfer to complete"
 msgstr ""
 
@@ -1553,19 +1553,19 @@ msgstr ""
 msgid "Waiting for data connection..."
 msgstr ""
 
-#: src/ftpclass.cc:3662
+#: src/ftpclass.cc:3663
 msgid "Sending data/TLS"
 msgstr ""
 
-#: src/ftpclass.cc:3664
+#: src/ftpclass.cc:3665
 msgid "Receiving data/TLS"
 msgstr ""
 
-#: src/Http.cc:1591 src/ftpclass.cc:3669
+#: src/Http.cc:1591 src/ftpclass.cc:3671
 msgid "Sending data"
 msgstr ""
 
-#: src/Http.cc:1598 src/ftpclass.cc:3671
+#: src/Http.cc:1598 src/ftpclass.cc:3673
 msgid "Receiving data"
 msgstr ""
 

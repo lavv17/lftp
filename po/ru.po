@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2\n"
-"POT-Creation-Date: 2002-02-27 14:59+0300\n"
+"POT-Creation-Date: 2002-03-12 20:01+0300\n"
 "PO-Revision-Date: 2000-09-07 09:36+08:00\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -1749,7 +1749,7 @@ msgstr "Смена каталога на сервере..."
 msgid "Waiting for other copy peer..."
 msgstr "Ожидание готовности другой стороны..."
 
-#: src/ftpclass.cc:3654 src/ftpclass.cc:3673
+#: src/ftpclass.cc:3654 src/ftpclass.cc:3675
 msgid "Waiting for transfer to complete"
 msgstr "Ожидание окончания пересылки"
 
@@ -1757,19 +1757,19 @@ msgstr "Ожидание окончания пересылки"
 msgid "Waiting for data connection..."
 msgstr "Ожидание установки соединения данных..."
 
-#: src/ftpclass.cc:3662
+#: src/ftpclass.cc:3663
 msgid "Sending data/TLS"
 msgstr "Отправка данных/TLS"
 
-#: src/ftpclass.cc:3664
+#: src/ftpclass.cc:3665
 msgid "Receiving data/TLS"
 msgstr "Получение данных/TLS"
 
-#: src/Http.cc:1591 src/ftpclass.cc:3669
+#: src/Http.cc:1591 src/ftpclass.cc:3671
 msgid "Sending data"
 msgstr "Отправка данных"
 
-#: src/Http.cc:1598 src/ftpclass.cc:3671
+#: src/Http.cc:1598 src/ftpclass.cc:3673
 msgid "Receiving data"
 msgstr "Получение данных"
 

@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2.1\n"
-"POT-Creation-Date: 2002-02-27 14:59+0300\n"
+"POT-Creation-Date: 2002-03-12 20:01+0300\n"
 "PO-Revision-Date: 2000-08-26 00:01-0300\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -1771,7 +1771,7 @@ msgstr "Cambiando el directorio remoto..."
 msgid "Waiting for other copy peer..."
 msgstr "Esperando respuesta..."
 
-#: src/ftpclass.cc:3654 src/ftpclass.cc:3673
+#: src/ftpclass.cc:3654 src/ftpclass.cc:3675
 msgid "Waiting for transfer to complete"
 msgstr "Esperando que finalice la transferencia"
 
@@ -1779,21 +1779,21 @@ msgstr "Esperando que finalice la transferencia"
 msgid "Waiting for data connection..."
 msgstr "Esperando la conexión de datos..."
 
-#: src/ftpclass.cc:3662
+#: src/ftpclass.cc:3663
 #, fuzzy
 msgid "Sending data/TLS"
 msgstr "Enviando datos"
 
-#: src/ftpclass.cc:3664
+#: src/ftpclass.cc:3665
 #, fuzzy
 msgid "Receiving data/TLS"
 msgstr "Recibiendo datos"
 
-#: src/Http.cc:1591 src/ftpclass.cc:3669
+#: src/Http.cc:1591 src/ftpclass.cc:3671
 msgid "Sending data"
 msgstr "Enviando datos"
 
-#: src/Http.cc:1598 src/ftpclass.cc:3671
+#: src/Http.cc:1598 src/ftpclass.cc:3673
 msgid "Receiving data"
 msgstr "Recibiendo datos"
 

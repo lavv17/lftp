@@ -1,4 +1,4 @@
-%define version 2.5.0
+%define version 2.5.0a
 %define release 1
 %define use_modules 0
 

@@ -1,3 +1,7 @@
+Version 2.5.0a - 2002-03-12
+
+* make it compile without ssl.
+
 Version 2.5.0 - 2002-03-06
 
 * mirror understands URLs now. It can mirror between two ftp sites, for
@@ -19,6 +23,10 @@ Version 2.5.0 - 2002-03-06
   Alexander Lukyanov).
 * cls improved (Glenn Maynard).
 * `bookmark list' hides passwords now.
+
+Version 2.4.10a - 2002-03-10
+
+* missed file triostr.h was added.
 
 Version 2.4.10 - 2002-02-26
 

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Lftp 2.4.5\n"
-"POT-Creation-Date: 2002-02-27 14:59+0300\n"
+"POT-Creation-Date: 2002-03-12 20:01+0300\n"
 "PO-Revision-Date: 2002-03-03 02:11+0100\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.de>\n"
 "Language-Team:  <de@li.org>\n"
@@ -1879,7 +1879,7 @@ msgstr "Wechsle nichtlokales Verzeichnis"
 msgid "Waiting for other copy peer..."
 msgstr "Warte auf die Gegenstelle für die andere Kopie..."
 
-#: src/ftpclass.cc:3654 src/ftpclass.cc:3673
+#: src/ftpclass.cc:3654 src/ftpclass.cc:3675
 msgid "Waiting for transfer to complete"
 msgstr "Warte auf Übertragungsende"
 
@@ -1887,19 +1887,19 @@ msgstr "Warte auf Übertragungsende"
 msgid "Waiting for data connection..."
 msgstr "Warte auf Datenverbindung"
 
-#: src/ftpclass.cc:3662
+#: src/ftpclass.cc:3663
 msgid "Sending data/TLS"
 msgstr "Sende Daten/TLS"
 
-#: src/ftpclass.cc:3664
+#: src/ftpclass.cc:3665
 msgid "Receiving data/TLS"
 msgstr "Empfange Daten/TLS"
 
-#: src/Http.cc:1591 src/ftpclass.cc:3669
+#: src/Http.cc:1591 src/ftpclass.cc:3671
 msgid "Sending data"
 msgstr "Sende Daten"
 
-#: src/Http.cc:1598 src/ftpclass.cc:3671
+#: src/Http.cc:1598 src/ftpclass.cc:3673
 msgid "Receiving data"
 msgstr "Empfange Daten"
 
