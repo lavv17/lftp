@@ -1,3 +1,7 @@
+2004-05-22  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* resource.cc: increase sftp:max-packets-in-flight to 8.
+
 2004-05-21  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SMTask.cc, SMTask.h: get rid of static sched_scan; don't Merge empty

@@ -272,7 +272,7 @@ static ResDecl
    ResDecl50 ("mirror:use-pget-n",	  "1",	   ResMgr::UNumberValidate,ResMgr::NoClosure);
 
 static ResDecl
-   res_sftp_packets  ("sftp:max-packets-in-flight","3",ResMgr::UNumberValidate,0),
+   res_sftp_packets  ("sftp:max-packets-in-flight","8",ResMgr::UNumberValidate,0),
    res_sftp_proto_ver("sftp:protocol-version","4",ResMgr::UNumberValidate,0),
    res_sftp_rsize    ("sftp:size-read", "0x8000",ResMgr::UNumberValidate,0),
    res_sftp_wsize    ("sftp:size-write","0x8000",ResMgr::UNumberValidate,0),
