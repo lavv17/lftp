@@ -721,6 +721,8 @@ FileCopyPeerFDStream::FileCopyPeerFDStream(FDStream *o,direction m)
 {
    stream=o;
    seek_base=0;
+   delete_stream=true;
+   create_fg_data=true;
    can_seek=stream->can_seek();
    if(can_seek && stream->fd!=-1)
    {
@@ -925,7 +927,7 @@ int FileCopyPeerFDStream::Put_LL(const char *buf,int len)
 }
 FgData *FileCopyPeerFDStream::GetFgData(bool fg)
 {
-   if(!delete_stream)
+   if(!delete_stream || !create_fg_data)
       return 0;	  // if we don't own the stream, don't create FgData.
    if(stream->GetProcGroup())
       return new FgData(stream->GetProcGroup(),fg);
