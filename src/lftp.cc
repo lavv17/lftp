@@ -162,6 +162,16 @@ public:
       }
       else
       {
+	 if(exec->interactive)
+	 {
+	    while(*prompt)
+	    {
+	       char ch=*prompt++;
+	       if(ch!=1 && ch!=2)
+		  putchar(ch);
+	    }
+	    fflush(stdout);
+	 }
 	 cmd_buf=readline_from_file(stdin);
       }
       to_free=cmd_buf;
@@ -295,15 +305,14 @@ int   main(int argc,char **argv)
    Ftp::ClassInit();
 #endif
 
-   top_exec=new CmdExec(new DummyProto());
-   top_exec->jobno=-1;
-   top_exec->status_line=new StatusLine(1);
-   Log::global=new Log();
-   Log::global->SetCB(tty_clear);
-
    lftp_readline_init();
 
    hook_signals();
+
+   top_exec=new CmdExec(new DummyProto());
+   top_exec->status_line=new StatusLine(1);
+   Log::global=new Log();
+   Log::global->SetCB(tty_clear);
 
    source_if_exist(top_exec,SYSCONFDIR"/lftp.conf");
 
@@ -324,6 +333,7 @@ int   main(int argc,char **argv)
 
    WaitDone(top_exec);
 
+   top_exec->SetTopLevel();
    top_exec->Fg();
 
    ArgV *args=new ArgV(argc,argv);
@@ -346,7 +356,7 @@ int   main(int argc,char **argv)
 
    if(Job::NumberOfJobs()>0)
    {
-      top_exec->interactive=false;
+      top_exec->SetInteractive(false);
       move_to_background();
    }
    return top_exec->ExitCode();

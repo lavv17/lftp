@@ -161,6 +161,7 @@ public:
    char *MakePrompt();
 
    bool interactive;
+   bool top_level;
    bool verbose;
    StatusLine *status_line;
    void SetCmdFeeder(CmdFeeder *new_feeder);
@@ -193,6 +194,11 @@ public:
    void top_vfprintf(FILE *file,const char *f,va_list v);
 
    void SetInteractive(bool i);
+   void SetTopLevel()
+      {
+	 top_level=true;
+	 Reconfig(0);
+      }
 
    static void RegisterCommand(const char *name,cmd_creator_t creator,
       const char *short_name=0,const char *long_name=0);

@@ -50,7 +50,8 @@ static ResDecl
    res_verify_host	   ("cmd:verify-host",	"yes",ResMgr::BoolValidate,0),
    res_at_exit		   ("cmd:at-exit",	"",   0,0),
    res_fail_exit	   ("cmd:fail-exit",	"no", ResMgr::BoolValidate,0),
-   res_verbose		   ("cmd:verbose",	"no", ResMgr::BoolValidate,0);
+   res_verbose		   ("cmd:verbose",	"no", ResMgr::BoolValidate,0),
+   res_interactive	   ("cmd:interactive",	"no", ResMgr::BoolValidate,0);
 
 CmdExec	 *CmdExec::cwd_owner=0;
 CmdExec	 *CmdExec::chain=0;
@@ -488,7 +489,7 @@ int CmdExec::Do()
 	 }
 	 if(SignalHook::GetCount(SIGHUP))
 	 {
-	    interactive=0;
+	    SetInteractive(false);
 	    return MOVED;
 	 }
       }
@@ -529,7 +530,7 @@ int CmdExec::Do()
 	 }
 	 if(SignalHook::GetCount(SIGHUP))
 	 {
-	    interactive=0;
+	    SetInteractive(false);
 	    return MOVED;
 	 }
       }
@@ -713,6 +714,7 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
    background=false;
 
    interactive=false;
+   top_level=false;
    status_line=0;
    feeder=0;
    feeder_called=false;
@@ -737,8 +739,6 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
    csh_history=false;
    verify_host=verify_path=true;
 
-   Reconfig();
-
    start_time=0;
    old_cwd=0;
    old_lcwd=0;
@@ -751,6 +751,8 @@ CmdExec::CmdExec(FileAccess *f) : SessionJob(f)
    queue_lcwd=0;
 
    saved_session=0;
+
+   Reconfig();
 }
 
 CmdExec::~CmdExec()
@@ -939,7 +941,7 @@ void CmdExec::beep_if_long()
       write(1,"\007",1);
 }
 
-void CmdExec::Reconfig(const char *)
+void CmdExec::Reconfig(const char *name)
 {
    const char *c=0;
    if(session)
@@ -955,6 +957,9 @@ void CmdExec::Reconfig(const char *)
    verify_path=res_verify_path.Query(c);
    verify_host=res_verify_host.Query(c);
    verbose=res_verbose.Query(0);
+   // only allow explicit setting of cmd:interactive to change interactiveness.
+   if(top_level && name && !strcmp(name,"cmd:interactive"))
+      SetInteractive(res_interactive.Query(0));
 }
 
 void CmdExec::pre_stdout()

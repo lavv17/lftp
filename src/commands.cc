@@ -1899,8 +1899,9 @@ CMD(bookmark)
 	 if(value==0)
 	 {
 	    value=session->GetConnectURL(flags);
-	    char *a=string_alloca(strlen(value)+2);
-	    strcpy(a,value);
+	    char *a=string_alloca(strlen(value)*3+2);
+	    // encode some more characters, special to CmdExec parser.
+	    url::encode_string(value,a,"&;|\"\\");
 	    if(value[0] && value[strlen(value)-1]!='/')
 	       strcat(a,"/");
 	    value=a;

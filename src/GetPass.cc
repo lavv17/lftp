@@ -97,7 +97,7 @@ char *readline_from_file(FILE *f)
 	 if(SignalHook::GetCount(SIGINT)>0)
 	 {
 	    xfree(line);
-	    return(NULL);
+	    return(xstrdup(""));
 	 }
       }
       if(c==r.EOFCHAR && ptr==line)
