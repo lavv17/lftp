@@ -1,3 +1,8 @@
+1999-08-02	lav
+
+	* configure.in, acconfig.h: check for res_search, vsnprintf
+	  declarations, add corresponding symbols.
+
 1999-07-25	lav
 
 	* configure.in, NEWS, lftp.lsm, README: version 2.0.3

@@ -96,6 +96,10 @@
 
 #undef HAVE_RES_SEARCH
 
+#undef HAVE_RES_SEARCH_DECL
+
+#undef HAVE_VSNPRINTF_DECL
+
 /* Define to `int' if <sys/socket.h> doesn't define.  */
 #undef socklen_t
 

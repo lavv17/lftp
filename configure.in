@@ -121,7 +121,13 @@ dnl Checks for libraries.
 AC_SEARCH_LIBS(socket,socket)
 AC_SEARCH_LIBS(gethostbyname,nsl)
 AC_SEARCH_LIBS(dlopen,dl,[AC_DEFINE(HAVE_DLOPEN)])
-AC_SEARCH_LIBS(res_search,resolv,[AC_DEFINE(HAVE_RES_SEARCH)])
+AC_SEARCH_LIBS(res_search,resolv bind,[AC_DEFINE(HAVE_RES_SEARCH)])
+IU_CHECK_DECL(res_search, [
+     #include <sys/types.h>
+     #include <netinet/in.h>
+     #include <arpa/nameser.h>
+     #include <resolv.h>
+])
 
 AC_ARG_WITH(libresolv, [  --without-libresolv     don't use libresolv],
       [with_libresolv=$withval], [with_libresolv=yes])
@@ -222,6 +228,7 @@ LFTP_FUNC_SSCANF_CONST
 AC_CHECK_FUNCS(strdup strstr lstat select regexec glob\
  killpg setpgid tcgetattr ftruncate vsnprintf gettimeofday strptime\
  gethostbyname2 getaddrinfo getnameinfo)
+IU_CHECK_DECL(vsnprintf, [#include <stdio.h>])
 
 AC_REPLACE_FUNCS(mktime memmove strcasecmp strtol strtoul)
 
