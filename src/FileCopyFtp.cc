@@ -39,8 +39,13 @@ int FileCopyFtp::Do()
 {
    int src_res,dst_res;
    int m=super::Do();
-   if(disable_fxp || state!=DO_COPY || put->GetSeekPos()==FILE_END || get->Eof())
+   if(disable_fxp || Error() || state!=DO_COPY
+   || put->GetSeekPos()==FILE_END || get->Eof())
       return m;
+
+   // FileCopy can suspend peers.
+   get->Resume();
+   put->Resume();
 
    if(ftp_src->IsClosed())
    {
