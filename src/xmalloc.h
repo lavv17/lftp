@@ -48,10 +48,13 @@ static inline void *xmemdup(const void *m,int len)
 }
 static inline void xfree(void *p)
 {
+   if(p)
+   {
 #ifdef MEM_DEBUG
-   printf("xfree %p\n",p);
+      printf("xfree %p\n",p);
 #endif
-   if(p) free(p);
+      free(p);
+   }
 }
 
 #endif /* XMALLOC_H */
