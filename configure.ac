@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.53)
-AC_INIT([lftp], [2.6.1a], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [2.6.2], [lftp-bugs@lftp.yar.ru])
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(include/config.h)
