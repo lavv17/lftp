@@ -7,3 +7,4 @@ ftpget
 .libs
 .le.ini
 *.lo
+*.la
