@@ -1,6 +1,8 @@
 2000-05-13  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: disconnect on 421/221 reply without sending QUIT.
+	* Resolver.cc: use getaddrinfo if available. (original patch
+	  from Brandon Hume)
 
 2000-05-11  Alexander V. Lukyanov  <lav@yars.free.net>
 

@@ -661,14 +661,78 @@ void Resolver::LookupOne(const char *name)
 
       time(&try_time);
 
+#if defined(HAVE_GETADDRINFO) && INET6
+      // getaddrinfo support by Brandon Hume
+      struct addrinfo	    *ainfo=0,
+			    *a_res,
+			    a_hint;
+      int		    ainfo_res;
+      struct sockaddr	    *sockname;
+      struct sockaddr_in    *inet_addr;
+      struct sockaddr_in6   *inet6_addr;
+      const char	    *addr_data;
+
+      a_hint.ai_flags	    = AI_PASSIVE;
+      a_hint.ai_family	    = PF_UNSPEC;
+      a_hint.ai_socktype    = 0;
+      a_hint.ai_protocol    = 0;
+      a_hint.ai_addrlen	    = 0;
+      a_hint.ai_canonname   = NULL;
+      a_hint.ai_addr	    = NULL;
+      a_hint.ai_next	    = NULL;
+
+      ainfo_res	= getaddrinfo(name, NULL, &a_hint, &ainfo);
+
+      if(ainfo_res == 0)
+      {
+        // by lav: add addresses in specified order.
+	for(int af=af_order[af_index]; af!=-1; af=af_order[++af_index])
+	{
+	    for(a_res = ainfo; a_res != NULL; a_res = a_res->ai_next)
+	    {
+	       if(a_res->ai_family!=af)
+		  continue;
+	    
+	       sockname	= a_res->ai_addr;
+
+	       switch(a_res->ai_family)
+	       {
+	       case AF_INET:
+		  inet_addr	= (sockaddr_in *)sockname;
+		  addr_data	= (const char *)&inet_addr->sin_addr.s_addr;
+		  break;
+	       case AF_INET6:
+		  inet6_addr	= (sockaddr_in6 *)sockname;
+		  addr_data	= (const char *)inet6_addr->sin6_addr.s6_addr;
+		  break;
+	       default:
+		  continue;
+	       }
+
+	       AddAddress(a_res->ai_family, addr_data, a_res->ai_addrlen);
+	    }
+	 } 
+
+	 freeaddrinfo(ainfo);
+	 break;
+      }
+
+      if(ainfo_res != EAI_AGAIN)
+      {
+	 error = gai_strerror(ainfo_res);
+	 break;
+      }
+
+#else // !HAVE_GETADDRINFO
+
       int af=af_order[af_index];
       if(af==-1)
 	 break;
 
       struct hostent *ha;
-#ifdef HAVE_GETHOSTBYNAME2
+# ifdef HAVE_GETHOSTBYNAME2
       ha=gethostbyname2(name,af);
-#else
+# else
       if(af==AF_INET)
 	 ha=gethostbyname(name);
       else
@@ -676,7 +740,7 @@ void Resolver::LookupOne(const char *name)
 	 af_index++;
 	 continue;
       }
-#endif
+# endif
 
       if(ha)
       {
@@ -686,21 +750,24 @@ void Resolver::LookupOne(const char *name)
 	 af_index++;
 	 continue;
       }
-#ifdef HAVE_H_ERRNO
+
+# ifdef HAVE_H_ERRNO
       if(h_errno!=TRY_AGAIN)
-#endif
+# endif
       {
 	 if(error==0)
 	 {
-#ifdef HAVE_H_ERRNO
+# ifdef HAVE_H_ERRNO
 	    error=hstrerror(h_errno);
-#else
+# else
 	    error="Host name lookup failure";
-#endif
+# endif
 	 }
 	 af_index++;
 	 continue; // try other address families
       }
+#endif /* HAVE_GETADDRINFO */
+
       time_t t;
       if((t=time(0))-try_time<5)
 	 sleep(5-(t-try_time));
