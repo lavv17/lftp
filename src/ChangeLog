@@ -1,3 +1,8 @@
+1999-09-30  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.cc, log.h: extra info in debug output when it goes
+	  to a file. (suggested by Caleb Epstein <cae@home.com>)
+
 1999-09-30  Albert Chin-A-Young <china@thewrittenword.com>
 
 	* module.c: fix // comment

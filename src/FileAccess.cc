@@ -119,11 +119,24 @@ void  FileAccess::DebugPrint(const char *prefix,const char *str,int level)
 {
    if(!Log::global)
       return;
-   char *msg=(char*)alloca(strlen(prefix)+strlen(str)+6);
+
+   char *msg=(char*)alloca(xstrlen(hostname)+strlen(prefix)+strlen(str)+25);
 
    do
    {
-      strcpy(msg,prefix);
+      if(Log::global->IsTTY())
+	 strcpy(msg,prefix);
+      else
+      {
+	 sprintf(msg,"[%d] ",(int)getpid());
+	 if(hostname)
+	 {
+	    strcat(msg,hostname);
+	    strcat(msg," ");
+	 }
+	 strcat(msg,prefix);
+      }
+
       int msglen=strlen(msg);
       while(*str && *str!='\n')
       {
