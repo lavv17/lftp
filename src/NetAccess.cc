@@ -720,6 +720,16 @@ int GenericParseListInfo::Do()
    {
       if(ubuf->Error())
       {
+	 if(session->GetErrorCode()==FA::NOT_SUPP)
+	 {
+	    if(mode==FA::MP_LIST)
+	    {
+	       mode=FA::LONG_LIST;
+	       delete ubuf;
+	       ubuf=0;
+	       return MOVED;
+	    }
+	 }
 	 SetError(ubuf->ErrorText());
 	 Delete(ubuf);
 	 ubuf=0;
@@ -877,7 +887,7 @@ GenericParseListInfo::GenericParseListInfo(FileAccess *s,const char *p)
    get_time_for_dirs=true;
    can_get_prec_time=true;
 
-   mode=FA::LONG_LIST;
+   mode=FA::MP_LIST;
 }
 
 GenericParseListInfo::~GenericParseListInfo()

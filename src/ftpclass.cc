@@ -1413,12 +1413,22 @@ int   Ftp::Do()
 
       if(mode==CHANGE_MODE && !conn->site_chmod_supported)
       {
-	 SetError(NO_FILE,_("SITE CHMOD is not supported by this site"));
+	 SetError(NOT_SUPP,_("SITE CHMOD is not supported by this site"));
 	 return MOVED;
       }
       if(mode==CHANGE_MODE && !QueryBool("use-site-chmod"))
       {
-	 SetError(NO_FILE,_("SITE CHMOD is disabled by ftp:use-site-chmod"));
+	 SetError(NOT_SUPP,_("SITE CHMOD is disabled by ftp:use-site-chmod"));
+	 return MOVED;
+      }
+      if(mode==MP_LIST && !conn->mlst_supported)
+      {
+	 SetError(NOT_SUPP,_("MLST and MLSD are not supported by this site"));
+	 return MOVED;
+      }
+      if(mode==MP_LIST && !use_mlsd)
+      {
+	 SetError(NOT_SUPP,_("MLSD is disabled by ftp:use-mlsd"));
 	 return MOVED;
       }
 
@@ -1457,7 +1467,7 @@ int   Ftp::Do()
       if(conn->control_ssl)
       {
 	 char want_prot='P';
-	 if(mode==LIST || mode==LONG_LIST)
+	 if(mode==LIST || mode==LONG_LIST || mode==MP_LIST)
 	    want_prot=QueryBool("ssl-protect-list",hostname)?'P':'C';
 	 else
 	    want_prot=QueryBool("ssl-protect-data",hostname)?'P':'C';
@@ -1509,7 +1519,7 @@ int   Ftp::Do()
 	 pos=0;
 
       if(copy_mode==COPY_NONE
-      && (mode==RETRIEVE || mode==STORE || mode==LIST || mode==LONG_LIST))
+      && (mode==RETRIEVE || mode==STORE || mode==LIST || mode==LONG_LIST || mode==MP_LIST))
       {
 	 assert(conn->data_sock==-1);
 	 conn->data_sock=SocketCreateTCP(conn->peer_sa.sa.sa_family);
@@ -1641,18 +1651,20 @@ int   Ftp::Do()
          want_type='A';
          if(!rest_list)
 	    real_pos=0;	// some ftp servers do not do REST/LIST.
-	 if(conn->mlst_supported && use_mlsd)
-	    command="MLSD";
-	 else
+	 command="LIST";
+	 if(list_options && list_options[0])
 	 {
-	    command="LIST";
-	    if(list_options && list_options[0])
-	    {
-	       char *c=string_alloca(5+strlen(list_options)+1);
-	       sprintf(c,"LIST %s",list_options);
-	       command=c;
-	    }
+	    char *c=string_alloca(5+strlen(list_options)+1);
+	    sprintf(c,"LIST %s",list_options);
+	    command=c;
 	 }
+	 if(file && file[0])
+	    append_file=true;
+         break;
+      case(MP_LIST):
+         want_type='A';
+         real_pos=0; // REST doesn't work for MLSD
+	 command="MLSD";
 	 if(file && file[0])
 	    append_file=true;
          break;

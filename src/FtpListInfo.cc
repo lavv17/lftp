@@ -36,9 +36,10 @@
 
 FileSet *FtpListInfo::Parse(const char *buf,int len)
 {
-   if(mode==FA::LONG_LIST)
+   if(mode==FA::LONG_LIST || mode==FA::MP_LIST)
    {
-      if(len==0)
+      if(len==0 && mode==FA::LONG_LIST
+      && !ResMgr::QueryBool("ftp:list-empty-ok",session->GetHostName()))
       {
 	 mode=FA::LIST;
 	 return 0;
@@ -46,7 +47,12 @@ FileSet *FtpListInfo::Parse(const char *buf,int len)
       int err;
       FileSet *set=session->ParseLongList(buf,len,&err);
       if(!set || err>0)
-	 mode=FA::LIST;
+      {
+	 if(mode==FA::MP_LIST)
+	    mode=FA::LONG_LIST;
+	 else
+	    mode=FA::LIST;
+      }
       return set;
    }
    else
@@ -521,7 +527,7 @@ FileInfo *ParseFtpLongList_EPLF(char *line,int *err,const char *)
       else
 	 break;
    }
-   if(name==0)
+   if(name==0 || !type_known)
       ERR;
 
    fi=new FileInfo(name);
@@ -799,6 +805,11 @@ FileInfo *ParseFtpLongList_MLSD(char *line,int *err,const char *)
 	    case 'w': perms|=0200; break;
 	    }
 	 }
+	 continue;
+      }
+      if(!strncasecmp(tok,"UNIX.mode=",10))
+      {
+	 sscanf(tok+10,"%o",&perms);
 	 continue;
       }
    }

@@ -63,6 +63,7 @@ public:
       STORE,
       LONG_LIST,
       LIST,
+      MP_LIST,
       CHANGE_DIR,
       MAKE_DIR,
       REMOVE_DIR,
@@ -267,6 +268,8 @@ public:
    virtual void Disconnect();
    virtual void UseCache(bool);
    virtual bool NeedSizeDateBeforehand();
+
+   int GetErrorCode() { return error_code; }
 
    enum status
    {

@@ -1,5 +1,15 @@
 2004-03-25  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* FileAccess.h: (MP_LIST) new mode for MLSD - Machine Parseable List;
+	  (GetErrorCode) new method.
+	* Fish.cc, Http.cc, LocalAccess.cc, SFtp.cc: handle MP_LIST.
+	* ftpclass.cc: send MLSD for MP_LIST.
+	* FtpListInfo.cc: use MP_LIST.
+	* NetAccess.cc: use MP_LIST, fallback to LONG_LIST if not supported.
+	* resource.cc: ftp:list-empty-ok - new setting.
+
+2004-03-25  Alexander V. Lukyanov <lav@yars.free.net>
+
 	* FileSet.cc: init all fields in FileInfo.
 	* FtpDirList.cc: support MLSD; use parsers from ListInfo.
 	* FtpListInfo.cc: support MLSD.

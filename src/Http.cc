@@ -380,6 +380,7 @@ bool Http::ModeSupported()
    case QUOTE_CMD:
    case RENAME:
    case LIST:
+   case MP_LIST:
    case CHANGE_MODE:
       return false;
    case CONNECT_VERIFY:
@@ -478,6 +479,7 @@ void Http::SendRequest(const char *connection,const char *f)
       }
    case RENAME:
    case LIST:
+   case MP_LIST:
    case CHANGE_MODE:
       abort(); // unsupported
 

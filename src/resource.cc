@@ -178,6 +178,7 @@ static ResDecl
    ResDecl02b("ftp:home",		  "",	   0,0),
    ResDecl02a("ftp:site-group",		  "",	   0,0),
    ResDecl02c("ftp:lang",		  "",	   0,0),
+   ResDecl03a("ftp:list-empty-ok",	  "no",	   0,0),
    ResDecl03 ("ftp:list-options",	  "",	   0,0),
    ResDecl04 ("ftp:nop-interval",	  "120",   ResMgr::UNumberValidate,0),
    ResDecl05 ("ftp:passive-mode",	  "on",    ResMgr::BoolValidate,0),

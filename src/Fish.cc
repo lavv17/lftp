@@ -600,6 +600,9 @@ void Fish::SendMethod()
       PushExpect(EXPECT_QUOTE);
       real_pos=0;
       break;
+   case MP_LIST:
+      SetError(NOT_SUPP);
+      break;
    case CONNECT_VERIFY:
    case CLOSED:
       abort();

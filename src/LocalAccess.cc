@@ -296,6 +296,9 @@ int LocalAccess::Do()
       fill_array_info();
       done=true;
       return MOVED;
+   case MP_LIST:
+      SetError(NOT_SUPP);
+      return MOVED;
    }
    return m;
 }

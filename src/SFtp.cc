@@ -640,6 +640,7 @@ void SFtp::SendRequest()
       state=WAITING;
       break;
    case QUOTE_CMD:
+   case MP_LIST:
       SetError(NOT_SUPP);
       break;
    case CONNECT_VERIFY:
