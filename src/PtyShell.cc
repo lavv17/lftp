@@ -27,8 +27,12 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <string.h>
+#include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
+#ifdef HAVE_SYS_IOCTL_H
+# include <sys/ioctl.h>
+#endif
 #include <termios.h>
 
 #include "PtyShell.h"
