@@ -1,3 +1,9 @@
+2001-07-30  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* commands.cc: format queue help at 80 columns.
+	* Resolver.cc: little correction for RAND_MAX.
+	* Speedometer.cc: call Get once, maybe fix for math exception.
+
 2001-07-26  Glenn F. Maynard <g_ld@zewt.org>
 
 	* CmdExec.cc, CmdExec.h, Job.cc, Makefile.am, commands.cc: queue

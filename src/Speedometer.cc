@@ -99,7 +99,7 @@ const char *Speedometer::GetETAStrFromSize(off_t size)
    if(!Valid() || Get()<1)
       return buf_eta;
 
-   return GetETAStrFromTime(long(size/Get()+.5));
+   return GetETAStrFromTime(long(size/rate+.5));
 }
 const char *Speedometer::GetETAStrFromTime(long eta)
 {
@@ -124,7 +124,7 @@ const char *Speedometer::GetETAStrFromTime(long eta)
 
    if(terse)
    {
-      if(eta>=DAY)
+      if(eta>=100*HOUR)
       {
 	 ueta=(eta+DAY/2)/DAY;
 	 eta2=eta-ueta*DAY;
@@ -137,7 +137,7 @@ const char *Speedometer::GetETAStrFromTime(long eta)
 	       ueta--;
 	 }
       }
-      else if(eta>=HOUR)
+      else if(eta>=100*MINUTE)
       {
 	 ueta=(eta+HOUR/2)/HOUR;
 	 eta2=eta-ueta*HOUR;

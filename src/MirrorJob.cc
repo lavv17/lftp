@@ -1331,7 +1331,6 @@ mode_t MirrorJob::get_mode_mask()
 
 #include "modconfig.h"
 #ifdef MODULE_CMD_MIRROR
-CDECL void module_init();
 void module_init()
 {
    CmdExec::RegisterCommand("mirror",cmd_mirror);

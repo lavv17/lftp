@@ -577,8 +577,8 @@ void Resolver::LookupSRV_RR()
 	    struct SRV *s;
 	    while(weight_sum>0)
 	    {
-	       int r=int((float(rand())/RAND_MAX)*weight_sum);
-	       if(r==weight_sum)
+	       int r=int(rand()/(RAND_MAX+1.0)*weight_sum);
+	       if(r>=weight_sum)
 		  r=weight_sum-1;
 	       int w=0;
 	       for(s=base; s<SRVscan; s++)
