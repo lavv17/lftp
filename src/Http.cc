@@ -762,11 +762,16 @@ int Http::Do()
 	       if(3!=sscanf(status,"HTTP/%d.%d %n%d",&ver_major,&ver_minor,
 		     &status_consumed,&status_code))
 	       {
-		  DebugPrint("**** ","Could not parse HTTP status line",0);
 		  // simple 0.9 ?
-		  proto_version=0x09;
-		  //FIXME: STORE
-		  goto pre_RECEIVING_BODY;
+		  ver_major=0;
+		  ver_minor=9;
+		  status_code=200;
+		  if(1!=sscanf(status,"HTTP %n%d",&status_consumed,&status_code))
+		  {
+		     DebugPrint("**** ","Could not parse HTTP status line",0);
+		     //FIXME: STORE
+		     goto pre_RECEIVING_BODY;
+		  }
 	       }
 	       proto_version=(ver_major<<4)+ver_minor;
 	       if(!H_20X(status_code))
