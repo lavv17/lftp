@@ -391,7 +391,7 @@ static char **lftp_completion (char *text,int start,int end)
    if(start>end)  // workaround for a bug in readline
       start=end;
 
-   Glob *rg=0;
+   GlobURL *rg=0;
 
    rl_completion_append_character=' ';
    shell_cmd=false;
@@ -435,12 +435,12 @@ static char **lftp_completion (char *text,int start,int end)
 
       SignalHook::ResetCount(SIGINT);
       glob_res=NULL;
-      rg=completion_shell->session->MakeGlob(pat);
+      rg=new GlobURL(completion_shell->session,pat);
       if(rg)
       {
-	 rg->NoMatchPeriod();
+	 rg->glob->NoMatchPeriod();
 	 if(type==REMOTE_DIR)
-	    rg->DirectoriesOnly();
+	    rg->glob->DirectoriesOnly();
 	 for(;;)
 	 {
 	    SMTask::Schedule();
