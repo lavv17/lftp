@@ -1,3 +1,7 @@
+1999-08-18  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* complete.cc: local completion after redirection.
+
 1999-08-17  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Job.cc, Job.h: provide useful default ShowRunStatus method.

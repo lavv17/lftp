@@ -232,6 +232,16 @@ static completion_type cmd_completion_type(int start)
       break;
    }
 
+   for(char *p=rl_line_buffer+start; p>rl_line_buffer; )
+   {
+      p--;
+      if((*p=='>' || *p=='|')
+      && !lftp_char_is_quoted(rl_line_buffer,p-rl_line_buffer))
+	 return LOCAL;
+      if(!isspace((unsigned char)*p))
+	 break;
+   }
+
    if(!strcmp(buf,"cd")
    || !strcmp(buf,"mkdir"))
       return REMOTE_DIR; /* append slash automatically */
