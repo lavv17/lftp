@@ -4,6 +4,7 @@
 	* CopyJob.cc, CopyJob.h, FileCopy.cc, FileCopy.h: NoStatusOnWrite added.
 	* commands.cc: use it.
 	* FileSetOutput.cc, FileSetOutput.h: fix recls.
+	* misc.cc: (xasprinf) fix va_end argument.
 
 2001-10-16  Alexander V. Lukyanov <lav@yars.free.net>
 

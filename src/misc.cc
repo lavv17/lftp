@@ -664,6 +664,6 @@ char *xasprintf(const char *format, ...)
    va_list va;
    va_start(va, format);
    ret = xvasprintf(format, va);
-   va_end(&va);
+   va_end(va);
    return ret;
 }
