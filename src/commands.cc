@@ -1217,8 +1217,6 @@ CMD(debug)
       else
       {
 	 new_dlevel=atoi(args->getarg(1));
-	 if(new_dlevel>9)
-	    new_dlevel=9;
 	 if(new_dlevel<0)
 	    new_dlevel=0;
 	 enabled=true;
