@@ -28,6 +28,8 @@
 #include <unistd.h>
 #endif
 
+#include <mbswidth.h>
+
 #include "SMTask.h"
 #include "ColumnOutput.h"
 #include "ResMgr.h"
@@ -54,6 +56,15 @@ ColumnOutput::~ColumnOutput()
 void ColumnOutput::add(const char *name, const char *color)
 {
    lst[lst_cnt-1]->append(name, color);
+}
+
+void ColumnOutput::addf(const char *fmt, const char *color, ...)
+{
+   va_list v;
+   va_start(v, color);
+   char *str = xvasprintf(fmt, v);
+   va_end(v);
+   add(str, color);
 }
 
 void ColumnOutput::append()
@@ -225,8 +236,7 @@ void datum::append(const char *name, const char *color)
       }
    }
 
-   /* XXX: UTF8 */
-   curwidth += strlen(name);
+   curwidth += mbswidth(name, MBSW_ACCEPT_INVALID|MBSW_ACCEPT_UNPRINTABLE);
 }
 
 void datum::print(Buffer *o, bool color, int skip,

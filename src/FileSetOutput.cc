@@ -31,7 +31,9 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <assert.h>
+#include <locale.h>
 
+#include <mbswidth.h>
 
 #include "misc.h"
 #include "ResMgr.h"
@@ -416,6 +418,43 @@ void FileSetOutput::print(FileSet &fs, Buffer *o) const
 	    sprintf(sz, "%10s ", ""); /* pad */
 	 }
 	 c.add(sz, "");
+      }
+
+      /* We use unprec dates; doing MDTMs for each file in ls is far too
+       * slow.  If someone actually wants that (to get dates on servers with
+       * unparsable dates, or more accurate dates), it wouldn't be
+       * difficult.  If we did this, we could also support --full-time. */
+      if(mode & DATE) {
+	 /* Consider a time to be recent if it is within the past six
+	  * months.  A Gregorian year has 365.2425 * 24 * 60 * 60 ==
+	  * 31556952 seconds on the average.  Write this value as an
+	  * integer constant to avoid floating point hassles.  */
+	 const int six_months_ago = SMTask::now - 31556952 / 2;
+	 bool recent = six_months_ago <= f->date;
+
+	 /* We assume all time outputs are equal-width. */
+	 static const char *long_time_format[] = {
+	    dcgettext (NULL, "%b %e  %Y", LC_TIME),
+	    dcgettext (NULL, "%b %e %H:%M", LC_TIME)
+	 };
+
+	 const char *fmt = long_time_format[recent];
+	 struct tm *when_local;
+	 char *dt;
+	 if ((f->defined&FileInfo::DATE_UNPREC) && (when_local = localtime (&f->date))) {
+	    dt = xstrftime(fmt, when_local);
+	 } else {
+	    /* put an empty field; make sure it's the same width */
+	    dt = xstrftime(long_time_format[0], NULL);
+	    int wid = mbswidth(dt, MBSW_ACCEPT_INVALID|MBSW_ACCEPT_UNPRINTABLE);
+	    xfree(dt);
+
+	    dt = (char *) xmalloc(wid+1);
+	    memset(dt, ' ', wid);
+	    dt[wid] = 0;
+	 }
+	 c.addf("%s ", "", dt);
+	 xfree(dt);
       }
 
       const char *nm = f->name;

@@ -100,4 +100,11 @@ void tokenize_free(char **argv);
 /* uses gettimeofday if available */
 void xgettimeofday(time_t *sec, int *usec);
 
+/* returns malloc'd date */
+char *xstrftime(const char *format, const struct tm *tm);
+	
+/* returns malloc'd formatted string */
+char *xvasprintf(const char *format, va_list ap);
+char *xasprintf(const char *format, ...);
+	
 #endif // MISC_H

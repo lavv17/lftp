@@ -21,9 +21,14 @@
 /* $Id$ */
 
 #include <config.h>
+#ifdef NEED_TRIO
+#include "trio.h"
+#define vsnprintf trio_vsnprintf
+#endif
 #include "xmalloc.h"
 #include "xstring.h"
 #include <stdio.h>
+#include <stdarg.h>
 #include <pwd.h>
 #include <unistd.h>
 #include <errno.h>
@@ -614,3 +619,44 @@ void xgettimeofday(time_t *sec, int *usec)
    if(usec) *usec = 0;
 #endif
 }
+
+char *xstrftime(const char *format, const struct tm *tm)
+{
+   char *ret = NULL;
+   int siz = 128;
+
+   struct tm dummy = { 0,0,0,0,0,0,0,0,0 };
+   if(tm == NULL) tm = &dummy;
+
+   while(1) {
+      ret = (char *) xrealloc(ret, siz);
+      if(strftime(ret, siz, format, tm) != 0)
+	 return ret; /* success */
+
+      /* more space */
+      siz += siz / 2;
+   }
+}
+
+char *xvasprintf(const char *format, va_list ap)
+{
+   char *ret = NULL;
+   int siz = 128;
+
+   while(1) {
+      ret = (char *) xrealloc(ret, siz);
+      if(vsnprintf(ret, siz, format, ap) != -1) return ret;
+      siz += siz / 2;
+   }
+}
+
+char *xasprintf(const char *format, ...)
+{
+   char *ret;
+   va_list va;
+   va_start(va, format);
+   ret = xvasprintf(format, va);
+   va_end(&va);
+   return ret;
+}
+

@@ -1,3 +1,16 @@
+2001-10-15  Glenn F. Maynard <g_ld@zewt.org>
+
+	* ColumnOutput.cc, ColumnOutput.h, FileSetOutput.cc, misc.h, misc.cc:
+
+	Column output now treats width properly (using mbswidth().)
+
+	Date output added to cls -l; uses locale-dependant date (like ls does.)
+
+	Added xasprintf and xvasprintf.  (Trivial asprintf/vasprintf
+	implementation so we don't need to deal with trio just for those.)
+
+	Added some ColumnOutput support for date output (addf()).
+
 2001-10-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* PtyShell.cc: fix warnings.

@@ -56,6 +56,7 @@ public:
 
    void append();
    void add(const char *name, const char *color);
+   void addf(const char *fmt, const char *color, ...);
 
    void SetWidth(unsigned width);
    void SetColor(bool color);
