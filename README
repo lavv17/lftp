@@ -94,7 +94,7 @@ By CVS:
 	cvs -z9 co -r lftp-2-0-3 lftp (if you omit -r option, you'll get
 		latest development sources)
 		
-See also home page http://ftp.yars.free.net/projects/lftp/ .
+See also home page `http://ftp.yars.free.net/projects/lftp/'.
 
 Internals
 ~~~~~~~~~
