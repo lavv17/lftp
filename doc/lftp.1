@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "02 Mar 2000"
+.TH lftp 1 "07 Mar 2000"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -755,6 +755,10 @@ data transfer. In such cases NOOP commands can prevent connection timeout.
 .BR ftp:passive-mode \ (bool)
 sets passive ftp mode. This can be useful if you are behind a firewall
 or a dumb masquerading router.
+.TP
+.BR ftp:port-range \ (from-to)
+allowed port range for active mode. 
+Format is min-max, or `full' or `any' to indicate any port. Default is `full'.
 .TP
 .BR ftp:proxy \ (URL)
 specifies ftp proxy to use.
