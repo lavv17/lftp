@@ -1,4 +1,4 @@
-Version 3.0.6 - 2004-06-??
+Version 3.0.6 - 2004-06-12
 
 * completion for bm: URL scheme implemented.
 * fixed `du' command with large files >2Gb.
