@@ -691,8 +691,8 @@ troubles with it, so it is on by default.
 verify that data connection comes from the network address of control
 connection peer. This can possibly prevent data connection spoofing
 which can lead to data corruption. Unfortunately, this can fail
-for sertain ftp servers with several network interfaces and
-that do not set outgoing address on data socket, so it is disabled by default.
+for sertain ftp servers with several network interfaces,
+when they do not set outgoing address on data socket, so it is disabled by default.
 .TP
 .BR ftp:verify-port \ (bool)
 verify that data connection has port 20 (ftp-data) on its remote end.
@@ -783,6 +783,14 @@ is currently just the host name as you specify it in the `open' command
 For other variables it is not currently used. See examples in the sample
 .IR lftp.conf .
 
+.P
+Certain commands and settings take a time interval parameter. It has
+the format Nx[Nx...], where N is time amount and x is time unit: d - days,
+h - hours, m - minutes, s - seconds. Default unit is second. E.g. 5h30m.
+Also the interval can be `infinity', `inf', `never', `forever' - it means
+infinite interval. E.g. `sleep forever' or `set dns:cache-expire never'.
+
+.P
 .B Lftp
 can speed up ftp operations by sending several commands at once and
 then checking all the responses. See ftp:sync-mode variable. Sometimes

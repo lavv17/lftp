@@ -1,3 +1,7 @@
+1999-09-20	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: describe time interval; fix an error.
+
 1999-09-19	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document dns:cache-* variables, update closure
