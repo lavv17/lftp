@@ -155,7 +155,7 @@ int   Resolver::Do()
       cache->Find(hostname,portname,defport,service,proto,&a,&n);
       if(a && n>0)
       {
-	 Log::global->Write(10,_("dns cache hit\n"));
+	 Log::global->Write(10,"dns cache hit\n");
 	 addr_num=n;
 	 addr=(sockaddr_u*)xmalloc(n*sizeof(*addr));
 	 memcpy(addr,a,n*sizeof(*addr));
@@ -165,28 +165,28 @@ int   Resolver::Do()
       no_cache=true;
    }
 
-   if(pipe_to_child[0]==-1)
-   {
-      int res=pipe(pipe_to_child);
-      if(res==-1)
-      {
-	 if(errno==ENFILE || errno==EMFILE)
-	 {
-	    TimeoutS(1);
-	    return m;
-	 }
-	 MakeErrMsg("pipe()");
-	 return MOVED;
-      }
-      fcntl(pipe_to_child[0],F_SETFL,O_NONBLOCK);
-      fcntl(pipe_to_child[0],F_SETFD,FD_CLOEXEC);
-      fcntl(pipe_to_child[1],F_SETFD,FD_CLOEXEC);
-      m=MOVED;
-      Log::global->Format(4,"---- %s\n",_("Resolving host address..."));
-   }
-
    if(use_fork)
    {
+      if(pipe_to_child[0]==-1)
+      {
+	 int res=pipe(pipe_to_child);
+	 if(res==-1)
+	 {
+	    if(errno==ENFILE || errno==EMFILE)
+	    {
+	       TimeoutS(1);
+	       return m;
+	    }
+	    MakeErrMsg("pipe()");
+	    return MOVED;
+	 }
+	 fcntl(pipe_to_child[0],F_SETFL,O_NONBLOCK);
+	 fcntl(pipe_to_child[0],F_SETFD,FD_CLOEXEC);
+	 fcntl(pipe_to_child[1],F_SETFD,FD_CLOEXEC);
+	 m=MOVED;
+	 Log::global->Format(4,"---- %s\n",_("Resolving host address..."));
+      }
+
       if(!w && !buf)
       {
 	 pid_t proc=fork();
@@ -225,6 +225,7 @@ int   Resolver::Do()
    {
       if(!buf)
       {
+	 Log::global->Format(4,"---- %s\n",_("Resolving host address..."));
 	 buf=new Buffer();
 	 DoGethostbyname();
 	 if(deleting)
@@ -278,8 +279,16 @@ int   Resolver::Do()
    if((unsigned)n<sizeof(sockaddr_u))
    {
    proto_error:
-      // protocol error
-      err_msg=xstrdup(_("child returned invalid data"));
+      if(use_fork)
+      {
+	 // e.g. under gdb child fails.
+	 Log::global->Format(4,"**** %s\n","child failed, retrying with dns:use-fork=no");
+	 use_fork=false;
+	 Delete(buf);
+	 buf=0;
+	 return MOVED;
+      }
+      err_msg=xstrdup("BUG: internal class Resolver error");
       done=true;
       return MOVED;
    }

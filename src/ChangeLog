@@ -1,3 +1,8 @@
+2001-08-28  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Resolver.cc: retry with use_fork=false; don't create pipe if
+	  use_fork==false.
+
 2001-08-27  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: (MoveConnectionHere) set home if null.
