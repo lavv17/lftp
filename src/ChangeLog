@@ -1,6 +1,9 @@
 2001-06-18  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Http.cc: handle 416 reply code.
+	* ProcWait.cc, ProcWait.h, lftp.cc: (ProcWait::DeleteAll) new method;
+	  use it.
+	* FileAccess.cc, modconfig.h, Makefile.am: include Fish.
 
 2001-06-12  Alexander V. Lukyanov  <lav@yars.free.net>
 

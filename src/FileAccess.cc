@@ -1297,5 +1297,5 @@ void FileAccess::ClassInit()
    _ftp;
    _file;
    _http;
-//    _fish;
+   _fish;
 }
