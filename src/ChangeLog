@@ -2,7 +2,7 @@
 
 	* ftpclass.cc, ftpclass.h: try PORT if connect fails after fixing
 	  pasv address.
-	* Http.cc: really skip rest of body from recv_buf.
+	* Http.cc: really skip rest of body from recv_buf; call recv_buf->Do.
 
 2000-08-29  Alexander V. Lukyanov  <lav@yars.free.net>
 

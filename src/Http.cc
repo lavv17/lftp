@@ -198,6 +198,8 @@ void Http::Close()
 {
    if(mode==CLOSED)
       return;
+   if(recv_buf)
+      recv_buf->Do();	// try to read any remaining data
    if(sock!=-1 && keep_alive && (keep_alive_max>1 || keep_alive_max==-1)
    && mode!=STORE && !recv_buf->Eof() && (state==RECEIVING_BODY || state==DONE))
    {
