@@ -1,3 +1,7 @@
+2000-09-19  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CmdExec.cc: fix error on some compilers (e.g. irix).
+
 2000-09-15  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* pgetJob.cc: fix yet another hang bug (hopefully last).

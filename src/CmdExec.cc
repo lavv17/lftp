@@ -1097,13 +1097,14 @@ int CmdExec::AcceptSig(int sig)
 	    exit_code=1;
 	    int jn=r->waiting_num;
 	    int *j=(int *)alloca(jn*sizeof(int));
-	    for(int k=0; k<jn; k++)
+	    int k;
+	    for(k=0; k<jn; k++)
 	       j[k]=r->waiting[k]->jobno;
 	    RemoveWaiting(r);
 	    Delete(r);
 	    i--;
 	    limit--;
-	    for(int k=0; k<jn; k++)
+	    for(k=0; k<jn; k++)
 	    {
 	       if(j[k]>=0)
 		  AddWaiting(FindJob(j[k])); // in case some jobs survived
