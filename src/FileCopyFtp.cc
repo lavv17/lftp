@@ -126,7 +126,10 @@ int FileCopyFtp::Do()
 
    long add=ftp_dst->GetPos()-put->GetRealPos();
    if(add>0)
+   {
       RateAdd(add);
+      bytes_count+=add;
+   }
 
    long pos=ftp_dst->GetPos();
    get->SetPos(pos);
