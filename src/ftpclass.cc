@@ -1071,7 +1071,7 @@ bool Ftp::GetBetterConnection(int level,bool limit_reached)
 	    if(diff>0)
 	    {
 	       /* number of seconds the task has been idle */
-	       int have_idle=now-o->idle_start;
+	       int have_idle=(time_t)now-o->idle_start;
 	       if(have_idle<diff)
 	       {
 		  TimeoutS(diff-have_idle);
@@ -1490,7 +1490,7 @@ int   Ftp::Do()
 
       if(now<retry_time)
       {
-	 TimeoutS(retry_time-now);
+	 TimeoutS(retry_time-time_t(now));
 	 goto usual_return;
       }
       retry_time=0;
@@ -2296,7 +2296,7 @@ int   Ftp::Do()
 	    m=MOVED;
 	 }
 	 else
-	    TimeoutS(stat_time+stat_interval-now);
+	    TimeoutS(stat_time+stat_interval-time_t(now));
       }
 
       // FXP is special - no data connection at all.

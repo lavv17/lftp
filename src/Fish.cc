@@ -86,7 +86,7 @@ int Fish::Do()
 	 Disconnect();
 	 return m;
       }
-      TimeoutS(idle_start+idle-now);
+      TimeoutS(idle_start+idle-time_t(now));
    }
 
    if(Error())

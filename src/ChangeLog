@@ -1,3 +1,8 @@
+2005-01-21  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Fish.cc, Http.cc, LsCache.cc, SFtp.cc, ftpclass.cc: cast `now' to
+	  time_t explicitly to please some compilers.
+
 2005-01-21  Thomas Glanzmann <sithglan@stud.uni-erlangen.de>
 
 	* SFtp.cc, Fish.cc, resource.cc: change connect-program to work with

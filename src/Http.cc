@@ -861,7 +861,7 @@ int Http::Do()
 	 Disconnect();
 	 return m;
       }
-      TimeoutS(idle_start+idle-now);
+      TimeoutS(idle_start+idle-time_t(now));
    }
 
    if(home==0)

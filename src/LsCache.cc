@@ -243,7 +243,7 @@ int LsCache::ExpireHelper::Do()
       if(!expiring)
 	 return STALL;
    }
-   time_t t_out=expiring->timestamp+ttl.Seconds()-now;
+   time_t t_out=expiring->timestamp+ttl.Seconds()-(time_t)now;
    if(t_out>1024)
       t_out=1024;
    Timeout(t_out*1000);
