@@ -53,6 +53,7 @@ int pgetJob::Do()
    {
       cp->SetRange(0,cp->GetPos());
       cp->Resume();
+      cp->Do();
       free_chunks();
       m=MOVED;
    }

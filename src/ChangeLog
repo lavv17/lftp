@@ -1,3 +1,8 @@
+2002-05-20  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* pgetJob.cc: let the copyer run before the session to avoid unneeded
+	  reconnect.
+
 2002-05-16  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Http.cc: handle '100 Continue' independently of open mode.
