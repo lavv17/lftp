@@ -24,6 +24,8 @@
 #include <errno.h>
 #include <stdarg.h>
 
+#define super NetAccess
+
 int Fish::Do()
 {
    int m=STALL;
@@ -137,6 +139,11 @@ Fish::~Fish()
    Disconnect();
 }
 
+Fish::Fish(const Fish *o) : super(o)
+{
+   Init();
+}
+
 void Fish::Close()
 {
    switch(state)
@@ -144,6 +151,7 @@ void Fish::Close()
    case(DISCONNECTED):
    case(WAITING):
    case(CONNECTED):
+   case(DONE):
       break;
    case(FILE_RECV):
    case(FILE_SEND):
@@ -152,6 +160,7 @@ void Fish::Close()
    }
    if(expected_responses>0)
       Disconnect(); // play safe.
+   state=(recv_buf?CONNECTED:DISCONNECTED);
 }
 
 void Fish::Send(const char *format,...)
@@ -169,6 +178,119 @@ void Fish::Send(const char *format,...)
 }
 
 void Fish::SendMethod()
+{
+}
+
+int Fish::Read(void *buf,int size)
+{
+   if(Error())
+      return error_code;
+   if(mode==CLOSED)
+      return 0;
+   if(state==DONE)
+      return 0;	  // eof
+   if(state==FILE_RECV && real_pos>=0)
+   {
+      const char *buf1;
+      int size1;
+   get_again:
+      if(recv_buf->Size()==0 && recv_buf->Error())
+      {
+	 Disconnect();
+	 return DO_AGAIN;
+      }
+      recv_buf->Get(&buf1,&size1);
+      if(buf1==0) // eof
+      {
+	 Disconnect();
+	 return DO_AGAIN;
+      }
+      if(size1==0)
+	 return DO_AGAIN;
+      if(entity_size>=0 && pos>=entity_size)
+      {
+	 DebugPrint("---- ","Received all (total)");
+	 return 0;
+      }
+      if(entity_size==NO_SIZE)
+      {
+	 // FIXME memstr(
+      }
+
+      int bytes_allowed=rate_limit->BytesAllowed();
+      if(size1>bytes_allowed)
+	 size1=bytes_allowed;
+      if(size1==0)
+	 return DO_AGAIN;
+      if(norest_manual && real_pos==0 && pos>0)
+	 return DO_AGAIN;
+      if(real_pos<pos)
+      {
+	 long to_skip=pos-real_pos;
+	 if(to_skip>size1)
+	    to_skip=size1;
+	 recv_buf->Skip(to_skip);
+	 real_pos+=to_skip;
+	 goto get_again;
+      }
+      if(size>size1)
+	 size=size1;
+      memcpy(buf,buf1,size);
+      recv_buf->Skip(size);
+      pos+=size;
+      real_pos+=size;
+      rate_limit->BytesUsed(size);
+      retries=0;
+      return size;
+   }
+   return DO_AGAIN;
+}
+
+int Fish::Write(const void *buf,int size)
+{
+}
+int Fish::StoreStatus()
+{
+}
+
+int Fish::Done()
+{
+   if(mode==CLOSED)
+      return OK;
+   if(Error())
+      return error_code;
+   if(state==DONE)
+      return OK;
+   if(mode==CONNECT_VERIFY)
+      return OK;
+   return IN_PROGRESS;
+}
+
+const char *Fish::CurrentStatus()
+{
+   return "FIXME";
+}
+
+bool Fish::SameSiteAs(FileAccess *fa)
+{
+   if(!SameProtoAs(fa))
+      return false;
+   Fish *o=(Fish*)fa;
+   return(!xstrcmp(hostname,o->hostname) && !xstrcmp(portname,o->portname)
+   && !xstrcmp(user,o->user) && !xstrcmp(pass,o->pass));
+}
+
+bool Fish::SameLocationAs(FileAccess *fa)
+{
+   if(!SameSiteAs(fa))
+      return false;
+   Fish *o=(Fish*)fa;
+   if(xstrcmp(cwd,o->cwd))
+      return false;
+   return true;
+}
+
+void Fish::Reconfig(const char *name)
 {
 }
 

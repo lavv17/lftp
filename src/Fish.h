@@ -36,7 +36,8 @@ class Fish : public NetAccess
       CONNECTED,
       FILE_RECV,
       FILE_SEND,
-      WAITING
+      WAITING,
+      DONE
    };
 
    state_t state;
@@ -85,8 +86,6 @@ public:
    int Write(const void *,int);
    int StoreStatus();
    int SendEOT();
-
-   void	Connect(const char *h,const char *p);
 
    void Close();
    const char *CurrentStatus();
