@@ -1,0 +1,61 @@
+/*
+ * lftp and utils
+ *
+ * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+/* $Id$ */
+
+#include <config.h>
+#include "SignalHook.h"
+
+int  SignalHook::counts[256];
+struct sigaction SignalHook::old_handlers[256];
+bool SignalHook::old_saved[256];
+
+void SignalHook::cnt_handler(int sig)
+{
+   counts[sig]++;
+}
+
+void SignalHook::set_signal(int sig,void (*handler)(int))
+{
+   if(!old_saved[sig])
+   {
+      sigaction(sig,0,&old_handlers[sig]);
+      if(sig==SIGINT && old_handlers[sig].sa_handler==(void(*)(int))SIG_IGN)
+	 return;
+      old_saved[sig]=true;
+   }
+   struct sigaction act;
+   act.sa_handler=handler;
+   act.sa_flags=0;
+   sigemptyset(&act.sa_mask);
+   sigaction(sig,&act,0);
+}
+
+void SignalHook::Restore(int i)
+{
+   if(old_saved[i])
+      sigaction(i,&old_handlers[i],0);
+}
+
+void SignalHook::RestoreAll()
+{
+   for(int i=0; i<256; i++)
+      Restore(i);
+}
