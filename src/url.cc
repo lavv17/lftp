@@ -26,11 +26,14 @@
 #include "url.h"
 #include "ascii_ctype.h"
 #include "ConnectionSlot.h"
+#include "misc.h"
 
 /*
    URL -> [PROTO://]CONNECT[[:]/PATH]
    CONNECT -> [USER[:PASS]@]HOST[:PORT]
 */
+
+static bool valid_slot(const char *s);
 
 ParsedURL::ParsedURL(const char *url,bool proto_required,bool use_rfc1738)
 {
@@ -74,13 +77,19 @@ ParsedURL::ParsedURL(const char *url,bool proto_required,bool use_rfc1738)
       path=scan+10;
       goto decode;
    }
-   else if(scan[0]==':' && !strncmp(base,"slot:",5) && ConnectionSlot::Find(scan+1))
+   else if(scan[0]==':' && !strncmp(base,"slot:",5) && valid_slot(scan+1))
    {
       // special form for selecting a connection slot
-      *scan=0;
-      scan++;
+      *scan++=0;
       proto=base;
       host=scan;
+      scan=strchr(scan,'/');
+      if(scan)
+      {
+	 memmove(scan+1,scan,strlen(scan)+1);
+	 *scan++=0;
+	 path=scan;
+      }
       goto decode;
    }
    else if(proto_required)
@@ -201,6 +210,7 @@ decode:
       FileAccess *fa=ConnectionSlot::FindSession(host);
       if(!fa)
 	 return;
+      char *orig_path=alloca_strdup(path);
       xfree(memory);
       memory=(char*)xmalloc(
 		     xstrlen(fa->GetProto())+1
@@ -208,7 +218,8 @@ decode:
 		    +xstrlen(fa->GetPassword())+1
 		    +xstrlen(fa->GetHostName())+1
 		    +xstrlen(fa->GetPort())+1
-		    +xstrlen(fa->GetCwd())+2);
+		    +xstrlen(fa->GetCwd())+2
+		    +xstrlen(orig_path)+1);
       proto=user=pass=host=port=path=0;
       char *next=memory;
       proto=next;
@@ -241,10 +252,21 @@ decode:
       if(fa->GetCwd())
       {
 	 path=next;
-	 strcpy(path,fa->GetCwd());
-	 strcat(path,"/");
+	 orig_path+=(orig_path!=0 && orig_path[0]=='/');
+	 strcpy(path,dir_file(fa->GetCwd(),orig_path));
+	 if(!orig_path || orig_path[0]==0)
+	    strcat(path,"/");
       }
    }
+}
+
+static bool valid_slot(const char *cs)
+{
+   char *s=alloca_strdup(cs);
+   char *slash=strchr(s,'/');
+   if(slash)
+      *slash=0;
+   return 0!=ConnectionSlot::Find(s);
 }
 
 int url::path_index(const char *base)
