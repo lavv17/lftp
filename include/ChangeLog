@@ -1,3 +1,12 @@
+2003-12-17	albert chin <china@thewrittenword.com>
+
+	* xalloca.h: tweak for aix.
+
+2003-12-17	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* post-config.h: include xalloca.h early; include sys/socket.h
+	  and define socklen_t if needed.
+
 2003-12-16	albert chin <china@thewrittenword.com>
 
 	* post-config.h: Don't assume C++ compiler defines __STDC__.
