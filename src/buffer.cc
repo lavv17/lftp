@@ -495,6 +495,8 @@ int IOBufferSSL::Get_LL(int size)
 	 return -1;
       }
    }
+   if(res==0)
+      eof=true;
    return res;
 }
 
