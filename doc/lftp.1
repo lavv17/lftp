@@ -1,0 +1,578 @@
+.\"
+.\" lftp.1 - Sophisticated ftp program
+.\"
+.\" This file is part of lftp.
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License , or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; see the file COPYING.  If not, write to
+.\" the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+.\"
+.\" $Id$
+.\"
+.\"-------
+.\" Sp	space down the interparagraph distance
+.\"-------
+.de Sp
+.sp \\n(Ddu
+..
+.\"-------
+.\" Ds	begin a display, indented .5 inches from the surrounding text.
+.\"
+.\" Note that uses of Ds and De may NOT be nested.
+.\"-------
+.de Ds
+.Sp
+.in +0.5i
+.nf
+..
+.\"-------
+.\" De	end a display (no trailing vertical spacing)
+.\"-------
+.de De
+.fi
+.in
+..
+.TH lftp 1 "12 Jan 1998"
+.SH NAME
+lftp \- Sophisticated ftp program
+.SH SYNTAX
+.B lftp
+.I [-d] [-e cmd] [-p port] [-u\ user[,pass]]\ [host]
+.SH VERSION
+This man page documents lftp version 0.14.0.
+.SH "DESCRIPTION"
+\fBlftp\fR is a program that allows sophisticated ftp connection to
+other hosts. If \fIhost\fR is specified then lftp will connect to that
+host otherwise a connection has to be established with the open
+command.
+.PP
+\fBlftp\fR is quite a powerful ftp client. It uses GNU readline to
+read commands. It uses shell-like command syntax allowing you to
+launch several commands in parallel in the background (&).
+.PP
+Some commands allow redirection of their output (cat, ls, site, quote)
+to a file or via a pipe to external command. Commands can be started
+conditionally based on termination status of previous command (&&,
+||). Also, it is possible to group commands within () and execute them
+in background. All background jobs are executed in the same single
+process. You can send a foreground job to the background with ^Z (C-z)
+and back with the command `wait'.
+
+.PP
+When you think you are done but some background jobs are not yet finished,
+you can just exit and lftp will move itself to nohup mode in
+background, allowing you to use your shell or logout.
+.PP
+\fBlftp\fR has reliable put, reput, mirror, a long with many other
+commands. 
+.PP 
+\fBlftp\fR does redial and reget automatically when the
+connection broke and there is something to do. 
+
+.SS Commands
+.PP
+
+.I !
+<shell command>
+Launch shell or shell command.  
+.PP
+.Ds
+!ls
+.De
+.PP
+To do a directory listing of the local host.
+
+.I alias 
+[<name> [<value>]]
+.PP
+Define or undefine alias <name>. If <value> is omitted, the alias is
+undefined, else it takes the value <value>. If no argument is given
+the current aliases are listed.
+.PP
+.Ds
+alias dir ls -lF
+alias less zmore
+.De
+
+.I anon
+.PP
+Sets the user to anonymous.  This is the default.
+
+.I cache
+[SUBCMD]
+.PP
+The cache command controls local memory cache.
+The following subcommands are recognized:
+.TP
+  stat        - print cache status (default)
+.TP
+  on|off      - turn on/off caching
+.TP
+  flush       - flush cache
+.TP
+  size <lim>  - set memory limit, -1 means unlimited
+.TP
+  expire <Nx> - set cache expiration time to N seconds (x=s)
+                minutes (x=m) hours (x=h) or days (x=d)
+.PP
+
+.I cat
+[-u] <files> 
+.PP
+cat outputs the remote file(s) to stdout.  (See also \fImore\fR,
+\fIzcat\fR and \fIzmore\fR)
+
+.I cd <rdir>
+.PP
+Change current remote directory
+
+.I debug 
+<level>|off
+.PP
+Switch debugging to <level> or turn it off.
+
+.I exit 
+[<code>]
+.PP
+exit will exit from lftp or move to background if jobs are active.  If
+no jobs are active, <code> is passed to operating system as lftp's
+termination status. If <code> is omitted, the exit code of last
+command is used.
+
+.I get 
+[-e] [-u] [-c] <rfile> [-o <lfile>]
+.PP
+Retrieve the remote file <rfile> and store it as the local file
+<lfile>.  If -o omitted, the file is stored to local file named as
+basename of <rfile>. If the option [-c] is specified, try to reget
+specified files.  You can get multiple files by specifying multiple
+instances of <rfile> [and -o <lfile>]. Does not expand wildcards, use
+\fImget\fR for that.
+.PP
+.Ds
+get README
+get README -o debian.README
+get README README.mirrors
+get README -o debian.README README.mirrors -o debian.mirrors
+.De
+
+.I help 
+[<cmd>]
+.PP
+Print help for <cmd> or if no <cmd> was specified print a list of
+available commands.
+
+.I jobs
+[-v]
+.PP
+List running jobs. -v means verbose, several -v can be specified.
+
+.I kill 
+all|<job_no>
+.PP
+Delete specified job with <job_no> or all jobs.  (For <job_no> see 
+.IR jobs)
+
+.I lcd
+<ldir>
+.PP
+Change current local directory <ldir>
+
+.I ls 
+<params>
+.PP
+List remote files. You can redirect output of this command to file or
+via pipe to external command.  By default, ls output is cached, to see
+new listing use 
+.IR rels
+or 
+.IR "cache flush."
+
+.I mget
+[-c] [-d] [-e] <files>
+.PP
+Gets selected files with expanded wildcards.
+.PP
+.Ds
+   -c  continue, reget.
+   -d  create directories the same as in file names and get the files
+       into them instead of current directory.
+   -e  delete remote files after successful transfer
+.De
+
+.I mirror 
+[OPTS] [remote [local]]
+.PP 
+Mirror specified remote directory to local directory.
+.PP
+.Ds 
+ -c, --continue         continue a mirror job if possible
+ -e, --delete           delete files not present at remote site
+ -s, --allow-suid       set suid/sgid bits according to remote site
+ -n, --only-newer       download only newer files
+ -r, --no-recursion     don't go to subdirectories
+ -p, --no-perms         don't set file permissions
+ -R, --reverse          reverse mirror (put files)
+ -i RX, --include RX    include matching files (only one allowed)
+ -x RX, --exclude RX    exclude matching files (only one allowed)
+ -t Nx, --time-prec Nx  set time precision to N seconds (x=s)
+                        minutes (x=m) hours (x=h) or days (x=d)
+.De
+.PP
+When using -R, the first directory is local and the second is remote.
+If the second directory is omitted, basename of first directory is used.
+If both directories are omitted, current local and remote directories are used.
+.PP
+RX is an extended regular expression, just like in 
+.BR egrep(1).
+
+.I mkdir
+<dir(s)>
+.PP
+Make remote directories.
+
+.I more 
+<files>
+.PP
+Same as `cat <files> | more'. if PAGER is set, it is used as filter.
+(See also \fIcat\fR, \fIzcat\fR and \fIzmore\fR)
+
+.I mput 
+[-c] [-d] <files>
+.PP
+Upload files with wildcard expansion. -c means reput, -d means to
+create remote directories and use the same remote name as local
+one. By default it uses the basename of local name as remote one.
+
+.I mrm 
+<file(s)>
+.PP
+Removes specified file(s) with wildcard expansion.
+
+.I mv 
+<file1> <file2>
+.PP
+Rename <file1> to <file2>.
+
+.I nlist
+[<args>]
+.PP
+List remote file names
+
+.I open 
+[-e cmd] [-u user[,pass]] [-p port] <host|url>
+.PP
+select an ftp server.
+
+.I pget
+[OPTS] <rfile> [-o <lfile>]
+
+Gets the specified file using several connections. This can speed up
+transfer, but loads the net heavily impacting other users. Use only if
+you really have to transfer the file ASAP, or some other user may go
+mad :) Options:
+
+.Ds
+ -n <maxconn>           Set maximum number of connections (default 5)
+.De
+.PP
+
+.I put 
+[-c] <lfile> [-o <rfile>]
+.PP
+Upload <lfile> with remote name <rfile>. If -o omitted, the basename
+of <lfile> is used as remote name. -c means reput, which requires you
+to have permission to overwrite remote files in current
+directory. Does not expand wildcards, use \fImput\fR for that.
+
+.I pwd
+.PP
+Print current remote directory.
+
+.I quote 
+<cmd>
+.PP
+Send the command uninterpreted. Use with caution - it can lead to
+unknown remote state and thus will cause reconnect. You cannot
+be sure that any change of remote state because of quoted command
+is solid - it can be reset by reconnect at any time.
+
+.I reget 
+<rfile> [-o <lfile>]
+.PP
+Same as `get -c'.
+
+.I rels 
+[<args>]
+.PP
+Same as `ls', but ignores the cache.
+
+.I renlist
+[<args>]
+.PP
+Same as `nlist', but ignores the cache.
+
+.I reput 
+<lfile> [-o <rfile>]
+.PP
+Same as `put -c'.
+
+.I rm 
+<files> 
+.PP
+Remove remote files.  Does not expand wildcards, use \fImrm\fR for
+that.
+
+.I rmdir
+<dir(s)>
+.PP
+Remove remote directories.
+
+.I scache
+[<session>]
+.PP
+List cached sessions or switch to specified session.
+
+.I set 
+[<var> [<val>]]
+.PP
+Set variable to given value. If the value is omitted, unset the
+variable.  If no argument is given, the currently set variables are
+listed.
+
+.I site 
+<site_cmd>
+.PP
+Execute site command <site_cmd> and output the result.
+You can redirect its output.
+
+.I source
+<file>
+.PP
+Execute commands recorded in file <file>.
+
+.I user
+<user> [<pass>]
+.PP
+Use specified info for remote login.
+
+.I version
+.PP
+Print \fBlftp\fR version.
+
+.I wait
+<jobno>
+.PP
+Wait for specified job to terminate.
+
+.I zcat
+<files>
+.PP
+Same as cat, but filter each file trough zcat. (See also \fIcat\fR,
+\fImore\fR and \fIzmore\fR)
+
+.I zmore
+<files>
+.PP
+Same as more, but filter each file trough zcat. (See also \fIcat\fR,
+\fIzcat\fR and \fImore\fR)
+
+.PP
+On startup, lftp executes
+.IR "~/.lftprc" "."
+You can place aliases
+and `set' commands there. Some people prefer to see full protocol
+debug, use `debug' to turn the debug on.
+.PP
+There is also a systemwide startup file in
+.IR /etc/lftp.conf .
+.PP
+.B lftp
+has the following settable variables (you can also use
+`set' to see all variables and their values):
+.TP
+.BR cmd:csh-history \ (bool)
+enables csh-like history expansion.
+.TP
+.BR cmd:long-running \ (seconds)
+time of command execution, which is
+considered as `long' and a beep is done before next prompt. 0
+means off.
+.TP
+.BR cmd:ls-default \ (string)
+default ls argument
+.TP
+.BR cmd:prompt \ (string)
+The prompt. lftp recognizes the following backslash-escaped special
+characters that are decoded as follows:
+
+.RS
+.PD 0
+.TP
+.B \ea
+an ASCII bell character (07)
+.TP
+.B \ee
+an ASCII escape character (033)
+.TP
+.B \eh
+the hostname you are connected to
+.TP
+.B \en
+newline
+.TP
+.B \es
+the name of the client (lftp)
+.TP
+.B \eu
+the username of the user you are logged in as
+.TP
+.B \eU
+the URL of the remote site (e.g., ftp://james@g437.ub.gu.se/home/james/src/lftp)
+.TP
+.B \ev
+the version of \fBlftp\fP (e.g., 0.13.0)
+.TP
+.B \ew
+the current working directory at the remote site
+.TP
+.B \eW
+the basename of the current working directory at the remote site
+.TP
+.B \e\fInnn\fP
+the character corresponding to the octal number \fInnn\fP
+.TP
+.B \e\e
+a backslash
+.TP
+.B \e[
+begin a sequence of non-printing characters, which could be used to
+embed a terminal control sequence into the prompt
+.TP
+.B \e]
+end a sequence of non-printing characters
+.PD
+.RE
+
+.TP
+.BR cmd:remote-completion \ (bool)
+a boolean to control whether or not lftp uses remote completion.
+.TP
+.BR ftp:nop-interval \ (seconds)
+delay between NOOP commands when downloading tail of a file. This is useful
+for ftp servers which send "Transfer complete" message before flushing
+data transfer. In such cases NOOP commands can prevent connection timeout.
+.TP
+.BR ftp:passive-mode \ (bool)
+sets passive ftp mode. This can be useful if you are behind a firewall
+or a dumb masquerading router.
+.TP
+.BR ftp:proxy \ (string)
+specifies ftp proxy to use. The format currently is `proxy_host:port'.
+To disable proxy set this to empty string. Note that it is ftp proxy which
+uses ftp protocol, not ftp over http.
+.TP
+.BR ftp:redial-interval \ (seconds)
+sets the minimal time between reconnects.
+.TP
+.BR ftp:relookup-always \ (bool)
+a boolean to control whether or not to lookup host address each time
+before connecting. Can be useful if ftp server uses dynamic ip
+address.
+.TP
+.BR ftp:sync-mode \ (bool)
+if set lftp will send one command at a time and wait for
+response. This might be useful if you are using a buggy ftp server or
+router.
+.TP
+.BR ftp:timeout \ (seconds)
+sets the network protocol timeout.
+.PP
+The name of variables can be abbreviated unless it becomes
+ambiguous. The prefix before `:' can be omitted too. You can
+set one variable several times for different closures, and thus
+you can get a particular settings for particular state. The closure
+is to be specified after variable name separated with slash `/'.
+.P
+The closure for `ftp:' domain variables is currently just the host
+name as you specify it in the `open' command. For other variables it
+is not currently used. See examples in the sample
+.IR lftp.conf .
+
+.B Lftp
+can speed up ftp operations by sending several commands at once
+and then checking all the responses. Sometimes this does not work,
+thus synchronous mode is the default. You can try to turn synchronous
+mode off and see if it works for you. It is known that some network
+software dealing with address translation works incorrectly in the
+case of several FTP commands in one network packet.
+
+.PP
+RFC959 says: ``The user-process sending another command before the
+completion reply would be in violation of protocol; but server-FTP
+processes should queue any commands that arrive while a preceding
+command is in progress.''. So it must be safe to send several commands
+at once, which speeds up operation a lot and seems to work with all
+Unix and VMS based ftp servers. Windows based servers often
+cannot handle several commands in one packet.
+
+.SH OPTIONS
+.TP
+.B \-d
+Switch on debugging mode
+.TP
+.B \-e cmd
+Execute given command
+.TP
+.B \-p port
+Use the given port to connect
+.TP
+.B \-u user,pass
+Use the given username and password to connect
+
+.SH ENVIRONMENT VARIABLES
+The following environment variables are processed by \fBlftp\fR:
+.IP "HOME"
+Used for (local) tilde (`~') expansion
+.IP "SHELL"
+Used by the \fI!\fR command to determine the shell to run.
+.IP "PAGER"
+This should be the name of the pager to use.  It's used by the
+\fImore\fR and \fIzmore\fR commands.
+
+.SH FILES
+.TP
+.I "/etc/lftp.conf"
+system-wide startup file
+.TP
+.I "~/.lftprc"
+The file executed on lftp startup after \fI/etc/lftp.conf\fR.
+.TP
+.I "~/.lftp_log"
+The file things are logged to when lftp moves into the background in
+nohup mode.
+.I "~/.netrc"
+The file is consulted to get default login to ftp server.
+
+.SH SEE ALSO
+.BR ftpd "(8), " ftp (1)
+
+.SH AUTHOR
+.nf
+Alexander V. Lukyanov
+lav@yars.free.net
+.fi
+
+.SH ACKNOWLEDGMENTS
+This manual page was originally written by Christoph Lameter
+<clameter@debian.org>, for the Debian GNU/Linux system.
