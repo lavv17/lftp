@@ -1,6 +1,7 @@
 Version 2.4.0 - 2001-07-??
 
-* fish protocol support (over plain ssh/rsh connection).
+* use CONNECT method for https over http proxy.
+* fish protocol support (over plain ssh connection).
 * support for variable name completion (Nicolas Noble).
 * support http keep-alive in case of chunked transfer encoding.
 * terminate some never-ending jobs before moving to background.
@@ -8,7 +9,7 @@ Version 2.4.0 - 2001-07-??
 * support for HTTP/1.1 416 reply code.
 * support for ftp ACCT command (ftp:acct variable) and for SITE GROUP command
   (ftp:site-group variable). E.g. `set ftp:acct/user@host account/password'.
-* new setting ftp:port-ipv4 to specify explicitly IP address send with PORT
+* new setting ftp:port-ipv4 to specify explicitly IP address sent with PORT
   command (suggested by Julien Oster and Jonas Jensen with patches).
 * roxen directory listing support.
 * fixed reget of non-existent files.
