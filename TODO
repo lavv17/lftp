@@ -1,7 +1,8 @@
 The items with a question mark are questionable. I'm not sure whether they
 are really needed. If you think it is a good feature do it yourself :) or
 at least tell me what you think. Items marked with - are hard to implement
-currently; some need other work to be done.
+currently; some need other work to be done. Items marked with + are partially
+implemented.
 
 
 ?* complete group/gpass and ACCT (does anyone need it?)
@@ -86,4 +87,5 @@ currently; some need other work to be done.
  * redirect error messages
  * stdout/stderr analogues, class Buffer.
 
- * count failed transfers in mirror. exit status.
+ * remember user-specified URL path from open/cd.
+ * flag to mark cwd as a file, not a directory. (for http).
