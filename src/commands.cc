@@ -401,22 +401,22 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "be sure that any change of remote state because of quoted command\n"
 	 "is solid - it can be reset by reconnect at any time.\n")},
    {"recls",    cmd_cls,   0,
-	 N_("recls [<args>]"
+	 N_("recls [<args>]\n"
 	 "Same as `cls', but don't look in cache\n")},
    {"reget",   cmd_get,    0,
-	 N_("Usage: reget [OPTS] <rfile> [-o <lfile>]"
+	 N_("Usage: reget [OPTS] <rfile> [-o <lfile>]\n"
 	 "Same as `get -c'\n")},
    {"rels",    cmd_ls,	    0,
-	 N_("Usage: rels [<args>]"
+	 N_("Usage: rels [<args>]\n"
 	    "Same as `ls', but don't look in cache\n")},
    {"renlist", cmd_ls,	    0,
-	 N_("Usage: renlist [<args>]"
+	 N_("Usage: renlist [<args>]\n"
 	 "Same as `nlist', but don't look in cache\n")},
    {"repeat",  cmd_repeat, N_("repeat [delay] [command]"),
 	 N_("Repeat specified command with a delay between iterations.\n"
 	 "Default delay is one second, default command is empty.\n")},
    {"reput",   cmd_get,    0,
-	 N_("Usage: reput <lfile> [-o <rfile>]"
+	 N_("Usage: reput <lfile> [-o <rfile>]\n"
 	 "Same as `put -c'\n")},
    {"rm",      cmd_rm,	    N_("rm [-r] [-f] <files>"),
 	 N_("Remove remote files\n"
