@@ -118,36 +118,12 @@ int GetFileInfo::Do()
       {
 	 tried_file=true;
 
-	 /* CD into the full path (without validation), and grab the
-	  * path's basename. */
+	 /* Chdir to the parent directory of the path: */
 	 session->Chdir(dir, false);
-	 verify_fn = xstrdup(basename_ptr(session->GetCwd()));
-
-	 /* Special case: looking up home dir. We won't find ~ in the listing
-	  * anyway, so make a phony entry. */
-	 if(showdir && verify_fn[0]=='~' && !strcmp(verify_fn,session->GetCwd()))
-	    goto phony_dir;
-
-	 /* Now go to the parent directory to list the directory we now
-	  * have a name for: */
 	 cd_path = "..";
 
 	 xfree(path_to_prefix);
 	 path_to_prefix=dirname_alloc(dir);
-
-	 /* Special case: looking up "/". Make a phony "/" entry. */
-	 if(showdir && !strcmp(verify_fn, "/"))
-	 {
-	 phony_dir:
-	    FileInfo *fi = new FileInfo(verify_fn);
-	    fi->SetType(fi->DIRECTORY);
-
-	    result = new FileSet;
-	    result->Add(fi);
-	    state=DONE;
-	    return MOVED;
-	 }
-
 	 was_directory=false;
       }
 
@@ -171,6 +147,34 @@ int GetFileInfo::Do()
 	 if(!saved_error_text)
 	    saved_error_text = xstrdup(session->StrError(res));
 	 state=CHANGE_DIR;
+	 return MOVED;
+      }
+
+      if(!was_directory)
+      {
+	 /* We now (hopefully) have the home directory path.  Find out
+	  * the real name of the path (we may have something like "..".) */
+
+	 char *pwd = alloca_strdup(session->GetCwd());
+
+	 session->SetCwd(origdir);
+	 session->Chdir(dir, false);
+
+	 verify_fn = xstrdup(basename_ptr(session->GetCwd()));
+
+	 /* go back */
+	 session->SetCwd(pwd);
+      }
+
+      /* Special case: looking up "/". Make a phony entry. */
+      if(showdir && !strcmp(verify_fn, "/"))
+      {
+	 FileInfo *fi = new FileInfo(verify_fn);
+	 fi->SetType(fi->DIRECTORY);
+
+	 result = new FileSet;
+	 result->Add(fi);
+	 state=DONE;
 	 return MOVED;
       }
 
@@ -257,6 +261,7 @@ done:
 	    result->PrependPath(path_to_prefix);
 	 done=true;
 	 session->Chdir(origdir, false);
+	 m=MOVED;
       }
       return m;
    }

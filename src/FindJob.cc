@@ -234,7 +234,7 @@ void FinderJob::Push(FileSet *fset)
 
    const char *new_path="";
    if(old_path) // the first path will be empty
-      new_path=xstrdup(dir_file(old_path,dir));
+      new_path=alloca_strdup(dir_file(old_path,dir));
 
    /* matching exclusions don't include the path, so they operate
     * on the filename portion only */
@@ -374,8 +374,7 @@ void FinderJob::PrintStatus(int v)
    case INFO:
       if(stack_ptr>=0)
 	 path=top.path;
-      printf("\t%s: %s [%s]\n",dir_file(path,dir),li->Status(),
-			   session->CurrentStatus());
+      printf("\t%s: %s\n",dir_file(path,dir),li->Status());
       break;
    case WAIT:
       break;

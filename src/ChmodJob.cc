@@ -79,7 +79,6 @@ void ChmodJob::CurrentFinished(const char *d,const FileInfo *fi)
    else
       fmt = _("Mode of `%s' changed to %04o (%s).\n");
 
-
    int mode=GetMode(fi);
    if(mode==-1)
    {

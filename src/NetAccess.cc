@@ -491,7 +491,7 @@ const char *NetAccess::DelayingMessage()
 {
    static char buf[80];
    if(connection_limit>0 && connection_limit<=CountConnections())
-      return _("Connections limit reached");
+      return _("Connection limit reached");
    long remains=ReconnectInterval()-(time_t(now)-try_time);
    if(remains<=0)
       return "";

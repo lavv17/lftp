@@ -1,3 +1,11 @@
+2001-12-13  Glenn Maynard <g_ld@zewt.org>
+
+	* ChmodJob.cc: cosmetics.
+	* FindJob.cc: fix mem leak; fix status.
+	* GetFileInfo.cc: move the ~ and / special case check after the initial
+	  chdir.
+	* NetAccess.cc: fix status message.
+
 2001-12-13  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* LsCache.h: rename Find to FindFileSet.
