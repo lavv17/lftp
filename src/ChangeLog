@@ -1,3 +1,7 @@
+2001-12-24  Glenn Maynard <g_ld@zewt.org>
+
+	* StatusLine.h: make GetWidthDelayed const.
+
 2001-12-24  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* LsCache.cc: ignore SetDirectory with NULL argument.

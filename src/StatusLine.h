@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2001 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,13 +44,13 @@ protected:
 
 public:
    int GetWidth();
-   int GetWidthDelayed() { return LastWidth; }
+   int GetWidthDelayed() const { return LastWidth; }
    void DefaultTitle(const char *s);
    void Show(const char *f,...) PRINTF_LIKE(2,3);
    void WriteLine(const char *f,...) PRINTF_LIKE(2,3);
    void Clear();
 
-   int getfd() { return fd; }
+   int getfd() const { return fd; }
 
    StatusLine(int new_fd);
 
