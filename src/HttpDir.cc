@@ -759,7 +759,7 @@ int HttpDirList::Do()
    {
       LsCache::Add(session,curr,mode,ubuf);
 
-      delete ubuf;
+      Delete(ubuf);
       ubuf=0;
       return MOVED;
    }
@@ -819,7 +819,7 @@ HttpDirList::HttpDirList(ArgV *a,FileAccess *fa)
 
 HttpDirList::~HttpDirList()
 {
-   delete ubuf;
+   Delete(ubuf);
    if(curr_url)
       delete curr_url;
    xfree(base_href);
@@ -893,10 +893,8 @@ HttpGlob::HttpGlob(FileAccess *s,const char *n_pattern)
 
 HttpGlob::~HttpGlob()
 {
-   if(updir_glob)
-      delete updir_glob;
-   if(ubuf)
-      delete ubuf;
+   Delete(updir_glob);
+   Delete(ubuf);
    xfree(dir);
 }
 
@@ -959,7 +957,7 @@ int HttpGlob::Do()
    if(ubuf->Error())
    {
       SetError(ubuf->ErrorText());
-      delete ubuf;
+      Delete(ubuf);
       ubuf=0;
       return MOVED;
    }
@@ -995,7 +993,7 @@ int HttpGlob::Do()
 
    LsCache::Add(session,curr_dir,FA::LONG_LIST,ubuf);
 
-   delete ubuf;
+   Delete(ubuf);
    ubuf=0;
 
    set.rewind();
@@ -1069,7 +1067,7 @@ int HttpListInfo::Do()
       if(ubuf->Error())
       {
 	 SetError(ubuf->ErrorText());
-	 delete ubuf;
+	 Delete(ubuf);
 	 ubuf=0;
 	 return MOVED;
       }
@@ -1097,7 +1095,7 @@ int HttpListInfo::Do()
 
       LsCache::Add(session,"",FA::LONG_LIST,ubuf);
 
-      delete ubuf;
+      Delete(ubuf);
       ubuf=0;
       m=MOVED;
 
@@ -1206,8 +1204,7 @@ HttpListInfo::~HttpListInfo()
 {
    session->Close();
    xfree(get_info);
-   if(ubuf)
-      delete ubuf;
+   Delete(ubuf);
 }
 
 const char *HttpListInfo::Status()

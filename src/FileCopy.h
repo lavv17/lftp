@@ -68,6 +68,8 @@ public:
 protected:
    enum direction mode;
 
+   ~FileCopyPeer();
+
 public:
    bool CanSeek() { return can_seek; }
    bool CanSeek0() { return can_seek0; }
@@ -93,7 +95,6 @@ public:
    void SetRange(long s,long lim) { range_start=s; range_limit=lim; }
 
    FileCopyPeer(direction m);
-   ~FileCopyPeer();
 
    bool Done();
 
@@ -200,6 +201,8 @@ protected:
       }
    long bytes_count;
 
+   ~FileCopy();
+
 public:
    long GetPos();
    long GetSize();
@@ -235,7 +238,6 @@ public:
    void LineBuffered(int size=0x1000);
 
    FileCopy(FileCopyPeer *src,FileCopyPeer *dst,bool cont);
-   ~FileCopy();
    void Init();
 
    int Do();
@@ -262,10 +264,12 @@ class FileCopyPeerFA : public FileCopyPeer
    bool reuse_later;
    bool fxp;   // FXP (ftp<=>ftp copy) active
 
+protected:
+   ~FileCopyPeerFA();
+
 public:
    FileCopyPeerFA(FileAccess *s,const char *f,int m);
    FileCopyPeerFA(class ParsedURL *u,int m);
-   ~FileCopyPeerFA();
    int Do();
    bool IOReady();
    long GetRealPos();
@@ -304,9 +308,11 @@ class FileCopyPeerFDStream : public FileCopyPeer
    bool create_fg_data;
    bool need_seek;
 
+protected:
+   ~FileCopyPeerFDStream();
+
 public:
    FileCopyPeerFDStream(FDStream *o,direction m);
-   ~FileCopyPeerFDStream();
    int Do();
    bool Done();
    bool IOReady();
@@ -327,9 +333,11 @@ public:
 
 class FileCopyPeerString : public FileCopyPeer
 {
+protected:
+   ~FileCopyPeerString();
+
 public:
    FileCopyPeerString(const char *s,int len=-1);
-   ~FileCopyPeerString();
    void Seek(long new_pos);
 };
 
@@ -339,9 +347,11 @@ private:
    FileAccess *session;
    DirList *dl;
 
+protected:
+   ~FileCopyPeerDirList();
+
 public:
    FileCopyPeerDirList(FA *s,ArgV *v); // consumes s and v.
-   ~FileCopyPeerDirList();
 
    int Do();
    void NoCache() { if(dl) dl->UseCache(false); }

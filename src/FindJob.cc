@@ -81,7 +81,7 @@ int FinderJob::Do()
       if(li->Error())
       {
 	 eprintf("%s: %s\n",op,li->ErrorText());
-	 delete li;
+	 Delete(li);
 	 li=0;
 	 errors++;
 	 depth_done=true;
@@ -89,7 +89,7 @@ int FinderJob::Do()
 	 return MOVED;
       }
       Push(li->GetResult());
-      delete li;
+      Delete(li);
       li=0;
       goto pre_LOOP;
 
@@ -159,7 +159,7 @@ int FinderJob::Do()
    case WAIT:
       if(!waiting->Done())
 	 return m;
-      delete waiting;
+      Delete(waiting);
       waiting=0;
       state=LOOP;
       m=MOVED;
@@ -276,7 +276,7 @@ FinderJob::~FinderJob()
    xfree(stack);
    xfree(start_dir);
    xfree(init_dir);
-   if(li) delete li;
+   Delete(li);
 }
 
 void FinderJob::ShowRunStatus(StatusLine *sl)
@@ -353,7 +353,7 @@ FinderJob_List::FinderJob_List(FileAccess *s,const char *d,FDStream *o)
 
 FinderJob_List::~FinderJob_List()
 {
-   delete buf;
+   Delete(buf);
 }
 
 
@@ -432,7 +432,7 @@ FinderJob_Cmd::~FinderJob_Cmd()
    {
       if(waiting->waiting)
 	 waiting->waiting->jobno=-1; // prevent reparenting
-      delete waiting;
+      Delete(waiting);
    }
 }
 

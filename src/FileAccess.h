@@ -157,6 +157,8 @@ protected:
 
    static int device_prefix_len(const char *path);
 
+   virtual ~FileAccess();
+
 public:
    virtual const char *GetProto() = 0; // http, ftp, file etc
    bool SameProtoAs(FileAccess *fa) { return !strcmp(GetProto(),fa->GetProto()); }
@@ -226,7 +228,6 @@ public:
    void Init();
    FileAccess() { Init(); }
    FileAccess(const FileAccess *);
-   virtual ~FileAccess();
 
    void	 DontSleep() { try_time=0; }
 
@@ -310,9 +311,10 @@ protected:
 
    bool use_cache;
 
+   virtual ~FileAccessOperation();
+
 public:
    FileAccessOperation();
-   virtual ~FileAccessOperation();
 
    virtual int Do() = 0;
    bool Done() { return done; }
@@ -338,11 +340,11 @@ protected:
    void	 add_force(const char *ptr,int len);
    void	 add(const char *ptr) { add(ptr,strlen(ptr)); }
    void	 free_list();
+   virtual ~Glob();
 public:
    const char *GetPattern() { return pattern; }
    char **GetResult() { return list; }
    Glob(const char *p);
-   virtual ~Glob();
    void DirectoriesOnly() { dirs_only=true; }
    void FilesOnly() { files_only=true; }
    void NoMatchPeriod() { match_period=false; }
@@ -388,9 +390,10 @@ protected:
    unsigned need;
    bool follow_symlinks;
 
+   virtual ~ListInfo();
+
 public:
    ListInfo();
-   virtual ~ListInfo();
 
    virtual void SetExclude(const char *p,regex_t *x,regex_t *i);
 
@@ -415,18 +418,17 @@ class DirList : public FileAccessOperation
 protected:
    Buffer *buf;
    ArgV *args;
+   ~DirList()
+      {
+	 Delete(buf);
+	 if(args)
+	    delete args;
+      }
 public:
    DirList(ArgV *a)
       {
 	 buf=new Buffer();
 	 args=a;
-      }
-   ~DirList()
-      {
-	 if(buf)
-	    delete buf;
-	 if(args)
-	    delete args;
       }
 
    virtual int Do() = 0;

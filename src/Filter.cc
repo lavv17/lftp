@@ -282,7 +282,6 @@ bool OutputFilter::Done()
       fd=-1;
       closed=true;
    }
-   w->Do();
    if(w->GetState()!=w->RUNNING)
       return true;
    return false;
@@ -293,7 +292,6 @@ bool OutputFilter::broken()
       return false;
    if(fd==-1)
       return false;
-//    w->Do();
    if(w->GetState()!=w->RUNNING)
       return true; // filter process terminated - pipe is broken
    return false;

@@ -52,6 +52,7 @@ SMTask::SMTask()
    }
    suspended=false;
    running=false;
+   deleting=false;
 }
 
 void  SMTask::Suspend() { suspended=true; }
@@ -59,6 +60,7 @@ void  SMTask::Resume()  { suspended=false; }
 
 SMTask::~SMTask()
 {
+   assert(!running);
    // remove from the chain
    SMTask **scan=&chain;
    while(*scan)
@@ -74,6 +76,17 @@ SMTask::~SMTask()
    }
 }
 
+void SMTask::Delete(SMTask *task)
+{
+   if(!task)
+      return;
+   if(task->deleting)
+      return;
+   task->deleting=true;
+   if(!task->running)
+      delete task;
+}
+
 void SMTask::UpdateNow()
 {
 #ifdef HAVE_GETTIMEOFDAY
@@ -84,6 +97,18 @@ void SMTask::UpdateNow()
 #else
    time(&now);
 #endif
+}
+
+int SMTask::Roll(SMTask *task)
+{
+   int m=STALL;
+   if(task->running)
+      return m;
+   task->running=true;
+   while(!task->deleting && task->Do()==MOVED)
+      m=MOVED;
+   task->running=false;
+   return m;
 }
 
 void SMTask::Schedule()
@@ -102,14 +127,21 @@ void SMTask::Schedule()
       }
       sched_scan->block.Empty();
       SMTask *tmp=sched_scan;
-      tmp->running=true;
-      int res=tmp->Do();
-      tmp->running=false;
+      int res=STALL;
+      if(!sched_scan->deleting)
+      {
+	 tmp->running=true;
+	 res=tmp->Do();
+	 tmp->running=false;
+      }
       if(sched_scan)
 	 sched_scan=sched_scan->next;
-      if(res==WANTDIE)
+      if(tmp->deleting)
+      {
 	 delete tmp;
-      else if(res==MOVED)
+	 res=MOVED;
+      }
+      if(res==MOVED)
 	 repeat=true;
    }
    sched_total.Empty();

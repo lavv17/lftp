@@ -303,7 +303,7 @@ int FileCopy::Do()
       m=MOVED;
       end_time=now;
       end_time_ms=now_ms;
-      delete put; put=0;
+      Delete(put); put=0;
       /* fallthrough */
    case(GET_DONE_WAIT):
       if(get->Error())
@@ -317,7 +317,7 @@ int FileCopy::Do()
 	 return m;
       debug((10,"copy: get is finished - all done\n"));
       state=ALL_DONE;
-      delete get; get=0;
+      Delete(get); get=0;
       return MOVED;
 
    pre_GET_INFO_WAIT:
@@ -367,9 +367,9 @@ FileCopy::FileCopy(FileCopyPeer *s,FileCopyPeer *d,bool c)
 }
 FileCopy::~FileCopy()
 {
-   if(get) delete get;
-   if(put) delete put;
-   if(line_buffer) delete line_buffer;
+   Delete(get);
+   Delete(put);
+   Delete(line_buffer);
 }
 FileCopy *FileCopy::New(FileCopyPeer *s,FileCopyPeer *d,bool c)
 {
@@ -413,8 +413,8 @@ void FileCopy::SetError(const char *str)
 {
    xfree(error_text);
    error_text=xstrdup(str);
-   if(get) { delete get; get=0; }
-   if(put) { delete put; put=0; }
+   Delete(get); get=0;
+   Delete(put); put=0;
 }
 
 void FileCopy::LineBuffered(int s)
@@ -476,6 +476,8 @@ float FileCopy::GetRate()
 }
 const char *FileCopy::GetRateStr()
 {
+   if(!rate->Valid())
+      return "";
    return rate->GetStrS();
 }
 long FileCopy::GetBytesRemaining()
@@ -1391,10 +1393,8 @@ FileCopyPeerDirList::FileCopyPeerDirList(FA *s,ArgV *v)
 
 FileCopyPeerDirList::~FileCopyPeerDirList()
 {
-   if(dl)
-      delete dl;
-   if(session)
-      SessionPool::Reuse(session);
+   Delete(dl);
+   SessionPool::Reuse(session);
 }
 
 int FileCopyPeerDirList::Do()

@@ -645,7 +645,7 @@ LocalDirList::LocalDirList(ArgV *a,const char *cwd)
    a->insarg(1,"-l");
    InputFilter *f=new InputFilter(a);
    f->SetCwd(cwd);
-   if(buf) delete buf;
+   Delete(buf);
    buf=new FileInputBuffer(f);
 }
 int LocalDirList::Do()

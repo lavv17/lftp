@@ -254,8 +254,7 @@ restart:
       {
 	 if(waiting)
 	 {
-	    while(waiting->Do()==MOVED)
-	       ;
+	    Roll(waiting);
 	    if(!waiting->Done())
 	       SuspendJob();
 	 }
@@ -496,7 +495,7 @@ int CmdExec::Do()
  	 if(interactive || verbose)
 	    waiting->SayFinal(); // final phrase like 'rm succeed'
 	 exit_code=waiting->ExitCode();
-	 delete waiting;
+	 Delete(waiting);
 	 waiting=0;
 	 beep_if_long();
       	 return MOVED;
@@ -995,7 +994,7 @@ int CmdExec::AcceptSig(int sig)
 	 int j=-1;
 	 if(waiting->waiting)
 	    j=waiting->waiting->jobno;
-	 delete waiting;
+	 Delete(waiting);
 	 waiting=0;
 	 if(j>=0)
 	    waiting=FindJob(j);

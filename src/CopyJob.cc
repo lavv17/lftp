@@ -128,7 +128,7 @@ CopyJob::CopyJob(FileCopy *c1,const char *name1,const char *op1)
 }
 CopyJob::~CopyJob()
 {
-   if(c) delete c;
+   Delete(c);
    xfree(name);
    xfree(op);
 }
@@ -200,11 +200,8 @@ int CopyJobEnv::Do()
 void CopyJobEnv::SetCopier(FileCopy *c,const char *n)
 {
    waiting=0;
-   if(cp)
-   {
-      delete cp;
-      cp=0;
-   }
+   Delete(cp);
+   cp=0;
    if(c==0)
       return;
    if(ascii)

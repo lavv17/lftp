@@ -42,6 +42,9 @@ class StatusLine : public SMTask
    void update(char *);
    int LastWidth;
 
+protected:
+   ~StatusLine();
+
 public:
    int GetWidth();
    int GetWidthDelayed() { return LastWidth; }
@@ -52,7 +55,6 @@ public:
    int getfd() { return fd; }
 
    StatusLine(int new_fd);
-   ~StatusLine();
 
    int Do();
 };

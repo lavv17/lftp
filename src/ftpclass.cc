@@ -2156,15 +2156,7 @@ void  Ftp::Close()
    if(mode!=CLOSED)
       set_idle_start();
 
-   retries=0;
-
    flags&=~NOREST_MODE;	// can depend on a particular file
-
-   if(resolver)
-   {
-      delete resolver;
-      resolver=0;
-   }
 
    Resume();
    ExpandTildeInCWD();

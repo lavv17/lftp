@@ -114,10 +114,8 @@ Http::Http(const Http *f) : super(f)
 
 Http::~Http()
 {
-   if(send_buf)
-      delete send_buf;
-   if(recv_buf)
-      delete recv_buf;
+   Delete(send_buf);
+   Delete(recv_buf);
    if(sock!=-1)
       close(sock);
    xfree(line);
@@ -140,16 +138,10 @@ bool Http::CheckTimeout()
 
 void Http::Disconnect()
 {
-   if(send_buf)
-   {
-      delete send_buf;
-      send_buf=0;
-   }
-   if(recv_buf)
-   {
-      delete recv_buf;
-      recv_buf=0;
-   }
+   Delete(send_buf);
+   send_buf=0;
+   Delete(recv_buf);
+   recv_buf=0;
    if(rate_limit)
    {
       delete rate_limit;
@@ -183,7 +175,6 @@ void Http::Disconnect()
 
 void Http::Close()
 {
-   retries=0;
    Disconnect();
    array_send=0;
    no_cache_this=false;
@@ -530,7 +521,7 @@ int Http::Do()
 	 Disconnect();
 	 return m;
       }
-      Timeout((idle_start+idle-now)*1000);
+      TimeoutS(idle_start+idle-now);
    }
 
    if(home==0)

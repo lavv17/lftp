@@ -69,8 +69,7 @@ NetAccess::NetAccess(const NetAccess *o) : super(o)
 }
 NetAccess::~NetAccess()
 {
-   if(resolver)
-      delete resolver;
+   Delete(resolver);
    if(rate_limit)
       delete rate_limit;
    ClearPeer();
@@ -301,10 +300,11 @@ int NetAccess::Resolve(const char *defp,const char *ser,const char *pr)
 	 resolver=new Resolver(proxy,proxy_port,defp);
       else
 	 resolver=new Resolver(hostname,portname,defp,ser,pr);
+      Roll(resolver);
+      if(!resolver)
+	 return MOVED;
       m=MOVED;
    }
-
-   resolver->Do();
 
    if(!resolver->Done())
       return m;
@@ -325,7 +325,7 @@ int NetAccess::Resolve(const char *defp,const char *ser,const char *pr)
    resolver->GetResult(peer);
    peer_curr=0;
 
-   delete resolver;
+   Delete(resolver);
    resolver=0;
    return MOVED;
 }
@@ -465,4 +465,12 @@ bool NetAccess::NextTry()
    assert(peer_curr<peer_num);
 
    return true;
+}
+
+void NetAccess::Close()
+{
+   retries=0;
+
+   Delete(resolver);
+   resolver=0;
 }

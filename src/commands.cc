@@ -458,7 +458,7 @@ Job *CmdExec::builtin_cd()
       return 0;
    }
    session->Chdir(dir);
-   while(session->Do()==MOVED);
+   Roll(session);
    builtin=BUILTIN_CD;
    return this;
 }

@@ -57,6 +57,9 @@ class LsCache
 
    static void CheckSize();
 
+protected:
+   ~LsCache();
+
 public:
    static void Add(FileAccess *p_loc,const char *a,int m,const char *d,int l);
    static void Add(FileAccess *p_loc,const char *a,int m,const Buffer *ubuf);
@@ -85,8 +88,6 @@ public:
    static void SetSizeLimit(long l) { sizelimit=l; }
    static long SizeLimit() { return sizelimit; }
    static void SetExpire(const TimeInterval &t) { ttl=t; }
-
-   ~LsCache();
 
    int Do();
 };

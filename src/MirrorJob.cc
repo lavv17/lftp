@@ -420,15 +420,15 @@ int   MirrorJob::Do()
 			rx_exclude?&rxc_exclude:0,rx_include?&rxc_include:0);
 
 	 while(!list_info->Done())
-	    list_info->Do();  // this should be fast
+	    Roll(list_info);  // this should be fast
 
 	 if(list_info->Error())
 	    goto list_info_error;
 
 	 local_set=list_info->GetResult();
-	 delete list_info;
+	 Delete(list_info);
 	 list_info=0;
-	 delete local_session;
+	 Delete(local_session);
 	 local_session=0;
 
 	 local_set->ExcludeDots();  // don't need .. and .
@@ -441,7 +441,7 @@ int   MirrorJob::Do()
 	 return MOVED;
       }
       session->Chdir(remote_dir);
-      while(session->Do()==MOVED);
+      Roll(session);
       state=CHANGING_REMOTE_DIR;
       return MOVED;
 
@@ -484,9 +484,7 @@ int   MirrorJob::Do()
 
       list_info->SetExclude(remote_relative_dir,
 		     rx_exclude?&rxc_exclude:0,rx_include?&rxc_include:0);
-      while(list_info->Do()==MOVED)
-	 ;
-
+      Roll(list_info);
       state=GETTING_LIST_INFO;
       return MOVED;
 
@@ -499,12 +497,12 @@ int   MirrorJob::Do()
       list_info_error:
 	 eprintf("mirror: %s\n",list_info->ErrorText());
 	 state=DONE;
-      	 delete list_info;
+      	 Delete(list_info);
 	 list_info=0;
 	 return MOVED;
       }
       remote_set=list_info->GetResult();
-      delete list_info;
+      Delete(list_info);
       list_info=0;
 
       remote_set->ExcludeDots(); // don't need .. and .
@@ -528,7 +526,7 @@ int   MirrorJob::Do()
       {
 	 if(!waiting->Done())
 	    return STALL;
-	 delete waiting;
+	 Delete(waiting);
 	 waiting=0;
       }
       Report(_("Sending local file `%s'"),
@@ -571,7 +569,7 @@ int   MirrorJob::Do()
       if(waiting && waiting->Done())
       {
 	 to_transfer->next();
-	 delete waiting;
+	 Delete(waiting);
 	 waiting=0;
       }
       while(!waiting && state==WAITING_FOR_SUBGET)
@@ -595,7 +593,7 @@ int   MirrorJob::Do()
 	    return STALL;
 	 if(waiting->ExitCode()==0)
 	    dir_made=true;
-	 delete waiting;
+	 Delete(waiting);
 	 waiting=0;
 	 if(!dir_made)
 	    to_transfer->next();
@@ -619,7 +617,7 @@ int   MirrorJob::Do()
 	 del_dirs+=mj.del_dirs;
 
 	 to_transfer->next();
-	 delete waiting;
+	 Delete(waiting);
 	 waiting=0;
       }
       while(!waiting && state==WAITING_FOR_SUBMIRROR)
@@ -714,7 +712,7 @@ int   MirrorJob::Do()
 	 goto pre_REMOTE_CHMOD;
       if(waiting->Done())
       {
-	 delete waiting;
+	 Delete(waiting);
 	 waiting=0;
 	 state=DONE;
 	 m=MOVED;
@@ -728,7 +726,7 @@ int   MirrorJob::Do()
    case(REMOTE_CHMOD):
       if(waiting->Done())
       {
-	 delete waiting;
+	 Delete(waiting);
 	 waiting=0;
 
       remote_chmod_next:
@@ -817,10 +815,8 @@ MirrorJob::~MirrorJob()
    if(old_files_set)
       delete old_files_set;
    // don't delete this->file -- it is a reference
-   if(list_info)
-      delete list_info;
-   if(local_session)
-      delete local_session;
+   Delete(list_info);
+   Delete(local_session);
    if(rx_include)
    {
       free(rx_include);
@@ -1115,7 +1111,7 @@ CMD(mirror)
 
 err_out:
    parent->eprintf("%s: %s: %s\n",args->a0(),err_tag,err);
-   delete j;
+   SMTask::Delete(j);
    return 0;
 #undef args
 }

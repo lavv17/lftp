@@ -142,8 +142,7 @@ Resolver::~Resolver()
       w->Kill(SIGKILL);
       w->Auto();
    }
-   if(buf)
-      delete buf;
+   Delete(buf);
 }
 
 int   Resolver::Do()
@@ -223,7 +222,7 @@ int   Resolver::Do()
       if(!buf)
       {
 	 buf=new FileInputBuffer(new FDStream(pipe_to_child[0],"<pipe>"));
-	 while(buf->Do()==MOVED);
+	 Roll(buf);
 	 m=MOVED;
       }
    }
@@ -233,6 +232,8 @@ int   Resolver::Do()
       {
 	 buf=new Buffer();
 	 DoGethostbyname();
+	 if(deleting)
+	    return MOVED;
       }
    }
 
@@ -644,6 +645,13 @@ void Resolver::LookupOne(const char *name)
 
    for(;;)
    {
+      if(!use_fork)
+      {
+	 Schedule();
+	 if(deleting)
+	    return;
+      }
+
       time(&try_time);
 
       int af=af_order[af_index];
@@ -659,7 +667,7 @@ void Resolver::LookupOne(const char *name)
       else
       {
 	 af_index++;
-	 continue;
+	 goto next;
       }
 #endif
 
@@ -669,7 +677,7 @@ void Resolver::LookupOne(const char *name)
 	 for(a=ha->h_addr_list; *a; a++)
 	    AddAddress(ha->h_addrtype, *a, ha->h_length);
 	 af_index++;
-	 continue;
+	 goto next;
       }
 #ifdef HAVE_H_ERRNO
       if(h_errno!=TRY_AGAIN)
@@ -684,11 +692,22 @@ void Resolver::LookupOne(const char *name)
 #endif
 	 }
 	 af_index++;
-	 continue; // try other address families
+	 goto next; // try other address families
       }
-      time_t t=time(0);
-      if(t-try_time<5)
-	 sleep(5-(t-try_time));
+      time_t t;
+      if((t=time(0))-try_time<5)
+      {
+	 if(use_fork)
+	    sleep(5-(t-try_time));
+	 else
+	    TimeoutS(5-(t-try_time));
+      }
+      else
+      {
+      next:
+	 if(!use_fork)
+	    block+=NoWait();
+      }
    }
 }
 
@@ -721,7 +740,13 @@ void Resolver::DoGethostbyname()
    if(service && !portname && !isdigit((unsigned char)hostname[0]))
       LookupSRV_RR();
 
+   if(!use_fork && deleting)
+      return;
+
    LookupOne(hostname);
+
+   if(!use_fork && deleting)
+      return;
 
    if(!buf)
       buf=new FileOutputBuffer(new FDStream(1,"<pipe>"));
@@ -742,7 +767,7 @@ void Resolver::DoGethostbyname()
    if(use_fork)
    {
       while(buf->Size()>0)
-	 buf->Do();  // should flush quickly.
+	 Roll(buf);  // should flush quickly.
    }
    return;
 }

@@ -35,7 +35,10 @@ int ProcWait::Do()
    {
    final:
       if(auto_die)
-	 return WANTDIE;
+      {
+	 deleting=true;
+	 return MOVED;
+      }
       block+=NoWait();
       return m;
    }

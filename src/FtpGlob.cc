@@ -85,12 +85,10 @@ FtpGlob::~FtpGlob()
 	 f->Chdir(base_dir,false);
       f->Close();
    }
-   if(li)
-      delete li;
+   Delete(li);
    if(!dir_list)
       xfree(dir);
-   if(updir_glob)
-      delete updir_glob;
+   Delete(updir_glob);
    xfree(base_dir);
 }
 
@@ -146,7 +144,7 @@ int   FtpGlob::Do()
 	 return MOVED;
       }
       dir=*dir_list;
-      delete li; li=0;
+      Delete(li); li=0;
       goto create_li;
    }
    if(!li->Done())

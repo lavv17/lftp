@@ -40,8 +40,7 @@ SleepJob::SleepJob(const TimeInterval &when,FileAccess *s,char *what)
 }
 SleepJob::~SleepJob()
 {
-   if(exec)
-      delete exec;
+   Delete(exec);
    xfree(cmd);
    xfree(saved_cwd);
 }
@@ -58,7 +57,7 @@ int SleepJob::Do()
       if(!repeat)
       {
 	 exit_code=waiting->ExitCode();
-	 delete waiting;
+	 Delete(waiting);
 	 waiting=0;
 	 exec=0;
 	 done=true;

@@ -237,9 +237,9 @@ class Ftp : public NetAccess
 
    void set_idle_start()
       {
-	 time(&idle_start);
+	 idle_start=now;
 	 if(control_sock!=-1 && idle>0)
-	    block+=TimeOut(idle*1000);
+	    TimeoutS(idle);
       }
 
    char *skey_pass;
@@ -265,12 +265,14 @@ private:
 
    const char *encode_eprt(sockaddr_u *);
 
+protected:
+   ~Ftp();
+
 public:
    static void ClassInit();
 
    Ftp();
    Ftp(const Ftp *);
-   ~Ftp();
 
    const char *GetProto() { return "ftp"; }
 

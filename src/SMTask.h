@@ -33,17 +33,19 @@ class SMTask
    static SMTask *sched_scan;
    static PollVec sched_total;
 
-
 protected:
    bool	 running;
    bool	 suspended;
+   bool	 deleting;
 
    enum
    {
       STALL=0,
       MOVED=1,	  // STALL|MOVED==MOVED.
-      WANTDIE=2
+      WANTDIE=2	  // for AcceptSig
    };
+
+   virtual ~SMTask();
 
 public:
    PollVec  block;
@@ -66,7 +68,9 @@ public:
    static void ReconfigAll(const char *name);
 
    SMTask();
-   virtual ~SMTask();
+
+   static void Delete(SMTask *);
+   static int Roll(SMTask *);
 };
 
 #endif /* SMTASK_H */

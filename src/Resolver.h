@@ -81,6 +81,9 @@ class Resolver : public SMTask
    bool no_cache;
    bool use_fork;
 
+protected:
+   ~Resolver();
+
 public:
    int	 Do();
    bool	 Done() { return done; }
@@ -95,7 +98,6 @@ public:
 
    Resolver(const char *h,const char *p,const char *defp=0,const char *ser=0,
 	    const char *pr=0);
-   ~Resolver();
 
    void Reconfig(const char *name=0);
 

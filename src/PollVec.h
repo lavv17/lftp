@@ -56,7 +56,6 @@ class PollVec
 public:
    PollVec(int fd,int events);
    PollVec(int timeout);
-   PollVec(SMTask *);
    PollVec(Waiting::Type);
    PollVec() { chain=0; }
 

@@ -56,6 +56,8 @@ protected:
 
    void SaveMaxCheck(int addsize);
 
+   virtual ~Buffer();
+
 public:
    virtual int Do();
    virtual bool Done() { return in_buffer==0; }
@@ -88,7 +90,6 @@ public:
    virtual time_t EventTime() { return now; }
 
    Buffer();
-   virtual ~Buffer();
 };
 
 class FileOutputBuffer : public Buffer
@@ -99,9 +100,11 @@ class FileOutputBuffer : public Buffer
 
    time_t event_time; // used to detect timeouts
 
+protected:
+   ~FileOutputBuffer();
+
 public:
    FileOutputBuffer(FDStream *o);
-   ~FileOutputBuffer();
    int Do();
    bool Done();
    FgData *GetFgData(bool fg);
@@ -120,10 +123,12 @@ class FileInputBuffer : public Buffer
 
    time_t event_time; // used to detect timeouts
 
+protected:
+   ~FileInputBuffer();
+
 public:
    FileInputBuffer(FDStream *i);
    FileInputBuffer(FileAccess *i);
-   ~FileInputBuffer();
    int Do();
    bool Done();
    FgData *GetFgData(bool fg);

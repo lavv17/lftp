@@ -44,6 +44,9 @@ class Log : public SMTask
 	 need_close_output=false;
       }
 
+protected:
+   ~Log();
+
 public:
    static Log *global;
 
@@ -72,7 +75,6 @@ public:
 
    void Init();
    Log() { Init(); }
-   ~Log();
 
    int Do();
 };

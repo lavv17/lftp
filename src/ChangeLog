@@ -1,3 +1,18 @@
+2000-01-27  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CharReader.h, CmdExec.cc, CopyJob.cc, FileAccess.cc, FileAccess.h,
+	  FileCopy.cc, FileCopy.h, Filter.cc, FindJob.cc, FtpDirList.cc,
+	  FtpGlob.cc, FtpListInfo.cc, Http.cc, HttpDir.cc, Job.cc, Job.h,
+	  LocalAccess.cc, LsCache.cc, LsCache.h, MirrorJob.cc, NetAccess.cc,
+	  NetAccess.h, PollVec.h, ProcWait.cc, ProcWait.h, Resolver.cc,
+	  Resolver.h, SMTask.cc, SMTask.h, SleepJob.cc, StatusLine.h,
+	  buffer.h, commands.cc, ftpclass.cc, ftpclass.h, log.h, mgetJob.cc,
+	  pgetJob.cc: (SMTask::Delete, SMTask::Roll) new methods; use them
+	  everywhere; prohibit direct SMTask destruction by making destructors
+	  protected; (SMTask::deleting) new member; don't show rate if it is
+	  not valid; don't call SMTask::Do directly; (NetAccess::Close) new
+	  method.
+
 2000-01-26  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* md5.c: check for HAVE_ENDIAN_H

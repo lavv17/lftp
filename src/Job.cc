@@ -64,7 +64,7 @@ Job::~Job()
 	    }
 	    else
 	    {
-	       delete scan;
+	       Delete(scan);
 	       scan=chain;
 	    }
 	 }
@@ -123,7 +123,7 @@ void Job::Kill(int n)
 	 j->cmdline=0;
 	 j->parent->waiting=r;
       }
-      delete j;
+      Delete(j);
    }
 }
 
@@ -132,7 +132,7 @@ void Job::KillAll()
    for(Job **scan=&chain; *scan; )
    {
       if((*scan)->jobno>=0)
-	 delete *scan;
+	 Delete(*scan);
       else
 	 scan=&(*scan)->next;
    }
@@ -248,7 +248,7 @@ void  Job::BuryDoneJobs()
       if((scan->parent==this || scan->parent==0) && scan->jobno>=0
 		  && scan->Done())
       {
-	 delete scan;
+	 Delete(scan);
       	 scan=chain;
       }
       else
@@ -368,7 +368,7 @@ int Job::AcceptSig(int s)
       {
 	 Job *new_waiting=waiting->waiting;
 	 waiting->waiting=0;
-	 delete waiting;
+	 Delete(waiting);
 	 waiting=new_waiting;
       }
    }

@@ -41,7 +41,6 @@ public:
       fd=new_fd;
       ch=NOCHAR;
    }
-   ~CharReader() {}
 };
 
 #endif//CHARREADER_H

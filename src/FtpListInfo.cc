@@ -46,8 +46,7 @@ FtpListInfo::FtpListInfo(Ftp *s)
 
 FtpListInfo::~FtpListInfo()
 {
-   if(slist)
-      delete slist;
+   Delete(slist);
    session->Close();
    xfree(get_info);
 }
@@ -78,7 +77,7 @@ int FtpListInfo::Do()
       if(slist->Error())
       {
 	 SetError(slist->ErrorText());
-      	 delete slist;
+      	 Delete(slist);
 	 slist=0;
 	 return MOVED;
       }
@@ -93,7 +92,7 @@ int FtpListInfo::Do()
       if(!result)
 	 result=new FileSet;
 
-      delete slist;
+      Delete(slist);
       slist=0;
       slist_res=0; // note: slist_res is pointer to part of slist
 
@@ -112,13 +111,13 @@ int FtpListInfo::Do()
       if(slist->Error())
       {
 	 SetError(slist->ErrorText());
-      	 delete slist;
+      	 Delete(slist);
 	 slist=0;
 	 return MOVED;
       }
       slist_res=slist->GetResult();
       result->Merge(slist_res);
-      delete slist;
+      Delete(slist);
       slist=0;
       slist_res=0;
 

@@ -231,7 +231,7 @@ void pgetJob::free_chunks()
       for(int i=0; i<num_of_chunks; i++)
       {
 	 bytes+=chunks[i]->GetBytesCount();
-	 delete chunks[i];
+	 Delete(chunks[i]);
       }
       free(chunks);
       chunks=0;

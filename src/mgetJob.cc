@@ -144,7 +144,7 @@ int mgetJob::Do()
    {
       if(mkdir_job->Done())
       {
-	 delete mkdir_job;
+	 Delete(mkdir_job);
 	 mkdir_job=0;
 	 waiting=0;
       }

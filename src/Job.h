@@ -44,6 +44,8 @@ protected:
    bool fg;
    FgData *fg_data;
 
+   virtual ~Job();
+
 public:
    int	 jobno;
    Job	 *parent;
@@ -90,7 +92,6 @@ public:
    void puts(const char *);
 
    Job();
-   virtual ~Job();
 
    virtual const char *GetConnectURL() { return 0; }
 };

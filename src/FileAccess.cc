@@ -728,9 +728,11 @@ FileAccess *SessionPool::pool[pool_size];
 
 void SessionPool::Reuse(FileAccess *f)
 {
+   if(f==0)
+      return;
    if(f->GetHostName()==0)
    {
-      delete f;
+      SMTask::Delete(f);
       return;
    }
    f->Close();
@@ -747,12 +749,12 @@ void SessionPool::Reuse(FileAccess *f)
    {
       if(f->IsBetterThan(pool[i]))
       {
-	 delete pool[i];
+	 SMTask::Delete(pool[i]);
 	 pool[i]=f;
 	 return;
       }
    }
-   delete f;
+   SMTask::Delete(f);
 }
 
 void SessionPool::Print(FILE *f)
@@ -1120,8 +1122,7 @@ GlobURL::GlobURL(FileAccess *s,const char *p)
 }
 GlobURL::~GlobURL()
 {
-   if(glob)
-      delete glob;
+   SMTask::Delete(glob);
    if(session && reuse)
       SessionPool::Reuse(session);
    xfree(url_prefix);

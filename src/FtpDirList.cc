@@ -199,7 +199,7 @@ FtpDirList::FtpDirList(ArgV *a,FileAccess *fa)
 
 FtpDirList::~FtpDirList()
 {
-   delete ubuf;
+   Delete(ubuf);
    xfree(pattern);
 }
 
