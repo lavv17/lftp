@@ -77,10 +77,6 @@ currently; some need other work to be done.
 
  * optimize help text, introduce a phrase separator for separate translations.
 
- * optionally follow http redirections
-   the best way would be to return a error from Http to FileCopy, and
-   FileCopy would change get or put accordingly.
-
  * add url support for mirror, find... This can wait for 2.3.
 
  * improve glob status (show directory/pattern).
