@@ -1,3 +1,11 @@
+2004-07-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SFtp.cc, SFtp.h: implemented slow start; handle passphrase prompt;
+	  print in debug wire path.
+	* ftpclass.cc: proxy with combined auth supported.
+	* resource.cc: new setting ftp:proxy-auth-joined; change
+	  sftp:max-packets-in-flight to 16.
+
 2004-07-08  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: remove redundant output default.

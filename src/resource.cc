@@ -187,6 +187,7 @@ static ResDecl
    ResDecl06 ("ftp:port-range",		  "full",  ResMgr::RangeValidate,0),
    ResDecl06a("ftp:port-ipv4",		  "",	   ResMgr::IPv4AddrValidate,0),
    ResDecl07 ("ftp:proxy",		  "",	   FtpProxyValidate,0),
+   ResDecl07a("ftp:proxy-auth-joined",	  "no",	   ResMgr::BoolValidate,0),
    ResDecl08 ("ftp:rest-list",		  "no",	   ResMgr::BoolValidate,0),
    ResDecl09 ("ftp:rest-stor",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl09a("ftp:timezone",		  "GMT",   0,0),
@@ -273,7 +274,7 @@ static ResDecl
    ResDecl50 ("mirror:use-pget-n",	  "1",	   ResMgr::UNumberValidate,ResMgr::NoClosure);
 
 static ResDecl
-   res_sftp_packets  ("sftp:max-packets-in-flight","8",ResMgr::UNumberValidate,0),
+   res_sftp_packets  ("sftp:max-packets-in-flight","16",ResMgr::UNumberValidate,0),
    res_sftp_proto_ver("sftp:protocol-version","4",ResMgr::UNumberValidate,0),
    res_sftp_rsize    ("sftp:size-read", "0x8000",ResMgr::UNumberValidate,0),
    res_sftp_wsize    ("sftp:size-write","0x8000",ResMgr::UNumberValidate,0),

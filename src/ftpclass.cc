@@ -1355,18 +1355,28 @@ int   Ftp::Do()
       char *user_to_use=(user?user:anon_user);
       if(proxy && !conn->proxy_is_http)
       {
-	 char *combined=(char*)alloca(strlen(user_to_use)+1+strlen(hostname)+1+xstrlen(portname)+1);
-	 sprintf(combined,"%s@%s",user_to_use,hostname);
-	 if(portname)
-	    sprintf(combined+strlen(combined),":%s",portname);
-	 user_to_use=combined;
-
-      	 if(proxy_user && proxy_pass)
+	 if(QueryBool("proxy-auth-joined",proxy) && proxy_user && proxy_pass)
 	 {
-	    expect->Push(Expect::USER_PROXY);
-	    conn->SendCmd2("USER",proxy_user);
-	    expect->Push(Expect::PASS_PROXY);
-	    conn->SendCmd2("PASS",proxy_pass);
+	    char *combined=(char*)alloca(strlen(user_to_use)+1+strlen(proxy_user)+1+strlen(hostname)+1+xstrlen(portname)+1);
+	    sprintf(combined,"%s@%s@%s",user_to_use,proxy_user,hostname);
+	    if(portname)
+	       sprintf(combined+strlen(combined),":%s",portname);
+	    user_to_use=combined;
+	 }
+	 else // !proxy-auth-joined
+	 {
+	    char *combined=(char*)alloca(strlen(user_to_use)+1+strlen(hostname)+1+xstrlen(portname)+1);
+	    sprintf(combined,"%s@%s",user_to_use,hostname);
+	    if(portname)
+	       sprintf(combined+strlen(combined),":%s",portname);
+	    user_to_use=combined;
+	    if(proxy_user && proxy_pass)
+	    {
+	       expect->Push(Expect::USER_PROXY);
+	       conn->SendCmd2("USER",proxy_user);
+	       expect->Push(Expect::PASS_PROXY);
+	       conn->SendCmd2("PASS",proxy_pass);
+	    }
 	 }
       }
 
@@ -1398,6 +1408,13 @@ int   Ftp::Do()
 	 const char *pass_to_use=pass?pass:anon_pass;
 	 if(allow_skey && skey_pass)
 	    pass_to_use=skey_pass;
+	 else if(proxy && !conn->proxy_is_http
+	 && QueryBool("proxy-auth-joined",proxy) && proxy_user && proxy_pass)
+	 {
+	    char *p=string_alloca(strlen(pass_to_use)+1+strlen(proxy_pass)+1);
+	    sprintf(p,"%s@%s",pass_to_use,proxy_pass);
+	    pass_to_use=p;
+	 }
 	 expect->Push(Expect::PASS);
 	 conn->SendCmd2("PASS",pass_to_use);
       }
