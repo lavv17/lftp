@@ -1,11 +1,8 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.13)
 AC_INIT(src/ftpclass.cc)
-AM_INIT_AUTOMAKE(lftp, A00627)
+AM_INIT_AUTOMAKE(lftp, A00629)
 AM_CONFIG_HEADER(include/config.h)
-
-dnl iumacros.m4 is stolen from inetutils-1.3a
-builtin(include,iumacros.m4)
 
 dnl Default AC_C_INLINE does not know about C++
 builtin(define,[AC_C_INLINE],[LFTP_C_INLINE])
@@ -22,7 +19,8 @@ dnl Checks for programs.
 AC_PROG_CC
 AC_PROG_CXX
 
-AC_CANONICAL_HOST
+dnl AC_CANONICAL_HOST
+AC_ISC_POSIX
 AC_SYS_LARGEFILE
 
 AC_PROG_YACC
@@ -301,4 +299,4 @@ builtin(define, [AC_OUTPUT_LINKS_ORIG], defn([AC_OUTPUT_LINKS]))
 builtin(define, [AC_OUTPUT_LINKS], [AC_OUTPUT_LINKS_ORIG([`echo $1`], [`echo $2`])])
 
 AC_OUTPUT(Makefile src/Makefile lib/Makefile include/Makefile doc/Makefile
-	  readline-4.1/Makefile intl/Makefile po/Makefile.in)
+	  readline-4.1/Makefile intl/Makefile po/Makefile.in m4/Makefile)
