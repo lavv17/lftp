@@ -1269,7 +1269,8 @@ int HttpDirList::Do()
 
    int m=STALL;
 
-   if(mode!=FA::MP_LIST)
+reparse:
+   if(mode!=FA::MP_LIST || parse_as_html)
    {
       int n=parse_html(b,len,ubuf->Eof(),buf,0,&all_links,curr_url,&base_href,&ls_options, color);
       if(n>0)
@@ -1281,6 +1282,8 @@ int HttpDirList::Do()
    else
    {
       ParsePropsFormat(b,len,ubuf->Eof());
+      if(parse_as_html)
+	 goto reparse;
       ubuf->Skip(len);
    }
 
@@ -1305,6 +1308,7 @@ HttpDirList::HttpDirList(ArgV *a,FileAccess *fa)
    session=fa;
    ubuf=0;
    mode=FA::MP_LIST;
+   parse_as_html=false;
 #if USE_EXPAT
    xml_p=0;
    xml_ctx=0;

@@ -197,6 +197,8 @@ void HttpDirList::ParsePropsFormat(const char *b,int len,bool eof)
       Log::global->Format(0, "XML Parse error at line %d: %s\n",
 	      XML_GetCurrentLineNumber(xml_p),
 	      XML_ErrorString(XML_GetErrorCode(xml_p)));
+      parse_as_html=true;
+      return;
    }
    if(!xml_ctx->fs)
       goto end;

@@ -50,6 +50,7 @@ class HttpDirList : public DirList
    ParsedURL *curr_url;
    FileSet all_links;
    int mode;
+   bool parse_as_html;
    char *base_href;
 
 #if USE_EXPAT
