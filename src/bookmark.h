@@ -43,11 +43,16 @@ public:
    void Add(const char *id,const char *value);
    void Remove(const char *id);
    const char *Lookup(const char *id);
-   void List();
    char *Format();
 
    Bookmark();
    ~Bookmark();
+
+   void Rewind()
+      {
+	 Refresh();
+	 KeyValueDB::Rewind();
+      }
 };
 
 #endif //BOOKMARK_H

@@ -30,8 +30,10 @@
 #include "Filter.h"
 #include "alias.h"
 #include "history.h"
+#include "bookmark.h"
 
 extern History cwd_history;
+extern Bookmark lftp_bookmarks;
 
 #define	CMD(name) Job *CmdExec::do_##name()
 #define	in_CMD(name) Job *do_##name()
@@ -153,7 +155,7 @@ public:
    void	RemoveFeeder();
 
    friend char *command_generator(char *,int);	  // readline completor
-   friend int remote_cmd(int);
+   static const char *GetFullCommandName(const char *);
 
    char	 *var_ls;
    char	 *var_prompt;

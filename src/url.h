@@ -41,4 +41,13 @@ public:
    }
 };
 
+class url
+{
+public:
+   // encode unsafe chars as %XY
+   static char *encode_string(const char *,char *buf=0);
+   // reverse; done in-place.
+   static void decode_string(char *);
+};
+
 #endif//URL_H

@@ -53,6 +53,8 @@ class KeyValueDB
    void Purge(Pair **p)
       {
 	 Pair *to_free=*p;
+	 if(current==to_free)
+	    current=to_free->next;
 	 *p=to_free->next;
 	 delete to_free;
       }
@@ -62,6 +64,8 @@ protected:
    int Lock(int fd,int type);
 
    Pair *chain;
+
+   Pair *current;
 
 public:
    void Add(const char *id,const char *value);
@@ -77,9 +81,34 @@ public:
    void Sort();
    char *Format(); // returns formatted contents (malloc'ed)
 
+   void Rewind()
+      {
+	 current=chain;
+      }
+   const char *CurrentKey()
+      {
+	 if(!current)
+	    return 0;
+	 return current->key;
+      }
+   const char *CurrentValue()
+      {
+	 if(!current)
+	    return 0;
+	 return current->value;
+      }
+   bool Next()
+      {
+	 if(current==0)
+	    return false;
+	 current=current->next;
+	 return current!=0;
+      }
+
    KeyValueDB()
       {
 	 chain=0;
+	 current=0;
       }
    ~KeyValueDB()
       {

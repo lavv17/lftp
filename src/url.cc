@@ -111,4 +111,65 @@ ParsedURL::ParsedURL(const char *url)
       *scan++=0;
       port=scan;
    }
+
+   url::decode_string(user);
+   url::decode_string(pass);
+   url::decode_string(host);
+   url::decode_string(path);
+}
+
+void url::decode_string(char *p)
+{
+   if(!p)
+      return;
+   while(*p)
+   {
+      if(*p=='%' && p[1] && p[2])
+      {
+	 int n;
+	 if(sscanf(p+1,"%2x",&n)==1)
+	 {
+	    *p++=n;
+	    memmove(p,p+2,strlen(p+2)+1);
+	    continue;
+	 }
+      }
+      p++;
+   }
+}
+
+/* encode_string was taken from wget-1.5.2 and slightly modified */
+
+# define URL_UNSAFE " <>\"%{}|\\^[]`\033"
+
+/* Encodes the unsafe characters (listed in URL_UNSAFE) in a given
+   string, returning a malloc-ed %XX encoded string.  */
+char *url::encode_string (const char *s,char *res)
+{
+  char *p;
+  int i;
+
+  if (res==0)
+  {
+     const char *b = s;
+     for (i = 0; *s; s++, i++)
+       if (strchr (URL_UNSAFE, *s))
+	 i += 2; /* Two more characters (hex digits) */
+     res = (char *)xmalloc (i + 1);
+     s = b;
+  }
+  for (p = res; *s; s++)
+  {
+    if (strchr (URL_UNSAFE, *s))
+      {
+	const unsigned char c = *s;
+	*p++ = '%';
+	sprintf(p,"%02X",c);
+	p+=2;
+      }
+    else
+      *p++ = *s;
+  }
+  *p = '\0';
+  return res;
 }

@@ -291,9 +291,10 @@ int FtpCopy::ExitCode()
 void FtpCopy::ShowRunStatus(StatusLine *sl)
 {
    if(state==GET_SIZE)
-      sl->Show("Getting size of %s [%s]",dst_url,dst->CurrentStatus());
+      sl->Show(_("Getting size of `%s' [%s]"),dst_url,dst->CurrentStatus());
    else if(state==WAIT)
-      sl->Show("Copying in progress (%c)","|/-\\"[time(0)%4]);
+      sl->Show(_("Copying of `%s' in progress (%c)"),src_url,
+	    "|/-\\"[time(0)%4]);
    else
       sl->Show("");
 }

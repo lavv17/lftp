@@ -30,6 +30,7 @@
 #include <ctype.h>
 #include "xalloca.h"
 #include "log.h"
+#include "url.h"
 
 void FileAccess::Init()
 {
@@ -273,35 +274,38 @@ const char *FileAccess::GetConnectURL(int flags)
    len+=strlen(GetProto())+strlen("://");
    if(user)
    {
-      len+=strlen(user)+1;
+      len+=strlen(user)*3+1;
       if(pass)
-	 len+=strlen(pass)+1;
+	 len+=strlen(pass)*3+1;
    }
    if(hostname)
-      len+=strlen(hostname);
+      len+=strlen(hostname)*3;
    if(port!=0)
       len+=1+20;
    if(cwd)
-      len+=1+strlen(cwd);
+      len+=1+strlen(cwd)*3;
    url=(char*)xrealloc(url,len);
    sprintf(url,"%s://",GetProto());
    if(user)
    {
-      strcat(url,user);
+      url::encode_string(user,url+strlen(url));
       if(pass && (flags&WITH_PASSWORD))
       {
 	 strcat(url,":");
-	 strcat(url,pass);
+	 url::encode_string(pass,url+strlen(url));
       }
       strcat(url,"@");
    }
    if(hostname)
-      sprintf(url+strlen(url),"%s",hostname);
+      url::encode_string(hostname,url+strlen(url));
    if(port!=0)
       sprintf(url+strlen(url),":%d",port);
    if(cwd && strcmp(cwd,"~") && !(flags&NO_CWD))
-      sprintf(url+strlen(url),"/%s",cwd+(cwd[0]=='/'));
-
+   {
+      if(cwd[0]!='/') // e.g. ~/path
+	 strcat(url,"/");
+      url::encode_string(cwd,url+strlen(url));
+   }
    return url;
 }
 

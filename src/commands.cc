@@ -849,17 +849,6 @@ CMD(anon)
    return 0;
 }
 
-void unquote(char *buf,char *str)
-{
-   while(*str)
-   {
-      if(*str=='"' || *str=='\\')
-	 *buf++='\\';
-      *buf++=*str++;
-   }
-   *buf=0;
-}
-
 CmdFeeder *lftp_feeder=0;
 static struct option lftp_options[]=
 {
@@ -908,11 +897,9 @@ CMD(lftp)
       lftp_feeder=0;
       SetInteractive(isatty(0));
       FeedCmd("||exit\n");   // if the command fails, quit
-      args->setarg(0,"open");
-      return do_open();
    }
-   exit_code=0;
-   return 0;
+   args->setarg(0,"open");
+   return do_open();
 }
 
 CMD(open)

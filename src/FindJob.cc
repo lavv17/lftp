@@ -348,15 +348,15 @@ FindJob::prf_res FindJob_Cmd::ProcessFile(const char *d,const FileInfo *f)
    case RM:
       if(ISDIR)
       {
-	 exec->FeedCmd("rmdir \"");
+	 exec->FeedCmd("rmdir -- ");
 	 exec->FeedQuoted(file);
-	 exec->FeedCmd("\"\n");
+	 exec->FeedCmd("\n");
       }
       else
       {
-	 exec->FeedCmd("rm \"");
+	 exec->FeedCmd("rm -- ");
 	 exec->FeedQuoted(file);
-	 exec->FeedCmd("\"\n");
+	 exec->FeedCmd("\n");
       }
       break;
    case GET:
@@ -414,9 +414,9 @@ void FindJob_Cmd::Finish()
 	 session->Chdir(init_dir,false); // to leave the directory
 	 CmdExec *exec=new CmdExec(session->Clone());
 	 exec->parent=this;
-	 exec->FeedCmd("rmdir \"");
+	 exec->FeedCmd("rmdir -- ");
 	 exec->FeedQuoted(start_dir);
-	 exec->FeedCmd("\"\n");
+	 exec->FeedCmd("\n");
 	 waiting=exec;
 	 removing_last=true;
 	 state=WAIT; // it will wait for termination, try to process

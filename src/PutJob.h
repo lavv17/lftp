@@ -34,6 +34,8 @@ protected:
 
    long	 remote_size;
 
+   bool delete_files;
+
 public:
    int	 Do();
 
@@ -41,10 +43,7 @@ public:
       : FileXfer(s,args,cont)
    {
       remote_size=0;
-#if 0
-      if(!curr && args && args->count()>1)
-	 NextFile();
-#endif
+      delete_files=false;
    }
 };
 

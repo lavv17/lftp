@@ -113,6 +113,8 @@ remote_error:
 	 NextFile();
 	 return MOVED;
       }
+      if(delete_files)
+	 remove(local->name); // name is absolute path
       NextFile();
       m=MOVED;
       return m;

@@ -133,12 +133,15 @@ const char *Bookmark::Lookup(const char *key)
    return super::Lookup(key);
 }
 
+#if 0
 void Bookmark::List()
 {
    Refresh();
    Close();
    super::Write(dup(0));
 }
+#endif
+
 char *Bookmark::Format()
 {
    Refresh();

@@ -1417,7 +1417,7 @@ int   Ftp::Do()
       }
 
       // store mode is special - the data can be buffered
-      // so is COPY_* - no data connection al all.
+      // so is COPY_* - no data connection at all.
       if(mode==STORE || copy_mode!=COPY_NONE)
 	 goto notimeout_return;
 

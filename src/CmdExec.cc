@@ -818,7 +818,18 @@ void CmdExec::unquote(char *buf,const char *str)
 
 void CmdExec::FeedQuoted(const char *c)
 {
-   char *buf=(char*)alloca(strlen(c)*2+1);
-   unquote(buf,c);
+   char *buf=(char*)alloca(strlen(c)*2+2+1);
+   buf[0]='"';
+   unquote(buf+1,c);
+   strcat(buf,"\"");
    FeedCmd(buf);
+}
+
+const char *CmdExec::GetFullCommandName(const char *cmd)
+{
+   const CmdExec::cmd_rec *c;
+   int part=CmdExec::find_cmd(cmd,&c);
+   if(part==1)
+      return c->name;
+   return cmd;
 }

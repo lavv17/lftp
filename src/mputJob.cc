@@ -33,7 +33,7 @@ mputJob::mputJob(FileAccess *session,ArgV *args) : PutJob(session,new ArgV(args-
    args->rewind();
    op=args->a0();
    int opt;
-   while((opt=args->getopt("+cd"))!=EOF)
+   while((opt=args->getopt("+cde"))!=EOF)
    {
       switch(opt)
       {
@@ -42,6 +42,9 @@ mputJob::mputJob(FileAccess *session,ArgV *args) : PutJob(session,new ArgV(args-
 	 break;
       case('d'):
 	 make_dirs=true;
+	 break;
+      case('e'):
+	 delete_files=true;
 	 break;
       case('?'):
       print_usage:
