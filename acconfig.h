@@ -95,6 +95,8 @@
 
 #undef HAVE_H_ERRNO_DECL
 
+#undef HAVE_UNSETENV_DECL
+
 #undef NEED_YYWRAP
 
 #undef HAVE_POLL
@@ -120,9 +122,6 @@
 #undef HAVE_RANDOM_DECL
 
 #undef HAVE_INET_ATON_DECL
-
-/* Define to `int' if <sys/socket.h> doesn't define.  */
-#undef socklen_t
 
 /* define if you are building with SOCKS support */
 #undef SOCKS4

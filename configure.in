@@ -12,9 +12,6 @@ dnl Default AC_C_INLINE does not know about C++
 m4_undefine([AC_C_INLINE])
 AC_DEFUN([AC_C_INLINE],[LFTP_C_INLINE])
 
-LIBOBJS=''
-AC_SUBST(LIBOBJS)
-
 test -z "$CXX"	     && DEFAULT_CXX=yes
 test -z "$CFLAGS"    && DEFAULT_CFLAGS=yes
 test -z "$CXXFLAGS"  && DEFAULT_CXXFLAGS=yes
@@ -96,6 +93,7 @@ dnl Make sure C++ build environment is sane.
 LFTP_CXX_TEST
 CXX_DYNAMIC_INITIALIZERS
 LFTP_CXX_BOOL
+LFTP_CXX_ANSI_SCOPE
 
 AC_ISC_POSIX
 
@@ -264,7 +262,7 @@ AC_CHECK_HEADERS(fcntl.h sys/time.h errno.h stdlib.h varargs.h dirent.h\
 
 # See if the system has strerror and replace if not
 AC_CHECK_FUNC(strerror, AC_DEFINE(HAVE_STRERROR),[
-  LIBOBJS="$LIBOBJS strerror.o"
+  AC_LIBOBJ(strerror)
   # No strerror, so see if the SYS_ERRLIST variable can be used by ours
   AC_CHECK_FUNC(sys_errlist,
     IU_CHECK_DECL(sys_errlist, [
@@ -289,7 +287,7 @@ if test "$inetutils_cv_var_h_errno" = yes; then
 fi
 
 # See if the system has hstrerror, and replace it if not
-AC_CHECK_FUNC(hstrerror, , LIBOBJS="$LIBOBJS hstrerror.o")
+AC_CHECK_FUNC(hstrerror, , AC_LIBOBJ(hstrerror))
 if test "$ac_cv_func_hstrerror" = yes; then
   IU_CHECK_DECL(hstrerror, [#include <netdb.h>])
 else
@@ -333,10 +331,13 @@ LFTP_FUNC_SSCANF_CONST
 AC_CHECK_FUNCS(strdup strstr lstat lchown select regexec glob\
  killpg setpgid tcgetattr ftruncate vsnprintf gettimeofday\
  gethostbyname2 getipnodebyname getaddrinfo getnameinfo setsid random\
- inet_aton unsetenv environ)
+ inet_aton unsetenv)
 IU_CHECK_DECL(vsnprintf, [#include <stdio.h>])
+IU_CHECK_DECL(unsetenv, [#include <stdlib.h>])
 
 lftp_VA_COPY
+
+LFTP_ENVIRON_CHECK
 
 AC_REPLACE_FUNCS(mktime memmove strcasecmp strncasecmp strtol strtoul strptime)
 IU_CHECK_DECL(strcasecmp, [#include <string.h>])
@@ -350,25 +351,26 @@ IU_CHECK_DECL(inet_aton, [
 ])
 
 # always want GNU getopt
-LIBOBJS="$LIBOBJS getopt.o getopt1.o"
+AC_LIBOBJ(getopt)
+AC_LIBOBJ(getopt1)
 
 if test x$lftp_cv_func_poll_works = xno; then
-   LIBOBJS="$LIBOBJS poll.o"
+   AC_LIBOBJ(poll)
    LINK_SRC="$LINK_SRC lib/poll.h"
    LINK_DST="$LINK_DST include/poll.h"
 fi
 if test x$ac_cv_func_regexec = xno -o x$ac_cv_header_regex_h = xno; then
-   LIBOBJS="$LIBOBJS regex.o"
+   AC_LIBOBJ(regex.o)
    LINK_SRC="$LINK_SRC lib/regex.h"
    LINK_DST="$LINK_DST include/regex.h"
 fi
 if test x$ac_cv_func_glob = xno; then
-   LIBOBJS="$LIBOBJS glob.o"
+   AC_LIBOBJ(glob)
    LINK_SRC="$LINK_SRC lib/glob.h"
    LINK_DST="$LINK_DST include/glob.h"
 fi
 if test x$ac_cv_func_fnmatch_works = xno; then
-   LIBOBJS="$LIBOBJS fnmatch.o"
+   AC_LIBOBJ(fnmatch)
    LINK_SRC="$LINK_SRC lib/fnmatch.h"
    LINK_DST="$LINK_DST include/fnmatch.h"
    AC_DEFINE_UNQUOTED(fnmatch, rpl_fnmatch, [Define to rpl_fnmatch if system fnmatch does not work])
