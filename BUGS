@@ -1,0 +1,19 @@
+This file describes some limitations or misfeatures lftp has.
+
+
+* Glob over ftp is unreliable (server dependent) when not only last path
+  component contains wildcards, e.g. */*.
+
+Reason: currently lftp gets the whole directory listing and performs
+pattern filtering locally, to make it consistent over various ftp servers
+(and not only ftp). The trouble is that it is not known whether ftp server
+does glob itself and whether it provides backslash quotation. So if glob of
+first directory component gives a file name with wildcards, then getting
+listing of that directory (the one which has wildcards in its name) will
+get trouble if the wildcards will be expanded by server.
+
+So currently lftp ignores wildcards in path before last component and sends
+it to server. Fortunately, most ftp servers expand wildcards and send back
+listing of all matching directories, so this mostly works.
+
+(glob = wildcard expansion)
