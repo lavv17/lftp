@@ -47,6 +47,8 @@ CDECL const char *strerror(int);
 	       && defined(HAVE_GETNAMEINFO) \
 	       && defined(HAVE_GETADDRINFO))
 
+#define USE_EXPAT (defined(HAVE_EXPAT_H) && defined(HAVE_LIBEXPAT))
+
 #if defined(SOCKS4) || defined(SOCKS_DANTE)
 # define connect     Rconnect
 # define getsockname Rgetsockname

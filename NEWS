@@ -1,3 +1,14 @@
+Version 3.1.2 - 2005-04-04
+
+* cache negative results, new setting cache:expire-negative.
+* set http:use-propfind and http:use-mkcol automatically if those methods
+  are unsupported, so that they will not be retried.
+* handle DAV:creator-displayname in PROPFIND parser.
+* parse incorrect XML returned for PROPFIND requests as HTML.
+* fixed coredump and href handling in PROPFIND result parsing.
+* fixed sftp transfer of growing files.
+* fixed compilation with socks5 on freebsd.
+
 Version 3.1.1 - 2005-03-23
 
 * new setting ftp:ignore-pasv-address.
