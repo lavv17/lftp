@@ -1,3 +1,8 @@
+2000-01-08  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* NetAccess.h, NetAccess.cc, ftpclass.cc, Http.cc: (SocketConnect,
+	  SocketAddrLen) new methods; use them. This fixes a problem on NetBSD.
+
 1999-12-19  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* HttpDir.cc: decode &amp and similar. Skip ~ for ListInfo.
