@@ -1,3 +1,9 @@
+2000-09-14  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ftpclass.cc: move out of CONNECTING_DATA_SOCKET after DataClose
+	  (fixes rare `bad file number' error).
+	* MirrorJob.cc: propagate remove_source_files to submirrors.
+
 2000-09-12  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileAccess.cc: include modconfig.h. (fixes module compilation).

@@ -252,7 +252,6 @@ void  MirrorJob::HandleFile(int how)
 
 	 FileCopyPeerFA *src_peer=
 	    new FileCopyPeerFA(session->Clone(),file->name,FA::RETRIEVE);
-	 //src_peer->DontReuseSession(); // mirror will need this session
 	 FileCopyPeer *dst_peer=
 	    FileCopyPeerFDStream::NewPut(local_name,cont_this);
 
@@ -357,6 +356,7 @@ void  MirrorJob::HandleFile(int how)
 	 mj->verbose_report=verbose_report;
 	 mj->newer_than=newer_than;
 	 mj->parallel=parallel;
+	 mj->remove_source_files=remove_source_files;
 
 	 if(verbose_report>=3)
 	    Report(_("Mirroring directory `%s'"),
@@ -645,7 +645,6 @@ int   MirrorJob::Do()
 
       FileCopyPeerFA *dst_peer=
 	 new FileCopyPeerFA(session->Clone(),file->name,FA::STORE);
-      //dst_peer->DontReuseSession(); // mirror won't need session
       FileCopyPeer *src_peer=
 	 FileCopyPeerFDStream::NewGet(local_name);
 

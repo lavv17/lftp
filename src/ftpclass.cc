@@ -353,6 +353,7 @@ void Ftp::TransferCheck(int act)
    if(act==RESP_NO_FILE && mode==LIST)
    {
       DataClose();
+      state=EOF_STATE;
       eof=true; // simulate eof
       return;
    }
