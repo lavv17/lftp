@@ -1,3 +1,7 @@
+2002-01-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Resolver.cc: fixed coredump on unknown service.
+
 2002-01-13  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* StringPool.cc: handle null pointer.
