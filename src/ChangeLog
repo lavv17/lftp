@@ -1,3 +1,9 @@
+1999-06-25  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* complete.cc: workaround for readline bug (reported by
+	  <sniffer@pamela.prograd.ufrgs.br>); make few functions static.
+	* Makefile.am: add READLINE_DEPEND to lftp_DEPENDENCIES.
+
 1999-06-24  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* XferJob.cc: translate time units in one place; add optional verbose

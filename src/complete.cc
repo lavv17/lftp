@@ -336,8 +336,11 @@ static bool force_remote=false;
    region of TEXT that contains the word to complete.  We can use the
    entire line in case we want to do some simple parsing.  Return the
    array of matches, or NULL if there aren't any. */
-char **lftp_completion (char *text,int start,int end)
+static char **lftp_completion (char *text,int start,int end)
 {
+   if(start>end)  // workaround for a bug in readline
+      start=end;
+
    Glob *rg=0;
 
    rl_completion_append_character=' ';
@@ -447,7 +450,7 @@ enum { COMPLETE_DQUOTE,COMPLETE_SQUOTE,COMPLETE_BSQUOTE };
 
 /* Return a new string which is the single-quoted version of STRING.
    Used by alias and trap, among others. */
-char *
+static char *
 single_quote (char *string)
 {
   register int c;
@@ -476,7 +479,7 @@ single_quote (char *string)
 }
 
 /* Quote STRING using double quotes.  Return a new string. */
-char *
+static char *
 double_quote (char *string)
 {
   register int c;
@@ -511,7 +514,7 @@ double_quote (char *string)
 
 /* Quote special characters in STRING using backslashes.  Return a new
    string. */
-char *
+static char *
 backslash_quote (char *string)
 {
   int c;
@@ -555,7 +558,8 @@ backslash_quote (char *string)
   return (result);
 }
 
-int
+#if 0 // no need yet
+static int
 contains_shell_metas (char *string)
 {
   char *s;
@@ -584,6 +588,7 @@ contains_shell_metas (char *string)
 
   return (0);
 }
+#endif //0
 
 /* Filename quoting for completion. */
 /* A function to strip quotes that are not protected by backquotes.  It
@@ -741,7 +746,7 @@ bash_quote_filename (char *s, int rtype, char *qcp)
   return ret;
 }
 
-int skip_double_quoted(char *s, int i)
+static int skip_double_quoted(char *s, int i)
 {
    while(s[i] && s[i]!='"')
    {
