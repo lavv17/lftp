@@ -1,3 +1,7 @@
+2002-03-13  Arkadiusz Miskiewicz <misiek@pld.org.pl>
+
+	* Makefile.am: distribute va_copy.m4
+
 2002-03-03  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* va_copy.m4: fix copy-by-value test; use VA_ZZZ_COPY tag for
