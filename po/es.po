@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.6.0\n"
-"POT-Creation-Date: 2002-08-02 12:43+0400\n"
+"POT-Creation-Date: 2002-08-10 16:25+0400\n"
 "PO-Revision-Date: 2002-08-08 19:01+0000\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -92,51 +92,51 @@ msgstr "\tEsperando orden\n"
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: la orden `%s' no fue compilada dentro del binario.\n"
 
-#: src/FileAccess.cc:224
+#: src/FileAccess.cc:225
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "Error de socket (%s) - reconectando"
 
-#: src/FileAccess.cc:315
+#: src/FileAccess.cc:316
 #, c-format
 msgid "Access failed: %s"
 msgstr "Falló el acceso: %s"
 
-#: src/FileAccess.cc:318
+#: src/FileAccess.cc:319
 msgid "File cannot be accessed"
 msgstr "El archivo no puede ser accedido"
 
-#: src/FileAccess.cc:320 src/ftpclass.cc:3649 src/ftpclass.cc:3658
+#: src/FileAccess.cc:321 src/ftpclass.cc:3649 src/ftpclass.cc:3658
 msgid "Not connected"
 msgstr "No conectado"
 
-#: src/FileAccess.cc:324
+#: src/FileAccess.cc:325
 #, c-format
 msgid "Fatal error: %s"
 msgstr "Error fatal: %s"
 
-#: src/FileAccess.cc:327
+#: src/FileAccess.cc:328
 msgid "Fatal error"
 msgstr "Error fatal"
 
-#: src/FileAccess.cc:329
+#: src/FileAccess.cc:330
 msgid "Store failed - you have to reput"
 msgstr "El envío falló - tiene que usar reput"
 
-#: src/FileAccess.cc:333 src/FileAccess.cc:336
+#: src/FileAccess.cc:334 src/FileAccess.cc:337
 msgid "Login failed"
 msgstr "Falló la identificación con el servidor"
 
-#: src/FileAccess.cc:338
+#: src/FileAccess.cc:339
 msgid "Operation not supported"
 msgstr "Operación no soportada"
 
-#: src/FileAccess.cc:342
+#: src/FileAccess.cc:343
 #, c-format
 msgid "File moved: %s"
 msgstr "Archivo movido: %s"
 
-#: src/FileAccess.cc:348
+#: src/FileAccess.cc:349
 #, c-format
 msgid "File moved to `%s'"
 msgstr "Archivo movido a `%s'"
@@ -327,7 +327,7 @@ msgid "invalid pair of numbers"
 msgstr "par de números inválido"
 
 #: src/Resolver.cc:184 src/Resolver.cc:226 src/ftpclass.cc:3654
-#: src/Http.cc:1637
+#: src/Http.cc:1639
 msgid "Resolving host address..."
 msgstr "Resolviendo dirección del servidor..."
 
@@ -1058,7 +1058,8 @@ msgstr ""
 "Opciones:\n"
 " -q                  Modo silencioso.\n"
 " -v                  Modo informativo.\n"
-" -Q                  Salida en un formato que se puede usar para re-encolar.\n"
+" -Q                  Salida en un formato que se puede usar para re-"
+"encolar.\n"
 "                     Útil con --delete.\n"
 
 #: src/commands.cc:402
@@ -1342,7 +1343,7 @@ msgstr ""
 msgid "%s: No queue is active.\n"
 msgstr "%s: Ninguna cola está activa.\n"
 
-#: src/commands.cc:1132
+#: src/commands.cc:1136
 #, c-format
 msgid "%s: -m: Number expected as second argument. "
 msgstr "%s: -m: Se esperaba un número como segundo argumento. "
@@ -1356,7 +1357,7 @@ msgstr ""
 msgid "Couldn't create temporary file `%s': %s.\n"
 msgstr "No se pudo crear el archivo temporal `%s': %s.\n"
 
-#: src/commands.cc:1183
+#: src/commands.cc:1187
 #, c-format
 msgid "%s: error writing %s: %s\n"
 msgstr "%s: error escribiendo %s: %s\n"
@@ -1370,11 +1371,11 @@ msgstr "Uso: %s <orden>\n"
 msgid "invalid argument for `--sort'"
 msgstr "argumento inválido para `--sort'"
 
-#: src/commands.cc:1349
+#: src/commands.cc:1353
 msgid "invalid block size"
 msgstr "tamaño de bloque inválido"
 
-#: src/commands.cc:1397
+#: src/commands.cc:1401
 msgid "invalid option"
 msgstr "opción inválida"
 
@@ -1562,18 +1563,18 @@ msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: se requiere el tipo a importar (netscape, ncftp)\n"
 
 # Es la ayuda del comando find.
-#: src/commands.cc:2548
+#: src/commands.cc:2552
 #, c-format
 msgid "Usage: %s [-d #] dir\n"
 msgstr "Uso: %s [-d N] dir\n"
 
-#: src/commands.cc:2648
+#: src/commands.cc:2652
 #, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "%s: tamaño de bloque inválido `%s'\n"
 
 # Es la ayuda del comando find.
-#: src/commands.cc:2663
+#: src/commands.cc:2667
 #, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "Uso: %s [opciones] <dirs>\n"
@@ -1602,11 +1603,12 @@ msgstr "Uso: %s módulo [args...]\n"
 msgid "cannot get current directory"
 msgstr "no se pudo obtener el directorio actual"
 
+#: src/commands.cc:2820
 #, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "Uso: %s [OPCS] modo archivo...\n"
 
-#: src/commands.cc:2835
+#: src/commands.cc:2839
 #, c-format
 msgid "invalid mode string: %s\n"
 msgstr "cadena de modo inválida: %s\n"
@@ -1635,7 +1637,9 @@ msgstr "La respuesta del servidor califica según ftp:retry-530, reintentando"
 
 #: src/ftpclass.cc:435
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
-msgstr "La respuesta del servidor califica según ftp:retry-530-anonymous, reintentando"
+msgstr ""
+"La respuesta del servidor califica según ftp:retry-530-anonymous, "
+"reintentando"
 
 #: src/ftpclass.cc:459
 msgid "Account is required, set ftp:acct variable"
@@ -1657,11 +1661,11 @@ msgstr "asumiendo falla en la búsqueda del nombre de servidor"
 msgid "cannot parse EPSV response"
 msgstr "no se pudo interpretar la respuesta EPSV"
 
-#: src/ftpclass.cc:1115 src/Http.cc:781
+#: src/ftpclass.cc:1115 src/Http.cc:783
 msgid "Closing idle connection"
 msgstr "Cerrando conexión ociosa"
 
-#: src/ftpclass.cc:1195 src/Http.cc:904
+#: src/ftpclass.cc:1195 src/Http.cc:906
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "no se pudo crear un socket de la familia %d de direcciones"
@@ -1687,7 +1691,7 @@ msgstr "Conectando socket de datos a (%s) puerto %u"
 msgid "Switching passive mode off"
 msgstr "Desconectando modo pasivo"
 
-#: src/ftpclass.cc:2379 src/Http.cc:992
+#: src/ftpclass.cc:2379 src/Http.cc:994
 msgid "Peer closed connection"
 msgstr "El otro extremo cerró la conexión"
 
@@ -1733,15 +1737,15 @@ msgid "Sending commands..."
 msgstr "Enviando comandos..."
 
 #: src/ftpclass.cc:3646 src/ftpclass.cc:3671 src/ftpclass.cc:3684
-#: src/Http.cc:1652
+#: src/Http.cc:1654
 msgid "Waiting for response..."
 msgstr "Esperando respuesta..."
 
-#: src/ftpclass.cc:3647 src/Http.cc:1645
+#: src/ftpclass.cc:3647 src/Http.cc:1647
 msgid "Connection idle"
 msgstr "Conexión ociosa"
 
-#: src/ftpclass.cc:3660 src/Http.cc:1643 src/Http.cc:1650
+#: src/ftpclass.cc:3660 src/Http.cc:1645 src/Http.cc:1652
 msgid "Connecting..."
 msgstr "Conectándose..."
 
@@ -1785,11 +1789,11 @@ msgstr "Enviando datos/TLS"
 msgid "Receiving data/TLS"
 msgstr "Recibiendo datos/TLS"
 
-#: src/ftpclass.cc:3700 src/Http.cc:1648
+#: src/ftpclass.cc:3700 src/Http.cc:1650
 msgid "Sending data"
 msgstr "Enviando datos"
 
-#: src/ftpclass.cc:3702 src/Http.cc:1655
+#: src/ftpclass.cc:3702 src/Http.cc:1657
 msgid "Receiving data"
 msgstr "Recibiendo datos"
 
@@ -1883,52 +1887,52 @@ msgstr "Cerrando conexión HTTP"
 msgid "POST method failed"
 msgstr "falló el método POST"
 
-#: src/Http.cc:860
+#: src/Http.cc:862
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr "ftp no funciona sobre http sin usar un proxy, configure hftp:proxy."
 
-#: src/Http.cc:1003
+#: src/Http.cc:1005
 msgid "Sending request..."
 msgstr "Enviando requerimiento..."
 
-#: src/Http.cc:1050
+#: src/Http.cc:1052
 msgid "Hit EOF while fetching headers"
 msgstr "Encontré EOF mientras traía encabezados"
 
 # Esto no se internacionaliza.
-#: src/Http.cc:1133
+#: src/Http.cc:1135
 msgid "Success, but did nothing??"
 msgstr ""
 
-#: src/Http.cc:1167
+#: src/Http.cc:1169
 msgid "Could not parse HTTP status line"
 msgstr "No se pudo interpretar la línea de estado HTTP"
 
-#: src/Http.cc:1307
+#: src/Http.cc:1309
 msgid "Receiving body..."
 msgstr "Recibiendo cuerpo..."
 
-#: src/Http.cc:1433
+#: src/Http.cc:1435
 msgid "Hit EOF"
 msgstr "Encontré EOF"
 
-#: src/Http.cc:1436
+#: src/Http.cc:1438
 msgid "Received not enough data, retrying"
 msgstr "No se recibió suficiente, reintentando"
 
-#: src/Http.cc:1444
+#: src/Http.cc:1446
 msgid "Received all"
 msgstr "Se recibió todo"
 
-#: src/Http.cc:1449
+#: src/Http.cc:1451
 msgid "Received all (total)"
 msgstr "Se recibió todo (total)"
 
-#: src/Http.cc:1472 src/Http.cc:1493
+#: src/Http.cc:1474 src/Http.cc:1495
 msgid "chunked format violated"
 msgstr "formato `chunked' violado"
 
-#: src/Http.cc:1653
+#: src/Http.cc:1655
 msgid "Fetching headers..."
 msgstr "Trayendo encabezados..."
 

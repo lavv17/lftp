@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2\n"
-"POT-Creation-Date: 2002-08-06 16:36+0400\n"
+"POT-Creation-Date: 2002-08-10 16:25+0400\n"
 "PO-Revision-Date: 2000-09-07 09:36+08:00\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -92,51 +92,51 @@ msgstr "\tОжидание команды\n"
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr ""
 
-#: src/FileAccess.cc:224
+#: src/FileAccess.cc:225
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "Ошибка на сокете (%s) - повторное соединение"
 
-#: src/FileAccess.cc:315
+#: src/FileAccess.cc:316
 #, c-format
 msgid "Access failed: %s"
 msgstr "Ошибка доступа: %s"
 
-#: src/FileAccess.cc:318
+#: src/FileAccess.cc:319
 msgid "File cannot be accessed"
 msgstr "Доступ к файлу невозможен"
 
-#: src/FileAccess.cc:320 src/ftpclass.cc:3649 src/ftpclass.cc:3658
+#: src/FileAccess.cc:321 src/ftpclass.cc:3649 src/ftpclass.cc:3658
 msgid "Not connected"
 msgstr "Нет соединения"
 
-#: src/FileAccess.cc:324
+#: src/FileAccess.cc:325
 #, c-format
 msgid "Fatal error: %s"
 msgstr "Фатальная ошибка: %s"
 
-#: src/FileAccess.cc:327
+#: src/FileAccess.cc:328
 msgid "Fatal error"
 msgstr "Фатальная ошибка"
 
-#: src/FileAccess.cc:329
+#: src/FileAccess.cc:330
 msgid "Store failed - you have to reput"
 msgstr "Передача файла не выполнена - требуется возобновление (reput)"
 
-#: src/FileAccess.cc:333 src/FileAccess.cc:336
+#: src/FileAccess.cc:334 src/FileAccess.cc:337
 msgid "Login failed"
 msgstr "Ошибка регистрации"
 
-#: src/FileAccess.cc:338
+#: src/FileAccess.cc:339
 msgid "Operation not supported"
 msgstr "Операция не поддерживается"
 
-#: src/FileAccess.cc:342
+#: src/FileAccess.cc:343
 #, c-format
 msgid "File moved: %s"
 msgstr "Файл переместился: %s"
 
-#: src/FileAccess.cc:348
+#: src/FileAccess.cc:349
 #, c-format
 msgid "File moved to `%s'"
 msgstr "Файл переместился в `%s'"
@@ -332,7 +332,7 @@ msgid "invalid pair of numbers"
 msgstr "неверное число"
 
 #: src/Resolver.cc:184 src/Resolver.cc:226 src/ftpclass.cc:3654
-#: src/Http.cc:1637
+#: src/Http.cc:1639
 msgid "Resolving host address..."
 msgstr "Преобразование адреса сервера..."
 
@@ -1627,11 +1627,11 @@ msgstr "подразумевается ошибка преобразования адреса машины"
 msgid "cannot parse EPSV response"
 msgstr ""
 
-#: src/ftpclass.cc:1115 src/Http.cc:781
+#: src/ftpclass.cc:1115 src/Http.cc:783
 msgid "Closing idle connection"
 msgstr "Закрытие неиспользуемого соединения"
 
-#: src/ftpclass.cc:1195 src/Http.cc:904
+#: src/ftpclass.cc:1195 src/Http.cc:906
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr ""
@@ -1657,7 +1657,7 @@ msgstr "Соединение сокета данных с (%s), порт %u"
 msgid "Switching passive mode off"
 msgstr "Отключение пассивного режима"
 
-#: src/ftpclass.cc:2379 src/Http.cc:992
+#: src/ftpclass.cc:2379 src/Http.cc:994
 msgid "Peer closed connection"
 msgstr "Соединение закрыто удаленной машиной"
 
@@ -1702,15 +1702,15 @@ msgid "Sending commands..."
 msgstr "Передача команд..."
 
 #: src/ftpclass.cc:3646 src/ftpclass.cc:3671 src/ftpclass.cc:3684
-#: src/Http.cc:1652
+#: src/Http.cc:1654
 msgid "Waiting for response..."
 msgstr "Ожидание ответа..."
 
-#: src/ftpclass.cc:3647 src/Http.cc:1645
+#: src/ftpclass.cc:3647 src/Http.cc:1647
 msgid "Connection idle"
 msgstr "Соединение не используется"
 
-#: src/ftpclass.cc:3660 src/Http.cc:1643 src/Http.cc:1650
+#: src/ftpclass.cc:3660 src/Http.cc:1645 src/Http.cc:1652
 msgid "Connecting..."
 msgstr "Установка соединения..."
 
@@ -1754,11 +1754,11 @@ msgstr "Отправка данных/TLS"
 msgid "Receiving data/TLS"
 msgstr "Получение данных/TLS"
 
-#: src/ftpclass.cc:3700 src/Http.cc:1648
+#: src/ftpclass.cc:3700 src/Http.cc:1650
 msgid "Sending data"
 msgstr "Отправка данных"
 
-#: src/ftpclass.cc:3702 src/Http.cc:1655
+#: src/ftpclass.cc:3702 src/Http.cc:1657
 msgid "Receiving data"
 msgstr "Получение данных"
 
@@ -1852,51 +1852,51 @@ msgstr "Закрытие соединения HTTP"
 msgid "POST method failed"
 msgstr ""
 
-#: src/Http.cc:860
+#: src/Http.cc:862
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 
-#: src/Http.cc:1003
+#: src/Http.cc:1005
 msgid "Sending request..."
 msgstr "Передача запроса..."
 
-#: src/Http.cc:1050
+#: src/Http.cc:1052
 msgid "Hit EOF while fetching headers"
 msgstr "Получил конец файла (EOF) при чтении заголовков"
 
-#: src/Http.cc:1133
+#: src/Http.cc:1135
 msgid "Success, but did nothing??"
 msgstr ""
 
-#: src/Http.cc:1167
+#: src/Http.cc:1169
 msgid "Could not parse HTTP status line"
 msgstr ""
 
-#: src/Http.cc:1307
+#: src/Http.cc:1309
 msgid "Receiving body..."
 msgstr "Получение тела ответа..."
 
-#: src/Http.cc:1433
+#: src/Http.cc:1435
 msgid "Hit EOF"
 msgstr ""
 
-#: src/Http.cc:1436
+#: src/Http.cc:1438
 msgid "Received not enough data, retrying"
 msgstr ""
 
-#: src/Http.cc:1444
+#: src/Http.cc:1446
 msgid "Received all"
 msgstr "Все получил"
 
-#: src/Http.cc:1449
+#: src/Http.cc:1451
 msgid "Received all (total)"
 msgstr ""
 
-#: src/Http.cc:1472 src/Http.cc:1493
+#: src/Http.cc:1474 src/Http.cc:1495
 msgid "chunked format violated"
 msgstr "формат данных `chunked' нарушен"
 
-#: src/Http.cc:1653
+#: src/Http.cc:1655
 msgid "Fetching headers..."
 msgstr "Получение заголовков HTTP..."
 
