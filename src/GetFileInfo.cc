@@ -64,8 +64,6 @@ int GetFileInfo::Do()
       }
       else if(!tried_file)
       {
-	 /* No need to save the initial directory, since we only chdir()
-	  * twice when the first fails (hence leaving our cwd intact). */
 	 tried_file=true;
 
 	 xfree(realdir);
@@ -103,6 +101,7 @@ int GetFileInfo::Do()
       /* Get a listing: */
       li=session->MakeListInfo();
       if(follow_symlinks) li->FollowSymlinks();
+      li->UseCache(use_cache);
       li->NoNeed(FileInfo::ALL_INFO); /* clear need */
       li->Need(need);
       SetExclude(path, rxc_exclude, rxc_include);
@@ -146,7 +145,7 @@ int GetFileInfo::Do()
 	 /* If we're not listing directories as files, and the file is a
 	  * directory, we should have been able to Chdir into it to begin
 	  * with.  We probably got Access Denied.  Fail. */
-	 if(!showdir && file->filetype==FileInfo::DIRECTORY) {
+	 if(!showdir && (file->defined&file->TYPE) && file->filetype==FileInfo::DIRECTORY) {
 	    char *buf = xasprintf("%s: %s", dir, strerror(EACCES));
 	    SetError(buf);
 	    xfree(buf);

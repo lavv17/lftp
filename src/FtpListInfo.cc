@@ -616,6 +616,7 @@ FileInfo *ParseFtpLongList_OS2(const char *line_c,int *err,const char *tz)
    long long size;
    if(sscanf(t,"%lld",&size)!=1)
       ERR;
+   fi=new FileInfo;
    fi->SetSize(size);
 
    t = NEXT_TOKEN;
@@ -679,6 +680,7 @@ FileInfo *ParseFtpLongList_MacWebStar(const char *line_c,int *err,const char *tz
    if(t==0)
       ERR;
 
+   fi=new FileInfo;
    switch(t[0])
    {
    case('l'):  // symlink

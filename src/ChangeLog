@@ -1,3 +1,11 @@
+2001-12-03  Glenn Maynard <g_ld@zewt.org>
+
+	* FileSetOutput.cc: don't add type suffix if type is not defined.
+	* ftpclass.cc: lower disconnection message debug level if session
+	  is closed.
+	* FtpListInfo.cc: add forgotten new FileInfo.
+	* GetFileInfo.cc: call UseCache; don't use type if it is not defined.
+
 2001-11-30  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: ftp:use-site-chmod setting; don't simulate eof for
