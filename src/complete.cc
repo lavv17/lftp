@@ -231,7 +231,6 @@ static completion_type cmd_completion_type(int start)
    || !strcmp(buf,"mget")
    || !strcmp(buf,"rm")
    || !strcmp(buf,"mrm")
-   || !strcmp(buf,"mirror")
    || !strcmp(buf,"rmdir")
    || !strcmp(buf,"more")
    || !strcmp(buf,"cat")
@@ -245,6 +244,7 @@ static completion_type cmd_completion_type(int start)
       return BOOKMARK;
 
    bool was_o=false;
+   bool was_N=false;
    for(int i=start; i>4; i--)
    {
       if(!isspace(rl_line_buffer[i-1]))
@@ -252,6 +252,11 @@ static completion_type cmd_completion_type(int start)
       if(!strncmp(rl_line_buffer+i-3,"-o",2) && isspace(rl_line_buffer[i-4]))
       {
 	 was_o=true;
+	 break;
+      }
+      if(!strncmp(rl_line_buffer+i-3,"-N",2) && isspace(rl_line_buffer[i-4]))
+      {
+	 was_N=true;
 	 break;
       }
    }
@@ -262,6 +267,9 @@ static completion_type cmd_completion_type(int start)
 	 return REMOTE_FILE;
    if(!strcmp(buf,"put"))
       if(was_o)
+	 return REMOTE_FILE;
+   if(!strcmp(buf,"mirror"))
+      if(!was_N)
 	 return REMOTE_FILE;
 
    return LOCAL;
