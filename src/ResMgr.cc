@@ -566,11 +566,17 @@ ResDecl::ResDecl(const char *a_name,const char *a_defvalue,
 		  ResValValid *a_val_valid,ResClValid *a_closure_valid)
 {
    name=a_name;
-   defvalue=a_defvalue;
+   defvalue=xstrdup(a_defvalue);
    val_valid=a_val_valid;
    closure_valid=a_closure_valid;
    next=ResMgr::type_chain;
    ResMgr::type_chain=this;
+   if(defvalue && val_valid)
+   {
+      const char *error=(*val_valid)(&defvalue);
+      if(error)
+	 fprintf(stderr,"Default value for %s is invalid: %s\n",name,error);
+   }
 #if 0
    if(defvalue)
       ResMgr::Set(name,0,defvalue);
@@ -610,6 +616,8 @@ ResDecl::~ResDecl()
 	 SMTask::ReconfigAll(this->name);
 #endif
    }
+
+   xfree(defvalue);
 }
 
 #define MINUTE (60)

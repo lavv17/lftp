@@ -1,3 +1,11 @@
+2001-08-22  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FtpListInfo.cc: remove erroneous assert, handle error.
+	* ftpclass.cc, ftpclass.h: (home_auto) new member; support ftp:home
+	  variable.
+	* resource.cc: add ftp:home, update ftp:retry-530.
+	* ResMgr.cc: verify default value with supplied validator.
+
 2001-08-20  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* resource.cc: fixed ftp:ssl-auth validation.

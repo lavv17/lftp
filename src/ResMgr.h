@@ -115,7 +115,7 @@ class ResDecl
    ResClValid *closure_valid;
 public:
    const char *name;
-   const char *defvalue;
+   char *defvalue;
 
    ResDecl(const char *name,const char *defvalue,
 	   ResValValid *val_valid,ResClValid *closure_valid=0);

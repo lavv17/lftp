@@ -168,6 +168,7 @@ static ResDecl
    ResDecl01b("ftp:bind-data-socket",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl01c("ftp:fix-pasv-address",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl02 ("ftp:fxp-passive-source",	  "no",	   ResMgr::BoolValidate,ResMgr::NoClosure),
+   ResDecl02b("ftp:home",		  "",	   0,0),
    ResDecl02a("ftp:site-group",		  "",	   0,0),
    ResDecl03 ("ftp:list-options",	  "",	   0,0),
    ResDecl04 ("ftp:nop-interval",	  "120",   ResMgr::UNumberValidate,0),
@@ -195,7 +196,7 @@ static ResDecl
    ResDecl18 ("ftp:verify-address",	  "no",    ResMgr::BoolValidate,0),
    ResDecl19 ("ftp:verify-port",	  "no",    ResMgr::BoolValidate,0),
    ResDecl20 ("ftp:web-mode",		  "off",   ResMgr::BoolValidate,0),
-#define RETRY_530 "too many|overloaded|try (again |back )?later|is restricted to|maximum number|number of connect"
+#define RETRY_530 "too many|overloaded|try (again |back )?later|is restricted to|maximum number|number of connect|only.*session.*allowed"
    ResDecl20a("ftp:retry-530",		  RETRY_530,			ResMgr::ERegExpValidate,0),
    ResDecl20b("ftp:retry-530-anonymous",  "Login incorrect|"RETRY_530,	ResMgr::ERegExpValidate,0),
    ResDecl21 ("hftp:cache",		  "yes",   ResMgr::BoolValidate,0),

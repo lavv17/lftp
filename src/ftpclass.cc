@@ -891,6 +891,7 @@ void Ftp::InitFtp()
 
    anon_pass=0;
    anon_user=0;	  // will be set by Reconfig()
+   home_auto=0;
 
    copy_mode=COPY_NONE;
    copy_addr_valid=false;
@@ -925,6 +926,7 @@ Ftp::~Ftp()
 
    xfree(anon_user);
    xfree(anon_pass);
+   xfree(home_auto);
    xfree(list_options);
    xfree(line);
    xfree(all_lines);
@@ -997,21 +999,18 @@ void  Ftp::GetBetterConnection(int level,int count)
 	 peer_curr=o->peer_curr;
       }
 
-      if(home && !o->home)
+      if(home_auto && !o->home_auto)
       {
-	 o->home=xstrdup(home);
+	 o->home_auto=xstrdup(home_auto);
 	 o->dos_path=dos_path;
 	 o->vms_path=vms_path;
       }
-      else if(!home && o->home)
+      else if(!home_auto && o->home_auto)
       {
-	 home=xstrdup(o->home);
+	 home_auto=xstrdup(o->home_auto);
 	 dos_path=o->dos_path;
 	 vms_path=o->vms_path;
       }
-
-      o->ExpandTildeInCWD();
-      ExpandTildeInCWD();
 
       if(level==0 && xstrcmp(real_cwd,o->real_cwd))
 	 continue;
@@ -1288,11 +1287,10 @@ int   Ftp::Do()
 	 // if we don't yet know the home location, try to get it
 	 SendCmd("PWD");
 	 AddResp(RESP_PWD_MKD_OK,CHECK_PWD);
+	 set_real_cwd("~");   // starting point
       }
 
-      set_real_cwd("~");   // starting point
       type=FTP_TYPE_A;	   // just after login we are in TEXT mode
-
       state=EOF_STATE;
       m=MOVED;
 
@@ -2028,8 +2026,9 @@ void Ftp::SendSiteIdle()
 const char *Ftp::QueryStringWithUserAtHost(const char *var)
 {
    const char *u=user?user:"anonymous";
-   char *closure=string_alloca(strlen(u)+1+xstrlen(hostname)+1);
-   sprintf(closure,"%s@%s",u,hostname);
+   const char *h=hostname?hostname:"";
+   char *closure=string_alloca(strlen(u)+1+strlen(h)+1);
+   sprintf(closure,"%s@%s",u,h);
    const char *val=Query(var,closure);
    if(!val || !val[0])
       val=Query(var,hostname);
@@ -3384,8 +3383,13 @@ void Ftp::CheckResp(int act)
    case CHECK_PWD:
       if(is2XX(act))
       {
+	 if(!home_auto)
+	    home_auto=ExtractPWD();   // it allocates space.
 	 if(!home)
-	    home=ExtractPWD();   // it allocates space.
+	 {
+	    home=xstrdup(home_auto);
+	    ExpandTildeInCWD();
+	 }
 	 break;
       }
       break;
@@ -3700,6 +3704,13 @@ void Ftp::Reconfig(const char *name)
    anon_user=xstrdup(Query("anon-user",c));
    xfree(anon_pass);
    anon_pass=xstrdup(Query("anon-pass",c));
+
+   xfree(home);
+   const char *h=QueryStringWithUserAtHost("home");
+   if(h && h[0] && AbsolutePath(h))
+      home=xstrdup(h);
+   else
+      home=xstrdup(home_auto);
 
    if(NoProxy(hostname))
       SetProxy(0);

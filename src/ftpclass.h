@@ -235,6 +235,8 @@ private:
    char	 *anon_user;
    char	 *anon_pass;
 
+   char	 *home_auto;
+
    static const char *DefaultAnonPass();
 
    int	 flags;
