@@ -448,6 +448,20 @@ void FileAccess::Login(const char *user1,const char *pass1)
    cwd=xstrdup(default_cwd);
    xfree(home);
    home=0;
+
+   if(user && pass==0)
+   {
+      for(FileAccess *o=chain; o!=0; o=o->next)
+      {
+	 pass=o->pass;
+	 if(SameSiteAs(o) && o->pass)
+	 {
+	    pass=xstrdup(o->pass);
+	    break;
+	 }
+	 pass=0;
+      }
+   }
 }
 
 void FileAccess::GroupLogin(const char *group,const char *pass)
