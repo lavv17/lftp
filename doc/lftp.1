@@ -532,6 +532,14 @@ quote set-cookie "variable=value; othervar=othervalue"
 set http:post-content-type application/x-www-form-urlencoded
 quote post /cgi-bin/script.cgi "var=value&othervar=othervalue" > local_file
 .De
+.PP
+For FISH - send the command uninterpreted. This can be used to execute
+arbitrary commands on server. The command must not take input or print ###
+at new line beginning. If it does, the protocol will become out of sync.
+.Ds
+open fish://server
+quote find -name \*.zip
+.De
 
 .BR "reget \fIrfile\fP " [ -o " \fIlfile\fP]"
 .PP
