@@ -242,6 +242,8 @@ public:
    void Suspend();
    void Resume();
 
+   void Reconfig(const char *);
+
    static FileCopy *New(FileCopyPeer *src,FileCopyPeer *dst,bool cont);
    static FileCopy *(*fxp_create)(FileCopyPeer *src,FileCopyPeer *dst,bool cont);
 };

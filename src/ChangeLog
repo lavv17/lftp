@@ -3,6 +3,8 @@
 	* commands.cc: don't use netrc if protocol is specified.
 	* ftpclass.cc: don't use s6_addr32, use s6_addr instead (for
 	  freebsd-4.0).
+	* CopyJob.cc: suppress status in Echo if output uses stdout.
+	* FileCopy.cc, FileCopy.h: reconfig Speedometers.
 
 2000-01-15  Alexander V. Lukyanov  <lav@yars.free.net>
 

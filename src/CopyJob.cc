@@ -137,11 +137,14 @@ CopyJob *CopyJob::NewEcho(const char *str,int len,FDStream *o,const char *op)
 {
    if(o==0)
       o=new FDStream(1,"<stdout>");
-   return new CopyJob(FileCopy::New(
+   CopyJob *j=new CopyJob(FileCopy::New(
 	 new FileCopyPeerString(str,len),
 	 new FileCopyPeerFDStream(o,FileCopyPeer::PUT),
 	 false
       ),o->name,op);
+   if(o->usesfd(1))
+      j->NoStatus();
+   return j;
 }
 
 // CopyJobEnv

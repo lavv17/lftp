@@ -401,6 +401,14 @@ void FileCopy::Resume()
    }
 }
 
+void FileCopy::Reconfig(const char *s)
+{
+   if(rate)
+      rate->SetPeriod(ResMgr::Query("xfer:rate-period",0));
+   if(rate_for_eta)
+      rate_for_eta->SetPeriod(ResMgr::Query("xfer:eta-period",0));
+}
+
 void FileCopy::SetError(const char *str)
 {
    xfree(error_text);
