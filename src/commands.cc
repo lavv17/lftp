@@ -632,8 +632,30 @@ Job *CmdExec::builtin_open()
 
    if(!no_bm && host && (bm=lftp_bookmarks.Lookup(host))!=0)
    {
-      char *cmd=string_alloca(5+3+strlen(bm)+2+1);
-      sprintf(cmd,"open -B %s%s\n",bm,background?"&":"");
+      char *cmd=string_alloca(5+3+3+xstrlen(user)+1+xstrlen(pass)+3+xstrlen(port)+strlen(bm)+4+1);
+      strcpy(cmd,"open -B ");
+      if(user)
+      {
+	 strcat(cmd,"-u \"");
+	 unquote(cmd+strlen(cmd),user);
+	 if(pass)
+	 {
+	    strcat(cmd,",");
+	    unquote(cmd+strlen(cmd),pass);
+	 }
+	 strcat(cmd,"\" ");
+      }
+      if(port)
+      {
+	 strcat(cmd,"-p \"");
+	 unquote(cmd+strlen(cmd),port);
+	 strcat(cmd,"\" ");
+      }
+      strcat(cmd,bm);
+      if(background)
+	 strcat(cmd," &\n");
+      strcat(cmd,";\n");
+
       PrependCmd(cmd);
    }
    else

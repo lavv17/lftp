@@ -1,3 +1,10 @@
+2000-07-14  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* NetAccess.cc: (SocketNumericAddress) use SocketAddrLen, this fixes
+	  a problem with solaris8.
+	* Http.cc: set real_pos=0 when no_ranges==true.
+	* commands.cc: fix `open -u ... -p ... bookmark_name'.
+
 2000-07-13  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h: (SendArrayInfoRequests) new method;

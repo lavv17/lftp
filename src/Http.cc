@@ -171,7 +171,7 @@ void Http::ResetRequestData()
 {
    body_size=-1;
    bytes_received=0;
-   real_pos=-1;
+   real_pos=no_ranges?0:-1;
    xfree(status);
    status=0;
    status_consumed=0;
@@ -1180,7 +1180,10 @@ int Http::Do()
 	    if(CheckTimeout())
 	    {
 	       if(no_ranges_if_timeout)
+	       {
 		  no_ranges=true;
+		  real_pos=0; // so that pget would know immediately.
+	       }
 	       return MOVED;
 	    }
 	 }

@@ -156,7 +156,7 @@ const char *NetAccess::SocketNumericAddress(const sockaddr_u *u)
 {
 #ifdef HAVE_GETNAMEINFO
    static char buf[NI_MAXHOST];
-   if(getnameinfo(&u->sa,sizeof(*u),buf,sizeof(buf),0,0,NI_NUMERICHOST)<0)
+   if(getnameinfo(&u->sa,SocketAddrLen(u),buf,sizeof(buf),0,0,NI_NUMERICHOST)<0)
       return "????";
    return buf;
 #else
