@@ -59,7 +59,6 @@ class MirrorJob : public Job
 
    void	 HandleFile(FileInfo *);
 
-   bool cont_this; // try to continue transfer of current file.
    bool create_target_dir;
 
    ListInfo *source_list_info;
