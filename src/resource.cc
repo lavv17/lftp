@@ -269,6 +269,16 @@ static ResDecl
 
 void ResMgr::ClassInit()
 {
+   for(ResDecl *scan=type_chain; scan; scan=scan->next)
+   {
+      if(scan->defvalue && scan->val_valid)
+      {
+	 const char *error=(*scan->val_valid)(&scan->defvalue);
+	 if(error)
+	    fprintf(stderr,"Default value for %s is invalid: %s\n",scan->name,error);
+      }
+   }
+
    // inherit http proxy from environment
    const char *http_proxy=getenv("http_proxy");
    if(http_proxy)

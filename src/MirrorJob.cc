@@ -700,6 +700,8 @@ int   MirrorJob::Do()
 	 if(flags&ALLOW_CHOWN)
 	    same->LocalChown(target_dir);
       }
+      if(waiting_num==0)
+	 transfer_count++; // parent mirror will decrement it.
       state=DONE;
       m=MOVED;
    case(DONE):
@@ -709,6 +711,8 @@ int   MirrorJob::Do()
 	 RemoveWaiting(j);
 	 Delete(j);
 	 transfer_count--;
+	 if(waiting_num==0)
+	    transfer_count++; // parent mirror will decrement it.
 	 m=MOVED;
       }
       break;
@@ -802,7 +806,6 @@ MirrorJob::~MirrorJob()
       fclose(script);
    if(parent_mirror)
       parent_mirror->stats.Add(stats);
-   transfer_count++;	// parent mirror will decrement it.
 }
 
 void MirrorJob::va_Report(const char *fmt,va_list v)
