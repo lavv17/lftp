@@ -87,13 +87,13 @@ uninstall-local:
 
 MODULEFLAGS=$(PIC_FLAG) -shared -nostdlib -DMODULE
 CXXMODLINK=$(CXXCOMPILE) $(LDFLAGS) $(MODULEFLAGS)
-proto-http.so: Http.cc HttpDir.cc
+proto-http.so: Http.cc HttpDir.cc NetAccess.cc
 	@-rm -f $@
 	$(CXXMODLINK) $^ -o $@
 proto-file.so: LocalAccess.cc
 	@-rm -f $@
 	$(CXXMODLINK) $^ -o $@
-proto-ftp.so: ftpclass.cc FtpListInfo.cc FtpGlob.cc FtpDirList.cc md5.c ftp-opie.c
+proto-ftp.so: ftpclass.cc FtpListInfo.cc FtpGlob.cc FtpDirList.cc md5.c ftp-opie.c NetAccess.cc
 	@-rm -f $@
 	$(CXXMODLINK) $^ -o $@
 cmd-mirror.so: MirrorJob.cc
