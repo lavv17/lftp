@@ -418,6 +418,8 @@ void  MirrorJob::InitSets(FileSet *source,FileSet *dest)
       ignore|=FileInfo::IGNORE_DATE_IF_OLDER;
    if(flags&IGNORE_TIME)
       ignore|=FileInfo::DATE;
+   if(flags&IGNORE_SIZE)
+      ignore|=FileInfo::SIZE;
    to_transfer->SubtractSame(dest,ignore);
 
    same->SubtractAny(to_transfer);
@@ -1137,6 +1139,8 @@ CMD(mirror)
       {"Remove-source-files",no_argument,0,256+'R'},
       {"parallel",optional_argument,0,'P'},
       {"ignore-time",no_argument,0,256+'i'},
+      {"ignore-size",no_argument,0,257+'i'},
+      {"only-missing",no_argument,0,256+'m'},
       {"log",required_argument,0,256+'s'},
       {"script",    required_argument,0,256+'S'},
       {"just-print",optional_argument,0,256+'S'},
@@ -1262,6 +1266,12 @@ CMD(mirror)
 	 break;
       case(256+'i'):
 	 flags|=MirrorJob::IGNORE_TIME;
+	 break;
+      case(257+'i'):
+	 flags|=MirrorJob::IGNORE_SIZE;
+	 break;
+      case(256+'m'):
+	 flags|=MirrorJob::IGNORE_TIME|MirrorJob::IGNORE_SIZE;
 	 break;
       case('P'):
 	 if(optarg)

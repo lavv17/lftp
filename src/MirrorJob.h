@@ -136,7 +136,8 @@ public:
       NO_UMASK=1<<8,
       ALLOW_CHOWN=1<<9,
       IGNORE_TIME=1<<10,
-      REMOVE_FIRST=1<<11
+      REMOVE_FIRST=1<<11,
+      IGNORE_SIZE=1<<12
    };
 
    void SetFlags(int f,int v)
