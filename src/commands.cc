@@ -435,6 +435,7 @@ Job *CmdExec::builtin_cd()
    if (!verify_path || background)
    {
       session->Chdir(dir,false);
+      exit_code=0;
       return 0;
    }
    session->Chdir(dir);

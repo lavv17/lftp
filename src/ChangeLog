@@ -1,6 +1,7 @@
 1999-10-12  Alexander V. Lukyanov  <lav@yars.free.net>
 
-	* commands.cc, CmdExec.cc: call Reconfig after session change.
+	* commands.cc, CmdExec.cc: call Reconfig after session change;
+	  (do_cd) exit_code=0 if check is not needed.
 
 1999-10-11  Alexander V. Lukyanov  <lav@yars.free.net>
 
