@@ -4,6 +4,9 @@
 	* FileAccess.h, FileAccess.cc, Http.cc, Http.h, ftpclass.cc, ftpclass.h:
 	  NetAccess.cc, NetAccess.h: new method ResetLocationData; reset
 	  home_auto on Connect/Login/AnonymousLogin.
+	* FileAccess.h, Fish.cc, ftpclass.cc, ftpclass.h: (FA::set_home) new
+	  method; use it; (Ftp::PropagateHomeAuto) new method; use it; fixed
+	  bug with unsynced home's.
 
 2001-10-08  Glenn F. Maynard <g_ld@zewt.org>
 
