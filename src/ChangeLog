@@ -1,3 +1,11 @@
+2000-09-21  Arkadiusz Miskiewicz <misiek@pld.org.pl>
+
+	* ftpclass.cc: fix addr_received initialization for ipv6.
+
+2000-09-21  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* module.cc: aliases for https and ftps.
+
 2000-09-19  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* CmdExec.cc: fix error on some compilers (e.g. irix).

@@ -1599,6 +1599,7 @@ int   Ftp::Do()
 	       goto ipv4_pasv;
 	    SendCmd("EPSV");
 	    AddResp(229,CHECK_EPSV);
+	    addr_received=0;
 #else
 	    Fatal(_("unsupported network protocol"));
 	    return MOVED;
