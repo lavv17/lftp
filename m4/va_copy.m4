@@ -52,4 +52,69 @@ AC_DEFUN(lftp_VA_COPY,
    if test -n "$va_copy_func"; then
        AC_DEFINE_UNQUOTED(VA_COPY,$va_copy_func,[A 'va_copy' style function])
    fi
+
+   AC_CACHE_CHECK([whether va_lists can be copied by value],lftp_cv_va_val_copy,[
+	AC_TRY_RUN([
+	#include <stdarg.h>
+	#include <string.h>
+	void f (int i, ...) {
+	va_list args1, args2;
+	va_start (args1, i);
+
+	memmove(&args2, &args1, sizeof(args));
+	if (va_arg (args2, int) != 42 || va_arg (args1, int) != 42)
+	  exit (1);
+	va_end (args1); va_end (args2);
+	}
+	int main() {
+	  f (0, 42);
+	  return 0;
+	}],
+	[lftp_cv_va_val_copy=yes],
+	[lftp_cv_va_val_copy=no],
+	[])
+   ])
+
+   if test x$lftp_cv_va_val_copy = xyes; then
+      AC_DEFINE(VA_VAL_COPY,1,[Define to 1 if va_lists can be copied by value])
+   fi
+
+   AC_CACHE_CHECK([whether va_lists can be copied by pointer],lftp_cv_va_ptr_copy,[
+	AC_TRY_RUN([
+	#include <stdarg.h>
+	void f (int i, ...) {
+	va_list args1, args2;
+	va_start (args1, i);
+
+	*args2 = *args1;
+	if (va_arg (args2, int) != 42 || va_arg (args1, int) != 42)
+	  exit (1);
+	va_end (args1); va_end (args2);
+	}
+	int main() {
+	  f (0, 42);
+	  return 0;
+	}],
+	[lftp_cv_va_val_copy=yes],
+	[lftp_cv_va_val_copy=no],
+	[])
+   ])
+
+   if test x$lftp_cv_va_ptr_copy = xyes; then
+      AC_DEFINE(VA_PTR_COPY,1,[Define to 1 if va_lists can be copied by pointer])
+   fi
+
+   if test x$lftp_cv_va_val_copy = xno -a x$lftp_cv_va_val_copy = xno -a \
+           x$lftp_cv_va_copy = xno -a x$lftp_cv___va_copy = xno; then
+	   AC_MSG_ERROR(Can't find a way to va_copy.)
+   fi
+
+   AH_VERBATIM([OPT_VA_COPY],[#if !defined (VA_COPY)
+      #  if defined (VA_PTR_COPY)
+      #    define VA_COPY(ap1, ap2)   (*(ap1) = *(ap2))
+      #  elif defined (VA_VAL_COPY)
+      #    include <string.h>
+      #    define VA_COPY(to,from) (memcpy(&(to),&(from),sizeof((to))))
+      #  endif
+      #endif /* !VA_COPY */ ])
 ])

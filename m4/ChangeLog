@@ -1,3 +1,12 @@
+2001-12-05	Glenn Maynard <g_ld@zewt.org>
+
+	* gnu-source.m4: new file.
+	* needtrio.m4: add missing def.
+	* va_copy.m4: Add copy-by-value test; always either define VA_LIST
+	  or fail during autoconf.
+
+**** some events missed
+
 2000-12-18	Joerg Dorchain <jd@europeonline.net>
 
 	* ssl.m4: look for ssl library in $prefix.

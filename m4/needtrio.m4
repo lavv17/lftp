@@ -13,6 +13,7 @@ AC_DEFUN([LFTP_NEED_TRIO],[
 	 {
 	    unsigned long long x=0,x1;
 	    long long y=0,y1;
+	    char buf[128];
 
 	    x=~x;
 	    sscanf("0","%llu",&x);
