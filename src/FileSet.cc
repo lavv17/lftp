@@ -204,7 +204,8 @@ bool  FileInfo::SameAs(const FileInfo *fi,bool only_newer,time_t prec,int ignore
    if(defined&SYMLINK_DEF && fi->defined&SYMLINK_DEF)
       return (strcmp(symlink,fi->symlink)==0);
 
-   if(defined&DATE && fi->defined&DATE && !(ignore&DATE))
+   if(defined&(DATE|DATE_UNPREC) && fi->defined&(DATE|DATE_UNPREC)
+   && !(ignore&DATE))
    {
       if(only_newer && date<fi->date)
 	    return true;

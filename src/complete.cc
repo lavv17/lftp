@@ -35,6 +35,7 @@
 #include "LsCache.h"
 #include "complete.h"
 #include "lftp_rl.h"
+#include "url.h"
 
 CDECL_BEGIN
 #include "readline/readline.h"
@@ -426,7 +427,7 @@ static char **lftp_completion (char *text,int start,int end)
       generator = array_generator;
       break;
    case LOCAL:
-      if(force_remote)
+      if(force_remote || (url::is_url(text) && remote_completion))
 	 goto really_remote;
       break;
    case REMOTE_FILE:

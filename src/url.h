@@ -39,6 +39,8 @@ public:
    {
       xfree(memory);
    }
+
+   void Combine(char *buf,const char *home=0);
 };
 
 class url
@@ -60,6 +62,8 @@ public:
 	 ParsedURL url(p,true);
 	 return url.proto!=0;
       }
+
+   static int path_index(const char *p);
 };
 
 #endif//URL_H

@@ -603,16 +603,19 @@ Job *CmdExec::builtin_open()
 	 url=new ParsedURL(host);
 
 	 const ParsedURL &uc=*url;
-	 if(uc.host)
+	 if(uc.host && uc.host[0])
 	 {
 	    cwd_history.Set(session,session->GetCwd());
 
 	    FileAccess *new_session=0;
 	    // get session with specified protocol if protocol differs
 	    if(uc.proto && strcmp(uc.proto,session->GetProto())
-	    || session->GetProto()[0]==0) // or if current session is dummy
+	    || session->GetProto()[0]==0 // or if current session is dummy
+	    || !strcmp(session->GetProto(),"file"))
 	    {
 	       const char *p=uc.proto;
+	       if(!p)
+		  p=ResMgr::Query("cmd:default-protocol",0);
 	       if(!p)
 		  p="ftp";
 	       new_session=FileAccess::New(p);
@@ -645,13 +648,12 @@ Job *CmdExec::builtin_open()
 	       path=uc.path;
 	 }
 
-	 if(!uc.proto && (!strcmp(session->GetProto(),"ftp")
-		       || !strcmp(session->GetProto(),"hftp")))
+	 if(!pass)
 	 {
 	    nrc=NetRC::LookupHost(host);
 	    if(nrc)
 	    {
-	       if(nrc->user && !user
+	       if((!uc.proto && nrc->user && !user)
 	       || (nrc->user && user && !strcmp(nrc->user,user) && !pass))
 	       {
 		  user=nrc->user;
@@ -921,7 +923,7 @@ CMD(get)
 {
    int opt;
    bool cont=false;
-   const char *opts="+ceua";
+   const char *opts="+ceuaO:";
    const char *op=args->a0();
    ArgV	 *get_args=new ArgV(op);
    int n_conn=0;
@@ -930,16 +932,17 @@ CMD(get)
    bool glob=false;
    bool make_dirs=false;
    bool reverse=false;
+   char *output_dir=0;
 
    args->rewind();
    if(!strncmp(op,"re",2))
    {
       cont=true;
-      opts="+eua";
+      opts="+euaO:";
    }
    if(!strcmp(op,"pget"))
    {
-      opts="+n:u";
+      opts="+n:uO:";
       n_conn=-1;
    }
    else if(!strcmp(op,"put") || !strcmp(op,"reput"))
@@ -949,12 +952,12 @@ CMD(get)
    else if(!strcmp(op,"mget"))
    {
       glob=true;
-      opts="+cead";
+      opts="ceadO:";
    }
    else if(!strcmp(op,"mput"))
    {
       glob=true;
-      opts="+cead";
+      opts="ceadO:";
       reverse=true;
    }
    while((opt=args->getopt(opts))!=EOF)
@@ -981,6 +984,9 @@ CMD(get)
       case('d'):
 	 make_dirs=true;
 	 break;
+      case('O'):
+	 output_dir=optarg;
+	 break;
       case('?'):
       err:
 	 eprintf(_("Try `help %s' for more information.\n"),op);
@@ -998,6 +1004,7 @@ CMD(get)
 	 goto err;
       }
       delete get_args;
+      output_dir=xstrdup(output_dir);  // save it from deleting.
       // remove options
       while(args->getindex()>1)
 	 args->delarg(1);
@@ -1008,60 +1015,30 @@ CMD(get)
 	 j->DeleteFiles();
       if(ascii)
 	 j->Ascii();
+      if(output_dir)
+	 j->OutputDir(output_dir);
       args=0;
       return j;
    }
    args->back();
    const char *a=args->getnext();
-   const char *a1;
    if(a==0)
       goto file_name_missed;
    while(a)
    {
-      get_args->Append(a);
-      ParsedURL url(a,true);
-      a1=0;
-      if(url.proto && url.path)
-	 a1=basename_ptr(url.path);
-      if(a1==0)
-	 a1=basename_ptr(a);
+      const char *src=a;
+      const char *dst=0;
       a=args->getnext();
       if(a && !strcmp(a,"-o"))
       {
-	 a=args->getnext();
-	 if(a)
-	 {
-	    ParsedURL url1(a,true);
-	    if(url1.proto==0 && !reverse)
-	    {
-	       a=expand_home_relative(a);
-	       struct stat st;
-	       int res=stat(a,&st);
-	       if(res!=-1 && S_ISDIR(st.st_mode))
-	       {
-		  char *comb=string_alloca(strlen(a)+strlen(a1)+2);
-		  sprintf(comb,"%s/%s",a,a1);
-		  a=comb;
-	       }
-	    }
-	    else
-	    {
-	       if(a[0] && a[strlen(a)-1]=='/')
-	       {
-		  char *dst1=string_alloca(strlen(a)+strlen(a1)+1);
-		  strcpy(dst1,a);
-		  strcat(dst1,a1);
-		  a=dst1;
-	       }
-	    }
-	    get_args->Append(a);
-	 }
-	 else
-	    get_args->Append(a1);
+	 dst=args->getnext();
 	 a=args->getnext();
       }
-      else
-	 get_args->Append(a1);
+      if(reverse)
+	 src=expand_home_relative(src);
+      dst=output_file_name(src,dst,!reverse,output_dir,false);
+      get_args->Append(src);
+      get_args->Append(dst);
    }
 
    if(n_conn==0)
@@ -1329,7 +1306,7 @@ CMD(user)
 
    if(u.proto && u.user)
    {
-      FA *s=FA::New(&u);
+      FA *s=FA::New(&u,false);
       if(s)
       {
 	 s->SetPasswordGlobal(pass);

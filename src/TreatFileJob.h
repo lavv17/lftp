@@ -39,6 +39,17 @@ protected:
 
    virtual void	TreatCurrent() = 0;
 
+   FA *url_session;
+   FA *Session() { return url_session?url_session:session; }
+   void Reuse()
+      {
+	 if(url_session)
+	 {
+	    SessionPool::Reuse(url_session);
+	    url_session=0;
+	 }
+      }
+
 public:
    int	 Do();
    int	 Done() { return done; }

@@ -30,6 +30,7 @@ TreatFileJob::TreatFileJob(FileAccess *s,ArgV *a) : SessionJob(s)
    done=false;
    quiet=false;
    failed=file_count=0;
+   url_session=0;
 
    args=a;
 
@@ -42,6 +43,7 @@ TreatFileJob::TreatFileJob(FileAccess *s,ArgV *a) : SessionJob(s)
 TreatFileJob::~TreatFileJob()
 {
    delete args;
+   Reuse();
 }
 
 int TreatFileJob::Do()
@@ -59,19 +61,20 @@ int TreatFileJob::Do()
       if(!first)
 	 first=curr;
    }
-   if(session->IsClosed())
+   if(Session()->IsClosed())
       TreatCurrent();
-   int res=session->Done();
+   int res=Session()->Done();
    if(res==FA::IN_PROGRESS)
       return STALL;
    if(res<0)
    {
       failed++;
       if(!quiet)
-	 fprintf(stderr,"%s: %s\n",op,session->StrError(res));
+	 fprintf(stderr,"%s: %s\n",op,Session()->StrError(res));
    }
    file_count++;
-   session->Close();
+   Session()->Close();
+   Reuse();
    curr=0;
    return MOVED;
 }
@@ -81,13 +84,13 @@ void  TreatFileJob::PrintStatus(int v)
    SessionJob::PrintStatus(v);
    if(Done() || !curr)
       return;
-   printf("\t`%s' [%s]\n",curr,session->CurrentStatus());
+   printf("\t`%s' [%s]\n",curr,Session()->CurrentStatus());
 }
 
 void  TreatFileJob::ShowRunStatus(StatusLine *s)
 {
    if(curr && !Done())
-      s->Show("%s `%s' [%s]",op,curr,session->CurrentStatus());
+      s->Show("%s `%s' [%s]",op,curr,Session()->CurrentStatus());
 }
 
 void  TreatFileJob::AddFile(const char *f)

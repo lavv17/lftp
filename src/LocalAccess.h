@@ -39,7 +39,9 @@ public:
    LocalAccess(const LocalAccess *);
    ~LocalAccess();
 
-   void Connect(const char *host,const char *port);
+   void Connect(const char *host,const char *port) {}
+   void AnonymousLogin() {}
+   void Login(const char *u,const char *p) {}
 
    const char *GetProto() { return "file"; }
    FileAccess *Clone() { return new LocalAccess(this); }
@@ -71,6 +73,7 @@ public:
 
 class LocalGlob : public Glob
 {
+   const char *cwd;
 public:
    LocalGlob(const char *cwd,const char *pattern);
    const char *Status() { return "..."; }

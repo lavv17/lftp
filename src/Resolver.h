@@ -54,7 +54,7 @@ class Resolver : public SMTask
 
    int pipe_to_child[2];
    ProcWait *w;
-   FileInputBuffer *buf;
+   Buffer *buf;
    int timeout;
 
    time_t start_time;
@@ -79,6 +79,7 @@ class Resolver : public SMTask
    static class ResolverCache *cache;
 
    bool no_cache;
+   bool use_fork;
 
 public:
    int	 Do();

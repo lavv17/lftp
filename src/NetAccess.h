@@ -97,6 +97,7 @@ public:
 
    int GetRetries() { return retries; }
    void SetRetries(int r) { retries=r; }
+   time_t GetTryTime() { return try_time; }
 };
 
 class RateLimit

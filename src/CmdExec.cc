@@ -40,6 +40,7 @@
 #define super SessionJob
 
 static ResDecl
+   res_default_proto	   ("cmd:default-protocol","ftp",0,0),
    res_long_running	   ("cmd:long-running",	"30",ResMgr::UNumberValidate,0),
    res_remote_completion   ("cmd:remote-completion","on",ResMgr::BoolValidate,0),
    res_prompt		   ("cmd:prompt",	"lftp> ",0,0),

@@ -36,6 +36,8 @@ class FileCopyFtp : public FileCopy
    bool disable_fxp;
    int src_retries;
    int dst_retries;
+   time_t src_try_time;
+   time_t dst_try_time;
 
    void Close();
 

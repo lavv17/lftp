@@ -127,6 +127,7 @@ class Ftp : public NetAccess
    void  AddResp(int exp,int fail,check_case_t ck=CHECK_NONE,bool log=false);
    void  SetRespPath(const char *p);
    int   CheckResp(int resp);
+   static int ReplyLogPriority(int code);
    void  PopResp();
    void	 EmptyRespQueue();
    void	 CloseRespQueue(); // treat responses on Close()
@@ -336,11 +337,12 @@ public:
    Glob *MakeGlob(const char *pattern);
    DirList *MakeDirList(ArgV *args);
 
-   void SetCopyMode(copy_mode_t cm,bool rp,int rnum)
+   void SetCopyMode(copy_mode_t cm,bool rp,int rnum,time_t tt)
       {
 	 copy_mode=cm;
 	 copy_passive=rp;
 	 retries=rnum;
+	 try_time=tt;
       }
    bool SetCopyAddress(Ftp *o)
       {

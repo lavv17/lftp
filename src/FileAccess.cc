@@ -39,6 +39,8 @@
 #include "log.h"
 #include "url.h"
 #include "misc.h"
+#include "DummyProto.h"
+#include "netrc.h"
 #ifdef WITH_MODULES
 # include "module.h"
 #endif
@@ -371,6 +373,7 @@ const char *FileAccess::GetFileURL(const char *f,int flags)
    const char *proto=GetProto();
    if(proto[0]==0)
       return "";
+
    len+=strlen(proto)+strlen("://");
    if(user)
    {
@@ -386,41 +389,20 @@ const char *FileAccess::GetFileURL(const char *f,int flags)
       f=dir_file(cwd?cwd:"~",f);
    len+=1+strlen(f)*3;
    url=(char*)xrealloc(url,len);
-   sprintf(url,"%s://",proto);
-   if(user)
-   {
-      url::encode_string(user,url+strlen(url),URL_USER_UNSAFE);
-      if(pass && (pass_open || (flags&WITH_PASSWORD)))
-      {
-	 strcat(url,":");
-	 url::encode_string(pass,url+strlen(url),URL_PASS_UNSAFE);
-      }
-      strcat(url,"@");
-   }
-   if(hostname)
-      url::encode_string(hostname,url+strlen(url),URL_HOST_UNSAFE);
-   if(portname)
-   {
-      strcat(url,":");
-      url::encode_string(portname,url+strlen(url),URL_PORT_UNSAFE);
-   }
-   if(strcmp(f,"~") && !(flags&NO_PATH))
-   {
-      if(f[0]!='/') // e.g. ~/path
-	 strcat(url,"/");
-      if(!strcmp(GetProto(),"ftp") || !strcmp(GetProto(),"hftp"))
-      {
-	 // some cruft for ftp urls...
-	 if(f[0]=='/' && xstrcmp(home,"/"))
-	 {
-	    strcat(url,"/%2F");
-	    f++;
-	 }
-	 else if(f[0]=='~' && f[1]=='/')
-	    f+=2;
-      }
-      url::encode_string(f,url+strlen(url),URL_PATH_UNSAFE);
-   }
+
+   ParsedURL u("");
+
+   u.proto=(char*)proto;
+   u.user=user;
+   if(pass_open || (flags&WITH_PASSWORD))
+      u.pass=pass;
+   u.host=hostname;
+   u.port=portname;
+   if(!(flags&NO_PATH))
+      u.path=(char*)f;
+
+   u.Combine(url,home);
+
    return url;
 }
 
@@ -466,6 +448,15 @@ void FileAccess::Login(const char *user1,const char *pass1)
 	    break;
 	 }
 	 pass=0;
+      }
+      if(pass==0 && hostname) // still no pass? Try .netrc
+      {
+	 NetRC::Entry *nrc=NetRC::LookupHost(hostname);
+	 if(nrc)
+	 {
+	    if(nrc->user && !strcmp(nrc->user,user))
+	       pass=xstrdup(nrc->pass);
+	 }
       }
    }
 }
@@ -875,11 +866,15 @@ void FileAccess::CleanupAll()
       o->CleanupThis();
 }
 
-FileAccess *FileAccess::New(const ParsedURL *u)
+FileAccess *FileAccess::New(const ParsedURL *u,bool dummy)
 {
    FileAccess *s=New(u->proto);
    if(!s)
-      return 0;
+   {
+      if(!dummy)
+	 return 0;
+      return new DummyNoProto(u->proto);
+   }
    s->Connect(u->host,u->port);
    if(u->user)
       s->Login(u->user,u->pass);
@@ -1103,6 +1098,8 @@ GlobURL::GlobURL(FileAccess *s,const char *p)
    session=s;
    reuse=false;
    glob=0;
+   url_prefix=xstrdup(p);
+   url_prefix[url::path_index(p)]=0;
 
    ParsedURL p_url(p,true);
    if(p_url.proto && p_url.path)
@@ -1127,6 +1124,7 @@ GlobURL::~GlobURL()
       delete glob;
    if(session && reuse)
       SessionPool::Reuse(session);
+   xfree(url_prefix);
 }
 char **GlobURL::GetResult()
 {
@@ -1137,7 +1135,7 @@ char **GlobURL::GetResult()
       return list;
    for(int i=0; list[i]; i++)
    {
-      const char *n=session->GetFileURL(list[i]);
+      const char *n=url_file(url_prefix,list[i]);
       list[i]=(char*)xrealloc(list[i],strlen(n)+1);
       strcpy(list[i],n);
    }

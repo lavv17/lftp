@@ -1,3 +1,36 @@
+2000-01-22  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* ChmodJob.cc, TreatFileJob.cc, TreatFileJob.h, mkdirJob.cc,
+	  mkdirJob.h, rmJob.cc: recognize urls.
+	* CmdExec.cc: cmd:default-protocol new setting.
+	* DummyProto.cc, DummyProto.h: add DummyNoProto class.
+	* FileAccess.cc: use ParsedURL::Combine; get password from .netrc
+	  if not present; create DummyNoProto if protocol is not supported;
+	  (GlobURL) find url prefix and use it; make StrError virtual.
+	* FileAccess.h: see above.
+	* FileCopy.cc: now there is no need to handle unsupported protocol.
+	* FileCopyFtp.cc, FileCopyFtp.h: save/restore try_time.
+	* FileSet.cc: compare DATE_UNPREC too.
+	* LocalAccess.cc, LocalAccess.h: ignore AnonymousLogin and Login;
+	  improve globbing.
+	* MirrorJob.cc: revert the change from 1998-10-13 - don't ignore date.
+	* NetAccess.h: add GetTryTime.
+	* Resolver.cc, Resolver.h: add dns:use-fork setting; pass data over
+	  a Buffer.
+	* commands.cc: add cmd:default-protocol; change protocol in open
+	  if current one is file; use .netrc not only for ftp; add option -O
+	  for get, put, mget, mput; use output_file_name.
+	* complete.cc: in local completion check for URLs too.
+	* ftpclass.cc: disallow empty home; (ReplyLogPriority) new method;
+	  handle 221 reply as 421.
+	* ftpclass.h: set try_time in SetCopyMode.
+	* mgetJob.cc, mgetJob.h: (make_directory) new method; use output_file_name;
+	  support for -O.
+	* misc.cc, misc.h: (url_file) new function; (output_file_name) new
+	  function.
+	* url.cc, url.h: (url::path_index) new function;
+	  (ParsedURL::Combine) new method.
+
 2000-01-19  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FtpListInfo.cc: check file names for slashes.

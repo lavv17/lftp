@@ -59,11 +59,6 @@ void LocalAccess::Init()
    hostname=xstrdup("localhost");
 }
 
-void LocalAccess::Connect(const char *host,const char *port)
-{
-   // ignore.
-}
-
 LocalAccess::LocalAccess() : FileAccess()
 {
    Init();
@@ -581,18 +576,28 @@ check_again:
 
 Glob *LocalAccess::MakeGlob(const char *pattern)
 {
-   return new LocalGlob(cwd,pattern);
+   xfree(file);
+   file=xstrdup(pattern);
+   ExpandTildeInCWD();
+   return new LocalGlob(cwd,file);
 }
 
-LocalGlob::LocalGlob(const char *cwd,const char *pattern)
+LocalGlob::LocalGlob(const char *c,const char *pattern)
    : Glob(pattern)
 {
+   cwd=c;
+}
+int LocalGlob::Do()
+{
+   if(done)
+      return STALL;
+
    glob_t g;
    char *oldcwd=xgetcwd();
    if(!oldcwd)
    {
       SetError("cannot get current directory");
-      return;
+      return MOVED;
    }
    if(chdir(cwd)==-1)
    {
@@ -601,26 +606,31 @@ LocalGlob::LocalGlob(const char *cwd,const char *pattern)
       sprintf(err,"chdir(%s): %s",cwd,se);
       SetError(err);
       xfree(oldcwd);
-      return;
+      return MOVED;
    }
 
    glob(pattern, 0, NULL, &g);
 
+   for(unsigned i=0; i<g.gl_pathc; i++)
+   {
+      struct stat st;
+      if(stat(g.gl_pathv[i],&st)!=-1)
+      {
+	 if(dirs_only && !S_ISDIR(st.st_mode))
+	    continue;
+	 if(files_only && !S_ISREG(st.st_mode))
+	    continue;
+      }
+      add(g.gl_pathv[i]);
+   }
+   globfree(&g);
+
    if(chdir(oldcwd)==-1)
       fprintf(stderr,"chdir(%s): %s",oldcwd,strerror(errno));
    xfree(oldcwd);
-   for(unsigned i=0; i<g.gl_pathc; i++)
-      add(g.gl_pathv[i],strlen(g.gl_pathv[i]));
-   globfree(&g);
-}
-int LocalGlob::Do()
-{
-   if(!done)
-   {
-      done=true;
-      return MOVED;
-   }
-   return STALL;
+
+   done=true;
+   return MOVED;
 }
 
 DirList *LocalAccess::MakeDirList(ArgV *a)

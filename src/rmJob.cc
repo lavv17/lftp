@@ -25,6 +25,7 @@
 #include <errno.h>
 #include "rmJob.h"
 #include "plural.h"
+#include "url.h"
 
 rmJob::rmJob(FileAccess *s,ArgV *a) : TreatFileJob(s,a)
 {
@@ -57,5 +58,11 @@ void  rmJob::SayFinal()
 
 void rmJob::TreatCurrent()
 {
-   session->Open(curr,mode);
+   ParsedURL u(curr,true);
+   if(u.proto)
+      url_session=FA::New(&u);
+   if(url_session)
+      url_session->Open(u.path,mode);
+   else
+      session->Open(curr,mode);
 }

@@ -446,6 +446,9 @@ char *Ftp::ExtractPWD()
    if(sscanf(line,"%*d \"%[^\"]\"",pwd)!=1)
       return 0;
 
+   if(pwd[0]==0)
+      return 0;	  // empty home not allowed.
+
    int dev_len=device_prefix_len(pwd);
    if(pwd[dev_len]=='[')
    {
@@ -1685,6 +1688,18 @@ void  Ftp::LogResp(const char *l)
    result_size+=strlen(l);
 }
 
+int Ftp::ReplyLogPriority(int code)
+{
+   // Greeting messages
+   if(code==220 || code==230)
+      return 3;
+   // Error messages
+   // 221 is the reply to QUIT, but we don't expect it.
+   if(code>=400 || code==221)
+      return 0;
+   return 4;
+}
+
 int  Ftp::ReceiveResp()
 {
    char  *store;
@@ -1721,14 +1736,8 @@ int  Ftp::ReceiveResp()
 	    && is_ascii_digit(line[1]) && is_ascii_digit(line[2]))
 	       code=atoi(line);
 
-	    int pri=4;
-	    if(code==220 || code==230
-	    || (code==0 && (multiline_code==220 || multiline_code==230)))
-	       pri=3;
-	    if(code >= 400 || (code==0 && multiline_code >= 400 ))
-	       pri=0;
-
-	    DebugPrint("<--- ",line,pri);
+	    DebugPrint("<--- ",line,
+		  ReplyLogPriority(multiline_code?multiline_code:code));
 	    if(!RespQueueIsEmpty() && RespQueue[RQ_head].log_resp)
 	    {
 	       LogResp(line);
@@ -2596,7 +2605,7 @@ int   Ftp::CheckResp(int act)
    if(act/100==1) // intermediate responses are ignored
       return -1;
 
-   if(act==421)  // timeout or something else
+   if(act==421 || act==221)  // timeout or something else
    {
       DebugPrint("**** ",_("remote end closes connection"),3);
       return(INITIAL_STATE);

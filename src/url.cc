@@ -151,6 +151,73 @@ decode:
    url::decode_string(path);
 }
 
+int url::path_index(const char *base)
+{
+   const char *scan=base;
+   while(isalpha(*scan))
+      scan++;
+   if(scan[0]==':' && scan[1]=='/' && scan[2]=='/')
+   {
+      // found protocol
+      const char *slash=strchr(scan+3,'/');
+      if(slash)
+	 return slash-base;
+      return strlen(base);
+   }
+   else if(scan[0]==':' && !strncmp(base,"file:",5))
+   {
+      // special form for file protocol
+      return scan+1-base;
+   }
+   return 0;
+}
+
+void ParsedURL::Combine(char *url,const char *home)
+{
+   bool is_file=!strcmp(proto,"file");
+   bool is_ftp=(!strcmp(proto,"ftp") || !strcmp(proto,"hftp"));
+
+   strcpy(url,proto);
+   strcat(url,is_file?":":"://");
+   if(user && !is_file)
+   {
+      url::encode_string(user,url+strlen(url),URL_USER_UNSAFE);
+      if(pass)
+      {
+	 strcat(url,":");
+	 url::encode_string(pass,url+strlen(url),URL_PASS_UNSAFE);
+      }
+      strcat(url,"@");
+   }
+   if(host && !is_file)
+      url::encode_string(host,url+strlen(url),URL_HOST_UNSAFE);
+   if(port && !is_file)
+   {
+      strcat(url,":");
+      url::encode_string(port,url+strlen(url),URL_PORT_UNSAFE);
+   }
+   if(path==0)
+      return;
+   if(strcmp(path,"~"))
+   {
+      if(path[0]!='/' && !is_file) // e.g. ~/path
+	 strcat(url,"/");
+      int p_offset=0;
+      if(is_ftp)
+      {
+	 // some cruft for ftp urls...
+	 if(path[0]=='/' && xstrcmp(home,"/"))
+	 {
+	    strcat(url,"/%2F");
+	    p_offset=1;
+	 }
+	 else if(path[0]=='~' && path[1]=='/')
+	    p_offset=2;
+      }
+      url::encode_string(path+p_offset,url+strlen(url),URL_PATH_UNSAFE);
+   }
+}
+
 void url::decode_string(char *p)
 {
    if(!p)

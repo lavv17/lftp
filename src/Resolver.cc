@@ -74,7 +74,8 @@ static ResDecl
    res_cache_size  ("dns:cache-size",   "256", ResMgr::UNumberValidate,0),
    res_timeout	   ("dns:fatal-timeout","0",   ResMgr::UNumberValidate,0),
    res_order	   ("dns:order",	DEFAULT_ORDER, Resolver::OrderValidate,0),
-   res_query_srv   ("dns:SRV-query",    "no",  ResMgr::BoolValidate,0);
+   res_query_srv   ("dns:SRV-query",    "no",  ResMgr::BoolValidate,0),
+   res_use_fork	   ("dns:use-fork",     "yes", ResMgr::BoolValidate,0);
 
 
 struct address_family
@@ -114,6 +115,7 @@ Resolver::Resolver(const char *h,const char *p,const char *defp,
    addr=0;
    addr_num=0;
    buf=0;
+   use_fork=res_use_fork.Query(0);
 
    error=0;
 
@@ -188,41 +190,50 @@ int   Resolver::Do()
       Log::global->Format(4,"---- %s\n",_("Resolving host address..."));
    }
 
-   if(!w)
+   if(use_fork)
    {
-      pid_t proc=fork();
-      if(proc==-1)
+      if(!w && !buf)
       {
-	 block+=TimeOut(1000);
-	 return m;
-      }
-      if(proc==0)
-      {	 // child
-	 SignalHook::Ignore(SIGINT);
-	 SignalHook::Ignore(SIGTSTP);
-	 SignalHook::Ignore(SIGQUIT);
-	 SignalHook::Ignore(SIGHUP);
-	 close(0);
-// 	 close(2);
-	 dup2(pipe_to_child[1],1);
+	 pid_t proc=fork();
+	 if(proc==-1)
+	 {
+	    block+=TimeOut(1000);
+	    return m;
+	 }
+	 if(proc==0)
+	 {	 // child
+	    SignalHook::Ignore(SIGINT);
+	    SignalHook::Ignore(SIGTSTP);
+	    SignalHook::Ignore(SIGQUIT);
+	    SignalHook::Ignore(SIGHUP);
+	    close(0);
+	    dup2(pipe_to_child[1],1);
+	    close(pipe_to_child[1]);
+	    close(pipe_to_child[0]);
+	    DoGethostbyname();
+	    _exit(0);
+	 }
+	 // parent
 	 close(pipe_to_child[1]);
-	 close(pipe_to_child[0]);
-	 DoGethostbyname();
-	 _exit(0);
+	 pipe_to_child[1]=-1;
+
+	 w=new ProcWait(proc);
+	 m=MOVED;
       }
-      // parent
-      close(pipe_to_child[1]);
-      pipe_to_child[1]=-1;
-
-      w=new ProcWait(proc);
-      m=MOVED;
+      if(!buf)
+      {
+	 buf=new FileInputBuffer(new FDStream(pipe_to_child[0],"<pipe>"));
+	 while(buf->Do()==MOVED);
+	 m=MOVED;
+      }
    }
-
-   if(!buf)
+   else
    {
-      buf=new FileInputBuffer(new FDStream(pipe_to_child[0],"<pipe>"));
-      while(buf->Do()==MOVED);
-      m=MOVED;
+      if(!buf)
+      {
+	 buf=new Buffer();
+	 DoGethostbyname();
+      }
    }
 
    if(buf->Error())
@@ -697,10 +708,11 @@ void Resolver::DoGethostbyname()
 	    port_number=se->s_port;
 	 else
 	 {
-	    write(1,"P",1);
+	    buf->Put("P");
 	    char *msg=string_alloca(64+strlen(tproto));
 	    sprintf(msg,"no such %s service",tproto);
-	    write(1,msg,strlen(msg));
+	    buf->Put(msg);
+	    buf->PutEOF();
 	    return;
 	 }
       }
@@ -711,16 +723,27 @@ void Resolver::DoGethostbyname()
 
    LookupOne(hostname);
 
+   if(!buf)
+      buf=new FileOutputBuffer(new FDStream(1,"<pipe>"));
+
    if(addr_num==0)
    {
-      write(1,"E",1);
+      buf->Put("E");
       if(error==0)
 	 error="No address found";
-      write(1,error,strlen(error));
+      buf->Put(error);
+      buf->PutEOF();
       return;
    }
-   write(1,"O",1);
-   write(1,addr,addr_num*sizeof(*addr));
+   buf->Put("O");
+   buf->Put((char*)addr,addr_num*sizeof(*addr));
+   buf->PutEOF();
+
+   if(use_fork)
+   {
+      while(buf->Size()>0)
+	 buf->Do();  // should flush quickly.
+   }
    return;
 }
 

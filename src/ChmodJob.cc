@@ -22,6 +22,7 @@
 
 #include <config.h>
 #include "ChmodJob.h"
+#include "url.h"
 
 ChmodJob::ChmodJob(FileAccess *s,int new_m,ArgV *a) : TreatFileJob(s,a)
 {
@@ -30,5 +31,11 @@ ChmodJob::ChmodJob(FileAccess *s,int new_m,ArgV *a) : TreatFileJob(s,a)
 
 void ChmodJob::TreatCurrent()
 {
-   session->Chmod(curr,m);
+   ParsedURL u(curr,true);
+   if(u.proto)
+      url_session=FA::New(&u);
+   if(url_session)
+      url_session->Chmod(u.path,m);
+   else
+      session->Chmod(curr,m);
 }

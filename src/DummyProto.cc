@@ -34,13 +34,41 @@ int DummyProto::StoreStatus() { return NO_HOST; }
 
 class DummyDirList : public DirList
 {
-   DummyProto *p;
+   FA *p;
 public:
-   DummyDirList(DummyProto *p1,ArgV *a) : DirList(a) { p=p1; }
+   DummyDirList(FA *p1,ArgV *a) : DirList(a) { p=p1; }
    int Do() { SetError(p->StrError(FA::NO_HOST)); return STALL; }
    const char *Status() { return ""; }
 };
 DirList *DummyProto::MakeDirList(ArgV *a)
+{
+   return new DummyDirList(this,a);
+}
+
+
+DummyNoProto::DummyNoProto(const char *p)
+{
+   proto=xstrdup(p);
+}
+DummyNoProto::~DummyNoProto()
+{
+   xfree(proto);
+}
+int DummyNoProto::Do() { return STALL; }
+int DummyNoProto::Done() { return NO_HOST; }
+const char *DummyNoProto::GetProto() { return proto; }
+FileAccess *DummyNoProto::Clone() { return new DummyNoProto(proto); }
+int DummyNoProto::Read(void *buf,int size) { return NO_HOST; };
+int DummyNoProto::Write(const void *buf,int size) { return NO_HOST; };
+int DummyNoProto::StoreStatus() { return NO_HOST; }
+const char *DummyNoProto::StrError(int)
+{
+   static char str[128];
+   sprintf(str,"%.32s%s",proto,_(" - not supported protocol"));
+   return str;
+}
+
+DirList *DummyNoProto::MakeDirList(ArgV *a)
 {
    return new DummyDirList(this,a);
 }

@@ -34,8 +34,14 @@ char *basename_ptr(char *f)
    return (char*)basename_ptr((const char *)f);
 }
 
-// clues file to dir; returns pointer to static storage
+// glues file to dir; returns pointer to static storage
 const char *dir_file(const char *dir,const char *file);
+
+// glues file to given url; returns pointer to static storage
+const char *url_file(const char *url,const char *file);
+
+const char *output_file_name(const char *src,const char *dst,bool dst_local,
+			     const char *dst_base,bool make_dirs);
 
 // mkdir -p
 int   create_directories(char *);

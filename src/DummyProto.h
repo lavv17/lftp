@@ -40,4 +40,24 @@ public:
    DirList *MakeDirList(ArgV *);
 };
 
+class DummyNoProto : public FileAccess
+{
+   char *proto;
+public:
+   DummyNoProto(const char *p);
+   ~DummyNoProto();
+
+   int Do();
+   int Done();
+   const char *GetProto();
+   FileAccess *Clone();
+   int Read(void *buf,int size);
+   int Write(const void *buf,int size);
+   int StoreStatus();
+   void Reconfig() {}
+   const char *StrError(int err);
+
+   DirList *MakeDirList(ArgV *);
+};
+
 #endif

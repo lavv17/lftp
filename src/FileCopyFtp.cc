@@ -44,13 +44,13 @@ int FileCopyFtp::Do()
    if(ftp_src->IsClosed())
    {
       ((FileCopyPeerFA*)get)->OpenSession();
-      ftp_src->SetCopyMode(Ftp::COPY_SOURCE,passive_source,src_retries);
+      ftp_src->SetCopyMode(Ftp::COPY_SOURCE,passive_source,src_retries,src_try_time);
       m=MOVED;
    }
    if(ftp_dst->IsClosed())
    {
       ((FileCopyPeerFA*)put)->OpenSession();
-      ftp_dst->SetCopyMode(Ftp::COPY_DEST,!passive_source,dst_retries);
+      ftp_dst->SetCopyMode(Ftp::COPY_DEST,!passive_source,dst_retries,src_try_time);
       m=MOVED;
    }
    // check for errors
@@ -85,6 +85,8 @@ int FileCopyFtp::Do()
       }
       src_retries=ftp_src->GetRetries();
       dst_retries=ftp_dst->GetRetries();
+      src_try_time=ftp_src->GetTryTime();
+      dst_try_time=ftp_dst->GetTryTime();
       Close();
       if(put->CanSeek())
 	 put->Seek(FILE_END);
@@ -144,6 +146,7 @@ void FileCopyFtp::Init()
    no_rest=false;
    orig_passive_source=passive_source=false;
    src_retries=dst_retries=0;
+   src_try_time=dst_try_time=0;
    disable_fxp=false;
 }
 

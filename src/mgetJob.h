@@ -32,8 +32,10 @@ class mgetJob : public GetJob
    ArgV *mkdir_args;
    int mkdir_base_arg;
    ArgV *m_args;
+   char *output_dir;
 
    bool	 make_dirs;
+   void	 make_directory(char *d);
 
    void LocalGlob(const char *p);
 
@@ -44,6 +46,8 @@ public:
 
    mgetJob(FileAccess *session,ArgV *args,bool c,bool md);
    ~mgetJob();
+
+   void OutputDir(char *o) { output_dir=o; }
 };
 
 #endif // MGETJOB_H

@@ -36,6 +36,7 @@
 #include "misc.h"
 #include "ProcWait.h"
 #include "SignalHook.h"
+#include "url.h"
 
 const char *dir_file(const char *dir,const char *file)
 {
@@ -65,6 +66,82 @@ const char *dir_file(const char *dir,const char *file)
    return buf;
 }
 
+const char *url_file(const char *url,const char *file)
+{
+   static char *buf=0;
+   static int buf_size=0;
+
+   if(buf && url==buf) // it is possible to url_file(url_file(url,dir),file)
+      url=alloca_strdup(url);
+
+   int len=3*xstrlen(url)+4+3*xstrlen(file)+1;
+   if(buf_size<len)
+      buf=(char*)xrealloc(buf,buf_size=len);
+   if(!url || url[0]==0)
+   {
+      strcpy(buf,file);
+      return buf;
+   }
+   ParsedURL u(url);
+   if(!u.proto)
+   {
+      strcpy(buf,dir_file(url,file));
+      return buf;
+   }
+   if(file[0]=='/' || file[0]=='~' || u.path==0 || u.path[0]==0)
+   {
+      u.path=(char*)file;
+      u.Combine(buf);
+      return buf;
+   }
+   url::encode_string(file,buf,URL_PATH_UNSAFE);
+   return dir_file(url,buf);
+}
+
+const char *output_file_name(const char *src,const char *dst,bool dst_local,
+			     const char *dst_base,bool make_dirs)
+{
+   bool dst_is_dir=false;
+   if(dst)
+   {
+      if(dst_base)
+	 dst=url_file(dst_base,dst);
+      if(url::is_url(dst))
+	 dst_local=false;
+      if(dst_local)
+      {
+	 dst=expand_home_relative(dst);
+	 struct stat st;
+	 if(stat(dst,&st)!=-1 && S_ISDIR(st.st_mode))
+	    dst_is_dir=true;
+      }
+      int len=strlen(dst);
+      if(len>0 && dst[len-1]=='/')
+	 dst_is_dir=true;
+      if(!dst_is_dir)
+	 return dst;
+   }
+
+   ParsedURL u_src(src,true);
+   if(u_src.proto)
+      src=u_src.path;
+   if(!src)
+      return "";  // there will be error anyway.
+   const char *base=basename_ptr(src);
+   if(make_dirs && !dst)
+   {
+      base=src;
+      if(base[0]=='~')
+      {
+	 base=strchr(base,'/');
+	 if(!base)
+	    base="";
+      }
+      while(*base=='/')
+	 base++;
+   }
+   return url_file(dst?dst:dst_base,base);
+}
 
 const char *basename_ptr(const char *s)
 {

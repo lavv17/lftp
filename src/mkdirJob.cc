@@ -23,6 +23,7 @@
 #include <errno.h>
 #include "mkdirJob.h"
 #include "plural.h"
+#include "url.h"
 
 mkdirJob::mkdirJob(FileAccess *s,ArgV *a) : SessionJob(s)
 {
@@ -35,6 +36,8 @@ mkdirJob::mkdirJob(FileAccess *s,ArgV *a) : SessionJob(s)
 
    curr=first=0;
    opt_p=false;
+
+   url_session=0;
 
    int opt;
    while((opt=args->getopt("p"))!=EOF)
@@ -58,26 +61,40 @@ mkdirJob::~mkdirJob()
 {
    delete args;
    args=0;
+   Reuse();
 }
 
 int mkdirJob::Do()
 {
    if(Done())
       return STALL;
-   if(session->IsClosed())
-      session->Mkdir(curr,opt_p);
+   if(Session()->IsClosed())
+   {
+      ParsedURL u(curr,true);
+      if(u.proto)
+	 url_session=FileAccess::New(&u);
+      if(url_session)
+	 url_session->Mkdir(u.path,opt_p);
+      else
+	 session->Mkdir(curr,opt_p);
+   }
 
-   int res=session->Done();
+   int res=Session()->Done();
    if(res==FA::DO_AGAIN || res==FA::IN_PROGRESS)
       return STALL;
    if(res<0)
    {
       failed++;
       if(!quiet)
-	 fprintf(stderr,"%s: %s\n",args->getarg(0),session->StrError(res));
+	 fprintf(stderr,"%s: %s\n",args->getarg(0),Session()->StrError(res));
    }
    file_count++;
-   session->Close();
+   Session()->Close();
+   if(url_session)
+   {
+      SessionPool::Reuse(url_session);
+      url_session=0;
+   }
    curr=args->getnext();
    return MOVED;
 }
@@ -87,13 +104,16 @@ void  mkdirJob::PrintStatus(int v)
    SessionJob::PrintStatus(v);
    if(Done())
       return;
-   printf("\t`%s' [%s]\n",curr,session->CurrentStatus());
+
+   printf("\t`%s' [%s]\n",curr,Session()->CurrentStatus());
 }
 
 void  mkdirJob::ShowRunStatus(StatusLine *s)
 {
-   if(!Done())
-      s->Show("%s `%s' [%s]",args->getarg(0),curr,session->CurrentStatus());
+   if(Done())
+      return;
+
+   s->Show("%s `%s' [%s]",args->getarg(0),curr,Session()->CurrentStatus());
 }
 
 void  mkdirJob::SayFinal()

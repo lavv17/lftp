@@ -255,7 +255,7 @@ public:
       NOT_SUPP
    };
 
-   const char *StrError(int err);
+   virtual const char *StrError(int err);
    virtual void Cleanup();
    virtual void CleanupThis();
    void CleanupAll();
@@ -292,7 +292,7 @@ public:
       {
 	 return Protocol::NewSession(proto);
       }
-   static FileAccess *New(const class ParsedURL *u);
+   static FileAccess *New(const class ParsedURL *u,bool dummy=true);
 
    void SetPasswordGlobal(const char *p);
    void InsecurePassword(bool i)
@@ -362,6 +362,7 @@ class GlobURL
 {
    FileAccess *session;
    bool reuse;
+   char *url_prefix;
 public:
    Glob *glob;
    GlobURL(FileAccess *s,const char *p);

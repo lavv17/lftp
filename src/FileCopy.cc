@@ -1010,15 +1010,7 @@ FileCopyPeerFA::FileCopyPeerFA(ParsedURL *u,int m)
    session=FileAccess::New(u);
    reuse_later=true;
    fxp=false;
-   if(!session)
-   {
-      const char *e=_(" - not supported protocol");
-      char *m=string_alloca(strlen(e)+strlen(u->proto)+1);
-      strcpy(m,u->proto);
-      strcat(m,e);
-      SetError(m);
-   }
-   else if(!file)
+   if(!file)
    {
       SetError(_("file name missed in URL"));
    }
