@@ -300,7 +300,10 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Same as `ls', but don't look in cache\n")},
    {"renlist", cmd_ls,	    N_("renlist [<args>]"),
 	 N_("Same as `nlist', but don't look in cache\n")},
-   {"repeat",  cmd_repeat},
+   {"repeat",  cmd_repeat, 0,
+	 N_("Usage: repeat [delay] [command]\n"
+	 "Repeat specified command with a delay between iterations.\n"
+	 "Default delay is one second, default command is empty.\n")},
    {"reput",   cmd_get,    N_("reput <lfile> [-o <rfile>]"),
 	 N_("Same as `put -c'\n")},
    {"rm",      cmd_rm,	    N_("rm [-r] <files>"),
