@@ -80,6 +80,8 @@ class Ftp : public NetAccess
       int sync_wait;	  // number of commands in flight.
       bool ignore_pass;	  // logged in just with user
       bool try_feat_after_login;
+      bool tune_after_login;
+      bool utf8_activated; // server is switched to UTF8 mode.
 
       char type;  // type of transfer: 'A'scii or 'I'mage
 
@@ -108,6 +110,7 @@ class Ftp : public NetAccess
       char prot;  // current data protection scheme 'C'lear or 'P'rivate
       bool auth_sent;
       bool auth_supported;
+      bool cpsv_supported;
       char *auth_args_supported;
       bool ssl_is_activated() { return control_ssl!=0; }
 #else
@@ -172,6 +175,8 @@ class Ftp : public NetAccess
 	 TRANSFER,	// generic check for transfer
 	 TRANSFER_CLOSED, // check for transfer complete when Close()d.
 	 FEAT,
+	 OPTS_UTF8,
+	 LANG,
 	 SITE_UTIME,
 	 QUOTED		// check response for any command submitted by QUOTE_CMD
 #ifdef USE_SSL

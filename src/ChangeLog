@@ -4,6 +4,8 @@
 	* PollVec.cc, PollVec.h: inline Empty method.
 	* SMTask.cc, SMTask.h: inline Enter/Leave methods.
 	* StatusLine.cc: (CanShowNow) new method.
+	* ftpclass.cc, ftpclass.h: support CPSV; add utf8_activated flag;
+	  added workaround for servers which refuse to do OPTS before login.
 
 2004-05-07  Alexander V. Lukyanov <lav@yars.free.net>
 

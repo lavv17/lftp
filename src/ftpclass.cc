@@ -857,6 +857,7 @@ Ftp::Connection::Connection()
    auth_sent=false;
    auth_supported=true;
    auth_args_supported=0;
+   cpsv_supported=false;
 #endif
    type='A';
    last_rest=0;
@@ -869,6 +870,8 @@ Ftp::Connection::Connection()
    multiline_code=0;
    ignore_pass=false;
    try_feat_after_login=false;
+   tune_after_login=false;
+   utf8_activated=false;
 
    dos_path=false;
    vms_path=false;
@@ -1394,6 +1397,8 @@ int   Ftp::Do()
 	 conn->SendCmd("FEAT");
 	 expect->Push(Expect::FEAT);
       }
+      else if(conn->tune_after_login)
+	 TuneConnectionAfterFEAT();
       SendSiteGroup();
       SendSiteIdle();
 
@@ -1832,7 +1837,12 @@ int   Ftp::Do()
 #if INET6
 	 ipv4_pasv:
 #endif
-	    conn->SendCmd("PASV");
+#ifdef USE_SSL
+	    if(copy_mode!=COPY_NONE && conn->prot=='P' && conn->cpsv_supported)
+	       conn->SendCmd("CPSV"); // same as PASV, but server does SSL_connect
+	    else
+#endif // note the following statement
+	       conn->SendCmd("PASV");
 	    expect->Push(Expect::PASV);
 	    pasv_state=PASV_NO_ADDRESS_YET;
 	 }
@@ -2082,7 +2092,7 @@ int   Ftp::Do()
       }
       if(mode==LIST || mode==LONG_LIST || mode==MP_LIST)
       {
-	 if(conn->utf8_supported)
+	 if(conn->utf8_activated)
 	    conn->data_iobuf->SetTranslation("UTF-8",true);
 	 else if(charset && *charset)
 	    conn->data_iobuf->SetTranslation(charset,true);
@@ -3128,6 +3138,8 @@ void Ftp::ExpectQueue::Close()
       case(Expect::FEAT):
       case(Expect::SITE_UTIME):
       case(Expect::TYPE):
+      case(Expect::LANG):
+      case(Expect::OPTS_UTF8):
 #ifdef USE_SSL
       case(Expect::AUTH_TLS):
       case(Expect::PROT):
@@ -3393,14 +3405,13 @@ void Ftp::TuneConnectionAfterFEAT()
 	 conn->SendCmd2("LANG",lang_to_use);
       else
 	 conn->SendCmd("LANG");
-      expect->Push(Expect::IGNORE);
+      expect->Push(Expect::LANG);
    }
    if(conn->utf8_supported)
    {
-      conn->SetControlConnectionTranslation("UTF-8");
       // some non-RFC2640 servers require this command.
       conn->SendCmd("OPTS UTF8 ON");
-      expect->Push(Expect::IGNORE);
+      expect->Push(Expect::OPTS_UTF8);
    }
    if(conn->clnt_supported)
    {
@@ -3479,6 +3490,8 @@ void Ftp::CheckFEAT(char *reply)
 	    strcat(conn->auth_args_supported,f+5);
 	 }
       }
+      else if(!strcasecmp(f,"CPSV"))
+	 conn->cpsv_supported=true;
 #endif // USE_SSL
    }
    conn->have_feat_info=true;
@@ -3764,6 +3777,16 @@ void Ftp::CheckResp(int act)
    case Expect::TYPE:
       if(is2XX(act))
 	 conn->type=arg[0];
+      break;
+   case Expect::OPTS_UTF8:
+   case Expect::LANG:
+      if(is2XX(act))
+      {
+	 conn->utf8_activated=true;
+	 conn->SetControlConnectionTranslation("UTF-8");
+      }
+      else if(act==530)
+	 conn->tune_after_login=true;
       break;
 
 #ifdef USE_SSL
