@@ -79,3 +79,10 @@ currently; some need other work to be done.
  * mirror --remove-first
 
  * mirror --use-cache
+
+ * job suspend/resume.
+
+ * connection number limit, connection takeover even if it is used(?).
+   foreground session should have priority over bg ones.
+
+ * motd. if it is not yet known, connect/login and get it. (use class Buffer).
