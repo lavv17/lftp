@@ -1397,18 +1397,43 @@ int   Ftp::Do()
 	 else
 	 {
 	    getsockname(control_sock,&data_sa.sa,&addr_len);
-	    if(data_sa.sa.sa_family==AF_INET)
-	       data_sa.in.sin_port=0;
-#if INET6
-	    else if(data_sa.sa.sa_family==AF_INET6)
-	       data_sa.in6.sin6_port=0;
-#endif
-	    else
+
+	    Range range(Query("port-range"));
+
+	    for(int t=0; ; t++)
 	    {
-	       Fatal("unsupported network protocol");
-	       return MOVED;
-	    }
-	    bind(data_sock,&data_sa.sa,addr_len);
+	       if(t>=10) // Fail after 10 tries
+	       {
+		  Fatal("could not allocate port from ftp:port-range set");
+		  return MOVED;
+	       }
+	       int port=0;
+	       if(!range.IsFull())
+		  port=range.Random();
+
+	       if(data_sa.sa.sa_family==AF_INET)
+	          data_sa.in.sin_port=htons(port);
+#if INET6
+	       else if(data_sa.sa.sa_family==AF_INET6)
+	          data_sa.in6.sin6_port=htons(port);
+#endif
+	       else
+	       {
+	          Fatal("unsupported network protocol");
+	          return MOVED;
+	       }
+
+	       if(bind(data_sock,&data_sa.sa,addr_len)==0)
+		  break;
+
+	       // Fail unless socket was already taken
+	       if(errno!=EINVAL && errno!=EADDRINUSE)
+	       {
+		  sprintf(str,"bind: %s",strerror(errno));
+		  DebugPrint("**** ",str,0);
+		  goto system_error;
+	       }
+ 	    }
 	    // get the port allocated
 	    getsockname(data_sock,&data_sa.sa,&addr_len);
 	    listen(data_sock,1);

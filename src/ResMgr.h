@@ -84,6 +84,7 @@ public:
    static const char *UNumberValidate(char **value);
    static const char *FloatValidate(char **value);
    static const char *TimeIntervalValidate(char **value);
+   static const char *RangeValidate(char **value);
    static bool str2bool(const char *value);
 
    static void ClassInit();
@@ -159,6 +160,22 @@ public:
 
    bool IsInfty() { return infty; }
    time_t Seconds() { return interval; }
+};
+
+class Range
+{
+   int start;
+   int end;
+   bool full;
+   const char *error_text;
+
+public:
+   Range(const char *s);
+   bool Match(int n);
+   bool IsFull() { return full; }
+   int Random();
+   bool Error() { return error_text!=0; };
+   const char *ErrorText() { return error_text; }
 };
 
 #endif //RESMGR_H

@@ -24,6 +24,7 @@
 
 #include <fnmatch.h>
 #include <ctype.h>
+#include <unistd.h>
 #include "ResMgr.h"
 #include "SMTask.h"
 #include "xmalloc.h"
@@ -522,5 +523,59 @@ const char *ResMgr::TimeIntervalValidate(char **s)
    TimeInterval t(*s);
    if(t.Error())
       return t.ErrorText();
+   return 0;
+}
+
+Range::Range(const char *s)
+{
+   start=0;
+   end=0;
+   full=true;
+   error_text=0;
+
+   if(!strcasecmp(s,"full") || !strcasecmp(s,"any"))
+      return;
+
+   if(sscanf(s,"%d-%d",&start,&end)!=2)
+   {
+      error_text=_("Invalid range format. Format is min-max, e.g. 10-20.");
+      return;
+   }
+   if(start<end)
+   {
+      int tmp=start;
+      start=end;
+      end=tmp;
+   }
+   full=false;
+}
+
+bool Range::Match(int n)
+{
+   return full || (n>=start && n<=end);
+}
+
+int Range::Random()
+{
+   if(full)
+      return random();
+
+   static bool init=false;
+   if(!init)
+   {
+      srandom(time(NULL)+getpid());
+      init=true;
+   }
+
+   // interval [0;1)
+   double mult=random()/2147483648.0;
+   return start + (int)((end-start+1)*mult);
+}
+
+const char *ResMgr::RangeValidate(char **s)
+{
+   Range r(*s);
+   if(r.Error())
+      return r.ErrorText();
    return 0;
 }
