@@ -61,8 +61,10 @@ public:
    void SetParentFg(Job *j, bool f=true)
       {
 	 SetParent(j);
-	 if(j->fg && f)
+	 if(f && j->fg)
 	    Fg();
+//	 else if(f && !j->fg)
+//	    Bg();
       }
 
    void	 AllocJobno();

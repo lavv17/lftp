@@ -45,14 +45,15 @@ int CopyJob::Do()
    }
    if(!c->WriteAllowed() && c->WritePending())
    {
-      if(no_status_on_write)
+      if(no_status_on_write || clear_status_on_write)
       {
 	 // clear status.
 	 const char *empty="";
 	 eprintf(empty);
-	 // disable status.
-	 NoStatus();
       }
+      if(no_status_on_write)
+	 NoStatus(); // disable status.
+
       c->AllowWrite();
       return MOVED;
    }
@@ -69,8 +70,10 @@ int CopyJob::ExitCode()
    return 0;
 }
 
-const char *CopyJob::SqueezeName(int w)
+const char *CopyJob::SqueezeName(int w, bool base)
 {
+   if(base)
+      return squeeze_file_name(basename_ptr(name),w);
    return squeeze_file_name(name,w);
 }
 
@@ -80,19 +83,38 @@ static const char copy_status_format[]=N_("`%s' at %lld %s%s%s%s");
       (long long)c->GetPos(),c->GetPercentDoneStr(),c->GetRateStr(),\
       c->GetETAStr(),c->GetStatus()
 
+const char *CopyJob::Status(const StatusLine *s, bool base)
+{
+   if(c->Done() || c->Error())
+      return "";
+
+   static char *buf = 0;
+   xfree(buf);
+
+   const char *name=SqueezeName(s->GetWidthDelayed()-50, base);
+   buf = xasprintf(COPY_STATUS);
+
+   return buf;
+}
+
 void CopyJob::ShowRunStatus(StatusLine *s)
 {
    if(no_status)
       return;
-   if(c->Done() || c->Error())
-      return;
 
-   const char *name=SqueezeName(s->GetWidthDelayed()-50);
-   s->Show(COPY_STATUS);
+   s->Show(Status(s, false));
 }
 void CopyJob::PrintStatus(int v)
 {
    if(c->Done() || c->Error())
+      return;
+   /* If neither of our FileCopyPeers have a status, we're something
+    * dumb like buffer->fd and have no meaningful status to print.
+    * (If that's the case, we're probably a child job, so our parent
+    * will be printing something anyway.)  If an OutputJob actually
+    * attaches to a real output peer, we *do* want to print status.
+    */
+   if(!*c->GetStatus())
       return;
 
    printf("\t");
@@ -123,26 +145,14 @@ CopyJob::CopyJob(FileCopy *c1,const char *name1,const char *op1)
    done=false;
    no_status=false;
    no_status_on_write=false;
+   clear_status_on_write=false;
 }
+
 CopyJob::~CopyJob()
 {
    Delete(c);
    xfree(name);
    xfree(op);
-}
-
-CopyJob *CopyJob::NewEcho(const char *str,int len,FDStream *o,const char *op)
-{
-   if(o==0)
-      o=new FDStream(1,"<stdout>");
-   CopyJob *j=new CopyJob(FileCopy::New(
-	 new FileCopyPeerString(str,len),
-	 new FileCopyPeerFDStream(o,FileCopyPeer::PUT),
-	 false
-      ),o->name,op);
-   if(o->usesfd(1))
-      j->NoStatus();
-   return j;
 }
 
 // CopyJobEnv

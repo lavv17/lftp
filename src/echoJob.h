@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 2002 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,36 +18,31 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id$ */
+#ifndef ECHOJOB_H
+#define ECHOJOB_H
 
-#ifndef CATJOB_H
-#define CATJOB_H
+#include "Job.h"
+#include "StatusLine.h"
+#include "OutputJob.h"
+#include <stdio.h>
 
-#include "CopyJob.h"
-
-class ArgV;
-class OutputJob;
-
-class CatJob : public CopyJobEnv
+class echoJob : public Job
 {
-protected:
    OutputJob *output;
-   bool ascii;
-   bool auto_ascii;
-
-   void	NextFile();
 
 public:
-   int Do();
-   int Done();
-   int ExitCode();
+   int	 Do() { return STALL; }
+   int	 Done();
+   int	 ExitCode();
 
-   CatJob(FileAccess *s,OutputJob *output,ArgV *args);
+   void	 ShowRunStatus(StatusLine *);
 
-   ~CatJob();
+   echoJob(const char *buf, OutputJob *output);
+   echoJob(const char *buf, int len, OutputJob *output);
+   ~echoJob();
 
-   void Ascii() { ascii=true; }
-   void Binary() { ascii=auto_ascii=false; }
+   void Fg();
+   void Bg();
 };
 
-#endif /* CATJOB_H */
+#endif // ECHOJOB_H

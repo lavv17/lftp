@@ -49,6 +49,8 @@
 #include "FindJobDu.h"
 #include "ChmodJob.h"
 #include "CopyJob.h"
+#include "OutputJob.h"
+#include "echoJob.h"
 
 #include "misc.h"
 #include "alias.h"
@@ -1388,11 +1390,15 @@ CMD(cls)
    const char *op=args->a0();
    bool re=false;
 
-   if(!output)
-      output=new FDStream(1,"<stdout>");
+   OutputJob *out=new OutputJob(output, args->a0());
+//   OutputJob *out=new OutputJob("testfile", args->a0());
+//   OutputJob *out=new OutputJob("file:testfile", args->a0());
+//   OutputJob *out=new OutputJob("ftp://localhost/incoming/testing", args->a0());
+
+   output=0;
 
    FileSetOutput fso;
-   fso.config(output);
+   fso.config(out);
 
    if(!strncmp(op,"re",2))
       re=true;
@@ -1403,34 +1409,15 @@ CMD(cls)
    if(const char *err = fso.parse_argv(args)) {
       eprintf("%s: %s.\n", op, err);
       eprintf(_("Try `help %s' for more information.\n"),op);
+      delete out;
       return 0;
    }
 
-   char *a=args->Combine(0);
-
-   FileCopyPeer *src_peer=0;
-   src_peer=new FileCopyPeerCLS(session->Clone(),args,fso);
-   args=0;
-
+   clsJob *j = new clsJob(session->Clone(), args, fso, out);
    if(re)
-      src_peer->NoCache();
-   src_peer->SetDate(NO_DATE);
-   src_peer->SetSize(NO_SIZE);
-   FileCopyPeer *dst_peer=new FileCopyPeerFDStream(output,FileCopyPeer::PUT);
+      j->UseCache(false);
 
-   FileCopy *c=FileCopy::New(src_peer,dst_peer,false);
-   c->DontCopyDate();
-   c->LineBuffered();
-   c->Ascii();
-
-   CopyJob *j=new CopyJob(c,a,op);
-   if(fso.quiet)
-      j->NoStatus();
-   else if(output->usesfd(1))
-      j->NoStatusOnWrite();
-
-   xfree(a);
-   output=0;
+   args=0;
 
    return j;
 }
@@ -1467,7 +1454,8 @@ CMD(cat)
       eprintf(_("Usage: %s [OPTS] files...\n"),op);
       return 0;
    }
-   CatJob *j=new CatJob(session->Clone(),output,args);
+   OutputJob *out=new OutputJob(output, args->a0());
+   CatJob *j=new CatJob(session->Clone(),out,args);
    if(!auto_ascii)
    {
       if(ascii)
@@ -1770,8 +1758,11 @@ CMD(pwd)
    char *url=alloca_strdup(url_c);
    int len=strlen(url_c);
    url[len++]='\n';  // replaces \0
-   Job *j=CopyJob::NewEcho(url,len,output,args->a0());
+
+   OutputJob *out=new OutputJob(output, args->a0());
+   Job *j=new echoJob(url,len,out);
    output=0;
+
    return j;
 }
 
@@ -2011,7 +2002,8 @@ CMD(set)
    if(a==0)
    {
       char *s=ResMgr::Format(with_defaults,only_defaults);
-      Job *j=CopyJob::NewEcho(s,output,args->a0());
+      OutputJob *out=new OutputJob(output, args->a0());
+      Job *j=new echoJob(s,out);
       xfree(s);
       output=0;
       return j;
@@ -2055,7 +2047,8 @@ CMD(alias)
    if(args->count()<2)
    {
       char *list=Alias::Format();
-      Job *j=CopyJob::NewEcho(list,output,args->a0());
+      OutputJob *out=new OutputJob(output, args->a0());
+      Job *j=new echoJob(list,out);
       xfree(list);
       output=0;
       return j;
@@ -2404,7 +2397,8 @@ CMD(bookmark)
    if(!strcasecmp(op,"list"))
    {
       char *list=lftp_bookmarks.FormatHidePasswords();
-      Job *j=CopyJob::NewEcho(list,output,args->a0());
+      OutputJob *out=new OutputJob(output, args->a0());
+      Job *j=new echoJob(list,out);
       xfree(list);
       output=0;
       return j;
@@ -2493,7 +2487,10 @@ CMD(echo)
    {
       s[len++]='\n'; // replaces \0 char
    }
-   Job *j=CopyJob::NewEcho(s,len,output,args->a0());
+
+   OutputJob *out=new OutputJob(output, args->a0());
+   Job *j=new echoJob(s,len,out);
+
    xfree(s);
    output=0;
    return j;
@@ -2742,7 +2739,7 @@ CMD(lpwd)
    const char *name=parent->cwd->GetName();
    char *buf=alloca_strdup2(name,2);
    sprintf(buf,"%s\n",name?name:"?");
-   Job *j=CopyJob::NewEcho(buf,strlen(buf),output,args->a0());
+   Job *j=new echoJob(buf,new OutputJob(output, args->a0()));
    output=0;
    return j;
 }
@@ -3035,7 +3032,7 @@ CMD(slot)
    else
    {
       char *slots=ConnectionSlot::Format();
-      Job *j=CopyJob::NewEcho(slots,strlen(slots),output,args->a0());
+      Job *j=new echoJob(slots,new OutputJob(output,args->a0()));
       xfree(slots);
       output=0;
       return j;

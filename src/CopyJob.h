@@ -35,6 +35,7 @@ class CopyJob : public Job
    char *op;   // command name
    bool no_status;
    bool no_status_on_write;
+   bool clear_status_on_write;
 
 public:
    CopyJob(FileCopy *c1,const char *n,const char *op1);
@@ -42,6 +43,8 @@ public:
 
    void NoStatus() { no_status=true; }
    void NoStatusOnWrite() { no_status_on_write=true; }
+   void ClearStatusOnWrite() { clear_status_on_write=true; }
+   bool HasStatus() const { return !no_status; }
 
    int Do();
    int Done();
@@ -68,19 +71,19 @@ public:
    void SetRange(off_t s,off_t lim) { c->SetRange(s,lim); }
    void SetDate(time_t d) { c->SetDate(d); }
    void SetSize(off_t s)   { c->SetSize(s); }
+   FileCopy *GetCopy() { return c; }
    FileCopyPeer *GetPut() { return c->put; }
+   FileCopyPeer *GetGet() { return c->get; }
 
+   const char *Status(const StatusLine *s,bool base=false);
    void ShowRunStatus(StatusLine *s);
    void	PrintStatus(int);
 
    const char *GetName() { return name; }
-   const char *SqueezeName(int w);
+   const char *SqueezeName(int w, bool base=false);
 
    static CopyJob *NewGet(FileAccess *f,const char *src,const char *dst);
    static CopyJob *NewPut(FileAccess *f,const char *src,const char *dst);
-   static CopyJob *NewEcho(const char *str,int len,FDStream *o,const char *op);
-   static CopyJob *NewEcho(const char *str,FDStream *o,const char *op)
-      { return NewEcho(str,strlen(str),o,op); }
 };
 
 class ArgV;
@@ -108,7 +111,7 @@ protected:
 public:
    int Do();
    int Done();
-   int ExitCode() { return errors!=0; }
+   virtual int ExitCode() { return errors!=0; }
 
    int AcceptSig(int sig);
 

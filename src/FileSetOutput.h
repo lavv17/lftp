@@ -6,6 +6,11 @@
 #include "keyvalue.h"
 #include "FileCopy.h"
 #include "GetFileInfo.h"
+#include "CopyJob.h"
+#include "OutputJob.h"
+#include "Job.h"
+
+class StatusLine;
 
 class FileSetOutput {
    const char *FileInfoSuffix(const FileInfo &fi) const;
@@ -48,45 +53,46 @@ public:
    const FileSetOutput &operator = (const FileSetOutput &cp);
 
    void long_list();
-   void config(FDStream *fd);
+   void config(const OutputJob *fd);
    const char *parse_argv(ArgV *a);
    static const char *ValidateArgv(char **s);
+   int Need() const;
 
-   void print(FileSet &fs, Buffer *o) const;
+   void print(FileSet &fs, OutputJob *o) const;
 };
 
 /* Job interface to FileSetOutput */
-class FileCopyPeerCLS : public FileCopyPeer
+class clsJob : public SessionJob
 {
-   FileAccess *session;
-
+   OutputJob *output;
    FileSetOutput fso;
-   FileSet *f;
-   ListInfo *list_info;
-
    ArgV *args;
-
-   bool quiet;
+   ListInfo *list_info;
+   char *dir, *mask;
+   bool done;
+   bool use_cache;
 
    /* element in args we're currently processing */
    int num;
 
-   char *dir;
-   char *mask;
-
-protected:
-   ~FileCopyPeerCLS();
+   enum { INIT, START_LISTING, GETTING_LIST_INFO, DONE } state;
 
 public:
-   FileCopyPeerCLS(FA *s, ArgV *a, const FileSetOutput &_opts);
+   clsJob(FA *s, ArgV *a, const FileSetOutput &_opts, OutputJob *output);
+   ~clsJob();
+   int Done();
    int Do();
-   const char *GetStatus();
-   void Quiet() { quiet = true; }
 
-   void Fg() { session->SetPriority(1); }
-   void Bg() { session->SetPriority(0); }
+   void UseCache(bool y=true) { use_cache=y; }
+
+   void Fg() { session->SetPriority(1); output->Fg(); }
+   void Bg() { session->SetPriority(0); output->Bg(); }
    void Suspend();
    void Resume();
+   int ExitCode() { return output->Error()? 1:0; }
+
+   void ShowRunStatus(StatusLine *s);
+   void PrintStatus(int v);
 };
 
 #endif

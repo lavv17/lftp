@@ -21,7 +21,7 @@
 #ifndef DISPCOLUMNS_H
 #define DISPCOLUMNS_H
 
-#include "FileCopy.h"
+#include "OutputJob.h"
 
 struct datum {
    /* Each entry has a series of strings; each string has a color. */
@@ -36,7 +36,7 @@ struct datum {
    int width() const;
 
    // print with or without color
-   void print(Buffer *o, bool color, int skip,
+   void print(OutputJob *o, bool color, int skip,
 	   const char *color_pref, const char *color_suf, const char *color_reset) const;
 
    /* count leading whitespace in the first name only. */
@@ -61,7 +61,7 @@ public:
    void SetWidth(unsigned width);
    void SetColor(bool color);
 
-   void print(Buffer *o, unsigned width, bool color) const;
+   void print(OutputJob *o, unsigned width, bool color) const;
    void set_mode(mode_t m) { mode = m; }
 
 private:

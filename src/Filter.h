@@ -29,6 +29,8 @@ class ArgV;
 
 class FDStream
 {
+   bool close_fd;
+
 public:
    int fd;
    char *name;
@@ -47,6 +49,7 @@ public:
    bool NonFatalError(int err);
    void set_status(const char *str) { status=str; }
    void clear_status() { status=0; }
+   void CloseFD() { close_fd=true; }
 
    virtual off_t get_size() { return -1; }
    virtual void setmtime(time_t) {}

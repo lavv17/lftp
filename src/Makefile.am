@@ -42,7 +42,7 @@ proto_http_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) libnetwork.la
 proto_fish_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) libnetwork.la
 
 libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
- ProcWait.h GetPass.cc GetPass.h\
+ ProcWait.h GetPass.cc GetPass.h ConnectionSlot.cc ConnectionSlot.h\
  CharReader.cc CharReader.h LsCache.cc LsCache.h\
  FileAccess.h FileAccess.cc ResMgr.h ResMgr.cc\
  Filter.cc Filter.h SignalHook.cc SignalHook.h FileCopy.cc FileCopy.h\
@@ -67,9 +67,10 @@ libjobs_a_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  bookmark.cc bookmark.h CatJob.cc CatJob.h GetJob.cc GetJob.h\
  mkdirJob.cc mkdirJob.h pgetJob.cc pgetJob.h FileFeeder.cc FileFeeder.h\
  QueueFeeder.cc QueueFeeder.h keyvalue.cc keyvalue.h history.cc history.h\
- FindJob.cc FindJob.h\
+ FindJob.cc FindJob.h \
  FindJobDu.cc FindJobDu.h ChmodJob.cc ChmodJob.h\
- TreatFileJob.cc TreatFileJob.h CopyJob.cc CopyJob.h
+ TreatFileJob.cc TreatFileJob.h CopyJob.cc CopyJob.h echoJob.cc echoJob.h \
+ OutputJob.cc OutputJob.h
 
 lftp_LDFLAGS = -export-dynamic $(LFTP_SSL_LDFLAGS)
 lftp_LDADD = libjobs.a libtasks.a $(READLINE) $(READLINE_SUPPLIB) \

@@ -1,3 +1,22 @@
+2002-07-10  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CharReader.cc, FileAccess.cc, Filter.cc, ftpclass.cc: F_GETFL returns
+	  flags as fcntl return value.
+
+2002-07-10  Glenn Maynard <g_ld@zewt.org>
+
+	* CatJob.cc, CatJob.h, ColumnOutput.cc, ColumnOutput.h, CopyJob.cc,
+	  CopyJob.h, FileCopy.cc, FileCopy.h, FileSetOutput.cc, FileSetOutput.h,
+	  Filter.cc, Filter.h, Job.h, Makefile.am, OutputJob.cc, OutputJob.h,
+	  commands.cc, complete.cc, echoJob.cc, echoJob.h: OuputJob support.
+
+2002-07-10  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc, CmdExec.h, ConnectionSlot.cc, ConnectionSlot.h,
+	  FileAccess.cc, commands.cc, complete.cc, keyvalue.cc, keyvalue.h,
+	  lftp.cc, lftp_rl.cc, lftp_rl.h, misc.cc, url.cc: connection slot
+	  support.
+
 2002-07-07  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Http.cc, FileAccess.cc, FileAccess.h: (GetSuggestedFileName) new

@@ -45,13 +45,14 @@ CDECL_END
 #include "ColumnOutput.h"
 #include "DirColors.h"
 #include "FileGlob.h"
+#include "CopyJob.h"
 
 
 ResDecl	res_default_cls         ("cmd:cls-default",  "-F", FileSetOutput::ValidateArgv,0),
 	res_default_comp_cls    ("cmd:cls-completion-default", "-FB",FileSetOutput::ValidateArgv,0);
 
 /* note: this sorts (add a nosort if necessary) */
-void FileSetOutput::print(FileSet &fs, Buffer *o) const
+void FileSetOutput::print(FileSet &fs, OutputJob *o) const
 {
    fs.Sort(sort, sort_casefold);
    if(sort_dirs_first) fs.Sort(FileSet::DIRSFIRST, false);
@@ -217,13 +218,13 @@ const FileSetOutput &FileSetOutput::operator = (const FileSetOutput &cp)
    return *this;
 }
 
-void FileSetOutput::config(FDStream *fd)
+void FileSetOutput::config(const OutputJob *o)
 {
-   width = fd_width(fd->getfd());
+   width = o->GetWidth();
    if(width == -1)
       width = 80;
 
-   if(!strcasecmp(ResMgr::Query("color:use-color", 0), "auto")) color = isatty(fd->getfd());
+   if(!strcasecmp(ResMgr::Query("color:use-color", 0), "auto")) color = o->IsTTY();
    else color = ResMgr::QueryBool("color:use-color", 0);
 }
 
@@ -252,115 +253,203 @@ const char *FileSetOutput::ValidateArgv(char **s)
    return NULL;
 }
 
-/* Peer interface: */
-
-#define super FileCopyPeer
-FileCopyPeerCLS::FileCopyPeerCLS(FA *_session, ArgV *a, const FileSetOutput &_fso):
-   super(GET),
-   session(_session),
-   fso(_fso), f(0),
-   args(a),
-   quiet(false),
-   num(1), dir(0), mask(0)
+int FileSetOutput::Need() const
 {
+   int need=FileInfo::NAME;
+   if(mode & PERMS)
+      need|=FileInfo::MODE;
+//   if(mode & SIZE) /* this must be optional */
+//      need|=FileInfo::SIZE;
+//   if(mode & DATE) /* this too */
+//      need|=FileInfo::DATE;
+   if(mode & LINKS)
+      need|=FileInfo::SYMLINK_DEF;
+   if(mode & USER)
+      need|=FileInfo::USER;
+   if(mode & GROUP)
+      need|=FileInfo::GROUP;
+
+   return need;
+}
+
+#undef super
+#define super SessionJob
+
+clsJob::clsJob(FA *s, ArgV *a, const FileSetOutput &_opts, OutputJob *_output):
+   SessionJob(s),
+   fso(_opts),
+   args(a),
+   num(1)
+{
+   use_cache=true;
+   done=0;
+   dir=0;
+   mask=0;
+   state=INIT;
+   list_info=0;
+
    if(args->count() == 1)
       args->Add("");
-   list_info=0;
-   can_seek=false;
-   can_seek0=false;
+
+   output=_output;
+   output->SetParentFg(this);
 }
 
-FileCopyPeerCLS::~FileCopyPeerCLS()
+clsJob::~clsJob()
 {
-   delete f;
    delete args;
-   Delete(list_info);
-   SessionPool::Reuse(session);
    xfree(dir);
+   Delete(list_info);
+   Delete(output);
 }
 
-int FileCopyPeerCLS::Do()
+int clsJob::Done()
 {
-   if(Done()) return STALL;
+   return done && output->Done();
+}
 
-   /* one currently processing? */
-   if(list_info) {
+int clsJob::Do()
+{
+   int m=STALL;
+
+   if(output->Done())
+      state=DONE;
+
+   switch(state)
+   {
+   case INIT:
+      state=START_LISTING;
+      m=MOVED;
+
+   case START_LISTING:
+   {
+      Delete(list_info);
+      list_info=0;
+
+      /* next: */
+      xfree(dir); dir = 0;
+      xfree(mask); mask = 0;
+
+      dir = args->getnext();
+      if(!dir) {
+	 /* done */
+	 state=DONE;
+	 return MOVED;
+      }
+      dir = xstrdup(dir);
+
+      /* If the basename contains wildcards, set up the mask. */
+      mask = strrchr(dir, '/');
+      if(!mask) mask=dir;
+      if(Glob::HasWildcards(mask)) {
+	 if(mask == dir)
+	    dir = xstrdup("");
+	 else {
+	    /* The mask is the whole argument, not just the basename; this is
+	     * because the whole relative paths will end up in the FileSet, and
+	     * that's what this pattern will be matched against. */
+	    char *newmask = xstrdup(dir);
+
+	    // leave the final / on the path, to prevent the dirname of
+	    // "file/*" from being treated as a file
+	    mask[1] = 0;
+	    mask = newmask;
+	 }
+      } else mask=0;
+
+      list_info=new GetFileInfo(session, dir, fso.list_directories);
+      list_info->UseCache(use_cache);
+      list_info->Need(fso.Need());
+
+      state=GETTING_LIST_INFO;
+      m=MOVED;
+   }
+   case GETTING_LIST_INFO:
+   {
+      if(!list_info->Done())
+	 return m;
+
       if(list_info->Error()) {
-	 SetError(list_info->ErrorText());
+	 eprintf("%s\n", list_info->ErrorText());
+	 state=START_LISTING;
 	 return MOVED;
       }
 
-      if(!list_info->Done())
-	 return STALL;
-
       /* one just finished */
-      int oldpos = pos;
       fso.pat = mask;
       FileSet *res = list_info->GetResult();
-      Delete(list_info);
-      list_info=0;
+
       if(res)
-	 fso.print(*res, this);
+	 fso.print(*res, output);
+
       fso.pat = 0;
       delete res;
-      pos = oldpos;
-   }
 
-   /* next: */
-   xfree(dir); dir = 0;
-   xfree(mask); mask = 0;
-
-   dir = args->getnext();
-   if(!dir) {
-      /* done */
-      PutEOF();
+      state=START_LISTING;
       return MOVED;
    }
-   dir = xstrdup(dir);
 
-   /* If the basename contains wildcards, move the basename into mask. */
-   mask = strrchr(dir, '/');
-   if(!mask) mask=dir;
-   if(Glob::HasWildcards(mask)) {
-      if(mask == dir)
-	 dir = xstrdup("");
-      else {
-	 /* The mask is the whole argument, not just the basename; this is
-	  * because the whole relative paths will end up in the FileSet, and
-	  * that's what this pattern will be matched against. */
-	 char *newmask = xstrdup(dir);
-
-	 // leave the final / on the path, to prevent the dirname of
-	 // "file/*" from being treated as a file
-	 mask[1] = 0;
-	 mask = newmask;
+   case DONE:
+      if(!done)
+      {
+	 output->PutEOF();
+	 done=true;
+	 m=MOVED;
       }
-   } else mask=0;
-
-   list_info=new GetFileInfo(session, dir, fso.list_directories);
-   if(!list_info) {
-      PutEOF();
-      return MOVED;
+      break;
    }
-   list_info->UseCache(use_cache);
-
-   return MOVED;
+   return m;
 }
 
-const char *FileCopyPeerCLS::GetStatus()
+void clsJob::Suspend()
 {
-   return session->CurrentStatus();
-}
-
-void FileCopyPeerCLS::Suspend()
-{
-   if(session)
-      session->Suspend();
+   if(list_info)
+      list_info->Suspend();
+   session->Suspend();
    super::Suspend();
 }
-void FileCopyPeerCLS::Resume()
+
+void clsJob::Resume()
 {
+   if(list_info)
+      list_info->Resume();
+   session->Resume();
    super::Resume();
-   if(session)
-      session->Resume();
 }
+
+void clsJob::ShowRunStatus(StatusLine *s)
+{
+   if(fso.quiet)
+      return;
+
+   if(!output->ShowStatusLine())
+      return;
+
+   if(list_info && !list_info->Done())
+   {
+      const char *curr = args->getcurr();
+      if(!*curr)
+	 curr = ".";
+      const char *stat = list_info->Status();
+      if(*stat)
+	 s->Show("`%s' %s %s", curr, stat, output->Status(s));
+   }
+   else
+	 s->Show("%s", output->Status(s));
+}
+
+void clsJob::PrintStatus(int v)
+{
+   Job::PrintStatus(v);
+
+   if(list_info)
+   {
+      const char *curr = args->getcurr();
+      if(!*curr)
+	 curr = ".";
+      const char *stat = list_info->Status();
+      if(*stat)
+	 printf("\t`%s' %s\n", curr, stat);
+   }
+}
+

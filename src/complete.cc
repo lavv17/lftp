@@ -44,6 +44,7 @@
 #include "ResMgr.h"
 #include "ColumnOutput.h"
 #include "FileSetOutput.h"
+#include "OutputJob.h"
 #include "misc.h"
 
 CDECL_BEGIN
@@ -387,6 +388,11 @@ static completion_type cmd_completion_type(const char *cmd,int start)
 	 break;
       }
       if(!strncmp(rl_line_buffer+i-3,"-N",2) && isspace(rl_line_buffer[i-4]))
+      {
+	 was_N=true;
+	 break;
+      }
+      if(i-14 >= 0 && !strncmp(rl_line_buffer+i-13, "--newer-than",12) && isspace(rl_line_buffer[i-14]))
       {
 	 was_N=true;
 	 break;
@@ -1209,8 +1215,7 @@ void lftp_readline_init ()
 
 extern "C" void completion_display_list (char **matches, int len)
 {
-   FDStream o(1,"<stdout>");
-   Buffer *b = new Buffer;
+   OutputJob *b=new OutputJob((FDStream *) NULL, "completion");
 
    if(glob_res) {
       /* Our last completion action was of files, and we kept that
@@ -1226,7 +1231,7 @@ extern "C" void completion_display_list (char **matches, int len)
       }
 
       FileSetOutput fso;
-      fso.config(&o);
+      fso.config(b);
 
       ArgV arg("", ResMgr::Query("cmd:cls-completion-default", 0));
       fso.parse_argv(&arg);
@@ -1239,19 +1244,19 @@ extern "C" void completion_display_list (char **matches, int len)
 	 c.append();
 	 c.add(matches[i], "");
       }
-      c.print(b, fd_width(o.getfd()), isatty(o.getfd()));
+      c.print(b, b->GetWidth(), b->IsTTY());
    }
 
-   const char *buf;
-   int sz;
-   b->Get(&buf, &sz);
+   b->PutEOF();
 
-   while(sz) {
-      int ret = write(1, buf, sz);
-      if(ret <= 0)
-	 break; /* oops */
-      sz -= ret;
-      buf += ret;
+   while(!b->Done())
+   {
+      SMTask::Schedule();
+      if(SignalHook::GetCount(SIGINT))
+      {
+	 SignalHook::ResetCount(SIGINT);
+	 break;
+      }
    }
 
    SMTask::Delete(b);
