@@ -1,3 +1,8 @@
+1999-09-19	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document dns:cache-* variables, update closure
+	  description.
+
 1999-09-15	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document repeat command.

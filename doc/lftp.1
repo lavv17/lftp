@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "12 Sep 1999"
+.TH lftp 1 "19 Sep 1999"
 .SH NAME
 lftp \- Sophisticated ftp program
 .SH SYNTAX
@@ -635,6 +635,16 @@ a boolean to control whether or not lftp uses remote completion.
 query for SRV records and use them before gethostbyname. The SRV records
 are only used if port is not explicitly specified. See RFC2052 for details.
 .TP
+.BR dns:cache-enable \ (bool)
+enable DNS cache. If it is off, lftp resolves host name each time it reconnects.
+.TP
+.BR dns:cache-expire " (time interval)"
+time to live for DNS cache entries. It has format <number><unit>+, e.g.
+1d12h30m5s or just 36h.
+.TP
+.BR dns:cache-size \ (number)
+maximum number of DNS cache entries.
+.TP
 .BR dns:fatal-timeout \ (seconds)
 limit the time for DNS queries. If DNS server is unavailable too long, lftp
 will fail to resolve a given host name. 0 means unlimited, the default.
@@ -735,7 +745,8 @@ sets the minimal time between reconnects.
 .BR net:relookup-always \ (bool)
 a boolean to control whether to lookup host address each time
 before connecting or not. Can be useful if server uses dynamic ip
-address and dynamic DNS.
+address and dynamic DNS. This setting is deprecated, use dns:cache-enable
+instead.
 .TP
 .BR net:socket-buffer \ (bytes)
 use given size for SO_SNDBUF and SO_RCVBUF socket options. 0 means system
@@ -766,10 +777,10 @@ you can get a particular settings for particular state. The closure
 is to be specified after variable name separated with slash `/'.
 .P
 
-The closure for `dns:', `ftp:', `http:' domain variables is currently
-just the host
-name as you specify it in the `open' command. For other variables it
-is not currently used. See examples in the sample
+The closure for `dns:', `net:', `ftp:', `http:', `hftp:' domain variables
+is currently just the host name as you specify it in the `open' command
+(with some exceptions, where closure is meaningless, e.g. dns:cache-size).
+For other variables it is not currently used. See examples in the sample
 .IR lftp.conf .
 
 .B Lftp
