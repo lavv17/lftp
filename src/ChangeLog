@@ -1,3 +1,12 @@
+2000-06-01  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CmdExec.cc: better status line; quote more special symbols.
+	* FileCopy.cc: fix positioning in FileCopyPeerFDStream.
+	* FindJob.cc: change op in FinderJob_Cmd ctor.
+	* Http.cc: don't pass user data as format, use %s.
+	* Job.cc: fix kill all.
+	* MirrorJob.cc: remove remote directories in reverse mode; fix chmod.
+
 2000-05-25  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Http.cc: fix quote-post; fix spurious 'Op not supp' messages and

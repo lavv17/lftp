@@ -634,10 +634,12 @@ void CmdExec::ShowRunStatus(StatusLine *s)
       switch(builtin)
       {
       case(BUILTIN_CD):
-	 s->Show("cd `%s' [%s]",args->getarg(1),session->CurrentStatus());
+	 if(session->IsOpen())
+	    s->Show("cd `%s' [%s]",args->getarg(1),session->CurrentStatus());
 	 break;
       case(BUILTIN_OPEN):
-	 s->Show("open `%s' [%s]",session->GetHostName(),session->CurrentStatus());
+	 if(session->IsOpen())
+	    s->Show("open `%s' [%s]",session->GetHostName(),session->CurrentStatus());
       	 break;
       case(BUILTIN_GLOB):
 	 s->Show("%s",glob->Status());
@@ -647,6 +649,8 @@ void CmdExec::ShowRunStatus(StatusLine *s)
 	 abort(); // can't happen
       }
    }
+   else
+      s->Clear();
 }
 
 void CmdExec::PrintStatus(int v)
@@ -1078,7 +1082,7 @@ bool CmdExec::needs_quotation(const char *buf)
    {
       if(isspace(*buf))
 	 return true;
-      if(*buf=='"' || *buf=='\\')
+      if(*buf=='"' || *buf=='\\' || *buf=='&' || *buf=='|' || *buf=='>' || *buf==';')
 	 return true;
       buf++;
    }

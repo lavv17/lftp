@@ -494,7 +494,7 @@ add_path:
    if(post)
    {
       if(post_data)
-	 Send(post_data);
+	 Send("%s",post_data);
       entity_size=NO_SIZE;
    }
 

@@ -428,6 +428,7 @@ FinderJob_Cmd::FinderJob_Cmd(FileAccess *s,ArgV *a,cmd_t c)
 {
    cmd=c;
    args=a;
+   op=args->a0();
    use_cache=false;
    if(cmd==RM)
       depth_first=true;

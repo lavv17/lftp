@@ -1110,18 +1110,32 @@ FileCopyPeerFDStream::~FileCopyPeerFDStream()
 }
 int FileCopyPeerFDStream::getfd()
 {
+   if(stream->fd!=-1)
+      return stream->fd;
    int fd=stream->getfd();
    if(fd==-1)
    {
       if(stream->error())
       {
 	 SetError(stream->error_text);
-	 Timeout(0);
+	 current->Timeout(0);
       }
       else
       {
-	 TimeoutS(1);
+	 current->TimeoutS(1);
       }
+      return -1;
+   }
+   if(seek_pos!=0)
+   {
+      if(pos==seek_pos)
+	 pos=seek_pos-1;
+      Seek(seek_pos);
+   }
+   if(!can_seek)
+   {
+      pos=(mode==GET?0:in_buffer);
+      seek_pos=0;
    }
    return fd;
 }
@@ -1201,7 +1215,7 @@ void FileCopyPeerFDStream::Seek(long new_pos)
    if(pos==new_pos)
       return;
 #ifndef NATIVE_CRLF
-   if(ascii)
+   if(ascii && new_pos!=0)
    {
       // it is possible to read file to determine right position,
       // but it is costly.
@@ -1212,7 +1226,11 @@ void FileCopyPeerFDStream::Seek(long new_pos)
 #endif
    super::Seek(new_pos);
    if(getfd()==-1)
+   {
+      if(seek_pos!=FILE_END)
+	 pos=seek_pos+(mode==PUT)*in_buffer;
       return;
+   }
    if(new_pos==FILE_END)
    {
       new_pos=lseek(getfd(),0,SEEK_END);
@@ -1239,6 +1257,8 @@ void FileCopyPeerFDStream::Seek(long new_pos)
       }
       pos=new_pos;
    }
+   if(mode==PUT)
+      pos+=in_buffer;
 }
 
 int FileCopyPeerFDStream::Get_LL(int len)
@@ -1422,6 +1442,7 @@ void FileCopyPeerString::Seek(long new_pos)
    assert(new_pos!=FILE_END);
    UnSkip(pos-new_pos);
    super::Seek(new_pos);
+   pos=new_pos;
 }
 
 // FileCopyPeerDirList

@@ -128,12 +128,12 @@ void Job::Kill(int n)
 
 void Job::KillAll()
 {
-   for(Job **scan=&chain; *scan; )
+   for(Job *scan=chain; scan; )
    {
-      if((*scan)->jobno>=0)
-	 Delete(*scan);
-      else
-	 scan=&(*scan)->next;
+      Job *tmp=scan;
+      scan=scan->next;
+      if(tmp->jobno>=0)
+	 Delete(tmp);
    }
 }
 
