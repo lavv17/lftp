@@ -118,15 +118,13 @@ static char *file_generator(const char *text,int state)
 
       if(!name[0])
 	 continue;
-      /* it's not our job to be case-sensitive; that's done (or not done)
-       * when we create the glob_res */
-      if(strncasecmp(name,text,len)==0)
-	 return(xstrdup(name));
+      return(xstrdup(name));
    }
 
    return NULL;
 }
 
+static bool bookmark_prepend_bm;
 static char *bookmark_generator(const char *text,int s)
 {
    static int state;
@@ -149,6 +147,12 @@ static char *bookmark_generator(const char *text,int s)
 	 }
 	 if(!lftp_bookmarks.Next())
 	    state=1;
+	 if(bookmark_prepend_bm)
+	 {
+	    char *e=alloca_strdup2("bm:",strlen(t)*3);
+	    url::encode_string(t,e+3,URL_HOST_UNSAFE);
+	    t=e;
+	 }
 	 if(strncmp(t,text,len)==0)
 	    return xstrdup(t);
 	 break;
@@ -275,6 +279,8 @@ enum completion_type
    STRING_ARRAY, VARIABLE, NO_COMPLETION
 };
 
+// cmd: ptr to command line beging completed
+// start: location of the word being completed
 static completion_type cmd_completion_type(const char *cmd,int start)
 {
    const char *w=find_word(cmd);
@@ -572,6 +578,7 @@ static char **lftp_completion (const char *text,int start,int end)
       generator = command_generator;
       break;
    case BOOKMARK:
+      bookmark_prepend_bm=false;
       generator = bookmark_generator;
       break;
    case STRING_ARRAY:
@@ -661,6 +668,14 @@ static char **lftp_completion (const char *text,int start,int end)
       if(!remote_completion && !force_remote)
 	 break; // local
    really_remote:
+      if(!strncmp(text,"bm:",3) && !strchr(text,'/'))
+      {
+	 bookmark_prepend_bm=true;
+	 generator=bookmark_generator;
+	 rl_completion_append_character='/';
+	 break;
+      }
+
       pat=(char*)alloca(len*2+10);
       glob_quote(pat,text,len);
 

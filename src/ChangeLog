@@ -1,3 +1,10 @@
+2004-06-07  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* complete.cc: complete `bm:' urls.
+	* misc.cc: fix url_file with file[0]=='~'.
+	* url.cc: unquote host name in valid_bm; don't re-check bm validity
+	  after lookup.
+
 2004-06-02  Marc Bevand <marc.bevand@smartjog.com>
 
 	* FindJobDu.cc: use long long to hold file size.

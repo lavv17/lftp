@@ -98,7 +98,7 @@ const char *url_file(const char *url,const char *file)
       buf=(char*)xrealloc(buf,buf_size=len);
    if(!url || url[0]==0)
    {
-      strcpy(buf,file);
+      strcpy(buf,file?file:"");
       return buf;
    }
    ParsedURL u(url);
@@ -107,7 +107,10 @@ const char *url_file(const char *url,const char *file)
       strcpy(buf,dir_file(url,file));
       return buf;
    }
-   u.path=(char*)dir_file(u.path,file);
+   if(file && file[0]=='~')
+      u.path=(char*)file;
+   else
+      u.path=(char*)dir_file(u.path,file);
    xfree(buf);
    buf=u.Combine();
    buf_size=xstrlen(buf)+1;

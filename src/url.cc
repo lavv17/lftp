@@ -265,15 +265,15 @@ decode:
    else if(!xstrcmp(proto,"bm"))
    {
       const char *bm=lftp_bookmarks.Lookup(host);
-      if(!bm || !valid_bm(host))
+      if(!bm)
 	 return;
       ParsedURL bu(url_file(bm,path+(path && path[0]=='/')));
       // move the data
       xfree(memory);
-      xfree(orig_url);
+      char *old_orig_url=orig_url;
       memcpy(this,&bu,sizeof(bu));
-      bu.memory=0;
-      bu.orig_url=0; // so that dtor won't free them
+      bu.memory=0; // so that dtor won't free it
+      orig_url=old_orig_url;
    }
 }
 
@@ -283,6 +283,7 @@ static bool valid_slot(const char *cs)
    char *slash=strchr(s,'/');
    if(slash)
       *slash=0;
+   url::decode_string(s);
    return 0!=ConnectionSlot::Find(s);
 }
 static bool valid_bm(const char *bm)
@@ -291,6 +292,7 @@ static bool valid_bm(const char *bm)
    char *slash=strchr(s,'/');
    if(slash)
       *slash=0;
+   url::decode_string(s);
    const char *url=lftp_bookmarks.Lookup(s);
    return(url && !strchr(url,' ') && !strchr(url,'\t'));
 }
@@ -300,7 +302,9 @@ int url::path_index(const char *base)
    const char *scan=base;
    while(is_ascii_alpha(*scan))
       scan++;
-   if(scan[0]==':' && scan[1]=='/' && scan[2]=='/')
+   if(scan[0]!=':')
+      return 0;
+   if(scan[1]=='/' && scan[2]=='/')
    {
       // found protocol
       const char *slash=strchr(scan+3,'/');
@@ -308,10 +312,18 @@ int url::path_index(const char *base)
 	 return slash-base;
       return strlen(base);
    }
-   else if(scan[0]==':' && !strncmp(base,"file:",5))
+   else if(!strncmp(base,"file:",5))
    {
       // special form for file protocol
       return scan+1-base;
+   }
+   else if((!strncmp(base,"slot:",5) && valid_slot(base+5))
+	|| (!strncmp(base,"bm:",3) && valid_bm(base+3)))
+   {
+      const char *slash=strchr(scan+1,'/');
+      if(slash)
+	 return slash-base;
+      return strlen(base);
    }
    return 0;
 }
