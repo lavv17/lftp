@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1998 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-1999 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -721,7 +721,7 @@ CMD(cd)
    xfree(old_cwd);
    old_cwd=xstrdup(session->GetCwd());
 
-   if (!verify_path)
+   if (!verify_path || background)
    {
       session->Chdir(dir,false);
       return 0;
@@ -974,8 +974,8 @@ CMD(open)
 
    if(host && (bm=lftp_bookmarks.Lookup(host))!=0)
    {
-      char *cmd=(char*)alloca(5+strlen(bm)+1+1);
-      sprintf(cmd,"open %s\n",bm);
+      char *cmd=(char*)alloca(5+strlen(bm)+2+1);
+      sprintf(cmd,"open %s%s\n",bm,background?"&":"");
       PrependCmd(cmd);
    }
    else
@@ -1068,7 +1068,7 @@ CMD(open)
 	       port_num=atoi(port);
 	 }
 	 session->Connect(host,port_num);
-	 if(verify_host)
+	 if(verify_host && !background)
 	 {
 	    session->ConnectVerify();
 	    builtin=BUILTIN_OPEN;
@@ -1083,7 +1083,10 @@ CMD(open)
       char *s=(char*)alloca(strlen(path)*4+40);
       strcpy(s,"&& cd \"");
       unquote(s+strlen(s),path);
-      strcat(s,"\"\n");
+      strcat(s,"\"");
+      if(background)
+	 strcat(s,"&");
+      strcat(s,"\n");
 #if 0
       char *slash=strrchr(path,'/');
       if(slash && slash[1])
@@ -1105,7 +1108,7 @@ CMD(open)
    if(url)
       delete url;
 
-   if(host && !bm && verify_host)
+   if(builtin==BUILTIN_OPEN)
       return this;
 
    exit_code=0;
@@ -1696,7 +1699,7 @@ CMD(help)
 CMD(ver)
 {
    printf(
-      _("Lftp | Version %s | Copyright (c) 1996-98 Alexander V. Lukyanov\n"),VERSION);
+      _("Lftp | Version %s | Copyright (c) 1996-1999 Alexander V. Lukyanov\n"),VERSION);
    printf(
       _("This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"));
    exit_code=0;

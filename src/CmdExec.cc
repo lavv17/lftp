@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-1999 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -216,6 +216,7 @@ restart:
 	 if(builtin==BUILTIN_EXEC_RESTART)
 	 {
 	    waiting=0;
+	    builtin=BUILTIN_NONE;
 	    goto restart;
 	 }
 	 return;
@@ -332,6 +333,7 @@ int CmdExec::Do()
 	    session->Close();
 	    exit_code=0;
 	    waiting=0;
+	    builtin=BUILTIN_NONE;
 	    beep_if_long();
 	    return MOVED;
 	 }
@@ -343,6 +345,7 @@ int CmdExec::Do()
 	    eprintf("%s: %s\n",args->getarg(0),session->StrError(res));
 	    session->Close();
 	    waiting=0;
+	    builtin=BUILTIN_NONE;
 	    beep_if_long();
 	    exit_code=1;
 	    return MOVED;
@@ -357,6 +360,7 @@ int CmdExec::Do()
 	       status_line->Show("");
 	    session->Close();
 	    waiting=0;
+	    builtin=BUILTIN_NONE;
 	    beep_if_long();
 	    exit_code=0;
 
@@ -369,11 +373,13 @@ int CmdExec::Do()
 	    eprintf("%s: %s\n",args->getarg(0),session->StrError(res));
 	    session->Close();
 	    waiting=0;
+	    builtin=BUILTIN_NONE;
 	    beep_if_long();
 	    exit_code=1;
 	    return MOVED;
 	 }
 	 break;
+      case(BUILTIN_NONE):
       case(BUILTIN_EXEC_RESTART):
 	 abort(); // can't happen
       }
@@ -397,6 +403,7 @@ int CmdExec::Do()
 	    session->Close();
 	    exit_code=0;
 	    waiting=0;
+	    builtin=BUILTIN_NONE;
 	    return MOVED;
 	 }
 	 if(SignalHook::GetCount(SIGHUP))
@@ -539,6 +546,7 @@ void CmdExec::ShowRunStatus(StatusLine *s)
       case(BUILTIN_OPEN):
 	 s->Show("open `%s' [%s]",session->GetHostName(),session->CurrentStatus());
       	 break;
+      case(BUILTIN_NONE):
       case(BUILTIN_EXEC_RESTART):
 	 abort(); // can't happen
       }
@@ -812,6 +820,7 @@ int CmdExec::AcceptSig(int sig)
    {
       session->Close();
       waiting=0;
+      builtin=BUILTIN_NONE;
       exit_code=1;
       return MOVED;
    }

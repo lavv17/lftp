@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-1999 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,6 +108,7 @@ class CmdExec : public SessionJob
 
    enum builtins
    {
+      BUILTIN_NONE,
       BUILTIN_OPEN,
       BUILTIN_CD,
       BUILTIN_EXEC_RESTART
