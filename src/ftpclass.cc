@@ -1555,7 +1555,10 @@ int   Ftp::Do()
       case(STORE):
          type=FTP_TYPE_I;
 	 if(!QueryBool("rest-stor",hostname))
+	 {
 	    real_pos=0;	// some old servers don't handle REST/STOR properly.
+	    pos=0;
+	 }
          command="STOR";
 	 append_file=true;
          break;
@@ -2616,7 +2619,7 @@ void  Ftp::DataClose()
       rate_limit=0;
    }
    fixed_pasv=false;
-   if(state==DATA_OPEN_STATE)
+   if(state==DATA_OPEN_STATE || state==DATASOCKET_CONNECTING_STATE)
       state=WAITING_STATE;
 }
 
