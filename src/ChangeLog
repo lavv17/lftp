@@ -1,6 +1,7 @@
 2001-01-10  Glenn Maynard <g_ld@zewt.org>
 
 	* FileCopy.cc, FileCopy.h: (fail_if_broken) new member.
+	* ftpclass.cc: comments added; cosmetic changes.
 
 2001-01-09  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -1038,12 +1038,15 @@ bool Ftp::GetBetterConnection(int level,bool limit_reached)
 
       if(o->data_sock!=-1 || o->state!=EOF_STATE || o->mode!=CLOSED)
       {
+	 /* session is in use; last resort is to takeover an active connection */
 	 if(level<2)
 	    continue;
+	 /* only take over lower priority jobs */
 	 if(!connection_takeover || o->priority>=priority)
 	    continue;
 	 if(o->data_sock!=-1 && o->RespQueueSize()<=1)
 	 {
+	    /* don't take over active connections if they won't be able to resume */
 	    if((o->flags&NOREST_MODE) && o->real_pos>0x1000)
 	       continue;
 	    if(o->QueryBool("web-mode",o->hostname))
@@ -1063,9 +1066,11 @@ bool Ftp::GetBetterConnection(int level,bool limit_reached)
       {
 	 if(limit_reached)
 	 {
+	    /* wait until job is diff seconds idle before taking it over */
 	    int diff=o->last_priority-priority;
 	    if(diff>0)
 	    {
+	       /* number of seconds the task has been idle */
 	       int have_idle=now-o->idle_start;
 	       if(have_idle<diff)
 	       {
@@ -2760,16 +2765,14 @@ void Ftp::SendCmd2(const char *cmd,int v)
 
 int   Ftp::SendEOT()
 {
-   if(mode==STORE)
-   {
-      if(state==DATA_OPEN_STATE)
-      {
-	 DataClose();
-	 state=WAITING_STATE;
-      	 return(OK);
-      }
+   if(mode!=STORE)
+      return(OK); /* nothing to do */
+
+   if(state!=DATA_OPEN_STATE)
       return(DO_AGAIN);
-   }
+
+   DataClose();
+   state=WAITING_STATE;
    return(OK);
 }
 
@@ -3166,16 +3169,18 @@ int   Ftp::StoreStatus()
    if(mode!=STORE)
       return(OK);
 
-   if(state==WAITING_STATE && RespQueueIsEmpty())
-   {
-      eof=true;
-      return(OK);
-   }
    if(state==DATA_OPEN_STATE)
    {
       // have not send EOT by SendEOT, do it now
       SendEOT();
    }
+
+   if(state==WAITING_STATE && RespQueueIsEmpty())
+   {
+      eof=true;
+      return(OK);
+   }
+
    return(IN_PROGRESS);
 }
 
