@@ -65,6 +65,7 @@ void Http::Init()
    send_buf=0;
    recv_buf=0;
    body_size=-1;
+   bytes_received=0;
    line=0;
    status=0;
    status_code=0;
@@ -163,6 +164,7 @@ void Http::Close()
    Disconnect();
    array_send=0;
    no_cache_this=false;
+   bytes_received=0;
    super::Close();
 }
 
@@ -930,7 +932,10 @@ int Http::Read(void *buf,int size)
       if(size1==0)
 	 return DO_AGAIN;
       if(body_size>=0 && bytes_received>=body_size)
+      {
+	 DebugPrint("---- ","Received all");
 	 return 0; // all received
+      }
       if(chunked)
       {
 	 if(chunk_size==-1) // expecting first/next chunk

@@ -819,6 +819,8 @@ void FileCopyPeerFA::OpenSession()
    {
       if(size!=NO_SIZE && size!=NO_SIZE_YET && seek_pos>=size && !ascii)
       {
+      past_eof:
+	 debug((10,"copy src: seek past eof (seek_pos=%ld, size=%ld)\n",seek_pos,size));
 	 pos=seek_pos;
 	 eof=true;
 	 return;
@@ -827,12 +829,9 @@ void FileCopyPeerFA::OpenSession()
       int s;
       if(use_cache && LsCache::Find(session,file,FAmode,&b,&s))
       {
-	 if(seek_pos>=s)
-	 {
-	    eof=true;
-	    return;
-	 }
 	 size=s;
+	 if(seek_pos>=s)
+	    goto past_eof;
 	 b+=seek_pos;
 	 s-=seek_pos;
 	 Save(0);
@@ -926,6 +925,7 @@ int FileCopyPeerFA::Get_LL(int len)
    }
    if(res==0)
    {
+      debug((10,"copy src: Read returned 0\n"));
       eof=true;
       LsCache::Add(session,file,FAmode,this);
    }
