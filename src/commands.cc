@@ -147,7 +147,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"close",   cmd_close,   "close [-a]",
 	 N_("Close idle connections. By default only with current server.\n"
 	 " -a  close idle connections with all servers\n")},
-   {"cls",     cmd_cls,     0, 
+   {"cls",     cmd_cls,     0,
 	 N_("cls [opts] [path/][wildcards]..."
 	    "List remote files. You can redirect output of this command to file\n"
 	    "or via pipe to external command.\n"
@@ -1144,7 +1144,7 @@ CMD(ls)
 	 args->insarg(1,"SITE");
    }
 
-   char *a=args->Combine(0);
+   char *a=args->Combine(nlist?1:0);
 
    if(!nlist && args->count()==1 && parent->var_ls && parent->var_ls[0])
       args->Append(parent->var_ls);
