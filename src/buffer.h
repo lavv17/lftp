@@ -63,7 +63,7 @@ public:
    bool Broken() { return broken; }
 
    void Get(const char **buf,int *size);
-   void Skip(int len); // Get(); consume; Skip()
+   virtual void Skip(int len); // Get(); consume; Skip()
    void Put(const char *buf,int size);
    void Put(const char *buf) { Put(buf,strlen(buf)); }
    void PutEOF() { eof=true; PutEOF_LL(); }
