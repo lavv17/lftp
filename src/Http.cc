@@ -471,7 +471,7 @@ int Http::Do()
    ExpandTildeInCWD();
 
    if(Error())
-      return m;
+      return MOVED;
 
    switch(state)
    {
