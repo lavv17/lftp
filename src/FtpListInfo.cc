@@ -444,10 +444,10 @@ FileInfo *ParseFtpLongList_NT(const char *line_c,int *err)
 	 hour=0;
    }
    struct tm tms;
-   tms.tm_sec=0;	      /* seconds after the minute [0, 61]  */
+   tms.tm_sec=0;	   /* seconds after the minute [0, 61]  */
    tms.tm_min=minute;      /* minutes after the hour [0, 59] */
-   tms.tm_hour=hour;	      /* hour since midnight [0, 23] */
-   tms.tm_mday=day;	      /* day of the month [1, 31] */
+   tms.tm_hour=hour;	   /* hour since midnight [0, 23] */
+   tms.tm_mday=day;	   /* day of the month [1, 31] */
    tms.tm_mon=month-1;     /* months since January [0, 11] */
    tms.tm_year=year-1900;  /* years since 1900 */
    tms.tm_isdst=0;
@@ -572,11 +572,79 @@ FileInfo *ParseFtpLongList_EPLF(const char *line,int *err)
    return fi;
 }
 
+static
+FileInfo *ParseFtpLongList_OS2(const char *line_c,int *err)
+{
+   char	 *line=alloca_strdup(line_c);
+   int 	 len=strlen(line);
+
+   if(len==0)
+      return 0;
+   char *t = FIRST_TOKEN;
+   if(t==0)
+      ERR;
+
+   FileInfo fi;
+
+   unsigned long size;
+   if(sscanf(t,"%lu",&size)!=1)
+      ERR;
+   fi.SetSize(size);
+
+   t = NEXT_TOKEN;
+   if(t==0)
+      ERR;
+   fi.SetType(fi.NORMAL);
+   if(!strcmp(t,"DIR"))
+   {
+      fi.SetType(fi.DIRECTORY);
+      t = NEXT_TOKEN;
+      if(t==0)
+	 ERR;
+   }
+   int month,day,year;
+   if(sscanf(t,"%2d-%2d-%2d",&month,&day,&year)!=3)
+      ERR;
+   if(year>=70)
+      year+=1900;
+   else
+      year+=2000;
+
+   t = NEXT_TOKEN;
+   if(t==0)
+      ERR;
+   int hour,minute;
+   if(sscanf(t,"%2d:%2d",&hour,&minute)!=3)
+      ERR;
+
+   struct tm tms;
+   tms.tm_sec=0;	   /* seconds after the minute [0, 61]  */
+   tms.tm_min=minute;      /* minutes after the hour [0, 59] */
+   tms.tm_hour=hour;	   /* hour since midnight [0, 23] */
+   tms.tm_mday=day;	   /* day of the month [1, 31] */
+   tms.tm_mon=month-1;     /* months since January [0, 11] */
+   tms.tm_year=year-1900;  /* years since 1900 */
+   tms.tm_isdst=0;
+   fi.SetDateUnprec(mktime(&tms));
+
+   t=strtok(NULL,"");
+   if(t==0)
+      ERR;
+   while(*t==' ')
+      t++;
+   if(*t==0)
+      ERR;
+   fi.SetName(t);
+
+   return new FileInfo(fi);
+}
+
 typedef FileInfo *(*ListParser)(const char *line,int *err);
 static ListParser list_parsers[]={
    ParseFtpLongList_UNIX,
    ParseFtpLongList_NT,
    ParseFtpLongList_EPLF,
+   ParseFtpLongList_OS2,
    0
 };
 
