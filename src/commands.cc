@@ -200,6 +200,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"du",      cmd_du,  N_("du [options] <dirs>"),
 	 N_("Summarize disk usage.\n"
 	 " -a, --all             write counts for all files, not just directories\n"
+	 "     --block-size=SIZ  use SIZ-byte blocks\n"
 	 " -b, --bytes           print size in bytes\n"
 	 " -c, --total           produce a grand total\n"
 	 " -d, --max-depth=N     print the total for a directory (or file, with --all)\n"
@@ -2453,6 +2454,7 @@ CMD(du)
       /* alias: both GNU-like max-depth and lftp-like maxdepth;
        * only document one of them. */
       {"bytes",no_argument,0,'b'},
+      {"block-size",required_argument,0,0},
       {"maxdepth",required_argument,0,'d'},
       {"total",no_argument,0,'c'},
       {"max-depth",required_argument,0,'d'},
@@ -2521,6 +2523,17 @@ CMD(du)
 	 separate_dirs = true;
 	 break;
       case 0:
+	 if(!strcmp(du_options[longopt].name, "block-size")) {
+	    if(!isdigit(optarg[0]) || atoi(optarg) == 0)
+	    {
+	       eprintf(_("%s: invalid block size `%s'\n"),op,optarg);
+	       return 0;
+	    }
+	    
+	    blocksize = atoi(optarg);
+	    break;
+	 }
+
 	 if(!strcmp(du_options[longopt].name, "exclude")) {
 	    exclude=optarg;
 	    break;
