@@ -23,7 +23,7 @@ AC_DEFUN(LFTP_FUNC_POLL,
    ])
    AC_MSG_RESULT($lftp_cv_func_poll_works)
    if test $lftp_cv_func_poll_works = yes; then
-      AC_DEFINE(HAVE_POLL)
+      AC_DEFINE(HAVE_POLL, 1, [have poll()])
    fi
 ])
 

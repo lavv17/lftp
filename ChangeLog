@@ -1,3 +1,8 @@
+2002-07-12	Glenn Maynard <g_ld@zewt.org>
+
+	* acconfig.h, m4/lftp.m4: HAVE_POLL acconfig.
+	* lftp.conf: Fix cls/hostls aliases
+
 2001-12-18	Glenn Maynard <g_ld@zewt.org>
 
 	* lftp.conf: "colored ls" -> "cls" (they're both colored).  Add
