@@ -1,3 +1,10 @@
+1999-06-15	lav
+
+	* INSTALL: refer to libstdc++ instead of libg++.
+	* README: correct wording about variables.
+	* configure.in: version 2.0.0
+	* lftp.conf: remove chmod alias; misc.
+
 1999-06-14	lav
 
 	* acconfig.h: define __USE_XOPEN on linux
