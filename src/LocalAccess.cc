@@ -545,7 +545,10 @@ int LocalListInfo::Do()
       f=readdir(d);
       if(f==0)
 	 break;
-      result->Add(new FileInfo(f->d_name));
+      const char *name=f->d_name;
+      if(name[0]=='~')
+	 name=dir_file(".",name);
+      result->Add(new FileInfo(name));
    }
    closedir(d);
 

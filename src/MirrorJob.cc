@@ -1142,6 +1142,8 @@ CMD(mirror)
 	 target_dir=basename_ptr(source_dir);
 	 if(target_dir[0]=='/')
 	    target_dir=".";
+	 else if(target_dir[0]=='~')
+	    target_dir=alloca_strdup(dir_file(".",target_dir));
       }
    }
 

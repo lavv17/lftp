@@ -68,12 +68,6 @@ int FinderJob::Do()
 	 return MOVED;
       }
 
-      if(dir[0]=='~')
-      {
-	 const char *dir1=dir_file(".",dir);
-	 xfree(dir);
-	 dir=xstrdup(dir1);
-      }
       /* The first time we get here (stack_ptr == -1), dir is an actual
        * argument, so it might be a file.  (Every other time, it's guaranteed
        * to be a directory.)  Set show_dirs to true, so it'll end up actually
@@ -237,12 +231,7 @@ void FinderJob::Push(FileSet *fset)
 
    const char *new_path="";
    if(old_path) // the first path will be empty
-   {
-      const char *d=dir;
-      if(old_path[0] && d[0]=='.' && d[1]=='/')
-	 d+=2;
-      new_path=alloca_strdup(dir_file(old_path,d));
-   }
+      new_path=alloca_strdup(dir_file(old_path,dir));
 
    /* matching exclusions don't include the path, so they operate
     * on the filename portion only */

@@ -1,3 +1,11 @@
+2002-12-18  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* NetAccess.cc: (GenericParseListInfo) handle ~ here.
+	* LocalAccess.cc (LocalListInfo) handle ~.
+	* FindJob.cc: revert ~ change.
+	* MirrorJob.cc: handle ~.
+	* misc.cc: handle /dir with ./file concatenation nicely.
+
 2002-12-10  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FindJob.cc: handle ~ directories properly.
