@@ -111,6 +111,8 @@
 
 #undef HAVE_STRCASECMP_DECL
 
+#undef HAVE_STRPTIME_DECL
+
 /* Define to `int' if <sys/socket.h> doesn't define.  */
 #undef socklen_t
 

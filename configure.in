@@ -256,6 +256,7 @@ IU_CHECK_DECL(vsnprintf, [#include <stdio.h>])
 
 AC_REPLACE_FUNCS(mktime memmove strcasecmp strncasecmp strtol strtoul strptime)
 IU_CHECK_DECL(strcasecmp, [#include <string.h>])
+IU_CHECK_DECL(strptime, [#include <time.h>])
 
 # always want GNU getopt
 LIBOBJS="$LIBOBJS getopt.o getopt1.o"
