@@ -30,7 +30,9 @@
 #include "xstring.h"
 
 #include <stdarg.h>
+CDECL_BEGIN
 #include <iconv.h>
+CDECL_END
 
 #define GET_BUFSIZE 0x10000
 #define PUT_LL_MIN  0x2000

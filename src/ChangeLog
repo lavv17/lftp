@@ -1,5 +1,11 @@
 2004-01-15  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* buffer.h: use CDECL around iconv.h.
+	* buffer.cc: use const_cast.
+	* Makefile.am: add iconv library.
+
+2004-01-15  Alexander V. Lukyanov <lav@yars.free.net>
+
 	* buffer.cc: use ICONV_CONST.
 	* FileCopy.cc: workaround solaris nfs bug in case of ENOSPC.
 
