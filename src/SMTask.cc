@@ -33,8 +33,9 @@
 
 SMTask	 *SMTask::chain=0;
 SMTask	 *SMTask::current=0;
-SMTask	 *SMTask::stack[MAX_TASK_RECURSION];
+SMTask	 **SMTask::stack=0;
 int      SMTask::stack_ptr=0;
+int      SMTask::stack_size=0;
 PollVec	 SMTask::sched_total;
 TimeDate SMTask::now;
 
@@ -96,6 +97,21 @@ void SMTask::Delete(SMTask *task)
    task->deleting=true;
    if(!task->running)
       delete task;
+}
+
+void SMTask::Enter(SMTask *task)
+{
+   if(stack_size<=stack_ptr)
+      stack=(SMTask**)xrealloc(stack,(stack_size+=16)*sizeof(*stack));
+   stack[stack_ptr++]=current;
+   current=task;
+   current->running++;
+}
+void SMTask::Leave(SMTask *task)
+{
+   assert(current==task);
+   current->running--;
+   current=stack[--stack_ptr];
 }
 
 int SMTask::Roll(SMTask *task)
