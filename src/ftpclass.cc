@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-1999 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -574,7 +574,6 @@ void Ftp::InitFtp()
    idle_start=now;
    max_retries=0;
    retries=0;
-   target_cwd=0;
    skey_pass=0;
    allow_skey=true;
    force_skey=false;
@@ -630,7 +629,6 @@ Ftp::~Ftp()
    xfree(anon_pass); anon_pass=0;
    xfree(line); line=0;
    xfree(resp); resp=0;
-   xfree(target_cwd); target_cwd=0;
 
    xfree(RespQueue); RespQueue=0;
    xfree(send_cmd_buffer); send_cmd_buffer=0;
@@ -990,17 +988,26 @@ int   Ftp::Do()
 
       ExpandTildeInCWD();
 
-      if(mode!=CHANGE_DIR && xstrcmp(cwd,real_cwd))
+      if(mode!=CHANGE_DIR)
       {
-	 char *s=(char*)alloca(strlen(cwd)+5);
-	 sprintf(s,"CWD %s",cwd);
-	 SendCmd(s);
-	 AddResp(RESP_CWD_RMD_DELE_OK,INITIAL_STATE,CHECK_CWD_CURR);
-	 SetRespPath(cwd);
+	 expected_response *last_cwd=FindLastCWD();
+	 if((!last_cwd && xstrcmp(cwd,real_cwd))
+	    || (last_cwd && xstrcmp(last_cwd->path,cwd)))
+	 {
+	    char *s=(char*)alloca(strlen(cwd)+5);
+	    sprintf(s,"CWD %s",cwd);
+	    SendCmd(s);
+	    AddResp(RESP_CWD_RMD_DELE_OK,INITIAL_STATE,CHECK_CWD_CURR);
+	    SetRespPath(cwd);
+	 }
+	 else if(last_cwd && !xstrcmp(last_cwd->path,cwd))
+	 {
+	    // no need for extra CWD, one's already sent.
+	    last_cwd->check_case=CHECK_CWD_CURR;
+	 }
       }
       state=CWD_CWD_WAITING_STATE;
       m=MOVED;
-
 
    case CWD_CWD_WAITING_STATE:
    {
@@ -1009,7 +1016,8 @@ int   Ftp::Do()
       if(state!=CWD_CWD_WAITING_STATE)
 	 return MOVED;
 
-      if(mode!=CHANGE_DIR && xstrcmp(cwd,real_cwd))
+      // wait for all CWD to finish
+      if(mode!=CHANGE_DIR && FindLastCWD())
 	 goto usual_return;
 
       // address of peer is not known yet
@@ -1073,9 +1081,6 @@ int   Ftp::Do()
 	 }
 	 else
 	 {
-	    xfree(target_cwd);
-	    target_cwd=xstrdup(file);
-
 	    int len=xstrlen(real_cwd);
 	    if(!AbsolutePath(file) && real_cwd
 	    && !strncmp(file,real_cwd,len) && file[len]=='/')
@@ -1980,10 +1985,16 @@ void Ftp::CloseRespQueue()
 {
    for(int i=RQ_head; i<RQ_tail; i++)
    {
-      switch(RespQueue[i].check_case)
+      check_case_t cc=RespQueue[i].check_case;
+      switch(cc)
       {
       case(CHECK_IGNORE):
       case(CHECK_PWD):
+      case(CHECK_USER):
+      case(CHECK_USER_PROXY):
+      case(CHECK_PASS):
+      case(CHECK_PASS_PROXY):
+      case(CHECK_READY):
 	 break;
       case(CHECK_CWD_CURR):
       case(CHECK_CWD):
@@ -1998,7 +2009,26 @@ void Ftp::CloseRespQueue()
 	 RespQueue[i].check_case=CHECK_IGNORE;
 	 break;
       }
+      if(cc!=CHECK_USER)
+	 RespQueue[i].log_resp=false;
    }
+}
+
+Ftp::expected_response *Ftp::FindLastCWD()
+{
+   for(int i=RQ_tail-1; i>=RQ_head; i--)
+   {
+      switch(RespQueue[i].check_case)
+      {
+      case(CHECK_CWD_CURR):
+      case(CHECK_CWD_STALE):
+      case(CHECK_CWD):
+	 return &RespQueue[i];
+      default:
+	 ;
+      }
+   }
+   return 0;
 }
 
 int   Ftp::Read(void *buf,int size)
@@ -2354,8 +2384,9 @@ int   Ftp::CheckResp(int act)
 
    int exp=RespQueue[RQ_head].expect;
    bool match=(act/100==exp/100);
+   check_case_t cc=RespQueue[RQ_head].check_case;
 
-   switch(RespQueue[RQ_head].check_case)
+   switch(cc)
    {
    case CHECK_NONE:
       break;
@@ -2382,28 +2413,22 @@ int   Ftp::CheckResp(int act)
       break;
 
    case CHECK_CWD:
-      if(match)
-      {
-	 // accept the target cwd
-	 xfree(cwd);
-	 cwd=xstrdup(target_cwd);
-	 xfree(real_cwd);
-	 real_cwd=target_cwd;
-	 target_cwd=0;
-      }
-      else if(act/100==5)
-	 new_state=NO_FILE_STATE;
-      break;
-
    case CHECK_CWD_CURR:
       if(act/100==5)
 	 new_state=NO_FILE_STATE;
       if(match)
+      {
+	 if(cc==CHECK_CWD)
+	 {
+	    xfree(cwd);
+	    cwd=xstrdup(RespQueue[RQ_head].path);
+	 }
 	 set_real_cwd(cwd);
+      }
       break;
 
    case CHECK_CWD_STALE:
-      if(match && RespQueue[RQ_head].path)
+      if(match)
 	 set_real_cwd(RespQueue[RQ_head].path);
       goto ignore;
 

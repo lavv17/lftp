@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-1999 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,6 +131,7 @@ class Ftp : public FileAccess
    void	 CloseRespQueue(); // treat responses on Close()
    int   RespQueueIsEmpty() { return RQ_head==RQ_tail; }
    int	 RespQueueSize() { return RQ_tail-RQ_head; }
+   expected_response *FindLastCWD();
 
    int	 RestCheck(int,int);
    int   NoFileCheck(int,int);
@@ -244,8 +245,6 @@ class Ftp : public FileAccess
 	 if(control_sock!=-1 && idle>0)
 	    block+=TimeOut(idle*1000);
       }
-
-   char *target_cwd;
 
    char *skey_pass;
    bool allow_skey;
