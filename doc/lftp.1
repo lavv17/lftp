@@ -753,6 +753,15 @@ look up address in inet family, then inet6 and use first matched.
 .BR dns:use-fork \ (bool)
 if true, lftp will fork before resolving host address. Default is true.
 .TP
+.BR ftp:anon-pass \ (string)
+sets the password used for anonymous ftp access authentication.
+Default is "-name@", where name is the username of the user running the
+program.
+.TP
+.BR ftp:anon-user \ (string)
+sets the user name used for anonymous ftp access authentication.
+Default is "anonymous".
+.TP
 .BR ftp:fxp-passive-source \ (bool)
 if true, lftp will try to set up source ftp server in passive mode first,
 otherwise destination one. If first attempt fails, lftp tries to set them up

@@ -1,3 +1,7 @@
+2000-07-14	kromJx <kromJx@crosswinds.net>
+
+	* lftp.1: document ftp:anon-user and ftp:anon-pass.
+
 2000-04-29	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: add http:cookie; mirror --Remove-source-files.
