@@ -1,3 +1,11 @@
+2000-06-21  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* CmdExec.cc, CmdExec.h, commands.cc, lftp.cc: new setting
+	  cmd:move-background; (Feeder::RealEOF) new method.
+	* FileAccess.cc, FileAccess.h, Http.h, Http.cc, FileCopy.cc,
+	  FileCopy.h: new setting xfer:max-redirections; redirection support;
+	  in http code - check for 20X code before using size/date.
+
 2000-06-18  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Http.cc: use strncasecmp for special cookie checking; handle domain=.
