@@ -271,8 +271,6 @@ void Http::SendRequest(const char *connection,const char *f)
 	 {
 	    strcpy(pfile,"ftp://");
 	    url::encode_string(user,pfile+strlen(pfile),"/:@"URL_UNSAFE);
-	    strcat(pfile,":");
-	    url::encode_string(pass,pfile+strlen(pfile),0);
 	    strcat(pfile,"@");
 	    url::encode_string(hostname,pfile+strlen(pfile));
 	    goto add_path;
@@ -1188,6 +1186,18 @@ HFtp::HFtp(const HFtp *o) : Http(o)
    hftp=true;
    Reconfig();
 }
+void HFtp::Login(const char *u,const char *p)
+{
+   Http::Login(u,p);
+   if(u)
+   {
+      home=(char*)xmalloc(strlen(u)+2);
+      sprintf(home,"~%s",u);
+      xfree(cwd);
+      cwd=xstrdup(home);
+   }
+}
+
 
 /* Converts struct tm to time_t, assuming the data in tm is UTC rather
    than local timezone (mktime assumes the latter).

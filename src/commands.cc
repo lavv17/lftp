@@ -644,6 +644,8 @@ Job *CmdExec::builtin_open()
 	    }
 	 }
       }
+      if(host)
+	 session->Connect(host,port);
       if(user)
       {
 	 if(!pass)
@@ -656,7 +658,6 @@ Job *CmdExec::builtin_open()
       }
       if(host)
       {
-	 session->Connect(host,port);
 	 if(verify_host && !background)
 	 {
 	    session->ConnectVerify();

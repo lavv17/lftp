@@ -108,7 +108,7 @@ public:
    int StoreStatus();
    int SendEOT();
 
-   void	 Connect(const char *h,const char *p);
+   void	Connect(const char *h,const char *p);
 
    void Close();
    const char *CurrentStatus();
@@ -136,6 +136,8 @@ public:
 
    FileAccess *Clone() { return new HFtp(this); }
    static FileAccess *New() { return new HFtp(); }
+
+   virtual void Login(const char *,const char *);
 };
 
 #endif//HTTP_H

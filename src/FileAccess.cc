@@ -454,6 +454,9 @@ void FileAccess::AnonymousLogin()
    xfree(pass); pass=0;
    xfree(group); group=0;
    xfree(gpass); gpass=0;
+   xfree(cwd);
+   cwd=xstrdup(default_cwd);
+   xfree(home);  home=0;
 }
 
 void FileAccess::GetInfoArray(struct fileinfo *info,int count)
