@@ -126,14 +126,14 @@ struct option
    arguments to the option '\0'.  This behavior is specific to the GNU
    `getopt'.  */
 
-#if defined __STDC__ && __STDC__
+#if defined(__cplusplus) || (defined (__STDC__) && __STDC__)
 # ifdef __GNU_LIBRARY__
 /* Many other libraries have conflicting prototypes for getopt, with
    differences in the consts, in stdlib.h.  To avoid compilation
    errors, only prototype getopt for the GNU C library.  */
 extern int getopt (int __argc, char *const *__argv, const char *__shortopts);
 # else /* not __GNU_LIBRARY__ */
-extern int getopt ();
+/*extern int getopt ();*/
 # endif /* __GNU_LIBRARY__ */
 
 # ifndef __need_getopt
