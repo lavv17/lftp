@@ -2282,7 +2282,9 @@ system_error:
 #ifdef USE_SSL
 void Ftp::SendAuth(const char *auth)
 {
-   if(!conn->auth_supported || conn->auth_sent || conn->control_ssl)
+   if(conn->auth_sent || conn->control_ssl)
+      return;
+   if(!conn->auth_supported)
    {
       if(QueryBool("ssl-force",hostname))
 	 SetError(LOGIN_FAILED,_("ftp:ssl-force is set and server does not support or allow SSL"));
