@@ -632,6 +632,7 @@ int   MirrorJob::Do()
 	 to_rm->next();
 	 ArgV *args=new ArgV("rm");
 	 args->Append(file->name);
+	 args->seek(1);
 	 rmJob *j=new rmJob(target_session->Clone(),args);
 	 j->SetParentFg(this);
 	 j->cmdline=args->Combine();
@@ -677,6 +678,7 @@ int   MirrorJob::Do()
 	    continue;
 	 ArgV *a=new ArgV("chmod");
 	 a->Append(file->name);
+	 a->seek(1);
 	 ChmodJob *cj=new ChmodJob(target_session->Clone(),file->mode&~get_mode_mask(),a);
 	 AddWaiting(cj);
 	 transfer_count++;

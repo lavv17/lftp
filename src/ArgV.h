@@ -53,7 +53,8 @@ public:
 	 return getopt_long(opts,0,0);
       }
 
-   void rewind();
+   void seek(int n);
+   void rewind() { seek(0); }
    char *getnext();
 
    char *getarg(int n) const

@@ -80,9 +80,11 @@ void ArgV::Empty()
    ind=0;
 }
 
-void ArgV::rewind()
+void ArgV::seek(int n)
 {
-   ind=0;
+   if(n>=c)
+      n=c;
+   ind=n;
 }
 
 char *ArgV::getnext()

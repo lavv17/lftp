@@ -1,3 +1,8 @@
+2001-12-20  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ArgV.cc, ArgV.h: (seek) new method.
+	* MirrorJob.cc: seek args before TreatJob creation.
+
 2001-12-20  Glenn Maynard <g_ld@zewt.org>
 
 	* FileAccess.cc, FileAccess.h: add last_priority member.
