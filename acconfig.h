@@ -226,4 +226,6 @@ CDECL void SOCKSinit(const char *);
 # define NATIVE_CRLF 1
 #endif
 
+#define E_RETRY(e) ((e)==EAGAIN || (e)==EWOULDBLOCK || (e)==EINTR)
+
 #endif /* CONFIG_H */
