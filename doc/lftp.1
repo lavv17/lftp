@@ -825,6 +825,10 @@ otherwise destination one. If first attempt fails, lftp tries to set them up
 the other way. If the other disposition fails too, lftp falls back to plain
 copy. See also ftp:use-fxp.
 .TP
+.BR ftp:home \ (string)
+Initial directory. Default is empty string which means auto. Set this to `/'
+if you don't like the look of %2F in ftp URLs.
+.TP
 .BR ftp:list-options \ (string)
 sets options which are always appended to LIST command. It can be
 useful to set this to `-a' if server does not show dot (hidden) files by default.

@@ -1,3 +1,7 @@
+2001-08-23	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:home.
+
 2001-07-30	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document new queue options; formatting.
