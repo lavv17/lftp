@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
-"POT-Creation-Date: 2002-01-27 11:56+0300\n"
+"POT-Creation-Date: 2002-02-24 13:37+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -331,23 +331,23 @@ msgstr "número inválido"
 msgid "Query of variable `%s' failed: %s\n"
 msgstr ""
 
-#: src/ResMgr.cc:684
+#: src/ResMgr.cc:674
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr ""
 
-#: src/ResMgr.cc:692
+#: src/ResMgr.cc:682
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr ""
 
-#: src/ResMgr.cc:718
+#: src/ResMgr.cc:708
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr ""
 
-#: src/ResMgr.cc:791
+#: src/ResMgr.cc:781
 msgid "Invalid IPv4 numeric address"
 msgstr ""
 
-#: src/ResMgr.cc:797
+#: src/ResMgr.cc:787
 msgid "no closure defined for this setting"
 msgstr ""
 
@@ -1272,11 +1272,6 @@ msgstr ""
 #, fuzzy
 msgid "invalid option"
 msgstr "número inválido"
-
-#: src/commands.cc:1300
-#, c-format
-msgid "%s: %s.\n"
-msgstr ""
 
 #: src/commands.cc:1366
 #, c-format

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2.3\n"
-"POT-Creation-Date: 2002-01-27 11:56+0300\n"
+"POT-Creation-Date: 2002-02-24 13:37+0300\n"
 "PO-Revision-Date: 2000-06-18 10:46+02:00\n"
 "Last-Translator: Giovanni Bortolozzo <borto@pluto.linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -331,23 +331,23 @@ msgstr "numero in virgola mobile non valido"
 msgid "Query of variable `%s' failed: %s\n"
 msgstr ""
 
-#: src/ResMgr.cc:684
+#: src/ResMgr.cc:674
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "Lettera per l'unità di tempo non valida. Sono permesse solo [smhd]"
 
-#: src/ResMgr.cc:692
+#: src/ResMgr.cc:682
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "Formato temporale non valido. Il formato è <tempo><unità>, es. 2h30m."
 
-#: src/ResMgr.cc:718
+#: src/ResMgr.cc:708
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Formato dell'intervallo non valido. Il formato è min-max, es. 10-20."
 
-#: src/ResMgr.cc:791
+#: src/ResMgr.cc:781
 msgid "Invalid IPv4 numeric address"
 msgstr ""
 
-#: src/ResMgr.cc:797
+#: src/ResMgr.cc:787
 msgid "no closure defined for this setting"
 msgstr ""
 
@@ -1385,11 +1385,6 @@ msgstr ""
 msgid "invalid option"
 msgstr "numero non valido"
 
-#: src/commands.cc:1300
-#, fuzzy, c-format
-msgid "%s: %s.\n"
-msgstr "Uso: %s\n"
-
 #: src/commands.cc:1366
 #, c-format
 msgid "Usage: %s [OPTS] files...\n"
@@ -2164,6 +2159,10 @@ msgstr ""
 #, fuzzy
 msgid "modules are not supported on this system"
 msgstr "SITE CHMOD non è supportato da questo sito"
+
+#, fuzzy
+#~ msgid "%s: %s.\n"
+#~ msgstr "Uso: %s\n"
 
 #~ msgid "nlist [<args>]"
 #~ msgstr "nlist [<arg>]"

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Lftp 2.4.5\n"
-"POT-Creation-Date: 2002-02-11 15:05+0300\n"
+"POT-Creation-Date: 2002-02-24 13:37+0300\n"
 "PO-Revision-Date: 2002-01-27 14:40GMT\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: deutsch <de@li.org>\n"
@@ -1470,11 +1470,6 @@ msgstr "ungültiges Argument für »--sort«"
 msgid "invalid option"
 msgstr "Ungültige Option"
 
-#: src/commands.cc:1300
-#, c-format
-msgid "%s: %s.\n"
-msgstr "%s: %s.\n"
-
 #: src/commands.cc:1366
 #, c-format
 msgid "Usage: %s [OPTS] files...\n"
@@ -2238,3 +2233,6 @@ msgstr "Vorraussetzung Modul »%s«: %s\n"
 #: src/module.cc:201
 msgid "modules are not supported on this system"
 msgstr "Module sind auf diesem System nicht verwendbar"
+
+#~ msgid "%s: %s.\n"
+#~ msgstr "%s: %s.\n"

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
-"POT-Creation-Date: 2002-01-27 11:56+0300\n"
+"POT-Creation-Date: 2002-02-24 13:37+0300\n"
 "PO-Revision-Date: 2001-09-24 00:06+0900\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -335,24 +335,24 @@ msgstr "不正な浮動小数点数"
 msgid "Query of variable `%s' failed: %s\n"
 msgstr "変数 `%s' の問い合わせに失敗しました: %s\n"
 
-#: src/ResMgr.cc:684
+#: src/ResMgr.cc:674
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "時間単位を示す文字として不正です。[smhd] のみ許されます。"
 
-#: src/ResMgr.cc:692
+#: src/ResMgr.cc:682
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr ""
 "時間フォーマットが不正です。正しいフォーマットは <時間><単位> 例) 2h30m"
 
-#: src/ResMgr.cc:718
+#: src/ResMgr.cc:708
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "範囲フォーマットが不正です。正しいフォーマットは 最小-最大 例) 10-20"
 
-#: src/ResMgr.cc:791
+#: src/ResMgr.cc:781
 msgid "Invalid IPv4 numeric address"
 msgstr "不正なIPv4番号アドレス"
 
-#: src/ResMgr.cc:797
+#: src/ResMgr.cc:787
 msgid "no closure defined for this setting"
 msgstr "この設定では終止が定義されていません"
 
@@ -1413,11 +1413,6 @@ msgstr ""
 msgid "invalid option"
 msgstr "不正な数"
 
-#: src/commands.cc:1300
-#, fuzzy, c-format
-msgid "%s: %s.\n"
-msgstr "%s: %s: %s\n"
-
 #: src/commands.cc:1366
 #, c-format
 msgid "Usage: %s [OPTS] files...\n"
@@ -2190,6 +2185,10 @@ msgstr "モジュール `%s' に依存しています: %s\n"
 #: src/module.cc:201
 msgid "modules are not supported on this system"
 msgstr "モジュールはこのシステムではサポートされていません"
+
+#, fuzzy
+#~ msgid "%s: %s.\n"
+#~ msgstr "%s: %s: %s\n"
 
 #~ msgid "copy: get position was %lld\n"
 #~ msgstr "copy: get の位置は %lld でした\n"

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2\n"
-"POT-Creation-Date: 2002-01-27 11:56+0300\n"
+"POT-Creation-Date: 2002-02-24 13:37+0300\n"
 "PO-Revision-Date: 2000-09-07 09:36+08:00\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -27,7 +27,7 @@ msgstr "Предупреждение: ошибка chdir(%s): %s\n"
 #. can't run further commands in wrong directory
 #: src/CmdExec.cc:104
 msgid "No directory to execute commands in - terminating\n"
-msgstr ""
+msgstr "Нет каталога для исполнения команд - это конец\n"
 
 #: src/CmdExec.cc:210
 #, c-format
@@ -334,25 +334,25 @@ msgstr "неверное число с плавающей точкой"
 msgid "Query of variable `%s' failed: %s\n"
 msgstr ""
 
-#: src/ResMgr.cc:684
+#: src/ResMgr.cc:674
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "Недопустимые единицы измерения времени, допускаются только [smhd]."
 
-#: src/ResMgr.cc:692
+#: src/ResMgr.cc:682
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "Неверный формат времени. Формат: <время><единицы>, например 2h30m."
 
-#: src/ResMgr.cc:718
+#: src/ResMgr.cc:708
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Неверный формат диапазона. Формат: минимум-максимум, например 10-20."
 
-#: src/ResMgr.cc:791
+#: src/ResMgr.cc:781
 msgid "Invalid IPv4 numeric address"
 msgstr "Некорректный цифровой IPv4 адрес"
 
-#: src/ResMgr.cc:797
+#: src/ResMgr.cc:787
 msgid "no closure defined for this setting"
-msgstr ""
+msgstr "для этой переменной адрес контекста не определен"
 
 #: src/Http.cc:1591 src/Resolver.cc:187 src/Resolver.cc:229
 #: src/ftpclass.cc:3568
@@ -387,9 +387,8 @@ msgid "execlp(%s) failed: %s\n"
 msgstr "функция execlp(%s) не выполнена: %s\n"
 
 #: src/commands.cc:107
-#, fuzzy
 msgid "!<shell-command>"
-msgstr "!<внешняя_команда>"
+msgstr "!<внешняя-команда>"
 
 #: src/commands.cc:108
 msgid "Launch shell or shell command\n"
@@ -523,7 +522,7 @@ msgstr ""
 
 #: src/commands.cc:151
 msgid "[re]cls [opts] [path/][pattern]"
-msgstr ""
+msgstr "[re]cls [опции] [путь/][шаблон]"
 
 #. note: I've tried to keep options which are likely to be always
 #. * turned on (via cmd:cls-default, etc) capital, to leave lowercase
@@ -584,9 +583,8 @@ msgstr ""
 " -o <файл>  направить отладочный вывод в указанный файл.\n"
 
 #: src/commands.cc:200
-#, fuzzy
 msgid "du [options] <dirs>"
-msgstr "mkdir [-p] <каталоги>"
+msgstr "du [опции] <каталоги>"
 
 #: src/commands.cc:201
 msgid ""
@@ -758,7 +756,6 @@ msgid "ls [<args>]"
 msgstr "ls [<аргументы>]"
 
 #: src/commands.cc:277
-#, fuzzy
 msgid ""
 "List remote files. You can redirect output of this command to file\n"
 "or via pipe to external command.\n"
@@ -770,6 +767,7 @@ msgstr ""
 "команды в файл или через программный канал во внешнюю программу.\n"
 "По-умолчанию, вывод команды ls кэшируется; чтобы увидеть обновленный\n"
 "список файлов, используйте команды `rels' или `cache flush'.\n"
+"Смотрите также `help cls'.\n"
 
 #: src/commands.cc:282
 msgid "mget [OPTS] <files>"
@@ -943,9 +941,8 @@ msgid "Rename <file1> to <file2>\n"
 msgstr "Переименовать <файл1> в <файл2>\n"
 
 #: src/commands.cc:340
-#, fuzzy
 msgid "[re]nlist [<args>]"
-msgstr "renlist [<аргументы>]"
+msgstr "[re]nlist [<аргументы>]"
 
 #: src/commands.cc:341
 #, fuzzy
@@ -1074,32 +1071,36 @@ msgstr ""
 "повторное соединение может восстановить состояние в любой момент.\n"
 
 #: src/commands.cc:389
-#, fuzzy
 msgid ""
 "recls [<args>]\n"
 "Same as `cls', but don't look in cache\n"
-msgstr "То же, что и `ls', но не обращаться к кэшу\n"
+msgstr ""
+"recls [<аргументы>]\n"
+"То же, что и `cls', но не обращаться к кэшу\n"
 
 #: src/commands.cc:392
-#, fuzzy
 msgid ""
 "Usage: reget [OPTS] <rfile> [-o <lfile>]\n"
 "Same as `get -c'\n"
-msgstr "reget [КЛЮЧИ] <файл> [-o <лок.файл>]"
+msgstr ""
+"Использование: reget [КЛЮЧИ] <файл> [-o <лок.файл>]\n"
+"То же, что и `get -c'\n"
 
 #: src/commands.cc:395
-#, fuzzy
 msgid ""
 "Usage: rels [<args>]\n"
 "Same as `ls', but don't look in cache\n"
-msgstr "То же, что и `ls', но не обращаться к кэшу\n"
+msgstr ""
+"Использование: rels [<аргументы>]\n"
+"То же, что и `ls', но не обращаться к кэшу\n"
 
 #: src/commands.cc:398
-#, fuzzy
 msgid ""
 "Usage: renlist [<args>]\n"
 "Same as `nlist', but don't look in cache\n"
-msgstr "То же, что и `nlist', но не обращаться к кэшу\n"
+msgstr ""
+"Использование: renlist [<аргументы>]\n"
+"То же, что и `nlist', но не обращаться к кэшу\n"
 
 #: src/commands.cc:400
 msgid "repeat [delay] [command]"
@@ -1112,11 +1113,12 @@ msgid ""
 msgstr ""
 
 #: src/commands.cc:404
-#, fuzzy
 msgid ""
 "Usage: reput <lfile> [-o <rfile>]\n"
 "Same as `put -c'\n"
-msgstr "reput <лок.файл> [-o <файл>]"
+msgstr ""
+"Использование: reput <лок.файл> [-o <файл>]\n"
+"То же, что и `put -c'.\n"
 
 #: src/commands.cc:406
 msgid "rm [-r] [-f] <files>"
@@ -1216,6 +1218,9 @@ msgid ""
 "Use specified info for remote login. If you specify URL, the password\n"
 "will be cached for future usage.\n"
 msgstr ""
+"Использовать введенную информацию для удаленной авторизации. Если указан "
+"URL,\n"
+"то пароль будет запомнен для последующего использования.\n"
 
 #: src/commands.cc:438
 msgid "Shows lftp version\n"
@@ -1230,6 +1235,8 @@ msgid ""
 "Wait for specified job to terminate. If jobno is omitted, wait\n"
 "for last backgrounded job.\n"
 msgstr ""
+"Ждать завершения указанного задания. Если номер задания не указан, то ждать\n"
+"завершения последнего задания, переведенного в фоновый режим.\n"
 
 #: src/commands.cc:442
 msgid "zcat <files>"
@@ -1358,14 +1365,8 @@ msgstr ""
 #. * we only need to never print errors for completion and validation; for
 #. * cls itself we could do it, but that'd be a special case ...
 #: src/commands.cc:1271
-#, fuzzy
 msgid "invalid option"
-msgstr "неверное число"
-
-#: src/commands.cc:1300
-#, fuzzy, c-format
-msgid "%s: %s.\n"
-msgstr "Использование: %s\n"
+msgstr "неверная опция"
 
 #: src/commands.cc:1366
 #, c-format
@@ -1378,9 +1379,9 @@ msgid "File name missed. "
 msgstr "Пропущено имя файла. "
 
 #: src/commands.cc:1570
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s %s[-f] files...\n"
-msgstr "Использование: %s [-r] [-f] файлы...\n"
+msgstr "Использование: %s %s[-f] файлы...\n"
 
 #: src/commands.cc:1619
 #, c-format
@@ -1519,9 +1520,9 @@ msgstr ""
 "Неоднозначное сокращение `%s'. Введите `help' для списка доступных команд.\n"
 
 #: src/commands.cc:2244
-#, fuzzy, c-format
+#, c-format
 msgid "Lftp | Version %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
-msgstr "Lftp | Версия %s | Copyright (c) 1996-2001 Александр В. Лукьянов\n"
+msgstr "Lftp | Версия %s | Copyright (c) 1996-2002 Александр В. Лукьянов\n"
 
 #: src/commands.cc:2246
 msgid ""
@@ -1561,14 +1562,14 @@ msgid "Usage: %s [-d #] dir\n"
 msgstr "Использование: %s [-d #] dir\n"
 
 #: src/commands.cc:2529
-#, fuzzy, c-format
+#, c-format
 msgid "%s: invalid block size `%s'\n"
-msgstr "%s: Неверное число для размера\n"
+msgstr "%s: неверный размер блока `%s'\n"
 
 #: src/commands.cc:2543
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [options] <dirs>\n"
-msgstr "Использование: %s [-d #] dir\n"
+msgstr "Использование: %s [опции] <каталоги>\n"
 
 #: src/commands.cc:2549
 #, c-format
@@ -1622,14 +1623,12 @@ msgid "Switching to NOREST mode"
 msgstr "Включение режима NOREST"
 
 #: src/ftpclass.cc:402
-#, fuzzy
 msgid "Server reply matched ftp:retry-530, retrying"
-msgstr "Ответ сервера совпал с ftp:retry-530[-anonymous], повтрная попытка"
+msgstr "Ответ сервера совпал с ftp:retry-530, повтрная попытка"
 
 #: src/ftpclass.cc:410
-#, fuzzy
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
-msgstr "Ответ сервера совпал с ftp:retry-530[-anonymous], повтрная попытка"
+msgstr "Ответ сервера совпал с ftp:retry-530-anonymous, повтрная попытка"
 
 #: src/ftpclass.cc:434
 msgid "Account is required, set ftp:acct variable"
