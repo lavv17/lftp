@@ -29,6 +29,8 @@
 
 ArgV::ArgV(const char *a0, const char *args)
 {
+   ind=0;
+
    int argc;
    char **argv = tokenize(args, &argc);
    Assign(argv,argc);

@@ -1,3 +1,11 @@
+2004-02-25  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* pgetJob.cc: nice progress bar.
+	* ArgV.cc: init ind in ctor.
+	* StatusLine.h: new Show methods to show StringSet.
+	* StringSet.cc, StringSet.h: (AppendFormat) new method.
+	* ftpclass.cc, Http.cc, Fish.cc, SFtp.cc: take over suspended sessions.
+
 2004-02-24  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ChmodJob.cc: fix recursing.

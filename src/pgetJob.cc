@@ -193,7 +193,29 @@ void pgetJob::ShowRunStatus(StatusLine *s)
 
    const char *name=cp->SqueezeName(s->GetWidthDelayed()-58);
    off_t size=cp->GetSize();
-   s->Show(PGET_STATUS);
+   StringSet status;
+   status.AppendFormat(PGET_STATUS);
+
+   int w=s->GetWidthDelayed();
+   char *bar=string_alloca(w--);
+   memset(bar,'.',w);
+   bar[w]=0;
+
+   int i;
+   int p=cp->GetPos()*w/size;
+   for(i=0; i<p; i++)
+      bar[i]='o';
+
+   for(int chunk=0; chunk<num_of_chunks; chunk++)
+   {
+      p=(chunks[chunk]->Done()?chunks[chunk]->limit:chunks[chunk]->GetPos())*w/size;
+      for(i=chunks[chunk]->start*w/size; i<p; i++)
+	 bar[i]='o';
+   }
+
+   status.Append(bar);
+
+   s->Show(status);
 }
 
 // list subjobs (chunk xfers) only when verbose

@@ -52,7 +52,7 @@ bool SFtp::GetBetterConnection(int level,bool limit_reached)
       {
 	 if(level<2)
 	    continue;
-	 if(!connection_takeover || o->priority>=priority)
+	 if(!connection_takeover || (o->priority>=priority && !o->suspended))
 	    continue;
 	 o->Disconnect();
 	 return need_sleep;

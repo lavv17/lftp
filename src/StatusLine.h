@@ -56,6 +56,8 @@ public:
    void DefaultTitle(const char *s);
    void ShowN(const char *const* newstr,int n);
    void Show(const char *f,...) PRINTF_LIKE(2,3);
+   void Show(const StringSet &s) { ShowN(s.Set(),s.Count()); }
+   void Show(const StringSet *s) { Show(*s); }
    void WriteLine(const char *f,...) PRINTF_LIKE(2,3);
    void Clear(bool title_also=true);
 

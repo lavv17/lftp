@@ -47,6 +47,7 @@ public:
    bool IsEqual(const char *const *s,int n) const;
    bool IsEqual(const StringSet &o) const { return IsEqual(o.set,o.set_size); }
    void Append(const char *);
+   void AppendFormat(const char *,...) PRINTF_LIKE(2,3);
    void InsertBefore(int,const char *);
    void Replace(int,const char *);
    void Remove(int);

@@ -22,6 +22,7 @@
 
 #include <config.h>
 #include "StringSet.h"
+#include "misc.h"
 
 bool StringSet::IsEqual(const char *const *set1,int n1) const
 {
@@ -114,4 +115,15 @@ void StringSet::Remove(int i)
       memmove(set+i,set+i+1,(set_size-i)*sizeof(*set));
       set_size--;
    }
+}
+
+void StringSet::AppendFormat(const char *f,...)
+{
+   va_list v;
+   va_start(v,f);
+   char *s=xvasprintf(f,v);
+   va_end(v);
+
+   Allocate(set_size+1);
+   set[set_size++]=s;	// note that s is allocated by xvasprintf
 }

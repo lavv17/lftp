@@ -1009,8 +1009,8 @@ bool Ftp::GetBetterConnection(int level,bool limit_reached)
 	 /* session is in use; last resort is to takeover an active connection */
 	 if(level<2)
 	    continue;
-	 /* only take over lower priority jobs */
-	 if(!connection_takeover || o->priority>=priority)
+	 /* only take over lower priority or suspended jobs */
+	 if(!connection_takeover || (o->priority>=priority && !o->suspended))
 	    continue;
 	 if(o->data_sock!=-1 && o->RespQueueSize()<=1)
 	 {
