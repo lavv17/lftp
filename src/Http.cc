@@ -195,6 +195,14 @@ void Http::SendMethod(const char *method,const char *efile)
    url::encode_string(hostname,ehost);
    if(!use_head && !strcmp(method,"HEAD"))
       method="GET";
+   if(file_url)
+   {
+      efile=file_url;
+      if(!proxy)
+	 efile+=url::path_index(efile);
+      else if(!strncmp(efile,"hftp://",7))
+	 efile++;
+   }
    Send("%s %s HTTP/1.1\r\n",method,efile);
    Send("Host: %s\r\n",ehost);
    if(user_agent && user_agent[0])

@@ -2,6 +2,10 @@
 
 	* Http.cc: add Cookie support; allow disabling user-agent.
 	* resource.cc: new setting http:cookie.
+	* CatJob.cc: simplify FileCopyPeerFA creation.
+	* FileAccess.cc, FileAccess.h, url.cc, url.h, Http.cc,
+	  FileCopy.cc, FileCopy.h: use original URL when sending HTTP request,
+	  this allows requesting URLs containing e.g. '?'.
 
 2000-04-26  Alexander V. Lukyanov  <lav@yars.free.net>
 

@@ -58,6 +58,7 @@ void FileAccess::Init()
    pass_open=false;
 
    file=0;
+   file_url=0;
    file1=0;
    real_cwd=0;
    default_cwd="~";
@@ -117,6 +118,7 @@ FileAccess::FileAccess(const FileAccess *fa)
 FileAccess::~FileAccess()
 {
    xfree(file); file=0;
+   xfree(file_url);
    xfree(cwd); cwd=0;
    xfree(real_cwd); real_cwd=0;
    xfree(error); error=0;
@@ -336,6 +338,7 @@ const char *FileAccess::StrError(int err)
 void FileAccess::Close()
 {
    xfree(file); file=0;
+   xfree(file_url); file_url=0;
    xfree(file1); file1=0;
    mode=CLOSED;
    opt_date=0;

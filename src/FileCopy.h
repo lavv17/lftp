@@ -232,6 +232,7 @@ public:
 class FileCopyPeerFA : public FileCopyPeer
 {
    char *file;
+   char *orig_url;
    int FAmode;
    FileAccess *session;
 

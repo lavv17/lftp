@@ -96,6 +96,7 @@ protected:
    const char *default_cwd;
    char  *cwd;
    char  *file;
+   char	 *file_url;
    char	 *file1;
    int	 mode;
    long	 pos;
@@ -185,6 +186,7 @@ public:
    virtual void GroupLogin(const char *g,const char *p);
 
    virtual void Open(const char *file,int mode,long pos=0);
+   void SetFileURL(const char *u) { xfree(file_url); file_url=xstrdup(u); }
    void SetSize(long s) { entity_size=s; }
    void SetDate(time_t d) { entity_date=d; }
    void WantDate(time_t *d) { opt_date=d; }

@@ -35,6 +35,7 @@ ParsedURL::ParsedURL(const char *url,bool proto_required)
 {
    memory=(char*)xmalloc(strlen(url)*2+20+1);
    strcpy(memory,url);
+   orig_url=xstrdup(url);
 
    proto=0;
    host=0;

@@ -884,6 +884,7 @@ void FileCopyPeerFA::OpenSession()
       }
    }
    session->Open(file,FAmode,seek_pos);
+   session->SetFileURL(orig_url);
    if(mode==PUT)
    {
       if(e_size!=NO_SIZE && e_size!=NO_SIZE_YET)
@@ -1019,6 +1020,7 @@ FileCopyPeerFA::FileCopyPeerFA(FileAccess *s,const char *f,int m)
    file=xstrdup(f);
    session=s;
    reuse_later=true;
+   orig_url=0;
    fxp=false;
    if(FAmode==FA::LIST || FAmode==FA::LONG_LIST)
       Save(LsCache::SizeLimit());
@@ -1032,6 +1034,7 @@ FileCopyPeerFA::~FileCopyPeerFA()
 	 SessionPool::Reuse(session);
    }
    xfree(file);
+   xfree(orig_url);
 }
 
 FileCopyPeerFA::FileCopyPeerFA(ParsedURL *u,int m)
@@ -1041,6 +1044,8 @@ FileCopyPeerFA::FileCopyPeerFA(ParsedURL *u,int m)
    file=xstrdup(u->path);
    session=FileAccess::New(u);
    reuse_later=true;
+   orig_url=u->orig_url;
+   u->orig_url=0;
    fxp=false;
    if(!file)
    {

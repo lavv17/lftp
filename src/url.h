@@ -34,10 +34,13 @@ public:
    char	 *port;
    char  *path;
 
+   char  *orig_url;
+
    ParsedURL(const char *url,bool proto_required=false);
    ~ParsedURL()
    {
       xfree(memory);
+      xfree(orig_url);
    }
 
    void Combine(char *buf,const char *home=0);

@@ -67,15 +67,7 @@ void CatJob::NextFile()
       return;
    }
 
-   ParsedURL src_url(src,true);
-   FileCopyPeerFA *src_peer=0;
-   if(src_url.proto==0)
-   {
-      src_peer=new FileCopyPeerFA(session,src,FA::RETRIEVE);
-      src_peer->DontReuseSession();
-   }
-   else
-      src_peer=new FileCopyPeerFA(&src_url,FA::RETRIEVE);
+   FileCopyPeerFA *src_peer=FileCopyPeerFA::New(session,src,FA::RETRIEVE,false);
 
    FileCopyPeerFDStream *dst_peer=0;
    if(for_each)
