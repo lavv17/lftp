@@ -1264,7 +1264,7 @@ int   Ftp::Do()
       conn->SavePeerAddress();
 
 #ifdef USE_SSL
-      if(proxy?!strcmp(proxy_proto,"ftps")||!strcmp(proxy_proto,"https"):ftps)
+      if(proxy?!xstrcmp(proxy_proto,"ftps")||!xstrcmp(proxy_proto,"https"):ftps)
       {
 	 conn->MakeSSLBuffers(hostname);
 	 conn->prot='P';
@@ -3178,6 +3178,9 @@ int   Ftp::Read(void *buf,int size)
       return DO_AGAIN;
 
    if(expect->Has(Expect::REST) && real_pos==-1)
+      return DO_AGAIN;
+
+   if(state==DATASOCKET_CONNECTING_STATE)
       return DO_AGAIN;
 
    if(state==DATA_OPEN_STATE)

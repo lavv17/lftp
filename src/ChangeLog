@@ -1,3 +1,9 @@
+2004-04-07  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: fixed coredump when ftp:proxy does not have a protocol
+	  specified; fixed assertion failure when using ftp over http proxy
+	  with CONNECT method.
+
 2004-04-06  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: add "closed by the remote host" string to the transient
