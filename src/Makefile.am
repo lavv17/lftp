@@ -5,7 +5,8 @@ bin_SCRIPTS = lftpget
 pkgdata_SCRIPTS = import-ncftp import-netscape
 noinst_SCRIPTS = ftpget
 
-EXTRA_DIST = $(pkgdata_SCRIPTS) $(bin_SCRIPTS) $(noinst_SCRIPTS) example1.cc example2.cc
+EXTRA_DIST = $(pkgdata_SCRIPTS) $(bin_SCRIPTS) $(noinst_SCRIPTS) example1.cc example2.cc\
+ Fish.cc Fish.h
 
 lftp_SOURCES = lftp.cc complete.h complete.cc lftp_rl.c lftp_rl.h
 #ftpget_SOURCES = ftpget.cc
@@ -31,7 +32,8 @@ libtasks_a_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  resource.cc DummyProto.cc DummyProto.h FtpGlob.cc FtpGlob.h FtpDirList.cc\
  FtpDirList.h ArgV.cc ArgV.h HttpDir.cc HttpDir.h ascii_ctype.h\
  NetAccess.cc NetAccess.h FtpSplitList.h FtpSplitList.cc Speedometer.cc\
- Speedometer.h Fish.cc Fish.h lftp_ssl.cc lftp_ssl.h
+ Speedometer.h lftp_ssl.cc lftp_ssl.h
+#Fish.cc Fish.h
 
 libjobs_a_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\
