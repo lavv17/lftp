@@ -173,8 +173,9 @@ void SMTask::Schedule()
       if(!repeat && current->block.GetTimeout()==0)
 	 printf("timeout==0: %p\n",current);
 #endif
-      if(sched_scan) // if the task called Schedule recursively, sched_scan==0.
-	 sched_scan=sched_scan->next;
+      if(!sched_scan)
+      	 sched_scan=current;
+      sched_scan=sched_scan->next;
       if(current->deleting)
       {
 	 delete current;

@@ -47,6 +47,7 @@
 #include "xmalloc.h"
 #include "ResMgr.h"
 #include "log.h"
+#include "plural.h"
 
 #ifndef T_SRV
 # define T_SRV 33
@@ -287,6 +288,7 @@ int   Resolver::Do()
    memcpy(addr,s,n);
    done=true;
    cache->Add(hostname,portname,defport,service,proto,addr,addr_num);
+   Log::global->Format(4,plural("---- %d address$|es$ found\n",addr_num),addr_num);
    return MOVED;
 }
 
