@@ -1,3 +1,14 @@
+1999-07-10  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Job.cc, Job.h: (GetConnectURL) virtual new method. (ListDoneJobs)
+	  compare urls and print job url if different.
+
+1999-07-10  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Job.cc, Job.h, CmdExec.cc, CmdExec.h: add top_vfprintf method;
+	  modify vfprintf method to call top_vfprintf; in (class CmdExec)
+	  redefine only top_vfprintf.
+
 1999-07-06  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* HttpDir.cc: support base href, refresh, take list of tags from wget;

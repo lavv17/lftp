@@ -219,8 +219,13 @@ void  Job::ListDoneJobs()
       if(scan->jobno>=0 && (scan->parent==this || scan->parent==0)
          && scan->Done())
       {
-	 fprintf(f,_("[%d] Done (%s)\n"),scan->jobno,
+	 fprintf(f,_("[%d] Done (%s)"),scan->jobno,
 	    scan->cmdline?scan->cmdline:"?");
+	 const char *this_url=this->GetConnectURL();
+	 const char *that_url=scan->GetConnectURL();
+	 if(this_url && that_url && strcmp(this_url,that_url))
+	    fprintf(f," (wd: %s)",that_url);
+	 fprintf(f,"\n");
 	 scan->PrintStatus(0);
       }
    }
@@ -296,10 +301,19 @@ void SessionJob::PrintStatus(int v)
 
 void Job::vfprintf(FILE *file,const char *fmt,va_list v)
 {
+   if(file!=stdout && file!=stderr)
+   {
+      ::vfprintf(file,fmt,v);
+      return;
+   }
    if(parent)
       parent->vfprintf(file,fmt,v);
    else
-      ::vfprintf(file,fmt,v);
+      top_vfprintf(file,fmt,v);
+}
+void Job::top_vfprintf(FILE *file,const char *fmt,va_list v)
+{
+   ::vfprintf(file,fmt,v);
 }
 
 void Job::perror(const char *f)

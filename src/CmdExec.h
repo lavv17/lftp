@@ -172,7 +172,7 @@ public:
 
    FDStream *default_output;
 
-   void vfprintf(FILE *file,const char *f,va_list v);
+   void top_vfprintf(FILE *file,const char *f,va_list v);
 
    void SetInteractive(bool i);
 

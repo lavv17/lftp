@@ -881,16 +881,11 @@ void CmdExec::Reconfig()
    verbose=res_verbose.Query(0);
 }
 
-void CmdExec::vfprintf(FILE *file,const char *f,va_list v)
+void CmdExec::top_vfprintf(FILE *file,const char *f,va_list v)
 {
-   if(parent)
-      parent->vfprintf(file,f,v);
-   else
-   {
-      if(status_line)
-	 status_line->Show("");
-      ::vfprintf(file,f,v);
-   }
+   if(status_line)
+      status_line->Show("");
+   ::vfprintf(file,f,v);
 }
 
 void CmdExec::SetCmdFeeder(CmdFeeder *new_feeder)
