@@ -1,3 +1,8 @@
+2003-04-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: fixes for --script (bug reported by Olaf Kaehler
+	  <kaehleof@iis.fhg.de>).
+
 2003-03-14  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: use net:timeout when draining data socket on upload;

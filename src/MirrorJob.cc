@@ -725,19 +725,33 @@ int   MirrorJob::Do()
 	 if(!file)
 	    goto pre_TARGET_CHMOD;
 	 to_rm->next();
-	 ArgV *args=new ArgV("rm");
-	 args->Append(file->name);
-	 args->seek(1);
-	 rmJob *j=new rmJob(target_session->Clone(),args);
-	 j->SetParentFg(this);
-	 j->cmdline=args->Combine();
-	 AddWaiting(j);
-	 transfer_count++;
+	 if(script)
+	 {
+	    ArgV args("rm");
+	    if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
+	       args.Append("-r");
+	    args.Append(target_session->GetFileURL(file->name));
+	    char *cmd=args.CombineQuoted();
+	    fprintf(script,"%s\n",cmd);
+	    xfree(cmd);
+	 }
+	 if(!script_only)
+	 {
+	    ArgV *args=new ArgV("rm");
+	    args->Append(file->name);
+	    args->seek(1);
+	    rmJob *j=new rmJob(target_session->Clone(),args);
+	    j->SetParentFg(this);
+	    j->cmdline=args->Combine();
+	    AddWaiting(j);
+	    transfer_count++;
+	    if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
+	       j->Recurse();
+	 }
 	 if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
 	 {
 	    Report(_("Removing old directory `%s'"),
 		     dir_file(target_relative_dir,file->name));
-	    j->Recurse();
 	 }
 	 else
 	 {
@@ -769,23 +783,49 @@ int   MirrorJob::Do()
 	 if(!file)
 	    goto pre_FINISHING;
 	 to_transfer->next();
+	 if((file->defined&file->TYPE) && file->filetype==file->SYMLINK)
+	    continue;
 	 if(!(file->defined&file->MODE))
 	    continue;
-	 ArgV *a=new ArgV("chmod");
-	 a->Append(file->name);
-	 a->seek(1);
-	 ChmodJob *cj=new ChmodJob(target_session->Clone(),file->mode&~get_mode_mask(),a);
-	 AddWaiting(cj);
-	 transfer_count++;
-	 cj->SetParentFg(this);
-	 cj->cmdline=a->Combine();
-	 cj->BeQuiet();   // chmod is not supported on all servers; be quiet.
-	 m=MOVED;
+	 mode_t mode_mask=get_mode_mask();
+	 if(target_is_local && file->mode==(0664&~mode_mask))
+	 {
+	    struct stat st;
+	    if(!target_is_local || lstat(dir_file(target_dir,file->name),&st)==-1)
+	       continue;
+	    if((st.st_mode&07777)==(file->mode&~mode_mask))
+	       continue;
+	 }
+	 if(script)
+	 {
+	    ArgV args("chmod");
+	    char m[16];
+	    sprintf(m,"%03lo",(unsigned long)(file->mode&~mode_mask));
+	    args.Append(m);
+	    args.Append(target_session->GetFileURL(file->name));
+	    char *cmd=args.CombineQuoted();
+	    fprintf(script,"%s\n",cmd);
+	    xfree(cmd);
+	 }
+	 if(!script_only)
+	 {
+	    ArgV *a=new ArgV("chmod");
+	    a->Append(file->name);
+	    a->seek(1);
+	    ChmodJob *cj=new ChmodJob(target_session->Clone(),
+				 file->mode&~mode_mask,a);
+	    AddWaiting(cj);
+	    transfer_count++;
+	    cj->SetParentFg(this);
+	    cj->cmdline=a->Combine();
+	    cj->BeQuiet(); // chmod is not supported on all servers; be quiet.
+	    m=MOVED;
+	 }
       }
       break;
 
    pre_FINISHING:
-      if(target_is_local)     // FIXME
+      if(target_is_local && !script_only)     // FIXME
       {
 	 to_transfer->LocalUtime(target_dir,/*only_dirs=*/true);
 	 if(flags&ALLOW_CHOWN)
@@ -956,9 +996,14 @@ mode_t MirrorJob::get_mode_mask()
       mode_mask|=S_ISUID|S_ISGID;
    if(!(flags&NO_UMASK))
    {
-      mode_t u=umask(022); // get+set
-      umask(u);	    // retore
-      mode_mask|=u;
+      if(target_is_local)
+      {
+	 mode_t u=umask(022); // get+set
+	 umask(u);	      // retore
+	 mode_mask|=u;
+      }
+      else
+	 mode_mask|=022;   // sane default.
    }
    return mode_mask;
 }
