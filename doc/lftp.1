@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "24 May 2000"
+.TH lftp 1 "01 Dec 2000"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 2.3.0.
+This man page documents lftp version 2.3.6.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a program that allows sophisticated ftp and http connections to
@@ -901,6 +901,11 @@ Default value is taken from environment
 variable \fBftp_proxy\fP if it starts with ``http://'', otherwise from
 environment variable \fBhttp_proxy\fP.  If your ftp proxy
 requires authentication, specify user name and password in the URL.
+.TP
+.BR hftp:use-authorization \ (bool)
+if set to off, lftp will send password as part of URL to the proxy. This
+may be required for some proxies (e.g. M-soft). Default is on, and lftp
+will send password as part of Authorization header.
 .TP
 .BR hftp:use-head \ (bool)
 if set to off, lftp will try to use `GET' instead of `HEAD' for hftp protocol.
