@@ -50,6 +50,7 @@ class Fish : public NetAccess
 
    IOBuffer *send_buf;
    IOBuffer *recv_buf;
+   bool recv_buf_suspended;
 
    OutputFilter *filter_out;  // used in connecting
    int pipe_in[2];	      // used in connecting
@@ -79,7 +80,8 @@ class Fish : public NetAccess
       EXPECT_INFO,
       EXPECT_DEFAULT,
       EXPECT_STOR_PRELIMINARY,
-      EXPECT_STOR
+      EXPECT_STOR,
+      EXPECT_QUOTE
    };
 
    void PushExpect(expect_t);
@@ -145,6 +147,12 @@ public:
    void DontEncodeFile() { encode_file=false; }
 
    bool NeedSizeDateBeforehand() { return true; }
+
+   void Suspend();
+   void Resume();
+
+   void Cleanup();
+   void CleanupThis();
 };
 
 class FishDirList : public DirList

@@ -37,6 +37,8 @@
 
 #define super NetAccess
 
+#define max_buf 0x10000
+
 static FileInfo *ls_to_FileInfo(char *line);
 
 void Fish::GetBetterConnection(int level,int count)
@@ -239,7 +241,7 @@ int Fish::Do()
 	    goto usual_return;
       }
       SendMethod();
-      if(mode==LONG_LIST || mode==LIST)
+      if(mode==LONG_LIST || mode==LIST || mode==QUOTE_CMD)
       {
 	 state=FILE_RECV;
 	 m=MOVED;
@@ -269,6 +271,23 @@ int Fish::Do()
       }
       goto usual_return;
    case FILE_RECV:
+      if(recv_buf->Size()>=rate_limit->BytesAllowed())
+      {
+	 recv_buf->Suspend();
+	 Timeout(1000);
+      }
+      else if(recv_buf->Size()>=max_buf)
+      {
+	 recv_buf->Suspend();
+	 m=MOVED;
+      }
+      else
+      {
+	 recv_buf->Resume();
+	 if(recv_buf->Size()>0 || (recv_buf->Size()==0 && recv_buf->Eof()))
+	    m=MOVED;
+      }
+      break;
    case FILE_SEND:
    case DONE:
       goto usual_return;
@@ -342,6 +361,7 @@ void Fish::Init()
    state=DISCONNECTED;
    send_buf=0;
    recv_buf=0;
+   recv_buf_suspended=false;
    pipe_in[0]=pipe_in[1]=-1;
    filter_out=0;
    max_send=0;
@@ -507,8 +527,16 @@ void Fish::SendMethod()
    case LONG_LIST:
       if(!encode_file)
 	 e=file;
-      Send("#DIR %s\n"
+      Send("#LIST %s\n"
 	   "ls -l %s; echo '### 200'\n",e,e);
+      PushExpect(EXPECT_DIR);
+      real_pos=0;
+      break;
+   case LIST:
+      if(!encode_file)
+	 e=file;
+      Send("#LIST %s\n"
+	   "ls %s; echo '### 200'\n",e,e);
       PushExpect(EXPECT_DIR);
       real_pos=0;
       break;
@@ -526,17 +554,19 @@ void Fish::SendMethod()
 	 SetError(NO_FILE,"Have to know file size before upload");
 	 break;
       }
-      #define BUF 1024
+      // dd pays attansion to read boundaries and reads wrong number
+      // of bytes when ibs>1. Have to use the inefficient ibs=1.
       Send("#STOR %lld %s\n"
            ">%s;echo '### 001';"
-	   "(dd bs=%d count=%lld;dd bs=%d count=1)2>/dev/null"
+	   "dd ibs=1 count=%lld 2>/dev/null"
 	   "|(cat>%s;cat>/dev/null);echo '### 200'\n",
-	   entity_size,e,
-	   e,BUF,
-	   entity_size/BUF,int(entity_size%BUF),
+	   (long long)entity_size,e,
+	   e,
+	   (long long)entity_size,
 	   e);
       PushExpect(EXPECT_STOR_PRELIMINARY);
       PushExpect(EXPECT_STOR);
+      real_pos=0;
       break;
    case ARRAY_INFO:
       SendArrayInfoRequests();
@@ -566,7 +596,12 @@ void Fish::SendMethod()
 	   "chmod %04o %s; echo '### 000'\n",chmod_mode,e,chmod_mode,e);
       PushExpect(EXPECT_DEFAULT);
       break;
-
+   case QUOTE_CMD:
+      Send("#EXEC %s\n"
+	   "%s; echo '### 200'\n",file,file);
+      PushExpect(EXPECT_QUOTE);
+      real_pos=0;
+      break;
    case CONNECT_VERIFY:
    case CLOSED:
       abort();
@@ -728,6 +763,7 @@ int Fish::HandleReplies()
    }
    case EXPECT_RETR:
    case EXPECT_DIR:
+   case EXPECT_QUOTE:
       eof=true;
       state=DONE;
       break;
@@ -958,6 +994,30 @@ int Fish::Done()
    return IN_PROGRESS;
 }
 
+void Fish::Suspend()
+{
+   if(suspended)
+      return;
+   if(recv_buf)
+   {
+      recv_buf_suspended=recv_buf->IsSuspended();
+      recv_buf->Suspend();
+   }
+   if(send_buf)
+      send_buf->Suspend();
+   super::Suspend();
+}
+void Fish::Resume()
+{
+   if(!suspended)
+      return;
+   super::Resume();
+   if(recv_buf && !recv_buf_suspended)
+      recv_buf->Resume();
+   if(send_buf)
+      send_buf->Resume();
+}
+
 const char *Fish::CurrentStatus()
 {
    return "FIXME";
@@ -980,6 +1040,23 @@ bool Fish::SameLocationAs(FileAccess *fa)
    if(xstrcmp(cwd,o->cwd))
       return false;
    return true;
+}
+
+void Fish::Cleanup()
+{
+   if(hostname==0)
+      return;
+
+   for(FA *fo=FirstSameSite(); fo!=0; fo=NextSameSite(fo))
+      fo->CleanupThis();
+
+   CleanupThis();
+}
+void Fish::CleanupThis()
+{
+   if(mode!=CLOSED)
+      return;
+   Disconnect();
 }
 
 void Fish::Reconfig(const char *name)
