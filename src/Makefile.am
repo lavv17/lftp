@@ -1,4 +1,4 @@
-localedir = @LOCALE_DIR@
+localedir = $(datadir)/locale
 pkgverlibdir = $(pkglibdir)/$(VERSION)
 
 bin_PROGRAMS = lftp

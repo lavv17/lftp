@@ -1,3 +1,14 @@
+2003-12-17  albert chin <china@thewrittenword.com>
+
+	* Makefile.am: remove LOCALE_DIR, use datadir/locale instead.
+
+2003-12-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc: fix core dump where first reply line is empty (reported by
+	  Nalin Dahyabhai); remove incorrect parsing of status line in case
+	  of 0.9 protocol; shutdown socket if sent uncomplete entity and
+	  unset keep_alive; handle STORE in case of 0.9 protocol.
+
 2003-12-16  albert chin <china@thewrittenword.com>
 
 	* Makefile.am: Because we use libtool to build lftp, use $(LTLIBINTL)
