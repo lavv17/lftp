@@ -2039,6 +2039,13 @@ usual_return:
 notimeout_return:
    if(m==MOVED)
       return MOVED;
+#ifdef USE_SSL
+   if(data_ssl)
+   {
+      BlockOnSSL(data_ssl);
+   }
+   else
+#endif
    if(data_sock!=-1)
    {
       if(state==ACCEPTING_STATE)
@@ -2068,6 +2075,13 @@ notimeout_return:
 	 abort();
       }
    }
+#ifdef USE_SSL
+   if(control_ssl)
+   {
+      BlockOnSSL(control_ssl);
+   }
+   else
+#endif
    if(control_sock!=-1)
    {
       if(state==CONNECTING_STATE)
@@ -3120,9 +3134,8 @@ int   Ftp::Write(const void *buf,int size)
 	    BlockOnSSL(control_ssl);
 	    return DO_AGAIN;
 	 }
-	 if(NotSerious(errno))
-	    DebugPrint("**** ",strerror(errno),0);
-	 else
+	 DebugPrint("**** ",strerror(errno),0);
+	 if(!NotSerious(errno))
 	    SetError(SEE_ERRNO,"SSL_write(data_ssl)");
 	 quit_sent=true;
 	 Disconnect();

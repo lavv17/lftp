@@ -1,3 +1,8 @@
+2002-01-22  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, lftp_ssl.cc: fix random SSL_write errors
+	  (bad write retry); fix ftp spinning in ssl mode.
+
 2002-01-17  Glenn Maynard <g_ld@zewt.org>
 
 	* ChmodJob.cc: add missing \n.
