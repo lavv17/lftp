@@ -89,6 +89,12 @@ void CatJob::NextFile()
       dst_peer->DontDeleteStream();
    }
 
+   if(ascii)
+   {
+      src_peer->Ascii();
+      dst_peer->Ascii();
+   }
+
    FileCopy *copier=new FileCopy(src_peer,dst_peer,false);
    copier->DontCopyDate();
    SetCopier(copier,src);
@@ -134,6 +140,7 @@ CatJob::CatJob(FileAccess *new_session,FDStream *new_global,ArgV *new_args)
 {
    global=new_global;
    for_each=0;
+   ascii=false;
 
    if(!strcmp(op,"more") || !strcmp(op,"zmore"))
    {

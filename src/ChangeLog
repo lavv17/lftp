@@ -1,3 +1,8 @@
+1999-12-22  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* commands.cc, CatJob.cc, CatJob.h: add ascii mode.
+	* HttpDir.cc: handle ~ as absolute path in check for icon.
+
 1999-12-22  Robert de Bath <rdebath@poboxes.com>
 
 	* FileAccess.cc, FileAccess.h, Http.cc, LocalAccess.cc, NetAccess.cc,

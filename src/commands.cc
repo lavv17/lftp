@@ -824,12 +824,36 @@ CMD(ls)
 
 CMD(cat)
 {
+   const char *op=args->a0();
+   int opt;
+   bool ascii=true;
+
+   while((opt=args->getopt("+ba"))!=EOF)
+   {
+      switch(opt)
+      {
+      case('a'):
+	 ascii=true;
+	 break;
+      case('b'):
+	 ascii=false;
+	 break;
+      case('?'):
+	 eprintf(_("Try `help %s' for more information.\n"),op);
+	 return 0;
+      }
+   }
+   while(args->getindex()>1)
+      args->delarg(1);
+   args->rewind();
    if(args->count()<=1)
    {
-      eprintf(_("Usage: %s files...\n"),args->a0());
+      eprintf(_("Usage: %s [OPTS] files...\n"),op);
       return 0;
    }
    CatJob *j=new CatJob(Clone(),output,args);
+   if(ascii)
+      j->Ascii();
    output=0;
    args=0;
    return j;
@@ -1987,11 +2011,14 @@ CMD(get1)
 	 // FIXME
 	 break;
       case '?':
+      usage:
 	 // FIXME
 	 return 0;
       }
    }
    src=args->getcurr();
+   if(src==0)
+      goto usage;
 
    if(dst==0 || dst[0]==0)
    {
@@ -2047,6 +2074,12 @@ retry:
 				    |(cont?0:O_TRUNC)),FileCopyPeer::PUT);
    else
       dst_peer=new FileCopyPeerFA(&dst_url,FA::STORE);
+
+   if(ascii)
+   {
+      src_peer->Ascii();
+      dst_peer->Ascii();
+   }
 
    return new CopyJob(new FileCopy(src_peer,dst_peer,cont),src);
 }

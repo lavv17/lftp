@@ -33,6 +33,7 @@ class CatJob : public CopyJobEnv
 protected:
    FDStream *global;
    const char *for_each;
+   bool ascii;
 
    void	NextFile();
 
@@ -43,6 +44,8 @@ public:
 
    CatJob(FileAccess *s,FDStream *global,ArgV *args);
    ~CatJob();
+
+   void Ascii() { ascii=true; }
 };
 
 #endif /* CATJOB_H */
