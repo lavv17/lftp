@@ -16,6 +16,7 @@
 	  Nalin Dahyabhai); remove incorrect parsing of status line in case
 	  of 0.9 protocol; shutdown socket if sent uncomplete entity and
 	  unset keep_alive; handle STORE in case of 0.9 protocol.
+	* misc.cc: add CDECL around regex.h
 
 2003-12-16  albert chin <china@thewrittenword.com>
 

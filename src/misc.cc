@@ -41,7 +41,9 @@
 # include <sys/time.h>
 #endif
 
+CDECL_BEGIN
 #include <regex.h>
+CDECL_END
 #include "misc.h"
 #include "ProcWait.h"
 #include "SignalHook.h"
