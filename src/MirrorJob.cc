@@ -788,7 +788,8 @@ int   MirrorJob::Do()
 	 if(!(file->defined&file->MODE))
 	    continue;
 	 mode_t mode_mask=get_mode_mask();
-	 if(target_is_local && file->mode==(0664&~mode_mask))
+	 mode_t def_mode=(file->filetype==file->DIRECTORY?0775:0664)&~mode_mask;
+	 if(target_is_local && file->mode==def_mode)
 	 {
 	    struct stat st;
 	    if(!target_is_local || lstat(dir_file(target_dir,file->name),&st)==-1)
@@ -1330,8 +1331,8 @@ CMD(mirror)
       j->RemoveSourceFiles();
    if(parallel<0)
       parallel=0;
-   if(parallel>16)
-      parallel=16;   // a sane limit.
+   if(parallel>64)
+      parallel=64;   // a (in)sane limit.
    if(parallel)
       j->SetParallel(parallel);
 
