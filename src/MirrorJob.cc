@@ -250,8 +250,8 @@ void  MirrorJob::HandleFile(int how)
 	 }
 
 	 FileCopyPeerFA *src_peer=
-	    new FileCopyPeerFA(session,file->name,FA::RETRIEVE);
-	 src_peer->DontReuseSession(); // mirror will need this session
+	    new FileCopyPeerFA(session->Clone(),file->name,FA::RETRIEVE);
+	 //src_peer->DontReuseSession(); // mirror will need this session
 	 FileCopyPeer *dst_peer=
 	    FileCopyPeerFDStream::NewPut(local_name,cont_this);
 
@@ -355,6 +355,7 @@ void  MirrorJob::HandleFile(int how)
 
 	 mj->verbose_report=verbose_report;
 	 mj->newer_than=newer_than;
+	 mj->parallel=parallel;
 
 	 if(verbose_report>=3)
 	    Report(_("Mirroring directory `%s'"),
@@ -609,8 +610,8 @@ int   MirrorJob::Do()
 #endif
 
       FileCopyPeerFA *dst_peer=
-	 new FileCopyPeerFA(session,file->name,FA::STORE);
-      dst_peer->DontReuseSession(); // mirror won't need session
+	 new FileCopyPeerFA(session->Clone(),file->name,FA::STORE);
+      //dst_peer->DontReuseSession(); // mirror won't need session
       FileCopyPeer *src_peer=
 	 FileCopyPeerFDStream::NewGet(local_name);
 
@@ -631,20 +632,22 @@ int   MirrorJob::Do()
       j=FindDoneAwaitedJob();
       if(j)
       {
-	 to_transfer->next();
 	 RemoveWaiting(j);
 	 Delete(j);
       }
-      while(waiting_num<1 && state==WAITING_FOR_SUBGET)
+      while(waiting_num<parallel && state==WAITING_FOR_SUBGET)
       {
 	 file=to_transfer->curr();
       	 if(!file)
 	 {
+	    if(waiting_num>0)
+	       return m;
 	    to_transfer->rewind();
 	    state=WAITING_FOR_SUBMIRROR;
 	    return MOVED;
 	 }
 	 HandleFile(0);
+	 to_transfer->next();
 	 m=MOVED;
       }
       return m;
@@ -876,6 +879,8 @@ MirrorJob::MirrorJob(FileAccess *f,const char *new_local_dir,const char *new_rem
 
    use_cache=false;
    remove_source_files=false;
+
+   parallel=1;
 }
 
 MirrorJob::~MirrorJob()
@@ -1007,6 +1012,7 @@ CMD(mirror)
       {"dereference",no_argument,0,'L'},
       {"use-cache",no_argument,0,256+'C'},
       {"Remove-source-files",no_argument,0,256+'R'},
+      {"parallel",optional_argument},
       {0}
    };
 
@@ -1049,9 +1055,10 @@ CMD(mirror)
    int	 verbose=0;
    const char *newer_than=0;
    bool  remove_source_files=false;
+   int	 parallel=0;
 
    args->rewind();
-   while((opt=args->getopt_long("esi:x:t:T:nrpcRvN:L",mirror_opts,0))!=EOF)
+   while((opt=args->getopt_long("esi:x:t:T:nrpcRvN:LP",mirror_opts,0))!=EOF)
    {
       switch(opt)
       {
@@ -1120,6 +1127,12 @@ CMD(mirror)
 	 break;
       case(256+'R'):
 	 remove_source_files=true;
+	 break;
+      case('P'):
+	 if(optarg)
+	    parallel=atoi(optarg);
+	 else
+	    parallel=3;
 	 break;
       case('?'):
 	 parent->eprintf(_("Try `help %s' for more information.\n"),args->a0());
@@ -1214,6 +1227,12 @@ CMD(mirror)
    j->UseCache(use_cache);
    if(remove_source_files)
       j->RemoveSourceFiles();
+   if(parallel<0)
+      parallel=0;
+   if(parallel>16)
+      parallel=16;   // a sane limit.
+   if(parallel)
+      j->SetParallel(parallel);
    return j;
 
 err_out:
