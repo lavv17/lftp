@@ -86,4 +86,8 @@ currently; some need other work to be done.
 
  * add url support for mirror, find... This can wait for 2.3.
 
+ * SMTask::deleting to indicate destruction. assert(!running)
+   SMTask::Delete(task).
+
+ * use Buffer in FtpSplitList
  * improve glob status (show directory).
