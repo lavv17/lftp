@@ -1,3 +1,7 @@
+2001-10-29	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document fish:shell and ftp:timezone.
+
 2001-09-05	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document ftp:acct, ftp:site-group and their closures.

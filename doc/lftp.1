@@ -796,6 +796,12 @@ look up address in inet family, then inet6 and use first matched.
 .BR dns:use-fork \ (bool)
 if true, lftp will fork before resolving host address. Default is true.
 .TP
+.BR fish:shell \ (string)
+use specified shell on server side. Default is /bin/sh. On some systems,
+/bin/sh exits when doing cd to a non-existent directory. lftp can handle
+that but it has to reconnect. Set it to /bin/bash for such systems if
+bash is installed.
+.TP
 .BR ftp:acct \ (string)
 Send this string in ACCT command after login. The result is ignored.
 The closure for this setting has format \fIuser@host\fP.
@@ -915,6 +921,13 @@ router. When it is off, lftp sends a pack of commands and waits for
 responses - it speeds up operation when round trip time is significant.
 Unfortunately it does not work with all ftp servers and some routers have
 troubles with it, so it is on by default.
+.TP
+.BR ftp:timezone \ (string)
+Assume this timezone for time in listings returned by LIST command.
+This setting can be GMT offset [+|-]HH[:MM[:SS]] or any valid TZ value
+(e.g. Europe/Moscow or MSK-3MSD,M3.5.0,M10.5.0/3). The default is GMT.
+Set it to an empty value to assume local timezone specified by environment
+variable TZ.
 .TP
 .BR ftp:use-abor \ (bool)
 if false, lftp does not send ABOR command but closes data connection
