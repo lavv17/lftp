@@ -175,6 +175,10 @@ void Http::Close()
    super::Close();
 }
 
+#if defined(HAVE_VSNPRINTF) && !defined(HAVE_VSNPRINTF_DECL)
+CDECL int vsnprintf(char *,size_t,const char *,va_list);
+#endif
+
 void Http::Send(const char *format,...)
 {
    va_list va;
