@@ -43,8 +43,7 @@ class Http : public NetAccess
 
    void Init();
 
-   int 	 max_send;
-   void	 Send(const char *format,...) PRINTF_LIKE(2,3);
+   void	Send(const char *format,...) PRINTF_LIKE(2,3);
 
    FileOutputBuffer *send_buf;
    FileInputBuffer *recv_buf;

@@ -1,3 +1,17 @@
+2000-05-04  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* xmalloc.cc, xmalloc.h: add spare parameter to xstrdup.
+	* HttpDir.cc: workaround some bugs in apache proxy.
+	* GetJob.cc, bookmark.cc, history.cc: use new xstrdup parameter.
+	* Http.cc, Http.h, resource.cc: add http:put-content-type setting;
+	  fix Http::Send buffer allocation.
+	* misc.cc, misc.h: optimize month_names.
+	* CmdExec.cc: don't say Running when doing nothing.
+	* FileAccess.cc, FileAccess.h: move retries here; don't reset try_time
+	  on open; GetTryTime, SetTryTime, GetRetries, SetRetries new/moved here.
+	* NetAccess.cc, NetAccess.h: ...from here.
+	* FileCopy.cc, FileCopy.h: get/set try_time and retries on store retry.
+
 2000-05-02  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Http.cc: (Disconnect) don't set state before check.

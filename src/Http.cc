@@ -208,16 +208,24 @@ void Http::Close()
 
 void Http::Send(const char *format,...)
 {
-   char *str=(char*)alloca(max_send);
+   static int max_send=256;
    va_list va;
    va_start(va,format);
-
-   vsprintf(str,format,va);
-
+   for(;;)
+   {
+      char *str=(char*)alloca(max_send);
+      int res=vsnprintf(str,max_send,format,va);
+      if(res>=0 && res<max_send)
+      {
+	 if(res<max_send/16)
+	    max_send/=2;
+	 DebugPrint("---> ",str,5);
+	 send_buf->Put(str);
+	 break;
+      }
+      max_send*=2;
+   }
    va_end(va);
-
-   DebugPrint("---> ",str,5);
-   send_buf->Put(str);
 }
 
 void Http::SendMethod(const char *method,const char *efile)
@@ -360,8 +368,6 @@ add_path:
    efile=pfile;
    efile_len=strlen(efile);
 
-   max_send=efile_len+40;
-
    if(pos==0)
       real_pos=0;
    if(mode==STORE)    // can't seek before writing
@@ -398,7 +404,7 @@ add_path:
       if(entity_date!=(time_t)-1)
       {
 	 char d[256];
-	 static const char * const weekday_names[]={
+	 static const char weekday_names[][4]={
 	    "Sun","Mon","Tue","Wed","Thu","Fri","Sat"
 	 };
 	 struct tm *t=gmtime(&entity_date);
@@ -442,6 +448,12 @@ add_path:
       const char *cookie=Query("cookie",hostname);
       if(cookie && cookie[0])
 	 Send("Cookie: %s\r\n",cookie);
+      if(mode==STORE)
+      {
+	 const char *content_type=Query("put-content-type",hostname);
+	 if(content_type && content_type[0])
+	    Send("Content-Type: %s\r\n",content_type);
+      }
    }
    if(mode==ARRAY_INFO && !use_head)
       connection="close";
@@ -1134,6 +1146,7 @@ int Http::Read(void *buf,int size)
 	 if(chunk_size==0) // eof
 	 {
 	    // FIXME: headers may follow
+	    // to avoid messing with headers, we close connection.
 	    Disconnect();
 	    state=DONE;
 	    return 0;

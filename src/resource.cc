@@ -112,6 +112,7 @@ static ResDecl resources[]={
    ResDecl  ("http:user-agent",	       PACKAGE"/"VERSION,0,0),
    ResDecl  ("http:cookie",	       "",	0,0),
    ResDecl  ("http:put-method",	       "PUT",	0,0),
+   ResDecl  ("http:put-content-type",  "",	0,0),
    ResDecl  ("net:idle",	       "180",   ResMgr::UNumberValidate,0),
    ResDecl  ("net:limit-max",	       "0",	ResMgr::UNumberValidate,0),
    ResDecl  ("net:limit-rate",	       "0",	ResMgr::UNumberValidate,0),
