@@ -75,24 +75,32 @@ char *XferJob::CurrETA(float rate)
    if(size>0 && rate>1 && now-last_bytes<30 && now-start_time>3 && size>=offset)
    {
       long eta=(long)((size-offset) / rate + 0.5);
-      char letter='s';
+      char letter;
 
       if(eta>=DAY)
       {
 	 eta=(eta+DAY/2)/DAY;
-	 letter='d';
+	 // for translator: only first letter matters
+	 letter=_("day")[0];
       }
       else if(eta>=HOUR)
       {
 	 eta=(eta+HOUR/2)/HOUR;
-	 letter='h';
+	 // for translator: only first letter matters
+	 letter=_("hour")[0];
       }
       else if(eta>=MINUTE)
       {
 	 eta=(eta+MINUTE/2)/MINUTE;
-	 letter='m';
+	 // for translator: only first letter matters
+	 letter=_("minute")[0];
       }
-      sprintf(eta_str,"eta:%ld%c ",eta,letter);
+      else
+      {
+	 // for translator: only first letter matters
+	 letter=_("second")[0];
+      }
+      sprintf(eta_str,_("eta:%ld%c "),eta,letter);
    }
    return eta_str;
 }
