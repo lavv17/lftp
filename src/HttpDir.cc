@@ -287,6 +287,8 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
    if(tag_scan->tag==0)
       return tag_len;	// not interesting
 
+   bool hftp=(prefix && !xstrcmp(prefix->proto,"hftp"));
+
    // ok, found the target.
 
    decode_amps(link_target);  // decode all &amp; and similar
@@ -296,7 +298,20 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
       if(base_href)
       {
 	 xfree(*base_href);
-	 *base_href=xstrdup(link_target);
+	 *base_href=xstrdup(link_target,+2);
+	 if(hftp)
+	 {
+	    // workaround apache proxy bugs.
+	    char *t=strstr(*base_href,";type=");
+	    if(t && t[6] && t[7]=='/' && t[8]==0)
+	       *t=0;
+	    char *p=*base_href+url::path_index(*base_href);
+	    if(p[0]=='/' && p[1]=='/')
+      	    {
+	       memmove(p+4,p+2,strlen(p+2)+1);
+	       memcpy(p+1,"%2F",3);
+	    }
+	 }
       }
       return tag_len;
    }
@@ -358,11 +373,7 @@ parse_url_again:
       if(!prefix)
 	 return tag_len;	// no way
 
-      const char *pproto=prefix->proto;
-      if(!xstrcmp(pproto,"hftp"))
-	 pproto++;
-
-      if(xstrcmp(link_url.proto,pproto)
+      if(xstrcmp(link_url.proto,prefix->proto+hftp)
       || xstrcmp(link_url.host,prefix->host)
       || xstrcmp(link_url.user,prefix->user)
       || xstrcmp(link_url.port,prefix->port))
@@ -399,16 +410,23 @@ parse_url_again:
    else
       strcpy(link_target,link_url.path);
 
+   if(link_target[0]=='/' && link_target[1]=='/' && hftp)
+   {
+      // workaround for apache proxy.
+      link_target++;
+   }
+
    int link_len=strlen(link_target);
    bool is_directory=(link_len>0 && link_target[link_len-1]=='/');
    if(is_directory && link_len>1)
       link_target[--link_len]=0;
 
-   if(prefix && prefix->path)
+   if(prefix)
    {
       const char *p_path=prefix->path;
+      if(p_path==0)
+	 p_path="~";
       int p_len=strlen(p_path);
-
       if(p_len==1 && p_path[0]=='/' && link_target[0]=='/')
       {
 	 if(link_len>1)
