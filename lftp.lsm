@@ -16,7 +16,7 @@ Author:		lav@yars.free.net (Alexander V. Lukyanov)
 Maintained-by:	lav@yars.free.net (Alexander V. Lukyanov)
 Primary-site:	ftp.yars.free.net /pub/software/unix/net/ftp/client/lftp
 		818 kB lftp-2.0.0.tar.gz
-Alternate-site:	sunsite.unc.edu /pub/Linux/system/network/file-transfer
+Alternate-site:	metalab.unc.edu /pub/Linux/system/network/file-transfer
 Platforms:	Unix, G++
 Copying-policy: GNU GPL
 End
