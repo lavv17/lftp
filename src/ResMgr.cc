@@ -814,8 +814,11 @@ const char *ResMgr::FileReadable(char **value)
       error=strerror(errno);
    else
    {
-      xfree(*value);
-      *value=xstrdup(f);
+      if(f!=*value)
+      {
+	 xfree(*value);
+	 *value=xstrdup(f);
+      }
    }
    xfree(cwd);
    return error;
@@ -843,8 +846,11 @@ const char *ResMgr::DirReadable(char **value)
       error=strerror(errno);
    else
    {
-      xfree(*value);
-      *value=xstrdup(f);
+      if(f!=*value)
+      {
+	 xfree(*value);
+	 *value=xstrdup(f);
+      }
    }
    xfree(cwd);
    return 0;
