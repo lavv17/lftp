@@ -1,8 +1,7 @@
 dnl check if c++ compiler can use dynamic initializers for static variables
 AC_DEFUN(CXX_DYNAMIC_INITIALIZERS,
 [
-   AC_LANG_SAVE
-   AC_LANG_CPLUSPLUS
+   AC_LANG_PUSH(C++)
    AC_MSG_CHECKING(if c++ compiler can handle dynamic initializers)
    AC_TRY_RUN(
    [
@@ -20,5 +19,5 @@ AC_DEFUN(CXX_DYNAMIC_INITIALIZERS,
    if test x$cxx_dynamic_init = xno; then
       AC_MSG_ERROR(C++ compiler cannot handle dynamic initializers of static objects)
    fi
-   AC_LANG_RESTORE
+   AC_LANG_POP(C++)
 ])

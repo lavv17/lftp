@@ -33,25 +33,23 @@ AC_DEFUN(LFTP_PROG_CXXLINK,
    if test "$GCC" = yes -a "$GXX" = yes; then
       old_CXX="$CXX"
       CXX="$CC"
-      AC_LANG_SAVE
-      AC_LANG_CPLUSPLUS
+      AC_LANG_PUSH(C++)
       AC_TRY_LINK([],[char *a=new char[10];delete[] a;],
 	 [],[CXX="$old_CXX";])
-      AC_LANG_RESTORE
+      AC_LANG_POP(C++)
    fi
    AC_MSG_RESULT(using $CXX)
 ])
 dnl try to build and run a dummy program
 AC_DEFUN(LFTP_CXX_TEST,
 [
-   AC_LANG_SAVE
-   AC_LANG_CPLUSPLUS
+   AC_LANG_PUSH(C++)
    AC_MSG_CHECKING(if c++ compiler works)
    AC_TRY_RUN([int main() { return(0); } ],
            [AC_MSG_RESULT(yes)], [
 	   AC_MSG_RESULT(no)
 	   AC_MSG_ERROR(C++ test compile failed; check your C++ compiler)], [AC_MSG_RESULT(cross-compiling)])
-   AC_LANG_RESTORE
+   AC_LANG_POP(C++)
 ])
 
 AC_DEFUN(LFTP_FUNC_SSCANF_CONST,
@@ -106,8 +104,7 @@ AC_DEFUN(LFTP_NOIMPLEMENTINLINE,
    flags="-fno-implement-inlines -Winline"
    AC_CACHE_VAL(lftp_cv_noimplementinline,
    [
-      AC_LANG_SAVE
-      AC_LANG_CPLUSPLUS
+      AC_LANG_PUSH(C++)
       old_CXXFLAGS="$CXXFLAGS"
       CXXFLAGS="$CXXFLAGS $flags"
       AC_TRY_LINK([
@@ -125,7 +122,7 @@ AC_DEFUN(LFTP_NOIMPLEMENTINLINE,
 	 [lftp_cv_noimplementinline=yes],
 	 [lftp_cv_noimplementinline=no])
       CXXFLAGS="$old_CXXFLAGS"
-      AC_LANG_RESTORE
+      AC_LANG_POP(C++)
    ])
    AC_MSG_RESULT($lftp_cv_noimplementinline)
    if test x$lftp_cv_noimplementinline = xyes; then
@@ -137,8 +134,7 @@ AC_DEFUN(LFTP_CHECK_CXX_FLAGS,
    flags="$1"
    AC_MSG_CHECKING(if $CXX supports $flags)
 
-      AC_LANG_SAVE
-      AC_LANG_CPLUSPLUS
+      AC_LANG_PUSH(C++)
       old_CXXFLAGS="$CXXFLAGS"
       CXXFLAGS="$CXXFLAGS $flags"
       AC_TRY_COMPILE([
@@ -155,7 +151,7 @@ AC_DEFUN(LFTP_CHECK_CXX_FLAGS,
 	 ],[],
 	 [support=yes],[support=no])
       CXXFLAGS="$old_CXXFLAGS"
-      AC_LANG_RESTORE
+      AC_LANG_POP(C++)
 
    AC_MSG_RESULT($support)
    if test x$support = xyes; then
@@ -167,8 +163,7 @@ AC_DEFUN(LFTP_CHECK_LIBM,
    AC_MSG_CHECKING(if math library is needed)
    AC_CACHE_VAL(lftp_cv_libm_needed,
    [
-      AC_LANG_SAVE
-      AC_LANG_CPLUSPLUS
+      AC_LANG_PUSH(C++)
       AC_TRY_LINK([
 	    #include <math.h>
 	    double a,b;
@@ -177,7 +172,7 @@ AC_DEFUN(LFTP_CHECK_LIBM,
 	 ],
 	 [lftp_cv_libm_needed=no],
 	 [lftp_cv_libm_needed=yes])
-      AC_LANG_RESTORE
+      AC_LANG_POP(C++)
    ])
    AC_MSG_RESULT($lftp_cv_libm_needed)
    if test x$lftp_cv_libm_needed = xyes; then
@@ -190,11 +185,10 @@ AC_DEFUN(LFTP_CXX_BOOL,
    AC_MSG_CHECKING(whether $CXX supports bool type)
    AC_CACHE_VAL(lftp_cv_cxx_bool,
    [
-      AC_LANG_SAVE
-      AC_LANG_CPLUSPLUS
+      AC_LANG_PUSH(C++)
       AC_TRY_COMPILE([bool t=true;bool f=false;],[],
 	 [lftp_cv_cxx_bool=yes],[lftp_cv_cxx_bool=no])
-      AC_LANG_RESTORE
+      AC_LANG_POP(C++)
    ])
    AC_MSG_RESULT($lftp_cv_cxx_bool)
    if test x$lftp_cv_cxx_bool = xyes; then
@@ -207,4 +201,54 @@ AC_DEFUN(LFTP_CXX_BOOL,
 #define false  0U
 #define true   1U
 #endif ])
+])
+
+dnl check if C++ compiler needs extra arguments to grok ANSI scoping rules
+AC_DEFUN([LFTP_CXX_ANSI_SCOPE],
+[
+   AC_MSG_CHECKING([whether $CXX understands ANSI scoping rules])
+   AC_CACHE_VAL(lftp_cv_cxx_ansi_scope,
+   [
+      AC_LANG_PUSH(C++)
+      AC_TRY_COMPILE(,[
+  for (int i = 0; i < 4; i++) ;
+  for (int i = 0; i < 4; i++) ;],
+      [lftp_cv_cxx_ansi_scope=yes],
+      [
+         # IRIX C++ needs -LANG:ansi-for-init-scope=ON if
+         # -LANG:std not used
+         _cxxflags=$CXXFLAGS
+         CXXFLAGS="$CXXFLAGS -LANG:ansi-for-init-scope=ON"
+         AC_TRY_COMPILE(,[
+  for (int i = 0; i < 4; i++) ;
+  for (int i = 0; i < 4; i++) ;],
+         [lftp_cv_cxx_ansi_scope="-LANG:ansi-for-init-scope=ON"],
+         [lftp_cv_cxx_ansi_scope=no])
+         CXXFLAGS=$_cxxflags
+      ])
+      AC_LANG_POP(C++)
+   ])
+   if test x$lftp_cv_cxx_ansi_scope = xno; then
+      AC_MSG_RESULT([$lftp_cv_cxx_ansi_scope])
+      AC_MSG_ERROR([C++ compiler does not understand ANSI scoping rules])
+   elif test x$lftp_cv_cxx_ansi_scope != xyes; then
+      AC_MSG_RESULT([$lftp_cv_cxx_ansi_scope added to \$CXXFLAGS])
+      CXXFLAGS="$CXXFLAGS $lftp_cv_cxx_ansi_scope"
+   else
+     AC_MSG_RESULT($lftp_cv_cxx_ansi_scope)
+   fi
+])
+
+AC_DEFUN(LFTP_ENVIRON_CHECK,[
+   AC_CACHE_CHECK([for environ variable],[lftp_cv_environ],[
+      AC_TRY_LINK([
+	 #include <unistd.h>
+	 extern char **environ;
+      ],[
+	 return environ==(char**)0;
+      ],[lftp_cv_environ=yes],[lftp_cv_environ=no])
+   ])
+   if test x$lftp_cv_environ = xyes; then
+      AC_DEFINE(HAVE_ENVIRON, 1, [define if you have global environ variable])
+   fi
 ])
