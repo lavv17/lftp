@@ -596,11 +596,20 @@ int   MirrorJob::Do()
 			   dir_file(local_relative_dir,file->name));
 	       }
 	    }
+	    mode_t mode_mask=0;
+	    if(!(flags&ALLOW_SUID))
+	       mode_mask|=S_ISUID|S_ISGID;
+	    if(!(flags&NO_UMASK))
+	    {
+	       mode_t u=umask(022); // get+set
+	       umask(u);	    // retore
+	       mode_mask|=u;
+	    }
 	    if(!(flags&NO_PERMS))
-	       to_transfer->LocalChmod(local_dir,flags&ALLOW_SUID?0:S_ISUID|S_ISGID);
+	       to_transfer->LocalChmod(local_dir,mode_mask);
 	    to_transfer->LocalUtime(local_dir,/*only_dirs=*/true);
 	    if(!(flags&NO_PERMS))
-	       same->LocalChmod(local_dir,flags&ALLOW_SUID?0:S_ISUID|S_ISGID);
+	       same->LocalChmod(local_dir,mode_mask);
 	    same->LocalUtime(local_dir); // the old mtime can differ up to prec
 	    state=DONE;
 	    return MOVED;
@@ -772,6 +781,7 @@ CMD(mirror)
       {"only-newer",no_argument,0,'n'},
       {"no-recursion",no_argument,0,'r'},
       {"no-perms",no_argument,0,'p'},
+      {"no-umask",no_argument,0,256+'u'},
       {"continue",no_argument,0,'c'},
       {"reverse",no_argument,0,'R'},
       {"verbose",optional_argument,0,'v'},
@@ -871,6 +881,9 @@ CMD(mirror)
 	 break;
       case('N'):
 	 newer_than=optarg;
+	 break;
+      case(256+'u'):
+	 flags|=MirrorJob::NO_UMASK;
 	 break;
       case('?'):
 	 return 0;

@@ -977,7 +977,7 @@ Job *CmdExec::default_cmd()
    builtin=BUILTIN_EXEC_RESTART;
    return this;
 #else
-   eprintf("%s: command `%s' is not compiled in.\n",args->a0(),args->a0());
+   eprintf("%s: command `%s' is not compiled in.\n",op,op);
    return 0;
 #endif
 }
