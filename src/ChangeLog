@@ -1,3 +1,7 @@
+1999-07-05  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* commands.cc: cd and lcd without arguments go to home.
+
 1999-07-04  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* ftpclass.cc: use new Resolver constructor; fix relookup

@@ -351,7 +351,10 @@ int find_command(const char *unprec_name,const char * const *names,
 
 Job *CmdExec::builtin_lcd()
 {
-   if(args->count()<2)
+   if(args->count()==1)
+      args->Append("~");
+
+   if(args->count()!=2)
    {
       eprintf(_("Usage: %s local-dir\n"),args->getarg(0));
       return 0;
@@ -391,6 +394,9 @@ Job *CmdExec::builtin_lcd()
 
 Job *CmdExec::builtin_cd()
 {
+   if(args->count()==1)
+      args->Append("~");
+
    if(args->count()!=2)
    {
       // xgettext:c-format
