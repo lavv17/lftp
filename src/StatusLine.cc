@@ -197,6 +197,7 @@ void StatusLine::update(const char *const *newstr,int newstr_height)
    while(i-->0)
    {
       int tw=mbswidth(shown[--j],mbflags);
+      write(fd,"\r",1);
       write(fd,spaces,tw);
       write(fd,"\r",1);
       write(fd,prev_line,strlen(prev_line));
@@ -239,7 +240,8 @@ void StatusLine::update(const char *const *newstr,int newstr_height)
       int dif=strlen(shown_curr)-(end-newstr[curr_line])+2;
       if(dif>(w-1)-wpos)
 	 dif=(w-1)-wpos;
-      write(fd,spaces,dif);
+      if(dif>0)
+	 write(fd,spaces,dif);
       write(fd,"\r",1);
 
       if(++curr_line<newstr_height)
