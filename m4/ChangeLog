@@ -1,3 +1,7 @@
+2003-05-27  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ssl.m4: add -R option for shared ssl lib.
+
 2002-03-13  Arkadiusz Miskiewicz <misiek@pld.org.pl>
 
 	* Makefile.am: distribute va_copy.m4

@@ -24,7 +24,7 @@ AC_CACHE_VAL(lftp_cv_ssl,
 		if test $found_loc != "none"; then
 			lftp_cv_ssl="SSL_LIBS=\"-lssl -lcrypto\""
 			if test $found_loc != default; then
-				lftp_cv_ssl="$lftp_cv_ssl SSL_LDFLAGS=-L$found_loc/lib"
+				lftp_cv_ssl="$lftp_cv_ssl SSL_LDFLAGS=\"-L$found_loc/lib -R$found_loc/lib\""
 				lftp_cv_ssl="$lftp_cv_ssl SSL_CPPFLAGS=-I$found_loc/include"
 			fi
 			break;
