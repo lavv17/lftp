@@ -891,7 +891,7 @@ Job *CmdExec::builtin_queue()
       }
    }
 
-   if(edit) 
+   if(edit)
       return builtin_queue_edit();
 
    if(src != NULL) {
@@ -954,7 +954,7 @@ Job *CmdExec::builtin_queue_edit()
       eprintf(_("Can only edit plain queues.\n"));
       return 0;
    }
-   
+
    const char *home=getenv("HOME");
    if(home==0)
       home="";
@@ -1161,7 +1161,7 @@ CMD(get)
 	 cont=true;
 	 break;
       case('n'):
-	 if(!isdigit(optarg[0]))
+	 if(!isdigit((unsigned char)optarg[0]))
 	 {
 	    eprintf(_("%s: -n: Number expected. "),op);
 	    goto err;
@@ -1597,7 +1597,7 @@ CMD(kill)
       char *arg=args->getnext();
       if(arg==0)
 	 break;
-      if(!isdigit(arg[0]))
+      if(!isdigit((unsigned char)arg[0]))
       {
 	 eprintf(_("%s: %s - not a number\n"),op,arg);
 	 exit_code=1;
@@ -1728,7 +1728,7 @@ CMD(wait)
 	 exit_code=0;
 	 return 0;
       }
-      if(!isdigit(jn[0]))
+      if(!isdigit((unsigned char)jn[0]))
       {
 	 eprintf(_("%s: %s - not a number\n"),op,jn);
 	 return 0;
@@ -1870,7 +1870,7 @@ CMD(scache)
    else
    {
       char *a=args->getarg(1);
-      if(!isdigit(a[0]))
+      if(!isdigit((unsigned char)a[0]))
       {
 	 eprintf(_("%s: %s - not a number\n"),args->a0(),a);
 	 return 0;
@@ -2145,6 +2145,7 @@ CMD(find)
    };
    int opt;
    int maxdepth = -1;
+   const char *op=args->a0();
 
    args->rewind();
    while((opt=args->getopt_long("+d:",find_options,0))!=EOF)
@@ -2152,17 +2153,22 @@ CMD(find)
       switch(opt)
       {
       case 'd':
+	 if(!isdigit((unsigned char)*optarg))
+	 {
+	    eprintf(_("%s: %s - not a number\n"),op,optarg);
+	    return 0;
+	 }
 	 maxdepth = atoi(optarg);
 	 break;
       case '?':
-	 eprintf(_("Usage: %s [-d #] dir\n"),args->a0());
+	 eprintf(_("Usage: %s [-d #] dir\n"),op);
 	 return 0;
       }
    }
 
-   const char *path=".";
-   if(args->getcurr())
-      path=args->getcurr();
+   const char *path=args->getcurr();
+   if(!path)
+      path=".";
    FinderJob_List *j=new class FinderJob_List(Clone(),path,
       output?output:new FDStream(1,"<stdout>"));
    j->set_maxdepth(maxdepth);
