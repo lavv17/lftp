@@ -50,9 +50,12 @@ extern "C" { const char *hstrerror(int); }
 #endif
 
 #ifndef HAVE_H_ERRNO_DECL
-extern int h_errno;
+CDECL int h_errno;
 #endif
 
+#if defined(HAVE_RES_SEARCH) && !defined(HAVE_RES_SEARCH_DECL)
+CDECL int res_search(const char*,int,int,unsigned char*,int);
+#endif
 
 #if INET6
 # define DEFAULT_ORDER "inet inet6"

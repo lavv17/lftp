@@ -1,3 +1,8 @@
+1999-08-02  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* Resolver.cc, log.cc: declare res_search, vsnprintf if prototypes
+	  are missing.
+
 1999-07-29  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* SignalHook.cc: ignore SIGXFSZ, want to get EFBIG.
