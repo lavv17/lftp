@@ -1,5 +1,5 @@
 dnl Check for libreadline of proper version
-AC_DEFUN(READLINE_CHECK,
+AC_DEFUN([READLINE_CHECK],
 [AC_MSG_CHECKING(for readline)
 AC_ARG_WITH(included-readline,
    [  --with-included-readline  use supplied readline instead of system one],

@@ -2,7 +2,7 @@
 # pessimistic tests, since just about all systems will have one of these.
 # Add them if needed.
 
-AC_DEFUN(lftp_VA_COPY,
+AC_DEFUN([lftp_VA_COPY],
 [
    AC_CACHE_CHECK([for an implementation of va_copy()],lftp_cv_va_copy,[
       AC_TRY_RUN([

@@ -1,4 +1,4 @@
-AC_DEFUN(LFTP_FUNC_POLL,
+AC_DEFUN([LFTP_FUNC_POLL],
 [
    AC_MSG_CHECKING(for working poll)
    AC_CACHE_VAL(lftp_cv_func_poll_works,
@@ -27,7 +27,7 @@ AC_DEFUN(LFTP_FUNC_POLL,
    fi
 ])
 
-AC_DEFUN(LFTP_PROG_CXXLINK,
+AC_DEFUN([LFTP_PROG_CXXLINK],
 [
    AC_MSG_CHECKING(how to link simple c++ programs)
    if test "$GCC" = yes -a "$GXX" = yes; then
@@ -45,7 +45,7 @@ AC_DEFUN(LFTP_PROG_CXXLINK,
    AC_MSG_RESULT(using $CXX)
 ])
 dnl try to build and run a dummy program
-AC_DEFUN(LFTP_CXX_TEST,
+AC_DEFUN([LFTP_CXX_TEST],
 [
    AC_LANG_PUSH(C++)
    AC_MSG_CHECKING(if c++ compiler works)
@@ -56,7 +56,7 @@ AC_DEFUN(LFTP_CXX_TEST,
    AC_LANG_POP(C++)
 ])
 
-AC_DEFUN(LFTP_FUNC_SSCANF_CONST,
+AC_DEFUN([LFTP_FUNC_SSCANF_CONST],
 [
    AC_MSG_CHECKING(whether sscanf works on const strings)
    AC_CACHE_VAL(lftp_cv_func_sscanf_const_works,
@@ -88,7 +88,7 @@ AC_DEFUN(LFTP_FUNC_SSCANF_CONST,
 dnl Do nothing if the compiler accepts the inline keyword.
 dnl Otherwise define c_inline to __inline__ or __inline if one of those work,
 dnl otherwise define c_inline to be empty.
-AC_DEFUN(LFTP_C_INLINE,
+AC_DEFUN([LFTP_C_INLINE],
 [AC_CACHE_CHECK([for inline], ac_cv_c_inline,
 [ac_cv_c_inline=no
 for ac_kw in inline __inline__ __inline; do
@@ -102,7 +102,7 @@ case "$ac_cv_c_inline" in
 esac
 ])
 
-AC_DEFUN(LFTP_NOIMPLEMENTINLINE,
+AC_DEFUN([LFTP_NOIMPLEMENTINLINE],
 [
    AC_MSG_CHECKING(if -fno-implement-inlines implements virtual functions)
    flags="-fno-implement-inlines -Winline"
@@ -133,7 +133,7 @@ AC_DEFUN(LFTP_NOIMPLEMENTINLINE,
       CXXFLAGS="$CXXFLAGS $flags"
    fi
 ])
-AC_DEFUN(LFTP_CHECK_CXX_FLAGS,
+AC_DEFUN([LFTP_CHECK_CXX_FLAGS],
 [
    flags="$1"
    AC_MSG_CHECKING(if $CXX supports $flags)
@@ -162,7 +162,7 @@ AC_DEFUN(LFTP_CHECK_CXX_FLAGS,
       CXXFLAGS="$CXXFLAGS $flags"
    fi
 ])
-AC_DEFUN(LFTP_CHECK_LIBM,
+AC_DEFUN([LFTP_CHECK_LIBM],
 [
    AC_MSG_CHECKING(if math library is needed)
    AC_CACHE_VAL(lftp_cv_libm_needed,
@@ -184,7 +184,7 @@ AC_DEFUN(LFTP_CHECK_LIBM,
    fi
 ])
 dnl try to build and run a dummy program
-AC_DEFUN(LFTP_CXX_BOOL,
+AC_DEFUN([LFTP_CXX_BOOL],
 [
    AC_MSG_CHECKING(whether $CXX supports bool type)
    AC_CACHE_VAL(lftp_cv_cxx_bool,
@@ -243,7 +243,7 @@ AC_DEFUN([LFTP_CXX_ANSI_SCOPE],
    fi
 ])
 
-AC_DEFUN(LFTP_ENVIRON_CHECK,[
+AC_DEFUN([LFTP_ENVIRON_CHECK],[
    AC_CACHE_CHECK([for environ variable],[lftp_cv_environ],[
       AC_TRY_LINK([
 	 #include <unistd.h>

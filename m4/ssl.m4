@@ -1,4 +1,4 @@
-AC_DEFUN(LFTP_SSL_CHECK,
+AC_DEFUN([LFTP_SSL_CHECK],
 [AC_MSG_CHECKING([for ssl library])
 AC_CACHE_VAL(lftp_cv_ssl,
 [

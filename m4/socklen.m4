@@ -1,5 +1,5 @@
 dnl Check for size of addr length argument
-AC_DEFUN(TYPE_SOCKLEN_T,
+AC_DEFUN([TYPE_SOCKLEN_T],
 [
    AC_MSG_CHECKING(for socklen_t)
    AC_CACHE_VAL(lftp_cv_socklen_t,

@@ -1,4 +1,4 @@
-AC_DEFUN(lftp_TERMINFO,
+AC_DEFUN([lftp_TERMINFO],
 [
    AC_CHECK_HEADERS(curses.h term.h ncurses/curses.h ncurses/term.h)
 
