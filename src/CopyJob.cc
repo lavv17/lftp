@@ -25,6 +25,7 @@
 #include "ArgV.h"
 #include "plural.h"
 #include "misc.h"
+#include "url.h"
 
 int CopyJob::Do()
 {
@@ -69,8 +70,8 @@ int CopyJob::ExitCode()
 const char *CopyJob::SqueezeName(int w, bool base)
 {
    if(base)
-      return squeeze_file_name(basename_ptr(name),w);
-   return squeeze_file_name(name,w);
+      return squeeze_file_name(basename_ptr(GetDispName()),w);
+   return squeeze_file_name(GetDispName(),w);
 }
 
 // xgettext:c-format
@@ -114,7 +115,7 @@ void CopyJob::PrintStatus(int v,const char *prefix)
       return;
 
    printf("%s",prefix);
-   const char *name=GetName();
+   const char *name=GetDispName();
    printf(COPY_STATUS);
    printf("\n");
 }
@@ -133,21 +134,36 @@ int CopyJob::AcceptSig(int sig)
    return MOVED;
 }
 
+void CopyJob::SetDispName()
+{
+   xfree(dispname);
+   dispname=0;
+
+   ParsedURL url(name,true);
+   if(url.proto)
+      dispname = xstrdup(url.path);
+   else
+      dispname = xstrdup(name);
+}
+
 CopyJob::CopyJob(FileCopy *c1,const char *name1,const char *op1)
 {
    c=c1;
+   dispname=0;
    name=xstrdup(name1);
    op=xstrdup(op1);
    done=false;
    no_status=false;
    no_status_on_write=false;
    clear_status_on_write=false;
+   SetDispName();
 }
 
 CopyJob::~CopyJob()
 {
    Delete(c);
    xfree(name);
+   xfree(dispname);
    xfree(op);
 }
 

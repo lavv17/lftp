@@ -32,10 +32,13 @@ class CopyJob : public Job
    FileCopy *c;
    bool done;
    char *name; // file name
+   char *dispname; // displayed file name
    char *op;   // command name
    bool no_status;
    bool no_status_on_write;
    bool clear_status_on_write;
+
+   void SetDispName();
 
 public:
    CopyJob(FileCopy *c1,const char *n,const char *op1);
@@ -79,7 +82,8 @@ public:
    void ShowRunStatus(StatusLine *s);
    void	PrintStatus(int,const char *);
 
-   const char *GetName() { return name; }
+   const char *GetName() const { return name; }
+   const char *GetDispName() const { return dispname; }
    const char *SqueezeName(int w, bool base=false);
 
    static CopyJob *NewGet(FileAccess *f,const char *src,const char *dst);

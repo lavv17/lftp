@@ -1,3 +1,8 @@
+2002-09-02  Glenn Maynard <g_ld@zewt.org>
+
+	* CopyJob.cc, CopyJob.h, pgetJob.cc: add and use dispname to hide
+	  passwords in urls.
+
 2002-08-29  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* rmJob.cc: set recursive properly. This fixes bug with DELE instead
@@ -6,6 +11,7 @@
 	* Job.h: (ClearStatus) new method.
 	* CopyJob.cc: use ClearStatus.
 	* OutputJob.cc: handle temporary pipe() error.
+	* resource.cc: add ifdef USE_SSL around AuthArgValidate.
 
 2002-08-28  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -223,7 +223,7 @@ void  pgetJob::PrintStatus(int verbose,const char *prefix)
    SessionJob::PrintStatus(verbose,prefix);
 
    printf("\t");
-   const char *name=cp->GetName();
+   const char *name=cp->GetDispName();
    off_t size=cp->GetSize();
    printf(PGET_STATUS);
    printf("\n");
