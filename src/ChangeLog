@@ -1,3 +1,18 @@
+2002-10-23  Glenn Maynard <g_ld@zewt.org>
+
+	* OutputJob.cc: fix abort when output file is not writable.
+
+2002-10-11  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: change state to WAITING_STATE from
+	  DATASOCKET_CONNECTING_STATE properly on DataClose().
+	* Fish.cc: (StoreStatus) check state; send a different store
+	  command when entity_size==0 to avoid dd bug.
+
+2002-09-30  Glenn Maynard <g_ld@zewt.org>
+
+	* misc.cc: unset put_tz properly on set_tz(0).
+
 2002-09-30  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* misc.cc: call tzset for glibc.

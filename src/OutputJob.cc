@@ -337,6 +337,9 @@ const char *OutputJob::Status(const StatusLine *s)
 
 void OutputJob::PutEOF()
 {
+   if(Error())
+      return;
+
    /* Make sure we've sent at least one (empty) block.  This ensures
     * that we always start the input->output code path. */
    Put("", 0);
