@@ -98,7 +98,7 @@ void ColumnOutput::get_print_info(unsigned width, int *&col_arr, int *&ws_arr, i
 
    col_arr = (int *) xmalloc (max_idx * sizeof (int));
    ws_arr = (int *) xmalloc (max_idx * sizeof (int));
-   
+
    /* Normally the maximum number of columns is determined by the
     * screen width.  But if few files are available this might limit it
     * as well. */
@@ -120,7 +120,7 @@ void ColumnOutput::get_print_info(unsigned width, int *&col_arr, int *&ws_arr, i
       }
 
       /* Strip as much whitespace off the left as possible, but strip
-       * the same amount from each entry (per column) to keep each 
+       * the same amount from each entry (per column) to keep each
        * column aligned with itself. */
       unsigned line_len = cols * MIN_COLUMN_WIDTH;
       for (int filesno = 0; filesno < lst_cnt; ++filesno) {
@@ -152,15 +152,15 @@ void ColumnOutput::print(Buffer *o, unsigned width, bool color) const
       { 0, "" }
    };
 
-   const char *color_pref = Subst(res_color_begin.Query(getenv("TERM")), subst);
-   const char *color_suf = Subst(res_color_end.Query(getenv("TERM")), subst);
-   const char *color_reset = Subst(res_color_reset.Query(getenv("TERM")), subst);
+   char *color_pref = Subst(res_color_begin.Query(getenv("TERM")), subst);
+   char *color_suf = Subst(res_color_end.Query(getenv("TERM")), subst);
+   char *color_reset = Subst(res_color_reset.Query(getenv("TERM")), subst);
 
    int cols;
    int *col_arr, *ws_arr;
 
    get_print_info(width, col_arr, ws_arr, cols);
-   
+
    /* Calculate the number of rows that will be in each column except possibly
     * for a short column on the right. */
    int rows = lst_cnt / cols + (lst_cnt % cols != 0);
@@ -187,6 +187,10 @@ void ColumnOutput::print(Buffer *o, unsigned width, bool color) const
 
    xfree(ws_arr);
    xfree(col_arr);
+
+   xfree(color_pref);
+   xfree(color_suf);
+   xfree(color_reset);
 }
 
 datum::datum(): names(0), colors(0), num(0), ws(0), curwidth(0) { }
@@ -236,13 +240,13 @@ void datum::print(Buffer *o, bool color, int skip,
 	 skip -= len;
 	 continue;
       }
-      
+
       if(color) {
 	 if(colors[i][0]) {
 	    /* if it's the same color, don't bother */
 	    if(!cur_color || !strcmp(cur_color, colors[i])) {
 	       o->Put(color_pref);
-	       o->Put(colors[i]); 
+	       o->Put(colors[i]);
 	       o->Put(color_suf);
 
 	       cur_color = colors[i];
@@ -269,4 +273,3 @@ int datum::whitespace() const
 {
    return ws;
 }
-

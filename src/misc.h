@@ -87,7 +87,10 @@ struct subst_t {
    const char *to;
 };
 
+/* Subst changes escape sequences to given strings, also substitutes \nnn
+ * with corresponding character. Returns allocated buffer to be free'd */
 char *Subst(const char *txt, const subst_t *s);
+
 char **tokenize(const char *str, int *argc = NULL);
 void tokenize_free(char **argv);
 

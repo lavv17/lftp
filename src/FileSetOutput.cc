@@ -49,7 +49,7 @@
 ResDecl res_dir_colors   ("cmd:dir-colors",    "",  0,0),
 	res_default_cls         ("cmd:cls-default",  "-F", FileSetOutput::ValidateArgv,0),
 	res_default_comp_cls    ("cmd:cls-completion-default", "-FB",FileSetOutput::ValidateArgv,0);
-      
+
 /* Parse a string as part of the LS_COLORS variable; this may involve
    decoding all kinds of escape characters.  If equals_end is set an
    unescaped equal sign ends the string, otherwise only a : or \0
@@ -252,6 +252,9 @@ get_funky_string (char **dest, const char **src, int equals_end)
 static void
 parse_ls_color (const char *p, KeyValueDB &out)
 {
+   if(!p)
+      return;
+
    char *buf;			/* color_buf buffer pointer */
    int state;			/* State of parser */
    char label[4];		/* Indicator label */
@@ -356,14 +359,14 @@ void FileSetOutput::print(FileSet &fs, Buffer *o) const
 {
    fs.Sort(sort, sort_casefold);
    if(sort_dirs_first) fs.Sort(FileSet::DIRSFIRST, false);
-   
+
    ColumnOutput c;
    const char *colorsp = res_dir_colors.Query(0);
    if(!colorsp || !*colorsp) colorsp = getenv("LS_COLORS");
    if(!colorsp || !*colorsp) colorsp = getenv("ZLS_COLORS"); /* zsh */
 
    char *colors = xstrdup(colorsp);
-   
+
    KeyValueDB col;
 
    /* Defaults: */
@@ -423,7 +426,7 @@ void FileSetOutput::print(FileSet &fs, Buffer *o) const
 	 c.add(FileInfoSuffix(*f), suffix_color);
 
       if((mode & LINKS) &&
-	 f->filetype == FileInfo::SYMLINK && 
+	 f->filetype == FileInfo::SYMLINK &&
 	 f->symlink) {
 	 c.add(" -> ", "");
 
@@ -488,7 +491,7 @@ FileSetOutput::FileSetOutput(const FileSetOutput &cp)
 const FileSetOutput &FileSetOutput::operator = (const FileSetOutput &cp)
 {
    if(this == &cp) return *this;
-   
+
    memcpy(this, &cp, sizeof(*this));
    pat = xstrdup(cp.pat);
    return *this;
@@ -511,7 +514,7 @@ void FileSetOutput::long_list()
 const char *FileSetOutput::ValidateArgv(char **s)
 {
    if(!*s) return NULL;
-   
+
    ArgV arg("", *s);
    FileSetOutput tmp;
 
@@ -602,7 +605,7 @@ int FileCopyPeerCLS::Do()
        * Let's assume it's a file and force people to use a trailing slash.
        * (I don't particularly like that, but it's done in other places
        * anyway ...) */
-      
+
       mask = strrchr(dir, '/');
       if(mask) {
 	 *mask++ = 0;
@@ -650,4 +653,3 @@ const char *FileCopyPeerCLS::GetStatus()
 {
    return session->CurrentStatus();
 }
-

@@ -1,3 +1,9 @@
+2001-10-05  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ColumnOutput.cc: fix memory leak.
+	* FileSetOutput.cc: fix coredump when LS_COLORS is unset.
+	* misc.h: add comment on Subst.
+
 2001-10-05  Glenn F. Maynard <g_ld@zewt.org>
 
 	* CmdExec.cc, ColumnOutput.cc, ColumnOutput.h, FileSet.cc, FileSet.h,
