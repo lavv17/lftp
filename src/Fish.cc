@@ -36,8 +36,6 @@
 
 #define max_buf 0x10000
 
-static FileInfo *ls_to_FileInfo(char *line);
-
 void Fish::GetBetterConnection(int level)
 {
    for(FA *fo=FirstSameSite(); fo!=0; fo=NextSameSite(fo))
@@ -759,7 +757,7 @@ int Fish::HandleReplies()
       }
       else if(message)
       {
-	 FileInfo *fi=ls_to_FileInfo(message);
+	 FileInfo *fi=FileInfo::parse_ls_line(message,"GMT");
 	 if(!fi)
 	 {
 	    SetError(NO_FILE,message);
@@ -782,7 +780,7 @@ int Fish::HandleReplies()
       break;
    case EXPECT_INFO:
    {
-      FileInfo *fi=ls_to_FileInfo(message);
+      FileInfo *fi=FileInfo::parse_ls_line(message,"GMT");
       if(fi && fi->defined&fi->SIZE)
 	 array_for_info[array_ptr].size=fi->size;
       else
@@ -1276,110 +1274,6 @@ void FishDirList::Resume()
       ubuf->Resume();
 }
 
-static FileInfo *ls_to_FileInfo(char *line)
-{
-   int year=-1,month=-1,day=0,hour=0,minute=0;
-   char month_name[32]="";
-   char perms[12]="";
-   int perms_code;
-   int n_links;
-   char user[32];
-   char group[32];
-   char year_or_time[6];
-   int consumed;
-   bool is_directory=false;
-   bool is_sym_link=false;
-   char *sym_link=0;
-   long long size;
-   int n;
-   int prec=0;
-
-   n=sscanf(line,"%11s %d %31s %31s %lld %3s %2d %5s%n",perms,&n_links,
-	 user,group,&size,month_name,&day,year_or_time,&consumed);
-   if(n==4) // bsd-like listing without group?
-   {
-      group[0]=0;
-      n=sscanf(line,"%11s %d %31s %lld %3s %2d %5s%n",perms,&n_links,
-	    user,&size,month_name,&day,year_or_time,&consumed);
-   }
-   if(n>=7 && -1!=(perms_code=parse_perms(perms+1))
-   && -1!=(month=parse_month(month_name))
-   && -1!=parse_year_or_time(year_or_time,&year,&hour,&minute))
-   {
-      if(perms[0]=='d')
-	 is_directory=true;
-      else if(perms[0]=='l')
-      {
-	 is_sym_link=true;
-	 sym_link=strstr(line+consumed+1," -> ");
-	 if(sym_link)
-	 {
-	    *sym_link=0;
-	    sym_link+=4;
-	 }
-      }
-
-      if(year!=-1)
-      {
-	 // server's y2000 problem :)
-	 if(year<37)
-	    year+=2000;
-	 else if(year<100)
-	    year+=1900;
-      }
-
-      if(day<1 || day>31 || hour<0 || hour>23 || minute<0 || minute>59
-      || (month==-1 && !is_ascii_alnum((unsigned char)month_name[0])))
-	 return 0;
-
-      if(month==-1)
-	 month=parse_month(month_name);
-      if(month>=0)
-      {
-	 sprintf(month_name,"%02d",month+1);
-	 if(year==-1)
-	    year=guess_year(month,day,hour,minute);
-	 else
-	 {
-	    hour=12;
-	    prec=12*60*60;
-	 }
-      }
-
-      FileInfo *fi=new FileInfo;
-      fi->SetName(line+consumed+1);
-      if(sym_link)
-	 fi->SetSymlink(sym_link);
-      else
-	 fi->SetType(is_directory ? fi->DIRECTORY : fi->NORMAL);
-
-      if(year!=-1 && month!=-1 && day!=-1 && hour!=-1 && minute!=-1)
-      {
-	 struct tm date;
-
-	 date.tm_year=year-1900;
-	 date.tm_mon=month;
-	 date.tm_mday=day;
-	 date.tm_hour=hour;
-	 date.tm_min=minute;
-
-	 date.tm_isdst=-1;
-	 date.tm_sec=0;
-
-	 fi->SetDate(mktime_from_utc(&date),prec);
-      }
-
-      fi->SetSize(size);
-      fi->SetUser(user);
-      fi->SetGroup(group);
-      fi->SetNlink(n_links);
-      fi->SetMode(perms_code);
-
-      return fi;
-   }
-   return 0;
-}
-
 static FileSet *ls_to_FileSet(const char *b,int len)
 {
    FileSet *set=new FileSet;
@@ -1394,7 +1288,7 @@ static FileSet *ls_to_FileSet(const char *b,int len)
       if(ll==0)
 	 continue;
 
-      FileInfo *f=ls_to_FileInfo(line);
+      FileInfo *f=FileInfo::parse_ls_line(line,"GMT");
 
       if(!f)
 	 continue;

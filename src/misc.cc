@@ -583,6 +583,8 @@ time_t mktime_from_tz(struct tm *t,const char *tz)
 {
    if(!tz || !*tz)
       return mktime(t);
+   if(!strcasecmp(tz,"GMT"))
+      return mktime_from_utc(t);
    if(isdigit((unsigned char)*tz) || *tz=='+' || *tz=='-')
    {
       char *tz1=string_alloca(strlen(tz)+4);

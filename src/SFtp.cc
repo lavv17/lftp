@@ -1806,6 +1806,19 @@ FileInfo *SFtp::MakeFileInfo(const NameAttrs *na)
       fi->SetUser (utf8_to_lc(a->owner));
       fi->SetGroup(utf8_to_lc(a->group));
    }
+   else if(fi->longname)
+   {
+      // try to extract owner/group from long name.
+      FileInfo *ls=FileInfo::parse_ls_line(fi->longname,0);
+      if(ls)
+      {
+	 if(ls->user)
+	    fi->SetUser(ls->user);
+	 if(ls->group)
+	    fi->SetGroup(ls->group);
+      }
+      delete ls;
+   }
    if(a->flags&SSH_FILEXFER_ATTR_PERMISSIONS)
       fi->SetMode(a->permissions&07777);
    if(a->flags&SSH_FILEXFER_ATTR_MODIFYTIME)

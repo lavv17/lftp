@@ -77,6 +77,7 @@ public:
    void SetUser(const char *n);
    void SetGroup(const char *n);
    void LocalFile(const char *name, bool follow_symlinks);
+   static FileInfo *parse_ls_line(const char *line,const char *tz);
 
    void SetMode(mode_t m) { mode=m; defined|=MODE; }
    void SetDate(time_t t,int prec) { date=t; defined|=DATE; date_prec=prec; }

@@ -715,6 +715,159 @@ check_again:
 #endif /* HAVE_LSTAT */
 }
 
+/* parse_ls_line: too common procedure to make it protocol specific */
+/*
+-rwxr-xr-x   1 lav      root         4771 Sep 12  1996 install-sh
+-rw-r--r--   1 lav      root         1349 Feb  2 14:10 lftp.lsm
+drwxr-xr-x   4 lav      root         1024 Feb 22 15:32 lib
+lrwxrwxrwx   1 lav      root           33 Feb 14 17:45 ltconfig -> /usr/share/libtool/ltconfig
+NOTE: group may be missing.
+*/
+FileInfo *FileInfo::parse_ls_line(const char *line_c,const char *tz)
+{
+   char *line=alloca_strdup(line_c);
+   char *next=0;
+   FileInfo *fi=0; /* don't instantiate until we at least have something */
+#define FIRST_TOKEN strtok_r(line," \t",&next)
+#define NEXT_TOKEN  strtok_r(NULL," \t",&next)
+#define ERR do{delete fi;return(0);}while(0)
+
+   /* parse perms */
+   char *t = FIRST_TOKEN;
+   if(t==0)
+      ERR;
+
+   fi = new FileInfo;
+   switch(t[0])
+   {
+   case('l'):  // symlink
+      fi->SetType(fi->SYMLINK);
+      break;
+   case('d'):  // directory
+      fi->SetType(fi->DIRECTORY);
+      break;
+   case('-'):  // plain file
+      fi->SetType(fi->NORMAL);
+      break;
+   case('b'): // block
+   case('c'): // char
+   case('p'): // pipe
+   case('s'): // sock
+      return 0;  // ignore
+   default:
+      ERR;
+   }
+   mode_t mode=parse_perms(t+1);
+   if(mode!=(mode_t)-1)
+      fi->SetMode(mode);
+
+   // link count
+   t = NEXT_TOKEN;
+   if(!t)
+      ERR;
+   fi->SetNlink(atoi(t));
+
+   // user
+   t = NEXT_TOKEN;
+   if(!t)
+      ERR;
+   fi->SetUser(t);
+
+   // group or size
+   char *group_or_size = NEXT_TOKEN;
+
+   // size or month
+   t = NEXT_TOKEN;
+   if(!t)
+      ERR;
+   if(isdigit(*t))
+   {
+      // it's size, so the previous was group:
+      fi->SetGroup(group_or_size);
+      long long size;
+      if(sscanf(t,"%lld",&size)==1)
+	 fi->SetSize(size);
+      t = NEXT_TOKEN;
+      if(!t)
+	 ERR;
+   }
+   else
+   {
+      // it was month, so the previous was size:
+      long long size;
+      if(sscanf(group_or_size,"%lld",&size)==1)
+	 fi->SetSize(size);
+   }
+
+   struct tm date;
+   memset(&date,0,sizeof(date));
+
+   date.tm_mon=parse_month(t);
+   if(date.tm_mon==-1)
+      date.tm_mon=0;
+
+   const char *day_of_month = NEXT_TOKEN;
+   if(!day_of_month)
+      ERR;
+   date.tm_mday=atoi(day_of_month);
+
+   bool year_anomaly=false;
+
+   // time or year
+   t = NEXT_TOKEN;
+   if(!t)
+      ERR;
+   date.tm_hour=date.tm_min=0;
+   int prec=30;
+   if(strlen(t)==5)
+   {
+      sscanf(t,"%2d:%2d",&date.tm_hour,&date.tm_min);
+      date.tm_year=guess_year(date.tm_mon,date.tm_mday,date.tm_hour,date.tm_min) - 1900;
+   }
+   else
+   {
+      if(day_of_month+strlen(day_of_month)+1 == t)
+	 year_anomaly=true;
+      date.tm_year=atoi(t)-1900;
+      /* We don't know the hour.  Set it to something other than 0, or
+       * DST -1 will end up changing the date. */
+      date.tm_hour = 12;
+      prec=12*60*60;
+   }
+
+   date.tm_isdst=-1;
+   date.tm_sec=30;
+
+   fi->SetDate(mktime_from_tz(&date,tz),prec);
+
+   char *name=strtok_r(NULL,"",&next);
+   if(!name)
+      ERR;
+
+   // there are ls which outputs extra space after year.
+   if(year_anomaly && *name==' ')
+      name++;
+
+   if(fi->filetype==fi->SYMLINK)
+   {
+      char *arrow=name;
+      while((arrow=strstr(arrow," -> "))!=0)
+      {
+	 if(arrow!=name && arrow[4]!=0)
+	 {
+	    *arrow=0;
+	    fi->SetSymlink(arrow+4);
+	    break;
+	 }
+	 arrow++;
+      }
+   }
+   fi->SetName(name);
+
+   return fi;
+}
+
+
 FileInfo::~FileInfo()
 {
    xfree(name);
