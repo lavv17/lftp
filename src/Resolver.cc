@@ -459,7 +459,7 @@ void Resolver::LookupSRV_RR()
    time_t try_time;
    unsigned char answer[0x1000];
    char *srv_name=string_alloca(strlen(service)+1+strlen(tproto)+1+strlen(hostname)+1);
-   sprintf(srv_name,"%s.%s.%s",service,tproto,hostname);
+   sprintf(srv_name,"_%s._%s.%s",service,tproto,hostname);
 
    int len;
    for(;;)
