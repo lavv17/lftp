@@ -473,9 +473,8 @@ int CmdExec::Do()
 	       if(builtin==BUILTIN_CD)
 	       {
 		  // accept the path
-		  const char *f=session->GetFile();
-		  f=alloca_strdup(f);
-		  session->Chdir(f,false);
+		  const char *f_c=session->GetFile();
+		  session->Chdir(alloca_strdup(f_c),false);
 	       }
 	       session->Close();
 	       exit_code=0;
@@ -496,7 +495,7 @@ int CmdExec::Do()
       }
       if(status_line)
 	 waiting->ShowRunStatus(status_line);
-      return m;
+      return STALL;
    }
 
    if(waiting)
@@ -537,7 +536,7 @@ int CmdExec::Do()
       }
       if(status_line)
 	 waiting->ShowRunStatus(status_line);
-      return m;
+      return STALL;
    }
 
    if(!interactive)

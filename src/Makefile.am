@@ -97,9 +97,6 @@ proto-ftp.so: ftpclass.cc FtpListInfo.cc FtpGlob.cc FtpDirList.cc\
  md5.c ftp-opie.c NetAccess.cc FtpSplitList.cc FileCopyFtp.cc
 	@-rm -f $@
 	$(CXXMODLINK) $^ -o $@
-proto-fish.so: Fish.cc NetAccess.cc
-	@-rm -f $@
-	$(CXXMODLINK) $^ -o $@
 cmd-mirror.so: MirrorJob.cc
 	@-rm -f $@
 	$(CXXMODLINK) $^ -o $@

@@ -1,7 +1,3 @@
-2000-04-29	Alexander V. Lukyanov <lav@yars.free.net>
-
-	* lftp.1: add http:cookie; mirror --Remove-source-files.
-
 2000-04-20	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: add http:user-agent.

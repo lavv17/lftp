@@ -197,8 +197,7 @@ void Http::SendMethod(const char *method,const char *efile)
       method="GET";
    Send("%s %s HTTP/1.1\r\n",method,efile);
    Send("Host: %s\r\n",ehost);
-   if(user_agent && user_agent[0])
-      Send("User-Agent: %s\r\n",user_agent);
+   Send("User-Agent: %s\r\n",user_agent);
    Send("Accept: */*\r\n");
 }
 
@@ -388,12 +387,6 @@ add_path:
       Send("Pragma: no-cache\r\n"); // for HTTP/1.0 compatibility
       Send("Cache-Control: no-cache\r\n");
    }
-   if(!hftp)
-   {
-      const char *cookie=Query("cookie",hostname);
-      if(cookie && cookie[0])
-	 Send("Cookie: %s\r\n",cookie);
-   }
    if(mode==ARRAY_INFO && !use_head)
       connection="close";
    if(mode!=ARRAY_INFO || connection)
@@ -529,7 +522,6 @@ int Http::Do()
    Buffer *data_buf;
 
    // check if idle time exceeded
-   // NOT USED YET.
    if(mode==CLOSED && sock!=-1 && idle>0)
    {
       if(now-idle_start>=idle)
@@ -770,16 +762,11 @@ int Http::Do()
 	       if(3!=sscanf(status,"HTTP/%d.%d %n%d",&ver_major,&ver_minor,
 		     &status_consumed,&status_code))
 	       {
+		  DebugPrint("**** ","Could not parse HTTP status line",0);
 		  // simple 0.9 ?
-		  ver_major=0;
-		  ver_minor=9;
-		  status_code=200;
-		  if(1!=sscanf(status,"HTTP %n%d",&status_consumed,&status_code))
-		  {
-		     DebugPrint("**** ","Could not parse HTTP status line",0);
-		     //FIXME: STORE
-		     goto pre_RECEIVING_BODY;
-		  }
+		  proto_version=0x09;
+		  //FIXME: STORE
+		  goto pre_RECEIVING_BODY;
 	       }
 	       proto_version=(ver_major<<4)+ver_minor;
 	       if(!H_20X(status_code))
@@ -908,11 +895,11 @@ int Http::Do()
 	    m=MOVED;
 	 else
 	 {
-	    // check if ranges were emulated by squid
-	    bool no_ranges_if_timeout=(bytes_received==0 && !seen_ranges_bytes);
 	    if(CheckTimeout())
 	    {
-	       no_ranges|=no_ranges_if_timeout;
+	       // check if ranges were emulated by squid
+	       if(bytes_received==0 && !seen_ranges_bytes)
+		  no_ranges=true;
 	       return MOVED;
 	    }
 	 }

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
-"POT-Creation-Date: 2000-04-29 21:25+0400\n"
+"POT-Creation-Date: 2000-04-20 15:08+0400\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -39,33 +39,33 @@ msgstr "不明确的命令 `%s'.\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "cd 成功, 当前目录=%s\n"
 
-#: src/CmdExec.cc:464 src/CmdExec.cc:524
+#: src/CmdExec.cc:464 src/CmdExec.cc:523
 msgid "Interrupt"
 msgstr "中断"
 
-#: src/CmdExec.cc:576
+#: src/CmdExec.cc:575
 msgid "Warning: discarding incomplete command\n"
 msgstr "警告: 放弃未完成的命令\n"
 
-#: src/CmdExec.cc:658
+#: src/CmdExec.cc:657
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\t执行内建的 `%s' [%s]\n"
 
-#: src/CmdExec.cc:666
+#: src/CmdExec.cc:665
 msgid "Now executing:"
 msgstr ""
 
-#: src/CmdExec.cc:674
+#: src/CmdExec.cc:673
 msgid "\tCommands queued:\n"
 msgstr ""
 
-#: src/CmdExec.cc:698
+#: src/CmdExec.cc:697
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\t等待任务 [%d] 中止\n"
 
-#: src/CmdExec.cc:702
+#: src/CmdExec.cc:701
 #, c-format
 msgid "\tRunning\n"
 msgstr "\t正在运行\n"
@@ -284,7 +284,7 @@ msgstr ""
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr ""
 
-#: src/Http.cc:1164 src/Resolver.cc:191 src/ftpclass.cc:2991
+#: src/Http.cc:1151 src/Resolver.cc:191 src/ftpclass.cc:2991
 msgid "Resolving host address..."
 msgstr "正在解析主机地址..."
 
@@ -1301,7 +1301,7 @@ msgstr "发现 `未知', 登录失败"
 msgid "assuming failed host name lookup"
 msgstr "名字查询失败"
 
-#: src/Http.cc:537 src/ftpclass.cc:913
+#: src/Http.cc:529 src/ftpclass.cc:913
 msgid "Closing idle connection"
 msgstr "关闭发呆的连接"
 
@@ -1355,7 +1355,7 @@ msgstr "正在关闭被动模式"
 msgid "Sending commands..."
 msgstr "正在发送命令..."
 
-#: src/Http.cc:1175 src/ftpclass.cc:2983 src/ftpclass.cc:3003
+#: src/Http.cc:1162 src/ftpclass.cc:2983 src/ftpclass.cc:3003
 #: src/ftpclass.cc:3010
 msgid "Waiting for response..."
 msgstr "正等待应答..."
@@ -1364,7 +1364,7 @@ msgstr "正等待应答..."
 msgid "Connection idle"
 msgstr "连接空闲"
 
-#: src/Http.cc:1170 src/ftpclass.cc:2998
+#: src/Http.cc:1157 src/ftpclass.cc:2998
 msgid "Connecting..."
 msgstr "正在连接..."
 
@@ -1388,11 +1388,11 @@ msgstr "正等待传输完成"
 msgid "Waiting for data connection..."
 msgstr "正等待数据连接..."
 
-#: src/Http.cc:1173 src/ftpclass.cc:3017
+#: src/Http.cc:1160 src/ftpclass.cc:3017
 msgid "Sending data"
 msgstr "正发送数据"
 
-#: src/Http.cc:1178 src/ftpclass.cc:3019
+#: src/Http.cc:1165 src/ftpclass.cc:3019
 msgid "Receiving data"
 msgstr "正接收数据"
 
@@ -1481,11 +1481,11 @@ msgstr "%s 成功, 删除 %d 个目录\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s 成功, 删除 %d 个文件\n"
 
-#: src/Http.cc:1006 src/Http.cc:1026
+#: src/Http.cc:993 src/Http.cc:1013
 msgid "chunked format violated"
 msgstr "块格式冲突"
 
-#: src/Http.cc:1176
+#: src/Http.cc:1163
 msgid "Fetching headers..."
 msgstr "正在取得头..."
 

@@ -1,24 +1,7 @@
-2000-04-29  Alexander V. Lukyanov  <lav@yars.free.net>
-
-	* Http.cc: add Cookie support; allow disabling user-agent.
-	* resource.cc: new setting http:cookie.
-
-2000-04-26  Alexander V. Lukyanov  <lav@yars.free.net>
-
-	* Http.cc: don't disable ranges always, check condition before
-	  disconnect.
-
-2000-04-23  Alexander V. Lukyanov  <lav@yars.free.net>
-
-	* Http.cc: handle old servers version 0.9 correctly.
-	* CmdExec.cc: actually commit the change for ^Z handling in `cd' command.
-
 2000-04-20  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* Http.cc: query http:user-agent explicitly.
 	* MirrorJob.cc: fix compilation problem.
-	* CmdExec.cc: fix stall problem with glob.
-	* DummyProto.h, complete.cc, pgetJob.h: fix warnings.
 
 2000-04-19  Alexander V. Lukyanov  <lav@yars.free.net>
 

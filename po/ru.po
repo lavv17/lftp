@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2\n"
-"POT-Creation-Date: 2000-04-29 21:25+0400\n"
+"POT-Creation-Date: 2000-04-20 15:08+0400\n"
 "PO-Revision-Date: 1999-09-29 09:36+08:00\n"
 "Last-Translator: Const Kaplinsky <const@ce.cctpu.edu.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -39,33 +39,33 @@ msgstr "Неоднозначное сокращение `%s'.\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, каталог=%s\n"
 
-#: src/CmdExec.cc:464 src/CmdExec.cc:524
+#: src/CmdExec.cc:464 src/CmdExec.cc:523
 msgid "Interrupt"
 msgstr "Прерывание"
 
-#: src/CmdExec.cc:576
+#: src/CmdExec.cc:575
 msgid "Warning: discarding incomplete command\n"
 msgstr "Предупреждение: неполный остаток команды игнорируется\n"
 
-#: src/CmdExec.cc:658
+#: src/CmdExec.cc:657
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tВыполнение примитива `%s' [%s]\n"
 
-#: src/CmdExec.cc:666
+#: src/CmdExec.cc:665
 msgid "Now executing:"
 msgstr ""
 
-#: src/CmdExec.cc:674
+#: src/CmdExec.cc:673
 msgid "\tCommands queued:\n"
 msgstr "\tОчередь команд:\n"
 
-#: src/CmdExec.cc:698
+#: src/CmdExec.cc:697
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\tОжидание завершения задания [%d]\n"
 
-#: src/CmdExec.cc:702
+#: src/CmdExec.cc:701
 #, c-format
 msgid "\tRunning\n"
 msgstr "\tВыполнение\n"
@@ -288,7 +288,7 @@ msgstr "Неверный формат времени. Формат: <время><единицы>, например 2h30m."
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Неверный формат времени. Формат: <время><единицы>, например 2h30m."
 
-#: src/Http.cc:1164 src/Resolver.cc:191 src/ftpclass.cc:2991
+#: src/Http.cc:1151 src/Resolver.cc:191 src/ftpclass.cc:2991
 msgid "Resolving host address..."
 msgstr "Преобразование адреса сервера..."
 
@@ -1332,7 +1332,7 @@ msgstr "Получена строка `unknown', подразумевается неудача регистрации"
 msgid "assuming failed host name lookup"
 msgstr "подразумевается ошибка преобразования адреса машины"
 
-#: src/Http.cc:537 src/ftpclass.cc:913
+#: src/Http.cc:529 src/ftpclass.cc:913
 msgid "Closing idle connection"
 msgstr "Закрытие неиспользуемого соединения"
 
@@ -1385,7 +1385,7 @@ msgstr "Включение пассивного режима"
 msgid "Sending commands..."
 msgstr "Передача команд..."
 
-#: src/Http.cc:1175 src/ftpclass.cc:2983 src/ftpclass.cc:3003
+#: src/Http.cc:1162 src/ftpclass.cc:2983 src/ftpclass.cc:3003
 #: src/ftpclass.cc:3010
 msgid "Waiting for response..."
 msgstr "Ожидание ответа..."
@@ -1394,7 +1394,7 @@ msgstr "Ожидание ответа..."
 msgid "Connection idle"
 msgstr "Соединение не используется"
 
-#: src/Http.cc:1170 src/ftpclass.cc:2998
+#: src/Http.cc:1157 src/ftpclass.cc:2998
 msgid "Connecting..."
 msgstr "Установка соединения..."
 
@@ -1418,11 +1418,11 @@ msgstr "Ожидание окончания пересылки"
 msgid "Waiting for data connection..."
 msgstr "Ожидание установки соединения данных..."
 
-#: src/Http.cc:1173 src/ftpclass.cc:3017
+#: src/Http.cc:1160 src/ftpclass.cc:3017
 msgid "Sending data"
 msgstr "Отправка данных"
 
-#: src/Http.cc:1178 src/ftpclass.cc:3019
+#: src/Http.cc:1165 src/ftpclass.cc:3019
 msgid "Receiving data"
 msgstr "Получение данных"
 
@@ -1511,11 +1511,11 @@ msgstr "%s ok, %d каталог$|а|ов$ удалено\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d файл$|а|ов$ удалено\n"
 
-#: src/Http.cc:1006 src/Http.cc:1026
+#: src/Http.cc:993 src/Http.cc:1013
 msgid "chunked format violated"
 msgstr "формат данных `chunked' нарушен"
 
-#: src/Http.cc:1176
+#: src/Http.cc:1163
 msgid "Fetching headers..."
 msgstr "Получение заголовков HTTP..."
 
