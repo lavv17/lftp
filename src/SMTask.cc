@@ -33,6 +33,8 @@
 
 SMTask	 *SMTask::chain=0;
 SMTask	 *SMTask::current=0;
+SMTask	 *SMTask::stack[MAX_TASK_RECURSION];
+int      SMTask::stack_ptr=0;
 PollVec	 SMTask::sched_total;
 TimeDate SMTask::now;
 
@@ -56,7 +58,6 @@ SMTask::SMTask()
    suspended=false;
    running=0;
    deleting=false;
-   prev_current=0;
    task_count++;
 #ifdef TASK_DEBUG
    printf("new SMTask %p (count=%d)\n",this,task_count);

@@ -707,8 +707,8 @@ do_again:
 	 ubuf->SetSpeedometer(new Speedometer());
 	 if(LsCache::IsEnabled())
 	    ubuf->Save(LsCache::SizeLimit());
-	 session->Do();
-	 ubuf->Do();
+	 Roll(session);
+	 Roll(ubuf);
       }
       m=MOVED;
    }

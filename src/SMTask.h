@@ -24,15 +24,18 @@
 #include "PollVec.h"
 #include "TimeDate.h"
 
+#define MAX_TASK_RECURSION 32
+
 class SMTask
 {
    virtual int Do() = 0;
 
    SMTask *next;
-   SMTask *prev_current;   // stack of running tasks
 
    static SMTask *chain;
    static PollVec sched_total;
+   static SMTask *stack[MAX_TASK_RECURSION];
+   static int stack_ptr;
 
 protected:
    int	 running;
@@ -82,13 +85,12 @@ public:
    static void Enter(SMTask *task)
       {
 	 task->running++;
-	 task->prev_current=current;
+	 stack[stack_ptr++]=current;
 	 current=task;
       }
    static void Leave(SMTask *task)
       {
-	 current=task->prev_current;
-	 task->prev_current=0;
+	 current=stack[--stack_ptr];
 	 task->running--;
       }
    void Enter() { Enter(this); }
