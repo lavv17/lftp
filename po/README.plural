@@ -43,11 +43,9 @@ Here is the language grammar I've chosen:
 	OP_CHAR -> '='
 	OP_CHAR -> '%'
 	NUMBER -> /* you know it */
-	
-Not so complicated, is it? :)
 
-Each condition is boolean expression, the first true condition gives
-the number of plural form. If all conditions are false, the number of
+Each condition is boolean expression, the first true condition corresponds
+to the number of plural form. If all conditions are false, the number of
 conditions plus one is taken as form number. The later is like "default"
 clause.
 
@@ -93,5 +91,19 @@ The grammar of the string passed to the function plural() is the following:
 
 In short, it contains inserts like this: $file|files$ or $plik|pliki|pliko'w$.
 
+
+* Conclusion
+
+A rather universal method for plural form choosing is presented here.
+It is based on a trivial interpreted language which is used to encode
+plural form rule in the translation file, along with translated
+sentenses. The translated strings contain all necessary plural forms
+and the function plural() cooses proper form using the rule.
+
+
+* Author
+
+This note and the actual code in plural.cc and plural.h are written by
+Alexander V. Lukyanov in 1998 and placed in public domain.
 
 Send comments to <lav@yars.free.net>.
