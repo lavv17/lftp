@@ -57,7 +57,7 @@ int FtpListInfo::Do()
    FileInfo *file;
    int res;
    int m=STALL;
-   char	**slist_res;
+   FileSet *slist_res;
    int err;
 
    if(done)
@@ -84,8 +84,8 @@ int FtpListInfo::Do()
       slist_res=slist->GetResult();
 
       // don't consider empty list to be valid
-      if(slist_res && slist_res[0])
-	 result=ParseFtpLongList(slist_res,&err);
+      if(slist_res->get_fnum()>0)
+	 result=ParseFtpLongList(*slist_res,&err);
       else
 	 err=1;
 
@@ -664,11 +664,8 @@ static ListParser list_parsers[]={
    0
 };
 
-FileSet *FtpListInfo::ParseFtpLongList(const char * const *lines_c,int *err_ret)
+FileSet *FtpListInfo::ParseFtpLongList(const FileSet &lines,int *err_ret)
 {
-   if(lines_c==0)
-      return new FileSet;
-
    FileSet *result;
    int err;
    FileSet *best_result=0;
@@ -677,14 +674,11 @@ FileSet *FtpListInfo::ParseFtpLongList(const char * const *lines_c,int *err_ret)
    for(ListParser *parser=list_parsers; *parser; parser++)
    {
       err=0;
-
-      const char *line;
-      const char * const *lines = lines_c;
       result=new FileSet;
 
-      while((line=*lines++)!=0)
+      for(int i=0; lines[i]; i++)
       {
-	 FileInfo *fi=(*parser)(line,&err);
+	 FileInfo *fi=(*parser)(lines[i]->name,&err);
 	 if(fi)
 	 {
 	    if(!strchr(fi->name,'/'))

@@ -47,6 +47,16 @@ void  FileInfo::Merge(const FileInfo& f)
       SetSymlink(f.symlink);
 }
 
+void FileInfo::SetName(const char *n)
+{
+   if(n==name)
+      return;
+   xfree(name);
+   name=xstrdup(n);
+   defined|=NAME;
+}
+
+
 void FileSet::Add(FileInfo *fi)
 {
    if(!(fi->defined & fi->NAME))
@@ -131,11 +141,19 @@ FileSet::FileSet(FileSet const *set)
       files[i]=new FileInfo(*(set->files[i]));
 }
 
-FileSet::~FileSet()
+void FileSet::Empty()
 {
    for(int i=0; i<fnum; i++)
       delete files[i];
    xfree(files);
+   files=0;
+   fnum=0;
+   ind=0;
+}
+
+FileSet::~FileSet()
+{
+   Empty();
 }
 
 void FileSet::SubtractSame(const FileSet *set,bool only_newer,

@@ -110,7 +110,8 @@ int   FtpGlob::Do()
 	 return m;
       dir_list=updir_glob->GetResult();
       xfree(dir);
-      dir=*dir_list;
+      dir_list->rewind();
+      dir=dir_list->curr()->name;
       m=MOVED;
       if(dir==0)
       {
@@ -135,15 +136,15 @@ int   FtpGlob::Do()
       // no need for error message
    next_dir:
       if(dir_list)
-	 dir_list++;
-      if(!dir_list || !*dir_list)
+	 dir_list->next();
+      if(!dir_list || dir_list->curr()==0)
       {
 	 f->Chdir(base_dir,false);
 	 xfree(base_dir); base_dir=0;
 	 done=true;
 	 return MOVED;
       }
-      dir=*dir_list;
+      dir=dir_list->curr()->name;
       Delete(li); li=0;
       goto create_li;
    }
@@ -155,15 +156,8 @@ int   FtpGlob::Do()
    set->rewind();
    for(FileInfo *info=set->curr(); info!=NULL; info=set->next())
    {
-      if(info->defined&info->TYPE)
-      {
-	 if(dirs_only && info->filetype==info->NORMAL)
-	    continue;   // note that symlinks can point to directories,
-			// so skip normal files only.
-	 if(files_only && info->filetype==info->DIRECTORY)
-	    continue;
-      }
-      add(dir_file(dir,info->name));
+      info->SetName(dir_file(dir,info->name));
+      add(info);
    }
    delete set;
    goto next_dir;

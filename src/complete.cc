@@ -47,7 +47,8 @@ static int lftp_char_is_quoted(char *string,int eindex);
 
 static int len;    // lenght of the word to complete
 static int cindex; // index in completion array
-static const char *const*glob_res=NULL;
+static const char *const *array;
+static FileSet *glob_res=NULL;
 
 static bool shell_cmd;
 static bool quote_glob;
@@ -99,8 +100,9 @@ static char *remote_generator(char *text,int state)
    if(glob_res==NULL)
       return NULL;
 
-   while((name=glob_res[cindex++])!=NULL)
+   while((*glob_res)[cindex])
    {
+      name=(*glob_res)[cindex++]->name;
       if(!name[0])
 	 continue;
       if(strncmp(name,text,len)==0)
@@ -150,10 +152,10 @@ static char *array_generator(char *text,int state)
    if(!state)
       cindex=0;
 
-   if(glob_res==NULL)
+   if(array==NULL)
       return NULL;
 
-   while((name=glob_res[cindex++])!=NULL)
+   while((name=array[cindex++])!=NULL)
    {
       if(!name[0])
 	 continue;
@@ -161,7 +163,7 @@ static char *array_generator(char *text,int state)
 	 return(xstrdup(name));
    }
 
-   glob_res=NULL;
+   array=NULL;
    return NULL;
 }
 
@@ -384,7 +386,7 @@ static completion_type cmd_completion_type(const char *cmd,int start)
    {
       if(second)
       {
-	 glob_res=bookmark_subcmd;
+	 array=bookmark_subcmd;
 	 return STRING_ARRAY;
       }
       else
@@ -415,7 +417,7 @@ static completion_type cmd_completion_type(const char *cmd,int start)
    {
       if(second)
       {
-	 glob_res=cache_subcmd;
+	 array=cache_subcmd;
 	 return STRING_ARRAY;
       }
       else
@@ -546,8 +548,17 @@ static char **lftp_completion (char *text,int start,int end)
 	    SMTask::Block();
 	 }
 	 glob_res=rg->GetResult();
+	 glob_res->rewind();
       }
-      rl_filename_completion_desired=1;
+      if(glob_res->get_fnum()==1)
+      {
+	 FileInfo *info=glob_res->curr();
+	 rl_completion_append_character=' ';
+	 if(info->defined&info->TYPE && info->filetype==info->DIRECTORY)
+	    rl_completion_append_character='/';
+      }
+      else
+	 rl_filename_completion_desired=1;
       generator = remote_generator;
       break;
 

@@ -106,7 +106,7 @@ int   FtpSplitList::Do()
 	 f->SeekReal();
 	 inbuf=0;
 	 ptr=buf;
-	 free_list();
+	 list.Empty();
       }
       res=f->Read(tmpbuf,sizeof(tmpbuf));
       if(res==f->DO_AGAIN)

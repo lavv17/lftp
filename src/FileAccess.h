@@ -40,6 +40,7 @@
 
 #include "xmalloc.h"
 #include "ResMgr.h"
+#include "FileSet.h"
 
 #define NO_SIZE	     (-1L)
 #define NO_SIZE_YET  (-2L)
@@ -356,24 +357,24 @@ class Glob : public FileAccessOperation
 {
 protected:
    char  *pattern;
-   char	 **list;
-   int	 list_size;
-   int	 list_alloc;
+   FileSet list;
    bool	 dirs_only;
    bool	 files_only;
    bool	 match_period;
    void	 add(const char *ptr,int len);
    void	 add_force(const char *ptr,int len);
    void	 add(const char *ptr) { add(ptr,strlen(ptr)); }
-   void	 free_list();
+   void	 add(const FileInfo *info);
+   void	 add_force(const FileInfo *info);
    virtual ~Glob();
 public:
    const char *GetPattern() { return pattern; }
-   char **GetResult() { return list; }
+   FileSet *GetResult() { return &list; }
    Glob(const char *p);
    void DirectoriesOnly() { dirs_only=true; }
    void FilesOnly() { files_only=true; }
    void NoMatchPeriod() { match_period=false; }
+   void SortByName() { list.SortByName(); }
 
    static bool HasWildcards(const char *);
    static void UnquoteWildcards(char *);
@@ -395,11 +396,12 @@ public:
    Glob *glob;
    GlobURL(FileAccess *s,const char *p);
    ~GlobURL();
-   char **GetResult();
+   FileSet *GetResult();
    bool Done()  { return glob->Done(); }
    bool Error() { return glob->Error(); }
    const char *ErrorText() { return glob->ErrorText(); }
    const char *Status() { return glob->Status(); }
+   void SortByName() { glob->SortByName(); }
 };
 
 #include "FileSet.h"

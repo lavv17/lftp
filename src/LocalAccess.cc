@@ -614,14 +614,19 @@ int LocalGlob::Do()
    for(unsigned i=0; i<g.gl_pathc; i++)
    {
       struct stat st;
+      FileInfo info(g.gl_pathv[i]);
       if(stat(g.gl_pathv[i],&st)!=-1)
       {
 	 if(dirs_only && !S_ISDIR(st.st_mode))
 	    continue;
 	 if(files_only && !S_ISREG(st.st_mode))
 	    continue;
+	 if(S_ISDIR(st.st_mode))
+	    info.SetType(info.DIRECTORY);
+	 else if(S_ISREG(st.st_mode))
+	    info.SetType(info.NORMAL);
       }
-      add(g.gl_pathv[i]);
+      add(&info);
    }
    globfree(&g);
 

@@ -28,7 +28,7 @@
 class FtpGlob : public Glob
 {
    char	 *dir;
-   char  **dir_list;
+   FileSet *dir_list;
    FtpGlob *updir_glob;
    char	 *base_dir;
 

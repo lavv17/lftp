@@ -1,3 +1,11 @@
+2000-07-18  Alexander V. Lukyanov  <lav@yars.free.net>
+
+	* FileAccess.h, FileAccess.cc: use FileSet in Glob.
+	* CmdExec.cc, FileSet.h, FileSet.cc, FtpGlob.cc, FtpGlob.h,
+	  FtpListInfo.cc, FtpListInfo.h, FtpSplitList.cc, HttpDir.cc,
+	  HttpDir.h, LocalAccess.cc, mgetJob.cc: change for FileSet in Glob.
+	* complete.cc: FileSet from Glob; append / for directories (finally!).
+
 2000-07-17  Alexander V. Lukyanov  <lav@yars.free.net>
 
 	* FileSet.cc: don't pass REG_NOSUB to regexec, this fixes

@@ -70,7 +70,8 @@ public:
       }
    FileInfo(const FileInfo &fi);
 
-   void SetName(const char *n) { xfree(name); name=xstrdup(n); defined|=NAME; }
+   void SetName(const char *n);
+   FileInfo(const char *n) { Init(); SetName(n); }
    void SetMode(mode_t m) { mode=m; defined|=MODE; }
    void SetDate(time_t t) { date=t; defined|=DATE; defined&=~DATE_UNPREC; }
    void SetDateUnprec(time_t t)
@@ -96,6 +97,8 @@ public:
 	 data=xmemdup(d,len);
       }
    void  *GetAssociatedData() { return data; }
+
+   operator const char *() { return name; }
 };
 
 class FileSet
@@ -116,8 +119,9 @@ public:
    }
    FileSet(const FileSet *s);
    ~FileSet();
+   void Empty();
 
-   int	 get_fnum() { return fnum; }
+   int	 get_fnum() const { return fnum; }
 
    void	 Add(FileInfo *);
    void	 Merge(const FileSet *);
@@ -157,6 +161,8 @@ public:
    }
 
    void SortByName();
+
+   FileInfo * operator[](int i) const { return i<fnum?files[i]:0; }
 };
 
 #endif // FILESET_H

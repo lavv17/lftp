@@ -419,15 +419,10 @@ int CmdExec::Do()
 	 }
 	 else if(glob->Done())
 	 {
-	    const char *const* glob_res=glob->GetResult();
-	    if(glob_res)
-	    {
-	       while(*glob_res)
-	       {
-		  args_glob->Append(*glob_res);
-		  glob_res++;
-	       }
-	    }
+	    glob->SortByName();
+	    FileSet &list=*glob->GetResult();
+	    for(int i=0; list[i]; i++)
+	       args_glob->Append(list[i]->name);
 	 }
 	 if(glob->Done() || glob->Error())
 	 {

@@ -203,20 +203,18 @@ int mgetJob::Do()
 
    m=MOVED;
 
-   char **files=rg->GetResult();
-   if(!files)
+   FileSet *files=rg->GetResult();
+   if(files->get_fnum()==0)
    {
       fprintf(stderr,_("%s: no files found\n"),rg->glob->GetPattern());
       goto next;
    }
-   while(*files)
-   {
-      char *src=*files;
+   do {
+      char *src=files->curr()->name;
       args->Append(src);
       make_directory(src);
       args->Append(output_file_name(src,0,!reverse,output_dir,make_dirs));
-      files++;
-   }
+   } while(files->next());
    goto next;
 }
 

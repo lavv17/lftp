@@ -1044,48 +1044,28 @@ void ListInfo::SetExclude(const char *p,regex_t *x,regex_t *i)
 // Glob implementation
 Glob::~Glob()
 {
-   free_list();
    xfree(pattern);
 }
 
 Glob::Glob(const char *p)
 {
    pattern=xstrdup(p);
-   list=0;
-   list_size=0;
-   list_alloc=0;
    dirs_only=false;
    files_only=false;
    match_period=true;
 }
 
-void Glob::free_list()
-{
-   for(int i=0; i<list_size; i++)
-      xfree(list[i]);
-   xfree(list);
-   list=0;
-   list_alloc=0;
-   list_size=0;
-}
-
 void Glob::add_force(const char *ptr,int len)
 {
    // insert new file name into list
-   if(list_size>=list_alloc-1)
-   {
-      if(list_alloc==0)
-	 list_alloc=32;
-      list=(char**)xrealloc(list,(list_alloc*=2)*sizeof(*list));
-   }
-   list[list_size]=(char*)xmalloc(len+1);
-   memcpy(list[list_size],ptr,len);
-   list[list_size][len]=0;
-   list[++list_size]=0;
+   char *s=string_alloca(len+1);
+   memcpy(s,ptr,len);
+   s[len]=0;
+   list.Add(new FileInfo(s));
 }
 void Glob::add(const char *ptr,int len)
 {
-   char *s=(char*)alloca(len+1);
+   char *s=string_alloca(len+1);
    memcpy(s,ptr,len);
    s[len]=0;
 
@@ -1098,6 +1078,36 @@ void Glob::add(const char *ptr,int len)
       return; // unmatched
 
    add_force(ptr,len);
+}
+void Glob::add_force(const FileInfo *info)
+{
+   // insert new file name into list
+   list.Add(new FileInfo(*info));
+}
+void Glob::add(const FileInfo *info)
+{
+   if(info->defined&info->TYPE)
+   {
+      if(dirs_only && info->filetype==info->NORMAL)
+	 return;   // note that symlinks can point to directories,
+		   // so skip normal files only.
+      if(files_only && info->filetype==info->DIRECTORY)
+	 return;
+   }
+
+   char *s=info->name;
+   if(s==0)
+      return;
+
+   int flags=FNM_PATHNAME;
+   if(match_period)
+      flags|=FNM_PERIOD;
+
+   if(pattern[0]!=0
+   && fnmatch(pattern, s, flags)!=0)
+      return; // unmatched
+
+   add_force(info);
 }
 
 bool Glob::HasWildcards(const char *s)
@@ -1192,20 +1202,14 @@ GlobURL::~GlobURL()
       SessionPool::Reuse(session);
    xfree(url_prefix);
 }
-char **GlobURL::GetResult()
+FileSet *GlobURL::GetResult()
 {
-   char **list=glob->GetResult();
-   if(!list)
-      return 0;
+   FileSet &list=*glob->GetResult();
    if(!reuse)
-      return list;
+      return &list;
    for(int i=0; list[i]; i++)
-   {
-      const char *n=url_file(url_prefix,list[i]);
-      list[i]=(char*)xrealloc(list[i],strlen(n)+1);
-      strcpy(list[i],n);
-   }
-   return list;
+      list[i]->SetName(url_file(url_prefix,list[i]->name));
+   return &list;
 }
 
 #ifndef MODULE_PROTO_FTP

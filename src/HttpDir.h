@@ -84,7 +84,7 @@ class HttpGlob : public Glob
    FileAccess *session;
    char	 *dir;
    const char *curr_dir;
-   char  **dir_list;
+   FileSet *dir_list;
    int   dir_index;
    HttpGlob *updir_glob;
 

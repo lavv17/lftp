@@ -1021,8 +1021,8 @@ int HttpGlob::Do()
    if(!ubuf)
    {
       curr_dir=0;
-      if(dir_list)
-	 curr_dir=dir_list[dir_index];
+      if(dir_list && (*dir_list)[dir_index])
+	 curr_dir=(*dir_list)[dir_index]->name;
       else if(dir_index==0)
 	 curr_dir=dir;
       if(curr_dir==0) // all done
@@ -1096,7 +1096,10 @@ int HttpGlob::Do()
 
    set.rewind();
    for(FileInfo *f=set.curr(); f; f=set.next())
-      add(dir_file(curr_dir,f->name));
+   {
+      f->SetName(dir_file(curr_dir,f->name));
+      add(f);
+   }
 
    dir_index++;
    m=MOVED;
