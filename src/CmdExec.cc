@@ -625,6 +625,9 @@ char *CmdExec::MakePrompt()
 	 case 'u':
 	    to_add=session->GetUser();
 	    break;
+	 case '@': // @ if non-default user
+	    to_add=session->GetUser()?"@":"";
+	    break;
 	 case 'U':
 	    to_add=session->GetConnectURL();
 	    break;

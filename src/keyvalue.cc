@@ -172,6 +172,7 @@ char *KeyValueDB::Format()
       sprintf(store,"%-*s\t%s\n",max_key_len,p->key,p->value);
       store+=strlen(store);
    }
+   *store=0; // this is for chain==0 case
 
    return buf;
 }
