@@ -456,3 +456,50 @@ void IOBufferFileAccess::Resume()
    super::Resume();
    session->Resume();
 }
+
+unsigned Buffer::UnpackUINT32BE(int offset)
+{
+   if(in_buffer-offset<4)
+      return 0;
+   unsigned char *b=(unsigned char*)buffer+buffer_ptr+offset;
+   return (b[0]<<24)|(b[1]<<16)|(b[2]<<8)|b[3];
+}
+unsigned Buffer::UnpackUINT16BE(int offset)
+{
+   if(in_buffer-offset<2)
+      return 0;
+   unsigned char *b=(unsigned char*)buffer+buffer_ptr+offset;
+   return (b[0]<<8)|b[1];
+}
+unsigned Buffer::UnpackUINT8(int offset)
+{
+   if(in_buffer-offset<1)
+      return 0;
+   unsigned char *b=(unsigned char*)buffer+buffer_ptr+offset;
+   return b[0];
+}
+void Buffer::PackUINT32BE(unsigned data)
+{
+   Allocate(4);
+   char *b=buffer+buffer_ptr+in_buffer;
+   b[0]=(data>>24)&255;
+   b[1]=(data>>16)&255;
+   b[2]=(data>>8)&255;
+   b[3]=(data)&255;
+   in_buffer+=4;
+}
+void Buffer::PackUINT16BE(unsigned data)
+{
+   Allocate(2);
+   char *b=buffer+buffer_ptr+in_buffer;
+   b[0]=(data>>8)&255;
+   b[1]=(data)&255;
+   in_buffer+=2;
+}
+void Buffer::PackUINT8(unsigned data)
+{
+   Allocate(1);
+   char *b=buffer+buffer_ptr+in_buffer;
+   b[0]=(data)&255;
+   in_buffer+=1;
+}
