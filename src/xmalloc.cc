@@ -79,10 +79,10 @@ void xfree(void *p)
 {
    if(!p)
       return;
-   memory_count--;
 #ifdef MEM_DEBUG
    printf("xfree %p (count=%d)\n",p,memory_count);
 #endif
+   memory_count--;
    free(p);
 }
 
@@ -101,6 +101,8 @@ char *xstrdup(const char *s)
 
 void xmalloc_register_block(void *b)
 {
+   if(!b)
+      return;
    memory_count++;
 #ifdef MEM_DEBUG
    printf("xmalloc %p (count=%d)\n",b,memory_count);

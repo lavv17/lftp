@@ -158,6 +158,7 @@ public:
 	 }
 	 else if(cmd_buf==0 && exec->interactive)
 	    puts("exit");
+	 xmalloc_register_block(cmd_buf);
       }
       else
       {
