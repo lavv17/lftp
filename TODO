@@ -20,7 +20,7 @@ currently; some need other work to be done.
 
  * ftpcopy glob, multiple files
 
--* progress indicator for ftpcopy (hard)
+ * progress indicator for ftpcopy
 
  * update process title
  * at-exit-bg
@@ -37,7 +37,7 @@ currently; some need other work to be done.
  * mirror: --log=file write actions to file, --script=file prepare script of
    actions to be done.
 
- * FileCopy class. (use it in get, put)
++* FileCopy class. (use it in get, put)
 
  * `local' command to swap local/remote, e.g.
       mirror -R = local mirror
@@ -80,7 +80,7 @@ currently; some need other work to be done.
 
  * motd. if it is not yet known, connect/login and get it. (use class Buffer).
 
- * xfer:avg-rate, xfer:avg-eta (number of seconds to get average on).
++* xfer:avg-rate, xfer:avg-eta (number of seconds to get average on).
    class speedometer.
 
  * use NDIR (from RFC1127) in FtpListInfo, when long list cannot be parsed.
@@ -97,4 +97,5 @@ currently; some need other work to be done.
 
  * glob urls; completion in URLs.
 
- * password migration between sessions.
++* password migration between sessions.
+ * login ftp://user@host to remember password for the site.

@@ -15,7 +15,7 @@
 * fixed completion and file name globbing for wu-ftpd-2.6.0. A long standing
   bug with multiple path component globbing over ftp has also been fixed.
 * fixed `mget -e': session was Close()'d too early.
-* fixed `ftp:rest-stor' handling - it was interpreted incorrectly.
+* fixed http and hftp sending port to proxy.
 
 Version 2.1.4 - 1999-10-23
 
