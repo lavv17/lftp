@@ -868,8 +868,7 @@ CMD(ls)
    FileCopy *c=new FileCopy(src_peer,dst_peer,false);
    c->DontCopyDate();
    c->LineBuffered();
-   if(nlist)
-      c->Ascii();
+   c->Ascii();
 
    CopyJob *j=new CopyJob(c,a,op);
    if(!output || output->usesfd(1))

@@ -67,7 +67,7 @@ int FtpDirList::Do()
    if(b==0) // eof
    {
       buf->PutEOF();
-      
+
       const char *cache_buffer;
       int cache_buffer_size;
       ubuf->GetSaved(&cache_buffer,&cache_buffer_size);
@@ -79,40 +79,16 @@ int FtpDirList::Do()
 
       return MOVED;
    }
-   
+
    int m=STALL;
 
-   while(len>0)
-   {
-      const char *cr=(const char *)memchr(b,'\r',len);
-      if(!cr)
-      {
-	 buf->Put(b,len);
-	 ubuf->Skip(len);
-	 m=MOVED;
-	 break;
-      }
-      else
-      {
-	 if(cr-b>0)
-	 {
-	    buf->Put(b,cr-b);
-	    ubuf->Skip(cr-b);
-	    m=MOVED;
-	    len-=cr-b;
-	    b=cr;
-	 }
-	 if(len==1)
-	    break;
-	 if(b[1]!='\n')
-	 {
-	    buf->Put(b,1);
-	    m=MOVED;
-	 }
-	 ubuf->Skip(1);
-	 b++,len--;
-      }
-   }
+   if(len==0)
+      return m;
+
+   buf->Put(b,len);
+   ubuf->Skip(len);
+   m=MOVED;
+
    if(ubuf->Error())
    {
       SetError(ubuf->ErrorText());

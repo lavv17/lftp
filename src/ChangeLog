@@ -5,8 +5,10 @@
 	  pass_open is true; (OpenMode) new method.
 	* FileCopy.cc: don't check session pos if it is not properly opened.
 	* commands.cc: `pwd -p' to show password; call InsecurePassword
-	  when password is entered on command line; forbid recursive bookmarks.
+	  when password is entered on command line; forbid recursive bookmarks;
+	  use ascii mode for ls.
 	* ftpclass.cc: don't hide password if pass_open.
+	* FtpDirList.cc: don't strip CRs.
 
 2000-01-04  Alexander V. Lukyanov  <lav@yars.free.net>
 
