@@ -23,9 +23,8 @@
 #ifndef FTPLISTINFO_H
 #define FTPLISTINFO_H
 
-#include "ListInfo.h"
 #include "ftpclass.h"
-#include "rglob.h"
+#include "FtpGlob.h"
 
 class FtpListInfo : public ListInfo
 {
@@ -43,9 +42,10 @@ class FtpListInfo : public ListInfo
    Ftp::fileinfo *get_info;
    int get_info_cnt;
 
-   RemoteGlob *glob;
+   FtpGlob *glob;
 
-   FileSet *ParseFtpLongList_UNIX(char **lines,int *err);
+public:
+   static FileSet *ParseFtpLongList_UNIX(char **lines,int *err);
 
 public:
    FtpListInfo(Ftp *session);

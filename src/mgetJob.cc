@@ -80,10 +80,8 @@ mgetJob::mgetJob(FileAccess *session,ArgV *args) : GetJob(session,new ArgV(args-
    if(!p)
       goto print_usage;
 
-   rg=new RemoteGlob(session,p,FA::LIST);
-   rg->RestrictPath();
-   rg->NoCache();
-   rg->Do();
+   rg=session->MakeGlob(p);
+   while(rg->Do()==MOVED);
 }
 
 int mgetJob::Do()
@@ -103,14 +101,14 @@ int mgetJob::Do()
 
    if(rg->Error())
    {
-      fprintf(stderr,"rglob: %s - %s\n",rg->pattern,session->StrError(rg->ErrorCode()));
+      fprintf(stderr,"rglob: %s\n",rg->ErrorText());
       goto next;
    }
 
    files=rg->GetResult();
    if(!files)
    {
-      fprintf(stderr,_("%s: no files found\n"),rg->pattern);
+      fprintf(stderr,_("%s: no files found\n"),rg->GetPattern());
       goto next;
    }
    for(i=files; *i; i++)
@@ -146,10 +144,8 @@ next:
       return MOVED;
    }
 
-   rg=new RemoteGlob(session,p,FA::LIST);
-   rg->RestrictPath();
-   rg->NoCache();
-   rg->Do();
+   rg=session->MakeGlob(p);
+   while(rg->Do()==MOVED);
 
    return m;
 }

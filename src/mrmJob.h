@@ -22,11 +22,10 @@
 #define MRMJOB_H
 
 #include "rmJob.h"
-#include "rglob.h"
 
 class mrmJob : public rmJob
 {
-   RemoteGlob *rg;
+   Glob *rg;
    ArgV *args;
 
 public:

@@ -24,11 +24,10 @@
 #define MGETJOB_H
 
 #include "GetJob.h"
-#include "rglob.h"
 
 class mgetJob : public GetJob
 {
-   RemoteGlob *rg;
+   Glob *rg;
    ArgV *args;
 
 public:

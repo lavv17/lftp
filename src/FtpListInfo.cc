@@ -65,9 +65,8 @@ int FtpListInfo::Do()
    switch(state)
    {
    case(INITIAL):
-      glob=new RemoteGlob(session,"",session->LONG_LIST);
-      if(!use_cache)
-	 glob->NoCache();
+      glob=new FtpGlob(session,"",session->LONG_LIST);
+      glob->UseCache(use_cache);
       state=GETTING_LONG_LIST;
       m=MOVED;
 
@@ -76,7 +75,7 @@ int FtpListInfo::Do()
 	 return m;
       if(glob->Error())
       {
-	 SetError(session->StrError(glob->ErrorCode()));
+	 SetError(glob->ErrorText());
       	 delete glob;
 	 glob=0;
 	 return MOVED;
@@ -89,9 +88,9 @@ int FtpListInfo::Do()
       if(err==0)
 	 goto pre_GETTING_INFO;
 
-      glob=new RemoteGlob(session,"",session->LIST);
-      if(!use_cache)
-	 glob->NoCache();
+      glob=new FtpGlob(session,"",session->LIST);
+      glob->UseCache(use_cache);
+      glob->NoLongList();
       state=GETTING_SHORT_LIST;
       m=MOVED;
 
@@ -100,7 +99,7 @@ int FtpListInfo::Do()
 	 return m;
       if(glob->Error())
       {
-	 SetError(session->StrError(glob->ErrorCode()));
+	 SetError(glob->ErrorText());
       	 delete glob;
 	 glob=0;
 	 return MOVED;
