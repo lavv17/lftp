@@ -217,6 +217,7 @@ class FileCopyPeerFDStream : public FileCopyPeer
    int getfd();
 
    bool delete_stream;
+   bool create_fg_data;
 
 public:
    FileCopyPeerFDStream(FDStream *o,direction m);
@@ -230,6 +231,7 @@ public:
    void Kill(int sig) { stream->Kill(sig); }
 
    void DontDeleteStream() { delete_stream=false; }
+   void DontCreateFgData() { create_fg_data=false; }
 };
 
 class FileCopyPeerString : public FileCopyPeer
