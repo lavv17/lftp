@@ -1348,7 +1348,7 @@ int   Ftp::Do()
 	 ipv4_port:
 	    sprintf(str,"PORT %d,%d,%d,%d,%d,%d\n",a[0],a[1],a[2],a[3],p[0],p[1]);
 	    SendCmd(str);
-	    AddResp(RESP_PORT_OK,INITIAL_STATE);
+	    AddResp(RESP_PORT_OK,INITIAL_STATE,CHECK_PORT);
 	 }
 	 else
 	 {
@@ -1362,7 +1362,7 @@ int   Ftp::Do()
 	    }
 	    sprintf(str,"EPRT %s\n",encode_eprt(&data_sa));
 	    SendCmd(str);
-	    AddResp(RESP_PORT_OK,INITIAL_STATE);
+	    AddResp(RESP_PORT_OK,INITIAL_STATE,CHECK_PORT);
 #else
 	    Fatal("unsupported network protocol");
 	    return MOVED;
@@ -1860,6 +1860,12 @@ void  Ftp::DataAbort()
 	 return; // the transfer seems to be finished
       if(!copy_addr_valid)
 	 return; // data connection cannot be established at this time
+      if(!copy_connection_open)
+      {
+	 // wu-ftpd-2.6.0 cannot interrupt accept() or connect().
+	 Disconnect();
+	 return;
+      }
    }
    copy_connection_open=false;
 
@@ -2675,6 +2681,12 @@ int   Ftp::CheckResp(int act)
 
    case CHECK_PASV:
    case CHECK_EPSV:
+      if(!match && copy_mode!=COPY_NONE)
+      {
+	 copy_passive=!copy_passive;
+	 new_state=COPY_FAILED;
+	 break;
+      }
       memset(&data_sa,0,sizeof(data_sa));
       if(strlen(line)<=4)
 	 goto passive_off;
@@ -2694,6 +2706,21 @@ int   Ftp::CheckResp(int act)
       passive_off:
 	 DebugPrint("---- ",_("Switching passive mode off"),2);
 	 SetFlag(PASSIVE_MODE,0);
+	 new_state=INITIAL_STATE;
+      }
+      break;
+
+   case CHECK_PORT:
+      if(!match && copy_mode!=COPY_NONE)
+      {
+	 copy_passive=!copy_passive;
+	 new_state=COPY_FAILED;
+	 break;
+      }
+      if(act/100==5)
+      {
+	 DebugPrint("---- ",_("Switching passive mode on"),2);
+	 SetFlag(PASSIVE_MODE,1);
 	 new_state=INITIAL_STATE;
       }
       break;

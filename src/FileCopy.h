@@ -282,7 +282,7 @@ public:
 
    void OpenSession();
    FA *GetSession() { return session; }
-   void SetFXP() { fxp=true; }
+   void SetFXP(bool on) { fxp=on; }
 };
 
 class FileCopyPeerFDStream : public FileCopyPeer

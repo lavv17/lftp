@@ -38,19 +38,19 @@ int FileCopyFtp::Do()
 {
    int src_res,dst_res;
    int m=super::Do();
-   if(state!=DO_COPY || put->GetRealPos()==FILE_END || get->Eof())
+   if(disable_fxp || state!=DO_COPY || put->GetSeekPos()==FILE_END || get->Eof())
       return m;
 
    if(ftp_src->IsClosed())
    {
       ((FileCopyPeerFA*)get)->OpenSession();
-      ftp_src->SetCopyMode(Ftp::COPY_SOURCE,reverse_passive,src_retries);
+      ftp_src->SetCopyMode(Ftp::COPY_SOURCE,passive_source,src_retries);
       m=MOVED;
    }
    if(ftp_dst->IsClosed())
    {
       ((FileCopyPeerFA*)put)->OpenSession();
-      ftp_dst->SetCopyMode(Ftp::COPY_DEST,!reverse_passive,dst_retries);
+      ftp_dst->SetCopyMode(Ftp::COPY_DEST,!passive_source,dst_retries);
       m=MOVED;
    }
    // check for errors
@@ -60,6 +60,26 @@ int FileCopyFtp::Do()
       {
 	 get->CannotSeek(put->GetSize());
 	 put->CannotSeek(put->GetSize());
+      }
+      bool new_ps=(!passive_source && ftp_src->IsCopyPassive())
+	       || (passive_source && !ftp_dst->IsCopyPassive());
+      if(new_ps!=passive_source)
+      {
+	 if(new_ps==orig_passive_source)
+	 {
+	    // both ways failed. Fall back to normal copying.
+	    Close();
+	    disable_fxp=true;
+	    ((FileCopyPeerFA*)get)->SetFXP(false);
+	    ((FileCopyPeerFA*)put)->SetFXP(false);
+	    long pos=put->GetRealPos();
+	    if(!get->CanSeek(pos) || !put->CanSeek(pos))
+	       pos=0;
+	    get->Seek(pos);
+	    put->Seek(pos);
+	    return MOVED;
+	 }
+	 passive_source=new_ps;
       }
       src_retries=ftp_src->GetRetries();
       dst_retries=ftp_dst->GetRetries();
@@ -109,8 +129,9 @@ void FileCopyFtp::Init()
 {
    ftp_src=ftp_dst=0;
    no_rest=false;
-   reverse_passive=false;
+   orig_passive_source=passive_source=false;
    src_retries=dst_retries=0;
+   disable_fxp=false;
 }
 
 FileCopyFtp::~FileCopyFtp()
@@ -122,18 +143,19 @@ FileCopyFtp::FileCopyFtp(FileCopyPeer *s,FileCopyPeer *d,bool c,bool rp)
    : super(s,d,c)
 {
    Init();
-   reverse_passive=rp;
+   passive_source=rp;
    // not pretty.
    ftp_src=(Ftp*)(s->GetSession());
    ftp_dst=(Ftp*)(d->GetSession());
 
-   ((FileCopyPeerFA*)s)->SetFXP();
-   ((FileCopyPeerFA*)d)->SetFXP();
+   ((FileCopyPeerFA*)s)->SetFXP(true);
+   ((FileCopyPeerFA*)d)->SetFXP(true);
 
    if(ftp_src->IsPassive() && !ftp_dst->IsPassive())
-      reverse_passive=true;
+      passive_source=true;
    else if(!ftp_src->IsPassive() && ftp_dst->IsPassive())
-      reverse_passive=false;
+      passive_source=false;
+   orig_passive_source=passive_source;
 }
 
 FileCopy *FileCopyFtp::New(FileCopyPeer *s,FileCopyPeer *d,bool c)

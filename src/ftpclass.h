@@ -93,6 +93,7 @@ class Ftp : public NetAccess
       CHECK_MDTM_OPT,	// check response for MDTM and save size to *opt_date
       CHECK_PASV,	// check response for PASV and save address
       CHECK_EPSV,	// check response for EPSV and save address
+      CHECK_PORT,	// check response for PORT or EPRT
       CHECK_FILE_ACCESS,// generic check for file access
       CHECK_PWD,	// check response for PWD and save it to home
       CHECK_RNFR,	// check RNFR and issue RNTO
@@ -353,6 +354,7 @@ public:
    bool RestartFailed() { return flags&NOREST_MODE; }
    bool IsPassive() { return flags&PASSIVE_MODE; }
    void SetPos(long p) { pos=real_pos=p; }
+   bool IsCopyPassive() { return copy_passive; }
 };
 
 #endif /* FTPCLASS_H */

@@ -31,7 +31,9 @@ class FileCopyFtp : public FileCopy
    Ftp *ftp_src;
    Ftp *ftp_dst;
    bool no_rest;
-   bool reverse_passive;
+   bool passive_source;
+   bool orig_passive_source;
+   bool disable_fxp;
    int src_retries;
    int dst_retries;
 
