@@ -196,6 +196,13 @@ protected:
 	 rate->Add(a);
 	 rate_for_eta->Add(a);
       }
+   void RateReset()
+      {
+	 start_time=now;
+	 start_time_ms=now_ms;
+	 rate->Reset();
+	 rate_for_eta->Reset();
+      }
 
 public:
    long GetPos();
