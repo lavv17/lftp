@@ -378,7 +378,7 @@ void QueueFeeder::PrintStatus(int v) const
 
    const char *pwd = cur_pwd, *lpwd = cur_lpwd;
    for(const QueueJob *job = jobs; job; job = job->next) {
-      if(v<2 && n>4)
+      if(v<2 && n>4 && job->next)
       {
 	 printf("\t%2d. ...\n",n);
 	 break;

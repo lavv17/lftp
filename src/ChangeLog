@@ -7,6 +7,7 @@
 	  idle_start (idea of Glenn Maynard).
 	* ftpclass.cc: call PopResp before actual checking, so that Disconnect
 	  can see empty RespQueue.
+	* QueueFeeder.cc: don't print dots where there is only 5 jobs queued.
 
 2001-12-20  Glenn Maynard <g_ld@zewt.org>
 
