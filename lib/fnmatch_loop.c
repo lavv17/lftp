@@ -249,7 +249,7 @@ FCT (pattern, string, string_end, no_leading_period, flags)
 		    /* Leave room for the null.  */
 		    CHAR str[CHAR_CLASS_MAX_LENGTH + 1];
 		    size_t c1 = 0;
-#if defined _LIBC || (defined HAVE_WCTYPE_H && defined HAVE_WCHAR_H)
+#if defined _LIBC || (defined HAVE_WCTYPE_H && defined HAVE_WCHAR_H && defined HAVE_BTOWC)
 		    wctype_t wt;
 #endif
 		    const CHAR *startp = p;
