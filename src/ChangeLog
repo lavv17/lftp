@@ -1,3 +1,10 @@
+2004-03-01  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc: rewind args before calling command-specific handler.
+	* commands.cc: don't rewind args, it is not rewinded in CmdExec.
+	* ftpclass.cc: use all_lines in error reporintg; join multiline error
+	  into single line.
+
 2004-02-25  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* pgetJob.cc: nice progress bar.

@@ -655,7 +655,6 @@ Job *CmdExec::builtin_lftp()
       {0,0,0,0}
    };
 
-   args->rewind();
    opterr=false;
    while((c=args->getopt_long("+f:c:vhd",lftp_options,0))!=EOF)
    {
@@ -737,7 +736,6 @@ Job *CmdExec::builtin_open()
       {0,0,0,0}
    };
 
-   args->rewind();
    while((c=args->getopt_long("u:p:e:dB",open_options,0))!=EOF)
    {
       switch(c)
@@ -929,7 +927,10 @@ Job *CmdExec::builtin_open()
       PrependCmd("debug\n");
 
    if(url)
+   {
       delete url;
+      url=0;
+   }
 
    if(slot)
       ConnectionSlot::Set(slot,session);
@@ -1017,11 +1018,7 @@ Job *CmdExec::builtin_queue()
    int pos = -1; /* default to the end */
    int verbose = -1; /* default */
 
-   args->rewind();
    int opt;
-
-   exit_code=1; // more failure exits than success exits, so set success explicitely
-
    while((opt=args->getopt_long("+dm:n:qvQw",queue_options,0))!=EOF)
    {
       switch(opt)
@@ -1340,7 +1337,6 @@ const char *FileSetOutput::parse_argv(ArgV *a)
       {0,0,0,0}
    };
 
-   a->rewind();
    int opt, longopt;
    while((opt=a->getopt_long(":1BdFhiklqsDIS", cls_options, &longopt))!=EOF)
    {
@@ -1526,7 +1522,6 @@ CMD(get)
    bool reverse=false;
    char *output_dir=0;
 
-   args->rewind();
    if(!strncmp(op,"re",2))
    {
       cont=true;
@@ -1740,7 +1735,6 @@ CMD(mkdir)
 CMD(source)
 {
    int opt;
-   args->rewind();
    bool e=false;
    while((opt=args->getopt("+e"))!=EOF)
    {
@@ -1776,7 +1770,6 @@ CMD(source)
 CMD(jobs)
 {
    int opt;
-   args->rewind();
    int v=1;
    while((opt=args->getopt("+v"))!=EOF)
    {
@@ -1804,7 +1797,6 @@ CMD(cd)
 CMD(pwd)
 {
    int opt;
-   args->rewind();
    int flags=0;
    while((opt=args->getopt("p"))!=EOF)
    {
@@ -2060,7 +2052,6 @@ CMD(set)
    bool only_defaults=false;
    int c;
 
-   args->rewind();
    while((c=args->getopt("+ad"))!=EOF)
    {
       switch(c)
@@ -2156,7 +2147,6 @@ CMD(wait)
       return 0;
    }
    int n=-1;
-   args->rewind();
    const char *jn=args->getnext();
    if(jn)
    {
@@ -2237,7 +2227,6 @@ const char *const cache_subcmd[]={
 
 CMD(cache)  // cache control
 {
-   args->rewind();
    const char *op=args->getnext();
 
    if(!op)
@@ -2394,7 +2383,6 @@ CMD(help)
 {
    if(args->count()>1)
    {
-      args->rewind();
       for(;;)
       {
 	 const char *cmd=args->getnext();
@@ -2455,7 +2443,6 @@ static ResDecl res_save_passwords
 
 CMD(bookmark)
 {
-   args->rewind();
    const char *op=args->getnext();
 
    if(!op)
@@ -2595,7 +2582,6 @@ CMD(find)
    int maxdepth = -1;
    const char *op=args->a0();
 
-   args->rewind();
    while((opt=args->getopt_long("+d:",find_options,&longopt))!=EOF)
    {
       switch(opt)
@@ -2660,7 +2646,6 @@ CMD(du)
 
    const char *op=args->a0();
 
-   args->rewind();
    int opt, longopt;
    while((opt=args->getopt_long("+abcd:FhHkmsS",du_options,&longopt))!=EOF)
    {
@@ -2939,7 +2924,6 @@ CMD(get1)
    long long target_region_begin=0,target_region_end=FILE_END;
    int n,p;
 
-   args->rewind();
    while((opt=args->getopt_long("arco:",get1_options,0))!=EOF)
    {
       switch(opt)
@@ -3064,7 +3048,6 @@ CMD(history)
    };
 
    exit_code=0;
-   args->rewind();
    int opt;
    while((opt=args->getopt_long("+r:w:cl",history_options,0))!=EOF) {
       switch(opt) {

@@ -261,7 +261,7 @@ void Ftp::NoFileCheck(int act)
       return;
    if(act==RESP_NOT_IMPLEMENTED || act==RESP_NOT_UNDERSTOOD)
    {
-      SetError(FATAL,line);
+      SetError(FATAL,all_lines);
       return;
    }
    if(is5XX(act) && !Transient5XX(act))
@@ -277,7 +277,7 @@ void Ftp::NoFileCheck(int act)
 	 state=EOF_STATE; // retry
 	 return;
       }
-      SetError(NO_FILE,line);
+      SetError(NO_FILE,all_lines);
       return;
    }
    DataClose();
@@ -409,7 +409,7 @@ void Ftp::LoginCheck(int act)
    }
    if(is5XX(act))
    {
-      SetError(LOGIN_FAILED,line);
+      SetError(LOGIN_FAILED,all_lines);
       return;
    }
 
@@ -460,7 +460,7 @@ void Ftp::NoPassReqCheck(int act) // for USER command
       if(strstr(line,"unknown")) // Don't translate!!!
       {
 	 DebugPrint("---- ",_("Saw `unknown', assume failed login"));
-	 SetError(LOGIN_FAILED,line);
+	 SetError(LOGIN_FAILED,all_lines);
 	 return;
       }
       goto def_ret;
@@ -471,10 +471,10 @@ void Ftp::NoPassReqCheck(int act) // for USER command
       if(proxy && (strstr(line,"host") || strstr(line,"resolve")))
       {
 	 DebugPrint("---- ",_("assuming failed host name lookup"));
-	 SetError(LOOKUP_ERROR,line);
+	 SetError(LOOKUP_ERROR,all_lines);
 	 return;
       }
-      SetError(LOGIN_FAILED,line);
+      SetError(LOGIN_FAILED,all_lines);
       return;
    }
 def_ret:
@@ -489,7 +489,7 @@ void Ftp::proxy_LoginCheck(int act)
       return;
    if(is5XX(act))
    {
-      SetError(LOGIN_FAILED,line);
+      SetError(LOGIN_FAILED,all_lines);
       return;
    }
    Disconnect();
@@ -502,7 +502,7 @@ void Ftp::proxy_NoPassReqCheck(int act)
       return;
    if(is5XX(act))
    {
-      SetError(LOGIN_FAILED,line);
+      SetError(LOGIN_FAILED,all_lines);
       return;
    }
    Disconnect();
@@ -2567,7 +2567,7 @@ bool Ftp::HttpProxyReplyCheck(IOBuffer *buf)
 	    Disconnect();
 	    return false;
 	 }
-	 SetError(FATAL,line);
+	 SetError(FATAL,all_lines);
 	 quit_sent=true;
 	 Disconnect();
 	 return false;
@@ -3480,7 +3480,7 @@ void Ftp::CheckResp(int act)
       }
       if(is5XX(act))
       {
-	 SetError(NO_FILE,line);
+	 SetError(NO_FILE,all_lines);
 	 LsCache::SetDirectory(this, exp_path, false);
 	 break;
       }
@@ -3514,7 +3514,7 @@ void Ftp::CheckResp(int act)
       if(mode==CHANGE_MODE && (act==500 || act==501 || act==502))
       {
 	 site_chmod_supported=false;
-	 SetError(NO_FILE,line);
+	 SetError(NO_FILE,all_lines);
 	 break;
       }
       NoFileCheck(act);
@@ -4031,6 +4031,30 @@ void Ftp::SetError(int ec,const char *e)
    case(DO_AGAIN):
    case(NOT_SUPP):
       break;
+   }
+   // join multiline error message into single line, removing `550-' prefix.
+   if(e && strchr(e,'\n'))
+   {
+      char *joined=string_alloca(strlen(e)+1);
+      const char *prefix=e;
+      char *store=joined;
+      while(*e)
+      {
+	 if(*e=='\n')
+	 {
+	    if(e[1])
+	       *store++=' ';
+	    e++;
+	    if(!strncmp(e,prefix,4))
+	       e+=4;
+	 }
+	 else
+	 {
+	    *store++=*e++;
+	 }
+      }
+      *store=0;
+      e=joined;
    }
    super::SetError(ec,e);
 }

@@ -206,6 +206,7 @@ restart:
       }
 
       args->setarg(0,c->name); // in case it was abbreviated
+      args->rewind();
 
       if(cmd==0)
 	 cmd=args->Combine();
@@ -279,8 +280,7 @@ void CmdExec::ExecParsed(ArgV *a,FDStream *o,bool b)
    args=a;
    xfree(cmd);
    cmd=args->Combine();
-   if(output)
-      delete output;
+   delete output;
    output=o;
    background=b;
    condition=COND_ANY;
