@@ -4,7 +4,7 @@
 	  (preparation for mirror --parallel).
 	* CmdExec.cc, CmdExec.h, CopyJob.cc, FindJob.cc, MirrorJob.cc,
 	  SleepJob.cc, commands.cc, mgetJob.cc: according to Job.cc.
-	* MirrorJob.cc: --parallel option (finally!).
+	* MirrorJob.cc, MirrorJob.h: --parallel option (finally!).
 
 2000-07-18  Alexander V. Lukyanov  <lav@yars.free.net>
 

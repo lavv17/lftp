@@ -114,6 +114,8 @@ class MirrorJob : public SessionJob
 
    bool remove_source_files;
 
+   int parallel;
+
    mode_t get_mode_mask();
 
 public:
@@ -167,6 +169,8 @@ public:
 
    void  UseCache(bool u) { use_cache=u; }
    void	 RemoveSourceFiles() { remove_source_files=true; }
+
+   void  SetParallel(int p) { parallel=p; }
 };
 
 #endif//MIRRORJOB_H
