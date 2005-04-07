@@ -1,3 +1,8 @@
+2005-04-07  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SFtp.cc: (SFtpListInfo::Do) check if done first, this fixes
+	  looping in SMTask::Roll.
+
 2005-04-06  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* NetAccess.cc: retry with LONG_LIST in case of any error with MP_LIST.

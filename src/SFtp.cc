@@ -2030,6 +2030,8 @@ void SFtpDirList::Resume()
 int SFtpListInfo::Do()
 {
    int m=STALL;
+   if(done)
+      return m;
    if(!ubuf)
    {
       const char *cache_buffer=0;
