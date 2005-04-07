@@ -720,8 +720,11 @@ do_again:
       {
 	 if(err)
 	 {
-	    if(err==FA::NOT_SUPP)
-	       goto not_supported;
+	    if(mode==FA::MP_LIST)
+	    {
+	       mode=FA::LONG_LIST;
+	       goto do_again;
+	    }
 	    SetErrorCached(cache_buffer);
 	    return MOVED;
 	 }
@@ -746,19 +749,15 @@ do_again:
    {
       if(ubuf->Error())
       {
-	 if(session->GetErrorCode()==FA::NOT_SUPP)
-	 {
-	 not_supported:
-	    if(mode==FA::MP_LIST)
-	    {
-	       mode=FA::LONG_LIST;
-	       delete ubuf;
-	       ubuf=0;
-	       m=MOVED;
-	       goto do_again;
-	    }
-	 }
 	 LsCache::Add(session,"",mode,session->GetErrorCode(),ubuf);
+	 if(mode==FA::MP_LIST)
+	 {
+	    mode=FA::LONG_LIST;
+	    delete ubuf;
+	    ubuf=0;
+	    m=MOVED;
+	    goto do_again;
+	 }
 	 SetError(ubuf->ErrorText());
 	 Delete(ubuf);
 	 ubuf=0;

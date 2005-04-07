@@ -1,3 +1,10 @@
+2005-04-06  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* NetAccess.cc: retry with LONG_LIST in case of any error with MP_LIST.
+	* MirrorJob.cc: don't let parent mirror act in between our actions;
+	  let other tasks run when ListInfo are created, this fixes mirror
+	  multitasking when using listings from cache.
+
 2005-04-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc, MirrorJob.h: add --loop option.

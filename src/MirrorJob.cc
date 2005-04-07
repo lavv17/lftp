@@ -39,6 +39,10 @@
 #include "url.h"
 #include "CopyJob.h"
 #include "pgetJob.h"
+#include "log.h"
+
+#define set_state(s) do { state=(s); \
+   Log::global->Format(11,"mirror(%p) enters state %s\n", this, #s); } while(0)
 
 void  MirrorJob::PrintStatus(int v,const char *tab)
 {
@@ -305,7 +309,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    cp->SetParentFg(this);
 	    cp->cmdline=xasprintf("\\transfer %s",file->name);
 	 }
-	 state=WAITING_FOR_TRANSFER;
+	 set_state(WAITING_FOR_TRANSFER);
 	 break;
       }
       case(FileInfo::DIRECTORY):
@@ -529,7 +533,7 @@ void MirrorJob::HandleChdir(FileAccess * &session, int &redirections)
       eprintf("mirror: %s\n",session->StrError(res));
       stats.error_count++;
       transfer_count-=root_transfer_count;
-      state=FINISHING;
+      set_state(FINISHING);
       source_session->Close();
       target_session->Close();
       return;
@@ -554,7 +558,7 @@ void MirrorJob::HandleListInfoCreation(FileAccess * &session,ListInfo * &list_in
       eprintf(_("mirror: protocol `%s' is not suitable for mirror\n"),
 	       session->GetProto());
       transfer_count-=root_transfer_count;
-      state=FINISHING;
+      set_state(FINISHING);
       return;
    }
    list_info->UseCache(use_cache);
@@ -577,7 +581,7 @@ void MirrorJob::HandleListInfo(ListInfo * &list_info, FileSet * &set)
       eprintf("mirror: %s\n",list_info->ErrorText());
       stats.error_count++;
       transfer_count-=root_transfer_count;
-      state=FINISHING;
+      set_state(FINISHING);
       Delete(source_list_info);
       source_list_info=0;
       Delete(target_list_info);
@@ -603,7 +607,7 @@ int   MirrorJob::Do()
       source_session->Chdir(source_dir);
       source_redirections=0;
       Roll(source_session);
-      state=CHANGING_DIR_SOURCE;
+      set_state(CHANGING_DIR_SOURCE);
       m=MOVED;
       /*fallthrough*/
    case(CHANGING_DIR_SOURCE):
@@ -663,7 +667,7 @@ int   MirrorJob::Do()
 	    goto pre_CHANGING_DIR_TARGET;
       }
       target_session->Mkdir(target_dir,(parent_mirror==0));
-      state=MAKE_TARGET_DIR;
+      set_state(MAKE_TARGET_DIR);
       m=MOVED;
       /*fallthrough*/
    case(MAKE_TARGET_DIR):
@@ -676,7 +680,7 @@ int   MirrorJob::Do()
       target_session->Chdir(target_dir);
       target_redirections=0;
       Roll(target_session);
-      state=CHANGING_DIR_TARGET;
+      set_state(CHANGING_DIR_TARGET);
       m=MOVED;
       /*fallthrough*/
    case(CHANGING_DIR_TARGET):
@@ -690,7 +694,7 @@ int   MirrorJob::Do()
       target_dir=xstrdup(target_session->GetCwd());
 
    pre_GETTING_LIST_INFO:
-      state=GETTING_LIST_INFO;
+      set_state(GETTING_LIST_INFO);
       m=MOVED;
       HandleListInfoCreation(source_session,source_list_info,source_relative_dir);
       HandleListInfoCreation(target_session,target_list_info,target_relative_dir);
@@ -698,9 +702,8 @@ int   MirrorJob::Do()
       {
 	 Delete(source_list_info); source_list_info=0;
 	 Delete(target_list_info); target_list_info=0;
-	 return MOVED;
       }
-      /*fallthrough*/
+      return m;	  // give time to other tasks
    case(GETTING_LIST_INFO):
       HandleListInfo(source_list_info,source_set);
       HandleListInfo(target_list_info,target_set);
@@ -718,12 +721,12 @@ int   MirrorJob::Do()
       to_rm_mismatched->Count(&stats.del_dirs,&stats.del_files,&stats.del_symlinks,&stats.del_files);
       to_rm_mismatched->rewind();
       transfer_count-=root_transfer_count; // leave room for transfers.
-      state=TARGET_REMOVE_OLD_FIRST;
-      return MOVED;
+      set_state(TARGET_REMOVE_OLD_FIRST);
+      goto TARGET_REMOVE_OLD_FIRST_label;
 
    pre_WAITING_FOR_TRANSFER:
       to_transfer->rewind();
-      state=WAITING_FOR_TRANSFER;
+      set_state(WAITING_FOR_TRANSFER);
       m=MOVED;
       /*fallthrough*/
    case(WAITING_FOR_TRANSFER):
@@ -754,11 +757,12 @@ int   MirrorJob::Do()
    pre_TARGET_REMOVE_OLD:
       if(flags&REMOVE_FIRST)
 	 goto pre_TARGET_CHMOD;
-      state=TARGET_REMOVE_OLD;
+      set_state(TARGET_REMOVE_OLD);
       m=MOVED;
       /*fallthrough*/
    case(TARGET_REMOVE_OLD):
    case(TARGET_REMOVE_OLD_FIRST):
+   TARGET_REMOVE_OLD_FIRST_label:
       while(j=FindDoneAwaitedJob())
       {
 	 RemoveWaiting(j);
@@ -841,7 +845,7 @@ int   MirrorJob::Do()
 	 goto pre_FINISHING;
 
       to_transfer->rewind();
-      state=TARGET_CHMOD;
+      set_state(TARGET_CHMOD);
       m=MOVED;
       /*fallthrough*/
    case(TARGET_CHMOD):
@@ -915,7 +919,7 @@ int   MirrorJob::Do()
 	 if(flags&ALLOW_CHOWN)
 	    same->LocalChown(target_dir);
       }
-      state=FINISHING;
+      set_state(FINISHING);
       m=MOVED;
       /*fallthrough*/
    case(FINISHING):
@@ -934,16 +938,16 @@ int   MirrorJob::Do()
 	 parent_mirror->stats.Add(stats);
       else
       {
-	 if((flags&LOOP) && stats.HaveSomethingDone())
+	 if((flags&LOOP) && stats.HaveSomethingDone() && !stats.error_count)
 	 {
-	    state=DONE;
+	    set_state(DONE);
 	    PrintStatus(0,"");
 	    printf(_("Retrying mirror...\n"));
 	    stats.Reset();
 	    goto pre_GETTING_LIST_INFO;
 	 }
       }
-      state=DONE;
+      set_state(DONE);
       m=MOVED;
       /*fallthrough*/
    case(DONE):
@@ -988,7 +992,7 @@ MirrorJob::MirrorJob(MirrorJob *parent,
 
    exclude=0;
 
-   state=INITIAL_STATE;
+   set_state(INITIAL_STATE);
 
    newer_than=(time_t)-1;
 
