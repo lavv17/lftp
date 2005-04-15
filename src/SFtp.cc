@@ -714,6 +714,9 @@ void SFtp::Close()
    // don't need these out-of-order packets anymore
    while(ooo_chain)
       DeleteExpect(&ooo_chain);
+   if(recv_buf && !suspended)
+      recv_buf->Resume();
+   recv_buf_suspended=false;
 }
 
 int SFtp::HandlePty()
