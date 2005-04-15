@@ -50,7 +50,8 @@ implemented.
 
  * use NDIR (from RFC1127) in FtpListInfo, when long list cannot be parsed.
 
- * optimize help text, introduce a phrase separator for separate translations.
+?* optimize help text, introduce a phrase separator for separate translations.
+?* help in external files
 
  * a setting to make commands quiet (cmd:quiet? or cmd:verbose with int value)
 
@@ -63,9 +64,11 @@ implemented.
  * mirror option to check an alternative directory(ies) for existing files.
    (overlay filesystem replacement?)
 
- * support keys with passphrases (sftp and fish).
-
  * APPE support.
 
  * cmd:parallel for scripting - execute several commands in parallel
    (change CmdExec::Done to return true when waiting_num<cmd:parallel)
+
+ * show transfer rate in mirror done message.
+
+ * mirror --loop to re-check for new or changed files.

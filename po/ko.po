@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-04-04 14:27+0400\n"
+"POT-Creation-Date: 2005-04-15 15:55+0400\n"
 "PO-Revision-Date: 2001-05-27 KST\n"
 "Last-Translator: Dojip Kim <greendrm@greendrm.com>\n"
 "Language-Team: \n"
@@ -39,7 +39,7 @@ msgstr "`%s'명령에 대한 모듈이 등록되어 있지 않습니다.\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "cd 성공, cwd=%s\n"
 
-#: src/CmdExec.cc:391 src/MirrorJob.cc:501
+#: src/CmdExec.cc:391 src/MirrorJob.cc:505
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: `%s'으로 리다이렉션을 받음\n"
@@ -195,87 +195,92 @@ msgstr "%ld $#l#second|seconds$ 의 캐시 내용이 만기되었습니다\n"
 msgid "Cache entries expire in %ld $#l#minute|minutes$\n"
 msgstr "%ld $#l#minute|minutes$ 의 캐시 내용이 만기되었습니다\n"
 
-#: src/MirrorJob.cc:92
+#: src/MirrorJob.cc:96
 #, c-format
 msgid "%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%s전체: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 
-#: src/MirrorJob.cc:96
+#: src/MirrorJob.cc:100
 #, c-format
 msgid "%sNew: %d file$|s$, %d symlink$|s$\n"
 msgstr "%s생성: %d file$|s$, %d symlink$|s$\n"
 
-#: src/MirrorJob.cc:100
+#: src/MirrorJob.cc:104
 #, c-format
 msgid "%sModified: %d file$|s$, %d symlink$|s$\n"
 msgstr "%s수정: %d file$|s$, %d symlink$|s$\n"
 
-#: src/MirrorJob.cc:105
+#: src/MirrorJob.cc:109
 #, c-format
 msgid "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%s삭제: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 
-#: src/MirrorJob.cc:106
+#: src/MirrorJob.cc:110
 #, c-format
 msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%s삭제: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 
-#: src/MirrorJob.cc:232 src/MirrorJob.cc:832
+#: src/MirrorJob.cc:236 src/MirrorJob.cc:837
 #, fuzzy, c-format
 msgid "Removing old file `%s'"
 msgstr "옛 지역 파일 `%s' 지움"
 
-#: src/MirrorJob.cc:243
+#: src/MirrorJob.cc:247
 #, fuzzy, c-format
 msgid "Transferring file `%s'"
 msgstr "지역 파일 `%s'을 전송"
 
-#: src/MirrorJob.cc:331 src/MirrorJob.cc:412 src/MirrorJob.cc:634
+#: src/MirrorJob.cc:335 src/MirrorJob.cc:416 src/MirrorJob.cc:638
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "옛 지역 파일 `%s' 지움"
 
-#: src/MirrorJob.cc:377
+#: src/MirrorJob.cc:381
 #, c-format
 msgid "Mirroring directory `%s'"
 msgstr "디렉토리 `%s' 미러링"
 
-#: src/MirrorJob.cc:425
+#: src/MirrorJob.cc:429
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "`%s'를 `%s'로 심볼 링크함"
 
-#: src/MirrorJob.cc:554
+#: src/MirrorJob.cc:558
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "미러: 프로토콜 '%s'은 mirror에 적합하지 않습니다\n"
 
-#: src/MirrorJob.cc:652
+#: src/MirrorJob.cc:656
 #, fuzzy, c-format
 msgid "Making directory `%s'"
 msgstr "원거리 디렉토리 `%s' 생성"
 
-#: src/MirrorJob.cc:794
+#: src/MirrorJob.cc:799
 #, fuzzy, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "옛 지역 파일 `%s'이 삭제되지 않았습니다"
 
-#: src/MirrorJob.cc:797
+#: src/MirrorJob.cc:802
 #, fuzzy, c-format
 msgid "Old file `%s' is not removed"
 msgstr "옛 지역 파일 `%s'이 삭제되지 않았습니다"
 
-#: src/MirrorJob.cc:827
+#: src/MirrorJob.cc:832
 #, fuzzy, c-format
 msgid "Removing old directory `%s'"
 msgstr "옛 원거리 디렉토리 `%s' 삭제"
 
-#: src/MirrorJob.cc:1260
+#: src/MirrorJob.cc:945
+#, c-format
+msgid "Retrying mirror...\n"
+msgstr ""
+
+#: src/MirrorJob.cc:1289
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1349 src/commands.cc:982 src/commands.cc:1070
+#: src/MirrorJob.cc:1381 src/commands.cc:982 src/commands.cc:1070
 #: src/commands.cc:1462 src/commands.cc:1496 src/commands.cc:1595
 #: src/commands.cc:1885 src/commands.cc:2081 src/commands.cc:2254
 #: src/commands.cc:2261 src/commands.cc:2443 src/commands.cc:2470
@@ -285,7 +290,7 @@ msgstr ""
 msgid "Try `help %s' for more information.\n"
 msgstr "상세한 것은 `help %s'를 이용하십시오\n"
 
-#: src/MirrorJob.cc:1383 src/MirrorJob.cc:1399 src/commands.cc:847
+#: src/MirrorJob.cc:1415 src/MirrorJob.cc:1431 src/commands.cc:847
 #: src/commands.cc:1976 src/DummyProto.cc:73
 msgid " - not supported protocol"
 msgstr " - 지원하지 않는 프로토콜입니다"
@@ -2158,12 +2163,12 @@ msgstr "재접속하기 위하여 기다립니다"
 msgid "max-retries exceeded"
 msgstr "최대-재시도를 초과했습니다"
 
-#: src/NetAccess.cc:932
+#: src/NetAccess.cc:931
 #, fuzzy, c-format
 msgid "Getting directory contents (%lld) %s[%s]"
 msgstr "디렉토리 정보를 가져오는 중 (%lld)"
 
-#: src/NetAccess.cc:939
+#: src/NetAccess.cc:938
 #, fuzzy, c-format
 msgid "Getting files information (%d%%) [%s]"
 msgstr "파일 정보를 가져오는 중 (%d%%)"

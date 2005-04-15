@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-04-04 14:27+0400\n"
+"POT-Creation-Date: 2005-04-15 15:55+0400\n"
 "PO-Revision-Date: 1999-07-12 00:00+0400\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -38,7 +38,7 @@ msgstr ""
 msgid "cd ok, cwd=%s\n"
 msgstr ""
 
-#: src/CmdExec.cc:391 src/MirrorJob.cc:501
+#: src/CmdExec.cc:391 src/MirrorJob.cc:505
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
@@ -194,87 +194,92 @@ msgstr "As entradas do cache expirarão em %ld segundos\n"
 msgid "Cache entries expire in %ld $#l#minute|minutes$\n"
 msgstr "As entradas do cache expirarão em %ld minuto\n"
 
-#: src/MirrorJob.cc:92
+#: src/MirrorJob.cc:96
 #, c-format
 msgid "%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 
-#: src/MirrorJob.cc:96
+#: src/MirrorJob.cc:100
 #, c-format
 msgid "%sNew: %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 
-#: src/MirrorJob.cc:100
+#: src/MirrorJob.cc:104
 #, c-format
 msgid "%sModified: %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 
-#: src/MirrorJob.cc:105
+#: src/MirrorJob.cc:109
 #, c-format
 msgid "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 
-#: src/MirrorJob.cc:106
+#: src/MirrorJob.cc:110
 #, c-format
 msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 
-#: src/MirrorJob.cc:232 src/MirrorJob.cc:832
+#: src/MirrorJob.cc:236 src/MirrorJob.cc:837
 #, fuzzy, c-format
 msgid "Removing old file `%s'"
 msgstr "Removendo arquivo local antigo `%s'"
 
-#: src/MirrorJob.cc:243
+#: src/MirrorJob.cc:247
 #, fuzzy, c-format
 msgid "Transferring file `%s'"
 msgstr "Enviando arquivo local `%s'"
 
-#: src/MirrorJob.cc:331 src/MirrorJob.cc:412 src/MirrorJob.cc:634
+#: src/MirrorJob.cc:335 src/MirrorJob.cc:416 src/MirrorJob.cc:638
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Removendo arquivo local antigo `%s'"
 
-#: src/MirrorJob.cc:377
+#: src/MirrorJob.cc:381
 #, fuzzy, c-format
 msgid "Mirroring directory `%s'"
 msgstr "Criando diretório remoto `%s'"
 
-#: src/MirrorJob.cc:425
+#: src/MirrorJob.cc:429
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Criando link simbólico de `%s' para `%s'"
 
-#: src/MirrorJob.cc:554
+#: src/MirrorJob.cc:558
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: o protocolo `%s' não pode ser espelhado\n"
 
-#: src/MirrorJob.cc:652
+#: src/MirrorJob.cc:656
 #, fuzzy, c-format
 msgid "Making directory `%s'"
 msgstr "Criando diretório remoto `%s'"
 
-#: src/MirrorJob.cc:794
+#: src/MirrorJob.cc:799
 #, fuzzy, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "%s: nenhum arquivo encontrado\n"
 
-#: src/MirrorJob.cc:797
+#: src/MirrorJob.cc:802
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr ""
 
-#: src/MirrorJob.cc:827
+#: src/MirrorJob.cc:832
 #, fuzzy, c-format
 msgid "Removing old directory `%s'"
 msgstr "Removendo arquivo remoto antigo `%s'"
 
-#: src/MirrorJob.cc:1260
+#: src/MirrorJob.cc:945
+#, c-format
+msgid "Retrying mirror...\n"
+msgstr ""
+
+#: src/MirrorJob.cc:1289
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1349 src/commands.cc:982 src/commands.cc:1070
+#: src/MirrorJob.cc:1381 src/commands.cc:982 src/commands.cc:1070
 #: src/commands.cc:1462 src/commands.cc:1496 src/commands.cc:1595
 #: src/commands.cc:1885 src/commands.cc:2081 src/commands.cc:2254
 #: src/commands.cc:2261 src/commands.cc:2443 src/commands.cc:2470
@@ -284,7 +289,7 @@ msgstr ""
 msgid "Try `help %s' for more information.\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1383 src/MirrorJob.cc:1399 src/commands.cc:847
+#: src/MirrorJob.cc:1415 src/MirrorJob.cc:1431 src/commands.cc:847
 #: src/commands.cc:1976 src/DummyProto.cc:73
 #, fuzzy
 msgid " - not supported protocol"
@@ -2067,12 +2072,12 @@ msgstr ""
 msgid "max-retries exceeded"
 msgstr ""
 
-#: src/NetAccess.cc:932
+#: src/NetAccess.cc:931
 #, fuzzy, c-format
 msgid "Getting directory contents (%lld) %s[%s]"
 msgstr "Buscando conteúdo do diretório (%ld)"
 
-#: src/NetAccess.cc:939
+#: src/NetAccess.cc:938
 #, fuzzy, c-format
 msgid "Getting files information (%d%%) [%s]"
 msgstr "Buscando informações dos arquivos (%d%%)"

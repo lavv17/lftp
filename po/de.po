@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-04-04 14:27+0400\n"
+"POT-Creation-Date: 2005-04-15 15:55+0400\n"
 "PO-Revision-Date: 2004-05-21 12:53+0200\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: deutsch <de@li.org>\n"
@@ -45,7 +45,7 @@ msgstr "Das Modul für den Befehl »%s« hat den Befehl nicht registriert.\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "Verzeichniswechsel OK, cwd=%s\n"
 
-#: src/CmdExec.cc:391 src/MirrorJob.cc:501
+#: src/CmdExec.cc:391 src/MirrorJob.cc:505
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: Umleitung nach »%s« empfangen\n"
@@ -203,89 +203,94 @@ msgstr "Einträge im Zwischenspeicher verfallen in %ld $#l#Sekunde|Sekunden$\n"
 msgid "Cache entries expire in %ld $#l#minute|minutes$\n"
 msgstr "Einträge im Zwischenspeicher verfallen in %ld $#l#Minute|Minuten$\n"
 
-#: src/MirrorJob.cc:92
+#: src/MirrorJob.cc:96
 #, c-format
 msgid "%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%sGesamt: %d Verzeichni$s|sse$, %d Datei$|en$, %d Verknüpfungen$|s$\n"
 
-#: src/MirrorJob.cc:96
+#: src/MirrorJob.cc:100
 #, c-format
 msgid "%sNew: %d file$|s$, %d symlink$|s$\n"
 msgstr "%sNeu: %d Datei$|en$, %d Verknüpfungen$|s$\n"
 
-#: src/MirrorJob.cc:100
+#: src/MirrorJob.cc:104
 #, c-format
 msgid "%sModified: %d file$|s$, %d symlink$|s$\n"
 msgstr "%sVerändert: %d Datei$|en$, %d Symlink$|s$\n"
 
-#: src/MirrorJob.cc:105
+#: src/MirrorJob.cc:109
 #, c-format
 msgid "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%sGelöscht: %d Verzeichnis$|sse$, %d Datei$|en$, %d Symlink$|s$\n"
 
-#: src/MirrorJob.cc:106
+#: src/MirrorJob.cc:110
 #, c-format
 msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 "%sZur Löschung vorgesehen: %d Verzeichnis$|se$, %d Datei$|en$, %d Symlink$|s"
 "$\n"
 
-#: src/MirrorJob.cc:232 src/MirrorJob.cc:832
+#: src/MirrorJob.cc:236 src/MirrorJob.cc:837
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "Entferne alte Datei »%s«"
 
-#: src/MirrorJob.cc:243
+#: src/MirrorJob.cc:247
 #, c-format
 msgid "Transferring file `%s'"
 msgstr "Sende Datei »%s«"
 
-#: src/MirrorJob.cc:331 src/MirrorJob.cc:412 src/MirrorJob.cc:634
+#: src/MirrorJob.cc:335 src/MirrorJob.cc:416 src/MirrorJob.cc:638
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Entferne alte lokale Datei »%s«"
 
-#: src/MirrorJob.cc:377
+#: src/MirrorJob.cc:381
 #, c-format
 msgid "Mirroring directory `%s'"
 msgstr "Spiegele Verzeichnis »%s«"
 
-#: src/MirrorJob.cc:425
+#: src/MirrorJob.cc:429
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Erzeuge symbolische Verknüpfung »%s« nach »%s«"
 
-#: src/MirrorJob.cc:554
+#: src/MirrorJob.cc:558
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: Protokoll »%s« ist nicht für das spiegeln geeignet\n"
 
-#: src/MirrorJob.cc:652
+#: src/MirrorJob.cc:656
 #, c-format
 msgid "Making directory `%s'"
 msgstr "Lege Verzeichnis »%s« an"
 
-#: src/MirrorJob.cc:794
+#: src/MirrorJob.cc:799
 #, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "Bestehendes Verzeichnis »%s« wird nicht entfernt"
 
-#: src/MirrorJob.cc:797
+#: src/MirrorJob.cc:802
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "Bestehende Datei »%s« wird nicht entfernt"
 
-#: src/MirrorJob.cc:827
+#: src/MirrorJob.cc:832
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "Entferne alte Datei »%s«"
 
-#: src/MirrorJob.cc:1260
+#: src/MirrorJob.cc:945
+#, c-format
+msgid "Retrying mirror...\n"
+msgstr ""
+
+#: src/MirrorJob.cc:1289
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s: Regulärer Ausdruck (regular expression) %s: %s\n"
 
-#: src/MirrorJob.cc:1349 src/commands.cc:982 src/commands.cc:1070
+#: src/MirrorJob.cc:1381 src/commands.cc:982 src/commands.cc:1070
 #: src/commands.cc:1462 src/commands.cc:1496 src/commands.cc:1595
 #: src/commands.cc:1885 src/commands.cc:2081 src/commands.cc:2254
 #: src/commands.cc:2261 src/commands.cc:2443 src/commands.cc:2470
@@ -295,7 +300,7 @@ msgstr "%s: Regulärer Ausdruck (regular expression) %s: %s\n"
 msgid "Try `help %s' for more information.\n"
 msgstr "»help %s« gibt mehr Informationen aus.\n"
 
-#: src/MirrorJob.cc:1383 src/MirrorJob.cc:1399 src/commands.cc:847
+#: src/MirrorJob.cc:1415 src/MirrorJob.cc:1431 src/commands.cc:847
 #: src/commands.cc:1976 src/DummyProto.cc:73
 msgid " - not supported protocol"
 msgstr " - Protokoll nicht unterstützt"
@@ -2299,12 +2304,12 @@ msgstr "Pausiere vor erneuter Verbindung"
 msgid "max-retries exceeded"
 msgstr "max-retries überschritten"
 
-#: src/NetAccess.cc:932
+#: src/NetAccess.cc:931
 #, c-format
 msgid "Getting directory contents (%lld) %s[%s]"
 msgstr "Lese Verzeichnisinhalt (%lld) %s[%s] aus"
 
-#: src/NetAccess.cc:939
+#: src/NetAccess.cc:938
 #, c-format
 msgid "Getting files information (%d%%) [%s]"
 msgstr "Lese Dateiinformationen (%d%%) [%s]"

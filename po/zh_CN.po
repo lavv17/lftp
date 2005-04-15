@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-04-04 14:27+0400\n"
+"POT-Creation-Date: 2005-04-15 15:55+0400\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -40,7 +40,7 @@ msgstr ""
 msgid "cd ok, cwd=%s\n"
 msgstr "cd 成功, 当前目录=%s\n"
 
-#: src/CmdExec.cc:391 src/MirrorJob.cc:501
+#: src/CmdExec.cc:391 src/MirrorJob.cc:505
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
@@ -196,87 +196,92 @@ msgstr "缓冲条目在 %ld 秒内过期\n"
 msgid "Cache entries expire in %ld $#l#minute|minutes$\n"
 msgstr "缓冲条目在 %ld 分钟内过期\n"
 
-#: src/MirrorJob.cc:92
+#: src/MirrorJob.cc:96
 #, c-format
 msgid "%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%s全部: %d 个目录,%d 个文件, %d 个符号链接\n"
 
-#: src/MirrorJob.cc:96
+#: src/MirrorJob.cc:100
 #, c-format
 msgid "%sNew: %d file$|s$, %d symlink$|s$\n"
 msgstr "%s新建: %d 个文件, %d 个符号链接\n"
 
-#: src/MirrorJob.cc:100
+#: src/MirrorJob.cc:104
 #, c-format
 msgid "%sModified: %d file$|s$, %d symlink$|s$\n"
 msgstr "%s修改过: %d 个文件, %d 个符号链接\n"
 
-#: src/MirrorJob.cc:105
+#: src/MirrorJob.cc:109
 #, c-format
 msgid "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%s删除: %d 个目录, %d 个文件, %d 个符号链接\n"
 
-#: src/MirrorJob.cc:106
+#: src/MirrorJob.cc:110
 #, c-format
 msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%s要删除: %d 个目录, %d 个文件, %d 个符号链接\n"
 
-#: src/MirrorJob.cc:232 src/MirrorJob.cc:832
+#: src/MirrorJob.cc:236 src/MirrorJob.cc:837
 #, fuzzy, c-format
 msgid "Removing old file `%s'"
 msgstr "正在删除本地文件 `%s'"
 
-#: src/MirrorJob.cc:243
+#: src/MirrorJob.cc:247
 #, fuzzy, c-format
 msgid "Transferring file `%s'"
 msgstr "上传本地文件 '%s'"
 
-#: src/MirrorJob.cc:331 src/MirrorJob.cc:412 src/MirrorJob.cc:634
+#: src/MirrorJob.cc:335 src/MirrorJob.cc:416 src/MirrorJob.cc:638
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "正在删除本地文件 `%s'"
 
-#: src/MirrorJob.cc:377
+#: src/MirrorJob.cc:381
 #, fuzzy, c-format
 msgid "Mirroring directory `%s'"
 msgstr "建立远程目录 `%s'"
 
-#: src/MirrorJob.cc:425
+#: src/MirrorJob.cc:429
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "建立符号链接 `%s' 指向 `%s'"
 
-#: src/MirrorJob.cc:554
+#: src/MirrorJob.cc:558
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "镜像: 协议 `%s' 不适合进行镜像\n"
 
-#: src/MirrorJob.cc:652
+#: src/MirrorJob.cc:656
 #, fuzzy, c-format
 msgid "Making directory `%s'"
 msgstr "建立远程目录 `%s'"
 
-#: src/MirrorJob.cc:794
+#: src/MirrorJob.cc:799
 #, fuzzy, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "没有删除旧的本地文件 `%s'"
 
-#: src/MirrorJob.cc:797
+#: src/MirrorJob.cc:802
 #, fuzzy, c-format
 msgid "Old file `%s' is not removed"
 msgstr "没有删除旧的本地文件 `%s'"
 
-#: src/MirrorJob.cc:827
+#: src/MirrorJob.cc:832
 #, fuzzy, c-format
 msgid "Removing old directory `%s'"
 msgstr "删除旧的远程文件 `%s'"
 
-#: src/MirrorJob.cc:1260
+#: src/MirrorJob.cc:945
+#, c-format
+msgid "Retrying mirror...\n"
+msgstr ""
+
+#: src/MirrorJob.cc:1289
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1349 src/commands.cc:982 src/commands.cc:1070
+#: src/MirrorJob.cc:1381 src/commands.cc:982 src/commands.cc:1070
 #: src/commands.cc:1462 src/commands.cc:1496 src/commands.cc:1595
 #: src/commands.cc:1885 src/commands.cc:2081 src/commands.cc:2254
 #: src/commands.cc:2261 src/commands.cc:2443 src/commands.cc:2470
@@ -286,7 +291,7 @@ msgstr ""
 msgid "Try `help %s' for more information.\n"
 msgstr "请用 `help %s' 或得更多的信息.\n"
 
-#: src/MirrorJob.cc:1383 src/MirrorJob.cc:1399 src/commands.cc:847
+#: src/MirrorJob.cc:1415 src/MirrorJob.cc:1431 src/commands.cc:847
 #: src/commands.cc:1976 src/DummyProto.cc:73
 #, fuzzy
 msgid " - not supported protocol"
@@ -2145,12 +2150,12 @@ msgstr "重新连接前延时"
 msgid "max-retries exceeded"
 msgstr "达到最大重试次数"
 
-#: src/NetAccess.cc:932
+#: src/NetAccess.cc:931
 #, fuzzy, c-format
 msgid "Getting directory contents (%lld) %s[%s]"
 msgstr "正在读取目录内容 (%ld)"
 
-#: src/NetAccess.cc:939
+#: src/NetAccess.cc:938
 #, fuzzy, c-format
 msgid "Getting files information (%d%%) [%s]"
 msgstr "正在读取文件信息 (%d%%)"
