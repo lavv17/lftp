@@ -2151,10 +2151,9 @@ void Http::MakeSSLBuffers()
    Delete(send_buf);
    Delete(recv_buf);
 
-   SSL *ssl=lftp_ssl_new(sock,hostname);
-   IOBufferSSL *send_buf_ssl=new IOBufferSSL(ssl,IOBuffer::PUT,hostname);
-   IOBufferSSL *recv_buf_ssl=new IOBufferSSL(ssl,IOBuffer::GET,hostname);
-   send_buf_ssl->DoConnect();
+   lftp_ssl *ssl=new lftp_ssl(sock,lftp_ssl::CLIENT,hostname);
+   IOBufferSSL *send_buf_ssl=new IOBufferSSL(ssl,IOBuffer::PUT);
+   IOBufferSSL *recv_buf_ssl=new IOBufferSSL(ssl,IOBuffer::GET);
    recv_buf_ssl->CloseLater();
    send_buf=send_buf_ssl;
    recv_buf=recv_buf_ssl;

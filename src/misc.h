@@ -119,4 +119,6 @@ char last_char(const char *str);
 int  base64_length (int len);
 void base64_encode (const char *s, char *store, int length);
 
+bool temporary_network_error(int e);
+
 #endif // MISC_H

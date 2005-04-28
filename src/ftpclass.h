@@ -29,7 +29,7 @@
 #include "NetAccess.h"
 
 #ifdef USE_SSL
-# include <openssl/ssl.h>
+# include "lftp_ssl.h"
 #endif
 
 class IOBufferTelnet : public IOBufferStacked
@@ -105,8 +105,7 @@ class Ftp : public NetAccess
       off_t rest_pos;	// the number sent with REST command.
 
 #ifdef USE_SSL
-      SSL *control_ssl;
-      SSL *data_ssl;
+      lftp_ssl *control_ssl;
       char prot;  // current data protection scheme 'C'lear or 'P'rivate
       bool auth_sent;
       bool auth_supported;
@@ -270,7 +269,6 @@ class Ftp : public NetAccess
    void	 HandleTimeout();
 
 #ifdef USE_SSL
-   void	 BlockOnSSL(SSL*);
 protected:
    bool	 ftps;	  // ssl and prot='P' by default (port 990)
 private:

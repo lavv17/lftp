@@ -21,13 +21,42 @@
 #ifndef LFTP_SSL_H
 #define LFTP_SSL_H
 
-#ifdef USE_SSL
-# include <openssl/ssl.h>
-# include <openssl/err.h>
+#if USE_SSL
+# if USE_GNUTLS
+#  include <gnutls/gnutls.h>
+# elif USE_OPENSSL
+#  include <openssl/ssl.h>
+#  include <openssl/err.h>
+#  include <openssl/rand.h>
+#endif
 
-SSL *lftp_ssl_new(int fd,const char *host=0);
-const char *lftp_ssl_strerror(const char *s);
-int lftp_ssl_connect(SSL *,const char *host=0);
+class lftp_ssl
+{
+#if USE_GNUTLS
+   gnutls_session_t session;
+#elif USE_OPENSSL
+   SSL *ssl;
+   int do_handshake();
+   bool check_fatal(int res);
+#endif
+
+public:
+   int fd;
+   char *hostname;
+   enum handshake_mode_t { CLIENT, SERVER } handshake_mode;
+   bool fatal;
+
+   lftp_ssl(int fd,handshake_mode_t m,const char *host=0);
+   ~lftp_ssl();
+   const char *strerror(const char *s);
+
+   enum code { RETRY=-2, ERROR=-1, DONE=0 };
+   int read(char *buf,int size);
+   int write(const char *buf,int size);
+   bool want_in();
+   bool want_out();
+   void copy_sid(const lftp_ssl *);
+};
 
 #endif//USE_SSL
 

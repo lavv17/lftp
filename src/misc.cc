@@ -878,3 +878,35 @@ base64_encode (const char *s, char *store, int length)
   /* ...and zero-terminate it.  */
   *p = '\0';
 }
+
+bool temporary_network_error(int err)
+{
+   switch(err)
+   {
+   case(ETIMEDOUT):
+#ifdef ECONNRESET
+   case(ECONNRESET):
+#endif
+   case(ECONNREFUSED):
+#ifdef EHOSTUNREACH
+   case(EHOSTUNREACH):
+#endif
+#ifdef EHOSTDOWN
+   case(EHOSTDOWN):
+#endif
+#ifdef ENETRESET
+   case(ENETRESET):
+#endif
+#ifdef ENETUNREACH
+   case(ENETUNREACH):
+#endif
+#ifdef ENETDOWN
+   case(ENETDOWN):
+#endif
+#ifdef ECONNABORTED
+   case(ECONNABORTED):
+#endif
+      return true;
+   }
+   return false;
+}

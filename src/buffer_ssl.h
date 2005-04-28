@@ -26,28 +26,20 @@
 #include "buffer.h"
 
 #ifdef USE_SSL
-# include <openssl/ssl.h>
+#include "lftp_ssl.h"
 class IOBufferSSL : public IOBuffer
 {
-   SSL *ssl;
-   bool ssl_connected;
-   bool do_connect;
+   lftp_ssl *ssl;
    bool close_later;
-
-   char *hostname;
 
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
-
-   bool IsFatal(int res);
 
 protected:
    ~IOBufferSSL();
 
 public:
-   IOBufferSSL(SSL *s,dir_t m,const char *h=0);
-   void DoConnect()	{ ssl_connected=false; do_connect=true; }
-   void SetConnected()	{ ssl_connected=true; }
+   IOBufferSSL(lftp_ssl *s,dir_t m);
    void CloseLater()	{ close_later=true; }
    int Do();
 };

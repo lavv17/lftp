@@ -857,7 +857,6 @@ Ftp::Connection::Connection()
    aborted_data_sock=-1;
 #ifdef USE_SSL
    control_ssl=0;
-   data_ssl=0;
    prot='C';  // current protection scheme 'C'lear or 'P'rivate
    auth_sent=false;
    auth_supported=true;
@@ -2136,13 +2135,12 @@ int   Ftp::Do()
 #ifdef USE_SSL
       if(conn->ssl_is_activated() && conn->prot=='P')
       {
-	 conn->data_ssl=lftp_ssl_new(conn->data_sock,hostname);
+	 lftp_ssl *ssl=new lftp_ssl(conn->data_sock,lftp_ssl::CLIENT,hostname);
 	 // share session id between control and data connections.
-	 SSL_copy_session_id(conn->data_ssl,conn->control_ssl);
+	 ssl->copy_sid(conn->control_ssl);
 
 	 IOBuffer::dir_t dir=(mode==STORE?IOBuffer::PUT:IOBuffer::GET);
-	 IOBufferSSL *ssl_buf=new IOBufferSSL(conn->data_ssl,dir,hostname);
-	 ssl_buf->DoConnect();
+	 IOBufferSSL *ssl_buf=new IOBufferSSL(ssl,dir);
 	 ssl_buf->CloseLater();
 	 conn->data_iobuf=ssl_buf;
       }
@@ -2528,17 +2526,6 @@ int Ftp::ReplyLogPriority(int code)
    return 4;
 }
 
-#ifdef USE_SSL
-void Ftp::BlockOnSSL(SSL *ssl)
-{
-   int fd=SSL_get_fd(ssl);
-   if(SSL_want_read(ssl))
-      current->Block(fd,POLLIN);
-   if(SSL_want_write(ssl))
-      current->Block(fd,POLLOUT);
-}
-#endif
-
 int  Ftp::ReceiveResp()
 {
    int m=STALL;
@@ -2912,9 +2899,6 @@ out:
 void Ftp::Connection::CloseDataConnection()
 {
    Delete(data_iobuf); data_iobuf=0;
-#ifdef USE_SSL
-   data_ssl=0; // it is free'd by data_iobuf dtor.
-#endif
    fixed_pasv=false;
    if(data_sock!=-1)
    {
@@ -3968,7 +3952,7 @@ const char *Ftp::CurrentStatus()
       return(_("Waiting for data connection..."));
    case(DATA_OPEN_STATE):
 #ifdef USE_SSL
-      if(conn->data_ssl)
+      if(conn->ssl_is_activated() && conn->prot=='P')
       {
 	 if(mode==STORE)
 	    return(_("Sending data/TLS"));
@@ -4379,10 +4363,9 @@ void Ftp::Connection::MakeSSLBuffers(const char *hostname)
    Delete(control_send); control_send=0; telnet_layer_send=0;
    Delete(control_recv); control_recv=0;
 
-   control_ssl=lftp_ssl_new(control_sock,hostname);
-   IOBufferSSL *send_ssl=new IOBufferSSL(control_ssl,IOBufferSSL::PUT,hostname);
-   IOBufferSSL *recv_ssl=new IOBufferSSL(control_ssl,IOBufferSSL::GET,hostname);
-   send_ssl->DoConnect();
+   control_ssl=new lftp_ssl(control_sock,lftp_ssl::CLIENT,hostname);
+   IOBufferSSL *send_ssl=new IOBufferSSL(control_ssl,IOBufferSSL::PUT);
+   IOBufferSSL *recv_ssl=new IOBufferSSL(control_ssl,IOBufferSSL::GET);
    recv_ssl->CloseLater();
 
    control_send=send_ssl;

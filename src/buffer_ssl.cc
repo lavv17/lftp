@@ -22,21 +22,12 @@
 #include "buffer_ssl.h"
 #include "xmalloc.h"
 
-#ifdef USE_SSL
-# include <openssl/err.h>
+#if USE_SSL
 # include "lftp_ssl.h"
 
 // IOBufferSSL implementation
 #undef super
 #define super IOBuffer
-
-bool IOBufferSSL::IsFatal(int res)
-{
-   if(SSL_get_error(ssl,res)==SSL_ERROR_SYSCALL
-   && (ERR_get_error()==0 || TemporaryNetworkError(errno)))
-      return false;
-   return true;
-}
 
 int IOBufferSSL::Do()
 {
@@ -45,29 +36,6 @@ int IOBufferSSL::Do()
 
    int res=0;
 
-   if(!ssl_connected && SSL_is_init_finished(ssl))
-      ssl_connected=true;
-   if(!ssl_connected)
-   {
-      if(!do_connect)
-	 return STALL;
-      errno=0;
-      int res=lftp_ssl_connect(ssl,hostname);
-      if(res<=0)
-      {
-	 if(BIO_sock_should_retry(res))
-	    goto blocks;
-	 else if (SSL_want_x509_lookup(ssl))
-	    return STALL;
-	 else // error
-	 {
-	    SetError(lftp_ssl_strerror("SSL connect"),IsFatal(res));
-	    return MOVED;
-	 }
-      }
-      ssl_connected=true;
-      event_time=now;
-   }
    switch(mode)
    {
    case PUT:
@@ -103,30 +71,24 @@ int IOBufferSSL::Do()
       event_time=now;
       return MOVED;
    }
-blocks:
-   if(SSL_want_read(ssl))
-      Block(SSL_get_fd(ssl),POLLIN);
-   if(SSL_want_write(ssl))
-      Block(SSL_get_fd(ssl),POLLOUT);
+   if(ssl->want_in())
+      Block(ssl->fd,POLLIN);
+   if(ssl->want_out())
+      Block(ssl->fd,POLLOUT);
    return STALL;
 }
 
 int IOBufferSSL::Get_LL(int size)
 {
-   if(!ssl_connected)
-      return 0;
    Allocate(size);
-   errno=0;
-   int res=SSL_read(ssl,buffer+buffer_ptr+in_buffer,size);
+   int res=ssl->read(buffer+buffer_ptr+in_buffer,size);
    if(res<0)
    {
-      if(BIO_sock_should_retry(res))
-	 return 0;
-      else if (SSL_want_x509_lookup(ssl))
+      if(res==ssl->RETRY)
 	 return 0;
       else // error
       {
-	 SetError(lftp_ssl_strerror("SSL read"),IsFatal(res));
+	 SetError(ssl->strerror("SSL read"),ssl->fatal);
 	 return -1;
       }
    }
@@ -137,42 +99,30 @@ int IOBufferSSL::Get_LL(int size)
 
 int IOBufferSSL::Put_LL(const char *buf,int size)
 {
-   if(!ssl_connected)
-      return 0;
-
-   int res=0;
-
-   errno=0;
-   res=SSL_write(ssl,buf,size);
+   int res=ssl->write(buf,size);
    if(res<0)
    {
-      if(BIO_sock_should_retry(res))
-	 return 0;
-      else if (SSL_want_x509_lookup(ssl))
+      if(res==ssl->RETRY)
 	 return 0;
       else // error
       {
-	 SetError(lftp_ssl_strerror("SSL write"),IsFatal(res));
+	 SetError(ssl->strerror("SSL write"),ssl->fatal);
 	 return -1;
       }
    }
    return res;
 }
 
-IOBufferSSL::IOBufferSSL(SSL *s,dir_t m,const char *h)
+IOBufferSSL::IOBufferSSL(lftp_ssl *s,dir_t m)
  : IOBuffer(m)
 {
    ssl=s;
-   ssl_connected=false;
-   do_connect=false;
    close_later=false;
-   hostname=xstrdup(h);
 }
 IOBufferSSL::~IOBufferSSL()
 {
-   xfree(hostname);
    if(close_later)
-      SSL_free(ssl);
+      delete ssl;
 }
 
 #endif // USE_SSL
