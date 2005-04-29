@@ -1,8 +1,8 @@
 Makefile
 Makefile.in
 confpaths.h
+getdate.c
 lftp
-ftpget
 .deps
 .libs
 .le.ini
