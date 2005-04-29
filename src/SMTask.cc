@@ -30,6 +30,7 @@
 #endif
 
 #include "SMTask.h"
+#include "misc.h"
 
 SMTask	 *SMTask::chain=0;
 SMTask	 *SMTask::current=0;
