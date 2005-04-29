@@ -27,9 +27,37 @@
 #include "log.h"
 #include "misc.h"
 
+lftp_ssl_base::lftp_ssl_base(int fd1,handshake_mode_t m,const char *h)
+{
+   fd=fd1;
+   hostname=xstrdup(h);
+   handshake_done=false;
+   handshake_mode=m;
+   error=0;
+   fatal=false;
+}
+lftp_ssl_base::~lftp_ssl_base()
+{
+   xfree(hostname);
+   xfree(error);
+}
+void lftp_ssl_base::set_error(const char *s1,const char *s2)
+{
+   xfree(error);
+   error=(char*)xmalloc(xstrlen(s1)+2+xstrlen(s2)+1);
+   if(s1)
+   {
+      strcpy(error,s1);
+      strcat(error,": ");
+      strcat(error,s2);
+   }
+   else
+      strcpy(error,s2);
+}
+
 #if USE_GNUTLS
 
-void lftp_ssl_init()
+static void lftp_ssl_init()
 {
    static bool inited=false;
    if(inited) return;
@@ -37,12 +65,102 @@ void lftp_ssl_init()
 
    gnutls_global_init();
 }
-gnutls_session_t *lftp_ssl_new(int fd,lftp_ssl_mode m,const char *host)
+lftp_ssl_gnutls::lftp_ssl_gnutls(int fd1,handshake_mode_t m,const char *h)
+   : lftp_ssl_base(fd1,m,h)
 {
    lftp_ssl_init();
-   gnutls_session_t session;
-   gnutls_init(&session, m==LFTP_SSL_CLIENT?GNUTLS_CLIENT:GNUTLS_SERVER);
 
+   gnutls_init(&session,(m==CLIENT?GNUTLS_CLIENT:GNUTLS_SERVER));
+   gnutls_set_default_priority(session);
+
+   gnutls_certificate_allocate_credentials(&cred);
+//    gnutls_certificate_set_x509_trust_file(cred,CAFILE,GNUTLS_X509_FMT_PEM);
+   gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, cred);
+
+   gnutls_transport_set_ptr(session,(gnutls_transport_ptr_t)fd);
+}
+lftp_ssl_gnutls::~lftp_ssl_gnutls()
+{
+   gnutls_certificate_free_credentials(cred);
+   gnutls_deinit(session);
+}
+
+int lftp_ssl_gnutls::do_handshake()
+{
+   if(handshake_done)
+      return DONE;
+   int res=gnutls_handshake(session);
+   if(res<0)
+   {
+      if(res==GNUTLS_E_AGAIN || res==GNUTLS_E_INTERRUPTED)
+	 return RETRY;
+      else // error
+      {
+	 fatal=gnutls_error_is_fatal(res);
+	 set_error("gnutls_handshake",gnutls_strerror(res));
+	 return ERROR;
+      }
+   }
+   handshake_done=true;
+   return DONE;
+}
+int lftp_ssl_gnutls::read(char *buf,int size)
+{
+   int res=do_handshake();
+   if(res!=DONE)
+      return res;
+   res=gnutls_record_recv(session,buf,size);
+   if(res<0)
+   {
+      if(res==GNUTLS_E_AGAIN || res==GNUTLS_E_INTERRUPTED)
+	 return RETRY;
+      else // error
+      {
+	 fatal=gnutls_error_is_fatal(res);
+	 set_error("gnutls_record_recv",gnutls_strerror(res));
+	 return ERROR;
+      }
+   }
+   return res;
+}
+int lftp_ssl_gnutls::write(const char *buf,int size)
+{
+   int res=do_handshake();
+   if(res!=DONE)
+      return res;
+   res=gnutls_record_send(session,buf,size);
+   if(res<0)
+   {
+      if(res==GNUTLS_E_AGAIN || res==GNUTLS_E_INTERRUPTED)
+	 return RETRY;
+      else // error
+      {
+	 fatal=gnutls_error_is_fatal(res);
+	 set_error("gnutls_record_send",gnutls_strerror(res));
+	 return ERROR;
+      }
+   }
+   return res;
+}
+bool lftp_ssl_gnutls::want_in()
+{
+   return gnutls_record_get_direction(session)==0;
+}
+bool lftp_ssl_gnutls::want_out()
+{
+   return gnutls_record_get_direction(session)==1;
+}
+void lftp_ssl_gnutls::copy_sid(const lftp_ssl_gnutls *o)
+{
+   size_t session_data_size;
+   void *session_data;
+   gnutls_session_get_data(o->session,NULL,&session_data_size);
+   session_data=xmalloc(session_data_size);
+   gnutls_session_get_data(o->session,session_data,&session_data_size);
+   gnutls_session_set_data(session,session_data,session_data_size);
+}
+
+/*=============================== OpenSSL ====================================*/
 #elif USE_OPENSSL
 static int lftp_ssl_verify_callback(int ok,X509_STORE_CTX *ctx);
 static int lftp_ssl_verify_crl(X509_STORE_CTX *ctx);
@@ -80,19 +198,10 @@ static void lftp_ssl_ctx_init()
 {
    if(ssl_ctx) return;
 
-#if USE_GNUTLS
-   SSL_library_init();
-   OpenSSL_add_all_algorithms();
-   ssl_ctx=SSL_CTX_new(SSLv23_client_method());
-   SSL_CTX_set_options(ssl_ctx, SSL_OP_ALL);
-//    SSL_CTX_set_verify(ssl_ctx,SSL_VERIFY_PEER,lftp_ssl_verify_callback);
-   SSL_CTX_set_default_verify_paths(ssl_ctx);
-
-#elif USE_OPENSSL
-# if SSLEAY_VERSION_NUMBER < 0x0800
+#if SSLEAY_VERSION_NUMBER < 0x0800
    ssl_ctx=SSL_CTX_new();
    X509_set_default_verify_paths(ssl_ctx->cert);
-# else
+#else
    SSLeay_add_ssl_algorithms();
    ssl_ctx=SSL_CTX_new(SSLv23_client_method());
    SSL_CTX_set_options(ssl_ctx, SSL_OP_ALL);
@@ -136,19 +245,14 @@ static void lftp_ssl_ctx_init()
 	    crl_path?crl_path:"NULL");
       }
    }
-# endif /* SSLEAY_VERSION_NUMBER < 0x0800 */
-#endif
+#endif /* SSLEAY_VERSION_NUMBER < 0x0800 */
 }
 
-lftp_ssl::lftp_ssl(int fd1,handshake_mode_t m,const char *h)
+lftp_ssl_openssl::lftp_ssl_openssl(int fd1,handshake_mode_t m,const char *h)
+   : lftp_ssl_base(fd1,m,h)
 {
    lftp_ssl_init();
    lftp_ssl_ctx_init();
-
-   fd=fd1;
-   hostname=xstrdup(h);
-   handshake_mode=m;
-   fatal=false;
 
    ssl=SSL_new(ssl_ctx);
    SSL_set_fd(ssl,fd);
@@ -179,9 +283,8 @@ lftp_ssl::lftp_ssl(int fd1,handshake_mode_t m,const char *h)
       }
    }
 }
-lftp_ssl::~lftp_ssl()
+lftp_ssl_openssl::~lftp_ssl_openssl()
 {
-   xfree(hostname);
    SSL_free(ssl);
 }
 
@@ -193,13 +296,13 @@ static int lftp_ssl_connect(SSL *ssl,const char *h)
    host=0;
    return res;
 }
-bool lftp_ssl::check_fatal(int res)
+bool lftp_ssl_openssl::check_fatal(int res)
 {
    return !(SSL_get_error(ssl,res)==SSL_ERROR_SYSCALL
 	    && (ERR_get_error()==0 || temporary_network_error(errno)));
 }
 
-int lftp_ssl::do_handshake()
+int lftp_ssl_openssl::do_handshake()
 {
    if(SSL_is_init_finished(ssl))
       return DONE;
@@ -219,12 +322,13 @@ int lftp_ssl::do_handshake()
       else // error
       {
 	 fatal=check_fatal(res);
+	 set_error("SSL_connect",strerror());
 	 return ERROR;
       }
    }
    return DONE;
 }
-int lftp_ssl::read(char *buf,int size)
+int lftp_ssl_openssl::read(char *buf,int size)
 {
    int res=do_handshake();
    if(res!=DONE)
@@ -240,12 +344,13 @@ int lftp_ssl::read(char *buf,int size)
       else // error
       {
 	 fatal=check_fatal(res);
+	 set_error("SSL_read",strerror());
 	 return ERROR;
       }
    }
    return res;
 }
-int lftp_ssl::write(const char *buf,int size)
+int lftp_ssl_openssl::write(const char *buf,int size)
 {
    int res=do_handshake();
    if(res!=DONE)
@@ -261,27 +366,28 @@ int lftp_ssl::write(const char *buf,int size)
       else // error
       {
 	 fatal=check_fatal(res);
+	 set_error("SSL_write",strerror());
 	 return ERROR;
       }
    }
    return res;
 }
-bool lftp_ssl::want_in()
+bool lftp_ssl_openssl::want_in()
 {
    return SSL_want_read(ssl);
 }
-bool lftp_ssl::want_out()
+bool lftp_ssl_openssl::want_out()
 {
    return SSL_want_write(ssl);
 }
-void lftp_ssl::copy_sid(const lftp_ssl *o)
+void lftp_ssl_openssl::copy_sid(const lftp_ssl_openssl *o)
 {
    SSL_copy_session_id(ssl,o->ssl);
 }
 
 static int certificate_verify_error;
 
-const char *lftp_ssl::strerror(const char *s)
+const char *lftp_ssl_openssl::strerror()
 {
    SSL_load_error_strings();
    int error=ERR_get_error();
@@ -295,20 +401,7 @@ const char *lftp_ssl::strerror(const char *s)
       ssl_error=ERR_error_string(error,NULL);
    if(!ssl_error)
       ssl_error="error";
-   static char *buffer;
-   static int buffer_alloc;
-   int need=xstrlen(s)+2+xstrlen(ssl_error)+1;
-   if(buffer_alloc<need)
-      buffer=(char*)xrealloc(buffer,buffer_alloc=need);
-   if(s)
-   {
-      strcpy(buffer,s);
-      strcat(buffer,": ");
-      strcat(buffer,ssl_error);
-   }
-   else
-      strcpy(buffer,ssl_error);
-   return buffer;
+   return ssl_error;
 }
 
 /* This one is (very much!) based on work by Ralf S. Engelschall <rse@engelschall.com>.

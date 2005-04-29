@@ -37,8 +37,8 @@ proto_sftp_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
 cmd_mirror_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
 cmd_sleep_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
 liblftp_pty_la_LDFLAGS     = -avoid-version -rpath $(pkgverlibdir)
-liblftp_network_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir) $(SSL_LDFLAGS)
-liblftp_network_la_LIBADD  = $(SOCKSLIBS) $(SSL_LIBS)
+liblftp_network_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir) $(OPENSSL_LDFLAGS)
+liblftp_network_la_LIBADD  = $(SOCKSLIBS) $(OPENSSL_LIBS) $(LIBGNUTLS_LIBS)
 
 proto_ftp_la_LIBADD  = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la
 proto_http_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la $(EXPAT_LIBS)
@@ -76,9 +76,9 @@ liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  TreatFileJob.cc TreatFileJob.h CopyJob.cc CopyJob.h echoJob.cc echoJob.h \
  OutputJob.cc OutputJob.h FileCopyOutputJob.cc buffer_std.cc buffer_std.h
 
-lftp_LDFLAGS = -export-dynamic $(LFTP_SSL_LDFLAGS)
+lftp_LDFLAGS = -export-dynamic $(LFTP_OPENSSL_LDFLAGS)
 lftp_LDADD = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC) $(READLINE)\
-	$(top_builddir)/lib/liblib.a $(LFTP_SSL_LIBS) $(SOCKSLIBS) $(LFTP_EXPAT_LIBS) $(LTLIBINTL) $(LTLIBICONV)
+	$(top_builddir)/lib/liblib.a $(LFTP_OPENSSL_LIBS) $(LFTP_LIBGNUTLS_LIBS) $(SOCKSLIBS) $(LFTP_EXPAT_LIBS) $(LTLIBINTL) $(LTLIBICONV)
 lftp_DEPENDENCIES = liblftp-jobs.la liblftp-tasks.la $(READLINE_DEPEND) \
 	$(top_builddir)/lib/liblib.a $(MODULES_LA_STATIC)
 
@@ -90,7 +90,7 @@ confpaths.h: Makefile
 
 DISTCLEANFILES = confpaths.h
 
-INCLUDES = -I$(top_srcdir)/include $(SSL_CPPFLAGS)
+INCLUDES = -I$(top_srcdir)/include $(OPENSSL_CPPFLAGS) $(LIBGNUTLS_CFLAGS)
 
 # These files can be linked to ../include by configure, but not always.
 #OMIT_DEPENDENCIES = readline.h keymaps.h chardefs.h tilde.h rltypedefs.h\

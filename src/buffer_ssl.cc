@@ -88,7 +88,7 @@ int IOBufferSSL::Get_LL(int size)
 	 return 0;
       else // error
       {
-	 SetError(ssl->strerror("SSL read"),ssl->fatal);
+	 SetError(ssl->error,ssl->fatal);
 	 return -1;
       }
    }
@@ -106,7 +106,7 @@ int IOBufferSSL::Put_LL(const char *buf,int size)
 	 return 0;
       else // error
       {
-	 SetError(ssl->strerror("SSL write"),ssl->fatal);
+	 SetError(ssl->error,ssl->fatal);
 	 return -1;
       }
    }

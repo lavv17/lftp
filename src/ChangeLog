@@ -2,6 +2,10 @@
 
 	* HttpDir.cc, HttpDirXML.cc: replace atoll with sscanf.
 	* GetJob.cc: do expand_home_relative on output file name.
+	* Filter.cc, PtyShell.cc: fix gcc4 warning.
+	* Makefile.am: add gnutls support.
+	* buffer_ssl.cc: use ssl->error member.
+	* lftp_ssl.cc, lftp_ssl.h: implement basic gnutls support.
 
 2005-04-29  Alexander V. Lukyanov <lav@yars.free.net>
 
