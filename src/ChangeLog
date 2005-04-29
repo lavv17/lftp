@@ -1,5 +1,10 @@
 2005-04-29  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* HttpDir.cc, HttpDirXML.cc: replace atoll with sscanf.
+	* GetJob.cc: do expand_home_relative on output file name.
+
+2005-04-29  Alexander V. Lukyanov <lav@yars.free.net>
+
 	* Http.cc, buffer_ssl.cc, buffer_ssl.h, ftpclass.cc, ftpclass.h,
 	  lftp_ssl.cc, lftp_ssl.h, misc.cc, misc.h: prepare for gnutls
 	  usage - make lftp_ssl class.

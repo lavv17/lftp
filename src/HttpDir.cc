@@ -1073,7 +1073,11 @@ parse_url_again:
       if(info.size==-1)
       {
 	 if(strspn(info.size_str,"0123456789")==strlen(info.size_str))
-	    info.size=atoll(info.size_str);
+	 {
+	    long long size_ll=0;
+	    sscanf(info.size_str,"%lld",&size_ll);
+	    info.size=size_ll;
+	 }
       }
       if(info.perms[0]==0)
       {

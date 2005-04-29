@@ -135,7 +135,9 @@ static void chardata_handle(void *data, const char *chardata, int len)
    }
    else if(!strcmp(tag,"DAV:getcontentlength"))
    {
-      ctx->fi->SetSize(atoll(s));
+      long long size_ll=0;
+      if(sscanf(s,"%lld",&size_ll)==1)
+	 ctx->fi->SetSize(size_ll);
    }
    else if(!strcmp(tag,"DAV:getlastmodified"))
    {
