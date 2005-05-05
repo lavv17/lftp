@@ -49,6 +49,7 @@
 #include "LocalDir.h"
 #include "ConnectionSlot.h"
 #include "misc.h"
+#include "lftp_ssl.h"
 
 #include "confpaths.h"
 
@@ -420,6 +421,9 @@ int   main(int argc,char **argv)
    LsCache::Flush();
    ProcWait::DeleteAll();
    DirColors::DeleteInstance();
+#if USE_SSL
+   lftp_ssl::global_deinit();
+#endif
    IdNameCacheCleanup();
    SignalHook::Cleanup();
    Log::Cleanup();

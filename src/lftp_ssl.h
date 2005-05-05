@@ -28,7 +28,7 @@
 #  include <openssl/ssl.h>
 #  include <openssl/err.h>
 #  include <openssl/rand.h>
-#endif
+# endif
 
 class lftp_ssl_base
 {
@@ -48,15 +48,32 @@ public:
    enum code { RETRY=-2, ERROR=-1, DONE=0 };
 
    void set_error(const char *s1,const char *s2);
+   void set_cert_error(const char *s);
 };
 
 #if USE_GNUTLS
+#include "SMTask.h"
+class lftp_ssl_instance : public SMTask
+{
+public:
+   lftp_ssl_instance();
+   ~lftp_ssl_instance();
+   int Do() { return STALL; }
+   void Reconfig(const char *);
+};
 class lftp_ssl_gnutls : public lftp_ssl_base
 {
+   static lftp_ssl_instance *instance;
    gnutls_session_t session;
    gnutls_certificate_credentials_t cred;
+   void verify_certificate_chain(const gnutls_datum_t *cert_chain,int cert_chain_length);
+   void verify_cert2(gnutls_x509_crt_t crt,gnutls_x509_crt_t issuer);
+   void verify_last_cert(gnutls_x509_crt_t crt);
    int do_handshake();
 public:
+   static void global_init();
+   static void global_deinit();
+
    lftp_ssl_gnutls(int fd,handshake_mode_t m,const char *host=0);
    ~lftp_ssl_gnutls();
 
@@ -75,6 +92,9 @@ class lftp_ssl_openssl : public lftp_ssl_base
    int do_handshake();
    const char *strerror(const char *s);
 public:
+   static void global_init();
+   static void global_deinit();
+
    lftp_ssl_openssl(int fd,handshake_mode_t m,const char *host=0);
    ~lftp_ssl_openssl();
 

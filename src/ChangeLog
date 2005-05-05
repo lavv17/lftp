@@ -1,3 +1,9 @@
+2005-05-05  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp_ssl.cc, lftp_ssl.h: verify peer certificate chain with gnutls;
+	  load CA and CRL globally.
+	* lftp.cc: deinit ssl.
+
 2005-04-29  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* HttpDir.cc, HttpDirXML.cc: replace atoll with sscanf.
