@@ -314,12 +314,15 @@ static ResDecl
 #ifdef USE_SSL
 static ResDecl
    res_ssl_ca_file    ("ssl:ca-file",  "", ResMgr::FileReadable,ResMgr::NoClosure),
-   res_ssl_ca_path    ("ssl:ca-path",  "", ResMgr::DirReadable, ResMgr::NoClosure),
    res_ssl_crl_file   ("ssl:crl-file", "", ResMgr::FileReadable,ResMgr::NoClosure),
-   res_ssl_crl_path   ("ssl:crl-path", "", ResMgr::DirReadable, ResMgr::NoClosure),
    res_ssl_key_file   ("ssl:key-file", "", ResMgr::FileReadable,0),
    res_ssl_cert_file  ("ssl:cert-file","", ResMgr::FileReadable,0),
    res_ssl_verify_cert("ssl:verify-certificate","no",ResMgr::BoolValidate,0);
+# if USE_OPENSSL
+static ResDecl
+   res_ssl_ca_path    ("ssl:ca-path",  "", ResMgr::DirReadable, ResMgr::NoClosure),
+   res_ssl_crl_path   ("ssl:crl-path", "", ResMgr::DirReadable, ResMgr::NoClosure);
+# endif
 #endif
 
 #if INET6
