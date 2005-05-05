@@ -1,8 +1,9 @@
 2005-05-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp_ssl.cc, lftp_ssl.h: verify peer certificate chain with gnutls;
-	  load CA and CRL globally.
+	  load CA and CRL globally; gnutls debugging support.
 	* lftp.cc: deinit ssl.
+	* resource.cc: ssl:*-path are only available with openssl.
 
 2005-04-29  Alexander V. Lukyanov <lav@yars.free.net>
 

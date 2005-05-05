@@ -208,7 +208,11 @@ static const char *lftp_ssl_find_ca_file()
 
 static void lftp_ssl_gnutls_log_func(int level, const char *msg)
 {
-   Log::global->Write(9+level,msg);
+   if(!strncmp(msg,"ASSERT",6)
+   || !strncmp(msg,"READ",4)
+   || !strncmp(msg,"WRITE",5))
+      level+=10;
+   Log::global->Format(9+level,"GNUTLS: %s",msg);
 }
 
 lftp_ssl_instance::lftp_ssl_instance()
