@@ -121,7 +121,7 @@ static void munmap_file(gnutls_datum_t data)
     munmap(data.data, data.size);
 }
 
-void lftp_ssl_instance::Reconfig(const char *name)
+void lftp_ssl_gnutls_instance::Reconfig(const char *name)
 {
    int res;
    // free CA and CRL first
@@ -215,7 +215,7 @@ static void lftp_ssl_gnutls_log_func(int level, const char *msg)
    Log::global->Format(9+level,"GNUTLS: %s",msg);
 }
 
-lftp_ssl_instance::lftp_ssl_instance()
+lftp_ssl_gnutls_instance::lftp_ssl_gnutls_instance()
 {
    Suspend();
    gnutls_global_init();
@@ -228,23 +228,23 @@ lftp_ssl_instance::lftp_ssl_instance()
 
    Reconfig(0);
 }
-lftp_ssl_instance::~lftp_ssl_instance()
+lftp_ssl_gnutls_instance::~lftp_ssl_gnutls_instance()
 {
    gnutls_global_deinit();
 }
 
 
-lftp_ssl_instance *lftp_ssl_gnutls::instance;
+lftp_ssl_gnutls_instance *lftp_ssl_gnutls::instance;
 
 void lftp_ssl_gnutls::global_init()
 {
    if(!instance)
-      instance=new lftp_ssl_instance();
+      instance=new lftp_ssl_gnutls_instance();
 }
 void lftp_ssl_gnutls::global_deinit()
 {
-   if(instance)
-      SMTask::Delete(instance);
+   SMTask::Delete(instance);
+   instance=0;
 }
 lftp_ssl_gnutls::lftp_ssl_gnutls(int fd1,handshake_mode_t m,const char *h)
    : lftp_ssl_base(fd1,m,h)
@@ -466,11 +466,22 @@ void lftp_ssl_gnutls::verify_last_cert(gnutls_x509_crt_t crt)
    }
 }
 
+bool lftp_ssl_gnutls::check_fatal(int res)
+{
+   if(!gnutls__error_is_fatal(res))
+      return false;
+   if((res==GNUTLS_E_UNEXPECTED_PACKET_LENGTH
+       || res==GNUTLS_E_PUSH_ERROR || res==GNUTLS_E_PULL_ERROR)
+   && temporary_network_error(errno))
+      return false;
+   return true;
+}
 
 int lftp_ssl_gnutls::do_handshake()
 {
    if(handshake_done)
       return DONE;
+   errno=0;
    int res=gnutls_handshake(session);
    if(res<0)
    {
@@ -478,7 +489,7 @@ int lftp_ssl_gnutls::do_handshake()
 	 return RETRY;
       else // error
       {
-	 fatal=gnutls_error_is_fatal(res);
+	 fatal=check_fatal(res);
 	 set_error("gnutls_handshake",gnutls_strerror(res));
 	 return ERROR;
       }
@@ -504,6 +515,7 @@ int lftp_ssl_gnutls::read(char *buf,int size)
    int res=do_handshake();
    if(res!=DONE)
       return res;
+   errno=0;
    res=gnutls_record_recv(session,buf,size);
    if(res<0)
    {
@@ -511,7 +523,7 @@ int lftp_ssl_gnutls::read(char *buf,int size)
 	 return RETRY;
       else // error
       {
-	 fatal=gnutls_error_is_fatal(res);
+	 fatal=check_fatal(res);
 	 set_error("gnutls_record_recv",gnutls_strerror(res));
 	 return ERROR;
       }
@@ -525,6 +537,7 @@ int lftp_ssl_gnutls::write(const char *buf,int size)
    int res=do_handshake();
    if(res!=DONE)
       return res;
+   errno=0;
    res=gnutls_record_send(session,buf,size);
    if(res<0)
    {
@@ -532,7 +545,7 @@ int lftp_ssl_gnutls::write(const char *buf,int size)
 	 return RETRY;
       else // error
       {
-	 fatal=gnutls_error_is_fatal(res);
+	 fatal=check_fatal(res);
 	 set_error("gnutls_record_send",gnutls_strerror(res));
 	 return ERROR;
       }
@@ -559,25 +572,31 @@ void lftp_ssl_gnutls::copy_sid(const lftp_ssl_gnutls *o)
 
 /*=============================== OpenSSL ====================================*/
 #elif USE_OPENSSL
-static int lftp_ssl_verify_callback(int ok,X509_STORE_CTX *ctx);
-static int lftp_ssl_verify_crl(X509_STORE_CTX *ctx);
 //static int lftp_ssl_passwd_callback(char *buf,int size,int rwflag,void *userdata);
 
-SSL_CTX *ssl_ctx;
-X509_STORE *crl_store;
+lftp_ssl_openssl_instance *lftp_ssl_openssl::instance;
 
 static char file[256];
-
 static void lftp_ssl_write_rnd()
 {
    RAND_write_file(file);
 }
 
-static void lftp_ssl_init()
+void lftp_ssl_openssl::global_init()
 {
-   static bool inited=false;
-   if(inited) return;
-   inited=true;
+   if(!instance)
+      instance=new lftp_ssl_openssl_instance();
+}
+void lftp_ssl_openssl::global_deinit()
+{
+   delete instance;
+   instance=0;
+}
+
+lftp_ssl_openssl_instance::lftp_ssl_openssl_instance()
+{
+   crl_store=0;
+   ssl_ctx=0;
 
 #ifdef WINDOWS
    RAND_screen();
@@ -589,11 +608,6 @@ static void lftp_ssl_init()
 
    if(RAND_load_file(file,-1) && RAND_status()!=0)
       atexit(lftp_ssl_write_rnd);
-}
-
-static void lftp_ssl_ctx_init()
-{
-   if(ssl_ctx) return;
 
 #if SSLEAY_VERSION_NUMBER < 0x0800
    ssl_ctx=SSL_CTX_new();
@@ -602,7 +616,7 @@ static void lftp_ssl_ctx_init()
    SSLeay_add_ssl_algorithms();
    ssl_ctx=SSL_CTX_new(SSLv23_client_method());
    SSL_CTX_set_options(ssl_ctx, SSL_OP_ALL);
-   SSL_CTX_set_verify(ssl_ctx,SSL_VERIFY_PEER,lftp_ssl_verify_callback);
+   SSL_CTX_set_verify(ssl_ctx,SSL_VERIFY_PEER,lftp_ssl_openssl::verify_callback);
 //    SSL_CTX_set_default_passwd_cb(ssl_ctx,lftp_ssl_passwd_callback);
 
    const char *ca_file=ResMgr::Query("ssl:ca-file",0);
@@ -644,14 +658,19 @@ static void lftp_ssl_ctx_init()
    }
 #endif /* SSLEAY_VERSION_NUMBER < 0x0800 */
 }
+lftp_ssl_openssl_instance::~lftp_ssl_openssl_instance()
+{
+   SSL_CTX_free(ssl_ctx);
+   X509_STORE_free(crl_store);
+}
 
 lftp_ssl_openssl::lftp_ssl_openssl(int fd1,handshake_mode_t m,const char *h)
    : lftp_ssl_base(fd1,m,h)
 {
-   lftp_ssl_init();
-   lftp_ssl_ctx_init();
+   if(!instance)
+      global_init();
 
-   ssl=SSL_new(ssl_ctx);
+   ssl=SSL_new(instance->ssl_ctx);
    SSL_set_fd(ssl,fd);
    SSL_ctrl(ssl,SSL_CTRL_MODE,SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER,0);
 
@@ -803,7 +822,7 @@ const char *lftp_ssl_openssl::strerror()
 
 /* This one is (very much!) based on work by Ralf S. Engelschall <rse@engelschall.com>.
  * Comments by Ralf. */
-static int lftp_ssl_verify_crl(X509_STORE_CTX *ctx)
+int lftp_ssl_openssl::verify_crl(X509_STORE_CTX *ctx)
 {
     X509_OBJECT obj;
     X509_NAME *subject;
@@ -820,7 +839,7 @@ static int lftp_ssl_verify_crl(X509_STORE_CTX *ctx)
      * Unless a revocation store for CRLs was created we
      * cannot do any CRL-based verification, of course.
      */
-    if (!crl_store)
+    if (!instance->crl_store)
         return 1;
 
     /*
@@ -866,7 +885,7 @@ static int lftp_ssl_verify_crl(X509_STORE_CTX *ctx)
      * the current certificate in order to verify it's integrity.
      */
     memset((char *)&obj, 0, sizeof(obj));
-    X509_STORE_CTX_init(&store_ctx, crl_store, NULL, NULL);
+    X509_STORE_CTX_init(&store_ctx, instance->crl_store, NULL, NULL);
     rc = X509_STORE_get_by_subject(&store_ctx, X509_LU_CRL, subject, &obj);
     X509_STORE_CTX_cleanup(&store_ctx);
     crl = obj.data.crl;
@@ -905,7 +924,7 @@ static int lftp_ssl_verify_crl(X509_STORE_CTX *ctx)
      * the current certificate in order to check for revocation.
      */
     memset((char *)&obj, 0, sizeof(obj));
-    X509_STORE_CTX_init(&store_ctx, crl_store, NULL, NULL);
+    X509_STORE_CTX_init(&store_ctx, instance->crl_store, NULL, NULL);
     rc = X509_STORE_get_by_subject(&store_ctx, X509_LU_CRL, issuer, &obj);
     X509_STORE_CTX_cleanup(&store_ctx);
     crl = obj.data.crl;
@@ -934,7 +953,7 @@ static int lftp_ssl_verify_crl(X509_STORE_CTX *ctx)
     return 1;
 }
 
-static int lftp_ssl_verify_callback(int ok,X509_STORE_CTX *ctx)
+int lftp_ssl_openssl::verify_callback(int ok,X509_STORE_CTX *ctx)
 {
    static X509 *prev_cert=0;
    X509 *cert=X509_STORE_CTX_get_current_cert(ctx);
@@ -952,7 +971,7 @@ static int lftp_ssl_verify_callback(int ok,X509_STORE_CTX *ctx)
       free(issuer_line);
    }
 
-   if(ok && !lftp_ssl_verify_crl(ctx))
+   if(ok && !verify_crl(ctx))
       ok=0;
 
    int error=X509_STORE_CTX_get_error(ctx);

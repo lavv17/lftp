@@ -1,3 +1,8 @@
+2005-05-06  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp_ssl.cc, lftp_ssl.h: fixes compilation with openssl; add instance
+	  to openssl code; improve temp error handling for gnutls.
+
 2005-05-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp_ssl.cc, lftp_ssl.h: verify peer certificate chain with gnutls;

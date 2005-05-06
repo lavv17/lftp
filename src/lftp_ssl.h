@@ -53,7 +53,7 @@ public:
 
 #if USE_GNUTLS
 #include "SMTask.h"
-class lftp_ssl_instance : public SMTask
+class lftp_ssl_gnutls_instance : public SMTask
 {
 public:
    lftp_ssl_instance();
@@ -63,13 +63,14 @@ public:
 };
 class lftp_ssl_gnutls : public lftp_ssl_base
 {
-   static lftp_ssl_instance *instance;
+   static lftp_ssl_gnutls_instance *instance;
    gnutls_session_t session;
    gnutls_certificate_credentials_t cred;
    void verify_certificate_chain(const gnutls_datum_t *cert_chain,int cert_chain_length);
    void verify_cert2(gnutls_x509_crt_t crt,gnutls_x509_crt_t issuer);
    void verify_last_cert(gnutls_x509_crt_t crt);
    int do_handshake();
+   bool check_fatal(int res);
 public:
    static void global_init();
    static void global_deinit();
@@ -85,13 +86,24 @@ public:
 };
 typedef lftp_ssl_gnutls lftp_ssl;
 #elif USE_OPENSSL
+class lftp_ssl_openssl_instance {
+public:
+   SSL_CTX *ssl_ctx;
+   X509_STORE *crl_store;
+   lftp_ssl_openssl_instance();
+   ~lftp_ssl_openssl_instance();
+};
 class lftp_ssl_openssl : public lftp_ssl_base
 {
+   static lftp_ssl_openssl_instance *instance;
    SSL *ssl;
    bool check_fatal(int res);
    int do_handshake();
-   const char *strerror(const char *s);
+   const char *strerror();
 public:
+   static int verify_crl(X509_STORE_CTX *ctx);
+   static int verify_callback(int ok,X509_STORE_CTX *ctx);
+
    static void global_init();
    static void global_deinit();
 
