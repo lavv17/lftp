@@ -109,6 +109,7 @@ static gnutls_datum_t mmap_file(const char *file)
       close(fd);
 	return mmaped_file;
     }
+   close(fd);
 
     mmaped_file.data = (unsigned char*)ptr;
     mmaped_file.size = stat_st.st_size;
