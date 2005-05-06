@@ -2415,14 +2415,46 @@ CMD(help)
    return 0;
 }
 
+#if USE_EXPAT
+# include <expat.h>
+#endif
+#if USE_GNUTLS
+# include <gnutls/gnutls.h>
+#endif
+CDECL const char *rl_library_version;
+CDECL const char *SSL_version_str;
+
 CMD(ver)
 {
    printf(
-      _("Lftp | Version %s | Copyright (c) 1996-2005 Alexander V. Lukyanov\n"),VERSION);
+      _("LFTP | Version %s | Copyright (c) 1996-2005 Alexander V. Lukyanov\n"),VERSION);
+   printf("\n");
    printf(
-      _("This is free software with ABSOLUTELY NO WARRANTY. See COPYING for details.\n"));
+      _("LFTP is free software, covered by the GNU General Public License, and you are\n"
+      "welcome to change it and/or distribute copies of it under certain conditions.\n"
+      "There is absolutely no warranty for LFTP.  See COPYING for details.\n"));
+   printf("\n");
    printf(
       _("Send bug reports and questions to <%s>.\n"),"lftp@uniyar.ac.ru");
+   printf("\n");
+
+   printf(_("Libraries used: "));
+
+   printf("Readline %s",rl_library_version);
+#if USE_EXPAT
+   const char *v=XML_ExpatVersion();
+   if(!strncmp(v,"expat_",6))
+      v+=6;
+   printf(", Expat %s",v);
+#endif
+#if USE_OPENSSL
+   printf(", %s",SSL_version_str);
+#endif
+#if USE_GNUTLS
+   printf(", GnuTLS %s",gnutls_check_version(0));
+#endif
+   printf("\n");
+
    exit_code=0;
    return 0;
 }

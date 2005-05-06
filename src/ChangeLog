@@ -2,6 +2,7 @@
 
 	* lftp_ssl.cc, lftp_ssl.h: fixes compilation with openssl; add instance
 	  to openssl code; improve temp error handling for gnutls.
+	* commands.cc: improve version info.
 
 2005-05-05  Alexander V. Lukyanov <lav@yars.free.net>
 
