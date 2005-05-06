@@ -730,7 +730,7 @@ int   MirrorJob::Do()
       m=MOVED;
       /*fallthrough*/
    case(WAITING_FOR_TRANSFER):
-      while(j=FindDoneAwaitedJob())
+      while((j=FindDoneAwaitedJob())!=0)
       {
 	 if(j->ExitCode()!=0)
 	    stats.error_count++;
@@ -763,7 +763,7 @@ int   MirrorJob::Do()
    case(TARGET_REMOVE_OLD):
    case(TARGET_REMOVE_OLD_FIRST):
    TARGET_REMOVE_OLD_FIRST_label:
-      while(j=FindDoneAwaitedJob())
+      while((j=FindDoneAwaitedJob())!=0)
       {
 	 RemoveWaiting(j);
 	 Delete(j);
@@ -849,7 +849,7 @@ int   MirrorJob::Do()
       m=MOVED;
       /*fallthrough*/
    case(TARGET_CHMOD):
-      while(j=FindDoneAwaitedJob())
+      while((j=FindDoneAwaitedJob())!=0)
       {
 	 RemoveWaiting(j);
 	 Delete(j);
@@ -923,7 +923,7 @@ int   MirrorJob::Do()
       m=MOVED;
       /*fallthrough*/
    case(FINISHING):
-      while(j=FindDoneAwaitedJob())
+      while((j=FindDoneAwaitedJob())!=0)
       {
 	 RemoveWaiting(j);
 	 Delete(j);
