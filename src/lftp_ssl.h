@@ -56,8 +56,8 @@ public:
 class lftp_ssl_gnutls_instance : public SMTask
 {
 public:
-   lftp_ssl_instance();
-   ~lftp_ssl_instance();
+   lftp_ssl_gnutls_instance();
+   ~lftp_ssl_gnutls_instance();
    int Do() { return STALL; }
    void Reconfig(const char *);
 };

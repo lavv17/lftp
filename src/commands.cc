@@ -34,6 +34,15 @@
 #include <fcntl.h>
 #include <assert.h>
 
+#if USE_EXPAT
+# include <expat.h>
+#endif
+#if USE_GNUTLS
+# include <gnutls/gnutls.h>
+#endif
+CDECL const char *rl_library_version;
+CDECL const char *SSL_version_str;
+
 #include "CmdExec.h"
 #include "GetJob.h"
 #include "CatJob.h"
@@ -2414,15 +2423,6 @@ CMD(help)
    exit_code=0;
    return 0;
 }
-
-#if USE_EXPAT
-# include <expat.h>
-#endif
-#if USE_GNUTLS
-# include <gnutls/gnutls.h>
-#endif
-CDECL const char *rl_library_version;
-CDECL const char *SSL_version_str;
 
 CMD(ver)
 {

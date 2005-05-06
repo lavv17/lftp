@@ -468,7 +468,7 @@ void lftp_ssl_gnutls::verify_last_cert(gnutls_x509_crt_t crt)
 
 bool lftp_ssl_gnutls::check_fatal(int res)
 {
-   if(!gnutls__error_is_fatal(res))
+   if(!gnutls_error_is_fatal(res))
       return false;
    if((res==GNUTLS_E_UNEXPECTED_PACKET_LENGTH
        || res==GNUTLS_E_PUSH_ERROR || res==GNUTLS_E_PULL_ERROR)
