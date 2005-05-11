@@ -437,7 +437,7 @@ void lftp_ssl_gnutls::verify_last_cert(gnutls_x509_crt_t crt)
 
    /* Do the actual verification.
     */
-   gnutls_x509_crt_verify(crt, ca_list, ca_list_size, 0, &crt_status);
+   gnutls_x509_crt_verify(crt, ca_list, ca_list_size, GNUTLS_VERIFY_ALLOW_X509_V1_CA_CRT, &crt_status);
 
    if (crt_status & GNUTLS_CERT_INVALID)
    {

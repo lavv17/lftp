@@ -1,3 +1,7 @@
+2005-05-11  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp_ssl.cc: allow V1 root crt.
+
 2005-05-06  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp_ssl.cc, lftp_ssl.h: fixes compilation with openssl; add instance
