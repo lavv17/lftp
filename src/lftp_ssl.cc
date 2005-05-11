@@ -502,7 +502,7 @@ int lftp_ssl_gnutls::do_handshake()
 
    unsigned cert_list_size=0;
    const gnutls_datum_t *cert_list=gnutls_certificate_get_peers(session,&cert_list_size);
-   if(cert_list==NULL)
+   if(cert_list==NULL || cert_list_size==0)
       set_cert_error("No certificate was found!");
    else
       verify_certificate_chain(cert_list,cert_list_size);
