@@ -1,3 +1,7 @@
+2005-05-12  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FtpListInfo.cc: add AS/400 parser, handle trailing slash in NLST.
+
 2005-05-11  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp_ssl.cc: allow V1 root crt.
