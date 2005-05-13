@@ -1,3 +1,7 @@
+2005-05-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: fix coredump when symlink target is unknown.
+
 2005-05-12  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FtpListInfo.cc: add AS/400 parser, handle trailing slash in NLST.

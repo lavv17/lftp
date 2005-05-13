@@ -387,6 +387,9 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 if(flags&NO_SYMLINKS)
 	    goto skip;
 
+	 if(!file->symlink)
+	    goto skip;
+
 	 if(!target_is_local)
 	 {
 	    // can't create symlink remotely (FIXME?)
