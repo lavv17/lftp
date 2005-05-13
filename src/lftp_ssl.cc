@@ -498,7 +498,10 @@ int lftp_ssl_gnutls::do_handshake()
    handshake_done=true;
 
    if(gnutls_certificate_type_get(session)!=GNUTLS_CRT_X509)
+   {
+      set_cert_error("Unsupported certificate type");
       return DONE; // FIXME: handle openpgp as well
+   }
 
    unsigned cert_list_size=0;
    const gnutls_datum_t *cert_list=gnutls_certificate_get_peers(session,&cert_list_size);

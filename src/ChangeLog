@@ -1,6 +1,7 @@
 2005-05-13  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc: fix coredump when symlink target is unknown.
+	* lftp_ssl.cc: set cert error if cert type is not supported.
 
 2005-05-12  Alexander V. Lukyanov <lav@yars.free.net>
 
