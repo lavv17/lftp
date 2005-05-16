@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.53)
-AC_INIT([lftp], [3.1.3], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [3.2.0], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_LIBOBJ_DIR(lib)
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
@@ -216,14 +216,17 @@ else
    enable_static=yes
    enable_shared=no
    MODULES_LA_STATIC="liblftp-pty.la liblftp-network.la proto-ftp.la proto-http.la proto-file.la proto-fish.la proto-sftp.la cmd-mirror.la cmd-sleep.la"
-   LFTP_SSL_LDFLAGS='$(SSL_LDFLAGS)'
-   LFTP_SSL_LIBS='$(SSL_LIBS)'
+   LFTP_OPENSSL_LDFLAGS='$(OPENSSL_LDFLAGS)'
+   LFTP_OPENSSL_LIBS='$(OPENSSL_LIBS)'
+   LFTP_LIBGNUTLS_LIBS='$(LIBGNUTLS_LIBS)'
    LFTP_EXPAT_LIBS='$(EXPAT_LIBS)'
 fi
 AC_SUBST(MODULES_LA)
 AC_SUBST(MODULES_LA_STATIC)
-AC_SUBST(LFTP_SSL_LDFLAGS)
-AC_SUBST(LFTP_SSL_LIBS)
+AC_SUBST(LFTP_OPENSSL_LDFLAGS)
+AC_SUBST(LFTP_OPENSSL_LIBS)
+AC_SUBST(LFTP_LIBGNUTLS_LDFLAGS)
+AC_SUBST(LFTP_LIBGNUTLS_LIBS)
 AC_SUBST(LFTP_EXPAT_LIBS)
 
 #test -z "$enable_static" && enable_static=no
@@ -255,18 +258,27 @@ lftp_TERMINFO
 
 READLINE_CHECK
 
-AC_ARG_WITH(ssl, [  --with-ssl[=/path]        use SSL [at /path]
-  --without-ssl           don't use SSL],
-      [with_ssl=$withval], [with_ssl=yes])
-case "$with_ssl" in
-	yes)		: ;;
+AC_ARG_WITH(gnutls, [  --without-gnutls              don't use GNUTLS library],
+      [with_gnutls=$withval], [with_gnutls=yes])
+AC_ARG_WITH(openssl, [  --with-openssl[=/path]          use OpenSSL [at /path]
+  --without-openssl             don't use OpenSSL (default)],
+      [with_openssl=$withval], [with_openssl=no])
+case "$with_openssl" in
+	yes)		with_gnutls=no;;
 	""|no)		: ;;
-	*)		ssl_loc=$with_ssl
-			with_ssl=yes ;;
+	*)		openssl_loc=$with_openssl
+			with_openssl=yes
+			with_gnutls=no;;
 esac
-if test x$with_ssl = xyes; then
-   LFTP_SSL_CHECK
+if test x$with_gnutls = xyes; then
+   AM_PATH_LIBGNUTLS([1.2.1], [
+      AC_DEFINE(USE_GNUTLS, 1, [Define to 1 when using GNU TLS library])
+   ])
 fi
+if test x$with_openssl = xyes -a x"$LIBGNUTLS_LIBS" = x; then
+   LFTP_OPENSSL_CHECK
+fi
+
 AC_CHECK_LIB(expat, XML_ParserCreateNS, [
    EXPAT_LIBS=-lexpat
    AC_SUBST(EXPAT_LIBS)

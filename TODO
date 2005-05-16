@@ -70,5 +70,3 @@ implemented.
    (change CmdExec::Done to return true when waiting_num<cmd:parallel)
 
  * show transfer rate in mirror done message.
-
- * mirror --loop to re-check for new or changed files.

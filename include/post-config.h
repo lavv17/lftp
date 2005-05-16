@@ -142,4 +142,6 @@ CDECL char *strtok_r(char *str, const char *sep, char **lasts);
 # include "trio.h"
 #endif
 
+#define USE_SSL (defined(USE_GNUTLS) || defined(USE_OPENSSL))
+
 #endif /* POST_CONFIG_H */
