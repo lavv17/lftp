@@ -53,15 +53,6 @@ public:
 
 #if USE_GNUTLS
 
-/* Compatibility defintions for old gnutls */
-typedef gnutls_session gnutls_session_t;
-typedef gnutls_anon_server_credentials gnutls_anon_server_credentials_t;
-typedef gnutls_dh_params gnutls_dh_params_t;
-typedef gnutls_certificate_credentials gnutls_certificate_credentials_t;
-typedef gnutls_transport_ptr gnutls_transport_ptr_t;
-typedef gnutls_x509_crt gnutls_x509_crt_t;
-typedef gnutls_datum gnutls_datum_t;
-
 #include "SMTask.h"
 class lftp_ssl_gnutls_instance : public SMTask
 {
