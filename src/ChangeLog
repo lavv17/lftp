@@ -2,6 +2,8 @@
 
 	* commands.cc: use dlsym to find library versions, this fixes
 	  compilation with modules.
+	* lftp_ssl.cc, lftp_ssl.h: (LoadCA, LoadCRL) new methods.
+	* lftp.cc: don't call lftp_ssl as it can be modular.
 
 2005-05-17  Alexander V. Lukyanov <lav@yars.free.net>
 

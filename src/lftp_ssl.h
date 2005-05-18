@@ -53,9 +53,18 @@ public:
 
 #if USE_GNUTLS
 
+#include <gnutls/x509.h>
 #include "SMTask.h"
 class lftp_ssl_gnutls_instance : public SMTask
 {
+   gnutls_x509_crl_t *crl_list;
+   unsigned crl_list_size;
+   gnutls_x509_crt_t *ca_list;
+   unsigned ca_list_size;
+   friend class lftp_ssl_gnutls;
+
+   void LoadCA();
+   void LoadCRL();
 public:
    lftp_ssl_gnutls_instance();
    ~lftp_ssl_gnutls_instance();

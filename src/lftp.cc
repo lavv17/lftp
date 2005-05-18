@@ -49,7 +49,6 @@
 #include "LocalDir.h"
 #include "ConnectionSlot.h"
 #include "misc.h"
-#include "lftp_ssl.h"
 
 #include "confpaths.h"
 
@@ -421,17 +420,14 @@ int   main(int argc,char **argv)
    LsCache::Flush();
    ProcWait::DeleteAll();
    DirColors::DeleteInstance();
-#if USE_SSL
-   lftp_ssl::global_deinit();
-#endif
    IdNameCacheCleanup();
    SignalHook::Cleanup();
    Log::Cleanup();
    SMTask::Cleanup();
 
-   // the tasks left: LsCache::ExpireHelper
+   // the tasks left: LsCache::ExpireHelper, lftp_ssl_instance(if created)
    int task_count=SMTask::TaskCount();
-   if(task_count>1)
+   if(task_count>2)
       printf("WARNING: task_count=%d\n",task_count);
 
    return exit_code;

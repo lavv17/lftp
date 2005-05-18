@@ -74,18 +74,6 @@ void lftp_ssl_base::set_cert_error(const char *s)
 
 #if USE_GNUTLS
 
-#include <gnutls/x509.h>
-
-/* All the available CRLs
- */
-gnutls_x509_crl_t *crl_list;
-unsigned crl_list_size;
-
-/* All the available trusted CAs
- */
-gnutls_x509_crt_t *ca_list;
-unsigned ca_list_size;
-
 /* Helper functions to load a certificate and key
  * files into memory. They use mmap for simplicity.
  */
@@ -122,39 +110,29 @@ static void munmap_file(gnutls_datum_t data)
     munmap(data.data, data.size);
 }
 
-void lftp_ssl_gnutls_instance::Reconfig(const char *name)
+void lftp_ssl_gnutls_instance::LoadCA()
 {
-   int res;
-   // free CA and CRL first
-   unsigned i;
-   for(i=0; i<ca_list_size; i++)
+   // free CA first
+   for(unsigned i=0; i<ca_list_size; i++)
       gnutls_x509_crt_deinit(ca_list[i]);
    xfree(ca_list);
    ca_list=0;
    ca_list_size=0;
-   for(i=0; i<crl_list_size; i++)
-      gnutls_x509_crl_deinit(crl_list[i]);
-   xfree(crl_list);
-   crl_list=0;
-   crl_list_size=0;
 
-   // load CA
-   if(name && strcmp(name,"ssl:ca-file"))
-      goto crl;
    const char *ca_file=ResMgr::Query("ssl:ca-file",0);
    if(!ca_file || !ca_file[0])
-      goto crl;
+      return;
 
    gnutls_datum_t ca_pem=mmap_file(ca_file);
    if(!ca_pem.data)
    {
       Log::global->Format(0,"%s: %s\n",ca_file,strerror(errno));
-      goto crl;
+      return;
    }
 
    ca_list_size=64;
    ca_list=(gnutls_x509_crt_t*)xmalloc(ca_list_size*sizeof(gnutls_x509_crl_t));
-   res=gnutls_x509_crt_list_import(ca_list,&ca_list_size,&ca_pem,GNUTLS_X509_FMT_PEM,GNUTLS_X509_CRT_LIST_IMPORT_FAIL_IF_EXCEED);
+   int res=gnutls_x509_crt_list_import(ca_list,&ca_list_size,&ca_pem,GNUTLS_X509_FMT_PEM,GNUTLS_X509_CRT_LIST_IMPORT_FAIL_IF_EXCEED);
    if(res==GNUTLS_E_SHORT_MEMORY_BUFFER)
    {
       ca_list=(gnutls_x509_crt_t*)xrealloc(ca_list,ca_list_size*sizeof(gnutls_x509_crl_t));
@@ -162,30 +140,42 @@ void lftp_ssl_gnutls_instance::Reconfig(const char *name)
    }
    if(res<0)
       Log::global->Format(0,"gnutls_x509_crt_list_import: %s\n",gnutls_strerror(res));
-   munmap_file(ca_pem);
 
-crl:
-   if(name && strcmp(name,"ssl:crl-file"))
-      goto end;
+   munmap_file(ca_pem);
+}
+void lftp_ssl_gnutls_instance::LoadCRL()
+{
+   // free CRL first
+   for(unsigned i=0; i<crl_list_size; i++)
+      gnutls_x509_crl_deinit(crl_list[i]);
+   xfree(crl_list);
+   crl_list=0;
+   crl_list_size=0;
+
    const char *crl_file=ResMgr::Query("ssl:crl-file",0);
    if(!crl_file || !crl_file[0])
-      goto end;
+      return;
 
    gnutls_datum_t crl_pem=mmap_file(crl_file);
    if(!crl_pem.data)
    {
       Log::global->Format(0,"%s: %s\n",crl_file,strerror(errno));
-      goto end;
+      return;
    }
    crl_list_size=1;
    crl_list=(gnutls_x509_crl_t*)xmalloc(crl_list_size*sizeof(gnutls_x509_crl_t));
-   res=gnutls_x509_crl_import(crl_list[0],&crl_pem,GNUTLS_X509_FMT_PEM);
+   int res=gnutls_x509_crl_import(crl_list[0],&crl_pem,GNUTLS_X509_FMT_PEM);
    if(res<0)
       Log::global->Format(0,"gnutls_x509_crl_import: %s\n",gnutls_strerror(res));
-   munmap_file(crl_pem);
 
-end:
-   return;
+   munmap_file(crl_pem);
+}
+void lftp_ssl_gnutls_instance::Reconfig(const char *name)
+{
+   if(!name || !strcmp(name,"ssl:ca-file"))
+      LoadCA();
+   if(!name || !strcmp(name,"ssl:crl-file"))
+      LoadCRL();
 }
 
 static const char *lftp_ssl_find_ca_file()
@@ -218,6 +208,11 @@ static void lftp_ssl_gnutls_log_func(int level, const char *msg)
 
 lftp_ssl_gnutls_instance::lftp_ssl_gnutls_instance()
 {
+   ca_list=0;
+   ca_list_size=0;
+   crl_list=0;
+   crl_list_size=0;
+
    Suspend();
    gnutls_global_init();
    gnutls_global_set_log_function(lftp_ssl_gnutls_log_func);
@@ -374,7 +369,7 @@ void lftp_ssl_gnutls::verify_cert2(gnutls_x509_crt_t crt,gnutls_x509_crt_t issue
    if(crt_status&GNUTLS_CERT_SIGNER_NOT_CA)
    {
       // recheck the issuer certificate against CA
-      gnutls_x509_crt_verify(issuer, ca_list, ca_list_size, 0, &issuer_status);
+      gnutls_x509_crt_verify(issuer, instance->ca_list, instance->ca_list_size, 0, &issuer_status);
       if(issuer_status==0)
 	 crt_status&=~GNUTLS_CERT_SIGNER_NOT_CA;
       if(crt_status==GNUTLS_CERT_INVALID)
@@ -404,7 +399,7 @@ void lftp_ssl_gnutls::verify_cert2(gnutls_x509_crt_t crt,gnutls_x509_crt_t issue
 
     /* Check if the certificate is revoked.
      */
-    ret = gnutls_x509_crt_check_revocation(crt, crl_list, crl_list_size);
+    ret = gnutls_x509_crt_check_revocation(crt, instance->crl_list, instance->crl_list_size);
     if (ret == 1) {		/* revoked */
 	set_cert_error("Revoked");
     }
@@ -437,7 +432,7 @@ void lftp_ssl_gnutls::verify_last_cert(gnutls_x509_crt_t crt)
 
    /* Do the actual verification.
     */
-   gnutls_x509_crt_verify(crt, ca_list, ca_list_size, GNUTLS_VERIFY_ALLOW_X509_V1_CA_CRT, &crt_status);
+   gnutls_x509_crt_verify(crt, instance->ca_list, instance->ca_list_size, GNUTLS_VERIFY_ALLOW_X509_V1_CA_CRT, &crt_status);
 
    if (crt_status & GNUTLS_CERT_INVALID)
    {
@@ -461,7 +456,7 @@ void lftp_ssl_gnutls::verify_last_cert(gnutls_x509_crt_t crt)
 
    /* Check if the certificate is revoked.
     */
-   ret = gnutls_x509_crt_check_revocation(crt, crl_list, crl_list_size);
+   ret = gnutls_x509_crt_check_revocation(crt, instance->crl_list, instance->crl_list_size);
    if (ret == 1) {		/* revoked */
       set_cert_error("Revoked");
    }
