@@ -144,7 +144,7 @@ const char *OrderValidate(char **s)
    return 0;
 }
 
-#ifdef USE_SSL
+#if USE_SSL
 static
 const char *AuthArgValidate(char **s)
 {
@@ -211,7 +211,7 @@ static ResDecl
    ResDecl09a("ftp:timezone",		  "GMT",   0,0),
    ResDecl10 ("ftp:skey-allow",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl11 ("ftp:skey-force",		  "no",    ResMgr::BoolValidate,0),
-#ifdef USE_SSL
+#if USE_SSL
    ResDecl11a("ftp:ssl-allow",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl11b("ftp:ssl-force",		  "no",	   ResMgr::BoolValidate,0),
    ResDecl11c("ftp:ssl-protect-data",	  "no",	   ResMgr::BoolValidate,0),
@@ -270,7 +270,7 @@ static ResDecl
    ResDecl29 ("http:put-method",	  "PUT",   PutOrPost,0),
    ResDecl30 ("http:put-content-type",	  "",	   0,0),
    ResDecl30b("http:referer",		  "",	   0,0),
-#ifdef USE_SSL
+#if USE_SSL
    ResDecl30a("https:proxy",		  "",	   HttpProxyValidate,0),
 #endif
    ResDecl31 ("net:idle",		  "180",   ResMgr::UNumberValidate,0),
@@ -311,7 +311,7 @@ static ResDecl
 static ResDecl
    res_file_charset  ("file:charset",  "",   ResMgr::CharsetValidate,ResMgr::NoClosure);
 
-#ifdef USE_SSL
+#if USE_SSL
 static ResDecl
    res_ssl_ca_file    ("ssl:ca-file",  "", ResMgr::FileReadable,ResMgr::NoClosure),
    res_ssl_crl_file   ("ssl:crl-file", "", ResMgr::FileReadable,ResMgr::NoClosure),
@@ -371,7 +371,7 @@ void ResMgr::ClassInit()
       Set("hftp:proxy",0,http_proxy);
    }
 
-#ifdef USE_SSL
+#if USE_SSL
    const char *https_proxy=getenv("https_proxy");
    if(https_proxy)
       Set("https:proxy",0,https_proxy);

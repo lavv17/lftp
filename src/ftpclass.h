@@ -28,7 +28,7 @@
 
 #include "NetAccess.h"
 
-#ifdef USE_SSL
+#if USE_SSL
 # include "lftp_ssl.h"
 #endif
 
@@ -104,7 +104,7 @@ class Ftp : public NetAccess
       off_t last_rest;	// last successful REST position.
       off_t rest_pos;	// the number sent with REST command.
 
-#ifdef USE_SSL
+#if USE_SSL
       lftp_ssl *control_ssl;
       char prot;  // current data protection scheme 'C'lear or 'P'rivate
       bool auth_sent;
@@ -180,7 +180,7 @@ class Ftp : public NetAccess
 	 LANG,
 	 SITE_UTIME,
 	 QUOTED		// check response for any command submitted by QUOTE_CMD
-#ifdef USE_SSL
+#if USE_SSL
 	 ,AUTH_TLS,PROT,SSCN
 #endif
       };
@@ -268,7 +268,7 @@ class Ftp : public NetAccess
 
    void	 HandleTimeout();
 
-#ifdef USE_SSL
+#if USE_SSL
 protected:
    bool	 ftps;	  // ssl and prot='P' by default (port 990)
 private:

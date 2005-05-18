@@ -1,3 +1,13 @@
+2005-05-18  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: use dlsym to find library versions, this fixes
+	  compilation with modules.
+
+2005-05-17  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc, buffer_ssl.h, ftpclass.cc, ftpclass.h, module.cc,
+	  resource.cc: fixed compilation without ssl.
+
 2005-05-13  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc: fix coredump when symlink target is unknown.

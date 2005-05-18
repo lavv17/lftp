@@ -54,7 +54,7 @@ typedef void (*init_t)(int,const char*const*);
 static const char * const module_aliases[]=
 {
    "proto-hftp",  "proto-http",
-#ifdef USE_SSL
+#if USE_SSL
    "proto-https", "proto-http",
    "proto-ftps",  "proto-ftp",
 #endif

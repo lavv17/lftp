@@ -1091,7 +1091,7 @@ int Http::Do()
 
       m=MOVED;
       state=CONNECTED;
-#ifdef USE_SSL
+#if USE_SSL
       if(proxy?!strncmp(proxy,"https://",8):https)
       {
 	 MakeSSLBuffers();
@@ -1103,7 +1103,7 @@ int Http::Do()
 	    new FDStream(sock,"<output-socket>"),IOBuffer::PUT);
 	 recv_buf=new IOBufferFDStream(
 	    new FDStream(sock,"<input-socket>"),IOBuffer::GET);
-#ifdef USE_SSL
+#if USE_SSL
 	 if(proxy && https)
 	 {
 	    // have to setup a tunnel.
@@ -1213,7 +1213,7 @@ int Http::Do()
 	       {
 		  if(H_20X(status_code))
 		  {
-#ifdef USE_SSL
+#if USE_SSL
 		     if(https)
 			MakeSSLBuffers();
 #endif
@@ -1557,7 +1557,7 @@ void  Http::ClassInit()
    // register the class
    Register("http",Http::New);
    Register("hftp",HFtp::New);
-#ifdef USE_SSL
+#if USE_SSL
    Register("https",Https::New);
 #endif
 }
@@ -2127,7 +2127,7 @@ void Http::SetCookie(const char *value_const)
    xfree(c);
 }
 
-#ifdef USE_SSL
+#if USE_SSL
 #undef super
 #define super Http
 Https::Https()

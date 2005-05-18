@@ -25,7 +25,7 @@
 
 #include "buffer.h"
 
-#ifdef USE_SSL
+#if USE_SSL
 #include "lftp_ssl.h"
 class IOBufferSSL : public IOBuffer
 {

@@ -70,7 +70,7 @@ CDECL int inet_aton(const char *,struct in_addr *);
 
 #include "xalloca.h"
 
-#ifdef USE_SSL
+#if USE_SSL
 # include "lftp_ssl.h"
 #else
 # define control_ssl 0
@@ -105,7 +105,7 @@ void  Ftp::ClassInit()
    Register("ftp",Ftp::New);
    FileCopy::fxp_create=FileCopyFtp::New;
 
-#ifdef USE_SSL
+#if USE_SSL
    Register("ftps",FtpS::New);
 #endif
 }
@@ -855,7 +855,7 @@ Ftp::Connection::Connection()
    data_sock=-1;
    data_iobuf=0;
    aborted_data_sock=-1;
-#ifdef USE_SSL
+#if USE_SSL
    control_ssl=0;
    prot='C';  // current protection scheme 'C'lear or 'P'rivate
    auth_sent=false;
@@ -904,7 +904,7 @@ void Ftp::InitFtp()
    conn=0;
    expect=0;
 
-#ifdef USE_SSL
+#if USE_SSL
    ftps=false;	  // ssl and prot='P' by default (port 990)
 #endif
 
@@ -978,7 +978,7 @@ Ftp::Connection::~Connection()
    Delete(control_recv);
    delete send_cmd_buffer;
    xfree(mlst_attr_supported);
-#ifdef USE_SSL
+#if USE_SSL
    xfree(auth_args_supported);
 #endif
 }
@@ -1289,7 +1289,7 @@ int   Ftp::Do()
 
       conn->SavePeerAddress();
 
-#ifdef USE_SSL
+#if USE_SSL
       if(proxy?!xstrcmp(proxy_proto,"ftps")||!xstrcmp(proxy_proto,"https"):ftps)
       {
 	 conn->MakeSSLBuffers(hostname);
@@ -1348,7 +1348,7 @@ int   Ftp::Do()
       if(expect->Has(Expect::FEAT))
 	 goto usual_return;
 
-#ifdef USE_SSL
+#if USE_SSL
       if(QueryBool((user && pass)?"ssl-allow":"ssl-allow-anonymous",hostname)
       && !ftps && (!proxy || conn->proxy_is_http))
 	 SendAuth(Query("ssl-auth",hostname));
@@ -1446,7 +1446,7 @@ int   Ftp::Do()
 	 expect->Push(Expect::PWD);
       }
 
-#ifdef USE_SSL
+#if USE_SSL
       if(conn->ssl_is_activated())
       {
 	 conn->SendCmd("PBSZ 0");
@@ -1517,7 +1517,7 @@ int   Ftp::Do()
 	    last_cwd->check_case=Expect::CWD_CURR;
 	 }
       }
-#ifdef USE_SSL
+#if USE_SSL
       if(conn->ssl_is_activated())
       {
 	 char want_prot=conn->prot;
@@ -1560,7 +1560,7 @@ int   Ftp::Do()
       // wait for all CWD to finish
       if(mode!=CHANGE_DIR && expect->FindLastCWD())
 	 goto usual_return;
-#ifdef USE_SSL
+#if USE_SSL
       // PROT and SSCN are critical for data transfers
       if(expect->Has(Expect::PROT)
       || expect->Has(Expect::SSCN))
@@ -1884,7 +1884,7 @@ int   Ftp::Do()
 #if INET6
 	 ipv4_pasv:
 #endif
-#ifdef USE_SSL
+#if USE_SSL
 	    if(copy_mode!=COPY_NONE && conn->prot=='P' && !conn->sscn_on && copy_ssl_connect)
 	       conn->SendCmd("CPSV"); // same as PASV, but server does SSL_connect
 	    else
@@ -2132,7 +2132,7 @@ int   Ftp::Do()
 
       Delete(conn->data_iobuf);
       conn->data_iobuf=0;
-#ifdef USE_SSL
+#if USE_SSL
       if(conn->ssl_is_activated() && conn->prot=='P')
       {
 	 lftp_ssl *ssl=new lftp_ssl(conn->data_sock,lftp_ssl::CLIENT,hostname);
@@ -2348,7 +2348,7 @@ system_error:
    return MOVED;
 }
 
-#ifdef USE_SSL
+#if USE_SSL
 void Ftp::SendAuth(const char *auth)
 {
    if(conn->auth_sent || conn->ssl_is_activated())
@@ -2734,7 +2734,7 @@ void Ftp::SendUrgentCmd(const char *cmd)
 
    static const char pre_cmd[]={TELNET_IAC,TELNET_IP,TELNET_IAC,TELNET_DM};
 
-#ifdef USE_SSL
+#if USE_SSL
    if(conn->ssl_is_activated())
    {
       // no way to send urgent data over ssl, send normally.
@@ -3206,7 +3206,7 @@ void Ftp::ExpectQueue::Close()
       case(Expect::TYPE):
       case(Expect::LANG):
       case(Expect::OPTS_UTF8):
-#ifdef USE_SSL
+#if USE_SSL
       case(Expect::AUTH_TLS):
       case(Expect::PROT):
       case(Expect::SSCN):
@@ -3502,7 +3502,7 @@ void Ftp::CheckFEAT(char *reply)
    conn->mdtm_supported=false;
    conn->size_supported=false;
    conn->rest_supported=false;
-#ifdef USE_SSL
+#if USE_SSL
    conn->auth_supported=false;
    xfree(conn->auth_args_supported);
    conn->auth_args_supported=0;
@@ -3547,7 +3547,7 @@ void Ftp::CheckFEAT(char *reply)
 	 xfree(conn->mlst_attr_supported);
 	 conn->mlst_attr_supported=xstrdup(f+5);
       }
-#ifdef USE_SSL
+#if USE_SSL
       else if(!strncasecmp(f,"AUTH ",5))
       {
 	 conn->auth_supported=true;
@@ -3862,7 +3862,7 @@ void Ftp::CheckResp(int act)
 	 conn->tune_after_login=true;
       break;
 
-#ifdef USE_SSL
+#if USE_SSL
    case Expect::AUTH_TLS:
       if(is2XX(act))
       {
@@ -3925,7 +3925,7 @@ const char *Ftp::CurrentStatus()
    case(HTTP_PROXY_CONNECTED):
       return(_("Connecting..."));
    case(CONNECTED_STATE):
-#ifdef USE_SSL
+#if USE_SSL
       if(conn->auth_sent)
 	 return _("TLS negotiation...");
 #endif
@@ -3951,7 +3951,7 @@ const char *Ftp::CurrentStatus()
    case(ACCEPTING_STATE):
       return(_("Waiting for data connection..."));
    case(DATA_OPEN_STATE):
-#ifdef USE_SSL
+#if USE_SSL
       if(conn->ssl_is_activated() && conn->prot=='P')
       {
 	 if(mode==STORE)
@@ -4339,7 +4339,7 @@ const char *Ftp::ProtocolSubstitution(const char *host)
 }
 
 
-#ifdef USE_SSL
+#if USE_SSL
 #undef super
 #define super Ftp
 FtpS::FtpS()
