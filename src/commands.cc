@@ -33,15 +33,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <assert.h>
-
-#if USE_EXPAT
-# include <expat.h>
+#ifdef HAVE_DLFCN_H
+# include <dlfcn.h>
 #endif
-#if USE_GNUTLS
-# include <gnutls/gnutls.h>
-#endif
-CDECL const char *rl_library_version;
-CDECL const char *SSL_version_str;
 
 #include "CmdExec.h"
 #include "GetJob.h"
@@ -2436,24 +2430,60 @@ CMD(ver)
    printf("\n");
    printf(
       _("Send bug reports and questions to <%s>.\n"),"lftp@uniyar.ac.ru");
-   printf("\n");
 
+#ifdef HAVE_DLOPEN
+   printf("\n");
    printf(_("Libraries used: "));
 
-   printf("Readline %s",rl_library_version);
-#if USE_EXPAT
-   const char *v=XML_ExpatVersion();
-   if(!strncmp(v,"expat_",6))
-      v+=6;
-   printf(", Expat %s",v);
-#endif
-#if USE_OPENSSL
-   printf(", %s",SSL_version_str);
-#endif
-#if USE_GNUTLS
-   printf(", GnuTLS %s",gnutls_check_version(0));
-#endif
+   struct VersionInfo
+   {
+      const char *lib_name;
+      const char *symbol;
+      enum type_t { STRING_PTR, FUNC0 } type;
+      const char *skip_prefix;
+      typedef const char *(*func0)(int);
+      const char *query() const
+	 {
+	    void *sym_ptr=dlsym(RTLD_DEFAULT,symbol);
+	    if(!sym_ptr)
+	       return 0;
+	    const char *str=0;
+	    switch(type)
+	    {
+	    case STRING_PTR:
+	       str=*(const char**)sym_ptr;
+	       break;
+	    case FUNC0:
+	       str=((func0)sym_ptr)(0);
+	       break;
+	    }
+	    if(!str)
+	       return 0;
+	    if(skip_prefix && !strncmp(str,skip_prefix,strlen(skip_prefix)))
+	       str+=strlen(skip_prefix);
+	    return str;
+	 }
+   }
+   static const libs[]=
+   {
+      {"Readline",   "rl_library_version",   VersionInfo::STRING_PTR,0},
+      {"Expat",	     "XML_ExpatVersion",     VersionInfo::FUNC0,     "expat_"},
+      {"OpenSSL",    "SSL_version_str",	     VersionInfo::STRING_PTR,"OpenSSL "},
+      {"GnuTLS",     "gnutls_check_version", VersionInfo::FUNC0,     0},
+      {0}
+   };
+
+   bool need_comma=false;
+   for(const VersionInfo *scan=libs; scan->lib_name; scan++)
+   {
+      const char *v=scan->query();
+      if(!v)
+	 continue;
+      printf("%s%s %s",need_comma?", ":"",scan->lib_name,v);
+      need_comma=true;
+   }
    printf("\n");
+#endif // HAVE_DLOPEN
 
    exit_code=0;
    return 0;
