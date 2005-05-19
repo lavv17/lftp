@@ -2431,7 +2431,7 @@ CMD(ver)
    printf(
       _("Send bug reports and questions to <%s>.\n"),"lftp@uniyar.ac.ru");
 
-#ifdef HAVE_DLOPEN
+#if defined(HAVE_DLOPEN) && defined(RTLD_DEFAULT)
    printf("\n");
    printf(_("Libraries used: "));
 
