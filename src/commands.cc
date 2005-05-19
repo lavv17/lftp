@@ -743,10 +743,11 @@ Job *CmdExec::builtin_open()
       {"execute",required_argument,0,'e'},
       {"debug",optional_argument,0,'d'},
       {"no-bookmark",no_argument,0,'B'},
+      {"help",no_argument,0,'h'},
       {0,0,0,0}
    };
 
-   while((c=args->getopt_long("u:p:e:dB",open_options,0))!=EOF)
+   while((c=args->getopt_long("u:p:e:dBh",open_options,0))!=EOF)
    {
       switch(c)
       {
@@ -775,6 +776,12 @@ Job *CmdExec::builtin_open()
       case('B'):
 	 no_bm=true;
 	 break;
+      case('h'):
+	 if(!strcmp(op,"lftp"))
+	 {
+	    PrependCmd("help lftp");
+	    return 0;
+	 }
       case('?'):
 	 if(!strcmp(op,"lftp"))
 	    eprintf(_("Try `%s --help' for more information\n"),op);

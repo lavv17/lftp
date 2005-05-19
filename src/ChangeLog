@@ -1,6 +1,7 @@
 2005-05-19  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: fix compilation on AIX 5.1
+	* commands.cc: fixed minor problem with `lftp -u user --help'.
 
 2005-05-18  Alexander V. Lukyanov <lav@yars.free.net>
 
