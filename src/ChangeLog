@@ -1,3 +1,7 @@
+2005-05-20  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SFtp.cc: fix handling of file names starting with a tilde.
+
 2005-05-19  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: fix compilation on AIX 5.1

@@ -1825,6 +1825,10 @@ FileInfo *SFtp::MakeFileInfo(const NameAttrs *na)
    const char *name=utf8_to_lc(na->name);
    if(!name || !name[0])
       return 0;
+   if(strchr(name,'/'))
+      return 0;
+   if(name[0]=='~')
+      name=dir_file(".",name);
    FileInfo *fi=new FileInfo(name);
    switch(a->type)
    {
