@@ -437,7 +437,7 @@ Verbosity level can be selected using \-\-verbose=level option or by several
 3 - +print directory names which are mirrored
 .De
 .PP
-\-\-only\-newer turns off file size comparision and uploads/downloads
+\-\-only\-newer turns off file size comparison and uploads/downloads
 only newer files even if size is different. By default older files are transferred and replace newer ones.
 .PP
 You can mirror between two servers if you specify URLs instead of directories.
@@ -643,7 +643,7 @@ Same as `put -c'.
 .PP
 Remove remote files.  Does not expand wildcards, use \fBmrm\fR for
 that. -r is for recursive directory remove. Be careful, if something goes
-wrong you can lose files. -f supress error messages.
+wrong you can lose files. -f suppress error messages.
 
 .B rmdir
 \fIdir(s)\fP
@@ -940,7 +940,7 @@ sets the user name used for anonymous ftp access authentication.
 Default is "anonymous".
 .TP
 .BR ftp:auto-sync-mode \ (regex)
-if first server message metches this regex, turn on sync mode for that host.
+if first server message matches this regex, turn on sync mode for that host.
 .TP
 .BR ftp:charset \ (string)
 the character set used by ftp server in requests, replies and file listings.
@@ -1147,7 +1147,7 @@ if true, lftp sends QUIT before disconnecting from ftp server. Default is true.
 verify that data connection comes from the network address of control
 connection peer. This can possibly prevent data connection spoofing
 which can lead to data corruption. Unfortunately, this can fail
-for sertain ftp servers with several network interfaces,
+for certain ftp servers with several network interfaces,
 when they do not set outgoing address on data socket, so it is disabled by default.
 .TP
 .BR ftp:verify-port \ (boolean)
@@ -1416,7 +1416,7 @@ if this setting is off, get commands will not overwrite existing
 files and generate an error instead. Default is on.
 .TP
 .BR xfer:eta-period \ (seconds)
-the period over which wheighted average rate is calculated to produce ETA.
+the period over which weighted average rate is calculated to produce ETA.
 .TP
 .BR xfer:eta-terse \ (boolean)
 show terse ETA (only high order parts). Default is true.
@@ -1426,7 +1426,7 @@ maximum number of redirections. This can be useful for downloading over HTTP.
 Default is 0, which prohibits redirections.
 .TP
 .BR xfer:rate-period \ (seconds)
-the period over which wheighted average rate is calculated to be shown.
+the period over which weighted average rate is calculated to be shown.
 
 .PP
 The name of variables can be abbreviated unless it becomes

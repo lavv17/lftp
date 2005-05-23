@@ -1,3 +1,7 @@
+2005-05-23	A Costa <agcosta@gis.net>
+
+	* lftp.1: fixed several typos.
+
 2005-04-05	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document mirror --loop option.
