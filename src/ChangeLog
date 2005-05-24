@@ -1,3 +1,7 @@
+2005-05-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp_ssl.cc, lftp_ssl.h: make it compatible with gnutls 1.0.x.
+
 2005-05-20  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.cc: fix handling of file names starting with a tilde.

@@ -110,6 +110,13 @@ static void munmap_file(gnutls_datum_t data)
     munmap(data.data, data.size);
 }
 
+#if LFTP_LIBGNUTLS_VERSION_CODE < 0x010201
+#define gnutls_x509_crt_list_import lftp_gnutls_x509_crt_list_import
+static
+int gnutls_x509_crt_list_import(gnutls_x509_crt_t *certs, unsigned int* cert_max,
+    const gnutls_datum_t * data, gnutls_x509_crt_fmt_t format, unsigned int flags);
+#endif
+
 void lftp_ssl_gnutls_instance::LoadCA()
 {
    // free CA first
@@ -568,6 +575,113 @@ void lftp_ssl_gnutls::copy_sid(const lftp_ssl_gnutls *o)
    gnutls_session_get_data(o->session,session_data,&session_data_size);
    gnutls_session_set_data(session,session_data,session_data_size);
 }
+
+#if LFTP_LIBGNUTLS_VERSION_CODE < 0x010201
+#define PEM_CERT_SEP2 "-----BEGIN X509 CERTIFICATE"
+#define PEM_CERT_SEP "-----BEGIN CERTIFICATE"
+#define CLEAR_CERTS \
+    for(j=0;j<count;j++) gnutls_x509_crt_deinit( certs[j])
+/**
+  * gnutls_x509_crt_list_import - This function will import a PEM encoded certificate list
+  * @certs: The structures to store the parsed certificate. Must not be initialized.
+  * @cert_max: Initially must hold the maximum number of certs. It will be updated with the number of certs available.
+  * @data: The PEM encoded certificate.
+  * @format: One of DER or PEM. Only PEM is supported for now.
+  * @flags: must be zero or an OR'd sequence of gnutls_certificate_import_flags.
+  *
+  * This function will convert the given PEM encoded certificate list
+  * to the native gnutls_x509_crt_t format. The output will be stored in @certs.
+  * They will be automatically initialized.
+  *
+  * If the Certificate is PEM encoded it should have a header of "X509 CERTIFICATE", or
+  * "CERTIFICATE".
+  *
+  * Returns the number of certificates read or a negative error value.
+  *
+  */
+static
+int gnutls_x509_crt_list_import(gnutls_x509_crt_t *certs, unsigned int* cert_max,
+    const gnutls_datum_t * data, gnutls_x509_crt_fmt_t format, unsigned int flags)
+{
+    int size;
+    const char *ptr;
+    gnutls_datum_t tmp;
+    int ret, nocopy=0;
+    unsigned int count=0,j;
+
+    /* move to the certificate
+     */
+    ptr = (const char *)memmem(data->data, data->size,
+		 PEM_CERT_SEP, sizeof(PEM_CERT_SEP) - 1);
+    if (ptr == NULL)
+	ptr = (const char *)memmem(data->data, data->size,
+		     PEM_CERT_SEP2, sizeof(PEM_CERT_SEP2) - 1);
+
+    if (ptr == NULL) {
+	return GNUTLS_E_BASE64_DECODING_ERROR;
+    }
+    size = data->size - (ptr - (char*)data->data);
+
+    count = 0;
+
+    do {
+        if (count >= *cert_max) {
+            if (!(flags & GNUTLS_X509_CRT_LIST_IMPORT_FAIL_IF_EXCEED))
+                break;
+            else
+                nocopy = 1;
+        }
+
+	if (!nocopy) {
+	    ret = gnutls_x509_crt_init( &certs[count]);
+	    if (ret < 0) {
+                goto error;
+            }
+
+	    tmp.data = (unsigned char*)ptr;
+	    tmp.size = size;
+
+	    ret = gnutls_x509_crt_import( certs[count], &tmp, GNUTLS_X509_FMT_PEM);
+	    if (ret < 0) {
+                goto error;
+            }
+        }
+
+	/* now we move ptr after the pem header
+	 */
+	ptr++;
+	/* find the next certificate (if any)
+	 */
+	size = data->size - (ptr - (char*)data->data);
+
+	if (size > 0) {
+	    const char *ptr2;
+
+	    ptr2 =
+		(const char *)memmem(ptr, size, PEM_CERT_SEP, sizeof(PEM_CERT_SEP) - 1);
+	    if (ptr2 == NULL)
+		ptr2 = (const char *)memmem(ptr, size, PEM_CERT_SEP2,
+			      sizeof(PEM_CERT_SEP2) - 1);
+
+	    ptr = ptr2;
+	} else
+	    ptr = NULL;
+
+	count++;
+    } while (ptr != NULL);
+
+    *cert_max = count;
+
+    if (nocopy==0)
+        return count;
+    else
+        return GNUTLS_E_SHORT_MEMORY_BUFFER;
+
+error:
+    CLEAR_CERTS;
+    return ret;
+}
+#endif
 
 /*=============================== OpenSSL ====================================*/
 #elif USE_OPENSSL
