@@ -1,13 +1,17 @@
 #!/usr/bin/perl
-# Copyright (c) 2001 Alexander V. Lukyanov <lav@yars.free.net>
-# See COPYING file (GNU GPL) for complete licence.
+# Copyright (c) 2001,2005 Alexander V. Lukyanov <lav@yars.free.net>
+# See COPYING file (GNU GPL) for complete license.
 
 # This script converts netscape-style cookies to lftp set commands.
 
-$file="$ENV{HOME}/.netscape/cookies";
 $file=$ARGV[0] if defined $ARGV[0];
+$file=qx{
+	ls -t \$HOME/.netscape/cookies \\
+	      `find \$HOME/.mozilla -name cookies.txt` | head -1
+},chomp $file if !defined $file;
 
 open COOKIES,"<$file" or die;
+print "# converted from $file\n";
 while(<COOKIES>)
 {
    chomp;
@@ -16,7 +20,7 @@ while(<COOKIES>)
    s/ /%20/g;
    ($domain,undef,$path,$secure_bool,$expires,$name,$value)=split /\t/;
    $secure='';
-   $secure=';secure' if $secure_bool eq TRUE;
+   $secure=';secure' if $secure_bool eq 'TRUE';
    $domain="*$domain" if $domain =~ /^\./;
    $path='' if $path eq '/';
    $path=";path=$path" if $path ne '';
