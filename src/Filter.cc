@@ -180,7 +180,7 @@ int OutputFilter::getfd()
       }
       if(a)
 	 execvp(a->a0(),a->GetVNonConst());
-      execl("/bin/sh","sh","-c",name,NULL);
+      execl("/bin/sh","sh","-c",name,(char*)NULL);
       fprintf(stderr,_("execl(/bin/sh) failed: %s\n"),strerror(errno));
       fflush(stderr);
       _exit(1);

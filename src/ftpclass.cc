@@ -165,13 +165,13 @@ bool Ftp::Connection::data_address_ok(sockaddr_u *dp,bool verify_address,bool ve
    else if(getpeername(data_sock,&d.sa,&len)==-1)
    {
       Log::global->Format(0,"getpeername(data_sock): %s\n",strerror(errno));
-      return false;
+      return !verify_address && !verify_port;
    }
    len=sizeof(c);
    if(getpeername(control_sock,&c.sa,&len)==-1)
    {
       Log::global->Format(0,"getpeername(control_sock): %s\n",strerror(errno));
-      return false;
+      return !verify_address;
    }
 
 #if INET6
@@ -3479,6 +3479,15 @@ void Ftp::SendOPTS_MLST()
 
 void Ftp::TuneConnectionAfterFEAT()
 {
+   if(conn->clnt_supported)
+   {
+      const char *client=Query("client",hostname);
+      if(client && client[0])
+      {
+	 conn->SendCmd2("CLNT",client);
+	 expect->Push(Expect::IGNORE);
+      }
+   }
    if(conn->lang_supported)
    {
       const char *lang_to_use=Query("lang",hostname);
@@ -3493,15 +3502,6 @@ void Ftp::TuneConnectionAfterFEAT()
       // some non-RFC2640 servers require this command.
       conn->SendCmd("OPTS UTF8 ON");
       expect->Push(Expect::OPTS_UTF8);
-   }
-   if(conn->clnt_supported)
-   {
-      const char *client=Query("client",hostname);
-      if(client && client[0])
-      {
-	 conn->SendCmd2("CLNT",client);
-	 expect->Push(Expect::IGNORE);
-      }
    }
    if(conn->host_supported)
    {

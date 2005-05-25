@@ -1,3 +1,8 @@
+2005-04-20  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: (data_address_ok) don't return false if no checking
+	  needed and getpeername fails; send CLNT before LANG and OPTS UTF8.
+
 2005-04-11  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.cc: resume recv_buf in Close, this fixes a rare hang.

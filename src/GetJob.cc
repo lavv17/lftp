@@ -78,6 +78,7 @@ FileCopyPeer *GetJob::NoProtoDst(const char *dst,bool to_local)
    }
 
    int flags=O_WRONLY|O_CREAT|(cont?0:O_TRUNC);
+   dst=expand_home_relative(dst);
    const char *f=(cwd && dst[0]!='/') ? dir_file(cwd,dst) : dst;
    if(!cont && res_make_backup.QueryBool(0))
    {
