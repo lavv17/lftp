@@ -1,4 +1,11 @@
-Version 3.1.3 - 2004-04-15
+Version 3.1.4 - 2005-05-25
+
+* added parser for AS/400 ftp listing.
+* fixed handling of file names starting with a tilde in sftp protocol.
+* fixed minor problem with `lftp -u user --help'.
+* fixed tilde expansion in get -O argument.
+
+Version 3.1.3 - 2005-04-15
 
 * added mirror --loop option to re-mirror until no changes found.
 * fixed mirror creating too many children mirrors.
