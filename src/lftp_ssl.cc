@@ -112,6 +112,7 @@ static void munmap_file(gnutls_datum_t data)
 
 #if LFTP_LIBGNUTLS_VERSION_CODE < 0x010201
 #define gnutls_x509_crt_list_import lftp_gnutls_x509_crt_list_import
+#define GNUTLS_X509_CRT_LIST_IMPORT_FAIL_IF_EXCEED 1
 static
 int gnutls_x509_crt_list_import(gnutls_x509_crt_t *certs, unsigned int* cert_max,
     const gnutls_datum_t * data, gnutls_x509_crt_fmt_t format, unsigned int flags);

@@ -63,6 +63,8 @@ typedef gnutls_dh_params gnutls_dh_params_t;
 typedef gnutls_certificate_credentials gnutls_certificate_credentials_t;
 typedef gnutls_transport_ptr gnutls_transport_ptr_t;
 typedef gnutls_x509_crt gnutls_x509_crt_t;
+typedef gnutls_x509_crl gnutls_x509_crl_t;
+typedef gnutls_x509_crt_fmt gnutls_x509_crt_fmt_t;
 typedef gnutls_datum gnutls_datum_t;
 #endif
 
