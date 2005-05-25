@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.53)
-AC_INIT([lftp], [3.2.0], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [3.2.1], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_LIBOBJ_DIR(lib)
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
@@ -271,8 +271,10 @@ case "$with_openssl" in
 			with_gnutls=no;;
 esac
 if test x$with_gnutls = xyes; then
-   AM_PATH_LIBGNUTLS([1.2.1], [
-      AC_DEFINE(USE_GNUTLS, 1, [Define to 1 when using GNU TLS library])
+   AM_PATH_LIBGNUTLS([1.0.0], [
+      AC_DEFINE([USE_GNUTLS], 1, [Define to 1 when using GNU TLS library])
+      gnutls_version_code=`echo $libgnutls_config_version | $AWK -F. '{ printf "0x%02X%02X%02X\n",$1,$2,$3 }'`
+      AC_DEFINE_UNQUOTED([LFTP_LIBGNUTLS_VERSION_CODE], $gnutls_version_code, [Define to libgnutls version, e.g. 0x010203 for 1.2.3])
    ])
 fi
 if test x$with_openssl = xyes -a x"$LIBGNUTLS_LIBS" = x; then
@@ -385,8 +387,8 @@ AC_FUNC_ALLOCA
 lftp_VA_COPY
 LFTP_ENVIRON_CHECK
 AC_REPLACE_FUNCS([mktime memmove strcasecmp strncasecmp strtol strtoul\
- strptime strtok_r])
-AC_CHECK_DECLS([vsnprintf,snprintf,unsetenv,random,inet_aton,strcasecmp,strptime,strtok_r,dn_expand],,,[
+ strptime strtok_r memmem])
+AC_CHECK_DECLS([vsnprintf,snprintf,unsetenv,random,inet_aton,strcasecmp,strptime,strtok_r,dn_expand,memmem],,,[
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <stdio.h>

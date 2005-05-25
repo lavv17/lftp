@@ -112,6 +112,11 @@ CDECL void SOCKSinit(const char *);
 CDECL char *strtok_r(char *str, const char *sep, char **lasts);
 #endif
 
+#if !HAVE_DECL_MEMMEM
+CDECL void *memmem(const void *haystack, size_t haystack_len,
+		   const void *needle, size_t needle_len);
+#endif
+
 /* Tell the compiler when a conditional or integer expression is
    almost always true or almost always false.  */
 #ifndef HAVE_BUILTIN_EXPECT

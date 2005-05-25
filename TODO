@@ -70,3 +70,5 @@ implemented.
    (change CmdExec::Done to return true when waiting_num<cmd:parallel)
 
  * show transfer rate in mirror done message.
+
+ * fix closing sftp connection with timeout after entering a command.
