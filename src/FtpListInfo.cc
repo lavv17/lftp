@@ -32,7 +32,7 @@
 #include "ftpclass.h"
 #include "ascii_ctype.h"
 
-#define number_of_parsers 6
+#define number_of_parsers 7
 
 FileSet *FtpListInfo::Parse(const char *buf,int len)
 {
@@ -185,12 +185,19 @@ FileSet *FtpListInfo::ParseShortList(const char *buf,int len)
       }
 #endif
 
-      char *nl=(char*)memchr(buf,'\n',len);
+      const char *nl=(const char*)memchr(buf,'\n',len);
       if(!nl)
 	 break;
       line_len=nl-buf;
       if(line_len>0 && buf[line_len-1]=='\r')
 	 line_len--;
+      FileInfo::type type=FileInfo::UNKNOWN;
+      const char *slash=(const char*)memchr(buf,'/',line_len);
+      if(slash)
+      {
+	 type=FileInfo::DIRECTORY;
+	 line_len=slash-buf;
+      }
       if(line_len==0)
       {
 	 len-=nl+1-buf;
@@ -206,7 +213,12 @@ FileSet *FtpListInfo::ParseShortList(const char *buf,int len)
       buf=nl+1;
 
       if(!strchr(line,'/'))
-	 set->Add(new FileInfo(line));
+      {
+	 FileInfo *fi=new FileInfo(line);
+	 if(type!=fi->UNKNOWN)
+	    fi->SetType(type);
+	 set->Add(fi);
+      }
    }
    return set;
 }
@@ -306,6 +318,98 @@ FileInfo *ParseFtpLongList_NT(char *line,int *err,const char *tz)
       ERR;
    fi->SetName(t);
 
+   return fi;
+}
+
+/*
+ASUSER          8192 04/26/05 13:54:16 *DIR       dir/
+ASUSER          8192 04/26/05 13:57:34 *DIR       dir1/
+ASUSER        365255 02/28/01 15:41:40 *STMF      readme.txt
+ASUSER       8489625 03/18/03 09:37:00 *STMF      saved.zip
+ASUSER        365255 02/28/01 15:41:40 *STMF      unist.old
+*/
+static
+FileInfo *ParseFtpLongList_AS400(char *line,int *err,const char *tz)
+{
+   char *t = FIRST_TOKEN;
+   FileInfo *fi=0;
+   if(t==0)
+      ERR;
+   char *user=t;
+
+   t = NEXT_TOKEN;
+   if(t==0)
+      ERR;
+   long long size;
+   if(sscanf(t,"%lld",&size)!=1)
+      ERR;
+
+   t = NEXT_TOKEN;
+   if(t==0)
+      ERR;
+   int month,day,year;
+   if(sscanf(t,"%2d/%2d/%2d",&month,&day,&year)!=3)
+      ERR;
+   if(year>=70)
+      year+=1900;
+   else
+      year+=2000;
+
+   t = NEXT_TOKEN;
+   if(t==0)
+      ERR;
+   int hour,minute,second;
+   if(sscanf(t,"%2d:%2d:%2d",&hour,&minute,&second)!=3)
+      ERR;
+   t = NEXT_TOKEN;
+   if(t==0)
+      ERR;
+
+   struct tm tms;
+   tms.tm_sec=second;	   /* seconds after the minute [0, 61]  */
+   tms.tm_min=minute;      /* minutes after the hour [0, 59] */
+   tms.tm_hour=hour;	   /* hour since midnight [0, 23] */
+   tms.tm_mday=day;	   /* day of the month [1, 31] */
+   tms.tm_mon=month-1;     /* months since January [0, 11] */
+   tms.tm_year=year-1900;  /* years since 1900 */
+   tms.tm_isdst=-1;
+   time_t mtime=mktime_from_tz(&tms,tz);
+
+   t = NEXT_TOKEN;
+   if(t==0)
+      ERR;
+   FileInfo::type type=FileInfo::UNKNOWN;
+   if(!strcmp(t,"*DIR"))
+      type=FileInfo::DIRECTORY;
+   else
+      type=FileInfo::NORMAL;
+
+   t=strtok(NULL,"");
+   if(t==0)
+      ERR;
+   while(*t==' ')
+      t++;
+   if(*t==0)
+      ERR;
+   char *slash=strchr(t,'/');
+   if(slash)
+   {
+      if(slash==t)
+	 return 0;
+      *slash=0;
+      type=FileInfo::DIRECTORY;
+      if(slash[1])
+      {
+	 fi=new FileInfo(t);
+	 fi->SetType(type);
+	 return fi;
+      }
+   }
+   fi=new FileInfo(t);
+   fi->SetType(type);
+   fi->SetSize(size);
+   fi->SetDate(mtime,0);
+   fi->SetUser(user);
    return fi;
 }
 
@@ -746,6 +850,7 @@ Ftp::FtpLineParser Ftp::line_parsers[number_of_parsers+1]={
    ParseFtpLongList_NT,
    ParseFtpLongList_EPLF,
    ParseFtpLongList_MLSD,
+   ParseFtpLongList_AS400,
    ParseFtpLongList_OS2,
    ParseFtpLongList_MacWebStar,
    0
