@@ -1,3 +1,7 @@
+2005-06-02  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FindJob.cc: don't add a slash for root directory.
+
 2005-05-24  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp_ssl.cc, lftp_ssl.h: make it compatible with gnutls 1.0.x.

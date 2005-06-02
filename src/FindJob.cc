@@ -419,7 +419,7 @@ FinderJob::prf_res FinderJob_List::ProcessFile(const char *d,const FileInfo *fi)
    }
    else
       buf->Put(dir_file(d,fi->name));
-   if((fi->defined&fi->TYPE) && fi->filetype==fi->DIRECTORY)
+   if((fi->defined&fi->TYPE) && fi->filetype==fi->DIRECTORY && strcmp(fi->name,"/"))
       buf->Put("/");
    buf->Put("\n");
    return FinderJob::ProcessFile(d,fi);
