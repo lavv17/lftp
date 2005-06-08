@@ -1,3 +1,7 @@
+2005-06-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: improve status line.
+
 2005-06-02  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FindJob.cc: don't add a slash for root directory.

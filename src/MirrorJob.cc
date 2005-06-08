@@ -27,6 +27,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <assert.h>
+#include <mbswidth.h>
 #include "MirrorJob.h"
 #include "CmdExec.h"
 #include "rmJob.h"
@@ -115,6 +116,7 @@ final:
 
 void  MirrorJob::ShowRunStatus(StatusLine *s)
 {
+   int w=s->GetWidthDelayed();
    switch(state)
    {
    case(INITIAL_STATE):
@@ -145,19 +147,27 @@ void  MirrorJob::ShowRunStatus(StatusLine *s)
    case(GETTING_LIST_INFO):
       if(target_list_info && (!source_list_info || now%4>=2))
       {
+	 const char *status=target_list_info->Status();
+	 int status_w=mbswidth(status, MBSW_ACCEPT_INVALID|MBSW_ACCEPT_UNPRINTABLE);
+	 int dw=w-status_w;
+	 if(dw<20)
+	    dw=20;
 	 if(target_relative_dir)
-	    s->Show("%s: %s",squeeze_file_name(target_relative_dir,20),
-	       target_list_info->Status());
+	    s->Show("%s: %s",squeeze_file_name(target_relative_dir,dw),status);
 	 else
-	    s->Show("%s",target_list_info->Status());
+	    s->Show("%s",status);
       }
       else if(source_list_info)
       {
+	 const char *status=source_list_info->Status();
+	 int status_w=mbswidth(status, MBSW_ACCEPT_INVALID|MBSW_ACCEPT_UNPRINTABLE);
+	 int dw=w-status_w;
+	 if(dw<20)
+	    dw=20;
 	 if(source_relative_dir)
-	    s->Show("%s: %s",squeeze_file_name(source_relative_dir,20),
-	       source_list_info->Status());
+	    s->Show("%s: %s",squeeze_file_name(source_relative_dir,dw),status);
 	 else
-	    s->Show("%s",source_list_info->Status());
+	    s->Show("%s",status);
       }
       break;
    }
