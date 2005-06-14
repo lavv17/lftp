@@ -3410,7 +3410,7 @@ void  Ftp::MoveConnectionHere(Ftp *o)
 
    if(peer_curr>=peer_num)
       peer_curr=0;
-   event_time=o->event_time;
+   BumpEventTime(o->event_time);
 
    if(!home)
       set_home(home_auto);

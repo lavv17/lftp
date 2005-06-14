@@ -647,7 +647,7 @@ ResDecl::~ResDecl()
 #define HOUR   (60*MINUTE)
 #define DAY    (24*HOUR)
 
-TimeInterval::TimeInterval(const char *s)
+void TimeInterval::init(const char *s)
 {
    double interval=0;
    infty=false;

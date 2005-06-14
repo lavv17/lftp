@@ -34,6 +34,7 @@ class FDStream
 public:
    int fd;
    char *name;
+   char *full_name;
    char *error_text;
    const char *status;
 
@@ -126,7 +127,6 @@ class FileStream : public FDStream
 {
    int mode;
 public:
-   char *full_name;
    FileStream(const char *fname,int open_mode);
    ~FileStream();
 

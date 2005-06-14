@@ -140,7 +140,7 @@ void Http::MoveConnectionHere(Http *o)
    sock=o->sock; o->sock=-1;
    rate_limit=o->rate_limit; o->rate_limit=0;
    last_method=o->last_method; o->last_method=0;
-   event_time=o->event_time;
+   BumpEventTime(o->event_time);
    state=CONNECTED;
    o->Disconnect();
 }

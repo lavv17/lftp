@@ -190,8 +190,10 @@ class TimeInterval : public TimeDiff
 {
    bool infty;
    const char *error_text;
+   void init(const char *);
 public:
-   TimeInterval(const char *);
+   TimeInterval(const char *s) { init(s); }
+   TimeInterval(ResValue r) { init(r); }
    TimeInterval(time_t i) : TimeDiff(i,0) { infty=false; error_text=0; }
    TimeInterval(const TimeDiff &d) : TimeDiff(d) { infty=false; error_text=0; }
    bool Error() const { return error_text!=0; };

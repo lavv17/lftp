@@ -290,7 +290,7 @@ static ResDecl
 #if INET6
    ResDecl42b("net:socket-bind-ipv6",	  "",	   ResMgr::IPv6AddrValidate,0),
 #endif
-   ResDecl43 ("net:timeout",		  "300",   ResMgr::UNumberValidate,0),
+   ResDecl43 ("net:timeout",		  "5m",   ResMgr::TimeIntervalValidate,0),
    ResDecl44 ("net:connection-limit",	  "0",	   ResMgr::UNumberValidate,0),
    ResDecl45 ("net:connection-takeover",  "yes",   ResMgr::BoolValidate,0),
    ResDecl46 ("mirror:order",		  "*.sfv *.sig *.md5* *.sum * */", 0,ResMgr::NoClosure),

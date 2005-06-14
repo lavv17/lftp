@@ -118,7 +118,7 @@ void NetAccess::Reconfig(const char *name)
 
    const char *c=hostname;
 
-   timeout = ResMgr::Query("net:timeout",c);
+   timeout = TimeInterval(ResMgr::Query("net:timeout",c)).Seconds();
    reconnect_interval = ResMgr::Query("net:reconnect-interval-base",c);
    reconnect_interval_multiplier = ResMgr::Query("net:reconnect-interval-multiplier",c);
    if(reconnect_interval_multiplier<1)

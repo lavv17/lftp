@@ -322,7 +322,7 @@ void SFtp::MoveConnectionHere(SFtp *o)
    if(expect_chain_end==&o->expect_chain)
       expect_chain_end=&expect_chain;
    o->expect_chain_end=&o->expect_chain;
-   event_time=o->event_time;
+   BumpEventTime(o->event_time);
    ssh_id=o->ssh_id;
    state=CONNECTED;
    o->Disconnect();

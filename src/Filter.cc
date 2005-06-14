@@ -46,6 +46,7 @@ FDStream::FDStream(int new_fd,const char *new_name)
       name=xstrdup(expand_home_relative(new_name));
    else
       name=0;
+   full_name=0;
    error_text=0;
    status=0;
    close_fd=false;
@@ -54,6 +55,7 @@ FDStream::FDStream()
 {
    fd=-1;
    name=0;
+   full_name=0;
    error_text=0;
    status=0;
    close_fd=false;
@@ -72,6 +74,8 @@ FDStream::~FDStream()
 {
    if(close_fd)
       close(fd);
+   if(full_name!=name)
+      xfree(full_name);
    xfree(name);
    xfree(error_text);
 };
@@ -337,7 +341,6 @@ void FileStream::setmtime(time_t t)
 FileStream::FileStream(const char *fname,int new_mode) : FDStream(-1,fname)
 {
    mode=new_mode;
-   full_name=0;
    if(name[0]=='/')
       full_name=name;
    else
@@ -349,8 +352,6 @@ FileStream::FileStream(const char *fname,int new_mode) : FDStream(-1,fname)
 }
 FileStream::~FileStream()
 {
-   if(full_name!=name)
-      xfree(full_name);
    if(fd!=-1)
       close(fd);
    fd=-1;

@@ -289,8 +289,8 @@ int LsCache::ExpireHelper::Do()
 void LsCache::ExpireHelper::Reconfig(const char *name)
 {
    SetSizeLimit(ResMgr::Query("cache:size",0));
-   SetExpire(TimeInterval((const char*)ResMgr::Query("cache:expire",0)));
-   SetExpireNegative(TimeInterval((const char*)ResMgr::Query("cache:expire-negative",0)));
+   SetExpire(TimeInterval(ResMgr::Query("cache:expire",0)));
+   SetExpireNegative(TimeInterval(ResMgr::Query("cache:expire-negative",0)));
    use=ResMgr::QueryBool("cache:enable",0);
 }
 

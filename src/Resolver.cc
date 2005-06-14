@@ -977,7 +977,7 @@ void ResolverCache::CacheCheck()
    while(*scan)
    {
       Entry *s=*scan;
-      TimeInterval expire((const char *)ResMgr::Query("dns:cache-expire",s->hostname));
+      TimeInterval expire(ResMgr::Query("dns:cache-expire",s->hostname));
       if((!expire.IsInfty() && SMTask::now>=s->timestamp+expire.Seconds())
       || (count>=countlimit))
       {

@@ -310,7 +310,7 @@ void Fish::MoveConnectionHere(Fish *o)
    RQ_alloc=o->RQ_alloc; o->RQ_alloc=0;
    RQ_head=o->RQ_head; o->RQ_head=0;
    RQ_tail=o->RQ_tail; o->RQ_tail=0;
-   event_time=o->event_time;
+   BumpEventTime(o->event_time);
    set_real_cwd(o->real_cwd);
    o->set_real_cwd(0);
    state=CONNECTED;
