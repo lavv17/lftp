@@ -1,3 +1,13 @@
+2005-06-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, SFtp.cc, Fish.cc, Http.cc: use BumpEventTime
+	  instead of copying event_time in MoveConnectionHere, this fixes
+	  timeout error when net:idle > net:timeout.
+	* Filter.cc, Filter.h: move full_name to base class FDStream.
+	* LsCache.cc, Resolver.cc, Timer.cc: use new TimeInterval ctor.
+	* NetAccess.cc, resource.cc: make net:timeout a TimeInterval.
+	* ResMgr.cc, ResMgr.h: make TimeInterval ctor for ResValue.
+
 2005-06-08  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc: improve status line.
