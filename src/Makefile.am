@@ -3,8 +3,8 @@ pkgverlibdir = $(pkglibdir)/$(VERSION)
 
 bin_PROGRAMS = lftp
 bin_SCRIPTS = lftpget
-pkgdata_SCRIPTS = import-ncftp import-netscape
-noinst_SCRIPTS = ftpget convert-netscape-cookies
+pkgdata_SCRIPTS = import-ncftp import-netscape verify-file convert-netscape-cookies
+noinst_SCRIPTS = ftpget
 
 EXTRA_DIST = $(pkgdata_SCRIPTS) $(bin_SCRIPTS) $(noinst_SCRIPTS) \
 	example1.cc example2.cc
