@@ -52,7 +52,7 @@
 
 ResDecl rate_period  ("xfer:rate-period","15", ResMgr::UNumberValidate,ResMgr::NoClosure);
 ResDecl eta_period   ("xfer:eta-period", "120",ResMgr::UNumberValidate,ResMgr::NoClosure);
-ResDecl max_redir    ("xfer:max-redirections", "0",ResMgr::UNumberValidate,ResMgr::NoClosure);
+ResDecl max_redir    ("xfer:max-redirections", "5",ResMgr::UNumberValidate,ResMgr::NoClosure);
 
 // FileCopy
 #define super SMTask
