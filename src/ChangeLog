@@ -1,3 +1,7 @@
+2005-06-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc: fix exit code for redirections.
+
 2005-06-14  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, SFtp.cc, Fish.cc, Http.cc: use BumpEventTime

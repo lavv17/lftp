@@ -407,6 +407,7 @@ int CmdExec::Do()
 		     Roll(session);
 		     return MOVED;
 		  }
+		  exit_code=0;
 		  builtin=BUILTIN_NONE;
 		  char *cmd=string_alloca(6+3+2*strlen(loc));
 		  strcpy(cmd,"open \"");
