@@ -801,34 +801,7 @@ const char *ResMgr::IPv6AddrValidate(char **value)
 }
 #endif
 
-const char *ResMgr::FileReadable(char **value)
-{
-   if(!**value)
-      return 0;
-   const char *f=expand_home_relative(*value);
-   char *cwd=0;
-   const char *error=0;
-   if(f[0]!='/')
-   {
-      cwd=xgetcwd();
-      if(cwd)
-	 f=dir_file(cwd,f);
-   }
-   if(access(f,R_OK)<0)
-      error=strerror(errno);
-   else
-   {
-      if(f!=*value)
-      {
-	 xfree(*value);
-	 *value=xstrdup(f);
-      }
-   }
-   xfree(cwd);
-   return error;
-}
-
-const char *ResMgr::DirReadable(char **value)
+const char *ResMgr::FileAccessible(char **value,int mode,int want_dir)
 {
    if(!**value)
       return 0;
@@ -844,9 +817,9 @@ const char *ResMgr::DirReadable(char **value)
    struct stat st;
    if(stat(f,&st)<0)
       error=strerror(errno);
-   else if(!S_ISDIR(st.st_mode))
-      error=strerror(ENOTDIR);
-   else if(access(f,R_OK|X_OK)<0)
+   else if(want_dir ^ S_ISDIR(st.st_mode))
+      error=strerror(want_dir?ENOTDIR:EISDIR);
+   else if(access(f,mode)<0)
       error=strerror(errno);
    else
    {
@@ -857,7 +830,19 @@ const char *ResMgr::DirReadable(char **value)
       }
    }
    xfree(cwd);
-   return 0;
+   return error;
+}
+const char *ResMgr::FileReadable(char **value)
+{
+   return FileAccessible(value,R_OK);
+}
+const char *ResMgr::FileExecutable(char **value)
+{
+   return FileAccessible(value,X_OK);
+}
+const char *ResMgr::DirReadable(char **value)
+{
+   return FileAccessible(value,R_OK|X_OK,1);
 }
 
 CDECL_BEGIN

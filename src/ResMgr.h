@@ -103,7 +103,9 @@ public:
    static const char *IPv6AddrValidate(char **value);
 #endif
    static const char *UNumberPairValidate(char **value);
+   static const char *FileAccessible(char **value,int mode,int want_dir=0);
    static const char *FileReadable(char **value);
+   static const char *FileExecutable(char **value);
    static const char *DirReadable(char **value);
    static const char *CharsetValidate(char **value);
    static const char *NoClosure(char **);
