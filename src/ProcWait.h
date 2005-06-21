@@ -53,7 +53,7 @@ protected:
 
 public:
    int	 Do();
-   int	 GetState() { return status; }
+   State GetState() { return status; }
    int	 GetInfo() { return term_info; }
    int	 Kill(int sig=SIGTERM);
 
