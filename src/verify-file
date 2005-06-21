@@ -105,7 +105,13 @@ file: foreach $file (@ARGV) {
       next file;
    }
    if($name=~/\.zip$/) {
-      system qw{unzip -t},$file;
+      system qw{unzip -tqq},$file;
+      $e=($?>>8);
+      $err++ if $e;
+      next file;
+   }
+   if($name=~/\.rpm$/) {
+      system qw{rpm --checksig},$file;
       $e=($?>>8);
       $err++ if $e;
       next file;

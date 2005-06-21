@@ -251,7 +251,7 @@ public:
 class FileVerificator : public SMTask
 {
    bool done;
-   const char *error_text;
+   char *error_text;
    IOBufferFDStream *verify_buffer;
    InputFilter *verify_process;
    void Init0();
@@ -265,6 +265,7 @@ public:
    bool Done() { return done; }
    bool Error() { return error_text!=0; }
    const char *ErrorText() { return error_text; }
+   const char *Status() { return _("Verifying..."); };
 };
 
 class FileCopyPeerFA : public FileCopyPeer

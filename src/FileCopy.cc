@@ -873,6 +873,8 @@ void FileCopyPeerFA::Resume()
 
 const char *FileCopyPeerFA::GetStatus()
 {
+   if(verify)
+      return verify->Status();
    if(!session->IsOpen())
       return 0;
    return session->CurrentStatus();
@@ -1665,6 +1667,8 @@ void FileCopyPeerFDStream::RemoveFile()
 
 const char *FileCopyPeerFDStream::GetStatus()
 {
+   if(verify)
+      return verify->Status();
    return stream->status;
 }
 void FileCopyPeerFDStream::Kill(int sig)
@@ -1737,14 +1741,13 @@ void FileVerificator::Init0()
    error_text=0;
    verify_buffer=0;
    verify_process=0;
+   if(!ResMgr::QueryBool("xfer:verify",0))
+      done=true;
 }
 void FileVerificator::InitVerify(const char *f)
 {
-   if(!ResMgr::QueryBool("xfer:verify",0))
-   {
-      done=true;
+   if(done)
       return;
-   }
    ArgV *args=new ArgV(ResMgr::Query("xfer:verify-command",0));
    args->Append(f);
    verify_process=new InputFilter(args);
@@ -1759,6 +1762,8 @@ FileVerificator::FileVerificator(const char *f)
 FileVerificator::FileVerificator(const FDStream *stream)
 {
    Init0();
+   if(done)
+      return;
    const char *f=stream->full_name;
    if(!f)
    {
@@ -1776,12 +1781,17 @@ FileVerificator::FileVerificator(const FDStream *stream)
 	 f=".";
    }
    InitVerify(f);
-   verify_process->SetProcGroup(stream->GetProcGroup());
-   verify_process->SetCwd(cwd);
+   if(verify_process)
+   {
+      verify_process->SetProcGroup(stream->GetProcGroup());
+      verify_process->SetCwd(cwd);
+   }
 }
 FileVerificator::FileVerificator(FileAccess *session,const char *f)
 {
    Init0();
+   if(done)
+      return;
    if(strcmp(session->GetProto(),"file"))
    {
       done=true;
@@ -1792,6 +1802,7 @@ FileVerificator::FileVerificator(FileAccess *session,const char *f)
 }
 FileVerificator::~FileVerificator()
 {
+   xfree(error_text);
    // verify_process is deleted by verify_buffer dtor
    Delete(verify_buffer);
 }
@@ -1800,6 +1811,7 @@ int FileVerificator::Do()
    int m=STALL;
    if(done)
       return m;
+   verify_process->Kill(SIGCONT);
    if(!verify_buffer->Eof())
       return m;
    if(verify_process->GetProcState()!=ProcWait::TERMINATED)
@@ -1810,7 +1822,21 @@ int FileVerificator::Do()
    {
       verify_buffer->Put("",1);
       int len;
-      verify_buffer->Get(&error_text,&len);
+      const char *s;
+      verify_buffer->Get(&s,&len);
+      len=strlen(s);
+      while(len>0 && s[len-1]=='\n')
+	 len--;
+      if(len==0)
+      {
+	 s=_("Verify command failed without a message");
+	 len=strlen(s);
+      }
+      error_text=xstrdup(s);
+      error_text[len]=0;
+      char *nl=strrchr(error_text,'\n');
+      if(nl)
+	 memmove(error_text,nl+1,len-(nl+1-error_text)+1);
    }
    return m;
 }

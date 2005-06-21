@@ -77,6 +77,7 @@ class OutputFilter : public FDStream
    FDStream *second;
    bool delete_second;
    bool stderr_to_stdout;
+   bool stdout_to_null;
 
    bool closed;
 
@@ -96,6 +97,7 @@ public:
    virtual ~OutputFilter();
 
    void StderrToStdout() { stderr_to_stdout=true; }
+   void StdoutToNull() { stdout_to_null=true; }
 
    int getfd();
    bool Done();

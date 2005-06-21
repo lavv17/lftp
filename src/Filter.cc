@@ -180,6 +180,13 @@ int OutputFilter::getfd()
       Child(p);
       if(stderr_to_stdout)
 	 dup2(1,2);
+      if(stdout_to_null)
+      {
+	 close(1);
+	 int null=open("/dev/null",O_RDWR);
+	 if(null==0)
+	    dup(0);
+      }
       if(cwd)
       {
 	 if(chdir(cwd)==-1)
@@ -239,6 +246,7 @@ void OutputFilter::Init()
    pg=0;
    closed=false;
    stderr_to_stdout=false;
+   stdout_to_null=false;
    delete_second=false;
 }
 

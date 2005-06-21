@@ -13,6 +13,10 @@
 	* misc.cc: fix gcc4 warning.
 	* FileCopy.cc, FileCopy.h, resource.cc: new settings xfer:verify,
 	  xfer:verify-command; verify completely received file.
+	* FileCopy.cc, FileCopy.h: show verify status; fix problems with
+	  xfer:verify=no; show only last line of verify error.
+	* Filter.cc, Filter.h: (StdoutToNull) new method.
+	* verify-file: add rpm support.
 
 2005-06-16  Alexander V. Lukyanov <lav@yars.free.net>
 
