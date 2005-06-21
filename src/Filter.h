@@ -35,7 +35,6 @@ public:
    int fd;
    char *name;
    char *full_name;
-   char *cwd;
    char *error_text;
    const char *status;
 
@@ -53,9 +52,6 @@ public:
    void clear_status() { status=0; }
    void CloseFD() { close_fd=true; }
 
-   void SetCwd(const char *);
-   const char *GetCwd() const { return cwd; }
-
    virtual off_t get_size() { return -1; }
    virtual void setmtime(time_t) {}
    virtual bool can_setmtime() { return false; }
@@ -64,7 +60,7 @@ public:
    virtual bool Done() { return true; }
    virtual bool usesfd(int n_fd) { return fd==n_fd; }
    virtual void Kill(int=SIGTERM) {}
-   virtual pid_t GetProcGroup() const { return 0; }
+   virtual pid_t GetProcGroup() { return 0; }
    virtual bool broken() { return false; }
    virtual bool can_seek() { return false; }
 };
@@ -77,6 +73,8 @@ class OutputFilter : public FDStream
    FDStream *second;
    bool delete_second;
    bool stderr_to_stdout;
+
+   char *oldcwd;
 
    bool closed;
 
@@ -95,6 +93,7 @@ public:
    OutputFilter(ArgV *a,FDStream *second);
    virtual ~OutputFilter();
 
+   void SetCwd(const char *);
    void StderrToStdout() { stderr_to_stdout=true; }
 
    int getfd();
@@ -102,10 +101,7 @@ public:
 
    bool usesfd(int n_fd);
    void Kill(int sig=SIGTERM);
-   pid_t GetProcGroup() const { return pg; }
-   void SetProcGroup(pid_t new_pg) { pg=new_pg; }
-   ProcWait::State GetProcState() { return w->GetState(); }
-   int GetProcExitCode() { return w->GetInfo()>>8; }
+   pid_t GetProcGroup() { return pg; }
 
    bool broken();
 

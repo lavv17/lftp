@@ -248,25 +248,6 @@ public:
    bool WritePending() { return put && put->WritePending(); }
 };
 
-class FileVerificator : public SMTask
-{
-   bool done;
-   const char *error_text;
-   IOBufferFDStream *verify_buffer;
-   InputFilter *verify_process;
-   void Init0();
-   void InitVerify(const char *f);
-public:
-   FileVerificator(const char *f);
-   FileVerificator(const FDStream *);
-   FileVerificator(FileAccess *,const char *f);
-   ~FileVerificator();
-   int Do();
-   bool Done() { return done; }
-   bool Error() { return error_text!=0; }
-   const char *ErrorText() { return error_text; }
-};
-
 class FileCopyPeerFA : public FileCopyPeer
 {
    char *file;
@@ -286,8 +267,6 @@ class FileCopyPeerFA : public FileCopyPeer
    int retries;
 
    int redirections;
-
-   FileVerificator *verify;
 
 protected:
    ~FileCopyPeerFA();
@@ -343,8 +322,6 @@ class FileCopyPeerFDStream : public FileCopyPeer
    bool delete_stream;
    bool create_fg_data;
    bool need_seek;
-
-   FileVerificator *verify;
 
 protected:
    ~FileCopyPeerFDStream();
