@@ -28,17 +28,23 @@ class FileFeeder : public CmdFeeder
    FDStream *in;
    enum { buffer_size=0x1000 };
    char buffer[buffer_size];
+   FgData *fg_data;
 public:
    const char *NextCmd(CmdExec *exec,const char *prompt);
    FileFeeder(FDStream *in)
    {
       this->in=in;
+      fg_data=0;
    }
    virtual ~FileFeeder()
    {
-      if(in)
-	 delete in;
+      if(fg_data)
+	 fg_data->Bg();
+      delete fg_data;
+      delete in;
    }
+   void Fg() { if(fg_data) fg_data->Fg(); }
+   void Bg() { if(fg_data) fg_data->Bg(); }
 };
 
 #endif//FILEFEEDER_H

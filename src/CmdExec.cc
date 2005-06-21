@@ -617,6 +617,8 @@ try_get_cmd:
 
 	 char *prompt=MakePrompt();
 	 feeder_called=true;
+	 if(fg)
+	    feeder->Fg();
 	 const char *cmd=feeder->NextCmd(this,prompt);
 	 feeder_called=false;
 	 if(cmd==0)
@@ -674,6 +676,8 @@ try_get_cmd:
       partial_cmd=true;
       goto try_get_cmd;
    case(PARSE_OK):
+      if(feeder)
+	 feeder->Bg();
       break;
    }
    if(args==0 || args->count()==0)

@@ -52,6 +52,9 @@ public:
 
    virtual void clear() {}
    virtual bool RealEOF() { return true; }
+
+   virtual void Fg() {}
+   virtual void Bg() {}
 };
 
 extern CmdFeeder *lftp_feeder;	 // feeder to use after 'lftp' command

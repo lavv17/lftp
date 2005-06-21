@@ -35,7 +35,8 @@ const char *FileFeeder::NextCmd(CmdExec *exec, const char *)
       }
       return "";
    }
-   in->Kill(SIGCONT);
+   if(fg_data==0)
+      fg_data=new FgData(in->GetProcGroup(),true);
    int res=read(fd,buffer,buffer_size-1);
    if(res==0)
    {
