@@ -34,6 +34,7 @@
 #include "url.h"
 #include "GetPass.h"
 #include "ascii_ctype.h"
+#include "confpaths.h"
 
 static const char *FtpProxyValidate(char **p)
 {
@@ -347,6 +348,10 @@ static ResDecl
 static ResDecl
    res_dir_colors ("color:dir-colors",   "",   0,ResMgr::NoClosure);
 
+static ResDecl
+   res_verify	  ("xfer:verify", "no", ResMgr::BoolValidate,ResMgr::NoClosure),
+   res_verify_cmd ("xfer:verify-command","",ResMgr::FileExecutable,0);
+
 #ifdef HAVE_LANGINFO_H
 # include <langinfo.h>
 #endif
@@ -420,4 +425,6 @@ void ResMgr::ClassInit()
    if(cs)
       Set("file:charset",0,cs);
 #endif
+
+   Set("xfer:verify-command",0,PKGDATADIR"/verify-file");
 }

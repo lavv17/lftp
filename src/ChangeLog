@@ -3,7 +3,16 @@
 	* CmdExec.cc, CmdExec.h, FileFeeder.cc, FileFeeder.h: add Fg/Bg methods
 	  to CmdFeeder to allow passing terminal to subprocesses; allocate
 	  FgData for FileFeeder.
-	* Filter.cc, Filter.h: move cwd to FDStream;
+	* Filter.cc, Filter.h: move cwd to FDStream; add GetCwd, SetProcGroup
+	  methods.
+	* PtyShell.h: make GetProcGroup const.
+	* ProcWait.h: (GetState) return enum type.
+	* ResMgr.cc, ResMgr.h: (FileExecutable) new method; optimize file checking.
+	* commands.cc: use SetCwd instead of Chdir for setting cwd from history.
+	* lftp_ssl.cc: add Fedora-4 ca-bundle location.
+	* misc.cc: fix gcc4 warning.
+	* FileCopy.cc, FileCopy.h, resource.cc: new settings xfer:verify,
+	  xfer:verify-command; verify completely received file.
 
 2005-06-16  Alexander V. Lukyanov <lav@yars.free.net>
 
