@@ -190,6 +190,7 @@ static const char *lftp_ssl_find_ca_file()
 {
    // a few possible locations of ca-bundle.crt
    static const char *const ca_file_location[]={
+      "/etc/pki/tls/certs/ca-bundle.crt",
       "/etc/certs/ca-bundle.crt",
       "/usr/share/ssl/certs/ca-bundle.crt",
       "/etc/ssl/certs/ca-certificates.crt",
