@@ -266,7 +266,7 @@ void  truncate_file_tree(const char *dir)
       SignalHook::Ignore(SIGTSTP);
       SignalHook::Ignore(SIGQUIT);
       SignalHook::Ignore(SIGHUP);
-      execlp("rm","rm","-rf",dir,NULL);
+      execlp("rm","rm","-rf",dir,(char*)NULL);
       perror("execlp(rm)");
       fflush(stderr);
       _exit(1);
