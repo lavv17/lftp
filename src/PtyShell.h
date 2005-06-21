@@ -54,7 +54,7 @@ public:
    bool Done();
 
    void Kill(int sig=SIGTERM) { if(w) w->Kill(sig); }
-   pid_t GetProcGroup() { return pg; }
+   pid_t GetProcGroup() const { return pg; }
 
    bool broken();
 };
