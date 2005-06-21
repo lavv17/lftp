@@ -46,6 +46,7 @@
 #include "misc.h"
 #include "LsCache.h"
 #include "plural.h"
+#include "ArgV.h"
 
 #define skip_threshold 0x1000
 #define debug(a) Log::global->Format a
@@ -724,6 +725,19 @@ int FileCopyPeerFA::Do()
 
    if(Done() || Error())
       return m;
+
+   if(verify)
+   {
+      if(verify->Error())
+	 SetError(verify->ErrorText());
+      if(verify->Done())
+      {
+	 done=true;
+	 m=MOVED;
+      }
+      return m;
+   }
+
    if(want_size && size==NO_SIZE_YET && (mode==PUT || !start_transfer))
    {
       if(session->IsClosed())
@@ -781,7 +795,10 @@ int FileCopyPeerFA::Do()
 	    fxp_eof:
 	       // FIXME: set date for real.
 	       date_set=true;
-	       done=true;
+	       if(!strcmp(session->GetProto(),"file") && !verify)
+		  verify=new FileVerificator(session,file);
+	       else
+		  done=true;
 	       m=MOVED;
 	    }
 	    else if(res==FA::IN_PROGRESS)
@@ -1155,6 +1172,7 @@ void FileCopyPeerFA::Init()
    redirections=0;
    can_seek=true;
    can_seek0=true;
+   verify=0;
 }
 
 FileCopyPeerFA::FileCopyPeerFA(FileAccess *s,const char *f,int m)
@@ -1178,6 +1196,7 @@ FileCopyPeerFA::~FileCopyPeerFA()
    }
    xfree(file);
    xfree(orig_url);
+   Delete(verify);
 }
 
 FileCopyPeerFA::FileCopyPeerFA(ParsedURL *u,int m)
@@ -1240,12 +1259,14 @@ FileCopyPeerFDStream::FileCopyPeerFDStream(FDStream *o,dir_t m)
    put_ll_timer=0;
    if(m==PUT)
       put_ll_timer=new Timer(TimeDiff(0,200));
+   verify=0;
 }
 FileCopyPeerFDStream::~FileCopyPeerFDStream()
 {
    if(delete_stream)
       delete stream;
    delete put_ll_timer;
+   Delete(verify);
 }
 
 void FileCopyPeerFDStream::Seek_LL()
@@ -1322,6 +1343,19 @@ int FileCopyPeerFDStream::Do()
    int m=STALL;
    if(Done() || Error())
       return m;
+
+   if(verify)
+   {
+      if(verify->Error())
+	 SetError(verify->ErrorText());
+      if(verify->Done())
+      {
+	 done=true;
+	 m=MOVED;
+      }
+      return m;
+   }
+
    switch(mode)
    {
    case PUT:
@@ -1340,7 +1374,10 @@ int FileCopyPeerFDStream::Do()
 	    }
 	    if(stream && delete_stream && !stream->Done())
 	       return m;
-	    done=true;
+	    if(!verify && stream->full_name)
+	       verify=new FileVerificator(stream);
+	    else
+	       done=true;
 	    return MOVED;
 	 }
 	 if(seek_pos==0)
@@ -1696,6 +1733,90 @@ int FileCopyPeerDirList::Do()
    dl->Skip(s);
    return MOVED;
 }
+
+// FileVerificator
+void FileVerificator::Init0()
+{
+   done=false;
+   error_text=0;
+   verify_buffer=0;
+   verify_process=0;
+}
+void FileVerificator::InitVerify(const char *f)
+{
+   if(!ResMgr::QueryBool("xfer:verify",0))
+   {
+      done=true;
+      return;
+   }
+   ArgV *args=new ArgV(ResMgr::Query("xfer:verify-command",0));
+   args->Append(f);
+   verify_process=new InputFilter(args);
+   verify_process->StderrToStdout();
+   verify_buffer=new IOBufferFDStream(verify_process,IOBuffer::GET);
+}
+FileVerificator::FileVerificator(const char *f)
+{
+   Init0();
+   InitVerify(f);
+}
+FileVerificator::FileVerificator(const FDStream *stream)
+{
+   Init0();
+   const char *f=stream->full_name;
+   if(!f)
+   {
+      done=true;
+      return;
+   }
+   const char *cwd=stream->GetCwd();
+   int cwd_len=xstrlen(cwd);
+   if(cwd && cwd_len>0 && !strncmp(f,cwd,cwd_len))
+   {
+      f+=cwd_len;
+      while(*f=='/')
+	 f++;
+      if(*f==0)
+	 f=".";
+   }
+   InitVerify(f);
+   verify_process->SetProcGroup(stream->GetProcGroup());
+   verify_process->SetCwd(cwd);
+}
+FileVerificator::FileVerificator(FileAccess *session,const char *f)
+{
+   Init0();
+   if(strcmp(session->GetProto(),"file"))
+   {
+      done=true;
+      return;
+   }
+   InitVerify(f);
+   verify_process->SetCwd(session->GetCwd());
+}
+FileVerificator::~FileVerificator()
+{
+   // verify_process is deleted by verify_buffer dtor
+   Delete(verify_buffer);
+}
+int FileVerificator::Do()
+{
+   int m=STALL;
+   if(!verify_buffer->Eof())
+      return m;
+   if(verify_process->GetProcState()!=ProcWait::TERMINATED)
+      return m;
+   done=true;
+   m=MOVED;
+   if(verify_process->GetProcExitCode()!=0)
+   {
+      verify_buffer->Put("",1);
+      int len;
+      verify_buffer->Get(&error_text,&len);
+   }
+   return m;
+}
+
 
 // special pointer to creator of ftp/ftp copier. It is init'ed in Ftp class.
 FileCopy *(*FileCopy::fxp_create)(FileCopyPeer *src,FileCopyPeer *dst,bool cont);

@@ -38,8 +38,6 @@ public:
    }
    virtual ~FileFeeder()
    {
-      if(fg_data)
-	 fg_data->Bg();
       delete fg_data;
       delete in;
    }

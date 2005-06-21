@@ -1,3 +1,10 @@
+2005-06-21  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc, CmdExec.h, FileFeeder.cc, FileFeeder.h: add Fg/Bg methods
+	  to CmdFeeder to allow passing terminal to subprocesses; allocate
+	  FgData for FileFeeder.
+	* Filter.cc, Filter.h: move cwd to FDStream;
+
 2005-06-16  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CmdExec.cc: fix exit code for redirections.

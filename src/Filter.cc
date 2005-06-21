@@ -47,6 +47,7 @@ FDStream::FDStream(int new_fd,const char *new_name)
    else
       name=0;
    full_name=0;
+   cwd=0;
    error_text=0;
    status=0;
    close_fd=false;
@@ -70,6 +71,11 @@ void FDStream::MakeErrorText(int e)
    error_text=(char*)xmalloc(strlen(name)+strlen(syserr)+3);
    sprintf(error_text,"%s: %s",name,syserr);
 }
+void FDStream::SetCwd(const char *new_cwd)
+{
+   xfree(cwd);
+   cwd=xstrdup(new_cwd);
+}
 FDStream::~FDStream()
 {
    if(close_fd)
@@ -77,6 +83,7 @@ FDStream::~FDStream()
    if(full_name!=name)
       xfree(full_name);
    xfree(name);
+   xfree(cwd);
    xfree(error_text);
 };
 
@@ -173,19 +180,25 @@ int OutputFilter::getfd()
       Child(p);
       if(stderr_to_stdout)
 	 dup2(1,2);
-      if(oldcwd)
+      if(cwd)
       {
-	 if(chdir(oldcwd)==-1)
+	 if(chdir(cwd)==-1)
 	 {
-	    fprintf(stderr,_("chdir(%s) failed: %s\n"),oldcwd,strerror(errno));
+	    fprintf(stderr,_("chdir(%s) failed: %s\n"),cwd,strerror(errno));
 	    fflush(stderr);
 	    _exit(1);
 	 }
       }
       if(a)
+      {
 	 execvp(a->a0(),a->GetVNonConst());
-      execl("/bin/sh","sh","-c",name,(char*)NULL);
-      fprintf(stderr,_("execl(/bin/sh) failed: %s\n"),strerror(errno));
+	 fprintf(stderr,_("execvp(%s) failed: %s\n"),a->a0(),strerror(errno));
+      }
+      else
+      {
+	 execl("/bin/sh","sh","-c",name,(char*)NULL);
+	 fprintf(stderr,_("execl(/bin/sh) failed: %s\n"),strerror(errno));
+      }
       fflush(stderr);
       _exit(1);
    case(-1): /* error */
@@ -202,9 +215,6 @@ int OutputFilter::getfd()
 
    fcntl(fd,F_SETFD,FD_CLOEXEC);
    fcntl(fd,F_SETFL,O_NONBLOCK);
-
-   xfree(oldcwd);
-   oldcwd=0;
 
    // wait until the child stops.
    int info;
@@ -225,17 +235,11 @@ void OutputFilter::Init()
    w=0;
    second=0;
    second_fd=-1;
-   oldcwd=xgetcwd();
+   cwd=xgetcwd();
    pg=0;
    closed=false;
    stderr_to_stdout=false;
    delete_second=false;
-}
-
-void OutputFilter::SetCwd(const char *cwd)
-{
-   xfree(oldcwd);
-   oldcwd=xstrdup(cwd);
 }
 
 OutputFilter::OutputFilter(const char *filter,int new_second_fd)
@@ -271,15 +275,13 @@ OutputFilter::OutputFilter(ArgV *a1,FDStream *new_second)
 
 OutputFilter::~OutputFilter()
 {
-   // `a' is not deleted here
+   delete a;
 
    close(fd);
    fd=-1;
 
    if(w)
       w->Auto();
-
-   xfree(oldcwd);
 
    if(delete_second)
       delete second;
@@ -345,9 +347,8 @@ FileStream::FileStream(const char *fname,int new_mode) : FDStream(-1,fname)
       full_name=name;
    else
    {
-      char *cwd=xgetcwd();
+      cwd=xgetcwd();
       full_name=xstrdup(dir_file(cwd,name));
-      xfree(cwd);
    }
 }
 FileStream::~FileStream()
