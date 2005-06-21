@@ -928,7 +928,7 @@ Job *CmdExec::builtin_open()
    {
       const char *old=cwd_history.Lookup(session);
       if(old)
-	 session->Chdir(old,false);
+	 session->SetCwd(old);
 
       char *s=string_alloca(strlen(path)*2+40);
       strcpy(s,"&& cd \"");
