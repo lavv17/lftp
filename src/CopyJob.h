@@ -53,8 +53,8 @@ public:
    int Done();
    int ExitCode();
 
-   void Suspend() { c->Suspend(); Job::Suspend(); }
-   void Resume() { Job::Resume(); c->Resume(); }
+   void SuspendInternal() { c->SuspendSlave(); }
+   void ResumeInternal()  { c->ResumeSlave(); }
    void Fg() { c->Fg(); Job::Fg(); }
    void Bg() { Job::Bg(); c->Bg(); }
 

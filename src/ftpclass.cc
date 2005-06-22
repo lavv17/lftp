@@ -1042,7 +1042,7 @@ bool Ftp::GetBetterConnection(int level,bool limit_reached)
 	 if(level<2)
 	    continue;
 	 /* only take over lower priority or suspended jobs */
-	 if(!connection_takeover || (o->priority>=priority && !o->suspended))
+	 if(!connection_takeover || (o->priority>=priority && !o->IsSuspended()))
 	    continue;
 	 if(o->conn->data_sock!=-1 && o->expect->Count()<=1)
 	 {

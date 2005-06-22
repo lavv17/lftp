@@ -145,17 +145,15 @@ const char *FtpDirList::Status()
    return "";
 }
 
-void FtpDirList::Suspend()
+void FtpDirList::SuspendInternal()
 {
    if(ubuf)
-      ubuf->Suspend();
-   super::Suspend();
+      ubuf->SuspendSlave();
 }
-void FtpDirList::Resume()
+void FtpDirList::ResumeInternal()
 {
-   super::Resume();
    if(ubuf)
-      ubuf->Resume();
+      ubuf->ResumeSlave();
 }
 
 void FtpDirList::FormatGeneric(FileInfo *fi)

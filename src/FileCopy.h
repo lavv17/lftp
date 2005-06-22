@@ -234,8 +234,8 @@ public:
    void Init();
 
    int Do();
-   void Suspend();
-   void Resume();
+   void SuspendInternal();
+   void ResumeInternal();
    void Fg();
    void Bg();
 
@@ -305,8 +305,8 @@ public:
 
    int Buffered() { return in_buffer+session->Buffered(); }
 
-   void Suspend();
-   void Resume();
+   void SuspendInternal();
+   void ResumeInternal();
 
    void DontReuseSession() { reuse_later=false; }
 

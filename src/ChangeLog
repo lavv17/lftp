@@ -2,6 +2,13 @@
 
 	* FileCopy.cc, FileCopy.h: (GetURL) new method; don't delete peers too
 	  early, so info can be get from them after transfer.
+	* CmdExec.cc, CopyJob.h, FileCopy.cc, FileCopy.h, FileSetOutput.cc,
+	  FileSetOutput.h, Fish.cc, Fish.h, FtpDirList.cc, FtpDirList.h,
+	  Http.cc, Http.h, HttpDir.cc, HttpDir.h, OutputJob.cc, OutputJob.h,
+	  SFtp.cc, SFtp.h, SMTask.cc, SMTask.h, buffer.cc, buffer.h,
+	  ftpclass.cc: (SuspendInternal, ResumeInternal, SuspendSlave,
+	  ResumeSlave) new methods to simplify suspend/resume with slave tasks;
+	  make suspend member private, use IsSuspended.
 
 2005-06-21  Alexander V. Lukyanov <lav@yars.free.net>
 

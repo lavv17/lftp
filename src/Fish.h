@@ -53,8 +53,6 @@ class Fish : public NetAccess
 
    IOBuffer *send_buf;
    IOBuffer *recv_buf;
-   bool recv_buf_suspended;
-
    PtyShell *ssh;
 
    void Disconnect();
@@ -153,8 +151,8 @@ public:
 
    bool NeedSizeDateBeforehand() { return true; }
 
-   void Suspend();
-   void Resume();
+   void SuspendInternal();
+   void ResumeInternal();
 
    void Cleanup();
    void CleanupThis();
@@ -172,8 +170,8 @@ public:
    const char *Status();
    int Do();
 
-   void Suspend();
-   void Resume();
+   void SuspendInternal();
+   void ResumeInternal();
 };
 
 class FishListInfo : public GenericParseListInfo

@@ -68,8 +68,8 @@ public:
    const char *Status();
    int Do();
 
-   void Suspend();
-   void Resume();
+   void SuspendInternal();
+   void ResumeInternal();
 };
 
 #endif//HTTPDIR_H

@@ -58,6 +58,7 @@ SMTask::SMTask()
       chain=this;
    }
    suspended=false;
+   suspended_slave=false;
    running=0;
    deleting=false;
    task_count++;
@@ -66,8 +67,38 @@ SMTask::SMTask()
 #endif
 }
 
-void  SMTask::Suspend() { suspended=true; }
-void  SMTask::Resume()  { suspended=false; }
+void  SMTask::Suspend()
+{
+   if(suspended)
+      return;
+   if(!IsSuspended())
+      SuspendInternal();
+   suspended=true;
+}
+void  SMTask::Resume()
+{
+   if(!suspended)
+      return;
+   suspended=false;
+   if(!IsSuspended())
+      ResumeInternal();
+}
+void  SMTask::SuspendSlave()
+{
+   if(suspended_slave)
+      return;
+   if(!IsSuspended())
+      SuspendInternal();
+   suspended_slave=true;
+}
+void  SMTask::ResumeSlave()
+{
+   if(!suspended_slave)
+      return;
+   suspended_slave=false;
+   if(!IsSuspended())
+      ResumeInternal();
+}
 
 SMTask::~SMTask()
 {
@@ -153,7 +184,7 @@ void SMTask::Schedule()
    scan=chain;
    while(scan)
    {
-      if(scan->running || scan->suspended)
+      if(scan->running || scan->IsSuspended())
       {
 	 scan=scan->next;
 	 continue;
@@ -196,7 +227,7 @@ void SMTask::Schedule()
    // conditions.
    for(scan=chain; scan; scan=scan->next)
    {
-      if(!scan->suspended && !scan->running && !scan->block.IsEmpty())
+      if(!scan->IsSuspended() && !scan->running && !scan->block.IsEmpty())
 	 sched_total.Merge(scan->block);
    }
 }

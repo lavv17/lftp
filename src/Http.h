@@ -53,7 +53,6 @@ class Http : public NetAccess
 
    IOBuffer *send_buf;
    IOBuffer *recv_buf;
-   bool recv_buf_suspended;
    void SendMethod(const char *,const char *);
    const char *last_method;
    enum { HTTP_NONE=0, HTTP_POST, HTTP_MOVE, HTTP_COPY } special;
@@ -163,8 +162,8 @@ public:
 
    bool NeedSizeDateBeforehand() { return true; }
 
-   void Suspend();
-   void Resume();
+   void SuspendInternal();
+   void ResumeInternal();
 
    void Cleanup();
    void CleanupThis();

@@ -464,22 +464,20 @@ void OutputJob::Bg()
    super::Bg();
 }
 
-void OutputJob::Suspend()
+void OutputJob::SuspendInternal()
 {
    if(input)
-      input->Suspend();
+      input->SuspendSlave();
    if(output && input != output)
-      output->Suspend();
-   super::Suspend();
+      output->SuspendSlave();
 }
 
-void OutputJob::Resume()
+void OutputJob::ResumeInternal()
 {
    if(input)
-      input->Resume();
+      input->ResumeSlave();
    if(output && input != output)
-      output->Resume();
-   super::Resume();
+      output->ResumeSlave();
 }
 
 bool OutputJob::Full()

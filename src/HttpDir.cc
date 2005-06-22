@@ -1378,17 +1378,15 @@ const char *HttpDirList::Status()
    return "";
 }
 
-void HttpDirList::Suspend()
+void HttpDirList::SuspendInternal()
 {
    if(ubuf)
-      ubuf->Suspend();
-   super::Suspend();
+      ubuf->SuspendSlave();
 }
-void HttpDirList::Resume()
+void HttpDirList::ResumeInternal()
 {
-   super::Resume();
    if(ubuf)
-      ubuf->Resume();
+      ubuf->ResumeSlave();
 }
 
 

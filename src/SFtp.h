@@ -141,7 +141,6 @@ private:
 
    IOBuffer *send_buf;
    IOBuffer *recv_buf;
-   bool recv_buf_suspended;
    IOBuffer *pty_send_buf;
    IOBuffer *pty_recv_buf;
    DirectedBuffer *send_translate;
@@ -713,8 +712,8 @@ public:
 
    bool NeedSizeDateBeforehand() { return true; }
 
-   void Suspend();
-   void Resume();
+   void SuspendInternal();
+   void ResumeInternal();
 
    void Cleanup();
    void CleanupThis();
@@ -737,8 +736,8 @@ public:
    const char *Status();
    int Do();
 
-   void Suspend();
-   void Resume();
+   void SuspendInternal();
+   void ResumeInternal();
 };
 
 class SFtpListInfo : public ListInfo

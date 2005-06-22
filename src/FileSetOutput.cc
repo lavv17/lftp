@@ -401,20 +401,18 @@ int clsJob::Do()
    return m;
 }
 
-void clsJob::Suspend()
+void clsJob::SuspendInternal()
 {
    if(list_info)
-      list_info->Suspend();
-   session->Suspend();
-   super::Suspend();
+      list_info->SuspendSlave();
+   session->SuspendSlave();
 }
 
-void clsJob::Resume()
+void clsJob::ResumeInternal()
 {
    if(list_info)
-      list_info->Resume();
-   session->Resume();
-   super::Resume();
+      list_info->ResumeSlave();
+   session->ResumeSlave();
 }
 
 void clsJob::ShowRunStatus(StatusLine *s)

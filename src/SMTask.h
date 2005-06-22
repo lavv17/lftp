@@ -36,9 +36,11 @@ class SMTask
    static int stack_ptr;
    static int stack_size;
 
+   bool	 suspended;
+   bool	 suspended_slave;
+
 protected:
    int	 running;
-   bool	 suspended;
    bool	 deleting;
 
    enum
@@ -49,6 +51,10 @@ protected:
    };
 
    virtual ~SMTask();
+
+   // SuspendInternal and ResumeInternal usually suspend and resume slave tasks
+   virtual void SuspendInternal() {}
+   virtual void ResumeInternal() {}
 
 public:
    PollVec  block;
@@ -63,9 +69,15 @@ public:
    static void Schedule();
    static void Block() { sched_total.Block(); }
 
-   virtual void Suspend();
-   virtual void Resume();
-   bool IsSuspended() { return suspended; }
+   void Suspend();
+   void Resume();
+
+   // SuspendSlave and ResumeSlave are used in SuspendInternal/ResumeInternal
+   // to suspend/resume slave tasks
+   void SuspendSlave();
+   void ResumeSlave();
+
+   bool IsSuspended() { return suspended|suspended_slave; }
 
    virtual void Reconfig(const char *name=0) {};
    static void ReconfigAll(const char *name);

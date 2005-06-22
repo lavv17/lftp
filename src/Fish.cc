@@ -49,7 +49,7 @@ void Fish::GetBetterConnection(int level)
       {
 	 if(level<2)
 	    continue;
-	 if(!connection_takeover || (o->priority>=priority && !o->suspended))
+	 if(!connection_takeover || (o->priority>=priority && !o->IsSuspended()))
 	    continue;
 	 o->Disconnect();
 	 return;
@@ -345,7 +345,6 @@ void Fish::Init()
    state=DISCONNECTED;
    send_buf=0;
    recv_buf=0;
-   recv_buf_suspended=false;
    ssh=0;
    max_send=0;
    line=0;
@@ -1087,28 +1086,19 @@ int Fish::Done()
    return IN_PROGRESS;
 }
 
-void Fish::Suspend()
+void Fish::SuspendInternal()
 {
-   if(suspended)
-      return;
    if(recv_buf)
-   {
-      recv_buf_suspended=recv_buf->IsSuspended();
-      recv_buf->Suspend();
-   }
+      recv_buf->SuspendSlave();
    if(send_buf)
-      send_buf->Suspend();
-   super::Suspend();
+      send_buf->SuspendSlave();
 }
-void Fish::Resume()
+void Fish::ResumeInternal()
 {
-   if(!suspended)
-      return;
-   super::Resume();
-   if(recv_buf && !recv_buf_suspended)
-      recv_buf->Resume();
+   if(recv_buf)
+      recv_buf->ResumeSlave();
    if(send_buf)
-      send_buf->Resume();
+      send_buf->ResumeSlave();
 }
 
 const char *Fish::CurrentStatus()
@@ -1295,17 +1285,15 @@ const char *FishDirList::Status()
    return "";
 }
 
-void FishDirList::Suspend()
+void FishDirList::SuspendInternal()
 {
    if(ubuf)
-      ubuf->Suspend();
-   super::Suspend();
+      ubuf->SuspendSlave();
 }
-void FishDirList::Resume()
+void FishDirList::ResumeInternal()
 {
-   super::Resume();
    if(ubuf)
-      ubuf->Resume();
+      ubuf->ResumeSlave();
 }
 
 static FileSet *ls_to_FileSet(const char *b,int len)

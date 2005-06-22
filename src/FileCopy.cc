@@ -436,25 +436,15 @@ FileCopy *FileCopy::New(FileCopyPeer *s,FileCopyPeer *d,bool c)
       return res;
    return new FileCopy(s,d,c);
 }
-void FileCopy::Suspend()
+void FileCopy::SuspendInternal()
 {
-   if(get) get->Suspend();
-   if(put) put->Suspend();
-   super::Suspend();
+   if(get) get->SuspendSlave();
+   if(put) put->SuspendSlave();
 }
-void FileCopy::Resume()
+void FileCopy::ResumeInternal()
 {
-   super::Resume();
-   if(state!=PUT_WAIT)
-   {
-      if(get && !(put && put->Size()>=max_buf))
-	 get->Resume();
-   }
-   if(state!=GET_INFO_WAIT)
-   {
-      if(put)
-	 put->Resume();
-   }
+   if(get) get->ResumeSlave();
+   if(put) put->ResumeSlave();
 }
 void FileCopy::Fg()
 {
@@ -858,17 +848,15 @@ bool FileCopyPeerFA::IOReady()
    return session->IOReady();
 }
 
-void FileCopyPeerFA::Suspend()
+void FileCopyPeerFA::SuspendInternal()
 {
    if(fxp && mode==PUT)
       return;
-   session->Suspend();
-   super::Suspend();
+   session->SuspendSlave();
 }
-void FileCopyPeerFA::Resume()
+void FileCopyPeerFA::ResumeInternal()
 {
-   super::Resume();
-   session->Resume();
+   session->ResumeSlave();
 }
 
 const char *FileCopyPeerFA::GetStatus()

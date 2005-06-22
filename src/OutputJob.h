@@ -119,8 +119,8 @@ public:
 
    void Fg();
    void Bg();
-   void Suspend();
-   void Resume();
+   void SuspendInternal();
+   void ResumeInternal();
    int AcceptSig(int sig);
 };
 

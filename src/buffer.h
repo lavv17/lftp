@@ -166,7 +166,7 @@ public:
       }
    virtual time_t EventTime()
       {
-	 if(suspended)
+	 if(IsSuspended())
 	    return now;
 	 return event_time;
       }
@@ -230,8 +230,8 @@ protected:
 public:
    IOBufferFileAccess(FileAccess *i) : IOBuffer(GET) { session=i; }
 
-   void Suspend();
-   void Resume();
+   void SuspendInternal();
+   void ResumeInternal();
    const char *Status();
 };
 

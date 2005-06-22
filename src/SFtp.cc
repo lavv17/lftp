@@ -52,7 +52,7 @@ bool SFtp::GetBetterConnection(int level,bool limit_reached)
       {
 	 if(level<2)
 	    continue;
-	 if(!connection_takeover || (o->priority>=priority && !o->suspended))
+	 if(!connection_takeover || (o->priority>=priority && !o->IsSuspended()))
 	    continue;
 	 o->Disconnect();
 	 return need_sleep;
@@ -360,7 +360,6 @@ void SFtp::Init()
    state=DISCONNECTED;
    send_buf=0;
    recv_buf=0;
-   recv_buf_suspended=false;
    pty_send_buf=0;
    pty_recv_buf=0;
    file_buf=0;
@@ -714,9 +713,8 @@ void SFtp::Close()
    // don't need these out-of-order packets anymore
    while(ooo_chain)
       DeleteExpect(&ooo_chain);
-   if(recv_buf && !suspended)
+   if(recv_buf)
       recv_buf->Resume();
-   recv_buf_suspended=false;
 }
 
 int SFtp::HandlePty()
@@ -1287,36 +1285,27 @@ int SFtp::Done()
    return IN_PROGRESS;
 }
 
-void SFtp::Suspend()
+void SFtp::SuspendInternal()
 {
-   if(suspended)
-      return;
    if(recv_buf)
-   {
-      recv_buf_suspended=recv_buf->IsSuspended();
-      recv_buf->Suspend();
-   }
+      recv_buf->SuspendSlave();
    if(send_buf)
-      send_buf->Suspend();
+      send_buf->SuspendSlave();
    if(pty_send_buf)
-      pty_send_buf->Suspend();
+      pty_send_buf->SuspendSlave();
    if(pty_recv_buf)
-      pty_recv_buf->Suspend();
-   super::Suspend();
+      pty_recv_buf->SuspendSlave();
 }
-void SFtp::Resume()
+void SFtp::ResumeInternal()
 {
-   if(!suspended)
-      return;
-   super::Resume();
-   if(recv_buf && !recv_buf_suspended)
-      recv_buf->Resume();
+   if(recv_buf)
+      recv_buf->ResumeSlave();
    if(send_buf)
-      send_buf->Resume();
+      send_buf->ResumeSlave();
    if(pty_send_buf)
-      pty_send_buf->Resume();
+      pty_send_buf->ResumeSlave();
    if(pty_recv_buf)
-      pty_recv_buf->Resume();
+      pty_recv_buf->ResumeSlave();
 }
 
 const char *SFtp::CurrentStatus()
@@ -2018,17 +2007,15 @@ const char *SFtpDirList::Status()
    return "";
 }
 
-void SFtpDirList::Suspend()
+void SFtpDirList::SuspendInternal()
 {
    if(ubuf)
-      ubuf->Suspend();
-   super::Suspend();
+      ubuf->SuspendSlave();
 }
-void SFtpDirList::Resume()
+void SFtpDirList::ResumeInternal()
 {
-   super::Resume();
    if(ubuf)
-      ubuf->Resume();
+      ubuf->ResumeSlave();
 }
 
 

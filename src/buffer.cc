@@ -636,15 +636,13 @@ int IOBufferFileAccess::Get_LL(int size)
    return res;
 }
 
-void IOBufferFileAccess::Suspend()
+void IOBufferFileAccess::SuspendInternal()
 {
-   session->Suspend();
-   super::Suspend();
+   session->SuspendSlave();
 }
-void IOBufferFileAccess::Resume()
+void IOBufferFileAccess::ResumeInternal()
 {
-   super::Resume();
-   session->Resume();
+   session->ResumeSlave();
 }
 const char *IOBufferFileAccess::Status()
 {

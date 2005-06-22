@@ -108,8 +108,8 @@ public:
 
    void Fg() { session->SetPriority(1); output->Fg(); }
    void Bg() { session->SetPriority(0); output->Bg(); }
-   void Suspend();
-   void Resume();
+   void SuspendInternal();
+   void ResumeInternal();
    int ExitCode() { return output->Error()? 1:0; }
 
    void ShowRunStatus(StatusLine *s);

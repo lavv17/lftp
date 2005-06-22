@@ -70,7 +70,6 @@ void Http::Init()
    sock=-1;
    send_buf=0;
    recv_buf=0;
-   recv_buf_suspended=false;
    body_size=-1;
    bytes_received=0;
    line=0;
@@ -874,7 +873,7 @@ void Http::GetBetterConnection(int level)
       {
 	 if(level<2)
 	    continue;
-	 if(!connection_takeover || (o->priority>=priority && !o->suspended))
+	 if(!connection_takeover || (o->priority>=priority && !o->IsSuspended()))
 	    continue;
 	 o->Disconnect();
 	 return;
@@ -1562,28 +1561,19 @@ void  Http::ClassInit()
 #endif
 }
 
-void Http::Suspend()
+void Http::SuspendInternal()
 {
-   if(suspended)
-      return;
    if(recv_buf)
-   {
-      recv_buf_suspended=recv_buf->IsSuspended();
-      recv_buf->Suspend();
-   }
+      recv_buf->SuspendSlave();
    if(send_buf)
-      send_buf->Suspend();
-   super::Suspend();
+      send_buf->SuspendSlave();
 }
-void Http::Resume()
+void Http::ResumeInternal()
 {
-   if(!suspended)
-      return;
-   super::Resume();
-   if(recv_buf && !recv_buf_suspended)
-      recv_buf->Resume();
+   if(recv_buf)
+      recv_buf->ResumeSlave();
    if(send_buf)
-      send_buf->Resume();
+      send_buf->ResumeSlave();
 }
 
 int Http::Read(void *buf,int size)

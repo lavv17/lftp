@@ -729,7 +729,7 @@ void CmdExec::PrintStatus(int v,const char *prefix)
    }
    if(queue_feeder)
    {
-      if(suspended)
+      if(IsSuspended())
 	 printf("%s%s\n",prefix,_("Queue is stopped."));
       for(int i=0; i<waiting_num; i++)
       {
