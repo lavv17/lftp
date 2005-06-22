@@ -133,6 +133,7 @@ public:
    void StartTransfer() { start_transfer=true; }
 
    const char *GetDescriptionForLog() { return 0; }
+   virtual const char *GetURL() { return 0; }
 };
 
 class FileCopy : public SMTask
@@ -327,6 +328,7 @@ public:
       {
 	 return orig_url ? orig_url : session->GetFileURL(file);
       }
+   const char *GetURL() { return GetDescriptionForLog(); }
 };
 
 class FileCopyPeerFDStream : public FileCopyPeer
@@ -373,6 +375,10 @@ public:
    const char *GetDescriptionForLog()
       {
 	 return stream->name;
+      }
+   const char *GetURL()
+      {
+	 return stream->full_name;
       }
 };
 

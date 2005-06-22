@@ -357,7 +357,7 @@ int FileCopy::Do()
       state=GET_DONE_WAIT;
       m=MOVED;
       end_time=now;
-      Delete(put); put=0;
+      put->Suspend();
       /* fallthrough */
    case(GET_DONE_WAIT):
       if(get->Error())
@@ -371,7 +371,7 @@ int FileCopy::Do()
 	 return m;
       debug((10,"copy: get is finished - all done\n"));
       state=ALL_DONE;
-      Delete(get); get=0;
+      get->Suspend();
       return MOVED;
 
    pre_GET_INFO_WAIT:

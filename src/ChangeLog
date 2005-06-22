@@ -1,3 +1,8 @@
+2005-06-22  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc, FileCopy.h: (GetURL) new method; don't delete peers too
+	  early, so info can be get from them after transfer.
+
 2005-06-21  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CmdExec.cc, CmdExec.h, FileFeeder.cc, FileFeeder.h: add Fg/Bg methods
