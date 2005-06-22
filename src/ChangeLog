@@ -9,6 +9,9 @@
 	  ftpclass.cc: (SuspendInternal, ResumeInternal, SuspendSlave,
 	  ResumeSlave) new methods to simplify suspend/resume with slave tasks;
 	  make suspend member private, use IsSuspended.
+	* CopyJob.cc, CopyJob.h, Job.h, MirrorJob.cc: (GetBytesCount,
+	  GetTimeSpent) make them virtual; (FormatBytesTimeRate) new method;
+	  use it in mirror.
 
 2005-06-21  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -105,13 +105,17 @@ final:
       printf(plural("%sModified: %d file$|s$, %d symlink$|s$\n",
 		     stats.mod_files,stats.mod_symlinks),
 	 tab,stats.mod_files,stats.mod_symlinks);
+   if(stats.bytes)
+      printf("%s%s\n",tab,CopyJob::FormatBytesTimeRate(stats.bytes,stats.time));
    if(stats.del_dirs || stats.del_files || stats.del_symlinks)
       printf(plural(flags&DELETE ?
 	       "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 	      :"%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n",
 	      stats.del_dirs,stats.del_files,stats.del_symlinks),
 	 tab,stats.del_dirs,stats.del_files,stats.del_symlinks);
-   return;
+   if(stats.error_count)
+      printf(plural("%s%d error$|s$ detected\n",stats.error_count),
+	       tab,stats.error_count);
 }
 
 void  MirrorJob::ShowRunStatus(StatusLine *s)
@@ -745,6 +749,8 @@ int   MirrorJob::Do()
    case(WAITING_FOR_TRANSFER):
       while((j=FindDoneAwaitedJob())!=0)
       {
+	 stats.bytes+=j->GetBytesCount();
+	 stats.time +=j->GetTimeSpent();
 	 if(j->ExitCode()!=0)
 	    stats.error_count++;
 	 RemoveWaiting(j);

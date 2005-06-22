@@ -126,6 +126,9 @@ public:
    virtual const char *GetConnectURL() { return 0; }
    virtual void lftpMovesToBackground() { Resume(); }
    static  void lftpMovesToBackground_ToAll();
+
+   virtual off_t GetBytesCount() { return 0; }
+   virtual double GetTimeSpent() { return 0; }
 };
 
 class SessionJob : public Job

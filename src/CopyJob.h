@@ -88,6 +88,8 @@ public:
 
    static CopyJob *NewGet(FileAccess *f,const char *src,const char *dst);
    static CopyJob *NewPut(FileAccess *f,const char *src,const char *dst);
+
+   static const char *FormatBytesTimeRate(off_t bytes,double time);
 };
 
 class ArgV;
@@ -99,7 +101,7 @@ protected:
    int errors;
    int count;
    off_t bytes;
-   float time_spent;
+   double time_spent;
    const char *op;
    bool no_status;
    char *cwd;
@@ -127,6 +129,9 @@ public:
    void	PrintStatus(int,const char *);
 
    void Ascii() { ascii=true; }
+
+   double GetTimeSpent() { return time_spent; }
+   off_t GetBytesCount() { return bytes; }
 };
 
 #endif // COPYJOB_H

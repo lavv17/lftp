@@ -167,6 +167,32 @@ CopyJob::~CopyJob()
    xfree(op);
 }
 
+const char *CopyJob::FormatBytesTimeRate(off_t bytes,double time_spent)
+{
+   static char buf[256];
+
+   if(bytes<=0)
+      return "";
+
+   if(time_spent>=1)
+   {
+      sprintf(buf,plural("%lld $#ll#byte|bytes$ transferred"
+		     " in %ld $#l#second|seconds$",
+		     (long long)bytes,long(time_spent+.5)),
+		     (long long)bytes,long(time_spent+.5));
+      double rate=bytes/time_spent;
+      if(rate>=1)
+	 sprintf(buf+strlen(buf)," (%s)",Speedometer::GetStr(rate));
+   }
+   else
+   {
+      sprintf(buf,plural("%lld $#ll#byte|bytes$ transferred",
+		     (long long)bytes),(long long)bytes);
+   }
+   return buf;
+}
+
+
 // CopyJobEnv
 CopyJobEnv::CopyJobEnv(FileAccess *s,ArgV *a,bool cont1)
    : SessionJob(s)
@@ -248,26 +274,7 @@ void CopyJobEnv::SayFinalWithPrefix(const char *p)
    if(count==errors)
       return;
    if(bytes)
-   {
-      printf("%s",p);
-      if(time_spent>=1)
-      {
-	 printf(plural("%lld $#ll#byte|bytes$ transferred"
-			" in %ld $#l#second|seconds$",
-			(long long)bytes,long(time_spent+.5)),
-			(long long)bytes,long(time_spent+.5));
-	 double rate=bytes/time_spent;
-	 if(rate>=1)
-	    printf(" (%s)\n",Speedometer::GetStr(rate));
-	 else
-	    printf("\n");
-      }
-      else
-      {
-	 printf(plural("%lld $#ll#byte|bytes$ transferred\n",
-			(long long)bytes),(long long)bytes);
-      }
-   }
+      printf("%s%s\n",p,CopyJob::FormatBytesTimeRate(bytes,time_spent));
    if(errors>0)
    {
       printf("%s",p);
