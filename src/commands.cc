@@ -2522,7 +2522,7 @@ CMD(close)
 }
 
 const char * const bookmark_subcmd[]=
-   {"add","delete","list","edit","import",0};
+   {"add","delete","list","list-p","edit","import",0};
 static ResDecl res_save_passwords
    ("bmk:save-passwords","no",ResMgr::BoolValidate,0);
 
@@ -2547,9 +2547,9 @@ CMD(bookmark)
       return 0;
    }
 
-   if(!strcasecmp(op,"list"))
+   if(!strcasecmp(op,"list") || !strcasecmp(op,"list-p"))
    {
-      char *list=lftp_bookmarks.FormatHidePasswords();
+      char *list=op[4]?lftp_bookmarks.Format():lftp_bookmarks.FormatHidePasswords();
       OutputJob *out=new OutputJob(output, args->a0());
       Job *j=new echoJob(list,out);
       xfree(list);
@@ -2619,6 +2619,16 @@ CMD(bookmark)
 	 parent->PrependCmd(cmd);
 	 exit_code=0;
       }
+   }
+   else if(!strcasecmp(op,"load"))
+   {
+      lftp_bookmarks.UserLoad();
+      exit_code=0;
+   }
+   else if(!strcasecmp(op,"save"))
+   {
+      lftp_bookmarks.UserSave();
+      exit_code=0;
    }
    return 0;
 }

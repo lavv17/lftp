@@ -26,10 +26,13 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include "trio.h"
+#include "ResMgr.h"
 
 #define super KeyValueDB
 
 Bookmark lftp_bookmarks;
+
+ResDecl res_auto_sync("bmk:auto-sync","yes",ResMgr::BoolValidate,ResMgr::NoClosure);
 
 Bookmark::Bookmark()
 {
@@ -79,8 +82,14 @@ void Bookmark::Load()
    super::Read(dup(bm_fd));   // Read closes file
 }
 
+
+static bool auto_sync;
 void Bookmark::PreModify()
 {
+   auto_sync=ResMgr::QueryBool("bmk:auto-sync",0);
+   if(!auto_sync)
+      return;
+
    Close();
    bm_fd=open(bm_file,O_RDWR|O_CREAT,0600);
    if(bm_fd==-1)
@@ -93,9 +102,11 @@ void Bookmark::PreModify()
    }
    Refresh();
 }
-
 void Bookmark::PostModify()
 {
+   if(!auto_sync)
+      return;
+
    // the file is already locked in PreModify.
    lseek(bm_fd,0,SEEK_SET);
 
@@ -105,6 +116,22 @@ void Bookmark::PostModify()
    close(open(bm_file,O_WRONLY|O_TRUNC));
 #endif
 
+   super::Write(bm_fd);
+   bm_fd=-1;   // Write closes file
+}
+
+void Bookmark::UserSave()
+{
+   Close();
+   bm_fd=open(bm_file,O_RDWR|O_CREAT|O_TRUNC,0600);
+   if(bm_fd==-1)
+      return;
+   if(Lock(F_WRLCK)==-1)
+   {
+      fprintf(stderr,"%s: lock for writing failed\n",bm_file);
+      Close();
+      return;
+   }
    super::Write(bm_fd);
    bm_fd=-1;   // Write closes file
 }
@@ -132,10 +159,18 @@ void Bookmark::Close()
    }
 }
 
+void Bookmark::AutoSync()
+{
+   if(ResMgr::QueryBool("bmk:auto-sync",0))
+   {
+      Refresh();
+      Close();
+   }
+}
+
 const char *Bookmark::Lookup(const char *key)
 {
-   Refresh();
-   Close();
+   AutoSync();
    return super::Lookup(key);
 }
 
@@ -150,8 +185,7 @@ void Bookmark::List()
 
 char *Bookmark::Format()
 {
-   Refresh();
-   Close();
+   AutoSync();
    return super::Format();
 }
 
@@ -186,7 +220,6 @@ static const char *hide_password(const char *url)
 
 char *Bookmark::FormatHidePasswords()
 {
-   Refresh();
-   Close();
+   AutoSync();
    return super::Format(hide_password);
 }

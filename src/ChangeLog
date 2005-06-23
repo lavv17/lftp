@@ -1,3 +1,8 @@
+2005-06-23  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* bookmarks.cc, bookmarks.h, commands.cc: (bmk:auto-sync) new setting;
+	  (list-p, load, save) new bookmark subcommands.
+
 2005-06-22  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc, FileCopy.h: (GetURL) new method; don't delete peers too

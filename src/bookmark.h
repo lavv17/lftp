@@ -39,12 +39,15 @@ class Bookmark : public KeyValueDB
    void PreModify();
    void PostModify();
    void Close();
+   void AutoSync();
 public:
    void Add(const char *id,const char *value);
    void Remove(const char *id);
    const char *Lookup(const char *id);
    char *Format();
    char *FormatHidePasswords();
+   void UserLoad() { Load(); Close(); }
+   void UserSave();
 
    Bookmark();
    ~Bookmark();
