@@ -5,7 +5,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 2.6\n"
+"Project-Id-Version: lftp 3.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-05-24 18:11+0400\n"
 "PO-Revision-Date: 2000-09-07 09:36+08:00\n"
@@ -261,9 +261,9 @@ msgid "Making directory `%s'"
 msgstr "Создание каталога `%s'"
 
 #: src/MirrorJob.cc:802
-#, fuzzy, c-format
+#, c-format
 msgid "Old directory `%s' is not removed"
-msgstr "Старый файл `%s' не удален"
+msgstr "Старый каталог `%s' не удален"
 
 #: src/MirrorJob.cc:805
 #, c-format
@@ -345,9 +345,8 @@ msgid "Invalid IPv6 numeric address"
 msgstr "Некорректный цифровой IPv6 адрес"
 
 #: src/ResMgr.cc:872
-#, fuzzy
 msgid "this encoding is not supported"
-msgstr "Операция не поддерживается"
+msgstr "эта кодировка не поддерживается"
 
 #: src/ResMgr.cc:879
 msgid "no closure defined for this setting"
@@ -830,7 +829,6 @@ msgid "mirror [OPTS] [remote [local]]"
 msgstr "mirror [КЛЮЧИ] [<откуда> [<куда>]]"
 
 #: src/commands.cc:309
-#, fuzzy
 msgid ""
 "\n"
 "Mirror specified remote directory to local directory\n"
@@ -869,6 +867,7 @@ msgstr ""
 " -c, --continue         продолжить прерванную команду `mirror', если "
 "возможно\n"
 " -e, --delete           удалять файлы, отсутствующие на сервере\n"
+"     --delete-first     удалять старые файлы до прекачки новых файлов\n"
 " -s, --allow-suid       сохранять значение битов suid/sgid\n"
 "     --allow-chown      попытаться сменить владельца и группу файлов\n"
 "     --ignore-time      игнорировать время при выборе файлов для перекачки\n"
@@ -879,13 +878,15 @@ msgstr ""
 "     --no-umask         не применять значение umask к режиму доступа файлов\n"
 " -R, --reverse          обратное зеркалирование (выполнять put)\n"
 " -L, --dereference      принимать символические ссылки как обычные файлы\n"
-" -N, --newer-than FILE  принимать только файлы, которые новее указанного\n"
+" -N, --newer-than=SPEC  принимать только файлы новее указанного времени\n"
 " -P, --parallel[=N]     скачивать параллельно N файлов\n"
 " -i RX, --include RX    включить соответствующие файлы (только один ключ)\n"
 " -x RX, --exclude RX    исключить соответствующие файлы (только один ключ)\n"
 "                        RX - расширенное регулярное выражение\n"
 " -v, --verbose          выводить подробную информацию\n"
-"     --use-cache        использовать кэшированное содержимое каталогов\n"
+"     --log=FILE         записать выполняемые комманды в файл FILE\n"
+"     --script=FILE      записать команды в FILE, но не выполнять их\n"
+"     --just-print, --dry-run    то же самое, что и --script=-\n"
 "\n"
 "При использовании -R первый каталог - локальный, второй - каталог на "
 "сервере.\n"
@@ -1426,9 +1427,9 @@ msgid "Usage: %s %s[-f] files...\n"
 msgstr "Использование: %s %s[-f] файлы...\n"
 
 #: src/commands.cc:1774
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [-e] <file|command>\n"
-msgstr "Использование: %s <файл>\n"
+msgstr "Использование: %s [-e] <файл|команда>\n"
 
 #: src/commands.cc:1808
 #, c-format
@@ -1563,9 +1564,9 @@ msgstr ""
 "Неоднозначное сокращение `%s'. Введите `help' для списка доступных команд.\n"
 
 #: src/commands.cc:2431
-#, fuzzy, c-format
+#, c-format
 msgid "LFTP | Version %s | Copyright (c) 1996-2005 Alexander V. Lukyanov\n"
-msgstr "Lftp | Версия %s | Copyright (c) 1996-2002 Александр В. Лукьянов\n"
+msgstr "LFTP | Версия %s | Copyright (c) 1996-2005 Александр В. Лукьянов\n"
 
 #: src/commands.cc:2434
 #, c-format
@@ -1585,7 +1586,7 @@ msgstr "Сообщения об ошибках и вопросы посылайте по адресу <%s>.\n"
 #: src/commands.cc:2443
 #, c-format
 msgid "Libraries used: "
-msgstr ""
+msgstr "Загруженые библиотеки: "
 
 #: src/commands.cc:2563 src/commands.cc:2595
 #, c-format
@@ -1714,9 +1715,8 @@ msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 msgstr "SITE CHMOD запрещено настройкой ftp:use-site-chmod"
 
 #: src/ftpclass.cc:1181
-#, fuzzy
 msgid "MLSD is disabled by ftp:use-mlsd"
-msgstr "SITE CHMOD запрещено настройкой ftp:use-site-chmod"
+msgstr "MLSD запрещено настройкой ftp:use-mlsd"
 
 #: src/ftpclass.cc:1244 src/Http.cc:1043
 #, c-format
@@ -1728,9 +1728,8 @@ msgid "SITE CHMOD is not supported by this site"
 msgstr "SITE CHMOD не поддерживается этим сервером"
 
 #: src/ftpclass.cc:1485
-#, fuzzy
 msgid "MLST and MLSD are not supported by this site"
-msgstr "SITE CHMOD не поддерживается этим сервером"
+msgstr "MLST и MLSD не поддерживаются этим сервером"
 
 #: src/ftpclass.cc:1906 src/ftpclass.cc:1956
 msgid "unsupported network protocol"
@@ -1742,18 +1741,17 @@ msgid "Connecting data socket to (%s) port %u"
 msgstr "Соединение сокета данных с (%s), порт %u"
 
 #: src/ftpclass.cc:2077
-#, fuzzy, c-format
+#, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
-msgstr "Соединение сокета данных с (%s), порт %u"
+msgstr "Соединение сокета данных с прокси-сервером (%s), порт %u"
 
 #: src/ftpclass.cc:2102 src/ftpclass.cc:3756
 msgid "Switching passive mode off"
 msgstr "Отключение пассивного режима"
 
 #: src/ftpclass.cc:2110
-#, fuzzy
 msgid "Data connection established"
-msgstr "Канал данных имеет удаленный адрес, не совпадающий с ожидаемым"
+msgstr "Канал данных установлен"
 
 #: src/ftpclass.cc:2359 src/ftpclass.cc:3874
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
@@ -1795,9 +1793,8 @@ msgid "Switching passive mode on"
 msgstr "Включение пассивного режима"
 
 #: src/ftpclass.cc:3900
-#, fuzzy
 msgid "FEAT negotiation..."
-msgstr "Согласование TLS..."
+msgstr "Согласование FEAT..."
 
 #: src/ftpclass.cc:3907
 msgid "Sending commands..."
@@ -1809,9 +1806,8 @@ msgid "Waiting for response..."
 msgstr "Ожидание ответа..."
 
 #: src/ftpclass.cc:3911
-#, fuzzy
 msgid "Delaying before retry"
-msgstr "Задержка перед повторным соединением"
+msgstr "Задержка перед повторной попыткой"
 
 #: src/ftpclass.cc:3912 src/Http.cc:1837
 msgid "Connection idle"
@@ -1978,7 +1974,7 @@ msgstr "Невозможно разобрать строку статуса HTTP"
 
 #: src/Http.cc:1341
 msgid "Object is not cached and http:cache-control has only-if-cached"
-msgstr ""
+msgstr "Объект не в кэше, а http:cache-control содержит only-if-cached"
 
 #: src/Http.cc:1484
 msgid "Receiving body..."
@@ -2031,7 +2027,7 @@ msgstr "ftp:ssl-auth должен быть одним из: SSL, TLS, TLS-P, TLS-C"
 
 #: src/resource.cc:175
 msgid "must be one of: C, S, E, P, or empty"
-msgstr ""
+msgstr "должно быть одним из: C, S, E, P, или пустым"
 
 #: src/HttpDir.cc:1374 src/FtpDirList.cc:141
 #, c-format
@@ -2041,17 +2037,17 @@ msgstr "Получение списка файлов (%lld) [%s]"
 #: src/ChmodJob.cc:78
 #, c-format
 msgid "Failed to change mode of `%s' to %04o (%s).\n"
-msgstr ""
+msgstr "Не удалось сменить права доступа `%s' на %04o (%s).\n"
 
 #: src/ChmodJob.cc:81
 #, c-format
 msgid "Mode of `%s' changed to %04o (%s).\n"
-msgstr ""
+msgstr "Права доступа `%s' изменены на %04o (%s).\n"
 
 #: src/ChmodJob.cc:86
 #, c-format
 msgid "Failed to change mode of `%s' because no old mode is available.\n"
-msgstr ""
+msgstr "Не удалось сменить права доступа `%s', так как старые права недоступны.\n"
 
 #: src/CopyJob.cc:78
 #, c-format
@@ -2228,7 +2224,7 @@ msgstr ""
 #: src/SleepJob.cc:114
 #, c-format
 msgid "\tRepeat count: %d\n"
-msgstr "\tСчетчик посторений: %d\n"
+msgstr "\tСчетчик повторений: %d\n"
 
 #: src/SleepJob.cc:137
 #, c-format
