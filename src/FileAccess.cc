@@ -1130,6 +1130,8 @@ void FileAccess::Path::Change(const char *new_path,bool new_is_file,int new_devi
 }
 void FileAccess::Path::ExpandTilde(const Path &home)
 {
+   if(!home.path)
+      return;
    if(path && path[0]=='~' && (path[1]=='/' || path[1]=='\0'))
    {
       device_prefix_len=home.device_prefix_len;

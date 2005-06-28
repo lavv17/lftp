@@ -2,6 +2,8 @@
 
 	* FileAccess.cc, FileAccess.h: (FileAccess::Path) new class.
 	* Fish.cc, Http.cc, LocalAccess.cc, SFtp.cc, ftpclass.cc: use it properly.
+	* FileAccess.cc: (Path::ExpandTilde) fix NULL dereference.
+	* Fish.cc: use home_auto; call LsCache::SetDirectory.
 
 2005-06-23  Alexander V. Lukyanov <lav@yars.free.net>
 

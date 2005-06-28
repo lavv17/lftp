@@ -196,7 +196,7 @@ int Fish::Do()
       Send("#VER 0.0.2\n"
 	   "echo '### 000'\n");
       PushExpect(EXPECT_VER);
-      if(home==0)
+      if(home_auto==0)
       {
 	 Send("#PWD\n"
 	      "pwd; echo '### 200'\n");
@@ -307,6 +307,8 @@ void Fish::MoveConnectionHere(Fish *o)
    o->set_real_cwd(0);
    state=CONNECTED;
    o->Disconnect();
+   if(!home)
+      set_home(home_auto);
 }
 
 void Fish::Disconnect()
@@ -323,6 +325,8 @@ void Fish::Disconnect()
       SetError(STORE_FAILED,0);
    received_greeting=false;
    password_sent=0;
+   xfree(home_auto); home_auto=0;
+   home_auto=xstrdup(FindHomeAuto());
 }
 
 void Fish::EmptyPathQueue()
@@ -743,7 +747,12 @@ int Fish::HandleReplies()
    case EXPECT_PWD:
       if(!message)
 	 break;
-      set_home(message);
+      home_auto=xstrdup(message);
+      Log::global->Format(9,"---- home set to %s\n",home_auto);
+      PropagateHomeAuto();
+      if(!home)
+	 set_home(home_auto);
+      LsCache::SetDirectory(this, home, true);
       break;
    case EXPECT_CWD:
       p=PopDirectory();
@@ -755,6 +764,7 @@ int Fish::HandleReplies()
 	    cwd.Set(p);
 	    eof=true;
 	 }
+	 LsCache::SetDirectory(this,p,true);
       }
       else
 	 SetError(NO_FILE,message);
