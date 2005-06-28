@@ -1,3 +1,7 @@
+2005-06-29  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: accept AUTH and REST with no arguments in FEAT reply.
+
 2005-06-28  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileAccess.cc, FileAccess.h: (FileAccess::Path) new class.

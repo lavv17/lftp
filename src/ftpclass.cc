@@ -3538,6 +3538,8 @@ void Ftp::CheckFEAT(char *reply)
 	 conn->host_supported=true;
       else if(!strncasecmp(f,"REST ",5)) // FIXME: actually REST STREAM
 	 conn->rest_supported=true;
+      else if(!strcasecmp(f,"REST"))
+	 conn->rest_supported=true;
       else if(!strncasecmp(f,"MLST ",5))
       {
 	 conn->mlst_supported=true;
@@ -3558,6 +3560,8 @@ void Ftp::CheckFEAT(char *reply)
 	    strcat(conn->auth_args_supported,f+5);
 	 }
       }
+      else if(!strcasecmp(f,"AUTH"))
+	 conn->auth_supported=true;
       else if(!strcasecmp(f,"CPSV"))
 	 conn->cpsv_supported=true;
       else if(!strcasecmp(f,"SSCN"))
