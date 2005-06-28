@@ -1021,8 +1021,8 @@ bool Ftp::GetBetterConnection(int level,bool limit_reached)
 {
    bool need_sleep=false;
 
-   if(level==0 && cwd==0)
-      return need_sleep;
+//    if(level==0 && cwd==0)
+//       return need_sleep;
 
    for(FA *fo=FirstSameSite(); fo!=0; fo=NextSameSite(fo))
    {
@@ -1739,10 +1739,7 @@ int   Ftp::Do()
          break;
       case(CHANGE_DIR):
 	 if(!xstrcmp(real_cwd,file))
-	 {
-	    xfree(cwd);
-	    cwd=xstrdup(real_cwd);
-	 }
+	    cwd.Set(real_cwd,false,0,device_prefix_len(real_cwd));
 	 else
 	 {
 	    int len=xstrlen(real_cwd);
@@ -3667,10 +3664,7 @@ void Ftp::CheckResp(int act)
       if(is2XX(act))
       {
 	 if(cc==Expect::CWD)
-	 {
-	    xfree(cwd);
-	    cwd=xstrdup(arg);
-	 }
+	    cwd.Set(arg,false,0,device_prefix_len(arg));
 	 set_real_cwd(cwd);
 	 LsCache::SetDirectory(this, arg, true);
 	 break;
@@ -4046,9 +4040,6 @@ bool  Ftp::SameLocationAs(FileAccess *fa)
    if(SameConnection(o))
    {
       if(home && o->home && strcmp(home,o->home))
-	 return false;
-
-      if(!cwd || !o->cwd)
 	 return false;
 
       ExpandTildeInCWD();

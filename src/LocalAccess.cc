@@ -50,8 +50,7 @@ void LocalAccess::Init()
    done=false;
    error_code=OK;
    stream=0;
-   xfree(home);
-   home=xstrdup(getenv("HOME"));
+   home.Set(getenv("HOME"));
    xfree(hostname);
    hostname=xstrdup("localhost");
 }
@@ -59,10 +58,9 @@ void LocalAccess::Init()
 LocalAccess::LocalAccess() : FileAccess()
 {
    Init();
-   xfree(cwd);
-   cwd=xgetcwd();
-   if(!cwd)
-      cwd=xstrdup(".");
+   char *c=xgetcwd();
+   cwd.Set(c?c:".");
+   xfree(c);
 }
 LocalAccess::LocalAccess(const LocalAccess *o) : FileAccess(o)
 {
@@ -173,8 +171,7 @@ int LocalAccess::Do()
       }
       else
       {
-	 xfree(cwd);
-	 cwd=xstrdup(file);
+	 cwd.Set(file);
 	 old_cwd.Chdir();
       }
       done=true;

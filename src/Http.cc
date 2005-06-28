@@ -435,6 +435,7 @@ bool Http::ModeSupported()
 
 void Http::DirFile(char *path_base,const char *ecwd,const char *efile)
 {
+   const char *cwd=this->cwd.path;
    if(efile[0]=='/')
       strcpy(path_base,efile);
    else if(efile[0]=='~')
@@ -913,8 +914,8 @@ int Http::Do()
       TimeoutS(idle_start+idle-time_t(now));
    }
 
-   if(home==0)
-      home=xstrdup(default_cwd);
+   if(home.path==0)
+      home.Set(default_cwd);
    ExpandTildeInCWD();
 
    if(Error())
@@ -1465,7 +1466,7 @@ int Http::Do()
 	    if(closure && closure[0])
 	       sprintf(err,"%s (%s)",status+status_consumed,closure);
 	    else
-	       sprintf(err,"%s (%s%s)",status+status_consumed,cwd,
+	       sprintf(err,"%s (%s%s)",status+status_consumed,cwd.path,
 				       (last_char(cwd)=='/')?"":"/");
 	 }
 	 state=RECEIVING_BODY;
@@ -1474,8 +1475,7 @@ int Http::Do()
       }
       if(mode==CHANGE_DIR)
       {
-	 xfree(cwd);
-	 cwd=xstrdup(file);
+	 cwd.Set(new_cwd);
 	 state=DONE;
 	 return MOVED;
       }
@@ -2171,10 +2171,8 @@ void HFtp::Login(const char *u,const char *p)
    super::Login(u,p);
    if(u)
    {
-      xfree(home);
-      home=xstrdup("~");
-      xfree(cwd);
-      cwd=xstrdup(home);
+      home.Set("~");
+      cwd.Set(home,false,0);
    }
 }
 void HFtp::Reconfig(const char *name)

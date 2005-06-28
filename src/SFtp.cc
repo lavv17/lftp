@@ -58,14 +58,6 @@ bool SFtp::GetBetterConnection(int level,bool limit_reached)
 	 return need_sleep;
       }
 
-      if(home && !o->home)
-	 o->home=xstrdup(home);
-      else if(!home && o->home)
-	 home=xstrdup(o->home);
-
-      o->ExpandTildeInCWD();
-      ExpandTildeInCWD();
-
       if(level==0 && xstrcmp(real_cwd,o->real_cwd))
 	 continue;
 
@@ -835,8 +827,7 @@ void SFtp::HandleExpect(Expect *e)
 	 }
 	 if(mode==CHANGE_DIR && RespQueueIsEmpty())
 	 {
-	    xfree(cwd);
-	    cwd=xstrdup(file);
+	    cwd.Set(file);
 	    eof=true;
 	    LsCache::SetDirectory(this,cwd,true);
 	 }

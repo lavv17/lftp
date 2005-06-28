@@ -77,12 +77,39 @@ public:
 
    struct fileinfo
    {
-      const char *file;
       off_t size;
+      const char *file;
       time_t time;
       bool get_size:1;
       bool get_time:1;
       bool is_dir:1;
+   };
+
+   class Path
+   {
+      void init();
+   public:
+      int   device_prefix_len;
+      char  *path;
+      bool  is_file;
+      char  *url;
+      Path() { init(); }
+      Path(const Path *o) { init(); Set(o); }
+      Path(const Path &o) { init(); Set(o); }
+      Path(const char *new_path) { init(); Set(new_path); }
+      ~Path();
+      void Set(const Path*);
+      void Set(const Path &o) { Set(&o); }
+      void Set(const char *new_path,bool new_is_file=false,const char *new_url=0,int device_prefix_len=0);
+      void Change(const char *new_path,bool new_is_file=false,int device_prefix_len=0);
+      void ExpandTilde(const Path &home);
+      void OptimizePath();
+      const Path& operator=(const Path &o)
+	 {
+	    Set(&o);
+	    return *this;
+	 }
+      operator const char *() { return path; }
    };
 
 protected:
@@ -93,9 +120,10 @@ protected:
    char  *pass;
    bool	 pass_open;
 
-   char	 *home;
    const char *default_cwd;
-   char  *cwd;
+   Path	 home;
+   Path	 cwd;
+   Path	 *new_cwd;
    char  *file;
    char	 *file_url;
    char	 *file1;
@@ -137,8 +165,7 @@ protected:
       }
    void set_home(const char *h)
       {
-	 xfree(home);
-	 home=xstrdup(h);
+	 home.Set(h);
 	 ExpandTildeInCWD();
       }
 
@@ -222,7 +249,7 @@ public:
    virtual void Mkdir(const char *rfile,bool allpath=false);
    virtual void Chdir(const char *dir,bool verify=true);
    void OptimizePath(char *path);
-   void SetCwd(const char *dir) { xfree(cwd); cwd=xstrdup(dir); }
+   void SetCwd(const char *dir) { cwd.Set(dir,false,0); }
    void Remove(const char *rfile)    { Open(rfile,REMOVE); }
    void RemoveDir(const char *dir)  { Open(dir,REMOVE_DIR); }
    void Chmod(const char *file,int m);
@@ -247,7 +274,7 @@ public:
    void SeekReal() { pos=GetRealPos(); }
    void RereadManual() { norest_manual=true; }
 
-   const char *GetCwd() { return cwd; }
+   const char *GetCwd() { return cwd.path; }
    const char *GetFile() { return file; }
 
    virtual int Do() = 0;

@@ -49,7 +49,6 @@ FileAccess *FileAccess::chain=0;
 void FileAccess::Init()
 {
    vproto=0;
-   home=0;
    portname=0;
    hostname=0;
    user=pass=0;
@@ -60,7 +59,8 @@ void FileAccess::Init()
    file1=0;
    real_cwd=0;
    default_cwd="~";
-   cwd=xstrdup(default_cwd);
+   cwd.Set(default_cwd,false,0);
+   new_cwd=0;
    real_pos=-1;
    pos=0;
    mode=CLOSED;
@@ -101,10 +101,8 @@ FileAccess::FileAccess(const FileAccess *fa)
 {
    Init();
 
-   xfree(cwd);
-   cwd=xstrdup(fa->cwd);
-   xfree(home);
-   home=xstrdup(fa->home);
+   cwd=fa->cwd;
+   home=fa->home;
    xfree(user);
    user=xstrdup(fa->user);
    xfree(pass);
@@ -122,10 +120,8 @@ FileAccess::~FileAccess()
    xfree(vproto);
    xfree(file);
    xfree(file_url);
-   xfree(cwd);
    xfree(real_cwd);
    xfree(error);
-   xfree(home);
    xfree(user);
    xfree(pass);
    xfree(hostname);
@@ -339,6 +335,7 @@ void FileAccess::Close()
    xfree(file); file=0;
    xfree(file_url); file_url=0;
    xfree(file1); file1=0;
+   delete new_cwd; new_cwd=0;
    mode=CLOSED;
    opt_date=0;
    opt_size=0;
@@ -402,7 +399,7 @@ const char *FileAccess::GetFileURL(const char *f,int flags)
    if(!(flags&NO_PATH))
    {
       if(!f || (f[0]!='/' && f[0]!='~'))
-	 f=dir_file(cwd?cwd:"~",f);
+	 f=dir_file(cwd.path?cwd.path:"~",f);
       u.path=(char*)f;
    }
 
@@ -470,8 +467,8 @@ void FileAccess::AnonymousLogin()
 
 void FileAccess::ResetLocationData()
 {
-   xfree(cwd);  cwd=xstrdup(default_cwd);
-   xfree(home); home=0;
+   cwd.Set(default_cwd,false,0);
+   home.Set((char*)0);
 }
 
 void FileAccess::SetPasswordGlobal(const char *p)
@@ -523,16 +520,15 @@ void  FileAccess::ExpandTildeInCWD()
 {
    if(home)
    {
-      if(cwd)
-	 expand_tilde(&cwd,home);
+      cwd.ExpandTilde(home);
+      if(new_cwd)
+	 new_cwd->ExpandTilde(home);
       if(real_cwd)
 	 expand_tilde(&real_cwd,home);
       if(file)
 	 expand_tilde(&file,home);
       if(file1)
 	 expand_tilde(&file1,home);
-      if(mode==CHANGE_DIR)
-	 OptimizePath(file);
    }
 }
 
@@ -572,7 +568,7 @@ int FileAccess::device_prefix_len(const char *path)
    return 0;
 }
 
-void FileAccess::OptimizePath(char *path)
+void FileAccess::Path::OptimizePath()
 {
    int	 prefix_size=0;
 
@@ -591,7 +587,7 @@ void FileAccess::OptimizePath(char *path)
    else
    {
       // handle VMS and DOS devices.
-      prefix_size=device_prefix_len(path);
+      prefix_size=device_prefix_len;
    }
 
    char	 *in;
@@ -663,36 +659,20 @@ void FileAccess::OptimizePath(char *path)
 
 void FileAccess::Chdir(const char *path,bool verify)
 {
-   ExpandTildeInCWD();
+   cwd.ExpandTilde(home);
 
-   char	 *newcwd=(char*)alloca(xstrlen(cwd)+strlen(path)+2);
-
-   if(path[0]=='/')
-      strcpy(newcwd,path);
-   else if(path[0]=='~')
-      strcpy(newcwd,path);
-   else if(device_prefix_len(path)>0)
-      strcpy(newcwd,path);
-   else
-   {
-      if(cwd && cwd[0])
-      {
-	 if(last_char(cwd)=='/')
-	    sprintf(newcwd,"%s%s",cwd,path);
-	 else
-	    sprintf(newcwd,"%s/%s",cwd,path);
-      }
-      else
-	 strcpy(newcwd,path);
-   }
-
-   OptimizePath(newcwd);
-   strip_trailing_slashes(newcwd);
+   delete new_cwd;
+   new_cwd=new Path(&cwd);
+   new_cwd->Change(path,false);
 
    if(verify)
-      Open(newcwd,CHANGE_DIR);
+      Open(new_cwd->path,CHANGE_DIR);
    else
-      SetCwd(newcwd);
+   {
+      cwd.Set(new_cwd);
+      delete new_cwd;
+      new_cwd=0;
+   }
 }
 
 void FileAccess::Chmod(const char *file,int m)
@@ -1090,6 +1070,73 @@ void ListInfo::SetExclude(const char *p,PatternSet *x)
 {
    exclude=x;
    exclude_prefix=p;
+}
+
+// Path implementation
+void FileAccess::Path::init()
+{
+   device_prefix_len=0;
+   path=0;
+   is_file=false;
+   url=0;
+}
+FileAccess::Path::~Path()
+{
+   xfree(path);
+   xfree(url);
+}
+void FileAccess::Path::Set(const char *new_path,bool new_is_file,const char *new_url,int new_device_prefix_len)
+{
+   xfree(path);
+   path=xstrdup(new_path);
+   is_file=new_is_file;
+   xfree(url);
+   url=xstrdup(new_url);
+   device_prefix_len=new_device_prefix_len;
+}
+void FileAccess::Path::Set(const Path *o)
+{
+   Set(o->path,o->is_file,o->url,o->device_prefix_len);
+}
+void FileAccess::Path::Change(const char *new_path,bool new_is_file,int new_device_prefix_len)
+{
+   if(new_path[0]!='/' && new_path[0]!='~' && new_device_prefix_len==0
+   && path && path[0])
+   {
+      if(is_file)
+      {
+	 char *slash=strrchr(path,'/');
+	 if(slash && slash==path)
+	    slash++; // exception for root dir
+	 if(slash)
+	    *slash=0;
+	 else
+	    strcpy(path,"~");
+      }
+      char *newcwd=string_alloca(xstrlen(path)+xstrlen(new_path)+2);
+      if(last_char(path)=='/')
+	 sprintf(newcwd,"%s%s",path,new_path);
+      else
+	 sprintf(newcwd,"%s/%s",path,new_path);
+      new_path=newcwd;
+   }
+   xfree(path);
+   path=xstrdup(new_path);
+   is_file=new_is_file;
+   device_prefix_len=new_device_prefix_len;
+
+   OptimizePath();
+   strip_trailing_slashes(path);
+}
+void FileAccess::Path::ExpandTilde(const Path &home)
+{
+   if(path && path[0]=='~' && (path[1]=='/' || path[1]=='\0'))
+   {
+      device_prefix_len=home.device_prefix_len;
+      if(path[1]=='\0')
+	 is_file=home.is_file;
+   }
+   expand_tilde(&path,home.path);
 }
 
 #include "modconfig.h"

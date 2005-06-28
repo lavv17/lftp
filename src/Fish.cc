@@ -55,14 +55,6 @@ void Fish::GetBetterConnection(int level)
 	 return;
       }
 
-      if(home && !o->home)
-	 o->home=xstrdup(home);
-      else if(!home && o->home)
-	 home=xstrdup(o->home);
-
-      o->ExpandTildeInCWD();
-      ExpandTildeInCWD();
-
       if(level==0 && xstrcmp(real_cwd,o->real_cwd))
 	 continue;
 
@@ -224,7 +216,7 @@ int Fish::Do()
 	 if(path_queue_len==0 || strcmp(path_queue[path_queue_len-1],cwd))
 	 {
 	    Send("#CWD %s\n"
-		 "cd %s; echo '### 000'\n",cwd,shell_encode(cwd));
+		 "cd %s; echo '### 000'\n",cwd.path,shell_encode(cwd));
 	    PushExpect(EXPECT_CWD);
 	    PushDirectory(cwd);
 	 }
@@ -760,9 +752,7 @@ int Fish::HandleReplies()
 	 set_real_cwd(p);
 	 if(mode==CHANGE_DIR && RespQueueIsEmpty())
 	 {
-	    xfree(cwd);
-	    cwd=p;
-	    p=0;
+	    cwd.Set(p);
 	    eof=true;
 	 }
       }
