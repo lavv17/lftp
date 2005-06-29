@@ -1,6 +1,8 @@
 2005-06-29  Alexander V. Lukyanov <lav@yars.free.net>
 
-	* ftpclass.cc: accept AUTH and REST with no arguments in FEAT reply.
+	* ftpclass.cc: accept AUTH and REST with no arguments in FEAT reply;
+	  use ftp:auto-passive-mode setting.
+	* resource.cc: add ftp:auto-passive-mode setting.
 
 2005-06-28  Alexander V. Lukyanov <lav@yars.free.net>
 

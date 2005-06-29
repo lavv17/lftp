@@ -187,6 +187,7 @@ static ResDecl
    ResDecl00 ("ftp:anon-pass",		  "lftp@", 0,0),
    ResDecl01 ("ftp:anon-user",		  "anonymous",0,0),
    ResDecl01a("ftp:auto-sync-mode",	  "",	   ResMgr::ERegExpValidate,0),
+   ResDecl01i("ftp:auto-passive-mode",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl01b("ftp:bind-data-socket",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl01f("ftp:charset",		  "",	   ResMgr::CharsetValidate,0),
    ResDecl01g("ftp:client",		  PACKAGE"/"VERSION,0,0),

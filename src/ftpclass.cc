@@ -2094,7 +2094,7 @@ int   Ftp::Do()
 	 res=Poll(conn->data_sock,POLLOUT);
 	 if(res==-1)
 	 {
-	    if(conn->fixed_pasv)
+	    if(conn->fixed_pasv && QueryBool("auto-passive-mode",hostname))
 	    {
 	       DebugPrint("---- ",_("Switching passive mode off"),2);
 	       SetFlag(PASSIVE_MODE,0);
@@ -3573,7 +3573,7 @@ void Ftp::CheckFEAT(char *reply)
 
 void Ftp::CheckResp(int act)
 {
-   if(act==150 && flags&PASSIVE_MODE && conn->aborted_data_sock!=-1)
+   if(act==150 && (flags&PASSIVE_MODE) && conn->aborted_data_sock!=-1)
       conn->CloseAbortedDataConnection();
 
    if(act==150 && state==WAITING_STATE && expect->FirstIs(Expect::TRANSFER))
@@ -3751,8 +3751,11 @@ void Ftp::CheckResp(int act)
       if(is5XX(act))
       {
       passive_off:
-	 DebugPrint("---- ",_("Switching passive mode off"),2);
-	 SetFlag(PASSIVE_MODE,0);
+	 if(QueryBool("auto-passive-mode",hostname))
+	 {
+	    DebugPrint("---- ",_("Switching passive mode off"),2);
+	    SetFlag(PASSIVE_MODE,0);
+	 }
       }
       Disconnect();
       break;
@@ -3768,8 +3771,11 @@ void Ftp::CheckResp(int act)
       }
       if(is5XX(act))
       {
-	 DebugPrint("---- ",_("Switching passive mode on"),2);
-	 SetFlag(PASSIVE_MODE,1);
+	 if(QueryBool("auto-passive-mode",hostname))
+	 {
+	    DebugPrint("---- ",_("Switching passive mode on"),2);
+	    SetFlag(PASSIVE_MODE,1);
+	 }
       }
       Disconnect();
       break;
