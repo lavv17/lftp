@@ -3,6 +3,7 @@
 	* ftpclass.cc: accept AUTH and REST with no arguments in FEAT reply;
 	  use ftp:auto-passive-mode setting.
 	* resource.cc: add ftp:auto-passive-mode setting.
+	* MirrorJob.cc: workaround FreeBSD tcgetpgrp bug.
 
 2005-06-28  Alexander V. Lukyanov <lav@yars.free.net>
 
