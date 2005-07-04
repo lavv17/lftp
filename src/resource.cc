@@ -328,7 +328,7 @@ static ResDecl
 #endif
 
 #if INET6
-# define DEFAULT_ORDER "inet inet6"
+# define DEFAULT_ORDER "inet6 inet"
 #else
 # define DEFAULT_ORDER "inet"
 #endif
