@@ -906,8 +906,9 @@ limit the time for DNS queries. If DNS server is unavailable too long, lftp
 will fail to resolve a given host name. 0 means unlimited, the default.
 .TP
 .BR dns:order " (list of protocol names)"
-sets the order of DNS queries. Default is ``inet inet6'' which means first
-look up address in inet family, then inet6 and use first matched.
+sets the order of DNS queries. Default is ``inet6 inet'' which means first
+look up address in inet6 family, then inet and use them in that order.
+To disable inet6 (AAAA) lookup, set this variable to ``inet''.
 .TP
 .BR dns:use-fork \ (boolean)
 if true, lftp will fork before resolving host address. Default is true.

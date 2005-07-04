@@ -1,3 +1,7 @@
+2005-07-04	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: fix dns:order description.
+
 2005-05-23	A Costa <agcosta@gis.net>
 
 	* lftp.1: fixed several typos.
