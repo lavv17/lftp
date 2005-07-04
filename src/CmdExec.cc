@@ -60,7 +60,8 @@ static ResDecl
    res_interactive	   ("cmd:interactive",	"no", ResMgr::BoolValidate,ResMgr::NoClosure),
    res_move_background	   ("cmd:move-background","yes", ResMgr::BoolValidate,ResMgr::NoClosure),
    res_set_term_status     ("cmd:set-term-status","no", ResMgr::BoolValidate,0),
-   res_term_status         ("cmd:term-status",  "", 0, 0);
+   res_term_status         ("cmd:term-status",  "", 0, 0),
+   res_trace		   ("cmd:trace",  "no",	ResMgr::BoolValidate,ResMgr::NoClosure);
 
 CmdExec	 *CmdExec::cwd_owner=0;
 CmdExec	 *CmdExec::chain=0;
@@ -187,6 +188,13 @@ void  CmdExec::exec_parsed_command()
    }
 
    bool did_default=false;
+
+   if(ResMgr::QueryBool("cmd:trace",0))
+   {
+      char *c=args->CombineQuoted();
+      printf("+ %s\n",c);
+      xfree(c);
+   }
 
 restart:
 

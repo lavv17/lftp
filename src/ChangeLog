@@ -1,6 +1,7 @@
 2005-07-04  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* resource.cc: make inet6 the first af to lookup.
+	* CmdExec.cc: add cmd:trace setting.
 
 2005-06-29  Alexander V. Lukyanov <lav@yars.free.net>
 
