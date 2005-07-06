@@ -17,6 +17,13 @@
 # define CDECL extern "C"
 # define CDECL_BEGIN CDECL {
 # define CDECL_END   }
+template<typename T>
+static inline T replace_value(T &var,T new_value)
+{
+   T tmp=var;
+   var=new_value;
+   return tmp;
+}
 #else
 # define CDECL
 # define CDECL_BEGIN

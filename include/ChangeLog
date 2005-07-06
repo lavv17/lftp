@@ -1,3 +1,7 @@
+2005-07-06	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* post-config.h: (replace_value) new template.
+
 2005-03-24	Dmitry A. Yanko <fm@cross-road.org.ua>
 
 	* post-config.h: fixed compilation with socks5.
