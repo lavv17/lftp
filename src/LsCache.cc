@@ -62,9 +62,7 @@ void LsCache::CheckSize()
       }
       if(size<=sizelimit)
 	 break;
-      LsCache *tmp=oldest[0]->next;
-      delete(*oldest);
-      *oldest=tmp;
+      delete replace_value(oldest[0],oldest[0]->next);
    }
 }
 
@@ -259,9 +257,7 @@ int LsCache::ExpireHelper::Do()
       {
 	 if((*scan)->Expired())
 	 {
-	    LsCache *tmp=*scan;
-	    *scan=tmp->next;
-	    delete tmp;
+	    delete replace_value(scan[0],scan[0]->next);
 	    scan=&LsCache::chain;   // rescan the chain to find next expiring
 	    continue;
 	 }
@@ -311,9 +307,7 @@ void LsCache::Changed(change_mode m,FileAccess *f,const char *dir)
 		     !strncmp(fdir,dir_file(sloc->GetCwd(),(*scan)->arg),fdir_len)
 		   : !strcmp (fdir,dir_file(sloc->GetCwd(),(*scan)->arg)))))
       {
-	 LsCache *tmp=*scan;
-	 *scan=tmp->next;
-	 delete tmp;
+	 delete replace_value(scan[0],scan[0]->next);
 	 continue;
       }
       scan=&scan[0]->next;

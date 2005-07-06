@@ -1,6 +1,7 @@
 2005-07-06  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.h: fixed a seg fault on empty directories.
+	* LsCache.cc: use replace_value.
 
 2005-07-04  Alexander V. Lukyanov <lav@yars.free.net>
 
