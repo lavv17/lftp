@@ -1,3 +1,7 @@
+2005-07-06  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SFtp.h: fixed a seg fault on empty directories.
+
 2005-07-04  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* resource.cc: make inet6 the first af to lookup.

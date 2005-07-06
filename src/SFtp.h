@@ -718,7 +718,7 @@ public:
    void Cleanup();
    void CleanupThis();
 
-   FileSet *GetFileSet() { FileSet *fset=file_set; file_set=0; return fset; }
+   FileSet *GetFileSet() { FileSet *fset=file_set; file_set=0; return fset?fset:new FileSet; }
 };
 
 class SFtpDirList : public DirList
