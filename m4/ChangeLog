@@ -1,3 +1,7 @@
+2005-07-18  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* pty.m4: don't check for /dev/ptc on linux; should help for cross-compiling.
+
 2003-12-24  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* socklen.m4: don't define lftp_socklen_t if socklen_t is available.
