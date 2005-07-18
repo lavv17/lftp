@@ -579,7 +579,12 @@ void MirrorJob::HandleListInfoCreation(FileAccess * &session,ListInfo * &list_in
       return;
    }
    list_info->UseCache(use_cache);
-   list_info->Need(FileInfo::ALL_INFO);
+   int need=FileInfo::ALL_INFO;
+   if(flags&IGNORE_TIME)
+      need&=~FileInfo::DATE;
+   if(flags&IGNORE_SIZE)
+      need&=~FileInfo::SIZE;
+   list_info->Need(need);
    if(flags&RETR_SYMLINKS)
       list_info->FollowSymlinks();
 
