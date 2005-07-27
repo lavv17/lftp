@@ -1,3 +1,7 @@
+2005-07-18  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: don't request date/size information when not needed.
+
 2005-07-06  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.h: fixed a seg fault on empty directories.
