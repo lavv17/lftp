@@ -97,19 +97,25 @@ public:
       Path(const Path *o) { init(); Set(o); }
       Path(const Path &o) { init(); Set(o); }
       Path(const char *new_path) { init(); Set(new_path); }
+      Path(const char *new_path,bool new_is_file=false,const char *new_url=0,int new_device_prefix_len=0)
+	 { init(); Set(new_path,new_is_file,new_url,new_device_prefix_len); }
       ~Path();
       void Set(const Path*);
       void Set(const Path &o) { Set(&o); }
       void Set(const char *new_path,bool new_is_file=false,const char *new_url=0,int device_prefix_len=0);
+      void SetURL(const char *u) { xfree(url); url=xstrdup(u); }
       void Change(const char *new_path,bool new_is_file=false,int device_prefix_len=0);
       void ExpandTilde(const Path &home);
-      void OptimizePath();
+      static void Optimize(char *p,int dev_prefix=0);
+      void Optimize() { Optimize(path,device_prefix_len); }
       const Path& operator=(const Path &o)
 	 {
 	    Set(&o);
 	    return *this;
 	 }
-      operator const char *() { return path; }
+      operator const char *() const { return path; }
+      bool operator==(const Path &p2) const;
+      bool operator!=(const Path &p2) const { return !(*this==p2); }
    };
 
 protected:
@@ -230,6 +236,7 @@ public:
 
    virtual void Connect(const char *h,const char *p);
    virtual void ConnectVerify();
+   void PathVerify(const Path &);
    virtual void AnonymousLogin();
    virtual void Login(const char *u,const char *p);
 
@@ -237,7 +244,7 @@ public:
    virtual void ResetLocationData();
 
    virtual void Open(const char *file,int mode,off_t pos=0);
-   void SetFileURL(const char *u) { xfree(file_url); file_url=xstrdup(u); }
+   void SetFileURL(const char *u);
    void SetSize(off_t s) { entity_size=s; }
    void SetDate(time_t d) { entity_date=d; }
    void WantDate(time_t *d) { opt_date=d; }
@@ -248,8 +255,8 @@ public:
    virtual void	Rename(const char *rfile,const char *to);
    virtual void Mkdir(const char *rfile,bool allpath=false);
    virtual void Chdir(const char *dir,bool verify=true);
-   void OptimizePath(char *path);
-   void SetCwd(const char *dir) { cwd.Set(dir,false,0); }
+   void ChdirAccept() { cwd=*new_cwd; }
+   void SetCwd(const Path &new_cwd) { cwd=new_cwd; }
    void Remove(const char *rfile)    { Open(rfile,REMOVE); }
    void RemoveDir(const char *dir)  { Open(dir,REMOVE_DIR); }
    void Chmod(const char *file,int m);
@@ -274,7 +281,7 @@ public:
    void SeekReal() { pos=GetRealPos(); }
    void RereadManual() { norest_manual=true; }
 
-   const char *GetCwd() { return cwd.path; }
+   const Path& GetCwd() { return cwd; }
    const char *GetFile() { return file; }
 
    virtual int Do() = 0;
@@ -418,7 +425,7 @@ class ListInfo : public FileAccessOperation
 {
 protected:
    FileAccess *session;
-   char *saved_cwd;
+   FileAccess::Path saved_cwd;
    FileSet *result;
 
    const char *exclude_prefix;

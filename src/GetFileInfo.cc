@@ -83,7 +83,7 @@
 #include "LsCache.h"
 
 GetFileInfo::GetFileInfo(FileAccess *a, const char *_dir, bool _showdir)
-   : ListInfo(a,0)
+   : ListInfo(a,0), origdir(a->GetCwd())
 {
   dir=xstrdup(_dir? _dir:"");
 
@@ -98,8 +98,6 @@ GetFileInfo::GetFileInfo(FileAccess *a, const char *_dir, bool _showdir)
    saved_error_text=0;
    was_directory=false;
    prepend_path=true;
-
-   origdir=xstrdup(session->GetCwd());
 
    const char *bn=basename_ptr(dir);
    if(bn[0]=='.' && (bn[1]==0 || bn[1]=='/' ||
@@ -119,7 +117,6 @@ GetFileInfo::~GetFileInfo()
    xfree(saved_error_text);
    xfree(dir);
    xfree(path_to_prefix);
-   xfree(origdir);
    xfree(verify_fn);
 }
 
@@ -275,7 +272,7 @@ int GetFileInfo::Do()
        * the real name of the path.  (We may have something like "~/..".) */
       if(!verify_fn)
       {
-	 char *pwd = alloca_strdup(session->GetCwd());
+	 FileAccess::Path pwd = session->GetCwd();
 
 	 session->SetCwd(origdir);
 	 session->Chdir(dir, false);

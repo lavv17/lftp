@@ -333,7 +333,7 @@ void Http::SendMethod(const char *method,const char *efile)
       if(!xstrcmp(referer,"."))
       {
 	 referer=GetConnectURL(NO_USER+NO_PASSWORD);
-	 if(last_char(referer)!='/')
+	 if(last_char(referer)!='/' && !cwd.is_file)
 	    slash="/";
       }
       if(referer && referer[0])
@@ -435,17 +435,18 @@ bool Http::ModeSupported()
 
 void Http::DirFile(char *path_base,const char *ecwd,const char *efile)
 {
-   const char *cwd=this->cwd.path;
    if(efile[0]=='/')
       strcpy(path_base,efile);
    else if(efile[0]=='~')
       sprintf(path_base,"/%s",efile);
-   else if(cwd[0]==0 || ((cwd[0]=='/' || (!hftp && cwd[0]=='~')) && cwd[1]==0))
+   else if(ecwd[0]==0 || ((ecwd[0]=='/' || (!hftp && ecwd[0]=='~')) && ecwd[1]==0))
       sprintf(path_base,"/%s",efile);
-   else if(cwd[0]=='~')
+   else if(ecwd[0]=='~' && efile[0])
       sprintf(path_base,"/%s/%s",ecwd,efile);
-   else
+   else if(efile[0])
       sprintf(path_base,"%s/%s",ecwd,efile);
+   else
+      strcpy(path_base,ecwd);
 
    if(path_base[1]=='~' && path_base[2]=='/')
       memmove(path_base,path_base+2,strlen(path_base+2)+1);
@@ -461,9 +462,29 @@ void Http::SendRequest(const char *connection,const char *f)
 {
    char *efile=string_alloca(strlen(f)*3+1);
    url::encode_string(f,efile,URL_PATH_UNSAFE);
-   char *ecwd=string_alloca(strlen(cwd)*3+1);
-   url::encode_string(cwd,ecwd,URL_PATH_UNSAFE);
+   char *ecwd;
    int efile_len;
+
+   if(cwd.url)
+   {
+      ecwd=cwd.url+url::path_index(cwd.url);
+      ecwd=alloca_strdup(ecwd);
+   }
+   else
+   {
+      ecwd=string_alloca(strlen(cwd)*3+1);
+      url::encode_string(cwd,ecwd,URL_PATH_UNSAFE);
+   }
+   bool add_slash=true;
+   if(cwd.is_file)
+   {
+      if(efile[0])
+	 dirname_modify(ecwd+(!strncmp(ecwd,"/~",2)));
+      else
+	 add_slash=false;
+   }
+   if(mode==CHANGE_DIR && new_cwd)
+      add_slash=!new_cwd->is_file;
 
    char *pfile=string_alloca(4+3+xstrlen(user)*6+3+xstrlen(pass)*3+1+
 			      strlen(hostname)*3+1+xstrlen(portname)*3+1+
@@ -585,7 +606,7 @@ void Http::SendRequest(const char *connection,const char *f)
    case LONG_LIST:
    case MP_LIST:
    case MAKE_DIR:
-      if(efile_len<1 || efile[efile_len-1]!='/')
+      if(last_char(efile)!='/' && add_slash)
 	 strcat(efile,"/");
       if(mode==CHANGE_DIR)
 	 SendMethod("HEAD",efile);
@@ -1894,7 +1915,7 @@ bool Http::SameLocationAs(FileAccess *fa)
    if(!SameSiteAs(fa))
       return false;
    Http *o=(Http*)fa;
-   if(xstrcmp(cwd,o->cwd))
+   if(cwd!=o->cwd)
       return false;
    return true;
 }

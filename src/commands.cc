@@ -571,6 +571,8 @@ Job *CmdExec::builtin_cd()
    if(args->count()==1)
       args->Append("~");
 
+   bool is_file=false;
+
    if(args->count()!=2)
    {
       // xgettext:c-format
@@ -579,9 +581,7 @@ Job *CmdExec::builtin_cd()
    }
 
    const char *dir=args->getarg(1);
-
-   if(url::is_url(dir))
-      return builtin_open();
+   const char *url=0;
 
    if(!strcmp(dir,"-"))
    {
@@ -594,20 +594,41 @@ Job *CmdExec::builtin_cd()
       args->setarg(1,dir); // for status line
    }
 
-   xfree(old_cwd);
-   old_cwd=xstrdup(session->GetCwd());
+   if(url::is_url(dir))
+   {
+      ParsedURL u(dir,true);
+      FileAccess *new_session=FileAccess::New(&u);
+      bool same_site=session->SameSiteAs(new_session);
+      Delete(new_session);
+      if(!same_site)
+	 return builtin_open();
+      url=dir;
+      dir=alloca_strdup(u.path);
+      if(url::dir_needs_trailing_slash(u.proto))
+	 is_file=(last_char(dir)!='/');
+   }
+   else
+   {
+      if(url::dir_needs_trailing_slash(session->GetProto()))
+	 is_file=(last_char(dir)!='/');
+   }
 
+   old_cwd=session->GetCwd();
+   FileAccess::Path new_cwd=old_cwd;
+   new_cwd.Change(dir,is_file);
+   if(url)
+      new_cwd.SetURL(url);
    if(!verify_path || background
    || (!verify_path_cached && LsCache::IsDirectory(session,dir)==1))
    {
-      cwd_history.Set(session,session->GetCwd());
-      session->Chdir(dir,false);
+      cwd_history.Set(session,old_cwd);
+      session->SetCwd(new_cwd);
       if(slot)
-	 ConnectionSlot::SetCwd(slot,session->GetCwd());
+	 ConnectionSlot::SetCwd(slot,new_cwd);
       exit_code=0;
       return 0;
    }
-   session->Chdir(dir);
+   session->PathVerify(new_cwd);
    Roll(session);
    builtin=BUILTIN_CD;
    return this;
@@ -928,11 +949,28 @@ Job *CmdExec::builtin_open()
    {
       const char *old=cwd_history.Lookup(session);
       if(old)
-	 session->SetCwd(old);
+      {
+	 bool is_file=false;
+	 const char *url=0;
+	 if(url::is_url(old))
+	 {
+	    ParsedURL u(old,true);
+	    url=old;
+	    old=alloca_strdup(u.path);
+	    if(url::dir_needs_trailing_slash(u.proto))
+	       is_file=(last_char(old)!='/');
+	 }
+	 else
+	 {
+	    if(url::dir_needs_trailing_slash(session->GetProto()))
+	       is_file=(last_char(old)!='/');
+	 }
+	 session->SetCwd(FileAccess::Path(old,is_file,url));
+      }
 
       char *s=string_alloca(strlen(path)*2+40);
       strcpy(s,"&& cd \"");
-      unquote(s+strlen(s),path);
+      unquote(s+strlen(s),(url && url->orig_url)?url->orig_url:path);
       strcat(s,"\"");
       if(background)
 	 strcat(s,"&");
@@ -1786,7 +1824,17 @@ CMD(source)
    }
    else
       f=new FileStream(args->getarg(1),O_RDONLY|O_ASCII);
-
+   // try to open the file to return error code if failed, as FileFeeder
+   // cannot feed error codes.
+   if(f->getfd()==-1)
+   {
+      if(f->error())
+      {
+	 fprintf(stderr,"%s: %s\n",args->a0(),f->error_text);
+	 delete f;
+	 return 0;
+      }
+   }
    parent->SetCmdFeeder(new FileFeeder(f));
    exit_code=0;
    return 0;

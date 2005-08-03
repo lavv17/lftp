@@ -237,7 +237,7 @@ int SFtp::Do()
       m=MOVED;
 
    case CONNECTED:
-      if(home==0 && !RespQueueIsEmpty())
+      if(home.path==0 && !RespQueueIsEmpty())
 	 return m;
 
       if(mode==CLOSED)

@@ -52,8 +52,8 @@ int FinderJob::Do()
 	 {
 	    session=FileAccess::New(&u);
 	    session->SetPriority(fg?1:0);
-	    init_dir=xstrdup(session->GetCwd());
-	    Down(u.path?u.path:init_dir);
+	    init_dir=session->GetCwd();
+	    Down(u.path?u.path:init_dir.path);
 	 }
       }
 
@@ -274,10 +274,8 @@ FinderJob::prf_res FinderJob::ProcessFile(const char *d,const FileInfo *f)
 void FinderJob::Init()
 {
    orig_session=0;
-   orig_init_dir=0;
 
    op="find";
-   init_dir=0;
    dir=0;
    errors=0;
    li=0;
@@ -303,12 +301,10 @@ void FinderJob::Init()
 }
 
 FinderJob::FinderJob(FileAccess *s)
-   : SessionJob(s)
+   : SessionJob(s), orig_init_dir(s->GetCwd()), init_dir(s->GetCwd())
 {
    Init();
-   init_dir=xstrdup(session->GetCwd());
    orig_session=session;
-   orig_init_dir=init_dir;
 }
 
 void FinderJob::NextDir(const char *d)
@@ -317,8 +313,6 @@ void FinderJob::NextDir(const char *d)
    {
       Reuse(session);
       session=orig_session;
-      assert(orig_init_dir!=init_dir);
-      xfree(init_dir);
       init_dir=orig_init_dir;
    }
    session->SetCwd(init_dir);
@@ -331,10 +325,7 @@ FinderJob::~FinderJob()
       Up();
    if(orig_session!=session)
       Reuse(orig_session);
-   if(orig_init_dir!=init_dir)
-      xfree(orig_init_dir);
    xfree(stack);
-   xfree(init_dir);
    delete exclude;
    xfree(dir);
    Delete(li);
@@ -411,7 +402,7 @@ FinderJob::prf_res FinderJob_List::ProcessFile(const char *d,const FileInfo *fi)
       return PRF_LATER;
    if(ProcessingURL())
    {
-      char *old_cwd=alloca_strdup(session->GetCwd());
+      FileAccess::Path old_cwd=session->GetCwd();
       session->SetCwd(init_dir);
       session->Chdir(dir_file(d,fi->name),false);
       buf->Put(session->GetConnectURL());

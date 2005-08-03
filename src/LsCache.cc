@@ -321,7 +321,7 @@ void LsCache::SetDirectory(FileAccess *p_loc, const char *path, bool dir)
    if(!path)
       return;
 
-   char *origdir = alloca_strdup(p_loc->GetCwd());
+   FileAccess::Path origdir = p_loc->GetCwd();
 
    p_loc->Chdir(path,false);
    const char *entry = dir? "1":"0";
@@ -335,7 +335,7 @@ void LsCache::SetDirectory(FileAccess *p_loc, const char *path, bool dir)
 
 int LsCache::IsDirectory(FileAccess *p_loc,const char *dir_c)
 {
-   char *origdir = alloca_strdup(p_loc->GetCwd());
+   FileAccess::Path origdir = p_loc->GetCwd();
    p_loc->Chdir(dir_c, false);
 
    int ret = -1;

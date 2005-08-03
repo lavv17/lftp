@@ -48,7 +48,7 @@ public:
    static ConnectionSlot::SlotValue *Find(const char *n);
    static FileAccess *FindSession(const char *n);
    static void Set(const char *n,FileAccess *s);
-   static void SetCwd(const char *n,const char *cwd);
+   static void SetCwd(const char *n,const FileAccess::Path &cwd);
    static void Remove(const char *n);
    static char *Format();
    char *FormatThis();

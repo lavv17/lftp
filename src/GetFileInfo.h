@@ -37,7 +37,7 @@ class GetFileInfo: public ListInfo
    char *path_to_prefix;
 
    /* directory we started in: */
-   char *origdir;
+   FileAccess::Path origdir;
 
    /* In showdir mode, we make sure the path actually exists; this is
     * the filename to look for. */

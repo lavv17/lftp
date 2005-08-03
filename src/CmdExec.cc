@@ -318,7 +318,7 @@ void CmdExec::RemoveFeeder()
 
    // save old cwd if necessary
    if(interactive && feeder->prev==0)
-      cwd_history.Set(session,session->GetCwd());
+      cwd_history.Set(session);
 
    CmdFeeder *tmp=feeder->prev;
    next_cmd=cmd_buf=feeder->saved_buf;
@@ -524,12 +524,7 @@ int CmdExec::Do()
 	       if(status_line)
 		  status_line->Clear();
 	       if(builtin==BUILTIN_CD)
-	       {
-		  // accept the path
-		  const char *f=session->GetFile();
-		  f=alloca_strdup(f);
-		  session->Chdir(f,false);
-	       }
+		  session->ChdirAccept();
 	       session->Close();
 	       exit_code=0;
 	       builtin=BUILTIN_NONE;
@@ -815,7 +810,6 @@ CmdExec::CmdExec(FileAccess *f,LocalDirectory *c) : SessionJob(f)
    verify_path_cached=false;
 
    start_time=0;
-   old_cwd=0;
    old_lcwd=0;
    slot=0;
 
@@ -853,7 +847,6 @@ CmdExec::~CmdExec()
    delete cwd;
    if(cwd_owner==this)
       cwd_owner=0;
-   xfree(old_cwd);
    xfree(old_lcwd);
    delete glob;
    delete args_glob;

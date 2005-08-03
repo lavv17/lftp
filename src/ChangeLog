@@ -1,3 +1,19 @@
+2005-08-03  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc, CmdExec.h: use FileAccess::Path for old_cwd.
+	* ConnectionSlot.cc, ConnectionSlot.h, FindJob.cc, FindJob.h,
+	  GetFileInfo.cc, GetFileInfo.h, LsCache.cc: use FileAccess::Path.
+	* FileAccess.cc, FileAccess.h: use cwd.url in GetFileURL; new method
+	  PathVerify; set new_cwd->url in SetFileURL; use Path for saved_cwd;
+	  modify url in Path::Change; unset is_file for some known directories;
+	  implement operator== for Path; new method ChdirAccept.
+	* Http.cc: modify url generation using cwd.url and cwd.is_file.
+	* commands.cc: modify cd and open to work with file URLs;
+	  fixed `source' command to return error code on bad files.
+	* history.cc, history.h: save URL in cwd history if present;
+	  add single argument Set method.
+	* url.cc, url.h: (dir_needs_trailing_slash) new function.
+
 2005-07-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc: don't request date/size information when not needed.

@@ -43,7 +43,8 @@ class History : public KeyValueDB
    time_t extract_stamp(const char *res);
 
 public:
-   void Set(FileAccess *s,const char *cwd);
+   void Set(FileAccess *s,const FileAccess::Path &p);
+   void Set(FileAccess *s) { Set(s,s->GetCwd()); }
    const char *Lookup(FileAccess *s);
    void Save();
    History();

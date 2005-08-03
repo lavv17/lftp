@@ -31,7 +31,7 @@
 class FinderJob : public SessionJob
 {
    FileAccess *orig_session;
-   char *orig_init_dir;
+   FileAccess::Path orig_init_dir;
 
    char *dir;
    int errors;
@@ -76,7 +76,7 @@ protected:
    state_t state;
 
    const char *op;
-   char *init_dir;
+   FileAccess::Path init_dir;
 
    enum prf_res { PRF_FATAL, PRF_ERR, PRF_OK, PRF_WAIT, PRF_LATER };
    virtual prf_res ProcessFile(const char *d,const FileInfo *fi);

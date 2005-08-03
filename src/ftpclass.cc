@@ -1486,7 +1486,7 @@ int   Ftp::Do()
 	 return MOVED;
       }
 
-      if(home==0 && !expect->IsEmpty())
+      if(home.path==0 && !expect->IsEmpty())
 	 goto usual_return;
 
       if(now<retry_time)

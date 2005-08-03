@@ -82,6 +82,7 @@ public:
       }
 
    static int path_index(const char *p);
+   static bool dir_needs_trailing_slash(const char *proto);
 };
 
 #endif//URL_H

@@ -473,3 +473,11 @@ char *url::encode_string (const char *s,char *res,const char *unsafe)
   *p = '\0';
   return res;
 }
+
+bool url::dir_needs_trailing_slash(const char *proto)
+{
+   if(!proto)
+      return false;
+   return !strcmp(proto,"http")
+       || !strcmp(proto,"https");
+}

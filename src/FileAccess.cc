@@ -398,6 +398,19 @@ const char *FileAccess::GetFileURL(const char *f,int flags)
    u.port=portname;
    if(!(flags&NO_PATH))
    {
+      if(cwd.url)
+      {
+	 Path f_path(cwd);
+	 if(f)
+	    f_path.Change(f,true);
+	 int f_path_index=url::path_index(f_path.url);
+	 xfree(url);
+	 url=u.Combine(home);
+	 url=(char*)xrealloc(url,strlen(url)+strlen(f_path.url+f_path_index)+2);
+	 strcpy(url+strlen(url),f_path.url+f_path_index);
+	 return url;
+      }
+
       if(!f || (f[0]!='/' && f[0]!='~'))
 	 f=dir_file(cwd.path?cwd.path:"~",f);
       u.path=(char*)f;
@@ -568,7 +581,7 @@ int FileAccess::device_prefix_len(const char *path)
    return 0;
 }
 
-void FileAccess::Path::OptimizePath()
+void FileAccess::Path::Optimize(char *path,int device_prefix_len)
 {
    int	 prefix_size=0;
 
@@ -675,6 +688,13 @@ void FileAccess::Chdir(const char *path,bool verify)
    }
 }
 
+void FileAccess::PathVerify(const Path &p)
+{
+   delete new_cwd;
+   new_cwd=new Path(p);
+   Open(new_cwd->path,CHANGE_DIR);
+}
+
 void FileAccess::Chmod(const char *file,int m)
 {
    chmod_mode=m;
@@ -727,6 +747,14 @@ void FileAccess::SetSuggestedFileName(const char *fn)
    if(!*fn)
       return;
    suggested_filename=xstrdup(fn);
+}
+
+void FileAccess::SetFileURL(const char *u)
+{
+   xfree(file_url);
+   file_url=xstrdup(u);
+   if(new_cwd && mode==CHANGE_DIR)
+      new_cwd->SetURL(u);
 }
 
 FileAccess *SessionPool::pool[pool_size];
@@ -1039,7 +1067,6 @@ void FileAccessOperation::SetErrorCached(const char *e)
 ListInfo::ListInfo(FileAccess *s,const char *p)
 {
    session=s;
-   saved_cwd=0;
    result=0;
 
    exclude=0;
@@ -1051,7 +1078,7 @@ ListInfo::ListInfo(FileAccess *s,const char *p)
 
    if(session && p)
    {
-      saved_cwd=xstrdup(session->GetCwd());
+      saved_cwd=session->GetCwd();
       session->Chdir(p,false);
    }
 }
@@ -1060,10 +1087,9 @@ ListInfo::~ListInfo()
 {
    if(session)
       session->Close();
-   if(session && saved_cwd)
+   if(session && saved_cwd.path)
       session->SetCwd(saved_cwd);
    delete result;
-   xfree(saved_cwd);
 }
 
 void ListInfo::SetExclude(const char *p,PatternSet *x)
@@ -1100,17 +1126,40 @@ void FileAccess::Path::Set(const Path *o)
 }
 void FileAccess::Path::Change(const char *new_path,bool new_is_file,int new_device_prefix_len)
 {
+   if(!new_path || !*new_path)
+      return;
+   const char *bn=basename_ptr(new_path);
+   if(!strcmp(bn,".") || !strcmp(bn,".."))
+      new_is_file=false;
+   if(url)
+   {
+      int path_index=url::path_index(url);
+      const char *old_url_path=url+path_index;
+      char *new_url_path=string_alloca(strlen(old_url_path)+xstrlen(new_path)*3+2);
+      strcpy(new_url_path,old_url_path);
+      if(is_file)
+      {
+	 dirname_modify(new_url_path);
+	 if(!new_url_path[0])
+	    strcpy(new_url_path,"/~");
+      }
+      if(last_char(new_url_path)!='/')
+	 strcat(new_url_path,"/");
+      if(new_path[0]!='/' && new_path[0]!='~' && new_device_prefix_len==0)
+	 url::encode_string(new_path,new_url_path+strlen(new_url_path),URL_PATH_UNSAFE);
+      else
+	 url::encode_string(new_path,new_url_path,URL_PATH_UNSAFE);
+      Optimize(new_url_path+(!strncmp(new_url_path,"/~",2)));
+      url=(char*)xrealloc(url,path_index+strlen(new_url_path)+1);
+      strcpy(url+path_index,new_url_path);
+   }
    if(new_path[0]!='/' && new_path[0]!='~' && new_device_prefix_len==0
    && path && path[0])
    {
       if(is_file)
       {
-	 char *slash=strrchr(path,'/');
-	 if(slash && slash==path)
-	    slash++; // exception for root dir
-	 if(slash)
-	    *slash=0;
-	 else
+	 dirname_modify(path);
+	 if(!path[0])
 	    strcpy(path,"~");
       }
       char *newcwd=string_alloca(xstrlen(path)+xstrlen(new_path)+2);
@@ -1122,11 +1171,23 @@ void FileAccess::Path::Change(const char *new_path,bool new_is_file,int new_devi
    }
    xfree(path);
    path=xstrdup(new_path);
-   is_file=new_is_file;
    device_prefix_len=new_device_prefix_len;
-
-   OptimizePath();
+   Optimize();
    strip_trailing_slashes(path);
+   is_file=new_is_file;
+   if(!strcmp(path,"/") || !strcmp(path,"//"))
+      is_file=false;
+}
+bool FileAccess::Path::operator==(const Path &p2) const
+{
+   const Path &p1=*this;
+   if(p1.is_file!=p2.is_file)
+      return false;
+   if(xstrcmp(p1.path,p2.path))
+      return false;
+   if(xstrcmp(p1.url,p2.url))
+      return false;
+   return true;
 }
 void FileAccess::Path::ExpandTilde(const Path &home)
 {

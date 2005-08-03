@@ -208,7 +208,7 @@ int Fish::Do()
    case CONNECTED:
       if(mode==CLOSED)
 	 return m;
-      if(home==0 && !RespQueueIsEmpty())
+      if(home.path==0 && !RespQueueIsEmpty())
 	 goto usual_return;
       ExpandTildeInCWD();
       if(mode!=CHANGE_DIR && xstrcmp(cwd,real_cwd))

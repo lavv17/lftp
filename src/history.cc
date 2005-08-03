@@ -140,13 +140,20 @@ void History::Close()
    }
 }
 
-void History::Set(FileAccess *s,const char *cwd)
+void History::Set(FileAccess *s,const FileAccess::Path &cwd)
 {
-   if(cwd==0 || !strcmp(cwd,"~") || s->GetHostName()==0)
+   if(cwd.path==0 || !strcmp(cwd.path,"~") || s->GetHostName()==0)
       return;
-   char *res=(char*)alloca(32+strlen(cwd)*3+1);
+   char *res=(char*)alloca(32+strlen(cwd.path)*3+xstrlen(cwd.url)+2);
    sprintf(res,"%lu:",(unsigned long)time(0));
-   url::encode_string(cwd,res+strlen(res),URL_PATH_UNSAFE);
+   if(!cwd.url)
+   {
+      url::encode_string(cwd,res+strlen(res),URL_PATH_UNSAFE);
+      if(!cwd.is_file && url::dir_needs_trailing_slash(s->GetProto()))
+	 strcat(res,"/");
+   }
+   else
+      strcat(res,cwd.url);
    super::Add(s->GetConnectURL(s->NO_PATH|s->NO_PASSWORD),res);
    modified=true;
 }

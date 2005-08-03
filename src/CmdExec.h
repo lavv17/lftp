@@ -124,7 +124,7 @@ private:
    }
       builtin;
 
-   char *old_cwd;
+   FileAccess::Path old_cwd;
    char *old_lcwd;
    char *slot;
 

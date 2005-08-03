@@ -63,7 +63,7 @@ void ConnectionSlot::Set(const char *n,FileAccess *fa)
    SessionPool::Reuse(s->session);
    s->session=fa->Clone();
 }
-void ConnectionSlot::SetCwd(const char *n,const char *cwd)
+void ConnectionSlot::SetCwd(const char *n,const FileAccess::Path &cwd)
 {
    ConnectionSlot::SlotValue *s=Find(n);
    if(!s)
