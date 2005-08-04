@@ -2,6 +2,9 @@
 
 	* Http.cc, Fish.cc, SFtp.cc: fixed a hang-up in http (and possibly
 	  in other protocols).
+	* FileAccess.cc, FileAccess.h: make Path::Change accept url-encoded
+	  path too.
+	* CmdExec.cc: allow cd redirections to file.
 
 2005-08-03  Alexander V. Lukyanov <lav@yars.free.net>
 

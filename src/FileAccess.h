@@ -104,7 +104,7 @@ public:
       void Set(const Path &o) { Set(&o); }
       void Set(const char *new_path,bool new_is_file=false,const char *new_url=0,int device_prefix_len=0);
       void SetURL(const char *u) { xfree(url); url=xstrdup(u); }
-      void Change(const char *new_path,bool new_is_file=false,int device_prefix_len=0);
+      void Change(const char *new_path,bool new_is_file=false,const char *new_path_enc=0,int device_prefix_len=0);
       void ExpandTilde(const Path &home);
       static void Optimize(char *p,int dev_prefix=0);
       void Optimize() { Optimize(path,device_prefix_len); }
@@ -282,6 +282,7 @@ public:
    void RereadManual() { norest_manual=true; }
 
    const Path& GetCwd() { return cwd; }
+   const Path& GetNewCwd() { return *new_cwd; }
    const char *GetFile() { return file; }
 
    virtual int Do() = 0;

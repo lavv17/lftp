@@ -394,7 +394,7 @@ int CmdExec::Do()
 	       // cd to another url.
 	       const char *loc_c=session->GetNewLocation();
 	       int max_redirections=ResMgr::Query("xfer:max-redirections",0);
-	       if(loc_c && max_redirections>0 && last_char(loc_c)=='/')
+	       if(loc_c && max_redirections>0)
 	       {
 		  eprintf(_("%s: received redirection to `%s'\n"),"cd",loc_c);
 		  if(++redirections>max_redirections)
@@ -404,17 +404,17 @@ int CmdExec::Do()
 		  }
 
 		  char *loc=alloca_strdup(loc_c);
-		  session->Close(); // loc_c is no longer valid.
-
 		  ParsedURL u(loc,true);
-
 		  if(!u.proto)
 		  {
-		     url::decode_string(loc);
-		     session->Chdir(loc);
+		     bool is_file=(last_char(loc)!='/');
+		     FileAccess::Path new_cwd(session->GetNewCwd());
+		     new_cwd.Change(0,is_file,loc);
+		     session->PathVerify(new_cwd);
 		     Roll(session);
 		     return MOVED;
 		  }
+		  session->Close();
 		  exit_code=0;
 		  builtin=BUILTIN_NONE;
 		  char *cmd=string_alloca(6+3+2*strlen(loc));
