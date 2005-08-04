@@ -5,7 +5,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 3.2.1\n"
+"Project-Id-Version: lftp 3.3.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-04 09:39+0400\n"
 "PO-Revision-Date: 2000-09-07 09:36+08:00\n"
@@ -227,9 +227,9 @@ msgstr ""
 "ссылок$\n"
 
 #: src/MirrorJob.cc:117
-#, fuzzy, c-format
+#, c-format
 msgid "%s%d error$|s$ detected\n"
-msgstr "%s ok, %d каталог$|а|ов$ создано\n"
+msgstr "%s%d ошиб$ка обнаружена|ки обнаружены|ок обнаружено$\n"
 
 #: src/MirrorJob.cc:250 src/MirrorJob.cc:861
 #, c-format
@@ -1779,9 +1779,8 @@ msgid "Closing data socket"
 msgstr "Закрытие соединения данных"
 
 #: src/ftpclass.cc:2918
-#, fuzzy
 msgid "Closing aborted data socket"
-msgstr "Закрытие соединения данных"
+msgstr "Закрытие соединения данных, оставшегося после ABOR"
 
 #: src/ftpclass.cc:3595
 msgid "saw file size in response"
@@ -2072,9 +2071,9 @@ msgstr ""
 "$#l#секунду|секунды|секунд$"
 
 #: src/CopyJob.cc:189
-#, fuzzy, c-format
+#, c-format
 msgid "%lld $#ll#byte|bytes$ transferred"
-msgstr "%lld $#ll#байт перемещен|байта перемещены|байтов перемещено$\n"
+msgstr "%lld $#ll#байт перемещен|байта перемещены|байтов перемещено$"
 
 #: src/CopyJob.cc:281
 #, c-format
@@ -2195,9 +2194,9 @@ msgid "chdir(%s) failed: %s\n"
 msgstr "функция chdir(%s) не выполнена: %s\n"
 
 #: src/Filter.cc:202
-#, fuzzy, c-format
+#, c-format
 msgid "execvp(%s) failed: %s\n"
-msgstr "функция execlp(%s) не выполнена: %s\n"
+msgstr "функция execvp(%s) не выполнена: %s\n"
 
 #: src/Filter.cc:207 src/PtyShell.cc:154
 #, c-format
@@ -2257,7 +2256,7 @@ msgstr ""
 
 #: src/module.cc:200
 msgid "modules are not supported on this system"
-msgstr ""
+msgstr "модули на этой системе не поддерживаются"
 
 #: src/FileSetOutput.cc:141
 msgid "%b %e  %Y"
@@ -2269,81 +2268,76 @@ msgstr ""
 
 #: src/FileSetOutput.cc:252
 msgid "non-option arguments found"
-msgstr ""
+msgstr "обнаружены аргументы, не являющиеся опциями"
 
 #: src/FindJobDu.cc:101
 msgid "total"
-msgstr ""
+msgstr "всего"
 
 #: src/Fish.cc:160 src/SFtp.cc:191
 msgid "Running connect program"
 msgstr ""
 
 #: src/Fish.cc:317 src/SFtp.cc:328
-#, fuzzy
 msgid "Disconnecting"
-msgstr "Установка соединения..."
+msgstr "Закрытие соединения"
 
 #: src/Fish.cc:673 src/SFtp.cc:735
-#, fuzzy
 msgid "Password required"
-msgstr "Пароль: "
+msgstr "Требуется пароль"
 
 #: src/Fish.cc:678 src/SFtp.cc:740
 msgid "Login incorrect"
-msgstr ""
+msgstr "Login/пароль неверный"
 
 #: src/Fish.cc:1126 src/SFtp.cc:1325
-#, fuzzy
 msgid "Done"
-msgstr "\tСделано\n"
+msgstr "Готово"
 
 #: src/OutputJob.cc:155
 #, c-format
 msgid "%s (filter)"
-msgstr ""
+msgstr "%s (фильтр)"
 
 #: src/PtyShell.cc:73
 #, c-format
 msgid "pseudo-tty allocation failed: %s"
-msgstr ""
+msgstr "выделение псевдо-терминала неудачно: %s"
 
 #: src/QueueFeeder.cc:92
 msgid "Added job$|s$"
-msgstr ""
+msgstr "Задани$е добавлено|я добавлены|я добавлены$"
 
 #: src/QueueFeeder.cc:172 src/QueueFeeder.cc:193
 #, c-format
 msgid "No queued jobs.\n"
-msgstr ""
+msgstr "В очереди нет заданий.\n"
 
 #: src/QueueFeeder.cc:174
-#, fuzzy, c-format
+#, c-format
 msgid "No queued job #%i.\n"
-msgstr "%s: Нет активной очереди.\n"
+msgstr "В очереди нет задания №%i.\n"
 
 #: src/QueueFeeder.cc:179 src/QueueFeeder.cc:200
 msgid "Deleted job$|s$"
-msgstr ""
+msgstr "Задани$е удалено|я удалены|я удалены$"
 
 #: src/QueueFeeder.cc:195
 #, c-format
 msgid "No queued jobs match \"%s\".\n"
-msgstr ""
+msgstr "В очереди нет заданий, соответствующих \"%s\".\n"
 
 #: src/QueueFeeder.cc:220 src/QueueFeeder.cc:238
 msgid "Moved job$|s$"
-msgstr ""
+msgstr "Задани$е перемещено|я перемещены|я перемещены$"
 
 #: src/QueueFeeder.cc:376
-#, fuzzy
 msgid "Commands queued:"
-msgstr "\tОчередь команд:\n"
+msgstr "Очередь команд:"
 
 #: src/SFtp.cc:1072
-#, fuzzy
 msgid "invalid server response format"
-msgstr "непредвиденный ответ сервера"
+msgstr "неверный формат ответа сервера"
 
 #~ msgid ""
 #~ "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for "
