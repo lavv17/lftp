@@ -309,6 +309,7 @@ void Fish::MoveConnectionHere(Fish *o)
    o->Disconnect();
    if(!home)
       set_home(home_auto);
+   ResumeInternal();
 }
 
 void Fish::Disconnect()

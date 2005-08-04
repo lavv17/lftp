@@ -1,3 +1,8 @@
+2005-08-04  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc, Fish.cc, SFtp.cc: fixed a hang-up in http (and possibly
+	  in other protocols).
+
 2005-08-03  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CmdExec.cc, CmdExec.h: use FileAccess::Path for old_cwd.

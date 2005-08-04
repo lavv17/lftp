@@ -320,6 +320,7 @@ void SFtp::MoveConnectionHere(SFtp *o)
    o->Disconnect();
    if(!home)
       set_home(home_auto);
+   ResumeInternal();
 }
 
 void SFtp::Disconnect()

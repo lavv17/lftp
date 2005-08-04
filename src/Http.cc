@@ -142,6 +142,7 @@ void Http::MoveConnectionHere(Http *o)
    BumpEventTime(o->event_time);
    state=CONNECTED;
    o->Disconnect();
+   ResumeInternal();
 }
 
 void Http::Disconnect()
