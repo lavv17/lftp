@@ -1,3 +1,8 @@
+2005-08-05  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc, MirrorJob.h: fixed --loop without --delete (the loop
+	  was infinite if there were files to be deleted).
+
 2005-08-04  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Http.cc, Fish.cc, SFtp.cc: fixed a hang-up in http (and possibly

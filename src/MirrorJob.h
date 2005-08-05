@@ -85,7 +85,7 @@ class MirrorJob : public Job
       Statistics();
       void Reset();
       void Add(const Statistics &);
-      bool HaveSomethingDone();
+      bool HaveSomethingDone(int);
    };
    Statistics stats;
 

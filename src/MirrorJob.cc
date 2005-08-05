@@ -962,7 +962,7 @@ int   MirrorJob::Do()
 	 parent_mirror->stats.Add(stats);
       else
       {
-	 if((flags&LOOP) && stats.HaveSomethingDone() && !stats.error_count)
+	 if((flags&LOOP) && stats.HaveSomethingDone(flags) && !stats.error_count)
 	 {
 	    set_state(DONE);
 	    PrintStatus(0,"");
@@ -1183,9 +1183,10 @@ void MirrorJob::Statistics::Add(const Statistics &s)
    bytes       +=s.bytes;
    time	       +=s.time;
 }
-bool MirrorJob::Statistics::HaveSomethingDone()
+bool MirrorJob::Statistics::HaveSomethingDone(int flags)
 {
-   return new_files|mod_files|del_files|new_symlinks|mod_symlinks|del_symlinks|del_dirs;
+   bool del=(flags&MirrorJob::DELETE);
+   return new_files|mod_files|(del_files*del)|new_symlinks|mod_symlinks|(del_symlinks*del)|(del_dirs*del);
 }
 
 char *MirrorJob::SetScriptFile(const char *n)
