@@ -1261,6 +1261,11 @@ int HttpDirList::Do()
       }
       else
       {
+	 if(mode==FA::MP_LIST && !*curr && session->GetCwd().is_file)
+	 {
+	    mode=FA::LONG_LIST;
+	    goto retry;
+	 }
 	 session->Open(curr,mode);
 	 session->UseCache(use_cache);
 	 ubuf=new IOBufferFileAccess(session);
