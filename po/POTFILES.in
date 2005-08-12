@@ -26,6 +26,7 @@ src/ChmodJob.cc
 src/TreatFileJob.cc
 src/CopyJob.cc
 src/FileCopy.cc
+src/FileCopy.h
 src/DummyProto.cc
 src/Speedometer.cc
 src/FileCopyFtp.cc
@@ -38,3 +39,11 @@ src/SMTask.cc
 src/SleepJob.cc
 src/getdate.c
 src/module.cc
+src/FileSetOutput.cc
+src/FindJobDu.cc
+src/Fish.cc
+src/OutputJob.cc
+src/PtyShell.cc
+src/QueueFeeder.cc
+src/SFtp.cc
+src/buffer.cc

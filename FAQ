@@ -35,3 +35,6 @@ A: Try `set ftp:list-options -a'.
 Q: ^Z doesn't work in Cygwin.
 A: Use "SET CYGWIN=TTY".  This must be done before starting a shell, if any.
 
+Q: lftp consumes 100% CPU on MacOS X Tiger just waiting at command prompt.
+A: See http://www.mail-archive.com/lftp%40uniyar.ac.ru/msg02101.html for
+   a workaround for MacOS X bug.

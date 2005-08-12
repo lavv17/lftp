@@ -1,3 +1,16 @@
+Version 3.3.0 - 2005-08-12
+
+* now plain files can be current location in http protocol.
+* report total bytes transferred and transfer rate in mirror.
+* included a script for file verification (verify-file). It can check crc32,
+  md5sum, gzip, bzip2, rpm, unzip and other things.
+* new settings xfer:verify, xfer:verify-command. When xfer:verify is on,
+  verify-command is launched after successful file transfer (to local disk)
+  to check the file consistency.
+* fixed `source -e' to allow subprocess reading from the terminal.
+* fixed `source' to return error exit code if the file is unreadable.
+* fixed `source' on large command files - some commands were truncated.
+
 Version 3.2.1 - 2005-05-25
 
 * fixed handling of file names starting with a tilde in sftp protocol.

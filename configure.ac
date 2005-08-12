@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.53)
-AC_INIT([lftp], [3.2.1], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [3.3.0], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_LIBOBJ_DIR(lib)
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
@@ -106,12 +106,12 @@ jm_PREREQ_HUMAN
 jm_FUNC_MBRTOWC
 AC_MBSTATE_T
 
-if test "`uname`" = Linux; then
-   case "`uname -r`" in
-   # Linux-2.2.x and older don't support fcntl64.
-   2.2.*|2.0.*)	  enable_largefile=no;;
-   esac
-fi
+case "`uname -sr`" in
+# Linux-2.2.x and older don't support fcntl64.
+"Linux 2.2."*|"Linux 2.0."*)  enable_largefile=no;;
+# MacOS X Tiger's poll does not work correctly.
+"Darwin 8."*)  lftp_cv_func_poll_works=no;;
+esac
 
 AC_PROG_YACC
 
@@ -417,7 +417,9 @@ AC_LIBOBJ(getopt1)
 
 if test x$lftp_cv_func_poll_works = xno; then
    AC_LIBOBJ(poll)
-   AC_CONFIG_LINKS([include/poll.h:lib/poll.h])
+   if text x$ac_cv_header_sys_poll_h = xno; then
+      AC_CONFIG_LINKS([include/poll.h:lib/poll.h])
+   fi
 fi
 if test x$ac_cv_func_regexec = xno -o x$ac_cv_header_regex_h = xno; then
    AC_LIBOBJ(regex)

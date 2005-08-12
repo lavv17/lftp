@@ -1,4 +1,4 @@
-%define version 3.2.1
+%define version 3.3.0rc1
 %define release 1
 %define use_modules 0
 
@@ -10,7 +10,7 @@ URL: http://lftp.yar.ru/
 Source: ftp://lftp.yar.ru/lftp/lftp-%{version}.tar.gz
 Group: Applications/Internet
 BuildRoot: %{_tmppath}/%{name}-buildroot
-Copyright: GPL
+License: GNU GPL
 #Packager: Manoj Kasichainula <manojk+rpm@io.com>
 
 %description

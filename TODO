@@ -1,7 +1,7 @@
 The items with a question mark are questionable. I'm not sure whether they
 are really needed. If you think it is a good feature do it yourself :) or
 at least tell me what you think. Items marked with - are hard to implement
-currently; some need other work to be done. Items marked with + are partially
+currently; need other work to be done. Items marked with + are partially
 implemented.
 
 
@@ -20,10 +20,12 @@ implemented.
    (Done()==true when queue is empty)
    This way ARRAY_* can be obsoleted.
 
- * there are many interesting protocols: smb, fsp, imap, irc...
+ * there are many interesting protocols which can be used to transfer
+   files/data: smb, fsp, imap, irc...
 
- * put -n (only if newer) Maybe it would be better to add a command to compare
+-* put -n (only if newer) Maybe it would be better to add a command to compare
    times?
+   mirror can be used: mirror -Rr -I file
 
  * http: ls -a to see all links, even off-site.
 
@@ -58,8 +60,8 @@ implemented.
  * redirect error messages
  * stdout/stderr analogues, use class IOBuffer.
 
- * remember user-specified URL path from open/cd.
- * flag to mark cwd as a file, not a directory. (for http).
++* remember user-specified URL path from open/cd.
++* flag to mark cwd as a file, not a directory. (for http).
 
  * mirror option to check an alternative directory(ies) for existing files.
    (overlay filesystem replacement?)
@@ -68,7 +70,4 @@ implemented.
 
  * cmd:parallel for scripting - execute several commands in parallel
    (change CmdExec::Done to return true when waiting_num<cmd:parallel)
-
- * show transfer rate in mirror done message.
-
- * fix closing sftp connection with timeout after entering a command.
+   dependedncies?
