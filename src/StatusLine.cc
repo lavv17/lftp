@@ -78,7 +78,9 @@ StatusLine::~StatusLine()
 
 void StatusLine::Clear(bool title_also)
 {
-   update("");
+   const char *empty="";
+   update_timer.Stop();
+   ShowN(&empty,1);
    update_delayed=false;
    update_timer.SetMilliSeconds(20);
 

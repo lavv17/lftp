@@ -95,7 +95,7 @@ int  CmdExec::RestoreCWD()
 void CmdExec::FeedCmd(const char *c)
 {
    partial_cmd=false;
-   time(&start_time);
+   start_time=now;
    if(cmd_buf==0)
    {
       cmd_buf=next_cmd=xstrdup(c);
@@ -109,7 +109,7 @@ void CmdExec::FeedCmd(const char *c)
 
 void CmdExec::PrependCmd(const char *c)
 {
-   time(&start_time);
+   start_time=now;
 
    int len=strlen(c);
    int nl=(len>0 && c[len-1]!='\n');
@@ -929,7 +929,7 @@ char *CmdExec::MakePrompt()
 void CmdExec::beep_if_long()
 {
    if(start_time!=0 && long_running!=0
-   && time(0)-start_time>long_running
+   && now-start_time>long_running
    && interactive && Idle() && isatty(1))
       write(1,"\007",1);
 }

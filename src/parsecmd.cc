@@ -104,7 +104,10 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
       if(line[0]=='\r' && line[1]=='\n')
 	 line++;
 
-      if(*line==0 || *line=='\n'
+      if(*line==0)
+	 return PARSE_AGAIN;
+
+      if(*line=='\n'
       || *line=='|' || *line=='>' || *line==';' || *line=='&')
 	 break;
 
@@ -220,7 +223,9 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
 	 }
 	 else
 	 {
-	    if(*line==0 || *line=='\n'
+	    if(*line==0)
+	       return PARSE_AGAIN;
+	    if(*line=='\n'
 	    || (!in_quotes && (is_space(*line)
 		     || *line=='>' || *line=='|' || *line==';' || *line=='&')))
 	       break;
@@ -309,7 +314,10 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
       while(is_space(*line))
 	 line++;
 
-      if(*line==0 || *line=='\n' || *line==';' || *line=='&')
+      if(*line==0)
+	 return PARSE_AGAIN;
+
+      if(*line=='\n' || *line==';' || *line=='&')
       {
 	 if(redir_type=='|')
 	    eprintf(_("parse: missing filter command\n"));
@@ -338,8 +346,10 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
 	    line++;
 	 else
 	 {
+	    if(*line==0)
+	       return PARSE_AGAIN;
 	    // filename can end with a space, filter command can't.
-	    if(*line==0 || *line=='\n' || (!in_quotes
+	    if(*line=='\n' || (!in_quotes
 		  && ((redir_type!='|' && is_space(*line))
 		      || *line==';' || *line=='&')))
 	       break;

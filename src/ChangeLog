@@ -1,3 +1,11 @@
+2005-08-12  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* parsecmd.cc: return PARSE_AGAIN if the command ends with \0,
+	  which means it is incomplete.
+	* CmdExec.cc: use now instead of time().
+	* StatusLine.cc: use ShowN in Clear so that status line is not
+	  continuously cleared while executing scripts.
+
 2005-08-09  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* HttpDir.cc: don't try PROPFIND on a file to get file listing.
