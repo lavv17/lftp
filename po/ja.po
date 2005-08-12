@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-08-04 17:14+0400\n"
+"POT-Creation-Date: 2005-08-12 11:29+0400\n"
 "PO-Revision-Date: 2002-04-12 00:06+0900\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -285,12 +285,12 @@ msgstr "古いリモートディレクトリ `%s' を削除しています"
 msgid "Retrying mirror...\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1313
+#: src/MirrorJob.cc:1314
 #, fuzzy, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s: %s の書き込みでエラー: %s\n"
 
-#: src/MirrorJob.cc:1405 src/commands.cc:1030 src/commands.cc:1118
+#: src/MirrorJob.cc:1406 src/commands.cc:1030 src/commands.cc:1118
 #: src/commands.cc:1510 src/commands.cc:1544 src/commands.cc:1643
 #: src/commands.cc:1943 src/commands.cc:2139 src/commands.cc:2312
 #: src/commands.cc:2319 src/commands.cc:2560 src/commands.cc:2587
@@ -300,7 +300,7 @@ msgstr "%s: %s の書き込みでエラー: %s\n"
 msgid "Try `help %s' for more information.\n"
 msgstr "`help %s' でより詳しい情報が得られます。\n"
 
-#: src/MirrorJob.cc:1439 src/MirrorJob.cc:1455 src/commands.cc:878
+#: src/MirrorJob.cc:1440 src/MirrorJob.cc:1456 src/commands.cc:878
 #: src/commands.cc:2034 src/DummyProto.cc:73
 msgid " - not supported protocol"
 msgstr " - はサポートされていないプロトコルです"
@@ -1954,11 +1954,11 @@ msgstr "%s 成功、%d 個のディレクトリを作成しました\n"
 msgid "rename successful\n"
 msgstr "リネームに成功しました\n"
 
-#: src/parsecmd.cc:315
+#: src/parsecmd.cc:323
 msgid "parse: missing filter command\n"
 msgstr "parse: フィルタコマンドがありません\n"
 
-#: src/parsecmd.cc:317
+#: src/parsecmd.cc:325
 msgid "parse: missing redirection filename\n"
 msgstr "parse: リダイレクションのファイル名がありません\n"
 
@@ -2075,7 +2075,7 @@ msgstr ""
 msgid "must be one of: C, S, E, P, or empty"
 msgstr ""
 
-#: src/HttpDir.cc:1374 src/FtpDirList.cc:141 src/Fish.cc:1282 src/SFtp.cc:1995
+#: src/HttpDir.cc:1379 src/FtpDirList.cc:141 src/Fish.cc:1282 src/SFtp.cc:1995
 #: src/SFtp.cc:2077
 #, c-format
 msgid "Getting file list (%lld) [%s]"
@@ -2162,6 +2162,10 @@ msgstr "URL 中にファイル名がありません"
 
 #: src/FileCopy.cc:1820
 msgid "Verify command failed without a message"
+msgstr ""
+
+#: src/FileCopy.h:269
+msgid "Verifying..."
 msgstr ""
 
 #: src/Speedometer.cc:102

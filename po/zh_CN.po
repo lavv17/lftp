@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-08-04 17:14+0400\n"
+"POT-Creation-Date: 2005-08-12 11:29+0400\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -282,12 +282,12 @@ msgstr "删除旧的远程文件 `%s'"
 msgid "Retrying mirror...\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1313
+#: src/MirrorJob.cc:1314
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1405 src/commands.cc:1030 src/commands.cc:1118
+#: src/MirrorJob.cc:1406 src/commands.cc:1030 src/commands.cc:1118
 #: src/commands.cc:1510 src/commands.cc:1544 src/commands.cc:1643
 #: src/commands.cc:1943 src/commands.cc:2139 src/commands.cc:2312
 #: src/commands.cc:2319 src/commands.cc:2560 src/commands.cc:2587
@@ -297,7 +297,7 @@ msgstr ""
 msgid "Try `help %s' for more information.\n"
 msgstr "请用 `help %s' 或得更多的信息.\n"
 
-#: src/MirrorJob.cc:1439 src/MirrorJob.cc:1455 src/commands.cc:878
+#: src/MirrorJob.cc:1440 src/MirrorJob.cc:1456 src/commands.cc:878
 #: src/commands.cc:2034 src/DummyProto.cc:73
 #, fuzzy
 msgid " - not supported protocol"
@@ -1866,11 +1866,11 @@ msgstr "%s 成功, 建立 %d 个目录\n"
 msgid "rename successful\n"
 msgstr "重命名成功\n"
 
-#: src/parsecmd.cc:315
+#: src/parsecmd.cc:323
 msgid "parse: missing filter command\n"
 msgstr "parse: 缺少过滤器命令\n"
 
-#: src/parsecmd.cc:317
+#: src/parsecmd.cc:325
 msgid "parse: missing redirection filename\n"
 msgstr "parse: 缺少重定向文件名\n"
 
@@ -1989,7 +1989,7 @@ msgstr ""
 msgid "must be one of: C, S, E, P, or empty"
 msgstr ""
 
-#: src/HttpDir.cc:1374 src/FtpDirList.cc:141 src/Fish.cc:1282 src/SFtp.cc:1995
+#: src/HttpDir.cc:1379 src/FtpDirList.cc:141 src/Fish.cc:1282 src/SFtp.cc:1995
 #: src/SFtp.cc:2077
 #, fuzzy, c-format
 msgid "Getting file list (%lld) [%s]"
@@ -2078,6 +2078,10 @@ msgstr "缺少文件名. "
 
 #: src/FileCopy.cc:1820
 msgid "Verify command failed without a message"
+msgstr ""
+
+#: src/FileCopy.h:269
+msgid "Verifying..."
 msgstr ""
 
 #: src/Speedometer.cc:102

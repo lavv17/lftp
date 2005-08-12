@@ -40,6 +40,7 @@ AC_DEFUN([LFTP_NEED_TRIO],[
       AC_LIBOBJ(trionan)
       AC_LIBOBJ(triostr)
       AC_DEFINE(TRIO_REPLACE_STDIO, 1, [replace system's printf functions])
+      LFTP_CHECK_LIBM
       ;;
    esac
 ])
