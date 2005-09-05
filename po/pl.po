@@ -7,10 +7,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 3.2.0\n"
+"Project-Id-Version: lftp 3.3.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-12 11:29+0400\n"
-"PO-Revision-Date: 2005-05-21 13:20+0200\n"
+"PO-Revision-Date: 2005-08-15 20:50+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -237,9 +237,9 @@ msgstr ""
 "symboliczne|dowi±zania symboliczne|dowi±zañ symbolicznych$.\n"
 
 #: src/MirrorJob.cc:117
-#, fuzzy, c-format
+#, c-format
 msgid "%s%d error$|s$ detected\n"
-msgstr "%s ok, utworzono %d katalog$|i|ów$\n"
+msgstr "%sWykryto %d b³$±d|êdy|êdów$\n"
 
 #: src/MirrorJob.cc:250 src/MirrorJob.cc:861
 #, c-format
@@ -2159,9 +2159,9 @@ msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
 msgstr "%lld bajt$#ll#|y|ów$ przes³an$y|e|ych$ w ci±gu %ld sekund$#l#y||$"
 
 #: src/CopyJob.cc:189
-#, fuzzy, c-format
+#, c-format
 msgid "%lld $#ll#byte|bytes$ transferred"
-msgstr "%lld bajt$#ll#|y|ów$ przes³an$y|e|ych$\n"
+msgstr "%lld bajt$#ll#|y|ów$ przes³an$y|e|ych$"
 
 #: src/CopyJob.cc:281
 #, c-format
@@ -2215,11 +2215,11 @@ msgstr "brak nazwy pliku w URL"
 
 #: src/FileCopy.cc:1820
 msgid "Verify command failed without a message"
-msgstr ""
+msgstr "Polecenie weryfikacji nie powiod³o siê bez komunikatu"
 
 #: src/FileCopy.h:269
 msgid "Verifying..."
-msgstr ""
+msgstr "Weryfikacja..."
 
 #: src/Speedometer.cc:102
 #, c-format
@@ -2287,9 +2287,9 @@ msgid "chdir(%s) failed: %s\n"
 msgstr "chdir(%s) nie powiod³o siê: %s\n"
 
 #: src/Filter.cc:202
-#, fuzzy, c-format
+#, c-format
 msgid "execvp(%s) failed: %s\n"
-msgstr "execlp(%s) nieudane: %s\n"
+msgstr "execvp(%s) nie powiod³o siê: %s\n"
 
 #: src/Filter.cc:207 src/PtyShell.cc:154
 #, c-format
@@ -2353,84 +2353,81 @@ msgstr "modu³y nie s± wspierane na tym systemie"
 
 #: src/FileSetOutput.cc:141
 msgid "%b %e  %Y"
-msgstr ""
+msgstr "%e %b  %Y"
 
 #: src/FileSetOutput.cc:142
 msgid "%b %e %H:%M"
-msgstr ""
+msgstr "%e %b %H:%M"
 
 #: src/FileSetOutput.cc:252
 msgid "non-option arguments found"
-msgstr ""
+msgstr "znaleziono argumenty nie bêd±ce opcjami"
 
 #: src/FindJobDu.cc:101
 msgid "total"
-msgstr ""
+msgstr "razem"
 
 #: src/Fish.cc:160 src/SFtp.cc:191
 msgid "Running connect program"
-msgstr ""
+msgstr "Uruchamianie programu ³±cz±cego"
 
 #: src/Fish.cc:318 src/SFtp.cc:329
-#, fuzzy
 msgid "Disconnecting"
-msgstr "£±czenie siê..."
+msgstr "Roz³±czanie"
 
 #: src/Fish.cc:674 src/SFtp.cc:736
-#, fuzzy
 msgid "Password required"
-msgstr "Has³o: "
+msgstr "Wymagane has³o"
 
 #: src/Fish.cc:679 src/SFtp.cc:741
 msgid "Login incorrect"
-msgstr ""
+msgstr "Logowanie nieudane"
 
 #: src/Fish.cc:1127 src/SFtp.cc:1326
 msgid "Done"
-msgstr ""
+msgstr "Gotowe"
 
 #: src/OutputJob.cc:155
 #, c-format
 msgid "%s (filter)"
-msgstr ""
+msgstr "%s (filtr)"
 
 #: src/PtyShell.cc:73
 #, c-format
 msgid "pseudo-tty allocation failed: %s"
-msgstr ""
+msgstr "przydzielenie pseudo-tty nie powiod³o siê: %s"
 
 #: src/QueueFeeder.cc:92
 msgid "Added job$|s$"
-msgstr ""
+msgstr "Dodano zadani$e|a|a$"
 
 #: src/QueueFeeder.cc:172 src/QueueFeeder.cc:193
 #, c-format
 msgid "No queued jobs.\n"
-msgstr ""
+msgstr "Nie ma ¿adnych skolejkowanych zadañ.\n"
 
 #: src/QueueFeeder.cc:174
-#, fuzzy, c-format
+#, c-format
 msgid "No queued job #%i.\n"
-msgstr "%s: Nie ma aktywnej kolejki.\n"
+msgstr "Nie ma skolejkowanego zadania %i.\n"
 
 #: src/QueueFeeder.cc:179 src/QueueFeeder.cc:200
 msgid "Deleted job$|s$"
-msgstr ""
+msgstr "Usuniêto zadani$e|a|a$"
 
 #: src/QueueFeeder.cc:195
 #, c-format
 msgid "No queued jobs match \"%s\".\n"
-msgstr ""
+msgstr "Nie ma skolejkowanego zadania pasuj±cego do \"%s\".\n"
 
 #: src/QueueFeeder.cc:220 src/QueueFeeder.cc:238
 msgid "Moved job$|s$"
-msgstr ""
+msgstr "Przesuniêto zadani$e|a|a$"
 
 #: src/QueueFeeder.cc:376
 msgid "Commands queued:"
-msgstr ""
+msgstr "Skolejkowane polecenia:"
 
 #: src/SFtp.cc:1073
-#, fuzzy
 msgid "invalid server response format"
-msgstr "dodatkowa odpowied¼ serwera"
+msgstr "nieprawid³owy format odpowiedzi serwera"
