@@ -147,7 +147,12 @@ void lftp_ssl_gnutls_instance::LoadCA()
       res=gnutls_x509_crt_list_import(ca_list,&ca_list_size,&ca_pem,GNUTLS_X509_FMT_PEM,0);
    }
    if(res<0)
+   {
       Log::global->Format(0,"gnutls_x509_crt_list_import: %s\n",gnutls_strerror(res));
+      xfree(ca_list);
+      ca_list=0;
+      ca_list_size=0;
+   }
 
    munmap_file(ca_pem);
 }
@@ -174,7 +179,12 @@ void lftp_ssl_gnutls_instance::LoadCRL()
    crl_list=(gnutls_x509_crl_t*)xmalloc(crl_list_size*sizeof(gnutls_x509_crl_t));
    int res=gnutls_x509_crl_import(crl_list[0],&crl_pem,GNUTLS_X509_FMT_PEM);
    if(res<0)
+   {
       Log::global->Format(0,"gnutls_x509_crl_import: %s\n",gnutls_strerror(res));
+      xfree(crl_list);
+      crl_list=0;
+      crl_list_size=0;
+   }
 
    munmap_file(crl_pem);
 }

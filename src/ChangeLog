@@ -1,3 +1,8 @@
+2005-09-07  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp_ssl.cc: free ca_list and crl_list when an error happens while
+	  loading the certificates. This fixes a core dump.
+
 2005-09-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: fixed `open host.com/path'; fixed a coredump
