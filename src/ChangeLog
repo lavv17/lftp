@@ -1,3 +1,8 @@
+2005-09-05  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: fixed `open host.com/path'; fixed a coredump
+	  when a bookmark contained lots of quotable characters.
+
 2005-08-12  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* parsecmd.cc: return PARSE_AGAIN if the command ends with \0,

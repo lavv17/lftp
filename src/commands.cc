@@ -859,22 +859,26 @@ Job *CmdExec::builtin_open()
       {
 	 url=new ParsedURL(host);
 
+	 if(!url->proto && url->host)
+	 {
+	    const char *p=ResMgr::Query("cmd:default-protocol",url->host);
+	    if(!p)
+	       p="ftp";
+	    char *u=string_alloca(strlen(p)+3+strlen(host)+1);
+	    sprintf(u,"%s://%s",p,host);
+	    delete url;
+	    url=new ParsedURL(u);
+	 }
+
 	 const ParsedURL &uc=*url;
-	 if(uc.host && uc.host[0])
+	 if(uc.host && uc.host[0] && uc.proto)
 	 {
 	    cwd_history.Set(session,session->GetCwd());
 
-	    FileAccess *new_session=0;
-
-	    const char *p=uc.proto;
-	    if(!p)
-	       p=ResMgr::Query("cmd:default-protocol",uc.host);
-	    if(!p)
-	       p="ftp";
-	    new_session=FileAccess::New(p,uc.host);
+	    FileAccess *new_session=FileAccess::New(uc.proto,uc.host);
 	    if(!new_session)
 	    {
-	       eprintf("%s: %s%s\n",args->a0(),p,
+	       eprintf("%s: %s%s\n",args->a0(),uc.proto,
 			_(" - not supported protocol"));
 	       return 0;
 	    }
@@ -968,9 +972,10 @@ Job *CmdExec::builtin_open()
 	 session->SetCwd(FileAccess::Path(old,is_file,url));
       }
 
-      char *s=string_alloca(strlen(path)*2+40);
+      const char *cd_arg=(url && url->orig_url)?url->orig_url:path;
+      char *s=string_alloca(strlen(cd_arg)*2+40);
       strcpy(s,"&& cd \"");
-      unquote(s+strlen(s),(url && url->orig_url)?url->orig_url:path);
+      unquote(s+strlen(s),cd_arg);
       strcat(s,"\"");
       if(background)
 	 strcat(s,"&");
