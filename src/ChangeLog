@@ -1,3 +1,11 @@
+2005-09-19  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: don't add basename of source dir if target is slot:
+	  or bm: pseudo-url without trailing slash.
+	* history.cc: decode only non-urls.
+	* Http.cc: fix path combination (avoid double slash); use new_cwd->url
+	  when available.
+
 2005-09-07  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp_ssl.cc: free ca_list and crl_list when an error happens while

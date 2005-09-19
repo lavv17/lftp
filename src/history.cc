@@ -70,7 +70,8 @@ const char *History::extract_url(const char *res)
       buf=(char*)xrealloc(buf,buf_len=len+64);
 
    strcpy(buf,url);
-   url::decode_string(buf);
+   if(!url::is_url(buf))
+      url::decode_string(buf);
 
    return buf;
 }

@@ -436,6 +436,7 @@ bool Http::ModeSupported()
 
 void Http::DirFile(char *path_base,const char *ecwd,const char *efile)
 {
+   const char *sep=(last_char(ecwd)=='/'?"":"/");
    if(efile[0]=='/')
       strcpy(path_base,efile);
    else if(efile[0]=='~')
@@ -443,9 +444,9 @@ void Http::DirFile(char *path_base,const char *ecwd,const char *efile)
    else if(ecwd[0]==0 || ((ecwd[0]=='/' || (!hftp && ecwd[0]=='~')) && ecwd[1]==0))
       sprintf(path_base,"/%s",efile);
    else if(ecwd[0]=='~' && efile[0])
-      sprintf(path_base,"/%s/%s",ecwd,efile);
+      sprintf(path_base,"/%s%s%s",ecwd,sep,efile);
    else if(efile[0])
-      sprintf(path_base,"%s/%s",ecwd,efile);
+      sprintf(path_base,"%s%s%s",ecwd,sep,efile);
    else
       strcpy(path_base,ecwd);
 
@@ -463,6 +464,8 @@ void Http::SendRequest(const char *connection,const char *f)
 {
    char *efile=string_alloca(strlen(f)*3+1);
    url::encode_string(f,efile,URL_PATH_UNSAFE);
+   if(mode==CHANGE_DIR && new_cwd && new_cwd->url)
+      efile=new_cwd->url+url::path_index(new_cwd->url);
    char *ecwd;
    int efile_len;
 
