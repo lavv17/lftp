@@ -1,3 +1,7 @@
+2005-09-22  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: fixed exit code of slot command.
+
 2005-09-19  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc: don't add basename of source dir if target is slot:

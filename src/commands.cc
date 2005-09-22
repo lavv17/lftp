@@ -3261,6 +3261,7 @@ CMD(slot)
    if(n)
    {
       parent->ChangeSlot(n);
+      exit_code=0;
       return 0;
    }
    else
