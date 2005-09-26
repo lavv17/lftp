@@ -1,3 +1,10 @@
+2005-09-26  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc: simplify path combination; pre-encode %2F for hftp.
+	* HttpDir.cc: ignore special and closing tags; move workaround for
+	  broken proxies to handle all links; specially handle empty paths.
+	* FileAccess.cc: don't change url when going up .. - simply drop it.
+
 2005-09-22  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: fixed exit code of slot command.

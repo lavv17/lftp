@@ -1156,7 +1156,18 @@ void FileAccess::Path::Change(const char *new_path,bool new_is_file,const char *
 	 if(new_path_enc)
 	    strcat(new_url_path,new_path_enc);
 	 else
-	    url::encode_string(new_path,new_url_path+strlen(new_url_path),URL_PATH_UNSAFE);
+	 {
+	    char *np=alloca_strdup(new_path);
+	    Optimize(np);
+	    if(np[0]=='.' && np[1]=='.' && (np[2]=='/' || np[2]==0))
+	    {
+	       xfree(url);
+	       url=0;
+	       goto url_done;
+	    }
+	    else
+	       url::encode_string(np,new_url_path+strlen(new_url_path),URL_PATH_UNSAFE);
+	 }
       }
       else
       {
@@ -1169,6 +1180,7 @@ void FileAccess::Path::Change(const char *new_path,bool new_is_file,const char *
       url=(char*)xrealloc(url,path_index+strlen(new_url_path)+1);
       strcpy(url+path_index,new_url_path);
    }
+url_done:
    if(new_path[0]!='/' && new_path[0]!='~' && new_device_prefix_len==0
    && path && path[0])
    {
