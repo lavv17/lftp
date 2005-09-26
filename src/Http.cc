@@ -436,7 +436,6 @@ bool Http::ModeSupported()
 
 void Http::DirFile(char *path_base,const char *ecwd,const char *efile)
 {
-printf("DirFile(%s,%s,%s)\n",path_base,ecwd,efile);
    if(!strcmp(ecwd,"~") && !hftp)
       ecwd="";
    const char *sep=(last_char(ecwd)=='/'?"":"/");
