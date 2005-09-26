@@ -436,28 +436,24 @@ bool Http::ModeSupported()
 
 void Http::DirFile(char *path_base,const char *ecwd,const char *efile)
 {
+printf("DirFile(%s,%s,%s)\n",path_base,ecwd,efile);
+   if(!strcmp(ecwd,"~") && !hftp)
+      ecwd="";
    const char *sep=(last_char(ecwd)=='/'?"":"/");
+   if(efile[0]==0)
+      sep="";
+   const char *pre=(ecwd[0]=='/'?"":"/");
    if(efile[0]=='/')
       strcpy(path_base,efile);
    else if(efile[0]=='~')
       sprintf(path_base,"/%s",efile);
-   else if(ecwd[0]==0 || ((ecwd[0]=='/' || (!hftp && ecwd[0]=='~')) && ecwd[1]==0))
-      sprintf(path_base,"/%s",efile);
-   else if(ecwd[0]=='~' && efile[0])
-      sprintf(path_base,"/%s%s%s",ecwd,sep,efile);
-   else if(efile[0])
-      sprintf(path_base,"%s%s%s",ecwd,sep,efile);
    else
-      strcpy(path_base,ecwd);
+      sprintf(path_base,"%s%s%s%s",pre,ecwd,sep,efile);
 
-   if(path_base[1]=='~' && path_base[2]=='/')
+   if(path_base[1]=='~' && path_base[2]==0)
+      path_base[1]=0;
+   else if(path_base[1]=='~' && path_base[2]=='/')
       memmove(path_base,path_base+2,strlen(path_base+2)+1);
-   else if(hftp && path_base[1]!='~')
-   {
-      // root directory in ftp urls needs special encoding. (/%2Fpath)
-      memmove(path_base+4,path_base+1,strlen(path_base+1)+1);
-      memcpy(path_base+1,"%2F",3);
-   }
 }
 
 void Http::SendRequest(const char *connection,const char *f)
@@ -476,8 +472,14 @@ void Http::SendRequest(const char *connection,const char *f)
    }
    else
    {
-      ecwd=string_alloca(strlen(cwd)*3+1);
+      ecwd=string_alloca(strlen(cwd)*3+3+1);
       url::encode_string(cwd,ecwd,URL_PATH_UNSAFE);
+      if(hftp && ecwd[0]=='/' && ecwd[1]!='~')
+      {
+	 // root directory in ftp urls needs special encoding. (/%2Fpath)
+	 memmove(ecwd+4,ecwd+1,strlen(ecwd+1)+1);
+	 memcpy(ecwd+1,"%2F",3);
+      }
    }
    bool add_slash=true;
    if(cwd.is_file)

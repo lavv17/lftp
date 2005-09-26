@@ -688,6 +688,9 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
    if(more-less<3)
       return tag_len;   // too small
 
+   if(less[1]=='/' || less[1]=='!')
+      return tag_len;
+
    int max_link_len=more-less+1+2;
    if(base_href && *base_href)
       max_link_len+=strlen(*base_href)+1;
@@ -745,25 +748,29 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
 
    decode_amps(link_target);  // decode all &amp; and similar
 
+   if(hftp)
+   {
+      // workaround proxy bugs.
+      char *t=strstr(link_target,";type=");
+      if(t && t[6] && t[7]=='/' && t[8]==0)
+	 *t=0;
+      char *p=link_target+url::path_index(link_target);
+      if(p[0]=='/' && p[1]=='/')
+      {
+	 memmove(p+4,p+2,strlen(p+2)+1);
+	 memcpy(p+1,"%2F",3);
+      }
+   }
+
+   Log::global->Format(10,"Found tag %s, link_target=%s\n",tag_scan->tag,link_target);
+
    if(!strcasecmp(tag_scan->tag,"base"))
    {
       if(base_href)
       {
 	 xfree(*base_href);
 	 *base_href=xstrdup(link_target,+2);
-	 if(hftp)
-	 {
-	    // workaround apache proxy bugs.
-	    char *t=strstr(*base_href,";type=");
-	    if(t && t[6] && t[7]=='/' && t[8]==0)
-	       *t=0;
-	    char *p=*base_href+url::path_index(*base_href);
-	    if(p[0]=='/' && p[1]=='/')
-      	    {
-	       memmove(p+4,p+2,strlen(p+2)+1);
-	       memcpy(p+1,"%2F",3);
-	    }
-	 }
+	 Log::global->Format(10,"Found base href=%s\n",*base_href);
       }
       return tag_len;
    }
@@ -932,6 +939,13 @@ parse_url_again:
       if(!all_links || all_links->FindByName(link_target))
 	 return tag_len;
       type[0]=';';
+   }
+
+   if(link_len==0)
+   {
+      strcpy(link_target,".");
+      link_len=1;
+      info.is_directory=true;
    }
 
    bool show_in_list=true;
