@@ -3075,7 +3075,7 @@ int   Ftp::SendEOT()
    if(!conn->data_iobuf->Eof())
       conn->data_iobuf->PutEOF();
 
-   if(conn->data_iobuf->Size()>0)
+   if(!conn->data_iobuf->Done())
       return(DO_AGAIN);
 
    DataClose();

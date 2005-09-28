@@ -32,10 +32,8 @@
 
 class lftp_ssl_base
 {
-protected:
-   bool handshake_done;
-
 public:
+   bool handshake_done;
    int fd;
    char *hostname;
    enum handshake_mode_t { CLIENT, SERVER } handshake_mode;

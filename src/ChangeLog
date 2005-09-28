@@ -1,3 +1,12 @@
+2005-09-27  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp_ssl.h: make handshake_done public.
+	* lftp_ssl.cc: do_handshake even when writing no data.
+	* buffer_ssl.cc, buffer_ssl.h: call ssl->write even with no data
+	  when handshake is not done yet; (Done) check handshake_done -
+	  this fixes a bug with uploading empty files.
+	* ftpclass.cc: check buf->Done instead of Size.
+
 2005-09-26  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Http.cc: simplify path combination; pre-encode %2F for hftp.

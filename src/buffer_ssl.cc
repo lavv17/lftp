@@ -39,7 +39,7 @@ int IOBufferSSL::Do()
    switch(mode)
    {
    case PUT:
-      if(in_buffer==0)
+      if(in_buffer==0 && ssl->handshake_done)
 	 return STALL;
       res=Put_LL(buffer+buffer_ptr,in_buffer);
       if(res>0)

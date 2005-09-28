@@ -42,6 +42,7 @@ public:
    IOBufferSSL(lftp_ssl *s,dir_t m);
    void CloseLater()	{ close_later=true; }
    int Do();
+   bool Done() { return IOBuffer::Done() && ssl->handshake_done; }
 };
 #endif
 

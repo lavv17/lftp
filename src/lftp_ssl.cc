@@ -555,6 +555,8 @@ int lftp_ssl_gnutls::write(const char *buf,int size)
    int res=do_handshake();
    if(res!=DONE)
       return res;
+   if(size==0)
+      return 0;
    errno=0;
    res=gnutls_record_send(session,buf,size);
    if(res<0)
@@ -896,6 +898,8 @@ int lftp_ssl_openssl::write(const char *buf,int size)
    int res=do_handshake();
    if(res!=DONE)
       return res;
+   if(size==0)
+      return 0;
    errno=0;
    res=SSL_write(ssl,buf,size);
    if(res<0)
