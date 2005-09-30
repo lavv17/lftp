@@ -1586,7 +1586,9 @@ CMD(get)
    bool glob=false;
    bool make_dirs=false;
    bool reverse=false;
-   char *output_dir=0;
+   const char *output_dir=ResMgr::Query("xfer:destination-directory",session->GetHostName());
+   if(!*output_dir)
+      output_dir=0;
 
    if(!strncmp(op,"re",2))
    {
@@ -1660,7 +1662,8 @@ CMD(get)
 	 goto err;
       }
       delete get_args;
-      output_dir=xstrdup(output_dir);  // save it from deleting.
+      char *output_dir_dup=xstrdup(output_dir);  // save it from deleting.
+      output_dir=0;
       // remove options
       while(args->getindex()>1)
 	 args->delarg(1);
@@ -1671,8 +1674,8 @@ CMD(get)
 	 j->DeleteFiles();
       if(ascii)
 	 j->Ascii();
-      if(output_dir)
-	 j->OutputDir(output_dir);
+      if(output_dir_dup)
+	 j->OutputDir(output_dir_dup);
       args=0;
       return j;
    }

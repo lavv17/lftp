@@ -1,3 +1,7 @@
+2005-09-30  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc, resource.cc: new setting xfer:destination-directory.
+
 2005-09-27  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp_ssl.h: make handshake_done public.

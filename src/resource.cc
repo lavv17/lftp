@@ -350,6 +350,7 @@ static ResDecl
    res_dir_colors ("color:dir-colors",   "",   0,ResMgr::NoClosure);
 
 static ResDecl
+   res_dest_dir	  ("xfer:destination-directory","",0,0),
    res_verify	  ("xfer:verify", "no", ResMgr::BoolValidate,ResMgr::NoClosure),
    res_verify_cmd ("xfer:verify-command","",ResMgr::FileExecutable,0);
 
