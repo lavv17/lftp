@@ -3519,7 +3519,7 @@ void Ftp::CheckFEAT(char *reply)
 	 break;	  // last line
       if(!strncmp(f,"211-",4))
 	 f+=4;	  // workaround for broken servers, RFC2389 does not allow it.
-      if(*f==' ')
+      while(*f==' ')
 	 f++;
 
       if(!strcasecmp(f,"UTF8"))
