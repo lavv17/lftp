@@ -107,6 +107,7 @@ public:
       return j && !j->Done();
    }
    void Kill(int n);
+   void Kill(Job*);
    void SendSig(int n,int sig);
    void KillAll();
 

@@ -882,12 +882,18 @@ parse_url_again:
    if(info.is_directory && link_len>1)
       link_target[--link_len]=0;
 
+   FileAccess::Path::Optimize(link_target+(link_target[0]=='/' && link_target[1]=='~'));
+   link_len=strlen(link_target);
+
    if(prefix)
    {
-      const char *p_path=prefix->path;
-      if(p_path==0)
-	 p_path="~";
+      const char *p_path_c=prefix->path;
+      if(p_path_c==0)
+	 p_path_c="~";
+      char *p_path=alloca_strdup(p_path_c);
       int p_len=strlen(p_path);
+      if(p_len>1 && p_path[p_len-1]=='/')
+	 p_path[--p_len]=0;
       if(p_len==1 && p_path[0]=='/' && link_target[0]=='/')
       {
 	 if(link_len>1)

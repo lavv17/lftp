@@ -53,7 +53,8 @@ void  Job::AllocJobno()
 Job::~Job()
 {
    xfree(waiting);
-
+   waiting=0;
+   waiting_num=0;
    // reparent or kill children (hm, that's sadistic)
    {
       for(Job *scan=chain; scan; )
@@ -77,6 +78,9 @@ Job::~Job()
 	    scan=scan->next;
       }
    }
+   // if parent waits for the job, make it stop
+   if(parent)
+      parent->RemoveWaiting(this);
    // now, delete the job from the list
    {
       for(Job **scan=&chain; *scan; scan=&(*scan)->next)
@@ -187,24 +191,27 @@ public:
    int	 ExitCode() { return 255; }
 };
 
+void Job::Kill(Job *j)
+{
+   if(j->parent && j->parent->WaitsFor(j))
+   {
+      // someone waits for termination of this job, so
+      // we have to simulate normal death...
+      Job *r=new KilledJob();
+      r->parent=j->parent;
+      r->cmdline=j->cmdline;
+      j->cmdline=0;
+      j->parent->ReplaceWaiting(j,r);
+   }
+   assert(FindWhoWaitsFor(j)==0);
+   Delete(j);
+}
+
 void Job::Kill(int n)
 {
    Job *j=FindJob(n);
    if(j)
-   {
-      if(j->parent && j->parent->WaitsFor(j))
-      {
-	 // someone waits for termination of this job, so
-	 // we have to simulate normal death...
-	 Job *r=new KilledJob();
-	 r->parent=j->parent;
-	 r->cmdline=j->cmdline;
-	 j->cmdline=0;
-	 j->parent->ReplaceWaiting(j,r);
-      }
-      assert(FindWhoWaitsFor(j)==0);
-      Delete(j);
-   }
+      Kill(j);
 }
 
 void Job::KillAll()
@@ -214,7 +221,7 @@ void Job::KillAll()
       Job *tmp=scan;
       scan=scan->next;
       if(tmp->jobno>=0)
-	 Delete(tmp);
+	 Job::Kill(tmp);
    }
 }
 
