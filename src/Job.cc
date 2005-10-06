@@ -62,20 +62,14 @@ Job::~Job()
 	 if(scan->parent==this)
 	 {
 	    if(scan->jobno!=-1 && this->parent)
-	    {
 	       scan->parent=this->parent;
-	       scan=scan->next;
-	    }
-	    else if(!scan->deleting)
-	    {
-	       Delete(scan);
-	       scan=chain;
-	    }
 	    else
-	       scan=scan->next;
+	    {
+	       scan->parent=0;
+	       scan->deleting=true;
+	    }
 	 }
-	 else
-	    scan=scan->next;
+	 scan=scan->next;
       }
    }
    // if parent waits for the job, make it stop
