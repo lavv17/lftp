@@ -1586,9 +1586,7 @@ CMD(get)
    bool glob=false;
    bool make_dirs=false;
    bool reverse=false;
-   const char *output_dir=ResMgr::Query("xfer:destination-directory",session->GetHostName());
-   if(!*output_dir)
-      output_dir=0;
+   const char *output_dir=0;
 
    if(!strncmp(op,"re",2))
    {
@@ -1614,6 +1612,12 @@ CMD(get)
       glob=true;
       opts="cEeadO:";
       reverse=true;
+   }
+   if(!reverse)
+   {
+      output_dir=ResMgr::Query("xfer:destination-directory",session->GetHostName());
+      if(!*output_dir)
+	 output_dir=0;
    }
    while((opt=args->getopt(opts))!=EOF)
    {

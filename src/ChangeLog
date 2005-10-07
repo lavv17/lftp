@@ -1,5 +1,10 @@
 2005-10-06  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* commands.cc: use xfer:destination-directory only for get/mget,
+	  not for put/mput.
+
+2005-10-06  Alexander V. Lukyanov <lav@yars.free.net>
+
 	* Job.cc: fixed another coredump with KillAll/Schedule.
 
 2005-10-05  Alexander V. Lukyanov <lav@yars.free.net>
