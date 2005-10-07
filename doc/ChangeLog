@@ -1,3 +1,8 @@
+2005-10-07	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document xfer:destination-directory; update RFC list;
+	  a phrase fixed.
+
 2005-07-04	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: fix dns:order description.

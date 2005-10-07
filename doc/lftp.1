@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "12 Aug 2005"
+.TH lftp 1 "07 Oct 2005"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 3.3.0.
+This man page documents lftp version 3.3.1.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -1416,6 +1416,10 @@ Certificate Authority and not be on Certificate Revocation List.
 if this setting is off, get commands will not overwrite existing
 files and generate an error instead. Default is on.
 .TP
+.BR xfer:destination-directory " (path or URL to directory)"
+This setting is used as default \-O option for get and mget commands.
+Default is empty, which means current directory (no \-O option).
+.TP
 .BR xfer:eta-period \ (seconds)
 the period over which weighted average rate is calculated to produce ETA.
 .TP
@@ -1430,7 +1434,7 @@ Default is 0, which prohibits redirections.
 the period over which weighted average rate is calculated to be shown.
 
 .PP
-The name of variables can be abbreviated unless it becomes
+The name of a variable can be abbreviated unless it becomes
 ambiguous. The prefix before `:' can be omitted too. You can
 set one variable several times for different closures, and thus
 you can get a particular settings for particular state. The closure
@@ -1546,10 +1550,12 @@ RFC959 (ftp),
 RFC1123,
 RFC1945 (http/1.0),
 RFC2052 (SRV RR),
-RFC2068 (http/1.1),
 RFC2228 (ftp security extensions),
 RFC2389 (ftp FEAT),
 RFC2428 (ftp/ipv6),
+RFC2518 (WebDAV),
+RFC2616 (http/1.1),
+RFC2617 (http/1.1 authentication),
 RFC2640 (ftp i18n).
 .br
 .na
