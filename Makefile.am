@@ -32,7 +32,7 @@ dist-hook:
 	    $(srcdir)/$(PACKAGE).lsm > $(distdir)/$(PACKAGE).lsm && \
 	    cp $(distdir)/$(PACKAGE).lsm $(srcdir)/$(PACKAGE).lsm
 
-REL_DIR=/ftp/pub/software/unix/net/ftp/client/lftp
+REL_DIR=/ftp/pub/source/lftp
 release:
 	cvs commit -m $(VERSION)
 	make dist
