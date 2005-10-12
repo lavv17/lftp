@@ -9,7 +9,8 @@ implemented.
 
  * mirror --config <file.cf>
 
-?* a way to not preserve timestamps.
+-* a way to not preserve timestamps.
+   use cat or touch the file after transfer.
 
 ?* eval -f "foo $1 $2; ls $@" a1 a2 a3
 
@@ -60,9 +61,6 @@ implemented.
  * redirect error messages
  * stdout/stderr analogues, use class IOBuffer.
 
-+* remember user-specified URL path from open/cd.
-+* flag to mark cwd as a file, not a directory. (for http).
-
  * mirror option to check an alternative directory(ies) for existing files.
    (overlay filesystem replacement?)
 
@@ -71,3 +69,5 @@ implemented.
  * cmd:parallel for scripting - execute several commands in parallel
    (change CmdExec::Done to return true when waiting_num<cmd:parallel)
    dependedncies?
+
+ * optionally use STAT . (or STAT -l) for directory listings.

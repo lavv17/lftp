@@ -1,3 +1,16 @@
+Version 3.3.1 - 2005-10-12
+
+* new setting xfer:destination-directory (default for -O option of get, mget).
+* fixed path+file combination in http - avoid double slash.
+* fixed url composition in hftp, a slash was missed.
+* fixed `open ftp.example.com/path'.
+* fixed a coredump when a bookmark contained lots of quotable characters.
+* fixed a coredump when an error happened while loading CA or CRL certificates.
+* fixed uploading of empty files via ftp with ftp:ssl-protect-data on.
+* fixed exit code of slot command.
+* fixed a coredump with `kill all'.
+* fixed path extraction from html files (broken in 3.3.0).
+
 Version 3.3.0 - 2005-08-12
 
 * now plain files can be current location in http protocol.
