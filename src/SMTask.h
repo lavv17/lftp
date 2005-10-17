@@ -67,6 +67,7 @@ public:
    static void UpdateNow() { now.SetToCurrentTime(); }
 
    static void Schedule();
+   static int CollectGarbage();
    static void Block() { sched_total.Block(); }
 
    void Suspend();

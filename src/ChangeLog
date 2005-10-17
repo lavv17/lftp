@@ -1,3 +1,13 @@
+2005-10-17  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SMTask.cc, SMTask.h: simplify Schedule; make garbage collection
+	  a separate function; don't delete the task in Delete, just mark
+	  it for GC.
+
+2005-10-17  Paul TBBle Hampson <Paul.Hampson@anu.edu.au>
+
+	* lftp.cc: add missing initialization for add_newline.
+
 2005-10-06  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: use xfer:destination-directory only for get/mget,

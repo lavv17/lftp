@@ -114,21 +114,18 @@ SMTask::~SMTask()
       if(*scan==this)
       {
 	 *scan=next;
-	 break;
+	 return;
       }
       scan=&((*scan)->next);
    }
+   assert(!"SMTask dtor called with unregistered task");
 }
 
 void SMTask::Delete(SMTask *task)
 {
    if(!task)
       return;
-   if(task->deleting)
-      return;
    task->deleting=true;
-   if(!task->running)
-      delete task;
 }
 
 void SMTask::Enter(SMTask *task)
@@ -166,6 +163,28 @@ void SMTask::RollAll(int max_time)
 	 && (max_time==0 || now<time_limit));
 }
 
+int SMTask::CollectGarbage()
+{
+   int count=0;
+   bool repeat_gc;
+   do {
+      repeat_gc=false;
+      SMTask *scan=chain;
+      while(scan)
+      {
+	 if(!scan->running && scan->deleting)
+	 {
+	    delete replace_value(scan,scan->next);
+	    repeat_gc=true;
+	    count++;
+	    continue;
+	 }
+	 scan=scan->next;
+      }
+   } while(repeat_gc);
+   return count;
+}
+
 void SMTask::Schedule()
 {
    SMTask *scan;
@@ -189,32 +208,20 @@ void SMTask::Schedule()
 	 scan=scan->next;
 	 continue;
       }
+
       if(repeat)
 	 scan->block.SetTimeout(0); // little optimization
 
-      int res=STALL;
+      Enter(scan);	   // mark it current and running.
+      int res=scan->Do();  // let it run.
+      Leave(scan);	   // unmark it running and change current.
 
-      Enter(scan);	// mark it current and running.
-      SMTask *entered=current;
-      if(!current->deleting)
-	 res=current->Do(); // let it run unless it is dying.
-      assert(current==entered);
-      scan=scan->next;	// move to a next task.
-      SMTask *to_delete=0;
-      if(current->deleting)
-	 to_delete=current;
-      if(res!=MOVED && current->block.GetTimeout()==0)
-	 res=MOVED;
-#if 0
-      if(res==MOVED)
-	 printf("MOVED:%p\n",current);
-#endif
-      Leave(current);	// unmark it running and change current.
-
-      delete to_delete;
-      if(res==MOVED || to_delete)
+      if(res==MOVED || scan->block.GetTimeout()==0)
 	 repeat=true;
+      scan=scan->next;	   // move to a next task.
    }
+   if(CollectGarbage())
+      repeat=true;
    if(repeat)
    {
       sched_total.SetTimeout(0);
@@ -274,6 +281,7 @@ int SMTask::TaskCount()
 
 void SMTask::Cleanup()
 {
+  CollectGarbage();
   delete init_task;
 }
 

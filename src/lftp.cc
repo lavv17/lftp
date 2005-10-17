@@ -112,6 +112,7 @@ public:
    {
       tty=isatty(0);
       ctty=(tcgetpgrp(0)!=(pid_t)-1);
+      add_newline=false;
       to_free=0;
       eof_count=0;
       for_history=0;
