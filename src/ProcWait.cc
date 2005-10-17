@@ -159,6 +159,6 @@ void ProcWait::Signal(bool yes)
 void ProcWait::DeleteAll()
 {
    Signal(false);
-   while(chain)
-      Delete(chain);
+   for(ProcWait *scan=chain; scan; scan=scan->next)
+      scan->deleting=true;
 }

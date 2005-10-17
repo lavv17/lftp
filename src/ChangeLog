@@ -3,6 +3,8 @@
 	* SMTask.cc, SMTask.h: simplify Schedule; make garbage collection
 	  a separate function; don't delete the task in Delete, just mark
 	  it for GC.
+	* ProcWait.cc: don't rely on Delete to delete the task, just mark
+	  it for deletion.
 
 2005-10-17  Paul TBBle Hampson <Paul.Hampson@anu.edu.au>
 
