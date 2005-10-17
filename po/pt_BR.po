@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-12 17:06+0400\n"
+"POT-Creation-Date: 2005-10-17 14:57+0400\n"
 "PO-Revision-Date: 1999-07-12 00:00+0400\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -1749,22 +1749,22 @@ msgstr ""
 msgid "Receiving data"
 msgstr ""
 
-#: src/lftp.cc:242
+#: src/lftp.cc:243
 #, c-format
 msgid "[%lu] Terminated by signal %d. %s"
 msgstr ""
 
-#: src/lftp.cc:301
+#: src/lftp.cc:302
 #, c-format
 msgid "[%lu] Started.  %s"
 msgstr ""
 
-#: src/lftp.cc:310
+#: src/lftp.cc:311
 #, c-format
 msgid "[%lu] Finished. %s"
 msgstr ""
 
-#: src/lftp.cc:314
+#: src/lftp.cc:315
 #, c-format
 msgid "[%lu] Moving to background to complete transfers...\n"
 msgstr ""

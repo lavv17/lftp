@@ -1,3 +1,7 @@
+Version 3.3.2 - 2005-10-17
+
+* fixed a coredump caused by double-free.
+
 Version 3.3.1 - 2005-10-12
 
 * new setting xfer:destination-directory (default for -O option of get, mget).

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-12 17:06+0400\n"
+"POT-Creation-Date: 2005-10-17 14:57+0400\n"
 "PO-Revision-Date: 2005-08-15 20:50+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -1962,22 +1962,22 @@ msgstr "Wysy³am dane"
 msgid "Receiving data"
 msgstr "Otrzymujê dane"
 
-#: src/lftp.cc:242
+#: src/lftp.cc:243
 #, c-format
 msgid "[%lu] Terminated by signal %d. %s"
 msgstr "[%lu] Przerwany przez sygna³ %d. %s"
 
-#: src/lftp.cc:301
+#: src/lftp.cc:302
 #, c-format
 msgid "[%lu] Started.  %s"
 msgstr "[%lu] Zosta³ uruchomiony.  %s"
 
-#: src/lftp.cc:310
+#: src/lftp.cc:311
 #, c-format
 msgid "[%lu] Finished. %s"
 msgstr "[%lu] Zakoñczono. %s"
 
-#: src/lftp.cc:314
+#: src/lftp.cc:315
 #, c-format
 msgid "[%lu] Moving to background to complete transfers...\n"
 msgstr "[%lu] Przechodzenie w t³o w celu dokoñczenia transferów...\n"

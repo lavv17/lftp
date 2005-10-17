@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.6.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-12 17:06+0400\n"
+"POT-Creation-Date: 2005-10-17 14:57+0400\n"
 "PO-Revision-Date: 2002-08-08 19:01+0000\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -1882,22 +1882,22 @@ msgstr "Enviando datos"
 msgid "Receiving data"
 msgstr "Recibiendo datos"
 
-#: src/lftp.cc:242
+#: src/lftp.cc:243
 #, c-format
 msgid "[%lu] Terminated by signal %d. %s"
 msgstr "[%lu] Terminado por señal %d. %s"
 
-#: src/lftp.cc:301
+#: src/lftp.cc:302
 #, c-format
 msgid "[%lu] Started.  %s"
 msgstr "[%lu] Comenzado.  %s"
 
-#: src/lftp.cc:310
+#: src/lftp.cc:311
 #, c-format
 msgid "[%lu] Finished. %s"
 msgstr "[%lu] Finalizado. %s"
 
-#: src/lftp.cc:314
+#: src/lftp.cc:315
 #, c-format
 msgid "[%lu] Moving to background to complete transfers...\n"
 msgstr "[%lu] Pasando a segundo plano para completar las transferencias...\n"
