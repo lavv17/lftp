@@ -5,6 +5,7 @@
 	  user-specific files if get_lftp_home returns NULL.
 	* FileAccess.cc: swap default SameSiteAs and SameLocationAs, this
 	  fixes loop in `open file:/path'.
+	* SMTask.cc: (CollectGarbage) don't protect scan->next if it is NULL.
 
 2005-10-18  Alexander V. Lukyanov <lav@yars.free.net>
 

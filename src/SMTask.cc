@@ -174,16 +174,24 @@ int SMTask::CollectGarbage()
       SMTask *scan=chain;
       while(scan)
       {
-	 if(!scan->running && scan->deleting)
+	 if(scan->running || !scan->deleting)
+	 {
+	    scan=scan->next;
+	    continue;
+	 }
+	 repeat_gc=true;
+	 count++;
+	 if(scan->next)
 	 {
 	    Enter(scan->next); // protect it from deleting
 	    delete scan;
 	    Leave(scan=current);
-	    repeat_gc=true;
-	    count++;
-	    continue;
 	 }
-	 scan=scan->next;
+	 else
+	 {
+	    delete scan;
+	    break;
+	 }
       }
    } while(repeat_gc);
    return count;
