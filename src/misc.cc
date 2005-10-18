@@ -910,3 +910,30 @@ bool temporary_network_error(int err)
    }
    return false;
 }
+
+const char *get_lftp_home()
+{
+   static char *home=NULL;
+
+   if(home)
+      return home;
+
+   home=getenv("LFTP_HOME");
+   if(!home)
+   {
+      home=getenv("HOME");
+      if(home)
+      {
+         char *tmp=(char*)malloc(strlen(home)+6+1);
+         sprintf(tmp,"%s/.lftp",home);
+         home=tmp;
+      }
+      else
+         return NULL;
+   }
+   else
+      home=xstrdup(home);
+
+   mkdir(home,0755);
+   return home;
+}

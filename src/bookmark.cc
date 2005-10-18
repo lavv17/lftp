@@ -27,6 +27,7 @@
 #include <unistd.h>
 #include "trio.h"
 #include "ResMgr.h"
+#include "misc.h"
 
 #define super KeyValueDB
 
@@ -36,10 +37,10 @@ ResDecl res_auto_sync("bmk:auto-sync","yes",ResMgr::BoolValidate,ResMgr::NoClosu
 
 Bookmark::Bookmark()
 {
-   const char *home=getenv("HOME");
+   const char *home=get_lftp_home();
    if(home==0)
       home="";
-   const char *add="/.lftp/bookmarks";
+   const char *add="/bookmarks";
    bm_file=xstrdup(home,+strlen(add));
    strcat(bm_file,add);
 

@@ -2664,7 +2664,7 @@ CMD(bookmark)
    else if(!strcasecmp(op,"edit"))
    {
       lftp_bookmarks.Remove(""); // force bookmark file creation
-      parent->PrependCmd("shell \"/bin/sh -c 'exec ${EDITOR:-vi} $HOME/.lftp/bookmarks'\"\n");
+      parent->PrependCmd("shell \"/bin/sh -c 'exec ${EDITOR:-vi} ${LFTP_HOME:-$HOME/.lftp}/bookmarks'\"\n");
    }
    else if(!strcasecmp(op,"import"))
    {

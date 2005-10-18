@@ -7,7 +7,7 @@
 set -e
 
 NCFTP="$HOME/.ncftp/bookmarks"
-OLD="$HOME/.lftp/bookmarks"
+OLD="${LFTP_HOME:-$HOME/.lftp}/bookmarks"
 NEW="$OLD.new.$$"
 
 grep "," "$NCFTP" | cut -d, -f1,2,3,6 | sed \

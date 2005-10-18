@@ -267,11 +267,11 @@ static void move_to_background()
       SignalHook::Ignore(SIGHUP);
       SignalHook::Ignore(SIGTSTP);
 
-      const char *home=getenv("HOME");
+      const char *home=get_lftp_home();
       if(home)
       {
-	 char *log=(char*)alloca(strlen(home)+1+9+1);
-	 sprintf(log,"%s/.lftp",home);
+	 char *log=(char*)alloca(strlen(home)+1+3+1);
+	 sprintf(log,"%s",home);
 	 if(access(log,F_OK)==-1)
 	    strcat(log,"_log");
 	 else
@@ -380,13 +380,16 @@ int   main(int argc,char **argv)
    {
       char *rc=(char*)alloca(strlen(home)+9+1);
 
-      // create lftp own directory
-      sprintf(rc,"%s/.lftp",home);
-      mkdir(rc,0755);
-
       sprintf(rc,"%s/.lftprc",home);
       source_if_exist(top_exec,rc);
-      sprintf(rc,"%s/.lftp/rc",home);
+   }
+
+   home=get_lftp_home();
+   if(home)
+   {
+      char *rc=(char*)alloca(strlen(home)+3+1);
+
+      sprintf(rc,"%s/rc",home);
       source_if_exist(top_exec,rc);
    }
 

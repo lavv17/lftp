@@ -121,4 +121,6 @@ void base64_encode (const char *s, char *store, int length);
 
 bool temporary_network_error(int e);
 
+CDECL const char *get_lftp_home();
+
 #endif // MISC_H

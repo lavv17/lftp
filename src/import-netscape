@@ -7,7 +7,7 @@
 set -e
 
 NS="$HOME/.netscape/bookmarks.html"
-OLD="$HOME/.lftp/bookmarks"
+OLD="${LFTP_HOME:-$HOME/.lftp}/bookmarks"
 NEW="$OLD.new.$$"
 
 prepend_hash()

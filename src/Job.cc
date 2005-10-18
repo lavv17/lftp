@@ -355,12 +355,8 @@ void  Job::BuryDoneJobs()
    {
       if((scan->parent==this || scan->parent==0) && scan->jobno>=0
 		  && scan->Done())
-      {
-	 Delete(scan);
-      	 scan=chain;
-      }
-      else
-	 scan=scan->next;
+	 scan->deleting=true;
+      scan=scan->next;
    }
 }
 

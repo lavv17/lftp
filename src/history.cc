@@ -28,6 +28,7 @@
 #include "trio.h"
 #include "history.h"
 #include "url.h"
+#include "misc.h"
 
 #define super KeyValueDB
 
@@ -38,10 +39,10 @@ History::History()
    fd=-1;
    modified=false;
 
-   const char *home=getenv("HOME");
+   const char *home=get_lftp_home();
    if(home==0)
       home="";
-   const char *add="/.lftp/cwd_history";
+   const char *add="/cwd_history";
    file=xstrdup(home,+strlen(add));
    strcat(file,add);
 }
