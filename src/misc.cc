@@ -919,8 +919,6 @@ const char *get_lftp_home()
       return home;
 
    home=getenv("LFTP_HOME");
-   if(!*home)
-      return NULL;
    if(!home)
    {
       home=getenv("HOME");
@@ -935,6 +933,9 @@ const char *get_lftp_home()
    }
    else
       home=xstrdup(home);
+
+   if(!*home)
+      return NULL;
 
    mkdir(home,0755);
    return home;
