@@ -38,13 +38,14 @@ History::History()
    stamp=0;
    fd=-1;
    modified=false;
-
+   file=0;
    const char *home=get_lftp_home();
-   if(home==0)
-      home="";
-   const char *add="/cwd_history";
-   file=xstrdup(home,+strlen(add));
-   strcat(file,add);
+   if(home)
+   {
+      const char *add="/cwd_history";
+      file=xstrdup(home,+strlen(add));
+      strcat(file,add);
+   }
 }
 
 History::~History()
@@ -102,6 +103,8 @@ const char *History::Lookup(FileAccess *s)
 
 void History::Refresh()
 {
+   if(!file)
+      return;
    struct stat st;
    if((fd==-1 ? stat(file,&st) : fstat(fd,&st)) == -1)
       return;
@@ -114,6 +117,8 @@ void History::Load()
 {
    if(full)
       full->Empty();
+   if(!file)
+      return;
    if(fd==-1)
    {
       fd=open(file,O_RDONLY);
@@ -163,6 +168,8 @@ void History::Set(FileAccess *s,const FileAccess::Path &cwd)
 void History::Save()
 {
    Close();
+   if(!file)
+      return;
    if(!modified)
       return;
    fd=open(file,O_RDWR|O_CREAT,0600);

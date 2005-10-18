@@ -37,13 +37,14 @@ ResDecl res_auto_sync("bmk:auto-sync","yes",ResMgr::BoolValidate,ResMgr::NoClosu
 
 Bookmark::Bookmark()
 {
+   bm_file=0;
    const char *home=get_lftp_home();
-   if(home==0)
-      home="";
-   const char *add="/bookmarks";
-   bm_file=xstrdup(home,+strlen(add));
-   strcat(bm_file,add);
-
+   if(home)
+   {
+      const char *add="/bookmarks";
+      bm_file=xstrdup(home,+strlen(add));
+      strcat(bm_file,add);
+   }
    bm_fd=-1;
    stamp=(time_t)-1;
 }
@@ -56,6 +57,8 @@ Bookmark::~Bookmark()
 
 void Bookmark::Refresh()
 {
+   if(!bm_file)
+      return;
    struct stat st;
    if((bm_fd==-1 ? stat(bm_file,&st) : fstat(bm_fd,&st)) == -1)
       return;
@@ -67,6 +70,8 @@ void Bookmark::Refresh()
 void Bookmark::Load()
 {
    super::Empty();
+   if(!bm_file)
+      return;
    if(bm_fd==-1)
    {
       bm_fd=open(bm_file,O_RDONLY);
@@ -87,6 +92,9 @@ void Bookmark::Load()
 static bool auto_sync;
 void Bookmark::PreModify()
 {
+   if(!bm_file)
+      return;
+
    auto_sync=ResMgr::QueryBool("bmk:auto-sync",0);
    if(!auto_sync)
       return;
@@ -105,6 +113,9 @@ void Bookmark::PreModify()
 }
 void Bookmark::PostModify()
 {
+   if(!bm_file)
+      return;
+
    if(!auto_sync)
       return;
 
@@ -123,6 +134,8 @@ void Bookmark::PostModify()
 
 void Bookmark::UserSave()
 {
+   if(!bm_file)
+      return;
    Close();
    bm_fd=open(bm_file,O_RDWR|O_CREAT|O_TRUNC,0600);
    if(bm_fd==-1)

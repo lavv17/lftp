@@ -919,6 +919,8 @@ const char *get_lftp_home()
       return home;
 
    home=getenv("LFTP_HOME");
+   if(!*home)
+      return NULL;
    if(!home)
    {
       home=getenv("HOME");

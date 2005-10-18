@@ -1,5 +1,11 @@
 2005-10-18  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* misc.cc: (get_lftp_home) return NULL if LFTP_HOME is empty.
+	* history.cc, bookmark.cc, lftp_rl.c: don't read/write anything to
+	  user-specific files if get_lftp_home returns NULL.
+
+2005-10-18  Alexander V. Lukyanov <lav@yars.free.net>
+
 	* SMTask.cc, SMTask.h: do delete the task in Delete if not running;
 	  (CollectGarbage) protect next element in chain when deleting one task.
 	* Job.cc: (BuryDoneJobs) avoid looping caused by Delete not
