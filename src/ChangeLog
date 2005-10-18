@@ -3,6 +3,8 @@
 	* misc.cc: (get_lftp_home) return NULL if LFTP_HOME is empty.
 	* history.cc, bookmark.cc, lftp_rl.c: don't read/write anything to
 	  user-specific files if get_lftp_home returns NULL.
+	* FileAccess.cc: swap default SameSiteAs and SameLocationAs, this
+	  fixes loop in `open file:/path'.
 
 2005-10-18  Alexander V. Lukyanov <lav@yars.free.net>
 

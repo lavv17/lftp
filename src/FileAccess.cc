@@ -372,13 +372,13 @@ void FileAccess::Mkdir(const char *fn,bool allp)
 
 bool FileAccess::SameLocationAs(FileAccess *fa)
 {
-   if(strcmp(this->GetProto(),fa->GetProto()))
-      return false;
-   return true;
+   return SameSiteAs(fa);
 }
 bool FileAccess::SameSiteAs(FileAccess *fa)
 {
-   return SameLocationAs(fa);
+   if(strcmp(this->GetProto(),fa->GetProto()))
+      return false;
+   return true;
 }
 
 const char *FileAccess::GetFileURL(const char *f,int flags)
