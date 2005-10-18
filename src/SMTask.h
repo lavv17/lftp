@@ -89,7 +89,6 @@ public:
 
    static void Delete(SMTask *);
    static int Roll(SMTask *);
-   static void DeleteAll();
    static void RollAll(int max_time);
 
    static SMTask *current;

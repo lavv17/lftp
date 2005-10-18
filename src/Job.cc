@@ -351,13 +351,13 @@ void  Job::ListDoneJobs()
 
 void  Job::BuryDoneJobs()
 {
-   for(Job *scan=chain; scan; )
+   for(Job *scan=chain; scan; scan=scan->next)
    {
       if((scan->parent==this || scan->parent==0) && scan->jobno>=0
 		  && scan->Done())
 	 scan->deleting=true;
-      scan=scan->next;
    }
+   CollectGarbage();
 }
 
 void Job::fprintf(FILE *file,const char *fmt,...)

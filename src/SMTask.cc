@@ -126,6 +126,8 @@ void SMTask::Delete(SMTask *task)
    if(!task)
       return;
    task->deleting=true;
+   if(!task->running)
+      delete task;
 }
 
 void SMTask::Enter(SMTask *task)
@@ -174,7 +176,9 @@ int SMTask::CollectGarbage()
       {
 	 if(!scan->running && scan->deleting)
 	 {
-	    delete replace_value(scan,scan->next);
+	    Enter(scan->next); // protect it from deleting
+	    delete scan;
+	    Leave(scan=current);
 	    repeat_gc=true;
 	    count++;
 	    continue;
@@ -245,17 +249,6 @@ void SMTask::ReconfigAll(const char *name)
    for(SMTask *scan=chain; scan; scan=scan->next)
       scan->Reconfig(name);
    sched_total.SetTimeout(0);  // for new values handling
-}
-void SMTask::DeleteAll()
-{
-   SMTask **scan=&chain;
-   while(*scan)
-   {
-      SMTask *old=*scan;
-      Delete(*scan);
-      if(*scan==old)
-	 scan=&(*scan)->next;
-   }
 }
 
 int SMTaskInit::Do()

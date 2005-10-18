@@ -1,5 +1,7 @@
 2005-10-18  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* SMTask.cc, SMTask.h: do delete the task in Delete if not running;
+	  (CollectGarbage) protect next element in chain when deleting one task.
 	* Job.cc: (BuryDoneJobs) avoid looping caused by Delete not
 	  always deleting the task.
 	* misc.cc, misc.h: (get_lftp_home) new function.
