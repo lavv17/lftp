@@ -1201,7 +1201,7 @@ int   Ftp::Do()
 	    return m;
       }
 
-      if(!ReconnectAllowed())
+      if(!resolver && mode!=CONNECT_VERIFY && !ReconnectAllowed())
 	 return m;
 
       if(ftps)
@@ -1212,6 +1212,9 @@ int   Ftp::Do()
 	 return m;
 
       if(mode==CONNECT_VERIFY)
+	 return m;
+
+      if(!ReconnectAllowed())
 	 return m;
 
       if(!NextTry())

@@ -1,3 +1,8 @@
+2005-10-19  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, Http.cc: check ReconnectAllowed() after host name
+	  resolving.
+
 2005-10-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* misc.cc: (get_lftp_home) return NULL if LFTP_HOME is empty.

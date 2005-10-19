@@ -1038,7 +1038,7 @@ int Http::Do()
 	    return MOVED;
       }
 
-      if(!ReconnectAllowed())
+      if(!resolver && mode!=CONNECT_VERIFY && !ReconnectAllowed())
 	 return m;
 
       if(https)
@@ -1049,6 +1049,9 @@ int Http::Do()
 	 return m;
 
       if(mode==CONNECT_VERIFY)
+	 return m;
+
+      if(!ReconnectAllowed())
 	 return m;
 
       if(!NextTry())
