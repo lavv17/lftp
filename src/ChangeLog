@@ -1,3 +1,8 @@
+2005-10-20  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: add workaround for proftpd resetting data connection
+	  when there is no files for NLST.
+
 2005-10-19  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, Http.cc: check ReconnectAllowed() after host name

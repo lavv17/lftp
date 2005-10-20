@@ -2197,12 +2197,19 @@ int   Ftp::Do()
          return MOVED;
 
       BumpEventTime(conn->data_iobuf->EventTime());
-      if(conn->data_iobuf->Error())
+      // handle errors on data connection only when storing or got all replies
+      if(conn->data_iobuf->Error() && (mode==STORE || expect->IsEmpty()))
       {
 	 DebugPrint("**** ",conn->data_iobuf->ErrorText(),0);
 	 if(conn->data_iobuf->ErrorFatal())
 	    SetError(FATAL,conn->data_iobuf->ErrorText());
-	 DisconnectNow();
+	 if(!expect->IsEmpty())
+	    DisconnectNow();
+	 else
+	 {
+	    DataClose();
+	    state=EOF_STATE;
+	 }
 	 return MOVED;
       }
       if(mode!=STORE)
