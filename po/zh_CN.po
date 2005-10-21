@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-17 14:57+0400\n"
+"POT-Creation-Date: 2005-10-21 08:32+0400\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -110,7 +110,7 @@ msgstr "访问失败: %s"
 msgid "File cannot be accessed"
 msgstr "不能访问文件"
 
-#: src/FileAccess.cc:293 src/ftpclass.cc:3918 src/ftpclass.cc:3927
+#: src/FileAccess.cc:293 src/ftpclass.cc:3928 src/ftpclass.cc:3937
 #: src/Fish.cc:1112 src/SFtp.cc:1310
 msgid "Not connected"
 msgstr "没有连接上"
@@ -363,8 +363,8 @@ msgstr ""
 msgid "invalid pair of numbers"
 msgstr "无效的数字"
 
-#: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3923
-#: src/Http.cc:1845
+#: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3933
+#: src/Http.cc:1848
 msgid "Resolving host address..."
 msgstr "正在解析主机地址..."
 
@@ -1666,158 +1666,158 @@ msgstr ""
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr ""
 
-#: src/ftpclass.cc:1244 src/Http.cc:1069
+#: src/ftpclass.cc:1247 src/Http.cc:1072
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr ""
 
-#: src/ftpclass.cc:1480
+#: src/ftpclass.cc:1483
 msgid "SITE CHMOD is not supported by this site"
 msgstr ""
 
-#: src/ftpclass.cc:1485
+#: src/ftpclass.cc:1488
 msgid "MLST and MLSD are not supported by this site"
 msgstr ""
 
-#: src/ftpclass.cc:1903 src/ftpclass.cc:1953
+#: src/ftpclass.cc:1906 src/ftpclass.cc:1956
 #, fuzzy
 msgid "unsupported network protocol"
 msgstr "%s: %s - 不支持的协议\n"
 
-#: src/ftpclass.cc:2067
+#: src/ftpclass.cc:2070
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "正在建立数据连接到 (%s) 端口 %u"
 
-#: src/ftpclass.cc:2074
+#: src/ftpclass.cc:2077
 #, fuzzy, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "正在建立数据连接到 (%s) 端口 %u"
 
-#: src/ftpclass.cc:2099 src/ftpclass.cc:3756
+#: src/ftpclass.cc:2102 src/ftpclass.cc:3766
 msgid "Switching passive mode off"
 msgstr "正在关闭被动模式"
 
-#: src/ftpclass.cc:2107
+#: src/ftpclass.cc:2110
 #, fuzzy
 msgid "Data connection established"
 msgstr "数据连接对端的地址不对"
 
-#: src/ftpclass.cc:2356 src/ftpclass.cc:3878
+#: src/ftpclass.cc:2366 src/ftpclass.cc:3888
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 
-#: src/ftpclass.cc:2553 src/ftpclass.cc:2688 src/Http.cc:1157 src/Fish.cc:647
+#: src/ftpclass.cc:2563 src/ftpclass.cc:2698 src/Http.cc:1160 src/Fish.cc:647
 #: src/SFtp.cc:757 src/SFtp.cc:1057
 msgid "Peer closed connection"
 msgstr "对端关闭连接"
 
-#: src/ftpclass.cc:2633
+#: src/ftpclass.cc:2643
 msgid "Persist and retry"
 msgstr ""
 
-#: src/ftpclass.cc:2902
+#: src/ftpclass.cc:2912
 msgid "Closing data socket"
 msgstr "关闭数据连接"
 
-#: src/ftpclass.cc:2918
+#: src/ftpclass.cc:2928
 #, fuzzy
 msgid "Closing aborted data socket"
 msgstr "关闭数据连接"
 
-#: src/ftpclass.cc:3595
+#: src/ftpclass.cc:3605
 msgid "saw file size in response"
 msgstr "看到应答中的文件大小"
 
-#: src/ftpclass.cc:3610 src/Fish.cc:731 src/SFtp.cc:1082
+#: src/ftpclass.cc:3620 src/Fish.cc:731 src/SFtp.cc:1082
 msgid "extra server response"
 msgstr "额外的服务器应答"
 
-#: src/ftpclass.cc:3624 src/ftpclass.cc:3647
+#: src/ftpclass.cc:3634 src/ftpclass.cc:3657
 msgid "Turning on sync-mode"
 msgstr ""
 
-#: src/ftpclass.cc:3776
+#: src/ftpclass.cc:3786
 #, fuzzy
 msgid "Switching passive mode on"
 msgstr "正在关闭被动模式"
 
-#: src/ftpclass.cc:3904
+#: src/ftpclass.cc:3914
 msgid "FEAT negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:3911
+#: src/ftpclass.cc:3921
 msgid "Sending commands..."
 msgstr "正在发送命令..."
 
-#: src/ftpclass.cc:3913 src/ftpclass.cc:3941 src/ftpclass.cc:3954
-#: src/Http.cc:1860 src/Fish.cc:1121 src/SFtp.cc:1320
+#: src/ftpclass.cc:3923 src/ftpclass.cc:3951 src/ftpclass.cc:3964
+#: src/Http.cc:1863 src/Fish.cc:1121 src/SFtp.cc:1320
 msgid "Waiting for response..."
 msgstr "正等待应答..."
 
-#: src/ftpclass.cc:3915
+#: src/ftpclass.cc:3925
 #, fuzzy
 msgid "Delaying before retry"
 msgstr "重新连接前延时"
 
-#: src/ftpclass.cc:3916 src/Http.cc:1853
+#: src/ftpclass.cc:3926 src/Http.cc:1856
 msgid "Connection idle"
 msgstr "连接空闲"
 
-#: src/ftpclass.cc:3930 src/Http.cc:1851 src/Http.cc:1858 src/Fish.cc:1117
+#: src/ftpclass.cc:3940 src/Http.cc:1854 src/Http.cc:1861 src/Fish.cc:1117
 #: src/SFtp.cc:1316
 msgid "Connecting..."
 msgstr "正在连接..."
 
-#: src/ftpclass.cc:3934
+#: src/ftpclass.cc:3944
 msgid "TLS negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:3936 src/Fish.cc:1119 src/SFtp.cc:1318
+#: src/ftpclass.cc:3946 src/Fish.cc:1119 src/SFtp.cc:1318
 #, fuzzy
 msgid "Connected"
 msgstr "没有连接上"
 
-#: src/ftpclass.cc:3938
+#: src/ftpclass.cc:3948
 msgid "Logging in..."
 msgstr "正在登录..."
 
-#: src/ftpclass.cc:3942
+#: src/ftpclass.cc:3952
 msgid "Making data connection..."
 msgstr "正在建立数据连接..."
 
-#: src/ftpclass.cc:3945
+#: src/ftpclass.cc:3955
 msgid "Changing remote directory..."
 msgstr "正在改变远程目录..."
 
-#: src/ftpclass.cc:3951
+#: src/ftpclass.cc:3961
 #, fuzzy
 msgid "Waiting for other copy peer..."
 msgstr "正等待应答..."
 
-#: src/ftpclass.cc:3953 src/ftpclass.cc:3974
+#: src/ftpclass.cc:3963 src/ftpclass.cc:3984
 msgid "Waiting for transfer to complete"
 msgstr "正等待传输完成"
 
-#: src/ftpclass.cc:3956
+#: src/ftpclass.cc:3966
 msgid "Waiting for data connection..."
 msgstr "正等待数据连接..."
 
-#: src/ftpclass.cc:3962
+#: src/ftpclass.cc:3972
 #, fuzzy
 msgid "Sending data/TLS"
 msgstr "正发送数据"
 
-#: src/ftpclass.cc:3964
+#: src/ftpclass.cc:3974
 #, fuzzy
 msgid "Receiving data/TLS"
 msgstr "正接收数据"
 
-#: src/ftpclass.cc:3970 src/Http.cc:1856 src/Fish.cc:1125 src/SFtp.cc:1324
+#: src/ftpclass.cc:3980 src/Http.cc:1859 src/Fish.cc:1125 src/SFtp.cc:1324
 msgid "Sending data"
 msgstr "正发送数据"
 
-#: src/ftpclass.cc:3972 src/Http.cc:1863 src/Fish.cc:1123 src/SFtp.cc:1322
+#: src/ftpclass.cc:3982 src/Http.cc:1866 src/Fish.cc:1123 src/SFtp.cc:1322
 msgid "Receiving data"
 msgstr "正接收数据"
 
@@ -1916,51 +1916,51 @@ msgstr ""
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 
-#: src/Http.cc:1173
+#: src/Http.cc:1176
 #, fuzzy
 msgid "Sending request..."
 msgstr "正在发送命令..."
 
-#: src/Http.cc:1220
+#: src/Http.cc:1223
 #, fuzzy
 msgid "Hit EOF while fetching headers"
 msgstr "正在取得头..."
 
-#: src/Http.cc:1336
+#: src/Http.cc:1339
 msgid "Could not parse HTTP status line"
 msgstr ""
 
-#: src/Http.cc:1367
+#: src/Http.cc:1370
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr ""
 
-#: src/Http.cc:1509
+#: src/Http.cc:1512
 #, fuzzy
 msgid "Receiving body..."
 msgstr "正接收数据"
 
-#: src/Http.cc:1629
+#: src/Http.cc:1632
 msgid "Hit EOF"
 msgstr ""
 
-#: src/Http.cc:1632
+#: src/Http.cc:1635
 msgid "Received not enough data, retrying"
 msgstr ""
 
-#: src/Http.cc:1640
+#: src/Http.cc:1643
 #, fuzzy
 msgid "Received all"
 msgstr "正接收数据"
 
-#: src/Http.cc:1645
+#: src/Http.cc:1648
 msgid "Received all (total)"
 msgstr ""
 
-#: src/Http.cc:1668 src/Http.cc:1689
+#: src/Http.cc:1671 src/Http.cc:1692
 msgid "chunked format violated"
 msgstr "块格式冲突"
 
-#: src/Http.cc:1861
+#: src/Http.cc:1864
 msgid "Fetching headers..."
 msgstr "正在取得头..."
 

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-17 14:57+0400\n"
+"POT-Creation-Date: 2005-10-21 08:32+0400\n"
 "PO-Revision-Date: 2005-08-15 20:50+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -112,7 +112,7 @@ msgstr "Brak dostêpu: %s"
 msgid "File cannot be accessed"
 msgstr "Brak dostêpu do pliku"
 
-#: src/FileAccess.cc:293 src/ftpclass.cc:3918 src/ftpclass.cc:3927
+#: src/FileAccess.cc:293 src/ftpclass.cc:3928 src/ftpclass.cc:3937
 #: src/Fish.cc:1112 src/SFtp.cc:1310
 msgid "Not connected"
 msgstr "Nie po³±czony"
@@ -372,8 +372,8 @@ msgstr "nie zdefiniowano zamkniêcia dla tego ustawienia"
 msgid "invalid pair of numbers"
 msgstr "nieprawid³owa para liczb"
 
-#: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3923
-#: src/Http.cc:1845
+#: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3933
+#: src/Http.cc:1848
 msgid "Resolving host address..."
 msgstr "Uzyskiwanie adresu hosta..."
 
@@ -1814,151 +1814,151 @@ msgstr "SITE CHMOD jest zablokowane przez ftp:use-site-chmod"
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "MLSD jest zablokowane przez ftp:use-mlsd"
 
-#: src/ftpclass.cc:1244 src/Http.cc:1069
+#: src/ftpclass.cc:1247 src/Http.cc:1072
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "nie mo¿na utworzyæ gniazda dla rodziny adresu %d"
 
-#: src/ftpclass.cc:1480
+#: src/ftpclass.cc:1483
 msgid "SITE CHMOD is not supported by this site"
 msgstr "SITE CHMOD nie jest obs³ugiwane przez ten serwer"
 
-#: src/ftpclass.cc:1485
+#: src/ftpclass.cc:1488
 msgid "MLST and MLSD are not supported by this site"
 msgstr "MLST i MLSD nie s± obs³ugiwane przez ten serwer"
 
-#: src/ftpclass.cc:1903 src/ftpclass.cc:1953
+#: src/ftpclass.cc:1906 src/ftpclass.cc:1956
 msgid "unsupported network protocol"
 msgstr "protokó³ nie jest obs³ugiwany"
 
-#: src/ftpclass.cc:2067
+#: src/ftpclass.cc:2070
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "£±czenie siê (gniazdo danych) z (%s) port %u"
 
-#: src/ftpclass.cc:2074
+#: src/ftpclass.cc:2077
 #, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "£±czenie siê (gniazdo danych) z proxy %s (%s) port %u"
 
-#: src/ftpclass.cc:2099 src/ftpclass.cc:3756
+#: src/ftpclass.cc:2102 src/ftpclass.cc:3766
 msgid "Switching passive mode off"
 msgstr "Wy³±czam tryb pasywny"
 
-#: src/ftpclass.cc:2107
+#: src/ftpclass.cc:2110
 msgid "Data connection established"
 msgstr "Ustanowiono po³±czenie dla danych"
 
-#: src/ftpclass.cc:2356 src/ftpclass.cc:3878
+#: src/ftpclass.cc:2366 src/ftpclass.cc:3888
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force jest ustawione i serwer nie wspiera lub nie zezwala\n"
 "na po³±czenia SSL"
 
-#: src/ftpclass.cc:2553 src/ftpclass.cc:2688 src/Http.cc:1157 src/Fish.cc:647
+#: src/ftpclass.cc:2563 src/ftpclass.cc:2698 src/Http.cc:1160 src/Fish.cc:647
 #: src/SFtp.cc:757 src/SFtp.cc:1057
 msgid "Peer closed connection"
 msgstr "Komputer po drugiej stronie zamkn±³ po³±czenie"
 
-#: src/ftpclass.cc:2633
+#: src/ftpclass.cc:2643
 msgid "Persist and retry"
 msgstr "Ponowne wznawianie"
 
-#: src/ftpclass.cc:2902
+#: src/ftpclass.cc:2912
 msgid "Closing data socket"
 msgstr "Zamykanie gniazda danych"
 
-#: src/ftpclass.cc:2918
+#: src/ftpclass.cc:2928
 msgid "Closing aborted data socket"
 msgstr "Zamykanie gniazda danych po przerwaniu"
 
-#: src/ftpclass.cc:3595
+#: src/ftpclass.cc:3605
 msgid "saw file size in response"
 msgstr "w odpowiedzi pojawi³ siê rozmiar pliku"
 
-#: src/ftpclass.cc:3610 src/Fish.cc:731 src/SFtp.cc:1082
+#: src/ftpclass.cc:3620 src/Fish.cc:731 src/SFtp.cc:1082
 msgid "extra server response"
 msgstr "dodatkowa odpowied¼ serwera"
 
-#: src/ftpclass.cc:3624 src/ftpclass.cc:3647
+#: src/ftpclass.cc:3634 src/ftpclass.cc:3657
 msgid "Turning on sync-mode"
 msgstr "W³±czanie trybu sync"
 
-#: src/ftpclass.cc:3776
+#: src/ftpclass.cc:3786
 msgid "Switching passive mode on"
 msgstr "W³±czam tryb pasywny"
 
-#: src/ftpclass.cc:3904
+#: src/ftpclass.cc:3914
 msgid "FEAT negotiation..."
 msgstr "Negocjacja FEAT..."
 
-#: src/ftpclass.cc:3911
+#: src/ftpclass.cc:3921
 msgid "Sending commands..."
 msgstr "Wysy³anie komend..."
 
-#: src/ftpclass.cc:3913 src/ftpclass.cc:3941 src/ftpclass.cc:3954
-#: src/Http.cc:1860 src/Fish.cc:1121 src/SFtp.cc:1320
+#: src/ftpclass.cc:3923 src/ftpclass.cc:3951 src/ftpclass.cc:3964
+#: src/Http.cc:1863 src/Fish.cc:1121 src/SFtp.cc:1320
 msgid "Waiting for response..."
 msgstr "Czekanie na odpowied¼..."
 
-#: src/ftpclass.cc:3915
+#: src/ftpclass.cc:3925
 msgid "Delaying before retry"
 msgstr "Opó¼nienie przed ponownym po³±czeniem"
 
-#: src/ftpclass.cc:3916 src/Http.cc:1853
+#: src/ftpclass.cc:3926 src/Http.cc:1856
 msgid "Connection idle"
 msgstr "Po³±czenie bezczynne"
 
-#: src/ftpclass.cc:3930 src/Http.cc:1851 src/Http.cc:1858 src/Fish.cc:1117
+#: src/ftpclass.cc:3940 src/Http.cc:1854 src/Http.cc:1861 src/Fish.cc:1117
 #: src/SFtp.cc:1316
 msgid "Connecting..."
 msgstr "£±czenie siê..."
 
-#: src/ftpclass.cc:3934
+#: src/ftpclass.cc:3944
 msgid "TLS negotiation..."
 msgstr "Negocjacja TLS..."
 
-#: src/ftpclass.cc:3936 src/Fish.cc:1119 src/SFtp.cc:1318
+#: src/ftpclass.cc:3946 src/Fish.cc:1119 src/SFtp.cc:1318
 msgid "Connected"
 msgstr "Po³±czono"
 
-#: src/ftpclass.cc:3938
+#: src/ftpclass.cc:3948
 msgid "Logging in..."
 msgstr "Logowanie siê..."
 
-#: src/ftpclass.cc:3942
+#: src/ftpclass.cc:3952
 msgid "Making data connection..."
 msgstr "Ustanawianie po³±czenia dla danych..."
 
-#: src/ftpclass.cc:3945
+#: src/ftpclass.cc:3955
 msgid "Changing remote directory..."
 msgstr "Zmiana zdalnego katalogu..."
 
-#: src/ftpclass.cc:3951
+#: src/ftpclass.cc:3961
 msgid "Waiting for other copy peer..."
 msgstr "Oczekiwanie na inne kopiowanie..."
 
-#: src/ftpclass.cc:3953 src/ftpclass.cc:3974
+#: src/ftpclass.cc:3963 src/ftpclass.cc:3984
 msgid "Waiting for transfer to complete"
 msgstr "Oczekiwanie na zakoñczenie transferu"
 
-#: src/ftpclass.cc:3956
+#: src/ftpclass.cc:3966
 msgid "Waiting for data connection..."
 msgstr "Czekam na po³±czenie dla danych..."
 
-#: src/ftpclass.cc:3962
+#: src/ftpclass.cc:3972
 msgid "Sending data/TLS"
 msgstr "Wysy³am dane/TLS"
 
-#: src/ftpclass.cc:3964
+#: src/ftpclass.cc:3974
 msgid "Receiving data/TLS"
 msgstr "Otrzymujê dane/TLS"
 
-#: src/ftpclass.cc:3970 src/Http.cc:1856 src/Fish.cc:1125 src/SFtp.cc:1324
+#: src/ftpclass.cc:3980 src/Http.cc:1859 src/Fish.cc:1125 src/SFtp.cc:1324
 msgid "Sending data"
 msgstr "Wysy³am dane"
 
-#: src/ftpclass.cc:3972 src/Http.cc:1863 src/Fish.cc:1123 src/SFtp.cc:1322
+#: src/ftpclass.cc:3982 src/Http.cc:1866 src/Fish.cc:1123 src/SFtp.cc:1322
 msgid "Receiving data"
 msgstr "Otrzymujê dane"
 
@@ -2056,47 +2056,47 @@ msgstr "nie powiod³a siê metoda POST"
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr "ftp poprzez http mo¿e nie dzia³aæ bez proxy, ustaw hftp:proxy"
 
-#: src/Http.cc:1173
+#: src/Http.cc:1176
 msgid "Sending request..."
 msgstr "Wysy³anie ¿±dania..."
 
-#: src/Http.cc:1220
+#: src/Http.cc:1223
 msgid "Hit EOF while fetching headers"
 msgstr "Natrafiono na EOF podczas przesy³ania nag³ówków"
 
-#: src/Http.cc:1336
+#: src/Http.cc:1339
 msgid "Could not parse HTTP status line"
 msgstr "Nie mo¿na zanalizowaæ linii statusu HTTP"
 
-#: src/Http.cc:1367
+#: src/Http.cc:1370
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr "Obiekt nie jest zapamiêtany a http:cache-control ma only-if-cache"
 
-#: src/Http.cc:1509
+#: src/Http.cc:1512
 msgid "Receiving body..."
 msgstr "Otrzymujê dane..."
 
-#: src/Http.cc:1629
+#: src/Http.cc:1632
 msgid "Hit EOF"
 msgstr "Natrafiono na EOF"
 
-#: src/Http.cc:1632
+#: src/Http.cc:1635
 msgid "Received not enough data, retrying"
 msgstr "Przes³anie nie wystarczaj±c± ilo¶æ danych, próbujê ponownie"
 
-#: src/Http.cc:1640
+#: src/Http.cc:1643
 msgid "Received all"
 msgstr "Przes³ano wszystko"
 
-#: src/Http.cc:1645
+#: src/Http.cc:1648
 msgid "Received all (total)"
 msgstr "Przes³ano wszystko (ca³o¶æ)"
 
-#: src/Http.cc:1668 src/Http.cc:1689
+#: src/Http.cc:1671 src/Http.cc:1692
 msgid "chunked format violated"
 msgstr "naruszony format"
 
-#: src/Http.cc:1861
+#: src/Http.cc:1864
 msgid "Fetching headers..."
 msgstr "Przesy³am nag³ówki..."
 
