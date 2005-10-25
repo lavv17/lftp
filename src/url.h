@@ -83,6 +83,9 @@ public:
 
    static int path_index(const char *p);
    static bool dir_needs_trailing_slash(const char *proto);
+   static bool find_password_pos(const char *url,int *start,int *len);
+   static const char *remove_password(const char *url);
+   static const char *hide_password(const char *url);
 };
 
 #endif//URL_H

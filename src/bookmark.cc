@@ -28,6 +28,7 @@
 #include "trio.h"
 #include "ResMgr.h"
 #include "misc.h"
+#include "url.h"
 
 #define super KeyValueDB
 
@@ -203,37 +204,8 @@ char *Bookmark::Format()
    return super::Format();
 }
 
-static const char *hide_password(const char *url)
-{
-   const char *scan=strstr(url,"://");
-   if(!scan)
-      return url;
-
-   scan+=3;
-
-   const char *at=strchr(scan,'@');
-   if(!at)
-      return url;
-
-   const char *colon=strchr(scan,':');
-   if(!colon || colon>at)
-      return url;
-
-   const char *slash=strchr(scan,'/');
-   if(slash && slash<at)
-      return url;
-
-   static char *buf;
-   static int buf_alloc;
-   int need=strlen(url)+5;
-   if(buf_alloc<need)
-      buf=(char*)xrealloc(buf,buf_alloc=need);
-   sprintf(buf,"%.*sXXXX%s",colon+1-url,url,at);
-   return buf;
-}
-
 char *Bookmark::FormatHidePasswords()
 {
    AutoSync();
-   return super::Format(hide_password);
+   return super::Format(url::hide_password);
 }

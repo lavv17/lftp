@@ -700,7 +700,7 @@ void CmdExec::ShowRunStatus(StatusLine *s)
    {
    case(BUILTIN_CD):
       if(session->IsOpen())
-	 s->Show("cd `%s' [%s]",args->getarg(1),session->CurrentStatus());
+	 s->Show("cd `%s' [%s]",squeeze_file_name(args->getarg(1),s->GetWidthDelayed()-40),session->CurrentStatus());
       break;
    case(BUILTIN_OPEN):
       if(session->IsOpen())

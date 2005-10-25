@@ -459,8 +459,9 @@ const char *squeeze_file_name(const char *name,int w)
    static int buf_len;
    int mbflags=MBSW_ACCEPT_INVALID|MBSW_ACCEPT_UNPRINTABLE;
 
-   int name_width=mbswidth(name,mbflags);
+   name=url::remove_password(name);
 
+   int name_width=mbswidth(name,mbflags);
    if(name_width<=w)
       return name;
 

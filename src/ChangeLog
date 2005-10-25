@@ -1,3 +1,11 @@
+2005-10-25  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* bookmarks.cc: (hide_password) move to url.
+	* url.cc, url.h: (hide_password) move here; (remove_password) new
+	  function.
+	* CmdExec.cc: use squeeze_file_name when showing cd status.
+	* misc.cc: (squeeze_file_name) use url::remove_password.
+
 2005-10-20  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: add workaround for proftpd resetting data connection

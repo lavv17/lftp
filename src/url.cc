@@ -481,3 +481,57 @@ bool url::dir_needs_trailing_slash(const char *proto)
    return !strcmp(proto,"http")
        || !strcmp(proto,"https");
 }
+
+bool url::find_password_pos(const char *url,int *start,int *len)
+{
+   *start=*len=0;
+
+   const char *scan=strstr(url,"://");
+   if(!scan)
+      return false;
+
+   scan+=3;
+
+   const char *at=strchr(scan,'@');
+   if(!at)
+      return false;
+
+   const char *colon=strchr(scan,':');
+   if(!colon || colon>at)
+      return false;
+
+   const char *slash=strchr(scan,'/');
+   if(slash && slash<at)
+      return false;
+
+   *start=colon+1-url;
+   *len=at-colon-1;
+   return true;
+}
+
+const char *url::hide_password(const char *url)
+{
+   int start,len;
+   if(!find_password_pos(url,&start,&len))
+      return url;
+   static char *buf;
+   static int buf_alloc;
+   int need=strlen(url)+5;
+   if(buf_alloc<need)
+      buf=(char*)xrealloc(buf,buf_alloc=need);
+   sprintf(buf,"%.*sXXXX%s",start,url,url+start+len);
+   return buf;
+}
+const char *url::remove_password(const char *url)
+{
+   int start,len;
+   if(!find_password_pos(url,&start,&len))
+      return url;
+   static char *buf;
+   static int buf_alloc;
+   int need=strlen(url)-len;
+   if(buf_alloc<need)
+      buf=(char*)xrealloc(buf,buf_alloc=need);
+   sprintf(buf,"%.*s%s",start-1,url,url+start+len);
+   return buf;
+}
