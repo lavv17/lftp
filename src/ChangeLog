@@ -5,6 +5,8 @@
 	  function.
 	* CmdExec.cc: use squeeze_file_name when showing cd status.
 	* misc.cc: (squeeze_file_name) use url::remove_password.
+	* buffer.cc, buffer_ssl.cc: don't return MOVED if we had eof already -
+	  this fixes a rare spinning.
 
 2005-10-20  Alexander V. Lukyanov <lav@yars.free.net>
 

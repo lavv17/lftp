@@ -385,6 +385,8 @@ int IOBuffer::Do()
       break;
 
    case GET:
+      if(eof)
+	 return STALL;
       res=Get_LL(GET_BUFSIZE);
       if(res>0)
       {
@@ -443,6 +445,8 @@ int IOBufferStacked::Do()
 
    case GET:
       m|=down->Do();
+      if(eof)
+	 return m;
       res=Get_LL(GET_BUFSIZE);
       if(res>0)
       {

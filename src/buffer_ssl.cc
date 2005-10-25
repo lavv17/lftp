@@ -52,6 +52,8 @@ int IOBufferSSL::Do()
       break;
 
    case GET:
+      if(eof)
+	 return STALL;
       res=Get_LL(GET_BUFSIZE);
       if(res>0)
       {
