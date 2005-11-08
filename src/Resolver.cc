@@ -385,7 +385,7 @@ void Resolver::ParseOrder(const char *s,int *o)
    if(o) o[idx]=-1;
 }
 
-#if defined(HAVE_DN_EXPAND) && !defined(HAVE_DECL_DN_EXPAND)
+#if defined(HAVE_DN_EXPAND) && !HAVE_DECL_DN_EXPAND
 CDECL int dn_expand(const unsigned char *msg,const unsigned char *eomorig,const unsigned char *comp_dn,char *exp_dn,int length);
 CDECL int dn_skipname(const unsigned char *msg,const unsigned char *eomorig);
 #endif
