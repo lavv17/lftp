@@ -1,3 +1,10 @@
+2005-11-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Resolver.cc: fix compilation when dn_expand is not declared (e.g. HP-UX).
+	* commands.cc: fix `open -u user URL'.
+	* ftpclass.cc, ftpclass.h, resource.cc: add ftp:ssl-use-ccc setting.
+	* lftp_ssl.cc: shutdown ssl connection before destruction.
+
 2005-10-25  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* bookmarks.cc: (hide_password) move to url.

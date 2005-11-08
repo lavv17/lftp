@@ -1104,6 +1104,9 @@ void Ftp::Connection::SavePeerAddress()
 // Create buffers after control socket had been connected.
 void Ftp::Connection::MakeBuffers()
 {
+   control_ssl=0;
+   delete control_send;
+   delete control_recv;
    control_send=new IOBufferFDStream(
       new FDStream(control_sock,"control-socket"),IOBuffer::PUT);
    control_recv=new IOBufferFDStream(
@@ -1454,6 +1457,11 @@ int   Ftp::Do()
       {
 	 conn->SendCmd("PBSZ 0");
 	 expect->Push(Expect::IGNORE);
+	 if(QueryBool("ssl-use-ccc"))
+	 {
+	    conn->SendCmd("CCC");
+	    expect->Push(Expect::CCC);
+	 }
       }
 #endif // USE_SSL
 
@@ -1471,6 +1479,11 @@ int   Ftp::Do()
       || expect->Has(Expect::OPTS_UTF8)
       || expect->Has(Expect::LANG))
 	 goto usual_return;
+
+#if USE_SSL
+      if(expect->Has(Expect::CCC))
+	 goto usual_return;
+#endif // USE_SSL
 
       if(!conn->utf8_activated && charset && *charset)
 	 conn->SetControlConnectionTranslation(charset);
@@ -3217,6 +3230,7 @@ void Ftp::ExpectQueue::Close()
       case(Expect::AUTH_TLS):
       case(Expect::PROT):
       case(Expect::SSCN):
+      case(Expect::CCC):
 #endif
 	 break;
       case(Expect::CWD_CURR):
@@ -3899,6 +3913,16 @@ void Ftp::CheckResp(int act)
       else if(cmd_unsupported(act))
 	 conn->sscn_supported=false;
       break;
+   case Expect::CCC:
+      if(is2XX(act))
+      {
+	 conn->MakeBuffers();
+	 if(conn->prot=='P')
+	 {
+	    conn->SendCmd("PROT C");
+	    expect->Push(new Expect(Expect::PROT,"C"));
+	 }
+      }
 #endif // USE_SSL
 
    } /* end switch */

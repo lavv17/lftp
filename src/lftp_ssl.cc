@@ -303,6 +303,8 @@ lftp_ssl_gnutls::lftp_ssl_gnutls(int fd1,handshake_mode_t m,const char *h)
 }
 lftp_ssl_gnutls::~lftp_ssl_gnutls()
 {
+   if(handshake_done)
+      gnutls_bye(session,GNUTLS_SHUT_RDWR);  // FIXME - E_AGAIN
    gnutls_certificate_free_credentials(cred);
    gnutls_deinit(session);
 }
@@ -828,6 +830,8 @@ lftp_ssl_openssl::lftp_ssl_openssl(int fd1,handshake_mode_t m,const char *h)
 }
 lftp_ssl_openssl::~lftp_ssl_openssl()
 {
+   if(handshake_done)
+      SSL_shutdown(ssl);
    SSL_free(ssl);
 }
 

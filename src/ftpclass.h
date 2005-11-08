@@ -181,7 +181,7 @@ class Ftp : public NetAccess
 	 SITE_UTIME,
 	 QUOTED		// check response for any command submitted by QUOTE_CMD
 #if USE_SSL
-	 ,AUTH_TLS,PROT,SSCN
+	 ,AUTH_TLS,PROT,SSCN,CCC
 #endif
       };
 

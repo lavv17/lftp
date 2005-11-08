@@ -221,6 +221,7 @@ static ResDecl
    ResDecl11f("ftp:ssl-protect-list",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl11d("ftp:ssl-auth",		  "TLS",   AuthArgValidate,0),
    ResDecl11e("ftp:ssl-allow-anonymous",  "no",	   ResMgr::BoolValidate,0),
+   ResDecl11i("ftp:ssl-use-ccc",	  "no",	   ResMgr::BoolValidate,0),
    ResDecl11h("ftps:initial-prot",	  "",	   ProtValidate,0),
 #endif
    ResDecl12 ("ftp:stat-interval",	  "1",	   ResMgr::UNumberValidate,0),
