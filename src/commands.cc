@@ -869,6 +869,15 @@ Job *CmdExec::builtin_open()
 	    delete url;
 	    url=new ParsedURL(u);
 	 }
+	 if(user)
+	 {
+	    url->user=user;
+	    url->pass=pass;
+	    char *host1=url->Combine();
+	    delete url;
+	    url=new ParsedURL(host1);
+	    xfree(host1);
+	 }
 
 	 const ParsedURL &uc=*url;
 	 if(uc.host && uc.host[0] && uc.proto)
