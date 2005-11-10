@@ -1,3 +1,8 @@
+2005-11-10  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: fix compilation without ssl.
+	* lftp_rl.c: fix compilation with some compilers.
+
 2005-11-08  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Resolver.cc: fix compilation when dn_expand is not declared (e.g. HP-UX).

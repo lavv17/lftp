@@ -1104,7 +1104,9 @@ void Ftp::Connection::SavePeerAddress()
 // Create buffers after control socket had been connected.
 void Ftp::Connection::MakeBuffers()
 {
+#if USE_SSL
    control_ssl=0;
+#endif
    delete control_send;
    delete control_recv;
    control_send=new IOBufferFDStream(

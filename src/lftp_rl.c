@@ -190,10 +190,10 @@ void lftp_rl_read_history()
 {
    if(!lftp_history_file)
    {
+      const char *add="/rl_history";
       const char *home=get_lftp_home();
       if(!home)
 	 return;
-      const char *add="/rl_history";
       lftp_history_file=(char*)malloc(strlen(home)+strlen(add)+1);
       strcat(strcpy(lftp_history_file,home),add);
    }
