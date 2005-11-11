@@ -3894,7 +3894,7 @@ void Ftp::CheckResp(int act)
 
 #if USE_SSL
    case Expect::AUTH_TLS:
-      if(is2XX(act))
+      if(is2XX(act) || is3XX(act))
       {
 	 conn->MakeSSLBuffers(hostname);
       }

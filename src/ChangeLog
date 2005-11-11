@@ -1,3 +1,7 @@
+2005-11-11  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: fixed handling of 334 reply to AUTH command.
+
 2005-11-10  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: fix compilation without ssl.
