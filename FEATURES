@@ -4,7 +4,7 @@ LFTP includes the following features (some may be missed in this list):
 * FTP (e.g. TIS FWTK) proxy support.
 * HTTP proxy support.
 * FTP over HTTP proxy support (hftp).
-* HTTPS and FTPS protocols support using OpenSSL library.
+* HTTPS and FTPS protocols support using GNU TLS or OpenSSL library.
 * Automatic OPIE/SKEY support in FTP protocol.
 * FXP transfers support (between two FTP servers, bypassing client machine).
 * FTP listings support: unix-style, NT, EPLF.
@@ -13,6 +13,7 @@ LFTP includes the following features (some may be missed in this list):
 * FISH protocol support. It uses ssh with no special program on server side.
 * SFTP protocol v3 and v4 support.
 * HTTP/1.1 keep-alive support.
+* Partial WebDAV support.
 * Experimental support for SRV DNS records.
 * SOCKS support (configure option).
 

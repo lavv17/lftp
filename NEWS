@@ -1,3 +1,12 @@
+Version 3.3.4 - 2005-11-15
+
+* added support for CCC command and ftp:ssl-use-ccc setting.
+* remove password from URLs when showing them on status line.
+* fixed `open -u' with an URL.
+* fixed a rare spinning.
+* fixed compilation on HP-UX.
+* fixed handling of 334 reply to AUTH command.
+
 Version 3.3.3 - 2005-10-21
 
 * added support for LFTP_HOME environment variable.
