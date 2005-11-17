@@ -145,7 +145,7 @@ public:
    void ResetTranslation();
    void Put(const char *buf,int size)
       {
-	 if(mode==PUT && backend_translate)
+	 if(mode==PUT)
 	    PutTranslated(buf,size);
 	 else
 	    Buffer::Put(buf,size);

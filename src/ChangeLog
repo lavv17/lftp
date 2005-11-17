@@ -1,3 +1,8 @@
+2005-11-17  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, buffer.h: move doubling of IAC to proper level,
+	  that is do it in IOBufferTelnet.
+
 2005-11-11  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: fixed handling of 334 reply to AUTH command.

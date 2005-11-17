@@ -3047,8 +3047,6 @@ void  Ftp::Connection::Send(const char *buf,int len)
    {
       char ch=*buf++;
       len--;
-      if(ch=='\377' && telnet_layer_send) // double chr(255) as in telnet protocol
-      	 send_cmd_buffer->Put("\377",1);
       send_cmd_buffer->Put(&ch,1);
       if(ch=='\r')
 	 send_cmd_buffer->Put("",1); // RFC2640
