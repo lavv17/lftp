@@ -304,6 +304,7 @@ private:
    void SendAuth(const char *auth);
    void TuneConnectionAfterFEAT();
    void SendOPTS_MLST();
+   void SendPROT(char want_prot);
 
    const char *QueryStringWithUserAtHost(const char *);
 

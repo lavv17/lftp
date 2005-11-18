@@ -1459,6 +1459,8 @@ int   Ftp::Do()
       {
 	 conn->SendCmd("PBSZ 0");
 	 expect->Push(Expect::IGNORE);
+	 if(QueryBool("ssl-protect-data") && QueryBool("ssl-protect-list"))
+	    SendPROT('P');
 	 if(QueryBool("ssl-use-ccc"))
 	 {
 	    conn->SendCmd("CCC");
@@ -1536,7 +1538,7 @@ int   Ftp::Do()
 	 }
       }
 #if USE_SSL
-      if(conn->ssl_is_activated())
+      if(conn->ssl_is_activated() || conn->auth_supported)
       {
 	 char want_prot=conn->prot;
 	 if(mode==LIST || mode==LONG_LIST || mode==MP_LIST)
@@ -1558,11 +1560,7 @@ int   Ftp::Do()
 	    conn->SendCmd2("SSCN",want_sscn?"ON":"OFF");
 	    expect->Push(new Expect(Expect::SSCN,want_sscn?'Y':'N'));
 	 }
-	 if(want_prot!=conn->prot)
-	 {
-	    conn->SendCmdF("PROT %c",want_prot);
-	    expect->Push(new Expect(Expect::PROT,want_prot));
-	 }
+	 SendPROT(want_prot);
       }
 #endif
       state=CWD_CWD_WAITING_STATE;
@@ -2416,6 +2414,13 @@ void Ftp::SendAuth(const char *auth)
       conn->prot='C';
    else
       conn->prot='P';
+}
+void Ftp::SendPROT(char want_prot)
+{
+   if(want_prot==conn->prot || !conn->auth_supported)
+      return;
+   conn->SendCmdF("PROT %c",want_prot);
+   expect->Push(new Expect(Expect::PROT,want_prot));
 }
 #endif // USE_SSL
 
@@ -3901,11 +3906,14 @@ void Ftp::CheckResp(int act)
 	 if(QueryBool("ssl-force",hostname))
 	    SetError(LOGIN_FAILED,_("ftp:ssl-force is set and server does not support or allow SSL"));
 	 conn->prot='C';
+	 conn->auth_supported=false;
       }
       break;
    case Expect::PROT:
       if(is2XX(act))
 	 conn->prot=arg[0];
+      else
+	 conn->auth_supported=false;
       break;
    case Expect::SSCN:
       if(is2XX(act))
@@ -3915,14 +3923,8 @@ void Ftp::CheckResp(int act)
       break;
    case Expect::CCC:
       if(is2XX(act))
-      {
 	 conn->MakeBuffers();
-	 if(conn->prot=='P')
-	 {
-	    conn->SendCmd("PROT C");
-	    expect->Push(new Expect(Expect::PROT,"C"));
-	 }
-      }
+      break;
 #endif // USE_SSL
 
    } /* end switch */

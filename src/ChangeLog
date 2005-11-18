@@ -1,3 +1,9 @@
+2005-11-18  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: allow PROT command to be used
+	  after CCC; issue PROT before CCC if all transfers has to be
+	  protected.
+
 2005-11-17  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, buffer.h: move doubling of IAC to proper level,
