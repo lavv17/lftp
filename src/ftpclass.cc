@@ -1538,7 +1538,7 @@ int   Ftp::Do()
 	 }
       }
 #if USE_SSL
-      if(conn->ssl_is_activated() || conn->auth_supported)
+      if(conn->ssl_is_activated() || (conn->auth_supported && conn->auth_sent))
       {
 	 char want_prot=conn->prot;
 	 if(mode==LIST || mode==LONG_LIST || mode==MP_LIST)
@@ -2146,7 +2146,7 @@ int   Ftp::Do()
       Delete(conn->data_iobuf);
       conn->data_iobuf=0;
 #if USE_SSL
-      if(conn->ssl_is_activated() && conn->prot=='P')
+      if(conn->prot=='P')
       {
 	 lftp_ssl *ssl=new lftp_ssl(conn->data_sock,lftp_ssl::CLIENT,hostname);
 	 // share session id between control and data connections.
@@ -3992,7 +3992,7 @@ const char *Ftp::CurrentStatus()
       return(_("Waiting for data connection..."));
    case(DATA_OPEN_STATE):
 #if USE_SSL
-      if(conn->ssl_is_activated() && conn->prot=='P')
+      if(conn->prot=='P')
       {
 	 if(mode==STORE)
 	    return(_("Sending data/TLS"));

@@ -2,7 +2,7 @@
 
 	* ftpclass.cc, ftpclass.h: allow PROT command to be used
 	  after CCC; issue PROT before CCC if all transfers has to be
-	  protected.
+	  protected; open data ssl layer when PROT=P even after CCC.
 
 2005-11-17  Alexander V. Lukyanov <lav@yars.free.net>
 
