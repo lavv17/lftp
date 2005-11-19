@@ -2150,7 +2150,8 @@ int   Ftp::Do()
       {
 	 lftp_ssl *ssl=new lftp_ssl(conn->data_sock,lftp_ssl::CLIENT,hostname);
 	 // share session id between control and data connections.
-	 ssl->copy_sid(conn->control_ssl);
+	 if(conn->control_ssl)
+	    ssl->copy_sid(conn->control_ssl);
 
 	 IOBuffer::dir_t dir=(mode==STORE?IOBuffer::PUT:IOBuffer::GET);
 	 IOBufferSSL *ssl_buf=new IOBufferSSL(ssl,dir);
