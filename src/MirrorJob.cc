@@ -379,6 +379,8 @@ void  MirrorJob::HandleFile(FileInfo *file)
 
 	 mj->verbose_report=verbose_report;
 	 mj->newer_than=newer_than;
+	 mj->older_than=older_than;
+	 mj->size_range=size_range;
 	 mj->parallel=parallel;
 	 mj->pget_n=pget_n;
 	 mj->pget_minchunk=pget_minchunk;
@@ -484,6 +486,10 @@ void  MirrorJob::InitSets(FileSet *source,FileSet *dest)
 
    if(newer_than!=(time_t)-1)
       to_transfer->SubtractOlderThan(newer_than);
+   if(older_than!=(time_t)-1)
+      to_transfer->SubtractNewerThan(older_than);
+   if(size_range)
+      to_transfer->SubtractSizeOutside(size_range);
 
    if(flags&NO_RECURSION)
       to_transfer->SubtractDirs();
@@ -1019,6 +1025,8 @@ MirrorJob::MirrorJob(MirrorJob *parent,
    set_state(INITIAL_STATE);
 
    newer_than=(time_t)-1;
+   older_than=(time_t)-1;
+   size_range=0;
 
    script_name=0;
    script=0;
@@ -1066,7 +1074,11 @@ MirrorJob::~MirrorJob()
    SessionPool::Reuse(source_session);
    SessionPool::Reuse(target_session);
    if(!parent_mirror)
+   {
+      // common pointers, delete only on top level.
       delete exclude;
+      delete size_range;
+   }
    if(script && script_needs_closing)
       fclose(script);
 }
@@ -1120,6 +1132,23 @@ void MirrorJob::SetNewerThan(const char *f)
       return;
    }
    newer_than=st.st_mtime;
+}
+void MirrorJob::SetOlderThan(const char *f)
+{
+   time_t t=now;
+   t=get_date(f,&t);
+   if(t>0)
+   {
+      older_than=t;
+      return;
+   }
+   struct stat st;
+   if(stat(f,&st)==-1)
+   {
+      perror(f);
+      return;
+   }
+   older_than=st.st_mtime;
 }
 
 mode_t MirrorJob::get_mode_mask()
@@ -1228,6 +1257,8 @@ CMD(mirror)
       {"reverse",no_argument,0,'R'},
       {"verbose",optional_argument,0,'v'},
       {"newer-than",required_argument,0,'N'},
+      {"older-than",required_argument,0,256+'O'},
+      {"size-range",required_argument,0,512+'S'},
       {"dereference",no_argument,0,'L'},
       {"use-cache",no_argument,0,256+'C'},
       {"Remove-source-files",no_argument,0,256+'R'},
@@ -1256,6 +1287,8 @@ CMD(mirror)
 
    int	 verbose=0;
    const char *newer_than=0;
+   const char *older_than=0;
+   Range *size_range=0;
    bool  remove_source_files=false;
    int	 parallel=ResMgr::Query("mirror:parallel-transfer-count",0);
    int	 use_pget=ResMgr::Query("mirror:use-pget-n",0);
@@ -1356,6 +1389,18 @@ CMD(mirror)
       case('N'):
 	 newer_than=optarg;
 	 break;
+      case(256+'O'):
+	 older_than=optarg;
+	 break;
+      case(512+'S'):
+	 size_range=new Range(optarg);
+	 if(size_range->Error())
+	 {
+	    eprintf("%s: --size-range \"%s\": %s\n",
+	       args->a0(),optarg,size_range->ErrorText());
+	    goto no_job;
+	 }
+	 break;
       case(256+'u'):
 	 flags|=MirrorJob::NO_UMASK;
 	 break;
@@ -1406,6 +1451,7 @@ CMD(mirror)
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
       no_job:
 	 delete exclude;
+	 delete size_range;
 	 if(source_session)
 	    SMTask::Delete(source_session);
 	 if(target_session)
@@ -1502,6 +1548,10 @@ CMD(mirror)
 
    if(newer_than)
       j->SetNewerThan(newer_than);
+   if(older_than)
+      j->SetOlderThan(older_than);
+   if(size_range)
+      j->SetSizeRange(size_range);
    j->UseCache(use_cache);
    if(remove_source_files)
       j->RemoveSourceFiles();

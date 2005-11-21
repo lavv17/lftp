@@ -710,23 +710,18 @@ Range::Range(const char *s)
    if(!strcasecmp(s,"full") || !strcasecmp(s,"any"))
       return;
 
-   if(sscanf(s,"%d-%d",&start,&end)!=2)
+   if(sscanf(s,"%lld-%lld",&start,&end)!=2)
    {
       error_text=_("Invalid range format. Format is min-max, e.g. 10-20.");
       return;
    }
-   if(start<end)
+   if(start>end)
    {
-      int tmp=start;
+      long long tmp=start;
       start=end;
       end=tmp;
    }
    full=false;
-}
-
-bool Range::Match(int n)
-{
-   return full || (n>=start && n<=end);
 }
 
 #if !HAVE_DECL_RANDOM
@@ -734,7 +729,7 @@ CDECL long random();
 CDECL void srandom(unsigned seed);
 #endif
 
-int Range::Random()
+long long Range::Random()
 {
    static bool init=false;
    if(!init)
@@ -748,7 +743,7 @@ int Range::Random()
 
    // interval [0;1)
    double mult=random()/2147483648.0;
-   return start + (int)((end-start+1)*mult);
+   return start + (long long)((end-start+1)*mult);
 }
 
 const char *ResMgr::RangeValidate(char **s)

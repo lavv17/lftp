@@ -1,3 +1,11 @@
+2005-11-21  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileSet.cc, FileSet.h: add new filtering modes - SubtractNewerThan,
+	  SubtractSizeOutside.
+	* MirrorJob.cc, MirrorJob.h: add --size-range and --older-than options.
+	* ResMgr.cc, ResMgr.h: change Range to use long long; fixed a bug with
+	  start/end reversed.
+
 2005-11-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h: allow PROT command to be used

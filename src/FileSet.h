@@ -29,6 +29,7 @@
 #undef TYPE
 
 class TimeInterval;
+class Range;
 
 class FileInfo
 {
@@ -92,6 +93,8 @@ public:
 
    bool	 SameAs(const FileInfo *,int ignore);
    bool	 OlderThan(time_t t);
+   bool	 NewerThan(time_t t);
+   bool  SizeOutside(const Range *r);
 
    void	 SetAssociatedData(void *d,int len)
       {
@@ -150,6 +153,8 @@ public:
    void	 SubtractSame(const FileSet *,int ignore);
    void	 SubtractAny(const FileSet *);
    void  SubtractOlderThan(time_t t);
+   void  SubtractNewerThan(time_t t);
+   void  SubtractSizeOutside(const Range *r);
    void  SubtractDirs();
    void  SubtractNotDirs();
    void  SubtractNotIn(const FileSet *);

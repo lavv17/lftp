@@ -104,6 +104,8 @@ class MirrorJob : public Job
    MirrorJob *parent_mirror;
 
    time_t newer_than;
+   time_t older_than;
+   Range *size_range;
 
    char *script_name;
    FILE *script;
@@ -167,16 +169,15 @@ public:
    void	 SayFinal() { PrintStatus(0,""); }
    int	 ExitCode() { return stats.error_count; }
 
-   void SetExclude(PatternSet *x)
-      {
-	 exclude=x;
-      }
+   void	 SetExclude(PatternSet *x) { exclude=x; }
+   void	 SetSizeRange(Range *r) { size_range=r; }
 
    void	 SetVerbose(int v) { verbose_report=v; }
 
    void	 CreateRemoteDir() { create_remote_dir=true; }
 
    void	 SetNewerThan(const char *file);
+   void	 SetOlderThan(const char *file);
 
    void  UseCache(bool u) { use_cache=u; }
    void	 RemoveSourceFiles() { remove_source_files=true; }

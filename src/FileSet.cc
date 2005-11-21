@@ -326,6 +326,34 @@ void FileSet::SubtractOlderThan(time_t t)
       }
    }
 }
+void FileSet::SubtractNewerThan(time_t t)
+{
+   for(int i=0; i<fnum; i++)
+   {
+      if(files[i]->defined&FileInfo::TYPE
+      && files[i]->filetype!=FileInfo::NORMAL)
+	 continue;
+      if(files[i]->NewerThan(t))
+      {
+	 Sub(i);
+	 i--;
+      }
+   }
+}
+void FileSet::SubtractSizeOutside(const Range *r)
+{
+   for(int i=0; i<fnum; i++)
+   {
+      if(files[i]->defined&FileInfo::TYPE
+      && files[i]->filetype!=FileInfo::NORMAL)
+	 continue;
+      if(files[i]->SizeOutside(r))
+      {
+	 Sub(i);
+	 i--;
+      }
+   }
+}
 void FileSet::SubtractDirs()
 {
    for(int i=0; i<fnum; i++)
@@ -402,7 +430,15 @@ bool  FileInfo::SameAs(const FileInfo *fi,int ignore)
 
 bool  FileInfo::OlderThan(time_t t)
 {
-   return ((defined&DATE) && date<t);
+   return((defined&DATE) && date<t);
+}
+bool  FileInfo::NewerThan(time_t t)
+{
+   return((defined&DATE) && date>=t);
+}
+bool  FileInfo::SizeOutside(const Range *r)
+{
+   return((defined&SIZE) && !r->Match(size));
 }
 
 void FileSet::Count(int *d,int *f,int *s,int *o)

@@ -206,16 +206,16 @@ public:
 
 class Range
 {
-   int start;
-   int end;
+   long long start;
+   long long end;
    bool full;
    const char *error_text;
 
 public:
    Range(const char *s);
-   bool Match(int n);
+   bool Match(long long n) const { return full || (n>=start && n<=end); }
    bool IsFull() { return full; }
-   int Random();
+   long long Random();
    bool Error() { return error_text!=0; };
    const char *ErrorText() { return error_text; }
 };
