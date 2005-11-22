@@ -1,6 +1,6 @@
 2005-11-22  Alexander V. Lukyanov <lav@yars.free.net>
 
-	* lftp_ssl.cc: set handshake_done for openssl - this fixes Done().
+	* lftp_ssl.cc: set handshake_done for openssl - this fixes IOBufferSSL::Done().
 
 2005-11-21  Alexander V. Lukyanov <lav@yars.free.net>
 
