@@ -851,7 +851,7 @@ bool lftp_ssl_openssl::check_fatal(int res)
 
 int lftp_ssl_openssl::do_handshake()
 {
-   if(SSL_is_init_finished(ssl))
+   if(handshake_done)
       return DONE;
    if(handshake_mode==SERVER)
    {
@@ -873,6 +873,7 @@ int lftp_ssl_openssl::do_handshake()
 	 return ERROR;
       }
    }
+   handshake_done=true;
    return DONE;
 }
 int lftp_ssl_openssl::read(char *buf,int size)
