@@ -3,6 +3,7 @@
 	* CatJob.cc: use DEFAULT_PAGER.
 	* FileCopy.cc, FileCopy.h: add suggested_filename member; copy it
 	  from get to put; add auto_rename member; prepare for automatic renaming.
+	* ftpclass.cc: fix compilation with Sun comiler.
 
 2005-11-22  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -2312,7 +2312,7 @@ int   Ftp::Do()
       && expect->Count()==1 && use_stat
       && !conn->ssl_is_activated() && !conn->proxy_is_http)
       {
-	 if(stat_time+stat_interval<=now)
+	 if(stat_time+stat_interval<=time_t(now))
 	 {
 	    // send STAT to know current position.
 	    SendUrgentCmd("STAT");
