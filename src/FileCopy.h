@@ -67,6 +67,7 @@ protected:
    bool write_allowed;
 
    char *suggested_filename;
+   bool auto_rename;
 
 public:
    off_t range_start; // NOTE: ranges are implemented only partially. (FIXME)

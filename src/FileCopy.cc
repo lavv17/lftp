@@ -686,6 +686,7 @@ FileCopyPeer::FileCopyPeer(dir_t m) : IOBuffer(m)
    write_allowed=true;
    done=false;
    suggested_filename=0;
+   auto_rename=false;
    Suspend();  // don't do anything too early
 }
 FileCopyPeer::~FileCopyPeer()
@@ -1342,6 +1343,14 @@ int FileCopyPeerFDStream::Do()
 	 SetError(verify->ErrorText());
       if(verify->Done())
       {
+	 if(suggested_filename && stream && stream->full_name && auto_rename)
+	 {
+	    char *dir=alloca_strdup(stream->full_name);
+	    dirname_modify(dir);
+	    debug((5,"copy: renaming `%s' to `%s'\n",stream->full_name,suggested_filename));
+	    if(rename(stream->full_name,dir_file(dir,suggested_filename))==-1)
+	       debug((3,"rename(%s, %s): %s\n",stream->full_name,suggested_filename,strerror(errno)));
+	 }
 	 done=true;
 	 m=MOVED;
       }
