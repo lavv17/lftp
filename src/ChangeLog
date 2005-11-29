@@ -1,3 +1,9 @@
+2005-11-29  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CatJob.cc: use DEFAULT_PAGER.
+	* FileCopy.cc, FileCopy.h: add suggested_filename member; copy it
+	  from get to put.
+
 2005-11-22  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp_ssl.cc: set handshake_done for openssl - this fixes IOBufferSSL::Done().

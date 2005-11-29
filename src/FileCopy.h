@@ -66,6 +66,8 @@ protected:
 
    bool write_allowed;
 
+   char *suggested_filename;
+
 public:
    off_t range_start; // NOTE: ranges are implemented only partially. (FIXME)
    off_t range_limit;
@@ -134,6 +136,13 @@ public:
 
    const char *GetDescriptionForLog() { return 0; }
    virtual const char *GetURL() { return 0; }
+
+   const char *GetSuggestedFileName() { return suggested_filename; }
+   void SetSuggestedFileName(const char *f)
+      {
+	 if(f && !suggested_filename)
+	    suggested_filename=xstrdup(f);
+      }
 };
 
 class FileCopy : public SMTask

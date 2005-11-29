@@ -321,6 +321,7 @@ int FileCopy::Do()
 	 line_buffer->Skip(s);
       }
    pre_CONFIRM_WAIT:
+      put->SetSuggestedFileName(get->GetSuggestedFileName());
       put->SetDate(get->GetDate());
       if(get->GetSize()!=NO_SIZE && get->GetSize()!=NO_SIZE_YET)
 	 put->SetEntitySize(get->GetSize());
@@ -684,10 +685,12 @@ FileCopyPeer::FileCopyPeer(dir_t m) : IOBuffer(m)
    use_cache=true;
    write_allowed=true;
    done=false;
+   suggested_filename=0;
    Suspend();  // don't do anything too early
 }
 FileCopyPeer::~FileCopyPeer()
 {
+   xfree(suggested_filename);
 }
 
 // FileCopyPeerFA implementation
@@ -1076,6 +1079,7 @@ int FileCopyPeerFA::Get_LL(int len)
    {
       eof=true;
       LsCache::Add(session,file,FAmode,FA::OK,this);
+      SetSuggestedFileName(session->GetSuggestedFileName());
    }
    return res;
 }

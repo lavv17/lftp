@@ -101,7 +101,7 @@ CatJob::CatJob(FileAccess *new_session,OutputJob *_output,ArgV *new_args)
    {
       const char *pager=getenv("PAGER");
       if(pager==NULL)
-	 pager="exec more";
+	 pager=DEFAULT_PAGER;
       output->PreFilter(pager);
    }
    if(!strcmp(op,"zcat") || !strcmp(op,"zmore"))
