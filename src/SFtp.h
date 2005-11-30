@@ -58,7 +58,11 @@ enum packet_type {
    SSH_FXP_STAT     =17,
    SSH_FXP_RENAME   =18,
    SSH_FXP_READLINK =19,
-   SSH_FXP_SYMLINK  =20,
+   SSH_FXP_SYMLINK  =20,   // v<=5
+   SSH_FXP_LINK     =21,   // v>=6
+   SSH_FXP_BLOCK    =22,   // v>=6
+   SSH_FXP_UNBLOCK  =23,   // v>=6
+
    SSH_FXP_STATUS   =101,
    SSH_FXP_HANDLE   =102,
    SSH_FXP_DATA     =103,
@@ -69,32 +73,102 @@ enum packet_type {
 };
 
 #define SSH_FILEXFER_ATTR_SIZE         0x00000001
-#define SSH_FILEXFER_ATTR_UIDGID       0x00000002  // used in protocol v3
+#define SSH_FILEXFER_ATTR_UIDGID       0x00000002  // v<=3
 #define SSH_FILEXFER_ATTR_PERMISSIONS  0x00000004
 #define SSH_FILEXFER_ATTR_ACCESSTIME   0x00000008
-#define SSH_FILEXFER_ATTR_ACMODTIME    0x00000008  // used in protocol v3
+#define SSH_FILEXFER_ATTR_ACMODTIME    0x00000008  // v<=3
 #define SSH_FILEXFER_ATTR_CREATETIME   0x00000010
 #define SSH_FILEXFER_ATTR_MODIFYTIME   0x00000020
 #define SSH_FILEXFER_ATTR_ACL          0x00000040
 #define SSH_FILEXFER_ATTR_OWNERGROUP   0x00000080
 #define SSH_FILEXFER_ATTR_SUBSECOND_TIMES 0x00000100
+#define SSH_FILEXFER_ATTR_BITS              0x00000200 // v>=5
+#define SSH_FILEXFER_ATTR_ALLOCATION_SIZE   0x00000400 // v>=6
+#define SSH_FILEXFER_ATTR_TEXT_HINT         0x00000800 // v>=6
+#define SSH_FILEXFER_ATTR_MIME_TYPE         0x00001000 // v>=6
+#define SSH_FILEXFER_ATTR_LINK_COUNT        0x00002000 // v>=6
+#define SSH_FILEXFER_ATTR_UNTRANSLATED_NAME 0x00004000 // v>=6
+#define SSH_FILEXFER_ATTR_CTIME             0x00008000 // v>=6
 #define SSH_FILEXFER_ATTR_EXTENDED     0x80000000
 
 #define SSH_FILEXFER_ATTR_MASK_V3      0x8000000F
 #define SSH_FILEXFER_ATTR_MASK_V4      0x800001FD
+#define SSH_FILEXFER_ATTR_MASK_V5      0x800003FD
+#define SSH_FILEXFER_ATTR_MASK_V6      0x8000FFFD
 
-#define SSH_FILEXFER_TYPE_REGULAR      1
-#define SSH_FILEXFER_TYPE_DIRECTORY    2
-#define SSH_FILEXFER_TYPE_SYMLINK      3
-#define SSH_FILEXFER_TYPE_SPECIAL      4
-#define SSH_FILEXFER_TYPE_UNKNOWN      5
+// BITS values (v>=5)
+#define SSH_FILEXFER_ATTR_FLAGS_READONLY         0x00000001
+#define SSH_FILEXFER_ATTR_FLAGS_SYSTEM           0x00000002
+#define SSH_FILEXFER_ATTR_FLAGS_HIDDEN           0x00000004
+#define SSH_FILEXFER_ATTR_FLAGS_CASE_INSENSITIVE 0x00000008
+#define SSH_FILEXFER_ATTR_FLAGS_ARCHIVE          0x00000010
+#define SSH_FILEXFER_ATTR_FLAGS_ENCRYPTED        0x00000020
+#define SSH_FILEXFER_ATTR_FLAGS_COMPRESSED       0x00000040
+#define SSH_FILEXFER_ATTR_FLAGS_SPARSE           0x00000080
+#define SSH_FILEXFER_ATTR_FLAGS_APPEND_ONLY      0x00000100
+#define SSH_FILEXFER_ATTR_FLAGS_IMMUTABLE        0x00000200
+#define SSH_FILEXFER_ATTR_FLAGS_SYNC             0x00000400
 
+enum sftp_file_type {
+   SSH_FILEXFER_TYPE_REGULAR	 =1,
+   SSH_FILEXFER_TYPE_DIRECTORY	 =2,
+   SSH_FILEXFER_TYPE_SYMLINK	 =3,
+   SSH_FILEXFER_TYPE_SPECIAL	 =4,
+   SSH_FILEXFER_TYPE_UNKNOWN	 =5,
+   SSH_FILEXFER_TYPE_SOCKET      =6, // v>=5
+   SSH_FILEXFER_TYPE_CHAR_DEVICE =7, // v>=5
+   SSH_FILEXFER_TYPE_BLOCK_DEVICE=8, // v>=5
+   SSH_FILEXFER_TYPE_FIFO        =9  // v>=5
+};
+
+// open modes (v<=4)
 #define SSH_FXF_READ		       0x00000001
 #define SSH_FXF_WRITE		       0x00000002
 #define SSH_FXF_APPEND		       0x00000004
 #define SSH_FXF_CREAT		       0x00000008
 #define SSH_FXF_TRUNC		       0x00000010
 #define SSH_FXF_EXCL		       0x00000020
+
+// open flags values (v>=5)
+#define SSH_FXF_ACCESS_DISPOSITION        0x00000007
+#define     SSH_FXF_CREATE_NEW            0x00000000
+#define     SSH_FXF_CREATE_TRUNCATE       0x00000001
+#define     SSH_FXF_OPEN_EXISTING         0x00000002
+#define     SSH_FXF_OPEN_OR_CREATE        0x00000003
+#define     SSH_FXF_TRUNCATE_EXISTING     0x00000004
+#define SSH_FXF_ACCESS_APPEND_DATA        0x00000008
+#define SSH_FXF_ACCESS_APPEND_DATA_ATOMIC 0x00000010
+#define SSH_FXF_ACCESS_TEXT_MODE          0x00000020
+#define SSH_FXF_ACCESS_READ_LOCK          0x00000040
+#define SSH_FXF_ACCESS_WRITE_LOCK         0x00000080
+#define SSH_FXF_ACCESS_DELETE_LOCK        0x00000100
+#define SSH_FXF_ACCESS_BLOCK_ADVISORY     0x00000200  // v>=6
+#define SSH_FXF_ACCESS_NOFOLLOW           0x00000400  // v>=6
+#define SSH_FXF_ACCESS_DELETE_ON_CLOSE    0x00000800  // v>=6
+
+// ACL masks
+#define ACE4_READ_DATA         0x00000001
+#define ACE4_LIST_DIRECTORY    0x00000001
+#define ACE4_WRITE_DATA        0x00000002
+#define ACE4_ADD_FILE          0x00000002
+#define ACE4_APPEND_DATA       0x00000004
+#define ACE4_ADD_SUBDIRECTORY  0x00000004
+#define ACE4_READ_NAMED_ATTRS  0x00000008
+#define ACE4_WRITE_NAMED_ATTRS 0x00000010
+#define ACE4_EXECUTE           0x00000020
+#define ACE4_DELETE_CHILD      0x00000040
+#define ACE4_READ_ATTRIBUTES   0x00000080
+#define ACE4_WRITE_ATTRIBUTES  0x00000100
+#define ACE4_DELETE            0x00010000
+#define ACE4_READ_ACL          0x00020000
+#define ACE4_WRITE_ACL         0x00040000
+#define ACE4_WRITE_OWNER       0x00080000
+#define ACE4_SYNCHRONIZE       0x00100000
+
+// RENAME flags (v>=5)
+#define SSH_FXF_RENAME_OVERWRITE  0x00000001
+#define SSH_FXF_RENAME_ATOMIC     0x00000002
+#define SSH_FXF_RENAME_NATIVE     0x00000004
 
 enum sftp_status_t {
    SSH_FX_OK		     =0,
@@ -110,7 +184,24 @@ enum sftp_status_t {
    SSH_FX_NO_SUCH_PATH       =10,
    SSH_FX_FILE_ALREADY_EXISTS=11,
    SSH_FX_WRITE_PROTECT      =12,
-   SSH_FX_NO_MEDIA           =13
+   SSH_FX_NO_MEDIA           =13,
+   SSH_FX_NO_SPACE_ON_FILESYSTEM    =14,
+   SSH_FX_QUOTA_EXCEEDED	    =15,
+   SSH_FX_UNKNOWN_PRINCIPAL	    =16,
+   SSH_FX_LOCK_CONFLICT		    =17,
+   SSH_FX_DIR_NOT_EMPTY		    =18,
+   SSH_FX_NOT_A_DIRECTORY	    =19,
+   SSH_FX_INVALID_FILENAME	    =20,
+   SSH_FX_LINK_LOOP		    =21,
+   SSH_FX_CANNOT_DELETE		    =22,
+   SSH_FX_INVALID_PARAMETER	    =23,
+   SSH_FX_FILE_IS_A_DIRECTORY	    =24,
+   SSH_FX_BYTE_RANGE_LOCK_CONFLICT  =25,
+   SSH_FX_BYTE_RANGE_LOCK_REFUSED   =26,
+   SSH_FX_DELETE_PENDING            =27,
+   SSH_FX_FILE_CORRUPT              =28,
+   SSH_FX_OWNER_INVALID             =29,
+   SSH_FX_GROUP_INVALID             =30
 };
 
 private:
@@ -257,19 +348,8 @@ private:
 	    string[l]=0;
 	    length+=4+l;
 	 }
-      ~PacketSTRING()
-	 {
-	    xfree(string);
-	 }
-      unpack_status_t Unpack(Buffer *b)
-	 {
-	    unpack_status_t res;
-	    res=Packet::Unpack(b);
-	    if(res!=UNPACK_SUCCESS)
-	       return res;
-	    res=UnpackString(b,&unpacked,length+4,&string,&string_len);
-	    return res;
-	 }
+      ~PacketSTRING();
+      unpack_status_t Unpack(Buffer *b);
       void ComputeLength() { Packet::ComputeLength(); length+=4+string_len; }
       void Pack(Buffer *b)
 	 {
@@ -363,12 +443,12 @@ public:
       };
 
       unsigned flags;
-      int      type;		    // v4
+      int      type;		    // v>=4
       off_t    size;		    // present only if flag SIZE
-      char     *owner;		    // present only if flag OWNERGROUP // v4
-      char     *group;		    // present only if flag OWNERGROUP // v4
-      uid_t    uid;		    // present only if flag UIDGID // v3
-      gid_t    gid;		    // present only if flag UIDGID // v3
+      char     *owner;		    // present only if flag OWNERGROUP // v>=4
+      char     *group;		    // present only if flag OWNERGROUP // v>=4
+      uid_t    uid;		    // present only if flag UIDGID // v<=3
+      gid_t    gid;		    // present only if flag UIDGID // v<=3
       unsigned permissions;	    // present only if flag PERMISSIONS
       time_t   atime;		    // present only if flag ACCESSTIME (ACMODTIME)
       unsigned atime_nseconds;	    // present only if flag SUBSECOND_TIMES
@@ -376,8 +456,16 @@ public:
       unsigned createtime_nseconds; // present only if flag SUBSECOND_TIMES
       time_t   mtime;		    // present only if flag MODIFYTIME (ACMODTIME)
       unsigned mtime_nseconds;	    // present only if flag SUBSECOND_TIMES
+      time_t   ctime;		    // present only if flag CTIME // v>=6
+      unsigned ctime_nseconds;	    // present only if flag SUBSECOND_TIMES // v>=6
       unsigned ace_count;	    // present only if flag ACL
       FileACE  *ace;
+      unsigned attrib_bits;         // if flag BITS		  // v>=5
+      unsigned attrib_bits_valid;   // if flag BITS		  // v>=6
+      unsigned char text_hint;      // if flag TEXT_HINT	  // v>=6
+      char     *mime_type;          // if flag MIME_TYPE	  // v>=6
+      unsigned link_count;          // if flag LINK_COUNT	  // v>=6
+      char     *untranslated_name;  // if flag UNTRANSLATED_NAME  // v>=6
       unsigned extended_count;	    // present only if flag EXTENDED
       ExtFileAttr *extended_attrs;
 
@@ -385,17 +473,14 @@ public:
       {
 	 flags=0; type=0; size=NO_SIZE; owner=group=0; uid=gid=0;
 	 permissions=0;
-	 atime=createtime=mtime=NO_DATE;
-	 atime_nseconds=createtime_nseconds=mtime_nseconds=0;
+	 atime=createtime=mtime=ctime=NO_DATE;
+	 atime_nseconds=createtime_nseconds=mtime_nseconds=ctime_nseconds=0;
 	 extended_count=0; extended_attrs=0;
 	 ace_count=0; ace=0;
+	 attrib_bits=attrib_bits_valid=0; text_hint=0;
+	 mime_type=untranslated_name=0; link_count=0;
       }
-      ~FileAttrs()
-      {
-	 xfree(owner); xfree(group);
-	 delete[] extended_attrs;
-	 delete[] ace;
-      }
+      ~FileAttrs();
       unpack_status_t Unpack(Buffer *b,int *offset,int limit,int proto_version);
       void Pack(Buffer *b,int proto_version);
       int ComputeLength(int v);
@@ -415,8 +500,9 @@ private:
       int protocol_version;
       int count;
       NameAttrs *names;
+      bool eof;
    public:
-      Reply_NAME(int pv) : Packet(SSH_FXP_NAME) { protocol_version=pv; }
+      Reply_NAME(int pv) : Packet(SSH_FXP_NAME) { protocol_version=pv; eof=false; }
       ~Reply_NAME() { delete[] names; }
       unpack_status_t Unpack(Buffer *b);
       int GetCount() { return count; }
@@ -426,6 +512,7 @@ private:
 	       return 0;
 	    return &names[index];
 	 }
+      bool Eof() { return eof; }
    };
    class Reply_ATTRS : public Packet
    {
@@ -466,24 +553,23 @@ private:
    };
    class Request_OPEN : public PacketSTRING_ATTRS
    {
-      unsigned pflags;
+      unsigned pflags;		 // v<=4
+      unsigned desired_access;	 // v>=5
+      unsigned flags;		 // v>=5
    public:
-      Request_OPEN(const char *fn,unsigned fl,int pv)
+      Request_OPEN(const char *fn,unsigned pf,unsigned da,unsigned f,int pv)
        : PacketSTRING_ATTRS(SSH_FXP_OPEN,fn,strlen(fn),pv)
 	 {
-	    pflags=fl;
+	    pflags=pf;
+	    desired_access=da;
+	    flags=f;
 	 }
       void ComputeLength()
 	 {
 	    PacketSTRING_ATTRS::ComputeLength();
-	    length+=4;
+	    length+=4+4*(protocol_version>=5);
 	 }
-      void Pack(Buffer *b)
-	 {
-	    PacketSTRING::Pack(b);
-	    b->PackUINT32BE(pflags);
-	    attrs.Pack(b,protocol_version);
-	 }
+      void Pack(Buffer *b);
    };
    class Reply_HANDLE : public PacketSTRING
    {
@@ -538,9 +624,12 @@ private:
    };
    class Reply_DATA : public PacketSTRING
    {
+      bool eof;
    public:
-      Reply_DATA() : PacketSTRING(SSH_FXP_DATA) {}
+      Reply_DATA() : PacketSTRING(SSH_FXP_DATA) { eof=false; }
       void GetData(const char **b,int *s) { *b=string; *s=string_len; }
+      unpack_status_t Unpack(Buffer *b);
+      bool Eof() { return eof; }
    };
    class Request_WRITE : public PacketSTRING
    {
@@ -578,13 +667,17 @@ private:
    };
    class Request_RENAME : public Packet
    {
+      int protocol_version;
       char *oldpath;
       char *newpath;
+      unsigned flags;
    public:
-      Request_RENAME(const char *o,const char *n) : Packet(SSH_FXP_RENAME)
+      Request_RENAME(const char *o,const char *n,unsigned f,int pv) : Packet(SSH_FXP_RENAME)
 	 {
+	    protocol_version=pv;
 	    oldpath=xstrdup(o);
 	    newpath=xstrdup(n);
+	    flags=f;
 	 }
       ~Request_RENAME()
 	 {
@@ -596,12 +689,7 @@ private:
 	    Packet::ComputeLength();
 	    length+=4+strlen(oldpath)+4+strlen(newpath);
 	 }
-      void Pack(Buffer *b)
-	 {
-	    Packet::Pack(b);
-	    Packet::PackString(b,oldpath);
-	    Packet::PackString(b,newpath);
-	 }
+      void Pack(Buffer *b);
    };
 
    struct Expect;

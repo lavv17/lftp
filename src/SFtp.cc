@@ -521,6 +521,9 @@ SFtp::unpack_status_t SFtp::UnpackPacket(Buffer *b,SFtp::Packet **p)
    case SSH_FXP_RENAME:
    case SSH_FXP_READLINK:
    case SSH_FXP_SYMLINK:
+   case SSH_FXP_LINK:
+   case SSH_FXP_BLOCK:
+   case SSH_FXP_UNBLOCK:
    case SSH_FXP_EXTENDED:
       DebugPrint("**** ","request in reply??",0);
       return UNPACK_WRONG_FORMAT;
@@ -596,8 +599,8 @@ void SFtp::SendRequest()
       state=WAITING;
       break;
    case RETRIEVE:
-      SendRequest(new Request_OPEN(WirePath(file),
-			SSH_FXF_READ,protocol_version),Expect::HANDLE);
+      SendRequest(new Request_OPEN(WirePath(file),SSH_FXF_READ,
+	 ACE4_READ_DATA|ACE4_READ_ATTRIBUTES,SSH_FXF_OPEN_EXISTING,protocol_version),Expect::HANDLE);
       state=WAITING;
       break;
    case LIST:
@@ -606,8 +609,8 @@ void SFtp::SendRequest()
       state=WAITING;
       break;
    case STORE:
-      SendRequest(new Request_OPEN(WirePath(file),
-			SSH_FXF_WRITE|SSH_FXF_CREAT,protocol_version),Expect::HANDLE);
+      SendRequest(new Request_OPEN(WirePath(file),SSH_FXF_WRITE|SSH_FXF_CREAT,
+	 ACE4_WRITE_DATA|ACE4_WRITE_ATTRIBUTES,SSH_FXF_OPEN_OR_CREATE,protocol_version),Expect::HANDLE);
       state=WAITING;
       break;
    case ARRAY_INFO:
@@ -621,8 +624,8 @@ void SFtp::SendRequest()
 	 break;
       }
       char *file1_wire_path=alloca_strdup(WirePath(file1));
-      SendRequest(new Request_RENAME(WirePath(file),
-				     file1_wire_path),Expect::DEFAULT);
+      SendRequest(new Request_RENAME(WirePath(file),file1_wire_path,
+			SSH_FXF_RENAME_NATIVE,protocol_version),Expect::DEFAULT);
       state=WAITING;
       break;
    }
@@ -887,6 +890,8 @@ void SFtp::HandleExpect(Expect *e)
 	    d->GetData(&b,&s);
 	    Log::global->Format(9,"---- data packet: pos=%lld, size=%d\n",(long long)r->pos,s);
 	    file_buf->Put(b,s);
+	    if(d->Eof())
+	       goto eof;
 	    if(r->len > unsigned(s))   // received less than requested?
 	    {
 	       // if we have not yet requested next chunk of data,
@@ -941,6 +946,8 @@ void SFtp::HandleExpect(Expect *e)
 	       }
 	    }
 	 }
+	 if(r->Eof())
+	    goto eof;
       }
       else
       {
@@ -948,6 +955,7 @@ void SFtp::HandleExpect(Expect *e)
 	 {
 	    if(((Reply_STATUS*)reply)->GetCode()==SSH_FX_EOF)
 	    {
+	    eof:
 	       if(!eof)
 		  Log::global->Write(9,"---- eof\n");
 	       eof=true;
@@ -1420,6 +1428,9 @@ const char *SFtp::Packet::GetPacketTypeText()
       { SSH_FXP_RENAME,        "RENAME"		},
       { SSH_FXP_READLINK,      "READLINK"	},
       { SSH_FXP_SYMLINK,       "SYMLINK"	},
+      { SSH_FXP_LINK,          "LINK"		},
+      { SSH_FXP_BLOCK,         "BLOCK"		},
+      { SSH_FXP_UNBLOCK,       "UNBLOCK"	},
       { SSH_FXP_STATUS,        "STATUS"		},
       { SSH_FXP_HANDLE,        "HANDLE"		},
       { SSH_FXP_DATA,          "DATA"		},
@@ -1450,7 +1461,24 @@ const char *SFtp::Reply_STATUS::GetCodeText()
       "Invalid handle",
       "File already exists",
       "Write protect",
-      "No media"
+      "No media",
+      "No space on filesystem",
+      "Quota exceeded",
+      "Unknown principal",
+      "Lock conflict",
+      "Directory not empty",
+      "Not a directory",
+      "Invalid file name",
+      "Link loop",
+      "Cannot delete",
+      "Invalid parameter",
+      "File is a directory",
+      "Byte range lock conflict",
+      "Byte range lock refused",
+      "Delete pending",
+      "File corrupt",
+      "Owner invalid",
+      "Group invalid"
    };
    if(code>=0 && code<sizeof(text_table)/sizeof(*text_table))
       return text_table[code];
@@ -1499,6 +1527,20 @@ void SFtp::SetError(int code,const Packet *reply)
 #define PACK32_SIGNED(data)	b->PackINT32BE(data)
 #define PACK64_SIGNED(data)	b->PackINT64BE(data)
 
+SFtp::unpack_status_t SFtp::PacketSTRING::Unpack(Buffer *b)
+{
+   unpack_status_t res;
+   res=Packet::Unpack(b);
+   if(res!=UNPACK_SUCCESS)
+      return res;
+   res=UnpackString(b,&unpacked,length+4,&string,&string_len);
+   return res;
+}
+SFtp::PacketSTRING::~PacketSTRING()
+{
+   xfree(string);
+}
+
 SFtp::unpack_status_t SFtp::Reply_NAME::Unpack(Buffer *b)
 {
    unpack_status_t res=Packet::Unpack(b);
@@ -1514,6 +1556,19 @@ SFtp::unpack_status_t SFtp::Reply_NAME::Unpack(Buffer *b)
       if(res!=UNPACK_SUCCESS)
 	 return res;
    }
+   if(*offset<limit)
+      UNPACK8(eof);
+   return UNPACK_SUCCESS;
+}
+SFtp::unpack_status_t SFtp::Reply_DATA::Unpack(Buffer *b)
+{
+   unpack_status_t res=PacketSTRING::Unpack(b);
+   if(res!=UNPACK_SUCCESS)
+      return res;
+   int *offset=&unpacked;
+   int limit=length+4;
+   if(*offset<limit)
+      UNPACK8(eof);
    return UNPACK_SUCCESS;
 }
 SFtp::unpack_status_t SFtp::NameAttrs::Unpack(Buffer *b,int *offset,int limit,int protocol_version)
@@ -1583,18 +1638,30 @@ SFtp::unpack_status_t SFtp::FileAttrs::Unpack(Buffer *b,int *offset,int limit,in
       flags|=SSH_FILEXFER_ATTR_MODIFYTIME;
    }
    if(protocol_version>=4 && (flags & SSH_FILEXFER_ATTR_ACCESSTIME))
+   {
       UNPACK64_SIGNED(atime);
-   if(protocol_version>=4 && (flags & SSH_FILEXFER_ATTR_SUBSECOND_TIMES))
-      UNPACK32(atime_nseconds);
+      if(flags & SSH_FILEXFER_ATTR_SUBSECOND_TIMES)
+	 UNPACK32(atime_nseconds);
+   }
    if(protocol_version>=4 && (flags & SSH_FILEXFER_ATTR_CREATETIME))
+   {
       UNPACK64_SIGNED(createtime);
-   if(protocol_version>=4 && (flags & SSH_FILEXFER_ATTR_SUBSECOND_TIMES))
-      UNPACK32(createtime_nseconds);
+      if(flags & SSH_FILEXFER_ATTR_SUBSECOND_TIMES)
+	 UNPACK32(createtime_nseconds);
+   }
    if(protocol_version>=4 && (flags & SSH_FILEXFER_ATTR_MODIFYTIME))
+   {
       UNPACK64_SIGNED(mtime);
-   if(protocol_version>=4 && (flags & SSH_FILEXFER_ATTR_SUBSECOND_TIMES))
-      UNPACK32(mtime_nseconds);
-   if(atime_nseconds>999999999 || createtime_nseconds>999999999 || mtime_nseconds>999999999)
+      if(flags & SSH_FILEXFER_ATTR_SUBSECOND_TIMES)
+	 UNPACK32(mtime_nseconds);
+   }
+   if(protocol_version>=5 && (flags & SSH_FILEXFER_ATTR_CTIME))
+   {
+      UNPACK64_SIGNED(ctime);
+      if(flags & SSH_FILEXFER_ATTR_SUBSECOND_TIMES)
+	 UNPACK32(ctime_nseconds);
+   }
+   if(atime_nseconds>999999999 || createtime_nseconds>999999999 || mtime_nseconds>999999999 || ctime_nseconds>999999999)
       return UNPACK_WRONG_FORMAT;
    if(protocol_version>=4 && (flags & SSH_FILEXFER_ATTR_ACL))
    {
@@ -1606,6 +1673,28 @@ SFtp::unpack_status_t SFtp::FileAttrs::Unpack(Buffer *b,int *offset,int limit,in
 	 if(res!=UNPACK_SUCCESS)
 	    return res;
       }
+   }
+   if(protocol_version>=5 && (flags & SSH_FILEXFER_ATTR_BITS))
+   {
+      UNPACK32(attrib_bits);
+      if(protocol_version>=6)
+	 UNPACK32(attrib_bits_valid);
+   }
+   if(protocol_version>=6 && (flags & SSH_FILEXFER_ATTR_TEXT_HINT))
+      UNPACK8(text_hint);
+   if(protocol_version>=6 && (flags & SSH_FILEXFER_ATTR_MIME_TYPE))
+   {
+      res=Packet::UnpackString(b,offset,limit,&mime_type);
+      if(res!=UNPACK_SUCCESS)
+	 return res;
+   }
+   if(protocol_version>=6 && (flags & SSH_FILEXFER_ATTR_LINK_COUNT))
+      UNPACK32(link_count);
+   if(protocol_version>=6 && (flags & SSH_FILEXFER_ATTR_UNTRANSLATED_NAME))
+   {
+      res=Packet::UnpackString(b,offset,limit,&untranslated_name);
+      if(res!=UNPACK_SUCCESS)
+	 return res;
    }
    if(flags & SSH_FILEXFER_ATTR_EXTENDED)
    {
@@ -1628,10 +1717,13 @@ void SFtp::FileAttrs::Pack(Buffer *b,int protocol_version)
       flags|=SSH_FILEXFER_ATTR_ACMODTIME;
       atime=mtime;
    }
-   if(protocol_version<=3)
-      PACK32(flags&SSH_FILEXFER_ATTR_MASK_V3);
-   else
-      PACK32(flags&SSH_FILEXFER_ATTR_MASK_V4);
+
+   unsigned flags_mask=SSH_FILEXFER_ATTR_MASK_V3;
+   if(protocol_version==4) flags_mask=SSH_FILEXFER_ATTR_MASK_V4;
+   if(protocol_version==5) flags_mask=SSH_FILEXFER_ATTR_MASK_V5;
+   if(protocol_version>=6) flags_mask=SSH_FILEXFER_ATTR_MASK_V6;
+   PACK32(flags&flags_mask);
+
    if(protocol_version>=4)
    {
       if(type==0)
@@ -1669,23 +1761,49 @@ void SFtp::FileAttrs::Pack(Buffer *b,int protocol_version)
       PACK32_SIGNED(mtime);
    }
    if(protocol_version>=4 && (flags & SSH_FILEXFER_ATTR_ACCESSTIME))
+   {
       PACK64_SIGNED(atime);
-   if(protocol_version>=4 && (flags & SSH_FILEXFER_ATTR_SUBSECOND_TIMES))
-      PACK32(atime_nseconds);
+      if(flags & SSH_FILEXFER_ATTR_SUBSECOND_TIMES)
+	 PACK32(atime_nseconds);
+   }
    if(protocol_version>=4 && (flags & SSH_FILEXFER_ATTR_CREATETIME))
+   {
       PACK64_SIGNED(createtime);
-   if(protocol_version>=4 && (flags & SSH_FILEXFER_ATTR_SUBSECOND_TIMES))
-      PACK32(createtime_nseconds);
+      if(flags & SSH_FILEXFER_ATTR_SUBSECOND_TIMES)
+	 PACK32(createtime_nseconds);
+   }
    if(protocol_version>=4 && (flags & SSH_FILEXFER_ATTR_MODIFYTIME))
+   {
       PACK64_SIGNED(mtime);
-   if(protocol_version>=4 && (flags & SSH_FILEXFER_ATTR_SUBSECOND_TIMES))
-      PACK32(mtime_nseconds);
+      if(flags & SSH_FILEXFER_ATTR_SUBSECOND_TIMES)
+	 PACK32(mtime_nseconds);
+   }
+   if(protocol_version>=5 && (flags & SSH_FILEXFER_ATTR_CTIME))
+   {
+      PACK64_SIGNED(ctime);
+      if(flags & SSH_FILEXFER_ATTR_SUBSECOND_TIMES)
+	 PACK32(ctime_nseconds);
+   }
    if(protocol_version>=4 && (flags & SSH_FILEXFER_ATTR_ACL))
    {
       PACK32(ace_count);
       for(unsigned i=0; i<ace_count; i++)
 	 ace[i].Pack(b);
    }
+   if(protocol_version>=5 && (flags & SSH_FILEXFER_ATTR_BITS))
+   {
+      PACK32(attrib_bits);
+      if(protocol_version>=6)
+	 PACK32(attrib_bits_valid);
+   }
+   if(protocol_version>=6 && (flags & SSH_FILEXFER_ATTR_TEXT_HINT))
+      PACK8(text_hint);
+   if(protocol_version>=6 && (flags & SSH_FILEXFER_ATTR_MIME_TYPE))
+      Packet::PackString(b,mime_type);
+   if(protocol_version>=6 && (flags & SSH_FILEXFER_ATTR_LINK_COUNT))
+      PACK32(link_count);
+   if(protocol_version>=6 && (flags & SSH_FILEXFER_ATTR_UNTRANSLATED_NAME))
+      Packet::PackString(b,untranslated_name);
    if(flags & SSH_FILEXFER_ATTR_EXTENDED)
    {
       PACK32(extended_count);
@@ -1698,6 +1816,13 @@ int SFtp::FileAttrs::ComputeLength(int protocol_version)
    Buffer b;
    Pack(&b,protocol_version);
    return b.Size();
+}
+SFtp::FileAttrs::~FileAttrs()
+{
+   xfree(owner); xfree(group);
+   xfree(mime_type); xfree(untranslated_name);
+   delete[] extended_attrs;
+   delete[] ace;
 }
 
 SFtp::unpack_status_t SFtp::FileAttrs::FileACE::Unpack(Buffer *b,int *offset,int limit)
@@ -1771,6 +1896,26 @@ void SFtp::Request_WRITE::Pack(Buffer *b)
    PACK64(pos);
    PACK32(len);
    b->Put(data,len);
+}
+void SFtp::Request_OPEN::Pack(Buffer *b)
+{
+   PacketSTRING::Pack(b);
+   if(protocol_version<=4)
+      PACK32(pflags);
+   if(protocol_version>=5)
+   {
+      PACK32(desired_access);
+      PACK32(flags);
+   }
+   attrs.Pack(b,protocol_version);
+}
+void SFtp::Request_RENAME::Pack(Buffer *b)
+{
+   Packet::Pack(b);
+   Packet::PackString(b,oldpath);
+   Packet::PackString(b,newpath);
+   if(protocol_version>=5)
+      PACK32(flags);
 }
 
 const char *SFtp::utf8_to_lc(const char *s)
