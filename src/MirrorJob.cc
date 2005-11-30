@@ -393,6 +393,8 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 mj->script_name=xstrdup(script_name);
 	 mj->script_only=script_only;
 
+	 mj->max_error_count=max_error_count;
+
 	 if(verbose_report>=3)
 	    Report(_("Mirroring directory `%s'"),mj->target_relative_dir);
 
@@ -769,6 +771,8 @@ int   MirrorJob::Do()
 	 transfer_count--;
 	 m=MOVED;
       }
+      if(max_error_count>0 && stats.error_count>=max_error_count)
+	 goto pre_FINISHING;
       while(transfer_count<parallel && state==WAITING_FOR_TRANSFER)
       {
 	 file=to_transfer->curr();
@@ -800,6 +804,8 @@ int   MirrorJob::Do()
 	 transfer_count--;
 	 m=MOVED;
       }
+      if(max_error_count>0 && stats.error_count>=max_error_count)
+	 goto pre_FINISHING;
       while(transfer_count<parallel && (state==TARGET_REMOVE_OLD || state==TARGET_REMOVE_OLD_FIRST))
       {
 	 file=0;
@@ -886,6 +892,8 @@ int   MirrorJob::Do()
 	 transfer_count--;
 	 m=MOVED;
       }
+      if(max_error_count>0 && stats.error_count>=max_error_count)
+	 goto pre_FINISHING;
       while(transfer_count<parallel && state==TARGET_CHMOD)
       {
 	 file=to_transfer->curr();
@@ -1019,6 +1027,7 @@ MirrorJob::MirrorJob(MirrorJob *parent,
    target_list_info=0;
 
    flags=0;
+   max_error_count=0;
 
    exclude=0;
 
@@ -1274,11 +1283,13 @@ CMD(mirror)
       {"use-pget-n",optional_argument,0,256+'p'},
       {"no-symlinks",no_argument,0,256+'y'},
       {"loop",no_argument,0,256+'l'},
+      {"max-errors",required_argument,0,256+'E'},
       {0}
    };
 
    int opt;
    int flags=0;
+   int max_error_count=0;
 
    bool use_cache=false;
 
@@ -1447,6 +1458,9 @@ CMD(mirror)
       case(256+'l'):
 	 flags|=MirrorJob::LOOP;
 	 break;
+      case(256+'E'):
+	 max_error_count=atoi(optarg);
+	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
       no_job:
@@ -1581,6 +1595,7 @@ CMD(mirror)
       if(!script_file)
 	 j->SetScriptFile("-");
    }
+   j->SetMaxErrorCount(max_error_count);
 
    return j;
 

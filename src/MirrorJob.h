@@ -93,6 +93,7 @@ class MirrorJob : public Job
    int	 &transfer_count;
 
    int	 flags;
+   int	 max_error_count;
 
    PatternSet *exclude;
 
@@ -193,6 +194,7 @@ public:
       {
 	 script_only=yes;
       }
+   void SetMaxErrorCount(int ec) { max_error_count=ec; }
 };
 
 #endif//MIRRORJOB_H
