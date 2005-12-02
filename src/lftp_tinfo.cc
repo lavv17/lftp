@@ -31,12 +31,14 @@ extern "C" {
 #  include <ncurses/term.h>
 # endif
 #elif defined(HAVE_NCURSES_CURSES_H)
-#include <ncurses/curses.h>
+# include <ncurses/curses.h>
 # if defined(HAVE_NCURSES_TERM_H)
 #  include <ncurses/term.h>
 # elif defined(HAVE_TERM_H)
 #  include <term.h>
 # endif
+#elif defined(HAVE_TERMCAP_H)
+# include <termcap.h>
 #endif
 }
 

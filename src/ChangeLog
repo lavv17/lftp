@@ -1,3 +1,9 @@
+2005-12-02  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* misc.cc: fix guess_year for month boundary.
+	* ftpclass.cc: another fix for sun c++ compiler.
+	* lftp_tinfo.cc: use termcap.h if available and no curses.
+
 2005-11-30  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc, MirrorJob.h: add --max-errors option.

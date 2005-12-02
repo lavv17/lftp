@@ -3948,7 +3948,7 @@ const char *Ftp::CurrentStatus()
 	    return(_("Sending commands..."));
 	 if(!expect->IsEmpty())
 	    return(_("Waiting for response..."));
-	 if(retry_time>now)
+	 if(retry_time>time_t(now))
 	    return _("Delaying before retry");
 	 return(_("Connection idle"));
       }
