@@ -2,7 +2,7 @@
 
 	* misc.cc: fix guess_year for month boundary.
 	* ftpclass.cc: another fix for sun c++ compiler.
-	* lftp_tinfo.cc: use termcap.h if available and no curses.
+	* lftp_tinfo.cc: use termcap.h if available and no curses; fix usage of tgetstr.
 
 2005-11-30  Alexander V. Lukyanov <lav@yars.free.net>
 

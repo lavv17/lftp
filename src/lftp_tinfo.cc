@@ -68,9 +68,9 @@ const char *get_string_term_cap(const char *terminfo_cap, const char *tcap_cap)
       if(ret && ret != (char *)-1) return ret;
    }
 #elif defined(HAVE_TGETSTR)
-   char buf[1024], *p = buf;
-   const char *ret = tgetstr(const_cast<char *>(tcap_cap), &p);
-   if(ret && ret != (char *)-1) return buf;
+   const char *ret = tgetstr(const_cast<char *>(tcap_cap), 0);
+   if(ret && ret != (const char *)-1)
+      return ret;
 #endif
 
    return NULL;
