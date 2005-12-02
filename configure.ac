@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.53)
-AC_INIT([lftp], [3.3.4], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [3.3.5], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_LIBOBJ_DIR(lib)
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
@@ -137,6 +137,12 @@ if test x$gt_cv_func_gettext_libintl = xyes; then
    *)	       LIBS="$LIBS -lintl";;
    esac
 fi
+
+AC_ARG_WITH(pager,
+[  --with-pager=/path      use specified pager by default],
+[  with_pager=$withval;	   ],
+[  with_pager="exec more"; ])
+AC_DEFINE_UNQUOTED([DEFAULT_PAGER], "$with_pager", [Default pager command])
 
 AC_ARG_WITH(socks,
 [  --with-socks[=/path]    build with SOCKSv4 library],
@@ -297,7 +303,7 @@ AC_HEADER_TIME
 AC_CHECK_HEADERS(fcntl.h sys/time.h errno.h stdlib.h varargs.h dirent.h\
  termios.h termio.h sys/select.h sys/poll.h sys/stropts.h string.h memory.h\
  strings.h sys/ioctl.h dlfcn.h arpa/inet.h arpa/nameser.h netinet/in.h netinet/tcp.h\
- netinet/in_systm.h netinet/ip.h\
+ netinet/in_systm.h netinet/ip.h termcap.h\
  resolv.h langinfo.h endian.h regex.h locale.h expat.h,,,[
 #include <sys/types.h>
 #ifdef HAVE_ARPA_NAMESER_H
@@ -408,7 +414,9 @@ AC_CHECK_DECLS([vsnprintf,snprintf,unsetenv,random,inet_aton,strcasecmp,strptime
 #ifdef HAVE_ARPA_INET_H
 # include <arpa/inet.h>
 #endif
-#include <resolv.h>
+#ifdef HAVE_RESOLV_H
+# include <resolv.h>
+#endif
 ])
 
 # always want GNU getopt

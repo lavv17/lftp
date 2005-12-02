@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "15 Nov 2005"
+.TH lftp 1 "24 Nov 2005"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 3.3.4.
+This man page documents lftp version 3.3.5.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -390,6 +390,8 @@ directory name. Source and/or target can be URLs pointing to directories.
 -R, --reverse		reverse mirror (put files)
 -L, --dereference		download symbolic links as files
 -N, --newer-than=SPEC	download only files newer than specified time
+    --older-than=SPEC	download only files older than specified time
+    --size-range=RANGE	download only files with size in specified range
 -P, --parallel[=N]		download N files in parallel
     --use-pget[-n=N]	use pget to transfer every single file
     --loop			loop until no changes found
@@ -442,6 +444,10 @@ only newer files even if size is different. By default older files are transferr
 .PP
 You can mirror between two servers if you specify URLs instead of directories.
 FXP is used automatically for transfers between ftp servers, if possible.
+.PP
+Some ftp servers hide dot-files by default (e.g. \fI.htaccess\fP), and show
+them only when LIST command is used with -a option. In such case try to use
+`set ftp:list-options -a'.
 
 .B mkdir
 .RB "[" -p "] " \fIdir(s)\fP
@@ -1020,7 +1026,7 @@ of ftp automatically.
 .TP
 .BR ftp:proxy-auth-joined \ (boolean)
 when true, lftp sends ``user@proxy_user@ftp.example.org'' as user name to proxy,
-and ``password@proxy_password'' as password. When false, it first sends 
+and ``password@proxy_password'' as password. When false, it first sends
 proxy user and proxy password and then ``user@ftp.example.org'' and password.
 .TP
 .BR ftp:rest-list \ (boolean)
@@ -1563,16 +1569,14 @@ RFC2428 (ftp/ipv6),
 RFC2518 (WebDAV),
 RFC2616 (http/1.1),
 RFC2617 (http/1.1 authentication),
-RFC2640 (ftp i18n).
+RFC2640 (ftp i18n),
+RFC4217 (ftp over ssl).
 .br
 .na
-http://www.ietf.org/internet-drafts/draft-murray-auth-ftp-ssl-11.txt
-(ftp over ssl),
-.br
 http://www.ietf.org/internet-drafts/draft-ietf-ftpext-mlst-16.txt
 (ftp extensions over RFC959),
 .br
-http://www.ietf.org/internet-drafts/draft-ietf-secsh-filexfer-04.txt
+http://www.ietf.org/internet-drafts/draft-ietf-secsh-filexfer-10.txt
 (sftp).
 .ad
 

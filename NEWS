@@ -1,3 +1,13 @@
+Version 3.3.5 - 2005-12-02
+
+* added mirror --older-than, --size-range and --max-errors options.
+* improved CCC support - allowed protected transfers after CCC.
+* added support for sftp v5 and v6 (experimental).
+* added configure option --with-pager.
+* fixed file uploading via protected ftp with openssl.
+* fixed compilation on cygwin.
+* fixed compilation with sun c++.
+
 Version 3.3.4 - 2005-11-15
 
 * added support for CCC command and ftp:ssl-use-ccc setting.
