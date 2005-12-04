@@ -702,26 +702,57 @@ const char *ResMgr::TimeIntervalValidate(char **s)
 
 Range::Range(const char *s)
 {
-   start=0;
-   end=0;
-   full=true;
+   start=end=0;
+   no_start=no_end=true;
    error_text=0;
 
    if(!strcasecmp(s,"full") || !strcasecmp(s,"any"))
       return;
 
-   if(sscanf(s,"%lld-%lld",&start,&end)!=2)
+   int n;
+   int len=strlen(s);
+   char start_k=0,end_k=0;
+   if(sscanf(s,"%lld-%n",&start,&n)==1 && n==len)
+      no_start=false;
+   else if(sscanf(s,"-%lld%n",&end,&n)==1 && n==len)
+      no_end=false;
+   else if(sscanf(s,"%lld-%lld%n",&start,&end,&n)==2 && n==len)
+      no_start=no_end=false;
+   else if(sscanf(s,"%lld%c-%n",&start,&start_k,&n)==2 && n==len)
+      no_start=false;
+   else if(sscanf(s,"-%lld%c%n",&end,&end_k,&n)==2 && n==len)
+      no_end=false;
+   else if(sscanf(s,"%lld%c-%lld%n",&start,&start_k,&end,&n)==3 && n==len)
+      no_start=no_end=false;
+   else if(sscanf(s,"%lld-%lld%c%n",&start,&end,&end_k,&n)==3 && n==len)
+      no_start=no_end=false;
+   else if(sscanf(s,"%lld%c-%lld%c%n",&start,&start_k,&end,&end_k,&n)==4 && n==len)
+      no_start=no_end=false;
+   else
    {
       error_text=_("Invalid range format. Format is min-max, e.g. 10-20.");
       return;
    }
-   if(start>end)
-   {
-      long long tmp=start;
-      start=end;
-      end=tmp;
-   }
-   full=false;
+   if(start_k)
+      error_text=scale(&start,start_k);
+   if(!error_text && end_k)
+      error_text=scale(&end,end_k);
+   if(!no_start && !no_end && start>end)
+      start=replace_value(end,start);
+}
+
+const char *Range::scale(long long *value,char suf)
+{
+   // kilo, Mega, Giga, Tera, Peta, Exa, Zetta, Yotta
+   static const char s[]="kMGTPEZY";
+   const char *match=strchr(s,suf);
+   if(!match)
+      return _("Invalid suffix. Valid suffixes are: k, M, G, T, P, E, Z, Y");
+   unsigned shift=10*(match-s+1);
+   if(((*value<<shift)>>shift)!=*value)
+      return _("Integer overflow");
+   *value<<=shift;
+   return 0;
 }
 
 #if !HAVE_DECL_RANDOM
@@ -738,8 +769,10 @@ long long Range::Random()
       init=true;
    }
 
-   if(full)
+   if(no_start && no_end)
       return random();
+   if(no_end)
+      return start+random();
 
    // interval [0;1)
    double mult=random()/2147483648.0;

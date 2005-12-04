@@ -206,15 +206,16 @@ public:
 
 class Range
 {
-   long long start;
-   long long end;
-   bool full;
+   long long start,end;
+   bool no_start,no_end;
    const char *error_text;
+
+   static const char *scale(long long *value,char suf);
 
 public:
    Range(const char *s);
-   bool Match(long long n) const { return full || (n>=start && n<=end); }
-   bool IsFull() { return full; }
+   bool Match(long long n) const { return (no_start || n>=start) && (no_end || n<=end); }
+   bool IsFull() { return no_start && no_end; }
    long long Random();
    bool Error() { return error_text!=0; };
    const char *ErrorText() { return error_text; }

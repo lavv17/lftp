@@ -1,3 +1,7 @@
+2005-12-04  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ResMgr.cc, ResMgr.h: support open ranges.
+
 2005-12-02  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* misc.cc: fix guess_year for month boundary.
