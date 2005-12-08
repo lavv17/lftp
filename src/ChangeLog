@@ -1,3 +1,8 @@
+2005-12-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc, commands.cc: show all queued commands on `queue' command;
+	  clear done jobs even if queue is stopped.
+
 2005-12-04  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ResMgr.cc, ResMgr.h: support open ranges.

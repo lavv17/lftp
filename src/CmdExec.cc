@@ -734,6 +734,7 @@ void CmdExec::PrintStatus(int v,const char *prefix)
    {
       if(IsSuspended())
 	 printf("%s%s\n",prefix,_("Queue is stopped."));
+      BuryDoneJobs();
       for(int i=0; i<waiting_num; i++)
       {
 	 if(i==0)

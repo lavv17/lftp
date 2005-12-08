@@ -1156,7 +1156,7 @@ Job *CmdExec::builtin_queue()
 	       queue->Suspend();
 	    }
 	    else
-	       queue->PrintStatus(0,"");
+	       queue->PrintStatus(2,"");
 	    exit_code=0;
 	    break;
 	 }
