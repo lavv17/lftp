@@ -1,3 +1,7 @@
+2005-12-12  Conan The Grammarian <spell-check@earthlink.net>
+
+	* FAQ: some grammar fixes.
+
 2005-03-01  lav
 
 	* configure.ac: check for netinet/in_systm.h, netinet/ip.h.
