@@ -4189,12 +4189,17 @@ void Ftp::Reconfig(const char *name)
    xfree(anon_pass);
    anon_pass=xstrdup(Query("anon-pass",c));
 
-   xfree(charset);
-   charset=xstrdup(Query("charset",c));
-   if(conn && conn->have_feat_info && !conn->utf8_activated
-   && !(expect->Has(Expect::LANG) || expect->Has(Expect::OPTS_UTF8))
-   && charset && *charset && !strcmp(name,"ftp:charset"))
-      conn->SetControlConnectionTranslation(charset);
+   if(!name || !xstrcmp(name,"ftp:charset"))
+   {
+      if(name && !IsSuspended())
+	 LsCache::TreeChanged(this,"/");
+      xfree(charset);
+      charset=xstrdup(Query("charset",c));
+      if(conn && conn->have_feat_info && !conn->utf8_activated
+      && !(expect->Has(Expect::LANG) || expect->Has(Expect::OPTS_UTF8))
+      && charset && *charset)
+	 conn->SetControlConnectionTranslation(charset);
+   }
 
    const char *h=QueryStringWithUserAtHost("home");
    if(h && h[0] && AbsolutePath(h))
