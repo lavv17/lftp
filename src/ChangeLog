@@ -1,3 +1,15 @@
+2005-12-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc, rmJob.h, commands.cc: don't remove directories
+	  recursively when NO_RECURSION flag is set; drop rmdirJob class;
+	  add rmJob::Rmdir method.
+	* SMTask.h, LsCache.cc: (SMTask::DeleteLater) new method; use it.
+
+2005-12-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: fix netrc usage when no user name is given.
+	* ftpclass.cc: flush cache when changing charset.
+
 2005-12-08  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CmdExec.cc, commands.cc: show all queued commands on `queue' command;
