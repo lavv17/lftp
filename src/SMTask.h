@@ -87,6 +87,7 @@ public:
 
    SMTask();
 
+   void DeleteLater() { deleting=true; }
    static void Delete(SMTask *);
    static int Roll(SMTask *);
    static void RollAll(int max_time);

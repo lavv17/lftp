@@ -185,7 +185,7 @@ LsCache::~LsCache()
 {
    if(expire_helper.expiring==this)
       expire_helper.expiring=0;
-   SMTask::Delete(loc);
+   loc->DeleteLater();
    xfree(data);
    xfree(arg);
    delete afset;
