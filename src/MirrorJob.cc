@@ -844,7 +844,12 @@ int   MirrorJob::Do()
 	 {
 	    ArgV args("rm");
 	    if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
-	       args.Append("-r");
+	    {
+	       if(flags&NO_RECURSION)
+		  args.setarg(0,"rmdir");
+	       else
+		  args.Append("-r");
+	    }
 	    args.Append(target_session->GetFileURL(file->name));
 	    char *cmd=args.CombineQuoted();
 	    fprintf(script,"%s\n",cmd);
@@ -861,7 +866,15 @@ int   MirrorJob::Do()
 	    AddWaiting(j);
 	    transfer_count++;
 	    if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
-	       j->Recurse();
+	    {
+	       if(flags&NO_RECURSION)
+	       {
+		  args->setarg(0,"rmdir");
+		  j->Rmdir();
+	       }
+	       else
+		  j->Recurse();
+	    }
 	 }
 	 if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
 	 {

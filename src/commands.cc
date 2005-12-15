@@ -1792,12 +1792,12 @@ CMD(rm)
    if(args->getcurr()==0)
       goto print_usage;
 
-   rmJob *j=(rmdir?
-	     new rmdirJob(session->Clone(),args):
-	     new rmJob(session->Clone(),args));
+   rmJob *j=new rmJob(session->Clone(),args);
 
    if(recursive)
       j->Recurse();
+   if(rmdir)
+      j->Rmdir();
 
    args=0;
 

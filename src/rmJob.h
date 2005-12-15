@@ -35,17 +35,9 @@ protected:
 public:
    void	SayFinal();
    void Recurse(); // rm -r
+   void Rmdir() { mode=FA::REMOVE_DIR; }
 
    rmJob(FileAccess *session,ArgV *a);
-};
-
-class rmdirJob : public rmJob
-{
-public:
-   rmdirJob(FileAccess *session,ArgV *a) : rmJob(session,a)
-   {
-      mode=FA::REMOVE_DIR;
-   }
 };
 
 #endif // RMJOB_H
