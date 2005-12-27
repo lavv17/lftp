@@ -1100,7 +1100,7 @@ Job *CmdExec::builtin_queue()
 	  * it. */
 	 if(!isdigit((unsigned char)optarg[0]) || atoi(optarg) == 0)
 	 {
-	    eprintf(_("%s: -n: Number expected. "), args->a0());
+	    eprintf(_("%s: -n: positive number expected. "), args->a0());
 	    goto err;
 	 }
 	 /* make offsets match the jobs output (starting at 1) */
@@ -2516,11 +2516,13 @@ CMD(ver)
    {
       const char *lib_name;
       const char *symbol;
-      enum type_t { STRING_PTR, FUNC0 } type;
+      enum type_t { STRING_PTR, FUNC0, INT8_8 } type;
       const char *skip_prefix;
       typedef const char *(*func0)(int);
       const char *query() const
 	 {
+	    static char ver[10];
+	    int v;
 	    void *sym_ptr=dlsym(RTLD_DEFAULT,symbol);
 	    if(!sym_ptr)
 	       return 0;
@@ -2533,6 +2535,10 @@ CMD(ver)
 	    case FUNC0:
 	       str=((func0)sym_ptr)(0);
 	       break;
+	    case INT8_8:
+	       v=*(int*)sym_ptr;
+	       sprintf(ver,"%d.%d",(v>>8)&255,v&255);
+	       str=ver;
 	    }
 	    if(!str)
 	       return 0;
@@ -2547,6 +2553,7 @@ CMD(ver)
       {"Expat",	     "XML_ExpatVersion",     VersionInfo::FUNC0,     "expat_"},
       {"OpenSSL",    "SSL_version_str",	     VersionInfo::STRING_PTR,"OpenSSL "},
       {"GnuTLS",     "gnutls_check_version", VersionInfo::FUNC0,     0},
+      {"libiconv",   "_libiconv_version",    VersionInfo::INT8_8,    0},
       {0}
    };
 
