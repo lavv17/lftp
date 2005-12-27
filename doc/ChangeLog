@@ -1,3 +1,7 @@
+2005-12-27	Jason Vas Dias <jvdias@redhat.com>
+
+	* lftp.1: add dns:max-retries description.
+
 2005-10-07	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document xfer:destination-directory; update RFC list;

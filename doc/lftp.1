@@ -919,6 +919,12 @@ To disable inet6 (AAAA) lookup, set this variable to ``inet''.
 .BR dns:use-fork \ (boolean)
 if true, lftp will fork before resolving host address. Default is true.
 .TP
+.BR dns:max-retries \ (number)
+If zero, there is no limit on the number of times lftp will try
+to lookup an address.
+If > 0, lftp will try only this number of times to look up an address of each 
+address family in dns:order.
+.TP
 .BR file:charset \ (string)
 local character set. It is set from current locale initially.
 .TP
