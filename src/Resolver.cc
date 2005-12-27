@@ -507,6 +507,8 @@ void Resolver::LookupSRV_RR()
    char *srv_name=string_alloca(strlen(service)+1+strlen(tproto)+1+strlen(hostname)+1);
    sprintf(srv_name,"_%s._%s.%s",service,tproto,hostname);
 
+   int retries=0;
+   int max_retries=ResMgr::Query("dns:max-retries",hostname);
    int len;
    for(;;)
    {
@@ -522,6 +524,8 @@ void Resolver::LookupSRV_RR()
 	 break;
 #ifdef HAVE_H_ERRNO
       if(h_errno!=TRY_AGAIN)
+	 return;
+      if(++retries>=max_retries && max_retries)
 	 return;
       time_t t=time(0);
       if(t-try_time<5)
@@ -699,6 +703,8 @@ void Resolver::LookupOne(const char *name)
 
    ParseOrder(order,af_order);
 
+   int retries=0;
+   int max_retries=ResMgr::Query("dns:max-retries",name);
    for(;;)
    {
       if(!use_fork)
@@ -710,9 +716,12 @@ void Resolver::LookupOne(const char *name)
 
       time(&try_time);
 
-#if defined(HAVE_GETADDRINFO) && INET6 \
-   && !defined(HAVE_GETHOSTBYNAME2) \
-   && !defined(HAVE_GETIPNODEBYNAME)
+// Prefer getaddrinfo over gethostbyname2 and getipnodebyname, as
+// approach with multiple lookups works badly when host name is in hosts file
+// and no dns servers are reachable.
+#if defined(HAVE_GETADDRINFO) && INET6
+/* && !defined(HAVE_GETHOSTBYNAME2) \
+   && !defined(HAVE_GETIPNODEBYNAME) */
 
       // getaddrinfo support by Brandon Hume
       struct addrinfo	    *ainfo=0,
@@ -723,15 +732,11 @@ void Resolver::LookupOne(const char *name)
       struct sockaddr_in    *inet_addr;
       struct sockaddr_in6   *inet6_addr;
       const char	    *addr_data;
+      int		    addr_len;
 
+      memset(&a_hint, 0, sizeof(a_hint));
       a_hint.ai_flags	    = AI_PASSIVE;
       a_hint.ai_family	    = PF_UNSPEC;
-      a_hint.ai_socktype    = 0;
-      a_hint.ai_protocol    = 0;
-      a_hint.ai_addrlen	    = 0;
-      a_hint.ai_canonname   = NULL;
-      a_hint.ai_addr	    = NULL;
-      a_hint.ai_next	    = NULL;
 
       ainfo_res	= getaddrinfo(name, NULL, &a_hint, &ainfo);
 
@@ -750,18 +755,19 @@ void Resolver::LookupOne(const char *name)
 	       switch(a_res->ai_family)
 	       {
 	       case AF_INET:
-		  inet_addr	= (sockaddr_in *)sockname;
-		  addr_data	= (const char *)&inet_addr->sin_addr.s_addr;
+		  inet_addr   = (sockaddr_in *)sockname;
+		  addr_data   = (const char *)&(inet_addr->sin_addr.s_addr);
+		  addr_len    = sizeof(inet_addr->sin_addr.s_addr);
 		  break;
 	       case AF_INET6:
-		  inet6_addr	= (sockaddr_in6 *)sockname;
-		  addr_data	= (const char *)inet6_addr->sin6_addr.s6_addr;
+		  inet6_addr  = (sockaddr_in6 *)sockname;
+		  addr_data   = (const char *)&(inet6_addr->sin6_addr.s6_addr);
+		  addr_len    = sizeof(inet6_addr->sin6_addr.s6_addr);
 		  break;
 	       default:
 		  continue;
 	       }
-
-	       AddAddress(a_res->ai_family, addr_data, a_res->ai_addrlen);
+	       AddAddress(a_res->ai_family, addr_data, addr_len);
 	    }
 	 }
 
@@ -769,7 +775,8 @@ void Resolver::LookupOne(const char *name)
 	 break;
       }
 
-      if(ainfo_res != EAI_AGAIN)
+      if(ainfo_res != EAI_AGAIN
+      || (++retries>=max_retries && max_retries))
       {
 	 error = gai_strerror(ainfo_res);
 	 break;
@@ -796,6 +803,7 @@ void Resolver::LookupOne(const char *name)
 	 ha=gethostbyname(name);
       else
       {
+	 retries=0;
 	 af_index++;
 	 continue;
       }
@@ -806,6 +814,7 @@ void Resolver::LookupOne(const char *name)
 	 const char * const *a;
 	 for(a=ha->h_addr_list; *a; a++)
 	    AddAddress(ha->h_addrtype, *a, ha->h_length);
+	 retries=0;
 	 af_index++;
 # if defined(HAVE_GETIPNODEBYNAME)
 	 freehostent(ha);
@@ -814,7 +823,8 @@ void Resolver::LookupOne(const char *name)
       }
 
 # ifdef HAVE_H_ERRNO
-      if(h_errno!=TRY_AGAIN)
+      if(h_errno!=TRY_AGAIN
+      || (++retries>=max_retries && max_retries))
 # endif
       {
 	 if(error==0)
@@ -825,6 +835,7 @@ void Resolver::LookupOne(const char *name)
 	    error=_("Host name lookup failure");
 # endif
 	 }
+	 retries=0;
 	 af_index++;
 	 continue; // try other address families
       }
@@ -896,7 +907,7 @@ flush:
 
 void Resolver::Reconfig(const char *name)
 {
-   timeout = ResMgr::Query("dns:fatal-timeout",hostname);
+   timeout = TimeInterval(ResMgr::Query("dns:fatal-timeout",hostname));
    if(!name || strncmp(name,"dns:",4))
       return;
    if(cache)

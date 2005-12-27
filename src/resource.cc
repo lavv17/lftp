@@ -338,7 +338,8 @@ static ResDecl
    res_cache_enable("dns:cache-enable", "yes", ResMgr::BoolValidate,0),
    res_cache_expire("dns:cache-expire", "1h",  ResMgr::TimeIntervalValidate,0),
    res_cache_size  ("dns:cache-size",   "256", ResMgr::UNumberValidate,ResMgr::NoClosure),
-   res_timeout	   ("dns:fatal-timeout","0",   ResMgr::UNumberValidate,0),
+   res_timeout	   ("dns:fatal-timeout","7d",  ResMgr::TimeIntervalValidate,0),
+   res_max_retries ("dns:max-retries",  "1000",ResMgr::UNumberValidate,0),
    res_order	   ("dns:order",	DEFAULT_ORDER, OrderValidate,0),
    res_query_srv   ("dns:SRV-query",    "no",  ResMgr::BoolValidate,0),
    res_use_fork	   ("dns:use-fork",     "yes", ResMgr::BoolValidate,ResMgr::NoClosure);
