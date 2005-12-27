@@ -2211,10 +2211,16 @@ int   Ftp::Do()
          return MOVED;
 
       BumpEventTime(conn->data_iobuf->EventTime());
-      // handle errors on data connection only when storing or got all replies
-      if(conn->data_iobuf->Error() && (mode==STORE || expect->IsEmpty()))
+      if(conn->data_iobuf->Error() && conn->data_sock!=-1)
       {
 	 DebugPrint("**** ",conn->data_iobuf->ErrorText(),0);
+	 conn->CloseDataSocket();
+      }
+      // handle errors on data connection only when storing or got all replies
+      // and read all data.
+      if(conn->data_iobuf->Error()
+      && (mode==STORE || (expect->IsEmpty() && conn->data_iobuf->Size()==0)))
+      {
 	 if(conn->data_iobuf->ErrorFatal())
 	    SetError(FATAL,conn->data_iobuf->ErrorText());
 	 if(!expect->IsEmpty())
@@ -2924,16 +2930,20 @@ out:
    disconnect_in_progress=false;
 }
 
+void Ftp::Connection::CloseDataSocket()
+{
+   if(data_sock==-1)
+      return;
+   Log::global->Format(7,"---- %s\n",_("Closing data socket"));
+   close(data_sock);
+   data_sock=-1;
+}
+
 void Ftp::Connection::CloseDataConnection()
 {
    Delete(data_iobuf); data_iobuf=0;
    fixed_pasv=false;
-   if(data_sock!=-1)
-   {
-      Log::global->Format(7,"---- %s\n",_("Closing data socket"));
-      close(data_sock);
-      data_sock=-1;
-   }
+   CloseDataSocket();
 }
 void Ftp::Connection::AbortDataConnection()
 {

@@ -131,6 +131,7 @@ class Ftp : public NetAccess
       void InitTelnetLayer();
       void SetControlConnectionTranslation(const char *cs);
 
+      void CloseDataSocket(); // only closes socket, does not delete iobuf.
       void CloseDataConnection();
       void AbortDataConnection();
       void CloseAbortedDataConnection();
