@@ -209,10 +209,9 @@ void History::Save()
    lseek(fd,0,SEEK_SET);
 
 #ifdef HAVE_FTRUNCATE
-   ftruncate(fd,0);
-#else
-   close(open(file,O_WRONLY|O_TRUNC));
+   if(ftruncate(fd,0)==-1) // note the following statement
 #endif
+   close(open(file,O_WRONLY|O_TRUNC));
 
    full->Write(fd);
    fd=-1;   // Write closes file

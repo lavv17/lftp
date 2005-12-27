@@ -145,7 +145,8 @@ NetRC::Entry *NetRC::LookupHost(const char *h,const char *u)
 	    {
 	       int ch=0;
 	       int n=0;
-	       sscanf(s+1,"%3o%n",&ch,&n);
+	       if(sscanf(s+1,"%3o%n",&ch,&n)!=1)
+		  continue;
 	       if(ch==0)
 		  continue;
 	       *s=ch;

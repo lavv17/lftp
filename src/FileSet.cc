@@ -639,7 +639,7 @@ void FileSet::LocalChown(const char *dir)
 	       new_gid=g;
 	 }
 	 if(new_uid!=st.st_uid || new_gid!=st.st_gid)
-	    lchown(local_name,new_uid,new_gid);
+	    (void)lchown(local_name,new_uid,new_gid); // don't care if it succeeds
       }
    }
 }
@@ -867,7 +867,8 @@ FileInfo *FileInfo::parse_ls_line(const char *line_c,const char *tz)
    int prec=30;
    if(strlen(t)==5)
    {
-      sscanf(t,"%2d:%2d",&date.tm_hour,&date.tm_min);
+      if(sscanf(t,"%2d:%2d",&date.tm_hour,&date.tm_min)!=2)
+	 ERR;
       date.tm_year=guess_year(date.tm_mon,date.tm_mday,date.tm_hour,date.tm_min) - 1900;
    }
    else

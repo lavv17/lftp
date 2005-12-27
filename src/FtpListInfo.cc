@@ -480,7 +480,7 @@ FileInfo *ParseFtpLongList_EPLF(char *line,int *err,const char *)
 	    break;
 	 case 'u':
 	    if(scan[1]=='p')  // permissions.
-	       sscanf(scan+2,"%o",&perms);
+	       (void)sscanf(scan+2,"%o",&perms);   // if it fails, perms remain -1
 	    break;
 	 default:
 	    name=0;
@@ -794,7 +794,7 @@ FileInfo *ParseFtpLongList_MLSD(char *line,int *err,const char *)
       }
       if(!strncasecmp(tok,"UNIX.mode=",10))
       {
-	 sscanf(tok+10,"%o",&perms);
+	 (void)sscanf(tok+10,"%o",&perms);   // if it fails, perms remain -1
 	 continue;
       }
       if(!strncasecmp(tok,"UNIX.owner=",11))

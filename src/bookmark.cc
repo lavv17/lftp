@@ -124,10 +124,9 @@ void Bookmark::PostModify()
    lseek(bm_fd,0,SEEK_SET);
 
 #ifdef HAVE_FTRUNCATE
-   ftruncate(bm_fd,0);
-#else
-   close(open(bm_file,O_WRONLY|O_TRUNC));
+   if(ftruncate(bm_fd,0)==-1) // note the following statement
 #endif
+   close(open(bm_file,O_WRONLY|O_TRUNC));
 
    super::Write(bm_fd);
    bm_fd=-1;   // Write closes file

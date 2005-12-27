@@ -639,7 +639,8 @@ char *Subst(const char *txt, const subst_t *s)
 	    unsigned len;
 	    unsigned code;
 	    txt--;
-	    sscanf(txt,"%3o%n",&code,&len);
+	    if(sscanf(txt,"%3o%n",&code,&len)!=1)
+	       continue; // should never happen.
 	    ch=code;
 	    txt+=len;
 	    str[0]=ch;

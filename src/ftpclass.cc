@@ -796,7 +796,7 @@ void Ftp::CatchSIZE(int act)
    if(is2XX(act))
    {
       if(strlen(line)>4 && is_ascii_digit(line[4]))
-	 sscanf(line+4,"%lld",&size);
+	 (void)sscanf(line+4,"%lld",&size);  // if it fails, size remain NO_SIZE
    }
    else	if(is5XX(act))
    {
@@ -826,7 +826,7 @@ void Ftp::CatchSIZE_opt(int act)
 
    if(is2XX(act) && strlen(line)>4 && is_ascii_digit(line[4]))
    {
-      sscanf(line+4,"%lld",&size);
+      (void)sscanf(line+4,"%lld",&size);  // if it fails, size remain NO_SIZE
    }
    else
    {
