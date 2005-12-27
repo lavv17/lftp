@@ -36,10 +36,8 @@ const char *expand_home_relative(const char *);
 
 // returns ptr to last path element
 const char *basename_ptr(const char *);
-static inline
-char *basename_ptr(char *f)
-{
-   return (char*)basename_ptr((const char *)f);
+static inline char *basename_ptr(char *f) {
+   return const_cast<char*>(basename_ptr(const_cast<const char *>(f)));
 }
 
 // glues file to dir; returns pointer to static storage
@@ -124,6 +122,8 @@ bool temporary_network_error(int e);
 CDECL const char *get_lftp_home();
 
 const char *memrchr(const char *buf,char c,size_t len);
-static inline char *memrchr(char *buf,char c,size_t len) { return const_cast<char*>(memrchr(buf,c,len)); }
+static inline char *memrchr(char *buf,char c,size_t len) {
+   return const_cast<char*>(memrchr(const_cast<const char*>(buf),c,len));
+}
 
 #endif // MISC_H
