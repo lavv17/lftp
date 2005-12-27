@@ -232,12 +232,12 @@ int KeyValueDB::Lock(int fd,int type)
       for(int i=0; i<retries; i++)
       {
 	 sleep(1);
-	 write(2,".",1);
+	 (void)write(2,".",1);
 	 res=fcntl(fd,F_SETLK,&lk);
 	 if(res==0)
 	    break;
       }
-      write(2,"\r",1);
+      (void)write(2,"\r",1);
    }
    if(res==-1 && E_LOCK_IGNORE(errno))
       return 0;

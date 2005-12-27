@@ -1,7 +1,7 @@
 2005-12-27  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileSet.cc, FtpListInfo.cc, bookmark.cc, ftpclass.cc, history.cc,
-	  misc.cc, netrc.cc: handle return values (fix warnings).
+	  misc.cc, netrc.cc, keyvalue.cc: handle return values (fix warnings).
 	* ResMgr.cc, ResMgr.h: add TimeInterval::Set method.
 	* Resolver.cc, resource.cc: add dns:max-retries setting; prefer
 	  getaddrinfo if available; change dns:fatal-timeout to TimeInterval type.
