@@ -1,3 +1,12 @@
+2005-12-27  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileSet.cc, FtpListInfo.cc, bookmark.cc, ftpclass.cc, history.cc,
+	  misc.cc, netrc.cc: handle return values (fix warnings).
+
+2005-12-22  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: add libiconv version to `version' output.
+
 2005-12-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc, rmJob.h, commands.cc: don't remove directories
