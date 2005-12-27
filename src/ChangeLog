@@ -2,6 +2,17 @@
 
 	* FileSet.cc, FtpListInfo.cc, bookmark.cc, ftpclass.cc, history.cc,
 	  misc.cc, netrc.cc: handle return values (fix warnings).
+	* ResMgr.cc, ResMgr.h: add TimeInterval::Set method.
+	* Resolver.cc, resource.cc: add dns:max-retries setting; prefer
+	  getaddrinfo if available; change dns:fatal-timeout to TimeInterval type.
+	* lftp_ssl.cc: treat GNUTLS_E_UNEXPECTED_PACKET_LENGTH as EOF indicator;
+	  output a warning when that error appears.
+	* FileCopy.cc: try to put available data in case of `get' error;
+	  optimize line-buffering.
+	* misc.cc, misc.h: (memrchr) new function.
+	* ftpclass.cc, ftpclass.h: (Connection::CloseDataSocket) new method;
+	  close data socket in case of data connection error for the case
+	  when error handling is delayed.
 
 2005-12-22  Alexander V. Lukyanov <lav@yars.free.net>
 
