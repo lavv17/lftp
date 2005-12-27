@@ -689,7 +689,7 @@ void TimeInterval::init(const char *s)
       error_text=_("Invalid time format. Format is <time><unit>, e.g. 2h30m.");
       return;
    }
-   Set(interval);
+   TimeDiff::Set(interval);
 }
 
 const char *ResMgr::TimeIntervalValidate(char **s)

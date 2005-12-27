@@ -194,6 +194,7 @@ class TimeInterval : public TimeDiff
    const char *error_text;
    void init(const char *);
 public:
+   void Set(const char *s) { init(s); }
    TimeInterval(const char *s) { init(s); }
    TimeInterval(ResValue r) { init(r); }
    TimeInterval(time_t i) : TimeDiff(i,0) { infty=false; error_text=0; }
