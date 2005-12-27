@@ -123,4 +123,7 @@ bool temporary_network_error(int e);
 
 CDECL const char *get_lftp_home();
 
+const char *memrchr(const char *buf,char c,size_t len);
+static inline char *memrchr(char *buf,char c,size_t len) { return const_cast<char*>(memrchr(buf,c,len)); }
+
 #endif // MISC_H

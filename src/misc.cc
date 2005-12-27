@@ -942,3 +942,12 @@ const char *get_lftp_home()
    mkdir(home,0755);
    return home;
 }
+
+const char *memrchr(const char *buf,char c,size_t len)
+{
+   buf+=len;
+   while(len-->0)
+      if(*--buf==c)
+	 return buf;
+   return 0;
+}

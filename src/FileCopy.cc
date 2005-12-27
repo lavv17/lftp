@@ -147,8 +147,10 @@ int FileCopy::Do()
 	 SetError(put->ErrorText());
 	 return MOVED;
       }
-      if(get->Error())
+      if(get->Error() && get->Size()==0)
       {
+	 put->PutEOF();
+	 Roll(put);
       get_error:
 	 SetError(get->ErrorText());
 	 return MOVED;
@@ -284,14 +286,15 @@ int FileCopy::Do()
 
 	 // now find eol in line_buffer.
 	 line_buffer->Get(&lb,&ls);
-	 while(ls>0)
+	 const char *eol=0;
+	 if(get->Eof() || get->Error())
+	    eol=lb+ls-1;
+	 else
+	    eol=memrchr(lb,'\n',ls);
+	 if(eol)
 	 {
-	    const char *eol=(const char *)memchr(lb,'\n',ls);
-	    if(!eol)
-	       break;
 	    put->Put(lb,eol-lb+1);
 	    line_buffer->Skip(eol-lb+1);
-	    line_buffer->Get(&lb,&ls);
 	 }
       }
       else
