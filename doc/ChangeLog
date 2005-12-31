@@ -1,3 +1,12 @@
+2005-12-31	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Makefile.am: install lftpget.1.
+	* lftpget.1: clarify supported protocols.
+
+2005-12-31	Francois Wendling <frwendling@free.fr>
+
+	* lftpget.1: new file.
+
 2005-12-27	Jason Vas Dias <jvdias@redhat.com>
 
 	* lftp.1: add dns:max-retries description.
