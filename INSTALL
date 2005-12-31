@@ -1,5 +1,7 @@
 Some hints about lftp compilation
 ---------------------------------
+   * ncurses or termcap development is required. If you get undefined
+references to tputs or tgetent, install ncurses-devel package.
    * invalid exception specifications in rltypedefs.h
 Solution: use configure --with-included-readline or copy
 readline-4.2/rlstdc.h and readline-4.2/tilde.h to your system include

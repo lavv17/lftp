@@ -1,3 +1,15 @@
+Version 3.4.0 - 2005-12-31
+
+* flush cache when changing ftp:charset.
+* show all queued commands on `queue' command.
+* support open ranges for `mirror --size-range'.
+* new setting dns:max-retries.
+* change dns:fatal-timeout setting to accept time interval suffixes.
+* prefer getaddrinfo over gethostbyname2.
+* treat GNUTLS_E_UNEXPECTED_PACKET_LENGTH as EOF indicator - this fixes
+  secure ftp with ProFTPD server.
+* fixed netrc usage when no user name is given.
+
 Version 3.3.5 - 2005-12-02
 
 * added mirror --older-than, --size-range and --max-errors options.

@@ -1,4 +1,4 @@
-%define version 3.3.5
+%define version 3.3.6
 %define release 1
 %define use_modules 0
 
@@ -43,6 +43,7 @@ make DESTDIR=%{buildroot}
 %install
 rm -rf %{buildroot}
 make install DESTDIR=%{buildroot}
+rm -f %{buildroot}%{_libdir}/*.{so,la}
 
 %clean
 rm -rf %{buildroot}
@@ -54,6 +55,7 @@ rm -rf %{buildroot}
 %attr(755 root root) %{_bindir}/*
 %if %use_modules
 %{_libdir}/lftp/*/*.so
+%{_libdir}/*.so.*
 %endif
 %{_mandir}/man*/*
 %attr(- root root) %{_datadir}/lftp
