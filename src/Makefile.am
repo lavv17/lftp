@@ -98,7 +98,7 @@ confpaths.h: Makefile
 	echo "#define PKGDATADIR \"$(pkgdatadir)\"" >> $@
 	echo "#define PKGLIBDIR  \"$(pkglibdir)\""  >> $@
 
-DISTCLEANFILES = confpaths.h
+DISTCLEANFILES = confpaths.h *.la
 
 INCLUDES = -I$(top_srcdir)/include $(OPENSSL_CPPFLAGS) $(LIBGNUTLS_CFLAGS)
 
