@@ -15,7 +15,8 @@ lftp_SOURCES = lftp.cc complete.h complete.cc lftp_rl.c lftp_rl.h getdate.y getd
 
 EXTRA_LTLIBRARIES = liblftp-pty.la liblftp-network.la proto-ftp.la proto-http.la proto-file.la cmd-mirror.la cmd-sleep.la proto-fish.la proto-sftp.la
 pkgverlib_LTLIBRARIES = $(MODULES_LA)
-noinst_LTLIBRARIES = liblftp-tasks.la liblftp-jobs.la $(MODULES_LA_STATIC)
+lib_LTLIBRARIES = liblftp-tasks.la liblftp-jobs.la
+#noinst_LTLIBRARIES = liblftp-tasks.la liblftp-jobs.la $(MODULES_LA_STATIC)
 
 proto_ftp_la_SOURCES  = ftpclass.cc ftpclass.h FtpListInfo.cc FtpListInfo.h\
  FtpDirList.cc FtpDirList.h md5.c md5.h ftp-opie.c FileCopyFtp.cc FileCopyFtp.h
@@ -28,6 +29,14 @@ cmd_sleep_la_SOURCES  = SleepJob.cc SleepJob.h
 liblftp_pty_la_SOURCES     = PtyShell.cc PtyShell.h lftp_pty.c lftp_pty.h
 liblftp_network_la_SOURCES = NetAccess.cc NetAccess.h Resolver.cc Resolver.h\
  lftp_ssl.cc lftp_ssl.h buffer_ssl.cc buffer_ssl.h
+
+if !WITH_MODULES
+add_tasks = $(proto_ftp_la_SOURCES) $(proto_http_la_SOURCES)\
+ $(proto_file_la_SOURCES) $(proto_fish_la_SOURCES) $(proto_sftp_la_SOURCES)\
+ $(liblftp_pty_la_SOURCES) $(liblftp_network_la_SOURCES)
+add_tasks_libadd = $(EXPAT_LIBS) $(SOCKSLIBS) $(OPENSSL_LIBS) $(LIBGNUTLS_LIBS)
+add_jobs = $(cmd_mirror_la_SOURCES) $(cmd_sleep_la_SOURCES)
+endif
 
 proto_ftp_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
 proto_http_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
@@ -62,23 +71,24 @@ liblftp_tasks_la_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  FileSetOutput.h lftp_tinfo.cc lftp_tinfo.h\
  TimeDate.cc TimeDate.h Timer.cc Timer.h GetFileInfo.cc GetFileInfo.h\
  StringPool.cc StringPool.h DirColors.cc DirColors.h IdNameCache.cc\
- IdNameCache.h PatternSet.cc PatternSet.h LocalDir.cc LocalDir.h
+ IdNameCache.h PatternSet.cc PatternSet.h LocalDir.cc LocalDir.h $(add_tasks)
+liblftp_tasks_la_LDFLAGS = $(OPENSSL_LDFLAGS)
+liblftp_tasks_la_LIBADD = $(LFTP_LIBGNUTLS_LIBS) $(LTLIBINTL) $(LTLIBICONV) $(add_tasks_libadd)
 
 liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\
- parsecmd.cc\
- mvJob.cc mvJob.h alias.cc alias.h\
+ parsecmd.cc mvJob.cc mvJob.h alias.cc alias.h\
  CatJob.cc CatJob.h GetJob.cc GetJob.h\
  mkdirJob.cc mkdirJob.h pgetJob.cc pgetJob.h FileFeeder.cc FileFeeder.h\
  QueueFeeder.cc QueueFeeder.h history.cc history.h\
- FindJob.cc FindJob.h \
- FindJobDu.cc FindJobDu.h ChmodJob.cc ChmodJob.h\
- TreatFileJob.cc TreatFileJob.h CopyJob.cc CopyJob.h echoJob.cc echoJob.h \
- OutputJob.cc OutputJob.h FileCopyOutputJob.cc buffer_std.cc buffer_std.h
+ FindJob.cc FindJob.h FindJobDu.cc FindJobDu.h ChmodJob.cc ChmodJob.h\
+ TreatFileJob.cc TreatFileJob.h CopyJob.cc CopyJob.h echoJob.cc echoJob.h\
+ OutputJob.cc OutputJob.h FileCopyOutputJob.cc buffer_std.cc buffer_std.h\
+ $(add_jobs)
 
-lftp_LDFLAGS = -export-dynamic $(LFTP_OPENSSL_LDFLAGS)
+lftp_LDFLAGS = -export-dynamic
 lftp_LDADD = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC) $(READLINE)\
-	$(top_builddir)/lib/liblib.a $(LFTP_OPENSSL_LIBS) $(LFTP_LIBGNUTLS_LIBS) $(SOCKSLIBS) $(LFTP_EXPAT_LIBS) $(LTLIBINTL) $(LTLIBICONV)
+	$(top_builddir)/lib/liblib.a
 lftp_DEPENDENCIES = liblftp-jobs.la liblftp-tasks.la $(READLINE_DEPEND) \
 	$(top_builddir)/lib/liblib.a $(MODULES_LA_STATIC)
 

@@ -639,7 +639,10 @@ void FileSet::LocalChown(const char *dir)
 	       new_gid=g;
 	 }
 	 if(new_uid!=st.st_uid || new_gid!=st.st_gid)
-	    (void)lchown(local_name,new_uid,new_gid); // don't care if it succeeds
+	 {
+	    if(lchown(local_name,new_uid,new_gid)==-1)
+	       /* don't care */;
+	 }
       }
    }
 }

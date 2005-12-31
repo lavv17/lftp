@@ -184,8 +184,12 @@ int OutputFilter::getfd()
       {
 	 close(1);
 	 int null=open("/dev/null",O_RDWR);
-	 if(null==0)
-	    dup(0);
+	 if(null==-1)
+	    perror("open(\"/dev/null\")");
+	 else if(null==0) {
+	    if(dup(0)==-1)
+	       perror("dup");
+	 }
       }
       if(cwd)
       {

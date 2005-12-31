@@ -798,9 +798,10 @@ void Http::HandleHeaderLine(const char *name,const char *value)
    {
       keep_alive=true;
       const char *m=strstr(value,"max=");
-      if(m)
-	 sscanf(m+4,"%d",&keep_alive_max);
-      else
+      if(m) {
+	 if(sscanf(m+4,"%d",&keep_alive_max)!=1)
+	    keep_alive=false;
+      } else
 	 keep_alive_max=100;
       return;
    }

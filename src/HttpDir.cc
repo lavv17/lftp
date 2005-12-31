@@ -1095,7 +1095,8 @@ parse_url_again:
 	 if(strspn(info.size_str,"0123456789")==strlen(info.size_str))
 	 {
 	    long long size_ll=0;
-	    sscanf(info.size_str,"%lld",&size_ll);
+	    if(sscanf(info.size_str,"%lld",&size_ll)!=1)
+	       size_ll=0;
 	    info.size=size_ll;
 	 }
       }

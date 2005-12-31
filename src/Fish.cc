@@ -704,8 +704,10 @@ int Fish::HandleReplies()
    recv_buf->Skip(s);
 
    int code=-1;
-   if(s>7 && !memcmp(line,"### ",4) && is_ascii_digit(line[4]))
-      sscanf(line+4,"%3d",&code);
+   if(s>7 && !memcmp(line,"### ",4)) {
+      if(sscanf(line+4,"%3d",&code)!=1)
+	 code=-1;
+   }
 
    DebugPrint("<--- ",line,ReplyLogPriority(code));
    if(code==-1)

@@ -1,3 +1,10 @@
+2005-12-28  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileSet.cc, Filter.cc, Fish.cc, FtpListInfo.cc, Http.cc, HttpDir.cc,
+	  ftpclass.cc, keyvalue.cc: handle return values (fix warnings).
+	* Makefile.am: install shared libs liblftp-tasks and liblftp-jobs;
+	  don't make static libs when not needed.
+
 2005-12-27  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileSet.cc, FtpListInfo.cc, bookmark.cc, ftpclass.cc, history.cc,
