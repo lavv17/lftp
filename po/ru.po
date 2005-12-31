@@ -149,7 +149,7 @@ msgstr "Файл переместился в `%s'"
 #: src/FileAccess.cc:1061 src/buffer.cc:234
 #, c-format
 msgid "%s [cached]"
-msgstr ""
+msgstr "%s [из кэша]"
 
 #: src/GetJob.cc:93
 #, c-format
@@ -284,7 +284,7 @@ msgstr "Удаление старого каталога `%s'"
 #: src/MirrorJob.cc:996
 #, c-format
 msgid "Retrying mirror...\n"
-msgstr ""
+msgstr "Повторный проход...\n"
 
 #: src/MirrorJob.cc:1371
 #, c-format
@@ -344,11 +344,11 @@ msgstr "Неверный формат диапазона. Формат: мини
 
 #: src/ResMgr.cc:750
 msgid "Invalid suffix. Valid suffixes are: k, M, G, T, P, E, Z, Y"
-msgstr ""
+msgstr "Неверный суффикс. Допустимыми являются: k, M, G, T, P, E, Z, Y"
 
 #: src/ResMgr.cc:753
 msgid "Integer overflow"
-msgstr ""
+msgstr "Целочисленное переполнение"
 
 #: src/ResMgr.cc:816
 msgid "Invalid IPv4 numeric address"
@@ -1375,9 +1375,9 @@ msgid "Usage: %s [OPTS] command args...\n"
 msgstr "Использование: %s [КЛЮЧИ] команда аргументы...\n"
 
 #: src/commands.cc:1103
-#, fuzzy, c-format
+#, c-format
 msgid "%s: -n: positive number expected. "
-msgstr "%s: -n: Ожидается числовое значение. "
+msgstr "%s: -n: Ожидается числовое значение больше нуля. "
 
 #: src/commands.cc:1155
 #, c-format
@@ -1596,6 +1596,10 @@ msgid ""
 "conditions.\n"
 "There is absolutely no warranty for LFTP.  See COPYING for details.\n"
 msgstr ""
+"LFTP - свободная программа под лицензией GNU General Public License,\n"
+"ее можно изменять и/или распространять при соблюдении некоторых условий.\n"
+"На LFTP не предоставляется никаких гарантий. Смотрите файл COPYING для\n"
+"дополнительной информации.\n"
 
 #: src/commands.cc:2509
 #, c-format
@@ -2143,7 +2147,7 @@ msgstr ""
 
 #: src/FileCopy.h:279
 msgid "Verifying..."
-msgstr ""
+msgstr "Проверка..."
 
 #: src/Speedometer.cc:102
 #, c-format
@@ -2293,7 +2297,7 @@ msgstr "всего"
 
 #: src/Fish.cc:160 src/SFtp.cc:191
 msgid "Running connect program"
-msgstr ""
+msgstr "Выполняется соединяющая программа"
 
 #: src/Fish.cc:318 src/SFtp.cc:329
 msgid "Disconnecting"
