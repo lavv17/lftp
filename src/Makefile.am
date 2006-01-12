@@ -11,12 +11,10 @@ EXTRA_DIST = $(pkgdata_SCRIPTS) $(bin_SCRIPTS) $(noinst_SCRIPTS) \
 
 lftp_SOURCES = lftp.cc complete.h complete.cc lftp_rl.c lftp_rl.h getdate.y getdate.h
 
-#ftpget_SOURCES = ftpget.cc
-
-EXTRA_LTLIBRARIES = liblftp-pty.la liblftp-network.la proto-ftp.la proto-http.la proto-file.la cmd-mirror.la cmd-sleep.la proto-fish.la proto-sftp.la
-pkgverlib_LTLIBRARIES = $(MODULES_LA)
+if WITH_MODULES
+pkgverlib_LTLIBRARIES = liblftp-pty.la liblftp-network.la proto-ftp.la proto-http.la proto-file.la cmd-mirror.la cmd-sleep.la proto-fish.la proto-sftp.la
+endif
 lib_LTLIBRARIES = liblftp-tasks.la liblftp-jobs.la
-#noinst_LTLIBRARIES = liblftp-tasks.la liblftp-jobs.la $(MODULES_LA_STATIC)
 
 proto_ftp_la_SOURCES  = ftpclass.cc ftpclass.h FtpListInfo.cc FtpListInfo.h\
  FtpDirList.cc FtpDirList.h md5.c md5.h ftp-opie.c FileCopyFtp.cc FileCopyFtp.h
