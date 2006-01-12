@@ -660,7 +660,7 @@ static char **lftp_completion (const char *text,int start,int end)
 	    type=REMOTE_DIR;
 	 goto really_remote;
       }
-
+   really_local:
       ArgV arg("", ResMgr::Query("cmd:cls-completion-default", 0));
       fso.parse_argv(&arg);
 
@@ -729,7 +729,11 @@ static char **lftp_completion (const char *text,int start,int end)
    case REMOTE_FILE:
    case REMOTE_DIR: {
       if(!remote_completion && !force_remote)
-	 break; // local
+      {
+	 if(type==REMOTE_DIR)
+	    type=LOCAL_DIR;
+	 goto really_local;
+      }
    really_remote:
       if(!strncmp(text,"bm:",3) && !strchr(text,'/'))
       {
