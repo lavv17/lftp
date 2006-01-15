@@ -1395,6 +1395,7 @@ const char *FileSetOutput::parse_argv(ArgV *a)
       {"nocase", no_argument,0,'i'},
       {"sortnocase", no_argument,0,'I'},
       {"dirsfirst", no_argument,0,'D'},
+      {"time-style", required_argument,0,256+'T'},
 
       {"sort", required_argument,0, 0},
       {"reverse",no_argument,0,'r'},
@@ -1484,6 +1485,38 @@ const char *FileSetOutput::parse_argv(ArgV *a)
 	 break;
       case('r'):
 	 sort_reverse = true;
+	 break;
+      case(256+'T'):
+	 xfree(time_fmt); time_fmt=0;
+	 if(optarg[0]=='+') {
+	    time_fmt=xstrdup(optarg+1);
+	    char *sep=strchr(time_fmt,'|');
+	    if(sep)
+	       *sep='\n';
+	 } else if(!strcmp(optarg,"full-iso"))
+// 	    time_fmt=xstrdup("%Y-%m-%d %H:%M:%S.%N %z"); // %N and %z are GNU extensions
+	    time_fmt=xstrdup("%Y-%m-%d %H:%M:%S");
+	 else if(!strcmp(optarg,"long-iso"))
+	    time_fmt=xstrdup("%Y-%m-%d %H:%M");
+	 else if(!strcmp(optarg,"iso"))
+	    time_fmt=xstrdup("%Y-%m-%d \n%m-%d %H:%M");
+	 else {
+	    return _("unknown time style");
+	 }
+	 need_exact_time=false;
+	 if(time_fmt) {
+	    static const char exact_fmts[][3]={"%H","%M","%S","%N",""};
+	    const char *sep=strchr(time_fmt,'\n');
+	    for(int i=0; exact_fmts[i][0]; i++) {
+	       const char *f=strstr(time_fmt,exact_fmts[i]);
+	       if(!f)
+		  continue;
+	       if(i>1 || !sep || sep<f) {
+		  need_exact_time=true;
+		  break;
+	       }
+	    }
+	 }
 	 break;
 
       default:

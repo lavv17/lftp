@@ -50,6 +50,7 @@ public:
    int mode;
 
    char *pat;
+   char *time_fmt;
 
    bool basenames;
    bool showdots;
@@ -61,15 +62,16 @@ public:
    bool size_filesonly;
    bool single_column;
    bool list_directories;
+   bool need_exact_time;
    int output_block_size;
 
    FileSet::sort_e sort;
    FileSetOutput(): classify(0), width(0), color(false), mode(NONE),
-      pat(NULL), basenames(false), showdots(false),
+      pat(NULL), time_fmt(0), basenames(false), showdots(false),
       quiet(false), patterns_casefold(false), sort_casefold(false), sort_reverse(false),
       sort_dirs_first(false), size_filesonly(false), single_column(false),
-      list_directories(false), output_block_size(0), sort(FileSet::BYNAME) { }
-   ~FileSetOutput() { xfree(pat); }
+      list_directories(false), need_exact_time(false), output_block_size(0), sort(FileSet::BYNAME) { }
+   ~FileSetOutput() { xfree(pat); xfree(time_fmt); }
    FileSetOutput(const FileSetOutput &cp);
    const FileSetOutput &operator = (const FileSetOutput &cp);
 

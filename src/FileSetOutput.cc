@@ -136,30 +136,30 @@ void FileSetOutput::print(FileSet &fs, OutputJob *o) const
 	 const int six_months_ago = SMTask::now - 31556952 / 2;
 	 bool recent = six_months_ago <= f->date;
 
-	 /* We assume all time outputs are equal-width. */
-	 const char *const long_time_format[] = {
-	    dcgettext (NULL, "%b %e  %Y", LC_TIME),
-	    dcgettext (NULL, "%b %e %H:%M", LC_TIME)
-	 };
+	 const char *use_fmt=time_fmt;
+	 if(!use_fmt)
+	    use_fmt=ResMgr::Query("cmd:time-style",0);
+	 if(!use_fmt)
+	    use_fmt="%b %e  %Y\n%b %e %H:%M";
 
-	 const char *fmt = long_time_format[recent];
-	 struct tm *when_local;
-	 char *dt;
-	 if ((f->defined&f->DATE)
-	 && (when_local = localtime (&f->date))) {
-	    dt = xstrftime(fmt, when_local);
-	 } else {
+	 char *dt_mem = xstrftime(use_fmt, localtime (&f->date));
+	 char *dt=strtok(dt_mem,"\n");
+	 if(recent) {
+	    char *dt1=strtok(NULL,"\n");
+	    if(dt1)
+	       dt=dt1;
+	 }
+	 if (!(f->defined&f->DATE)) {
 	    /* put an empty field; make sure it's the same width */
-	    dt = xstrftime(long_time_format[0], NULL);
 	    int wid = mbswidth(dt, MBSW_ACCEPT_INVALID|MBSW_ACCEPT_UNPRINTABLE);
-	    xfree(dt);
+	    xfree(dt_mem); dt_mem=0;
 
-	    dt = (char *) xmalloc(wid+1);
+	    dt = string_alloca(wid+1);
 	    memset(dt, ' ', wid);
 	    dt[wid] = 0;
 	 }
 	 c.addf("%s ", "", dt);
-	 xfree(dt);
+	 xfree(dt_mem);
       }
 
       const char *nm = f->name;
@@ -216,6 +216,7 @@ const FileSetOutput &FileSetOutput::operator = (const FileSetOutput &cp)
 
    memcpy(this, &cp, sizeof(*this));
    pat = xstrdup(cp.pat);
+   time_fmt = xstrdup(cp.time_fmt);
    return *this;
 }
 
@@ -269,6 +270,8 @@ int FileSetOutput::Need() const
       need|=FileInfo::USER;
    if(mode & GROUP)
       need|=FileInfo::GROUP;
+   if(need_exact_time)
+      need|=FileInfo::DATE;
 
    return need;
 }
