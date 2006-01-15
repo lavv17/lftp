@@ -1,3 +1,9 @@
+2006-01-12  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* complete.cc: fixed an abortion when cmd:remote-completion is false.
+	* lftp_ssl.cc: don't do shutdown/bye, as it makes problems with CCC.
+	* Makefile.am: use automake conditionals to select modules to build.
+
 2005-12-28  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileSet.cc, Filter.cc, Fish.cc, FtpListInfo.cc, Http.cc, HttpDir.cc,
