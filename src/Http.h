@@ -116,6 +116,8 @@ class Http : public NetAccess
    bool no_cache;
    bool no_cache_this;
 
+   bool use_propfind_now;
+
    const char *user_agent;
 
 protected:

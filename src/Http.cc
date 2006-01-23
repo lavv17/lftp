@@ -98,6 +98,8 @@ void Http::Init()
    no_cache_this=false;
    no_cache=false;
 
+   use_propfind_now=true;
+
    hftp=false;
    https=false;
    use_head=true;
@@ -233,6 +235,7 @@ void Http::Close()
    array_send=0;
    no_cache_this=false;
    no_ranges=false;
+   use_propfind_now=QueryBool("use-propfind",hostname);
    special=HTTP_NONE;
    xfree(special_data);
    special_data=0;
@@ -614,7 +617,17 @@ void Http::SendRequest(const char *connection,const char *f)
       if(last_char(efile)!='/' && add_slash)
 	 strcat(efile,"/");
       if(mode==CHANGE_DIR)
-	 SendMethod("HEAD",efile);
+      {
+	 if(use_propfind_now)
+	 {
+	    SendMethod("PROPFIND",efile);
+	    Send("Depth: 0\r\n"); // no directory listing required
+	    Send("Content-Type: text/xml\r\n");
+	    Send("Content-Length: %d\r\n",strlen(allprop));
+	 }
+	 else
+	    SendMethod("HEAD",efile);
+      }
       else if(mode==LONG_LIST)
 	 goto retrieve;
       else if(mode==MAKE_DIR)
@@ -672,7 +685,7 @@ void Http::SendRequest(const char *connection,const char *f)
 	 Send("%s",special_data);
       entity_size=NO_SIZE;
    }
-   else if(mode==MP_LIST)
+   else if(mode==MP_LIST || (mode==CHANGE_DIR && use_propfind_now))
    {
       Send("%s",allprop);
    }
@@ -1489,6 +1502,13 @@ int Http::Do()
 		     ResMgr::Set("http:use-propfind",hostname,"no");
 		  if(!xstrcmp(last_method,"MKCOL"))
 		     ResMgr::Set("http:use-mkcol",hostname,"no");
+	       }
+	       if(mode==CHANGE_DIR && !xstrcmp(last_method,"PROPFIND"))
+	       {
+		  use_propfind_now=false;
+		  try_time=0;
+		  Disconnect();
+		  return MOVED;
 	       }
 	       code=NOT_SUPP;
 	       closure=last_method;
