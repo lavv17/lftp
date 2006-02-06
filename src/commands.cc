@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2005 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2006 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -190,6 +190,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	    " -S                   - sort by file size\n"
 	    " --user, --group, --perms, --date, --linkcount, --links\n"
 	    "                      - show individual fields\n"
+	    " --time-style=STYLE   - use specified time format\n"
 	    "\n"
 	    "By default, cls output is cached, to see new listing use `recls' or\n"
 	    "`cache flush'.\n"
@@ -2532,7 +2533,7 @@ CMD(help)
 CMD(ver)
 {
    printf(
-      _("LFTP | Version %s | Copyright (c) 1996-2005 Alexander V. Lukyanov\n"),VERSION);
+      _("LFTP | Version %s | Copyright (c) 1996-2006 Alexander V. Lukyanov\n"),VERSION);
    printf("\n");
    printf(
       _("LFTP is free software, covered by the GNU General Public License, and you are\n"
