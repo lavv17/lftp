@@ -49,8 +49,10 @@ CDECL_END
 #include "CopyJob.h"
 
 
-ResDecl	res_default_cls         ("cmd:cls-default",  "-F", FileSetOutput::ValidateArgv,0),
-	res_default_comp_cls    ("cmd:cls-completion-default", "-FB",FileSetOutput::ValidateArgv,0);
+ResDecl	res_default_cls         ("cmd:cls-default",  "-F", FileSetOutput::ValidateArgv,ResMgr::NoClosure),
+	res_default_comp_cls    ("cmd:cls-completion-default", "-FB",FileSetOutput::ValidateArgv,ResMgr::NoClosure);
+
+ResDecl res_time_style	("cmd:time-style", "%b %e  %Y|%b %e %H:%M", 0, ResMgr::NoClosure);
 
 /* note: this sorts (add a nosort if necessary) */
 void FileSetOutput::print(FileSet &fs, OutputJob *o) const
@@ -139,13 +141,13 @@ void FileSetOutput::print(FileSet &fs, OutputJob *o) const
 	 const char *use_fmt=time_fmt;
 	 if(!use_fmt)
 	    use_fmt=ResMgr::Query("cmd:time-style",0);
-	 if(!use_fmt)
+	 if(!use_fmt || !*use_fmt)
 	    use_fmt="%b %e  %Y\n%b %e %H:%M";
 
 	 char *dt_mem = xstrftime(use_fmt, localtime (&f->date));
-	 char *dt=strtok(dt_mem,"\n");
+	 char *dt=strtok(dt_mem,"\n|");
 	 if(recent) {
-	    char *dt1=strtok(NULL,"\n");
+	    char *dt1=strtok(NULL,"\n|");
 	    if(dt1)
 	       dt=dt1;
 	 }
