@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "31 Dec 2005"
+.TH lftp 1 "06 Feb 2006"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 3.4.0.
+This man page documents lftp version 3.4.1.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -856,6 +856,9 @@ end a sequence of non-printing characters
 .RE
 
 .TP
+.BR cmd:time-style \ (string)
+This setting is the default value for cls --time-style option.
+.TP
 .BR cache:cache-empty-listings \ (boolean)
 When false, empty listings are not cached.
 .TP
@@ -922,7 +925,7 @@ if true, lftp will fork before resolving host address. Default is true.
 .BR dns:max-retries \ (number)
 If zero, there is no limit on the number of times lftp will try
 to lookup an address.
-If > 0, lftp will try only this number of times to look up an address of each 
+If > 0, lftp will try only this number of times to look up an address of each
 address family in dns:order.
 .TP
 .BR file:charset \ (string)

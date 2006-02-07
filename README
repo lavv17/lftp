@@ -1,4 +1,4 @@
-** lftp-3.3.x
+** lftp-3.4.x
 
 This package `lftp' contains the following components:
 
@@ -20,7 +20,7 @@ library is used for input.
 
 Low level stuff supported: ftp proxy, http proxy, ftp over http, opie/skey,
 fxp transfers, automatic retrying on non-fatal errors and timeouts, ipv6,
-socks, http/1.1, sftp v3-4. See FEATURES for more detailed list of
+socks, http/1.1, sftp v3-v6. See FEATURES for more detailed list of
 features.
 
 Every operation in lftp is reliable, that is any non-fatal error is ignored
@@ -148,7 +148,7 @@ Comments and bug reports are welcome. Please send them to the list:
 
 License
 ~~~~~~~
-Copyright (c) 1996-2005 by Alexander V. Lukyanov (lav@yars.free.net)
+Copyright (c) 1996-2006 by Alexander V. Lukyanov (lav@yars.free.net)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

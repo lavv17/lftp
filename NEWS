@@ -1,3 +1,10 @@
+Version 3.4.1 - 2006-02-07
+
+* new cls option --time-style, new setting cmd:time-style.
+* use PROPFIND first to check directory existence (http).
+* fixed CCC - don't try to shutdown ssl connection gracefully.
+* fixed an abortion when completing with cmd:remote-completion set to false.
+
 Version 3.4.0 - 2005-12-31
 
 * flush cache when changing ftp:charset.
