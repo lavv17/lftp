@@ -1490,6 +1490,7 @@ const char *FileSetOutput::parse_argv(ArgV *a)
 	 sort_reverse = true;
 	 break;
       case(256+'T'):
+	 time_style=optarg;
 	 break;
 
       default:
@@ -1508,12 +1509,12 @@ const char *FileSetOutput::parse_argv(ArgV *a)
    if(time_style && time_style[0]) {
       if(time_style[0]=='+')
 	 time_fmt=xstrdup(time_style+1);
-      else if(!strcmp(optarg,"full-iso"))
+      else if(!strcmp(time_style,"full-iso"))
 //	 time_fmt=xstrdup("%Y-%m-%d %H:%M:%S.%N %z"); // %N and %z are GNU extensions
 	 time_fmt=xstrdup("%Y-%m-%d %H:%M:%S");
-      else if(!strcmp(optarg,"long-iso"))
+      else if(!strcmp(time_style,"long-iso"))
 	 time_fmt=xstrdup("%Y-%m-%d %H:%M");
-      else if(!strcmp(optarg,"iso"))
+      else if(!strcmp(time_style,"iso"))
 	 time_fmt=xstrdup("%Y-%m-%d \n%m-%d %H:%M");
       else
 	 time_fmt=xstrdup(time_style);

@@ -1,3 +1,7 @@
+2006-02-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: fixed a stupid bug with cls (time-style).
+
 2006-02-06  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileSetOutput.cc, commands.cc: add cmd:time-style setting.
