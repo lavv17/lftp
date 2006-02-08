@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-07 17:24+0300\n"
+"POT-Creation-Date: 2006-02-08 12:32+0300\n"
 "PO-Revision-Date: 2005-07-30 23:51+0800\n"
 "Last-Translator: Abel Cheung <abelcheung@gmail.com>\n"
 "Language-Team: traditional Chinese <community@linuxhall.org>\n"
@@ -287,17 +287,17 @@ msgid "%s: regular expression `%s': %s\n"
 msgstr "%s：正規表示式 ‘%s’：%s\n"
 
 #: src/MirrorJob.cc:1478 src/commands.cc:1046 src/commands.cc:1134
-#: src/commands.cc:1560 src/commands.cc:1594 src/commands.cc:1699
-#: src/commands.cc:2000 src/commands.cc:2196 src/commands.cc:2369
-#: src/commands.cc:2376 src/commands.cc:2624 src/commands.cc:2651
-#: src/commands.cc:2658 src/commands.cc:2992 src/commands.cc:3273
+#: src/commands.cc:1561 src/commands.cc:1595 src/commands.cc:1700
+#: src/commands.cc:2001 src/commands.cc:2197 src/commands.cc:2370
+#: src/commands.cc:2377 src/commands.cc:2625 src/commands.cc:2652
+#: src/commands.cc:2659 src/commands.cc:2993 src/commands.cc:3274
 #: src/SleepJob.cc:139
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "請輸入 ‘help %s’ 顯示額外資訊。\n"
 
 #: src/MirrorJob.cc:1513 src/MirrorJob.cc:1529 src/commands.cc:893
-#: src/commands.cc:2091 src/DummyProto.cc:73
+#: src/commands.cc:2092 src/DummyProto.cc:73
 msgid " - not supported protocol"
 msgstr " - 不支援該種協定"
 
@@ -333,7 +333,7 @@ msgstr "時間單位無效，只允許使用 [smhd]。"
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "時間格式無效。格式是 <time><unit>，例如：2h30m。"
 
-#: src/ResMgr.cc:733 src/commands.cc:3150 src/commands.cc:3159
+#: src/ResMgr.cc:733 src/commands.cc:3151 src/commands.cc:3160
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "範圍格式無效。格式是 min-max，例如 10-20。"
 
@@ -1389,7 +1389,7 @@ msgstr "請輸入 ‘%s --help’ 顯示額外資訊\n"
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 msgstr "用法：%s [-e 指令] [-p 連接埠] [-u 用戶名稱[,密碼]] <主機名稱|URL>\n"
 
-#: src/commands.cc:939 src/commands.cc:2075
+#: src/commands.cc:939 src/commands.cc:2076
 msgid "Password: "
 msgstr "密碼："
 
@@ -1451,168 +1451,168 @@ msgstr "‘--sort’的參數無效"
 msgid "invalid block size"
 msgstr "無效的區段大小"
 
-#: src/commands.cc:1499
+#: src/commands.cc:1500
 msgid "invalid option"
 msgstr "無效的選項"
 
-#: src/commands.cc:1603
+#: src/commands.cc:1604
 #, c-format
 msgid "Usage: %s [OPTS] files...\n"
 msgstr "Usage：%s [選項] 檔案...\n"
 
-#: src/commands.cc:1677
+#: src/commands.cc:1678
 #, c-format
 msgid "%s: -n: Number expected. "
 msgstr "%s：-n：應該使用數字。 "
 
-#: src/commands.cc:1710
+#: src/commands.cc:1711
 #, c-format
 msgid "File name missed. "
 msgstr "缺少了檔案名稱。 "
 
-#: src/commands.cc:1822
+#: src/commands.cc:1823
 #, c-format
 msgid "Usage: %s %s[-f] files...\n"
 msgstr "用法：%s %s[-f] 檔案...\n"
 
-#: src/commands.cc:1869
+#: src/commands.cc:1870
 #, c-format
 msgid "Usage: %s [-e] <file|command>\n"
 msgstr "用法：%s [-e] <檔案|指令>\n"
 
-#: src/commands.cc:1913
+#: src/commands.cc:1914
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
 msgstr "用法：%s [-v] [-v] ...\n"
 
-#: src/commands.cc:1940
+#: src/commands.cc:1941
 #, c-format
 msgid "Usage: %s [-p]\n"
 msgstr "用法：%s [-p]\n"
 
-#: src/commands.cc:2042
+#: src/commands.cc:2043
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
 msgstr "偵錯輸出詳細程度為 %d，輸出至 %s\n"
 
-#: src/commands.cc:2045
+#: src/commands.cc:2046
 #, c-format
 msgid "debug is off\n"
 msgstr "關閉偵錯輸出\n"
 
-#: src/commands.cc:2056
+#: src/commands.cc:2057
 #, c-format
 msgid "Usage: %s userid [pass]\n"
 msgstr "用法：%s 用戶名稱 [密碼]\n"
 
-#: src/commands.cc:2131 src/commands.cc:2304
+#: src/commands.cc:2132 src/commands.cc:2305
 #, c-format
 msgid "%s: no current job\n"
 msgstr "%s：目前沒有任何工作\n"
 
-#: src/commands.cc:2141 src/commands.cc:2171 src/commands.cc:2312
+#: src/commands.cc:2142 src/commands.cc:2172 src/commands.cc:2313
 #, c-format
 msgid "%s: %d - no such job\n"
 msgstr "%s：%d - 指定的工作編號不存在\n"
 
-#: src/commands.cc:2143
+#: src/commands.cc:2144
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
 msgstr "用法：%s <工作編號> ... | all\n"
 
-#: src/commands.cc:2162 src/commands.cc:2294 src/commands.cc:2438
-#: src/commands.cc:2799 src/commands.cc:2872 src/commands.cc:3285
+#: src/commands.cc:2163 src/commands.cc:2295 src/commands.cc:2439
+#: src/commands.cc:2800 src/commands.cc:2873 src/commands.cc:3286
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s：%s - 不是數字\n"
 
-#: src/commands.cc:2227
+#: src/commands.cc:2228
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr "%s：%s。請輸入‘set -a’列出所有變數。\n"
 
-#: src/commands.cc:2277
+#: src/commands.cc:2278
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
 msgstr "用法：%s [<工作編號>]\n"
 
-#: src/commands.cc:2317
+#: src/commands.cc:2318
 #, c-format
 msgid "%s: some other job waits for job %d\n"
 msgstr "%s：有其它工作正在等待工作 %d 完成\n"
 
-#: src/commands.cc:2322
+#: src/commands.cc:2323
 #, c-format
 msgid "%s: wait loop detected\n"
 msgstr "%s：某項工作正在等待自己完成 (迴圈)\n"
 
-#: src/commands.cc:2347
+#: src/commands.cc:2348
 #, c-format
 msgid "Usage: mv <file1> <file2>\n"
 msgstr "用法：mv <檔案1> <檔案2>\n"
 
-#: src/commands.cc:2368 src/commands.cc:2650
+#: src/commands.cc:2369 src/commands.cc:2651
 #, c-format
 msgid "Invalid command. "
 msgstr "指令無效。 "
 
-#: src/commands.cc:2375 src/commands.cc:2657
+#: src/commands.cc:2376 src/commands.cc:2658
 #, c-format
 msgid "Ambiguous command. "
 msgstr "指令不明確。 "
 
-#: src/commands.cc:2394
+#: src/commands.cc:2395
 #, c-format
 msgid "%s: Operand missed for size\n"
 msgstr "%s：size 副指令缺少了參數\n"
 
-#: src/commands.cc:2411
+#: src/commands.cc:2412
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
 msgstr "%s：‘expire’副指令缺少了參數\n"
 
-#: src/commands.cc:2444
+#: src/commands.cc:2445
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr "%s：%s - 指定的作業階段不存在。請使用‘scache’列出作業階段的清單。\n"
 
-#: src/commands.cc:2461
+#: src/commands.cc:2462
 #, c-format
 msgid "Sorry, no help for %s\n"
 msgstr "對不起，沒有有關 %s 的說明文字\n"
 
-#: src/commands.cc:2466
+#: src/commands.cc:2467
 #, c-format
 msgid "%s is a built-in alias for %s\n"
 msgstr "%s 是 %s 的內置別名\n"
 
-#: src/commands.cc:2471
+#: src/commands.cc:2472
 #, c-format
 msgid "Usage: %s\n"
 msgstr "用法：%s\n"
 
-#: src/commands.cc:2479
+#: src/commands.cc:2480
 #, c-format
 msgid "%s is an alias to `%s'\n"
 msgstr "%s 是 ‘%s’ 的別名\n"
 
-#: src/commands.cc:2483
+#: src/commands.cc:2484
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr "沒有 ‘%s’ 這個指令。請輸入 ‘help’ 列出可使用的指令。\n"
 
-#: src/commands.cc:2485
+#: src/commands.cc:2486
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr "指令 ‘%s’ 不明確。請輸入 ‘help’ 列出可使用的指令。\n"
 
-#: src/commands.cc:2536
+#: src/commands.cc:2537
 #, fuzzy, c-format
 msgid "LFTP | Version %s | Copyright (c) 1996-2006 Alexander V. Lukyanov\n"
 msgstr "LFTP | %s 版本 | 版權所有 (c) 1996-2005 Alexander V. Lukyanov\n"
 
-#: src/commands.cc:2539
+#: src/commands.cc:2540
 #, c-format
 msgid ""
 "LFTP is free software, covered by the GNU General Public License, and you "
@@ -1625,86 +1625,86 @@ msgstr ""
 "下修改及 / 或散布該程式。\n"
 "LFTP 不負任何擔保責任。請參閱 COPYING 檔案。\n"
 
-#: src/commands.cc:2544
+#: src/commands.cc:2545
 #, c-format
 msgid "Send bug reports and questions to <%s>.\n"
 msgstr "請將錯誤報告及問題寄至 <%s>。\n"
 
-#: src/commands.cc:2548
+#: src/commands.cc:2549
 #, c-format
 msgid "Libraries used: "
 msgstr "本程式使用的函式庫："
 
-#: src/commands.cc:2675 src/commands.cc:2707
+#: src/commands.cc:2676 src/commands.cc:2708
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s：需要書籤名稱\n"
 
-#: src/commands.cc:2696
+#: src/commands.cc:2697
 #, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
 msgstr "%s：書籤名稱不可有空格\n"
 
-#: src/commands.cc:2709
+#: src/commands.cc:2710
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s：沒有‘%s’這個書籤\n"
 
-#: src/commands.cc:2725
+#: src/commands.cc:2726
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s：需要指定匯入的方式 (netscape,ncftp)\n"
 
-#: src/commands.cc:2805
+#: src/commands.cc:2806
 #, c-format
 msgid "Usage: %s [-d #] dir\n"
 msgstr "用法：%s [-d 數字] 目錄\n"
 
-#: src/commands.cc:2903
+#: src/commands.cc:2904
 #, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "%s：區段大小‘%s’無效\n"
 
-#: src/commands.cc:2918
+#: src/commands.cc:2919
 #, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "用法：%s [選項] <目錄>\n"
 
-#: src/commands.cc:2924
+#: src/commands.cc:2925
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr "%s：警告：summarizing 和 --max-depth=0 是一樣的\n"
 
-#: src/commands.cc:2928
+#: src/commands.cc:2929
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr "%s：summarizing 和 --max-depth=%i 選項互相矛盾\n"
 
-#: src/commands.cc:2979
+#: src/commands.cc:2980
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "用法：%s 指令 參數...\n"
 
-#: src/commands.cc:2991
+#: src/commands.cc:2992
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "用法：%s 模組 [參數...]\n"
 
-#: src/commands.cc:3009 src/LocalAccess.cc:628
+#: src/commands.cc:3010 src/LocalAccess.cc:628
 msgid "cannot get current directory"
 msgstr "無法決定目前的目錄"
 
-#: src/commands.cc:3070
+#: src/commands.cc:3071
 #, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "Usage：%s [選項] 模式 檔案...\n"
 
-#: src/commands.cc:3090
+#: src/commands.cc:3091
 #, c-format
 msgid "invalid mode string: %s\n"
 msgstr "無效的檔案模式字串：%s\n"
 
-#: src/commands.cc:3165
+#: src/commands.cc:3166
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "用法：%s [選項] 檔案\n"
