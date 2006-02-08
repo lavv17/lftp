@@ -1,3 +1,8 @@
+Version 3.4.2 - 2006-02-08
+
+* fixed a coredump in cls (option parsing).
+* import TIME_STYLE environment variable to cmd:time-style.
+
 Version 3.4.1 - 2006-02-07
 
 * new cls option --time-style, new setting cmd:time-style.

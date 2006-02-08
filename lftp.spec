@@ -43,7 +43,7 @@ make DESTDIR=%{buildroot}
 %install
 rm -rf %{buildroot}
 make install DESTDIR=%{buildroot}
-rm -f %{buildroot}%{_libdir}/*.{so,la}
+rm -f %{buildroot}%{_libdir}/*.{so,la,a}
 
 %clean
 rm -rf %{buildroot}
