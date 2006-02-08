@@ -430,5 +430,9 @@ void ResMgr::ClassInit()
       Set("file:charset",0,cs);
 #endif
 
+   const char *time_style=getenv("TIME_STYLE");
+   if(time_style && *time_style)
+      Set("cmd:time-style",0,time_style);
+
    Set("xfer:verify-command",0,PKGDATADIR"/verify-file");
 }

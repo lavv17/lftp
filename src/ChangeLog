@@ -1,6 +1,7 @@
 2006-02-08  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: fixed a stupid bug with cls (time-style).
+	* resource.cc: assign env TIME_STYLE to cmd:time-style.
 
 2006-02-06  Alexander V. Lukyanov <lav@yars.free.net>
 
