@@ -1,3 +1,7 @@
+2006-02-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: fixed condition when exact time is needed for cls.
+
 2006-02-08  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: fixed a stupid bug with cls (time-style).

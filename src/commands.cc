@@ -1526,7 +1526,7 @@ const char *FileSetOutput::parse_argv(ArgV *a)
 	    const char *f=strstr(time_fmt,exact_fmts[i]);
 	    if(!f)
 	       continue;
-	    if(i>1 || (sep && !time_fmt[sep]) || sep<f-time_fmt) {
+	    if(i>1 || sep>f-time_fmt) {
 	       need_exact_time=true;
 	       break;
 	    }
