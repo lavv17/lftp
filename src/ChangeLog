@@ -1,3 +1,12 @@
+2006-02-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h: Close session in Chdir, VerifyPath
+	  (fixed coredump).
+	* LsCache.cc: avoid Chdir, as it Closes session.
+	* FileCopy.cc: use SMTask ref count.
+	* SMTask.cc, SMTask.h: (ref_count) new member.
+	* ftpclass.cc: remove unneeded abort().
+
 2006-02-14  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: fixed condition when exact time is needed for cls.

@@ -402,8 +402,8 @@ void FileCopy::Init()
    max_buf=0x10000;
    cont=false;
    error_text=0;
-   rate        =new Speedometer("xfer:rate-period");
-   rate_for_eta=new Speedometer("xfer:eta-period");
+   rate        =MakeRef(new Speedometer("xfer:rate-period"));
+   rate_for_eta=MakeRef(new Speedometer("xfer:eta-period"));
    put_buf=0;
    put_eof_pos=0;
    bytes_count=0;
@@ -418,18 +418,18 @@ void FileCopy::Init()
 FileCopy::FileCopy(FileCopyPeer *s,FileCopyPeer *d,bool c)
 {
    Init();
-   get=s;
-   put=d;
+   get=MakeRef(s);
+   put=MakeRef(d);
    cont=c;
 }
 FileCopy::~FileCopy()
 {
-   Delete(get);
-   Delete(put);
+   DeleteRef(get);
+   DeleteRef(put);
    delete line_buffer;
    xfree(error_text);
-   Delete(rate);
-   Delete(rate_for_eta);
+   DeleteRef(rate);
+   DeleteRef(rate_for_eta);
 }
 FileCopy *FileCopy::New(FileCopyPeer *s,FileCopyPeer *d,bool c)
 {
@@ -469,8 +469,8 @@ void FileCopy::SetError(const char *str)
 {
    xfree(error_text);
    error_text=xstrdup(str);
-   Delete(get); get=0;
-   Delete(put); put=0;
+   DeleteRef(get);
+   DeleteRef(put);
 }
 
 void FileCopy::LineBuffered(int s)
@@ -793,7 +793,7 @@ int FileCopyPeerFA::Do()
 	       // FIXME: set date for real.
 	       date_set=true;
 	       if(!verify)
-		  verify=new FileVerificator(session,file);
+		  verify=MakeRef(new FileVerificator(session,file));
 	       return MOVED;
 	    }
 	    else if(res==FA::IN_PROGRESS)
@@ -1192,7 +1192,7 @@ FileCopyPeerFA::~FileCopyPeerFA()
    }
    xfree(file);
    xfree(orig_url);
-   Delete(verify);
+   DeleteRef(verify);
 }
 
 FileCopyPeerFA::FileCopyPeerFA(ParsedURL *u,int m)
@@ -1262,7 +1262,7 @@ FileCopyPeerFDStream::~FileCopyPeerFDStream()
    if(delete_stream)
       delete stream;
    delete put_ll_timer;
-   Delete(verify);
+   DeleteRef(verify);
 }
 
 void FileCopyPeerFDStream::Seek_LL()
@@ -1379,7 +1379,7 @@ int FileCopyPeerFDStream::Do()
 	    if(stream && delete_stream && !stream->Done())
 	       return m;
 	    if(!verify)
-	       verify=new FileVerificator(stream);
+	       verify=MakeRef(new FileVerificator(stream));
 	    return MOVED;
 	 }
 	 if(seek_pos==0)
@@ -1698,7 +1698,7 @@ FileCopyPeerDirList::FileCopyPeerDirList(FA *s,ArgV *v)
    : FileCopyPeer(GET)
 {
    session=s;
-   dl=session->MakeDirList(v);
+   dl=MakeRef(session->MakeDirList(v));
    if(dl==0)
       eof=true;
    can_seek=false;
@@ -1707,7 +1707,7 @@ FileCopyPeerDirList::FileCopyPeerDirList(FA *s,ArgV *v)
 
 FileCopyPeerDirList::~FileCopyPeerDirList()
 {
-   Delete(dl);
+   DeleteRef(dl);
    SessionPool::Reuse(session);
 }
 

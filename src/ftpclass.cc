@@ -1808,7 +1808,8 @@ int   Ftp::Do()
 	 }
       case(CONNECT_VERIFY):
       case(CLOSED):
-	 abort(); // can't happen
+	 state=EOF_STATE;
+	 return MOVED;
       }
       if(want_type!=conn->type)
       {

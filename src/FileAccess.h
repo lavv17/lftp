@@ -97,7 +97,7 @@ public:
       Path(const Path *o) { init(); Set(o); }
       Path(const Path &o) { init(); Set(o); }
       Path(const char *new_path) { init(); Set(new_path); }
-      Path(const char *new_path,bool new_is_file=false,const char *new_url=0,int new_device_prefix_len=0)
+      Path(const char *new_path,bool new_is_file,const char *new_url=0,int new_device_prefix_len=0)
 	 { init(); Set(new_path,new_is_file,new_url,new_device_prefix_len); }
       ~Path();
       void Set(const Path*);

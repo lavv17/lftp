@@ -39,8 +39,12 @@ class SMTask
    bool	 suspended;
    bool	 suspended_slave;
 
+   static void _MakeRef(SMTask*);
+   static void _DeleteRef(SMTask*);
+
 protected:
    int	 running;
+   int	 ref_count;
    bool	 deleting;
 
    enum
@@ -89,6 +93,8 @@ public:
 
    void DeleteLater() { deleting=true; }
    static void Delete(SMTask *);
+   template<class T> static void DeleteRef(T *&task) { _DeleteRef(task); task=0; }
+   template<class T> static T *MakeRef(T *task) { _MakeRef(task); return task; }
    static int Roll(SMTask *);
    static void RollAll(int max_time);
 

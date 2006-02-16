@@ -322,9 +322,11 @@ void LsCache::SetDirectory(FileAccess *p_loc, const char *path, bool dir)
       return;
 
    FileAccess::Path origdir = p_loc->GetCwd();
+   FileAccess::Path new_cwd = origdir;
 
-   p_loc->Chdir(path,false);
+   new_cwd.Change(path,!dir);
    const char *entry = dir? "1":"0";
+   p_loc->SetCwd(new_cwd);
    LsCache::Add(p_loc,"",FileAccess::CHANGE_DIR, dir?FA::OK:FA::NO_FILE, entry, strlen(entry));
    p_loc->SetCwd(origdir);
 }

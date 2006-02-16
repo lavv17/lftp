@@ -60,6 +60,7 @@ SMTask::SMTask()
    suspended=false;
    suspended_slave=false;
    running=0;
+   ref_count=0;
    deleting=false;
    task_count++;
 #ifdef TASK_DEBUG
@@ -107,6 +108,7 @@ SMTask::~SMTask()
 #endif
    task_count--;
    assert(!running);
+   assert(!ref_count);
    // remove from the chain
    SMTask **scan=&chain;
    while(*scan)
@@ -126,8 +128,23 @@ void SMTask::Delete(SMTask *task)
    if(!task)
       return;
    task->deleting=true;
-   if(!task->running)
+   if(!task->running && !task->ref_count)
       delete task;
+}
+void SMTask::_DeleteRef(SMTask *task)
+{
+   if(!task)
+      return;
+   assert(task->ref_count>0);
+   task->ref_count--;
+   Delete(task);
+   task=0;
+}
+void SMTask::_MakeRef(SMTask *task)
+{
+   if(!task)
+      return;
+   task->ref_count++;
 }
 
 void SMTask::Enter(SMTask *task)
@@ -174,7 +191,7 @@ int SMTask::CollectGarbage()
       SMTask *scan=chain;
       while(scan)
       {
-	 if(scan->running || !scan->deleting)
+	 if(scan->running || !scan->deleting || scan->ref_count)
 	 {
 	    scan=scan->next;
 	    continue;

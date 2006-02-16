@@ -674,7 +674,7 @@ void FileAccess::Chdir(const char *path,bool verify)
 {
    cwd.ExpandTilde(home);
 
-   delete new_cwd;
+   Close();
    new_cwd=new Path(&cwd);
    new_cwd->Change(path,false);
 
@@ -690,7 +690,7 @@ void FileAccess::Chdir(const char *path,bool verify)
 
 void FileAccess::PathVerify(const Path &p)
 {
-   delete new_cwd;
+   Close();
    new_cwd=new Path(p);
    Open(new_cwd->path,CHANGE_DIR);
 }
