@@ -149,8 +149,11 @@ int FileCopy::Do()
       }
       if(get->Error() && get->Size()==0)
       {
-	 put->PutEOF();
-	 Roll(put);
+	 if(put->GetPos()>0)
+	 {
+	    put->PutEOF();
+	    Roll(put);
+	 }
       get_error:
 	 SetError(get->ErrorText());
 	 return MOVED;
