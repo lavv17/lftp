@@ -419,6 +419,7 @@ int   main(int argc,char **argv)
    int exit_code=top_exec->ExitCode();
    SMTask::Delete(top_exec);
    top_exec=0;
+   Job::Cleanup();
    ConnectionSlot::Cleanup();
    SessionPool::ClearAll();
    LsCache::Flush();

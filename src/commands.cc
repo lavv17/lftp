@@ -662,6 +662,13 @@ Job *CmdExec::builtin_exit()
    }
    while(!Done())
       RemoveFeeder();
+   if(interactive)
+   {
+      ListDoneJobs();
+      BuryDoneJobs();
+      if(FindJob(last_bg)==0)
+	 last_bg=-1;
+   }
    exit_code=prev_exit_code=code;
    return 0;
 }

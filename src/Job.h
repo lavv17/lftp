@@ -107,9 +107,10 @@ public:
       return j && !j->Done();
    }
    void Kill(int n);
-   void Kill(Job*);
+   static void Kill(Job*);
    void SendSig(int n,int sig);
-   void KillAll();
+   static void KillAll();
+   static void Cleanup();
 
    void vfprintf(FILE *file,const char *fmt,va_list v);
    // CmdExec redefines this, and traps all messages of its children.

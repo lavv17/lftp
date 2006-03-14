@@ -1,3 +1,13 @@
+2006-03-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc: don't create target file if source does not exist.
+	* Job.cc: don't delete killed job right not; CollectGarbage after
+	  KillAll or Cleanup, don't delete the jobs in loop.
+	* Job.h: make Kill and KillAll static; add Cleanup method.
+	* commands.cc: show done jobs before exit.
+	* lftp.cc: do Job::Cleanup before termination.
+	* resource.cc: change http:use-propfind default to no.
+
 2006-02-16  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileAccess.cc, FileAccess.h: Close session in Chdir, VerifyPath

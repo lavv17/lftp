@@ -265,7 +265,7 @@ static ResDecl
    ResDecl24d("http:cache-control",	  "",	   0,0),
    ResDecl25 ("http:proxy",		  "",	   HttpProxyValidate,0),
    ResDecl25a("http:use-mkcol",		  "yes",   ResMgr::BoolValidate,0),
-   ResDecl25b("http:use-propfind",	  "yes",   ResMgr::BoolValidate,0),
+   ResDecl25b("http:use-propfind",	  "no",    ResMgr::BoolValidate,0),
    ResDecl26 ("http:user-agent",	  PACKAGE"/"VERSION,0,0),
    ResDecl27 ("http:cookie",		  "",	   0,0),
    ResDecl28 ("http:set-cookies",	  "no",	   0,0),

@@ -198,7 +198,7 @@ void Job::Kill(Job *j)
       j->parent->ReplaceWaiting(j,r);
    }
    assert(FindWhoWaitsFor(j)==0);
-   Delete(j);
+   j->DeleteLater();
 }
 
 void Job::Kill(int n)
@@ -210,13 +210,16 @@ void Job::Kill(int n)
 
 void Job::KillAll()
 {
-   for(Job *scan=chain; scan; )
-   {
-      Job *tmp=scan;
-      scan=scan->next;
-      if(tmp->jobno>=0)
-	 Job::Kill(tmp);
-   }
+   for(Job *scan=chain; scan; scan=scan->next)
+      if(scan->jobno>=0)
+	 Job::Kill(scan);
+   CollectGarbage();
+}
+void Job::Cleanup()
+{
+   for(Job *scan=chain; scan; scan=scan->next)
+      Job::Kill(scan);
+   CollectGarbage();
 }
 
 void  Job::SendSig(int n,int sig)
