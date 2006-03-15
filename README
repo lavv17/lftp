@@ -70,10 +70,10 @@ by the OpenSSL Project for use in the OpenSSL Toolkit.
 Where to get
 ~~~~~~~~~~~~
 By FTP:
-	ftp://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/
+	ftp://ftp.yar.ru/lftp/
 	ftp://metalab.unc.edu/pub/Linux/system/network/file-transfer/
 By HTTP:
-	http://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/
+	http://ftp.yar.ru/lftp/
 	http://metalab.unc.edu/pub/Linux/system/network/file-transfer/
 By CVS:
 	CVSROOT=:pserver:anonymous@swing.yars.free.net:/home/lav/cvsroot
