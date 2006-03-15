@@ -1,5 +1,10 @@
 2006-03-15  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* MirrorJob.cc, resource.cc: add mirror:dereference setting,
+	  --no-dereference, --perms options.
+
+2006-03-15  Alexander V. Lukyanov <lav@yars.free.net>
+
 	* FindJob.cc, FindJob.h: add PROCESSING state, so Chdir
 	  is not called continuously.
 	* LsCache.cc: use Path::Change instead of Chdir.

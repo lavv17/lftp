@@ -1274,6 +1274,7 @@ CMD(mirror)
       {"only-newer",no_argument,0,'n'},
       {"no-recursion",no_argument,0,'r'},
       {"no-perms",no_argument,0,'p'},
+      {"perms",no_argument,0,'p'+512},
       {"no-umask",no_argument,0,256+'u'},
       {"continue",no_argument,0,'c'},
       {"reverse",no_argument,0,'R'},
@@ -1282,6 +1283,7 @@ CMD(mirror)
       {"older-than",required_argument,0,256+'O'},
       {"size-range",required_argument,0,512+'S'},
       {"dereference",no_argument,0,'L'},
+      {"no-dereference",no_argument,0,'L'+512},
       {"use-cache",no_argument,0,256+'C'},
       {"Remove-source-files",no_argument,0,256+'R'},
       {"parallel",optional_argument,0,'P'},
@@ -1325,6 +1327,8 @@ CMD(mirror)
 
    if(!ResMgr::QueryBool("mirror:set-permissions",0))
       flags|=MirrorJob::NO_PERMS;
+   if(ResMgr::QueryBool("mirror:dereference",0))
+      flags|=MirrorJob::RETR_SYMLINKS;
 
    args->rewind();
    while((opt=args->getopt_long("esi:x:I:X:nrpcRvN:LPa",mirror_opts,0))!=EOF)
@@ -1351,6 +1355,9 @@ CMD(mirror)
 	 break;
       case('p'):
 	 flags|=MirrorJob::NO_PERMS;
+	 break;
+      case('p'+512):
+	 flags&=~MirrorJob::NO_PERMS;
 	 break;
       case('c'):
 	 flags|=MirrorJob::CONTINUE;
@@ -1401,6 +1408,9 @@ CMD(mirror)
 	 break;
       case('L'):
 	 flags|=MirrorJob::RETR_SYMLINKS;
+	 break;
+      case('L'+512):
+	 flags&=~MirrorJob::RETR_SYMLINKS;
 	 break;
       case('v'):
 	 if(optarg)
