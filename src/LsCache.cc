@@ -338,7 +338,9 @@ void LsCache::SetDirectory(FileAccess *p_loc, const char *path, bool dir)
 int LsCache::IsDirectory(FileAccess *p_loc,const char *dir_c)
 {
    FileAccess::Path origdir = p_loc->GetCwd();
-   p_loc->Chdir(dir_c, false);
+   FileAccess::Path new_cwd = origdir;
+   new_cwd.Change(dir_c);
+   p_loc->SetCwd(new_cwd);
 
    int ret = -1;
 
@@ -378,10 +380,8 @@ int LsCache::IsDirectory(FileAccess *p_loc,const char *dir_c)
    /* We know this is a file or a directory if the dirname is cached and
     * contains the basename. */
    {
-      p_loc->SetCwd(origdir);
-      char *dir = alloca_strdup(dir_c);
-      p_loc->Chdir(dirname_modify(dir), false);
-
+      new_cwd.Change("..");
+      p_loc->SetCwd(new_cwd);
 
       const FileSet *fs=FindFileSet(p_loc, "", FA::MP_LIST);
       if(!fs)

@@ -72,7 +72,7 @@ class FinderJob : public SessionJob
    PatternSet *exclude;
 
 protected:
-   enum state_t { START_INFO, INFO, LOOP, WAIT, DONE };
+   enum state_t { START_INFO, INFO, LOOP, PROCESSING, WAIT, DONE };
    state_t state;
 
    const char *op;

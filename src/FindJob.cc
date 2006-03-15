@@ -137,6 +137,10 @@ int FinderJob::Do()
 	    return MOVED;
 	 }
       }
+
+      state=PROCESSING;
+      m=MOVED;
+   case PROCESSING:
       pres=ProcessFile(top.path,top.fset->curr());
 
       if(pres==PRF_LATER)
@@ -149,8 +153,7 @@ int FinderJob::Do()
       case(PRF_FATAL):
 	 errors++;
 	 state=DONE;
-	 m=MOVED;
-	 return m;
+	 return MOVED;
       case(PRF_ERR):
 	 errors++;
 	 break;
@@ -163,6 +166,8 @@ int FinderJob::Do()
 	 abort();
       }
    post_WAIT:
+      state=LOOP;
+      m=MOVED;
       if(stack_ptr==-1)
 	 return m;
       if(!depth_first && (maxdepth == -1 || stack_ptr+1 < maxdepth))
@@ -184,8 +189,6 @@ int FinderJob::Do()
 	 return m;
       RemoveWaiting(j);
       Delete(j);
-      state=LOOP;
-      m=MOVED;
       goto post_WAIT;
 
    case DONE:

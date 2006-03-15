@@ -1,3 +1,9 @@
+2006-03-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FindJob.cc, FindJob.h: add PROCESSING state, so Chdir
+	  is not called continuously.
+	* LsCache.cc: use Path::Change instead of Chdir.
+
 2006-03-13  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc: don't create target file if source does not exist.
