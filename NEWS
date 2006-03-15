@@ -1,3 +1,12 @@
+Version 3.4.3 - 2006-03-15
+
+* don't create target file when source file does not exist.
+* show done jobs before exit.
+* changed default for http:use-propfind to no.
+* fixed condition for getting exact time for cls.
+* fixed coredump with non-absolute http redirection.
+* fixed coredump when exiting lftp with a done job.
+
 Version 3.4.2 - 2006-02-08
 
 * fixed a coredump in cls (option parsing).
