@@ -514,6 +514,7 @@ int lftp_ssl_gnutls::do_handshake()
       }
    }
    handshake_done=true;
+   SMTask::current->Timeout(0);
 
    if(gnutls_certificate_type_get(session)!=GNUTLS_CRT_X509)
    {
@@ -883,6 +884,7 @@ int lftp_ssl_openssl::do_handshake()
       }
    }
    handshake_done=true;
+   SMTask::current->Timeout(0);
    return DONE;
 }
 int lftp_ssl_openssl::read(char *buf,int size)
