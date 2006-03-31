@@ -1,3 +1,14 @@
+2006-03-31  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.cc: get exit_code before AtExit, so it is not changed by
+	  cmd:at-exit commands.
+	* Http.cc: workaround some servers' problem with size>2G.
+
+2006-03-30  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp_ssl.cc: make scheduler run after ssl handshake - this fixes
+	  ftp upload hang when the file is empty.
+
 2006-03-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc, resource.cc: add mirror:dereference setting,

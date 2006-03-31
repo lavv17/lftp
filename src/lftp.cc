@@ -407,6 +407,8 @@ int   main(int argc,char **argv)
 
    WaitDone(top_exec);
 
+   int exit_code=top_exec->ExitCode();
+
    top_exec->AtExit();
    WaitDone(top_exec);
 
@@ -416,7 +418,6 @@ int   main(int argc,char **argv)
       move_to_background();
    }
    top_exec->KillAll();
-   int exit_code=top_exec->ExitCode();
    SMTask::Delete(top_exec);
    top_exec=0;
    Job::Cleanup();

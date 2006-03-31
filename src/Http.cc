@@ -749,6 +749,8 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       long long bs=0;
       if(1!=sscanf(value,"%lld",&bs))
 	 return;
+      if(bs<0) // try to workaround broken servers
+	 bs+=0x100000000LL;
       body_size=bs;
       if(pos==0 && mode!=STORE && mode!=MAKE_DIR)
 	 entity_size=body_size;
