@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "06 Feb 2006"
+.TH lftp 1 "05 Apr 2006"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 3.4.1.
+This man page documents lftp version 3.4.4.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -224,10 +224,9 @@ the debug output to a file.
 .PP
 guess what it does.
 
-.BR exit " ["
-.IR code ]
-.br
-.B exit bg
+.BR exit " [" bg "] [" top "]"
+.RB [ kill ]
+.RI [ code ]
 .PP
 exit will exit from lftp or move to background if there are active jobs. If
 no job is active, \fIcode\fP is passed to operating system as lftp's
@@ -235,6 +234,9 @@ termination status. If \fIcode\fP is omitted, the exit code of last
 command is used.
 .PP
 `exit bg' forces moving to background when cmd:move-background is false.
+`exit top' makes top level `shell' (internal lftp command executor) terminate.
+`exit kill' kills all numbered jobs before exiting. The options can be combined, e.g.
+`at 08:00 -- exit top kill &' kills all jobs and makes lftp exit at specified time.
 
 .B fg
 .PP
@@ -1277,6 +1279,10 @@ the string lftp sends in User-Agent header of HTTP request.
 .BR https:proxy " (string)"
 specifies https proxy. Default value is taken from environment variable \fBhttps_proxy\fP.
 .TP
+.BR mirror:dereference " (boolean)"
+when true, mirror will dereference symbolic links by default.
+You can override it by --no-dereference option. Default if false.
+.TP
 .BR mirror:exclude-regex " (regex)"
 specifies default exclusion pattern. You can override it by --include option.
 .TP
@@ -1296,7 +1302,7 @@ You can override it with --parallel option.
 .TP
 .BR mirror:set-permissions \ (boolean)
 When set to off, mirror won't try to copy file and directory permissions.
-Default is on.
+You can override it by --perms option. Default is on.
 .TP
 .BR mirror:use-pget-n " (number)"
 specifies -n option for pget command used to transfer every single file under

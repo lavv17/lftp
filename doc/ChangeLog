@@ -1,3 +1,7 @@
+2006-04-05	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document new exit options; new mirror:dereference option.
+
 2005-12-31	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Makefile.am: install lftpget.1.
