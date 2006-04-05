@@ -645,12 +645,18 @@ Job *CmdExec::builtin_exit()
    args->rewind();
    while((a=args->getnext())!=0)
    {
-      if(!strcmp(a,"top") && top)
-	 exec=top;
-      else if(!strcmp(a,"bg"))
+      if(!strcmp(a,"bg"))
 	 bg=true;
+      if(!strcmp(a,"top") || !strcmp(a,"bg"))
+      {
+	 if(top)
+	    exec=top;
+      }
       else if(!strcmp(a,"kill"))
+      {
 	 kill=true;
+	 bg=false;
+      }
       else if(sscanf(a,"%i",&code)!=1)
       {
 	 eprintf(_("Usage: %s [<exit_code>]\n"),args->a0());
