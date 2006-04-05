@@ -638,12 +638,19 @@ Job *CmdExec::builtin_cd()
 Job *CmdExec::builtin_exit()
 {
    bool bg=false;
+   bool kill=false;
    int code=prev_exit_code;
-   if(args->count()>=2)
+   CmdExec *exec=this;
+   const char *a;
+   args->rewind();
+   while((a=args->getnext())!=0)
    {
-      const char *a=args->getarg(1);
-      if(!strcmp(a,"bg"))
+      if(!strcmp(a,"top") && top)
+	 exec=top;
+      else if(!strcmp(a,"bg"))
 	 bg=true;
+      else if(!strcmp(a,"kill"))
+	 kill=true;
       else if(sscanf(a,"%i",&code)!=1)
       {
 	 eprintf(_("Usage: %s [<exit_code>]\n"),args->a0());
@@ -651,7 +658,7 @@ Job *CmdExec::builtin_exit()
       }
    }
    // Note: one job is this CmdExec.
-   if(!bg && top_level
+   if(!bg && exec->top_level
    && !ResMgr::QueryBool("cmd:move-background",0) && NumberOfJobs()>1)
    {
       eprintf(_(
@@ -660,7 +667,15 @@ Job *CmdExec::builtin_exit()
       ));
       return 0;
    }
-   while(!Done())
+   if(kill)
+      Job::KillAll();
+   exec->Exit(code);
+   exit_code=code;
+   return 0;
+}
+void CmdExec::Exit(int code)
+{
+   while(feeder)
       RemoveFeeder();
    if(interactive)
    {
@@ -670,7 +685,7 @@ Job *CmdExec::builtin_exit()
 	 last_bg=-1;
    }
    exit_code=prev_exit_code=code;
-   return 0;
+   return;
 }
 
 CmdFeeder *lftp_feeder=0;

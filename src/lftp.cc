@@ -56,7 +56,7 @@
 #include "complete.h"
 
 
-CmdExec	 *top_exec;
+#define top_exec CmdExec::top
 
 
 void  hook_signals()

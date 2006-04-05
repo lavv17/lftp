@@ -63,8 +63,9 @@ static ResDecl
    res_term_status         ("cmd:term-status",  "", 0, 0),
    res_trace		   ("cmd:trace",  "no",	ResMgr::BoolValidate,ResMgr::NoClosure);
 
-CmdExec	 *CmdExec::cwd_owner=0;
-CmdExec	 *CmdExec::chain=0;
+CmdExec	 *CmdExec::cwd_owner;
+CmdExec	 *CmdExec::chain;
+CmdExec  *CmdExec::top;
 
 void  CmdExec::SaveCWD()
 {

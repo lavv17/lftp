@@ -1,3 +1,13 @@
+2006-04-05  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopyOutputJob.cc: don't return MOVED if nothing changed, this
+	  fixes rare spinning.
+	* CmdExec.cc, CmdExec.h, lftp.cc: rename top_exec to CmdExec::top;
+	  add CmdExec::Exit method.
+	* Job.cc: don't show status of deleted jobs.
+	* commands.cc: add exit options: top, kill; accept exit code along
+	  with options.
+
 2006-03-31  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.cc: get exit_code before AtExit, so it is not changed by

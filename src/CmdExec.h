@@ -156,6 +156,7 @@ public:
    static bool is_space(char c) { return c==' ' || c=='\t'; }
    static bool is_quote(char c) { return c=='"' || c=='\''; }
    void FeedQuoted(const char *c);
+   void Exit(int);
    void AtExit();
    void EmptyCmds();
    bool WriteCmds(int fd) const;
@@ -248,6 +249,8 @@ public:
    void pre_stdout();
 
    void ChangeSlot(const char *n);
+
+   static CmdExec *top;
 };
 
 extern const char * const bookmark_subcmd[];

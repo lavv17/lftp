@@ -193,8 +193,9 @@ void Job::Kill(Job *j)
       // we have to simulate normal death...
       Job *r=new KilledJob();
       r->parent=j->parent;
-      r->cmdline=j->cmdline;
-      j->cmdline=0;
+      r->cmdline=j->cmdline,j->cmdline=0;
+      r->waiting=j->waiting,j->waiting=0;
+      r->waiting_num=j->waiting_num,j->waiting_num=0;
       j->parent->ReplaceWaiting(j,r);
    }
    assert(FindWhoWaitsFor(j)==0);
@@ -338,7 +339,7 @@ void  Job::ListDoneJobs()
    for(Job *scan=chain; scan; scan=scan->next)
    {
       if(scan->jobno>=0 && (scan->parent==this || scan->parent==0)
-         && scan->Done())
+         && !scan->deleting && scan->Done())
       {
 	 fprintf(f,_("[%d] Done (%s)"),scan->jobno,
 	    scan->cmdline?scan->cmdline:"?");
@@ -357,7 +358,7 @@ void  Job::BuryDoneJobs()
    for(Job *scan=chain; scan; scan=scan->next)
    {
       if((scan->parent==this || scan->parent==0) && scan->jobno>=0
-		  && scan->Done())
+		  && !scan->deleting && scan->Done())
 	 scan->deleting=true;
    }
    CollectGarbage();
