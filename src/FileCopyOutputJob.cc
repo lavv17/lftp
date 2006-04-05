@@ -51,19 +51,20 @@ int FileCopyPeerOutputJob::Put_LL(const char *buf,int len)
 
 int FileCopyPeerOutputJob::Do()
 {
+   int m=STALL;
+
+   if(broken || done)
+      return m;
    if(o->Error())
    {
       broken=true;
       return MOVED;
    }
-
    if(eof && !in_buffer)
    {
       done=true;
       return MOVED;
    }
-
-   int m=STALL;
 
    if(!write_allowed)
       return m;
