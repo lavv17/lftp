@@ -1,3 +1,11 @@
+Version 3.4.4 - 2006-04-06
+
+* new setting mirror:dereference.
+* new exit options: top, kill.
+* fixed stalling when uploading empty files with ftps.
+* fixed lftp exit code when cmd:at-exit is set.
+* fixed a rare spinning.
+
 Version 3.4.3 - 2006-03-15
 
 * don't create target file when source file does not exist.

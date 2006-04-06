@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.53)
-AC_INIT([lftp], [3.4.3], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [3.4.4], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_LIBOBJ_DIR(lib)
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
@@ -426,7 +426,7 @@ AC_LIBOBJ(getopt1)
 
 if test x$lftp_cv_func_poll_works = xno; then
    AC_LIBOBJ(poll)
-   if text x$ac_cv_header_sys_poll_h = xno; then
+   if test x$ac_cv_header_sys_poll_h = xno; then
       AC_CONFIG_LINKS([include/poll.h:lib/poll.h])
    fi
 fi

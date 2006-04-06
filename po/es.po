@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.6.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-15 11:04+0300\n"
+"POT-Creation-Date: 2006-04-06 14:30+0400\n"
 "PO-Revision-Date: 2002-08-08 19:01+0000\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -15,83 +15,83 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/CmdExec.cc:91
+#: src/CmdExec.cc:92
 #, c-format
 msgid "Warning: chdir(%s) failed: %s\n"
 msgstr "Aviso: falló chdir(%s): %s\n"
 
-#: src/CmdExec.cc:205
+#: src/CmdExec.cc:206
 #, c-format
 msgid "Unknown command `%s'.\n"
 msgstr "Orden desconocida `%s'.\n"
 
-#: src/CmdExec.cc:207
+#: src/CmdExec.cc:208
 #, c-format
 msgid "Ambiguous command `%s'.\n"
 msgstr "Orden ambigua `%s'.\n"
 
-#: src/CmdExec.cc:228
+#: src/CmdExec.cc:229
 #, c-format
 msgid "Module for command `%s' did not register the command.\n"
 msgstr "El módulo para la orden `%s' no registro esa orden.\n"
 
-#: src/CmdExec.cc:378
+#: src/CmdExec.cc:379
 #, c-format
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, dir actual=%s\n"
 
-#: src/CmdExec.cc:399 src/MirrorJob.cc:530
+#: src/CmdExec.cc:400 src/MirrorJob.cc:530
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: se recibió redirección a `%s'\n"
 
-#: src/CmdExec.cc:402 src/FileCopy.cc:1011
+#: src/CmdExec.cc:403 src/FileCopy.cc:1011
 msgid "Too many redirections"
 msgstr "Demasiadas redirecciones"
 
-#: src/CmdExec.cc:517 src/CmdExec.cc:574
+#: src/CmdExec.cc:518 src/CmdExec.cc:575
 msgid "Interrupt"
 msgstr "Interrupción"
 
-#: src/CmdExec.cc:637
+#: src/CmdExec.cc:638
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "Aviso: descartando orden incompleta\n"
 
-#: src/CmdExec.cc:729
+#: src/CmdExec.cc:730
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tEjecutando primitiva `%s' [%s]\n"
 
-#: src/CmdExec.cc:736
+#: src/CmdExec.cc:737
 msgid "Queue is stopped."
 msgstr ""
 
-#: src/CmdExec.cc:741
+#: src/CmdExec.cc:742
 msgid "Now executing:"
 msgstr "Ejecutando ahora:"
 
-#: src/CmdExec.cc:754
+#: src/CmdExec.cc:755
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\tEsperando que termine la tarea [%d]\n"
 
-#: src/CmdExec.cc:759
+#: src/CmdExec.cc:760
 #, c-format
 msgid "\tWaiting for termination of jobs: "
 msgstr "\tEsperando la finalización de las siguientes tareas: "
 
-#: src/CmdExec.cc:770
+#: src/CmdExec.cc:771
 #, c-format
 msgid "\tRunning\n"
 msgstr "\tEjecutando\n"
 
-#: src/CmdExec.cc:774
+#: src/CmdExec.cc:775
 #, c-format
 msgid "\tWaiting for command\n"
 msgstr "\tEsperando orden\n"
 
-#: src/CmdExec.cc:1291
+#: src/CmdExec.cc:1292
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: la orden `%s' no fue compilada dentro del binario.\n"
@@ -156,7 +156,7 @@ msgstr ""
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr "%s: %s: el archivo ya existe y xfer:clobber no está definido\n"
 
-#: src/Job.cc:343
+#: src/Job.cc:344
 #, c-format
 msgid "[%d] Done (%s)"
 msgstr "[%d] Hecho (%s)"
@@ -283,23 +283,23 @@ msgstr "Borrando directorio antiguo `%s'"
 msgid "Retrying mirror...\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1371
+#: src/MirrorJob.cc:1378
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1478 src/commands.cc:1053 src/commands.cc:1141
-#: src/commands.cc:1568 src/commands.cc:1602 src/commands.cc:1707
-#: src/commands.cc:2008 src/commands.cc:2204 src/commands.cc:2377
-#: src/commands.cc:2384 src/commands.cc:2632 src/commands.cc:2659
-#: src/commands.cc:2666 src/commands.cc:3000 src/commands.cc:3281
+#: src/MirrorJob.cc:1488 src/commands.cc:1074 src/commands.cc:1162
+#: src/commands.cc:1589 src/commands.cc:1623 src/commands.cc:1728
+#: src/commands.cc:2029 src/commands.cc:2225 src/commands.cc:2398
+#: src/commands.cc:2405 src/commands.cc:2653 src/commands.cc:2680
+#: src/commands.cc:2687 src/commands.cc:3021 src/commands.cc:3302
 #: src/SleepJob.cc:139
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Pruebe `help %s' para mayor información.\n"
 
-#: src/MirrorJob.cc:1513 src/MirrorJob.cc:1529 src/commands.cc:900
-#: src/commands.cc:2099 src/DummyProto.cc:73
+#: src/MirrorJob.cc:1523 src/MirrorJob.cc:1539 src/commands.cc:921
+#: src/commands.cc:2120 src/DummyProto.cc:73
 msgid " - not supported protocol"
 msgstr " - protocolo no soportado"
 
@@ -335,7 +335,7 @@ msgstr "Unidad de tiempo inválida, sólo se permiten [smhd]."
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "Formato de tiempo inválido, debe ser <tiempo><unidad>, p.ej. 2h30m."
 
-#: src/ResMgr.cc:733 src/commands.cc:3158 src/commands.cc:3167
+#: src/ResMgr.cc:733 src/commands.cc:3179 src/commands.cc:3188
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Formato del rango inválido. El formato es mín-máx, p.ej. 10-20."
 
@@ -370,7 +370,7 @@ msgid "invalid pair of numbers"
 msgstr "par de números inválido"
 
 #: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3976
-#: src/Http.cc:1869
+#: src/Http.cc:1871
 msgid "Resolving host address..."
 msgstr "Resolviendo dirección del servidor..."
 
@@ -1340,12 +1340,12 @@ msgstr "Uso: cd dir-remoto\n"
 msgid "%s: no old directory for this site\n"
 msgstr "%s: no hay antiguo directorio para este sitio\n"
 
-#: src/commands.cc:649
+#: src/commands.cc:662
 #, c-format
 msgid "Usage: %s [<exit_code>]\n"
 msgstr "Uso: %s [<código_de_salida>]\n"
 
-#: src/commands.cc:658
+#: src/commands.cc:671
 msgid ""
 "There are running jobs and `cmd:move-background' is not set.\n"
 "Use `exit bg' to force moving to background or `kill all' to terminate "
@@ -1355,240 +1355,240 @@ msgstr ""
 "Use `exit bg' para forzar el pasaje a segundo plano, o `kill all'\n"
 "para terminar esas tareas.\n"
 
-#: src/commands.cc:816
+#: src/commands.cc:837
 #, c-format
 msgid "Try `%s --help' for more information\n"
 msgstr "Pruebe `%s --help' para mayor información\n"
 
-#: src/commands.cc:818
+#: src/commands.cc:839
 #, c-format
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 msgstr "Uso: %s [-e cmd] [-p puerto] [-u usuario[,clave]] <servidor|url>\n"
 
-#: src/commands.cc:946 src/commands.cc:2083
+#: src/commands.cc:967 src/commands.cc:2104
 msgid "Password: "
 msgstr "Clave: "
 
-#: src/commands.cc:948
+#: src/commands.cc:969
 #, c-format
 msgid "%s: GetPass() failed -- assume anonymous login\n"
 msgstr "%s: GetPass() falló -- asumiendo identificación anónima\n"
 
-#: src/commands.cc:1061
+#: src/commands.cc:1082
 #, c-format
 msgid "Usage: %s [OPTS] command args...\n"
 msgstr "Uso: %s [OPCS] orden parámetros ...\n"
 
-#: src/commands.cc:1111
+#: src/commands.cc:1132
 #, fuzzy, c-format
 msgid "%s: -n: positive number expected. "
 msgstr "%s: -n: Se esperaba un número. "
 
-#: src/commands.cc:1163
+#: src/commands.cc:1184
 #, c-format
 msgid "Created a stopped queue.\n"
 msgstr ""
 
-#: src/commands.cc:1207 src/commands.cc:1237
+#: src/commands.cc:1228 src/commands.cc:1258
 #, c-format
 msgid "%s: No queue is active.\n"
 msgstr "%s: Ninguna cola está activa.\n"
 
-#: src/commands.cc:1229
+#: src/commands.cc:1250
 #, c-format
 msgid "%s: -m: Number expected as second argument. "
 msgstr "%s: -m: Se esperaba un número como segundo argumento. "
 
-#: src/commands.cc:1261
+#: src/commands.cc:1282
 msgid "Can only edit plain queues.\n"
 msgstr ""
 
-#: src/commands.cc:1274
+#: src/commands.cc:1295
 #, c-format
 msgid "Couldn't create temporary file `%s': %s.\n"
 msgstr "No se pudo crear el archivo temporal `%s': %s.\n"
 
-#: src/commands.cc:1280
+#: src/commands.cc:1301
 #, c-format
 msgid "%s: error writing %s: %s\n"
 msgstr "%s: error escribiendo %s: %s\n"
 
-#: src/commands.cc:1335
+#: src/commands.cc:1356
 #, c-format
 msgid "Usage: %s <cmd>\n"
 msgstr "Uso: %s <orden>\n"
 
-#: src/commands.cc:1431
+#: src/commands.cc:1452
 msgid "invalid argument for `--sort'"
 msgstr "argumento inválido para `--sort'"
 
-#: src/commands.cc:1450
+#: src/commands.cc:1471
 msgid "invalid block size"
 msgstr "tamaño de bloque inválido"
 
-#: src/commands.cc:1507
+#: src/commands.cc:1528
 msgid "invalid option"
 msgstr "opción inválida"
 
-#: src/commands.cc:1611
+#: src/commands.cc:1632
 #, c-format
 msgid "Usage: %s [OPTS] files...\n"
 msgstr "Uso: %s [OPCS] archivos...\n"
 
-#: src/commands.cc:1685
+#: src/commands.cc:1706
 #, c-format
 msgid "%s: -n: Number expected. "
 msgstr "%s: -n: Se esperaba un número. "
 
-#: src/commands.cc:1718
+#: src/commands.cc:1739
 #, c-format
 msgid "File name missed. "
 msgstr "Nombre de archivo no encontrado. "
 
-#: src/commands.cc:1830
+#: src/commands.cc:1851
 #, c-format
 msgid "Usage: %s %s[-f] files...\n"
 msgstr "Uso: %s %s[-f] archivos...\n"
 
-#: src/commands.cc:1877
+#: src/commands.cc:1898
 #, fuzzy, c-format
 msgid "Usage: %s [-e] <file|command>\n"
 msgstr "Uso: %s <archivo>\n"
 
-#: src/commands.cc:1921
+#: src/commands.cc:1942
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
 msgstr "Uso: %s [-v] [-v] ...\n"
 
-#: src/commands.cc:1948
+#: src/commands.cc:1969
 #, c-format
 msgid "Usage: %s [-p]\n"
 msgstr "Uso: %s [-p]\n"
 
-#: src/commands.cc:2050
+#: src/commands.cc:2071
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
 msgstr "el nivel de depuración es %d, la salida va a %s\n"
 
-#: src/commands.cc:2053
+#: src/commands.cc:2074
 #, c-format
 msgid "debug is off\n"
 msgstr "la depuración está desactivada\n"
 
-#: src/commands.cc:2064
+#: src/commands.cc:2085
 #, c-format
 msgid "Usage: %s userid [pass]\n"
 msgstr "Uso: %s id_usuario [clave]\n"
 
-#: src/commands.cc:2139 src/commands.cc:2312
+#: src/commands.cc:2160 src/commands.cc:2333
 #, c-format
 msgid "%s: no current job\n"
 msgstr "%s: no hay una tarea seleccionada\n"
 
-#: src/commands.cc:2149 src/commands.cc:2179 src/commands.cc:2320
+#: src/commands.cc:2170 src/commands.cc:2200 src/commands.cc:2341
 #, c-format
 msgid "%s: %d - no such job\n"
 msgstr "%s: %d - no existe tal tarea\n"
 
-#: src/commands.cc:2151
+#: src/commands.cc:2172
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
 msgstr "Uso: %s <númtarea> ... | all\n"
 
-#: src/commands.cc:2170 src/commands.cc:2302 src/commands.cc:2446
-#: src/commands.cc:2807 src/commands.cc:2880 src/commands.cc:3293
+#: src/commands.cc:2191 src/commands.cc:2323 src/commands.cc:2467
+#: src/commands.cc:2828 src/commands.cc:2901 src/commands.cc:3314
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s: %s - no es un número\n"
 
-#: src/commands.cc:2235
+#: src/commands.cc:2256
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr "%s: %s. Use `set -a' para ver todas las variables.\n"
 
-#: src/commands.cc:2285
+#: src/commands.cc:2306
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
 msgstr "Uso: %s [<númtarea>]\n"
 
-#: src/commands.cc:2325
+#: src/commands.cc:2346
 #, c-format
 msgid "%s: some other job waits for job %d\n"
 msgstr "%s: hay otra tarea esperando por la tarea %d\n"
 
 #  Juaa... me divierte mucho esta traducción, y ma sí... =)
-#: src/commands.cc:2330
+#: src/commands.cc:2351
 #, c-format
 msgid "%s: wait loop detected\n"
 msgstr "%s: bucle de espera detectado\n"
 
-#: src/commands.cc:2355
+#: src/commands.cc:2376
 #, c-format
 msgid "Usage: mv <file1> <file2>\n"
 msgstr "Uso: mv <archivo1> <archivo2>\n"
 
-#: src/commands.cc:2376 src/commands.cc:2658
+#: src/commands.cc:2397 src/commands.cc:2679
 #, c-format
 msgid "Invalid command. "
 msgstr "Orden inválida."
 
-#: src/commands.cc:2383 src/commands.cc:2665
+#: src/commands.cc:2404 src/commands.cc:2686
 #, c-format
 msgid "Ambiguous command. "
 msgstr "Orden ambigua. "
 
-#: src/commands.cc:2402
+#: src/commands.cc:2423
 #, c-format
 msgid "%s: Operand missed for size\n"
 msgstr "%s: Falta operando para size\n"
 
-#: src/commands.cc:2419
+#: src/commands.cc:2440
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
 msgstr "%s: Falta operando para `expire'\n"
 
-#: src/commands.cc:2452
+#: src/commands.cc:2473
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr "%s: %s - no hay tal sesión cacheada. Use `scache' para ver la lista.\n"
 
-#: src/commands.cc:2469
+#: src/commands.cc:2490
 #, c-format
 msgid "Sorry, no help for %s\n"
 msgstr "Lo siento, no hay ayuda para %s\n"
 
-#: src/commands.cc:2474
+#: src/commands.cc:2495
 #, c-format
 msgid "%s is a built-in alias for %s\n"
 msgstr "%s es un alias de fábrica para %s\n"
 
-#: src/commands.cc:2479
+#: src/commands.cc:2500
 #, c-format
 msgid "Usage: %s\n"
 msgstr "Uso: %s\n"
 
-#: src/commands.cc:2487
+#: src/commands.cc:2508
 #, c-format
 msgid "%s is an alias to `%s'\n"
 msgstr "%s es un alias para `%s'\n"
 
-#: src/commands.cc:2491
+#: src/commands.cc:2512
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr "No hay una orden `%s'. Use `help' para ver las órdenes disponibles.\n"
 
-#: src/commands.cc:2493
+#: src/commands.cc:2514
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr "Orden ambigua `%s'. Use `help' para ver las órdenes disponibles.\n"
 
-#: src/commands.cc:2544
+#: src/commands.cc:2565
 #, fuzzy, c-format
 msgid "LFTP | Version %s | Copyright (c) 1996-2006 Alexander V. Lukyanov\n"
 msgstr "Lftp | Versión %s | Copyright (c) 1996-2002 Alexander V. Lukyanov\n"
 
-#: src/commands.cc:2547
+#: src/commands.cc:2568
 #, c-format
 msgid ""
 "LFTP is free software, covered by the GNU General Public License, and you "
@@ -1598,88 +1598,88 @@ msgid ""
 "There is absolutely no warranty for LFTP.  See COPYING for details.\n"
 msgstr ""
 
-#: src/commands.cc:2552
+#: src/commands.cc:2573
 #, c-format
 msgid "Send bug reports and questions to <%s>.\n"
 msgstr "Envíe reportes de bugs y preguntas a <%s>.\n"
 
-#: src/commands.cc:2556
+#: src/commands.cc:2577
 #, c-format
 msgid "Libraries used: "
 msgstr ""
 
-#: src/commands.cc:2683 src/commands.cc:2715
+#: src/commands.cc:2704 src/commands.cc:2736
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s: se requiere un nombre de señalador\n"
 
-#: src/commands.cc:2704
+#: src/commands.cc:2725
 #, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
 msgstr "%s: no se permiten espacios en el nombre de un señalador\n"
 
-#: src/commands.cc:2717
+#: src/commands.cc:2738
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s: no existe señalador `%s'\n"
 
-#: src/commands.cc:2733
+#: src/commands.cc:2754
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: se requiere el tipo a importar (netscape, ncftp)\n"
 
 # Es la ayuda del comando find.
-#: src/commands.cc:2813
+#: src/commands.cc:2834
 #, c-format
 msgid "Usage: %s [-d #] dir\n"
 msgstr "Uso: %s [-d N] dir\n"
 
-#: src/commands.cc:2911
+#: src/commands.cc:2932
 #, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "%s: tamaño de bloque inválido `%s'\n"
 
 # Es la ayuda del comando find.
-#: src/commands.cc:2926
+#: src/commands.cc:2947
 #, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "Uso: %s [opciones] <dirs>\n"
 
-#: src/commands.cc:2932
+#: src/commands.cc:2953
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr ""
 
-#: src/commands.cc:2936
+#: src/commands.cc:2957
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr ""
 
-#: src/commands.cc:2987
+#: src/commands.cc:3008
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "Uso: %s orden parámetros ...\n"
 
-#: src/commands.cc:2999
+#: src/commands.cc:3020
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "Uso: %s módulo [args...]\n"
 
-#: src/commands.cc:3017 src/LocalAccess.cc:628
+#: src/commands.cc:3038 src/LocalAccess.cc:628
 msgid "cannot get current directory"
 msgstr "no se pudo obtener el directorio actual"
 
-#: src/commands.cc:3078
+#: src/commands.cc:3099
 #, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "Uso: %s [OPCS] modo archivo...\n"
 
-#: src/commands.cc:3098
+#: src/commands.cc:3119
 #, c-format
 msgid "invalid mode string: %s\n"
 msgstr "cadena de modo inválida: %s\n"
 
-#: src/commands.cc:3173
+#: src/commands.cc:3194
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "Uso: %s [OPCS] archivo\n"
@@ -1731,7 +1731,7 @@ msgstr "no se pudo interpretar la respuesta EPSV"
 msgid "Closing control socket"
 msgstr "Cerrando socket de control"
 
-#: src/ftpclass.cc:1147 src/Http.cc:950 src/Fish.cc:77 src/SFtp.cc:83
+#: src/ftpclass.cc:1147 src/Http.cc:952 src/Fish.cc:77 src/SFtp.cc:83
 msgid "Closing idle connection"
 msgstr "Cerrando conexión ociosa"
 
@@ -1744,7 +1744,7 @@ msgstr "SITE CHMOD está desabilitado por ftp:use-site-chmod"
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "SITE CHMOD está desabilitado por ftp:use-site-chmod"
 
-#: src/ftpclass.cc:1257 src/Http.cc:1086
+#: src/ftpclass.cc:1257 src/Http.cc:1088
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "no se pudo crear un socket de la familia %d de direcciones"
@@ -1786,7 +1786,7 @@ msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "Está asignado el parámetro ssl-force y el sistema no soporta o no permite SSL"
 
-#: src/ftpclass.cc:2596 src/ftpclass.cc:2731 src/Http.cc:1174 src/Fish.cc:647
+#: src/ftpclass.cc:2596 src/ftpclass.cc:2731 src/Http.cc:1176 src/Fish.cc:647
 #: src/SFtp.cc:760 src/SFtp.cc:1065
 msgid "Peer closed connection"
 msgstr "El otro extremo cerró la conexión"
@@ -1830,7 +1830,7 @@ msgid "Sending commands..."
 msgstr "Enviando comandos..."
 
 #: src/ftpclass.cc:3966 src/ftpclass.cc:3994 src/ftpclass.cc:4007
-#: src/Http.cc:1884 src/Fish.cc:1123 src/SFtp.cc:1328
+#: src/Http.cc:1886 src/Fish.cc:1123 src/SFtp.cc:1328
 msgid "Waiting for response..."
 msgstr "Esperando respuesta..."
 
@@ -1839,11 +1839,11 @@ msgstr "Esperando respuesta..."
 msgid "Delaying before retry"
 msgstr "Esperando antes de reintentar"
 
-#: src/ftpclass.cc:3969 src/Http.cc:1877
+#: src/ftpclass.cc:3969 src/Http.cc:1879
 msgid "Connection idle"
 msgstr "Conexión ociosa"
 
-#: src/ftpclass.cc:3983 src/Http.cc:1875 src/Http.cc:1882 src/Fish.cc:1119
+#: src/ftpclass.cc:3983 src/Http.cc:1877 src/Http.cc:1884 src/Fish.cc:1119
 #: src/SFtp.cc:1324
 msgid "Connecting..."
 msgstr "Conectándose..."
@@ -1888,11 +1888,11 @@ msgstr "Enviando datos/TLS"
 msgid "Receiving data/TLS"
 msgstr "Recibiendo datos/TLS"
 
-#: src/ftpclass.cc:4023 src/Http.cc:1880 src/Fish.cc:1127 src/SFtp.cc:1332
+#: src/ftpclass.cc:4023 src/Http.cc:1882 src/Fish.cc:1127 src/SFtp.cc:1332
 msgid "Sending data"
 msgstr "Enviando datos"
 
-#: src/ftpclass.cc:4025 src/Http.cc:1887 src/Fish.cc:1125 src/SFtp.cc:1330
+#: src/ftpclass.cc:4025 src/Http.cc:1889 src/Fish.cc:1125 src/SFtp.cc:1330
 msgid "Receiving data"
 msgstr "Recibiendo datos"
 
@@ -1986,51 +1986,51 @@ msgstr "Cerrando conexión HTTP"
 msgid "POST method failed"
 msgstr "falló el método POST"
 
-#: src/Http.cc:1039
+#: src/Http.cc:1041
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr "ftp no funciona sobre http sin usar un proxy, configure hftp:proxy."
 
-#: src/Http.cc:1190
+#: src/Http.cc:1192
 msgid "Sending request..."
 msgstr "Enviando requerimiento..."
 
-#: src/Http.cc:1237
+#: src/Http.cc:1239
 msgid "Hit EOF while fetching headers"
 msgstr "Encontré EOF mientras traía encabezados"
 
-#: src/Http.cc:1353
+#: src/Http.cc:1355
 msgid "Could not parse HTTP status line"
 msgstr "No se pudo interpretar la línea de estado HTTP"
 
-#: src/Http.cc:1384
+#: src/Http.cc:1386
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr ""
 
-#: src/Http.cc:1533
+#: src/Http.cc:1535
 msgid "Receiving body..."
 msgstr "Recibiendo cuerpo..."
 
-#: src/Http.cc:1653
+#: src/Http.cc:1655
 msgid "Hit EOF"
 msgstr "Encontré EOF"
 
-#: src/Http.cc:1656
+#: src/Http.cc:1658
 msgid "Received not enough data, retrying"
 msgstr "No se recibió suficiente, reintentando"
 
-#: src/Http.cc:1664
+#: src/Http.cc:1666
 msgid "Received all"
 msgstr "Se recibió todo"
 
-#: src/Http.cc:1669
+#: src/Http.cc:1671
 msgid "Received all (total)"
 msgstr "Se recibió todo (total)"
 
-#: src/Http.cc:1692 src/Http.cc:1713
+#: src/Http.cc:1694 src/Http.cc:1715
 msgid "chunked format violated"
 msgstr "formato `chunked' violado"
 
-#: src/Http.cc:1885
+#: src/Http.cc:1887
 msgid "Fetching headers..."
 msgstr "Trayendo encabezados..."
 
