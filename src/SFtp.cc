@@ -739,7 +739,7 @@ int SFtp::HandlePty()
 	    SetError(LOGIN_FAILED,_("Password required"));
 	    return MOVED;
 	 }
-	 if(password_sent>0)
+	 if(password_sent>1)
 	 {
 	    SetError(LOGIN_FAILED,_("Login incorrect"));
 	    return MOVED;

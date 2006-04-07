@@ -1,3 +1,8 @@
+2006-04-07  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SFtp.cc, Fish.cc: send password twice if needed, it handles the case
+	  of a protected private key.
+
 2006-04-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopyOutputJob.cc: don't return MOVED if nothing changed, this
