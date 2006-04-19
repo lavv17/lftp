@@ -131,6 +131,8 @@ public:
 
    virtual off_t GetBytesCount() { return 0; }
    virtual double GetTimeSpent() { return 0; }
+
+   void WaitDone();
 };
 
 class SessionJob : public Job

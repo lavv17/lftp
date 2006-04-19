@@ -1,35 +1,33 @@
-
 /*
 	This example shows blocking usage of Ftp class
 */
 
 #include <config.h>
-#include "ftpclass.h"
-#include "ResMgr.h"
-#include "SignalHook.h"
-#include "log.h"
 #include <unistd.h>
+#include "FileAccess.h"
 
 int main()
 {
-   ResMgr::ClassInit();
-   SignalHook::ClassInit();
-   FileAccess::ClassInit();
-
-   Ftp *f=new Ftp;
-   f->Connect("ftp.yars.free.net",0);
-   f->Open("/pub/software/unix/net/ftp/client/lftp",f->LONG_LIST);
+   FileAccess *f=FileAccess::New("ftp","ftp.yar.ru");
+   if(!f)
+   {
+      fprintf(stderr,"ftp: unknown protocol, cannot create ftp session\n");
+      return 1;
+   }
+   f->Open("/pub/source/lftp",f->LONG_LIST);
    for(;;)
    {
       SMTask::Schedule();
-      SMTask::Block();
 
       char buf[1024];
       int res=f->Read(buf,sizeof(buf));
       if(res<0)
       {
 	 if(res==f->DO_AGAIN)
+	 {
+	    SMTask::Block();
 	    continue;
+	 }
 	 fprintf(stderr,"Error: %s\n",f->StrError(res));
 	 return 1;
       }

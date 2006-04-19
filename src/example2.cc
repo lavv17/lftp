@@ -1,23 +1,22 @@
 #include <config.h>
-#include "Http.h"
-#include "log.h"
-#include "ResMgr.h"
-#include "SignalHook.h"
 #include <unistd.h>
+#include "FileAccess.h"
+#include "log.h"
 
 int main()
 {
-   ResMgr::ClassInit();
-   SignalHook::ClassInit();
-   FileAccess::ClassInit();
-
    Log::global->SetOutput(2,false);
    Log::global->SetLevel(5);
    Log::global->Enable();
+   Log::global->ShowNothing();
 
-   Http *f=new Http;
-   f->Connect("ftp.yars.free.net",0);
-   f->Open("/pub/software/",f->RETRIEVE);
+   FileAccess *f=FileAccess::New("http","ftp.yar.ru");
+   if(!f)
+   {
+      fprintf(stderr,"http: unknown protocol, cannot create http session\n");
+      return 1;
+   }
+   f->Open("/pub/source/lftp/",f->RETRIEVE);
    for(;;)
    {
       SMTask::Schedule();

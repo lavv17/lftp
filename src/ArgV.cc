@@ -22,7 +22,6 @@
 
 #include <config.h>
 
-#include "getopt.h"
 #include "xmalloc.h"
 #include "misc.h"
 #include "ArgV.h"

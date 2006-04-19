@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2005 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2006 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@
 #include "xstring.h"
 #include <fcntl.h>
 #include <locale.h>
+#include <ctype.h>
 
 #include "xmalloc.h"
 #include "alias.h"
@@ -49,6 +50,7 @@
 #include "LocalDir.h"
 #include "ConnectionSlot.h"
 #include "misc.h"
+#include "ArgV.h"
 
 #include "confpaths.h"
 
@@ -64,17 +66,6 @@ void  hook_signals()
    SignalHook::DoCount(SIGHUP);
    SignalHook::Ignore(SIGTTOU);
    ProcWait::Signal(true);
-}
-
-void WaitDone(CmdExec *exec)
-{
-   for(;;)
-   {
-      SMTask::Schedule();
-      if(exec->Done())
-	 break;
-      SMTask::Block();
-   }
 }
 
 ResDecl res_save_cwd_history
@@ -237,6 +228,92 @@ public:
 };
 bool ReadlineFeeder::readline_inited;
 
+#define args	  (parent->args)
+#define exit_code (parent->exit_code)
+#define output	  (parent->output)
+#define session	  (parent->session)
+#define eprintf	  parent->eprintf
+CMD(history)
+{
+   enum { READ, WRITE, CLEAR, LIST } mode = LIST;
+   const char *fn = NULL;
+   static struct option history_options[]=
+   {
+      {"read",required_argument,0,'r'},
+      {"write",required_argument,0,'w'},
+      {"clear",no_argument,0,'c'},
+      {"list",required_argument,0,'l'},
+      {0,0,0,0}
+   };
+
+   exit_code=0;
+   int opt;
+   while((opt=args->getopt_long("+r:w:cl",history_options,0))!=EOF) {
+      switch(opt) {
+      case 'r':
+	 mode = READ;
+	 fn = optarg;
+	 break;
+      case 'w':
+	 mode = WRITE;
+	 fn = optarg;
+	 break;
+      case 'c':
+	 mode = CLEAR;
+	 break;
+      case 'l':
+	 mode = LIST;
+	 break;
+      case '?':
+	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
+	 return 0;
+      }
+   }
+
+   int cnt = 16;
+   if(const char *arg = args->getcurr()) {
+      if(!strcasecmp(arg, "all"))
+	 cnt = -1;
+      else if(isdigit(arg[0]))
+	 cnt = atoi(arg);
+      else {
+	 eprintf(_("%s: %s - not a number\n"), args->a0(), args->getcurr());
+	 exit_code=1;
+	 return 0;
+      }
+   }
+
+   switch(mode) {
+   case READ:
+      if(int err = lftp_history_read(fn)) {
+	 eprintf("%s: %s: %s\n", args->a0(), fn, strerror(err));
+	 exit_code=1;
+      }
+      break;
+
+   case WRITE:
+      if(int err = lftp_history_write(fn)) {
+	 eprintf("%s: %s: %s\n", args->a0(), fn, strerror(err));
+	 exit_code=1;
+      }
+      break;
+
+   case LIST:
+      lftp_history_list(cnt);
+      break;
+   case CLEAR:
+      lftp_history_clear();
+      break;
+   }
+
+   return 0;
+}
+#undef args
+#undef exit_code
+#undef output
+#undef session
+#undef eprintf
+
 static void sig_term(int sig)
 {
    time_t t=time(0);
@@ -360,16 +437,17 @@ int   main(int argc,char **argv)
    bindtextdomain (PACKAGE, LOCALEDIR);
    textdomain (PACKAGE);
 
-   // order is significant.
-   SignalHook::ClassInit();
-   ResMgr::ClassInit();
-   FileAccess::ClassInit();
+   CmdExec::RegisterCommand("history",cmd_history,
+	 N_("history -w file|-r file|-c|-l [cnt]"),
+	 N_(" -w <file> Write history to file.\n"
+	 " -r <file> Read history from file; appends to current history.\n"
+	 " -c  Clear the history.\n"
+	 " -l  List the history (default).\n"
+	 "Optional argument cnt specifies the number of history lines to list,\n"
+	 "or \"all\" to list all entries.\n"));
 
+   top_exec=new CmdExec(0,0);
    hook_signals();
-
-   LocalDirectory *cwd=new LocalDirectory;
-   cwd->SetFromCWD();
-   top_exec=new CmdExec(new DummyProto(),cwd);
    top_exec->SetStatusLine(new StatusLine(1));
    Log::global->SetCB(tty_clear);
 
@@ -393,7 +471,7 @@ int   main(int argc,char **argv)
       source_if_exist(top_exec,rc);
    }
 
-   WaitDone(top_exec);
+   top_exec->WaitDone();
 
    top_exec->SetTopLevel();
    top_exec->Fg();
@@ -405,12 +483,12 @@ int   main(int argc,char **argv)
 
    top_exec->ExecParsed(args);
 
-   WaitDone(top_exec);
+   top_exec->WaitDone();
 
    int exit_code=top_exec->ExitCode();
 
    top_exec->AtExit();
-   WaitDone(top_exec);
+   top_exec->WaitDone();
 
    if(Job::NumberOfJobs()>0)
    {

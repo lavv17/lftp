@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2005 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2006 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@
 #include "QueueFeeder.h"
 #include "LocalDir.h"
 #include "ConnectionSlot.h"
+#include "DummyProto.h"
 
 #define RL_PROMPT_START_IGNORE	'\001'
 #define RL_PROMPT_END_IGNORE	'\002'
@@ -776,7 +777,7 @@ void CmdExec::PrintStatus(int v,const char *prefix)
    }
 }
 
-CmdExec::CmdExec(FileAccess *f,LocalDirectory *c) : SessionJob(f)
+CmdExec::CmdExec(FileAccess *f,LocalDirectory *c) : SessionJob(f?f:new DummyProto)
 {
    // add this to chain
    next=chain;
@@ -804,6 +805,8 @@ CmdExec::CmdExec(FileAccess *f,LocalDirectory *c) : SessionJob(f)
    last_bg=-1;
 
    cwd=c;
+   if(!cwd)
+      SaveCWD();
 
    remote_completion=false;
    long_running=0;

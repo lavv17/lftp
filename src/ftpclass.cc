@@ -3763,8 +3763,13 @@ void Ftp::CheckResp(int act)
 
    case Expect::PRET:
       if(cmd_unsupported(act))
+      {
 	 conn->pret_supported=false;
-      goto ignore;
+	 break;
+      }
+      if(is5XX(act))
+	 SetError(NO_FILE,all_lines);
+      break;
 
    case Expect::PASV:
    case Expect::EPSV:

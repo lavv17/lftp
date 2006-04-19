@@ -37,6 +37,7 @@ class ResDecl;
 
 class ResMgr
 {
+   static bool class_inited;
    friend class ResDecl;
 public:
    class Resource

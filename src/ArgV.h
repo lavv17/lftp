@@ -25,6 +25,7 @@
 
 #include "trio.h"
 #include "StringSet.h"
+#include "getopt.h"
 
 class ArgV : public StringSet
 {

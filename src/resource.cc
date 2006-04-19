@@ -361,8 +361,12 @@ static ResDecl
 # include <langinfo.h>
 #endif
 
+bool ResMgr::class_inited;
 void ResMgr::ClassInit()
 {
+   if(class_inited)
+      return;
+   class_inited=true;
    for(ResDecl *scan=type_chain; scan; scan=scan->next)
    {
       if(scan->defvalue && scan->val_valid)

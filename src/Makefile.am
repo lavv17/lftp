@@ -6,10 +6,17 @@ bin_SCRIPTS = lftpget
 pkgdata_SCRIPTS = import-ncftp import-netscape verify-file convert-netscape-cookies
 noinst_SCRIPTS = ftpget
 
-EXTRA_DIST = $(pkgdata_SCRIPTS) $(bin_SCRIPTS) $(noinst_SCRIPTS) \
-	example1.cc example2.cc
+EXTRA_DIST = $(pkgdata_SCRIPTS) $(bin_SCRIPTS) $(noinst_SCRIPTS)
 
-lftp_SOURCES = lftp.cc complete.h complete.cc lftp_rl.c lftp_rl.h getdate.y getdate.h
+lftp_SOURCES = lftp.cc complete.h complete.cc lftp_rl.c lftp_rl.h
+
+noinst_PROGRAMS = example1 example2 example1-cmd
+noinst_LTLIBRARIES = example-module1.la
+example1_SOURCES = example1.cc
+example1_cmd_SOURCES = example1-cmd.cc
+example2_SOURCES = example2.cc
+example_module1_la_SOURCES = example-module1.cc
+example_module1_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
 
 if WITH_MODULES
 pkgverlib_LTLIBRARIES = liblftp-pty.la liblftp-network.la proto-ftp.la proto-http.la proto-file.la cmd-mirror.la cmd-sleep.la proto-fish.la proto-sftp.la
@@ -64,12 +71,12 @@ liblftp_tasks_la_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  resource.cc DummyProto.cc DummyProto.h\
  ArgV.cc ArgV.h ascii_ctype.h keyvalue.cc keyvalue.h bookmark.cc bookmark.h\
  Speedometer.cc FileGlob.cc FileGlob.h\
- Speedometer.h netrc.cc netrc.h\
- ColumnOutput.cc ColumnOutput.h FileSetOutput.cc\
- FileSetOutput.h lftp_tinfo.cc lftp_tinfo.h\
+ Speedometer.h netrc.cc netrc.h lftp_tinfo.cc lftp_tinfo.h\
  TimeDate.cc TimeDate.h Timer.cc Timer.h GetFileInfo.cc GetFileInfo.h\
  StringPool.cc StringPool.h DirColors.cc DirColors.h IdNameCache.cc\
- IdNameCache.h PatternSet.cc PatternSet.h LocalDir.cc LocalDir.h $(add_tasks)
+ IdNameCache.h PatternSet.cc PatternSet.h LocalDir.cc LocalDir.h\
+ mbswidth.c mbswidth.h\
+ $(add_tasks)
 liblftp_tasks_la_LDFLAGS = $(OPENSSL_LDFLAGS)
 liblftp_tasks_la_LIBADD = $(LFTP_LIBGNUTLS_LIBS) $(LTLIBINTL) $(LTLIBICONV) $(add_tasks_libadd)
 
@@ -77,18 +84,28 @@ liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\
  parsecmd.cc mvJob.cc mvJob.h alias.cc alias.h\
  CatJob.cc CatJob.h GetJob.cc GetJob.h\
+ ColumnOutput.h ColumnOutput.cc FileSetOutput.h FileSetOutput.cc\
  mkdirJob.cc mkdirJob.h pgetJob.cc pgetJob.h FileFeeder.cc FileFeeder.h\
  QueueFeeder.cc QueueFeeder.h history.cc history.h\
  FindJob.cc FindJob.h FindJobDu.cc FindJobDu.h ChmodJob.cc ChmodJob.h\
  TreatFileJob.cc TreatFileJob.h CopyJob.cc CopyJob.h echoJob.cc echoJob.h\
  OutputJob.cc OutputJob.h FileCopyOutputJob.cc buffer_std.cc buffer_std.h\
+ filemode.c human.c xstrtol.c xstrtoul.c modechange.c\
+ filemode.h human.h xstrtol.h modechange.h\
+ getdate.y getdate.h\
  $(add_jobs)
 
-lftp_LDFLAGS = -export-dynamic
 lftp_LDADD = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC) $(READLINE)\
 	$(top_builddir)/lib/liblib.a
 lftp_DEPENDENCIES = liblftp-jobs.la liblftp-tasks.la $(READLINE_DEPEND) \
 	$(top_builddir)/lib/liblib.a $(MODULES_LA_STATIC)
+
+example1_LDADD = liblftp-tasks.la $(MODULES_LA_STATIC) $(top_builddir)/lib/liblib.a
+example1_DEPENDENCIES = liblftp-tasks.la $(MODULES_LA_STATIC) $(top_builddir)/lib/liblib.a
+example1_cmd_LDADD = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC) $(top_builddir)/lib/liblib.a
+example1_cmd_DEPENDENCIES = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC) $(top_builddir)/lib/liblib.a
+example2_LDADD = liblftp-tasks.la $(MODULES_LA_STATIC) $(top_builddir)/lib/liblib.a
+example2_DEPENDENCIES = liblftp-tasks.la $(MODULES_LA_STATIC) $(top_builddir)/lib/liblib.a
 
 confpaths.h: Makefile
 	echo "#define SYSCONFDIR \"$(sysconfdir)\""  > $@

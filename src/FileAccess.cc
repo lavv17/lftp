@@ -40,6 +40,7 @@
 #include "netrc.h"
 #include "ArgV.h"
 #include "ConnectionSlot.h"
+#include "SignalHook.h"
 #ifdef WITH_MODULES
 # include "module.h"
 #endif
@@ -48,6 +49,8 @@ FileAccess *FileAccess::chain=0;
 
 void FileAccess::Init()
 {
+   ClassInit();
+
    vproto=0;
    portname=0;
    hostname=0;
@@ -949,8 +952,10 @@ FileAccess *FileAccess::NextSameSite(FA *scan)
    return 0;
 }
 
-FileAccess *FileAccess::New(const char *proto,const char *host)
+FileAccess *FileAccess::New(const char *proto,const char *host,const char *port)
 {
+   ClassInit();
+
    if(!strcmp(proto,"slot"))
    {
       FA *session=ConnectionSlot::FindSession(host);
@@ -972,6 +977,9 @@ FileAccess *FileAccess::New(const char *proto,const char *host)
 	 session->SetVisualProto(proto);
       }
    }
+
+   if(host)
+      session->Connect(host,port);
 
    return session;
 }
@@ -1261,8 +1269,16 @@ void FileAccess::Path::ExpandTilde(const Path &home)
 #else
 # define _sftp
 #endif
+bool FileAccess::class_inited;
 void FileAccess::ClassInit()
 {
+   if(class_inited)
+      return;
+   class_inited=true;
+
+   SignalHook::ClassInit();
+   ResMgr::ClassInit();
+
    _ftp;
    _file;
    _http;

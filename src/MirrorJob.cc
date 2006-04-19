@@ -35,7 +35,6 @@
 #include "ChmodJob.h"
 #include "misc.h"
 #include "plural.h"
-#include "getopt.h"
 #include "FindJob.h"
 #include "url.h"
 #include "CopyJob.h"

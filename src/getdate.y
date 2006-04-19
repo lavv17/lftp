@@ -642,7 +642,7 @@ static int
 yyerror (s)
      char *s;
 {
-  xfree(get_date_error_buf);
+  free(get_date_error_buf);
   get_date_error_buf=strdup(s);
   return 0;
 }

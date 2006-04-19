@@ -1,3 +1,22 @@
+2006-04-19  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ArgV.cc, ArgV.h: include getopt.h in the header.
+	* CmdExec.cc: add defaults for session and cwd when creating CmdExec.
+	* FileAccess.cc, FileAccess.h: make sure classes are inited; add port
+	  argument for New method; do Connect in New.
+	* Job.cc, Job.h: add WaitDone method.
+	* MirrorJob.cc: no need to include getopt.h.
+	* ResMgr.h, resource.cc: add class_inited static member.
+	* commands.cc: move history command to lftp.cc.
+	* ftpclass.cc: handle PRET errors.
+	* getdate.y: use plain free.
+	* lftp.cc: move history here; ClassInit's are called automatically now;
+	  use Job::WaitDone.
+	* log.h: add ShowNothing method.
+	* example1.cc, example2.cc: fixed for new interfaces.
+	* example1-cmd.cc: new example.
+	* example-module1.cc: new example.
+
 2006-04-07  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.cc, Fish.cc: send password twice if needed, it handles the case

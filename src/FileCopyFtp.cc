@@ -22,8 +22,6 @@
 
 #include <config.h>
 
-#include <getopt.h>
-
 #include "FileCopyFtp.h"
 #include "log.h"
 

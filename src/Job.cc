@@ -550,3 +550,14 @@ bool Job::CheckForWaitLoop(Job *parent)
 	 return true;
    return false;
 }
+
+void Job::WaitDone()
+{
+   for(;;)
+   {
+      SMTask::Schedule();
+      if(Done())
+	 break;
+      SMTask::Block();
+   }
+}

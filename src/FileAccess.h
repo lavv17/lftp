@@ -55,6 +55,7 @@ class ArgV;
 
 class FileAccess : public SMTask
 {
+   static bool class_inited;
 public:
    enum open_mode
    {
@@ -365,7 +366,7 @@ public:
 	 (void)new Protocol(proto,creator);
       }
 
-   static FileAccess *New(const char *proto,const char *host=0);
+   static FileAccess *New(const char *proto,const char *host=0,const char *port=0);
    static FileAccess *New(const class ParsedURL *u,bool dummy=true);
 
    void SetPasswordGlobal(const char *p);
