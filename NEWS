@@ -1,3 +1,11 @@
+Version 3.4.5 - 2006-04-22
+
+* handle ftp PRET errors.
+* send ssh password twice if needed, this fixes a problem with encoded
+  secret keys.
+* updated programming examples.
+* fixed cross-references between jobs/tasks libraries and lftp.
+
 Version 3.4.4 - 2006-04-06
 
 * new setting mirror:dereference.

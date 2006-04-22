@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-06 14:30+0400\n"
+"POT-Creation-Date: 2006-04-19 10:11+0400\n"
 "PO-Revision-Date: 2001-05-27 KST\n"
 "Last-Translator: Dojip Kim <greendrm@greendrm.com>\n"
 "Language-Team: \n"
@@ -109,7 +109,7 @@ msgstr "접속 실패: %s"
 msgid "File cannot be accessed"
 msgstr "파일을 읽을 수 없습니다"
 
-#: src/FileAccess.cc:293 src/ftpclass.cc:3971 src/ftpclass.cc:3980
+#: src/FileAccess.cc:293 src/ftpclass.cc:3976 src/ftpclass.cc:3985
 #: src/Fish.cc:1114 src/SFtp.cc:1318
 msgid "Not connected"
 msgstr "접속되지 않았습니다"
@@ -368,7 +368,7 @@ msgstr "이 설정에 대한 종결이 정의되어 있지 않습니다"
 msgid "invalid pair of numbers"
 msgstr "잘못된 수입니다"
 
-#: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3976
+#: src/Resolver.cc:187 src/Resolver.cc:229 src/ftpclass.cc:3981
 #: src/Http.cc:1871
 msgid "Resolving host address..."
 msgstr "호스트 주소를 찾습니다..."
@@ -1722,7 +1722,7 @@ msgstr "(%s) 포트 %u에 자료 소켓을 연결합니다"
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "(%s) 포트 %u에 자료 소켓을 연결합니다"
 
-#: src/ftpclass.cc:2121 src/ftpclass.cc:3802
+#: src/ftpclass.cc:2121 src/ftpclass.cc:3807
 msgid "Switching passive mode off"
 msgstr "패시브(passive) 모드 끔"
 
@@ -1731,7 +1731,7 @@ msgstr "패시브(passive) 모드 끔"
 msgid "Data connection established"
 msgstr "접속이 잘못된 주소로 된 듯 합니다"
 
-#: src/ftpclass.cc:2392 src/ftpclass.cc:3924
+#: src/ftpclass.cc:2392 src/ftpclass.cc:3929
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force가 설정되어있지만 서버가 지원하지 않거나 SSL을 허용하지 않음"
@@ -1766,86 +1766,86 @@ msgstr "임시 서버 응답"
 msgid "Turning on sync-mode"
 msgstr "동기 모드로 전환"
 
-#: src/ftpclass.cc:3822
+#: src/ftpclass.cc:3827
 msgid "Switching passive mode on"
 msgstr "패시브(passive) 모드로 전환"
 
-#: src/ftpclass.cc:3957
+#: src/ftpclass.cc:3962
 #, fuzzy
 msgid "FEAT negotiation..."
 msgstr "TLS 협상중..."
 
-#: src/ftpclass.cc:3964
+#: src/ftpclass.cc:3969
 msgid "Sending commands..."
 msgstr "명령어 전송중..."
 
-#: src/ftpclass.cc:3966 src/ftpclass.cc:3994 src/ftpclass.cc:4007
+#: src/ftpclass.cc:3971 src/ftpclass.cc:3999 src/ftpclass.cc:4012
 #: src/Http.cc:1886 src/Fish.cc:1123 src/SFtp.cc:1328
 msgid "Waiting for response..."
 msgstr "응답을 기다립니다..."
 
-#: src/ftpclass.cc:3968
+#: src/ftpclass.cc:3973
 #, fuzzy
 msgid "Delaying before retry"
 msgstr "재접속하기 위하여 기다립니다"
 
-#: src/ftpclass.cc:3969 src/Http.cc:1879
+#: src/ftpclass.cc:3974 src/Http.cc:1879
 msgid "Connection idle"
 msgstr "사용하지 않는 접속"
 
-#: src/ftpclass.cc:3983 src/Http.cc:1877 src/Http.cc:1884 src/Fish.cc:1119
+#: src/ftpclass.cc:3988 src/Http.cc:1877 src/Http.cc:1884 src/Fish.cc:1119
 #: src/SFtp.cc:1324
 msgid "Connecting..."
 msgstr "접속중..."
 
-#: src/ftpclass.cc:3987
+#: src/ftpclass.cc:3992
 msgid "TLS negotiation..."
 msgstr "TLS 협상중..."
 
-#: src/ftpclass.cc:3989 src/Fish.cc:1121 src/SFtp.cc:1326
+#: src/ftpclass.cc:3994 src/Fish.cc:1121 src/SFtp.cc:1326
 msgid "Connected"
 msgstr "접속되었음"
 
-#: src/ftpclass.cc:3991
+#: src/ftpclass.cc:3996
 msgid "Logging in..."
 msgstr "로그인 중..."
 
-#: src/ftpclass.cc:3995
+#: src/ftpclass.cc:4000
 msgid "Making data connection..."
 msgstr "접속 하는 중..."
 
-#: src/ftpclass.cc:3998
+#: src/ftpclass.cc:4003
 msgid "Changing remote directory..."
 msgstr "원거리 디렉토리 변경중..."
 
-#: src/ftpclass.cc:4004
+#: src/ftpclass.cc:4009
 #, fuzzy
 msgid "Waiting for other copy peer..."
 msgstr "응답을 기다립니다..."
 
-#: src/ftpclass.cc:4006 src/ftpclass.cc:4027
+#: src/ftpclass.cc:4011 src/ftpclass.cc:4032
 msgid "Waiting for transfer to complete"
 msgstr "전송 완료를 기다립니다"
 
-#: src/ftpclass.cc:4009
+#: src/ftpclass.cc:4014
 msgid "Waiting for data connection..."
 msgstr "접속을 기다리는 중..."
 
-#: src/ftpclass.cc:4015
+#: src/ftpclass.cc:4020
 #, fuzzy
 msgid "Sending data/TLS"
 msgstr "자료 보내는 중"
 
-#: src/ftpclass.cc:4017
+#: src/ftpclass.cc:4022
 #, fuzzy
 msgid "Receiving data/TLS"
 msgstr "자료 받는 중"
 
-#: src/ftpclass.cc:4023 src/Http.cc:1882 src/Fish.cc:1127 src/SFtp.cc:1332
+#: src/ftpclass.cc:4028 src/Http.cc:1882 src/Fish.cc:1127 src/SFtp.cc:1332
 msgid "Sending data"
 msgstr "자료 보내는 중"
 
-#: src/ftpclass.cc:4025 src/Http.cc:1889 src/Fish.cc:1125 src/SFtp.cc:1330
+#: src/ftpclass.cc:4030 src/Http.cc:1889 src/Fish.cc:1125 src/SFtp.cc:1330
 msgid "Receiving data"
 msgstr "자료 받는 중"
 
