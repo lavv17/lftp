@@ -1303,14 +1303,10 @@ int   Ftp::Do()
       conn->SavePeerAddress();
 
 #if USE_SSL
-      if(proxy?!xstrcmp(proxy_proto,"ftps")||!xstrcmp(proxy_proto,"https"):ftps)
+      if(proxy && (!xstrcmp(proxy_proto,"ftps")
+	        || !xstrcmp(proxy_proto,"https")))
       {
 	 conn->MakeSSLBuffers(hostname);
-	 if(ftps)
-	 {
-	    const char *initial_prot=ResMgr::Query("ftps:initial-prot",hostname);
-	    conn->prot=initial_prot[0];
-	 }
       }
       else // note the following block
 #endif
@@ -1330,6 +1326,12 @@ int   Ftp::Do()
 	 goto usual_return;
 
    pre_CONNECTED_STATE:
+      if(ftps && (!proxy || conn->proxy_is_http))
+      {
+	 conn->MakeSSLBuffers(hostname);
+	 const char *initial_prot=ResMgr::Query("ftps:initial-prot",hostname);
+	 conn->prot=initial_prot[0];
+      }
       if(use_telnet_iac)
 	 conn->InitTelnetLayer();
 

@@ -1,3 +1,8 @@
+2006-04-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: init ssl layer after connection through http proxy is
+	  established.
+
 2006-04-19  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ArgV.cc, ArgV.h: include getopt.h in the header.
