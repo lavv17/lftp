@@ -906,18 +906,6 @@ Job *CmdExec::builtin_open()
 	 {
 	    cwd_history.Set(session,session->GetCwd());
 
-	    FileAccess *new_session=FileAccess::New(uc.proto,uc.host);
-	    if(!new_session)
-	    {
-	       eprintf("%s: %s%s\n",args->a0(),uc.proto,
-			_(" - not supported protocol"));
-	       return 0;
-	    }
-
-	    saved_session=session;
-	    session=0;
-	    ChangeSession(new_session);
-
 	    if(uc.user && !user)
 	       user=uc.user;
 	    if(uc.pass && !pass)
@@ -930,6 +918,18 @@ Job *CmdExec::builtin_open()
 	       port=uc.port;
 	    if(uc.path && !path)
 	       path=uc.path;
+
+	    FileAccess *new_session=FileAccess::New(uc.proto,host,port);
+	    if(!new_session)
+	    {
+	       eprintf("%s: %s%s\n",args->a0(),uc.proto,
+			_(" - not supported protocol"));
+	       return 0;
+	    }
+
+	    saved_session=session;
+	    session=0;
+	    ChangeSession(new_session);
 	 }
 
 	 // user gets substituted only if no proto is specified.

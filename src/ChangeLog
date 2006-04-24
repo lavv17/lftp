@@ -2,6 +2,9 @@
 
 	* ftpclass.cc: init ssl layer after connection through http proxy is
 	  established.
+	* commands.cc: pass port to FileAccess::New along with hostname, this
+	  fixes opening sites with explicit port (it could either use default
+	  port or spin).
 
 2006-04-19  Alexander V. Lukyanov <lav@yars.free.net>
 
