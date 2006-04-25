@@ -1,3 +1,7 @@
+2006-04-25  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: add zlib version; wrap library line nicely.
+
 2006-04-24  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: init ssl layer after connection through http proxy is

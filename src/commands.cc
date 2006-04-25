@@ -36,6 +36,7 @@
 #ifdef HAVE_DLFCN_H
 # include <dlfcn.h>
 #endif
+#include <mbswidth.h>
 
 #include "CmdExec.h"
 #include "GetJob.h"
@@ -2565,8 +2566,14 @@ CMD(ver)
       _("Send bug reports and questions to <%s>.\n"),"lftp@uniyar.ac.ru");
 
 #if defined(HAVE_DLOPEN) && defined(RTLD_DEFAULT)
+   /* Show some of loaded libraries. Modules can load those libraries on
+      demand so use dlsym to avoid linking with them just for showing version. */
    printf("\n");
-   printf(_("Libraries used: "));
+   const char *msg=_("Libraries used: ");
+   int mbflags=MBSW_ACCEPT_INVALID|MBSW_ACCEPT_UNPRINTABLE;
+   int col=mbswidth(msg,mbflags);
+   int width=parent->status_line?parent->status_line->GetWidth():80;
+   printf("%s",msg);
 
    struct VersionInfo
    {
@@ -2610,6 +2617,7 @@ CMD(ver)
       {"OpenSSL",    "SSL_version_str",	     VersionInfo::STRING_PTR,"OpenSSL "},
       {"GnuTLS",     "gnutls_check_version", VersionInfo::FUNC0,     0},
       {"libiconv",   "_libiconv_version",    VersionInfo::INT8_8,    0},
+      {"zlib",	     "zlibVersion",	     VersionInfo::FUNC0,     0},
       {0}
    };
 
@@ -2619,7 +2627,19 @@ CMD(ver)
       const char *v=scan->query();
       if(!v)
 	 continue;
-      printf("%s%s %s",need_comma?", ":"",scan->lib_name,v);
+      char buf[256];
+      sprintf(buf,", %s %s",scan->lib_name,v);
+      int skip=need_comma?0:2;
+      int w=mbswidth(buf+skip,mbflags);
+      if(col+w>=width)
+      {
+	 buf[1]='\n';
+	 col=w-2+skip;
+	 skip/=2;
+      }
+      else
+	 col+=w;
+      printf("%s",buf+skip);
       need_comma=true;
    }
    printf("\n");
