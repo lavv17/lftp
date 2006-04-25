@@ -1,3 +1,9 @@
+Version 3.4.6 - 2006-04-25
+
+* fixed opening sites with explicitly specified port (it could either use
+  default port or spin).
+* fixed ftps over http proxy with CONNECT method.
+
 Version 3.4.5 - 2006-04-22
 
 * handle ftp PRET errors.
