@@ -1326,12 +1326,14 @@ int   Ftp::Do()
 	 goto usual_return;
 
    pre_CONNECTED_STATE:
+#if USE_SSL
       if(ftps && (!proxy || conn->proxy_is_http))
       {
 	 conn->MakeSSLBuffers(hostname);
 	 const char *initial_prot=ResMgr::Query("ftps:initial-prot",hostname);
 	 conn->prot=initial_prot[0];
       }
+#endif
       if(use_telnet_iac)
 	 conn->InitTelnetLayer();
 
