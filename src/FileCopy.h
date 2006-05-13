@@ -144,6 +144,7 @@ public:
 	 if(f && !suggested_filename)
 	    suggested_filename=xstrdup(f);
       }
+   void AutoRename(bool yes=true) { auto_rename=yes; }
 };
 
 class FileCopy : public SMTask
