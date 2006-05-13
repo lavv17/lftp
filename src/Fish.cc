@@ -106,6 +106,7 @@ int Fish::Do()
    && rate_limit==0)
       rate_limit=new RateLimit(hostname);
 
+   const char *charset;
    switch(state)
    {
    case DISCONNECTED:
@@ -188,6 +189,14 @@ int Fish::Do()
    case CONNECTING_1:
       if(!received_greeting)
 	 return m;
+
+      charset=ResMgr::Query("fish:charset",hostname);
+      if(charset && *charset)
+      {
+	 send_buf->SetTranslation(charset,false);
+	 recv_buf->SetTranslation(charset,true);
+      }
+
       Send("#FISH\n"
 	   "exec 2>&1;echo;start_fish_server;"
 	   "TZ=GMT;export TZ;LC_ALL=C;export LC_ALL;"
@@ -1170,6 +1179,17 @@ void Fish::CleanupThis()
 void Fish::Reconfig(const char *name)
 {
    super::Reconfig(name);
+   if(!xstrcmp(name,"fish:charset") && recv_buf && send_buf)
+   {
+      if(!IsSuspended())
+	 LsCache::TreeChanged(this,"/");
+      const char *charset=ResMgr::Query("fish:charset",hostname);
+      if(charset && *charset)
+      {
+	 send_buf->SetTranslation(charset,false);
+	 recv_buf->SetTranslation(charset,true);
+      }
+   }
 }
 
 void Fish::ClassInit()

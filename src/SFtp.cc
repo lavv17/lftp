@@ -789,12 +789,17 @@ void SFtp::HandleExpect(Expect *e)
       {
 	 protocol_version=((Reply_VERSION*)reply)->GetVersion();
 	 Log::global->Format(9,"---- protocol version set to %d\n",protocol_version);
+	 const char *charset=0;
 	 if(protocol_version>=4)
+	    charset="UTF-8";
+	 else
+	    charset=ResMgr::Query("sftp:charset",hostname);
+	 if(charset && *charset)
 	 {
 	    send_translate=new DirectedBuffer(DirectedBuffer::PUT);
 	    recv_translate=new DirectedBuffer(DirectedBuffer::GET);
-	    send_translate->SetTranslation("UTF-8",false);
-	    recv_translate->SetTranslation("UTF-8",true);
+	    send_translate->SetTranslation(charset,false);
+	    recv_translate->SetTranslation(charset,true);
 	 }
       }
       else
@@ -1389,6 +1394,21 @@ void SFtp::Reconfig(const char *name)
       size_read=16;
    if(size_write<16)
       size_write=16;
+   if(!xstrcmp(name,"sftp:charset") && protocol_version && protocol_version<4)
+   {
+      if(!IsSuspended())
+	 LsCache::TreeChanged(this,"/");
+      const char *charset=ResMgr::Query("fish:charset",hostname);
+      if(charset && *charset)
+      {
+	 if(!send_translate)
+	    send_translate=new DirectedBuffer(DirectedBuffer::PUT);
+	 if(!recv_translate)
+	    recv_translate=new DirectedBuffer(DirectedBuffer::GET);
+	 send_translate->SetTranslation(charset,false);
+	 recv_translate->SetTranslation(charset,true);
+      }
+   }
 }
 
 void SFtp::ClassInit()

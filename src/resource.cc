@@ -310,7 +310,8 @@ static ResDecl
    res_sftp_rsize    ("sftp:size-read", "0x8000",ResMgr::UNumberValidate,0),
    res_sftp_wsize    ("sftp:size-write","0x8000",ResMgr::UNumberValidate,0),
    res_sftp_conn_prog("sftp:connect-program","ssh -a -x",0,0),
-   res_sftp_srv_prog ("sftp:server-program","sftp",0,0);
+   res_sftp_srv_prog ("sftp:server-program","sftp",0,0),
+   res_sftp_charset  ("sftp:charset","",ResMgr::CharsetValidate,0);
 
 static ResDecl
    res_file_charset  ("file:charset",  "",   ResMgr::CharsetValidate,ResMgr::NoClosure);
@@ -346,8 +347,9 @@ static ResDecl
    res_use_fork	   ("dns:use-fork",     "yes", ResMgr::BoolValidate,ResMgr::NoClosure);
 
 static ResDecl
-   fish_shell  ("fish:shell", "/bin/sh",  0,0),
-   fish_connect("fish:connect-program", "ssh -a -x", 0,0);
+   res_fish_shell    ("fish:shell", "/bin/sh",  0,0),
+   res_fish_connect  ("fish:connect-program", "ssh -a -x", 0,0),
+   res_fish_charset  ("fish:charset","",ResMgr::CharsetValidate,0);
 
 static ResDecl
    res_dir_colors ("color:dir-colors",   "",   0,ResMgr::NoClosure);

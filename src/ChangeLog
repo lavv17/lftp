@@ -1,3 +1,8 @@
+2006-05-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Fish.cc, SFtp.cc, resource.cc: add support for recoding in fish
+	  and sftp (version<4); new settings fish:charset, sftp:charset.
+
 2006-05-03  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: fixed compilation without ssl.
