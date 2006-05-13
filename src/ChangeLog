@@ -1,3 +1,12 @@
+2006-05-03  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: fixed compilation without ssl.
+	* SMTask.cc, SMTask.h: fix compilation with some compilers (e.g. sun).
+	* commands.cc: support auto-rename in get1.
+	* FileCopy.h: add AutoRename method.
+	* Http.cc: fixed extraction of suggested file name; fixed decoding
+	  of chunked transfers when content-length is explicitly known.
+
 2006-04-25  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: add zlib version; wrap library line nicely.
