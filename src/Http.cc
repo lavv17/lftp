@@ -732,6 +732,7 @@ static const char *extract_quoted_header_value(const char *value)
 	    value++;
 	 *store++=*value++;
       }
+      *store=0;
    }
    else
    {
@@ -1661,15 +1662,18 @@ int Http::Read(void *buf,int size)
 	 }
 	 return 0;
       }
-      if(body_size>=0 && bytes_received>=body_size)
+      if(!chunked)
       {
-	 DebugPrint("---- ",_("Received all"));
-	 return 0; // all received
-      }
-      if(entity_size>=0 && pos>=entity_size)
-      {
-	 DebugPrint("---- ",_("Received all (total)"));
-	 return 0;
+	 if(body_size>=0 && bytes_received>=body_size)
+	 {
+	    DebugPrint("---- ",_("Received all"));
+	    return 0; // all received
+	 }
+	 if(entity_size>=0 && pos>=entity_size)
+	 {
+	    DebugPrint("---- ",_("Received all (total)"));
+	    return 0;
+	 }
       }
       if(size1==0)
 	 return DO_AGAIN;
@@ -1700,6 +1704,7 @@ int Http::Read(void *buf,int size)
 	 }
 	 if(chunk_size==0) // eof
 	 {
+	    DebugPrint("---- ",_("Received last chunk"));
 	    // headers may follow
 	    chunked_trailer=true;
 	    state=RECEIVING_HEADER;
