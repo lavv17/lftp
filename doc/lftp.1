@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "05 Apr 2006"
+.TH lftp 1 "12 May 2006"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 3.4.4.
+This man page documents lftp version 3.4.7.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -933,6 +933,10 @@ address family in dns:order.
 .BR file:charset \ (string)
 local character set. It is set from current locale initially.
 .TP
+.BR fish:charset \ (string)
+the character set used by fish server in requests, replies and file listings.
+Default is empty which means the same as local.
+.TP
 .BR fish:connect-program \ (string)
 the program to use for connecting to remote server. It should support `-l' option
 for user name, `-p' for port number. Default is `ssh -a -x'. You can set it to
@@ -1385,6 +1389,11 @@ this option, but linux does.
 .TP
 .BR net:timeout \ (seconds)
 sets the network protocol timeout.
+.TP
+.BR sftp:charset \ (string)
+the character set used by sftp server in file names and file listings.
+Default is empty which means the same as local. This setting is only used
+for sftp protocol version prior to 4. Version 4 and later always use UTF-8.
 .TP
 .BR sftp:connect-program \ (string)
 the program to use for connecting to remote server. It should support `-l' option
