@@ -3213,9 +3213,11 @@ CMD(get1)
    if(args->getnext()!=0)
       goto usage;
 
+   bool auto_rename=false;
    if(dst==0 || dst[0]==0)
    {
       dst=basename_ptr(src);
+      auto_rename=true;
    }
    else
    {
@@ -3228,6 +3230,7 @@ CMD(get1)
 	    strcpy(dst1,dst);
 	    strcat(dst1,bn);
 	    dst=dst1;
+	    auto_rename=true;
 	 }
       }
    }
@@ -3268,6 +3271,7 @@ CMD(get1)
       dst_peer=FileCopyPeerFDStream::NewPut(dst,cont||target_region_begin>0);
    else
       dst_peer=new FileCopyPeerFA(&dst_url,FA::STORE);
+   dst_peer->AutoRename(auto_rename);
    if(!cont && (target_region_begin>0 || target_region_end!=FILE_END))
       dst_peer->SetRange(target_region_begin,target_region_end);
 
