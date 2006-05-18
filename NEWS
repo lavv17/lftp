@@ -1,3 +1,11 @@
+Version 3.4.7 - 2006-05-18
+
+* get1 can now automatically rename files to server suggested file name.
+* new settings fish:charset and sftp:charset (for sftp version<4).
+* fixed http chunked transfers with explicit Content-Length.
+* fixed compilation with sun c++ compiler.
+* fixed compilation without ssl.
+
 Version 3.4.6 - 2006-04-25
 
 * fixed opening sites with explicitly specified port (it could either use

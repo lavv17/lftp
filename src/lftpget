@@ -57,7 +57,7 @@ do
    if $need_pass; then
       SCRIPT="$SCRIPT echo \"$f\" needs password;"
    fi
-   SCRIPT="$SCRIPT get $CONT \"$f\";"
+   SCRIPT="$SCRIPT get1 $CONT \"$f\";"
 
    if $verbose; then
       SCRIPT="$SCRIPT && echo Got \`\"$f\"\'.;"
