@@ -1233,7 +1233,7 @@ void CmdExec::RegisterCommand(const char *name,cmd_creator_t creator,const char 
 {
    if(dyn_cmd_table==0)
    {
-      dyn_cmd_table_count=1;
+      dyn_cmd_table_count=2;
       for(const cmd_rec *c=static_cmd_table; c->name; c++)
 	 dyn_cmd_table_count++;
       dyn_cmd_table=(cmd_rec*)xmemdup(static_cmd_table,dyn_cmd_table_count*sizeof(cmd_rec));

@@ -1,3 +1,8 @@
+2006-06-19  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc: fixed dyn_cmd_table initialization - last static command
+	  was overwritten due to off-by-one error.
+
 2006-05-13  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Fish.cc, SFtp.cc, resource.cc: add support for recoding in fish
