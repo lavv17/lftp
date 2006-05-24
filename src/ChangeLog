@@ -1,4 +1,21 @@
-2006-06-19  Alexander V. Lukyanov <lav@yars.free.net>
+2006-05-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc, FileSetOutput.cc, Fish.cc, Http.cc, Resolver.cc,
+	  SFtp.cc, SMTask.cc, ftpclass.cc: explicitly request unix time.
+	* LsCache.cc: use numeric TimeInterval ctor.
+	* ResMgr.cc, ResMgr.h: split off TimeIntervalR from TimeInterval;
+	  move TimeInterval to TimeDate.{cc,h}.
+	* Resolver.cc: use TimeInterval::Finished method.
+	* SleepJob.cc, SleepJob.h: use Time; TimeInterval::GetTimeout.
+	* Speedometer.cc: explicitly create TimeDiff.
+	* TimeDate.cc, TimeDate.h: optimize time_tuple and Time methods;
+	  move TimeInterval here.
+	* Timer.cc: use TimeIntervalR.
+	* ftpclass.cc: close aborted data connection in few seconds after ABOR;
+	  don't use ABOR just after another command.
+	* ftpclass.h: add abor_time and last_cmd_time members.
+
+2006-05-19  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CmdExec.cc: fixed dyn_cmd_table initialization - last static command
 	  was overwritten due to off-by-one error.

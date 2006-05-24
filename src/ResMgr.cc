@@ -647,7 +647,7 @@ ResDecl::~ResDecl()
 #define HOUR   (60*MINUTE)
 #define DAY    (24*HOUR)
 
-void TimeInterval::init(const char *s)
+void TimeIntervalR::init(const char *s)
 {
    double interval=0;
    infty=false;
@@ -694,7 +694,7 @@ void TimeInterval::init(const char *s)
 
 const char *ResMgr::TimeIntervalValidate(char **s)
 {
-   TimeInterval t(*s);
+   TimeIntervalR t(*s);
    if(t.Error())
       return t.ErrorText();
    return 0;

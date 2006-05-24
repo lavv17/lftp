@@ -164,7 +164,7 @@ void SMTask::RollAll(int max_time)
    time_t time_limit=now.UnixTime()+max_time;
    do { Schedule(); }
    while(sched_total.GetTimeout()==0
-	 && (max_time==0 || now<time_limit));
+	 && (max_time==0 || now.UnixTime()<time_limit));
 }
 
 int SMTask::CollectGarbage()

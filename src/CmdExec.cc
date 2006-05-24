@@ -934,7 +934,7 @@ char *CmdExec::MakePrompt()
 void CmdExec::beep_if_long()
 {
    if(start_time!=0 && long_running!=0
-   && now-start_time>long_running
+   && now.UnixTime()>start_time+long_running
    && interactive && Idle() && isatty(1))
       write(1,"\007",1);
 }

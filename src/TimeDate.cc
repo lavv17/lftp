@@ -36,23 +36,19 @@ void time_tuple::normalize()
       sec-=1;
    }
 }
-void time_tuple::add(const time_tuple &o)
+void time_tuple::add(time_t s,int ms)
 {
-   sec+=o.sec;
-   msec+=o.msec;
+   sec+=s;
+   msec+=ms;
    if(msec>=1000)
       msec-=1000,sec++;
    else if(msec<=-1000)
       msec+=1000,sec--;
 }
-void time_tuple::sub(const time_tuple &o)
+void time_tuple::add(double s)
 {
-   sec-=o.sec;
-   msec-=o.msec;
-   if(msec>=1000)
-      msec-=1000,sec++;
-   else if(msec<=-1000)
-      msec+=1000,sec--;
+   time_t s_int=time_t(s);
+   add(s_int,int((s-s_int)*1000));
 }
 bool time_tuple::lt(const time_tuple &o) const
 {
@@ -102,4 +98,26 @@ void TimeDiff::Set(double s)
 {
    time_t s_int=(time_t)s;
    set(s_int,int((s-s_int)*1000));
+}
+
+bool TimeInterval::Finished(const Time &base) const
+{
+   if(infty)
+      return false;
+   TimeDiff elapsed(SMTask::now,base);
+   if(!lt(elapsed))
+      return false;
+   return true;
+}
+int TimeInterval::GetTimeout(const Time &base) const
+{
+   if(infty)
+      return HOUR*1000;	// to avoid dead-lock message
+   TimeDiff elapsed(SMTask::now,base);
+   if(lt(elapsed))
+      return 0;
+   elapsed-=*this;
+   if(-elapsed.Seconds()>HOUR)
+      return HOUR*1000;
+   return -elapsed.MilliSeconds();
 }

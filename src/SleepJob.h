@@ -30,7 +30,7 @@ class LocalDirectory;
 
 class SleepJob : public SessionJob
 {
-   time_t start_time;
+   Time start_time;
    TimeInterval next_time;
    char *cmd;
    int exit_code;

@@ -288,7 +288,7 @@ void Ftp::NoFileCheck(int act)
    DataClose();
    state=EOF_STATE;
    eof=false;
-   retry_time=now+2; // retry after 2 seconds
+   retry_time=time_t(now)+2; // retry after 2 seconds
 }
 
 /* 5xx that aren't errors at all */
@@ -330,7 +330,7 @@ void Ftp::TransferCheck(int act)
    if(act==211)
    {
       // permature STAT?
-      stat_time=now+3;
+      stat_time=time_t(now)+3;
       return;
    }
    if(act==213)	  // this must be a STAT reply.
@@ -873,6 +873,7 @@ Ftp::Connection::Connection()
    type='A';
    last_rest=0;
    rest_pos=0;
+   abor_time=0;
 
    quit_sent=false;
    fixed_pasv=false;
@@ -1076,7 +1077,7 @@ bool Ftp::GetBetterConnection(int level,bool limit_reached)
 	    if(diff>0)
 	    {
 	       /* number of seconds the task has been idle */
-	       int have_idle=(time_t)now-o->idle_start;
+	       int have_idle=time_t(now)-o->idle_start;
 	       if(have_idle<diff)
 	       {
 		  TimeoutS(diff-have_idle);
@@ -1142,12 +1143,12 @@ int   Ftp::Do()
    // check if idle time exceeded
    if(mode==CLOSED && conn && idle>0)
    {
-      if(now >= idle_start+idle)
+      if(now.UnixTime() >= idle_start+idle)
       {
 	 DebugPrint("---- ",_("Closing idle connection"),1);
 	 Disconnect();
 	 if(conn)
-	    idle_start=now+timeout;
+	    idle_start=time_t(now)+timeout;
 	 return m;
       }
       TimeoutS(idle_start+idle-time_t(now));
@@ -1164,6 +1165,11 @@ int   Ftp::Do()
       }
       goto usual_return;
    }
+
+   /* Some servers cannot detect ABOR, help them by closing data connection */
+   if(conn && conn->aborted_data_sock!=-1
+   && time_t(now)-conn->abor_time>5)
+      conn->CloseAbortedDataConnection();
 
    if(Error() || eof || mode==CLOSED)
    {
@@ -1518,7 +1524,7 @@ int   Ftp::Do()
       if(home.path==0 && !expect->IsEmpty())
 	 goto usual_return;
 
-      if(now<retry_time)
+      if(now.UnixTime()<retry_time)
       {
 	 TimeoutS(retry_time-time_t(now));
 	 goto usual_return;
@@ -2190,7 +2196,7 @@ int   Ftp::Do()
 	 // but the data can be still unsent in server side kernel buffer.
 	 // So the ftp server can decide the connection is idle for too long
 	 // time and disconnect. This hack is to prevent the above.
-	 if(now >= nop_time+nop_interval)
+	 if(now.UnixTime() >= nop_time+nop_interval)
 	 {
 	    // prevent infinite NOOP's
 	    if(nop_offset==pos && nop_count*nop_interval>=timeout)
@@ -2832,7 +2838,8 @@ void  Ftp::DataAbort()
    expect->Close();
 
    if(!QueryBool("use-abor",hostname)
-   || expect->Count()>1 || conn->proxy_is_http)
+   || expect->Count()>1 || conn->proxy_is_http
+   || now-conn->last_cmd_time<TimeDiff(1,0))
    {
       // check that we have a data socket to close, and the server is not
       // in uninterruptible accept() state.
@@ -2857,6 +2864,7 @@ void  Ftp::DataAbort()
    SendUrgentCmd("ABOR");
    expect->Push(Expect::ABOR);
    FlushSendQueue(true);
+   conn->abor_time=now;
 
    // don't close it now, wait for ABOR result
    conn->AbortDataConnection();
@@ -3077,6 +3085,7 @@ void  Ftp::Connection::Send(const char *buf,int len)
       if(ch=='\r')
 	 send_cmd_buffer->Put("",1); // RFC2640
    }
+   last_cmd_time=SMTask::now;
 }
 
 void  Ftp::Connection::SendCmd(const char *cmd)
@@ -3629,7 +3638,7 @@ void Ftp::CheckResp(int act)
    if(act==150 && state==WAITING_STATE && expect->FirstIs(Expect::TRANSFER))
    {
       copy_connection_open=true;
-      stat_time=now+2;
+      stat_time=time_t(now)+2;
    }
 
    if(act==150 && mode==RETRIEVE && opt_size && *opt_size<0)
@@ -3738,6 +3747,7 @@ void Ftp::CheckResp(int act)
       goto ignore;
 
    case Expect::ABOR:
+      conn->abor_time=0;
       conn->CloseAbortedDataConnection();
       goto ignore;
 

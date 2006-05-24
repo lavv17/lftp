@@ -77,7 +77,7 @@ int SleepJob::Do()
       return STALL;
    }
 
-   if(now >= start_time+next_time.Seconds())
+   if(now >= start_time+next_time)
    {
       if(cmd)
       {
@@ -100,10 +100,7 @@ int SleepJob::Do()
       done=true;
       return MOVED;
    }
-   time_t diff=next_time.Seconds()-(time_t(now)-start_time);
-   if(diff>1024)
-      diff=1024;  // prevent overflow
-   TimeoutS(diff);
+   Timeout(next_time.GetTimeout(start_time));
    return STALL;
 }
 
@@ -140,7 +137,7 @@ Job *cmd_sleep(CmdExec *parent)
       return 0;
    }
    const char *t=args->getarg(1);
-   TimeInterval delay(t);
+   TimeIntervalR delay(t);
    if(delay.Error())
    {
       eprintf("%s: %s: %s. ",op,t,delay.ErrorText());
@@ -154,10 +151,10 @@ Job *cmd_repeat(CmdExec *parent)
    const char *op=args->a0();
    int cmd_start=1;
    const char *t=args->getarg(1);
-   TimeInterval delay(1);
+   TimeIntervalR delay(1);
    if(t && isdigit((unsigned char)t[0]))
    {
-      delay=TimeInterval(t);
+      delay.Set(t);
       if(delay.Error())
       {
 	 eprintf("%s: %s: %s.\n",op,t,delay.ErrorText());

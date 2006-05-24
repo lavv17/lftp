@@ -33,13 +33,17 @@ class time_tuple
 {
    time_t sec;
    int msec;
+   void add(time_t s,int ms);   // must be |ms|<1000
 
 protected:
    time_t get_seconds()   const { return sec; }
    int get_milliseconds() const { return msec; }
    void normalize();
-   void add(const time_tuple &);
-   void sub(const time_tuple &);
+   void add_sec(long s) { sec+=s; }
+   void add(double);
+   void add(const time_tuple &o) { add(o.sec,o.msec); }
+   void sub(const time_tuple &o) { add(-o.sec,-o.msec); }
+   void sub(double o) { add(-o); }
    void set(time_t s,int ms) { sec=s; msec=ms; normalize(); }
    void set(const time_tuple &o) { sec=o.sec; msec=o.msec; }
    bool lt(const time_tuple &) const;
@@ -59,19 +63,18 @@ public:
    time_t UnixTime() const { return get_seconds(); }
    int MilliSecond() const { return get_milliseconds(); }
 
-   const Time& operator+=(const TimeDiff &o);
-   const Time& operator-=(const TimeDiff &o);
-   time_t operator+(int t) { return UnixTime()+t; }
-   time_t operator-(int t) { return UnixTime()-t; }
-   time_t operator+(long t) { return UnixTime()+t; }
-   time_t operator-(long t) { return UnixTime()-t; }
+   inline const Time& operator+=(const TimeDiff &o);
+   inline const Time& operator-=(const TimeDiff &o);
+   inline TimeDiff operator-(const Time &o) const;
+   Time operator+(const TimeDiff &o) const { Time t(*this); t+=o; return t; }
+   Time operator-(const TimeDiff &o) const { Time t(*this); t-=o; return t; }
    bool operator<(const Time &o) const { return this->lt(o); }
    bool operator>=(const Time &o) const { return !(*this<o); }
    bool operator>(const Time &o) const { return *this>=o; }
-   bool operator<(int t) const { return UnixTime()<t; }
-   bool operator>=(int t) const { return UnixTime()>=t; }
-   bool operator<(long t) const { return UnixTime()<t; }
-   bool operator>=(long t) const { return UnixTime()>=t; }
+/*   bool operator<(int t) const { return UnixTime()<t; }*/
+/*   bool operator>=(int t) const { return UnixTime()>=t; }*/
+/*   bool operator<(long t) const { return UnixTime()<t; }*/
+/*   bool operator>=(long t) const { return UnixTime()>=t; }*/
 
    operator time_t() { return UnixTime(); }
 };
@@ -117,14 +120,28 @@ public:
    bool operator>=(const TimeDiff &o) const { return !(*this<o); }
    bool operator>(const TimeDiff &o) const { return *this>=o; }
 
-   const TimeDiff &operator-=(const TimeDiff &o);
-   const TimeDiff &operator+=(const TimeDiff &o);
+   const TimeDiff &operator-=(const TimeDiff &o) { sub(o); return *this; }
+   const TimeDiff &operator+=(const TimeDiff &o) { add(o); return *this; }
 
    int MilliSeconds() const;
    time_t Seconds() const;
 };
 
+inline TimeDiff Time::operator-(const Time &o) const { return TimeDiff(*this,o); }
 inline const Time &Time::operator+=(const TimeDiff &o) { add(o); return *this; }
 inline const Time &Time::operator-=(const TimeDiff &o) { sub(o); return *this; }
+
+class TimeInterval : public TimeDiff
+{
+protected:
+   bool infty;
+public:
+   TimeInterval(time_t s,int ms=0) : TimeDiff(s,ms) { infty=false; }
+   TimeInterval(const TimeDiff &d) : TimeDiff(d) { infty=false; }
+   void SetInfty(bool i=true) { infty=i; }
+   bool IsInfty() const { return infty; }
+   bool Finished(const Time &base) const;
+   int GetTimeout(const Time &base) const;
+};
 
 #endif

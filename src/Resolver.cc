@@ -245,7 +245,7 @@ int   Resolver::Do()
    {
       if(timeout>0)
       {
-	 if(now >= start_time+timeout)
+	 if(now.UnixTime() >= start_time+timeout)
 	 {
 	    err_msg=xstrdup(_("host name resolve timeout"));
 	    done=true;
@@ -989,8 +989,7 @@ void ResolverCache::CacheCheck()
    {
       Entry *s=*scan;
       TimeInterval expire(ResMgr::Query("dns:cache-expire",s->hostname));
-      if((!expire.IsInfty() && SMTask::now>=s->timestamp+expire.Seconds())
-      || (count>=countlimit))
+      if(expire.Finished(s->timestamp) || (count>=countlimit))
       {
 	 *scan=s->next;
 	 delete s;

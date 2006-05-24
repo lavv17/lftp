@@ -135,7 +135,7 @@ void FileSetOutput::print(FileSet &fs, OutputJob *o) const
 	  * months.  A Gregorian year has 365.2425 * 24 * 60 * 60 ==
 	  * 31556952 seconds on the average.  Write this value as an
 	  * integer constant to avoid floating point hassles.  */
-	 const int six_months_ago = SMTask::now - 31556952 / 2;
+	 const int six_months_ago = SMTask::now.UnixTime() - 31556952 / 2;
 	 bool recent = six_months_ago <= f->date;
 
 	 const char *use_fmt=time_fmt;

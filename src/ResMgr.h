@@ -189,21 +189,18 @@ inline bool ResMgr::QueryBool(const char *name,const char *closure)
    return Query(name,closure).to_bool();
 }
 
-class TimeInterval : public TimeDiff
+class TimeIntervalR : public TimeInterval
 {
-   bool infty;
    const char *error_text;
    void init(const char *);
 public:
    void Set(const char *s) { init(s); }
-   TimeInterval(const char *s) { init(s); }
-   TimeInterval(ResValue r) { init(r); }
-   TimeInterval(time_t i) : TimeDiff(i,0) { infty=false; error_text=0; }
-   TimeInterval(const TimeDiff &d) : TimeDiff(d) { infty=false; error_text=0; }
+   TimeIntervalR(const char *s) : TimeInterval(0,0) { init(s); }
+   TimeIntervalR(ResValue r) : TimeInterval(0,0) { init(r); }
+   TimeIntervalR(time_t s,int ms=0) : TimeInterval(s,ms) { error_text=0; }
+   TimeIntervalR(const TimeDiff &d) : TimeInterval(d) { error_text=0; }
    bool Error() const { return error_text!=0; };
    const char *ErrorText() const { return error_text; }
-
-   bool IsInfty() const { return infty; }
 };
 
 class Range

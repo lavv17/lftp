@@ -30,8 +30,8 @@
 LsCache *LsCache::chain=0;
 bool	 LsCache::use=true;
 long	 LsCache::sizelimit=1024*1024;
-TimeInterval LsCache::ttl("60m");  // time to live = 60 minutes
-TimeInterval LsCache::ttl_neg("1m");  // time to live for negative cache
+TimeInterval LsCache::ttl(60*MINUTE);  // time to live = 60 minutes
+TimeInterval LsCache::ttl_neg(MINUTE);  // time to live for negative cache
 LsCache::ExpireHelper LsCache::expire_helper;
 
 void LsCache::CheckSize()

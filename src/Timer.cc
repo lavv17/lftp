@@ -75,7 +75,7 @@ void Timer::Reconfig(const char *r)
 {
    if(resource && (!r || !strcmp(r,resource)))
    {
-      last_setting=TimeInterval(ResMgr::Query(resource,closure));
+      last_setting=TimeIntervalR(ResMgr::Query(resource,closure));
       stop=start;
       stop+=last_setting;
       set_timeout();

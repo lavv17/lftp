@@ -72,7 +72,7 @@ int Fish::Do()
    // check if idle time exceeded
    if(mode==CLOSED && send_buf && idle>0)
    {
-      if(now >= idle_start+idle)
+      if(now.UnixTime() >= idle_start+idle)
       {
 	 DebugPrint("---- ",_("Closing idle connection"),1);
 	 Disconnect();

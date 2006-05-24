@@ -104,6 +104,9 @@ class Ftp : public NetAccess
       off_t last_rest;	// last successful REST position.
       off_t rest_pos;	// the number sent with REST command.
 
+      Time last_cmd_time;
+      Time abor_time;	// time of last ABOR command.
+
 #if USE_SSL
       lftp_ssl *control_ssl;
       char prot;  // current data protection scheme 'C'lear or 'P'rivate
