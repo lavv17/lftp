@@ -8,6 +8,7 @@
 	  TimeRemains.
 	* misc.h: move MINUTE, HOUR, DAY to TimeDate.h.
 	* resource.cc: change net:idle format to TimeInterval.
+	* SleepJob.cc: use SMTask::now.
 
 2006-05-24  Alexander V. Lukyanov <lav@yars.free.net>
 

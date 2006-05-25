@@ -200,7 +200,7 @@ Job *cmd_at(CmdExec *parent)
 #endif
    char *date=args->Combine(1);
    date[date_len]=0;
-   time_t now=time(0);
+   time_t now=SMTask::now;
    time_t when=get_date(date,&now);
    xfree(date);
 
@@ -227,9 +227,10 @@ Job *cmd_at(CmdExec *parent)
    }
 
    if(!cmd)
-      return new SleepJob(when-now);
+      return new SleepJob(Time(when,0)-SMTask::now);
 
-   return new SleepJob(when-now, session->Clone(), parent->cwd->Clone(), cmd);
+   return new SleepJob(Time(when,0)-SMTask::now,
+			session->Clone(), parent->cwd->Clone(), cmd);
 }
 #undef args
 
