@@ -9,6 +9,8 @@
 	* misc.h: move MINUTE, HOUR, DAY to TimeDate.h.
 	* resource.cc: change net:idle format to TimeInterval.
 	* SleepJob.cc: use SMTask::now.
+	* SMTask.cc, SMTask.h, lftp.cc: use TimeInterval and Timer in RollAll.
+	* Timer.cc, Timer.h: use TimeInterval in Set.
 
 2006-05-24  Alexander V. Lukyanov <lav@yars.free.net>
 

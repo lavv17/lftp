@@ -30,6 +30,7 @@
 #endif
 
 #include "SMTask.h"
+#include "Timer.h"
 #include "misc.h"
 
 SMTask	 *SMTask::chain=0;
@@ -159,12 +160,11 @@ int SMTask::Roll(SMTask *task)
    return m;
 }
 
-void SMTask::RollAll(int max_time)
+void SMTask::RollAll(const TimeInterval &max_time)
 {
-   time_t time_limit=now.UnixTime()+max_time;
+   Timer limit_timer(max_time);
    do { Schedule(); }
-   while(sched_total.GetTimeout()==0
-	 && (max_time==0 || now.UnixTime()<time_limit));
+   while(sched_total.GetTimeout()==0 && !limit_timer.Stopped());
 }
 
 int SMTask::CollectGarbage()

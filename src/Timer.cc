@@ -31,10 +31,9 @@ void Timer::set_timeout() const
       current->Timeout(remains.MilliSeconds());
    }
 }
-
-void Timer::Set(const TimeDiff &diff)
+void Timer::Set(const TimeInterval &i)
 {
-   last_setting=diff;
+   last_setting=i;
    resource=closure=0;
    Reset();
 }
