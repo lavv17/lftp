@@ -42,8 +42,7 @@ protected:
    int	 retries;
    int	 persist_retries;
 
-   int	 idle;
-   time_t idle_start;
+   Timer idle_timer;
 
    int	 timeout;
    bool	 CheckTimeout();
@@ -112,6 +111,7 @@ public:
 
    void Reconfig(const char *name=0);
 
+   void Connect(const char *h,const char *p);
    void ConnectVerify();
    void ResetLocationData();
 

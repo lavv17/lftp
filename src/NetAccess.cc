@@ -55,8 +55,7 @@
 void NetAccess::Init()
 {
    resolver=0;
-   idle=0;
-   idle_start=now;
+   idle_timer.SetResource("net:idle",0);
    max_retries=0;
    max_persist_retries=0;
    retries=0;
@@ -118,7 +117,7 @@ void NetAccess::Reconfig(const char *name)
 
    const char *c=hostname;
 
-   timeout = TimeInterval(ResMgr::Query("net:timeout",c)).Seconds();
+   timeout = TimeIntervalR(ResMgr::Query("net:timeout",c)).Seconds();
    reconnect_interval = ResMgr::Query("net:reconnect-interval-base",c);
    reconnect_interval_multiplier = ResMgr::Query("net:reconnect-interval-multiplier",c);
    if(reconnect_interval_multiplier<1)
@@ -126,7 +125,6 @@ void NetAccess::Reconfig(const char *name)
    reconnect_interval_max = ResMgr::Query("net:reconnect-interval-max",c);
    if(reconnect_interval_max<reconnect_interval)
       reconnect_interval_max=reconnect_interval;
-   idle = ResMgr::Query("net:idle",c);
    max_retries = ResMgr::Query("net:max-retries",c);
    max_persist_retries = ResMgr::Query("net:persist-retries",c);
    socket_buffer = ResMgr::Query("net:socket-buffer",c);
@@ -438,6 +436,12 @@ void NetAccess::ResetLocationData()
    super::ResetLocationData();
 }
 
+void NetAccess::Connect(const char *h,const char *p)
+{
+   super::Connect(h,p);
+   idle_timer.SetResource("net:idle",hostname);
+}
+
 void NetAccess::ConnectVerify()
 {
    if(peer)
@@ -644,10 +648,7 @@ void NetAccess::TrySuccess()
 void NetAccess::Close()
 {
    if(mode!=CLOSED)
-   {
-      idle_start=now;
-      TimeoutS(idle);
-   }
+      idle_timer.Reset();
 
    TrySuccess();
 

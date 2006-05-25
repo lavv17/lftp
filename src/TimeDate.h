@@ -136,12 +136,17 @@ class TimeInterval : public TimeDiff
 protected:
    bool infty;
 public:
-   TimeInterval(time_t s,int ms=0) : TimeDiff(s,ms) { infty=false; }
+   TimeInterval() : TimeDiff(0,0) { infty=true; }
+   TimeInterval(time_t s,int ms) : TimeDiff(s,ms) { infty=false; }
    TimeInterval(const TimeDiff &d) : TimeDiff(d) { infty=false; }
    void SetInfty(bool i=true) { infty=i; }
    bool IsInfty() const { return infty; }
    bool Finished(const Time &base) const;
    int GetTimeout(const Time &base) const;
 };
+
+#define MINUTE (60)
+#define HOUR   (60*MINUTE)
+#define DAY    (24*HOUR)
 
 #endif

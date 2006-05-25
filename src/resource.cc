@@ -276,7 +276,7 @@ static ResDecl
 #if USE_SSL
    ResDecl30a("https:proxy",		  "",	   HttpProxyValidate,0),
 #endif
-   ResDecl31 ("net:idle",		  "180",   ResMgr::UNumberValidate,0),
+   ResDecl31 ("net:idle",		  "3m",	   ResMgr::TimeIntervalValidate,0),
    ResDecl32 ("net:limit-max",		  "0",	   ResMgr::UNumberValidate,0),
    ResDecl33 ("net:limit-rate",		  "0:0",   ResMgr::UNumberPairValidate,0),
    ResDecl34 ("net:limit-total-max",	  "0",	   ResMgr::UNumberValidate,ResMgr::NoClosure),

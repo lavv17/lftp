@@ -946,15 +946,11 @@ int Http::Do()
    int len;
 
    // check if idle time exceeded
-   if(mode==CLOSED && sock!=-1 && idle>0)
+   if(mode==CLOSED && sock!=-1 && idle_timer.Stopped())
    {
-      if(now.UnixTime() >= idle_start+idle)
-      {
-	 DebugPrint("---- ",_("Closing idle connection"),1);
-	 Disconnect();
-	 return m;
-      }
-      TimeoutS(idle_start+idle-time_t(now));
+      DebugPrint("---- ",_("Closing idle connection"),1);
+      Disconnect();
+      return m;
    }
 
    if(home.path==0)

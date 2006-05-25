@@ -108,9 +108,8 @@ Resolver::Resolver(const char *h,const char *p,const char *defp,
    w=0;
    err_msg=0;
    done=false;
-   timeout=0;
+   timeout_timer.SetResource("dns:fatal-timeout",hostname);
    Reconfig();
-   time(&start_time);
    addr=0;
    addr_num=0;
    buf=0;
@@ -243,15 +242,11 @@ int   Resolver::Do()
 
    if(!buf->Eof())   // wait for all data to arrive (not too much)
    {
-      if(timeout>0)
+      if(timeout_timer.Stopped())
       {
-	 if(now.UnixTime() >= start_time+timeout)
-	 {
-	    err_msg=xstrdup(_("host name resolve timeout"));
-	    done=true;
-	    return MOVED;
-	 }
-	 TimeoutS(timeout-(time_t(now)-start_time));
+	 err_msg=xstrdup(_("host name resolve timeout"));
+	 done=true;
+	 return MOVED;
       }
       return m;
    }
@@ -907,7 +902,6 @@ flush:
 
 void Resolver::Reconfig(const char *name)
 {
-   timeout = TimeInterval(ResMgr::Query("dns:fatal-timeout",hostname));
    if(!name || strncmp(name,"dns:",4))
       return;
    if(cache)
@@ -988,7 +982,7 @@ void ResolverCache::CacheCheck()
    while(*scan)
    {
       Entry *s=*scan;
-      TimeInterval expire(ResMgr::Query("dns:cache-expire",s->hostname));
+      TimeIntervalR expire(ResMgr::Query("dns:cache-expire",s->hostname));
       if(expire.Finished(s->timestamp) || (count>=countlimit))
       {
 	 *scan=s->next;

@@ -288,7 +288,7 @@ void Ftp::NoFileCheck(int act)
    DataClose();
    state=EOF_STATE;
    eof=false;
-   retry_time=time_t(now)+2; // retry after 2 seconds
+   retry_timer.Set(2); // retry after 2 seconds
 }
 
 /* 5xx that aren't errors at all */
@@ -956,8 +956,6 @@ void Ftp::InitFtp()
    disconnect_on_close=false;
 
    Reconfig();
-
-   retry_time=0;
 }
 Ftp::Ftp() : super()
 {
@@ -1077,7 +1075,7 @@ bool Ftp::GetBetterConnection(int level,bool limit_reached)
 	    if(diff>0)
 	    {
 	       /* number of seconds the task has been idle */
-	       int have_idle=time_t(now)-o->idle_start;
+	       int have_idle=o->idle_timer.TimePassed().Seconds();
 	       if(have_idle<diff)
 	       {
 		  TimeoutS(diff-have_idle);
@@ -1141,17 +1139,13 @@ int   Ftp::Do()
    int	 m=STALL;
 
    // check if idle time exceeded
-   if(mode==CLOSED && conn && idle>0)
+   if(mode==CLOSED && conn && idle_timer.Stopped())
    {
-      if(now.UnixTime() >= idle_start+idle)
-      {
-	 DebugPrint("---- ",_("Closing idle connection"),1);
-	 Disconnect();
-	 if(conn)
-	    idle_start=time_t(now)+timeout;
-	 return m;
-      }
-      TimeoutS(idle_start+idle-time_t(now));
+      DebugPrint("---- ",_("Closing idle connection"),1);
+      Disconnect();
+      if(conn)
+	 idle_timer.Reset();
+      return m;
    }
 
    if(conn && conn->quit_sent)
@@ -1168,7 +1162,7 @@ int   Ftp::Do()
 
    /* Some servers cannot detect ABOR, help them by closing data connection */
    if(conn && conn->aborted_data_sock!=-1
-   && time_t(now)-conn->abor_time>5)
+   && now-conn->abor_time>TimeDiff(5,0))
       conn->CloseAbortedDataConnection();
 
    if(Error() || eof || mode==CLOSED)
@@ -1524,12 +1518,8 @@ int   Ftp::Do()
       if(home.path==0 && !expect->IsEmpty())
 	 goto usual_return;
 
-      if(now.UnixTime()<retry_time)
-      {
-	 TimeoutS(retry_time-time_t(now));
+      if(!retry_timer.Stopped())
 	 goto usual_return;
-      }
-      retry_time=0;
 
       if(real_cwd==0)
 	 set_real_cwd(home_auto);
@@ -2322,7 +2312,7 @@ int   Ftp::Do()
 	 state=EOF_STATE;
 	 DataAbort();
 	 DataClose();
-	 set_idle_start();
+	 idle_timer.Reset();
 	 eof=true;
 	 return MOVED;
       }
@@ -2451,7 +2441,7 @@ void Ftp::SendSiteIdle()
 {
    if(!QueryBool("use-site-idle"))
       return;
-   conn->SendCmd2("SITE IDLE",idle);
+   conn->SendCmd2("SITE IDLE",idle_timer.GetLastSetting().Seconds());
    expect->Push(Expect::IGNORE);
 }
 void Ftp::SendUTimeRequest()
@@ -3144,7 +3134,7 @@ int   Ftp::SendEOT()
 void  Ftp::Close()
 {
    if(mode!=CLOSED)
-      set_idle_start();
+      idle_timer.Reset();
 
    flags&=~NOREST_MODE;	// can depend on a particular file
    eof=false;
@@ -3983,7 +3973,7 @@ const char *Ftp::CurrentStatus()
 	    return(_("Sending commands..."));
 	 if(!expect->IsEmpty())
 	    return(_("Waiting for response..."));
-	 if(retry_time>time_t(now))
+	 if(!retry_timer.Stopped())
 	    return _("Delaying before retry");
 	 return(_("Connection idle"));
       }
@@ -4188,7 +4178,10 @@ void Ftp::Reconfig(const char *name)
    if(!xstrcmp(name,"net:idle") || !xstrcmp(name,"ftp:use-site-idle"))
    {
       if(conn && conn->data_sock==-1 && state==EOF_STATE && !conn->quit_sent)
+      {
+	 idle_timer.Reconfig(name);
 	 SendSiteIdle();
+      }
       return;
    }
 

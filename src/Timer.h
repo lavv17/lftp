@@ -31,18 +31,22 @@ class Timer : public SMTask
    TimeInterval last_setting;
    const char *resource;
    const char *closure;
-   void set_timeout();
+   void set_timeout() const;
 public:
    Timer();
    Timer(const TimeDiff &);
    int Do();
-   bool Stopped();
+   bool Stopped() const;
    void Stop() { stop=now; }
    void Set(const TimeDiff &d);
+   void Set(time_t s,int ms=0) { Set(TimeDiff(s,ms)); }
    void SetResource(const char *,const char *);
    void SetMilliSeconds(int ms) { Set(TimeDiff(0,ms)); }
    void Reset();
    void Reconfig(const char *);
+   const TimeInterval& GetLastSetting() const { return last_setting; }
+   TimeDiff TimeRemains() const { return Stopped()?TimeDiff(0,0):TimeDiff(stop,now); }
+   TimeDiff TimePassed() const { return now-start; }
 };
 
 #endif

@@ -1,3 +1,14 @@
+2006-05-25  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Fish.cc, Http.cc, NetAccess.cc, NetAccess.h, Resolver.cc, Resolver.h,
+	  SFtp.cc, ftpclass.cc, ftpclass.h: use Timer for net:idle, dns:fatal-timeout.
+	* ResMgr.h, TimeDate.h: add default TimeInterval{R,} ctors.
+	* LsCache.cc: use TimeIntervalR to convert string to TimeInterval.
+	* Timer.h, Timer.cc: add const; new methods GetLastSetting, TimePassed,
+	  TimeRemains.
+	* misc.h: move MINUTE, HOUR, DAY to TimeDate.h.
+	* resource.cc: change net:idle format to TimeInterval.
+
 2006-05-24  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CmdExec.cc, FileSetOutput.cc, Fish.cc, Http.cc, Resolver.cc,

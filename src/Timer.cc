@@ -21,10 +21,10 @@
 #include <config.h>
 #include "Timer.h"
 
-void Timer::set_timeout()
+void Timer::set_timeout() const
 {
    if(last_setting.IsInfty())
-      current->TimeoutS(1024);
+      current->TimeoutS(HOUR);
    else
    {
       TimeDiff remains(stop,now);
@@ -65,7 +65,7 @@ int Timer::Do()
       set_timeout();
    return STALL;
 }
-bool Timer::Stopped()
+bool Timer::Stopped() const
 {
    if(last_setting.IsInfty())
       return false;

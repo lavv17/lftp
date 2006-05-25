@@ -195,6 +195,7 @@ class TimeIntervalR : public TimeInterval
    void init(const char *);
 public:
    void Set(const char *s) { init(s); }
+   TimeIntervalR() { error_text=0; }
    TimeIntervalR(const char *s) : TimeInterval(0,0) { init(s); }
    TimeIntervalR(ResValue r) : TimeInterval(0,0) { init(r); }
    TimeIntervalR(time_t s,int ms=0) : TimeInterval(s,ms) { error_text=0; }

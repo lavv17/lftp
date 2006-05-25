@@ -291,7 +291,7 @@ private:
    int	    nop_count;
 
    time_t   stat_time;
-   time_t   retry_time;
+   Timer retry_timer;
 
    void	 DataAbort();
    void  DataClose();
@@ -359,13 +359,6 @@ private:
    bool  SameConnection(const Ftp *o);
 
    int	 nop_interval;
-
-   void set_idle_start()
-      {
-	 idle_start=now;
-	 if(conn && idle>0)
-	    TimeoutS(idle);
-      }
 
    char *skey_pass;
    bool allow_skey;

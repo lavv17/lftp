@@ -68,10 +68,6 @@ int percent(off_t offset,off_t size);
 
 #define find_char(buf,len,ch) ((const char *)memchr(buf,ch,len))
 
-#define MINUTE (60)
-#define HOUR   (60*MINUTE)
-#define DAY    (24*HOUR)
-
 extern const char month_names[][4];
 
 int parse_month(const char *);
