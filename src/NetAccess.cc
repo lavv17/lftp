@@ -56,9 +56,9 @@ void NetAccess::Init()
 {
    resolver=0;
    idle_timer.SetResource("net:idle",0);
+   timeout_timer.SetResource("net:timeout",0);
    max_retries=0;
    max_persist_retries=0;
-   retries=0;
    persist_retries=0;
    socket_buffer=0;
    socket_maxseg=0;
@@ -70,7 +70,6 @@ void NetAccess::Init()
    reconnect_interval=30;  // retry with 30 second interval
    reconnect_interval_multiplier=1.2;
    reconnect_interval_max=300;
-   timeout=600;		   // 10 minutes with no events = reconnect
 
    proxy=proxy_proto=0;
    proxy_port=0;
@@ -117,7 +116,6 @@ void NetAccess::Reconfig(const char *name)
 
    const char *c=hostname;
 
-   timeout = TimeIntervalR(ResMgr::Query("net:timeout",c)).Seconds();
    reconnect_interval = ResMgr::Query("net:reconnect-interval-base",c);
    reconnect_interval_multiplier = ResMgr::Query("net:reconnect-interval-multiplier",c);
    if(reconnect_interval_multiplier<1)
@@ -335,6 +333,57 @@ int NetAccess::SocketBuffered(int sock)
    return 0;
 #endif
 }
+int NetAccess::CheckHangup(const struct pollfd *pfd,int num)
+{
+   for(int i=0; i<num; i++)
+   {
+#ifdef SO_ERROR
+      char  str[256];
+      int   s_errno=0;
+      socklen_t len;
+
+      errno=0;
+
+// Where does the error number go - to errno or to the pointer?
+// It seems that to errno, but if the pointer is NULL it dumps core.
+// (solaris 2.5)
+// It seems to be different on glibc 2.0 - check both errno and s_errno
+
+      len=sizeof(s_errno);
+      getsockopt(pfd[i].fd,SOL_SOCKET,SO_ERROR,(char*)&s_errno,&len);
+      if(errno==ENOTSOCK)
+	 return 0;
+      if(errno!=0 || s_errno!=0)
+      {
+	 sprintf(str,_("Socket error (%s) - reconnecting"),
+				    strerror(errno?errno:s_errno));
+	 DebugPrint("**** ",str,0);
+	 return 1;
+      }
+#endif /* SO_ERROR */
+      if(pfd[i].revents&POLLERR)
+      {
+	 DebugPrint("**** ","POLLERR",0);
+	 return 1;
+      }
+   } /* end for */
+   return 0;
+}
+int NetAccess::Poll(int fd,int ev)
+{
+   struct pollfd pfd;
+   pfd.fd=fd;
+   pfd.events=ev;
+   pfd.revents=0;
+   int res=poll(&pfd,1,0);
+   if(res<1)
+      return 0;
+   if(CheckHangup(&pfd,1))
+      return -1;
+   if(pfd.revents)
+      timeout_timer.Reset();
+   return pfd.revents;
+}
 
 void NetAccess::SayConnectingTo()
 {
@@ -399,17 +448,16 @@ void NetAccess::HandleTimeout()
 {
    DebugPrint("**** ",_("Timeout - reconnecting"),0);
    Disconnect();
-   event_time=now;
+   timeout_timer.Reset();
 }
 
 bool NetAccess::CheckTimeout()
 {
-   if(time_t(now) >= event_time+timeout)
+   if(timeout_timer.Stopped())
    {
       HandleTimeout();
       return(true);
    }
-   TimeoutS(timeout-(time_t(now)-event_time));
    return(false);
 }
 
@@ -439,14 +487,20 @@ void NetAccess::ResetLocationData()
 void NetAccess::Connect(const char *h,const char *p)
 {
    super::Connect(h,p);
+   timeout_timer.SetResource("net:timeout",hostname);
    idle_timer.SetResource("net:idle",hostname);
 }
-
 void NetAccess::ConnectVerify()
 {
    if(peer)
       return;
    mode=CONNECT_VERIFY;
+}
+
+void NetAccess::Open(const char *fn,int mode,off_t offs)
+{
+   timeout_timer.Reset();
+   super::Open(fn,mode,offs);
 }
 
 int NetAccess::Resolve(const char *defp,const char *ser,const char *pr)

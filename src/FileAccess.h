@@ -141,17 +141,13 @@ protected:
    time_t *opt_date;
    off_t  *opt_size;
 
-   int	 Poll(int fd,int ev);
-   int   CheckHangup(struct pollfd *pfd,int num);
    static void NonBlock(int fd);
    static void CloseOnExec(int fd);
 
    void  DebugPrint(const char *prefix,const char *str,int level=9);
 
-   time_t   try_time;
-   time_t   event_time;
-   void BumpEventTime(time_t t);
-   int	 retries;
+   time_t try_time;
+   int retries;
 
    fileinfo *array_for_info;
    int	 array_ptr;

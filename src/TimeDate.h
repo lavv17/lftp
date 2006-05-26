@@ -76,7 +76,7 @@ public:
 /*   bool operator<(long t) const { return UnixTime()<t; }*/
 /*   bool operator>=(long t) const { return UnixTime()>=t; }*/
 
-   operator time_t() { return UnixTime(); }
+   operator time_t() const { return UnixTime(); }
 };
 
 class TimeDate : public Time

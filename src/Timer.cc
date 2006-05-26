@@ -37,10 +37,12 @@ void Timer::Set(const TimeInterval &i)
    resource=closure=0;
    Reset();
 }
-void Timer::Reset()
+void Timer::Reset(const Time &t)
 {
-   start=now;
-   stop=now;
+   if(start>=t)
+      return;
+   start=t;
+   stop=t;
    stop+=last_setting;
    set_timeout();
 }

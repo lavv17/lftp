@@ -514,7 +514,7 @@ public:
       }
    void CopyCheckTimeout(Ftp *o)
       {
-	 BumpEventTime(o->event_time);
+	 timeout_timer.Reset(o->timeout_timer);
 	 CheckTimeout();
       }
 };

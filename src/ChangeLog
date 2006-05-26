@@ -1,3 +1,15 @@
+2006-05-26  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h: move Poll and CheckHangup to NetAccess;
+	  drop event_time member and BumpEventTime method.
+	* Fish.cc, Http.cc, SFtp.cc, ftpclass.cc, ftpclass.h: use
+	  timeout_timer.Reset instead of BumpEventTime.
+	* NetAccess.cc, NetAccess.h: drop timeout member; add timeout_timer;
+	  drop duplicate member retries (fixes a bug).
+	* TimeDate.h: make time_t operator const.
+	* Timer.cc, Timer.h: allow Reset from Time or Timer; reset only to a
+	  later time.
+
 2006-05-25  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Fish.cc, Http.cc, NetAccess.cc, NetAccess.h, Resolver.cc, Resolver.h,

@@ -39,12 +39,10 @@ protected:
 
    int	 max_retries;
    int	 max_persist_retries;
-   int	 retries;
    int	 persist_retries;
 
    Timer idle_timer;
-
-   int	 timeout;
+   Timer timeout_timer;
    bool	 CheckTimeout();
 
    int	 reconnect_interval;
@@ -75,6 +73,8 @@ protected:
    static int SocketConnect(int fd,const sockaddr_u *u);
    int SocketCreate(int,int,int);
    int SocketCreateTCP(int);
+   int Poll(int fd,int ev);
+   int CheckHangup(const struct pollfd *pfd,int num);
 
    char	 *proxy;
    char	 *proxy_port;
@@ -113,6 +113,7 @@ public:
 
    void Connect(const char *h,const char *p);
    void ConnectVerify();
+   void Open(const char *fn,int mode,off_t offs);
    void ResetLocationData();
 
    void Close();

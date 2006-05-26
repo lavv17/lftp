@@ -42,11 +42,14 @@ public:
    void Set(time_t s,int ms=0) { Set(TimeInterval(s,ms)); }
    void SetMilliSeconds(int ms) { Set(TimeInterval(0,ms)); }
    void SetResource(const char *,const char *);
-   void Reset();
+   void Reset(const Time &t);
+   void Reset() { Reset(now); }
+   void Reset(const Timer &t) { Reset(t.GetStartTime()); }
    void Reconfig(const char *);
    const TimeInterval& GetLastSetting() const { return last_setting; }
 /*   TimeInterval TimeRemains() const { return Stopped()?TimeInterval(0,0):last_setting-(now-start); }*/
    TimeDiff TimePassed() const { return now-start; }
+   const Time &GetStartTime() const { return start; }
 };
 
 #endif

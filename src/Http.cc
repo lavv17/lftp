@@ -141,7 +141,7 @@ void Http::MoveConnectionHere(Http *o)
    sock=o->sock; o->sock=-1;
    rate_limit=o->rate_limit; o->rate_limit=0;
    last_method=o->last_method; o->last_method=0;
-   BumpEventTime(o->event_time);
+   timeout_timer.Reset(o->timeout_timer);
    state=CONNECTED;
    o->Disconnect();
    ResumeInternal();
@@ -1110,7 +1110,7 @@ int Http::Do()
       }
       state=CONNECTING;
       m=MOVED;
-      event_time=now;
+      timeout_timer.Reset();
 
    case CONNECTING:
       res=Poll(sock,POLLOUT);
@@ -1225,8 +1225,8 @@ int Http::Do()
 	 Disconnect();
 	 return MOVED;
       }
-      BumpEventTime(send_buf->EventTime());
-      BumpEventTime(recv_buf->EventTime());
+      timeout_timer.Reset(send_buf->EventTime());
+      timeout_timer.Reset(recv_buf->EventTime());
       if(CheckTimeout())
 	 return MOVED;
       recv_buf->Get(&buf,&len);
@@ -1565,8 +1565,8 @@ int Http::Do()
 	    if(recv_buf->Size()>0 || (recv_buf->Size()==0 && recv_buf->Eof()))
 	       m=MOVED;
 	 }
-	 BumpEventTime(send_buf->EventTime());
-	 BumpEventTime(recv_buf->EventTime());
+	 timeout_timer.Reset(send_buf->EventTime());
+	 timeout_timer.Reset(recv_buf->EventTime());
 	 if(recv_buf->Size()==0)
 	 {
 	    // check if ranges were emulated by squid

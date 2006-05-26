@@ -69,7 +69,6 @@ void FileAccess::Init()
    mode=CLOSED;
    try_time=0;
    retries=0;
-   event_time=now;
    opt_date=0;
    opt_size=0;
    error=0;
@@ -158,59 +157,6 @@ void  FileAccess::DebugPrint(const char *prefix,const char *str,int level)
    Log::global->Write(level,buf);
 }
 
-int   FileAccess::Poll(int fd,int ev)
-{
-   struct pollfd pfd;
-   pfd.fd=fd;
-   pfd.events=ev;
-   pfd.revents=0;
-   int res=poll(&pfd,1,0);
-   if(res<1)
-      return 0;
-   if(CheckHangup(&pfd,1))
-      return -1;
-   if(pfd.revents)
-      event_time=now;
-   return pfd.revents;
-}
-
-int   FileAccess::CheckHangup(struct pollfd *pfd,int num)
-{
-   for(int i=0; i<num; i++)
-   {
-#ifdef SO_ERROR
-      char  str[256];
-      int   s_errno=0;
-      socklen_t len;
-
-      errno=0;
-
-// Where does the error number go - to errno or to the pointer?
-// It seems that to errno, but if the pointer is NULL it dumps core.
-// (solaris 2.5)
-// It seems to be different on glibc 2.0 - check both errno and s_errno
-
-      len=sizeof(s_errno);
-      getsockopt(pfd[i].fd,SOL_SOCKET,SO_ERROR,(char*)&s_errno,&len);
-      if(errno==ENOTSOCK)
-	 return 0;
-      if(errno!=0 || s_errno!=0)
-      {
-	 sprintf(str,_("Socket error (%s) - reconnecting"),
-				    strerror(errno?errno:s_errno));
-	 DebugPrint("**** ",str,0);
-	 return 1;
-      }
-#endif /* SO_ERROR */
-      if(pfd[i].revents&POLLERR)
-      {
-	 DebugPrint("**** ","POLLERR",0);
-	 return 1;
-      }
-   } /* end for */
-   return 0;
-}
-
 void FileAccess::NonBlock(int fd)
 {
    int fl=fcntl(fd,F_GETFL);
@@ -230,7 +176,6 @@ void  FileAccess::Open(const char *fn,int mode,off_t offs)
    if(IsOpen())
       Close();
    Resume();
-   event_time=now;
    file=xstrdup(fn);
    real_pos=-1;
    pos=offs;
@@ -883,11 +828,6 @@ bool FileAccess::NotSerious(int e)
    return false;
 }
 
-void FileAccess::BumpEventTime(time_t t)
-{
-   if(event_time<t)
-      event_time=t;
-}
 void FileAccess::SetTryTime(time_t t)
 {
    try_time=t;

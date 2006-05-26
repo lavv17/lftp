@@ -94,9 +94,9 @@ int Fish::Do()
       return m;
 
    if(send_buf)
-      BumpEventTime(send_buf->EventTime());
+      timeout_timer.Reset(send_buf->EventTime());
    if(recv_buf)
-      BumpEventTime(recv_buf->EventTime());
+      timeout_timer.Reset(recv_buf->EventTime());
 
    if((state==FILE_RECV || state==FILE_SEND)
    && rate_limit==0)
@@ -159,7 +159,7 @@ int Fish::Do()
       }
       ssh=new PtyShell(cmd);
       state=CONNECTING;
-      event_time=now;
+      timeout_timer.Reset();
       m=MOVED;
    }
    case CONNECTING:
@@ -285,9 +285,9 @@ usual_return:
    if(m==MOVED)
       return MOVED;
    if(send_buf)
-      BumpEventTime(send_buf->EventTime());
+      timeout_timer.Reset(send_buf->EventTime());
    if(recv_buf)
-      BumpEventTime(recv_buf->EventTime());
+      timeout_timer.Reset(recv_buf->EventTime());
    if(CheckTimeout())
       return MOVED;
 // notimeout_return:
@@ -307,7 +307,7 @@ void Fish::MoveConnectionHere(Fish *o)
    RQ_alloc=o->RQ_alloc; o->RQ_alloc=0;
    RQ_head=o->RQ_head; o->RQ_head=0;
    RQ_tail=o->RQ_tail; o->RQ_tail=0;
-   BumpEventTime(o->event_time);
+   timeout_timer.Reset(o->timeout_timer);
    set_real_cwd(o->real_cwd);
    o->set_real_cwd(0);
    state=CONNECTED;

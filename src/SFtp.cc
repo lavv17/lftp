@@ -100,13 +100,13 @@ int SFtp::Do()
       return m;
 
    if(send_buf)
-      BumpEventTime(send_buf->EventTime());
+      timeout_timer.Reset(send_buf->EventTime());
    if(recv_buf)
-      BumpEventTime(recv_buf->EventTime());
+      timeout_timer.Reset(recv_buf->EventTime());
    if(pty_send_buf)
-      BumpEventTime(pty_send_buf->EventTime());
+      timeout_timer.Reset(pty_send_buf->EventTime());
    if(pty_recv_buf)
-      BumpEventTime(pty_recv_buf->EventTime());
+      timeout_timer.Reset(pty_recv_buf->EventTime());
 
    // check for timeout only if there should be connection activity.
    if(state!=DISCONNECTED && state!=CONNECTED
@@ -189,7 +189,7 @@ int SFtp::Do()
       ssh=new PtyShell(cmd);
       ssh->UsePipes();
       state=CONNECTING;
-      event_time=now;
+      timeout_timer.Reset();
       m=MOVED;
    }
    case CONNECTING:
@@ -310,7 +310,7 @@ void SFtp::MoveConnectionHere(SFtp *o)
    if(expect_chain_end==&o->expect_chain)
       expect_chain_end=&expect_chain;
    o->expect_chain_end=&o->expect_chain;
-   BumpEventTime(o->event_time);
+   timeout_timer.Reset(o->timeout_timer);
    ssh_id=o->ssh_id;
    state=CONNECTED;
    o->Disconnect();

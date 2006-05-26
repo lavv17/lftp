@@ -1286,7 +1286,7 @@ int   Ftp::Do()
 	 goto system_error;
       }
       m=MOVED;
-      event_time=now;
+      timeout_timer.Reset();
    }
 
    case(CONNECTING_STATE):
@@ -2189,7 +2189,7 @@ int   Ftp::Do()
 	 if(now.UnixTime() >= nop_time+nop_interval)
 	 {
 	    // prevent infinite NOOP's
-	    if(nop_offset==pos && nop_count*nop_interval>=timeout)
+	    if(nop_offset==pos && nop_count*nop_interval>=timeout_timer.GetLastSetting().Seconds())
 	    {
 	       HandleTimeout();
 	       return MOVED;
@@ -2216,7 +2216,7 @@ int   Ftp::Do()
       if(state!=oldstate || Error())
          return MOVED;
 
-      BumpEventTime(conn->data_iobuf->EventTime());
+      timeout_timer.Reset(conn->data_iobuf->EventTime());
       if(conn->data_iobuf->Error() && conn->data_sock!=-1)
       {
 	 DebugPrint("**** ",conn->data_iobuf->ErrorText(),0);
@@ -2573,7 +2573,7 @@ int  Ftp::ReceiveResp()
    if(!conn || !conn->control_recv)
       return m;
 
-   BumpEventTime(conn->control_recv->EventTime());
+   timeout_timer.Reset(conn->control_recv->EventTime());
    if(conn->control_recv->Error())
    {
       DebugPrint("**** ",conn->control_recv->ErrorText(),0);
@@ -3041,7 +3041,7 @@ int  Ftp::FlushSendQueue(bool all)
    if(!conn || !conn->control_send)
       return m;
 
-   BumpEventTime(conn->control_send->EventTime());
+   timeout_timer.Reset(conn->control_send->EventTime());
    if(conn->control_send->Error())
    {
       DebugPrint("**** ",conn->control_send->ErrorText(),0);
@@ -3456,7 +3456,7 @@ void  Ftp::MoveConnectionHere(Ftp *o)
 
    if(peer_curr>=peer_num)
       peer_curr=0;
-   BumpEventTime(o->event_time);
+   timeout_timer.Reset(o->timeout_timer);
 
    if(!home)
       set_home(home_auto);
