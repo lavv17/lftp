@@ -70,11 +70,6 @@ public:
    Time operator-(const TimeDiff &o) const { Time t(*this); t-=o; return t; }
    bool operator<(const Time &o) const { return this->lt(o); }
    bool operator>=(const Time &o) const { return !(*this<o); }
-   bool operator>(const Time &o) const { return *this>=o; }
-/*   bool operator<(int t) const { return UnixTime()<t; }*/
-/*   bool operator>=(int t) const { return UnixTime()>=t; }*/
-/*   bool operator<(long t) const { return UnixTime()<t; }*/
-/*   bool operator>=(long t) const { return UnixTime()>=t; }*/
 
    operator time_t() const { return UnixTime(); }
 };

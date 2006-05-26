@@ -66,7 +66,7 @@ public:
    const char *Lookup(int id);
    int Lookup(const char *);
 
-   void SetExpireTimer(Timer *t) { Delete(expire_timer); expire_timer=t; }
+   void SetExpireTimer(Timer *t) { delete expire_timer; expire_timer=t; }
 
    int Do();
 };

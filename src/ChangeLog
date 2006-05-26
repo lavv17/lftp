@@ -1,5 +1,14 @@
 2006-05-26  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* FileCopy.cc: use correct ctor of Timer.
+	* IdNameCache.cc, IdNameCache.h: don't use Delete for Timer.
+	* SMTask.cc: use Timer timeout and call Timer::ReconfigAll.
+	* TimeDate.h: drop unneeded operators.
+	* Timer.cc, Timer.h: don't inherit from SMTask for efficiency.
+	* ftpclass.cc: don't call Timer::Reconfig - not needed now.
+
+2006-05-26  Alexander V. Lukyanov <lav@yars.free.net>
+
 	* FileAccess.cc, FileAccess.h: move Poll and CheckHangup to NetAccess;
 	  drop event_time member and BumpEventTime method.
 	* Fish.cc, Http.cc, SFtp.cc, ftpclass.cc, ftpclass.h: use

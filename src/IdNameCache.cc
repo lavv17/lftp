@@ -101,7 +101,7 @@ int IdNameCache::Lookup(const char *name)
 IdNameCache::~IdNameCache()
 {
    free();
-   Delete(expire_timer);
+   delete expire_timer;
 }
 int IdNameCache::Do()
 {

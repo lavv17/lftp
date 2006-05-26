@@ -1257,7 +1257,7 @@ FileCopyPeerFDStream::FileCopyPeerFDStream(FDStream *o,dir_t m)
       write_allowed=false;
    put_ll_timer=0;
    if(m==PUT)
-      put_ll_timer=new Timer(TimeDiff(0,200));
+      put_ll_timer=new Timer(0,200);
    verify=0;
 }
 FileCopyPeerFDStream::~FileCopyPeerFDStream()

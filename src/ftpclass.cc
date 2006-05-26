@@ -4178,10 +4178,7 @@ void Ftp::Reconfig(const char *name)
    if(!xstrcmp(name,"net:idle") || !xstrcmp(name,"ftp:use-site-idle"))
    {
       if(conn && conn->data_sock==-1 && state==EOF_STATE && !conn->quit_sent)
-      {
-	 idle_timer.Reconfig(name);
 	 SendSiteIdle();
-      }
       return;
    }
 

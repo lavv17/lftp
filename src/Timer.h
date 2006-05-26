@@ -24,32 +24,45 @@
 #include "SMTask.h"
 #include "ResMgr.h"
 
-class Timer : public SMTask
+class Timer
 {
    Time start;
    Time stop;
    TimeInterval last_setting;
    const char *resource;
    const char *closure;
-   void set_timeout() const;
+
+   static int infty_count;
+   static Timer *chain_all;
+   Timer *next_all;
+   static Timer *chain_running;
+   Timer *next;
+   Timer *prev;
+   void re_sort();
+   void set_last_setting(const TimeInterval &);
+   void init();
+   void reconfig(const char *);
+
 public:
    Timer();
-   Timer(const TimeDiff &);
-   int Do();
+   ~Timer();
+   Timer(int s,int ms=0) { init(); Set(TimeInterval(s,ms)); }
+   Timer(const TimeInterval &);
    bool Stopped() const;
-   void Stop() { stop=now; }
+   void Stop() { stop=SMTask::now; re_sort(); }
    void Set(const TimeInterval&);
    void Set(time_t s,int ms=0) { Set(TimeInterval(s,ms)); }
    void SetMilliSeconds(int ms) { Set(TimeInterval(0,ms)); }
    void SetResource(const char *,const char *);
    void Reset(const Time &t);
-   void Reset() { Reset(now); }
+   void Reset(time_t t) { Reset(Time(t)); }
+   void Reset() { Reset(SMTask::now); }
    void Reset(const Timer &t) { Reset(t.GetStartTime()); }
-   void Reconfig(const char *);
    const TimeInterval& GetLastSetting() const { return last_setting; }
-/*   TimeInterval TimeRemains() const { return Stopped()?TimeInterval(0,0):last_setting-(now-start); }*/
-   TimeDiff TimePassed() const { return now-start; }
+   TimeDiff TimePassed() const { return SMTask::now-start; }
    const Time &GetStartTime() const { return start; }
+   static int GetTimeout();
+   static void ReconfigAll(const char *);
 };
 
 #endif

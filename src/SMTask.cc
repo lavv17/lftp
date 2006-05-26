@@ -213,6 +213,10 @@ void SMTask::Schedule()
    // get time once and assume Do() don't take much time
    UpdateNow();
 
+   int timer_timeout=Timer::GetTimeout();
+   if(timer_timeout>=0)
+      sched_total.SetTimeout(timer_timeout);
+
    bool repeat=false;
    scan=chain;
    while(scan)
@@ -256,6 +260,7 @@ void SMTask::Schedule()
 void SMTask::ReconfigAll(const char *name)
 {
    UpdateNow();
+   Timer::ReconfigAll(name);
    for(SMTask *scan=chain; scan; scan=scan->next)
       scan->Reconfig(name);
    sched_total.SetTimeout(0);  // for new values handling
