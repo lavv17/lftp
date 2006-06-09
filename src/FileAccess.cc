@@ -849,7 +849,7 @@ bool FileAccess::IsBetterThan(FileAccess *fa)
 }
 
 void FileAccess::Reconfig(const char *) {}
-void FileAccess::ConnectVerify() {}
+void FileAccess::ConnectVerify() { mode=CONNECT_VERIFY; }
 const char *FileAccess::CurrentStatus() { return ""; }
 int FileAccess::Buffered() { return 0; }
 bool FileAccess::IOReady() { return IsOpen(); }

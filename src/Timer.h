@@ -57,9 +57,9 @@ public:
    void SetMilliSeconds(int ms) { Set(TimeInterval(0,ms)); }
    void SetResource(const char *,const char *);
    void Reset(const Time &t);
-   void Reset(time_t t) { Reset(Time(t)); }
    void Reset() { Reset(SMTask::now); }
    void Reset(const Timer &t) { Reset(t.GetStartTime()); }
+   void ResetDelayed(int s);
    const TimeInterval& GetLastSetting() const { return last_setting; }
    TimeDiff TimePassed() const { return SMTask::now-start; }
    TimeInterval TimeLeft() const;

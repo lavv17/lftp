@@ -7,6 +7,11 @@
 	* TimeDate.h: add TimeInterval comparisions.
 	* Timer.cc, Timer.h: add Iterate* methods; add TimeLeft method.
 	* commands.cc: call PrintTasks from .tasks command.
+	* FileAccess.cc, FileAccess.h, NetAccess.cc, NetAccess.h: make Connect
+	  and ConnectVerify non-virtual; init timers in ResetLocationData.
+	* Timer.cc, Timer.h: add ResetDelayed method; drop Reset(time_t).
+	* buffer.h: make event_time of type Time.
+	* ftpclass.cc, ftpclass.h: use Timer for STAT timing.
 
 2006-05-26  Alexander V. Lukyanov <lav@yars.free.net>
 

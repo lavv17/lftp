@@ -231,8 +231,8 @@ public:
    const char  *GetFileURL(const char *file,int flags=0);
    enum { NO_PATH=1,WITH_PASSWORD=2,NO_PASSWORD=4,NO_USER=8 };
 
-   virtual void Connect(const char *h,const char *p);
-   virtual void ConnectVerify();
+   void Connect(const char *h,const char *p);
+   void ConnectVerify();
    void PathVerify(const Path &);
    virtual void AnonymousLogin();
    virtual void Login(const char *u,const char *p);

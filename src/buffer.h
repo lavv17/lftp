@@ -157,14 +157,11 @@ public:
 class IOBuffer : public DirectedBuffer, public SMTask
 {
 protected:
-   time_t event_time; // used to detect timeouts
+   Time event_time; // used to detect timeouts
 
 public:
-   IOBuffer(dir_t m) : DirectedBuffer(m)
-      {
-	 event_time=now;
-      }
-   virtual time_t EventTime()
+   IOBuffer(dir_t m) : DirectedBuffer(m), event_time(now) {}
+   virtual const Time& EventTime()
       {
 	 if(IsSuspended())
 	    return now;
@@ -192,7 +189,7 @@ class IOBufferStacked : public IOBuffer
 public:
    IOBufferStacked(IOBuffer *b) : IOBuffer(b->GetDirection()) { down=b; }
    ~IOBufferStacked() { Delete(down); }
-   time_t EventTime() { return down->EventTime(); }
+   const Time& EventTime() { return down->EventTime(); }
    int Do();
    bool Done();
 };

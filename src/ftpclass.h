@@ -290,7 +290,7 @@ private:
    off_t    nop_offset;
    int	    nop_count;
 
-   time_t   stat_time;
+   Timer stat_timer;
    Timer retry_timer;
 
    void	 DataAbort();
@@ -381,6 +381,7 @@ private:
    bool copy_allow_store;
    bool copy_failed;
 
+   bool use_stat;
    bool use_mdtm;
    bool use_size;
    bool use_pret;
@@ -388,9 +389,6 @@ private:
    bool use_mlsd;
 
    bool use_telnet_iac;
-
-   bool use_stat;
-   int  stat_interval;
 
    const char *encode_eprt(sockaddr_u *);
 

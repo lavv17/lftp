@@ -330,12 +330,12 @@ void Ftp::TransferCheck(int act)
    if(act==211)
    {
       // permature STAT?
-      stat_time=time_t(now)+3;
+      stat_timer.ResetDelayed(3);
       return;
    }
    if(act==213)	  // this must be a STAT reply.
    {
-      stat_time=now;
+      stat_timer.Reset();
 
       long long p;
       // first try Serv-U format:
@@ -929,8 +929,6 @@ void Ftp::InitFtp()
    verify_data_address=true;
    list_options=0;
    use_stat=true;
-   stat_interval=1;
-
    use_mdtm=true;
    use_size=true;
    use_telnet_iac=true;
@@ -949,7 +947,6 @@ void Ftp::InitFtp()
    copy_ssl_connect=false;
    copy_done=false;
    copy_connection_open=false;
-   stat_time=0;
    copy_allow_store=false;
    copy_failed=false;
 
@@ -2324,7 +2321,7 @@ int   Ftp::Do()
       && expect->Count()==1 && use_stat
       && !conn->ssl_is_activated() && !conn->proxy_is_http)
       {
-	 if(stat_time+stat_interval<=time_t(now))
+	 if(stat_timer.Stopped())
 	 {
 	    // send STAT to know current position.
 	    SendUrgentCmd("STAT");
@@ -2332,8 +2329,6 @@ int   Ftp::Do()
 	    FlushSendQueue(true);
 	    m=MOVED;
 	 }
-	 else
-	    TimeoutS(stat_time+stat_interval-time_t(now));
       }
 
       // FXP is special - no data connection at all.
@@ -3176,7 +3171,6 @@ void  Ftp::Close()
    copy_addr_valid=false;
    copy_done=false;
    copy_connection_open=false;
-   stat_time=0;
    copy_allow_store=false;
    copy_failed=false;
    super::Close();
@@ -3628,7 +3622,7 @@ void Ftp::CheckResp(int act)
    if(act==150 && state==WAITING_STATE && expect->FirstIs(Expect::TRANSFER))
    {
       copy_connection_open=true;
-      stat_time=time_t(now)+2;
+      stat_timer.ResetDelayed(2);
    }
 
    if(act==150 && mode==RETRIEVE && opt_size && *opt_size<0)
@@ -4166,6 +4160,7 @@ void Ftp::ResetLocationData()
    home_auto=xstrdup(FindHomeAuto());
    Reconfig(0);
    state=INITIAL_STATE;
+   stat_timer.SetResource("ftp:stat-interval",hostname);
 }
 
 void Ftp::Reconfig(const char *name)
@@ -4196,8 +4191,6 @@ void Ftp::Reconfig(const char *name)
    verify_data_port = QueryBool("verify-port",c);
 
    use_stat = QueryBool("use-stat",c);
-   stat_interval = Query("stat-interval",c);
-
    use_mdtm = QueryBool("use-mdtm",c);
    use_size = QueryBool("use-size",c);
    use_pret = QueryBool("use-pret",c);

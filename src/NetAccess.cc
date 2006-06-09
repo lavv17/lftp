@@ -482,19 +482,8 @@ void NetAccess::ResetLocationData()
    Disconnect();
    ClearPeer();
    super::ResetLocationData();
-}
-
-void NetAccess::Connect(const char *h,const char *p)
-{
-   super::Connect(h,p);
    timeout_timer.SetResource("net:timeout",hostname);
    idle_timer.SetResource("net:idle",hostname);
-}
-void NetAccess::ConnectVerify()
-{
-   if(peer)
-      return;
-   mode=CONNECT_VERIFY;
 }
 
 void NetAccess::Open(const char *fn,int mode,off_t offs)

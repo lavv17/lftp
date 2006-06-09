@@ -111,8 +111,6 @@ public:
 
    void Reconfig(const char *name=0);
 
-   void Connect(const char *h,const char *p);
-   void ConnectVerify();
    void Open(const char *fn,int mode,off_t offs);
    void ResetLocationData();
 
