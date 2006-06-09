@@ -110,6 +110,7 @@ public:
    void Leave() { Leave(this); }
 
    static int TaskCount();
+   static void PrintTasks();
    static bool NonFatalError(int err);
    static bool TemporaryNetworkError(int err);
 

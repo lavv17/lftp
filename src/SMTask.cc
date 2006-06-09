@@ -329,3 +329,14 @@ bool SMTask::TemporaryNetworkError(int err)
 {
    return temporary_network_error(err);
 }
+
+void SMTask::PrintTasks()
+{
+   for(SMTask *scan=chain; scan; scan=scan->next)
+   {
+      const char *c=scan->GetLogContext();
+      if(!c) c="";
+      printf("%p\t%c%c%c\t%s\n",scan,scan->running?'R':' ',
+	 scan->suspended?'S':' ',scan->deleting?'D':' ',c);
+   }
+}

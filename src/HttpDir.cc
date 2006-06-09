@@ -1290,7 +1290,7 @@ int HttpDirList::Do()
 	 session->Open(curr,mode);
 	 session->UseCache(use_cache);
 	 ubuf=new IOBufferFileAccess(session);
-	 if(LsCache::IsEnabled())
+	 if(LsCache::IsEnabled(session->GetHostName()))
 	    ubuf->Save(LsCache::SizeLimit());
       }
    }

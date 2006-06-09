@@ -2058,7 +2058,7 @@ int SFtpDirList::Do()
       {
 	 session->Open(dir,FA::LONG_LIST);
 	 ubuf=new IOBufferFileAccess(session);
-	 if(LsCache::IsEnabled())
+	 if(LsCache::IsEnabled(session->GetHostName()))
 	    ubuf->Save(LsCache::SizeLimit());
       }
    }
@@ -2201,7 +2201,7 @@ int SFtpListInfo::Do()
       {
 	 session->Open("",FA::LONG_LIST);
 	 ubuf=new IOBufferFileAccess(session);
-	 if(LsCache::IsEnabled())
+	 if(LsCache::IsEnabled(session->GetHostName()))
 	    ubuf->Save(LsCache::SizeLimit());
       }
    }

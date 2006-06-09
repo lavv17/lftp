@@ -1246,7 +1246,7 @@ int FishDirList::Do()
 	 session->Open(pattern,FA::LONG_LIST);
 	 ((Fish*)session)->DontEncodeFile();
 	 ubuf=new IOBufferFileAccess(session);
-	 if(LsCache::IsEnabled())
+	 if(LsCache::IsEnabled(session->GetHostName()))
 	    ubuf->Save(LsCache::SizeLimit());
       }
    }

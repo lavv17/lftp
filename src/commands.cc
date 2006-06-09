@@ -3305,6 +3305,7 @@ CMD(slot)
 CMD(tasks)
 {
    printf("task_count=%d\n",SMTask::TaskCount());
+   SMTask::PrintTasks();
    exit_code=0;
    return 0;
 }

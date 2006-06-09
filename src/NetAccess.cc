@@ -793,7 +793,7 @@ do_again:
 	 session->UseCache(use_cache);
 	 ubuf=new IOBufferFileAccess(session);
 	 ubuf->SetSpeedometer(new Speedometer());
-	 if(LsCache::IsEnabled())
+	 if(LsCache::IsEnabled(session->GetHostName()))
 	    ubuf->Save(LsCache::SizeLimit());
 	 Roll(session);
 	 Roll(ubuf);

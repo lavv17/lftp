@@ -21,6 +21,7 @@
 #include <config.h>
 #include "SMTask.h"
 #include "Timer.h"
+#include "xstring.h"
 
 #define now SMTask::now
 
@@ -36,6 +37,14 @@ int Timer::GetTimeout()
       return infty_count?HOUR*1000:-1;
    TimeDiff remains(chain_running->stop,now);
    return remains.MilliSeconds();
+}
+TimeInterval Timer::TimeLeft() const
+{
+   if(last_setting.IsInfty())
+      return TimeInterval();
+   if(now>=stop)
+      return TimeInterval(0,0);
+   return TimeInterval(stop-now);
 }
 void Timer::set_last_setting(const TimeInterval &i)
 {
@@ -92,19 +101,19 @@ void Timer::init()
 {
    resource=0;
    closure=0;
-   next=prev=0;
+   next_running=prev_running=0;
    next_all=chain_all;
    chain_all=this;
 }
 Timer::~Timer()
 {
    infty_count-=last_setting.IsInfty();
-   if(next)
-      next->prev=prev;
-   if(prev)
-      prev->next=next;
+   if(next_running)
+      next_running->prev_running=prev_running;
+   if(prev_running)
+      prev_running->next_running=next_running;
    if(chain_running==this)
-      chain_running=next;
+      chain_running=next_running;
    Timer **scan=&chain_all;
    while(*scan!=this)
       scan=&scan[0]->next_all;
@@ -125,46 +134,46 @@ void Timer::re_sort()
    if(now>=stop || last_setting.IsInfty())
    {
       // make sure it is not in the list.
-      if(prev==0 && next==0 && chain_running!=this)
+      if(prev_running==0 && next_running==0 && chain_running!=this)
 	 return;
-      if(prev)
-	 prev->next=next;
-      if(next)
-	 next->prev=prev;
+      if(prev_running)
+	 prev_running->next_running=next_running;
+      if(next_running)
+	 next_running->prev_running=prev_running;
       if(chain_running==this)
-	 chain_running=next;
-      next=prev=0;
+	 chain_running=next_running;
+      next_running=prev_running=0;
    }
    else
    {
       // find new location in the list.
-      Timer *new_next=next;
-      Timer *new_prev=prev;
-      if(prev==0 && next==0 && chain_running!=this)
+      Timer *new_next=next_running;
+      Timer *new_prev=prev_running;
+      if(prev_running==0 && next_running==0 && chain_running!=this)
 	 new_next=chain_running;
-      else if((!prev || prev->stop<stop)
-	   && (!next || stop<next->stop))
+      else if((!prev_running || prev_running->stop<stop)
+	   && (!next_running || stop<next_running->stop))
 	 return;
-      if(next)
-	 next->prev=prev;
-      if(prev)
-	 prev->next=next;
+      if(next_running)
+	 next_running->prev_running=prev_running;
+      if(prev_running)
+	 prev_running->next_running=next_running;
       while(new_next && new_next->stop<stop)
       {
 	 new_prev=new_next;
-	 new_next=new_next->next;
+	 new_next=new_next->next_running;
       }
       while(new_prev && stop<new_prev->stop)
       {
 	 new_next=new_prev;
-	 new_prev=new_prev->prev;
+	 new_prev=new_prev->prev_running;
       }
-      next=new_next;
-      prev=new_prev;
+      next_running=new_next;
+      prev_running=new_prev;
       if(new_next)
-	 new_next->prev=this;
+	 new_next->prev_running=this;
       if(new_prev)
-	 new_prev->next=this;
+	 new_prev->next_running=this;
       if(!new_prev)
 	 chain_running=this;
    }
@@ -172,8 +181,31 @@ void Timer::re_sort()
 void Timer::ReconfigAll(const char *r)
 {
    for(Timer *scan=chain_all; scan; scan=scan->next_all)
-{
-printf("reconfig(%p,%s)\n",scan,r);
       scan->reconfig(r);
 }
+Timer **Timer::Iterate(Timer **chain,Timer *(Timer::*next),Timer **scan,const char *resource_prefix,int skip)
+{
+   if(!scan)
+      scan=chain;
+   else
+   {
+      while(skip-->0 && scan[0])
+	 scan=&(scan[0]->*next);
+   }
+   if(resource_prefix)
+   {
+      int prefix_len=xstrlen(resource_prefix);
+      while(scan[0] && xstrncmp(scan[0]->resource,resource_prefix,prefix_len))
+	 scan=&(scan[0]->*next);
+   }
+   return scan;
+}
+
+Timer **Timer::IterateAll(Timer **scan,const char *resource_prefix,int skip)
+{
+   return Iterate(&chain_all,&Timer::next_all,scan,resource_prefix,skip);
+}
+Timer **Timer::IterateRunning(Timer **scan,const char *resource_prefix,int skip)
+{
+   return Iterate(&chain_running,&Timer::next_running,scan,resource_prefix,skip);
 }

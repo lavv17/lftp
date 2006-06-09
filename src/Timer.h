@@ -36,12 +36,14 @@ class Timer
    static Timer *chain_all;
    Timer *next_all;
    static Timer *chain_running;
-   Timer *next;
-   Timer *prev;
+   Timer *next_running;
+   Timer *prev_running;
    void re_sort();
    void set_last_setting(const TimeInterval &);
    void init();
    void reconfig(const char *);
+
+   static Timer **Iterate(Timer **chain,Timer *(Timer::*next),Timer **scan,const char *resource_prefix,int skip);
 
 public:
    Timer();
@@ -60,9 +62,12 @@ public:
    void Reset(const Timer &t) { Reset(t.GetStartTime()); }
    const TimeInterval& GetLastSetting() const { return last_setting; }
    TimeDiff TimePassed() const { return SMTask::now-start; }
+   TimeInterval TimeLeft() const;
    const Time &GetStartTime() const { return start; }
    static int GetTimeout();
    static void ReconfigAll(const char *);
+   static Timer **IterateAll(Timer **prev,const char *resource_prefix,int skip=1);
+   static Timer **IterateRunning(Timer **prev,const char *resource_prefix,int skip=1);
 };
 
 #endif

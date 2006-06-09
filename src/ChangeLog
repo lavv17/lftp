@@ -1,3 +1,13 @@
+2006-06-09  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Fish.cc, FtpDirList.cc, HttpDir.cc, SFtp.cc, NetAccess.cc: cache is now enabled per host.
+	* LsCache.cc, LsCache.h: derive LsCache from Timer; drop expire_helper.
+	* ResMgr.cc, ResMgr.h: add ResMgr::SimpleQuery(ResDecl); optimize queries.
+	* SMTask.cc, SMTask.h: add PrintTasks debug method.
+	* TimeDate.h: add TimeInterval comparisions.
+	* Timer.cc, Timer.h: add Iterate* methods; add TimeLeft method.
+	* commands.cc: call PrintTasks from .tasks command.
+
 2006-05-26  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc: use correct ctor of Timer.

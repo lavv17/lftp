@@ -74,6 +74,7 @@ private:
 
 public:
    static const char *QueryNext(const char *name,const char **closure,Resource **ptr);
+   static const char *SimpleQuery(const ResDecl *type,const char *closure);
    static const char *SimpleQuery(const char *name,const char *closure);
    static ResValue Query(const char *name,const char *closure);
    static bool QueryBool(const char *name,const char *closure);

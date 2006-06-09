@@ -113,7 +113,6 @@ public:
 
    bool operator<(const TimeDiff &o) const { return this->lt(o); }
    bool operator>=(const TimeDiff &o) const { return !(*this<o); }
-   bool operator>(const TimeDiff &o) const { return *this>=o; }
 
    const TimeDiff &operator-=(const TimeDiff &o) { sub(o); return *this; }
    const TimeDiff &operator+=(const TimeDiff &o) { add(o); return *this; }
@@ -138,6 +137,8 @@ public:
    bool IsInfty() const { return infty; }
    bool Finished(const Time &base) const;
    int GetTimeout(const Time &base) const;
+   bool operator<(const TimeInterval &o) const { return infty<o.infty || lt(o); }
+   bool operator>=(const TimeInterval &o) const { return !(*this<o); }
 };
 
 #define MINUTE (60)

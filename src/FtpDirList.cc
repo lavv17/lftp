@@ -72,7 +72,7 @@ int FtpDirList::Do()
       {
 	 session->Open(pattern,FA::LONG_LIST);
 	 ubuf=new IOBufferFileAccess(session);
-	 if(LsCache::IsEnabled())
+	 if(LsCache::IsEnabled(session->GetHostName()))
 	    ubuf->Save(LsCache::SizeLimit());
       }
    }

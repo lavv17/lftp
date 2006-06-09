@@ -521,6 +521,14 @@ const char *ResMgr::QueryNext(const char *name,const char **closure,Resource **p
    return 0;
 }
 
+const char *ResMgr::SimpleQuery(const ResDecl *type,const char *closure)
+{
+   // find the value
+   for(Resource *scan=chain; scan; scan=scan->next)
+      if(scan->type==type && scan->ClosureMatch(closure))
+	 return scan->value;
+   return 0;
+}
 const char *ResMgr::SimpleQuery(const char *name,const char *closure)
 {
    const char *msg;
@@ -531,17 +539,7 @@ const char *ResMgr::SimpleQuery(const char *name,const char *closure)
    if(msg)
       return 0;
 
-   Resource *scan;
-   // find the value
-   for(scan=chain; scan; scan=scan->next)
-      if(scan->type==type && scan->ClosureMatch(closure))
-	 break;
-
-   // if found
-   if(scan)
-      return scan->value;
-
-   return 0;
+   return SimpleQuery(type,closure);
 }
 
 ResValue ResMgr::Query(const char *name,const char *closure)
@@ -558,22 +556,7 @@ ResValue ResMgr::Query(const char *name,const char *closure)
       return 0;
    }
 
-   for(;;)
-   {
-      Resource **scan;
-      // find the value
-      for(scan=&chain; *scan; scan=&(*scan)->next)
-	 if((*scan)->type==type && (*scan)->ClosureMatch(closure))
-	    break;
-      // if found
-      if(*scan)
-	 return (*scan)->value;
-      if(!closure)
-	 break;
-      closure=0;
-   }
-
-   return type->defvalue;
+   return type->Query(closure);
 }
 
 ResValue ResDecl::Query(const char *closure)
@@ -581,9 +564,9 @@ ResValue ResDecl::Query(const char *closure)
    const char *v=0;
 
    if(closure)
-      v=ResMgr::SimpleQuery(name,closure);
+      v=ResMgr::SimpleQuery(this,closure);
    if(!v)
-      v=ResMgr::SimpleQuery(name,0);
+      v=ResMgr::SimpleQuery(this,0);
    if(!v)
       v=defvalue;
 

@@ -28,12 +28,9 @@
 
 class Buffer;
 
-class LsCache
+class LsCache : public Timer
 {
-   time_t timestamp;
    int	 err_code;
-   time_t ExpireTime();
-   bool	 Expired();
    char	 *data;
    int	 data_len;
    FileSet *afset;    // associated file set
@@ -42,26 +39,9 @@ class LsCache
    FileAccess *loc;
    int	 mode;
 
-   LsCache *next;
-   static LsCache *chain;
-   static bool use;
-   static long sizelimit;
-   static TimeInterval ttl;
-   static TimeInterval ttl_neg;
-
-   class ExpireHelper;
-   friend class LsCache::ExpireHelper;
-   class ExpireHelper : public SMTask
-   {
-   public:
-      LsCache *expiring;
-      int Do();
-      ExpireHelper() { expiring=0; }
-      void Reconfig(const char *name);
-   };
-   static ExpireHelper expire_helper;
-
-   static void CheckSize();
+   static void Trim();
+   int EstimateMemory() const;
+   static LsCache *Find(FileAccess *p_loc,const char *a,int m);
 
 protected:
    ~LsCache();
@@ -92,13 +72,8 @@ public:
 
    static void List();
    static void Flush();
-   static void On() { use=true; }
-   static void Off() { use=false; }
-   static bool IsEnabled() { return use; }
-   static void SetSizeLimit(long l) { sizelimit=l; }
-   static long SizeLimit() { return sizelimit; }
-   static void SetExpire(const TimeInterval &t) { ttl=t; }
-   static void SetExpireNegative(const TimeInterval &t) { ttl_neg=t; }
+   static bool IsEnabled(const char *closure);
+   static long SizeLimit();
 };
 
 #endif//LSCACHE_H

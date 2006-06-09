@@ -27,42 +27,44 @@
 #include "plural.h"
 #include "misc.h"
 
-LsCache *LsCache::chain=0;
-bool	 LsCache::use=true;
-long	 LsCache::sizelimit=1024*1024;
-TimeInterval LsCache::ttl(60*MINUTE);  // time to live = 60 minutes
-TimeInterval LsCache::ttl_neg(MINUTE);  // time to live for negative cache
-LsCache::ExpireHelper LsCache::expire_helper;
+static const char p[]="cache:";
 
-void LsCache::CheckSize()
+int LsCache::EstimateMemory() const
 {
+   int size=sizeof(*this)+data_len+xstrlen(arg)+(arg!=0);
+   if(afset)
+      size+=afset->EstimateMemory();
+   return size;
+}
+
+void LsCache::Trim()
+{
+   long sizelimit=SizeLimit();
+
    if(sizelimit<0)
       return;  // no limit
 
-   LsCache **oldest;
-   time_t   oldest_expire_time;
-   LsCache **scan;
-
-   for(;;)
+   long size=0;
+   LsCache *c;
+   Timer **scan=IterateAll(0,p);
+   while((c=(LsCache*)*scan)!=0)
    {
-      long size=0;
-      oldest=&chain;
-      oldest_expire_time=0;
-      for(scan=&chain; *scan; scan=&(*scan)->next)
+      if(c->Stopped())
       {
-	 time_t e_time=(*scan)->ExpireTime();
-	 if(oldest_expire_time<e_time)
-	 {
-	    oldest=scan;
-	    oldest_expire_time=e_time;
-	 }
-	 size+=scan[0]->data_len;
-	 if(scan[0]->afset)
-	    size+=scan[0]->afset->EstimateMemory();
+	 delete c;
+	 scan=IterateAll(scan,p,0);
       }
-      if(size<=sizelimit)
-	 break;
-      delete replace_value(oldest[0],oldest[0]->next);
+      else
+      {
+	 size+=c->EstimateMemory();
+	 scan=IterateAll(scan,p);
+      }
+   }
+   for(scan=IterateRunning(0,p); (c=(LsCache*)*scan)!=0 && size>sizelimit; scan=IterateRunning(scan,p,0))
+   {
+      LsCache *c=(LsCache*)*scan;
+      size-=c->EstimateMemory();
+      delete c;
    }
 }
 
@@ -71,6 +73,15 @@ ResDecl res_cache_enable("cache:enable","yes",ResMgr::BoolValidate,0);
 ResDecl res_cache_expire("cache:expire","60m",ResMgr::TimeIntervalValidate,0);
 ResDecl res_cache_expire_neg("cache:expire-negative","1m",ResMgr::TimeIntervalValidate,0);
 ResDecl res_cache_size  ("cache:size","1048576",ResMgr::UNumberValidate,ResMgr::NoClosure);
+
+bool LsCache::IsEnabled(const char *closure)
+{
+   return res_cache_enable.QueryBool(closure);
+}
+long LsCache::SizeLimit()
+{
+   return res_cache_size.Query(0);
+}
 
 void LsCache::Add(FileAccess *p_loc,const char *a,int m,int e,const char *d,int l,const FileSet *fs)
 {
@@ -82,39 +93,34 @@ void LsCache::Add(FileAccess *p_loc,const char *a,int m,int e,const char *d,int 
    if(e!=FA::OK && e!=FA::NO_FILE && e!=FA::NOT_SUPP)
       return;
 
-   CheckSize();
+   Trim();
 
-   LsCache *scan;
-   for(scan=chain; scan; scan=scan->next)
+   LsCache *c;
+   for(Timer **scan=IterateAll(0,p); (c=(LsCache*)*scan)!=0; scan=IterateAll(scan,p))
    {
-      if(scan->mode==m && !strcmp(scan->arg,a) && p_loc->SameLocationAs(scan->loc))
+      if(c->mode==m && !strcmp(c->arg,a) && p_loc->SameLocationAs(c->loc))
 	 break;
    }
-   if(!scan)
+   if(!c)
    {
-      if(!use)
+      if(!IsEnabled(p_loc->GetHostName()))
 	 return;
-      scan=new LsCache();
-      scan->next=chain;
-      scan->loc=p_loc->Clone();
-      scan->loc->Suspend();
-      scan->arg=xstrdup(a);
-      scan->mode=m;
-      chain=scan;
+      c=new LsCache();
+      c->loc=p_loc->Clone();
+      c->loc->Suspend();
+      c->arg=xstrdup(a);
+      c->mode=m;
    }
    else
    {
-      xfree(scan->data);
-      delete scan->afset;
+      xfree(c->data);
+      delete c->afset;
    }
-   scan->err_code=e;
-   scan->data=(char*)xmemdup(d,l);
-   scan->data_len=l;
-   scan->afset=fs?new FileSet(fs):0;
-   scan->timestamp=SMTask::now;
-   if(expire_helper.expiring==0
-   || scan->ExpireTime()<expire_helper.expiring->ExpireTime())
-      expire_helper.expiring=scan;
+   c->err_code=e;
+   c->data=(char*)xmemdup(d,l);
+   c->data_len=l;
+   c->afset=fs?new FileSet(fs):0;
+   c->SetResource(e==FA::OK?"cache:expire":"cache:expire-negative",c->loc->GetHostName());
 }
 
 void LsCache::Add(FileAccess *p_loc,const char *a,int m,int e,const Buffer *ubuf,const FileSet *fs)
@@ -134,57 +140,57 @@ void LsCache::Add(FileAccess *p_loc,const char *a,int m,int e,const Buffer *ubuf
    LsCache::Add(p_loc,a,m,e,cache_buffer,cache_buffer_size,fs);
 }
 
-int LsCache::Find(FileAccess *p_loc,const char *a,int m,int *e,const char **d,int *l,FileSet **fs)
+LsCache *LsCache::Find(FileAccess *p_loc,const char *a,int m)
 {
-   if(!ResMgr::QueryBool("cache:enable",p_loc->GetHostName()))
+   if(!IsEnabled(p_loc->GetHostName()))
       return 0;
 
-   for(LsCache *scan=chain; scan; scan=scan->next)
+   LsCache *c;
+   for(Timer **scan=IterateAll(0,p); (c=(LsCache*)*scan)!=0; scan=IterateAll(scan,p))
    {
-      if((m == -1 || scan->mode==m) && !strcmp(scan->arg,a) && p_loc->SameLocationAs(scan->loc))
+      if((m == -1 || c->mode==m) && !strcmp(c->arg,a) && p_loc->SameLocationAs(c->loc))
       {
-	 if(d && l)
+	 if(c->Stopped())
 	 {
-	    *d=scan->data;
-	    *l=scan->data_len;
+	    Trim();
+	    return 0;
 	 }
-	 if(fs)
-	    *fs=scan->afset;
-	 *e=scan->err_code;
-	 return 1;
+	 return c;
       }
    }
    return 0;
 }
 
+int LsCache::Find(FileAccess *p_loc,const char *a,int m,int *e,const char **d,int *l,FileSet **fs)
+{
+   LsCache *c=Find(p_loc,a,m);
+   if(!c)
+      return 0;
+   if(d && l)
+   {
+      *d=c->data;
+      *l=c->data_len;
+   }
+   if(fs)
+      *fs=c->afset;
+   *e=c->err_code;
+   return 1;
+}
+
 FileSet *LsCache::FindFileSet(FileAccess *p_loc,const char *a,int m)
 {
-   const char *buf_c;
-   int bufsiz;
-   int e;
-   FileSet *fs=0;
-   if(!Find(p_loc, a, m, &e, &buf_c, &bufsiz, &fs))
+   LsCache *c=Find(p_loc,a,m);
+   if(!c)
       return 0;
-
-   if(fs)
-      return fs;
-
-   fs=p_loc->ParseLongList(buf_c, bufsiz);
-   if(!fs)
+   if(c->afset)
+      return c->afset;
+   if(c->err_code!=FA::OK)
       return 0;
-
-   for(LsCache *scan=chain; scan; scan=scan->next)
-   {
-      if(scan->data==buf_c)
-	 scan->afset=fs;
-   }
-   return fs;
+   return c->afset=p_loc->ParseLongList(c->data, c->data_len);
 }
 
 LsCache::~LsCache()
 {
-   if(expire_helper.expiring==this)
-      expire_helper.expiring=0;
    loc->DeleteLater();
    xfree(data);
    xfree(arg);
@@ -193,101 +199,27 @@ LsCache::~LsCache()
 
 void LsCache::Flush()
 {
-   while(chain)
-   {
-      LsCache *n=chain->next;
-      delete chain;
-      chain=n;
-   }
+   LsCache *c;
+   for(Timer **scan=IterateAll(0,p); (c=(LsCache*)*scan)!=0; scan=IterateAll(scan,p,0))
+      delete c;
 }
 
 void LsCache::List()
 {
-   if(use)
-      puts(_("Cache is on"));
-   else
-      puts(_("Cache is off"));
+   Trim();
 
    long vol=0;
-   for(LsCache *scan=chain; scan; scan=scan->next)
-      vol+=scan->data_len+(scan->afset?scan->afset->EstimateMemory():0);
+   LsCache *c;
+   for(Timer **scan=IterateAll(0,p); (c=(LsCache*)*scan)!=0; scan=IterateAll(scan,p))
+      vol+=c->EstimateMemory();
 
    printf(plural("%ld $#l#byte|bytes$ cached",vol),vol);
 
+   long sizelimit=res_cache_size.Query(0);
    if(sizelimit<0)
       puts(_(", no size limit"));
    else
       printf(_(", maximum size %ld\n"),sizelimit);
-
-   if(ttl.IsInfty() || ttl.Seconds()==0)
-      puts(_("Cache entries do not expire"));
-   else if(ttl.Seconds()<60)
-      printf(plural("Cache entries expire in %ld $#l#second|seconds$\n",
-		     long(ttl.Seconds())),long(ttl.Seconds()));
-   else
-   {
-      long ttl_min=(long)(ttl.Seconds()+30)/60;
-      printf(plural("Cache entries expire in %ld $#l#minute|minutes$\n",
-		     ttl_min),ttl_min);
-   }
-}
-
-time_t LsCache::ExpireTime()
-{
-   TimeInterval *this_ttl=(err_code==FA::OK?&ttl:&ttl_neg);
-   if(this_ttl->IsInfty() || this_ttl->Seconds()==0)
-      return 0;
-   return(timestamp+this_ttl->Seconds());
-}
-bool LsCache::Expired()
-{
-   time_t e_time=ExpireTime();
-   return(e_time && e_time<=(time_t)SMTask::now);
-}
-
-int LsCache::ExpireHelper::Do()
-{
-   if((ttl.IsInfty() || ttl.Seconds()==0)
-   && (ttl_neg.IsInfty() || ttl_neg.Seconds()==0))
-      return STALL;
-   if(!expiring || expiring->Expired())
-   {
-      LsCache **scan=&LsCache::chain;
-      while(*scan)
-      {
-	 if((*scan)->Expired())
-	 {
-	    delete replace_value(scan[0],scan[0]->next);
-	    scan=&LsCache::chain;   // rescan the chain to find next expiring
-	    continue;
-	 }
-	 if(!expiring)
-	    expiring=*scan;
-	 else
-	 {
-	    // compare expire times and find the least one
-   	    time_t expiring_e_time=expiring->ExpireTime();
-	    time_t scan_e_time=(*scan)->ExpireTime();
-	    if(scan_e_time!=0 && scan_e_time!=0 && expiring_e_time > scan_e_time);
-	       expiring=*scan;
-	 }
-	 scan=&scan[0]->next;
-      }
-      if(!expiring)
-	 return STALL;
-   }
-   time_t t_out=expiring->ExpireTime()-(time_t)now;
-   if(t_out>1024)
-      t_out=1024;
-   TimeoutS(t_out);
-   return STALL;
-}
-void LsCache::ExpireHelper::Reconfig(const char *name)
-{
-   SetSizeLimit(ResMgr::Query("cache:size",0));
-   SetExpire(TimeIntervalR(ResMgr::Query("cache:expire",0)));
-   SetExpireNegative(TimeIntervalR(ResMgr::Query("cache:expire-negative",0)));
-   use=ResMgr::QueryBool("cache:enable",0);
 }
 
 void LsCache::Changed(change_mode m,FileAccess *f,const char *dir)
@@ -298,19 +230,21 @@ void LsCache::Changed(change_mode m,FileAccess *f,const char *dir)
       dirname_modify(fdir);
    int fdir_len=strlen(fdir);
 
-   LsCache **scan=&LsCache::chain;
-   while(*scan)
+   LsCache *c;
+   Timer **scan=IterateAll(0,p);
+   while((c=(LsCache*)*scan)!=0)
    {
-      FileAccess *sloc=(*scan)->loc;
+      FileAccess *sloc=c->loc;
       if(f->SameLocationAs(sloc) || (f->SameSiteAs(sloc)
 	       && (m==TREE_CHANGED?
-		     !strncmp(fdir,dir_file(sloc->GetCwd(),(*scan)->arg),fdir_len)
-		   : !strcmp (fdir,dir_file(sloc->GetCwd(),(*scan)->arg)))))
+		     !strncmp(fdir,dir_file(sloc->GetCwd(),c->arg),fdir_len)
+		   : !strcmp (fdir,dir_file(sloc->GetCwd(),c->arg)))))
       {
-	 delete replace_value(scan[0],scan[0]->next);
-	 continue;
+	 delete c;
+	 scan=IterateAll(scan,p,0);
       }
-      scan=&scan[0]->next;
+      else
+	 scan=IterateAll(scan,p);
    }
 }
 
