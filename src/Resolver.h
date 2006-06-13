@@ -31,6 +31,7 @@
 #include <sys/socket.h>
 #include "buffer.h"
 #include "xmalloc.h"
+#include "Cache.h"
 
 union sockaddr_u
 {
@@ -102,66 +103,72 @@ public:
    const char *GetLogContext() { return hostname; }
 };
 
-class ResolverCache
+class ResolverCacheEntryLoc
 {
-   class Entry
-   {
-      friend class ResolverCache;
-
-      char *hostname;
-      char *portname;
-      char *defport;
-      char *service;
-      char *proto;
-
-      int addr_num;
-      sockaddr_u *addr;
-      time_t timestamp;
-
-      Entry *next;
-
-      Entry(Entry *nxt,const char *h,const char *p,const char *defp,
-         const char *ser,const char *pr,const sockaddr_u *a,int n)
-	 {
-	    next=nxt;
-
-	    hostname=xstrdup(h);
-	    portname=xstrdup(p);
-	    service=xstrdup(ser);
-	    proto=xstrdup(pr);
-	    defport=xstrdup(defp);
-
-	    addr_num=n;
-	    addr=(sockaddr_u*)xmalloc(n*sizeof(*addr));
-	    memcpy(addr,a,n*sizeof(*addr));
-
-	    timestamp=SMTask::now;
-	 }
-      ~Entry()
-	 {
-	    xfree(hostname);
-	    xfree(portname);
-	    xfree(service);
-	    xfree(proto);
-	    xfree(defport);
-	    xfree(addr);
-	 }
-   };
-
-   Entry *chain;
-
-   Entry **FindPtr(const char *h,const char *p,const char *defp,
-         const char *ser,const char *pr);
-
-   void CacheCheck(); // prune cache as needed
-
+   char *hostname;
+   char *portname;
+   char *defport;
+   char *service;
+   char *proto;
+public:
+   ResolverCacheEntryLoc(const char *h,const char *p,const char *defp,const char *ser,const char *pr) {
+      hostname=xstrdup(h);
+      portname=xstrdup(p);
+      service=xstrdup(ser);
+      proto=xstrdup(pr);
+      defport=xstrdup(defp);
+   }
+   ~ResolverCacheEntryLoc() {
+      xfree(hostname);
+      xfree(portname);
+      xfree(service);
+      xfree(proto);
+      xfree(defport);
+   }
+   const char *GetClosure() const { return hostname; }
+   bool Matches(const char *h,const char *p,const char *defp,const char *ser,const char *pr);
+};
+class ResolverCacheEntryData
+{
+   int addr_num;
+   sockaddr_u *addr;
+public:
+   ResolverCacheEntryData(const sockaddr_u *a,int n) {
+      addr_num=n;
+      addr=(sockaddr_u*)xmemdup(a,n*sizeof(*addr));
+   }
+   ~ResolverCacheEntryData() {
+      xfree(addr);
+   }
+   void SetData(const sockaddr_u *a,int n) {
+      xfree(addr);
+      addr_num=n;
+      addr=(sockaddr_u*)xmemdup(a,n*sizeof(*addr));
+   }
+   void GetData(const sockaddr_u **a,int *n) {
+      *n=addr_num;
+      *a=addr;
+   }
+};
+class ResolverCacheEntry : public CacheEntry, public ResolverCacheEntryLoc, public ResolverCacheEntryData
+{
+public:
+   ResolverCacheEntry(CacheEntry *next,const char *h,const char *p,const char *defp,const char *ser,const char *pr,
+	 const sockaddr_u *a,int n) : CacheEntry(next), ResolverCacheEntryLoc(h,p,defp,ser,pr), ResolverCacheEntryData(a,n) {
+      SetResource("dns:cache-expire",GetClosure());
+   }
+};
+class ResolverCache : public Cache
+{
+   ResolverCacheEntry *Find(const char *h,const char *p,const char *defp,const char *ser,const char *pr);
+   ResolverCacheEntry *IterateFirst() { return (ResolverCacheEntry*)Cache::IterateFirst(); }
+   ResolverCacheEntry *IterateNext()  { return (ResolverCacheEntry*)Cache::IterateNext(); }
+   ResolverCacheEntry *IterateDelete(){ return (ResolverCacheEntry*)Cache::IterateDelete(); }
 public:
    void Add(const char *h,const char *p,const char *defp,
          const char *ser,const char *pr,const sockaddr_u *a,int n);
    void Find(const char *h,const char *p,const char *defp,
          const char *ser,const char *pr,const sockaddr_u **a,int *n);
-   void Clear();
-
    ResolverCache();
 };
 

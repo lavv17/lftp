@@ -322,7 +322,7 @@ public:
    void DontReuseSession() { reuse_later=false; }
 
    const char *GetStatus();
-   const char *GetProto() { return session->GetProto(); }
+   const char *GetProto() const { return session->GetProto(); }
 
    bool NeedSizeDateBeforehand() { return session->NeedSizeDateBeforehand(); }
    void RemoveFile();

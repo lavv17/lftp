@@ -133,6 +133,14 @@ Timer::Timer(const TimeInterval &d) : last_setting(d)
    infty_count+=last_setting.IsInfty();
    Reset();
 }
+Timer::Timer(const char *r,const char *c) : last_setting(0)
+{
+   init();
+   resource=r;
+   closure=c;
+   start=now;
+   reconfig(r);
+}
 void Timer::re_sort()
 {
    if(now>=stop || last_setting.IsInfty())
@@ -186,30 +194,4 @@ void Timer::ReconfigAll(const char *r)
 {
    for(Timer *scan=chain_all; scan; scan=scan->next_all)
       scan->reconfig(r);
-}
-Timer **Timer::Iterate(Timer **chain,Timer *(Timer::*next),Timer **scan,const char *resource_prefix,int skip)
-{
-   if(!scan)
-      scan=chain;
-   else
-   {
-      while(skip-->0 && scan[0])
-	 scan=&(scan[0]->*next);
-   }
-   if(resource_prefix)
-   {
-      int prefix_len=xstrlen(resource_prefix);
-      while(scan[0] && xstrncmp(scan[0]->resource,resource_prefix,prefix_len))
-	 scan=&(scan[0]->*next);
-   }
-   return scan;
-}
-
-Timer **Timer::IterateAll(Timer **scan,const char *resource_prefix,int skip)
-{
-   return Iterate(&chain_all,&Timer::next_all,scan,resource_prefix,skip);
-}
-Timer **Timer::IterateRunning(Timer **scan,const char *resource_prefix,int skip)
-{
-   return Iterate(&chain_running,&Timer::next_running,scan,resource_prefix,skip);
 }

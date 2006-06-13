@@ -61,7 +61,7 @@ FileSet *FtpListInfo::Parse(const char *buf,int len)
    }
 }
 
-FileSet *Ftp::ParseLongList(const char *buf,int len,int *err_ret)
+FileSet *Ftp::ParseLongList(const char *buf,int len,int *err_ret) const
 {
    if(err_ret)
       *err_ret=0;

@@ -613,7 +613,7 @@ Job *CmdExec::builtin_cd()
    if(url)
       new_cwd.SetURL(url);
    if(!verify_path || background
-   || (!verify_path_cached && LsCache::IsDirectory(session,dir)==1))
+   || (!verify_path_cached && FileAccess::cache->IsDirectory(session,dir)==1))
    {
       cwd_history.Set(session,old_cwd);
       session->SetCwd(new_cwd);
@@ -2241,7 +2241,7 @@ CMD(set)
       closure=sl+1;
    }
 
-   ResDecl *type;
+   const ResDecl *type;
    // find type of given variable
    const char *msg=ResMgr::FindVar(a,&type);
    if(msg)
@@ -2401,9 +2401,9 @@ CMD(cache)  // cache control
 
    exit_code=0;
    if(!op || !strcasecmp(op,"status"))
-      LsCache::List();
+      FileAccess::cache->List();
    else if(!strcasecmp(op,"flush"))
-      LsCache::Flush();
+      FileAccess::cache->Flush();
    else if(!strcasecmp(op,"on"))
       ResMgr::Set("cache:enable",0,"yes");
    else if(!strcasecmp(op,"off"))

@@ -26,8 +26,8 @@
 
 int DummyProto::Do() { return STALL; }
 int DummyProto::Done() { return NO_HOST; }
-const char *DummyProto::GetProto() { return ""; }
-FileAccess *DummyProto::Clone() { return new DummyProto; }
+const char *DummyProto::GetProto() const { return ""; }
+FileAccess *DummyProto::Clone() const { return new DummyProto; }
 int DummyProto::Read(void *buf,int size) { return NO_HOST; };
 int DummyProto::Write(const void *buf,int size) { return NO_HOST; };
 int DummyProto::StoreStatus() { return NO_HOST; }
@@ -65,8 +65,8 @@ DummyNoProto::~DummyNoProto()
 {
    xfree(proto);
 }
-const char *DummyNoProto::GetProto() { return proto; }
-FileAccess *DummyNoProto::Clone() { return new DummyNoProto(proto); }
+const char *DummyNoProto::GetProto() const { return proto; }
+FileAccess *DummyNoProto::Clone() const { return new DummyNoProto(proto); }
 const char *DummyNoProto::StrError(int)
 {
    static char str[128];

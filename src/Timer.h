@@ -43,13 +43,12 @@ class Timer
    void init();
    void reconfig(const char *);
 
-   static Timer **Iterate(Timer **chain,Timer *(Timer::*next),Timer **scan,const char *resource_prefix,int skip);
-
 public:
    Timer();
    ~Timer();
    Timer(int s,int ms=0) { init(); Set(TimeInterval(s,ms)); }
    Timer(const TimeInterval &);
+   Timer(const char *,const char *);
    bool Stopped() const;
    void Stop() { stop=SMTask::now; re_sort(); }
    void Set(const TimeInterval&);
@@ -66,8 +65,6 @@ public:
    const Time &GetStartTime() const { return start; }
    static int GetTimeout();
    static void ReconfigAll(const char *);
-   static Timer **IterateAll(Timer **prev,const char *resource_prefix,int skip=1);
-   static Timer **IterateRunning(Timer **prev,const char *resource_prefix,int skip=1);
 };
 
 #endif

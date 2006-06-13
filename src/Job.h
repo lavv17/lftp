@@ -139,7 +139,7 @@ class SessionJob : public Job
 {
 protected:
    static void Reuse(FileAccess *s) { SessionPool::Reuse(s); }
-   FileAccess *Clone();
+   FileAccess *Clone() const;
 
    SessionJob(FileAccess *);
    ~SessionJob();

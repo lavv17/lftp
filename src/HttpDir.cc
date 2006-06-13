@@ -1264,7 +1264,7 @@ int HttpDirList::Do()
       const char *cache_buffer=0;
       int cache_buffer_size=0;
       int err;
-      if(use_cache && LsCache::Find(session,curr,mode,&err,
+      if(use_cache && FileAccess::cache->Find(session,curr,mode,&err,
 				    &cache_buffer,&cache_buffer_size))
       {
 	 if(err)
@@ -1290,8 +1290,8 @@ int HttpDirList::Do()
 	 session->Open(curr,mode);
 	 session->UseCache(use_cache);
 	 ubuf=new IOBufferFileAccess(session);
-	 if(LsCache::IsEnabled(session->GetHostName()))
-	    ubuf->Save(LsCache::SizeLimit());
+	 if(FileAccess::cache->IsEnabled(session->GetHostName()))
+	    ubuf->Save(FileAccess::cache->SizeLimit());
       }
    }
 
@@ -1300,7 +1300,7 @@ int HttpDirList::Do()
    ubuf->Get(&b,&len);
    if(b==0) // eof
    {
-      LsCache::Add(session,curr,mode,FA::OK,ubuf);
+      FileAccess::cache->Add(session,curr,mode,FA::OK,ubuf);
       Delete(ubuf);
       ubuf=0;
       return MOVED;
@@ -1328,7 +1328,7 @@ reparse:
 
    if(ubuf->Error())
    {
-      LsCache::Add(session,curr,mode,session->GetErrorCode(),ubuf);
+      FileAccess::cache->Add(session,curr,mode,session->GetErrorCode(),ubuf);
       if(mode==FA::MP_LIST)
       {
 	 mode=FA::LONG_LIST;
@@ -1429,7 +1429,7 @@ FileSet *HttpListInfo::Parse(const char *b,int len)
    return session->ParseLongList(b,len);
 }
 
-FileSet *Http::ParseLongList(const char *b,int len,int *err)
+FileSet *Http::ParseLongList(const char *b,int len,int *err) const
 {
    if(err)
       *err=0;

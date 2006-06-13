@@ -389,11 +389,9 @@ void Job::eprintf(const char *fmt,...)
 }
 
 
-FileAccess *SessionJob::Clone()
+FileAccess *SessionJob::Clone() const
 {
-   FileAccess *tmp=session;
-   session=session->Clone();
-   return tmp;
+   return session->Clone();
 }
 
 SessionJob::SessionJob(FileAccess *f)

@@ -356,7 +356,7 @@ private:
    char  *list_options;
 
    bool	 GetBetterConnection(int level,bool limit_reached);
-   bool  SameConnection(const Ftp *o);
+   bool  SameConnection(const Ftp *o) const;
 
    int	 nop_interval;
 
@@ -404,15 +404,15 @@ public:
    Ftp();
    Ftp(const Ftp *);
 
-   const char *GetProto() { return "ftp"; }
+   const char *GetProto() const { return "ftp"; }
 
-   FileAccess *Clone() { return new Ftp(this); }
+   FileAccess *Clone() const { return new Ftp(this); }
    static FileAccess *New();
 
    const char *ProtocolSubstitution(const char *host);
 
-   bool	 SameLocationAs(FileAccess *);
-   bool	 SameSiteAs(FileAccess *);
+   bool	 SameLocationAs(const FileAccess *) const;
+   bool	 SameSiteAs(const FileAccess *) const;
 
    void	 ResetLocationData();
 
@@ -425,8 +425,8 @@ public:
       CL_LOGGED_IN,
       CL_JUST_BEFORE_DISCONNECT
    };
-   ConnectLevel GetConnectLevel();
-   int IsConnected()
+   ConnectLevel GetConnectLevel() const;
+   int IsConnected() const
    {
       return GetConnectLevel()!=CL_NOT_CONNECTED;
    }
@@ -472,7 +472,7 @@ public:
    ListInfo *MakeListInfo(const char *path);
    Glob *MakeGlob(const char *pattern);
    DirList *MakeDirList(ArgV *args);
-   FileSet *ParseLongList(const char *buf,int len,int *err=0);
+   FileSet *ParseLongList(const char *buf,int len,int *err=0) const;
 
    void SetCopyMode(copy_mode_t cm,bool rp,bool prot,bool sscn,int rnum,time_t tt)
       {
@@ -524,9 +524,9 @@ public:
    FtpS(const FtpS *);
    ~FtpS();
 
-   const char *GetProto() { return "ftps"; }
+   const char *GetProto() const { return "ftps"; }
 
-   FileAccess *Clone() { return new FtpS(this); }
+   FileAccess *Clone() const { return new FtpS(this); }
    static FileAccess *New();
 };
 

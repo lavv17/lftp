@@ -30,8 +30,8 @@ class DummyProto : public FileAccess
 public:
    int Do();
    int Done();
-   const char *GetProto();
-   FileAccess *Clone();
+   const char *GetProto() const;
+   FileAccess *Clone() const;
    int Read(void *buf,int size);
    int Write(const void *buf,int size);
    int StoreStatus();
@@ -48,8 +48,8 @@ public:
    DummyNoProto(const char *p);
    ~DummyNoProto();
 
-   const char *GetProto();
-   FileAccess *Clone();
+   const char *GetProto() const;
+   FileAccess *Clone() const;
    const char *StrError(int err);
 };
 

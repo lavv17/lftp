@@ -25,6 +25,7 @@
 
 #include "FileAccess.h"
 #include "Resolver.h"
+#include "LsCache.h"
 
 class NetAccess : public FileAccess
 {
@@ -101,8 +102,6 @@ protected:
    virtual void HandleTimeout();
 
 public:
-   const char *GetProto() { return "net"; }
-
    void Init();
 
    NetAccess();
@@ -117,6 +116,8 @@ public:
    void Close();
 
    int CountConnections();
+
+   static void ClassInit();
 };
 
 class RateLimit

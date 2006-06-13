@@ -86,7 +86,8 @@ public:
    };
 
    static int VarNameCmp(const char *name1,const char *name2);
-   static const char *FindVar(const char *name,ResDecl **type);
+   static const char *FindVar(const char *name,const ResDecl **type);
+   static const ResDecl *FindRes(const char *name);
    static const char *Set(const char *name,const char *closure,const char *value);
 
    static char *Format(bool with_defaults,bool only_defaults);
@@ -134,8 +135,8 @@ public:
 	   ResValValid *val_valid,ResClValid *closure_valid=0);
    ~ResDecl();
 
-   ResValue Query(const char *closure);
-   bool QueryBool(const char *closure);
+   ResValue Query(const char *closure) const;
+   bool QueryBool(const char *closure) const;
 };
 
 class ResValue
@@ -181,7 +182,7 @@ public:
       }
 };
 
-inline bool ResDecl::QueryBool(const char *closure)
+inline bool ResDecl::QueryBool(const char *closure) const
 {
    return Query(closure).to_bool();
 }

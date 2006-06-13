@@ -1933,7 +1933,7 @@ void Http::Reconfig(const char *name)
    user_agent=ResMgr::Query("http:user-agent",c);
 }
 
-bool Http::SameSiteAs(FileAccess *fa)
+bool Http::SameSiteAs(const FileAccess *fa) const
 {
    if(!SameProtoAs(fa))
       return false;
@@ -1942,7 +1942,7 @@ bool Http::SameSiteAs(FileAccess *fa)
    && !xstrcmp(user,o->user) && !xstrcmp(pass,o->pass));
 }
 
-bool Http::SameLocationAs(FileAccess *fa)
+bool Http::SameLocationAs(const FileAccess *fa) const
 {
    if(!SameSiteAs(fa))
       return false;
@@ -1957,6 +1957,7 @@ void Http::ResetLocationData()
    super::ResetLocationData();
    Reconfig();
    state=DISCONNECTED;
+   use_propfind_now=QueryBool("use-propfind",hostname);
 }
 
 DirList *Http::MakeDirList(ArgV *args)

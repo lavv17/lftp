@@ -3713,13 +3713,13 @@ void Ftp::CheckResp(int act)
 	 if(cc==Expect::CWD)
 	    cwd.Set(arg,false,0,device_prefix_len(arg));
 	 set_real_cwd(cwd);
-	 LsCache::SetDirectory(this, arg, true);
+	 cache->SetDirectory(this, arg, true);
 	 break;
       }
       if(is5XX(act))
       {
 	 SetError(NO_FILE,all_lines);
-	 LsCache::SetDirectory(this, arg, false);
+	 cache->SetDirectory(this, arg, false);
 	 break;
       }
       Disconnect();
@@ -3839,7 +3839,7 @@ void Ftp::CheckResp(int act)
 	 }
 	 if(!home)
 	    set_home(home_auto);
-	 LsCache::SetDirectory(this, home, true);
+	 cache->SetDirectory(this, home, true);
 	 break;
       }
       break;
@@ -4075,7 +4075,7 @@ void  Ftp::SetFlag(int flag,bool val)
       flags&=~flag;
 }
 
-bool  Ftp::SameSiteAs(FileAccess *fa)
+bool  Ftp::SameSiteAs(const FileAccess *fa) const
 {
    if(!SameProtoAs(fa))
       return false;
@@ -4085,7 +4085,7 @@ bool  Ftp::SameSiteAs(FileAccess *fa)
    && ftps==o->ftps);
 }
 
-bool  Ftp::SameConnection(const Ftp *o)
+bool  Ftp::SameConnection(const Ftp *o) const
 {
    if(!strcasecmp(hostname,o->hostname) && !xstrcmp(portname,o->portname)
    && !xstrcmp(user,o->user) && !xstrcmp(pass,o->pass)
@@ -4096,7 +4096,7 @@ bool  Ftp::SameConnection(const Ftp *o)
    return false;
 }
 
-bool  Ftp::SameLocationAs(FileAccess *fa)
+bool  Ftp::SameLocationAs(const FileAccess *fa) const
 {
    if(!SameProtoAs(fa))
       return false;
@@ -4107,9 +4107,6 @@ bool  Ftp::SameLocationAs(FileAccess *fa)
    {
       if(home && o->home && strcmp(home,o->home))
 	 return false;
-
-      ExpandTildeInCWD();
-      o->ExpandTildeInCWD();
       return !xstrcmp(cwd,o->cwd);
    }
    return false;
@@ -4210,7 +4207,7 @@ void Ftp::Reconfig(const char *name)
    if(!name || !xstrcmp(name,"ftp:charset"))
    {
       if(name && !IsSuspended())
-	 LsCache::TreeChanged(this,"/");
+	 cache->TreeChanged(this,"/");
       xfree(charset);
       charset=xstrdup(Query("charset",c));
       if(conn && conn->have_feat_info && !conn->utf8_activated
@@ -4313,7 +4310,7 @@ void Ftp::SetError(int ec,const char *e)
    }
 }
 
-Ftp::ConnectLevel Ftp::GetConnectLevel()
+Ftp::ConnectLevel Ftp::GetConnectLevel() const
 {
    if(!conn)
       return CL_NOT_CONNECTED;

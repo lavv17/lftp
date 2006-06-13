@@ -61,7 +61,7 @@ proto_sftp_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la liblftp-pt
 
 liblftp_tasks_la_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  ProcWait.h GetPass.cc GetPass.h ConnectionSlot.cc ConnectionSlot.h\
- CharReader.cc CharReader.h LsCache.cc LsCache.h\
+ CharReader.cc CharReader.h Cache.cc Cache.h LsCache.cc LsCache.h\
  FileAccess.h FileAccess.cc ResMgr.h ResMgr.cc\
  Filter.cc Filter.h SignalHook.cc SignalHook.h FileCopy.cc FileCopy.h\
  xmalloc.cc xmalloc.h FileSet.cc FileSet.h\

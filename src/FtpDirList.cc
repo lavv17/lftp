@@ -56,7 +56,7 @@ int FtpDirList::Do()
       const char *cache_buffer=0;
       int cache_buffer_size=0;
       int err;
-      if(use_cache && LsCache::Find(session,pattern,FA::LONG_LIST,&err,
+      if(use_cache && FileAccess::cache->Find(session,pattern,FA::LONG_LIST,&err,
 				    &cache_buffer,&cache_buffer_size))
       {
 	 if(err)
@@ -72,8 +72,8 @@ int FtpDirList::Do()
       {
 	 session->Open(pattern,FA::LONG_LIST);
 	 ubuf=new IOBufferFileAccess(session);
-	 if(LsCache::IsEnabled(session->GetHostName()))
-	    ubuf->Save(LsCache::SizeLimit());
+	 if(FileAccess::cache->IsEnabled(session->GetHostName()))
+	    ubuf->Save(FileAccess::cache->SizeLimit());
       }
    }
 
@@ -83,7 +83,7 @@ int FtpDirList::Do()
    if(b==0) // eof
    {
       buf->PutEOF();
-      LsCache::Add(session,pattern,FA::LONG_LIST,FA::OK,ubuf);
+      FileAccess::cache->Add(session,pattern,FA::LONG_LIST,FA::OK,ubuf);
       return MOVED;
    }
 

@@ -816,7 +816,7 @@ void SFtp::HandleExpect(Expect *e)
 	    PropagateHomeAuto();
 	    if(!home)
 	       set_home(home_auto);
-	    LsCache::SetDirectory(this, home, true);
+	    cache->SetDirectory(this, home, true);
 	 }
       }
       break;
@@ -826,7 +826,7 @@ void SFtp::HandleExpect(Expect *e)
 	 const FileAttrs *a=((Reply_ATTRS*)reply)->GetAttrs();
 	 if(a->type!=SSH_FILEXFER_TYPE_DIRECTORY)
 	 {
-	    LsCache::SetDirectory(this,cwd,false);
+	    cache->SetDirectory(this,cwd,false);
 	    SetError(NO_FILE,strerror(ENOTDIR));
 	    break;
 	 }
@@ -834,7 +834,7 @@ void SFtp::HandleExpect(Expect *e)
 	 {
 	    cwd.Set(file);
 	    eof=true;
-	    LsCache::SetDirectory(this,cwd,true);
+	    cache->SetDirectory(this,cwd,true);
 	 }
       }
       else
@@ -1337,7 +1337,7 @@ const char *SFtp::CurrentStatus()
    return "";
 }
 
-bool SFtp::SameSiteAs(FileAccess *fa)
+bool SFtp::SameSiteAs(const FileAccess *fa) const
 {
    if(!SameProtoAs(fa))
       return false;
@@ -1346,7 +1346,7 @@ bool SFtp::SameSiteAs(FileAccess *fa)
    && !xstrcmp(user,o->user) && !xstrcmp(pass,o->pass));
 }
 
-bool SFtp::SameLocationAs(FileAccess *fa)
+bool SFtp::SameLocationAs(const FileAccess *fa) const
 {
    if(!SameSiteAs(fa))
       return false;
@@ -1393,7 +1393,7 @@ void SFtp::Reconfig(const char *name)
    if(!xstrcmp(name,"sftp:charset") && protocol_version && protocol_version<4)
    {
       if(!IsSuspended())
-	 LsCache::TreeChanged(this,"/");
+	 cache->TreeChanged(this,"/");
       const char *charset=ResMgr::Query("fish:charset",hostname);
       if(charset && *charset)
       {
@@ -2041,8 +2041,9 @@ int SFtpDirList::Do()
       const char *cache_buffer=0;
       int cache_buffer_size=0;
       int err;
-      if(use_cache && LsCache::Find(session,dir,FA::LONG_LIST,&err,
-				    &cache_buffer,&cache_buffer_size,&fset))
+      const FileSet *fset_c;
+      if(use_cache && FileAccess::cache->Find(session,dir,FA::LONG_LIST,&err,
+				    &cache_buffer,&cache_buffer_size,&fset_c))
       {
 	 if(err)
 	 {
@@ -2052,14 +2053,14 @@ int SFtpDirList::Do()
 	 ubuf=new IOBuffer(IOBuffer::GET);
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
-	 fset=new FileSet(fset);
+	 fset=new FileSet(fset_c);
       }
       else
       {
 	 session->Open(dir,FA::LONG_LIST);
 	 ubuf=new IOBufferFileAccess(session);
-	 if(LsCache::IsEnabled(session->GetHostName()))
-	    ubuf->Save(LsCache::SizeLimit());
+	 if(FileAccess::cache->IsEnabled(session->GetHostName()))
+	    ubuf->Save(FileAccess::cache->SizeLimit());
       }
    }
 
@@ -2070,7 +2071,7 @@ int SFtpDirList::Do()
    {
       if(!fset && session->IsOpen())
 	 fset=((SFtp*)session)->GetFileSet();
-      LsCache::Add(session,dir,FA::LONG_LIST,FA::OK,ubuf,fset);
+      FileAccess::cache->Add(session,dir,FA::LONG_LIST,FA::OK,ubuf,fset);
       if(use_file_set)
       {
 	 fset->Sort(fset->BYNAME,false);
@@ -2184,8 +2185,9 @@ int SFtpListInfo::Do()
       const char *cache_buffer=0;
       int cache_buffer_size=0;
       int err;
-      if(use_cache && LsCache::Find(session,"",FA::LONG_LIST,&err,
-				    &cache_buffer,&cache_buffer_size,&result))
+      const FileSet *fset_c;
+      if(use_cache && FileAccess::cache->Find(session,"",FA::LONG_LIST,&err,
+				    &cache_buffer,&cache_buffer_size,&fset_c))
       {
 	 if(err)
 	 {
@@ -2195,14 +2197,14 @@ int SFtpListInfo::Do()
 	 ubuf=new IOBuffer(IOBuffer::GET);
 	 ubuf->Put(cache_buffer,cache_buffer_size);
 	 ubuf->PutEOF();
-	 result=new FileSet(result);
+	 result=new FileSet(fset_c);
       }
       else
       {
 	 session->Open("",FA::LONG_LIST);
 	 ubuf=new IOBufferFileAccess(session);
-	 if(LsCache::IsEnabled(session->GetHostName()))
-	    ubuf->Save(LsCache::SizeLimit());
+	 if(FileAccess::cache->IsEnabled(session->GetHostName()))
+	    ubuf->Save(FileAccess::cache->SizeLimit());
       }
    }
    const char *b;
@@ -2212,7 +2214,7 @@ int SFtpListInfo::Do()
    {
       if(!result && session->IsOpen())
 	 result=((SFtp*)session)->GetFileSet();
-      LsCache::Add(session,"",FA::LONG_LIST,FA::OK,ubuf,result);
+      FileAccess::cache->Add(session,"",FA::LONG_LIST,FA::OK,ubuf,result);
       result->ExcludeDots();
       result->Exclude(exclude_prefix,exclude);
       done=true;

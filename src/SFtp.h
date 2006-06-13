@@ -243,7 +243,7 @@ private:
    PtyShell *ssh;
 
    void Disconnect();
-   int IsConnected()
+   int IsConnected() const
       {
 	 if(state==DISCONNECTED)
 	    return 0;
@@ -774,9 +774,9 @@ public:
    SFtp(const SFtp*);
    ~SFtp();
 
-   const char *GetProto() { return "sftp"; }
+   const char *GetProto() const { return "sftp"; }
 
-   FileAccess *Clone() { return new SFtp(this); }
+   FileAccess *Clone() const { return new SFtp(this); }
    static FileAccess *New();
 
    int Do();
@@ -791,8 +791,8 @@ public:
 
    void Reconfig(const char *name=0);
 
-   bool SameSiteAs(FileAccess *fa);
-   bool SameLocationAs(FileAccess *fa);
+   bool SameSiteAs(const FileAccess *fa) const;
+   bool SameLocationAs(const FileAccess *fa) const;
 
    DirList *MakeDirList(ArgV *args);
    Glob *MakeGlob(const char *pattern);

@@ -529,7 +529,7 @@ const char *LocalAccess::CurrentStatus()
    return "";
 }
 
-bool LocalAccess::SameLocationAs(FileAccess *fa)
+bool LocalAccess::SameLocationAs(const FileAccess *fa) const
 {
    if(!SameProtoAs(fa))
       return false;

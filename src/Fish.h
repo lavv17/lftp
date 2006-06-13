@@ -56,7 +56,7 @@ class Fish : public NetAccess
    PtyShell *ssh;
 
    void Disconnect();
-   int IsConnected()
+   int IsConnected() const
       {
 	 if(state==DISCONNECTED)
 	    return 0;
@@ -121,9 +121,9 @@ public:
    Fish(const Fish*);
    ~Fish();
 
-   const char *GetProto() { return "fish"; }
+   const char *GetProto() const { return "fish"; }
 
-   FileAccess *Clone() { return new Fish(this); }
+   FileAccess *Clone() const { return new Fish(this); }
    static FileAccess *New();
 
    int Do();
@@ -138,13 +138,13 @@ public:
 
    void Reconfig(const char *name=0);
 
-   bool SameSiteAs(FileAccess *fa);
-   bool SameLocationAs(FileAccess *fa);
+   bool SameSiteAs(const FileAccess *fa) const;
+   bool SameLocationAs(const FileAccess *fa) const;
 
    DirList *MakeDirList(ArgV *args);
    Glob *MakeGlob(const char *pattern);
    ListInfo *MakeListInfo(const char *p);
-   FileSet *ParseLongList(const char *buf,int len,int *err=0);
+   FileSet *ParseLongList(const char *buf,int len,int *err=0) const;
 
    static const char *shell_encode(const char *);
    void DontEncodeFile() { encode_file=false; }

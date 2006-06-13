@@ -80,7 +80,7 @@ class Http : public NetAccess
    void Disconnect();
    void ResetRequestData();
    void MoveConnectionHere(Http *o);
-   int IsConnected()
+   int IsConnected() const
       {
 	 if(sock==-1)
 	    return 0;
@@ -132,11 +132,11 @@ public:
    Http(const Http *);
    ~Http();
 
-   const char *GetProto() { return "http"; }
+   const char *GetProto() const { return "http"; }
 
-   FileAccess *Clone() { return new Http(this); }
+   FileAccess *Clone() const { return new Http(this); }
    static FileAccess *New();
-   FileSet *ParseLongList(const char *buf,int len,int *err=0);
+   FileSet *ParseLongList(const char *buf,int len,int *err=0) const;
 
    int Do();
    int Done();
@@ -153,8 +153,8 @@ public:
 
    void Reconfig(const char *name=0);
 
-   bool SameSiteAs(FileAccess *fa);
-   bool SameLocationAs(FileAccess *fa);
+   bool SameSiteAs(const FileAccess *fa) const;
+   bool SameLocationAs(const FileAccess *fa) const;
 
    DirList *MakeDirList(ArgV *a);
    Glob *MakeGlob(const char *pattern);
@@ -180,9 +180,9 @@ public:
    HFtp(const HFtp *);
    ~HFtp();
 
-   const char *GetProto() { return "hftp"; }
+   const char *GetProto() const { return "hftp"; }
 
-   FileAccess *Clone() { return new HFtp(this); }
+   FileAccess *Clone() const { return new HFtp(this); }
    static FileAccess *New();
 
    virtual void Login(const char *,const char *);
@@ -196,9 +196,9 @@ public:
    Https(const Https *);
    ~Https();
 
-   const char *GetProto() { return "https"; }
+   const char *GetProto() const { return "https"; }
 
-   FileAccess *Clone() { return new Https(this); }
+   FileAccess *Clone() const { return new Https(this); }
    static FileAccess *New();
 };
 

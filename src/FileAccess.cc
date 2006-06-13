@@ -83,8 +83,6 @@ void FileAccess::Init()
    entity_charset=0;
    array_ptr=array_cnt=0;
 
-   url=0;
-
    entity_size=NO_SIZE;
    entity_date=NO_DATE;
 
@@ -128,7 +126,6 @@ FileAccess::~FileAccess()
    xfree(pass);
    xfree(hostname);
    xfree(portname);
-   xfree(url);
    xfree(closure);
    xfree(location);
    xfree(entity_content_type);
@@ -189,11 +186,11 @@ void  FileAccess::Open(const char *fn,int mode,off_t offs)
    case REMOVE:
    case MAKE_DIR:
    case CHANGE_MODE:
-      LsCache::FileChanged(this,file);
+      cache->FileChanged(this,file);
       break;
    case REMOVE_DIR:
-      LsCache::FileChanged(this,file);
-      LsCache::TreeChanged(this,file);
+      cache->FileChanged(this,file);
+      cache->TreeChanged(this,file);
       break;
    default:
       break;
@@ -307,9 +304,9 @@ void FileAccess::Rename(const char *f,const char *f1)
    file1=xstrdup(f1);
    Open(f,RENAME);
 
-   LsCache::TreeChanged(this,file);
-   LsCache::FileChanged(this,file);
-   LsCache::FileChanged(this,file1);
+   cache->TreeChanged(this,file);
+   cache->FileChanged(this,file);
+   cache->FileChanged(this,file1);
 }
 
 void FileAccess::Mkdir(const char *fn,bool allp)
@@ -318,19 +315,19 @@ void FileAccess::Mkdir(const char *fn,bool allp)
    mkdir_p=allp;
 }
 
-bool FileAccess::SameLocationAs(FileAccess *fa)
+bool FileAccess::SameLocationAs(const FileAccess *fa) const
 {
    return SameSiteAs(fa);
 }
-bool FileAccess::SameSiteAs(FileAccess *fa)
+bool FileAccess::SameSiteAs(const FileAccess *fa) const
 {
-   if(strcmp(this->GetProto(),fa->GetProto()))
-      return false;
-   return true;
+   return SameProtoAs(fa);
 }
 
-const char *FileAccess::GetFileURL(const char *f,int flags)
+const char *FileAccess::GetFileURL(const char *f,int flags) const
 {
+   static char *url;
+
    const char *proto=GetVisualProto();
    if(proto[0]==0)
       return "";
@@ -370,7 +367,7 @@ const char *FileAccess::GetFileURL(const char *f,int flags)
    return url;
 }
 
-const char *FileAccess::GetConnectURL(int flags)
+const char *FileAccess::GetConnectURL(int flags) const
 {
    return GetFileURL(0,flags);
 }
@@ -833,7 +830,7 @@ void FileAccess::SetTryTime(time_t t)
    try_time=t;
 }
 
-ResValue FileAccess::Query(const char *name,const char *closure)
+ResValue FileAccess::Query(const char *name,const char *closure) const
 {
    const char *prefix=res_prefix;
    if(!prefix)
@@ -843,7 +840,7 @@ ResValue FileAccess::Query(const char *name,const char *closure)
    return ResMgr::Query(fullname,closure);
 }
 
-bool FileAccess::IsBetterThan(FileAccess *fa)
+bool FileAccess::IsBetterThan(const FileAccess *fa) const
 {
    return(SameProtoAs(fa) && this->IsConnected() > fa->IsConnected());
 }
@@ -853,7 +850,7 @@ void FileAccess::ConnectVerify() { mode=CONNECT_VERIFY; }
 const char *FileAccess::CurrentStatus() { return ""; }
 int FileAccess::Buffered() { return 0; }
 bool FileAccess::IOReady() { return IsOpen(); }
-int FileAccess::IsConnected() { return 0; }
+int FileAccess::IsConnected() const { return 0; }
 void FileAccess::Disconnect() {}
 void FileAccess::UseCache(bool) {}
 bool FileAccess::NeedSizeDateBeforehand() { return false; }
@@ -1210,11 +1207,13 @@ void FileAccess::Path::ExpandTilde(const Path &home)
 # define _sftp
 #endif
 bool FileAccess::class_inited;
+LsCache *FileAccess::cache;
 void FileAccess::ClassInit()
 {
    if(class_inited)
       return;
    class_inited=true;
+   cache=new LsCache();
 
    SignalHook::ClassInit();
    ResMgr::ClassInit();
@@ -1224,4 +1223,9 @@ void FileAccess::ClassInit()
    _http;
    _fish;
    _sftp;
+}
+void FileAccess::ClassCleanup()
+{
+   delete cache;
+   cache=0;
 }

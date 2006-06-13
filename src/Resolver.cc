@@ -904,55 +904,44 @@ void Resolver::Reconfig(const char *name)
 {
    if(!name || strncmp(name,"dns:",4))
       return;
-   if(cache)
-      cache->Clear();
 }
 
 
-
 ResolverCache::ResolverCache()
+   : Cache(ResMgr::FindRes("dns:cache-size"),ResMgr::FindRes("dns:cache-enable"))
 {
-   chain=0;
+}
+ResolverCacheEntry *ResolverCache::Find(const char *h,const char *p,const char *defp,const char *ser,const char *pr)
+{
+   for(ResolverCacheEntry *c=IterateFirst(); c; c=IterateNext())
+   {
+      if(c->Matches(h,p,defp,ser,pr))
+	 return c;
+   }
+   return 0;
 }
 void ResolverCache::Add(const char *h,const char *p,const char *defp,
 	 const char *ser,const char *pr,const sockaddr_u *a,int n)
 {
-   Entry **ptr=FindPtr(h,p,defp,ser,pr);
-   if(ptr && *ptr)
+   Trim();
+   ResolverCacheEntry *c=Find(h,p,defp,ser,pr);
+   if(c)
+      c->SetData(a,n);
+   else
    {
-      // delete old
-      Entry *next=(*ptr)->next;
-      delete *ptr;
-      *ptr=next;
+      if(!IsEnabled(h))
+	 return;
+      chain=new ResolverCacheEntry(chain,h,p,defp,ser,pr,a,n);
    }
-   chain=new Entry(chain,h,p,defp,ser,pr,a,n);
 }
-ResolverCache::Entry **ResolverCache::FindPtr(const char *h,const char *p,
+bool ResolverCacheEntryLoc::Matches(const char *h,const char *p,
 	 const char *defp,const char *ser,const char *pr)
 {
-   CacheCheck();
-   Entry **scan=&chain;
-   while(*scan)
-   {
-      Entry *s=*scan;
-      if(!xstrcasecmp(s->hostname,h)
-      && !xstrcmp(s->portname,p)
-      && !xstrcmp(s->defport,defp)
-      && !xstrcmp(s->service,ser)
-      && !xstrcmp(s->proto,pr))
-	 return scan;
-      scan=&s->next;
-   }
-   return 0;
-}
-void ResolverCache::Clear()
-{
-   while(chain)
-   {
-      Entry *next=chain->next;
-      delete chain;
-      chain=next;
-   }
+   return (!xstrcasecmp(hostname,h)
+      && !xstrcmp(portname,p)
+      && !xstrcmp(defport,defp)
+      && !xstrcmp(service,ser)
+      && !xstrcmp(proto,pr));
 }
 void ResolverCache::Find(const char *h,const char *p,const char *defp,
 	 const char *ser,const char *pr,const sockaddr_u **a,int *n)
@@ -961,35 +950,17 @@ void ResolverCache::Find(const char *h,const char *p,const char *defp,
    *n=0;
 
    // if cache is disabled for this host, return nothing.
-   if(!ResMgr::QueryBool("dns:cache-enable",h))
+   if(!IsEnabled(h))
       return;
 
-   Entry **ptr=FindPtr(h,p,defp,ser,pr);
-   if(ptr && *ptr)
+   ResolverCacheEntry *c=Find(h,p,defp,ser,pr);
+   if(c)
    {
-      Entry *s=*ptr;
-      *a=s->addr;
-      *n=s->addr_num;
-   }
-}
-
-// FIXME: this function can be speed-optimized.
-void ResolverCache::CacheCheck()
-{
-   int countlimit=ResMgr::Query("dns:cache-size",0);
-   int count=0;
-   Entry **scan=&chain;
-   while(*scan)
-   {
-      Entry *s=*scan;
-      TimeIntervalR expire(ResMgr::Query("dns:cache-expire",s->hostname));
-      if(expire.Finished(s->timestamp) || (count>=countlimit))
+      if(c->Stopped())
       {
-	 *scan=s->next;
-	 delete s;
-	 continue;
+	 Trim();
+	 return;
       }
-      scan=&s->next;
-      count++;
+      c->GetData(a,n);
    }
 }

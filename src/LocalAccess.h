@@ -43,10 +43,10 @@ public:
    void AnonymousLogin() {}
    void Login(const char *u,const char *p) {}
 
-   const char *GetProto() { return "file"; }
-   FileAccess *Clone() { return new LocalAccess(this); }
+   const char *GetProto() const { return "file"; }
+   FileAccess *Clone() const { return new LocalAccess(this); }
    static FileAccess *New();
-   bool SameLocationAs(FileAccess *fa);
+   bool SameLocationAs(const FileAccess *fa) const;
 
    int Read(void *buf,int size);
    int Write(const void *buf,int size);

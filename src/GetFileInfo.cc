@@ -140,7 +140,7 @@ int GetFileInfo::Do()
 	 if(last_char(dir)=='/')
 	    is_dir=1;
 	 else
-	    is_dir=LsCache::IsDirectory(session,dir);
+	    is_dir=FileAccess::cache->IsDirectory(session,dir);
 	 switch(is_dir)
 	 {
 	 case 0:
@@ -266,7 +266,7 @@ int GetFileInfo::Do()
       }
       session->Close();
       if(!from_cache)
-	 LsCache::SetDirectory(session,"",true);
+	 FileAccess::cache->SetDirectory(session,"",true);
 
       /* Now that we've connected, we should have the home directory path. Find out
        * the real name of the path.  (We may have something like "~/..".) */

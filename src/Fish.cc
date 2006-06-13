@@ -760,7 +760,7 @@ int Fish::HandleReplies()
       PropagateHomeAuto();
       if(!home)
 	 set_home(home_auto);
-      LsCache::SetDirectory(this, home, true);
+      cache->SetDirectory(this, home, true);
       break;
    case EXPECT_CWD:
       p=PopDirectory();
@@ -772,7 +772,7 @@ int Fish::HandleReplies()
 	    cwd.Set(p);
 	    eof=true;
 	 }
-	 LsCache::SetDirectory(this,p,true);
+	 cache->SetDirectory(this,p,true);
       }
       else
 	 SetError(NO_FILE,message);
@@ -1136,7 +1136,7 @@ const char *Fish::CurrentStatus()
    return "";
 }
 
-bool Fish::SameSiteAs(FileAccess *fa)
+bool Fish::SameSiteAs(const FileAccess *fa) const
 {
    if(!SameProtoAs(fa))
       return false;
@@ -1145,7 +1145,7 @@ bool Fish::SameSiteAs(FileAccess *fa)
    && !xstrcmp(user,o->user) && !xstrcmp(pass,o->pass));
 }
 
-bool Fish::SameLocationAs(FileAccess *fa)
+bool Fish::SameLocationAs(const FileAccess *fa)	const
 {
    if(!SameSiteAs(fa))
       return false;
@@ -1178,7 +1178,7 @@ void Fish::Reconfig(const char *name)
    if(!xstrcmp(name,"fish:charset") && recv_buf && send_buf)
    {
       if(!IsSuspended())
-	 LsCache::TreeChanged(this,"/");
+	 cache->TreeChanged(this,"/");
       const char *charset=ResMgr::Query("fish:charset",hostname);
       if(charset && *charset)
       {
@@ -1229,7 +1229,7 @@ int FishDirList::Do()
       const char *cache_buffer=0;
       int cache_buffer_size=0;
       int err;
-      if(use_cache && LsCache::Find(session,pattern,FA::LONG_LIST,&err,
+      if(use_cache && FileAccess::cache->Find(session,pattern,FA::LONG_LIST,&err,
 				    &cache_buffer,&cache_buffer_size))
       {
 	 if(err)
@@ -1246,8 +1246,8 @@ int FishDirList::Do()
 	 session->Open(pattern,FA::LONG_LIST);
 	 ((Fish*)session)->DontEncodeFile();
 	 ubuf=new IOBufferFileAccess(session);
-	 if(LsCache::IsEnabled(session->GetHostName()))
-	    ubuf->Save(LsCache::SizeLimit());
+	 if(FileAccess::cache->IsEnabled(session->GetHostName()))
+	    ubuf->Save(FileAccess::cache->SizeLimit());
       }
    }
 
@@ -1257,7 +1257,7 @@ int FishDirList::Do()
    if(b==0) // eof
    {
       buf->PutEOF();
-      LsCache::Add(session,pattern,FA::LONG_LIST,FA::OK,ubuf);
+      FileAccess::cache->Add(session,pattern,FA::LONG_LIST,FA::OK,ubuf);
       return MOVED;
    }
 
@@ -1339,7 +1339,7 @@ static FileSet *ls_to_FileSet(const char *b,int len)
    return set;
 }
 
-FileSet *Fish::ParseLongList(const char *b,int len,int *err)
+FileSet *Fish::ParseLongList(const char *b,int len,int *err) const
 {
    if(err)
       *err=0;

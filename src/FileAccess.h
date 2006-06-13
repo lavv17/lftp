@@ -41,6 +41,7 @@
 #include "xmalloc.h"
 #include "ResMgr.h"
 #include "FileSet.h"
+#include "LsCache.h"
 
 #define NO_SIZE	     (-1L)
 #define NO_SIZE_YET  (-2L)
@@ -57,6 +58,7 @@ class FileAccess : public SMTask
 {
    static bool class_inited;
 public:
+   static LsCache *cache;
    enum open_mode
    {
       CLOSED,
@@ -172,15 +174,13 @@ protected:
 	 ExpandTildeInCWD();
       }
 
-   char *url;
-
    off_t  entity_size; // size of file to be sent
    time_t entity_date; // date of file to be sent
 
    char *closure;
    const char *res_prefix;
-   ResValue Query(const char *name,const char *closure=0);
-   bool QueryBool(const char *name,const char *closure=0)
+   ResValue Query(const char *name,const char *closure=0) const;
+   bool QueryBool(const char *name,const char *closure=0) const
       {
 	 return Query(name,closure).to_bool();
       }
@@ -215,20 +215,20 @@ protected:
    virtual ~FileAccess();
 
 public:
-   virtual const char *GetProto() = 0; // http, ftp, file etc
-   bool SameProtoAs(FileAccess *fa) { return !strcmp(GetProto(),fa->GetProto()); }
-   virtual FileAccess *Clone() = 0;
+   virtual const char *GetProto() const = 0; // http, ftp, file etc
+   bool SameProtoAs(const FileAccess *fa) const { return !strcmp(GetProto(),fa->GetProto()); }
+   virtual FileAccess *Clone() const = 0;
    virtual const char *ProtocolSubstitution(const char *host) { return 0; }
 
-   const char *GetVisualProto() { return vproto?vproto:GetProto(); }
+   const char *GetVisualProto() const { return vproto?vproto:GetProto(); }
    void SetVisualProto(const char *p) { xfree(vproto); vproto=xstrdup(p); }
-   const char  *GetHome() { return home; }
-   const char  *GetHostName() { return hostname; }
-   const char  *GetUser() { return user; }
-   const char  *GetPassword() { return pass; }
-   const char  *GetPort() { return portname; }
-   const char  *GetConnectURL(int flags=0);
-   const char  *GetFileURL(const char *file,int flags=0);
+   const char  *GetHome() const { return home; }
+   const char  *GetHostName() const { return hostname; }
+   const char  *GetUser() const { return user; }
+   const char  *GetPassword() const { return pass; }
+   const char  *GetPort() const { return portname; }
+   const char  *GetConnectURL(int flags=0) const;
+   const char  *GetFileURL(const char *file,int flags=0) const;
    enum { NO_PATH=1,WITH_PASSWORD=2,NO_PASSWORD=4,NO_USER=8 };
 
    void Connect(const char *h,const char *p);
@@ -278,16 +278,16 @@ public:
    void SeekReal() { pos=GetRealPos(); }
    void RereadManual() { norest_manual=true; }
 
-   const Path& GetCwd() { return cwd; }
-   const Path& GetNewCwd() { return *new_cwd; }
-   const char *GetFile() { return file; }
+   const Path& GetCwd() const { return cwd; }
+   const Path& GetNewCwd() const { return *new_cwd; }
+   const char *GetFile() const { return file; }
 
    virtual int Do() = 0;
    virtual int Done() = 0;
 
-   virtual bool SameLocationAs(FileAccess *fa);
-   virtual bool SameSiteAs(FileAccess *fa);
-   virtual bool IsBetterThan(FileAccess *fa);
+   virtual bool SameLocationAs(const FileAccess *fa) const;
+   virtual bool SameSiteAs(const FileAccess *fa) const;
+   bool IsBetterThan(const FileAccess *fa) const;
 
    void Init();
    FileAccess() { Init(); }
@@ -299,7 +299,7 @@ public:
    bool	 IsOpen() { return !IsClosed(); }
    int	 OpenMode() { return mode; }
 
-   virtual int  IsConnected(); // level of connection (0 - not connected).
+   virtual int  IsConnected() const; // level of connection (0 - not connected).
    virtual void Disconnect();
    virtual void UseCache(bool);
    virtual bool NeedSizeDateBeforehand();
@@ -331,7 +331,7 @@ public:
    virtual ListInfo *MakeListInfo(const char *path=0);
    virtual Glob *MakeGlob(const char *pattern);
    virtual DirList *MakeDirList(ArgV *a);
-   virtual FileSet *ParseLongList(const char *buf,int len,int *err=0) { return 0; }
+   virtual FileSet *ParseLongList(const char *buf,int len,int *err=0) const { return 0; }
 
    static bool NotSerious(int err);
 
@@ -388,6 +388,7 @@ public:
    const char *GetLogContext() { return hostname; }
 
    static void ClassInit();
+   static void ClassCleanup();
 };
 
 class FileAccessOperation : public SMTask

@@ -289,8 +289,8 @@ int SMTask::TaskCount()
 
 void SMTask::Cleanup()
 {
-  CollectGarbage();
-  delete init_task;
+   CollectGarbage();
+   delete init_task;
 }
 
 #include <errno.h>

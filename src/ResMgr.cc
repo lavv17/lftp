@@ -78,15 +78,15 @@ int ResMgr::VarNameCmp(const char *good_name,const char *name)
    return res;
 }
 
-const char *ResMgr::FindVar(const char *name,ResDecl **type)
+const char *ResMgr::FindVar(const char *name,const ResDecl **type)
 {
-   ResDecl *exact_proto=0;
-   ResDecl *exact_name=0;
+   const ResDecl *exact_proto=0;
+   const ResDecl *exact_name=0;
 
    *type=0;
 
    int sub=0;
-   ResDecl *type_scan;
+   const ResDecl *type_scan;
    for(type_scan=type_chain; type_scan; type_scan=type_scan->next)
    {
       switch(VarNameCmp(type_scan->name,name))
@@ -124,11 +124,20 @@ const char *ResMgr::FindVar(const char *name,ResDecl **type)
    return _("ambiguous variable name");
 }
 
+const ResDecl *ResMgr::FindRes(const char *name)
+{
+   const ResDecl *type;
+   const char *msg=FindVar(name,&type);
+   if(msg)
+      return 0;
+   return type;
+}
+
 const char *ResMgr::Set(const char *name,const char *cclosure,const char *cvalue)
 {
    const char *msg;
 
-   ResDecl *type;
+   const ResDecl *type;
    // find type of given variable
    msg=FindVar(name,&type);
    if(msg)
@@ -498,10 +507,8 @@ bool ResMgr::Resource::ClosureMatch(const char *cl_data)
 
 const char *ResMgr::QueryNext(const char *name,const char **closure,Resource **ptr)
 {
-   ResDecl *type;
-   // find type of given variable
-   const char *msg=FindVar(name,&type);
-   if(msg)
+   const ResDecl *type=FindRes(name);
+   if(!type)
       return 0;
 
    if(*ptr==0)
@@ -531,12 +538,8 @@ const char *ResMgr::SimpleQuery(const ResDecl *type,const char *closure)
 }
 const char *ResMgr::SimpleQuery(const char *name,const char *closure)
 {
-   const char *msg;
-
-   ResDecl *type;
-   // find type of given variable
-   msg=FindVar(name,&type);
-   if(msg)
+   const ResDecl *type=FindRes(name);
+   if(!type)
       return 0;
 
    return SimpleQuery(type,closure);
@@ -546,7 +549,7 @@ ResValue ResMgr::Query(const char *name,const char *closure)
 {
    const char *msg;
 
-   ResDecl *type;
+   const ResDecl *type;
    // find type of given variable
    msg=FindVar(name,&type);
    if(msg)
@@ -559,7 +562,7 @@ ResValue ResMgr::Query(const char *name,const char *closure)
    return type->Query(closure);
 }
 
-ResValue ResDecl::Query(const char *closure)
+ResValue ResDecl::Query(const char *closure) const
 {
    const char *v=0;
 

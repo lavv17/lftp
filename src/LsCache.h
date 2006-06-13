@@ -24,56 +24,80 @@
 #define LSCACHE_H
 
 #include <time.h>
-#include "FileAccess.h"
+#include "Cache.h"
 
 class Buffer;
+class FileAccess;
 
-class LsCache : public Timer
+class LsCacheEntryLoc
+{
+   friend class LsCache;
+   char	 *arg;
+   FileAccess *loc;
+   int	 mode;
+
+public:
+   bool Matches(const FileAccess *p_loc,const char *a,int m);
+   LsCacheEntryLoc(const FileAccess *p_loc,const char *a,int m);
+   ~LsCacheEntryLoc();
+   int EstimateSize() const { return xstrlen(arg)+(arg!=0); }
+   const char *GetClosure() const;
+};
+class LsCacheEntryData
 {
    int	 err_code;
    char	 *data;
    int	 data_len;
    FileSet *afset;    // associated file set
-
-   char	 *arg;
-   FileAccess *loc;
-   int	 mode;
-
-   static void Trim();
-   int EstimateMemory() const;
-   static LsCache *Find(FileAccess *p_loc,const char *a,int m);
-
-protected:
-   ~LsCache();
-
 public:
-   static void Add(FileAccess *p_loc,const char *a,int m,int err,const char *d,int l,const FileSet *f=0);
-   static void Add(FileAccess *p_loc,const char *a,int m,int err,const Buffer *ubuf,const FileSet *f=0);
-   static int Find(FileAccess *p_loc,const char *a,int m,int *err,const char **d, int *l,FileSet **f=0);
-   static FileSet *FindFileSet(FileAccess *p_loc,const char *a,int m);
+   LsCacheEntryData(int e,const char *d,int l,const FileSet *fs);
+   ~LsCacheEntryData();
+   void SetData(int e,const char *d,int l,const FileSet *fs);
+   void GetData(int *e,const char **d,int *l,const FileSet **fs);
+   const FileSet *GetFileSet(const FileAccess *parser);
+   int EstimateSize() const { return data_len+(afset?afset->EstimateMemory():0); }
+};
 
-   static int IsDirectory(FileAccess *p_loc,const char *dir);
-   static void SetDirectory(FileAccess *p_loc, const char *path, bool dir);
+class LsCacheEntry : public CacheEntry, public LsCacheEntryLoc, public LsCacheEntryData
+{
+public:
+   int EstimateSize() const;
+   ~LsCacheEntry();
+   LsCacheEntry(CacheEntry *n,const FileAccess *p_loc,const char *a,int m,int e,const char *d,int l,const FileSet *fs);
+};
+
+class LsCache : public Cache
+{
+   LsCacheEntry *Find(const FileAccess *p_loc,const char *a,int m);
+   LsCacheEntry *IterateFirst() { return (LsCacheEntry*)Cache::IterateFirst(); }
+   LsCacheEntry *IterateNext()  { return (LsCacheEntry*)Cache::IterateNext(); }
+   LsCacheEntry *IterateDelete(){ return (LsCacheEntry*)Cache::IterateDelete(); }
+public:
+   LsCache();
+   void Add(const FileAccess *p_loc,const char *a,int m,int err,const char *d,int l,const FileSet *f=0);
+   void Add(const FileAccess *p_loc,const char *a,int m,int err,const Buffer *ubuf,const FileSet *f=0);
+   bool Find(const FileAccess *p_loc,const char *a,int m,int *err,const char **d, int *l,const FileSet **f=0);
+   const FileSet *FindFileSet(const FileAccess *p_loc,const char *a,int m);
+
+   int IsDirectory(const FileAccess *p_loc,const char *dir);
+   void SetDirectory(const FileAccess *p_loc, const char *path, bool dir);
 
    enum change_mode { FILE_CHANGED, DIR_CHANGED, TREE_CHANGED };
-   static void Changed(change_mode m,FileAccess *f,const char *what);
-   static void FileChanged(FileAccess *f,const char *file)
+   void Changed(change_mode m,const FileAccess *f,const char *what);
+   void FileChanged(const FileAccess *f,const char *file)
       {
 	 Changed(FILE_CHANGED,f,file);
       }
-   static void DirectoryChanged(FileAccess *f,const char *dir)
+   void DirectoryChanged(const FileAccess *f,const char *dir)
       {
 	 Changed(DIR_CHANGED,f,dir);
       }
-   static void TreeChanged(FileAccess *f,const char *dir)
+   void TreeChanged(const FileAccess *f,const char *dir)
       {
 	 Changed(TREE_CHANGED,f,dir);
       }
 
-   static void List();
-   static void Flush();
-   static bool IsEnabled(const char *closure);
-   static long SizeLimit();
+   void List();
 };
 
 #endif//LSCACHE_H

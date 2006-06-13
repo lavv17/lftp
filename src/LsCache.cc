@@ -22,50 +22,66 @@
 
 #include <config.h>
 #include <assert.h>
+#include "FileAccess.h"
 #include "LsCache.h"
 #include "xmalloc.h"
 #include "plural.h"
 #include "misc.h"
 
-static const char p[]="cache:";
-
-int LsCache::EstimateMemory() const
+int LsCacheEntry::EstimateSize() const
 {
-   int size=sizeof(*this)+data_len+xstrlen(arg)+(arg!=0);
-   if(afset)
-      size+=afset->EstimateMemory();
+   int size=sizeof(*this);
+   size+=LsCacheEntryLoc::EstimateSize();
+   size+=LsCacheEntryData::EstimateSize();
    return size;
 }
-
-void LsCache::Trim()
+LsCacheEntryLoc::LsCacheEntryLoc(const FileAccess *p_loc,const char *a,int m)
 {
-   long sizelimit=SizeLimit();
+   loc=p_loc->Clone();
+   loc->Suspend();
+   arg=xstrdup(a);
+   mode=m;
+}
+const char *LsCacheEntryLoc::GetClosure() const
+{
+   return loc->GetHostName();
+}
+LsCacheEntryData::LsCacheEntryData(int e,const char *d,int l,const FileSet *fs)
+{
+   data=0;
+   afset=0;
+   SetData(e,d,l,fs);
+}
 
-   if(sizelimit<0)
-      return;  // no limit
+LsCacheEntry::LsCacheEntry(CacheEntry *n,const FileAccess *p_loc,const char *a,int m,int e,const char *d,int l,const FileSet *fs)
+   : CacheEntry(n), LsCacheEntryLoc(p_loc,a,m), LsCacheEntryData(e,d,l,fs)
+{
+   SetResource(e==FA::OK?"cache:expire":"cache:expire-negative",GetClosure());
+}
 
-   long size=0;
-   LsCache *c;
-   Timer **scan=IterateAll(0,p);
-   while((c=(LsCache*)*scan)!=0)
+void LsCacheEntryData::SetData(int e,const char *d,int l,const FileSet *fs)
+{
+   xfree(data);
+   delete afset;
+   err_code=e;
+   data=(char*)xmemdup(d,l);
+   data_len=l;
+   afset=fs?new FileSet(fs):0;
+}
+void LsCacheEntryData::GetData(int *e,const char **d,int *l,const FileSet **fs)
+{
+   if(d && l)
    {
-      if(c->Stopped())
-      {
-	 delete c;
-	 scan=IterateAll(scan,p,0);
-      }
-      else
-      {
-	 size+=c->EstimateMemory();
-	 scan=IterateAll(scan,p);
-      }
+      *d=data;
+      *l=data_len;
    }
-   for(scan=IterateRunning(0,p); (c=(LsCache*)*scan)!=0 && size>sizelimit; scan=IterateRunning(scan,p,0))
-   {
-      LsCache *c=(LsCache*)*scan;
-      size-=c->EstimateMemory();
-      delete c;
-   }
+   if(fs)
+      *fs=afset;
+   *e=err_code;
+}
+bool LsCacheEntryLoc::Matches(const FileAccess *p_loc,const char *a,int m)
+{
+   return (m==-1 || mode==m) && !xstrcmp(arg,a) && p_loc->SameLocationAs(loc);
 }
 
 ResDecl res_cache_empty_listings("cache:cache-empty-listings","no",ResMgr::BoolValidate,0);
@@ -74,16 +90,9 @@ ResDecl res_cache_expire("cache:expire","60m",ResMgr::TimeIntervalValidate,0);
 ResDecl res_cache_expire_neg("cache:expire-negative","1m",ResMgr::TimeIntervalValidate,0);
 ResDecl res_cache_size  ("cache:size","1048576",ResMgr::UNumberValidate,ResMgr::NoClosure);
 
-bool LsCache::IsEnabled(const char *closure)
-{
-   return res_cache_enable.QueryBool(closure);
-}
-long LsCache::SizeLimit()
-{
-   return res_cache_size.Query(0);
-}
+LsCache::LsCache() : Cache(&res_cache_size,&res_cache_enable) {}
 
-void LsCache::Add(FileAccess *p_loc,const char *a,int m,int e,const char *d,int l,const FileSet *fs)
+void LsCache::Add(const FileAccess *p_loc,const char *a,int m,int e,const char *d,int l,const FileSet *fs)
 {
    if(!strcmp(p_loc->GetProto(),"file"))
       return;  // don't cache local objects
@@ -95,35 +104,20 @@ void LsCache::Add(FileAccess *p_loc,const char *a,int m,int e,const char *d,int 
 
    Trim();
 
-   LsCache *c;
-   for(Timer **scan=IterateAll(0,p); (c=(LsCache*)*scan)!=0; scan=IterateAll(scan,p))
-   {
-      if(c->mode==m && !strcmp(c->arg,a) && p_loc->SameLocationAs(c->loc))
-	 break;
-   }
+   LsCacheEntry *c=Find(p_loc,a,m);
    if(!c)
    {
       if(!IsEnabled(p_loc->GetHostName()))
 	 return;
-      c=new LsCache();
-      c->loc=p_loc->Clone();
-      c->loc->Suspend();
-      c->arg=xstrdup(a);
-      c->mode=m;
+      chain=new LsCacheEntry(chain,p_loc,a,m,e,d,l,fs);
    }
    else
    {
-      xfree(c->data);
-      delete c->afset;
+      c->SetData(e,d,l,fs);
    }
-   c->err_code=e;
-   c->data=(char*)xmemdup(d,l);
-   c->data_len=l;
-   c->afset=fs?new FileSet(fs):0;
-   c->SetResource(e==FA::OK?"cache:expire":"cache:expire-negative",c->loc->GetHostName());
 }
 
-void LsCache::Add(FileAccess *p_loc,const char *a,int m,int e,const Buffer *ubuf,const FileSet *fs)
+void LsCache::Add(const FileAccess *p_loc,const char *a,int m,int e,const Buffer *ubuf,const FileSet *fs)
 {
    if(!ubuf->IsSaving())
       return;
@@ -140,68 +134,62 @@ void LsCache::Add(FileAccess *p_loc,const char *a,int m,int e,const Buffer *ubuf
    LsCache::Add(p_loc,a,m,e,cache_buffer,cache_buffer_size,fs);
 }
 
-LsCache *LsCache::Find(FileAccess *p_loc,const char *a,int m)
+LsCacheEntry *LsCache::Find(const FileAccess *p_loc,const char *a,int m)
 {
    if(!IsEnabled(p_loc->GetHostName()))
       return 0;
 
-   LsCache *c;
-   for(Timer **scan=IterateAll(0,p); (c=(LsCache*)*scan)!=0; scan=IterateAll(scan,p))
+   LsCacheEntry *c;
+   for(c=IterateFirst(); c; c=IterateNext())
    {
-      if((m == -1 || c->mode==m) && !strcmp(c->arg,a) && p_loc->SameLocationAs(c->loc))
-      {
-	 if(c->Stopped())
-	 {
-	    Trim();
-	    return 0;
-	 }
-	 return c;
-      }
+      if(c->Matches(p_loc,a,m))
+	 break;
    }
-   return 0;
+   if(c && c->Stopped())
+   {
+      Trim();
+      return 0;
+   }
+   return c;
 }
 
-int LsCache::Find(FileAccess *p_loc,const char *a,int m,int *e,const char **d,int *l,FileSet **fs)
+bool LsCache::Find(const FileAccess *p_loc,const char *a,int m,int *e,const char **d,int *l,const FileSet **fs)
 {
-   LsCache *c=Find(p_loc,a,m);
+   LsCacheEntry *c=Find(p_loc,a,m);
+   if(!c)
+      return false;
+   c->GetData(e,d,l,fs);
+   return true;
+}
+
+const FileSet *LsCache::FindFileSet(const FileAccess *p_loc,const char *a,int m)
+{
+   LsCacheEntry *c=Find(p_loc,a,m);
    if(!c)
       return 0;
-   if(d && l)
-   {
-      *d=c->data;
-      *l=c->data_len;
-   }
-   if(fs)
-      *fs=c->afset;
-   *e=c->err_code;
-   return 1;
+   return c->GetFileSet(c->loc);
 }
-
-FileSet *LsCache::FindFileSet(FileAccess *p_loc,const char *a,int m)
+const FileSet *LsCacheEntryData::GetFileSet(const FileAccess *parser)
 {
-   LsCache *c=Find(p_loc,a,m);
-   if(!c)
+   if(afset)
+      return afset;
+   if(err_code!=FA::OK)
       return 0;
-   if(c->afset)
-      return c->afset;
-   if(c->err_code!=FA::OK)
-      return 0;
-   return c->afset=p_loc->ParseLongList(c->data, c->data_len);
+   return afset=parser->ParseLongList(data, data_len);
 }
 
-LsCache::~LsCache()
+LsCacheEntryLoc::~LsCacheEntryLoc()
 {
    loc->DeleteLater();
-   xfree(data);
    xfree(arg);
+}
+LsCacheEntryData::~LsCacheEntryData()
+{
+   xfree(data);
    delete afset;
 }
-
-void LsCache::Flush()
+LsCacheEntry::~LsCacheEntry()
 {
-   LsCache *c;
-   for(Timer **scan=IterateAll(0,p); (c=(LsCache*)*scan)!=0; scan=IterateAll(scan,p,0))
-      delete c;
 }
 
 void LsCache::List()
@@ -209,9 +197,8 @@ void LsCache::List()
    Trim();
 
    long vol=0;
-   LsCache *c;
-   for(Timer **scan=IterateAll(0,p); (c=(LsCache*)*scan)!=0; scan=IterateAll(scan,p))
-      vol+=c->EstimateMemory();
+   for(LsCacheEntry *c=IterateFirst(); c; c=IterateNext())
+      vol+=c->EstimateSize();
 
    printf(plural("%ld $#l#byte|bytes$ cached",vol),vol);
 
@@ -222,7 +209,7 @@ void LsCache::List()
       printf(_(", maximum size %ld\n"),sizelimit);
 }
 
-void LsCache::Changed(change_mode m,FileAccess *f,const char *dir)
+void LsCache::Changed(change_mode m,const FileAccess *f,const char *dir)
 {
    const char *fdir_c=dir_file(f->GetCwd(),dir);
    char *fdir=alloca_strdup(fdir_c);
@@ -230,51 +217,48 @@ void LsCache::Changed(change_mode m,FileAccess *f,const char *dir)
       dirname_modify(fdir);
    int fdir_len=strlen(fdir);
 
-   LsCache *c;
-   Timer **scan=IterateAll(0,p);
-   while((c=(LsCache*)*scan)!=0)
+   LsCacheEntry *c=IterateFirst();
+   while(c)
    {
       FileAccess *sloc=c->loc;
       if(f->SameLocationAs(sloc) || (f->SameSiteAs(sloc)
 	       && (m==TREE_CHANGED?
 		     !strncmp(fdir,dir_file(sloc->GetCwd(),c->arg),fdir_len)
 		   : !strcmp (fdir,dir_file(sloc->GetCwd(),c->arg)))))
-      {
-	 delete c;
-	 scan=IterateAll(scan,p,0);
-      }
+	 c=IterateDelete();
       else
-	 scan=IterateAll(scan,p);
+	 c=IterateNext();
    }
 }
 
 /* Mark a path as a directory or file. (We have other ways of knowing this;
  * this is the most explicit and least expensive.) */
-void LsCache::SetDirectory(FileAccess *p_loc, const char *path, bool dir)
+void LsCache::SetDirectory(const FileAccess *p_loc, const char *path, bool dir)
 {
    if(!path)
       return;
 
-   FileAccess::Path origdir = p_loc->GetCwd();
-   FileAccess::Path new_cwd = origdir;
-
+   FileAccess::Path new_cwd = p_loc->GetCwd();
    new_cwd.Change(path,!dir);
+   FileAccess *new_p_loc=p_loc->Clone();
+   new_p_loc->SetCwd(new_cwd);
+
    const char *entry = dir? "1":"0";
-   p_loc->SetCwd(new_cwd);
-   LsCache::Add(p_loc,"",FileAccess::CHANGE_DIR, dir?FA::OK:FA::NO_FILE, entry, strlen(entry));
-   p_loc->SetCwd(origdir);
+   LsCache::Add(new_p_loc,"",FileAccess::CHANGE_DIR, dir?FA::OK:FA::NO_FILE, entry, strlen(entry));
+
+   SMTask::Delete(new_p_loc);
 }
 
 /* This is a hint function. If file type is really needed, use GetFileInfo
  * with showdir set to true. (GetFileInfo uses this function.)
  * Returns -1 if type is not known, 1 if a directory, 0 if a file. */
 
-int LsCache::IsDirectory(FileAccess *p_loc,const char *dir_c)
+int LsCache::IsDirectory(const FileAccess *p_loc,const char *dir_c)
 {
-   FileAccess::Path origdir = p_loc->GetCwd();
-   FileAccess::Path new_cwd = origdir;
+   FileAccess::Path new_cwd = p_loc->GetCwd();
    new_cwd.Change(dir_c);
-   p_loc->SetCwd(new_cwd);
+   FileAccess *new_p_loc=p_loc->Clone();
+   new_p_loc->SetCwd(new_cwd);
 
    int ret = -1;
 
@@ -285,7 +269,7 @@ int LsCache::IsDirectory(FileAccess *p_loc,const char *dir_c)
    const char *buf_c;
    int bufsiz;
    int e;
-   if(Find(p_loc, "", FileAccess::CHANGE_DIR, &e, &buf_c,&bufsiz))
+   if(Find(new_p_loc, "", FileAccess::CHANGE_DIR, &e, &buf_c,&bufsiz))
    {
       assert(bufsiz==1);
       ret = (e==FA::OK);
@@ -295,17 +279,17 @@ int LsCache::IsDirectory(FileAccess *p_loc,const char *dir_c)
    /* We know the path is a directory if we have a cache entry for it.  This is
     * true regardless of the list type.  (Unless it's a CHANGE_DIR entry; do this
     * test after the CHANGE_DIR check.) */
-   if(Find(p_loc, "", FA::LONG_LIST, &e, 0,0))
+   if(Find(new_p_loc, "", FA::LONG_LIST, &e, 0,0))
    {
       ret = (e==FA::OK);
       goto leave;
    }
-   if(Find(p_loc, "", FA::MP_LIST, &e, 0,0))
+   if(Find(new_p_loc, "", FA::MP_LIST, &e, 0,0))
    {
       ret = (e==FA::OK);
       goto leave;
    }
-   if(Find(p_loc, "", FA::LIST, &e, 0,0))
+   if(Find(new_p_loc, "", FA::LIST, &e, 0,0))
    {
       ret = (e==FA::OK);
       goto leave;
@@ -315,11 +299,11 @@ int LsCache::IsDirectory(FileAccess *p_loc,const char *dir_c)
     * contains the basename. */
    {
       new_cwd.Change("..");
-      p_loc->SetCwd(new_cwd);
+      new_p_loc->SetCwd(new_cwd);
 
-      const FileSet *fs=FindFileSet(p_loc, "", FA::MP_LIST);
+      const FileSet *fs=FindFileSet(new_p_loc, "", FA::MP_LIST);
       if(!fs)
-	 fs=FindFileSet(p_loc, "", FA::LONG_LIST);
+	 fs=FindFileSet(new_p_loc, "", FA::LONG_LIST);
       if(fs)
       {
 	 FileInfo *fi=fs->FindByName(basename_ptr(dir_c));
@@ -329,6 +313,6 @@ int LsCache::IsDirectory(FileAccess *p_loc,const char *dir_c)
    }
 
 leave:
-   p_loc->SetCwd(origdir);
+   SMTask::Delete(new_p_loc);
    return ret;
 }

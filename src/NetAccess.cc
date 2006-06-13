@@ -80,7 +80,7 @@ void NetAccess::Init()
    connection_limit=0;	// no limit.
    connection_takeover=false;
 
-   home_auto=xstrdup(FindHomeAuto());
+   home_auto=0;
 
    Reconfig(0);
 }
@@ -759,7 +759,7 @@ do_again:
       const char *cache_buffer=0;
       int cache_buffer_size=0;
       int err;
-      if(use_cache && LsCache::Find(session,"",mode,&err,
+      if(use_cache && FileAccess::cache->Find(session,"",mode,&err,
 				    &cache_buffer,&cache_buffer_size))
       {
 	 if(err)
@@ -782,8 +782,8 @@ do_again:
 	 session->UseCache(use_cache);
 	 ubuf=new IOBufferFileAccess(session);
 	 ubuf->SetSpeedometer(new Speedometer());
-	 if(LsCache::IsEnabled(session->GetHostName()))
-	    ubuf->Save(LsCache::SizeLimit());
+	 if(FileAccess::cache->IsEnabled(session->GetHostName()))
+	    ubuf->Save(FileAccess::cache->SizeLimit());
 	 Roll(session);
 	 Roll(ubuf);
       }
@@ -793,7 +793,7 @@ do_again:
    {
       if(ubuf->Error())
       {
-	 LsCache::Add(session,"",mode,session->GetErrorCode(),ubuf);
+	 FileAccess::cache->Add(session,"",mode,session->GetErrorCode(),ubuf);
 	 if(mode==FA::MP_LIST)
 	 {
 	    mode=FA::LONG_LIST;
@@ -811,7 +811,7 @@ do_again:
       if(!ubuf->Eof())
 	 return m;
 
-      LsCache::Add(session,"",mode,FA::OK,ubuf);
+      FileAccess::cache->Add(session,"",mode,FA::OK,ubuf);
 
       // now we have all the index in ubuf; parse it.
       const char *b;

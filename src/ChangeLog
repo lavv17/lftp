@@ -1,3 +1,18 @@
+2006-06-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* DummyProto.cc, DummyProto.h, : const everywhere.
+	* FileAccess.cc, FileAccess.h: consts; drop url member; new cache; ClassCleanup.
+	* FileCopy.cc, FileCopy.h, Fish.cc, Fish.h, FtpDirList.cc,
+	  FtpListInfo.cc, GetFileInfo.cc, Http.cc, Http.h, HttpDir.cc,
+	  Job.cc, LocalAccess.cc, LocalAccess.h, NetAccess.cc, NetAccess.h,
+	  SFtp.cc, SFtp.h, commands.cc, ftpclass.cc, ftpclass.h: const; new cache.
+	* Cache.cc, Cache.h: new files; base Cache class.
+	* LsCache.cc, LsCache.h, Resolver.cc, Resolver.h: use base Cache class.
+	* Makefile.am: add Cache files.
+	* ResMgr.cc, ResMgr.h: consts.
+	* Timer.cc, Timer.h: add ctor from resource/closure; drop iterators.
+	* lftp.cc: call FileAccess::ClassCleanup; ajust max tasks left.
+
 2006-06-09  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Fish.cc, FtpDirList.cc, HttpDir.cc, SFtp.cc, NetAccess.cc: cache is now enabled per host.

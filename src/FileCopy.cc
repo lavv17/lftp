@@ -907,7 +907,7 @@ void FileCopyPeerFA::OpenSession()
       const char *b;
       int s;
       int err;
-      if(use_cache && LsCache::Find(session,file,FAmode,&err,&b,&s))
+      if(use_cache && FileAccess::cache->Find(session,file,FAmode,&err,&b,&s))
       {
 	 if(err)
 	 {
@@ -1085,7 +1085,7 @@ int FileCopyPeerFA::Get_LL(int len)
    if(res==0)
    {
       eof=true;
-      LsCache::Add(session,file,FAmode,FA::OK,this);
+      FileAccess::cache->Add(session,file,FAmode,FA::OK,this);
       SetSuggestedFileName(session->GetSuggestedFileName());
    }
    return res;
@@ -1183,7 +1183,7 @@ FileCopyPeerFA::FileCopyPeerFA(FileAccess *s,const char *f,int m)
    session=s;
    reuse_later=true;
    if(FAmode==FA::LIST || FAmode==FA::LONG_LIST)
-      Save(LsCache::SizeLimit());
+      Save(FileAccess::cache->SizeLimit());
 }
 FileCopyPeerFA::~FileCopyPeerFA()
 {

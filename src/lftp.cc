@@ -501,7 +501,7 @@ int   main(int argc,char **argv)
    Job::Cleanup();
    ConnectionSlot::Cleanup();
    SessionPool::ClearAll();
-   LsCache::Flush();
+   FileAccess::ClassCleanup();
    ProcWait::DeleteAll();
    DirColors::DeleteInstance();
    IdNameCacheCleanup();
@@ -509,9 +509,9 @@ int   main(int argc,char **argv)
    Log::Cleanup();
    SMTask::Cleanup();
 
-   // the tasks left: LsCache::ExpireHelper, lftp_ssl_instance(if created)
+   // the tasks left: lftp_ssl_instance(if created)
    int task_count=SMTask::TaskCount();
-   if(task_count>2)
+   if(task_count>1)
       printf("WARNING: task_count=%d\n",task_count);
 
    return exit_code;
