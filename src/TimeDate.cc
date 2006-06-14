@@ -42,17 +42,13 @@ void time_tuple::add(time_t s,int ms)
    msec+=ms;
    if(msec>=1000)
       msec-=1000,sec++;
-   else if(msec<=-1000)
+   else if(msec<0)
       msec+=1000,sec--;
 }
 void time_tuple::add(double s)
 {
    time_t s_int=time_t(s);
    add(s_int,int((s-s_int)*1000));
-}
-bool time_tuple::lt(const time_tuple &o) const
-{
-   return sec<o.sec || (sec==o.sec && msec<o.msec);
 }
 double time_tuple::to_double() const
 {
@@ -70,6 +66,10 @@ Time::Time()
 {
    // this saves a system call
    *this=SMTask::now;
+}
+bool Time::Passed(int s) const
+{
+   return TimeDiff(SMTask::now,*this)>=s;
 }
 void TimeDate::set_local_time()
 {

@@ -28,9 +28,8 @@
 #include "LocalDir.h"
 
 SleepJob::SleepJob(const TimeInterval &when,FileAccess *s,LocalDirectory *cwd,char *what)
-   : SessionJob(s), next_time(when)
+   : SessionJob(s), Timer(when)
 {
-   start_time=now;
    cmd=what;
    exit_code=0;
    done=false;
@@ -66,18 +65,12 @@ int SleepJob::Do()
 	 return MOVED;
       }
       repeat_count++;
-      start_time=now;
+      Reset();
       exec=(CmdExec*)j; // we are sure it is CmdExec.
       RemoveWaiting(j);
    }
 
-   if(next_time.IsInfty())
-   {
-      TimeoutS(HOUR);  // to avoid deadlock message
-      return STALL;
-   }
-
-   if(now >= start_time+next_time)
+   if(Stopped())
    {
       if(cmd)
       {
@@ -100,7 +93,6 @@ int SleepJob::Do()
       done=true;
       return MOVED;
    }
-   Timeout(next_time.GetTimeout(start_time));
    return STALL;
 }
 
@@ -115,8 +107,7 @@ void SleepJob::PrintStatus(int,const char *prefix)
 
 void SleepJob::lftpMovesToBackground()
 {
-   if(next_time.IsInfty()
-   || (repeat && cmd[0]==0))
+   if(IsInfty() || (repeat && cmd[0]==0))
    {
       // terminate
       done=true;

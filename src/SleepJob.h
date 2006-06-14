@@ -28,10 +28,8 @@
 
 class LocalDirectory;
 
-class SleepJob : public SessionJob
+class SleepJob : public SessionJob, public Timer
 {
-   Time start_time;
-   TimeInterval next_time;
    char *cmd;
    int exit_code;
    bool done;
@@ -50,7 +48,7 @@ public:
 
    void PrintStatus(int v,const char *);
 
-   void Repeat() { repeat=true; start_time-=next_time.Seconds(); }
+   void Repeat() { repeat=true; Stop(); }
 
    void lftpMovesToBackground();
 };

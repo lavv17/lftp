@@ -46,7 +46,7 @@ protected:
    void sub(double o) { add(-o); }
    void set(time_t s,int ms) { sec=s; msec=ms; normalize(); }
    void set(const time_tuple &o) { sec=o.sec; msec=o.msec; }
-   bool lt(const time_tuple &) const;
+   bool lt(const time_tuple &o) const { return sec<o.sec || (sec==o.sec && msec<o.msec); }
    double to_double() const;
 };
 
@@ -72,6 +72,7 @@ public:
    bool operator>=(const Time &o) const { return !(*this<o); }
 
    operator time_t() const { return UnixTime(); }
+   bool Passed(int s) const;
 };
 
 class TimeDate : public Time
@@ -105,7 +106,6 @@ public:
    void SetDiff(const Time&a,const Time&b) { this->set(a); sub(b); }
    TimeDiff() {}
    TimeDiff(const Time&a,const Time&b) { SetDiff(a,b); }
-   TimeDiff(double s) { Set(s); }
    TimeDiff(time_t s,int ms) { set(s,ms); }
    void Set(time_t s,int ms) { set(s,ms); }
    operator double() const { return to_double(); }
@@ -113,6 +113,8 @@ public:
 
    bool operator<(const TimeDiff &o) const { return this->lt(o); }
    bool operator>=(const TimeDiff &o) const { return !(*this<o); }
+   bool operator<(int s) const { return get_seconds()<s; }
+   bool operator>=(int s) const { return get_seconds()>=s; }
 
    const TimeDiff &operator-=(const TimeDiff &o) { sub(o); return *this; }
    const TimeDiff &operator+=(const TimeDiff &o) { add(o); return *this; }
@@ -139,6 +141,8 @@ public:
    int GetTimeout(const Time &base) const;
    bool operator<(const TimeInterval &o) const { return infty<o.infty || lt(o); }
    bool operator>=(const TimeInterval &o) const { return !(*this<o); }
+   bool operator<(int s) const { return !infty && get_seconds()<s; }
+   bool operator>=(int s) const { return infty || get_seconds()>=s; }
 };
 
 #define MINUTE (60)
