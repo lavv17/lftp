@@ -1387,7 +1387,6 @@ CMD(ls)
    FileCopy *c=FileCopy::New(src_peer,dst_peer,false);
    c->DontCopyDate();
    c->LineBuffered();
-   c->Ascii();
 
    CopyJob *j=new CopyJob(c,a,op);
    if(!output || output->usesfd(1))
