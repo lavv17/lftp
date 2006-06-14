@@ -62,6 +62,7 @@ public:
    const TimeInterval& GetLastSetting() const { return last_setting; }
    TimeDiff TimePassed() const { return SMTask::now-start; }
    TimeInterval TimeLeft() const;
+   bool IsInfty() const { return last_setting.IsInfty(); }
    const Time &GetStartTime() const { return start; }
    static int GetTimeout();
    static void ReconfigAll(const char *);

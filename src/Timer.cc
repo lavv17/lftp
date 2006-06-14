@@ -40,7 +40,7 @@ int Timer::GetTimeout()
 }
 TimeInterval Timer::TimeLeft() const
 {
-   if(last_setting.IsInfty())
+   if(IsInfty())
       return TimeInterval();
    if(now>=stop)
       return TimeInterval(0,0);
@@ -48,9 +48,9 @@ TimeInterval Timer::TimeLeft() const
 }
 void Timer::set_last_setting(const TimeInterval &i)
 {
-   infty_count-=last_setting.IsInfty();
+   infty_count-=IsInfty();
    last_setting=i;
-   infty_count+=last_setting.IsInfty();
+   infty_count+=IsInfty();
 }
 void Timer::Set(const TimeInterval &i)
 {
@@ -60,8 +60,6 @@ void Timer::Set(const TimeInterval &i)
 }
 void Timer::Reset(const Time &t)
 {
-   if(start>=t)
-      return;
    start=t;
    stop=t;
    stop+=last_setting;
@@ -87,7 +85,7 @@ void Timer::SetResource(const char *r,const char *c)
 }
 bool Timer::Stopped() const
 {
-   if(last_setting.IsInfty())
+   if(IsInfty())
       return false;
    return now>=stop;
 }
@@ -111,7 +109,7 @@ void Timer::init()
 }
 Timer::~Timer()
 {
-   infty_count-=last_setting.IsInfty();
+   infty_count-=IsInfty();
    if(next_running)
       next_running->prev_running=prev_running;
    if(prev_running)
@@ -123,17 +121,17 @@ Timer::~Timer()
       scan=&scan[0]->next_all;
    *scan=next_all;
 }
-Timer::Timer() : last_setting(1)
+Timer::Timer() : last_setting(1,0)
 {
    init();
 }
 Timer::Timer(const TimeInterval &d) : last_setting(d)
 {
    init();
-   infty_count+=last_setting.IsInfty();
+   infty_count+=IsInfty();
    Reset();
 }
-Timer::Timer(const char *r,const char *c) : last_setting(0)
+Timer::Timer(const char *r,const char *c) : last_setting(0,0)
 {
    init();
    resource=r;
@@ -143,7 +141,7 @@ Timer::Timer(const char *r,const char *c) : last_setting(0)
 }
 void Timer::re_sort()
 {
-   if(now>=stop || last_setting.IsInfty())
+   if(now>=stop || IsInfty())
    {
       // make sure it is not in the list.
       if(prev_running==0 && next_running==0 && chain_running!=this)

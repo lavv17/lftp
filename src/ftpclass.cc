@@ -873,7 +873,6 @@ Ftp::Connection::Connection()
    type='A';
    last_rest=0;
    rest_pos=0;
-   abor_time=0;
 
    quit_sent=false;
    fixed_pasv=false;
@@ -1072,10 +1071,9 @@ bool Ftp::GetBetterConnection(int level,bool limit_reached)
 	    if(diff>0)
 	    {
 	       /* number of seconds the task has been idle */
-	       int have_idle=o->idle_timer.TimePassed().Seconds();
-	       if(have_idle<diff)
+	       if(o->idle_timer.TimePassed()<diff)
 	       {
-		  TimeoutS(diff-have_idle);
+		  TimeoutS(1);
 		  need_sleep=true;
 		  continue;
 	       }
@@ -1159,7 +1157,7 @@ int   Ftp::Do()
 
    /* Some servers cannot detect ABOR, help them by closing data connection */
    if(conn && conn->aborted_data_sock!=-1
-   && now-conn->abor_time>TimeDiff(5,0))
+   && abor_close_timer.Stopped())
       conn->CloseAbortedDataConnection();
 
    if(Error() || eof || mode==CLOSED)
@@ -2186,7 +2184,7 @@ int   Ftp::Do()
 	 if(now.UnixTime() >= nop_time+nop_interval)
 	 {
 	    // prevent infinite NOOP's
-	    if(nop_offset==pos && nop_count*nop_interval>=timeout_timer.GetLastSetting().Seconds())
+	    if(nop_offset==pos && timeout_timer.GetLastSetting()<nop_count*nop_interval)
 	    {
 	       HandleTimeout();
 	       return MOVED;
@@ -2824,7 +2822,7 @@ void  Ftp::DataAbort()
 
    if(!QueryBool("use-abor",hostname)
    || expect->Count()>1 || conn->proxy_is_http
-   || now-conn->last_cmd_time<TimeDiff(1,0))
+   || !conn->last_cmd_time.Passed(1))
    {
       // check that we have a data socket to close, and the server is not
       // in uninterruptible accept() state.
@@ -2849,7 +2847,7 @@ void  Ftp::DataAbort()
    SendUrgentCmd("ABOR");
    expect->Push(Expect::ABOR);
    FlushSendQueue(true);
-   conn->abor_time=now;
+   abor_close_timer.Reset();
 
    // don't close it now, wait for ABOR result
    conn->AbortDataConnection();
@@ -3731,7 +3729,6 @@ void Ftp::CheckResp(int act)
       goto ignore;
 
    case Expect::ABOR:
-      conn->abor_time=0;
       conn->CloseAbortedDataConnection();
       goto ignore;
 
@@ -4158,6 +4155,7 @@ void Ftp::ResetLocationData()
    Reconfig(0);
    state=INITIAL_STATE;
    stat_timer.SetResource("ftp:stat-interval",hostname);
+   abor_close_timer.Set(5);
 }
 
 void Ftp::Reconfig(const char *name)

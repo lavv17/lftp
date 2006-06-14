@@ -105,7 +105,6 @@ class Ftp : public NetAccess
       off_t rest_pos;	// the number sent with REST command.
 
       Time last_cmd_time;
-      Time abor_time;	// time of last ABOR command.
 
 #if USE_SSL
       lftp_ssl *control_ssl;
@@ -290,8 +289,9 @@ private:
    off_t    nop_offset;
    int	    nop_count;
 
-   Timer stat_timer;
    Timer retry_timer;
+   Timer stat_timer;	   // timer for sending periodic STAT commands.
+   Timer abor_close_timer; // timer for closing aborted connection.
 
    void	 DataAbort();
    void  DataClose();
