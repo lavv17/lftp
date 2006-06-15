@@ -1,5 +1,6 @@
 2006-06-15  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* SleepJob.cc, SleepJob.h, commands.cc: new options for repeat (--count, --delay).
 	* NetAccess.cc, NetAccess.h, Http.cc: drop two arg SetSocketBuffer and
 	  SetSocketMaxseg methods.
 	* ftpclass.cc, ftpclass.h, resource.cc: move abor_close_timer to Ftp::Connection;

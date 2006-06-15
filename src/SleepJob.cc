@@ -36,6 +36,7 @@ SleepJob::SleepJob(const TimeInterval &when,FileAccess *s,LocalDirectory *cwd,ch
    saved_cwd=cwd;
    repeat=false;
    repeat_count=0;
+   max_repeat_count=0;
    exec=0;
 }
 SleepJob::~SleepJob()
@@ -55,7 +56,7 @@ int SleepJob::Do()
       Job *j=FindDoneAwaitedJob();
       if(!j)
 	 return STALL;
-      if(!repeat)
+      if(!repeat || (++repeat_count>=max_repeat_count && max_repeat_count))
       {
 	 exit_code=j->ExitCode();
 	 RemoveWaiting(j);
@@ -64,7 +65,6 @@ int SleepJob::Do()
 	 done=true;
 	 return MOVED;
       }
-      repeat_count++;
       Reset();
       exec=(CmdExec*)j; // we are sure it is CmdExec.
       RemoveWaiting(j);
@@ -143,21 +143,54 @@ Job *cmd_repeat(CmdExec *parent)
    int cmd_start=1;
    const char *t=args->getarg(1);
    TimeIntervalR delay(1);
-   if(t && isdigit((unsigned char)t[0]))
+   int max_count=0;
+   const char *delay_str=0;
+   int opt;
+
+   static struct option repeat_opts[]=
    {
-      delay.Set(t);
-      if(delay.Error())
+      {"delay",required_argument,0,'d'},
+      {"count",required_argument,0,'c'},
+      {0},
+   };
+
+   args->rewind();
+   while((opt=args->getopt_long("c:d:",repeat_opts,0))!=EOF)
+   {
+      switch(opt)
       {
-	 eprintf("%s: %s: %s.\n",op,t,delay.ErrorText());
+      case('c'):
+	 max_count=atoi(optarg);
+	 break;
+      case('d'):
+	 delay_str=optarg;
+	 break;
+      case('?'):
+	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
 	 return 0;
       }
-      cmd_start=2;
+   }
+   if(!delay_str && (t=args->getcurr())!=0 && isdigit((unsigned char)t[0]))
+   {
+      args->getnext();
+      delay_str=t;
+   }
+   cmd_start=args->getindex();
+
+   if(delay_str)
+   {
+      delay.Set(delay_str);
+      if(delay.Error())
+      {
+	 eprintf("%s: %s: %s.\n",op,delay_str,delay.ErrorText());
+	 return 0;
+      }
    }
 
    char *cmd = (args->count()==cmd_start+1
 	        ? args->Combine(cmd_start) : args->CombineQuoted(cmd_start));
    SleepJob *s=new SleepJob(delay,session->Clone(),parent->cwd->Clone(),cmd);
-   s->Repeat();
+   s->Repeat(max_count);
    return s;
 }
 

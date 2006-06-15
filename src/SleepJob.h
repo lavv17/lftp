@@ -35,8 +35,9 @@ class SleepJob : public SessionJob, public Timer
    bool done;
    LocalDirectory *saved_cwd;
    class CmdExec *exec;
-   bool   repeat;
-   int    repeat_count;
+   bool repeat;
+   int repeat_count;
+   int max_repeat_count;
 
 public:
    int Do();
@@ -48,7 +49,7 @@ public:
 
    void PrintStatus(int v,const char *);
 
-   void Repeat() { repeat=true; Stop(); }
+   void Repeat(int m) { repeat=true; max_repeat_count=m; Stop(); }
 
    void lftpMovesToBackground();
 };
