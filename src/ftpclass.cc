@@ -1163,7 +1163,7 @@ int   Ftp::Do()
       and closing data connection in few seconds */
    if(conn && conn->aborted_data_sock!=-1)
    {
-      char discard[0x10000];
+      char discard[0x2000];
       int res=read(conn->aborted_data_sock,discard,sizeof(discard));
       if(res>0)
 	 Log::global->Format(10,"<--- got %d bytes from aborted data connection\n",res);
