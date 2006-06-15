@@ -59,6 +59,7 @@ class Ftp : public NetAccess
 
    class Connection
    {
+      char *closure;
    public:
       int control_sock;
       IOBuffer *control_recv;
@@ -104,7 +105,7 @@ class Ftp : public NetAccess
       off_t last_rest;	// last successful REST position.
       off_t rest_pos;	// the number sent with REST command.
 
-      Time last_cmd_time;
+      Timer abor_close_timer; // timer for closing aborted connection.
 
 #if USE_SSL
       lftp_ssl *control_ssl;
@@ -122,7 +123,7 @@ class Ftp : public NetAccess
 
       char *mlst_attr_supported;
 
-      Connection();
+      Connection(const char *c);
       ~Connection();
 
       bool data_address_ok(sockaddr_u *d,bool verify_address,bool verify_port);
@@ -291,7 +292,6 @@ private:
 
    Timer retry_timer;
    Timer stat_timer;	   // timer for sending periodic STAT commands.
-   Timer abor_close_timer; // timer for closing aborted connection.
 
    void	 DataAbort();
    void  DataClose();

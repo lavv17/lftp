@@ -1088,8 +1088,8 @@ int Http::Do()
 	 return MOVED;
       }
       KeepAlive(sock);
-      SetSocketBuffer(sock,socket_buffer);
-      SetSocketMaxseg(sock,socket_maxseg);
+      SetSocketBuffer(sock);
+      SetSocketMaxseg(sock);
       NonBlock(sock);
       CloseOnExec(sock);
 
@@ -1926,7 +1926,7 @@ void Http::Reconfig(const char *name)
    }
 
    if(sock!=-1)
-      SetSocketBuffer(sock,socket_buffer);
+      SetSocketBuffer(sock);
    if(proxy && proxy_port==0)
       proxy_port=xstrdup(HTTP_DEFAULT_PROXY_PORT);
 

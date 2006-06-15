@@ -1,3 +1,11 @@
+2006-06-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* NetAccess.cc, NetAccess.h, Http.cc: drop two arg SetSocketBuffer and
+	  SetSocketMaxseg methods.
+	* ftpclass.cc, ftpclass.h, resource.cc: move abor_close_timer to Ftp::Connection;
+	  init it from resource ftp:abor-max-wait; read and discard data from aborted
+	  data connection.
+
 2006-06-14  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.cc: use TimeInterval two arg ctor.

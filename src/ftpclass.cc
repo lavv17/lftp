@@ -851,8 +851,11 @@ void Ftp::CatchSIZE_opt(int act)
    }
 }
 
-Ftp::Connection::Connection()
+Ftp::Connection::Connection(const char *c)
 {
+   closure=xstrdup(c);
+   abor_close_timer.SetResource("ftp:abor-max-wait",closure);
+
    control_sock=-1;
    control_recv=control_send=0;
    telnet_layer_send=0;
@@ -981,6 +984,7 @@ Ftp::Connection::~Connection()
 #if USE_SSL
    xfree(auth_args_supported);
 #endif
+   xfree(closure);
 }
 
 Ftp::~Ftp()
@@ -1155,10 +1159,19 @@ int   Ftp::Do()
       goto usual_return;
    }
 
-   /* Some servers cannot detect ABOR, help them by closing data connection */
-   if(conn && conn->aborted_data_sock!=-1
-   && abor_close_timer.Stopped())
-      conn->CloseAbortedDataConnection();
+   /* Some servers cannot detect ABOR, help them by reading remaining data
+      and closing data connection in few seconds */
+   if(conn && conn->aborted_data_sock!=-1)
+   {
+      char discard[0x10000];
+      int res=read(conn->aborted_data_sock,discard,sizeof(discard));
+      if(res>0)
+	 Log::global->Format(10,"<--- got %d bytes from aborted data connection\n",res);
+      if(res==0 || conn->abor_close_timer.Stopped())
+	 conn->CloseAbortedDataConnection();
+      else
+	 Block(conn->aborted_data_sock,POLLIN);
+   }
 
    if(Error() || eof || mode==CLOSED)
    {
@@ -1227,7 +1240,7 @@ int   Ftp::Do()
 
       assert(!conn);
       assert(!expect);
-      conn=new Connection();
+      conn=new Connection(hostname);
       expect=new ExpectQueue();
 
       conn->proxy_is_http=ProxyIsHttp();
@@ -2783,9 +2796,9 @@ void Ftp::SendUrgentCmd(const char *cmd)
 	 return;
       if(conn->control_send->Size()>0)
 	 Roll(conn->control_send);
-      /* send only first byte as OOB due to OOB braindamage in many unices */
-      send(conn->control_sock,pre_cmd,1,MSG_OOB);
-      send(conn->control_sock,pre_cmd+1,3,0);
+      // only DM byte is to be sent in urgent mode
+      send(conn->control_sock,pre_cmd,3,0);
+      send(conn->control_sock,pre_cmd+3,1,MSG_OOB);
       fcntl(conn->control_sock,F_SETFL,fl);
    }
    conn->SendCmd(cmd);
@@ -2821,8 +2834,7 @@ void  Ftp::DataAbort()
    expect->Close();
 
    if(!QueryBool("use-abor",hostname)
-   || expect->Count()>1 || conn->proxy_is_http
-   || !conn->last_cmd_time.Passed(1))
+   || expect->Count()>1 || conn->proxy_is_http)
    {
       // check that we have a data socket to close, and the server is not
       // in uninterruptible accept() state.
@@ -2847,7 +2859,7 @@ void  Ftp::DataAbort()
    SendUrgentCmd("ABOR");
    expect->Push(Expect::ABOR);
    FlushSendQueue(true);
-   abor_close_timer.Reset();
+   conn->abor_close_timer.Reset();
 
    // don't close it now, wait for ABOR result
    conn->AbortDataConnection();
@@ -3068,7 +3080,6 @@ void  Ftp::Connection::Send(const char *buf,int len)
       if(ch=='\r')
 	 send_cmd_buffer->Put("",1); // RFC2640
    }
-   last_cmd_time=SMTask::now;
 }
 
 void  Ftp::Connection::SendCmd(const char *cmd)
@@ -4155,7 +4166,6 @@ void Ftp::ResetLocationData()
    Reconfig(0);
    state=INITIAL_STATE;
    stat_timer.SetResource("ftp:stat-interval",hostname);
-   abor_close_timer.Set(5);
 }
 
 void Ftp::Reconfig(const char *name)

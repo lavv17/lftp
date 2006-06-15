@@ -65,8 +65,6 @@ protected:
    static void MinimizeLatency(int sock);
    static void MaximizeThroughput(int sock);
    static void ReuseAddress(int sock);
-   static void SetSocketBuffer(int sock,int val);
-   static void SetSocketMaxseg(int sock,int val);
    static int SocketBuffered(int sock);
    static const char *SocketNumericAddress(const sockaddr_u *u);
    static int SocketPort(const sockaddr_u *u);

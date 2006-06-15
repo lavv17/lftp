@@ -159,7 +159,7 @@ void NetAccess::ReuseAddress(int sock)
 {
    setsockopt(sock,SOL_SOCKET,SO_REUSEADDR,(char*)&one,sizeof(one));
 }
-void NetAccess::SetSocketBuffer(int sock,int socket_buffer)
+void NetAccess::SetSocketBuffer(int sock)
 {
    if(socket_buffer==0)
       return;
@@ -168,7 +168,7 @@ void NetAccess::SetSocketBuffer(int sock,int socket_buffer)
    if(-1==setsockopt(sock,SOL_SOCKET,SO_RCVBUF,(char*)&socket_buffer,sizeof(socket_buffer)))
       Log::global->Format(1,"setsockopt(SO_RCVBUF,%d): %s\n",socket_buffer,strerror(errno));
 }
-void NetAccess::SetSocketMaxseg(int sock,int socket_maxseg)
+void NetAccess::SetSocketMaxseg(int sock)
 {
 #ifndef SOL_TCP
 # define SOL_TCP IPPROTO_TCP
@@ -179,15 +179,6 @@ void NetAccess::SetSocketMaxseg(int sock,int socket_maxseg)
    if(-1==setsockopt(sock,SOL_TCP,TCP_MAXSEG,(char*)&socket_maxseg,sizeof(socket_maxseg)))
       Log::global->Format(1,"setsockopt(TCP_MAXSEG,%d): %s\n",socket_maxseg,strerror(errno));
 #endif
-}
-void  NetAccess::SetSocketBuffer(int sock)
-{
-   SetSocketBuffer(sock,socket_buffer);
-}
-
-void  NetAccess::SetSocketMaxseg(int sock)
-{
-   SetSocketBuffer(sock,socket_maxseg);
 }
 
 const char *NetAccess::SocketNumericAddress(const sockaddr_u *u)

@@ -183,6 +183,7 @@ const char *ProtValidate(char **s)
 // So here goes list of arbitrarily named objects, they are never referred
 // by name.
 static ResDecl
+   res_ftp_abor_max_wait   ("ftp:abor-max-wait",   "15s",   ResMgr::TimeIntervalValidate,0),
    ResDecl00a("ftp:acct",		  "",	   0,0),
    ResDecl00 ("ftp:anon-pass",		  "lftp@", 0,0),
    ResDecl01 ("ftp:anon-user",		  "anonymous",0,0),
@@ -224,7 +225,7 @@ static ResDecl
    ResDecl11i("ftp:ssl-use-ccc",	  "no",	   ResMgr::BoolValidate,0),
    ResDecl11h("ftps:initial-prot",	  "",	   ProtValidate,0),
 #endif
-   ResDecl12 ("ftp:stat-interval",	  "1",	   ResMgr::UNumberValidate,0),
+   ResDecl12 ("ftp:stat-interval",	  "1",	   ResMgr::TimeIntervalValidate,0),
    ResDecl13 ("ftp:sync-mode",		  "on",    ResMgr::BoolValidate,0),
    ResDecl14 ("ftp:use-abor",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl14a("ftp:use-feat",		  "yes",   ResMgr::BoolValidate,0),
