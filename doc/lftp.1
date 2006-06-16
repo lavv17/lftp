@@ -633,10 +633,16 @@ Same as `ls', but ignores the cache.
 .PP
 Same as `nlist', but ignores the cache.
 
-.BR repeat " [\fIdelay\fP] [\fIcommand\fP]"
+.B repeat
+.RI "[ \fB-c\fR " <count> ]
+.RI "[[\fB-d\fR] " delay ]
+.RI [ command ]
 .PP
-Repeat the command. Between the commands a delay inserted, by default 1 second.
-Example:
+Repeat the command. Between the commands a delay is inserted, by default 1 second.
+Option `-c' limits number of repeations. Option `--while-ok' breaks loop when
+command returns non-zero exit code; `--until-ok' breaks on zero exit code.
+.De
+Examples:
 .Ds
 repeat at tomorrow -- mirror
 repeat 1d mirror

@@ -1,3 +1,7 @@
+2006-06-16	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document new repeat options.
+
 2006-05-13	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document fish:charset and sftp:charset.
