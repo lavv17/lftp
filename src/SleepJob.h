@@ -38,6 +38,8 @@ class SleepJob : public SessionJob, public Timer
    bool repeat;
    int repeat_count;
    int max_repeat_count;
+   int continue_code;
+   int break_code;
 
 public:
    int Do();
@@ -50,6 +52,8 @@ public:
    void PrintStatus(int v,const char *);
 
    void Repeat(int m) { repeat=true; max_repeat_count=m; Stop(); }
+   void ContinueCode(int c) { continue_code=c; }
+   void BreakCode(int c) { break_code=c; }
 
    void lftpMovesToBackground();
 };

@@ -38,6 +38,8 @@ SleepJob::SleepJob(const TimeInterval &when,FileAccess *s,LocalDirectory *cwd,ch
    repeat_count=0;
    max_repeat_count=0;
    exec=0;
+   continue_code=-1;
+   break_code=-1;
 }
 SleepJob::~SleepJob()
 {
@@ -56,9 +58,10 @@ int SleepJob::Do()
       Job *j=FindDoneAwaitedJob();
       if(!j)
 	 return STALL;
-      if(!repeat || (++repeat_count>=max_repeat_count && max_repeat_count))
+      exit_code=j->ExitCode();
+      if(!repeat || (++repeat_count>=max_repeat_count && max_repeat_count)
+      || exit_code==break_code || (continue_code!=-1 && exit_code!=continue_code))
       {
-	 exit_code=j->ExitCode();
 	 RemoveWaiting(j);
 	 Delete(j);
 	 exec=0;
@@ -145,12 +148,16 @@ Job *cmd_repeat(CmdExec *parent)
    TimeIntervalR delay(1);
    int max_count=0;
    const char *delay_str=0;
+   bool while_ok=false;
+   bool until_ok=false;
    int opt;
 
    static struct option repeat_opts[]=
    {
       {"delay",required_argument,0,'d'},
       {"count",required_argument,0,'c'},
+      {"while-ok",no_argument,0,'o'},
+      {"until-ok",no_argument,0,'O'},
       {0},
    };
 
@@ -164,6 +171,12 @@ Job *cmd_repeat(CmdExec *parent)
 	 break;
       case('d'):
 	 delay_str=optarg;
+	 break;
+      case('o'):
+	 while_ok=true;
+	 break;
+      case('O'):
+	 until_ok=true;
 	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
@@ -191,6 +204,10 @@ Job *cmd_repeat(CmdExec *parent)
 	        ? args->Combine(cmd_start) : args->CombineQuoted(cmd_start));
    SleepJob *s=new SleepJob(delay,session->Clone(),parent->cwd->Clone(),cmd);
    s->Repeat(max_count);
+   if(while_ok)
+      s->ContinueCode(0);
+   if(until_ok)
+      s->BreakCode(0);
    return s;
 }
 
