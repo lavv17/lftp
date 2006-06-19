@@ -193,6 +193,8 @@ void StatusLine::update(const char *const *newstr,int newstr_height)
 
    // clear old extra lines. Assume we are at beginning of last shown line.
    int j=shown.Count();
+   if(!prev_line)    // if there is no way to go up, show a single line only.
+      j=newstr_height=1;
    int i=j-newstr_height;
    char *spaces=string_alloca(w+1);
    memset(spaces,' ',w);

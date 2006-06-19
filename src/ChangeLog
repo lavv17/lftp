@@ -1,3 +1,7 @@
+2006-06-19  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* StatusLine.cc: handle prev_line==0 case (fixes coredump).
+
 2006-06-16  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SleepJob.cc, SleepJob.h: new options for repeat (--while-ok, --until-ok).
