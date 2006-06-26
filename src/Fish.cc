@@ -560,10 +560,23 @@ void Fish::SendMethod()
 	 SetError(NO_FILE,"Have to know file size before upload");
 	 break;
       }
-      // dd pays attension to read boundaries and reads wrong number
-      // of bytes when ibs>1. Have to use the inefficient ibs=1.
       if(entity_size>0)
       {
+	 Send("#STOR %lld %s\n"
+	      "rest=%lld;file=%s;:>$file;echo '### 001';"
+	      "if echo 1|head -c 1 -q ->/dev/null 2>&1;then "
+		  "head -c $rest -q -|(cat>$file;cat>/dev/null);"
+	      "else while [ $rest -gt 0 ];do "
+		  "bs=4096;cnt=`expr $rest / $bs`;"
+		  "[ $cnt -eq 0 ] && { cnt=1;bs=$rest; }; "
+		  "n=`dd ibs=$bs count=$cnt 2>/dev/null|tee -a $file|wc -c`;"
+		  "[ \"$n\" -le 0 ] && exit;"
+		  "rest=`expr $rest - $n`; "
+	      "done;fi;echo '### 200'\n",
+	    (long long)entity_size,e,(long long)entity_size,e);
+#if 0
+	 // dd pays attension to read boundaries and reads wrong number
+	 // of bytes when ibs>1. Have to use the inefficient ibs=1.
 	 Send("#STOR %lld %s\n"
 	      ">%s;echo '### 001';"
 	      "dd ibs=1 count=%lld 2>/dev/null"
@@ -572,6 +585,7 @@ void Fish::SendMethod()
 	      e,
 	      (long long)entity_size,
 	      e);
+#endif
       }
       else
       {

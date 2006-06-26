@@ -89,10 +89,10 @@ int FileCopy::Do()
 	    goto pre_GET_INFO_WAIT;
 	 }
       }
+      if(get->GetSize()==NO_SIZE_YET)
+	 get->WantSize();
       if(get->GetSize()!=NO_SIZE && get->GetSize()!=NO_SIZE_YET)
 	 put->SetEntitySize(get->GetSize());
-      else if(get->GetSize()==NO_SIZE_YET)
-	 get->WantSize();
       if(get->GetDate()!=NO_DATE && get->GetDate()!=NO_DATE_YET)
 	 put->SetDate(get->GetDate());
       else if(get->GetDate()==NO_DATE_YET)
@@ -970,6 +970,16 @@ void FileCopyPeerFA::OpenSession()
    }
 }
 
+void FileCopyPeerFA::WantSize()
+{
+   struct stat st;
+   if(!strcmp(session->GetProto(),"file")
+   && stat(dir_file(session->GetCwd(),file),&st)!=-1)
+      size=st.st_size;
+   else
+      super::WantSize();
+}
+
 void FileCopyPeerFA::RemoveFile()
 {
    session->Open(file,FA::REMOVE);
@@ -1661,6 +1671,22 @@ FgData *FileCopyPeerFDStream::GetFgData(bool fg)
    if(stream->GetProcGroup())
       return new FgData(stream->GetProcGroup(),fg);
    return 0;
+}
+
+void FileCopyPeerFDStream::WantSize()
+{
+   struct stat st;
+   st.st_size=NO_SIZE;
+
+   if(stream->fd!=-1)
+      fstat(stream->fd,&st);
+   else if(stream->full_name)
+      stat(stream->full_name,&st);
+
+   if(st.st_size!=NO_SIZE)
+      size=st.st_size;
+   else
+      super::WantSize();
 }
 
 void FileCopyPeerFDStream::RemoveFile()

@@ -1985,6 +1985,11 @@ int   Ftp::Do()
 #endif
 	 }
       }
+      if(mode==STORE && entity_size!=NO_SIZE)
+      {
+	 conn->SendCmdF("ALLO %lld",(long long)entity_size);
+	 expect->Push(Expect::IGNORE);
+      }
       // some broken servers don't reset REST after a transfer,
       // so check if last_rest was different.
       if(real_pos==-1 || conn->last_rest!=real_pos)

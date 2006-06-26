@@ -1,3 +1,11 @@
+2006-06-26  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, FileCopy.cc, FileCopy.h: support for ALLO command; get file size
+	  for local sources in any case.
+	* Fish.cc: use GNU head if available for upload; use a larger bs for dd in upload
+	  and count characters with wc -c (a great speed up for both cases). A fixed
+	  version of script by Dmitry Butskoj <buc@odusz.so-cdu.ru> was used (from mc).
+
 2006-06-19  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* StatusLine.cc: handle prev_line==0 case (fixes coredump).

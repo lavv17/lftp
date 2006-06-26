@@ -325,6 +325,7 @@ public:
    const char *GetProto() const { return session->GetProto(); }
 
    bool NeedSizeDateBeforehand() { return session->NeedSizeDateBeforehand(); }
+   void WantSize();
    void RemoveFile();
 
    static FileCopyPeerFA *New(FA *s,const char *url,int m,bool reuse=false);
@@ -375,6 +376,7 @@ public:
    void DontDeleteStream() { delete_stream=false; }
    void DontCreateFgData() { create_fg_data=false; }
    void NeedSeek() { need_seek=true; }
+   void WantSize();
    void RemoveFile();
    void SetBase(off_t b) { seek_base=b; }
 
