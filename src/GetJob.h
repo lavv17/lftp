@@ -27,7 +27,12 @@
 
 class GetJob : public CopyJobEnv
 {
+   FileCopyPeer *NoProtoSrcLocal(const char *src);
+   FileCopyPeer *NoProtoDstLocal(const char *dst);
+   FileCopyPeer *NoProtoPeer(FileAccess *session,const char *file,FA::open_mode mode);
+
 protected:
+   FileCopyPeer *CreateCopyPeer(FileAccess *session,const char *path,FA::open_mode mode);
    void	 NextFile();
 
    bool delete_files;
@@ -38,10 +43,6 @@ protected:
    bool reverse;
 
    void RemoveBackupFile();
-
-   FileCopyPeer *NoProtoSrc(const char *src,bool from_local);
-   FileCopyPeer *NoProtoDst(const char *dst,bool to_local);
-   FileCopyPeer *CreateCopyPeer(const char *path,FA::open_mode mode);
 
 public:
    GetJob(FileAccess *s,ArgV *a,bool c=false);

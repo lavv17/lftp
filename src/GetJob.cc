@@ -56,27 +56,13 @@ int   GetJob::Do()
    return m;
 }
 
-FileCopyPeer *GetJob::NoProtoSrc(const char *src,bool from_local)
+FileCopyPeer *GetJob::NoProtoSrcLocal(const char *src)
 {
-   if(from_local)
-   {
-      const char *f=(cwd && src[0]!='/') ? dir_file(cwd,src) : src;
-      return FileCopyPeerFDStream::NewGet(f);
-   }
-
-   FileCopyPeerFA *s=new FileCopyPeerFA(session,src,FA::RETRIEVE);
-   s->DontReuseSession();
-   return s;
+   const char *f=(cwd && src[0]!='/') ? dir_file(cwd,src) : src;
+   return FileCopyPeerFDStream::NewGet(f);
 }
-FileCopyPeer *GetJob::NoProtoDst(const char *dst,bool to_local)
+FileCopyPeer *GetJob::NoProtoDstLocal(const char *dst)
 {
-   if(!to_local)
-   {
-      FileCopyPeerFA *s=new FileCopyPeerFA(session,dst,FA::STORE);
-      s->DontReuseSession();
-      return s;
-   }
-
    int flags=O_WRONLY|O_CREAT|(cont?0:O_TRUNC);
    dst=expand_home_relative(dst);
    const char *f=(cwd && dst[0]!='/') ? dir_file(cwd,dst) : dst;
@@ -114,18 +100,39 @@ FileCopyPeer *GetJob::NoProtoDst(const char *dst,bool to_local)
    p->DontDeleteStream();
    return p;
 }
+FileCopyPeer *GetJob::NoProtoPeer(FileAccess *session,const char *src,FA::open_mode mode)
+{
+   FileCopyPeerFA *peer=new FileCopyPeerFA(session,src,mode);
+   if(this->session==session)
+      peer->DontReuseSession();
+   return peer;
+}
 
-FileCopyPeer *GetJob::CreateCopyPeer(const char *path,FA::open_mode mode)
+FileCopyPeer *GetJob::CreateCopyPeer(FileAccess *session,const char *path,FA::open_mode mode)
 {
    ParsedURL url(path);
+   bool is_local;
    if(!url.proto)
+   {
+      // store & put || !store & get
+      if(mode==FA::STORE ^ !reverse)
+	 return NoProtoPeer(session,path,mode);
+      is_local=true;
+   }
+   else
+   {
+      path=url.path;
+      is_local=!strcasecmp(url.proto,"file");
+   }
+
+   if(session!=this->session)
+      Delete(session);	// delete cloned session.
+
+   if(is_local)
       return (mode==FA::STORE)
-	 ? NoProtoDst(path,!reverse)
-	 : NoProtoSrc(path,reverse);
-   else if(!strcasecmp(url.proto,"file"))
-      return (mode==FA::STORE)
-	 ? NoProtoDst(url.path,true)
-	 : NoProtoSrc(url.path,true);
+	 ? NoProtoDstLocal(path)
+	 : NoProtoSrcLocal(path);
+
    return new FileCopyPeerFA(&url,mode);
 }
 
@@ -155,10 +162,10 @@ try_next:
       return;
    }
 
-   FileCopyPeer *dst_peer=CreateCopyPeer(dst,FA::STORE);
+   FileCopyPeer *dst_peer=CreateCopyPeer(session,dst,FA::STORE);
    if(!dst_peer)
       goto try_next;
-   FileCopyPeer *src_peer=CreateCopyPeer(src,FA::RETRIEVE);
+   FileCopyPeer *src_peer=CreateCopyPeer(session,src,FA::RETRIEVE);
 
    FileCopy *c=FileCopy::New(src_peer,dst_peer,cont);
 

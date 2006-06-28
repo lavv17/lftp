@@ -1,3 +1,9 @@
+2006-06-28  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* GetJob.cc, GetJob.h, pgetJob.cc, pgetJob.h: simplify copy peer
+	  creation; pass url from pget to CreateCopyPeer (this fixes
+	  pget http://...?args).
+
 2006-06-26  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, FileCopy.cc, FileCopy.h: support for ALLO command; get file size

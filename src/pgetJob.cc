@@ -74,7 +74,6 @@ int pgetJob::Do()
 
    if(chunks==0)
    {
-
       if(size==NO_SIZE_YET)
 	 return m;
 
@@ -100,18 +99,7 @@ int pgetJob::Do()
       off_t curr_offs=size;
       for(int i=num_of_chunks; i-->0; )
       {
-	 const char *name=cp->GetName();
-	 FileAccess *s=0;
-	 ParsedURL u(name,true);
-	 if(u.proto && u.path)
-	 {
-	    s=FA::New(&u);
-	    if(s)
-	       name=u.path;
-	 }
-	 if(!s)
-	    s=session->Clone();
-	 chunks[i]=NewChunk(s,name,local,curr_offs-chunk_size,curr_offs);
+	 chunks[i]=NewChunk(cp->GetName(),local,curr_offs-chunk_size,curr_offs);
 	 chunks[i]->SetParentFg(this,false);
 	 chunks[i]->cmdline=(char*)xmalloc(7+2*20+1);
 	 sprintf(chunks[i]->cmdline,"\\chunk %lld-%lld",
@@ -286,16 +274,15 @@ void pgetJob::NextFile()
    total_eta=-1;
 }
 
-pgetJob::ChunkXfer *pgetJob::NewChunk(FileAccess *session,const char *remote,
-				       FDStream *local,off_t start,off_t limit)
+pgetJob::ChunkXfer *pgetJob::NewChunk(const char *remote,FDStream *local,off_t start,off_t limit)
 {
    FileCopyPeerFDStream
 	       	*dst_peer=new FileCopyPeerFDStream(local,FileCopyPeer::PUT);
-   FileCopyPeer *src_peer=new FileCopyPeerFA(session,remote,FA::RETRIEVE);
-
    dst_peer->DontDeleteStream();
    dst_peer->NeedSeek(); // seek before writing
    dst_peer->SetBase(0);
+
+   FileCopyPeer *src_peer=CreateCopyPeer(session->Clone(),remote,FA::RETRIEVE);
 
    FileCopy *c=FileCopy::New(src_peer,dst_peer,false);
    c->SetRange(start,limit);
