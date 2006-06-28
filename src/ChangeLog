@@ -3,6 +3,7 @@
 	* GetJob.cc, GetJob.h, pgetJob.cc, pgetJob.h: simplify copy peer
 	  creation; pass url from pget to CreateCopyPeer (this fixes
 	  pget http://...?args).
+	* resource.cc, ftpclass.cc: add use-allo setting.
 
 2006-06-26  Alexander V. Lukyanov <lav@yars.free.net>
 

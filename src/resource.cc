@@ -228,6 +228,7 @@ static ResDecl
    ResDecl12 ("ftp:stat-interval",	  "1",	   ResMgr::TimeIntervalValidate,0),
    ResDecl13 ("ftp:sync-mode",		  "on",    ResMgr::BoolValidate,0),
    ResDecl14 ("ftp:use-abor",		  "yes",   ResMgr::BoolValidate,0),
+   res_ftp_use_allo  ("ftp:use-allo",	  "yes",   ResMgr::BoolValidate,0),
    ResDecl14a("ftp:use-feat",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl15 ("ftp:use-fxp",		  "yes",   ResMgr::BoolValidate,0),
    ResDecl15e("ftp:use-hftp",		  "yes",   ResMgr::BoolValidate,0),

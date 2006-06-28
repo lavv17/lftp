@@ -1985,7 +1985,7 @@ int   Ftp::Do()
 #endif
 	 }
       }
-      if(mode==STORE && entity_size!=NO_SIZE)
+      if(mode==STORE && entity_size!=NO_SIZE && QueryBool("use-allo",hostname))
       {
 	 conn->SendCmdF("ALLO %lld",(long long)entity_size);
 	 expect->Push(Expect::IGNORE);
