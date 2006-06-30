@@ -69,22 +69,7 @@ public:
    void PrintStatus(int,const char *);
    void ListJobs(int verbose,int indent=0);
 
-   pgetJob(FileAccess *s,ArgV *args,bool cont)
-      : GetJob(s,args,/*cont=*/false)
-   {
-      chunks=0;
-      num_of_chunks=0;
-      total_xferred=0;
-      total_xfer_rate=0;
-      no_parallel=false;
-      chunks_done=false;
-      pget_cont=cont;
-      max_chunks=5;
-      total_eta=-1;
-      status_timer.Set(10,0);
-      status_file=0;
-      truncate_target_first=!cont;
-   }
+   pgetJob(FileAccess *s,ArgV *args,bool cont);
    ~pgetJob();
 
    void SetMaxConn(int n) { max_chunks=n; }

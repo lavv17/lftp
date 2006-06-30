@@ -597,8 +597,11 @@ ResDecls::ResDecls(ResType *array)
 ResDecls::ResDecls(ResType *r1,ResType *r2,...)
 {
    ResMgr::AddType(r1);
+   if(!r2)
+      return;
+   ResMgr::AddType(r2);
    va_list v;
-   va_start(v,r1);
+   va_start(v,r2);
    while((r1=va_arg(v,ResType *))!=0)
       ResMgr::AddType(r1);
    va_end(v);

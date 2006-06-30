@@ -27,11 +27,12 @@
 #include "url.h"
 #include "misc.h"
 
-ResType pget_save_status =
-   {"pget:save-status",	"yes",   ResMgr::BoolValidate,	 ResMgr::NoClosure};
-ResType pget_default_n =
-   {"pget:default-n",   "5",	 ResMgr::UNumberValidate,ResMgr::NoClosure};
-ResDecls pget_vars_register(&pget_save_status,&pget_default_n,0);
+ResType pget_vars[] = {
+   {"pget:save-status",	"10s",   ResMgr::TimeIntervalValidate,ResMgr::NoClosure},
+   {"pget:default-n",   "5",	 ResMgr::UNumberValidate,ResMgr::NoClosure},
+   {0}
+};
+ResDecls pget_vars_register(pget_vars);
 
 #undef MIN
 #define MIN(a,b) ((a)<(b)?(a):(b))
@@ -109,7 +110,7 @@ int pgetJob::Do()
 
       xfree(status_file);
       status_file=0;
-      if(ResMgr::QueryBool("xfer:pget-save-status",0))
+      if(!status_timer.IsInfty())
 	 status_file=xasprintf("%s.lftp-pget-status",local->full_name);
 
       if(pget_cont)
@@ -292,9 +293,9 @@ pgetJob::pgetJob(FileAccess *s,ArgV *args,bool cont)
    no_parallel=false;
    chunks_done=false;
    pget_cont=cont;
-   max_chunks=ResMgr::Query("xfer:pget-;
+   max_chunks=ResMgr::Query("pget:default-n",0);
    total_eta=-1;
-   status_timer.Set(10,0);
+   status_timer.SetResource("pget:save-status",0);
    status_file=0;
    truncate_target_first=!cont;
 }
