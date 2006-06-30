@@ -21,9 +21,17 @@
 /* $Id$ */
 
 #include <config.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include "pgetJob.h"
 #include "url.h"
 #include "misc.h"
+
+ResType pget_save_status =
+   {"pget:save-status",	"yes",   ResMgr::BoolValidate,	 ResMgr::NoClosure};
+ResType pget_default_n =
+   {"pget:default-n",   "5",	 ResMgr::UNumberValidate,ResMgr::NoClosure};
+ResDecls pget_vars_register(&pget_save_status,&pget_default_n,0);
 
 #undef MIN
 #define MIN(a,b) ((a)<(b)?(a):(b))
@@ -40,14 +48,28 @@ int pgetJob::Do()
    if(cp==0)
       return super::Do();
 
+   if(status_timer.Stopped())
+   {
+      SaveStatus();
+      status_timer.Reset();
+   }
+
+   if(cp->Done())
+   {
+      RemoveBackupFile();
+      if(status_file)
+      {
+	 remove(status_file);
+	 xfree(status_file);
+	 status_file=0;
+      }
+   }
+
    if(no_parallel || max_chunks<2)
    {
       cp->Resume();
       return super::Do();
    }
-
-   if(cp->Done())
-      RemoveBackupFile();
 
    if(chunks_done && chunks && cp->GetPos()>=chunks[0]->start)
    {
@@ -85,36 +107,36 @@ int pgetJob::Do()
 
       cp->GetPut()->NeedSeek(); // seek before writing
 
-      /* initialize chunks */
-      off_t chunk_size=(size-offset)/max_chunks;
-      if(chunk_size<0x10000)
-	 chunk_size=0x10000;
-      num_of_chunks=(size-offset)/chunk_size-1;
-      if(num_of_chunks<1)
+      xfree(status_file);
+      status_file=0;
+      if(ResMgr::QueryBool("xfer:pget-save-status",0))
+	 status_file=xasprintf("%s.lftp-pget-status",local->full_name);
+
+      if(pget_cont)
+	 LoadStatus();
+      else if(status_file)
+	 remove(status_file);
+      if(!chunks)
+	 InitChunks(offset,size);
+
+      m=MOVED;
+
+      if(chunks)
+      {
+	 xfree(cp->cmdline);
+	 cp->cmdline=xasprintf("\\chunk %lld-%lld",0LL,(long long)(chunks[0]->start-1));
+      }
+      else
       {
 	 no_parallel=true;
-	 return MOVED;
+	 return m;
       }
-      chunks=(ChunkXfer**)xmalloc(sizeof(*chunks)*num_of_chunks);
-      off_t curr_offs=size;
-      for(int i=num_of_chunks; i-->0; )
-      {
-	 chunks[i]=NewChunk(cp->GetName(),local,curr_offs-chunk_size,curr_offs);
-	 chunks[i]->SetParentFg(this,false);
-	 chunks[i]->cmdline=(char*)xmalloc(7+2*20+1);
-	 sprintf(chunks[i]->cmdline,"\\chunk %lld-%lld",
-	    (long long)(curr_offs-chunk_size),(long long)(curr_offs-1));
-	 curr_offs-=chunk_size;
-      }
-      xfree(cp->cmdline);
-      cp->cmdline=(char*)xmalloc(7+2*20+1);
-      sprintf(cp->cmdline,"\\chunk 0-%lld",(long long)(chunks[0]->start-1));
-      m=MOVED;
    }
 
    /* cycle through the chunks */
    chunks_done=true;
    total_xferred=MIN(offset,chunks[0]->start);
+   off_t got_already=cp->GetSize()-chunks[0]->start;
    total_xfer_rate=cp->GetRate();
 
    off_t rem=chunks[0]->start-cp->GetPos();
@@ -150,7 +172,9 @@ int pgetJob::Do()
       {
 	 total_xferred+=chunks[i]->limit-chunks[i]->start;
       }
+      got_already-=chunks[i]->limit-chunks[i]->start;
    }
+   total_xferred+=got_already;
 
    if(no_parallel)
    {
@@ -258,6 +282,22 @@ void pgetJob::free_chunks()
    }
 }
 
+pgetJob::pgetJob(FileAccess *s,ArgV *args,bool cont)
+   : GetJob(s,args,/*cont=*/false)
+{
+   chunks=0;
+   num_of_chunks=0;
+   total_xferred=0;
+   total_xfer_rate=0;
+   no_parallel=false;
+   chunks_done=false;
+   pget_cont=cont;
+   max_chunks=ResMgr::Query("xfer:pget-;
+   total_eta=-1;
+   status_timer.Set(10,0);
+   status_file=0;
+   truncate_target_first=!cont;
+}
 pgetJob::~pgetJob()
 {
    free_chunks();
@@ -290,7 +330,9 @@ pgetJob::ChunkXfer *pgetJob::NewChunk(const char *remote,FDStream *local,off_t s
    c->DontCopyDate();
    c->FailIfCannotSeek();
 
-   return new ChunkXfer(c,remote,start,limit);
+   ChunkXfer *chunk=new ChunkXfer(c,remote,start,limit);
+   chunk->cmdline=xasprintf("\\chunk %lld-%lld",(long long)start,(long long)(limit-1));
+   return chunk;
 }
 
 pgetJob::ChunkXfer::ChunkXfer(FileCopy *c1,const char *name,
@@ -303,4 +345,107 @@ pgetJob::ChunkXfer::ChunkXfer(FileCopy *c1,const char *name,
 
 pgetJob::ChunkXfer::~ChunkXfer()
 {
+}
+
+void pgetJob::SaveStatus()
+{
+   if(!status_file)
+      return;
+
+   FILE *f=fopen(status_file,"w");
+   if(!f)
+      return;
+
+   off_t size=cp->GetSize();
+   fprintf(f,"size=%lld\n",size);
+
+   int i=0;
+   fprintf(f,"%d.pos=%lld\n",i,cp->GetPos());
+   if(!chunks)
+      goto out;
+   fprintf(f,"%d.limit=%lld\n",i,chunks[0]->start);
+   for(int chunk=0; chunk<num_of_chunks; chunk++)
+   {
+      if(chunks[chunk]->Done())
+	 continue;
+      i++;
+      fprintf(f,"%d.pos=%lld\n",i,chunks[chunk]->GetPos());
+      fprintf(f,"%d.limit=%lld\n",i,chunks[chunk]->limit);
+   }
+out:
+   fclose(f);
+}
+void pgetJob::LoadStatus()
+{
+   if(!status_file)
+      return;
+
+   FILE *f=fopen(status_file,"r");
+   if(!f)
+      return;
+
+   struct stat st;
+   if(fstat(fileno(f),&st)<0)
+      return;
+
+   long long size;
+   if(fscanf(f,"size=%lld\n",&size)<1)
+      return;
+
+   int i=0;
+   int max_chunks=st.st_size/20; // highest estimate
+   long long *pos=(long long *)alloca(2*max_chunks*sizeof(*pos));
+   long long *limit=pos+max_chunks;
+   for(;;)
+   {
+      int j;
+      if(fscanf(f,"%d.pos=%lld\n",&j,pos+i)<2 || j!=i)
+	 break;
+      if(fscanf(f,"%d.limit=%lld\n",&j,limit+i)<2 || j!=i)
+	 return;
+      if(pos[i]<limit[i])
+	 i++;
+   }
+   if(i<1)
+      return;
+   if(size<cp->GetSize())  // file grew?
+   {
+      if(limit[i-1]==size)
+	 limit[i-1]=cp->GetSize();
+      else
+      {
+	 pos[i]=size;
+	 limit[i]=cp->GetSize();
+	 i++;
+      }
+   }
+   num_of_chunks=i-1;
+   cp->SetRange(pos[0],limit[0]);
+   if(num_of_chunks<1)
+      return;
+   chunks=(ChunkXfer**)xmalloc(sizeof(*chunks)*num_of_chunks);
+   for(int i=0; i<num_of_chunks; i++)
+   {
+      chunks[i]=NewChunk(cp->GetName(),local,pos[i+1],limit[i+1]);
+      chunks[i]->SetParentFg(this,false);
+   }
+}
+
+void pgetJob::InitChunks(off_t offset,off_t size)
+{
+   /* initialize chunks */
+   off_t chunk_size=(size-offset)/max_chunks;
+   if(chunk_size<0x10000)
+      chunk_size=0x10000;
+   num_of_chunks=(size-offset)/chunk_size-1;
+   if(num_of_chunks<1)
+      return;
+   chunks=(ChunkXfer**)xmalloc(sizeof(*chunks)*num_of_chunks);
+   off_t curr_offs=size;
+   for(int i=num_of_chunks; i-->0; )
+   {
+      chunks[i]=NewChunk(cp->GetName(),local,curr_offs-chunk_size,curr_offs);
+      chunks[i]->SetParentFg(this,false);
+      curr_offs-=chunk_size;
+   }
 }

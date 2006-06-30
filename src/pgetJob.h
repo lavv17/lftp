@@ -41,16 +41,24 @@ class pgetJob : public GetJob
    ChunkXfer   **chunks;
    int	 max_chunks;
    int	 num_of_chunks;
+   void InitChunks(off_t offset,off_t size);
+
    off_t total_xferred;
    float total_xfer_rate;
 
    bool	no_parallel:1;
    bool chunks_done:1;
+   bool pget_cont:1;
 
    void free_chunks();
    ChunkXfer *NewChunk(const char *remote,FDStream *local,off_t start,off_t limit);
 
    long total_eta;
+
+   Timer status_timer;
+   char *status_file;
+   void SaveStatus();
+   void LoadStatus();
 
 protected:
    void	 NextFile();
@@ -61,7 +69,7 @@ public:
    void PrintStatus(int,const char *);
    void ListJobs(int verbose,int indent=0);
 
-   pgetJob(FileAccess *s,ArgV *args)
+   pgetJob(FileAccess *s,ArgV *args,bool cont)
       : GetJob(s,args,/*cont=*/false)
    {
       chunks=0;
@@ -69,8 +77,13 @@ public:
       total_xferred=0;
       total_xfer_rate=0;
       no_parallel=false;
+      chunks_done=false;
+      pget_cont=cont;
       max_chunks=5;
       total_eta=-1;
+      status_timer.Set(10,0);
+      status_file=0;
+      truncate_target_first=!cont;
    }
    ~pgetJob();
 

@@ -36,8 +36,8 @@ public:
 };
 class Cache
 {
-   const ResDecl *res_max_size;
-   const ResDecl *res_enable;
+   const ResType *res_max_size;
+   const ResType *res_enable;
 protected:
    CacheEntry *chain;
    CacheEntry **curr;
@@ -47,7 +47,7 @@ protected:
 public:
    void Trim();
    void Flush();
-   Cache(const ResDecl *s,const ResDecl *e) {
+   Cache(const ResType *s,const ResType *e) {
       res_max_size=s;
       res_enable=e;
       chain=0;

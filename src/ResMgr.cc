@@ -41,7 +41,7 @@ CDECL_END
 #include "misc.h"
 
 ResMgr::Resource  *ResMgr::chain=0;
-ResDecl		  *ResMgr::type_chain=0;
+ResType		  *ResMgr::type_chain=0;
 
 int ResMgr::VarNameCmp(const char *good_name,const char *name)
 {
@@ -78,15 +78,15 @@ int ResMgr::VarNameCmp(const char *good_name,const char *name)
    return res;
 }
 
-const char *ResMgr::FindVar(const char *name,const ResDecl **type)
+const char *ResMgr::FindVar(const char *name,const ResType **type)
 {
-   const ResDecl *exact_proto=0;
-   const ResDecl *exact_name=0;
+   const ResType *exact_proto=0;
+   const ResType *exact_name=0;
 
    *type=0;
 
    int sub=0;
-   const ResDecl *type_scan;
+   const ResType *type_scan;
    for(type_scan=type_chain; type_scan; type_scan=type_scan->next)
    {
       switch(VarNameCmp(type_scan->name,name))
@@ -124,9 +124,9 @@ const char *ResMgr::FindVar(const char *name,const ResDecl **type)
    return _("ambiguous variable name");
 }
 
-const ResDecl *ResMgr::FindRes(const char *name)
+const ResType *ResMgr::FindRes(const char *name)
 {
-   const ResDecl *type;
+   const ResType *type;
    const char *msg=FindVar(name,&type);
    if(msg)
       return 0;
@@ -137,7 +137,7 @@ const char *ResMgr::Set(const char *name,const char *cclosure,const char *cvalue
 {
    const char *msg;
 
-   const ResDecl *type;
+   const ResType *type;
    // find type of given variable
    msg=FindVar(name,&type);
    if(msg)
@@ -224,7 +224,7 @@ char *ResMgr::Format(bool with_defaults,bool only_defaults)
    char *res;
 
    Resource *scan;
-   ResDecl  *dscan;
+   ResType  *dscan;
 
    int n=0;
    int dn=0;
@@ -336,7 +336,7 @@ char **ResMgr::Generator(void)
    char **res;
 
    Resource *scan;
-   ResDecl  *dscan;
+   ResType  *dscan;
 
    int n=0;
    int dn=0;
@@ -507,7 +507,7 @@ bool ResMgr::Resource::ClosureMatch(const char *cl_data)
 
 const char *ResMgr::QueryNext(const char *name,const char **closure,Resource **ptr)
 {
-   const ResDecl *type=FindRes(name);
+   const ResType *type=FindRes(name);
    if(!type)
       return 0;
 
@@ -528,7 +528,7 @@ const char *ResMgr::QueryNext(const char *name,const char **closure,Resource **p
    return 0;
 }
 
-const char *ResMgr::SimpleQuery(const ResDecl *type,const char *closure)
+const char *ResMgr::SimpleQuery(const ResType *type,const char *closure)
 {
    // find the value
    for(Resource *scan=chain; scan; scan=scan->next)
@@ -538,7 +538,7 @@ const char *ResMgr::SimpleQuery(const ResDecl *type,const char *closure)
 }
 const char *ResMgr::SimpleQuery(const char *name,const char *closure)
 {
-   const ResDecl *type=FindRes(name);
+   const ResType *type=FindRes(name);
    if(!type)
       return 0;
 
@@ -549,7 +549,7 @@ ResValue ResMgr::Query(const char *name,const char *closure)
 {
    const char *msg;
 
-   const ResDecl *type;
+   const ResType *type;
    // find type of given variable
    msg=FindVar(name,&type);
    if(msg)
@@ -562,7 +562,7 @@ ResValue ResMgr::Query(const char *name,const char *closure)
    return type->Query(closure);
 }
 
-ResValue ResDecl::Query(const char *closure) const
+ResValue ResType::Query(const char *closure) const
 {
    const char *v=0;
 
@@ -581,19 +581,32 @@ bool ResMgr::str2bool(const char *s)
    return(strchr("TtYy1+",s[0])!=0 || !strcasecmp(s,"on"));
 }
 
-ResDecl::ResDecl(const char *a_name,const char *a_defvalue,
-		  ResValValid *a_val_valid,ResClValid *a_closure_valid)
+ResDecl::ResDecl(const char *a_name,const char *a_defvalue,ResValValid *a_val_valid,ResClValid *a_closure_valid)
 {
    name=a_name;
-   defvalue=xstrdup(a_defvalue);
+   defvalue=a_defvalue;
    val_valid=a_val_valid;
    closure_valid=a_closure_valid;
-   next=ResMgr::type_chain;
-   ResMgr::type_chain=this;
+   ResMgr::AddType(this);
 }
-ResDecl::~ResDecl()
+ResDecls::ResDecls(ResType *array)
 {
-   for(ResDecl **scan=&ResMgr::type_chain; *scan; scan=&(*scan)->next)
+   while(array->name)
+      ResMgr::AddType(array++);
+}
+ResDecls::ResDecls(ResType *r1,ResType *r2,...)
+{
+   ResMgr::AddType(r1);
+   va_list v;
+   va_start(v,r1);
+   while((r1=va_arg(v,ResType *))!=0)
+      ResMgr::AddType(r1);
+   va_end(v);
+}
+
+ResType::~ResType()
+{
+   for(ResType **scan=&ResMgr::type_chain; *scan; scan=&(*scan)->next)
    {
       if(*scan==this)
       {
@@ -610,9 +623,7 @@ ResDecl::~ResDecl()
       {
 	 if((*scan)->type==this)
 	 {
-	    ResMgr::Resource *to_free=*scan;
-	    *scan=(*scan)->next;
-	    delete to_free;
+	    delete replace_value(*scan,(*scan)->next);
 	    modified=true;
 	 }
 	 else
@@ -625,13 +636,7 @@ ResDecl::~ResDecl()
 	 SMTask::ReconfigAll(this->name);
 #endif
    }
-
-   xfree(defvalue);
 }
-
-#define MINUTE (60)
-#define HOUR   (60*MINUTE)
-#define DAY    (24*HOUR)
 
 void TimeIntervalR::init(const char *s)
 {

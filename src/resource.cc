@@ -179,187 +179,179 @@ const char *ProtValidate(char **s)
 }
 #endif
 
-// Static array of objects is wrongly initialized by IRIX CC and Unixware c++.
-// So here goes list of arbitrarily named objects, they are never referred
-// by name.
-static ResDecl
-   res_ftp_abor_max_wait   ("ftp:abor-max-wait",   "15s",   ResMgr::TimeIntervalValidate,0),
-   ResDecl00a("ftp:acct",		  "",	   0,0),
-   ResDecl00 ("ftp:anon-pass",		  "lftp@", 0,0),
-   ResDecl01 ("ftp:anon-user",		  "anonymous",0,0),
-   ResDecl01a("ftp:auto-sync-mode",	  "",	   ResMgr::ERegExpValidate,0),
-   ResDecl01i("ftp:auto-passive-mode",	  "yes",   ResMgr::BoolValidate,0),
-   ResDecl01b("ftp:bind-data-socket",	  "yes",   ResMgr::BoolValidate,0),
-   ResDecl01f("ftp:charset",		  "",	   ResMgr::CharsetValidate,0),
-   ResDecl01g("ftp:client",		  PACKAGE"/"VERSION,0,0),
-   ResDecl01e("ftp:device-prefix",	  "no",	   ResMgr::BoolValidate,0),
-   ResDecl01c("ftp:fix-pasv-address",	  "yes",   ResMgr::BoolValidate,0),
-   ResDecl01h("ftp:ignore-pasv-address",  "no",	   ResMgr::BoolValidate,0),
-   ResDecl01d("ftp:fxp-force",		  "no",	   ResMgr::BoolValidate,0),
-   ResDecl02 ("ftp:fxp-passive-source",	  "no",	   ResMgr::BoolValidate,ResMgr::NoClosure),
-   ResDecl02d("ftp:fxp-passive-sscn",	  "yes",   ResMgr::BoolValidate,ResMgr::NoClosure),
-   ResDecl02b("ftp:home",		  "",	   0,0),
-   ResDecl02a("ftp:site-group",		  "",	   0,0),
-   ResDecl02c("ftp:lang",		  "",	   0,0),
-   ResDecl03a("ftp:list-empty-ok",	  "no",	   0,0),
-   ResDecl03 ("ftp:list-options",	  "",	   0,0),
-   ResDecl04 ("ftp:nop-interval",	  "120",   ResMgr::UNumberValidate,0),
-   ResDecl05 ("ftp:passive-mode",	  "on",    ResMgr::BoolValidate,0),
-   ResDecl06 ("ftp:port-range",		  "full",  ResMgr::RangeValidate,0),
-   ResDecl06a("ftp:port-ipv4",		  "",	   ResMgr::IPv4AddrValidate,0),
-   ResDecl07 ("ftp:proxy",		  "",	   FtpProxyValidate,0),
-   ResDecl07a("ftp:proxy-auth-joined",	  "no",	   ResMgr::BoolValidate,0),
-   ResDecl08 ("ftp:rest-list",		  "no",	   ResMgr::BoolValidate,0),
-   ResDecl09 ("ftp:rest-stor",		  "yes",   ResMgr::BoolValidate,0),
-   ResDecl09a("ftp:timezone",		  "GMT",   0,0),
-   ResDecl10 ("ftp:skey-allow",		  "yes",   ResMgr::BoolValidate,0),
-   ResDecl11 ("ftp:skey-force",		  "no",    ResMgr::BoolValidate,0),
+static ResType lftp_vars[] = {
+   {"ftp:abor-max-wait",	 "15s",	  ResMgr::TimeIntervalValidate,0},
+   {"ftp:acct",			 "",	  0,0},
+   {"ftp:anon-pass",		 "lftp@", 0,0},
+   {"ftp:anon-user",		 "anonymous",0,0},
+   {"ftp:auto-sync-mode",	 "",	  ResMgr::ERegExpValidate,0},
+   {"ftp:auto-passive-mode",	 "yes",   ResMgr::BoolValidate,0},
+   {"ftp:bind-data-socket",	 "yes",   ResMgr::BoolValidate,0},
+   {"ftp:charset",		 "",	  ResMgr::CharsetValidate,0},
+   {"ftp:client",		 PACKAGE"/"VERSION,0,0},
+   {"ftp:device-prefix",	 "no",	  ResMgr::BoolValidate,0},
+   {"ftp:fix-pasv-address",	 "yes",   ResMgr::BoolValidate,0},
+   {"ftp:ignore-pasv-address",	 "no",	  ResMgr::BoolValidate,0},
+   {"ftp:fxp-force",		 "no",	  ResMgr::BoolValidate,0},
+   {"ftp:fxp-passive-source",	 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
+   {"ftp:fxp-passive-sscn",	 "yes",   ResMgr::BoolValidate,ResMgr::NoClosure},
+   {"ftp:home",			 "",	  0,0},
+   {"ftp:site-group",		 "",	  0,0},
+   {"ftp:lang",			 "",	  0,0},
+   {"ftp:list-empty-ok",	 "no",	  0,0},
+   {"ftp:list-options",		 "",	  0,0},
+   {"ftp:nop-interval",		 "120",   ResMgr::UNumberValidate,0},
+   {"ftp:passive-mode",		 "on",    ResMgr::BoolValidate,0},
+   {"ftp:port-range",		 "full",  ResMgr::RangeValidate,0},
+   {"ftp:port-ipv4",		 "",	  ResMgr::IPv4AddrValidate,0},
+   {"ftp:proxy",		 "",	  FtpProxyValidate,0},
+   {"ftp:proxy-auth-joined",	 "no",	  ResMgr::BoolValidate,0},
+   {"ftp:rest-list",		 "no",	  ResMgr::BoolValidate,0},
+   {"ftp:rest-stor",		 "yes",   ResMgr::BoolValidate,0},
+   {"ftp:timezone",		 "GMT",   0,0},
+   {"ftp:skey-allow",		 "yes",   ResMgr::BoolValidate,0},
+   {"ftp:skey-force",		 "no",    ResMgr::BoolValidate,0},
 #if USE_SSL
-   ResDecl11a("ftp:ssl-allow",		  "yes",   ResMgr::BoolValidate,0),
-   ResDecl11b("ftp:ssl-force",		  "no",	   ResMgr::BoolValidate,0),
-   ResDecl11c("ftp:ssl-protect-data",	  "no",	   ResMgr::BoolValidate,0),
-   ResDecl11g("ftp:ssl-protect-fxp",	  "no",    ResMgr::BoolValidate,0),
-   ResDecl11f("ftp:ssl-protect-list",	  "yes",   ResMgr::BoolValidate,0),
-   ResDecl11d("ftp:ssl-auth",		  "TLS",   AuthArgValidate,0),
-   ResDecl11e("ftp:ssl-allow-anonymous",  "no",	   ResMgr::BoolValidate,0),
-   ResDecl11i("ftp:ssl-use-ccc",	  "no",	   ResMgr::BoolValidate,0),
-   ResDecl11h("ftps:initial-prot",	  "",	   ProtValidate,0),
+   {"ftp:ssl-allow",		 "yes",   ResMgr::BoolValidate,0},
+   {"ftp:ssl-force",		 "no",	  ResMgr::BoolValidate,0},
+   {"ftp:ssl-protect-data",	 "no",	  ResMgr::BoolValidate,0},
+   {"ftp:ssl-protect-fxp",	 "no",    ResMgr::BoolValidate,0},
+   {"ftp:ssl-protect-list",	 "yes",   ResMgr::BoolValidate,0},
+   {"ftp:ssl-auth",		 "TLS",   AuthArgValidate,0},
+   {"ftp:ssl-allow-anonymous",	 "no",	  ResMgr::BoolValidate,0},
+   {"ftp:ssl-use-ccc",		 "no",	  ResMgr::BoolValidate,0},
+   {"ftps:initial-prot",	 "",	  ProtValidate,0},
 #endif
-   ResDecl12 ("ftp:stat-interval",	  "1",	   ResMgr::TimeIntervalValidate,0),
-   ResDecl13 ("ftp:sync-mode",		  "on",    ResMgr::BoolValidate,0),
-   ResDecl14 ("ftp:use-abor",		  "yes",   ResMgr::BoolValidate,0),
-   res_ftp_use_allo  ("ftp:use-allo",	  "yes",   ResMgr::BoolValidate,0),
-   ResDecl14a("ftp:use-feat",		  "yes",   ResMgr::BoolValidate,0),
-   ResDecl15 ("ftp:use-fxp",		  "yes",   ResMgr::BoolValidate,0),
-   ResDecl15e("ftp:use-hftp",		  "yes",   ResMgr::BoolValidate,0),
-   ResDecl15b("ftp:use-mdtm",		  "yes",   ResMgr::BoolValidate,0),
-   ResDecl15d("ftp:use-mdtm-overloaded",  "no",	   ResMgr::BoolValidate,0),
-   ResDecl15f("ftp:use-mlsd",		  "no",    ResMgr::BoolValidate,0),
-   ResDecl15c("ftp:use-pret",		  "yes",   ResMgr::BoolValidate,0),
-   ResDecl15a("ftp:use-site-chmod",	  "yes",   ResMgr::BoolValidate,0),
-   ResDecl16a("ftp:use-site-idle",	  "no",    ResMgr::BoolValidate,0),
-   ResDecl16d("ftp:use-site-utime",	  "no",	   ResMgr::BoolValidate,0),
-   ResDecl16b("ftp:use-size",		  "yes",   ResMgr::BoolValidate,0),
-   ResDecl16 ("ftp:use-stat",		  "yes",   ResMgr::BoolValidate,0),
-   ResDecl16c("ftp:use-telnet-iac",	  "yes",   ResMgr::BoolValidate,0),
-   ResDecl17 ("ftp:use-quit",		  "yes",   ResMgr::BoolValidate,0),
-   ResDecl18 ("ftp:verify-address",	  "no",    ResMgr::BoolValidate,0),
-   ResDecl19 ("ftp:verify-port",	  "no",    ResMgr::BoolValidate,0),
-   ResDecl20 ("ftp:web-mode",		  "off",   ResMgr::BoolValidate,0),
+   {"ftp:stat-interval",	 "1",	  ResMgr::TimeIntervalValidate,0},
+   {"ftp:sync-mode",		 "on",    ResMgr::BoolValidate,0},
+   {"ftp:use-abor",		 "yes",   ResMgr::BoolValidate,0},
+   {"ftp:use-allo",		 "yes",   ResMgr::BoolValidate,0},
+   {"ftp:use-feat",		 "yes",   ResMgr::BoolValidate,0},
+   {"ftp:use-fxp",		 "yes",   ResMgr::BoolValidate,0},
+   {"ftp:use-hftp",		 "yes",   ResMgr::BoolValidate,0},
+   {"ftp:use-mdtm",		 "yes",   ResMgr::BoolValidate,0},
+   {"ftp:use-mdtm-overloaded",	 "no",	  ResMgr::BoolValidate,0},
+   {"ftp:use-mlsd",		 "no",    ResMgr::BoolValidate,0},
+   {"ftp:use-pret",		 "yes",   ResMgr::BoolValidate,0},
+   {"ftp:use-site-chmod",	 "yes",   ResMgr::BoolValidate,0},
+   {"ftp:use-site-idle",	 "no",    ResMgr::BoolValidate,0},
+   {"ftp:use-site-utime",	 "no",	  ResMgr::BoolValidate,0},
+   {"ftp:use-size",		 "yes",   ResMgr::BoolValidate,0},
+   {"ftp:use-stat",		 "yes",   ResMgr::BoolValidate,0},
+   {"ftp:use-telnet-iac",	 "yes",   ResMgr::BoolValidate,0},
+   {"ftp:use-quit",		 "yes",   ResMgr::BoolValidate,0},
+   {"ftp:verify-address",	 "no",    ResMgr::BoolValidate,0},
+   {"ftp:verify-port",		 "no",    ResMgr::BoolValidate,0},
+   {"ftp:web-mode",		 "off",   ResMgr::BoolValidate,0},
 #define RETRY_530 \
    "too many|overloaded|try (again |back )?later|is restricted to|"\
    "maximum number|number of connect|only.*session.*allowed|more connection"
-   ResDecl20a("ftp:retry-530",		  RETRY_530,ResMgr::ERegExpValidate,0),
-   ResDecl20b("ftp:retry-530-anonymous",  "Login incorrect",ResMgr::ERegExpValidate,0),
-   ResDecl21 ("hftp:cache",		  "yes",   ResMgr::BoolValidate,0),
-   ResDecl21a("hftp:cache-control",	  "",	   0,0),
-   ResDecl22 ("hftp:proxy",		  "",	   HttpProxyValidate,0),
-   ResDecl22a("hftp:use-authorization",	  "yes",   ResMgr::BoolValidate,0),
-   ResDecl23 ("hftp:use-head",		  "yes",   ResMgr::BoolValidate,0),
-   ResDecl23c("hftp:use-mkcol",		  "no",	   ResMgr::BoolValidate,0),
-   ResDecl23b("hftp:use-propfind",	  "no",	   ResMgr::BoolValidate,0),
-   ResDecl23a("hftp:use-type",		  "yes",   ResMgr::BoolValidate,0),
-   ResDecl24a("http:accept",		  "*/*",   0,0),
-   ResDecl24b("http:accept-language",	  "",	   0,0),
-   ResDecl24c("http:accept-charset",	  "",	   0,0),
-   ResDecl24e("http:authorization",	  "",	   0,0),
-   ResDecl24 ("http:cache",		  "yes",   ResMgr::BoolValidate,0),
-   ResDecl24d("http:cache-control",	  "",	   0,0),
-   ResDecl25 ("http:proxy",		  "",	   HttpProxyValidate,0),
-   ResDecl25a("http:use-mkcol",		  "yes",   ResMgr::BoolValidate,0),
-   ResDecl25b("http:use-propfind",	  "no",    ResMgr::BoolValidate,0),
-   ResDecl26 ("http:user-agent",	  PACKAGE"/"VERSION,0,0),
-   ResDecl27 ("http:cookie",		  "",	   0,0),
-   ResDecl28 ("http:set-cookies",	  "no",	   0,0),
-   ResDecl29a("http:post-content-type",   "application/x-www-form-urlencoded",0,0),
-   ResDecl29 ("http:put-method",	  "PUT",   PutOrPost,0),
-   ResDecl30 ("http:put-content-type",	  "",	   0,0),
-   ResDecl30b("http:referer",		  "",	   0,0),
+   {"ftp:retry-530",		 RETRY_530,ResMgr::ERegExpValidate,0},
+   {"ftp:retry-530-anonymous",	 "Login incorrect",ResMgr::ERegExpValidate,0},
+   {"hftp:cache",		 "yes",   ResMgr::BoolValidate,0},
+   {"hftp:cache-control",	 "",	  0,0},
+   {"hftp:proxy",		 "",	  HttpProxyValidate,0},
+   {"hftp:use-authorization",	 "yes",   ResMgr::BoolValidate,0},
+   {"hftp:use-head",		 "yes",   ResMgr::BoolValidate,0},
+   {"hftp:use-mkcol",		 "no",	  ResMgr::BoolValidate,0},
+   {"hftp:use-propfind",	 "no",	  ResMgr::BoolValidate,0},
+   {"hftp:use-type",		 "yes",   ResMgr::BoolValidate,0},
+   {"http:accept",		 "*/*",   0,0},
+   {"http:accept-language",	 "",	  0,0},
+   {"http:accept-charset",	 "",	  0,0},
+   {"http:authorization",	 "",	  0,0},
+   {"http:cache",		 "yes",   ResMgr::BoolValidate,0},
+   {"http:cache-control",	 "",	  0,0},
+   {"http:proxy",		 "",	  HttpProxyValidate,0},
+   {"http:use-mkcol",		 "yes",   ResMgr::BoolValidate,0},
+   {"http:use-propfind",	 "no",    ResMgr::BoolValidate,0},
+   {"http:user-agent",		 PACKAGE"/"VERSION,0,0},
+   {"http:cookie",		 "",	  0,0},
+   {"http:set-cookies",		 "no",	  0,0},
+   {"http:post-content-type",	 "application/x-www-form-urlencoded",0,0},
+   {"http:put-method",		 "PUT",   PutOrPost,0},
+   {"http:put-content-type",	 "",	  0,0},
+   {"http:referer",		 "",	  0,0},
 #if USE_SSL
-   ResDecl30a("https:proxy",		  "",	   HttpProxyValidate,0),
+   {"https:proxy",		 "",	  HttpProxyValidate,0},
 #endif
-   ResDecl31 ("net:idle",		  "3m",	   ResMgr::TimeIntervalValidate,0),
-   ResDecl32 ("net:limit-max",		  "0",	   ResMgr::UNumberValidate,0),
-   ResDecl33 ("net:limit-rate",		  "0:0",   ResMgr::UNumberPairValidate,0),
-   ResDecl34 ("net:limit-total-max",	  "0",	   ResMgr::UNumberValidate,ResMgr::NoClosure),
-   ResDecl35 ("net:limit-total-rate",	  "0:0",   ResMgr::UNumberPairValidate,ResMgr::NoClosure),
-   ResDecl36 ("net:max-retries",	  "4096",  ResMgr::UNumberValidate,0),
-   ResDecl36a("net:persist-retries",	  "0",	   ResMgr::UNumberValidate,0),
-   ResDecl37 ("net:no-proxy",		  "",	   0,ResMgr::NoClosure),
-   ResDecl38 ("net:reconnect-interval-base","30",  ResMgr::UNumberValidate,0),
-   ResDecl39 ("net:reconnect-interval-multiplier","1.5",ResMgr::FloatValidate,0),
-   ResDecl40 ("net:reconnect-interval-max","600",  ResMgr::UNumberValidate,0),
-   ResDecl41 ("net:socket-buffer",	  "0",	   ResMgr::UNumberValidate,0),
-   ResDecl42 ("net:socket-maxseg",	  "0",	   ResMgr::UNumberValidate,0),
-   ResDecl42a("net:socket-bind-ipv4",	  "",	   ResMgr::IPv4AddrValidate,0),
+   {"net:idle",			 "3m",	  ResMgr::TimeIntervalValidate,0},
+   {"net:limit-max",		 "0",	  ResMgr::UNumberValidate,0},
+   {"net:limit-rate",		 "0:0",   ResMgr::UNumberPairValidate,0},
+   {"net:limit-total-max",	 "0",	  ResMgr::UNumberValidate,ResMgr::NoClosure},
+   {"net:limit-total-rate",	 "0:0",   ResMgr::UNumberPairValidate,ResMgr::NoClosure},
+   {"net:max-retries",		 "4096",  ResMgr::UNumberValidate,0},
+   {"net:persist-retries",	 "0",	  ResMgr::UNumberValidate,0},
+   {"net:no-proxy",		 "",	  0,ResMgr::NoClosure},
+   {"net:reconnect-interval-base","30",	  ResMgr::UNumberValidate,0},
+   {"net:reconnect-interval-multiplier","1.5",ResMgr::FloatValidate,0},
+   {"net:reconnect-interval-max","600",	  ResMgr::UNumberValidate,0},
+   {"net:socket-buffer",	 "0",	  ResMgr::UNumberValidate,0},
+   {"net:socket-maxseg",	 "0",	  ResMgr::UNumberValidate,0},
+   {"net:socket-bind-ipv4",	 "",	  ResMgr::IPv4AddrValidate,0},
 #if INET6
-   ResDecl42b("net:socket-bind-ipv6",	  "",	   ResMgr::IPv6AddrValidate,0),
+   {"net:socket-bind-ipv6",	 "",	  ResMgr::IPv6AddrValidate,0},
 #endif
-   ResDecl43 ("net:timeout",		  "5m",   ResMgr::TimeIntervalValidate,0),
-   ResDecl44 ("net:connection-limit",	  "0",	   ResMgr::UNumberValidate,0),
-   ResDecl45 ("net:connection-takeover",  "yes",   ResMgr::BoolValidate,0),
-   ResDecl46 ("mirror:order",		  "*.sfv *.sig *.md5* *.sum * */", 0,ResMgr::NoClosure),
-   ResDecl47 ("mirror:parallel-directories", "yes", ResMgr::BoolValidate,ResMgr::NoClosure),
-   ResDecl48 ("mirror:parallel-transfer-count", "1", ResMgr::UNumberValidate,ResMgr::NoClosure),
-   ResDecl49 ("mirror:exclude-regex",	  "(^|/)(\\.in\\.|\\.nfs)",ResMgr::ERegExpValidate,ResMgr::NoClosure),
-   ResDecl50 ("mirror:use-pget-n",	  "1",	   ResMgr::UNumberValidate,ResMgr::NoClosure),
-   ResDecl51 ("mirror:set-permissions",	  "yes",   ResMgr::BoolValidate,ResMgr::NoClosure),
-   ResDecl52 ("mirror:dereference",	  "no",    ResMgr::BoolValidate,ResMgr::NoClosure);
+   {"net:timeout",		 "5m",	  ResMgr::TimeIntervalValidate,0},
+   {"net:connection-limit",	 "0",	  ResMgr::UNumberValidate,0},
+   {"net:connection-takeover",	 "yes",   ResMgr::BoolValidate,0},
 
-static ResDecl
-   res_sftp_packets  ("sftp:max-packets-in-flight","16",ResMgr::UNumberValidate,0),
-   res_sftp_proto_ver("sftp:protocol-version","4",ResMgr::UNumberValidate,0),
-   res_sftp_rsize    ("sftp:size-read", "0x8000",ResMgr::UNumberValidate,0),
-   res_sftp_wsize    ("sftp:size-write","0x8000",ResMgr::UNumberValidate,0),
-   res_sftp_conn_prog("sftp:connect-program","ssh -a -x",0,0),
-   res_sftp_srv_prog ("sftp:server-program","sftp",0,0),
-   res_sftp_charset  ("sftp:charset","",ResMgr::CharsetValidate,0);
+   {"mirror:order",		 "*.sfv *.sig *.md5* *.sum * */", 0,ResMgr::NoClosure},
+   {"mirror:parallel-directories", "yes", ResMgr::BoolValidate,ResMgr::NoClosure},
+   {"mirror:parallel-transfer-count", "1",ResMgr::UNumberValidate,ResMgr::NoClosure},
+   {"mirror:exclude-regex",	 "(^|/)(\\.in\\.|\\.nfs)",ResMgr::ERegExpValidate,ResMgr::NoClosure},
+   {"mirror:use-pget-n",	 "1",	  ResMgr::UNumberValidate,ResMgr::NoClosure},
+   {"mirror:set-permissions",	 "yes",   ResMgr::BoolValidate,ResMgr::NoClosure},
+   {"mirror:dereference",	 "no",    ResMgr::BoolValidate,ResMgr::NoClosure},
 
-static ResDecl
-   res_file_charset  ("file:charset",  "",   ResMgr::CharsetValidate,ResMgr::NoClosure);
+   {"sftp:max-packets-in-flight","16",	  ResMgr::UNumberValidate,0},
+   {"sftp:protocol-version",	 "4",	  ResMgr::UNumberValidate,0},
+   {"sftp:size-read",		 "0x8000",ResMgr::UNumberValidate,0},
+   {"sftp:size-write",		 "0x8000",ResMgr::UNumberValidate,0},
+   {"sftp:connect-program",	 "ssh -a -x",0,0},
+   {"sftp:server-program",	 "sftp",  0,0},
+   {"sftp:charset",		 "",	  ResMgr::CharsetValidate,0},
 
-#if USE_SSL
-static ResDecl
-   res_ssl_ca_file    ("ssl:ca-file",  "", ResMgr::FileReadable,ResMgr::NoClosure),
-   res_ssl_crl_file   ("ssl:crl-file", "", ResMgr::FileReadable,ResMgr::NoClosure),
-   res_ssl_key_file   ("ssl:key-file", "", ResMgr::FileReadable,0),
-   res_ssl_cert_file  ("ssl:cert-file","", ResMgr::FileReadable,0),
-   res_ssl_verify_cert("ssl:verify-certificate","no",ResMgr::BoolValidate,0);
-# if USE_OPENSSL
-static ResDecl
-   res_ssl_ca_path    ("ssl:ca-path",  "", ResMgr::DirReadable, ResMgr::NoClosure),
-   res_ssl_crl_path   ("ssl:crl-path", "", ResMgr::DirReadable, ResMgr::NoClosure);
-# endif
-#endif
+   {"file:charset",		 "",	  ResMgr::CharsetValidate,ResMgr::NoClosure},
 
+   {"dns:cache-enable",		 "yes",	  ResMgr::BoolValidate,0},
+   {"dns:cache-expire",		 "1h",	  ResMgr::TimeIntervalValidate,0},
+   {"dns:cache-size",		 "256",	  ResMgr::UNumberValidate,ResMgr::NoClosure},
+   {"dns:fatal-timeout",	 "7d",	  ResMgr::TimeIntervalValidate,0},
+   {"dns:max-retries",		 "1000",  ResMgr::UNumberValidate,0},
 #if INET6
 # define DEFAULT_ORDER "inet6 inet"
 #else
 # define DEFAULT_ORDER "inet"
 #endif
+   {"dns:order",		 DEFAULT_ORDER, OrderValidate,0},
+   {"dns:SRV-query",		 "no",	  ResMgr::BoolValidate,0},
+   {"dns:use-fork",		 "yes",	  ResMgr::BoolValidate,ResMgr::NoClosure},
 
-static ResDecl
-   res_cache_enable("dns:cache-enable", "yes", ResMgr::BoolValidate,0),
-   res_cache_expire("dns:cache-expire", "1h",  ResMgr::TimeIntervalValidate,0),
-   res_cache_size  ("dns:cache-size",   "256", ResMgr::UNumberValidate,ResMgr::NoClosure),
-   res_timeout	   ("dns:fatal-timeout","7d",  ResMgr::TimeIntervalValidate,0),
-   res_max_retries ("dns:max-retries",  "1000",ResMgr::UNumberValidate,0),
-   res_order	   ("dns:order",	DEFAULT_ORDER, OrderValidate,0),
-   res_query_srv   ("dns:SRV-query",    "no",  ResMgr::BoolValidate,0),
-   res_use_fork	   ("dns:use-fork",     "yes", ResMgr::BoolValidate,ResMgr::NoClosure);
+   {"fish:shell",		 "/bin/sh",0,0},
+   {"fish:connect-program",	 "ssh -a -x",0,0},
+   {"fish:charset",		 "",	  ResMgr::CharsetValidate,0},
 
-static ResDecl
-   res_fish_shell    ("fish:shell", "/bin/sh",  0,0),
-   res_fish_connect  ("fish:connect-program", "ssh -a -x", 0,0),
-   res_fish_charset  ("fish:charset","",ResMgr::CharsetValidate,0);
+   {"color:dir-colors",		 "",	  0,ResMgr::NoClosure},
 
-static ResDecl
-   res_dir_colors ("color:dir-colors",   "",   0,ResMgr::NoClosure);
+   {"xfer:destination-directory","",	  0,0},
+   {"xfer:verify",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
+   {"xfer:verify-command",	 "",	  ResMgr::FileExecutable,0},
 
-static ResDecl
-   res_dest_dir	  ("xfer:destination-directory","",0,0),
-   res_verify	  ("xfer:verify", "no", ResMgr::BoolValidate,ResMgr::NoClosure),
-   res_verify_cmd ("xfer:verify-command","",ResMgr::FileExecutable,0);
+#if USE_SSL
+   {"ssl:ca-file",		 "",	  ResMgr::FileReadable,ResMgr::NoClosure},
+   {"ssl:crl-file",		 "",	  ResMgr::FileReadable,ResMgr::NoClosure},
+   {"ssl:key-file",		 "",	  ResMgr::FileReadable,0},
+   {"ssl:cert-file",		 "",	  ResMgr::FileReadable,0},
+   {"ssl:verify-certificate",	 "no",	  ResMgr::BoolValidate,0},
+# if USE_OPENSSL
+   {"ssl:ca-path",		 "",	  ResMgr::DirReadable,ResMgr::NoClosure},
+   {"ssl:crl-path",		 "",	  ResMgr::DirReadable,ResMgr::NoClosure},
+# endif
+#endif
+   {0}
+};
+static ResDecls lftp_vars_register(lftp_vars);
 
 #ifdef HAVE_LANGINFO_H
 # include <langinfo.h>
@@ -371,13 +363,16 @@ void ResMgr::ClassInit()
    if(class_inited)
       return;
    class_inited=true;
-   for(ResDecl *scan=type_chain; scan; scan=scan->next)
+   for(ResType *scan=type_chain; scan; scan=scan->next)
    {
       if(scan->defvalue && scan->val_valid)
       {
-	 const char *error=(*scan->val_valid)(&scan->defvalue);
+	 char *dv=xstrdup(scan->defvalue);
+	 const char *error=(*scan->val_valid)(&dv);
 	 if(error)
 	    fprintf(stderr,"Default value for %s is invalid: %s\n",scan->name,error);
+	 else if(strcmp(dv,scan->defvalue))
+	    fprintf(stderr,"Default value for %s (%s) is not in canonic form: %s\n",scan->name,scan->defvalue,dv);
       }
    }
 

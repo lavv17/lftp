@@ -63,10 +63,10 @@ FileCopyPeer *GetJob::NoProtoSrcLocal(const char *src)
 }
 FileCopyPeer *GetJob::NoProtoDstLocal(const char *dst)
 {
-   int flags=O_WRONLY|O_CREAT|(cont?0:O_TRUNC);
+   int flags=O_WRONLY|O_CREAT|(truncate_target_first?O_TRUNC:0);
    dst=expand_home_relative(dst);
    const char *f=(cwd && dst[0]!='/') ? dir_file(cwd,dst) : dst;
-   if(!cont && res_make_backup.QueryBool(0))
+   if(truncate_target_first && res_make_backup.QueryBool(0))
    {
       /* rename old file if exists and size>0 */
       struct stat st;
@@ -192,6 +192,7 @@ GetJob::GetJob(FileAccess *s,ArgV *a,bool c)
 {
    delete_files=false;
    remove_target_first=false;
+   truncate_target_first=!cont;
    backup_file=0;
    file_mode=NO_MODE;
    local=0;

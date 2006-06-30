@@ -311,7 +311,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    ArgV *get_args=new ArgV("mirror");
 	    get_args->Append(file->name);
 	    get_args->Append(dir_file(target_dir,file->name));
-	    pgetJob *cp=new pgetJob(source_session->Clone(),get_args);
+	    pgetJob *cp=new pgetJob(source_session->Clone(),get_args,cont_this);
 	    cp->SetMaxConn(pget_n);
 	    if(remove_source_files)
 	       cp->RemoveSourceLater();

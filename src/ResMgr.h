@@ -33,19 +33,31 @@ typedef const char *ResValValid(char **value);
 typedef const char *ResClValid(char **closure);
 
 class ResValue;
-class ResDecl;
+
+struct ResType
+{
+   const char *name;
+   const char *defvalue;
+   ResValValid *val_valid;
+   ResClValid *closure_valid;
+   ResType *next;
+   ~ResType();
+
+   ResValue Query(const char *closure) const;
+   bool QueryBool(const char *closure) const;
+};
 
 class ResMgr
 {
    static bool class_inited;
-   friend class ResDecl;
+   friend class ResType;
 public:
    class Resource
    {
       friend class ResMgr;
-      friend class ResDecl;
+      friend class ResType;
 
-      const ResDecl *type;
+      const ResType *type;
       char *value;
       char *closure;
 
@@ -53,7 +65,7 @@ public:
 
       bool ClosureMatch(const char *cl_data);
 
-      Resource(Resource *next,const ResDecl *type,
+      Resource(Resource *next,const ResType *type,
 	       char *closure,char *value)
       {
 	 this->type=type;
@@ -70,11 +82,12 @@ public:
 
 private:
    static Resource *chain;
-   static ResDecl *type_chain;
+   static ResType *type_chain;
 
 public:
+   static void AddType(ResType *t) { t->next=type_chain; type_chain=t; }
    static const char *QueryNext(const char *name,const char **closure,Resource **ptr);
-   static const char *SimpleQuery(const ResDecl *type,const char *closure);
+   static const char *SimpleQuery(const ResType *type,const char *closure);
    static const char *SimpleQuery(const char *name,const char *closure);
    static ResValue Query(const char *name,const char *closure);
    static bool QueryBool(const char *name,const char *closure);
@@ -86,8 +99,8 @@ public:
    };
 
    static int VarNameCmp(const char *name1,const char *name2);
-   static const char *FindVar(const char *name,const ResDecl **type);
-   static const ResDecl *FindRes(const char *name);
+   static const char *FindVar(const char *name,const ResType **type);
+   static const ResType *FindRes(const char *name);
    static const char *Set(const char *name,const char *closure,const char *value);
 
    static char *Format(bool with_defaults,bool only_defaults);
@@ -120,23 +133,17 @@ public:
    static int VResourceCompare(const void *a,const void *b);
 };
 
-class ResDecl
+class ResDecl : public ResType
 {
-   friend class ResMgr;
-
-   ResDecl *next;
-   ResValValid *val_valid;
-   ResClValid *closure_valid;
 public:
-   const char *name;
-   char *defvalue;
-
-   ResDecl(const char *name,const char *defvalue,
-	   ResValValid *val_valid,ResClValid *closure_valid=0);
-   ~ResDecl();
-
-   ResValue Query(const char *closure) const;
-   bool QueryBool(const char *closure) const;
+   ResDecl(const char *a_name,const char *a_defvalue,
+	   ResValValid *a_val_valid,ResClValid *a_closure_valid=0);
+};
+class ResDecls
+{
+public:
+   ResDecls(ResType *array);
+   ResDecls(ResType *r1,ResType *r2,...);
 };
 
 class ResValue
@@ -182,7 +189,7 @@ public:
       }
 };
 
-inline bool ResDecl::QueryBool(const char *closure) const
+inline bool ResType::QueryBool(const char *closure) const
 {
    return Query(closure).to_bool();
 }

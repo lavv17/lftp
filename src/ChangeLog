@@ -1,3 +1,12 @@
+2006-06-30  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ResMgr.cc, ResMgr.h, resource.cc, Cache.h: rename ResDecl to ResType;
+	  make ResDecl a derived from ResType; make resources a static array
+	  of structures (to save on constructors); make ResDecls class to
+	  register bulk of ResType's.
+	* GetJob.cc, GetJob.h: add truncate_target_first flag (for pget).
+	* pgetJob.cc, pgetJob.h, MirrorJob.cc, commands.cc: support pget -c.
+
 2006-06-28  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* GetJob.cc, GetJob.h, pgetJob.cc, pgetJob.h: simplify copy peer

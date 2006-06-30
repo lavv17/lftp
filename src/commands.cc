@@ -1663,7 +1663,7 @@ CMD(get)
    }
    if(!strcmp(op,"pget"))
    {
-      opts="+n:euO:";
+      opts="+n:ceuO:";
       n_conn=-1;
    }
    else if(!strcmp(op,"put") || !strcmp(op,"reput"))
@@ -1787,7 +1787,7 @@ CMD(get)
    }
    else
    {
-      pgetJob *j=new pgetJob(session->Clone(),get_args);
+      pgetJob *j=new pgetJob(session->Clone(),get_args,cont);
       if(n_conn!=-1)
 	 j->SetMaxConn(n_conn);
       if(del_target)
@@ -2242,7 +2242,7 @@ CMD(set)
       closure=sl+1;
    }
 
-   const ResDecl *type;
+   const ResType *type;
    // find type of given variable
    const char *msg=ResMgr::FindVar(a,&type);
    if(msg)
