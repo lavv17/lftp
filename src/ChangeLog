@@ -1,3 +1,10 @@
+2006-07-03  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CopyJob.h: (SetRangeLimit) new method.
+	* FileCopy.h: (SetRangeLimit) new method; make SetRange seek when needed.
+	* pgetJob.cc, pgetJob.h: add explicit start0 and limit0 members for chunk 0;
+	  read position for chunk 0 before trying to fetch it (when pget_cont).
+
 2006-06-30  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ResMgr.cc, ResMgr.h, resource.cc, Cache.h: rename ResDecl to ResType;

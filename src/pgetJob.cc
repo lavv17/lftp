@@ -26,6 +26,7 @@
 #include "pgetJob.h"
 #include "url.h"
 #include "misc.h"
+#include "log.h"
 
 ResType pget_vars[] = {
    {"pget:save-status",	"10s",   ResMgr::TimeIntervalValidate,ResMgr::NoClosure},
@@ -72,16 +73,16 @@ int pgetJob::Do()
       return super::Do();
    }
 
-   if(chunks_done && chunks && cp->GetPos()>=chunks[0]->start)
+   if(chunks_done && chunks && cp->GetPos()>=limit0)
    {
-      cp->SetRange(0,cp->GetPos());
+      cp->SetRangeLimit(cp->GetPos());    // make it stop.
       cp->Resume();
       cp->Do();
       free_chunks();
       m=MOVED;
    }
 
-   if(chunks==0 || cp->GetPos()<chunks[0]->start)
+   if(chunks==0 || cp->GetPos()<limit0)
    {
       cp->Resume();
       m=super::Do(); // it can call NextFile.
@@ -108,11 +109,6 @@ int pgetJob::Do()
 
       cp->GetPut()->NeedSeek(); // seek before writing
 
-      xfree(status_file);
-      status_file=0;
-      if(!status_timer.IsInfty())
-	 status_file=xasprintf("%s.lftp-pget-status",local->full_name);
-
       if(pget_cont)
 	 LoadStatus();
       else if(status_file)
@@ -125,7 +121,7 @@ int pgetJob::Do()
       if(chunks)
       {
 	 xfree(cp->cmdline);
-	 cp->cmdline=xasprintf("\\chunk %lld-%lld",0LL,(long long)(chunks[0]->start-1));
+	 cp->cmdline=xasprintf("\\chunk %lld-%lld",(long long)start0,(long long)(limit0-1));
       }
       else
       {
@@ -136,11 +132,11 @@ int pgetJob::Do()
 
    /* cycle through the chunks */
    chunks_done=true;
-   total_xferred=MIN(offset,chunks[0]->start);
-   off_t got_already=cp->GetSize()-chunks[0]->start;
+   total_xferred=MIN(offset,limit0);
+   off_t got_already=cp->GetSize()-limit0;
    total_xfer_rate=cp->GetRate();
 
-   off_t rem=chunks[0]->start-cp->GetPos();
+   off_t rem=limit0-cp->GetPos();
    if(rem<=0)
       total_eta=0;
    else
@@ -211,19 +207,25 @@ void pgetJob::ShowRunStatus(StatusLine *s)
 
    int w=s->GetWidthDelayed();
    char *bar=string_alloca(w--);
-   memset(bar,'.',w);
+   memset(bar,'+',w);
    bar[w]=0;
 
    int i;
    int p=cp->GetPos()*w/size;
-   for(i=0; i<p; i++)
+   for(i=start0*w/size; i<p; i++)
       bar[i]='o';
+   p=limit0*w/size;
+   for( ; i<p; i++)
+      bar[i]='.';
 
    for(int chunk=0; chunk<num_of_chunks; chunk++)
    {
       p=(chunks[chunk]->Done()?chunks[chunk]->limit:chunks[chunk]->GetPos())*w/size;
       for(i=chunks[chunk]->start*w/size; i<p; i++)
 	 bar[i]='o';
+      p=chunks[chunk]->limit*w/size;
+      for( ; i<p; i++)
+	 bar[i]='.';
    }
 
    status.Append(bar);
@@ -241,9 +243,10 @@ void  pgetJob::ListJobs(int verbose,int indent)
    }
    if(verbose>1 && cp)
    {
-      cp->SetRange(0,chunks[0]->start);
+      // to show proper ETA, change the range temporarily.
+      cp->SetRangeLimit(limit0);
       Job::ListJobs(verbose,indent);
-      cp->SetRange(0,FILE_END);
+      cp->SetRangeLimit(FILE_END);
    }
 }
 
@@ -288,6 +291,7 @@ pgetJob::pgetJob(FileAccess *s,ArgV *args,bool cont)
 {
    chunks=0;
    num_of_chunks=0;
+   start0=limit0=0;
    total_xferred=0;
    total_xfer_rate=0;
    no_parallel=false;
@@ -313,6 +317,11 @@ void pgetJob::NextFile()
    chunks_done=false;
    total_xferred=0;
    total_eta=-1;
+
+   xfree(status_file);
+   status_file=xasprintf("%s.lftp-pget-status",local->full_name);
+   if(pget_cont)
+      LoadStatus0();
 }
 
 pgetJob::ChunkXfer *pgetJob::NewChunk(const char *remote,FDStream *local,off_t start,off_t limit)
@@ -363,8 +372,8 @@ void pgetJob::SaveStatus()
    int i=0;
    fprintf(f,"%d.pos=%lld\n",i,cp->GetPos());
    if(!chunks)
-      goto out;
-   fprintf(f,"%d.limit=%lld\n",i,chunks[0]->start);
+      goto out_close;
+   fprintf(f,"%d.limit=%lld\n",i,limit0);
    for(int chunk=0; chunk<num_of_chunks; chunk++)
    {
       if(chunks[chunk]->Done())
@@ -373,7 +382,30 @@ void pgetJob::SaveStatus()
       fprintf(f,"%d.pos=%lld\n",i,chunks[chunk]->GetPos());
       fprintf(f,"%d.limit=%lld\n",i,chunks[chunk]->limit);
    }
-out:
+out_close:
+   fclose(f);
+}
+void pgetJob::LoadStatus0()
+{
+   if(!status_file)
+      return;
+
+   FILE *f=fopen(status_file,"r");
+   if(!f)
+      return;
+
+   long long size;
+   if(fscanf(f,"size=%lld\n",&size)<1)
+      goto out_close;
+
+   long long pos;
+   int j;
+   if(fscanf(f,"%d.pos=%lld\n",&j,&pos)<2 || j!=0)
+      goto out_close;
+   Log::global->Format(10,"pget: got chunk[%d] pos=%lld\n",j,pos);
+   cp->SetRange(pos,FILE_END);
+
+out_close:
    fclose(f);
 }
 void pgetJob::LoadStatus()
@@ -387,11 +419,15 @@ void pgetJob::LoadStatus()
 
    struct stat st;
    if(fstat(fileno(f),&st)<0)
+   {
+   out_close:
+      fclose(f);
       return;
+   }
 
    long long size;
    if(fscanf(f,"size=%lld\n",&size)<1)
-      return;
+      goto out_close;
 
    int i=0;
    int max_chunks=st.st_size/20; // highest estimate
@@ -403,12 +439,15 @@ void pgetJob::LoadStatus()
       if(fscanf(f,"%d.pos=%lld\n",&j,pos+i)<2 || j!=i)
 	 break;
       if(fscanf(f,"%d.limit=%lld\n",&j,limit+i)<2 || j!=i)
-	 return;
-      if(pos[i]<limit[i])
-	 i++;
+	 goto out_close;
+      if(i>0 && pos[i]>=limit[i])
+	 continue;
+      Log::global->Format(10,"pget: got chunk[%d] pos=%lld\n",j,pos[i]);
+      Log::global->Format(10,"pget: got chunk[%d] limit=%lld\n",j,limit[i]);
+      i++;
    }
    if(i<1)
-      return;
+      goto out_close;
    if(size<cp->GetSize())  // file grew?
    {
       if(limit[i-1]==size)
@@ -421,15 +460,18 @@ void pgetJob::LoadStatus()
       }
    }
    num_of_chunks=i-1;
-   cp->SetRange(pos[0],limit[0]);
+   start0=pos[0];
+   limit0=limit[0];
+   cp->SetRange(pos[0],FILE_END);
    if(num_of_chunks<1)
-      return;
+      goto out_close;
    chunks=(ChunkXfer**)xmalloc(sizeof(*chunks)*num_of_chunks);
-   for(int i=0; i<num_of_chunks; i++)
+   for(i=num_of_chunks; i-->0; )
    {
       chunks[i]=NewChunk(cp->GetName(),local,pos[i+1],limit[i+1]);
       chunks[i]->SetParentFg(this,false);
    }
+   goto out_close;
 }
 
 void pgetJob::InitChunks(off_t offset,off_t size)
@@ -449,4 +491,6 @@ void pgetJob::InitChunks(off_t offset,off_t size)
       chunks[i]->SetParentFg(this,false);
       curr_offs-=chunk_size;
    }
+   start0=0;
+   limit0=curr_offs;
 }

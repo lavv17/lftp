@@ -98,7 +98,11 @@ public:
    void DontCopyDate() { do_set_date=false; }
    bool NeedDate() { return do_set_date; }
 
-   void SetRange(off_t s,off_t lim) { range_start=s; range_limit=lim; }
+   void SetRange(off_t s,off_t lim) {
+      range_start=s; range_limit=lim;
+      if(range_start>GetPos()+0x4000);
+	 Seek(range_start);
+   }
 
    FileCopyPeer(dir_t m);
 
@@ -236,6 +240,7 @@ public:
    void DontFailIfBroken() { fail_if_broken=false; }
    void FailIfCannotSeek() { fail_if_cannot_seek=true; }
    void SetRange(off_t s,off_t lim) { get->SetRange(s,lim); put->SetRange(s,lim); }
+   void SetRangeLimit(off_t lim) { get->range_limit=lim; }
    void RemoveSourceLater() { remove_source_later=true; }
    void RemoveTargetFirst() { remove_target_first=true; put->Resume(); put->RemoveFile(); }
    void LineBuffered(int size=0x1000);

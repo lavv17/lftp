@@ -43,6 +43,9 @@ class pgetJob : public GetJob
    int	 num_of_chunks;
    void InitChunks(off_t offset,off_t size);
 
+   off_t start0;
+   off_t limit0;
+
    off_t total_xferred;
    float total_xfer_rate;
 
@@ -59,9 +62,10 @@ class pgetJob : public GetJob
    char *status_file;
    void SaveStatus();
    void LoadStatus();
+   void LoadStatus0();
 
 protected:
-   void	 NextFile();
+   void NextFile();
 
 public:
    int Do();
