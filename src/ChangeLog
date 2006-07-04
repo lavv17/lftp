@@ -1,3 +1,9 @@
+2006-07-04  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h, Http.cc: (SetLimit) new method;
+	  (UNKNOWN_POS) new constant; move FILE_END here.
+	* FileCopy.cc, FileCopy.h: use SetLimit; move FILE_END to FileAccess.h.
+
 2006-07-03  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CopyJob.h: (SetRangeLimit) new method.

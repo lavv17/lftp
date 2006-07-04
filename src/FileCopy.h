@@ -39,8 +39,6 @@
 #include "Speedometer.h"
 #include "Timer.h"
 
-#define FILE_END     (-1L)
-
 class FileCopyPeer : public IOBuffer
 {
 protected:

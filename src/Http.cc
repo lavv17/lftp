@@ -577,7 +577,12 @@ void Http::SendRequest(const char *connection,const char *f)
    retrieve:
       SendMethod("GET",efile);
       if(pos>0 && !no_ranges)
-	 Send("Range: bytes=%lld-\r\n",(long long)pos);
+      {
+	 if(limit==FILE_END)
+	    Send("Range: bytes=%lld-\r\n",(long long)pos);
+	 else
+	    Send("Range: bytes=%lld-%lld\r\n",(long long)pos,(long long)limit-1);
+      }
       break;
 
    case STORE:
@@ -592,10 +597,18 @@ void Http::SendRequest(const char *connection,const char *f)
       if(entity_size>=0)
 	 Send("Content-length: %lld\r\n",(long long)(entity_size-pos));
       if(pos>0 && entity_size<0)
-	 Send("Range: bytes=%lld-\r\n",(long long)pos);
+      {
+	 if(limit==FILE_END)
+	    Send("Range: bytes=%lld-\r\n",(long long)pos);
+	 else
+	    Send("Range: bytes=%lld-%lld\r\n",(long long)pos,(long long)limit-1);
+      }
       else if(pos>0)
+      {
 	 Send("Range: bytes=%lld-%lld/%lld\r\n",(long long)pos,
-		     (long long)(entity_size-1),(long long)entity_size);
+		     (long long)((limit==FILE_END || limit>entity_size ? entity_size : limit)-1),
+		     (long long)entity_size);
+      }
       if(entity_date!=NO_DATE)
       {
 	 char d[256];

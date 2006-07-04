@@ -64,7 +64,8 @@ void FileAccess::Init()
    default_cwd="~";
    cwd.Set(default_cwd,false,0);
    new_cwd=0;
-   real_pos=-1;
+   limit=FILE_END;
+   real_pos=UNKNOWN_POS;
    pos=0;
    mode=CLOSED;
    try_time=0;
@@ -174,7 +175,7 @@ void  FileAccess::Open(const char *fn,int mode,off_t offs)
       Close();
    Resume();
    file=xstrdup(fn);
-   real_pos=-1;
+   real_pos=UNKNOWN_POS;
    pos=offs;
    this->mode=mode;
    mkdir_p=false;

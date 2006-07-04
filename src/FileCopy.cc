@@ -941,6 +941,7 @@ void FileCopyPeerFA::OpenSession()
    }
    session->Open(file,FAmode,seek_pos);
    session->SetFileURL(orig_url);
+   session->SetLimit(range_limit);
    if(mode==PUT)
    {
       if(try_time!=0)

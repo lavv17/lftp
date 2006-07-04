@@ -43,10 +43,12 @@
 #include "FileSet.h"
 #include "LsCache.h"
 
-#define NO_SIZE	     (-1L)
-#define NO_SIZE_YET  (-2L)
+#define NO_SIZE	     ((off_t)-1L)
+#define NO_SIZE_YET  ((off_t)-2L)
 #define NO_DATE	     ((time_t)-1L)
 #define NO_DATE_YET  ((time_t)-2L)
+#define FILE_END     ((off_t)-1L)
+#define UNKNOWN_POS  ((off_t)-1L)
 
 class ListInfo;
 class Glob;
@@ -139,6 +141,7 @@ protected:
    int	 mode;
    off_t pos;
    off_t real_pos;
+   off_t limit;
 
    time_t *opt_date;
    off_t  *opt_size;
@@ -242,6 +245,7 @@ public:
 
    virtual void Open(const char *file,int mode,off_t pos=0);
    void SetFileURL(const char *u);
+   void SetLimit(off_t lim) { limit=lim; }
    void SetSize(off_t s) { entity_size=s; }
    void SetDate(time_t d) { entity_date=d; }
    void WantDate(time_t *d) { opt_date=d; }
