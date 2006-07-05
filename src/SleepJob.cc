@@ -144,7 +144,6 @@ Job *cmd_repeat(CmdExec *parent)
 {
    const char *op=args->a0();
    int cmd_start=1;
-   const char *t=args->getarg(1);
    TimeIntervalR delay(1);
    int max_count=0;
    const char *delay_str=0;
@@ -162,7 +161,7 @@ Job *cmd_repeat(CmdExec *parent)
    };
 
    args->rewind();
-   while((opt=args->getopt_long("c:d:",repeat_opts,0))!=EOF)
+   while((opt=args->getopt_long("+c:d:",repeat_opts,0))!=EOF)
    {
       switch(opt)
       {
@@ -183,10 +182,14 @@ Job *cmd_repeat(CmdExec *parent)
 	 return 0;
       }
    }
-   if(!delay_str && (t=args->getcurr())!=0 && isdigit((unsigned char)t[0]))
+   if(!delay_str)
    {
-      args->getnext();
-      delay_str=t;
+      const char *t=args->getcurr();
+      if(t && isdigit((unsigned char)t[0]))
+      {
+	 args->getnext();
+	 delay_str=t;
+      }
    }
    cmd_start=args->getindex();
 
