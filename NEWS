@@ -1,3 +1,7 @@
+Version 3.5.1 - 2006-07-05
+
+* fixed a coredump in pget.
+
 Version 3.5.0 - 2006-07-05
 
 * implemented pget -c (continue) with a status file. (`set pget:save-status never'
