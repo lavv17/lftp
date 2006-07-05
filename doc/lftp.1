@@ -508,21 +508,27 @@ List remote file names
 Select an ftp server.
 
 .B pget
-.RI [ OPTS "] " rfile " [" "\fB-o\fP lfile"
-.RI ]
+.RI [ OPTS ]
+.I rfile
+.RI [ "\fB-o\fP lfile" ]
 
 Gets the specified file using several connections. This can speed up
-transfer, but loads the net heavily impacting other users. Use only if
-you really have to transfer the file ASAP, or some other user may go
-mad :) Options:
+transfer, but loads the net and server heavily impacting other users. Use only if
+you really have to transfer the file ASAP.
+Options:
 .Ds
--n	\fImaxconn\fP  set maximum number of connections (default 5)
+-c		continue transfer. Requires \fIlfile.lftp-pget-status\fP file.
+-n \fImaxconn\fP	set maximum number of connections (default is taken from pget:default-n setting)
 .De
 .PP
 
-.BR put " [" -E ]
-.RB [ -a "] [" -c "]"
-.RB "[" -O " \fIbase\fP] \fIlfile\fP [" -o \fIrfile\fP]
+.B put
+.RB [ -E ]
+.RB [ -a ]
+.RB [ -c ]
+.RB [ "-O \fIbase\fP" ]
+.I lfile
+.RB [ "-o \fIrfile\fP" ]
 .PP
 Upload \fIlfile\fP with remote name \fIrfile\fP. If -o omitted, the base name
 of \fIlfile\fP is used as remote name. Does not expand wildcards, use \fBmput\fR for that.
@@ -536,8 +542,9 @@ of \fIlfile\fP is used as remote name. Does not expand wildcards, use \fBmput\fR
 .De
 
 .B pwd
+.RB [ -p ]
 .PP
-Print current remote directory.
+Print current remote URL. Use `-p' option to show password in the URL.
 
 .B queue
 .RB [ -n " \fInum\fP ] \fIcmd\fP"

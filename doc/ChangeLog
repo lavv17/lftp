@@ -4,6 +4,7 @@
 	  can be used instead of OpenSSL.
 	  Document pget settings; change seconds to time interval where needed;
 	  add note about floating point in time intarval.
+	  Document pget -c, pwd -p.
 
 2006-06-16	Alexander V. Lukyanov <lav@yars.free.net>
 
