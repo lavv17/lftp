@@ -69,7 +69,7 @@ the open command.
 .PP
 \fBlftp\fP can handle seven file access methods - ftp, ftps, http, https,
 hftp, fish, sftp and file (https and ftps are only available when lftp is
-compiled with openssl library). You can specify the method to use in `open
+compiled with GNU TLS or OpenSSL library). You can specify the method to use in `open
 URL' command, e.g. `open http://www.us.kernel.org/pub/linux'. hftp is
 ftp-over-http-proxy protocol. It can be used automatically instead of ftp
 if ftp:proxy is set to `http://proxy[:port]'. Fish is a protocol working
@@ -117,7 +117,7 @@ all variables and their values or `set -d' to see list of defaults.
 Variable names can be abbreviated and prefix can be omitted unless the
 rest becomes ambiguous.
 .PP
-If lftp was compiled with ssl support, then it includes software developed
+If lftp was compiled with OpenSSL (configure --with-openssl), then it includes software developed
 by the OpenSSL Project for use in the OpenSSL Toolkit. (http://www.openssl.org/)
 
 .SS Commands
@@ -1081,17 +1081,17 @@ skey/opie is not available, assume failed login. Off by default.
 .BR ftp:ssl-allow \ (boolean)
 if true, try to negotiate SSL connection with ftp server for non-anonymous
 access. Default is true. This setting is only available if lftp was compiled
-with openssl.
+with an ssl/tls library.
 .TP
 .BR ftp:ssl-force \ (boolean)
 if trus, refuse to send password in clear when server does not support SSL.
 Default is false. This setting is only available if lftp was compiled with
-openssl.
+an ssl/tls library.
 .TP
 .BR ftp:ssl-protect-data \ (boolean)
 if true, request ssl connection for data transfers. This is cpu-intensive
 but provides privacy. Default is false. This setting is only available if
-lftp was compiled with openssl.
+lftp was compiled with an ssl/tls library.
 .TP
 .BR ftp:ssl-protect-fxp \ (boolean)
 if true, request ssl connection for data transfer between two ftp servers
