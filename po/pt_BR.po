@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-07-04 09:19+0400\n"
+"POT-Creation-Date: 2006-07-05 12:58+0400\n"
 "PO-Revision-Date: 1999-07-12 00:00+0400\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -263,7 +263,7 @@ msgstr ""
 #: src/commands.cc:2023 src/commands.cc:2219 src/commands.cc:2392
 #: src/commands.cc:2399 src/commands.cc:2666 src/commands.cc:2693
 #: src/commands.cc:2700 src/commands.cc:3034 src/lftp.cc:268
-#: src/SleepJob.cc:130 src/SleepJob.cc:182
+#: src/SleepJob.cc:130 src/SleepJob.cc:181
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr ""

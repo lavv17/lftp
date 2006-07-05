@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-07-04 09:19+0400\n"
+"POT-Creation-Date: 2006-07-05 12:58+0400\n"
 "PO-Revision-Date: 2005-07-30 23:51+0800\n"
 "Last-Translator: Abel Cheung <abelcheung@gmail.com>\n"
 "Language-Team: traditional Chinese <community@linuxhall.org>\n"
@@ -264,7 +264,7 @@ msgstr "%s：正規表示式 ‘%s’：%s\n"
 #: src/commands.cc:2023 src/commands.cc:2219 src/commands.cc:2392
 #: src/commands.cc:2399 src/commands.cc:2666 src/commands.cc:2693
 #: src/commands.cc:2700 src/commands.cc:3034 src/lftp.cc:268
-#: src/SleepJob.cc:130 src/SleepJob.cc:182
+#: src/SleepJob.cc:130 src/SleepJob.cc:181
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "請輸入 ‘help %s’ 顯示額外資訊。\n"

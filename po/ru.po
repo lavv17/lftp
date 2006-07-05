@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-07-04 09:19+0400\n"
+"POT-Creation-Date: 2006-07-05 12:58+0400\n"
 "PO-Revision-Date: 2000-09-07 09:36+08:00\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -269,7 +269,7 @@ msgstr "%s: регулярное выражение `%s': %s\n"
 #: src/commands.cc:2023 src/commands.cc:2219 src/commands.cc:2392
 #: src/commands.cc:2399 src/commands.cc:2666 src/commands.cc:2693
 #: src/commands.cc:2700 src/commands.cc:3034 src/lftp.cc:268
-#: src/SleepJob.cc:130 src/SleepJob.cc:182
+#: src/SleepJob.cc:130 src/SleepJob.cc:181
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Запустите `help %s' для получения дополнительной информации.\n"
