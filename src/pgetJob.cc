@@ -319,9 +319,13 @@ void pgetJob::NextFile()
    total_eta=-1;
 
    xfree(status_file);
-   status_file=xasprintf("%s.lftp-pget-status",local->full_name);
-   if(pget_cont)
-      LoadStatus0();
+   status_file=0;
+   if(local && local->full_name)
+   {
+      status_file=xasprintf("%s.lftp-pget-status",local->full_name);
+      if(pget_cont)
+	 LoadStatus0();
+   }
 }
 
 pgetJob::ChunkXfer *pgetJob::NewChunk(const char *remote,FDStream *local,off_t start,off_t limit)

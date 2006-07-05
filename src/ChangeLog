@@ -1,6 +1,7 @@
 2006-07-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SleepJob.cc: disable option reordering in repeat; small cleanup.
+	* pgetJob.cc: fix a coredump.
 
 2006-07-04  Alexander V. Lukyanov <lav@yars.free.net>
 
