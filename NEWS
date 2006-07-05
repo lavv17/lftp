@@ -1,3 +1,16 @@
+Version 3.5.0 - 2006-07-05
+
+* implemented pget -c (continue) with a status file. (`set pget:save-status never'
+  to disable periodic saving of the status).
+* new options of `repeat' command: --count (-c), --delay (-d), --while-ok, --until-ok.
+* listing and dns cache optimized; added per host enable/disable for caching.
+* made ABOR more robust.
+* added support for ALLO command and ftp:use-allo setting.
+* use binary mode for `quote' (e.g. `quote POST' for http).
+* sped up uploading in fish protocol.
+* fixed coredump in pget when terminal lacks prev_line capability.
+* fixed pget for URLs with question sign.
+
 Version 3.4.7 - 2006-05-18
 
 * get1 can now automatically rename files to server suggested file name.

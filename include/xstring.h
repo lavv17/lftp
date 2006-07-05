@@ -68,6 +68,14 @@ static inline int xstrcmp(const char *s1,const char *s2)
       return 1;
    return strcmp(s1,s2);
 }
+static inline int xstrncmp(const char *s1,const char *s2,size_t len)
+{
+   if(s1==s2 || len==0)
+      return 0;
+   if(s1==0 || s2==0)
+      return 1;
+   return strncmp(s1,s2,len);
+}
 static inline int xstrcasecmp(const char *s1,const char *s2)
 {
    if(s1==s2)

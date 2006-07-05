@@ -22,7 +22,7 @@ implemented.
    This way ARRAY_* can be obsoleted.
 
  * there are many interesting protocols which can be used to transfer
-   files/data: smb, fsp, imap, irc...
+   files/data: smb, fsp, imap, irc, pop3...
 
 -* put -n (only if newer) Maybe it would be better to add a command to compare
    times?
@@ -41,7 +41,7 @@ implemented.
  * more intelligently squeeze file name in status line.
 
  * parallel get's in mget
-+* make a command get1 to get single file with extra options.
++* make a command get1 to get a single file with extra options.
 
  * tail command
 
