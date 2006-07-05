@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "12 May 2006"
+.TH lftp 1 "05 Jul 2006"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 3.4.7.
+This man page documents lftp version 3.5.0.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -918,9 +918,9 @@ time to live for DNS cache entries. It has format <number><unit>+, e.g.
 .BR dns:cache-size \ (number)
 maximum number of DNS cache entries.
 .TP
-.BR dns:fatal-timeout \ (seconds)
+.BR dns:fatal-timeout " (time interval)"
 limit the time for DNS queries. If DNS server is unavailable too long, lftp
-will fail to resolve a given host name. 0 means unlimited, the default.
+will fail to resolve a given host name. Set to `never' to disable.
 .TP
 .BR dns:order " (list of protocol names)"
 sets the order of DNS queries. Default is ``inet6 inet'' which means first
@@ -1106,8 +1106,8 @@ if true, request ssl connection for file list transfers. Default is true.
 if true, lftp would issue CCC command after logon, thus disable
 ssl protection layer on control connection.
 .TP
-.BR ftp:stat-interval \ (seconds)
-interval between STAT commands. Default is 1.
+.BR ftp:stat-interval " (time interval)"
+interval between STAT commands. Default is 1 second.
 .TP
 .BR ftp:sync-mode \ (boolean)
 if true, lftp will send one command at a time and wait for
@@ -1127,6 +1127,9 @@ variable TZ.
 .BR ftp:use-abor \ (boolean)
 if false, lftp does not send ABOR command but closes data connection
 immediately.
+.TP
+.BR ftp:use-allo \ (boolean)
+when true (default), lftp sends ALLO command before uploading a file.
 .TP
 .BR ftp:use-feat \ (boolean)
 when true (default), lftp uses FEAT command to determine extended features of
@@ -1329,8 +1332,8 @@ maximum number of concurrent connections to the same site. 0 means unlimited.
 if true, foreground connections have priority over background ones and can
 interrupt background transfers to complete a foreground operation.
 .TP
-.BR net:idle \ (seconds)
-disconnect from server after that number of idle seconds.
+.BR net:idle " (time interval)"
+disconnect from server after this idle time. Default is 3 minutes.
 .TP
 .BR net:limit-rate " (bytes per second)"
 limit transfer rate on data connection. 0 means unlimited. You can specify
@@ -1393,8 +1396,15 @@ default.
 use given size for TCP_MAXSEG socket option. Not all operating systems support
 this option, but linux does.
 .TP
-.BR net:timeout \ (seconds)
+.BR net:timeout " (time interval)"
 sets the network protocol timeout.
+.TP
+.BR pget:default-n \ (number)
+default number of chunks to split the file to in pget.
+.TP
+.BR pget:save-status " (time interval)"
+save pget transfer status this often. Set to `never' to disable saving of the status file.
+The status is saved to a file with suffix \fI.lftp-pget-status\fP.
 .TP
 .BR sftp:charset \ (string)
 the character set used by sftp server in file names and file listings.
@@ -1488,8 +1498,8 @@ For other variables it is not currently used. See examples in the sample
 .IR lftp.conf .
 .PP
 Certain commands and settings take a time interval parameter. It has
-the format Nx[Nx...], where N is time amount and x is time unit: d - days,
-h - hours, m - minutes, s - seconds. Default unit is second. E.g. 5h30m.
+the format Nx[Nx...], where N is time amount (floating point) and x is time unit: d - days,
+h - hours, m - minutes, s - seconds. Default unit is second. E.g. 5h30m or 5.5h.
 Also the interval can be `infinity', `inf', `never', `forever' - it means
 infinite interval. E.g. `sleep forever' or `set dns:cache-expire never'.
 

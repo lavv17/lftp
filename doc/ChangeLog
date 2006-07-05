@@ -2,6 +2,8 @@
 
         * lftp.1: change openssl to an ssl/tls library; note that GNU TLS
 	  can be used instead of OpenSSL.
+	  Document pget settings; change seconds to time interval where needed;
+	  add note about floating point in time intarval.
 
 2006-06-16	Alexander V. Lukyanov <lav@yars.free.net>
 
