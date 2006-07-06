@@ -266,9 +266,15 @@ lftp_ssl_gnutls::lftp_ssl_gnutls(int fd1,handshake_mode_t m,const char *h)
 {
    global_init();
 
+   cred=0;
+
    gnutls_init(&session,(m==CLIENT?GNUTLS_CLIENT:GNUTLS_SERVER));
    gnutls_set_default_priority(session);
 
+   gnutls_transport_set_ptr(session,(gnutls_transport_ptr_t)fd);
+}
+void lftp_ssl_gnutls::load_keys()
+{
    gnutls_certificate_allocate_credentials(&cred);
    int res;
 #if 0
@@ -298,8 +304,6 @@ lftp_ssl_gnutls::lftp_ssl_gnutls(int fd1,handshake_mode_t m,const char *h)
 	 Log::global->Format(0,"gnutls_certificate_set_x509_key_file(%s,%s): %s\n",cert_file,key_file,gnutls_strerror(res));
    }
    gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, cred);
-
-   gnutls_transport_set_ptr(session,(gnutls_transport_ptr_t)fd);
 }
 lftp_ssl_gnutls::~lftp_ssl_gnutls()
 {
@@ -810,7 +814,9 @@ lftp_ssl_openssl::lftp_ssl_openssl(int fd1,handshake_mode_t m,const char *h)
    ssl=SSL_new(instance->ssl_ctx);
    SSL_set_fd(ssl,fd);
    SSL_ctrl(ssl,SSL_CTRL_MODE,SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER,0);
-
+}
+void lftp_ssl_openssl::load_keys()
+{
    const char *key_file =ResMgr::Query("ssl:key-file",hostname);
    const char *cert_file=ResMgr::Query("ssl:cert-file",hostname);
    if(key_file && !*key_file)

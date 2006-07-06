@@ -4435,6 +4435,7 @@ void Ftp::Connection::MakeSSLBuffers(const char *hostname)
    Delete(control_recv); control_recv=0;
 
    control_ssl=new lftp_ssl(control_sock,lftp_ssl::CLIENT,hostname);
+   control_ssl->load_keys();
    IOBufferSSL *send_ssl=new IOBufferSSL(control_ssl,IOBufferSSL::PUT);
    IOBufferSSL *recv_ssl=new IOBufferSSL(control_ssl,IOBufferSSL::GET);
    recv_ssl->CloseLater();

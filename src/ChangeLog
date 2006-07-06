@@ -1,3 +1,8 @@
+2006-07-06  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp_ssl.cc, lftp_ssl.h, ftpclass.cc, Http.cc: don't load keys/certs
+	  for ftp data connection.
+
 2006-07-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SleepJob.cc: disable option reordering in repeat; small cleanup.
