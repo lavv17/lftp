@@ -362,9 +362,12 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"pget",    cmd_get,    N_("pget [OPTS] <rfile> [-o <lfile>]"),
 	 N_("Gets the specified file using several connections. This can speed up transfer,\n"
 	 "but loads the net heavily impacting other users. Use only if you really\n"
-	 "have to transfer the file ASAP, or some other user may go mad :)\n"
+	 "have to transfer the file ASAP.\n"
 	 "\nOptions:\n"
-	 " -n <maxconn>  set maximum number of connections (default 5)\n")},
+	 " -c  continue transfer. Requires <lfile>.lftp-pget-status file.\n"
+	 " -n <maxconn>  set maximum number of connections (default is is taken from\n"
+	 "     pget:default-n setting)\n"
+	 " -O <base> specifies base directory where files should be placed\n")},
    {"put",     cmd_get,    N_("put [OPTS] <lfile> [-o <rfile>]"),
 	 N_("Upload <lfile> with remote name <rfile>.\n"
 	 " -o <rfile> specifies remote file name (default - basename of lfile)\n"

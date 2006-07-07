@@ -1,3 +1,7 @@
+2006-07-07  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: update help for pget.
+
 2006-07-06  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp_ssl.cc, lftp_ssl.h, ftpclass.cc, Http.cc: don't load keys/certs
