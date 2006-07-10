@@ -1343,6 +1343,7 @@ CMD(ls)
    bool re=false;
    int mode=FA::LIST;
    const char *op=args->a0();
+   bool ascii=true;
    if(strstr(op,"nlist"))
       nlist=true;
    if(!strncmp(op,"re",2))
@@ -1355,6 +1356,7 @@ CMD(ls)
 	 return 0;
       }
       nlist=true;
+      ascii=false;
       mode=FA::QUOTE_CMD;
       if(!strcmp(op,"site"))
 	 args->insarg(1,"SITE");
@@ -1392,6 +1394,8 @@ CMD(ls)
    FileCopy *c=FileCopy::New(src_peer,dst_peer,false);
    c->DontCopyDate();
    c->LineBuffered();
+   if(ascii)
+      c->Ascii();
 
    CopyJob *j=new CopyJob(c,a,op);
    if(!output || output->usesfd(1))
