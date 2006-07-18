@@ -784,10 +784,15 @@ Job *CmdExec::builtin_open()
    bool insecure=false;
    bool no_bm=false;
 
+   enum {
+      OPT_USER,
+      OPT_PASSWORD
+   };
    static struct option open_options[]=
    {
       {"port",required_argument,0,'p'},
-      {"user",required_argument,0,'u'},
+      {"user",required_argument,0,OPT_USER},
+      {"password",required_argument,0,OPT_PASSWORD},
       {"execute",required_argument,0,'e'},
       {"debug",optional_argument,0,'d'},
       {"no-bookmark",no_argument,0,'B'},
@@ -815,6 +820,12 @@ Job *CmdExec::builtin_open()
 	 pass++;
 	 insecure=true;
          break;
+      case(OPT_USER):
+	 user=optarg;
+	 break;
+      case(OPT_PASSWORD):
+	 pass=optarg;
+	 break;
       case('d'):
 	 debug=true;
 	 break;
@@ -2083,7 +2094,7 @@ CMD(user)
 {
    if(args->count()<2 || args->count()>3)
    {
-      eprintf(_("Usage: %s userid [pass]\n"),args->getarg(0));
+      eprintf(_("Usage: %s <user|URL> [<pass>]\n"),args->getarg(0));
       return 0;
    }
    const char *user=args->getarg(1);
