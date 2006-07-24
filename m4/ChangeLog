@@ -1,3 +1,44 @@
+2006-07-22  Nix  <nix@esperi.org.uk>
+
+        * va_copy.m4 (lftp_VA_COPY): Include <stdlib.h> for exit()
+        prototype in autoconf 2.60+.
+
+        * gnu-source.m4: Fix quoting.
+        * mbstate_t.m4: Fix quoting.
+
+        Synch with gnulib-20060722.
+
+        * Makefile.am: Rebuild from scratch.
+
+        * human.m4: Updated. jm_ -> gl_.
+        * mbrtowc.m4: Likewise.
+        * inttypes_h.m4: Likewise.
+        * mbswidth.m4: Likewise.
+        * uintmax_t.m4: Likewise.
+        * ulonglong.m4: Likewise.
+
+        * filemode.m4: New, required by updated filemode.[ch].
+        * modechange.m4: New, required by updated modechange.[ch].
+
+        * error.m4: New, prerequisite of human, xstrtol.
+        * exitfail.m4: New, prerequisite of argmatch, xalloc-die,
+        xstrtol.
+        * intmax_t.m4: New, prerequisite of strtoimax, xstrtol.
+        * longlong.m4: New, prerequisite of strtoimax.
+        * quote.m4: New, prerequisite of argmatch.
+        * quotearg.m4: Likewise.
+        * stat-macros.m4: New, prerequisite of filemode, modechange.
+        * stdbool.m4: New, prerequisite of human, argmatch, modechange,
+        quotearg.
+        * stdint_h.m4: New, prerequisite of uintmax_t, intmax_t.
+        * strerror_r.m4: New, prerequisite of error.
+        * strtoull.m4: New, prerequisite of strtoumax.
+        * strtoimax.m4: New, prerequisite of xstrtol.
+        * strtoumax.m4: Likewise.
+        * xalloc.m4: New, prerequisite of quotearg, modechange.
+        * xstrtol.m4: New, prequisite of xstrtol.
+        * xstrtoumax.m4: New, prerequisite of human.
+
 2005-07-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* pty.m4: don't check for /dev/ptc on linux; should help for cross-compiling.

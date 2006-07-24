@@ -75,7 +75,7 @@ liblftp_tasks_la_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  TimeDate.cc TimeDate.h Timer.cc Timer.h GetFileInfo.cc GetFileInfo.h\
  StringPool.cc StringPool.h DirColors.cc DirColors.h IdNameCache.cc\
  IdNameCache.h PatternSet.cc PatternSet.h LocalDir.cc LocalDir.h\
- mbswidth.c mbswidth.h\
+ mbswidth.c mbswidth.h wcwidth.h\
  $(add_tasks)
 liblftp_tasks_la_LDFLAGS = $(OPENSSL_LDFLAGS)
 liblftp_tasks_la_LIBADD = $(LFTP_LIBGNUTLS_LIBS) $(LTLIBINTL) $(LTLIBICONV) $(add_tasks_libadd)
@@ -90,10 +90,9 @@ liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  FindJob.cc FindJob.h FindJobDu.cc FindJobDu.h ChmodJob.cc ChmodJob.h\
  TreatFileJob.cc TreatFileJob.h CopyJob.cc CopyJob.h echoJob.cc echoJob.h\
  OutputJob.cc OutputJob.h FileCopyOutputJob.cc buffer_std.cc buffer_std.h\
- filemode.c human.c xstrtol.c xstrtoul.c modechange.c\
- filemode.h human.h xstrtol.h modechange.h\
  getdate.y getdate.h\
  $(add_jobs)
+liblftp_jobs_la_LIBADD = liblftp-tasks.la
 
 lftp_LDADD = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC) $(READLINE)\
 	$(top_builddir)/lib/liblib.a
@@ -115,7 +114,7 @@ confpaths.h: Makefile
 
 DISTCLEANFILES = confpaths.h *.la
 
-INCLUDES = -I$(top_srcdir)/include $(OPENSSL_CPPFLAGS) $(LIBGNUTLS_CFLAGS)
+INCLUDES = -I$(top_srcdir)/include -I$(top_srcdir)/lib $(OPENSSL_CPPFLAGS) $(LIBGNUTLS_CFLAGS)
 
 # These files can be linked to ../include by configure, but not always.
 #OMIT_DEPENDENCIES = readline.h keymaps.h chardefs.h tilde.h rltypedefs.h\

@@ -24,7 +24,10 @@
 #include <assert.h>
 #include "ChmodJob.h"
 #include "url.h"
+
+CDECL_BEGIN
 #include "filemode.h"
+CDECL_END
 
 void ChmodJob::Init()
 {
@@ -46,7 +49,7 @@ ChmodJob::ChmodJob(FileAccess *s,int mode,ArgV *a) : TreatFileJob(s,a)
 
 ChmodJob::~ChmodJob()
 {
-   mode_free(m);
+   free(m);
 }
 
 void ChmodJob::Recurse()
@@ -61,9 +64,9 @@ int ChmodJob::GetMode(const FileInfo *fi) const
       return simple_mode;
 
    if(fi->defined&fi->MODE)
-      return mode_adjust(fi->mode, m);
+      return mode_adjust(fi->mode, false, 7777, m, NULL);
    if(!RelativeMode(m))
-      return mode_adjust(0, m);
+      return mode_adjust(0, false, 7777, m, NULL);
 
    return -1;
 }
@@ -91,7 +94,7 @@ void ChmodJob::CurrentFinished(const char *d,const FileInfo *fi)
    {
       char perms[11];               /* "-rwxrwxrwx" ls-style modes. */
 
-      mode_string (mode, perms);
+      strmode (mode, perms);
       perms[10] = '\0';             /* `mode_string' does not null terminate. */
 
       eprintf (fmt, fi->name, (int) mode, perms+1);
@@ -120,12 +123,18 @@ void ChmodJob::SetVerbosity(verbosity v)
 
 bool ChmodJob::RelativeMode(const mode_change *m) const
 {
-   while(m)
+   // The mode_change library doesn't exactly bother with type-safety. This
+   // `pointer to mode_change' is in reality a pointer to an array of
+   // mode_changes. We can increment it by sizeof[mode_change] quite
+   // safely.
+
+   size_t i = 0;
+   for (; m[i].flag != MODE_DONE; ++i)
    {
-      if(m->flags || m->op != '=')
-	 return true;
-      m=m->next;
+      if(m[i].flag || m[i].op != '=')
+         return true;
    }
+
    return false;
 }
 

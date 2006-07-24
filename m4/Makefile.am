@@ -1,5 +1,1 @@
-EXTRA_DIST= intmax.m4 longdouble.m4 longlong.m4 nls.m4 po.m4 printf-posix.m4 signed.m4 size_max.m4 wchar_t.m4 wint_t.m4 xsize.m4  intdiv0.m4 inttypes.m4 inttypes-pri.m4 stdint_h.m4 codeset.m4 gettext.m4 glibc21.m4 iconv.m4 isc-posix.m4 lcmessage.m4 lib-ld.m4 lib-link.m4 lib-prefix.m4 progtest.m4\
- cxx-dynamic-initializers.m4\
- lftp.m4 readline.m4 socklen.m4 ssl.m4 mbrtowc.m4 mbstate_t.m4 mbswidth.m4\
- human.m4 inttypes_h.m4 uintmax_t.m4 ulonglong.m4 needtrio.m4 gnu-source.m4\
- pty.m4 va_copy.m4 terminfo.m4
+EXTRA_DIST= cxx-dynamic-initializers.m4 error.m4 exitfail.m4 filemode.m4 gnu-source.m4 human.m4 intmax_t.m4 inttypes_h.m4 lftp.m4 longlong.m4 mbrtowc.m4 mbstate_t.m4 mbswidth.m4 modechange.m4 needtrio.m4 pty.m4 quote.m4 quotearg.m4 readline.m4 socklen.m4 ssl.m4 stat-macros.m4 stdbool.m4 stdint_h.m4 strerror_r.m4 strtoimax.m4 strtoull.m4 strtoumax.m4 terminfo.m4 uintmax_t.m4 ulonglong.m4 va_copy.m4 xalloc.m4 xstrtol.m4 xstrtoumax.m4

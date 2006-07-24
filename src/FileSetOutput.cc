@@ -23,7 +23,6 @@
 #include <config.h>
 #include "FileSet.h"
 
-#include <filemode.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <utime.h>
@@ -35,6 +34,7 @@
 #include <mbswidth.h>
 
 CDECL_BEGIN
+#include <filemode.h>
 #include "human.h"
 CDECL_END
 
@@ -86,7 +86,7 @@ void FileSetOutput::print(FileSet &fs, OutputJob *o) const
       if((mode & PERMS) && (f->defined&FileInfo::MODE)) {
 	 char mode[16];
 	 memset(mode, 0, sizeof(mode));
-	 mode_string(f->mode, mode);
+	 strmode(f->mode, mode);
 	 /* FIXME: f->mode doesn't have type info; it wouldn't
 	  * be hard to fix that */
 	 if(f->filetype == FileInfo::DIRECTORY) mode[0] = 'd';
@@ -118,8 +118,8 @@ void FileSetOutput::print(FileSet &fs, OutputJob *o) const
 	 && (f->defined&f->SIZE)) {
 	    char buffer[128];
 	    sprintf(sz, "%8s ",
-	       human_readable_inexact (f->size, buffer, 1,
-		  output_block_size? output_block_size:1024, human_ceiling));
+	       human_readable (f->size, buffer, human_ceiling, 1,
+		  output_block_size? output_block_size:1024));
 	 } else {
 	    sprintf(sz, "%8s ", ""); /* pad */
 	 }
@@ -153,7 +153,7 @@ void FileSetOutput::print(FileSet &fs, OutputJob *o) const
 	 }
 	 if (!(f->defined&f->DATE)) {
 	    /* put an empty field; make sure it's the same width */
-	    int wid = mbswidth(dt, MBSW_ACCEPT_INVALID|MBSW_ACCEPT_UNPRINTABLE);
+	    int wid = mbswidth(dt, 0);
 	    xfree(dt_mem); dt_mem=0;
 
 	    dt = string_alloca(wid+1);

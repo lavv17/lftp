@@ -97,13 +97,54 @@ LFTP_CXX_ANSI_SCOPE
 
 AC_ISC_POSIX
 
-# for lib/mbswidth.{c,h}
-jm_PREREQ_MBSWIDTH
+# for src/mbswidth.{c,h} from gnulib
+gl_MBSWIDTH
 
-# for lib/human.{c,h}
-jm_PREREQ_HUMAN
+# for src/human.{c,h}
+gl_HUMAN
 
-jm_FUNC_MBRTOWC
+# for lib/stat-macros.h
+gl_STAT_MACROS
+
+# for lib/xmalloc.c, lib/xalloc.h
+gl_XALLOC
+
+# for lib/modechange.{c,h}
+gl_MODECHANGE
+
+# for src/mbrtowc.{c,h}
+gl_FUNC_MBRTOWC
+
+# for lib/exitfail.{c,h}
+gl_EXITFAIL
+
+# for lib/quote.{c,h}
+gl_QUOTE
+
+# for lib/quotearg.{c,h}
+gl_QUOTEARG
+
+# for lib/xstrtol.{c,h}
+gl_XSTRTOL
+
+# for lib/strtoull.{c,h}
+gl_FUNC_STRTOULL
+
+# for lib/strtoimax.c
+gl_FUNC_STRTOIMAX
+
+# for lib/strtoumax.c
+gl_FUNC_STRTOUMAX
+
+# for lib/xstrtoumax.c
+gl_XSTRTOUMAX
+
+# for src/filemode.c
+gl_FILEMODE
+
+# for lib/error.{c,h}
+gl_ERROR
+
 AC_MBSTATE_T
 
 case "`uname -sr`" in

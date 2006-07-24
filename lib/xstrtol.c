@@ -1,5 +1,7 @@
 /* A more useful interface to strtol.
-   Copyright (C) 1995, 1996, 1998-2000 Free Software Foundation, Inc.
+
+   Copyright (C) 1995, 1996, 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2006
+   Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,101 +15,74 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Written by Jim Meyering. */
 
-#if HAVE_CONFIG_H
+#ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+
+#include "xstrtol.h"
 
 #ifndef __strtol
 # define __strtol strtol
 # define __strtol_t long int
 # define __xstrtol xstrtol
+# define STRTOL_T_MINIMUM LONG_MIN
+# define STRTOL_T_MAXIMUM LONG_MAX
 #endif
 
 /* Some pre-ANSI implementations (e.g. SunOS 4)
    need stderr defined if assertion checking is enabled.  */
 #include <stdio.h>
 
-#if STDC_HEADERS
-# include <stdlib.h>
-#endif
-
-#if HAVE_STRING_H
-# include <string.h>
-#else
-# include <strings.h>
-# ifndef strchr
-#  define strchr index
-# endif
-#endif
-
 #include <assert.h>
 #include <ctype.h>
-
 #include <errno.h>
-#ifndef errno
-extern int errno;
+#include <limits.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "intprops.h"
+
+#ifndef STRTOL_T_MINIMUM
+# define STRTOL_T_MINIMUM TYPE_MINIMUM (__strtol_t)
+# define STRTOL_T_MAXIMUM TYPE_MAXIMUM (__strtol_t)
 #endif
 
-#if HAVE_LIMITS_H
-# include <limits.h>
+#if !HAVE_DECL_STRTOIMAX && !defined strtoimax
+intmax_t strtoimax ();
 #endif
 
-#ifndef CHAR_BIT
-# define CHAR_BIT 8
-#endif
-
-/* The extra casts work around common compiler bugs.  */
-#define TYPE_SIGNED(t) (! ((t) 0 < (t) -1))
-/* The outer cast is needed to work around a bug in Cray C 5.0.3.0.
-   It is necessary at least when t == time_t.  */
-#define TYPE_MINIMUM(t) ((t) (TYPE_SIGNED (t) \
-			      ? ~ (t) 0 << (sizeof (t) * CHAR_BIT - 1) : (t) 0))
-#define TYPE_MAXIMUM(t) (~ (t) 0 - TYPE_MINIMUM (t))
-
-#if defined (STDC_HEADERS) || (!defined (isascii) && !defined (HAVE_ISASCII))
-# define IN_CTYPE_DOMAIN(c) 1
-#else
-# define IN_CTYPE_DOMAIN(c) isascii(c)
-#endif
-
-#define ISSPACE(c) (IN_CTYPE_DOMAIN (c) && isspace (c))
-
-#include "xstrtol.h"
-
-#ifndef strtol
-long int strtol ();
-#endif
-
-#ifndef strtoul
-unsigned long int strtoul ();
-#endif
-
-#ifndef strtoumax
+#if !HAVE_DECL_STRTOUMAX && !defined strtoumax
 uintmax_t strtoumax ();
 #endif
 
-static int
+static strtol_error
 bkm_scale (__strtol_t *x, int scale_factor)
 {
-  __strtol_t product = *x * scale_factor;
-  if (*x != product / scale_factor)
-    return 1;
-  *x = product;
-  return 0;
+  if (TYPE_SIGNED (__strtol_t) && *x < STRTOL_T_MINIMUM / scale_factor)
+    {
+      *x = STRTOL_T_MINIMUM;
+      return LONGINT_OVERFLOW;
+    }
+  if (STRTOL_T_MAXIMUM / scale_factor < *x)
+    {
+      *x = STRTOL_T_MAXIMUM;
+      return LONGINT_OVERFLOW;
+    }
+  *x *= scale_factor;
+  return LONGINT_OK;
 }
 
-static int
+static strtol_error
 bkm_scale_by_power (__strtol_t *x, int base, int power)
 {
+  strtol_error err = LONGINT_OK;
   while (power--)
-    if (bkm_scale (x, base))
-      return 1;
-
-  return 0;
+    err |= bkm_scale (x, base);
+  return err;
 }
 
 /* FIXME: comment.  */
@@ -119,6 +94,7 @@ __xstrtol (const char *s, char **ptr, int strtol_base,
   char *t_ptr;
   char **p;
   __strtol_t tmp;
+  strtol_error err = LONGINT_OK;
 
   assert (0 <= strtol_base && strtol_base <= 36);
 
@@ -127,18 +103,31 @@ __xstrtol (const char *s, char **ptr, int strtol_base,
   if (! TYPE_SIGNED (__strtol_t))
     {
       const char *q = s;
-      while (ISSPACE ((unsigned char) *q))
-	++q;
-      if (*q == '-')
+      unsigned char ch = *q;
+      while (isspace (ch))
+	ch = *++q;
+      if (ch == '-')
 	return LONGINT_INVALID;
     }
 
   errno = 0;
   tmp = __strtol (s, p, strtol_base);
-  if (errno != 0)
-    return LONGINT_OVERFLOW;
+
   if (*p == s)
-    return LONGINT_INVALID;
+    {
+      /* If there is no number but there is a valid suffix, assume the
+	 number is 1.  The string is invalid otherwise.  */
+      if (valid_suffixes && **p && strchr (valid_suffixes, **p))
+	tmp = 1;
+      else
+	return LONGINT_INVALID;
+    }
+  else if (errno != 0)
+    {
+      if (errno != ERANGE)
+	return LONGINT_INVALID;
+      err = LONGINT_OVERFLOW;
+    }
 
   /* Let valid_suffixes == NULL mean `allow any suffix'.  */
   /* FIXME: update all callers except the ones that allow suffixes
@@ -146,34 +135,39 @@ __xstrtol (const char *s, char **ptr, int strtol_base,
   if (!valid_suffixes)
     {
       *val = tmp;
-      return LONGINT_OK;
+      return err;
     }
 
   if (**p != '\0')
     {
       int base = 1024;
       int suffixes = 1;
-      int overflow;
+      strtol_error overflow;
 
       if (!strchr (valid_suffixes, **p))
 	{
 	  *val = tmp;
-	  return LONGINT_INVALID_SUFFIX_CHAR;
+	  return err | LONGINT_INVALID_SUFFIX_CHAR;
 	}
 
       if (strchr (valid_suffixes, '0'))
 	{
 	  /* The ``valid suffix'' '0' is a special flag meaning that
 	     an optional second suffix is allowed, which can change
-	     the base, e.g. "100MD" for 100 megabytes decimal.  */
+	     the base.  A suffix "B" (e.g. "100MB") stands for a power
+	     of 1000, whereas a suffix "iB" (e.g. "100MiB") stands for
+	     a power of 1024.  If no suffix (e.g. "100M"), assume
+	     power-of-1024.  */
 
 	  switch (p[0][1])
 	    {
-	    case 'B':
-	      suffixes++;
+	    case 'i':
+	      if (p[0][2] == 'B')
+		suffixes += 2;
 	      break;
 
-	    case 'D':
+	    case 'B':
+	    case 'D': /* 'D' is obsolescent */
 	      base = 1000;
 	      suffixes++;
 	      break;
@@ -194,29 +188,30 @@ __xstrtol (const char *s, char **ptr, int strtol_base,
 	  overflow = 0;
 	  break;
 
-	case 'E': /* Exa */
+	case 'E': /* exa or exbi */
 	  overflow = bkm_scale_by_power (&tmp, base, 6);
 	  break;
 
-	case 'G': /* Giga */
+	case 'G': /* giga or gibi */
 	case 'g': /* 'g' is undocumented; for compatibility only */
 	  overflow = bkm_scale_by_power (&tmp, base, 3);
 	  break;
 
 	case 'k': /* kilo */
+	case 'K': /* kibi */
 	  overflow = bkm_scale_by_power (&tmp, base, 1);
 	  break;
 
-	case 'M': /* Mega */
+	case 'M': /* mega or mebi */
 	case 'm': /* 'm' is undocumented; for compatibility only */
 	  overflow = bkm_scale_by_power (&tmp, base, 2);
 	  break;
 
-	case 'P': /* Peta */
+	case 'P': /* peta or pebi */
 	  overflow = bkm_scale_by_power (&tmp, base, 5);
 	  break;
 
-	case 'T': /* Tera */
+	case 'T': /* tera or tebi */
 	case 't': /* 't' is undocumented; for compatibility only */
 	  overflow = bkm_scale_by_power (&tmp, base, 4);
 	  break;
@@ -225,28 +220,27 @@ __xstrtol (const char *s, char **ptr, int strtol_base,
 	  overflow = bkm_scale (&tmp, 2);
 	  break;
 
-	case 'Y': /* Yotta */
+	case 'Y': /* yotta or 2**80 */
 	  overflow = bkm_scale_by_power (&tmp, base, 8);
 	  break;
 
-	case 'Z': /* Zetta */
+	case 'Z': /* zetta or 2**70 */
 	  overflow = bkm_scale_by_power (&tmp, base, 7);
 	  break;
 
 	default:
 	  *val = tmp;
-	  return LONGINT_INVALID_SUFFIX_CHAR;
-	  break;
+	  return err | LONGINT_INVALID_SUFFIX_CHAR;
 	}
 
-      if (overflow)
-	return LONGINT_OVERFLOW;
-
-      (*p) += suffixes;
+      err |= overflow;
+      *p += suffixes;
+      if (**p)
+	err |= LONGINT_INVALID_SUFFIX_CHAR;
     }
 
   *val = tmp;
-  return LONGINT_OK;
+  return err;
 }
 
 #ifdef TESTING_XSTRTO
@@ -257,7 +251,7 @@ __xstrtol (const char *s, char **ptr, int strtol_base,
 char *program_name;
 
 int
-main (int argc, char** argv)
+main (int argc, char **argv)
 {
   strtol_error s_err;
   int i;

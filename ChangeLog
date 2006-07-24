@@ -1,3 +1,23 @@
+2006-07-22  Nix  <nix@esperi.org.uk>
+
+        * configure.ac: Synch with gnulib-20060722.
+        (jm_PREREQ_MBSWIDTH): Rename to...
+        (gl_MBSWIDTH): ... this.
+        (jm_PREREQ_HUMAN): Rename to...
+        (gl_HUMAN): ... this.
+        (jm_FUNC_MBRTOWC): Rename to...
+        (gl_MBRTOWC): ... this.
+
+        (gl_FILEMODE): Newly required by filemode.[ch].
+
+        Pull in gnulib transitive dependencies:
+
+        (gl_STAT_MACROS, gl_XALLOC, gl_MODECHANGE, EXITFAIL,
+        gl_QUOTE, gl_QUOTEARG, gl_XSTRTOL, gl_FUNC_STRTOULL,
+        gl_FUNC_STRTOIMAX, gl_FUNC_STRTOUMAX, gl_FUNC_XSTROTUMAX,
+        gl_ERROR): New.
+
+
 2005-12-12  Conan The Grammarian <spell-check@earthlink.net>
 
 	* FAQ: some grammar fixes.

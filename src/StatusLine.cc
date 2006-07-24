@@ -186,7 +186,7 @@ void StatusLine::update(const char *const *newstr,int newstr_height)
    }
 
    int w=GetWidth();
-   int mbflags=MBSW_ACCEPT_INVALID|MBSW_ACCEPT_UNPRINTABLE;
+   int mbflags=0;
 
    if(newstr_height>LastHeight)
       newstr_height=LastHeight;

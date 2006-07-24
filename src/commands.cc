@@ -2589,7 +2589,7 @@ CMD(ver)
       demand so use dlsym to avoid linking with them just for showing version. */
    printf("\n");
    const char *msg=_("Libraries used: ");
-   int mbflags=MBSW_ACCEPT_INVALID|MBSW_ACCEPT_UNPRINTABLE;
+   int mbflags=0;
    int col=mbswidth(msg,mbflags);
    int width=parent->status_line?parent->status_line->GetWidth():80;
    printf("%s",msg);
@@ -3144,8 +3144,8 @@ CMD(chmod)
    if(!args->getcurr())
       goto usage;
 
-   mode_change *m = mode_compile(arg, MODE_MASK_ALL);
-   if(m == MODE_INVALID)
+   mode_change *m = mode_compile(arg);
+   if(!m)
    {
       eprintf(_("invalid mode string: %s\n"), arg);
       return 0;

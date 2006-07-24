@@ -1,3 +1,7 @@
+2006-07-22  Nix  <nix@esperi.org.uk>
+
+        * gettext.h: Synch with gnulib-20060722.
+
 2005-07-06	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* post-config.h: (replace_value) new template.

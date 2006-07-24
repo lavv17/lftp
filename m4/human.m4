@@ -1,10 +1,18 @@
-# If you use human.c, you need the following files:
-# uintmax_t.m4 inttypes_h.m4 ulonglong.m4
-AC_DEFUN(jm_PREREQ_HUMAN,
-[
-  AC_CHECK_HEADERS(limits.h stdlib.h string.h)
-  AC_CHECK_DECLS([getenv])
-  AC_REQUIRE([jm_AC_HEADER_INTTYPES_H])
-  AC_REQUIRE([jm_AC_TYPE_UINTMAX_T])
-])
+#serial 9
+dnl Copyright (C) 2002, 2003, 2004, 2005 Free Software Foundation, Inc.
+dnl This file is free software; the Free Software Foundation
+dnl gives unlimited permission to copy and/or distribute it,
+dnl with or without modifications, as long as this notice is preserved.
 
+AC_DEFUN([gl_HUMAN],
+[
+  AC_LIBSOURCES([human.c, human.h, intprops.h])
+  AC_LIBOBJ([human])
+
+  dnl Prerequisites of lib/human.h.
+  AC_REQUIRE([AM_STDBOOL_H])
+  AC_REQUIRE([gl_AC_TYPE_UINTMAX_T])
+
+  dnl Prerequisites of lib/human.c.
+  :
+])

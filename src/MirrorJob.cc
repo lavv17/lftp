@@ -151,7 +151,7 @@ void  MirrorJob::ShowRunStatus(StatusLine *s)
       if(target_list_info && (!source_list_info || now%4>=2))
       {
 	 const char *status=target_list_info->Status();
-	 int status_w=mbswidth(status, MBSW_ACCEPT_INVALID|MBSW_ACCEPT_UNPRINTABLE);
+	 int status_w=mbswidth(status, 0);
 	 int dw=w-status_w;
 	 if(dw<20)
 	    dw=20;
@@ -163,7 +163,7 @@ void  MirrorJob::ShowRunStatus(StatusLine *s)
       else if(source_list_info)
       {
 	 const char *status=source_list_info->Status();
-	 int status_w=mbswidth(status, MBSW_ACCEPT_INVALID|MBSW_ACCEPT_UNPRINTABLE);
+	 int status_w=mbswidth(status, 0);
 	 int dw=w-status_w;
 	 if(dw<20)
 	    dw=20;

@@ -177,8 +177,7 @@ void FinderJob_Du::print_size (long long n_blocks, const char *string)
    /* We get blocks in bytes, since we don't know the remote system's
     * block size. */
    buf->Format("%s\t%s\n",
-	 human_readable_inexact (n_blocks, buffer, 1,
-	    output_block_size, human_ceiling),
+	 human_readable (n_blocks, buffer, human_ceiling, 1, output_block_size),
 	 string);
 }
 

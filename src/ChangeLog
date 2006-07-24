@@ -1,3 +1,42 @@
+2006-07-22  Nix  <nix@esperi.org.uk>
+
+        Adapt to synch with gnulib-20060722.
+
+        * ChmodJob.cc: filemode.h needs CDECL guards.
+        * ChmodJob.cc (ChmodJob): mode_free() is gone, just free() now.
+        * ChmodJob.cc (GetMode): Adjust mode_adjust() prototype, keeping
+        current behaviour by deactivating umasking (which is meaningless
+        on remote systems in any case).
+        * ChmodJob.cc (CurrentFinished): mode_string() is now named strmode().
+        * ChmodJob.cc (RelativeMode): mode_change is now an array, not a
+        linked list.
+        * ColumnOutput.cc (append): mbswidth()'s flags have flipped.
+        * FindJobDu.cc (print_size): human_readable() and human_readable_inexact()
+        have merged.
+        * FileSetOutput.cc: filemode.h needs CDECL guards.
+        * FileSetOutput.cc (print): human_readable(), mode_string() and mbswidth
+        flag changes as above.
+        * MirrorJob.cc (ShowRunStatus): mbswidth flag changes.
+        * StatusLine.cc (update): Likewise.
+        * commands.cc (CMD): Likewise.
+        * misc.cc (squeeze_file_name): Likewise.
+
+        * filemode.c: Synched with gnulib; moved to lib/.
+        * human.c: Likewise.
+        * modechange.c: Likewise.
+        * xstrtol.c: Likewise.
+        * xstrtoul.c: Likewise.
+
+        * mbswidth.c: Synched with gnulib.
+        * mbswidth.h: New, from gnulib.
+        * wcwidth.h: Likewise.
+
+        * Makefile.am (liblftp_tasks_la_SOURCES): Remove stuff that's
+        moved to lib/.
+        * Makefile.am (liblftp_jobs_la_SOURCES): This depends on
+        liblftp-tasks.la.
+        * Makefile.am (INCLUDES): Include from lib/.
+
 2006-07-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.cc: add --user and --password options for open.

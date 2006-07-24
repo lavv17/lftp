@@ -228,7 +228,7 @@ void datum::append(const char *name, const char *color)
       }
    }
 
-   curwidth += mbswidth(name, MBSW_ACCEPT_INVALID|MBSW_ACCEPT_UNPRINTABLE);
+   curwidth += mbswidth(name, 0);
 }
 
 void datum::print(OutputJob *o, bool color, int skip,

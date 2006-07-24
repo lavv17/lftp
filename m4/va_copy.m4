@@ -7,6 +7,7 @@ AC_DEFUN([lftp_VA_COPY],
    AC_CACHE_CHECK([for an implementation of va_copy()],lftp_cv_va_copy,[
       AC_TRY_RUN([
       #include <stdarg.h>
+      #include <stdlib.h>
       void f (int i, ...) {
 	 va_list args1, args2;
 	 va_start (args1, i);
@@ -27,6 +28,7 @@ AC_DEFUN([lftp_VA_COPY],
       AC_CACHE_CHECK([for an implementation of __va_copy()],lftp_cv___va_copy,[
 	 AC_TRY_RUN([
 	 #include <stdarg.h>
+         #include <stdlib.h>
 	 void f (int i, ...) {
 	    va_list args1, args2;
 	    va_start (args1, i);
@@ -60,6 +62,7 @@ AC_DEFUN([lftp_VA_COPY],
 	   AC_TRY_RUN([
 	   #include <stdarg.h>
 	   #include <string.h>
+           #include <stdlib.h>
 	   void f (int i, ...) {
 	   va_list args1, args2;
 	   va_start (args1, i);
@@ -84,6 +87,7 @@ AC_DEFUN([lftp_VA_COPY],
 	 AC_CACHE_CHECK([whether va_lists can be copied by pointer],lftp_cv_va_ptr_copy,[
 	      AC_TRY_RUN([
 	      #include <stdarg.h>
+              #include <stdlib.h>
 	      void f (int i, ...) {
 	      va_list args1, args2;
 	      va_start (args1, i);
