@@ -426,10 +426,14 @@ static void tty_clear()
       top_exec->pre_stdout();
 }
 
+char *program_name;
+
 int   main(int argc,char **argv)
 {
+   program_name=argv[0];
+
 #ifdef SOCKS4
-   SOCKSinit(argv[0]);
+   SOCKSinit(program_name);
 #endif
 
    setlocale (LC_ALL, "");
