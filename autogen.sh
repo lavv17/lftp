@@ -21,7 +21,7 @@ DIE=0
   echo
   echo "**Error**: You must have \`autoconf' installed to compile $PKG_NAME."
   echo "Download the appropriate package for your distribution,"
-  echo "or get the source tarball at ftp://ftp.gnu.org/pub/gnu/autoconf/"
+  echo "or get the source at ftp://ftp.gnu.org/pub/gnu/autoconf/autoconf-2.60.tar.gz"
   DIE=1
 }
 
@@ -29,7 +29,7 @@ DIE=0
   (libtoolize --version) < /dev/null > /dev/null 2>&1 || {
     echo
     echo "**Error**: You must have \`libtool' installed to compile $PKG_NAME."
-    echo "Get ftp://ftp.gnu.org/pub/gnu/libtool/libtool-1.4.tar.gz"
+    echo "Get ftp://ftp.gnu.org/pub/gnu/libtool/libtool-1.6.tar.gz"
     echo "(or a newer version if it is available)"
     DIE=1
   }
@@ -49,7 +49,7 @@ grep "^AM_GNU_GETTEXT" $srcdir/configure.ac >/dev/null && {
 (automake --version) < /dev/null > /dev/null 2>&1 || {
   echo
   echo "**Error**: You must have \`automake' installed to compile $PKG_NAME."
-  echo "Get ftp://ftp.gnu.org/pub/gnu/automake/automake-1.3.tar.gz"
+  echo "Get ftp://ftp.gnu.org/pub/gnu/automake/automake-1.9.tar.gz"
   echo "(or a newer version if it is available)"
   DIE=1
   NO_AUTOMAKE=yes
@@ -61,7 +61,7 @@ test -n "$NO_AUTOMAKE" || (aclocal --version) < /dev/null > /dev/null 2>&1 || {
   echo
   echo "**Error**: Missing \`aclocal'.  The version of \`automake'"
   echo "installed doesn't appear recent enough."
-  echo "Get ftp://ftp.gnu.org/pub/gnu/automake/automake-1.4.tar.gz"
+  echo "Get ftp://ftp.gnu.org/pub/gnu/automake/automake-1.9.tar.gz"
   echo "(or a newer version if it is available)"
   DIE=1
 }
@@ -69,13 +69,13 @@ ver=`gettextize --version 2>&1 | sed -n 's/^.*GNU gettext.* \([0-9]*\.[0-9.]*\).
 
 case $ver in
   '') gettext_fail_text="Unknown gettext version.";;
-  0.1[1-9]* | 0.[2-9]* | [1-9].*) ;;
+  0.1[5-9]* | 0.[2-9]* | [1-9].*) ;;
   *) gettext_fail_text="Old gettext version $ver.";;
 esac
 
 if test "$gettext_fail_text" != ""; then
   echo "$gettext_fail_text."
-  echo "Get ftp://ftp.gnu.org/pub/gnu/gettext/gettext-0.11.2.tar.gz"
+  echo "Get ftp://ftp.gnu.org/pub/gnu/gettext/gettext-0.15.tar.gz"
   echo "(or a newer version if it is available)"
   DIE=1
 fi
