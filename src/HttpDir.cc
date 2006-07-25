@@ -1072,7 +1072,7 @@ parse_url_again:
 	 struct tm tm;
 	 memset(&tm,0,sizeof(tm));
 	 tm.tm_year=info.year-1900;
-	 tm.tm_mon=info.month-1;
+	 tm.tm_mon=info.month;
 	 tm.tm_mday=info.day;
 	 tm.tm_hour=12;
 	 info.date_prec=43200;
