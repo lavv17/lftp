@@ -78,7 +78,7 @@ liblftp_tasks_la_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  mbswidth.c mbswidth.h wcwidth.h\
  $(add_tasks)
 liblftp_tasks_la_LDFLAGS = $(OPENSSL_LDFLAGS)
-liblftp_tasks_la_LIBADD = $(LFTP_LIBGNUTLS_LIBS) $(LTLIBINTL) $(LTLIBICONV) $(add_tasks_libadd)
+liblftp_tasks_la_LIBADD = $(top_builddir)/lib/liblib.la $(LFTP_LIBGNUTLS_LIBS) $(LTLIBINTL) $(LTLIBICONV) $(add_tasks_libadd)
 
 liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\
@@ -94,17 +94,15 @@ liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  $(add_jobs)
 liblftp_jobs_la_LIBADD = liblftp-tasks.la
 
-lftp_LDADD = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC) $(READLINE)\
-	$(top_builddir)/lib/liblib.a
-lftp_DEPENDENCIES = liblftp-jobs.la liblftp-tasks.la $(READLINE_DEPEND) \
-	$(top_builddir)/lib/liblib.a $(MODULES_LA_STATIC)
+lftp_LDADD = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC) $(READLINE)
+lftp_DEPENDENCIES = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC) $(READLINE_DEPEND)
 
-example1_LDADD = liblftp-tasks.la $(MODULES_LA_STATIC) $(top_builddir)/lib/liblib.a
-example1_DEPENDENCIES = liblftp-tasks.la $(MODULES_LA_STATIC) $(top_builddir)/lib/liblib.a
-example1_cmd_LDADD = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC) $(top_builddir)/lib/liblib.a
-example1_cmd_DEPENDENCIES = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC) $(top_builddir)/lib/liblib.a
-example2_LDADD = liblftp-tasks.la $(MODULES_LA_STATIC) $(top_builddir)/lib/liblib.a
-example2_DEPENDENCIES = liblftp-tasks.la $(MODULES_LA_STATIC) $(top_builddir)/lib/liblib.a
+example1_LDADD = liblftp-tasks.la $(MODULES_LA_STATIC)
+example1_DEPENDENCIES = liblftp-tasks.la $(MODULES_LA_STATIC)
+example1_cmd_LDADD = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC)
+example1_cmd_DEPENDENCIES = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC)
+example2_LDADD = liblftp-tasks.la $(MODULES_LA_STATIC)
+example2_DEPENDENCIES = liblftp-tasks.la $(MODULES_LA_STATIC)
 
 confpaths.h: Makefile
 	echo "#define SYSCONFDIR \"$(sysconfdir)\""  > $@
@@ -114,7 +112,7 @@ confpaths.h: Makefile
 
 DISTCLEANFILES = confpaths.h *.la
 
-INCLUDES = -I$(top_srcdir)/include -I$(top_srcdir)/lib $(OPENSSL_CPPFLAGS) $(LIBGNUTLS_CFLAGS)
+INCLUDES = -I$(top_srcdir)/include $(OPENSSL_CPPFLAGS) $(LIBGNUTLS_CFLAGS)
 
 # These files can be linked to ../include by configure, but not always.
 #OMIT_DEPENDENCIES = readline.h keymaps.h chardefs.h tilde.h rltypedefs.h\
