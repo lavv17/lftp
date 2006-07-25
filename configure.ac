@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_PREREQ(2.53)
+AC_PREREQ(2.60)
 AC_INIT([lftp], [3.5.1], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_LIBOBJ_DIR(lib)
@@ -102,6 +102,7 @@ gl_MBSWIDTH
 
 # for src/human.{c,h}
 gl_HUMAN
+AC_CONFIG_LINKS([include/human.h:lib/human.h])
 
 # for lib/stat-macros.h
 gl_STAT_MACROS
@@ -111,6 +112,7 @@ gl_XALLOC
 
 # for lib/modechange.{c,h}
 gl_MODECHANGE
+AC_CONFIG_LINKS([include/modechange.h:lib/modechange.h])
 
 # for src/mbrtowc.{c,h}
 gl_FUNC_MBRTOWC
@@ -141,6 +143,7 @@ gl_XSTRTOUMAX
 
 # for src/filemode.c
 gl_FILEMODE
+AC_CONFIG_LINKS([include/filemode.h:lib/filemode.h])
 
 # for lib/error.{c,h}
 gl_ERROR
@@ -164,10 +167,6 @@ dnl ** LFTP needs iconv, call the test explicitly (even if --disable-nls)
 AM_ICONV
 ALL_LINGUAS="de es fr it ja ko pl pt_BR ru zh_CN zh_TW"
 AM_GNU_GETTEXT([external])
-if test x$USE_INCLUDED_LIBINTL = xyes; then
-   LINK_SRC="$LINK_SRC intl/libgnuintl.h"
-   LINK_DST="$LINK_DST include/libintl.h"
-fi
 test "$MSGFMT"  = "no" && MSGFMT  ="$missing_dir/missing msgfmt"
 test "$GMSGFMT" = "no" && GMSGFMT ="$missing_dir/missing msgfmt"
 test "$XGETTEXT" = ":" && XGETTEXT="$missing_dir/missing xgettext"
