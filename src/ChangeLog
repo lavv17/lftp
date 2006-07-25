@@ -1,3 +1,11 @@
+2006-07-25  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: use timestamp only if it's precise.
+	* HttpDir.cc: fix month off-by-one.
+	* FileCopy.cc: use SetSize so that seek_pos gets changed from FILE_END;
+	  debug state changes.
+	* Makefile.am: use liblib.la; don't use lib for includes.
+
 2006-07-22  Nix  <nix@esperi.org.uk>
 
         Adapt to synch with gnulib-20060722.
