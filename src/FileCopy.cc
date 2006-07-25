@@ -58,6 +58,9 @@ ResDecl max_redir    ("xfer:max-redirections", "5",ResMgr::UNumberValidate,ResMg
 // FileCopy
 #define super SMTask
 
+#define set_state(s) do { state=(s); \
+   Log::global->Format(11,"FileCopy(%p) enters state %s\n", this, #s); } while(0)
+
 int FileCopy::Do()
 {
    int m=STALL;
@@ -70,7 +73,7 @@ int FileCopy::Do()
    switch(state)
    {
    pre_INITIAL:
-      state=INITIAL;
+      set_state(INITIAL);
       m=MOVED;
    case(INITIAL):
       if(remove_target_first && !put->FileRemoved())
@@ -114,7 +117,7 @@ int FileCopy::Do()
 
       get->Suspend();
       put->Resume();
-      state=PUT_WAIT;
+      set_state(PUT_WAIT);
       m=MOVED;
       /* fallthrough */
    case(PUT_WAIT):
@@ -137,7 +140,7 @@ int FileCopy::Do()
       get->Resume();
       get->StartTransfer();
       RateReset();
-      state=DO_COPY;
+      set_state(DO_COPY);
       m=MOVED;
       /* fallthrough */
    case(DO_COPY): {
@@ -336,7 +339,7 @@ int FileCopy::Do()
       put->Resume();
       put_eof_pos=put->GetRealPos();
       debug((10,"copy: waiting for put confirmation\n"));
-      state=CONFIRM_WAIT;
+      set_state(CONFIRM_WAIT);
       m=MOVED;
    case(CONFIRM_WAIT):
       if(put->Error())
@@ -344,7 +347,7 @@ int FileCopy::Do()
       /* check if put position is correct */
       if(put_eof_pos!=put->GetRealPos() || put->GetSeekPos()==FILE_END)
       {
-	 state=DO_COPY;
+	 set_state(DO_COPY);
 	 return MOVED;
       }
 
@@ -361,7 +364,7 @@ int FileCopy::Do()
       get->Empty();
       get->PutEOF();
       get->Resume();
-      state=GET_DONE_WAIT;
+      set_state(GET_DONE_WAIT);
       m=MOVED;
       end_time=now;
       put->Suspend();
@@ -377,12 +380,12 @@ int FileCopy::Do()
       if(!get->Done())
 	 return m;
       debug((10,"copy: get is finished - all done\n"));
-      state=ALL_DONE;
+      set_state(ALL_DONE);
       get->Suspend();
       return MOVED;
 
    pre_GET_INFO_WAIT:
-      state=GET_INFO_WAIT;
+      set_state(GET_INFO_WAIT);
       m=MOVED;
    case(GET_INFO_WAIT):
       if(get->Error())
@@ -401,7 +404,7 @@ void FileCopy::Init()
 {
    get=0;
    put=0;
-   state=INITIAL;
+   set_state(INITIAL);
    max_buf=0x10000;
    cont=false;
    error_text=0;
@@ -976,7 +979,7 @@ void FileCopyPeerFA::WantSize()
    struct stat st;
    if(!strcmp(session->GetProto(),"file")
    && stat(dir_file(session->GetCwd(),file),&st)!=-1)
-      size=st.st_size;
+      SetSize(st.st_size);
    else
       super::WantSize();
 }
@@ -1685,7 +1688,7 @@ void FileCopyPeerFDStream::WantSize()
       stat(stream->full_name,&st);
 
    if(st.st_size!=NO_SIZE)
-      size=st.st_size;
+      SetSize(st.st_size);
    else
       super::WantSize();
 }
