@@ -297,7 +297,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	       c->RemoveTargetFirst();
 	    CopyJob *cp=
 	       new CopyJob(c,file->name,"mirror");
-	    if(file->defined&file->DATE)
+	    if((file->defined&file->DATE) && file->date_prec<=1)
 	       cp->SetDate(file->date);
 	    if(file->defined&file->SIZE)
 	       cp->SetSize(file->size);
