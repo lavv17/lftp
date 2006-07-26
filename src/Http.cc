@@ -1944,6 +1944,7 @@ void Http::Reconfig(const char *name)
       proxy_port=xstrdup(HTTP_DEFAULT_PROXY_PORT);
 
    user_agent=ResMgr::Query("http:user-agent",c);
+   use_propfind_now=(use_propfind_now && QueryBool("use-propfind",c));
 }
 
 bool Http::SameSiteAs(const FileAccess *fa) const
