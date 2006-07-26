@@ -1230,7 +1230,6 @@ void FileAccess::ClassInit()
    _sftp;
 
    // make it link in classes required by modules.
-   DirColors::GetInstance();
    LocalDirectory ld;
 }
 void FileAccess::ClassCleanup()
