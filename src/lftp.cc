@@ -45,7 +45,6 @@
 #include "DummyProto.h"
 #include "ResMgr.h"
 #include "LsCache.h"
-#include "DirColors.h"
 #include "IdNameCache.h"
 #include "LocalDir.h"
 #include "ConnectionSlot.h"
@@ -507,7 +506,6 @@ int   main(int argc,char **argv)
    SessionPool::ClearAll();
    FileAccess::ClassCleanup();
    ProcWait::DeleteAll();
-   DirColors::DeleteInstance();
    IdNameCacheCleanup();
    SignalHook::Cleanup();
    Log::Cleanup();

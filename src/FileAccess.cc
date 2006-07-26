@@ -41,6 +41,7 @@
 #include "ArgV.h"
 #include "ConnectionSlot.h"
 #include "SignalHook.h"
+#include "FileGlob.h"
 #ifdef WITH_MODULES
 # include "module.h"
 #endif
@@ -858,7 +859,7 @@ bool FileAccess::NeedSizeDateBeforehand() { return false; }
 void FileAccess::Cleanup() {}
 void FileAccess::CleanupThis() {}
 ListInfo *FileAccess::MakeListInfo(const char *path) { return 0; }
-Glob *FileAccess::MakeGlob(const char *pattern) { return 0; }
+Glob *FileAccess::MakeGlob(const char *pattern) { return new NoGlob(pattern); }
 DirList *FileAccess::MakeDirList(ArgV *a) { if(a) delete a; return 0; }
 
 DirList::~DirList()
@@ -1176,6 +1177,9 @@ void FileAccess::Path::ExpandTilde(const Path &home)
    expand_tilde(&path,home.path);
 }
 
+#include "DirColors.h"
+#include "LocalDir.h"
+#include "FileCopy.h"
 #include "modconfig.h"
 #ifndef MODULE_PROTO_FTP
 # include "ftpclass.h"
@@ -1224,9 +1228,15 @@ void FileAccess::ClassInit()
    _http;
    _fish;
    _sftp;
+
+   // make it link in classes required by modules.
+   DirColors::GetInstance();
+   LocalDirectory ld;
 }
 void FileAccess::ClassCleanup()
 {
+   DirColors::DeleteInstance();
    delete cache;
    cache=0;
+   FileCopy::fxp_create=0;
 }
