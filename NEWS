@@ -2,6 +2,7 @@ Version 3.5.2 - 2006-07-??
 
 * strip CRs from ls output, as before.
 * updated help for pget.
+* fixed use of PROPFIND when http:use-propfind is no.
 
 Version 3.5.1 - 2006-07-05
 

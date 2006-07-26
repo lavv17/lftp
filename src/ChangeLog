@@ -1,6 +1,10 @@
 2006-07-26  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Http.cc: change use_propfind_now in Reconfig.
+	* FileAccess.cc: add references to classes which are used in modules,
+	  this fixes static compilation.
+	* lftp.cc: remove DirColors reference (in FileAccess.cc now).
+	* Makefile.am: better use of libtool capabilities.
 
 2006-07-25  Alexander V. Lukyanov <lav@yars.free.net>
 
