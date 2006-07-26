@@ -49,7 +49,9 @@ LFTP includes the following features (some may be missed in this list):
 * Job output redirection to a file or to a program via pipe.
 * Conditional commands depending on exit status of previous one.
 * Loading of binary modules at run time (configure option).
-* `pget' to download a file using several connections.
-* `mirror' can download several files in parallel (--parallel option).
+* `pget' to download a file using several connections. `pget' download
+  can be continued as it saves a status file periodically.
+* `mirror' can download several files in parallel (--parallel option)
+  and a single file with `pget' (--use-pget-n option).
 * Slots. Each slot is a separate session, switch using Meta-{1-9} or `slot'
   command. Refer to a slot site using pseudo URL slot:name.
