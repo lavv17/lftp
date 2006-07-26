@@ -19,7 +19,7 @@ example_module1_la_SOURCES = example-module1.cc
 example_module1_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
 
 TASK_MODULES = liblftp-pty.la liblftp-network.la proto-ftp.la proto-http.la proto-file.la proto-fish.la proto-sftp.la
-JOB_MODULES = cmd-mirror.la cmd-sleep.la
+JOB_MODULES = liblftp-getdate.la cmd-mirror.la cmd-sleep.la
 if WITH_MODULES
   pkgverlib_LTLIBRARIES = $(TASK_MODULES) $(JOB_MODULES)
 else
@@ -39,6 +39,7 @@ cmd_sleep_la_SOURCES  = SleepJob.cc SleepJob.h
 liblftp_pty_la_SOURCES     = PtyShell.cc PtyShell.h lftp_pty.c lftp_pty.h
 liblftp_network_la_SOURCES = NetAccess.cc NetAccess.h Resolver.cc Resolver.h\
  lftp_ssl.cc lftp_ssl.h buffer_ssl.cc buffer_ssl.h
+liblftp_getdate_la_SOURCES = getdate.y getdate.h
 
 proto_ftp_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
 proto_http_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
@@ -50,11 +51,14 @@ cmd_sleep_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
 liblftp_pty_la_LDFLAGS     = -avoid-version -rpath $(pkgverlibdir)
 liblftp_network_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir) $(OPENSSL_LDFLAGS)
 liblftp_network_la_LIBADD  = $(SOCKSLIBS) $(OPENSSL_LIBS) $(LIBGNUTLS_LIBS)
+liblftp_getdate_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir)
 
 proto_ftp_la_LIBADD  = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la
 proto_http_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la $(EXPAT_LIBS)
 proto_fish_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la liblftp-pty.la
 proto_sftp_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la liblftp-pty.la
+cmd_mirror_la_LIBADD = liblftp-getdate.la
+cmd_sleep_la_LIBADD  = liblftp-getdate.la
 
 liblftp_tasks_la_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  ProcWait.h GetPass.cc GetPass.h ConnectionSlot.cc ConnectionSlot.h\
@@ -84,19 +88,15 @@ liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  QueueFeeder.cc QueueFeeder.h history.cc history.h\
  FindJob.cc FindJob.h FindJobDu.cc FindJobDu.h ChmodJob.cc ChmodJob.h\
  TreatFileJob.cc TreatFileJob.h CopyJob.cc CopyJob.h echoJob.cc echoJob.h\
- OutputJob.cc OutputJob.h FileCopyOutputJob.cc buffer_std.cc buffer_std.h\
- getdate.y getdate.h
-liblftp_jobs_la_LIBADD = liblftp-tasks.la $(JOB_MODULES_STATIC)
+ OutputJob.cc OutputJob.h FileCopyOutputJob.cc buffer_std.cc buffer_std.h
+liblftp_jobs_la_LIBADD = $(JOB_MODULES_STATIC) liblftp-tasks.la
 
 lftp_LDADD = liblftp-jobs.la $(READLINE)
-lftp_DEPENDENCIES = liblftp-jobs.la $(READLINE_DEPEND)
+lftp_DEPENDENCIES = $(READLINE_DEPEND)
 
 example1_LDADD = liblftp-tasks.la
-example1_DEPENDENCIES = liblftp-tasks.la
 example1_cmd_LDADD = liblftp-jobs.la
-example1_cmd_DEPENDENCIES = liblftp-jobs.la
 example2_LDADD = liblftp-tasks.la
-example2_DEPENDENCIES = liblftp-tasks.la
 
 confpaths.h: Makefile
 	echo "#define SYSCONFDIR \"$(sysconfdir)\""  > $@
