@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = liblib.la
 liblib_la_SOURCES = poll.h glob.h fnmatch_.h regex.h argmatch.c argmatch.h verify.h exit.h xalloc-die.c xstrtoumax.c
-liblib_la_LIBADD = @LTLIBOBJS@ @ALLOCA@
+liblib_la_LIBADD = @LTLIBOBJS@ @LTALLOCA@
 INCLUDES = -I$(top_srcdir)/include
 EXTRA_DIST = fnmatch_loop.c intprops.h stdbool_.h
 BUILT_SOURCES = $(STDBOOL_H)
