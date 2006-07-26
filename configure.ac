@@ -255,26 +255,10 @@ if test "$with_modules" = yes; then
    enable_static=no
    enable_shared=yes
    AC_DEFINE(WITH_MODULES, 1, [build modular lftp])
-   MODULES_LA="liblftp-pty.la liblftp-network.la proto-ftp.la proto-http.la proto-file.la proto-fish.la proto-sftp.la cmd-mirror.la cmd-sleep.la"
-   LFTP_SSL_LDFLAGS=
-   LFTP_SSL_LIBS=
-   LFTP_EXPAT_LIBS=
 else
    enable_static=yes
    enable_shared=no
-   MODULES_LA_STATIC="liblftp-pty.la liblftp-network.la proto-ftp.la proto-http.la proto-file.la proto-fish.la proto-sftp.la cmd-mirror.la cmd-sleep.la"
-   LFTP_OPENSSL_LDFLAGS='$(OPENSSL_LDFLAGS)'
-   LFTP_OPENSSL_LIBS='$(OPENSSL_LIBS)'
-   LFTP_LIBGNUTLS_LIBS='$(LIBGNUTLS_LIBS)'
-   LFTP_EXPAT_LIBS='$(EXPAT_LIBS)'
 fi
-AC_SUBST(MODULES_LA)
-AC_SUBST(MODULES_LA_STATIC)
-AC_SUBST(LFTP_OPENSSL_LDFLAGS)
-AC_SUBST(LFTP_OPENSSL_LIBS)
-AC_SUBST(LFTP_LIBGNUTLS_LDFLAGS)
-AC_SUBST(LFTP_LIBGNUTLS_LIBS)
-AC_SUBST(LFTP_EXPAT_LIBS)
 
 #test -z "$enable_static" && enable_static=no
 AM_PROG_LIBTOOL

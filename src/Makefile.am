@@ -18,8 +18,13 @@ example2_SOURCES = example2.cc
 example_module1_la_SOURCES = example-module1.cc
 example_module1_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
 
+TASK_MODULES = liblftp-pty.la liblftp-network.la proto-ftp.la proto-http.la proto-file.la proto-fish.la proto-sftp.la
+JOB_MODULES = cmd-mirror.la cmd-sleep.la
 if WITH_MODULES
-pkgverlib_LTLIBRARIES = liblftp-pty.la liblftp-network.la proto-ftp.la proto-http.la proto-file.la cmd-mirror.la cmd-sleep.la proto-fish.la proto-sftp.la
+  pkgverlib_LTLIBRARIES = $(TASK_MODULES) $(JOB_MODULES)
+else
+  TASK_MODULES_STATIC = $(TASK_MODULES)
+  JOB_MODULES_STATIC = $(JOB_MODULES)
 endif
 lib_LTLIBRARIES = liblftp-tasks.la liblftp-jobs.la
 
@@ -34,14 +39,6 @@ cmd_sleep_la_SOURCES  = SleepJob.cc SleepJob.h
 liblftp_pty_la_SOURCES     = PtyShell.cc PtyShell.h lftp_pty.c lftp_pty.h
 liblftp_network_la_SOURCES = NetAccess.cc NetAccess.h Resolver.cc Resolver.h\
  lftp_ssl.cc lftp_ssl.h buffer_ssl.cc buffer_ssl.h
-
-if !WITH_MODULES
-add_tasks = $(proto_ftp_la_SOURCES) $(proto_http_la_SOURCES)\
- $(proto_file_la_SOURCES) $(proto_fish_la_SOURCES) $(proto_sftp_la_SOURCES)\
- $(liblftp_pty_la_SOURCES) $(liblftp_network_la_SOURCES)
-add_tasks_libadd = $(EXPAT_LIBS) $(SOCKSLIBS) $(OPENSSL_LIBS) $(LIBGNUTLS_LIBS)
-add_jobs = $(cmd_mirror_la_SOURCES) $(cmd_sleep_la_SOURCES)
-endif
 
 proto_ftp_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
 proto_http_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
@@ -75,10 +72,8 @@ liblftp_tasks_la_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  TimeDate.cc TimeDate.h Timer.cc Timer.h GetFileInfo.cc GetFileInfo.h\
  StringPool.cc StringPool.h DirColors.cc DirColors.h IdNameCache.cc\
  IdNameCache.h PatternSet.cc PatternSet.h LocalDir.cc LocalDir.h\
- mbswidth.c mbswidth.h wcwidth.h\
- $(add_tasks)
-liblftp_tasks_la_LDFLAGS = $(OPENSSL_LDFLAGS)
-liblftp_tasks_la_LIBADD = $(top_builddir)/lib/liblib.la $(LFTP_LIBGNUTLS_LIBS) $(LTLIBINTL) $(LTLIBICONV) $(add_tasks_libadd)
+ mbswidth.c mbswidth.h wcwidth.h
+liblftp_tasks_la_LIBADD = $(TASK_MODULES_STATIC) $(top_builddir)/lib/liblib.la $(LTLIBINTL) $(LTLIBICONV)
 
 liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\
@@ -90,19 +85,18 @@ liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  FindJob.cc FindJob.h FindJobDu.cc FindJobDu.h ChmodJob.cc ChmodJob.h\
  TreatFileJob.cc TreatFileJob.h CopyJob.cc CopyJob.h echoJob.cc echoJob.h\
  OutputJob.cc OutputJob.h FileCopyOutputJob.cc buffer_std.cc buffer_std.h\
- getdate.y getdate.h\
- $(add_jobs)
-liblftp_jobs_la_LIBADD = liblftp-tasks.la
+ getdate.y getdate.h
+liblftp_jobs_la_LIBADD = liblftp-tasks.la $(JOB_MODULES_STATIC)
 
-lftp_LDADD = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC) $(READLINE)
-lftp_DEPENDENCIES = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC) $(READLINE_DEPEND)
+lftp_LDADD = liblftp-jobs.la $(READLINE)
+lftp_DEPENDENCIES = liblftp-jobs.la $(READLINE_DEPEND)
 
-example1_LDADD = liblftp-tasks.la $(MODULES_LA_STATIC)
-example1_DEPENDENCIES = liblftp-tasks.la $(MODULES_LA_STATIC)
-example1_cmd_LDADD = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC)
-example1_cmd_DEPENDENCIES = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC)
-example2_LDADD = liblftp-tasks.la $(MODULES_LA_STATIC)
-example2_DEPENDENCIES = liblftp-tasks.la $(MODULES_LA_STATIC)
+example1_LDADD = liblftp-tasks.la
+example1_DEPENDENCIES = liblftp-tasks.la
+example1_cmd_LDADD = liblftp-jobs.la
+example1_cmd_DEPENDENCIES = liblftp-jobs.la
+example2_LDADD = liblftp-tasks.la
+example2_DEPENDENCIES = liblftp-tasks.la
 
 confpaths.h: Makefile
 	echo "#define SYSCONFDIR \"$(sysconfdir)\""  > $@
@@ -114,17 +108,14 @@ DISTCLEANFILES = confpaths.h *.la
 
 INCLUDES = -I$(top_srcdir)/include $(OPENSSL_CPPFLAGS) $(LIBGNUTLS_CFLAGS)
 
-# These files can be linked to ../include by configure, but not always.
-#OMIT_DEPENDENCIES = readline.h keymaps.h chardefs.h tilde.h rltypedefs.h\
-#	history.h libintl.hregex.h glob.h fnmatch.h poll.h rlstdc.h
-
 lftp.o commands.lo module.lo: confpaths.h
 
 # libtool does not strip modules, do it here.
 install-data-hook:
-	@-if test "$(MODULES_LA)"; then \
-	    rm -f $(DESTDIR)$(pkgverlibdir)/*.la; \
-	    case " $(LDFLAGS) " in *" -s "*) \
-	       echo $(STRIP) $(DESTDIR)$(pkgverlibdir)/*.so; \
-	       $(STRIP) $(DESTDIR)$(pkgverlibdir)/*.so;; \
-	    esac; else rmdir $(DESTDIR)$(pkgverlibdir) 2>/dev/null || true; fi
+if WITH_MODULES
+	@rm -f $(DESTDIR)$(pkgverlibdir)/*.la; \
+	case " $(LDFLAGS) " in *" -s "*) \
+		echo $(STRIP) $(DESTDIR)$(pkgverlibdir)/*.so; \
+		$(STRIP) $(DESTDIR)$(pkgverlibdir)/*.so;; \
+	esac; else rmdir $(DESTDIR)$(pkgverlibdir) 2>/dev/null || true;
+endif
