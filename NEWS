@@ -2,7 +2,10 @@ Version 3.5.2 - 2006-07-??
 
 * strip CRs from ls output, as before.
 * updated help for pget.
+* fixed mirror -c and get -c hang.
+* fixed mirror timestamps for hftp and http.
 * fixed use of PROPFIND when http:use-propfind is no.
+* updated gnulib sources (Nix <nix@esperi.org.uk>).
 
 Version 3.5.1 - 2006-07-05
 
