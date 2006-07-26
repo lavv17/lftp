@@ -11,6 +11,7 @@ char *program_name;
 int main(int argc,char **argv)
 {
    program_name=argv[0];
+
    FileAccess *f=FileAccess::New("ftp","ftp.yar.ru");
    if(!f)
    {

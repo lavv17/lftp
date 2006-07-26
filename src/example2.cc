@@ -3,8 +3,12 @@
 #include "FileAccess.h"
 #include "log.h"
 
-int main()
+char *program_name;
+
+int main(int argc,char **argv)
 {
+   program_name=argv[0];
+
    Log::global->SetOutput(2,false);
    Log::global->SetLevel(5);
    Log::global->Enable();
