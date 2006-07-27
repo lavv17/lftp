@@ -1,3 +1,9 @@
+2006-07-27  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileSet.cc, FileSet.h: optimize FileSet::Merge.
+	* NetAccess.cc: make sure FileSet is properly sorted after tilde
+	  transformation.
+
 2006-07-26  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Http.cc: change use_propfind_now in Reconfig.
