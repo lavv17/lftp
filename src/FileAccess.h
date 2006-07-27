@@ -23,8 +23,6 @@
 #ifndef FILEACCESS_H
 #define FILEACCESS_H
 
-#include "SMTask.h"
-#include "trio.h"
 #include <time.h>
 #include <sys/types.h>
 
@@ -38,6 +36,8 @@
 # include <poll.h>
 #endif
 
+#include "SMTask.h"
+#include "trio.h"
 #include "xmalloc.h"
 #include "ResMgr.h"
 #include "FileSet.h"
@@ -445,14 +445,7 @@ public:
    void SetExclude(const char *p,PatternSet *e);
 
    // caller has to delete the resulting FileSet itself.
-   FileSet *GetResult()
-      {
-	 FileSet *tmp=result;
-      	 result=0;
-	 return tmp;
-	 // miss := (assign and return old value) :(
-      	 // return result:=0;
-      }
+   FileSet *GetResult() { return replace_value(result,(FileSet*)0); }
 
    void Need(unsigned mask) { need|=mask; }
    void NoNeed(unsigned mask) { need&=~mask; }
