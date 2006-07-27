@@ -92,7 +92,7 @@ liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
 liblftp_jobs_la_LIBADD = $(JOB_MODULES_STATIC) liblftp-tasks.la
 
 lftp_LDADD = liblftp-jobs.la $(READLINE)
-lftp_DEPENDENCIES = $(READLINE_DEPEND)
+lftp_DEPENDENCIES = liblftp-jobs.la $(READLINE_DEPEND)
 
 example1_LDADD = liblftp-tasks.la
 example1_cmd_LDADD = liblftp-jobs.la
