@@ -133,6 +133,8 @@ private:
    void	 Sub(int);
    bool sorted;
 
+   void add_before(int pos,FileInfo *fi);
+
 public:
    FileSet()
    {

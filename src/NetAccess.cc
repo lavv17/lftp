@@ -814,6 +814,7 @@ do_again:
       FileSet *set=Parse(b,len);
       if(set)
       {
+	 bool need_resort=false;
 	 set->rewind();
 	 for(file=set->curr(); file!=0; file=set->next())
 	 {
@@ -824,8 +825,11 @@ do_again:
 	       file->name=(char*)xrealloc(file->name,len+3);
 	       memmove(file->name+2,file->name,len+1);
 	       memcpy(file->name,"./",2);
+	       need_resort=true;
 	    }
 	 }
+	 if(need_resort && !result)
+	    result=new FileSet; // Merge will sort the names
 	 if(result)
 	 {
 	    result->Merge(set);

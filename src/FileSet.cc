@@ -96,6 +96,17 @@ void FileInfo::SetGroup(const char *g)
    defined|=GROUP;
 }
 
+void FileSet::add_before(int pos,FileInfo *fi)
+{
+   if(fnum==allocated)
+   {
+      allocated=allocated?allocated*2:16;
+      files=files_sort=(FileInfo**)xrealloc(files,allocated*sizeof(*files));
+   }
+   memmove(files+pos+1, files+pos, sizeof(*files)*(fnum-pos));
+   files[pos]=fi;
+   fnum++;
+}
 void FileSet::Add(FileInfo *fi)
 {
    assert(!sorted);
@@ -111,14 +122,7 @@ void FileSet::Add(FileInfo *fi)
       delete fi;
       return;
    }
-   if(fnum==allocated)
-   {
-      allocated=allocated?allocated*2:16;
-      files=files_sort=(FileInfo**)xrealloc(files,allocated*sizeof(*files));
-   }
-   memmove(files+pos+1, files+pos, sizeof(*files)*(fnum-pos));
-   files[pos]=fi;
-   fnum++;
+   add_before(pos,fi);
 }
 
 void FileSet::Sub(int i)
@@ -134,21 +138,14 @@ void FileSet::Sub(int i)
 
 void FileSet::Merge(const FileSet *set)
 {
-   int i,j;
-   for(i=0; i<set->fnum; i++)
+   for(int i=0; i<set->fnum; i++)
    {
-      for(j=0; j<fnum; j++)
-      {
-      	 if(!strcmp(files[j]->name,set->files[i]->name))
-	 {
-	    files[j]->Merge(*(set->files[i]));
-	    break;
-	 }
-      }
-      if(j==fnum)
-      {
-	 Add(new FileInfo(*set->files[i]));
-      }
+      FileInfo *fi=set->files[i];
+      int pos = FindGEIndByName(fi->name);
+      if(pos < fnum && !strcmp(files[pos]->name,fi->name))
+	 files[pos]->Merge(*fi);
+      else
+	 add_before(pos,new FileInfo(*fi));
    }
 }
 
