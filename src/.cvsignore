@@ -8,3 +8,6 @@ lftp
 .le.ini
 *.lo
 *.la
+example1
+example2
+example1-cmd
