@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.2.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2006-07-27 12:00+0400\n"
+"POT-Creation-Date: 2006-07-28 18:18+0400\n"
 "PO-Revision-Date: 2005-07-30 23:51+0800\n"
 "Last-Translator: Abel Cheung <abelcheung@gmail.com>\n"
 "Language-Team: traditional Chinese <community@linuxhall.org>\n"
@@ -2055,7 +2055,7 @@ msgstr "ftp:ssl-auth 必須為 SSL、TLS、TLS-P、TLS-C 其中一個"
 msgid "must be one of: C, S, E, P, or empty"
 msgstr "必須是 C, S, E, P 或者空白。"
 
-#: src/HttpDir.cc:1400 src/FtpDirList.cc:141 src/Fish.cc:1314 src/SFtp.cc:2157
+#: src/HttpDir.cc:1404 src/FtpDirList.cc:141 src/Fish.cc:1314 src/SFtp.cc:2157
 #: src/SFtp.cc:2240
 #, c-format
 msgid "Getting file list (%lld) [%s]"

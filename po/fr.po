@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2006-07-27 12:00+0400\n"
+"POT-Creation-Date: 2006-07-28 18:18+0400\n"
 "PO-Revision-Date: 2005-11-08 04:30+0100\n"
 "Last-Translator: Nicolas Noble <nicolas@nobis-crew.org>\n"
 "Language-Team: French <fr@li.org>\n"
@@ -2105,7 +2105,7 @@ msgstr "ftp:ssl-auth doit être un de la liste: SSL, TLS, TLS-P, TLS-C"
 msgid "must be one of: C, S, E, P, or empty"
 msgstr "doit être C, S, E, P, ou vide"
 
-#: src/HttpDir.cc:1400 src/FtpDirList.cc:141 src/Fish.cc:1314 src/SFtp.cc:2157
+#: src/HttpDir.cc:1404 src/FtpDirList.cc:141 src/Fish.cc:1314 src/SFtp.cc:2157
 #: src/SFtp.cc:2240
 #, c-format
 msgid "Getting file list (%lld) [%s]"
