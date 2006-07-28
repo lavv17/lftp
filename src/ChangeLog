@@ -1,3 +1,7 @@
+2006-07-28  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* HttpDir.cc: fixed proto comparision when using hftp with ftp url scheme.
+
 2006-07-27  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileSet.cc, FileSet.h: optimize FileSet::Merge.

@@ -741,8 +741,12 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
    if(tag_scan->tag==0)
       return tag_len;	// not interesting
 
-   bool hftp=(prefix && (!xstrcmp(prefix->proto,"hftp")
-		      || !xstrcmp(prefix->proto,"ftp")));
+   const char *prefix_proto=0;
+   if(prefix)
+      prefix_proto=prefix->proto;
+   if(!xstrcmp(prefix_proto,"hftp"))
+      prefix_proto++;
+   bool hftp=!xstrcmp(prefix_proto,"ftp");
 
    // ok, found the target.
 
@@ -770,7 +774,7 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
       {
 	 xfree(*base_href);
 	 *base_href=xstrdup(link_target,+2);
-	 Log::global->Format(10,"Found base href=%s\n",*base_href);
+	 Log::global->Format(10,"Using base href=%s\n",*base_href);
       }
       return tag_len;
    }
@@ -832,7 +836,7 @@ parse_url_again:
       if(!prefix)
 	 return tag_len;	// no way
 
-      if(xstrcmp(link_url.proto,prefix->proto+hftp)
+      if(xstrcmp(link_url.proto,prefix_proto)
       || xstrcmp(link_url.host,prefix->host)
       || xstrcmp(link_url.user,prefix->user)
       || xstrcmp(link_url.port,prefix->port))
