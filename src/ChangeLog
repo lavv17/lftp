@@ -1,3 +1,7 @@
+2006-08-01  Pascal Bleser <pascal.bleser@skynet.be>
+
+	* Makefile.am: fixed install with modules.
+
 2006-07-28  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* HttpDir.cc: fixed proto comparision when using hftp with ftp url scheme.

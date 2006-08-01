@@ -113,9 +113,10 @@ lftp.o commands.lo module.lo: confpaths.h
 # libtool does not strip modules, do it here.
 install-data-hook:
 if WITH_MODULES
-	@rm -f $(DESTDIR)$(pkgverlibdir)/*.la; \
+	rm -f $(DESTDIR)$(pkgverlibdir)/*.la; \
 	case " $(LDFLAGS) " in *" -s "*) \
-		echo $(STRIP) $(DESTDIR)$(pkgverlibdir)/*.so; \
 		$(STRIP) $(DESTDIR)$(pkgverlibdir)/*.so;; \
-	esac; else rmdir $(DESTDIR)$(pkgverlibdir) 2>/dev/null || true;
+	esac
+else
+	-rmdir $(DESTDIR)$(pkgverlibdir) 2>/dev/null || :
 endif
