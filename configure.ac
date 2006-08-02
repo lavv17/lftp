@@ -22,12 +22,12 @@ AC_PROG_CXX
 AC_SYS_LARGEFILE
 
 AC_ARG_WITH(debug,
-[  --with-debug            enable debug info],
+   AS_HELP_STRING([--with-debug], [enable debug info]),
 [   with_debug=$withval;   ],
 [   with_debug=no;	   ])
 
 AC_ARG_WITH(profiling,
-[  --with-profiling        enable profiling],
+   AS_HELP_STRING([--with-profiling], [enable profiling]),
 [   with_profiling=$withval;   ],
 [   with_profiling=no;	   ])
 
@@ -191,21 +191,21 @@ if test x$gt_cv_func_gettext_libintl = xyes; then
 fi
 
 AC_ARG_WITH(pager,
-[  --with-pager=/path      use specified pager by default],
+   AS_HELP_STRING([--with-pager=/path], [use specified pager by default]),
 [  with_pager=$withval;	   ],
 [  with_pager="exec more"; ])
 AC_DEFINE_UNQUOTED([DEFAULT_PAGER], "$with_pager", [Default pager command])
 
 AC_ARG_WITH(socks,
-[  --with-socks[=/path]    build with SOCKSv4 library],
+   AS_HELP_STRING([--with-socks[[=/path]]], [build with SOCKSv4 library]),
 [  with_socks=$withval;	],
 [  with_socks=no;	])
 AC_ARG_WITH(socks5,
-[  --with-socks5[=/path]   build with SOCKSv5 library],
+   AS_HELP_STRING([--with-socks5[[=/path]]], [build with SOCKSv5 library]),
 [  with_socks5=$withval;],
 [  with_socks5=no;	])
 AC_ARG_WITH(socksdante,
-[  --with-socksdante[=/path]  build with SOCKS-Dante library],
+   AS_HELP_STRING([--with-socksdante[[=/path]]], [build with SOCKS-Dante library]),
 [  with_socksdante=$withval;],
 [  with_socksdante=no;	])
 
@@ -258,7 +258,7 @@ if test -n "$SOCKSLIBS"; then
 fi
 
 AC_ARG_WITH(modules,
-[  --with-modules          build modular lftp (protocols become dll's)],
+   AS_HELP_STRING([--with-modules], [build modular lftp (protocols become dll's)]),
 [  with_modules=$withval;  ],
 [  with_modules=no;	   ])
 
@@ -291,7 +291,7 @@ AC_CHECK_DECLS([res_search],,, [
      #include <resolv.h>
 ])
 
-AC_ARG_WITH(libresolv, [  --without-libresolv     don't use libresolv],
+AC_ARG_WITH(libresolv, AS_HELP_STRING([--without-libresolv], [don't use libresolv]),
       [with_libresolv=$withval], [with_libresolv=yes])
 if test x$with_libresolv = xyes; then
    AC_SEARCH_LIBS(hstrerror, resolv)
@@ -301,10 +301,11 @@ lftp_TERMINFO
 
 READLINE_CHECK
 
-AC_ARG_WITH(gnutls, [  --without-gnutls              don't use GNUTLS library],
+AC_ARG_WITH(gnutls, AS_HELP_STRING([--without-gnutls], [don't use GNUTLS library]),
       [with_gnutls=$withval], [with_gnutls=yes])
-AC_ARG_WITH(openssl, [  --with-openssl[=/path]          use OpenSSL [at /path]
-  --without-openssl             don't use OpenSSL (default)],
+AC_ARG_WITH(openssl,
+AS_HELP_STRING([--with-openssl[[=/path]]], [use OpenSSL [at /path]])
+AS_HELP_STRING([--without-openssl], [don't use OpenSSL (default)]),
       [with_openssl=$withval], [with_openssl=no])
 case "$with_openssl" in
 	yes)		with_gnutls=no;;

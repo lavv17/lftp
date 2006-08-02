@@ -1,3 +1,7 @@
+2006-08-03  lav
+
+	* configure.ac: use AS_HELP_STRING everywhere.
+
 2006-08-02  Daniel Black <dragonheart@gentoo.org>
 
 	* configure.ac: add --enable-packager-mode to disable *FLAGS defaults.
