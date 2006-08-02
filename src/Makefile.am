@@ -77,7 +77,7 @@ liblftp_tasks_la_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  StringPool.cc StringPool.h DirColors.cc DirColors.h IdNameCache.cc\
  IdNameCache.h PatternSet.cc PatternSet.h LocalDir.cc LocalDir.h\
  mbswidth.c mbswidth.h wcwidth.h
-liblftp_tasks_la_LIBADD = $(TASK_MODULES_STATIC) $(top_builddir)/lib/liblib.la $(LTLIBINTL) $(LTLIBICONV)
+liblftp_tasks_la_LIBADD = $(TASK_MODULES_STATIC) $(top_builddir)/lib/liblib.la $(SOCKSLIBS) $(LTLIBINTL) $(LTLIBICONV)
 
 liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\

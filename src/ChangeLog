@@ -1,3 +1,7 @@
+2006-08-02  Daniel Black <dragonheart@gentoo.org>
+
+	* Makefile.am: fix linking with modules and socks.
+
 2006-08-01  Pascal Bleser <pascal.bleser@skynet.be>
 
 	* Makefile.am: fixed install with modules.
