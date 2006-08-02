@@ -1311,19 +1311,21 @@ void CmdExec::FeedArgV(const ArgV *args,int start)
    xfree(cmd);
 }
 
-bool CmdExec::SameQueueParameters(CmdExec *scan)
+bool CmdExec::SameQueueParameters(CmdExec *scan,const char *this_url)
 {
-   return !strcmp(this->session->GetConnectURL(FA::NO_PATH),
-	          scan->session->GetConnectURL(FA::NO_PATH))
+   return !strcmp(this_url,scan->session->GetConnectURL(FA::NO_PATH))
       && !xstrcmp(this->slot,scan->slot);
 }
 
 /* return the CmdExec containing a queue feeder; create if necessary */
 CmdExec  *CmdExec::GetQueue(bool create)
 {
+   const char *this_url=session->GetConnectURL(FA::NO_PATH);
+   // future GetConnectURL overwrite the static buffer, save it.
+   this_url=alloca_strdup(this_url);
    for(CmdExec *scan=chain; scan; scan=scan->next)
    {
-      if(scan->queue_feeder && SameQueueParameters(scan))
+      if(scan->queue_feeder && SameQueueParameters(scan,this_url))
 	 return scan;
    }
    if(!create)

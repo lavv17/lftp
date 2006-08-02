@@ -344,6 +344,7 @@ void  Job::ListDoneJobs()
 	 fprintf(f,_("[%d] Done (%s)"),scan->jobno,
 	    scan->cmdline?scan->cmdline:"?");
 	 const char *this_url=this->GetConnectURL();
+	 this_url=alloca_strdup(this_url); // save it from overwriting.
 	 const char *that_url=scan->GetConnectURL();
 	 if(this_url && that_url && strcmp(this_url,that_url))
 	    fprintf(f," (wd: %s)",that_url);

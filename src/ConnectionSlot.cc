@@ -59,7 +59,7 @@ void ConnectionSlot::Set(const char *n,FileAccess *fa)
       lftp_slots.AddPair(new SlotValue(n,fa));
       return;
    }
-   s->SetValue(fa->GetConnectURL());
+   s->SetValue(url);
    SessionPool::Reuse(s->session);
    s->session=fa->Clone();
 }

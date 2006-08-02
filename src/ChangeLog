@@ -1,6 +1,8 @@
 2006-08-02  Daniel Black <dragonheart@gentoo.org>
 
 	* Makefile.am: fix linking with modules and socks.
+	* CmdExec.cc, CmdExec.h, ConnectionSlot.cc, Job.cc: save url returned
+	  from GetConnectURL from overwriting by next GetConnectURL call.
 
 2006-08-01  Pascal Bleser <pascal.bleser@skynet.be>
 
