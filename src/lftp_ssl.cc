@@ -311,7 +311,8 @@ lftp_ssl_gnutls::~lftp_ssl_gnutls()
    if(handshake_done)
       gnutls_bye(session,GNUTLS_SHUT_RDWR);  // FIXME - E_AGAIN
 #endif
-   gnutls_certificate_free_credentials(cred);
+   if(cred)
+      gnutls_certificate_free_credentials(cred);
    gnutls_deinit(session);
 }
 
