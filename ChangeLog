@@ -1,3 +1,7 @@
+2006-08-02  Daniel Black <dragonheart@gentoo.org>
+
+	* configure.ac: add --enable-packager-mode to disable *FLAGS defaults.
+
 2006-07-22  Nix  <nix@esperi.org.uk>
 
         * configure.ac: Synch with gnulib-20060722.

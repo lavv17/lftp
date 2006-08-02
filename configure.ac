@@ -31,6 +31,18 @@ AC_ARG_WITH(profiling,
 [   with_profiling=$withval;   ],
 [   with_profiling=no;	   ])
 
+AC_ARG_ENABLE([packager-mode],
+              AS_HELP_STRING([--enable-packager-mode],
+                             [Change configuration behavior
+                              to ease packaging]),
+              [if test x"${enableval}" = xyes
+               then
+				   DEFAULT_CXX=no
+				   DEFAULT_CFLAGS=no
+				   DEFAULT_CXXFLAGS=no
+				   DEFAULT_LDFLAGS=no
+               fi])
+
 if test x$with_debug = xno; then
    if test x$DEFAULT_CFLAGS = xyes; then
       CFLAGS="`echo $CFLAGS | sed 's/-g//'`"
