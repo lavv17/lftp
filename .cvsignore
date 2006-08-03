@@ -11,6 +11,7 @@ ltcf-c.sh
 ltcf-cxx.sh
 Makefile.in
 configure
+configure.lineno
 junk
 ABOUT-NLS
 intl
