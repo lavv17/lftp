@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2006-07-28 18:18+0400\n"
+"POT-Creation-Date: 2006-08-04 14:25+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -106,7 +106,7 @@ msgstr ""
 msgid "File cannot be accessed"
 msgstr ""
 
-#: src/FileAccess.cc:240 src/ftpclass.cc:3987 src/ftpclass.cc:3996
+#: src/FileAccess.cc:240 src/ftpclass.cc:3992 src/ftpclass.cc:4001
 #: src/Fish.cc:1133 src/SFtp.cc:1319
 msgid "Not connected"
 msgstr ""
@@ -335,7 +335,7 @@ msgstr ""
 msgid "invalid pair of numbers"
 msgstr ""
 
-#: src/Resolver.cc:186 src/Resolver.cc:228 src/ftpclass.cc:3992
+#: src/Resolver.cc:186 src/Resolver.cc:228 src/ftpclass.cc:3997
 #: src/Http.cc:1885
 msgid "Resolving host address..."
 msgstr ""
@@ -1487,7 +1487,7 @@ msgstr ""
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr ""
 
-#: src/ftpclass.cc:2134 src/ftpclass.cc:3818
+#: src/ftpclass.cc:2134 src/ftpclass.cc:3823
 msgid "Switching passive mode off"
 msgstr ""
 
@@ -1495,7 +1495,7 @@ msgstr ""
 msgid "Data connection established"
 msgstr ""
 
-#: src/ftpclass.cc:2403 src/ftpclass.cc:3940
+#: src/ftpclass.cc:2403 src/ftpclass.cc:3945
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 
@@ -1516,93 +1516,93 @@ msgstr ""
 msgid "Closing aborted data socket"
 msgstr ""
 
-#: src/ftpclass.cc:3652
+#: src/ftpclass.cc:3657
 msgid "saw file size in response"
 msgstr ""
 
-#: src/ftpclass.cc:3667 src/Fish.cc:752 src/SFtp.cc:1091
+#: src/ftpclass.cc:3672 src/Fish.cc:752 src/SFtp.cc:1091
 msgid "extra server response"
 msgstr ""
 
-#: src/ftpclass.cc:3681 src/ftpclass.cc:3704
+#: src/ftpclass.cc:3686 src/ftpclass.cc:3709
 msgid "Turning on sync-mode"
 msgstr ""
 
-#: src/ftpclass.cc:3838
+#: src/ftpclass.cc:3843
 msgid "Switching passive mode on"
 msgstr ""
 
-#: src/ftpclass.cc:3973
+#: src/ftpclass.cc:3978
 msgid "FEAT negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:3980
+#: src/ftpclass.cc:3985
 msgid "Sending commands..."
 msgstr ""
 
-#: src/ftpclass.cc:3982 src/ftpclass.cc:4010 src/ftpclass.cc:4023
+#: src/ftpclass.cc:3987 src/ftpclass.cc:4015 src/ftpclass.cc:4028
 #: src/Http.cc:1900 src/Fish.cc:1142 src/SFtp.cc:1329
 msgid "Waiting for response..."
 msgstr ""
 
-#: src/ftpclass.cc:3984
+#: src/ftpclass.cc:3989
 msgid "Delaying before retry"
 msgstr ""
 
-#: src/ftpclass.cc:3985 src/Http.cc:1893
+#: src/ftpclass.cc:3990 src/Http.cc:1893
 msgid "Connection idle"
 msgstr ""
 
-#: src/ftpclass.cc:3999 src/Http.cc:1891 src/Http.cc:1898 src/Fish.cc:1138
+#: src/ftpclass.cc:4004 src/Http.cc:1891 src/Http.cc:1898 src/Fish.cc:1138
 #: src/SFtp.cc:1325
 msgid "Connecting..."
 msgstr ""
 
-#: src/ftpclass.cc:4003
+#: src/ftpclass.cc:4008
 msgid "TLS negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:4005 src/Fish.cc:1140 src/SFtp.cc:1327
+#: src/ftpclass.cc:4010 src/Fish.cc:1140 src/SFtp.cc:1327
 msgid "Connected"
 msgstr ""
 
-#: src/ftpclass.cc:4007
+#: src/ftpclass.cc:4012
 msgid "Logging in..."
 msgstr ""
 
-#: src/ftpclass.cc:4011
+#: src/ftpclass.cc:4016
 msgid "Making data connection..."
 msgstr ""
 
-#: src/ftpclass.cc:4014
+#: src/ftpclass.cc:4019
 msgid "Changing remote directory..."
 msgstr ""
 
-#: src/ftpclass.cc:4020
+#: src/ftpclass.cc:4025
 msgid "Waiting for other copy peer..."
 msgstr ""
 
-#: src/ftpclass.cc:4022 src/ftpclass.cc:4043
+#: src/ftpclass.cc:4027 src/ftpclass.cc:4048
 msgid "Waiting for transfer to complete"
 msgstr ""
 
-#: src/ftpclass.cc:4025
+#: src/ftpclass.cc:4030
 msgid "Waiting for data connection..."
 msgstr ""
 
-#: src/ftpclass.cc:4031
+#: src/ftpclass.cc:4036
 msgid "Sending data/TLS"
 msgstr ""
 
-#: src/ftpclass.cc:4033
+#: src/ftpclass.cc:4038
 msgid "Receiving data/TLS"
 msgstr ""
 
-#: src/ftpclass.cc:4039 src/Http.cc:1896 src/Fish.cc:1146 src/SFtp.cc:1333
+#: src/ftpclass.cc:4044 src/Http.cc:1896 src/Fish.cc:1146 src/SFtp.cc:1333
 msgid "Sending data"
 msgstr ""
 
-#: src/ftpclass.cc:4041 src/Http.cc:1903 src/Fish.cc:1144 src/SFtp.cc:1331
+#: src/ftpclass.cc:4046 src/Http.cc:1903 src/Fish.cc:1144 src/SFtp.cc:1331
 msgid "Receiving data"
 msgstr ""
 
