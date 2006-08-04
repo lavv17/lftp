@@ -107,15 +107,19 @@ void Timer::init()
    next_all=chain_all;
    chain_all=this;
 }
-Timer::~Timer()
+void Timer::remove_from_running_list()
 {
-   infty_count-=IsInfty();
    if(next_running)
       next_running->prev_running=prev_running;
    if(prev_running)
       prev_running->next_running=next_running;
    if(chain_running==this)
       chain_running=next_running;
+}
+Timer::~Timer()
+{
+   remove_from_running_list();
+   infty_count-=IsInfty();
    Timer **scan=&chain_all;
    while(*scan!=this)
       scan=&scan[0]->next_all;
@@ -159,15 +163,16 @@ void Timer::re_sort()
       // find new location in the list.
       Timer *new_next=next_running;
       Timer *new_prev=prev_running;
+
       if(prev_running==0 && next_running==0 && chain_running!=this)
-	 new_next=chain_running;
+	 new_next=chain_running; // it was not in the running list.
       else if((!prev_running || prev_running->stop<stop)
 	   && (!next_running || stop<next_running->stop))
-	 return;
-      if(next_running)
-	 next_running->prev_running=prev_running;
-      if(prev_running)
-	 prev_running->next_running=next_running;
+	 return;  // it was already properly sorted.
+
+      remove_from_running_list();
+
+      // find new position in the list.
       while(new_next && new_next->stop<stop)
       {
 	 new_prev=new_next;
@@ -178,6 +183,8 @@ void Timer::re_sort()
 	 new_next=new_prev;
 	 new_prev=new_prev->prev_running;
       }
+
+      // re-insert it.
       next_running=new_next;
       prev_running=new_prev;
       if(new_next)

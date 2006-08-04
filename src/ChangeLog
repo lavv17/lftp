@@ -1,3 +1,8 @@
+2006-08-04  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: disable ssl on errors if not forced.
+	* Timer.cc: fix timer chain head corruption.
+
 2006-08-02  Daniel Black <dragonheart@gentoo.org>
 
 	* Makefile.am: fix linking with modules and socks.

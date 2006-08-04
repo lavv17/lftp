@@ -38,6 +38,7 @@ class Timer
    static Timer *chain_running;
    Timer *next_running;
    Timer *prev_running;
+   void remove_from_running_list();
    void re_sort();
    void set_last_setting(const TimeInterval &);
    void init();
