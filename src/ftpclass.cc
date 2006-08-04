@@ -3056,7 +3056,12 @@ int  Ftp::FlushSendQueue(bool all)
    {
       DebugPrint("**** ",conn->control_send->ErrorText(),0);
       if(conn->control_send->ErrorFatal())
-	 SetError(FATAL,conn->control_send->ErrorText());
+      {
+	 if(conn->ssl_is_activated() && !ftps && !QueryBool("ssl-force",hostname))
+	    ResMgr::Set("ftp:ssl-allow",hostname,"no");
+	 else
+	    SetError(FATAL,conn->control_send->ErrorText());
+      }
       DisconnectNow();
       return MOVED;
    }
