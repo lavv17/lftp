@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "05 Jul 2006"
+.TH lftp 1 "07 Aug 2006"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 3.5.0.
+This man page documents lftp version 3.5.4.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -1305,6 +1305,10 @@ You can override it by --no-dereference option. Default if false.
 .TP
 .BR mirror:exclude-regex " (regex)"
 specifies default exclusion pattern. You can override it by --include option.
+.TP
+.BR mirror:include-regex " (regex)"
+specifies default inclusion pattern. It is used just after mirror:exclude-regex
+is applied. It is never used if mirror:exclude-regex is empty.
 .TP
 .BR mirror:order " (list of patterns)"
 specifies order of file transfers. E.g. setting this to "*.sfv *.sum" makes mirror to

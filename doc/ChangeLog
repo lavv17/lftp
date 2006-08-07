@@ -1,3 +1,7 @@
+2006-08-07	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document mirror:include-regex option.
+
 2006-07-05	Alexander V. Lukyanov <lav@yars.free.net>
 
         * lftp.1: change openssl to an ssl/tls library; note that GNU TLS
