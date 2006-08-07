@@ -2168,6 +2168,8 @@ int   Ftp::Do()
       if(conn->prot=='P')
       {
 	 lftp_ssl *ssl=new lftp_ssl(conn->data_sock,lftp_ssl::CLIENT,hostname);
+	 if(QueryBool("ssl-data-use-keys",hostname) || !conn->control_ssl)
+	    ssl->load_keys();
 	 // share session id between control and data connections.
 	 if(conn->control_ssl)
 	    ssl->copy_sid(conn->control_ssl);

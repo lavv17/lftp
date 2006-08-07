@@ -4,6 +4,8 @@
 	  FindJobDu.cc, FindJobDu.h: update for new human_readable; use enum
 	  for long options.
 	* MirrorJob.cc: use enum for long options.
+	* ftpclass.cc: load ssl keys for data connection.
+	* resource.cc: new setting ftp:ssl-data-use-keys.
 
 2006-08-04  Alexander V. Lukyanov <lav@yars.free.net>
 
