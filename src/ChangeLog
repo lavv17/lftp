@@ -3,6 +3,7 @@
 	* FileSetOutput.cc, FileSetOutput.h, commands.cc,
 	  FindJobDu.cc, FindJobDu.h: update for new human_readable; use enum
 	  for long options.
+	* MirrorJob.cc: use enum for long options.
 
 2006-08-04  Alexander V. Lukyanov <lav@yars.free.net>
 

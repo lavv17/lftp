@@ -1261,11 +1261,31 @@ CMD(mirror)
 {
 #define args (parent->args)
 #define eprintf parent->eprintf
-   static struct option mirror_opts[]=
+   enum {
+      OPT_ALLOW_CHOWN,
+      OPT_DELETE_FIRST,
+      OPT_IGNORE_SIZE,
+      OPT_IGNORE_TIME,
+      OPT_LOOP,
+      OPT_MAX_ERRORS,
+      OPT_NO_DEREFERENCE,
+      OPT_NO_SYMLINKS,
+      OPT_NO_UMASK,
+      OPT_OLDER_THAN,
+      OPT_ONLY_MISSING,
+      OPT_PERMS,
+      OPT_REMOVE_SOURCE_FILES,
+      OPT_SCRIPT,
+      OPT_SCRIPT_ONLY,
+      OPT_SIZE_RANGE,
+      OPT_USE_CACHE,
+      OPT_USE_PGET_N,
+   };
+   static const struct option mirror_opts[]=
    {
       {"delete",no_argument,0,'e'},
       {"allow-suid",no_argument,0,'s'},
-      {"allow-chown",no_argument,0,256+'a'},
+      {"allow-chown",no_argument,0,OPT_ALLOW_CHOWN},
       {"include",required_argument,0,'i'},
       {"exclude",required_argument,0,'x'},
       {"include-glob",required_argument,0,'I'},
@@ -1273,31 +1293,31 @@ CMD(mirror)
       {"only-newer",no_argument,0,'n'},
       {"no-recursion",no_argument,0,'r'},
       {"no-perms",no_argument,0,'p'},
-      {"perms",no_argument,0,'p'+512},
-      {"no-umask",no_argument,0,256+'u'},
+      {"perms",no_argument,0,OPT_PERMS},
+      {"no-umask",no_argument,0,OPT_NO_UMASK},
       {"continue",no_argument,0,'c'},
       {"reverse",no_argument,0,'R'},
       {"verbose",optional_argument,0,'v'},
       {"newer-than",required_argument,0,'N'},
-      {"older-than",required_argument,0,256+'O'},
-      {"size-range",required_argument,0,512+'S'},
+      {"older-than",required_argument,0,OPT_OLDER_THAN},
+      {"size-range",required_argument,0,OPT_SIZE_RANGE},
       {"dereference",no_argument,0,'L'},
-      {"no-dereference",no_argument,0,'L'+512},
-      {"use-cache",no_argument,0,256+'C'},
-      {"Remove-source-files",no_argument,0,256+'R'},
+      {"no-dereference",no_argument,0,OPT_NO_DEREFERENCE},
+      {"use-cache",no_argument,0,OPT_USE_CACHE},
+      {"Remove-source-files",no_argument,0,OPT_REMOVE_SOURCE_FILES},
       {"parallel",optional_argument,0,'P'},
-      {"ignore-time",no_argument,0,256+'i'},
-      {"ignore-size",no_argument,0,257+'i'},
-      {"only-missing",no_argument,0,256+'m'},
-      {"log",required_argument,0,256+'s'},
-      {"script",    required_argument,0,256+'S'},
-      {"just-print",optional_argument,0,256+'S'},
-      {"dry-run",   optional_argument,0,256+'S'},
-      {"delete-first",no_argument,0,256+'e'},
-      {"use-pget-n",optional_argument,0,256+'p'},
-      {"no-symlinks",no_argument,0,256+'y'},
-      {"loop",no_argument,0,256+'l'},
-      {"max-errors",required_argument,0,256+'E'},
+      {"ignore-time",no_argument,0,OPT_IGNORE_TIME},
+      {"ignore-size",no_argument,0,OPT_IGNORE_SIZE},
+      {"only-missing",no_argument,0,OPT_ONLY_MISSING},
+      {"log",required_argument,0,OPT_SCRIPT},
+      {"script",    required_argument,0,OPT_SCRIPT_ONLY},
+      {"just-print",optional_argument,0,OPT_SCRIPT_ONLY},
+      {"dry-run",   optional_argument,0,OPT_SCRIPT_ONLY},
+      {"delete-first",no_argument,0,OPT_DELETE_FIRST},
+      {"use-pget-n",optional_argument,0,OPT_USE_PGET_N},
+      {"no-symlinks",no_argument,0,OPT_NO_SYMLINKS},
+      {"loop",no_argument,0,OPT_LOOP},
+      {"max-errors",required_argument,0,OPT_MAX_ERRORS},
       {0}
    };
 
@@ -1340,7 +1360,7 @@ CMD(mirror)
       case('s'):
 	 flags|=MirrorJob::ALLOW_SUID;
 	 break;
-      case(256+'a'):
+      case(OPT_ALLOW_CHOWN):
 	 flags|=MirrorJob::ALLOW_CHOWN;
 	 break;
       case('a'):
@@ -1355,7 +1375,7 @@ CMD(mirror)
       case('p'):
 	 flags|=MirrorJob::NO_PERMS;
 	 break;
-      case('p'+512):
+      case(OPT_PERMS):
 	 flags&=~MirrorJob::NO_PERMS;
 	 break;
       case('c'):
@@ -1408,7 +1428,7 @@ CMD(mirror)
       case('L'):
 	 flags|=MirrorJob::RETR_SYMLINKS;
 	 break;
-      case('L'+512):
+      case(OPT_NO_DEREFERENCE):
 	 flags&=~MirrorJob::RETR_SYMLINKS;
 	 break;
       case('v'):
@@ -1422,10 +1442,10 @@ CMD(mirror)
       case('N'):
 	 newer_than=optarg;
 	 break;
-      case(256+'O'):
+      case(OPT_OLDER_THAN):
 	 older_than=optarg;
 	 break;
-      case(512+'S'):
+      case(OPT_SIZE_RANGE):
 	 size_range=new Range(optarg);
 	 if(size_range->Error())
 	 {
@@ -1434,22 +1454,22 @@ CMD(mirror)
 	    goto no_job;
 	 }
 	 break;
-      case(256+'u'):
+      case(OPT_NO_UMASK):
 	 flags|=MirrorJob::NO_UMASK;
 	 break;
-      case(256+'C'):
+      case(OPT_USE_CACHE):
 	 use_cache=true;
 	 break;
-      case(256+'R'):
+      case(OPT_REMOVE_SOURCE_FILES):
 	 remove_source_files=true;
 	 break;
-      case(256+'i'):
+      case(OPT_IGNORE_TIME):
 	 flags|=MirrorJob::IGNORE_TIME;
 	 break;
-      case(257+'i'):
+      case(OPT_IGNORE_SIZE):
 	 flags|=MirrorJob::IGNORE_SIZE;
 	 break;
-      case(256+'m'):
+      case(OPT_ONLY_MISSING):
 	 flags|=MirrorJob::IGNORE_TIME|MirrorJob::IGNORE_SIZE;
 	 break;
       case('P'):
@@ -1458,29 +1478,29 @@ CMD(mirror)
 	 else
 	    parallel=3;
 	 break;
-      case(256+'p'):
+      case(OPT_USE_PGET_N):
 	 if(optarg)
 	    use_pget=atoi(optarg);
 	 else
 	    use_pget=3;
 	 break;
-      case(256+'S'):
+      case(OPT_SCRIPT_ONLY):
 	 script_only=true;
-      case(256+'s'):
+      case(OPT_SCRIPT):
 	 script_file=optarg;
 	 if(script_file==0)
 	    script_file="-";
 	 break;
-      case(256+'e'):
+      case(OPT_DELETE_FIRST):
 	 flags|=MirrorJob::REMOVE_FIRST|MirrorJob::DELETE;
 	 break;
-      case(256+'y'):
+      case(OPT_NO_SYMLINKS):
 	 flags|=MirrorJob::NO_SYMLINKS;
 	 break;
-      case(256+'l'):
+      case(OPT_LOOP):
 	 flags|=MirrorJob::LOOP;
 	 break;
-      case(256+'E'):
+      case(OPT_MAX_ERRORS):
 	 max_error_count=atoi(optarg);
 	 break;
       case('?'):
