@@ -37,6 +37,7 @@
 # include <dlfcn.h>
 #endif
 #include <mbswidth.h>
+#include <human.h>
 
 #include "CmdExec.h"
 #include "GetJob.h"
@@ -1422,30 +1423,43 @@ CMD(ls)
 /* this seems to belong here more than in FileSetOutput.cc ... */
 const char *FileSetOutput::parse_argv(ArgV *a)
 {
+   enum {
+      OPT_BLOCK_SIZE,
+      OPT_DATE,
+      OPT_FILESIZE,
+      OPT_GROUP,
+      OPT_LINKCOUNT,
+      OPT_LINKS,
+      OPT_PERMS,
+      OPT_SI,
+      OPT_SORT,
+      OPT_TIME_STYLE,
+      OPT_USER
+   };
    static struct option cls_options[] = {
       {"basename",no_argument,0,'B'},
       {"directory",no_argument,0,'d'},
       {"human-readable",no_argument,0,'h'},
-      {"block-size",required_argument,0,0},
-      {"si",no_argument,0,0},
+      {"block-size",required_argument,0,OPT_BLOCK_SIZE},
+      {"si",no_argument,0,OPT_SI},
       {"classify",no_argument,0,'F'},
       {"long",no_argument,0,'l'},
       {"quiet",no_argument,0,'q'},
-      {"size", no_argument,0,'s'},	/* show size */
-      {"filesize", no_argument,0,0},	/* for files only */
-      {"nocase", no_argument,0,'i'},
-      {"sortnocase", no_argument,0,'I'},
-      {"dirsfirst", no_argument,0,'D'},
-      {"time-style", required_argument,0,256+'T'},
+      {"size",no_argument,0,'s'},	/* show size */
+      {"filesize",no_argument,0,OPT_FILESIZE},	/* for files only */
+      {"nocase",no_argument,0,'i'},
+      {"sortnocase",no_argument,0,'I'},
+      {"dirsfirst",no_argument,0,'D'},
+      {"time-style",required_argument,0,OPT_TIME_STYLE},
 
-      {"sort", required_argument,0, 0},
+      {"sort",required_argument,0,OPT_SORT},
       {"reverse",no_argument,0,'r'},
-      {"user", no_argument,0, 0},
-      {"group", no_argument,0, 0},
-      {"perms", no_argument,0, 0},
-      {"date", no_argument,0, 0},
-      {"linkcount", no_argument,0, 0},
-      {"links", no_argument,0, 0},
+      {"user",no_argument,0,OPT_USER},
+      {"group",no_argument,0,OPT_GROUP},
+      {"perms",no_argument,0,OPT_PERMS},
+      {"date",no_argument,0,OPT_DATE},
+      {"linkcount",no_argument,0,OPT_LINKCOUNT},
+      {"links",no_argument,0,OPT_LINKS},
       {0,0,0,0}
    };
 
@@ -1455,34 +1469,42 @@ const char *FileSetOutput::parse_argv(ArgV *a)
    while((opt=a->getopt_long(":1BdFhiklqsDISrt", cls_options, &longopt))!=EOF)
    {
       switch(opt) {
-      case 0:
-	 if(!strcmp(cls_options[longopt].name, "sort")) {
-	    if(!strcasecmp(optarg, "name")) sort = FileSet::BYNAME;
-	    else if(!strcasecmp(optarg, "size")) sort = FileSet::BYSIZE;
-	    else if(!strcasecmp(optarg, "date")) sort = FileSet::BYDATE;
-	    else if(!strcasecmp(optarg, "time")) sort = FileSet::BYDATE;
-	    else return _("invalid argument for `--sort'");
-	 } else if(!strcmp(cls_options[longopt].name, "filesize")) {
-	    size_filesonly = true;
-	 } else if(!strcmp(cls_options[longopt].name, "user")) {
-	    mode |= USER;
-	 } else if(!strcmp(cls_options[longopt].name, "group")) {
-	    mode |= GROUP;
-	 } else if(!strcmp(cls_options[longopt].name, "perms")) {
-	    mode |= PERMS;
-	 } else if(!strcmp(cls_options[longopt].name, "date")) {
-	    mode |= DATE;
-	 } else if(!strcmp(cls_options[longopt].name, "linkcount")) {
-	    mode |= NLINKS;
-	 } else if(!strcmp(cls_options[longopt].name, "links")) {
-	    mode |= LINKS;
-	 } else if(!strcmp(cls_options[longopt].name, "si")) {
-	    output_block_size = -1000;
-	 } else if(!strcmp(cls_options[longopt].name, "block-size")) {
-	    if(!isdigit(optarg[0]))
-	       return _("invalid block size");
-	    output_block_size = atoi(optarg);
-	 }
+      case OPT_SORT:
+	 if(!strcasecmp(optarg, "name")) sort = FileSet::BYNAME;
+	 else if(!strcasecmp(optarg, "size")) sort = FileSet::BYSIZE;
+	 else if(!strcasecmp(optarg, "date")) sort = FileSet::BYDATE;
+	 else if(!strcasecmp(optarg, "time")) sort = FileSet::BYDATE;
+	 else return _("invalid argument for `--sort'");
+	 break;
+      case OPT_FILESIZE:
+	 size_filesonly = true;
+	 break;
+      case OPT_USER:
+	 mode |= USER;
+	 break;
+      case OPT_GROUP:
+	 mode |= GROUP;
+	 break;
+      case OPT_PERMS:
+	 mode |= PERMS;
+	 break;
+      case OPT_DATE:
+	 mode |= DATE;
+	 break;
+      case OPT_LINKCOUNT:
+	 mode |= NLINKS;
+	 break;
+      case OPT_LINKS:
+	 mode |= LINKS;
+	 break;
+      case OPT_SI:
+	 output_block_size = 1;
+	 human_opts=human_autoscale|human_SI;
+	 break;
+      case OPT_BLOCK_SIZE:
+	 if(!isdigit(optarg[0]))
+	    return _("invalid block size");
+	 output_block_size = atoi(optarg);
 	 break;
       case('1'):
 	 single_column = true;
@@ -1494,7 +1516,8 @@ const char *FileSetOutput::parse_argv(ArgV *a)
 	 list_directories = true;
          break;
       case('h'):
-	 output_block_size = -1024;
+	 output_block_size = 1;
+	 human_opts=human_autoscale|human_SI|human_base_1024;
          break;
       case('l'):
 	 long_list();
@@ -1529,7 +1552,7 @@ const char *FileSetOutput::parse_argv(ArgV *a)
       case('r'):
 	 sort_reverse = true;
 	 break;
-      case(256+'T'):
+      case OPT_TIME_STYLE:
 	 time_style=optarg;
 	 break;
 
@@ -2878,13 +2901,17 @@ CMD(find)
 
 CMD(du)
 {
+   enum {
+      OPT_BLOCK_SIZE,
+      OPT_EXCLUDE
+   };
    static struct option du_options[]=
    {
       {"all",no_argument,0,'a'},
       /* alias: both GNU-like max-depth and lftp-like maxdepth;
        * only document one of them. */
       {"bytes",no_argument,0,'b'},
-      {"block-size",required_argument,0,0},
+      {"block-size",required_argument,0,OPT_BLOCK_SIZE},
       {"maxdepth",required_argument,0,'d'},
       {"total",no_argument,0,'c'},
       {"max-depth",required_argument,0,'d'},
@@ -2895,7 +2922,7 @@ CMD(du)
       {"megabytes",required_argument,0,'m'},
       {"separate-dirs",no_argument,0,'S'},
       {"summarize",no_argument,0,'s'},
-      {"exclude",required_argument,0,0},
+      {"exclude",required_argument,0,OPT_EXCLUDE},
       {0,0,0,0}
    };
    int maxdepth = -1;
@@ -2907,6 +2934,7 @@ CMD(du)
    bool all_files=false;
    bool file_count=false;
    const char *exclude=0;
+   int human_opts=0;
 
    exit_code=1;
 
@@ -2939,10 +2967,12 @@ CMD(du)
 	 file_count=true;
 	 break;
       case 'h':
-	 blocksize = -1024;
+	 blocksize=1;
+	 human_opts|=human_autoscale|human_SI|human_base_1024;
 	 break;
       case 'H':
-	 blocksize = -1000;
+	 blocksize=1;
+	 human_opts |= human_autoscale|human_SI;
 	 break;
       case 'k': /* the default; here for completeness */
 	 blocksize = 1024;
@@ -2956,23 +2986,17 @@ CMD(du)
       case 'S':
 	 separate_dirs = true;
 	 break;
-      case 0:
-	 if(!strcmp(du_options[longopt].name, "block-size")) {
-	    if(!isdigit(optarg[0]) || atoi(optarg) == 0)
-	    {
-	       eprintf(_("%s: invalid block size `%s'\n"),op,optarg);
-	       return 0;
-	    }
-
-	    blocksize = atoi(optarg);
-	    break;
+      case OPT_BLOCK_SIZE:
+	 if(!isdigit(optarg[0]) || atoi(optarg) == 0)
+	 {
+	    eprintf(_("%s: invalid block size `%s'\n"),op,optarg);
+	    return 0;
 	 }
-
-	 if(!strcmp(du_options[longopt].name, "exclude")) {
-	    exclude=optarg;
-	    break;
-	 }
-	 /* fallthrough */
+	 blocksize = atoi(optarg);
+	 break;
+      case OPT_EXCLUDE:
+	 exclude=optarg;
+	 break;
       case '?':
       default:
 	 eprintf(_("Usage: %s [options] <dirs>\n"),op);
@@ -3008,7 +3032,7 @@ CMD(du)
    FinderJob_Du *j=new class FinderJob_Du(session->Clone(),args,output);
    args=0;
    j->PrintDepth(maxdepth);
-   j->SetBlockSize(blocksize);
+   j->SetBlockSize(blocksize,human_opts);
    if(print_totals)
       j->PrintTotals();
    if(all_files)

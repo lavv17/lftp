@@ -31,6 +31,7 @@ class FinderJob_Du : public FinderJob
    int max_print_depth;
    bool print_totals;
    int output_block_size;
+   int human_opts;
    bool all_files;
    bool separate_dirs;
    bool file_count;
@@ -60,7 +61,7 @@ public:
    int Done();
 
    void PrintTotals() { print_totals=true; }
-   void SetBlockSize(int n) { output_block_size = n; }
+   void SetBlockSize(int n,int ho) { output_block_size = n; human_opts = ho; }
    void PrintDepth(int n) { max_print_depth = n; }
    void AllFiles() { all_files=true; }
    void SeparateDirs() { separate_dirs=true; }

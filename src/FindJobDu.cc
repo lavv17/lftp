@@ -48,6 +48,7 @@ FinderJob_Du::FinderJob_Du(FileAccess *s,ArgV *a,FDStream *o):
    max_print_depth = -1;
    print_totals = false;
    output_block_size = 1024;
+   human_opts = 0;
    all_files = false;
    separate_dirs = false;
    file_count = false;
@@ -177,7 +178,7 @@ void FinderJob_Du::print_size (long long n_blocks, const char *string)
    /* We get blocks in bytes, since we don't know the remote system's
     * block size. */
    buf->Format("%s\t%s\n",
-	 human_readable (n_blocks, buffer, human_ceiling, 1, output_block_size),
+	 human_readable (n_blocks, buffer, human_opts, 1, output_block_size),
 	 string);
 }
 

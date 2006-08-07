@@ -118,7 +118,7 @@ void FileSetOutput::print(FileSet &fs, OutputJob *o) const
 	 && (f->defined&f->SIZE)) {
 	    char buffer[128];
 	    sprintf(sz, "%8s ",
-	       human_readable (f->size, buffer, human_ceiling, 1,
+	       human_readable (f->size, buffer, human_opts, 1,
 		  output_block_size? output_block_size:1024));
 	 } else {
 	    sprintf(sz, "%8s ", ""); /* pad */

@@ -1,3 +1,9 @@
+2006-08-07  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileSetOutput.cc, FileSetOutput.h, commands.cc,
+	  FindJobDu.cc, FindJobDu.h: update for new human_readable; use enum
+	  for long options.
+
 2006-08-04  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: disable ssl on errors if not forced.
