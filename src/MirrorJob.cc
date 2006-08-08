@@ -1343,6 +1343,7 @@ CMD(mirror)
 
    PatternSet *exclude=0;
    const char *default_exclude=ResMgr::Query("mirror:exclude-regex",0);
+   const char *default_include=ResMgr::Query("mirror:include-regex",0);
 
    if(!ResMgr::QueryBool("mirror:set-permissions",0))
       flags|=MirrorJob::NO_PERMS;
@@ -1413,7 +1414,11 @@ CMD(mirror)
 	     * explicit pattern is for exclusion - otherwise all files are
 	     * excluded by default and no default exclusion is needed. */
 	    if(type==PatternSet::EXCLUDE && default_exclude && *default_exclude)
+	    {
 	       exclude->Add(type,new PatternSet::Regex(default_exclude));
+	       if(default_include && *default_include)
+		  exclude->Add(PatternSet::INCLUDE,new PatternSet::Regex(default_include));
+	    }
 	    default_exclude=0;
 	    /* Users usually don't want to exclude all directories */
 	    if(type==PatternSet::INCLUDE)
@@ -1521,6 +1526,8 @@ CMD(mirror)
    {
       exclude=new PatternSet;
       exclude->Add(PatternSet::EXCLUDE,new PatternSet::Regex(default_exclude));
+      if(default_include && *default_include)
+	 exclude->Add(PatternSet::INCLUDE,new PatternSet::Regex(default_include));
    }
 
    args->back();

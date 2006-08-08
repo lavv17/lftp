@@ -301,6 +301,7 @@ static ResType lftp_vars[] = {
    {"mirror:parallel-directories", "yes", ResMgr::BoolValidate,ResMgr::NoClosure},
    {"mirror:parallel-transfer-count", "1",ResMgr::UNumberValidate,ResMgr::NoClosure},
    {"mirror:exclude-regex",	 "(^|/)(\\.in\\.|\\.nfs)",ResMgr::ERegExpValidate,ResMgr::NoClosure},
+   {"mirror:include-regex",	 "",	  ResMgr::ERegExpValidate,ResMgr::NoClosure},
    {"mirror:use-pget-n",	 "1",	  ResMgr::UNumberValidate,ResMgr::NoClosure},
    {"mirror:set-permissions",	 "yes",   ResMgr::BoolValidate,ResMgr::NoClosure},
    {"mirror:dereference",	 "no",    ResMgr::BoolValidate,ResMgr::NoClosure},
