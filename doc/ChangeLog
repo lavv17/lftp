@@ -1,3 +1,8 @@
+2006-08-08	Alexander V. Lukyanov <lav@yars.free.net>
+
+        * lftp.1: document ftp:ssl-data-load-keys; fix a typo; merge
+	  ssl/tls library notes to one.
+
 2006-08-07	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document mirror:include-regex option.

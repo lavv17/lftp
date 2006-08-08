@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "07 Aug 2006"
+.TH lftp 1 "08 Aug 2006"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -1087,18 +1087,21 @@ skey/opie is not available, assume failed login. Off by default.
 .TP
 .BR ftp:ssl-allow \ (boolean)
 if true, try to negotiate SSL connection with ftp server for non-anonymous
-access. Default is true. This setting is only available if lftp was compiled
+access. Default is true. This and other ssl settings are only available if lftp was compiled
 with an ssl/tls library.
 .TP
+.BR ftp:ssl-data-use-keys \ (boolean)
+if true, lftp loads ssl:key-file for protected data connection too. When false,
+it does not, and the server can match data and control connections by session ID.
+Default is true.
+.TP
 .BR ftp:ssl-force \ (boolean)
-if trus, refuse to send password in clear when server does not support SSL.
-Default is false. This setting is only available if lftp was compiled with
-an ssl/tls library.
+if true, refuse to send password in clear when server does not support SSL.
+Default is false.
 .TP
 .BR ftp:ssl-protect-data \ (boolean)
 if true, request ssl connection for data transfers. This is cpu-intensive
-but provides privacy. Default is false. This setting is only available if
-lftp was compiled with an ssl/tls library.
+but provides privacy. Default is false.
 .TP
 .BR ftp:ssl-protect-fxp \ (boolean)
 if true, request ssl connection for data transfer between two ftp servers
