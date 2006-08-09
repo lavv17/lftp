@@ -75,6 +75,8 @@
    initializer for static 'char[]' or 'const char[]' variables.  */
 #define gettext_noop(String) String
 
+#if 0 /* lftp does not need those and they cause compile problems */
+
 /* The separator between msgctxt and msgid in a .mo file.  */
 #define GETTEXT_CONTEXT_GLUE "\004"
 
@@ -238,5 +240,7 @@ dcnpgettext_expr (const char *domain,
     }
   return (n == 1 ? msgid : msgid_plural);
 }
+
+#endif
 
 #endif /* _LIBGETTEXT_H */
