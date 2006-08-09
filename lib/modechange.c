@@ -278,7 +278,7 @@ mode_create_from_ref (const char *ref_file)
    Unix-like host.  */
 
 mode_t
-mode_adjust (mode_t oldmode, bool dir, mode_t umask_value,
+mode_adjust (mode_t oldmode, int dir, mode_t umask_value,
 	     struct mode_change const *changes, mode_t *pmode_bits)
 {
   /* The adjusted mode.  */

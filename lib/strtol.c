@@ -102,6 +102,9 @@ extern int errno;
 # define LONG_MAX LONG_LONG_MAX
 # undef ULONG_MAX
 # define ULONG_MAX ULONG_LONG_MAX
+# ifndef ULONG_LONG_MAX
+#  define ULONG_LONG_MAX ((unsigned long long) ~(unsigned long long) 0)
+# endif
 # if __GNUC__ == 2 && __GNUC_MINOR__ < 7
    /* Work around gcc bug with using this constant.  */
    static const unsigned long long int maxquad = ULONG_LONG_MAX;
