@@ -112,6 +112,11 @@ AC_ISC_POSIX
 # for src/mbswidth.{c,h} from gnulib
 gl_MBSWIDTH
 
+AM_STDBOOL_H
+if test x$ac_cv_header_stdbool_h = xno; then
+   AC_CONFIG_LINKS([include/stdbool.h:lib/stdbool_.h])
+fi
+
 # for src/human.{c,h}
 gl_HUMAN
 AC_CONFIG_LINKS([include/human.h:lib/human.h])

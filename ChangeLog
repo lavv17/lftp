@@ -1,3 +1,7 @@
+2006-08-22  lav
+
+	* configure.ac: link stdbool_.h to include if needed.
+
 2006-08-03  lav
 
 	* configure.ac: use AS_HELP_STRING everywhere.
