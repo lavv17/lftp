@@ -590,7 +590,9 @@ int CmdExec::Do()
       }
       if(status_line && status_line->CanShowNow())
 	 ShowRunStatus(status_line);   // this is only for top level CmdExec.
-      return m;
+      if(m != STALL || interactive || !feeder || !queue_feeder ||
+	 waiting_num >= queue_feeder->GetParallelJobNum())
+	 return m;
    }
 
    if(!interactive)
@@ -644,6 +646,8 @@ try_get_cmd:
 	       FeedCmd("exit;");
 	       return MOVED;
 	    }
+	    if(waiting_num > 0)
+	      return m;
 	    RemoveFeeder();
 	    m=MOVED;
 	    goto try_get_cmd;
