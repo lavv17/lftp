@@ -92,13 +92,8 @@ public:
    static void Delete(SMTask *);
    static SMTask *_MakeRef(SMTask *task) { if(task) task->ref_count++; return task; }
    static void _DeleteRef(SMTask *task)  { if(task) task->ref_count--; Delete(task); }
-#if __GNUC__
    template<typename T> static void DeleteRef(T *&task) { _DeleteRef(task); task=0; }
    template<typename T> static T *MakeRef(T *task) { _MakeRef(task); return task; }
-#else
-# define DeleteRef(task) do { _DeleteRef((task)); (task)=0; } while(0)
-# define MakeRef(task)   (_MakeRef((task)),(task))
-#endif
    static int Roll(SMTask *);
    static void RollAll(const TimeInterval &max_time);
 

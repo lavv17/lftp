@@ -1,3 +1,7 @@
+2006-08-22  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SMTask.h: drop MakeRef macro, it makes trouble with multiple arg evaluation.
+
 2006-08-08  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc, resource.cc: add mirror:include-regex setting.
