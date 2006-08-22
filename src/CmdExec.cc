@@ -62,7 +62,9 @@ static ResDecl
    res_move_background	   ("cmd:move-background","yes", ResMgr::BoolValidate,ResMgr::NoClosure),
    res_set_term_status     ("cmd:set-term-status","no", ResMgr::BoolValidate,0),
    res_term_status         ("cmd:term-status",  "", 0, 0),
-   res_trace		   ("cmd:trace",  "no",	ResMgr::BoolValidate,ResMgr::NoClosure);
+   res_trace		   ("cmd:trace",  "no",	ResMgr::BoolValidate,ResMgr::NoClosure),
+   res_parallel		   ("cmd:parallel",	   "1",  ResMgr::UNumberValidate,0),
+   res_queue_parallel	   ("cmd:queue-parallel",  "1",	 ResMgr::UNumberValidate,0);
 
 CmdExec	 *CmdExec::cwd_owner;
 CmdExec	 *CmdExec::chain;
@@ -329,7 +331,7 @@ void CmdExec::RemoveFeeder()
       queue_feeder=0;
    delete feeder;
    feeder=tmp;
-
+   Reconfig(0);
 }
 
 void CmdExec::ReuseSavedSession()
@@ -590,8 +592,7 @@ int CmdExec::Do()
       }
       if(status_line && status_line->CanShowNow())
 	 ShowRunStatus(status_line);   // this is only for top level CmdExec.
-      if(m != STALL || interactive || !feeder || !queue_feeder ||
-	 waiting_num >= queue_feeder->GetParallelJobNum())
+      if(m != STALL || interactive || !feeder || waiting_num >= max_waiting)
 	 return m;
    }
 
@@ -828,6 +829,7 @@ CmdExec::CmdExec(FileAccess *f,LocalDirectory *c) : SessionJob(f?f:new DummyProt
    redirections=0;
 
    queue_feeder=0;
+   max_waiting=1;
 
    saved_session=0;
 
@@ -959,6 +961,8 @@ void CmdExec::Reconfig(const char *name)
    // only allow explicit setting of cmd:interactive to change interactiveness.
    if(top_level && name && !strcmp(name,"cmd:interactive"))
       SetInteractive(res_interactive.QueryBool(0));
+   ResType *r=queue_feeder?&res_queue_parallel:&res_parallel;
+   max_waiting=r->Query(c);
 }
 
 void CmdExec::pre_stdout()
@@ -1344,6 +1348,7 @@ CmdExec  *CmdExec::GetQueue(bool create)
    queue->cmdline=xasprintf("queue (%s%s%s)",url,slot?"; ":"",slot?slot:"");
    queue->queue_feeder=new QueueFeeder(session->GetCwd(), cwd->GetName());
    queue->SetCmdFeeder(queue->queue_feeder);
+   queue->Reconfig(0);
 
    return queue;
 }

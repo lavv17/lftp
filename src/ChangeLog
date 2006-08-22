@@ -1,3 +1,9 @@
+2006-08-22  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc, CmdExec.h, QueueFeeder.h, commands.cc: add settings
+	  cmd:parallel and cmd:queue-parallel; backout QueueFeeder changes;
+	  drop queue --parallel option.
+
 2006-08-22  Markus Schoder <lists@gammarayburst.de>
 
 	* CmdExec.cc, commands.cc, QueueFeeder.h: add queue --parallel option.

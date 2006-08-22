@@ -37,8 +37,6 @@ class QueueFeeder : public CmdFeeder
 
    char *buffer;
 
-   int parallel_job_num;
-
    /* remove the given job from the list */
    void unlink_job(QueueJob *job);
 
@@ -76,21 +74,11 @@ public:
    bool MoveJob(int from, int to, int v = 0);
    bool MoveJob(const char *cmd, int to, int v = 0);
 
-   /* Set/Get number of jobs that should be executed in parallel from this queue. */
-   void SetParallelJobNum(int n)
-   {
-     parallel_job_num = n;
-   }
-   int GetParallelJobNum() const
-   {
-     return parallel_job_num;
-   }
-
    enum { PrintRequeue = 9999 };
    void PrintStatus(int v,const char *prefix="\t") const;
 
    QueueFeeder(const char *pwd, const char *lpwd):
-      jobs(0), lastjob(0), cur_pwd(0), cur_lpwd(0), buffer(0), parallel_job_num(1)
+      jobs(0), lastjob(0), cur_pwd(0), cur_lpwd(0), buffer(0)
    {
       cur_pwd = xstrdup(pwd);
       cur_lpwd = xstrdup(lpwd);

@@ -395,9 +395,6 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "Move the given items before the given queue index, or to the end if no\n"
 	 "destination is given.\n"
 	 "\n"
-	 "       queue --parallel|-P num\n\n"
-	 "Set the number of jobs executed in parallel from the current queue to num.\n"
-	 "\n"
 	 "Options:\n"
 	 " -q                  Be quiet.\n"
 	 " -v                  Be verbose.\n"
@@ -1121,10 +1118,9 @@ Job *CmdExec::builtin_queue()
       {"quiet",no_argument,0,'q'},
       {"verbose",no_argument,0,'v'},
       {"queue",required_argument,0,'Q'},
-      {"parallel",required_argument,0,'P'},
       {0,0,0,0}
    };
-   enum { ins, del, move, parallel } mode = ins;
+   enum { ins, del, move } mode = ins;
 
    const char *arg = NULL;
    /* position to insert at (ins only) */
@@ -1132,7 +1128,7 @@ Job *CmdExec::builtin_queue()
    int verbose = -1; /* default */
 
    int opt;
-   while((opt=args->getopt_long("+dm:n:qvQwP:",queue_options,0))!=EOF)
+   while((opt=args->getopt_long("+dm:n:qvQw",queue_options,0))!=EOF)
    {
       switch(opt)
       {
@@ -1157,11 +1153,6 @@ Job *CmdExec::builtin_queue()
 
       case 'd':
 	 mode = del;
-	 break;
-
-      case 'P':
-	 mode = parallel;
-	 arg = optarg;
 	 break;
 
       case 'q':
@@ -1285,24 +1276,6 @@ Job *CmdExec::builtin_queue()
 
 	 queue->queue_feeder->MoveJob(arg, to, verbose);
 	 exit_code=0;
-      }
-      break;
-
-      case parallel: {
-	 CmdExec *queue=GetQueue(false);
-	 if(!queue) {
-	    eprintf(_("%s: No queue is active.\n"), args->a0());
-	    break;
-	 }
-
-	 const int nParallel = atoi(arg);
-	 if(nParallel > 0)
-	    queue->queue_feeder->SetParallelJobNum(nParallel);
-	 else {
-	    eprintf(_("%s: -P: positive number expected. "), args->a0());
-	    goto err;
-	 }
-	 exit_code = 0;
       }
       break;
    }

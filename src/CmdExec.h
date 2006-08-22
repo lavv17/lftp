@@ -139,6 +139,7 @@ private:
    QueueFeeder *queue_feeder;
    CmdExec *GetQueue(bool create = true);
    bool SameQueueParameters(CmdExec *,const char *);
+   int max_waiting;
 
    FileAccess *saved_session;
    void ReuseSavedSession();
