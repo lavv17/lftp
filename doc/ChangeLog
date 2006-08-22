@@ -1,3 +1,7 @@
+2006-08-22	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document cmd:parallel and cmd:queue-parallel.
+
 2006-08-08	Alexander V. Lukyanov <lav@yars.free.net>
 
         * lftp.1: document ftp:ssl-data-load-keys; fix a typo; merge

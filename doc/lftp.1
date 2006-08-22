@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "08 Aug 2006"
+.TH lftp 1 "22 Aug 2006"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 3.5.4.
+This man page documents lftp version 3.5.5.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -870,6 +870,15 @@ end a sequence of non-printing characters
 .PD
 .RE
 
+.TP
+.BR cmd:parallel \ (boolean)
+Number of jobs run in parallel in non-interactive mode. For example,
+this may be useful for scripts with multiple `get' commands. Note that setting
+this to a value greater than 1 changes conditional execution behaviour, basically
+makes it inconsistent.
+.TP
+.BR cmd:queue-parallel \ (boolean)
+Number of jobs run in parallel in a queue.
 .TP
 .BR cmd:time-style \ (string)
 This setting is the default value for cls --time-style option.
