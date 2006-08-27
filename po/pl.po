@@ -1,99 +1,99 @@
 # Polish translation of lftp.
 # Copyright (C) 1998-2000 Free Software Foundation, Inc.
 # Arkadiusz Mi¶kiewicz <misiek@pld-linux.org>, 1998-2004
-# Jakub Bogusz <qboosh@pld-linux.org>, 2002-2005
+# Jakub Bogusz <qboosh@pld-linux.org>, 2002-2006
 # some updates by Tomasz K³oczko <kloczek@pld.org.pl>, 2003
-# Adam Go³êbiowski <adamg@pld-linux.org>, 2004
+# Adam Go³êbiowski <adamg@pld-linux.org>, 2004-2006
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 3.3.0\n"
+"Project-Id-Version: lftp 3.5.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2006-08-09 12:19+0400\n"
-"PO-Revision-Date: 2005-08-15 20:50+0200\n"
+"PO-Revision-Date: 2006-08-25 22:20+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/CmdExec.cc:93
+#: src/CmdExec.cc:95
 #, c-format
 msgid "Warning: chdir(%s) failed: %s\n"
 msgstr "Uwaga: chdir(%s) nie powiod³o siê: %s\n"
 
-#: src/CmdExec.cc:207
+#: src/CmdExec.cc:209
 #, c-format
 msgid "Unknown command `%s'.\n"
 msgstr "Nieznana komenda `%s'.\n"
 
-#: src/CmdExec.cc:209
+#: src/CmdExec.cc:211
 #, c-format
 msgid "Ambiguous command `%s'.\n"
 msgstr "Dwuznaczne polecenie `%s'.\n"
 
-#: src/CmdExec.cc:230
+#: src/CmdExec.cc:232
 #, c-format
 msgid "Module for command `%s' did not register the command.\n"
 msgstr "Modu³ dla komendy `%s' nie zarejestrowa³ komendy.\n"
 
-#: src/CmdExec.cc:380
+#: src/CmdExec.cc:382
 #, c-format
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, cwd=%s\n"
 
-#: src/CmdExec.cc:401 src/MirrorJob.cc:529
+#: src/CmdExec.cc:403 src/MirrorJob.cc:529
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: otrzymano przekierowanie do `%s'\n"
 
-#: src/CmdExec.cc:404 src/FileCopy.cc:1025
+#: src/CmdExec.cc:406 src/FileCopy.cc:1025
 msgid "Too many redirections"
 msgstr "Zbyt du¿o przekierowañ"
 
-#: src/CmdExec.cc:519 src/CmdExec.cc:576
+#: src/CmdExec.cc:521 src/CmdExec.cc:578
 msgid "Interrupt"
 msgstr "Przerwanie"
 
-#: src/CmdExec.cc:639
+#: src/CmdExec.cc:642
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "Uwaga: niekompletna komenda zosta³a odrzucona\n"
 
-#: src/CmdExec.cc:731
+#: src/CmdExec.cc:736
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tUruchamianie wbudowanego `%s' [%s]\n"
 
-#: src/CmdExec.cc:738
+#: src/CmdExec.cc:743
 msgid "Queue is stopped."
 msgstr "Kolejka jest zatrzymana."
 
-#: src/CmdExec.cc:743
+#: src/CmdExec.cc:748
 msgid "Now executing:"
 msgstr "Aktualnie wykonujê:"
 
-#: src/CmdExec.cc:756
+#: src/CmdExec.cc:761
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\tOczekiwanie na zakoñczenie zadania [%d]\n"
 
-#: src/CmdExec.cc:761
+#: src/CmdExec.cc:766
 #, c-format
 msgid "\tWaiting for termination of jobs: "
 msgstr "\tOczekiwanie na zakoñczenie prac: "
 
-#: src/CmdExec.cc:772
+#: src/CmdExec.cc:777
 #, c-format
 msgid "\tRunning\n"
 msgstr "\tUruchamianie\n"
 
-#: src/CmdExec.cc:776
+#: src/CmdExec.cc:781
 #, c-format
 msgid "\tWaiting for command\n"
 msgstr "\tOczekiwanie na komendê\n"
 
-#: src/CmdExec.cc:1295
+#: src/CmdExec.cc:1303
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: komenda `%s' nie zosta³a wkompilowana.\n"
@@ -318,11 +318,11 @@ msgstr "Nieprawid³owy format zakresu. Format to min-maks, np. 10-20."
 
 #: src/ResMgr.cc:744
 msgid "Invalid suffix. Valid suffixes are: k, M, G, T, P, E, Z, Y"
-msgstr ""
+msgstr "Nieprawid³owy przyrostek. Poprawne to: k, M, G, T, P, E, Z, Y"
 
 #: src/ResMgr.cc:747
 msgid "Integer overflow"
-msgstr ""
+msgstr "Przepe³nienie liczby ca³kowitej"
 
 #: src/ResMgr.cc:810
 msgid "Invalid IPv4 numeric address"
@@ -535,7 +535,6 @@ msgid "[re]cls [opts] [path/][pattern]"
 msgstr "[re]cls [opcje] [¶cie¿ka/][maska]"
 
 #: src/commands.cc:167
-#, fuzzy
 msgid ""
 "List remote files. You can redirect output of this command to file\n"
 "or via pipe to external command.\n"
@@ -594,10 +593,10 @@ msgstr ""
 "znaków\n"
 " -I, --sortnocase     - sortuj nazwy bez rozró¿niania wielko¶ci znaków\n"
 " -D, --dirsfirst      - w pierwszej kolejno¶ci wy¶wietlaj katalogi\n"
-"     --sort=OPC       - \"name\", \"size\"\n"
+"     --sort=OPC       - \"name\", \"size\", \"date\"\n"
 " -S                   - sortuj wg rozmiaru pliku\n"
 " --user, --group, --perms, --date, --linkcount, --links\n"
-"                      - wy¶wietlaj indywidualne pola\n"
+"                      - wy¶wietlaj poszczególne pola\n"
 "\n"
 "Domy¶lnie, wyj¶cie komendy cls jest zapamiêtywane w pamiêci podrêcznej. By\n"
 "zobaczyæ nowe listy plików u¿yj komendy `recls' lub `cache flush'.\n"
@@ -605,7 +604,7 @@ msgstr ""
 "Zmienne cls-default i cls-completion-default mog± byæ u¿yte do okre¶lenia\n"
 "domy¶lnych parametrów dla listingów \"cls\" wzglêdnie listingów \"completion"
 "\".\n"
-"Dla przyk³adu, aby listing \"completion\" pokazywa³ rozmiary plików ustaw:\n"
+"Na przyk³ad, aby listing \"completion\" pokazywa³ rozmiary plików ustaw:\n"
 "cls-completion-default na \"-s\".\n"
 "\n"
 "Porady: U¿yj --filesize z opcj± -D by lepiej upakowaæ listing. Je¶li nie\n"
@@ -1038,7 +1037,6 @@ msgid "pget [OPTS] <rfile> [-o <lfile>]"
 msgstr "pget [OPCJE] <z_plik> [-p <l_plik>]"
 
 #: src/commands.cc:364
-#, fuzzy
 msgid ""
 "Gets the specified file using several connections. This can speed up "
 "transfer,\n"
@@ -1058,7 +1056,10 @@ msgstr ""
 "oszaleæ :)\n"
 "\n"
 "Opcje:\n"
-" -n <maxconn>  ustaw maksymaln± liczbê po³±czeñ (domy¶lnie 5)\n"
+" -c  wznów transfer. Wymaga pliku <lfile>.lftp-pget-status.\n"
+" -n <maxconn>  ustaw maksymaln± liczbê po³±czeñ (domy¶lna warto¶æ wziêta\n"
+"    ze zmiennej pget:default-n)\n"
+" -O <base> okre¶la katalog, w którym umieszczone bêd± pobrane pliki\n"
 
 #: src/commands.cc:372
 msgid "put [OPTS] <lfile> [-o <rfile>]"
@@ -1196,12 +1197,10 @@ msgstr ""
 "Podobnie jak `nlist', lecz nie zagl±da do pamiêci podrêcznej\n"
 
 #: src/commands.cc:422
-#, fuzzy
 msgid "repeat [OPTS] [delay] [command]"
-msgstr "repeat [opó¼nienie] [komenda]"
+msgstr "repeat [OPCJE] [opó¼nienie] [komenda]"
 
 #: src/commands.cc:423
-#, fuzzy
 msgid ""
 "Repeat specified command with a delay between iterations.\n"
 "Default delay is one second, default command is empty.\n"
@@ -1210,6 +1209,8 @@ msgid ""
 msgstr ""
 "Powtarzaj podan± komendê z opó¼nieniem pomiêdzy iteracjami.\n"
 "Domy¶lne opó¼nienie to jedna sekunda, domy¶lnie komenda jest pusta.\n"
+" -c <liczba>      liczba powtórzeñ\n"
+" -d <opó¼nienie>  opó¼nienie miêdzy powtórzeniami.\n"
 
 #: src/commands.cc:428
 msgid ""
@@ -1418,9 +1419,9 @@ msgid "Usage: %s [OPTS] command args...\n"
 msgstr "U¿ycie: %s [OPCJE] komenda argumenty...\n"
 
 #: src/commands.cc:1142
-#, fuzzy, c-format
+#, c-format
 msgid "%s: -n: positive number expected. "
-msgstr "%s: -n: Oczekiwano liczby. "
+msgstr "%s: -n: Oczekiwano liczby dodatniej. "
 
 #: src/commands.cc:1194
 #, c-format
@@ -1514,9 +1515,9 @@ msgid "debug is off\n"
 msgstr "debugowanie jest wy³±czone\n"
 
 #: src/commands.cc:2120
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s <user|URL> [<pass>]\n"
-msgstr "user <u¿ytkownik|URL> [<has³o>]"
+msgstr "U¿ycie: %s <u¿ytkownik|URL> [<has³o>]\n"
 
 #: src/commands.cc:2195 src/commands.cc:2368
 #, c-format
@@ -1622,9 +1623,9 @@ msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr "Dwuznaczne polecenie `%s'. U¿yj `help' by uzyskaæ spis komend.\n"
 
 #: src/commands.cc:2600
-#, fuzzy, c-format
+#, c-format
 msgid "LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
-msgstr "LFTP | Wersja %s | Copyright (c) 1996-2005 Alexander V. Lukyanov\n"
+msgstr "LFTP | Wersja %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
 
 #: src/commands.cc:2603
 #, c-format
@@ -2083,9 +2084,8 @@ msgid "chunked format violated"
 msgstr "naruszony format"
 
 #: src/Http.cc:1716
-#, fuzzy
 msgid "Received last chunk"
-msgstr "Przes³ano wszystko"
+msgstr "Przes³ano ostatni fragment"
 
 #: src/Http.cc:1901
 msgid "Fetching headers..."
@@ -2419,36 +2419,3 @@ msgstr "Skolejkowane polecenia:"
 #: src/SFtp.cc:1082
 msgid "invalid server response format"
 msgstr "nieprawid³owy format odpowiedzi serwera"
-
-#~ msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
-#~ msgstr ""
-#~ "%sDo usuniêcia: %d katalog$|i|ów$, %d plik$|i|ów$, %d $dowi±zanie "
-#~ "symboliczne|dowi±zania symboliczne|dowi±zañ symbolicznych$.\n"
-
-#~ msgid "Usage: %s userid [pass]\n"
-#~ msgstr "U¿ycie: %s id_u¿ytkownika [has³o]\n"
-
-#~ msgid "Cache is on"
-#~ msgstr "Pamiêæ podrêczna jest w³±czona"
-
-#~ msgid "Cache is off"
-#~ msgstr "Pamiêæ podrêczna jest wy³±czona"
-
-#~ msgid "Cache entries do not expire"
-#~ msgstr "Wpisy w pamiêci podrêcznej nie dezaktualizuj± siê"
-
-#~ msgid "Cache entries expire in %ld $#l#second|seconds$\n"
-#~ msgstr ""
-#~ "Wpisy w pamiêci podrêcznej dezaktualizuj± siê po %ld sekund$#l#zie|ach|ach"
-#~ "$\n"
-
-#~ msgid "Cache entries expire in %ld $#l#minute|minutes$\n"
-#~ msgstr ""
-#~ "Wpisy w pamiêci podrêcznej dezaktualizuj± siê po %ld minu$#l#cie|tach|tach"
-#~ "$\n"
-
-#~ msgid "%b %e  %Y"
-#~ msgstr "%e %b  %Y"
-
-#~ msgid "%b %e %H:%M"
-#~ msgstr "%e %b %H:%M"
