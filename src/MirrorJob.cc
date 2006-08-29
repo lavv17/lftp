@@ -384,6 +384,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 mj->pget_n=pget_n;
 	 mj->pget_minchunk=pget_minchunk;
 	 mj->remove_source_files=remove_source_files;
+	 mj->skip_noaccess=skip_noaccess;
 	 mj->create_target_dir=create_target_dir;
 	 mj->no_target_dir=no_target_dir;
 
@@ -494,6 +495,9 @@ void  MirrorJob::InitSets(FileSet *source,FileSet *dest)
 
    if(flags&NO_RECURSION)
       to_transfer->SubtractDirs();
+
+   if(skip_noaccess)
+      to_transfer->ExcludeUnaccessible();
 
    new_files_set=new FileSet(to_transfer);
    new_files_set->SubtractAny(dest);
@@ -1056,6 +1060,7 @@ MirrorJob::MirrorJob(MirrorJob *parent,
 
    use_cache=false;
    remove_source_files=false;
+   skip_noaccess=false;
 
    parallel=1;
    pget_n=1;
@@ -1280,6 +1285,7 @@ CMD(mirror)
       OPT_SIZE_RANGE,
       OPT_USE_CACHE,
       OPT_USE_PGET_N,
+      OPT_SKIP_NOACCESS,
    };
    static const struct option mirror_opts[]=
    {
@@ -1318,6 +1324,7 @@ CMD(mirror)
       {"no-symlinks",no_argument,0,OPT_NO_SYMLINKS},
       {"loop",no_argument,0,OPT_LOOP},
       {"max-errors",required_argument,0,OPT_MAX_ERRORS},
+      {"skip-noaccess",no_argument,0,OPT_SKIP_NOACCESS},
       {0}
    };
 
@@ -1335,6 +1342,7 @@ CMD(mirror)
    const char *older_than=0;
    Range *size_range=0;
    bool  remove_source_files=false;
+   bool	 skip_noaccess=ResMgr::QueryBool("mirror:skip-noaccess",0);
    int	 parallel=ResMgr::Query("mirror:parallel-transfer-count",0);
    int	 use_pget=ResMgr::Query("mirror:use-pget-n",0);
    bool	 reverse=false;
@@ -1508,6 +1516,9 @@ CMD(mirror)
       case(OPT_MAX_ERRORS):
 	 max_error_count=atoi(optarg);
 	 break;
+      case(OPT_SKIP_NOACCESS):
+	 skip_noaccess=true;
+	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
       no_job:
@@ -1618,6 +1629,8 @@ CMD(mirror)
    j->UseCache(use_cache);
    if(remove_source_files)
       j->RemoveSourceFiles();
+   if(skip_noaccess)
+      j->SkipNoAccess();
    if(parallel<0)
       parallel=0;
    if(parallel>64)

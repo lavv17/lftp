@@ -168,6 +168,7 @@ public:
 
    void	 Exclude(const char *prefix,PatternSet *x);
    void	 ExcludeDots();
+   void	 ExcludeUnaccessible();
 
    void	 rewind() { ind=0; }
    FileInfo *curr();

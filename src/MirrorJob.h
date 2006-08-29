@@ -112,10 +112,9 @@ class MirrorJob : public Job
    FILE *script;
    bool script_only;
    bool script_needs_closing;
-
    bool use_cache;
-
    bool remove_source_files;
+   bool skip_noaccess;
 
    int parallel;
    int pget_n;
@@ -182,6 +181,7 @@ public:
 
    void  UseCache(bool u) { use_cache=u; }
    void	 RemoveSourceFiles() { remove_source_files=true; }
+   void	 SkipNoAccess() { skip_noaccess=true; }
 
    void  SetParallel(int p) { parallel=p; }
    void  SetPGet(int n) { pget_n=n; }
