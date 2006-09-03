@@ -74,12 +74,12 @@
   /* A compiler known to have 'bool'.  */
   /* If the compiler already has both 'bool' and '_Bool', we can assume they
      are the same types.  */
-# if !@HAVE__BOOL@
+# if !HAVE__BOOL
 typedef bool _Bool;
 # endif
 #else
 # if !defined __GNUC__
-   /* If @HAVE__BOOL@:
+   /* If HAVE__BOOL:
         Some HP-UX cc and AIX IBM C compiler versions have compiler bugs when
         the built-in _Bool type is used.  See
           http://gcc.gnu.org/ml/gcc-patches/2003-12/msg02303.html
@@ -88,7 +88,7 @@ typedef bool _Bool;
         Similar bugs are likely with other compilers as well; this file
         wouldn't be used if <stdbool.h> was working.
         So we override the _Bool type.
-      If !@HAVE__BOOL@:
+      If !HAVE__BOOL:
         Need to define _Bool ourselves. As 'signed char' or as an enum type?
         Use of a typedef, with SunPRO C, leads to a stupid
           "warning: _Bool is a keyword in ISO C99".
@@ -100,7 +100,7 @@ typedef bool _Bool;
 enum { false = 0, true = 1 };
 # else
    /* With this compiler, trust the _Bool type if the compiler has it.  */
-#  if !@HAVE__BOOL@
+#  if !HAVE__BOOL
 typedef enum { _Bool_must_promote_to_int = -1, false = 0, true = 1 } _Bool;
 #  endif
 # endif
