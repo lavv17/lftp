@@ -108,7 +108,15 @@ SMTask::~SMTask()
    printf("delete SMTask %p (count=%d)\n",this,task_count);
 #endif
    task_count--;
-   assert(!running);
+   if(__builtin_expect(running,0))
+   {
+      fprintf(stderr,"SMTask(%p).running=%d\n",this,running);
+      fprintf(stderr,"SMTask stack:");
+      for(int i=0; i<stack_ptr; i++)
+	 fprintf(stderr," %p",stack[i]);
+      fprintf(stderr,"; current=%p\n",current);
+      abort();
+   }
    assert(!ref_count);
    // remove from the chain
    SMTask **scan=&chain;
@@ -121,7 +129,6 @@ SMTask::~SMTask()
       }
       scan=&((*scan)->next);
    }
-   assert(!"SMTask dtor called with unregistered task");
 }
 
 void SMTask::Delete(SMTask *task)

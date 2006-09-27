@@ -206,7 +206,7 @@ Buffer::~Buffer()
 {
    xfree(error_text);
    xfree(buffer);
-   delete rate;
+   SMTask::Delete(rate);
 }
 
 const char *Buffer::GetRateStrS()
