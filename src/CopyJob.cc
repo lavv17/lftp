@@ -243,6 +243,7 @@ int CopyJobEnv::Do()
    count++;
    bytes+=j->GetBytesCount();
    time_spent+=j->GetTimeSpent();
+   Delete(j);
    return MOVED;
 }
 void CopyJobEnv::AddCopier(FileCopy *c,const char *n)

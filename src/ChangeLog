@@ -3,6 +3,7 @@
 	* buffer.cc: use Delete on SMTask derivative Speedometer.
 	* SMTask.cc: add debug print when deleting running task.
 	* FileAccess.cc: fixed coredump when path.url is null after Change.
+	* CopyJob.cc: Delete done CopyJob - fix a leak.
 
 2006-08-29  Alexander V. Lukyanov <lav@yars.free.net>
 
