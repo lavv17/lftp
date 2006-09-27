@@ -350,12 +350,15 @@ const char *FileAccess::GetFileURL(const char *f,int flags) const
 	 Path f_path(cwd);
 	 if(f)
 	    f_path.Change(f,true);
-	 int f_path_index=url::path_index(f_path.url);
-	 xfree(url);
-	 url=u.Combine(home);
-	 url=(char*)xrealloc(url,strlen(url)+strlen(f_path.url+f_path_index)+2);
-	 strcpy(url+strlen(url),f_path.url+f_path_index);
-	 return url;
+	 if(f_path.url)
+	 {
+	    int f_path_index=url::path_index(f_path.url);
+	    xfree(url);
+	    url=u.Combine(home);
+	    url=(char*)xrealloc(url,strlen(url)+strlen(f_path.url+f_path_index)+2);
+	    strcpy(url+strlen(url),f_path.url+f_path_index);
+	    return url;
+	 }
       }
 
       if(!f || (f[0]!='/' && f[0]!='~'))
