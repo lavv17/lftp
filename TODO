@@ -66,8 +66,4 @@ implemented.
 
  * APPE support.
 
- * cmd:parallel for scripting - execute several commands in parallel
-   (change CmdExec::Done to return true when waiting_num<cmd:parallel)
-   dependedncies?
-
  * optionally use STAT . (or STAT -l) for directory listings.

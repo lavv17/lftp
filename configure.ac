@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
-AC_INIT([lftp], [3.5.4], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [3.5.5], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_LIBOBJ_DIR([lib])
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
@@ -113,7 +113,7 @@ AC_ISC_POSIX
 gl_MBSWIDTH
 
 AM_STDBOOL_H
-if test x$ac_cv_header_stdbool_h = xno; then
+if test "$ac_cv_header_stdbool_h" = no; then
    AC_CONFIG_LINKS([include/stdbool.h:lib/stdbool_.h])
 fi
 
