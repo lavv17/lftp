@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.6.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2006-08-09 12:19+0400\n"
+"POT-Creation-Date: 2006-09-27 11:41+0400\n"
 "PO-Revision-Date: 2002-08-08 19:01+0000\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -15,83 +15,83 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/CmdExec.cc:93
+#: src/CmdExec.cc:95
 #, c-format
 msgid "Warning: chdir(%s) failed: %s\n"
 msgstr "Aviso: falló chdir(%s): %s\n"
 
-#: src/CmdExec.cc:207
+#: src/CmdExec.cc:209
 #, c-format
 msgid "Unknown command `%s'.\n"
 msgstr "Orden desconocida `%s'.\n"
 
-#: src/CmdExec.cc:209
+#: src/CmdExec.cc:211
 #, c-format
 msgid "Ambiguous command `%s'.\n"
 msgstr "Orden ambigua `%s'.\n"
 
-#: src/CmdExec.cc:230
+#: src/CmdExec.cc:232
 #, c-format
 msgid "Module for command `%s' did not register the command.\n"
 msgstr "El módulo para la orden `%s' no registro esa orden.\n"
 
-#: src/CmdExec.cc:380
+#: src/CmdExec.cc:382
 #, c-format
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, dir actual=%s\n"
 
-#: src/CmdExec.cc:401 src/MirrorJob.cc:529
+#: src/CmdExec.cc:403 src/MirrorJob.cc:533
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: se recibió redirección a `%s'\n"
 
-#: src/CmdExec.cc:404 src/FileCopy.cc:1025
+#: src/CmdExec.cc:406 src/FileCopy.cc:1025
 msgid "Too many redirections"
 msgstr "Demasiadas redirecciones"
 
-#: src/CmdExec.cc:519 src/CmdExec.cc:576
+#: src/CmdExec.cc:521 src/CmdExec.cc:578
 msgid "Interrupt"
 msgstr "Interrupción"
 
-#: src/CmdExec.cc:639
+#: src/CmdExec.cc:642
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "Aviso: descartando orden incompleta\n"
 
-#: src/CmdExec.cc:731
+#: src/CmdExec.cc:736
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tEjecutando primitiva `%s' [%s]\n"
 
-#: src/CmdExec.cc:738
+#: src/CmdExec.cc:743
 msgid "Queue is stopped."
 msgstr ""
 
-#: src/CmdExec.cc:743
+#: src/CmdExec.cc:748
 msgid "Now executing:"
 msgstr "Ejecutando ahora:"
 
-#: src/CmdExec.cc:756
+#: src/CmdExec.cc:761
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\tEsperando que termine la tarea [%d]\n"
 
-#: src/CmdExec.cc:761
+#: src/CmdExec.cc:766
 #, c-format
 msgid "\tWaiting for termination of jobs: "
 msgstr "\tEsperando la finalización de las siguientes tareas: "
 
-#: src/CmdExec.cc:772
+#: src/CmdExec.cc:777
 #, c-format
 msgid "\tRunning\n"
 msgstr "\tEjecutando\n"
 
-#: src/CmdExec.cc:776
+#: src/CmdExec.cc:781
 #, c-format
 msgid "\tWaiting for command\n"
 msgstr "\tEsperando orden\n"
 
-#: src/CmdExec.cc:1295
+#: src/CmdExec.cc:1303
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: la orden `%s' no fue compilada dentro del binario.\n"
@@ -141,7 +141,7 @@ msgstr "Archivo movido: %s"
 msgid "File moved to `%s'"
 msgstr "Archivo movido a `%s'"
 
-#: src/FileAccess.cc:1008 src/buffer.cc:234
+#: src/FileAccess.cc:1011 src/buffer.cc:234
 #, c-format
 msgid "%s [cached]"
 msgstr ""
@@ -196,7 +196,7 @@ msgstr "%sBorrados: %d directorio$|s$, %d archivo$|s$, %d enlace$|s$\n"
 msgid "%s%d error$|s$ detected\n"
 msgstr "%s ok, %d directorio$|s$ creado$|s$\n"
 
-#: src/MirrorJob.cc:249 src/MirrorJob.cc:885
+#: src/MirrorJob.cc:249 src/MirrorJob.cc:889
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "Borrando archivo antiguo `%s'"
@@ -206,57 +206,57 @@ msgstr "Borrando archivo antiguo `%s'"
 msgid "Transferring file `%s'"
 msgstr "Enviando archivo `%s'"
 
-#: src/MirrorJob.cc:348 src/MirrorJob.cc:436 src/MirrorJob.cc:667
+#: src/MirrorJob.cc:348 src/MirrorJob.cc:437 src/MirrorJob.cc:671
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Borrando archivo local antiguo `%s'"
 
-#: src/MirrorJob.cc:398
+#: src/MirrorJob.cc:399
 #, c-format
 msgid "Mirroring directory `%s'"
 msgstr "Replicando directorio `%s'"
 
-#: src/MirrorJob.cc:449
+#: src/MirrorJob.cc:450
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Creando enlace simbólico `%s' a `%s'"
 
-#: src/MirrorJob.cc:582
+#: src/MirrorJob.cc:586
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: el protocolo `%s' no es adecuado para mirror\n"
 
-#: src/MirrorJob.cc:685
+#: src/MirrorJob.cc:689
 #, c-format
 msgid "Making directory `%s'"
 msgstr "Creando directorio `%s'"
 
-#: src/MirrorJob.cc:834
+#: src/MirrorJob.cc:838
 #, fuzzy, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "No se borró el archivo `%s'"
 
-#: src/MirrorJob.cc:837
+#: src/MirrorJob.cc:841
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "No se borró el archivo `%s'"
 
-#: src/MirrorJob.cc:880
+#: src/MirrorJob.cc:884
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "Borrando directorio antiguo `%s'"
 
-#: src/MirrorJob.cc:995
+#: src/MirrorJob.cc:999
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1398
+#: src/MirrorJob.cc:1406
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1512 src/commands.cc:1084 src/commands.cc:1172
+#: src/MirrorJob.cc:1523 src/commands.cc:1084 src/commands.cc:1172
 #: src/commands.cc:1624 src/commands.cc:1658 src/commands.cc:1763
 #: src/commands.cc:2064 src/commands.cc:2260 src/commands.cc:2433
 #: src/commands.cc:2440 src/commands.cc:2707 src/commands.cc:2734
@@ -266,7 +266,7 @@ msgstr ""
 msgid "Try `help %s' for more information.\n"
 msgstr "Pruebe `help %s' para mayor información.\n"
 
-#: src/MirrorJob.cc:1549 src/MirrorJob.cc:1565 src/commands.cc:944
+#: src/MirrorJob.cc:1560 src/MirrorJob.cc:1576 src/commands.cc:944
 #: src/commands.cc:2155 src/DummyProto.cc:73
 msgid " - not supported protocol"
 msgstr " - protocolo no soportado"
@@ -2075,12 +2075,12 @@ msgstr "%lld byte$#ll#|s$ transferidos en %ld segundo$#l#|s$."
 msgid "%lld $#ll#byte|bytes$ transferred"
 msgstr "%lld byte$#l#|s$ transferidos.\n"
 
-#: src/CopyJob.cc:281
+#: src/CopyJob.cc:282
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr "Falló la transferencia de %d de %d archivo$|s$.\n"
 
-#: src/CopyJob.cc:287
+#: src/CopyJob.cc:288
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr "%d archivo$|s$ transferido$|s$ en total.\n"

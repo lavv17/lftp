@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.2.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2006-08-09 12:19+0400\n"
+"POT-Creation-Date: 2006-09-27 11:41+0400\n"
 "PO-Revision-Date: 2005-07-30 23:51+0800\n"
 "Last-Translator: Abel Cheung <abelcheung@gmail.com>\n"
 "Language-Team: traditional Chinese <community@linuxhall.org>\n"
@@ -14,83 +14,83 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/CmdExec.cc:93
+#: src/CmdExec.cc:95
 #, c-format
 msgid "Warning: chdir(%s) failed: %s\n"
 msgstr "警告：chdir(%s) 失敗：%s\n"
 
-#: src/CmdExec.cc:207
+#: src/CmdExec.cc:209
 #, c-format
 msgid "Unknown command `%s'.\n"
 msgstr "不明的指令 ‘%s’。\n"
 
-#: src/CmdExec.cc:209
+#: src/CmdExec.cc:211
 #, c-format
 msgid "Ambiguous command `%s'.\n"
 msgstr "指令 ‘%s’ 不明確。\n"
 
-#: src/CmdExec.cc:230
+#: src/CmdExec.cc:232
 #, c-format
 msgid "Module for command `%s' did not register the command.\n"
 msgstr "應該和指令 ‘%s’ 有關的模組根本沒有包含該指令在內。\n"
 
-#: src/CmdExec.cc:380
+#: src/CmdExec.cc:382
 #, c-format
 msgid "cd ok, cwd=%s\n"
 msgstr "cd 成功，目前的目錄為 %s\n"
 
-#: src/CmdExec.cc:401 src/MirrorJob.cc:529
+#: src/CmdExec.cc:403 src/MirrorJob.cc:533
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s：將輸出結果重新導向至 ‘%s’\n"
 
-#: src/CmdExec.cc:404 src/FileCopy.cc:1025
+#: src/CmdExec.cc:406 src/FileCopy.cc:1025
 msgid "Too many redirections"
 msgstr "重新導向次數太多"
 
-#: src/CmdExec.cc:519 src/CmdExec.cc:576
+#: src/CmdExec.cc:521 src/CmdExec.cc:578
 msgid "Interrupt"
 msgstr "中斷"
 
-#: src/CmdExec.cc:639
+#: src/CmdExec.cc:642
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "警告：忽略不完整的指令\n"
 
-#: src/CmdExec.cc:731
+#: src/CmdExec.cc:736
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\t執行內置的 ‘%s’ [%s]\n"
 
-#: src/CmdExec.cc:738
+#: src/CmdExec.cc:743
 msgid "Queue is stopped."
 msgstr "佇列已停止。"
 
-#: src/CmdExec.cc:743
+#: src/CmdExec.cc:748
 msgid "Now executing:"
 msgstr "現在執行："
 
-#: src/CmdExec.cc:756
+#: src/CmdExec.cc:761
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\t等待工作 [%d] 終止\n"
 
-#: src/CmdExec.cc:761
+#: src/CmdExec.cc:766
 #, c-format
 msgid "\tWaiting for termination of jobs: "
 msgstr "\t等待工作終止："
 
-#: src/CmdExec.cc:772
+#: src/CmdExec.cc:777
 #, c-format
 msgid "\tRunning\n"
 msgstr "\t正在執行\n"
 
-#: src/CmdExec.cc:776
+#: src/CmdExec.cc:781
 #, c-format
 msgid "\tWaiting for command\n"
 msgstr "\t等待輸入指令\n"
 
-#: src/CmdExec.cc:1295
+#: src/CmdExec.cc:1303
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s：編譯程式時沒有包括指令 ‘%s’ 的支援。\n"
@@ -140,7 +140,7 @@ msgstr "檔案已移動：%s"
 msgid "File moved to `%s'"
 msgstr "檔案被移動至 ‘%s’"
 
-#: src/FileAccess.cc:1008 src/buffer.cc:234
+#: src/FileAccess.cc:1011 src/buffer.cc:234
 #, c-format
 msgid "%s [cached]"
 msgstr "%s [已存入快取記憶]"
@@ -194,7 +194,7 @@ msgstr "%s刪除︰%d 個目錄，%d 個檔案，%d 個符號鏈結\n"
 msgid "%s%d error$|s$ detected\n"
 msgstr "%s 成功，建立了 %d 個目錄\n"
 
-#: src/MirrorJob.cc:249 src/MirrorJob.cc:885
+#: src/MirrorJob.cc:249 src/MirrorJob.cc:889
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "刪除舊的檔案 ‘%s’"
@@ -204,57 +204,57 @@ msgstr "刪除舊的檔案 ‘%s’"
 msgid "Transferring file `%s'"
 msgstr "正在上傳檔案 ‘%s’"
 
-#: src/MirrorJob.cc:348 src/MirrorJob.cc:436 src/MirrorJob.cc:667
+#: src/MirrorJob.cc:348 src/MirrorJob.cc:437 src/MirrorJob.cc:671
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "刪除舊的本機檔案 ‘%s’"
 
-#: src/MirrorJob.cc:398
+#: src/MirrorJob.cc:399
 #, c-format
 msgid "Mirroring directory `%s'"
 msgstr "正在 mirror ‘%s’ 目錄"
 
-#: src/MirrorJob.cc:449
+#: src/MirrorJob.cc:450
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "建立符號鏈結 ‘%s’ 到 ‘%s’"
 
-#: src/MirrorJob.cc:582
+#: src/MirrorJob.cc:586
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror：協定 ‘%s’ 不適合作為 mirror 用途\n"
 
-#: src/MirrorJob.cc:685
+#: src/MirrorJob.cc:689
 #, c-format
 msgid "Making directory `%s'"
 msgstr "正在建立 ‘%s’ 目錄"
 
-#: src/MirrorJob.cc:834
+#: src/MirrorJob.cc:838
 #, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "沒有刪除 ‘%s’ 舊目錄"
 
-#: src/MirrorJob.cc:837
+#: src/MirrorJob.cc:841
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "沒有刪除舊檔案 ‘%s’"
 
-#: src/MirrorJob.cc:880
+#: src/MirrorJob.cc:884
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "刪除 ‘%s’ 舊目錄"
 
-#: src/MirrorJob.cc:995
+#: src/MirrorJob.cc:999
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr "重新嘗試 mirror...\n"
 
-#: src/MirrorJob.cc:1398
+#: src/MirrorJob.cc:1406
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s：正規表示式 ‘%s’：%s\n"
 
-#: src/MirrorJob.cc:1512 src/commands.cc:1084 src/commands.cc:1172
+#: src/MirrorJob.cc:1523 src/commands.cc:1084 src/commands.cc:1172
 #: src/commands.cc:1624 src/commands.cc:1658 src/commands.cc:1763
 #: src/commands.cc:2064 src/commands.cc:2260 src/commands.cc:2433
 #: src/commands.cc:2440 src/commands.cc:2707 src/commands.cc:2734
@@ -264,7 +264,7 @@ msgstr "%s：正規表示式 ‘%s’：%s\n"
 msgid "Try `help %s' for more information.\n"
 msgstr "請輸入 ‘help %s’ 顯示額外資訊。\n"
 
-#: src/MirrorJob.cc:1549 src/MirrorJob.cc:1565 src/commands.cc:944
+#: src/MirrorJob.cc:1560 src/MirrorJob.cc:1576 src/commands.cc:944
 #: src/commands.cc:2155 src/DummyProto.cc:73
 msgid " - not supported protocol"
 msgstr " - 不支援該種協定"
@@ -2091,12 +2091,12 @@ msgstr "於 %2$ld 秒內傳送了 %1$lld 個位元組"
 msgid "%lld $#ll#byte|bytes$ transferred"
 msgstr "傳送了 %lld 個位元組\n"
 
-#: src/CopyJob.cc:281
+#: src/CopyJob.cc:282
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr "傳送 %2$d 個檔案時有 %1$d 個失敗了\n"
 
-#: src/CopyJob.cc:287
+#: src/CopyJob.cc:288
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr "共傳送了 %d 個檔案\n"
