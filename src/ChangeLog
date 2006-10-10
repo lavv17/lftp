@@ -1,3 +1,8 @@
+2006-10-10  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CopyJob.cc: clear and reset cp when a sub-job finishes (fixes
+	  coredump in mget).
+
 2006-09-27  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* buffer.cc: use Delete on SMTask derivative Speedometer.
