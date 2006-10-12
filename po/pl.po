@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.5.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2006-09-27 11:41+0400\n"
+"POT-Creation-Date: 2006-10-12 13:02+0400\n"
 "PO-Revision-Date: 2006-08-25 22:20+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -2154,12 +2154,12 @@ msgstr "%lld bajt$#ll#|y|ów$ przes³an$y|e|ych$ w ci±gu %ld sekund$#l#y||$"
 msgid "%lld $#ll#byte|bytes$ transferred"
 msgstr "%lld bajt$#ll#|y|ów$ przes³an$y|e|ych$"
 
-#: src/CopyJob.cc:282
+#: src/CopyJob.cc:286
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr "Transfer %d z %d plik$u|ów|ów$ nie powiód³ siê\n"
 
-#: src/CopyJob.cc:288
+#: src/CopyJob.cc:292
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Podsumowuj±c: przes³ano %d plik$|i|ów$\n"

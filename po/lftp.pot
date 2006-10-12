@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2006-09-27 11:41+0400\n"
+"POT-Creation-Date: 2006-10-12 13:02+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1823,12 +1823,12 @@ msgstr ""
 msgid "%lld $#ll#byte|bytes$ transferred"
 msgstr ""
 
-#: src/CopyJob.cc:282
+#: src/CopyJob.cc:286
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr ""
 
-#: src/CopyJob.cc:288
+#: src/CopyJob.cc:292
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr ""

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2006-09-27 11:41+0400\n"
+"POT-Creation-Date: 2006-10-12 13:02+0400\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -2016,12 +2016,12 @@ msgstr "%ld 字节, 在 %ld 秒中传输完毕 (%g 字节/秒)\n"
 msgid "%lld $#ll#byte|bytes$ transferred"
 msgstr "传输 %ld 字节\n"
 
-#: src/CopyJob.cc:282
+#: src/CopyJob.cc:286
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr "传输 %d/%d 文件失败\n"
 
-#: src/CopyJob.cc:288
+#: src/CopyJob.cc:292
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr "总共传输 %d 个文件\n"

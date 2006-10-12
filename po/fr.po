@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2006-09-27 11:41+0400\n"
+"POT-Creation-Date: 2006-10-12 13:02+0400\n"
 "PO-Revision-Date: 2005-11-08 04:30+0100\n"
 "Last-Translator: Nicolas Noble <nicolas@nobis-crew.org>\n"
 "Language-Team: French <fr@li.org>\n"
@@ -2142,12 +2142,12 @@ msgstr "%lld octet$#ll# transféré|s transférés$ en %ld seconde$#l#|s$"
 msgid "%lld $#ll#byte|bytes$ transferred"
 msgstr "%lld octet$#ll# transféré|s transférés"
 
-#: src/CopyJob.cc:282
+#: src/CopyJob.cc:286
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr "Le transfert de %d sur %d fichier$|s$ a échoué\n"
 
-#: src/CopyJob.cc:288
+#: src/CopyJob.cc:292
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Total %d fichier$|s$ transférés\n"

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2006-09-27 11:41+0400\n"
+"POT-Creation-Date: 2006-10-12 13:02+0400\n"
 "PO-Revision-Date: 1999-07-12 00:00+0400\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -1939,12 +1939,12 @@ msgstr "%ld bytes transmitidos em %ld segundos (%g bytes/s)\n"
 msgid "%lld $#ll#byte|bytes$ transferred"
 msgstr "%ld bytes transmitidos\n"
 
-#: src/CopyJob.cc:282
+#: src/CopyJob.cc:286
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr "Transferência de %d de %d arquivos falhou\n"
 
-#: src/CopyJob.cc:288
+#: src/CopyJob.cc:292
 #, fuzzy, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr "%d arquivos transmitidos"

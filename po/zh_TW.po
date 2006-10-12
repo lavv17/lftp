@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.2.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2006-09-27 11:41+0400\n"
+"POT-Creation-Date: 2006-10-12 13:02+0400\n"
 "PO-Revision-Date: 2005-07-30 23:51+0800\n"
 "Last-Translator: Abel Cheung <abelcheung@gmail.com>\n"
 "Language-Team: traditional Chinese <community@linuxhall.org>\n"
@@ -2091,12 +2091,12 @@ msgstr "於 %2$ld 秒內傳送了 %1$lld 個位元組"
 msgid "%lld $#ll#byte|bytes$ transferred"
 msgstr "傳送了 %lld 個位元組\n"
 
-#: src/CopyJob.cc:282
+#: src/CopyJob.cc:286
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr "傳送 %2$d 個檔案時有 %1$d 個失敗了\n"
 
-#: src/CopyJob.cc:288
+#: src/CopyJob.cc:292
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr "共傳送了 %d 個檔案\n"

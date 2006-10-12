@@ -1,3 +1,7 @@
+Version 3.5.6 - 2006-10-12
+
+* fixed a coredump in mget.
+
 Version 3.5.5 - 2006-10-05
 
 * new settings cmd:parallel and cmd:queue-parallel to set number of jobs
