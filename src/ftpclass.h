@@ -32,11 +32,21 @@
 # include "lftp_ssl.h"
 #endif
 
+class TelnetEncode : public DataTranslator {
+   void PutTranslated(Buffer *target,const char *buf,int size);
+};
+class TelnetDecode : public DataTranslator {
+   void PutTranslated(Buffer *target,const char *buf,int size);
+};
 class IOBufferTelnet : public IOBufferStacked
 {
-   void PutTranslated(const char *,int);
 public:
-   IOBufferTelnet(IOBuffer *b) : IOBufferStacked(b) {}
+   IOBufferTelnet(IOBuffer *b) : IOBufferStacked(b) {
+      if(mode==PUT)
+	 SetTranslator(new TelnetEncode());
+      else
+	 SetTranslator(new TelnetDecode());
+   }
 };
 
 class Ftp : public NetAccess

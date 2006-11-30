@@ -79,7 +79,7 @@ void Buffer::Allocate(int size)
       buffer_ptr=0;
 
    int in_buffer_real=in_buffer;
-   if(save)
+   if(save || buffer_ptr<size || buffer_ptr<in_buffer)
       in_buffer_real+=buffer_ptr;
 
    if(buffer_allocated<in_buffer_real+size)
@@ -124,9 +124,8 @@ void Buffer::Put(const char *buf,int size)
    if(size==0)
       return;
 
-   Allocate(size);
-
-   memcpy(buffer+buffer_ptr+in_buffer,buf,size);
+   char *space=GetSpace(size);
+   memmove(space,buf,size);
    in_buffer+=size;
    pos+=size;
 }
@@ -144,10 +143,9 @@ void Buffer::vFormat(const char *f, va_list v)
    int size=64;
    for(;;)
    {
-      Allocate(size);
       va_list tmp;
       VA_COPY(tmp,v);
-      int res=vsnprintf(buffer+buffer_ptr+in_buffer, size, f, v);
+      int res=vsnprintf(GetSpace(size), size, f, v);
       va_end(tmp);
       if(res>=0 && res<size)
       {
@@ -246,16 +244,75 @@ void Buffer::SetError2(const char *e1,const char *e2)
 }
 #endif
 
-void DirectedBuffer::SetTranslation(const char *enc,bool translit)
+void DataRecoder::PutTranslated(Buffer *target,const char *put_buf,int size)
+{
+   if(!backend_translate)
+   {
+      target->Put(put_buf,size);
+      return;
+   }
+   bool from_untranslated=false;
+   if(Size()>0)
+   {
+      Put(put_buf,size);
+      Get(&put_buf,&size);
+      from_untranslated=true;
+   }
+   if(size<=0)
+      return;
+   size_t put_size=size;
+
+   int size_coeff=6;
+try_again:
+   if(put_size==0)
+      return;
+   size_t store_size=size_coeff*put_size;
+   char *store_space=target->GetSpace(store_size);
+   char *store_buf=store_space;
+   const char *base_buf=put_buf;
+   // do the translation
+   ICONV_CONST char **put_buf_ptr=const_cast<ICONV_CONST char**>(&put_buf);
+   size_t res=iconv(backend_translate,put_buf_ptr,&put_size,&store_buf,&store_size);
+   in_buffer+=store_buf-store_space;
+   if(from_untranslated)
+      Skip(put_buf-base_buf);
+   if(res==(size_t)-1)
+   {
+      switch(errno)
+      {
+      case EINVAL: // incomplete character
+	 if(!from_untranslated)
+	    Put(put_buf,put_size);
+	 break;
+      case EILSEQ: // invalid character
+	 target->Put("?");
+	 put_buf++;
+	 put_size--;
+	 goto try_again;
+      case E2BIG:  // no room to store result, allocate more.
+	 size_coeff*=2;
+	 goto try_again;
+      default:
+	 break;
+      }
+   }
+   return;
+}
+
+void DataRecoder::ResetTranslation()
+{
+   Empty();
+   if(!backend_translate)
+      return;
+   iconv(backend_translate,0,0,0,0);
+}
+DataRecoder::~DataRecoder()
 {
    if(backend_translate)
       iconv_close(backend_translate);
-   backend_translate=0;
-   if(!enc)
-      return;
-   const char *local_code=ResMgr::Query("file:charset",0);
-   const char *from_code=(mode==GET?enc:local_code);
-   const char *to_code  =(mode==GET?local_code:enc);
+}
+DataRecoder::DataRecoder(const char *from_code,const char *to_code,bool translit)
+{
    if(translit)
    {
       const char *add="//TRANSLIT";
@@ -271,90 +328,49 @@ void DirectedBuffer::SetTranslation(const char *enc,bool translit)
       backend_translate=0;
    }
 }
+
+void DirectedBuffer::SetTranslation(const char *enc,bool translit)
+{
+   if(!enc)
+      return;
+   const char *local_code=ResMgr::Query("file:charset",0);
+   const char *from_code=(mode==GET?enc:local_code);
+   const char *to_code  =(mode==GET?local_code:enc);
+   SetTranslator(new DataRecoder(from_code,to_code,translit));
+}
 DirectedBuffer::~DirectedBuffer()
 {
-   SetTranslation(0);
-   delete untranslated;
+   delete translator;
 }
 void DirectedBuffer::ResetTranslation()
 {
-   if(!backend_translate)
-      return;
-   iconv(backend_translate,0,0,0,0);
-   delete untranslated;
-   untranslated=0;
+   if(translator)
+      translator->ResetTranslation();
 }
-void DirectedBuffer::PutTranslated(const char *put_buf,int size)
+void DirectedBuffer::Put(const char *buf,int size)
 {
-   if(!backend_translate)
-   {
-      Buffer::Put(put_buf,size);
-      return;
-   }
-   bool from_untranslated=false;
-   if(untranslated && untranslated->Size()>0)
-   {
-      untranslated->Put(put_buf,size);
-      untranslated->Get(&put_buf,&size);
-      from_untranslated=true;
-   }
-   if(size<=0)
-      return;
-   size_t put_size=size;
-
-try_again:
-   if(put_size==0)
-      return;
-   size_t store_size=6*put_size;
-   Allocate(store_size);
-   char *store_buf=buffer+buffer_ptr+in_buffer;
-   store_size=buffer_allocated-(store_buf-buffer);
-   const char *base_buf=put_buf;
-   // do the translation
-   ICONV_CONST char **put_buf_ptr=const_cast<ICONV_CONST char**>(&put_buf);
-   size_t res=iconv(backend_translate,put_buf_ptr,&put_size,&store_buf,&store_size);
-   in_buffer+=store_buf-(buffer+buffer_ptr+in_buffer);
-   if(from_untranslated)
-      untranslated->Skip(put_buf-base_buf);
-   if(res==(size_t)-1)
-   {
-      switch(errno)
-      {
-      case EINVAL: // incomplete character
-	 if(!from_untranslated)
-	 {
-	    if(!untranslated)
-	       untranslated=new Buffer;
-	    untranslated->Put(put_buf,put_size);
-	 }
-	 break;
-      case EILSEQ: // invalid character
-	 Buffer::Put("?");
-	 put_buf++;
-	 put_size--;
-	 goto try_again;
-      case E2BIG:  // no room to store result
-	 if(store_size>=6*put_size)
-	    Allocate(store_size*2);
-	 goto try_again;
-      default:
-	 break;
-      }
-   }
-   return;
+   if(mode==PUT && translator)
+      translator->PutTranslated(this,buf,size);
+   else
+      Buffer::Put(buf,size);
+}
+void DirectedBuffer::PutTranslated(const char *buf,int size)
+{
+   if(translator)
+      translator->PutTranslated(this,buf,size);
+   else
+      Buffer::Put(buf,size);
 }
 void DirectedBuffer::EmbraceNewData(int len)
 {
    if(len<=0)
       return;
    RateAdd(len);
-   if(backend_translate)
+   if(translator)
    {
-      if(!untranslated)
-	 untranslated=new Buffer;
       // copy the data to free room for translated data
-      untranslated->Put(buffer+buffer_ptr+in_buffer,len);
-      PutTranslated(0,0);
+      translator->Put(buffer+buffer_ptr+in_buffer,len);
+      translator->PutTranslated(this,0,0);
    }
    else
    {
@@ -489,8 +505,7 @@ int IOBufferStacked::Get_LL(int)
       return 0;
    }
 
-   Allocate(size);
-   memcpy(buffer+buffer_ptr+in_buffer,b,size);
+   memcpy(GetSpace(size),b,size);
    down->Skip(size);
    return size;
 }
@@ -571,9 +586,7 @@ int IOBufferFDStream::Get_LL(int size)
       return 0;
    }
 
-   Allocate(size);
-
-   res=read(fd,buffer+buffer_ptr+in_buffer,size);
+   res=read(fd,GetSpace(size),size);
    if(res==-1)
    {
       saved_errno=errno;
@@ -625,9 +638,7 @@ int IOBufferFileAccess::Get_LL(int size)
 {
    int res=0;
 
-   Allocate(size);
-
-   res=session->Read(buffer+buffer_ptr+in_buffer,size);
+   res=session->Read(GetSpace(size),size);
    if(res<0)
    {
       if(res==FA::DO_AGAIN)
@@ -719,8 +730,7 @@ void Buffer::PackUINT32BE(unsigned data)
 #ifndef NDEBUG
    Log::global->Format(11,"PackUINT32BE(0x%08X)\n",data);
 #endif
-   Allocate(4);
-   char *b=buffer+buffer_ptr+in_buffer;
+   char *b=GetSpace(4);
    b[0]=(data>>24)&255;
    b[1]=(data>>16)&255;
    b[2]=(data>>8)&255;
@@ -738,8 +748,7 @@ void Buffer::PackINT32BE(int data)
 }
 void Buffer::PackUINT16BE(unsigned data)
 {
-   Allocate(2);
-   char *b=buffer+buffer_ptr+in_buffer;
+   char *b=GetSpace(2);
    b[0]=(data>>8)&255;
    b[1]=(data)&255;
    in_buffer+=2;
@@ -749,8 +758,7 @@ void Buffer::PackUINT8(unsigned data)
 #ifndef NDEBUG
    Log::global->Format(11,"PackUINT8(0x%02X)\n",data);
 #endif
-   Allocate(1);
-   char *b=buffer+buffer_ptr+in_buffer;
+   char *b=GetSpace(1);
    b[0]=(data)&255;
    in_buffer+=1;
 }

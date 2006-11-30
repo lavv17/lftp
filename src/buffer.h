@@ -88,6 +88,10 @@ public:
    void Format(const char *f,...) PRINTF_LIKE(2,3);
    void vFormat(const char *f, va_list v);
    void PutEOF() { eof=true; PutEOF_LL(); }
+   char *GetSpace(int size) {
+      Allocate(size);
+      return buffer+buffer_ptr+in_buffer;
+   }
 
    unsigned long long UnpackUINT64BE(int offset=0);
    unsigned UnpackUINT32BE(int offset=0);
@@ -125,31 +129,42 @@ public:
    virtual ~Buffer();
 };
 
+class DataTranslator : public Buffer
+{
+public:
+   virtual void PutTranslated(Buffer *dst,const char *buf,int size)=0;
+   virtual void ResetTranslation() { Empty(); }
+   virtual ~DataTranslator() {}
+};
+class DataRecoder : public DataTranslator
+{
+   iconv_t backend_translate;
+public:
+   void PutTranslated(Buffer *dst,const char *buf,int size);
+   void ResetTranslation();
+   DataRecoder(const char *from_code,const char *to_code,bool translit=true);
+   ~DataRecoder();
+};
+
 class DirectedBuffer : public Buffer
 {
 public:
    enum dir_t { GET, PUT };
 
 protected:
-   iconv_t backend_translate;
-   Buffer *untranslated;
+   DataTranslator *translator;
    dir_t mode;
    void EmbraceNewData(int len);
 
 public:
-   DirectedBuffer(dir_t m) { mode=m; backend_translate=0; untranslated=0; }
+   DirectedBuffer(dir_t m) { mode=m; translator=0; }
    ~DirectedBuffer();
+   void SetTranslator(DataTranslator *t) { delete translator; translator=t; }
    void SetTranslation(const char *be_encoding,bool translit=true);
-   virtual void PutTranslated(const char *buf,int size);
+   void PutTranslated(const char *buf,int size);
    void PutTranslated(const char *buf) { PutTranslated(buf,strlen(buf)); }
    void ResetTranslation();
-   void Put(const char *buf,int size)
-      {
-	 if(mode==PUT)
-	    PutTranslated(buf,size);
-	 else
-	    Buffer::Put(buf,size);
-      }
+   void Put(const char *buf,int size);
    void Put(const char *buf) { Put(buf,strlen(buf)); }
    dir_t GetDirection() { return mode; }
 };

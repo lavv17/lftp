@@ -1,3 +1,13 @@
+2006-11-28  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc, MirrorJob.h: (--on-change) new option.
+	* log.cc, log.h: optimize Log::Format for when the message is not
+	  going to be output.
+	* buffer.cc, buffer.h, ftpclass.cc, ftpclass.h: (DataTranslator) new
+	class; use it in DirectedBuffer; (DataRecoder) new class for charset
+	conversion; use DataTranslator in IOBufferTelnet; skip 3-byte telnet
+	commands; optimize buffer data movement.
+
 2006-10-10  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CopyJob.cc: clear and reset cp when a sub-job finishes (fixes

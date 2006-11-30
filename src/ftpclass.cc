@@ -48,6 +48,10 @@
 #define TELNET_IAC	255		/* interpret as command: */
 #define	TELNET_IP	244		/* interrupt process--permanently */
 #define	TELNET_DM	242		/* for telfunc calls */
+#define	TELNET_WILL	251
+#define	TELNET_WONT	252
+#define	TELNET_DO	253
+#define	TELNET_DONT	254
 
 #include <errno.h>
 #include <time.h>
@@ -4452,14 +4456,31 @@ void Ftp::Connection::MakeSSLBuffers(const char *hostname)
 }
 #endif
 
-void IOBufferTelnet::PutTranslated(const char *put_buf,int size)
+void TelnetEncode::PutTranslated(Buffer *target,const char *put_buf,int size)
 {
-   bool from_untranslated=false;
-   if(untranslated && untranslated->Size()>0)
+   size_t put_size=size;
+   const char *iac;
+   while(put_size>0)
    {
-      untranslated->Put(put_buf,size);
-      untranslated->Get(&put_buf,&size);
-      from_untranslated=true;
+      iac=(const char*)memchr(put_buf,TELNET_IAC,put_size);
+      if(!iac)
+      {
+	 target->Put(put_buf,put_size);
+	 break;
+      }
+      target->Put(put_buf,iac+1-put_buf);
+      put_size-=iac+1-put_buf;
+      put_buf=iac+1;
+      // double the IAC to send it literally.
+      target->Put(iac,1);
+   }
+}
+void TelnetDecode::PutTranslated(Buffer *target,const char *put_buf,int size)
+{
+   if(Size()>0)
+   {
+      Put(put_buf,size);
+      Get(&put_buf,&size);
    }
    if(size<=0)
       return;
@@ -4470,48 +4491,48 @@ void IOBufferTelnet::PutTranslated(const char *put_buf,int size)
       iac=(const char*)memchr(put_buf,TELNET_IAC,put_size);
       if(!iac)
 	 break;
-      Buffer::Put(put_buf,iac-put_buf);
-      if(from_untranslated)
-	 untranslated->Skip(iac-put_buf);
+      target->Put(put_buf,iac-put_buf);
+      Skip(iac-put_buf);
       put_size-=iac-put_buf;
       put_buf=iac;
-      if(mode==PUT)
+      if(put_size<2)
       {
-	 // double the IAC to send it literally.
-	 Buffer::Put(iac,1);
-	 Buffer::Put(iac,1);
-	 if(from_untranslated)
-	    untranslated->Skip(1);
-	 put_buf++;
-	 put_size--;
+	 if(Size()==0)
+	    Put(put_buf,put_size); // remember incomplete sequence
+	 return;
       }
-      else // mode==GET
+      switch((unsigned char)iac[1])
       {
-	 if(put_size<2)
+      // 3-byte commands
+      case TELNET_WILL:
+      case TELNET_WONT:
+      case TELNET_DO:
+      case TELNET_DONT:
+	 if(put_size<3)
 	 {
-	    if(!from_untranslated)
-	    {
-	       if(!untranslated)
-		  untranslated=new Buffer;
-	       untranslated->Put(iac,1);
-	    }
+	    if(Size()==0)
+	       Put(put_buf,put_size); // remember incomplete sequence
 	    return;
 	 }
-	 switch((unsigned char)iac[1])
-	 {
-	 case TELNET_IAC:
-	    Buffer::Put(iac,1);
-	    /*fallthrough*/
-	 default:
-	    if(from_untranslated)
-	       untranslated->Skip(2);
-	    put_buf+=2;
-	    put_size-=2;
-	 }
+	 Skip(3);
+	 put_buf+=3;
+	 put_size-=3;
+	 break;
+      // 2-byte commands
+      case TELNET_IAC:
+	 target->Put(iac,1);
+	 /*fallthrough*/
+      default:
+	 Skip(2);
+	 put_buf+=2;
+	 put_size-=2;
       }
    }
    if(put_size>0)
-      Buffer::Put(put_buf,put_size);
+   {
+      target->Put(put_buf,put_size);
+      Skip(put_size);
+   }
 }
 
 void Ftp::Connection::SetControlConnectionTranslation(const char *cs)
