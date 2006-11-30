@@ -45,22 +45,29 @@ void Log::Init()
    at_line_start=true;
 }
 
-void Log::Write(int l,const char *s)
+bool Log::WillOutput(int l)
 {
-   if(!enabled || l>level)
-      return;
-   if(output==-1)
-      return;
-   if(!*s)
-      return;
+   if(!enabled || l>level || output==-1)
+      return false;
    if(tty)
    {
       pid_t pg=tcgetpgrp(output);
-      if(pg==(pid_t)-1)
-	 tty=false;
-      else if(pg!=getpgrp())
-	 return;
+      if(pg!=(pid_t)-1 && pg!=getpgrp())
+	 return false;
    }
+   return true;
+}
+
+void Log::Write(int l,const char *s)
+{
+   if(!WillOutput(l))
+      return;
+   DoWrite(s);
+}
+void Log::DoWrite(const char *s)
+{
+   if(!s || !*s)
+      return;
    if(at_line_start)
    {
       if(tty_cb && tty)
@@ -101,6 +108,9 @@ int Log::Do()
 
 void Log::Format(int l,const char *f,...)
 {
+   if(!WillOutput(l))
+      return;
+
    static char *buf=0;
    static int buf_alloc;
    va_list v;
@@ -122,7 +132,7 @@ void Log::Format(int l,const char *f,...)
       buf=(char*)xrealloc(buf,buf_alloc=res);
    }
 
-   Write(l,buf);
+   DoWrite(buf);
 }
 
 void Log::Cleanup()

@@ -46,6 +46,7 @@ class Log : public SMTask
 	 output=-1;
 	 need_close_output=false;
       }
+   bool WillOutput(int l);
 
 protected:
    ~Log();
@@ -56,6 +57,7 @@ public:
    bool enabled;
    int level;
 
+   void DoWrite(const char *str);
    void Write(int l,const char *str);
    void Format(int l,const char *fmt,...) PRINTF_LIKE(3,4);
 
