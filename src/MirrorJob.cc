@@ -58,6 +58,7 @@ void  MirrorJob::PrintStatus(int v,const char *tab)
    case(TARGET_REMOVE_OLD):
    case(TARGET_REMOVE_OLD_FIRST):
    case(TARGET_CHMOD):
+   case(LAST_EXEC):
       break;
 
    case(MAKE_TARGET_DIR):
@@ -132,6 +133,7 @@ void  MirrorJob::ShowRunStatus(StatusLine *s)
    case(TARGET_CHMOD):
    case(FINISHING):
    case(DONE):
+   case(LAST_EXEC):
       Job::ShowRunStatus(s);
       break;
 
@@ -992,20 +994,40 @@ int   MirrorJob::Do()
 	 parent_mirror->stats.Add(stats);
       else
       {
-	 if((flags&LOOP) && stats.HaveSomethingDone(flags) && !stats.error_count)
+	 if(stats.HaveSomethingDone(flags) && on_change)
 	 {
-	    set_state(DONE);
-	    PrintStatus(0,"");
-	    printf(_("Retrying mirror...\n"));
-	    stats.Reset();
-	    goto pre_GETTING_LIST_INFO;
+	    CmdExec *exec=new CmdExec(source_session->Clone(),0);
+	    exec->SetParentFg(this);
+	    AddWaiting(exec);
+	    exec->FeedCmd(on_change);
+	    exec->FeedCmd("\n");
+	    set_state(LAST_EXEC);
+	    break;
 	 }
       }
+      goto pre_DONE;
+   case(LAST_EXEC):
+      while((j=FindDoneAwaitedJob())!=0)
+      {
+	 RemoveWaiting(j);
+	 Delete(j);
+	 m=MOVED;
+      }
+      if(waiting_num>0)
+	 break;
+   pre_DONE:
       set_state(DONE);
       m=MOVED;
+      if(!parent_mirror && (flags&LOOP) && stats.HaveSomethingDone(flags) && !stats.error_count)
+      {
+	 PrintStatus(0,"");
+	 printf(_("Retrying mirror...\n"));
+	 stats.Reset();
+	 goto pre_GETTING_LIST_INFO;
+      }
       /*fallthrough*/
    case(DONE):
-      return m;
+      break;
    }
    // give direct parent priority over grand-parents.
    if(transfer_count<parallel && parent_mirror)
@@ -1066,6 +1088,8 @@ MirrorJob::MirrorJob(MirrorJob *parent,
    pget_n=1;
    pget_minchunk=0x10000;
 
+   on_change=0;
+
    source_redirections=0;
    target_redirections=0;
 
@@ -1107,6 +1131,7 @@ MirrorJob::~MirrorJob()
    }
    if(script && script_needs_closing)
       fclose(script);
+   xfree(on_change);
 }
 
 void MirrorJob::va_Report(const char *fmt,va_list v)
@@ -1246,6 +1271,7 @@ bool MirrorJob::Statistics::HaveSomethingDone(int flags)
 
 char *MirrorJob::SetScriptFile(const char *n)
 {
+   xfree(script_name);
    script_name=xstrdup(n);
    if(strcmp(n,"-"))
    {
@@ -1260,6 +1286,12 @@ char *MirrorJob::SetScriptFile(const char *n)
    if(script)
       return 0;
    return xasprintf("%s: %s",n,strerror(errno));
+}
+
+void MirrorJob::SetOnChange(const char *oc)
+{
+   xfree(on_change);
+   on_change=xstrdup(oc);
 }
 
 CMD(mirror)
@@ -1286,6 +1318,7 @@ CMD(mirror)
       OPT_USE_CACHE,
       OPT_USE_PGET_N,
       OPT_SKIP_NOACCESS,
+      OPT_ON_CHANGE,
    };
    static const struct option mirror_opts[]=
    {
@@ -1325,6 +1358,7 @@ CMD(mirror)
       {"loop",no_argument,0,OPT_LOOP},
       {"max-errors",required_argument,0,OPT_MAX_ERRORS},
       {"skip-noaccess",no_argument,0,OPT_SKIP_NOACCESS},
+      {"on-change",required_argument,0,OPT_ON_CHANGE},
       {0}
    };
 
@@ -1348,6 +1382,7 @@ CMD(mirror)
    bool	 reverse=false;
    bool	 script_only=false;
    const char *script_file=0;
+   const char *on_change=0;
 
    PatternSet *exclude=0;
    const char *default_exclude=ResMgr::Query("mirror:exclude-regex",0);
@@ -1519,6 +1554,9 @@ CMD(mirror)
       case(OPT_SKIP_NOACCESS):
 	 skip_noaccess=true;
 	 break;
+      case(OPT_ON_CHANGE):
+	 on_change=optarg;
+	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
       no_job:
@@ -1658,6 +1696,8 @@ CMD(mirror)
 	 j->SetScriptFile("-");
    }
    j->SetMaxErrorCount(max_error_count);
+   if(on_change)
+      j->SetOnChange(on_change);
 
    return j;
 

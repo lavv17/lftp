@@ -42,6 +42,7 @@ class MirrorJob : public Job
       TARGET_REMOVE_OLD_FIRST,
       TARGET_CHMOD,
       FINISHING,
+      LAST_EXEC,
       DONE
    };
    state_t state;
@@ -120,6 +121,8 @@ class MirrorJob : public Job
    int pget_n;
    int pget_minchunk;
 
+   char *on_change;
+
    mode_t get_mode_mask();
 
    int source_redirections;
@@ -195,6 +198,7 @@ public:
 	 script_only=yes;
       }
    void SetMaxErrorCount(int ec) { max_error_count=ec; }
+   void SetOnChange(const char *oc);
 };
 
 #endif//MIRRORJOB_H
