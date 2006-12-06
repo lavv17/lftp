@@ -60,6 +60,8 @@ void Timer::Set(const TimeInterval &i)
 }
 void Timer::Reset(const Time &t)
 {
+   if(start>=t)
+      return;
    start=t;
    stop=t;
    stop+=last_setting;

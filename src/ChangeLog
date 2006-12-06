@@ -1,3 +1,10 @@
+2006-12-06  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: reset timeout_timer when waiting for transfer
+	  confirmation; reset it when sending a command after some idle
+	  time; (Read) fixed check for null iobuf.
+	* Timer.cc: (Reset) reset only to a later time.
+
 2006-11-28  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc, MirrorJob.h: (--on-change) new option.

@@ -2210,6 +2210,7 @@ int   Ftp::Do()
 	    // prevent infinite NOOP's
 	    if(nop_offset==pos && timeout_timer.GetLastSetting()<nop_count*nop_interval)
 	    {
+	       DebugPrint("**** ","NOOP timeout",1);
 	       HandleTimeout();
 	       return MOVED;
 	    }
@@ -2262,7 +2263,7 @@ int   Ftp::Do()
 	 if(conn->data_iobuf->Size()>=rate_limit->BytesAllowedToGet())
 	 {
 	    conn->data_iobuf->Suspend();
-	    Timeout(1000);
+	    TimeoutS(1);
 	 }
 	 else if(conn->data_iobuf->Size()>=max_buf)
 	 {
@@ -2321,19 +2322,23 @@ int   Ftp::Do()
 	 return MOVED;
       }
 
-      if(expect->IsEmpty() && conn->data_sock==-1 && conn->data_iobuf && !conn->data_iobuf->Eof())
+      if(conn->data_iobuf)
       {
-	 conn->data_iobuf->PutEOF();
-	 m=MOVED;
-      }
-      if(conn->data_iobuf && conn->data_iobuf->Eof() && conn->data_iobuf->Size()==0)
-      {
-	 state=EOF_STATE;
-	 DataAbort();
-	 DataClose();
-	 idle_timer.Reset();
-	 eof=true;
-	 return MOVED;
+	 if(expect->IsEmpty() && conn->data_sock==-1 && !conn->data_iobuf->Eof())
+	 {
+	    conn->data_iobuf->PutEOF();
+	    m=MOVED;
+	 }
+	 timeout_timer.Reset(conn->data_iobuf->EventTime());
+	 if(conn->data_iobuf->Eof() && conn->data_iobuf->Size()==0)
+	 {
+	    state=EOF_STATE;
+	    DataAbort();
+	    DataClose();
+	    idle_timer.Reset();
+	    eof=true;
+	    return MOVED;
+	 }
       }
 
       if(copy_mode==COPY_DEST && !copy_allow_store)
@@ -3057,7 +3062,6 @@ int  Ftp::FlushSendQueue(bool all)
    if(!conn || !conn->control_send)
       return m;
 
-   timeout_timer.Reset(conn->control_send->EventTime());
    if(conn->control_send->Error())
    {
       DebugPrint("**** ",conn->control_send->ErrorText(),0);
@@ -3072,6 +3076,13 @@ int  Ftp::FlushSendQueue(bool all)
       return MOVED;
    }
 
+   if(!conn->send_cmd_buffer || conn->send_cmd_buffer->Size()==0)
+      return m;
+
+   // prevent timeout after some idle time
+   if(conn->control_send->Size()==0)
+      timeout_timer.Reset();
+
    while(conn->sync_wait<=0 || all || !(flags&SYNC_MODE))
    {
       int res=conn->FlushSendQueueOneCmd();
@@ -3082,6 +3093,7 @@ int  Ftp::FlushSendQueue(bool all)
 
    if(m==MOVED)
       Roll(conn->control_send);
+   timeout_timer.Reset(conn->control_send->EventTime());
 
    return m;
 }
@@ -3405,7 +3417,7 @@ int   Ftp::Write(const void *buf,int size)
       return DO_AGAIN;
 
    IOBuffer *iobuf=conn->data_iobuf;
-   if(!buf)
+   if(!iobuf)
       return DO_AGAIN;
 
    {
