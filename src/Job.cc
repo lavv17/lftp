@@ -552,11 +552,13 @@ bool Job::CheckForWaitLoop(Job *parent)
 
 void Job::WaitDone()
 {
+   ref_count++;	  // keep me in memory
    for(;;)
    {
       SMTask::Schedule();
-      if(Done())
+      if(deleting || Done())
 	 break;
       SMTask::Block();
    }
+   ref_count--;
 }

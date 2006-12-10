@@ -2,6 +2,8 @@
 
 	* SMTask.cc, SMTask.h: eliminate sched_total and the need to merge
 	  multiple block vectors; tasks set the global SMTask::block directly.
+	* Job.cc: (WaitDone) make it more robust - protect from deleting the
+	  jobs we wait for.
 
 2006-12-06  Alexander V. Lukyanov <lav@yars.free.net>
 
