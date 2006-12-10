@@ -38,7 +38,7 @@ SMTask	 *SMTask::current=0;
 SMTask	 **SMTask::stack=0;
 int      SMTask::stack_ptr=0;
 int      SMTask::stack_size=0;
-PollVec	 SMTask::sched_total;
+PollVec	 SMTask::block;
 TimeDate SMTask::now;
 
 static int task_count=0;
@@ -171,7 +171,7 @@ void SMTask::RollAll(const TimeInterval &max_time)
 {
    Timer limit_timer(max_time);
    do { Schedule(); }
-   while(sched_total.GetTimeout()==0 && !limit_timer.Stopped());
+   while(block.GetTimeout()==0 && !limit_timer.Stopped());
 }
 
 int SMTask::CollectGarbage()
@@ -210,67 +210,26 @@ void SMTask::Schedule()
 {
    SMTask *scan;
 
-   for(scan=chain; scan; scan=scan->next)
-   {
-      if(!scan->running)
-	 scan->block.Empty();
-   }
-   sched_total.Empty();
+   block.Empty();
 
    // get time once and assume Do() don't take much time
    UpdateNow();
 
    int timer_timeout=Timer::GetTimeout();
    if(timer_timeout>=0)
-      sched_total.SetTimeout(timer_timeout);
+      block.SetTimeout(timer_timeout);
 
-   bool repeat=false;
-   scan=chain;
-   while(scan)
-   {
-      if(scan->running || scan->IsSuspended())
-      {
-	 scan=scan->next;
-	 continue;
-      }
-
-      if(repeat)
-	 scan->block.SetTimeout(0); // little optimization
-
-      Enter(scan);	   // mark it current and running.
-      int res=scan->Do();  // let it run.
-      Leave(scan);	   // unmark it running and change current.
-
-      if(res==MOVED || scan->block.GetTimeout()==0)
-	 repeat=true;
-      scan=scan->next;	   // move to a next task.
-   }
-   if(CollectGarbage())
-      repeat=true;
-   if(repeat)
-   {
-      sched_total.SetTimeout(0);
-      return;
-   }
-
-   // now collect all wake up conditions; excluding suspended and
-   // already running tasks, because they can't run again on this
-   // level of recursion, and thus could cause spinning by their wake up
-   // conditions.
+   int res=STALL;
    for(scan=chain; scan; scan=scan->next)
    {
-      if(!scan->IsSuspended() && !scan->running && !scan->block.IsEmpty())
-	 sched_total.Merge(scan->block);
+      if(scan->running || scan->IsSuspended())
+	 continue;
+      Enter(scan);	   // mark it current and running.
+      res|=scan->Do();	   // let it run.
+      Leave(scan);	   // unmark it running and change current.
    }
-}
-
-void SMTask::ReconfigAll(const char *name)
-{
-   UpdateNow();
-   Timer::ReconfigAll(name);
-   for(SMTask *scan=chain; scan; scan=scan->next)
-      scan->Reconfig(name);
-   sched_total.SetTimeout(0);  // for new values handling
+   if(CollectGarbage() || res)
+      block.NoWait();
 }
 
 int SMTaskInit::Do()

@@ -31,7 +31,7 @@ class SMTask
    SMTask *next;
 
    static SMTask *chain;
-   static PollVec sched_total;
+   static PollVec block;
    static SMTask **stack;
    static int stack_ptr;
    static int stack_size;
@@ -58,18 +58,16 @@ protected:
    virtual void ResumeInternal() {}
 
 public:
-   PollVec  block;
-
-   void Block(int fd,int mask) { block.AddFD(fd,mask); }
-   void Timeout(int ms) { block.AddTimeout(ms); }
-   void TimeoutS(int s) { Timeout(1000*s); }
+   static void Block(int fd,int mask) { block.AddFD(fd,mask); }
+   static void Timeout(int ms) { block.AddTimeout(ms); }
+   static void TimeoutS(int s) { Timeout(1000*s); }
 
    static TimeDate now;
    static void UpdateNow() { now.SetToCurrentTime(); }
 
    static void Schedule();
    static int CollectGarbage();
-   static void Block() { sched_total.Block(); }
+   static void Block() { block.Block(); }
 
    void Suspend();
    void Resume();
@@ -80,9 +78,6 @@ public:
    void ResumeSlave();
 
    bool IsSuspended() { return suspended|suspended_slave; }
-
-   virtual void Reconfig(const char *name=0) {};
-   static void ReconfigAll(const char *name);
 
    virtual const char *GetLogContext() { return 0; }
 
