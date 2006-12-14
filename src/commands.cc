@@ -140,7 +140,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "  stat        - print cache status (default)\n"
 	 "  on|off      - turn on/off caching\n"
 	 "  flush       - flush cache\n"
-	 "  size <lim>  - set memory limit, -1 means unlimited\n"
+	 "  size <lim>  - set memory limit\n"
 	 "  expire <Nx> - set cache expiration time to N seconds (x=s)\n"
 	 "                minutes (x=m) hours (x=h) or days (x=d)\n")},
    {"cat",     cmd_cat,    N_("cat [-b] <files>"),
