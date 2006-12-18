@@ -51,21 +51,26 @@ void Timer::set_last_setting(const TimeInterval &i)
    infty_count-=IsInfty();
    last_setting=i;
    infty_count+=IsInfty();
+   re_set();
+}
+void Timer::re_set()
+{
+   stop=start;
+   stop+=last_setting;
+   re_sort();
 }
 void Timer::Set(const TimeInterval &i)
 {
    resource=closure=0;
+   start=SMTask::now;
    set_last_setting(i);
-   Reset();
 }
 void Timer::Reset(const Time &t)
 {
    if(start>=t)
       return;
    start=t;
-   stop=t;
-   stop+=last_setting;
-   re_sort();
+   re_set();
 }
 void Timer::ResetDelayed(int s)
 {
@@ -94,12 +99,7 @@ bool Timer::Stopped() const
 void Timer::reconfig(const char *r)
 {
    if(resource && (!r || !strcmp(r,resource)))
-   {
       set_last_setting(TimeIntervalR(ResMgr::Query(resource,closure)));
-      stop=start;
-      stop+=last_setting;
-      re_sort();
-   }
 }
 void Timer::init()
 {
@@ -135,7 +135,7 @@ Timer::Timer(const TimeInterval &d) : last_setting(d)
 {
    init();
    infty_count+=IsInfty();
-   Reset();
+   re_set();
 }
 Timer::Timer(const char *r,const char *c) : last_setting(0,0)
 {
