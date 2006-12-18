@@ -40,6 +40,7 @@ class Timer
    Timer *prev_running;
    void remove_from_running_list();
    void re_sort();
+   void re_set();
    void set_last_setting(const TimeInterval &);
    void init();
    void reconfig(const char *);
