@@ -183,14 +183,14 @@ const char *ResMgr::Set(const char *name,const char *cclosure,const char *cvalue
 	 delete to_free;
 	 xfree(closure);
       }
-      SMTask::ReconfigAll(type->name);
+      ResClient::ReconfigAll(type->name);
    }
    else
    {
       if(value)
       {
 	 chain=new Resource(chain,type,closure,value);
-	 SMTask::ReconfigAll(type->name);
+	 ResClient::ReconfigAll(type->name);
       }
       else
 	 xfree(closure);
@@ -903,4 +903,32 @@ const char *ResMgr::UNumberPairValidate(char **value)
    v[n]=0;
 
    return 0;
+}
+
+ResClient *ResClient::chain;
+ResValue ResClient::Query(const char *name,const char *closure) const
+{
+   if(!strchr(name,':'))
+   {
+      const char *prefix=ResPrefix();
+      char *fullname=(char*)alloca(3+strlen(prefix)+1+strlen(name)+1);
+      sprintf(fullname,"%s:%s",prefix,name);
+      name=fullname;
+   }
+   if(!closure)
+      closure=ResClosure();
+   return ResMgr::Query(name,closure);
+}
+ResClient::ResClient()
+{
+   ListAdd(ResClient,chain,this,next);
+}
+ResClient::~ResClient()
+{
+   ListDel(ResClient,chain,this,next);
+}
+void ResClient::ReconfigAll(const char *r)
+{
+   ListScan(ResClient,chain,next)
+      scan->Reconfig(r);
 }

@@ -30,7 +30,7 @@ class CacheEntry : public Timer
    friend class Cache;
    CacheEntry *next;
 public:
-   CacheEntry(CacheEntry *n) { next=n; }
+   CacheEntry() { next=0; }
    virtual int EstimateSize() const { return 1; }
    virtual ~CacheEntry() {}
 };
@@ -56,6 +56,10 @@ public:
    ~Cache() { Flush(); }
    bool IsEnabled(const char *closure) { return res_enable->QueryBool(closure); }
    long SizeLimit() { return res_max_size->Query(0); }
+   void AddCacheEntry(CacheEntry *e) {
+      e->next=chain;
+      chain=e;
+   }
 };
 
 #endif//CACHE_H

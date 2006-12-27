@@ -56,7 +56,7 @@ class NoGlob;
 class DirList;
 class ArgV;
 
-class FileAccess : public SMTask
+class FileAccess : public SMTask, public ResClient
 {
    static bool class_inited;
 public:
@@ -182,11 +182,8 @@ protected:
 
    char *closure;
    const char *res_prefix;
-   ResValue Query(const char *name,const char *closure=0) const;
-   bool QueryBool(const char *name,const char *closure=0) const
-      {
-	 return Query(name,closure).to_bool();
-      }
+   const char *ResPrefix() const { return res_prefix?res_prefix:GetProto(); }
+   const char *ResClosure() const { return closure?closure:GetHostName(); }
 
    int chmod_mode;
    bool ascii;

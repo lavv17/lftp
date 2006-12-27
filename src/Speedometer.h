@@ -24,8 +24,9 @@
 #define SPEEDOMETER_H
 
 #include "SMTask.h"
+#include "ResMgr.h"
 
-class Speedometer : public SMTask
+class Speedometer : public SMTask, public ResClient
 {
    int period;
    float rate;

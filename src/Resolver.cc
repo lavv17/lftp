@@ -911,6 +911,12 @@ ResolverCache::ResolverCache()
    : Cache(ResMgr::FindRes("dns:cache-size"),ResMgr::FindRes("dns:cache-enable"))
 {
 }
+void ResolverCache::Reconfig(const char *r)
+{
+   if(!xstrcmp(r,"dns:SRV-query")
+   || !xstrcmp(r,"dns:order"))
+      Flush();
+}
 ResolverCacheEntry *ResolverCache::Find(const char *h,const char *p,const char *defp,const char *ser,const char *pr)
 {
    for(ResolverCacheEntry *c=IterateFirst(); c; c=IterateNext())
@@ -931,7 +937,7 @@ void ResolverCache::Add(const char *h,const char *p,const char *defp,
    {
       if(!IsEnabled(h))
 	 return;
-      chain=new ResolverCacheEntry(chain,h,p,defp,ser,pr,a,n);
+      AddCacheEntry(new ResolverCacheEntry(h,p,defp,ser,pr,a,n));
    }
 }
 bool ResolverCacheEntryLoc::Matches(const char *h,const char *p,

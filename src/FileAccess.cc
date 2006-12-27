@@ -835,16 +835,6 @@ void FileAccess::SetTryTime(time_t t)
    try_time=t;
 }
 
-ResValue FileAccess::Query(const char *name,const char *closure) const
-{
-   const char *prefix=res_prefix;
-   if(!prefix)
-      prefix=GetProto();
-   char *fullname=(char*)alloca(3+strlen(prefix)+1+strlen(name)+1);
-   sprintf(fullname,"%s:%s",prefix,name);
-   return ResMgr::Query(fullname,closure);
-}
-
 bool FileAccess::IsBetterThan(const FileAccess *fa) const
 {
    return(SameProtoAs(fa) && this->IsConnected() > fa->IsConnected());

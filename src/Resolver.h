@@ -153,12 +153,12 @@ public:
 class ResolverCacheEntry : public CacheEntry, public ResolverCacheEntryLoc, public ResolverCacheEntryData
 {
 public:
-   ResolverCacheEntry(CacheEntry *next,const char *h,const char *p,const char *defp,const char *ser,const char *pr,
-	 const sockaddr_u *a,int n) : CacheEntry(next), ResolverCacheEntryLoc(h,p,defp,ser,pr), ResolverCacheEntryData(a,n) {
+   ResolverCacheEntry(const char *h,const char *p,const char *defp,const char *ser,const char *pr,
+	 const sockaddr_u *a,int n) : ResolverCacheEntryLoc(h,p,defp,ser,pr), ResolverCacheEntryData(a,n) {
       SetResource("dns:cache-expire",GetClosure());
    }
 };
-class ResolverCache : public Cache
+class ResolverCache : public Cache, public ResClient
 {
    ResolverCacheEntry *Find(const char *h,const char *p,const char *defp,const char *ser,const char *pr);
    ResolverCacheEntry *IterateFirst() { return (ResolverCacheEntry*)Cache::IterateFirst(); }
@@ -170,6 +170,7 @@ public:
    void Find(const char *h,const char *p,const char *defp,
          const char *ser,const char *pr,const sockaddr_u **a,int *n);
    ResolverCache();
+   void Reconfig(const char *);
 };
 
 #endif // RESOLVER_H

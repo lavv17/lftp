@@ -63,7 +63,7 @@ class LsCacheEntry : public CacheEntry, public LsCacheEntryLoc, public LsCacheEn
 public:
    int EstimateSize() const;
    ~LsCacheEntry();
-   LsCacheEntry(CacheEntry *n,const FileAccess *p_loc,const char *a,int m,int e,const char *d,int l,const FileSet *fs);
+   LsCacheEntry(const FileAccess *p_loc,const char *a,int m,int e,const char *d,int l,const FileSet *fs);
 };
 
 class LsCache : public Cache

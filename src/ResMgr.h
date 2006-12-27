@@ -230,4 +230,21 @@ public:
    const char *ErrorText() { return error_text; }
 };
 
+class ResClient
+{
+   static ResClient *chain;
+   ResClient *next;
+protected:
+   virtual const char *ResPrefix() const { return 0; }
+   virtual const char *ResClosure() const { return 0; }
+   virtual void Reconfig(const char *) {}
+   ResValue Query(const char *name,const char *closure=0) const;
+   bool QueryBool(const char *name,const char *closure=0) const
+      { return Query(name,closure).to_bool(); }
+   ResClient();
+   virtual ~ResClient();
+public:
+   static void ReconfigAll(const char *);
+};
+
 #endif //RESMGR_H

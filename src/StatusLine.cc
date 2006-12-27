@@ -67,7 +67,6 @@ StatusLine::StatusLine(int new_fd)
    strcpy(def_title,"");
    not_term=!isatty(fd);
    GetWidth();
-   Reconfig();
 }
 
 StatusLine::~StatusLine()

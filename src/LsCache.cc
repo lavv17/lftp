@@ -53,8 +53,8 @@ LsCacheEntryData::LsCacheEntryData(int e,const char *d,int l,const FileSet *fs)
    SetData(e,d,l,fs);
 }
 
-LsCacheEntry::LsCacheEntry(CacheEntry *n,const FileAccess *p_loc,const char *a,int m,int e,const char *d,int l,const FileSet *fs)
-   : CacheEntry(n), LsCacheEntryLoc(p_loc,a,m), LsCacheEntryData(e,d,l,fs)
+LsCacheEntry::LsCacheEntry(const FileAccess *p_loc,const char *a,int m,int e,const char *d,int l,const FileSet *fs)
+   : LsCacheEntryLoc(p_loc,a,m), LsCacheEntryData(e,d,l,fs)
 {
    SetResource(e==FA::OK?"cache:expire":"cache:expire-negative",GetClosure());
 }
@@ -109,7 +109,7 @@ void LsCache::Add(const FileAccess *p_loc,const char *a,int m,int e,const char *
    {
       if(!IsEnabled(p_loc->GetHostName()))
 	 return;
-      chain=new LsCacheEntry(chain,p_loc,a,m,e,d,l,fs);
+      AddCacheEntry(new LsCacheEntry(p_loc,a,m,e,d,l,fs));
    }
    else
    {

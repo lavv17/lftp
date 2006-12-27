@@ -122,4 +122,23 @@ static inline char *memrchr(char *buf,char c,size_t len) {
    return const_cast<char*>(memrchr(const_cast<const char*>(buf),c,len));
 }
 
+#define ListAdd(type,chain,this,next)  \
+do {				       \
+   this->next=chain;		       \
+   chain=this;			       \
+} while(0)
+
+#define ListDel(type,chain,this,next)			 \
+do {							 \
+   for(type **scan=&chain; *scan; scan=&scan[0]->next)	 \
+      if(*scan==this)					 \
+      {							 \
+	 delete replace_value(*scan,scan[0]->next);	 \
+	 break;						 \
+      }							 \
+} while(0)
+
+#define ListScan(type,chain,next) \
+   for(type *scan=chain; scan; scan=scan->next)
+
 #endif // MISC_H
