@@ -951,3 +951,50 @@ const char *memrchr(const char *buf,char c,size_t len)
 	 return buf;
    return 0;
 }
+
+const char *shell_encode(const char *string)
+{
+   if(!string)
+      return 0;
+
+   int c;
+   static char *result=0;
+   char *r;
+   const char *s;
+
+   result = (char*)xrealloc (result, 2 + 2 * strlen (string) + 1);
+
+   r = result;
+   if(string[0]=='-' || string[0]=='~')
+   {
+      *r++='.';
+      *r++='/';
+   }
+
+   for (s = string; s && (c = *s); s++)
+   {
+      switch (c)
+      {
+      case '\'':
+      case '(': case ')':
+      case '!': case '{': case '}':		/* reserved words */
+      case '^':
+      case '$': case '`':			/* expansion chars */
+      case '*': case '[': case '?': case ']':	/* globbing chars */
+      case ' ': case '\t': case '\n':		/* IFS white space */
+      case '"': case '\\':		/* quoting chars */
+      case '|': case '&': case ';':		/* shell metacharacters */
+      case '<': case '>':
+      case '#':				/* comment char */
+	 *r++ = '\\';
+	 *r++ = c;
+	 break;
+      default:
+	 *r++ = c;
+	 break;
+      }
+   }
+
+   *r = '\0';
+   return (result);
+}
