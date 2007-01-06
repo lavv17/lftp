@@ -122,4 +122,6 @@ static inline char *memrchr(char *buf,char c,size_t len) {
    return const_cast<char*>(memrchr(const_cast<const char*>(buf),c,len));
 }
 
+const char *shell_encode(const char *);
+
 #endif // MISC_H

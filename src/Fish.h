@@ -146,7 +146,6 @@ public:
    ListInfo *MakeListInfo(const char *p);
    FileSet *ParseLongList(const char *buf,int len,int *err=0) const;
 
-   static const char *shell_encode(const char *);
    void DontEncodeFile() { encode_file=false; }
 
    bool NeedSizeDateBeforehand() { return true; }

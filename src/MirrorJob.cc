@@ -419,8 +419,8 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    ArgV args("shell");
 	    args.Append("ln");
 	    args.Append("-sf");
-	    args.Append(file->symlink);
-	    args.Append(target_name);
+	    args.Append(shell_encode(file->symlink));
+	    args.Append(shell_encode(target_name));
 	    char *cmd=args.CombineQuoted();
 	    fprintf(script,"%s\n",cmd);
 	    xfree(cmd);
