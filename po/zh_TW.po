@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.2.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2006-12-28 11:34+0300\n"
+"POT-Creation-Date: 2007-01-09 09:04+0300\n"
 "PO-Revision-Date: 2005-07-30 23:51+0800\n"
 "Last-Translator: Abel Cheung <abelcheung@gmail.com>\n"
 "Language-Team: traditional Chinese <community@linuxhall.org>\n"
@@ -105,7 +105,7 @@ msgid "File cannot be accessed"
 msgstr "無法存取檔案"
 
 #: src/FileAccess.cc:240 src/ftpclass.cc:4006 src/ftpclass.cc:4015
-#: src/Fish.cc:1133 src/SFtp.cc:1319
+#: src/Fish.cc:1086 src/SFtp.cc:1319
 msgid "Not connected"
 msgstr "並未連線"
 
@@ -1760,7 +1760,7 @@ msgstr "成功建立數據連線"
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr "已設定 ftp:ssl-force 但伺服器不支援/不使用 SSL"
 
-#: src/ftpclass.cc:2614 src/ftpclass.cc:2749 src/Http.cc:1186 src/Fish.cc:666
+#: src/ftpclass.cc:2614 src/ftpclass.cc:2749 src/Http.cc:1186 src/Fish.cc:619
 #: src/SFtp.cc:756 src/SFtp.cc:1066
 msgid "Peer closed connection"
 msgstr "對方關閉了連線"
@@ -1781,7 +1781,7 @@ msgstr "關閉被中止的數據連線"
 msgid "saw file size in response"
 msgstr "回應中包括檔案的大小"
 
-#: src/ftpclass.cc:3686 src/Fish.cc:752 src/SFtp.cc:1091
+#: src/ftpclass.cc:3686 src/Fish.cc:705 src/SFtp.cc:1091
 msgid "extra server response"
 msgstr "額外的伺服器回應"
 
@@ -1802,7 +1802,7 @@ msgid "Sending commands..."
 msgstr "正在送出指令..."
 
 #: src/ftpclass.cc:4001 src/ftpclass.cc:4029 src/ftpclass.cc:4042
-#: src/Http.cc:1900 src/Fish.cc:1142 src/SFtp.cc:1329
+#: src/Http.cc:1900 src/Fish.cc:1095 src/SFtp.cc:1329
 msgid "Waiting for response..."
 msgstr "正在等待回應..."
 
@@ -1814,7 +1814,7 @@ msgstr "重新嘗試之前稍為延遲"
 msgid "Connection idle"
 msgstr "連線閒置"
 
-#: src/ftpclass.cc:4018 src/Http.cc:1891 src/Http.cc:1898 src/Fish.cc:1138
+#: src/ftpclass.cc:4018 src/Http.cc:1891 src/Http.cc:1898 src/Fish.cc:1091
 #: src/SFtp.cc:1325
 msgid "Connecting..."
 msgstr "嘗試連線..."
@@ -1823,7 +1823,7 @@ msgstr "嘗試連線..."
 msgid "TLS negotiation..."
 msgstr "使用 TLS 協定通訊..."
 
-#: src/ftpclass.cc:4024 src/Fish.cc:1140 src/SFtp.cc:1327
+#: src/ftpclass.cc:4024 src/Fish.cc:1093 src/SFtp.cc:1327
 msgid "Connected"
 msgstr "成功連線"
 
@@ -1859,11 +1859,11 @@ msgstr "正在傳送資料/TLS"
 msgid "Receiving data/TLS"
 msgstr "接收資料中/TLS"
 
-#: src/ftpclass.cc:4058 src/Http.cc:1896 src/Fish.cc:1146 src/SFtp.cc:1333
+#: src/ftpclass.cc:4058 src/Http.cc:1896 src/Fish.cc:1099 src/SFtp.cc:1333
 msgid "Sending data"
 msgstr "傳送資料中"
 
-#: src/ftpclass.cc:4060 src/Http.cc:1903 src/Fish.cc:1144 src/SFtp.cc:1331
+#: src/ftpclass.cc:4060 src/Http.cc:1903 src/Fish.cc:1097 src/SFtp.cc:1331
 msgid "Receiving data"
 msgstr "接收資料中"
 
@@ -2056,7 +2056,7 @@ msgstr "ftp:ssl-auth 必須為 SSL、TLS、TLS-P、TLS-C 其中一個"
 msgid "must be one of: C, S, E, P, or empty"
 msgstr "必須是 C, S, E, P 或者空白。"
 
-#: src/HttpDir.cc:1404 src/FtpDirList.cc:141 src/Fish.cc:1314 src/SFtp.cc:2157
+#: src/HttpDir.cc:1404 src/FtpDirList.cc:141 src/Fish.cc:1267 src/SFtp.cc:2157
 #: src/SFtp.cc:2240
 #, c-format
 msgid "Getting file list (%lld) [%s]"
@@ -2300,15 +2300,15 @@ msgstr "正在執行進行連線的程式"
 msgid "Disconnecting"
 msgstr "正在中斷連線"
 
-#: src/Fish.cc:693 src/SFtp.cc:735
+#: src/Fish.cc:646 src/SFtp.cc:735
 msgid "Password required"
 msgstr "需要密碼"
 
-#: src/Fish.cc:698 src/SFtp.cc:740
+#: src/Fish.cc:651 src/SFtp.cc:740
 msgid "Login incorrect"
 msgstr "登入錯誤"
 
-#: src/Fish.cc:1148 src/SFtp.cc:1335
+#: src/Fish.cc:1101 src/SFtp.cc:1335
 msgid "Done"
 msgstr "完成"
 

@@ -1,3 +1,8 @@
+Version 3.5.9 - 2007-01-09
+
+* fixed `mirror --script' which generated improperly quoted shell commands
+(potential security vulnerability, when someone executes the resulting script).
+
 Version 3.5.8 - 2006-12-28
 
 * fixed `sleep' command.

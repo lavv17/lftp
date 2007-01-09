@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2006-12-28 11:34+0300\n"
+"POT-Creation-Date: 2007-01-09 09:04+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -107,7 +107,7 @@ msgid "File cannot be accessed"
 msgstr ""
 
 #: src/FileAccess.cc:240 src/ftpclass.cc:4006 src/ftpclass.cc:4015
-#: src/Fish.cc:1133 src/SFtp.cc:1319
+#: src/Fish.cc:1086 src/SFtp.cc:1319
 msgid "Not connected"
 msgstr ""
 
@@ -1499,7 +1499,7 @@ msgstr ""
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 
-#: src/ftpclass.cc:2614 src/ftpclass.cc:2749 src/Http.cc:1186 src/Fish.cc:666
+#: src/ftpclass.cc:2614 src/ftpclass.cc:2749 src/Http.cc:1186 src/Fish.cc:619
 #: src/SFtp.cc:756 src/SFtp.cc:1066
 msgid "Peer closed connection"
 msgstr ""
@@ -1520,7 +1520,7 @@ msgstr ""
 msgid "saw file size in response"
 msgstr ""
 
-#: src/ftpclass.cc:3686 src/Fish.cc:752 src/SFtp.cc:1091
+#: src/ftpclass.cc:3686 src/Fish.cc:705 src/SFtp.cc:1091
 msgid "extra server response"
 msgstr ""
 
@@ -1541,7 +1541,7 @@ msgid "Sending commands..."
 msgstr ""
 
 #: src/ftpclass.cc:4001 src/ftpclass.cc:4029 src/ftpclass.cc:4042
-#: src/Http.cc:1900 src/Fish.cc:1142 src/SFtp.cc:1329
+#: src/Http.cc:1900 src/Fish.cc:1095 src/SFtp.cc:1329
 msgid "Waiting for response..."
 msgstr ""
 
@@ -1553,7 +1553,7 @@ msgstr ""
 msgid "Connection idle"
 msgstr ""
 
-#: src/ftpclass.cc:4018 src/Http.cc:1891 src/Http.cc:1898 src/Fish.cc:1138
+#: src/ftpclass.cc:4018 src/Http.cc:1891 src/Http.cc:1898 src/Fish.cc:1091
 #: src/SFtp.cc:1325
 msgid "Connecting..."
 msgstr ""
@@ -1562,7 +1562,7 @@ msgstr ""
 msgid "TLS negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:4024 src/Fish.cc:1140 src/SFtp.cc:1327
+#: src/ftpclass.cc:4024 src/Fish.cc:1093 src/SFtp.cc:1327
 msgid "Connected"
 msgstr ""
 
@@ -1598,11 +1598,11 @@ msgstr ""
 msgid "Receiving data/TLS"
 msgstr ""
 
-#: src/ftpclass.cc:4058 src/Http.cc:1896 src/Fish.cc:1146 src/SFtp.cc:1333
+#: src/ftpclass.cc:4058 src/Http.cc:1896 src/Fish.cc:1099 src/SFtp.cc:1333
 msgid "Sending data"
 msgstr ""
 
-#: src/ftpclass.cc:4060 src/Http.cc:1903 src/Fish.cc:1144 src/SFtp.cc:1331
+#: src/ftpclass.cc:4060 src/Http.cc:1903 src/Fish.cc:1097 src/SFtp.cc:1331
 msgid "Receiving data"
 msgstr ""
 
@@ -1787,7 +1787,7 @@ msgstr ""
 msgid "must be one of: C, S, E, P, or empty"
 msgstr ""
 
-#: src/HttpDir.cc:1404 src/FtpDirList.cc:141 src/Fish.cc:1314 src/SFtp.cc:2157
+#: src/HttpDir.cc:1404 src/FtpDirList.cc:141 src/Fish.cc:1267 src/SFtp.cc:2157
 #: src/SFtp.cc:2240
 #, c-format
 msgid "Getting file list (%lld) [%s]"
@@ -2031,15 +2031,15 @@ msgstr ""
 msgid "Disconnecting"
 msgstr ""
 
-#: src/Fish.cc:693 src/SFtp.cc:735
+#: src/Fish.cc:646 src/SFtp.cc:735
 msgid "Password required"
 msgstr ""
 
-#: src/Fish.cc:698 src/SFtp.cc:740
+#: src/Fish.cc:651 src/SFtp.cc:740
 msgid "Login incorrect"
 msgstr ""
 
-#: src/Fish.cc:1148 src/SFtp.cc:1335
+#: src/Fish.cc:1101 src/SFtp.cc:1335
 msgid "Done"
 msgstr ""
 
