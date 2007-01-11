@@ -93,8 +93,25 @@ char *xstrdup(const char *s,int spare)
 #ifdef MEM_DEBUG
    printf("xstrdup \"%s\"\n",s);
 #endif
-   int len=strlen(s)+1;
+   size_t len=strlen(s)+1;
    char *mem=(char*)xmalloc(len+spare);
+   memcpy(mem,s,len);
+   return mem;
+}
+
+char *xstrset(char *&mem,const char *s)
+{
+   if(!s)
+   {
+      xfree(mem);
+      return mem=0;
+   }
+#ifdef MEM_DEBUG
+   printf("xstrset \"%s\"\n",s);
+#endif
+   size_t len=strlen(s)+1;
+   if(!mem || strlen(mem)+1<len)
+      mem=(char*)xrealloc(mem,len);
    memcpy(mem,s,len);
    return mem;
 }
