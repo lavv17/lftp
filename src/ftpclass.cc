@@ -4210,42 +4210,45 @@ void Ftp::Reconfig(const char *name)
       return;
    }
 
-   const char *c=closure;
+   SetFlag(SYNC_MODE,	QueryBool("sync-mode"));
+   SetFlag(PASSIVE_MODE,QueryBool("passive-mode"));
+   rest_list = QueryBool("rest-list");
 
-   SetFlag(SYNC_MODE,	QueryBool("sync-mode",c));
-   SetFlag(PASSIVE_MODE,QueryBool("passive-mode",c));
-   rest_list = QueryBool("rest-list",c);
+   nop_interval = Query("nop-interval");
 
-   nop_interval = Query("nop-interval",c);
+   allow_skey = QueryBool("skey-allow");
+   force_skey = QueryBool("skey-force");
+   verify_data_address = QueryBool("verify-address");
+   verify_data_port = QueryBool("verify-port");
 
-   allow_skey = QueryBool("skey-allow",c);
-   force_skey = QueryBool("skey-force",c);
-   verify_data_address = QueryBool("verify-address",c);
-   verify_data_port = QueryBool("verify-port",c);
+   use_stat = QueryBool("use-stat");
+   use_mdtm = QueryBool("use-mdtm");
+   use_size = QueryBool("use-size");
+   use_pret = QueryBool("use-pret");
+   use_feat = QueryBool("use-feat");
+   use_mlsd = QueryBool("use-mlsd");
 
-   use_stat = QueryBool("use-stat",c);
-   use_mdtm = QueryBool("use-mdtm",c);
-   use_size = QueryBool("use-size",c);
-   use_pret = QueryBool("use-pret",c);
-   use_feat = QueryBool("use-feat",c);
-   use_mlsd = QueryBool("use-mlsd",c);
-
-   use_telnet_iac = QueryBool("use-telnet-iac",c);
-
-   xfree(list_options);
-   list_options = xstrdup(Query("list-options",c));
+   use_telnet_iac = QueryBool("use-telnet-iac");
 
    xfree(anon_user);
-   anon_user=xstrdup(Query("anon-user",c));
+   anon_user=xstrdup(Query("anon-user"));
    xfree(anon_pass);
-   anon_pass=xstrdup(Query("anon-pass",c));
+   anon_pass=xstrdup(Query("anon-pass"));
+
+   if(!name || !xstrcmp(name,"ftp:list-options"))
+   {
+      if(name && !IsSuspended())
+	 cache->TreeChanged(this,"/");
+      xfree(list_options);
+      list_options = xstrdup(Query("list-options"));
+   }
 
    if(!name || !xstrcmp(name,"ftp:charset"))
    {
       if(name && !IsSuspended())
 	 cache->TreeChanged(this,"/");
       xfree(charset);
-      charset=xstrdup(Query("charset",c));
+      charset=xstrdup(Query("charset"));
       if(conn && conn->have_feat_info && !conn->utf8_activated
       && !(expect->Has(Expect::LANG) || expect->Has(Expect::OPTS_UTF8))
       && charset && *charset)
@@ -4261,7 +4264,7 @@ void Ftp::Reconfig(const char *name)
    if(NoProxy(hostname))
       SetProxy(0);
    else
-      SetProxy(Query("proxy",c));
+      SetProxy(Query("proxy"));
 
    if(proxy && proxy_port==0)
    {
