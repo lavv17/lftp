@@ -1419,8 +1419,7 @@ int   Ftp::Do()
 	 }
       }
 
-      xfree(skey_pass);
-      skey_pass=0;
+      xstrset(skey_pass,0);
 
       expect->Push(Expect::USER);
       conn->SendCmd2("USER",user_to_use);
@@ -3581,8 +3580,7 @@ void Ftp::CheckFEAT(char *reply)
    conn->rest_supported=false;
 #if USE_SSL
    conn->auth_supported=false;
-   xfree(conn->auth_args_supported);
-   conn->auth_args_supported=0;
+   xstrset(conn->auth_args_supported,0);
    conn->cpsv_supported=false;
    conn->sscn_supported=false;
 #endif
@@ -3623,8 +3621,7 @@ void Ftp::CheckFEAT(char *reply)
       else if(!strncasecmp(f,"MLST ",5))
       {
 	 conn->mlst_supported=true;
-	 xfree(conn->mlst_attr_supported);
-	 conn->mlst_attr_supported=xstrdup(f+5);
+	 xstrset(conn->mlst_attr_supported,f+5);
       }
 #if USE_SSL
       else if(!strncasecmp(f,"AUTH ",5))
@@ -4189,8 +4186,7 @@ void Ftp::ResetLocationData()
 {
    super::ResetLocationData();
    flags=0;
-   xfree(home_auto); home_auto=0;
-   home_auto=xstrdup(FindHomeAuto());
+   xstrset(home_auto,FindHomeAuto());
    Reconfig(0);
    state=INITIAL_STATE;
    stat_timer.SetResource("ftp:stat-interval",hostname);
@@ -4198,8 +4194,7 @@ void Ftp::ResetLocationData()
 
 void Ftp::Reconfig(const char *name)
 {
-   xfree(closure);
-   closure=xstrdup(hostname);
+   xstrset(closure,hostname);
 
    super::Reconfig(name);
 
@@ -4230,25 +4225,21 @@ void Ftp::Reconfig(const char *name)
 
    use_telnet_iac = QueryBool("use-telnet-iac");
 
-   xfree(anon_user);
-   anon_user=xstrdup(Query("anon-user"));
-   xfree(anon_pass);
-   anon_pass=xstrdup(Query("anon-pass"));
+   xstrset(anon_user,Query("anon-user"));
+   xstrset(anon_pass,Query("anon-pass"));
 
    if(!name || !xstrcmp(name,"ftp:list-options"))
    {
       if(name && !IsSuspended())
 	 cache->TreeChanged(this,"/");
-      xfree(list_options);
-      list_options = xstrdup(Query("list-options"));
+      xstrset(list_options,Query("list-options"));
    }
 
    if(!name || !xstrcmp(name,"ftp:charset"))
    {
       if(name && !IsSuspended())
 	 cache->TreeChanged(this,"/");
-      xfree(charset);
-      charset=xstrdup(Query("charset"));
+      xstrset(charset,Query("charset"));
       if(conn && conn->have_feat_info && !conn->utf8_activated
       && !(expect->Has(Expect::LANG) || expect->Has(Expect::OPTS_UTF8))
       && charset && *charset)

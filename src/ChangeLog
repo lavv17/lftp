@@ -3,6 +3,7 @@
 	* ftpclass.cc: use default closure feature of ResClient;
 	  clear ls cache when ftp:list-options changes.
 	* xmalloc.cc, xmalloc.h: (xstrset) new function.
+	* ftpclass.cc: use xstrset.
 
 2007-01-06  Alexander V. Lukyanov <lav@yars.free.net>
 
