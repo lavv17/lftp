@@ -1,16 +1,16 @@
 # Polish translation of lftp.
 # Copyright (C) 1998-2000 Free Software Foundation, Inc.
 # Arkadiusz Mi¶kiewicz <misiek@pld-linux.org>, 1998-2004
-# Jakub Bogusz <qboosh@pld-linux.org>, 2002-2006
+# Jakub Bogusz <qboosh@pld-linux.org>, 2002-2007
 # some updates by Tomasz K³oczko <kloczek@pld.org.pl>, 2003
 # Adam Go³êbiowski <adamg@pld-linux.org>, 2004-2006
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 3.5.4\n"
+"Project-Id-Version: lftp 3.5.9\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2007-01-09 09:04+0300\n"
-"PO-Revision-Date: 2006-08-25 22:20+0200\n"
+"PO-Revision-Date: 2007-01-28 14:07+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -445,7 +445,6 @@ msgid "cache [SUBCMD]"
 msgstr "cache [PARAM]"
 
 #: src/commands.cc:138
-#, fuzzy
 msgid ""
 "cache command controls local memory cache\n"
 "\n"
@@ -463,9 +462,9 @@ msgstr ""
 "  stat        - wy¶wietl status bufora (domy¶lnie)\n"
 "  on|off      - w³±cz/wy³±cz buforowanie\n"
 "  flush       - wyczy¶æ bufor\n"
-"  size <lim>  - ustaw limit pamiêci, -1 oznacza bez limitu\n"
-"  expire <Nx> - ustal czas po jakim kasuj± siê wpisy w buforze na N sekund \n"
-"                (x=s) minut (x=m) godzin (x=h) lub dni (x=d)\n"
+"  size <lim>  - ustaw limit pamiêci\n"
+"  expire <Nx> - ustal czas po jakim kasuj± siê wpisy w buforze na N sekund\n"
+"                (x=s), minut (x=m), godzin (x=h) lub dni (x=d)\n"
 
 #: src/commands.cc:146
 msgid "cat [-b] <files>"
@@ -708,7 +707,7 @@ msgstr ""
 
 #: src/commands.cc:250
 msgid "get [OPTS] <rfile> [-o <lfile>]"
-msgstr "get [OPCJE] <zd_plik> [-p <lo_plik>]"
+msgstr "get [OPCJE] <zd_plik> [-o <lo_plik>]"
 
 #: src/commands.cc:251
 msgid ""
@@ -1076,8 +1075,8 @@ msgid ""
 " -a  use ascii mode (binary is the default)\n"
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
-"Umie¶æ plik <lo_plik> ze zdaln± nazw± <zd_plik>.\n"
-" -o <zd_plik> precyzuje nazwê pliku (domy¶lnie - nazwa pliku ¼ród³owego)\n"
+"Umie¶æ plik <lplik> ze zdaln± nazw± <zplik>.\n"
+" -o <zplik> precyzuje nazwê pliku (domy¶lnie - nazwa pliku ¼ród³owego)\n"
 " -c  kontynuuj, reput\n"
 "     wymaga prawa do nadpisywania odleg³ych plików\n"
 " -E  kasowanie zdalnego pliku po zakoñczonej pomy¶lnie operacji\n"
