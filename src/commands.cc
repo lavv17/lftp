@@ -909,10 +909,17 @@ Job *CmdExec::builtin_open()
 	    delete url;
 	    url=new ParsedURL(u);
 	 }
-	 if(user)
+	 if(user || port)
 	 {
 	    url->user=user;
 	    url->pass=pass;
+	    if(user)
+	    {
+	       url->user=user;
+	       url->pass=pass;
+	    }
+	    if(port)
+	       url->port=port;
 	    char *host1=url->Combine();
 	    delete url;
 	    url=new ParsedURL(host1);
