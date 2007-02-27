@@ -150,7 +150,8 @@ public:
       REMOVE_FIRST=1<<11,
       IGNORE_SIZE=1<<12,
       NO_SYMLINKS=1<<13,
-      LOOP=1<<14
+      LOOP=1<<14,
+      ONLY_EXISTING=1<<15
    };
 
    void SetFlags(int f,int v)

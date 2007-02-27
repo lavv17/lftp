@@ -256,6 +256,12 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    else
 	       stats.new_files++;
 	 }
+	 else if(flags&ONLY_EXISTING)
+	 {
+	    Report(_("Skipping file `%s' (only-existing)"),
+		     dir_file(source_relative_dir,file->name));
+	    goto skip;
+	 }
 	 else
 	    stats.new_files++;
 
@@ -334,8 +340,19 @@ void  MirrorJob::HandleFile(FileInfo *file)
 
 	 bool create_target_dir=true;
 	 FileInfo *old=target_set->FindByName(file->name);
-	 if(old && old->defined&old->TYPE && old->filetype==old->DIRECTORY)
+	 if(!old)
+	 {
+	    if(flags&ONLY_EXISTING)
+	    {
+	       Report(_("Skipping directory `%s' (only-existing)"),
+			dir_file(target_relative_dir,file->name));
+	       goto skip;
+	    }
+	 }
+	 else if(old->defined&old->TYPE && old->filetype==old->DIRECTORY)
+	 {
 	    create_target_dir=false;
+	 }
 	 if(target_is_local && !script_only)
 	 {
 	    if(lstat(target_name,&st)!=-1)
@@ -447,6 +464,12 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    }
 	    else
 	    {
+	       if(flags&ONLY_EXISTING)
+	       {
+		  Report(_("Skipping symlink `%s' (only-existing)"),
+			   dir_file(target_relative_dir,file->name));
+		  goto skip;
+	       }
 	       stats.new_symlinks++;
 	    }
 	    Report(_("Making symbolic link `%s' to `%s'"),
@@ -1306,6 +1329,7 @@ CMD(mirror)
       OPT_NO_UMASK,
       OPT_OLDER_THAN,
       OPT_ONLY_MISSING,
+      OPT_ONLY_EXISTING,
       OPT_PERMS,
       OPT_REMOVE_SOURCE_FILES,
       OPT_SCRIPT,
@@ -1344,6 +1368,7 @@ CMD(mirror)
       {"ignore-time",no_argument,0,OPT_IGNORE_TIME},
       {"ignore-size",no_argument,0,OPT_IGNORE_SIZE},
       {"only-missing",no_argument,0,OPT_ONLY_MISSING},
+      {"only-existing",no_argument,0,OPT_ONLY_EXISTING},
       {"log",required_argument,0,OPT_SCRIPT},
       {"script",    required_argument,0,OPT_SCRIPT_ONLY},
       {"just-print",optional_argument,0,OPT_SCRIPT_ONLY},
@@ -1552,6 +1577,9 @@ CMD(mirror)
 	 break;
       case(OPT_ON_CHANGE):
 	 on_change=optarg;
+	 break;
+      case(OPT_ONLY_EXISTING):
+	 flags|=MirrorJob::ONLY_EXISTING;
 	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
