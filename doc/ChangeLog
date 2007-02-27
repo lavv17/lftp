@@ -1,3 +1,7 @@
+2007-02-27	Damon Harper <gnu@usrbin.ca>
+
+	* lftp.1: new mirror option --only-existing.
+
 2006-08-22	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document cmd:parallel and cmd:queue-parallel.
