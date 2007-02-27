@@ -188,8 +188,7 @@ int PtyShell::getfd()
       fcntl(pipe_out,F_SETFL,O_NONBLOCK);
    }
 
-   xfree(oldcwd);
-   oldcwd=0;
+   xstrset(oldcwd,0);
 
    int info;
    waitpid(pid,&info,WUNTRACED);
@@ -213,8 +212,7 @@ void PtyShell::Init()
 
 void PtyShell::SetCwd(const char *cwd)
 {
-   xfree(oldcwd);
-   oldcwd=xstrdup(cwd);
+   xstrset(oldcwd,cwd);
 }
 
 PtyShell::PtyShell(const char *filter)

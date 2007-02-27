@@ -182,11 +182,9 @@ void Http::ResetRequestData()
    body_size=-1;
    bytes_received=0;
    real_pos=no_ranges?0:-1;
-   xfree(status);
-   status=0;
+   xstrset(status,0);
    status_consumed=0;
-   xfree(line);
-   line=0;
+   xstrset(line,0);
    sent_eot=false;
    keep_alive=false;
    keep_alive_max=-1;
@@ -237,8 +235,7 @@ void Http::Close()
    no_ranges=false;
    use_propfind_now=QueryBool("use-propfind",hostname);
    special=HTTP_NONE;
-   xfree(special_data);
-   special_data=0;
+   xstrset(special_data,0);
    super::Close();
 }
 
@@ -819,8 +816,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
    }
    if(!strcasecmp(name,"Location"))
    {
-      xfree(location);
-      location=xstrdup(value);
+      xstrset(location,value);
       return;
    }
    if(!strcasecmp(name,"Keep-Alive"))
@@ -882,14 +878,12 @@ void Http::HandleHeaderLine(const char *name,const char *value)
    }
    if(!strcasecmp(name,"Content-Type"))
    {
-      xfree(entity_content_type);
-      entity_content_type=xstrdup(value);
+      xstrset(entity_content_type,value);
       const char *cs=strstr(value,"charset=");
       if(cs)
       {
 	 cs=extract_quoted_header_value(cs+8);
-	 xfree(entity_charset);
-	 entity_charset=xstrdup(cs);
+	 xstrset(entity_charset,cs);
       }
    }
 }
@@ -1287,16 +1281,14 @@ int Http::Do()
 	       }
 	       if(H_CONTINUE(status_code))
 	       {
-		  xfree(status);
-		  status=0;
+		  xstrset(status,0);
 		  status_code=0;
 		  return MOVED;
 	       }
 	       if(mode==ARRAY_INFO)
 	       {
 		  // we'll have to receive next header
-		  xfree(status);
-		  status=0;
+		  xstrset(status,0);
 		  status_code=0;
 		  if(array_for_info[array_ptr].get_time)
 		     array_for_info[array_ptr].time=NO_DATE;
@@ -1494,8 +1486,7 @@ int Http::Do()
 		  char *slash=strrchr(new_location,'/');
 		  strcpy(slash+1,location);
 	       }
-	       xfree(location);
-	       location=xstrdup(new_location);
+	       xstrset(location,new_location);
 	    }
 	    sprintf(err,"%s (%s -> %s)",status+status_consumed,file,
 				    location?location:"nowhere");

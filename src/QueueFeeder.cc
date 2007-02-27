@@ -50,8 +50,7 @@ const char *QueueFeeder::NextCmd(CmdExec *exec, const char *)
       CmdExec::unquote(buffer+strlen(buffer), job->pwd);
       strcat(buffer, "\"; ");
 
-      xfree(cur_pwd);
-      cur_pwd = xstrdup(job->pwd);
+      xstrset(cur_pwd,job->pwd);
    }
 
    if(cur_lpwd == NULL || strcmp(cur_lpwd, job->lpwd)) {
@@ -63,8 +62,7 @@ const char *QueueFeeder::NextCmd(CmdExec *exec, const char *)
       CmdExec::unquote(buffer+strlen(buffer), job->lpwd);
       strcat(buffer, "\"; ");
 
-      xfree(cur_lpwd);
-      cur_lpwd = xstrdup(job->lpwd);
+      xstrset(cur_lpwd,job->lpwd);
    }
 
    bufsize += strlen(job->cmd) + 1;

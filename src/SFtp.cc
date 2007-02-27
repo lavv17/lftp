@@ -340,8 +340,7 @@ void SFtp::Disconnect()
    delete send_translate; send_translate=0;
    delete recv_translate; recv_translate=0;
    ssh_id=0;
-   xfree(home_auto); home_auto=0;
-   home_auto=xstrdup(FindHomeAuto());
+   xstrset(home_auto,FindHomeAuto());
 }
 
 void SFtp::Init()

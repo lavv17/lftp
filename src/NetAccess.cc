@@ -92,8 +92,7 @@ NetAccess::NetAccess()
 NetAccess::NetAccess(const NetAccess *o) : super(o)
 {
    Init();
-   xfree(home_auto);
-   home_auto=xstrdup(o->home_auto);
+   xstrset(home_auto,o->home_auto);
 }
 NetAccess::~NetAccess()
 {

@@ -182,8 +182,7 @@ int GetFileInfo::Do()
 	  * if we are going to show its contents */
 	 tried_dir=true;
 	 cd_path = dir;
-	 xfree(path_to_prefix);
-	 path_to_prefix=xstrdup(dir);
+	 xstrset(path_to_prefix,dir);
 	 was_directory=true;
       }
       else if(!tried_file)
@@ -277,8 +276,7 @@ int GetFileInfo::Do()
 	 session->SetCwd(origdir);
 	 session->Chdir(dir, false);
 
-	 xfree(verify_fn);
-	 verify_fn = xstrdup(basename_ptr(session->GetCwd()));
+	 xstrset(verify_fn,basename_ptr(session->GetCwd()));
 
 	 /* go back */
 	 session->SetCwd(pwd);

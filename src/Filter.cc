@@ -73,8 +73,7 @@ void FDStream::MakeErrorText(int e)
 }
 void FDStream::SetCwd(const char *new_cwd)
 {
-   xfree(cwd);
-   cwd=xstrdup(new_cwd);
+   xstrset(cwd,new_cwd);
 }
 FDStream::~FDStream()
 {

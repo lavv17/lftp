@@ -35,8 +35,7 @@ char *GetPass(const char *prompt)
    static int tty_fd=-2;
    static FILE *f=0;
 
-   xfree(oldpass);
-   oldpass=0;
+   xstrset(oldpass,0);
 
    if(tty_fd==-2)
    {

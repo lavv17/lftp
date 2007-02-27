@@ -42,8 +42,7 @@ void StringSet::Empty()
    while(set_size>0)
    {
       set_size--;
-      xfree(set[set_size]);
-      set[set_size]=0;
+      xstrset(set[set_size],0);
    }
 }
 void StringSet::Allocate(int req)
@@ -81,16 +80,9 @@ void StringSet::Replace(int i,const char *s)
       Append(s);
    else if(i>=0 && i<set_size)
    {
-      if(s)
-      {
-	 xfree(set[i]);
-	 set[i]=xstrdup(s);
-      }
-      else if(i==set_size-1)
-      {
-	 xfree(set[--set_size]);
-	 set[set_size]=0;
-      }
+      xstrset(set[i],s);
+      if(!s && i==set_size-1)
+	 set_size--;
    }
 }
 void StringSet::InsertBefore(int i,const char *s)

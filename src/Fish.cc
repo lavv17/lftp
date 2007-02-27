@@ -331,8 +331,7 @@ void Fish::Disconnect()
       SetError(STORE_FAILED,0);
    received_greeting=false;
    password_sent=0;
-   xfree(home_auto); home_auto=0;
-   home_auto=xstrdup(FindHomeAuto());
+   xstrset(home_auto,FindHomeAuto());
 }
 
 void Fish::EmptyPathQueue()

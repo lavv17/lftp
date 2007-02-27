@@ -348,8 +348,7 @@ void CmdExec::RevertToSavedSession()
 }
 void CmdExec::ChangeSlot(const char *n)
 {
-   xfree(slot);
-   slot=0;
+   xstrset(slot,0);
    if(!n || !*n)
       return;
    FileAccess *s=ConnectionSlot::FindSession(n);
@@ -357,7 +356,7 @@ void CmdExec::ChangeSlot(const char *n)
       ConnectionSlot::Set(n,session);
    else
       ChangeSession(s->Clone());
-   slot=xstrdup(n);
+   xstrset(slot,n);
 }
 
 int CmdExec::Do()

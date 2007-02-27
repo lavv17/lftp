@@ -222,8 +222,7 @@ void Buffer::RateAdd(int n)
 
 void Buffer::SetError(const char *e,bool fatal)
 {
-   xfree(error_text);
-   error_text=xstrdup(e);
+   xstrset(error_text,e);
    error_fatal=fatal;
 }
 void Buffer::SetErrorCached(const char *e)

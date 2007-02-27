@@ -407,10 +407,7 @@ const char *ResMgr::BoolValidate(char **value)
       return _("invalid boolean value");
    }
    if(strcmp(v,newval))
-   {
-      xfree(v);
-      *value=xstrdup(newval);
-   }
+      xstrset(*value,newval);
 
    return 0;
 }
@@ -433,10 +430,7 @@ const char *ResMgr::TriBoolValidate(char **value)
    }
 
    if(strcmp(v,newval))
-   {
-      xfree(v);
-      *value=xstrdup(newval);
-   }
+      xstrset(*value,newval);
 
    return 0;
 }
@@ -846,10 +840,7 @@ const char *ResMgr::FileAccessible(char **value,int mode,int want_dir)
    else
    {
       if(f!=*value)
-      {
-	 xfree(*value);
-	 *value=xstrdup(f);
-      }
+	 xstrset(*value,f);
    }
    xfree(cwd);
    return error;

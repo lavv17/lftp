@@ -105,16 +105,12 @@ FileAccess::FileAccess(const FileAccess *fa)
 
    cwd=fa->cwd;
    home=fa->home;
-   xfree(user);
-   user=xstrdup(fa->user);
-   xfree(pass);
-   pass=xstrdup(fa->pass);
+   xstrset(user,fa->user);
+   xstrset(pass,fa->pass);
    pass_open=fa->pass_open;
-   xfree(hostname);
-   hostname=xstrdup(fa->hostname);
-   xfree(portname);
-   portname=xstrdup(fa->portname);
-   vproto=xstrdup(fa->vproto);
+   xstrset(hostname,fa->hostname);
+   xstrset(portname,fa->portname);
+   xstrset(vproto,fa->vproto);
 }
 
 FileAccess::~FileAccess()
@@ -279,9 +275,9 @@ const char *FileAccess::StrError(int err)
 
 void FileAccess::Close()
 {
-   xfree(file); file=0;
-   xfree(file_url); file_url=0;
-   xfree(file1); file1=0;
+   xstrset(file,0);
+   xstrset(file_url,0);
+   xstrset(file1,0);
    delete new_cwd; new_cwd=0;
    mode=CLOSED;
    opt_date=0;
@@ -292,11 +288,9 @@ void FileAccess::Close()
    entity_date=NO_DATE;
    ascii=false;
    norest_manual=false;
-   xfree(location); location=0;
-   xfree(entity_content_type);
-   entity_content_type=0;
-   xfree(entity_charset);
-   entity_charset=0;
+   xstrset(location,0);
+   xstrset(entity_content_type,0);
+   xstrset(entity_charset,0);
    ClearError();
 }
 
@@ -380,10 +374,8 @@ const char *FileAccess::GetConnectURL(int flags) const
 void FileAccess::Connect(const char *host1,const char *port1)
 {
    Close();
-   xfree(hostname);
-   hostname=xstrdup(host1);
-   xfree(portname);
-   portname=xstrdup(port1);
+   xstrset(hostname,host1);
+   xstrset(portname,port1);
    DontSleep();
    ResetLocationData();
 }
@@ -391,10 +383,8 @@ void FileAccess::Connect(const char *host1,const char *port1)
 void FileAccess::Login(const char *user1,const char *pass1)
 {
    Close();
-   xfree(user);
-   user=xstrdup(user1);
-   xfree(pass);
-   pass=xstrdup(pass1);
+   xstrset(user,user1);
+   xstrset(pass,pass1);
    pass_open=false;
 
    if(user && pass==0)
@@ -422,8 +412,8 @@ void FileAccess::Login(const char *user1,const char *pass1)
 void FileAccess::AnonymousLogin()
 {
    Close();
-   xfree(user); user=0;
-   xfree(pass); pass=0;
+   xstrset(user,0);
+   xstrset(pass,0);
    pass_open=false;
    ResetLocationData();
 }
@@ -436,8 +426,7 @@ void FileAccess::ResetLocationData()
 
 void FileAccess::SetPasswordGlobal(const char *p)
 {
-   xfree(pass);
-   pass=xstrdup(p);
+   xstrset(pass,p);
    for(FileAccess *o=chain; o!=0; o=o->next)
    {
       if(o==this)
@@ -661,16 +650,14 @@ void FileAccess::SetError(int ec,const char *e)
       sprintf(m,"%s (%s)",e,file);
       e=m;
    }
-   xfree(error);
-   error=xstrdup(e);
+   xstrset(error,e);
    error_code=ec;
 }
 
 void FileAccess::ClearError()
 {
    error_code=OK;
-   xfree(error);
-   error=0;
+   xstrset(error,0);
 }
 
 void FileAccess::Fatal(const char *e)
@@ -680,8 +667,7 @@ void FileAccess::Fatal(const char *e)
 
 void FileAccess::SetSuggestedFileName(const char *fn)
 {
-   xfree(suggested_filename);
-   suggested_filename=0;
+   xstrset(suggested_filename,0);
    if(fn==0)
       return;
 
@@ -701,8 +687,7 @@ void FileAccess::SetSuggestedFileName(const char *fn)
 
 void FileAccess::SetFileURL(const char *u)
 {
-   xfree(file_url);
-   file_url=xstrdup(u);
+   xstrset(file_url,u);
    if(new_cwd && mode==CHANGE_DIR)
       new_cwd->SetURL(u);
 }
@@ -991,8 +976,7 @@ FileAccessOperation::~FileAccessOperation()
 
 void FileAccessOperation::SetError(const char *e)
 {
-   xfree(error_text);
-   error_text=xstrdup(e);
+   xstrset(error_text,e);
    done=true;
 }
 void FileAccessOperation::SetErrorCached(const char *e)
@@ -1053,11 +1037,9 @@ FileAccess::Path::~Path()
 }
 void FileAccess::Path::Set(const char *new_path,bool new_is_file,const char *new_url,int new_device_prefix_len)
 {
-   xfree(path);
-   path=xstrdup(new_path);
+   xstrset(path,new_path);
    is_file=new_is_file;
-   xfree(url);
-   url=xstrdup(new_url);
+   xstrset(url,new_url);
    device_prefix_len=new_device_prefix_len;
 }
 void FileAccess::Path::Set(const Path *o)
@@ -1101,8 +1083,7 @@ void FileAccess::Path::Change(const char *new_path,bool new_is_file,const char *
 	    Optimize(np);
 	    if(np[0]=='.' && np[1]=='.' && (np[2]=='/' || np[2]==0))
 	    {
-	       xfree(url);
-	       url=0;
+	       xstrset(url,0);
 	       goto url_done;
 	    }
 	    else
@@ -1137,8 +1118,7 @@ url_done:
 	 sprintf(newcwd,"%s/%s",path,new_path);
       new_path=newcwd;
    }
-   xfree(path);
-   path=xstrdup(new_path);
+   xstrset(path,new_path);
    device_prefix_len=new_device_prefix_len;
    Optimize();
    strip_trailing_slashes(path);

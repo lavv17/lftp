@@ -576,8 +576,7 @@ static void set_tz(const char *tz)
 static char *saved_tz=0;
 static void save_tz()
 {
-   xfree(saved_tz);
-   saved_tz=xstrdup(getenv("TZ"));
+   xstrset(saved_tz,getenv("TZ"));
 }
 static void restore_tz()
 {

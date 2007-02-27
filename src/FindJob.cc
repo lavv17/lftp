@@ -264,8 +264,7 @@ void FinderJob::Down(const char *p)
 #ifdef FIND_DEBUG
    printf("Down(%s)\n",p);
 #endif
-   xfree(dir);
-   dir=xstrdup(p);
+   xstrset(dir,p);
    state=START_INFO;
 }
 

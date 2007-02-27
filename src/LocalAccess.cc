@@ -51,8 +51,7 @@ void LocalAccess::Init()
    error_code=OK;
    stream=0;
    home.Set(getenv("HOME"));
-   xfree(hostname);
-   hostname=xstrdup("localhost");
+   xstrset(hostname,"localhost");
 }
 
 LocalAccess::LocalAccess() : FileAccess()
@@ -603,8 +602,7 @@ public:
 };
 Glob *LocalAccess::MakeGlob(const char *pattern)
 {
-   xfree(file);
-   file=xstrdup(pattern);
+   xstrset(file,pattern);
    ExpandTildeInCWD();
    return new LocalGlob(cwd,file);
 }

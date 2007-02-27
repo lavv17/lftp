@@ -553,8 +553,7 @@ Job *CmdExec::builtin_lcd()
       return 0;
    }
 
-   xfree(old_lcwd);
-   old_lcwd=xstrdup(cwd->GetName());
+   xstrset(old_lcwd,cwd->GetName());
 
    SaveCWD();
 
@@ -909,10 +908,15 @@ Job *CmdExec::builtin_open()
 	    delete url;
 	    url=new ParsedURL(u);
 	 }
-	 if(user)
+	 if(user || port)
 	 {
-	    url->user=user;
-	    url->pass=pass;
+	    if(user)
+	    {
+	       url->user=user;
+	       url->pass=pass;
+	    }
+	    if(port)
+	       url->port=port;
 	    char *host1=url->Combine();
 	    delete url;
 	    url=new ParsedURL(host1);

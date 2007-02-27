@@ -473,8 +473,7 @@ void FileCopy::Reconfig(const char *s)
 
 void FileCopy::SetError(const char *str)
 {
-   xfree(error_text);
-   error_text=xstrdup(str);
+   xstrset(error_text,str);
    DeleteRef(get);
    DeleteRef(put);
 }
@@ -573,7 +572,7 @@ long FileCopy::GetETA(off_t b)
 const char *FileCopy::GetStatus()
 {
    static char *buf;
-   xfree(buf); buf=0;
+   xstrset(buf,0);
    const char *get_st=0;
    if(get)
       get_st=get->GetStatus();
@@ -1041,10 +1040,8 @@ int FileCopyPeerFA::Get_LL(int len)
 	       session=FileAccess::New(&u);
 	       reuse_later=true;
 
-	       xfree(file);
-	       file=xstrdup(u.path?u.path:"");
-	       xfree(orig_url);
-	       orig_url=xstrdup(loc);
+	       xstrset(file,u.path?u.path:"");
+	       xstrset(orig_url,loc);
 	    }
 	    else // !proto
 	    {
@@ -1070,18 +1067,17 @@ int FileCopyPeerFA::Get_LL(int len)
 
 	       url::decode_string(loc);
 	       char *slash=strrchr(file,'/');
-	       char *new_file;
+	       const char *new_file=0;
 	       if(loc[0]!='/' && slash)
 	       {
 		  *slash=0;
-		  new_file=xstrdup(dir_file(file,loc));
+		  new_file=dir_file(file,loc);
 	       }
 	       else
 	       {
-		  new_file=xstrdup(loc);
+		  new_file=loc;
 	       }
-	       xfree(file);
-	       file=new_file;
+	       xstrset(file,new_file);
 	    }
 
 	    size=NO_SIZE_YET;

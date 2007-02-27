@@ -111,8 +111,7 @@ void OutputJob::InitCopy()
       pipe_output->CloseFD();
       output_fd->CloseFD();
 
-      xfree(fa_path);
-      fa_path=0;
+      xstrset(fa_path,0);
    }
 
    initialized=true;
@@ -374,8 +373,7 @@ void OutputJob::PreFilter(const char *newfilter)
 
 void OutputJob::SetFilter(const char *newfilter)
 {
-   xfree(filter);
-   filter=xstrdup(newfilter);
+   xstrset(filter,newfilter);
 }
 
 /* Return the width of the output.  If there's a filter, we can either

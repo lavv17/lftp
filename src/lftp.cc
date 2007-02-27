@@ -92,8 +92,7 @@ class ReadlineFeeder : public CmdFeeder
       if(for_history)
       {
 	 lftp_add_history_nodups(for_history);
-	 xfree(for_history);
-	 for_history=0;
+	 xstrset(for_history,0);
       }
    }
 
@@ -128,8 +127,7 @@ public:
 
    const char *NextCmd(class CmdExec *exec,const char *prompt)
    {
-      xfree(to_free);
-      to_free=0;
+      xstrset(to_free,0);
 
       if(add_newline)
       {

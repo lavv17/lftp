@@ -652,8 +652,7 @@ int   MirrorJob::Do()
       if(source_session->IsOpen())
 	 return m;
 
-      xfree(source_dir);
-      source_dir=xstrdup(source_session->GetCwd());
+      xstrset(source_dir,source_session->GetCwd());
 
       if(!create_target_dir || !strcmp(target_dir,".") || !strcmp(target_dir,".."))
 	 goto pre_CHANGING_DIR_TARGET;
@@ -725,8 +724,7 @@ int   MirrorJob::Do()
       if(target_session->IsOpen())
 	 return m;
 
-      xfree(target_dir);
-      target_dir=xstrdup(target_session->GetCwd());
+      xstrset(target_dir,target_session->GetCwd());
 
    pre_GETTING_LIST_INFO:
       set_state(GETTING_LIST_INFO);
@@ -1271,8 +1269,7 @@ bool MirrorJob::Statistics::HaveSomethingDone(int flags)
 
 char *MirrorJob::SetScriptFile(const char *n)
 {
-   xfree(script_name);
-   script_name=xstrdup(n);
+   xstrset(script_name,n);
    if(strcmp(n,"-"))
    {
       script=fopen(n,"w");
@@ -1290,8 +1287,7 @@ char *MirrorJob::SetScriptFile(const char *n)
 
 void MirrorJob::SetOnChange(const char *oc)
 {
-   xfree(on_change);
-   on_change=xstrdup(oc);
+   xstrset(on_change,oc);
 }
 
 CMD(mirror)

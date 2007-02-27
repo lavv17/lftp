@@ -51,8 +51,7 @@ void Alias::Add(const char *alias,const char *value)
       int dif=strcasecmp((*scan)->alias,alias);
       if(dif==0)
       {
-	 xfree((*scan)->value);
-	 (*scan)->value=xstrdup(value);
+	 xstrset((*scan)->value,value);
 	 return;
       }
       if(dif>0)
