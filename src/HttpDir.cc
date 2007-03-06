@@ -89,38 +89,6 @@ static bool find_value(const char *scan,const char *more,const char *name,char *
    return false;
 }
 
-static
-void remove_tags(char *buf)
-{
-   for(;;)
-   {
-      char *less=strchr(buf,'<');
-      char *amp=strstr(buf,"&nbsp;");
-      if(!less && !amp)
-	 break;
-      if(amp && (!less || amp<less))
-      {
-	 amp[0]=' ';
-	 memmove(amp+1,amp+6,strlen(amp+6)+1);
-	 buf=amp+1;
-	 continue;
-      }
-#if 0
-      if(token_eq(less+1,strlen(less+1),"a"))
-      {
-	 // don't allow anchors to be skipped.
-      	 *less=0;
-	 break;
-      }
-#endif
-      char *more=strchr(less+1,'>');
-      if(!more)
-	 break;
-      memmove(less,more+1,strlen(more+1)+1);
-      buf=less;
-   }
-}
-
 #if 0 // unused
 static
 const char *strncasestr(const char *buf,int len,const char *str)

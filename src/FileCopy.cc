@@ -79,7 +79,9 @@ int FileCopy::Do()
       if(remove_target_first && !put->FileRemoved())
 	 return m;
       remove_target_first=false;
-      if(put->NeedSizeDateBeforehand() || (cont && put->CanSeek()))
+      if(cont && put->CanSeek())
+	 put->WantSize();
+      if(put->NeedSizeDateBeforehand() || (cont && put->CanSeek() && put->GetSize()==NO_SIZE_YET))
       {
 	 if(get->GetSize()==NO_SIZE_YET || get->GetDate()==NO_DATE_YET)
 	 {

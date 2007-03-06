@@ -129,6 +129,10 @@ void Buffer::Put(const char *buf,int size)
    in_buffer+=size;
    pos+=size;
 }
+void Buffer::ZeroTerminate()
+{
+   *GetSpace(1)=0;
+}
 
 void Buffer::Format(const char *f,...)
 {

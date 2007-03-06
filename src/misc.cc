@@ -997,3 +997,26 @@ const char *shell_encode(const char *string)
    *r = '\0';
    return (result);
 }
+
+void remove_tags(char *buf)
+{
+   for(;;)
+   {
+      char *less=strchr(buf,'<');
+      char *amp=strstr(buf,"&nbsp;");
+      if(!less && !amp)
+	 break;
+      if(amp && (!less || amp<less))
+      {
+	 amp[0]=' ';
+	 memmove(amp+1,amp+6,strlen(amp+6)+1);
+	 buf=amp+1;
+	 continue;
+      }
+      char *more=strchr(less+1,'>');
+      if(!more)
+	 break;
+      memmove(less,more+1,strlen(more+1)+1);
+      buf=less;
+   }
+}

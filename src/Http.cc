@@ -1523,6 +1523,7 @@ int Http::Do()
 				       (last_char(cwd)=='/')?"":"/");
 	 }
 	 state=RECEIVING_BODY;
+	 LogErrorText();
 	 SetError(code,err);
 	 return MOVED;
       }
@@ -1735,7 +1736,9 @@ int Http::Read(void *buf,int size)
 	    size1=body_size-bytes_received;
       }
 
-      int bytes_allowed=rate_limit->BytesAllowedToGet();
+      int bytes_allowed=0x10000000;
+      if(rate_limit)
+	 bytes_allowed=rate_limit->BytesAllowedToGet();
       if(size1>bytes_allowed)
 	 size1=bytes_allowed;
       if(size1==0)
@@ -1763,7 +1766,8 @@ int Http::Read(void *buf,int size)
       bytes_received+=size;
       if(chunked)
 	 chunk_pos+=size;
-      rate_limit->BytesGot(size);
+      if(rate_limit)
+	 rate_limit->BytesGot(size);
       TrySuccess();
       return size;
    }
@@ -2258,6 +2262,27 @@ void Http::CleanupThis()
    Disconnect();
 }
 
+void Http::LogErrorText()
+{
+   Roll(recv_buf);
+   const char *buf_c;
+   int size;
+   recv_buf->ZeroTerminate();
+   recv_buf->Get(&buf_c,&size);
+   if(body_size>=0 && size>body_size)
+      size=body_size;
+   char *buf=string_alloca(size+1);
+   off_t old_pos=pos;
+   size=Read(buf,size);
+   pos=old_pos;	  // do not disturb FileCopy
+   if(size<0)
+      return;
+   buf[size]=0;
+   remove_tags(buf);
+   for(char *line=strtok(buf,"\n"); line; line=strtok(0,"\n"))
+      if(*line)
+	 Log::global->Format(4,"<--* %s\n",line);
+}
 
 
 /* The functions http_atotm and check_end are taken from wget */

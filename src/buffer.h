@@ -80,6 +80,7 @@ public:
    bool Eof() const { return eof; }
    bool Broken() const { return broken; }
 
+   void ZeroTerminate(); // makes sure that the data end with '\0'
    void Get(const char **buf,int *size);
    void Skip(int len); // Get(); consume; Skip()
    void UnSkip(int len); // this only works if there were no Put's.

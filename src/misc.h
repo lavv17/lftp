@@ -123,6 +123,7 @@ static inline char *memrchr(char *buf,char c,size_t len) {
 }
 
 const char *shell_encode(const char *);
+void remove_tags(char *buf);
 
 #define ListAdd(type,chain,this,next)  \
 do {				       \

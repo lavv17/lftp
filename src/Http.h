@@ -89,6 +89,7 @@ class Http : public NetAccess
 	 return 2;
       }
    void MakeSSLBuffers();
+   void LogErrorText();
 
    char *status;
    int   status_consumed;

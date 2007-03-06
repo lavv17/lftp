@@ -51,4 +51,17 @@ void xfree(void *p);
 
 void xmalloc_register_block(void *);
 
+class xstring
+{
+   char *buf;
+   int buf_size;
+public:
+   xstring() { buf=0; buf_size=0; }
+   ~xstring() { xfree(buf); }
+   xstring(const char *s) { buf=xstrdup(s); buf_size=0; }
+   operator const char *() { return buf; }
+   const char *set(const char *s) { xstrset(buf,s); buf_size=0; return buf; }
+   const char *set_allocated(char *s) { xfree(buf); buf=s; buf_size=0; return buf; }
+};
+
 #endif /* XMALLOC_H */
