@@ -136,7 +136,7 @@ do {							 \
    for(type **scan=&chain; *scan; scan=&scan[0]->next)	 \
       if(*scan==this)					 \
       {							 \
-	 delete replace_value(*scan,scan[0]->next);	 \
+	 *scan=scan[0]->next;				 \
 	 break;						 \
       }							 \
 } while(0)

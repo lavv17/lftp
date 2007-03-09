@@ -1,3 +1,7 @@
+2007-03-09  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* misc.h: don't delete the object in ListDel.
+
 2007-03-06  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc: tell target to find file size before requesting
