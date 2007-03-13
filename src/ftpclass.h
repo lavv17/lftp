@@ -280,8 +280,7 @@ private:
    static const bool ftps; // for convenience
 #endif
 
-   char  *line;
-   int	 line_len;
+   xstring line;
    xstring all_lines;
 
    bool	 eof;

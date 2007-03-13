@@ -556,16 +556,6 @@ static void normalize_path_vms(char *path)
 
 char *Ftp::ExtractPWD()
 {
-   // drop \0 according to RFC2640
-   for(int i=0; i<line_len; i++)
-   {
-      if(line[i]==0)
-      {
-	 memmove(line+i,line+i+1,line_len-i);
-	 line_len--;
-      }
-   }
-
    char *pwd=string_alloca(strlen(line)+1);
 
    const char *scan=strchr(line,'"');
@@ -648,7 +638,7 @@ Ftp::pasv_state_t Ftp::Handle_PASV()
     * Extract address. RFC1123 says:
     * "...must scan the reply for the first digit..."
     */
-   for(char *b=line+4; ; b++)
+   for(const char *b=line+4; ; b++)
    {
       if(*b==0)
       {
@@ -709,9 +699,8 @@ Ftp::pasv_state_t Ftp::Handle_EPSV()
    char delim;
    char *format=alloca_strdup("|||%u|");
    unsigned port;
-   char *c;
 
-   c=strchr(line,'(');
+   const char *c=strchr(line,'(');
    c=c?c+1:line+4;
    delim=*c;
 
@@ -921,8 +910,6 @@ void Ftp::InitFtp()
    nop_time=0;
    nop_count=0;
    nop_offset=0;
-   line=0;
-   line_len=0;
    eof=false;
    state=INITIAL_STATE;
    flags=SYNC_MODE;
@@ -986,9 +973,6 @@ Ftp::~Ftp()
       ReceiveResp();
    }
    Disconnect();
-
-   xfree(line);
-
    Leave();
 }
 
@@ -2596,29 +2580,45 @@ int  Ftp::ReceiveResp()
 	 DisconnectNow();
 	 return MOVED;
       }
-      const char *nl=(const char*)memchr(resp,'\n',resp_size);
-      if(!nl)
+      int line_len=0;
+      int skip_len=0;
+      const char *nl=find_char(resp,resp_size,'\n');
+      for(;;)
       {
-	 if(conn->control_recv->Eof())
-	    nl=resp+resp_size;
-	 else
+	 if(!nl)
+	 {
+	    if(conn->control_recv->Eof())
+	    {
+	       skip_len=line_len=resp_size;
+	       break;
+	    }
 	    return m;
+	 }
+	 if(nl>resp && nl[-1]=='\r')
+	 {
+	    line_len=nl-resp-1;
+	    skip_len=nl-resp+1;
+	    break;
+	 }
+	 nl=find_char(nl+1,resp_size-(nl+1-resp),'\n');
       }
       m=MOVED;
 
-      xfree(line);
-      line_len=nl-resp;
-      line=(char*)xmalloc(line_len+1);
-      memcpy(line,resp,line_len);
-      line[line_len]=0;
-      conn->control_recv->Skip(line_len+1);
-      if(line_len>0 && line[line_len-1]=='\r')
-	 line[--line_len]=0;
-      for(char *scan=line+line_len-1; scan>=line; scan--)
+      line.nset(resp,line_len);
+      conn->control_recv->Skip(skip_len);
+
+      // Change <CR><NUL> to <CR> according to RFC2640.
+      // Other occurencies of <NUL> are changed to '!'.
+      char *w=line.get_non_const();
+      const char *r=line.get();
+      for(int i=line_len; i>0; i--,r++)
       {
-	 if(*scan=='\0')
-	    *scan='!';
+	 if(*r)
+	    *w++=*r;
+	 else if(r[-1]!='\r')
+	    *w++='!';
       }
+      *w=0;
 
       int code=0;
 
@@ -2638,7 +2638,7 @@ int  Ftp::ReceiveResp()
       if(conn->multiline_code==0 || all_lines_len==0)
 	 all_lines.set(line); // not continuation
       else
-	 all_lines.vappend("\n",line,NULL);
+	 all_lines.vappend("\n",line.get(),NULL);
 
       if(code==0)
 	 continue;

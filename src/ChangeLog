@@ -1,5 +1,10 @@
 2007-03-13  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* ftpclass.cc, ftpclass.h: change line to xstring; drop line_len;
+	  improve <NUL> handling; require <CR><NL> to end line.
+
+2007-03-13  Alexander V. Lukyanov <lav@yars.free.net>
+
 	* xstring.cc, xstring.h, Makefile.am, xmalloc.h: split off xstring.
 	* FileAccess.cc, FileAccess.h, Fish.cc, Fish.h, Http.cc, Http.h,
 	  LocalAccess.cc, NetAccess.cc, NetAccess.h, SFtp.cc, ftpclass.cc,
