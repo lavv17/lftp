@@ -1,3 +1,8 @@
+2007-03-13	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* post-config.h: define __attribute__ for non-gcc compilers.
+	* xstring.h: move to ../src/.
+
 2006-07-22  Nix  <nix@esperi.org.uk>
 
         * gettext.h: Synch with gnulib-20060722.

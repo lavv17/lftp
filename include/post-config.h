@@ -134,6 +134,7 @@ CDECL void *memmem(const void *haystack, size_t haystack_len,
 # define PRINTF_LIKE(n,m) __attribute__((format(__printf__,n,m)))
 #else
 # define PRINTF_LIKE(n,m)
+# define __attribute__(x)
 #endif
 
 #ifdef TRIO_REPLACE_STDIO
