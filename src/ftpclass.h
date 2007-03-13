@@ -69,7 +69,7 @@ class Ftp : public NetAccess
 
    class Connection
    {
-      char *closure;
+      xstring closure;
    public:
       int control_sock;
       IOBuffer *control_recv;
@@ -125,13 +125,13 @@ class Ftp : public NetAccess
       bool cpsv_supported;
       bool sscn_supported;
       bool sscn_on;
-      char *auth_args_supported;
+      xstring auth_args_supported;
       bool ssl_is_activated() { return control_ssl!=0; }
 #else
       bool ssl_is_activated() { return false; }
 #endif
 
-      char *mlst_attr_supported;
+      xstring mlst_attr_supported;
 
       Connection(const char *c);
       ~Connection();
@@ -200,24 +200,14 @@ class Ftp : public NetAccess
       };
 
       expect_t check_case;
-      char *arg;
+      xstring arg;
       Expect *next;
 
-      Expect(expect_t e,const char *a=0)
+      Expect(expect_t e,const char *a=0) : check_case(e), arg(a) {}
+      Expect(expect_t e,char c) : check_case(e)
 	 {
-	    check_case=e;
-	    arg=xstrdup(a);
-	 }
-      Expect(expect_t e,char c)
-	 {
-	    check_case=e;
-	    arg=(char*)xmalloc(2);
-	    arg[0]=c;
-	    arg[1]=0;
-	 }
-      ~Expect()
-	 {
-	    xfree(arg);
+	    char cc[2]={c,0};
+	    arg.set(cc);
 	 }
    };
    class ExpectQueue;
@@ -292,7 +282,7 @@ private:
 
    char  *line;
    int	 line_len;
-   char  *all_lines;
+   xstring all_lines;
 
    bool	 eof;
 
@@ -349,10 +339,10 @@ private:
 
    automate_state state;
 
-   char	 *anon_user;
-   char	 *anon_pass;
+   xstring anon_user;
+   xstring anon_pass;
 
-   char	 *charset;
+   xstring charset;
 
    static const char *DefaultAnonPass();
 
@@ -363,14 +353,14 @@ private:
    bool  verify_data_address;
    bool  verify_data_port;
    bool	 rest_list;
-   char  *list_options;
+   xstring list_options;
 
    bool	 GetBetterConnection(int level,bool limit_reached);
    bool  SameConnection(const Ftp *o) const;
 
    int	 nop_interval;
 
-   char *skey_pass;
+   xstring skey_pass;
    bool allow_skey;
    bool force_skey;
    const char *make_skey_reply();

@@ -347,7 +347,7 @@ void Ftp::TransferCheck(int act)
       //    Stored 1 files, 0 Kbytes
       //    Retrieved 0 files, 0 Kbytes
       //    Receiving file XXX (YYY bytes)
-      char *r=strstr(all_lines,"Receiving file");
+      const char *r=strstr(all_lines,"Receiving file");
       if(r)
       {
 	 r=strrchr(r,'(');
@@ -361,7 +361,7 @@ void Ftp::TransferCheck(int act)
       //    Status: XXX bytes transferred
       //
       // find the first number.
-      for(char *b=line+4; ; b++)
+      for(const char *b=line+4; ; b++)
       {
 	 if(*b==0)
 	    return;
@@ -451,7 +451,7 @@ void Ftp::NoPassReqCheck(int act) // for USER command
    }
    if(act==331 && allow_skey && user && pass)
    {
-      skey_pass=xstrdup(make_skey_reply());
+      skey_pass.set(make_skey_reply());
       if(force_skey && skey_pass==0)
       {
 	 SetError(LOGIN_FAILED,_("ftp:skey-force is set and server does not support OPIE nor S/KEY"));
@@ -856,8 +856,8 @@ void Ftp::CatchSIZE_opt(int act)
 }
 
 Ftp::Connection::Connection(const char *c)
+   : closure(c)
 {
-   closure=xstrdup(c);
    abor_close_timer.SetResource("ftp:abor-max-wait",closure);
 
    control_sock=-1;
@@ -872,7 +872,6 @@ Ftp::Connection::Connection(const char *c)
    prot='C';  // current protection scheme 'C'lear or 'P'rivate
    auth_sent=false;
    auth_supported=true;
-   auth_args_supported=0;
    cpsv_supported=false;
    sscn_supported=true;
    sscn_on=false;
@@ -903,7 +902,6 @@ Ftp::Connection::Connection(const char *c)
    utf8_supported=false;
    lang_supported=false;
    mlst_supported=false;
-   mlst_attr_supported=0;
    clnt_supported=false;
    host_supported=false;
 
@@ -925,26 +923,18 @@ void Ftp::InitFtp()
    nop_offset=0;
    line=0;
    line_len=0;
-   all_lines=0;
    eof=false;
    state=INITIAL_STATE;
    flags=SYNC_MODE;
-   skey_pass=0;
    allow_skey=true;
    force_skey=false;
    verify_data_address=true;
-   list_options=0;
    use_stat=true;
    use_mdtm=true;
    use_size=true;
    use_telnet_iac=true;
    use_pret=true;
    use_mlsd=false;
-
-   anon_pass=0;
-   anon_user=0;	  // will be set by Reconfig()
-
-   charset=0;
 
    copy_mode=COPY_NONE;
    copy_addr_valid=false;
@@ -984,11 +974,6 @@ Ftp::Connection::~Connection()
    Delete(control_send);
    Delete(control_recv);
    delete send_cmd_buffer;
-   xfree(mlst_attr_supported);
-#if USE_SSL
-   xfree(auth_args_supported);
-#endif
-   xfree(closure);
 }
 
 Ftp::~Ftp()
@@ -1002,14 +987,7 @@ Ftp::~Ftp()
    }
    Disconnect();
 
-   xfree(anon_user);
-   xfree(anon_pass);
-   xfree(charset);
-   xfree(list_options);
    xfree(line);
-   xfree(all_lines);
-
-   xfree(skey_pass);
 
    Leave();
 }
@@ -1391,23 +1369,23 @@ int   Ftp::Do()
       if(conn->have_feat_info)
 	 TuneConnectionAfterFEAT();
 
-      char *user_to_use=(user?user:anon_user);
+      const char *user_to_use=(user?user:anon_user);
       if(proxy && !conn->proxy_is_http)
       {
 	 if(QueryBool("proxy-auth-joined",proxy) && proxy_user && proxy_pass)
 	 {
 	    char *combined=(char*)alloca(strlen(user_to_use)+1+strlen(proxy_user)+1+strlen(hostname)+1+xstrlen(portname)+1);
-	    sprintf(combined,"%s@%s@%s",user_to_use,proxy_user,hostname);
+	    sprintf(combined,"%s@%s@%s",user_to_use,proxy_user.get(),hostname.get());
 	    if(portname)
-	       sprintf(combined+strlen(combined),":%s",portname);
+	       sprintf(combined+strlen(combined),":%s",portname.get());
 	    user_to_use=combined;
 	 }
 	 else // !proxy-auth-joined
 	 {
 	    char *combined=(char*)alloca(strlen(user_to_use)+1+strlen(hostname)+1+xstrlen(portname)+1);
-	    sprintf(combined,"%s@%s",user_to_use,hostname);
+	    sprintf(combined,"%s@%s",user_to_use,hostname.get());
 	    if(portname)
-	       sprintf(combined+strlen(combined),":%s",portname);
+	       sprintf(combined+strlen(combined),":%s",portname.get());
 	    user_to_use=combined;
 	    if(proxy_user && proxy_pass)
 	    {
@@ -1419,7 +1397,7 @@ int   Ftp::Do()
 	 }
       }
 
-      xstrset(skey_pass,0);
+      skey_pass.set(0);
 
       expect->Push(Expect::USER);
       conn->SendCmd2("USER",user_to_use);
@@ -1443,14 +1421,14 @@ int   Ftp::Do()
       if(!conn->ignore_pass)
       {
 	 conn->may_show_password = (skey_pass!=0) || (user==0) || pass_open;
-	 const char *pass_to_use=pass?pass:anon_pass;
+	 const char *pass_to_use=(pass?pass:anon_pass);
 	 if(allow_skey && skey_pass)
 	    pass_to_use=skey_pass;
 	 else if(proxy && !conn->proxy_is_http
 	 && QueryBool("proxy-auth-joined",proxy) && proxy_user && proxy_pass)
 	 {
 	    char *p=string_alloca(strlen(pass_to_use)+1+strlen(proxy_pass)+1);
-	    sprintf(p,"%s@%s",pass_to_use,proxy_pass);
+	    sprintf(p,"%s@%s",pass_to_use,proxy_pass.get());
 	    pass_to_use=p;
 	 }
 	 expect->Push(Expect::PASS);
@@ -1749,7 +1727,7 @@ int   Ftp::Do()
 	 if(list_options && list_options[0])
 	 {
 	    char *c=string_alloca(5+strlen(list_options)+1);
-	    sprintf(c,"LIST %s",list_options);
+	    sprintf(c,"LIST %s",list_options.get());
 	    command=c;
 	 }
 	 if(file && file[0])
@@ -1775,7 +1753,7 @@ int   Ftp::Do()
 	 else
 	 {
 	    int len=xstrlen(real_cwd);
-	    char *path_to_use=file;
+	    const char *path_to_use=file;
 	    if(!conn->vms_path && !AbsolutePath(file) && real_cwd
 	    && !strncmp(file,real_cwd,len) && file[len]=='/')
 	       path_to_use=file+len+1;
@@ -2110,7 +2088,7 @@ int   Ftp::Do()
 	 else // proxy_is_http
 	 {
 	    sprintf(str,_("Connecting data socket to proxy %s (%s) port %u"),
-	       proxy,SocketNumericAddress(&conn->peer_sa),SocketPort(&conn->peer_sa));
+	       proxy.get(),SocketNumericAddress(&conn->peer_sa),SocketPort(&conn->peer_sa));
 	    DebugPrint("---- ",str,5);
 	    res=SocketConnect(conn->data_sock,&conn->peer_sa);
 	 }
@@ -2476,7 +2454,7 @@ void Ftp::SendUTimeRequest()
       time_t n=entity_date;
       strftime(d,sizeof(d),"%Y%m%d%H%M%S",gmtime(&n));
       d[sizeof(d)-1]=0;
-      sprintf(c,"SITE UTIME %s %s %s %s UTC",file,d,d,d);
+      sprintf(c,"SITE UTIME %s %s %s %s UTC",file.get(),d,d,d);
       conn->SendCmd(c);
       expect->Push(Expect::SITE_UTIME);
    }
@@ -2493,8 +2471,8 @@ void Ftp::SendUTimeRequest()
 }
 const char *Ftp::QueryStringWithUserAtHost(const char *var)
 {
-   const char *u=user?user:"anonymous";
-   const char *h=hostname?hostname:"";
+   const char *u=user?user.get():"anonymous";
+   const char *h=hostname?hostname.get():"";
    char *closure=string_alloca(strlen(u)+1+strlen(h)+1);
    sprintf(closure,"%s@%s",u,h);
    const char *val=Query(var,closure);
@@ -2658,11 +2636,9 @@ int  Ftp::ReceiveResp()
 
       int all_lines_len=xstrlen(all_lines);
       if(conn->multiline_code==0 || all_lines_len==0)
-	 all_lines_len=-1; // not continuation
-      all_lines=(char*)xrealloc(all_lines,all_lines_len+1+strlen(line)+1);
-      if(all_lines_len>0)
-	 all_lines[all_lines_len]='\n';
-      strcpy(all_lines+all_lines_len+1,line);
+	 all_lines.set(line); // not continuation
+      else
+	 all_lines.vappend("\n",line,NULL);
 
       if(code==0)
 	 continue;
@@ -2707,7 +2683,7 @@ void Ftp::HttpProxySendAuth(IOBuffer *buf)
    if(!proxy_user || !proxy_pass)
       return;
    char *auth=string_alloca(strlen(proxy_user)+1+strlen(proxy_pass)+1);
-   sprintf(auth,"%s:%s",proxy_user,proxy_pass);
+   sprintf(auth,"%s:%s",proxy_user.get(),proxy_pass.get());
    int auth_len=strlen(auth);
    char *buf64=string_alloca(base64_length(auth_len)+1);
    base64_encode(auth,buf64,auth_len);
@@ -2716,9 +2692,9 @@ void Ftp::HttpProxySendAuth(IOBuffer *buf)
 }
 void Ftp::HttpProxySendConnect()
 {
-   const char *the_port=portname?portname:ftps?FTPS_DEFAULT_PORT:FTP_DEFAULT_PORT;
-   conn->control_send->Format("CONNECT %s:%s HTTP/1.0\r\n",hostname,the_port);
-   Log::global->Format(4,"+--> CONNECT %s:%s HTTP/1.0\n",hostname,the_port);
+   const char *the_port=portname?portname.get():ftps?FTPS_DEFAULT_PORT:FTP_DEFAULT_PORT;
+   conn->control_send->Format("CONNECT %s:%s HTTP/1.0\r\n",hostname.get(),the_port);
+   Log::global->Format(4,"+--> CONNECT %s:%s HTTP/1.0\n",hostname.get(),the_port);
    HttpProxySendAuth(conn->control_send);
    conn->control_send->Put("\r\n");
    http_proxy_status_code=0;
@@ -3580,7 +3556,7 @@ void Ftp::CheckFEAT(char *reply)
    conn->rest_supported=false;
 #if USE_SSL
    conn->auth_supported=false;
-   xstrset(conn->auth_args_supported,0);
+   conn->auth_args_supported.set(0);
    conn->cpsv_supported=false;
    conn->sscn_supported=false;
 #endif
@@ -3621,21 +3597,16 @@ void Ftp::CheckFEAT(char *reply)
       else if(!strncasecmp(f,"MLST ",5))
       {
 	 conn->mlst_supported=true;
-	 xstrset(conn->mlst_attr_supported,f+5);
+	 conn->mlst_attr_supported.set(f+5);
       }
 #if USE_SSL
       else if(!strncasecmp(f,"AUTH ",5))
       {
 	 conn->auth_supported=true;
-	 if(!conn->auth_args_supported)
-	    conn->auth_args_supported=xstrdup(f+5);
+	 if(conn->auth_args_supported)
+	    conn->auth_args_supported.vappend(";",f+5,NULL);
 	 else
-	 {
-	    conn->auth_args_supported=(char*)xrealloc(conn->auth_args_supported,
-		  strlen(conn->auth_args_supported)+1+strlen(f+5)+1);
-	    strcat(conn->auth_args_supported,";");
-	    strcat(conn->auth_args_supported,f+5);
-	 }
+	    conn->auth_args_supported.append(f+5);
       }
       else if(!strcasecmp(f,"AUTH"))
 	 conn->auth_supported=true;
@@ -3867,7 +3838,7 @@ void Ftp::CheckResp(int act)
       {
 	 if(!home_auto)
 	 {
-	    home_auto=ExtractPWD();   // it allocates space.
+	    home_auto.set_allocated(ExtractPWD());
 	    PropagateHomeAuto();
 	 }
 	 if(!home)
@@ -3918,7 +3889,7 @@ void Ftp::CheckResp(int act)
    case Expect::FEAT:
       if(is2XX(act))
       {
-	 CheckFEAT(all_lines);
+	 CheckFEAT(all_lines.get_non_const());
 	 if(conn->try_feat_after_login && conn->have_feat_info)
 	    TuneConnectionAfterFEAT();
       }
@@ -4186,7 +4157,7 @@ void Ftp::ResetLocationData()
 {
    super::ResetLocationData();
    flags=0;
-   xstrset(home_auto,FindHomeAuto());
+   home_auto.set(FindHomeAuto());
    Reconfig(0);
    state=INITIAL_STATE;
    stat_timer.SetResource("ftp:stat-interval",hostname);
@@ -4194,7 +4165,7 @@ void Ftp::ResetLocationData()
 
 void Ftp::Reconfig(const char *name)
 {
-   xstrset(closure,hostname);
+   closure.set(hostname);
 
    super::Reconfig(name);
 
@@ -4225,21 +4196,21 @@ void Ftp::Reconfig(const char *name)
 
    use_telnet_iac = QueryBool("use-telnet-iac");
 
-   xstrset(anon_user,Query("anon-user"));
-   xstrset(anon_pass,Query("anon-pass"));
+   anon_user.set(Query("anon-user"));
+   anon_pass.set(Query("anon-pass"));
 
    if(!name || !xstrcmp(name,"ftp:list-options"))
    {
       if(name && !IsSuspended())
 	 cache->TreeChanged(this,"/");
-      xstrset(list_options,Query("list-options"));
+      list_options.set(Query("list-options"));
    }
 
    if(!name || !xstrcmp(name,"ftp:charset"))
    {
       if(name && !IsSuspended())
 	 cache->TreeChanged(this,"/");
-      xstrset(charset,Query("charset"));
+      charset.set(Query("charset"));
       if(conn && conn->have_feat_info && !conn->utf8_activated
       && !(expect->Has(Expect::LANG) || expect->Has(Expect::OPTS_UTF8))
       && charset && *charset)
@@ -4260,9 +4231,9 @@ void Ftp::Reconfig(const char *name)
    if(proxy && proxy_port==0)
    {
       if(ProxyIsHttp())
-	 proxy_port=xstrdup(HTTP_DEFAULT_PROXY_PORT);
+	 proxy_port.set(HTTP_DEFAULT_PROXY_PORT);
       else
-	 proxy_port=xstrdup(FTP_DEFAULT_PORT);
+	 proxy_port.set(FTP_DEFAULT_PORT);
    }
 
    if(nop_interval<30)

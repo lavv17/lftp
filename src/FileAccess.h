@@ -38,7 +38,7 @@
 
 #include "SMTask.h"
 #include "trio.h"
-#include "xmalloc.h"
+#include "xstring.h"
 #include "ResMgr.h"
 #include "FileSet.h"
 #include "LsCache.h"
@@ -95,9 +95,9 @@ public:
       void init();
    public:
       int   device_prefix_len;
-      char  *path;
+      xstring path;
       bool  is_file;
-      char  *url;
+      xstring url;
       Path() { init(); }
       Path(const Path *o) { init(); Set(o); }
       Path(const Path &o) { init(); Set(o); }
@@ -108,11 +108,11 @@ public:
       void Set(const Path*);
       void Set(const Path &o) { Set(&o); }
       void Set(const char *new_path,bool new_is_file=false,const char *new_url=0,int device_prefix_len=0);
-      void SetURL(const char *u) { xfree(url); url=xstrdup(u); }
+      void SetURL(const char *u) { url.set(u); }
       void Change(const char *new_path,bool new_is_file=false,const char *new_path_enc=0,int device_prefix_len=0);
       void ExpandTilde(const Path &home);
       static void Optimize(char *p,int dev_prefix=0);
-      void Optimize() { Optimize(path,device_prefix_len); }
+      void Optimize() { Optimize(path.get_non_const(),device_prefix_len); }
       const Path& operator=(const Path &o)
 	 {
 	    Set(&o);
@@ -124,20 +124,20 @@ public:
    };
 
 protected:
-   char	 *vproto;
-   char	 *hostname;
-   char	 *portname;
-   char  *user;
-   char  *pass;
+   xstring vproto;
+   xstring hostname;
+   xstring portname;
+   xstring user;
+   xstring pass;
    bool	 pass_open;
 
    const char *default_cwd;
    Path	 home;
    Path	 cwd;
    Path	 *new_cwd;
-   char  *file;
-   char	 *file_url;
-   char	 *file1;
+   xstring file;
+   xstring file_url;
+   xstring file1;
    int	 mode;
    off_t pos;
    off_t real_pos;
@@ -165,11 +165,10 @@ protected:
    void	 ExpandTildeInCWD();
    const char *ExpandTildeStatic(const char *s);
 
-   char *real_cwd;
+   xstring real_cwd;
    void set_real_cwd(const char *c)
       {
-	 xfree(real_cwd);
-	 real_cwd=xstrdup(c);
+	 real_cwd.set(c);
       }
    void set_home(const char *h)
       {
@@ -180,10 +179,10 @@ protected:
    off_t  entity_size; // size of file to be sent
    time_t entity_date; // date of file to be sent
 
-   char *closure;
+   xstring closure;
    const char *res_prefix;
    const char *ResPrefix() const { return res_prefix?res_prefix:GetProto(); }
-   const char *ResClosure() const { return closure?closure:GetHostName(); }
+   const char *ResClosure() const { return closure?closure.get():GetHostName(); }
 
    int chmod_mode;
    bool ascii;
@@ -196,14 +195,14 @@ protected:
    void ClearError();
    void SetError(int code,const char *mess=0);
    void Fatal(const char *mess);
-   char *error;
+   xstring error;
    int error_code;
-   char *location;
-   char *suggested_filename;
+   xstring location;
+   xstring suggested_filename;
    void SetSuggestedFileName(const char *fn);
 
-   char *entity_content_type;
-   char *entity_charset;
+   xstring entity_content_type;
+   xstring entity_charset;
 
    FileAccess *next;
    static FileAccess *chain;
@@ -220,8 +219,8 @@ public:
    virtual FileAccess *Clone() const = 0;
    virtual const char *ProtocolSubstitution(const char *host) { return 0; }
 
-   const char *GetVisualProto() const { return vproto?vproto:GetProto(); }
-   void SetVisualProto(const char *p) { xfree(vproto); vproto=xstrdup(p); }
+   const char *GetVisualProto() const { return vproto?vproto.get():GetProto(); }
+   void SetVisualProto(const char *p) { vproto.set(p); }
    const char  *GetHome() const { return home; }
    const char  *GetHostName() const { return hostname; }
    const char  *GetUser() const { return user; }
@@ -396,7 +395,7 @@ class FileAccessOperation : public SMTask
 {
 protected:
    bool done;
-   char *error_text;
+   xstring error_text;
    void SetError(const char *);
    void SetErrorCached(const char *);
 

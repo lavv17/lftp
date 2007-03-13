@@ -221,7 +221,7 @@ int Fish::Do()
 	 if(path_queue_len==0 || strcmp(path_queue[path_queue_len-1],cwd))
 	 {
 	    Send("#CWD %s\n"
-		 "cd %s; echo '### 000'\n",cwd.path,shell_encode(cwd));
+		 "cd %s; echo '### 000'\n",cwd.path.get(),shell_encode(cwd));
 	    PushExpect(EXPECT_CWD);
 	    PushDirectory(cwd);
 	 }
@@ -331,7 +331,7 @@ void Fish::Disconnect()
       SetError(STORE_FAILED,0);
    received_greeting=false;
    password_sent=0;
-   xstrset(home_auto,FindHomeAuto());
+   home_auto.set(FindHomeAuto());
 }
 
 void Fish::EmptyPathQueue()
@@ -348,8 +348,6 @@ void Fish::Init()
    recv_buf=0;
    ssh=0;
    max_send=0;
-   line=0;
-   message=0;
    RespQueue=0;
    RQ_alloc=0;
    RQ_head=RQ_tail=0;
@@ -369,8 +367,6 @@ Fish::Fish()
 Fish::~Fish()
 {
    Disconnect();
-   xfree(line);
-   xfree(message);
    EmptyRespQueue();
    xfree(RespQueue);
    EmptyPathQueue();
@@ -580,7 +576,7 @@ void Fish::SendMethod()
       break;
    case QUOTE_CMD:
       Send("#EXEC %s\n"
-	   "%s; echo '### 200'\n",file,file);
+	   "%s; echo '### 200'\n",e,file.get());
       PushExpect(EXPECT_QUOTE);
       real_pos=0;
       break;
@@ -669,9 +665,7 @@ int Fish::HandleReplies()
    }
    m=MOVED;
    s=eol-b+1;
-   xfree(line);
-   line=(char*)xmemdup(b,s);
-   line[s-1]=0;
+   line.nset(b,s-1);
    recv_buf->Skip(s);
 
    int code=-1;
@@ -689,21 +683,16 @@ int Fish::HandleReplies()
 	 return m;
       }
       if(message==0)
-	 message=xstrdup(line);
+	 message.set(line);
       else
-      {
-	 message=(char*)xrealloc(message,xstrlen(message)+s+1);
-	 strcat(message,"\n");
-	 strcat(message,line);
-      }
+	 message.vappend("\n",line.get(),NULL);
       return m;
    }
 
    if(RespQueueIsEmpty())
    {
       DebugPrint("**** ",_("extra server response"),3);
-      xfree(message);
-      message=0;
+      message.set(0);
       return m;
    }
    expect_t &e=RespQueue[RQ_head];
@@ -721,8 +710,8 @@ int Fish::HandleReplies()
    case EXPECT_PWD:
       if(!message)
 	 break;
-      home_auto=xstrdup(message);
-      Log::global->Format(9,"---- home set to %s\n",home_auto);
+      home_auto.set(message);
+      Log::global->Format(9,"---- home set to %s\n",home_auto.get());
       PropagateHomeAuto();
       if(!home)
 	 set_home(home_auto);
@@ -823,10 +812,7 @@ int Fish::HandleReplies()
    }
 
    if(!keep_message)
-   {
-      xfree(message);
-      message=0;
-   }
+      message.set(0);
 
    return m;
 }
@@ -1249,13 +1235,12 @@ FishDirList::FishDirList(ArgV *a,FileAccess *fa)
 {
    session=fa;
    ubuf=0;
-   pattern=args->Combine(1);
+   pattern.set_allocated(args->Combine(1));
 }
 
 FishDirList::~FishDirList()
 {
    Delete(ubuf);
-   xfree(pattern);
 }
 
 const char *FishDirList::Status()

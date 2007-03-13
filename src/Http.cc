@@ -72,8 +72,6 @@ void Http::Init()
    recv_buf=0;
    body_size=-1;
    bytes_received=0;
-   line=0;
-   status=0;
    status_code=0;
    status_consumed=0;
    proto_version=0x10;
@@ -105,7 +103,6 @@ void Http::Init()
    use_head=true;
 
    user_agent=0;
-   special_data=0;
    special=HTTP_NONE;
 }
 
@@ -182,9 +179,9 @@ void Http::ResetRequestData()
    body_size=-1;
    bytes_received=0;
    real_pos=no_ranges?0:-1;
-   xstrset(status,0);
+   status.set(0);
    status_consumed=0;
-   xstrset(line,0);
+   line.set(0);
    sent_eot=false;
    keep_alive=false;
    keep_alive_max=-1;
@@ -235,7 +232,7 @@ void Http::Close()
    no_ranges=false;
    use_propfind_now=QueryBool("use-propfind",hostname);
    special=HTTP_NONE;
-   xstrset(special_data,0);
+   special_data.set(0);
    super::Close();
 }
 
@@ -340,10 +337,10 @@ void Http::SendMethod(const char *method,const char *efile)
       if(referer && referer[0])
 	 Send("Referer: %s%s\r\n",referer,slash);
 
-      char *cookie=MakeCookie(hostname,efile+(proxy?url::path_index(efile):0));
+      xstring cookie;
+      MakeCookie(cookie,hostname,efile+(proxy?url::path_index(efile):0));
       if(cookie && cookie[0])
-	 Send("Cookie: %s\r\n",cookie);
-      xfree(cookie);
+	 Send("Cookie: %s\r\n",cookie.get());
    }
 }
 
@@ -457,17 +454,25 @@ void Http::DirFile(char *path_base,const char *ecwd,const char *efile)
 
 void Http::SendRequest(const char *connection,const char *f)
 {
-   char *efile=string_alloca(strlen(f)*3+1);
-   url::encode_string(f,efile,URL_PATH_UNSAFE);
-   if(mode==CHANGE_DIR && new_cwd && new_cwd->url)
-      efile=new_cwd->url+url::path_index(new_cwd->url);
+   char *efile;
    char *ecwd;
    int efile_len;
 
+   if(mode==CHANGE_DIR && new_cwd && new_cwd->url)
+   {
+      const char *efile_c=new_cwd->url+url::path_index(new_cwd->url);
+      efile=alloca_strdup2(efile_c,1);
+   }
+   else
+   {
+      char *efile_mem=string_alloca(strlen(f)*3+1);
+      url::encode_string(f,efile_mem,URL_PATH_UNSAFE);
+      efile=efile_mem;
+   }
    if(cwd.url)
    {
-      ecwd=cwd.url+url::path_index(cwd.url);
-      ecwd=alloca_strdup(ecwd);
+      const char *ecwd_c=cwd.url+url::path_index(cwd.url);
+      ecwd=alloca_strdup(ecwd_c);
    }
    else
    {
@@ -480,6 +485,7 @@ void Http::SendRequest(const char *connection,const char *f)
 	 memcpy(ecwd+1,"%2F",3);
       }
    }
+
    bool add_slash=true;
    if(cwd.is_file)
    {
@@ -559,7 +565,7 @@ void Http::SendRequest(const char *connection,const char *f)
       case HTTP_MOVE:
       case HTTP_COPY:
 	 SendMethod(special==HTTP_MOVE?"MOVE":"COPY",efile);
-	 Send("Destination: %s\r\n",special_data);
+	 Send("Destination: %s\r\n",special_data.get());
 	 break;
       case HTTP_NONE:
 	 abort(); // cannot happen
@@ -692,7 +698,7 @@ void Http::SendRequest(const char *connection,const char *f)
    if(special==HTTP_POST)
    {
       if(special_data)
-	 Send("%s",special_data);
+	 Send("%s",special_data.get());
       entity_size=NO_SIZE;
    }
    else if(mode==MP_LIST || (mode==CHANGE_DIR && use_propfind_now))
@@ -729,13 +735,12 @@ void Http::SendArrayInfoRequest()
 
 static const char *extract_quoted_header_value(const char *value)
 {
-   static char *value1;
-   xfree(value1);
+   static xstring value1;
    if(*value=='"')
    {
       value++;
-      value1=(char*)xmalloc(strlen(value));
-      char *store=value1;
+      value1.set(value);
+      char *store=value1.get_non_const();
       while(*value && *value!='"')
       {
 	 if(*value=='\\' && value[1])
@@ -747,8 +752,8 @@ static const char *extract_quoted_header_value(const char *value)
    else
    {
       int end=strcspn(value,"()<>@,;:\\\"/[]?={} \t");
-      value1=xstrdup(value);
-      value1[end]=0;
+      value1.set(value);
+      value1.truncate(end);
    }
    return value1;
 }
@@ -816,7 +821,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
    }
    if(!strcasecmp(name,"Location"))
    {
-      xstrset(location,value);
+      location.set(value);
       return;
    }
    if(!strcasecmp(name,"Keep-Alive"))
@@ -878,12 +883,12 @@ void Http::HandleHeaderLine(const char *name,const char *value)
    }
    if(!strcasecmp(name,"Content-Type"))
    {
-      xstrset(entity_content_type,value);
+      entity_content_type.set(value);
       const char *cs=strstr(value,"charset=");
       if(cs)
       {
 	 cs=extract_quoted_header_value(cs+8);
-	 xstrset(entity_charset,cs);
+	 entity_charset.set(cs);
       }
    }
 }
@@ -1017,16 +1022,14 @@ int Http::Do()
 	    if(*scan!='/')
 	       strcat(url,"/");
 	    strcat(url,scan);
-	    char *path=xstrdup(url);
-	    char *space=strchr(path,' ');
-	    if(space)
-	       *space=0;
+
+	    file_url.set(url);
+	    file_url.truncate_at(' ');
+
 	    scan=strchr(scan,' ');
 	    while(scan && *scan==' ')
 	       scan++;
-	    special_data=xstrdup(scan);
-	    xfree(file_url);
-	    file_url=path;
+	    special_data.set(scan);
 	    return MOVED;
 	 }
 	 state=DONE;
@@ -1281,14 +1284,14 @@ int Http::Do()
 	       }
 	       if(H_CONTINUE(status_code))
 	       {
-		  xstrset(status,0);
+		  status.set(0);
 		  status_code=0;
 		  return MOVED;
 	       }
 	       if(mode==ARRAY_INFO)
 	       {
 		  // we'll have to receive next header
-		  xstrset(status,0);
+		  status.set(0);
 		  status_code=0;
 		  if(array_for_info[array_ptr].get_time)
 		     array_for_info[array_ptr].time=NO_DATE;
@@ -1332,10 +1335,7 @@ int Http::Do()
 	       goto pre_RECEIVING_BODY;
 	    }
 	    len=eol-buf;
-	    xfree(line);
-	    line=(char*)xmalloc(len+1);
-	    memcpy(line,buf,len);
-	    line[len]=0;
+	    line.nset(buf,len);
 
 	    recv_buf->Skip(len+eol_size);
 
@@ -1345,8 +1345,7 @@ int Http::Do()
 	    if(status==0)
 	    {
 	       // it's status line
-	       status=line;
-	       line=0;
+	       status.set(line);
 	       int ver_major,ver_minor;
 	       if(3!=sscanf(status,"HTTP/%d.%d %n%d",&ver_major,&ver_minor,
 		     &status_consumed,&status_code))
@@ -1410,7 +1409,7 @@ int Http::Do()
 	    else
 	    {
 	       // header line.
-	       char *colon=strchr(line,':');
+	       char *colon=strchr(line.get_non_const(),':');
 	       if(colon)
 	       {
 		  *colon=0;
@@ -1486,10 +1485,10 @@ int Http::Do()
 		  char *slash=strrchr(new_location,'/');
 		  strcpy(slash+1,location);
 	       }
-	       xstrset(location,new_location);
+	       location.set(new_location);
 	    }
-	    sprintf(err,"%s (%s -> %s)",status+status_consumed,file,
-				    location?location:"nowhere");
+	    sprintf(err,"%s (%s -> %s)",status+status_consumed,file.get(),
+				    location?location.get():"nowhere");
 	    code=FILE_MOVED;
 	 }
 	 else
@@ -1519,7 +1518,7 @@ int Http::Do()
 	    if(closure && closure[0])
 	       sprintf(err,"%s (%s)",status+status_consumed,closure);
 	    else
-	       sprintf(err,"%s (%s%s)",status+status_consumed,cwd.path,
+	       sprintf(err,"%s (%s%s)",status+status_consumed,cwd.path.get(),
 				       (last_char(cwd)=='/')?"":"/");
 	 }
 	 state=RECEIVING_BODY;
@@ -1936,7 +1935,7 @@ void Http::Reconfig(const char *name)
    if(sock!=-1)
       SetSocketBuffer(sock);
    if(proxy && proxy_port==0)
-      proxy_port=xstrdup(HTTP_DEFAULT_PROXY_PORT);
+      proxy_port.set(HTTP_DEFAULT_PROXY_PORT);
 
    user_agent=ResMgr::Query("http:user-agent",c);
    use_propfind_now=(use_propfind_now && QueryBool("use-propfind",c));
@@ -2021,13 +2020,8 @@ bool Http::CookieClosureMatch(const char *closure_c,
    return false;
 }
 
-void Http::CookieMerge(char **all_p,const char *cookie_c)
+void Http::CookieMerge(xstring &all,const char *cookie_c)
 {
-   char *all=*all_p;
-   int all_len=xstrlen(all);
-   all=*all_p=(char*)xrealloc(all,all_len+2+xstrlen(cookie_c)+1);
-   all[all_len]=0;   // in case the buffer is freshly allocated.
-
    char *value=alloca_strdup(cookie_c);
 
    for(char *entry=strtok(value,";"); entry; entry=strtok(0,";"))
@@ -2051,7 +2045,7 @@ void Http::CookieMerge(char **all_p,const char *cookie_c)
 	 c_value=c_name, c_name=0;
       int c_name_len=xstrlen(c_name);
 
-      char *scan=all;
+      char *scan=all.get_non_const();
       for(;;)
       {
 	 while(*scan==' ') scan++;
@@ -2088,21 +2082,21 @@ void Http::CookieMerge(char **all_p,const char *cookie_c)
       // append cookie.
       int c_len=strlen(all);
       while(c_len>0 && all[c_len-1]==' ')
-	 all[--c_len]=0;  // trim
+	 c_len--; // trim
+      all.truncate(c_len);
       if(c_len>0 && all[c_len-1]!=';')
-	 all[c_len++]=';', all[c_len++]=' ';  // append '; '
+	 all.append("; ");
       if(c_name)
-	 sprintf(all+c_len,"%s=%s",c_name,c_value);
+	 all.vappend(c_name,"=",c_value,NULL);
       else
-	 strcpy(all+c_len,c_value);
+	 all.append(c_value);
    }
 }
 
-char *Http::MakeCookie(const char *hostname,const char *efile)
+void Http::MakeCookie(xstring &all_cookies,const char *hostname,const char *efile)
 {
    ResMgr::Resource *scan=0;
    const char *closure;
-   char *all_cookies=0;
    for(;;)
    {
       const char *cookie=ResMgr::QueryNext("http:cookie",&closure,&scan);
@@ -2110,9 +2104,8 @@ char *Http::MakeCookie(const char *hostname,const char *efile)
 	 break;
       if(!CookieClosureMatch(closure,hostname,efile))
 	 continue;
-      CookieMerge(&all_cookies,cookie);
+      CookieMerge(all_cookies,cookie);
    }
-   return all_cookies;
 }
 
 void Http::SetCookie(const char *value_const)
@@ -2170,14 +2163,9 @@ void Http::SetCookie(const char *value_const)
    if(secure)
       strcat(closure,";secure");
 
-   const char *old=Query("cookie",closure);
-
-   char *c=xstrdup(old,2+strlen(value_const));
-   CookieMerge(&c,value_const);
-
+   xstring c(Query("cookie",closure));
+   CookieMerge(c,value_const);
    ResMgr::Set("http:cookie",closure,c);
-
-   xfree(c);
 }
 
 #if USE_SSL

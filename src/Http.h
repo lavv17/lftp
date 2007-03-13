@@ -56,7 +56,7 @@ class Http : public NetAccess
    void SendMethod(const char *,const char *);
    const char *last_method;
    enum { HTTP_NONE=0, HTTP_POST, HTTP_MOVE, HTTP_COPY } special;
-   char *special_data;
+   xstring special_data;
    void DirFile(char *path_base,const char *ecwd,const char *efile);
    void SendAuth();
    void SendCacheControl();
@@ -72,8 +72,8 @@ class Http : public NetAccess
    void HandleHeaderLine(const char *name,const char *value);
    void GetBetterConnection(int level);
    void SetCookie(const char *val);
-   char *MakeCookie(const char *host,const char *path);
-   void CookieMerge(char **c,const char *add);
+   void MakeCookie(xstring &cookie,const char *host,const char *path);
+   void CookieMerge(xstring &c,const char *add);
    bool CookieClosureMatch(const char *closure,const char *host,const char *path);
 
    int sock;
@@ -91,10 +91,10 @@ class Http : public NetAccess
    void MakeSSLBuffers();
    void LogErrorText();
 
-   char *status;
+   xstring status;
    int   status_consumed;
    int proto_version;
-   char *line;
+   xstring line;
    off_t body_size;
    off_t bytes_received;
    bool sent_eot;

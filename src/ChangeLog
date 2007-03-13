@@ -1,3 +1,10 @@
+2007-03-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* xstring.cc, xstring.h, Makefile.am, xmalloc.h: split off xstring.
+	* FileAccess.cc, FileAccess.h, Fish.cc, Fish.h, Http.cc, Http.h,
+	  LocalAccess.cc, NetAccess.cc, NetAccess.h, SFtp.cc, ftpclass.cc,
+	  ftpclass.h: use xstring.
+
 2007-03-09  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* misc.h: don't delete the object in ListDel.

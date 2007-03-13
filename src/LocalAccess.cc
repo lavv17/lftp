@@ -51,7 +51,7 @@ void LocalAccess::Init()
    error_code=OK;
    stream=0;
    home.Set(getenv("HOME"));
-   xstrset(hostname,"localhost");
+   hostname.set("localhost");
 }
 
 LocalAccess::LocalAccess() : FileAccess()
@@ -73,15 +73,13 @@ LocalAccess::~LocalAccess()
 void LocalAccess::errno_handle()
 {
    int e=errno;
-   xfree(error);
    const char *err=strerror(e);
-   error=(char*)xmalloc(xstrlen(file)+xstrlen(file1)+strlen(err)+20);
    if(mode==RENAME)
-      sprintf(error,"rename(%s, %s): %s",file,file1,err);
+      error.vset("rename(",file.get(),", ",file1.get(),"): ",err,NULL);
    else
-      sprintf(error,"%s: %s",file,err);
+      error.vset(file.get(),": ",err,NULL);
    if(e!=EEXIST)
-      Log::global->Format(0,"**** %s\n",error);
+      Log::global->Format(0,"**** %s\n",error.get());
 }
 
 int LocalAccess::Done()
@@ -121,14 +119,14 @@ int LocalAccess::Do()
 	 if(mode==LIST)
 	 {
 	    if(file && file[0])
-	       sprintf(cmd,"ls %s",file);
+	       sprintf(cmd,"ls %s",file.get());
 	    else
 	       strcpy(cmd,"ls");
 	 }
 	 else if(mode==LONG_LIST)
 	 {
 	    if(file && file[0])
-	       sprintf(cmd,"ls -l %s",file);
+	       sprintf(cmd,"ls -l %s",file.get());
 	    else
 	       strcpy(cmd,"ls -la");
 	 }
@@ -197,13 +195,13 @@ int LocalAccess::Do()
       return MOVED;
    case(RENAME):
    {
-      char *cwd_file1=xstrdup(dir_file(cwd,file1));
+      const char *cwd_file1=dir_file(cwd,file1);
+      cwd_file1=alloca_strdup(cwd_file1); // save it
       if(rename(dir_file(cwd,file),cwd_file1)==-1)
       {
 	 errno_handle();
 	 error_code=NO_FILE;
       }
-      xfree(cwd_file1);
       done=true;
       return MOVED;
    }
@@ -602,7 +600,7 @@ public:
 };
 Glob *LocalAccess::MakeGlob(const char *pattern)
 {
-   xstrset(file,pattern);
+   file.set(pattern);
    ExpandTildeInCWD();
    return new LocalGlob(cwd,file);
 }

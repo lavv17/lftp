@@ -340,7 +340,7 @@ void SFtp::Disconnect()
    delete send_translate; send_translate=0;
    delete recv_translate; recv_translate=0;
    ssh_id=0;
-   xstrset(home_auto,FindHomeAuto());
+   home_auto.set(FindHomeAuto());
 }
 
 void SFtp::Init()
@@ -810,8 +810,8 @@ void SFtp::HandleExpect(Expect *e)
 	 const NameAttrs *a=r->GetNameAttrs(0);
 	 if(a && !home_auto)
 	 {
-	    home_auto=xstrdup(utf8_to_lc(a->name));
-	    Log::global->Format(9,"---- home set to %s\n",home_auto);
+	    home_auto.set(utf8_to_lc(a->name));
+	    Log::global->Format(9,"---- home set to %s\n",home_auto.get());
 	    PropagateHomeAuto();
 	    if(!home)
 	       set_home(home_auto);

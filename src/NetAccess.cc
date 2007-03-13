@@ -71,16 +71,10 @@ void NetAccess::Init()
    reconnect_interval_multiplier=1.2;
    reconnect_interval_max=300;
 
-   proxy=proxy_proto=0;
-   proxy_port=0;
-   proxy_user=proxy_pass=0;
-
    rate_limit=0;
 
    connection_limit=0;	// no limit.
    connection_takeover=false;
-
-   home_auto=0;
 
    Reconfig(0);
 }
@@ -92,7 +86,7 @@ NetAccess::NetAccess()
 NetAccess::NetAccess(const NetAccess *o) : super(o)
 {
    Init();
-   xstrset(home_auto,o->home_auto);
+   home_auto.set(o->home_auto);
 }
 NetAccess::~NetAccess()
 {
@@ -100,13 +94,6 @@ NetAccess::~NetAccess()
    if(rate_limit)
       delete rate_limit;
    ClearPeer();
-
-   xfree(proxy);
-   xfree(proxy_port);
-   xfree(proxy_user);
-   xfree(proxy_pass);
-   xfree(proxy_proto);
-   xfree(home_auto);
 }
 
 void NetAccess::Reconfig(const char *name)
@@ -389,10 +376,10 @@ void NetAccess::SetProxy(const char *px)
 {
    bool was_proxied=(proxy!=0);
 
-   xfree(proxy); proxy=0;
-   xfree(proxy_port); proxy_port=0;
-   xfree(proxy_user); proxy_user=0;
-   xfree(proxy_pass); proxy_pass=0;
+   proxy.set(0);
+   proxy_port.set(0);
+   proxy_user.set(0);
+   proxy_pass.set(0);
 
    if(!px)
       px="";
@@ -405,11 +392,11 @@ void NetAccess::SetProxy(const char *px)
       return;
    }
 
-   proxy=xstrdup(url.host);
-   proxy_port=xstrdup(url.port);
-   proxy_user=xstrdup(url.user);
-   proxy_pass=xstrdup(url.pass);
-   proxy_proto=xstrdup(url.proto);
+   proxy.set(url.host);
+   proxy_port.set(url.port);
+   proxy_user.set(url.user);
+   proxy_pass.set(url.pass);
+   proxy_proto.set(url.proto);
    ClearPeer();
 }
 
@@ -711,7 +698,7 @@ void NetAccess::PropagateHomeAuto()
       NetAccess *o=(NetAccess*)fo; // we are sure it is NetAccess.
       if(!o->home_auto)
       {
-	 o->home_auto=xstrdup(home_auto);
+	 o->home_auto.set(home_auto);
 	 if(!o->home)
 	    o->set_home(home_auto);
       }

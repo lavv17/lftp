@@ -25,7 +25,6 @@
 #define XMALLOC_H
 
 #include <stdlib.h>
-#include "xstring.h"
 #include "xalloca.h"
 
 #ifdef DBMALLOC
@@ -40,6 +39,11 @@ char *xstrset(char *&mem,const char *s);
 #define alloca_strdup2(s,n) ((s)?strcpy((char*)alloca(strlen((s))+1+n),(s)) \
                                 :((n)==0?0:(char*)alloca((n))))
 
+void xfree(void *p);
+void xmalloc_register_block(void *);
+
+#include "xstring.h"
+
 static inline void *xmemdup(const void *m,int len)
 {
    if(!m) return 0;
@@ -47,21 +51,5 @@ static inline void *xmemdup(const void *m,int len)
    memcpy(buf,m,len);
    return buf;
 }
-void xfree(void *p);
-
-void xmalloc_register_block(void *);
-
-class xstring
-{
-   char *buf;
-   int buf_size;
-public:
-   xstring() { buf=0; buf_size=0; }
-   ~xstring() { xfree(buf); }
-   xstring(const char *s) { buf=xstrdup(s); buf_size=0; }
-   operator const char *() { return buf; }
-   const char *set(const char *s) { xstrset(buf,s); buf_size=0; return buf; }
-   const char *set_allocated(char *s) { xfree(buf); buf=s; buf_size=0; return buf; }
-};
 
 #endif /* XMALLOC_H */

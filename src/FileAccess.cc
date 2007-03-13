@@ -52,16 +52,8 @@ void FileAccess::Init()
 {
    ClassInit();
 
-   vproto=0;
-   portname=0;
-   hostname=0;
-   user=pass=0;
    pass_open=false;
 
-   file=0;
-   file_url=0;
-   file1=0;
-   real_cwd=0;
    default_cwd="~";
    cwd.Set(default_cwd,false,0);
    new_cwd=0;
@@ -73,22 +65,16 @@ void FileAccess::Init()
    retries=0;
    opt_date=0;
    opt_size=0;
-   error=0;
    error_code=OK;
    saved_errno=0;
    mkdir_p=false;
    ascii=false;
    norest_manual=false;
-   location=0;
-   suggested_filename=0;
-   entity_content_type=0;
-   entity_charset=0;
    array_ptr=array_cnt=0;
 
    entity_size=NO_SIZE;
    entity_date=NO_DATE;
 
-   closure=0;
    res_prefix=0;
 
    chmod_mode=0644;
@@ -105,29 +91,16 @@ FileAccess::FileAccess(const FileAccess *fa)
 
    cwd=fa->cwd;
    home=fa->home;
-   xstrset(user,fa->user);
-   xstrset(pass,fa->pass);
+   user.set(fa->user);
+   pass.set(fa->pass);
    pass_open=fa->pass_open;
-   xstrset(hostname,fa->hostname);
-   xstrset(portname,fa->portname);
-   xstrset(vproto,fa->vproto);
+   hostname.set(fa->hostname);
+   portname.set(fa->portname);
+   vproto.set(fa->vproto);
 }
 
 FileAccess::~FileAccess()
 {
-   xfree(vproto);
-   xfree(file);
-   xfree(file_url);
-   xfree(real_cwd);
-   xfree(error);
-   xfree(user);
-   xfree(pass);
-   xfree(hostname);
-   xfree(portname);
-   xfree(closure);
-   xfree(location);
-   xfree(entity_content_type);
-   xfree(entity_charset);
    for(FileAccess **scan=&chain; *scan; scan=&((*scan)->next))
    {
       if(*scan==this)
@@ -171,7 +144,7 @@ void  FileAccess::Open(const char *fn,int mode,off_t offs)
    if(IsOpen())
       Close();
    Resume();
-   file=xstrdup(fn);
+   file.set(fn);
    real_pos=UNKNOWN_POS;
    pos=offs;
    this->mode=mode;
@@ -197,14 +170,7 @@ void  FileAccess::Open(const char *fn,int mode,off_t offs)
 
 const char *FileAccess::StrError(int err)
 {
-   static char *str=0;
-   static unsigned str_allocated=0;
-
-   if(error)
-   {
-      if(str_allocated<128+strlen(error))
-	 str=(char*)xrealloc(str,str_allocated=128+strlen(error));
-   }
+   static xstring str;
 
    // note to translators: several errors should not be displayed to user;
    // so no need to translate them.
@@ -216,10 +182,7 @@ const char *FileAccess::StrError(int err)
       return("Error 0");
    case(SEE_ERRNO):
       if(error)
-      {
-   	 sprintf(str,"%s: %s",error,strerror(saved_errno));
-	 return(str);
-      }
+   	 return str.vset(error.get(),": ",strerror(saved_errno),NULL);
       return(strerror(saved_errno));
    case(LOOKUP_ERROR):
       return(error);
@@ -227,57 +190,38 @@ const char *FileAccess::StrError(int err)
       return("Class is not Open()ed");
    case(NO_FILE):
       if(error)
-      {
-   	 sprintf(str,_("Access failed: %s"),error);
-	 return(str);
-      }
+   	 return str.vset(_("Access failed: "),error.get(),NULL);
       return(_("File cannot be accessed"));
    case(NO_HOST):
       return(_("Not connected"));
    case(FATAL):
       if(error)
-      {
-   	 sprintf(str,_("Fatal error: %s"),error);
-	 return(str);
-      }
+   	 return str.vset(_("Fatal error"),": ",error.get(),NULL);
       return(_("Fatal error"));
    case(STORE_FAILED):
       return(_("Store failed - you have to reput"));
    case(LOGIN_FAILED):
       if(error)
-      {
-   	 sprintf(str,"%s: %s",_("Login failed"),error);
-	 return(str);
-      }
+   	 return str.vset(_("Login failed"),": ",error.get(),NULL);
       return(_("Login failed"));
    case(NOT_SUPP):
       if(error)
-      {
-   	 sprintf(str,"%s: %s",_("Operation not supported"),error);
-	 return(str);
-      }
+   	 return str.vset(_("Operation not supported"),": ",error.get(),NULL);
       return(_("Operation not supported"));
    case(FILE_MOVED):
       if(error)
-      {
-   	 sprintf(str,_("File moved: %s"),error);
-      }
+   	 return str.vset(_("File moved"),": ",error.get(),NULL);
       else
-      {
-	 if(str_allocated<64+xstrlen(location))
-	    str=(char*)xrealloc(str,64+xstrlen(location));
-	 sprintf(str,_("File moved to `%s'"),location?location:"?");
-      }
-      return str;
+   	 return str.vset(_("File moved to `"),location?location.get():"?","'",NULL);
    }
    return("");
 }
 
 void FileAccess::Close()
 {
-   xstrset(file,0);
-   xstrset(file_url,0);
-   xstrset(file1,0);
+   file.set(0);
+   file_url.set(0);
+   file1.set(0);
    delete new_cwd; new_cwd=0;
    mode=CLOSED;
    opt_date=0;
@@ -288,16 +232,16 @@ void FileAccess::Close()
    entity_date=NO_DATE;
    ascii=false;
    norest_manual=false;
-   xstrset(location,0);
-   xstrset(entity_content_type,0);
-   xstrset(entity_charset,0);
+   location.set(0);
+   entity_content_type.set(0);
+   entity_charset.set(0);
    ClearError();
 }
 
 void FileAccess::Rename(const char *f,const char *f1)
 {
    Close();
-   file1=xstrdup(f1);
+   file1.set(f1);
    Open(f,RENAME);
 
    cache->TreeChanged(this,file);
@@ -322,7 +266,7 @@ bool FileAccess::SameSiteAs(const FileAccess *fa) const
 
 const char *FileAccess::GetFileURL(const char *f,int flags) const
 {
-   static char *url;
+   static xstring url;
 
    const char *proto=GetVisualProto();
    if(proto[0]==0)
@@ -332,11 +276,11 @@ const char *FileAccess::GetFileURL(const char *f,int flags) const
 
    u.proto=(char*)proto;
    if(!(flags&NO_USER))
-      u.user=user;
+      u.user=(char*)user.get();
    if((pass_open || (flags&WITH_PASSWORD)) && !(flags&NO_PASSWORD))
-      u.pass=pass;
-   u.host=hostname;
-   u.port=portname;
+      u.pass=(char*)pass.get();
+   u.host=(char*)hostname.get();
+   u.port=(char*)portname.get();
    if(!(flags&NO_PATH))
    {
       if(cwd.url)
@@ -347,23 +291,17 @@ const char *FileAccess::GetFileURL(const char *f,int flags) const
 	 if(f_path.url)
 	 {
 	    int f_path_index=url::path_index(f_path.url);
-	    xfree(url);
-	    url=u.Combine(home);
-	    url=(char*)xrealloc(url,strlen(url)+strlen(f_path.url+f_path_index)+2);
-	    strcpy(url+strlen(url),f_path.url+f_path_index);
+	    url.set_allocated(u.Combine(home));
+	    url.append(f_path.url+f_path_index);
 	    return url;
 	 }
       }
 
       if(!f || (f[0]!='/' && f[0]!='~'))
-	 f=dir_file(cwd.path?cwd.path:"~",f);
+	 f=dir_file(cwd.path?cwd.path.get():"~",f);
       u.path=(char*)f;
    }
-
-   xfree(url);
-   url=u.Combine(home);
-
-   return url;
+   return url.set_allocated(u.Combine(home));
 }
 
 const char *FileAccess::GetConnectURL(int flags) const
@@ -374,8 +312,8 @@ const char *FileAccess::GetConnectURL(int flags) const
 void FileAccess::Connect(const char *host1,const char *port1)
 {
    Close();
-   xstrset(hostname,host1);
-   xstrset(portname,port1);
+   hostname.set(host1);
+   portname.set(port1);
    DontSleep();
    ResetLocationData();
 }
@@ -383,27 +321,26 @@ void FileAccess::Connect(const char *host1,const char *port1)
 void FileAccess::Login(const char *user1,const char *pass1)
 {
    Close();
-   xstrset(user,user1);
-   xstrset(pass,pass1);
+   user.set(user1);
+   pass.set(pass1);
    pass_open=false;
 
    if(user && pass==0)
    {
-      for(FileAccess *o=chain; o!=0; o=o->next)
+      FileAccess *o;
+      for(o=chain; o!=0; o=o->next)
       {
-	 pass=o->pass;
+	 pass.set(o->pass);
 	 if(SameSiteAs(o) && o->pass)
-	 {
-	    pass=xstrdup(o->pass);
 	    break;
-	 }
-	 pass=0;
       }
+      if(!o)
+	 pass.set(0);
       if(pass==0 && hostname) // still no pass? Try .netrc
       {
 	 NetRC::Entry *nrc=NetRC::LookupHost(hostname,user);
 	 if(nrc)
-	    pass=xstrdup(nrc->pass);
+	    pass.set(nrc->pass);
       }
    }
    ResetLocationData();
@@ -412,8 +349,8 @@ void FileAccess::Login(const char *user1,const char *pass1)
 void FileAccess::AnonymousLogin()
 {
    Close();
-   xstrset(user,0);
-   xstrset(pass,0);
+   user.set(0);
+   pass.set(0);
    pass_open=false;
    ResetLocationData();
 }
@@ -426,20 +363,16 @@ void FileAccess::ResetLocationData()
 
 void FileAccess::SetPasswordGlobal(const char *p)
 {
-   xstrset(pass,p);
+   pass.set(p);
+   xstring save_pass;
    for(FileAccess *o=chain; o!=0; o=o->next)
    {
       if(o==this)
 	 continue;
-      char *save_pass=o->pass;	 // cheat SameSiteAs.
-      o->pass=pass;
-      if(SameSiteAs(o))
-      {
-	 xfree(save_pass);
-	 o->pass=xstrdup(pass);
-      }
-      else
-	 o->pass=save_pass;
+      save_pass.set(o->pass);	 // cheat SameSiteAs.
+      o->pass.set(pass);
+      if(!SameSiteAs(o))
+	 o->pass.set(save_pass);
    }
 }
 
@@ -451,20 +384,15 @@ void FileAccess::GetInfoArray(struct fileinfo *info,int count)
    array_cnt=count;
 }
 
-static void expand_tilde(char **path, const char *home)
+static void expand_tilde(xstring &path, const char *home)
 {
-   if((*path)[0]=='~' && ((*path)[1]==0 || (*path)[1]=='/'))
+   if(path[0]=='~' && (path[1]==0 || path[1]=='/'))
    {
-      int home_len=strlen(home);
-      if(home_len==1 && home[0]=='/' && (*path)[1]=='/')
-	 home_len=0;
-      int path_len=strlen(*path+1);
-      // Note: don't shrink the array, because later memmove would break
-      // We could first memmove then shrink, but it won't give much
-      if(home_len>1)
-	 *path=(char*)xrealloc(*path,path_len+home_len+1);
-      memmove(*path+home_len,*path+1,path_len+1);
-      memmove(*path,home,home_len);
+      const char *saved_path=alloca_strdup(path+1);
+      if(home[0]=='/' && home[1]==0 && saved_path[0]=='/')
+	 path.set(saved_path);
+      else
+	 path.vset(home,saved_path,NULL);
    }
 }
 
@@ -476,11 +404,11 @@ void  FileAccess::ExpandTildeInCWD()
       if(new_cwd)
 	 new_cwd->ExpandTilde(home);
       if(real_cwd)
-	 expand_tilde(&real_cwd,home);
+	 expand_tilde(real_cwd,home);
       if(file)
-	 expand_tilde(&file,home);
+	 expand_tilde(file,home);
       if(file1)
-	 expand_tilde(&file1,home);
+	 expand_tilde(file1,home);
    }
 }
 
@@ -489,19 +417,14 @@ const char *FileAccess::ExpandTildeStatic(const char *s)
    if(!home || !(s[0]=='~' && (s[1]=='/' || s[1]==0)))
       return s;
 
-   static char *buf=0;
-   static int buf_len=0;
-
-   int len=strlen(s)+1;
-   if(len>buf_len)
-      buf=(char*)xrealloc(buf,buf_len=len);
-   strcpy(buf,s);
-   expand_tilde(&buf,home);
+   static xstring buf;
+   buf.set(s);
+   expand_tilde(buf,home);
    return buf;
 }
 
 static inline
-int last_element_is_doubledot(char *path,char *end)
+bool last_element_is_doubledot(const char *path,const char *end)
 {
    return((end==path+2 && !strncmp(path,"..",2))
         || (end>path+2 && !strncmp(end-3,"/..",3)));
@@ -645,19 +568,16 @@ void FileAccess::SetError(int ec,const char *e)
    if(ec==SEE_ERRNO)
       saved_errno=errno;
    if(ec==NO_FILE && file && file[0] && !strstr(e,file))
-   {
-      char *m=string_alloca(strlen(e)+2+strlen(file)+2);
-      sprintf(m,"%s (%s)",e,file);
-      e=m;
-   }
-   xstrset(error,e);
+      error.vset(e," (",file.get(),")",NULL);
+   else
+      error.set(e);
    error_code=ec;
 }
 
 void FileAccess::ClearError()
 {
    error_code=OK;
-   xstrset(error,0);
+   error.set(0);
 }
 
 void FileAccess::Fatal(const char *e)
@@ -667,7 +587,7 @@ void FileAccess::Fatal(const char *e)
 
 void FileAccess::SetSuggestedFileName(const char *fn)
 {
-   xstrset(suggested_filename,0);
+   suggested_filename.set(0);
    if(fn==0)
       return;
 
@@ -682,12 +602,12 @@ void FileAccess::SetSuggestedFileName(const char *fn)
    }
    if(!*fn)
       return;
-   suggested_filename=xstrdup(fn);
+   suggested_filename.set(fn);
 }
 
 void FileAccess::SetFileURL(const char *u)
 {
-   xstrset(file_url,u);
+   file_url.set(u);
    if(new_cwd && mode==CHANGE_DIR)
       new_cwd->SetURL(u);
 }
@@ -965,25 +885,22 @@ FileAccess *FileAccess::Protocol::NewSession(const char *proto)
 FileAccessOperation::FileAccessOperation()
 {
    done=false;
-   error_text=0;
    use_cache=true;
 }
 
 FileAccessOperation::~FileAccessOperation()
 {
-   xfree(error_text);
 }
 
 void FileAccessOperation::SetError(const char *e)
 {
-   xstrset(error_text,e);
+   error_text.set(e);
    done=true;
 }
 void FileAccessOperation::SetErrorCached(const char *e)
 {
-   xfree(error_text);
-   error_text=xasprintf(_("%s [cached]"),e);
-   done=true;
+   SetError(e);
+   error_text.append(_(" [cached]"));
 }
 
 
@@ -1026,20 +943,16 @@ void ListInfo::SetExclude(const char *p,PatternSet *x)
 void FileAccess::Path::init()
 {
    device_prefix_len=0;
-   path=0;
    is_file=false;
-   url=0;
 }
 FileAccess::Path::~Path()
 {
-   xfree(path);
-   xfree(url);
 }
 void FileAccess::Path::Set(const char *new_path,bool new_is_file,const char *new_url,int new_device_prefix_len)
 {
-   xstrset(path,new_path);
+   path.set(new_path);
    is_file=new_is_file;
-   xstrset(url,new_url);
+   url.set(new_url);
    device_prefix_len=new_device_prefix_len;
 }
 void FileAccess::Path::Set(const Path *o)
@@ -1083,7 +996,7 @@ void FileAccess::Path::Change(const char *new_path,bool new_is_file,const char *
 	    Optimize(np);
 	    if(np[0]=='.' && np[1]=='.' && (np[2]=='/' || np[2]==0))
 	    {
-	       xstrset(url,0);
+	       url.set(0);
 	       goto url_done;
 	    }
 	    else
@@ -1098,8 +1011,8 @@ void FileAccess::Path::Change(const char *new_path,bool new_is_file,const char *
 	    url::encode_string(new_path,new_url_path,URL_PATH_UNSAFE);
       }
       Optimize(new_url_path+(!strncmp(new_url_path,"/~",2)));
-      url=(char*)xrealloc(url,path_index+strlen(new_url_path)+1);
-      strcpy(url+path_index,new_url_path);
+      url.truncate(path_index);
+      url.append(new_url_path);
    }
 url_done:
    if(new_path[0]!='/' && new_path[0]!='~' && new_device_prefix_len==0
@@ -1107,21 +1020,21 @@ url_done:
    {
       if(is_file)
       {
-	 dirname_modify(path);
+	 dirname_modify(path.get_non_const());
 	 if(!path[0])
-	    strcpy(path,"~");
+	    path.set("~");
       }
       char *newcwd=string_alloca(xstrlen(path)+xstrlen(new_path)+2);
       if(last_char(path)=='/')
-	 sprintf(newcwd,"%s%s",path,new_path);
+	 sprintf(newcwd,"%s%s",path.get(),new_path);
       else
-	 sprintf(newcwd,"%s/%s",path,new_path);
+	 sprintf(newcwd,"%s/%s",path.get(),new_path);
       new_path=newcwd;
    }
-   xstrset(path,new_path);
+   path.set(new_path);
    device_prefix_len=new_device_prefix_len;
    Optimize();
-   strip_trailing_slashes(path);
+   strip_trailing_slashes(path.get_non_const());
    is_file=new_is_file;
    if(!strcmp(path,"/") || !strcmp(path,"//"))
       is_file=false;
@@ -1147,7 +1060,7 @@ void FileAccess::Path::ExpandTilde(const Path &home)
       if(path[1]=='\0')
 	 is_file=home.is_file;
    }
-   expand_tilde(&path,home.path);
+   expand_tilde(path,home.path);
 }
 
 #include "DirColors.h"

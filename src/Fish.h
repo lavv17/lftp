@@ -108,8 +108,8 @@ class Fish : public NetAccess
    void GetBetterConnection(int level);
    void MoveConnectionHere(Fish *o);
 
-   char  *line;
-   char  *message;
+   xstring line;
+   xstring message;
 
    bool	 eof;
    bool	 encode_file;
@@ -161,7 +161,7 @@ class FishDirList : public DirList
 {
    FileAccess *session;
    IOBuffer *ubuf;
-   char *pattern;
+   xstring pattern;
 
 public:
    FishDirList(ArgV *a,FileAccess *fa);
