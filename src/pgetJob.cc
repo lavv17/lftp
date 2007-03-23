@@ -62,8 +62,7 @@ int pgetJob::Do()
       if(status_file)
       {
 	 remove(status_file);
-	 xfree(status_file);
-	 status_file=0;
+	 status_file.set(0);
       }
    }
 
@@ -300,7 +299,6 @@ pgetJob::pgetJob(FileAccess *s,ArgV *args,bool cont)
    max_chunks=ResMgr::Query("pget:default-n",0);
    total_eta=-1;
    status_timer.SetResource("pget:save-status",0);
-   status_file=0;
    truncate_target_first=!cont;
 }
 pgetJob::~pgetJob()
@@ -318,14 +316,14 @@ void pgetJob::NextFile()
    total_xferred=0;
    total_eta=-1;
 
-   xfree(status_file);
-   status_file=0;
    if(local && local->full_name)
    {
-      status_file=xasprintf("%s.lftp-pget-status",local->full_name);
+      status_file.vset(local->full_name,".lftp-pget-status",NULL);
       if(pget_cont)
 	 LoadStatus0();
    }
+   else
+      status_file.set(0);
 }
 
 pgetJob::ChunkXfer *pgetJob::NewChunk(const char *remote,FDStream *local,off_t start,off_t limit)

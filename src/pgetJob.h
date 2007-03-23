@@ -59,7 +59,7 @@ class pgetJob : public GetJob
    long total_eta;
 
    Timer status_timer;
-   char *status_file;
+   xstring status_file;
    void SaveStatus();
    void LoadStatus();
    void LoadStatus0();
