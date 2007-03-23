@@ -99,15 +99,6 @@ void StringSet::InsertBefore(int i,const char *s)
       set[i]=xstrdup(s);
    }
 }
-void StringSet::Remove(int i)
-{
-   if(i>=0 && i<set_size)
-   {
-      xfree(set[i]);
-      memmove(set+i,set+i+1,(set_size-i)*sizeof(*set));
-      set_size--;
-   }
-}
 
 void StringSet::AppendFormat(const char *f,...)
 {
@@ -118,4 +109,23 @@ void StringSet::AppendFormat(const char *f,...)
 
    Allocate(set_size+1);
    set[set_size++]=s;	// note that s is allocated by xvasprintf
+}
+
+void StringSet::MoveHere(StringSet &o)
+{
+   set=o.set; o.set=0;
+   set_size=o.set_size; o.set_size=0;
+   allocated=o.allocated; o.allocated=0;
+}
+
+char *StringSet::Pop(int i)
+{
+   char *s=0;
+   if(i>=0 && i<set_size)
+   {
+      s=set[i];
+      set_size--;
+      memmove(set+i,set+i+1,(set_size-i)*sizeof(*set));
+   }
+   return s;
 }

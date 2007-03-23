@@ -25,6 +25,7 @@
 
 #include "NetAccess.h"
 #include "PtyShell.h"
+#include "StringSet.h"
 
 class Fish : public NetAccess
 {
@@ -95,11 +96,10 @@ class Fish : public NetAccess
    int	 RQ_head;
    int	 RQ_tail;
 
-   char  **path_queue;
-   int	 path_queue_len;
-   void  PushDirectory(const char *);
-   char  *PopDirectory();
-   void	 EmptyPathQueue();
+   StringSet path_queue;
+   void  PushDirectory(const char *d) { path_queue.Append(d); }
+   void  PopDirectory(xstring *d) { d->set_allocated(path_queue.Pop()); }
+   void	 EmptyPathQueue() { path_queue.Empty(); }
 
    int   RespQueueIsEmpty() { return RQ_head==RQ_tail; }
    int	 RespQueueSize() { return RQ_tail-RQ_head; }

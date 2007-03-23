@@ -218,7 +218,7 @@ int Fish::Do()
       ExpandTildeInCWD();
       if(mode!=CHANGE_DIR && xstrcmp(cwd,real_cwd))
       {
-	 if(path_queue_len==0 || strcmp(path_queue[path_queue_len-1],cwd))
+	 if(xstrcmp(path_queue.LastString(),cwd))
 	 {
 	    Send("#CWD %s\n"
 		 "cd %s; echo '### 000'\n",cwd.path.get(),shell_encode(cwd));
@@ -301,8 +301,7 @@ void Fish::MoveConnectionHere(Fish *o)
    send_buf=o->send_buf; o->send_buf=0;
    recv_buf=o->recv_buf; o->recv_buf=0;
    rate_limit=o->rate_limit; o->rate_limit=0;
-   path_queue=o->path_queue; o->path_queue=0;
-   path_queue_len=o->path_queue_len; o->path_queue_len=0;
+   path_queue.MoveHere(o->path_queue);
    RespQueue=o->RespQueue; o->RespQueue=0;
    RQ_alloc=o->RQ_alloc; o->RQ_alloc=0;
    RQ_head=o->RQ_head; o->RQ_head=0;
@@ -334,13 +333,6 @@ void Fish::Disconnect()
    home_auto.set(FindHomeAuto());
 }
 
-void Fish::EmptyPathQueue()
-{
-   for(int i=0; i<path_queue_len; i++)
-      xfree(path_queue[i]);
-   path_queue_len=0;
-}
-
 void Fish::Init()
 {
    state=DISCONNECTED;
@@ -352,8 +344,6 @@ void Fish::Init()
    RQ_alloc=0;
    RQ_head=RQ_tail=0;
    eof=false;
-   path_queue=0;
-   path_queue_len=0;
    received_greeting=false;
    password_sent=0;
 }
@@ -369,8 +359,6 @@ Fish::~Fish()
    Disconnect();
    EmptyRespQueue();
    xfree(RespQueue);
-   EmptyPathQueue();
-   xfree(path_queue);
 }
 
 Fish::Fish(const Fish *o) : super(o)
@@ -699,7 +687,7 @@ int Fish::HandleReplies()
    RQ_head++;
 
    bool keep_message=false;
-   char *p;
+   xstring p;
 
    switch(e)
    {
@@ -718,7 +706,7 @@ int Fish::HandleReplies()
       cache->SetDirectory(this, home, true);
       break;
    case EXPECT_CWD:
-      p=PopDirectory();
+      PopDirectory(&p);
       if(message==0)
       {
 	 set_real_cwd(p);
@@ -731,7 +719,6 @@ int Fish::HandleReplies()
       }
       else
 	 SetError(NO_FILE,message);
-      xfree(p);
       break;
    case EXPECT_RETR_INFO:
       if(message && is_ascii_digit(message[0]) && !strchr(message,':'))
@@ -858,19 +845,6 @@ void Fish::CloseExpectQueue()
 	 break;
       }
    }
-}
-
-void Fish::PushDirectory(const char *p)
-{
-   path_queue=(char**)xrealloc(path_queue,++path_queue_len*sizeof(*path_queue));
-   path_queue[path_queue_len-1]=xstrdup(p);
-}
-char *Fish::PopDirectory()
-{
-   assert(path_queue_len>0);
-   char *p=path_queue[0];
-   memmove(path_queue,path_queue+1,--path_queue_len*sizeof(*path_queue));
-   return p; // caller should free it.
 }
 
 const char *memstr(const char *mem,size_t len,const char *str)

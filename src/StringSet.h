@@ -33,6 +33,7 @@ class StringSet
 
    void Init() { set=0; allocated=set_size=0; }
    void Allocate(int);
+   const StringSet &operator=(const StringSet &); // disable assignment
 
 public:
    StringSet() { Init(); }
@@ -50,13 +51,17 @@ public:
    void AppendFormat(const char *,...) PRINTF_LIKE(2,3);
    void InsertBefore(int,const char *);
    void Replace(int,const char *);
-   void Remove(int);
+   char *Pop(int i=0);
+   void Remove(int i) { xfree(Pop(i)); }
 
    const char *const *Set() const { return set; }
    char **SetNonConst() { return set; }
    int Count() const { return set_size; }
    const char *String(int i) const { return i>=0 && i<set_size ? set[i] : 0; }
+   const char *LastString() const { return String(set_size-1); }
    const char *operator[](int i) const { return String(i); }
+
+   void MoveHere(StringSet &o);
 };
 
 #endif // STRINGSET_H
