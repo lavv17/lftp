@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2006 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -775,8 +775,8 @@ Job *CmdExec::builtin_open()
    char	 *port=NULL;
    const char *host=NULL;
    char  *path=NULL;
-   char	 *user=NULL;
-   char	 *pass=NULL;
+   const char *user=NULL;
+   const char *pass=NULL;
    int	 c;
    NetRC::Entry *nrc=0;
    char  *cmd_to_exec=0;
@@ -808,18 +808,20 @@ Job *CmdExec::builtin_open()
 	 port=optarg;
 	 break;
       case('u'):
+      {
          user=optarg;
-         pass=strchr(optarg,',');
-	 if(pass==NULL)
-	    pass=strchr(optarg,' ');
-	 if(pass==NULL)
-	    pass=strchr(optarg,':');
-	 if(pass==NULL)
+         char *sep=strchr(optarg,',');
+	 if(sep==NULL)
+	    sep=strchr(optarg,' ');
+	 if(sep==NULL)
+	    sep=strchr(optarg,':');
+	 if(sep==NULL)
    	    break;
-	 *pass=0;
-	 pass++;
+	 *sep=0;
+	 pass=sep+1;
 	 insecure=true;
          break;
+      }
       case(OPT_USER):
 	 user=optarg;
 	 break;
@@ -912,8 +914,8 @@ Job *CmdExec::builtin_open()
 	 {
 	    if(user)
 	    {
-	       url->user=user;
-	       url->pass=pass;
+	       url->user=(char*)user;
+	       url->pass=(char*)pass;
 	    }
 	    if(port)
 	       url->port=port;
@@ -961,7 +963,7 @@ Job *CmdExec::builtin_open()
 	    if(nrc)
 	    {
 	       if(!user)
-		  Log::global->Format(3,"---- using user `%s' and password from ~/.netrc\n",nrc->user);
+		  Log::global->Format(3,"---- using user `%s' and password from ~/.netrc\n",nrc->user.get());
 	       else
 		  Log::global->Format(3,"---- using password from ~/.netrc\n");
 	       user=nrc->user;

@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2004 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,20 +18,29 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/* $Id$ */
+
+#ifndef NETRC_H
+#define NETRC_H
+
+#include "xstring.h"
+
 class NetRC
 {
 public:
    class Entry
    {
    public:
-      char *host;
-      char *user;
-      char *pass;
-      char *acct;
+      xstring host;
+      xstring user;
+      xstring pass;
+      xstring acct;
 
-      Entry(const char *h=0,const char *u=0,const char *p=0,const char *a=0);
-      ~Entry();
+      Entry(const char *h=0,const char *u=0,const char *p=0,const char *a=0)
+	 : host(h), user(u), pass(p), acct(a) {}
    };
 
-   static Entry	  *LookupHost(const char *host,const char *user=0);
+   static Entry *LookupHost(const char *host,const char *user=0);
 };
+
+#endif//NETRC_H

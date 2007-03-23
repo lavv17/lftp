@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2005 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,22 +29,6 @@
 #include "netrc.h"
 #include "xmalloc.h"
 #include "log.h"
-
-NetRC::Entry::Entry(const char *h,const char *u,const char *p,const char *a)
-{
-   host=xstrdup(h);
-   user=xstrdup(u);
-   pass=xstrdup(p);
-   acct=xstrdup(a);
-}
-
-NetRC::Entry::~Entry()
-{
-   xfree(host);
-   xfree(user);
-   xfree(pass);
-   xfree(acct);
-}
 
 static bool comment(const char *s, FILE *f)
 {

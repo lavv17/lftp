@@ -2,6 +2,8 @@
 
 	* Fish.cc, Fish.h: use StringSet for path_queue.
 	* StringSet.cc, StringSet.h: (LastString, Pop) new methods.
+	* NetRC.cc, NetRC.h: use xstring.
+	* commands.cc: fixes for xstring in NetRC.
 
 2007-03-13  Alexander V. Lukyanov <lav@yars.free.net>
 
