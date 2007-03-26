@@ -1390,6 +1390,7 @@ CMD(ls)
    if(!nlist)
    {
       FileCopyPeerDirList *dir_list=new FileCopyPeerDirList(session->Clone(),args);
+      args=0; // FileCopyPeerDirList consumes args.
 
       src_peer=dir_list;
       ResValue color=ResMgr::Query("color:use-color",0);
@@ -1420,8 +1421,6 @@ CMD(ls)
       j->NoStatusOnWrite();
    xfree(a);
    output=0;
-   if(!nlist)
-      args=0;  // `ls' consumes args itself.
 
    return j;
 }

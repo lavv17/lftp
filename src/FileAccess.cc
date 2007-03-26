@@ -763,8 +763,7 @@ DirList *FileAccess::MakeDirList(ArgV *a) { if(a) delete a; return 0; }
 DirList::~DirList()
 {
    delete buf;
-   if(args)
-      delete args;
+   delete args;
 }
 
 void FileAccess::CleanupAll()
