@@ -674,12 +674,12 @@ DirList *LocalAccess::MakeDirList(ArgV *a)
 
 #include "ArgV.h"
 LocalDirList::LocalDirList(ArgV *a,const char *cwd)
-   : DirList(a)
+   : DirList(0)
 {
    fg_data=0;
    a->setarg(0,"ls");
    a->insarg(1,"-l");
-   InputFilter *f=new InputFilter(a);
+   InputFilter *f=new InputFilter(a); // a is consumed.
    f->SetCwd(cwd);
    ubuf=new IOBufferFDStream(f,IOBuffer::GET);
 }
