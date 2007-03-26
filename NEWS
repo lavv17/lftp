@@ -1,3 +1,8 @@
+Version 3.5.10 - 2007-03-26
+
+* fixed core dump when doing ls on file: connection.
+* fixed core dump when doing pget to write-protected directory.
+
 Version 3.5.9 - 2007-01-09
 
 * fixed `mirror --script' which generated improperly quoted shell commands
