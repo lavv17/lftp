@@ -2404,8 +2404,7 @@ CMD(subsh)
    const char *c=args->getarg(1);
    e->FeedCmd(c);
    e->FeedCmd("\n");
-   e->cmdline=(char*)xmalloc(strlen(c)+3);
-   sprintf(e->cmdline,"(%s)",c);
+   e->cmdline.vset("(",c,")",NULL);
    return e;
 }
 

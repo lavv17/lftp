@@ -253,9 +253,9 @@ restart:
       {
 	 if(new_job->jobno<0)
 	    new_job->AllocJobno();
-	 if(cmd && new_job->cmdline==0)
+	 if(cmd && !new_job->cmdline)
 	 {
-	    new_job->cmdline=cmd;
+	    new_job->cmdline.set_allocated(cmd);
 	    cmd=0;
       	 }
 	 new_job->SetParentFg(this,!background);
@@ -1344,7 +1344,7 @@ CmdExec  *CmdExec::GetQueue(bool create)
    queue->SetParentFg(this,false);
    queue->AllocJobno();
    const char *url=session->GetConnectURL(FA::NO_PATH);
-   queue->cmdline=xasprintf("queue (%s%s%s)",url,slot?"; ":"",slot?slot:"");
+   queue->cmdline.vset("queue (",url,slot?"; ":"",slot?slot:"",")",NULL);
    queue->queue_feeder=new QueueFeeder(session->GetCwd(), cwd->GetName());
    queue->SetCmdFeeder(queue->queue_feeder);
    queue->Reconfig(0);

@@ -118,10 +118,7 @@ int pgetJob::Do()
       m=MOVED;
 
       if(chunks)
-      {
-	 xfree(cp->cmdline);
-	 cp->cmdline=xasprintf("\\chunk %lld-%lld",(long long)start0,(long long)(limit0-1));
-      }
+	 cp->cmdline.set_allocated(xasprintf("\\chunk %lld-%lld",(long long)start0,(long long)(limit0-1)));
       else
       {
 	 no_parallel=true;
@@ -279,10 +276,7 @@ void pgetJob::free_chunks()
       chunks=0;
    }
    if(cp)
-   {
-      xfree(cp->cmdline);
-      cp->cmdline=0;
-   }
+      cp->cmdline.set(0);
 }
 
 pgetJob::pgetJob(FileAccess *s,ArgV *args,bool cont)
@@ -343,7 +337,7 @@ pgetJob::ChunkXfer *pgetJob::NewChunk(const char *remote,FDStream *local,off_t s
    c->FailIfCannotSeek();
 
    ChunkXfer *chunk=new ChunkXfer(c,remote,start,limit);
-   chunk->cmdline=xasprintf("\\chunk %lld-%lld",(long long)start,(long long)(limit-1));
+   chunk->cmdline.set_allocated(xasprintf("\\chunk %lld-%lld",(long long)start,(long long)(limit-1)));
    return chunk;
 }
 

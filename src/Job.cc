@@ -32,7 +32,6 @@ Job::Job()
 {
    next=chain;
    chain=this;
-   cmdline=0;
    parent=0;
    waiting=0;
    waiting_num=0;
@@ -86,10 +85,7 @@ Job::~Job()
 	 }
       }
    }
-
-   xfree(cmdline);
-   if(fg_data)
-      delete fg_data;
+   delete fg_data;
 }
 
 Job *Job::FindJob(int n)
@@ -193,7 +189,7 @@ void Job::Kill(Job *j)
       // we have to simulate normal death...
       Job *r=new KilledJob();
       r->parent=j->parent;
-      r->cmdline=j->cmdline,j->cmdline=0;
+      r->cmdline.set(j->cmdline);
       r->waiting=j->waiting,j->waiting=0;
       r->waiting_num=j->waiting_num,j->waiting_num=0;
       j->parent->ReplaceWaiting(j,r);
@@ -283,12 +279,12 @@ void  Job::SortJobs()
 
 void Job::PrintJobTitle(int indent,const char *suffix)
 {
-   if(jobno<0 && cmdline==0)
+   if(jobno<0 && !cmdline)
       return;
    printf("%*s",indent,"");
    if(jobno>=0)
       printf("[%d] ",jobno);
-   printf("%s",cmdline?cmdline:"?");
+   printf("%s",cmdline?cmdline.get():"?");
    if(suffix)
       printf(" %s",suffix);
    printf("\n");
@@ -300,7 +296,7 @@ void Job::ListOneJob(int verbose,int indent,const char *suffix)
    PrintStatus(verbose);
    for(int i=0; i<waiting_num; i++)
    {
-      if(waiting[i]->jobno<0 && waiting[i]!=this && waiting[i]->cmdline==0)
+      if(waiting[i]->jobno<0 && waiting[i]!=this && !waiting[i]->cmdline)
 	 waiting[i]->ListOneJob(verbose,indent+1);
    }
 }
@@ -342,7 +338,7 @@ void  Job::ListDoneJobs()
          && !scan->deleting && scan->Done())
       {
 	 fprintf(f,_("[%d] Done (%s)"),scan->jobno,
-	    scan->cmdline?scan->cmdline:"?");
+	    scan->cmdline?scan->cmdline.get():"?");
 	 const char *this_url=this->GetConnectURL();
 	 this_url=alloca_strdup(this_url); // save it from overwriting.
 	 const char *that_url=scan->GetConnectURL();

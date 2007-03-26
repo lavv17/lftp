@@ -173,7 +173,7 @@ int mgetJob::Do()
 	    mkdir_job->BeQuiet();
 	    AddWaiting(mkdir_job);
 	    mkdir_job->SetParentFg(this);
-	    mkdir_job->cmdline=mkdir_args->Combine();
+	    mkdir_job->cmdline.set_allocated(mkdir_args->Combine());
 	    // don't delete mkdir_args; -- mkdirJob does it
 	    mkdir_args=0;
 	 }

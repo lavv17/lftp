@@ -312,7 +312,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    AddWaiting(cp);
 	    transfer_count++;
 	    cp->SetParentFg(this);
-	    cp->cmdline=xasprintf("\\transfer %s",file->name);
+	    cp->cmdline.vset("\\transfer ",file->name,NULL);
 	 }
 	 else // pget
 	 {
@@ -328,7 +328,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    AddWaiting(cp);
 	    transfer_count++;
 	    cp->SetParentFg(this);
-	    cp->cmdline=xasprintf("\\transfer %s",file->name);
+	    cp->cmdline.vset("\\transfer ",file->name,NULL);
 	 }
 	 set_state(WAITING_FOR_TRANSFER);
 	 break;
@@ -382,7 +382,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    source_name,target_name);
 	 AddWaiting(mj);
 	 mj->SetParentFg(this);
-	 mj->cmdline=xasprintf("\\mirror %s",file->name);
+	 mj->cmdline.vset("\\mirror ",file->name,NULL);
 
 	 // inherit flags and other things
 	 mj->SetFlags(flags,1);
@@ -888,7 +888,7 @@ int   MirrorJob::Do()
 	    args->seek(1);
 	    rmJob *j=new rmJob(target_session->Clone(),args);
 	    j->SetParentFg(this);
-	    j->cmdline=args->Combine();
+	    j->cmdline.set_allocated(args->Combine());
 	    AddWaiting(j);
 	    transfer_count++;
 	    if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
@@ -978,7 +978,7 @@ int   MirrorJob::Do()
 	    AddWaiting(cj);
 	    transfer_count++;
 	    cj->SetParentFg(this);
-	    cj->cmdline=a->Combine();
+	    cj->cmdline.set_allocated(a->Combine());
 	    cj->BeQuiet(); // chmod is not supported on all servers; be quiet.
 	    m=MOVED;
 	 }

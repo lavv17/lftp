@@ -1,3 +1,8 @@
+2007-03-26  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc, Job.cc, Job.h, MirrorJob.cc, SleepJob.cc, commands.cc,
+	  mgetJob.cc, pgetJob.cc: use xstring for cmdline.
+
 2007-03-23  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Fish.cc, Fish.h: use StringSet for path_queue.

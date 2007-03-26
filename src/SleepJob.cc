@@ -84,8 +84,7 @@ int SleepJob::Do()
 	    saved_cwd=0;
 	    exec->SetParentFg(this);
 	    exec->AllocJobno();
-	    exec->cmdline=(char*)xmalloc(3+strlen(cmd));
-	    sprintf(exec->cmdline,"(%s)",cmd);
+	    exec->cmdline.vset("(",cmd,")",NULL);
 	 }
 	 exec->FeedCmd(cmd);
 	 exec->FeedCmd("\n");
