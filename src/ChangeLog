@@ -2,6 +2,8 @@
 
 	* LocalAccess.cc: prevent double-delete of args in LocalDirList
 	  (reported by Liu Yubao <yubao.liu@gmail.com>)
+	* pgetJob.cc: fixed core dump when target directory is not writable
+	  (reported by Justin Piszcz <jpiszcz@lucidpixels.com>).
 
 2007-02-26  Alexander V. Lukyanov <lav@yars.free.net>
 

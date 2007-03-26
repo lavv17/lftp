@@ -86,6 +86,8 @@ int pgetJob::Do()
    {
       cp->Resume();
       m=super::Do(); // it can call NextFile.
+      if(!cp)
+	 return m;
    }
    else if(chunks)
       cp->Suspend();
