@@ -30,7 +30,7 @@ class LocalDirectory;
 
 class SleepJob : public SessionJob, public Timer
 {
-   char *cmd;
+   xstring cmd;
    int exit_code;
    bool done;
    LocalDirectory *saved_cwd;

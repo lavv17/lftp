@@ -30,7 +30,7 @@
 SleepJob::SleepJob(const TimeInterval &when,FileAccess *s,LocalDirectory *cwd,char *what)
    : SessionJob(s), Timer(when)
 {
-   cmd=what;
+   cmd.set_allocated(what);
    exit_code=0;
    done=false;
    saved_cwd=cwd;
@@ -44,7 +44,6 @@ SleepJob::SleepJob(const TimeInterval &when,FileAccess *s,LocalDirectory *cwd,ch
 SleepJob::~SleepJob()
 {
    Delete(exec);
-   xfree(cmd);
    delete saved_cwd;
 }
 
@@ -84,7 +83,7 @@ int SleepJob::Do()
 	    saved_cwd=0;
 	    exec->SetParentFg(this);
 	    exec->AllocJobno();
-	    exec->cmdline.vset("(",cmd,")",NULL);
+	    exec->cmdline.vset("(",cmd.get(),")",NULL);
 	 }
 	 exec->FeedCmd(cmd);
 	 exec->FeedCmd("\n");
