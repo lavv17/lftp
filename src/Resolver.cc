@@ -95,18 +95,12 @@ ResolverCache *Resolver::cache;
 
 Resolver::Resolver(const char *h,const char *p,const char *defp,
 		   const char *ser,const char *pr)
+   : hostname(h), portname(p), service(ser), proto(pr), defport(defp)
 {
-   hostname=xstrdup(h);
-   portname=xstrdup(p);
    port_number=0;
-
-   service=xstrdup(ser);
-   proto=xstrdup(pr);
-   defport=xstrdup(defp);
 
    pipe_to_child[0]=pipe_to_child[1]=-1;
    w=0;
-   err_msg=0;
    done=false;
    timeout_timer.SetResource("dns:fatal-timeout",hostname);
    Reconfig();
@@ -127,13 +121,6 @@ Resolver::~Resolver()
    if(pipe_to_child[1]!=-1)
       close(pipe_to_child[1]);
 
-   xfree(hostname);
-   xfree(portname);
-   xfree(service);
-   xfree(proto);
-   xfree(defport);
-
-   xfree(err_msg);
    xfree(addr);
    if(w)
    {
@@ -235,7 +222,7 @@ int   Resolver::Do()
 
    if(buf->Error())
    {
-      err_msg=xstrdup(buf->ErrorText());
+      err_msg.set(buf->ErrorText());
       done=true;
       return MOVED;
    }
@@ -244,7 +231,7 @@ int   Resolver::Do()
    {
       if(timeout_timer.Stopped())
       {
-	 err_msg=xstrdup(_("host name resolve timeout"));
+	 err_msg.set(_("host name resolve timeout"));
 	 done=true;
 	 return MOVED;
       }
@@ -260,15 +247,12 @@ int   Resolver::Do()
       goto proto_error;
    c=*s;
    buf->Skip(1);
+   buf->ZeroTerminate();
    buf->Get(&s,&n);
    if(c=='E' || c=='P') // error
    {
-      const char *tport=portname?portname:defport;
-      err_msg=(char*)xmalloc(strlen(hostname)+strlen(tport)+n+3);
-      sprintf(err_msg,"%s: ",(c=='E'?hostname:tport));
-      char *e=err_msg+strlen(err_msg);
-      memcpy(e,s,n);
-      e[n]=0;
+      const char *tport=portname?portname.get():defport.get();
+      err_msg.vset(c=='E'?hostname.get():tport,": ",s,NULL);
       done=true;
       return MOVED;
    }
@@ -284,7 +268,7 @@ int   Resolver::Do()
 	 buf=0;
 	 return MOVED;
       }
-      err_msg=xstrdup("BUG: internal class Resolver error");
+      err_msg.set("BUG: internal class Resolver error");
       done=true;
       return MOVED;
    }
@@ -302,8 +286,7 @@ int   Resolver::Do()
 void Resolver::MakeErrMsg(const char *f)
 {
    const char *e=strerror(errno);
-   err_msg=(char*)xmalloc(strlen(e)+strlen(f)+3);
-   sprintf(err_msg,"%s: %s",f,e);
+   err_msg.vset(f,": ",e,NULL);
    done=true;
 }
 
@@ -496,11 +479,11 @@ void Resolver::LookupSRV_RR()
    if(!ResMgr::QueryBool("dns:SRV-query",hostname))
       return;
 #ifdef HAVE_RES_SEARCH
-   const char *tproto=proto?proto:"tcp";
+   const char *tproto=proto?proto.get():"tcp";
    time_t try_time;
    unsigned char answer[0x1000];
    char *srv_name=string_alloca(strlen(service)+1+strlen(tproto)+1+strlen(hostname)+1);
-   sprintf(srv_name,"_%s._%s.%s",service,tproto,hostname);
+   sprintf(srv_name,"_%s._%s.%s",service.get(),tproto,hostname.get());
 
    int retries=0;
    int max_retries=ResMgr::Query("dns:max-retries",hostname);
@@ -846,8 +829,8 @@ void Resolver::DoGethostbyname()
 {
    if(port_number==0)
    {
-      const char *tproto=proto?proto:"tcp";
-      const char *tport=portname?portname:defport;
+      const char *tproto=proto?proto.get():"tcp";
+      const char *tport=portname?portname.get():defport.get();
 
       if(isdigit((unsigned char)tport[0]))
 	 port_number=htons(atoi(tport));

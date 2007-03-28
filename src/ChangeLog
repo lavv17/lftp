@@ -3,6 +3,7 @@
 	* SleepJob.cc, SleepJob.h: use xstring.
 	* xstring.cc, xstring.h: add len member; support binary strings.
 	* SFtp.cc, SFtp.h: use xstring.
+	* Resolver.cc, Resolver.h: use xstring.
 
 2007-03-26  Alexander V. Lukyanov <lav@yars.free.net>
 

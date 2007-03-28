@@ -44,12 +44,12 @@ union sockaddr_u
 
 class Resolver : public SMTask
 {
-   char *hostname;
-   char *portname;
+   xstring hostname;
+   xstring portname;
 
-   char *service;
-   char *proto;
-   char *defport;
+   xstring service;
+   xstring proto;
+   xstring defport;
 
    int port_number;
 
@@ -63,7 +63,7 @@ class Resolver : public SMTask
 
    void AddAddress(int family,const char *a,int len);
 
-   char *err_msg;
+   xstring err_msg;
    bool done;
 
    void  MakeErrMsg(const char *f);
