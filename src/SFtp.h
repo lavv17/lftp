@@ -222,8 +222,7 @@ private:
    bool received_greeting;
    int  password_sent;
    unsigned ssh_id;
-   char *handle;
-   int handle_len;
+   xstring handle;
 
    void Init();
 
@@ -303,7 +302,7 @@ public:
       void SetID(unsigned new_id) { id=new_id; }
       void DropData(Buffer *b) { b->Skip(4+(length>0?length:0)); }
       bool TypeIs(packet_type t) const { return type==t; }
-      static unpack_status_t UnpackString(Buffer *b,int *offset,int limit,char **str_out,int *len_out=0);
+      static unpack_status_t UnpackString(Buffer *b,int *offset,int limit,xstring *str_out);
       static void PackString(Buffer *b,const char *str,int len=-1);
    };
 private:
@@ -330,34 +329,25 @@ private:
    class PacketSTRING : public Packet
    {
    protected:
-      int string_len;
-      char *string;
+      xstring string;
       PacketSTRING(packet_type t) : Packet(t)
 	 {
-	    string_len=0;
-	    string=0;
 	    length=4;
 	 }
-      PacketSTRING(packet_type t,const char *s,int l=-1) : Packet(t)
+      PacketSTRING(packet_type t,const xstring &s) : Packet(t)
 	 {
-	    if(l==-1)
-	       l=strlen(s);
-	    string_len=l;
-	    string=(char*)xmalloc(l+1);
-	    memcpy(string,s,l);
-	    string[l]=0;
-	    length+=4+l;
+	    string.set(s);
+	    length+=4+string.length();
 	 }
-      ~PacketSTRING();
       unpack_status_t Unpack(Buffer *b);
-      void ComputeLength() { Packet::ComputeLength(); length+=4+string_len; }
+      void ComputeLength() { Packet::ComputeLength(); length+=4+string.length(); }
       void Pack(Buffer *b)
 	 {
 	    Packet::Pack(b);
-	    Packet::PackString(b,string,string_len);
+	    Packet::PackString(b,string,string.length());
 	 }
       const char *GetString() { return string; }
-      int GetStringLength() { return string_len; }
+      int GetStringLength() { return string.length(); }
    };
    class Request_INIT : public PacketUINT32
    {
@@ -391,7 +381,7 @@ private:
       unsigned flags;
       int protocol_version;
    public:
-      Request_FSTAT(const char *h,int len,unsigned f,int pv) : PacketSTRING(SSH_FXP_FSTAT,h,len)
+      Request_FSTAT(const xstring &h,unsigned f,int pv) : PacketSTRING(SSH_FXP_FSTAT,h)
 	 {
 	    flags=f;
 	    protocol_version=pv;
@@ -412,7 +402,7 @@ private:
    class Request_STAT : public Request_FSTAT
    {
    public:
-      Request_STAT(const char *p,unsigned f,int pv) : Request_FSTAT(p,strlen(p),f,pv)
+      Request_STAT(const char *p,unsigned f,int pv) : Request_FSTAT(p,f,pv)
 	 {
 	    type=SSH_FXP_STAT;
 	 }
@@ -423,10 +413,8 @@ public:
    {
       struct ExtFileAttr
       {
-	 char *extended_type;
-	 char *extended_data;
-	 ExtFileAttr() { extended_type=extended_data=0; }
-	 ~ExtFileAttr() { xfree(extended_type); xfree(extended_data); }
+	 xstring extended_type;
+	 xstring extended_data;
 	 unpack_status_t Unpack(Buffer *b,int *offset,int limit);
 	 void Pack(Buffer *b);
       };
@@ -435,9 +423,8 @@ public:
 	 unsigned ace_type;
 	 unsigned ace_flag;
 	 unsigned ace_mask;
-	 char     *who;
-	 FileACE() { ace_type=ace_flag=ace_mask=0; who=0; }
-	 ~FileACE() { xfree(who); }
+	 xstring who;
+	 FileACE() { ace_type=ace_flag=ace_mask=0; }
 	 unpack_status_t Unpack(Buffer *b,int *offset,int limit);
 	 void Pack(Buffer *b);
       };
@@ -445,8 +432,8 @@ public:
       unsigned flags;
       int      type;		    // v>=4
       off_t    size;		    // present only if flag SIZE
-      char     *owner;		    // present only if flag OWNERGROUP // v>=4
-      char     *group;		    // present only if flag OWNERGROUP // v>=4
+      xstring  owner;		    // present only if flag OWNERGROUP // v>=4
+      xstring  group;		    // present only if flag OWNERGROUP // v>=4
       uid_t    uid;		    // present only if flag UIDGID // v<=3
       gid_t    gid;		    // present only if flag UIDGID // v<=3
       unsigned permissions;	    // present only if flag PERMISSIONS
@@ -463,22 +450,22 @@ public:
       unsigned attrib_bits;         // if flag BITS		  // v>=5
       unsigned attrib_bits_valid;   // if flag BITS		  // v>=6
       unsigned char text_hint;      // if flag TEXT_HINT	  // v>=6
-      char     *mime_type;          // if flag MIME_TYPE	  // v>=6
+      xstring  mime_type;	    // if flag MIME_TYPE	  // v>=6
       unsigned link_count;          // if flag LINK_COUNT	  // v>=6
-      char     *untranslated_name;  // if flag UNTRANSLATED_NAME  // v>=6
+      xstring  untranslated_name;   // if flag UNTRANSLATED_NAME  // v>=6
       unsigned extended_count;	    // present only if flag EXTENDED
       ExtFileAttr *extended_attrs;
 
       FileAttrs()
       {
-	 flags=0; type=0; size=NO_SIZE; owner=group=0; uid=gid=0;
+	 flags=0; type=0; size=NO_SIZE; uid=gid=0;
 	 permissions=0;
 	 atime=createtime=mtime=ctime=NO_DATE;
 	 atime_nseconds=createtime_nseconds=mtime_nseconds=ctime_nseconds=0;
 	 extended_count=0; extended_attrs=0;
 	 ace_count=0; ace=0;
 	 attrib_bits=attrib_bits_valid=0; text_hint=0;
-	 mime_type=untranslated_name=0; link_count=0;
+	 link_count=0;
       }
       ~FileAttrs();
       unpack_status_t Unpack(Buffer *b,int *offset,int limit,int proto_version);
@@ -487,11 +474,9 @@ public:
    };
    struct NameAttrs
    {
-      char *name;
-      char *longname;
+      xstring name;
+      xstring longname;
       FileAttrs attrs;
-      NameAttrs() { name=0; longname=0; }
-      ~NameAttrs() { xfree(name); xfree(longname); }
       unpack_status_t Unpack(Buffer *b,int *offset,int limit,int proto_version);
    };
 private:
@@ -529,8 +514,8 @@ private:
       int protocol_version;
    public:
       FileAttrs attrs;
-      PacketSTRING_ATTRS(packet_type type,const char *s,int len,int pv)
-       : PacketSTRING(type,s,len)
+      PacketSTRING_ATTRS(packet_type type,const xstring &h,int pv)
+       : PacketSTRING(type,h)
 	 {
 	    protocol_version=pv;
 	 }
@@ -548,8 +533,8 @@ private:
    class Request_FSETSTAT : public PacketSTRING_ATTRS
    {
    public:
-      Request_FSETSTAT(const char *h,int h_len,int pv)
-       : PacketSTRING_ATTRS(SSH_FXP_FSETSTAT,h,h_len,pv) {}
+      Request_FSETSTAT(const xstring &h,int pv)
+       : PacketSTRING_ATTRS(SSH_FXP_FSETSTAT,h,pv) {}
    };
    class Request_OPEN : public PacketSTRING_ATTRS
    {
@@ -558,7 +543,7 @@ private:
       unsigned flags;		 // v>=5
    public:
       Request_OPEN(const char *fn,unsigned pf,unsigned da,unsigned f,int pv)
-       : PacketSTRING_ATTRS(SSH_FXP_OPEN,fn,strlen(fn),pv)
+       : PacketSTRING_ATTRS(SSH_FXP_OPEN,fn,pv)
 	 {
 	    pflags=pf;
 	    desired_access=da;
@@ -575,18 +560,12 @@ private:
    {
    public:
       Reply_HANDLE() : PacketSTRING(SSH_FXP_HANDLE) {}
-      char *GetHandle(int *out_len=0)
-	 {
-	    char *out=(char*)xmemdup(string,string_len+1);
-	    if(out_len)
-	       *out_len=string_len;
-	    return out;
-	 }
+      const xstring &GetHandle() { return string; }
    };
    class Request_CLOSE : public PacketSTRING
    {
    public:
-      Request_CLOSE(const char *h,int len) : PacketSTRING(SSH_FXP_CLOSE,h,len) {}
+      Request_CLOSE(const xstring &h) : PacketSTRING(SSH_FXP_CLOSE,h) {}
    };
    class Request_OPENDIR : public PacketSTRING
    {
@@ -596,17 +575,16 @@ private:
    class Request_READDIR : public PacketSTRING
    {
    public:
-      Request_READDIR(const char *h,int len) : PacketSTRING(SSH_FXP_READDIR,h,len) {}
+      Request_READDIR(const xstring &h) : PacketSTRING(SSH_FXP_READDIR,h) {}
    };
    class Reply_STATUS : public Packet
    {
       int protocol_version;
       unsigned code;
-      char *message;
-      char *language;
+      xstring message;
+      xstring language;
    public:
-      Reply_STATUS(int pv) { protocol_version=pv; code=0; message=0; language=0; }
-      ~Reply_STATUS() { xfree(message); xfree(language); }
+      Reply_STATUS(int pv) { protocol_version=pv; code=0; }
       unpack_status_t Unpack(Buffer *b);
       int GetCode() { return code; }
       const char *GetCodeText();
@@ -617,8 +595,8 @@ private:
    public:
       off_t pos;
       unsigned len;
-      Request_READ(const char *h,int hlen,off_t p,unsigned l)
-       : PacketSTRING(SSH_FXP_READ,h,hlen) { pos=p; len=l; }
+      Request_READ(const xstring &h,off_t p,unsigned l)
+       : PacketSTRING(SSH_FXP_READ,h) { pos=p; len=l; }
       void ComputeLength() { PacketSTRING::ComputeLength(); length+=8+4; }
       void Pack(Buffer *b);
    };
@@ -627,7 +605,7 @@ private:
       bool eof;
    public:
       Reply_DATA() : PacketSTRING(SSH_FXP_DATA) { eof=false; }
-      void GetData(const char **b,int *s) { *b=string; *s=string_len; }
+      void GetData(const char **b,int *s) { *b=string; *s=string.length(); }
       unpack_status_t Unpack(Buffer *b);
       bool Eof() { return eof; }
    };
@@ -635,25 +613,23 @@ private:
    {
    public:
       off_t pos;
-      unsigned len;
-      char *data;
-      Request_WRITE(const char *h,int hlen,off_t p,const char *d,unsigned l)
-       : PacketSTRING(SSH_FXP_WRITE,h,hlen) { pos=p; len=l; data=(char*)xmemdup(d,l); }
-      ~Request_WRITE() { xfree(data); }
-      void ComputeLength() { PacketSTRING::ComputeLength(); length+=8+4+len; }
+      xstring data;
+      Request_WRITE(const xstring &h,off_t p,const char *d,unsigned l)
+       : PacketSTRING(SSH_FXP_WRITE,h) { pos=p; data.nset(d,l); }
+      void ComputeLength() { PacketSTRING::ComputeLength(); length+=8+4+data.length(); }
       void Pack(Buffer *b);
    };
    class Request_MKDIR : public PacketSTRING_ATTRS
    {
    public:
       Request_MKDIR(const char *fn,int pv)
-       : PacketSTRING_ATTRS(SSH_FXP_MKDIR,fn,strlen(fn),pv) {}
+       : PacketSTRING_ATTRS(SSH_FXP_MKDIR,fn,pv) {}
    };
    class Request_SETSTAT : public PacketSTRING_ATTRS
    {
    public:
       Request_SETSTAT(const char *fn,int pv)
-       : PacketSTRING_ATTRS(SSH_FXP_SETSTAT,fn,strlen(fn),pv) {}
+       : PacketSTRING_ATTRS(SSH_FXP_SETSTAT,fn,pv) {}
    };
    class Request_RMDIR : public PacketSTRING
    {
@@ -668,21 +644,15 @@ private:
    class Request_RENAME : public Packet
    {
       int protocol_version;
-      char *oldpath;
-      char *newpath;
+      xstring oldpath;
+      xstring newpath;
       unsigned flags;
    public:
-      Request_RENAME(const char *o,const char *n,unsigned f,int pv) : Packet(SSH_FXP_RENAME)
+      Request_RENAME(const char *o,const char *n,unsigned f,int pv)
+      : Packet(SSH_FXP_RENAME), oldpath(o), newpath(n)
 	 {
 	    protocol_version=pv;
-	    oldpath=xstrdup(o);
-	    newpath=xstrdup(n);
 	    flags=f;
-	 }
-      ~Request_RENAME()
-	 {
-	    xfree(oldpath);
-	    xfree(newpath);
 	 }
       void ComputeLength()
 	 {

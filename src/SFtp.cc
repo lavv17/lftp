@@ -268,7 +268,7 @@ int SFtp::Do()
       if(s==0)
       {
 	 // no more data, set attributes and close the file.
-	 Request_FSETSTAT *req=new Request_FSETSTAT(handle,handle_len,protocol_version);
+	 Request_FSETSTAT *req=new Request_FSETSTAT(handle,protocol_version);
 	 req->attrs.mtime=entity_date;
 	 req->attrs.flags|=SSH_FILEXFER_ATTR_MODIFYTIME;
 	 SendRequest(req,Expect::IGNORE);
@@ -279,7 +279,7 @@ int SFtp::Do()
       }
       if(RespQueueSize()>max_packets_in_flight)
 	 return m;
-      SendRequest(new Request_WRITE(handle,handle_len,request_pos,b,s),Expect::WRITE_STATUS);
+      SendRequest(new Request_WRITE(handle,request_pos,b,s),Expect::WRITE_STATUS);
       file_buf->Skip(s);
       request_pos+=s;
       m=MOVED;
@@ -323,7 +323,6 @@ void SFtp::Disconnect()
 {
    if(send_buf)
       DebugPrint("---- ",_("Disconnecting"),9);
-   xfree(handle); handle=0; handle_len=0;
    Delete(send_buf); send_buf=0;
    Delete(recv_buf); recv_buf=0;
    Delete(pty_send_buf); pty_send_buf=0;
@@ -364,8 +363,6 @@ void SFtp::Init()
    protocol_version=0;
    send_translate=0;
    recv_translate=0;
-   handle=0;
-   handle_len=0;
    max_packets_in_flight=16;
    max_packets_in_flight_slow_start=1;
    size_read=0x8000;
@@ -403,10 +400,8 @@ void SFtp::Packet::PackString(Buffer *b,const char *str,int len)
    b->PackUINT32BE(len);
    b->Put(str,len);
 }
-SFtp::unpack_status_t SFtp::Packet::UnpackString(Buffer *b,int *offset,int limit,char **str_out,int *len_out)
+SFtp::unpack_status_t SFtp::Packet::UnpackString(Buffer *b,int *offset,int limit,xstring *str_out)
 {
-   assert(str_out && *str_out==0);
-
    if(limit-*offset<4)
       return b->Eof()?UNPACK_PREMATURE_EOF:UNPACK_NO_DATA_YET;
 
@@ -422,14 +417,9 @@ SFtp::unpack_status_t SFtp::Packet::UnpackString(Buffer *b,int *offset,int limit
    int data_len;
    b->Get(&data,&data_len);
 
-   char *string=(char*)xmalloc(len+1);
-   memcpy(string,data+*offset,len);
-   string[len]=0;
+   str_out->nset(data+*offset,len);
 
    *offset+=len;
-   *str_out=string;
-   if(len_out)
-      *len_out=len;
 
    return UNPACK_SUCCESS;
 }
@@ -673,8 +663,8 @@ void SFtp::CloseHandle(Expect::expect_t c)
 {
    if(handle)
    {
-      SendRequest(new Request_CLOSE(handle,handle_len),c);
-      xfree(handle); handle=0; handle_len=0;
+      SendRequest(new Request_CLOSE(handle),c);
+      handle.set(0);
    }
 }
 
@@ -842,23 +832,24 @@ void SFtp::HandleExpect(Expect *e)
    case Expect::HANDLE:
       if(reply->TypeIs(SSH_FXP_HANDLE))
       {
-	 handle=((Reply_HANDLE*)reply)->GetHandle(&handle_len);
+	 handle.set(((Reply_HANDLE*)reply)->GetHandle());
 	 state=(mode==STORE?FILE_SEND:FILE_RECV);
 	 assert(!file_buf);
 	 file_buf=new Buffer;
 	 Log::global->Write(9,"---- got file handle ");
+	 int handle_len=handle.length();
 	 for(int i=0; i<handle_len; i++)
 	    Log::global->Format(9,"%02X",handle[i]);
 	 Log::global->Format(9," (%d)\n",handle_len);
 	 request_pos=real_pos=pos;
 	 if(mode==RETRIEVE)
-	    SendRequest(new Request_FSTAT(handle,handle_len,
+	    SendRequest(new Request_FSTAT(handle,
 	       SSH_FILEXFER_ATTR_SIZE|SSH_FILEXFER_ATTR_MODIFYTIME|SSH_FILEXFER_ATTR_PERMISSIONS,
 	       protocol_version),Expect::INFO);
 	 else if(mode==STORE)
 	 {
 	    // truncate the file at write position.
-	    Request_FSETSTAT *req=new Request_FSETSTAT(handle,handle_len,protocol_version);
+	    Request_FSETSTAT *req=new Request_FSETSTAT(handle,protocol_version);
 	    req->attrs.size=pos;
 	    req->attrs.flags|=SSH_FILEXFER_ATTR_SIZE;
 	    SendRequest(req,Expect::IGNORE);
@@ -871,10 +862,8 @@ void SFtp::HandleExpect(Expect *e)
       if(reply->TypeIs(SSH_FXP_HANDLE))
       {
 	 // close the handle immediately.
-	 int h_len;
-	 char *handle=((Reply_HANDLE*)reply)->GetHandle(&h_len);
-	 SendRequest(new Request_CLOSE(handle,h_len),Expect::IGNORE);
-	 xfree(handle);
+	 const xstring &handle=((Reply_HANDLE*)reply)->GetHandle();
+	 SendRequest(new Request_CLOSE(handle),Expect::IGNORE);
       }
       break;
    case Expect::DATA:
@@ -899,7 +888,7 @@ void SFtp::HandleExpect(Expect *e)
 	       if(r->pos+r->len==request_pos)
 		  request_pos=r->pos+s;
 	       else
-		  SendRequest(new Request_READ(handle,handle_len,r->pos+s,r->len-s),Expect::DATA);
+		  SendRequest(new Request_READ(handle,r->pos+s,r->len-s),Expect::DATA);
 	    }
 	 }
 	 else
@@ -1022,10 +1011,10 @@ void SFtp::RequestMoreData()
 {
    if(mode==RETRIEVE) {
       int req_len=size_read;
-      SendRequest(new Request_READ(handle,handle_len,request_pos,req_len),Expect::DATA);
+      SendRequest(new Request_READ(handle,request_pos,req_len),Expect::DATA);
       request_pos+=req_len;
    } else if(mode==LIST || mode==LONG_LIST) {
-      SendRequest(new Request_READDIR(handle,handle_len),Expect::DATA);
+      SendRequest(new Request_READDIR(handle),Expect::DATA);
    }
 }
 
@@ -1548,12 +1537,8 @@ SFtp::unpack_status_t SFtp::PacketSTRING::Unpack(Buffer *b)
    res=Packet::Unpack(b);
    if(res!=UNPACK_SUCCESS)
       return res;
-   res=UnpackString(b,&unpacked,length+4,&string,&string_len);
+   res=UnpackString(b,&unpacked,length+4,&string);
    return res;
-}
-SFtp::PacketSTRING::~PacketSTRING()
-{
-   xfree(string);
 }
 
 SFtp::unpack_status_t SFtp::Reply_NAME::Unpack(Buffer *b)
@@ -1834,8 +1819,6 @@ int SFtp::FileAttrs::ComputeLength(int protocol_version)
 }
 SFtp::FileAttrs::~FileAttrs()
 {
-   xfree(owner); xfree(group);
-   xfree(mime_type); xfree(untranslated_name);
    delete[] extended_attrs;
    delete[] ace;
 }
@@ -1909,6 +1892,7 @@ void SFtp::Request_WRITE::Pack(Buffer *b)
 {
    PacketSTRING::Pack(b);
    PACK64(pos);
+   int len=data.length();
    PACK32(len);
    b->Put(data,len);
 }
