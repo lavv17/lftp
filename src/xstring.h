@@ -101,28 +101,46 @@ class xstring
 {
    char *buf;
    size_t size;
+   size_t len;
+
+   static const size_t AUTO=(size_t)-1;
+
+   void init() { buf=0; size=len=0; }
+   void init(const char *s,int l);
+   void init(const char *s);
+
    void get_space(size_t s);
+
    // make xstring = xstrdup() fail:
    xstring& operator=(char *);
    const char *operator=(const char *s) { return set(s); }
    const char *operator=(const xstring& s) { return set(s.get()); }
-   void init(const char *s);
+
 public:
-   xstring() { buf=0; size=0; }
+   xstring() { init(); }
    ~xstring() { xfree(buf); }
-   xstring(const xstring &s) { init(s); }
+   xstring(xstring &s) { init(s,s.length()); }
+   xstring(const xstring &s) { init(s,s.length()); }
    xstring(const char *s) { init(s); }
+
    operator const char *() const { return buf; }
    const char *get() const { return buf; }
-   char *get_non_const() { return buf; }
+   char *get_non_const() { len=AUTO; return buf; }
+   size_t length();
+   size_t length() const;
+
+   const char *set(xstring &s) { return nset(s,s.length()); }
+   const char *set(const xstring &s) { return nset(s,s.length()); }
    const char *set(const char *s);
    const char *nset(const char *s,int len);
    const char *set_allocated(char *s);
+
    const char *append(const char *s);
    static size_t vstrlen(va_list);
    const char *vappend(va_list);
    const char *vappend(...) __attribute__((sentinel));
    const char *vset(...) __attribute__((sentinel));
+
    void truncate(size_t n);
    void truncate_at(char c);
 };

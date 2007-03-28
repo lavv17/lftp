@@ -27,50 +27,48 @@
 void xstring::get_space(size_t s)
 {
    if(!buf)
-      buf=(char*)xmalloc(size=s);
-   else if(size<s)
-      buf=(char*)realloc(buf,size=(s+31)&~31);
-   else if(size>=128 && s<=size/2)
+      buf=(char*)xmalloc(size=s+1);
+   else if(size<s+1)
+      buf=(char*)realloc(buf,size=(s|31)+1);
+   else if(size>=128 && s<size/2)
       buf=(char*)realloc(buf,size/=2);
+   buf[s]=0;
 }
 
+void xstring::init(const char *s,int len)
+{
+   init();
+   if(s)
+      nset(s,len);
+}
 void xstring::init(const char *s)
 {
-   if(!s)
-   {
-      buf=0;
-      size=0;
-      return;
-   }
-   buf=(char*)xmalloc(size=strlen(s)+1);
-   memcpy(buf,s,size);
-}
-
-const char *xstring::set(const char *s)
-{
-   if(!s)
-   {
-      xfree(buf);
-      buf=0;
-      size=0;
-      return 0;
-   }
-   size_t len=strlen(s)+1;
-   get_space(len);
-   return (char*)memcpy(buf,s,len);
+   init();
+   if(s)
+      set(s);
 }
 
 const char *xstring::nset(const char *s,int len)
 {
-   get_space(len+1);
-   memcpy(buf,s,len);
-   buf[len]=0;
-   return buf;
+   if(!s)
+   {
+      xfree(buf);
+      init();
+      return 0;
+   }
+   this->len=len;
+   get_space(len);
+   return (char*)memcpy(buf,s,len);
+}
+const char *xstring::set(const char *s)
+{
+   return nset(s,xstrlen(s));
 }
 
 const char *xstring::set_allocated(char *s)
 {
-   size=strlen(s)+1;
+   len=strlen(s);
+   size=len+1;
    xfree(buf);
    return buf=s;
 }
@@ -81,11 +79,12 @@ const char *xstring::append(const char *s)
       return buf;
    if(!buf)
       return set(s);
-   size_t len=strlen(buf);
+   if(len==AUTO)
+      len=strlen(buf);
    size_t s_len=strlen(s);
-   size_t need=len+s_len+1;
-   get_space(need);
-   memcpy(buf+len,s,s_len+1);
+   get_space(len+s_len);
+   memcpy(buf+len,s,s_len);
+   len+=s_len;
    return buf;
 }
 
@@ -105,10 +104,11 @@ size_t xstring::vstrlen(va_list va)
 const char *xstring::vappend(va_list va)
 {
    va_list va1;
-   size_t len=xstrlen(buf);
+   if(len==AUTO)
+      len=xstrlen(buf);
 
    va_copy(va1,va);
-   size_t need=len+vstrlen(va1)+1;
+   size_t need=len+vstrlen(va1);
    va_end(va1);
 
    get_space(need);
@@ -122,8 +122,6 @@ const char *xstring::vappend(va_list va)
       memcpy(buf+len,s,s_len);
       len+=s_len;
    }
-
-   buf[len]=0;
    return buf;
 }
 
@@ -150,10 +148,26 @@ void xstring::truncate(size_t n)
 {
    if(n<size)
       buf[n]=0;
+   if(len!=AUTO && n<len)
+      len=n;
 }
 void xstring::truncate_at(char c)
 {
    char *p=strchr(buf,c);
    if(p)
+   {
       *p=0;
+      len=p-buf;
+   }
+}
+
+size_t xstring::length() const
+{
+   if(len==AUTO)
+      return xstrlen(buf);
+   return len;
+}
+size_t xstring::length()
+{
+   return len=const_cast<const xstring*>(this)->length();
 }
