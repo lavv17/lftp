@@ -311,7 +311,7 @@ int GenericGlob::Do()
 	 set->rewind();
 	 for(FileInfo *info=set->curr(); info!=NULL; info=set->next())
 	 {
-	    char *name=alloca_strdup(info->name);
+	    const char *name=info->name;
 	    if(name[0]=='.' && name[1]=='/')
 	       name+=2;
 	    if(curr_dir && curr_dir[0])
