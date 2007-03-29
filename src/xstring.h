@@ -134,6 +134,7 @@ public:
    const char *set(const char *s);
    const char *nset(const char *s,int len);
    const char *set_allocated(char *s);
+   const char *set_substr(int start,size_t sublen,const char *);
 
    const char *append(const char *s);
    static size_t vstrlen(va_list);

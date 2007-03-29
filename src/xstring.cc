@@ -171,3 +171,17 @@ size_t xstring::length()
 {
    return len=const_cast<const xstring*>(this)->length();
 }
+
+const char *xstring::set_substr(int start,size_t sublen,const char *s)
+{
+   size_t s_len=xstrlen(s);
+   if(len==AUTO)
+      len=strlen(buf);
+   if(sublen<s_len)
+      get_space(len+s_len-sublen);
+   if(sublen!=s_len)
+      memmove(buf+start+s_len,buf+start+sublen,len-(start+sublen)+1);
+   memcpy(buf+start,s,s_len);
+   len+=s_len-sublen;
+   return buf;
+}

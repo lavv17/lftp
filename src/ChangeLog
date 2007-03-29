@@ -1,3 +1,7 @@
+2007-03-29  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* xstring.cc, xstring.h: (set_substr) new method.
+
 2007-03-28  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SleepJob.cc, SleepJob.h: use xstring.
