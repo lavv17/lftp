@@ -6,6 +6,8 @@
 	* xstring.cc: support overlapping set.
 	* xstring.h: add compact variant of xstring (xstring_c).
 	* Resolver.cc, Resolver.h: use xstring_c in cache.
+	* xstring.h: add xstring_c::truncate.
+	* xmalloc.cc: allow overlapped xstrset.
 
 2007-03-28  Alexander V. Lukyanov <lav@yars.free.net>
 

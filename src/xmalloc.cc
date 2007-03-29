@@ -109,8 +109,13 @@ char *xstrset(char *&mem,const char *s)
 #ifdef MEM_DEBUG
    printf("xstrset \"%s\"\n",s);
 #endif
+   if(s==mem)
+      return mem;
+   size_t old_len=(mem?strlen(mem)+1:0);
    size_t len=strlen(s)+1;
-   if(!mem || strlen(mem)+1<len)
+   if(mem && s>mem && s<mem+old_len)
+      return (char*)memmove(mem,s,len);
+   if(old_len<len)
       mem=(char*)xrealloc(mem,len);
    memcpy(mem,s,len);
    return mem;

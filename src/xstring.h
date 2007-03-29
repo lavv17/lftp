@@ -122,6 +122,7 @@ public:
    char *get_non_const() { return buf; }
    const char *set(const char *s) { return xstrset(buf,s); }
    const char *set_allocated(char *s) { xfree(buf); return buf=s; }
+   void truncate(size_t n) { buf[n]=0; }
 };
 
 // full implementation
