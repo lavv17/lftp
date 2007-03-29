@@ -105,26 +105,14 @@ public:
 
 class ResolverCacheEntryLoc
 {
-   char *hostname;
-   char *portname;
-   char *defport;
-   char *service;
-   char *proto;
+   xstring_c hostname;
+   xstring_c portname;
+   xstring_c defport;
+   xstring_c service;
+   xstring_c proto;
 public:
-   ResolverCacheEntryLoc(const char *h,const char *p,const char *defp,const char *ser,const char *pr) {
-      hostname=xstrdup(h);
-      portname=xstrdup(p);
-      service=xstrdup(ser);
-      proto=xstrdup(pr);
-      defport=xstrdup(defp);
-   }
-   ~ResolverCacheEntryLoc() {
-      xfree(hostname);
-      xfree(portname);
-      xfree(service);
-      xfree(proto);
-      xfree(defport);
-   }
+   ResolverCacheEntryLoc(const char *h,const char *p,const char *defp,const char *ser,const char *pr)
+      : hostname(h), portname(p), defport(defp), service(ser), proto(pr) {}
    const char *GetClosure() const { return hostname; }
    bool Matches(const char *h,const char *p,const char *defp,const char *ser,const char *pr);
 };

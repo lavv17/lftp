@@ -97,9 +97,36 @@ static inline size_t xstrlen(const char *s)
 /* this is a small and fast dynamic string class */
 /* mostly used as xstrdup/xfree replacement */
 
-class xstring
+class xstring0 // base class
 {
+protected:
    char *buf;
+   xstring0() {}
+public:
+   ~xstring0() { xfree(buf); }
+   operator const char *() const { return buf; }
+   const char *get() const { return buf; }
+};
+
+// compact variant
+class xstring_c : public xstring0
+{
+   // make xstring_c = xstrdup() fail:
+   xstring_c& operator=(char *);
+   const char *operator=(const char *s);
+   const char *operator=(const xstring_c& s);
+
+public:
+   xstring_c() { buf=0; }
+   xstring_c(const char *s) { buf=xstrdup(s); }
+   char *get_non_const() { return buf; }
+   const char *set(const char *s) { return xstrset(buf,s); }
+   const char *set_allocated(char *s) { xfree(buf); return buf=s; }
+};
+
+// full implementation
+class xstring : public xstring0
+{
    size_t size;
    size_t len;
 
@@ -118,13 +145,10 @@ class xstring
 
 public:
    xstring() { init(); }
-   ~xstring() { xfree(buf); }
    xstring(xstring &s) { init(s,s.length()); }
    xstring(const xstring &s) { init(s,s.length()); }
    xstring(const char *s) { init(s); }
 
-   operator const char *() const { return buf; }
-   const char *get() const { return buf; }
    char *get_non_const() { len=AUTO; return buf; }
    size_t length();
    size_t length() const;

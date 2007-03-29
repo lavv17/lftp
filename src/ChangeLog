@@ -4,6 +4,8 @@
 	* FileGlob.cc, FileSet.cc, FileSet.h, MirrorJob.cc, NetAccess.cc,
 	  mgetJob.cc, mgetJob.h, rmJob.cc: use xstring in FileInfo.
 	* xstring.cc: support overlapping set.
+	* xstring.h: add compact variant of xstring (xstring_c).
+	* Resolver.cc, Resolver.h: use xstring_c in cache.
 
 2007-03-28  Alexander V. Lukyanov <lav@yars.free.net>
 
