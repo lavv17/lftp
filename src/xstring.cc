@@ -57,6 +57,10 @@ const char *xstring::nset(const char *s,int len)
       return 0;
    }
    this->len=len;
+   if(s==buf)
+      return buf;
+   if(s>buf && s<buf+size)
+      return (char*)memmove(buf,s,len);
    get_space(len);
    return (char*)memcpy(buf,s,len);
 }

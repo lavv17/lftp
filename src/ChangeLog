@@ -3,6 +3,7 @@
 	* xstring.cc, xstring.h: (set_substr) new method.
 	* FileGlob.cc, FileSet.cc, FileSet.h, MirrorJob.cc, NetAccess.cc,
 	  mgetJob.cc, mgetJob.h, rmJob.cc: use xstring in FileInfo.
+	* xstring.cc: support overlapping set.
 
 2007-03-28  Alexander V. Lukyanov <lav@yars.free.net>
 
