@@ -241,7 +241,7 @@ void FileSetOutput::long_list()
       output_block_size = 1;
 }
 
-const char *FileSetOutput::ValidateArgv(char **s)
+const char *FileSetOutput::ValidateArgv(xstring_c *s)
 {
    if(!*s) return NULL;
 

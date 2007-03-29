@@ -8,6 +8,8 @@
 	* Resolver.cc, Resolver.h: use xstring_c in cache.
 	* xstring.h: add xstring_c::truncate.
 	* xmalloc.cc: allow overlapped xstrset.
+	* FileSetOutput.cc, FileSetOutput.h, ResMgr.cc, ResMgr.h, resource.cc:
+	  use xstring_c for resources.
 
 2007-03-28  Alexander V. Lukyanov <lav@yars.free.net>
 

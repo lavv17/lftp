@@ -29,20 +29,21 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <errno.h>
+#include <stddef.h>
 
 #include "ResMgr.h"
 #include "url.h"
 #include "GetPass.h"
 #include "ascii_ctype.h"
 #include "confpaths.h"
+#include "misc.h"
 
-static const char *FtpProxyValidate(char **p)
+static const char *FtpProxyValidate(xstring_c *p)
 {
    ParsedURL url(*p);
    if(url.host==0)
    {
-      if((*p)[0]!=0)
-	 (*p)[0]=0;
+      p->truncate(0);
       return 0;
    }
    if(url.proto)
@@ -53,19 +54,17 @@ static const char *FtpProxyValidate(char **p)
    if(url.user && !url.pass)
    {
       url.pass=GetPass(_("ftp:proxy password: "));
-      xfree(*p);
-      *p=url.Combine();
+      p->set_allocated(url.Combine());
    }
    return 0;
 }
 
-static const char *HttpProxyValidate(char **p)
+static const char *HttpProxyValidate(xstring_c *p)
 {
    ParsedURL url(*p);
    if(url.host==0)
    {
-      if((*p)[0]!=0)
-	 (*p)[0]=0;
+      p->truncate(0);
       return 0;
    }
    if(url.proto)
@@ -94,11 +93,11 @@ static const char *FtpDefaultAnonPass()
 }
 #endif
 
-static const char *PutOrPost(char **s)
+static const char *PutOrPost(xstring_c *s)
 {
    if(strcasecmp(*s,"PUT") && strcasecmp(*s,"POST"))
       return _("only PUT and POST values allowed");
-   for(char *scan=*s; *scan; scan++)
+   for(char *scan=s->get_non_const(); *scan; scan++)
       *scan=to_ascii_upper((unsigned char)*scan);
    return 0;
 }
@@ -112,15 +111,13 @@ static const char *const af_list[]=
    0
 };
 static
-const char *OrderValidate(char **s)
+const char *OrderValidate(xstring_c *s)
 {
-   static char *error=0;
+   static xstring error;
+   xstring fixed;
 
    const char * const delim="\t ";
    char *s1=alloca_strdup(*s);
-   char *fixed=(char*)xmalloc(strlen(s1)+1);
-   fixed[0]=0;
-
    for(s1=strtok(s1,delim); s1; s1=strtok(0,delim))
    {
       const char *const *f;
@@ -131,25 +128,23 @@ const char *OrderValidate(char **s)
       }
       if(!*f)
       {
-	 const char * const format=_("unknown address family `%s'");
-	 error=(char*)xrealloc(error,strlen(format)+strlen(s1));
-	 sprintf(error,format,s1);
+	 error.set_allocated(xasprintf(_("unknown address family `%s'"),s1));
 	 return error;
       }
-      if(fixed[0])
-	 strcat(fixed," ");
-      strcat(fixed,s1);
+      if(fixed)
+	 fixed.vappend(" ",s1,NULL);
+      else
+	 fixed.set(s1);
    }
-   xfree(*s);
-   *s=fixed;
+   s->set(fixed);
    return 0;
 }
 
 #if USE_SSL
 static
-const char *AuthArgValidate(char **s)
+const char *AuthArgValidate(xstring_c *s)
 {
-   for(char *i=*s; *i; i++)
+   for(char *i=s->get_non_const(); *i; i++)
       *i=to_ascii_upper(*i);
 
    if(strcmp(*s,"SSL")
@@ -161,12 +156,12 @@ const char *AuthArgValidate(char **s)
    return 0;
 }
 static
-const char *ProtValidate(char **s)
+const char *ProtValidate(xstring_c *s)
 {
    if(!**s)
       return 0;
 
-   for(char *i=*s; *i; i++)
+   for(char *i=s->get_non_const(); *i; i++)
       *i=to_ascii_upper(*i);
 
    if(strcmp(*s,"P")
@@ -370,12 +365,12 @@ void ResMgr::ClassInit()
    {
       if(scan->defvalue && scan->val_valid)
       {
-	 char *dv=xstrdup(scan->defvalue);
+	 xstring_c dv(scan->defvalue);
 	 const char *error=(*scan->val_valid)(&dv);
 	 if(error)
 	    fprintf(stderr,"Default value for %s is invalid: %s\n",scan->name,error);
 	 else if(strcmp(dv,scan->defvalue))
-	    fprintf(stderr,"Default value for %s (%s) is not in canonic form: %s\n",scan->name,scan->defvalue,dv);
+	    fprintf(stderr,"Default value for %s (%s) is not in canonic form: %s\n",scan->name,scan->defvalue,dv.get());
       }
    }
 

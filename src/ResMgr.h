@@ -29,8 +29,8 @@
 #include "xmalloc.h"
 #include "TimeDate.h"
 
-typedef const char *ResValValid(char **value);
-typedef const char *ResClValid(char **closure);
+typedef const char *ResValValid(xstring_c *value);
+typedef const char *ResClValid(xstring_c *closure);
 
 class ResValue;
 
@@ -58,26 +58,15 @@ public:
       friend class ResType;
 
       const ResType *type;
-      char *value;
-      char *closure;
+      xstring_c value;
+      xstring_c closure;
 
       Resource *next;
 
       bool ClosureMatch(const char *cl_data);
 
-      Resource(Resource *next,const ResType *type,
-	       char *closure,char *value)
-      {
-	 this->type=type;
-	 this->value=value;
-	 this->closure=closure;
-	 this->next=next;
-      }
-      ~Resource()
-      {
-	 xfree(closure);
-	 xfree(value);
-      }
+      Resource(Resource *next,const ResType *type,const char *closure,const char *value)
+	 : type(type), value(value), closure(closure), next(next) {}
    };
 
 private:
@@ -106,25 +95,25 @@ public:
    static char *Format(bool with_defaults,bool only_defaults);
    static char **Generator(void);
 
-   static const char *BoolValidate(char **value);
-   static const char *TriBoolValidate(char **value);
-   static const char *NumberValidate(char **value);
-   static const char *UNumberValidate(char **value);
-   static const char *FloatValidate(char **value);
-   static const char *TimeIntervalValidate(char **value);
-   static const char *RangeValidate(char **value);
-   static const char *ERegExpValidate(char **value);
-   static const char *IPv4AddrValidate(char **value);
+   static const char *BoolValidate(xstring_c *value);
+   static const char *TriBoolValidate(xstring_c *value);
+   static const char *NumberValidate(xstring_c *value);
+   static const char *UNumberValidate(xstring_c *value);
+   static const char *FloatValidate(xstring_c *value);
+   static const char *TimeIntervalValidate(xstring_c *value);
+   static const char *RangeValidate(xstring_c *value);
+   static const char *ERegExpValidate(xstring_c *value);
+   static const char *IPv4AddrValidate(xstring_c *value);
 #if INET6
-   static const char *IPv6AddrValidate(char **value);
+   static const char *IPv6AddrValidate(xstring_c *value);
 #endif
-   static const char *UNumberPairValidate(char **value);
-   static const char *FileAccessible(char **value,int mode,int want_dir=0);
-   static const char *FileReadable(char **value);
-   static const char *FileExecutable(char **value);
-   static const char *DirReadable(char **value);
-   static const char *CharsetValidate(char **value);
-   static const char *NoClosure(char **);
+   static const char *UNumberPairValidate(xstring_c *value);
+   static const char *FileAccessible(xstring_c *value,int mode,int want_dir=0);
+   static const char *FileReadable(xstring_c *value);
+   static const char *FileExecutable(xstring_c *value);
+   static const char *DirReadable(xstring_c *value);
+   static const char *CharsetValidate(xstring_c *value);
+   static const char *NoClosure(xstring_c *);
    static bool str2bool(const char *value);
 
    static void ClassInit();

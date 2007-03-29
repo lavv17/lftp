@@ -80,7 +80,7 @@ public:
    void long_list();
    void config(const OutputJob *fd);
    const char *parse_argv(ArgV *a);
-   static const char *ValidateArgv(char **s);
+   static const char *ValidateArgv(xstring_c *s);
    int Need() const;
 
    void print(FileSet &fs, OutputJob *o) const;

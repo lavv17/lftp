@@ -143,20 +143,13 @@ const char *ResMgr::Set(const char *name,const char *cclosure,const char *cvalue
    if(msg)
       return msg;
 
-   char *value=xstrdup(cvalue);
+   xstring_c value(cvalue);
    if(value && type->val_valid && (msg=(*type->val_valid)(&value))!=0)
-   {
-      xfree(value);
       return msg;
-   }
 
-   char *closure=xstrdup(cclosure);
+   xstring_c closure(cclosure);
    if(closure && type->closure_valid && (msg=(*type->closure_valid)(&closure))!=0)
-   {
-      xfree(closure);
-      xfree(value);
       return msg;
-   }
 
    Resource **scan;
    // find the old value
@@ -171,17 +164,12 @@ const char *ResMgr::Set(const char *name,const char *cclosure,const char *cvalue
    if(*scan)
    {
       if(value)
-      {
-	 xfree((*scan)->value);
-	 (*scan)->value=value;
-	 xfree(closure);
-      }
+	 (*scan)->value.set(value);
       else
       {
 	 Resource *to_free=*scan;
 	 *scan=(*scan)->next;
 	 delete to_free;
-	 xfree(closure);
       }
       ResClient::ReconfigAll(type->name);
    }
@@ -192,8 +180,6 @@ const char *ResMgr::Set(const char *name,const char *cclosure,const char *cvalue
 	 chain=new Resource(chain,type,closure,value);
 	 ResClient::ReconfigAll(type->name);
       }
-      else
-	 xfree(closure);
    }
    return 0;
 }
@@ -289,7 +275,7 @@ char *ResMgr::Format(bool with_defaults,bool only_defaults)
    {
       sprintf(store,"set %s",arr[i]->type->name);
       store+=strlen(store);
-      char *s=arr[i]->closure;
+      const char *s=arr[i]->closure;
       if(s)
       {
 	 *store++='/';
@@ -382,9 +368,9 @@ char **ResMgr::Generator(void)
    return res;
 }
 
-const char *ResMgr::BoolValidate(char **value)
+const char *ResMgr::BoolValidate(xstring_c *value)
 {
-   char *v=*value;
+   const char *v=*value;
    const char *newval=0;
 
    switch(v[0])
@@ -407,18 +393,18 @@ const char *ResMgr::BoolValidate(char **value)
       return _("invalid boolean value");
    }
    if(strcmp(v,newval))
-      xstrset(*value,newval);
+      value->set(newval);
 
    return 0;
 }
 
-const char *ResMgr::TriBoolValidate(char **value)
+const char *ResMgr::TriBoolValidate(xstring_c *value)
 {
    if(!BoolValidate(value))
       return 0;
 
    /* not bool */
-   char *v=*value;
+   const char *v=*value;
    const char *newval=0;
 
    switch(v[0])
@@ -430,14 +416,14 @@ const char *ResMgr::TriBoolValidate(char **value)
    }
 
    if(strcmp(v,newval))
-      xstrset(*value,newval);
+      value->set(newval);
 
    return 0;
 }
 
-const char *ResMgr::NumberValidate(char **value)
+const char *ResMgr::NumberValidate(xstring_c *value)
 {
-   char *v=*value;
+   const char *v=*value;
 
    v+=strspn(v," \t");
 
@@ -449,14 +435,14 @@ const char *ResMgr::NumberValidate(char **value)
    if(n==0)
       return _("invalid number");
 
-   v[n]=0;
+   value->truncate(n+(v-*value));
 
    return 0;
 }
 
-const char *ResMgr::FloatValidate(char **value)
+const char *ResMgr::FloatValidate(xstring_c *value)
 {
-   char *v=*value;
+   const char *v=*value;
 
    int n=0;
 
@@ -464,17 +450,17 @@ const char *ResMgr::FloatValidate(char **value)
    if(1>sscanf(v,"%lf%n",&f,&n))
       return _("invalid floating point number");
 
-   v[n]=0;
+   value->truncate(n);
 
    return 0;
 }
 
-const char *ResMgr::UNumberValidate(char **value)
+const char *ResMgr::UNumberValidate(xstring_c *value)
 {
-   char *v=*value;
+   const char *v=*value;
 
    v+=strspn(v," \t");
-   memmove(*value,v,strlen(v)+1);   // drop leading space
+   value->set(v); // drop leading space
 
    v=*value;
    if(!strncasecmp(v,"0x",2))
@@ -485,7 +471,7 @@ const char *ResMgr::UNumberValidate(char **value)
    if(n==0)
       return _("invalid number");
 
-   v[n]=0;
+   value->truncate(n+(v-*value));
 
    return 0;
 }
@@ -680,7 +666,7 @@ void TimeIntervalR::init(const char *s)
    TimeDiff::Set(interval);
 }
 
-const char *ResMgr::TimeIntervalValidate(char **s)
+const char *ResMgr::TimeIntervalValidate(xstring_c *s)
 {
    TimeIntervalR t(*s);
    if(t.Error())
@@ -767,7 +753,7 @@ long long Range::Random()
    return start + (long long)((end-start+1)*mult);
 }
 
-const char *ResMgr::RangeValidate(char **s)
+const char *ResMgr::RangeValidate(xstring_c *s)
 {
    Range r(*s);
    if(r.Error())
@@ -775,7 +761,7 @@ const char *ResMgr::RangeValidate(char **s)
    return 0;
 }
 
-const char *ResMgr::ERegExpValidate(char **s)
+const char *ResMgr::ERegExpValidate(xstring_c *s)
 {
    if(**s==0)
       return 0;
@@ -795,7 +781,7 @@ const char *ResMgr::ERegExpValidate(char **s)
 CDECL int inet_aton(const char *,struct in_addr *);
 #endif
 
-const char *ResMgr::IPv4AddrValidate(char **value)
+const char *ResMgr::IPv4AddrValidate(xstring_c *value)
 {
    if(!**value)
       return 0;
@@ -806,7 +792,7 @@ const char *ResMgr::IPv4AddrValidate(char **value)
 }
 
 #if INET6
-const char *ResMgr::IPv6AddrValidate(char **value)
+const char *ResMgr::IPv6AddrValidate(xstring_c *value)
 {
    if(!**value)
       return 0;
@@ -817,16 +803,16 @@ const char *ResMgr::IPv6AddrValidate(char **value)
 }
 #endif
 
-const char *ResMgr::FileAccessible(char **value,int mode,int want_dir)
+const char *ResMgr::FileAccessible(xstring_c *value,int mode,int want_dir)
 {
    if(!**value)
       return 0;
    const char *f=expand_home_relative(*value);
-   char *cwd=0;
+   xstring_c cwd;
    const char *error=0;
    if(f[0]!='/')
    {
-      cwd=xgetcwd();
+      cwd.set_allocated(xgetcwd());
       if(cwd)
 	 f=dir_file(cwd,f);
    }
@@ -838,22 +824,18 @@ const char *ResMgr::FileAccessible(char **value,int mode,int want_dir)
    else if(access(f,mode)<0)
       error=strerror(errno);
    else
-   {
-      if(f!=*value)
-	 xstrset(*value,f);
-   }
-   xfree(cwd);
+      value->set(f);
    return error;
 }
-const char *ResMgr::FileReadable(char **value)
+const char *ResMgr::FileReadable(xstring_c *value)
 {
    return FileAccessible(value,R_OK);
 }
-const char *ResMgr::FileExecutable(char **value)
+const char *ResMgr::FileExecutable(xstring_c *value)
 {
    return FileAccessible(value,X_OK);
 }
-const char *ResMgr::DirReadable(char **value)
+const char *ResMgr::DirReadable(xstring_c *value)
 {
    return FileAccessible(value,R_OK|X_OK,1);
 }
@@ -861,7 +843,7 @@ const char *ResMgr::DirReadable(char **value)
 CDECL_BEGIN
 #include <iconv.h>
 CDECL_END
-const char *ResMgr::CharsetValidate(char **value)
+const char *ResMgr::CharsetValidate(xstring_c *value)
 {
    if(!**value)
       return 0;
@@ -872,26 +854,24 @@ const char *ResMgr::CharsetValidate(char **value)
    return 0;
 }
 
-const char *ResMgr::NoClosure(char **)
+const char *ResMgr::NoClosure(xstring_c *)
 {
    return _("no closure defined for this setting");
 }
 
-const char *ResMgr::UNumberPairValidate(char **value)
+const char *ResMgr::UNumberPairValidate(xstring_c *value)
 {
-   char *v=*value;
-
    int n=0;
 
    unsigned a,b;
-   if(2>sscanf(v,"%u%*c%u%n",&a,&b,&n))
+   if(2>sscanf(value->get(),"%u%*c%u%n",&a,&b,&n))
    {
       if(UNumberValidate(value))
 	 return _("invalid pair of numbers");
       return 0;
    }
 
-   v[n]=0;
+   value->truncate(n);
 
    return 0;
 }
