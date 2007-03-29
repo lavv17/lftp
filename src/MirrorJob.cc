@@ -312,7 +312,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    AddWaiting(cp);
 	    transfer_count++;
 	    cp->SetParentFg(this);
-	    cp->cmdline.vset("\\transfer ",file->name,NULL);
+	    cp->cmdline.vset("\\transfer ",file->name.get(),NULL);
 	 }
 	 else // pget
 	 {
@@ -328,7 +328,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    AddWaiting(cp);
 	    transfer_count++;
 	    cp->SetParentFg(this);
-	    cp->cmdline.vset("\\transfer ",file->name,NULL);
+	    cp->cmdline.vset("\\transfer ",file->name.get(),NULL);
 	 }
 	 set_state(WAITING_FOR_TRANSFER);
 	 break;
@@ -382,7 +382,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    source_name,target_name);
 	 AddWaiting(mj);
 	 mj->SetParentFg(this);
-	 mj->cmdline.vset("\\mirror ",file->name,NULL);
+	 mj->cmdline.vset("\\mirror ",file->name.get(),NULL);
 
 	 // inherit flags and other things
 	 mj->SetFlags(flags,1);
@@ -473,7 +473,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	       stats.new_symlinks++;
 	    }
 	    Report(_("Making symbolic link `%s' to `%s'"),
-		     dir_file(target_relative_dir,file->name),file->symlink);
+		     dir_file(target_relative_dir,file->name),file->symlink.get());
 	    res=symlink(file->symlink,target_name);
 	    if(res==-1)
 	       eprintf("mirror: symlink(%s): %s\n",target_name,strerror(errno));

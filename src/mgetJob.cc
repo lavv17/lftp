@@ -71,10 +71,11 @@ mgetJob::mgetJob(FileAccess *session,ArgV *a,bool c,bool md)
    output_dir=0;
 }
 
-void mgetJob::make_directory(char *d)
+void mgetJob::make_directory(const char *d_c)
 {
    if(!make_dirs)
       return;
+   char *d=alloca_strdup(d_c);
    char *slash=strrchr(d,'/');
    if(!slash || slash==d)
       return;
@@ -84,7 +85,7 @@ void mgetJob::make_directory(char *d)
    const char *dir_name_c=output_file_name(d,0,!reverse,output_dir,make_dirs);
    char *dir_name;
    if(dir_name_c==0 || dir_name_c[0]==0)
-      goto leave;
+      return;
    dir_name=alloca_strdup(dir_name_c);
    if(reverse || url::is_url(dir_name))
    {
@@ -95,7 +96,7 @@ void mgetJob::make_directory(char *d)
 	    if(!strcmp(dir_name,mkdir_args->getarg(j)))
 	       break;
 	 if(j<mkdir_args->count()) // don't try to create dir twice
-	    goto leave;
+	    return;
       }
       if(!mkdir_args)
       {
@@ -110,8 +111,6 @@ void mgetJob::make_directory(char *d)
    {
       create_directories(dir_name);
    }
-leave:
-   *slash='/';
 }
 
 void mgetJob::LocalGlob(const char *p)
@@ -207,7 +206,7 @@ int mgetJob::Do()
       goto next;
    }
    do {
-      char *src=files->curr()->name;
+      const char *src=files->curr()->name;
       args->Append(src);
       make_directory(src);
       args->Append(output_file_name(src,0,!reverse,output_dir,make_dirs));

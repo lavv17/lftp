@@ -807,10 +807,7 @@ do_again:
 	    // tilde is special.
 	    if(file->name[0]=='~')
 	    {
-	       int len=strlen(file->name);
-	       file->name=(char*)xrealloc(file->name,len+3);
-	       memmove(file->name+2,file->name,len+1);
-	       memcpy(file->name,"./",2);
+	       file->name.set_substr(0,1,"./");
 	       need_resort=true;
 	    }
 	 }

@@ -36,7 +36,7 @@ class mgetJob : public GetJob
    char *output_dir;
 
    bool	 make_dirs;
-   void	 make_directory(char *d);
+   void	 make_directory(const char *d);
 
    void LocalGlob(const char *p);
 

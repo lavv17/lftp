@@ -86,7 +86,7 @@ void Glob::add(const FileInfo *info)
 	 return;
    }
 
-   char *s=info->name;
+   const char *s=info->name;
    if(s==0)
       return;
 
@@ -311,7 +311,7 @@ int GenericGlob::Do()
 	 set->rewind();
 	 for(FileInfo *info=set->curr(); info!=NULL; info=set->next())
 	 {
-	    const char *name=info->name;
+	    char *name=alloca_strdup(info->name);
 	    if(name[0]=='.' && name[1]=='/')
 	       name+=2;
 	    if(curr_dir && curr_dir[0])

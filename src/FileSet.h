@@ -34,7 +34,9 @@ class Range;
 class FileInfo
 {
 public:
-   char	    *name;
+   xstring  name;
+   xstring  longname;
+   xstring  symlink;
    mode_t   mode;
    time_t   date;
    int	    date_prec;
@@ -50,9 +52,7 @@ public:
       SYMLINK,
       NORMAL
    };
-
    type	 filetype;
-   char	 *symlink;
 
    int	 defined;
    enum defined_bits
@@ -67,7 +67,6 @@ public:
    };
 
    int rank;
-   char *longname;
 
    ~FileInfo();
    void Init();
@@ -75,7 +74,7 @@ public:
    FileInfo(const FileInfo &fi);
    FileInfo(const char *n) { Init(); SetName(n); }
 
-   void SetName(const char *n);
+   void SetName(const char *n) { name.set(n); defined|=NAME; }
    void SetUser(const char *n);
    void SetGroup(const char *n);
    void LocalFile(const char *name, bool follow_symlinks);
@@ -84,8 +83,7 @@ public:
    void SetMode(mode_t m) { mode=m; defined|=MODE; }
    void SetDate(time_t t,int prec) { date=t; defined|=DATE; date_prec=prec; }
    void SetType(type t) { filetype=t; defined|=TYPE; }
-   void SetSymlink(const char *s) { xfree(symlink); symlink=xstrdup(s);
-      filetype=SYMLINK; defined|=TYPE|SYMLINK_DEF; }
+   void SetSymlink(const char *s) { symlink.set(s); filetype=SYMLINK; defined|=TYPE|SYMLINK_DEF; }
    void	SetSize(off_t s) { size=s; defined|=SIZE; }
    void	SetNlink(int n) { nlinks=n; defined|=NLINKS; }
 
@@ -106,7 +104,7 @@ public:
    void SetRank(int r) { rank=r; }
    int GetRank() const { return rank; }
    void MakeLongName();
-   void SetLongName(const char *s) { xfree(longname); longname=xstrdup(s); }
+   void SetLongName(const char *s) { longname.set(s); }
    const char *GetLongName() { if(!longname) MakeLongName(); return longname; }
 
    operator const char *() { return name; }

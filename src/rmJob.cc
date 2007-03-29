@@ -47,7 +47,7 @@ void  rmJob::SayFinal()
    if(failed==file_count)
       return;
    if(file_count==1)
-      printf(_("%s ok, `%s' removed\n"),op,first->name);
+      printf(_("%s ok, `%s' removed\n"),op,first->name.get());
    else if(failed)
    {
       if(mode==FA::REMOVE_DIR)

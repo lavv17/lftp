@@ -23,6 +23,7 @@
 #include <config.h>
 #include "FileSet.h"
 
+#include <stddef.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <utime.h>
@@ -67,17 +68,6 @@ void  FileInfo::Merge(const FileInfo& f)
       SetGroup(f.group);
    if(dif&NLINKS)
       SetNlink(f.nlinks);
-}
-
-void FileInfo::SetName(const char *n)
-{
-   if(n==name)
-      return;
-   // in case of n being tail of name, dup it first
-   char *n1=xstrdup(n);
-   xfree(name);
-   name=n1;
-   defined|=NAME;
 }
 
 void FileInfo::SetUser(const char *u)
@@ -692,20 +682,17 @@ void FileInfo::Init()
    date_prec=0;
    size=NO_SIZE;
    nlinks=0;
-   name=0;
    defined=0;
-   symlink=0;
    data=0;
    user=0; group=0;
    rank=0;
-   longname=0;
 }
 
 FileInfo::FileInfo(const FileInfo &fi)
 {
    Init();
-   name=xstrdup(fi.name);
-   symlink=xstrdup(fi.symlink);
+   name.set(fi.name);
+   symlink.set(fi.symlink);
    user=fi.user;
    group=fi.group;
    defined=fi.defined;
@@ -715,7 +702,7 @@ FileInfo::FileInfo(const FileInfo &fi)
    date_prec=fi.date_prec;
    size=fi.size;
    nlinks=fi.nlinks;
-   longname=xstrdup(fi.longname);
+   longname.set(fi.longname);
 }
 
 #ifndef S_ISLNK
@@ -933,10 +920,7 @@ FileInfo *FileInfo::parse_ls_line(const char *line_c,const char *tz)
 
 FileInfo::~FileInfo()
 {
-   xfree(name);
-   xfree(symlink);
    xfree(data);
-   xfree(longname);
 }
 
 int FileSet::Have() const
@@ -951,11 +935,12 @@ int FileSet::Have() const
 
 static bool fnmatch_dir(const char *pattern,const FileInfo *file)
 {
-   char *name=file->name;
+   const char *name=file->name;
    if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
    {
-      name=alloca_strdup2(name,1);
-      strcat(name,"/");
+      char *n=alloca_strdup2(name,1);
+      strcat(n,"/");
+      name=n;
    }
    return fnmatch(pattern,name,FNM_PATHNAME|FNM_CASEFOLD);
 }
@@ -976,8 +961,8 @@ void FileSet::SortByPatternList(const char *list_c)
 
 void FileInfo::MakeLongName()
 {
-   longname=(char*)xrealloc(longname,80+xstrlen(name)+xstrlen(symlink));
-   char filetype_c='-';
+   char filetype_s[2]="-";
+   char &filetype_c=filetype_s[0];
    switch(filetype)
    {
    case NORMAL:	   break;
@@ -987,26 +972,31 @@ void FileInfo::MakeLongName()
    }
    int mode1=(defined&MODE?mode:
       (filetype_c=='d'?0755:(filetype_c=='l'?0777:0644)));
-   sprintf(longname,"%c%s  ",filetype_c,format_perms(mode1));
+
    char usergroup[33];
    usergroup[0]=0;
    if(defined&(USER|GROUP))
       sprintf(usergroup,"%.16s%s%.16s",defined&USER?user:"?",
 		  defined&GROUP?"/":"",defined&GROUP?group:"");
-   char size_str[20];
-   strcpy(size_str,"-");
-   if(defined&SIZE)
-      sprintf(size_str,"%lld",(long long)size);
+
    int w=20-strlen(usergroup);
    if(w<1)
       w=1;
-   sprintf(longname+strlen(longname),"%s %*s ",usergroup,w,size_str);
+   char size_str[20];
+   if(defined&SIZE)
+      sprintf(size_str,"%*lld",w,(long long)size);
+   else
+      sprintf(size_str,"%*s",w,"-");
+
    const char *date_str="-";
    if(defined&DATE)
       date_str=TimeDate(date).IsoDateTime();
-   sprintf(longname+strlen(longname),"%s %s",date_str,name);
+
+   longname.vset(filetype_s,format_perms(mode1),"  ",usergroup," ",size_str,
+      " ",date_str," ",name.get(),NULL);
+
    if(defined&SYMLINK_DEF)
-      sprintf(longname+strlen(longname)," -> %s",symlink);
+      longname.vappend(" -> ",symlink.get(),NULL);
 }
 
 int FileSet::EstimateMemory() const
