@@ -2253,12 +2253,7 @@ void Http::CleanupThis()
 void Http::LogErrorText()
 {
    Roll(recv_buf);
-   const char *buf_c;
-   int size;
-   recv_buf->ZeroTerminate();
-   recv_buf->Get(&buf_c,&size);
-   if(body_size>=0 && size>body_size)
-      size=body_size;
+   size_t size=recv_buf->Size();
    char *buf=string_alloca(size+1);
    off_t old_pos=pos;
    size=Read(buf,size);
