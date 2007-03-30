@@ -123,6 +123,7 @@ public:
    const char *set(const char *s) { return xstrset(buf,s); }
    const char *set_allocated(char *s) { xfree(buf); return buf=s; }
    void truncate(size_t n) { buf[n]=0; }
+   char *borrow() { return replace_value(buf,(char*)0); }
 };
 
 // full implementation
@@ -158,6 +159,7 @@ public:
    const char *set_substr(int start,size_t sublen,const char *);
 
    const char *append(const char *s);
+   const char *append(char c);
    static size_t vstrlen(va_list);
    const char *vappend(va_list);
    const char *vappend(...) __attribute__((sentinel));
@@ -168,6 +170,7 @@ public:
    /* set_length can be used to extend the string, e.g. after modification
       with get_space+get_non_const. */
    void set_length(size_t n) { buf[len=n]=0; }
+   char *borrow() { size=len=0; return replace_value(buf,(char*)0); }
 };
 
 #endif//XSTRING_H

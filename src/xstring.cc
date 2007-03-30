@@ -92,6 +92,13 @@ const char *xstring::append(const char *s)
    return buf;
 }
 
+const char *xstring::append(char c)
+{
+   get_space(len+1);
+   buf[len++]=c;
+   return buf;
+}
+
 size_t xstring::vstrlen(va_list va)
 {
    size_t len=0;
