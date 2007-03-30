@@ -5,6 +5,12 @@
 	* xstring.cc, xstring.h: move get_non_const to xstring0;
 	  get rid of AUTO len (unused); make get_space public and make it
 	  take granularity as argument; (set_length) new method.
+	* Http.cc: (LogErrorText) get rid of unused code.
+	* FileSet.h: use xstring_c for symlink.
+	* xstring.cc: allow set_allocated(0); simplify truncate.
+	* FileCopy.cc, FileCopy.h, FileCopyOutputJob.cc, buffer.cc,
+	  buffer.h, buffer_ssl.cc, Resolver.cc: use xstring as base for Buffer;
+	  in_buffer is gone; ZeroTerminate is too.
 
 2007-03-29  Alexander V. Lukyanov <lav@yars.free.net>
 

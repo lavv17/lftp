@@ -60,7 +60,7 @@ int FileCopyPeerOutputJob::Do()
       broken=true;
       return MOVED;
    }
-   if(eof && !in_buffer)
+   if(eof && Size()==0)
    {
       done=true;
       return MOVED;
@@ -69,12 +69,11 @@ int FileCopyPeerOutputJob::Do()
    if(!write_allowed)
       return m;
 
-   while(in_buffer>0)
+   while(Size()>0)
    {
-      int res=Put_LL(buffer+buffer_ptr,in_buffer);
+      int res=Put_LL(buffer+buffer_ptr,Size());
       if(res>0)
       {
-	 in_buffer-=res;
 	 buffer_ptr+=res;
 	 m=MOVED;
       }

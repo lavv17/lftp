@@ -42,13 +42,11 @@ class Speedometer;
 class Buffer
 {
 protected:
-   char *error_text;
+   xstring error_text;
    int  saved_errno;
    bool error_fatal;
 
-   char *buffer;
-   int buffer_allocated;
-   int in_buffer;
+   xstring buffer;
    int buffer_ptr;
    bool eof;	  // no reads possible (except from mem buffer)
    bool broken;	  // no writes possible
@@ -73,14 +71,13 @@ public:
    bool Error() const { return error_text!=0; }
    bool ErrorFatal() const { return error_fatal; }
    void SetError(const char *e,bool fatal=false);
-   void SetError2(const char *e1,const char *e2,bool fatal=false);
    void SetErrorCached(const char *e);
    const char *ErrorText() const { return error_text; }
-   int Size() const { return in_buffer; }
+   int Size() const { return buffer.length()-buffer_ptr; }
    bool Eof() const { return eof; }
    bool Broken() const { return broken; }
 
-   void ZeroTerminate(); // makes sure that the data end with '\0'
+   const char *Get();
    void Get(const char **buf,int *size);
    void Skip(int len); // Get(); consume; Skip()
    void UnSkip(int len); // this only works if there were no Put's.
@@ -91,7 +88,10 @@ public:
    void PutEOF() { eof=true; PutEOF_LL(); }
    char *GetSpace(int size) {
       Allocate(size);
-      return buffer+buffer_ptr+in_buffer;
+      return buffer.get_non_const()+buffer.length();
+   }
+   void SpaceAdd(int size) {
+      buffer.set_length(buffer.length()+size);
    }
 
    unsigned long long UnpackUINT64BE(int offset=0);
@@ -116,7 +116,7 @@ public:
    void Save(int m) { save=true; save_max=m; }
    bool IsSaving() const { return save; }
    void GetSaved(const char **buf,int *size) const;
-   void SaveRollback(int p);
+   void SaveRollback(off_t p);
 
    void SetPos(off_t p) { pos=p; }
    off_t GetPos() const { return pos; }
@@ -185,7 +185,7 @@ public:
       }
    virtual bool Done()
       {
-	 return(broken || Error() || (eof && (mode==GET || in_buffer==0)));
+	 return(broken || Error() || (eof && (mode==GET || Size()==0)));
       }
    virtual int Get_LL(int size) { return 0; }
    virtual int Do();

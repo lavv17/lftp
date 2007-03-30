@@ -30,11 +30,18 @@
 
 #define BUFFER_INC	   (8*1024) // should be power of 2
 
+const char *Buffer::Get()
+{
+   if(Size()==0)
+      return eof?0:"";
+   return buffer+buffer_ptr;
+}
+
 void Buffer::Get(const char **buf,int *size)
 {
-   if(in_buffer==0)
+   *size=Size();
+   if(*size==0)
    {
-      *size=0;
       if(eof)
 	 *buf=0;
       else
@@ -42,7 +49,6 @@ void Buffer::Get(const char **buf,int *size)
       return;
    }
    *buf=buffer+buffer_ptr;
-   *size=in_buffer;
 }
 
 void Buffer::GetSaved(const char **buf,int *size) const
@@ -54,45 +60,45 @@ void Buffer::GetSaved(const char **buf,int *size) const
       return;
    }
    *buf=buffer;
-   *size=buffer_ptr+in_buffer;
+   *size=buffer.length();
 }
 
-void Buffer::SaveRollback(int p)
+void Buffer::SaveRollback(off_t p)
 {
+   pos=p;
    if(buffer_ptr<p)
       save=false;
    if(!save)
-   {
-      buffer_ptr=0;
-      in_buffer=0;
-   }
-   else
-   {
-      buffer_ptr=p;
-      in_buffer=0;
-   }
+      p=0;
+   buffer.truncate(buffer_ptr=p);
 }
 
 void Buffer::Allocate(int size)
 {
-   if(in_buffer==0 && !save)
+   if(buffer_ptr>0 && Size()==0 && !save)
+   {
+      buffer.truncate(0);
       buffer_ptr=0;
+   }
 
-   int in_buffer_real=in_buffer;
-   if(save || buffer_ptr<size || buffer_ptr<in_buffer)
+   size_t in_buffer_real=Size();
+   /* disable data movement to beginning of the buffer, if:
+      1. we save the data explicitly;
+      2. we add more data than there is space in the beginning of the buffer
+	 (because the probability of realloc is high anyway);
+      3. the gap at beginning is smaller than the amount of data in the buffer
+	 (because the penalty of data movement is high). */
+   if(save || buffer_ptr<size || buffer_ptr<Size())
       in_buffer_real+=buffer_ptr;
 
-   if(buffer_allocated<in_buffer_real+size)
-   {
-      buffer_allocated=(in_buffer_real+size+(BUFFER_INC-1)) & ~(BUFFER_INC-1);
-      buffer=(char*)xrealloc(buffer,buffer_allocated);
-   }
    // could be round-robin, but this is easier
-   if(!save && buffer_ptr+in_buffer+size>buffer_allocated)
+   if(buffer.length()>in_buffer_real)
    {
-      memmove(buffer,buffer+buffer_ptr,in_buffer);
+      buffer.nset(buffer+buffer_ptr,Size());
       buffer_ptr=0;
    }
+
+   buffer.get_space(in_buffer_real+size,BUFFER_INC);
 }
 
 void Buffer::SaveMaxCheck(int size)
@@ -105,8 +111,9 @@ void Buffer::Put(const char *buf,int size)
 {
    SaveMaxCheck(size);
 
-   if(in_buffer==0 && !save)
+   if(Size()==0 && !save)
    {
+      buffer.truncate(0);
       buffer_ptr=0;
 
       if(size>=PUT_LL_MIN)
@@ -126,12 +133,8 @@ void Buffer::Put(const char *buf,int size)
 
    char *space=GetSpace(size);
    memmove(space,buf,size);
-   in_buffer+=size;
+   SpaceAdd(size);
    pos+=size;
-}
-void Buffer::ZeroTerminate()
-{
-   *GetSpace(1)=0;
 }
 
 void Buffer::Format(const char *f,...)
@@ -153,7 +156,7 @@ void Buffer::vFormat(const char *f, va_list v)
       va_end(tmp);
       if(res>=0 && res<size)
       {
-	 in_buffer+=res;
+	 SpaceAdd(res);
 	 return;
       }
       if(res>size)   // some vsnprintf's return desired buffer size.
@@ -165,9 +168,8 @@ void Buffer::vFormat(const char *f, va_list v)
 
 void Buffer::Skip(int len)
 {
-   if(len>in_buffer)
-      len=in_buffer;
-   in_buffer-=len;
+   if(len>Size())
+      len=Size();
    buffer_ptr+=len;
    pos+=len;
 }
@@ -175,14 +177,13 @@ void Buffer::UnSkip(int len)
 {
    if(len>buffer_ptr)
       len=buffer_ptr;
-   in_buffer+=len;
    buffer_ptr-=len;
    pos-=len;
 }
 
 void Buffer::Empty()
 {
-   in_buffer=0;
+   buffer.truncate(0);
    buffer_ptr=0;
    if(save_max>0)
       save=true;
@@ -190,12 +191,8 @@ void Buffer::Empty()
 
 Buffer::Buffer()
 {
-   error_text=0;
    saved_errno=0;
    error_fatal=false;
-   buffer=0;
-   buffer_allocated=0;
-   in_buffer=0;
    buffer_ptr=0;
    eof=false;
    broken=false;
@@ -206,8 +203,6 @@ Buffer::Buffer()
 }
 Buffer::~Buffer()
 {
-   xfree(error_text);
-   xfree(buffer);
    SMTask::Delete(rate);
 }
 
@@ -226,26 +221,14 @@ void Buffer::RateAdd(int n)
 
 void Buffer::SetError(const char *e,bool fatal)
 {
-   xstrset(error_text,e);
+   error_text.set(e);
    error_fatal=fatal;
 }
 void Buffer::SetErrorCached(const char *e)
 {
-   xfree(error_text);
-   error_text=xasprintf(_("%s [cached]"),e);
-   error_fatal=false;
+   SetError(e,false);
+   error_text.append(_(" [cached]"));
 }
-#if 0 // unused
-void Buffer::SetError2(const char *e1,const char *e2)
-{
-   xfree(error_text);
-   int len1=strlen(e1);
-   int len2=strlen(e2);
-   error_text=(char*)xmalloc(len1+len2+1);
-   strcpy(error_text,e1);
-   strcat(error_text,e2);
-}
-#endif
 
 void DataRecoder::PutTranslated(Buffer *target,const char *put_buf,int size)
 {
@@ -276,7 +259,7 @@ try_again:
    // do the translation
    ICONV_CONST char **put_buf_ptr=const_cast<ICONV_CONST char**>(&put_buf);
    size_t res=iconv(backend_translate,put_buf_ptr,&put_size,&store_buf,&store_size);
-   in_buffer+=store_buf-store_space;
+   SpaceAdd(store_buf-store_space);
    if(from_untranslated)
       Skip(put_buf-base_buf);
    if(res==(size_t)-1)
@@ -372,13 +355,11 @@ void DirectedBuffer::EmbraceNewData(int len)
    if(translator)
    {
       // copy the data to free room for translated data
-      translator->Put(buffer+buffer_ptr+in_buffer,len);
+      translator->Put(buffer+buffer.length(),len);
       translator->PutTranslated(this,0,0);
    }
    else
-   {
-      in_buffer+=len;
-   }
+      SpaceAdd(len);
    SaveMaxCheck(0);
 }
 
@@ -390,13 +371,12 @@ int IOBuffer::Do()
    switch(mode)
    {
    case PUT:
-      if(in_buffer==0)
+      if(Size()==0)
 	 return STALL;
-      res=Put_LL(buffer+buffer_ptr,in_buffer);
+      res=Put_LL(buffer+buffer_ptr,Size());
       if(res>0)
       {
 	 RateAdd(res);
-	 in_buffer-=res;
 	 buffer_ptr+=res;
 	 event_time=now;
 	 return MOVED;
@@ -450,12 +430,11 @@ int IOBufferStacked::Do()
 	 SetError(down->ErrorText(),down->ErrorFatal());
 	 m=MOVED;
       }
-      if(in_buffer==0)
+      if(Size()==0)
 	 return m;
-      res=Put_LL(buffer+buffer_ptr,in_buffer);
+      res=Put_LL(buffer+buffer_ptr,Size());
       if(res>0)
       {
-	 in_buffer-=res;
 	 buffer_ptr+=res;
 	 m=MOVED;
 	 down->Do();
@@ -527,7 +506,7 @@ bool IOBufferStacked::Done()
 #define super IOBuffer
 int IOBufferFDStream::Put_LL(const char *buf,int size)
 {
-   if(put_ll_timer && !eof && in_buffer<PUT_LL_MIN
+   if(put_ll_timer && !eof && Size()<PUT_LL_MIN
    && !put_ll_timer->Stopped())
       return 0;
    if(stream->broken())
@@ -669,7 +648,7 @@ const char *IOBufferFileAccess::Status()
 
 unsigned long long Buffer::UnpackUINT64BE(int offset)
 {
-   if(in_buffer-offset<8)
+   if(Size()-offset<8)
       return 0;
    unsigned long long res=UnpackUINT32BE(offset);
    res=(res<<32)|UnpackUINT32BE(offset+4);
@@ -684,9 +663,9 @@ long long Buffer::UnpackINT64BE(int offset)
 }
 unsigned Buffer::UnpackUINT32BE(int offset)
 {
-   if(in_buffer-offset<4)
+   if(Size()-offset<4)
       return 0;
-   unsigned char *b=(unsigned char*)buffer+buffer_ptr+offset;
+   unsigned char *b=(unsigned char*)buffer.get()+buffer_ptr+offset;
    return (b[0]<<24)|(b[1]<<16)|(b[2]<<8)|b[3];
 }
 int Buffer::UnpackINT32BE(int offset)
@@ -698,16 +677,16 @@ int Buffer::UnpackINT32BE(int offset)
 }
 unsigned Buffer::UnpackUINT16BE(int offset)
 {
-   if(in_buffer-offset<2)
+   if(Size()-offset<2)
       return 0;
-   unsigned char *b=(unsigned char*)buffer+buffer_ptr+offset;
+   unsigned char *b=(unsigned char*)buffer.get()+buffer_ptr+offset;
    return (b[0]<<8)|b[1];
 }
 unsigned Buffer::UnpackUINT8(int offset)
 {
-   if(in_buffer-offset<1)
+   if(Size()-offset<1)
       return 0;
-   unsigned char *b=(unsigned char*)buffer+buffer_ptr+offset;
+   unsigned char *b=(unsigned char*)buffer.get()+buffer_ptr+offset;
    return b[0];
 }
 void Buffer::PackUINT64BE(unsigned long long data)
@@ -738,7 +717,7 @@ void Buffer::PackUINT32BE(unsigned data)
    b[1]=(data>>16)&255;
    b[2]=(data>>8)&255;
    b[3]=(data)&255;
-   in_buffer+=4;
+   SpaceAdd(4);
 }
 void Buffer::PackINT32BE(int data)
 {
@@ -754,7 +733,7 @@ void Buffer::PackUINT16BE(unsigned data)
    char *b=GetSpace(2);
    b[0]=(data>>8)&255;
    b[1]=(data)&255;
-   in_buffer+=2;
+   SpaceAdd(2);
 }
 void Buffer::PackUINT8(unsigned data)
 {
@@ -763,5 +742,5 @@ void Buffer::PackUINT8(unsigned data)
 #endif
    char *b=GetSpace(1);
    b[0]=(data)&255;
-   in_buffer+=1;
+   SpaceAdd(1);
 }

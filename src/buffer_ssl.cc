@@ -39,12 +39,11 @@ int IOBufferSSL::Do()
    switch(mode)
    {
    case PUT:
-      if(in_buffer==0 && ssl->handshake_done)
+      if(Size()==0 && ssl->handshake_done)
 	 return STALL;
-      res=Put_LL(buffer+buffer_ptr,in_buffer);
+      res=Put_LL(buffer+buffer_ptr,Size());
       if(res>0)
       {
-	 in_buffer-=res;
 	 buffer_ptr+=res;
 	 event_time=now;
 	 return MOVED;
@@ -82,8 +81,7 @@ int IOBufferSSL::Do()
 
 int IOBufferSSL::Get_LL(int size)
 {
-   Allocate(size);
-   int res=ssl->read(buffer+buffer_ptr+in_buffer,size);
+   int res=ssl->read(GetSpace(size),size);
    if(res<0)
    {
       if(res==ssl->RETRY)

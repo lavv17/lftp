@@ -81,7 +81,7 @@ public:
    off_t GetSeekPos() { return seek_pos; }
    virtual void Seek(off_t offs);
    virtual off_t GetRealPos() { return pos; }
-   virtual int Buffered() { return in_buffer; }
+   virtual int Buffered() { return Size(); }
    virtual bool IOReady() { return true; }
 
    virtual void WantDate() { want_date=true; date=NO_DATE_YET; }
@@ -317,7 +317,7 @@ public:
    off_t GetRealPos();
    void Seek(off_t new_pos);
 
-   int Buffered() { return in_buffer+session->Buffered(); }
+   int Buffered() { return Size()+session->Buffered(); }
 
    void SuspendInternal();
    void ResumeInternal();

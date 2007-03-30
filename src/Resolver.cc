@@ -247,7 +247,6 @@ int   Resolver::Do()
       goto proto_error;
    c=*s;
    buf->Skip(1);
-   buf->ZeroTerminate();
    buf->Get(&s,&n);
    if(c=='E' || c=='P') // error
    {

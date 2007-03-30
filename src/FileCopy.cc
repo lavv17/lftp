@@ -651,7 +651,7 @@ bool FileCopyPeer::Done()
 {
    if(Error())
       return true;
-   if(eof && in_buffer==0)
+   if(eof && Size()==0)
    {
       if(removing)
 	 return false;
@@ -668,7 +668,7 @@ void FileCopyPeer::Seek(off_t offs)
 {
    seek_pos=offs;
    if(mode==PUT)
-      pos-=in_buffer;
+      pos-=Size();
    Empty();
    eof=false;
    broken=false;
@@ -775,16 +775,15 @@ int FileCopyPeerFA::Do()
 	    goto fxp_eof;
 	 return m;
       }
-      res=Put_LL(buffer+buffer_ptr,in_buffer);
+      res=Put_LL(buffer+buffer_ptr,Size());
       if(res>0)
       {
-	 in_buffer-=res;
 	 buffer_ptr+=res;
 	 m=MOVED;
       }
       else if(res<0)
 	 return MOVED;
-      if(in_buffer==0)
+      if(Size()==0)
       {
 	 if(eof)
 	 {
@@ -837,7 +836,7 @@ int FileCopyPeerFA::Do()
       res=Get_LL(GET_BUFSIZE);
       if(res>0)
       {
-	 in_buffer+=res;
+	 EmbraceNewData(res);
 	 SaveMaxCheck(0);
 	 return MOVED;
       }
@@ -924,9 +923,7 @@ void FileCopyPeerFA::OpenSession()
 	 b+=seek_pos;
 	 s-=seek_pos;
 	 Save(0);
-	 Allocate(s);
-	 memmove(buffer+buffer_ptr,b,s);
-	 in_buffer=s;
+	 Put(b,s);
 	 pos=seek_pos;
 	 eof=true;
 	 return;
@@ -965,14 +962,9 @@ void FileCopyPeerFA::OpenSession()
    if(want_date && date==NO_DATE_YET)
       session->WantDate(&date);
    if(mode==GET)
-   {
       SaveRollback(seek_pos);
-      pos=seek_pos;
-   }
    else
-   {
-      pos=seek_pos+in_buffer;
-   }
+      pos=seek_pos+Size();
 }
 
 void FileCopyPeerFA::WantSize()
@@ -1005,9 +997,7 @@ int FileCopyPeerFA::Get_LL(int len)
    if(GetRealPos()!=io_at) // GetRealPos can alter pos.
       return 0;
 
-   Allocate(len);
-
-   res=session->Read(buffer+buffer_ptr+in_buffer,len);
+   res=session->Read(GetSpace(len),len);
    if(res<0)
    {
       if(res==FA::DO_AGAIN)
@@ -1145,7 +1135,7 @@ off_t FileCopyPeerFA::GetRealPos()
       return pos;
    if(mode==PUT)
    {
-      if(pos-in_buffer!=session->GetPos())
+      if(pos-Size()!=session->GetPos())
       {
 	 Empty();
 	 can_seek=false;
@@ -1161,11 +1151,8 @@ off_t FileCopyPeerFA::GetRealPos()
 	 can_seek=false;
 	 session->SeekReal();
       }
-      if(pos+in_buffer!=session->GetPos())
-      {
+      if(pos+Size()!=session->GetPos())
 	 SaveRollback(session->GetPos());
-	 pos=session->GetPos();
-      }
    }
    return pos;
 }
@@ -1316,7 +1303,7 @@ void FileCopyPeerFDStream::Seek_LL()
 	 pos=seek_pos;
       }
       if(mode==PUT)
-	 pos+=in_buffer;
+	 pos+=Size();
    }
    else
    {
@@ -1345,7 +1332,7 @@ int FileCopyPeerFDStream::getfd()
    stream->clear_status();
    pos=0;
    if(mode==PUT)
-      pos+=in_buffer;
+      pos+=Size();
    Seek_LL();
    return fd;
 }
@@ -1378,7 +1365,7 @@ int FileCopyPeerFDStream::Do()
    switch(mode)
    {
    case PUT:
-      if(in_buffer==0)
+      if(Size()==0)
       {
 	 if(eof)
 	 {
@@ -1402,15 +1389,14 @@ int FileCopyPeerFDStream::Do()
       }
       if(!write_allowed)
 	 return m;
-      while(in_buffer>0)
+      while(Size()>0)
       {
-	 if(!eof && in_buffer<PUT_LL_MIN
+	 if(!eof && Size()<PUT_LL_MIN
 	 && put_ll_timer && !put_ll_timer->Stopped())
 	    break;
-	 int res=Put_LL(buffer+buffer_ptr,in_buffer);
+	 int res=Put_LL(buffer+buffer_ptr,Size());
 	 if(res>0)
 	 {
-	    in_buffer-=res;
 	    buffer_ptr+=res;
 	    m=MOVED;
 	 }
@@ -1424,12 +1410,12 @@ int FileCopyPeerFDStream::Do()
    case GET:
       if(eof)
 	 return m;
-      while(in_buffer<GET_BUFSIZE)
+      while(Size()<GET_BUFSIZE)
       {
 	 int res=Get_LL(GET_BUFSIZE);
 	 if(res>0)
 	 {
-	    in_buffer+=res;
+	    EmbraceNewData(res);
 	    SaveMaxCheck(0);
 	    m=MOVED;
 	 }
@@ -1470,7 +1456,7 @@ void FileCopyPeerFDStream::Seek(off_t new_pos)
    {
       if(seek_pos!=FILE_END)
       {
-	 pos=seek_pos+(mode==PUT)*in_buffer;
+	 pos=seek_pos+(mode==PUT)?Size():0;
 	 return;
       }
       else
@@ -1479,7 +1465,7 @@ void FileCopyPeerFDStream::Seek(off_t new_pos)
 	 if(s!=-1)
 	 {
 	    SetSize(s);
-	    pos=seek_pos+(mode==PUT)*in_buffer;
+	    pos=seek_pos+(mode==PUT)?Size():0;
 	    return;
 	 }
 	 else
@@ -1518,17 +1504,11 @@ int FileCopyPeerFDStream::Get_LL(int len)
       }
    }
 
-#ifndef NATIVE_CRLF
-   if(ascii)
-      Allocate(len*2);
-   else
-#endif
-      Allocate(len);
-
    if(need_seek)  // this does not combine with ascii.
       lseek(fd,seek_base+pos,SEEK_SET);
 
-   res=read(fd,buffer+buffer_ptr+in_buffer,len);
+   char *p=GetSpace(ascii?len*2:len);
+   res=read(fd,p,len);
    if(res==-1)
    {
       if(E_RETRY(errno))
@@ -1547,7 +1527,6 @@ int FileCopyPeerFDStream::Get_LL(int len)
 #ifndef NATIVE_CRLF
    if(ascii)
    {
-      char *p=buffer+buffer_ptr+in_buffer;
       for(int i=res; i>0; i--)
       {
 	 if(*p=='\n')
@@ -1609,7 +1588,7 @@ int FileCopyPeerFDStream::Put_LL(const char *buf,int len)
       return skip_cr;
 
    if(need_seek)  // this does not combine with ascii.
-      lseek(fd,seek_base+pos-in_buffer,SEEK_SET);
+      lseek(fd,seek_base+pos-Size(),SEEK_SET);
 
    int res=write(fd,buf,len);
    if(res<0)
@@ -1622,7 +1601,7 @@ int FileCopyPeerFDStream::Put_LL(const char *buf,int len)
       if(errno==EPIPE)
       {
 	 broken=true;
-	 in_buffer=0;
+	 buffer.truncate(buffer_ptr);
 	 eof=true;
 	 return -1;
       }
@@ -1634,11 +1613,11 @@ int FileCopyPeerFDStream::Put_LL(const char *buf,int len)
 	    struct stat st;
 	    if(fstat(fd,&st)!=-1)
 	    {
-	       if(st.st_size<seek_base+pos-in_buffer)
+	       if(st.st_size<seek_base+pos-Size())
 	       {
 		  // workaround solaris nfs bug. It can lose data if disk is full.
-		  if(buffer_ptr>=seek_base+pos-in_buffer-buffer_ptr-st.st_size)
-		     UnSkip(seek_base+pos-in_buffer-st.st_size);
+		  if(buffer_ptr>=seek_base+pos-Size()-buffer_ptr-st.st_size)
+		     UnSkip(seek_base+pos-Size()-st.st_size);
 		  else
 		  {
 		     Empty();
@@ -1762,9 +1741,8 @@ int FileCopyPeerDirList::Do()
    }
    if(s==0)
       return STALL;
-   Allocate(s);
-   memmove(buffer+buffer_ptr+in_buffer,b,s);
-   in_buffer+=s;
+   memcpy(GetSpace(s),b,s);
+   SpaceAdd(s);
    dl->Skip(s);
    return MOVED;
 }
