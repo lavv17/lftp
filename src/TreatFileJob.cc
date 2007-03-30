@@ -98,11 +98,11 @@ void  TreatFileJob::PrintStatus(int v,const char *prefix)
    SessionJob::PrintStatus(v,prefix);
    if(Done() || !curr)
       return;
-   printf("\t`%s' [%s]\n",curr->name,session->CurrentStatus());
+   printf("\t`%s' [%s]\n",curr->name.get(),session->CurrentStatus());
 }
 
 void  TreatFileJob::ShowRunStatus(StatusLine *s)
 {
    if(curr && !Done())
-      s->Show("%s `%s' [%s]",op,curr->name,session->CurrentStatus());
+      s->Show("%s `%s' [%s]",op,curr->name.get(),session->CurrentStatus());
 }

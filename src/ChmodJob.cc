@@ -86,7 +86,7 @@ void ChmodJob::CurrentFinished(const char *d,const FileInfo *fi)
    int mode=GetMode(fi);
    if(mode==-1)
    {
-      eprintf(_("Failed to change mode of `%s' because no old mode is available.\n"),fi->name);
+      eprintf(_("Failed to change mode of `%s' because no old mode is available.\n"),fi->name.get());
       return;
    }
    if(verbose == V_ALL || (verbose == V_CHANGES
@@ -97,7 +97,7 @@ void ChmodJob::CurrentFinished(const char *d,const FileInfo *fi)
       strmode (mode, perms);
       perms[10] = '\0';             /* `mode_string' does not null terminate. */
 
-      eprintf (fmt, fi->name, (int) mode, perms+1);
+      eprintf (fmt, fi->name.get(), (int) mode, perms+1);
    }
 }
 
