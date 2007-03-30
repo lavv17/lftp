@@ -1,3 +1,8 @@
+2007-03-30  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ChmodJob.cc, TreatFileJob.cc: FileInfo::name is now xstring -
+	  use get().
+
 2007-03-29  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* xstring.cc, xstring.h: (set_substr) new method.
