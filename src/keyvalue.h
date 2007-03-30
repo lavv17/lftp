@@ -40,29 +40,17 @@ public:
    class Pair
    {
    public:
-      char *key;
-      char *value;
+      xstring_c key;
+      xstring_c value;
       Pair *next;
       Pair(const char *k,const char *v)
-	 {
-	    key=xstrdup(k);
-	    value=xstrdup(v);
-	    next=0;
-	 }
-      virtual ~Pair()
-	 {
-	    xfree(key);
-	    xfree(value);
-	 }
+	 : key(k), value(v), next(0) {}
+      virtual ~Pair() {}
       int KeyCompare(const char *s) const
 	 {
 	    return strcmp(s,key);
 	 }
-      void SetValue(const char *v)
-	 {
-	    xfree(value);
-	    value=xstrdup(v);
-	 }
+      void SetValue(const char *v) { value.set(v); }
    };
 
 protected:

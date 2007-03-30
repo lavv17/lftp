@@ -29,10 +29,8 @@
 
 int KeyValueDB::Read(int fd)
 {
-   int key_size=16;
-   char *key=(char*)xmalloc(key_size);
-   int value_size=16;
-   char *value=(char*)xmalloc(value_size);
+   xstring key;
+   xstring value;
 
    int c;
 
@@ -51,27 +49,17 @@ int KeyValueDB::Read(int fd)
       if(c=='\n')
 	 continue;   // next line
 
-      char *store=key;
-
       for(;;)
       {
-	 if(store>=key+key_size-1)
-	 {
-	    int shift=store-key;
-	    key=(char*)xrealloc(key,key_size*=2);
-	    store=key+shift;
-	 }
-	 *store++=c;
-
+	 key.append(c);
 	 c=getc(f);
 	 if(c==EOF)
 	    break;
 	 if(c==' ' || c=='\t' || c=='\n')
 	    break;
       }
-      *store=0;
 
-      if(c==EOF || c=='\n' || store==key)
+      if(c==EOF || c=='\n' || key.length()==0)
 	 break;	// invalid line
 
       // skip space in mid
@@ -81,25 +69,15 @@ int KeyValueDB::Read(int fd)
       if(c==EOF || c=='\n')
 	 break;
 
-      store=value;
-
       for(;;)
       {
-	 if(store>=value+value_size-1)
-	 {
-	    int shift=store-value;
-	    value=(char*)xrealloc(value,value_size*=2);
-	    store=value+shift;
-	 }
-	 *store++=c;
-
+	 value.append(c);
 	 c=getc(f);
 	 if(c==EOF)
 	    break;
 	 if(c=='\n')
 	    break;
       }
-      *store=0;
 
       Add(key,value);
 
@@ -107,8 +85,6 @@ int KeyValueDB::Read(int fd)
 	 break;
    }
    fclose(f);
-   xfree(key);
-   xfree(value);
    return 0;
 }
 
@@ -169,7 +145,7 @@ char *KeyValueDB::Format(StringMangler value_mangle)
 
    for(p=chain; p; p=p->next)
    {
-      sprintf(store,"%-*s\t%s\n",max_key_len,p->key,value_mangle(p->value));
+      sprintf(store,"%-*s\t%s\n",max_key_len,p->key.get(),value_mangle(p->value));
       store+=strlen(store);
    }
    *store=0; // this is for chain==0 case

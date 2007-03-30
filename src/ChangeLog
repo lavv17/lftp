@@ -11,6 +11,8 @@
 	* FileCopy.cc, FileCopy.h, FileCopyOutputJob.cc, buffer.cc,
 	  buffer.h, buffer_ssl.cc, Resolver.cc: use xstring as base for Buffer;
 	  in_buffer is gone; ZeroTerminate is too.
+	* xstring.cc, xstring.h: append(char) new method; (borrow) new method.
+	* keyvalue.cc, keyvalue.h: use xstring.
 
 2007-03-29  Alexander V. Lukyanov <lav@yars.free.net>
 
