@@ -36,7 +36,7 @@ class FileInfo
 public:
    xstring  name;
    xstring  longname;
-   xstring  symlink;
+   xstring_c symlink;
    mode_t   mode;
    time_t   date;
    int	    date_prec;
