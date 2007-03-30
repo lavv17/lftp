@@ -2,6 +2,9 @@
 
 	* ChmodJob.cc, TreatFileJob.cc: FileInfo::name is now xstring -
 	  use get().
+	* xstring.cc, xstring.h: move get_non_const to xstring0;
+	  get rid of AUTO len (unused); make get_space public and make it
+	  take granularity as argument; (set_length) new method.
 
 2007-03-29  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -24,13 +24,13 @@
 #include <string.h>
 #include "xstring.h"
 
-void xstring::get_space(size_t s)
+void xstring::get_space(size_t s,size_t g)
 {
    if(!buf)
       buf=(char*)xmalloc(size=s+1);
    else if(size<s+1)
-      buf=(char*)realloc(buf,size=(s|31)+1);
-   else if(size>=128 && s<size/2)
+      buf=(char*)realloc(buf,size=(s|(g-1))+1);
+   else if(size>=g*8 && s<size/2)
       buf=(char*)realloc(buf,size/=2);
    buf[s]=0;
 }
@@ -83,8 +83,6 @@ const char *xstring::append(const char *s)
       return buf;
    if(!buf)
       return set(s);
-   if(len==AUTO)
-      len=strlen(buf);
    size_t s_len=strlen(s);
    get_space(len+s_len);
    memcpy(buf+len,s,s_len);
@@ -108,8 +106,6 @@ size_t xstring::vstrlen(va_list va)
 const char *xstring::vappend(va_list va)
 {
    va_list va1;
-   if(len==AUTO)
-      len=xstrlen(buf);
 
    va_copy(va1,va);
    size_t need=len+vstrlen(va1);
@@ -152,7 +148,7 @@ void xstring::truncate(size_t n)
 {
    if(n<size)
       buf[n]=0;
-   if(len!=AUTO && n<len)
+   if(n<len)
       len=n;
 }
 void xstring::truncate_at(char c)
@@ -165,22 +161,9 @@ void xstring::truncate_at(char c)
    }
 }
 
-size_t xstring::length() const
-{
-   if(len==AUTO)
-      return xstrlen(buf);
-   return len;
-}
-size_t xstring::length()
-{
-   return len=const_cast<const xstring*>(this)->length();
-}
-
 const char *xstring::set_substr(int start,size_t sublen,const char *s)
 {
    size_t s_len=xstrlen(s);
-   if(len==AUTO)
-      len=strlen(buf);
    if(sublen<s_len)
       get_space(len+s_len-sublen);
    if(sublen!=s_len)

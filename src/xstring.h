@@ -106,6 +106,7 @@ public:
    ~xstring0() { xfree(buf); }
    operator const char *() const { return buf; }
    const char *get() const { return buf; }
+   char *get_non_const() { return buf; }
 };
 
 // compact variant
@@ -119,7 +120,6 @@ class xstring_c : public xstring0
 public:
    xstring_c() { buf=0; }
    xstring_c(const char *s) { buf=xstrdup(s); }
-   char *get_non_const() { return buf; }
    const char *set(const char *s) { return xstrset(buf,s); }
    const char *set_allocated(char *s) { xfree(buf); return buf=s; }
    void truncate(size_t n) { buf[n]=0; }
@@ -131,13 +131,9 @@ class xstring : public xstring0
    size_t size;
    size_t len;
 
-   static const size_t AUTO=(size_t)-1;
-
    void init() { buf=0; size=len=0; }
    void init(const char *s,int l);
    void init(const char *s);
-
-   void get_space(size_t s);
 
    // make xstring = xstrdup() fail:
    xstring& operator=(char *);
@@ -146,13 +142,13 @@ class xstring : public xstring0
 
 public:
    xstring() { init(); }
-   xstring(xstring &s) { init(s,s.length()); }
    xstring(const xstring &s) { init(s,s.length()); }
    xstring(const char *s) { init(s); }
 
-   char *get_non_const() { len=AUTO; return buf; }
-   size_t length();
-   size_t length() const;
+   // allocates s bytes, with preferred granularity g
+   void get_space(size_t s,size_t g=32);
+
+   size_t length() const { return len; }
 
    const char *set(xstring &s) { return nset(s,s.length()); }
    const char *set(const xstring &s) { return nset(s,s.length()); }
@@ -169,6 +165,9 @@ public:
 
    void truncate(size_t n);
    void truncate_at(char c);
+   /* set_length can be used to extend the string, e.g. after modification
+      with get_space+get_non_const. */
+   void set_length(size_t n) { buf[len=n]=0; }
 };
 
 #endif//XSTRING_H
