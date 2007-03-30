@@ -71,6 +71,8 @@ const char *xstring::set(const char *s)
 
 const char *xstring::set_allocated(char *s)
 {
+   if(!s)
+      return set(0);
    len=strlen(s);
    size=len+1;
    xfree(buf);
@@ -146,10 +148,8 @@ const char *xstring::vset(...)
 
 void xstring::truncate(size_t n)
 {
-   if(n<size)
-      buf[n]=0;
    if(n<len)
-      len=n;
+      set_length(n);
 }
 void xstring::truncate_at(char c)
 {
