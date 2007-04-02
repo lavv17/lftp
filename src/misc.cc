@@ -66,54 +66,42 @@ const char *dir_file(const char *dir,const char *file)
    if(file[0]=='/')
       return file;
 
-   static char *buf=0;
-   static int buf_size=0;
+   static xstring buf;
 
    if(buf && dir==buf) // it is possible to dir_file(dir_file(dir,dir),file)
       dir=alloca_strdup(dir);
 
-   int len=strlen(dir)+1+strlen(file)+1;
-   if(buf_size<len)
-      buf=(char*)xrealloc(buf,buf_size=len);
-   len=strlen(dir);
+   size_t len=strlen(dir);
    if(len==0)
-      sprintf(buf,"%s",file);
-   else if(dir[len-1]=='/')
-      sprintf(buf,"%s%s",dir,file);
-   else
-      sprintf(buf,"%s/%s",dir,file);
-   return buf;
+      return buf.set(file);
+   if(dir[len-1]=='/')
+      return buf.vset(dir,file,NULL);
+   return buf.vset(dir,"/",file,NULL);
 }
 
 const char *url_file(const char *url,const char *file)
 {
-   static char *buf=0;
-   static int buf_size=0;
+   static xstring buf;
 
    if(buf && url==buf) // it is possible to url_file(url_file(url,dir),file)
       url=alloca_strdup(url);
 
-   int len=3*xstrlen(url)+4+3*xstrlen(file)+1;
-   if(buf_size<len)
-      buf=(char*)xrealloc(buf,buf_size=len);
    if(!url || url[0]==0)
    {
-      strcpy(buf,file?file:"");
+      buf.set(file?file:"");
       return buf;
    }
    ParsedURL u(url);
    if(!u.proto)
    {
-      strcpy(buf,dir_file(url,file));
+      buf.set(dir_file(url,file));
       return buf;
    }
    if(file && file[0]=='~')
       u.path=(char*)file;
    else
       u.path=(char*)dir_file(u.path,file);
-   xfree(buf);
-   buf=u.Combine();
-   buf_size=xstrlen(buf)+1;
+   buf.set_allocated(u.Combine());
    return buf;
 }
 
@@ -178,41 +166,35 @@ const char *basename_ptr(const char *s)
 
 const char *expand_home_relative(const char *s)
 {
-   if(s[0]=='~')
+   if(s[0]!='~')
+      return s;
+
+   const char *home=0;
+   const char *sl=strchr(s+1,'/');
+   static xstring ret_path;
+
+   if(s[1]==0 || s[1]=='/')
    {
-      const char *home=0;
-      const char *sl=strchr(s+1,'/');;
-      static char *ret_path=0;
-
-      if(s[1]==0 || s[1]=='/')
-      {
-	 home=getenv("HOME");
-      }
-      else
-      {
-	 // extract user name and find the home
-	 int name_len=(sl?sl-s-1:strlen(s+1));
-	 char *name=(char*)alloca(name_len+1);
-	 strncpy(name,s+1,name_len);
-	 name[name_len]=0;
-
-	 struct passwd *pw=getpwnam(name);
-	 if(pw)
-	    home=pw->pw_dir;
-      }
-      if(home==0)
-	 return s;
-
-      if(sl)
-      {
-	 ret_path=(char*)xrealloc(ret_path,strlen(sl)+strlen(home)+1);
-	 strcpy(ret_path,home);
-	 strcat(ret_path,sl);
-	 return ret_path;
-      }
-      return home;
+      home=getenv("HOME");
    }
-   return s;
+   else
+   {
+      // extract user name and find the home
+      int name_len=(sl?sl-s-1:strlen(s+1));
+      char *name=(char*)alloca(name_len+1);
+      strncpy(name,s+1,name_len);
+      name[name_len]=0;
+
+      struct passwd *pw=getpwnam(name);
+      if(pw)
+	 home=pw->pw_dir;
+   }
+   if(home==0)
+      return s;
+
+   if(sl)
+      return ret_path.vset(home,sl,NULL);
+   return home;
 }
 
 int   create_directories(char *path)
@@ -455,8 +437,7 @@ int percent(off_t offset,off_t size)
 
 const char *squeeze_file_name(const char *name,int w)
 {
-   static char *buf;
-   static int buf_len;
+   static xstring buf;
    int mbflags=0;
 
    name=url::remove_password(name);
@@ -465,17 +446,10 @@ const char *squeeze_file_name(const char *name,int w)
    if(name_width<=w)
       return name;
 
-   if(buf_len<w*4+20)
-      buf=(char*)xrealloc(buf,buf_len=w*4+20);
-
    const char *b=basename_ptr(name);
    int b_width=name_width-mbsnwidth(name,b-name,mbflags);
    if(b_width<=w-4 && b_width>w-15)
-   {
-      strcpy(buf,".../");
-      strcat(buf,b);
-      return buf;
-   }
+      return buf.vset(".../",b,NULL);
    int b_len=strlen(b);
    while(b_width>(w<3?w-1:w-3) && b_len>0)
    {
@@ -487,11 +461,10 @@ const char *squeeze_file_name(const char *name,int w)
       b_len-=ch_len;
    }
    if(w>=6)
-      strcpy(buf,"...");
+      buf.set("...");
    else
-      strcpy(buf,"<");
-   strcat(buf,b);
-   return buf;
+      buf.set("<");
+   return buf.append(b);
 }
 
 /* Converts struct tm to time_t, assuming the data in tm is UTC rather
@@ -615,18 +588,11 @@ bool re_match(const char *line,const char *a,int flags)
 
 char *Subst(const char *txt, const subst_t *s)
 {
-   char *buf=0;
-   int buf_size=256;
-
-   if(buf==0)
-      buf=(char*)xmalloc(buf_size);
-
-   char *store=buf;
+   xstring buf("");
 
    char str[3];
    bool last_subst_empty=true;
 
-   *store=0;
    while(*txt)
    {
       char ch = *txt++;
@@ -680,20 +646,9 @@ char *Subst(const char *txt, const subst_t *s)
       if(to_add==0)
 	 continue;
 
-      int store_index=store-buf;
-      int need=store_index+strlen(to_add)+1;
-      if(buf_size<need)
-      {
-	 while(buf_size<need)
-	    buf_size*=2;
-	 buf=(char*)xrealloc(buf,buf_size);
-	 store=buf+store_index;
-      }
-
-      strcpy(store,to_add);
-      store+=strlen(to_add);
+      buf.append(to_add);
    }
-   return(buf);
+   return(buf.borrow());
 }
 
 /* if we put escape-handling, etc. in here, the main parser
@@ -714,6 +669,8 @@ char **tokenize(const char *str, int *argc)
       while(buf[i] && buf[i] != ' ') i++;
       if(buf[i] == ' ') buf[i++] = 0;
    }
+   if(*argc==0)
+      xfree(buf); // we have not assigned it
 
    argv = (char **) xrealloc(argv, sizeof(char *) * (*argc+1));
    argv[*argc] = NULL;
@@ -956,21 +913,19 @@ const char *shell_encode(const char *string)
    if(!string)
       return 0;
 
-   int c;
-   static char *result=0;
-   char *r;
-   const char *s;
+   static xstring result;
 
-   result = (char*)xrealloc (result, 2 + 2 * strlen (string) + 1);
+   result.get_space(2 + 2 * strlen (string));
+   char *r = result.get_non_const();
 
-   r = result;
    if(string[0]=='-' || string[0]=='~')
    {
       *r++='.';
       *r++='/';
    }
 
-   for (s = string; s && (c = *s); s++)
+   int c;
+   for (const char *s = string; s && (c = *s); s++)
    {
       switch (c)
       {
@@ -993,8 +948,7 @@ const char *shell_encode(const char *string)
 	 break;
       }
    }
-
-   *r = '\0';
+   result.set_length(r-result);
    return (result);
 }
 
