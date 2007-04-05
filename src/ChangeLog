@@ -1,3 +1,8 @@
+2007-04-05  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* xstring.h: disable cloning of xstring*.
+	* FindJob.cc, Http.cc, keyvalue.cc: avoid unnecessary xstring cloning.
+
 2007-04-04  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* keyvalue.cc: truncate key and value before reading next record.
