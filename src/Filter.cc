@@ -34,6 +34,7 @@
 #include "SignalHook.h"
 #include "ArgV.h"
 #include "misc.h"
+#include "FileSet.h"
 
 #ifndef O_BINARY
 # define O_BINARY 0
@@ -344,11 +345,17 @@ bool OutputFilter::usesfd(int n_fd)
    return n_fd<=2;
 }
 
-void FileStream::setmtime(time_t t)
+void FileStream::setmtime(const FileTimestamp &ts)
 {
    getfd(); // this might create the file... But can fail retriably. FIXME.
+
+   // skip the time update if the timestamp is already accurate enough.
+   struct stat st;
+   if(fstat(fd,&st)!=-1 && labs(st.st_mtime-ts)<=ts.ts_prec)
+      return;
+
    struct utimbuf ut;
-   ut.actime=ut.modtime=t;
+   ut.actime=ut.modtime=ts;
    utime(full_name,&ut);
 }
 FileStream::FileStream(const char *fname,int new_mode) : FDStream(-1,fname)

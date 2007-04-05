@@ -854,7 +854,7 @@ do_again:
 	 cur->time=NO_DATE;
 	 cur->get_size = need_size && !(file->defined & file->SIZE);
 	 cur->get_time = need_time && (!(file->defined & file->DATE)
-				 || (file->date_prec>0 && can_get_prec_time));
+				 || (file->date.ts_prec>0 && can_get_prec_time));
 	 cur->file=0;
 
 	 if(file->defined & file->TYPE)

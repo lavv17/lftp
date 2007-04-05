@@ -43,10 +43,6 @@
 #include "FileSet.h"
 #include "LsCache.h"
 
-#define NO_SIZE	     ((off_t)-1L)
-#define NO_SIZE_YET  ((off_t)-2L)
-#define NO_DATE	     ((time_t)-1L)
-#define NO_DATE_YET  ((time_t)-2L)
 #define FILE_END     ((off_t)-1L)
 #define UNKNOWN_POS  ((off_t)-1L)
 
@@ -143,7 +139,7 @@ protected:
    off_t real_pos;
    off_t limit;
 
-   time_t *opt_date;
+   FileTimestamp *opt_date;
    off_t  *opt_size;
 
    static void NonBlock(int fd);
@@ -244,7 +240,7 @@ public:
    void SetLimit(off_t lim) { limit=lim; }
    void SetSize(off_t s) { entity_size=s; }
    void SetDate(time_t d) { entity_date=d; }
-   void WantDate(time_t *d) { opt_date=d; }
+   void WantDate(FileTimestamp *d) { opt_date=d; }
    void WantSize(off_t *s) { opt_size=s; }
    void AsciiTransfer() { ascii=true; }
    virtual void Close();

@@ -144,7 +144,7 @@ void FileSetOutput::print(FileSet &fs, OutputJob *o) const
 	 if(!use_fmt || !*use_fmt)
 	    use_fmt="%b %e  %Y\n%b %e %H:%M";
 
-	 char *dt_mem = xstrftime(use_fmt, localtime (&f->date));
+	 char *dt_mem = xstrftime(use_fmt, localtime (&f->date.ts));
 	 char *dt=strtok(dt_mem,"\n|");
 	 if(recent) {
 	    char *dt1=strtok(NULL,"\n|");

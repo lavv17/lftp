@@ -2,6 +2,10 @@
 
 	* xstring.h: disable cloning of xstring*.
 	* FindJob.cc, Http.cc, keyvalue.cc: avoid unnecessary xstring cloning.
+	* FileAccess.h, FileCopy.cc, FileCopy.h, FileSet.cc, FileSet.h,
+	  FileSetOutput.cc, Filter.cc, Filter.h, MirrorJob.cc, NetAccess.cc:
+	  (FileTimestamp) new struct; use it where needed; submit even
+	  imprecise timestamp from MirrorJob to CopyJob.
 
 2007-04-04  Alexander V. Lukyanov <lav@yars.free.net>
 
