@@ -49,6 +49,7 @@ int KeyValueDB::Read(int fd)
       if(c=='\n')
 	 continue;   // next line
 
+      key.truncate(0);
       for(;;)
       {
 	 key.append(c);
@@ -69,6 +70,7 @@ int KeyValueDB::Read(int fd)
       if(c==EOF || c=='\n')
 	 break;
 
+      value.truncate(0);
       for(;;)
       {
 	 value.append(c);

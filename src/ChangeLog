@@ -1,3 +1,7 @@
+2007-04-04  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* keyvalue.cc: truncate key and value before reading next record.
+
 2007-04-02  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* misc.cc: use xstring.
