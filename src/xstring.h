@@ -102,6 +102,7 @@ class xstring0 // base class
 protected:
    char *buf;
    xstring0() {}
+   xstring0(const xstring0&); // disable cloning
 public:
    ~xstring0() { xfree(buf); }
    operator const char *() const { return buf; }
@@ -116,6 +117,7 @@ class xstring_c : public xstring0
    xstring_c& operator=(char *);
    const char *operator=(const char *s);
    const char *operator=(const xstring_c& s);
+   xstring_c(const xstring_c&); // disable cloning
 
 public:
    xstring_c() { buf=0; }
@@ -140,10 +142,10 @@ class xstring : public xstring0
    xstring& operator=(char *);
    const char *operator=(const char *s) { return set(s); }
    const char *operator=(const xstring& s) { return set(s.get()); }
+   xstring(const xstring&); // disable cloning
 
 public:
    xstring() { init(); }
-   xstring(const xstring &s) { init(s,s.length()); }
    xstring(const char *s) { init(s); }
 
    // allocates s bytes, with preferred granularity g

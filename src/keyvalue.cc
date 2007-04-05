@@ -193,7 +193,7 @@ KeyValueDB::Pair **KeyValueDB::LookupPair(const char *key) const
 const char *KeyValueDB::Lookup(const char *key) const
 {
    const Pair * const*p=LookupPair(key);
-   return p ? (*p)->value : 0;
+   return p ? (*p)->value.get() : 0;
 }
 
 int KeyValueDB::Lock(int fd,int type)

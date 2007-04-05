@@ -1160,7 +1160,7 @@ int Http::Do()
 	 {
 	    // have to setup a tunnel.
 	    char *ehost=string_alloca(strlen(hostname)*3+1);
-	    const char *port_to_use=portname?portname:HTTPS_DEFAULT_PORT;
+	    const char *port_to_use=portname?portname.get():HTTPS_DEFAULT_PORT;
 	    char *eport=string_alloca(strlen(port_to_use)*3+1);
 	    url::encode_string(hostname,ehost,URL_HOST_UNSAFE);
 	    url::encode_string(port_to_use,eport,URL_PORT_UNSAFE);
