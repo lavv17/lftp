@@ -228,7 +228,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    && (old->defined&file->TYPE) && old->filetype==old->NORMAL
 	    && (flags&IGNORE_TIME ||
 	    	((file->defined&file->DATE) && (old->defined&old->DATE)
-	    	&& file->date + file->date_prec < old->date - old->date_prec))
+	    	&& file->date + file->date.ts_prec < old->date - old->date.ts_prec))
 	    && (file->defined&file->SIZE) && (old->defined&old->SIZE)
 	    && file->size >= old->size
 	    && !use_pget)
@@ -297,7 +297,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	       c->RemoveTargetFirst();
 	    CopyJob *cp=
 	       new CopyJob(c,file->name,"mirror");
-	    if((file->defined&file->DATE) && file->date_prec<=1)
+	    if(file->defined&file->DATE)
 	       cp->SetDate(file->date);
 	    if(file->defined&file->SIZE)
 	       cp->SetSize(file->size);

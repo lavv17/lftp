@@ -47,7 +47,7 @@ protected:
    bool start_transfer;
    off_t size;
    off_t e_size;
-   time_t date;
+   FileTimestamp date;
 
    off_t seek_pos;
    bool can_seek;
@@ -89,7 +89,7 @@ public:
    time_t GetDate() { return date; }
    off_t  GetSize() { if(size>=0 && pos>size) WantSize(); return size; }
 
-   void SetDate(time_t d);
+   void SetDate(time_t d,int p=0);
    void SetSize(off_t s);
    void SetEntitySize(off_t s) { e_size=s; }
 
@@ -225,7 +225,8 @@ public:
    off_t GetBytesCount() { return bytes_count; }
    double GetTimeSpent();
 
-   void SetDate(time_t t) { get->SetDate(t); }
+   void SetDate(time_t t,int p=0) { get->SetDate(t,p); }
+   void SetDate(const FileTimestamp &t) { SetDate(t.ts,t.ts_prec); }
    void SetSize(off_t  s) { get->SetSize(s); }
 
    bool Done() { return state==ALL_DONE; }

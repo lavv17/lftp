@@ -42,11 +42,6 @@
 #include "IdNameCache.h"
 #include "PatternSet.h"
 
-#define NO_SIZE	     (-1L)
-#define NO_SIZE_YET  (-2L)
-#define NO_DATE	     ((time_t)-1L)
-#define NO_DATE_YET  ((time_t)-2L)
-
 void  FileInfo::Merge(const FileInfo& f)
 {
    if(strcmp(name,f.name))
@@ -55,8 +50,8 @@ void  FileInfo::Merge(const FileInfo& f)
    int dif=(~defined)&f.defined;
    if(dif&MODE)
       SetMode(f.mode);
-   if(dif&DATE || (defined&DATE && f.defined&DATE && f.date_prec<date_prec))
-      SetDate(f.date,f.date_prec);
+   if(dif&DATE || (defined&DATE && f.defined&DATE && f.date.ts_prec<date.ts_prec))
+      SetDate(f.date,f.date.ts_prec);
    if(dif&TYPE)
       SetType(f.filetype);
    if(dif&SYMLINK)
@@ -421,9 +416,9 @@ bool  FileInfo::SameAs(const FileInfo *fi,int ignore)
 
    if(defined&DATE && fi->defined&DATE && !(ignore&DATE))
    {
-      time_t p=date_prec;
-      if(p<fi->date_prec)
-	 p=fi->date_prec;
+      time_t p=date.ts_prec;
+      if(p<fi->date.ts_prec)
+	 p=fi->date.ts_prec;
       if(!(ignore&IGNORE_DATE_IF_OLDER && date<fi->date)
       && labs(date-fi->date)>p)
 	 return false;
@@ -588,7 +583,7 @@ void FileSet::LocalUtime(const char *dir,bool only_dirs)
 	 struct stat st;
 	 ut.actime=ut.modtime=file->date;
 
-	 if(stat(local_name,&st)!=-1 && st.st_mtime!=file->date)
+	 if(stat(local_name,&st)!=-1 && labs(st.st_mtime-file->date)>file->date.ts_prec)
 	    utime(local_name,&ut);
       }
    }
@@ -689,7 +684,6 @@ void FileInfo::Init()
    filetype=UNKNOWN;
    mode=(mode_t)-1;
    date=NO_DATE;
-   date_prec=0;
    size=NO_SIZE;
    nlinks=0;
    name=0;
@@ -712,7 +706,6 @@ FileInfo::FileInfo(const FileInfo &fi)
    filetype=fi.filetype;
    mode=fi.mode;
    date=fi.date;
-   date_prec=fi.date_prec;
    size=fi.size;
    nlinks=fi.nlinks;
    longname=xstrdup(fi.longname);

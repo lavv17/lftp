@@ -1,3 +1,10 @@
+2007-04-05  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileAccess.h, FileCopy.cc, FileCopy.h, FileSet.cc, FileSet.h,
+	  FileSetOutput.cc, Filter.cc, Filter.h, MirrorJob.cc, NetAccess.cc:
+	  (FileTimestamp) new struct; use it where needed; submit even
+	  imprecise timestamp from MirrorJob to CopyJob.
+
 2007-03-26  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* LocalAccess.cc: prevent double-delete of args in LocalDirList

@@ -637,10 +637,10 @@ void FileCopyPeer::SetSize(off_t s)
 	 seek_pos=0;
    }
 }
-void FileCopyPeer::SetDate(time_t d)
+void FileCopyPeer::SetDate(time_t d,int p)
 {
-   date=d;
-   if(date==NO_DATE || date==NO_DATE_YET)
+   date.set(d,p);
+   if(d==NO_DATE || d==NO_DATE_YET)
       date_set=true;
    else
       date_set=false;
@@ -680,7 +680,6 @@ FileCopyPeer::FileCopyPeer(dir_t m) : IOBuffer(m)
    start_transfer=true;
    size=NO_SIZE_YET;
    e_size=NO_SIZE;
-   date=NO_DATE_YET;
    seek_pos=0;
    can_seek=false;
    can_seek0=false;
@@ -961,7 +960,7 @@ void FileCopyPeerFA::OpenSession()
       session->AsciiTransfer();
    if(want_size && size==NO_SIZE_YET)
       session->WantSize(&size);
-   if(want_date && date==NO_DATE_YET)
+   if(want_date && (date==NO_DATE_YET || date.ts_prec>1))
       session->WantDate(&date);
    if(mode==GET)
    {

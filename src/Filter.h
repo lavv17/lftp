@@ -26,6 +26,7 @@
 #include "ProcWait.h"
 
 class ArgV;
+class FileTimestamp;
 
 class FDStream
 {
@@ -57,7 +58,7 @@ public:
    const char *GetCwd() const { return cwd; }
 
    virtual off_t get_size() { return -1; }
-   virtual void setmtime(time_t) {}
+   virtual void setmtime(const FileTimestamp &) {}
    virtual bool can_setmtime() { return false; }
    virtual void remove_if_empty() {}
    virtual void remove() {}
@@ -136,7 +137,7 @@ public:
    FileStream(const char *fname,int open_mode);
    ~FileStream();
 
-   void setmtime(time_t t);
+   void setmtime(const FileTimestamp &);
    bool can_setmtime() { return true; }
    void remove_if_empty();
    void remove();

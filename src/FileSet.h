@@ -31,13 +31,28 @@
 class TimeInterval;
 class Range;
 
+#define NO_SIZE	     ((off_t)-1L)
+#define NO_SIZE_YET  ((off_t)-2L)
+#define NO_DATE	     ((time_t)-1L)
+#define NO_DATE_YET  ((time_t)-2L)
+
+struct FileTimestamp
+{
+   time_t ts;
+   int ts_prec;
+   FileTimestamp() : ts(NO_DATE_YET), ts_prec(0) {}
+   void set(time_t ts1,int ts1_prec) { ts=ts1; ts_prec=ts1_prec; }
+   bool is_set() { return ts!=NO_DATE && ts!=NO_DATE_YET; }
+   operator time_t() const { return ts; }
+   time_t operator=(time_t t) { set(t,0); return t; }
+};
+
 class FileInfo
 {
 public:
    char	    *name;
    mode_t   mode;
-   time_t   date;
-   int	    date_prec;
+   FileTimestamp date;
    off_t    size;
    void	    *data;
    const char *user, *group;
@@ -82,7 +97,7 @@ public:
    static FileInfo *parse_ls_line(const char *line,const char *tz);
 
    void SetMode(mode_t m) { mode=m; defined|=MODE; }
-   void SetDate(time_t t,int prec) { date=t; defined|=DATE; date_prec=prec; }
+   void SetDate(time_t t,int prec) { date.set(t,prec); defined|=DATE; }
    void SetType(type t) { filetype=t; defined|=TYPE; }
    void SetSymlink(const char *s) { xfree(symlink); symlink=xstrdup(s);
       filetype=SYMLINK; defined|=TYPE|SYMLINK_DEF; }
