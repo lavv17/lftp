@@ -183,9 +183,8 @@ int SFtp::Do()
       cmd->Add(hostname);
       if(init[0])
 	 cmd->Add(init);
-      char *cmd_str=cmd->Combine(0);
-      Log::global->Format(9,"---- %s (%s)\n",_("Running connect program"),cmd_str);
-      xfree(cmd_str);
+      xstring_ca cmd_str(cmd->Combine(0));
+      Log::global->Format(9,"---- %s (%s)\n",_("Running connect program"),cmd_str.get());
       ssh=new PtyShell(cmd);
       ssh->UsePipes();
       state=CONNECTING;

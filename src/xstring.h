@@ -127,6 +127,11 @@ public:
    void truncate(size_t n) { if(buf) buf[n]=0; }
    char *borrow() { return replace_value(buf,(char*)0); }
 };
+class xstring_ca : public xstring_c
+{
+public:
+   xstring_ca(char *s) { buf=s; }
+};
 
 // full implementation
 class xstring : public xstring0
