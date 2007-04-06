@@ -890,14 +890,8 @@ char *CmdExec::FormatPrompt(const char *scan)
    if(p && p>cwdb)
       cwdb=p+1;
 
-   char StartIgn[3], EndIgn[3];
-   /* bash adds the extra \001 too, don't know why */
-   StartIgn[0] = '\001';
-   StartIgn[1] = RL_PROMPT_START_IGNORE;
-   StartIgn[2] = 0;
-   EndIgn[0] = '\001';
-   EndIgn[1] = RL_PROMPT_END_IGNORE;
-   EndIgn[2] = 0;
+   static const char StartIgn[]={RL_PROMPT_START_IGNORE,0};
+   static const char EndIgn[]={RL_PROMPT_END_IGNORE,0};
 
    subst_t subst[] = {
       { 'a', "\007" },

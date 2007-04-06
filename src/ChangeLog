@@ -9,6 +9,7 @@
 	* CmdExec.cc, CmdExec.h: use xstring; make unquote return result length.
 	* QueueFeeder.cc, QueueFeeder.h, StatusLine.cc: use xstring.
 	* SleepJob.cc: use xstring_ca.
+	* CmdExec.cc: don't add extra \001 for readline prompt.
 
 2007-04-05  Alexander V. Lukyanov <lav@yars.free.net>
 
