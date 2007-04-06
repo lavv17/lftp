@@ -234,17 +234,10 @@ Job *cmd_at(CmdExec *parent)
       count++;
    }
 
-#if 0
-   char **av=(char**)xmemdup(args->GetV(),(count+1)*sizeof(char**));
-   av[count]=0;
-   time_t when=parsetime(count-1,av+1);
-   xfree(av);
-#endif
-   char *date=args->Combine(1);
-   date[date_len]=0;
+   xstring_ca date(args->Combine(1));
+   date.truncate(date_len);
    time_t now=SMTask::now;
    time_t when=get_date(date,&now);
-   xfree(date);
 
    if(when==0 || when==(time_t)-1)
    {

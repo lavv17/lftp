@@ -26,16 +26,17 @@
 class QueueFeeder : public CmdFeeder
 {
    struct QueueJob {
-      char *cmd;
-      char *pwd, *lpwd;
+      xstring_c cmd;
+      xstring_c pwd;
+      xstring_c lpwd;
 
       QueueJob *next, *prev;
-      QueueJob(): cmd(0), pwd(0), lpwd(0), next(0), prev(0) { }
-      ~QueueJob();
+      QueueJob(): next(0), prev(0) {}
    } *jobs, *lastjob;
-   char *cur_pwd, *cur_lpwd;
+   xstring_c cur_pwd;
+   xstring_c cur_lpwd;
 
-   char *buffer;
+   xstring buffer;
 
    /* remove the given job from the list */
    void unlink_job(QueueJob *job);
@@ -78,11 +79,7 @@ public:
    void PrintStatus(int v,const char *prefix="\t") const;
 
    QueueFeeder(const char *pwd, const char *lpwd):
-      jobs(0), lastjob(0), cur_pwd(0), cur_lpwd(0), buffer(0)
-   {
-      cur_pwd = xstrdup(pwd);
-      cur_lpwd = xstrdup(lpwd);
-   }
+      jobs(0), lastjob(0), cur_pwd(pwd), cur_lpwd(lpwd) {}
    virtual ~QueueFeeder();
 };
 

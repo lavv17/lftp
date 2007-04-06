@@ -155,16 +155,15 @@ void StatusLine::WriteTitle(const char *s, int fd) const
 
    const char *status_format = ResMgr::Query("cmd:term-status", getenv("TERM"));
 
-   char *disp;
+   xstring disp;
 
    /* If we have no format, and we have both tsl and fsl, use them: */
    if((!status_format || !*status_format) && to_status_line && from_status_line)
-      disp = xasprintf("%s%s%s", to_status_line, s, from_status_line);
+      disp.vset(to_status_line, s, from_status_line, NULL);
    else
-      disp = Subst(status_format, subst);
+      disp.set_allocated(Subst(status_format, subst));
 
    write(fd, disp, strlen(disp));
-   xfree(disp);
 }
 
 void StatusLine::update(const char *const *newstr,int newstr_height)

@@ -37,54 +37,33 @@ const char *QueueFeeder::NextCmd(CmdExec *exec, const char *)
    /* denext the first job */
    QueueJob *job = grab_job(0);
 
-   int bufsize = 1;
-   buffer = (char *) xrealloc(buffer, bufsize);
-   buffer[0] = 0;
+   buffer.truncate(0);
 
-   if(cur_pwd == NULL || strcmp(cur_pwd, job->pwd)) {
-      bufsize += strlen(job->pwd)*2 + 	/* quote safety */
-	         7;			/* 'cd ""; ' */
-      buffer = (char *) xrealloc(buffer, bufsize);
-
-      strcat(buffer, "cd \"");
-      CmdExec::unquote(buffer+strlen(buffer), job->pwd);
-      strcat(buffer, "\"; ");
-
-      xstrset(cur_pwd,job->pwd);
+   if(xstrcmp(cur_pwd, job->pwd)) {
+      buffer.vappend("cd \"",CmdExec::unquote(job->pwd),"\"; ",NULL);
+      cur_pwd.set(job->pwd);
    }
 
-   if(cur_lpwd == NULL || strcmp(cur_lpwd, job->lpwd)) {
-      bufsize += strlen(job->lpwd)*2 + 	/* quote safety */
-	         8;			/* 'lcd ""; ' */
-      buffer = (char *) xrealloc(buffer, bufsize);
-
-      strcat(buffer, "lcd \"");
-      CmdExec::unquote(buffer+strlen(buffer), job->lpwd);
-      strcat(buffer, "\"; ");
-
-      xstrset(cur_lpwd,job->lpwd);
+   if(xstrcmp(cur_lpwd, job->lpwd)) {
+      buffer.vappend("lcd \"",CmdExec::unquote(job->lpwd),"\"; ",NULL);
+      cur_lpwd.set(job->lpwd);
    }
 
-   bufsize += strlen(job->cmd) + 1;
-   buffer = (char *) xrealloc(buffer, bufsize);
-   strcat(buffer, job->cmd);
-   strcat(buffer, "\n");
-
+   buffer.vappend(job->cmd.get(),"\n",NULL);
    delete job;
-
    return buffer;
 }
 
 void QueueFeeder::QueueCmd(const char *cmd, const char *pwd, const char *lpwd, int pos, int v)
 {
    QueueJob *job = new QueueJob;
-   job->cmd = xstrdup(cmd);
-   job->pwd = xstrdup(pwd);
-   job->lpwd = xstrdup(lpwd);
+   job->cmd.set(cmd);
+   job->pwd.set(pwd);
+   job->lpwd.set(lpwd);
 
    /* we never want a newline at the end: */
    if(last_char(job->cmd) == '\n')
-      job->cmd[strlen(job->cmd)-1] = 0;
+      job->cmd.truncate(strlen(job->cmd)-1);
 
    insert_jobs(job, jobs, lastjob, pos != -1? get_job(pos): NULL);
    PrintJobs(job, v, _("Added job$|s$"));
@@ -106,13 +85,13 @@ void QueueFeeder::PrintJobs(const QueueJob *job, int v, const char *plur) const
    {
       for(const QueueJob *j = job; j; j=j->next)
       {
-	 if(!pwd || strcmp(pwd, job->pwd))
+	 if(xstrcmp(pwd, job->pwd))
 	 {
 	    printf("cd \"%s\" &\n", CmdExec::unquote(job->pwd));
 	    pwd = job->pwd;
 	 }
 
-	 if(!lpwd || strcmp(lpwd, job->lpwd))
+	 if(xstrcmp(lpwd, job->lpwd))
 	 {
 	    printf("lcd \"%s\" &\n", CmdExec::unquote(job->lpwd));
 	    lpwd = job->lpwd;
@@ -138,13 +117,13 @@ void QueueFeeder::PrintJobs(const QueueJob *job, int v, const char *plur) const
    {
       /* Print pwd/lpwd changes when v >= 2.  (This only happens when there's
        * more than one.) */
-      if(v > 2 && (!pwd || strcmp(pwd, job->pwd)))
+      if(v > 2 && (xstrcmp(pwd, job->pwd)))
       {
 	 printf("\tcd \"%s\"\n", CmdExec::unquote(job->pwd));
 	 pwd = job->pwd;
       }
 
-      if(v > 2 && (!lpwd || strcmp(lpwd, job->lpwd)))
+      if(v > 2 && (xstrcmp(lpwd, job->lpwd)))
       {
 	 printf("\tlcd \"%s\"\n", CmdExec::unquote(job->lpwd));
 	 lpwd = job->lpwd;
@@ -155,7 +134,7 @@ void QueueFeeder::PrintJobs(const QueueJob *job, int v, const char *plur) const
       else
 	 printf("\t%2d. ",n++);
 
-      printf("%s\n", j->cmd);
+      printf("%s\n", j->cmd.get());
    }
 }
 
@@ -333,13 +312,6 @@ void QueueFeeder::insert_jobs(QueueJob *job,
    if(!job->prev) lst_head = job;
 }
 
-QueueFeeder::QueueJob::~QueueJob()
-{
-   xfree(cmd);
-   xfree(pwd);
-   xfree(lpwd);
-}
-
 /* Free a list of jobs (forward only; j should be a head pointer.) */
 void QueueFeeder::FreeList(QueueJob *j)
 {
@@ -353,10 +325,6 @@ void QueueFeeder::FreeList(QueueJob *j)
 QueueFeeder::~QueueFeeder()
 {
    FreeList(jobs);
-
-   xfree(cur_pwd);
-   xfree(cur_lpwd);
-   xfree(buffer);
 }
 
 
@@ -383,13 +351,13 @@ void QueueFeeder::PrintStatus(int v,const char *prefix) const
 	 break;
       }
       /* Print pwd/lpwd changes when v >= 2. */
-      if(v >= 2 && (!pwd || strcmp(pwd, job->pwd)))
-	 printf("%s    cd %s\n",prefix,job->pwd);
-      if(v >= 2 && (!lpwd || strcmp(lpwd, job->lpwd)))
-	 printf("%s    lcd %s\n",prefix,job->lpwd);
+      if(v >= 2 && (xstrcmp(pwd, job->pwd)))
+	 printf("%s    cd %s\n",prefix,job->pwd.get());
+      if(v >= 2 && (xstrcmp(lpwd, job->lpwd)))
+	 printf("%s    lcd %s\n",prefix,job->lpwd.get());
       pwd = job->pwd;
       lpwd = job->lpwd;
 
-      printf("%s%2d. %s\n",prefix,n++,job->cmd);
+      printf("%s%2d. %s\n",prefix,n++,job->cmd.get());
    }
 }

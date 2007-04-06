@@ -1070,8 +1070,9 @@ void CmdExec::SetInteractive(bool i)
    interactive=i;
 }
 
-void CmdExec::unquote(char *buf,const char *str)
+int CmdExec::unquote(char *buf,const char *str)
 {
+   char *buf0=buf;
    while(*str)
    {
       if(*str=='"' || *str=='\\')
@@ -1079,17 +1080,14 @@ void CmdExec::unquote(char *buf,const char *str)
       *buf++=*str++;
    }
    *buf=0;
+   return buf-buf0;
 }
 
-char *CmdExec::unquote(const char *str)
+const char *CmdExec::unquote(const char *str)
 {
-   static char *ret = 0;
-   if(ret)
-      xfree(ret);
-   ret=(char *)xmalloc(strlen(str)*2+1);
-
-   unquote(ret, str);
-
+   static xstring ret;
+   ret.get_space(strlen(str)*2);
+   ret.set_length(unquote(ret.get_non_const(),str));
    return ret;
 }
 

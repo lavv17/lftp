@@ -150,8 +150,8 @@ public:
    void FeedArgV(const ArgV *,int start=0);
    void PrependCmd(const char *c);
    void ExecParsed(ArgV *a,FDStream *o=0,bool b=false);
-   static void unquote(char *buf,const char *str);
-   static char *unquote(const char *str);
+   static int unquote(char *buf,const char *str);  // returns buf length
+   static const char *unquote(const char *str);
    static bool needs_quotation(const char *buf);
    static bool quotable(char c,char in_quotes);
    static bool is_space(char c) { return c==' ' || c=='\t'; }

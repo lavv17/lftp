@@ -6,6 +6,9 @@
 	  disable FileSetOutput cloning and assignment.
 	* xstring.h: (xstring_ca) new class for allocated strings.
 	* FileSetOutput.cc, SFtp.cc: use it.
+	* CmdExec.cc, CmdExec.h: use xstring; make unquote return result length.
+	* QueueFeeder.cc, QueueFeeder.h, StatusLine.cc: use xstring.
+	* SleepJob.cc: use xstring_ca.
 
 2007-04-05  Alexander V. Lukyanov <lav@yars.free.net>
 
