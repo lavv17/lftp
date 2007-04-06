@@ -124,7 +124,7 @@ public:
    xstring_c(const char *s) { buf=xstrdup(s); }
    const char *set(const char *s) { return xstrset(buf,s); }
    const char *set_allocated(char *s) { xfree(buf); return buf=s; }
-   void truncate(size_t n) { buf[n]=0; }
+   void truncate(size_t n) { if(buf) buf[n]=0; }
    char *borrow() { return replace_value(buf,(char*)0); }
 };
 

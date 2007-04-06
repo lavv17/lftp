@@ -1,3 +1,8 @@
+2007-04-06  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* xstring.cc, xstring.h: allow truncate on unset xstrings; change
+	  truncate_at so that it works on binary strings.
+
 2007-04-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* xstring.h: disable cloning of xstring*.

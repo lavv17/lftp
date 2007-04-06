@@ -160,7 +160,9 @@ void xstring::truncate(size_t n)
 }
 void xstring::truncate_at(char c)
 {
-   char *p=strchr(buf,c);
+   if(!buf)
+      return;
+   char *p=(char*)memchr(buf,c,len);
    if(p)
    {
       *p=0;
