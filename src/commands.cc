@@ -1573,19 +1573,19 @@ const char *FileSetOutput::parse_argv(ArgV *a)
       a->delarg(1);
    a->rewind();
 
-   xfree(time_fmt); time_fmt=0;
+   time_fmt.set(0);
    if(time_style && time_style[0]) {
       if(time_style[0]=='+')
-	 time_fmt=xstrdup(time_style+1);
+	 time_fmt.set(time_style+1);
       else if(!strcmp(time_style,"full-iso"))
-//	 time_fmt=xstrdup("%Y-%m-%d %H:%M:%S.%N %z"); // %N and %z are GNU extensions
-	 time_fmt=xstrdup("%Y-%m-%d %H:%M:%S");
+//	 time_fmt.set("%Y-%m-%d %H:%M:%S.%N %z"); // %N and %z are GNU extensions
+	 time_fmt.set("%Y-%m-%d %H:%M:%S");
       else if(!strcmp(time_style,"long-iso"))
-	 time_fmt=xstrdup("%Y-%m-%d %H:%M");
+	 time_fmt.set("%Y-%m-%d %H:%M");
       else if(!strcmp(time_style,"iso"))
-	 time_fmt=xstrdup("%Y-%m-%d \n%m-%d %H:%M");
+	 time_fmt.set("%Y-%m-%d \n%m-%d %H:%M");
       else
-	 time_fmt=xstrdup(time_style);
+	 time_fmt.set(time_style);
       need_exact_time=false;
       if(time_fmt) {
 	 static const char exact_fmts[][3]={"%H","%M","%S","%N",""};
@@ -1615,19 +1615,20 @@ CMD(cls)
    OutputJob *out=new OutputJob(output, args->a0());
    output=0;
 
-   FileSetOutput fso;
-   fso.config(out);
+   FileSetOutput *fso=new FileSetOutput;
+   fso->config(out);
 
    if(!strncmp(op,"re",2))
       re=true;
 
    ArgV arg("", ResMgr::Query("cmd:cls-default", 0));
-   fso.parse_argv(&arg);
+   fso->parse_argv(&arg);
 
-   if(const char *err = fso.parse_argv(args)) {
+   if(const char *err = fso->parse_argv(args)) {
       eprintf("%s: %s.\n", op, err);
       eprintf(_("Try `help %s' for more information.\n"),op);
       delete out;
+      delete fso;
       return 0;
    }
 

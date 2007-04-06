@@ -2,6 +2,8 @@
 
 	* xstring.cc, xstring.h: allow truncate on unset xstrings; change
 	  truncate_at so that it works on binary strings.
+	* FileSetOutput.cc, FileSetOutput.h, commands.cc: use xstring;
+	  disable FileSetOutput cloning and assignment.
 
 2007-04-05  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -144,8 +144,9 @@ void FileSetOutput::print(FileSet &fs, OutputJob *o) const
 	 if(!use_fmt || !*use_fmt)
 	    use_fmt="%b %e  %Y\n%b %e %H:%M";
 
-	 char *dt_mem = xstrftime(use_fmt, localtime (&f->date.ts));
-	 char *dt=strtok(dt_mem,"\n|");
+	 xstring_c dt_mem;
+	 dt_mem.set_allocated(xstrftime(use_fmt, localtime (&f->date.ts)));
+	 char *dt=strtok(dt_mem.get_non_const(),"\n|");
 	 if(recent) {
 	    char *dt1=strtok(NULL,"\n|");
 	    if(dt1)
@@ -154,14 +155,11 @@ void FileSetOutput::print(FileSet &fs, OutputJob *o) const
 	 if (!(f->defined&f->DATE)) {
 	    /* put an empty field; make sure it's the same width */
 	    int wid = mbswidth(dt, 0);
-	    xfree(dt_mem); dt_mem=0;
-
 	    dt = string_alloca(wid+1);
 	    memset(dt, ' ', wid);
 	    dt[wid] = 0;
 	 }
 	 c.addf("%s ", "", dt);
-	 xfree(dt_mem);
       }
 
       const char *nm = f->name;
@@ -204,22 +202,6 @@ const char *FileSetOutput::FileInfoSuffix(const FileInfo &fi) const
    else if(fi.filetype == FileInfo::SYMLINK)
       return "@";
    return "";
-}
-
-FileSetOutput::FileSetOutput(const FileSetOutput &cp)
-{
-   memset(this, 0, sizeof(*this));
-   *this = cp;
-}
-
-const FileSetOutput &FileSetOutput::operator = (const FileSetOutput &cp)
-{
-   if(this == &cp) return *this;
-
-   memcpy(this, &cp, sizeof(*this));
-   pat = xstrdup(cp.pat);
-   time_fmt = xstrdup(cp.time_fmt);
-   return *this;
 }
 
 void FileSetOutput::config(const OutputJob *o)
@@ -281,7 +263,7 @@ int FileSetOutput::Need() const
 #undef super
 #define super SessionJob
 
-clsJob::clsJob(FA *s, ArgV *a, const FileSetOutput &_opts, OutputJob *_output):
+clsJob::clsJob(FA *s, ArgV *a, FileSetOutput *_opts, OutputJob *_output):
    SessionJob(s),
    fso(_opts),
    args(a),
@@ -289,8 +271,6 @@ clsJob::clsJob(FA *s, ArgV *a, const FileSetOutput &_opts, OutputJob *_output):
 {
    use_cache=true;
    done=0;
-   dir=0;
-   mask=0;
    state=INIT;
    list_info=0;
 
@@ -304,9 +284,9 @@ clsJob::clsJob(FA *s, ArgV *a, const FileSetOutput &_opts, OutputJob *_output):
 clsJob::~clsJob()
 {
    delete args;
-   xfree(dir);
    Delete(list_info);
    Delete(output);
+   delete fso;
 }
 
 int clsJob::Done()
@@ -333,10 +313,8 @@ int clsJob::Do()
       list_info=0;
 
       /* next: */
-      xfree(dir); dir = 0;
-      xfree(mask); mask = 0;
-
-      dir=xstrdup(args->getnext());
+      mask.set(0);
+      dir.set(args->getnext());
       if(!dir) {
 	 /* done */
 	 state=DONE;
@@ -344,27 +322,20 @@ int clsJob::Do()
       }
 
       /* If the basename contains wildcards, set up the mask. */
-      mask = strrchr(dir, '/');
-      if(!mask) mask=dir;
-      if(Glob::HasWildcards(mask)) {
-	 if(mask == dir)
-	    dir = xstrdup("");
-	 else {
-	    /* The mask is the whole argument, not just the basename; this is
-	     * because the whole relative paths will end up in the FileSet, and
-	     * that's what this pattern will be matched against. */
-	    char *newmask = xstrdup(dir);
+      char *bn = basename_ptr(dir.get_non_const());
+      if(Glob::HasWildcards(bn)) {
+	 /* The mask is the whole argument, not just the basename; this is
+	  * because the whole relative paths will end up in the FileSet, and
+	  * that's what this pattern will be matched against. */
+	 mask.set(dir);
+	 // leave the final / on the path, to prevent the dirname of
+	 // "file/*" from being treated as a file
+	 bn[0]=0;	// this modifies dir, can result in dir eq ""
+      }
 
-	    // leave the final / on the path, to prevent the dirname of
-	    // "file/*" from being treated as a file
-	    mask[1] = 0;
-	    mask = newmask;
-	 }
-      } else mask=0;
-
-      list_info=new GetFileInfo(session, dir, fso.list_directories);
+      list_info=new GetFileInfo(session, dir, fso->list_directories);
       list_info->UseCache(use_cache);
-      list_info->Need(fso.Need());
+      list_info->Need(fso->Need());
 
       state=GETTING_LIST_INFO;
       m=MOVED;
@@ -381,13 +352,13 @@ int clsJob::Do()
       }
 
       /* one just finished */
-      fso.pat = mask;
+      fso->pat.set_allocated(mask.borrow());
       FileSet *res = list_info->GetResult();
 
       if(res)
-	 fso.print(*res, output);
+	 fso->print(*res, output);
 
-      fso.pat = 0;
+      fso->pat.set(0);
       delete res;
 
       state=START_LISTING;
@@ -422,7 +393,7 @@ void clsJob::ResumeInternal()
 
 void clsJob::ShowRunStatus(StatusLine *s)
 {
-   if(fso.quiet)
+   if(fso->quiet)
       return;
 
    if(!output->ShowStatusLine(s))
