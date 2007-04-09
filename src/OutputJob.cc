@@ -111,7 +111,7 @@ void OutputJob::InitCopy()
       pipe_output->CloseFD();
       output_fd->CloseFD();
 
-      xstrset(fa_path,0);
+      fa_path.set(0);
    }
 
    initialized=true;
@@ -151,9 +151,8 @@ void OutputJob::InitCopy()
    if(!fail_if_broken)
       input_fc->DontFailIfBroken();
 
-   char *buf = xasprintf(_("%s (filter)"), a0);
+   xstring_ca buf(xasprintf(_("%s (filter)"), a0.get()));
    input=new CopyJob(input_fc, buf, filter?filter:a0);
-   xfree(buf);
 
    if(!output)
       output=input;
@@ -185,16 +184,14 @@ void OutputJob::InitCopy()
 void OutputJob::Init(const char *_a0)
 {
    input=output=0;
-   filter=0;
    initialized=false;
    error=false;
    no_status=false;
-   a0=xstrdup(_a0);
+   a0.set(_a0);
    is_stdout=false;
    fail_if_broken=true;
    output_fd=0;
    fa=0;
-   fa_path=0;
    tmp_buf=0;
    is_a_tty=false;
    width=-1;
@@ -242,6 +239,7 @@ OutputJob::OutputJob(FDStream *output_, const char *a0)
 }
 
 OutputJob::OutputJob(const char *path, const char *a0, FileAccess *fa0)
+   : fa_path(path)
 {
    Init(a0);
 
@@ -253,7 +251,6 @@ OutputJob::OutputJob(const char *path, const char *a0, FileAccess *fa0)
       if(!fa)
 	 fa=new DummyNoProto("file");
    }
-   fa_path=xstrdup(path);
 }
 
 OutputJob::~OutputJob()
@@ -266,11 +263,7 @@ OutputJob::~OutputJob()
       Delete(output);
    delete output_fd;
    SessionPool::Reuse(fa);
-   xfree(fa_path);
    delete tmp_buf;
-
-   xfree(a0);
-   xfree(filter);
 }
 
 /* This is called to ask us "permission" to display a status line. */
@@ -361,19 +354,9 @@ void OutputJob::PutEOF()
 void OutputJob::PreFilter(const char *newfilter)
 {
    if(!filter)
-   {
-      SetFilter(newfilter);
-      return;
-   }
-
-   char *newstr = xasprintf("%s | %s", newfilter, filter);
-   SetFilter(newstr);
-   xfree(newstr);
-}
-
-void OutputJob::SetFilter(const char *newfilter)
-{
-   xstrset(filter,newfilter);
+      filter.set(newfilter);
+   else
+      filter.set_allocated(xasprintf("%s | %s", newfilter, filter.get()));
 }
 
 /* Return the width of the output.  If there's a filter, we can either
@@ -546,10 +529,9 @@ void OutputJob::Format(const char *f,...)
 {
    va_list v;
    va_start(v,f);
-   char *str=xvasprintf(f,v);
+   xstring_ca str(xvasprintf(f,v));
    va_end(v);
    Put(str);
-   xfree(str);
 }
 
 /* Propagate signals down to our child processes. */

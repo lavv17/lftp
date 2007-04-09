@@ -108,6 +108,9 @@ public:
    operator const char *() const { return buf; }
    const char *get() const { return buf; }
    char *get_non_const() { return buf; }
+   bool eq(const char *s) { return !xstrcmp(buf,s); }
+   bool ne(const char *s) { return !eq(s); }
+   size_t length() const { return xstrlen(buf); }
 };
 
 // compact variant
@@ -178,6 +181,8 @@ public:
       with get_space+get_non_const. */
    void set_length(size_t n) { buf[len=n]=0; }
    char *borrow() { size=len=0; return replace_value(buf,(char*)0); }
+   bool eq(const xstring&o) { return len==o.len && (buf==o.buf || (len>0 && !memcmp(buf,o.buf,len))); }
+   bool ne(const xstring&o) { return !eq(o); }
 };
 
 #endif//XSTRING_H

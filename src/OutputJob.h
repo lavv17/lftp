@@ -39,13 +39,13 @@ class OutputJob : public Job
    Buffer *tmp_buf;	// to store data while !initialized
    FDStream *output_fd;	// to initialize CopyJobs
    FileAccess *fa;
-   char *fa_path;
+   xstring_c fa_path;
    bool fa_reuse;
 
    bool initialized;
 
-   char *a0;
-   char *filter;
+   xstring_c a0;
+   xstring_c filter;
 
    bool error;
    bool is_stdout;
@@ -78,9 +78,9 @@ public:
    ~OutputJob();
 
    /* Set the main filter: */
-   void SetFilter(const char *filter);
+   void SetFilter(const char *f) { filter.set(f); }
    /* Prepend a filter before the main filter: */
-   void PreFilter(const char *filter);
+   void PreFilter(const char *f);
 
    void DontFailIfBroken(bool y=true) { fail_if_broken=!y; }
    bool Error();
