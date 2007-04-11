@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2007-03-26 16:55+0400\n"
+"POT-Creation-Date: 2007-04-11 09:32+0400\n"
 "PO-Revision-Date: 1999-07-12 00:00+0400\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -43,7 +43,7 @@ msgstr ""
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
 
-#: src/CmdExec.cc:406 src/FileCopy.cc:1025
+#: src/CmdExec.cc:406 src/FileCopy.cc:1024
 msgid "Too many redirections"
 msgstr ""
 
@@ -89,7 +89,7 @@ msgstr "\tExecutando\n"
 msgid "\tWaiting for command\n"
 msgstr "Atenção: descartando comando incompleto\n"
 
-#: src/CmdExec.cc:1303
+#: src/CmdExec.cc:1297
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr ""
@@ -1981,20 +1981,20 @@ msgstr ""
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr ""
 
-#: src/FileCopy.cc:1022
+#: src/FileCopy.cc:1021
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr ""
 
-#: src/FileCopy.cc:1227
+#: src/FileCopy.cc:1226
 msgid "file name missed in URL"
 msgstr ""
 
-#: src/FileCopy.cc:1869
+#: src/FileCopy.cc:1868
 msgid "Verify command failed without a message"
 msgstr ""
 
-#: src/FileCopy.h:283
+#: src/FileCopy.h:284
 msgid "Verifying..."
 msgstr ""
 
@@ -2053,22 +2053,22 @@ msgstr ""
 msgid "ftp:fxp-force is set but FXP is not available"
 msgstr ""
 
-#: src/Filter.cc:165
+#: src/Filter.cc:166
 #, fuzzy, c-format
 msgid "pipe() failed: %s"
 msgstr "falha em execlp(%s): %s\n"
 
-#: src/Filter.cc:198 src/PtyShell.cc:142
+#: src/Filter.cc:199 src/PtyShell.cc:142
 #, fuzzy, c-format
 msgid "chdir(%s) failed: %s\n"
 msgstr "Atenção: chdir() falhou: %s\n"
 
-#: src/Filter.cc:206
+#: src/Filter.cc:207
 #, fuzzy, c-format
 msgid "execvp(%s) failed: %s\n"
 msgstr "falha em execlp(%s): %s\n"
 
-#: src/Filter.cc:211 src/PtyShell.cc:154
+#: src/Filter.cc:212 src/PtyShell.cc:154
 #, fuzzy, c-format
 msgid "execl(/bin/sh) failed: %s\n"
 msgstr "falha em execlp(%s): %s\n"

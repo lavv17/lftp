@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.6.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2007-03-26 16:55+0400\n"
+"POT-Creation-Date: 2007-04-11 09:32+0400\n"
 "PO-Revision-Date: 2002-08-08 19:01+0000\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -45,7 +45,7 @@ msgstr "cd ok, dir actual=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: se recibió redirección a `%s'\n"
 
-#: src/CmdExec.cc:406 src/FileCopy.cc:1025
+#: src/CmdExec.cc:406 src/FileCopy.cc:1024
 msgid "Too many redirections"
 msgstr "Demasiadas redirecciones"
 
@@ -91,7 +91,7 @@ msgstr "\tEjecutando\n"
 msgid "\tWaiting for command\n"
 msgstr "\tEsperando orden\n"
 
-#: src/CmdExec.cc:1303
+#: src/CmdExec.cc:1297
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: la orden `%s' no fue compilada dentro del binario.\n"
@@ -2116,20 +2116,20 @@ msgstr ""
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr ""
 
-#: src/FileCopy.cc:1022
+#: src/FileCopy.cc:1021
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy: se recibió redirección a `%s'\n"
 
-#: src/FileCopy.cc:1227
+#: src/FileCopy.cc:1226
 msgid "file name missed in URL"
 msgstr "nombre de archivo no encontrado em URL"
 
-#: src/FileCopy.cc:1869
+#: src/FileCopy.cc:1868
 msgid "Verify command failed without a message"
 msgstr ""
 
-#: src/FileCopy.h:283
+#: src/FileCopy.h:284
 msgid "Verifying..."
 msgstr ""
 
@@ -2190,22 +2190,22 @@ msgstr "**** FXP: me rindo, se usará copiado simple\n"
 msgid "ftp:fxp-force is set but FXP is not available"
 msgstr "ftp:fxp-force está activado pero FXP no está disponible"
 
-#: src/Filter.cc:165
+#: src/Filter.cc:166
 #, c-format
 msgid "pipe() failed: %s"
 msgstr "falló pipe(): %s"
 
-#: src/Filter.cc:198 src/PtyShell.cc:142
+#: src/Filter.cc:199 src/PtyShell.cc:142
 #, c-format
 msgid "chdir(%s) failed: %s\n"
 msgstr "falló chdir(%s): %s\n"
 
-#: src/Filter.cc:206
+#: src/Filter.cc:207
 #, fuzzy, c-format
 msgid "execvp(%s) failed: %s\n"
 msgstr "falló execlp(%s): %s\n"
 
-#: src/Filter.cc:211 src/PtyShell.cc:154
+#: src/Filter.cc:212 src/PtyShell.cc:154
 #, c-format
 msgid "execl(/bin/sh) failed: %s\n"
 msgstr "falló execl(/bin/sh): %s\n"

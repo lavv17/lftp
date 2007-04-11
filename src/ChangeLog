@@ -1,3 +1,7 @@
+2007-04-06  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc: don't add extra \001 for readline prompt.
+
 2007-04-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileAccess.h, FileCopy.cc, FileCopy.h, FileSet.cc, FileSet.h,

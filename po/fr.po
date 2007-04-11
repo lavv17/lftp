@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2007-03-26 16:55+0400\n"
+"POT-Creation-Date: 2007-04-11 09:32+0400\n"
 "PO-Revision-Date: 2005-11-08 04:30+0100\n"
 "Last-Translator: Nicolas Noble <nicolas@nobis-crew.org>\n"
 "Language-Team: French <fr@li.org>\n"
@@ -47,7 +47,7 @@ msgstr "cd ok, cwd=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: reçu une redirection vers `%s'\n"
 
-#: src/CmdExec.cc:406 src/FileCopy.cc:1025
+#: src/CmdExec.cc:406 src/FileCopy.cc:1024
 msgid "Too many redirections"
 msgstr "Trop de redirections"
 
@@ -93,7 +93,7 @@ msgstr "\tEn cours d'exécution\n"
 msgid "\tWaiting for command\n"
 msgstr "\tEn attente de la commande\n"
 
-#: src/CmdExec.cc:1303
+#: src/CmdExec.cc:1297
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: la commande `%s' n'est pas compilée.\n"
@@ -2183,20 +2183,20 @@ msgstr "copy: toutes les données reçues, mais 'get' est revenu en arrière\n"
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr "copy: 'get' est revenu à %lld, 'put' s'y ajuste\n"
 
-#: src/FileCopy.cc:1022
+#: src/FileCopy.cc:1021
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy: reçu une redirection vers `%s'\n"
 
-#: src/FileCopy.cc:1227
+#: src/FileCopy.cc:1226
 msgid "file name missed in URL"
 msgstr "nom de fichier manquant dans l'URL"
 
-#: src/FileCopy.cc:1869
+#: src/FileCopy.cc:1868
 msgid "Verify command failed without a message"
 msgstr "La commande Verify a échouée sans message"
 
-#: src/FileCopy.h:283
+#: src/FileCopy.h:284
 msgid "Verifying..."
 msgstr "Vérification..."
 
@@ -2255,22 +2255,22 @@ msgstr "**** FXP: abandon, retour à la copie brute\n"
 msgid "ftp:fxp-force is set but FXP is not available"
 msgstr "ftp:fxp-force est actif mais l'FXP n'est pas disponible"
 
-#: src/Filter.cc:165
+#: src/Filter.cc:166
 #, c-format
 msgid "pipe() failed: %s"
 msgstr "pipe() a échouée: %s"
 
-#: src/Filter.cc:198 src/PtyShell.cc:142
+#: src/Filter.cc:199 src/PtyShell.cc:142
 #, c-format
 msgid "chdir(%s) failed: %s\n"
 msgstr "chdir(%s) a échouée: %s\n"
 
-#: src/Filter.cc:206
+#: src/Filter.cc:207
 #, c-format
 msgid "execvp(%s) failed: %s\n"
 msgstr "execvp(%s) a échouée: %s\n"
 
-#: src/Filter.cc:211 src/PtyShell.cc:154
+#: src/Filter.cc:212 src/PtyShell.cc:154
 #, c-format
 msgid "execl(/bin/sh) failed: %s\n"
 msgstr "execl(/bin/sh) a échouée: %s\n"

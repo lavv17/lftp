@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
-AC_INIT([lftp], [3.5.10], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [3.5.11], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_LIBOBJ_DIR([lib])
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
@@ -105,6 +105,7 @@ dnl Make sure C++ build environment is sane.
 LFTP_CXX_TEST
 CXX_DYNAMIC_INITIALIZERS
 LFTP_CXX_BOOL
+LFTP_CXX__BOOL
 LFTP_CXX_ANSI_SCOPE
 
 AC_ISC_POSIX

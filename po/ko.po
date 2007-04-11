@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2007-03-26 16:55+0400\n"
+"POT-Creation-Date: 2007-04-11 09:32+0400\n"
 "PO-Revision-Date: 2001-05-27 KST\n"
 "Last-Translator: Dojip Kim <greendrm@greendrm.com>\n"
 "Language-Team: \n"
@@ -44,7 +44,7 @@ msgstr "cd 성공, cwd=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: `%s'으로 리다이렉션을 받음\n"
 
-#: src/CmdExec.cc:406 src/FileCopy.cc:1025
+#: src/CmdExec.cc:406 src/FileCopy.cc:1024
 msgid "Too many redirections"
 msgstr "리다이렉션이 너무 많습니다"
 
@@ -90,7 +90,7 @@ msgstr "\t실행중\n"
 msgid "\tWaiting for command\n"
 msgstr "\t명령을 기다리는 중\n"
 
-#: src/CmdExec.cc:1303
+#: src/CmdExec.cc:1297
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: `%s'명령은 컴파일되지 않았습니다.\n"
@@ -2069,20 +2069,20 @@ msgstr ""
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr ""
 
-#: src/FileCopy.cc:1022
+#: src/FileCopy.cc:1021
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy: `%s'로 재지정하여 받음\n"
 
-#: src/FileCopy.cc:1227
+#: src/FileCopy.cc:1226
 msgid "file name missed in URL"
 msgstr "URL에 파일명이 빠졌습니다"
 
-#: src/FileCopy.cc:1869
+#: src/FileCopy.cc:1868
 msgid "Verify command failed without a message"
 msgstr ""
 
-#: src/FileCopy.h:283
+#: src/FileCopy.h:284
 msgid "Verifying..."
 msgstr ""
 
@@ -2143,22 +2143,22 @@ msgstr "**** FXP: 포기하고 일반적인 복사로 바꿈\n"
 msgid "ftp:fxp-force is set but FXP is not available"
 msgstr ""
 
-#: src/Filter.cc:165
+#: src/Filter.cc:166
 #, c-format
 msgid "pipe() failed: %s"
 msgstr "pipe() 실패: %s"
 
-#: src/Filter.cc:198 src/PtyShell.cc:142
+#: src/Filter.cc:199 src/PtyShell.cc:142
 #, c-format
 msgid "chdir(%s) failed: %s\n"
 msgstr "chdir(%s) 실패: %s\n"
 
-#: src/Filter.cc:206
+#: src/Filter.cc:207
 #, fuzzy, c-format
 msgid "execvp(%s) failed: %s\n"
 msgstr "execlp(%s) 실패: %s\n"
 
-#: src/Filter.cc:211 src/PtyShell.cc:154
+#: src/Filter.cc:212 src/PtyShell.cc:154
 #, c-format
 msgid "execl(/bin/sh) failed: %s\n"
 msgstr "execl(/bin/sh) 실패: %s\n"

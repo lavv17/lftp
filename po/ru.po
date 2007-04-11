@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.3.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2007-03-26 16:55+0400\n"
+"POT-Creation-Date: 2007-04-11 09:32+0400\n"
 "PO-Revision-Date: 2000-09-07 09:36+08:00\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -45,7 +45,7 @@ msgstr "cd ok, каталог=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: получено перенаправление на `%s'\n"
 
-#: src/CmdExec.cc:406 src/FileCopy.cc:1025
+#: src/CmdExec.cc:406 src/FileCopy.cc:1024
 msgid "Too many redirections"
 msgstr "Слишком много перенаправлений"
 
@@ -91,7 +91,7 @@ msgstr "\tВыполнение\n"
 msgid "\tWaiting for command\n"
 msgstr "\tОжидание команды\n"
 
-#: src/CmdExec.cc:1303
+#: src/CmdExec.cc:1297
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: команда `%s' не встроена при компиляции.\n"
@@ -2110,20 +2110,20 @@ msgstr ""
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr ""
 
-#: src/FileCopy.cc:1022
+#: src/FileCopy.cc:1021
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr ""
 
-#: src/FileCopy.cc:1227
+#: src/FileCopy.cc:1226
 msgid "file name missed in URL"
 msgstr "пропущено имя файла в URL"
 
-#: src/FileCopy.cc:1869
+#: src/FileCopy.cc:1868
 msgid "Verify command failed without a message"
 msgstr ""
 
-#: src/FileCopy.h:283
+#: src/FileCopy.h:284
 msgid "Verifying..."
 msgstr "Проверка..."
 
@@ -2182,22 +2182,22 @@ msgstr ""
 msgid "ftp:fxp-force is set but FXP is not available"
 msgstr "ftp:fxp-force установлен, но FXP не удалось использовать"
 
-#: src/Filter.cc:165
+#: src/Filter.cc:166
 #, c-format
 msgid "pipe() failed: %s"
 msgstr "функция pipe() не выполнена: %s"
 
-#: src/Filter.cc:198 src/PtyShell.cc:142
+#: src/Filter.cc:199 src/PtyShell.cc:142
 #, c-format
 msgid "chdir(%s) failed: %s\n"
 msgstr "функция chdir(%s) не выполнена: %s\n"
 
-#: src/Filter.cc:206
+#: src/Filter.cc:207
 #, c-format
 msgid "execvp(%s) failed: %s\n"
 msgstr "функция execvp(%s) не выполнена: %s\n"
 
-#: src/Filter.cc:211 src/PtyShell.cc:154
+#: src/Filter.cc:212 src/PtyShell.cc:154
 #, c-format
 msgid "execl(/bin/sh) failed: %s\n"
 msgstr "функция execl(/bin/sh) не выполнена: %s\n"
