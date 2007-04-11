@@ -1,3 +1,12 @@
+2007-04-11  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc, CmdExec.h, parsecmd.cc: use Buffer for cmd_buf;
+	  use xstring where needed; fix FIXME in WriteCmds and ReadCmds;
+	* buffer.cc, buffer.h: make Get const; (Prepend) new method.
+	* MirrorJob.cc, MirrorJob.h, PatternSet.cc, PatternSet.h,
+	  PtyShell.cc, PtyShell.h, commands.cc, lftp_ssl.cc, lftp_ssl.h:
+	  use xstring.
+
 2007-04-09  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* xstring.h: (eq, ne, xstring0::length) new methods.

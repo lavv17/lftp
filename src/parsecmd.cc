@@ -43,19 +43,15 @@ bool CmdExec::quotable(char ch,char in_quotes)
 CmdExec::parse_result CmdExec::parse_one_cmd()
 {
    char	 in_quotes;
-   char *line=next_cmd;
-   static char *nextarg=0;
-   char *endarg;
+   const char *line=cmd_buf.Get();
+   const char *line_begin=line;
+   static xstring nextarg;
    const char *alias=0;
-   char *old_next_cmd=next_cmd;
 
    if(args)
       args->Empty();
    else
       args=new ArgV;
-
-   xfree(cmd);
-   cmd=0;
 
    if(output)
    {
@@ -64,10 +60,9 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
    }
 
    char redir_type=0;
-   char *redir_file=0;
    background=0;
 
-   if(line==0 || *line==0)
+   if(!*line)
    {
       // empty command
       return PARSE_OK;
@@ -111,20 +106,16 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
       || *line=='|' || *line=='>' || *line==';' || *line=='&')
 	 break;
 
-      nextarg=(char*)xrealloc(nextarg,strlen(line)+1);
-
-      // endarg points just beyond the last char of arg
-      endarg=nextarg;
+      nextarg.truncate(0);
 
       if(args->count()==0 && *line=='#')
       {
 	 // comment -- skip and return
 	 while(*line!='\n' && *line)
 	    line++;
-	 next_cmd=line;
-	 if(*next_cmd=='\n')
-	    next_cmd++;
-	 alias_field-=next_cmd-old_next_cmd;
+	 if(*line=='\n')
+	    line++;
+	 skip_cmd(line-line_begin);
 	 return PARSE_OK;
       }
 
@@ -142,17 +133,15 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
 	       line+=2;
 	       continue;
 	    }
-	    *endarg++=*line++;
+	    nextarg.append(*line++);
 	 }
 	 if(*line==0)
 	    return PARSE_AGAIN;
-	 next_cmd=line;
-	 if(*next_cmd=='\n')
-	    next_cmd++;
-	 *endarg=0;
-	 if(*nextarg)
+	 if(*line=='\n')
+	    line++;
+	 skip_cmd(line-line_begin);
+	 if(nextarg.length()>0)
 	    args->Append(nextarg);
-	 alias_field-=next_cmd-old_next_cmd;
 	 return PARSE_OK;
       }
 
@@ -170,7 +159,7 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
 	    if(*line=='\\' && line[1] && (strchr("\"\\",line[1])
 			         || (level==1 && line[1]==')')))
 	    {
-	       *endarg++=*line++;
+	       nextarg.append(*line++);
 	    }
 	    else
 	    {
@@ -189,9 +178,8 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
 	       else if(!in_quotes && is_quote(*line))
 		  in_quotes=*line;
 	    }
-	    *endarg++=*line++;
+	    nextarg.append(*line++);
 	 }
-	 *endarg=0;
 	 args->Append(nextarg);
 	 line++;  // skip )
 	 while(is_space(*line))
@@ -242,45 +230,32 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
 	       continue;
 	    }
 	 }
-	 *endarg++=*line++;
+	 nextarg.append(*line++);
       }
       if(*line==0)
 	 return PARSE_AGAIN;  // normal commands finish with \n or ;
-      *endarg=0;
+
+      // check if the first arg is an alias, expand it accordingly.
       if(args->count()==0)
       {
 	 alias=Alias::Find(nextarg);
       	 if(alias)
 	 {
 	    int alias_len=strlen(alias);
-	    if(alias_field<(int)(line-next_cmd))
-	    {
-	       // the case of previous alias ending before end of new one
+	    /* Check if the previous alias ends before the end of new one.
+	     * So the new alias does not expand entirely from previous
+	     * aliases and we can repeat the expansion from the very beginning. */
+	    if(alias_field<(int)(line-line_begin))
 	       free_used_aliases();
-	       old_next_cmd=next_cmd;
-	    }
 	    if(!TouchedAlias::IsTouched(alias,used_aliases))
 	    {
-	       alias_field-=next_cmd-old_next_cmd;
-	       alias_field-=line-next_cmd;
-	       if(alias_field<0)
-		  alias_field=0;
+	       skip_cmd(line-line_begin);
+
 	       used_aliases=new TouchedAlias(alias,used_aliases);
-	       if(line-cmd_buf < alias_len)
-	       {
-		  int offs=line-cmd_buf;
-		  int line_len=strlen(line);
-		  cmd_buf=(char*)xrealloc(cmd_buf,line_len+1+alias_len);
-		  memmove(cmd_buf+alias_len,cmd_buf+offs,line_len+1);
-		  line=cmd_buf;
-	       }
-	       else
-	       {
-		  line-=alias_len;
-	       }
-	       memcpy(line,alias,alias_len);
-	       old_next_cmd=next_cmd=line;
+
+	       cmd_buf.Prepend(alias);
 	       alias_field+=alias_len;
+	       line=line_begin=cmd_buf.Get();
 	       continue;
 	    }
 	 }
@@ -294,8 +269,7 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
    if((line[0]=='&' && line[1]=='&')
    || (line[0]=='|' && line[1]=='|'))
    {
-      next_cmd=line;
-      alias_field-=next_cmd-old_next_cmd;
+      skip_cmd(line-line_begin);
       return PARSE_OK;
    }
 
@@ -325,14 +299,13 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
 	    eprintf(_("parse: missing redirection filename\n"));
 
 	 if(*line==';' || *line=='&' || *line=='\n')
-	    next_cmd=line+1;
-	 else
-	    next_cmd=line;
-	 alias_field-=next_cmd-old_next_cmd;
+	    line++;
+
+	 skip_cmd(line-line_begin);
 	 return PARSE_ERR;
       }
 
-      redir_file=endarg=nextarg;
+      nextarg.truncate(0);
 
       in_quotes=0;
       for(;;)
@@ -366,9 +339,8 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
 	       continue;
 	    }
 	 }
-	 *endarg++=*line++;
+	 nextarg.append(*line++);
       }
-      *endarg=0;
       // skip spaces
       while(is_space(*line))
 	 line++;
@@ -377,31 +349,25 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
 cmd_end:
    if((line[0]=='&' && line[1]=='&')
    || (line[0]=='|' && line[1]=='|'))
-   {
-      next_cmd=line;
-   }
+      ;
    else if(*line==';' || *line=='&' || *line=='\n')
    {
-      next_cmd=line+1;
       if(*line=='&')
 	 background=1;
+      line++;
    }
-   else
-   {
-      next_cmd=line;
-   }
-   alias_field-=next_cmd-old_next_cmd;
+   skip_cmd(line-line_begin);
 
    switch(redir_type)
    {
    case('|'):
-      output=new OutputFilter(redir_file);
+      output=new OutputFilter(nextarg);
       break;
    case('>'):
-      output=new FileStream(redir_file,O_WRONLY|O_TRUNC|O_CREAT);
+      output=new FileStream(nextarg,O_WRONLY|O_TRUNC|O_CREAT);
       break;
    case('+'):
-      output=new FileStream(redir_file,O_WRONLY|O_APPEND|O_CREAT);
+      output=new FileStream(nextarg,O_WRONLY|O_APPEND|O_CREAT);
       break;
    }
 

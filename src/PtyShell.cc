@@ -139,7 +139,7 @@ int PtyShell::getfd()
       {
 	 if(chdir(oldcwd)==-1)
 	 {
-	    fprintf(stderr,_("chdir(%s) failed: %s\n"),oldcwd,strerror(errno));
+	    fprintf(stderr,_("chdir(%s) failed: %s\n"),oldcwd.get(),strerror(errno));
 	    fflush(stderr);
 	    _exit(1);
 	 }
@@ -188,7 +188,7 @@ int PtyShell::getfd()
       fcntl(pipe_out,F_SETFL,O_NONBLOCK);
    }
 
-   xstrset(oldcwd,0);
+   oldcwd.set(0);
 
    int info;
    waitpid(pid,&info,WUNTRACED);
@@ -202,7 +202,7 @@ void PtyShell::Init()
 {
    a=0;
    w=0;
-   oldcwd=xgetcwd();
+   oldcwd.set_allocated(xgetcwd());
    pg=0;
    closed=false;
    use_pipes=false;
@@ -212,7 +212,7 @@ void PtyShell::Init()
 
 void PtyShell::SetCwd(const char *cwd)
 {
-   xstrset(oldcwd,cwd);
+   oldcwd.set(cwd);
 }
 
 PtyShell::PtyShell(const char *filter)
@@ -243,7 +243,6 @@ PtyShell::~PtyShell()
       close(pipe_out);
    if(w)
       w->Auto();
-   xfree(oldcwd);
 }
 
 bool PtyShell::Done()

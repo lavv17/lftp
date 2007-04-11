@@ -77,8 +77,8 @@ public:
    bool Eof() const { return eof; }
    bool Broken() const { return broken; }
 
-   const char *Get();
-   void Get(const char **buf,int *size);
+   const char *Get() const;
+   void Get(const char **buf,int *size) const;
    void Skip(int len); // Get(); consume; Skip()
    void UnSkip(int len); // this only works if there were no Put's.
    void Put(const char *buf,int size);
@@ -93,6 +93,8 @@ public:
    void SpaceAdd(int size) {
       buffer.set_length(buffer.length()+size);
    }
+   void Prepend(const char *buf,int size);
+   void Prepend(const char *buf) { Prepend(buf,strlen(buf)); }
 
    unsigned long long UnpackUINT64BE(int offset=0);
    unsigned UnpackUINT32BE(int offset=0);

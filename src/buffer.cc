@@ -30,25 +30,17 @@
 
 #define BUFFER_INC	   (8*1024) // should be power of 2
 
-const char *Buffer::Get()
+const char *Buffer::Get() const
 {
    if(Size()==0)
       return eof?0:"";
    return buffer+buffer_ptr;
 }
 
-void Buffer::Get(const char **buf,int *size)
+void Buffer::Get(const char **buf,int *size) const
 {
    *size=Size();
-   if(*size==0)
-   {
-      if(eof)
-	 *buf=0;
-      else
-	 *buf="";
-      return;
-   }
-   *buf=buffer+buffer_ptr;
+   *buf=Get();
 }
 
 void Buffer::GetSaved(const char **buf,int *size) const
@@ -135,6 +127,28 @@ void Buffer::Put(const char *buf,int size)
    memmove(space,buf,size);
    SpaceAdd(size);
    pos+=size;
+}
+
+void Buffer::Prepend(const char *buf,int size)
+{
+   if(size==0)
+      return;
+   save=false;
+   if(Size()==0)
+   {
+      memmove(GetSpace(size),buf,size);
+      SpaceAdd(size);
+      return;
+   }
+   if(buffer_ptr<size)
+   {
+      Allocate(size-buffer_ptr);
+      memmove(buffer.get_non_const()+size,buffer+buffer_ptr,Size());
+      SpaceAdd(size-buffer_ptr);
+      buffer_ptr=size;
+   }
+   memmove(buffer.get_non_const()+buffer_ptr-size,buf,size);
+   buffer_ptr-=size;
 }
 
 void Buffer::Format(const char *f,...)

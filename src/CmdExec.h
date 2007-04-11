@@ -45,7 +45,7 @@ typedef Job * (*cmd_creator_t)(class CmdExec *parent);
 class CmdFeeder
 {
 public:
-   char *saved_buf;
+   xstring_c saved_buf;
    CmdFeeder *prev;
    virtual const char *NextCmd(class CmdExec *exec,const char *prompt) = 0;
    virtual ~CmdFeeder() {}
@@ -63,20 +63,20 @@ class CmdExec : public SessionJob
 {
 public:
 // current command data
-   char *cmd;
    ArgV *args;
    FDStream *output;
    bool background;
    int	 exit_code;
 
 private:
-   char *next_cmd;
-   char *cmd_buf;
+   Buffer cmd_buf;
    bool partial_cmd;
    int alias_field; // length of expanded alias (and ttl for used_aliases)
 
    TouchedAlias *used_aliases;
    void free_used_aliases();
+
+   void skip_cmd(int len);
 
    enum
    {
@@ -125,8 +125,8 @@ private:
       builtin;
 
    FileAccess::Path old_cwd;
-   char *old_lcwd;
-   char *slot;
+   xstring_c old_lcwd;
+   xstring_c slot;
 
    GlobURL *glob;
    ArgV *args_glob;

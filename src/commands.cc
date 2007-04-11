@@ -553,7 +553,7 @@ Job *CmdExec::builtin_lcd()
       return 0;
    }
 
-   xstrset(old_lcwd,cwd->GetName());
+   old_lcwd.set(cwd->GetName());
 
    SaveCWD();
 

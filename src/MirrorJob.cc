@@ -62,29 +62,29 @@ void  MirrorJob::PrintStatus(int v,const char *tab)
       break;
 
    case(MAKE_TARGET_DIR):
-      printf("\tmkdir `%s' [%s]\n",target_dir,target_session->CurrentStatus());
+      printf("\tmkdir `%s' [%s]\n",target_dir.get(),target_session->CurrentStatus());
       break;
 
    case(CHANGING_DIR_SOURCE):
    case(CHANGING_DIR_TARGET):
       if(target_session->IsOpen())
-	 printf("\tcd `%s' [%s]\n",target_dir,target_session->CurrentStatus());
+	 printf("\tcd `%s' [%s]\n",target_dir.get(),target_session->CurrentStatus());
       if(source_session->IsOpen())
-	 printf("\tcd `%s' [%s]\n",source_dir,source_session->CurrentStatus());
+	 printf("\tcd `%s' [%s]\n",source_dir.get(),source_session->CurrentStatus());
       break;
 
    case(GETTING_LIST_INFO):
       if(target_list_info)
       {
 	 if(target_relative_dir)
-	    printf("\t%s: %s\n",target_relative_dir,target_list_info->Status());
+	    printf("\t%s: %s\n",target_relative_dir.get(),target_list_info->Status());
 	 else
 	    printf("\t%s\n",target_list_info->Status());
       }
       if(source_list_info)
       {
 	 if(source_relative_dir)
-	    printf("\t%s: %s\n",source_relative_dir,source_list_info->Status());
+	    printf("\t%s: %s\n",source_relative_dir.get(),source_list_info->Status());
 	 else
 	    printf("\t%s\n",source_list_info->Status());
       }
@@ -138,15 +138,15 @@ void  MirrorJob::ShowRunStatus(StatusLine *s)
       break;
 
    case(MAKE_TARGET_DIR):
-      s->Show("mkdir `%s' [%s]",target_dir,target_session->CurrentStatus());
+      s->Show("mkdir `%s' [%s]",target_dir.get(),target_session->CurrentStatus());
       break;
 
    case(CHANGING_DIR_SOURCE):
    case(CHANGING_DIR_TARGET):
       if(target_session->IsOpen() && (!source_session->IsOpen() || now%4>=2))
-	 s->Show("cd `%s' [%s]",target_dir,target_session->CurrentStatus());
+	 s->Show("cd `%s' [%s]",target_dir.get(),target_session->CurrentStatus());
       else if(source_session->IsOpen())
-	 s->Show("cd `%s' [%s]",source_dir,source_session->CurrentStatus());
+	 s->Show("cd `%s' [%s]",source_dir.get(),source_session->CurrentStatus());
       break;
 
    case(GETTING_LIST_INFO):
@@ -281,12 +281,11 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    if(remove_target)
 	       args.Append("-e");
 	    args.Append("-O");
-	    args.Append(target_is_local?target_dir
+	    args.Append(target_is_local?target_dir.get()
 			:target_session->GetConnectURL());
 	    args.Append(source_session->GetFileURL(file->name));
-	    char *cmd=args.CombineQuoted();
-	    fprintf(script,"%s\n",cmd);
-	    xfree(cmd);
+	    xstring_ca cmd(args.CombineQuoted());
+	    fprintf(script,"%s\n",cmd.get());
 	    if(script_only)
 	       goto skip;
 	 }
@@ -390,10 +389,8 @@ void  MirrorJob::HandleFile(FileInfo *file)
 
 	 mj->SetExclude(exclude);
 
-	 mj->source_relative_dir=
-	       xstrdup(dir_file(source_relative_dir,file->name));
-	 mj->target_relative_dir=
-	       xstrdup(dir_file(target_relative_dir,file->name));
+	 mj->source_relative_dir.set(dir_file(source_relative_dir,file->name));
+	 mj->target_relative_dir.set(dir_file(target_relative_dir,file->name));
 
 	 mj->verbose_report=verbose_report;
 	 mj->newer_than=newer_than;
@@ -409,13 +406,13 @@ void  MirrorJob::HandleFile(FileInfo *file)
 
 	 mj->script=script;
 	 mj->script_needs_closing=false;
-	 mj->script_name=xstrdup(script_name);
+	 mj->script_name.set(script_name);
 	 mj->script_only=script_only;
 
 	 mj->max_error_count=max_error_count;
 
 	 if(verbose_report>=3)
-	    Report(_("Mirroring directory `%s'"),mj->target_relative_dir);
+	    Report(_("Mirroring directory `%s'"),mj->target_relative_dir.get());
 
 	 break;
       }
@@ -440,9 +437,8 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    args.Append("-sf");
 	    args.Append(shell_encode(file->symlink));
 	    args.Append(shell_encode(target_name));
-	    char *cmd=args.CombineQuoted();
-	    fprintf(script,"%s\n",cmd);
-	    xfree(cmd);
+	    xstring_ca cmd(args.CombineQuoted());
+	    fprintf(script,"%s\n",cmd.get());
 	    if(script_only)
 	       goto skip;
 	 }
@@ -675,7 +671,7 @@ int   MirrorJob::Do()
       if(source_session->IsOpen())
 	 return m;
 
-      xstrset(source_dir,source_session->GetCwd());
+      source_dir.set(source_session->GetCwd());
 
       if(!create_target_dir || !strcmp(target_dir,".") || !strcmp(target_dir,".."))
 	 goto pre_CHANGING_DIR_TARGET;
@@ -692,34 +688,32 @@ int   MirrorJob::Do()
 	    }
 	    else
 	    {
-	       Report(_("Removing old local file `%s'"),target_dir);
+	       Report(_("Removing old local file `%s'"),target_dir.get());
 	       if(script)
 	       {
 		  ArgV args("rm");
 		  args.Append(target_session->GetFileURL(target_dir));
-		  char *cmd=args.CombineQuoted();
-		  fprintf(script,"%s\n",cmd);
-		  xfree(cmd);
+		  xstring_ca cmd(args.CombineQuoted());
+		  fprintf(script,"%s\n",cmd.get());
 	       }
 	       if(!script_only)
 	       {
 		  if(remove(target_dir)==-1)
-		     eprintf("mirror: remove(%s): %s\n",target_dir,strerror(errno));
+		     eprintf("mirror: remove(%s): %s\n",target_dir.get(),strerror(errno));
 	       }
 	    }
 	 }
       }
       if(target_relative_dir)
-	 Report(_("Making directory `%s'"),target_relative_dir);
+	 Report(_("Making directory `%s'"),target_relative_dir.get());
       if(script)
       {
 	 ArgV args("mkdir");
 	 if(parent_mirror==0)
 	    args.Append("-p");
 	 args.Append(target_session->GetFileURL(target_dir));
-	 char *cmd=args.CombineQuoted();
-	 fprintf(script,"%s\n",cmd);
-	 xfree(cmd);
+	 xstring_ca cmd(args.CombineQuoted());
+	 fprintf(script,"%s\n",cmd.get());
 	 if(script_only)
 	    goto pre_CHANGING_DIR_TARGET;
       }
@@ -747,7 +741,7 @@ int   MirrorJob::Do()
       if(target_session->IsOpen())
 	 return m;
 
-      xstrset(target_dir,target_session->GetCwd());
+      target_dir.set(target_session->GetCwd());
 
    pre_GETTING_LIST_INFO:
       set_state(GETTING_LIST_INFO);
@@ -877,9 +871,8 @@ int   MirrorJob::Do()
 		  args.Append("-r");
 	    }
 	    args.Append(target_session->GetFileURL(file->name));
-	    char *cmd=args.CombineQuoted();
-	    fprintf(script,"%s\n",cmd);
-	    xfree(cmd);
+	    xstring_ca cmd(args.CombineQuoted());
+	    fprintf(script,"%s\n",cmd.get());
 	 }
 	 if(!script_only)
 	 {
@@ -964,9 +957,8 @@ int   MirrorJob::Do()
 	    sprintf(m,"%03lo",(unsigned long)(file->mode&~mode_mask));
 	    args.Append(m);
 	    args.Append(target_session->GetFileURL(file->name));
-	    char *cmd=args.CombineQuoted();
-	    fprintf(script,"%s\n",cmd);
-	    xfree(cmd);
+	    xstring_ca cmd(args.CombineQuoted());
+	    fprintf(script,"%s\n",cmd.get());
 	 }
 	 if(!script_only)
 	 {
@@ -1060,6 +1052,7 @@ MirrorJob::MirrorJob(MirrorJob *parent,
    FileAccess *source,FileAccess *target,
    const char *new_source_dir,const char *new_target_dir)
  :
+   source_dir(new_source_dir), target_dir(new_target_dir),
    root_transfer_count(0),
    transfer_count(parent?parent->transfer_count:root_transfer_count)
 {
@@ -1071,11 +1064,6 @@ MirrorJob::MirrorJob(MirrorJob *parent,
    // TODO: get rid of this.
    source_is_local=!strcmp(source_session->GetProto(),"file");
    target_is_local=!strcmp(target_session->GetProto(),"file");
-
-   source_dir=xstrdup(new_source_dir);
-   target_dir=xstrdup(new_target_dir);
-   source_relative_dir=0;
-   target_relative_dir=0;
 
    to_transfer=to_rm=to_rm_mismatched=same=0;
    source_set=target_set=0;
@@ -1096,7 +1084,6 @@ MirrorJob::MirrorJob(MirrorJob *parent,
    older_than=(time_t)-1;
    size_range=0;
 
-   script_name=0;
    script=0;
    script_only=false;
    script_needs_closing=false;
@@ -1108,8 +1095,6 @@ MirrorJob::MirrorJob(MirrorJob *parent,
    parallel=1;
    pget_n=1;
    pget_minchunk=0x10000;
-
-   on_change=0;
 
    source_redirections=0;
    target_redirections=0;
@@ -1127,10 +1112,6 @@ MirrorJob::MirrorJob(MirrorJob *parent,
 
 MirrorJob::~MirrorJob()
 {
-   xfree(source_dir);
-   xfree(target_dir);
-   xfree(source_relative_dir);
-   xfree(target_relative_dir);
    delete source_set;
    delete target_set;
    delete to_transfer;
@@ -1152,7 +1133,6 @@ MirrorJob::~MirrorJob()
    }
    if(script && script_needs_closing)
       fclose(script);
-   xfree(on_change);
 }
 
 void MirrorJob::va_Report(const char *fmt,va_list v)
@@ -1292,7 +1272,7 @@ bool MirrorJob::Statistics::HaveSomethingDone(int flags)
 
 char *MirrorJob::SetScriptFile(const char *n)
 {
-   xstrset(script_name,n);
+   script_name.set(n);
    if(strcmp(n,"-"))
    {
       script=fopen(n,"w");
@@ -1310,7 +1290,7 @@ char *MirrorJob::SetScriptFile(const char *n)
 
 void MirrorJob::SetOnChange(const char *oc)
 {
-   xstrset(on_change,oc);
+   on_change.set(oc);
 }
 
 CMD(mirror)
@@ -1704,11 +1684,10 @@ CMD(mirror)
 
    if(script_file)
    {
-      char *err=j->SetScriptFile(script_file);
+      xstring_ca err(j->SetScriptFile(script_file));
       if(err)
       {
-	 eprintf("%s: %s\n",args->a0(),err);
-	 xfree(err);
+	 eprintf("%s: %s\n",args->a0(),err.get());
 	 delete j;
 	 return 0;
       }

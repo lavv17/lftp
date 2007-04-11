@@ -100,15 +100,7 @@ void CmdExec::FeedCmd(const char *c)
 {
    partial_cmd=false;
    start_time=now;
-   if(cmd_buf==0)
-   {
-      cmd_buf=next_cmd=xstrdup(c);
-      return;
-   }
-   int len=strlen(next_cmd);
-   memmove(cmd_buf,next_cmd,len);
-   cmd_buf=next_cmd=(char*)xrealloc(cmd_buf,len+strlen(c)+1);
-   strcpy(next_cmd+len,c);
+   cmd_buf.Put(c);
 };
 
 void CmdExec::PrependCmd(const char *c)
@@ -118,17 +110,9 @@ void CmdExec::PrependCmd(const char *c)
    int len=strlen(c);
    int nl=(len>0 && c[len-1]!='\n');
 
-   int next_cmd_len=xstrlen(next_cmd);
-   int next_cmd_offs=next_cmd-cmd_buf;
-   if(next_cmd_offs<len+1)
-      cmd_buf=(char*)xrealloc(cmd_buf,len+nl+next_cmd_len+1);
-   if(next_cmd_len>0)
-      memmove(cmd_buf+len+nl,cmd_buf+next_cmd_offs,next_cmd_len);
-   cmd_buf[len+nl+next_cmd_len]=0;
-   memcpy(cmd_buf,c,len);
    if(nl)
-      cmd_buf[len]='\n';
-   next_cmd=cmd_buf;
+      cmd_buf.Prepend("\n",1);
+   cmd_buf.Prepend(c,len);
 
    if(alias_field>0)
       alias_field+=len+nl;
@@ -220,9 +204,7 @@ restart:
       args->setarg(0,c->name); // in case it was abbreviated
       args->rewind();
 
-      if(cmd==0)
-	 cmd=args->Combine();
-
+      xstring_ca cmdline(args->Combine());   // save the cmdline
       Job *new_job=0;
 
       if(c->creator==0)
@@ -253,11 +235,8 @@ restart:
       {
 	 if(new_job->jobno<0)
 	    new_job->AllocJobno();
-	 if(cmd && !new_job->cmdline)
-	 {
-	    new_job->cmdline.set_allocated(cmd);
-	    cmd=0;
-      	 }
+	 if(!new_job->cmdline)
+	    new_job->cmdline.set_allocated(cmdline.borrow());
 	 new_job->SetParentFg(this,!background);
       }
       AddWaiting(new_job);
@@ -290,8 +269,6 @@ void CmdExec::ExecParsed(ArgV *a,FDStream *o,bool b)
    if(args)
       delete args;
    args=a;
-   xfree(cmd);
-   cmd=args->Combine();
    delete output;
    output=o;
    background=b;
@@ -303,7 +280,7 @@ void CmdExec::ExecParsed(ArgV *a,FDStream *o,bool b)
 
 bool CmdExec::Idle()
 {
-   return(waiting_num==0 && (next_cmd==0 || *next_cmd==0 || partial_cmd));
+   return(waiting_num==0 && (cmd_buf.Size()==0 || partial_cmd));
 }
 
 int CmdExec::Done()
@@ -313,8 +290,6 @@ int CmdExec::Done()
 
 void CmdExec::RemoveFeeder()
 {
-   alias_field=0;
-   xfree(cmd_buf); next_cmd=cmd_buf=0;
    free_used_aliases();
 
    if(!feeder)
@@ -324,13 +299,12 @@ void CmdExec::RemoveFeeder()
    if(interactive && feeder->prev==0)
       cwd_history.Set(session);
 
-   CmdFeeder *tmp=feeder->prev;
-   next_cmd=cmd_buf=feeder->saved_buf;
+   cmd_buf.Empty();
+   cmd_buf.Put(feeder->saved_buf);
    partial_cmd=false;
    if(feeder==queue_feeder)
       queue_feeder=0;
-   delete feeder;
-   feeder=tmp;
+   delete replace_value(feeder,feeder->prev);
    Reconfig(0);
 }
 
@@ -348,15 +322,17 @@ void CmdExec::RevertToSavedSession()
 }
 void CmdExec::ChangeSlot(const char *n)
 {
-   xstrset(slot,0);
    if(!n || !*n)
+   {
+      slot.set(0);
       return;
+   }
    FileAccess *s=ConnectionSlot::FindSession(n);
    if(!s)
       ConnectionSlot::Set(n,session);
    else
       ChangeSession(s->Clone());
-   xstrset(slot,n);
+   slot.set(n);
 }
 
 int CmdExec::Do()
@@ -603,7 +579,7 @@ int CmdExec::Do()
    }
 
 try_get_cmd:
-   if(next_cmd==0 || *next_cmd==0 || partial_cmd)
+   if(cmd_buf.Size()==0 || partial_cmd)
    {
       if(feeder)
       {
@@ -628,10 +604,11 @@ try_get_cmd:
 	    feeder->Fg();
 	 const char *cmd=feeder->NextCmd(this,prompt);
 	 feeder_called=false;
-	 if(cmd==0)
+	 if(!cmd)
 	 {
-	    if(next_cmd && *next_cmd && partial_cmd)
+	    if(cmd_buf.Size()>0 && partial_cmd)
 	    {
+	       const char *next_cmd=cmd_buf.Get();
 	       if(last_char(next_cmd)!='\n')
 	       {
 		  // missing EOL on last line, add it
@@ -642,7 +619,7 @@ try_get_cmd:
 	    }
 	    if(!feeder->RealEOF() && top_level)
 	    {
-	       *next_cmd=0;
+	       cmd_buf.Empty();
 	       FeedCmd("exit;");
 	       return MOVED;
 	    }
@@ -662,8 +639,7 @@ try_get_cmd:
 	    if(SignalHook::GetCount(SIGINT)>0)
 	    {
 	       SignalHook::ResetCount(SIGINT);
-	       if(next_cmd)
-		  *next_cmd=0;	 // flush unparsed command
+	       cmd_buf.Empty();	 // flush unparsed command
 	       return MOVED;
 	    }
 	 }
@@ -770,7 +746,7 @@ void CmdExec::PrintStatus(int v,const char *prefix)
       }
       return;
    }
-   if(next_cmd && next_cmd[0])
+   if(cmd_buf.Size()>0)
    {
       // xgettext:c-format
       printf(_("\tRunning\n"));
@@ -787,7 +763,6 @@ CmdExec::CmdExec(FileAccess *f,LocalDirectory *c) : SessionJob(f?f:new DummyProt
    next=chain;
    chain=this;
 
-   cmd=0;
    args=0;
    output=0;
    background=false;
@@ -799,7 +774,6 @@ CmdExec::CmdExec(FileAccess *f,LocalDirectory *c) : SessionJob(f?f:new DummyProt
    feeder_called=false;
    used_aliases=0;
 
-   next_cmd=cmd_buf=0;
    partial_cmd=false;
    alias_field=0;
    default_output=0;
@@ -819,8 +793,6 @@ CmdExec::CmdExec(FileAccess *f,LocalDirectory *c) : SessionJob(f?f:new DummyProt
    verify_path_cached=false;
 
    start_time=0;
-   old_lcwd=0;
-   slot=0;
 
    glob=0;
    args_glob=0;
@@ -850,14 +822,11 @@ CmdExec::~CmdExec()
    }
 
    free_used_aliases();
-   xfree(cmd);
    delete args;
    delete output;
-   xfree(cmd_buf);
    delete cwd;
    if(cwd_owner==this)
       cwd_owner=0;
-   xfree(old_lcwd);
    delete glob;
    delete args_glob;
 
@@ -905,7 +874,7 @@ char *CmdExec::FormatPrompt(const char *scan)
  // @ if non-default user
       { '@', session->GetUser()?"@":"" },
       { 'U', session->GetConnectURL() },
-      { 'S', slot?slot:"" },
+      { 'S', slot?slot.get():"" },
       { 'w', cwd },
       { 'W', cwdb },
       { '[', StartIgn },
@@ -976,10 +945,9 @@ void CmdExec::top_vfprintf(FILE *file,const char *f,va_list v)
 void CmdExec::SetCmdFeeder(CmdFeeder *new_feeder)
 {
    new_feeder->prev=feeder;
-   new_feeder->saved_buf=xstrdup(next_cmd);
-   xfree(cmd_buf);
-   cmd_buf=next_cmd=0;
+   new_feeder->saved_buf.set(cmd_buf.Get());
    feeder=new_feeder;
+   cmd_buf.Empty();
 }
 
 int CmdExec::AcceptSig(int sig)
@@ -1172,47 +1140,38 @@ void CmdExec::AtExit()
 
 void CmdExec::EmptyCmds()
 {
-   xfree(cmd_buf);
-   next_cmd=cmd_buf=0;
+   cmd_buf.Empty();
 }
 
 bool CmdExec::WriteCmds(int fd) const
 {
-   // FIXME: handle short writes.
-
-   if(next_cmd)
-      return write(fd, next_cmd, strlen(next_cmd)) != -1;
-
-   return true;
+   const char *buf;
+   int len;
+   cmd_buf.Get(&buf,&len);
+   for(;;)
+   {
+      if(len==0)
+	 return true;
+      int res=write(fd,buf,len);
+      if(res<=0)
+	 return false;
+      buf+=res;
+      len-=res;
+   }
 }
 
 bool CmdExec::ReadCmds(int fd)
 {
-   // FIXME: use loop over read until eof.
-
-   int fpos = lseek(fd, 0, SEEK_CUR);
-   if(fpos == -1) return false;
-
-   int size = lseek(fd, 0, SEEK_END) - fpos;
-
-   /* restore the file pos */
-   lseek(fd, fpos, SEEK_SET);
-
-   /* realloc */
-   int len=0;
-   if(next_cmd) {
-      len=strlen(next_cmd);
-      memmove(cmd_buf,next_cmd,len);
+   for(;;)
+   {
+      int size=0x1000;
+      size=read(fd,cmd_buf.GetSpace(size),size);
+      if(size==-1)
+	 return false;
+      if(size==0)
+	 return true;
+      cmd_buf.SpaceAdd(size);
    }
-   cmd_buf=next_cmd=(char*)xrealloc(cmd_buf,size+len+1);
-
-   if(read(fd, cmd_buf+len, size) == -1) {
-      cmd_buf[len] = 0; /* leave it in a sane state */
-      return false;
-   }
-
-   cmd_buf[len+size] = 0;
-   return true;
 }
 
 void CmdExec::free_used_aliases()
@@ -1225,6 +1184,13 @@ void CmdExec::free_used_aliases()
    alias_field=0;
 }
 
+void CmdExec::skip_cmd(int len)
+{
+   cmd_buf.Skip(len);
+   alias_field-=len;
+   if(alias_field<=0)
+      free_used_aliases();
+}
 
 CmdExec::cmd_rec *CmdExec::dyn_cmd_table=0;
 int CmdExec::dyn_cmd_table_count=0;
@@ -1298,22 +1264,21 @@ Job *CmdExec::default_cmd()
 
 void CmdExec::FeedArgV(const ArgV *args,int start)
 {
-   char *cmd;
+   xstring_c cmd;
 
    if(start+1==args->count())
-      cmd=args->Combine(start);
+      cmd.set_allocated(args->Combine(start));
    else
-      cmd=args->CombineQuoted(start);
+      cmd.set_allocated(args->CombineQuoted(start));
 
    FeedCmd(cmd);
    FeedCmd("\n");
-   xfree(cmd);
 }
 
 bool CmdExec::SameQueueParameters(CmdExec *scan,const char *this_url)
 {
    return !strcmp(this_url,scan->session->GetConnectURL(FA::NO_PATH))
-      && !xstrcmp(this->slot,scan->slot);
+      && this->slot.eq(scan->slot);
 }
 
 /* return the CmdExec containing a queue feeder; create if necessary */
@@ -1331,12 +1296,12 @@ CmdExec  *CmdExec::GetQueue(bool create)
       return NULL;
 
    CmdExec *queue=new CmdExec(session->Clone(),cwd->Clone());
-   queue->slot=xstrdup(slot);
+   queue->slot.set(slot);
 
    queue->SetParentFg(this,false);
    queue->AllocJobno();
    const char *url=session->GetConnectURL(FA::NO_PATH);
-   queue->cmdline.vset("queue (",url,slot?"; ":"",slot?slot:"",")",NULL);
+   queue->cmdline.vset("queue (",url,slot?"; ":"",slot?slot.get():"",")",NULL);
    queue->queue_feeder=new QueueFeeder(session->GetCwd(), cwd->GetName());
    queue->SetCmdFeeder(queue->queue_feeder);
    queue->Reconfig(0);

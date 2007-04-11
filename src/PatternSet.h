@@ -27,6 +27,7 @@
 CDECL_BEGIN
 #include <regex.h>
 CDECL_END
+#include "xstring.h"
 
 class PatternSet
 {
@@ -36,11 +37,11 @@ public:
    class Pattern
    {
    protected:
-      char *pattern;
+      xstring_c pattern;
    public:
       virtual bool Match(const char *str)=0;
-      Pattern(const char *str);
-      virtual ~Pattern();
+      Pattern(const char *str) : pattern(str) {}
+      virtual ~Pattern() {}
    };
 
 private:
@@ -77,7 +78,7 @@ public:
    class Regex : public Pattern
    {
       regex_t compiled;
-      char *error;
+      xstring error;
    public:
       Regex(const char *str);
       bool Error() { return error!=0; }

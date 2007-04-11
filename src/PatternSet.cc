@@ -54,15 +54,6 @@ bool PatternSet::Match(Type type,const char *str) const
    return false;
 }
 
-PatternSet::Pattern::Pattern(const char *p)
-{
-   pattern=xstrdup(p);
-}
-PatternSet::Pattern::~Pattern()
-{
-   xfree(pattern);
-}
-
 PatternSet::Glob::Glob(const char *p) : Pattern(p)
 {
    slash_count=0;
@@ -95,14 +86,13 @@ bool PatternSet::Glob::Match(const char *str)
 
 PatternSet::Regex::Regex(const char *p) : Pattern(p)
 {
-   error=0;
    memset(&compiled,0,sizeof(compiled));  // safety.
    int errcode=regcomp(&compiled,pattern,REG_EXTENDED|REG_NOSUB);
    if(errcode)
    {
       size_t need=regerror(errcode,0,0,0);
-      error=(char*)xmalloc(need);
-      regerror(errcode,0,error,need);
+      error.get_space(need-1);
+      error.set_length(regerror(errcode,0,error.get_non_const(),need)-1);
    }
 }
 PatternSet::Regex::~Regex()

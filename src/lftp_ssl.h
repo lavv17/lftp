@@ -30,18 +30,19 @@
 #  include <openssl/rand.h>
 # endif
 
+#include "xstring.h"
+
 class lftp_ssl_base
 {
 public:
    bool handshake_done;
    int fd;
-   char *hostname;
+   xstring_c hostname;
    enum handshake_mode_t { CLIENT, SERVER } handshake_mode;
-   char *error;
+   xstring error;
    bool fatal;
 
    lftp_ssl_base(int fd,handshake_mode_t m,const char *host=0);
-   ~lftp_ssl_base();
 
    enum code { RETRY=-2, ERROR=-1, DONE=0 };
 

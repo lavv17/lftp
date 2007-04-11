@@ -70,10 +70,10 @@ class MirrorJob : public Job
    ListInfo *source_list_info;
    ListInfo *target_list_info;
 
-   char	 *source_dir;
-   char	 *source_relative_dir;
-   char	 *target_dir;
-   char	 *target_relative_dir;
+   xstring_c source_dir;
+   xstring_c source_relative_dir;
+   xstring_c target_dir;
+   xstring_c target_relative_dir;
 
    struct Statistics
    {
@@ -109,7 +109,7 @@ class MirrorJob : public Job
    time_t older_than;
    Range *size_range;
 
-   char *script_name;
+   xstring_c script_name;
    FILE *script;
    bool script_only;
    bool script_needs_closing;
@@ -121,7 +121,7 @@ class MirrorJob : public Job
    int pget_n;
    int pget_minchunk;
 
-   char *on_change;
+   xstring_c on_change;
 
    mode_t get_mode_mask();
 

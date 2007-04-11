@@ -34,31 +34,19 @@
 #include "misc.h"
 
 lftp_ssl_base::lftp_ssl_base(int fd1,handshake_mode_t m,const char *h)
+   : hostname(h)
 {
    fd=fd1;
-   hostname=xstrdup(h);
    handshake_done=false;
    handshake_mode=m;
-   error=0;
    fatal=false;
-}
-lftp_ssl_base::~lftp_ssl_base()
-{
-   xfree(hostname);
-   xfree(error);
 }
 void lftp_ssl_base::set_error(const char *s1,const char *s2)
 {
-   xfree(error);
-   error=(char*)xmalloc(xstrlen(s1)+2+xstrlen(s2)+1);
-   if(s1)
-   {
-      strcpy(error,s1);
-      strcat(error,": ");
-      strcat(error,s2);
-   }
+   if(s2)
+      error.vset(s1,": ",s2,NULL);
    else
-      strcpy(error,s2);
+      error.set(s1);
 }
 void lftp_ssl_base::set_cert_error(const char *s)
 {
@@ -348,9 +336,8 @@ void lftp_ssl_gnutls::verify_certificate_chain(const gnutls_datum_t *cert_chain,
     */
    if(!gnutls_x509_crt_check_hostname(cert[0], hostname))
    {
-      char *err=xasprintf("The certificate's owner does not match hostname '%s'\n",hostname);
+      xstring_ca err(xasprintf("The certificate's owner does not match hostname '%s'\n",hostname.get()));
       set_cert_error(err);
-      xfree(err);
    }
 
    for (i = 0; i < cert_chain_length; i++)

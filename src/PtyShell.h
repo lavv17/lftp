@@ -31,7 +31,7 @@ class PtyShell : public FDStream
    ProcWait *w;
    pid_t pg;
 
-   char *oldcwd;
+   xstring_c oldcwd;
 
    bool closed;
    bool use_pipes;
