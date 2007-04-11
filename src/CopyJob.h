@@ -31,9 +31,9 @@ class CopyJob : public Job
 {
    FileCopy *c;
    bool done;
-   char *name; // file name
-   char *dispname; // displayed file name
-   char *op;   // command name
+   xstring_c name; // file name
+   xstring_c dispname; // displayed file name
+   xstring_c op;   // command name
    bool no_status;
    bool no_status_on_write;
    bool clear_status_on_write;
@@ -105,7 +105,7 @@ protected:
    double time_spent;
    const char *op;
    bool no_status;
-   char *cwd;
+   xstring_c cwd;
    bool cont;
    bool ascii;
    ArgV *args;

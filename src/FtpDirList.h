@@ -27,7 +27,7 @@ class FtpDirList : public DirList
 {
    FileAccess *session;
    IOBuffer *ubuf;
-   char *pattern;
+   xstring_c pattern;
 
    bool TryEPLF(const char *line,int len);
    bool TryMLSD(const char *line,int len);

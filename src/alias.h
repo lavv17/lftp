@@ -28,16 +28,15 @@
 class Alias
 {
    Alias *next;
-   char	 *alias;
-   char	 *value;
+   xstring_c alias;
+   xstring_c value;
 
    static Alias *base;
 
-   Alias(const char *alias,const char *value,Alias *next);
+   Alias(const char *alias,const char *value,Alias *next)
+      : next(next), alias(alias), value(value) {}
 
 public:
-   ~Alias();
-
    static const char *Find(const char *alias);
 
    static void Add(const char *alias,const char *value);
@@ -50,32 +49,21 @@ public:
 
 class TouchedAlias
 {
-   char *alias;
+   xstring_c alias;
    TouchedAlias *next;
 public:
    TouchedAlias(const char *a,TouchedAlias *n)
-   {
-      alias=xstrdup(a);
-      next=n;
-   }
-   ~TouchedAlias()
-   {
-      free(alias);
-   }
+      : alias(a), next(n) {}
    static void FreeChain(TouchedAlias *chain)
    {
       while(chain)
-      {
-	 TouchedAlias *next=chain->next;
-	 delete chain;
-	 chain=next;
-      }
+	 delete replace_value(chain,chain->next);
    }
    static bool IsTouched(const char *a,TouchedAlias *chain)
    {
       while(chain)
       {
-	 if(!strcmp(chain->alias,a))
+	 if(chain->alias.eq(a))
 	    return true;
 	 chain=chain->next;
       }

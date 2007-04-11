@@ -179,9 +179,8 @@ void  CmdExec::exec_parsed_command()
 
    if(ResMgr::QueryBool("cmd:trace",0))
    {
-      char *c=args->CombineQuoted();
-      printf("+ %s\n",c);
-      xfree(c);
+      xstring_ca c(args->CombineQuoted());
+      printf("+ %s\n",c.get());
    }
 
 restart:
@@ -593,12 +592,12 @@ try_get_cmd:
 
 	 if(status_line)
 	 {
-	    char *def_title = FormatPrompt(res_default_title.Query(getenv("TERM")));
+	    const char *def_title = FormatPrompt(res_default_title.Query(getenv("TERM")));
 	    status_line->DefaultTitle(def_title);
 	    status_line->Clear();
 	 }
 
-	 char *prompt=MakePrompt();
+	 const char *prompt=MakePrompt();
 	 feeder_called=true;
 	 if(fg)
 	    feeder->Fg();
@@ -707,9 +706,8 @@ void CmdExec::PrintStatus(int v,const char *prefix)
    SessionJob::PrintStatus(v,prefix);
    if(builtin)
    {
-      char *s=args->Combine();
-      printf(_("\tExecuting builtin `%s' [%s]\n"),s,session->CurrentStatus());
-      xfree(s);
+      xstring_ca s(args->Combine());
+      printf(_("\tExecuting builtin `%s' [%s]\n"),s.get(),session->CurrentStatus());
       return;
    }
    if(queue_feeder)
@@ -835,7 +833,7 @@ CmdExec::~CmdExec()
    Delete(status_line);
 }
 
-char *CmdExec::FormatPrompt(const char *scan)
+const char *CmdExec::FormatPrompt(const char *scan)
 {
    const char *cwd=session->GetCwd();
    if(cwd==0 || cwd[0]==0)
@@ -881,14 +879,13 @@ char *CmdExec::FormatPrompt(const char *scan)
       { ']', EndIgn },
       { 0, "" }
    };
-   static char *prompt=0;
-   xfree(prompt);
-   prompt = Subst(scan, subst);
+   static xstring_c prompt;
+   prompt.set_allocated(Subst(scan, subst));
 
    return(prompt);
 }
 
-char *CmdExec::MakePrompt()
+const char *CmdExec::MakePrompt()
 {
    if(partial_cmd)
    {

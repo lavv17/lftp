@@ -60,10 +60,9 @@ void ColumnOutput::addf(const char *fmt, const char *color, ...)
 {
    va_list v;
    va_start(v, color);
-   char *str = xvasprintf(fmt, v);
+   xstring_ca str(xvasprintf(fmt, v));
    va_end(v);
    add(str, color);
-   xfree(str);
 }
 
 void ColumnOutput::append()
@@ -196,38 +195,17 @@ void ColumnOutput::print(OutputJob *o, unsigned width, bool color) const
    xfree(col_arr);
 }
 
-datum::datum(): names(0), colors(0), num(0), ws(0), curwidth(0) { }
-datum::~datum()
-{
-   for(int i = 0; i < num; i++) {
-      xfree(names[i]);
-      xfree(colors[i]);
-   }
-   xfree(names);
-   xfree(colors);
-}
-
-int datum::width() const
-{
-   return curwidth;
-}
-
 void datum::append(const char *name, const char *color)
 {
-   num++;
-   names = (char **) xrealloc(names, sizeof(char *) * num);
-   colors = (char **) xrealloc(colors, sizeof(char *) * num);
-
-   names[num-1] = xstrdup(name);
-   colors[num-1] = xstrdup(color);
-   if(num == 1) {
+   names.Append(name);
+   colors.Append(color);
+   if(names.Count() == 1) {
       ws = 0;
       for(int c = 0; name[c]; c++) {
 	 if(name[c] != ' ') break;
 	 ws++;
       }
    }
-
    curwidth += mbswidth(name, 0);
 }
 
@@ -236,7 +214,7 @@ void datum::print(OutputJob *o, bool color, int skip,
 {
    const char *cur_color = 0;
 
-   for(int i = 0; i < num; i++) {
+   for(int i = 0; i < names.Count(); i++) {
       int len = strlen(names[i]);
       if(len < skip) {
 	 skip -= len;
@@ -267,9 +245,4 @@ void datum::print(OutputJob *o, bool color, int skip,
 
    if(cur_color)
       o->Put(color_reset);
-}
-
-int datum::whitespace() const
-{
-   return ws;
 }

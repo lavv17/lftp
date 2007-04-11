@@ -28,7 +28,7 @@
 
 class Bookmark : public KeyValueDB
 {
-   char *bm_file;
+   xstring bm_file;
    int bm_fd;
    time_t stamp;
 

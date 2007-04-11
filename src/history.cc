@@ -38,14 +38,9 @@ History::History()
    stamp=0;
    fd=-1;
    modified=false;
-   file=0;
    const char *home=get_lftp_home();
    if(home)
-   {
-      const char *add="/cwd_history";
-      file=xstrdup(home,+strlen(add));
-      strcat(file,add);
-   }
+      file.vset(home,"/cwd_history",NULL);
 }
 
 History::~History()
@@ -53,7 +48,6 @@ History::~History()
    Close();
    if(full)
       delete full;
-   xfree(file);
 }
 
 const char *History::extract_url(const char *res)
@@ -126,7 +120,7 @@ void History::Load()
 	 return;
       fcntl(fd,F_SETFD,FD_CLOEXEC);
       if(Lock(fd,F_RDLCK)==-1)
-	 fprintf(stderr,"%s: lock for reading failed, trying to read anyway\n",file);
+	 fprintf(stderr,"%s: lock for reading failed, trying to read anyway\n",file.get());
    }
    if(!full)
       full=new KeyValueDB;
@@ -178,7 +172,7 @@ void History::Save()
    fcntl(fd,F_SETFD,FD_CLOEXEC);
    if(Lock(fd,F_WRLCK)==-1)
    {
-      fprintf(stderr,"%s: lock for writing failed\n",file);
+      fprintf(stderr,"%s: lock for writing failed\n",file.get());
       Close();
       return;
    }

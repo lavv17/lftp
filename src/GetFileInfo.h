@@ -31,17 +31,17 @@ class GetFileInfo: public ListInfo
    ListInfo *li;
 
    /* file or dir we're listing: */
-   char *dir;
+   xstring_c dir;
 
    /* directory we've actually listed: */
-   char *path_to_prefix;
+   xstring_c path_to_prefix;
 
    /* directory we started in: */
    FileAccess::Path origdir;
 
    /* In showdir mode, we make sure the path actually exists; this is
     * the filename to look for. */
-   char *verify_fn;
+   xstring verify_fn;
 
    bool showdir;
 
@@ -59,7 +59,7 @@ class GetFileInfo: public ListInfo
    /* if true, prepend the appropriate relative path to the result */
    bool prepend_path;
 
-   char *saved_error_text;
+   xstring_c saved_error_text;
 
    FA::fileinfo get_info;
 public:

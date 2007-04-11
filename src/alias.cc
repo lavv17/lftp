@@ -30,19 +30,6 @@
 
 Alias *Alias::base;
 
-Alias::Alias(const char *alias,const char *value,Alias *next)
-{
-   this->alias=xstrdup(alias);
-   this->value=xstrdup(value);
-   this->next=next;
-}
-
-Alias::~Alias()
-{
-   xfree(this->alias);
-   xfree(this->value);
-}
-
 void Alias::Add(const char *alias,const char *value)
 {
    Alias **scan=&base;
@@ -51,7 +38,7 @@ void Alias::Add(const char *alias,const char *value)
       int dif=strcasecmp((*scan)->alias,alias);
       if(dif==0)
       {
-	 xstrset((*scan)->value,value);
+	 (*scan)->value.set(value);
 	 return;
       }
       if(dif>0)
@@ -93,61 +80,36 @@ const char *Alias::Find(const char *alias)
    return 0;
 }
 
-#if 0
-void Alias::List()
-{
-   Alias *scan=base;
-   while(scan)
-   {
-      printf("alias %s \"%s\"\n",scan->alias,scan->value);
-      scan=scan->next;
-   }
-}
-#endif
-
 char *Alias::Format()
 {
-   char *res;
-   Alias *scan;
-   int size=0;
-
-   for(scan=base; scan; scan=scan->next)
+   xstring res;
+   for(Alias *scan=base; scan; scan=scan->next)
    {
-      size+=6+strlen(scan->alias)*2;
-      size+=2+strlen(scan->value)*2+1+1;
-   }
-   res=(char*)xmalloc(size+1);
-   char *store=res;
-
-   for(scan=base; scan; scan=scan->next)
-   {
-      strcpy(store,"alias ");
-      store+=strlen(store);
-      char *s=scan->alias;
+      res.append("alias ");
+      const char *s=scan->alias;
       while(*s)
       {
 	 if(strchr("\" \t\\>|",*s))
-	    *store++='\\';
-	 *store++=*s++;
+	    res.append('\\');
+	 res.append(*s++);
       }
-      *store++=' ';
+      res.append(' ');
       s=scan->value;
 
       bool par=false;
       if(*s==0 || strcspn(s," \t>|")!=strlen(s))
 	 par=true;
       if(par)
-	 *store++='"';
+	 res.append('"');
       while(*s)
       {
 	 if(strchr("\"\\",*s))
-	    *store++='\\';
-	 *store++=*s++;
+	    res.append('\\');
+	 res.append(*s++);
       }
       if(par)
-	 *store++='"';
-      *store++='\n';
+	 res.append('"');
+      res.append('\n');
    }
-   *store=0;
-   return res;
+   return res.borrow();
 }

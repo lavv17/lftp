@@ -151,7 +151,7 @@ void lftp_rl_init(
    const char *completer_word_break_characters,
    const char *filename_quote_characters,
    char *(*filename_quoting_function)(char *,int,char *),
-   char *(*filename_dequoting_function)(char *,int),
+   char *(*filename_dequoting_function)(const char *,int),
    int (*char_is_quoted_p)(const char *,int))
 {
    rl_readline_name                  =readline_name;

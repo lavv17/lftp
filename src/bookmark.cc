@@ -25,6 +25,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <stddef.h>
 #include "trio.h"
 #include "ResMgr.h"
 #include "misc.h"
@@ -38,14 +39,9 @@ ResDecl res_auto_sync("bmk:auto-sync","yes",ResMgr::BoolValidate,ResMgr::NoClosu
 
 Bookmark::Bookmark()
 {
-   bm_file=0;
    const char *home=get_lftp_home();
    if(home)
-   {
-      const char *add="/bookmarks";
-      bm_file=xstrdup(home,+strlen(add));
-      strcat(bm_file,add);
-   }
+      bm_file.vset(home,"/bookmarks",NULL);
    bm_fd=-1;
    stamp=(time_t)-1;
 }
@@ -53,7 +49,6 @@ Bookmark::Bookmark()
 Bookmark::~Bookmark()
 {
    Close();
-   xfree(bm_file);
 }
 
 void Bookmark::Refresh()
@@ -80,7 +75,7 @@ void Bookmark::Load()
 	 return;
       fcntl(bm_fd,F_SETFD,FD_CLOEXEC);
       if(Lock(F_RDLCK)==-1)
-	 fprintf(stderr,"%s: lock for reading failed, trying to read anyway\n",bm_file);
+	 fprintf(stderr,"%s: lock for reading failed, trying to read anyway\n",bm_file.get());
    }
    struct stat st;
    fstat(bm_fd,&st);
@@ -106,7 +101,7 @@ void Bookmark::PreModify()
       return;
    if(Lock(F_WRLCK)==-1)
    {
-      fprintf(stderr,"%s: lock for writing failed\n",bm_file);
+      fprintf(stderr,"%s: lock for writing failed\n",bm_file.get());
       Close();
       return;
    }
@@ -142,7 +137,7 @@ void Bookmark::UserSave()
       return;
    if(Lock(F_WRLCK)==-1)
    {
-      fprintf(stderr,"%s: lock for writing failed\n",bm_file);
+      fprintf(stderr,"%s: lock for writing failed\n",bm_file.get());
       Close();
       return;
    }

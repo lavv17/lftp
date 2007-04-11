@@ -248,23 +248,12 @@ void FinderJob::Push(FileSet *fset)
    ProcessList(fset);
 }
 
-FinderJob::place::place(const char *p,FileSet *f)
-{
-   path=xstrdup(p);
-   fset=f;
-}
-FinderJob::place::~place()
-{
-   xfree(path);
-   if(fset) delete fset;
-}
-
 void FinderJob::Down(const char *p)
 {
 #ifdef FIND_DEBUG
-   printf("Down(%s)\n",p);
+   printf("Down(%s)\n",p.get());
 #endif
-   xstrset(dir,p);
+   dir.set(p);
    state=START_INFO;
 }
 
@@ -278,7 +267,6 @@ void FinderJob::Init()
    orig_session=0;
 
    op="find";
-   dir=0;
    errors=0;
    li=0;
 
@@ -329,7 +317,6 @@ FinderJob::~FinderJob()
       Reuse(orig_session);
    xfree(stack);
    delete exclude;
-   xfree(dir);
    Delete(li);
 }
 
@@ -338,13 +325,10 @@ void FinderJob::ShowRunStatus(StatusLine *sl)
    if(!show_sl)
       return;
 
-   char *path=0;
    switch(state)
    {
    case INFO:
-      if(stack_ptr>=0)
-	 path=top.path;
-      sl->Show("%s: %s",dir_file(path,dir),li->Status());
+      sl->Show("%s: %s",dir_file(stack_ptr>=0?top.path.get():0,dir),li->Status());
       break;
    case WAIT:
       Job::ShowRunStatus(sl);
@@ -359,13 +343,10 @@ void FinderJob::PrintStatus(int v,const char *prefix)
 {
    SessionJob::PrintStatus(v,prefix);
 
-   char *path=0;
    switch(state)
    {
    case INFO:
-      if(stack_ptr>=0)
-	 path=top.path;
-      printf("\t%s: %s\n",dir_file(path,dir),li->Status());
+      printf("\t%s: %s\n",dir_file(stack_ptr>=0?top.path.get():0,dir),li->Status());
       break;
    case WAIT:
       break;

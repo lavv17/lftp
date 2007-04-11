@@ -33,7 +33,7 @@ class mgetJob : public GetJob
    ArgV *mkdir_args;
    int mkdir_base_arg;
    ArgV *m_args;
-   char *output_dir;
+   xstring_c output_dir;
 
    bool	 make_dirs;
    void	 make_directory(const char *d);
@@ -48,7 +48,7 @@ public:
    mgetJob(FileAccess *session,ArgV *args,bool c,bool md);
    ~mgetJob();
 
-   void OutputDir(char *o) { output_dir=o; }
+   void OutputDir(char *o) { output_dir.set_allocated(o); }
 };
 
 #endif // MGETJOB_H

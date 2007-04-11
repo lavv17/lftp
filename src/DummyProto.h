@@ -43,10 +43,9 @@ public:
 
 class DummyNoProto : public DummyProto
 {
-   char *proto;
+   xstring_c proto;
 public:
-   DummyNoProto(const char *p);
-   ~DummyNoProto();
+   DummyNoProto(const char *p) : proto(p) {}
 
    const char *GetProto() const;
    FileAccess *Clone() const;

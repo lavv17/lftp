@@ -56,7 +56,7 @@ CDECL_END
 # define GLOB_PERIOD 0
 #endif
 
-static char *bash_dequote_filename (char *text, int quote_char);
+static char *bash_dequote_filename (const char *text, int quote_char);
 static int lftp_char_is_quoted(const char *string,int eindex);
 
 static int len;    // lenght of the word to complete
@@ -838,8 +838,7 @@ static char **lftp_completion (const char *text,int start,int end)
    char quoted=((lftp_char_is_quoted(rl_line_buffer,start) &&
 		 strchr(rl_completer_quote_characters,rl_line_buffer[start-1]))
 		? rl_line_buffer[start-1] : 0);
-   char *textq=alloca_strdup(text);
-   textq=bash_dequote_filename(textq, quoted);
+   xstring_ca textq(bash_dequote_filename(text, quoted));
    len=strlen(textq);
 
    char **matches=lftp_rl_completion_matches(textq,generator);
@@ -855,14 +854,12 @@ static char **lftp_completion (const char *text,int start,int end)
    if(!matches)
    {
       rl_attempted_completion_over = 1;
-      goto leave;
+      return 0;
    }
 
    if(type==REMOTE_DIR)
       rl_completion_append_character='/';
 
-leave:
-   xfree(textq);
    return matches;
 }
 
@@ -1032,9 +1029,11 @@ contains_shell_metas (char *string)
    allows single quotes to appear within double quotes, and vice versa.
    It should be smarter. */
 static char *
-bash_dequote_filename (char *text, int quote_char)
+bash_dequote_filename (const char *text, int quote_char)
 {
-  char *ret, *p, *r;
+  char *ret;
+  const char *p;
+  char *r;
   int l, quoted;
 
   l = strlen (text);

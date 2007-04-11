@@ -35,7 +35,7 @@ int CopyJob::Do()
       return STALL;
    if(c->Error())
    {
-      eprintf("%s: %s\n",op,c->ErrorText());
+      eprintf("%s: %s\n",op.get(),c->ErrorText());
       done=true;
       return MOVED;
    }
@@ -85,11 +85,10 @@ const char *CopyJob::Status(const StatusLine *s, bool base)
    if(c->Done() || c->Error())
       return "";
 
-   static char *buf = 0;
-   xfree(buf);
-
    const char *name=SqueezeName(s->GetWidthDelayed()-50, base);
-   buf = xasprintf(COPY_STATUS);
+
+   static xstring_c buf;
+   buf.set_allocated(xasprintf(COPY_STATUS));
 
    return buf;
 }
@@ -136,22 +135,17 @@ int CopyJob::AcceptSig(int sig)
 
 void CopyJob::SetDispName()
 {
-   xfree(dispname);
-   dispname=0;
-
    ParsedURL url(name,true);
    if(url.proto)
-      dispname = xstrdup(url.path);
+      dispname.set(url.path);
    else
-      dispname = xstrdup(name);
+      dispname.set(name);
 }
 
 CopyJob::CopyJob(FileCopy *c1,const char *name1,const char *op1)
+   : name(name1), op(op1)
 {
    c=c1;
-   dispname=0;
-   name=xstrdup(name1);
-   op=xstrdup(op1);
    done=false;
    no_status=false;
    no_status_on_write=false;
@@ -162,9 +156,6 @@ CopyJob::CopyJob(FileCopy *c1,const char *name1,const char *op1)
 CopyJob::~CopyJob()
 {
    Delete(c);
-   xfree(name);
-   xfree(dispname);
-   xfree(op);
 }
 
 const char *CopyJob::FormatBytesTimeRate(off_t bytes,double time_spent)
@@ -209,14 +200,12 @@ CopyJobEnv::CopyJobEnv(FileAccess *s,ArgV *a,bool cont1)
    no_status=false;
    cont=cont1;
    ascii=false;
-   cwd=xgetcwd();
+   cwd.set_allocated(xgetcwd());
 }
 CopyJobEnv::~CopyJobEnv()
 {
    SetCopier(0,0);
-   if(args)
-      delete args;
-   xfree(cwd);
+   delete args;
 }
 int CopyJobEnv::Do()
 {

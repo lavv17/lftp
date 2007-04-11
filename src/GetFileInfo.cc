@@ -83,19 +83,14 @@
 #include "LsCache.h"
 
 GetFileInfo::GetFileInfo(FileAccess *a, const char *_dir, bool _showdir)
-   : ListInfo(a,0), origdir(a->GetCwd())
+   : ListInfo(a,0), dir(_dir?_dir:""), origdir(a->GetCwd())
 {
-  dir=xstrdup(_dir? _dir:"");
-
    showdir=_showdir;
    state=INITIAL;
    tried_dir=tried_file=tried_info=false;
    result=0;
-   path_to_prefix=0;
-   verify_fn=0;
    li=0;
    from_cache=0;
-   saved_error_text=0;
    was_directory=false;
    prepend_path=true;
 
@@ -114,10 +109,6 @@ GetFileInfo::~GetFileInfo()
    session->Close();
    session->SetCwd(origdir);
    Delete(li);
-   xfree(saved_error_text);
-   xfree(dir);
-   xfree(path_to_prefix);
-   xfree(verify_fn);
 }
 
 int GetFileInfo::Do()
@@ -182,7 +173,7 @@ int GetFileInfo::Do()
 	  * if we are going to show its contents */
 	 tried_dir=true;
 	 cd_path = dir;
-	 xstrset(path_to_prefix,dir);
+	 path_to_prefix.set(dir);
 	 was_directory=true;
       }
       else if(!tried_file)
@@ -195,8 +186,7 @@ int GetFileInfo::Do()
 	 session->Chdir(dir, false);
 	 cd_path = "..";
 
-	 xfree(path_to_prefix);
-	 path_to_prefix=dirname_alloc(dir);
+	 path_to_prefix.set_allocated(dirname_alloc(dir));
 	 was_directory=false;
       }
       else if(!tried_info)
@@ -207,8 +197,7 @@ int GetFileInfo::Do()
 	 session->Chdir(dir, false);
 	 session->Chdir("..", false);
 
-	 xfree(path_to_prefix);
-	 path_to_prefix=dirname_alloc(dir);
+	 path_to_prefix.set_allocated(dirname_alloc(dir));
 	 was_directory=false;
 
 	 /* We tried both; no luck. Fall back on ARRAY_INFO. */
@@ -247,7 +236,7 @@ int GetFileInfo::Do()
 	  * Only save the first error, so error texts contain the full
 	  * path. */
 	 if(!saved_error_text)
-	    saved_error_text = xstrdup(session->StrError(res));
+	    saved_error_text.set(session->StrError(res));
 	 session->Close();
 	 if(res==FA::NO_FILE)
 	 {
@@ -276,7 +265,7 @@ int GetFileInfo::Do()
 	 session->SetCwd(origdir);
 	 session->Chdir(dir, false);
 
-	 xstrset(verify_fn,basename_ptr(session->GetCwd()));
+	 verify_fn.set(basename_ptr(session->GetCwd()));
 
 	 /* go back */
 	 session->SetCwd(pwd);
@@ -291,8 +280,7 @@ int GetFileInfo::Do()
 	 result = new FileSet;
 	 result->Add(fi);
 
-	 xfree(path_to_prefix);
-	 path_to_prefix=dirname_alloc(dir);
+	 path_to_prefix.set_allocated(dirname_alloc(dir));
 
 	 state=DONE;
 	 return MOVED;
@@ -306,8 +294,7 @@ int GetFileInfo::Do()
 	  * directory index. */
 	 FileInfo *fi = new FileInfo(dir);
 	 fi->SetType(fi->DIRECTORY);
-	 xfree(path_to_prefix);
-	 path_to_prefix=dirname_alloc(dir);
+	 path_to_prefix.set_allocated(dirname_alloc(dir));
 
 	 result = new FileSet;
 	 result->Add(fi);
@@ -337,7 +324,7 @@ int GetFileInfo::Do()
 	 }
 
 	 if(!saved_error_text)
-	    saved_error_text = xstrdup(li->ErrorText());
+	    saved_error_text.set(li->ErrorText());
 
 	 /* Otherwise, go on to try the next mode. */
 	 state=CHANGE_DIR;
@@ -356,9 +343,7 @@ int GetFileInfo::Do()
 
       /* If this was a listing of the basename: */
       if(!was_directory) {
-	 int len=strlen(verify_fn);
-	 while(len>0 && verify_fn[len-1] == '/')
-	    verify_fn[--len] = 0;
+	 verify_fn.rtrim('/');
 
 	 /* Find the file with our filename: */
 	 const FileInfo *file = result->FindByName(verify_fn);
@@ -425,7 +410,7 @@ int GetFileInfo::Do()
       if(res < 0)
       {
 	 if(!saved_error_text)
-	    saved_error_text = xstrdup(session->StrError(res));
+	    saved_error_text.set(session->StrError(res));
 	 state=CHANGE_DIR;
 	 return MOVED;
       }
@@ -473,7 +458,7 @@ done:
 	 {
 	    FileInfo *f = (*result)[0];
 	    /* Make sure the filename is what was requested (ie ".."). */
-	    char *fn = basename_ptr(dir);
+	    const char *fn = basename_ptr(dir);
 	    f->SetName(*fn? fn:".");
 
 	    /* If we're in show_dir mode, was_directory will always be false;

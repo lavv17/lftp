@@ -33,7 +33,7 @@ class FinderJob : public SessionJob
    FileAccess *orig_session;
    FileAccess::Path orig_init_dir;
 
-   char *dir;
+   xstring_c dir;
    int errors;
    GetFileInfo *li;
 
@@ -41,11 +41,11 @@ class FinderJob : public SessionJob
       {
 	 friend class FinderJob;
 
-	 char *path;
+	 xstring_c path;
 	 FileSet *fset;
 
-	 place(const char *p,FileSet *f); // eat f, dup p
-	 ~place();
+	 place(const char *p,FileSet *f) : path(p), fset(f) {}
+	 ~place() { delete fset; }
       };
 
    place **stack;

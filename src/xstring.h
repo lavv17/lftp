@@ -183,6 +183,8 @@ public:
    char *borrow() { size=len=0; return replace_value(buf,(char*)0); }
    bool eq(const xstring&o) { return len==o.len && (buf==o.buf || (len>0 && !memcmp(buf,o.buf,len))); }
    bool ne(const xstring&o) { return !eq(o); }
+   bool chomp(char c='\n');
+   void rtrim(char c=' ');
 };
 
 #endif//XSTRING_H

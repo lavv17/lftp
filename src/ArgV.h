@@ -45,6 +45,7 @@ public:
 
    char *Combine(int start_index=0) const;
    char *CombineQuoted(int start_index=0) const;
+   char *CombineCmd(int i=0) const { return i>=count()-1 ? Combine(i) : CombineQuoted(i); }
 
    int getopt_long(const char *opts,const struct option *lopts,int *lind);
    int getopt(const char *opts)

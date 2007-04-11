@@ -77,9 +77,9 @@ class ReadlineFeeder : public CmdFeeder
    bool tty:1;
    bool ctty:1;
    bool add_newline:1;
-   char *to_free;
    int eof_count;
-   char *for_history;
+   xstring_c cmd_buf;
+   xstring_c for_history;
 
    static bool readline_inited;
    void readline_init()
@@ -92,7 +92,7 @@ class ReadlineFeeder : public CmdFeeder
       if(for_history)
       {
 	 lftp_add_history_nodups(for_history);
-	 xstrset(for_history,0);
+	 for_history.set(0);
       }
    }
 
@@ -102,11 +102,9 @@ public:
       tty=isatty(0);
       ctty=(tcgetpgrp(0)!=(pid_t)-1);
       add_newline=false;
-      to_free=0;
       eof_count=0;
-      for_history=0;
       if(args && args->count()>1)
-	 for_history=args->CombineQuoted();
+	 for_history.set_allocated(args->CombineQuoted());
    }
    virtual ~ReadlineFeeder()
    {
@@ -117,8 +115,6 @@ public:
 	 if(res_save_rl_history.QueryBool(0))
 	    lftp_rl_write_history();
       }
-      xfree(to_free);
-      xfree(for_history);
    }
    bool RealEOF()
    {
@@ -127,8 +123,6 @@ public:
 
    const char *NextCmd(class CmdExec *exec,const char *prompt)
    {
-      xstrset(to_free,0);
-
       if(add_newline)
       {
 	 add_newline=false;
@@ -138,7 +132,6 @@ public:
       ::completion_shell=exec;
       ::remote_completion=exec->remote_completion;
 
-      char *cmd_buf;
       if(tty)
       {
 	 readline_init();
@@ -155,36 +148,37 @@ public:
 	 }
 
 	 SignalHook::ResetCount(SIGINT);
-	 cmd_buf=lftp_readline(prompt);
+	 cmd_buf.set_allocated(lftp_readline(prompt));
+	 xmalloc_register_block(cmd_buf.get_non_const());
 	 if(cmd_buf && *cmd_buf)
 	 {
 	    if(exec->csh_history)
 	    {
-	       char *history_value;
-	       int expanded = lftp_history_expand (cmd_buf, &history_value);
-
+	       char *history_value0=0;
+	       int expanded = lftp_history_expand (cmd_buf, &history_value0);
 	       if (expanded)
 	       {
+		  if(history_value0)
+		     xmalloc_register_block(history_value0);
+		  xstring_ca history_value(history_value0);
+
 		  if (expanded < 0);
-		     fprintf (stderr, "%s\n", history_value);
+		     fprintf (stderr, "%s\n", history_value.get());
 
 		  /* If there was an error, return nothing. */
 		  if (expanded < 0 || expanded == 2)	/* 2 == print only */
 		  {
 		     exec->Timeout(0);  // and retry immediately
-		     xfree(history_value);
 		     return "";
 		  }
 
-		  to_free=history_value;
-		  cmd_buf=history_value;
+		  cmd_buf.set_allocated(history_value.borrow());
 	       }
 	    }
 	    lftp_add_history_nodups(cmd_buf);
 	 }
 	 else if(cmd_buf==0 && exec->interactive)
 	    puts("exit");
-	 xmalloc_register_block(cmd_buf);
 
 	 if(cmd_buf==0)
 	    eof_count++;
@@ -203,9 +197,8 @@ public:
 	    }
 	    fflush(stdout);
 	 }
-	 cmd_buf=readline_from_file(stdin);
+	 cmd_buf.set_allocated(readline_from_file(0));
       }
-      to_free=cmd_buf;
 
       ::completion_shell=0;
 

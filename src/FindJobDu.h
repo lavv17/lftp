@@ -42,10 +42,11 @@ class FinderJob_Du : public FinderJob
 
    void Init(const char *d);
 
-   struct stack {
-      char *dir;
+   struct stack_entry {
+      xstring_c dir;
       long long size;
-   } *size_stack;
+      stack_entry(const char *dir) : dir(dir), size(0) {}
+   } **size_stack;
    int stack_ptr;
 
    ArgV *args;

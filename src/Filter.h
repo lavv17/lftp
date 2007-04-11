@@ -34,10 +34,10 @@ class FDStream
 
 public:
    int fd;
-   char *name;
-   char *full_name;
-   char *cwd;
-   char *error_text;
+   xstring_c name;
+   xstring_c full_name;
+   xstring_c cwd;
+   xstring error_text;
    const char *status;
 
    bool	 error() { return error_text!=0; }

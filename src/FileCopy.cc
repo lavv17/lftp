@@ -409,7 +409,6 @@ void FileCopy::Init()
    set_state(INITIAL);
    max_buf=0x10000;
    cont=false;
-   error_text=0;
    rate        =MakeRef(new Speedometer("xfer:rate-period"));
    rate_for_eta=MakeRef(new Speedometer("xfer:eta-period"));
    put_buf=0;
@@ -435,7 +434,6 @@ FileCopy::~FileCopy()
    DeleteRef(get);
    DeleteRef(put);
    delete line_buffer;
-   xfree(error_text);
    DeleteRef(rate);
    DeleteRef(rate_for_eta);
 }
@@ -469,13 +467,9 @@ void FileCopy::Bg()
    if(put) put->Bg();
 }
 
-void FileCopy::Reconfig(const char *s)
-{
-}
-
 void FileCopy::SetError(const char *str)
 {
-   xstrset(error_text,str);
+   error_text.set(str);
    DeleteRef(get);
    DeleteRef(put);
 }
@@ -573,20 +567,15 @@ long FileCopy::GetETA(off_t b)
 }
 const char *FileCopy::GetStatus()
 {
-   static char *buf;
-   xstrset(buf,0);
-   const char *get_st=0;
-   if(get)
-      get_st=get->GetStatus();
-   const char *put_st=0;
-   if(put)
-      put_st=put->GetStatus();
+   static xstring buf;
+   const char *get_st=get?get->GetStatus():0;
+   const char *put_st=put?put->GetStatus():0;
    if(get_st && get_st[0] && put_st && put_st[0])
-      buf=xasprintf("[%s->%s]",get_st,put_st);
+      buf.vset("[",get_st,"->",put_st,"]",NULL);
    else if(get_st && get_st[0])
-      buf=xasprintf("[%s]",get_st);
+      buf.vset("[",get_st,"]",NULL);
    else if(put_st && put_st[0])
-      buf=xasprintf("[%s]",put_st);
+      buf.vset("[",put_st,"]",NULL);
    else
       return "";
    return buf;
@@ -694,13 +683,8 @@ FileCopyPeer::FileCopyPeer(dir_t m) : IOBuffer(m)
    use_cache=true;
    write_allowed=true;
    done=false;
-   suggested_filename=0;
    auto_rename=false;
    Suspend();  // don't do anything too early
-}
-FileCopyPeer::~FileCopyPeer()
-{
-   xfree(suggested_filename);
 }
 
 // FileCopyPeerFA implementation
@@ -1031,8 +1015,8 @@ int FileCopyPeerFA::Get_LL(int len)
 	       session=FileAccess::New(&u);
 	       reuse_later=true;
 
-	       xstrset(file,u.path?u.path:"");
-	       xstrset(orig_url,loc);
+	       file.set(u.path?u.path:"");
+	       orig_url.set(loc);
 	    }
 	    else // !proto
 	    {
@@ -1045,30 +1029,26 @@ int FileCopyPeerFA::Get_LL(int len)
 		     s_ind=p_ind=strlen(orig_url);
 		  if(loc[0]=='/')
 		  {
-		     orig_url=(char*)xrealloc(orig_url,p_ind+strlen(loc)+1);
-		     strcpy(orig_url+p_ind,loc);
+		     orig_url.truncate(p_ind);
+		     orig_url.append(loc);
 		  }
 		  else
 		  {
-		     orig_url=(char*)xrealloc(orig_url,s_ind+1+strlen(loc)+1);
-		     strcpy(orig_url+s_ind,"/");
-		     strcpy(orig_url+s_ind+1,loc);
+		     orig_url.truncate(s_ind);
+		     orig_url.append('/');
+		     orig_url.append(loc);
 		  }
 	       }
 
 	       url::decode_string(loc);
-	       char *slash=strrchr(file,'/');
-	       const char *new_file=0;
+	       const char *slash=strrchr(file,'/');
 	       if(loc[0]!='/' && slash)
 	       {
-		  *slash=0;
-		  new_file=dir_file(file,loc);
+		  file.truncate(slash-file);
+		  file.set(dir_file(file,loc));
 	       }
 	       else
-	       {
-		  new_file=loc;
-	       }
-	       xstrset(file,new_file);
+		  file.set(loc);
 	    }
 
 	    size=NO_SIZE_YET;
@@ -1159,10 +1139,8 @@ off_t FileCopyPeerFA::GetRealPos()
 void FileCopyPeerFA::Init()
 {
    FAmode=FA::RETRIEVE;
-   file=0;
    session=0;
    reuse_later=false;
-   orig_url=0;
    fxp=false;
    try_time=0;
    retries=0;
@@ -1173,11 +1151,10 @@ void FileCopyPeerFA::Init()
 }
 
 FileCopyPeerFA::FileCopyPeerFA(FileAccess *s,const char *f,int m)
-   : FileCopyPeer(m==FA::STORE ? PUT : GET)
+   : FileCopyPeer(m==FA::STORE ? PUT : GET), file(f)
 {
    Init();
    FAmode=m;
-   file=xstrdup(f);
    session=s;
    reuse_later=true;
    if(FAmode==FA::LIST || FAmode==FA::LONG_LIST)
@@ -1191,25 +1168,18 @@ FileCopyPeerFA::~FileCopyPeerFA()
       if(reuse_later)
 	 SessionPool::Reuse(session);
    }
-   xfree(file);
-   xfree(orig_url);
    DeleteRef(verify);
 }
 
 FileCopyPeerFA::FileCopyPeerFA(ParsedURL *u,int m)
-   : FileCopyPeer(m==FA::STORE ? PUT : GET)
+   : FileCopyPeer(m==FA::STORE ? PUT : GET), file(u->path), orig_url(u->orig_url)
 {
    Init();
    FAmode=m;
-   file=xstrdup(u->path);
    session=FileAccess::New(u);
    reuse_later=true;
-   orig_url=u->orig_url;
-   u->orig_url=0;
    if(!file)
-   {
       SetError(_("file name missed in URL"));
-   }
 }
 
 FileCopyPeerFA *FileCopyPeerFA::New(FileAccess *s,const char *url,int m,bool reuse)
@@ -1351,9 +1321,9 @@ int FileCopyPeerFDStream::Do()
 	 {
 	    char *dir=alloca_strdup(stream->full_name);
 	    dirname_modify(dir);
-	    debug((5,"copy: renaming `%s' to `%s'\n",stream->full_name,suggested_filename));
+	    debug((5,"copy: renaming `%s' to `%s'\n",stream->full_name,suggested_filename.get()));
 	    if(rename(stream->full_name,dir_file(dir,suggested_filename))==-1)
-	       debug((3,"rename(%s, %s): %s\n",stream->full_name,suggested_filename,strerror(errno)));
+	       debug((3,"rename(%s, %s): %s\n",stream->full_name,suggested_filename.get(),strerror(errno)));
 	 }
 	 done=true;
 	 m=MOVED;
@@ -1750,7 +1720,6 @@ int FileCopyPeerDirList::Do()
 void FileVerificator::Init0()
 {
    done=false;
-   error_text=0;
    verify_buffer=0;
    verify_process=0;
    if(!ResMgr::QueryBool("xfer:verify",0))
@@ -1814,7 +1783,6 @@ FileVerificator::FileVerificator(FileAccess *session,const char *f)
 }
 FileVerificator::~FileVerificator()
 {
-   xfree(error_text);
    // verify_process is deleted by verify_buffer dtor
    Delete(verify_buffer);
 }
@@ -1832,23 +1800,13 @@ int FileVerificator::Do()
    m=MOVED;
    if(verify_process->GetProcExitCode()!=0)
    {
-      verify_buffer->Put("",1);
-      int len;
-      const char *s;
-      verify_buffer->Get(&s,&len);
-      len=strlen(s);
-      while(len>0 && s[len-1]=='\n')
-	 len--;
-      if(len==0)
-      {
-	 s=_("Verify command failed without a message");
-	 len=strlen(s);
-      }
-      error_text=xstrdup(s);
-      error_text[len]=0;
-      char *nl=strrchr(error_text,'\n');
+      error_text.set(verify_buffer->Get());
+      error_text.rtrim('\n');
+      if(error_text.length()==0)
+	 error_text.set(_("Verify command failed without a message"));
+      const char *nl=strrchr(error_text,'\n');
       if(nl)
-	 memmove(error_text,nl+1,len-(nl+1-error_text)+1);
+	 error_text.set(nl+1);
    }
    return m;
 }

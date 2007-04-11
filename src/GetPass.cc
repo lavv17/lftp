@@ -29,13 +29,10 @@
 #include "CharReader.h"
 #include "SignalHook.h"
 
-char *GetPass(const char *prompt)
+const char *GetPass(const char *prompt)
 {
-   static char *oldpass=0;
+   static xstring_c oldpass;
    static int tty_fd=-2;
-   static FILE *f=0;
-
-   xstrset(oldpass,0);
 
    if(tty_fd==-2)
    {
@@ -51,13 +48,7 @@ char *GetPass(const char *prompt)
    if(tty_fd==-1)
       return 0;
 
-   if(f==0)
-      f=fdopen(tty_fd,"r");
-   if(f==0)
-      return 0;
-
    write(tty_fd,prompt,strlen(prompt));
-
 
    struct termios tc;
    tcgetattr(tty_fd,&tc);
@@ -65,7 +56,7 @@ char *GetPass(const char *prompt)
    tc.c_lflag&=~ECHO;
    tcsetattr(tty_fd,TCSANOW,&tc);
 
-   oldpass=readline_from_file(f);
+   oldpass.set_allocated(readline_from_file(tty_fd));
 
    tc.c_lflag=old_lflag;
    tcsetattr(tty_fd,TCSANOW,&tc);
@@ -75,16 +66,12 @@ char *GetPass(const char *prompt)
    return oldpass;
 }
 
-char *readline_from_file(FILE *f)
+char *readline_from_file(int fd)
 {
-   int	 size=0x800;
-   char	 *line=(char*)xmalloc(size);
-   int	 len=0;
-   char  *ptr=line;
-
+   xstring line;
    for(;;)
    {
-      CharReader r(fileno(f));
+      CharReader r(fd);
       int c;
       for(;;)
       {
@@ -94,28 +81,12 @@ char *readline_from_file(FILE *f)
 	    break;
 	 SMTask::Block();
 	 if(SignalHook::GetCount(SIGINT)>0)
-	 {
-	    xfree(line);
 	    return(xstrdup(""));
-	 }
       }
-      if(c==r.EOFCHAR && ptr==line)
-      {
-	 xfree(line);
+      if(c==r.EOFCHAR && line.length()==0)
 	 return(NULL);
-      }
       if(c==r.EOFCHAR || c=='\n')
-      {
-	 *ptr=0;
-	 return(line);
-      }
-      if(len+2>=size)
-      {
-	 size*=2;
-	 line=(char*)xrealloc(line,size);
-	 ptr=line+len;
-      }
-      *ptr++=c;
-      len++;
+	 return(line.borrow());
+      line.append(c);
    }
 }

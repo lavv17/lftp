@@ -28,6 +28,7 @@
 #include <utime.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
+#include <stddef.h>
 
 #include "Filter.h"
 #include "xmalloc.h"
@@ -41,50 +42,26 @@
 #endif
 
 FDStream::FDStream(int new_fd,const char *new_name)
-{
-   fd=new_fd;
-   if(new_name)
-      name=xstrdup(expand_home_relative(new_name));
-   else
-      name=0;
-   full_name=0;
-   cwd=0;
-   error_text=0;
-   status=0;
-   close_fd=false;
-}
+   : close_fd(false), fd(new_fd), name(new_name?expand_home_relative(new_name):0), status(0) {}
 FDStream::FDStream()
-{
-   fd=-1;
-   name=0;
-   full_name=0;
-   error_text=0;
-   status=0;
-   close_fd=false;
-}
+   : close_fd(false), fd(-1), status(0) {}
+
 void FDStream::MakeErrorText(int e)
 {
    if(!e)
       e=errno;
    if(NonFatalError(e))
       return;  // not a serious error - can be retried
-   char *syserr=strerror(e);
-   error_text=(char*)xmalloc(strlen(name)+strlen(syserr)+3);
-   sprintf(error_text,"%s: %s",name,syserr);
+   error_text.vset(name.get(),": ",strerror(e),NULL);
 }
 void FDStream::SetCwd(const char *new_cwd)
 {
-   xstrset(cwd,new_cwd);
+   cwd.set(new_cwd);
 }
 FDStream::~FDStream()
 {
    if(close_fd)
       close(fd);
-   if(full_name!=name)
-      xfree(full_name);
-   xfree(name);
-   xfree(cwd);
-   xfree(error_text);
 };
 
 void OutputFilter::Parent(int *p)
@@ -148,7 +125,7 @@ int OutputFilter::getfd()
       if(second_fd==-1)
       {
 	 if(second->error())
-	    error_text=xstrdup(second->error_text);
+	    error_text.set(second->error_text);
 	 return -1;
       }
       if(pg==0)
@@ -162,7 +139,7 @@ int OutputFilter::getfd()
    {
       if(NonFatalError(errno))
 	 return -1;
-      error_text=xasprintf(_("pipe() failed: %s"),strerror(errno));
+      error_text.vset(_("pipe() failed: "),strerror(errno),NULL);
       return -1;
    }
 
@@ -195,7 +172,7 @@ int OutputFilter::getfd()
       {
 	 if(chdir(cwd)==-1)
 	 {
-	    fprintf(stderr,_("chdir(%s) failed: %s\n"),cwd,strerror(errno));
+	    fprintf(stderr,_("chdir(%s) failed: %s\n"),cwd.get(),strerror(errno));
 	    fflush(stderr);
 	    _exit(1);
 	 }
@@ -207,7 +184,7 @@ int OutputFilter::getfd()
       }
       else
       {
-	 execl("/bin/sh","sh","-c",name,(char*)NULL);
+	 execl("/bin/sh","sh","-c",name.get(),NULL);
 	 fprintf(stderr,_("execl(/bin/sh) failed: %s\n"),strerror(errno));
       }
       fflush(stderr);
@@ -246,7 +223,7 @@ void OutputFilter::Init()
    w=0;
    second=0;
    second_fd=-1;
-   cwd=xgetcwd();
+   cwd.set_allocated(xgetcwd());
    pg=0;
    closed=false;
    stderr_to_stdout=false;
@@ -273,7 +250,7 @@ OutputFilter::OutputFilter(ArgV *a1,int new_second_fd)
    Init();
    second_fd=new_second_fd;
    a=a1;
-   name=a->Combine();
+   name.set_allocated(a->Combine());
 }
 
 OutputFilter::OutputFilter(ArgV *a1,FDStream *new_second)
@@ -282,7 +259,7 @@ OutputFilter::OutputFilter(ArgV *a1,FDStream *new_second)
    Init();
    second=new_second;
    a=a1;
-   name=a->Combine();
+   name.set_allocated(a->Combine());
 }
 
 OutputFilter::~OutputFilter()
@@ -362,18 +339,20 @@ FileStream::FileStream(const char *fname,int new_mode) : FDStream(-1,fname)
 {
    mode=new_mode;
    if(name[0]=='/')
-      full_name=name;
+      full_name.set(name);
    else
    {
-      cwd=xgetcwd();
-      full_name=xstrdup(dir_file(cwd,name));
+      cwd.set_allocated(xgetcwd());
+      full_name.set(dir_file(cwd,name));
    }
 }
 FileStream::~FileStream()
 {
    if(fd!=-1)
+   {
       close(fd);
-   fd=-1;
+      fd=-1;
+   }
 }
 void FileStream::remove()
 {

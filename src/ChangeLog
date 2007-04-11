@@ -6,6 +6,21 @@
 	* MirrorJob.cc, MirrorJob.h, PatternSet.cc, PatternSet.h,
 	  PtyShell.cc, PtyShell.h, commands.cc, lftp_ssl.cc, lftp_ssl.h:
 	  use xstring.
+	* ArgV.h: (CombineCmd) new method.
+	* CmdExec.cc, CmdExec.h, CopyJob.cc, CopyJob.h, DummyProto.cc,
+	  DummyProto.h, FileCopy.cc, FileCopy.h, FileGlob.cc, FileGlob.h,
+	  Filter.cc, Filter.h, FindJob.cc, FindJob.h, FindJobDu.cc,
+	  FindJobDu.h, Fish.cc, FtpDirList.cc, FtpDirList.h, GetFileInfo.cc,
+	  GetFileInfo.h, GetJob.cc, GetJob.h, LocalDir.cc, LocalDir.h,
+	  PtyShell.cc, alias.cc, alias.h, bookmark.cc, bookmark.h, commands.cc,
+	  complete.cc, ftpclass.cc, history.cc, history.h, lftp.cc,
+	  mgetJob.cc, mgetJob.h: use xstring.
+	* lftp_rl.c, lftp_rl.h: const in filename_dequoting_function.
+	* resource.cc: const mismatch.
+	* GetPass.cc, GetPass.h: use file descriptor instead of FILE;
+	  use xstring; return const char*.
+	* ColumnOutput.cc, ColumnOutput.h: use StringSet, xstring.
+	* xstring.cc, xstring.h: (chomp, rtrim) new methods.
 
 2007-04-09  Alexander V. Lukyanov <lav@yars.free.net>
 

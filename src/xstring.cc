@@ -181,3 +181,15 @@ const char *xstring::set_substr(int start,size_t sublen,const char *s)
    len+=s_len-sublen;
    return buf;
 }
+
+bool xstring::chomp(char c)
+{
+   if(!len || buf[len-1]!=c)
+      return false;
+   buf[--len]=0;
+   return true;
+}
+void xstring::rtrim(char c)
+{
+   while(chomp(c));
+}

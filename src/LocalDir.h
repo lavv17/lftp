@@ -23,10 +23,12 @@
 #ifndef LOCALDIR_H
 #define LOCALDIR_H
 
+#include "xstring.h"
+
 class LocalDirectory
 {
    int fd;
-   char *name;
+   xstring_c name;
 
 public:
    LocalDirectory();

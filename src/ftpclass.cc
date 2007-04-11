@@ -3113,10 +3113,9 @@ void Ftp::Connection::SendCmdF(const char *f,...)
 {
    va_list v;
    va_start(v,f);
-   char *s=xvasprintf(f,v);
+   xstring_ca s(xvasprintf(f,v));
    va_end(v);
    SendCmd(s);
-   xfree(s);
 }
 
 int   Ftp::SendEOT()

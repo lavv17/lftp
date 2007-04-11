@@ -28,7 +28,7 @@
 class Glob : public FileAccessOperation
 {
 protected:
-   char  *pattern;
+   xstring_c pattern;
    FileSet list;
    bool	 dirs_only;
    bool	 files_only;
@@ -37,7 +37,7 @@ protected:
    bool	 casefold;
    void	 add(const FileInfo *info);
    void	 add_force(const FileInfo *info);
-   virtual ~Glob();
+   virtual ~Glob() {};
 public:
    const char *GetPattern() { return pattern; }
    FileSet *GetResult() { return &list; }
@@ -62,7 +62,7 @@ class GlobURL
 {
    FileAccess *orig_session;
    FileAccess *session;
-   char *url_prefix;
+   xstring_c url_prefix;
 public:
    Glob *glob;
 

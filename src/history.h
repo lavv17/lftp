@@ -31,7 +31,7 @@ class History : public KeyValueDB
    KeyValueDB *full;
    time_t stamp;
 
-   char *file;
+   xstring file;
    int fd;
    bool modified;
 

@@ -176,8 +176,8 @@ public:
    void ShowRunStatus(StatusLine *s);
    int AcceptSig(int sig);
 
-   char *FormatPrompt(const char *scan);
-   char *MakePrompt();
+   const char *FormatPrompt(const char *scan);
+   const char *MakePrompt();
 
    bool interactive;
    bool top_level;

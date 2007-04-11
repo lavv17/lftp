@@ -81,17 +81,11 @@ FileCopyPeer *GetJob::NoProtoDstLocal(const char *dst)
 	       count++;
 	       return 0;
 	    }
-	    backup_file=xstrdup(f,+1);
-	    strcat(backup_file,"~");
+	    backup_file.vset(f,"~",NULL);
 	    if(rename(f,backup_file)!=0)
-	    {
-	       xfree(backup_file);
-	       backup_file=0;
-	    }
+	       backup_file.set(0);
 	    else
-	    {
 	       file_mode=st.st_mode;
-	    }
 	 }
       }
    }
@@ -140,11 +134,7 @@ void GetJob::NextFile()
 {
 try_next:
    file_mode=NO_MODE;
-   if(backup_file)
-   {
-      xfree(backup_file);
-      backup_file=0;
-   }
+   backup_file.set(0);
    if(local)
    {
       delete local;
@@ -182,8 +172,7 @@ void GetJob::RemoveBackupFile()
    if(backup_file)
    {
       remove(backup_file);
-      xfree(backup_file);
-      backup_file=0;
+      backup_file.set(0);
    }
 }
 
@@ -193,14 +182,11 @@ GetJob::GetJob(FileAccess *s,ArgV *a,bool c)
    delete_files=false;
    remove_target_first=false;
    truncate_target_first=!cont;
-   backup_file=0;
    file_mode=NO_MODE;
    local=0;
    reverse=false;
 }
 GetJob::~GetJob()
 {
-   xfree(backup_file);
-   if(local)
-      delete local;
+   delete local;
 }

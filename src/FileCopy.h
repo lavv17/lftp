@@ -64,17 +64,13 @@ protected:
 
    bool write_allowed;
 
-   char *suggested_filename;
+   xstring_c suggested_filename;
    bool auto_rename;
 
 public:
    off_t range_start; // NOTE: ranges are implemented only partially. (FIXME)
    off_t range_limit;
 
-protected:
-   ~FileCopyPeer();
-
-public:
    bool CanSeek() { return can_seek; }
    bool CanSeek0() { return can_seek0; }
    bool CanSeek(off_t p) { return p==0 ? CanSeek0() : CanSeek(); }
@@ -144,7 +140,7 @@ public:
    void SetSuggestedFileName(const char *f)
       {
 	 if(f && !suggested_filename)
-	    suggested_filename=xstrdup(f);
+	    suggested_filename.set(f);
       }
    void AutoRename(bool yes=true) { auto_rename=yes; }
 };
@@ -172,7 +168,7 @@ private:
    int max_buf;
    bool cont;
 
-   char *error_text;
+   xstring_c error_text;
 
    Speedometer *rate;
    Speedometer *rate_for_eta;
@@ -254,8 +250,6 @@ public:
    void Fg();
    void Bg();
 
-   void Reconfig(const char *);
-
    static FileCopy *New(FileCopyPeer *src,FileCopyPeer *dst,bool cont);
    static FileCopy *(*fxp_create)(FileCopyPeer *src,FileCopyPeer *dst,bool cont);
 
@@ -267,7 +261,7 @@ public:
 class FileVerificator : public SMTask
 {
    bool done;
-   char *error_text;
+   xstring error_text;
    IOBufferFDStream *verify_buffer;
    InputFilter *verify_process;
    void Init0();
@@ -286,8 +280,8 @@ public:
 
 class FileCopyPeerFA : public FileCopyPeer
 {
-   char *file;
-   char *orig_url;
+   xstring_c file;
+   xstring orig_url;
    int FAmode;
    FileAccess *session;
 
@@ -342,7 +336,7 @@ public:
 
    const char *GetDescriptionForLog()
       {
-	 return orig_url ? orig_url : session->GetFileURL(file);
+	 return orig_url ? orig_url.get() : session->GetFileURL(file);
       }
    const char *GetURL() { return GetDescriptionForLog(); }
 };

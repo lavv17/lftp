@@ -23,27 +23,27 @@
 
 #include "OutputJob.h"
 
-struct datum {
+class datum
+{
+   int ws, curwidth;
+
+public:
    /* Each entry has a series of strings; each string has a color. */
-   char **names, **colors;
-   int num;
-   datum();
-   ~datum();
+   StringSet names;
+   StringSet colors;
+   datum() : ws(0), curwidth(0) {}
 
    void append(const char *name, const char *color);
 
    // get the total display width
-   int width() const;
+   int width() const { return curwidth; }
 
    // print with or without color
    void print(OutputJob *o, bool color, int skip,
 	   const char *color_pref, const char *color_suf, const char *color_reset) const;
 
    /* count leading whitespace in the first name only. */
-   int whitespace() const;
-
-private:
-   int ws, curwidth;
+   int whitespace() const { return ws; }
 };
 
 class ColumnOutput {

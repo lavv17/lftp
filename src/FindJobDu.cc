@@ -127,14 +127,14 @@ FinderJob::prf_res FinderJob_Du::ProcessFile(const char *d,const FileInfo *fi)
    if (file_count)
       add = 1;
    if(stack_ptr != -1)
-      size_stack[stack_ptr].size += add;
+      size_stack[stack_ptr]->size += add;
    tot_size += add;
 
    if(all_files || stack_ptr == -1) {
       /* this is <, where Pop() is <=, since the file counts in depth */
       if(max_print_depth == -1 || stack_ptr < max_print_depth)
 	 print_size(fi->size,
-	       dir_file(stack_ptr == -1? "":size_stack[stack_ptr].dir,fi->name));
+	       dir_file(stack_ptr == -1? "":size_stack[stack_ptr]->dir.get(),fi->name.get()));
    }
 
    return PRF_OK;
@@ -149,13 +149,12 @@ void FinderJob_Du::ProcessList(FileSet *f)
 void FinderJob_Du::Push (const char *d)
 {
    stack_ptr++;
-   size_stack = (stack *) xrealloc(size_stack, (stack_ptr+1) * sizeof(stack));
+   size_stack = (stack_entry **) xrealloc(size_stack, (stack_ptr+1) * sizeof(*size_stack));
 
    const char *combine;
-   combine = dir_file(stack_ptr > 0? size_stack[stack_ptr-1].dir:"", d);
+   combine = dir_file(stack_ptr > 0? size_stack[stack_ptr-1]->dir.get():"", d);
 
-   size_stack[stack_ptr].dir = xstrdup(combine);
-   size_stack[stack_ptr].size = 0;
+   size_stack[stack_ptr]=new stack_entry(combine);
 }
 
 /* pop a directory off the stack, combining as necessary */
@@ -165,9 +164,9 @@ void FinderJob_Du::Pop()
 
    /* merge directory's size with its parent */
    if(!separate_dirs && stack_ptr > 0)
-      size_stack[stack_ptr-1].size += size_stack[stack_ptr].size;
+      size_stack[stack_ptr-1]->size += size_stack[stack_ptr]->size;
 
-   xfree(size_stack[stack_ptr].dir);
+   delete size_stack[stack_ptr];
    stack_ptr--;
    /* no need to actually shrink */
 }
@@ -187,7 +186,7 @@ void FinderJob_Du::Exit()
 {
    /* print the dir */
    if(max_print_depth == -1 || stack_ptr <= max_print_depth)
-      print_size(size_stack[stack_ptr].size, size_stack[stack_ptr].dir);
+      print_size(size_stack[stack_ptr]->size, size_stack[stack_ptr]->dir);
 
    Pop();
 }

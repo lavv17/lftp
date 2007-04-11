@@ -56,20 +56,11 @@ ListInfo *DummyProto::MakeListInfo(const char *path)
    return new DummyListInfo(this);
 }
 
-
-DummyNoProto::DummyNoProto(const char *p)
-{
-   proto=xstrdup(p);
-}
-DummyNoProto::~DummyNoProto()
-{
-   xfree(proto);
-}
 const char *DummyNoProto::GetProto() const { return proto; }
 FileAccess *DummyNoProto::Clone() const { return new DummyNoProto(proto); }
 const char *DummyNoProto::StrError(int)
 {
-   static char str[128];
-   sprintf(str,"%.32s%s",proto,_(" - not supported protocol"));
+   static xstring str;
+   str.vset(proto.get(),_(" - not supported protocol"),NULL);
    return str;
 }

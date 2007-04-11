@@ -34,14 +34,9 @@
 #include "url.h"
 
 // Glob implementation
-Glob::~Glob()
-{
-   xfree(pattern);
-}
-
 Glob::Glob(const char *p)
+   : pattern(p)
 {
-   pattern=xstrdup(p);
    dirs_only=false;
    files_only=false;
    match_period=true;
@@ -185,10 +180,9 @@ void GlobURL::NewGlob(const char *p)
    if(session!=orig_session)
       SessionPool::Reuse(session);
    session=orig_session;
-   xfree(url_prefix);
 
-   url_prefix=xstrdup(p);
-   url_prefix[url::path_index(p)]=0;
+   url_prefix.set(p);
+   url_prefix.truncate(url::path_index(p));
 
    ParsedURL p_url(p,true);
    if(p_url.proto && p_url.path)
@@ -213,7 +207,6 @@ GlobURL::GlobURL(FileAccess *s,const char *p,type_select t)
 {
    orig_session=session=s;
    glob=0;
-   url_prefix=0;
    type=t;
 
    NewGlob(p);
@@ -223,7 +216,6 @@ GlobURL::~GlobURL()
    SMTask::Delete(glob);
    if(session!=orig_session)
       SessionPool::Reuse(session);
-   xfree(url_prefix);
 }
 FileSet *GlobURL::GetResult()
 {
@@ -361,8 +353,7 @@ const char *GenericGlob::Status()
    if(!curr_dir)
       return st;
 
-   static char *buf = 0;
-   if(buf) xfree(buf);
-   buf=xasprintf("%s: %s", curr_dir, st);
+   static xstring buf;
+   buf.vset(curr_dir,": ",st,NULL);
    return buf;
 }

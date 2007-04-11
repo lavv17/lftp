@@ -68,7 +68,6 @@ mgetJob::mgetJob(FileAccess *session,ArgV *a,bool c,bool md)
    mkdir_job=0;
    mkdir_args=0;
    mkdir_base_arg=0;
-   output_dir=0;
 }
 
 void mgetJob::make_directory(const char *d_c)
@@ -216,11 +215,7 @@ int mgetJob::Do()
 
 mgetJob::~mgetJob()
 {
-   if(rg)
-      delete rg;
-   if(m_args)
-      delete m_args;
-   if(mkdir_args)
-      delete mkdir_args;
-   xfree(output_dir);
+   delete rg;
+   delete m_args;
+   delete mkdir_args;
 }

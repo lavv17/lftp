@@ -23,7 +23,7 @@
 
 #include "trio.h"
 
-char *GetPass(const char *p);
-char *readline_from_file(FILE *f);
+const char *GetPass(const char *p);
+char *readline_from_file(int fd);
 
 #endif//GETPASS_H

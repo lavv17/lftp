@@ -696,8 +696,7 @@ CmdFeeder *lftp_feeder=0;
 Job *CmdExec::builtin_lftp()
 {
    int c;
-   const char *cmd=0;
-   char *acmd;
+   xstring cmd;
    bool debug=false;
    static struct option lftp_options[]=
    {
@@ -712,29 +711,18 @@ Job *CmdExec::builtin_lftp()
       switch(c)
       {
       case('h'):
-	 cmd="help lftp;";
+	 cmd.set("help lftp;");
 	 break;
       case('v'):
-	 cmd="version;";
+	 cmd.set("version;");
 	 break;
       case('f'):
-	 acmd=string_alloca(20+2*strlen(optarg));
-	 strcpy(acmd,"source \"");
-	 unquote(acmd+strlen(acmd),optarg);
-	 strcat(acmd,"\";");
-	 cmd=acmd;
+	 cmd.vset("source \"",unquote(optarg),"\";",NULL);
 	 break;
       case('c'):
-      {
-	 int cmd_start=args->getindex()-1;
-	 char *c = (args->count()==cmd_start+1
-		      ? args->Combine(cmd_start) : args->CombineQuoted(cmd_start));
-	 acmd=string_alloca(4+strlen(c));
-	 sprintf(acmd,"%s\n\n",c);
-	 cmd=acmd;
-	 xfree(c);
+	 cmd.set_allocated(args->CombineCmd(args->getindex()-1));
+	 cmd.append("\n\n");
 	 break;
-      }
       case('d'):
 	 debug=true;
 	 break;
@@ -919,10 +907,9 @@ Job *CmdExec::builtin_open()
 	    }
 	    if(port)
 	       url->port=port;
-	    char *host1=url->Combine();
+	    xstring_ca host1(url->Combine());
 	    delete url;
 	    url=new ParsedURL(host1);
-	    xfree(host1);
 	 }
 
 	 const ParsedURL &uc=*url;
@@ -1209,11 +1196,7 @@ Job *CmdExec::builtin_queue()
 	 if(!queue)
 	    queue=GetQueue(true);
 
-	 char *cmd=NULL;
-	 if(args_remaining == 1)
-	    cmd=args->Combine(args->getindex());
-	 else
-	    cmd=args->CombineQuoted(args->getindex());
+	 xstring_ca cmd(args->CombineCmd(args->getindex()));
 
 	 if(!strcasecmp(cmd,"stop"))
 	    queue->Suspend();
@@ -1222,7 +1205,6 @@ Job *CmdExec::builtin_queue()
 	 else
 	    queue->queue_feeder->QueueCmd(cmd, session->GetCwd(),
 					  cwd?cwd->GetName():0, pos, verbose);
-	 xfree(cmd);
 
 	 last_bg=queue->jobno;
 	 exit_code=0;
@@ -1302,23 +1284,20 @@ Job *CmdExec::builtin_queue_edit()
    const char *home=getenv("HOME");
    if(home==0)
       home="";
-   char *q_file = (char *) xmalloc(strlen(home)+32);
    /* if we have $HOME, use $HOME/.lftp/file; otherwise just file */
-   sprintf(q_file, "%s%slftp-queue-%i", home, home? "/.lftp/":"", (int) getpid());
+   xstring_ca q_file(xasprintf("%s%slftp-queue-%i", home, home? "/.lftp/":"", (int) getpid()));
 
    int q_fd=open(q_file,O_RDWR|O_CREAT,0600);
    if(q_fd==-1) {
-      eprintf(_("Couldn't create temporary file `%s': %s.\n"), q_file, strerror(errno));
-      xfree(q_file);
+      eprintf(_("Couldn't create temporary file `%s': %s.\n"), q_file.get(), strerror(errno));
       return 0;
    }
 
    if(!queue->WriteCmds(q_fd)) {
-      eprintf(_("%s: error writing %s: %s\n"), args->a0(), q_file, strerror(errno));
+      eprintf(_("%s: error writing %s: %s\n"), args->a0(), q_file.get(), strerror(errno));
 
       /* abort without clearing the queue */
       close(q_fd);
-      xfree(q_file);
 
       return 0;
    }
@@ -1331,13 +1310,9 @@ Job *CmdExec::builtin_queue_edit()
     * this also effectively "suspends" this queue until it's done editing. */
 
    {
-      char *editcmd = (char *) xmalloc(strlen(q_file)*3+128);
-      sprintf(editcmd, "shell \"/bin/sh -c 'exec ${EDITOR:-vi} %s'\"; queue -s %s; shell rm '%s'\n", q_file, q_file, q_file);
+      xstring_ca editcmd(xasprintf("shell \"/bin/sh -c 'exec ${EDITOR:-vi} %s'\"; queue -s %s; shell rm '%s'\n", q_file.get(), q_file.get(), q_file.get()));
       PrependCmd(editcmd);
-      xfree(editcmd);
    }
-
-   xfree(q_file);
 
    return 0;
 }
@@ -1380,7 +1355,7 @@ CMD(ls)
 	 args->insarg(1,"SITE");
    }
 
-   char *a=args->Combine(nlist?1:0);
+   xstring_ca a(args->Combine(nlist?1:0));
 
    const char *var_ls=ResMgr::Query("cmd:ls-default",session->GetConnectURL(FA::NO_PATH));
    if(!nlist && args->count()==1 && var_ls[0])
@@ -1419,7 +1394,6 @@ CMD(ls)
    CopyJob *j=new CopyJob(c,a,op);
    if(!output || output->usesfd(1))
       j->NoStatusOnWrite();
-   xfree(a);
    output=0;
 
    return j;
@@ -1850,9 +1824,8 @@ CMD(shell)
       j=new SysCmdJob(0);
    else
    {
-      char *a=args->Combine(1);
+      xstring_ca a(args->Combine(1));
       j=new SysCmdJob(a);
-      xfree(a);
    }
    return j;
 }
@@ -1945,9 +1918,8 @@ CMD(source)
    FDStream *f=0;
    if(e)
    {
-      char *cmd=args->Combine(args->getindex());
+      xstring_ca cmd(args->Combine(args->getindex()));
       f=new InputFilter(cmd);
-      xfree(cmd);
    }
    else
       f=new FileStream(args->getarg(1),O_RDONLY|O_ASCII);
@@ -2273,10 +2245,9 @@ CMD(set)
 
    if(a==0)
    {
-      char *s=ResMgr::Format(with_defaults,only_defaults);
+      xstring_ca s(ResMgr::Format(with_defaults,only_defaults));
       OutputJob *out=new OutputJob(output, args->a0());
       Job *j=new echoJob(s,out);
-      xfree(s);
       output=0;
       return j;
    }
@@ -2299,17 +2270,14 @@ CMD(set)
    }
 
    args->getnext();
-   char *val=(args->getcurr()==0?0:args->Combine(args->getindex()));
+   xstring_ca val(args->getcurr()==0?0:args->Combine(args->getindex()));
    msg=ResMgr::Set(a,closure,val);
 
    if(msg)
    {
-      eprintf("%s: %s.\n",val,msg);
-      xfree(val);
+      eprintf("%s: %s.\n",val.get(),msg);
       return 0;
    }
-   xfree(val);
-
    exit_code=0;
    return 0;
 }
@@ -2318,10 +2286,9 @@ CMD(alias)
 {
    if(args->count()<2)
    {
-      char *list=Alias::Format();
+      xstring_ca list(Alias::Format());
       OutputJob *out=new OutputJob(output, args->a0());
       Job *j=new echoJob(list,out);
-      xfree(list);
       output=0;
       return j;
    }
@@ -2331,9 +2298,8 @@ CMD(alias)
    }
    else
    {
-      char *val=args->Combine(2);
+      xstring_ca val(args->Combine(2));
       Alias::Add(args->getarg(1),val);
-      xfree(val);
    }
    exit_code=0;
    return 0;
@@ -2749,10 +2715,9 @@ CMD(bookmark)
 
    if(!strcasecmp(op,"list") || !strcasecmp(op,"list-p"))
    {
-      char *list=op[4]?lftp_bookmarks.Format():lftp_bookmarks.FormatHidePasswords();
+      xstring_ca list(op[4]?lftp_bookmarks.Format():lftp_bookmarks.FormatHidePasswords());
       OutputJob *out=new OutputJob(output, args->a0());
       Job *j=new echoJob(list,out);
-      xfree(list);
       output=0;
       return j;
    }
@@ -2835,27 +2800,24 @@ CMD(bookmark)
 
 CMD(echo)
 {
-   char *s=args->Combine(1);
-   int len=strlen(s);
+   xstring s;
+   s.set_allocated(args->Combine(1));
    if(args->count()>1 && !strcmp(args->getarg(1),"-n"))
    {
-      if(len<=3)
+      if(s.length()<=3)
       {
 	 exit_code=0;
-	 xfree(s);
 	 return 0;
       }
-      memmove(s,s+3,len-=3);
+      s.set_substr(0,3,"");
    }
    else
    {
-      s[len++]='\n'; // replaces \0 char
+      s.append('\n');
    }
 
    OutputJob *out=new OutputJob(output, args->a0());
-   Job *j=new echoJob(s,len,out);
-
-   xfree(s);
+   Job *j=new echoJob(s,s.length(),out);
    output=0;
    return j;
 }
@@ -3342,9 +3304,8 @@ CMD(slot)
    }
    else
    {
-      char *slots=ConnectionSlot::Format();
+      xstring_ca slots(ConnectionSlot::Format());
       Job *j=new echoJob(slots,new OutputJob(output,args->a0()));
-      xfree(slots);
       output=0;
       return j;
    }

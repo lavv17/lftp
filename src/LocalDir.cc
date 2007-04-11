@@ -40,7 +40,7 @@ void LocalDirectory::SetFromCWD()
 {
    Unset();
    fd=open(".",O_RDONLY|O_DIRECTORY);
-   name=xgetcwd();
+   name.set_allocated(xgetcwd());
 }
 
 const char *LocalDirectory::Chdir()
@@ -74,14 +74,12 @@ void LocalDirectory::Unset()
    if(fd!=-1)
       close(fd);
    fd=-1;
-   xfree(name);
-   name=0;
+   name.set(0);
 }
 
 LocalDirectory::LocalDirectory()
 {
    fd=-1;
-   name=0;
 }
 
 LocalDirectory::LocalDirectory(const LocalDirectory *o)
@@ -89,7 +87,7 @@ LocalDirectory::LocalDirectory(const LocalDirectory *o)
    fd=-1;
    if(o->fd!=-1)
       fd=dup(o->fd);
-   name=xstrdup(o->name);
+   name.set(o->name);
 }
 
 LocalDirectory *LocalDirectory::Clone() const

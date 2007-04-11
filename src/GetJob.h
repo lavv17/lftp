@@ -38,7 +38,7 @@ protected:
    bool delete_files;
    bool remove_target_first;
    bool truncate_target_first;
-   char *backup_file;
+   xstring backup_file;
    mode_t file_mode;
    FileStream *local;
    bool reverse;

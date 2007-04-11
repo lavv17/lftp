@@ -124,13 +124,12 @@ FtpDirList::FtpDirList(ArgV *a,FileAccess *fa)
 {
    session=fa;
    ubuf=0;
-   pattern=args->Combine(1);
+   pattern.set_allocated(args->Combine(1));
 }
 
 FtpDirList::~FtpDirList()
 {
    Delete(ubuf);
-   xfree(pattern);
 }
 
 const char *FtpDirList::Status()

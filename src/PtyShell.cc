@@ -34,6 +34,7 @@
 # include <sys/ioctl.h>
 #endif
 #include <termios.h>
+#include <stddef.h>
 
 #include "PtyShell.h"
 #include "lftp_pty.h"
@@ -68,11 +69,7 @@ int PtyShell::getfd()
    if(!tty_name)
    {
       if(!NonFatalError(errno))
-      {
-	 char s[256];
-	 sprintf(s,_("pseudo-tty allocation failed: %s"),strerror(errno));
-	 error_text=xstrdup(s);
-      }
+	 error_text.vset(_("pseudo-tty allocation failed: "),strerror(errno),NULL);
       if(use_pipes)
       {
 	 close(pipe0[0]);
@@ -150,7 +147,7 @@ int PtyShell::getfd()
       putenv((char*)"LANGUAGE=C");
       if(a)
 	 execvp(a->a0(),a->GetVNonConst());
-      execl("/bin/sh","sh","-c",name,(char*)NULL);
+      execl("/bin/sh","sh","-c",name.get(),NULL);
       fprintf(stderr,_("execl(/bin/sh) failed: %s\n"),strerror(errno));
       fflush(stderr);
       _exit(1);
@@ -226,7 +223,7 @@ PtyShell::PtyShell(ArgV *a1)
 {
    Init();
    a=a1;
-   name=a->Combine();
+   name.set_allocated(a->Combine());
 }
 
 PtyShell::~PtyShell()
