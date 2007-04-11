@@ -207,6 +207,27 @@ AC_DEFUN([LFTP_CXX_BOOL],
 #endif ])
 ])
 
+dnl try to build and run a dummy program
+AC_DEFUN([LFTP_CXX__BOOL],
+[
+   AC_MSG_CHECKING(whether $CXX supports _Bool type)
+   AC_CACHE_VAL(lftp_cv_cxx__Bool,
+   [
+      AC_LANG_PUSH(C++)
+      AC_TRY_COMPILE([_Bool t=true;bool f=false;],[],
+	 [lftp_cv_cxx__Bool=yes],[lftp_cv_cxx__Bool=no])
+      AC_LANG_POP(C++)
+   ])
+   AC_MSG_RESULT($lftp_cv_cxx__Bool)
+   if test x$lftp_cv_cxx__Bool = xyes; then
+      AC_DEFINE(HAVE_CXX__BOOL, 1, [define if c++ compiler supports _Bool])
+   fi
+   AH_VERBATIM([OPT_CPP__BOOL], [
+#if defined(__cplusplus) && !defined(HAVE_CXX__BOOL)
+   typedef bool _Bool;
+#endif ])
+])
+
 dnl check if C++ compiler needs extra arguments to grok ANSI scoping rules
 AC_DEFUN([LFTP_CXX_ANSI_SCOPE],
 [

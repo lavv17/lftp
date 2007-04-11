@@ -1,3 +1,7 @@
+2007-04-11	Yann Rouillard <yann@pleiades.fr.eu.org>
+
+	* lftp.m4: (LFTP_CXX__BOOL) new test for Sun native compiler.
+
 2006-07-22  Nix  <nix@esperi.org.uk>
 
         * va_copy.m4 (lftp_VA_COPY): Include <stdlib.h> for exit()
