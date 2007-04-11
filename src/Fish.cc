@@ -153,7 +153,7 @@ int Fish::Do()
       cmd->Add(hostname);
       cmd->Add(init);
       xstring_ca cmd_str(cmd->Combine(0));
-      Log::global->Format(9,"---- %s (%s)\n",_("Running connect program"),cmd_str);
+      Log::global->Format(9,"---- %s (%s)\n",_("Running connect program"),cmd_str.get());
       ssh=new PtyShell(cmd);
       state=CONNECTING;
       timeout_timer.Reset();

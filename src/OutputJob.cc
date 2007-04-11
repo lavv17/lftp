@@ -233,7 +233,7 @@ OutputJob::OutputJob(FDStream *output_, const char *a0)
     * a file.) */
    if(output_fd->getfd()==-1 && output_fd->error())
    {
-      eprintf("%s: %s\n", a0, output_fd->error_text);
+      eprintf("%s: %s\n", a0, output_fd->error_text.get());
       error=true;
    }
 }

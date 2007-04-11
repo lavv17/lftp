@@ -1929,7 +1929,7 @@ CMD(source)
    {
       if(f->error())
       {
-	 fprintf(stderr,"%s: %s\n",args->a0(),f->error_text);
+	 fprintf(stderr,"%s: %s\n",args->a0(),f->error_text.get());
 	 delete f;
 	 return 0;
       }

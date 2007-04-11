@@ -314,7 +314,7 @@ void pgetJob::NextFile()
 
    if(local && local->full_name)
    {
-      status_file.vset(local->full_name,".lftp-pget-status",NULL);
+      status_file.vset(local->full_name.get(),".lftp-pget-status",NULL);
       if(pget_cont)
 	 LoadStatus0();
    }

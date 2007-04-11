@@ -30,7 +30,7 @@ const char *FileFeeder::NextCmd(CmdExec *exec, const char *)
    {
       if(in->error())
       {
-	 fprintf(stderr,"source: %s\n",in->error_text);
+	 fprintf(stderr,"source: %s\n",in->error_text.get());
 	 return 0;
       }
       return "";
