@@ -1,5 +1,11 @@
 * new mirror option --on-change.
 
+Version 3.5.11 - 2007-04-11
+
+* fixed mirror for MDTM-less ftp servers.
+* fixed readline prompt for \[\] (visible on win32).
+* fixed compilation with Sun native compiler (Yann Rouillard).
+
 Version 3.5.10 - 2007-03-26
 
 * fixed core dump when doing ls on file: connection.
