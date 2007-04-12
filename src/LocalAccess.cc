@@ -57,9 +57,8 @@ void LocalAccess::Init()
 LocalAccess::LocalAccess() : FileAccess()
 {
    Init();
-   char *c=xgetcwd();
-   cwd.Set(c?c:".");
-   xfree(c);
+   xstring_ca c(xgetcwd());
+   cwd.Set(c?c.get():".");
 }
 LocalAccess::LocalAccess(const LocalAccess *o) : FileAccess(o)
 {

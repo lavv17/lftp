@@ -204,8 +204,7 @@ class file_info
 public:
    long long size;
    int year,month,day,hour,minute,second;
-   char *sym_link;
-   bool free_sym_link;
+   xstring_c sym_link;
    bool is_sym_link;
    bool is_directory;
    char month_name[32];
@@ -223,7 +222,6 @@ public:
    file_info()
    {
       is_directory=false;
-      free_sym_link=false;
       clear();
    }
 };
@@ -239,9 +237,7 @@ void file_info::clear()
    month_name[0]=0;
    size_str[0]=0;
    perms[0]=0;
-   if(free_sym_link)
-      xfree(sym_link);
-   sym_link=0;
+   sym_link.set(0);
    is_sym_link=false;
    user[0]=0;
    group[0]=0;
@@ -415,10 +411,7 @@ static bool try_apache_unixlike(file_info &info,const char *buf,
 	 str[more1-more-4]=0;
 	 str=strstr(str," -> ");
 	 if(str)
-	 {
-	    info.sym_link=xstrdup(str+4);
-	    info.free_sym_link=true;
-	 }
+	    info.sym_link.set(str+4);
       }
       *info_string=buf;
       *info_string_len=consumed;
@@ -491,15 +484,16 @@ static bool try_squid_ftp(file_info &info,const char *str,char *str_with_tags)
    if(ptr)
    {
       info.is_sym_link=true;
-      info.sym_link=ptr+13;
-      ptr=strchr(info.sym_link,'"');
+      char *sym_link=ptr+13;
+      ptr=strchr(sym_link,'"');
       if(!ptr)
-	 info.sym_link=0;
+	 sym_link=0;
       else
       {
 	 *ptr=0;
-	 url::decode_string(info.sym_link);
+	 url::decode_string(sym_link);
       }
+      info.sym_link.set(sym_link);
    }
    debug("squid ftp listing matched");
    return true;
@@ -536,10 +530,7 @@ static bool try_wwwoffle_ftp(file_info &info,const char *buf,
 	 info.is_sym_link=true;
 	 const char *p=strstr(ext,"-&gt; ");
 	 if(p)
-	 {
-	    info.sym_link=xstrdup(p+6);
-	    info.free_sym_link=true;
-	 }
+	    info.sym_link.set(p+6);
       }
       *info_string=buf;
       *info_string_len=consumed;
@@ -606,7 +597,7 @@ static bool try_csm_proxy(file_info &info,const char *str)
 // this procedure is highly inefficient in some cases,
 // esp. when it has to return for more data many times.
 static int parse_html(const char *buf,int len,bool eof,Buffer *list,
-      FileSet *set,FileSet *all_links,ParsedURL *prefix,char **base_href,
+      FileSet *set,FileSet *all_links,ParsedURL *prefix,xstring_c *base_href,
       LsOptions *lsopt=0, int color = 0)
 {
    const char *end=buf+len;
@@ -661,7 +652,7 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
 
    int max_link_len=more-less+1+2;
    if(base_href && *base_href)
-      max_link_len+=strlen(*base_href)+1;
+      max_link_len+=base_href->length()+1;
    char *link_target=(char*)alloca(max_link_len);
 
    static const struct tag_link
@@ -740,9 +731,8 @@ static int parse_html(const char *buf,int len,bool eof,Buffer *list,
    {
       if(base_href)
       {
-	 xfree(*base_href);
-	 *base_href=xstrdup(link_target,+2);
-	 Log::global->Format(10,"Using base href=%s\n",*base_href);
+	 base_href->set(link_target);
+	 Log::global->Format(10,"Using base href=%s\n",base_href->get());
       }
       return tag_len;
    }
@@ -823,7 +813,7 @@ parse_url_again:
       }
       if(*link_target!='/' && base_href && *base_href && !base_href_applied)
       {
-	 char *base_end=strrchr(*base_href,'/');
+	 const char *base_end=strrchr(*base_href,'/');
 	 if(base_end)
 	 {
 	    memmove(link_target+(base_end-*base_href+1),link_target,
@@ -1133,7 +1123,7 @@ parse_url_again:
 
    append_symlink_maybe:
       if(info.sym_link)
-	 sprintf(line_add+strlen(line_add)," -> %s",info.sym_link);
+	 sprintf(line_add+strlen(line_add)," -> %s",info.sym_link.get());
 
    append_type_maybe:
       if(lsopt && lsopt->append_type)
@@ -1352,7 +1342,6 @@ HttpDirList::HttpDirList(ArgV *a,FileAccess *fa)
    args->rewind();
    curr=0;
    curr_url=0;
-   base_href=0;
 }
 
 HttpDirList::~HttpDirList()
@@ -1361,7 +1350,6 @@ HttpDirList::~HttpDirList()
    Delete(ubuf);
    if(curr_url)
       delete curr_url;
-   xfree(base_href);
 }
 
 const char *HttpDirList::Status()
@@ -1408,7 +1396,7 @@ FileSet *Http::ParseLongList(const char *b,int len,int *err) const
 
    FileSet *set=new FileSet;
    ParsedURL prefix(GetConnectURL());
-   char *base_href=0;
+   xstring_c base_href;
    for(;;)
    {
       int n=parse_html(b,len,true,0,set,0,&prefix,&base_href);
@@ -1417,6 +1405,5 @@ FileSet *Http::ParseLongList(const char *b,int len,int *err) const
       b+=n;
       len-=n;
    }
-   xfree(base_href);
    return set;
 }

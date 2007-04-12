@@ -32,7 +32,7 @@ class FileAccess;
 class LsCacheEntryLoc
 {
    friend class LsCache;
-   char	 *arg;
+   xstring_c arg;
    FileAccess *loc;
    int	 mode;
 
@@ -46,8 +46,7 @@ public:
 class LsCacheEntryData
 {
    int	 err_code;
-   char	 *data;
-   int	 data_len;
+   xstring data;
    FileSet *afset;    // associated file set
 public:
    LsCacheEntryData(int e,const char *d,int l,const FileSet *fs);
@@ -55,7 +54,7 @@ public:
    void SetData(int e,const char *d,int l,const FileSet *fs);
    void GetData(int *e,const char **d,int *l,const FileSet **fs);
    const FileSet *GetFileSet(const FileAccess *parser);
-   int EstimateSize() const { return data_len+(afset?afset->EstimateMemory():0); }
+   int EstimateSize() const { return data.length()+(afset?afset->EstimateMemory():0); }
 };
 
 class LsCacheEntry : public CacheEntry, public LsCacheEntryLoc, public LsCacheEntryData

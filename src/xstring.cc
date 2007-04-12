@@ -99,8 +99,10 @@ const char *xstring::append(char c)
    return buf;
 }
 
-size_t xstring::vstrlen(va_list va)
+static size_t vstrlen(va_list va0)
 {
+   va_list va;
+   va_copy(va,va0);
    size_t len=0;
    for(;;)
    {
@@ -109,19 +111,13 @@ size_t xstring::vstrlen(va_list va)
 	 break;
       len+=strlen(s);
    }
+   va_end(va);
    return len;
 }
 
 const char *xstring::vappend(va_list va)
 {
-   va_list va1;
-
-   va_copy(va1,va);
-   size_t need=len+vstrlen(va1);
-   va_end(va1);
-
-   get_space(need);
-
+   get_space(len+vstrlen(va));
    for(;;)
    {
       const char *s=va_arg(va,const char *);

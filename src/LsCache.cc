@@ -36,11 +36,10 @@ int LsCacheEntry::EstimateSize() const
    return size;
 }
 LsCacheEntryLoc::LsCacheEntryLoc(const FileAccess *p_loc,const char *a,int m)
+   : arg(a), mode(m)
 {
    loc=p_loc->Clone();
    loc->Suspend();
-   arg=xstrdup(a);
-   mode=m;
 }
 const char *LsCacheEntryLoc::GetClosure() const
 {
@@ -48,7 +47,6 @@ const char *LsCacheEntryLoc::GetClosure() const
 }
 LsCacheEntryData::LsCacheEntryData(int e,const char *d,int l,const FileSet *fs)
 {
-   data=0;
    afset=0;
    SetData(e,d,l,fs);
 }
@@ -61,19 +59,17 @@ LsCacheEntry::LsCacheEntry(const FileAccess *p_loc,const char *a,int m,int e,con
 
 void LsCacheEntryData::SetData(int e,const char *d,int l,const FileSet *fs)
 {
-   xfree(data);
    delete afset;
-   err_code=e;
-   data=(char*)xmemdup(d,l);
-   data_len=l;
    afset=fs?new FileSet(fs):0;
+   data.nset(d,l);
+   err_code=e;
 }
 void LsCacheEntryData::GetData(int *e,const char **d,int *l,const FileSet **fs)
 {
    if(d && l)
    {
       *d=data;
-      *l=data_len;
+      *l=data.length();
    }
    if(fs)
       *fs=afset;
@@ -81,7 +77,7 @@ void LsCacheEntryData::GetData(int *e,const char **d,int *l,const FileSet **fs)
 }
 bool LsCacheEntryLoc::Matches(const FileAccess *p_loc,const char *a,int m)
 {
-   return (m==-1 || mode==m) && !xstrcmp(arg,a) && p_loc->SameLocationAs(loc);
+   return (m==-1 || mode==m) && arg.eq(a) && p_loc->SameLocationAs(loc);
 }
 
 ResDecl res_cache_empty_listings("cache:cache-empty-listings","no",ResMgr::BoolValidate,0);
@@ -175,17 +171,15 @@ const FileSet *LsCacheEntryData::GetFileSet(const FileAccess *parser)
       return afset;
    if(err_code!=FA::OK)
       return 0;
-   return afset=parser->ParseLongList(data, data_len);
+   return afset=parser->ParseLongList(data, data.length());
 }
 
 LsCacheEntryLoc::~LsCacheEntryLoc()
 {
    loc->DeleteLater();
-   xfree(arg);
 }
 LsCacheEntryData::~LsCacheEntryData()
 {
-   xfree(data);
    delete afset;
 }
 LsCacheEntry::~LsCacheEntry()

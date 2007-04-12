@@ -1,3 +1,8 @@
+2007-04-12  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* HttpDir.cc, HttpDir.h, LocalAccess.cc, LsCache.cc, LsCache.h: use xstring.
+	* xstring.cc, xstring.h: make vstrlen do va_copy.
+
 2007-04-11  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CmdExec.cc, CmdExec.h, parsecmd.cc: use Buffer for cmd_buf;

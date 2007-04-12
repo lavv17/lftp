@@ -108,9 +108,6 @@ public:
    operator const char *() const { return buf; }
    const char *get() const { return buf; }
    char *get_non_const() { return buf; }
-   bool eq(const char *s) { return !xstrcmp(buf,s); }
-   bool ne(const char *s) { return !eq(s); }
-   size_t length() const { return xstrlen(buf); }
 };
 
 // compact variant
@@ -129,6 +126,9 @@ public:
    const char *set_allocated(char *s) { xfree(buf); return buf=s; }
    void truncate(size_t n) { if(buf) buf[n]=0; }
    char *borrow() { return replace_value(buf,(char*)0); }
+   bool eq(const char *s) { return !xstrcmp(buf,s); }
+   bool ne(const char *s) { return !eq(s); }
+   size_t length() const { return xstrlen(buf); }
 };
 class xstring_ca : public xstring_c
 {
@@ -170,7 +170,6 @@ public:
 
    const char *append(const char *s);
    const char *append(char c);
-   static size_t vstrlen(va_list);
    const char *vappend(va_list);
    const char *vappend(...) __attribute__((sentinel));
    const char *vset(...) __attribute__((sentinel));

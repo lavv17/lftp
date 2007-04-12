@@ -51,7 +51,7 @@ class HttpDirList : public DirList
    FileSet all_links;
    int mode;
    bool parse_as_html;
-   char *base_href;
+   xstring_c base_href;
 
 #if USE_EXPAT
    XML_Parser xml_p;
