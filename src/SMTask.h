@@ -23,6 +23,7 @@
 
 #include "PollVec.h"
 #include "TimeDate.h"
+#include "Ref.h"
 
 class SMTask
 {
@@ -113,6 +114,25 @@ class SMTaskInit : public SMTask
 public:
    SMTaskInit();
    ~SMTaskInit();
+};
+
+template<class T> class SMTaskRef
+{
+   SMTaskRef<T>(const SMTaskRef<T>&);  // disable cloning
+   void operator=(const SMTaskRef<T>&);   // and assignment
+
+protected:
+   T *ptr;
+
+public:
+   SMTaskRef() { ptr=0; }
+   SMTaskRef<T>(T *p) { ptr=SMTask::MakeRef(p); }
+   ~SMTaskRef<T>() { SMTask::DeleteRef(ptr); }
+   void operator=(T *p) { SMTask::DeleteRef(p); ptr=SMTask::MakeRef(p); }
+   void operator=(SMTaskRef<T> &p) { SMTask::DeleteRef(ptr); ptr=p.borrow(); }
+   operator const T*() const { return ptr; }
+   T *operator->() const { return ptr; }
+   T *borrow() { return replace_value(ptr,(T*)0); }
 };
 
 #endif /* SMTASK_H */

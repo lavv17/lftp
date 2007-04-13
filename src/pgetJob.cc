@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2002 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -187,7 +187,7 @@ static const char pget_status_format[]=N_("`%s', got %lld of %lld (%d%%) %s%s");
    percent(total_xferred,size),Speedometer::GetStrS(total_xfer_rate), \
    cp->GetETAStrSFromTime(total_eta)
 
-void pgetJob::ShowRunStatus(StatusLine *s)
+void pgetJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
 {
    if(Done() || no_parallel || max_chunks<2 || !chunks)
    {

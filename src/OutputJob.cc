@@ -267,7 +267,7 @@ OutputJob::~OutputJob()
 }
 
 /* This is called to ask us "permission" to display a status line. */
-bool OutputJob::ShowStatusLine(StatusLine *s)
+bool OutputJob::ShowStatusLine(const SMTaskRef<StatusLine>& s)
 {
    /* If our output file is gone, or isn't stdout, we don't care. */
    if(!output || !is_stdout)

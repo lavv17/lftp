@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2002 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,8 +63,8 @@ class CmdExec : public SessionJob
 {
 public:
 // current command data
-   ArgV *args;
-   FDStream *output;
+   Ref<ArgV> args;
+   Ref<FDStream> output;
    bool background;
    int	 exit_code;
 
@@ -128,8 +128,8 @@ private:
    xstring_c old_lcwd;
    xstring_c slot;
 
-   GlobURL *glob;
-   ArgV *args_glob;
+   Ref<GlobURL> glob;
+   Ref<ArgV> args_glob;
 
    int redirections;
 
@@ -173,7 +173,7 @@ public:
    int ExitCode() { return exit_code; }
    int Do();
    void PrintStatus(int,const char *prefix="\t");
-   void ShowRunStatus(StatusLine *s);
+   void ShowRunStatus(const SMTaskRef<StatusLine>& s);
    int AcceptSig(int sig);
 
    const char *FormatPrompt(const char *scan);
@@ -182,7 +182,7 @@ public:
    bool interactive;
    bool top_level;
    bool verbose;
-   StatusLine *status_line;
+   SMTaskRef<StatusLine> status_line;
    void SetCmdFeeder(CmdFeeder *new_feeder);
    void	RemoveFeeder();
 
@@ -216,11 +216,7 @@ public:
 	 top_level=true;
 	 Reconfig(0);
       }
-   void SetStatusLine(StatusLine *s)
-      {
-	 Delete(status_line);
-	 status_line=s;
-      }
+   void SetStatusLine(StatusLine *s) { status_line=s; }
 
    static void RegisterCommand(const char *name,cmd_creator_t creator,
       const char *short_name=0,const char *long_name=0);

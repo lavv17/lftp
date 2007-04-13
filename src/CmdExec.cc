@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2006 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -265,10 +265,7 @@ void CmdExec::ExecParsed(ArgV *a,FDStream *o,bool b)
 {
    Enter();
 
-   if(args)
-      delete args;
    args=a;
-   delete output;
    output=o;
    background=b;
    condition=COND_ANY;
@@ -464,12 +461,9 @@ int CmdExec::Do()
 	    const char *pat=args->getnext();
 	    if(!pat)
 	    {
-	       delete glob;
 	       glob=0;
 	       // it was last argument
-	       delete args;
 	       args=args_glob;
-	       args_glob=0;
 	       builtin=BUILTIN_NONE;
 	       redirections=0;
 	       if(status_line)
@@ -675,7 +669,7 @@ try_get_cmd:
    return MOVED;
 }
 
-void CmdExec::ShowRunStatus(StatusLine *s)
+void CmdExec::ShowRunStatus(const SMTaskRef<StatusLine>& s)
 {
    switch(builtin)
    {
@@ -761,13 +755,10 @@ CmdExec::CmdExec(FileAccess *f,LocalDirectory *c) : SessionJob(f?f:new DummyProt
    next=chain;
    chain=this;
 
-   args=0;
-   output=0;
    background=false;
 
    interactive=false;
    top_level=false;
-   status_line=0;
    feeder=0;
    feeder_called=false;
    used_aliases=0;
@@ -791,9 +782,6 @@ CmdExec::CmdExec(FileAccess *f,LocalDirectory *c) : SessionJob(f?f:new DummyProt
    verify_path_cached=false;
 
    start_time=0;
-
-   glob=0;
-   args_glob=0;
 
    redirections=0;
 
@@ -829,8 +817,6 @@ CmdExec::~CmdExec()
    delete args_glob;
 
    Reuse(saved_session);
-
-   Delete(status_line);
 }
 
 const char *CmdExec::FormatPrompt(const char *scan)
@@ -963,9 +949,7 @@ int CmdExec::AcceptSig(int sig)
 	 RevertToSavedSession();
 	 break;
       case(BUILTIN_GLOB):
-	 delete glob;
 	 glob=0;
-	 delete args_glob;
 	 args_glob=0;
 	 break;
       case(BUILTIN_NONE):
@@ -1125,14 +1109,9 @@ void CmdExec::AtExit()
 {
    FeedCmd(res_at_exit.Query(0));
    FeedCmd("\n");
-
-   if(status_line)
-   {
-      /* Clear the title, and ensure we don't write anything else
-       * to it in case we're being backgrounded. */
-      Delete(status_line);
-      status_line = 0;
-   }
+   /* Clear the title, and ensure we don't write anything else
+    * to it in case we're being backgrounded. */
+   status_line=0;
 }
 
 void CmdExec::EmptyCmds()

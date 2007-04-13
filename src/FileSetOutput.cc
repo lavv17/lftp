@@ -1,6 +1,6 @@
 /* lftp and utils
  *
- * Copyright (c) 2001-2006 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 2001-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * Portions from GNU fileutils.
  *
@@ -390,7 +390,7 @@ void clsJob::ResumeInternal()
    session->ResumeSlave();
 }
 
-void clsJob::ShowRunStatus(StatusLine *s)
+void clsJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
 {
    if(fso->quiet)
       return;

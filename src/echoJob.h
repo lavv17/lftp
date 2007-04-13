@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 2002 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 2002-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ public:
    int	 Done();
    int	 ExitCode();
 
-   void	 ShowRunStatus(StatusLine *);
+   void	 ShowRunStatus(const SMTaskRef<StatusLine>&);
 
    echoJob(const char *buf, OutputJob *output);
    echoJob(const char *buf, int len, OutputJob *output);

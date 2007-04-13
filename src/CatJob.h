@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ public:
 
    void Ascii() { ascii=true; }
    void Binary() { ascii=auto_ascii=false; }
-   void ShowRunStatus(StatusLine *s);
+   void ShowRunStatus(const SMTaskRef<StatusLine>&);
 };
 
 #endif /* CATJOB_H */

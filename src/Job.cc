@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2005 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -506,7 +506,7 @@ int Job::AcceptSig(int s)
    return WANTDIE;
 }
 
-void Job::ShowRunStatus(StatusLine *sl)
+void Job::ShowRunStatus(const SMTaskRef<StatusLine>& sl)
 {
    if(waiting_num==0)
       return;

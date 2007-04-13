@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1999-2005 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1999-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +93,7 @@ const char *CopyJob::Status(const StatusLine *s, bool base)
    return buf;
 }
 
-void CopyJob::ShowRunStatus(StatusLine *s)
+void CopyJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
 {
    if(no_status)
       return;
@@ -143,19 +143,13 @@ void CopyJob::SetDispName()
 }
 
 CopyJob::CopyJob(FileCopy *c1,const char *name1,const char *op1)
-   : name(name1), op(op1)
+   : c(c1), name(name1), op(op1)
 {
-   c=c1;
    done=false;
    no_status=false;
    no_status_on_write=false;
    clear_status_on_write=false;
    SetDispName();
-}
-
-CopyJob::~CopyJob()
-{
-   Delete(c);
 }
 
 const char *CopyJob::FormatBytesTimeRate(off_t bytes,double time_spent)

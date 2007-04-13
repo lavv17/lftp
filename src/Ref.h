@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2007 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,27 +18,28 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef MVJOB_H
-#define MVJOB_H
+/* $Id$ */
 
-#include "Job.h"
-#include "StatusLine.h"
-#include "ArgV.h"
-#include "trio.h"
+#ifndef REF_H
+#define REF_H
 
-class mvJob : public SessionJob
+template<typename T> class Ref
 {
-   int	 failed;
+   Ref<T>(const Ref<T>&);  // disable cloning
+   void operator=(const Ref<T>&);   // and assignment
+
+protected:
+   T *ptr;
+
 public:
-   int	 Do();
-   int	 Done() { return session->IsClosed(); }
-   int	 ExitCode() { return failed; }
-
-   void	 PrintStatus(int,const char *);
-   void	 ShowRunStatus(const SMTaskRef<StatusLine>&);
-   void	 SayFinal();
-
-   mvJob(FileAccess *session,const char *from,const char *to);
+   Ref<T>() { ptr=0; }
+   Ref<T>(T *p) { ptr=p; }
+   ~Ref<T>() { delete ptr; }
+   void operator=(T *p) { delete ptr; ptr=p; }
+   void operator=(Ref<T> &p) { delete ptr; ptr=p.borrow(); }
+   operator const T*() const { return ptr; }
+   T *operator->() const { return ptr; }
+   T *borrow() { return replace_value(ptr,(T*)0); }
 };
 
-#endif // MVJOB_H
+#endif

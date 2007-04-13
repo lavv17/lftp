@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-1999 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ protected:
 
 public:
    void	 PrintStatus(int,const char *);
-   void	 ShowRunStatus(StatusLine *);
+   void	 ShowRunStatus(const SMTaskRef<StatusLine>&);
 
    TreatFileJob(FileAccess *session,ArgV *a);
    virtual ~TreatFileJob();

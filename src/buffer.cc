@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1998-2005 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1998-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -213,11 +213,6 @@ Buffer::Buffer()
    save=false;
    save_max=0;
    pos=0;
-   rate=0;
-}
-Buffer::~Buffer()
-{
-   SMTask::Delete(rate);
 }
 
 const char *Buffer::GetRateStrS()
@@ -337,10 +332,6 @@ void DirectedBuffer::SetTranslation(const char *enc,bool translit)
    const char *from_code=(mode==GET?enc:local_code);
    const char *to_code  =(mode==GET?local_code:enc);
    SetTranslator(new DataRecoder(from_code,to_code,translit));
-}
-DirectedBuffer::~DirectedBuffer()
-{
-   delete translator;
 }
 void DirectedBuffer::ResetTranslation()
 {

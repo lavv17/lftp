@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,7 +116,7 @@ void  mkdirJob::PrintStatus(int v,const char *prefix)
    printf("%s`%s' [%s]\n",prefix,curr,session->CurrentStatus());
 }
 
-void  mkdirJob::ShowRunStatus(StatusLine *s)
+void  mkdirJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
 {
    if(Done())
       return;

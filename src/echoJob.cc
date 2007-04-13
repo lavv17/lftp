@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 2002 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 2002-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ int echoJob::ExitCode()
 /* We have no interesting status for "jobs", so we have no PrintStatus
  * override.  (The output job will print the output status, if relevant.) */
 
-void  echoJob::ShowRunStatus(StatusLine *s)
+void  echoJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
 {
    if(Done())
       return;

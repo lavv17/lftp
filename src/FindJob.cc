@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1998-2000 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1998-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -320,7 +320,7 @@ FinderJob::~FinderJob()
    Delete(li);
 }
 
-void FinderJob::ShowRunStatus(StatusLine *sl)
+void FinderJob::ShowRunStatus(const SMTaskRef<StatusLine>& sl)
 {
    if(!show_sl)
       return;

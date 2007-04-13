@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ class mgetJob : public GetJob
 public:
    int	 Do();
    void	 PrintStatus(int,const char *);
-   void	 ShowRunStatus(StatusLine *s);
+   void	 ShowRunStatus(const SMTaskRef<StatusLine>&);
 
    mgetJob(FileAccess *session,ArgV *args,bool c,bool md);
    ~mgetJob();

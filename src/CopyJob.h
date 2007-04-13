@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1999 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1999-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 
 class CopyJob : public Job
 {
-   FileCopy *c;
+   SMTaskRef<FileCopy> c;
    bool done;
    xstring_c name; // file name
    xstring_c dispname; // displayed file name
@@ -42,7 +42,6 @@ class CopyJob : public Job
 
 public:
    CopyJob(FileCopy *c1,const char *n,const char *op1);
-   ~CopyJob();
 
    void NoStatus() { no_status=true; }
    void NoStatusOnWrite() { no_status_on_write=true; }
@@ -75,12 +74,12 @@ public:
    void SetRangeLimit(off_t lim) { return c->SetRangeLimit(lim); }
    void SetDate(time_t d) { c->SetDate(d); }
    void SetSize(off_t s)   { c->SetSize(s); }
-   FileCopy *GetCopy() { return c; }
+   const SMTaskRef<FileCopy>& GetCopy() { return c; }
    FileCopyPeer *GetPut() { return c->put; }
    FileCopyPeer *GetGet() { return c->get; }
 
    const char *Status(const StatusLine *s,bool base=false);
-   void ShowRunStatus(StatusLine *s);
+   void ShowRunStatus(const SMTaskRef<StatusLine>&);
    void	PrintStatus(int,const char *);
 
    const char *GetName() const { return name; }

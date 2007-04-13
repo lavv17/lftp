@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 2002-2006 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 2002-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ public:
 
    void long_list();
    void config(const OutputJob *fd);
-   const char *parse_argv(ArgV *a);
+   const char *parse_argv(const Ref<ArgV>& a);
    static const char *ValidateArgv(xstring_c *s);
    int Need() const;
 
@@ -114,7 +114,7 @@ public:
    void ResumeInternal();
    int ExitCode() { return output->Error()? 1:0; }
 
-   void ShowRunStatus(StatusLine *s);
+   void ShowRunStatus(const SMTaskRef<StatusLine>&);
    void PrintStatus(int v,const char *);
 };
 

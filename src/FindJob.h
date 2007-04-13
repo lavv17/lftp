@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1998 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1998-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,8 +106,8 @@ public:
    FinderJob(FileAccess *s);
    virtual ~FinderJob();
 
-   void ShowRunStatus(StatusLine *sl);
-   virtual void PrintStatus(int v,const char *);
+   void ShowRunStatus(const SMTaskRef<StatusLine>&);
+   void PrintStatus(int v,const char *);
 
    void BeQuiet() { quiet=true; }
    void SetExclude(PatternSet *p) { exclude = p; }

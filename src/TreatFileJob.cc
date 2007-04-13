@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2004 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ void  TreatFileJob::PrintStatus(int v,const char *prefix)
    printf("\t`%s' [%s]\n",curr->name.get(),session->CurrentStatus());
 }
 
-void  TreatFileJob::ShowRunStatus(StatusLine *s)
+void  TreatFileJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
 {
    if(curr && !Done())
       s->Show("%s `%s' [%s]",op,curr->name.get(),session->CurrentStatus());

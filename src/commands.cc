@@ -1092,7 +1092,6 @@ Job *CmdExec::builtin_glob()
    const char *pat=args->getnext();
    if(!pat)
    {
-      delete args_glob;
       args_glob=0;
       args->rewind();
       return cmd_command(this);
@@ -1361,20 +1360,23 @@ CMD(ls)
    if(!nlist && args->count()==1 && var_ls[0])
       args->Append(var_ls);
 
+   bool use_color=false;
+   if(!nlist)
+   {
+      ResValue color=ResMgr::Query("color:use-color",0);
+      if(!strcasecmp(color,"auto"))
+	 use_color=!output && isatty(1);
+      else
+	 use_color=color.to_bool();
+   }
+   bool no_status=(!output || output->usesfd(1));
+
    FileCopyPeer *src_peer=0;
    if(!nlist)
    {
-      FileCopyPeerDirList *dir_list=new FileCopyPeerDirList(session->Clone(),args);
-      args=0; // FileCopyPeerDirList consumes args.
-
+      FileCopyPeerDirList *dir_list=new FileCopyPeerDirList(session->Clone(),args.borrow());
+      dir_list->UseColor(use_color);
       src_peer=dir_list;
-      ResValue color=ResMgr::Query("color:use-color",0);
-      bool use;
-      if(!strcasecmp(color,"auto"))
-	 use=!output && isatty(1);
-      else
-	 use=color.to_bool();
-      dir_list->UseColor(use);
    }
    else
       src_peer=new FileCopyPeerFA(session->Clone(),a,mode);
@@ -1383,7 +1385,7 @@ CMD(ls)
       src_peer->NoCache();
    src_peer->SetDate(NO_DATE);
    src_peer->SetSize(NO_SIZE);
-   FileCopyPeer *dst_peer=new FileCopyPeerFDStream(output,FileCopyPeer::PUT);
+   FileCopyPeer *dst_peer=new FileCopyPeerFDStream(output.borrow(),FileCopyPeer::PUT);
 
    FileCopy *c=FileCopy::New(src_peer,dst_peer,false);
    c->DontCopyDate();
@@ -1392,15 +1394,14 @@ CMD(ls)
       c->Ascii();
 
    CopyJob *j=new CopyJob(c,a,op);
-   if(!output || output->usesfd(1))
+   if(no_status)
       j->NoStatusOnWrite();
-   output=0;
 
    return j;
 }
 
 /* this seems to belong here more than in FileSetOutput.cc ... */
-const char *FileSetOutput::parse_argv(ArgV *a)
+const char *FileSetOutput::parse_argv(const Ref<ArgV>& a)
 {
    enum {
       OPT_BLOCK_SIZE,
@@ -1586,10 +1587,8 @@ CMD(cls)
    const char *op=args->a0();
    bool re=false;
 
-   OutputJob *out=new OutputJob(output, args->a0());
-   output=0;
-
-   FileSetOutput *fso=new FileSetOutput;
+   JobRef<OutputJob> out(new OutputJob(output.borrow(), args->a0()));
+   Ref<FileSetOutput> fso(new FileSetOutput);
    fso->config(out);
 
    if(!strncmp(op,"re",2))
@@ -1601,16 +1600,12 @@ CMD(cls)
    if(const char *err = fso->parse_argv(args)) {
       eprintf("%s: %s.\n", op, err);
       eprintf(_("Try `help %s' for more information.\n"),op);
-      delete out;
-      delete fso;
       return 0;
    }
 
-   clsJob *j = new clsJob(session->Clone(), args, fso, out);
+   clsJob *j = new clsJob(session->Clone(), args.borrow(), fso.borrow(), out.borrow());
    if(re)
       j->UseCache(false);
-
-   args=0;
 
    return j;
 }
@@ -1647,8 +1642,8 @@ CMD(cat)
       eprintf(_("Usage: %s [OPTS] files...\n"),op);
       return 0;
    }
-   OutputJob *out=new OutputJob(output, args->a0());
-   CatJob *j=new CatJob(session->Clone(),out,args);
+   OutputJob *out=new OutputJob(output.borrow(), args->a0());
+   CatJob *j=new CatJob(session->Clone(),out,args.borrow());
    if(!auto_ascii)
    {
       if(ascii)
@@ -1656,8 +1651,6 @@ CMD(cat)
       else
 	 j->Binary();
    }
-   output=0;
-   args=0;
    return j;
 }
 
@@ -1675,7 +1668,7 @@ CMD(get)
    bool glob=false;
    bool make_dirs=false;
    bool reverse=false;
-   const char *output_dir=0;
+   xstring_c output_dir;
 
    if(!strncmp(op,"re",2))
    {
@@ -1704,9 +1697,9 @@ CMD(get)
    }
    if(!reverse)
    {
-      output_dir=ResMgr::Query("xfer:destination-directory",session->GetHostName());
-      if(!*output_dir)
-	 output_dir=0;
+      const char *od=ResMgr::Query("xfer:destination-directory",session->GetHostName());
+      if(od && *od)
+	 output_dir.set(od);
    }
    while((opt=args->getopt(opts))!=EOF)
    {
@@ -1736,7 +1729,7 @@ CMD(get)
 	 make_dirs=true;
 	 break;
       case('O'):
-	 output_dir=optarg;
+	 output_dir.set(optarg);
 	 break;
       case('?'):
       err:
@@ -1755,21 +1748,18 @@ CMD(get)
 	 goto err;
       }
       delete get_args;
-      char *output_dir_dup=xstrdup(output_dir);  // save it from deleting.
-      output_dir=0;
       // remove options
       while(args->getindex()>1)
 	 args->delarg(1);
-      mgetJob *j=new mgetJob(session->Clone(),args,cont,make_dirs);
+      mgetJob *j=new mgetJob(session->Clone(),args.borrow(),cont,make_dirs);
       if(reverse)
 	 j->Reverse();
       if(del)
 	 j->DeleteFiles();
       if(ascii)
 	 j->Ascii();
-      if(output_dir_dup)
-	 j->OutputDir(output_dir_dup);
-      args=0;
+      if(output_dir)
+	 j->OutputDir(output_dir.borrow());
       return j;
    }
    args->back();
@@ -1870,14 +1860,12 @@ CMD(rm)
    if(args->getcurr()==0)
       goto print_usage;
 
-   rmJob *j=new rmJob(session->Clone(),args);
+   rmJob *j=new rmJob(session->Clone(),args.borrow());
 
    if(recursive)
       j->Recurse();
    if(rmdir)
       j->Rmdir();
-
-   args=0;
 
    if(silent)
       j->BeQuiet();
@@ -1886,9 +1874,7 @@ CMD(rm)
 }
 CMD(mkdir)
 {
-   Job *j=new mkdirJob(session->Clone(),args);
-   args=0;
-   return j;
+   return new mkdirJob(session->Clone(),args.borrow());
 }
 
 #ifndef O_ASCII
@@ -1988,9 +1974,8 @@ CMD(pwd)
    int len=strlen(url_c);
    url[len++]='\n';  // replaces \0
 
-   OutputJob *out=new OutputJob(output, args->a0());
+   OutputJob *out=new OutputJob(output.borrow(), args->a0());
    Job *j=new echoJob(url,len,out);
-   output=0;
 
    return j;
 }
@@ -2246,9 +2231,8 @@ CMD(set)
    if(a==0)
    {
       xstring_ca s(ResMgr::Format(with_defaults,only_defaults));
-      OutputJob *out=new OutputJob(output, args->a0());
+      OutputJob *out=new OutputJob(output.borrow(), args->a0());
       Job *j=new echoJob(s,out);
-      output=0;
       return j;
    }
 
@@ -2287,9 +2271,8 @@ CMD(alias)
    if(args->count()<2)
    {
       xstring_ca list(Alias::Format());
-      OutputJob *out=new OutputJob(output, args->a0());
+      OutputJob *out=new OutputJob(output.borrow(), args->a0());
       Job *j=new echoJob(list,out);
-      output=0;
       return j;
    }
    else if(args->count()==2)
@@ -2716,9 +2699,8 @@ CMD(bookmark)
    if(!strcasecmp(op,"list") || !strcasecmp(op,"list-p"))
    {
       xstring_ca list(op[4]?lftp_bookmarks.Format():lftp_bookmarks.FormatHidePasswords());
-      OutputJob *out=new OutputJob(output, args->a0());
+      OutputJob *out=new OutputJob(output.borrow(), args->a0());
       Job *j=new echoJob(list,out);
-      output=0;
       return j;
    }
    else if(!strcasecmp(op,"add"))
@@ -2816,9 +2798,8 @@ CMD(echo)
       s.append('\n');
    }
 
-   OutputJob *out=new OutputJob(output, args->a0());
+   OutputJob *out=new OutputJob(output.borrow(), args->a0());
    Job *j=new echoJob(s,s.length(),out);
-   output=0;
    return j;
 }
 
@@ -2859,10 +2840,8 @@ CMD(find)
 
    if(!args->getcurr())
       args->Append(".");
-   FinderJob_List *j=new class FinderJob_List(session->Clone(),args,output);
+   FinderJob_List *j=new class FinderJob_List(session->Clone(),args.borrow(),output.borrow());
    j->set_maxdepth(maxdepth);
-   args=0;
-   output=0;
    return j;
 }
 
@@ -2996,8 +2975,7 @@ CMD(du)
 
    if(!args->getcurr())
       args->Append(".");
-   FinderJob_Du *j=new class FinderJob_Du(session->Clone(),args,output);
-   args=0;
+   FinderJob_Du *j=new class FinderJob_Du(session->Clone(),args.borrow(),output.borrow());
    j->PrintDepth(maxdepth);
    j->SetBlockSize(blocksize,human_opts);
    if(print_totals)
@@ -3018,8 +2996,6 @@ CMD(du)
       p->Add(p->EXCLUDE,new PatternSet::Glob(exclude));
       j->SetExclude(p);
    }
-
-   output=0;
    return j;
 }
 
@@ -3063,8 +3039,7 @@ CMD(lpwd)
    const char *name=parent->cwd->GetName();
    char *buf=alloca_strdup2(name,2);
    sprintf(buf,"%s\n",name?name:"?");
-   Job *j=new echoJob(buf,new OutputJob(output, args->a0()));
-   output=0;
+   Job *j=new echoJob(buf,new OutputJob(output.borrow(), args->a0()));
    return j;
 }
 
@@ -3142,14 +3117,13 @@ CMD(chmod)
       return 0;
    }
 
-   ChmodJob *j=new ChmodJob(session->Clone(),args);
+   ChmodJob *j=new ChmodJob(session->Clone(),args.borrow());
    j->SetVerbosity(verbose);
    j->SetMode(m);
    if(quiet)
       j->BeQuiet(); /* does not affect messages from Verbosity */
    if(recurse)
       j->Recurse();
-   args=0;
    return j;
 }
 
@@ -3305,8 +3279,7 @@ CMD(slot)
    else
    {
       xstring_ca slots(ConnectionSlot::Format());
-      Job *j=new echoJob(slots,new OutputJob(output,args->a0()));
-      output=0;
+      Job *j=new echoJob(slots,new OutputJob(output.borrow(),args->a0()));
       return j;
    }
 }

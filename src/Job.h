@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2005 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,8 +69,8 @@ public:
 
    void	 AllocJobno();
 
-   virtual void	  PrintStatus(int,const char *prefix="\t") {};
-   virtual void	  ShowRunStatus(StatusLine *);
+   virtual void	PrintStatus(int,const char *prefix="\t") {};
+   virtual void	ShowRunStatus(const SMTaskRef<StatusLine>&);
    void ClearStatus()
       {
 	 const char *empty="";
@@ -155,6 +155,16 @@ public:
       }
    void Fg();
    void Bg();
+};
+
+template<class T> class JobRef : public SMTaskRef<T>
+{
+   JobRef<T>(const JobRef<T>&);  // disable cloning
+   void operator=(const JobRef<T>&);   // and assignment
+
+public:
+   JobRef() {}
+   JobRef<T>(T *p) : SMTaskRef<T>(p) {}
 };
 
 #endif /* JOB_H */

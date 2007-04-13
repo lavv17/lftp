@@ -1,3 +1,15 @@
+2007-04-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Ref.h: (Ref) new template class.
+	* SMTask.h: (SMTaskRef) new template class.
+	* Job.h: (JobRef) new template class.
+	* CatJob.cc, CatJob.h, CmdExec.cc, CmdExec.h, CopyJob.cc, CopyJob.h,
+	  FileSetOutput.cc, FileSetOutput.h, FindJob.cc, FindJob.h, Job.cc,
+	  Job.h, MirrorJob.cc, MirrorJob.h, OutputJob.cc, OutputJob.h,
+	  TreatFileJob.cc, TreatFileJob.h, buffer.cc, buffer.h, commands.cc,
+	  echoJob.cc, echoJob.h, mgetJob.cc, mgetJob.h, mvJob.cc, mvJob.h,
+	  pgetJob.cc, pgetJob.h: use Ref.
+
 2007-04-12  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* HttpDir.cc, HttpDir.h, LocalAccess.cc, LsCache.cc, LsCache.h: use xstring.

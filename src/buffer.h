@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1998-2005 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1998-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include "Timer.h"
 #include "fg.h"
 #include "xstring.h"
+#include "Speedometer.h"
 
 #include <stdarg.h>
 CDECL_BEGIN
@@ -36,8 +37,6 @@ CDECL_END
 
 #define GET_BUFSIZE 0x10000
 #define PUT_LL_MIN  0x2000
-
-class Speedometer;
 
 class Buffer
 {
@@ -60,7 +59,7 @@ protected:
    virtual int Put_LL(const char *buf,int size) { return 0; }
    virtual int PutEOF_LL() { return 0; }
 
-   Speedometer *rate;
+   SMTaskRef<Speedometer> rate;
    void RateAdd(int n);
 
    void Allocate(int size);
@@ -129,7 +128,7 @@ public:
    void Empty();
 
    Buffer();
-   virtual ~Buffer();
+   virtual ~Buffer() {}
 };
 
 class DataTranslator : public Buffer
@@ -155,14 +154,13 @@ public:
    enum dir_t { GET, PUT };
 
 protected:
-   DataTranslator *translator;
+   Ref<DataTranslator> translator;
    dir_t mode;
    void EmbraceNewData(int len);
 
 public:
-   DirectedBuffer(dir_t m) { mode=m; translator=0; }
-   ~DirectedBuffer();
-   void SetTranslator(DataTranslator *t) { delete translator; translator=t; }
+   DirectedBuffer(dir_t m) : mode(m) {}
+   void SetTranslator(DataTranslator *t) { translator=t; }
    void SetTranslation(const char *be_encoding,bool translit=true);
    void PutTranslated(const char *buf,int size);
    void PutTranslated(const char *buf) { PutTranslated(buf,strlen(buf)); }
@@ -199,14 +197,13 @@ public:
 
 class IOBufferStacked : public IOBuffer
 {
-   IOBuffer *down;
+   SMTaskRef<IOBuffer> down;
 
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
 
 public:
-   IOBufferStacked(IOBuffer *b) : IOBuffer(b->GetDirection()) { down=b; }
-   ~IOBufferStacked() { Delete(down); }
+   IOBufferStacked(IOBuffer *b) : IOBuffer(b->GetDirection()), down(b) {}
    const Time& EventTime() { return down->EventTime(); }
    int Do();
    bool Done();
@@ -214,18 +211,15 @@ public:
 
 class IOBufferFDStream : public IOBuffer
 {
-   FDStream *stream;
-   class Timer *put_ll_timer;
+   Ref<FDStream> stream;
+   Ref<Timer> put_ll_timer;
 
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
 
-protected:
-   ~IOBufferFDStream() { delete stream; delete put_ll_timer; }
-
 public:
    IOBufferFDStream(FDStream *o,dir_t m,Timer *t=0)
-      : IOBuffer(m) { stream=o; put_ll_timer=t; }
+      : IOBuffer(m), stream(o), put_ll_timer(t) {}
    bool Done();
    FgData *GetFgData(bool fg);
    const char *Status() { return stream->status; }

@@ -54,7 +54,6 @@ public:
    int Do();
 
    static FileCopy *New(FileCopyPeer *src,FileCopyPeer *dst,bool cont);
-/*   void ShowRunStatus(StatusLine *sl);*/
 };
 
 #endif // FILECOPYFTP_H

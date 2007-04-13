@@ -108,7 +108,7 @@ public:
 
    /* Call before showing a StatusLine on a job using this class.  If it
     * returns false, don't display it. */
-   bool ShowStatusLine(StatusLine *s);
+   bool ShowStatusLine(const SMTaskRef<StatusLine>&);
 
    /* For commands that stream output from servers, redisplaying the
     * statusbar when output becomes idle can be annoying, especially
