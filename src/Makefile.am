@@ -63,7 +63,7 @@ cmd_sleep_la_LIBADD  = liblftp-getdate.la
 liblftp_tasks_la_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  ProcWait.h GetPass.cc GetPass.h ConnectionSlot.cc ConnectionSlot.h\
  CharReader.cc CharReader.h Cache.cc Cache.h LsCache.cc LsCache.h\
- FileAccess.h FileAccess.cc ResMgr.h ResMgr.cc\
+ FileAccess.h FileAccess.cc ResMgr.h ResMgr.cc Ref.h\
  Filter.cc Filter.h SignalHook.cc SignalHook.h FileCopy.cc FileCopy.h\
  xmalloc.cc xmalloc.h xstring.cc xstring.h FileSet.cc FileSet.h\
  log.h log.cc StringSet.cc StringSet.h\
@@ -88,7 +88,8 @@ liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  QueueFeeder.cc QueueFeeder.h history.cc history.h\
  FindJob.cc FindJob.h FindJobDu.cc FindJobDu.h ChmodJob.cc ChmodJob.h\
  TreatFileJob.cc TreatFileJob.h CopyJob.cc CopyJob.h echoJob.cc echoJob.h\
- OutputJob.cc OutputJob.h FileCopyOutputJob.cc buffer_std.cc buffer_std.h
+ OutputJob.cc OutputJob.h FileCopyOutputJob.cc FileCopyOutputJob.h\
+ buffer_std.cc buffer_std.h
 liblftp_jobs_la_LIBADD = $(JOB_MODULES_STATIC) liblftp-tasks.la
 
 lftp_LDADD = liblftp-jobs.la $(READLINE)

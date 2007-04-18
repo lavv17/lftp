@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1996-2007 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1999-2005 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,34 +20,27 @@
 
 /* $Id$ */
 
-#ifndef CATJOB_H
-#define CATJOB_H
+#ifndef FILECOPYPEEROUTPUTJOB_H
+#define FILECOPYPEEROUTPUTJOB_H
 
-#include "CopyJob.h"
-#include "StatusLine.h"
 #include "OutputJob.h"
 
-class ArgV;
-
-class CatJob : public CopyJobEnv
+class FileCopyPeerOutputJob : public FileCopyPeer
 {
-protected:
-   JobRef<OutputJob> output;
-   bool ascii;
-   bool auto_ascii;
-
-   void	NextFile();
+   const JobRef<OutputJob>& o;
+   int Put_LL(const char *buf,int len);
 
 public:
+   FileCopyPeerOutputJob(const JobRef<OutputJob>& o);
+
    int Do();
-   int Done();
-   int ExitCode();
+   void Fg();
+   void Bg();
 
-   CatJob(FileAccess *s,OutputJob *output,ArgV *args);
-
-   void Ascii() { ascii=true; }
-   void Binary() { ascii=auto_ascii=false; }
-   void ShowRunStatus(const SMTaskRef<StatusLine>&);
+   const char *GetDescriptionForLog()
+      {
+	 return "[pipe to other job]";
+      }
 };
 
-#endif /* CATJOB_H */
+#endif

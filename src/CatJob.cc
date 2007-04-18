@@ -27,7 +27,7 @@
 
 #include "CatJob.h"
 #include "ArgV.h"
-#include "OutputJob.h"
+#include "FileCopyOutputJob.h"
 
 #define super CopyJobEnv
 
@@ -82,15 +82,9 @@ void CatJob::NextFile()
    SetCopier(copier,src);
 }
 
-CatJob::~CatJob()
-{
-   delete output;
-}
-
 CatJob::CatJob(FileAccess *new_session,OutputJob *_output,ArgV *new_args)
-   : CopyJobEnv(new_session,new_args)
+   : CopyJobEnv(new_session,new_args), output(_output)
 {
-   output=_output;
    output->SetParentFg(this);
    ascii=false;
    auto_ascii=true;

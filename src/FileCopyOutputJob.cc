@@ -22,12 +22,11 @@
 
 #include <config.h>
 #include "FileCopy.h"
-#include "OutputJob.h"
+#include "FileCopyOutputJob.h"
 
-FileCopyPeerOutputJob::FileCopyPeerOutputJob(OutputJob *new_o)
-   : FileCopyPeer(PUT)
+FileCopyPeerOutputJob::FileCopyPeerOutputJob(const JobRef<OutputJob>& new_o)
+   : FileCopyPeer(PUT), o(new_o)
 {
-   o=new_o;
    DontCopyDate();
 }
 

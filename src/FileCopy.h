@@ -27,7 +27,6 @@
    +FileCopyPeerFA
    +FileCopyPeerFDStream
    \FileCopyPeerList
-   +FileCopyPeerOutputJob
 */
 
 #ifndef FILECOPY_H
@@ -408,26 +407,6 @@ public:
    void Bg() { session->SetPriority(0); }
    const char *GetStatus() { return session->CurrentStatus(); }
    void UseColor(bool c=true) { if(dl) dl->UseColor(c); }
-};
-
-class OutputJob;
-
-class FileCopyPeerOutputJob : public FileCopyPeer
-{
-   OutputJob *o;
-   int Put_LL(const char *buf,int len);
-
-public:
-   FileCopyPeerOutputJob(OutputJob *o);
-
-   int Do();
-   void Fg();
-   void Bg();
-
-   const char *GetDescriptionForLog()
-      {
-	 return "[pipe to other job]";
-      }
 };
 
 #endif

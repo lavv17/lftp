@@ -11,6 +11,8 @@
 	* SMTask.cc, SMTask.h: fixed Ref assignment; more info in PrintTasks.
 	* commands.cc, complete.cc: use FileSetOutput::parse_res.
 	* pgetJob.cc, pgetJob.h: use new FileCopyPeerFDStream ctor.
+	* CatJob.cc, CatJob.h, FileCopyOutputJob.cc: use JobRef; pass const ref to JobRef.
+	* FileCopyOutputJob.h, FileCopy.h, Makefile.am: split off FileCopyOutputJob.h.
 
 2007-04-13  Alexander V. Lukyanov <lav@yars.free.net>
 
