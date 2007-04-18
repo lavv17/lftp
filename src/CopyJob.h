@@ -75,8 +75,8 @@ public:
    void SetDate(time_t d) { c->SetDate(d); }
    void SetSize(off_t s)   { c->SetSize(s); }
    const SMTaskRef<FileCopy>& GetCopy() { return c; }
-   FileCopyPeer *GetPut() { return c->put; }
-   FileCopyPeer *GetGet() { return c->get; }
+   const SMTaskRef<FileCopyPeer>& GetPut() { return c->put; }
+   const SMTaskRef<FileCopyPeer>& GetGet() { return c->get; }
 
    const char *Status(const StatusLine *s,bool base=false);
    void ShowRunStatus(const SMTaskRef<StatusLine>&);

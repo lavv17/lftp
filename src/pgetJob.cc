@@ -322,11 +322,10 @@ void pgetJob::NextFile()
       status_file.set(0);
 }
 
-pgetJob::ChunkXfer *pgetJob::NewChunk(const char *remote,FDStream *local,off_t start,off_t limit)
+pgetJob::ChunkXfer *pgetJob::NewChunk(const char *remote,off_t start,off_t limit)
 {
    FileCopyPeerFDStream
 	       	*dst_peer=new FileCopyPeerFDStream(local,FileCopyPeer::PUT);
-   dst_peer->DontDeleteStream();
    dst_peer->NeedSeek(); // seek before writing
    dst_peer->SetBase(0);
 
@@ -466,7 +465,7 @@ void pgetJob::LoadStatus()
    chunks=(ChunkXfer**)xmalloc(sizeof(*chunks)*num_of_chunks);
    for(i=num_of_chunks; i-->0; )
    {
-      chunks[i]=NewChunk(cp->GetName(),local,pos[i+1],limit[i+1]);
+      chunks[i]=NewChunk(cp->GetName(),pos[i+1],limit[i+1]);
       chunks[i]->SetParentFg(this,false);
    }
    goto out_close;
@@ -485,7 +484,7 @@ void pgetJob::InitChunks(off_t offset,off_t size)
    off_t curr_offs=size;
    for(int i=num_of_chunks; i-->0; )
    {
-      chunks[i]=NewChunk(cp->GetName(),local,curr_offs-chunk_size,curr_offs);
+      chunks[i]=NewChunk(cp->GetName(),curr_offs-chunk_size,curr_offs);
       chunks[i]->SetParentFg(this,false);
       curr_offs-=chunk_size;
    }

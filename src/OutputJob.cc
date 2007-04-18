@@ -378,16 +378,22 @@ bool OutputJob::IsTTY() const
    return is_a_tty;
 }
 
+static const SMTaskRef<FileCopyPeer> null_peer;
+
 /* Get the input FileCopyPeer; this is the buffer we write to. */
-FileCopyPeer *OutputJob::InputPeer() const
+const SMTaskRef<FileCopyPeer>& OutputJob::InputPeer() const
 {
-   return input? input->GetGet():0;
+   if(input)
+      return input->GetGet();
+   return null_peer;
 }
 
 /* Get the output FileCopyPeer (the FileCopyPeer that's doing the final output). */
-FileCopyPeer *OutputJob::OutputPeer() const
+const SMTaskRef<FileCopyPeer>& OutputJob::OutputPeer() const
 {
-   return output? output->GetPut():0;
+   if(output)
+      return output->GetPut();
+   return null_peer;
 }
 
 /* We're done if the output is finished, or on error. */

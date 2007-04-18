@@ -1,3 +1,17 @@
+2007-04-18  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc: don't delete Refs.
+	* CopyJob.h, OutputJob.cc, OutputJob.h: return ref to Ref instead of
+	  pointer.
+	* FileCopy.cc, FileCopy.h: use Refs; make more virtual methods for fxp.
+	* FileCopyFtp.cc: use the new virtual methods instead of ptr casting.
+	* FileSetOutput.cc, FileSetOutput.h: (FileSetOutput::parse_res) new
+	  method.
+	* GetJob.cc, GetJob.h: use Ref and new FileCopyPeerFDStream ctor.
+	* SMTask.cc, SMTask.h: fixed Ref assignment; more info in PrintTasks.
+	* commands.cc, complete.cc: use FileSetOutput::parse_res.
+	* pgetJob.cc, pgetJob.h: use new FileCopyPeerFDStream ctor.
+
 2007-04-13  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Ref.h: (Ref) new template class.

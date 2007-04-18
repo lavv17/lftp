@@ -86,11 +86,14 @@ public:
 
    void DeleteLater() { deleting=true; }
    static void Delete(SMTask *);
-   static SMTask *_MakeRef(SMTask *task) { if(task) task->ref_count++; return task; }
-   static void _DeleteRef(SMTask *task)  { if(task) task->ref_count--; Delete(task); }
-   template<typename T> static void DeleteRef(T *&task) { _DeleteRef(task); task=0; }
+   void IncRefCount() { ref_count++; }
+   void DecRefCount() { if(ref_count>0) ref_count--; }
+   static SMTask *_MakeRef(SMTask *task) { if(task) task->IncRefCount(); return task; }
+   static void _DeleteRef(SMTask *task)  { if(task) task->DecRefCount(); Delete(task); }
+/*   template<typename T> static void DeleteRef(T *&task) { _DeleteRef(task); task=0; }*/
    template<typename T> static T *MakeRef(T *task) { _MakeRef(task); return task; }
    static int Roll(SMTask *);
+   int Roll() { return Roll(this); }
    static void RollAll(const TimeInterval &max_time);
 
    static SMTask *current;
@@ -127,12 +130,12 @@ protected:
 public:
    SMTaskRef() { ptr=0; }
    SMTaskRef<T>(T *p) { ptr=SMTask::MakeRef(p); }
-   ~SMTaskRef<T>() { SMTask::DeleteRef(ptr); }
-   void operator=(T *p) { SMTask::DeleteRef(p); ptr=SMTask::MakeRef(p); }
-   void operator=(SMTaskRef<T> &p) { SMTask::DeleteRef(ptr); ptr=p.borrow(); }
+   ~SMTaskRef<T>() { SMTask::_DeleteRef(ptr); }
+   void operator=(T *p) { SMTask::_DeleteRef(ptr); ptr=SMTask::MakeRef(p); }
+   void operator=(SMTaskRef<T> &p) { SMTask::_DeleteRef(ptr); ptr=SMTask::MakeRef(p.borrow()); }
    operator const T*() const { return ptr; }
    T *operator->() const { return ptr; }
-   T *borrow() { return replace_value(ptr,(T*)0); }
+   T *borrow() { if(ptr) ptr->DecRefCount(); return replace_value(ptr,(T*)0); }
 };
 
 #endif /* SMTASK_H */

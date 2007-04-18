@@ -1594,8 +1594,7 @@ CMD(cls)
    if(!strncmp(op,"re",2))
       re=true;
 
-   ArgV arg("", ResMgr::Query("cmd:cls-default", 0));
-   fso->parse_argv(&arg);
+   fso->parse_res(ResMgr::Query("cmd:cls-default", 0));
 
    if(const char *err = fso->parse_argv(args)) {
       eprintf("%s: %s.\n", op, err);

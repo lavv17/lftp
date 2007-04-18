@@ -52,7 +52,7 @@ int FileCopyFtp::Do()
 	 return m;
       if(ftp_dst->IsClosed())
       {
-	 ((FileCopyPeerFA*)put)->OpenSession();
+	 put->OpenSession();
 	 ftp_dst->SetCopyMode(Ftp::COPY_DEST,!passive_source,protect,
 	       passive_source^passive_ssl_connect,dst_retries,dst_try_time);
 	 m=MOVED;
@@ -68,14 +68,14 @@ int FileCopyFtp::Do()
 
    if(ftp_src->IsClosed())
    {
-      ((FileCopyPeerFA*)get)->OpenSession();
+      get->OpenSession();
       ftp_src->SetCopyMode(Ftp::COPY_SOURCE,passive_source,protect,
 	    !passive_source^passive_ssl_connect,src_retries,src_try_time);
       m=MOVED;
    }
    if(ftp_dst->IsClosed())
    {
-      ((FileCopyPeerFA*)put)->OpenSession();
+      put->OpenSession();
       ftp_dst->SetCopyMode(Ftp::COPY_DEST,!passive_source,protect,
 	    passive_source^passive_ssl_connect,dst_retries,dst_try_time);
       m=MOVED;
@@ -116,8 +116,8 @@ int FileCopyFtp::Do()
 	 Log::global->Write(0,_("**** FXP: giving up, reverting to plain copy\n"));
 	 Close();
 	 disable_fxp=true;
-	 ((FileCopyPeerFA*)get)->SetFXP(false);
-	 ((FileCopyPeerFA*)put)->SetFXP(false);
+	 get->SetFXP(false);
+	 put->SetFXP(false);
 
 	 if(ResMgr::QueryBool("ftp:fxp-force",ftp_src->GetHostName())
 	 || ResMgr::QueryBool("ftp:fxp-force",ftp_dst->GetHostName()))

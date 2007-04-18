@@ -222,18 +222,28 @@ void FileSetOutput::long_list()
       output_block_size = 1;
 }
 
+const char *FileSetOutput::parse_res(const char *res)
+{
+   Ref<ArgV> arg(new ArgV("",res));
+   const char *error=parse_argv(arg);
+   if(error)
+      return error;
+
+   /* shouldn't be any non-option arguments */
+   if(arg->count() > 1)
+      return _("non-option arguments found");
+
+   return 0;
+}
+
 const char *FileSetOutput::ValidateArgv(xstring_c *s)
 {
    if(!*s) return NULL;
 
-   ArgV arg("", *s);
    FileSetOutput tmp;
 
-   const char *ret = tmp.parse_argv(&arg);
+   const char *ret = tmp.parse_res(*s);
    if(ret) return ret;
-
-   /* shouldn't be any non-option arguments */
-   if(arg.count() > 1) return _("non-option arguments found");
 
    return NULL;
 }

@@ -661,8 +661,7 @@ static char **lftp_completion (const char *text,int start,int end)
 	 goto really_remote;
       }
    really_local:
-      ArgV arg("", ResMgr::Query("cmd:cls-completion-default", 0));
-      fso.parse_argv(&arg);
+      fso.parse_res(ResMgr::Query("cmd:cls-completion-default", 0));
 
       bool tilde_expanded=false;
       const char *home=getenv("HOME");
@@ -764,8 +763,7 @@ static char **lftp_completion (const char *text,int start,int end)
 
       rl_save_prompt();
 
-      ArgV arg("", ResMgr::Query("cmd:cls-completion-default", 0));
-      fso.parse_argv(&arg);
+      fso.parse_res(ResMgr::Query("cmd:cls-completion-default", 0));
 
       if(rg)
       {
@@ -1312,8 +1310,7 @@ extern "C" void completion_display_list (char **matches, int len)
       FileSetOutput fso;
       fso.config(b);
 
-      ArgV arg("", ResMgr::Query("cmd:cls-completion-default", 0));
-      fso.parse_argv(&arg);
+      fso.parse_res(ResMgr::Query("cmd:cls-completion-default", 0));
 
       fso.print(tmp, b);
    } else {

@@ -302,7 +302,7 @@ void SMTask::PrintTasks()
    {
       const char *c=scan->GetLogContext();
       if(!c) c="";
-      printf("%p\t%c%c%c\t%s\n",scan,scan->running?'R':' ',
-	 scan->suspended?'S':' ',scan->deleting?'D':' ',c);
+      printf("%p\t%c%c%c\t%d\t%s\n",scan,scan->running?'R':' ',
+	 scan->suspended?'S':' ',scan->deleting?'D':' ',scan->ref_count,c);
    }
 }

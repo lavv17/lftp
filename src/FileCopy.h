@@ -121,6 +121,9 @@ public:
 	    can_seek0=false;
       }
    virtual FA *GetSession() { return 0; } // for fxp.
+   virtual void OpenSession() {}	  // for fxp.
+   virtual void SetFXP(bool) {}		  // for fxp.
+
    virtual void Fg() {}
    virtual void Bg() {}
 
@@ -148,8 +151,8 @@ public:
 class FileCopy : public SMTask
 {
 public:
-   FileCopyPeer *get;
-   FileCopyPeer *put;
+   SMTaskRef<FileCopyPeer> get;
+   SMTaskRef<FileCopyPeer> put;
 
 protected:
    enum state_t
@@ -164,14 +167,13 @@ protected:
       } state;
 
 private:
-
    int max_buf;
    bool cont;
 
    xstring_c error_text;
 
-   Speedometer *rate;
-   Speedometer *rate_for_eta;
+   SMTaskRef<Speedometer> rate;
+   SMTaskRef<Speedometer> rate_for_eta;
    int put_buf;
    off_t put_eof_pos;
 
@@ -183,7 +185,7 @@ private:
    bool remove_source_later;
    bool remove_target_first;
 
-   Buffer *line_buffer;
+   Ref<Buffer> line_buffer;
    int  line_buffer_max;
 
 protected:
@@ -199,8 +201,6 @@ protected:
 	 rate_for_eta->Reset();
       }
    off_t bytes_count;
-
-   ~FileCopy();
 
 public:
    off_t GetPos();
@@ -242,7 +242,6 @@ public:
    bool IsLineBuffered() const { return line_buffer; }
 
    FileCopy(FileCopyPeer *src,FileCopyPeer *dst,bool cont);
-   void Init();
 
    int Do();
    void SuspendInternal();
@@ -298,7 +297,7 @@ class FileCopyPeerFA : public FileCopyPeer
 
    int redirections;
 
-   FileVerificator *verify;
+   Ref<FileVerificator> verify;
 
 protected:
    ~FileCopyPeerFA();
@@ -343,9 +342,10 @@ public:
 
 class FileCopyPeerFDStream : public FileCopyPeer
 {
-   FDStream *stream;
+   Ref<FDStream> my_stream;
+   const Ref<FDStream>& stream;
    off_t seek_base;
-   Timer *put_ll_timer;
+   Ref<Timer> put_ll_timer;
 
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
@@ -353,16 +353,14 @@ class FileCopyPeerFDStream : public FileCopyPeer
 
    int getfd();
 
-   bool delete_stream;
    bool create_fg_data;
    bool need_seek;
 
-   FileVerificator *verify;
-
-protected:
-   ~FileCopyPeerFDStream();
+   Ref<FileVerificator> verify;
 
 public:
+   void Init();
+   FileCopyPeerFDStream(const Ref<FDStream>& o,dir_t m);
    FileCopyPeerFDStream(FDStream *o,dir_t m);
    int Do();
    bool IOReady();
@@ -371,7 +369,6 @@ public:
    pid_t GetProcGroup() { return stream->GetProcGroup(); }
    void Kill(int sig);
 
-   void DontDeleteStream() { delete_stream=false; }
    void DontCreateFgData() { create_fg_data=false; }
    void NeedSeek() { need_seek=true; }
    void WantSize();
@@ -397,7 +394,7 @@ class FileCopyPeerDirList : public FileCopyPeer
 {
 private:
    FileAccess *session;
-   DirList *dl;
+   SMTaskRef<DirList> dl;
 
 protected:
    ~FileCopyPeerDirList();

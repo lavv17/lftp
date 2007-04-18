@@ -157,7 +157,7 @@ int FileCopy::Do()
 	 if(put->GetPos()>0)
 	 {
 	    put->PutEOF();
-	    Roll(put);
+	    put->Roll();
 	 }
       get_error:
 	 SetError(get->ErrorText());
@@ -402,15 +402,13 @@ int FileCopy::Do()
    return m;
 }
 
-void FileCopy::Init()
+FileCopy::FileCopy(FileCopyPeer *s,FileCopyPeer *d,bool c)
+   : get(s), put(d), cont(c),
+   rate(new Speedometer("xfer:rate-period")),
+   rate_for_eta(new Speedometer("xfer:eta-period"))
 {
-   get=0;
-   put=0;
    set_state(INITIAL);
    max_buf=0x10000;
-   cont=false;
-   rate        =MakeRef(new Speedometer("xfer:rate-period"));
-   rate_for_eta=MakeRef(new Speedometer("xfer:eta-period"));
    put_buf=0;
    put_eof_pos=0;
    bytes_count=0;
@@ -418,24 +416,7 @@ void FileCopy::Init()
    fail_if_broken=true;
    remove_source_later=false;
    remove_target_first=false;
-   line_buffer=0;
    line_buffer_max=0;
-}
-
-FileCopy::FileCopy(FileCopyPeer *s,FileCopyPeer *d,bool c)
-{
-   Init();
-   get=MakeRef(s);
-   put=MakeRef(d);
-   cont=c;
-}
-FileCopy::~FileCopy()
-{
-   DeleteRef(get);
-   DeleteRef(put);
-   delete line_buffer;
-   DeleteRef(rate);
-   DeleteRef(rate_for_eta);
 }
 FileCopy *FileCopy::New(FileCopyPeer *s,FileCopyPeer *d,bool c)
 {
@@ -470,8 +451,8 @@ void FileCopy::Bg()
 void FileCopy::SetError(const char *str)
 {
    error_text.set(str);
-   DeleteRef(get);
-   DeleteRef(put);
+   get=0;
+   put=0;
 }
 
 void FileCopy::LineBuffered(int s)
@@ -782,7 +763,7 @@ int FileCopyPeerFA::Do()
 	       // FIXME: set date for real.
 	       date_set=true;
 	       if(!verify)
-		  verify=MakeRef(new FileVerificator(session,file));
+		  verify=new FileVerificator(session,file);
 	       return MOVED;
 	    }
 	    else if(res==FA::IN_PROGRESS)
@@ -1147,7 +1128,6 @@ void FileCopyPeerFA::Init()
    redirections=0;
    can_seek=true;
    can_seek0=true;
-   verify=0;
 }
 
 FileCopyPeerFA::FileCopyPeerFA(FileAccess *s,const char *f,int m)
@@ -1168,7 +1148,6 @@ FileCopyPeerFA::~FileCopyPeerFA()
       if(reuse_later)
 	 SessionPool::Reuse(session);
    }
-   DeleteRef(verify);
 }
 
 FileCopyPeerFA::FileCopyPeerFA(ParsedURL *u,int m)
@@ -1200,14 +1179,21 @@ FileCopyPeerFA *FileCopyPeerFA::New(FileAccess *s,const char *url,int m,bool reu
 // FileCopyPeerFDStream
 #undef super
 #define super FileCopyPeer
+
 FileCopyPeerFDStream::FileCopyPeerFDStream(FDStream *o,dir_t m)
-   : FileCopyPeer(m)
+   : FileCopyPeer(m), my_stream(o?o:new FDStream(1,"<stdout>")), stream(my_stream)
 {
-   if(o==0 && m==PUT)
-      o=new FDStream(1,"<stdout>");
-   stream=o;
+   Init();
+}
+FileCopyPeerFDStream::FileCopyPeerFDStream(const Ref<FDStream>& o,dir_t m)
+   : FileCopyPeer(m), stream(o)
+{
+   Init();
+}
+
+void FileCopyPeerFDStream::Init()
+{
    seek_base=0;
-   delete_stream=true;
    create_fg_data=true;
    need_seek=false;
    can_seek = can_seek0 = stream->can_seek();
@@ -1223,17 +1209,8 @@ FileCopyPeerFDStream::FileCopyPeerFDStream(FDStream *o,dir_t m)
    }
    if(stream->usesfd(1))
       write_allowed=false;
-   put_ll_timer=0;
-   if(m==PUT)
+   if(mode==PUT)
       put_ll_timer=new Timer(0,200);
-   verify=0;
-}
-FileCopyPeerFDStream::~FileCopyPeerFDStream()
-{
-   if(delete_stream)
-      delete stream;
-   delete put_ll_timer;
-   DeleteRef(verify);
 }
 
 void FileCopyPeerFDStream::Seek_LL()
@@ -1347,10 +1324,10 @@ int FileCopyPeerFDStream::Do()
 	       date_set=true;
 	       m=MOVED;
 	    }
-	    if(stream && delete_stream && !stream->Done())
+	    if(stream && my_stream && !stream->Done())
 	       return m;
 	    if(!verify)
-	       verify=MakeRef(new FileVerificator(stream));
+	       verify=new FileVerificator(stream);
 	    return MOVED;
 	 }
 	 if(seek_pos==0)
@@ -1616,7 +1593,7 @@ int FileCopyPeerFDStream::Put_LL(const char *buf,int len)
 }
 FgData *FileCopyPeerFDStream::GetFgData(bool fg)
 {
-   if(!delete_stream || !create_fg_data)
+   if(!my_stream || !create_fg_data)
       return 0;	  // if we don't own the stream, don't create FgData.
    if(stream->GetProcGroup())
       return new FgData(stream->GetProcGroup(),fg);
@@ -1677,7 +1654,7 @@ FileCopyPeerDirList::FileCopyPeerDirList(FA *s,ArgV *v)
    : FileCopyPeer(GET)
 {
    session=s;
-   dl=MakeRef(session->MakeDirList(v));
+   dl=session->MakeDirList(v);
    if(dl==0)
       eof=true;
    can_seek=false;
@@ -1686,7 +1663,6 @@ FileCopyPeerDirList::FileCopyPeerDirList(FA *s,ArgV *v)
 
 FileCopyPeerDirList::~FileCopyPeerDirList()
 {
-   DeleteRef(dl);
    SessionPool::Reuse(session);
 }
 

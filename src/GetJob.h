@@ -40,14 +40,13 @@ protected:
    bool truncate_target_first;
    xstring backup_file;
    mode_t file_mode;
-   FileStream *local;
+   Ref<FDStream> local;
    bool reverse;
 
    void RemoveBackupFile();
 
 public:
    GetJob(FileAccess *s,ArgV *a,bool c=false);
-   ~GetJob();
 
    int	 Do();
 

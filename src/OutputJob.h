@@ -67,10 +67,10 @@ class OutputJob : public Job
    void SetError(const char *e, ...) PRINTF_LIKE(2,3);
 
    /* Get the input FileCopyPeer */
-   FileCopyPeer *InputPeer() const;
+   const SMTaskRef<FileCopyPeer>& InputPeer() const;
 
    /* Get the output FileCopyPeer (the FileCopyPeer that's doing the final output) */
-   FileCopyPeer *OutputPeer() const;
+   const SMTaskRef<FileCopyPeer>& OutputPeer() const;
 
 public:
    OutputJob(FDStream *output, const char *a0);

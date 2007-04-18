@@ -91,7 +91,6 @@ FileCopyPeer *GetJob::NoProtoDstLocal(const char *dst)
    }
    local=new FileStream(f,flags); // local is for pget.
    FileCopyPeerFDStream *p=new FileCopyPeerFDStream(local,FileCopyPeer::PUT);
-   p->DontDeleteStream();
    return p;
 }
 FileCopyPeer *GetJob::NoProtoPeer(FileAccess *session,const char *src,FA::open_mode mode)
@@ -135,11 +134,7 @@ void GetJob::NextFile()
 try_next:
    file_mode=NO_MODE;
    backup_file.set(0);
-   if(local)
-   {
-      delete local;
-      local=0;
-   }
+   local=0;
 
    if(!args)
       return;
@@ -183,10 +178,5 @@ GetJob::GetJob(FileAccess *s,ArgV *a,bool c)
    remove_target_first=false;
    truncate_target_first=!cont;
    file_mode=NO_MODE;
-   local=0;
    reverse=false;
-}
-GetJob::~GetJob()
-{
-   delete local;
 }

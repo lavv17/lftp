@@ -808,13 +808,8 @@ CmdExec::~CmdExec()
    }
 
    free_used_aliases();
-   delete args;
-   delete output;
-   delete cwd;
    if(cwd_owner==this)
       cwd_owner=0;
-   delete glob;
-   delete args_glob;
 
    Reuse(saved_session);
 }
