@@ -26,9 +26,11 @@
 #include "SMTask.h"
 #include "FileAccess.h"
 
-class GetFileInfo: public ListInfo
+class GetFileInfo : public ListInfo
 {
-   ListInfo *li;
+   const FileAccessRef& session;
+
+   SMTaskRef<ListInfo> li;
 
    /* file or dir we're listing: */
    xstring_c dir;
@@ -63,7 +65,7 @@ class GetFileInfo: public ListInfo
 
    FA::fileinfo get_info;
 public:
-   GetFileInfo(FileAccess *a, const char *path, bool showdir);
+   GetFileInfo(const FileAccessRef& a, const char *path, bool showdir);
    virtual ~GetFileInfo();
 
    int Do();

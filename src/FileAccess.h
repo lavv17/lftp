@@ -35,6 +35,7 @@
 #else
 # include <poll.h>
 #endif
+#include <assert.h>
 
 #include "SMTask.h"
 #include "trio.h"
@@ -42,6 +43,7 @@
 #include "ResMgr.h"
 #include "FileSet.h"
 #include "LsCache.h"
+#include "ArgV.h"
 
 #define FILE_END     ((off_t)-1L)
 #define UNKNOWN_POS  ((off_t)-1L)
@@ -50,7 +52,7 @@ class ListInfo;
 class Glob;
 class NoGlob;
 class DirList;
-class ArgV;
+class FileAccessRef;
 
 class FileAccess : public SMTask, public ResClient
 {
@@ -387,106 +389,6 @@ public:
    static void ClassCleanup();
 };
 
-class FileAccessOperation : public SMTask
-{
-protected:
-   bool done;
-   xstring error_text;
-   void SetError(const char *);
-   void SetErrorCached(const char *);
-
-   bool use_cache;
-
-   virtual ~FileAccessOperation();
-
-public:
-   FileAccessOperation();
-
-   virtual int Do() = 0;
-   bool Done() { return done; }
-   bool Error() { return error_text!=0; }
-   const char *ErrorText() { return error_text; }
-
-   virtual const char *Status() = 0;
-
-   void UseCache(bool y=true) { use_cache=y; }
-};
-
-#include "FileSet.h"
-
-class PatternSet;
-
-class ListInfo : public FileAccessOperation
-{
-protected:
-   FileAccess *session;
-   FileAccess::Path saved_cwd;
-   FileSet *result;
-
-   const char *exclude_prefix;
-   PatternSet *exclude;
-
-   unsigned need;
-   bool follow_symlinks;
-
-   virtual ~ListInfo();
-
-public:
-   ListInfo(FileAccess *session,const char *path);
-
-   void SetExclude(const char *p,PatternSet *e);
-
-   // caller has to delete the resulting FileSet itself.
-   FileSet *GetResult() { return replace_value(result,(FileSet*)0); }
-
-   void Need(unsigned mask) { need|=mask; }
-   void NoNeed(unsigned mask) { need&=~mask; }
-   void FollowSymlinks() { follow_symlinks=true; }
-};
-
-#include "buffer.h"
-
-class LsOptions
-{
-public:
-   bool append_type:1;
-   bool multi_column:1;
-   bool show_all:1;
-   LsOptions()
-      {
-	 append_type=false;
-	 multi_column=false;
-	 show_all=false;
-      }
-};
-
-class DirList : public FileAccessOperation
-{
-protected:
-   Buffer *buf;
-   ArgV *args;
-   bool color;
-
-   ~DirList();
-public:
-   DirList(ArgV *a)
-      {
-	 buf=new Buffer();
-	 args=a;
-	 color=false;
-      }
-
-   virtual int Do() = 0;
-   virtual const char *Status() = 0;
-
-   int Size() { return buf->Size(); }
-   bool Eof() { return buf->Eof();  }
-   void Get(const char **b,int *size) { buf->Get(b,size); }
-   void Skip(int len) { buf->Skip(len); }
-   void UseColor(bool c=true) { color=c; }
-};
-
-
 // shortcut
 #define FA FileAccess
 
@@ -505,6 +407,146 @@ public:
    static FileAccess *Walk(int *n,const char *proto);
 
    static void ClearAll();
+};
+
+class FileAccessRef : public SMTaskRef<FileAccess>
+{
+   FileAccessRef(const FileAccessRef&);  // disable cloning
+   void operator=(const FileAccessRef&);   // and assignment
+
+   void reuse() { if(ptr) { ptr->DecRefCount(); SessionPool::Reuse(ptr); ptr=0; } }
+
+public:
+   FileAccessRef() {}
+   FileAccessRef(FileAccess *p) : SMTaskRef<FileAccess>(p) {}
+   ~FileAccessRef() { reuse(); }
+   const FileAccessRef& operator=(FileAccess *p) { reuse(); ptr=SMTask::MakeRef(p); return *this; }
+
+   template<class T> const SMTaskRef<T>& Cast() const
+      { assert(ptr==dynamic_cast<T*>(ptr)); return *(SMTaskRef<T>*)this; }
+
+   static const FileAccessRef null;
+};
+
+// constant ref (ref clone)
+class FileAccessRefC
+{
+   void close() { if(*ref) (*ref)->Close(); }
+
+protected:
+   const FileAccessRef *ref;
+
+public:
+   FileAccessRefC(const FileAccessRef& p) { ref=&p; }
+   ~FileAccessRefC() { close(); }
+   const FileAccessRef& operator=(const FileAccessRef& p) { close(); ref=&p; return p; }
+   operator const FileAccess*() const { return *ref; }
+   FileAccess *operator->() const { return ref->operator->(); }
+   operator const FileAccessRef&() { return *ref; }
+};
+
+// static reference
+class FileAccessRefS : public FileAccessRef
+{
+   FileAccessRefS(const FileAccessRefS&);  // disable cloning
+   void operator=(const FileAccessRefS&);   // and assignment
+
+public:
+   FileAccessRefS() {}
+   FileAccessRefS(FileAccess *p) { ptr=p; }
+   ~FileAccessRefS() { ptr=0; }
+   const FileAccessRefS& operator=(FileAccess *p) { ptr=p; return *this; }
+};
+
+class FileAccessOperation : public SMTask
+{
+protected:
+   FileAccessRefS session;
+   bool done;
+   xstring error_text;
+   void SetError(const char *);
+   void SetErrorCached(const char *);
+
+   bool use_cache;
+
+   ~FileAccessOperation() { if(session) session->Close(); }
+
+public:
+   FileAccessOperation(FileAccess *s);
+
+   virtual int Do() = 0;
+   bool Done() { return done; }
+   bool Error() { return error_text!=0; }
+   const char *ErrorText() { return error_text; }
+
+   virtual const char *Status() = 0;
+
+   void UseCache(bool y=true) { use_cache=y; }
+};
+
+#include "PatternSet.h"
+class ListInfo : public FileAccessOperation
+{
+protected:
+   FileAccess::Path saved_cwd;
+   Ref<FileSet> result;
+
+   const char *exclude_prefix;
+   const PatternSet *exclude;
+
+   unsigned need;
+   bool follow_symlinks;
+
+   ~ListInfo();
+
+public:
+   ListInfo(FileAccess *session,const char *path);
+
+   void SetExclude(const char *p,const PatternSet *e);
+
+   // caller has to delete the resulting FileSet itself.
+   FileSet *GetResult() { return result.borrow(); }
+
+   void Need(unsigned mask) { need|=mask; }
+   void NoNeed(unsigned mask) { need&=~mask; }
+   void FollowSymlinks() { follow_symlinks=true; }
+};
+
+#include "buffer.h"
+class LsOptions
+{
+public:
+   bool append_type:1;
+   bool multi_column:1;
+   bool show_all:1;
+   LsOptions()
+      {
+	 append_type=false;
+	 multi_column=false;
+	 show_all=false;
+      }
+};
+
+class DirList : public FileAccessOperation
+{
+protected:
+   Ref<Buffer> buf;
+   Ref<ArgV> args;
+   bool color;
+
+public:
+   DirList(FileAccess *s,ArgV *a)
+      : FileAccessOperation(s), buf(new Buffer()), args(a), color(false) {}
+
+   virtual int Do() = 0;
+   virtual const char *Status() = 0;
+
+   int Size() { return buf->Size(); }
+   bool Eof() { return buf->Eof();  }
+   void Get(const char **b,int *size) { buf->Get(b,size); }
+   void Skip(int len) { buf->Skip(len); }
+
+   void UseColor(bool c=true) { color=c; }
 };
 
 #endif /* FILEACCESS_H */

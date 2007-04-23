@@ -26,7 +26,7 @@
 
 ConnectionSlot ConnectionSlot::lftp_slots;
 
-ConnectionSlot::SlotValue::SlotValue(const char *n,FileAccess *s)
+ConnectionSlot::SlotValue::SlotValue(const char *n,const FileAccess *s)
    : KeyValueDB::Pair(n,s->GetConnectURL())
 {
    session=s->Clone();
@@ -45,7 +45,7 @@ ConnectionSlot::SlotValue *ConnectionSlot::Find(const char *n)
    SlotValue **slot=(SlotValue**)lftp_slots.LookupPair(n);
    return slot?*slot:0;
 }
-void ConnectionSlot::Set(const char *n,FileAccess *fa)
+void ConnectionSlot::Set(const char *n,const FileAccess *fa)
 {
    const char *url=fa->GetConnectURL();
    if(!url || !*url)

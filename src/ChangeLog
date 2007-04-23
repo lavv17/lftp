@@ -1,3 +1,27 @@
+2007-04-21  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CatJob.cc: use new FileCopyPeerFA::New.
+	* CmdExec.cc, CmdExec.h: use Ref for saved_session.
+	* ConnectionSlot.cc, ConnectionSlot.h: add const.
+	* DirColors.cc, DirColors.h: pass const Ref&.
+	* DummyProto.cc: use new DirList ctor.
+	* FileAccess.cc, FileAccess.h: use Refs; (FileAccessRef::null) new
+	  const;
+	* FileCopy.cc, FileCopy.h, FileCopyFtp.cc, FileCopyFtp.h: use Refs;
+	  const; Cast method.
+	* FileGlob.cc, FileGlob.h, Filter.cc, Filter.h: use Refs.
+	* FileSet.cc, FileSet.h: use consts.
+	* FindJob.cc, FindJob.h, Fish.cc, Fish.h, FtpDirList.cc, FtpDirList.h,
+	  GetFileInfo.cc, GetFileInfo.h, GetJob.cc GetJob.h, HttpDir.cc,
+	  OutputJob.cc, OutputJob.h, SFtp.cc, SFtp.h, SleepJob.cc, SleepJob.h,
+	  buffer.cc, buffer.h, commands.cc, mkdirJob.cc, mkdirJob.h: use Refs.
+	* Http.cc, ftpclass.cc: change order of args to *DirList.
+	* ftpclass.h, history.cc, history.h: add const.
+	* Job.cc, Job.h: use Refs in SessionJob; drop Reuse method.
+	* LocalAccess.cc: pass 0 as session to DirList.
+	* NetAccess.cc, commands.cc: use non-static Roll method.
+	* SMTask.h: drop operator=(SMTaskRef&).
+
 2007-04-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CmdExec.cc: don't delete Refs.

@@ -119,9 +119,11 @@ public:
 	 if(p==0)
 	    can_seek0=false;
       }
-   virtual FA *GetSession() { return 0; } // for fxp.
-   virtual void OpenSession() {}	  // for fxp.
-   virtual void SetFXP(bool) {}		  // for fxp.
+
+   // for fxp:
+   virtual const FileAccessRef& GetSession() { return FileAccessRef::null; }
+   virtual void OpenSession() {}
+   virtual void SetFXP(bool) {}
 
    virtual void Fg() {}
    virtual void Bg() {}
@@ -267,7 +269,7 @@ class FileVerificator : public SMTask
 public:
    FileVerificator(const char *f);
    FileVerificator(const FDStream *);
-   FileVerificator(FileAccess *,const char *f);
+   FileVerificator(const FileAccess *,const char *f);
    ~FileVerificator();
    int Do();
    bool Done() { return done; }
@@ -280,15 +282,15 @@ class FileCopyPeerFA : public FileCopyPeer
 {
    xstring_c file;
    xstring orig_url;
+   FileAccessRef my_session;
+   FileAccessRefC session;
    int FAmode;
-   FileAccess *session;
 
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
 
    FileAccess::fileinfo info;
 
-   bool reuse_later;
    bool fxp;   // FXP (ftp<=>ftp copy) active
 
    time_t try_time;
@@ -304,7 +306,8 @@ protected:
 public:
    void Init();
    FileCopyPeerFA(FileAccess *s,const char *f,int m);
-   FileCopyPeerFA(class ParsedURL *u,int m);
+   FileCopyPeerFA(const FileAccessRef& s,const char *f,int m);
+   FileCopyPeerFA(const class ParsedURL *u,int m);
    int Do();
    bool IOReady();
    off_t GetRealPos();
@@ -315,8 +318,6 @@ public:
    void SuspendInternal();
    void ResumeInternal();
 
-   void DontReuseSession() { reuse_later=false; }
-
    const char *GetStatus();
    const char *GetProto() const { return session->GetProto(); }
 
@@ -324,10 +325,11 @@ public:
    void WantSize();
    void RemoveFile();
 
-   static FileCopyPeerFA *New(FA *s,const char *url,int m,bool reuse=false);
+   static FileCopyPeerFA *New(FA *s,const char *url,int m);
+   static FileCopyPeerFA *New(const FileAccessRef& s,const char *url,int m);
 
    void OpenSession();
-   FA *GetSession() { return session; }
+   const FileAccessRef& GetSession() { return session; }
    void Fg() { session->SetPriority(1); }
    void Bg() { session->SetPriority(0); }
    void SetFXP(bool on) { fxp=on; }
@@ -392,11 +394,8 @@ public:
 class FileCopyPeerDirList : public FileCopyPeer
 {
 private:
-   FileAccess *session;
+   FileAccessRef session;
    SMTaskRef<DirList> dl;
-
-protected:
-   ~FileCopyPeerDirList();
 
 public:
    FileCopyPeerDirList(FA *s,ArgV *v); // consumes s and v.

@@ -34,6 +34,7 @@
 
 #define top (*stack[stack_ptr])
 #define super SessionJob
+#define orig_session super::session
 
 int FinderJob::Do()
 {
@@ -50,7 +51,7 @@ int FinderJob::Do()
 	 ParsedURL u(dir,true);
 	 if(u.proto)
 	 {
-	    session=FileAccess::New(&u);
+	    session=my_session=FileAccess::New(&u);
 	    session->SetPriority(fg?1:0);
 	    init_dir=session->GetCwd();
 	    Down(u.path?u.path:init_dir.path.get());
@@ -98,7 +99,6 @@ int FinderJob::Do()
       {
 	 if(!quiet)
 	    eprintf("%s: %s\n",op,li->ErrorText());
-	 Delete(li);
 	 li=0;
 	 errors++;
 	 depth_done=true;
@@ -112,7 +112,6 @@ int FinderJob::Do()
       Push(li->GetResult());
       top.fset->rewind();
 
-      Delete(li);
       li=0;
       state=LOOP;
       m=MOVED;
@@ -264,8 +263,6 @@ FinderJob::prf_res FinderJob::ProcessFile(const char *d,const FileInfo *f)
 
 void FinderJob::Init()
 {
-   orig_session=0;
-
    op="find";
    errors=0;
    li=0;
@@ -291,17 +288,16 @@ void FinderJob::Init()
 }
 
 FinderJob::FinderJob(FileAccess *s)
-   : SessionJob(s), orig_init_dir(s->GetCwd()), init_dir(s->GetCwd())
+   : SessionJob(s), orig_init_dir(orig_session->GetCwd()),
+     session(orig_session), init_dir(session->GetCwd())
 {
    Init();
-   orig_session=session;
 }
 
 void FinderJob::NextDir(const char *d)
 {
    if(session!=orig_session)
    {
-      Reuse(session);
       session=orig_session;
       init_dir=orig_init_dir;
    }
@@ -313,11 +309,7 @@ FinderJob::~FinderJob()
 {
    while(stack_ptr>=0)
       Up();
-   if(orig_session!=session)
-      Reuse(orig_session);
    xfree(stack);
-   delete exclude;
-   Delete(li);
 }
 
 void FinderJob::ShowRunStatus(const SMTaskRef<StatusLine>& sl)
@@ -359,12 +351,12 @@ void FinderJob::Fg()
 {
    super::Fg();
    if(orig_session!=session)
-      orig_session->SetPriority(1);
+      session->SetPriority(1);
 }
 void FinderJob::Bg()
 {
    if(orig_session!=session)
-      orig_session->SetPriority(0);
+      session->SetPriority(0);
    super::Bg();
 }
 
@@ -411,12 +403,6 @@ FinderJob_List::FinderJob_List(FileAccess *s,ArgV *a,FDStream *o)
    ValidateArgs();
 }
 
-FinderJob_List::~FinderJob_List()
-{
-   Delete(buf);
-   delete args;
-}
-
 void FinderJob_List::Finish()
 {
    const char *d=args->getnext();
@@ -426,107 +412,3 @@ void FinderJob_List::Finish()
    }
    NextDir(d);
 }
-
-#if 0 // unused
-// FinderJob_Cmd implementation
-// process directory tree
-#undef super
-#define super FinderJob
-
-FinderJob::prf_res FinderJob_Cmd::ProcessFile(const char *d,const FileInfo *f)
-{
-#define ISDIR  ((f->defined&f->TYPE) && f->filetype==f->DIRECTORY)
-#define ISLINK ((f->defined&f->TYPE) && f->filetype==f->SYMLINK)
-
-   FileAccess *s=session->Clone();
-
-   CmdExec *exec=new CmdExec(s);
-   exec->SetParentFg(this);
-   exec->SetCWD(saved_cwd);
-
-   char *file=f->name;
-
-   switch(cmd)
-   {
-   case RM:
-      if(ISDIR)
-      {
-	 exec->FeedCmd("rmdir ");
-	 if(quiet)
-	    exec->FeedCmd("-f ");
-	 exec->FeedCmd("-- ");
-	 exec->FeedQuoted(file);
-	 exec->FeedCmd("\n");
-      }
-      else
-      {
-	 exec->FeedCmd("rm ");
-	 if(quiet)
-	    exec->FeedCmd("-f ");
-	 exec->FeedCmd("-- ");
-	 exec->FeedQuoted(file);
-	 exec->FeedCmd("\n");
-      }
-      break;
-   case GET:
-#if 0
-      if(ISDIR)
-      {
-// 	 mkdir(dir_file(saved_cwd,
-      }
-      else if(ISLINK)
-      {
-      }
-      else
-      {
-      }
-#endif
-      break;
-   }
-   AddWaiting(exec);
-   return PRF_WAIT;
-
-#undef ISDIR
-#undef ISLINK
-}
-
-FinderJob_Cmd::FinderJob_Cmd(FileAccess *s,ArgV *a,cmd_t c)
-   : FinderJob(s)
-{
-   cmd=c;
-   args=a;
-   op=args->a0();
-   use_cache=false;
-   if(cmd==RM)
-      depth_first=true;
-   saved_cwd=xgetcwd();
-   removing_last=false;
-   NextDir(a->getcurr());
-}
-FinderJob_Cmd::~FinderJob_Cmd()
-{
-   xfree(saved_cwd);
-   delete args;
-   while(waiting_num>0)
-   {
-      Job *r=waiting[0];
-      for(int k=0; k<r->waiting_num; k++)
-	 r->waiting[k]->jobno=-1; // prevent reparenting
-      RemoveWaiting(r);
-      Delete(r);
-   }
-}
-
-void FinderJob_Cmd::Finish()
-{
-   char *d=args->getnext();
-   if(!d)
-      return;
-   FinderJob::NextDir(d);
-}
-
-int FinderJob_Cmd::Done()
-{
-   return FinderJob::Done() && args->getcurr()==0;
-}
-#endif

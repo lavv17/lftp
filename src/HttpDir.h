@@ -44,10 +44,9 @@ class ParsedURL;
 
 class HttpDirList : public DirList
 {
-   FileAccess *session;
-   IOBuffer *ubuf;
+   Ref<IOBuffer> ubuf;
    const char *curr;
-   ParsedURL *curr_url;
+   Ref<ParsedURL> curr_url;
    FileSet all_links;
    int mode;
    bool parse_as_html;
@@ -63,7 +62,7 @@ class HttpDirList : public DirList
    void ParsePropsFormat(const char *b,int len,bool eof);
 
 public:
-   HttpDirList(ArgV *a,FileAccess *fa);
+   HttpDirList(FileAccess *s,ArgV *a);
    ~HttpDirList();
    const char *Status();
    int Do();

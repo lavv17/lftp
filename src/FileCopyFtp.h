@@ -28,8 +28,6 @@
 
 class FileCopyFtp : public FileCopy
 {
-   Ftp *ftp_src;
-   Ftp *ftp_dst;
    bool no_rest;
    bool passive_source;
    bool orig_passive_source;
@@ -49,7 +47,6 @@ class FileCopyFtp : public FileCopy
 public:
    void Init();
    FileCopyFtp(FileCopyPeer *src,FileCopyPeer *dst,bool cont,bool rp);
-   ~FileCopyFtp();
 
    int Do();
 

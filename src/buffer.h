@@ -225,19 +225,16 @@ public:
    const char *Status() { return stream->status; }
 };
 
-class FileAccess;
+#include <FileAccess.h>
 
 class IOBufferFileAccess : public IOBuffer
 {
-   FileAccess *session;
+   const FileAccessRef& session;
 
    int Get_LL(int size);
 
-protected:
-   ~IOBufferFileAccess();
-
 public:
-   IOBufferFileAccess(FileAccess *i) : IOBuffer(GET) { session=i; }
+   IOBufferFileAccess(const FileAccessRef& i) : IOBuffer(GET), session(i) {}
 
    void SuspendInternal();
    void ResumeInternal();

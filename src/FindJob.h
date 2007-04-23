@@ -27,25 +27,25 @@
 #include "buffer.h"
 #include "ArgV.h"
 #include "GetFileInfo.h"
+#include "PatternSet.h"
 
 class FinderJob : public SessionJob
 {
-   FileAccess *orig_session;
+   FileAccessRef my_session;
    FileAccess::Path orig_init_dir;
 
    xstring_c dir;
    int errors;
-   GetFileInfo *li;
+   SMTaskRef<GetFileInfo> li;
 
    class place
       {
 	 friend class FinderJob;
 
 	 xstring_c path;
-	 FileSet *fset;
+	 Ref<FileSet> fset;
 
 	 place(const char *p,FileSet *f) : path(p), fset(f) {}
-	 ~place() { delete fset; }
       };
 
    place **stack;
@@ -69,13 +69,14 @@ class FinderJob : public SessionJob
     * call ValidateArgs(). */
    bool validate_args;
 
-   PatternSet *exclude;
+   Ref<PatternSet> exclude;
 
 protected:
    enum state_t { START_INFO, INFO, LOOP, PROCESSING, WAIT, DONE };
    state_t state;
 
    const char *op;
+   FileAccessRefC session;
    FileAccess::Path init_dir;
 
    enum prf_res { PRF_FATAL, PRF_ERR, PRF_OK, PRF_WAIT, PRF_LATER };
@@ -95,7 +96,7 @@ protected:
    void Need(unsigned need) { file_info_need=need; }
    void ValidateArgs() { validate_args=true; }
 
-   bool ProcessingURL() { return session!=orig_session; }
+   bool ProcessingURL() { return session!=SessionJob::session; }
 
 public:
    int Do();
@@ -119,36 +120,16 @@ public:
 
 class FinderJob_List : public FinderJob
 {
-   IOBuffer *buf;
-   ArgV *args;
+   SMTaskRef<IOBuffer> buf;
+   Ref<ArgV> args;
 protected:
    prf_res ProcessFile(const char *d,const FileInfo *fi);
    void Finish();
 
 public:
    FinderJob_List(FileAccess *s,ArgV *a,FDStream *o);
-   ~FinderJob_List();
 
    int Done() { return FinderJob::Done() && buf->Done(); }
 };
-
-#if 0
-class FinderJob_Cmd : public FinderJob
-{
-public:
-   enum cmd_t { GET, RM };
-   FinderJob_Cmd(FileAccess *s,ArgV *a,cmd_t c);
-   ~FinderJob_Cmd();
-   int Done();
-protected:
-   cmd_t cmd;
-   ArgV *args;
-   char *saved_cwd;
-   bool removing_last;
-
-   prf_res ProcessFile(const char *d,const FileInfo *fi);
-   void Finish();
-};
-#endif
 
 #endif //FINDJOB_H

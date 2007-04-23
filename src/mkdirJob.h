@@ -28,9 +28,10 @@
 
 class mkdirJob : public SessionJob
 {
-   ArgV	 *args;
+   Ref<ArgV> args;
    const char *curr,*first;
-   FA	 *orig_session;
+   FileAccessRef my_session;
+   FileAccessRefC session;
    int	 failed,file_count;
    bool	 quiet;
    bool	 opt_p;
@@ -45,7 +46,6 @@ public:
    void	 SayFinal();
 
    mkdirJob(FileAccess *session,ArgV *a);
-   ~mkdirJob();
 
    void	 BeQuiet() { quiet=true; }
 

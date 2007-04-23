@@ -65,7 +65,7 @@ void CatJob::NextFile()
       return;
    }
 
-   FileCopyPeerFA *src_peer=FileCopyPeerFA::New(session,src,FA::RETRIEVE,false);
+   FileCopyPeerFA *src_peer=FileCopyPeerFA::New(session,src,FA::RETRIEVE);
    FileCopyPeer *dst_peer=new FileCopyPeerOutputJob(output);
 
    FileCopy *copier=FileCopy::New(src_peer,dst_peer,false);

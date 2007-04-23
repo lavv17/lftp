@@ -219,61 +219,57 @@ out:
 
 void OutputFilter::Init()
 {
-   a=0;
    w=0;
-   second=0;
    second_fd=-1;
    cwd.set_allocated(xgetcwd());
    pg=0;
    closed=false;
    stderr_to_stdout=false;
    stdout_to_null=false;
-   delete_second=false;
+   if(a)
+      name.set_allocated(a->Combine());
 }
 
 OutputFilter::OutputFilter(const char *filter,int new_second_fd)
-   : FDStream(-1,filter)
+   : FDStream(-1,filter), second(my_second), second_fd(new_second_fd)
 {
    Init();
-   second_fd=new_second_fd;
 }
 
 OutputFilter::OutputFilter(const char *filter,FDStream *new_second)
-   : FDStream(-1,filter)
+   : FDStream(-1,filter), my_second(new_second), second(my_second)
 {
    Init();
-   second=new_second;
+}
+OutputFilter::OutputFilter(const char *filter,const Ref<FDStream>& new_second)
+   : FDStream(-1,filter), second(new_second)
+{
+   Init();
 }
 OutputFilter::OutputFilter(ArgV *a1,int new_second_fd)
-   : FDStream(-1,0)
+   : FDStream(-1,0), a(a1), second(my_second), second_fd(new_second_fd)
 {
    Init();
-   second_fd=new_second_fd;
-   a=a1;
-   name.set_allocated(a->Combine());
 }
 
 OutputFilter::OutputFilter(ArgV *a1,FDStream *new_second)
-   : FDStream(-1,0)
+   : FDStream(-1,0), a(a1), my_second(new_second), second(my_second)
 {
    Init();
-   second=new_second;
-   a=a1;
-   name.set_allocated(a->Combine());
+}
+OutputFilter::OutputFilter(ArgV *a1,const Ref<FDStream>& new_second)
+   : FDStream(-1,0), a(a1), second(new_second)
+{
+   Init();
 }
 
 OutputFilter::~OutputFilter()
 {
-   delete a;
-
    close(fd);
    fd=-1;
 
    if(w)
       w->Auto();
-
-   if(delete_second)
-      delete second;
 }
 
 bool OutputFilter::Done()
@@ -288,8 +284,8 @@ bool OutputFilter::Done()
    }
    if(w->GetState()!=w->RUNNING)
    {
-      if(delete_second && second)
-	 return second->Done();
+      if(my_second)
+	 return my_second->Done();
       return true;
    }
    return false;

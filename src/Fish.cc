@@ -1120,7 +1120,7 @@ FileAccess *Fish::New() { return new Fish(); }
 
 DirList *Fish::MakeDirList(ArgV *args)
 {
-   return new FishDirList(args,this);
+   return new FishDirList(this,args);
 }
 #include "FileGlob.h"
 Glob *Fish::MakeGlob(const char *pattern)
@@ -1167,7 +1167,7 @@ int FishDirList::Do()
       else
       {
 	 session->Open(pattern,FA::LONG_LIST);
-	 ((Fish*)session)->DontEncodeFile();
+	 session.Cast<Fish>()->DontEncodeFile();
 	 ubuf=new IOBufferFileAccess(session);
 	 if(FileAccess::cache->IsEnabled(session->GetHostName()))
 	    ubuf->Save(FileAccess::cache->SizeLimit());
@@ -1199,19 +1199,6 @@ int FishDirList::Do()
       m=MOVED;
    }
    return m;
-}
-
-FishDirList::FishDirList(ArgV *a,FileAccess *fa)
-   : DirList(a)
-{
-   session=fa;
-   ubuf=0;
-   pattern.set_allocated(args->Combine(1));
-}
-
-FishDirList::~FishDirList()
-{
-   Delete(ubuf);
 }
 
 const char *FishDirList::Status()

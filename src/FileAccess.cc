@@ -47,6 +47,7 @@
 #endif
 
 FileAccess *FileAccess::chain=0;
+const FileAccessRef FileAccessRef::null;
 
 void FileAccess::Init()
 {
@@ -101,14 +102,7 @@ FileAccess::FileAccess(const FileAccess *fa)
 
 FileAccess::~FileAccess()
 {
-   for(FileAccess **scan=&chain; *scan; scan=&((*scan)->next))
-   {
-      if(*scan==this)
-      {
-	 *scan=next;
-	 break;
-      }
-   }
+   ListDel(FileAccess,chain,this,next);
 }
 
 void  FileAccess::DebugPrint(const char *prefix,const char *str,int level)
@@ -758,13 +752,7 @@ void FileAccess::Cleanup() {}
 void FileAccess::CleanupThis() {}
 ListInfo *FileAccess::MakeListInfo(const char *path) { return 0; }
 Glob *FileAccess::MakeGlob(const char *pattern) { return new NoGlob(pattern); }
-DirList *FileAccess::MakeDirList(ArgV *a) { if(a) delete a; return 0; }
-
-DirList::~DirList()
-{
-   delete buf;
-   delete args;
-}
+DirList *FileAccess::MakeDirList(ArgV *a) { delete a; return 0; }
 
 void FileAccess::CleanupAll()
 {
@@ -881,13 +869,8 @@ FileAccess *FileAccess::Protocol::NewSession(const char *proto)
 }
 
 // FileAccessOperation implementation
-FileAccessOperation::FileAccessOperation()
-{
-   done=false;
-   use_cache=true;
-}
-
-FileAccessOperation::~FileAccessOperation()
+FileAccessOperation::FileAccessOperation(FileAccess *s)
+ : session(s), done(false), use_cache(true)
 {
 }
 
@@ -905,10 +888,8 @@ void FileAccessOperation::SetErrorCached(const char *e)
 
 // ListInfo implementation
 ListInfo::ListInfo(FileAccess *s,const char *p)
+   : FileAccessOperation(s)
 {
-   session=s;
-   result=0;
-
    exclude=0;
    exclude_prefix=0;
 
@@ -927,12 +908,11 @@ ListInfo::~ListInfo()
 {
    if(session)
       session->Close();
-   if(session && saved_cwd.path)
+   if(session && saved_cwd)
       session->SetCwd(saved_cwd);
-   delete result;
 }
 
-void ListInfo::SetExclude(const char *p,PatternSet *x)
+void ListInfo::SetExclude(const char *p,const PatternSet *x)
 {
    exclude=x;
    exclude_prefix=p;

@@ -34,10 +34,9 @@ int DummyProto::StoreStatus() { return NO_HOST; }
 
 class DummyDirList : public DirList
 {
-   FA *p;
 public:
-   DummyDirList(FA *p1,ArgV *a) : DirList(a) { p=p1; }
-   int Do() { SetError(p->StrError(FA::NO_HOST)); return STALL; }
+   DummyDirList(FA *p1,ArgV *a) : DirList(p1,a) {}
+   int Do() { SetError(session->StrError(FA::NO_HOST)); return STALL; }
    const char *Status() { return ""; }
 };
 class DummyListInfo : public ListInfo

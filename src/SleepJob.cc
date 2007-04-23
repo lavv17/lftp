@@ -28,12 +28,11 @@
 #include "LocalDir.h"
 
 SleepJob::SleepJob(const TimeInterval &when,FileAccess *s,LocalDirectory *cwd,char *what)
-   : SessionJob(s), Timer(when)
+   : SessionJob(s), Timer(when), saved_cwd(cwd)
 {
    cmd.set_allocated(what);
    exit_code=0;
    done=false;
-   saved_cwd=cwd;
    repeat=false;
    repeat_count=0;
    max_repeat_count=0;
@@ -44,7 +43,6 @@ SleepJob::SleepJob(const TimeInterval &when,FileAccess *s,LocalDirectory *cwd,ch
 SleepJob::~SleepJob()
 {
    Delete(exec);
-   delete saved_cwd;
 }
 
 int SleepJob::Do()
@@ -78,9 +76,7 @@ int SleepJob::Do()
       {
 	 if(!exec)
 	 {
-	    exec=new CmdExec(session,saved_cwd);
-	    session=0;
-	    saved_cwd=0;
+	    exec=new CmdExec(session.borrow(),saved_cwd.borrow());
 	    exec->SetParentFg(this);
 	    exec->AllocJobno();
 	    exec->cmdline.vset("(",cmd.get(),")",NULL);

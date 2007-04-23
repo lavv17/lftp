@@ -179,7 +179,7 @@ public:
    void  Unsort();
    void	 SortByPatternList(const char *list_c);
 
-   void	 Exclude(const char *prefix,PatternSet *x);
+   void	 Exclude(const char *prefix,const PatternSet *x);
    void	 ExcludeDots();
    void	 ExcludeUnaccessible();
 

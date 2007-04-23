@@ -386,23 +386,6 @@ void Job::eprintf(const char *fmt,...)
 }
 
 
-FileAccess *SessionJob::Clone() const
-{
-   return session->Clone();
-}
-
-SessionJob::SessionJob(FileAccess *f)
-{
-   session=f;
-}
-
-SessionJob::~SessionJob()
-{
-   if(session)
-      Reuse(session);
-   session=0;
-}
-
 void SessionJob::PrintStatus(int v,const char *prefix)
 {
    if(v<2 || !session)

@@ -159,13 +159,12 @@ public:
 
 class FishDirList : public DirList
 {
-   FileAccess *session;
-   IOBuffer *ubuf;
-   xstring pattern;
+   Ref<IOBuffer> ubuf;
+   const xstring_ca pattern;
 
 public:
-   FishDirList(ArgV *a,FileAccess *fa);
-   ~FishDirList();
+   FishDirList(Fish *s,ArgV *a)
+      : DirList(s,a), pattern(args->Combine(1)) {}
    const char *Status();
    int Do();
 

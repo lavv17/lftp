@@ -141,7 +141,7 @@ private:
    bool SameQueueParameters(CmdExec *,const char *);
    int max_waiting;
 
-   FileAccess *saved_session;
+   FileAccessRef saved_session;
    void ReuseSavedSession();
    void RevertToSavedSession();
 

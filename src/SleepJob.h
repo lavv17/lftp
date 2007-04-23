@@ -25,16 +25,16 @@
 
 #include "Job.h"
 #include "ResMgr.h"
-
-class LocalDirectory;
+#include "LocalDir.h"
+#include "CmdExec.h"
 
 class SleepJob : public SessionJob, public Timer
 {
    xstring cmd;
    int exit_code;
    bool done;
-   LocalDirectory *saved_cwd;
-   class CmdExec *exec;
+   Ref<LocalDirectory> saved_cwd;
+   CmdExec *exec;
    bool repeat;
    int repeat_count;
    int max_repeat_count;

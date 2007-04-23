@@ -990,11 +990,8 @@ int FileCopyPeerFA::Get_LL(int len)
 
 	    if(u.proto)
 	    {
-	       if(reuse_later)
-		  SessionPool::Reuse(session);
-
-	       session=FileAccess::New(&u);
-	       reuse_later=true;
+	       my_session=FileAccess::New(&u);
+	       session=my_session;
 
 	       file.set(u.path?u.path:"");
 	       orig_url.set(loc);
@@ -1119,61 +1116,59 @@ off_t FileCopyPeerFA::GetRealPos()
 
 void FileCopyPeerFA::Init()
 {
-   FAmode=FA::RETRIEVE;
-   session=0;
-   reuse_later=false;
    fxp=false;
    try_time=0;
    retries=0;
    redirections=0;
    can_seek=true;
    can_seek0=true;
-}
-
-FileCopyPeerFA::FileCopyPeerFA(FileAccess *s,const char *f,int m)
-   : FileCopyPeer(m==FA::STORE ? PUT : GET), file(f)
-{
-   Init();
-   FAmode=m;
-   session=s;
-   reuse_later=true;
    if(FAmode==FA::LIST || FAmode==FA::LONG_LIST)
       Save(FileAccess::cache->SizeLimit());
 }
-FileCopyPeerFA::~FileCopyPeerFA()
-{
-   if(session)
-   {
-      session->Close();
-      if(reuse_later)
-	 SessionPool::Reuse(session);
-   }
-}
 
-FileCopyPeerFA::FileCopyPeerFA(ParsedURL *u,int m)
-   : FileCopyPeer(m==FA::STORE ? PUT : GET), file(u->path), orig_url(u->orig_url)
+FileCopyPeerFA::FileCopyPeerFA(FileAccess *s,const char *f,int m)
+   : FileCopyPeer(m==FA::STORE ? PUT : GET), file(f),
+     my_session(s), session(my_session), FAmode(m)
 {
    Init();
-   FAmode=m;
-   session=FileAccess::New(u);
-   reuse_later=true;
+}
+FileCopyPeerFA::FileCopyPeerFA(const FileAccessRef& s,const char *f,int m)
+   : FileCopyPeer(m==FA::STORE ? PUT : GET), file(f),
+     session(s), FAmode(m)
+{
+   Init();
+}
+FileCopyPeerFA::FileCopyPeerFA(const ParsedURL *u,int m)
+   : FileCopyPeer(m==FA::STORE ? PUT : GET), file(u->path), orig_url(u->orig_url),
+     my_session(FileAccess::New(u)), session(my_session), FAmode(m)
+{
+   Init();
    if(!file)
       SetError(_("file name missed in URL"));
 }
 
-FileCopyPeerFA *FileCopyPeerFA::New(FileAccess *s,const char *url,int m,bool reuse)
+FileCopyPeerFA::~FileCopyPeerFA()
+{
+   if(session)
+      session->Close();
+}
+
+FileCopyPeerFA *FileCopyPeerFA::New(FileAccess *s,const char *url,int m)
 {
    ParsedURL u(url,true);
    if(u.proto)
    {
-      if(reuse)
-	 SessionPool::Reuse(s);
+      SessionPool::Reuse(s);
       return new FileCopyPeerFA(&u,m);
    }
-   FileCopyPeerFA *peer=new FileCopyPeerFA(s,url,m);
-   if(!reuse)
-      peer->DontReuseSession();
-   return peer;
+   return new FileCopyPeerFA(s,url,m);
+}
+FileCopyPeerFA *FileCopyPeerFA::New(const FileAccessRef& s,const char *url,int m)
+{
+   ParsedURL u(url,true);
+   if(u.proto)
+      return new FileCopyPeerFA(&u,m);
+   return new FileCopyPeerFA(s,url,m);
 }
 
 // FileCopyPeerFDStream
@@ -1651,19 +1646,13 @@ FileCopyPeerFDStream *FileCopyPeerFDStream::NewGet(const char *file)
 
 // FileCopyPeerDirList
 FileCopyPeerDirList::FileCopyPeerDirList(FA *s,ArgV *v)
-   : FileCopyPeer(GET)
+   : FileCopyPeer(GET), session(s)
 {
-   session=s;
    dl=session->MakeDirList(v);
    if(dl==0)
       eof=true;
    can_seek=false;
    can_seek0=false;
-}
-
-FileCopyPeerDirList::~FileCopyPeerDirList()
-{
-   SessionPool::Reuse(session);
 }
 
 int FileCopyPeerDirList::Do()
@@ -1744,7 +1733,7 @@ FileVerificator::FileVerificator(const FDStream *stream)
       verify_process->SetCwd(cwd);
    }
 }
-FileVerificator::FileVerificator(FileAccess *session,const char *f)
+FileVerificator::FileVerificator(const FileAccess *session,const char *f)
 {
    Init0();
    if(done)

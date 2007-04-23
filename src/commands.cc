@@ -628,7 +628,7 @@ Job *CmdExec::builtin_cd()
       return 0;
    }
    session->PathVerify(new_cwd);
-   Roll(session);
+   session->Roll();
    builtin=BUILTIN_CD;
    return this;
 }
@@ -938,8 +938,7 @@ Job *CmdExec::builtin_open()
 	       return 0;
 	    }
 
-	    saved_session=session;
-	    session=0;
+	    saved_session=session.borrow();
 	    ChangeSession(new_session);
 	 }
 
@@ -3246,7 +3245,7 @@ CMD(get1)
    FileCopyPeer *src_peer=0;
    FileCopyPeer *dst_peer=0;
 
-   src_peer=FileCopyPeerFA::New(session->Clone(),src,FA::RETRIEVE,true);
+   src_peer=FileCopyPeerFA::New(session->Clone(),src,FA::RETRIEVE);
    if(!cont && (source_region_begin>0 || source_region_end!=FILE_END))
       src_peer->SetRange(source_region_begin,source_region_end);
 

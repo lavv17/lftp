@@ -1970,7 +1970,7 @@ void Http::ResetLocationData()
 
 DirList *Http::MakeDirList(ArgV *args)
 {
-   return new HttpDirList(args,this);
+   return new HttpDirList(this,args);
 }
 #include "FileGlob.h"
 Glob *Http::MakeGlob(const char *pattern)

@@ -82,8 +82,8 @@
 #include "misc.h"
 #include "LsCache.h"
 
-GetFileInfo::GetFileInfo(FileAccess *a, const char *_dir, bool _showdir)
-   : ListInfo(a,0), dir(_dir?_dir:""), origdir(a->GetCwd())
+GetFileInfo::GetFileInfo(const FileAccessRef& a, const char *_dir, bool _showdir)
+   : ListInfo(0,0), session(a), dir(_dir?_dir:""), origdir(a->GetCwd())
 {
    showdir=_showdir;
    state=INITIAL;
@@ -108,7 +108,6 @@ GetFileInfo::~GetFileInfo()
 {
    session->Close();
    session->SetCwd(origdir);
-   Delete(li);
 }
 
 int GetFileInfo::Do()
@@ -303,13 +302,12 @@ int GetFileInfo::Do()
       }
 
       /* Get a listing: */
-      Delete(li);
       li=session->MakeListInfo();
       if(follow_symlinks) li->FollowSymlinks();
       li->UseCache(use_cache);
       li->NoNeed(FileInfo::ALL_INFO); /* clear need */
       li->Need(need);
-      SetExclude(exclude_prefix, exclude);
+      li->SetExclude(exclude_prefix, exclude);
       state=GETTING_LIST;
       m=MOVED;
 
@@ -339,7 +337,7 @@ int GetFileInfo::Do()
 
       /* Got the list.  Steal it from the listinfo: */
       result=li->GetResult();
-      Delete(li); li=0;
+      li=0;
 
       /* If this was a listing of the basename: */
       if(!was_directory) {
@@ -350,7 +348,7 @@ int GetFileInfo::Do()
 
 	 if(!file) {
 	    /* It doesn't exist, or we have no result (failed). */
-	    delete result; result=0;
+	    result=0;
 	    tried_file=true;
 	    from_cache=false;
 	    state=CHANGE_DIR;
@@ -361,7 +359,7 @@ int GetFileInfo::Do()
 	  * directory, we should have been able to Chdir into it to begin
 	  * with.  We probably got Access Denied.  Fail. */
 	 if(!showdir && (file->defined&file->TYPE) && file->filetype==FileInfo::DIRECTORY) {
-	    delete result; result=0;
+	    result=0;
 	    if(saved_error_text)
 	    {
 	       SetError(saved_error_text);
@@ -373,12 +371,9 @@ int GetFileInfo::Do()
 	    return MOVED;
 	 }
 
-	 FileSet *newresult=new FileSet();
 	 FileInfo *copy = new FileInfo(*file);
-
-	 newresult->Add(copy);
-	 delete result;
-	 result=newresult;
+	 result=new FileSet();
+	 result->Add(copy);
       }
 
       goto done;

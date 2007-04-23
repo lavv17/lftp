@@ -119,19 +119,6 @@ int FtpDirList::Do()
    return m;
 }
 
-FtpDirList::FtpDirList(ArgV *a,FileAccess *fa)
-   : DirList(a)
-{
-   session=fa;
-   ubuf=0;
-   pattern.set_allocated(args->Combine(1));
-}
-
-FtpDirList::~FtpDirList()
-{
-   Delete(ubuf);
-}
-
 const char *FtpDirList::Status()
 {
    static char s[256];

@@ -138,15 +138,13 @@ public:
 class SessionJob : public Job
 {
 protected:
-   static void Reuse(FileAccess *s) { SessionPool::Reuse(s); }
-   FileAccess *Clone() const;
-
-   SessionJob(FileAccess *);
-   ~SessionJob();
+   SessionJob(FileAccess *s) : session(s) {}
+   FileAccess *Clone() const { return session->Clone(); }
 
 public:
+   FileAccessRef session;
+
    void PrintStatus(int v,const char *);
-   FileAccess *session;
    const char *GetConnectURL()
       {
 	 if(!session)

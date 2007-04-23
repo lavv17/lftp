@@ -375,7 +375,7 @@ const char *DirColors::GetColor(const FileInfo *fi)
    return GetColor(fi->name,fi->defined&fi->TYPE?fi->filetype:-1);
 }
 
-void DirColors::PutColored(Buffer *buf,const char *name,int type)
+void DirColors::PutColored(const Ref<Buffer>& buf,const char *name,int type)
 {
    const char *color=GetColor(name,type);
    const char *lc=Lookup(".lc");
@@ -391,7 +391,7 @@ void DirColors::PutColored(Buffer *buf,const char *name,int type)
    buf->Put(name);
    PutReset(buf);
 }
-void DirColors::PutReset(Buffer *buf)
+void DirColors::PutReset(const Ref<Buffer>& buf)
 {
    const char *reset=Lookup(".ec");
    buf->Put(reset);

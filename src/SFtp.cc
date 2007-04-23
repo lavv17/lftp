@@ -1403,7 +1403,7 @@ FileAccess *SFtp::New() { return new SFtp(); }
 
 DirList *SFtp::MakeDirList(ArgV *args)
 {
-  return new SFtpDirList(args,this);
+  return new SFtpDirList(this,args);
 }
 
 struct code_text { int code; const char *text; };
@@ -2052,7 +2052,7 @@ int SFtpDirList::Do()
    if(b==0) // eof
    {
       if(!fset && session->IsOpen())
-	 fset=((SFtp*)session)->GetFileSet();
+	 fset=session.Cast<SFtp>()->GetFileSet();
       FileAccess::cache->Add(session,dir,FA::LONG_LIST,FA::OK,ubuf,fset);
       if(use_file_set)
       {
@@ -2063,10 +2063,9 @@ int SFtpDirList::Do()
 	    buf->Put(fi->GetLongName());
 	    buf->Put("\n");
 	 }
-	 delete fset;
 	 fset=0;
       }
-      Delete(ubuf); ubuf=0;
+      ubuf=0;
       dir=args->getnext();
       if(!dir)
 	 buf->PutEOF();
@@ -2091,13 +2090,10 @@ int SFtpDirList::Do()
    return m;
 }
 
-SFtpDirList::SFtpDirList(ArgV *a,FileAccess *fa)
-   : DirList(a)
+SFtpDirList::SFtpDirList(SFtp *s,ArgV *a)
+   : DirList(s,a)
 {
-   session=fa;
-   ubuf=0;
    use_file_set=true;
-   fset=0;
    args->rewind();
    int opt;
    while((opt=args->getopt("fCFl"))!=EOF)
@@ -2123,12 +2119,6 @@ SFtpDirList::SFtpDirList(ArgV *a,FileAccess *fa)
    dir=args->getnext();
    if(args->getindex()+1<args->count())
       buf->Format("%s:\n",dir);
-}
-
-SFtpDirList::~SFtpDirList()
-{
-   Delete(ubuf);
-   delete fset;
 }
 
 const char *SFtpDirList::Status()
@@ -2195,7 +2185,7 @@ int SFtpListInfo::Do()
    if(b==0) // eof
    {
       if(!result && session->IsOpen())
-	 result=((SFtp*)session)->GetFileSet();
+	 result=session.Cast<SFtp>()->GetFileSet();
       FileAccess::cache->Add(session,"",FA::LONG_LIST,FA::OK,ubuf,result);
       result->ExcludeDots();
       result->Exclude(exclude_prefix,exclude);

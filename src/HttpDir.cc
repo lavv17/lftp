@@ -596,8 +596,8 @@ static bool try_csm_proxy(file_info &info,const char *str)
 
 // this procedure is highly inefficient in some cases,
 // esp. when it has to return for more data many times.
-static int parse_html(const char *buf,int len,bool eof,Buffer *list,
-      FileSet *set,FileSet *all_links,ParsedURL *prefix,xstring_c *base_href,
+static int parse_html(const char *buf,int len,bool eof,const Ref<Buffer>& list,
+      FileSet *set,FileSet *all_links,const ParsedURL *prefix,xstring_c *base_href,
       LsOptions *lsopt=0, int color = 0)
 {
    const char *end=buf+len;
@@ -1211,8 +1211,6 @@ int HttpDirList::Do()
 	 buf->Put(curr);
 	 buf->Put(":\n");
       }
-      if(curr_url)
-	 delete curr_url;
       curr_url=new ParsedURL(session->GetFileURL(curr));
       if(mode==FA::RETRIEVE)
       {
@@ -1263,7 +1261,6 @@ int HttpDirList::Do()
    if(b==0) // eof
    {
       FileAccess::cache->Add(session,curr,mode,FA::OK,ubuf);
-      Delete(ubuf);
       ubuf=0;
       return MOVED;
    }
@@ -1294,7 +1291,6 @@ reparse:
       if(mode==FA::MP_LIST)
       {
 	 mode=FA::LONG_LIST;
-	 Delete(ubuf);
 	 ubuf=0;
 	 goto retry;
       }
@@ -1304,11 +1300,9 @@ reparse:
    return m;
 }
 
-HttpDirList::HttpDirList(ArgV *a,FileAccess *fa)
-   : DirList(a)
+HttpDirList::HttpDirList(FileAccess *s,ArgV *a)
+   : DirList(s,a)
 {
-   session=fa;
-   ubuf=0;
    mode=FA::MP_LIST;
    parse_as_html=false;
 #if USE_EXPAT
@@ -1347,9 +1341,6 @@ HttpDirList::HttpDirList(ArgV *a,FileAccess *fa)
 HttpDirList::~HttpDirList()
 {
    ParsePropsFormat(0,0,true);
-   Delete(ubuf);
-   if(curr_url)
-      delete curr_url;
 }
 
 const char *HttpDirList::Status()

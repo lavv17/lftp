@@ -36,9 +36,9 @@ class OutputJob : public Job
    /* CopyJob that sends to the output.  (output may be equal to input) */
    CopyJob *output;
 
-   Buffer *tmp_buf;	// to store data while !initialized
-   FDStream *output_fd;	// to initialize CopyJobs
-   FileAccess *fa;
+   Ref<Buffer> tmp_buf;	// to store data while !initialized
+   Ref<FDStream> output_fd;	// to initialize CopyJobs
+   FileAccessRef fa;
    xstring_c fa_path;
    bool fa_reuse;
 

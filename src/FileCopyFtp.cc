@@ -32,6 +32,9 @@
 #define passive_ssl_connect true
 #endif
 
+#define ftp_src get->GetSession().Cast<Ftp>()
+#define ftp_dst put->GetSession().Cast<Ftp>()
+
 void FileCopyFtp::Close()
 {
    ftp_src->Close();
@@ -204,7 +207,6 @@ int FileCopyFtp::Do()
 
 void FileCopyFtp::Init()
 {
-   ftp_src=ftp_dst=0;
    no_rest=false;
    orig_passive_source=passive_source=false;
    src_retries=dst_retries=0;
@@ -216,22 +218,15 @@ void FileCopyFtp::Init()
 #endif
 }
 
-FileCopyFtp::~FileCopyFtp()
-{
-}
-
 // s,d must be FileCopyPeerFA, s->GetSession(),d->GetSession() must be Ftp.
 FileCopyFtp::FileCopyFtp(FileCopyPeer *s,FileCopyPeer *d,bool c,bool rp)
    : super(s,d,c)
 {
    Init();
    passive_source=rp;
-   // not pretty.
-   ftp_src=(Ftp*)(s->GetSession());
-   ftp_dst=(Ftp*)(d->GetSession());
 
-   ((FileCopyPeerFA*)s)->SetFXP(true);
-   ((FileCopyPeerFA*)d)->SetFXP(true);
+   get->SetFXP(true);
+   put->SetFXP(true);
 
    if(ftp_src->IsPassive() && !ftp_dst->IsPassive())
       passive_source=true;
@@ -250,8 +245,8 @@ FileCopyFtp::FileCopyFtp(FileCopyPeer *s,FileCopyPeer *d,bool c,bool rp)
 
 FileCopy *FileCopyFtp::New(FileCopyPeer *s,FileCopyPeer *d,bool c)
 {
-   FA *s_s=s->GetSession();
-   FA *d_s=d->GetSession();
+   const FileAccessRef& s_s=s->GetSession();
+   const FileAccessRef& d_s=d->GetSession();
    if(!s_s || !d_s)
       return 0;
    if((strcmp(s_s->GetProto(),"ftp") && strcmp(s_s->GetProto(),"ftps"))

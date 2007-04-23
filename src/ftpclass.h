@@ -482,7 +482,7 @@ public:
 	 retries=rnum;
 	 try_time=tt;
       }
-   bool SetCopyAddress(Ftp *o)
+   bool SetCopyAddress(const Ftp *o)
       {
 	 if(copy_addr_valid || !o->copy_addr_valid)
 	    return false;
@@ -509,7 +509,7 @@ public:
 	    return copy_addr_valid && expect->FirstIs(Expect::TRANSFER);
 	 return state==WAITING_STATE && expect->IsEmpty();
       }
-   void CopyCheckTimeout(Ftp *o)
+   void CopyCheckTimeout(const Ftp *o)
       {
 	 timeout_timer.Reset(o->timeout_timer);
 	 CheckTimeout();

@@ -34,7 +34,7 @@ class ConnectionSlot : public KeyValueDB
    {
    public:
       FileAccess *session;
-      SlotValue(const char *n,FileAccess *s);
+      SlotValue(const char *n,const FileAccess *s);
       SlotValue(const char *n,const char *v);
       ~SlotValue();
    };
@@ -47,7 +47,7 @@ class ConnectionSlot : public KeyValueDB
 public:
    static ConnectionSlot::SlotValue *Find(const char *n);
    static FileAccess *FindSession(const char *n);
-   static void Set(const char *n,FileAccess *s);
+   static void Set(const char *n,const FileAccess *s);
    static void SetCwd(const char *n,const FileAccess::Path &cwd);
    static void Remove(const char *n);
    static char *Format();

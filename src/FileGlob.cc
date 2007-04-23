@@ -34,8 +34,8 @@
 #include "url.h"
 
 // Glob implementation
-Glob::Glob(const char *p)
-   : pattern(p)
+Glob::Glob(FileAccess *s,const char *p)
+   : FileAccessOperation(s), pattern(p)
 {
    dirs_only=false;
    files_only=false;
@@ -169,16 +169,13 @@ int NoGlob::Do()
    }
    return STALL;
 }
-NoGlob::NoGlob(const char *p) : Glob(p)
+NoGlob::NoGlob(const char *p) : Glob(0,p)
 {
 }
 
 void GlobURL::NewGlob(const char *p)
 {
-   SMTask::Delete(glob);
    glob=0;
-   if(session!=orig_session)
-      SessionPool::Reuse(session);
    session=orig_session;
 
    url_prefix.set(p);
@@ -187,7 +184,7 @@ void GlobURL::NewGlob(const char *p)
    ParsedURL p_url(p,true);
    if(p_url.proto && p_url.path)
    {
-      session=FA::New(&p_url);
+      session=my_session=FA::New(&p_url);
       if(session)
 	 glob=session->MakeGlob(p_url.path);
    }
@@ -203,19 +200,10 @@ void GlobURL::NewGlob(const char *p)
       glob->DirectoriesOnly();
 }
 
-GlobURL::GlobURL(FileAccess *s,const char *p,type_select t)
+GlobURL::GlobURL(const FileAccessRef& s,const char *p,type_select t)
+   : orig_session(s), session(orig_session), type(t)
 {
-   orig_session=session=s;
-   glob=0;
-   type=t;
-
    NewGlob(p);
-}
-GlobURL::~GlobURL()
-{
-   SMTask::Delete(glob);
-   if(session!=orig_session)
-      SessionPool::Reuse(session);
 }
 FileSet *GlobURL::GetResult()
 {
@@ -229,12 +217,9 @@ FileSet *GlobURL::GetResult()
 
 // GenericGlob implementation
 GenericGlob::GenericGlob(FileAccess *s,const char *n_pattern)
-   : Glob(n_pattern)
+   : Glob(s,n_pattern)
 {
-   session=s;
    dir_list=0;
-   updir_glob=0;
-   li=0;
    curr_dir=0;
 
    if(done)
@@ -251,15 +236,9 @@ GenericGlob::GenericGlob(FileAccess *s,const char *n_pattern)
 
    if(dir)
    {
-      updir_glob=new GenericGlob(session,dir);
+      updir_glob=new GenericGlob(s,dir);
       updir_glob->DirectoriesOnly();
    }
-}
-
-GenericGlob::~GenericGlob()
-{
-   Delete(li);
-   Delete(updir_glob);
 }
 
 int GenericGlob::Do()
@@ -273,7 +252,6 @@ int GenericGlob::Do()
    {
       if(updir_glob->Error())
       {
-	 Delete(updir_glob);
 	 updir_glob=0;
 	 done=true;
 	 return MOVED;
@@ -313,7 +291,7 @@ int GenericGlob::Do()
 	 }
 	 delete set;
       }
-      Delete(li); li=0;
+      li=0;
 
       if(dir_list)
 	 dir_list->next();

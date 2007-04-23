@@ -24,8 +24,8 @@
 #define FILTER_H
 
 #include "ProcWait.h"
+#include "ArgV.h"
 
-class ArgV;
 class FileTimestamp;
 
 class FDStream
@@ -72,11 +72,13 @@ public:
 
 class OutputFilter : public FDStream
 {
-   ArgV *a;
+   Ref<ArgV> a;
    ProcWait *w;
    pid_t pg;
-   FDStream *second;
-   bool delete_second;
+
+   Ref<FDStream> my_second;
+   const Ref<FDStream>& second;
+
    bool stderr_to_stdout;
    bool stdout_to_null;
 
@@ -93,8 +95,10 @@ protected:
 public:
    OutputFilter(const char *filter,int second_fd=-1);
    OutputFilter(const char *filter,FDStream *second);
+   OutputFilter(const char *filter,const Ref<FDStream>& second);
    OutputFilter(ArgV *a,int second_fd=-1);
    OutputFilter(ArgV *a,FDStream *second);
+   OutputFilter(ArgV *a,const Ref<FDStream>& second);
    virtual ~OutputFilter();
 
    void StderrToStdout() { stderr_to_stdout=true; }
@@ -111,8 +115,6 @@ public:
    int GetProcExitCode() { return w->GetInfo()>>8; }
 
    bool broken();
-
-   void DeleteSecondaryStream() { delete_second=true; }
 };
 
 class InputFilter : public OutputFilter

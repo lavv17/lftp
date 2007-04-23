@@ -781,16 +781,14 @@ public:
 
 class SFtpDirList : public DirList
 {
-   FileAccess *session;
-   IOBuffer *ubuf;
+   Ref<IOBuffer> ubuf;
    const char *dir;
    bool use_file_set;
-   FileSet *fset;
+   Ref<FileSet> fset;
    LsOptions ls_options;
 
 public:
-   SFtpDirList(ArgV *a,FileAccess *fa);
-   ~SFtpDirList();
+   SFtpDirList(SFtp *s,ArgV *a);
    const char *Status();
    int Do();
 
@@ -800,14 +798,11 @@ public:
 
 class SFtpListInfo : public ListInfo
 {
-   IOBuffer *ubuf;
+   SMTaskRef<IOBuffer> ubuf;
+
 public:
    SFtpListInfo(SFtp *session,const char *dir)
-      : ListInfo(session,dir)
-      {
-	 ubuf=0;
-      }
-   ~SFtpListInfo() { Delete(ubuf); }
+      : ListInfo(session,dir) {}
    int Do();
    const char *Status();
 };

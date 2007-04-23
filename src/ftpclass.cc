@@ -4335,7 +4335,7 @@ Glob *Ftp::MakeGlob(const char *pattern)
 }
 DirList *Ftp::MakeDirList(ArgV *args)
 {
-   return new FtpDirList(args,this);
+   return new FtpDirList(this,args);
 }
 
 

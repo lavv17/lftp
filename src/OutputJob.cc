@@ -91,8 +91,7 @@ void OutputJob::InitCopy()
 	 return;
       }
 
-      FileCopyPeerFA *dst_peer = FileCopyPeerFA::New(fa, fa_path, FA::STORE, true);
-      fa=0;
+      FileCopyPeerFA *dst_peer = FileCopyPeerFA::New(fa.borrow(), fa_path, FA::STORE);
 
       /* Status only for remote outputs. */
       if(!strcmp(dst_peer->GetProto(), "file"))
@@ -131,22 +130,13 @@ void OutputJob::InitCopy()
    if(filter)
    {
       /* Create the global filter: */
-      OutputFilter *global = new OutputFilter(filter, output_fd);
-      global->DeleteSecondaryStream();
+      OutputFilter *global = new OutputFilter(filter, output_fd.borrow());
       output_fd=global;
    }
 
    /* Use a FileCopy to buffer our output to the filter: */
-   FileCopyPeerFDStream *out = new FileCopyPeerFDStream(output_fd, FileCopyPeer::PUT);
+   FileCopyPeerFDStream *out = new FileCopyPeerFDStream(output_fd.borrow(), FileCopyPeer::PUT);
    FileCopy *input_fc = FileCopy::New(new FileCopyPeer(FileCopyPeer::GET), out, false);
-
-   /* out now owns output_fd, and will delete it when it's finished, so
-    * we can't keep it around. */
-   output_fd=0;
-
-   // I don't think we need to do this; the CopyJob picks up the output_fd's
-   // FgData now, since we're not telling it not to delete it.
-   // fg_data=new FgData(output_fd->GetProcGroup(),fg);
 
    if(!fail_if_broken)
       input_fc->DontFailIfBroken();
@@ -190,9 +180,6 @@ void OutputJob::Init(const char *_a0)
    a0.set(_a0);
    is_stdout=false;
    fail_if_broken=true;
-   output_fd=0;
-   fa=0;
-   tmp_buf=0;
    is_a_tty=false;
    width=-1;
    statusbar_redisplay=true;
@@ -200,14 +187,11 @@ void OutputJob::Init(const char *_a0)
 
 /* Local (fd) output. */
 OutputJob::OutputJob(FDStream *output_, const char *a0)
+   : output_fd(output_ ? output_ : new FDStream(1,"<stdout>"))
 {
    Init(a0);
 
-   output_fd=output_;
-
-   if(!output_fd)
-      output_fd=new FDStream(1,"<stdout>");
-   else
+   if(output_)
    {
       /* We don't want to produce broken pipe when we're actually
        * piping, since some legitimate uses produce broken pipe, eg
@@ -239,18 +223,9 @@ OutputJob::OutputJob(FDStream *output_, const char *a0)
 }
 
 OutputJob::OutputJob(const char *path, const char *a0, FileAccess *fa0)
-   : fa_path(path)
+   : fa(fa0 ? fa0->Clone() : FileAccess::New("file")), fa_path(path)
 {
    Init(a0);
-
-   if(fa0)
-      fa=fa0->Clone();
-   else
-   {
-      fa=FileAccess::New("file");
-      if(!fa)
-	 fa=new DummyNoProto("file");
-   }
 }
 
 OutputJob::~OutputJob()
@@ -261,9 +236,6 @@ OutputJob::~OutputJob()
    Delete(input);
    if(input != output)
       Delete(output);
-   delete output_fd;
-   SessionPool::Reuse(fa);
-   delete tmp_buf;
 }
 
 /* This is called to ask us "permission" to display a status line. */
@@ -512,8 +484,7 @@ void OutputJob::Put(const char *buf,int size)
    // InputPeer was inited, flush tmp_buf.
    if(InputPeer() && tmp_buf)
    {
-      Buffer *saved_buf=tmp_buf;
-      tmp_buf=0;
+      Ref<Buffer> saved_buf(tmp_buf.borrow());
       const char *b=0;
       int s=0;
       saved_buf->Get(&b,&s);
@@ -521,7 +492,6 @@ void OutputJob::Put(const char *buf,int size)
 	 Put(b,s);
       if(saved_buf->Eof())
 	 PutEOF();
-      delete saved_buf;
    }
 
    update_timer.SetResource("cmd:status-interval",0);

@@ -77,7 +77,7 @@ time_t History::extract_stamp(const char *res)
    return atol(res);
 }
 
-const char *History::Lookup(FileAccess *s)
+const char *History::Lookup(const FileAccess *s)
 {
    const char *url=s->GetConnectURL(s->NO_PATH|s->NO_PASSWORD);
    if(!url)
@@ -141,7 +141,7 @@ void History::Close()
    }
 }
 
-void History::Set(FileAccess *s,const FileAccess::Path &cwd)
+void History::Set(const FileAccess *s,const FileAccess::Path &cwd)
 {
    if(cwd.path==0 || !strcmp(cwd.path,"~") || s->GetHostName()==0)
       return;

@@ -761,8 +761,8 @@ do_again:
 	 ubuf->SetSpeedometer(new Speedometer());
 	 if(FileAccess::cache->IsEnabled(session->GetHostName()))
 	    ubuf->Save(FileAccess::cache->SizeLimit());
-	 Roll(session);
-	 Roll(ubuf);
+	 session->Roll();
+	 ubuf->Roll();
       }
       m=MOVED;
    }

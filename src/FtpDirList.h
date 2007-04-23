@@ -25,9 +25,8 @@
 
 class FtpDirList : public DirList
 {
-   FileAccess *session;
-   IOBuffer *ubuf;
-   xstring_c pattern;
+   SMTaskRef<IOBuffer> ubuf;
+   xstring_ca pattern;
 
    bool TryEPLF(const char *line,int len);
    bool TryMLSD(const char *line,int len);
@@ -36,8 +35,8 @@ class FtpDirList : public DirList
    void FormatGeneric(class FileInfo *);
 
 public:
-   FtpDirList(ArgV *a,FileAccess *fa);
-   ~FtpDirList();
+   FtpDirList(FileAccess *s,ArgV *a)
+      : DirList(s,a), pattern(args->Combine(1)) {}
    const char *Status();
    int Do();
 

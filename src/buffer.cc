@@ -616,11 +616,6 @@ bool IOBufferFDStream::Done()
 // IOBufferFileAccess implementation
 #undef super
 #define super IOBuffer
-IOBufferFileAccess::~IOBufferFileAccess()
-{
-   session->Resume();
-   session->Close();
-}
 int IOBufferFileAccess::Get_LL(int size)
 {
    int res=0;

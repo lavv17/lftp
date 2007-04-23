@@ -605,7 +605,7 @@ Glob *LocalAccess::MakeGlob(const char *pattern)
 }
 
 LocalGlob::LocalGlob(const char *c,const char *pattern)
-   : Glob(pattern)
+   : Glob(0,pattern)
 {
    cwd=c;
 }
@@ -669,7 +669,7 @@ DirList *LocalAccess::MakeDirList(ArgV *a)
 
 #include "ArgV.h"
 LocalDirList::LocalDirList(ArgV *a,const char *cwd)
-   : DirList(0)
+   : DirList(0,0)
 {
    fg_data=0;
    a->setarg(0,"ls");

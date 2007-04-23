@@ -27,15 +27,14 @@
 #include "misc.h"
 
 #define super SessionJob
+#define orig_session super::session
 
-mkdirJob::mkdirJob(FileAccess *s,ArgV *a) : super(s)
+mkdirJob::mkdirJob(FileAccess *s,ArgV *a)
+   : super(s), args(a), session(orig_session)
 {
-   orig_session=session;
-
    quiet=false;
    failed=file_count=0;
 
-   args=a;
    args->rewind();
    const char *op=args->getarg(0);
 
@@ -59,14 +58,6 @@ mkdirJob::mkdirJob(FileAccess *s,ArgV *a) : super(s)
    }
 }
 
-mkdirJob::~mkdirJob()
-{
-   delete args;
-   args=0;
-   if(orig_session!=session)
-      Reuse(orig_session);
-}
-
 int mkdirJob::Do()
 {
    if(Done())
@@ -76,7 +67,7 @@ int mkdirJob::Do()
       ParsedURL u(curr,true);
       if(u.proto)
       {
-	 session=FileAccess::New(&u);
+	 session=my_session=FileAccess::New(&u);
 	 session->SetPriority(fg?1:0);
 	 session->Mkdir(u.path,opt_p);
       }
@@ -98,11 +89,6 @@ int mkdirJob::Do()
    }
    file_count++;
    session->Close();
-   if(session!=orig_session)
-   {
-      Reuse(session);
-      session=orig_session;
-   }
    curr=args->getnext();
    return MOVED;
 }

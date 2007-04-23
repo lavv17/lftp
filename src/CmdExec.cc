@@ -306,15 +306,13 @@ void CmdExec::RemoveFeeder()
 
 void CmdExec::ReuseSavedSession()
 {
-   Reuse(saved_session);
    saved_session=0;
 }
 void CmdExec::RevertToSavedSession()
 {
    if(saved_session==0)
       return;
-   ChangeSession(saved_session);
-   saved_session=0;
+   ChangeSession(saved_session.borrow());
 }
 void CmdExec::ChangeSlot(const char *n)
 {
@@ -386,7 +384,7 @@ int CmdExec::Do()
 		     FileAccess::Path new_cwd(session->GetNewCwd());
 		     new_cwd.Change(0,is_file,loc);
 		     session->PathVerify(new_cwd);
-		     Roll(session);
+		     session->Roll();
 		     return MOVED;
 		  }
 		  session->Close();
@@ -810,8 +808,6 @@ CmdExec::~CmdExec()
    free_used_aliases();
    if(cwd_owner==this)
       cwd_owner=0;
-
-   Reuse(saved_session);
 }
 
 const char *CmdExec::FormatPrompt(const char *scan)
@@ -1201,7 +1197,6 @@ void CmdExec::RegisterCommand(const char *name,cmd_creator_t creator,const char 
 
 void CmdExec::ChangeSession(FileAccess *new_session)
 {
-   Reuse(session);
    session=new_session;
    session->SetPriority(fg?1:0);
    Reconfig(0);

@@ -37,11 +37,10 @@ protected:
    bool	 casefold;
    void	 add(const FileInfo *info);
    void	 add_force(const FileInfo *info);
-   virtual ~Glob() {};
 public:
    const char *GetPattern() { return pattern; }
    FileSet *GetResult() { return &list; }
-   Glob(const char *p);
+   Glob(FileAccess *s,const char *p);
    void DirectoriesOnly() { dirs_only=true; }
    void FilesOnly() { files_only=true; }
    void NoMatchPeriod() { match_period=false; }
@@ -60,11 +59,12 @@ public:
 };
 class GlobURL
 {
-   FileAccess *orig_session;
-   FileAccess *session;
+   const FileAccessRef& orig_session;
+   FileAccessRef my_session;
+   FileAccessRefC session;
    xstring_c url_prefix;
 public:
-   Glob *glob;
+   SMTaskRef<Glob> glob;
 
    enum type_select
    {
@@ -73,8 +73,7 @@ public:
       DIRS_ONLY
    };
 
-   GlobURL(FileAccess *s,const char *p,type_select t=ALL);
-   ~GlobURL();
+   GlobURL(const FileAccessRef& s,const char *p,type_select t=ALL);
    FileSet *GetResult();
    bool Done()  { return glob->Done(); }
    bool Error() { return glob->Error(); }
@@ -90,20 +89,16 @@ private:
 
 class GenericGlob : public Glob
 {
-   FileAccess  *session;
-
    const char *curr_dir;
-   FileSet *dir_list;
-   Glob *updir_glob;
-
-   ListInfo *li;
+   Ref<FileSet> dir_list;
+   SMTaskRef<Glob> updir_glob;
+   SMTaskRef<ListInfo> li;
 
 public:
    int	 Do();
    const char *Status();
 
    GenericGlob(FileAccess *session,const char *n_pattern);
-   virtual ~GenericGlob();
 };
 
 #endif

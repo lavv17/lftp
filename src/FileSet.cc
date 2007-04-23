@@ -495,7 +495,7 @@ FileInfo *FileSet::FindByName(const char *name) const
    return 0;
 }
 
-static bool do_exclude_match(const char *prefix,FileInfo *fi,PatternSet *x)
+static bool do_exclude_match(const char *prefix,const FileInfo *fi,const PatternSet *x)
 {
    const char *name=dir_file(prefix,fi->name);
    if(fi->defined&fi->TYPE && fi->filetype==fi->DIRECTORY)
@@ -507,7 +507,7 @@ static bool do_exclude_match(const char *prefix,FileInfo *fi,PatternSet *x)
    return x->MatchExclude(name);
 }
 
-void  FileSet::Exclude(const char *prefix,PatternSet *x)
+void  FileSet::Exclude(const char *prefix,const PatternSet *x)
 {
    if(!x)
       return;

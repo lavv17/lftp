@@ -132,7 +132,6 @@ public:
    SMTaskRef<T>(T *p) { ptr=SMTask::MakeRef(p); }
    ~SMTaskRef<T>() { SMTask::_DeleteRef(ptr); }
    void operator=(T *p) { SMTask::_DeleteRef(ptr); ptr=SMTask::MakeRef(p); }
-   void operator=(SMTaskRef<T> &p) { SMTask::_DeleteRef(ptr); ptr=SMTask::MakeRef(p.borrow()); }
    operator const T*() const { return ptr; }
    T *operator->() const { return ptr; }
    T *borrow() { if(ptr) ptr->DecRefCount(); return replace_value(ptr,(T*)0); }
