@@ -52,9 +52,9 @@ class Fish : public NetAccess
    void	 SendMethod();
    void	 SendArrayInfoRequests();
 
-   IOBuffer *send_buf;
-   IOBuffer *recv_buf;
-   PtyShell *ssh;
+   Ref<IOBuffer> send_buf;
+   Ref<IOBuffer> recv_buf;
+   Ref<PtyShell> ssh;
 
    void Disconnect();
    int IsConnected() const

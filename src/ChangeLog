@@ -1,3 +1,11 @@
+2007-04-25  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc: use explicit borrow().
+	* Fish.cc, Fish.h, SFtp.cc, SFtp.h: use Refs.
+	* Ref.h: declare Ref::null; deny assignment from other Ref.
+	* HttpDir.cc: use Ref::null.
+	* buffer.h: optimize ctors.
+
 2007-04-21  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CatJob.cc: use new FileCopyPeerFA::New.

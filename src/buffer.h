@@ -218,7 +218,9 @@ class IOBufferFDStream : public IOBuffer
    int Put_LL(const char *buf,int size);
 
 public:
-   IOBufferFDStream(FDStream *o,dir_t m,Timer *t=0)
+   IOBufferFDStream(FDStream *o,dir_t m)
+      : IOBuffer(m), stream(o) {}
+   IOBufferFDStream(FDStream *o,dir_t m,Timer *t)
       : IOBuffer(m), stream(o), put_ll_timer(t) {}
    bool Done();
    FgData *GetFgData(bool fg);

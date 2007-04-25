@@ -135,6 +135,10 @@ public:
    operator const T*() const { return ptr; }
    T *operator->() const { return ptr; }
    T *borrow() { if(ptr) ptr->DecRefCount(); return replace_value(ptr,(T*)0); }
+
+   static const SMTaskRef<T> null;
 };
+
+template<typename T> const SMTaskRef<T> SMTaskRef<T>::null;
 
 #endif /* SMTASK_H */

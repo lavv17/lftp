@@ -1390,7 +1390,7 @@ FileSet *Http::ParseLongList(const char *b,int len,int *err) const
    xstring_c base_href;
    for(;;)
    {
-      int n=parse_html(b,len,true,0,set,0,&prefix,&base_href);
+      int n=parse_html(b,len,true,Ref<Buffer>::null,set,0,&prefix,&base_href);
       if(n==0)
 	 break;
       b+=n;

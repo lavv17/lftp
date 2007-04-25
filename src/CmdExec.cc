@@ -461,7 +461,7 @@ int CmdExec::Do()
 	    {
 	       glob=0;
 	       // it was last argument
-	       args=args_glob;
+	       args=args_glob.borrow();
 	       builtin=BUILTIN_NONE;
 	       redirections=0;
 	       if(status_line)

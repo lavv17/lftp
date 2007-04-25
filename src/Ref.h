@@ -36,10 +36,13 @@ public:
    Ref<T>(T *p) { ptr=p; }
    ~Ref<T>() { delete ptr; }
    void operator=(T *p) { delete ptr; ptr=p; }
-   void operator=(Ref<T> &p) { delete ptr; ptr=p.borrow(); }
    operator const T*() const { return ptr; }
    T *operator->() const { return ptr; }
    T *borrow() { return replace_value(ptr,(T*)0); }
+
+   static const Ref<T> null;
 };
+
+template<typename T> const Ref<T> Ref<T>::null;
 
 #endif

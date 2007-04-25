@@ -172,8 +172,7 @@ int Fish::Do()
 	 return m;
       }
       ssh->Kill(SIGCONT);
-      send_buf=new IOBufferFDStream(ssh,IOBuffer::PUT);
-      ssh=0;
+      send_buf=new IOBufferFDStream(ssh.borrow(),IOBuffer::PUT);
       recv_buf=new IOBufferFDStream(new FDStream(fd,"pseudo-tty"),IOBuffer::GET);
       set_real_cwd("~");
       state=CONNECTING_1;
@@ -295,8 +294,8 @@ usual_return:
 
 void Fish::MoveConnectionHere(Fish *o)
 {
-   send_buf=o->send_buf; o->send_buf=0;
-   recv_buf=o->recv_buf; o->recv_buf=0;
+   send_buf=o->send_buf.borrow();
+   recv_buf=o->recv_buf.borrow();
    rate_limit=o->rate_limit; o->rate_limit=0;
    path_queue.MoveHere(o->path_queue);
    RespQueue=o->RespQueue; o->RespQueue=0;
@@ -317,9 +316,6 @@ void Fish::Disconnect()
 {
    if(send_buf)
       DebugPrint("---- ",_("Disconnecting"),9);
-   Delete(send_buf); send_buf=0;
-   Delete(recv_buf); recv_buf=0;
-   delete ssh; ssh=0;
    EmptyRespQueue();
    EmptyPathQueue();
    state=DISCONNECTED;
@@ -335,7 +331,6 @@ void Fish::Init()
    state=DISCONNECTED;
    send_buf=0;
    recv_buf=0;
-   ssh=0;
    max_send=0;
    RespQueue=0;
    RQ_alloc=0;
