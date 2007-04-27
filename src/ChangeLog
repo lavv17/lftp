@@ -1,3 +1,9 @@
+2007-04-27  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h: more inlines; make dtor public.
+	* StatusLine.h: make dtor public.
+	* SMTask.h: make SMTaskRef inherit from Ref.
+
 2007-04-25  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CmdExec.cc: use explicit borrow().

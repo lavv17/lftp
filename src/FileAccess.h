@@ -209,8 +209,6 @@ protected:
 
    int device_prefix_len(const char *path);
 
-   virtual ~FileAccess();
-
 public:
    virtual const char *GetProto() const = 0; // http, ftp, file etc
    bool SameProtoAs(const FileAccess *fa) const { return !strcmp(GetProto(),fa->GetProto()); }
@@ -290,6 +288,7 @@ public:
    void Init();
    FileAccess() { Init(); }
    FileAccess(const FileAccess *);
+   virtual ~FileAccess();
 
    void	 DontSleep() { try_time=0; }
 
@@ -472,7 +471,7 @@ protected:
    ~FileAccessOperation() { if(session) session->Close(); }
 
 public:
-   FileAccessOperation(FileAccess *s);
+   FileAccessOperation(FileAccess *s) : session(s), done(false), use_cache(true) {}
 
    virtual int Do() = 0;
    bool Done() { return done; }
@@ -497,12 +496,11 @@ protected:
    unsigned need;
    bool follow_symlinks;
 
-   ~ListInfo();
-
 public:
    ListInfo(FileAccess *session,const char *path);
+   ~ListInfo();
 
-   void SetExclude(const char *p,const PatternSet *e);
+   void SetExclude(const char *p,const PatternSet *e) { exclude_prefix=p; exclude=e; }
 
    // caller has to delete the resulting FileSet itself.
    FileSet *GetResult() { return result.borrow(); }

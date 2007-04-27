@@ -44,7 +44,6 @@ class StatusLine : public SMTask
    static const char *to_status_line, *from_status_line, *prev_line;
 
 protected:
-   ~StatusLine();
    void WriteTitle(const char *s, int fd) const;
 
 public:
@@ -65,6 +64,7 @@ public:
    int getfd() const { return fd; }
 
    StatusLine(int new_fd);
+   ~StatusLine();
 
    int Do();
 };

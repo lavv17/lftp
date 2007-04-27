@@ -52,8 +52,6 @@ protected:
       WANTDIE=2	  // for AcceptSig
    };
 
-   virtual ~SMTask();
-
    // SuspendInternal and ResumeInternal usually suspend and resume slave tasks
    virtual void SuspendInternal() {}
    virtual void ResumeInternal() {}
@@ -83,6 +81,7 @@ public:
    virtual const char *GetLogContext() { return 0; }
 
    SMTask();
+   virtual ~SMTask();
 
    void DeleteLater() { deleting=true; }
    static void Delete(SMTask *);
@@ -119,26 +118,19 @@ public:
    ~SMTaskInit();
 };
 
-template<class T> class SMTaskRef
+template<class T> class SMTaskRef : public Ref<T>
 {
    SMTaskRef<T>(const SMTaskRef<T>&);  // disable cloning
    void operator=(const SMTaskRef<T>&);   // and assignment
 
-protected:
-   T *ptr;
-
 public:
-   SMTaskRef() { ptr=0; }
-   SMTaskRef<T>(T *p) { ptr=SMTask::MakeRef(p); }
-   ~SMTaskRef<T>() { SMTask::_DeleteRef(ptr); }
+#define ptr Ref<T>::ptr
+   SMTaskRef() {}
+   SMTaskRef<T>(T *p) : Ref<T>(SMTask::MakeRef(p)) {}
+   ~SMTaskRef<T>() { SMTask::_DeleteRef(ptr); ptr=0; }
    void operator=(T *p) { SMTask::_DeleteRef(ptr); ptr=SMTask::MakeRef(p); }
-   operator const T*() const { return ptr; }
-   T *operator->() const { return ptr; }
-   T *borrow() { if(ptr) ptr->DecRefCount(); return replace_value(ptr,(T*)0); }
-
-   static const SMTaskRef<T> null;
+   T *borrow() { if(ptr) ptr->DecRefCount(); return Ref<T>::borrow(); }
+#undef ptr
 };
-
-template<typename T> const SMTaskRef<T> SMTaskRef<T>::null;
 
 #endif /* SMTASK_H */

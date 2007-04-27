@@ -869,11 +869,6 @@ FileAccess *FileAccess::Protocol::NewSession(const char *proto)
 }
 
 // FileAccessOperation implementation
-FileAccessOperation::FileAccessOperation(FileAccess *s)
- : session(s), done(false), use_cache(true)
-{
-}
-
 void FileAccessOperation::SetError(const char *e)
 {
    error_text.set(e);
@@ -912,11 +907,6 @@ ListInfo::~ListInfo()
       session->SetCwd(saved_cwd);
 }
 
-void ListInfo::SetExclude(const char *p,const PatternSet *x)
-{
-   exclude=x;
-   exclude_prefix=p;
-}
 
 // Path implementation
 void FileAccess::Path::init()
