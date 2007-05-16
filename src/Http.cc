@@ -39,7 +39,6 @@
 #include "HttpDir.h"
 #include "misc.h"
 #include "buffer_ssl.h"
-#include "lftp_ssl.h"
 
 #include "ascii_ctype.h"
 
@@ -133,10 +132,10 @@ Http::~Http()
 
 void Http::MoveConnectionHere(Http *o)
 {
-   send_buf=o->send_buf; o->send_buf=0;
-   recv_buf=o->recv_buf; o->recv_buf=0;
+   send_buf=o->send_buf.borrow();
+   recv_buf=o->recv_buf.borrow();
    sock=o->sock; o->sock=-1;
-   rate_limit=o->rate_limit; o->rate_limit=0;
+   rate_limit=o->rate_limit.borrow();
    last_method=o->last_method; o->last_method=0;
    timeout_timer.Reset(o->timeout_timer);
    state=CONNECTED;
@@ -146,15 +145,9 @@ void Http::MoveConnectionHere(Http *o)
 
 void Http::Disconnect()
 {
-   Delete(send_buf);
    send_buf=0;
-   Delete(recv_buf);
    recv_buf=0;
-   if(rate_limit)
-   {
-      delete rate_limit;
-      rate_limit=0;
-   }
+   rate_limit=0;
    if(sock!=-1)
    {
       DebugPrint("---- ",_("Closing HTTP connection"),7);
@@ -198,12 +191,12 @@ void Http::Close()
    if(mode==CLOSED)
       return;
    if(recv_buf)
-      Roll(recv_buf);	// try to read any remaining data
+      recv_buf->Roll();	// try to read any remaining data
    if(sock!=-1 && keep_alive && (keep_alive_max>0 || keep_alive_max==-1)
    && mode!=STORE && !recv_buf->Eof() && (state==RECEIVING_BODY || state==DONE))
    {
       recv_buf->Resume();
-      Roll(recv_buf);
+      recv_buf->Roll();
       if(xstrcmp(last_method,"HEAD"))
       {
 	 // check if all data are in buffer
@@ -2189,14 +2182,10 @@ FileAccess *Https::New(){ return new Https();}
 
 void Http::MakeSSLBuffers()
 {
-   Delete(send_buf);
-   Delete(recv_buf);
-
-   lftp_ssl *ssl=new lftp_ssl(sock,lftp_ssl::CLIENT,hostname);
+   ssl=new lftp_ssl(sock,lftp_ssl::CLIENT,hostname);
    ssl->load_keys();
    IOBufferSSL *send_buf_ssl=new IOBufferSSL(ssl,IOBuffer::PUT);
    IOBufferSSL *recv_buf_ssl=new IOBufferSSL(ssl,IOBuffer::GET);
-   recv_buf_ssl->CloseLater();
    send_buf=send_buf_ssl;
    recv_buf=recv_buf_ssl;
 }
@@ -2252,7 +2241,7 @@ void Http::CleanupThis()
 
 void Http::LogErrorText()
 {
-   Roll(recv_buf);
+   recv_buf->Roll();
    size_t size=recv_buf->Size();
    char *buf=string_alloca(size+1);
    off_t old_pos=pos;

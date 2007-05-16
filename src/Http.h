@@ -25,6 +25,7 @@
 
 #include "NetAccess.h"
 #include "buffer.h"
+#include "lftp_ssl.h"
 
 class Http : public NetAccess
 {
@@ -51,8 +52,8 @@ class Http : public NetAccess
 
    void	Send(const char *format,...) PRINTF_LIKE(2,3);
 
-   IOBuffer *send_buf;
-   IOBuffer *recv_buf;
+   SMTaskRef<IOBuffer> send_buf;
+   SMTaskRef<IOBuffer> recv_buf;
    void SendMethod(const char *,const char *);
    const char *last_method;
    enum { HTTP_NONE=0, HTTP_POST, HTTP_MOVE, HTTP_COPY } special;
@@ -88,11 +89,14 @@ class Http : public NetAccess
 	    return 1;
 	 return 2;
       }
+#if USE_SSL
+   Ref<lftp_ssl> ssl;
    void MakeSSLBuffers();
+#endif
    void LogErrorText();
 
    xstring status;
-   int   status_consumed;
+   int status_consumed;
    int proto_version;
    xstring line;
    off_t body_size;

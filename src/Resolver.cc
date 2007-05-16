@@ -100,13 +100,11 @@ Resolver::Resolver(const char *h,const char *p,const char *defp,
    port_number=0;
 
    pipe_to_child[0]=pipe_to_child[1]=-1;
-   w=0;
    done=false;
    timeout_timer.SetResource("dns:fatal-timeout",hostname);
    Reconfig();
    addr=0;
    addr_num=0;
-   buf=0;
    use_fork=ResMgr::QueryBool("dns:use-fork",0);
 
    error=0;
@@ -125,9 +123,8 @@ Resolver::~Resolver()
    if(w)
    {
       w->Kill(SIGKILL);
-      w->Auto();
+      w.borrow()->Auto();
    }
-   Delete(buf);
 }
 
 int   Resolver::Do()
@@ -263,7 +260,6 @@ int   Resolver::Do()
 	 // e.g. under gdb child fails.
 	 Log::global->Format(4,"**** %s\n","child failed, retrying with dns:use-fork=no");
 	 use_fork=false;
-	 Delete(buf);
 	 buf=0;
 	 return MOVED;
       }
@@ -878,7 +874,7 @@ flush:
    if(use_fork)
    {
       while(buf->Size()>0 && !buf->Error() && !buf->Broken())
-	 Roll(buf);  // should flush quickly.
+	 buf->Roll();  // should flush quickly.
    }
 }
 

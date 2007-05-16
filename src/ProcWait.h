@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,8 +49,6 @@ protected:
 
    bool  handle_info(int info); // true if finished
 
-   ~ProcWait();
-
 public:
    int	 Do();
    State GetState() { return status; }
@@ -60,6 +58,7 @@ public:
    void Auto() { auto_die=true; }
 
    ProcWait(pid_t p);
+   ~ProcWait();
 
    static void SIGCHLD_handler(int);
 

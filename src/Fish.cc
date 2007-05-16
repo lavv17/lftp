@@ -296,7 +296,7 @@ void Fish::MoveConnectionHere(Fish *o)
 {
    send_buf=o->send_buf.borrow();
    recv_buf=o->recv_buf.borrow();
-   rate_limit=o->rate_limit; o->rate_limit=0;
+   rate_limit=o->rate_limit.borrow();
    path_queue.MoveHere(o->path_queue);
    RespQueue=o->RespQueue; o->RespQueue=0;
    RQ_alloc=o->RQ_alloc; o->RQ_alloc=0;
@@ -304,7 +304,6 @@ void Fish::MoveConnectionHere(Fish *o)
    RQ_tail=o->RQ_tail; o->RQ_tail=0;
    timeout_timer.Reset(o->timeout_timer);
    set_real_cwd(o->real_cwd);
-   o->set_real_cwd(0);
    state=CONNECTED;
    o->Disconnect();
    if(!home)

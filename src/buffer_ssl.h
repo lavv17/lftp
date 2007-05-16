@@ -29,18 +29,15 @@
 #include "lftp_ssl.h"
 class IOBufferSSL : public IOBuffer
 {
-   lftp_ssl *ssl;
-   bool close_later;
+   Ref<lftp_ssl> my_ssl;
+   const Ref<lftp_ssl>& ssl;
 
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
 
-protected:
-   ~IOBufferSSL();
-
 public:
-   IOBufferSSL(lftp_ssl *s,dir_t m);
-   void CloseLater()	{ close_later=true; }
+   IOBufferSSL(lftp_ssl *s,dir_t m) : IOBuffer(m), my_ssl(s), ssl(my_ssl) {}
+   IOBufferSSL(const Ref<lftp_ssl>& s,dir_t m) : IOBuffer(m), ssl(s) {}
    int Do();
    bool Done() { return IOBuffer::Done() && ssl->handshake_done; }
 };

@@ -54,8 +54,8 @@ class Resolver : public SMTask
    int port_number;
 
    int pipe_to_child[2];
-   ProcWait *w;
-   IOBuffer *buf;
+   SMTaskRef<ProcWait> w;
+   SMTaskRef<IOBuffer> buf;
    Timer timeout_timer;
 
    int addr_num;
@@ -81,15 +81,12 @@ class Resolver : public SMTask
    bool no_cache;
    bool use_fork;
 
-protected:
-   ~Resolver();
-
 public:
    int	 Do();
    bool	 Done() { return done; }
    bool	 Error() { return err_msg!=0; }
    const char *ErrorMsg() { return err_msg; }
-   sockaddr_u *Result() { return addr; }
+   const sockaddr_u *Result() { return addr; }
    size_t GetResultSize() { return addr_num*sizeof(*addr); }
    int	 GetResultNum() { return addr_num; }
    void  GetResult(void *m) { memcpy(m,addr,GetResultSize()); }
@@ -98,6 +95,7 @@ public:
 
    Resolver(const char *h,const char *p,const char *defp=0,const char *ser=0,
 	    const char *pr=0);
+   ~Resolver();
 
    void Reconfig(const char *name=0);
    const char *GetLogContext() { return hostname; }

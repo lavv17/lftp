@@ -26,11 +26,12 @@
 #include "FileAccess.h"
 #include "Resolver.h"
 #include "LsCache.h"
+#include "RateLimit.h"
 
 class NetAccess : public FileAccess
 {
 protected:
-   Resolver *resolver;
+   SMTaskRef<Resolver> resolver;
 
    sockaddr_u *peer;
    int	 peer_num;
@@ -54,7 +55,7 @@ protected:
    int	 connection_limit;
    bool	 connection_takeover;
 
-   class RateLimit *rate_limit;
+   Ref<RateLimit> rate_limit;
 
    int	 socket_buffer;
    int	 socket_maxseg;
@@ -118,46 +119,6 @@ public:
    static void ClassInit();
 };
 
-class RateLimit
-{
-public:
-   class BytesPool
-   {
-      friend class RateLimit;
-
-      int pool;
-      int rate;
-      int pool_max;
-      Time t;
-
-      void AdjustTime();
-      void Reset();
-      void Used(int);
-   };
-
-private:
-   static int total_xfer_number;
-   static bool total_reconfig_needed;
-   static void ReconfigTotal();
-   static BytesPool total[2];
-   BytesPool one[2];
-
-public:
-   RateLimit(const char *closure);
-   ~RateLimit();
-
-   enum dir_t { GET=0, PUT=1 };
-
-   int BytesAllowed(dir_t how);
-   int BytesAllowedToGet() { return BytesAllowed(GET); }
-   int BytesAllowedToPut() { return BytesAllowed(PUT); }
-   void BytesUsed(int,dir_t);
-   void BytesGot(int b) { BytesUsed(b,GET); }
-   void BytesPut(int b) { BytesUsed(b,PUT); }
-
-   void Reconfig(const char *name,const char *c);
-};
-
 class GenericParseListInfo : public ListInfo
 {
 protected:
@@ -165,7 +126,7 @@ protected:
    int get_info_cnt;
 
    int mode;
-   IOBuffer *ubuf;
+   SMTaskRef<IOBuffer> ubuf;
 
    bool get_time_for_dirs;
    bool can_get_prec_time;
@@ -179,6 +140,5 @@ public:
    int Do();
    const char *Status();
 };
-
 
 #endif//NETACCESS_H

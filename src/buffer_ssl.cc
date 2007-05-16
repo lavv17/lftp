@@ -113,16 +113,4 @@ int IOBufferSSL::Put_LL(const char *buf,int size)
    return res;
 }
 
-IOBufferSSL::IOBufferSSL(lftp_ssl *s,dir_t m)
- : IOBuffer(m)
-{
-   ssl=s;
-   close_later=false;
-}
-IOBufferSSL::~IOBufferSSL()
-{
-   if(close_later)
-      delete ssl;
-}
-
 #endif // USE_SSL

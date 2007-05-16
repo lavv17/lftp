@@ -302,7 +302,7 @@ void SFtp::MoveConnectionHere(SFtp *o)
    recv_buf=o->recv_buf; o->recv_buf=0;
    pty_send_buf=o->pty_send_buf; o->pty_send_buf=0;
    pty_recv_buf=o->pty_recv_buf; o->pty_recv_buf=0;
-   rate_limit=o->rate_limit; o->rate_limit=0;
+   rate_limit=o->rate_limit.borrow();
    expect_queue_size=o->expect_queue_size; o->expect_queue_size=0;
    expect_chain=o->expect_chain; o->expect_chain=0;
    expect_chain_end=o->expect_chain_end;

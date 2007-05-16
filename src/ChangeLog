@@ -1,3 +1,14 @@
+2007-05-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileAccess.h: use static_cast (as we use -fno-rtti).
+	* NetAccess.cc, NetAccess.h: use Ref; split off RateLimit.
+	* RateLimit.h: new file.
+	* Fish.cc, SFtp.cc: change for Refs in NetAccess.
+	* Http.cc, Http.h: use Ref.
+	* ProcWait.h: make dtor public.
+	* Resolver.cc, Resolver.h, buffer_ssl.cc, buffer_ssl.h, ftpclass.cc,
+	  ftpclass.h: use Ref.
+
 2007-04-27  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileAccess.cc, FileAccess.h: more inlines; make dtor public.

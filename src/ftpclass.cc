@@ -129,7 +129,7 @@ static const eprt_proto_match eprt_proto[]=
    { -1, -1 }
 };
 
-const char *Ftp::encode_eprt(sockaddr_u *a)
+const char *Ftp::encode_eprt(const sockaddr_u *a)
 {
    char host[NI_MAXHOST];
    char serv[NI_MAXSERV];
@@ -158,7 +158,7 @@ const char *Ftp::encode_eprt(sockaddr_u *a)
 }
 #endif
 
-bool Ftp::Connection::data_address_ok(sockaddr_u *dp,bool verify_address,bool verify_port)
+bool Ftp::Connection::data_address_ok(const sockaddr_u *dp,bool verify_address,bool verify_port)
 {
    sockaddr_u d;
    sockaddr_u c;
@@ -850,14 +850,9 @@ Ftp::Connection::Connection(const char *c)
    abor_close_timer.SetResource("ftp:abor-max-wait",closure);
 
    control_sock=-1;
-   control_recv=control_send=0;
-   telnet_layer_send=0;
-   send_cmd_buffer=new Buffer;
    data_sock=-1;
-   data_iobuf=0;
    aborted_data_sock=-1;
 #if USE_SSL
-   control_ssl=0;
    prot='C';  // current protection scheme 'C'lear or 'P'rivate
    auth_sent=false;
    auth_supported=true;
@@ -900,9 +895,6 @@ Ftp::Connection::Connection(const char *c)
 
 void Ftp::InitFtp()
 {
-   conn=0;
-   expect=0;
-
 #if USE_SSL
    ftps=false;	  // ssl and prot='P' by default (port 990)
 #endif
@@ -958,9 +950,6 @@ Ftp::Connection::~Connection()
       Log::global->Format(7,"---- %s\n",_("Closing control socket"));
       close(control_sock);
    }
-   Delete(control_send);
-   Delete(control_recv);
-   delete send_cmd_buffer;
 }
 
 Ftp::~Ftp()
@@ -1076,8 +1065,6 @@ void Ftp::Connection::MakeBuffers()
 #if USE_SSL
    control_ssl=0;
 #endif
-   delete control_send;
-   delete control_recv;
    control_send=new IOBufferFDStream(
       new FDStream(control_sock,"control-socket"),IOBuffer::PUT);
    control_recv=new IOBufferFDStream(
@@ -1087,8 +1074,8 @@ void Ftp::Connection::InitTelnetLayer()
 {
    if(telnet_layer_send)
       return;
-   control_send=telnet_layer_send=new IOBufferTelnet(control_send);
-   control_recv=new IOBufferTelnet(control_recv);
+   control_send=telnet_layer_send=new IOBufferTelnet(control_send.borrow());
+   control_recv=new IOBufferTelnet(control_recv.borrow());
 }
 
 int   Ftp::Do()
@@ -1215,8 +1202,8 @@ int   Ftp::Do()
       conn->control_sock=SocketCreateTCP(conn->peer_sa.sa.sa_family);
       if(conn->control_sock==-1)
       {
-	 delete conn; conn=0;
-	 delete expect; expect=0;
+	 conn=0;
+	 expect=0;
 	 if(peer_curr+1<peer_num)
 	 {
 	    try_time=0;
@@ -2112,8 +2099,8 @@ int   Ftp::Do()
 	 m=MOVED;
 	 conn->data_iobuf=new IOBufferFDStream(new FDStream(conn->data_sock,"data-socket"),IOBuffer::PUT);
 	 HttpProxySendConnectData();
-	 Roll(conn->data_iobuf);
-	 Delete(conn->data_iobuf); // FIXME, it could be not done yet
+	 conn->data_iobuf->Roll();
+	 // FIXME, data_iobuf could be not done yet
 	 conn->data_iobuf=new IOBufferFDStream(new FDStream(conn->data_sock,"data-socket"),IOBuffer::GET);
       case PASV_HTTP_PROXY_CONNECTED:
       	 if(HttpProxyReplyCheck(conn->data_iobuf))
@@ -2127,12 +2114,11 @@ int   Ftp::Do()
       state=DATA_OPEN_STATE;
       m=MOVED;
 
-      Delete(conn->data_iobuf);
       conn->data_iobuf=0;
 #if USE_SSL
       if(conn->prot=='P')
       {
-	 lftp_ssl *ssl=new lftp_ssl(conn->data_sock,lftp_ssl::CLIENT,hostname);
+	 Ref<lftp_ssl> ssl(new lftp_ssl(conn->data_sock,lftp_ssl::CLIENT,hostname));
 	 if(QueryBool("ssl-data-use-keys",hostname) || !conn->control_ssl)
 	    ssl->load_keys();
 	 // share session id between control and data connections.
@@ -2140,8 +2126,7 @@ int   Ftp::Do()
 	    ssl->copy_sid(conn->control_ssl);
 
 	 IOBuffer::dir_t dir=(mode==STORE?IOBuffer::PUT:IOBuffer::GET);
-	 IOBufferSSL *ssl_buf=new IOBufferSSL(ssl,dir);
-	 ssl_buf->CloseLater();
+	 IOBufferSSL *ssl_buf=new IOBufferSSL(ssl.borrow(),dir);
 	 conn->data_iobuf=ssl_buf;
       }
       else  // note the following block
@@ -2678,7 +2663,7 @@ int  Ftp::ReceiveResp()
    return m;
 }
 
-void Ftp::HttpProxySendAuth(IOBuffer *buf)
+void Ftp::HttpProxySendAuth(const SMTaskRef<IOBuffer>& buf)
 {
    if(!proxy_user || !proxy_pass)
       return;
@@ -2710,7 +2695,7 @@ void Ftp::HttpProxySendConnectData()
    http_proxy_status_code=0;
 }
 // Check reply and return true when the reply is received and is ok.
-bool Ftp::HttpProxyReplyCheck(IOBuffer *buf)
+bool Ftp::HttpProxyReplyCheck(const SMTaskRef<IOBuffer>& buf)
 {
    const char *b;
    int s;
@@ -2786,7 +2771,7 @@ void Ftp::SendUrgentCmd(const char *cmd)
       if(!conn || !conn->control_send)
 	 return;
       if(conn->control_send->Size()>0)
-	 Roll(conn->control_send);
+	 conn->control_send->Roll();
       // only DM byte is to be sent in urgent mode
       send(conn->control_sock,pre_cmd,3,0);
       send(conn->control_sock,pre_cmd+3,1,MSG_OOB);
@@ -2866,8 +2851,8 @@ void  Ftp::DataAbort()
 
 void Ftp::ControlClose()
 {
-   delete conn; conn=0;
-   delete expect; expect=0;
+   conn=0;
+   expect=0;
 }
 
 void  Ftp::DisconnectNow()
@@ -2945,7 +2930,7 @@ void Ftp::Connection::CloseDataSocket()
 
 void Ftp::Connection::CloseDataConnection()
 {
-   Delete(data_iobuf); data_iobuf=0;
+   data_iobuf=0;
    fixed_pasv=false;
    CloseDataSocket();
 }
@@ -2968,7 +2953,6 @@ void Ftp::Connection::CloseAbortedDataConnection()
 
 void  Ftp::DataClose()
 {
-   delete rate_limit;
    rate_limit=0;
    nop_time=0;
    nop_offset=0;
@@ -2987,7 +2971,7 @@ int Ftp::Connection::FlushSendQueueOneCmd()
 {
    const char *send_cmd_ptr;
    int send_cmd_count;
-   send_cmd_buffer->Get(&send_cmd_ptr,&send_cmd_count);
+   send_cmd_buffer.Get(&send_cmd_ptr,&send_cmd_count);
 
    if(send_cmd_count==0)
       return 0;
@@ -2999,7 +2983,7 @@ int Ftp::Connection::FlushSendQueueOneCmd()
 
    int to_write=line_end+1-send_cmd_ptr;
    control_send->Put(send_cmd_ptr,to_write);
-   send_cmd_buffer->Skip(to_write);
+   send_cmd_buffer.Skip(to_write);
    sync_wait++;
 
    int log_level=5;
@@ -3051,7 +3035,7 @@ int  Ftp::FlushSendQueue(bool all)
       return MOVED;
    }
 
-   if(!conn->send_cmd_buffer || conn->send_cmd_buffer->Size()==0)
+   if(conn->send_cmd_buffer.Size()==0)
       return m;
 
    // prevent timeout after some idle time
@@ -3067,7 +3051,7 @@ int  Ftp::FlushSendQueue(bool all)
    }
 
    if(m==MOVED)
-      Roll(conn->control_send);
+      conn->control_send->Roll();
    timeout_timer.Reset(conn->control_send->EventTime());
 
    return m;
@@ -3079,16 +3063,16 @@ void  Ftp::Connection::Send(const char *buf,int len)
    {
       char ch=*buf++;
       len--;
-      send_cmd_buffer->Put(&ch,1);
+      send_cmd_buffer.Put(&ch,1);
       if(ch=='\r')
-	 send_cmd_buffer->Put("",1); // RFC2640
+	 send_cmd_buffer.Put("",1); // RFC2640
    }
 }
 
 void  Ftp::Connection::SendCmd(const char *cmd)
 {
    Send(cmd,strlen(cmd));
-   send_cmd_buffer->Put("\r\n",2);
+   send_cmd_buffer.Put("\r\n",2);
 }
 
 void Ftp::Connection::SendCmd2(const char *cmd,const char *f)
@@ -3096,10 +3080,10 @@ void Ftp::Connection::SendCmd2(const char *cmd,const char *f)
    if(cmd && cmd[0])
    {
       Send(cmd,strlen(cmd));
-      send_cmd_buffer->Put(" ",1);
+      send_cmd_buffer.Put(" ",1);
    }
    Send(f,strlen(f));
-   send_cmd_buffer->Put("\r\n",2);
+   send_cmd_buffer.Put("\r\n",2);
 }
 
 void Ftp::Connection::SendCmd2(const char *cmd,int v)
@@ -3390,8 +3374,7 @@ int   Ftp::Write(const void *buf,int size)
    if(!conn || state!=DATA_OPEN_STATE || (expect->Has(Expect::REST) && real_pos==-1))
       return DO_AGAIN;
 
-   IOBuffer *iobuf=conn->data_iobuf;
-   if(!iobuf)
+   if(!conn->data_iobuf)
       return DO_AGAIN;
 
    {
@@ -3402,15 +3385,15 @@ int   Ftp::Write(const void *buf,int size)
       if(size>allowed)
 	 size=allowed;
    }
-   if(size+iobuf->Size()>=max_buf)
-      size=max_buf-iobuf->Size();
+   if(size+conn->data_iobuf->Size()>=max_buf)
+      size=max_buf-conn->data_iobuf->Size();
    if(size<=0)
       return 0;
 
-   iobuf->Put((const char*)buf,size);
+   conn->data_iobuf->Put((const char*)buf,size);
 
    if(retries+persist_retries>0
-   && iobuf->GetPos()-iobuf->Size()>Buffered()+0x10000)
+   && conn->data_iobuf->GetPos()-conn->data_iobuf->Size()>Buffered()+0x10000)
    {
       // reset retry count if some data were actually written to server.
       TrySuccess();
@@ -3455,8 +3438,7 @@ void  Ftp::MoveConnectionHere(Ftp *o)
    expect->Close(); // we need not handle other session's replies.
 
    assert(!conn);
-   conn=o->conn;
-   o->conn=0;
+   conn=o->conn.borrow();
    o->state=INITIAL_STATE;
 
    if(peer_curr>=peer_num)
@@ -3467,7 +3449,6 @@ void  Ftp::MoveConnectionHere(Ftp *o)
       set_home(home_auto);
 
    set_real_cwd(o->real_cwd);
-   o->set_real_cwd(0);
    o->Disconnect();
    state=EOF_STATE;
 }
@@ -3966,7 +3947,7 @@ const char *Ftp::CurrentStatus()
    case(EOF_STATE):
       if(conn && conn->control_sock!=-1)
       {
-	 if(conn->send_cmd_buffer->Size()>0)
+	 if(conn->send_cmd_buffer.Size()>0)
 	    return(_("Sending commands..."));
 	 if(!expect->IsEmpty())
 	    return(_("Waiting for response..."));
@@ -4418,17 +4399,14 @@ FileAccess *FtpS::New(){ return new FtpS();}
 
 void Ftp::Connection::MakeSSLBuffers(const char *hostname)
 {
-   Delete(control_send); control_send=0; telnet_layer_send=0;
-   Delete(control_recv); control_recv=0;
-
    control_ssl=new lftp_ssl(control_sock,lftp_ssl::CLIENT,hostname);
    control_ssl->load_keys();
    IOBufferSSL *send_ssl=new IOBufferSSL(control_ssl,IOBufferSSL::PUT);
    IOBufferSSL *recv_ssl=new IOBufferSSL(control_ssl,IOBufferSSL::GET);
-   recv_ssl->CloseLater();
 
    control_send=send_ssl;
    control_recv=recv_ssl;
+   telnet_layer_send=0;
 }
 #endif
 
@@ -4518,8 +4496,8 @@ void Ftp::Connection::SetControlConnectionTranslation(const char *cs)
    if(telnet_layer_send==control_send)
    {
       // cannot do two conversions in one DirectedBuffer, stack it.
-      control_send=new IOBufferStacked(control_send);
-      control_recv=new IOBufferStacked(control_recv);
+      control_send=new IOBufferStacked(control_send.borrow());
+      control_recv=new IOBufferStacked(control_recv.borrow());
    }
    control_send->SetTranslation(cs,false);
    control_recv->SetTranslation(cs,true);

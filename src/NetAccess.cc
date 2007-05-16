@@ -90,9 +90,6 @@ NetAccess::NetAccess(const NetAccess *o) : super(o)
 }
 NetAccess::~NetAccess()
 {
-   Delete(resolver);
-   if(rate_limit)
-      delete rate_limit;
    ClearPeer();
 }
 
@@ -482,9 +479,9 @@ int NetAccess::Resolve(const char *defp,const char *ser,const char *pr)
 	 resolver=new Resolver(proxy,proxy_port,defp);
       else
 	 resolver=new Resolver(hostname,portname,defp,ser,pr);
-      Roll(resolver);
       if(!resolver)
 	 return MOVED;
+      resolver->Roll();
       m=MOVED;
    }
 
@@ -504,7 +501,6 @@ int NetAccess::Resolve(const char *defp,const char *ser,const char *pr)
    if(peer_curr>=peer_num)
       peer_curr=0;
 
-   Delete(resolver);
    resolver=0;
    return MOVED;
 }
@@ -671,10 +667,7 @@ void NetAccess::Close()
       idle_timer.Reset();
 
    TrySuccess();
-
-   Delete(resolver);
    resolver=0;
-
    super::Close();
 }
 
@@ -774,13 +767,11 @@ do_again:
 	 if(mode==FA::MP_LIST)
 	 {
 	    mode=FA::LONG_LIST;
-	    delete ubuf;
 	    ubuf=0;
 	    m=MOVED;
 	    goto do_again;
 	 }
 	 SetError(ubuf->ErrorText());
-	 Delete(ubuf);
 	 ubuf=0;
 	 return MOVED;
       }
@@ -797,7 +788,7 @@ do_again:
 
       int old_mode=mode;
 
-      FileSet *set=Parse(b,len);
+      Ref<FileSet> set(Parse(b,len));
       if(set)
       {
 	 bool need_resort=false;
@@ -814,15 +805,11 @@ do_again:
 	 if(need_resort && !result)
 	    result=new FileSet; // Merge will sort the names
 	 if(result)
-	 {
 	    result->Merge(set);
-	    delete set;
-	 }
 	 else
-	    result=set;
+	    result=set.borrow();
       }
 
-      Delete(ubuf);
       ubuf=0;
       m=MOVED;
 
@@ -942,7 +929,6 @@ GenericParseListInfo::GenericParseListInfo(FileAccess *s,const char *p)
 GenericParseListInfo::~GenericParseListInfo()
 {
    xfree(get_info);
-   Delete(ubuf);
 }
 
 const char *GenericParseListInfo::Status()

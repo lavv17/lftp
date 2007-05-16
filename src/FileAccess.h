@@ -422,7 +422,7 @@ public:
    const FileAccessRef& operator=(FileAccess *p) { reuse(); ptr=SMTask::MakeRef(p); return *this; }
 
    template<class T> const SMTaskRef<T>& Cast() const
-      { assert(ptr==dynamic_cast<T*>(ptr)); return *(SMTaskRef<T>*)this; }
+      { void(static_cast<T*>(this->ptr)); return *(const SMTaskRef<T>*)this; }
 
    static const FileAccessRef null;
 };

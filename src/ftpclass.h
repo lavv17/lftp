@@ -72,12 +72,12 @@ class Ftp : public NetAccess
       xstring closure;
    public:
       int control_sock;
-      IOBuffer *control_recv;
-      IOBuffer *control_send;
+      SMTaskRef<IOBuffer> control_recv;
+      SMTaskRef<IOBuffer> control_send;
       IOBufferTelnet *telnet_layer_send;
-      Buffer *send_cmd_buffer; // holds unsent commands.
+      Buffer send_cmd_buffer; // holds unsent commands.
       int data_sock;
-      IOBuffer *data_iobuf;
+      SMTaskRef<IOBuffer> data_iobuf;
       int aborted_data_sock;
       sockaddr_u peer_sa;
       sockaddr_u data_sa; // address for data accepting
@@ -118,7 +118,7 @@ class Ftp : public NetAccess
       Timer abor_close_timer; // timer for closing aborted connection.
 
 #if USE_SSL
-      lftp_ssl *control_ssl;
+      Ref<lftp_ssl> control_ssl;
       char prot;  // current data protection scheme 'C'lear or 'P'rivate
       bool auth_sent;
       bool auth_supported;
@@ -136,7 +136,7 @@ class Ftp : public NetAccess
       Connection(const char *c);
       ~Connection();
 
-      bool data_address_ok(sockaddr_u *d,bool verify_address,bool verify_port);
+      bool data_address_ok(const sockaddr_u *d,bool verify_address,bool verify_port);
       void SavePeerAddress();
 
       void MakeBuffers();
@@ -157,7 +157,7 @@ class Ftp : public NetAccess
       int FlushSendQueueOneCmd(); // sends single command from send_cmd_buffer
    };
 
-   Connection *conn;
+   Ref<Connection> conn;
 
    struct Expect
    {
@@ -327,10 +327,10 @@ private:
    void	 HttpProxySendConnect();
    void	 HttpProxySendConnectData();
    // Send http proxy auth.
-   void	 HttpProxySendAuth(IOBuffer *);
+   void	 HttpProxySendAuth(const SMTaskRef<IOBuffer>&);
    // Check if proxy returned a reply, returns true if reply is ok.
    // May disconnect.
-   bool	 HttpProxyReplyCheck(IOBuffer *buf);
+   bool	 HttpProxyReplyCheck(const SMTaskRef<IOBuffer>&);
 
    bool	 AbsolutePath(const char *p);
 
@@ -389,7 +389,7 @@ private:
 
    bool use_telnet_iac;
 
-   const char *encode_eprt(sockaddr_u *);
+   const char *encode_eprt(const sockaddr_u *);
 
    typedef FileInfo *(*FtpLineParser)(char *line,int *err,const char *tz);
    static FtpLineParser line_parsers[];
