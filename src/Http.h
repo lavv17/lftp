@@ -125,6 +125,8 @@ class Http : public NetAccess
 
    const char *user_agent;
 
+   int _Read(void *,int);  // does not update pos, rate_limit, retries, does not check state.
+
 protected:
    bool hftp;  // ftp over http proxy.
    bool https; // secure http

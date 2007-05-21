@@ -1630,140 +1630,148 @@ int Http::Read(void *buf,int size)
       return 0;
    if(state==DONE)
       return 0;	  // eof
+   int res=DO_AGAIN;
    if(state==RECEIVING_BODY && real_pos>=0)
    {
-      const char *buf1;
-      int size1;
-   get_again:
-      if(recv_buf->Size()==0 && recv_buf->Error())
+      int res=_Read(buf,size);
+      if(res>0)
       {
-	 DebugPrint("**** ",recv_buf->ErrorText(),0);
-	 if(recv_buf->ErrorFatal())
-	    SetError(FATAL,recv_buf->ErrorText());
+	 pos+=size;
+	 if(rate_limit)
+	    rate_limit->BytesGot(size);
+	 TrySuccess();
+      }
+   }
+   return res;
+}
+int Http::_Read(void *buf,int size)
+{
+   const char *buf1;
+   int size1;
+get_again:
+   if(recv_buf->Size()==0 && recv_buf->Error())
+   {
+      DebugPrint("**** ",recv_buf->ErrorText(),0);
+      if(recv_buf->ErrorFatal())
+	 SetError(FATAL,recv_buf->ErrorText());
+      Disconnect();
+      return DO_AGAIN;
+   }
+   recv_buf->Get(&buf1,&size1);
+   if(buf1==0) // eof
+   {
+      DebugPrint("---- ",_("Hit EOF"));
+      if(bytes_received<body_size || chunked)
+      {
+	 DebugPrint("**** ",_("Received not enough data, retrying"),0);
 	 Disconnect();
 	 return DO_AGAIN;
       }
-      recv_buf->Get(&buf1,&size1);
-      if(buf1==0) // eof
+      return 0;
+   }
+   if(!chunked)
+   {
+      if(body_size>=0 && bytes_received>=body_size)
       {
-	 DebugPrint("---- ",_("Hit EOF"));
-	 if(bytes_received<body_size || chunked)
-	 {
-	    DebugPrint("**** ",_("Received not enough data, retrying"),0);
-	    Disconnect();
-	    return DO_AGAIN;
-	 }
+	 DebugPrint("---- ",_("Received all"));
+	 return 0; // all received
+      }
+      if(entity_size>=0 && pos>=entity_size)
+      {
+	 DebugPrint("---- ",_("Received all (total)"));
 	 return 0;
       }
-      if(!chunked)
-      {
-	 if(body_size>=0 && bytes_received>=body_size)
-	 {
-	    DebugPrint("---- ",_("Received all"));
-	    return 0; // all received
-	 }
-	 if(entity_size>=0 && pos>=entity_size)
-	 {
-	    DebugPrint("---- ",_("Received all (total)"));
-	    return 0;
-	 }
-      }
-      if(size1==0)
+   }
+   if(size1==0)
+      return DO_AGAIN;
+   if(chunked)
+   {
+      if(chunked_trailer && state==RECEIVING_HEADER)
 	 return DO_AGAIN;
-      if(chunked)
+      const char *nl;
+      if(chunk_size==-1) // expecting first/next chunk
       {
-	 if(chunked_trailer && state==RECEIVING_HEADER)
-	    return DO_AGAIN;
-	 const char *nl;
-	 if(chunk_size==-1) // expecting first/next chunk
+	 nl=(const char*)memchr(buf1,'\n',size1);
+	 if(nl==0)  // not yet
 	 {
-	    nl=(const char*)memchr(buf1,'\n',size1);
-	    if(nl==0)  // not yet
-	    {
-	    not_yet:
-	       if(recv_buf->Eof())
-		  Disconnect();	 // connection closed too early
-	       return DO_AGAIN;
-	    }
-	    if(!is_ascii_xdigit(*buf1)
-	    || sscanf(buf1,"%lx",&chunk_size)!=1)
-	    {
-	       Fatal(_("chunked format violated"));
-	       return FATAL;
-	    }
-	    recv_buf->Skip(nl-buf1+1);
-	    chunk_pos=0;
-	    goto get_again;
-	 }
-	 if(chunk_size==0) // eof
-	 {
-	    DebugPrint("---- ",_("Received last chunk"));
-	    // headers may follow
-	    chunked_trailer=true;
-	    state=RECEIVING_HEADER;
-	    body_size=bytes_received;
+	 not_yet:
+	    if(recv_buf->Eof())
+	       Disconnect();	 // connection closed too early
 	    return DO_AGAIN;
 	 }
-	 if(chunk_pos==chunk_size)
+	 if(!is_ascii_xdigit(*buf1)
+	 || sscanf(buf1,"%lx",&chunk_size)!=1)
 	 {
-	    if(size1<2)
-	       goto not_yet;
-	    if(buf1[0]!='\r' || buf1[1]!='\n')
-	    {
-	       Fatal(_("chunked format violated"));
-	       return FATAL;
-	    }
-	    recv_buf->Skip(2);
-	    chunk_size=-1;
-	    goto get_again;
+	    Fatal(_("chunked format violated"));
+	    return FATAL;
 	 }
-	 // ok, now we may get portion of data
-	 if(size1>chunk_size-chunk_pos)
-	    size1=chunk_size-chunk_pos;
-      }
-      else
-      {
-	 // limit by body_size.
-	 if(body_size>=0 && size1+bytes_received>=body_size)
-	    size1=body_size-bytes_received;
-      }
-
-      int bytes_allowed=0x10000000;
-      if(rate_limit)
-	 bytes_allowed=rate_limit->BytesAllowedToGet();
-      if(size1>bytes_allowed)
-	 size1=bytes_allowed;
-      if(size1==0)
-	 return DO_AGAIN;
-      if(norest_manual && real_pos==0 && pos>0)
-	 return DO_AGAIN;
-      if(real_pos<pos)
-      {
-	 off_t to_skip=pos-real_pos;
-	 if(to_skip>size1)
-	    to_skip=size1;
-	 recv_buf->Skip(to_skip);
-	 real_pos+=to_skip;
-	 bytes_received+=to_skip;
-	 if(chunked)
-	    chunk_pos+=to_skip;
+	 recv_buf->Skip(nl-buf1+1);
+	 chunk_pos=0;
 	 goto get_again;
       }
-      if(size>size1)
-	 size=size1;
-      memcpy(buf,buf1,size);
-      recv_buf->Skip(size);
-      pos+=size;
-      real_pos+=size;
-      bytes_received+=size;
-      if(chunked)
-	 chunk_pos+=size;
-      if(rate_limit)
-	 rate_limit->BytesGot(size);
-      TrySuccess();
-      return size;
+      if(chunk_size==0) // eof
+      {
+	 DebugPrint("---- ",_("Received last chunk"));
+	 // headers may follow
+	 chunked_trailer=true;
+	 state=RECEIVING_HEADER;
+	 body_size=bytes_received;
+	 return DO_AGAIN;
+      }
+      if(chunk_pos==chunk_size)
+      {
+	 if(size1<2)
+	    goto not_yet;
+	 if(buf1[0]!='\r' || buf1[1]!='\n')
+	 {
+	    Fatal(_("chunked format violated"));
+	    return FATAL;
+	 }
+	 recv_buf->Skip(2);
+	 chunk_size=-1;
+	 goto get_again;
+      }
+      // ok, now we may get portion of data
+      if(size1>chunk_size-chunk_pos)
+	 size1=chunk_size-chunk_pos;
    }
-   return DO_AGAIN;
+   else
+   {
+      // limit by body_size.
+      if(body_size>=0 && size1+bytes_received>=body_size)
+	 size1=body_size-bytes_received;
+   }
+
+   int bytes_allowed=0x10000000;
+   if(rate_limit)
+      bytes_allowed=rate_limit->BytesAllowedToGet();
+   if(size1>bytes_allowed)
+      size1=bytes_allowed;
+   if(size1==0)
+      return DO_AGAIN;
+   if(norest_manual && real_pos==0 && pos>0)
+      return DO_AGAIN;
+   if(real_pos<pos)
+   {
+      off_t to_skip=pos-real_pos;
+      if(to_skip>size1)
+	 to_skip=size1;
+      recv_buf->Skip(to_skip);
+      real_pos+=to_skip;
+      bytes_received+=to_skip;
+      if(chunked)
+	 chunk_pos+=to_skip;
+      goto get_again;
+   }
+   if(size>size1)
+      size=size1;
+   memcpy(buf,buf1,size);
+   recv_buf->Skip(size);
+   if(chunked)
+      chunk_pos+=size;
+   real_pos+=size;
+   bytes_received+=size;
+   return size;
 }
 
 int Http::Done()
@@ -2241,12 +2249,14 @@ void Http::CleanupThis()
 
 void Http::LogErrorText()
 {
+   if(!recv_buf)
+      return;
    recv_buf->Roll();
    size_t size=recv_buf->Size();
+   if(size==0)
+      return;
    char *buf=string_alloca(size+1);
-   off_t old_pos=pos;
-   size=Read(buf,size);
-   pos=old_pos;	  // do not disturb FileCopy
+   size=_Read(buf,size);
    if(size<0)
       return;
    buf[size]=0;
