@@ -233,7 +233,7 @@ class Ftp : public NetAccess
       void Close();
    };
 
-   ExpectQueue *expect;
+   Ref<ExpectQueue> expect;
 
    void  CheckResp(int resp);
    int	 ReplyLogPriority(int code);

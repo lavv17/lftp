@@ -3432,12 +3432,9 @@ int   Ftp::StoreStatus()
 
 void  Ftp::MoveConnectionHere(Ftp *o)
 {
-   assert(!expect);
-   expect=o->expect;
-   o->expect=0;
+   expect=o->expect.borrow();
    expect->Close(); // we need not handle other session's replies.
 
-   assert(!conn);
    conn=o->conn.borrow();
    o->state=INITIAL_STATE;
 
