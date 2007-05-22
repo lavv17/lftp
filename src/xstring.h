@@ -123,6 +123,7 @@ public:
    xstring_c() { buf=0; }
    xstring_c(const char *s) { buf=xstrdup(s); }
    const char *set(const char *s) { return xstrset(buf,s); }
+   const char *nset(const char *s,int n) { return xstrset(buf,s,n); }
    const char *set_allocated(char *s) { xfree(buf); return buf=s; }
    void truncate(size_t n) { if(buf) buf[n]=0; }
    char *borrow() { return replace_value(buf,(char*)0); }
@@ -178,7 +179,7 @@ public:
    void truncate_at(char c);
    /* set_length can be used to extend the string, e.g. after modification
       with get_space+get_non_const. */
-   void set_length(size_t n) { buf[len=n]=0; }
+   void set_length(size_t n) { if(buf) buf[len=n]=0; }
    char *borrow() { size=len=0; return replace_value(buf,(char*)0); }
    bool eq(const xstring&o) { return len==o.len && (buf==o.buf || (len>0 && !memcmp(buf,o.buf,len))); }
    bool ne(const xstring&o) { return !eq(o); }

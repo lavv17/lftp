@@ -99,6 +99,34 @@ char *xstrdup(const char *s,int spare)
    return mem;
 }
 
+char *xstrset(char *&mem,const char *s,size_t len)
+{
+   if(!s)
+   {
+      xfree(mem);
+      return mem=0;
+   }
+#ifdef MEM_DEBUG
+   printf("xstrset \"%s\"\n",s);
+#endif
+   if(s==mem)
+   {
+      mem[len]=0;
+      return mem;
+   }
+   size_t old_len=(mem?strlen(mem)+1:0);
+   if(mem && s>mem && s<mem+old_len)
+   {
+      memmove(mem,s,len);
+      mem[len]=0;
+      return mem;
+   }
+   if(old_len<len+1)
+      mem=(char*)xrealloc(mem,len+1);
+   memcpy(mem,s,len);
+   mem[len]=0;
+   return mem;
+}
 char *xstrset(char *&mem,const char *s)
 {
    if(!s)
@@ -120,7 +148,6 @@ char *xstrset(char *&mem,const char *s)
    memcpy(mem,s,len);
    return mem;
 }
-
 void xmalloc_register_block(void *b)
 {
    if(!b)
