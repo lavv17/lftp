@@ -268,13 +268,13 @@ const char *FileAccess::GetFileURL(const char *f,int flags) const
 
    ParsedURL u("");
 
-   u.proto=(char*)proto;
+   u.proto.set(proto);
    if(!(flags&NO_USER))
-      u.user=(char*)user.get();
+      u.user.set(user);
    if((pass_open || (flags&WITH_PASSWORD)) && !(flags&NO_PASSWORD))
-      u.pass=(char*)pass.get();
-   u.host=(char*)hostname.get();
-   u.port=(char*)portname.get();
+      u.pass.set(pass);
+   u.host.set(hostname);
+   u.port.set(portname);
    if(!(flags&NO_PATH))
    {
       if(cwd.url)
@@ -293,7 +293,7 @@ const char *FileAccess::GetFileURL(const char *f,int flags) const
 
       if(!f || (f[0]!='/' && f[0]!='~'))
 	 f=dir_file(cwd.path?cwd.path.get():"~",f);
-      u.path=(char*)f;
+      u.path.set(f);
    }
    return url.set_allocated(u.Combine(home));
 }

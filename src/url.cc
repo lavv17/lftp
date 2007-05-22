@@ -28,10 +28,16 @@
 #include "ConnectionSlot.h"
 #include "bookmark.h"
 #include "misc.h"
+#include "log.h"
 
 /*
    URL -> [PROTO://]CONNECT[[:]/PATH]
    CONNECT -> [USER[:PASS]@]HOST[:PORT]
+
+   exceptions:
+      file:/PATH
+      bm:BOOKMARK[/PATH]
+      slot:SLOT[/PATH]
 */
 
 static bool valid_slot(const char *s);
@@ -39,44 +45,33 @@ static bool valid_bm(const char *s);
 
 ParsedURL::ParsedURL(const char *url,bool proto_required,bool use_rfc1738)
 {
-   memory=(char*)xmalloc(strlen(url)*2+20+1);
-   strcpy(memory,url);
-   orig_url=xstrdup(url);
+   parse(url,proto_required,use_rfc1738);
+}
 
-   proto=0;
-   host=0;
-   user=0;
-   pass=0;
-   port=0;
-   path=0;
-
-   char *base=memory;
-   char *scan=base;
+void ParsedURL::parse(const char *url,bool proto_required,bool use_rfc1738)
+{
+   orig_url.set(url);
+   xstring_c connect;
+   const char *base=url;
+   const char *scan=base;
    while(is_ascii_alpha(*scan))
       scan++;
    if(scan[0]==':' && scan[1]=='/' && scan[2]=='/')
    {
       // found protocol
-      *scan=0;
-      scan+=3;
-      proto=base;
-
-      base=scan;
-
+      proto.nset(base,scan-base);
+      base=scan+=3;
       if(!strcmp(proto,"file") && scan[0]=='/')
 	 goto file_with_no_host;
    }
    else if(scan[0]==':' && !strncmp(base,"file:",5))
    {
       // special form for file protocol
-      *scan=0;
+      proto.nset(base,scan-base);
       scan++;
-      proto=base;
    file_with_no_host:
-      memmove(scan+10,scan,strlen(scan)+1);
-      host=scan;
-      strcpy(host,"localhost");
-      path=scan+10;
+      path.set(scan);
+      host.set("localhost");
       goto decode;
    }
    else if(scan[0]==':'
@@ -84,22 +79,23 @@ ParsedURL::ParsedURL(const char *url,bool proto_required,bool use_rfc1738)
        || (!strncmp(base,"bm:",3) && valid_bm(scan+1))))
    {
       // special form for selecting a connection slot or a bookmark
-      *scan++=0;
-      proto=base;
-      host=scan;
+      proto.nset(base,scan-base);
+      scan++;
+      base=scan;
       scan=strchr(scan,'/');
       if(scan)
       {
-	 memmove(scan+1,scan,strlen(scan)+1);
-	 *scan++=0;
-	 path=scan;
+	 host.nset(base,scan-base);
+	 path.set(scan);
       }
+      else
+	 host.set(base);
       goto decode;
    }
    else if(proto_required)
    {
       // all the rest is path, if protocol is required.
-      path=base;
+      path.set(base);
       goto decode;
    }
 
@@ -107,76 +103,60 @@ ParsedURL::ParsedURL(const char *url,bool proto_required,bool use_rfc1738)
    while(*scan && *scan!='/')
       scan++; // skip host name, port and user:pass
 
+   connect.nset(base,scan-base-(scan>base && scan[-1]==':'));
+
    if(*scan=='/') // directory
    {
-      if(scan-1>=base && scan[-1]==':')
-	 scan[-1]=0;
-      if(scan[1]!='~')
+      if(scan[1]=='~')
+	 path.set(scan+1);
+      else
       {
-	 memmove(scan+1,scan,strlen(scan)+1);
 	 if((!xstrcmp(proto,"ftp") || !xstrcmp(proto,"hftp"))
 	 && use_rfc1738)
 	 {
 	    // special handling for ftp protocol.
-	    if(!strncasecmp(scan+2,"%2F",3))
-	    {
-	       char *p=scan+5+(scan[5]=='/');
-	       memmove(scan+2,p,strlen(p)+1);
-	    }
-	    else
-	    {
-	       if(!(is_ascii_alpha(scan[2]) && scan[3]==':' && scan[4]=='/'))
-	       {
-		  memmove(scan+3,scan+2,strlen(scan+2)+1);
-		  scan[1]='~';
-		  scan[2]='/';
-	       }
-	    }
+	    if(!strncasecmp(scan+1,"%2F",3))
+	       path.set(scan+1);
+	    else if(!(is_ascii_alpha(scan[1]) && scan[2]==':' && scan[3]=='/'))
+	       path.vset("~",scan,NULL);
 	 }
+	 else
+	    path.set(scan);
       }
-      *scan++=0;
-      path=scan;
    }
    else if(proto)
    {
       if(!strcmp(proto,"http") || !strcmp(proto,"https"))
-      {
-	 scan++;
-	 scan[0]='/';
-	 scan[1]=0;
-	 path=scan;
-      }
+	 path.set("/");
    }
 
    // try to extract user name/password
+   base=connect;
    scan=strrchr(base,'@');
    if(scan)
    {
-      *scan++=0;
-      user=base;
-      base=scan;
-
+      user.nset(base,scan-base);
+      base=scan+1;
       scan=user;
       while(*scan && *scan!=':')
 	 scan++;
       if(*scan==':')
       {
-	 *scan++=0;
-	 pass=scan;
+	 pass.set(scan+1);
+	 user.truncate(scan-user);
       }
    }
 
-   // extract host name/password
+   // extract host name
    scan=base;
-   host=base;
    if(*scan=='[') // RFC2732 [ipv6]
    {
       while(*scan && *scan!=']')
 	 scan++;
       if(*scan==']')
       {
-	 *scan++=0;
-	 host++;
+	 scan++;
+	 host.nset(base+1,scan-base-2);
       }
       else
 	 scan=base;
@@ -186,26 +166,27 @@ ParsedURL::ParsedURL(const char *url,bool proto_required,bool use_rfc1738)
    {
       while(*scan && *scan!=':')
 	 scan++;
+      host.nset(base,scan-base);
    }
 
    if(*scan==':') // port found
    {
       if(strchr(scan+1,':')==0)
       {
-	 *scan++=0;
-	 port=scan;
+	 port.set(scan+1);
       }
       else
       {
 	 /* more than one colon - maybe it is ipv6 digital address */
+	 host.set(base);
       }
    }
 
 decode:
-   url::decode_string(user);
-   url::decode_string(pass);
-   url::decode_string(host);
-   url::decode_string(path);
+   url::decode_string(user.get_non_const());
+   url::decode_string(pass.get_non_const());
+   url::decode_string(host.get_non_const());
+   path.set_length(url::decode_string(path.get_non_const()));
 
    FileAccess *fa=0;
    if(!xstrcmp(proto,"slot"))
@@ -213,55 +194,18 @@ decode:
       fa=ConnectionSlot::FindSession(host);
       if(!fa)
 	 return;
-      xfree(orig_url);
-      orig_url=0;
+      orig_url.set(0);
       char *orig_path=alloca_strdup(path);
-      xfree(memory);
-      memory=(char*)xmalloc(
-		     xstrlen(fa->GetProto())+1
-		    +xstrlen(fa->GetUser())+1
-		    +xstrlen(fa->GetPassword())+1
-		    +xstrlen(fa->GetHostName())+1
-		    +xstrlen(fa->GetPort())+1
-		    +xstrlen(fa->GetCwd())+2
-		    +xstrlen(orig_path)+1);
-      proto=user=pass=host=port=path=0;
-      char *next=memory;
-      proto=next;
-      strcpy(proto,fa->GetProto());
-      next=proto+strlen(proto)+1;
-      if(fa->GetUser())
-      {
-	 user=next;
-	 strcpy(user,fa->GetUser());
-	 next=user+strlen(user)+1;
-      }
-      if(fa->GetPassword())
-      {
-	 pass=next;
-	 strcpy(pass,fa->GetPassword());
-	 next=pass+strlen(pass)+1;
-      }
-      if(fa->GetHostName())
-      {
-	 host=next;
-	 strcpy(host,fa->GetHostName());
-	 next=host+strlen(host)+1;
-      }
-      if(fa->GetPort())
-      {
-	 port=next;
-	 strcpy(port,fa->GetPort());
-	 next=port+strlen(port)+1;
-      }
-      if(fa->GetCwd())
-      {
-	 path=next;
-	 orig_path+=(orig_path!=0 && orig_path[0]=='/');
-	 strcpy(path,dir_file(fa->GetCwd(),orig_path));
-	 if(!orig_path || orig_path[0]==0)
-	    strcat(path,"/");
-      }
+      proto.set(fa->GetProto());
+      user.set(fa->GetUser());
+      pass.set(fa->GetPassword());
+      host.set(fa->GetHostName());
+      port.set(fa->GetPort());
+      path.set(fa->GetCwd());
+      orig_path+=(orig_path!=0 && orig_path[0]=='/');
+      path.set(dir_file(fa->GetCwd(),path));
+      if(!orig_path || orig_path[0]==0)
+	 path.append('/');
    }
    else if(!xstrcmp(proto,"bm"))
    {
@@ -287,13 +231,7 @@ decode:
       }
       else
 	 new_url=url_file(bm,path+(path && path[0]=='/'));
-      ParsedURL bu(new_url);
-      // move the data
-      xfree(memory);
-      xfree(orig_url);
-      memcpy(this,&bu,sizeof(bu));
-      bu.memory=0; // so that dtor won't free it
-      bu.orig_url=0;
+      parse(new_url,proto_required,use_rfc1738);
    }
 }
 
@@ -350,77 +288,60 @@ int url::path_index(const char *base)
 
 char *ParsedURL::Combine(const char *home,bool use_rfc1738)
 {
-   int len=1;
-   if(proto)
-      len+=strlen(proto)+strlen("://");
-   if(user)
-   {
-      len+=strlen(user)*3+1;
-      if(pass)
-	 len+=strlen(pass)*3+1;
-   }
-   if(host)
-      len+=strlen(host)*3;
-   if(port)
-      len+=1+strlen(port)*3;
-   if(path)
-      len+=1+strlen(path)*3;
-
-   char *url=(char*)xmalloc(len);
+   xstring u("");
 
    bool is_file=!xstrcmp(proto,"file");
    bool is_ftp=(!xstrcmp(proto,"ftp") || !xstrcmp(proto,"hftp"));
 
-   url[0]=0;
    if(proto)
    {
-      strcpy(url,proto);
-      strcat(url,is_file?":":"://");
+      u.append(proto);
+      u.append(is_file?":":"://");
    }
    if(user && !is_file)
    {
-      url::encode_string(user,url+strlen(url),URL_USER_UNSAFE);
+      u.append(url::encode(user,URL_USER_UNSAFE));
       if(pass)
       {
-	 strcat(url,":");
-	 url::encode_string(pass,url+strlen(url),URL_PASS_UNSAFE);
+	 u.append(':');
+	 u.append(url::encode(pass,URL_PASS_UNSAFE));
       }
-      strcat(url,"@");
+      u.append('@');
    }
    if(host && !is_file)
-      url::encode_string(host,url+strlen(url),URL_HOST_UNSAFE);
+      u.append(url::encode(host,URL_HOST_UNSAFE));
    if(port && !is_file)
    {
-      strcat(url,":");
-      url::encode_string(port,url+strlen(url),URL_PORT_UNSAFE);
+      u.append(':');
+      u.append(url::encode(port,URL_PORT_UNSAFE));
    }
-   if(path==0)
-      return url;
-   if(strcmp(path,"~"))
+   if(path && strcmp(path,"~"))
    {
       if(path[0]!='/' && !is_file) // e.g. ~/path
-	 strcat(url,"/");
+	 u.append('/');
       int p_offset=0;
       if(is_ftp && use_rfc1738)
       {
 	 // some cruft for ftp urls...
 	 if(path[0]=='/' && xstrcmp(home,"/"))
 	 {
-	    strcat(url,"/%2F");
+	    u.append("/%2F");
 	    p_offset=1;
 	 }
 	 else if(path[0]=='~' && path[1]=='/')
 	    p_offset=2;
       }
-      url::encode_string(path+p_offset,url+strlen(url),URL_PATH_UNSAFE);
+      u.append(url::encode(path+p_offset,URL_PATH_UNSAFE));
    }
-   return url;
+   return u.borrow();
 }
 
-void url::decode_string(char *p)
+int url::decode_string(char *str)
 {
+   char *p=str;
    if(!p)
-      return;
+      return 0;
+   char *o=p;
    while(*p)
    {
       if(*p=='%' && p[1] && p[2])
@@ -428,13 +349,15 @@ void url::decode_string(char *p)
 	 int n;
 	 if(sscanf(p+1,"%2x",&n)==1)
 	 {
-	    *p++=n;
-	    memmove(p,p+2,strlen(p+2)+1);
+	    *o++=n;
+	    p+=3;
 	    continue;
 	 }
       }
-      p++;
+      *o++=*p++;
    }
+   *o=0;
+   return p-str;
 }
 
 /* encode_string was taken from wget-1.5.2 and slightly modified */
@@ -472,6 +395,27 @@ char *url::encode_string (const char *s,char *res,const char *unsafe)
   }
   *p = '\0';
   return res;
+}
+const char *url::encode(const char *s,const char *unsafe)
+{
+   if(!s || !*s)
+      return s;
+   static xstring u;
+   u.truncate(0);
+   char c;
+   while((c=*s++))
+   {
+      if (need_quote(c))
+      {
+	 u.append('%');
+	 static const char h[]="0123456789ABCDEF";
+	 u.append(h[(c>>4)&15]);
+	 u.append(h[(c&15)]);
+      }
+      else
+	 u.append(c);
+   }
+   return u;
 }
 
 bool url::dir_needs_trailing_slash(const char *proto)

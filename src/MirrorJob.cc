@@ -1598,7 +1598,7 @@ CMD(mirror)
 	 source_session=FileAccess::New(&source_url);
 	 if(!source_session)
 	 {
-	    eprintf("%s: %s%s\n",args->a0(),source_url.proto,
+	    eprintf("%s: %s%s\n",args->a0(),source_url.proto.get(),
 		     _(" - not supported protocol"));
 	    goto no_job;
 	 }
@@ -1614,7 +1614,7 @@ CMD(mirror)
 	    target_session=FileAccess::New(&target_url);
 	    if(!target_session)
 	    {
-	       eprintf("%s: %s%s\n",args->a0(),target_url.proto,
+	       eprintf("%s: %s%s\n",args->a0(),target_url.proto.get(),
 			_(" - not supported protocol"));
 	       goto no_job;
 	    }

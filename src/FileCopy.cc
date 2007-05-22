@@ -993,7 +993,7 @@ int FileCopyPeerFA::Get_LL(int len)
 	       my_session=FileAccess::New(&u);
 	       session=my_session;
 
-	       file.set(u.path?u.path:"");
+	       file.set(u.path?u.path.get():"");
 	       orig_url.set(loc);
 	    }
 	    else // !proto

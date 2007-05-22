@@ -98,9 +98,9 @@ const char *url_file(const char *url,const char *file)
       return buf;
    }
    if(file && file[0]=='~')
-      u.path=(char*)file;
+      u.path.set(file);
    else
-      u.path=(char*)dir_file(u.path,file);
+      u.path.set(dir_file(u.path,file));
    buf.set_allocated(u.Combine());
    return buf;
 }

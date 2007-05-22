@@ -760,9 +760,9 @@ Job *CmdExec::builtin_open()
    ReuseSavedSession();
 
    bool	 debug=false;
-   char	 *port=NULL;
+   const char *port=NULL;
    const char *host=NULL;
-   char  *path=NULL;
+   const char *path=NULL;
    const char *user=NULL;
    const char *pass=NULL;
    int	 c;
@@ -844,7 +844,7 @@ Job *CmdExec::builtin_open()
    if(optind<args->count())
       host=args->getarg(optind++);
 
-   ParsedURL *url=0;
+   Ref<ParsedURL> url;
 
    const char *bm=0;
 
@@ -895,20 +895,18 @@ Job *CmdExec::builtin_open()
 	       p="ftp";
 	    char *u=string_alloca(strlen(p)+3+strlen(host)+1);
 	    sprintf(u,"%s://%s",p,host);
-	    delete url;
 	    url=new ParsedURL(u);
 	 }
 	 if(user || port)
 	 {
 	    if(user)
 	    {
-	       url->user=(char*)user;
-	       url->pass=(char*)pass;
+	       url->user.set(user);
+	       url->pass.set(pass);
 	    }
 	    if(port)
-	       url->port=port;
+	       url->port.set(port);
 	    xstring_ca host1(url->Combine());
-	    delete url;
 	    url=new ParsedURL(host1);
 	 }
 
@@ -925,7 +923,7 @@ Job *CmdExec::builtin_open()
 	       insecure=true;
 	    }
 	    host=uc.host;
-	    if(uc.port!=0 && port==0)
+	    if(uc.port && !port)
 	       port=uc.port;
 	    if(uc.path && !path)
 	       path=uc.path;
@@ -933,7 +931,7 @@ Job *CmdExec::builtin_open()
 	    FileAccess *new_session=FileAccess::New(uc.proto,host,port);
 	    if(!new_session)
 	    {
-	       eprintf("%s: %s%s\n",args->a0(),uc.proto,
+	       eprintf("%s: %s%s\n",args->a0(),uc.proto.get(),
 			_(" - not supported protocol"));
 	       return 0;
 	    }
@@ -1013,7 +1011,7 @@ Job *CmdExec::builtin_open()
 	 session->SetCwd(FileAccess::Path(old,is_file,url));
       }
 
-      const char *cd_arg=(url && url->orig_url)?url->orig_url:path;
+      const char *cd_arg=(url && url->orig_url)?url->orig_url.get():path;
       char *s=string_alloca(strlen(cd_arg)*2+40);
       strcpy(s,"&& cd \"");
       unquote(s+strlen(s),cd_arg);
@@ -1026,12 +1024,6 @@ Job *CmdExec::builtin_open()
 
    if(debug)
       PrependCmd("debug\n");
-
-   if(url)
-   {
-      delete url;
-      url=0;
-   }
 
    if(slot)
       ConnectionSlot::Set(slot,session);
@@ -2112,7 +2104,7 @@ CMD(user)
       }
       else
       {
-	 eprintf("%s: %s%s\n",args->a0(),u.proto,
+	 eprintf("%s: %s%s\n",args->a0(),u.proto.get(),
 		  _(" - not supported protocol"));
 	 return 0;
       }

@@ -111,7 +111,7 @@ static void chardata_handle(void *data, const char *chardata, int len)
    if(!strcmp(tag, "DAV:href") && !xstrcmp(ctx->top(1), "DAV:response"))
    {
       ParsedURL u(s,true);
-      s=u.path;
+      s=alloca_strdup(u.path);
       int s_len=strlen(s);
       if(s_len>0 && s[s_len-1]=='/')
       {

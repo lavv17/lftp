@@ -25,23 +25,18 @@
 
 class ParsedURL
 {
-   char	 *memory;
 public:
-   char	 *proto;
-   char	 *user;
-   char	 *pass;
-   char	 *host;
-   char	 *port;
-   char	 *path;
+   xstring_c proto;
+   xstring_c user;
+   xstring_c pass;
+   xstring_c host;
+   xstring_c port;
+   xstring path;
 
-   char  *orig_url;
+   xstring_c orig_url;
 
    ParsedURL(const char *url,bool proto_required=false,bool use_rfc1738=true);
-   ~ParsedURL()
-   {
-      xfree(memory);
-      xfree(orig_url);
-   }
+   void parse(const char *url,bool proto_required=false,bool use_rfc1738=true);
 
    // returns allocated memory
    char *Combine(const char *home=0,bool use_rfc1738=true);
@@ -72,8 +67,9 @@ public:
 
    // encode unsafe chars as %XY
    static char *encode_string(const char *,char *buf=0,const char *u=URL_UNSAFE);
-   // reverse; done in-place.
-   static void decode_string(char *);
+   static const char *encode(const char *s,const char *unsafe);
+   // reverse; done in-place; returns length.
+   static int decode_string(char *);
 
    static bool is_url(const char *p)
       {
