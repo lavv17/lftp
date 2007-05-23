@@ -1,3 +1,7 @@
+2007-05-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* convert-netscape-cookies: use strict; better error message.
+
 2007-05-22  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h: use Ref for expect.
