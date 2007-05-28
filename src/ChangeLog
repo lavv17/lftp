@@ -1,3 +1,7 @@
+2007-05-28  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* url.cc: encode non-ascii chars.
+
 2007-04-06  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CmdExec.cc: don't add extra \001 for readline prompt.

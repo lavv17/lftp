@@ -441,7 +441,7 @@ void url::decode_string(char *p)
 
 /* Encodes the unsafe characters (listed in URL_UNSAFE) in a given
    string, returning a malloc-ed %XX encoded string.  */
-#define need_quote(c) (!unsafe || iscntrl((unsigned char)(c)) || strchr(unsafe,(c)))
+#define need_quote(c) (!unsafe || iscntrl((unsigned char)(c)) || !isascii((unsigned char)(c)) || strchr(unsafe,(c)))
 char *url::encode_string (const char *s,char *res,const char *unsafe)
 {
   char *p;
