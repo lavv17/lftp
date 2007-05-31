@@ -7,6 +7,8 @@
 	* OutputJob.cc: use xstring_c::vset.
 	* url.cc: encode non-ascii chars; use setf.
 	* xmalloc.cc: better debug print.
+	* Http.cc: fixed Read (broken when _Read was split off);
+	  fixed handling of urls without path.
 
 2007-05-24  Alexander V. Lukyanov <lav@yars.free.net>
 

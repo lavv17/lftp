@@ -454,6 +454,8 @@ void Http::SendRequest(const char *connection,const char *f)
    if(mode==CHANGE_DIR && new_cwd && new_cwd->url)
    {
       const char *efile_c=new_cwd->url+url::path_index(new_cwd->url);
+      if(!*efile_c)
+	 efile_c="/";
       efile=alloca_strdup2(efile_c,1);
    }
    else
@@ -1633,12 +1635,12 @@ int Http::Read(void *buf,int size)
    int res=DO_AGAIN;
    if(state==RECEIVING_BODY && real_pos>=0)
    {
-      int res=_Read(buf,size);
+      res=_Read(buf,size);
       if(res>0)
       {
-	 pos+=size;
+	 pos+=res;
 	 if(rate_limit)
-	    rate_limit->BytesGot(size);
+	    rate_limit->BytesGot(res);
 	 TrySuccess();
       }
    }
