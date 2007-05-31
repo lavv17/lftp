@@ -1,3 +1,13 @@
+2007-05-31  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Fish.cc: fixed Disconnect to unset buffers.
+	* FileGlob.h: dir_list should not be Ref.
+	* xstring.cc, xstring.h: (xstring_c::vset, xstring::setf) new methods.
+	* CopyJob.cc, misc.cc, pgetJob.cc, resource.cc: use xstring::setf.
+	* OutputJob.cc: use xstring_c::vset.
+	* url.cc: encode non-ascii chars; use setf.
+	* xmalloc.cc: better debug print.
+
 2007-05-24  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* convert-netscape-cookies: use strict; better error message.
