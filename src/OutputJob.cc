@@ -328,7 +328,7 @@ void OutputJob::PreFilter(const char *newfilter)
    if(!filter)
       filter.set(newfilter);
    else
-      filter.set_allocated(xasprintf("%s | %s", newfilter, filter.get()));
+      filter.vset(newfilter," | ",filter.get(),NULL);
 }
 
 /* Return the width of the output.  If there's a filter, we can either
