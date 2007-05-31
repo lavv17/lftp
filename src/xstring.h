@@ -125,6 +125,7 @@ public:
    const char *set(const char *s) { return xstrset(buf,s); }
    const char *nset(const char *s,int n) { return xstrset(buf,s,n); }
    const char *set_allocated(char *s) { xfree(buf); return buf=s; }
+   const char *vset(...) __attribute__((sentinel));
    void truncate(size_t n) { if(buf) buf[n]=0; }
    char *borrow() { return replace_value(buf,(char*)0); }
    bool eq(const char *s) { return !xstrcmp(buf,s); }
@@ -174,6 +175,8 @@ public:
    const char *vappend(va_list);
    const char *vappend(...) __attribute__((sentinel));
    const char *vset(...) __attribute__((sentinel));
+   const char *vsetf(const char *fmt, va_list ap);
+   const char *setf(const char *fmt,...) PRINTF_LIKE(2,3);
 
    void truncate(size_t n);
    void truncate_at(char c);

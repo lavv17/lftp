@@ -23,6 +23,7 @@
 #include <config.h>
 #include <string.h>
 #include "xstring.h"
+#include "trio.h"
 
 void xstring::get_space(size_t s,size_t g)
 {
@@ -102,7 +103,7 @@ const char *xstring::append(char c)
 static size_t vstrlen(va_list va0)
 {
    va_list va;
-   va_copy(va,va0);
+   VA_COPY(va,va0);
    size_t len=0;
    for(;;)
    {
@@ -114,19 +115,29 @@ static size_t vstrlen(va_list va0)
    va_end(va);
    return len;
 }
-
-const char *xstring::vappend(va_list va)
+static void vstrcpy(char *buf,va_list va0)
 {
-   get_space(len+vstrlen(va));
+   va_list va;
+   VA_COPY(va,va0);
    for(;;)
    {
       const char *s=va_arg(va,const char *);
       if(!s)
 	 break;
       size_t s_len=strlen(s);
-      memcpy(buf+len,s,s_len);
-      len+=s_len;
+      memcpy(buf,s,s_len);
+      buf+=s_len;
    }
+   *buf=0;
+   va_end(va);
+}
+
+const char *xstring::vappend(va_list va)
+{
+   size_t va_len=vstrlen(va);
+   get_space(len+va_len);
+   vstrcpy(buf+len,va);
+   len+=va_len;
    return buf;
 }
 
@@ -188,4 +199,43 @@ bool xstring::chomp(char c)
 void xstring::rtrim(char c)
 {
    while(chomp(c));
+}
+
+const char *xstring::vsetf(const char *format, va_list ap)
+{
+   if(size<32 || size>512)
+      get_space(strlen(format)+32);
+   for(;;)
+   {
+      va_list tmp;
+      VA_COPY(tmp,ap);
+      size_t res=vsnprintf(buf, size, format, tmp);
+      va_end(tmp);
+      if(res>=0 && res<size)
+      {
+	 set_length(res);
+	 return buf;
+      }
+      get_space(res>size ? res+1 : size*2);
+   }
+}
+const char *xstring::setf(const char *format, ...)
+{
+   va_list va;
+   va_start(va, format);
+   vsetf(format, va);
+   va_end(va);
+   return buf;
+}
+
+const char *xstring_c::vset(...)
+{
+   va_list va;
+   va_start(va,this);
+   size_t va_len=vstrlen(va);
+   if(!buf || strlen(buf)<va_len)
+      buf=(char*)xrealloc(buf,va_len+1);
+   vstrcpy(buf,va);
+   va_end(va);
+   return buf;
 }
