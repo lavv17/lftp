@@ -315,6 +315,9 @@ void Fish::Disconnect()
 {
    if(send_buf)
       DebugPrint("---- ",_("Disconnecting"),9);
+   send_buf=0;
+   recv_buf=0;
+   ssh=0;
    EmptyRespQueue();
    EmptyPathQueue();
    state=DISCONNECTED;
