@@ -107,7 +107,7 @@ char *xstrset(char *&mem,const char *s,size_t len)
       return mem=0;
    }
 #ifdef MEM_DEBUG
-   printf("xstrset \"%s\"\n",s);
+   printf("xstrset \"%.*s\"\n",len,s);
 #endif
    if(s==mem)
    {
