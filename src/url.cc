@@ -363,24 +363,12 @@ int url::decode_string(char *str)
 /* encode_string was taken from wget-1.5.2 and slightly modified */
 
 /* Encodes the unsafe characters (listed in URL_UNSAFE) in a given
-   string, returning a malloc-ed %XX encoded string.  */
-#define need_quote(c) (!unsafe || iscntrl((unsigned char)(c)) || strchr(unsafe,(c)))
+   string, producing %XX encoded string.  */
+#define need_quote(c) (iscntrl((unsigned char)(c)) || !isascii((unsigned char)(c)) || strchr(unsafe,(c)))
 char *url::encode_string (const char *s,char *res,const char *unsafe)
 {
   char *p;
 
-#if 0 // this easily leads to memory leaks.
-  int i;
-  if (res==0)
-  {
-     const char *b = s;
-     for (i = 0; *s; s++, i++)
-       if (need_quote(*s))
-	 i += 2; /* Two more characters (hex digits) */
-     res = (char *)xmalloc (i + 1);
-     s = b;
-  }
-#endif
   for (p = res; *s; s++)
   {
     if (need_quote(*s))
@@ -458,12 +446,8 @@ const char *url::hide_password(const char *url)
    int start,len;
    if(!find_password_pos(url,&start,&len))
       return url;
-   static char *buf;
-   static int buf_alloc;
-   int need=strlen(url)+5;
-   if(buf_alloc<need)
-      buf=(char*)xrealloc(buf,buf_alloc=need);
-   sprintf(buf,"%.*sXXXX%s",start,url,url+start+len);
+   static xstring buf;
+   buf.setf("%.*sXXXX%s",start,url,url+start+len);
    return buf;
 }
 const char *url::remove_password(const char *url)
