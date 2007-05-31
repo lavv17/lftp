@@ -90,7 +90,7 @@ private:
 class GenericGlob : public Glob
 {
    const char *curr_dir;
-   Ref<FileSet> dir_list;
+   FileSet *dir_list;
    SMTaskRef<Glob> updir_glob;
    SMTaskRef<ListInfo> li;
 
