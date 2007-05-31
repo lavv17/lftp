@@ -128,7 +128,7 @@ const char *OrderValidate(xstring_c *s)
       }
       if(!*f)
       {
-	 error.set_allocated(xasprintf(_("unknown address family `%s'"),s1));
+	 error.setf(_("unknown address family `%s'"),s1);
 	 return error;
       }
       if(fixed)

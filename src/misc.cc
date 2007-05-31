@@ -720,33 +720,18 @@ char *xstrftime(const char *format, const struct tm *tm)
 
 char *xvasprintf(const char *format, va_list ap)
 {
-   char *ret = NULL;
-   int siz = 128;
-
-   for(;;)
-   {
-      ret = (char *) xrealloc(ret, siz);
-      va_list tmp;
-      VA_COPY(tmp,ap);
-      int res=vsnprintf(ret, siz, format, tmp);
-      va_end(tmp);
-      if(res>=0 && res<siz)
-	 return ret;
-      if(res>siz)
-	 siz=res+1;
-      else
-	 siz*=2;
-   }
+   xstring buf;
+   buf.vsetf(format, ap);
+   return buf.borrow();
 }
-
 char *xasprintf(const char *format, ...)
 {
-   char *ret;
+   xstring buf;
    va_list va;
    va_start(va, format);
-   ret = xvasprintf(format, va);
+   buf.vsetf(format, va);
    va_end(va);
-   return ret;
+   return buf.borrow();
 }
 
 /* /file/name -> /file

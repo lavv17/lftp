@@ -120,7 +120,7 @@ int pgetJob::Do()
       m=MOVED;
 
       if(chunks)
-	 cp->cmdline.set_allocated(xasprintf("\\chunk %lld-%lld",(long long)start0,(long long)(limit0-1)));
+	 cp->cmdline.setf("\\chunk %lld-%lld",(long long)start0,(long long)(limit0-1));
       else
       {
 	 no_parallel=true;
@@ -338,7 +338,7 @@ pgetJob::ChunkXfer *pgetJob::NewChunk(const char *remote,off_t start,off_t limit
    c->FailIfCannotSeek();
 
    ChunkXfer *chunk=new ChunkXfer(c,remote,start,limit);
-   chunk->cmdline.set_allocated(xasprintf("\\chunk %lld-%lld",(long long)start,(long long)(limit-1)));
+   chunk->cmdline.setf("\\chunk %lld-%lld",(long long)start,(long long)(limit-1));
    return chunk;
 }
 

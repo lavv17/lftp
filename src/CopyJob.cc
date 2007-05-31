@@ -87,9 +87,8 @@ const char *CopyJob::Status(const StatusLine *s, bool base)
 
    const char *name=SqueezeName(s->GetWidthDelayed()-50, base);
 
-   static xstring_c buf;
-   buf.set_allocated(xasprintf(COPY_STATUS));
-
+   static xstring buf;
+   buf.setf(COPY_STATUS);
    return buf;
 }
 
