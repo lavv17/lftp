@@ -646,7 +646,7 @@ const char *IOBufferFileAccess::Status()
    return session->CurrentStatus();
 }
 
-unsigned long long Buffer::UnpackUINT64BE(int offset)
+unsigned long long Buffer::UnpackUINT64BE(int offset) const
 {
    if(Size()-offset<8)
       return 0;
@@ -654,35 +654,35 @@ unsigned long long Buffer::UnpackUINT64BE(int offset)
    res=(res<<32)|UnpackUINT32BE(offset+4);
    return res;
 }
-long long Buffer::UnpackINT64BE(int offset)
+long long Buffer::UnpackINT64BE(int offset) const
 {
    unsigned long long n=UnpackUINT64BE(offset);
    if(n&0x8000000000000000ULL)
       return -(long long)(n^0xFFFFFFFFFFFFFFFFULL)-1;
    return (long long)n;
 }
-unsigned Buffer::UnpackUINT32BE(int offset)
+unsigned Buffer::UnpackUINT32BE(int offset) const
 {
    if(Size()-offset<4)
       return 0;
    unsigned char *b=(unsigned char*)buffer.get()+buffer_ptr+offset;
    return (b[0]<<24)|(b[1]<<16)|(b[2]<<8)|b[3];
 }
-int Buffer::UnpackINT32BE(int offset)
+int Buffer::UnpackINT32BE(int offset) const
 {
    unsigned n=UnpackUINT32BE(offset);
    if(n&0x80000000U)
       return -(int)(n^0xFFFFFFFFU)-1;
    return (int)n;
 }
-unsigned Buffer::UnpackUINT16BE(int offset)
+unsigned Buffer::UnpackUINT16BE(int offset) const
 {
    if(Size()-offset<2)
       return 0;
    unsigned char *b=(unsigned char*)buffer.get()+buffer_ptr+offset;
    return (b[0]<<8)|b[1];
 }
-unsigned Buffer::UnpackUINT8(int offset)
+unsigned Buffer::UnpackUINT8(int offset) const
 {
    if(Size()-offset<1)
       return 0;

@@ -95,19 +95,19 @@ public:
    void Prepend(const char *buf,int size);
    void Prepend(const char *buf) { Prepend(buf,strlen(buf)); }
 
-   unsigned long long UnpackUINT64BE(int offset=0);
-   unsigned UnpackUINT32BE(int offset=0);
-   unsigned UnpackUINT16BE(int offset=0);
-   unsigned UnpackUINT8(int offset=0);
+   unsigned long long UnpackUINT64BE(int offset=0) const;
+   unsigned UnpackUINT32BE(int offset=0) const;
+   unsigned UnpackUINT16BE(int offset=0) const;
+   unsigned UnpackUINT8(int offset=0) const;
    void PackUINT64BE(unsigned long long data);
    void PackUINT32BE(unsigned data);
    void PackUINT16BE(unsigned data);
    void PackUINT8(unsigned data);
 
-   long long UnpackINT64BE(int offset=0);
-   int UnpackINT32BE(int offset=0);
-   int UnpackINT16BE(int offset=0);
-   int UnpackINT8(int offset=0);
+   long long UnpackINT64BE(int offset=0) const;
+   int UnpackINT32BE(int offset=0) const;
+   int UnpackINT16BE(int offset=0) const;
+   int UnpackINT8(int offset=0) const;
    void PackINT64BE(long long data);
    void PackINT32BE(int data);
    void PackINT16BE(int data);
