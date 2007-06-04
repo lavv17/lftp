@@ -1,3 +1,9 @@
+2007-06-04  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* buffer.cc, buffer.h: make Unpack* const.
+	* Ref.h: (get_non_const) new method; Cast<T> new template.
+	* SFtp.cc, SFtp.h: use Refs, use const where appropriate.
+
 2007-05-31  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Fish.cc: fixed Disconnect to unset buffers.
