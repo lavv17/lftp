@@ -207,8 +207,7 @@ int SFtp::Do()
       int pipe_in =ssh->getfd_pipe_in();
       int pipe_out=ssh->getfd_pipe_out();
       ssh->Kill(SIGCONT);
-      pty_send_buf=new IOBufferFDStream(ssh,IOBuffer::PUT);
-      ssh=0;
+      pty_send_buf=new IOBufferFDStream(ssh.borrow(),IOBuffer::PUT);
       pty_recv_buf=new IOBufferFDStream(new FDStream(fd,"pseudo-tty"),IOBuffer::GET);
       send_buf=new IOBufferFDStream(new FDStream(pipe_out,"pipe-out"),IOBuffer::PUT);
       recv_buf=new IOBufferFDStream(new FDStream(pipe_in,"pipe-in"),IOBuffer::GET);
@@ -296,12 +295,12 @@ int SFtp::Do()
 void SFtp::MoveConnectionHere(SFtp *o)
 {
    protocol_version=o->protocol_version;
-   recv_translate=o->recv_translate; o->recv_translate=0;
-   send_translate=o->send_translate; o->send_translate=0;
-   send_buf=o->send_buf; o->send_buf=0;
-   recv_buf=o->recv_buf; o->recv_buf=0;
-   pty_send_buf=o->pty_send_buf; o->pty_send_buf=0;
-   pty_recv_buf=o->pty_recv_buf; o->pty_recv_buf=0;
+   recv_translate=o->recv_translate.borrow();
+   send_translate=o->send_translate.borrow();
+   send_buf=o->send_buf.borrow();
+   recv_buf=o->recv_buf.borrow();
+   pty_send_buf=o->pty_send_buf.borrow();
+   pty_recv_buf=o->pty_recv_buf.borrow();
    rate_limit=o->rate_limit.borrow();
    expect_queue_size=o->expect_queue_size; o->expect_queue_size=0;
    expect_chain=o->expect_chain; o->expect_chain=0;
@@ -322,12 +321,12 @@ void SFtp::Disconnect()
 {
    if(send_buf)
       DebugPrint("---- ",_("Disconnecting"),9);
-   Delete(send_buf); send_buf=0;
-   Delete(recv_buf); recv_buf=0;
-   Delete(pty_send_buf); pty_send_buf=0;
-   Delete(pty_recv_buf); pty_recv_buf=0;
-   delete file_buf; file_buf=0;
-   delete ssh; ssh=0;
+   send_buf=0;
+   recv_buf=0;
+   pty_send_buf=0;
+   pty_recv_buf=0;
+   file_buf=0;
+   ssh=0;
    EmptyRespQueue();
    state=DISCONNECTED;
    if(mode==STORE)
@@ -335,8 +334,8 @@ void SFtp::Disconnect()
    received_greeting=false;
    password_sent=0;
    protocol_version=0;
-   delete send_translate; send_translate=0;
-   delete recv_translate; recv_translate=0;
+   send_translate=0;
+   recv_translate=0;
    ssh_id=0;
    home_auto.set(FindHomeAuto());
 }
@@ -344,13 +343,6 @@ void SFtp::Disconnect()
 void SFtp::Init()
 {
    state=DISCONNECTED;
-   send_buf=0;
-   recv_buf=0;
-   pty_send_buf=0;
-   pty_recv_buf=0;
-   file_buf=0;
-   file_set=0;
-   ssh=0;
    ssh_id=0;
    eof=false;
    received_greeting=false;
@@ -399,7 +391,7 @@ void SFtp::Packet::PackString(Buffer *b,const char *str,int len)
    b->PackUINT32BE(len);
    b->Put(str,len);
 }
-SFtp::unpack_status_t SFtp::Packet::UnpackString(Buffer *b,int *offset,int limit,xstring *str_out)
+SFtp::unpack_status_t SFtp::Packet::UnpackString(const Buffer *b,int *offset,int limit,xstring *str_out)
 {
    if(limit-*offset<4)
       return b->Eof()?UNPACK_PREMATURE_EOF:UNPACK_NO_DATA_YET;
@@ -423,7 +415,7 @@ SFtp::unpack_status_t SFtp::Packet::UnpackString(Buffer *b,int *offset,int limit
    return UNPACK_SUCCESS;
 }
 
-SFtp::unpack_status_t SFtp::Packet::Unpack(Buffer *b)
+SFtp::unpack_status_t SFtp::Packet::Unpack(const Buffer *b)
 {
    unpacked=0;
    if(b->Size()<4)
@@ -543,7 +535,7 @@ void SFtp::SendRequest(Packet *request,Expect::expect_t tag,int i)
    request->ComputeLength();
    Log::global->Format(9,"---> sending a packet, length=%d, type=%d(%s), id=%u\n",
       request->GetLength(),request->GetPacketType(),request->GetPacketTypeText(),request->GetID());
-   request->Pack(send_buf);
+   request->Pack(send_buf.get_non_const());
    PushExpect(new Expect(request,tag,i));
 }
 
@@ -686,8 +678,8 @@ void SFtp::Close()
    CloseExpectQueue();
    state=(recv_buf?CONNECTED:DISCONNECTED);
    eof=false;
-   delete file_buf; file_buf=0;
-   delete file_set; file_set=0;
+   file_buf=0;
+   file_set=0;
    CloseHandle(Expect::IGNORE);
    super::Close();
    // don't need these out-of-order packets anymore
@@ -765,7 +757,7 @@ int SFtp::HandlePty()
 
 void SFtp::HandleExpect(Expect *e)
 {
-   Packet *reply=e->reply;
+   const Packet *reply=e->reply;
    switch(e->tag)
    {
    case Expect::FXP_VERSION:
@@ -870,7 +862,7 @@ void SFtp::HandleExpect(Expect *e)
 	 max_packets_in_flight_slow_start++;
       if(reply->TypeIs(SSH_FXP_DATA))
       {
-	 Request_READ *r=(Request_READ*)e->request;
+	 const Request_READ *r=e->request.Cast<Request_READ>();
 	 Reply_DATA *d=(Reply_DATA*)reply;
 	 if(r->pos==pos+file_buf->Size())
 	 {
@@ -1061,7 +1053,7 @@ int SFtp::HandleReplies()
       return m;
 
    Packet *reply=0;
-   unpack_status_t st=UnpackPacket(recv_buf,&reply);
+   unpack_status_t st=UnpackPacket(recv_buf.get_non_const(),&reply);
    if(st==UNPACK_NO_DATA_YET)
       return m;
    if(st!=UNPACK_SUCCESS)
@@ -1071,7 +1063,7 @@ int SFtp::HandleReplies()
       return MOVED;
    }
 
-   reply->DropData(recv_buf);
+   reply->DropData(recv_buf.get_non_const());
    Expect *e=FindExpectExclusive(reply);
    if(e==0)
    {
@@ -1530,7 +1522,7 @@ void SFtp::SetError(int code,const Packet *reply)
 #define PACK32_SIGNED(data)	b->PackINT32BE(data)
 #define PACK64_SIGNED(data)	b->PackINT64BE(data)
 
-SFtp::unpack_status_t SFtp::PacketSTRING::Unpack(Buffer *b)
+SFtp::unpack_status_t SFtp::PacketSTRING::Unpack(const Buffer *b)
 {
    unpack_status_t res;
    res=Packet::Unpack(b);
@@ -1540,7 +1532,7 @@ SFtp::unpack_status_t SFtp::PacketSTRING::Unpack(Buffer *b)
    return res;
 }
 
-SFtp::unpack_status_t SFtp::Reply_NAME::Unpack(Buffer *b)
+SFtp::unpack_status_t SFtp::Reply_NAME::Unpack(const Buffer *b)
 {
    unpack_status_t res=Packet::Unpack(b);
    if(res!=UNPACK_SUCCESS)
@@ -1559,7 +1551,7 @@ SFtp::unpack_status_t SFtp::Reply_NAME::Unpack(Buffer *b)
       UNPACK8(eof);
    return UNPACK_SUCCESS;
 }
-SFtp::unpack_status_t SFtp::Reply_DATA::Unpack(Buffer *b)
+SFtp::unpack_status_t SFtp::Reply_DATA::Unpack(const Buffer *b)
 {
    unpack_status_t res=PacketSTRING::Unpack(b);
    if(res!=UNPACK_SUCCESS)
@@ -1570,7 +1562,7 @@ SFtp::unpack_status_t SFtp::Reply_DATA::Unpack(Buffer *b)
       UNPACK8(eof);
    return UNPACK_SUCCESS;
 }
-SFtp::unpack_status_t SFtp::NameAttrs::Unpack(Buffer *b,int *offset,int limit,int protocol_version)
+SFtp::unpack_status_t SFtp::NameAttrs::Unpack(const Buffer *b,int *offset,int limit,int protocol_version)
 {
    unpack_status_t res;
 
@@ -1590,7 +1582,7 @@ SFtp::unpack_status_t SFtp::NameAttrs::Unpack(Buffer *b,int *offset,int limit,in
    return UNPACK_SUCCESS;
 }
 
-SFtp::unpack_status_t SFtp::FileAttrs::Unpack(Buffer *b,int *offset,int limit,int protocol_version)
+SFtp::unpack_status_t SFtp::FileAttrs::Unpack(const Buffer *b,int *offset,int limit,int protocol_version)
 {
    unpack_status_t res;
 
@@ -1822,7 +1814,7 @@ SFtp::FileAttrs::~FileAttrs()
    delete[] ace;
 }
 
-SFtp::unpack_status_t SFtp::FileAttrs::FileACE::Unpack(Buffer *b,int *offset,int limit)
+SFtp::unpack_status_t SFtp::FileAttrs::FileACE::Unpack(const Buffer *b,int *offset,int limit)
 {
    UNPACK32(ace_type);
    UNPACK32(ace_flag);
@@ -1837,7 +1829,7 @@ void SFtp::FileAttrs::FileACE::Pack(Buffer *b)
    Packet::PackString(b,who);
 }
 
-SFtp::unpack_status_t SFtp::FileAttrs::ExtFileAttr::Unpack(Buffer *b,int *offset,int limit)
+SFtp::unpack_status_t SFtp::FileAttrs::ExtFileAttr::Unpack(const Buffer *b,int *offset,int limit)
 {
    unpack_status_t res;
    res=Packet::UnpackString(b,offset,limit,&extended_type);
@@ -1854,7 +1846,7 @@ void SFtp::FileAttrs::ExtFileAttr::Pack(Buffer *b)
    Packet::PackString(b,extended_data);
 }
 
-SFtp::unpack_status_t SFtp::Reply_ATTRS::Unpack(Buffer *b)
+SFtp::unpack_status_t SFtp::Reply_ATTRS::Unpack(const Buffer *b)
 {
    unpack_status_t res=Packet::Unpack(b);
    if(res!=UNPACK_SUCCESS)
@@ -1862,7 +1854,7 @@ SFtp::unpack_status_t SFtp::Reply_ATTRS::Unpack(Buffer *b)
    return attrs.Unpack(b,&unpacked,length+4,protocol_version);
 }
 
-SFtp::unpack_status_t SFtp::Reply_STATUS::Unpack(Buffer *b)
+SFtp::unpack_status_t SFtp::Reply_STATUS::Unpack(const Buffer *b)
 {
    unpack_status_t res=Packet::Unpack(b);
    if(res!=UNPACK_SUCCESS)
@@ -1953,13 +1945,13 @@ FileInfo *SFtp::MakeFileInfo(const NameAttrs *na)
       return 0;
    if(name[0]=='~')
       name=dir_file(".",name);
-   FileInfo *fi=new FileInfo(name);
+   Ref<FileInfo> fi(new FileInfo(name));
    switch(a->type)
    {
    case SSH_FILEXFER_TYPE_REGULAR:  fi->SetType(fi->NORMAL);    break;
    case SSH_FILEXFER_TYPE_DIRECTORY:fi->SetType(fi->DIRECTORY); break;
    case SSH_FILEXFER_TYPE_SYMLINK:  fi->SetType(fi->SYMLINK);   break;
-   default: delete fi; return 0;
+   default: return 0;
    }
    if(na->longname)
       fi->SetLongName(utf8_to_lc(na->longname));
@@ -1981,7 +1973,7 @@ FileInfo *SFtp::MakeFileInfo(const NameAttrs *na)
    else if(fi->longname)
    {
       // try to extract owner/group from long name.
-      FileInfo *ls=FileInfo::parse_ls_line(fi->longname,0);
+      Ref<FileInfo> ls(FileInfo::parse_ls_line(fi->longname,0));
       if(ls)
       {
 	 if(ls->user)
@@ -1991,13 +1983,12 @@ FileInfo *SFtp::MakeFileInfo(const NameAttrs *na)
 	 if(ls->nlinks>0)
 	    fi->SetNlink(ls->nlinks);
       }
-      delete ls;
    }
    if(a->flags&SSH_FILEXFER_ATTR_PERMISSIONS)
       fi->SetMode(a->permissions&07777);
    if(a->flags&SSH_FILEXFER_ATTR_MODIFYTIME)
       fi->SetDate(a->mtime,0);
-   return fi;
+   return fi.borrow();
 }
 
 

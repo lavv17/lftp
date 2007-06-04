@@ -229,17 +229,17 @@ private:
    void	 SendMethod();
    void	 SendArrayInfoRequests();
 
-   IOBuffer *send_buf;
-   IOBuffer *recv_buf;
-   IOBuffer *pty_send_buf;
-   IOBuffer *pty_recv_buf;
-   DirectedBuffer *send_translate;
-   DirectedBuffer *recv_translate;
+   SMTaskRef<IOBuffer> send_buf;
+   SMTaskRef<IOBuffer> recv_buf;
+   SMTaskRef<IOBuffer> pty_send_buf;
+   SMTaskRef<IOBuffer> pty_recv_buf;
+   Ref<DirectedBuffer> send_translate;
+   Ref<DirectedBuffer> recv_translate;
 
-   Buffer   *file_buf;
-   FileSet  *file_set;
+   Ref<Buffer> file_buf;
+   Ref<FileSet> file_set;
 
-   PtyShell *ssh;
+   Ref<PtyShell> ssh;
 
    void Disconnect();
    int IsConnected() const
@@ -293,16 +293,16 @@ public:
 	    if(HasID())
 	       b->PackUINT32BE(id);
 	 }
-      virtual unpack_status_t Unpack(Buffer *b);
+      virtual unpack_status_t Unpack(const Buffer *b);
       virtual ~Packet() {}
       int GetLength() { return length; }
       packet_type GetPacketType() { return type; }
       const char *GetPacketTypeText();
-      unsigned GetID() { return id; }
+      unsigned GetID() const { return id; }
       void SetID(unsigned new_id) { id=new_id; }
       void DropData(Buffer *b) { b->Skip(4+(length>0?length:0)); }
       bool TypeIs(packet_type t) const { return type==t; }
-      static unpack_status_t UnpackString(Buffer *b,int *offset,int limit,xstring *str_out);
+      static unpack_status_t UnpackString(const Buffer *b,int *offset,int limit,xstring *str_out);
       static void PackString(Buffer *b,const char *str,int len=-1);
    };
 private:
@@ -313,7 +313,7 @@ private:
       unsigned data;
       PacketUINT32(packet_type t,unsigned d=0) : Packet(t)
 	 { data=d; length+=4; }
-      unpack_status_t Unpack(Buffer *b)
+      unpack_status_t Unpack(const Buffer *b)
 	 {
 	    unpack_status_t res;
 	    res=Packet::Unpack(b);
@@ -339,7 +339,7 @@ private:
 	    string.set(s);
 	    length+=4+string.length();
 	 }
-      unpack_status_t Unpack(Buffer *b);
+      unpack_status_t Unpack(const Buffer *b);
       void ComputeLength() { Packet::ComputeLength(); length+=4+string.length(); }
       void Pack(Buffer *b)
 	 {
@@ -360,7 +360,7 @@ private:
       char **extension_data;
    public:
       Reply_VERSION() : PacketUINT32(SSH_FXP_VERSION) {}
-      unpack_status_t Unpack(Buffer *b)
+      unpack_status_t Unpack(const Buffer *b)
 	 {
 	    unpack_status_t res;
 	    res=PacketUINT32::Unpack(b);
@@ -415,7 +415,7 @@ public:
       {
 	 xstring extended_type;
 	 xstring extended_data;
-	 unpack_status_t Unpack(Buffer *b,int *offset,int limit);
+	 unpack_status_t Unpack(const Buffer *b,int *offset,int limit);
 	 void Pack(Buffer *b);
       };
       struct FileACE
@@ -425,7 +425,7 @@ public:
 	 unsigned ace_mask;
 	 xstring who;
 	 FileACE() { ace_type=ace_flag=ace_mask=0; }
-	 unpack_status_t Unpack(Buffer *b,int *offset,int limit);
+	 unpack_status_t Unpack(const Buffer *b,int *offset,int limit);
 	 void Pack(Buffer *b);
       };
 
@@ -468,7 +468,7 @@ public:
 	 link_count=0;
       }
       ~FileAttrs();
-      unpack_status_t Unpack(Buffer *b,int *offset,int limit,int proto_version);
+      unpack_status_t Unpack(const Buffer *b,int *offset,int limit,int proto_version);
       void Pack(Buffer *b,int proto_version);
       int ComputeLength(int v);
    };
@@ -477,7 +477,7 @@ public:
       xstring name;
       xstring longname;
       FileAttrs attrs;
-      unpack_status_t Unpack(Buffer *b,int *offset,int limit,int proto_version);
+      unpack_status_t Unpack(const Buffer *b,int *offset,int limit,int proto_version);
    };
 private:
    class Reply_NAME : public Packet
@@ -489,7 +489,7 @@ private:
    public:
       Reply_NAME(int pv) : Packet(SSH_FXP_NAME) { protocol_version=pv; eof=false; }
       ~Reply_NAME() { delete[] names; }
-      unpack_status_t Unpack(Buffer *b);
+      unpack_status_t Unpack(const Buffer *b);
       int GetCount() { return count; }
       const NameAttrs *GetNameAttrs(int index)
 	 {
@@ -505,7 +505,7 @@ private:
       FileAttrs attrs;
    public:
       Reply_ATTRS(int pv) : Packet(SSH_FXP_ATTRS) { protocol_version=pv; }
-      unpack_status_t Unpack(Buffer *b);
+      unpack_status_t Unpack(const Buffer *b);
       const FileAttrs *GetAttrs() { return &attrs; }
    };
    class PacketSTRING_ATTRS : public PacketSTRING
@@ -585,7 +585,7 @@ private:
       xstring language;
    public:
       Reply_STATUS(int pv) { protocol_version=pv; code=0; }
-      unpack_status_t Unpack(Buffer *b);
+      unpack_status_t Unpack(const Buffer *b);
       int GetCode() { return code; }
       const char *GetCodeText();
       const char *GetMessage() { return message; }
@@ -606,7 +606,7 @@ private:
    public:
       Reply_DATA() : PacketSTRING(SSH_FXP_DATA) { eof=false; }
       void GetData(const char **b,int *s) { *b=string; *s=string.length(); }
-      unpack_status_t Unpack(Buffer *b);
+      unpack_status_t Unpack(const Buffer *b);
       bool Eof() { return eof; }
    };
    class Request_WRITE : public PacketSTRING
@@ -680,13 +680,12 @@ private:
 	 IGNORE
       };
 
-      Packet *request;
-      Packet *reply;
+      Ref<Packet> request;
+      Ref<Packet> reply;
       Expect *next;
       int i;
       expect_t tag;
-      Expect(Packet *req,expect_t t,int j=0) { request=req; tag=t; reply=0; i=j; }
-      ~Expect() { delete request; delete reply; }
+      Expect(Packet *req,expect_t t,int j=0) : request(req), i(j), tag(t) {}
    };
 
    void PushExpect(Expect *);
@@ -776,7 +775,7 @@ public:
    void Cleanup();
    void CleanupThis();
 
-   FileSet *GetFileSet() { FileSet *fset=file_set; file_set=0; return fset?fset:new FileSet; }
+   FileSet *GetFileSet() { FileSet *fset=file_set.borrow(); return fset?fset:new FileSet; }
 };
 
 class SFtpDirList : public DirList
