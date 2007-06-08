@@ -86,6 +86,14 @@ NetAccess::NetAccess()
 NetAccess::NetAccess(const NetAccess *o) : super(o)
 {
    Init();
+   if(o->peer)
+   {
+      peer=(sockaddr_u*)xmemdup(o->peer,o->peer_num*sizeof(*peer));
+      peer_num=o->peer_num;
+      peer_curr=o->peer_curr;
+      if(peer_curr>=peer_num)
+	 peer_curr=0;
+   }
    home_auto.set(o->home_auto);
 }
 NetAccess::~NetAccess()
@@ -779,8 +787,6 @@ do_again:
       if(!ubuf->Eof())
 	 return m;
 
-      FileAccess::cache->Add(session,"",mode,FA::OK,ubuf);
-
       // now we have all the index in ubuf; parse it.
       const char *b;
       int len;
@@ -809,6 +815,8 @@ do_again:
 	 else
 	    result=set.borrow();
       }
+
+      FileAccess::cache->Add(session,"",mode,FA::OK,ubuf,result);
 
       ubuf=0;
       m=MOVED;
