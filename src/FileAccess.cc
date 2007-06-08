@@ -291,9 +291,13 @@ const char *FileAccess::GetFileURL(const char *f,int flags) const
 	 }
       }
 
+      bool is_dir=((!f || !*f) && !cwd.is_file);
+
       if(!f || (f[0]!='/' && f[0]!='~'))
 	 f=dir_file(cwd.path?cwd.path.get():"~",f);
       u.path.set(f);
+      if(is_dir && url::dir_needs_trailing_slash(proto))
+	 u.path.append('/');
    }
    return url.set_allocated(u.Combine(home));
 }
@@ -941,11 +945,13 @@ void FileAccess::Path::Change(const char *new_path,bool new_is_file,const char *
    const char *bn=basename_ptr(new_path);
    if(!strcmp(bn,".") || !strcmp(bn,".."))
       new_is_file=false;
+
+   int path_index=0;
    if(url)
    {
-      int path_index=url::path_index(url);
+      path_index=url::path_index(url);
       const char *old_url_path=url+path_index;
-      char *new_url_path=string_alloca(strlen(old_url_path)+xstrlen(new_path)*3+2);
+      char *new_url_path=string_alloca(strlen(old_url_path)+xstrlen(new_path)*3+3);
       strcpy(new_url_path,old_url_path);
       if(is_file)
       {
@@ -963,13 +969,7 @@ void FileAccess::Path::Change(const char *new_path,bool new_is_file,const char *
 	 {
 	    char *np=alloca_strdup(new_path);
 	    Optimize(np);
-	    if(np[0]=='.' && np[1]=='.' && (np[2]=='/' || np[2]==0))
-	    {
-	       url.set(0);
-	       goto url_done;
-	    }
-	    else
-	       url::encode_string(np,new_url_path+strlen(new_url_path),URL_PATH_UNSAFE);
+	    url::encode_string(np,new_url_path+strlen(new_url_path),URL_PATH_UNSAFE);
 	 }
       }
       else
@@ -979,11 +979,13 @@ void FileAccess::Path::Change(const char *new_path,bool new_is_file,const char *
 	 else
 	    url::encode_string(new_path,new_url_path,URL_PATH_UNSAFE);
       }
+      if(!new_is_file && url::dir_needs_trailing_slash(url) && last_char(new_url_path)!='/')
+	 strcat(new_url_path,"/");
       Optimize(new_url_path+(!strncmp(new_url_path,"/~",2)));
       url.truncate(path_index);
       url.append(new_url_path);
    }
-url_done:
+
    if(new_path[0]!='/' && new_path[0]!='~' && new_device_prefix_len==0
    && path && path[0])
    {
@@ -1007,6 +1009,23 @@ url_done:
    is_file=new_is_file;
    if(!strcmp(path,"/") || !strcmp(path,"//"))
       is_file=false;
+
+   // sanity check
+   if(url)
+   {
+      const char *url_path=url+path_index;
+      if(url_path[0]=='/' && url_path[1]=='~')
+	 url_path++;
+      url_path=url::decode(url_path);
+      int up_len=strlen(url_path);
+      if(up_len>1 && url_path[up_len-1]=='/')
+	 up_len--;
+      if(strncmp(url_path,path,up_len))
+      {
+	 Log::global->Format(0,"(BUG?) URL mismatch %s vs %s, dropping URL\n",url.get(),path.get());
+	 url.set(0);
+      }
+   }
 }
 bool FileAccess::Path::operator==(const Path &p2) const
 {
