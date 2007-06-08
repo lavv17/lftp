@@ -113,14 +113,6 @@ Http::Http() : super()
 Http::Http(const Http *f) : super(f)
 {
    Init();
-   if(f->peer)
-   {
-      peer=(sockaddr_u*)xmemdup(f->peer,f->peer_num*sizeof(*peer));
-      peer_num=f->peer_num;
-      peer_curr=f->peer_curr;
-      if(peer_curr>=peer_num)
-	 peer_curr=0;
-   }
    Reconfig();
 }
 
@@ -450,6 +442,7 @@ void Http::SendRequest(const char *connection,const char *f)
    char *efile;
    char *ecwd;
    int efile_len;
+   bool add_slash=true;
 
    if(mode==CHANGE_DIR && new_cwd && new_cwd->url)
    {
@@ -457,6 +450,7 @@ void Http::SendRequest(const char *connection,const char *f)
       if(!*efile_c)
 	 efile_c="/";
       efile=alloca_strdup2(efile_c,1);
+      add_slash=false;
    }
    else
    {
@@ -481,15 +475,13 @@ void Http::SendRequest(const char *connection,const char *f)
       }
    }
 
-   bool add_slash=true;
    if(cwd.is_file)
    {
       if(efile[0])
-	 dirname_modify(ecwd+(!strncmp(ecwd,"/~",2)));
-      else
-	 add_slash=false;
+	 basename_ptr(ecwd+(!strncmp(ecwd,"/~",2)))[0]=0;
+      add_slash=false;
    }
-   if(mode==CHANGE_DIR && new_cwd)
+   if(mode==CHANGE_DIR && new_cwd && !new_cwd->url)
       add_slash=!new_cwd->is_file;
 
    char *pfile=string_alloca(4+3+xstrlen(user)*6+3+xstrlen(pass)*3+1+
@@ -1524,6 +1516,7 @@ int Http::Do()
       if(mode==CHANGE_DIR)
       {
 	 cwd.Set(new_cwd);
+	 cache->SetDirectory(this, "", !cwd.is_file);
 	 state=DONE;
 	 return MOVED;
       }
