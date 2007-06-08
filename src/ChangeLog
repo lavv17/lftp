@@ -1,3 +1,19 @@
+2007-06-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileAccess.h: don't include LsCache.h.
+	* FileSet.cc, FileSet.h: const Count.
+	* GetPass.cc: don't return NULL for empty pass.
+	* LocalAccess.cc, LocalAccess.h, LsCache.cc, LsCache.h,
+	  MirrorJob.cc, MirrorJob.h: use Refs.
+	* xstring.h: (last_char) new method.
+	* xmalloc.h: (alloca_append) new macro.
+	* url.cc, url.h: (url::decode) new static method; make
+	  url::dir_needs_trailing_slash support urls instead of just proto.
+	* FileAccess.cc: add trailing slash to urls when needed; keep url when doing cd ..
+	* commands.cc: consult cache when deciding how to Chdir.
+	* NetAccess.cc: move peer cloning here from Http; cache FileSet.
+	* Http.cc: don't add slash if url is known; cache dir status.
+
 2007-06-04  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* buffer.cc, buffer.h: make Unpack* const.
