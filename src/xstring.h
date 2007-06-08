@@ -188,6 +188,7 @@ public:
    bool ne(const xstring&o) { return !eq(o); }
    bool chomp(char c='\n');
    void rtrim(char c=' ');
+   char last_char() { return len>0?buf[len-1]:0; }
 };
 
 #endif//XSTRING_H
