@@ -28,7 +28,7 @@
 
 class LocalAccess : public FileAccess
 {
-   FDStream *stream;
+   Ref<FDStream> stream;
    bool done;
    void errno_handle();
    void fill_array_info();
@@ -37,7 +37,6 @@ public:
    void Init();
    LocalAccess();
    LocalAccess(const LocalAccess *);
-   ~LocalAccess();
 
    void Connect(const char *host,const char *port) {}
    void AnonymousLogin() {}
@@ -74,11 +73,10 @@ public:
 
 class LocalDirList : public DirList
 {
-   IOBuffer *ubuf;
-   FgData *fg_data;
+   SMTaskRef<IOBuffer> ubuf;
+   Ref<FgData> fg_data;
 public:
    LocalDirList(ArgV *a,const char *cwd);
-   ~LocalDirList();
    const char *Status() { return "..."; }
    int Do();
 };

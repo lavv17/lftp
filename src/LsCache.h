@@ -25,6 +25,7 @@
 
 #include <time.h>
 #include "Cache.h"
+#include "FileAccess.h"
 
 class Buffer;
 class FileAccess;
@@ -33,13 +34,12 @@ class LsCacheEntryLoc
 {
    friend class LsCache;
    xstring_c arg;
-   FileAccess *loc;
+   SMTaskRef<FileAccess> loc; // no FileAccessRef -> no reuse here
    int	 mode;
 
 public:
    bool Matches(const FileAccess *p_loc,const char *a,int m);
    LsCacheEntryLoc(const FileAccess *p_loc,const char *a,int m);
-   ~LsCacheEntryLoc();
    int EstimateSize() const { return xstrlen(arg)+(arg!=0); }
    const char *GetClosure() const;
 };
@@ -47,10 +47,9 @@ class LsCacheEntryData
 {
    int	 err_code;
    xstring data;
-   FileSet *afset;    // associated file set
+   Ref<FileSet> afset;    // associated file set
 public:
    LsCacheEntryData(int e,const char *d,int l,const FileSet *fs);
-   ~LsCacheEntryData();
    void SetData(int e,const char *d,int l,const FileSet *fs);
    void GetData(int *e,const char **d,int *l,const FileSet **fs);
    const FileSet *GetFileSet(const FileAccess *parser);
@@ -61,7 +60,6 @@ class LsCacheEntry : public CacheEntry, public LsCacheEntryLoc, public LsCacheEn
 {
 public:
    int EstimateSize() const;
-   ~LsCacheEntry();
    LsCacheEntry(const FileAccess *p_loc,const char *a,int m,int e,const char *d,int l,const FileSet *fs);
 };
 

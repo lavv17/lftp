@@ -47,28 +47,28 @@ class MirrorJob : public Job
    };
    state_t state;
 
-   FileAccess *source_session;
-   FileAccess *target_session;
+   FileAccessRef source_session;
+   FileAccessRef target_session;
    bool target_is_local;
    bool source_is_local;
 
-   FileSet *target_set;
-   FileSet *source_set;
-   FileSet *to_transfer;
-   FileSet *same;
-   FileSet *to_rm;
-   FileSet *to_rm_mismatched;
-   FileSet *old_files_set;
-   FileSet *new_files_set;
-   void	 InitSets(FileSet *src,FileSet *dst);
+   Ref<FileSet> target_set;
+   Ref<FileSet> source_set;
+   Ref<FileSet> to_transfer;
+   Ref<FileSet> same;
+   Ref<FileSet> to_rm;
+   Ref<FileSet> to_rm_mismatched;
+   Ref<FileSet> old_files_set;
+   Ref<FileSet> new_files_set;
+   void	 InitSets(const FileSet *src,const FileSet *dst);
 
    void	 HandleFile(FileInfo *);
 
    bool create_target_dir;
    bool	no_target_dir;	   // target directory does not exist (for script_only)
 
-   ListInfo *source_list_info;
-   ListInfo *target_list_info;
+   Ref<ListInfo> source_list_info;
+   Ref<ListInfo> target_list_info;
 
    xstring_c source_dir;
    xstring_c source_relative_dir;
@@ -96,7 +96,8 @@ class MirrorJob : public Job
    int	 flags;
    int	 max_error_count;
 
-   PatternSet *exclude;
+   Ref<PatternSet> my_exclude;
+   const PatternSet *exclude;
 
    bool	 create_remote_dir;
 
@@ -107,7 +108,8 @@ class MirrorJob : public Job
 
    time_t newer_than;
    time_t older_than;
-   Range *size_range;
+   Ref<Range> my_size_range;
+   const Range *size_range;
 
    xstring_c script_name;
    FILE *script;
@@ -128,10 +130,10 @@ class MirrorJob : public Job
    int source_redirections;
    int target_redirections;
 
-   void HandleChdir(FileAccess * &session, int &redirections);
-   void HandleListInfoCreation(FileAccess * &session,ListInfo * &list_info,
+   void HandleChdir(FileAccessRef& session, int &redirections);
+   void HandleListInfoCreation(const FileAccessRef& session,Ref<ListInfo>& list_info,
 	    const char *relative_dir);
-   void HandleListInfo(ListInfo * &list_info, FileSet * &set);
+   void HandleListInfo(Ref<ListInfo>& list_info,Ref<FileSet>& set);
 
 public:
    enum
@@ -151,7 +153,7 @@ public:
       IGNORE_SIZE=1<<12,
       NO_SYMLINKS=1<<13,
       LOOP=1<<14,
-      ONLY_EXISTING=1<<15
+      ONLY_EXISTING=1<<15,
    };
 
    void SetFlags(int f,int v)
@@ -161,6 +163,9 @@ public:
       else
 	 flags&=~f;
    }
+   bool FlagsSet(int f)	   { return (flags&f)==f; }
+   bool FlagSet(int f)	   { return (flags&f); }
+   bool AnyFlagSet(int f)  { return (flags&f); }
 
    MirrorJob(MirrorJob *parent,FileAccess *f,FileAccess *target,
       const char *new_source_dir,const char *new_target_dir);
@@ -173,8 +178,10 @@ public:
    void	 SayFinal() { PrintStatus(0,""); }
    int	 ExitCode() { return stats.error_count; }
 
-   void	 SetExclude(PatternSet *x) { exclude=x; }
-   void	 SetSizeRange(Range *r) { size_range=r; }
+   void	 SetExclude(PatternSet *x) { my_exclude=x; exclude=my_exclude; }
+   void	 SetExclude(const PatternSet *x) { exclude=x; }
+   void	 SetSizeRange(Range *r) { my_size_range=r; size_range=my_size_range; }
+   void	 SetSizeRange(const Range *r) { size_range=r; }
 
    void	 SetVerbose(int v) { verbose_report=v; }
 

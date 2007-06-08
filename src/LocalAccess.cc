@@ -49,7 +49,6 @@ void LocalAccess::Init()
 {
    done=false;
    error_code=OK;
-   stream=0;
    home.Set(getenv("HOME"));
    hostname.set("localhost");
 }
@@ -63,10 +62,6 @@ LocalAccess::LocalAccess() : FileAccess()
 LocalAccess::LocalAccess(const LocalAccess *o) : FileAccess(o)
 {
    Init();
-}
-LocalAccess::~LocalAccess()
-{
-   delete stream;
 }
 
 void LocalAccess::errno_handle()
@@ -494,7 +489,6 @@ int LocalAccess::StoreStatus()
       if(stream->error())
 	 SetError(NO_FILE,stream->error_text);
    }
-   delete stream;
    stream=0;
    if(error_code==OK && entity_date!=NO_DATE)
    {
@@ -513,7 +507,6 @@ void LocalAccess::Close()
 {
    done=false;
    error_code=OK;
-   delete stream;
    stream=0;
    FileAccess::Close();
 }
@@ -671,7 +664,6 @@ DirList *LocalAccess::MakeDirList(ArgV *a)
 LocalDirList::LocalDirList(ArgV *a,const char *cwd)
    : DirList(0,0)
 {
-   fg_data=0;
    a->setarg(0,"ls");
    a->insarg(1,"-l");
    InputFilter *f=new InputFilter(a); // a is consumed.
@@ -709,11 +701,6 @@ int LocalDirList::Do()
    buf->Put(b,len);
    ubuf->Skip(len);
    return MOVED;
-}
-LocalDirList::~LocalDirList()
-{
-   delete fg_data;
-   Delete(ubuf);
 }
 
 #include "modconfig.h"

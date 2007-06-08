@@ -484,7 +484,7 @@ skip:
    return;
 }
 
-void  MirrorJob::InitSets(FileSet *source,FileSet *dest)
+void  MirrorJob::InitSets(const FileSet *source,const FileSet *dest)
 {
    source->Count(NULL,&stats.tot_files,&stats.tot_symlinks,&stats.tot_files);
 
@@ -535,7 +535,7 @@ void  MirrorJob::InitSets(FileSet *source,FileSet *dest)
    to_transfer->SortByPatternList(ResMgr::Query("mirror:order",0));
 }
 
-void MirrorJob::HandleChdir(FileAccess * &session, int &redirections)
+void MirrorJob::HandleChdir(FileAccessRef& session, int &redirections)
 {
    if(!session->IsOpen())
       return;
@@ -564,7 +564,6 @@ void MirrorJob::HandleChdir(FileAccess * &session, int &redirections)
 	       session->Chdir(loc);
 	       return;
 	    }
-	    SessionPool::Reuse(session);
 	    session=FA::New(&u);
 	    session->Chdir(u.path);
 	    return;
@@ -590,7 +589,7 @@ void MirrorJob::HandleChdir(FileAccess * &session, int &redirections)
    if(res==FA::OK)
       session->Close();
 }
-void MirrorJob::HandleListInfoCreation(FileAccess * &session,ListInfo * &list_info,const char *relative_dir)
+void MirrorJob::HandleListInfoCreation(const FileAccessRef& session,Ref<ListInfo>& list_info,const char *relative_dir)
 {
    if(state!=GETTING_LIST_INFO)
       return;
@@ -621,10 +620,10 @@ void MirrorJob::HandleListInfoCreation(FileAccess * &session,ListInfo * &list_in
       list_info->FollowSymlinks();
 
    list_info->SetExclude(relative_dir,exclude);
-   Roll(list_info);
+   list_info->Roll();
 }
 
-void MirrorJob::HandleListInfo(ListInfo * &list_info, FileSet * &set)
+void MirrorJob::HandleListInfo(Ref<ListInfo>& list_info, Ref<FileSet>& set)
 {
    if(!list_info)
       return;
@@ -636,14 +635,11 @@ void MirrorJob::HandleListInfo(ListInfo * &list_info, FileSet * &set)
       stats.error_count++;
       transfer_count-=root_transfer_count;
       set_state(FINISHING);
-      Delete(source_list_info);
       source_list_info=0;
-      Delete(target_list_info);
       target_list_info=0;
       return;
    }
    set=list_info->GetResult();
-   Delete(list_info);
    list_info=0;
    set->ExcludeDots(); // don't need .. and .
 }
@@ -660,7 +656,7 @@ int   MirrorJob::Do()
    case(INITIAL_STATE):
       source_session->Chdir(source_dir);
       source_redirections=0;
-      Roll(source_session);
+      source_session->Roll();
       set_state(CHANGING_DIR_SOURCE);
       m=MOVED;
       /*fallthrough*/
@@ -730,7 +726,7 @@ int   MirrorJob::Do()
    pre_CHANGING_DIR_TARGET:
       target_session->Chdir(target_dir);
       target_redirections=0;
-      Roll(target_session);
+      target_session->Roll();
       set_state(CHANGING_DIR_TARGET);
       m=MOVED;
       /*fallthrough*/
@@ -750,8 +746,8 @@ int   MirrorJob::Do()
       HandleListInfoCreation(target_session,target_list_info,target_relative_dir);
       if(state!=GETTING_LIST_INFO)
       {
-	 Delete(source_list_info); source_list_info=0;
-	 Delete(target_list_info); target_list_info=0;
+	 source_list_info=0;
+	 target_list_info=0;
       }
       return m;	  // give time to other tasks
    case(GETTING_LIST_INFO):
@@ -1044,7 +1040,7 @@ int   MirrorJob::Do()
    }
    // give direct parent priority over grand-parents.
    if(transfer_count<parallel && parent_mirror)
-      m|=Roll(parent_mirror);
+      m|=parent_mirror->Roll();
    return m;
 }
 
@@ -1065,13 +1061,8 @@ MirrorJob::MirrorJob(MirrorJob *parent,
    source_is_local=!strcmp(source_session->GetProto(),"file");
    target_is_local=!strcmp(target_session->GetProto(),"file");
 
-   to_transfer=to_rm=to_rm_mismatched=same=0;
-   source_set=target_set=0;
-   new_files_set=old_files_set=0;
    create_target_dir=true;
    no_target_dir=false;
-   source_list_info=0;
-   target_list_info=0;
 
    flags=0;
    max_error_count=0;
@@ -1112,25 +1103,6 @@ MirrorJob::MirrorJob(MirrorJob *parent,
 
 MirrorJob::~MirrorJob()
 {
-   delete source_set;
-   delete target_set;
-   delete to_transfer;
-   delete to_rm;
-   delete to_rm_mismatched;
-   delete same;
-   delete new_files_set;
-   delete old_files_set;
-   Delete(source_list_info);
-   Delete(target_list_info);
-   // session disposal should be done after ListInfo deletion.
-   SessionPool::Reuse(source_session);
-   SessionPool::Reuse(target_session);
-   if(!parent_mirror)
-   {
-      // common pointers, delete only on top level.
-      delete exclude;
-      delete size_range;
-   }
    if(script && script_needs_closing)
       fclose(script);
 }
@@ -1369,13 +1341,13 @@ CMD(mirror)
 
    bool use_cache=false;
 
-   FileAccess *source_session=0;
-   FileAccess *target_session=0;
+   FileAccessRef source_session;
+   FileAccessRef target_session;
 
    int	 verbose=0;
    const char *newer_than=0;
    const char *older_than=0;
-   Range *size_range=0;
+   Ref<Range> size_range;
    bool  remove_source_files=false;
    bool	 skip_noaccess=ResMgr::QueryBool("mirror:skip-noaccess",0);
    int	 parallel=ResMgr::Query("mirror:parallel-transfer-count",0);
@@ -1385,7 +1357,7 @@ CMD(mirror)
    const char *script_file=0;
    const char *on_change=0;
 
-   PatternSet *exclude=0;
+   Ref<PatternSet> exclude;
    const char *default_exclude=ResMgr::Query("mirror:exclude-regex",0);
    const char *default_include=ResMgr::Query("mirror:include-regex",0);
 
@@ -1436,15 +1408,14 @@ CMD(mirror)
 	 PatternSet::Pattern *pattern=0;
 	 if(opt=='x' || opt=='i')
 	 {
-	    PatternSet::Regex *rx=new PatternSet::Regex(optarg);
+	    Ref<PatternSet::Regex> rx(new PatternSet::Regex(optarg));
 	    if(rx->Error())
 	    {
 	       eprintf(_("%s: regular expression `%s': %s\n"),
 		  args->a0(),optarg,rx->ErrorText());
-	       delete rx;
 	       goto no_job;
 	    }
-	    pattern=rx;
+	    pattern=rx.borrow();
 	 }
 	 else // X or I
 	 {
@@ -1564,12 +1535,6 @@ CMD(mirror)
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
       no_job:
-	 delete exclude;
-	 delete size_range;
-	 if(source_session)
-	    SMTask::Delete(source_session);
-	 if(target_session)
-	    SMTask::Delete(target_session);
 	 return 0;
       }
    }
@@ -1657,17 +1622,17 @@ CMD(mirror)
 	 target_session=parent->session->Clone();
    }
 
-   MirrorJob *j=new MirrorJob(0,source_session,target_session,source_dir,target_dir);
+   Ref<MirrorJob> j(new MirrorJob(0,source_session.borrow(),target_session.borrow(),source_dir,target_dir));
    j->SetFlags(flags,1);
    j->SetVerbose(verbose);
-   j->SetExclude(exclude);
+   j->SetExclude(exclude.borrow());
 
    if(newer_than)
       j->SetNewerThan(newer_than);
    if(older_than)
       j->SetOlderThan(older_than);
    if(size_range)
-      j->SetSizeRange(size_range);
+      j->SetSizeRange(size_range.borrow());
    j->UseCache(use_cache);
    if(remove_source_files)
       j->RemoveSourceFiles();
@@ -1688,7 +1653,6 @@ CMD(mirror)
       if(err)
       {
 	 eprintf("%s: %s\n",args->a0(),err.get());
-	 delete j;
 	 return 0;
       }
    }
@@ -1702,7 +1666,7 @@ CMD(mirror)
    if(on_change)
       j->SetOnChange(on_change);
 
-   return j;
+   return j.borrow();
 
 #undef args
 }

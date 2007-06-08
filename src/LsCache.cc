@@ -47,7 +47,6 @@ const char *LsCacheEntryLoc::GetClosure() const
 }
 LsCacheEntryData::LsCacheEntryData(int e,const char *d,int l,const FileSet *fs)
 {
-   afset=0;
    SetData(e,d,l,fs);
 }
 
@@ -59,7 +58,6 @@ LsCacheEntry::LsCacheEntry(const FileAccess *p_loc,const char *a,int m,int e,con
 
 void LsCacheEntryData::SetData(int e,const char *d,int l,const FileSet *fs)
 {
-   delete afset;
    afset=fs?new FileSet(fs):0;
    data.nset(d,l);
    err_code=e;
@@ -171,19 +169,8 @@ const FileSet *LsCacheEntryData::GetFileSet(const FileAccess *parser)
       return afset;
    if(err_code!=FA::OK)
       return 0;
-   return afset=parser->ParseLongList(data, data.length());
-}
-
-LsCacheEntryLoc::~LsCacheEntryLoc()
-{
-   loc->DeleteLater();
-}
-LsCacheEntryData::~LsCacheEntryData()
-{
-   delete afset;
-}
-LsCacheEntry::~LsCacheEntry()
-{
+   afset=parser->ParseLongList(data, data.length());
+   return afset;
 }
 
 void LsCache::List()
@@ -214,7 +201,7 @@ void LsCache::Changed(change_mode m,const FileAccess *f,const char *dir)
    LsCacheEntry *c=IterateFirst();
    while(c)
    {
-      FileAccess *sloc=c->loc;
+      const FileAccess *sloc=c->loc;
       if(f->SameLocationAs(sloc) || (f->SameSiteAs(sloc)
 	       && (m==TREE_CHANGED?
 		     !strncmp(fdir,dir_file(sloc->GetCwd(),c->arg),fdir_len)
@@ -234,13 +221,11 @@ void LsCache::SetDirectory(const FileAccess *p_loc, const char *path, bool dir)
 
    FileAccess::Path new_cwd = p_loc->GetCwd();
    new_cwd.Change(path,!dir);
-   FileAccess *new_p_loc=p_loc->Clone();
+   SMTaskRef<FileAccess> new_p_loc(p_loc->Clone());
    new_p_loc->SetCwd(new_cwd);
 
    const char *entry = dir? "1":"0";
    LsCache::Add(new_p_loc,"",FileAccess::CHANGE_DIR, dir?FA::OK:FA::NO_FILE, entry, strlen(entry));
-
-   SMTask::Delete(new_p_loc);
 }
 
 /* This is a hint function. If file type is really needed, use GetFileInfo
@@ -251,7 +236,7 @@ int LsCache::IsDirectory(const FileAccess *p_loc,const char *dir_c)
 {
    FileAccess::Path new_cwd = p_loc->GetCwd();
    new_cwd.Change(dir_c);
-   FileAccess *new_p_loc=p_loc->Clone();
+   SMTaskRef<FileAccess> new_p_loc(p_loc->Clone());
    new_p_loc->SetCwd(new_cwd);
 
    int ret = -1;
@@ -266,32 +251,25 @@ int LsCache::IsDirectory(const FileAccess *p_loc,const char *dir_c)
    if(Find(new_p_loc, "", FileAccess::CHANGE_DIR, &e, &buf_c,&bufsiz))
    {
       assert(bufsiz==1);
-      ret = (e==FA::OK);
-      goto leave;
+      return (e==FA::OK);
    }
 
    /* We know the path is a directory if we have a cache entry for it.  This is
     * true regardless of the list type.  (Unless it's a CHANGE_DIR entry; do this
     * test after the CHANGE_DIR check.) */
    if(Find(new_p_loc, "", FA::LONG_LIST, &e, 0,0))
-   {
-      ret = (e==FA::OK);
-      goto leave;
-   }
+      return(e==FA::OK);
    if(Find(new_p_loc, "", FA::MP_LIST, &e, 0,0))
-   {
-      ret = (e==FA::OK);
-      goto leave;
-   }
+      return(e==FA::OK);
    if(Find(new_p_loc, "", FA::LIST, &e, 0,0))
-   {
-      ret = (e==FA::OK);
-      goto leave;
-   }
+      return(e==FA::OK);
 
    /* We know this is a file or a directory if the dirname is cached and
     * contains the basename. */
    {
+      const char *bn=basename_ptr(new_cwd.path);
+      bn=alloca_strdup(bn); // save basename
+
       new_cwd.Change("..");
       new_p_loc->SetCwd(new_cwd);
 
@@ -300,13 +278,11 @@ int LsCache::IsDirectory(const FileAccess *p_loc,const char *dir_c)
 	 fs=FindFileSet(new_p_loc, "", FA::LONG_LIST);
       if(fs)
       {
-	 FileInfo *fi=fs->FindByName(basename_ptr(dir_c));
+	 FileInfo *fi=fs->FindByName(bn);
 	 if(fi && (fi->defined&fi->TYPE))
-	    ret = (fi->filetype == fi->DIRECTORY);
+	    return(fi->filetype == fi->DIRECTORY);
       }
    }
 
-leave:
-   SMTask::Delete(new_p_loc);
    return ret;
 }
