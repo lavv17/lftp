@@ -612,13 +612,19 @@ Job *CmdExec::builtin_cd()
 	 is_file=(last_char(dir)!='/');
    }
 
+   int cache_is_dir=FileAccess::cache->IsDirectory(session,dir);
+   if(cache_is_dir==1)
+      is_file=false;
+   else if(cache_is_dir==0)
+      is_file=true;
+
    old_cwd=session->GetCwd();
-   FileAccess::Path new_cwd=old_cwd;
+   FileAccess::Path new_cwd(old_cwd);
    new_cwd.Change(dir,is_file);
    if(url)
       new_cwd.SetURL(url);
    if(!verify_path || background
-   || (!verify_path_cached && FileAccess::cache->IsDirectory(session,dir)==1))
+   || (!verify_path_cached && cache_is_dir==1))
    {
       cwd_history.Set(session,old_cwd);
       session->SetCwd(new_cwd);
