@@ -68,7 +68,7 @@ const char *GetPass(const char *prompt)
 
 char *readline_from_file(int fd)
 {
-   xstring line;
+   xstring line("");
    for(;;)
    {
       CharReader r(fd);
