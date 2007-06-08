@@ -438,7 +438,7 @@ bool  FileInfo::SizeOutside(const Range *r)
    return((defined&SIZE) && !r->Match(size));
 }
 
-void FileSet::Count(int *d,int *f,int *s,int *o)
+void FileSet::Count(int *d,int *f,int *s,int *o) const
 {
    for(int i=0; i<fnum; i++)
    {

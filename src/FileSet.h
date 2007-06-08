@@ -192,7 +192,7 @@ public:
    void	 LocalChmod(const char *dir,mode_t mask=0);
    void	 LocalChown(const char *dir);
 
-   void Count(int *d,int *f,int *s,int *o);
+   void Count(int *d,int *f,int *s,int *o) const;
 
    int FindGEIndByName(const char *name) const;
    FileInfo *FindByName(const char *name) const;
