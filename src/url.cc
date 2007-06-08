@@ -344,7 +344,7 @@ int url::decode_string(char *str)
    char *o=p;
    while(*p)
    {
-      if(*p=='%' && p[1] && p[2])
+      if(*p=='%' && isxdigit(p[1]) && isxdigit(p[2]))
       {
 	 int n;
 	 if(sscanf(p+1,"%2x",&n)==1)
@@ -358,6 +358,29 @@ int url::decode_string(char *str)
    }
    *o=0;
    return p-str;
+}
+
+const char *url::decode(const char *p)
+{
+   if(!p)
+      return 0;
+   static xstring s("");
+   s.truncate(0);
+   while(*p)
+   {
+      if(*p=='%' && isxdigit(p[1]) && isxdigit(p[2]))
+      {
+	 int n;
+	 if(sscanf(p+1,"%2x",&n)==1)
+	 {
+	    s.append(n);
+	    p+=3;
+	    continue;
+	 }
+      }
+      s.append(*p++);
+   }
+   return s;
 }
 
 /* encode_string was taken from wget-1.5.2 and slightly modified */
@@ -388,7 +411,7 @@ const char *url::encode(const char *s,const char *unsafe)
 {
    if(!s || !*s)
       return s;
-   static xstring u;
+   static xstring u("");
    u.truncate(0);
    char c;
    while((c=*s++))
@@ -406,12 +429,16 @@ const char *url::encode(const char *s,const char *unsafe)
    return u;
 }
 
-bool url::dir_needs_trailing_slash(const char *proto)
+bool url::dir_needs_trailing_slash(const char *proto_c)
 {
-   if(!proto)
+   if(!proto_c)
       return false;
-   return !strcmp(proto,"http")
-       || !strcmp(proto,"https");
+   char *proto=alloca_strdup(proto_c);
+   char *colon=strchr(proto,':');
+   if(colon)
+      *colon=0;
+   return !strcasecmp(proto,"http")
+       || !strcasecmp(proto,"https");
 }
 
 bool url::find_password_pos(const char *url,int *start,int *len)

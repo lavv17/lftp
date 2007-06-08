@@ -70,6 +70,7 @@ public:
    static const char *encode(const char *s,const char *unsafe);
    // reverse; done in-place; returns length.
    static int decode_string(char *);
+   static const char *decode(const char *);
 
    static bool is_url(const char *p)
       {
