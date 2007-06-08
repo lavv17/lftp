@@ -203,7 +203,6 @@ void Http::Close()
       // can reuse the connection.
       state=CONNECTED;
       ResetRequestData();
-      delete rate_limit;
       rate_limit=0;
    }
    else
