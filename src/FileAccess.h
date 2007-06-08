@@ -42,7 +42,6 @@
 #include "xstring.h"
 #include "ResMgr.h"
 #include "FileSet.h"
-#include "LsCache.h"
 #include "ArgV.h"
 
 #define FILE_END     ((off_t)-1L)
@@ -58,7 +57,7 @@ class FileAccess : public SMTask, public ResClient
 {
    static bool class_inited;
 public:
-   static LsCache *cache;
+   static class LsCache *cache;
    enum open_mode
    {
       CLOSED,
