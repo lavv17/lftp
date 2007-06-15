@@ -867,17 +867,22 @@ const char *ResMgr::DirReadable(char **value)
    return FileAccessible(value,R_OK|X_OK,1);
 }
 
+#ifdef HAVE_ICONV
 CDECL_BEGIN
 #include <iconv.h>
 CDECL_END
+#endif
+
 const char *ResMgr::CharsetValidate(char **value)
 {
+#ifdef HAVE_ICONV
    if(!**value)
       return 0;
    iconv_t ic=iconv_open(*value,*value);
    if(ic==(iconv_t)-1)
       return _("this encoding is not supported");
    iconv_close(ic);
+#endif
    return 0;
 }
 

@@ -30,9 +30,12 @@
 #include "xstring.h"
 
 #include <stdarg.h>
+
+#ifdef HAVE_ICONV
 CDECL_BEGIN
 #include <iconv.h>
 CDECL_END
+#endif
 
 #define GET_BUFSIZE 0x10000
 #define PUT_LL_MIN  0x2000
@@ -131,13 +134,20 @@ public:
    enum dir_t { GET, PUT };
 
 protected:
+#ifdef HAVE_ICONV
    iconv_t backend_translate;
+#endif
    Buffer *untranslated;
    dir_t mode;
    void EmbraceNewData(int len);
 
 public:
-   DirectedBuffer(dir_t m) { mode=m; backend_translate=0; untranslated=0; }
+   DirectedBuffer(dir_t m) { mode=m; 
+#ifdef HAVE_ICONV
+	   backend_translate=0; 
+#endif
+	   untranslated=0;
+   }
    ~DirectedBuffer();
    void SetTranslation(const char *be_encoding,bool translit=true);
    virtual void PutTranslated(const char *buf,int size);
