@@ -1,5 +1,3 @@
 This file describes some limitations or misfeatures lftp has.
 
 (none known)
-spins when disk fills up.
-FXP mode sends PASV multiple times.
