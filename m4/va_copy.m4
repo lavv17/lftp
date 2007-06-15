@@ -22,7 +22,7 @@ AC_DEFUN([lftp_VA_COPY],
       }],
       [lftp_cv_va_copy=yes],
       [lftp_cv_va_copy=no],
-      [])
+      [lftp_cv_va_copy=yes])
    ])
    if test x$lftp_cv_va_copy != xyes; then
       AC_CACHE_CHECK([for an implementation of __va_copy()],lftp_cv___va_copy,[
@@ -43,7 +43,7 @@ AC_DEFUN([lftp_VA_COPY],
 	 }],
 	 [lftp_cv___va_copy=yes],
 	 [lftp_cv___va_copy=no],
-	 [])
+	 [lftp_cv___va_copy=no])
       ])
    fi
 
