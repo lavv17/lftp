@@ -1,4 +1,9 @@
-2007-06-15	Jakob Truelsen <antialize@gmail.com>
+2007-06-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ResMgr.cc: (CharsetValidate) return error without iconv.
+	* buffer.cc, buffer.h: nicer conditionals.
+
+2007-06-15  Jakob Truelsen <antialize@gmail.com>
 
 	* ResMgr.cc, SFtp.cc, buffer.cc, buffer.h: allow compilation without iconv.
 

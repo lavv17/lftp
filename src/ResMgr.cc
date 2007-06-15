@@ -875,15 +875,17 @@ CDECL_END
 
 const char *ResMgr::CharsetValidate(char **value)
 {
-#ifdef HAVE_ICONV
    if(!**value)
       return 0;
+#ifdef HAVE_ICONV
    iconv_t ic=iconv_open(*value,*value);
    if(ic==(iconv_t)-1)
       return _("this encoding is not supported");
    iconv_close(ic);
-#endif
    return 0;
+#else
+   return _("this encoding is not supported");
+#endif
 }
 
 const char *ResMgr::NoClosure(char **)

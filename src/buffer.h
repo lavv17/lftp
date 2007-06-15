@@ -136,18 +136,14 @@ public:
 protected:
 #ifdef HAVE_ICONV
    iconv_t backend_translate;
-#endif
    Buffer *untranslated;
+#endif
    dir_t mode;
    void EmbraceNewData(int len);
 
 public:
-   DirectedBuffer(dir_t m) { mode=m; 
 #ifdef HAVE_ICONV
-	   backend_translate=0; 
-#endif
-	   untranslated=0;
-   }
+   DirectedBuffer(dir_t m) { mode=m; backend_translate=0; untranslated=0; }
    ~DirectedBuffer();
    void SetTranslation(const char *be_encoding,bool translit=true);
    virtual void PutTranslated(const char *buf,int size);
@@ -161,6 +157,12 @@ public:
 	    Buffer::Put(buf,size);
       }
    void Put(const char *buf) { Put(buf,strlen(buf)); }
+#else
+   DirectedBuffer(dir_t m) { mode=m; }
+   void SetTranslation(const char *be_encoding,bool translit=true) {}
+   virtual void PutTranslated(const char *buf,int size) { Put(buf,size); }
+   void ResetTranslation() {}
+#endif
    dir_t GetDirection() { return mode; }
 };
 

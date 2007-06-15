@@ -246,9 +246,9 @@ void Buffer::SetError2(const char *e1,const char *e2)
 }
 #endif
 
+#ifdef HAVE_ICONV
 void DirectedBuffer::SetTranslation(const char *enc,bool translit)
 {
-#ifdef HAVE_ICONV
    if(backend_translate)
       iconv_close(backend_translate);
    backend_translate=0;
@@ -271,7 +271,6 @@ void DirectedBuffer::SetTranslation(const char *enc,bool translit)
 			      to_code,from_code,strerror(errno));
       backend_translate=0;
    }
-#endif
 }
 DirectedBuffer::~DirectedBuffer()
 {
@@ -280,17 +279,14 @@ DirectedBuffer::~DirectedBuffer()
 }
 void DirectedBuffer::ResetTranslation()
 {
-#ifdef HAVE_ICONV
    if(!backend_translate)
       return;
    iconv(backend_translate,0,0,0,0);
-#endif
    delete untranslated;
    untranslated=0;
 }
 void DirectedBuffer::PutTranslated(const char *put_buf,int size)
 {
-#ifdef HAVE_ICONV
    if(!backend_translate)
    {
       Buffer::Put(put_buf,size);
@@ -347,11 +343,9 @@ try_again:
       }
    }
    return;
-#else
-   Buffer::Put(put_buf,size);
-   return;
-#endif
 }
+#endif //HAVE_ICONV
+
 void DirectedBuffer::EmbraceNewData(int len)
 {
    if(len<=0)
@@ -367,12 +361,10 @@ void DirectedBuffer::EmbraceNewData(int len)
       PutTranslated(0,0);
    }
    else
+#endif
    {
       in_buffer+=len;
    }
-#else
-      in_buffer+=len;
-#endif
    SaveMaxCheck(0);
 }
 
