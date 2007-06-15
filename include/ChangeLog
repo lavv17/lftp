@@ -1,3 +1,7 @@
+2007-06-15	Jakob Truelsen <antialize@gmail.com>
+
+	* gettext.h: allow compilation without libintl.h
+
 2006-07-22  Nix  <nix@esperi.org.uk>
 
         * gettext.h: Synch with gnulib-20060722.
