@@ -1,41 +1,41 @@
-# translation of fr.po to French
-# translation of fr.po to Francais
+# translation of fr.po to FranÃ§ais
 # French messages of lftp
-# Copyright (C) 2000-2001,2003, 2005 Free Software Foundation, Inc.
-# Nicolas Noble <nicolas@nobis-crew.org>, 2000-2003, 2005.
+# Copyright (C) 2000-2001,2003, 2005, 2007 Free Software Foundation, Inc.
 #
+# Nicolas Noble <nicolas@nobis-crew.org>, 2000-2003, 2005.
+# Alain PORTAL <aportal@univ-montp2.fr>, 2007.
 msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2006-10-12 13:02+0400\n"
-"PO-Revision-Date: 2005-11-08 04:30+0100\n"
-"Last-Translator: Nicolas Noble <nicolas@nobis-crew.org>\n"
-"Language-Team: French <fr@li.org>\n"
+"PO-Revision-Date: 2007-06-15 16:32+0200\n"
+"Last-Translator: Alain PORTAL <aportal@univ-montp2.fr>\n"
+"Language-Team: FranÃ§ais <traduc@traduc.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.10.2\n"
+"X-Generator: KBabel 1.11.4\n"
 
 #: src/CmdExec.cc:95
 #, c-format
 msgid "Warning: chdir(%s) failed: %s\n"
-msgstr "Attention: chdir(%s) a échouée: %s\n"
+msgstr "Attention : chdir(%s) a Ã©chouÃ© : %s\n"
 
 #: src/CmdExec.cc:209
 #, c-format
 msgid "Unknown command `%s'.\n"
-msgstr "Commande inconnue `%s'.\n"
+msgstr "Commande inconnue Â« %s Â».\n"
 
 #: src/CmdExec.cc:211
 #, c-format
 msgid "Ambiguous command `%s'.\n"
-msgstr "Commande ambiguë `%s'.\n"
+msgstr "Commande ambiguÃ« Â« %s Â».\n"
 
 #: src/CmdExec.cc:232
 #, c-format
 msgid "Module for command `%s' did not register the command.\n"
-msgstr "Le module pour la commande `%s' ne s'est pas enregistré.\n"
+msgstr "Le module pour la commande Â« %s Â» n'a pas enregistrÃ© la commande.\n"
 
 #: src/CmdExec.cc:382
 #, c-format
@@ -45,7 +45,7 @@ msgstr "cd ok, cwd=%s\n"
 #: src/CmdExec.cc:403 src/MirrorJob.cc:533
 #, c-format
 msgid "%s: received redirection to `%s'\n"
-msgstr "%s: reçu une redirection vers `%s'\n"
+msgstr "%s : reÃ§u une redirection vers Â« %s Â»\n"
 
 #: src/CmdExec.cc:406 src/FileCopy.cc:1025
 msgid "Too many redirections"
@@ -58,35 +58,35 @@ msgstr "Interrompu"
 #: src/CmdExec.cc:642
 #, c-format
 msgid "Warning: discarding incomplete command\n"
-msgstr "Attention: commande incomplète ignorée\n"
+msgstr "Attention : commande incomplÃ¨te ignorÃ©e\n"
 
 #: src/CmdExec.cc:736
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
-msgstr "\tExécution de la commande interne `%s' [%s]\n"
+msgstr "\tExÃ©cution de la commande interne Â« %s Â» [%s]\n"
 
 #: src/CmdExec.cc:743
 msgid "Queue is stopped."
-msgstr "La queue est stoppée."
+msgstr "La file d'attente est stoppÃ©e."
 
 #: src/CmdExec.cc:748
 msgid "Now executing:"
-msgstr "En train d'exécuter:"
+msgstr "En cours d'exÃ©cution :"
 
 #: src/CmdExec.cc:761
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
-msgstr "\tEn attente du travail [%d]\n"
+msgstr "\tEn attente de la fin de la tÃ¢che [%d]\n"
 
 #: src/CmdExec.cc:766
 #, c-format
 msgid "\tWaiting for termination of jobs: "
-msgstr "\tEn attente de la terminaison des travaux: "
+msgstr "\tEn attente de la fin des tÃ¢ches : "
 
 #: src/CmdExec.cc:777
 #, c-format
 msgid "\tRunning\n"
-msgstr "\tEn cours d'exécution\n"
+msgstr "\tEn cours d'exÃ©cution\n"
 
 #: src/CmdExec.cc:781
 #, c-format
@@ -96,26 +96,26 @@ msgstr "\tEn attente de la commande\n"
 #: src/CmdExec.cc:1303
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
-msgstr "%s: la commande `%s' n'est pas compilée.\n"
+msgstr "%s : la commande Â« %s Â» n'est pas compilÃ©e.\n"
 
 #: src/FileAccess.cc:235
 #, c-format
 msgid "Access failed: %s"
-msgstr "L'accès a échoué: %s"
+msgstr "L'accÃ¨s a Ã©chouÃ© : %s"
 
 #: src/FileAccess.cc:238
 msgid "File cannot be accessed"
-msgstr "Le fichier ne peut être adressé"
+msgstr "Impossible d'accÃ©der au fichier"
 
 #: src/FileAccess.cc:240 src/ftpclass.cc:3994 src/ftpclass.cc:4003
 #: src/Fish.cc:1133 src/SFtp.cc:1319
 msgid "Not connected"
-msgstr "Non connecté"
+msgstr "Non connectÃ©"
 
 #: src/FileAccess.cc:244
 #, c-format
 msgid "Fatal error: %s"
-msgstr "Erreur fatale: %s"
+msgstr "Erreur fatale : %s"
 
 #: src/FileAccess.cc:247
 msgid "Fatal error"
@@ -123,40 +123,40 @@ msgstr "Erreur fatale"
 
 #: src/FileAccess.cc:249
 msgid "Store failed - you have to reput"
-msgstr "L'émission a échoué - vous devez renvoyer (reput)"
+msgstr "Le stockage a Ã©chouÃ© - vous devez renvoyer (reput)"
 
 #: src/FileAccess.cc:253 src/FileAccess.cc:256
 msgid "Login failed"
-msgstr "Login incorrect."
+msgstr "L'authentification a Ã©chouÃ©."
 
 #: src/FileAccess.cc:260 src/FileAccess.cc:263
 msgid "Operation not supported"
-msgstr "Opération non supportée"
+msgstr "OpÃ©ration non prise en charge"
 
 #: src/FileAccess.cc:267
 #, c-format
 msgid "File moved: %s"
-msgstr "Fichier déplacé: %s"
+msgstr "Fichier dÃ©placÃ© : %s"
 
 #: src/FileAccess.cc:273
 #, c-format
 msgid "File moved to `%s'"
-msgstr "Fichier déplacé vers `%s'"
+msgstr "Fichier dÃ©placÃ© vers Â« %s Â»"
 
 #: src/FileAccess.cc:1011 src/buffer.cc:234
 #, c-format
 msgid "%s [cached]"
-msgstr "%s [caché]"
+msgstr "%s [cachÃ©]"
 
 #: src/GetJob.cc:79
 #, c-format
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
-msgstr "%s: %s: le fichier existe déjà et xfer:clobber n'est pas défini\n"
+msgstr "%s : %s : le fichier existe dÃ©jÃ  et xfer:clobber n'est pas dÃ©fini\n"
 
 #: src/Job.cc:344
 #, c-format
 msgid "[%d] Done (%s)"
-msgstr "[%d] Terminé (%s)"
+msgstr "[%d] TerminÃ© (%s)"
 
 #: src/LsCache.cc:203
 #, c-format
@@ -165,7 +165,7 @@ msgstr "%ld octet$#l#|s$ dans le cache"
 
 #: src/LsCache.cc:207
 msgid ", no size limit"
-msgstr ", aucune limite en taille"
+msgstr ", aucune limite de taille"
 
 #: src/LsCache.cc:209
 #, c-format
@@ -175,87 +175,87 @@ msgstr ", taille maximum %ld\n"
 #: src/MirrorJob.cc:96
 #, c-format
 msgid "%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
-msgstr "%sTotal: %d répertoire$|s$, %d fichier$|s$, %d lien$|s$\n"
+msgstr "%sTotal : %d rÃ©pertoire$|s$, %d fichier$|s$, %d $lien symbolique|liens symboliques$\n"
 
 #: src/MirrorJob.cc:100
 #, c-format
 msgid "%sNew: %d file$|s$, %d symlink$|s$\n"
-msgstr "%sNouveau: %d fichier$|s$, %d lien$|s$\n"
+msgstr "%sNouveau : %d fichier$|s$, %d $lien symbolique|liens symboliques$\n"
 
 #: src/MirrorJob.cc:104
 #, c-format
 msgid "%sModified: %d file$|s$, %d symlink$|s$\n"
-msgstr "%sModifié: %d fichier$|s$, %d lien$|s$\n"
+msgstr "%sModifiÃ© : %d fichier$|s$, %d $lien symbolique|liens symboliques$\n"
 
 #: src/MirrorJob.cc:111
 #, c-format
 msgid "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
-msgstr "%sSupprimé: %d répertoire$|s$, %d fichier$|s$, %d lien$|s$\n"
+msgstr "%sSupprimÃ© : %d rÃ©pertoire$|s$, %d fichier$|s$, %d $lien symbolique|liens symboliques$\n"
 
 #: src/MirrorJob.cc:116
 #, c-format
 msgid "%s%d error$|s$ detected\n"
-msgstr "%s%d erreur$ détectée|s détectées$\n"
+msgstr "%s%d $erreur dÃ©tectÃ©e|erreurs dÃ©tectÃ©es$\n"
 
 #: src/MirrorJob.cc:249 src/MirrorJob.cc:889
 #, c-format
 msgid "Removing old file `%s'"
-msgstr "Suppression de l'ancien fichier `%s'"
+msgstr "Suppression de l'ancien fichier Â« %s Â»"
 
 #: src/MirrorJob.cc:260
 #, c-format
 msgid "Transferring file `%s'"
-msgstr "Émission du fichier `%s'"
+msgstr "Transfert du fichier Â« %s Â»"
 
 #: src/MirrorJob.cc:348 src/MirrorJob.cc:437 src/MirrorJob.cc:671
 #, c-format
 msgid "Removing old local file `%s'"
-msgstr "Suppression de l'ancien fichier local `%s'"
+msgstr "Suppression de l'ancien fichier local Â« %s Â»"
 
 #: src/MirrorJob.cc:399
 #, c-format
 msgid "Mirroring directory `%s'"
-msgstr "Duplication du répertoire `%s'"
+msgstr "Duplication du rÃ©pertoire Â« %s Â»"
 
 #: src/MirrorJob.cc:450
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
-msgstr "Création du lien `%s' -> `%s'"
+msgstr "CrÃ©ation du lien symbolique Â« %s Â» vers Â« %s Â»"
 
 #: src/MirrorJob.cc:586
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
-msgstr "mirror: le protocole `%s' ne convient pas pour une duplication\n"
+msgstr "mirror : le protocole Â« %s Â» ne convient pas pour une duplication\n"
 
 #: src/MirrorJob.cc:689
 #, c-format
 msgid "Making directory `%s'"
-msgstr "Création du répertoire `%s'"
+msgstr "CrÃ©ation du rÃ©pertoire Â« %s Â»"
 
 #: src/MirrorJob.cc:838
 #, c-format
 msgid "Old directory `%s' is not removed"
-msgstr "L'ancien répertoire `%s' n'est pas supprimé"
+msgstr "L'ancien rÃ©pertoire Â« %s Â» n'est pas supprimÃ©"
 
 #: src/MirrorJob.cc:841
 #, c-format
 msgid "Old file `%s' is not removed"
-msgstr "L'ancien fichier `%s' n'est pas supprimé"
+msgstr "L'ancien fichier Â« %s Â» n'est pas supprimÃ©"
 
 #: src/MirrorJob.cc:884
 #, c-format
 msgid "Removing old directory `%s'"
-msgstr "Suppression de l'ancien répertoire `%s'"
+msgstr "Suppression de l'ancien rÃ©pertoire Â« %s Â»"
 
 #: src/MirrorJob.cc:999
 #, c-format
 msgid "Retrying mirror...\n"
-msgstr "Réessaye le mirroir...\n"
+msgstr "RÃ©essaye la commande mirror...\n"
 
 #: src/MirrorJob.cc:1406
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
-msgstr "%s: expression régulière `%s': %s\n"
+msgstr "%s : expression rationnelle Â« %s Â» : %s\n"
 
 #: src/MirrorJob.cc:1523 src/commands.cc:1084 src/commands.cc:1172
 #: src/commands.cc:1624 src/commands.cc:1658 src/commands.cc:1763
@@ -265,12 +265,12 @@ msgstr "%s: expression régulière `%s': %s\n"
 #: src/SleepJob.cc:130 src/SleepJob.cc:181
 #, c-format
 msgid "Try `help %s' for more information.\n"
-msgstr "Essayez `help %s' pour plus d'informations.\n"
+msgstr "Essayez Â« help %s Â» pour plus d'informations.\n"
 
 #: src/MirrorJob.cc:1560 src/MirrorJob.cc:1576 src/commands.cc:944
 #: src/commands.cc:2155 src/DummyProto.cc:73
 msgid " - not supported protocol"
-msgstr " - protocole non supporté"
+msgstr " - protocole non pris en charge"
 
 #: src/ResMgr.cc:120
 msgid "no such variable"
@@ -282,11 +282,11 @@ msgstr "nom de variable ambigu"
 
 #: src/ResMgr.cc:407
 msgid "invalid boolean value"
-msgstr "valeur booléenne invalide"
+msgstr "valeur boolÃ©enne invalide"
 
 #: src/ResMgr.cc:432
 msgid "invalid boolean/auto value"
-msgstr "booléen/valeur automatique invalide"
+msgstr "valeur boolÃ©enne/automatique invalide"
 
 #: src/ResMgr.cc:456 src/ResMgr.cc:492
 msgid "invalid number"
@@ -298,61 +298,61 @@ msgstr "nombre en virgule flottante invalide"
 
 #: src/ResMgr.cc:675
 msgid "Invalid time unit letter, only [smhd] are allowed."
-msgstr "Unité de temps invalide, seules [smhd] sont permises."
+msgstr "UnitÃ© de temps invalide, seules [smhd] sont permises."
 
 #: src/ResMgr.cc:683
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
-msgstr "Format de temps invalide. Le format est <temps><unité>, ex: 2h30m."
+msgstr "Format de temps invalide. Le format est <temps><unitÃ©>, par ex. : 2h30m."
 
 #: src/ResMgr.cc:727 src/commands.cc:3234 src/commands.cc:3243
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
-msgstr "Format de domaine invalide. Le format est min-max, ex: 10-20"
+msgstr "Format d'intervalle invalide. Le format est min-max, par ex. : 10-20."
 
 #: src/ResMgr.cc:744
 msgid "Invalid suffix. Valid suffixes are: k, M, G, T, P, E, Z, Y"
-msgstr ""
+msgstr "Suffixe invalide. Les suffixes valides sont : k, M, G, T, P, E, Z, Y"
 
 #: src/ResMgr.cc:747
 msgid "Integer overflow"
-msgstr ""
+msgstr "DÃ©bordement de nombre entier"
 
 #: src/ResMgr.cc:810
 msgid "Invalid IPv4 numeric address"
-msgstr "Adresse numérique IPv4 invalide"
+msgstr "Adresse numÃ©rique IPv4 invalide"
 
 #: src/ResMgr.cc:821
 msgid "Invalid IPv6 numeric address"
-msgstr "Adresse numérique IPv6 invalide"
+msgstr "Adresse numÃ©rique IPv6 invalide"
 
 #: src/ResMgr.cc:879
 msgid "this encoding is not supported"
-msgstr "cet encodage n'est pas supporté"
+msgstr "cet encodage n'est pas pris en charge"
 
 #: src/ResMgr.cc:886
 msgid "no closure defined for this setting"
-msgstr "aucune restriction pour ce paramètre"
+msgstr "aucune restriction pour ce paramÃ¨tre"
 
 #: src/ResMgr.cc:899
 msgid "invalid pair of numbers"
-msgstr "paire de nombre invalide"
+msgstr "paire de nombres invalide"
 
 #: src/Resolver.cc:186 src/Resolver.cc:228 src/ftpclass.cc:3999
 #: src/Http.cc:1885
 msgid "Resolving host address..."
-msgstr "Résolution de l'adresse..."
+msgstr "RÃ©solution de l'adresse..."
 
 #: src/Resolver.cc:247
 msgid "host name resolve timeout"
-msgstr "résolution de l'adresse trop longue"
+msgstr "dÃ©lai d'attente dÃ©passÃ© pour la rÃ©solution du nom de l'hÃ´te"
 
 #: src/Resolver.cc:298
 #, c-format
 msgid "---- %d address$|es$ found\n"
-msgstr "---- %d: adress$e trouvée|es trouvées$\n"
+msgstr "---- %d: $adresse trouvÃ©e|adresses trouvÃ©es$\n"
 
 #: src/Resolver.cc:830
 msgid "Host name lookup failure"
-msgstr "La résolution du nom a échouée"
+msgstr "La rÃ©solution du nom a Ã©chouÃ©e"
 
 #: src/Resolver.cc:863
 #, c-format
@@ -361,20 +361,20 @@ msgstr "service %s inconnu"
 
 #: src/Resolver.cc:885
 msgid "No address found"
-msgstr "Adresse non trouvée"
+msgstr "Adresse non trouvÃ©e"
 
 #: src/SysCmdJob.cc:78
 #, c-format
 msgid "execlp(%s) failed: %s\n"
-msgstr "execlp(%s) a échouée: %s\n"
+msgstr "execlp(%s) a Ã©chouÃ© : %s\n"
 
 #: src/commands.cc:114
 msgid "!<shell-command>"
-msgstr "!<commande_de_shell>"
+msgstr "!<commande-shell>"
 
 #: src/commands.cc:115
 msgid "Launch shell or shell command\n"
-msgstr "Lance un shell ou une commande de shell\n"
+msgstr "Lance un interprÃ©teur de commande ou une commande shell\n"
 
 #: src/commands.cc:116
 msgid "(commands)"
@@ -385,9 +385,8 @@ msgid ""
 "Group commands together to be executed as one command\n"
 "You can launch such a group in background\n"
 msgstr ""
-"Groupe des commandes ensembles pour être exécutées\n"
-"comme une seule commande\n"
-"Vous pouvez lancer un tel groupe en tâche de fond\n"
+"Regroupe des commandes pour Ãªtre exÃ©cutÃ©es comme une seule\n"
+"commande. Vous pouvez lancer un tel groupe en tÃ¢che de fond\n"
 
 #: src/commands.cc:120
 msgid "alias [<name> [<value>]]"
@@ -399,14 +398,14 @@ msgid ""
 "the alias is undefined, else is takes the value <value>.\n"
 "If no argument is given the current aliases are listed.\n"
 msgstr ""
-"Définit ou efface l'alias <nom>. Si <valeur> est omise,\n"
-"l'alias est effacé, sinon il prend la valeur <valeur>.\n"
-"Si aucun argument n'est donné, alors les alias en cours\n"
-"sont affichés.\n"
+"DÃ©finit ou efface l'alias <nom>. Si <valeur> est omise,\n"
+"l'alias est effacÃ©, sinon il prend la valeur <valeur>.\n"
+"Si aucun argument n'est donnÃ©, alors les alias en cours\n"
+"sont affichÃ©s.\n"
 
 #: src/commands.cc:125
 msgid "anon - login anonymously (by default)\n"
-msgstr "anon - se loggue de manière anonyme (par défaut)\n"
+msgstr "anon - se connecter de maniÃ¨re anonyme (par dÃ©faut)\n"
 
 #: src/commands.cc:127
 msgid "bookmark [SUBCMD]"
@@ -424,15 +423,15 @@ msgid ""
 "  import <type>      - import foreign bookmarks\n"
 "  list               - list bookmarks (default)\n"
 msgstr ""
-"La commande bookmark contrôle les signets\n"
+"La commande bookmark contrÃ´le les signets\n"
 "\n"
-"Les sous-commandes suivantes sont valides:\n"
-"  add <nom> [<url>]  - ajoute l'url en cours ou l'url indiquée aux signets\n"
-"                       et l'associe au nom donné\n"
-"  del <nom>          - supprime le signet \n"
-"  edit               - démarre l'éditeur de signets\n"
+"Les sous-commandes suivantes sont valides :\n"
+"  add <nom> [<url>]  - ajoute l'url en cours ou l'url indiquÃ©e aux signets\n"
+"                       et l'associe au nom donnÃ©\n"
+"  del <nom>          - supprime le signet\n"
+"  edit               - dÃ©marre l'Ã©diteur de signets\n"
 "  import <type>      - importe un fichier de signets externe\n"
-"  list               - liste les signets (par défaut)\n"
+"  list               - affiche les signets (par dÃ©faut)\n"
 
 #: src/commands.cc:137
 msgid "cache [SUBCMD]"
@@ -450,15 +449,15 @@ msgid ""
 "  expire <Nx> - set cache expiration time to N seconds (x=s)\n"
 "                minutes (x=m) hours (x=h) or days (x=d)\n"
 msgstr ""
-"La commande cache contrôle la mémoire cache locale\n"
+"La commande cache contrÃ´le la mÃ©moire cache locale\n"
 "\n"
-"Les sous-commandes suivantes sont valides:\n"
-"  stat        - affiche l'état du cache (défaut)\n"
-"  on|off      - active ou désactive le cache\n"
+"Les sous-commandes suivantes sont valides :\n"
+"  stat        - affiche l'Ã©tat du cache (dÃ©faut)\n"
+"  on|off      - active ou dÃ©sactive le cache\n"
 "  flush       - vide le cache\n"
-"  size <lim>  - définit la limite de mémoire, -1 = illimité\n"
-"  expire <Nx> - définit le temps d'expiration du cache à N,\n"
-"                N étant en secondes (x=s) minutes (x=m)\n"
+"  size <lim>  - dÃ©finit la limite de mÃ©moire, -1 = illimitÃ©\n"
+"  expire <Nx> - dÃ©finit le temps d'expiration du cache Ã  N,\n"
+"                N Ã©tant en secondes (x=s) minutes (x=m)\n"
 "                heures (x=h) ou jours (x=d)\n"
 
 #: src/commands.cc:146
@@ -470,12 +469,12 @@ msgid ""
 "cat - output remote files to stdout (can be redirected)\n"
 " -b  use binary mode (ascii is the default)\n"
 msgstr ""
-"cat - affiche des fichiers distants sur stdout (peut être redirigé)\n"
-" -b  utilise le mode binaire (ascii par défaut)\n"
+"cat - affiche les fichiers distants sur stdout (peut Ãªtre redirigÃ©)\n"
+" -b  utilise le mode binaire (ASCII par dÃ©faut)\n"
 
 #: src/commands.cc:149
 msgid "cd <rdir>"
-msgstr "cd <repd>"
+msgstr "cd <rÃ©p-dis>"
 
 #: src/commands.cc:150
 msgid ""
@@ -484,11 +483,11 @@ msgid ""
 "The previous directory for each site is also stored on disk, so you can\n"
 "do `open site; cd -' even after lftp restart.\n"
 msgstr ""
-"Change le répertoire en cours pour <repd>. Le répertoire précédent\n"
-"est enregistré dans `-'. Vous pouvez faire `cd -' pour revenir au\n"
-"répertoire précédent. Le répertoire précédent de chaque site est stocké\n"
-"sur disque, donc vous pouvez faire `open site; cd-' même après avoir\n"
-"redémarré lftp.\n"
+"Change le rÃ©pertoire en cours pour <rep-dis>. Le rÃ©pertoire prÃ©cÃ©dent\n"
+"est enregistrÃ© dans Â« - Â». Vous pouvez faire Â« cd - Â» pour revenir au\n"
+"rÃ©pertoire prÃ©cÃ©dent. Le rÃ©pertoire prÃ©cÃ©dent de chaque site est stockÃ©\n"
+"sur disque, donc vous pouvez faire Â« open site; cd - Â» mÃªme aprÃ¨s avoir\n"
+"redÃ©marrÃ© lftp.\n"
 
 #: src/commands.cc:154
 msgid "chmod [OPTS] mode file..."
@@ -505,30 +504,29 @@ msgid ""
 "\n"
 "MODE can be an octal number or symbolic mode (see chmod(1))\n"
 msgstr ""
-"Change le mode de chaque FICHIER en MODE.\n"
+"Modifie le mode de chaque FICHIER en MODE.\n"
 "\n"
-" -c, --changes        - comme verbose mais n'affiche que les changements\n"
+" -c, --changes        - comme verbose mais n'affiche que les modifications\n"
 " -f, --quiet          - supprime quasiment tous les messages d'erreurs\n"
 " -v, --verbose        - affiche un message pour chaque fichier\n"
-" -R, --recursive      - change les fichiers et répertoires récursivement\n"
+" -R, --recursive      - modifie les fichiers et rÃ©pertoires rÃ©cursivement\n"
 "\n"
-"MODE peut être un nombre octal ou un mode symbolique (voir chmod(1))\n"
+"MODE peut Ãªtre un nombre octal ou un mode symbolique (voir chmod(1))\n"
 
 #: src/commands.cc:164
 msgid ""
 "Close idle connections. By default only with current server.\n"
 " -a  close idle connections with all servers\n"
 msgstr ""
-"Ferme les connexions inutiles. Par défaut, uniquement pour le serveur "
+"Ferme les connexions inutiles. Par dÃ©faut, uniquement pour le serveur "
 "actif.\n"
-" -a  ferme les connexion inutiles de tous les serveurs\n"
+" -a  ferme les connexions inutiles de tous les serveurs\n"
 
 #: src/commands.cc:166
 msgid "[re]cls [opts] [path/][pattern]"
-msgstr "[re]cls [opts] [chemin/][expression]"
+msgstr "[re]cls [opts] [chemin/][motif]"
 
 #: src/commands.cc:167
-#, fuzzy
 msgid ""
 "List remote files. You can redirect output of this command to file\n"
 "or via pipe to external command.\n"
@@ -567,43 +565,48 @@ msgid ""
 "-s flag on the commandline as well.  Add `-i' to cls-completion-default\n"
 "to make filename completion case-insensitive.\n"
 msgstr ""
-"Liste les fichiers distant. Vous pouvez rediriger la sortie de cette\n"
-"commande vers un fichier ou vers un pipe sur une commande externe.\n"
+"Affiche les fichiers distants. Vous pouvez rediriger la sortie de cette\n"
+"commande vers un fichier ou une commande externe via un tube.\n"
 "\n"
-" -1                   - sortie en une colonne\n"
-" -B, --basename       - affiche les noms des fichiers uniquement\n"
+" -1                   - sortie sur une colonne\n"
+" -B, --basename       - affiche uniquement les noms des fichiers\n"
 "     --bloc-size=SIZ  - utilise des blocs de taille SIZ\n"
-" -d, --directory      - liste les entrées des répertoires\n"
-" -F, --classify       - ajoute un indicateur ('/' ou '@') aux entrées\n"
-" -h, --human-readable - affiche les taille en format humain (ex, 1K)\n"
-"     --si             - même chose, en utilisant des puissances de 1000\n"
+" -d, --directory      - affiche les entrÃ©es des rÃ©pertoires au lieu de leur\n"
+"                        contenu\n"
+" -F, --classify       - ajoute un indicateur (Â« / Â» ou Â« @ Â») aux entrÃ©es\n"
+" -h, --human-readable - affiche les tailles dans un format intelligible\n"
+"                        (par ex., 1K)\n"
+"     --si             - mÃªme chose, en utilisant des puissances de 1000\n"
+"                        au lieu des puissances de 1024"
 " -k, --kilobytes      - comme --block-size=1024\n"
-" -l, --long           - utilise un format de liste long\n"
-" -q, --quiet          - n'affiche pas de status\n"
-" -s, --size           - affiche les tailles des fichiers\n"
+" -l, --long           - utilise un format d'affichage long\n"
+" -q, --quiet          - n'affiche pas d'Ã©tat\n"
+" -s, --size           - affiche la taille de chaque fichier\n"
 "     --filesize       - avec -s, n'affiche que les tailles des fichiers\n"
-" -i, --nocase         - la recherche ne fait pas attention à la casse\n"
-" -I, --sortnocase     - trie sans tenir compte de la casse\n"
-" -D, --dirsfirst      - affiche les répertoires en premier\n"
-"     --sort=OPT       - \"name\" (par nom), \"size\" (par taille)\n"
-" -S                   - trie par la taille des fichiers\n"
+" -i, --nocase         - la mise en correspondance est insensible Ã  la casse\n"
+" -I, --sortnocase     - trie les noms sans tenir compte de la casse\n"
+" -D, --dirsfirst      - affiche les rÃ©pertoires en premier\n"
+"     --sort=OPT       - Â« name Â» (par nom), Â« size Â»(par taille)\n"
+" -S                   - trie suivant la taille des fichiers\n"
 " --user, --group, --perms, --date, --linkcount, --links\n"
 "                      - affiche des champs individuels\n"
+" --time-style=STYLE   - utilise le format de temps spÃ©cifiÃ©\n"
 "\n"
-"Par défaut, la sortie de cls est cachée, pour voir un nouveau listing,\n"
-"utilisez `recls' ou `cache flush'.\n"
+"Par dÃ©faut, la sortie de Â« cls Â» est cachÃ©e. Pour voir un nouvel affichage,\n"
+"utilisez Â« recls Â» ou Â« cache flush Â».\n"
 "\n"
-"Les variables cls-default et cls-completion-default peuvent être utilisées\n"
-"pour spécifier les défauts pour les listings cls et les listings de\n"
-"complétion, respectivement. Par exemple, pour que les listings de\n"
-"complétion affichent les tailles de fichiers, mettez\n"
-"cls-completion-default à \"-s\".\n"
+"Les variables cls-default et cls-completion-default peuvent Ãªtre utilisÃ©es\n"
+"pour spÃ©cifier les valeurs par dÃ©faut des affichages cls et des affichages de\n"
+"complÃ©tion, respectivement. Par exemple, pour que les affichages de\n"
+"complÃ©tion affichent les tailles de fichiers, mettez\n"
+"cls-completion-default Ã  Â« -s Â».\n"
 "\n"
-"Astuces: Utilisez --filesize et -D pour de meilleurs listings. Si vous\n"
-"ne voulez pas toujours voir les tailles des fichiers, --filesize pour\n"
-"cls-default affectera l'option -s de la ligne de commande. Toutes les\n"
-"options fonctionnent pour cls-completion-default. -i pour\n"
-"pour cls-completion-default va désactiver la casse pour la complétion.\n"
+"Astuces : utilisez Â« --filesize Â» et Â« -D Â» pour de meilleurs affichages.\n"
+"Si vous ne voulez pas toujours voir les tailles des fichiers, Â« --filesize Â»\n"
+"dans cls-default affectera l'option Â« -s Â» de la ligne de commande.\n"
+"Toutes les options fonctionnent pour cls-completion-default.\n"
+"Ajoutez Â« -i Â» Ã  cls-completion-default pour rendre la complÃ©tion\n"
+"des fichiers insensible Ã  la casse.\n"
 
 #: src/commands.cc:216
 msgid "debug [<level>|off] [-o <file>]"
@@ -614,13 +617,12 @@ msgid ""
 "Set debug level to given value or turn debug off completely.\n"
 " -o <file>  redirect debug output to the file.\n"
 msgstr ""
-"Définit le niveau de déboggage a la valeur indiquée ou désactive le "
-"déboggage.\n"
-" -o <fichier>  redirige le déboggage vers un fichier.\n"
+"DÃ©finit le niveau de dÃ©bogage Ã  la valeur indiquÃ©e ou dÃ©sactive le dÃ©bogage.\n"
+" -o <fichier>  redirige la sortie du dÃ©bogage vers un fichier.\n"
 
 #: src/commands.cc:219
 msgid "du [options] <dirs>"
-msgstr "du [options] <reps>"
+msgstr "du [options] <rÃ©pertoires>"
 
 #: src/commands.cc:220
 msgid ""
@@ -644,23 +646,25 @@ msgid ""
 " -s, --summarize       display only a total for each argument\n"
 "     --exclude=PAT     exclude files that match PAT\n"
 msgstr ""
-"Estime l'espace disque.\n"
-" -a, --all             affiche pour tous les fichiers\n"
+"RÃ©capituler l'utilisation du disque.\n"
+" -a, --all             affiche pour tous les fichiers,\n"
+"                       pas seulement les rÃ©pertoires\n"
 "     --block-size=SIZ  utilise des blocs de taille SIZ\n"
 " -b, --bytes           affiche la taille en octets\n"
 " -c, --total           produit un grand total\n"
-" -d, --max-depth=N     affiche le total pour un répertoire (ou un fichier\n"
+" -d, --max-depth=N     affiche le total pour un rÃ©pertoire (ou un fichier\n"
 "                       avec --all) seulement s'il y a N ou moins de niveaux\n"
-"                       en dessous des arguements de la commande;\n"
-"                       --max-depth=0 fait la même chose que --summarize\n"
+"                       en dessous des arguments de la commande ;\n"
+"                       --max-depth=0 fait la mÃªme chose que --summarize\n"
 " -F, --files           affiche le nombre de fichiers au lieu des tailles\n"
-" -h, --human-readable  affiche les tailles au format humain (ex: 1K)\n"
-" -H, --si              même chose, avec des puissances de 1000\n"
-" -k, --kilobytes       comme --block-size=1024\n"
-" -m, --megabytes       comme --block-size=1048576\n"
-" -S, --separate-dirs   ne pas inclure la taille des sous-répertoires\n"
+" -h, --human-readable  affiche les tailles dans format intelligible\n"
+"                       (par ex. : 1K, 234M, 2G)\n"
+" -H, --si              mÃªme chose, avec des puissances de 1000 et non de 1024\n"
+" -k, --kilobytes       identique Ã  --block-size=1024\n"
+" -m, --megabytes       identique Ã  --block-size=1048576\n"
+" -S, --separate-dirs   ne pas inclure la taille des sous-rÃ©pertoires\n"
 " -s, --summarize       affiche seulement un total pour chaque argument\n"
-"     --exclude=PAT     exclue les fichiers correspondant à PAT\n"
+"     --exclude=PAT     exclut les fichiers correspondant Ã  PAT\n"
 
 #: src/commands.cc:238
 msgid "exit [<code>|bg]"
@@ -674,12 +678,12 @@ msgid ""
 "termination status. If omitted, exit code of last command is used.\n"
 "`bg' forces moving to background if cmd:move-background is false.\n"
 msgstr ""
-"exit - sort de lftp ou passe en tâche de fond si des travaux sont actifs\n"
+"exit - sort de lftp ou bascule en arriÃ¨re-plan si des tÃ¢ches sont actives\n"
 "\n"
-"Si aucun travail n'est actif, le code est passé au système d'exploitation\n"
-"comme étant le code de sortie de lftp. Si le code est omis, le code de\n"
-"sortie de la dernière commande sera utilisé.\n"
-"`bg' force le passage en tâche de fond si cmd:move-background est faux.\n"
+"Si aucun tÃ¢che n'est active, le code est passÃ© au systÃ¨me d'exploitation\n"
+"comme Ã©tant le code de sortie de lftp. Si le code est omis, le code de\n"
+"sortie de la derniÃ¨re commande sera utilisÃ©.\n"
+"Â« bg Â» force le basculement en arriÃ¨re-plan si cmd:move-background est faux.\n"
 
 #: src/commands.cc:245
 msgid ""
@@ -689,15 +693,15 @@ msgid ""
 "You can redirect output of this command.\n"
 " -d, --maxdepth=LEVELS  Descend at most LEVELS of directories.\n"
 msgstr ""
-"Usage: find [OPTS] [répertoire]\n"
-"Affiche le contenu du répertoire spécifié ou du répertoire en cours de\n"
-"manière récursive. Les répertoires dans la listes sont marqués avec un\n"
-"slash final. Vous pouvez rediriger la sortie de cette commande.\n"
-" -d, --maxdepth=LEVELS  Descend au plus LEVELS répertoires.\n"
+"Utilisation : find [OPTS] [rÃ©pertoire]\n"
+"Affiche, de maniÃ¨re rÃ©cursive, le contenu du rÃ©pertoire spÃ©cifiÃ©\n"
+"ou du rÃ©pertoire en cours. Les rÃ©pertoires dans la liste sont marquÃ©s avec une\n"
+"barre oblique finale. Vous pouvez rediriger la sortie de cette commande.\n"
+" -d, --maxdepth=LEVELS  Descend dans au plus LEVELS rÃ©pertoires.\n"
 
 #: src/commands.cc:250
 msgid "get [OPTS] <rfile> [-o <lfile>]"
-msgstr "get [OPTS] <fichierd> -o <fichierl>]"
+msgstr "get [OPTS] <fichier-distant> -o <fichier-local>]"
 
 #: src/commands.cc:251
 msgid ""
@@ -708,13 +712,14 @@ msgid ""
 " -a  use ascii mode (binary is the default)\n"
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
-"Télécharge le fichier distant <fichierd>.\n"
-" -o <fichierd> spécifie le nom de fichier local (par défaut: fichierd)\n"
+"TÃ©lÃ©charge le fichier distant <fichier-distant> et l'enregistre dans\n"
+"le fichier local <fichier-local>.\n"
+" -o <fichier-local> spÃ©cifie le nom de fichier local (par dÃ©faut : fichier-distant)\n"
 " -c  continue (reget)\n"
-" -E  efface le fichier distant après un transfert correctement accompli.\n"
-" -a  utilise le mode ascii (mode binaire par défaut)\n"
-" -O <base> spécifie le répertoire de base ou l'URL où les fichiers doivent\n"
-"     être placés.\n"
+" -E  efface le fichier distant aprÃ¨s un transfert correctement effectuÃ©.\n"
+" -a  utilise le mode ASCII (mode binaire par dÃ©faut)\n"
+" -O <base> spÃ©cifie le rÃ©pertoire de base ou l'URL oÃ¹ les fichiers doivent\n"
+"     Ãªtre placÃ©s.\n"
 
 #: src/commands.cc:258
 msgid "glob [OPTS] <cmd> <args>"
@@ -730,13 +735,13 @@ msgid ""
 " -d  directories\n"
 " -a  all types\n"
 msgstr ""
-"Étend les jokers et lance la commande spécifiée.\n"
-"Les options peuvent être utilisées pour étendre les jokers à une liste de\n"
-"fichiers, de répertoires ou des deux types. La détermination du type n'est\n"
-"pas très fiable et dépend du serveur. Si une entrée ne peut être \n"
-"déterminée, elle sera incluse dans la liste.\n"
-" -f  fichiers (défaut)\n"
-" -d  répertoires\n"
+"DÃ©veloppe les caractÃ¨res gÃ©nÃ©riques (wildcard) et lance la commande\n"
+"spÃ©cifiÃ©e. Les options peuvent Ãªtre utilisÃ©es pour dÃ©velopper les caractÃ¨res\n"
+"gÃ©nÃ©riques Ã  une liste de fichiers, de rÃ©pertoires ou des deux types.\n"
+"La dÃ©termination du type n'est pas trÃ¨s fiable et dÃ©pend du serveur.\n"
+"Si une entrÃ©e ne peut Ãªtre dÃ©terminÃ©e, elle sera incluse dans la liste.\n"
+" -f  fichiers (dÃ©faut)\n"
+" -d  rÃ©pertoires\n"
 " -a  tous les types\n"
 
 #: src/commands.cc:267
@@ -745,11 +750,13 @@ msgstr "help [<cmd>]"
 
 #: src/commands.cc:268
 msgid "Print help for command <cmd>, or list of available commands\n"
-msgstr "Affiche l'aide pour la commande <cmd>, ou la liste des commandes\n"
+msgstr "Affiche l'aide pour la commande <cmd>, ou la liste des commandes disponibles\n"
 
 #: src/commands.cc:270
 msgid "List running jobs. -v means verbose, several -v can be specified.\n"
-msgstr "Liste les travaux actifs. -v pour le mode bavard (cumulatif)\n"
+msgstr ""
+"Affiche les tÃ¢ches actives. -v pour le mode volubile,\n"
+"l'option pouvant Ãªtre spÃ©cifiÃ©e plusieurs fois\n"
 
 #: src/commands.cc:271
 msgid "kill all|<job_no>"
@@ -757,20 +764,20 @@ msgstr "kill all|<num>"
 
 #: src/commands.cc:272
 msgid "Delete specified job with <job_no> or all jobs\n"
-msgstr "Efface le travail spécifié par <num> ou tous les travaux\n"
+msgstr "Supprime la tÃ¢che spÃ©cifiÃ©e par <num> ou toutes les tÃ¢ches\n"
 
 #: src/commands.cc:273
 msgid "lcd <ldir>"
-msgstr "lcd <repl>"
+msgstr "lcd <rÃ©pertoire-local>"
 
 #: src/commands.cc:274
 msgid ""
 "Change current local directory to <ldir>. The previous local directory\n"
 "is stored as `-'. You can do `lcd -' to change the directory back.\n"
 msgstr ""
-"Change le répertoire local pour <repl>. Le répertoire local précédent\n"
-"est stocké dans `-'. Vous pouvez faire `lcd -' pour revenir au répertoire\n"
-"précédent.\n"
+"Modifie le rÃ©pertoire local courant en <rÃ©pertoire-local>. Le rÃ©pertoire local\n"
+"prÃ©cÃ©dent est stockÃ© dans Â« - Â». Vous pouvez faire Â« lcd - Â» pour revenir\n"
+"au rÃ©pertoire prÃ©cÃ©dent.\n"
 
 #: src/commands.cc:276
 msgid "lftp [OPTS] <site>"
@@ -789,14 +796,14 @@ msgid ""
 " -p <port>           use the port for connection\n"
 " <site>              host name, URL or bookmark name\n"
 msgstr ""
-"`lftp' est la première commande exécutée par lftp après les fichiers `rc'\n"
-" -f <fichier>        exécute les commandes depuis le fichier et termine\n"
-" -c <cmd>            exécute les commandes et termine\n"
+"Â« lftp Â» est la premiÃ¨re commande exÃ©cutÃ©e par lftp aprÃ¨s les fichiers Â« rc Â»\n"
+" -f <fichier>        exÃ©cute les commandes depuis le fichier et termine\n"
+" -c <cmd>            exÃ©cute les commandes et termine\n"
 " --help              affiche cette aide et termine\n"
 " --version           affiche la version de lftp et termine\n"
-"Les autres options sont les mêmes que celles de la commande `open'\n"
-" -e <cmd>            exécute la commande juste après la sélection.\n"
-" -u <user>[,<pass>]  utilise user/pass pour l'authentification.\n"
+"Les autres options sont les mÃªmes que celles de la commande Â« open Â»\n"
+" -e <cmd>            exÃ©cute la commande juste aprÃ¨s la sÃ©lection\n"
+" -u <user>[,<pass>]  utilise user/pass pour l'authentification\n"
 " -p <port>           utilise le port pour la connexion\n"
 " <site>              nom du site, URL ou nom de signet\n"
 
@@ -812,11 +819,11 @@ msgid ""
 "`cache flush'.\n"
 "See also `help cls'.\n"
 msgstr ""
-"Liste les fichiers distants. Vous pouvez rediriger la sortie de cette\n"
-"commande vers un fichier ou faire un pipe vers une commande externe.\n"
-"Par défaut, la sortie de ls est cachée. Pour voir un nouveau listing,\n"
-"utilisez `rels' ou `cache flush'.\n"
-"Voir aussi `help cls'.\n"
+"Affiche les fichiers distants. Vous pouvez rediriger la sortie de cette\n"
+"commande vers un fichier ou une commande externe via un tube.\n"
+"Par dÃ©faut, la sortie de ls est cachÃ©e. Pour avoir un nouvel affichage,\n"
+"utilisez Â« rels Â» ou Â« cache flush Â».\n"
+"Voir aussi Â« help cls Â».\n"
 
 #: src/commands.cc:295
 msgid "mget [OPTS] <files>"
@@ -832,14 +839,15 @@ msgid ""
 " -a  use ascii mode (binary is the default)\n"
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
-"Télécharge les fichiers sélectionnés après extension des jokers\n"
+"TÃ©lÃ©charge les fichiers sÃ©lectionnÃ©s aprÃ¨s expansion des caractÃ¨res\n"
+"gÃ©nÃ©riques (wildcard)\n"
 " -c  continue (reget)\n"
-" -d  créé des répertoires du même nom que les noms de fichiers et\n"
-"     met les fichiers dans ces répertoires au lieu du répertoire en cours\n"
-" -E  efface le fichier distant après un transfert correctement accompli.\n"
-" -a  utilise le mode ascii (mode binaire par défaut)\n"
-" -O <base> spécifie le répertoire de base ou l'URL où les fichiers doivent\n"
-"     être placés.\n"
+" -d  crÃ©e des rÃ©pertoires du mÃªme nom que les noms de fichiers et\n"
+"     met les fichiers dans ces rÃ©pertoires au lieu du rÃ©pertoire courant\n"
+" -E  efface le fichier distant aprÃ¨s un transfert correctement accompli.\n"
+" -a  utilise le mode ASCII (mode binaire par dÃ©faut)\n"
+" -O <base> spÃ©cifie le rÃ©pertoire de base ou l'URL oÃ¹ les fichiers doivent\n"
+"     Ãªtre placÃ©s.\n"
 
 #: src/commands.cc:303
 msgid "mirror [OPTS] [remote [local]]"
@@ -878,48 +886,49 @@ msgid ""
 "used.\n"
 msgstr ""
 "\n"
-"Duplique le répertoire distant vers le répertoire local\n"
+"Duplique le rÃ©pertoire distant spÃ©cifiÃ© vers le rÃ©pertoire local\n"
 "\n"
-" -c, --continue         continue un travail de duplication, si possible\n"
-" -e, --delete           efface les fichiers non présents sur le site\n"
+" -c, --continue         continue, si c'est possible, un travail de duplication\n"
+" -e, --delete           efface les fichiers absents sur le site distant\n"
+"     --delete-first     efface les anciens fichiers avant d'en transfÃ©rer "
+"                        de nouveaux\n"
 " -s, --allow-suid       duplique aussi les bits suid/sgid\n"
-"     --allow-chown      duplique aussi les propriétaires\n"
-"     --ignore-time      ignore l'heure pour décider ou non du "
-"téléchargement\n"
-" -n, --only-newer       télécharge uniquement les nouveaux fichiers\n"
-" -r, --no-recursion     ne rentre pas dans les sous-répertoires\n"
-" -p, --no-perms         ne définit pas les permissions de fichier\n"
+"     --allow-chown      essaye de dupliquer aussi les propriÃ©taires\n"
+"     --ignore-time      ignore l'heure pour dÃ©cider ou non du tÃ©lÃ©chargement\n"
+" -n, --only-newer       tÃ©lÃ©charge uniquement les nouveaux fichiers\n"
+" -r, --no-recursion     n'entre pas dans les sous-rÃ©pertoires\n"
+" -p, --no-perms         ne dÃ©finit pas les permissions de fichier\n"
 "     --no-umask         n'applique pas umask aux modes de fichier\n"
-" -R, --reverse          duplication inversée (émet les fichiers)\n"
-" -L, --dereference      télécharge les liens symboliques comme des fichiers\n"
-" -N, --newer-than FICH  télécharge uniquement les fichiers plus jeunes que\n"
-"                        le fichier spécifie par FICH\n"
-" -P, --parallel[=N]     télécharge N fichiers en parallèle\n"
-" -i RX, --include RX    inclus les fichiers définits par RX\n"
-" -x RX, --exclude RX    exclus les fichiers définits par RX\n"
-"                        RX est une expression régulière étendue\n"
-" -v, --verbose[=N]      mode bavard\n"
-"     --log=FILE         écrit les commandes exécutées dans FILE\n"
-"     --script=FILE      écrit les commandes à exécuter dans FILE\n"
-"                        mais ne les exécute pas.\n"
-"     --just-print, --dry-run    identique à --script=-\n"
+" -R, --reverse          duplication inversÃ©e (Ã©met les fichiers)\n"
+" -L, --dereference      tÃ©lÃ©charge les liens symboliques comme des fichiers\n"
+" -N, --newer-than=SPEC  tÃ©lÃ©charge uniquement les fichiers plus jeunes que\n"
+"                        la date et l'heure spÃ©cifiÃ©es par SPEC\n"
+" -P, --parallel[=N]     tÃ©lÃ©charge N fichiers en parallÃ¨le\n"
+" -i RX, --include RX    inclut les fichiers correspondant Ã  RX\n"
+" -x RX, --exclude RX    exclut les fichiers correspondant Ã  RX\n"
+"                        RX est une expression rÃ©guliÃ¨re Ã©tendue\n"
+" -v, --verbose[=N]      mode volubile\n"
+"     --log=FILE         Ã©crit dans FILE les commandes exÃ©cutÃ©es par lftp\n"
+"     --script=FILE      Ã©crit dans FILE les commandes Ã  exÃ©cuter par lftp\n"
+"                        mais ne les exÃ©cute pas.\n"
+"     --just-print, --dry-run    identique Ã  --script=-\n"
 "\n"
-"Lorsque vous utilisez -R, le premier répertoire est local et le second est\n"
-"distant. Si le second répertoire est omis, le nom de base du premier est\n"
-"utilisé. Si les deux répertoires sont omis, les répertoires local et \n"
-"distants en cours sont utilisés.\n"
+"Lorsque vous utilisez -R, le premier rÃ©pertoire est local et le second est\n"
+"distant. Si le second rÃ©pertoire est omis, le nom de base du premier est\n"
+"utilisÃ©. Si les deux rÃ©pertoires sont omis, les rÃ©pertoires courants local\n"
+"et distant sont utilisÃ©s.\n"
 
 #: src/commands.cc:331
 msgid "mkdir [-p] <dirs>"
-msgstr "mkdir [-p] <reps>"
+msgstr "mkdir [-p] <rÃ©pertoires>"
 
 #: src/commands.cc:332
 msgid ""
 "Make remote directories\n"
 " -p  make all levels of path\n"
 msgstr ""
-"Créé des répertoires distants\n"
-" -p  créé tous les niveaux de l'arborescence.\n"
+"CrÃ©e les rÃ©pertoires distants\n"
+" -p  crÃ©e tous les niveaux de l'arborescence.\n"
 
 #: src/commands.cc:334
 msgid "module name [args]"
@@ -932,10 +941,11 @@ msgid ""
 "If name contains a slash, then the module is searched in current\n"
 "directory, otherwise in directories specified by setting module:path.\n"
 msgstr ""
-"Charge le module (objet 'shared'). Ce module doit contenir la fonction\n"
+"Charge le module (objet partagÃ©). Ce module doit contenir la fonction\n"
 "   void module_init(int argc, const char *const argv)\n"
-"Si le nom contient un slash, le module est cherché dans le répertoire\n"
-"en cours, ou bien dans les répertoires spécifiés par module:path.\n"
+"Si le nom contient une barre oblique, le module est recherchÃ© dans le\n"
+"rÃ©pertoire courant, autrement, la recherche s'effectue dans les rÃ©pertoires\n"
+"spÃ©cifiÃ©s par module:path.\n"
 
 #: src/commands.cc:339
 msgid "more <files>"
@@ -944,8 +954,7 @@ msgstr "more <fichiers>"
 #: src/commands.cc:340
 msgid "Same as `cat <files> | more'. if PAGER is set, it is used as filter\n"
 msgstr ""
-"Même chose que `cat <fichiers> | more'. Si PAGER est définit, il est "
-"utilisé\n"
+"Identique Ã  Â« cat <fichiers> | more Â». Si PAGER est dÃ©fini, il est utilisÃ©\n"
 "en temps que filtre.\n"
 
 #: src/commands.cc:341
@@ -962,15 +971,15 @@ msgid ""
 " -a  use ascii mode (binary is the default)\n"
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
-"Émet les fichiers après extension des jokers\n"
+"TÃ©lÃ©verse les fichiers aprÃ¨s expansion des caractÃ¨res gÃ©nÃ©riques (wildcard)\n"
 " -c  continue (reput)\n"
-"     cela nécessite la permission d'écraser les fichiers distants\n"
-" -d  créé des répertoires du même nom que les noms de fichiers et\n"
-"     met les fichiers dans ces répertoires au lieu du répertoire en cours\n"
-" -E  efface le fichier local après un transfert correctement accompli.\n"
-" -a  utilise le mode ascii (mode binaire par défaut)\n"
-" -O <base> spécifie le répertoire de base ou l'URL où les fichiers doivent\n"
-"     être placés.\n"
+" -d  crÃ©e des rÃ©pertoires du mÃªme nom que les noms de fichiers et\n"
+"     met les fichiers dans ces rÃ©pertoires au lieu du rÃ©pertoire courant\n"
+" -E  efface les fichiers locaux aprÃ¨s un transfert correctement effectuÃ©\n"
+"     (dangeureux)\n"
+" -a  utilise le mode ASCII (mode binaire par dÃ©faut)\n"
+" -O <base> spÃ©cifie le rÃ©pertoire de base ou l'URL oÃ¹ les fichiers doivent\n"
+"     Ãªtre placÃ©s.\n"
 
 #: src/commands.cc:349
 msgid "mrm <files>"
@@ -978,7 +987,7 @@ msgstr "mrm <fichiers>"
 
 #: src/commands.cc:350
 msgid "Removes specified files with wildcard expansion\n"
-msgstr "Efface les fichiers après extension des jokers\n"
+msgstr "Efface les fichiers aprÃ¨s expansion des caractÃ¨res gÃ©nÃ©riques\n"
 
 #: src/commands.cc:351
 msgid "mv <file1> <file2>"
@@ -998,9 +1007,8 @@ msgid ""
 "By default, nlist output is cached, to see new listing use `renlist' or\n"
 "`cache flush'.\n"
 msgstr ""
-"Liste les fichiers distants.Par défault, la sortie de nlist est cachée. Pour "
-"voir un nouveau listing,\n"
-"utilisez `renlist' ou `cache flush'.\n"
+"Affiche les fichiers distants. Par dÃ©faut, la sortie de nlist est cachÃ©e.\n"
+"Pour avoir un nouvel affichage, utilisez Â« renlist Â» ou Â« cache flush Â».\n"
 
 #: src/commands.cc:357
 msgid "open [OPTS] <site>"
@@ -1014,18 +1022,17 @@ msgid ""
 " -p <port>           use the port for connection\n"
 " <site>              host name, URL or bookmark name\n"
 msgstr ""
-"Sélectionne un serveur, une URL ou un signet\n"
-" -e <cmd>            exécute la commande juste après la sélection.\n"
+"SÃ©lectionne un serveur, une URL ou un signet\n"
+" -e <cmd>            exÃ©cute la commande juste aprÃ¨s la sÃ©lection.\n"
 " -u <user>[,<pass>]  utilise user/pass pour l'authentification.\n"
 " -p <port>           utilise le port pour la connexion\n"
 " <site>              nom du site, URL ou nom de signet\n"
 
 #: src/commands.cc:363
 msgid "pget [OPTS] <rfile> [-o <lfile>]"
-msgstr "pget [OPTS] <fichierd> [-o <fichierl>]"
+msgstr "pget [OPTS] <fichier-distant> [-o <fichier-local>]"
 
 #: src/commands.cc:364
-#, fuzzy
 msgid ""
 "Gets the specified file using several connections. This can speed up "
 "transfer,\n"
@@ -1038,18 +1045,20 @@ msgid ""
 "     pget:default-n setting)\n"
 " -O <base> specifies base directory where files should be placed\n"
 msgstr ""
-"Télécharge le fichier spécifié en utilisant plusieurs connexions.\n"
-"Cela peut accélérer le transfert, mais ça charge le net, au détriment\n"
-"des autres utilisateurs. A n'utiliser que si vous devez transférer le\n"
-"fichier le plus vite possible, ou les autres utilisateurs pourraient\n"
-"commencer a se fâcher ;)\n"
+"TÃ©lÃ©charge le fichier spÃ©cifiÃ© en utilisant plusieurs connexions.\n"
+"Cela peut accÃ©lÃ©rer le transfert, mais cela charge le rÃ©seau au dÃ©triment\n"
+"des autres utilisateurs. Ã€ n'utiliser que si vous devez transfÃ©rer le\n"
+"fichier le plus rapidement possible.\n"
 "\n"
-"Options:\n"
-" -n <maxconn>  définit le nombre maximum de connexions (5 par défaut)\n"
+"Options :\n"
+" -c  continuer le transfert. NÃ©cessite le fichier <fichier-local>.lftp-pget-status.\n"
+" -n <maxconn>  dÃ©finit le nombre maximum de connexions (la valeur par dÃ©faut\n"
+"    est obtenue dans le paramÃ¨tre pget:default-n)\n"
+" -O <base> dÃ©finit le rÃ©pertoire de base oÃ¹ seront placÃ©s les fichiers\n"
 
 #: src/commands.cc:372
 msgid "put [OPTS] <lfile> [-o <rfile>]"
-msgstr "put [OPTS] <fichierl> [-o <fichierd>]"
+msgstr "put [OPTS] <fichier-local> [-o <fichier-distant>]"
 
 #: src/commands.cc:373
 msgid ""
@@ -1061,21 +1070,23 @@ msgid ""
 " -a  use ascii mode (binary is the default)\n"
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
-"Émet <fichierl> avec le nom distant <fichierd>.\n"
-" -o <fichierd> spécifie le nom distant (défaut: fichierd)\n"
+"TÃ©lÃ©verse <fichier-local> avec le nom distant <fichier-distant>.\n"
+" -o <fichier-distant> spÃ©cifie le nom distant\n"
+"     (par dÃ©faut : nom de fichier-local)\n"
 " -c  continue (reput)\n"
-"     cela nécessite la permission d'écraser les fichiers distants\n"
-" -E  efface le fichier local après un transfert correctement accompli.\n"
-" -a  utilise le mode ascii (mode binaire par défaut)\n"
-" -O <base> spécifie le répertoire de base ou l'URL où les fichiers doivent\n"
-"     être placés.\n"
+"     cela nÃ©cessite la permission d'Ã©craser les fichiers distants\n"
+" -E  efface le fichier local aprÃ¨s un transfert correctement effectuÃ©\n"
+"     (dangeureux)\n"
+" -a  utilise le mode ASCII (mode binaire par dÃ©faut)\n"
+" -O <base> spÃ©cifie le rÃ©pertoire de base ou l'URL oÃ¹ les fichiers doivent\n"
+"     Ãªtre placÃ©s.\n"
 
 #: src/commands.cc:381
 msgid ""
 "Print current remote URL.\n"
 " -p  show password\n"
 msgstr ""
-"Affiche l'URL distante en cours.\n"
+"Affiche l'URL distante courante.\n"
 " -p  affiche le mot de passe\n"
 
 #: src/commands.cc:383
@@ -1110,26 +1121,26 @@ msgstr ""
 "\n"
 "       queue [-n num] <commande>\n"
 "\n"
-"Ajoute la commande a la queue pour le site en cours. Chaque site a sa \n"
-"propre queue de commandes. `-n' ajoute la commande avant l'élément indiqué\n"
-"dans la queue. Il est possible de rajouter en tête de queue un travail en\n"
-"cours avec la commande `queue wait <jobno>'.\n"
+"Ajoute la commande Ã  la file d'attente pour le site courant. Chaque site a sa\n"
+"propre file de commandes. Â« -n Â» ajoute la commande avant l'Ã©lÃ©ment indiquÃ©\n"
+"dans la file. Il est possible de rajouter en tÃªte de file une tÃ¢che en cours\n"
+"avec la commande Â« queue wait <jobno> Â».\n"
 "\n"
-"       queue --delete|-d [index ou joker]\n"
+"       queue --delete|-d [index ou expression de caractÃ¨res gÃ©nÃ©riques]\n"
 "\n"
-"Efface un ou plusieurs éléments de la queue. Si aucun argument n'est donné,\n"
-"le dernier élément de la queue est effacé.\n"
+"Supprime un ou plusieurs Ã©lÃ©ments de la file. Si aucun argument n'est donnÃ©,\n"
+"le dernier Ã©lÃ©ment de la file est supprimÃ©.\n"
 "\n"
-"       queue --move|-m <index ou joker> [index]\n"
+"       queue --move|-m <index ou expression de caractÃ¨res gÃ©nÃ©riques> [index]\n"
 "\n"
-"Déplace les éléments donnés avant la place indiquée dans la queue, ou à la\n"
-"fin si aucune destination n'est donnée.\n"
+"DÃ©place les Ã©lÃ©ments donnÃ©s avant la place indiquÃ©e dans la file, ou Ã  la\n"
+"fin si aucune destination n'est donnÃ©e.\n"
 "\n"
-"Options:\n"
+"Options :\n"
 " -q                  Mode discret.\n"
-" -v                  Mode bavard.\n"
-" -Q                  Affiche dans un format réutilisable pour remettre en\n"
-"                     queue. Utile avec --delete.\n"
+" -v                  Mode volubile.\n"
+" -Q                  Affiche dans un format rÃ©utilisable pour remettre en\n"
+"                     file d'attente. Utile avec --delete.\n"
 
 #: src/commands.cc:405
 msgid "quote <cmd>"
@@ -1142,11 +1153,11 @@ msgid ""
 "be sure that any change of remote state because of quoted command\n"
 "is solid - it can be reset by reconnect at any time.\n"
 msgstr ""
-"Envoie la commande sans l'interpréter. A utiliser avec prudence:\n"
-"ceci peut mener a un état distant inconnu et donc provoquer une\n"
-"reconnexion. Vous ne pouvez être sur que tout changement provoqué\n"
-"par une commande envoyée avec quote sera définitif: il peut être\n"
-"remis a zéro par une reconnexion a tout moment.\n"
+"Envoie la commande sans l'interprÃ©ter. Ã€ utiliser avec prudence :\n"
+"ceci peut mener Ã  un Ã©tat distant inconnu et donc provoquer une\n"
+"reconnexion. Vous ne pouvez Ãªtre certain que tout changement provoquÃ©\n"
+"par une commande envoyÃ©e avec quote sera dÃ©finitif : il peut Ãªtre\n"
+"remis Ã  zÃ©ro Ã  tout moment par une reconnexion.\n"
 
 #: src/commands.cc:411
 msgid ""
@@ -1154,56 +1165,56 @@ msgid ""
 "Same as `cls', but don't look in cache\n"
 msgstr ""
 "recls [<args>]\n"
-"Même chose que `cls', sauf que le cache n'est pas utilisé\n"
+"Identique Ã  Â« cls Â», sauf que le cache n'est pas utilisÃ©\n"
 
 #: src/commands.cc:414
 msgid ""
 "Usage: reget [OPTS] <rfile> [-o <lfile>]\n"
 "Same as `get -c'\n"
 msgstr ""
-"Usage: reget [OPTS] <fichierd> [-o <fichierl>]\n"
-"Même chose que `get -c'\n"
+"Utilisation : reget [OPTS] <fichier-distant> [-o <fichier-local>]\n"
+"Identique Ã  Â« get -c Â»\n"
 
 #: src/commands.cc:417
 msgid ""
 "Usage: rels [<args>]\n"
 "Same as `ls', but don't look in cache\n"
 msgstr ""
-"Usage: rels [<args>]\n"
-"Même chose que `ls', sauf que le cache n'est pas utilisé\n"
+"Utilisation : rels [<args>]\n"
+"Identique Ã  Â« ls Â», sauf que le cache n'est pas utilisÃ©\n"
 
 #: src/commands.cc:420
 msgid ""
 "Usage: renlist [<args>]\n"
 "Same as `nlist', but don't look in cache\n"
 msgstr ""
-"Usage: renlist [<args>]\n"
-"Même chose que `nlist', sauf que le cache n'est pas utilisé\n"
+"Utilisation : renlist [<args>]\n"
+"Identique Ã  Â« nlist Â», sauf que le cache n'est pas utilisÃ©\n"
 
 #: src/commands.cc:422
-#, fuzzy
 msgid "repeat [OPTS] [delay] [command]"
-msgstr "repeat [delay] [command]"
+msgstr "repeat [OPTS] [dÃ©lai] [commande]"
 
 #: src/commands.cc:423
-#, fuzzy
 msgid ""
 "Repeat specified command with a delay between iterations.\n"
 "Default delay is one second, default command is empty.\n"
 " -c <count>  number of iterations\n"
 " -d <delay>  delay between iterations.\n"
 msgstr ""
-"Répète la commande spécifiée en respectant un délai entre chaque\n"
-"répétition. Le délai par défaut est d'une seconde, la commande\n"
-"par défaut est la commande vide.\n"
+"RÃ©pÃ¨te la commande spÃ©cifiÃ©e en respectant un dÃ©lai entre chaque\n"
+"tentative. Le dÃ©lai par dÃ©faut est d'une seconde, la commande\n"
+"par dÃ©faut est la commande vide.\n"
+" -c <count>  nombre de tentatives\n"
+" -d <delay>  dÃ©lai entre chaque tentative.\n"
 
 #: src/commands.cc:428
 msgid ""
 "Usage: reput <lfile> [-o <rfile>]\n"
 "Same as `put -c'\n"
 msgstr ""
-"Usage: reput <fichierl> [-o <fichierd>]\n"
-"Même chose que `put -c'\n"
+"Utilisation : reput <fichier-local> [-o <fichier-distant>]\n"
+"Identique Ã  Â« put -c Â»\n"
 
 #: src/commands.cc:430
 msgid "rm [-r] [-f] <files>"
@@ -1216,16 +1227,16 @@ msgid ""
 " -f  work quietly\n"
 msgstr ""
 "Efface des fichiers distants\n"
-" -r  effacement de répertoire récursif\n"
+" -r  effacement de rÃ©pertoire de maniÃ¨re rÃ©cursive, soyez prudent\n"
 " -f  travaille silencieusement\n"
 
 #: src/commands.cc:434
 msgid "rmdir [-f] <dirs>"
-msgstr "rmdir [-f] <reps>"
+msgstr "rmdir [-f] <rÃ©pertoires>"
 
 #: src/commands.cc:435
 msgid "Remove remote directories\n"
-msgstr "Efface des répertoires distants\n"
+msgstr "Efface les rÃ©pertoires distants\n"
 
 #: src/commands.cc:436
 msgid "scache [<session_no>]"
@@ -1233,7 +1244,7 @@ msgstr "scache [<num_session>]"
 
 #: src/commands.cc:437
 msgid "List cached sessions or switch to specified session number\n"
-msgstr "Affiche les sessions cachées ou bascule sur la session spécifiée\n"
+msgstr "Affiche les sessions en cache ou bascule sur la session spÃ©cifiÃ©e\n"
 
 #: src/commands.cc:438
 msgid "set [OPT] [<var> [<val>]]"
@@ -1249,17 +1260,14 @@ msgid ""
 " -a  list all settings, including default values\n"
 " -d  list only default values, not necessary current ones\n"
 msgstr ""
-"Définit la variable à la valeur indiquée. Si la valeur est omise, cela\n"
-"va effacer la variable. Le format d'un nom de variable est ``nom/"
-"restriction''\n"
-"où la restriction permet de spécifier l'application exacte de la "
-"définition.\n"
-"Regardez lftp(1) pour les détails.\n"
-"Si set est appelée sans nom de variable, alors seuls les définitions "
-"modifiées\n"
-"sont affichées. Cela peut être changé par les options:\n"
-" -a  liste toutes les définitions, même les valeurs par défaut\n"
-" -d  liste uniquement les valeurs par défaut\n"
+"DÃ©finit la variable Ã  la valeur indiquÃ©e. Si la valeur est omise, cela\n"
+"efface la variable. Le format d'un nom de variable est Â« nom/restriction Â»\n"
+"oÃ¹ la restriction permet de spÃ©cifier l'application exacte de la dÃ©finition.\n"
+"Voir lftp(1) pour les dÃ©tails.\n"
+"Si set est appelÃ©e sans nom de variable, alors seules les dÃ©finitions\n"
+"modifiÃ©es sont affichÃ©es. Cela peut Ãªtre modifiÃ© par les options :\n"
+" -a  affiche toutes les dÃ©finitions, mÃªme les valeurs par dÃ©faut\n"
+" -d  affiche uniquement les valeurs par dÃ©faut\n"
 
 #: src/commands.cc:447
 msgid "site <site_cmd>"
@@ -1270,7 +1278,7 @@ msgid ""
 "Execute site command <site_cmd> and output the result\n"
 "You can redirect its output\n"
 msgstr ""
-"Exécute la commande site <cmd_site> et affiche le résultat\n"
+"ExÃ©cute la commande site <cmd_site> et affiche le rÃ©sultat.\n"
 "Vous pouvez rediriger sa sortie\n"
 
 #: src/commands.cc:451
@@ -1280,10 +1288,10 @@ msgid ""
 "followed by unit specifier: d - days, h - hours, m - minutes, s - seconds.\n"
 "By default time is assumed to be seconds.\n"
 msgstr ""
-"Usage: sleep <temps>[unité]\n"
-"Dort pendant un temps donné. L'argument de temps peut être éventuellement\n"
-"suivi par une unité: d - jours, h - heures, m - minutes, s - secondes.\n"
-"Par défaut, le temps est en seconde.\n"
+"Utilisation : sleep <temps>[unitÃ©]\n"
+"Sommeille pendant un temps donnÃ©. L'argument de temps peut Ãªtre Ã©ventuellement\n"
+"suivi par une unitÃ© : d - jours, h - heures, m - minutes, s - secondes.\n"
+"Par dÃ©faut, le temps est en seconde.\n"
 
 #: src/commands.cc:456
 msgid "source <file>"
@@ -1291,7 +1299,7 @@ msgstr "source <fichier>"
 
 #: src/commands.cc:457
 msgid "Execute commands recorded in file <file>\n"
-msgstr "Exécute les commandes enregistrées dans le fichier <fichier>\n"
+msgstr "ExÃ©cute les commandes enregistrÃ©es dans le fichier <fichier>\n"
 
 #: src/commands.cc:459
 msgid "user <user|URL> [<pass>]"
@@ -1302,8 +1310,8 @@ msgid ""
 "Use specified info for remote login. If you specify URL, the password\n"
 "will be cached for future usage.\n"
 msgstr ""
-"Utilise les infos spécifiées pour le login. Si vous spécifiez l'URL,\n"
-"le mot de passe sera enregistré pour un usage futur.\n"
+"Utilise les informations spÃ©cifiÃ©es pour la connexion. Si vous spÃ©cifiez\n"
+"l'URL, le mot de passe sera enregistrÃ© pour une utilisation ultÃ©rieure.\n"
 
 #: src/commands.cc:463
 msgid "Shows lftp version\n"
@@ -1318,8 +1326,8 @@ msgid ""
 "Wait for specified job to terminate. If jobno is omitted, wait\n"
 "for last backgrounded job.\n"
 msgstr ""
-"Attend que le travail spécifié se termine. Si num_travail est omis,\n"
-"attend le dernier travail mis en tâche de fond.\n"
+"Attend que la tÃ¢che spÃ©cifiÃ©e se termine. Si num_travail est omis,\n"
+"attend la derniÃ¨re tÃ¢che mise en arriÃ¨re-plan.\n"
 
 #: src/commands.cc:467
 msgid "zcat <files>"
@@ -1327,7 +1335,7 @@ msgstr "zcat <fichiers>"
 
 #: src/commands.cc:468
 msgid "Same as cat, but filter each file through zcat\n"
-msgstr "Même chose que cat, mais filtre chaque fichier à travers zcat\n"
+msgstr "Identique Ã  cat, mais filtre chaque fichier Ã  travers zcat\n"
 
 #: src/commands.cc:469
 msgid "zmore <files>"
@@ -1335,20 +1343,20 @@ msgstr "zmore <fichiers>"
 
 #: src/commands.cc:470
 msgid "Same as more, but filter each file through zcat\n"
-msgstr "Même chose que more, mais filtre chaque fichier à travers zcat\n"
+msgstr "Identique Ã  more, mais filtre chaque fichier Ã  travers zcat\n"
 
 #: src/commands.cc:472
 msgid "Same as cat, but filter each file through bzcat\n"
-msgstr "Même chose que cat, mais filtre chaque fichier à travers bzcat\n"
+msgstr "Identique Ã  cat, mais filtre chaque fichier Ã  travers bzcat\n"
 
 #: src/commands.cc:474
 msgid "Same as more, but filter each file through bzcat\n"
-msgstr "Même chose que more, mais filtre chaque fichier à travers bzcat\n"
+msgstr "Identique Ã  more, mais filtre chaque fichier Ã  travers bzcat\n"
 
 #: src/commands.cc:526
 #, c-format
 msgid "Usage: %s local-dir\n"
-msgstr "Usage: %s rep-local\n"
+msgstr "Utilisation : %s rÃ©pertoire-local\n"
 
 #: src/commands.cc:563
 #, c-format
@@ -1358,17 +1366,17 @@ msgstr "lcd ok, cwd local=%s\n"
 #: src/commands.cc:579
 #, c-format
 msgid "Usage: cd remote-dir\n"
-msgstr "Usage: cd rep-distant\n"
+msgstr "Utilisation : cd rÃ©pertoire-distant\n"
 
 #: src/commands.cc:591
 #, c-format
 msgid "%s: no old directory for this site\n"
-msgstr "%s: pas d'ancien répertoire pour ce site\n"
+msgstr "%s : pas d'ancien rÃ©pertoire pour ce site\n"
 
 #: src/commands.cc:661
 #, c-format
 msgid "Usage: %s [<exit_code>]\n"
-msgstr "Usage: %s [<code_sortie>]\n"
+msgstr "Utilisation : %s [<code_sortie>]\n"
 
 #: src/commands.cc:670
 msgid ""
@@ -1376,80 +1384,80 @@ msgid ""
 "Use `exit bg' to force moving to background or `kill all' to terminate "
 "jobs.\n"
 msgstr ""
-"Il y a des travaux en cours et `cmd:move-background' n'est pas définit.\n"
-"Utilisez `exit bg' pour forcer la mise en tâche de fond ou `kill all'\n"
-"pour terminer tous les travaux.\n"
+"Il y a des tÃ¢ches en cours et Â« cmd:move-background Â» n'est pas dÃ©fini.\n"
+"Utilisez Â« exit bg Â» pour forcer le basculement en arriÃ¨re-plan\n"
+"ou Â« kill all Â» pour terminer toutes les tÃ¢ches.\n"
 
 #: src/commands.cc:847
 #, c-format
 msgid "Try `%s --help' for more information\n"
-msgstr "Essayez `%s --help' pour plus d'informations\n"
+msgstr "Essayez Â« %s --help Â» pour plus d'informations\n"
 
 #: src/commands.cc:849
 #, c-format
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
-msgstr "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
+msgstr "Utilisation : %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 
 #: src/commands.cc:977 src/commands.cc:2139
 msgid "Password: "
-msgstr "Mot de passe: "
+msgstr "Mot de passe : "
 
 #: src/commands.cc:979
 #, c-format
 msgid "%s: GetPass() failed -- assume anonymous login\n"
-msgstr "%s: GetPass() a échouée -- passage en mode anonyme\n"
+msgstr "%s : GetPass() a Ã©chouÃ© -- passage en mode anonyme\n"
 
 #: src/commands.cc:1092
 #, c-format
 msgid "Usage: %s [OPTS] command args...\n"
-msgstr "Usage: %s [OPTS] commande args...\n"
+msgstr "Utilisation : %s [OPTS] commande args...\n"
 
 #: src/commands.cc:1142
-#, fuzzy, c-format
+#, c-format
 msgid "%s: -n: positive number expected. "
-msgstr "%s: -n: Nombre attendu. "
+msgstr "%s : -n : nombre positif attendu. "
 
 #: src/commands.cc:1194
 #, c-format
 msgid "Created a stopped queue.\n"
-msgstr "Créé une queue stoppée.\n"
+msgstr "CrÃ©e une file d'attente stoppÃ©e.\n"
 
 #: src/commands.cc:1238 src/commands.cc:1268
 #, c-format
 msgid "%s: No queue is active.\n"
-msgstr "%s: Aucune queue active.\n"
+msgstr "%s : aucune file d'attente active.\n"
 
 #: src/commands.cc:1260
 #, c-format
 msgid "%s: -m: Number expected as second argument. "
-msgstr "%s: -m: Nombre attendu en tant que second argument. "
+msgstr "%s : -m : nombre attendu en tant que second argument. "
 
 #: src/commands.cc:1292
 msgid "Can only edit plain queues.\n"
-msgstr "Ne peut éditer que des queues entières.\n"
+msgstr "Ne peut Ã©diter que des files d'attente entiÃ¨res.\n"
 
 #: src/commands.cc:1305
 #, c-format
 msgid "Couldn't create temporary file `%s': %s.\n"
-msgstr "Ne peut créer le fichier temporaire `%s': %s.\n"
+msgstr "Ne peut crÃ©er le fichier temporaire Â« %s Â» : %s.\n"
 
 #: src/commands.cc:1311
 #, c-format
 msgid "%s: error writing %s: %s\n"
-msgstr "%s: erreur à l'écriture de %s: %s\n"
+msgstr "%s : erreur lors de l'Ã©criture de %s : %s\n"
 
 #: src/commands.cc:1367
 #, c-format
 msgid "Usage: %s <cmd>\n"
-msgstr "Usage: %s <cmd>\n"
+msgstr "Utilisation : %s <cmd>\n"
 
 #: src/commands.cc:1477
 msgid "invalid argument for `--sort'"
-msgstr "argument invalide pur `--sort'"
+msgstr "argument invalide pour Â« --sort Â»"
 
 #: src/commands.cc:1506
 msgid "invalid block size"
-msgstr "taille de block invalide"
+msgstr "taille de bloc invalide"
 
 #: src/commands.cc:1563
 msgid "invalid option"
@@ -1458,12 +1466,12 @@ msgstr "option invalide"
 #: src/commands.cc:1667
 #, c-format
 msgid "Usage: %s [OPTS] files...\n"
-msgstr "Usage: %s [OPTS] fichier...\n"
+msgstr "Utilisation : %s [OPTS] fichier...\n"
 
 #: src/commands.cc:1741
 #, c-format
 msgid "%s: -n: Number expected. "
-msgstr "%s: -n: Nombre attendu. "
+msgstr "%s : -n : Nombre attendu. "
 
 #: src/commands.cc:1774
 #, c-format
@@ -1473,114 +1481,115 @@ msgstr "Nom de fichier manquant. "
 #: src/commands.cc:1886
 #, c-format
 msgid "Usage: %s %s[-f] files...\n"
-msgstr "Usage: %s %s[-f] fichiers...\n"
+msgstr "Utilisation : %s %s[-f] fichiers...\n"
 
 #: src/commands.cc:1933
 #, c-format
 msgid "Usage: %s [-e] <file|command>\n"
-msgstr "Usage: %s [-e] <fichier|commande>\n"
+msgstr "Utilisation : %s [-e] <fichier|commande>\n"
 
 #: src/commands.cc:1977
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
-msgstr "Usage: %s [-v] [-v] ...\n"
+msgstr "Utilisation : %s [-v] [-v] ...\n"
 
 #: src/commands.cc:2004
 #, c-format
 msgid "Usage: %s [-p]\n"
-msgstr "Usage: %s [-p]\n"
+msgstr "Utilisation : %s [-p]\n"
 
 #: src/commands.cc:2106
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
-msgstr "niveau de déboggage %d, sortie sur %s\n"
+msgstr "niveau de dÃ©bogage %d, sortie sur %s\n"
 
 #: src/commands.cc:2109
 #, c-format
 msgid "debug is off\n"
-msgstr "déboggage désactivé\n"
+msgstr "dÃ©bogage dÃ©sactivÃ©\n"
 
 #: src/commands.cc:2120
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s <user|URL> [<pass>]\n"
-msgstr "user <user|URL> [<pass>]"
+msgstr "Utilisation : %s <user|URL> [<pass>]\n"
 
 #: src/commands.cc:2195 src/commands.cc:2368
 #, c-format
 msgid "%s: no current job\n"
-msgstr "%s: pas de travail en cours\n"
+msgstr "%s : pas de tÃ¢che en cours\n"
 
 #: src/commands.cc:2205 src/commands.cc:2235 src/commands.cc:2376
 #, c-format
 msgid "%s: %d - no such job\n"
-msgstr "%s: %d - travail inconnu\n"
+msgstr "%s : %d - tÃ¢che inconnue\n"
 
 #: src/commands.cc:2207
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
-msgstr "Usage: %s <num_travail> | all\n"
+msgstr "Utilisation : %s <num_tache> | all\n"
 
 #: src/commands.cc:2226 src/commands.cc:2358 src/commands.cc:2502
 #: src/commands.cc:2882 src/commands.cc:2960 src/lftp.cc:279
 #, c-format
 msgid "%s: %s - not a number\n"
-msgstr "%s: %s - n'est pas un nombre\n"
+msgstr "%s : %s - n'est pas un nombre\n"
 
 #: src/commands.cc:2291
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
-msgstr "%s: %s. Utilisez `set -a' pour visualiser toutes les variables.\n"
+msgstr "%s : %s. Utilisez Â« set -a Â» pour visualiser toutes les variables.\n"
 
 #: src/commands.cc:2341
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
-msgstr "Usage: %s [<num_travail>]\n"
+msgstr "Utilisation : %s [<num_tache>]\n"
 
 #: src/commands.cc:2381
 #, c-format
 msgid "%s: some other job waits for job %d\n"
-msgstr "%s: d'autre travaux attendent le travail %d\n"
+msgstr "%s : d'autres tÃ¢ches attendent la tÃ¢che %d\n"
 
 #: src/commands.cc:2386
 #, c-format
 msgid "%s: wait loop detected\n"
-msgstr "%s: boucle infinie détectée\n"
+msgstr "%s : boucle infinie dÃ©tectÃ©e\n"
 
 #: src/commands.cc:2411
 #, c-format
 msgid "Usage: mv <file1> <file2>\n"
-msgstr "Usage: mv <fichier1> <fichier2>\n"
+msgstr "Utilisation : mv <fichier1> <fichier2>\n"
 
 #: src/commands.cc:2432 src/commands.cc:2733
 #, c-format
 msgid "Invalid command. "
-msgstr "Commande invalide."
+msgstr "Commande invalide. "
 
 #: src/commands.cc:2439 src/commands.cc:2740
 #, c-format
 msgid "Ambiguous command. "
-msgstr "Commande ambiguë"
+msgstr "Commande ambiguÃ«. "
 
 #: src/commands.cc:2458
 #, c-format
 msgid "%s: Operand missed for size\n"
-msgstr "%s: Taille attendue\n"
+msgstr "%s : la taille n'a pas Ã©tÃ© indiquÃ©e\n"
 
 #: src/commands.cc:2475
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
-msgstr "%s: `expire' attendu\n"
+msgstr "%s : opÃ©rande manquant pour Â« expire Â»\n"
 
 #: src/commands.cc:2508
 #, c-format
-msgid ""
-"%s: %s - no such cached session. Use `scache' to look at session list.\n"
-msgstr "%s: %s - pas de telle session cachée. Utilisez `scache'\n"
+msgid "%s: %s - no such cached session. Use `scache' to look at session list.\n"
+msgstr ""
+"%s : %s - pas de telle session en cache.\n"
+"Utilisez Â« scache Â» pour afficher la liste des sessions.\n"
 
 #: src/commands.cc:2525
 #, c-format
 msgid "Sorry, no help for %s\n"
-msgstr "Désolé, pas d'aide disponible pour %s\n"
+msgstr "DÃ©solÃ©, pas d'aide disponible pour %s\n"
 
 #: src/commands.cc:2530
 #, c-format
@@ -1590,29 +1599,31 @@ msgstr "%s est un alias interne pour %s\n"
 #: src/commands.cc:2535
 #, c-format
 msgid "Usage: %s\n"
-msgstr "Usage: %s\n"
+msgstr "Utilisation : %s\n"
 
 #: src/commands.cc:2543
 #, c-format
 msgid "%s is an alias to `%s'\n"
-msgstr "%s est un alias pour `%s'\n"
+msgstr "%s est un alias pour Â« %s Â»\n"
 
 #: src/commands.cc:2547
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr ""
-"Commande inconnue `%s'. Utilisez `help' pour voir la liste des commandes.\n"
+"Commande Â« %s Â» inconnue.\n"
+"Utilisez Â« help Â» pour afficher la liste des commandes disponibles.\n"
 
 #: src/commands.cc:2549
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr ""
-"Commande ambiguë `%s'. Utilisez `help' pour voir la liste des commandes.\n"
+"Commande Â« %s Â»ambiguÃ«.\n"
+"Utilisez Â« help Â» pour afficher la liste des commandes disponibles.\n"
 
 #: src/commands.cc:2600
-#, fuzzy, c-format
+#, c-format
 msgid "LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
-msgstr "Lftp | Version %s | Copyright (c) 1996-2005 Alexander V. Lukyanov\n"
+msgstr "LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
 
 #: src/commands.cc:2603
 #, c-format
@@ -1623,101 +1634,101 @@ msgid ""
 "conditions.\n"
 "There is absolutely no warranty for LFTP.  See COPYING for details.\n"
 msgstr ""
-"LFTP est un logiciel libre, distribué sous la licence GNU General Public\n"
-"License, et vous êtes encouragés à le modifier et/ou en distribuer des\n"
-"copies sous certaines conditions. LFTP est distribué sans aucune garantie.\n"
-"Veuillez consulter le fichier COPYING pour les détails.\n"
+"LFTP est un logiciel libre, distribuÃ© sous la licence GNU General Public\n"
+"License, et vous Ãªtes encouragÃ© Ã  le modifier et/ou en distribuer des\n"
+"copies sous certaines conditions. LFTP est distribuÃ© sans aucune garantie.\n"
+"Veuillez consulter le fichier COPYING pour les dÃ©tails.\n"
 
 #: src/commands.cc:2608
 #, c-format
 msgid "Send bug reports and questions to <%s>.\n"
-msgstr "Envoyez les rapports de bogues et les questions a <%s>.\n"
+msgstr "Envoyez les rapports de bogues et les questions Ã  <%s>.\n"
 
 #: src/commands.cc:2614
 msgid "Libraries used: "
-msgstr "Librairies utilisées: "
+msgstr "BibliothÃ¨ques utilisÃ©es : "
 
 #: src/commands.cc:2758 src/commands.cc:2790
 #, c-format
 msgid "%s: bookmark name required\n"
-msgstr "%s: nom de signet requis\n"
+msgstr "%s : nom de signet requis\n"
 
 #: src/commands.cc:2779
 #, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
-msgstr "%s: les espaces dans les noms de signets ne sont pas permis\n"
+msgstr "%s : les espaces dans les noms de signets ne sont pas permises\n"
 
 #: src/commands.cc:2792
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
-msgstr "%s: signet inconnu `%s'\n"
+msgstr "%s : signet Â« %s Â» inconnu\n"
 
 #: src/commands.cc:2808
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
-msgstr "%s: type d'import requis (netscape,ncftp)\n"
+msgstr "%s : type d'import requis (netscape,ncftp)\n"
 
 #: src/commands.cc:2888
 #, c-format
 msgid "Usage: %s [-d #] dir\n"
-msgstr "Usage: %s [-d #] rep\n"
+msgstr "Utilisation : %s [-d #] rÃ©pertoire\n"
 
 #: src/commands.cc:2992
 #, c-format
 msgid "%s: invalid block size `%s'\n"
-msgstr "%s: taille de block invalide `%s'\n"
+msgstr "%s : taille de bloc invalide Â« %s Â»\n"
 
 #: src/commands.cc:3002
 #, c-format
 msgid "Usage: %s [options] <dirs>\n"
-msgstr "Usage: %s [options] <reps>\n"
+msgstr "Utilisation : %s [options] <rÃ©pertoires>\n"
 
 #: src/commands.cc:3008
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
-msgstr "%s: attention: summarize revient à faire --max-depth=0\n"
+msgstr "%s : attention : summarize revient Ã  faire --max-depth=0\n"
 
 #: src/commands.cc:3012
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
-msgstr "%s: summarize est en conflit avec --max-depth=%i\n"
+msgstr "%s : summarize est en conflit avec --max-depth=%i\n"
 
 #: src/commands.cc:3063
 #, c-format
 msgid "Usage: %s command args...\n"
-msgstr "Usage: %s commande args...\n"
+msgstr "Utilisation : %s commande args...\n"
 
 #: src/commands.cc:3075
 #, c-format
 msgid "Usage: %s module [args...]\n"
-msgstr "Usage: %s module [args...]\n"
+msgstr "Utilisation : %s module [args...]\n"
 
 #: src/commands.cc:3093 src/LocalAccess.cc:628
 msgid "cannot get current directory"
-msgstr "ne peut lire le répertoire en cours"
+msgstr "ne peut lire le rÃ©pertoire en cours"
 
 #: src/commands.cc:3154
 #, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
-msgstr "Usage: %s [OPTS] mode du fichier...\n"
+msgstr "Utilisation : %s [OPTS] mode du fichier...\n"
 
 #: src/commands.cc:3174
 #, c-format
 msgid "invalid mode string: %s\n"
-msgstr "chaîne de mode invalide: %s\n"
+msgstr "chaÃ®ne de mode invalide : %s\n"
 
 #: src/commands.cc:3249
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
-msgstr "Usage: %s [OPTS] fichier\n"
+msgstr "Utilisation : %s [OPTS] fichier\n"
 
 #: src/ftpclass.cc:219
 msgid "Data connection peer has wrong port number"
-msgstr "La connexion de données du tiers a un faux numéro de port"
+msgstr "La connexion de donnÃ©es du tiers a un mauvais numÃ©ro de port"
 
 #: src/ftpclass.cc:225
 msgid "Data connection peer has mismatching address"
-msgstr "La connexion de données du tiers a une adresse incorrecte"
+msgstr "La connexion de donnÃ©es du tiers a une adresse incorrecte"
 
 #: src/ftpclass.cc:247 src/ftpclass.cc:272
 msgid "Switching to NOREST mode"
@@ -1725,36 +1736,35 @@ msgstr "Passage en mode NOREST"
 
 #: src/ftpclass.cc:404
 msgid "Server reply matched ftp:retry-530, retrying"
-msgstr "La réponse du serveur est de la forme ftp:retry-530, recommence"
+msgstr "La rÃ©ponse du serveur est de la forme ftp:retry-530, nouvel essai"
 
 #: src/ftpclass.cc:412
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
-msgstr ""
-"La réponse du serveur est de la forme ftp:retry-530-anonymous, recommence"
+msgstr "La rÃ©ponse du serveur est de la forme ftp:retry-530-anonymous, nouvel essai"
 
 #: src/ftpclass.cc:436
 msgid "Account is required, set ftp:acct variable"
-msgstr "Un compte est requis, définissez la variable ftp:acct"
+msgstr "Un compte est nÃ©cessaire, dÃ©finissez la variable ftp:acct"
 
 #: src/ftpclass.cc:453
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
-msgstr "ftp:skey-force est défini et le serveur ne supporte pas OPIE ou S/KEY"
+msgstr "ftp:skey-force est dÃ©fini et le serveur ne supporte pas OPIE ou S/KEY"
 
 #: src/ftpclass.cc:469
 msgid "Saw `unknown', assume failed login"
-msgstr "`unknow' détecté, échec de la connexion"
+msgstr "Â« unknow Â» dÃ©tectÃ©, Ã©chec de la connexion"
 
 #: src/ftpclass.cc:480
 msgid "assuming failed host name lookup"
-msgstr "la résolution du nom du host a échouée"
+msgstr "la rÃ©solution du nom de l'hÃ´te a Ã©chouÃ©"
 
 #: src/ftpclass.cc:720
 msgid "cannot parse EPSV response"
-msgstr "ne peut analyser la réponse EPSV"
+msgstr "ne peut analyser la rÃ©ponse EPSV"
 
 #: src/ftpclass.cc:977
 msgid "Closing control socket"
-msgstr "Fermeture du socket de contrôle"
+msgstr "Fermeture du socket de contrÃ´le"
 
 #: src/ftpclass.cc:1143 src/Http.cc:964 src/Fish.cc:75 src/SFtp.cc:81
 msgid "Closing idle connection"
@@ -1762,75 +1772,75 @@ msgstr "Fermeture de la connexion inutile"
 
 #: src/ftpclass.cc:1194
 msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
-msgstr "SITE CHMOD est désactivé par ftp:use-site-chmod"
+msgstr "SITE CHMOD est dÃ©sactivÃ© par ftp:use-site-chmod"
 
 #: src/ftpclass.cc:1199
 msgid "MLSD is disabled by ftp:use-mlsd"
-msgstr "MLSD est désactivée par ftp:use-mlsd"
+msgstr "MLSD est dÃ©sactivÃ©e par ftp:use-mlsd"
 
 #: src/ftpclass.cc:1265 src/Http.cc:1098
 #, c-format
 msgid "cannot create socket of address family %d"
-msgstr "ne peut créer un socket de la famille %d"
+msgstr "ne peut crÃ©er un socket de la famille %d"
 
 #: src/ftpclass.cc:1517
 msgid "SITE CHMOD is not supported by this site"
-msgstr "SITE CHMOD n'est pas supportée par ce site"
+msgstr "SITE CHMOD n'est pas prise en charge par ce site"
 
 #: src/ftpclass.cc:1522
 msgid "MLST and MLSD are not supported by this site"
-msgstr "MLST et MLSD ne sont pas supportées par ce site."
+msgstr "MLST et MLSD ne sont pas prises en charge par ce site"
 
 #: src/ftpclass.cc:1933 src/ftpclass.cc:1983
 msgid "unsupported network protocol"
-msgstr "protocole non supporté"
+msgstr "protocole rÃ©seau non pris en charge"
 
 #: src/ftpclass.cc:2102
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
-msgstr "Connexion du socket de données à (%s) port %u"
+msgstr "Connexion du socket de donnÃ©es Ã  (%s) port %u"
 
 #: src/ftpclass.cc:2109
 #, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
-msgstr "Connexion du socket de données au proxy %s (%s) port %u"
+msgstr "Connexion du socket de donnÃ©es au proxy %s (%s) port %u"
 
 #: src/ftpclass.cc:2134 src/ftpclass.cc:3825
 msgid "Switching passive mode off"
-msgstr "Désactivation du mode passif"
+msgstr "DÃ©sactivation du mode passif"
 
 #: src/ftpclass.cc:2142
 msgid "Data connection established"
-msgstr "Connexion de donnée établie"
+msgstr "Connexion de donnÃ©e Ã©tablie"
 
 #: src/ftpclass.cc:2405 src/ftpclass.cc:3947
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
-msgstr "ftp:ssl-force est défini et le serveur ne supporte pas SSL"
+msgstr "ftp:ssl-force est dÃ©fini et le serveur ne supporte pas SSL"
 
 #: src/ftpclass.cc:2609 src/ftpclass.cc:2744 src/Http.cc:1186 src/Fish.cc:666
 #: src/SFtp.cc:756 src/SFtp.cc:1066
 msgid "Peer closed connection"
-msgstr "Connexion interrompue par un tiers"
+msgstr "Connexion interrompue par le tiers"
 
 #: src/ftpclass.cc:2689
 msgid "Persist and retry"
-msgstr "Persiste et réessaye"
+msgstr "Persiste et rÃ©essaye"
 
 #: src/ftpclass.cc:2957
 msgid "Closing data socket"
-msgstr "Fermeture du socket de données"
+msgstr "Fermeture du socket de donnÃ©es"
 
 #: src/ftpclass.cc:2979
 msgid "Closing aborted data socket"
-msgstr "Fermeture du socket de données avorté"
+msgstr "Fermeture du socket de donnÃ©es avortÃ©e"
 
 #: src/ftpclass.cc:3659
 msgid "saw file size in response"
-msgstr "taille du fichier détectée dans la réponse"
+msgstr "taille du fichier dÃ©tectÃ©e dans la rÃ©ponse"
 
 #: src/ftpclass.cc:3674 src/Fish.cc:752 src/SFtp.cc:1091
 msgid "extra server response"
-msgstr "réponse du serveur supplémentaire"
+msgstr "rÃ©ponse du serveur supplÃ©mentaire"
 
 #: src/ftpclass.cc:3688 src/ftpclass.cc:3711
 msgid "Turning on sync-mode"
@@ -1842,16 +1852,16 @@ msgstr "Activation du mode passif"
 
 #: src/ftpclass.cc:3980
 msgid "FEAT negotiation..."
-msgstr "négotiation FEAT..."
+msgstr "nÃ©gociation FEAT..."
 
 #: src/ftpclass.cc:3987
 msgid "Sending commands..."
-msgstr "Émission des commandes..."
+msgstr "Ã‰mission des commandes..."
 
 #: src/ftpclass.cc:3989 src/ftpclass.cc:4017 src/ftpclass.cc:4030
 #: src/Http.cc:1900 src/Fish.cc:1142 src/SFtp.cc:1329
 msgid "Waiting for response..."
-msgstr "En attente de réponse..."
+msgstr "En attente de rÃ©ponse..."
 
 #: src/ftpclass.cc:3991
 msgid "Delaying before retry"
@@ -1868,23 +1878,23 @@ msgstr "Connexion..."
 
 #: src/ftpclass.cc:4010
 msgid "TLS negotiation..."
-msgstr "négociation TLS..."
+msgstr "NÃ©gociation TLS..."
 
 #: src/ftpclass.cc:4012 src/Fish.cc:1140 src/SFtp.cc:1327
 msgid "Connected"
-msgstr "Connecté"
+msgstr "ConnectÃ©"
 
 #: src/ftpclass.cc:4014
 msgid "Logging in..."
-msgstr "Login en cours..."
+msgstr "Identification en cours..."
 
 #: src/ftpclass.cc:4018
 msgid "Making data connection..."
-msgstr "Établissement de la connexion de données..."
+msgstr "Ã‰tablissement de la connexion de donnÃ©es..."
 
 #: src/ftpclass.cc:4021
 msgid "Changing remote directory..."
-msgstr "Changement de répertoire distant..."
+msgstr "Changement de rÃ©pertoire distant..."
 
 #: src/ftpclass.cc:4027
 msgid "Waiting for other copy peer..."
@@ -1896,47 +1906,47 @@ msgstr "En attente de la fin du transfert"
 
 #: src/ftpclass.cc:4032
 msgid "Waiting for data connection..."
-msgstr "En attente de la connexion de données..."
+msgstr "En attente de la connexion de donnÃ©es..."
 
 #: src/ftpclass.cc:4038
 msgid "Sending data/TLS"
-msgstr "Émission des données/TLS"
+msgstr "Ã‰mission des donnÃ©es/TLS"
 
 #: src/ftpclass.cc:4040
 msgid "Receiving data/TLS"
-msgstr "Réception des données/TLS"
+msgstr "RÃ©ception des donnÃ©es/TLS"
 
 #: src/ftpclass.cc:4046 src/Http.cc:1896 src/Fish.cc:1146 src/SFtp.cc:1333
 msgid "Sending data"
-msgstr "Émission des données"
+msgstr "Ã‰mission des donnÃ©es"
 
 #: src/ftpclass.cc:4048 src/Http.cc:1903 src/Fish.cc:1144 src/SFtp.cc:1331
 msgid "Receiving data"
-msgstr "Réception des données"
+msgstr "RÃ©ception des donnÃ©es"
 
 #: src/lftp.cc:319
 #, c-format
 msgid "[%lu] Terminated by signal %d. %s"
-msgstr "[%lu] Terminé par le signal %d. %s"
+msgstr "[%lu] TerminÃ© par le signal %d. %s"
 
 #: src/lftp.cc:378
 #, c-format
 msgid "[%lu] Started.  %s"
-msgstr "[%lu] Démarré.  %s"
+msgstr "[%lu] DÃ©marrÃ©.  %s"
 
 #: src/lftp.cc:387
 #, c-format
 msgid "[%lu] Finished. %s"
-msgstr "[%lu] Terminé. %s"
+msgstr "[%lu] TerminÃ©. %s"
 
 #: src/lftp.cc:391
 #, c-format
 msgid "[%lu] Moving to background to complete transfers...\n"
-msgstr "[%lu] Passe en tâche de fond pour terminer les transferts...\n"
+msgstr "[%lu] Bascule en arriÃ¨re-plan pour terminer les transferts...\n"
 
 #: src/lftp.cc:444
 msgid "history -w file|-r file|-c|-l [cnt]"
-msgstr "historique: -w fichier|-r fichier|-c|-l [num]"
+msgstr "historique : -w fichier|-r fichier|-c|-l [num]"
 
 #: src/lftp.cc:445
 msgid ""
@@ -1947,52 +1957,51 @@ msgid ""
 "Optional argument cnt specifies the number of history lines to list,\n"
 "or \"all\" to list all entries.\n"
 msgstr ""
-" -w <fichier> Écrit l'historique dans le fichier.\n"
-" -r <fichier> Lit l'historique depuis le fichier et l'ajoute à l'historique "
-"en cours.\n"
+" -w <fichier> Ã‰crit l'historique dans le fichier.\n"
+" -r <fichier> Lit l'historique depuis le fichier "
+"     et l'ajoute Ã  l'historique en cours.\n"
 " -c  Efface l'historique.\n"
-" -l  Liste l'historique (défaut).\n"
-"L'argument optionnel nb spécifie le nombre de lignes d'historique à "
-"afficher,\n"
-"ou \"all\" pour lister toutes les entrées.\n"
+" -l  Liste l'historique (dÃ©faut).\n"
+"L'argument optionnel num spÃ©cifie le nombre de lignes d'historique Ã  afficher,\n"
+"ou Â« all Â» pour afficher toutes les entrÃ©es.\n"
 
 #: src/mgetJob.cc:124 src/mgetJob.cc:206
 #, c-format
 msgid "%s: no files found\n"
-msgstr "%s: aucun fichier trouvé\n"
+msgstr "%s : aucun fichier trouvÃ©\n"
 
 #: src/mkdirJob.cc:136
 #, c-format
 msgid "%s ok, `%s' created\n"
-msgstr "%s ok, `%s' créé\n"
+msgstr "%s ok, Â« %s Â» crÃ©Ã©\n"
 
 #: src/mkdirJob.cc:138 src/rmJob.cc:54
 #, c-format
 msgid "%s failed for %d of %d director$y|ies$\n"
-msgstr "%s a échoué pour %d sur %d répertoire$|s$\n"
+msgstr "%s a Ã©chouÃ© pour %d sur %d rÃ©pertoire$|s$\n"
 
 #: src/mkdirJob.cc:141
 #, c-format
 msgid "%s ok, %d director$y|ies$ created\n"
-msgstr "%s ok, %d répertoire$ créé|s créés$\n"
+msgstr "%s ok, %d rÃ©pertoire$ crÃ©Ã©|s crÃ©Ã©s$\n"
 
 #: src/mvJob.cc:80
 #, c-format
 msgid "rename successful\n"
-msgstr "fichier renommé\n"
+msgstr "renommage rÃ©ussi\n"
 
 #: src/parsecmd.cc:323
 msgid "parse: missing filter command\n"
-msgstr "parse: commande de filtre manquante\n"
+msgstr "parse : commande de filtre manquante\n"
 
 #: src/parsecmd.cc:325
 msgid "parse: missing redirection filename\n"
-msgstr "parse: fichier de redirection manquant\n"
+msgstr "parse : fichier de redirection manquant\n"
 
 #: src/pgetJob.cc:186
 #, c-format
 msgid "`%s', got %lld of %lld (%d%%) %s%s"
-msgstr "`%s', lu %lld sur %lld (%d%%) %s%s"
+msgstr "Â« %s Â», lu %lld sur %lld (%d%%) %s%s"
 
 #: src/plural.c:98
 msgid "=1 =0|>1"
@@ -2001,22 +2010,22 @@ msgstr "=1 =0|>1"
 #: src/rmJob.cc:50
 #, c-format
 msgid "%s ok, `%s' removed\n"
-msgstr "%s ok, `%s' supprimé\n"
+msgstr "%s ok, Â« %s Â» supprimÃ©\n"
 
 #: src/rmJob.cc:57
 #, c-format
 msgid "%s failed for %d of %d file$|s$\n"
-msgstr "%s a échoué pour %d sur %d fichier$|s$\n"
+msgstr "%s a Ã©chouÃ© pour %d sur %d fichier$|s$\n"
 
 #: src/rmJob.cc:63
 #, c-format
 msgid "%s ok, %d director$y|ies$ removed\n"
-msgstr "%s ok, %d répertoire$ supprimé|s supprimés$\n"
+msgstr "%s ok, %d rÃ©pertoire$ supprimÃ©|s supprimÃ©s$\n"
 
 #: src/rmJob.cc:66
 #, c-format
 msgid "%s ok, %d file$|s$ removed\n"
-msgstr "%s ok, %d fichier$ supprimé|s supprimés$\n"
+msgstr "%s ok, %d fichier$ supprimÃ©|s supprimÃ©s$\n"
 
 #: src/Http.cc:163
 msgid "Closing HTTP connection"
@@ -2024,32 +2033,31 @@ msgstr "Fermeture de la connexion HTTP"
 
 #: src/Http.cc:171
 msgid "POST method failed"
-msgstr "échec de la méthode POST"
+msgstr "Ã©chec de la mÃ©thode POST"
 
 #: src/Http.cc:1051
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
-msgstr ""
-"ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
+msgstr "ftp Ã  travers http ne peut travailler sans proxy, dÃ©finissez hftp:proxy."
 
 #: src/Http.cc:1202
 msgid "Sending request..."
-msgstr "Émission des requêtes..."
+msgstr "Ã‰mission des requÃªtes..."
 
 #: src/Http.cc:1249
 msgid "Hit EOF while fetching headers"
-msgstr "Reçu une fin de fichier en lisant les entêtes"
+msgstr "ReÃ§u une fin de fichier en lisant les entÃªtes"
 
 #: src/Http.cc:1365
 msgid "Could not parse HTTP status line"
-msgstr "Ne peut analyser la ligne d'état HTTP"
+msgstr "Ne peut analyser la ligne d'Ã©tat HTTP"
 
 #: src/Http.cc:1396
 msgid "Object is not cached and http:cache-control has only-if-cached"
-msgstr "L'objet n'est pas caché, et http:cache-control a only-if-cached"
+msgstr "L'objet n'est pas cachÃ©, et http:cache-control a only-if-cached"
 
 #: src/Http.cc:1545
 msgid "Receiving body..."
-msgstr "Réception du corps..."
+msgstr "RÃ©ception du corps..."
 
 #: src/Http.cc:1665
 msgid "Hit EOF"
@@ -2057,36 +2065,35 @@ msgstr "Fin de fichier atteinte"
 
 #: src/Http.cc:1668
 msgid "Received not enough data, retrying"
-msgstr "Pas assez de données reçues, recommence"
+msgstr "Pas assez de donnÃ©es reÃ§ues, nouvelle tentative"
 
 #: src/Http.cc:1678
 msgid "Received all"
-msgstr "Tout reçu"
+msgstr "Tout reÃ§u"
 
 #: src/Http.cc:1683
 msgid "Received all (total)"
-msgstr "Tout reçu (total)"
+msgstr "Tout reÃ§u (total)"
 
 #: src/Http.cc:1707 src/Http.cc:1729
 msgid "chunked format violated"
-msgstr "format en 'chunk' violé"
+msgstr "format en Â« chunk Â» violÃ©"
 
 #: src/Http.cc:1716
-#, fuzzy
 msgid "Received last chunk"
-msgstr "Tout reçu"
+msgstr "Dernier fragment reÃ§u"
 
 #: src/Http.cc:1901
 msgid "Fetching headers..."
-msgstr "Réception des entêtes..."
+msgstr "RÃ©ception des entÃªtes..."
 
 #: src/resource.cc:51 src/resource.cc:75
 msgid "Proxy protocol unsupported"
-msgstr "Protocole de proxy non supporté"
+msgstr "Protocole de proxy non pris en charge"
 
 #: src/resource.cc:55
 msgid "ftp:proxy password: "
-msgstr "ftp:proxy mot de passe: "
+msgstr "ftp:proxy mot de passe : "
 
 #: src/resource.cc:100
 msgid "only PUT and POST values allowed"
@@ -2095,97 +2102,96 @@ msgstr "seules les valeurs PUT et POST sont permises"
 #: src/resource.cc:134
 #, c-format
 msgid "unknown address family `%s'"
-msgstr "famille d'adresse inconnue `%s'"
+msgstr "famille d'adresse Â« %s Â» inconnue"
 
 #: src/resource.cc:159
 msgid "ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C"
-msgstr "ftp:ssl-auth doit être un de la liste: SSL, TLS, TLS-P, TLS-C"
+msgstr "ftp:ssl-auth doit Ãªtre un de la liste : SSL, TLS, TLS-P, TLS-C"
 
 #: src/resource.cc:176
 msgid "must be one of: C, S, E, P, or empty"
-msgstr "doit être C, S, E, P, ou vide"
+msgstr "doit Ãªtre C, S, E, P, ou vide"
 
 #: src/HttpDir.cc:1404 src/FtpDirList.cc:141 src/Fish.cc:1314 src/SFtp.cc:2157
 #: src/SFtp.cc:2240
 #, c-format
 msgid "Getting file list (%lld) [%s]"
-msgstr "Récupération de la liste des fichiers (%lld) [%s]"
+msgstr "RÃ©cupÃ©ration de la liste des fichiers (%lld) [%s]"
 
 #: src/ChmodJob.cc:81
 #, c-format
 msgid "Failed to change mode of `%s' to %04o (%s).\n"
-msgstr "Impossible de changer le mode de `%s' en %04o (%s).\n"
+msgstr "Impossible de modifier le mode de Â« %s Â» en %04o (%s).\n"
 
 #: src/ChmodJob.cc:84
 #, c-format
 msgid "Mode of `%s' changed to %04o (%s).\n"
-msgstr "Le mode de `%s' a été changé en %04o (%s).\n"
+msgstr "Le mode de Â« %s Â» a Ã©tÃ© modifiÃ© en %04o (%s).\n"
 
 #: src/ChmodJob.cc:89
 #, c-format
 msgid "Failed to change mode of `%s' because no old mode is available.\n"
-msgstr ""
-"Impossible de changer le mode de `%s' car il n'y a pas d'ancien mode.\n"
+msgstr "Impossible de modifier le mode de Â« %s Â» car il n'y a pas d'ancien mode.\n"
 
 #: src/CopyJob.cc:78
 #, c-format
 msgid "`%s' at %lld %s%s%s%s"
-msgstr "`%s' à %lld %s%s%s%s"
+msgstr "Â« %s Â» Ã  %lld %s%s%s%s"
 
 #: src/CopyJob.cc:179
 #, c-format
 msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
-msgstr "%lld octet$#ll# transféré|s transférés$ en %ld seconde$#l#|s$"
+msgstr "%lld octet$#ll# transfÃ©rÃ©|s transfÃ©rÃ©s$ en %ld seconde$#l#|s$"
 
 #: src/CopyJob.cc:189
 #, c-format
 msgid "%lld $#ll#byte|bytes$ transferred"
-msgstr "%lld octet$#ll# transféré|s transférés"
+msgstr "%lld octet$#ll# transfÃ©rÃ©|s transfÃ©rÃ©s"
 
 #: src/CopyJob.cc:286
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
-msgstr "Le transfert de %d sur %d fichier$|s$ a échoué\n"
+msgstr "Le transfert de %d sur %d fichier$|s$ a Ã©chouÃ©\n"
 
 #: src/CopyJob.cc:292
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
-msgstr "Total %d fichier$|s$ transférés\n"
+msgstr "Total %d fichier$|s$ transfÃ©rÃ©s\n"
 
 #: src/FileCopy.cc:129
 msgid "copy: destination file is already complete\n"
-msgstr "copy: le fichier de destination est déjà terminé\n"
+msgstr "copy : le fichier de destination est dÃ©jÃ  terminÃ©\n"
 
 #: src/FileCopy.cc:169
 msgid "copy: put is broken\n"
-msgstr "copy: 'put' brisé\n"
+msgstr "copy: Â« put Â» brisÃ©\n"
 
 #: src/FileCopy.cc:188
 msgid "seek failed"
-msgstr "'seek' a échoué"
+msgstr "Â« seek Â» a Ã©chouÃ©"
 
 #: src/FileCopy.cc:215
 msgid "cannot seek on data source"
-msgstr "ne peut se déplacer sur la source"
+msgstr "ne peut se dÃ©placer sur la source"
 
 #: src/FileCopy.cc:218
 #, c-format
 msgid "copy: put rolled back to %lld, seeking get accordingly\n"
-msgstr "copy: 'put' est revenu à %lld, 'get' s'y ajuste\n"
+msgstr "copy : Â« put Â» est revenu Ã  %lld, Â« get Â» s'y ajuste\n"
 
 #: src/FileCopy.cc:231
 msgid "copy: all data received, but get rolled back\n"
-msgstr "copy: toutes les données reçues, mais 'get' est revenu en arrière\n"
+msgstr "copy : toutes les donnÃ©es reÃ§ues, mais Â« get Â» est revenu en arriÃ¨re\n"
 
 #: src/FileCopy.cc:247
 #, c-format
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
-msgstr "copy: 'get' est revenu à %lld, 'put' s'y ajuste\n"
+msgstr "copy : Â« get Â» est revenu Ã  %lld, Â« put Â» s'y ajuste\n"
 
 #: src/FileCopy.cc:1022
 #, c-format
 msgid "copy: received redirection to `%s'\n"
-msgstr "copy: reçu une redirection vers `%s'\n"
+msgstr "copy : reÃ§u une redirection vers Â« %s Â»\n"
 
 #: src/FileCopy.cc:1227
 msgid "file name missed in URL"
@@ -2193,11 +2199,11 @@ msgstr "nom de fichier manquant dans l'URL"
 
 #: src/FileCopy.cc:1869
 msgid "Verify command failed without a message"
-msgstr "La commande Verify a échouée sans message"
+msgstr "La commande verify a Ã©chouÃ© sans message"
 
 #: src/FileCopy.h:283
 msgid "Verifying..."
-msgstr "Vérification..."
+msgstr "VÃ©rification..."
 
 #: src/Speedometer.cc:102
 #, c-format
@@ -2232,23 +2238,23 @@ msgstr "seconde"
 
 #: src/Speedometer.cc:140
 msgid "eta:"
-msgstr "eta:"
+msgstr "reste :"
 
 #: src/FileCopyFtp.cc:95
 msgid "**** FXP: trying to reverse ftp:fxp-passive-source\n"
-msgstr "**** FXP: tentative d'inversion de ftp:fxp-passive-source\n"
+msgstr "**** FXP : tentative d'inversion de ftp:fxp-passive-source\n"
 
 #: src/FileCopyFtp.cc:102
 msgid "**** FXP: trying to reverse ftp:fxp-passive-sscn\n"
-msgstr "**** FXP: tentative d'inversion de ftp:fxp-passive-sscn\n"
+msgstr "**** FXP : tentative d'inversion de ftp:fxp-passive-sscn\n"
 
 #: src/FileCopyFtp.cc:110
 msgid "**** FXP: trying to reverse ftp:ssl-protect-fxp\n"
-msgstr "**** FXP: tentative d'inversion de ftp:ssl-protect-fxp\n"
+msgstr "**** FXP : tentative d'inversion de ftp:ssl-protect-fxp\n"
 
 #: src/FileCopyFtp.cc:116
 msgid "**** FXP: giving up, reverting to plain copy\n"
-msgstr "**** FXP: abandon, retour à la copie brute\n"
+msgstr "**** FXP : abandon, retour Ã  la copie brute\n"
 
 #: src/FileCopyFtp.cc:125
 msgid "ftp:fxp-force is set but FXP is not available"
@@ -2257,22 +2263,22 @@ msgstr "ftp:fxp-force est actif mais l'FXP n'est pas disponible"
 #: src/Filter.cc:165
 #, c-format
 msgid "pipe() failed: %s"
-msgstr "pipe() a échouée: %s"
+msgstr "pipe() a Ã©chouÃ© : %s"
 
 #: src/Filter.cc:198 src/PtyShell.cc:142
 #, c-format
 msgid "chdir(%s) failed: %s\n"
-msgstr "chdir(%s) a échouée: %s\n"
+msgstr "chdir(%s) a Ã©chouÃ© : %s\n"
 
 #: src/Filter.cc:206
 #, c-format
 msgid "execvp(%s) failed: %s\n"
-msgstr "execvp(%s) a échouée: %s\n"
+msgstr "execvp(%s) a Ã©chouÃ© : %s\n"
 
 #: src/Filter.cc:211 src/PtyShell.cc:154
 #, c-format
 msgid "execl(/bin/sh) failed: %s\n"
-msgstr "execl(/bin/sh) a échouée: %s\n"
+msgstr "execl(/bin/sh) a Ã©chouÃ© : %s\n"
 
 #: src/NetAccess.cc:349
 #, c-format
@@ -2282,11 +2288,11 @@ msgstr "Erreur de socket (%s) - reconnexion"
 #: src/NetAccess.cc:384
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
-msgstr "Connexion à %s%s (%s) port %u"
+msgstr "Connexion Ã  %s%s (%s) port %u"
 
 #: src/NetAccess.cc:440
 msgid "Timeout - reconnecting"
-msgstr "Temps écoulé - reconnexion"
+msgstr "Temps Ã©coulÃ© - reconnexion"
 
 #: src/NetAccess.cc:647
 msgid "Connection limit reached"
@@ -2298,12 +2304,12 @@ msgstr "Attente avant reconnexion"
 
 #: src/NetAccess.cc:660
 msgid "max-retries exceeded"
-msgstr "max-retries atteint"
+msgstr "le nombre maximum de tentatives (max-retries) a Ã©tÃ© atteint"
 
 #: src/NetAccess.cc:970
 #, c-format
 msgid "Getting directory contents (%lld) %s[%s]"
-msgstr "Récupération du contenu du répertoire (%lld) %s[%s]"
+msgstr "RÃ©cupÃ©ration du contenu du rÃ©pertoire (%lld) %s[%s]"
 
 #: src/NetAccess.cc:977
 #, c-format
@@ -2313,30 +2319,30 @@ msgstr "Lecture des informations de fichiers (%d%%) [%s]"
 #: src/PollVec.cc:92
 #, c-format
 msgid "%s: BUG - deadlock detected\n"
-msgstr "%s: BUG - boucle infinie détectée\n"
+msgstr "%s : BOGUE - boucle infinie dÃ©tectÃ©e\n"
 
 #: src/SleepJob.cc:106
 #, c-format
 msgid "\tRepeat count: %d\n"
-msgstr "\tNombre de répétitions: %d\n"
+msgstr "\tNombre de rÃ©pÃ©titions : %d\n"
 
 #: src/SleepJob.cc:128
 #, c-format
 msgid "%s: argument required. "
-msgstr "%s: argument requis. "
+msgstr "%s : argument requis. "
 
 #: src/module.cc:180
 #, c-format
 msgid "depend module `%s': %s\n"
-msgstr "dépendance du module `%s': %s\n"
+msgstr "dÃ©pendance du module Â« %s Â» : %s\n"
 
 #: src/module.cc:200
 msgid "modules are not supported on this system"
-msgstr "les modules ne sont pas supportés sur ce système"
+msgstr "les modules ne sont pas pris en charge sur ce systÃ¨me"
 
 #: src/FileSetOutput.cc:255
 msgid "non-option arguments found"
-msgstr "argument non-option spécifié"
+msgstr "certains arguments ne sont pas des options"
 
 #: src/FindJobDu.cc:102
 msgid "total"
@@ -2344,11 +2350,11 @@ msgstr "total"
 
 #: src/Fish.cc:157 src/SFtp.cc:187
 msgid "Running connect program"
-msgstr "Exécution du programme de connexion"
+msgstr "ExÃ©cution du programme de connexion"
 
 #: src/Fish.cc:323 src/SFtp.cc:325
 msgid "Disconnecting"
-msgstr "Déconnexion..."
+msgstr "DÃ©connexion"
 
 #: src/Fish.cc:693 src/SFtp.cc:735
 msgid "Password required"
@@ -2356,74 +2362,54 @@ msgstr "Mot de passe requis"
 
 #: src/Fish.cc:698 src/SFtp.cc:740
 msgid "Login incorrect"
-msgstr "Login incorrect"
+msgstr "Identification incorrecte"
 
 #: src/Fish.cc:1148 src/SFtp.cc:1335
 msgid "Done"
-msgstr "Terminé"
+msgstr "TerminÃ©"
 
 #: src/OutputJob.cc:155
 #, c-format
 msgid "%s (filter)"
-msgstr "%s (filtré)"
+msgstr "%s (filtrÃ©)"
 
 #: src/PtyShell.cc:73
 #, c-format
 msgid "pseudo-tty allocation failed: %s"
-msgstr "l'allocation du pseudo-tty a échouée: %s"
+msgstr "l'allocation du pseudo-terminal a Ã©chouÃ© : %s"
 
 #: src/QueueFeeder.cc:92
 msgid "Added job$|s$"
-msgstr "Ajout $du travail|des travaux$"
+msgstr "Ajout $de la tÃ¢che|des tÃ¢ches$"
 
 #: src/QueueFeeder.cc:172 src/QueueFeeder.cc:193
 #, c-format
 msgid "No queued jobs.\n"
-msgstr "Aucun travail en queue\n"
+msgstr "Aucune tÃ¢che dans la file d'attente\n"
 
 #: src/QueueFeeder.cc:174
 #, c-format
 msgid "No queued job #%i.\n"
-msgstr "Aucun travail en queue #%i.\n"
+msgstr "Aucune tÃ¢che #%i dans la file d'attente.\n"
 
 #: src/QueueFeeder.cc:179 src/QueueFeeder.cc:200
 msgid "Deleted job$|s$"
-msgstr "$Travail supprimé|Travaux supprimés$"
+msgstr "$TÃ¢che supprimÃ©e|TÃ¢ches supprimÃ©es$"
 
 #: src/QueueFeeder.cc:195
 #, c-format
 msgid "No queued jobs match \"%s\".\n"
-msgstr "Aucun travail correspondant à \"%s\".\n"
+msgstr "Aucune tÃ¢che correspondant Ã  Â« %s Â».\n"
 
 #: src/QueueFeeder.cc:220 src/QueueFeeder.cc:238
 msgid "Moved job$|s$"
-msgstr "Trava$il déplacé|aux déplacés$"
+msgstr "$TÃ¢che dÃ©placÃ©e|TÃ¢ches dÃ©placÃ©es$"
 
 #: src/QueueFeeder.cc:376
 msgid "Commands queued:"
-msgstr "Commande en queue:"
+msgstr "Commande en file d'attente :"
 
 #: src/SFtp.cc:1082
 msgid "invalid server response format"
-msgstr "format de réponse du serveur invalide"
+msgstr "format de rÃ©ponse du serveur invalide"
 
-#~ msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
-#~ msgstr "%sA supprimer: %d répertoire$|s$, %d fichier$|s$, %d lien$|s$\n"
-
-#~ msgid "Usage: %s userid [pass]\n"
-#~ msgstr "Usage: %s userid [pass]\n"
-
-#~ msgid "Cache is on"
-#~ msgstr "Cache activé"
-
-#~ msgid "Cache is off"
-#~ msgstr "Cache désactivé"
-
-#~ msgid "Cache entries do not expire"
-#~ msgstr "Les entrées du cache n'expirent pas"
-
-#~ msgid "Cache entries expire in %ld $#l#second|seconds$\n"
-#~ msgstr "Les entrées du cache expirent dans %ld seconde$#l#|s$\n"
-
-#~ msgid "Cache entries expire in %ld $#l#minute|minutes$\n"
-#~ msgstr "Les entrées du cache expirent dans %ld minute$#l#|s$\n"
