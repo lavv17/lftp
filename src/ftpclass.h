@@ -75,7 +75,7 @@ class Ftp : public NetAccess
       SMTaskRef<IOBuffer> control_recv;
       SMTaskRef<IOBuffer> control_send;
       IOBufferTelnet *telnet_layer_send;
-      Buffer send_cmd_buffer; // holds unsent commands.
+      DirectedBuffer send_cmd_buffer; // holds unsent commands.
       int data_sock;
       SMTaskRef<IOBuffer> data_iobuf;
       int aborted_data_sock;
@@ -149,9 +149,10 @@ class Ftp : public NetAccess
       void AbortDataConnection();
       void CloseAbortedDataConnection();
 
-      void Send(const char *cmd,int len);
+      void Send(const char *cmd);
+      void SendEncoded(const char *url);
       void SendCmd(const char *cmd);
-      void SendCmd2(const char *cmd,const char *f);
+      void SendCmd2(const char *cmd,const char *f,const char *u=0,const char *home=0);
       void SendCmd2(const char *cmd,int v);
       void SendCmdF(const char *fmt,...) PRINTF_LIKE(2,3);
       int FlushSendQueueOneCmd(); // sends single command from send_cmd_buffer

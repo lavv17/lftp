@@ -268,7 +268,7 @@ try_again:
    // do the translation
    ICONV_CONST char **put_buf_ptr=const_cast<ICONV_CONST char**>(&put_buf);
    size_t res=iconv(backend_translate,put_buf_ptr,&put_size,&store_buf,&store_size);
-   SpaceAdd(store_buf-store_space);
+   target->SpaceAdd(store_buf-store_space);
    if(from_untranslated)
       Skip(put_buf-base_buf);
    if(res==(size_t)-1)

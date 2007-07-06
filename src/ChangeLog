@@ -1,3 +1,10 @@
+2007-07-06  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* buffer.cc: fixed DataRecoder.
+	* buffer.h: (PutRaw) new method.
+	* ftpclass.cc, ftpclass.h: send encoded parts of url untranslated.
+	* url.cc, url.h: (path_ptr) new method.
+
 2007-06-08  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileAccess.h: don't include LsCache.h.

@@ -165,6 +165,8 @@ public:
    void PutTranslated(const char *buf,int size);
    void PutTranslated(const char *buf) { PutTranslated(buf,strlen(buf)); }
    void ResetTranslation();
+   void PutRaw(const char *buf,int size) { Buffer::Put(buf,size); }
+   void PutRaw(const char *buf) { Buffer::Put(buf); }
    void Put(const char *buf,int size);
    void Put(const char *buf) { Put(buf,strlen(buf)); }
    dir_t GetDirection() { return mode; }

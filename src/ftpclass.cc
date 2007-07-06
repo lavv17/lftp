@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <ctype.h>
 
 #include "ftpclass.h"
 #include "xstring.h"
@@ -845,7 +846,7 @@ void Ftp::CatchSIZE_opt(int act)
 }
 
 Ftp::Connection::Connection(const char *c)
-   : closure(c)
+   : closure(c), send_cmd_buffer(DirectedBuffer::PUT)
 {
    abor_close_timer.SetResource("ftp:abor-max-wait",closure);
 
@@ -1779,12 +1780,12 @@ int   Ftp::Do()
 
       if(opt_size && conn->size_supported && file[0] && use_size)
       {
-	 conn->SendCmd2("SIZE",file);
+	 conn->SendCmd2("SIZE",file,url::path_ptr(file_url),home);
 	 expect->Push(Expect::SIZE_OPT);
       }
       if(opt_date && conn->mdtm_supported && file[0] && use_mdtm)
       {
-	 conn->SendCmd2("MDTM",file);
+	 conn->SendCmd2("MDTM",file,url::path_ptr(file_url),home);
 	 expect->Push(Expect::MDTM_OPT);
       }
 
@@ -1807,7 +1808,7 @@ int   Ftp::Do()
 		  *sl=0;
 		  if(strcmp(file,".") && strcmp(file,".."))
 		  {
-		     conn->SendCmd2("MKD",file);
+		     conn->SendCmd2("MKD",file,url::path_ptr(file_url),home);
 		     expect->Push(Expect::IGNORE);
 		  }
 		  *sl='/';
@@ -1817,7 +1818,7 @@ int   Ftp::Do()
 	 }
 
 	 if(append_file)
-	    conn->SendCmd2(command,file);
+	    conn->SendCmd2(command,file,url::path_ptr(file_url),home);
 	 else
 	    conn->SendCmd(command);
 
@@ -1954,7 +1955,7 @@ int   Ftp::Do()
       if(copy_mode!=COPY_DEST || copy_allow_store)
       {
 	 if(append_file)
-	    conn->SendCmd2(command,file);
+	    conn->SendCmd2(command,file,url::path_ptr(file_url),home);
 	 else
 	    conn->SendCmd(command);
 	 expect->Push(Expect::TRANSFER);
@@ -2434,7 +2435,7 @@ void Ftp::SendUTimeRequest()
       time_t n=entity_date;
       strftime(c,c_size,"MDTM %Y%m%d%H%M%S",gmtime(&n));
       c[c_size-1]=0;
-      conn->SendCmd2(c,file);
+      conn->SendCmd2(c,file,url::path_ptr(file_url),home);
       expect->Push(Expect::IGNORE);
    }
 }
@@ -3057,33 +3058,71 @@ int  Ftp::FlushSendQueue(bool all)
    return m;
 }
 
-void  Ftp::Connection::Send(const char *buf,int len)
+void  Ftp::Connection::Send(const char *buf)
 {
-   while(len>0)
+   while(*buf)
    {
       char ch=*buf++;
-      len--;
       send_cmd_buffer.Put(&ch,1);
       if(ch=='\r')
-	 send_cmd_buffer.Put("",1); // RFC2640
+	 send_cmd_buffer.PutRaw("",1); // RFC2640
+   }
+}
+void  Ftp::Connection::SendEncoded(const char *buf)
+{
+   while(*buf)
+   {
+      char ch=*buf++;
+      if(ch=='%' && isxdigit(buf[0]) && isxdigit(buf[1]))
+      {
+	 int n=0;
+	 if(sscanf(buf,"%2x",&n)==1)
+	 {
+	    buf+=2;
+	    ch=n;
+	    // don't translate encoded bytes
+	    send_cmd_buffer.PutRaw(&ch,1);
+	    send_cmd_buffer.ResetTranslation();
+	    goto next;
+	 }
+      }
+      send_cmd_buffer.Put(&ch,1);
+next: if(ch=='\r')
+	 send_cmd_buffer.PutRaw("",1); // RFC2640
    }
 }
 
 void  Ftp::Connection::SendCmd(const char *cmd)
 {
-   Send(cmd,strlen(cmd));
-   send_cmd_buffer.Put("\r\n",2);
+   Send(cmd);
+   send_cmd_buffer.PutRaw("\r\n",2);
+   send_cmd_buffer.ResetTranslation();
 }
 
-void Ftp::Connection::SendCmd2(const char *cmd,const char *f)
+void Ftp::Connection::SendCmd2(const char *cmd,const char *f,const char *u,const char *home)
 {
    if(cmd && cmd[0])
    {
-      Send(cmd,strlen(cmd));
+      Send(cmd);
       send_cmd_buffer.Put(" ",1);
    }
-   Send(f,strlen(f));
-   send_cmd_buffer.Put("\r\n",2);
+   if(u)
+   {
+      if(u[0]=='/' && u[1]=='~')
+	 u++;
+      else if(!strncasecmp(u,"/%2F",4))
+      {
+	 Send("/");
+	 u+=4;
+      }
+      else if(home && strcmp(home,"/"))
+	 Send(home);
+      SendEncoded(u);
+   }
+   else
+      Send(f);
+   send_cmd_buffer.PutRaw("\r\n",2);
+   send_cmd_buffer.ResetTranslation();
 }
 
 void Ftp::Connection::SendCmd2(const char *cmd,int v)
@@ -4490,13 +4529,12 @@ void Ftp::Connection::SetControlConnectionTranslation(const char *cs)
 {
    if(translation_activated)
       return;
-   if(telnet_layer_send==control_send)
+   if(telnet_layer_send)
    {
       // cannot do two conversions in one DirectedBuffer, stack it.
-      control_send=new IOBufferStacked(control_send.borrow());
       control_recv=new IOBufferStacked(control_recv.borrow());
    }
-   control_send->SetTranslation(cs,false);
+   send_cmd_buffer.SetTranslation(cs,false);
    control_recv->SetTranslation(cs,true);
    translation_activated=true;
 }

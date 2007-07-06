@@ -286,6 +286,13 @@ int url::path_index(const char *base)
    return 0;
 }
 
+const char *url::path_ptr(const char *base)
+{
+   if(!base)
+      return 0;
+   return base+path_index(base);
+}
+
 char *ParsedURL::Combine(const char *home,bool use_rfc1738)
 {
    xstring u("");
