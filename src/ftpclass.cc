@@ -432,6 +432,7 @@ void Ftp::LoginCheck(int act)
       NextPeer();
       if(peer_curr==0)
 	 try_time=now;	// count the reconnect-interval from this moment
+      last_connection_failed=true;
    }
    if(is3XX(act))
    {
@@ -492,6 +493,7 @@ void Ftp::NoPassReqCheck(int act) // for USER command
 def_ret:
    Disconnect();
    try_time=now;	// count the reconnect-interval from this moment
+   last_connection_failed=true;
 }
 
 // login to proxy.
@@ -927,6 +929,7 @@ void Ftp::InitFtp()
    copy_failed=false;
 
    disconnect_on_close=false;
+   last_connection_failed=false;
 
    Reconfig();
 }
@@ -1162,8 +1165,8 @@ int   Ftp::Do()
       // first try "easy" cases of session take-over.
       for(int i=0; i<3; i++)
       {
-	 bool limit_reached=(connection_limit>0
-			    && connection_limit<=CountConnections());
+	 bool limit_reached=last_connection_failed
+	       || (connection_limit>0 && connection_limit<=CountConnections());
 	 if(i>=2 && !limit_reached)
 	    break;
 	 bool need_sleep=GetBetterConnection(i,limit_reached);
@@ -1192,6 +1195,7 @@ int   Ftp::Do()
       if(!NextTry())
 	 return MOVED;
 
+      last_connection_failed=false;
       assert(!conn);
       assert(!expect);
       conn=new Connection(hostname);
@@ -3720,6 +3724,7 @@ void Ftp::CheckResp(int act)
 	 NextPeer();
 	 if(peer_curr==0)
 	    try_time=now;  // count the reconnect-interval from this moment
+	 last_connection_failed=true;
       }
       break;
 

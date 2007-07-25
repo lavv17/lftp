@@ -159,6 +159,7 @@ class Ftp : public NetAccess
    };
 
    Ref<Connection> conn;
+   bool last_connection_failed;
 
    struct Expect
    {
