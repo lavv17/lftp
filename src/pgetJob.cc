@@ -38,7 +38,8 @@ ResDecls pget_vars_register(pget_vars);
 #undef MIN
 #define MIN(a,b) ((a)<(b)?(a):(b))
 
-#define super GetJob
+#define super CopyJob
+#define min_chunk_size 0x10000
 
 int pgetJob::Do()
 {
@@ -47,18 +48,14 @@ int pgetJob::Do()
    if(Done())
       return m;
 
-   if(cp==0)
-      return super::Do();
-
    if(status_timer.Stopped())
    {
       SaveStatus();
       status_timer.Reset();
    }
 
-   if(cp->Done())
+   if(c->Done() || c->Error())
    {
-      RemoveBackupFile();
       if(status_file)
       {
 	 remove(status_file);
@@ -68,47 +65,76 @@ int pgetJob::Do()
 
    if(no_parallel || max_chunks<2)
    {
-      cp->Resume();
+      c->Resume();
       return super::Do();
    }
 
-   if(chunks_done && chunks && cp->GetPos()>=limit0)
+   if(chunks_done && chunks && c->GetPos()>=limit0)
    {
-      cp->SetRangeLimit(cp->GetPos());    // make it stop.
-      cp->Resume();
-      cp->Do();
+      c->SetRangeLimit(limit0);    // make it stop.
+      c->Resume();
+      c->Do();
       free_chunks();
       m=MOVED;
    }
 
-   if(chunks==0 || cp->GetPos()<limit0)
+   if(chunks==0 || c->GetPos()<limit0)
    {
-      cp->Resume();
-      m=super::Do(); // it can call NextFile.
-      if(!cp)
-	 return m;
+      c->Resume();
+      m|=super::Do();
    }
-   else if(chunks)
-      cp->Suspend();
+   else if(chunks && num_of_chunks>0)
+   {
+      if(!chunks[0]->Done() && chunks[0]->GetBytesCount()<limit0/16)
+      {
+	 c->Resume();
+	 if(num_of_chunks==1)
+	 {
+	    free_chunks();
+	    no_parallel=true;
+	 }
+	 else
+	 {
+	    limit0=chunks[0]->c->GetRangeLimit();
+	    Delete(chunks[0]);
+	    memmove(chunks,chunks+1,--num_of_chunks*sizeof(*chunks));
+	 }
+	 m=MOVED;
+      }
+      else
+	 c->Suspend();
+   }
 
    if(Done() || chunks_done)
       return m;
 
-   off_t offset=cp->GetPos();
-   off_t size=cp->GetSize();
+   off_t offset=c->GetPos();
+   off_t size=c->GetSize();
 
    if(chunks==0)
    {
       if(size==NO_SIZE_YET)
 	 return m;
 
-      if(size==NO_SIZE || local==0)
+      if(size==NO_SIZE || (c->put && c->put->GetLocal()==0))
       {
+	 Log::global->Write(0,_("pget: falling back to plain get"));
+	 Log::global->Write(0," (");
+	 if(c->put && c->put->GetLocal()==0)
+	 {
+	    Log::global->Write(0,_("the target file is remote"));
+	    if(size==NO_SIZE)
+	       Log::global->Write(0,", ");
+	 }
+	 if(size==NO_SIZE)
+	    Log::global->Write(0,_("the source file size is unknown"));
+	 Log::global->Write(0,")\n");
+
 	 no_parallel=true;
 	 return m;
       }
 
-      cp->GetPut()->NeedSeek(); // seek before writing
+      c->put->NeedSeek(); // seek before writing
 
       if(pget_cont)
 	 LoadStatus();
@@ -119,9 +145,7 @@ int pgetJob::Do()
 
       m=MOVED;
 
-      if(chunks)
-	 cp->cmdline.setf("\\chunk %lld-%lld",(long long)start0,(long long)(limit0-1));
-      else
+      if(!chunks)
       {
 	 no_parallel=true;
 	 return m;
@@ -131,19 +155,20 @@ int pgetJob::Do()
    /* cycle through the chunks */
    chunks_done=true;
    total_xferred=MIN(offset,limit0);
-   off_t got_already=cp->GetSize()-limit0;
-   total_xfer_rate=cp->GetRate();
+   off_t got_already=c->GetSize()-limit0;
+   total_xfer_rate=c->GetRate();
 
-   off_t rem=limit0-cp->GetPos();
+   off_t rem=limit0-c->GetPos();
    if(rem<=0)
       total_eta=0;
    else
-      total_eta=cp->GetETA(rem);
+      total_eta=c->GetETA(rem);
 
    for(int i=0; i<num_of_chunks; i++)
    {
       if(chunks[i]->Error())
       {
+	 Log::global->Format(0,"pget: chunk[%d] error: %s\n",i,chunks[i]->ErrorText());
 	 no_parallel=true;
 	 break;
       }
@@ -185,21 +210,18 @@ static const char pget_status_format[]=N_("`%s', got %lld of %lld (%d%%) %s%s");
 #define PGET_STATUS _(pget_status_format),name, \
    (long long)total_xferred,(long long)size, \
    percent(total_xferred,size),Speedometer::GetStrS(total_xfer_rate), \
-   cp->GetETAStrSFromTime(total_eta)
+   c->GetETAStrSFromTime(total_eta)
 
 void pgetJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
 {
    if(Done() || no_parallel || max_chunks<2 || !chunks)
    {
-      GetJob::ShowRunStatus(s);
+      super::ShowRunStatus(s);
       return;
    }
 
-   if(!cp)
-      return;
-
-   const char *name=cp->SqueezeName(s->GetWidthDelayed()-58);
-   off_t size=cp->GetSize();
+   const char *name=SqueezeName(s->GetWidthDelayed()-58);
+   off_t size=GetSize();
    StringSet status;
    status.AppendFormat(PGET_STATUS);
 
@@ -209,7 +231,7 @@ void pgetJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
    bar[w]=0;
 
    int i;
-   int p=cp->GetPos()*w/size;
+   int p=c->GetPos()*w/size;
    for(i=start0*w/size; i<p; i++)
       bar[i]='o';
    p=limit0*w/size;
@@ -234,33 +256,36 @@ void pgetJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
 // list subjobs (chunk xfers) only when verbose
 void  pgetJob::ListJobs(int verbose,int indent)
 {
+   indent--;
    if(!chunks)
    {
       Job::ListJobs(verbose,indent);
       return;
    }
-   if(verbose>1 && cp)
+   if(verbose>1)
    {
-      // to show proper ETA, change the range temporarily.
-      cp->SetRangeLimit(limit0);
+      if(c->GetPos()<limit0)
+      {
+	 printf("%*s\\chunk %lld-%lld\n",indent,"",(long long)start0,(long long)limit0);
+	 c->SetRangeLimit(limit0); // to see right ETA.
+	 CopyJob::PrintStatus(verbose,"\t");
+	 c->SetRangeLimit(FILE_END);
+      }
       Job::ListJobs(verbose,indent);
-      cp->SetRangeLimit(FILE_END);
    }
 }
 
 void  pgetJob::PrintStatus(int verbose,const char *prefix)
 {
-   if(!cp || Done() || no_parallel || max_chunks<2 || !chunks)
+   if(Done() || no_parallel || max_chunks<2 || !chunks)
    {
-      GetJob::PrintStatus(verbose,prefix);
+      super::PrintStatus(verbose,prefix);
       return;
    }
 
-   SessionJob::PrintStatus(verbose,prefix);
-
-   printf("\t");
-   const char *name=cp->GetDispName();
-   off_t size=cp->GetSize();
+   printf("%s",prefix);
+   const char *name=GetDispName();
+   off_t size=GetSize();
    printf(PGET_STATUS);
    printf("\n");
 }
@@ -271,87 +296,68 @@ void pgetJob::free_chunks()
    {
       for(int i=0; i<num_of_chunks; i++)
       {
-	 bytes+=chunks[i]->GetBytesCount();
+	 chunks_bytes+=chunks[i]->GetBytesCount();
 	 Delete(chunks[i]);
       }
       xfree(chunks);
       chunks=0;
    }
-   if(cp)
-      cp->cmdline.set(0);
+   cmdline.set(0);
 }
 
-pgetJob::pgetJob(FileAccess *s,ArgV *args,bool cont)
-   : GetJob(s,args,/*cont=*/false)
+pgetJob::pgetJob(FileCopy *c1,const char *n,int m)
+   : CopyJob(c1,n,"pget")
 {
    chunks=0;
    num_of_chunks=0;
+   chunks_bytes=0;
    start0=limit0=0;
    total_xferred=0;
    total_xfer_rate=0;
    no_parallel=false;
    chunks_done=false;
-   pget_cont=cont;
-   max_chunks=ResMgr::Query("pget:default-n",0);
+   pget_cont=c->SetContinue(false);
+   max_chunks=m?m:ResMgr::Query("pget:default-n",0);
    total_eta=-1;
    status_timer.SetResource("pget:save-status",0);
-   truncate_target_first=!cont;
-}
-pgetJob::~pgetJob()
-{
-   free_chunks();
-}
-
-void pgetJob::NextFile()
-{
-   free_chunks();
-
-   super::NextFile();
-   no_parallel=false;
-   chunks_done=false;
-   total_xferred=0;
-   total_eta=-1;
-
+   const Ref<FDStream>& local=c->put->GetLocal();
    if(local && local->full_name)
    {
       status_file.vset(local->full_name.get(),".lftp-pget-status",NULL);
       if(pget_cont)
 	 LoadStatus0();
    }
-   else
-      status_file.set(0);
+}
+pgetJob::~pgetJob()
+{
+   free_chunks();
 }
 
 pgetJob::ChunkXfer *pgetJob::NewChunk(const char *remote,off_t start,off_t limit)
 {
+   const Ref<FDStream>& local=c->put->GetLocal();
    FileCopyPeerFDStream
 	       	*dst_peer=new FileCopyPeerFDStream(local,FileCopyPeer::PUT);
    dst_peer->NeedSeek(); // seek before writing
    dst_peer->SetBase(0);
 
-   FileCopyPeer *src_peer=CreateCopyPeer(session->Clone(),remote,FA::RETRIEVE);
+   FileCopy *c1=FileCopy::New(c->get->Clone(),dst_peer,false);
+   c1->SetRange(start,limit);
+   c1->SetSize(GetSize());
+   c1->DontCopyDate();
+   c1->FailIfCannotSeek();
 
-   FileCopy *c=FileCopy::New(src_peer,dst_peer,false);
-   c->SetRange(start,limit);
-   c->SetSize(cp->GetSize());
-   c->DontCopyDate();
-   c->FailIfCannotSeek();
-
-   ChunkXfer *chunk=new ChunkXfer(c,remote,start,limit);
+   ChunkXfer *chunk=new ChunkXfer(c1,remote,start,limit);
    chunk->cmdline.setf("\\chunk %lld-%lld",(long long)start,(long long)(limit-1));
    return chunk;
 }
 
 pgetJob::ChunkXfer::ChunkXfer(FileCopy *c1,const char *name,
 			      off_t s,off_t lim)
-   : CopyJob(c1,name,"pget")
+   : CopyJob(c1,name,"pget-chunk")
 {
    start=s;
    limit=lim;
-}
-
-pgetJob::ChunkXfer::~ChunkXfer()
-{
 }
 
 void pgetJob::SaveStatus()
@@ -363,11 +369,11 @@ void pgetJob::SaveStatus()
    if(!f)
       return;
 
-   off_t size=cp->GetSize();
+   off_t size=GetSize();
    fprintf(f,"size=%lld\n",size);
 
    int i=0;
-   fprintf(f,"%d.pos=%lld\n",i,cp->GetPos());
+   fprintf(f,"%d.pos=%lld\n",i,GetPos());
    if(!chunks)
       goto out_close;
    fprintf(f,"%d.limit=%lld\n",i,limit0);
@@ -400,7 +406,7 @@ void pgetJob::LoadStatus0()
    if(fscanf(f,"%d.pos=%lld\n",&j,&pos)<2 || j!=0)
       goto out_close;
    Log::global->Format(10,"pget: got chunk[%d] pos=%lld\n",j,pos);
-   cp->SetRange(pos,FILE_END);
+   c->SetRange(pos,FILE_END);
 
 out_close:
    fclose(f);
@@ -427,7 +433,7 @@ void pgetJob::LoadStatus()
       goto out_close;
 
    int i=0;
-   int max_chunks=st.st_size/20; // highest estimate
+   int max_chunks=st.st_size/20; // highest estimate - min 20 bytes per chunk in status file.
    long long *pos=(long long *)alloca(2*max_chunks*sizeof(*pos));
    long long *limit=pos+max_chunks;
    for(;;)
@@ -445,27 +451,27 @@ void pgetJob::LoadStatus()
    }
    if(i<1)
       goto out_close;
-   if(size<cp->GetSize())  // file grew?
+   if(size<c->GetSize())  // file grew?
    {
       if(limit[i-1]==size)
-	 limit[i-1]=cp->GetSize();
+	 limit[i-1]=c->GetSize();
       else
       {
 	 pos[i]=size;
-	 limit[i]=cp->GetSize();
+	 limit[i]=c->GetSize();
 	 i++;
       }
    }
    num_of_chunks=i-1;
    start0=pos[0];
    limit0=limit[0];
-   cp->SetRange(pos[0],FILE_END);
+   c->SetRange(pos[0],FILE_END);
    if(num_of_chunks<1)
       goto out_close;
    chunks=(ChunkXfer**)xmalloc(sizeof(*chunks)*num_of_chunks);
    for(i=num_of_chunks; i-->0; )
    {
-      chunks[i]=NewChunk(cp->GetName(),pos[i+1],limit[i+1]);
+      chunks[i]=NewChunk(GetName(),pos[i+1],limit[i+1]);
       chunks[i]->SetParentFg(this,false);
    }
    goto out_close;
@@ -475,8 +481,8 @@ void pgetJob::InitChunks(off_t offset,off_t size)
 {
    /* initialize chunks */
    off_t chunk_size=(size-offset)/max_chunks;
-   if(chunk_size<0x10000)
-      chunk_size=0x10000;
+   if(chunk_size<min_chunk_size)
+      chunk_size=min_chunk_size;
    num_of_chunks=(size-offset)/chunk_size-1;
    if(num_of_chunks<1)
       return;
@@ -484,7 +490,7 @@ void pgetJob::InitChunks(off_t offset,off_t size)
    off_t curr_offs=size;
    for(int i=num_of_chunks; i-->0; )
    {
-      chunks[i]=NewChunk(cp->GetName(),curr_offs-chunk_size,curr_offs);
+      chunks[i]=NewChunk(GetName(),curr_offs-chunk_size,curr_offs);
       chunks[i]->SetParentFg(this,false);
       curr_offs-=chunk_size;
    }

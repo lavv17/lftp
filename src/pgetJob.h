@@ -23,9 +23,9 @@
 #ifndef PGETJOB_H
 #define PGETJOB_H
 
-#include "GetJob.h"
+#include "CopyJob.h"
 
-class pgetJob : public GetJob
+class pgetJob : public CopyJob
 {
    class ChunkXfer : public CopyJob
    {
@@ -34,13 +34,13 @@ class pgetJob : public GetJob
       off_t start;
       off_t limit;
 
-      ChunkXfer(FileCopy *c,const char *remote,off_t start,off_t limit);
-      ~ChunkXfer();
+      ChunkXfer(FileCopy *c,const char *n,off_t start,off_t limit);
    };
 
    ChunkXfer   **chunks;
    int	 max_chunks;
    int	 num_of_chunks;
+   off_t chunks_bytes;
    void InitChunks(off_t offset,off_t size);
 
    off_t start0;
@@ -73,11 +73,22 @@ public:
    void PrintStatus(int,const char *);
    void ListJobs(int verbose,int indent=0);
 
-   pgetJob(FileAccess *s,ArgV *args,bool cont);
+   pgetJob(FileCopy *c1,const char *n,int m=0);
    ~pgetJob();
 
    void SetMaxConn(int n) { max_chunks=n; }
 
+   off_t GetBytesCount() { return chunks_bytes+c->GetBytesCount(); }
+};
+
+class pCopyJobCreator : public CopyJobCreator
+{
+public:
+   int max_chunks;
+   pCopyJobCreator(int n) : max_chunks(n) {}
+   CopyJob *New(FileCopy *c,const char *n,const char *o) const {
+      return new pgetJob(c,n,max_chunks);
+   }
 };
 
 #endif//PGETJOB_H
