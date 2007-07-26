@@ -40,7 +40,6 @@ class OutputJob : public Job
    Ref<FDStream> output_fd;	// to initialize CopyJobs
    FileAccessRef fa;
    xstring_c fa_path;
-   bool fa_reuse;
 
    bool initialized;
 
@@ -63,8 +62,6 @@ class OutputJob : public Job
 
    void Init(const char *a0);
    void InitCopy();
-
-   void SetError(const char *e, ...) PRINTF_LIKE(2,3);
 
    /* Get the input FileCopyPeer */
    const SMTaskRef<FileCopyPeer>& InputPeer() const;
