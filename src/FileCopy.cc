@@ -276,7 +276,11 @@ int FileCopy::Do()
       m=MOVED;
 
       if(get->range_limit!=FILE_END && get->range_limit<get->GetRealPos()+s)
+      {
 	 s=get->range_limit-get->GetRealPos();
+	 if(s<0)
+	    s=0;
+      }
 
       if(line_buffer)
       {
@@ -685,10 +689,9 @@ int FileCopyPeerFA::Do()
 	 file_removed=true;
 	 session->Close();
 	 Suspend();
-	 return MOVED;
+	 m=MOVED;
       }
-      else
-	 return m;
+      return m;
    }
 
    if(Done() || Error())
@@ -829,7 +832,8 @@ void FileCopyPeerFA::SuspendInternal()
 {
    if(fxp && mode==PUT)
       return;
-   session->SuspendSlave();
+   if(session->IsOpen())
+      session->SuspendSlave();
 }
 void FileCopyPeerFA::ResumeInternal()
 {
@@ -1046,6 +1050,7 @@ int FileCopyPeerFA::Get_LL(int len)
       eof=true;
       FileAccess::cache->Add(session,file,FAmode,FA::OK,this);
       SetSuggestedFileName(session->GetSuggestedFileName());
+      session->Close();
    }
    return res;
 }
@@ -1084,6 +1089,13 @@ int FileCopyPeerFA::Put_LL(const char *buf,int len)
    }
    seek_pos+=res; // mainly to indicate that there was some output.
    return res;
+}
+
+int FileCopyPeerFA::PutEOF_LL()
+{
+   if(mode==GET && session)
+      session->Close();
+   return 0;
 }
 
 off_t FileCopyPeerFA::GetRealPos()
@@ -1169,6 +1181,10 @@ FileCopyPeerFA *FileCopyPeerFA::New(const FileAccessRef& s,const char *url,int m
    if(u.proto)
       return new FileCopyPeerFA(&u,m);
    return new FileCopyPeerFA(s,url,m);
+}
+FileCopyPeer *FileCopyPeerFA::Clone()
+{
+   return new FileCopyPeerFA(session->Clone(),file,FAmode);
 }
 
 // FileCopyPeerFDStream
@@ -1397,7 +1413,7 @@ void FileCopyPeerFDStream::Seek(off_t new_pos)
    {
       if(seek_pos!=FILE_END)
       {
-	 pos=seek_pos+(mode==PUT)?Size():0;
+	 pos=seek_pos+(mode==PUT?Size():0);
 	 return;
       }
       else
@@ -1642,7 +1658,14 @@ FileCopyPeerFDStream *FileCopyPeerFDStream::NewGet(const char *file)
    return new FileCopyPeerFDStream(new FileStream(file,O_RDONLY),
 				    FileCopyPeer::GET);
 }
-
+FileCopyPeer *FileCopyPeerFDStream::Clone()
+{
+   NeedSeek();
+   FileCopyPeerFDStream *peer=new FileCopyPeerFDStream(stream,mode);
+   peer->NeedSeek();
+   peer->SetBase(0);
+   return peer;
+}
 
 // FileCopyPeerDirList
 FileCopyPeerDirList::FileCopyPeerDirList(FA *s,ArgV *v)

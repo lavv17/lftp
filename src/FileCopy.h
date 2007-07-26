@@ -93,7 +93,7 @@ public:
 
    void SetRange(off_t s,off_t lim) {
       range_start=s; range_limit=lim;
-      if(range_start>GetPos()+0x4000);
+      if(mode==PUT || range_start>GetPos()+0x4000);
 	 Seek(range_start);
    }
 
@@ -139,6 +139,8 @@ public:
 
    const char *GetDescriptionForLog() { return 0; }
    virtual const char *GetURL() { return 0; }
+   virtual FileCopyPeer *Clone() { return 0; }
+   virtual const Ref<FDStream>& GetLocal() const { return Ref<FDStream>::null; }
 
    const char *GetSuggestedFileName() { return suggested_filename; }
    void SetSuggestedFileName(const char *f)
@@ -226,6 +228,8 @@ public:
    void SetDate(const FileTimestamp &t) { SetDate(t.ts,t.ts_prec); }
    void SetSize(off_t  s) { get->SetSize(s); }
 
+   bool SetContinue(bool new_cont) { return replace_value(cont,new_cont); }
+
    bool Done() { return state==ALL_DONE; }
    bool Error() { return error_text!=0; }
    const char *ErrorText() { return error_text; }
@@ -237,6 +241,8 @@ public:
    void FailIfCannotSeek() { fail_if_cannot_seek=true; }
    void SetRange(off_t s,off_t lim) { get->SetRange(s,lim); put->SetRange(s,lim); }
    void SetRangeLimit(off_t lim) { get->range_limit=lim; }
+   off_t GetRangeStart() { return get->range_start; }
+   off_t GetRangeLimit() { return get->range_limit; }
    void RemoveSourceLater() { remove_source_later=true; }
    void RemoveTargetFirst() { remove_target_first=true; put->Resume(); put->RemoveFile(); }
    void LineBuffered(int size=0x1000);
@@ -288,6 +294,7 @@ class FileCopyPeerFA : public FileCopyPeer
 
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
+   int PutEOF_LL();
 
    FileAccess::fileinfo info;
 
@@ -339,6 +346,7 @@ public:
 	 return orig_url ? orig_url.get() : session->GetFileURL(file);
       }
    const char *GetURL() { return GetDescriptionForLog(); }
+   FileCopyPeer *Clone();
 };
 
 class FileCopyPeerFDStream : public FileCopyPeer
@@ -389,6 +397,8 @@ public:
       {
 	 return stream->full_name;
       }
+   const Ref<FDStream>& GetLocal() const { return stream; }
+   FileCopyPeer *Clone();
 };
 
 class FileCopyPeerDirList : public FileCopyPeer
