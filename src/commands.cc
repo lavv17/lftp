@@ -87,7 +87,7 @@ History	 cwd_history;
 CMD(alias); CMD(anon);   CMD(cd);      CMD(debug);	CMD(du);
 CMD(exit);  CMD(get);    CMD(help);    CMD(jobs);
 CMD(kill);  CMD(lcd);    CMD(ls);      CMD(cls);
-CMD(open);  CMD(pwd);    CMD(set);
+CMD(open);  CMD(pwd);    CMD(set);     CMD(eval);
 CMD(shell); CMD(source); CMD(user);    CMD(rm);
 CMD(wait);  CMD(subsh);  CMD(mirror);
 CMD(mv);    CMD(cat);    CMD(cache);
@@ -235,6 +235,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -s, --summarize       display only a total for each argument\n"
 	 "     --exclude=PAT     exclude files that match PAT\n")},
    {"echo",    cmd_echo,   0},
+   {"eval",    cmd_eval,   0},
    {"exit",    cmd_exit,   N_("exit [<code>|bg]"),
 	 N_("exit - exit from lftp or move to background if jobs are active\n\n"
 	 "If no jobs active, the code is passed to operating system as lftp\n"
@@ -3275,5 +3276,60 @@ CMD(tasks)
    printf("task_count=%d\n",SMTask::TaskCount());
    SMTask::PrintTasks();
    exit_code=0;
+   return 0;
+}
+
+CMD(eval)
+{
+   int opt;
+   const char *fmt=0;
+   const char *op=args->getarg(0);
+   while((opt=args->getopt("+f:"))!=EOF)
+   {
+      switch(opt)
+      {
+      case 'f':
+	 fmt=optarg;
+	 break;
+      default:
+	 eprintf(_("Try `%s --help' for more information\n"),op);
+	 return 0;
+      }
+   }
+   int base=optind;
+   xstring cmd;
+   if(!fmt)
+      cmd.set_allocated(args->Combine(optind));
+   else
+   {
+      while(*fmt)
+      {
+	 if(*fmt=='\\' && (fmt[1]=='$' || fmt[1]=='\\'))
+	 {
+	    cmd.append(fmt[1]);
+	    fmt+=2;
+	    continue;
+	 }
+	 if(*fmt=='$' && fmt[1]>='0' && fmt[1]<='9')
+	 {
+	    int n=fmt[1]-'0';
+	    if(n+base<args->count())
+	       cmd.append(args->getarg(n+base));
+	    fmt+=2;
+	    continue;
+	 }
+	 if(*fmt=='$' && fmt[1]=='@')
+	 {
+	    xstring_ca c(args->CombineQuoted(base));
+	    cmd.append(c);
+	    fmt+=2;
+	    continue;
+	 }
+	 cmd.append(*fmt++);
+      }
+   }
+   cmd.append(";\n\n");
+   parent->PrependCmd(cmd);
+   exit_code=parent->prev_exit_code;
    return 0;
 }
