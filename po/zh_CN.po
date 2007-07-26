@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2007-04-11 09:32+0400\n"
+"POT-Creation-Date: 2007-07-26 15:29+0400\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -106,7 +106,7 @@ msgid "File cannot be accessed"
 msgstr "不能访问文件"
 
 #: src/FileAccess.cc:240 src/ftpclass.cc:4006 src/ftpclass.cc:4015
-#: src/Fish.cc:1086 src/SFtp.cc:1319
+#: src/Fish.cc:1086 src/SFtp.cc:1318
 msgid "Not connected"
 msgstr "没有连接上"
 
@@ -325,16 +325,16 @@ msgstr ""
 msgid "Invalid IPv6 numeric address"
 msgstr ""
 
-#: src/ResMgr.cc:879
+#: src/ResMgr.cc:883 src/ResMgr.cc:887
 #, fuzzy
 msgid "this encoding is not supported"
 msgstr "不支持的操作"
 
-#: src/ResMgr.cc:886
+#: src/ResMgr.cc:893
 msgid "no closure defined for this setting"
 msgstr ""
 
-#: src/ResMgr.cc:899
+#: src/ResMgr.cc:906
 #, fuzzy
 msgid "invalid pair of numbers"
 msgstr "无效的数字"
@@ -1627,7 +1627,7 @@ msgstr ""
 msgid "Closing control socket"
 msgstr "关闭控制连接"
 
-#: src/ftpclass.cc:1143 src/Http.cc:964 src/Fish.cc:75 src/SFtp.cc:81
+#: src/ftpclass.cc:1143 src/Http.cc:964 src/Fish.cc:75 src/SFtp.cc:80
 msgid "Closing idle connection"
 msgstr "关闭发呆的连接"
 
@@ -1681,7 +1681,7 @@ msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 
 #: src/ftpclass.cc:2614 src/ftpclass.cc:2749 src/Http.cc:1186 src/Fish.cc:619
-#: src/SFtp.cc:756 src/SFtp.cc:1066
+#: src/SFtp.cc:755 src/SFtp.cc:1065
 msgid "Peer closed connection"
 msgstr "对端关闭连接"
 
@@ -1702,7 +1702,7 @@ msgstr "关闭数据连接"
 msgid "saw file size in response"
 msgstr "看到应答中的文件大小"
 
-#: src/ftpclass.cc:3686 src/Fish.cc:705 src/SFtp.cc:1091
+#: src/ftpclass.cc:3686 src/Fish.cc:705 src/SFtp.cc:1090
 msgid "extra server response"
 msgstr "额外的服务器应答"
 
@@ -1724,7 +1724,7 @@ msgid "Sending commands..."
 msgstr "正在发送命令..."
 
 #: src/ftpclass.cc:4001 src/ftpclass.cc:4029 src/ftpclass.cc:4042
-#: src/Http.cc:1900 src/Fish.cc:1095 src/SFtp.cc:1329
+#: src/Http.cc:1900 src/Fish.cc:1095 src/SFtp.cc:1328
 msgid "Waiting for response..."
 msgstr "正等待应答..."
 
@@ -1738,7 +1738,7 @@ msgid "Connection idle"
 msgstr "连接空闲"
 
 #: src/ftpclass.cc:4018 src/Http.cc:1891 src/Http.cc:1898 src/Fish.cc:1091
-#: src/SFtp.cc:1325
+#: src/SFtp.cc:1324
 msgid "Connecting..."
 msgstr "正在连接..."
 
@@ -1746,7 +1746,7 @@ msgstr "正在连接..."
 msgid "TLS negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:4024 src/Fish.cc:1093 src/SFtp.cc:1327
+#: src/ftpclass.cc:4024 src/Fish.cc:1093 src/SFtp.cc:1326
 #, fuzzy
 msgid "Connected"
 msgstr "没有连接上"
@@ -1786,11 +1786,11 @@ msgstr "正发送数据"
 msgid "Receiving data/TLS"
 msgstr "正接收数据"
 
-#: src/ftpclass.cc:4058 src/Http.cc:1896 src/Fish.cc:1099 src/SFtp.cc:1333
+#: src/ftpclass.cc:4058 src/Http.cc:1896 src/Fish.cc:1099 src/SFtp.cc:1332
 msgid "Sending data"
 msgstr "正发送数据"
 
-#: src/ftpclass.cc:4060 src/Http.cc:1903 src/Fish.cc:1097 src/SFtp.cc:1331
+#: src/ftpclass.cc:4060 src/Http.cc:1903 src/Fish.cc:1097 src/SFtp.cc:1330
 msgid "Receiving data"
 msgstr "正接收数据"
 
@@ -1981,8 +1981,8 @@ msgstr ""
 msgid "must be one of: C, S, E, P, or empty"
 msgstr ""
 
-#: src/HttpDir.cc:1404 src/FtpDirList.cc:141 src/Fish.cc:1267 src/SFtp.cc:2157
-#: src/SFtp.cc:2240
+#: src/HttpDir.cc:1404 src/FtpDirList.cc:141 src/Fish.cc:1267 src/SFtp.cc:2156
+#: src/SFtp.cc:2239
 #, fuzzy, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "正在获取文件列表 (%ld) [%s]"
@@ -2220,25 +2220,25 @@ msgstr ""
 msgid "total"
 msgstr ""
 
-#: src/Fish.cc:157 src/SFtp.cc:187
+#: src/Fish.cc:157 src/SFtp.cc:186
 msgid "Running connect program"
 msgstr ""
 
-#: src/Fish.cc:323 src/SFtp.cc:325
+#: src/Fish.cc:323 src/SFtp.cc:324
 #, fuzzy
 msgid "Disconnecting"
 msgstr "正在连接..."
 
-#: src/Fish.cc:646 src/SFtp.cc:735
+#: src/Fish.cc:646 src/SFtp.cc:734
 #, fuzzy
 msgid "Password required"
 msgstr "口令: "
 
-#: src/Fish.cc:651 src/SFtp.cc:740
+#: src/Fish.cc:651 src/SFtp.cc:739
 msgid "Login incorrect"
 msgstr ""
 
-#: src/Fish.cc:1101 src/SFtp.cc:1335
+#: src/Fish.cc:1101 src/SFtp.cc:1334
 #, fuzzy
 msgid "Done"
 msgstr "\t完成\n"
@@ -2284,7 +2284,7 @@ msgstr ""
 msgid "Commands queued:"
 msgstr ""
 
-#: src/SFtp.cc:1082
+#: src/SFtp.cc:1081
 #, fuzzy
 msgid "invalid server response format"
 msgstr "额外的服务器应答"

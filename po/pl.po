@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.5.9\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2007-04-11 09:32+0400\n"
+"POT-Creation-Date: 2007-07-26 15:29+0400\n"
 "PO-Revision-Date: 2007-01-28 14:07+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -108,7 +108,7 @@ msgid "File cannot be accessed"
 msgstr "Brak dostêpu do pliku"
 
 #: src/FileAccess.cc:240 src/ftpclass.cc:4006 src/ftpclass.cc:4015
-#: src/Fish.cc:1086 src/SFtp.cc:1319
+#: src/Fish.cc:1086 src/SFtp.cc:1318
 msgid "Not connected"
 msgstr "Nie po³±czony"
 
@@ -332,15 +332,15 @@ msgstr "Nieprawid³owy numeryczny adres IPv4"
 msgid "Invalid IPv6 numeric address"
 msgstr "Nieprawid³owy numeryczny adres IPv6"
 
-#: src/ResMgr.cc:879
+#: src/ResMgr.cc:883 src/ResMgr.cc:887
 msgid "this encoding is not supported"
 msgstr "to kodowanie nie jest wspierane"
 
-#: src/ResMgr.cc:886
+#: src/ResMgr.cc:893
 msgid "no closure defined for this setting"
 msgstr "nie zdefiniowano zamkniêcia dla tego ustawienia"
 
-#: src/ResMgr.cc:899
+#: src/ResMgr.cc:906
 msgid "invalid pair of numbers"
 msgstr "nieprawid³owa para liczb"
 
@@ -1769,7 +1769,7 @@ msgstr "nie mo¿na przeanalizowaæ odpowiedzi EPSV"
 msgid "Closing control socket"
 msgstr "Zamykanie gniazda steruj±cego"
 
-#: src/ftpclass.cc:1143 src/Http.cc:964 src/Fish.cc:75 src/SFtp.cc:81
+#: src/ftpclass.cc:1143 src/Http.cc:964 src/Fish.cc:75 src/SFtp.cc:80
 msgid "Closing idle connection"
 msgstr "Zamykanie bezczynnego po³±czenia"
 
@@ -1823,7 +1823,7 @@ msgstr ""
 "na po³±czenia SSL"
 
 #: src/ftpclass.cc:2614 src/ftpclass.cc:2749 src/Http.cc:1186 src/Fish.cc:619
-#: src/SFtp.cc:756 src/SFtp.cc:1066
+#: src/SFtp.cc:755 src/SFtp.cc:1065
 msgid "Peer closed connection"
 msgstr "Komputer po drugiej stronie zamkn±³ po³±czenie"
 
@@ -1843,7 +1843,7 @@ msgstr "Zamykanie gniazda danych po przerwaniu"
 msgid "saw file size in response"
 msgstr "w odpowiedzi pojawi³ siê rozmiar pliku"
 
-#: src/ftpclass.cc:3686 src/Fish.cc:705 src/SFtp.cc:1091
+#: src/ftpclass.cc:3686 src/Fish.cc:705 src/SFtp.cc:1090
 msgid "extra server response"
 msgstr "dodatkowa odpowied¼ serwera"
 
@@ -1864,7 +1864,7 @@ msgid "Sending commands..."
 msgstr "Wysy³anie komend..."
 
 #: src/ftpclass.cc:4001 src/ftpclass.cc:4029 src/ftpclass.cc:4042
-#: src/Http.cc:1900 src/Fish.cc:1095 src/SFtp.cc:1329
+#: src/Http.cc:1900 src/Fish.cc:1095 src/SFtp.cc:1328
 msgid "Waiting for response..."
 msgstr "Czekanie na odpowied¼..."
 
@@ -1877,7 +1877,7 @@ msgid "Connection idle"
 msgstr "Po³±czenie bezczynne"
 
 #: src/ftpclass.cc:4018 src/Http.cc:1891 src/Http.cc:1898 src/Fish.cc:1091
-#: src/SFtp.cc:1325
+#: src/SFtp.cc:1324
 msgid "Connecting..."
 msgstr "£±czenie siê..."
 
@@ -1885,7 +1885,7 @@ msgstr "£±czenie siê..."
 msgid "TLS negotiation..."
 msgstr "Negocjacja TLS..."
 
-#: src/ftpclass.cc:4024 src/Fish.cc:1093 src/SFtp.cc:1327
+#: src/ftpclass.cc:4024 src/Fish.cc:1093 src/SFtp.cc:1326
 msgid "Connected"
 msgstr "Po³±czono"
 
@@ -1921,11 +1921,11 @@ msgstr "Wysy³am dane/TLS"
 msgid "Receiving data/TLS"
 msgstr "Otrzymujê dane/TLS"
 
-#: src/ftpclass.cc:4058 src/Http.cc:1896 src/Fish.cc:1099 src/SFtp.cc:1333
+#: src/ftpclass.cc:4058 src/Http.cc:1896 src/Fish.cc:1099 src/SFtp.cc:1332
 msgid "Sending data"
 msgstr "Wysy³am dane"
 
-#: src/ftpclass.cc:4060 src/Http.cc:1903 src/Fish.cc:1097 src/SFtp.cc:1331
+#: src/ftpclass.cc:4060 src/Http.cc:1903 src/Fish.cc:1097 src/SFtp.cc:1330
 msgid "Receiving data"
 msgstr "Otrzymujê dane"
 
@@ -2116,8 +2116,8 @@ msgstr "ftp:ssl-auth musi byæ jednym z: SSL, TLS, TLS-P, TLS-C"
 msgid "must be one of: C, S, E, P, or empty"
 msgstr "musi byæ jednym z: C, S, E, P lub puste"
 
-#: src/HttpDir.cc:1404 src/FtpDirList.cc:141 src/Fish.cc:1267 src/SFtp.cc:2157
-#: src/SFtp.cc:2240
+#: src/HttpDir.cc:1404 src/FtpDirList.cc:141 src/Fish.cc:1267 src/SFtp.cc:2156
+#: src/SFtp.cc:2239
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "Pobieranie listy plików (%lld) [%s]"
@@ -2355,23 +2355,23 @@ msgstr "znaleziono argumenty nie bêd±ce opcjami"
 msgid "total"
 msgstr "razem"
 
-#: src/Fish.cc:157 src/SFtp.cc:187
+#: src/Fish.cc:157 src/SFtp.cc:186
 msgid "Running connect program"
 msgstr "Uruchamianie programu ³±cz±cego"
 
-#: src/Fish.cc:323 src/SFtp.cc:325
+#: src/Fish.cc:323 src/SFtp.cc:324
 msgid "Disconnecting"
 msgstr "Roz³±czanie"
 
-#: src/Fish.cc:646 src/SFtp.cc:735
+#: src/Fish.cc:646 src/SFtp.cc:734
 msgid "Password required"
 msgstr "Wymagane has³o"
 
-#: src/Fish.cc:651 src/SFtp.cc:740
+#: src/Fish.cc:651 src/SFtp.cc:739
 msgid "Login incorrect"
 msgstr "Logowanie nieudane"
 
-#: src/Fish.cc:1101 src/SFtp.cc:1335
+#: src/Fish.cc:1101 src/SFtp.cc:1334
 msgid "Done"
 msgstr "Gotowe"
 
@@ -2416,6 +2416,6 @@ msgstr "Przesuniêto zadani$e|a|a$"
 msgid "Commands queued:"
 msgstr "Skolejkowane polecenia:"
 
-#: src/SFtp.cc:1082
+#: src/SFtp.cc:1081
 msgid "invalid server response format"
 msgstr "nieprawid³owy format odpowiedzi serwera"

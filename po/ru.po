@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.3.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2007-04-11 09:32+0400\n"
+"POT-Creation-Date: 2007-07-26 15:29+0400\n"
 "PO-Revision-Date: 2000-09-07 09:36+08:00\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -106,7 +106,7 @@ msgid "File cannot be accessed"
 msgstr "Доступ к файлу невозможен"
 
 #: src/FileAccess.cc:240 src/ftpclass.cc:4006 src/ftpclass.cc:4015
-#: src/Fish.cc:1086 src/SFtp.cc:1319
+#: src/Fish.cc:1086 src/SFtp.cc:1318
 msgid "Not connected"
 msgstr "Нет соединения"
 
@@ -324,15 +324,15 @@ msgstr "Некорректный цифровой IPv4 адрес"
 msgid "Invalid IPv6 numeric address"
 msgstr "Некорректный цифровой IPv6 адрес"
 
-#: src/ResMgr.cc:879
+#: src/ResMgr.cc:883 src/ResMgr.cc:887
 msgid "this encoding is not supported"
 msgstr "эта кодировка не поддерживается"
 
-#: src/ResMgr.cc:886
+#: src/ResMgr.cc:893
 msgid "no closure defined for this setting"
 msgstr "Для этой настройки контекст не имеет смысла"
 
-#: src/ResMgr.cc:899
+#: src/ResMgr.cc:906
 msgid "invalid pair of numbers"
 msgstr "неверно указана пара чисел"
 
@@ -1689,7 +1689,7 @@ msgstr "невозможно разобрать ответ на EPSV"
 msgid "Closing control socket"
 msgstr "Закрытие управляющего соединения"
 
-#: src/ftpclass.cc:1143 src/Http.cc:964 src/Fish.cc:75 src/SFtp.cc:81
+#: src/ftpclass.cc:1143 src/Http.cc:964 src/Fish.cc:75 src/SFtp.cc:80
 msgid "Closing idle connection"
 msgstr "Закрытие неиспользуемого соединения"
 
@@ -1743,7 +1743,7 @@ msgstr ""
 "использовать SSL"
 
 #: src/ftpclass.cc:2614 src/ftpclass.cc:2749 src/Http.cc:1186 src/Fish.cc:619
-#: src/SFtp.cc:756 src/SFtp.cc:1066
+#: src/SFtp.cc:755 src/SFtp.cc:1065
 msgid "Peer closed connection"
 msgstr "Соединение закрыто удаленной машиной"
 
@@ -1763,7 +1763,7 @@ msgstr "Закрытие соединения данных, оставшегос
 msgid "saw file size in response"
 msgstr "замечен размер файла в ответе сервера"
 
-#: src/ftpclass.cc:3686 src/Fish.cc:705 src/SFtp.cc:1091
+#: src/ftpclass.cc:3686 src/Fish.cc:705 src/SFtp.cc:1090
 msgid "extra server response"
 msgstr "непредвиденный ответ сервера"
 
@@ -1784,7 +1784,7 @@ msgid "Sending commands..."
 msgstr "Передача команд..."
 
 #: src/ftpclass.cc:4001 src/ftpclass.cc:4029 src/ftpclass.cc:4042
-#: src/Http.cc:1900 src/Fish.cc:1095 src/SFtp.cc:1329
+#: src/Http.cc:1900 src/Fish.cc:1095 src/SFtp.cc:1328
 msgid "Waiting for response..."
 msgstr "Ожидание ответа..."
 
@@ -1797,7 +1797,7 @@ msgid "Connection idle"
 msgstr "Соединение не используется"
 
 #: src/ftpclass.cc:4018 src/Http.cc:1891 src/Http.cc:1898 src/Fish.cc:1091
-#: src/SFtp.cc:1325
+#: src/SFtp.cc:1324
 msgid "Connecting..."
 msgstr "Установка соединения..."
 
@@ -1805,7 +1805,7 @@ msgstr "Установка соединения..."
 msgid "TLS negotiation..."
 msgstr "Согласование TLS..."
 
-#: src/ftpclass.cc:4024 src/Fish.cc:1093 src/SFtp.cc:1327
+#: src/ftpclass.cc:4024 src/Fish.cc:1093 src/SFtp.cc:1326
 msgid "Connected"
 msgstr "Соединен"
 
@@ -1841,11 +1841,11 @@ msgstr "Отправка данных/TLS"
 msgid "Receiving data/TLS"
 msgstr "Получение данных/TLS"
 
-#: src/ftpclass.cc:4058 src/Http.cc:1896 src/Fish.cc:1099 src/SFtp.cc:1333
+#: src/ftpclass.cc:4058 src/Http.cc:1896 src/Fish.cc:1099 src/SFtp.cc:1332
 msgid "Sending data"
 msgstr "Отправка данных"
 
-#: src/ftpclass.cc:4060 src/Http.cc:1903 src/Fish.cc:1097 src/SFtp.cc:1331
+#: src/ftpclass.cc:4060 src/Http.cc:1903 src/Fish.cc:1097 src/SFtp.cc:1330
 msgid "Receiving data"
 msgstr "Получение данных"
 
@@ -2031,8 +2031,8 @@ msgstr "ftp:ssl-auth должен быть одним из: SSL, TLS, TLS-P, TLS
 msgid "must be one of: C, S, E, P, or empty"
 msgstr "должно быть одним из: C, S, E, P, или пустым"
 
-#: src/HttpDir.cc:1404 src/FtpDirList.cc:141 src/Fish.cc:1267 src/SFtp.cc:2157
-#: src/SFtp.cc:2240
+#: src/HttpDir.cc:1404 src/FtpDirList.cc:141 src/Fish.cc:1267 src/SFtp.cc:2156
+#: src/SFtp.cc:2239
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "Получение списка файлов (%lld) [%s]"
@@ -2270,23 +2270,23 @@ msgstr "обнаружены аргументы, не являющиеся оп�
 msgid "total"
 msgstr "всего"
 
-#: src/Fish.cc:157 src/SFtp.cc:187
+#: src/Fish.cc:157 src/SFtp.cc:186
 msgid "Running connect program"
 msgstr "Выполняется соединяющая программа"
 
-#: src/Fish.cc:323 src/SFtp.cc:325
+#: src/Fish.cc:323 src/SFtp.cc:324
 msgid "Disconnecting"
 msgstr "Закрытие соединения"
 
-#: src/Fish.cc:646 src/SFtp.cc:735
+#: src/Fish.cc:646 src/SFtp.cc:734
 msgid "Password required"
 msgstr "Требуется пароль"
 
-#: src/Fish.cc:651 src/SFtp.cc:740
+#: src/Fish.cc:651 src/SFtp.cc:739
 msgid "Login incorrect"
 msgstr "Login/пароль неверный"
 
-#: src/Fish.cc:1101 src/SFtp.cc:1335
+#: src/Fish.cc:1101 src/SFtp.cc:1334
 msgid "Done"
 msgstr "Готово"
 
@@ -2331,7 +2331,7 @@ msgstr "Задани$е перемещено|я перемещены|я пере
 msgid "Commands queued:"
 msgstr "Очередь команд:"
 
-#: src/SFtp.cc:1082
+#: src/SFtp.cc:1081
 msgid "invalid server response format"
 msgstr "неверный формат ответа сервера"
 

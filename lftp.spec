@@ -1,4 +1,4 @@
-%define version 3.5.11
+%define version 3.5.12
 %define release 1
 %define use_modules 0
 
