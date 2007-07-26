@@ -1,3 +1,7 @@
+2007-06-15	Jakob Truelsen <antialize@gmail.com>
+
+	* gettext.h: allow compilation without libintl.h
+
 2007-03-13	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* post-config.h: define __attribute__ for non-gcc compilers.
