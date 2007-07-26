@@ -155,14 +155,6 @@ public:
    void Bg();
 };
 
-template<class T> class JobRef : public SMTaskRef<T>
-{
-   JobRef<T>(const JobRef<T>&);  // disable cloning
-   void operator=(const JobRef<T>&);   // and assignment
-
-public:
-   JobRef() {}
-   JobRef<T>(T *p) : SMTaskRef<T>(p) {}
-};
+#define JobRef SMTaskRef // it is basically the same
 
 #endif /* JOB_H */
