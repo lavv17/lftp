@@ -1,3 +1,22 @@
+2007-07-26  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ColumnOutput.cc, ColumnOutput.h: use Refs.
+	* CopyJob.cc, CopyJob.h: use Refs; allow to specify CopyJob creator
+	  for CopyJobEnv.
+	* FileCopy.cc, FileCopy.h: close session when it's not needed; suspend
+	  only open sessions; new Clone methods; disallow negative buf size.
+	* FileSetOutput.cc, FileSetOutput.h: use Refs; remember data source error.
+	* Job.h: make JobRef===SMTaskRef.
+	* OutputJob.h: remove unused members/methods.
+	* MirrorJob.cc, commands.cc: use new pget.
+	* complete.cc: use JobRef.
+	* pgetJob.cc, pgetJob.h: derive from CopyJob.
+
+2007-07-25  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: allow to borrow active connection if last
+	  connection failed.
+
 2007-07-06  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* buffer.cc: fixed DataRecoder.
