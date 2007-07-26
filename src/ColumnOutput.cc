@@ -84,7 +84,7 @@ void ColumnOutput::append()
 /* Assuming cursor is at position FROM, indent up to position TO.
  * Use a TAB character instead of two or more spaces whenever possible.  */
 static void
-indent (int from, int to, OutputJob *o)
+indent (int from, int to, const JobRef<OutputJob>& o)
 {
    // TODO
 #define tabsize 8
@@ -153,7 +153,7 @@ void ColumnOutput::get_print_info(unsigned width, int *&col_arr, int *&ws_arr, i
 
 }
 
-void ColumnOutput::print(OutputJob *o, unsigned width, bool color) const
+void ColumnOutput::print(const JobRef<OutputJob>& o, unsigned width, bool color) const
 {
    if(!lst_cnt) return; /* we have nothing to display */
 
@@ -209,7 +209,7 @@ void datum::append(const char *name, const char *color)
    curwidth += mbswidth(name, 0);
 }
 
-void datum::print(OutputJob *o, bool color, int skip,
+void datum::print(const JobRef<OutputJob>& o, bool color, int skip,
 		const char *color_pref, const char *color_suf, const char *color_reset) const
 {
    const char *cur_color = 0;

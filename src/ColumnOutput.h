@@ -39,7 +39,7 @@ public:
    int width() const { return curwidth; }
 
    // print with or without color
-   void print(OutputJob *o, bool color, int skip,
+   void print(const JobRef<OutputJob>& o, bool color, int skip,
 	   const char *color_pref, const char *color_suf, const char *color_reset) const;
 
    /* count leading whitespace in the first name only. */
@@ -61,7 +61,7 @@ public:
    void SetWidth(unsigned width);
    void SetColor(bool color);
 
-   void print(OutputJob *o, unsigned width, bool color) const;
+   void print(const JobRef<OutputJob>& o, unsigned width, bool color) const;
    void set_mode(mode_t m) { mode = m; }
 
 private:
