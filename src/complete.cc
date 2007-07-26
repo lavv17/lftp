@@ -1292,7 +1292,7 @@ void lftp_readline_init ()
 
 extern "C" void completion_display_list (char **matches, int len)
 {
-   OutputJob *b=new OutputJob((FDStream *) NULL, "completion");
+   JobRef<OutputJob> b(new OutputJob((FDStream *) NULL, "completion"));
 
    if(glob_res) {
       /* Our last completion action was of files, and we kept that
@@ -1334,6 +1334,4 @@ extern "C" void completion_display_list (char **matches, int len)
 	 break;
       }
    }
-
-   SMTask::Delete(b);
 }
