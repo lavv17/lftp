@@ -56,10 +56,6 @@ int CopyJob::Do()
    }
    return STALL;
 }
-int CopyJob::Done()
-{
-   return done;
-}
 int CopyJob::ExitCode()
 {
    if(c->Error())
@@ -198,7 +194,6 @@ CopyJobEnv::CopyJobEnv(FileAccess *s,ArgV *a,bool cont1)
 CopyJobEnv::~CopyJobEnv()
 {
    SetCopier(0,0);
-   delete args;
 }
 int CopyJobEnv::Do()
 {
@@ -238,7 +233,7 @@ void CopyJobEnv::AddCopier(FileCopy *c,const char *n)
       return;
    if(ascii)
       c->Ascii();
-   cp=new CopyJob(c,n,op);
+   cp=cj_new?cj_new->New(c,n,op):new CopyJob(c,n,op);
    cp->SetParentFg(this);
    AddWaiting(cp);
 }

@@ -29,6 +29,7 @@
 
 class CopyJob : public Job
 {
+protected:
    SMTaskRef<FileCopy> c;
    bool done;
    xstring_c name; // file name
@@ -49,7 +50,7 @@ public:
    bool HasStatus() const { return !no_status; }
 
    int Do();
-   int Done();
+   int Done() { return done; }
    int ExitCode();
 
    void SuspendInternal() { c->SuspendSlave(); }
@@ -63,7 +64,7 @@ public:
    bool Error() { return c->Error(); }
    const char *ErrorText() { return c->ErrorText(); }
    double GetTimeSpent() { return c->GetTimeSpent(); }
-   off_t GetBytesCount() { return c->GetBytesCount(); }
+   virtual off_t GetBytesCount() { return c->GetBytesCount(); }
    off_t GetSize() { return c->GetSize(); }
    off_t GetPos()  { return c->GetPos(); }
    float GetRate() { return c->GetRate(); }
@@ -91,6 +92,12 @@ public:
 
    static const char *FormatBytesTimeRate(off_t bytes,double time);
 };
+class CopyJobCreator
+{
+public:
+   virtual CopyJob *New(FileCopy *c,const char *n,const char *o) const = 0;
+   virtual ~CopyJobCreator() {}
+};
 
 class ArgV;
 class CopyJobEnv : public SessionJob
@@ -107,12 +114,14 @@ protected:
    xstring_c cwd;
    bool cont;
    bool ascii;
-   ArgV *args;
+   Ref<ArgV> args;
 
    virtual void NextFile() = 0;
 
    void SetCopier(FileCopy *c,const char *n);
    void AddCopier(FileCopy *c,const char *n);
+
+   Ref<CopyJobCreator> cj_new;
 
 public:
    int Do();
@@ -123,6 +132,8 @@ public:
 
    CopyJobEnv(FileAccess *s,ArgV *a,bool c=false);
    ~CopyJobEnv();
+
+   void SetCopyJobCreator(CopyJobCreator *c) { cj_new=c; }
 
    void SayFinalWithPrefix(const char *p);
    void SayFinal() { SayFinalWithPrefix(""); }
