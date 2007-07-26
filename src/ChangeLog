@@ -1,5 +1,9 @@
 2007-07-26  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* commands.cc: (eval) new command.
+
+2007-07-26  Alexander V. Lukyanov <lav@yars.free.net>
+
 	* ColumnOutput.cc, ColumnOutput.h: use Refs.
 	* CopyJob.cc, CopyJob.h: use Refs; allow to specify CopyJob creator
 	  for CopyJobEnv.
@@ -23,6 +27,15 @@
 	* buffer.h: (PutRaw) new method.
 	* ftpclass.cc, ftpclass.h: send encoded parts of url untranslated.
 	* url.cc, url.h: (path_ptr) new method.
+
+2007-06-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ResMgr.cc: (CharsetValidate) return error without iconv.
+	* buffer.cc, buffer.h: nicer conditionals.
+
+2007-06-15  Jakob Truelsen <antialize@gmail.com>
+
+	* ResMgr.cc, SFtp.cc, buffer.cc, buffer.h: allow compilation without iconv.
 
 2007-06-08  Alexander V. Lukyanov <lav@yars.free.net>
 

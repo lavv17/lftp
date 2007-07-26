@@ -239,6 +239,7 @@ void Buffer::SetErrorCached(const char *e)
    error_text.append(_(" [cached]"));
 }
 
+#ifdef HAVE_ICONV
 void DataRecoder::PutTranslated(Buffer *target,const char *put_buf,int size)
 {
    if(!backend_translate)
@@ -333,6 +334,8 @@ void DirectedBuffer::SetTranslation(const char *enc,bool translit)
    const char *to_code  =(mode==GET?local_code:enc);
    SetTranslator(new DataRecoder(from_code,to_code,translit));
 }
+#endif //HAVE_ICONV
+
 void DirectedBuffer::ResetTranslation()
 {
    if(translator)
@@ -352,6 +355,7 @@ void DirectedBuffer::PutTranslated(const char *buf,int size)
    else
       Buffer::Put(buf,size);
 }
+
 void DirectedBuffer::EmbraceNewData(int len)
 {
    if(len<=0)

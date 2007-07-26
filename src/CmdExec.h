@@ -67,6 +67,7 @@ public:
    Ref<FDStream> output;
    bool background;
    int	 exit_code;
+   int	 prev_exit_code;
 
 private:
    Buffer cmd_buf;
@@ -111,8 +112,6 @@ private:
 
    CmdFeeder *feeder;
    bool feeder_called;
-
-   int	 prev_exit_code;
 
    enum builtins
    {

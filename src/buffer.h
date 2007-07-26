@@ -31,9 +31,12 @@
 #include "Speedometer.h"
 
 #include <stdarg.h>
+
+#ifdef HAVE_ICONV
 CDECL_BEGIN
-#include <iconv.h>
+# include <iconv.h>
 CDECL_END
+#endif
 
 #define GET_BUFSIZE 0x10000
 #define PUT_LL_MIN  0x2000
@@ -138,6 +141,8 @@ public:
    virtual void ResetTranslation() { Empty(); }
    virtual ~DataTranslator() {}
 };
+
+#ifdef HAVE_ICONV
 class DataRecoder : public DataTranslator
 {
    iconv_t backend_translate;
@@ -147,6 +152,7 @@ public:
    DataRecoder(const char *from_code,const char *to_code,bool translit=true);
    ~DataRecoder();
 };
+#endif //HAVE_ICONV
 
 class DirectedBuffer : public Buffer
 {
@@ -161,7 +167,12 @@ protected:
 public:
    DirectedBuffer(dir_t m) : mode(m) {}
    void SetTranslator(DataTranslator *t) { translator=t; }
-   void SetTranslation(const char *be_encoding,bool translit=true);
+   void SetTranslation(const char *be_encoding,bool translit=true)
+#ifdef HAVE_ICONV
+      ;
+#else
+      {}
+#endif //HAVE_ICONV
    void PutTranslated(const char *buf,int size);
    void PutTranslated(const char *buf) { PutTranslated(buf,strlen(buf)); }
    void ResetTranslation();

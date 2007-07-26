@@ -31,7 +31,6 @@
 
 #include <assert.h>
 #include <errno.h>
-#include <iconv.h>
 
 #define max_buf 0x10000
 
