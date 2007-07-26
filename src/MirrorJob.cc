@@ -25,6 +25,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <unistd.h>
 #include <assert.h>
 #include <mbswidth.h>
@@ -290,45 +291,33 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	       goto skip;
 	 }
 
-	 if(!use_pget)
-	 {
-	    FileCopyPeerFA *src_peer=
-	       new FileCopyPeerFA(source_session->Clone(),file->name,FA::RETRIEVE);
-	    FileCopyPeerFA *dst_peer=
-	       new FileCopyPeerFA(target_session->Clone(),file->name,FA::STORE);
+	 FileCopyPeer *src_peer=0;
+	 if(source_is_local)
+	    src_peer=new FileCopyPeerFDStream(new FileStream(source_name,O_RDONLY),FileCopyPeer::GET);
+	 else
+	    src_peer=new FileCopyPeerFA(source_session,file->name,FA::RETRIEVE);
 
-	    FileCopy *c=FileCopy::New(src_peer,dst_peer,cont_this);
-	    if(remove_source_files)
-	       c->RemoveSourceLater();
-	    if(remove_target)
-	       c->RemoveTargetFirst();
-	    CopyJob *cp=
-	       new CopyJob(c,file->name,"mirror");
-	    if(file->defined&file->DATE)
-	       cp->SetDate(file->date);
-	    if(file->defined&file->SIZE)
-	       cp->SetSize(file->size);
-	    AddWaiting(cp);
-	    transfer_count++;
-	    cp->SetParentFg(this);
-	    cp->cmdline.vset("\\transfer ",file->name.get(),NULL);
-	 }
-	 else // pget
-	 {
-	    ArgV *get_args=new ArgV("mirror");
-	    get_args->Append(file->name);
-	    get_args->Append(dir_file(target_dir,file->name));
-	    pgetJob *cp=new pgetJob(source_session->Clone(),get_args,cont_this);
-	    cp->SetMaxConn(pget_n);
-	    if(remove_source_files)
-	       cp->RemoveSourceLater();
-	    if(remove_target)
-	       cp->RemoveTargetFirst();
-	    AddWaiting(cp);
-	    transfer_count++;
-	    cp->SetParentFg(this);
-	    cp->cmdline.vset("\\transfer ",file->name.get(),NULL);
-	 }
+	 FileCopyPeer *dst_peer=0;
+	 if(target_is_local)
+	    dst_peer=new FileCopyPeerFDStream(new FileStream(target_name,O_WRONLY|O_CREAT|(cont_this?0:O_TRUNC)),FileCopyPeer::PUT);
+	 else
+	    dst_peer=new FileCopyPeerFA(target_session,file->name,FA::STORE);
+
+	 FileCopy *c=FileCopy::New(src_peer,dst_peer,cont_this);
+	 if(remove_source_files)
+	    c->RemoveSourceLater();
+	 if(remove_target)
+	    c->RemoveTargetFirst();
+	 CopyJob *cp=(use_pget ? new pgetJob(c,file->name,pget_n) : new CopyJob(c,file->name,"mirror"));
+	 if(file->defined&file->DATE)
+	    cp->SetDate(file->date);
+	 if(file->defined&file->SIZE)
+	    cp->SetSize(file->size);
+	 AddWaiting(cp);
+	 transfer_count++;
+	 cp->SetParentFg(this);
+	 cp->cmdline.vset("\\transfer ",file->name.get(),NULL);
+
 	 set_state(WAITING_FOR_TRANSFER);
 	 break;
       }

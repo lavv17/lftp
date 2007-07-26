@@ -1657,7 +1657,7 @@ CMD(get)
    const char *opts="+cEeuaO:";
    const char *op=args->a0();
    ArgV	 *get_args=new ArgV(op);
-   int n_conn=0;
+   int n_conn=1;
    bool del=false;
    bool del_target=false;
    bool ascii=false;
@@ -1674,7 +1674,7 @@ CMD(get)
    if(!strcmp(op,"pget"))
    {
       opts="+n:ceuO:";
-      n_conn=-1;
+      n_conn=0; // default, which means to take pget:default-n
    }
    else if(!strcmp(op,"put") || !strcmp(op,"reput"))
    {
@@ -1779,28 +1779,18 @@ CMD(get)
       get_args->Append(dst);
    }
 
-   if(n_conn==0)
-   {
-      GetJob *j=new GetJob(session->Clone(),get_args,cont);
-      if(del)
-	 j->DeleteFiles();
-      if(del_target)
-	 j->RemoveTargetFirst();
-      if(ascii)
-	 j->Ascii();
-      if(reverse)
-	 j->Reverse();
-      return j;
-   }
-   else
-   {
-      pgetJob *j=new pgetJob(session->Clone(),get_args,cont);
-      if(n_conn!=-1)
-	 j->SetMaxConn(n_conn);
-      if(del_target)
-	 j->RemoveTargetFirst();
-      return j;
-   }
+   GetJob *j=new GetJob(session->Clone(),get_args,cont);
+   if(del)
+      j->DeleteFiles();
+   if(del_target)
+      j->RemoveTargetFirst();
+   if(ascii)
+      j->Ascii();
+   if(reverse)
+      j->Reverse();
+   if(n_conn!=1)
+      j->SetCopyJobCreator(new pCopyJobCreator(n_conn));
+   return j;
 }
 
 CMD(shell)
