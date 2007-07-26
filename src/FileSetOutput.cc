@@ -55,7 +55,7 @@ ResDecl	res_default_cls         ("cmd:cls-default",  "-F", FileSetOutput::Valida
 ResDecl res_time_style	("cmd:time-style", "%b %e  %Y|%b %e %H:%M", 0, ResMgr::NoClosure);
 
 /* note: this sorts (add a nosort if necessary) */
-void FileSetOutput::print(FileSet &fs, OutputJob *o) const
+void FileSetOutput::print(FileSet &fs, const JobRef<OutputJob>& o) const
 {
    fs.Sort(sort, sort_casefold, sort_reverse);
    if(sort_dirs_first) fs.Sort(FileSet::DIRSFIRST, false, sort_reverse);
@@ -276,11 +276,12 @@ clsJob::clsJob(FA *s, ArgV *a, FileSetOutput *_opts, OutputJob *_output):
    SessionJob(s),
    fso(_opts),
    args(a),
-   num(1)
+   done(0),
+   use_cache(true),
+   error(false),
+   num(1),
+   state(INIT)
 {
-   use_cache=true;
-   done=0;
-   state=INIT;
    list_info=0;
 
    if(args->count() == 1)
@@ -288,14 +289,6 @@ clsJob::clsJob(FA *s, ArgV *a, FileSetOutput *_opts, OutputJob *_output):
 
    output=_output;
    output->SetParentFg(this);
-}
-
-clsJob::~clsJob()
-{
-   delete args;
-   Delete(list_info);
-   Delete(output);
-   delete fso;
 }
 
 int clsJob::Done()
@@ -318,7 +311,6 @@ int clsJob::Do()
 
    case START_LISTING:
    {
-      Delete(list_info);
       list_info=0;
 
       /* next: */
@@ -356,6 +348,7 @@ int clsJob::Do()
 
       if(list_info->Error()) {
 	 eprintf("%s\n", list_info->ErrorText());
+	 error=true;
 	 state=START_LISTING;
 	 return MOVED;
       }

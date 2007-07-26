@@ -81,20 +81,21 @@ public:
    static const char *ValidateArgv(xstring_c *s);
    int Need() const;
 
-   void print(FileSet &fs, OutputJob *o) const;
+   void print(FileSet &fs, const JobRef<OutputJob>& o) const;
 };
 
 /* Job interface to FileSetOutput */
 class clsJob : public SessionJob
 {
-   OutputJob *output;
-   FileSetOutput *fso;
-   ArgV *args;
-   ListInfo *list_info;
+   JobRef<OutputJob> output;
+   Ref<FileSetOutput> fso;
+   Ref<ArgV> args;
+   SMTaskRef<ListInfo> list_info;
    xstring_c dir;
    xstring_c mask;
    bool done;
    bool use_cache;
+   bool error;
 
    /* element in args we're currently processing */
    int num;
@@ -103,7 +104,6 @@ class clsJob : public SessionJob
 
 public:
    clsJob(FA *s, ArgV *a, FileSetOutput *_opts, OutputJob *output);
-   ~clsJob();
    int Done();
    int Do();
 
@@ -113,7 +113,7 @@ public:
    void Bg() { session->SetPriority(0); output->Bg(); }
    void SuspendInternal();
    void ResumeInternal();
-   int ExitCode() { return output->Error()? 1:0; }
+   int ExitCode() { return error||output->Error() ? 1 : 0; }
 
    void ShowRunStatus(const SMTaskRef<StatusLine>&);
    void PrintStatus(int v,const char *);
