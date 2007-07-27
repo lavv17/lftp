@@ -201,22 +201,22 @@ void xstring::rtrim(char c)
    while(chomp(c));
 }
 
-const char *xstring::vsetf(const char *format, va_list ap)
+const char *xstring::vappendf(const char *format, va_list ap)
 {
-   if(size<32 || size>512)
-      get_space(strlen(format)+32);
+   if(size-len<32 || size-len>512)
+      get_space(len+strlen(format)+32);
    for(;;)
    {
       va_list tmp;
       VA_COPY(tmp,ap);
-      size_t res=vsnprintf(buf, size, format, tmp);
+      size_t res=vsnprintf(buf+len, size-len, format, tmp);
       va_end(tmp);
-      if(res>=0 && res<size)
+      if(res>=0 && res<size-len)
       {
-	 set_length(res);
+	 set_length(len+res);
 	 return buf;
       }
-      get_space(res>size ? res+1 : size*2);
+      get_space(res>size-len ? len+res+1 : len+(size-len)*2);
    }
 }
 const char *xstring::setf(const char *format, ...)
@@ -224,6 +224,14 @@ const char *xstring::setf(const char *format, ...)
    va_list va;
    va_start(va, format);
    vsetf(format, va);
+   va_end(va);
+   return buf;
+}
+const char *xstring::appendf(const char *format, ...)
+{
+   va_list va;
+   va_start(va, format);
+   vappendf(format, va);
    va_end(va);
    return buf;
 }

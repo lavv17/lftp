@@ -3325,6 +3325,12 @@ CMD(eval)
 	    fmt+=2;
 	    continue;
 	 }
+	 if(*fmt=='$' && fmt[1]=='$')
+	 {
+	    cmd.appendf("%d",(int)getpid());
+	    fmt+=2;
+	    continue;
+	 }
 	 cmd.append(*fmt++);
       }
    }

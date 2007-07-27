@@ -175,8 +175,10 @@ public:
    const char *vappend(va_list);
    const char *vappend(...) __attribute__((sentinel));
    const char *vset(...) __attribute__((sentinel));
-   const char *vsetf(const char *fmt, va_list ap);
+   const char *vsetf(const char *fmt, va_list ap) { truncate(0); return vappendf(fmt,ap); }
    const char *setf(const char *fmt,...) PRINTF_LIKE(2,3);
+   const char *vappendf(const char *fmt, va_list ap);
+   const char *appendf(const char *fmt,...) PRINTF_LIKE(2,3);
 
    void truncate(size_t n);
    void truncate_at(char c);
