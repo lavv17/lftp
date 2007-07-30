@@ -320,6 +320,7 @@ void SFtp::Disconnect()
 {
    if(send_buf)
       DebugPrint("---- ",_("Disconnecting"),9);
+   handle.set(0);
    send_buf=0;
    recv_buf=0;
    pty_send_buf=0;

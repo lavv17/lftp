@@ -1,3 +1,7 @@
+2007-07-30  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SFtp.cc: clear handle on disconnect (fixes coredump).
+
 2007-07-27  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: add $$ eval substitution.
