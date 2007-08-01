@@ -293,6 +293,8 @@ void Ftp::NoFileCheck(int act)
    DataClose();
    state=EOF_STATE;
    eof=false;
+   if(mode==STORE && (flags&IO_FLAG))
+      SetError(STORE_FAILED,0);
    retry_timer.Set(2); // retry after 2 seconds
 }
 
@@ -912,6 +914,7 @@ void Ftp::InitFtp()
    force_skey=false;
    verify_data_address=true;
    use_stat=true;
+   use_stat_for_list=true;
    use_mdtm=true;
    use_size=true;
    use_telnet_iac=true;
@@ -1511,7 +1514,7 @@ int   Ftp::Do()
       if(conn->ssl_is_activated() || (conn->auth_supported && conn->auth_sent))
       {
 	 char want_prot=conn->prot;
-	 if(mode==LIST || mode==LONG_LIST || mode==MP_LIST)
+	 if(mode==LIST || mode==MP_LIST || (mode==LONG_LIST && !use_stat_for_list))
 	    want_prot=QueryBool("ssl-protect-list",hostname)?'P':'C';
 	 else if(mode==RETRIEVE || mode==STORE)
 	    want_prot=QueryBool("ssl-protect-data",hostname)?'P':'C';
@@ -1522,7 +1525,8 @@ int   Ftp::Do()
 	 if(copy_mode!=COPY_NONE)
 	    want_sscn=copy_protect && copy_ssl_connect
 		      && !(copy_passive && conn->cpsv_supported);
-	 else if(mode==RETRIEVE || mode==STORE || mode==LIST || mode==LONG_LIST || mode==MP_LIST)
+	 else if(mode==RETRIEVE || mode==STORE || mode==LIST || mode==MP_LIST
+		  || (mode==LONG_LIST && !use_stat_for_list))
 	    want_sscn=false;
 
 	 if(conn->sscn_supported && want_sscn!=conn->sscn_on)
@@ -1573,7 +1577,8 @@ int   Ftp::Do()
 	 pos=0;
 
       if(copy_mode==COPY_NONE
-      && (mode==RETRIEVE || mode==STORE || mode==LIST || mode==LONG_LIST || mode==MP_LIST))
+      && (mode==RETRIEVE || mode==STORE || mode==LIST || mode==MP_LIST
+          || (mode==LONG_LIST && !use_stat_for_list)))
       {
 	 assert(conn->data_sock==-1);
 	 conn->data_sock=socket(conn->peer_sa.sa.sa_family,SOCK_STREAM,IPPROTO_TCP);
@@ -1696,18 +1701,30 @@ int   Ftp::Do()
          break;
       long_list:
       case(LONG_LIST):
-         want_type='A';
-         if(!rest_list)
-	    real_pos=0;	// some ftp servers do not do REST/LIST.
-	 command="LIST";
+	 if(use_stat_for_list)
+	 {
+	    real_pos=0;
+	    command="STAT";
+	    conn->data_iobuf=new IOBuffer(IOBuffer::GET);
+	    rate_limit=new RateLimit(hostname);
+	 }
+	 else
+	 {
+	    want_type='A';
+	    if(!rest_list)
+	       real_pos=0;	// some ftp servers do not do REST/LIST.
+	    command="LIST";
+	 }
 	 if(list_options && list_options[0])
 	 {
 	    char *c=string_alloca(5+strlen(list_options)+1);
-	    sprintf(c,"LIST %s",list_options.get());
+	    sprintf(c,"%s %s",command,list_options.get());
 	    command=c;
 	 }
 	 if(file && file[0])
 	    append_file=true;
+	 if(use_stat_for_list && !append_file && !strchr(command,' '))
+	    command="STAT .";
          break;
       case(MP_LIST):
          want_type='A';
@@ -1752,8 +1769,6 @@ int   Ftp::Do()
 	 real_pos=0;
 	 command="";
 	 append_file=true;
-	 assert(!conn->data_iobuf);
-	 assert(!rate_limit);
 	 conn->data_iobuf=new IOBuffer(IOBuffer::GET);
 	 rate_limit=new RateLimit(hostname);
 	 break;
@@ -1799,7 +1814,7 @@ int   Ftp::Do()
 	 goto pre_WAITING_STATE;
       }
 
-      if(mode==QUOTE_CMD || mode==CHANGE_MODE
+      if(mode==QUOTE_CMD || mode==CHANGE_MODE || (mode==LONG_LIST && use_stat_for_list)
       || mode==REMOVE || mode==REMOVE_DIR || mode==MAKE_DIR || mode==RENAME)
       {
 	 if(mode==MAKE_DIR && mkdir_p)
@@ -1826,11 +1841,7 @@ int   Ftp::Do()
 	 else
 	    conn->SendCmd(command);
 
-	 if(mode==REMOVE_DIR || mode==REMOVE)
-	    expect->Push(Expect::FILE_ACCESS);
-	 else if(mode==MAKE_DIR)
-	    expect->Push(Expect::FILE_ACCESS);
-	 else if(mode==QUOTE_CMD)
+	 if(mode==QUOTE_CMD)
 	 {
 	    expect->Push(Expect::QUOTED);
 	    if(!strncasecmp(file,"CWD",3)
@@ -1842,6 +1853,8 @@ int   Ftp::Do()
 	       set_real_cwd(0);  // we do not know the path now.
 	    }
 	 }
+	 else if(mode==LONG_LIST)
+	    expect->Push(Expect::QUOTED);
 	 else if(mode==RENAME)
 	    expect->Push(Expect::RNFR);
 	 else
@@ -2206,6 +2219,8 @@ int   Ftp::Do()
 	 {
 	    DataClose();
 	    state=EOF_STATE;
+	    if(mode==STORE && (flags&IO_FLAG))
+	       SetError(STORE_FAILED,0);
 	 }
 	 return MOVED;
       }
@@ -2616,12 +2631,16 @@ int  Ftp::ReceiveResp()
       && is_ascii_digit(line[1]) && is_ascii_digit(line[2]))
 	 code=atoi(line);
 
-      DebugPrint("<--- ",line,
-	    ReplyLogPriority(conn->multiline_code?conn->multiline_code:code));
-      if(!expect->IsEmpty() && expect->FirstIs(Expect::QUOTED) && conn->data_iobuf)
+      if(!expect->IsEmpty() && expect->FirstIs(Expect::QUOTED) && conn->data_iobuf
+      && (mode!=LONG_LIST || !code))
       {
 	 conn->data_iobuf->Put(line);
 	 conn->data_iobuf->Put("\n");
+      }
+      else
+      {
+	 DebugPrint("<--- ",line,
+	    ReplyLogPriority(conn->multiline_code?conn->multiline_code:code));
       }
 
       int all_lines_len=xstrlen(all_lines);
@@ -3704,8 +3723,17 @@ void Ftp::CheckResp(int act)
       Disconnect();
       break;
 
-   case Expect::IGNORE:
    case Expect::QUOTED:
+      if(mode==LONG_LIST && !is2XX(act) && use_stat_for_list)
+      {
+	 DataClose();
+	 state=EOF_STATE;
+	 DebugPrint("---- ","Setting ftp:use-stat-for-list to off",2);
+	 ResMgr::Set("ftp:use-stat-for-list",hostname,"off");
+	 use_stat_for_list=false;
+      }
+      break;
+   case Expect::IGNORE:
    ignore:
       break;
 
@@ -4187,7 +4215,6 @@ void Ftp::ResetLocationData()
 void Ftp::Reconfig(const char *name)
 {
    closure.set(hostname);
-
    super::Reconfig(name);
 
    if(!xstrcmp(name,"net:idle") || !xstrcmp(name,"ftp:use-site-idle"))
@@ -4209,6 +4236,7 @@ void Ftp::Reconfig(const char *name)
    verify_data_port = QueryBool("verify-port");
 
    use_stat = QueryBool("use-stat");
+   use_stat_for_list=QueryBool("use-stat-for-list");
    use_mdtm = QueryBool("use-mdtm");
    use_size = QueryBool("use-size");
    use_pret = QueryBool("use-pret");

@@ -1,3 +1,8 @@
+2007-07-31  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: set STORE_FAILED error properly in some cases.
+	* ftpclass.cc, ftpclass.h, resource.cc: new setting ftp:use-stat-for-list.
+
 2007-07-30  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.cc: clear handle on disconnect (fixes coredump).
