@@ -383,7 +383,7 @@ private:
    bool copy_failed;
 
    bool use_stat;
-   bool use_stat_now;
+   bool use_stat_for_list;
    bool use_mdtm;
    bool use_size;
    bool use_pret;

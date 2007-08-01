@@ -2636,6 +2636,8 @@ int  Ftp::ReceiveResp()
       {
 	 conn->data_iobuf->Put(line);
 	 conn->data_iobuf->Put("\n");
+	 if(code)
+	    DebugPrint("<--- ",line,ReplyLogPriority(code));
       }
       else
       {
