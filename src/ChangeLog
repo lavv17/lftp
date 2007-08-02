@@ -1,3 +1,10 @@
+2007-08-02  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, NetAccess.cc, NetAccess.h: increment retries on
+	  soft transfer errors which do not cause disconnect; check retry
+	  count before re-starting transfer.
+	* FileCopy.cc: increment saved retry count before next try.
+
 2007-07-31  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: set STORE_FAILED error properly in some cases.
