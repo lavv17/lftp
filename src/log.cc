@@ -24,12 +24,11 @@
 
 #include <stdarg.h>
 #include "trio.h"
-#include "xmalloc.h"
 #include "xstring.h"
 #include "log.h"
 #include "SMTask.h"
 
-Log *Log::global=new Log;
+SMTaskRef<Log> Log::global(new Log);
 
 void Log::Init()
 {
@@ -111,33 +110,18 @@ void Log::Format(int l,const char *f,...)
    if(!WillOutput(l))
       return;
 
-   static char *buf=0;
-   static int buf_alloc;
+   static xstring buf;
    va_list v;
-
-   if(buf==0)
-      buf=(char*)xmalloc(buf_alloc=1024);
-
-   for(;;)
-   {
-      va_start(v,f);
-      int res=vsnprintf(buf,buf_alloc,f,v);
-      va_end(v);
-      if(res>=0 && res<buf_alloc)
-	 break;
-      if(res==buf_alloc)
-	 res*=2;
-      if(res==-1)
-	 res=buf_alloc*2;
-      buf=(char*)xrealloc(buf,buf_alloc=res);
-   }
+   va_start(v,f);
+   buf.vsetf(f,v);
+   va_end(v);
 
    DoWrite(buf);
 }
 
 void Log::Cleanup()
 {
-   delete global;
+   global=0;
 }
 Log::~Log()
 {

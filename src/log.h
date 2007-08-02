@@ -48,11 +48,8 @@ class Log : public SMTask
       }
    bool WillOutput(int l);
 
-protected:
-   ~Log();
-
 public:
-   static Log *global;
+   static SMTaskRef<Log> global;
 
    bool enabled;
    int level;
@@ -80,6 +77,7 @@ public:
 
    void Init();
    Log() { Init(); }
+   ~Log();
 
    int Do();
 
