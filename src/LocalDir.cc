@@ -30,7 +30,6 @@
 
 #include "LocalDir.h"
 #include "misc.h"
-#include "xmalloc.h"
 
 #ifndef O_DIRECTORY
 # define O_DIRECTORY 0
