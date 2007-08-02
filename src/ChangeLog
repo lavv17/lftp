@@ -4,6 +4,10 @@
 	  soft transfer errors which do not cause disconnect; check retry
 	  count before re-starting transfer.
 	* FileCopy.cc: increment saved retry count before next try.
+	* resource.cc: remove obsolete code.
+	* log.cc, log.h: use Ref; use xstring::vsetf.
+	* keyvalue.cc, keyvalue.h: use xstring::appendf.
+	* ArgV.cc, CmdExec.cc: use xstring.
 
 2007-07-31  Alexander V. Lukyanov <lav@yars.free.net>
 
