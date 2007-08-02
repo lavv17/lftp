@@ -24,7 +24,6 @@
 #include <string.h>
 #include <ctype.h>
 #include "IdNameCache.h"
-#include "xmalloc.h"
 
 void IdNameCache::init()
 {

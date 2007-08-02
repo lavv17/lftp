@@ -20,7 +20,6 @@
 
 #include <config.h>
 #include "buffer_ssl.h"
-#include "xmalloc.h"
 
 #if USE_SSL
 # include "lftp_ssl.h"

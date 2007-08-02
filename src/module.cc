@@ -31,7 +31,6 @@
 #include "ResMgr.h"
 #include "confpaths.h"
 #include "xstring.h"
-#include "xmalloc.h"
 
 #ifndef RTLD_GLOBAL
 # define RTLD_GLOBAL 0

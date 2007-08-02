@@ -26,7 +26,6 @@
 #include "trio.h"
 
 #include "alias.h"
-#include "xmalloc.h"
 
 Alias *Alias::base;
 

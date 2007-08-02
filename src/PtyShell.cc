@@ -38,7 +38,6 @@
 
 #include "PtyShell.h"
 #include "lftp_pty.h"
-#include "xmalloc.h"
 #include "SignalHook.h"
 #include "ArgV.h"
 #include "misc.h"

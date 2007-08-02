@@ -21,7 +21,6 @@
 #include <config.h>
 #include <errno.h>
 #include "buffer.h"
-#include "xmalloc.h"
 #include "FileAccess.h"
 #include "misc.h"
 #include "trio.h"

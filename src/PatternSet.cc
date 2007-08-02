@@ -23,7 +23,6 @@
 #include <config.h>
 #include <fnmatch.h>
 #include "PatternSet.h"
-#include "xmalloc.h"
 
 PatternSet::PatternSet()
 {

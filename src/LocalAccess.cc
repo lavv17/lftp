@@ -31,7 +31,6 @@
 #include <utime.h>
 
 #include "LocalAccess.h"
-#include "xmalloc.h"
 #include "xstring.h"
 #include "misc.h"
 #include "log.h"

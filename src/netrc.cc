@@ -27,7 +27,6 @@
 #include <errno.h>
 #include "xstring.h"
 #include "netrc.h"
-#include "xmalloc.h"
 #include "log.h"
 
 static bool comment(const char *s, FILE *f)

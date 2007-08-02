@@ -24,7 +24,6 @@
 #include <assert.h>
 #include "FileAccess.h"
 #include "LsCache.h"
-#include "xmalloc.h"
 #include "plural.h"
 #include "misc.h"
 

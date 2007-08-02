@@ -29,7 +29,6 @@
 
 #include "SysCmdJob.h"
 #include "SignalHook.h"
-#include "xmalloc.h"
 #include "misc.h"
 
 SysCmdJob::SysCmdJob(const char *c)

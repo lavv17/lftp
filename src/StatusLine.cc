@@ -32,7 +32,6 @@
 #include <stdlib.h>
 #include <mbswidth.h>
 #include "xstring.h"
-#include "xmalloc.h"
 
 #include "ResMgr.h"
 #include "misc.h"
