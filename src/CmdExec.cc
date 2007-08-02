@@ -26,7 +26,6 @@
 #include <ctype.h>
 #include <fcntl.h>
 #include "CmdExec.h"
-#include "xmalloc.h"
 #include "xstring.h"
 #include "SignalHook.h"
 #include "alias.h"
@@ -1050,41 +1049,20 @@ void CmdExec::FeedQuoted(const char *c)
 // implementation is here because it depends on CmdExec.
 char *ArgV::CombineQuoted(int start) const
 {
-   int	 i;
-   char  *res;
-   char	 *store;
-   const char *arg;
-   int	 len=0;
-
-   for(i=start; i<Count(); i++)
-      len+=strlen(String(i))*2+3;
-
-   if(len==0)
-      return(xstrdup(""));
-
-   res=(char*)xmalloc(len);
-
-   store=res;
-   for(i=start; i<Count(); i++)
+   xstring res("");
+   if(start>=Count())
+      return res.borrow();
+   for(;;)
    {
-      arg=String(i);
+      const char *arg=String(start++);
       if(CmdExec::needs_quotation(arg))
-      {
-	 *store++='"';
-	 CmdExec::unquote(store,arg);
-	 store+=strlen(store);
-	 *store++='"';
-      }
+	 res.vappend("\"",CmdExec::unquote(arg),"\"",NULL);
       else
-      {
-	 strcpy(store,arg);
-	 store+=strlen(store);
-      }
-      *store++=' ';
+	 res.append(arg);
+      if(start>=Count())
+	 return(res.borrow());
+      res.append(' ');
    }
-   store[-1]=0;
-
-   return(res);
 }
 
 const char *CmdExec::GetFullCommandName(const char *cmd)

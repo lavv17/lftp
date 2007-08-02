@@ -22,7 +22,6 @@
 
 #include <config.h>
 
-#include "xmalloc.h"
 #include "misc.h"
 #include "ArgV.h"
 
@@ -61,31 +60,16 @@ void ArgV::back()
 
 char *ArgV::Combine(int start) const
 {
-   int	 i;
-   char  *res;
-   char	 *store;
-   const char *arg;
-   int	 len=0;
-
-   for(i=start; i<Count(); i++)
-      len+=strlen(getarg(i))+1;
-
-   if(len==0)
-      return(xstrdup(""));
-
-   res=(char*)xmalloc(len);
-
-   store=res;
-   for(i=start; i<Count(); i++)
+   xstring res("");
+   if(start>=Count())
+      return res.borrow();
+   for(;;)
    {
-      arg=getarg(i);
-      while(*arg)
-	 *store++=*arg++;
-      *store++=' ';
+      res.append(getarg(start++));
+      if(start>=Count())
+	 return(res.borrow());
+      res.append(' ');
    }
-   store[-1]=0;
-
-   return(res);
 }
 
 int ArgV::getopt_long(const char *opts,const struct option *lopts,int *lind)
