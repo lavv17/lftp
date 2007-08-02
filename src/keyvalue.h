@@ -23,7 +23,7 @@
 #ifndef KEYVALUE_H
 #define KEYVALUE_H
 
-#include "xmalloc.h"
+#include "xstring.h"
 
 class StringMangler
 {

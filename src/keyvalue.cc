@@ -128,38 +128,25 @@ char *KeyValueDB::Format(StringMangler value_mangle)
 
    Pair *p;
    int max_key_len=0;
-   size_t size_required=0;
-   int n=0;
 
    for(p=chain; p; p=p->next)
    {
       int len=strlen(p->key);
       if(len>max_key_len)
 	 max_key_len=len;
-      size_required+=1+strlen(value_mangle(p->value))+1;
-      n++;
    }
-   size_required+=max_key_len*n;
    max_key_len&=~7;  // save some bytes
 
-   char *buf=(char*)xmalloc(size_required+1);
-   char *store=buf;
-
+   xstring buf("");
    for(p=chain; p; p=p->next)
-   {
-      sprintf(store,"%-*s\t%s\n",max_key_len,p->key.get(),value_mangle(p->value));
-      store+=strlen(store);
-   }
-   *store=0; // this is for chain==0 case
-
-   return buf;
+      buf.appendf("%-*s\t%s\n",max_key_len,p->key.get(),value_mangle(p->value));
+   return buf.borrow();
 }
 
 int KeyValueDB::Write(int fd)
 {
-   char *buf=Format();
+   xstring_ca buf(Format());
    int res=write(fd,buf,strlen(buf));
-   xfree(buf);
    close(fd);
    return res;
 }
