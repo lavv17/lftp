@@ -24,7 +24,6 @@
 #include <fcntl.h>
 #include "CmdExec.h"
 #include "alias.h"
-#include "xmalloc.h"
 #include "xstring.h"
 
 bool CmdExec::quotable(char ch,char in_quotes)
