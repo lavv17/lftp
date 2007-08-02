@@ -76,23 +76,6 @@ static const char *HttpProxyValidate(xstring_c *p)
    return 0;
 }
 
-#if 0
-static const char *FtpDefaultAnonPass()
-{
-   static char *pass=0;
-
-   if(pass)
-      return pass;
-
-   struct passwd *pw=getpwuid(getuid());
-   const char *u=pw?pw->pw_name:"unknown";
-   pass=(char*)xmalloc(strlen(u)+3);
-   sprintf(pass,"%s@",u);
-
-   return pass;
-}
-#endif
-
 static const char *PutOrPost(xstring_c *s)
 {
    if(strcasecmp(*s,"PUT") && strcasecmp(*s,"POST"))
