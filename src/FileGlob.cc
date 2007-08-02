@@ -29,7 +29,6 @@
 #include <fnmatch.h>
 
 #include "FileGlob.h"
-#include "xmalloc.h"
 #include "misc.h"
 #include "url.h"
 

@@ -24,7 +24,6 @@
 #include <unistd.h>
 #include <termios.h>
 
-#include "xmalloc.h"
 #include "GetPass.h"
 #include "CharReader.h"
 #include "SignalHook.h"

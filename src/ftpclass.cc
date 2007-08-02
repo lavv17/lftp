@@ -33,7 +33,6 @@
 
 #include "ftpclass.h"
 #include "xstring.h"
-#include "xmalloc.h"
 #include "url.h"
 #include "FtpListInfo.h"
 #include "FileGlob.h"

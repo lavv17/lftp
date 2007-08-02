@@ -31,7 +31,6 @@
 #include <stddef.h>
 
 #include "Filter.h"
-#include "xmalloc.h"
 #include "SignalHook.h"
 #include "ArgV.h"
 #include "misc.h"
