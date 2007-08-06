@@ -136,8 +136,8 @@ public:
 protected:
 #ifdef HAVE_ICONV
    iconv_t backend_translate;
-   Buffer *untranslated;
 #endif
+   Buffer *untranslated;
    dir_t mode;
    void EmbraceNewData(int len);
 
@@ -147,7 +147,6 @@ public:
    ~DirectedBuffer();
    void SetTranslation(const char *be_encoding,bool translit=true);
    virtual void PutTranslated(const char *buf,int size);
-   void PutTranslated(const char *buf) { PutTranslated(buf,strlen(buf)); }
    void ResetTranslation();
    void Put(const char *buf,int size)
       {
@@ -158,11 +157,13 @@ public:
       }
    void Put(const char *buf) { Put(buf,strlen(buf)); }
 #else
-   DirectedBuffer(dir_t m) { mode=m; }
+   DirectedBuffer(dir_t m) { mode=m; untranslated=0; }
+   ~DirectedBuffer() { delete untranslated; }
    void SetTranslation(const char *be_encoding,bool translit=true) {}
    virtual void PutTranslated(const char *buf,int size) { Put(buf,size); }
    void ResetTranslation() {}
 #endif
+   void PutTranslated(const char *buf) { PutTranslated(buf,strlen(buf)); }
    dir_t GetDirection() { return mode; }
 };
 

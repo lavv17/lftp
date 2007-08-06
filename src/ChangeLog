@@ -1,3 +1,7 @@
+2007-08-06  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* buffer.h: fix compilation without iconv.
+
 2007-06-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ResMgr.cc: (CharsetValidate) return error without iconv.
