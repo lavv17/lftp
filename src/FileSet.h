@@ -107,6 +107,8 @@ public:
    bool	 SameAs(const FileInfo *,int ignore);
    bool	 OlderThan(time_t t);
    bool	 NewerThan(time_t t);
+   bool	 NotOlderThan(time_t t);
+   bool	 NotNewerThan(time_t t);
    bool  SizeOutside(const Range *r);
 
    void	 SetAssociatedData(void *d,int len)
@@ -167,8 +169,11 @@ public:
    void	 Merge(const FileSet *);
    void	 SubtractSame(const FileSet *,int ignore);
    void	 SubtractAny(const FileSet *);
-   void  SubtractOlderThan(time_t t);
-   void  SubtractNewerThan(time_t t);
+   void  SubtractTimeCmp(bool (FileInfo::*cmp)(time_t),time_t);
+   void  SubtractOlderThan(time_t t) { SubtractTimeCmp(&FileInfo::OlderThan,t); }
+   void  SubtractNewerThan(time_t t) { SubtractTimeCmp(&FileInfo::NewerThan,t); }
+   void  SubtractNotOlderThan(time_t t) { SubtractTimeCmp(&FileInfo::NotOlderThan,t); }
+   void  SubtractNotNewerThan(time_t t) { SubtractTimeCmp(&FileInfo::NotNewerThan,t); }
    void  SubtractSizeOutside(const Range *r);
    void  SubtractDirs();
    void  SubtractNotDirs();

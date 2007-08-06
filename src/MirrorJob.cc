@@ -497,9 +497,9 @@ void  MirrorJob::InitSets(const FileSet *source,const FileSet *dest)
    same->SubtractAny(to_transfer);
 
    if(newer_than!=(time_t)-1)
-      to_transfer->SubtractOlderThan(newer_than);
+      to_transfer->SubtractNotNewerThan(newer_than);
    if(older_than!=(time_t)-1)
-      to_transfer->SubtractNewerThan(older_than);
+      to_transfer->SubtractNotOlderThan(older_than);
    if(size_range)
       to_transfer->SubtractSizeOutside(size_range);
 

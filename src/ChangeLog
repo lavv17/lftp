@@ -1,3 +1,8 @@
+2007-08-06  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileSet.h, FileSet.cc: (NotNewerThan, NotOlderThan, Subtract*) new methods.
+	* MirrorJob.cc: use SubtractNotNewerThan and SubtractNotOlderThan.
+
 2007-08-02  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, NetAccess.cc, NetAccess.h: increment retries on
