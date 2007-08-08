@@ -1212,7 +1212,7 @@ int   Ftp::Do()
       {
 	 conn=0;
 	 expect=0;
-	 if(peer_curr+1<peer_num)
+	 if(peer_curr+1<peer.count())
 	 {
 	    try_time=0;
 	    peer_curr++;
@@ -3507,7 +3507,7 @@ void  Ftp::MoveConnectionHere(Ftp *o)
    conn=o->conn.borrow();
    o->state=INITIAL_STATE;
 
-   if(peer_curr>=peer_num)
+   if(peer_curr>=peer.count())
       peer_curr=0;
    timeout_timer.Reset(o->timeout_timer);
 

@@ -63,8 +63,6 @@ void NetAccess::Init()
    socket_buffer=0;
    socket_maxseg=0;
 
-   peer=0;
-   peer_num=0;
    peer_curr=0;
 
    reconnect_interval=30;  // retry with 30 second interval
@@ -88,10 +86,9 @@ NetAccess::NetAccess(const NetAccess *o) : super(o)
    Init();
    if(o->peer)
    {
-      peer=(sockaddr_u*)xmemdup(o->peer,o->peer_num*sizeof(*peer));
-      peer_num=o->peer_num;
+      peer.set(o->peer);
       peer_curr=o->peer_curr;
-      if(peer_curr>=peer_num)
+      if(peer_curr>=peer.count())
 	 peer_curr=0;
    }
    home_auto.set(o->home_auto);
@@ -369,7 +366,7 @@ int NetAccess::Poll(int fd,int ev)
 
 void NetAccess::SayConnectingTo()
 {
-   assert(peer_curr<peer_num);
+   assert(peer_curr<peer.count());
    const char *h=(proxy?proxy:hostname);
    char *str=string_alloca(256+strlen(h));
    sprintf(str,_("Connecting to %s%s (%s) port %u"),proxy?"proxy ":"",
@@ -445,15 +442,14 @@ bool NetAccess::CheckTimeout()
 
 void NetAccess::ClearPeer()
 {
-   xfree(peer);
-   peer=0;
-   peer_curr=peer_num=0;
+   peer.unset();
+   peer_curr=0;
 }
 
 void NetAccess::NextPeer()
 {
    peer_curr++;
-   if(peer_curr>=peer_num)
+   if(peer_curr>=peer.count())
       peer_curr=0;
    else
       try_time=0;	// try next address immediately
@@ -480,9 +476,7 @@ int NetAccess::Resolve(const char *defp,const char *ser,const char *pr)
 
    if(!resolver)
    {
-      xfree(peer);
-      peer=0;
-      peer_num=0;
+      peer.unset();
       if(proxy)
 	 resolver=new Resolver(proxy,proxy_port,defp);
       else
@@ -502,11 +496,8 @@ int NetAccess::Resolve(const char *defp,const char *ser,const char *pr)
       return(MOVED);
    }
 
-   xfree(peer);
-   peer=(sockaddr_u*)xmalloc(resolver->GetResultSize());
-   peer_num=resolver->GetResultNum();
-   resolver->GetResult(peer);
-   if(peer_curr>=peer_num)
+   peer.set(resolver->Result());
+   if(peer_curr>=peer.count())
       peer_curr=0;
 
    resolver=0;
@@ -729,7 +720,6 @@ int GenericParseListInfo::Do()
 #define need_size (need&FileInfo::SIZE)
 #define need_time (need&FileInfo::DATE)
 
-   FA::fileinfo *cur;
    FileInfo *file;
    int res;
    int m=STALL;
@@ -836,27 +826,17 @@ do_again:
 
       result->ExcludeDots();
       result->Exclude(exclude_prefix,exclude);
-
-      get_info_cnt=result->get_fnum();
-      if(get_info_cnt==0)
-      {
-	 done=true;
-	 return m;
-      }
-
-      get_info=(FA::fileinfo*)xmalloc(sizeof(*get_info)*get_info_cnt);
-      cur=get_info;
-
-      get_info_cnt=0;
       result->rewind();
       for(file=result->curr(); file!=0; file=result->next())
       {
-	 cur->size=NO_SIZE;
-	 cur->time=NO_DATE;
-	 cur->get_size = need_size && !(file->defined & file->SIZE);
-	 cur->get_time = need_time && (!(file->defined & file->DATE)
+	 FA::fileinfo add;
+	 add.size=NO_SIZE;
+	 add.time=NO_DATE;
+	 add.get_size = need_size && !(file->defined & file->SIZE);
+	 add.get_time = need_time && (!(file->defined & file->DATE)
 				 || (file->date.ts_prec>0 && can_get_prec_time));
-	 cur->file=0;
+	 add.is_dir=false;
+	 add.file=0;
 
 	 if(file->defined & file->TYPE)
 	 {
@@ -864,44 +844,42 @@ do_again:
 	    {
 	       //file->filetype=file->NORMAL;
 	       file->defined &= ~(file->SIZE|file->SYMLINK_DEF|file->MODE|file->DATE|file->TYPE);
-	       cur->get_size=true;
-	       cur->get_time=true;
+	       add.get_size=true;
+	       add.get_time=true;
 	    }
 
 	    if(file->filetype==file->SYMLINK)
 	    {
 	       // don't need these for symlinks
-	       cur->get_size=false;
-	       cur->get_time=false;
+	       add.get_size=false;
+	       add.get_time=false;
 	    }
 	    else if(file->filetype==file->DIRECTORY)
 	    {
 	       if(!get_time_for_dirs)
 		  continue;
 	       // don't need size for directories
-	       cur->get_size=false;
+	       add.get_size=false;
+	       add.is_dir=true;
 	    }
 	 }
 
-	 if(cur->get_size || cur->get_time)
+	 if(add.get_size || add.get_time)
 	 {
-	    cur->file=file->name;
-	    if(!cur->get_size)
-	       cur->size=-1;
-	    if(!cur->get_time)
-	       cur->time=(time_t)-1;
-	    cur++;
-	    get_info_cnt++;
+	    add.file=file->name;
+	    if(!add.get_size)
+	       add.size=NO_SIZE;
+	    if(!add.get_time)
+	       add.time=NO_DATE;
+	    get_info.append(add);
 	 }
       }
-      if(get_info_cnt==0)
+      if(get_info.count()==0)
       {
-	 xfree(get_info);
-	 get_info=0;
 	 done=true;
 	 return m;
       }
-      session->GetInfoArray(get_info,get_info_cnt);
+      session->GetInfoArray(get_info.get_non_const(),get_info.count());
    }
    if(get_info)
    {
@@ -911,15 +889,14 @@ do_again:
       if(res==FA::IN_PROGRESS)
 	 return m;
       session->Close();
-      for(cur=get_info; get_info_cnt-->0; cur++)
+      for(size_t i=0; i<get_info.count(); i++)
       {
-	 if(cur->time!=NO_DATE)
-	    result->SetDate(cur->file,cur->time,0);
-	 if(cur->size!=NO_SIZE)
-	    result->SetSize(cur->file,cur->size);
+	 if(get_info[i].time!=NO_DATE)
+	    result->SetDate(get_info[i].file,get_info[i].time,0);
+	 if(get_info[i].size!=NO_SIZE)
+	    result->SetSize(get_info[i].file,get_info[i].size);
       }
-      xfree(get_info);
-      get_info=0;
+      get_info.unset();
       done=true;
       m=MOVED;
    }
@@ -929,20 +906,9 @@ do_again:
 GenericParseListInfo::GenericParseListInfo(FileAccess *s,const char *p)
    : ListInfo(s,p)
 {
-   get_info=0;
-   get_info_cnt=0;
-
-   ubuf=0;
-
    get_time_for_dirs=true;
    can_get_prec_time=true;
-
    mode=FA::MP_LIST;
-}
-
-GenericParseListInfo::~GenericParseListInfo()
-{
-   xfree(get_info);
 }
 
 const char *GenericParseListInfo::Status()
