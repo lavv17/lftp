@@ -889,7 +889,7 @@ do_again:
       if(res==FA::IN_PROGRESS)
 	 return m;
       session->Close();
-      for(size_t i=0; i<get_info.count(); i++)
+      for(int i=0; i<get_info.count(); i++)
       {
 	 if(get_info[i].time!=NO_DATE)
 	    result->SetDate(get_info[i].file,get_info[i].time,0);

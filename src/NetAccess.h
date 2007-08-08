@@ -34,7 +34,7 @@ protected:
    SMTaskRef<Resolver> resolver;
 
    xarray<sockaddr_u> peer;
-   size_t peer_curr;
+   int peer_curr;
    void	 ClearPeer();
    void	 NextPeer();
 
