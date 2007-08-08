@@ -62,6 +62,8 @@ public:
    const char *operator[](int i) const { return String(i); }
 
    void MoveHere(StringSet &o);
+
+   char **borrow() { allocated=set_size=0; return replace_value(set,(char**)0); }
 };
 
 #endif // STRINGSET_H
