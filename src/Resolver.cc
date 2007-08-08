@@ -44,7 +44,6 @@
 #endif
 
 #include "xstring.h"
-#include "xmalloc.h"
 #include "ResMgr.h"
 #include "log.h"
 #include "plural.h"
@@ -103,8 +102,6 @@ Resolver::Resolver(const char *h,const char *p,const char *defp,
    done=false;
    timeout_timer.SetResource("dns:fatal-timeout",hostname);
    Reconfig();
-   addr=0;
-   addr_num=0;
    use_fork=ResMgr::QueryBool("dns:use-fork",0);
 
    error=0;
@@ -119,7 +116,6 @@ Resolver::~Resolver()
    if(pipe_to_child[1]!=-1)
       close(pipe_to_child[1]);
 
-   xfree(addr);
    if(w)
    {
       w->Kill(SIGKILL);
@@ -142,9 +138,7 @@ int   Resolver::Do()
       if(a && n>0)
       {
 	 Log::global->Write(10,"dns cache hit\n");
-	 addr_num=n;
-	 addr=(sockaddr_u*)xmalloc(n*sizeof(*addr));
-	 memcpy(addr,a,n*sizeof(*addr));
+	 addr.nset(a,n);
 	 done=true;
 	 return MOVED;
       }
@@ -252,7 +246,7 @@ int   Resolver::Do()
       done=true;
       return MOVED;
    }
-   if((unsigned)n<sizeof(sockaddr_u))
+   if((unsigned)n<addr.get_element_size())
    {
    proto_error:
       if(use_fork)
@@ -267,14 +261,12 @@ int   Resolver::Do()
       done=true;
       return MOVED;
    }
-   addr_num=n/sizeof(*addr);
-   addr=(sockaddr_u*)xmalloc(n);
-   memcpy(addr,s,n);
+   addr.nset((const sockaddr_u*)s,n/addr.get_element_size());
    done=true;
    if(!cache)
       cache=new ResolverCache;
-   cache->Add(hostname,portname,defport,service,proto,addr,addr_num);
-   Log::global->Format(4,plural("---- %d address$|es$ found\n",addr_num),addr_num);
+   cache->Add(hostname,portname,defport,service,proto,addr,addr.count());
+   Log::global->Format(4,plural("---- %d address$|es$ found\n",addr.count()),addr.count());
    return MOVED;
 }
 
@@ -287,47 +279,38 @@ void Resolver::MakeErrMsg(const char *f)
 
 void Resolver::AddAddress(int family,const char *address,int len)
 {
-   addr=(sockaddr_u*)xrealloc(addr,(addr_num+1)*sizeof(*addr));
-   sockaddr_u *add=addr+addr_num;
-   addr_num++;
+   sockaddr_u add;
+   memset(&add,0,sizeof(add));
 
-   memset(add,0,sizeof(*add));
-
-   add->sa.sa_family=family;
+   add.sa.sa_family=family;
    switch(family)
    {
    case AF_INET:
-      if(sizeof(add->in.sin_addr) != len)
-      {
-         addr_num--;
+      if(sizeof(add.in.sin_addr) != len)
          return;
-      }
-      memcpy(&add->in.sin_addr,address,len);
-      add->in.sin_port=port_number;
+      memcpy(&add.in.sin_addr,address,len);
+      add.in.sin_port=port_number;
 #ifdef HAVE_STRUCT_SOCKADDR_SA_LEN
-      add->sa.sa_len=sizeof(add->in);
+      add.sa.sa_len=sizeof(add.in);
 #endif
       break;
 
 #if INET6
    case AF_INET6:
-      if(sizeof(add->in6.sin6_addr) != len)
-      {
-         addr_num--;
+      if(sizeof(add.in6.sin6_addr) != len)
          return;
-      }
-      memcpy(&add->in6.sin6_addr,address,len);
-      add->in6.sin6_port=port_number;
+      memcpy(&add.in6.sin6_addr,address,len);
+      add.in6.sin6_port=port_number;
 #ifdef HAVE_STRUCT_SOCKADDR_SA_LEN
-      add->sa.sa_len=sizeof(add->in6);
+      add.sa.sa_len=sizeof(add.in6);
 #endif
       break;
 #endif
 
    default:
-      addr_num--;
       return;
    }
+   addr.append(add);
 }
 
 int Resolver::FindAddressFamily(const char *name)
@@ -856,7 +839,7 @@ void Resolver::DoGethostbyname()
    if(!use_fork && deleting)
       return;
 
-   if(addr_num==0)
+   if(addr.count()==0)
    {
       buf->Put("E");
       if(error==0)
@@ -865,9 +848,8 @@ void Resolver::DoGethostbyname()
       goto flush;
    }
    buf->Put("O");
-   buf->Put((char*)addr,addr_num*sizeof(*addr));
-   xfree(addr);
-   addr=0;
+   buf->Put((const char*)addr.get(),addr.count()*addr.get_element_size());
+   addr.unset();
 
 flush:
    buf->PutEOF();

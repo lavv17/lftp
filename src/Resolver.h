@@ -30,7 +30,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include "buffer.h"
-#include "xmalloc.h"
+#include "xarray.h"
 #include "Cache.h"
 
 union sockaddr_u
@@ -58,8 +58,7 @@ class Resolver : public SMTask
    SMTaskRef<IOBuffer> buf;
    Timer timeout_timer;
 
-   int addr_num;
-   sockaddr_u *addr;
+   xarray<sockaddr_u> addr;
 
    void AddAddress(int family,const char *a,int len);
 
@@ -86,9 +85,9 @@ public:
    bool	 Done() { return done; }
    bool	 Error() { return err_msg!=0; }
    const char *ErrorMsg() { return err_msg; }
-   const sockaddr_u *Result() { return addr; }
-   size_t GetResultSize() { return addr_num*sizeof(*addr); }
-   int	 GetResultNum() { return addr_num; }
+   const xarray<sockaddr_u>& Result() { return addr; }
+   size_t GetResultSize() { return addr.count()*addr.get_element_size(); }
+   int	 GetResultNum() { return addr.count(); }
    void  GetResult(void *m) { memcpy(m,addr,GetResultSize()); }
    void	 UseCache(bool y) { no_cache=!y; }
    void	 NoCache() { UseCache(false); }
@@ -116,24 +115,17 @@ public:
 };
 class ResolverCacheEntryData
 {
-   int addr_num;
-   sockaddr_u *addr;
+   xarray<sockaddr_u> addr;
 public:
    ResolverCacheEntryData(const sockaddr_u *a,int n) {
-      addr_num=n;
-      addr=(sockaddr_u*)xmemdup(a,n*sizeof(*addr));
-   }
-   ~ResolverCacheEntryData() {
-      xfree(addr);
+      addr.nset(a,n);
    }
    void SetData(const sockaddr_u *a,int n) {
-      xfree(addr);
-      addr_num=n;
-      addr=(sockaddr_u*)xmemdup(a,n*sizeof(*addr));
+      addr.nset(a,n);
    }
    void GetData(const sockaddr_u **a,int *n) {
-      *n=addr_num;
-      *a=addr;
+      *n=addr.count();
+      *a=addr.get();
    }
 };
 class ResolverCacheEntry : public CacheEntry, public ResolverCacheEntryLoc, public ResolverCacheEntryData
