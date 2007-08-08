@@ -489,11 +489,7 @@ const char *url::remove_password(const char *url)
    int start,len;
    if(!find_password_pos(url,&start,&len))
       return url;
-   static char *buf;
-   static int buf_alloc;
-   int need=strlen(url)-len;
-   if(buf_alloc<need)
-      buf=(char*)xrealloc(buf,buf_alloc=need);
-   sprintf(buf,"%.*s%s",start-1,url,url+start+len);
+   static xstring buf;
+   buf.setf("%.*s%s",start-1,url,url+start+len);
    return buf;
 }

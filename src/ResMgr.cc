@@ -37,8 +37,8 @@ CDECL_BEGIN
 CDECL_END
 #include "ResMgr.h"
 #include "SMTask.h"
-#include "xmalloc.h"
 #include "misc.h"
+#include "StringSet.h"
 
 ResMgr::Resource  *ResMgr::chain=0;
 ResType		  *ResMgr::type_chain=0;
@@ -207,8 +207,6 @@ int ResMgr::VResourceCompare(const void *a,const void *b)
 
 char *ResMgr::Format(bool with_defaults,bool only_defaults)
 {
-   char *res;
-
    Resource *scan;
    ResType  *dscan;
 
@@ -236,8 +234,7 @@ char *ResMgr::Format(bool with_defaults,bool only_defaults)
       }
    }
 
-   res=(char*)xmalloc(size+1);
-   char *store=res;
+   xstring res("");
 
    Resource **created=(Resource**)alloca((dn+1)*sizeof(Resource*));
    Resource **c_store=created;
@@ -273,54 +270,50 @@ char *ResMgr::Format(bool with_defaults,bool only_defaults)
 
    for(i=0; i<n; i++)
    {
-      sprintf(store,"set %s",arr[i]->type->name);
-      store+=strlen(store);
+      res.appendf("set %s",arr[i]->type->name);
       const char *s=arr[i]->closure;
       if(s)
       {
-	 *store++='/';
+	 res.append('/');
 	 bool par=false;
 	 if(strcspn(s," \t>|;&")!=strlen(s))
 	    par=true;
 	 if(par)
-	    *store++='"';
+	    res.append('"');
 	 while(*s)
 	 {
 	    if(strchr("\"\\",*s))
-	       *store++='\\';
-	    *store++=*s++;
+	       res.append('\\');
+	    res.append(*s++);
 	 }
 	 if(par)
-	    *store++='"';
+	    res.append('"');
       }
-      *store++=' ';
+      res.append(' ');
       s=arr[i]->value;
 
       bool par=false;
       if(*s==0 || strcspn(s," \t>|;&")!=strlen(s))
 	 par=true;
       if(par)
-	 *store++='"';
+	 res.append('"');
       while(*s)
       {
 	 if(strchr("\"\\",*s))
-	    *store++='\\';
-	 *store++=*s++;
+	    res.append('\\');
+	 res.append(*s++);
       }
       if(par)
-	 *store++='"';
-      *store++='\n';
+	 res.append('"');
+      res.append('\n');
    }
-   *store=0;
    for(i=0; i<dn; i++)
       delete created[i];
-   return res;
+   return res.borrow();
 }
 
 char **ResMgr::Generator(void)
 {
-   char **res;
-
    Resource *scan;
    ResType  *dscan;
 
@@ -331,8 +324,7 @@ char **ResMgr::Generator(void)
    for(dscan=type_chain; dscan; dscan=dscan->next)
       dn++;
 
-   res=(char**)xmalloc((n + dn + 1) * sizeof(char*));
-   char **store = res;
+   StringSet res;
 
    Resource **created=(Resource**)alloca((dn+1)*sizeof(Resource*));
    Resource **c_store=created;
@@ -359,13 +351,11 @@ char **ResMgr::Generator(void)
    qsort(arr,n,sizeof(*arr),&ResMgr::VResourceCompare);
 
    for(i=0; i<n; i++)
-      *(store++) = xstrdup(arr[i]->type->name);
-
-   *store=0;
+      res.Append(arr[i]->type->name);
 
    for(i=0; i<dn; i++)
       delete created[i];
-   return res;
+   return res.borrow();
 }
 
 const char *ResMgr::BoolValidate(xstring_c *value)
