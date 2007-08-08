@@ -23,6 +23,8 @@
 #ifndef REF_H
 #define REF_H
 
+template<typename T> class RefArray;
+
 template<typename T> class Ref
 {
    Ref<T>(const Ref<T>&);  // disable cloning
@@ -39,12 +41,14 @@ public:
    operator const T*() const { return ptr; }
    T *operator->() const { return ptr; }
    T *borrow() { return replace_value(ptr,(T*)0); }
-   T *get_non_const() { return ptr; }
+   T *get_non_const() const { return ptr; }
 
    template<class C> const Ref<C>& Cast() const
       { void(static_cast<C*>(ptr)); return *(const Ref<C>*)this; }
 
    static const Ref<T> null;
+
+   friend class RefArray<T>;
 };
 
 template<typename T> const Ref<T> Ref<T>::null;
