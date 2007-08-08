@@ -55,9 +55,9 @@ void xarray0::_nset(const void *s,int len)
 
 void *xarray0::_insert(int before)
 {
-   assert(before>=0 && (size_t)before<=len);
+   assert(before>=0 && before<=len);
    get_space(len+1);
-   if((size_t)before<len)
+   if(before<len)
       memmove(get_ptr(before+1),get_ptr(before),element_size*(len-before));
    len++;
    return get_ptr(before);
@@ -67,8 +67,8 @@ void *xarray0::_append() {
    return get_ptr(len++);
 }
 void xarray0::_remove(int i) {
-   assert(i>=0 && (size_t)i<len);
-   if((size_t)i<len-1)
+   assert(i>=0 && i<len);
+   if(i<len-1)
       memmove(get_ptr(i),get_ptr(i+1),element_size*(len-i-1));
    len--;
 }

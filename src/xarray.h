@@ -34,7 +34,7 @@ protected:
    void *buf;
 
    size_t size;
-   size_t len;
+   int len;
    const size_t element_size;
 
    void init() { buf=0; size=len=0; }
@@ -51,8 +51,8 @@ public:
    void get_space(size_t s,size_t g=32);
    size_t get_element_size() { return element_size; }
 
-   size_t length() const { return len; }
-   size_t count() const { return len; }
+   int length() const { return len; }
+   int count()  const { return len; }
 
    void _set_length(size_t n) { assert(n>=0 && n<=size); len=n; }
    void _nset(const void *s,int len);
@@ -70,17 +70,17 @@ public:
    T *get_non_const() { return static_cast<T*>(buf); }
    const T *get() const { return static_cast<const T*>(buf); }
    T& operator[](int i) {
-      assert(i>=0 && (size_t)i<len);
+      assert(i>=0 && i<len);
       return get_non_const()[i];
    }
    const T& operator[](int i) const {
-      assert(i>=0 && (size_t)i<len);
+      assert(i>=0 && i<len);
       return get()[i];
    }
    size_t get_element_size() const { return sizeof(T); }
    operator const T*() const { return get(); }
    void nset(const T *s,int len) { _nset(s,len); }
-   void set(const xarray<T> &a) { nset(a.get(),a.length()); }
+   void set(const xarray<T> &a) { nset(a.get(),a.count()); }
    void set_length(size_t n) { _set_length(n); }
    void unset() { _unset(); }
    void truncate() { set_length(0); }
@@ -101,11 +101,11 @@ public:
    Ref<T> *get_non_const() { return static_cast<Ref<T>*>(buf); }
    const Ref<T> *get() const { return static_cast<const Ref<T>*>(buf); }
    Ref<T>& operator[](int i) {
-      assert(i>=0 && (size_t)i<len);
+      assert(i>=0 && i<len);
       return get_non_const()[i];
    }
    const Ref<T>& operator[](int i) const {
-      assert(i>=0 && (size_t)i<len);
+      assert(i>=0 && i<len);
       return get()[i];
    }
    size_t get_element_size() const { return sizeof(Ref<T>); }
