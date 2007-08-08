@@ -921,15 +921,6 @@ void Http::GetBetterConnection(int level)
 	 return;
       }
 
-      if(!peer && o->peer)
-      {
-	 // copy resolved address so that it would be possible to create
-	 // data connection.
-	 peer=(sockaddr_u*)xmemdup(o->peer,o->peer_num*sizeof(*o->peer));
-	 peer_num=o->peer_num;
-	 peer_curr=o->peer_curr;
-      }
-
       // so borrow the connection
       MoveConnectionHere(o);
       return;
@@ -1069,7 +1060,7 @@ int Http::Do()
       sock=SocketCreateTCP(peer[peer_curr].sa.sa_family);
       if(sock==-1)
       {
-	 if(peer_curr+1<peer_num)
+	 if(peer_curr+1<peer.count())
 	 {
 	    peer_curr++;
 	    retries--;

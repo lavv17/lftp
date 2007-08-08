@@ -33,9 +33,8 @@ class NetAccess : public FileAccess
 protected:
    SMTaskRef<Resolver> resolver;
 
-   sockaddr_u *peer;
-   int	 peer_num;
-   int	 peer_curr;
+   xarray<sockaddr_u> peer;
+   size_t peer_curr;
    void	 ClearPeer();
    void	 NextPeer();
 
@@ -123,8 +122,7 @@ public:
 class GenericParseListInfo : public ListInfo
 {
 protected:
-   FA::fileinfo *get_info;
-   int get_info_cnt;
+   xarray<FA::fileinfo> get_info;
 
    int mode;
    SMTaskRef<IOBuffer> ubuf;
@@ -137,7 +135,6 @@ protected:
 
 public:
    GenericParseListInfo(FileAccess *session,const char *path);
-   virtual ~GenericParseListInfo();
    int Do();
    const char *Status();
 };
