@@ -32,13 +32,11 @@
 #else
 # include <poll.h>
 #endif
+#include "xarray.h"
 
 class PollVec
 {
-   struct pollfd *fds;
-   int fds_num;
-   int fds_allocated;
-
+   xarray<pollfd> fds;
    int timeout;
 
 public:
@@ -47,15 +45,15 @@ public:
 
    void	 Empty()
       {
-	 fds_num=0;
+	 fds.set_length(0);
 	 timeout=-1;
       }
    bool IsEmpty()
       {
-	 return fds_num==0 && timeout==-1;
+	 return fds.length()==0 && timeout==-1;
       }
    void	 Merge(const PollVec&);
-   void	 Block() const;
+   void	 Block();
 
    void SetTimeout(int t);
    void AddTimeout(int t);
@@ -63,8 +61,6 @@ public:
    void NoWait() { SetTimeout(0); }
 
    int GetTimeout() { return timeout; }
-
-   ~PollVec();
 };
 
 #endif /* POLLVEC_H */

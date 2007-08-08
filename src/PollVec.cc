@@ -20,25 +20,16 @@
 
 #include <config.h>
 #include "trio.h"
-#include <assert.h>
 #include "PollVec.h"
-#include "xmalloc.h"
 
 void PollVec::Init()
 {
-   fds=0;
-   fds_num=0;
-   fds_allocated=0;
    timeout=-1;
 }
 
 PollVec::PollVec()
 {
    Init();
-}
-PollVec::~PollVec()
-{
-   xfree(fds);
 }
 
 void PollVec::SetTimeout(int t)
@@ -61,7 +52,7 @@ void PollVec::AddFD(int fd,int mask)
 {
    if(timeout==0)
       return;
-   for(int i=0; i<fds_num; i++)
+   for(int i=0; i<fds.count(); i++)
    {
       if(fds[i].fd==fd)
       {
@@ -69,22 +60,19 @@ void PollVec::AddFD(int fd,int mask)
 	 return;
       }
    }
-   if(fds_num+1>fds_allocated)
-   {
-      fds_allocated=fds_num+16;
-      fds=(struct pollfd*)xrealloc(fds,fds_allocated*sizeof(*fds));
-   }
-   fds[fds_num].fd=fd;
-   fds[fds_num].events=mask;
-   fds_num++;
+   pollfd add;
+   memset(&add,0,sizeof(add));
+   add.fd=fd;
+   add.events=mask;
+   fds.append(add);
 }
 
-void  PollVec::Block() const
+void  PollVec::Block()
 {
    if(timeout==0)
       return;
 
-   if(fds_num==0)
+   if(fds.count()==0)
    {
       if(/*async==0 && */ timeout<0)
       {
@@ -97,7 +85,7 @@ void  PollVec::Block() const
       return;
    }
 
-   poll(fds,fds_num,timeout);
+   poll(fds.get_non_const(),fds.count(),timeout);
    return;
 }
 
@@ -107,6 +95,6 @@ void PollVec::Merge(const PollVec &p)
       AddTimeout(p.timeout);
    if(timeout==0)
       return;
-   for(int i=0; i<p.fds_num; i++)
+   for(int i=0; i<p.fds.count(); i++)
       AddFD(p.fds[i].fd,p.fds[i].events);
 }
