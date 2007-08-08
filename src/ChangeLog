@@ -1,3 +1,14 @@
+2007-08-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ResMgr.cc, url.cc: use xstring and StringSet.
+	* xarray.cc, xarray.h: new files.
+	* Makefile.am: add xarray files.
+	* NetAccess.cc, NetAccess.h, ftpclass.cc, Http.cc, FileSet.cc,
+	  FileSet.h, PollVec.cc, PollVec.h, ColumnOutput.cc, ColumnOutput.h,
+	  Resolver.cc, Resolver.h: use xarray.
+	* StringSet.h: (borrow) new method.
+	* Ref.h: make RefArray a friend.
+
 2007-08-06  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileSet.h, FileSet.cc: (NotNewerThan, NotOlderThan, Subtract*) new methods.
