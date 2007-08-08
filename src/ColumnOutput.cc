@@ -99,14 +99,11 @@ indent (int from, int to, const JobRef<OutputJob>& o)
    }
 }
 
-void ColumnOutput::get_print_info(unsigned width, int *&col_arr, int *&ws_arr, int &cols) const
+void ColumnOutput::get_print_info(unsigned width, xarray<int> &col_arr, xarray<int> &ws_arr, int &cols) const
 {
    /* Maximum number of columns ever possible for this display.  */
    int max_idx = width / MIN_COLUMN_WIDTH;
    if (max_idx == 0) max_idx = 1;
-
-   col_arr = (int *) xmalloc (max_idx * sizeof (int));
-   ws_arr = (int *) xmalloc (max_idx * sizeof (int));
 
    /* Normally the maximum number of columns is determined by the
     * screen width.  But if few files are available this might limit it
@@ -116,9 +113,11 @@ void ColumnOutput::get_print_info(unsigned width, int *&col_arr, int *&ws_arr, i
 
    /* Compute the maximum number of possible columns.  */
    for (cols = max_cols; cols >= 1; cols--) {
+      col_arr.truncate();
+      ws_arr.truncate();
       for (int j = 0; j < max_idx; ++j) {
-	 col_arr[j] = MIN_COLUMN_WIDTH;
-	 ws_arr[j] = 99999999;
+	 col_arr.append(MIN_COLUMN_WIDTH);
+	 ws_arr.append(99999999);
       }
 
       int filesno;
@@ -148,9 +147,8 @@ void ColumnOutput::get_print_info(unsigned width, int *&col_arr, int *&ws_arr, i
       if(line_len < width)
 	 break; /* found it */
    }
-   if(cols == 0) cols = 1;
-
-
+   if(cols == 0)
+      cols = 1;
 }
 
 void ColumnOutput::print(const JobRef<OutputJob>& o, unsigned width, bool color) const
@@ -158,7 +156,8 @@ void ColumnOutput::print(const JobRef<OutputJob>& o, unsigned width, bool color)
    if(!lst_cnt) return; /* we have nothing to display */
 
    int cols;
-   int *col_arr, *ws_arr;
+   xarray<int> col_arr;
+   xarray<int> ws_arr;
 
    get_print_info(width, col_arr, ws_arr, cols);
 
@@ -190,9 +189,6 @@ void ColumnOutput::print(const JobRef<OutputJob>& o, unsigned width, bool color)
       }
       o->Put("\n");
    }
-
-   xfree(ws_arr);
-   xfree(col_arr);
 }
 
 void datum::append(const char *name, const char *color)

@@ -24,7 +24,7 @@
 #define FILESET_H
 
 #include <sys/types.h>
-#include "xmalloc.h"
+#include "xarray.h"
 
 #undef TYPE
 
@@ -56,7 +56,7 @@ public:
    mode_t   mode;
    FileTimestamp date;
    off_t    size;
-   void	    *data;
+   xstring  data;
    const char *user, *group;
    int      nlinks;
 
@@ -83,7 +83,6 @@ public:
 
    int rank;
 
-   ~FileInfo();
    void Init();
    FileInfo() { Init(); }
    FileInfo(const FileInfo &fi);
@@ -104,19 +103,15 @@ public:
 
    void	 Merge(const FileInfo&);
 
-   bool	 SameAs(const FileInfo *,int ignore);
-   bool	 OlderThan(time_t t);
-   bool	 NewerThan(time_t t);
-   bool	 NotOlderThan(time_t t);
-   bool	 NotNewerThan(time_t t);
-   bool  SizeOutside(const Range *r);
+   bool	 SameAs(const FileInfo *,int ignore) const;
+   bool	 OlderThan(time_t t) const;
+   bool	 NewerThan(time_t t) const;
+   bool	 NotOlderThan(time_t t) const;
+   bool	 NotNewerThan(time_t t) const;
+   bool  SizeOutside(const Range *r) const;
 
-   void	 SetAssociatedData(void *d,int len)
-      {
-	 xfree(data);
-	 data=xmemdup(d,len);
-      }
-   void  *GetAssociatedData() { return data; }
+   void	 SetAssociatedData(const void *d,int len) { data.nset((const char*)d,len); }
+   const void *GetAssociatedData() { return data; }
 
    void SetRank(int r) { rank=r; }
    int GetRank() const { return rank; }
@@ -135,41 +130,29 @@ public:
    enum sort_e { BYNAME, BYSIZE, DIRSFIRST, BYRANK, BYDATE };
 
 private:
-   FileInfo **files;
+   RefArray<FileInfo> files;
 
-   /* Alternate pointers when sort != NAME: */
-   FileInfo **files_sort;
-
-   int	 fnum;
-   int	 allocated;
+   /* indexes when sort != NAME: */
+   xarray<int> sorted;
 
    int	 ind;
 
    void	 Sub(int);
-   bool sorted;
 
    void add_before(int pos,FileInfo *fi);
 
 public:
-   FileSet()
-   {
-      files=files_sort=0;
-      sorted=false;
-      fnum=0;
-      allocated=0;
-      ind=0;
-   }
+   FileSet() : ind(0) {}
    FileSet(const FileSet *s);
-   ~FileSet();
    void Empty();
 
-   int	 get_fnum() const { return fnum; }
+   int	 get_fnum() const { return files.length(); }
 
    void	 Add(FileInfo *);
    void	 Merge(const FileSet *);
    void	 SubtractSame(const FileSet *,int ignore);
    void	 SubtractAny(const FileSet *);
-   void  SubtractTimeCmp(bool (FileInfo::*cmp)(time_t),time_t);
+   void  SubtractTimeCmp(bool (FileInfo::*cmp)(time_t) const,time_t);
    void  SubtractOlderThan(time_t t) { SubtractTimeCmp(&FileInfo::OlderThan,t); }
    void  SubtractNewerThan(time_t t) { SubtractTimeCmp(&FileInfo::NewerThan,t); }
    void  SubtractNotOlderThan(time_t t) { SubtractTimeCmp(&FileInfo::NotOlderThan,t); }
@@ -223,7 +206,7 @@ public:
 
    FileInfo * operator[](int i) const;
 
-   int EstimateMemory() const;
+   size_t EstimateMemory() const;
 };
 
 #endif // FILESET_H

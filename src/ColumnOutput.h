@@ -22,6 +22,7 @@
 #define DISPCOLUMNS_H
 
 #include "OutputJob.h"
+#include "xarray.h"
 
 class datum
 {
@@ -47,7 +48,7 @@ public:
 };
 
 class ColumnOutput {
-   void get_print_info(unsigned width, int *&col_arr, int *&ws_arr, int &cols) const;
+   void get_print_info(unsigned width, xarray<int> &col_arr, xarray<int> &ws_arr, int &cols) const;
 
 public:
    enum mode_t { VERT };

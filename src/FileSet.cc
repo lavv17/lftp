@@ -43,6 +43,8 @@
 #include "IdNameCache.h"
 #include "PatternSet.h"
 
+#define fnum files.count()
+
 void  FileInfo::Merge(const FileInfo& f)
 {
    if(strcmp(name,f.name))
@@ -83,19 +85,12 @@ void FileInfo::SetGroup(const char *g)
 
 void FileSet::add_before(int pos,FileInfo *fi)
 {
-   if(fnum==allocated)
-   {
-      allocated=allocated?allocated*2:16;
-      files=files_sort=(FileInfo**)xrealloc(files,allocated*sizeof(*files));
-   }
-   memmove(files+pos+1, files+pos, sizeof(*files)*(fnum-pos));
-   files[pos]=fi;
-   fnum++;
+   files.insert(fi,pos);
 }
 void FileSet::Add(FileInfo *fi)
 {
    assert(!sorted);
-   if(!(fi->defined & fi->NAME))
+   if(!fi->name)
    {
       delete fi;
       return;
@@ -113,10 +108,7 @@ void FileSet::Add(FileInfo *fi)
 void FileSet::Sub(int i)
 {
    assert(!sorted);
-   if(i>=fnum)
-      abort();
-   delete files[i];
-   memmove(files+i,files+i+1,(--fnum-i)*sizeof(*files));
+   files.remove(i);
    if(ind>i)
       ind--;
 }
@@ -125,7 +117,7 @@ void FileSet::Merge(const FileSet *set)
 {
    for(int i=0; i<set->fnum; i++)
    {
-      FileInfo *fi=set->files[i];
+      const Ref<FileInfo>& fi=set->files[i];
       int pos = FindGEIndByName(fi->name);
       if(pos < fnum && !strcmp(files[pos]->name,fi->name))
 	 files[pos]->Merge(*fi);
@@ -145,30 +137,25 @@ void FileSet::PrependPath(const char *path)
 FileSet::FileSet(FileSet const *set)
 {
    ind=set->ind;
-   fnum=set->fnum;
-   sorted=false;
-   if(fnum==0)
-      files=files_sort=0;
-   else
-      files=files_sort=(FileInfo**)xmalloc((allocated=fnum)*sizeof(*files));
    for(int i=0; i<fnum; i++)
-      files[i]=new FileInfo(*(set->files[i]));
+      files.append(new FileInfo(*(set->files[i])));
 }
 
 static int (*compare)(const char *s1, const char *s2);
 static int rev_cmp;
+static RefArray<FileInfo> *files_cmp;
 
 static int sort_name(const void *s1, const void *s2)
 {
-   const FileInfo *p1 = *(const FileInfo **) s1;
-   const FileInfo *p2 = *(const FileInfo **) s2;
+   const FileInfo *p1=(*files_cmp)[*static_cast<const int*>(s1)];
+   const FileInfo *p2=(*files_cmp)[*static_cast<const int*>(s2)];
    return compare(p1->name, p2->name) * rev_cmp;
 }
 
 static int sort_size(const void *s1, const void *s2)
 {
-   const FileInfo *p1 = *(const FileInfo **) s1;
-   const FileInfo *p2 = *(const FileInfo **) s2;
+   const FileInfo *p1=(*files_cmp)[*static_cast<const int*>(s1)];
+   const FileInfo *p2=(*files_cmp)[*static_cast<const int*>(s2)];
    if(p1->size > p2->size) return -rev_cmp;
    if(p1->size < p2->size) return rev_cmp;
    return 0;
@@ -176,8 +163,8 @@ static int sort_size(const void *s1, const void *s2)
 
 static int sort_dirs(const void *s1, const void *s2)
 {
-   const FileInfo *p1 = *(const FileInfo **) s1;
-   const FileInfo *p2 = *(const FileInfo **) s2;
+   const FileInfo *p1=(*files_cmp)[*static_cast<const int*>(s1)];
+   const FileInfo *p2=(*files_cmp)[*static_cast<const int*>(s2)];
    if(p1->filetype == FileInfo::DIRECTORY && !p2->filetype == FileInfo::DIRECTORY) return -rev_cmp;
    if(!p1->filetype == FileInfo::DIRECTORY && p2->filetype == FileInfo::DIRECTORY) return rev_cmp;
    return 0;
@@ -185,8 +172,8 @@ static int sort_dirs(const void *s1, const void *s2)
 
 static int sort_rank(const void *s1, const void *s2)
 {
-   const FileInfo *p1 = *(const FileInfo **) s1;
-   const FileInfo *p2 = *(const FileInfo **) s2;
+   const FileInfo *p1=(*files_cmp)[*static_cast<const int*>(s1)];
+   const FileInfo *p2=(*files_cmp)[*static_cast<const int*>(s2)];
    if(p1->GetRank()==p2->GetRank())
       return sort_name(s1,s2);
    return p1->GetRank()<p2->GetRank() ? -rev_cmp : rev_cmp;
@@ -194,16 +181,13 @@ static int sort_rank(const void *s1, const void *s2)
 
 static int sort_date(const void *s1, const void *s2)
 {
-   const FileInfo *p1 = *(const FileInfo **) s1;
-   const FileInfo *p2 = *(const FileInfo **) s2;
+   const FileInfo *p1=(*files_cmp)[*static_cast<const int*>(s1)];
+   const FileInfo *p2=(*files_cmp)[*static_cast<const int*>(s2)];
    if(p1->date==p2->date)
       return sort_name(s1,s2);
    return p1->date>p2->date ? -rev_cmp : rev_cmp;
 }
 
-/* files_sort is an alias of files when sort == NAME (since
- * files is always sorted by name), and an independant array
- * of pointers (pointing to the same data) otherwise. */
 void FileSet::Sort(sort_e newsort, bool casefold, bool reverse)
 {
    if(newsort == BYNAME && !casefold && !reverse) {
@@ -211,25 +195,24 @@ void FileSet::Sort(sort_e newsort, bool casefold, bool reverse)
       return;
    }
 
-   if(files_sort == files) {
-      files_sort=(FileInfo**)xmalloc(fnum*sizeof(FileInfo *));
-      for(int i=0; i < fnum; i++)
-	 files_sort[i] = files[i];
-   }
-
-   sorted=true;
-
    if(casefold) compare = strcasecmp;
    else compare = strcmp;
 
    rev_cmp=(reverse?-1:1);
+   files_cmp=&files;
 
+   sorted.truncate();
+   for(int i=0; i<fnum; i++)
+      sorted.append(i);
+
+   int *s=sorted.get_non_const();
+   int sz=sorted.get_element_size();
    switch(newsort) {
-   case BYNAME: qsort(files_sort, fnum, sizeof(FileInfo *), sort_name); break;
-   case BYSIZE: qsort(files_sort, fnum, sizeof(FileInfo *), sort_size); break;
-   case DIRSFIRST: qsort(files_sort, fnum, sizeof(FileInfo *), sort_dirs); break;
-   case BYRANK: qsort(files_sort, fnum, sizeof(FileInfo *), sort_rank); break;
-   case BYDATE: qsort(files_sort, fnum, sizeof(FileInfo *), sort_date); break;
+   case BYNAME: qsort(s, fnum, sz, sort_name); break;
+   case BYSIZE: qsort(s, fnum, sz, sort_size); break;
+   case DIRSFIRST: qsort(s, fnum, sz, sort_dirs); break;
+   case BYRANK: qsort(s, fnum, sz, sort_rank); break;
+   case BYDATE: qsort(s, fnum, sz, sort_date); break;
    }
 }
 
@@ -237,27 +220,14 @@ void FileSet::Sort(sort_e newsort, bool casefold, bool reverse)
  * (Nothing uses this ... */
 void FileSet::Unsort()
 {
-   if(!sorted) return;
-   xfree(files_sort);
-   files_sort=files;
-   sorted=false;
+   sorted.unset();
 }
 
 void FileSet::Empty()
 {
    Unsort();
-   for(int i=0; i<fnum; i++)
-      delete files[i];
-   xfree(files);
-   files=0; files_sort=0;
-   fnum=0;
-   allocated=0;
+   files.unset();
    ind=0;
-}
-
-FileSet::~FileSet()
-{
-   Empty();
 }
 
 void FileSet::SubtractSame(const FileSet *set,int ignore)
@@ -294,7 +264,7 @@ void FileSet::SubtractSameType(const FileSet *set)
    }
 }
 
-void FileSet::SubtractTimeCmp(bool (FileInfo::*cmp)(time_t),time_t t)
+void FileSet::SubtractTimeCmp(bool (FileInfo::*cmp)(time_t) const,time_t t)
 {
    for(int i=0; i<fnum; i++)
    {
@@ -375,7 +345,7 @@ void FileSet::ExcludeUnaccessible()
    }
 }
 
-bool  FileInfo::SameAs(const FileInfo *fi,int ignore)
+bool  FileInfo::SameAs(const FileInfo *fi,int ignore) const
 {
    if(defined&NAME && fi->defined&NAME)
       if(strcmp(name,fi->name))
@@ -412,23 +382,23 @@ bool  FileInfo::SameAs(const FileInfo *fi,int ignore)
    return true;
 }
 
-bool  FileInfo::NotOlderThan(time_t t)
+bool  FileInfo::NotOlderThan(time_t t) const
 {
    return((defined&DATE) && date>=t);
 }
-bool  FileInfo::NotNewerThan(time_t t)
+bool  FileInfo::NotNewerThan(time_t t) const
 {
    return((defined&DATE) && date<=t);
 }
-bool  FileInfo::OlderThan(time_t t)
+bool  FileInfo::OlderThan(time_t t) const
 {
    return((defined&DATE) && date<t);
 }
-bool  FileInfo::NewerThan(time_t t)
+bool  FileInfo::NewerThan(time_t t) const
 {
    return((defined&DATE) && date>t);
 }
-bool  FileInfo::SizeOutside(const Range *r)
+bool  FileInfo::SizeOutside(const Range *r) const
 {
    return((defined&SIZE) && !r->Match(size));
 }
@@ -485,7 +455,7 @@ FileInfo *FileSet::FindByName(const char *name) const
    int n = FindGEIndByName(name);
 
    if(n < fnum && !strcmp(files[n]->name,name))
-      return files[n];
+      return files[n].get_non_const();
 
    return 0;
 }
@@ -519,41 +489,11 @@ void  FileSet::Exclude(const char *prefix,const PatternSet *x)
 
 // *** Manipulations with set of local files
 
-#if 0
-void FileSet::LocalRemove(const char *dir)
-{
-   FileInfo *file;
-   for(int i=0; i<fnum; i++)
-   {
-      file=files[i];
-      if(file->defined & file->DATE)
-      {
-	 const char *local_name=dir_file(dir,file->name);
-
-	 if(!(file->defined & file->TYPE)
-	 || file->filetype==file->DIRECTORY)
-	 {
-	    int res=rmdir(local_name);
-	    if(res==0)
-	       continue;
-	    res=remove(local_name);
-	    if(res==0)
-	       continue;
-	    truncate_file_tree(local_name);
-	    continue;
-	 }
-	 remove(local_name);
-      }
-   }
-}
-#endif
-
 void FileSet::LocalUtime(const char *dir,bool only_dirs)
 {
-   FileInfo *file;
    for(int i=0; i<fnum; i++)
    {
-      file=files[i];
+      const Ref<FileInfo>& file=files[i];
       if(file->defined & file->DATE)
       {
 	 if(!(file->defined & file->TYPE))
@@ -575,10 +515,9 @@ void FileSet::LocalUtime(const char *dir,bool only_dirs)
 }
 void FileSet::LocalChmod(const char *dir,mode_t mask)
 {
-   FileInfo *file;
    for(int i=0; i<fnum; i++)
    {
-      file=files[i];
+      const Ref<FileInfo>& file=files[i];
       if(file->defined & file->MODE)
       {
 	 if(file->defined & file->TYPE
@@ -597,10 +536,9 @@ void FileSet::LocalChmod(const char *dir,mode_t mask)
 }
 void FileSet::LocalChown(const char *dir)
 {
-   FileInfo *file;
    for(int i=0; i<fnum; i++)
    {
-      file=files[i];
+      const Ref<FileInfo>& file=files[i];
       if(file->defined & (file->USER|file->GROUP))
       {
 #ifndef HAVE_LCHOWN
@@ -643,7 +581,9 @@ FileInfo * FileSet::operator[](int i) const
 {
    if(i>=fnum || i<0)
       return 0;
-   return files_sort[i];
+   if(sorted)
+      i=sorted[i];
+   return files[i].get_non_const();
 }
 
 FileInfo *FileSet::curr()
@@ -672,7 +612,6 @@ void FileInfo::Init()
    size=NO_SIZE;
    nlinks=0;
    defined=0;
-   data=0;
    user=0; group=0;
    rank=0;
 }
@@ -906,11 +845,6 @@ FileInfo *FileInfo::parse_ls_line(const char *line_c,const char *tz)
 }
 
 
-FileInfo::~FileInfo()
-{
-   xfree(data);
-}
-
 int FileSet::Have() const
 {
    int bits=0;
@@ -987,9 +921,11 @@ void FileInfo::MakeLongName()
       longname.vappend(" -> ",symlink.get(),NULL);
 }
 
-int FileSet::EstimateMemory() const
+size_t FileSet::EstimateMemory() const
 {
-   int size=sizeof(FileSet)+sizeof(FileInfo*)*allocated;
+   size_t size=sizeof(FileSet)
+      +files.count()*files.get_element_size()
+      +sorted.count()*sorted.get_element_size();
    for(int i=0; i<fnum; i++)
    {
       size+=sizeof(FileInfo);
