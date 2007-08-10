@@ -23,7 +23,6 @@
 #ifndef STRINGSET_H
 #define STRINGSET_H
 
-#include "xmalloc.h"
 #include "xarray.h"
 
 class StringSet

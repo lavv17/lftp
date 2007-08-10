@@ -23,7 +23,7 @@
 #ifndef ALIAS_H
 #define ALIAS_H
 
-#include "xmalloc.h"
+#include "xstring.h"
 
 class Alias
 {

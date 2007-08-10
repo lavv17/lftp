@@ -26,8 +26,8 @@
 #include "trio.h"
 #include <sys/types.h>
 #include <time.h>
-#include "xmalloc.h"
 #include "TimeDate.h"
+#include "xstring.h"
 
 typedef const char *ResValValid(xstring_c *value);
 typedef const char *ResClValid(xstring_c *closure);

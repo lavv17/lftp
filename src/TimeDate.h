@@ -27,8 +27,6 @@
 # include <sys/time.h>
 #endif
 
-#include "xmalloc.h"
-
 class time_tuple
 {
    time_t sec;

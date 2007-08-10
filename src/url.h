@@ -21,7 +21,7 @@
 #ifndef URL_H
 #define URL_H
 
-#include "xmalloc.h"
+#include "xstring.h"
 
 class ParsedURL
 {
