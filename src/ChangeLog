@@ -4,6 +4,8 @@
 	  TaskRefArray; new class xarray_p; (xarray::borrow) new method.
 	* StringPool.cc, StringPool.h, StringSet.cc, StringSet.h: use xarray_p.
 	* pgetJob.cc, pgetJob.h: use TaskRefArray.
+	* ftpclass.cc, ftpclass.h: check anonymous password for leading minus sign
+	  before enabling stat-for-list.
 
 2007-08-08  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -517,6 +517,7 @@ public:
 	 timeout_timer.Reset(o->timeout_timer);
 	 CheckTimeout();
       }
+   bool AnonymousQuietMode();
 };
 
 class FtpS : public Ftp

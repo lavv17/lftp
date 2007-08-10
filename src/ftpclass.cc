@@ -946,6 +946,8 @@ Ftp::Ftp(const Ftp *f) : super(f)
 
    state=INITIAL_STATE;
    flags=f->flags&MODES_MASK;
+
+   ResetLocationData();
 }
 
 Ftp::Connection::~Connection()
@@ -4215,9 +4217,17 @@ void Ftp::ResetLocationData()
    super::ResetLocationData();
    flags=0;
    home_auto.set(FindHomeAuto());
-   Reconfig(0);
+   Reconfig();
    state=INITIAL_STATE;
    stat_timer.SetResource("ftp:stat-interval",hostname);
+}
+
+bool Ftp::AnonymousQuietMode()
+{
+   if(user && user.ne("anonymous") && user.ne("ftp"))
+      return false;
+   const char *pass_to_use=(pass?pass:anon_pass);
+   return pass_to_use && *pass_to_use=='-';  // minus sign in password means quiet mode
 }
 
 void Ftp::Reconfig(const char *name)
@@ -4244,7 +4254,7 @@ void Ftp::Reconfig(const char *name)
    verify_data_port = QueryBool("verify-port");
 
    use_stat = QueryBool("use-stat");
-   use_stat_for_list=QueryBool("use-stat-for-list");
+   use_stat_for_list=QueryBool("use-stat-for-list") && !AnonymousQuietMode();
    use_mdtm = QueryBool("use-mdtm");
    use_size = QueryBool("use-size");
    use_pret = QueryBool("use-pret");
@@ -4470,7 +4480,7 @@ FtpS::FtpS(const FtpS *o) : super(o)
 {
    ftps=true;
    res_prefix="ftp";
-   Reconfig(0);
+   ResetLocationData();
 }
 FileAccess *FtpS::New(){ return new FtpS();}
 
