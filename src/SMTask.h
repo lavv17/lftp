@@ -118,6 +118,8 @@ public:
    ~SMTaskInit();
 };
 
+template<typename T,typename RefT> class _RefArray;
+
 template<class T> class SMTaskRef : public Ref<T>
 {
    SMTaskRef<T>(const SMTaskRef<T>&);  // disable cloning
@@ -131,6 +133,15 @@ public:
    void operator=(T *p) { SMTask::_DeleteRef(ptr); ptr=SMTask::MakeRef(p); }
    T *borrow() { if(ptr) ptr->DecRefCount(); return Ref<T>::borrow(); }
 #undef ptr
+   friend class _RefArray< T,SMTaskRef<T> >;
+};
+
+template<typename T>
+class TaskRefArray : public _RefArray< T,SMTaskRef<T> > {
+   TaskRefArray& operator=(const TaskRefArray&); // make assignment fail
+   TaskRefArray(const TaskRefArray&);	       // disable cloning
+public:
+   TaskRefArray() : _RefArray< T,SMTaskRef<T> >() {}
 };
 
 #endif /* SMTASK_H */

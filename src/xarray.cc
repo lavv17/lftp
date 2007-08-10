@@ -21,6 +21,7 @@
 /* $Id$ */
 
 #include <config.h>
+#include <assert.h>
 #include "xarray.h"
 
 void xarray0::get_space(size_t s,size_t g)

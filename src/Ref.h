@@ -23,7 +23,7 @@
 #ifndef REF_H
 #define REF_H
 
-template<typename T> class RefArray;
+template<typename T,typename RefR> class _RefArray;
 
 template<typename T> class Ref
 {
@@ -48,7 +48,7 @@ public:
 
    static const Ref<T> null;
 
-   friend class RefArray<T>;
+   friend class _RefArray< T,Ref<T> >;
 };
 
 template<typename T> const Ref<T> Ref<T>::null;
