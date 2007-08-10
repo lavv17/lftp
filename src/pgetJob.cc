@@ -83,12 +83,12 @@ int pgetJob::Do()
       c->Resume();
       m|=super::Do();
    }
-   else if(chunks && num_of_chunks>0)
+   else if(chunks.count()>0)
    {
       if(!chunks[0]->Done() && chunks[0]->GetBytesCount()<limit0/16)
       {
 	 c->Resume();
-	 if(num_of_chunks==1)
+	 if(chunks.count()==1)
 	 {
 	    free_chunks();
 	    no_parallel=true;
@@ -96,8 +96,7 @@ int pgetJob::Do()
 	 else
 	 {
 	    limit0=chunks[0]->c->GetRangeLimit();
-	    Delete(chunks[0]);
-	    memmove(chunks,chunks+1,--num_of_chunks*sizeof(*chunks));
+	    chunks.remove(0);
 	 }
 	 m=MOVED;
       }
@@ -164,7 +163,7 @@ int pgetJob::Do()
    else
       total_eta=c->GetETA(rem);
 
-   for(int i=0; i<num_of_chunks; i++)
+   for(int i=0; i<chunks.count(); i++)
    {
       if(chunks[i]->Error())
       {
@@ -238,7 +237,7 @@ void pgetJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
    for( ; i<p; i++)
       bar[i]='.';
 
-   for(int chunk=0; chunk<num_of_chunks; chunk++)
+   for(int chunk=0; chunk<chunks.count(); chunk++)
    {
       p=(chunks[chunk]->Done()?chunks[chunk]->limit:chunks[chunk]->GetPos())*w/size;
       for(i=chunks[chunk]->start*w/size; i<p; i++)
@@ -294,13 +293,9 @@ void pgetJob::free_chunks()
 {
    if(chunks)
    {
-      for(int i=0; i<num_of_chunks; i++)
-      {
+      for(int i=0; i<chunks.count(); i++)
 	 chunks_bytes+=chunks[i]->GetBytesCount();
-	 Delete(chunks[i]);
-      }
-      xfree(chunks);
-      chunks=0;
+      chunks.unset();
    }
    cmdline.set(0);
 }
@@ -308,8 +303,6 @@ void pgetJob::free_chunks()
 pgetJob::pgetJob(FileCopy *c1,const char *n,int m)
    : CopyJob(c1,n,"pget")
 {
-   chunks=0;
-   num_of_chunks=0;
    chunks_bytes=0;
    start0=limit0=0;
    total_xferred=0;
@@ -377,7 +370,7 @@ void pgetJob::SaveStatus()
    if(!chunks)
       goto out_close;
    fprintf(f,"%d.limit=%lld\n",i,limit0);
-   for(int chunk=0; chunk<num_of_chunks; chunk++)
+   for(int chunk=0; chunk<chunks.count(); chunk++)
    {
       if(chunks[chunk]->Done())
 	 continue;
@@ -462,17 +455,17 @@ void pgetJob::LoadStatus()
 	 i++;
       }
    }
-   num_of_chunks=i-1;
+   int num_of_chunks=i-1;
    start0=pos[0];
    limit0=limit[0];
    c->SetRange(pos[0],FILE_END);
    if(num_of_chunks<1)
       goto out_close;
-   chunks=(ChunkXfer**)xmalloc(sizeof(*chunks)*num_of_chunks);
-   for(i=num_of_chunks; i-->0; )
+   for(i=0; i<num_of_chunks; i++)
    {
-      chunks[i]=NewChunk(GetName(),pos[i+1],limit[i+1]);
-      chunks[i]->SetParentFg(this,false);
+      ChunkXfer *c=NewChunk(GetName(),pos[i],limit[i]);
+      c->SetParentFg(this,false);
+      chunks.append(c);
    }
    goto out_close;
 }
@@ -483,17 +476,18 @@ void pgetJob::InitChunks(off_t offset,off_t size)
    off_t chunk_size=(size-offset)/max_chunks;
    if(chunk_size<min_chunk_size)
       chunk_size=min_chunk_size;
-   num_of_chunks=(size-offset)/chunk_size-1;
+   int num_of_chunks=(size-offset)/chunk_size-1;
    if(num_of_chunks<1)
       return;
-   chunks=(ChunkXfer**)xmalloc(sizeof(*chunks)*num_of_chunks);
-   off_t curr_offs=size;
-   for(int i=num_of_chunks; i-->0; )
-   {
-      chunks[i]=NewChunk(GetName(),curr_offs-chunk_size,curr_offs);
-      chunks[i]->SetParentFg(this,false);
-      curr_offs-=chunk_size;
-   }
    start0=0;
-   limit0=curr_offs;
+   limit0=size-chunk_size*num_of_chunks;
+   off_t curr_offs=limit0;
+   for(int i=0; i<num_of_chunks; i++)
+   {
+      ChunkXfer *c=NewChunk(GetName(),curr_offs,curr_offs+chunk_size);
+      c->SetParentFg(this,false);
+      chunks.append(c);
+      curr_offs+=chunk_size;
+   }
+   assert(curr_offs==size);
 }

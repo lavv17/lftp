@@ -24,6 +24,8 @@
 #include "StringSet.h"
 #include "misc.h"
 
+#define set_size set.count()
+
 bool StringSet::IsEqual(const char *const *set1,int n1) const
 {
    if(set_size!=n1)
@@ -37,42 +39,17 @@ bool StringSet::IsEqual(const char *const *set1,int n1) const
    }
    return true;
 }
-void StringSet::Empty()
-{
-   while(set_size>0)
-   {
-      set_size--;
-      xstrset(set[set_size],0);
-   }
-}
-void StringSet::Allocate(int req)
-{
-   // alloc at least one extra for trailing zero
-   int size=((req+4)&~3);
-   if(allocated<size)
-   {
-      set=(char**)xrealloc(set,sizeof(*set)*(allocated=size));
-      while(req<size)
-	 set[req++]=0;
-   }
-}
 void StringSet::Assign(const char *const *set1,int n1)
 {
    Empty();
-   Allocate(n1);
-   set_size=0;
    while(set_size<n1)
-   {
-      set[set_size]=xstrdup(set1[set_size]);
-      set_size++;
-   }
+      set.append(xstrdup(set1[set_size]));
 }
 void StringSet::Append(const char *s)
 {
    if(!s)
       return;
-   Allocate(set_size+1);
-   set[set_size++]=xstrdup(s);
+   set.append(xstrdup(s));
 }
 void StringSet::Replace(int i,const char *s)
 {
@@ -82,50 +59,36 @@ void StringSet::Replace(int i,const char *s)
    {
       xstrset(set[i],s);
       if(!s && i==set_size-1)
-	 set_size--;
+	 set.set_length(set.count()-1);
    }
 }
 void StringSet::InsertBefore(int i,const char *s)
 {
    if(!s)
       return;
-   if(i==set_size)
-      Append(s);
-   else if(i>=0 && i<set_size)
-   {
-      Allocate(set_size+1);
-      memmove(set+i+1,set+i,(set_size-i)*sizeof(*set));
-      set_size++;
-      set[i]=xstrdup(s);
-   }
+   set.insert(xstrdup(s),i);
 }
 
 void StringSet::AppendFormat(const char *f,...)
 {
    va_list v;
    va_start(v,f);
-   char *s=xvasprintf(f,v);
+   set.append(xvasprintf(f,v));
    va_end(v);
-
-   Allocate(set_size+1);
-   set[set_size++]=s;	// note that s is allocated by xvasprintf
 }
 
 void StringSet::MoveHere(StringSet &o)
 {
-   set=o.set; o.set=0;
-   set_size=o.set_size; o.set_size=0;
-   allocated=o.allocated; o.allocated=0;
+   set.set(o.set);
+   o.set.borrow();
 }
 
 char *StringSet::Pop(int i)
 {
-   char *s=0;
-   if(i>=0 && i<set_size)
-   {
-      s=set[i];
-      set_size--;
-      memmove(set+i,set+i+1,(set_size-i)*sizeof(*set));
-   }
+   if(i<0 || i>=set_size)
+      return 0;
+   char *s=set[i];
+   set[i]=0;
+   set.remove(i);
    return s;
 }

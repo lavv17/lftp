@@ -24,29 +24,25 @@
 #define STRINGSET_H
 
 #include "xmalloc.h"
+#include "xarray.h"
 
 class StringSet
 {
-   char **set;
-   int set_size;
-   int allocated;
+   xarray_p<char> set;
 
-   void Init() { set=0; allocated=set_size=0; }
-   void Allocate(int);
    const StringSet &operator=(const StringSet &); // disable assignment
 
 public:
-   StringSet() { Init(); }
-   StringSet(const char *const *s,int n) { Init(); Assign(s,n); }
-   StringSet(const StringSet &o) { Init(); Assign(o.set,o.set_size); }
-   StringSet(const char *s) { Init(); Assign(&s,1); }
-   ~StringSet() { Empty(); xfree(set); }
+   StringSet() {}
+   StringSet(const char *const *s,int n) { Assign(s,n); }
+   StringSet(const StringSet &o) { Assign(o.set.get(),o.set.count()); }
+   StringSet(const char *s) { Assign(&s,1); }
 
-   void Empty();
+   void Empty() { set.truncate(); }
    void Assign(const char *const *s,int n);
    void Assign(const char *s) { Assign(&s,1); }
    bool IsEqual(const char *const *s,int n) const;
-   bool IsEqual(const StringSet &o) const { return IsEqual(o.set,o.set_size); }
+   bool IsEqual(const StringSet &o) const { return IsEqual(o.Set(),o.Count()); }
    void Append(const char *);
    void AppendFormat(const char *,...) PRINTF_LIKE(2,3);
    void InsertBefore(int,const char *);
@@ -54,16 +50,16 @@ public:
    char *Pop(int i=0);
    void Remove(int i) { xfree(Pop(i)); }
 
-   const char *const *Set() const { return set; }
-   char **SetNonConst() { return set; }
-   int Count() const { return set_size; }
-   const char *String(int i) const { return i>=0 && i<set_size ? set[i] : 0; }
-   const char *LastString() const { return String(set_size-1); }
+   const char *const *Set() const { return set.get(); }
+   char **SetNonConst() { return set.get_non_const(); }
+   int Count() const { return set.count(); }
+   const char *String(int i) const { return i>=0 && i<Count() ? set[i] : 0; }
+   const char *LastString() const { return String(Count()-1); }
    const char *operator[](int i) const { return String(i); }
 
    void MoveHere(StringSet &o);
 
-   char **borrow() { allocated=set_size=0; return replace_value(set,(char**)0); }
+   char **borrow() { return set.borrow(); }
 };
 
 #endif // STRINGSET_H

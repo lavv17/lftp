@@ -20,11 +20,9 @@
 
 #include <config.h>
 #include "StringPool.h"
-#include "xmalloc.h"
+#include "xarray.h"
 
-char **StringPool::strings;
-int StringPool::n_strings;
-int StringPool::allocated;
+xarray_p<char> StringPool::strings;
 
 const char *StringPool::Get(const char *s)
 {
@@ -32,7 +30,7 @@ const char *StringPool::Get(const char *s)
       return 0;
 
    int l=0;
-   int u=n_strings;
+   int u=strings.count();
 
    while(l<u)
    {
@@ -50,13 +48,6 @@ const char *StringPool::Get(const char *s)
 
    // not found.
    // l==u points to first elementh greater than s or past end of array.
-   n_strings++;
-   if(allocated<n_strings)
-   {
-      allocated+=16;
-      strings=(char**)xrealloc(strings,sizeof(*strings)*allocated);
-   }
-   memmove(strings+u+1,strings+u,(n_strings-u-1)*sizeof(*strings));
-   strings[u]=xstrdup(s);
+   strings.insert(xstrdup(s),u);
    return strings[u];
 }

@@ -21,12 +21,12 @@
 #ifndef STRINGPOOL_H
 #define STRINGPOOL_H
 
+#include "xarray.h"
+
 // maybe it is better to have many separate pools with dtors.
 class StringPool
 {
-   static char **strings;
-   static int n_strings;
-   static int allocated;
+   static xarray_p<char> strings;
 
 public:
    static const char *Get(const char *);

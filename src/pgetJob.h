@@ -37,9 +37,8 @@ class pgetJob : public CopyJob
       ChunkXfer(FileCopy *c,const char *n,off_t start,off_t limit);
    };
 
-   ChunkXfer   **chunks;
+   TaskRefArray<ChunkXfer> chunks;
    int	 max_chunks;
-   int	 num_of_chunks;
    off_t chunks_bytes;
    void InitChunks(off_t offset,off_t size);
 
