@@ -31,7 +31,7 @@ bool StringSet::IsEqual(const char *const *set1,int n1) const
    if(set_size!=n1)
       return false;
    int i=0;
-   while(i<set_size)
+   while(i<n1)
    {
       if(strcmp(set[i],set1[i]))
 	 return false;
@@ -42,8 +42,8 @@ bool StringSet::IsEqual(const char *const *set1,int n1) const
 void StringSet::Assign(const char *const *set1,int n1)
 {
    Empty();
-   while(set_size<n1)
-      set.append(xstrdup(set1[set_size]));
+   while(n1-->0)
+      set.append(xstrdup(*set1++));
 }
 void StringSet::Append(const char *s)
 {

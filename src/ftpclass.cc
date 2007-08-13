@@ -2630,7 +2630,7 @@ int  Ftp::ReceiveResp()
 	 else if(r[-1]!='\r')
 	    *w++='!';
       }
-      *w=0;
+      line.set_length(line_len-=(r-w));
 
       int code=0;
 
@@ -2641,7 +2641,7 @@ int  Ftp::ReceiveResp()
       if(!expect->IsEmpty() && expect->FirstIs(Expect::QUOTED) && conn->data_iobuf
       && (mode!=LONG_LIST || !code))
       {
-	 conn->data_iobuf->Put(line);
+	 conn->data_iobuf->Put(line,line_len);
 	 conn->data_iobuf->Put("\n");
 	 if(code)
 	    DebugPrint("<--- ",line,ReplyLogPriority(code));

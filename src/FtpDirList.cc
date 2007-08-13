@@ -217,7 +217,11 @@ bool FtpDirList::TryColor(const char *line_c,int len)
       group[0]=0;
       n=sscanf(line,"%11s %d %31s %lld %3s %2d %5s%n",perms,&nlink,
 	    user,&size,month_name,&day,year_or_time,&consumed);
+      if(n!=7)
+	 return false;
    }
+   else if(n!=8)
+      return false;
    if(consumed>0 && -1!=(parse_perms(perms+1))
    && -1!=(parse_month(month_name))
    && -1!=parse_year_or_time(year_or_time,&year,&hour,&minute)

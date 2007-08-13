@@ -125,6 +125,7 @@ class xarray_p : public xarray0
    void dispose(int i,int j) { while(i<j) dispose(i++); }
    void clear(int i) { get_non_const()[i]=0; }
    void clear(int i,int j) { while(i<j) clear(i++); }
+   void z() { if(size==(size_t)len) get_space(len+1); clear(len); }
 public:
    xarray_p() : xarray0(sizeof(T*)) {}
    ~xarray_p() { dispose(0,len); }
@@ -133,14 +134,14 @@ public:
    T *&operator[](int i) { return get_non_const()[i]; }
    T *operator[](int i) const { return get()[i]; }
    size_t get_element_size() const { return sizeof(T*); }
-   void nset(T *const*s,int len) { dispose(0,len); _nset(s,len); }
+   void nset(T *const*s,int len) { dispose(0,len); _nset(s,len); z(); }
    void set(const xarray_p<T> &a) { nset(a.get(),a.count()); }
-   void set_length(size_t n) { dispose(n,len); clear(len,n); _set_length(n); }
+   void set_length(size_t n) { dispose(n,len); clear(len,n); _set_length(n); z(); }
    void unset() { dispose(0,len); _unset(); }
    void truncate() { set_length(0); }
-   void insert(T *n,int before) { *static_cast<T**>(_insert(before))=n; }
-   void append(T *n) { *static_cast<T**>(_append())=n; }
-   void remove(int i) { dispose(i); _remove(i); }
+   void insert(T *n,int before) { *static_cast<T**>(_insert(before))=n; z(); }
+   void append(T *n) { *static_cast<T**>(_append())=n; z(); }
+   void remove(int i) { dispose(i); _remove(i); z(); }
    T **borrow() { return static_cast<T**>(_borrow()); }
 };
 
