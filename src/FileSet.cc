@@ -137,7 +137,7 @@ void FileSet::PrependPath(const char *path)
 FileSet::FileSet(FileSet const *set)
 {
    ind=set->ind;
-   for(int i=0; i<fnum; i++)
+   for(int i=0; i<set->fnum; i++)
       files.append(new FileInfo(*(set->files[i])));
 }
 
@@ -486,6 +486,15 @@ void  FileSet::Exclude(const char *prefix,const PatternSet *x)
    }
 }
 
+#if 0
+void FileSet::Dump(const char *tag) const
+{
+   printf("%s:",tag);
+   for(int i=0; i<fnum; i++)
+      printf(" %s",files[i]->name.get());
+   printf("\n");
+}
+#endif
 
 // *** Manipulations with set of local files
 

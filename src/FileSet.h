@@ -207,6 +207,7 @@ public:
    FileInfo * operator[](int i) const;
 
    size_t EstimateMemory() const;
+   void Dump(const char *tag) const;
 };
 
 #endif // FILESET_H
