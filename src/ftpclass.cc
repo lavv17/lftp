@@ -947,7 +947,7 @@ Ftp::Ftp(const Ftp *f) : super(f)
    state=INITIAL_STATE;
    flags=f->flags&MODES_MASK;
 
-   ResetLocationData();
+   Reconfig();
 }
 
 Ftp::Connection::~Connection()
@@ -3776,7 +3776,7 @@ void Ftp::CheckResp(int act)
       {
 	 if(cc==Expect::CWD)
 	    cwd.Set(arg,false,0,device_prefix_len(arg));
-	 set_real_cwd(cwd);
+	 set_real_cwd(arg);
 	 cache->SetDirectory(this, arg, true);
 	 break;
       }

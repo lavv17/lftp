@@ -2,6 +2,8 @@
 
 	* FileSet.cc, FileSet.h: fix clone ctor, add Dump method.
 	* MirrorJob.cc: use NO_DATE.
+	* ftpclass.cc: don't do ResetLocationDate in clone ctor - it leads
+	  to loss of cwd; set correct real_cwd when handling of CWD reply.
 
 2007-08-13  Alexander V. Lukyanov <lav@yars.free.net>
 
