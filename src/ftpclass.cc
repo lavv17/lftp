@@ -1712,6 +1712,7 @@ int   Ftp::Do()
 	    command="STAT";
 	    conn->data_iobuf=new IOBuffer(IOBuffer::GET);
 	    rate_limit=new RateLimit(hostname);
+	    want_type=conn->type;
 	 }
 	 else
 	 {
@@ -1761,14 +1762,17 @@ int   Ftp::Do()
       case(MAKE_DIR):
 	 command="MKD";
 	 append_file=true;
+	 want_type=conn->type;
 	 break;
       case(REMOVE_DIR):
 	 command="RMD";
 	 append_file=true;
+	 want_type=conn->type;
 	 break;
       case(REMOVE):
 	 command="DELE";
 	 append_file=true;
+	 want_type=conn->type;
 	 break;
       case(QUOTE_CMD):
 	 real_pos=0;
@@ -1780,6 +1784,7 @@ int   Ftp::Do()
       case(RENAME):
 	 command="RNFR";
 	 append_file=true;
+	 want_type=conn->type;
 	 break;
       case(ARRAY_INFO):
 	 break;
@@ -1789,6 +1794,7 @@ int   Ftp::Do()
 	    sprintf(c,"SITE CHMOD %03o",chmod_mode);
 	    command=c;
 	    append_file=true;
+	    want_type=conn->type;
 	    break;
 	 }
       case(CONNECT_VERIFY):

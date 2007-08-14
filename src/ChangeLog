@@ -4,6 +4,9 @@
 	* MirrorJob.cc: use NO_DATE.
 	* ftpclass.cc: don't do ResetLocationDate in clone ctor - it leads
 	  to loss of cwd; set correct real_cwd when handling of CWD reply.
+	* NetAccess.cc: save listing in cache with proper mode.
+	* commands.cc: update copyright.
+	* ftpclass.cc: don't change TYPE unless needed.
 
 2007-08-13  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -812,7 +812,7 @@ do_again:
 	    result=set.borrow();
       }
 
-      FileAccess::cache->Add(session,"",mode,FA::OK,ubuf,result);
+      FileAccess::cache->Add(session,"",old_mode,FA::OK,ubuf,result);
 
       ubuf=0;
       m=MOVED;
