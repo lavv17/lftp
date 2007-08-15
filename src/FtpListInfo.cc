@@ -75,9 +75,8 @@ FileSet *Ftp::ParseLongList(const char *buf,int len,int *err_ret) const
       set[i]=new FileSet;
    }
 
-   char *line=0;
-   int line_alloc=0;
-   int line_len;
+   xstring line;
+   xstring tmp_line;
 
    FtpLineParser guessed_parser=0;
    FileSet **the_set=0;
@@ -89,23 +88,17 @@ FileSet *Ftp::ParseLongList(const char *buf,int len,int *err_ret) const
 
    for(;;)
    {
-      char *nl=(char*)memchr(buf,'\n',len);
+      const char *nl=(char*)memchr(buf,'\n',len);
       if(!nl)
 	 break;
-      line_len=nl-buf;
-      if(line_len>0 && buf[line_len-1]=='\r')
-	 line_len--;
-      if(line_len==0)
+      line.nset(buf,nl-buf);
+      line.chomp('\r');
+      if(line.length()==0)
       {
 	 len-=nl+1-buf;
 	 buf=nl+1;
 	 continue;
       }
-      if(line_alloc<line_len+1)
-	 line=string_alloca(line_alloc=line_len+128);
-      memcpy(line,buf,line_len);
-      line[line_len]=0;
-      const char *buf_line=buf;
 
       len-=nl+1-buf;
       buf=nl+1;
@@ -114,7 +107,8 @@ FileSet *Ftp::ParseLongList(const char *buf,int len,int *err_ret) const
       {
 	 for(i=0; i<number_of_parsers; i++)
 	 {
-	    FileInfo *info=(*line_parsers[i])(line,&err[i],tz);
+	    tmp_line.set(line);	 // parser can clobber the line - work on a copy
+	    FileInfo *info=(*line_parsers[i])(tmp_line.get_non_const(),&err[i],tz);
 	    if(info && !strchr(info->name,'/'))
 	       set[i]->Add(info);
 	    else
@@ -134,14 +128,11 @@ FileSet *Ftp::ParseLongList(const char *buf,int len,int *err_ret) const
 	    }
 	    if(*best_err1>16)
 	       goto leave; // too many errors with best parser.
-	    // Restore line contents. It could be clobbered by parser.
-	    memcpy(line,buf_line,line_len);
-	    line[line_len]=0;
 	 }
       }
       else
       {
-	 FileInfo *info=(*guessed_parser)(line,the_err,tz);
+	 FileInfo *info=(*guessed_parser)(line.get_non_const(),the_err,tz);
 	 if(info && !strchr(info->name,'/'))
 	    (*the_set)->Add(info);
 	 else

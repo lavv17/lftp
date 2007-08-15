@@ -31,7 +31,7 @@ void xstring::get_space(size_t s,size_t g)
       buf=(char*)xmalloc(size=s+1);
    else if(size<s+1)
       buf=(char*)realloc(buf,size=(s|(g-1))+1);
-   else if(size>=g*8 && s<size/2)
+   else if(size>=g*8 && s+1<=size/2)
       buf=(char*)realloc(buf,size/=2);
    buf[s]=0;
 }

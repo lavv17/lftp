@@ -134,6 +134,8 @@ public:
 };
 class xstring_ca : public xstring_c
 {
+   xstring_ca& operator=(const xstring_ca& s); // disable assigning
+   xstring_ca(const xstring_ca&); // disable cloning
 public:
    xstring_ca(char *s) { buf=s; }
 };

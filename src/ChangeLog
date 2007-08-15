@@ -1,3 +1,10 @@
+2007-08-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* xstring.h: disable clone and assign for xstring_ca.
+	* xstring.cc: use a clearer alloc condition.
+	* FtpListInfo.cc: simplify parser with xstring.
+	* xarray.cc, xarray.h: (keep_extra) new member.
+
 2007-08-14  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileSet.cc, FileSet.h: fix clone ctor, add Dump method.

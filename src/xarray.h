@@ -31,19 +31,22 @@ class xarray0
 {
 protected:
    void *buf;
-
-   size_t size;
    int len;
-   const size_t element_size;
+private:
+   size_t size;
+   const unsigned short element_size;
+   const short keep_extra;
 
    void init() { buf=0; size=len=0; }
-   void *get_ptr(int n) { return static_cast<char*>(buf)+n*element_size; }
 
    xarray0& operator=(const xarray0&); // make assignment fail
    xarray0(const xarray0&);	       // disable cloning
 
+protected:
+   void *get_ptr(int n) { return static_cast<char*>(buf)+n*element_size; }
+
 public:
-   xarray0(size_t e) : element_size(e) { init(); }
+   xarray0(size_t e,int k=0) : element_size(e),keep_extra(k) { init(); }
    ~xarray0() { xfree(buf); }
 
    // allocates s slots, with preferred granularity g
@@ -101,7 +104,7 @@ public:
    RefT& operator[](int i) { return get_non_const()[i]; }
    const RefT& operator[](int i) const { return get()[i]; }
    size_t get_element_size() const { return sizeof(RefT); }
-   void set_length(size_t n) { dispose(n,len); clear(len,n); _set_length(n); }
+   void set_length(size_t n) { dispose(n,len); _set_length(n); }
    void unset() { dispose(0,len); _unset(); }
    void truncate() { set_length(0); }
    void insert(T *n,int before) { static_cast<RefT*>(_insert(before))->ptr=n; }
@@ -125,18 +128,18 @@ class xarray_p : public xarray0
    void dispose(int i,int j) { while(i<j) dispose(i++); }
    void clear(int i) { get_non_const()[i]=0; }
    void clear(int i,int j) { while(i<j) clear(i++); }
-   void z() { if(size==(size_t)len) get_space(len+1); clear(len); }
+   void z() { clear(len); }
 public:
-   xarray_p() : xarray0(sizeof(T*)) {}
+   xarray_p() : xarray0(sizeof(T*),1) {}
    ~xarray_p() { dispose(0,len); }
    T **get_non_const() { return static_cast<T**>(buf); }
    T *const* get() const { return static_cast<T*const*>(buf); }
    T *&operator[](int i) { return get_non_const()[i]; }
    T *operator[](int i) const { return get()[i]; }
    size_t get_element_size() const { return sizeof(T*); }
-   void nset(T *const*s,int len) { dispose(0,len); _nset(s,len); z(); }
+   void nset(T *const*s,int len) { dispose(0,len); _nset(s,len); if(buf) z(); }
    void set(const xarray_p<T> &a) { nset(a.get(),a.count()); }
-   void set_length(size_t n) { dispose(n,len); clear(len,n); _set_length(n); z(); }
+   void set_length(size_t n) { dispose(n,len); _set_length(n); if(buf) z(); }
    void unset() { dispose(0,len); _unset(); }
    void truncate() { set_length(0); }
    void insert(T *n,int before) { *static_cast<T**>(_insert(before))=n; z(); }
