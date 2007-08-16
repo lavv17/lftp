@@ -323,7 +323,7 @@ int clsJob::Do()
       }
 
       /* If the basename contains wildcards, set up the mask. */
-      char *bn = basename_ptr(dir.get_non_const());
+      const char *bn = basename_ptr(dir);
       if(Glob::HasWildcards(bn)) {
 	 /* The mask is the whole argument, not just the basename; this is
 	  * because the whole relative paths will end up in the FileSet, and
@@ -331,7 +331,7 @@ int clsJob::Do()
 	 mask.set(dir);
 	 // leave the final / on the path, to prevent the dirname of
 	 // "file/*" from being treated as a file
-	 bn[0]=0;	// this modifies dir, can result in dir eq ""
+	 dir.truncate(bn-dir); // this can result in dir eq ""
       }
 
       list_info=new GetFileInfo(session, dir, fso->list_directories);
