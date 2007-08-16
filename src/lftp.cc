@@ -400,13 +400,13 @@ int lftp_slot(int count,int key)
    return 0;
 }
 
-void  source_if_exist(CmdExec *exec,const char *rc)
+void  source_if_exist(const char *rc)
 {
    if(access(rc,R_OK)!=-1)
    {
-      exec->FeedCmd("source ");
-      exec->FeedCmd(rc);
-      exec->FeedCmd("\n");
+      top_exec->FeedCmd("source ");
+      top_exec->FeedCmd(rc);
+      top_exec->FeedCmd("\n");
    }
 }
 
@@ -445,40 +445,25 @@ int   main(int argc,char **argv)
    top_exec->SetStatusLine(new StatusLine(1));
    Log::global->SetCB(tty_clear);
 
-   source_if_exist(top_exec,SYSCONFDIR"/lftp.conf");
-
+   source_if_exist(SYSCONFDIR"/lftp.conf");
    const char *home=getenv("HOME");
    if(home)
-   {
-      char *rc=(char*)alloca(strlen(home)+9+1);
-
-      sprintf(rc,"%s/.lftprc",home);
-      source_if_exist(top_exec,rc);
-   }
-
+      source_if_exist(dir_file(home,".lftprc"));
    home=get_lftp_home();
    if(home)
-   {
-      char *rc=(char*)alloca(strlen(home)+3+1);
-
-      sprintf(rc,"%s/rc",home);
-      source_if_exist(top_exec,rc);
-   }
-
+      source_if_exist(dir_file(home,"rc"));
    top_exec->WaitDone();
 
    top_exec->SetTopLevel();
    top_exec->Fg();
 
-   ArgV *args=new ArgV(argc,argv);
+   Ref<ArgV> args(new ArgV(argc,argv));
    args->setarg(0,"lftp");
 
    lftp_feeder=new ReadlineFeeder(args);
 
-   top_exec->ExecParsed(args);
-
+   top_exec->ExecParsed(args.borrow());
    top_exec->WaitDone();
-
    int exit_code=top_exec->ExitCode();
 
    top_exec->AtExit();
@@ -490,8 +475,8 @@ int   main(int argc,char **argv)
       move_to_background();
    }
    top_exec->KillAll();
-   SMTask::Delete(top_exec);
    top_exec=0;
+
    Job::Cleanup();
    ConnectionSlot::Cleanup();
    SessionPool::ClearAll();
@@ -501,11 +486,6 @@ int   main(int argc,char **argv)
    SignalHook::Cleanup();
    Log::Cleanup();
    SMTask::Cleanup();
-
-   // the tasks left: lftp_ssl_instance(if created)
-   int task_count=SMTask::TaskCount();
-   if(task_count>1)
-      printf("WARNING: task_count=%d\n",task_count);
 
    return exit_code;
 }
