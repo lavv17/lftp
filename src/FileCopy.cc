@@ -620,8 +620,11 @@ void FileCopy::LogTransfer()
       transfer_log->ShowTime();	 // nothing but time
       transfer_log->Enable();
    }
-   transfer_log->Format(0,"%s -> %s %lld:%lld %s\n",src,dst,
-      (long long)GetRangeStart(),(long long)GetRangeLimit(),
+   long long range_limit=GetRangeLimit();
+   if(range_limit==FILE_END)
+      range_limit=get->GetPos();
+   transfer_log->Format(0,"%s -> %s %lld-%lld %s\n",src,dst,
+      (long long)GetRangeStart(),range_limit,
       Speedometer::GetStr(GetBytesCount()/GetTimeSpent()));
 }
 
