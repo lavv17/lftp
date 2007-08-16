@@ -1,3 +1,10 @@
+2007-08-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileSetOutput.cc: truncate xstring correctly.
+	* lftp.cc, commands.cc, CmdExec.cc, CmdExec.h: use Ref for top_exec.
+	* FileCopy.cc, FileCopy.h, resource.cc: add transfer log support
+	  and xfer:log setting.
+
 2007-08-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* xstring.h: disable clone and assign for xstring_ca.
