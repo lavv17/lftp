@@ -67,7 +67,7 @@ static ResDecl
 
 CmdExec	 *CmdExec::cwd_owner;
 CmdExec	 *CmdExec::chain;
-CmdExec  *CmdExec::top;
+JobRef<CmdExec> CmdExec::top;
 
 void  CmdExec::SaveCWD()
 {

@@ -655,7 +655,7 @@ Job *CmdExec::builtin_exit()
       if(!strcmp(a,"top") || !strcmp(a,"bg"))
       {
 	 if(top)
-	    exec=top;
+	    exec=top.get_non_const();
       }
       else if(!strcmp(a,"kill"))
       {

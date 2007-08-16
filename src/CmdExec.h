@@ -246,7 +246,7 @@ public:
 
    void ChangeSlot(const char *n);
 
-   static CmdExec *top;
+   static JobRef<CmdExec> top;
 };
 
 extern const char * const bookmark_subcmd[];
