@@ -319,6 +319,7 @@ static ResType lftp_vars[] = {
    {"xfer:destination-directory","",	  0,0},
    {"xfer:verify",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"xfer:verify-command",	 "",	  ResMgr::FileExecutable,0},
+   {"xfer:log",			 "yes",	  ResMgr::BoolValidate,ResMgr::NoClosure},
 
 #if USE_SSL
    {"ssl:ca-file",		 "",	  ResMgr::FileReadable,ResMgr::NoClosure},

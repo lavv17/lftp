@@ -388,6 +388,7 @@ int FileCopy::Do()
       debug((10,"copy: get is finished - all done\n"));
       set_state(ALL_DONE);
       get->Suspend();
+      LogTransfer();
       return MOVED;
 
    pre_GET_INFO_WAIT:
@@ -597,6 +598,33 @@ void FileCopy::Kill(int sig)
    if(get) get->Kill(sig);
    if(put) put->Kill(sig);
 }
+
+SMTaskRef<Log> FileCopy::transfer_log;
+
+void FileCopy::LogTransfer()
+{
+   if(!ResMgr::QueryBool("xfer:log",0))
+      return;
+   const char *src=get->GetURL();
+   const char *dst=put->GetURL();
+   if(!src || !dst)
+      return;
+   if(!transfer_log)
+   {
+      int fd=open(dir_file(get_lftp_home(),"transfer_log"),O_WRONLY|O_APPEND|O_CREAT,0600);
+      if(fd==-1)
+	 return;
+      transfer_log=new Log;
+      transfer_log->SetOutput(fd,true);
+      transfer_log->ShowNothing();
+      transfer_log->ShowTime();	 // nothing but time
+      transfer_log->Enable();
+   }
+   transfer_log->Format(0,"%s -> %s %lld:%lld %s\n",src,dst,
+      (long long)GetRangeStart(),(long long)GetRangeLimit(),
+      Speedometer::GetStr(GetBytesCount()/GetTimeSpent()));
+}
+
 
 // FileCopyPeer implementation
 #undef super

@@ -37,6 +37,7 @@
 #include "FileAccess.h"
 #include "Speedometer.h"
 #include "Timer.h"
+#include "log.h"
 
 class FileCopyPeer : public IOBuffer
 {
@@ -262,6 +263,9 @@ public:
    void AllowWrite(bool y=true) { if(put) put->AllowWrite(y); }
    bool WriteAllowed() { return !put || put->WriteAllowed(); }
    bool WritePending() { return put && put->WritePending(); }
+
+   void LogTransfer();
+   static SMTaskRef<Log> transfer_log;
 };
 
 class FileVerificator : public SMTask
