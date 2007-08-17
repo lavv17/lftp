@@ -94,7 +94,8 @@ protected:
 
    const char *DelayingMessage();
    bool ReconnectAllowed();
-   bool NextTry();	// returns false if max-retries exceeded.
+   bool CheckRetries();	// returns false if max-retries exceeded.
+   bool NextTry();	// increments retries; does CheckRetries().
    void TrySuccess();	// reset retry counters.
 
    virtual void HandleTimeout();

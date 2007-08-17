@@ -2,6 +2,13 @@
 
 	* buffer.h: fix compilation without iconv.
 
+2007-08-02  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, NetAccess.cc, NetAccess.h: increment retries on
+	  soft transfer errors which do not cause disconnect; check retry
+	  count before re-starting transfer.
+	* FileCopy.cc: increment saved retry count before next try.
+
 2007-06-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ResMgr.cc: (CharsetValidate) return error without iconv.

@@ -288,7 +288,10 @@ void Ftp::NoFileCheck(int act)
    DataClose();
    state=EOF_STATE;
    eof=false;
-   retry_timer.Set(2); // retry after 2 seconds
+   if(mode==STORE && (flags&IO_FLAG))
+      SetError(STORE_FAILED,0);
+   else if(NextTry())
+      retry_timer.Set(2); // retry after 2 seconds
 }
 
 /* 5xx that aren't errors at all */
@@ -320,8 +323,6 @@ bool Ftp::Transient5XX(int act)
 // 226 Transfer complete.
 void Ftp::TransferCheck(int act)
 {
-   if(conn->data_sock==-1)
-      eof=true;
    if(act==225 || act==226) // data connection is still open or ABOR worked.
    {
       copy_done=true;
@@ -389,6 +390,8 @@ void Ftp::TransferCheck(int act)
       if(conn->data_sock==-1 && strstr(line,"Broken pipe"))
    	 return;
    }
+   if(is2XX(act) && conn->data_sock==-1)
+      eof=true;
    NoFileCheck(act);
 }
 
@@ -1534,6 +1537,9 @@ int   Ftp::Do()
 
       ExpandTildeInCWD();
 
+      if(!CheckRetries())
+	 return MOVED;
+
       if(mode!=CHANGE_DIR)
       {
 	 Expect *last_cwd=expect->FindLastCWD();
@@ -2251,6 +2257,10 @@ int   Ftp::Do()
 	 {
 	    DataClose();
 	    state=EOF_STATE;
+	    if(mode==STORE && (flags&IO_FLAG))
+	       SetError(STORE_FAILED,0);
+	    else if(NextTry())
+	       retry_timer.Set(2); // retry after 2 seconds
 	 }
 	 return MOVED;
       }
@@ -3667,7 +3677,8 @@ void Ftp::CheckResp(int act)
 	 long long size_ll;
 	 if(1==sscanf(s+1,"%lld",&size_ll))
 	 {
-	    *opt_size=size_ll;
+	    entity_size=size_ll;
+	    *opt_size=entity_size;
 	    DebugPrint("---- ",_("saw file size in response"),7);
 	 }
       }

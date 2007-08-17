@@ -655,11 +655,8 @@ const char *NetAccess::DelayingMessage()
 
 bool NetAccess::NextTry()
 {
-   if(max_retries>0 && retries>=max_retries)
-   {
-      Fatal(_("max-retries exceeded"));
+   if(!CheckRetries())
       return false;
-   }
    if(retries==0)
       reconnect_interval_current=reconnect_interval;
    else if(reconnect_interval_multiplier>1)
@@ -668,8 +665,17 @@ bool NetAccess::NextTry()
       if(reconnect_interval_current>reconnect_interval_max)
 	 reconnect_interval_current=reconnect_interval_max;
    }
-   try_time=now;
    retries++;
+   return CheckRetries();
+}
+bool NetAccess::CheckRetries()
+{
+   if(max_retries>0 && retries>max_retries)
+   {
+      Fatal(_("max-retries exceeded"));
+      return false;
+   }
+   try_time=now;
    return true;
 }
 void NetAccess::TrySuccess()

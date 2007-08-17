@@ -949,7 +949,7 @@ void FileCopyPeerFA::OpenSession()
       if(try_time!=0)
 	 session->SetTryTime(try_time);
       if(retries!=0)
-	 session->SetRetries(retries);
+	 session->SetRetries(retries+1);
       if(e_size!=NO_SIZE && e_size!=NO_SIZE_YET)
 	 session->SetSize(e_size);
       if(date!=NO_DATE && date!=NO_DATE_YET)
