@@ -1,3 +1,8 @@
+2007-08-17	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document xfer:log; boolean settings; appending of
+	  basename in mirror; minor tweaks.
+
 2007-02-27	Damon Harper <gnu@usrbin.ca>
 
 	* lftp.1: new mirror option --only-existing.

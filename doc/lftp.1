@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "22 Aug 2006"
+.TH lftp 1 "17 Aug 2007"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 3.5.5.
+This man page documents lftp version 3.6.0.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -98,7 +98,7 @@ itself to nohup mode in background. The same happens when you have a
 real modem hangup or when you close an xterm.
 .PP
 \fBlftp\fP has builtin mirror which can download or update a whole directory
-tree. There is also reverse mirror (mirror -R) which uploads or
+tree. There is also reverse mirror (mirror \-R) which uploads or
 updates a directory tree on server. Mirror can also synchronize directories
 between two remote servers, using FXP if available.
 .PP
@@ -112,12 +112,12 @@ people prefer to see full protocol debug, use `debug' to turn the
 debug on. Use `debug 3' to see only greeting messages and error
 messages.
 .PP
-\fBlftp\fP has a number of settable variables. You can use `set -a' to see
-all variables and their values or `set -d' to see list of defaults.
+\fBlftp\fP has a number of settable variables. You can use `set \-a' to see
+all variables and their values or `set \-d' to see list of defaults.
 Variable names can be abbreviated and prefix can be omitted unless the
 rest becomes ambiguous.
 .PP
-If lftp was compiled with OpenSSL (configure --with-openssl), then it includes software developed
+If lftp was compiled with OpenSSL (configure \-\-with\-openssl), then it includes software developed
 by the OpenSSL Project for use in the OpenSSL Toolkit. (http://www.openssl.org/)
 
 .SS Commands
@@ -141,7 +141,7 @@ undefined, else it takes the value \fIvalue\fP. If no argument is given
 the current aliases are listed.
 .PP
 .Ds
-alias dir ls -lF
+alias dir ls \-lF
 alias less zmore
 .De
 
@@ -149,9 +149,9 @@ alias less zmore
 .PP
 Sets the user to anonymous.  This is the default.
 
-.BR at " \fItime\fP [ -- \fIcommand\fP ] "
+.BR at " \fItime\fP [ \-\- \fIcommand\fP ] "
 .PP
-Wait until the given time and execute given (optional) command. See also at(1).
+Wait until the given time and execute given (optional) command. See also \fBat\fR(1).
 
 .B bookmark
 .RI " [" subcommand ]
@@ -189,18 +189,18 @@ cat outputs the remote file(s) to stdout.  (See also \fBmore\fR,
 .BR cd " rdir"
 .PP
 Change current remote directory.  The previous remote directory is
-stored as `-'. You can do `cd -' to change the directory back.
+stored as `\-'. You can do `cd \-' to change the directory back.
 The previous directory for each site is also stored on disk,
-so you can do `open site; cd -' even after lftp restart.
+so you can do `open site; cd \-' even after lftp restart.
 
 .BR chmod " \fImode files\fP"
 .PP
 Change permission mask on remote files. The mode must be an octal number.
 
-.BR close " [" -a "]"
+.BR close " [" \-a "]"
 .PP
 Close idle connections.  By default only with the current server, use
--a to close all idle connections.
+\-a to close all idle connections.
 
 .BR cls " [" OPTS "] " \fIfiles...\fP
 .PP
@@ -214,13 +214,13 @@ See `help cls' for options.
 .PP
 execute given command ignoring aliases.
 
-.BR debug " [" -o
+.BR debug " [" \-o
 .IR file "] "  level "|\fBoff\fP"
 .PP
-Switch debugging to \fIlevel\fP or turn it off.  Use -o to redirect
+Switch debugging to \fIlevel\fP or turn it off.  Use \-o to redirect
 the debug output to a file.
 
-.BR echo " [" -n "] \fIstring\fR"
+.BR echo " [" \-n "] \fIstring\fR"
 .PP
 guess what it does.
 
@@ -236,7 +236,7 @@ command is used.
 `exit bg' forces moving to background when cmd:move-background is false.
 `exit top' makes top level `shell' (internal lftp command executor) terminate.
 `exit kill' kills all numbered jobs before exiting. The options can be combined, e.g.
-`at 08:00 -- exit top kill &' kills all jobs and makes lftp exit at specified time.
+`at 08:00 \-\- exit top kill &' kills all jobs and makes lftp exit at specified time.
 
 .B fg
 .PP
@@ -246,47 +246,47 @@ Alias for `wait'.
 .RI " [" directory "] "
 .PP
 List files in the directory (current directory by default) recursively.
-This can help with servers lacking ls -R support. You can redirect output
+This can help with servers lacking ls \-R support. You can redirect output
 of this command.
 
 .BR ftpcopy
 .PP
 Obsolete. Use one of the following instead:
 .Ds
-get ftp://... -o ftp://...
-get -O ftp://... file1 file2...
+get ftp://... \-o ftp://...
+get \-O ftp://... file1 file2...
 put ftp://...
 mput ftp://.../*
-mget -O ftp://... ftp://.../*
+mget \-O ftp://... ftp://.../*
 .De
 or other combinations to get FXP transfer (directly between two ftp servers).
 lftp would fallback to plain copy (via client) if FXP transfer cannot be
 initiated or ftp:use-fxp is false.
 
-.BR get " [" -E ]
-.RB [ -a "] [" -c "] [" -O
-.RB "\fIbase\fP] \fIrfile\fP [" -o " \fIlfile\fP] ..."
+.BR get " [" \-E ]
+.RB [ \-a "] [" \-c "] [" \-O
+.RB "\fIbase\fP] \fIrfile\fP [" \-o " \fIlfile\fP] ..."
 .PP
 Retrieve the remote file \fIrfile\fP and store it as the local file
-\fIlfile\fP.  If -o is omitted, the file is stored to local file named as
+\fIlfile\fP.  If \-o is omitted, the file is stored to local file named as
 base name of \fIrfile\fP. You can get multiple files by specifying multiple
-instances of \fIrfile\fP [and -o \fIlfile\fP]. Does not expand wildcards, use
+instances of \fIrfile\fP (and \-o \fIlfile\fP). Does not expand wildcards, use
 \fBmget\fR for that.
 .Ds
--c		continue, reget
--E		delete source files after successful transfer
--a		use ascii mode (binary is the default)
--O <base>	specifies base directory or URL where files should be placed
+\-c		continue, reget
+\-E		delete source files after successful transfer
+\-a		use ascii mode (binary is the default)
+\-O <base>	specifies base directory or URL where files should be placed
 .De
 .PP
 Examples:
 .Ds
 get README
-get README -o debian.README
+get README \-o debian.README
 get README README.mirrors
-get README -o debian.README README.mirrors -o debian.mirrors
-get README -o ftp://some.host.org/debian.README
-get README -o ftp://some.host.org/debian-dir/ (end slash is important)
+get README \-o debian.README README.mirrors \-o debian.mirrors
+get README \-o ftp://some.host.org/debian.README
+get README \-o ftp://some.host.org/debian-dir/ (end slash is important)
 .De
 
 .BR get1
@@ -294,25 +294,25 @@ get README -o ftp://some.host.org/debian-dir/ (end slash is important)
 .PP
 Transfer a single file. Options:
 .Ds
--o <lfile>	destination file name (default - basename of rfile)
--c		continue, reget
--E		delete source files after successful transfer
--a		use ascii mode (binary is the default)
---source-region=<from-to>
+\-o <lfile>	destination file name (default - basename of rfile)
+\-c		continue, reget
+\-E		delete source files after successful transfer
+\-a		use ascii mode (binary is the default)
+\-\-source\-region=<from-to>
 		transfer specified region of source file
---target-position=<pos>
+\-\-target\-position=<pos>
 		position in target file to write data at
 .De
 
-.BR glob " [" -d "] [" -a "]"
-.RB "[" -f "] \fIcommand patterns\fP"
+.BR glob " [" \-d "] [" \-a "]"
+.RB "[" \-f "] \fIcommand patterns\fP"
 .PP
 Glob given patterns containing metacharacters and pass result to given command.
 E.g. ``glob echo *''.
 .Ds
--f	plain files (default)
--d	directories
--a	all types
+\-f	plain files (default)
+\-d	directories
+\-a	all types
 .De
 
 .B help
@@ -322,9 +322,9 @@ Print help for \fIcmd\fP or if no \fIcmd\fP was specified print a list of
 available commands.
 
 .B jobs
-.RB [ -v ]
+.RB [ \-v ]
 .PP
-List running jobs. -v means verbose, several -v can be specified.
+List running jobs. \-v means verbose, several \-v can be specified.
 
 .B kill
 all|\fIjob_no\fP
@@ -336,7 +336,7 @@ Delete specified job with \fIjob_no\fP or all jobs.
 \fIldir\fP
 .PP
 Change current local directory \fIldir\fP. The previous local
-directory is stored as `-'. You can do `lcd -' to change the directory back.
+directory is stored as `\-'. You can do `lcd \-' to change the directory back.
 
 .B lpwd
 .PP
@@ -352,19 +352,19 @@ new listing use
 or
 .B "cache flush."
 
-.BR mget " [" -c "] [" -d "]"
-.RB [ -a "] [" -E "]"
-.RB [ -O " \fIbase\fP] \fIfiles\fP"
+.BR mget " [" \-c "] [" \-d "]"
+.RB [ \-a "] [" \-E "]"
+.RB [ \-O " \fIbase\fP] \fIfiles\fP"
 .PP
 Gets selected files with expanded wildcards.
 .PP
 .Ds
--c		continue, reget.
--d		create directories the same as file names and get
+\-c		continue, reget.
+\-d		create directories the same as file names and get
 		the files into them instead of current directory.
--E		delete source files after successful transfer
--a		use ascii mode (binary is the default)
--O <base>	specifies base directory or URL where files should be placed
+\-E		delete source files after successful transfer
+\-a		use ascii mode (binary is the default)
+\-O <base>	specifies base directory or URL where files should be placed
 .De
 
 .B mirror
@@ -376,47 +376,48 @@ directory ends with a slash, the source base name is appended to target
 directory name. Source and/or target can be URLs pointing to directories.
 .PP
 .Ds
--c, --continue		continue a mirror job if possible
--e, --delete		delete files not present at remote site
-    --delete-first		delete old files before transferring new ones
--s, --allow-suid		set suid/sgid bits according to remote site
-    --allow-chown		try to set owner and group on files
-    --ignore-time		ignore time when deciding whether to download
-    --ignore-size		ignore size when deciding whether to download
-    --only-missing		download only missing files
-    --only-existing		download only files already existing at target
--n, --only-newer		download only newer files (-c won't work)
--r, --no-recursion		don't go to subdirectories
-    --no-symlinks		don't create symbolic links
--p, --no-perms		don't set file permissions
-    --no-umask		don't apply umask to file modes
--R, --reverse		reverse mirror (put files)
--L, --dereference		download symbolic links as files
--N, --newer-than=SPEC	download only files newer than specified time
-    --older-than=SPEC	download only files older than specified time
-    --size-range=RANGE	download only files with size in specified range
--P, --parallel[=N]		download N files in parallel
-    --use-pget[-n=N]	use pget to transfer every single file
-    --loop			loop until no changes found
--i \fIRX\fP, --include \fIRX\fP	include matching files
--x \fIRX\fP, --exclude \fIRX\fP	exclude matching files
--I \fIGP\fP, --include-glob \fIGP\fP	include matching files
--X \fIGP\fP, --exclude-glob \fIGP\fP	exclude matching files
--v, --verbose[=level]	verbose operation
-    --log=FILE		write lftp commands being executed to FILE
-    --script=FILE		write lftp commands to FILE, but don't execute them
-    --just-print, --dry-run	same as --script=-
-    --use-cache		use cached directory listings
---Remove-source-files	remove files after transfer (use with caution)
--a			same as --allow-chown --allow-suid --no-umask
+\-c, \-\-continue		continue a mirror job if possible
+\-e, \-\-delete		delete files not present at remote site
+    \-\-delete\-first		delete old files before transferring new ones
+\-s, \-\-allow\-suid		set suid/sgid bits according to remote site
+    \-\-allow\-chown	try to set owner and group on files
+    \-\-ignore\-time		ignore time when deciding whether to download
+    \-\-ignore\-size		ignore size when deciding whether to download
+    \-\-only\-missing	download only missing files
+    \-\-only\-existing	download only files already existing at target
+\-n, \-\-only\-newer	download only newer files (\-c won't work)
+\-r, \-\-no\-recursion	don't go to subdirectories
+    \-\-no\-symlinks	don't create symbolic links
+\-p, \-\-no\-perms		don't set file permissions
+    \-\-no\-umask		don't apply umask to file modes
+\-R, \-\-reverse		reverse mirror (put files)
+\-L, \-\-dereference	download symbolic links as files
+\-N, \-\-newer\-than=SPEC	download only files newer than specified time
+    \-\-older\-than=SPEC	download only files older than specified time
+    \-\-size\-range=RANGE	download only files with size in specified range
+\-P, \-\-parallel[=N]	download N files in parallel
+    \-\-use-pget[\-n=N]	use pget to transfer every single file
+    \-\-loop		loop until no changes found
+\-i \fIRX\fP, \-\-include \fIRX\fP	include matching files
+\-x \fIRX\fP, \-\-exclude \fIRX\fP	exclude matching files
+\-I \fIGP\fP, \-\-include\-glob \fIGP\fP	include matching files
+\-X \fIGP\fP, \-\-exclude\-glob \fIGP\fP	exclude matching files
+\-v, \-\-verbose[=level]	verbose operation
+    \-\-log=FILE		write lftp commands being executed to FILE
+    \-\-script=FILE		write lftp commands to FILE, but don't execute them
+    \-\-just-print, \-\-dry-run	same as \-\-script=-
+    \-\-use-cache		use cached directory listings
+-\-Remove\-source\-files	remove files after transfer (use with caution)
+\-a			same as \-\-allow-chown \-\-allow-suid \-\-no-umask
 .De
 .PP
-When using -R, the first directory is local and the second is remote.
+When using \-R, the first directory is local and the second is remote.
 If the second directory is omitted, base name of first directory is used.
 If both directories are omitted, current local and remote directories are used.
+If target directory ends with a slash (except root directory) then base
+name of source directory is appended.
 .PP
-\fIRX\fP is an extended regular expression, just like in
-.BR egrep (1).
+\fIRX\fP is an extended regular expression, just like in \fBegrep\fR(1).
 .PP
 \fIGP\fP is a glob pattern, e.g. `*.zip'.
 .PP
@@ -427,10 +428,10 @@ and the first check is exclude. Directories are matched with a slash appended.
 .PP
 Note that symbolic links are not created when uploading to remote server,
 because ftp protocol cannot do it. To upload files the links refer
-to, use `mirror -RL' command (treat symbolic links as files).
+to, use `mirror \-RL' command (treat symbolic links as files).
 .PP
-For option --newer-than you can either specify a file or time specification
-like that used by at(1) command, e.g. `now-7days' or `week ago'. If you
+For option \-\-newer\-than you can either specify a file or time specification
+like that used by \fBat\fR(1) command, e.g. `now-7days' or `week ago'. If you
 specify a file, then modification time of that file will be used.
 .PP
 Verbosity level can be selected using \-\-verbose=level option or by several
@@ -438,7 +439,7 @@ Verbosity level can be selected using \-\-verbose=level option or by several
 .Ds
 0 - no output (default)
 1 - print actions
-2 - +print not deleted file names (when -e is not specified)
+2 - +print not deleted file names (when \-e is not specified)
 3 - +print directory names which are mirrored
 .De
 .PP
@@ -449,18 +450,18 @@ You can mirror between two servers if you specify URLs instead of directories.
 FXP is used automatically for transfers between ftp servers, if possible.
 .PP
 Some ftp servers hide dot-files by default (e.g. \fI.htaccess\fP), and show
-them only when LIST command is used with -a option. In such case try to use
-`set ftp:list-options -a'.
+them only when LIST command is used with \-a option. In such case try to use
+`set ftp:list-options \-a'.
 
 .B mkdir
-.RB "[" -p "] " \fIdir(s)\fP
+.RB "[" \-p "] " \fIdir(s)\fP
 .PP
-Make remote directories. If -p is used, make all components of paths.
+Make remote directories. If \-p is used, make all components of paths.
 
 .B module
 .IR "module " [ " args " ]
 .PP
-Load given module using dlopen(3) function. If module name does not contain
+Load given module using \fBdlopen\fR(3) function. If module name does not contain
 a slash, it is searched in directories specified by module:path variable.
 Arguments are passed to module_init function. See README.modules for technical
 details.
@@ -471,19 +472,19 @@ details.
 Same as `cat \fIfiles\fP | more'. if \fBPAGER\fP is set, it is used as filter.
 (See also \fBcat\fR, \fBzcat\fR and \fBzmore\fR)
 
-.BR mput " [" -c "] [" -d "]"
-.RB [ -a "] [" -E "]"
-.RB [ -O " \fIbase\fP] \fIfiles\fP"
+.BR mput " [" \-c "] [" \-d "]"
+.RB [ \-a "] [" \-E "]"
+.RB [ \-O " \fIbase\fP] \fIfiles\fP"
 .PP
 Upload files with wildcard expansion. By default it uses the base name of
-local name as remote one. This can be changed by `-d' option.
+local name as remote one. This can be changed by `\-d' option.
 .Ds
--c		continue, reput
--d		create directories the same as in file names and put the
+\-c		continue, reput
+\-d		create directories the same as in file names and put the
 		files into them instead of current directory
--E		delete source files after successful transfer (dangerous)
--a		use ascii mode (binary is the default)
--O <base>	specifies base directory or URL where files should be placed
+\-E		delete source files after successful transfer (dangerous)
+\-a		use ascii mode (binary is the default)
+\-O <base>	specifies base directory or URL where files should be placed
 .De
 
 .B mrm
@@ -502,9 +503,9 @@ Rename \fIfile1\fP to \fIfile2\fP.
 List remote file names
 
 .B open
-.RB [ -e " \fIcmd\fP]"
-.BR "[" -u " \fIuser\fP[", "\fIpass\fP]]"
-.BR "[" -p " \fIport\fP] \fIhost\fP|\fIurl\fP"
+.RB [ \-e " \fIcmd\fP]"
+.BR "[" \-u " \fIuser\fP[", "\fIpass\fP]]"
+.BR "[" \-p " \fIport\fP] \fIhost\fP|\fIurl\fP"
 .PP
 Select an ftp server.
 
@@ -518,40 +519,40 @@ transfer, but loads the net and server heavily impacting other users. Use only i
 you really have to transfer the file ASAP.
 Options:
 .Ds
--c		continue transfer. Requires \fIlfile.lftp-pget-status\fP file.
--n \fImaxconn\fP	set maximum number of connections (default is taken from pget:default-n setting)
+\-c		continue transfer. Requires \fIlfile.lftp-pget-status\fP file.
+\-n \fImaxconn\fP	set maximum number of connections (default is taken from pget:default-n setting)
 .De
 .PP
 
 .B put
-.RB [ -E ]
-.RB [ -a ]
-.RB [ -c ]
-.RB [ "-O \fIbase\fP" ]
+.RB [ \-E ]
+.RB [ \-a ]
+.RB [ \-c ]
+.RB [ "\-O \fIbase\fP" ]
 .I lfile
-.RB [ "-o \fIrfile\fP" ]
+.RB [ "\-o \fIrfile\fP" ]
 .PP
-Upload \fIlfile\fP with remote name \fIrfile\fP. If -o omitted, the base name
+Upload \fIlfile\fP with remote name \fIrfile\fP. If \-o omitted, the base name
 of \fIlfile\fP is used as remote name. Does not expand wildcards, use \fBmput\fR for that.
 .Ds
--o <rfile>	specifies remote file name (default - basename of lfile)
--c		continue, reput
+\-o <rfile>	specifies remote file name (default - basename of lfile)
+\-c		continue, reput
 		it requires permission to overwrite remote files
--E		delete source files after successful transfer (dangerous)
--a		use ascii mode (binary is the default)
--O <base>	specifies base directory or URL where files should be placed
+\-E		delete source files after successful transfer (dangerous)
+\-a		use ascii mode (binary is the default)
+\-O <base>	specifies base directory or URL where files should be placed
 .De
 
 .B pwd
-.RB [ -p ]
+.RB [ \-p ]
 .PP
-Print current remote URL. Use `-p' option to show password in the URL.
+Print current remote URL. Use `\-p' option to show password in the URL.
 
 .B queue
-.RB [ -n " \fInum\fP ] \fIcmd\fP"
+.RB [ \-n " \fInum\fP ] \fIcmd\fP"
 .PP
 Add the given command to queue for sequential execution. Each site has its own
-queue. `-n' adds the command before the given item in the queue. Don't try to
+queue. `\-n' adds the command before the given item in the queue. Don't try to
 queue `cd' or `lcd' commands, it may confuse lftp. Instead
 do the cd/lcd before `queue' command, and it will remember the place in which
 the command is to be done. It is possible to queue up an already running job
@@ -567,22 +568,22 @@ When you exit lftp, it will start all stopped queues automatically.
 status.
 
 .B queue
-.BR "--delete|-d " "[\fIindex or wildcard expression\fP]"
+.BR "\-\-delete|-d " "[\fIindex or wildcard expression\fP]"
 .PP
 Delete one or more items from the queue. If no argument is given, the last
 entry in the queue is deleted.
 
 .B queue
-.BR "--move|-m " "<\fIindex or wildcard expression\fP> [\fIindex\fP]"
+.BR "\-\-move|-m " "<\fIindex or wildcard expression\fP> [\fIindex\fP]"
 .PP
 Move the given items before the given queue index, or to the end if no
 destination is given.
 .PP
 .Ds
--q	Be quiet.
--v	Be verbose.
--Q	Output in a format that can be used to re-queue.
-	Useful with --delete.
+\-q	Be quiet.
+\-v	Be verbose.
+\-Q	Output in a format that can be used to re-queue.
+	Useful with \-\-delete.
 .De
 .PP
 .Ds
@@ -595,11 +596,11 @@ destination is given.
 .De
 .PP
 .Ds
-queue -d 3		Delete the third item in the queue.
-queue -m 6 4		Move the sixth item in the queue before the fourth.
-queue -m "get*zip" 1	Move all commands matching "get*zip" to the beginning
+queue \-d 3		Delete the third item in the queue.
+queue \-m 6 4		Move the sixth item in the queue before the fourth.
+queue \-m "get*zip" 1	Move all commands matching "get*zip" to the beginning
 			of the queue.  (The order of the items is preserved.)
-queue -d "get*zip"	Delete all commands matching "get*zip".
+queue \-d "get*zip"	Delete all commands matching "get*zip".
 .De
 
 .B quote
@@ -624,12 +625,12 @@ arbitrary commands on server. The command must not take input or print ###
 at new line beginning. If it does, the protocol will become out of sync.
 .Ds
 open fish://server
-quote find -name \*.zip
+quote find \-name \\*.zip
 .De
 
-.BR "reget \fIrfile\fP " [ -o " \fIlfile\fP]"
+.BR "reget \fIrfile\fP " [ \-o " \fIlfile\fP]"
 .PP
-Same as `get -c'.
+Same as `get \-c'.
 
 .B rels
 [\fIargs\fP]
@@ -647,25 +648,25 @@ Same as `nlist', but ignores the cache.
 .RI [ command ]
 .PP
 Repeat the command. Between the commands a delay is inserted, by default 1 second.
-Option `-c' limits number of repeations. Option `--while-ok' breaks loop when
-command returns non-zero exit code; `--until-ok' breaks on zero exit code.
+Option `\-c' limits number of repeations. Option `\-\-while\-ok' breaks loop when
+command returns non-zero exit code; `\-\-until\-ok' breaks on zero exit code.
 .De
 Examples:
 .Ds
-repeat at tomorrow -- mirror
+repeat at tomorrow \-\- mirror
 repeat 1d mirror
 .De
 
-.BR reput " \fIlfile\fP [" -o " \fIrfile\fP]"
+.BR reput " \fIlfile\fP [" \-o " \fIrfile\fP]"
 .PP
-Same as `put -c'.
+Same as `put \-c'.
 
-.BR rm " [" -r "] [" -f ]
+.BR rm " [" \-r "] [" \-f ]
 \fIfiles\fP
 .PP
 Remove remote files.  Does not expand wildcards, use \fBmrm\fR for
-that. -r is for recursive directory remove. Be careful, if something goes
-wrong you can lose files. -f suppress error messages.
+that. \-r is for recursive directory remove. Be careful, if something goes
+wrong you can lose files. \-f suppress error messages.
 
 .B rmdir
 \fIdir(s)\fP
@@ -687,8 +688,8 @@ If set is called with no variable then only altered settings are listed.
 It can be changed by options:
 .PP
 .Ds
--a	list all settings, including default values
--d	list only default values, not necessary current ones
+\-a	list all settings, including default values
+\-d	list only default values, not necessary current ones
 .De
 .PP
 
@@ -717,13 +718,13 @@ Meta-0 - Meta-9 keys (often you can use Alt instead of Meta).
 .B source
 \fIfile\fP
 .br
-.B source -e
+.B source \-e
 \fIcommand\fP
 .PP
 Execute commands recorded in file \fIfile\fP or returned by specified external command.
 .Ds
 source ~/.lftp/rc
-source -e echo help
+source \-e echo help
 .De
 
 .B suspend
@@ -780,7 +781,7 @@ It can be in different directory, see FILES section.
 .PP
 .B lftp
 has the following settable variables (you can also use
-`set -a' to see all variables and their values):
+`set \-a' to see all variables and their values):
 .TP
 .BR bmk:save-passwords \ (boolean)
 save plain text passwords in ~/.lftp/bookmarks on `bookmark add' command.
@@ -882,7 +883,7 @@ makes it inconsistent.
 Number of jobs run in parallel in a queue.
 .TP
 .BR cmd:time-style \ (string)
-This setting is the default value for cls --time-style option.
+This setting is the default value for cls \-\-time\-style option.
 .TP
 .BR cache:cache-empty-listings \ (boolean)
 When false, empty listings are not cached.
@@ -961,8 +962,8 @@ the character set used by fish server in requests, replies and file listings.
 Default is empty which means the same as local.
 .TP
 .BR fish:connect-program \ (string)
-the program to use for connecting to remote server. It should support `-l' option
-for user name, `-p' for port number. Default is `ssh -a -x'. You can set it to
+the program to use for connecting to remote server. It should support `\-l' option
+for user name, `\-p' for port number. Default is `ssh \-a \-x'. You can set it to
 `rsh', for example.
 .TP
 .BR fish:shell \ (string)
@@ -1029,7 +1030,7 @@ and another method (NLST) will be used.
 .TP
 .BR ftp:list-options \ (string)
 sets options which are always appended to LIST command. It can be
-useful to set this to `-a' if server does not show dot (hidden) files by default.
+useful to set this to `\-a' if server does not show dot (hidden) files by default.
 Default is empty.
 .TP
 .BR ftp:nop-interval \ (seconds)
@@ -1058,8 +1059,7 @@ To disable proxy set this to empty string. Note that it is an ftp proxy which
 uses ftp protocol, not ftp over http. Default value is taken from environment
 variable \fBftp_proxy\fP if it starts with ``ftp://''. If your ftp proxy
 requires authentication, specify user name and password in the URL.
-.PP
-If ftp:proxy starts with http://, hftp (ftp over http proxy) is used instead
+If ftp:proxy starts with http:// then hftp protocol (ftp over http proxy) is used instead
 of ftp automatically.
 .TP
 .BR ftp:proxy-auth-joined \ (boolean)
@@ -1314,10 +1314,10 @@ specifies https proxy. Default value is taken from environment variable \fBhttps
 .TP
 .BR mirror:dereference " (boolean)"
 when true, mirror will dereference symbolic links by default.
-You can override it by --no-dereference option. Default if false.
+You can override it by \-\-no\-dereference option. Default if false.
 .TP
 .BR mirror:exclude-regex " (regex)"
-specifies default exclusion pattern. You can override it by --include option.
+specifies default exclusion pattern. You can override it by \-\-include option.
 .TP
 .BR mirror:include-regex " (regex)"
 specifies default inclusion pattern. It is used just after mirror:exclude-regex
@@ -1335,14 +1335,14 @@ directory before moving to other directories.
 .TP
 .BR mirror:parallel-transfer-count " (number)"
 specifies number of parallel transfers mirror is allowed to start. Default is 1.
-You can override it with --parallel option.
+You can override it with \-\-parallel option.
 .TP
 .BR mirror:set-permissions \ (boolean)
 When set to off, mirror won't try to copy file and directory permissions.
-You can override it by --perms option. Default is on.
+You can override it by \-\-perms option. Default is on.
 .TP
 .BR mirror:use-pget-n " (number)"
-specifies -n option for pget command used to transfer every single file under
+specifies \-n option for pget command used to transfer every single file under
 mirror. Default is 1 which disables pget.
 .TP
 .BR module:path \ (string)
@@ -1436,8 +1436,8 @@ Default is empty which means the same as local. This setting is only used
 for sftp protocol version prior to 4. Version 4 and later always use UTF-8.
 .TP
 .BR sftp:connect-program \ (string)
-the program to use for connecting to remote server. It should support `-l' option
-for user name, `-p' for port number. Default is `ssh -a -x'. You can set it to
+the program to use for connecting to remote server. It should support `\-l' option
+for user name, `\-p' for port number. Default is `ssh \-a \-x'. You can set it to
 `rsh', for example.
 .TP
 .BR sftp:max-packets-in-flight \ (number)
@@ -1450,7 +1450,7 @@ used depends on server.
 .TP
 .BR sftp:server-program \ (string)
 The server program implementing SFTP protocol. If it does not contain a slash `/',
-it is considered a ssh2 subsystem and -s option is used when starting connect-program.
+it is considered a ssh2 subsystem and \-s option is used when starting connect-program.
 Default is `sftp'. You can use rsh as transport level protocol like this:
 .Ds
 set sftp:connect-program rsh
@@ -1500,6 +1500,9 @@ the period over which weighted average rate is calculated to produce ETA.
 .BR xfer:eta-terse \ (boolean)
 show terse ETA (only high order parts). Default is true.
 .TP
+.BR xfer:log \ (boolean)
+when true, lftp logs transfers to \fI~/.lftp/transfer_log\fR.
+.TP
 .BR xfer:max-redirections " (number)"
 maximum number of redirections. This can be useful for downloading over HTTP.
 Default is 0, which prohibits redirections.
@@ -1519,13 +1522,16 @@ is currently just the host name as you specify it in the `open' command
 (with some exceptions where closure is meaningless, e.g. dns:cache-size).
 For some `cmd:' domain variables the closure is current URL without path.
 For other variables it is not currently used. See examples in the sample
-.IR lftp.conf .
+\fIlftp.conf\fR.
 .PP
 Certain commands and settings take a time interval parameter. It has
 the format Nx[Nx...], where N is time amount (floating point) and x is time unit: d - days,
 h - hours, m - minutes, s - seconds. Default unit is second. E.g. 5h30m or 5.5h.
 Also the interval can be `infinity', `inf', `never', `forever' - it means
 infinite interval. E.g. `sleep forever' or `set dns:cache-expire never'.
+.PP
+Boolean settings can be one of (true, on, yes, 1, +) for a True value
+or one of (false, off, no, 0, -) for a False value.
 
 .SS FTP asynchronous mode (pipelining)
 .PP
@@ -1590,7 +1596,7 @@ Used to set initial net:no-proxy variable.
 Used to set initial module:path variable.
 .IP "\fBLFTP_HOME\fP"
 Used to locate the directory that stores user-specific configuration files.  If
-unset, ~/.lftp will be used.
+unset, \fI~/.lftp\fR will be used.
 
 .SH FILES
 .TP
@@ -1607,6 +1613,9 @@ These files are executed on lftp startup after \fI/etc/lftp.conf\fR.
 The file things are logged to when lftp moves into the background in
 nohup mode.
 .TP
+.I "~/.lftp/transfer_log"
+The file transfers are logged to when xfer:log setting is set to `yes'.
+.TP
 .I "~/.lftp/bookmarks"
 The file is used to store lftp's bookmarks.  See the \fBbookmark\fR
 command.
@@ -1620,7 +1629,7 @@ Passwords are also searched here if an URL with user name but with no
 password is used.
 
 .SH SEE ALSO
-.BR ftpd "(8), " ftp (1)
+.BR ftpd (8),\  ftp (1)
 .br
 RFC854 (telnet),
 RFC959 (ftp),
