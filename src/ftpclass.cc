@@ -101,6 +101,10 @@ const bool Ftp::ftps=false;
 
 #define debug(a) Log::global->Format a
 
+#ifndef EINPROGRESS
+#define EINPROGRESS -1
+#endif
+
 FileAccess *Ftp::New() { return new Ftp(); }
 
 void  Ftp::ClassInit()
@@ -248,7 +252,7 @@ void Ftp::RestCheck(int act)
    {
       if(cmd_unsupported(act))
 	 conn->rest_supported=false;
-      DebugPrint("---- ",_("Switching to NOREST mode"),2);
+      LogNote(2,_("Switching to NOREST mode"));
       flags|=NOREST_MODE;
       if(mode==STORE)
 	 pos=0;
@@ -273,7 +277,7 @@ void Ftp::NoFileCheck(int act)
       if(real_pos>0 && !(flags&IO_FLAG) && copy_mode==COPY_NONE)
       {
 	 DataClose();
-	 DebugPrint("---- ",_("Switching to NOREST mode"),2);
+	 LogNote(2,_("Switching to NOREST mode"));
 	 flags|=NOREST_MODE;
 	 real_pos=0;
 	 if(mode==STORE)
@@ -408,7 +412,7 @@ void Ftp::LoginCheck(int act)
       const char *rexp=Query("retry-530",hostname);
       if(re_match(all_lines,rexp,REG_ICASE))
       {
-	 DebugPrint("---- ",_("Server reply matched ftp:retry-530, retrying"));
+	 LogNote(9,_("Server reply matched ftp:retry-530, retrying"));
 	 goto retry;
       }
       if(!user)
@@ -416,7 +420,7 @@ void Ftp::LoginCheck(int act)
 	 rexp=Query("retry-530-anonymous",hostname);
 	 if(re_match(all_lines,rexp,REG_ICASE))
 	 {
-	    DebugPrint("---- ",_("Server reply matched ftp:retry-530-anonymous, retrying"));
+	    LogNote(9,_("Server reply matched ftp:retry-530-anonymous, retrying"));
 	    goto retry;
 	 }
       }
@@ -474,7 +478,7 @@ void Ftp::NoPassReqCheck(int act) // for USER command
       // PASS and then say `Login incorrect'.
       if(strstr(line,"unknown")) // Don't translate!!!
       {
-	 DebugPrint("---- ",_("Saw `unknown', assume failed login"));
+	 LogNote(9,_("Saw `unknown', assume failed login"));
 	 SetError(LOGIN_FAILED,all_lines);
 	 return;
       }
@@ -485,7 +489,7 @@ void Ftp::NoPassReqCheck(int act) // for USER command
       // proxy interprets USER as user@host, so we check for host name validity
       if(proxy && (strstr(line,"host") || strstr(line,"resolve")))
       {
-	 DebugPrint("---- ",_("assuming failed host name lookup"));
+	 LogNote(9,_("assuming failed host name lookup"));
 	 SetError(LOOKUP_ERROR,all_lines);
 	 return;
       }
@@ -687,7 +691,7 @@ Ftp::pasv_state_t Ftp::Handle_PASV()
    {
       // broken server, try to fix up
       conn->fixed_pasv=true;
-      DebugPrint("---- ","Address returned by PASV seemed to be incorrect and has been fixed",2);
+      LogNote(2,"Address returned by PASV seemed to be incorrect and has been fixed");
       if(conn->data_sa.sa.sa_family==AF_INET)
 	 memcpy(a,&conn->peer_sa.in.sin_addr,sizeof(conn->peer_sa.in.sin_addr));
 #if INET6
@@ -715,7 +719,7 @@ Ftp::pasv_state_t Ftp::Handle_EPSV()
 
    if(sscanf(c,format,&port)!=1)
    {
-      DebugPrint("**** ",_("cannot parse EPSV response"),0);
+      LogError(0,_("cannot parse EPSV response"));
       Disconnect();
       return PASV_NO_ADDRESS_YET;
    }
@@ -1063,11 +1067,6 @@ void  Ftp::HandleTimeout()
    super::HandleTimeout();
 }
 
-void Ftp::Connection::SavePeerAddress()
-{
-   socklen_t addr_len=sizeof(peer_sa);
-   getpeername(control_sock,&peer_sa.sa,&addr_len);
-}
 // Create buffers after control socket had been connected.
 void Ftp::Connection::MakeBuffers()
 {
@@ -1089,10 +1088,9 @@ void Ftp::Connection::InitTelnetLayer()
 
 int   Ftp::Do()
 {
-   char	 *str=(char*)alloca(xstrlen(cwd)+xstrlen(hostname)+xstrlen(proxy)+256);
    const char *command=0;
-   bool	       append_file=false;
-   int   res;
+   bool	 append_file=false;
+   int	 res;
    socklen_t addr_len;
    unsigned char *a;
    unsigned char *p;
@@ -1102,7 +1100,7 @@ int   Ftp::Do()
    // check if idle time exceeded
    if(mode==CLOSED && conn && idle_timer.Stopped())
    {
-      DebugPrint("---- ",_("Closing idle connection"),1);
+      LogNote(1,_("Closing idle connection"));
       Disconnect();
       if(conn)
 	 idle_timer.Reset();
@@ -1221,17 +1219,19 @@ int   Ftp::Do()
 	    retries--;
 	    return MOVED;
 	 }
-	 sprintf(str,"socket: %s",strerror(errno));
-         DebugPrint("**** ",str,0);
-	 if(NonFatalError(errno))
+	 int saved_errno=errno;
+	 LogError(9,"socket: %s",strerror(saved_errno));
+	 if(NonFatalError(saved_errno))
 	    return m;
-	 sprintf(str,_("cannot create socket of address family %d"),
-			conn->peer_sa.sa.sa_family);
+	 xstring str;
+	 str.setf(_("cannot create socket of address family %d"),
+		     conn->peer_sa.sa.sa_family);
+	 errno=saved_errno;
 	 SetError(SEE_ERRNO,str);
 	 return MOVED;
       }
       KeepAlive(conn->control_sock);
-	  MinimizeLatency(conn->control_sock);
+      MinimizeLatency(conn->control_sock);
       SetSocketBuffer(conn->control_sock);
       SetSocketMaxseg(conn->control_sock);
       NonBlock(conn->control_sock);
@@ -1241,11 +1241,7 @@ int   Ftp::Do()
 
       res=SocketConnect(conn->control_sock,&conn->peer_sa);
       state=CONNECTING_STATE;
-      if(res==-1
-#ifdef EINPROGRESS
-      && errno!=EINPROGRESS
-#endif
-      )
+      if(res==-1 && errno!=EINPROGRESS)
       {
 	 int e=errno;
 	 Log::global->Format(0,"connect(control_sock): %s\n",strerror(e));
@@ -1270,8 +1266,6 @@ int   Ftp::Do()
       }
       if(!(res&POLLOUT))
 	 goto usual_return;
-
-      conn->SavePeerAddress();
 
 #if USE_SSL
       if(proxy && (!xstrcmp(proxy_proto,"ftps")
@@ -1589,8 +1583,7 @@ int   Ftp::Do()
 	 conn->data_sock=socket(conn->peer_sa.sa.sa_family,SOCK_STREAM,IPPROTO_TCP);
 	 if(conn->data_sock==-1)
 	 {
-	    sprintf(str,"socket(data): %s",strerror(errno));
-	    DebugPrint("**** ",str,0);
+	    LogError(0,"socket(data): %s",strerror(errno));
 	    goto system_error;
 	 }
 	 NonBlock(conn->data_sock);
@@ -1686,6 +1679,7 @@ int   Ftp::Do()
 
       flags&=~IO_FLAG;
       last_priority=priority;
+      conn->received_150=false;
 
       switch((enum open_mode)mode)
       {
@@ -1860,7 +1854,7 @@ int   Ftp::Do()
 	    || !strncasecmp(file,"XCWD",4)
 	    || !strncasecmp(file,"XCUP",4))
 	    {
-	       DebugPrint("---- ","Resetting cwd",9);
+	       LogNote(9,"Resetting cwd");
 	       set_real_cwd(0);  // we do not know the path now.
 	    }
 	 }
@@ -2024,7 +2018,7 @@ int   Ftp::Do()
 	    goto usual_return;
 	 if(NotSerious(errno))
 	 {
-	    DebugPrint("**** ",strerror(errno),0);
+	    LogError(0,"%s",strerror(errno));
 	    Disconnect();
 	    return MOVED;
 	 }
@@ -2036,17 +2030,19 @@ int   Ftp::Do()
       NonBlock(conn->data_sock);
       CloseOnExec(conn->data_sock);
       KeepAlive(conn->data_sock);
-	  MaximizeThroughput(conn->data_sock);
+      MaximizeThroughput(conn->data_sock);
       SetSocketBuffer(conn->data_sock);
       SetSocketMaxseg(conn->data_sock);
 
+      LogNote(5,_("Accepted data connection from (%s) port %u"),
+	 SocketNumericAddress(&conn->data_sa),SocketPort(&conn->data_sa));
       if(!conn->data_address_ok(0,verify_data_address,verify_data_port))
       {
 	 Disconnect();
 	 return MOVED;
       }
 
-      goto pre_data_open;
+      goto pre_waiting_150;
 
    case(DATASOCKET_CONNECTING_STATE):
    datasocket_connecting_state:
@@ -2080,26 +2076,19 @@ int   Ftp::Do()
 
 	 if(!conn->proxy_is_http)
 	 {
-	    sprintf(str,_("Connecting data socket to (%s) port %u"),
+	    LogNote(5,_("Connecting data socket to (%s) port %u"),
 	       SocketNumericAddress(&conn->data_sa),SocketPort(&conn->data_sa));
-	    DebugPrint("---- ",str,5);
 	    res=SocketConnect(conn->data_sock,&conn->data_sa);
 	 }
 	 else // proxy_is_http
 	 {
-	    sprintf(str,_("Connecting data socket to proxy %s (%s) port %u"),
+	    LogNote(5,_("Connecting data socket to proxy %s (%s) port %u"),
 	       proxy.get(),SocketNumericAddress(&conn->peer_sa),SocketPort(&conn->peer_sa));
-	    DebugPrint("---- ",str,5);
 	    res=SocketConnect(conn->data_sock,&conn->peer_sa);
 	 }
-	 if(res==-1
-#ifdef EINPROGRESS
-	 && errno!=EINPROGRESS
-#endif
-	 )
+	 if(res==-1 && errno!=EINPROGRESS)
 	 {
-	    sprintf(str,"connect: %s",strerror(errno));
-	    DebugPrint("**** ",str,0);
+	    LogError(0,"connect: %s",strerror(errno));
 	    Disconnect();
 	    if(NotSerious(errno))
 	       return MOVED;
@@ -2112,7 +2101,7 @@ int   Ftp::Do()
 	 {
 	    if(conn->fixed_pasv && QueryBool("auto-passive-mode",hostname))
 	    {
-	       DebugPrint("---- ",_("Switching passive mode off"),2);
+	       LogNote(2,_("Switching passive mode off"));
 	       SetFlag(PASSIVE_MODE,0);
 	    }
 	    Disconnect();
@@ -2120,9 +2109,9 @@ int   Ftp::Do()
 	 }
 	 if(!(res&POLLOUT))
 	    goto usual_return;
-	 DebugPrint("---- ",_("Data connection established"),9);
+	 LogNote(9,_("Data connection established"));
 	 if(!conn->proxy_is_http)
-	    goto pre_data_open;
+	    goto pre_waiting_150;
 
 	 pasv_state=PASV_HTTP_PROXY_CONNECTED;
 	 m=MOVED;
@@ -2133,11 +2122,22 @@ int   Ftp::Do()
 	 conn->data_iobuf=new IOBufferFDStream(new FDStream(conn->data_sock,"data-socket"),IOBuffer::GET);
       case PASV_HTTP_PROXY_CONNECTED:
       	 if(HttpProxyReplyCheck(conn->data_iobuf))
-	    goto pre_data_open;
+	    goto pre_waiting_150;
 	 goto usual_return;
       }
 
-   pre_data_open:
+   pre_waiting_150:
+      state=WAITING_150_STATE;
+      m=MOVED;
+   case WAITING_150_STATE:
+      m|=FlushSendQueue();
+      m|=ReceiveResp();
+      if(state!=WAITING_150_STATE || Error())
+         return MOVED;
+      if(!conn->received_150)
+	 return m;
+
+      // now init data connection properly and start data exchange
       assert(rate_limit==0);
       rate_limit=new RateLimit(hostname);
       state=DATA_OPEN_STATE;
@@ -2185,7 +2185,7 @@ int   Ftp::Do()
 	    // prevent infinite NOOP's
 	    if(nop_offset==pos && timeout_timer.GetLastSetting()<nop_count*nop_interval)
 	    {
-	       DebugPrint("**** ","NOOP timeout",1);
+	       LogError(1,"NOOP timeout");
 	       HandleTimeout();
 	       return MOVED;
 	    }
@@ -2214,7 +2214,7 @@ int   Ftp::Do()
       timeout_timer.Reset(conn->data_iobuf->EventTime());
       if(conn->data_iobuf->Error() && conn->data_sock!=-1)
       {
-	 DebugPrint("**** ",conn->data_iobuf->ErrorText(),0);
+	 LogError(0,"%s",conn->data_iobuf->ErrorText());
 	 conn->CloseDataSocket();
       }
       // handle errors on data connection only when storing or got all replies
@@ -2257,7 +2257,7 @@ int   Ftp::Do()
 	 }
 	 if(conn->data_iobuf->Size()==0 && conn->data_iobuf->Eof())
 	 {
-	    DebugPrint("---- ","Got EOF on data connection",9);
+	    LogNote(9,"Got EOF on data connection");
 	    DataClose();
 	    if(expect->IsEmpty())
 	    {
@@ -2577,7 +2577,7 @@ int  Ftp::ReceiveResp()
    timeout_timer.Reset(conn->control_recv->EventTime());
    if(conn->control_recv->Error())
    {
-      DebugPrint("**** ",conn->control_recv->ErrorText(),0);
+      LogError(0,"%s",conn->control_recv->ErrorText());
       if(conn->control_recv->ErrorFatal())
 	 SetError(FATAL,conn->control_recv->ErrorText());
       DisconnectNow();
@@ -2594,7 +2594,7 @@ int  Ftp::ReceiveResp()
       conn->control_recv->Get(&resp,&resp_size);
       if(resp==0) // eof
       {
-	 DebugPrint("**** ",_("Peer closed connection"),0);
+	 LogError(0,_("Peer closed connection"));
 	 DisconnectNow();
 	 return MOVED;
       }
@@ -2650,12 +2650,11 @@ int  Ftp::ReceiveResp()
 	 conn->data_iobuf->Put(line,line_len);
 	 conn->data_iobuf->Put("\n");
 	 if(code)
-	    DebugPrint("<--- ",line,ReplyLogPriority(code));
+	    LogRecv(ReplyLogPriority(code),"%s",line.get());
       }
       else
       {
-	 DebugPrint("<--- ",line,
-	    ReplyLogPriority(conn->multiline_code?conn->multiline_code:code));
+	 LogRecv(ReplyLogPriority(conn->multiline_code?conn->multiline_code:code),"%s",line.get());
       }
 
       int all_lines_len=xstrlen(all_lines);
@@ -2694,7 +2693,7 @@ int  Ftp::ReceiveResp()
 	 {
 	    error_code=OK;
 	    Disconnect();
-	    DebugPrint("---- ",_("Persist and retry"),4);
+	    LogNote(4,_("Persist and retry"));
 	    return m;
 	 }
       }
@@ -2744,12 +2743,12 @@ bool Ftp::HttpProxyReplyCheck(const SMTaskRef<IOBuffer>& buf)
    {
       if(buf->Error())
       {
-	 DebugPrint("**** ",buf->ErrorText(),0);
+	 LogError(0,"%s",buf->ErrorText());
 	 if(buf->ErrorFatal())
 	    SetError(FATAL,buf->ErrorText());
       }
       else if(buf->Eof())
-	 DebugPrint("**** ",_("Peer closed connection"),0);
+	 LogError(0,_("Peer closed connection"));
       if(conn && (buf->Eof() || buf->Error()))
 	 DisconnectNow();
       return false;
@@ -3062,7 +3061,7 @@ int  Ftp::FlushSendQueue(bool all)
 
    if(conn->control_send->Error())
    {
-      DebugPrint("**** ",conn->control_send->ErrorText(),0);
+      LogError(0,"%s",conn->control_send->ErrorText());
       if(conn->control_send->ErrorFatal())
       {
 	 if(conn->ssl_is_activated() && !ftps && !QueryBool("ssl-force",hostname))
@@ -3226,6 +3225,7 @@ void  Ftp::Close()
       case(CWD_CWD_WAITING_STATE):
       case(WAITING_STATE):
       case(DATA_OPEN_STATE):
+      case(WAITING_150_STATE):
 	 state=EOF_STATE;
 	 break;
       case(INITIAL_STATE):
@@ -3675,6 +3675,9 @@ void Ftp::CheckFEAT(char *reply)
 
 void Ftp::CheckResp(int act)
 {
+   if(act==150)
+      conn->received_150=true;
+
    if(act==150 && (flags&PASSIVE_MODE) && conn->aborted_data_sock!=-1)
       conn->CloseAbortedDataConnection();
 
@@ -3695,7 +3698,7 @@ void Ftp::CheckResp(int act)
 	 {
 	    entity_size=size_ll;
 	    *opt_size=entity_size;
-	    DebugPrint("---- ",_("saw file size in response"),7);
+	    LogNote(7,_("saw file size in response"));
 	 }
       }
    }
@@ -3710,7 +3713,7 @@ void Ftp::CheckResp(int act)
    if(!exp)
    {
       if(act!=421)
-	 DebugPrint("**** ",_("extra server response"),3);
+	 LogError(3,_("extra server response"));
       if(is2XX(act)) // some buggy servers send several 226 replies
 	 return;
       Disconnect();
@@ -3724,7 +3727,7 @@ void Ftp::CheckResp(int act)
    if(act==331 && cc==Expect::READY && !(flags&SYNC_MODE) && expect->Count()>1)
    {
       delete expect->Pop();
-      DebugPrint("---- ",_("Turning on sync-mode"),2);
+      LogNote(2,_("Turning on sync-mode"));
       ResMgr::Set("ftp:sync-mode",hostname,"on");
       Disconnect();
       try_time=0; // retry immediately
@@ -3744,7 +3747,7 @@ void Ftp::CheckResp(int act)
       {
 	 DataClose();
 	 state=EOF_STATE;
-	 DebugPrint("---- ","Setting ftp:use-stat-for-list to off",2);
+	 LogNote(2,"Setting ftp:use-stat-for-list to off");
 	 ResMgr::Set("ftp:use-stat-for-list",hostname,"off");
 	 use_stat_for_list=false;
       }
@@ -3756,7 +3759,7 @@ void Ftp::CheckResp(int act)
    case Expect::READY:
       if(!(flags&SYNC_MODE) && re_match(all_lines,Query("auto-sync-mode",hostname)))
       {
-	 DebugPrint("---- ",_("Turning on sync-mode"),2);
+	 LogNote(2,_("Turning on sync-mode"));
 	 ResMgr::Set("ftp:sync-mode",hostname,"on");
 	 assert(flags&SYNC_MODE);
 	 Disconnect();
@@ -3871,7 +3874,7 @@ void Ftp::CheckResp(int act)
       passive_off:
 	 if(QueryBool("auto-passive-mode",hostname))
 	 {
-	    DebugPrint("---- ",_("Switching passive mode off"),2);
+	    LogNote(2,_("Switching passive mode off"));
 	    SetFlag(PASSIVE_MODE,0);
 	 }
       }
@@ -3891,7 +3894,7 @@ void Ftp::CheckResp(int act)
       {
 	 if(QueryBool("auto-passive-mode",hostname))
 	 {
-	    DebugPrint("---- ",_("Switching passive mode on"),2);
+	    LogNote(2,_("Switching passive mode on"));
 	    SetFlag(PASSIVE_MODE,1);
 	 }
       }
@@ -3946,7 +3949,7 @@ void Ftp::CheckResp(int act)
       if(strstr(line,"ABOR")
       && expect->Count()>=2 && expect->FirstIs(Expect::ABOR))
       {
-	 DebugPrint("**** ","server bug: 426 reply missed",1);
+	 LogError(1,"server bug: 426 reply missed");
 	 delete expect->Pop();
 	 conn->CloseAbortedDataConnection();
       }
@@ -4076,6 +4079,7 @@ const char *Ftp::CurrentStatus()
 	 return _("Waiting for other copy peer...");
       if(mode==STORE)
 	 return(_("Waiting for transfer to complete"));
+   case(WAITING_150_STATE):
       return(_("Waiting for response..."));
    case(ACCEPTING_STATE):
       return(_("Waiting for data connection..."));
@@ -4439,7 +4443,7 @@ const char *Ftp::make_skey_reply()
       }
    }
 
-   DebugPrint("---- ","found s/key substring");
+   LogNote(9,"found s/key substring");
 
    int skey_sequence=0;
    char *buf=(char*)alloca(strlen(cp));
