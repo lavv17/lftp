@@ -25,6 +25,7 @@
 
 #include <unistd.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include "SMTask.h"
 
 class Log : public SMTask
@@ -57,6 +58,7 @@ public:
    void DoWrite(const char *str);
    void Write(int l,const char *str);
    void Format(int l,const char *fmt,...) PRINTF_LIKE(3,4);
+   void vFormat(int l,const char *fmt,va_list v);
 
    void SetLevel(int l) { level=l; }
    void Enable()  { enabled=true;  }

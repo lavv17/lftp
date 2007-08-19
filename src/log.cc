@@ -119,6 +119,17 @@ void Log::Format(int l,const char *f,...)
    DoWrite(buf);
 }
 
+void Log::vFormat(int l,const char *f,va_list v)
+{
+   if(!WillOutput(l))
+      return;
+
+   static xstring buf;
+   buf.vsetf(f,v);
+
+   DoWrite(buf);
+}
+
 void Log::Cleanup()
 {
    global=0;
