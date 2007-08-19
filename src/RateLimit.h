@@ -23,6 +23,8 @@
 #ifndef RATELIMIT_H
 #define RATELIMIT_H
 
+#include "TimeDate.h"
+
 class RateLimit
 {
 public:
