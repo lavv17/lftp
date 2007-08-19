@@ -1,3 +1,10 @@
+	* FileAccess.cc, FileAccess.h: new Log* methods.
+	* log.cc, log.h: (vFormat) new method.
+	* RateLimit.cc, RateLimit.h, NetAccess.cc, Makefile.am: move RateLimit
+	  implementation to a separate file.
+	* ftpclass.cc, ftpclass.h: use new Log* methods; don't call getpeername
+	  for just connected socket; wait for 150 reply before accessing data socket.
+
 2007-08-16  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileSetOutput.cc: truncate xstring correctly.
