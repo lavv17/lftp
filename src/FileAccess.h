@@ -146,7 +146,11 @@ protected:
    static void NonBlock(int fd);
    static void CloseOnExec(int fd);
 
-   void  DebugPrint(const char *prefix,const char *str,int level=9);
+   static void DebugPrint(const char *prefix,const char *str,int level=9);
+   static void LogError(int level,const char *fmt,...) PRINTF_LIKE(2,3);
+   static void LogNote(int level,const char *fmt,...) PRINTF_LIKE(2,3);
+   static void LogRecv(int level,const char *fmt,...) PRINTF_LIKE(2,3);
+   static void LogSend(int level,const char *fmt,...) PRINTF_LIKE(2,3);
 
    time_t try_time;
    int retries;
