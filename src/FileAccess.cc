@@ -104,14 +104,19 @@ FileAccess::~FileAccess()
    ListDel(FileAccess,chain,this,next);
 }
 
-void  FileAccess::DebugPrint(const char *prefix,const char *str,int level)
+void  FileAccess::Log2(int level,const char *str)
 {
    int len=strlen(str);
    if(len>0 && str[len-1]=='\n')
       len--;
    if(len>0 && str[len-1]=='\r')
       len--;
-   Log::global->Format(level,"%s%.*s\n",prefix,len,str);
+   Log::global->Format(level,"%.*s\n",len,str);
+}
+void  FileAccess::Log3(int level,const char *prefix,const char *str)
+{
+   Log::global->Write(level,prefix);
+   Log2(level,str);
 }
 void FileAccess::LogError(int level,const char *fmt,...)
 {
@@ -131,23 +136,13 @@ void FileAccess::LogNote(int level,const char *fmt,...)
    Log::global->Write(level,"\n");
    va_end(v);
 }
-void FileAccess::LogRecv(int level,const char *fmt,...)
+void FileAccess::LogRecv(int level,const char *line)
 {
-   va_list v;
-   va_start(v,fmt);
-   Log::global->Write(level,"<--- ");
-   Log::global->vFormat(level,fmt,v);
-   Log::global->Write(level,"\n");
-   va_end(v);
+   Log3(level,"<--- ",line);
 }
-void FileAccess::LogSend(int level,const char *fmt,...)
+void FileAccess::LogSend(int level,const char *line)
 {
-   va_list v;
-   va_start(v,fmt);
-   Log::global->Write(level,"---> ");
-   Log::global->vFormat(level,fmt,v);
-   Log::global->Write(level,"\n");
-   va_end(v);
+   Log3(level,"---> ",line);
 }
 
 void FileAccess::NonBlock(int fd)

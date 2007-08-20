@@ -146,11 +146,8 @@ protected:
    static void NonBlock(int fd);
    static void CloseOnExec(int fd);
 
-   static void DebugPrint(const char *prefix,const char *str,int level=9);
-   static void LogError(int level,const char *fmt,...) PRINTF_LIKE(2,3);
-   static void LogNote(int level,const char *fmt,...) PRINTF_LIKE(2,3);
-   static void LogRecv(int level,const char *fmt,...) PRINTF_LIKE(2,3);
-   static void LogSend(int level,const char *fmt,...) PRINTF_LIKE(2,3);
+   static void Log2(int level,const char *str);
+   static void Log3(int level,const char *prefix,const char *str);
 
    time_t try_time;
    int retries;
@@ -389,6 +386,11 @@ public:
 
    static void ClassInit();
    static void ClassCleanup();
+
+   static void LogError(int level,const char *fmt,...) PRINTF_LIKE(2,3);
+   static void LogNote(int level,const char *fmt,...) PRINTF_LIKE(2,3);
+   static void LogRecv(int level,const char *line);
+   static void LogSend(int level,const char *line);
 };
 
 // shortcut
