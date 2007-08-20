@@ -152,9 +152,9 @@ void NetAccess::SetSocketBuffer(int sock)
    if(socket_buffer==0)
       return;
    if(-1==setsockopt(sock,SOL_SOCKET,SO_SNDBUF,(char*)&socket_buffer,sizeof(socket_buffer)))
-      Log::global->Format(1,"setsockopt(SO_SNDBUF,%d): %s\n",socket_buffer,strerror(errno));
+      LogError(1,"setsockopt(SO_SNDBUF,%d): %s",socket_buffer,strerror(errno));
    if(-1==setsockopt(sock,SOL_SOCKET,SO_RCVBUF,(char*)&socket_buffer,sizeof(socket_buffer)))
-      Log::global->Format(1,"setsockopt(SO_RCVBUF,%d): %s\n",socket_buffer,strerror(errno));
+      LogError(1,"setsockopt(SO_RCVBUF,%d): %s",socket_buffer,strerror(errno));
 }
 void NetAccess::SetSocketMaxseg(int sock)
 {
@@ -165,7 +165,7 @@ void NetAccess::SetSocketMaxseg(int sock)
    if(socket_maxseg==0)
       return;
    if(-1==setsockopt(sock,SOL_TCP,TCP_MAXSEG,(char*)&socket_maxseg,sizeof(socket_maxseg)))
-      Log::global->Format(1,"setsockopt(TCP_MAXSEG,%d): %s\n",socket_maxseg,strerror(errno));
+      LogError(1,"setsockopt(TCP_MAXSEG,%d): %s",socket_maxseg,strerror(errno));
 #endif
 }
 
@@ -238,7 +238,7 @@ int NetAccess::SocketCreate(int af,int type,int proto)
    {
       int res=bind(s,&bind_addr.sa,sizeof(bind_addr.sa));
       if(res==-1)
-	 Log::global->Format(0,"**** bind(socket, %s): %s\n",b,strerror(errno));
+	 LogError(0,"bind(socket, %s): %s",b,strerror(errno));
    }
    return s;
 }
@@ -317,7 +317,6 @@ int NetAccess::CheckHangup(const struct pollfd *pfd,int num)
    for(int i=0; i<num; i++)
    {
 #ifdef SO_ERROR
-      char  str[256];
       int   s_errno=0;
       socklen_t len;
 
@@ -334,15 +333,14 @@ int NetAccess::CheckHangup(const struct pollfd *pfd,int num)
 	 return 0;
       if(errno!=0 || s_errno!=0)
       {
-	 sprintf(str,_("Socket error (%s) - reconnecting"),
+	 LogError(0,_("Socket error (%s) - reconnecting"),
 				    strerror(errno?errno:s_errno));
-	 DebugPrint("**** ",str,0);
 	 return 1;
       }
 #endif /* SO_ERROR */
       if(pfd[i].revents&POLLERR)
       {
-	 DebugPrint("**** ","POLLERR",0);
+	 LogError(0,"POLLERR on fd %d",pfd[i].fd);
 	 return 1;
       }
    } /* end for */
@@ -368,10 +366,8 @@ void NetAccess::SayConnectingTo()
 {
    assert(peer_curr<peer.count());
    const char *h=(proxy?proxy:hostname);
-   char *str=string_alloca(256+strlen(h));
-   sprintf(str,_("Connecting to %s%s (%s) port %u"),proxy?"proxy ":"",
+   LogNote(1,_("Connecting to %s%s (%s) port %u"),proxy?"proxy ":"",
       h,SocketNumericAddress(&peer[peer_curr]),SocketPort(&peer[peer_curr]));
-   DebugPrint("---- ",str,1);
 }
 
 void NetAccess::SetProxy(const char *px)
@@ -425,7 +421,7 @@ bool NetAccess::NoProxy(const char *hostname)
 
 void NetAccess::HandleTimeout()
 {
-   DebugPrint("**** ",_("Timeout - reconnecting"),0);
+   LogError(0,_("Timeout - reconnecting"));
    Disconnect();
    timeout_timer.Reset();
 }

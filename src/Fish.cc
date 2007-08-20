@@ -72,7 +72,7 @@ int Fish::Do()
    // check if idle time exceeded
    if(mode==CLOSED && send_buf && idle_timer.Stopped())
    {
-      DebugPrint("---- ",_("Closing idle connection"),1);
+      LogNote(1,_("Closing idle connection"));
       Disconnect();
       return m;
    }
@@ -314,7 +314,7 @@ void Fish::MoveConnectionHere(Fish *o)
 void Fish::Disconnect()
 {
    if(send_buf)
-      DebugPrint("---- ",_("Disconnecting"),9);
+      LogNote(9,_("Disconnecting"));
    send_buf=0;
    recv_buf=0;
    ssh=0;
@@ -391,25 +391,11 @@ void Fish::Close()
 void Fish::Send(const char *format,...)
 {
    va_list va;
-   char *str;
-
-   static int max_send=256;
-   for(;;)
-   {
-      va_start(va,format);
-      str=string_alloca(max_send);
-      int res=vsnprintf(str,max_send,format,va);
-      va_end(va);
-      if(res>=0 && res<max_send)
-      {
-	 if(res<max_send/16)
-	    max_send/=2;
-	 break;
-      }
-      max_send*=2;
-   }
-
-   DebugPrint("---> ",str,5);
+   va_start(va,format);
+   xstring str;
+   str.vsetf(format,va);
+   va_end(va);
+   LogSend(5,str);
    send_buf->Put(str);
 }
 
@@ -593,7 +579,7 @@ int Fish::HandleReplies()
       }
       if(recv_buf->Eof())
       {
-	 DebugPrint("**** ",_("Peer closed connection"),0);
+	 LogError(0,_("Peer closed connection"));
 	 if(!RespQueueIsEmpty() && RespQueue[RQ_head]==EXPECT_CWD && message)
 	    SetError(NO_FILE,message);
 	 Disconnect();
@@ -656,7 +642,7 @@ int Fish::HandleReplies()
 	 code=-1;
    }
 
-   DebugPrint("<--- ",line,ReplyLogPriority(code));
+   LogRecv(ReplyLogPriority(code),line);
    if(code==-1)
    {
       if(!received_greeting && !strcmp(line,"FISH:"))
@@ -673,7 +659,7 @@ int Fish::HandleReplies()
 
    if(RespQueueIsEmpty())
    {
-      DebugPrint("**** ",_("extra server response"),3);
+      LogError(3,_("extra server response"));
       message.set(0);
       return m;
    }

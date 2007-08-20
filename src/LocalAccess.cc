@@ -72,7 +72,7 @@ void LocalAccess::errno_handle()
    else
       error.vset(file.get(),": ",err,NULL);
    if(e!=EEXIST)
-      Log::global->Format(0,"**** %s\n",error.get());
+      LogError(0,"%s",error.get());
 }
 
 int LocalAccess::Done()
@@ -125,7 +125,7 @@ int LocalAccess::Do()
 	 }
 	 else// if(mode==QUOTE_CMD)
 	    strcpy(cmd,file);
-	 DebugPrint("---- ",cmd,5);
+	 LogNote(5,"running `%s'",cmd);
 	 InputFilter *f_stream=new InputFilter(cmd);
 	 f_stream->SetCwd(cwd);
 	 stream=f_stream;
@@ -169,7 +169,7 @@ int LocalAccess::Do()
    }
    case(REMOVE): {
       const char *f=dir_file(cwd,file);
-      Log::global->Format(5,"---- remove(%s)\n",f);
+      LogNote(5,"remove(%s)",f);
       if(remove(f)==-1)
       {
 	 errno_handle();

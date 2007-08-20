@@ -77,7 +77,7 @@ int SFtp::Do()
    // check if idle time exceeded
    if(mode==CLOSED && send_buf && idle_timer.Stopped())
    {
-      DebugPrint("---- ",_("Closing idle connection"),1);
+      LogNote(1,_("Closing idle connection"));
       Disconnect();
       return m;
    }
@@ -90,6 +90,7 @@ int SFtp::Do()
 
    if(send_buf && send_buf->Error())
    {
+      LogError(0,"send: %s",send_buf->ErrorText());
       Disconnect();
       return MOVED;
    }
@@ -183,7 +184,7 @@ int SFtp::Do()
       if(init[0])
 	 cmd->Add(init);
       xstring_ca cmd_str(cmd->Combine(0));
-      Log::global->Format(9,"---- %s (%s)\n",_("Running connect program"),cmd_str.get());
+      LogNote(9,"%s (%s)",_("Running connect program"),cmd_str.get());
       ssh=new PtyShell(cmd);
       ssh->UsePipes();
       state=CONNECTING;
@@ -262,6 +263,8 @@ int SFtp::Do()
       file_buf->Get(&b,&s);
       if(s<size_write && !eof)
 	 return m;   // wait for more data before sending.
+      if(RespQueueSize()>max_packets_in_flight)
+	 return m;
       if(s==0)
       {
 	 // no more data, set attributes and close the file.
@@ -274,8 +277,8 @@ int SFtp::Do()
 	 m=MOVED;
 	 break;
       }
-      if(RespQueueSize()>max_packets_in_flight)
-	 return m;
+      if(s>size_write)
+	 s=size_write;
       SendRequest(new Request_WRITE(handle,request_pos,b,s),Expect::WRITE_STATUS);
       file_buf->Skip(s);
       request_pos+=s;
@@ -319,7 +322,7 @@ void SFtp::MoveConnectionHere(SFtp *o)
 void SFtp::Disconnect()
 {
    if(send_buf)
-      DebugPrint("---- ",_("Disconnecting"),9);
+      LogNote(9,_("Disconnecting"));
    handle.set(0);
    send_buf=0;
    recv_buf=0;
@@ -399,7 +402,7 @@ SFtp::unpack_status_t SFtp::Packet::UnpackString(const Buffer *b,int *offset,int
    int len=b->UnpackUINT32BE(*offset);
    if(len>limit-*offset-4)
    {
-      Log::global->Write(2,"**** bad string in reply (invalid length field)");
+      LogError(2,"bad string in reply (invalid length field)");
       return UNPACK_WRONG_FORMAT;
    }
    *offset+=4;
@@ -501,10 +504,10 @@ SFtp::unpack_status_t SFtp::UnpackPacket(Buffer *b,SFtp::Packet **p)
    case SSH_FXP_BLOCK:
    case SSH_FXP_UNBLOCK:
    case SSH_FXP_EXTENDED:
-      DebugPrint("**** ","request in reply??",0);
+      LogError(0,"request in reply??");
       return UNPACK_WRONG_FORMAT;
    case SSH_FXP_EXTENDED_REPLY:
-      DebugPrint("**** ","unexpected SSH_FXP_EXTENDED_REPLY",0);
+      LogError(0,"unexpected SSH_FXP_EXTENDED_REPLY");
       return UNPACK_WRONG_FORMAT;
    }
    res=pp->Unpack(b);
@@ -513,10 +516,10 @@ SFtp::unpack_status_t SFtp::UnpackPacket(Buffer *b,SFtp::Packet **p)
       switch(res)
       {
       case UNPACK_PREMATURE_EOF:
-	 DebugPrint("**** ","premature eof",0);
+	 LogError(0,"premature eof");
 	 break;
       case UNPACK_WRONG_FORMAT:
-	 DebugPrint("**** ","wrong packet format",0);
+	 LogError(0,"wrong packet format");
 	 break;
       case UNPACK_NO_DATA_YET:
       case UNPACK_SUCCESS:
@@ -559,7 +562,7 @@ const char *SFtp::SkipHome(const char *path)
 const char *SFtp::WirePath(const char *path)
 {
    path=SkipHome(dir_file(cwd,path));
-   Log::global->Format(9,"---- path on wire is `%s'\n",path);
+   LogNote(9,"path on wire is `%s'",path);
    return lc_to_utf8(path);
 }
 
@@ -733,7 +736,9 @@ int SFtp::HandlePty()
 	 return m;
       }
       if(pty_recv_buf->Eof())
-	 DebugPrint("**** ",_("Peer closed connection"),0);
+	 LogError(0,_("Peer closed connection"));
+      if(pty_recv_buf->Error())
+	 LogError(0,"pty read: %s",pty_recv_buf->ErrorText());
       if(pty_recv_buf->Eof() || pty_recv_buf->Error())
       {
 	 Disconnect();
@@ -748,7 +753,7 @@ int SFtp::HandlePty()
    line[s-1]=0;
    pty_recv_buf->Skip(s);
 
-   DebugPrint("<--- ",line,4);
+   LogRecv(4,line);
    if(!received_greeting && !strcmp(line,"SFTP:"))
       received_greeting=true;
 
@@ -764,7 +769,7 @@ void SFtp::HandleExpect(Expect *e)
       if(reply->TypeIs(SSH_FXP_VERSION))
       {
 	 protocol_version=((Reply_VERSION*)reply)->GetVersion();
-	 Log::global->Format(9,"---- protocol version set to %d\n",protocol_version);
+	 LogNote(9,"protocol version set to %d",protocol_version);
 	 const char *charset=0;
 	 if(protocol_version>=4)
 	    charset="UTF-8";
@@ -792,7 +797,7 @@ void SFtp::HandleExpect(Expect *e)
 	 if(a && !home_auto)
 	 {
 	    home_auto.set(utf8_to_lc(a->name));
-	    Log::global->Format(9,"---- home set to %s\n",home_auto.get());
+	    LogNote(9,"home set to %s",home_auto.get());
 	    PropagateHomeAuto();
 	    if(!home)
 	       set_home(home_auto);
@@ -825,13 +830,12 @@ void SFtp::HandleExpect(Expect *e)
       {
 	 handle.set(((Reply_HANDLE*)reply)->GetHandle());
 	 state=(mode==STORE?FILE_SEND:FILE_RECV);
-	 assert(!file_buf);
 	 file_buf=new Buffer;
-	 Log::global->Write(9,"---- got file handle ");
+	 xstring handle_x("");
 	 int handle_len=handle.length();
 	 for(int i=0; i<handle_len; i++)
-	    Log::global->Format(9,"%02X",handle[i]);
-	 Log::global->Format(9," (%d)\n",handle_len);
+	    handle_x.appendf("%02X",handle[i]);
+	 LogNote(9,"got file handle %s (%d)",handle_x.get(),handle_len);
 	 request_pos=real_pos=pos;
 	 if(mode==RETRIEVE)
 	    SendRequest(new Request_FSTAT(handle,
@@ -868,7 +872,7 @@ void SFtp::HandleExpect(Expect *e)
 	 {
 	    const char *b; int s;
 	    d->GetData(&b,&s);
-	    Log::global->Format(9,"---- data packet: pos=%lld, size=%d\n",(long long)r->pos,s);
+	    LogNote(9,"data packet: pos=%lld, size=%d",(long long)r->pos,s);
 	    file_buf->Put(b,s);
 	    if(d->Eof())
 	       goto eof;
@@ -885,7 +889,7 @@ void SFtp::HandleExpect(Expect *e)
 	 else
 	 {
 	    if(e->next!=ooo_chain)
-	       Log::global->Format(9,"---- put a packet with id=%d on out-of-order chain (need_pos=%lld packet_pos=%lld)\n",
+	       LogNote(9,"put a packet with id=%d on out-of-order chain (need_pos=%lld packet_pos=%lld)",
 		  reply->GetID(),pos+file_buf->Size(),r->pos);
 	    e->next=ooo_chain;
 	    ooo_chain=e;
@@ -895,7 +899,7 @@ void SFtp::HandleExpect(Expect *e)
       else if(reply->TypeIs(SSH_FXP_NAME))
       {
 	 Reply_NAME *r=(Reply_NAME*)reply;
-	 Log::global->Format(9,"---- file name count=%d\n",r->GetCount());
+	 LogNote(9,"file name count=%d",r->GetCount());
 	 for(int i=0; i<r->GetCount(); i++)
 	 {
 	    const NameAttrs *a=r->GetNameAttrs(i);
@@ -937,7 +941,7 @@ void SFtp::HandleExpect(Expect *e)
 	    {
 	    eof:
 	       if(!eof)
-		  Log::global->Write(9,"---- eof\n");
+		  LogNote(9,"eof");
 	       eof=true;
 	       state=DONE;
 	       if(file_buf && !ooo_chain)
@@ -966,7 +970,7 @@ void SFtp::HandleExpect(Expect *e)
 	    array_for_info[e->i].get_time=false;
 	    break;
 	 }
-	 Log::global->Format(9,"---- file info: size=%lld, date=%s",(long long)entity_size,ctime(&entity_date));
+	 LogNote(9,"file info: size=%lld, date=%s",(long long)entity_size,ctime(&entity_date));
 	 if(opt_size)
 	    *opt_size=entity_size;
 	 if(opt_date)
@@ -1025,7 +1029,7 @@ int SFtp::HandleReplies()
       ooo_scan=next;
       if(++i>64)
       {
-	 DebugPrint("**** ","Too many out-of-order packets");
+	 LogError(0,"Too many out-of-order packets");
 	 Disconnect();
 	 return MOVED;
       }
@@ -1037,12 +1041,13 @@ int SFtp::HandleReplies()
    {
       if(recv_buf->Error())
       {
+	 LogError(0,"receive: %s",recv_buf->ErrorText());
 	 Disconnect();
 	 return MOVED;
       }
       if(recv_buf->Eof() && pty_recv_buf->Size()==0)
       {
-	 DebugPrint("**** ",_("Peer closed connection"),0);
+	 LogError(0,_("Peer closed connection"));
 	 Disconnect();
 	 m=MOVED;
       }
@@ -1058,7 +1063,7 @@ int SFtp::HandleReplies()
       return m;
    if(st!=UNPACK_SUCCESS)
    {
-      DebugPrint("**** ",_("invalid server response format"),2);
+      LogError(2,_("invalid server response format"));
       Disconnect();
       return MOVED;
    }
@@ -1067,7 +1072,7 @@ int SFtp::HandleReplies()
    Expect *e=FindExpectExclusive(reply);
    if(e==0)
    {
-      DebugPrint("**** ",_("extra server response"),3);
+      LogError(3,_("extra server response"));
       delete reply;
       return MOVED;
    }

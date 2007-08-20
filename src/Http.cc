@@ -62,6 +62,10 @@ CDECL char *strptime(const char *buf, const char *format, struct tm *tm);
 #define H_CONTINUE(x)	((x) == 100 || (x) == 102)
 #define H_REQUESTED_RANGE_NOT_SATISFIABLE(x) ((x) == 416)
 
+#ifndef EINPROGRESS
+#define EINPROGRESS -1
+#endif
+
 void Http::Init()
 {
    state=DISCONNECTED;
@@ -142,7 +146,7 @@ void Http::Disconnect()
    rate_limit=0;
    if(sock!=-1)
    {
-      DebugPrint("---- ",_("Closing HTTP connection"),7);
+      LogNote(7,_("Closing HTTP connection"));
       close(sock);
       sock=-1;
    }
@@ -223,25 +227,11 @@ void Http::Close()
 void Http::Send(const char *format,...)
 {
    va_list va;
-   char *str;
-
-   static int max_send=256;
-   for(;;)
-   {
-      va_start(va,format);
-      str=string_alloca(max_send);
-      int res=vsnprintf(str,max_send,format,va);
-      va_end(va);
-      if(res>=0 && res<max_send)
-      {
-	 if(res<max_send/16)
-	    max_send/=2;
-	 break;
-      }
-      max_send*=2;
-   }
-
-   DebugPrint("---> ",str,5);
+   va_start(va,format);
+   xstring str;
+   str.vsetf(format,va);
+   va_end(va);
+   LogSend(5,str);
    send_buf->Put(str);
 }
 
@@ -937,7 +927,7 @@ int Http::Do()
    // check if idle time exceeded
    if(mode==CLOSED && sock!=-1 && idle_timer.Stopped())
    {
-      DebugPrint("---- ",_("Closing idle connection"),1);
+      LogNote(1,_("Closing idle connection"));
       Disconnect();
       return m;
    }
@@ -1082,14 +1072,10 @@ int Http::Do()
 
       SayConnectingTo();
       res=SocketConnect(sock,&peer[peer_curr]);
-      if(res==-1
-#ifdef EINPROGRESS
-      && errno!=EINPROGRESS
-#endif
-      )
+      if(res==-1 && errno!=EINPROGRESS)
       {
 	 NextPeer();
-	 Log::global->Format(0,"connect: %s\n",strerror(errno));
+	 LogError(0,"connect: %s\n",strerror(errno));
 	 Disconnect();
 	 if(NotSerious(errno))
 	    return MOVED;
@@ -1157,7 +1143,7 @@ int Http::Do()
 	 goto handle_quote_cmd;
       if(recv_buf->Eof())
       {
-	 DebugPrint("**** ",_("Peer closed connection"),0);
+	 LogError(0,_("Peer closed connection"));
 	 Disconnect();
 	 return MOVED;
       }
@@ -1173,7 +1159,7 @@ int Http::Do()
 	 state=DONE;
 	 return MOVED;
       }
-      DebugPrint("---- ",_("Sending request..."));
+      LogNote(9,_("Sending request..."));
       if(mode==ARRAY_INFO)
       {
 	 SendArrayInfoRequest();
@@ -1199,13 +1185,13 @@ int Http::Do()
       handle_buf_error:
 	 if(send_buf->Error())
 	 {
-	    DebugPrint("**** ",send_buf->ErrorText(),0);
+	    LogError(0,"send: %s",send_buf->ErrorText());
 	    if(send_buf->ErrorFatal())
 	       SetError(FATAL,send_buf->ErrorText());
 	 }
 	 if(recv_buf->Error())
 	 {
-	    DebugPrint("**** ",recv_buf->ErrorText(),0);
+	    LogError(0,"recv: %s",recv_buf->ErrorText());
 	    if(recv_buf->ErrorFatal())
 	       SetError(FATAL,recv_buf->ErrorText());
 	 }
@@ -1220,7 +1206,7 @@ int Http::Do()
       if(!buf)
       {
 	 // eof
-	 DebugPrint("**** ",_("Hit EOF while fetching headers"),0);
+	 LogError(0,_("Hit EOF while fetching headers"));
 	 // workaround some broken servers
 	 if(H_REDIRECTED(status_code) && location)
 	    goto pre_RECEIVING_BODY;
@@ -1236,7 +1222,7 @@ int Http::Do()
 	    // empty line indicates end of headers.
 	    if(eol==buf && status)
 	    {
-	       DebugPrint("<--- ","",4);
+	       LogRecv(4,"");
 	       recv_buf->Skip(eol_size);
 	       if(tunnel_state==TUNNEL_WAITING)
 	       {
@@ -1303,7 +1289,7 @@ int Http::Do()
 		  if(H_20X(status_code))
 		  {
 		     // should never happen
-		     DebugPrint("**** ","Success, but did nothing??",0);
+		     LogError(0,"Success, but did nothing??");
 		     Disconnect();
 		     return MOVED;
 		  }
@@ -1316,7 +1302,7 @@ int Http::Do()
 
 	    recv_buf->Skip(len+eol_size);
 
-	    DebugPrint("<--- ",line,4);
+	    LogRecv(4,line);
 	    m=MOVED;
 
 	    if(status==0)
@@ -1330,7 +1316,7 @@ int Http::Do()
 		  // simple 0.9 ?
 		  proto_version=0x09;
 		  status_code=200;
-		  DebugPrint("**** ",_("Could not parse HTTP status line"),0);
+		  LogError(0,_("Could not parse HTTP status line"));
 		  if(mode==STORE)
 		  {
 		     state=DONE;
@@ -1511,8 +1497,7 @@ int Http::Do()
 	 return MOVED;
       }
 
-      DebugPrint("---- ",_("Receiving body..."));
-      assert(rate_limit==0);
+      LogNote(9,_("Receiving body..."));
       rate_limit=new RateLimit(hostname);
       if(real_pos<0) // assume Range: did not work
       {
@@ -1636,7 +1621,7 @@ int Http::_Read(void *buf,int size)
 get_again:
    if(recv_buf->Size()==0 && recv_buf->Error())
    {
-      DebugPrint("**** ",recv_buf->ErrorText(),0);
+      LogError(0,"recv: %s",recv_buf->ErrorText());
       if(recv_buf->ErrorFatal())
 	 SetError(FATAL,recv_buf->ErrorText());
       Disconnect();
@@ -1645,10 +1630,10 @@ get_again:
    recv_buf->Get(&buf1,&size1);
    if(buf1==0) // eof
    {
-      DebugPrint("---- ",_("Hit EOF"));
+      LogNote(9,_("Hit EOF"));
       if(bytes_received<body_size || chunked)
       {
-	 DebugPrint("**** ",_("Received not enough data, retrying"),0);
+	 LogError(0,_("Received not enough data, retrying"));
 	 Disconnect();
 	 return DO_AGAIN;
       }
@@ -1658,12 +1643,12 @@ get_again:
    {
       if(body_size>=0 && bytes_received>=body_size)
       {
-	 DebugPrint("---- ",_("Received all"));
+	 LogNote(9,_("Received all"));
 	 return 0; // all received
       }
       if(entity_size>=0 && pos>=entity_size)
       {
-	 DebugPrint("---- ",_("Received all (total)"));
+	 LogNote(9,_("Received all (total)"));
 	 return 0;
       }
    }
@@ -1696,7 +1681,7 @@ get_again:
       }
       if(chunk_size==0) // eof
       {
-	 DebugPrint("---- ",_("Received last chunk"));
+	 LogNote(9,_("Received last chunk"));
 	 // headers may follow
 	 chunked_trailer=true;
 	 state=RECEIVING_HEADER;
