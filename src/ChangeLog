@@ -1,3 +1,7 @@
+2007-08-20  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: wait for 150 reply before accessing data socket.
+
 2007-08-06  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* buffer.h: fix compilation without iconv.

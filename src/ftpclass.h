@@ -53,7 +53,8 @@ class Ftp : public NetAccess
       DATA_OPEN_STATE,	   // data connection is open, for read or write
       CWD_CWD_WAITING_STATE,  // waiting until 'CWD $cwd' finishes
       USER_RESP_WAITING_STATE,// waiting until 'USER $user' finishes
-      DATASOCKET_CONNECTING_STATE  // waiting for data_sock to connect
+      DATASOCKET_CONNECTING_STATE, // waiting for data_sock to connect
+      WAITING_150_STATE	   // waiting for 150 message
    };
 
 
@@ -83,6 +84,7 @@ class Ftp : public NetAccess
       bool try_feat_after_login;
       bool tune_after_login;
       bool utf8_activated; // server is switched to UTF8 mode.
+      bool received_150;
 
       char type;  // type of transfer: 'A'scii or 'I'mage
 

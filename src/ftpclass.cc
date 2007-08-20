@@ -1725,6 +1725,7 @@ int   Ftp::Do()
 
       flags&=~IO_FLAG;
       last_priority=priority;
+      conn->received_150=false;
 
       switch((enum open_mode)mode)
       {
@@ -2071,7 +2072,7 @@ int   Ftp::Do()
 	 return MOVED;
       }
 
-      goto pre_data_open;
+      goto pre_waiting_150;
 
    case(DATASOCKET_CONNECTING_STATE):
    datasocket_connecting_state:
@@ -2147,7 +2148,7 @@ int   Ftp::Do()
 	    goto usual_return;
 	 DebugPrint("---- ",_("Data connection established"),9);
 	 if(!conn->proxy_is_http)
-	    goto pre_data_open;
+	    goto pre_waiting_150;
 
 	 pasv_state=PASV_HTTP_PROXY_CONNECTED;
 	 m=MOVED;
@@ -2158,11 +2159,22 @@ int   Ftp::Do()
 	 conn->data_iobuf=new IOBufferFDStream(new FDStream(conn->data_sock,"data-socket"),IOBuffer::GET);
       case PASV_HTTP_PROXY_CONNECTED:
       	 if(HttpProxyReplyCheck(conn->data_iobuf))
-	    goto pre_data_open;
+	    goto pre_waiting_150;
 	 goto usual_return;
       }
 
-   pre_data_open:
+   pre_waiting_150:
+      state=WAITING_150_STATE;
+      m=MOVED;
+   case WAITING_150_STATE:
+      m|=FlushSendQueue();
+      m|=ReceiveResp();
+      if(state!=WAITING_150_STATE || Error())
+         return MOVED;
+      if(!conn->received_150)
+	 return m;
+
+      // now init data connection properly and start data exchange
       assert(rate_limit==0);
       rate_limit=new RateLimit(hostname);
       state=DATA_OPEN_STATE;
@@ -3197,6 +3209,7 @@ void  Ftp::Close()
       case(CWD_CWD_WAITING_STATE):
       case(WAITING_STATE):
       case(DATA_OPEN_STATE):
+      case(WAITING_150_STATE):
 	 state=EOF_STATE;
 	 break;
       case(INITIAL_STATE):
@@ -3659,6 +3672,9 @@ void Ftp::CheckFEAT(char *reply)
 
 void Ftp::CheckResp(int act)
 {
+   if(act==150)
+      conn->received_150=true;
+
    if(act==150 && (flags&PASSIVE_MODE) && conn->aborted_data_sock!=-1)
       conn->CloseAbortedDataConnection();
 
@@ -4050,6 +4066,7 @@ const char *Ftp::CurrentStatus()
 	 return _("Waiting for other copy peer...");
       if(mode==STORE)
 	 return(_("Waiting for transfer to complete"));
+   case(WAITING_150_STATE):
       return(_("Waiting for response..."));
    case(ACCEPTING_STATE):
       return(_("Waiting for data connection..."));
