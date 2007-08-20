@@ -4,6 +4,10 @@
 	  implementation to a separate file.
 	* ftpclass.cc, ftpclass.h: use new Log* methods; don't call getpeername
 	  for just connected socket; wait for 150 reply before accessing data socket.
+	* Fish.cc, SFtp.cc, Http.cc, LocalAccess.cc, Resolver.cc,
+	  NetAccess.cc: use new Log* methods.
+	* SFtp.cc: limit upload packet size.
+	* LsCache.cc: increase cache size to 16Mb.
 
 2007-08-16  Alexander V. Lukyanov <lav@yars.free.net>
 
