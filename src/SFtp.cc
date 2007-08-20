@@ -278,6 +278,8 @@ int SFtp::Do()
       }
       if(RespQueueSize()>max_packets_in_flight)
 	 return m;
+      if(s>size_write)
+	 s=size_write;
       SendRequest(new Request_WRITE(handle,handle_len,request_pos,b,s),Expect::WRITE_STATUS);
       file_buf->Skip(s);
       request_pos+=s;
