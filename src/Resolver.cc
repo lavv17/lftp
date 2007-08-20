@@ -137,7 +137,7 @@ int   Resolver::Do()
       cache->Find(hostname,portname,defport,service,proto,&a,&n);
       if(a && n>0)
       {
-	 Log::global->Write(10,"dns cache hit\n");
+	 FA::LogNote(10,"dns cache hit");
 	 addr.nset(a,n);
 	 done=true;
 	 return MOVED;
@@ -161,7 +161,7 @@ int   Resolver::Do()
 	 fcntl(pipe_to_child[0],F_SETFD,FD_CLOEXEC);
 	 fcntl(pipe_to_child[1],F_SETFD,FD_CLOEXEC);
 	 m=MOVED;
-	 Log::global->Format(4,"---- %s\n",_("Resolving host address..."));
+	 FA::LogNote(4,_("Resolving host address..."));
       }
 
       if(!w && !buf)
@@ -203,7 +203,7 @@ int   Resolver::Do()
    {
       if(!buf)
       {
-	 Log::global->Format(4,"---- %s\n",_("Resolving host address..."));
+	 FA::LogNote(4,_("Resolving host address..."));
 	 buf=new IOBuffer(IOBuffer::GET);
 	 DoGethostbyname();
 	 if(deleting)
@@ -252,7 +252,7 @@ int   Resolver::Do()
       if(use_fork)
       {
 	 // e.g. under gdb child fails.
-	 Log::global->Format(4,"**** %s\n","child failed, retrying with dns:use-fork=no");
+	 FA::LogError(4,"child failed, retrying with dns:use-fork=no");
 	 use_fork=false;
 	 buf=0;
 	 return MOVED;
@@ -266,7 +266,7 @@ int   Resolver::Do()
    if(!cache)
       cache=new ResolverCache;
    cache->Add(hostname,portname,defport,service,proto,addr,addr.count());
-   Log::global->Format(4,plural("---- %d address$|es$ found\n",addr.count()),addr.count());
+   FA::LogNote(4,plural("%d address$|es$ found",addr.count()),addr.count());
    return MOVED;
 }
 
