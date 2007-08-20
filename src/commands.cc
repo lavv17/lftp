@@ -954,9 +954,9 @@ Job *CmdExec::builtin_open()
 	    if(nrc)
 	    {
 	       if(!user)
-		  Log::global->Format(3,"---- using user `%s' and password from ~/.netrc\n",nrc->user.get());
+		  FA::LogNote(3,"using user `%s' and password from ~/.netrc",nrc->user.get());
 	       else
-		  Log::global->Format(3,"---- using password from ~/.netrc\n");
+		  FA::LogNote(3,"using password from ~/.netrc");
 	       user=nrc->user;
 	       pass=nrc->pass;
 	    }
