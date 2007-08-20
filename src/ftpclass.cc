@@ -172,13 +172,13 @@ bool Ftp::Connection::data_address_ok(const sockaddr_u *dp,bool verify_address,b
       d=*dp;
    else if(getpeername(data_sock,&d.sa,&len)==-1)
    {
-      Log::global->Format(0,"getpeername(data_sock): %s\n",strerror(errno));
+      LogError(0,"getpeername(data_sock): %s\n",strerror(errno));
       return !verify_address && !verify_port;
    }
    len=sizeof(c);
    if(getpeername(control_sock,&c.sa,&len)==-1)
    {
-      Log::global->Format(0,"getpeername(control_sock): %s\n",strerror(errno));
+      LogError(0,"getpeername(control_sock): %s\n",strerror(errno));
       return !verify_address;
    }
 
@@ -224,13 +224,13 @@ bool Ftp::Connection::data_address_ok(const sockaddr_u *dp,bool verify_address,b
 wrong_port:
    if(!verify_port)
       return true;
-   Log::global->Format(0,"**** %s\n",_("Data connection peer has wrong port number"));
+   LogError(0,_("Data connection peer has wrong port number"));
    return false;
 
 address_mismatch:
    if(!verify_address)
       return true;
-   Log::global->Format(0,"**** %s\n",_("Data connection peer has mismatching address"));
+   LogError(0,_("Data connection peer has mismatching address"));
    return false;
 }
 
@@ -960,7 +960,7 @@ Ftp::Connection::~Connection()
    CloseDataConnection();
    if(control_sock!=-1)
    {
-      Log::global->Format(7,"---- %s\n",_("Closing control socket"));
+      LogNote(7,_("Closing control socket"));
       close(control_sock);
    }
 }
@@ -1125,8 +1125,6 @@ int   Ftp::Do()
    {
       char discard[0x2000];
       int res=read(conn->aborted_data_sock,discard,sizeof(discard));
-      if(res>0)
-	 Log::global->Format(10,"<--- got %d bytes from aborted data connection\n",res);
       if(res==0 || conn->abor_close_timer.Stopped())
 	 conn->CloseAbortedDataConnection();
       else
@@ -1244,7 +1242,7 @@ int   Ftp::Do()
       if(res==-1 && errno!=EINPROGRESS)
       {
 	 int e=errno;
-	 Log::global->Format(0,"connect(control_sock): %s\n",strerror(e));
+	 LogError(0,"connect(control_sock): %s",strerror(e));
 	 if(NotSerious(e))
 	 {
 	    Disconnect();
@@ -1647,7 +1645,7 @@ int   Ftp::Do()
 	    // Fail unless socket was already taken
 	    if(errno!=EINVAL && errno!=EADDRINUSE)
 	    {
-	       Log::global->Format(0,"**** bind(data_sock,[%s]:%d): %s\n",
+	       LogError(0,"bind(data_sock,[%s]:%d): %s",
 		  SocketNumericAddress(&conn->data_sa),port,strerror(saved_errno));
 	       close(conn->data_sock);
 	       conn->data_sock=-1;
@@ -1659,7 +1657,7 @@ int   Ftp::Do()
 	       SetError(SEE_ERRNO,"Cannot bind data socket for ftp:port-range");
 	       return MOVED;
 	    }
-	    Log::global->Format(10,"**** bind(data_sock,[%s]:%d): %s\n",
+	    LogError(10,"bind(data_sock,[%s]:%d): %s",
 	       SocketNumericAddress(&conn->data_sa),port,strerror(saved_errno));
 	 }
 
@@ -2415,9 +2413,7 @@ void Ftp::SendAuth(const char *auth)
 	    auth="TLS";
 	 else if(saw_ssl)
 	    auth="SSL";
-	 Log::global->Format(1,
-	    "**** AUTH %s is not supported, using AUTH %s instead\n",
-	    old_auth,auth);
+	 LogError(1,"AUTH %s is not supported, using AUTH %s instead",old_auth,auth);
       }
    }
    conn->SendCmd2("AUTH",auth);
@@ -2650,11 +2646,11 @@ int  Ftp::ReceiveResp()
 	 conn->data_iobuf->Put(line,line_len);
 	 conn->data_iobuf->Put("\n");
 	 if(code)
-	    LogRecv(ReplyLogPriority(code),"%s",line.get());
+	    LogRecv(ReplyLogPriority(code),line);
       }
       else
       {
-	 LogRecv(ReplyLogPriority(conn->multiline_code?conn->multiline_code:code),"%s",line.get());
+	 LogRecv(ReplyLogPriority(conn->multiline_code?conn->multiline_code:code),line);
       }
 
       int all_lines_len=xstrlen(all_lines);
@@ -2759,7 +2755,7 @@ bool Ftp::HttpProxyReplyCheck(const SMTaskRef<IOBuffer>& buf)
    line[nl-b-1]=0;
    buf->Skip(nl-b+1);	 // skip \r\n too.
 
-   DebugPrint("<--+ ",line,4);
+   Log::global->Format(4,"<--+ %s\n",line);
 
    if(!http_proxy_status_code)
    {
@@ -2961,7 +2957,7 @@ void Ftp::Connection::CloseDataSocket()
 {
    if(data_sock==-1)
       return;
-   Log::global->Format(7,"---- %s\n",_("Closing data socket"));
+   LogNote(7,_("Closing data socket"));
    close(data_sock);
    data_sock=-1;
 }
@@ -2983,7 +2979,7 @@ void Ftp::Connection::CloseAbortedDataConnection()
 {
    if(aborted_data_sock!=-1)
    {
-      Log::global->Format(9,"---- %s\n",_("Closing aborted data socket"));
+      LogNote(9,_("Closing aborted data socket"));
       close(aborted_data_sock);
       aborted_data_sock=-1;
    }
@@ -3027,27 +3023,28 @@ int Ftp::Connection::FlushSendQueueOneCmd()
    int log_level=5;
 
    if(!may_show_password && !strncasecmp(cmd_begin,"PASS ",5))
-      Log::global->Write(log_level,"---> PASS XXXX\n");
+      LogSend(log_level,"PASS XXXX");
    else
    {
-      Log::global->Write(log_level,"---> ");
+      xstring log;
       for(const char *s=cmd_begin; s<=line_end; s++)
       {
 	 if(*s==0)
-	    Log::global->Write(log_level,"<NUL>");
+	    log.append("<NUL>");
 	 else if((unsigned char)*s==TELNET_IAC && telnet_layer_send)
 	 {
 	    s++;
 	    if((unsigned char)*s==TELNET_IAC)
-	       Log::global->Write(log_level,"\377");
+	       log.append('\377');
 	    else if((unsigned char)*s==TELNET_IP)
-	       Log::global->Write(log_level,"<IP>");
+	       log.append("<IP>");
 	    else if((unsigned char)*s==TELNET_DM)
-	       Log::global->Write(log_level,"<DM>");
+	       log.append("<DM>");
 	 }
 	 else
-	    Log::global->Format(log_level,"%c",*s?*s:'!');
+	   log.append(*s?*s:'!');
       }
+      LogSend(log_level,log);
    }
    return 1;
 }
