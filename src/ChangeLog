@@ -1,3 +1,5 @@
+2007-08-20  Alexander V. Lukyanov <lav@yars.free.net>
+
 	* FileAccess.cc, FileAccess.h: new Log* methods.
 	* log.cc, log.h: (vFormat) new method.
 	* RateLimit.cc, RateLimit.h, NetAccess.cc, Makefile.am: move RateLimit
