@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2007-08-20 12:59+0400\n"
+"POT-Creation-Date: 2007-08-23 14:11+0400\n"
 "PO-Revision-Date: 1999-07-12 00:00+0400\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -1990,7 +1990,7 @@ msgstr ""
 msgid "file name missed in URL"
 msgstr ""
 
-#: src/FileCopy.cc:1868
+#: src/FileCopy.cc:1873
 msgid "Verify command failed without a message"
 msgstr ""
 

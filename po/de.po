@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2007-08-20 12:59+0400\n"
+"POT-Creation-Date: 2007-08-23 14:11+0400\n"
 "PO-Revision-Date: 2004-05-21 12:53+0200\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: deutsch <de@li.org>\n"
@@ -2222,7 +2222,7 @@ msgstr "copy: Umleitung nach »%s« empfangen\n"
 msgid "file name missed in URL"
 msgstr "Dateiname fehlt in der URL"
 
-#: src/FileCopy.cc:1868
+#: src/FileCopy.cc:1873
 msgid "Verify command failed without a message"
 msgstr ""
 

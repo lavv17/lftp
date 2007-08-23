@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2007-08-20 12:59+0400\n"
+"POT-Creation-Date: 2007-08-23 14:11+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1872,7 +1872,7 @@ msgstr ""
 msgid "file name missed in URL"
 msgstr ""
 
-#: src/FileCopy.cc:1868
+#: src/FileCopy.cc:1873
 msgid "Verify command failed without a message"
 msgstr ""
 

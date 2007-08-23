@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.6.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2007-08-20 12:59+0400\n"
+"POT-Creation-Date: 2007-08-23 14:11+0400\n"
 "PO-Revision-Date: 2002-08-08 19:01+0000\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -2125,7 +2125,7 @@ msgstr "copy: se recibió redirección a `%s'\n"
 msgid "file name missed in URL"
 msgstr "nombre de archivo no encontrado em URL"
 
-#: src/FileCopy.cc:1868
+#: src/FileCopy.cc:1873
 msgid "Verify command failed without a message"
 msgstr ""
 
