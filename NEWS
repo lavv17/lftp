@@ -1,3 +1,11 @@
+Version 3.5.13 - 2007-08-23
+
+* fixed ftps not to access data socket before 150 reply.
+* fixed sftp to send properly sized packets on upload.
+* fixed infinite retrying on upload.
+* fixed compilation without iconv.
+* fixed buffering in ascii mode transfers.
+
 Version 3.5.12 - 2007-07-26
 
 * hex-encode all non-ascii characters in URLs.
