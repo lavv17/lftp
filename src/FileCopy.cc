@@ -1350,6 +1350,11 @@ int FileCopyPeerFDStream::Do()
       return m;
    }
 
+   bool check_min_size=true;
+#ifndef NATIVE_CRLF
+   if(ascii)
+      check_min_size=false;
+#endif
    switch(mode)
    {
    case PUT:
@@ -1379,7 +1384,7 @@ int FileCopyPeerFDStream::Do()
 	 return m;
       while(Size()>0)
       {
-	 if(!eof && Size()<PUT_LL_MIN
+	 if(check_min_size && !eof && Size()<PUT_LL_MIN
 	 && put_ll_timer && !put_ll_timer->Stopped())
 	    break;
 	 int res=Put_LL(buffer+buffer_ptr,Size());
