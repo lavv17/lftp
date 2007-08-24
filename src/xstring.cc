@@ -235,6 +235,36 @@ const char *xstring::appendf(const char *format, ...)
    va_end(va);
    return buf;
 }
+xstring& xstring::get_tmp()
+{
+   static xstring revolver[4];
+   static int i;
+   return revolver[i=(i+1)&3];
+}
+xstring& xstring::vformat(const char *fmt,va_list ap)
+{
+   xstring& str=get_tmp();
+   str.vsetf(fmt,ap);
+   return str;
+}
+xstring& xstring::format(const char *fmt, ...)
+{
+   va_list va;
+   va_start(va,fmt);
+   xstring& res=vformat(fmt, va);
+   va_end(va);
+   return res;
+}
+xstring &xstring::cat(const char *first,...)
+{
+   va_list va;
+   va_start(va,first);
+   xstring& str=get_tmp();
+   str.truncate(0);
+   str.vappend(va);
+   va_end(va);
+   return str;
+}
 
 const char *xstring_c::vset(...)
 {

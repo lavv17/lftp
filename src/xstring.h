@@ -181,6 +181,10 @@ public:
    const char *setf(const char *fmt,...) PRINTF_LIKE(2,3);
    const char *vappendf(const char *fmt, va_list ap);
    const char *appendf(const char *fmt,...) PRINTF_LIKE(2,3);
+   static xstring& get_tmp();
+   static xstring& vformat(const char *fmt,va_list ap);
+   static xstring& format(const char *fmt,...) PRINTF_LIKE(1,2);
+   static xstring& cat(const char *first,...) __attribute__((sentinel));
 
    void truncate(size_t n);
    void truncate_at(char c);
