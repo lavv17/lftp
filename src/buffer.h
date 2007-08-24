@@ -85,6 +85,7 @@ public:
    void UnSkip(int len); // this only works if there were no Put's.
    void Put(const char *buf,int size);
    void Put(const char *buf) { Put(buf,strlen(buf)); }
+   void Put(const xstring &s) { Put(s.get(),s.length()); }
    void Format(const char *f,...) PRINTF_LIKE(2,3);
    void vFormat(const char *f, va_list v);
    void PutEOF() { eof=true; PutEOF_LL(); }
