@@ -110,13 +110,10 @@ void Log::Format(int l,const char *f,...)
    if(!WillOutput(l))
       return;
 
-   static xstring buf;
    va_list v;
    va_start(v,f);
-   buf.vsetf(f,v);
+   DoWrite(xstring::format(f,v));
    va_end(v);
-
-   DoWrite(buf);
 }
 
 void Log::vFormat(int l,const char *f,va_list v)
@@ -124,10 +121,7 @@ void Log::vFormat(int l,const char *f,va_list v)
    if(!WillOutput(l))
       return;
 
-   static xstring buf;
-   buf.vsetf(f,v);
-
-   DoWrite(buf);
+   DoWrite(xstring::format(f,v));
 }
 
 void Log::Cleanup()

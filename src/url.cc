@@ -480,16 +480,12 @@ const char *url::hide_password(const char *url)
    int start,len;
    if(!find_password_pos(url,&start,&len))
       return url;
-   static xstring buf;
-   buf.setf("%.*sXXXX%s",start,url,url+start+len);
-   return buf;
+   return xstring::format("%.*sXXXX%s",start,url,url+start+len);
 }
 const char *url::remove_password(const char *url)
 {
    int start,len;
    if(!find_password_pos(url,&start,&len))
       return url;
-   static xstring buf;
-   buf.setf("%.*s%s",start-1,url,url+start+len);
-   return buf;
+   return xstring::format("%.*s%s",start-1,url,url+start+len);
 }

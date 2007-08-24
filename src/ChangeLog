@@ -1,3 +1,11 @@
+2007-08-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* xstring.cc, xstring.h: (get_tmp, format, vformat, cat, join) new static methods.
+	* CopyJob.cc, Fish.cc, Http.cc, ftpclass.cc, log.cc, misc.cc, url.cc, SFtp.cc:
+	  use new xstring methods; prefer xstring::length over strlen.
+	* ftpclass.cc, ftpclass.h: (ReceiveOneLine) new method; clean up ReceiveResp.
+	* buffer.h: (Put(xstring&)) new method.
+
 2007-08-23  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc: don't use put_ll_timer in ascii mode.

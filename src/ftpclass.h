@@ -314,6 +314,7 @@ private:
 
    const char *QueryStringWithUserAtHost(const char *);
 
+   int	 ReceiveOneLine();
    // If a response is received, it checks it for accordance with
    // response_queue and switch to a state if necessary
    int	 ReceiveResp();

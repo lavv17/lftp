@@ -265,6 +265,24 @@ xstring &xstring::cat(const char *first,...)
    va_end(va);
    return str;
 }
+xstring &xstring::join(const char *sep,int n,...)
+{
+   va_list va;
+   va_start(va,first);
+   xstring& str=get_tmp();
+   str.truncate(0);
+   while(n-->0)
+   {
+      const char *a=va_arg(va,const char*);
+      if(!a || !*a)
+	 continue;
+      if(str.length())
+	 str.append(sep);
+      str.append(a);
+   }
+   va_end(va);
+   return str;
+}
 
 const char *xstring_c::vset(...)
 {

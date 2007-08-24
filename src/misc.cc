@@ -720,18 +720,15 @@ char *xstrftime(const char *format, const struct tm *tm)
 
 char *xvasprintf(const char *format, va_list ap)
 {
-   xstring buf;
-   buf.vsetf(format, ap);
-   return buf.borrow();
+   return xstring::vformat(format,ap).borrow();
 }
 char *xasprintf(const char *format, ...)
 {
-   xstring buf;
    va_list va;
    va_start(va, format);
-   buf.vsetf(format, va);
+   char *str=xvasprintf(format,va);
    va_end(va);
-   return buf.borrow();
+   return str;
 }
 
 /* /file/name -> /file

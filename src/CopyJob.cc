@@ -82,10 +82,7 @@ const char *CopyJob::Status(const StatusLine *s, bool base)
       return "";
 
    const char *name=SqueezeName(s->GetWidthDelayed()-50, base);
-
-   static xstring buf;
-   buf.setf(COPY_STATUS);
-   return buf;
+   return xstring::format(COPY_STATUS);
 }
 
 void CopyJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)

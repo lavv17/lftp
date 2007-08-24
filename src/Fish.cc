@@ -130,9 +130,7 @@ int Fish::Do()
 	 return MOVED;
 
       const char *shell=Query("shell",hostname);
-      char *init=alloca_strdup2("echo FISH:;",strlen(shell));
-      strcat(init,shell);
-
+      const char *init=xstring::cat("echo FISH:;",shell,NULL);
       const char *prog=Query("connect-program",hostname);
       if(!prog || !prog[0])
 	 prog="ssh -a -x";
@@ -392,8 +390,7 @@ void Fish::Send(const char *format,...)
 {
    va_list va;
    va_start(va,format);
-   xstring str;
-   str.vsetf(format,va);
+   xstring& str=xstring::vformat(format,va);
    va_end(va);
    LogSend(5,str);
    send_buf->Put(str);

@@ -164,12 +164,7 @@ int SFtp::Do()
 	 received_greeting=true;
       }
       else
-      {
-	 const char *greeting="echo SFTP: >&2";
-	 char *init1=string_alloca(strlen(init)+strlen(greeting)+2);
-	 sprintf(init1,"%s;%s",greeting,init);
-	 init=init1;
-      }
+	 init=xstring::cat("echo SFTP: >&2;",init,NULL);
       if(user)
       {
 	 cmd->Add("-l");
@@ -550,7 +545,7 @@ const char *SFtp::SkipHome(const char *path)
       return ".";
    if(!home)
       return path;
-   int home_len=strlen(home);
+   int home_len=home.path.length();
    if(strncmp(home,path,home_len))
       return path;
    if(path[home_len]=='/' && path[home_len+1] && path[home_len+1]!='/')
@@ -2119,13 +2114,9 @@ SFtpDirList::SFtpDirList(SFtp *s,ArgV *a)
 
 const char *SFtpDirList::Status()
 {
-   static char s[256];
    if(ubuf && !ubuf->Eof() && session->IsOpen())
-   {
-      sprintf(s,_("Getting file list (%lld) [%s]"),
+      return xstring::format(_("Getting file list (%lld) [%s]"),
 		     (long long)session->GetPos(),session->CurrentStatus());
-      return s;
-   }
    return "";
 }
 
@@ -2202,13 +2193,9 @@ int SFtpListInfo::Do()
 }
 const char *SFtpListInfo::Status()
 {
-   static char s[256];
    if(ubuf && !ubuf->Eof() && session->IsOpen())
-   {
-      sprintf(s,_("Getting file list (%lld) [%s]"),
+      return xstring::format(_("Getting file list (%lld) [%s]"),
 		     (long long)session->GetPos(),session->CurrentStatus());
-      return s;
-   }
    return "";
 }
 

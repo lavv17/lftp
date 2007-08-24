@@ -185,6 +185,7 @@ public:
    static xstring& vformat(const char *fmt,va_list ap);
    static xstring& format(const char *fmt,...) PRINTF_LIKE(1,2);
    static xstring& cat(const char *first,...) __attribute__((sentinel));
+   static xstring& join(const char *sep,int n,...);
 
    void truncate(size_t n);
    void truncate_at(char c);

@@ -228,8 +228,7 @@ void Http::Send(const char *format,...)
 {
    va_list va;
    va_start(va,format);
-   xstring str;
-   str.vsetf(format,va);
+   xstring& str=xstring::vformat(format,va);
    va_end(va);
    LogSend(5,str);
    send_buf->Put(str);
@@ -237,13 +236,10 @@ void Http::Send(const char *format,...)
 
 void Http::SendMethod(const char *method,const char *efile)
 {
-   char *ehost=string_alloca(strlen(hostname)*3+1+xstrlen(portname)*3+1);
-   url::encode_string(hostname,ehost,URL_HOST_UNSAFE);
-   if(portname)
-   {
-      strcat(ehost,":");
-      url::encode_string(portname,ehost+strlen(ehost),URL_PORT_UNSAFE);
-   }
+   const char *ehost=xstring::join(":",2,
+      url::encode(hostname,URL_HOST_UNSAFE),
+      url::encode(portname,URL_PORT_UNSAFE)
+   );
    if(!use_head && !strcmp(method,"HEAD"))
       method="GET";
    last_method=method;
@@ -330,9 +326,7 @@ void Http::SendBasicAuth(const char *tag,const char *auth)
 void Http::SendBasicAuth(const char *tag,const char *user,const char *pass)
 {
    /* Basic scheme */
-   char *buf=string_alloca(strlen(user)+1+strlen(pass)+1);
-   sprintf(buf,"%s:%s",user,pass);
-   SendBasicAuth(tag,buf);
+   SendBasicAuth(tag,xstring::cat(user,":",pass,NULL));
 }
 
 void Http::SendAuth()
@@ -360,18 +354,9 @@ void Http::SendCacheControl()
 	     && (pos[cc_no_cache_len]==0 || pos[cc_no_cache_len]==' '))
 	 cc_no_cache=0, cc_no_cache_len=0;
    }
-   char *cc=string_alloca(xstrlen(cc_setting)+1+cc_no_cache_len+1);
-   cc[0]=0;
-   if(cc_no_cache)
-      strcpy(cc,cc_no_cache);
-   if(cc_setting)
-   {
-      if(cc[0])
-	 strcat(cc,",");
-      strcat(cc,cc_setting);
-   }
+   xstring& cc=xstring::join(",",2,cc_no_cache,cc_setting);
    if(*cc)
-      Send("Cache-Control: %s\r\n",cc);
+      Send("Cache-Control: %s\r\n",cc.get());
 }
 
 bool Http::ModeSupported()
@@ -405,8 +390,9 @@ bool Http::ModeSupported()
    abort(); // should not happen
 }
 
-void Http::DirFile(char *path_base,const char *ecwd,const char *efile)
+void Http::DirFile(xstring& path,const char *ecwd,const char *efile)
 {
+   int base=path.length();
    if(!strcmp(ecwd,"~") && !hftp)
       ecwd="";
    const char *sep=(last_char(ecwd)=='/'?"":"/");
@@ -414,23 +400,22 @@ void Http::DirFile(char *path_base,const char *ecwd,const char *efile)
       sep="";
    const char *pre=(ecwd[0]=='/'?"":"/");
    if(efile[0]=='/')
-      strcpy(path_base,efile);
+      path.append(efile);
    else if(efile[0]=='~')
-      sprintf(path_base,"/%s",efile);
+      path.vappend("/",efile,NULL);
    else
-      sprintf(path_base,"%s%s%s%s",pre,ecwd,sep,efile);
+      path.vappend(pre,ecwd,sep,efile,NULL);
 
-   if(path_base[1]=='~' && path_base[2]==0)
-      path_base[1]=0;
-   else if(path_base[1]=='~' && path_base[2]=='/')
-      memmove(path_base,path_base+2,strlen(path_base+2)+1);
+   if(path[base+1]=='~' && path[base+2]==0)
+      path.truncate(base+1);
+   else if(path[base+1]=='~' && path[base+2]=='/')
+      path.set_substr(base,2,"");
 }
 
 void Http::SendRequest(const char *connection,const char *f)
 {
-   char *efile;
-   char *ecwd;
-   int efile_len;
+   xstring efile;
+   xstring ecwd;
    bool add_slash=true;
 
    if(mode==CHANGE_DIR && new_cwd && new_cwd->url)
@@ -438,44 +423,32 @@ void Http::SendRequest(const char *connection,const char *f)
       const char *efile_c=new_cwd->url+url::path_index(new_cwd->url);
       if(!*efile_c)
 	 efile_c="/";
-      efile=alloca_strdup2(efile_c,1);
+      efile.set(efile_c);
       add_slash=false;
    }
    else
-   {
-      char *efile_mem=string_alloca(strlen(f)*3+1);
-      url::encode_string(f,efile_mem,URL_PATH_UNSAFE);
-      efile=efile_mem;
-   }
+      efile.set(url::encode(f,URL_PATH_UNSAFE));
+
    if(cwd.url)
-   {
-      const char *ecwd_c=cwd.url+url::path_index(cwd.url);
-      ecwd=alloca_strdup(ecwd_c);
-   }
+      ecwd.set(cwd.url+url::path_index(cwd.url));
    else
    {
-      ecwd=string_alloca(strlen(cwd)*3+3+1);
-      url::encode_string(cwd,ecwd,URL_PATH_UNSAFE);
+      ecwd.set(url::encode(cwd,URL_PATH_UNSAFE));
       if(hftp && ecwd[0]=='/' && ecwd[1]!='~')
       {
 	 // root directory in ftp urls needs special encoding. (/%2Fpath)
-	 memmove(ecwd+4,ecwd+1,strlen(ecwd+1)+1);
-	 memcpy(ecwd+1,"%2F",3);
+	 ecwd.set_substr(1,0,"%2F");
       }
    }
 
    if(cwd.is_file)
    {
       if(efile[0])
-	 basename_ptr(ecwd+(!strncmp(ecwd,"/~",2)))[0]=0;
+	 ecwd.truncate(basename_ptr(ecwd+(!strncmp(ecwd,"/~",2)))-ecwd);
       add_slash=false;
    }
    if(mode==CHANGE_DIR && new_cwd && !new_cwd->url)
       add_slash=!new_cwd->is_file;
-
-   char *pfile=string_alloca(4+3+xstrlen(user)*6+3+xstrlen(pass)*3+1+
-			      strlen(hostname)*3+1+xstrlen(portname)*3+1+
-			      strlen(ecwd)+1+strlen(efile)+1+6+1);
 
    const char *allprop=	// PROPFIND request
       "<?xml version=\"1.0\" ?>"
@@ -483,38 +456,37 @@ void Http::SendRequest(const char *connection,const char *f)
         "<allprop/>"
       "</propfind>\r\n";
 
+   xstring pfile;
    if(proxy && !https)
    {
       const char *proto="http";
       if(hftp)
 	 proto="ftp";
-      sprintf(pfile,"%s://",proto);
+      pfile.vset(proto,"://",NULL);
       if(hftp && user && pass)
       {
-	 url::encode_string(user,pfile+strlen(pfile),URL_USER_UNSAFE);
+	 pfile.append(url::encode(user,URL_USER_UNSAFE));
 	 if(!QueryBool("use-authorization",proxy))
 	 {
-	    strcat(pfile,":");
-	    url::encode_string(pass,pfile+strlen(pfile),URL_PASS_UNSAFE);
+	    pfile.append(':');
+	    pfile.append(url::encode(pass,URL_PASS_UNSAFE));
 	 }
-	 strcat(pfile,"@");
+	 pfile.append('@');
       }
-      url::encode_string(hostname,pfile+strlen(pfile),URL_HOST_UNSAFE);
+      pfile.append(url::encode(hostname,URL_HOST_UNSAFE));
       if(portname)
       {
-	 strcat(pfile,":");
-	 url::encode_string(portname,pfile+strlen(pfile),URL_PORT_UNSAFE);
+	 pfile.append(':');
+	 pfile.append(url::encode(portname,URL_PORT_UNSAFE));
       }
    }
    else
    {
-      pfile[0]=0;
+      pfile.set("");
    }
 
-   char *path_base=pfile+strlen(pfile);
-   DirFile(path_base,ecwd,efile);
-   efile=pfile;
-   efile_len=strlen(efile);
+   DirFile(pfile,ecwd,efile);
+   efile.set(pfile);
 
    if(pos==0)
       real_pos=0;
@@ -536,7 +508,7 @@ void Http::SendRequest(const char *connection,const char *f)
       switch(special)
       {
       case HTTP_POST:
-	 entity_size=xstrlen(special_data);
+	 entity_size=special_data.length();
 	 goto send_post;
       case HTTP_MOVE:
       case HTTP_COPY:
@@ -607,7 +579,7 @@ void Http::SendRequest(const char *connection,const char *f)
    case MP_LIST:
    case MAKE_DIR:
       if(last_char(efile)!='/' && add_slash)
-	 strcat(efile,"/");
+	 efile.append('/');
       if(mode==CHANGE_DIR)
       {
 	 if(use_propfind_now)

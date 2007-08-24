@@ -58,7 +58,7 @@ class Http : public NetAccess
    const char *last_method;
    enum { HTTP_NONE=0, HTTP_POST, HTTP_MOVE, HTTP_COPY } special;
    xstring special_data;
-   void DirFile(char *path_base,const char *ecwd,const char *efile);
+   void DirFile(xstring& path,const char *ecwd,const char *efile);
    void SendAuth();
    void SendCacheControl();
    void SendBasicAuth(const char *tag,const char *auth);

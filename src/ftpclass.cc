@@ -137,7 +137,6 @@ const char *Ftp::encode_eprt(const sockaddr_u *a)
 {
    char host[NI_MAXHOST];
    char serv[NI_MAXSERV];
-   static char *eprt=0;
 
    int proto=-1;
    for(const eprt_proto_match *p=eprt_proto; p->proto!=-1; p++)
@@ -156,9 +155,7 @@ const char *Ftp::encode_eprt(const sockaddr_u *a)
    {
       return 0;
    }
-   eprt=(char*)xrealloc(eprt,20+strlen(host)+strlen(serv));
-   sprintf(eprt, "|%d|%s|%s|", proto, host, serv);
-   return eprt;
+   return xstring::format("|%d|%s|%s|",proto,host,serv);
 }
 #endif
 
@@ -565,7 +562,7 @@ static void normalize_path_vms(char *path)
 
 char *Ftp::ExtractPWD()
 {
-   char *pwd=string_alloca(strlen(line)+1);
+   char *pwd=string_alloca(line.length()+1);
 
    const char *scan=strchr(line,'"');
    if(scan==0)
@@ -747,7 +744,7 @@ void Ftp::CatchDATE(int act)
 
    if(is2XX(act))
    {
-      if(strlen(line)>4 && is_ascii_digit(line[4]))
+      if(line.length()>4 && is_ascii_digit(line[4]))
 	 array_for_info[array_ptr].time=ConvertFtpDate(line+4);
       else
 	 array_for_info[array_ptr].time=NO_DATE;
@@ -775,7 +772,7 @@ void Ftp::CatchDATE_opt(int act)
    if(!opt_date)
       return;
 
-   if(is2XX(act) && strlen(line)>4 && is_ascii_digit(line[4]))
+   if(is2XX(act) && line.length()>4 && is_ascii_digit(line[4]))
    {
       *opt_date=ConvertFtpDate(line+4);
       opt_date=0;
@@ -797,7 +794,7 @@ void Ftp::CatchSIZE(int act)
 
    if(is2XX(act))
    {
-      if(strlen(line)>4) {
+      if(line.length()>4) {
 	 if(sscanf(line+4,"%lld",&size)!=1)
 	    size=NO_SIZE;
       }
@@ -830,7 +827,7 @@ void Ftp::CatchSIZE_opt(int act)
 
    if(is2XX(act))
    {
-      if(strlen(line)>4) {
+      if(line.length()>4) {
 	 if(sscanf(line+4,"%lld",&size)!=1)
 	    size=NO_SIZE;
       }
@@ -1221,8 +1218,7 @@ int   Ftp::Do()
 	 LogError(9,"socket: %s",strerror(saved_errno));
 	 if(NonFatalError(saved_errno))
 	    return m;
-	 xstring str;
-	 str.setf(_("cannot create socket of address family %d"),
+	 xstring& str=xstring::format(_("cannot create socket of address family %d"),
 		     conn->peer_sa.sa.sa_family);
 	 errno=saved_errno;
 	 SetError(SEE_ERRNO,str);
@@ -1346,20 +1342,12 @@ int   Ftp::Do()
       if(proxy && !conn->proxy_is_http)
       {
 	 if(QueryBool("proxy-auth-joined",proxy) && proxy_user && proxy_pass)
-	 {
-	    char *combined=(char*)alloca(strlen(user_to_use)+1+strlen(proxy_user)+1+strlen(hostname)+1+xstrlen(portname)+1);
-	    sprintf(combined,"%s@%s@%s",user_to_use,proxy_user.get(),hostname.get());
-	    if(portname)
-	       sprintf(combined+strlen(combined),":%s",portname.get());
-	    user_to_use=combined;
-	 }
+	    user_to_use=xstring::cat(user_to_use,"@",proxy_user.get(),"@",
+		  hostname.get(),portname?":":NULL,portname.get(),NULL);
 	 else // !proxy-auth-joined
 	 {
-	    char *combined=(char*)alloca(strlen(user_to_use)+1+strlen(hostname)+1+xstrlen(portname)+1);
-	    sprintf(combined,"%s@%s",user_to_use,hostname.get());
-	    if(portname)
-	       sprintf(combined+strlen(combined),":%s",portname.get());
-	    user_to_use=combined;
+	    user_to_use=xstring::cat(user_to_use,"@",hostname.get(),
+		  portname?":":NULL,portname.get(),NULL);
 	    if(proxy_user && proxy_pass)
 	    {
 	       expect->Push(Expect::USER_PROXY);
@@ -1395,15 +1383,12 @@ int   Ftp::Do()
       {
 	 conn->may_show_password = (skey_pass!=0) || (user==0) || pass_open;
 	 const char *pass_to_use=(pass?pass:anon_pass);
+	 xstring combined;
 	 if(allow_skey && skey_pass)
 	    pass_to_use=skey_pass;
 	 else if(proxy && !conn->proxy_is_http
 	 && QueryBool("proxy-auth-joined",proxy) && proxy_user && proxy_pass)
-	 {
-	    char *p=string_alloca(strlen(pass_to_use)+1+strlen(proxy_pass)+1);
-	    sprintf(p,"%s@%s",pass_to_use,proxy_pass.get());
-	    pass_to_use=p;
-	 }
+	    pass_to_use=xstring::cat(pass_to_use,"@",proxy_pass.get(),NULL);
 	 expect->Push(Expect::PASS);
 	 conn->SendCmd2("PASS",pass_to_use);
       }
@@ -1714,11 +1699,7 @@ int   Ftp::Do()
 	    command="LIST";
 	 }
 	 if(list_options && list_options[0])
-	 {
-	    char *c=string_alloca(5+strlen(list_options)+1);
-	    sprintf(c,"%s %s",command,list_options.get());
-	    command=c;
-	 }
+	    command=xstring::cat(command," ",list_options.get(),NULL);
 	 if(file && file[0])
 	    append_file=true;
 	 if(use_stat_for_list && !append_file && !strchr(command,' '))
@@ -1743,7 +1724,7 @@ int   Ftp::Do()
 	    cwd.Set(real_cwd,false,0,device_prefix_len(real_cwd));
 	 else
 	 {
-	    int len=xstrlen(real_cwd);
+	    int len=real_cwd.length();
 	    const char *path_to_use=file;
 	    if(!conn->vms_path && !AbsolutePath(file) && real_cwd
 	    && !strncmp(file,real_cwd,len) && file[len]=='/')
@@ -1871,12 +1852,7 @@ int   Ftp::Do()
       {
 	 if(use_pret && conn->pret_supported)
 	 {
-	    char *s=string_alloca(5+strlen(command)+1+strlen(file)+2);
-	    strcpy(s, "PRET ");
-	    strcat(s, command);
-	    strcat(s, " ");
-	    strcat(s, file);
-	    conn->SendCmd(s);
+	    conn->SendCmd(xstring::cat("PRET ",command," ",file,NULL));
 	    expect->Push(Expect::PRET);
 	 }
 	 if(conn->peer_sa.sa.sa_family==AF_INET)
@@ -2447,13 +2423,11 @@ void Ftp::SendUTimeRequest()
       return;
    if(QueryBool("use-site-utime") && conn->site_utime_supported)
    {
-      char *c=string_alloca(11+strlen(file)+14*3+3+4);
       char d[15];
       time_t n=entity_date;
       strftime(d,sizeof(d),"%Y%m%d%H%M%S",gmtime(&n));
       d[sizeof(d)-1]=0;
-      sprintf(c,"SITE UTIME %s %s %s %s UTC",file.get(),d,d,d);
-      conn->SendCmd(c);
+      conn->SendCmd(xstring::format("SITE UTIME %s %s %s %s UTC",file.get(),d,d,d));
       expect->Push(Expect::SITE_UTIME);
    }
    else if(QueryBool("use-mdtm-overloaded"))
@@ -2471,8 +2445,7 @@ const char *Ftp::QueryStringWithUserAtHost(const char *var)
 {
    const char *u=user?user.get():"anonymous";
    const char *h=hostname?hostname.get():"";
-   char *closure=string_alloca(strlen(u)+1+strlen(h)+1);
-   sprintf(closure,"%s@%s",u,h);
+   const char *closure=xstring::cat(u,"@",h,NULL);
    const char *val=Query(var,closure);
    if(!val || !val[0])
       val=Query(var,hostname);
@@ -2563,6 +2536,61 @@ int Ftp::ReplyLogPriority(int code)
    return 4;
 }
 
+int Ftp::ReceiveOneLine()
+{
+   const char *resp;
+   int resp_size;
+   conn->control_recv->Get(&resp,&resp_size);
+   if(resp==0) // eof
+   {
+      LogError(0,_("Peer closed connection"));
+      DisconnectNow();
+      return -1;
+   }
+   if(resp_size==0)
+      return 0;
+   int line_len=0;
+   int skip_len=0;
+   // find <CR><NL> pair
+   const char *nl=find_char(resp,resp_size,'\n');
+   for(;;)
+   {
+      if(!nl)
+      {
+	 if(conn->control_recv->Eof())
+	 {
+	    skip_len=line_len=resp_size;
+	    break;
+	 }
+	 return 0;
+      }
+      if(nl>resp && nl[-1]=='\r')
+      {
+	 line_len=nl-resp-1;
+	 skip_len=nl-resp+1;
+	 break;
+      }
+      nl=find_char(nl+1,resp_size-(nl+1-resp),'\n');
+   }
+
+   line.nset(resp,line_len);
+   conn->control_recv->Skip(skip_len);
+
+   // Change <CR><NUL> to <CR> according to RFC2640.
+   // Other occurencies of <NUL> are changed to '!'.
+   char *w=line.get_non_const();
+   const char *r=w;
+   for(int i=line.length(); i>0; i--,r++)
+   {
+      if(*r)
+	 *w++=*r;
+      else if(r==line || r[-1]!='\r')
+	 *w++='!';
+   }
+   line.truncate(line.length()-(r-w));
+   return line.length();
+}
+
 int  Ftp::ReceiveResp()
 {
    int m=STALL;
@@ -2585,78 +2613,38 @@ int  Ftp::ReceiveResp()
       if(!conn || !conn->control_recv)
 	 return m;
 
-      const char *resp;
-      int resp_size;
-      conn->control_recv->Get(&resp,&resp_size);
-      if(resp==0) // eof
-      {
-	 LogError(0,_("Peer closed connection"));
-	 DisconnectNow();
+      int res=ReceiveOneLine();
+      if(res==-1)
 	 return MOVED;
-      }
-      int line_len=0;
-      int skip_len=0;
-      const char *nl=find_char(resp,resp_size,'\n');
-      for(;;)
-      {
-	 if(!nl)
-	 {
-	    if(conn->control_recv->Eof())
-	    {
-	       skip_len=line_len=resp_size;
-	       break;
-	    }
-	    return m;
-	 }
-	 if(nl>resp && nl[-1]=='\r')
-	 {
-	    line_len=nl-resp-1;
-	    skip_len=nl-resp+1;
-	    break;
-	 }
-	 nl=find_char(nl+1,resp_size-(nl+1-resp),'\n');
-      }
-      m=MOVED;
-
-      line.nset(resp,line_len);
-      conn->control_recv->Skip(skip_len);
-
-      // Change <CR><NUL> to <CR> according to RFC2640.
-      // Other occurencies of <NUL> are changed to '!'.
-      char *w=line.get_non_const();
-      const char *r=line.get();
-      for(int i=line_len; i>0; i--,r++)
-      {
-	 if(*r)
-	    *w++=*r;
-	 else if(r[-1]!='\r')
-	    *w++='!';
-      }
-      line.set_length(line_len-=(r-w));
+      if(res==0)
+	 return m;
 
       int code=0;
-
-      if(strlen(line)>=3 && is_ascii_digit(line[0])
+      if(line.length()>=3 && is_ascii_digit(line[0])
       && is_ascii_digit(line[1]) && is_ascii_digit(line[2]))
-	 code=atoi(line);
+	 sscanf(line,"%3d",&code);
+
+      if(conn->multiline_code && conn->multiline_code!=code)
+	 code=0;  // reply can only terminate with the same code
+
+      int log_prio=ReplyLogPriority(conn->multiline_code?conn->multiline_code:code);
 
       if(!expect->IsEmpty() && expect->FirstIs(Expect::QUOTED) && conn->data_iobuf
       && (mode!=LONG_LIST || !code))
       {
-	 conn->data_iobuf->Put(line,line_len);
+	 conn->data_iobuf->Put(line);
 	 conn->data_iobuf->Put("\n");
 	 if(code)
-	    LogRecv(ReplyLogPriority(code),line);
+	    LogRecv(log_prio,line);
       }
       else
       {
-	 LogRecv(ReplyLogPriority(conn->multiline_code?conn->multiline_code:code),line);
+	 LogRecv(log_prio,line);
       }
 
-      int all_lines_len=xstrlen(all_lines);
-      if(conn->multiline_code==0 || all_lines_len==0)
+      if(conn->multiline_code==0 || all_lines.length()==0)
 	 all_lines.set(line); // not continuation
-      else
+      else if(all_lines.length()<0x4000)
 	 all_lines.vappend("\n",line.get(),NULL);
 
       if(code==0)
@@ -2668,15 +2656,11 @@ int  Ftp::ReceiveResp()
 	    conn->multiline_code=code;
 	 continue;
       }
-      if(conn->multiline_code)
-      {
-	 if(conn->multiline_code!=code || line[3]!=' ')
-	    continue;   // Multiline response can terminate only with
-			// the same code as it started with.
-			// The space is required.
-	 conn->multiline_code=0;
-      }
-      if(conn->sync_wait>0 && code/100!=1)
+      if(conn->multiline_code && line[3]!=' ')
+	 continue; // The space is required to terminate multiline reply
+      conn->multiline_code=0;
+
+      if(conn->sync_wait>0 && !is1XX(code))
 	 conn->sync_wait--; // clear the flag to send next command
 
       CheckResp(code);
@@ -2701,9 +2685,8 @@ void Ftp::HttpProxySendAuth(const SMTaskRef<IOBuffer>& buf)
 {
    if(!proxy_user || !proxy_pass)
       return;
-   char *auth=string_alloca(strlen(proxy_user)+1+strlen(proxy_pass)+1);
-   sprintf(auth,"%s:%s",proxy_user.get(),proxy_pass.get());
-   int auth_len=strlen(auth);
+   xstring& auth=xstring::cat(proxy_user.get(),":",proxy_pass.get(),NULL);
+   int auth_len=auth.length();
    char *buf64=string_alloca(base64_length(auth_len)+1);
    base64_encode(auth,buf64,auth_len);
    buf->Format("Proxy-Authorization: Basic %s\r\n",buf64);
@@ -3842,7 +3825,7 @@ void Ftp::CheckResp(int act)
    case Expect::EPSV:
       if(is2XX(act))
       {
-	 if(strlen(line)<=4)
+	 if(line.length()<=4)
 	    goto passive_off;
 
 	 memset(&conn->data_sa,0,sizeof(conn->data_sa));
