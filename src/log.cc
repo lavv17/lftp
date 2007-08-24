@@ -112,7 +112,7 @@ void Log::Format(int l,const char *f,...)
 
    va_list v;
    va_start(v,f);
-   DoWrite(xstring::format(f,v));
+   DoWrite(xstring::vformat(f,v));
    va_end(v);
 }
 
@@ -121,7 +121,7 @@ void Log::vFormat(int l,const char *f,va_list v)
    if(!WillOutput(l))
       return;
 
-   DoWrite(xstring::format(f,v));
+   DoWrite(xstring::vformat(f,v));
 }
 
 void Log::Cleanup()

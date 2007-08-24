@@ -268,7 +268,7 @@ xstring &xstring::cat(const char *first,...)
 xstring &xstring::join(const char *sep,int n,...)
 {
    va_list va;
-   va_start(va,first);
+   va_start(va,n);
    xstring& str=get_tmp();
    str.truncate(0);
    while(n-->0)
