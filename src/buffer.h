@@ -58,10 +58,6 @@ protected:
 
    off_t pos;
 
-   // low-level for derived classes
-   virtual int Put_LL(const char *buf,int size) { return 0; }
-   virtual int PutEOF_LL() { return 0; }
-
    SMTaskRef<Speedometer> rate;
    void RateAdd(int n);
 
@@ -88,7 +84,7 @@ public:
    void Put(const xstring &s) { Put(s.get(),s.length()); }
    void Format(const char *f,...) PRINTF_LIKE(2,3);
    void vFormat(const char *f, va_list v);
-   void PutEOF() { eof=true; PutEOF_LL(); }
+   void PutEOF() { eof=true; }
    char *GetSpace(int size) {
       Allocate(size);
       return buffer.get_non_const()+buffer.length();
@@ -132,7 +128,6 @@ public:
    void Empty();
 
    Buffer();
-   virtual ~Buffer() {}
 };
 
 class DataTranslator : public Buffer
@@ -187,6 +182,11 @@ public:
 class IOBuffer : public DirectedBuffer, public SMTask
 {
 protected:
+   // low-level for derived classes
+   virtual int Get_LL(int size) { return 0; }
+   virtual int Put_LL(const char *buf,int size) { return 0; }
+   virtual int PutEOF_LL() { return 0; }
+
    Time event_time; // used to detect timeouts
 
 public:
@@ -201,12 +201,18 @@ public:
       {
 	 return(broken || Error() || (eof && (mode==GET || Size()==0)));
       }
-   virtual int Get_LL(int size) { return 0; }
    virtual int Do();
 
    virtual FgData *GetFgData(bool) { return 0; }
    virtual const char *Status() { return ""; }
    virtual int Buffered() { return Size(); }
+
+   // Put method with Put_LL shortcut
+   void Put(const char *,int);
+   void Put(const char *buf) { Put(buf,strlen(buf)); }
+   void Put(const xstring &s) { Put(s.get(),s.length()); }
+   // anchor to PutEOF_LL
+   void PutEOF() { DirectedBuffer::PutEOF(); PutEOF_LL(); }
 };
 
 class IOBufferStacked : public IOBuffer

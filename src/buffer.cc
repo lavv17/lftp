@@ -100,27 +100,15 @@ void Buffer::SaveMaxCheck(int size)
 
 void Buffer::Put(const char *buf,int size)
 {
-   SaveMaxCheck(size);
+   if(size==0)
+      return;
 
-   if(Size()==0 && !save)
+   SaveMaxCheck(size);
+   if(Size()==0 && buffer_ptr>0 && !save)
    {
       buffer.truncate(0);
       buffer_ptr=0;
-
-      if(size>=PUT_LL_MIN)
-      {
-	 int res=Put_LL(buf,size);
-	 if(res>=0)
-	 {
-	    buf+=res;
-	    size-=res;
-	    pos+=res;
-	 }
-      }
    }
-
-   if(size==0)
-      return;
 
    char *space=GetSpace(size);
    memmove(space,buf,size);
@@ -369,6 +357,21 @@ void DirectedBuffer::EmbraceNewData(int len)
    else
       SpaceAdd(len);
    SaveMaxCheck(0);
+}
+
+void IOBuffer::Put(const char *buf,int size)
+{
+   if(size>=PUT_LL_MIN && Size()==0 && mode==PUT && !save)
+   {
+      int res=Put_LL(buf,size);
+      if(res>=0)
+      {
+	 buf+=res;
+	 size-=res;
+	 pos+=res;
+      }
+   }
+   DirectedBuffer::Put(buf,size);
 }
 
 int IOBuffer::Do()
