@@ -1852,7 +1852,7 @@ int   Ftp::Do()
       {
 	 if(use_pret && conn->pret_supported)
 	 {
-	    conn->SendCmd(xstring::cat("PRET ",command," ",file,NULL));
+	    conn->SendCmd(xstring::cat("PRET ",command," ",file.get(),NULL));
 	    expect->Push(Expect::PRET);
 	 }
 	 if(conn->peer_sa.sa.sa_family==AF_INET)

@@ -739,33 +739,33 @@ char *xasprintf(const char *format, ...)
  * note: the last differs from dirname(1) (which would return ".")
  *
  */
-char *dirname_alloc(const char *fn)
+void strip_trailing_slashes(xstring& ret)
 {
-   char *ret=xstrdup(fn);
-   return dirname_modify(ret);
-}
-char *strip_trailing_slashes(char *ret)
-{
-   int len=strlen(ret);
+   int len=ret.length();
    while(len>0 && ret[len-1]=='/')
       len--;
    if(len==0 && ret[0]=='/')
       len=1+(ret[1]=='/');
    if(len>0)
-      ret[len]=0;
-   return ret;
+      ret.truncate(len);
 }
-char *dirname_modify(char *ret)
+xstring& dirname_modify(xstring &ret)
 {
    strip_trailing_slashes(ret);
-   char *slash=strrchr(ret,'/');
+   const char *slash=strrchr(ret,'/');
    if(!slash)
-      ret[0]=0; /* file with no path */
+      ret.truncate(0); /* file with no path */
    else if(slash==ret)
-      ret[1]=0; /* the slash is the first character */
+      ret.truncate(1); /* the slash is the first character */
    else
-      *slash=0;
+      ret.truncate(slash-ret);
    return ret;
+}
+xstring& dirname(const char *path)
+{
+   xstring& tmp=xstring::get_tmp();
+   tmp.set(path);
+   return dirname_modify(tmp);
 }
 
 char last_char(const char *str)

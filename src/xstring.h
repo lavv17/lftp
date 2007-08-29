@@ -170,10 +170,14 @@ public:
    const char *set(const char *s);
    const char *nset(const char *s,int len);
    const char *set_allocated(char *s);
+   const char *set_substr(int start,size_t sublen,const char *,size_t);
    const char *set_substr(int start,size_t sublen,const char *);
+   const char *set_substr(int start,size_t sublen,const xstring &s) { return set_substr(start,sublen,s.get(),s.length()); }
 
    const char *append(const char *s);
    const char *append(char c);
+   const char *append(const char *s,size_t len);
+   const char *append(const xstring &s) { return append(s.get(),s.length()); }
    const char *vappend(va_list);
    const char *vappend(...) __attribute__((sentinel));
    const char *vset(...) __attribute__((sentinel));

@@ -191,11 +191,9 @@ void LsCache::List()
 
 void LsCache::Changed(change_mode m,const FileAccess *f,const char *dir)
 {
-   const char *fdir_c=dir_file(f->GetCwd(),dir);
-   char *fdir=alloca_strdup(fdir_c);
+   xstring fdir(dir_file(f->GetCwd(),dir));
    if(m==FILE_CHANGED)
       dirname_modify(fdir);
-   int fdir_len=strlen(fdir);
 
    LsCacheEntry *c=IterateFirst();
    while(c)
@@ -203,7 +201,7 @@ void LsCache::Changed(change_mode m,const FileAccess *f,const char *dir)
       const FileAccess *sloc=c->loc;
       if(f->SameLocationAs(sloc) || (f->SameSiteAs(sloc)
 	       && (m==TREE_CHANGED?
-		     !strncmp(fdir,dir_file(sloc->GetCwd(),c->arg),fdir_len)
+		     !strncmp(fdir,dir_file(sloc->GetCwd(),c->arg),fdir.length())
 		   : !strcmp (fdir,dir_file(sloc->GetCwd(),c->arg)))))
 	 c=IterateDelete();
       else

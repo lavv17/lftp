@@ -31,6 +31,8 @@
 #endif
 #include <stdarg.h>
 
+class xstring;
+
 // expands tilde; returns pointer to static data
 const char *expand_home_relative(const char *);
 
@@ -103,9 +105,9 @@ char *xstrftime(const char *format, const struct tm *tm);
 char *xvasprintf(const char *format, va_list ap);
 char *xasprintf(const char *format, ...);
 
-char *dirname_alloc(const char *fn);
-char *dirname_modify(char *fn);
-char *strip_trailing_slashes(char *fn);
+void strip_trailing_slashes(xstring& fn);
+xstring& dirname_modify(xstring& fn);
+xstring& dirname(const char *path);  // returns a tmp
 
 /* returns last character of string or \0 if string is empty */
 char last_char(const char *str);

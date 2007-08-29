@@ -40,7 +40,7 @@ static bool token_eq(const char *buf,int len,const char *token)
 	    && (token_len==len || !is_ascii_alnum(buf[token_len]));
 }
 
-static bool find_value(const char *scan,const char *more,const char *name,char *store)
+static bool find_value(const char *scan,const char *more,const char *name,xstring& store)
 {
    for(;;)
    {
@@ -73,14 +73,11 @@ static bool find_value(const char *scan,const char *more,const char *name,char *
       while(scan<more && (quote ? *scan!=quote : !is_ascii_space(*scan)))
       {
 	 if(match)
-	    *store++=*scan;
+	    store.append(*scan);
 	 scan++;
       }
       if(match)
-      {
-	 *store=0;
 	 return true;
-      }
       if(scan>=more)
 	 return false;
       if(quote)
@@ -170,7 +167,7 @@ const char *find_eol(const char *buf,int len,bool eof,int *eol_size)
 }
 
 /* This function replaces &amp; &lt; &gt; &quot; to appropriate characters */
-static void decode_amps(char *s)
+static void decode_amps(xstring& s)
 {
    static const struct pair
       { char str[7]; char ch; }
@@ -183,15 +180,14 @@ static void decode_amps(char *s)
    };
    const struct pair *scan;
 
-   for(char *a=s; a; a=strchr(a,'&'))
+   for(const char *a=s; a; a=strchr(a,'&'))
    {
       for(scan=table; scan->ch; scan++)
       {
 	 int len=strlen(scan->str);
 	 if(!strncmp(a,scan->str,len))
 	 {
-	    *a=scan->ch;
-	    memmove(a+1,a+len,strlen(a+len)+1);
+	    s.set_substr(a-s,len,&scan->ch,1);
 	    break;
 	 }
       }
@@ -377,7 +373,7 @@ static bool try_mini_proxy(file_info &info,const char *buf)
    return false;
 }
 static bool try_apache_unixlike(file_info &info,const char *buf,
-   const char *more,const char *more1,const char **info_string,int *info_string_len)
+   const char *more,const char *more1,xstring& info_string)
 {
    info.clear();
 
@@ -413,8 +409,7 @@ static bool try_apache_unixlike(file_info &info,const char *buf,
 	 if(str)
 	    info.sym_link.set(str+4);
       }
-      *info_string=buf;
-      *info_string_len=consumed;
+      info_string.nset(buf,consumed);
       debug("apache ftp over http proxy listing matched");
       return true;
    }
@@ -500,7 +495,7 @@ static bool try_squid_ftp(file_info &info,const char *str,char *str_with_tags)
 }
 
 static bool try_wwwoffle_ftp(file_info &info,const char *buf,
-   const char *ext,const char **info_string,int *info_string_len)
+   const char *ext,xstring& info_string)
 {
    info.clear();
 
@@ -532,8 +527,7 @@ static bool try_wwwoffle_ftp(file_info &info,const char *buf,
 	 if(p)
 	    info.sym_link.set(p+6);
       }
-      *info_string=buf;
-      *info_string_len=consumed;
+      info_string.nset(buf,consumed);
       debug("wwwoffle ftp over http proxy listing matched");
       return true;
    }
@@ -596,17 +590,17 @@ static bool try_csm_proxy(file_info &info,const char *str)
 
 // this procedure is highly inefficient in some cases,
 // esp. when it has to return for more data many times.
-static int parse_html(const char *buf,int len,bool eof,const Ref<Buffer>& list,
+static int parse_html(const char *buf,int buf_len,bool eof,const Ref<Buffer>& list,
       FileSet *set,FileSet *all_links,const ParsedURL *prefix,xstring_c *base_href,
       LsOptions *lsopt=0, int color = 0)
 {
-   const char *end=buf+len;
-   const char *less=find_char(buf,len,'<');
+   const char *end=buf+buf_len;
+   const char *less=find_char(buf,buf_len,'<');
    int eol_len=0;
    int skip_len=0;
    const char *eol;
 
-   eol=find_eol(buf,len,eof,&eol_len);
+   eol=find_eol(buf,buf_len,eof,&eol_len);
    if(eol)
       skip_len=eol-buf+eol_len;
 
@@ -626,7 +620,7 @@ static int parse_html(const char *buf,int len,bool eof,const Ref<Buffer>& list,
 	 if(!eoc)
 	 {
 	    if(eof)  // unterminated comment.
-	       return len;
+	       return buf_len;
 	    return less-buf;
 	 }
 	 if(eoc>=less+4+2 && eoc[-1]=='-' && eoc[-2]=='-')
@@ -639,7 +633,7 @@ static int parse_html(const char *buf,int len,bool eof,const Ref<Buffer>& list,
    if(more==0)
    {
       if(eof)
-	 return len;
+	 return buf_len;
       return 0;
    }
    // we have found a tag
@@ -650,10 +644,7 @@ static int parse_html(const char *buf,int len,bool eof,const Ref<Buffer>& list,
    if(less[1]=='/' || less[1]=='!')
       return tag_len;
 
-   int max_link_len=more-less+1+2;
-   if(base_href && *base_href)
-      max_link_len+=base_href->length()+1;
-   char *link_target=(char*)alloca(max_link_len);
+   xstring link_target;
 
    static const struct tag_link
 	 { const char *tag, *link; }
@@ -717,15 +708,12 @@ static int parse_html(const char *buf,int len,bool eof,const Ref<Buffer>& list,
       char *t=strstr(link_target,";type=");
       if(t && t[6] && t[7]=='/' && t[8]==0)
 	 *t=0;
-      char *p=link_target+url::path_index(link_target);
+      const char *p=link_target+url::path_index(link_target);
       if(p[0]=='/' && p[1]=='/')
-      {
-	 memmove(p+4,p+2,strlen(p+2)+1);
-	 memcpy(p+1,"%2F",3);
-      }
+	 link_target.set_substr(p-link_target+1,1,"%2F");
    }
 
-   Log::global->Format(10,"Found tag %s, link_target=%s\n",tag_scan->tag,link_target);
+   Log::global->Format(10,"Found tag %s, link_target=%s\n",tag_scan->tag,link_target.get());
 
    if(!strcasecmp(tag_scan->tag,"base"))
    {
@@ -739,24 +727,29 @@ static int parse_html(const char *buf,int len,bool eof,const Ref<Buffer>& list,
    if(!strcasecmp(tag_scan->tag,"meta"))
    {
       // skip 0; URL=
-      while(*link_target && is_ascii_digit(*link_target))
-	 link_target++;
-      if(*link_target!=';')
+      link_target.rtrim();
+      const char *scan=link_target;
+      while(*scan && is_ascii_digit(*scan))
+	 scan++;
+      if(*scan!=';')
 	 return tag_len;
-      link_target++;
-      while(*link_target && is_ascii_space(*link_target))
-	 link_target++;
-      if(strncasecmp(link_target,"URL=",4))
+      scan++;
+      while(*scan && is_ascii_space(*scan))
+	 scan++;
+      if(strncasecmp(scan,"URL=",4))
 	 return tag_len;
-      link_target+=4;
+      scan+=4;
+      int len=link_target.length()-(scan-link_target);
       if(link_target[0]=='\'')
       {
 	 // FIXME: maybe a more complex value parser is required.
-	 link_target++;
-	 int len=strlen(link_target);
-	 if(len>0 && link_target[len-1]=='\'')
-	    link_target[len-1]=0;
+	 scan++;
+	 len--;
+	 if(len>0 && scan[len-1]=='\'')
+	    len--;
       }
+      link_target.nset(scan,len);
+      Log::global->Format(10,"Extracted `%s' from META tag\n",link_target.get());
    }
 
    bool icon=false;
@@ -772,10 +765,8 @@ static int parse_html(const char *buf,int len,bool eof,const Ref<Buffer>& list,
    // check if the target is a relative and not a cgi
    if(strchr(link_target,'?'))
       return tag_len;	// cgi
-   char *c=strchr(link_target,'#');
-   if(c)
-      *c=0; // strip pointer inside document.
-   if(*link_target==0)
+   link_target.truncate_at('#'); // strip the anchor
+   if(link_target.length()==0)
       return tag_len;	// no target ?
 
    // netscape internal icons
@@ -783,7 +774,7 @@ static int parse_html(const char *buf,int len,bool eof,const Ref<Buffer>& list,
       return tag_len;
 
    if(link_target[0]=='/' && link_target[1]=='~')
-      link_target++;
+      link_target.set_substr(0,1,0,0);
 
    bool base_href_applied=false;
 
@@ -816,9 +807,7 @@ parse_url_again:
 	 const char *base_end=strrchr(*base_href,'/');
 	 if(base_end)
 	 {
-	    memmove(link_target+(base_end-*base_href+1),link_target,
-	       strlen(link_target)+1);
-	    memcpy(link_target,*base_href,(base_end-*base_href+1));
+	    link_target.set_substr(0,0,*base_href,(base_end+1-*base_href));
 	    base_href_applied=true;
 	    goto parse_url_again;
 	 }
@@ -827,25 +816,22 @@ parse_url_again:
 
    // ok, it is good relative link
    if(link_url.path==0)
-      strcpy(link_target,"/");
+      link_target.set("/");
    else
-      strcpy(link_target,link_url.path);
+      link_target.set(link_url.path);
 
    if(link_target[0]=='/' && link_target[1]=='/' && hftp)
    {
       // workaround for apache proxy.
-      link_target++;
+      link_target.set_substr(0,1,0,0);
    }
 
-   int link_len=strlen(link_target);
-
    file_info info;
-   info.is_directory=(link_len>0 && link_target[link_len-1]=='/');
-   if(info.is_directory && link_len>1)
-      link_target[--link_len]=0;
+   info.is_directory=(link_target.last_char()=='/');
+   if(link_target.length()>1)
+      link_target.chomp('/');
 
-   FileAccess::Path::Optimize(link_target+(link_target[0]=='/' && link_target[1]=='~'));
-   link_len=strlen(link_target);
+   FileAccess::Path::Optimize(link_target,(link_target[0]=='/' && link_target[1]=='~'));
 
    if(prefix)
    {
@@ -858,30 +844,20 @@ parse_url_again:
 	 p_path[--p_len]=0;
       if(p_len==1 && p_path[0]=='/' && link_target[0]=='/')
       {
-	 if(link_len>1)
+	 if(link_target.length()>1)
 	 {
 	    // strip leading slash
-	    link_len--;
-	    memmove(link_target,link_target+1,link_len+1);
+	    link_target.set_substr(0,1,0,0);
 	 }
       }
       else if(p_len>0 && !strncmp(link_target,p_path,p_len))
       {
 	 if(link_target[p_len]=='/')
-	 {
-	    link_len=strlen(link_target+p_len+1);
-	    memmove(link_target,link_target+p_len+1,link_len+1);
-	 }
+	    link_target.set_substr(0,p_len+1,0,0);
 	 else if(link_target[p_len]==0)
-	 {
-	    strcpy(link_target,".");
-	    link_len=1;
-	 }
+	    link_target.set(".");
 	 if(link_target[0]=='.' && link_target[1]=='/')
-	 {
-	    link_len-=2;
-	    memmove(link_target,link_target+2,link_len+1);
-	 }
+	    link_target.set_substr(0,2,0,0);
       }
       else
       {
@@ -892,10 +868,7 @@ parse_url_again:
 	    p_len=rslash-p_path;
 	    if(p_len>0 && !strncmp(link_target,p_path,p_len)
 	    && link_target[p_len]==0)
-	    {
-	       strcpy(link_target,"..");
-	       link_len=2;
-	    }
+	       link_target.set("..");
 	 }
       }
    }
@@ -909,10 +882,9 @@ parse_url_again:
       type[0]=';';
    }
 
-   if(link_len==0)
+   if(link_target.length()==0)
    {
-      strcpy(link_target,".");
-      link_len=1;
+      link_target.set(".");
       info.is_directory=true;
    }
 
@@ -925,9 +897,8 @@ parse_url_again:
    {
       const char *more1;
       char *str,*str_with_tags, *str2;
-      char *line_add=(char*)alloca(link_len+128+2*1024);
-      const char *info_string=0;
-      int         info_string_len=0;
+      xstring line_add;
+      xstring info_string;
       int type;
 
       if(!a_href)
@@ -990,7 +961,7 @@ parse_url_again:
 	 goto got_info;
       }
       if(try_mini_proxy(info,str)		&& info.validate()) goto got_info;
-      if(try_apache_unixlike(info,str,more,more1,&info_string,&info_string_len)
+      if(try_apache_unixlike(info,str,more,more1,info_string)
       && info.validate())
 	 goto got_info;
       if(try_roxen(info,str)			&& info.validate()) goto got_info;
@@ -1004,7 +975,7 @@ parse_url_again:
       str2=string_alloca(less-buf+1);
       memcpy(str2,buf,less-buf);
       str2[less-buf]=0;
-      if(try_wwwoffle_ftp(info,str2,str,&info_string,&info_string_len)
+      if(try_wwwoffle_ftp(info,str2,str,info_string)
       && info.validate())
       {
 	 // skip rest of line, because there may be href to link target.
@@ -1016,8 +987,7 @@ parse_url_again:
    add_file_no_info:
       if(!list || !show_in_list)
 	 goto info_done;
-      sprintf(line_add,"%s  --  %s",
-	    info.is_directory?"drwxr-xr-x":"-rw-r--r--",link_target);
+      line_add.vset(info.is_directory?"drwxr-xr-x":"-rw-r--r--","  --  ",link_target.get(),NULL);
       goto append_type_maybe;
 
    got_info:
@@ -1076,35 +1046,31 @@ parse_url_again:
 
       if(info_string)
       {
-	 sprintf(line_add,"%.*s %s",info_string_len,info_string,link_target);
+	 line_add.vset(info_string.get()," ",link_target.get(),NULL);
 	 goto append_symlink_maybe;
       }
 
-      sprintf(line_add,"%s  %11s  %04d-%s-%02d",
+      line_add.setf("%s  %11s  %04d-%s-%02d",
 	 info.perms,info.size_str,info.year,info.month_name,info.day);
 
       if (info.hour >= 0 || info.minute >= 0) {
 	  if (info.hour >= 0) {
-	      char hour[6];
-	      sprintf(hour, " %02d:", info.hour);
-	      strcat(line_add, hour);
+	      line_add.appendf(" %02d:",info.hour);
 	  } else {
-	      strcat(line_add, " --:");
+	      line_add.append(" --:");
 	  }
 
 	  if (info.minute >= 0) {
-	      char minute[4];
-	      sprintf(minute, "%02d", info.minute);
-	      strcat(line_add, minute);
+	      line_add.appendf("%02d", info.minute);
 	  } else {
-	      strcat(line_add, "--");
+	      line_add.append("--");
 	  }
       } else {
 	  // neither hour nor minute are given
-	  strcat(line_add, "      ");
+	  line_add.append("      ");
       }
 
-      strcat(line_add, "  ");
+      line_add.append("  ");
 
       type = FileInfo::NORMAL;
 
@@ -1116,24 +1082,24 @@ parse_url_again:
       if (color && FileInfo::NORMAL != type && all_links && !all_links->FindByName(link_target)) {
 	  list->Put(line_add);
 	  DirColors::GetInstance()->PutColored(list, link_target, type);
-	  line_add[0] = '\0'; // reset
+	  line_add.truncate(0);	 // reset
       } else {
-	  strcat(line_add, link_target);
+	  line_add.append(link_target);
       }
 
    append_symlink_maybe:
       if(info.sym_link)
-	 sprintf(line_add+strlen(line_add)," -> %s",info.sym_link.get());
+	 line_add.vappend(" -> ",info.sym_link.get(),NULL);
 
    append_type_maybe:
       if(lsopt && lsopt->append_type)
       {
 	 if(info.is_directory)
-	    strcat(line_add,"/");
+	    line_add.append('/');
 	 if(info.is_sym_link && !info.sym_link)
-	    strcat(line_add,"@");
+	    line_add.append('@');
       }
-      strcat(line_add,"\n");
+      line_add.append('\n');
 
       if(!all_links->FindByName(link_target))
       {

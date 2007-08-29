@@ -1338,10 +1338,8 @@ int FileCopyPeerFDStream::Do()
       {
 	 if(suggested_filename && stream && stream->full_name && auto_rename)
 	 {
-	    char *dir=alloca_strdup(stream->full_name);
-	    dirname_modify(dir);
 	    debug((5,"copy: renaming `%s' to `%s'\n",stream->full_name.get(),suggested_filename.get()));
-	    if(rename(stream->full_name,dir_file(dir,suggested_filename))==-1)
+	    if(rename(stream->full_name,dir_file(dirname(stream->full_name),suggested_filename))==-1)
 	       debug((3,"rename(%s, %s): %s\n",stream->full_name.get(),suggested_filename.get(),strerror(errno)));
 	 }
 	 done=true;
@@ -1381,6 +1379,8 @@ int FileCopyPeerFDStream::Do()
 	    return m;
       }
       if(!write_allowed)
+	 return m;
+      if(getfd()==-1)
 	 return m;
       while(Size()>0)
       {

@@ -408,16 +408,14 @@ void FileAccess::GetInfoArray(struct fileinfo *info,int count)
    array_cnt=count;
 }
 
-static void expand_tilde(xstring &path, const char *home)
+static void expand_tilde(xstring &path, const char *home, int i=0)
 {
-   if(path[0]=='~' && (path[1]==0 || path[1]=='/'))
-   {
-      const char *saved_path=alloca_strdup(path+1);
-      if(home[0]=='/' && home[1]==0 && saved_path[0]=='/')
-	 path.set(saved_path);
-      else
-	 path.vset(home,saved_path,NULL);
-   }
+   if(!(path[i]=='~' && (path[i+1]==0 || path[i+1]=='/')))
+      return;
+   char prefix_len=(last_char(home)=='/' ? 2 : 1);
+   if(home[0]=='/' && i>0 && path[i-1]=='/')
+      home++;
+   path.set_substr(i,prefix_len,home);
 }
 
 void  FileAccess::ExpandTildeInCWD()
@@ -467,11 +465,17 @@ int FileAccess::device_prefix_len(const char *path)
    return 0;
 }
 
-void FileAccess::Path::Optimize(char *path,int device_prefix_len)
+void FileAccess::Path::Optimize(xstring& path,int device_prefix_len)
 {
-   int	 prefix_size=0;
+   int prefix_size=0;
 
-   if(path[0]=='/')
+   if(path[0]=='/' && path[1]=='~' && device_prefix_len==1)
+   {
+      prefix_size=2;
+      while(path[prefix_size]!='/' && path[prefix_size]!='\0')
+	 prefix_size++;
+   }
+   else if(path[0]=='/')
    {
       prefix_size=1;
       if(path[1]=='/' && (!path[2] || path[2]!='/'))
@@ -492,7 +496,7 @@ void FileAccess::Path::Optimize(char *path,int device_prefix_len)
    char	 *in;
    char	 *out;
 
-   in=out=path+prefix_size;
+   in=out=path.get_non_const()+prefix_size;
 
    while((in[0]=='.' && (in[1]=='/' || in[1]==0))
    || (in>path && in[-1]=='/' && (in[0]=='/'
@@ -505,12 +509,12 @@ void FileAccess::Path::Optimize(char *path,int device_prefix_len)
 	 in++;
    }
 
-   for(;;)
+   while(*in)
    {
       if(in[0]=='/')
       {
 	 // double slash
-	 if(in[1]=='/') // || (strip_trailing_slash && in[1]=='\0'))
+	 if(in[1]=='/')
 	 {
 	    in++;
 	    continue;
@@ -551,9 +555,9 @@ void FileAccess::Path::Optimize(char *path,int device_prefix_len)
 	    continue;
 	 }
       }
-      if((*out++=*in++)=='\0')
-	 break;
+      *out++=*in++;
    }
+   path.truncate(path.length()-(in-out));
 }
 
 void FileAccess::Chdir(const char *path,bool verify)
@@ -944,9 +948,6 @@ void FileAccess::Path::init()
    device_prefix_len=0;
    is_file=false;
 }
-FileAccess::Path::~Path()
-{
-}
 void FileAccess::Path::Set(const char *new_path,bool new_is_file,const char *new_url,int new_device_prefix_len)
 {
    path.set(new_path);
@@ -976,38 +977,27 @@ void FileAccess::Path::Change(const char *new_path,bool new_is_file,const char *
    if(url)
    {
       path_index=url::path_index(url);
-      const char *old_url_path=url+path_index;
-      char *new_url_path=string_alloca(strlen(old_url_path)+xstrlen(new_path)*3+3);
-      strcpy(new_url_path,old_url_path);
+      xstring new_url_path(url+path_index);
       if(is_file)
       {
 	 dirname_modify(new_url_path);
 	 if(!new_url_path[0])
-	    strcpy(new_url_path,"/~");
+	    new_url_path.set("/~");
       }
-      if(last_char(new_url_path)!='/')
-	 strcat(new_url_path,"/");
-      if(new_path[0]!='/' && new_path[0]!='~' && new_device_prefix_len==0)
+      if(new_url_path.last_char()!='/')
+	 new_url_path.append("/");
+      if(new_path[0]=='/' || new_path[0]=='~' || new_device_prefix_len!=0)
       {
-	 if(new_path_enc)
-	    strcat(new_url_path,new_path_enc);
-	 else
-	 {
-	    char *np=alloca_strdup(new_path);
-	    Optimize(np);
-	    url::encode_string(np,new_url_path+strlen(new_url_path),URL_PATH_UNSAFE);
-	 }
+	 bool have_slash=((new_path_enc?new_path_enc:new_path)[0]=='/');
+	 new_url_path.set(have_slash?"":"/");
       }
+      if(new_path_enc)
+	 new_url_path.append(new_path_enc);
       else
-      {
-	 if(new_path_enc)
-	    strcpy(new_url_path,new_path_enc);
-	 else
-	    url::encode_string(new_path,new_url_path,URL_PATH_UNSAFE);
-      }
-      if(!new_is_file && url::dir_needs_trailing_slash(url) && last_char(new_url_path)!='/')
-	 strcat(new_url_path,"/");
-      Optimize(new_url_path+(!strncmp(new_url_path,"/~",2)));
+	 new_url_path.append(url::encode(new_path,URL_PATH_UNSAFE));
+      if(!new_is_file && url::dir_needs_trailing_slash(url) && new_url_path.last_char()!='/')
+	 new_url_path.append('/');
+      Optimize(new_url_path,!strncmp(new_url_path,"/~",2));
       url.truncate(path_index);
       url.append(new_url_path);
    }
@@ -1017,7 +1007,7 @@ void FileAccess::Path::Change(const char *new_path,bool new_is_file,const char *
    {
       if(is_file)
       {
-	 dirname_modify(path.get_non_const());
+	 dirname_modify(path);
 	 if(!path[0])
 	    path.set("~");
       }
@@ -1031,7 +1021,7 @@ void FileAccess::Path::Change(const char *new_path,bool new_is_file,const char *
    path.set(new_path);
    device_prefix_len=new_device_prefix_len;
    Optimize();
-   strip_trailing_slashes(path.get_non_const());
+   strip_trailing_slashes(path);
    is_file=new_is_file;
    if(!strcmp(path,"/") || !strcmp(path,"//"))
       is_file=false;
@@ -1073,6 +1063,13 @@ void FileAccess::Path::ExpandTilde(const Path &home)
       device_prefix_len=home.device_prefix_len;
       if(path[1]=='\0')
 	 is_file=home.is_file;
+   }
+   if(url)
+   {
+      int pi=url::path_index(url);
+      if(url[pi]=='/' && url[pi+1]=='~')
+	 pi++;
+      expand_tilde(url,home.url?home.url.get():url::encode(home.path,URL_PATH_UNSAFE),pi);
    }
    expand_tilde(path,home.path);
 }

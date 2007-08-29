@@ -61,7 +61,11 @@ const char *xstring::nset(const char *s,int len)
    if(s==buf)
       return buf;
    if(s>buf && s<buf+size)
-      return (char*)memmove(buf,s,len);
+   {
+      memmove(buf,s,len);
+      get_space(len);
+      return buf;
+   }
    get_space(len);
    return (char*)memcpy(buf,s,len);
 }
@@ -80,19 +84,19 @@ const char *xstring::set_allocated(char *s)
    return buf=s;
 }
 
-const char *xstring::append(const char *s)
+const char *xstring::append(const char *s,size_t s_len)
 {
    if(!s || !*s)
       return buf;
-   if(!buf)
-      return set(s);
-   size_t s_len=strlen(s);
    get_space(len+s_len);
    memcpy(buf+len,s,s_len);
    len+=s_len;
    return buf;
 }
-
+const char *xstring::append(const char *s)
+{
+   return append(s,strlen(s));
+}
 const char *xstring::append(char c)
 {
    get_space(len+1);
@@ -177,9 +181,10 @@ void xstring::truncate_at(char c)
    }
 }
 
-const char *xstring::set_substr(int start,size_t sublen,const char *s)
+const char *xstring::set_substr(int start,size_t sublen,const char *s,size_t s_len)
 {
-   size_t s_len=xstrlen(s);
+   if(start+sublen>len)
+      sublen=len-start;
    if(sublen<s_len)
       get_space(len+s_len-sublen);
    if(sublen!=s_len)
@@ -187,6 +192,10 @@ const char *xstring::set_substr(int start,size_t sublen,const char *s)
    memcpy(buf+start,s,s_len);
    len+=s_len-sublen;
    return buf;
+}
+const char *xstring::set_substr(int start,size_t sublen,const char *s)
+{
+   return set_substr(start,sublen,s,xstrlen(s));
 }
 
 bool xstring::chomp(char c)

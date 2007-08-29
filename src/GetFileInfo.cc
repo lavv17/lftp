@@ -185,7 +185,7 @@ int GetFileInfo::Do()
 	 session->Chdir(dir, false);
 	 cd_path = "..";
 
-	 path_to_prefix.set_allocated(dirname_alloc(dir));
+	 path_to_prefix.set(dirname(dir));
 	 was_directory=false;
       }
       else if(!tried_info)
@@ -196,7 +196,7 @@ int GetFileInfo::Do()
 	 session->Chdir(dir, false);
 	 session->Chdir("..", false);
 
-	 path_to_prefix.set_allocated(dirname_alloc(dir));
+	 path_to_prefix.set(dirname(dir));
 	 was_directory=false;
 
 	 /* We tried both; no luck. Fall back on ARRAY_INFO. */
@@ -279,7 +279,7 @@ int GetFileInfo::Do()
 	 result = new FileSet;
 	 result->Add(fi);
 
-	 path_to_prefix.set_allocated(dirname_alloc(dir));
+	 path_to_prefix.set(dirname(dir));
 
 	 state=DONE;
 	 return MOVED;
@@ -293,7 +293,7 @@ int GetFileInfo::Do()
 	  * directory index. */
 	 FileInfo *fi = new FileInfo(dir);
 	 fi->SetType(fi->DIRECTORY);
-	 path_to_prefix.set_allocated(dirname_alloc(dir));
+	 path_to_prefix.set(dirname(dir));
 
 	 result = new FileSet;
 	 result->Add(fi);

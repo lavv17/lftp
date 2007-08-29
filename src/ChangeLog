@@ -1,3 +1,17 @@
+2007-08-29  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* buffer.cc, buffer.h: move Put_LL shortcut to IOBuffer.
+	* FileAccess.cc, FileAccess.h: (expand_tilde) add start index arg;
+	  (Path::Optimize) use xstrings, add a special case for optimization of url paths,
+	  (Path::Change) use xstrings, expand single tilde in url.
+	* misc.cc, misc.h: dirname works with xstring.
+	* GetFileInfo.cc: use new dirname.
+	* FileCopy.cc: use new dirname; getfd in FileCopyPeerFDStream mode PUT, so that
+	  it becomes IOReady.
+	* HttpDir.cc: use xstrings.
+	* xstring.cc, xstring.h: (append(s,len), append(xstring)) new methods; fix set_substr;
+	  (set_substr(i,len1,s,len2)) new method.
+
 2007-08-24  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* xstring.cc, xstring.h: (get_tmp, format, vformat, cat, join) new static methods.
