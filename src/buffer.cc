@@ -98,7 +98,7 @@ void Buffer::SaveMaxCheck(int size)
       save=false;
 }
 
-void Buffer::Put(const char *buf,int size)
+void Buffer::Append(const char *buf,int size)
 {
    if(size==0)
       return;
@@ -110,12 +110,14 @@ void Buffer::Put(const char *buf,int size)
       buffer_ptr=0;
    }
 
-   char *space=GetSpace(size);
-   memmove(space,buf,size);
+   memmove(GetSpace(size),buf,size);
    SpaceAdd(size);
+}
+void Buffer::Put(const char *buf,int size)
+{
+   Append(buf,size);
    pos+=size;
 }
-
 void Buffer::Prepend(const char *buf,int size)
 {
    if(size==0)
@@ -226,6 +228,13 @@ void Buffer::SetErrorCached(const char *e)
    error_text.append(_(" [cached]"));
 }
 
+void DataTranslator::AppendTranslated(Buffer *target,const char *put_buf,int size)
+{
+   off_t old_pos=target->GetPos();
+   PutTranslated(target,put_buf,size);
+   target->SetPos(old_pos);
+}
+
 #ifdef HAVE_ICONV
 void DataRecoder::PutTranslated(Buffer *target,const char *put_buf,int size)
 {
@@ -281,7 +290,6 @@ try_again:
    }
    return;
 }
-
 void DataRecoder::ResetTranslation()
 {
    Empty();
@@ -352,7 +360,7 @@ void DirectedBuffer::EmbraceNewData(int len)
    {
       // copy the data to free room for translated data
       translator->Put(buffer+buffer.length(),len);
-      translator->PutTranslated(this,0,0);
+      translator->AppendTranslated(this,0,0);
    }
    else
       SpaceAdd(len);

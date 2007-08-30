@@ -1,3 +1,8 @@
+2007-08-30  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: clone session when doing transfer (fixes -P).
+	* buffer.cc, buffer.h: (Append, AppendTranslated) new methods.
+
 2007-08-29  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* buffer.cc, buffer.h: move Put_LL shortcut to IOBuffer.
