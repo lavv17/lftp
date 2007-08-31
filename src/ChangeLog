@@ -1,3 +1,7 @@
+2007-08-31  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: set entity_size only for RETRIEVE mode; better handle 1xx replies.
+
 2007-08-31  Craig Ruff <cruff@ucar.edu>
 
 	* ftpclass.cc: handle 125 reply as 150.

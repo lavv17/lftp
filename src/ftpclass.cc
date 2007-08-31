@@ -838,14 +838,16 @@ void Ftp::CatchSIZE_opt(int act)
 	 conn->size_supported=false;
    }
 
+   // SIZE 0 is ignored (for some buggy servers).
    if(size<1)
       return;
 
-   entity_size=size;
+   if(mode==RETRIEVE)
+      entity_size=size;
 
    if(opt_size)
    {
-      *opt_size=entity_size;
+      *opt_size=size;
       opt_size=0;
    }
 }
@@ -1936,6 +1938,7 @@ int   Ftp::Do()
       }
       if(mode==STORE && entity_size!=NO_SIZE && QueryBool("use-allo",hostname))
       {
+	 // ALLO is usually ignored by servers, but send it anyway.
 	 conn->SendCmdF("ALLO %lld",(long long)entity_size);
 	 expect->Push(Expect::IGNORE);
       }
@@ -3655,33 +3658,36 @@ void Ftp::CheckFEAT(char *reply)
 
 void Ftp::CheckResp(int act)
 {
-   if(act==150 || act==125)
-   {
-      act = 150;
-      conn->received_150=true;
-   }
-
-   if(act==150 && (flags&PASSIVE_MODE) && conn->aborted_data_sock!=-1)
+   // close aborted accepting data socket when the connection is established
+   if(is1XX(act) && (flags&PASSIVE_MODE) && conn->aborted_data_sock!=-1)
       conn->CloseAbortedDataConnection();
 
-   if(act==150 && state==WAITING_STATE && expect->FirstIs(Expect::TRANSFER))
+   if(is1XX(act) && expect->FirstIs(Expect::TRANSFER))
    {
-      copy_connection_open=true;
-      stat_timer.ResetDelayed(2);
-   }
+      // allow data transfer
+      conn->received_150=true;
 
-   if(act==150 && mode==RETRIEVE && opt_size && *opt_size<0)
-   {
-      // try to catch size
-      char *s=strrchr(line,'(');
-      if(s && is_ascii_digit(s[1]))
+      if(state==WAITING_STATE)
       {
-	 long long size_ll;
-	 if(1==sscanf(s+1,"%lld",&size_ll))
+	 // set the FXP flag
+	 copy_connection_open=true;
+	 stat_timer.ResetDelayed(2);
+      }
+
+      if(mode==RETRIEVE && entity_size<0)
+      {
+	 // try to catch size
+	 const char *s=strrchr(line,'(');
+	 if(s && is_ascii_digit(s[1]))
 	 {
-	    entity_size=size_ll;
-	    *opt_size=entity_size;
-	    LogNote(7,_("saw file size in response"));
+	    long long size_ll;
+	    if(1==sscanf(s+1,"%lld",&size_ll))
+	    {
+	       entity_size=size_ll;
+	       if(*opt_size)
+		  *opt_size=entity_size;
+	       LogNote(7,_("saw file size in response"));
+	    }
 	 }
       }
    }
