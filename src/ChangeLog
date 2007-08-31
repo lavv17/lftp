@@ -1,3 +1,7 @@
+2007-08-31  Craig Ruff <cruff@ucar.edu>
+
+	* ftpclass.cc: handle 125 reply as 150.
+
 2007-08-23  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc: don't use put_ll_timer in ascii mode.
