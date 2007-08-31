@@ -3655,8 +3655,11 @@ void Ftp::CheckFEAT(char *reply)
 
 void Ftp::CheckResp(int act)
 {
-   if(act==150)
+   if(act==150 || act==125)
+   {
+      act = 150;
       conn->received_150=true;
+   }
 
    if(act==150 && (flags&PASSIVE_MODE) && conn->aborted_data_sock!=-1)
       conn->CloseAbortedDataConnection();
