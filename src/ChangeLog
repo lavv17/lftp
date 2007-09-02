@@ -1,3 +1,7 @@
+2007-09-02  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: fixed typo leading to coredump.
+
 2007-08-31  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: set entity_size only for RETRIEVE mode; better handle 1xx replies.

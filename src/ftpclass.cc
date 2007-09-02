@@ -3684,7 +3684,7 @@ void Ftp::CheckResp(int act)
 	    if(1==sscanf(s+1,"%lld",&size_ll))
 	    {
 	       entity_size=size_ll;
-	       if(*opt_size)
+	       if(opt_size)
 		  *opt_size=entity_size;
 	       LogNote(7,_("saw file size in response"));
 	    }
