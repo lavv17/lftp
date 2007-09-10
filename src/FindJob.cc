@@ -32,7 +32,8 @@
 #include "PatternSet.h"
 #include "buffer_std.h"
 
-#define top (*stack[stack_ptr])
+#define top (*stack.last())
+#define stack_ptr (stack.count()-1)
 #define super SessionJob
 #define orig_session super::session
 
@@ -209,7 +210,7 @@ void FinderJob::Up()
     * stack[1] is the contents (ls dir); don't exit for the first. */
    if(stack_ptr)
       Exit();
-   delete stack[stack_ptr--];
+   stack.chop();
    if(stack_ptr==-1)
       goto done;
    depth_done=true;
@@ -220,17 +221,10 @@ void FinderJob::Push(FileSet *fset)
 {
    const char *old_path=0;
    if(stack_ptr>=0)
-      old_path=top.path;
-
-   stack_ptr++;
-   if(stack_allocated<=stack_ptr)
    {
-      stack_allocated=stack_ptr+8;
-      stack=(place**)xrealloc(stack,sizeof(*stack)*stack_allocated);
-   }
-
-   if(stack_ptr != 0)
+      old_path=top.path;
       fset->ExcludeDots(); /* don't need . and .. (except for stack[0]) */
+   }
 
    const char *new_path="";
    if(old_path) // the first path will be empty
@@ -240,7 +234,7 @@ void FinderJob::Push(FileSet *fset)
     * on the filename portion only */
    if(exclude)
       fset->Exclude(0, exclude);
-   stack[stack_ptr]=new place(new_path,fset);
+   stack.append(new place(new_path,fset));
 
    /* give a chance to operate on the list as a whole, and
     * possibly sort it */
@@ -266,10 +260,6 @@ void FinderJob::Init()
    op="find";
    errors=0;
    li=0;
-
-   stack_allocated=0;
-   stack_ptr=-1;
-   stack=0;
 
    show_sl=true;
 
@@ -307,9 +297,6 @@ void FinderJob::NextDir(const char *d)
 
 FinderJob::~FinderJob()
 {
-   while(stack_ptr>=0)
-      Up();
-   xfree(stack);
 }
 
 void FinderJob::ShowRunStatus(const SMTaskRef<StatusLine>& sl)

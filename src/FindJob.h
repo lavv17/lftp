@@ -48,9 +48,7 @@ class FinderJob : public SessionJob
 	 place(const char *p,FileSet *f) : path(p), fset(f) {}
       };
 
-   place **stack;
-   int stack_ptr;
-   int stack_allocated;
+   RefArray<place> stack;
 
    void Up();
    void Down(const char *d);
@@ -105,7 +103,7 @@ public:
 
    void Init();
    FinderJob(FileAccess *s);
-   virtual ~FinderJob();
+   ~FinderJob();
 
    void ShowRunStatus(const SMTaskRef<StatusLine>&);
    void PrintStatus(int v,const char *);
