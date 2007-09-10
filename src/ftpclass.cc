@@ -2632,18 +2632,23 @@ int  Ftp::ReceiveResp()
 
       int log_prio=ReplyLogPriority(conn->multiline_code?conn->multiline_code:code);
 
-      if(!expect->IsEmpty() && expect->FirstIs(Expect::QUOTED) && conn->data_iobuf
-      && (mode!=LONG_LIST || !code))
+      bool is_data=(!expect->IsEmpty() && expect->FirstIs(Expect::QUOTED) && conn->data_iobuf);
+      int data_offset=0;
+      if(is_data && mode==LONG_LIST)
       {
-	 conn->data_iobuf->Put(line);
+	 if(code && line.length()>4)
+	    data_offset=4;
+	 if(!strncasecmp(line+data_offset,"Status of ",10)
+	 || !strncasecmp(line+data_offset,"End of Status",13))
+	    is_data=false;
+      }
+      if(is_data)
+      {
+	 conn->data_iobuf->Put(line+data_offset,line.length()-data_offset);
 	 conn->data_iobuf->Put("\n");
-	 if(code)
-	    LogRecv(log_prio,line);
+	 log_prio=10;
       }
-      else
-      {
-	 LogRecv(log_prio,line);
-      }
+      LogRecv(log_prio,line);
 
       if(conn->multiline_code==0 || all_lines.length()==0)
 	 all_lines.set(line); // not continuation
