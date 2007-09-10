@@ -52,24 +52,16 @@ History::~History()
 
 const char *History::extract_url(const char *res)
 {
-   static char *buf;
-   static int buf_len;
-
    const char *url=strchr(res,':');
    if(url)
       url++;
    else
       url=res;
 
-   int len=strlen(url);
-   if(len>=buf_len);
-      buf=(char*)xrealloc(buf,buf_len=len+64);
+   if(url::is_url(url))
+      return url;
 
-   strcpy(buf,url);
-   if(!url::is_url(buf))
-      url::decode_string(buf);
-
-   return buf;
+   return url::decode(url);
 }
 
 time_t History::extract_stamp(const char *res)
