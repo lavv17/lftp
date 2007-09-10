@@ -27,15 +27,13 @@
 #include "Job.h"
 
 Job *Job::chain;
+#define waiting_num waiting.count()
 
 Job::Job()
 {
    next=chain;
    chain=this;
    parent=0;
-   waiting=0;
-   waiting_num=0;
-   waiting_alloc=0;
    jobno=-1;
    fg=false;
    fg_data=0;
@@ -51,9 +49,6 @@ void  Job::AllocJobno()
 
 Job::~Job()
 {
-   xfree(waiting);
-   waiting=0;
-   waiting_num=0;
    // reparent or kill children (hm, that's sadistic)
    {
       for(Job *scan=chain; scan; )
@@ -136,6 +131,11 @@ void Job::WaitForAllChildren()
 	 AddWaiting(scan);
    }
 }
+void Job::AllWaitingFg()
+{
+   for(int i=0; i<parent->waiting_num; i++)
+      parent->waiting[i]->Fg();
+}
 
 void Job::ReplaceWaiting(Job *from,Job *to)
 {
@@ -154,10 +154,7 @@ void Job::AddWaiting(Job *j)
    if(j==0 || this->WaitsFor(j))
       return;
    assert(FindWhoWaitsFor(j)==0);
-   waiting_num++;
-   if(waiting_alloc<waiting_num)
-      waiting=(Job**)xrealloc(waiting,(waiting_alloc+=4)*sizeof(*waiting));
-   waiting[waiting_num-1]=j;
+   waiting.append(j);
 }
 void Job::RemoveWaiting(Job *j)
 {
@@ -165,9 +162,7 @@ void Job::RemoveWaiting(Job *j)
    {
       if(waiting[i]==j)
       {
-	 waiting_num--;
-	 if(i<waiting_num)
-	    memmove(waiting+i,waiting+i+1,(waiting_num-i)*sizeof(*waiting));
+	 waiting.remove(i);
 	 return;
       }
    }
@@ -190,8 +185,7 @@ void Job::Kill(Job *j)
       Job *r=new KilledJob();
       r->parent=j->parent;
       r->cmdline.set(j->cmdline);
-      r->waiting=j->waiting,j->waiting=0;
-      r->waiting_num=j->waiting_num,j->waiting_num=0;
+      r->waiting.move_here(j->waiting);
       j->parent->ReplaceWaiting(j,r);
    }
    assert(FindWhoWaitsFor(j)==0);
@@ -239,31 +233,22 @@ int   Job::NumberOfJobs()
    return count;
 }
 
-static int jobno_compare(const void *a,const void *b)
+static int jobno_compare(Job *const*a,Job *const*b)
 {
-   Job *ja=*(Job*const*)a;
-   Job *jb=*(Job*const*)b;
-   return ja->jobno-jb->jobno;
+   return (*a)->jobno-(*b)->jobno;
 }
 
 void  Job::SortJobs()
 {
-   int count=0;
+   xarray<Job*> arr;
    Job *scan;
+
    for(scan=chain; scan; scan=scan->next)
-      count++;
-
-   if(count==0)
-      return;
-
-   Job **arr=(Job**)alloca(count*sizeof(*arr));
-   count=0;
-   for(scan=chain; scan; scan=scan->next)
-      arr[count++]=scan;
-
-   qsort(arr,count,sizeof(*arr),jobno_compare);
+      arr.append(scan);
+   arr.qsort(jobno_compare);
 
    chain=0;
+   int count=arr.count();
    while(count--)
    {
       arr[count]->next=chain;
@@ -273,7 +258,7 @@ void  Job::SortJobs()
    for(scan=chain; scan; scan=scan->next)
    {
       if(scan->waiting_num>1)
-	 qsort(scan->waiting,scan->waiting_num,sizeof(*scan->waiting),jobno_compare);
+	 scan->waiting.qsort(jobno_compare);
    }
 }
 

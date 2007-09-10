@@ -36,9 +36,8 @@ class Job : public SMTask
 {
    static void SortJobs();
 
-   Job	 *next;
+   Job  *next;
    static Job *chain;
-   int	 waiting_alloc;
 
 protected:
    bool fg;
@@ -50,8 +49,7 @@ public:
    int	 jobno;
    Job	 *parent;
 
-   Job	 **waiting;
-   int	 waiting_num;
+   xarray<Job*> waiting;
 
    void AddWaiting(Job *);
    void RemoveWaiting(Job *);
@@ -95,9 +93,10 @@ public:
    bool WaitsFor(Job *);
    static Job *FindWhoWaitsFor(Job *);
    bool CheckForWaitLoop(Job *parent);
-   int NumAwaitedJobs() { return waiting_num; }
+   int NumAwaitedJobs() { return waiting.count(); }
    Job *FindDoneAwaitedJob();
    void WaitForAllChildren();
+   void AllWaitingFg();
 
    static int NumberOfJobs();
    static Job *FindJob(int n);
