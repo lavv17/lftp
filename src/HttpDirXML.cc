@@ -31,42 +31,24 @@
 
 struct xml_context
 {
-   int depth;
-   char **stack;
-   FileSet *fs;
-   FileInfo *fi;
-   char *base_dir;
+   xarray_s<xstring_c> stack;
+   Ref<FileSet> fs;
+   Ref<FileInfo> fi;
+   xstring_c base_dir;
 
-   xml_context() { depth=0; stack=0; fs=0; fi=0; base_dir=0; }
-   ~xml_context();
    void push(const char *);
    void pop();
-   void set_base_dir(const char *d) { base_dir=xstrdup(d); }
-   const char *top(int i=0) { return depth>i?stack[depth-i-1]:0; }
+   void set_base_dir(const char *d) { base_dir.set(d); }
+   const char *top(int i=0) { return stack.count()>i ? stack[stack.count()-i-1].get() : 0; }
 };
 
-xml_context::~xml_context()
-{
-   for(int i=0; i<depth; i++)
-      xfree(stack[i]);
-   xfree(stack);
-   xfree(base_dir);
-   delete fs;
-   delete fi;
-}
 void xml_context::push(const char *s)
 {
-   depth++;
-   if(!(depth&(depth-1))) {
-      stack=(char**)xrealloc(stack,depth*2*sizeof(*stack));
-   }
-   stack[depth-1]=xstrdup(s);
+   stack.append(s);
 }
 void xml_context::pop()
 {
-   depth--;
-   xfree(stack[depth]);
-   stack[depth]=0;
+   stack.chop();
 }
 
 static void start_handle(void *data, const char *el, const char **attr)
@@ -92,8 +74,7 @@ static void end_handle(void *data, const char *el)
       {
 	 if(!ctx->fs)
 	    ctx->fs=new FileSet;
-	 ctx->fs->Add(ctx->fi);
-	 ctx->fi=0;
+	 ctx->fs->Add(ctx->fi.borrow());
       }
    }
    ctx->pop();
@@ -175,10 +156,8 @@ FileSet *HttpListInfo::ParseProps(const char *b,int len,const char *base_dir)
       XML_ParserFree(p);
       return 0;
    }
-   FileSet *result=ctx.fs;
-   ctx.fs=0;
    XML_ParserFree(p);
-   return result;
+   return ctx.fs.borrow();
 }
 
 void HttpDirList::ParsePropsFormat(const char *b,int len,bool eof)
