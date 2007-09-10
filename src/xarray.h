@@ -61,15 +61,27 @@ public:
    void _unset() { _nset(0,0); }
    void *_insert(int before);
    void *_append();
-   void _remove(int i);
-   void *_borrow() { size=len=0; return replace_value(buf,(void*)0); }
+   void _remove(int i,int j);
+   void _remove(int i) { _remove(i,i+1); }
+   void _chop() { len--; }
+   void *_last() { return get_ptr(len-1); }
+   void *_borrow();
+   void move_here(xarray0& o);
 
    operator bool() const { return buf!=0; }
+
+   typedef int (*qsort_cmp_t)(const void*,const void*);
+   void qsort(qsort_cmp_t cmp) {
+      if(len>0)
+	 ::qsort(buf,len,element_size,cmp);
+   }
 };
 
 template<typename T>
 class xarray : public xarray0
 {
+   xarray& operator=(const xarray&); // make assignment fail
+   xarray(const xarray&);	       // disable cloning
 public:
    xarray() : xarray0(sizeof(T)) {}
    T *get_non_const() { return static_cast<T*>(buf); }
@@ -86,15 +98,21 @@ public:
    void insert(const T& n,int before) { *static_cast<T*>(_insert(before))=n; }
    void append(const T& n) { *static_cast<T*>(_append())=n; }
    void remove(int i) { _remove(i); }
+   void remove(int i,int j) { _remove(i,j); }
+   void chop() { _chop(); }
+   T& last() { return (*this)[len-1]; }
    T *borrow() { return static_cast<T*>(_borrow()); }
+   void qsort(int (*cmp)(const T*,const T*)) {
+      xarray0::qsort((qsort_cmp_t)cmp);
+   }
 };
 
 template<typename T,typename RefT>
 class _RefArray : public xarray0
 {
-   void dispose(int i) { get_non_const()[i]=0; }
+   void dispose(int i) { get_non_const()[i].unset(); }
    void dispose(int i,int j) { while(i<j) dispose(i++); }
-   void clear(int i) { get_non_const()[i].ptr=0; }
+   void clear(int i) { get_non_const()[i]._clear(); }
    void clear(int i,int j) { while(i<j) clear(i++); }
 public:
    _RefArray() : xarray0(sizeof(RefT)) {}
@@ -107,9 +125,12 @@ public:
    void set_length(size_t n) { dispose(n,len); _set_length(n); }
    void unset() { dispose(0,len); _unset(); }
    void truncate() { set_length(0); }
-   void insert(T *n,int before) { static_cast<RefT*>(_insert(before))->ptr=n; }
-   void append(T *n) { static_cast<RefT*>(_append())->ptr=n; }
+   void insert(T *n,int before) { static_cast<RefT*>(_insert(before))->_set(n); }
+   void append(T *n) { static_cast<RefT*>(_append())->_set(n); }
    void remove(int i) { dispose(i); _remove(i); }
+   void remove(int i,int j) { dispose(i,j); _remove(i,j); }
+   void chop() { dispose(len-1); _chop(); }
+   RefT& last() { return (*this)[len-1]; }
    RefT *borrow() { return static_cast<RefT*>(_borrow()); }
 };
 
@@ -122,8 +143,19 @@ public:
 };
 
 template<typename T>
+class xarray_s : public _RefArray<const char,T> {
+   xarray_s& operator=(const xarray_s&); // make assignment fail
+   xarray_s(const xarray_s&);	       // disable cloning
+public:
+   xarray_s() : _RefArray<const char,T>() {}
+};
+
+template<typename T>
 class xarray_p : public xarray0
 {
+   xarray_p& operator=(const xarray_p&); // make assignment fail
+   xarray_p(const xarray_p&);	       // disable cloning
+
    void dispose(int i) { xfree(get_non_const()[i]); }
    void dispose(int i,int j) { while(i<j) dispose(i++); }
    void clear(int i) { get_non_const()[i]=0; }
@@ -145,7 +177,32 @@ public:
    void insert(T *n,int before) { *static_cast<T**>(_insert(before))=n; z(); }
    void append(T *n) { *static_cast<T**>(_append())=n; z(); }
    void remove(int i) { dispose(i); _remove(i); z(); }
+   void remove(int i,int j) { dispose(i,j); _remove(i,j); z(); }
+   void chop() { dispose(len-1); _chop(); }
+   T *last() { return (*this)[len-1]; }
    T **borrow() { return static_cast<T**>(_borrow()); }
+};
+
+
+template<typename T,class A> class xqueue
+{
+   A q;
+   int ptr;
+public:
+   xqueue() : ptr(0) {}
+   int count() { return q.count()-ptr; }
+   void empty() { q.truncate(); ptr=0; }
+   void push(const T &n) {
+      if(ptr>count()) {
+	 q.remove(0,ptr);
+	 ptr=0;
+      }
+      q.append(n);
+   }
+   // returned pointer valid till the next push
+   T& next() { return q[ptr++]; }
+   T& operator[](int i) { return q[ptr+i]; }
+   void move_here(xqueue& o) { q.move_here(o.q); ptr=o.ptr; o.ptr=0; }
 };
 
 #endif // XARRAY_H

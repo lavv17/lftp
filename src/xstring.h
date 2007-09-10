@@ -108,6 +108,8 @@ public:
    operator const char *() const { return buf; }
    const char *get() const { return buf; }
    char *get_non_const() { return buf; }
+
+   void _clear() { buf=0; }
 };
 
 // compact variant
@@ -121,7 +123,7 @@ class xstring_c : public xstring0
 
 public:
    xstring_c() { buf=0; }
-   xstring_c(const char *s) { buf=xstrdup(s); }
+   xstring_c(const char *s) { _set(s); }
    const char *set(const char *s) { return xstrset(buf,s); }
    const char *nset(const char *s,int n) { return xstrset(buf,s,n); }
    const char *set_allocated(char *s) { xfree(buf); return buf=s; }
@@ -131,6 +133,9 @@ public:
    bool eq(const char *s) { return !xstrcmp(buf,s); }
    bool ne(const char *s) { return !eq(s); }
    size_t length() const { return xstrlen(buf); }
+
+   void unset() { xfree(buf); buf=0; }
+   void _set(const char *s) { buf=xstrdup(s); }
 };
 class xstring_ca : public xstring_c
 {
@@ -202,6 +207,10 @@ public:
    bool chomp(char c='\n');
    void rtrim(char c=' ');
    char last_char() { return len>0?buf[len-1]:0; }
+
+   void _clear() { init(); }
+   void _set(const char *s) { init(s); }
+   void unset() { xfree(buf); _clear(); }
 };
 
 #endif//XSTRING_H

@@ -63,13 +63,28 @@ void *xarray0::_insert(int before)
    len++;
    return get_ptr(before);
 }
-void *xarray0::_append() {
+void *xarray0::_append()
+{
    get_space(len+1);
    return get_ptr(len++);
 }
-void xarray0::_remove(int i) {
-   assert(i>=0 && i<len);
-   if(i<len-1)
-      memmove(get_ptr(i),get_ptr(i+1),element_size*(len-i-1));
-   len--;
+void xarray0::_remove(int i,int j)
+{
+   assert(i<j && i>=0 && j<=len);
+   if(j<len)
+      memmove(get_ptr(i),get_ptr(j),element_size*(len-j));
+   len-=(j-i);
+}
+
+void *xarray0::_borrow()
+{
+   size=len=0;
+   return replace_value(buf,(void*)0);
+}
+void xarray0::move_here(xarray0& o)
+{
+   xfree(buf);
+   size=o.size;
+   len=o.len;
+   buf=o._borrow();
 }
