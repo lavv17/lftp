@@ -142,7 +142,7 @@ private:
    void add_before(int pos,FileInfo *fi);
 
 public:
-   FileSet() : ind(0) {}
+   FileSet();
    FileSet(const FileSet *s);
    void Empty();
 

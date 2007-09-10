@@ -41,6 +41,7 @@ public:
    const char *GetPattern() { return pattern; }
    FileSet *GetResult() { return &list; }
    Glob(FileAccess *s,const char *p);
+   ~Glob();
    void DirectoriesOnly() { dirs_only=true; }
    void FilesOnly() { files_only=true; }
    void NoMatchPeriod() { match_period=false; }

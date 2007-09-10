@@ -423,6 +423,9 @@ FileCopy::FileCopy(FileCopyPeer *s,FileCopyPeer *d,bool c)
    remove_target_first=false;
    line_buffer_max=0;
 }
+FileCopy::~FileCopy()
+{
+}
 FileCopy *FileCopy::New(FileCopyPeer *s,FileCopyPeer *d,bool c)
 {
    FileCopy *res=0;

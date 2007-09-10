@@ -99,6 +99,7 @@ public:
    }
 
    FileCopyPeer(dir_t m);
+   virtual ~FileCopyPeer() {}
 
    bool Done();
 
@@ -250,6 +251,7 @@ public:
    bool IsLineBuffered() const { return line_buffer; }
 
    FileCopy(FileCopyPeer *src,FileCopyPeer *dst,bool cont);
+   ~FileCopy();
 
    int Do();
    void SuspendInternal();

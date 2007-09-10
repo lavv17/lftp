@@ -132,6 +132,11 @@ void FileSet::PrependPath(const char *path)
       files[i]->SetName(dir_file(path, files[i]->name));
 }
 
+FileSet::FileSet()
+   : ind(0)
+{
+}
+
 /* we don't copy the sort state--nothing needs it, and it'd
  * be a bit of a pain to implement. */
 FileSet::FileSet(FileSet const *set)

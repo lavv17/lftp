@@ -914,6 +914,13 @@ void FileAccessOperation::SetErrorCached(const char *e)
    error_text.append(_(" [cached]"));
 }
 
+DirList::DirList(FileAccess *s,ArgV *a)
+   : FileAccessOperation(s), buf(new Buffer()), args(a), color(false)
+{
+}
+DirList::~DirList()
+{
+}
 
 // ListInfo implementation
 ListInfo::ListInfo(FileAccess *s,const char *p)

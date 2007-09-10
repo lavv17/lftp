@@ -537,8 +537,8 @@ protected:
    bool color;
 
 public:
-   DirList(FileAccess *s,ArgV *a)
-      : FileAccessOperation(s), buf(new Buffer()), args(a), color(false) {}
+   DirList(FileAccess *s,ArgV *a);
+   ~DirList();
 
    virtual int Do() = 0;
    virtual const char *Status() = 0;

@@ -63,6 +63,9 @@ Glob::Glob(FileAccess *s,const char *p)
       done=true;
    }
 }
+Glob::~Glob()
+{
+}
 
 void Glob::add_force(const FileInfo *info)
 {
