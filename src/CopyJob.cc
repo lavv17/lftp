@@ -27,6 +27,8 @@
 #include "misc.h"
 #include "url.h"
 
+#define waiting_num waiting.count()
+
 int CopyJob::Do()
 {
    if(!fg_data)

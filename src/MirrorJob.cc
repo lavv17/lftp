@@ -44,6 +44,7 @@
 
 #define set_state(s) do { state=(s); \
    Log::global->Format(11,"mirror(%p) enters state %s\n", this, #s); } while(0)
+#define waiting_num waiting.count()
 
 void  MirrorJob::PrintStatus(int v,const char *tab)
 {
