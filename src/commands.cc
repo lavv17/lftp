@@ -2290,8 +2290,7 @@ CMD(wait)
       if(!strcasecmp(jn,"all"))
       {
 	 parent->WaitForAllChildren();
-	 for(int i=0; i<parent->waiting_num; i++)
-	    parent->waiting[i]->Fg();
+	 parent->AllWaitingFg();
 	 exit_code=0;
 	 return 0;
       }
@@ -2494,8 +2493,9 @@ void CmdExec::print_cmd_index()
 {
    int i=0;
    const char *c1;
-   const cmd_rec *cmd_table=dyn_cmd_table?dyn_cmd_table:static_cmd_table;
-   while(cmd_table[i].name)
+   const cmd_rec *cmd_table=dyn_cmd_table?dyn_cmd_table.get():static_cmd_table;
+   const int count=dyn_cmd_table?dyn_cmd_table.count():1024;
+   while(i<count && cmd_table[i].name)
    {
       while(cmd_table[i].name && !cmd_table[i].short_desc)
 	 i++;
