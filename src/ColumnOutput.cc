@@ -38,18 +38,7 @@
 
 ResDecl res_color	("color:use-color",		"auto",ResMgr::TriBoolValidate,ResMgr::NoClosure);
 
-ColumnOutput::ColumnOutput()
-{
-   lst = 0;
-   lst_cnt = lst_alloc = 0;
-}
-
-ColumnOutput::~ColumnOutput()
-{
-   for(int i = 0; i < lst_cnt; i++)
-      delete lst[i];
-   xfree(lst);
-}
+#define lst_cnt lst.count()
 
 void ColumnOutput::add(const char *name, const char *color)
 {
@@ -60,21 +49,13 @@ void ColumnOutput::addf(const char *fmt, const char *color, ...)
 {
    va_list v;
    va_start(v, color);
-   xstring_ca str(xvasprintf(fmt, v));
+   add(xstring::vformat(fmt,v), color);
    va_end(v);
-   add(str, color);
 }
 
 void ColumnOutput::append()
 {
-   if(lst_cnt >= lst_alloc) {
-      if(!lst_alloc) lst_alloc = 16;
-      else lst_alloc += lst_alloc / 2;
-
-      lst = (datum **) xrealloc(lst, sizeof(datum *) * lst_alloc);
-   }
-
-   lst[lst_cnt++] = new datum;
+   lst.append(new datum);
 }
 
 /* The minimum width of a colum is 3: 1 character for the name and 2

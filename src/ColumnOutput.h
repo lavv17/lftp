@@ -52,8 +52,6 @@ class ColumnOutput {
 
 public:
    enum mode_t { VERT };
-   ColumnOutput();
-   ~ColumnOutput();
 
    void append();
    void add(const char *name, const char *color);
@@ -66,8 +64,7 @@ public:
    void set_mode(mode_t m) { mode = m; }
 
 private:
-   datum **lst;
-   int lst_cnt, lst_alloc;
+   RefArray<datum> lst;
 
    mode_t mode;
 };
