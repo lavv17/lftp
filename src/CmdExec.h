@@ -95,8 +95,7 @@ private:
       const char  *long_desc;
    };
    static const cmd_rec static_cmd_table[];
-   static cmd_rec *dyn_cmd_table;
-   static int dyn_cmd_table_count;
+   static xarray<cmd_rec> dyn_cmd_table;
 
    static int find_cmd(const char *cmd_name,const cmd_rec **ret);
 

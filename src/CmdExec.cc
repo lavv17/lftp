@@ -42,6 +42,7 @@
 #define RL_PROMPT_END_IGNORE	'\002'
 
 #define super SessionJob
+#define waiting_num waiting.count()
 
 static ResDecl
    res_default_proto	   ("cmd:default-protocol","ftp",0,0),
@@ -120,8 +121,9 @@ void CmdExec::PrependCmd(const char *c)
 int CmdExec::find_cmd(const char *cmd_name,const struct cmd_rec **ret)
 {
    int part=0;
-   const cmd_rec *c;
-   for(c=dyn_cmd_table?dyn_cmd_table:static_cmd_table; c->name; c++)
+   const cmd_rec *c=dyn_cmd_table?dyn_cmd_table.get():static_cmd_table;
+   const int count=dyn_cmd_table?dyn_cmd_table.count():1024;
+   for(int i=0; i<count && c->name; i++,c++)
    {
       if(!strcasecmp(c->name,cmd_name))
       {
@@ -819,8 +821,7 @@ const char *CmdExec::FormatPrompt(const char *scan)
       if(home && strcmp(home,"/") && !strncmp(cwd,home,strlen(home))
 	    && (cwd[strlen(home)]=='/' || cwd[strlen(home)]==0))
       {
-	 static char *cwdbuf=0;
-	 cwdbuf=(char*)xrealloc(cwdbuf,strlen(cwd)-strlen(home)+2);
+	 char *cwdbuf=string_alloca(strlen(cwd)-strlen(home)+2);
 	 sprintf(cwdbuf,"~%s",cwd+strlen(home));
 	 cwd=cwdbuf;
       }
@@ -1137,24 +1138,19 @@ void CmdExec::skip_cmd(int len)
       free_used_aliases();
 }
 
-CmdExec::cmd_rec *CmdExec::dyn_cmd_table=0;
-int CmdExec::dyn_cmd_table_count=0;
+xarray<CmdExec::cmd_rec> CmdExec::dyn_cmd_table;
 void CmdExec::RegisterCommand(const char *name,cmd_creator_t creator,const char *short_desc,const char *long_desc)
 {
    if(dyn_cmd_table==0)
    {
-      dyn_cmd_table_count=2;
+      int count=0;
       for(const cmd_rec *c=static_cmd_table; c->name; c++)
-	 dyn_cmd_table_count++;
-      dyn_cmd_table=(cmd_rec*)xmemdup(static_cmd_table,dyn_cmd_table_count*sizeof(cmd_rec));
+        count++;
+      dyn_cmd_table.nset(static_cmd_table,count);
    }
-   else
+   for(int i=0; i<dyn_cmd_table.count(); i++)
    {
-      dyn_cmd_table_count++;
-      dyn_cmd_table=(cmd_rec*)xrealloc(dyn_cmd_table,dyn_cmd_table_count*sizeof(cmd_rec));
-   }
-   for(cmd_rec *c=dyn_cmd_table; c->name; c++)
-   {
+      cmd_rec *const c=&dyn_cmd_table[i];
       if(!strcmp(c->name,name))
       {
 	 c->creator=creator;
@@ -1162,15 +1158,11 @@ void CmdExec::RegisterCommand(const char *name,cmd_creator_t creator,const char 
 	    c->short_desc=short_desc;
 	 if(long_desc)
 	    c->long_desc=long_desc;
-	 dyn_cmd_table_count--;
 	 return;
       }
    }
-   dyn_cmd_table[dyn_cmd_table_count-2].name=name;
-   dyn_cmd_table[dyn_cmd_table_count-2].creator=creator;
-   dyn_cmd_table[dyn_cmd_table_count-2].short_desc=short_desc;
-   dyn_cmd_table[dyn_cmd_table_count-2].long_desc=long_desc;
-   memset(&dyn_cmd_table[dyn_cmd_table_count-1],0,sizeof(cmd_rec));
+   cmd_rec new_entry={name,creator,short_desc,long_desc};
+   dyn_cmd_table.append(new_entry);
 }
 
 void CmdExec::ChangeSession(FileAccess *new_session)
@@ -1184,7 +1176,13 @@ void CmdExec::ChangeSession(FileAccess *new_session)
 
 const CmdExec::cmd_rec *CmdExec::CmdByIndex(int i)
 {
-   return (dyn_cmd_table?dyn_cmd_table:static_cmd_table)+i;
+   if(dyn_cmd_table)
+   {
+      if(i<dyn_cmd_table.count())
+	 return &dyn_cmd_table[i];
+      return 0;
+   }
+   return &static_cmd_table[i];
 }
 
 Job *CmdExec::default_cmd()
