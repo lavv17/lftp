@@ -23,8 +23,6 @@
 #ifndef REF_H
 #define REF_H
 
-template<typename T,typename RefR> class _RefArray;
-
 template<typename T> class Ref
 {
    Ref<T>(const Ref<T>&);  // disable cloning
@@ -48,7 +46,9 @@ public:
 
    static const Ref<T> null;
 
-   friend class _RefArray< T,Ref<T> >;
+   void _set(T *p) { ptr=p; }
+   void _clear() { ptr=0; }
+   void unset() { *this=0; }
 };
 
 template<typename T> const Ref<T> Ref<T>::null;
