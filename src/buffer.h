@@ -129,6 +129,7 @@ public:
    void Empty();
 
    Buffer();
+   ~Buffer();
 };
 
 class DataTranslator : public Buffer
@@ -194,7 +195,8 @@ protected:
    Time event_time; // used to detect timeouts
 
 public:
-   IOBuffer(dir_t m) : DirectedBuffer(m), event_time(now) {}
+   IOBuffer(dir_t m);
+   virtual ~IOBuffer();
    virtual const Time& EventTime()
       {
 	 if(IsSuspended())

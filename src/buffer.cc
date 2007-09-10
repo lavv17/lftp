@@ -203,6 +203,9 @@ Buffer::Buffer()
    save_max=0;
    pos=0;
 }
+Buffer::~Buffer()
+{
+}
 
 const char *Buffer::GetRateStrS()
 {
@@ -365,6 +368,15 @@ void DirectedBuffer::EmbraceNewData(int len)
    else
       SpaceAdd(len);
    SaveMaxCheck(0);
+}
+
+
+IOBuffer::IOBuffer(dir_t m)
+   : DirectedBuffer(m), event_time(now)
+{
+}
+IOBuffer::~IOBuffer()
+{
 }
 
 void IOBuffer::Put(const char *buf,int size)
