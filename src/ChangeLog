@@ -1,3 +1,27 @@
+2007-09-10  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ArgV.cc: use strtok instead of tokenize.
+	* misc.cc, misc.h: drop tokenize.
+	* CmdExec.cc, CmdExec.h, commands.cc: use xarray for dyn_cmd_table.
+	* ColumnOutput.cc, ColumnOutput.h: use RefArray for datum.
+	* FileAccess.cc, FileAccess.h: outline DirList ctor and dtor.
+	* FileCopy.cc, FileCopy.h, FileGlob.cc, FileGlob.h, FileSet.cc,
+	  FileSet.h: outline ctor/dtor.
+	* FindJob.cc, FindJob.h: use RefArray for stack.
+	* FindJobDu.cc, FindJobDu.h: use RefArray for size_stack; use Ref.
+	* xarray.cc, xarray.h: (xqueue) new class; (xarray::chop,last,qsort,
+	  move_here) new methods; (xarray_s) new class.
+	* xstring.h, Ref.h: (_clear,_set,unset) new methods.
+	* Fish.cc: use xqueue for RespQueue.
+	* HttpDirXML.cc: use Refs, use xarray_s for stack.
+	* Job.cc, Job.h: use xarray for waiting; (AllWaitingFg) new method.
+	* CopyJob.cc, MirrorJob.cc: define waiting_num.
+	* Resolver.cc: use xarray.
+	* SMTask.cc, SMTask.h: use xarray for stack.
+	* history.cc: use url::encode.
+	* SleepJob.cc: fixup for new waiting.
+	* ftpclass.cc: when directory STAT reply includes 211- prefixes, strip them.
+
 2007-09-02  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: fixed typo leading to coredump.
