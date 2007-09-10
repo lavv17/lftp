@@ -25,16 +25,14 @@
 #include "misc.h"
 #include "ArgV.h"
 
-ArgV::ArgV(const char *a0, const char *args)
+ArgV::ArgV(const char *a0, const char *args_c)
 {
    ind=0;
 
-   int argc;
-   char **argv = tokenize(args, &argc);
-   Assign(argv,argc);
-   tokenize_free(argv);
-
-   insarg(0, a0);
+   Append(a0);
+   char *args=alloca_strdup(args_c);
+   for(char *t=strtok(args," "); t; t=strtok(NULL," "))
+      Append(t);
 }
 
 void ArgV::seek(int n)

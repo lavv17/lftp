@@ -92,9 +92,6 @@ struct subst_t {
  * with corresponding character. Returns allocated buffer to be free'd */
 char *Subst(const char *txt, const subst_t *s);
 
-char **tokenize(const char *str, int *argc = NULL);
-void tokenize_free(char **argv);
-
 /* uses gettimeofday if available */
 void xgettimeofday(time_t *sec, int *usec);
 

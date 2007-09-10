@@ -651,39 +651,6 @@ char *Subst(const char *txt, const subst_t *s)
    return(buf.borrow());
 }
 
-/* if we put escape-handling, etc. in here, the main parser
- * could possibly use it */
-char **tokenize(const char *str, int *argc)
-{
-   char *buf = xstrdup(str);
-   char **argv = NULL;
-   int _argc;
-   if(!argc) argc = &_argc;
-   *argc = 0;
-
-   for(int i = 0; buf[i]; ) {
-      (*argc)++;
-      argv = (char **) xrealloc(argv, sizeof(char *) * (*argc));
-      argv[*argc-1] = buf+i;
-
-      while(buf[i] && buf[i] != ' ') i++;
-      if(buf[i] == ' ') buf[i++] = 0;
-   }
-   if(*argc==0)
-      xfree(buf); // we have not assigned it
-
-   argv = (char **) xrealloc(argv, sizeof(char *) * (*argc+1));
-   argv[*argc] = NULL;
-   return argv;
-}
-
-void tokenize_free(char **argv)
-{
-   if(!argv) return;
-   xfree(argv[0]);
-   xfree(argv);
-}
-
 void xgettimeofday(time_t *sec, int *usec)
 {
 #ifdef HAVE_GETTIMEOFDAY
