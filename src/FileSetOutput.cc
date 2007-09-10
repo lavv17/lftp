@@ -1,4 +1,5 @@
-/* lftp and utils
+/*
+ * lftp and utils
  *
  * Copyright (c) 2001-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
@@ -18,7 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-
 
 #include <config.h>
 #include "FileSet.h"
