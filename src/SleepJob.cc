@@ -50,7 +50,7 @@ int SleepJob::Do()
    if(Done())
       return STALL;
 
-   if(waiting_num>0)
+   if(waiting.count()>0)
    {
       Job *j=FindDoneAwaitedJob();
       if(!j)
