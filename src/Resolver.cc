@@ -432,10 +432,8 @@ struct SRV
 };
 
 static
-int SRV_compare(const void *a,const void *b)
+int SRV_compare(const SRV *sa,const SRV *sb)
 {
-   struct SRV *sa=(struct SRV*)a;
-   struct SRV *sb=(struct SRV*)b;
    if(sa->priority < sb->priority)
       return -1;
    if(sa->priority > sb->priority)
@@ -518,18 +516,14 @@ void Resolver::LookupSRV_RR()
       len-=4;
    }
 
-   struct SRV *SRVs=0;
-   int SRV_num=0;
+   xarray<SRV> SRVs;
 
    // now process answers section
    for( ; answer_count>0; answer_count--)
    {
       int dom_len=extract_domain(answer,scan,len,0,0);
       if(dom_len<0)
-      {
-	 xfree(SRVs);
 	 return;
-      }
       scan+=dom_len;
       len-=dom_len;
       if(len<8)
@@ -550,49 +544,44 @@ void Resolver::LookupSRV_RR()
       if(data_len<6)
 	 return;
 
-      SRV_num++;
-      SRVs=(struct SRV*)xrealloc(SRVs,sizeof(*SRVs)*SRV_num);
-      struct SRV *t=SRVs+SRV_num-1;
-
-      t->priority=(scan[0]<<8)+scan[1];
-      t->weight  =(scan[2]<<8)+scan[3];
-      t->port    =(scan[4]<<8)+scan[5];
-
-      t->order=0;
+      struct SRV t;
+      t.priority=(scan[0]<<8)+scan[1];
+      t.weight  =(scan[2]<<8)+scan[3];
+      t.port    =(scan[4]<<8)+scan[5];
+      t.order=0;
 
       scan+=6;
       len-=6;
 
-      dom_len=extract_domain(answer,scan,len,t->domain,sizeof(t->domain));
+      dom_len=extract_domain(answer,scan,len,t.domain,sizeof(t.domain));
       if(dom_len<0)
-      {
-	 xfree(SRVs);
 	 return;
-      }
+
       scan+=dom_len;
       len-=dom_len;
 
-      // check if the service is decidedly not available at this domain.
-      if(!strcmp(t->domain,"."))
-	 SRV_num--;
+      // add unless the service is decidedly not available at this domain.
+      if(strcmp(t.domain,"."))
+	 SRVs.append(t);
    }
 
    // now sort and randomize the list.
-   qsort(SRVs,SRV_num,sizeof(*SRVs),SRV_compare);
+   SRVs.qsort(SRV_compare);
 
    srand(time(0));
 
-   struct SRV *SRVscan,*base=0;
+   int SRVscan;
+   int base=0;
    int curr_priority=-1;
    int weight_sum=0;
-   for(SRVscan=SRVs; ; SRVscan++)
+   for(SRVscan=0; ; SRVscan++)
    {
-      if(SRVscan-SRVs==SRV_num || SRVscan->priority!=curr_priority)
+      if(SRVscan==SRVs.count() || SRVs[SRVscan].priority!=curr_priority)
       {
 	 if(base)
 	 {
 	    int o=1;
-	    struct SRV *s;
+	    int s;
 	    while(weight_sum>0)
 	    {
 	       int r=int(rand()/(RAND_MAX+1.0)*weight_sum);
@@ -601,39 +590,38 @@ void Resolver::LookupSRV_RR()
 	       int w=0;
 	       for(s=base; s<SRVscan; s++)
 	       {
-		  if(s->order!=0)
+		  if(SRVs[s].order!=0)
 		     continue;
-		  w+=s->weight;
+		  w+=SRVs[s].weight;
 		  if(r<w)
 		  {
-		     s->order=o;
+		     SRVs[s].order=o;
 		     o++;
-		     weight_sum-=s->weight;
+		     weight_sum-=SRVs[s].weight;
 		     break;
 		  }
 	       }
 	    }
 	 }
-	 if(SRVscan-SRVs==SRV_num)
+	 if(SRVscan==SRVs.count())
 	    break;
 	 base=SRVscan;
-	 curr_priority=SRVscan->priority;
+	 curr_priority=SRVs[SRVscan].priority;
 	 weight_sum=0;
       }
-      weight_sum+=SRVscan->weight;
+      weight_sum+=SRVs[SRVscan].weight;
    }
 
-   qsort(SRVs,SRV_num,sizeof(*SRVs),SRV_compare);
+   SRVs.qsort(SRV_compare);
 
    int oldport=port_number;
-   for(SRVscan=SRVs; SRVscan-SRVs<SRV_num; SRVscan++)
+   for(SRVscan=0; SRVscan<SRVs.count(); SRVscan++)
    {
-      port_number=htons(SRVscan->port);
-      LookupOne(SRVscan->domain);
+      port_number=htons(SRVs[SRVscan].port);
+      LookupOne(SRVs[SRVscan].domain);
    }
    port_number=oldport;
 
-   xfree(SRVs);
 #endif // HAVE_RES_SEARCH
 }
 
