@@ -296,10 +296,7 @@ void Fish::MoveConnectionHere(Fish *o)
    recv_buf=o->recv_buf.borrow();
    rate_limit=o->rate_limit.borrow();
    path_queue.MoveHere(o->path_queue);
-   RespQueue=o->RespQueue; o->RespQueue=0;
-   RQ_alloc=o->RQ_alloc; o->RQ_alloc=0;
-   RQ_head=o->RQ_head; o->RQ_head=0;
-   RQ_tail=o->RQ_tail; o->RQ_tail=0;
+   RespQueue.move_here(o->RespQueue);
    timeout_timer.Reset(o->timeout_timer);
    set_real_cwd(o->real_cwd);
    state=CONNECTED;
@@ -332,9 +329,6 @@ void Fish::Init()
    send_buf=0;
    recv_buf=0;
    max_send=0;
-   RespQueue=0;
-   RQ_alloc=0;
-   RQ_head=RQ_tail=0;
    eof=false;
    received_greeting=false;
    password_sent=0;
@@ -349,8 +343,6 @@ Fish::Fish()
 Fish::~Fish()
 {
    Disconnect();
-   EmptyRespQueue();
-   xfree(RespQueue);
 }
 
 Fish::Fish(const Fish *o) : super(o)
@@ -577,7 +569,8 @@ int Fish::HandleReplies()
       if(recv_buf->Eof())
       {
 	 LogError(0,_("Peer closed connection"));
-	 if(!RespQueueIsEmpty() && RespQueue[RQ_head]==EXPECT_CWD && message)
+	 // Solaris' shell exists when is given with wrong directory
+	 if(!RespQueueIsEmpty() && RespQueue[0]==EXPECT_CWD && message)
 	    SetError(NO_FILE,message);
 	 Disconnect();
 	 m=MOVED;
@@ -660,8 +653,7 @@ int Fish::HandleReplies()
       message.set(0);
       return m;
    }
-   expect_t &e=RespQueue[RQ_head];
-   RQ_head++;
+   expect_t e=RespQueue.next();
 
    bool keep_message=false;
    xstring p;
@@ -782,23 +774,12 @@ int Fish::HandleReplies()
 }
 void Fish::PushExpect(expect_t e)
 {
-   int newtail=RQ_tail+1;
-   if(newtail>RQ_alloc)
-   {
-      if(RQ_head-0<newtail-RQ_alloc)
-	 RespQueue=(expect_t*)
-	    xrealloc(RespQueue,(RQ_alloc=newtail+16)*sizeof(*RespQueue));
-      memmove(RespQueue,RespQueue+RQ_head,(RQ_tail-RQ_head)*sizeof(*RespQueue));
-      RQ_tail=0+(RQ_tail-RQ_head);
-      RQ_head=0;
-      newtail=RQ_tail+1;
-   }
-   RespQueue[RQ_tail]=e;
-   RQ_tail=newtail;
+   RespQueue.push(e);
 }
 void Fish::CloseExpectQueue()
 {
-   for(int i=RQ_head; i<RQ_tail; i++)
+   int count=RespQueue.count();
+   for(int i=0; i<count; i++)
    {
       switch(RespQueue[i])
       {

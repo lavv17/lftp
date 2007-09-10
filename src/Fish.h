@@ -91,19 +91,15 @@ class Fish : public NetAccess
    void CloseExpectQueue();
    int ReplyLogPriority(int);
 
-   expect_t *RespQueue;
-   int	 RQ_alloc;   // memory allocated
-   int	 RQ_head;
-   int	 RQ_tail;
-
+   xqueue<expect_t,xarray<expect_t> > RespQueue;
    StringSet path_queue;
    void  PushDirectory(const char *d) { path_queue.Append(d); }
    void  PopDirectory(xstring *d) { d->set_allocated(path_queue.Pop()); }
    void	 EmptyPathQueue() { path_queue.Empty(); }
 
-   int   RespQueueIsEmpty() { return RQ_head==RQ_tail; }
-   int	 RespQueueSize() { return RQ_tail-RQ_head; }
-   void  EmptyRespQueue() { RQ_head=RQ_tail=0; }
+   bool  RespQueueIsEmpty() { return RespQueue.count()==0; }
+   int	 RespQueueSize() { return RespQueue.count(); }
+   void  EmptyRespQueue() { RespQueue.empty(); }
 
    void GetBetterConnection(int level);
    void MoveConnectionHere(Fish *o);
