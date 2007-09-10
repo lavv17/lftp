@@ -35,9 +35,7 @@
 
 SMTask	 *SMTask::chain=0;
 SMTask	 *SMTask::current=0;
-SMTask	 **SMTask::stack=0;
-int      SMTask::stack_ptr=0;
-int      SMTask::stack_size=0;
+xarray<SMTask*>	SMTask::stack;
 PollVec	 SMTask::block;
 TimeDate SMTask::now;
 
@@ -112,7 +110,7 @@ SMTask::~SMTask()
    {
       fprintf(stderr,"SMTask(%p).running=%d\n",this,running);
       fprintf(stderr,"SMTask stack:");
-      for(int i=0; i<stack_ptr; i++)
+      for(int i=0; i<stack.count(); i++)
 	 fprintf(stderr," %p",stack[i]);
       fprintf(stderr,"; current=%p\n",current);
       abort();
@@ -142,9 +140,7 @@ void SMTask::Delete(SMTask *task)
 
 void SMTask::Enter(SMTask *task)
 {
-   if(stack_size<=stack_ptr)
-      stack=(SMTask**)xrealloc(stack,(stack_size+=16)*sizeof(*stack));
-   stack[stack_ptr++]=current;
+   stack.append(current);
    current=task;
    current->running++;
 }
@@ -152,7 +148,9 @@ void SMTask::Leave(SMTask *task)
 {
    assert(current==task);
    current->running--;
-   current=stack[--stack_ptr];
+   assert(stack.count()>0);
+   current=stack.last();
+   stack.chop();
 }
 
 int SMTask::Roll(SMTask *task)

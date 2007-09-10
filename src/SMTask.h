@@ -33,9 +33,7 @@ class SMTask
 
    static SMTask *chain;
    static PollVec block;
-   static SMTask **stack;
-   static int stack_ptr;
-   static int stack_size;
+   static xarray<SMTask*> stack;
 
    bool	 suspended;
    bool	 suspended_slave;
@@ -118,8 +116,6 @@ public:
    ~SMTaskInit();
 };
 
-template<typename T,typename RefT> class _RefArray;
-
 template<class T> class SMTaskRef : public Ref<T>
 {
    SMTaskRef<T>(const SMTaskRef<T>&);  // disable cloning
@@ -133,7 +129,7 @@ public:
    void operator=(T *p) { SMTask::_DeleteRef(ptr); ptr=SMTask::MakeRef(p); }
    T *borrow() { if(ptr) ptr->DecRefCount(); return Ref<T>::borrow(); }
 #undef ptr
-   friend class _RefArray< T,SMTaskRef<T> >;
+   void unset() { *this=0; }
 };
 
 template<typename T>
