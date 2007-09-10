@@ -24,7 +24,7 @@
 
 class FinderJob_Du : public FinderJob
 {
-   IOBuffer *buf;
+   Ref<IOBuffer> buf;
 
    /* We keep traversing deeper than this, but we never print a total
     * past this. */
@@ -46,12 +46,15 @@ class FinderJob_Du : public FinderJob
       xstring_c dir;
       long long size;
       stack_entry(const char *dir) : dir(dir), size(0) {}
-   } **size_stack;
-   int stack_ptr;
+   };
+   RefArray<stack_entry> size_stack;
 
-   ArgV *args;
+   Ref<ArgV> args;
 
    void print_size (long long n_blocks, const char *string);
+
+   // prepends last directory name
+   const char *MakeFileName(const char *n);
 
    void Push (const char *d);
    void Pop();
@@ -75,7 +78,6 @@ protected:
    void Finish();
    void Enter(const char *d);
    void Exit();
-
 };
 
-#endif
+#endif // FINDJOBDU_H

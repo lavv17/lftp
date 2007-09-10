@@ -30,17 +30,24 @@ CDECL_BEGIN
 #include "human.h"
 CDECL_END
 
-FinderJob_Du::FinderJob_Du(FileAccess *s,ArgV *a,FDStream *o):
-	FinderJob(s)
+#define stack_ptr (size_stack.count()-1)
+#define stack_top (*size_stack.last())
+
+FinderJob_Du::FinderJob_Du(FileAccess *s,ArgV *a,FDStream *o)
+   : FinderJob(s), args(a)
 {
-   args=a;
    op=args->a0();
 
    if(o)
+   {
       buf=new IOBufferFDStream(o,IOBuffer::PUT);
+      show_sl=!o->usesfd(1);
+   }
    else
+   {
       buf=new IOBuffer_STDOUT(this);
-   show_sl = !o || !o->usesfd(1);
+      show_sl=true;
+   }
 
    Need(FileInfo::SIZE);
 
@@ -54,8 +61,6 @@ FinderJob_Du::FinderJob_Du(FileAccess *s,ArgV *a,FDStream *o):
    file_count = false;
 
    tot_size=0;
-   size_stack=0;
-   stack_ptr=-1;
    success=false;
 
    Init(a->getcurr());
@@ -63,11 +68,6 @@ FinderJob_Du::FinderJob_Du(FileAccess *s,ArgV *a,FDStream *o):
 
 FinderJob_Du::~FinderJob_Du()
 {
-   Delete(buf);
-   delete args;
-   while(stack_ptr >= 0)
-      Pop();
-   xfree(size_stack);
 }
 
 /* process a new directory */
@@ -103,6 +103,11 @@ void FinderJob_Du::Finish()
    buf->PutEOF();
 }
 
+const char *FinderJob_Du::MakeFileName(const char *n)
+{
+   return size_stack.count()>0 ? dir_file(size_stack.last()->dir,n) : n;
+}
+
 FinderJob::prf_res FinderJob_Du::ProcessFile(const char *d,const FileInfo *fi)
 {
    if(buf->Broken())
@@ -126,15 +131,14 @@ FinderJob::prf_res FinderJob_Du::ProcessFile(const char *d,const FileInfo *fi)
    long long add = fi->size;
    if (file_count)
       add = 1;
-   if(stack_ptr != -1)
-      size_stack[stack_ptr]->size += add;
+   if(size_stack.count()>0)
+      size_stack.last()->size += add;
    tot_size += add;
 
    if(all_files || stack_ptr == -1) {
       /* this is <, where Pop() is <=, since the file counts in depth */
       if(max_print_depth == -1 || stack_ptr < max_print_depth)
-	 print_size(fi->size,
-	       dir_file(stack_ptr == -1? "":size_stack[stack_ptr]->dir.get(),fi->name.get()));
+	 print_size(fi->size, MakeFileName(fi->name));
    }
 
    return PRF_OK;
@@ -148,13 +152,7 @@ void FinderJob_Du::ProcessList(FileSet *f)
 /* push a directory onto the stack */
 void FinderJob_Du::Push (const char *d)
 {
-   stack_ptr++;
-   size_stack = (stack_entry **) xrealloc(size_stack, (stack_ptr+1) * sizeof(*size_stack));
-
-   const char *combine;
-   combine = dir_file(stack_ptr > 0? size_stack[stack_ptr-1]->dir.get():"", d);
-
-   size_stack[stack_ptr]=new stack_entry(combine);
+   size_stack.append(new stack_entry(MakeFileName(d)));
 }
 
 /* pop a directory off the stack, combining as necessary */
@@ -164,11 +162,9 @@ void FinderJob_Du::Pop()
 
    /* merge directory's size with its parent */
    if(!separate_dirs && stack_ptr > 0)
-      size_stack[stack_ptr-1]->size += size_stack[stack_ptr]->size;
+      size_stack[stack_ptr-1]->size += stack_top.size;
 
-   delete size_stack[stack_ptr];
-   stack_ptr--;
-   /* no need to actually shrink */
+   size_stack.chop();
 }
 
 void FinderJob_Du::print_size (long long n_blocks, const char *string)
@@ -186,7 +182,7 @@ void FinderJob_Du::Exit()
 {
    /* print the dir */
    if(max_print_depth == -1 || stack_ptr <= max_print_depth)
-      print_size(size_stack[stack_ptr]->size, size_stack[stack_ptr]->dir);
+      print_size(stack_top.size, stack_top.dir);
 
    Pop();
 }
