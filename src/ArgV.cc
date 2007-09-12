@@ -77,3 +77,22 @@ int ArgV::getopt_long(const char *opts,const struct option *lopts,int *lind)
    ind=optind;
    return r;
 }
+
+const char *ArgV::getopt_error_message(int e)
+{
+   if(optopt>=32 && optopt<127)
+   {
+      if(e==':')
+	 return xstring::format("%s -- %c",_("option requires an argument"),optopt);
+      else
+	 return xstring::format("%s -- %c",_("invalid option"),optopt);
+   }
+   if(ind>1)
+   {
+      if(e==':')
+	 return xstring::format(_("option `%s' requires an argument"),getarg(ind-1));
+      else
+	 return xstring::format(_("unrecognized option `%s'"),getarg(ind-1));
+   }
+   return _("invalid option");
+}

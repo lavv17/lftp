@@ -1,6 +1,9 @@
 2007-09-12  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: improve STAT reply handling.
+	* ArgV.cc, ArgV.h: (getopt_error_message) new method.
+	* commands.cc: use getopt_error_message; don't pass longopt - unneeded;
+	  (cls) remove options after time_style is used.
 
 2007-09-12  Lamer <lamer@vnsecurity.net>
 

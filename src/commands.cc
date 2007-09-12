@@ -713,7 +713,7 @@ Job *CmdExec::builtin_lftp()
    };
 
    opterr=false;
-   while((c=args->getopt_long("+f:c:vhd",lftp_options,0))!=EOF)
+   while((c=args->getopt_long("+f:c:vhd",lftp_options))!=EOF)
    {
       switch(c)
       {
@@ -795,7 +795,7 @@ Job *CmdExec::builtin_open()
       {0,0,0,0}
    };
 
-   while((c=args->getopt_long("u:p:e:dBh",open_options,0))!=EOF)
+   while((c=args->getopt_long("u:p:e:dBh",open_options))!=EOF)
    {
       switch(c)
       {
@@ -1118,7 +1118,7 @@ Job *CmdExec::builtin_queue()
    int verbose = -1; /* default */
 
    int opt;
-   while((opt=args->getopt_long("+dm:n:qvQw",queue_options,0))!=EOF)
+   while((opt=args->getopt_long("+dm:n:qvQw",queue_options))!=EOF)
    {
       switch(opt)
       {
@@ -1443,8 +1443,8 @@ const char *FileSetOutput::parse_argv(const Ref<ArgV>& a)
 
    const char *time_style=ResMgr::Query("cmd:time-style",0);
 
-   int opt, longopt;
-   while((opt=a->getopt_long(":1BdFhiklqsDISrt", cls_options, &longopt))!=EOF)
+   int opt;
+   while((opt=a->getopt_long(":1BdFhiklqsDISrt", cls_options))!=EOF)
    {
       switch(opt) {
       case OPT_SORT:
@@ -1535,16 +1535,9 @@ const char *FileSetOutput::parse_argv(const Ref<ArgV>& a)
 	 break;
 
       default:
-	 /* silly getopt won't give us its error instead of printing it, oh well.
-	  * we only need to never print errors for completion and validation; for
-	  * cls itself we could do it, but that'd be a special case ... */
-	 return _("invalid option");
+	 return a->getopt_error_message(opt);
       }
    }
-
-   while(a->getindex()>1)
-      a->delarg(1);
-   a->rewind();
 
    time_fmt.set(0);
    if(time_style && time_style[0]) {
@@ -1575,6 +1568,11 @@ const char *FileSetOutput::parse_argv(const Ref<ArgV>& a)
       }
    }
 
+   // remove parsed options.
+   while(a->getindex()>1)
+      a->delarg(1);
+   a->rewind();
+
    return NULL;
 }
 
@@ -1595,7 +1593,7 @@ CMD(cls)
    fso->parse_res(ResMgr::Query("cmd:cls-default", 0));
 
    if(const char *err = fso->parse_argv(args)) {
-      eprintf("%s: %s.\n", op, err);
+      eprintf("%s: %s\n", op, err);
       eprintf(_("Try `help %s' for more information.\n"),op);
       return 0;
    }
@@ -2803,11 +2801,11 @@ CMD(find)
       {"maxdepth",required_argument,0,'d'},
       {0,0,0,0}
    };
-   int opt, longopt;
+   int opt;
    int maxdepth = -1;
    const char *op=args->a0();
 
-   while((opt=args->getopt_long("+d:",find_options,&longopt))!=EOF)
+   while((opt=args->getopt_long("+d:",find_options))!=EOF)
    {
       switch(opt)
       {
@@ -2873,8 +2871,8 @@ CMD(du)
 
    const char *op=args->a0();
 
-   int opt, longopt;
-   while((opt=args->getopt_long("+abcd:FhHkmsS",du_options,&longopt))!=EOF)
+   int opt;
+   while((opt=args->getopt_long("+abcd:FhHkmsS",du_options))!=EOF)
    {
       switch(opt)
       {
@@ -3052,7 +3050,7 @@ CMD(chmod)
    int opt;
    int modeind = 0;
 
-   while((opt=args->getopt_long("vcRfrwxXstugoa,+-=",chmod_options,0))!=EOF)
+   while((opt=args->getopt_long("vcRfrwxXstugoa,+-=",chmod_options))!=EOF)
    {
       switch(opt)
       {
@@ -3141,7 +3139,7 @@ CMD(get1)
    long long target_region_begin=0,target_region_end=FILE_END;
    int n,p;
 
-   while((opt=args->getopt_long("arco:",get1_options,0))!=EOF)
+   while((opt=args->getopt_long("arco:",get1_options))!=EOF)
    {
       switch(opt)
       {

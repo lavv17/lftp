@@ -40,18 +40,19 @@ public:
    ArgV(int new_c,const char * const *new_v) : StringSet(new_v,new_c) { ind=0; }
 
    void Append(const char *s) { StringSet::Append(s); }
-   void Append(int a) { char buf[12]; sprintf(buf,"%d",a); Append(buf); }
+   void Append(int a) { char buf[32]; sprintf(buf,"%d",a); Append(buf); }
    void Add(const char *a) { Append(a); } // alias
 
    char *Combine(int start_index=0) const;
    char *CombineQuoted(int start_index=0) const;
    char *CombineCmd(int i=0) const { return i>=count()-1 ? Combine(i) : CombineQuoted(i); }
 
-   int getopt_long(const char *opts,const struct option *lopts,int *lind);
+   int getopt_long(const char *opts,const struct option *lopts,int *lind=0);
    int getopt(const char *opts)
       {
 	 return getopt_long(opts,0,0);
       }
+   const char *getopt_error_message(int e);
 
    void seek(int n);
    void rewind() { seek(0); }
