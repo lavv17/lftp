@@ -1,3 +1,7 @@
+2007-09-12  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: improve STAT reply handling.
+
 2007-09-12  Lamer <lamer@vnsecurity.net>
 
 	* lftp_ssl.cc, resource.cc: (ssl:check-hostname) new setting.

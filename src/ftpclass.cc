@@ -2637,10 +2637,12 @@ int  Ftp::ReceiveResp()
       if(is_data && mode==LONG_LIST)
       {
 	 if(code && line.length()>4)
+	 {
 	    data_offset=4;
-	 if(!strncasecmp(line+data_offset,"Status of ",10)
-	 || !strncasecmp(line+data_offset,"End of Status",13))
-	    is_data=false;
+	    if(!strncasecmp(line+data_offset,"Status ",7)
+	    || !strncasecmp(line+data_offset,"End of Status",13))
+	       is_data=false;
+	 }
       }
       if(is_data)
       {
