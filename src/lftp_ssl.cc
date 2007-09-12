@@ -334,7 +334,8 @@ void lftp_ssl_gnutls::verify_certificate_chain(const gnutls_datum_t *cert_chain,
 
    /* Check if the name in the first certificate matches our destination!
     */
-   if(!gnutls_x509_crt_check_hostname(cert[0], hostname))
+   bool check_hostname = ResMgr::QueryBool("ssl:check-hostname", hostname);
+   if(check_hostname && !gnutls_x509_crt_check_hostname(cert[0], hostname))
    {
       xstring_ca err(xasprintf("The certificate's owner does not match hostname '%s'\n",hostname.get()));
       set_cert_error(err);
