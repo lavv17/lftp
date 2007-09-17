@@ -308,6 +308,8 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    c->RemoveSourceLater();
 	 if(remove_target)
 	    c->RemoveTargetFirst();
+	 if(FlagSet(ASCII))
+	    c->Ascii();
 	 CopyJob *cp=(use_pget ? new pgetJob(c,file->name,pget_n) : new CopyJob(c,file->name,"mirror"));
 	 if(file->defined&file->DATE)
 	    cp->SetDate(file->date);
@@ -327,7 +329,9 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    goto skip;
 
 	 bool create_target_dir=true;
-	 FileInfo *old=target_set->FindByName(file->name);
+	 const FileInfo *old=0;
+	 if(target_set)
+	    old=target_set->FindByName(file->name);
 	 if(!old)
 	 {
 	    if(flags&ONLY_EXISTING)
@@ -658,7 +662,14 @@ int   MirrorJob::Do()
 
       source_dir.set(source_session->GetCwd());
 
-      if(!create_target_dir || !strcmp(target_dir,".") || !strcmp(target_dir,".."))
+      if(FlagSet(DEPTH_FIRST))    // first need to get source dir contents
+	 goto pre_GETTING_LIST_INFO;
+
+   pre_MAKE_TARGET_DIR:
+   {
+      if(!strcmp(target_dir,".") || !strcmp(target_dir,".."))
+	 create_target_dir=false;
+      if(!create_target_dir)
 	 goto pre_CHANGING_DIR_TARGET;
       if(target_is_local)
       {
@@ -691,10 +702,11 @@ int   MirrorJob::Do()
       }
       if(target_relative_dir)
 	 Report(_("Making directory `%s'"),target_relative_dir.get());
+      bool mkdir_p=(parent_mirror==0 || parent_mirror->create_target_dir);
       if(script)
       {
 	 ArgV args("mkdir");
-	 if(parent_mirror==0)
+	 if(mkdir_p)
 	    args.Append("-p");
 	 args.Append(target_session->GetFileURL(target_dir));
 	 xstring_ca cmd(args.CombineQuoted());
@@ -702,15 +714,17 @@ int   MirrorJob::Do()
 	 if(script_only)
 	    goto pre_CHANGING_DIR_TARGET;
       }
-      target_session->Mkdir(target_dir,(parent_mirror==0));
+      target_session->Mkdir(target_dir,mkdir_p);
       set_state(MAKE_TARGET_DIR);
       m=MOVED;
+   }
       /*fallthrough*/
    case(MAKE_TARGET_DIR):
       res=target_session->Done();
       if(res==FA::IN_PROGRESS)
 	 return m;
       target_session->Close();
+      create_target_dir=false;
 
    pre_CHANGING_DIR_TARGET:
       target_session->Chdir(target_dir);
@@ -731,8 +745,11 @@ int   MirrorJob::Do()
    pre_GETTING_LIST_INFO:
       set_state(GETTING_LIST_INFO);
       m=MOVED;
-      HandleListInfoCreation(source_session,source_list_info,source_relative_dir);
-      HandleListInfoCreation(target_session,target_list_info,target_relative_dir);
+      if(!source_set)
+	 HandleListInfoCreation(source_session,source_list_info,source_relative_dir);
+      if(!target_set && (!FlagSet(DEPTH_FIRST) || FlagSet(ONLY_EXISTING)
+      || source_set || !create_target_dir))
+	 HandleListInfoCreation(target_session,target_list_info,target_relative_dir);
       if(state!=GETTING_LIST_INFO)
       {
 	 source_list_info=0;
@@ -747,6 +764,16 @@ int   MirrorJob::Do()
       if(source_list_info || target_list_info)
 	 return m;
 
+      transfer_count-=root_transfer_count; // leave room for transfers.
+
+      if(FlagSet(DEPTH_FIRST) && source_set && !target_set)
+      {
+	 // transfer directories first
+	 to_transfer=new FileSet(source_set);
+	 to_transfer->SubtractNotDirs();
+	 goto pre_WAITING_FOR_TRANSFER;
+      }
+
       // now we have both target and source file sets.
       stats.dirs++;
 
@@ -755,7 +782,6 @@ int   MirrorJob::Do()
       to_rm->rewind();
       to_rm_mismatched->Count(&stats.del_dirs,&stats.del_files,&stats.del_symlinks,&stats.del_files);
       to_rm_mismatched->rewind();
-      transfer_count-=root_transfer_count; // leave room for transfers.
       set_state(TARGET_REMOVE_OLD_FIRST);
       goto TARGET_REMOVE_OLD_FIRST_label;
 
@@ -785,6 +811,21 @@ int   MirrorJob::Do()
 	 {
 	    if(waiting_num>0)
 	       break;
+	    if(FlagSet(DEPTH_FIRST))
+	    {
+	       // we have been in the depth, don't go there again
+	       SetFlags(DEPTH_FIRST,false);
+	       SetFlags(NO_RECURSION,true);
+
+	       // if we have not created any subdirs and there are only subdirs,
+	       // then the directory would be empty - skip it.
+	       if(FlagSet(NO_EMPTY_DIRS) && stats.dirs==0
+	       && source_set->get_fnum()==to_transfer->get_fnum())
+		  goto pre_FINISHING;
+
+	       transfer_count+=root_transfer_count;
+	       goto pre_MAKE_TARGET_DIR;
+	    }
 	    goto pre_TARGET_REMOVE_OLD;
 	 }
 	 HandleFile(file);
@@ -968,9 +1009,9 @@ int   MirrorJob::Do()
 	 to_transfer->LocalUtime(target_dir,/*only_dirs=*/true);
 	 if(flags&ALLOW_CHOWN)
 	    to_transfer->LocalChown(target_dir);
-	 if(!(flags&NO_PERMS))
+	 if(!FlagSet(NO_PERMS) && same)
 	    same->LocalChmod(target_dir,get_mode_mask());
-	 if(flags&ALLOW_CHOWN)
+	 if(FlagSet(ALLOW_CHOWN) && same)
 	    same->LocalChown(target_dir);
       }
       set_state(FINISHING);
@@ -1280,6 +1321,9 @@ CMD(mirror)
       OPT_USE_PGET_N,
       OPT_SKIP_NOACCESS,
       OPT_ON_CHANGE,
+      OPT_NO_EMPTY_DIRS,
+      OPT_DEPTH_FIRST,
+      OPT_ASCII,
    };
    static const struct option mirror_opts[]=
    {
@@ -1321,6 +1365,9 @@ CMD(mirror)
       {"max-errors",required_argument,0,OPT_MAX_ERRORS},
       {"skip-noaccess",no_argument,0,OPT_SKIP_NOACCESS},
       {"on-change",required_argument,0,OPT_ON_CHANGE},
+      {"no-empty-dirs",no_argument,0,OPT_NO_EMPTY_DIRS},
+      {"depth-first",no_argument,0,OPT_DEPTH_FIRST},
+      {"ascii",no_argument,0,OPT_ASCII},
       {0}
    };
 
@@ -1521,6 +1568,15 @@ CMD(mirror)
       case(OPT_ONLY_EXISTING):
 	 flags|=MirrorJob::ONLY_EXISTING;
 	 break;
+      case(OPT_NO_EMPTY_DIRS):
+	 flags|=MirrorJob::NO_EMPTY_DIRS|MirrorJob::DEPTH_FIRST;
+	 break;
+      case(OPT_DEPTH_FIRST):
+	 flags|=MirrorJob::DEPTH_FIRST;
+	 break;
+      case(OPT_ASCII):
+	 flags|=MirrorJob::ASCII|MirrorJob::IGNORE_SIZE;
+	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
       no_job:
@@ -1633,7 +1689,7 @@ CMD(mirror)
       parallel=64;   // a (in)sane limit.
    if(parallel)
       j->SetParallel(parallel);
-   if(use_pget>1)
+   if(use_pget>1 && !(flags&MirrorJob::ASCII))
       j->SetPGet(use_pget);
 
    if(script_file)

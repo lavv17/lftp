@@ -154,9 +154,12 @@ public:
       NO_SYMLINKS=1<<13,
       LOOP=1<<14,
       ONLY_EXISTING=1<<15,
+      NO_EMPTY_DIRS=1<<16,
+      DEPTH_FIRST=1<<17,
+      ASCII=1<<18,
    };
 
-   void SetFlags(int f,int v)
+   void SetFlags(int f,bool v)
    {
       if(v)
 	 flags|=f;

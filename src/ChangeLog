@@ -1,3 +1,10 @@
+2007-09-17  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: skip leading space in STAT reply.
+	* resource.cc: add another server overload message.
+	* MirrorJob.cc, MirrorJob.h: (depth-first, no-empty-dirs, ascii)
+	  new options.
+
 2007-09-12  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: improve STAT reply handling.
