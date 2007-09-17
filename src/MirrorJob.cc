@@ -281,6 +281,8 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	       args.Append("-c");
 	    if(remove_target)
 	       args.Append("-e");
+	    if(FlagSet(ASCII))
+	       args.Append("-a");
 	    args.Append("-O");
 	    args.Append(target_is_local?target_dir.get()
 			:target_session->GetConnectURL());
