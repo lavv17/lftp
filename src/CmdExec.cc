@@ -1174,15 +1174,15 @@ void CmdExec::ChangeSession(FileAccess *new_session)
       ConnectionSlot::Set(slot,session);
 }
 
-const CmdExec::cmd_rec *CmdExec::CmdByIndex(int i)
+const char *CmdExec::CmdByIndex(int i)
 {
    if(dyn_cmd_table)
    {
       if(i<dyn_cmd_table.count())
-	 return &dyn_cmd_table[i];
+	 return dyn_cmd_table[i].name;
       return 0;
    }
-   return &static_cmd_table[i];
+   return static_cmd_table[i].name;
 }
 
 Job *CmdExec::default_cmd()

@@ -236,7 +236,7 @@ public:
    void print_cmd_help(const char *cmd);
    void print_cmd_index();
 
-   static const cmd_rec *CmdByIndex(int i);
+   static const char *CmdByIndex(int i);
 
    int	 last_bg;
    bool	 wait_all;

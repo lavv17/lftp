@@ -82,7 +82,7 @@ char *command_generator(const char *text,int state)
    }
 
    /* Return the next name which partially matches from the command list. */
-   while ((name=CmdExec::CmdByIndex(cindex)->name)!=0)
+   while ((name=CmdExec::CmdByIndex(cindex))!=0)
    {
       cindex++;
       if(name[0]=='.' && len==0)

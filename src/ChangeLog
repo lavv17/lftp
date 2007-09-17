@@ -4,6 +4,7 @@
 	* resource.cc: add another server overload message.
 	* MirrorJob.cc, MirrorJob.h: (depth-first, no-empty-dirs, ascii)
 	  new options.
+	* CmdExec.cc, CmdExec.h, complete.cc: (CmdByIndex) return cmd name.
 
 2007-09-12  Alexander V. Lukyanov <lav@yars.free.net>
 
