@@ -664,9 +664,6 @@ int   MirrorJob::Do()
 
       source_dir.set(source_session->GetCwd());
 
-      if(FlagSet(DEPTH_FIRST))    // first need to get source dir contents
-	 goto pre_GETTING_LIST_INFO;
-
    pre_MAKE_TARGET_DIR:
    {
       if(!strcmp(target_dir,".") || !strcmp(target_dir,".."))
@@ -682,6 +679,7 @@ int   MirrorJob::Do()
 	    {
 	       if(!script_only)
 		  chmod(target_dir,st.st_mode|0700);
+	       create_target_dir=false;
 	       goto pre_CHANGING_DIR_TARGET;
 	    }
 	    else
@@ -702,6 +700,10 @@ int   MirrorJob::Do()
 	    }
 	 }
       }
+
+      if(FlagSet(DEPTH_FIRST))
+	 goto pre_GETTING_LIST_INFO;
+
       if(target_relative_dir)
 	 Report(_("Making directory `%s'"),target_relative_dir.get());
       bool mkdir_p=(parent_mirror==0 || parent_mirror->create_target_dir);
@@ -741,6 +743,7 @@ int   MirrorJob::Do()
 	 return MOVED;
       if(target_session->IsOpen())
 	 return m;
+      create_target_dir=false;
 
       target_dir.set(target_session->GetCwd());
 
@@ -749,8 +752,7 @@ int   MirrorJob::Do()
       m=MOVED;
       if(!source_set)
 	 HandleListInfoCreation(source_session,source_list_info,source_relative_dir);
-      if(!target_set && (!FlagSet(DEPTH_FIRST) || FlagSet(ONLY_EXISTING)
-      || source_set || !create_target_dir))
+      if(!target_set && !create_target_dir && (!FlagSet(DEPTH_FIRST) || FlagSet(ONLY_EXISTING)))
 	 HandleListInfoCreation(target_session,target_list_info,target_relative_dir);
       if(state!=GETTING_LIST_INFO)
       {
