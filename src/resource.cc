@@ -225,7 +225,7 @@ static ResType lftp_vars[] = {
    {"ftp:web-mode",		 "off",   ResMgr::BoolValidate,0},
 #define RETRY_530 \
    "too many|overloaded|try (again |back )?later|is restricted to|"\
-   "maximum number|number of connect|only.*session.*allowed|more connection"
+   "maximum number|number of connect|only.*session.*allowed|more connection|already connected"
    {"ftp:retry-530",		 RETRY_530,ResMgr::ERegExpValidate,0},
    {"ftp:retry-530-anonymous",	 "Login incorrect",ResMgr::ERegExpValidate,0},
    {"hftp:cache",		 "yes",   ResMgr::BoolValidate,0},

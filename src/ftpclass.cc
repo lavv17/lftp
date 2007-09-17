@@ -2646,6 +2646,8 @@ int  Ftp::ReceiveResp()
       }
       if(is_data)
       {
+	 if(line[data_offset]==' ')
+	    data_offset++;
 	 conn->data_iobuf->Put(line+data_offset,line.length()-data_offset);
 	 conn->data_iobuf->Put("\n");
 	 log_prio=10;
