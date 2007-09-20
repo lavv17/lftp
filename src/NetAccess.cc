@@ -806,20 +806,13 @@ GenericParseListInfo::GenericParseListInfo(FileAccess *s,const char *p)
 
 const char *GenericParseListInfo::Status()
 {
-   static char s[256];
    if(ubuf && !ubuf->Eof() && session->IsOpen())
-   {
-      sprintf(s,_("Getting directory contents (%lld) %s[%s]"),
+      return xstring::format("%s (%lld) %s[%s]",_("Getting directory contents"),
 		     (long long)session->GetPos(),
 		     ubuf->GetRateStrS(),session->CurrentStatus());
-      return s;
-   }
    if(get_info)
-   {
-      sprintf(s,_("Getting files information (%d%%) [%s]"),
+      return xstring::format("%s (%d%%) [%s]",_("Getting files information"),
 		     session->InfoArrayPercentDone(),
 		     session->CurrentStatus());
-      return s;
-   }
    return "";
 }
