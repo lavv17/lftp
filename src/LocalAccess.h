@@ -63,22 +63,4 @@ public:
    DirList  *MakeDirList(ArgV *a);
 };
 
-class LocalListInfo : public ListInfo
-{
-public:
-   LocalListInfo(FileAccess *s,const char *d) : ListInfo(s,d) {}
-   const char *Status() { return "..."; }
-   int Do();
-};
-
-class LocalDirList : public DirList
-{
-   SMTaskRef<IOBuffer> ubuf;
-   Ref<FgData> fg_data;
-public:
-   LocalDirList(ArgV *a,const char *cwd);
-   const char *Status() { return "..."; }
-   int Do();
-};
-
 #endif//LOCALACCESS_H

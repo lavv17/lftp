@@ -146,7 +146,10 @@ public:
    FileSet(const FileSet *s);
    void Empty();
 
-   int	 get_fnum() const { return files.length(); }
+   int	 get_fnum() const { return files.count(); }
+   int	 count() const { return files.count(); }
+   int	 curr_index() const { return ind; }
+   int	 curr_pct() const { return count()==0 ? 100 : ind*100/count(); }
 
    void	 Add(FileInfo *);
    void	 Merge(const FileSet *);

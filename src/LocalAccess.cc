@@ -36,6 +36,9 @@
 #include "log.h"
 #include "LocalDir.h"
 
+#define FILES_AT_ONCE_STAT 64
+#define FILES_AT_ONCE_READDIR 256
+
 FileAccess *LocalAccess::New() { return new LocalAccess(); }
 
 void LocalAccess::ClassInit()
@@ -529,6 +532,16 @@ bool LocalAccess::SameLocationAs(const FileAccess *fa) const
    return !xstrcmp(cwd,o->cwd);
 }
 
+class LocalListInfo : public ListInfo
+{
+   DIR *dir;
+public:
+   LocalListInfo(FileAccess *s,const char *d) : ListInfo(s,d), dir(0) {}
+   ~LocalListInfo() { if(dir) closedir(dir); }
+   const char *Status();
+   int Do();
+};
+
 ListInfo *LocalAccess::MakeListInfo(const char *path)
 {
    return new LocalListInfo(this,path);
@@ -536,48 +549,72 @@ ListInfo *LocalAccess::MakeListInfo(const char *path)
 
 int LocalListInfo::Do()
 {
+   int m=STALL;
+
    if(done)
       return STALL;
 
-   const char *dir=session->GetCwd();
-   DIR *d=opendir(dir);
-   struct dirent *f;
-
-   if(d==0)
+   if(!dir && !result)
    {
-      const char *err=strerror(errno);
-      char *mem=(char*)alloca(strlen(err)+strlen(dir)+3);
-      sprintf(mem,"%s: %s",dir,err);
-      SetError(mem);
-      return MOVED;
+      const char *path=session->GetCwd();
+      dir=opendir(path);
+      if(!dir)
+      {
+	 SetError(xstring::format("%s: %s",path,strerror(errno)));
+	 return MOVED;
+      }
+      m=MOVED;
    }
-
-   result=new FileSet;
-   for(;;)
+   if(dir)
    {
-      f=readdir(d);
-      if(f==0)
-	 break;
-      const char *name=f->d_name;
-      if(name[0]=='~')
-	 name=dir_file(".",name);
-      result->Add(new FileInfo(name));
+      if(!result)
+	 result=new FileSet;
+      int count=FILES_AT_ONCE_READDIR;
+      for(;;)
+      {
+	 struct dirent *f=readdir(dir);
+	 if(f==0)
+	    break;
+	 const char *name=f->d_name;
+	 if(name[0]=='~')
+	    name=dir_file(".",name);
+	 result->Add(new FileInfo(name));
+	 if(!--count)
+	    return MOVED;	// let other tasks run
+      }
+      closedir(dir);
+      dir=0;
+      result->rewind();
+      m=MOVED;
    }
-   closedir(d);
-
-   result->rewind();
-   for(FileInfo *file=result->curr(); file!=0; file=result->next())
+   if(!dir && result)
    {
-      const char *name=dir_file(dir,file->name);
-      file->LocalFile(name, follow_symlinks);
-      if(!(file->defined&file->TYPE))
-	 result->SubtractCurr();
+      int count=FILES_AT_ONCE_STAT;
+      const char *path=session->GetCwd();
+      for(FileInfo *file=result->curr(); file!=0; file=result->next())
+      {
+	 const char *name=dir_file(path,file->name);
+	 file->LocalFile(name, follow_symlinks);
+	 if(!(file->defined&file->TYPE))
+	    result->SubtractCurr();
+	 if(!--count)
+	    return MOVED;	// let other tasks run
+      }
+      result->Exclude(exclude_prefix,exclude);
+      done=true;
+      m=MOVED;
    }
-
-   result->Exclude(exclude_prefix,exclude);
-
-   done=true;
-   return MOVED;
+   return m;
+}
+const char *LocalListInfo::Status()
+{
+   if(done)
+      return "";
+   if(dir && result)
+      return xstring::format("%s (%d)",_("Getting directory contents"),result->count());
+   if(result && result->count())
+      return xstring::format("%s (%d%%)",_("Getting files information"),result->curr_pct());
+   return "";
 }
 
 #include "FileGlob.h"
@@ -586,7 +623,7 @@ class LocalGlob : public Glob
    const char *cwd;
 public:
    LocalGlob(const char *cwd,const char *pattern);
-   const char *Status() { return "..."; }
+   const char *Status() { return "Reading directory"; }
    int Do();
 };
 Glob *LocalAccess::MakeGlob(const char *pattern)
@@ -617,10 +654,7 @@ int LocalGlob::Do()
    }
    if(chdir(cwd)==-1)
    {
-      const char *se=strerror(errno);
-      char *err=(char*)alloca(strlen(cwd)+strlen(se)+20);
-      sprintf(err,"chdir(%s): %s",cwd,se);
-      SetError(err);
+      SetError(xstring::format("chdir(%s): %s",cwd,strerror(errno)));
       return MOVED;
    }
 
@@ -653,6 +687,16 @@ int LocalGlob::Do()
    done=true;
    return MOVED;
 }
+
+class LocalDirList : public DirList
+{
+   SMTaskRef<IOBuffer> ubuf;
+   Ref<FgData> fg_data;
+public:
+   LocalDirList(ArgV *a,const char *cwd);
+   const char *Status() { return ""; }
+   int Do();
+};
 
 DirList *LocalAccess::MakeDirList(ArgV *a)
 {

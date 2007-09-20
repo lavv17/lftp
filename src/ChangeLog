@@ -1,3 +1,10 @@
+2007-09-20  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* LocalAccess.cc, LocalAccess.h: let other tasks run while doing
+	  ListInfo; better status messages.
+	* NetAccess.cc: optimize translations; use xstring::format.
+	* FileSet.h: (count, curr_index, curr_pct) new methods.
+
 2007-09-17  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: skip leading space in STAT reply.
