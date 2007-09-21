@@ -27,6 +27,7 @@
 # include <dlfcn.h>
 #endif
 #include <unistd.h>
+#include <stddef.h>
 #include "module.h"
 #include "ResMgr.h"
 #include "confpaths.h"
@@ -116,23 +117,31 @@ lftp_module_info *lftp_module_info::base;
 
 static ResDecl res_mod_path("module:path", PKGLIBDIR"/"VERSION":"PKGLIBDIR, 0,0);
 
+static int access_so(xstring &fullpath)
+{
+   int res=access(fullpath,F_OK);
+   if(res==-1)
+   {
+      int len=fullpath.length();
+      if(len>3 && strcmp(fullpath+len-3,".so"))
+	 fullpath.append(".so");
+      res=access(fullpath,F_OK);
+   }
+   return res;
+}
+
 void *module_load(const char *path,int argc,const char *const *argv)
 {
 #ifdef HAVE_DLOPEN
    void *map;
    const char *modules_path=res_mod_path.Query(path);
-   char *fullpath=(char*)alloca(strlen(modules_path)+strlen(PKGLIBDIR)+1+strlen(path)+3+1);
+   xstring fullpath;
    init_t init;
 
    if(strchr(path,'/'))
    {
-      strcpy(fullpath,path);
-      if(access(fullpath,F_OK)==-1)
-      {
-	 int len=strlen(fullpath);
-	 if(len>3 && strcmp(fullpath+len-3,".so"))
-	    strcat(fullpath,".so");
-      }
+      fullpath.set(path);
+      access_so(fullpath);
    }
    else
    {
@@ -148,19 +157,15 @@ void *module_load(const char *path,int argc,const char *const *argv)
       char *p=alloca_strdup(modules_path);
       for(p=strtok(p,":"); p; p=strtok(0,":"))
       {
-	 sprintf(fullpath,"%s/%s",p,path);
-	 if(access(fullpath,F_OK)==0)
+	 fullpath.vset(p,"/",path,NULL);
+	 if(access_so(fullpath)==0)
 	    break;
-	 int len=strlen(fullpath);
-	 if(len>3 && strcmp(fullpath+len-3,".so"))
-	 {
-	    strcat(fullpath,".so");
-	    if(access(fullpath,F_OK)==0)
-	       break;
-	 }
       }
       if(p==0)
-	 sprintf(fullpath,"%s/%s/%s.so",PKGLIBDIR,VERSION,path); // fallback
+      {
+	 fullpath.vset(PKGLIBDIR,"/",VERSION,"/",path,NULL); // fallback
+	 access_so(fullpath);
+      }
    }
    map=dlopen(fullpath,DLOPEN_FLAGS);  // LAZY?
    if(map==0)

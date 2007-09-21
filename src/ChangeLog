@@ -1,3 +1,7 @@
+2007-09-21  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* module.cc: use xstring; (access_so) new function.
+
 2007-09-20  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* LocalAccess.cc, LocalAccess.h: let other tasks run while doing
