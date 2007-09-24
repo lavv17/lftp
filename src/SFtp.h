@@ -238,6 +238,7 @@ private:
 
    Ref<Buffer> file_buf;
    Ref<FileSet> file_set;
+   Timer flush_timer;
 
    Ref<PtyShell> ssh;
 

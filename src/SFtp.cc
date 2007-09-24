@@ -256,7 +256,9 @@ int SFtp::Do()
    case FILE_SEND:
       // pack data from file_buf.
       file_buf->Get(&b,&s);
-      if(s<size_write && !eof)
+      if(s==0 && !eof)
+	 return m;
+      if(s<size_write && !eof && !flush_timer.Stopped())
 	 return m;   // wait for more data before sending.
       if(RespQueueSize()>max_packets_in_flight)
 	 return m;
@@ -277,6 +279,7 @@ int SFtp::Do()
       SendRequest(new Request_WRITE(handle,request_pos,b,s),Expect::WRITE_STATUS);
       file_buf->Skip(s);
       request_pos+=s;
+      flush_timer.Reset();
       m=MOVED;
       break;
    case WAITING:
@@ -356,6 +359,7 @@ void SFtp::Init()
    max_packets_in_flight_slow_start=1;
    size_read=0x8000;
    size_write=0x8000;
+   flush_timer.Set(0,500);
 }
 
 SFtp::SFtp()
@@ -1220,7 +1224,7 @@ int SFtp::Write(const void *buf,int size)
       size=entity_size-pos;
    if(size<=0)
       return 0;
-   file_buf->Put((char*)buf,size);
+   file_buf->Put(static_cast<const char*>(buf),size);
    TrySuccess();
    rate_limit->BytesPut(size);
    pos+=size;

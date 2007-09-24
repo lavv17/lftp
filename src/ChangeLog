@@ -1,6 +1,7 @@
 2007-09-24  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: fix for non-standard FEAT reply.
+	* SFtp.cc, SFtp.h: use timer to flush imcomplete data.
 
 2007-09-21  Alexander V. Lukyanov <lav@yars.free.net>
 
