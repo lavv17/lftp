@@ -3615,10 +3615,13 @@ void Ftp::CheckFEAT(char *reply)
 
    for(char *f=strtok(scan,"\r\n"); f; f=strtok(0,"\r\n"))
    {
-      if(!strncmp(f,"211 ",4))
-	 break;	  // last line
-      if(!strncmp(f,"211-",4))
-	 f+=4;	  // workaround for broken servers, RFC2389 does not allow it.
+      if(!strncmp(f,line,3))
+      {
+	 if(f[3]==' ')
+	    break;   // last line
+	 if(f[3]=='-')
+	    f+=4;    // workaround for broken servers, RFC2389 does not allow it.
+      }
       while(*f==' ')
 	 f++;
 
