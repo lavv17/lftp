@@ -30,7 +30,7 @@ AC_DEFUN([LFTP_NEED_TRIO],[
 	       return 1;
 
 	    return 0;
-	 }],[],[ac_cv_need_trio="yes (because %lld fails)"],[])
+	 }],[],[ac_cv_need_trio="yes (because %lld fails)"],[ac_cv_need_trio="no (assumed)"])
 
       fi
    ])

@@ -1,3 +1,7 @@
+2007-06-15	Jakob Truelsen <antialize@gmail.com>
+
+	* needtrio.m4, va_copy.m4: allow cross-compilation.
+
 2007-04-11	Yann Rouillard <yann@pleiades.fr.eu.org>
 
 	* lftp.m4: (LFTP_CXX__BOOL) new test for Sun native compiler.
