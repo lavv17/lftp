@@ -2636,6 +2636,8 @@ int  Ftp::ReceiveResp()
       int data_offset=0;
       if(is_data && mode==LONG_LIST)
       {
+	 if(code && !is2XX(code))
+	    is_data=false;
 	 if(code && line.length()>4)
 	 {
 	    data_offset=4;
