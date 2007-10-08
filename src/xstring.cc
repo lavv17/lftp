@@ -269,7 +269,7 @@ xstring &xstring::cat(const char *first,...)
    va_list va;
    va_start(va,first);
    xstring& str=get_tmp();
-   str.truncate(0);
+   str.set(first);
    str.vappend(va);
    va_end(va);
    return str;

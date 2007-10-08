@@ -265,7 +265,7 @@ int   Resolver::Do()
    done=true;
    if(!cache)
       cache=new ResolverCache;
-   cache->Add(hostname,portname,defport,service,proto,addr,addr.count());
+   cache->Add(hostname,portname,defport,service,proto,addr.get(),addr.count());
    FA::LogNote(4,plural("%d address$|es$ found",addr.count()),addr.count());
    return MOVED;
 }

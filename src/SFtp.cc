@@ -889,7 +889,7 @@ void SFtp::HandleExpect(Expect *e)
 	 {
 	    if(e->next!=ooo_chain)
 	       LogNote(9,"put a packet with id=%d on out-of-order chain (need_pos=%lld packet_pos=%lld)",
-		  reply->GetID(),pos+file_buf->Size(),r->pos);
+		  reply->GetID(),(long long)(pos+file_buf->Size()),(long long)r->pos);
 	    e->next=ooo_chain;
 	    ooo_chain=e;
 	    return;

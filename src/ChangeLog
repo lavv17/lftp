@@ -1,3 +1,10 @@
+2007-10-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* xstring.cc: fix xstring::cat.
+	* xarray.h: drop automatic cast to T*.
+	* Resolver.cc, Resolver.h: use explicit xarray::get.
+	* SFtp.cc: fix type mismatch warning.
+
 2007-10-01  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: handle and log STAT errors properly.

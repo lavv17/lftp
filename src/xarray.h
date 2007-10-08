@@ -89,7 +89,7 @@ public:
    T& operator[](int i) { return get_non_const()[i]; }
    const T& operator[](int i) const { return get()[i]; }
    size_t get_element_size() const { return sizeof(T); }
-   operator const T*() const { return get(); }
+/*   operator const T*() const { return get(); }*/
    void nset(const T *s,int len) { _nset(s,len); }
    void set(const xarray<T> &a) { nset(a.get(),a.count()); }
    void set_length(size_t n) { _set_length(n); }

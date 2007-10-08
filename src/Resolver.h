@@ -88,7 +88,7 @@ public:
    const xarray<sockaddr_u>& Result() { return addr; }
    size_t GetResultSize() { return addr.count()*addr.get_element_size(); }
    int	 GetResultNum() { return addr.count(); }
-   void  GetResult(void *m) { memcpy(m,addr,GetResultSize()); }
+   void  GetResult(void *m) { memcpy(m,addr.get(),GetResultSize()); }
    void	 UseCache(bool y) { no_cache=!y; }
    void	 NoCache() { UseCache(false); }
 
