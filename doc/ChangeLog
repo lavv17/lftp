@@ -1,3 +1,8 @@
+2007-10-08	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document eval; new mirror options; ftp:use-stat-for-list;
+	  ssl:check-hostname; correct xfer:max-redirections default.
+
 2007-08-17	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document xfer:log; boolean settings; appending of

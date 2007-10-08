@@ -67,7 +67,7 @@ and other connections to other hosts. If \fIsite\fR is specified then lftp
 will connect to that site otherwise a connection has to be established with
 the open command.
 .PP
-\fBlftp\fP can handle seven file access methods - ftp, ftps, http, https,
+\fBlftp\fP can handle several file access methods - ftp, ftps, http, https,
 hftp, fish, sftp and file (https and ftps are only available when lftp is
 compiled with GNU TLS or OpenSSL library). You can specify the method to use in `open
 URL' command, e.g. `open http://www.us.kernel.org/pub/linux'. hftp is
@@ -224,6 +224,12 @@ the debug output to a file.
 .PP
 guess what it does.
 
+.BR eval " [" -f " \fIformat\fR ] " \fIargs...\fR
+.PP
+without -f it just executes given arguments as a command. With -f, arguments
+are transformed into a new command. The format can contain plain text and
+placeholders $0...$9 and $@, corresponding to the arguments.
+
 .BR exit " [" bg "] [" top "]"
 .RB [ kill ]
 .RI [ code ]
@@ -379,13 +385,16 @@ directory name. Source and/or target can be URLs pointing to directories.
 \-c, \-\-continue		continue a mirror job if possible
 \-e, \-\-delete		delete files not present at remote site
     \-\-delete\-first		delete old files before transferring new ones
+    \-\-depth\-first		descend into subdirectories before transferring files
 \-s, \-\-allow\-suid		set suid/sgid bits according to remote site
     \-\-allow\-chown	try to set owner and group on files
+    \-\-ascii		use ascii mode transfers (implies \-\-ignore\-size)
     \-\-ignore\-time		ignore time when deciding whether to download
     \-\-ignore\-size		ignore size when deciding whether to download
     \-\-only\-missing	download only missing files
     \-\-only\-existing	download only files already existing at target
 \-n, \-\-only\-newer	download only newer files (\-c won't work)
+    \-\-no\-empty\-dirs	don't create empty directories (implies \-\-depth\-first)
 \-r, \-\-no\-recursion	don't go to subdirectories
     \-\-no\-symlinks	don't create symbolic links
 \-p, \-\-no\-perms		don't set file permissions
@@ -393,6 +402,7 @@ directory name. Source and/or target can be URLs pointing to directories.
 \-R, \-\-reverse		reverse mirror (put files)
 \-L, \-\-dereference	download symbolic links as files
 \-N, \-\-newer\-than=SPEC	download only files newer than specified time
+    \-\-on\-change=CMD		execute the command if anything has been changed
     \-\-older\-than=SPEC	download only files older than specified time
     \-\-size\-range=RANGE	download only files with size in specified range
 \-P, \-\-parallel[=N]	download N files in parallel
@@ -1189,6 +1199,12 @@ when true (default), lftp uses SIZE command to determine file size.
 if true, lftp sends STAT command in FXP mode transfer to know how much
 data has been transferred. See also ftp:stat-interval. Default is true.
 .TP
+.BR ftp:use-stat-for-list \ (boolean)
+when true, lftp uses STAT instead of LIST command. By default `.' is used
+as STAT argument. Using STAT, lftp avoids creating data connection for directory
+listing. Some servers require special options for STAT, use ftp:list-options
+to specify them (e.g. \fB\-la\fP).
+.TP
 .BR ftp:use-telnet-iac \ (boolean)
 when true (default), lftp uses TELNET IAC command and follows TELNET protocol
 as specified in RFC959. When false, it does not follow TELNET protocol and
@@ -1467,6 +1483,10 @@ Block size for writing. Default is 0x8000.
 .BR ssl:ca-file " (path to file)"
 use specified file as Certificate Authority certificate.
 .TP
+.BR ssl:check-hostname " (boolean)"
+when true, lftp checks if the host name used to connect to the server
+corresponds to the host name in its certificate.
+.TP
 .BR ssl:ca-path " (path to directory)"
 use specified directory as Certificate Authority certificate repository.
 .TP
@@ -1505,7 +1525,7 @@ when true, lftp logs transfers to \fI~/.lftp/transfer_log\fR.
 .TP
 .BR xfer:max-redirections " (number)"
 maximum number of redirections. This can be useful for downloading over HTTP.
-Default is 0, which prohibits redirections.
+0 prohibits redirections.
 .TP
 .BR xfer:rate-period \ (seconds)
 the period over which weighted average rate is calculated to be shown.
