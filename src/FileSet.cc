@@ -276,7 +276,7 @@ void FileSet::SubtractTimeCmp(bool (FileInfo::*cmp)(time_t) const,time_t t)
       if(files[i]->defined&FileInfo::TYPE
       && files[i]->filetype!=FileInfo::NORMAL)
 	 continue;
-      if((files[i]->*cmp)(t))
+      if((files[i].get()->*cmp)(t))
       {
 	 Sub(i);
 	 i--;

@@ -39,6 +39,7 @@ public:
    operator const T*() const { return ptr; }
    T *operator->() const { return ptr; }
    T *borrow() { return replace_value(ptr,(T*)0); }
+   const T *get() const { return ptr; }
    T *get_non_const() const { return ptr; }
 
    template<class C> const Ref<C>& Cast() const
