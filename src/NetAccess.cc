@@ -394,6 +394,7 @@ void NetAccess::SetProxy(const char *px)
    xfree(proxy_port); proxy_port=0;
    xfree(proxy_user); proxy_user=0;
    xfree(proxy_pass); proxy_pass=0;
+   xfree(proxy_proto); proxy_proto=0;
 
    if(!px)
       px="";

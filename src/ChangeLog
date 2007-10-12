@@ -1,3 +1,7 @@
+2007-10-12  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* NetAccess.cc: clear proxy_proto properly.
+
 2007-09-24  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: fix for non-standard FEAT reply.
