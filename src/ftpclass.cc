@@ -2632,6 +2632,9 @@ int  Ftp::ReceiveResp()
 
       int log_prio=ReplyLogPriority(conn->multiline_code?conn->multiline_code:code);
 
+      bool is_first_line=(line[3]=='-' && conn->multiline_code==0);
+      bool is_last_line=(line[3]!='-' && code!=0);
+
       bool is_data=(!expect->IsEmpty() && expect->FirstIs(Expect::QUOTED) && conn->data_iobuf);
       int data_offset=0;
       if(is_data && mode==LONG_LIST)
@@ -2641,12 +2644,17 @@ int  Ftp::ReceiveResp()
 	 if(code && line.length()>4)
 	 {
 	    data_offset=4;
-	    if(!strncasecmp(line+data_offset,"Status ",7)
-	    || !strncasecmp(line+data_offset,"End of Status",13))
+	    if(is_first_line && strstr(line+data_offset,"FTP server status"))
+	    {
+	       TurnOffStatForList();
+	       is_data=false;
+	    }
+	    if((is_first_line && !strncasecmp(line+data_offset,"Stat",4)
+	    || (is_last_line  && !strncasecmp(line+data_offset,"End",3))))
 	       is_data=false;
 	 }
       }
-      if(is_data)
+      if(is_data && conn->data_iobuf)
       {
 	 if(line[data_offset]==' ')
 	    data_offset++;
@@ -3670,6 +3678,16 @@ void Ftp::CheckFEAT(char *reply)
    conn->have_feat_info=true;
 }
 
+void Ftp::TurnOffStatForList()
+{
+   DataClose();
+   expect->Close();
+   state=EOF_STATE;
+   LogNote(2,"Setting ftp:use-stat-for-list to off");
+   ResMgr::Set("ftp:use-stat-for-list",hostname,"off");
+   use_stat_for_list=false;
+}
+
 void Ftp::CheckResp(int act)
 {
    // close aborted accepting data socket when the connection is established
@@ -3747,13 +3765,7 @@ void Ftp::CheckResp(int act)
 
    case Expect::QUOTED:
       if(mode==LONG_LIST && !is2XX(act) && use_stat_for_list)
-      {
-	 DataClose();
-	 state=EOF_STATE;
-	 LogNote(2,"Setting ftp:use-stat-for-list to off");
-	 ResMgr::Set("ftp:use-stat-for-list",hostname,"off");
-	 use_stat_for_list=false;
-      }
+	 TurnOffStatForList();
       break;
    case Expect::IGNORE:
    ignore:

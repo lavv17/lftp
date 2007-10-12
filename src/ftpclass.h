@@ -255,6 +255,7 @@ class Ftp : public NetAccess
    void	 CatchDATE_opt(int);
    void	 CatchSIZE(int);
    void	 CatchSIZE_opt(int);
+   void	 TurnOffStatForList();
 
    enum pasv_state_t
    {

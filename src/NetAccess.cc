@@ -378,6 +378,7 @@ void NetAccess::SetProxy(const char *px)
    proxy_port.set(0);
    proxy_user.set(0);
    proxy_pass.set(0);
+   proxy_proto.set(0);
 
    if(!px)
       px="";
