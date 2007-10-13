@@ -133,8 +133,8 @@ void Job::WaitForAllChildren()
 }
 void Job::AllWaitingFg()
 {
-   for(int i=0; i<parent->waiting_num; i++)
-      parent->waiting[i]->Fg();
+   for(int i=0; i<waiting_num; i++)
+      waiting[i]->Fg();
 }
 
 void Job::ReplaceWaiting(Job *from,Job *to)
