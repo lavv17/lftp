@@ -1,3 +1,7 @@
+2007-10-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: handle timeouts when 150 reply is not received yet.
+
 2007-10-12  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* NetAccess.cc: clear proxy_proto properly.
