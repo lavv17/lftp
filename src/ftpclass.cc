@@ -2112,7 +2112,7 @@ int   Ftp::Do()
       if(state!=WAITING_150_STATE || Error())
          return MOVED;
       if(!conn->received_150)
-	 return m;
+	 goto usual_return;
 
       // now init data connection properly and start data exchange
       assert(rate_limit==0);
