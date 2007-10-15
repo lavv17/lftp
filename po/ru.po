@@ -437,7 +437,6 @@ msgid "cache [SUBCMD]"
 msgstr "cache [ДЕЙСТВИЕ]"
 
 #: src/commands.cc:138
-#, fuzzy
 msgid ""
 "cache command controls local memory cache\n"
 "\n"
@@ -455,8 +454,7 @@ msgstr ""
 "  stat          - вывести состояние кэша (по умолчанию)\n"
 "  on|off        - включить или выключить кэш\n"
 "  flush         - очистить кэш\n"
-"  size <предел> - ограничить объем памяти, -1 означает отсутствие "
-"ограничений\n"
+"  size <предел> - ограничить объем памяти\n"
 "  expire <Nx>   - установить время устаревания данных в кэше: N секунд "
 "(x=s),\n"
 "                  минут (x=m), часов (x=h) или дней (x=d)\n"
@@ -976,7 +974,6 @@ msgid "pget [OPTS] <rfile> [-o <lfile>]"
 msgstr "pget [КЛЮЧИ] <файл> [-o <лок.файл>]"
 
 #: src/commands.cc:364
-#, fuzzy
 msgid ""
 "Gets the specified file using several connections. This can speed up "
 "transfer,\n"
@@ -993,12 +990,14 @@ msgstr ""
 "ускорить прием, но загружает сеть сильнее обычного, а также влияет на "
 "других\n"
 "пользователей. Используйте эту возможность только в тех случаях, когда вам\n"
-"действительно необходимо получить файл как можно скорее, иначе кто-нибудь\n"
-"может сильно разозлиться :)\n"
+"действительно необходимо получить файл как можно скорее.\n"
 "\n"
 "Ключи:\n"
+" -c  продолжить передачу. Требует наличия файла <лок.файл>.lftp-pget-status\n"
 " -n <кол-во>   максимальное количество одновременных соединений\n"
-"               (по умолчанию 5)\n"
+"               (по умолчанию берётся значение pget:default-n)\n"
+" -O <база> указывает базовый каталог, куда класть переданные файлы\n"
+
 
 #: src/commands.cc:372
 msgid "put [OPTS] <lfile> [-o <rfile>]"
@@ -1114,7 +1113,6 @@ msgid "repeat [OPTS] [delay] [command]"
 msgstr ""
 
 #: src/commands.cc:423
-#, fuzzy
 msgid ""
 "Repeat specified command with a delay between iterations.\n"
 "Default delay is one second, default command is empty.\n"
@@ -1123,6 +1121,8 @@ msgid ""
 msgstr ""
 "Повторять указанную команду с задержкой между повторами.\n"
 "По-умолчанию задержка - 1 секунда, команды нет.\n"
+" -c <кол-во>    количество повторений\n"
+" -d <задержка>  задержка между повторениями\n"
 
 #: src/commands.cc:428
 msgid ""
