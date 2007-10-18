@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 2001 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 2001-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ struct IdNamePair
 
 class IdNameCache : public SMTask
 {
-   Timer *expire_timer;
+   Ref<Timer> expire_timer;
 
    enum { table_size=131 };
    unsigned hash(const char *);
@@ -60,13 +60,13 @@ protected:
    IdNamePair *lookup(const char *id);
 
 public:
-   IdNameCache() { init(); expire_timer=0; }
+   IdNameCache() { init(); }
    virtual ~IdNameCache();
    void Clear() { free(); init(); }
    const char *Lookup(int id);
    int Lookup(const char *);
 
-   void SetExpireTimer(Timer *t) { delete expire_timer; expire_timer=t; }
+   void SetExpireTimer(Timer *t) { expire_timer=t; }
 
    int Do();
 };

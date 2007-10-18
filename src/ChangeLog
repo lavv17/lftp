@@ -1,3 +1,8 @@
+2007-10-18  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: set prot='P' for ftps if PROT command fails.
+	* IdNameCache.cc, IdNameCache.h: use Ref; use xstrcmp.
+
 2007-10-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: handle timeouts when 150 reply is not received yet.

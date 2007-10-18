@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 2001 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 2001-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ IdNamePair *IdNameCache::lookup(const char *name)
       return lookup(atoi(name));
    unsigned h=hash(name);
    for(IdNamePair *scan=table_id[h]; scan; scan=scan->next)
-      if(!strcmp(name,scan->name))
+      if(!xstrcmp(name,scan->name))
 	 return scan;
    IdNamePair *r=get_record(name);
    if(!r)
@@ -100,7 +100,6 @@ int IdNameCache::Lookup(const char *name)
 IdNameCache::~IdNameCache()
 {
    free();
-   delete expire_timer;
 }
 int IdNameCache::Do()
 {
@@ -140,14 +139,14 @@ IdNamePair *PasswdCache::get_record(const char *name)
    struct passwd *p=getpwnam(name);
    if(!p)
       return 0;
-   return new IdNamePair(p->pw_uid,p->pw_name);
+   return new IdNamePair(p->pw_uid,name);
 }
 IdNamePair *GroupCache::get_record(const char *name)
 {
    struct group *p=getgrnam(name);
    if(!p)
       return 0;
-   return new IdNamePair(p->gr_gid,p->gr_name);
+   return new IdNamePair(p->gr_gid,name);
 }
 
 PasswdCache *PasswdCache::instance;
@@ -157,7 +156,7 @@ PasswdCache *PasswdCache::GetInstance()
    if(instance)
       return instance;
    instance=new PasswdCache();
-   instance->SetExpireTimer(new Timer(3));
+   instance->SetExpireTimer(new Timer(30));
    return instance;
 }
 GroupCache *GroupCache::GetInstance()
@@ -165,7 +164,7 @@ GroupCache *GroupCache::GetInstance()
    if(instance)
       return instance;
    instance=new GroupCache();
-   instance->SetExpireTimer(new Timer(3));
+   instance->SetExpireTimer(new Timer(30));
    return instance;
 }
 PasswdCache::~PasswdCache()

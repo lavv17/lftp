@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2005 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2007 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -4019,8 +4019,8 @@ void Ftp::CheckResp(int act)
    case Expect::PROT:
       if(is2XX(act))
 	 conn->prot=arg[0];
-      else
-	 conn->auth_supported=false;
+      else if(!conn->prot)
+	 conn->prot=(ftps?'P':'C');
       break;
    case Expect::SSCN:
       if(is2XX(act))
