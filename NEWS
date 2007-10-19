@@ -1,3 +1,8 @@
+Version 3.5.15 - 2007-10-19
+
+* fixed timeout handling when waiting for 150 or 125 ftp reply.
+* fixed a bug occuring when turning off proxy server setting.
+
 Version 3.5.14 - 2007-08-31
 
 * handle ftp reply with code 125 same as code 150 (Craig Ruff).

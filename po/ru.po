@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.3.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2007-08-31 17:37+0400\n"
+"POT-Creation-Date: 2007-10-19 16:44+0400\n"
 "PO-Revision-Date: 2000-09-07 09:36+08:00\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -105,7 +105,7 @@ msgstr "Ошибка доступа: %s"
 msgid "File cannot be accessed"
 msgstr "Доступ к файлу невозможен"
 
-#: src/FileAccess.cc:240 src/ftpclass.cc:4036 src/ftpclass.cc:4045
+#: src/FileAccess.cc:240 src/ftpclass.cc:4039 src/ftpclass.cc:4048
 #: src/Fish.cc:1086 src/SFtp.cc:1320
 msgid "Not connected"
 msgstr "Нет соединения"
@@ -336,7 +336,7 @@ msgstr "Для этой настройки контекст не имеет см
 msgid "invalid pair of numbers"
 msgstr "неверно указана пара чисел"
 
-#: src/Resolver.cc:186 src/Resolver.cc:228 src/ftpclass.cc:4041
+#: src/Resolver.cc:186 src/Resolver.cc:228 src/ftpclass.cc:4044
 #: src/Http.cc:1885
 msgid "Resolving host address..."
 msgstr "Преобразование адреса сервера..."
@@ -997,7 +997,6 @@ msgstr ""
 " -n <кол-во>   максимальное количество одновременных соединений\n"
 "               (по умолчанию берётся значение pget:default-n)\n"
 " -O <база> указывает базовый каталог, куда класть переданные файлы\n"
-
 
 #: src/commands.cc:372
 msgid "put [OPTS] <lfile> [-o <rfile>]"
@@ -1727,7 +1726,7 @@ msgstr "Соединение сокета данных с (%s), порт %u"
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "Соединение сокета данных с прокси-сервером %s (%s), порт %u"
 
-#: src/ftpclass.cc:2141 src/ftpclass.cc:3867
+#: src/ftpclass.cc:2141 src/ftpclass.cc:3870
 msgid "Switching passive mode off"
 msgstr "Отключение пассивного режима"
 
@@ -1735,7 +1734,7 @@ msgstr "Отключение пассивного режима"
 msgid "Data connection established"
 msgstr "Канал данных установлен"
 
-#: src/ftpclass.cc:2432 src/ftpclass.cc:3989
+#: src/ftpclass.cc:2432 src/ftpclass.cc:3992
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force установлено, а сервер не поддерживает или не позволяет "
@@ -1758,93 +1757,93 @@ msgstr "Закрытие соединения данных"
 msgid "Closing aborted data socket"
 msgstr "Закрытие соединения данных, оставшегося после ABOR"
 
-#: src/ftpclass.cc:3701
+#: src/ftpclass.cc:3704
 msgid "saw file size in response"
 msgstr "замечен размер файла в ответе сервера"
 
-#: src/ftpclass.cc:3716 src/Fish.cc:705 src/SFtp.cc:1092
+#: src/ftpclass.cc:3719 src/Fish.cc:705 src/SFtp.cc:1092
 msgid "extra server response"
 msgstr "непредвиденный ответ сервера"
 
-#: src/ftpclass.cc:3730 src/ftpclass.cc:3753
+#: src/ftpclass.cc:3733 src/ftpclass.cc:3756
 msgid "Turning on sync-mode"
 msgstr "Включение синхронного режима"
 
-#: src/ftpclass.cc:3887
+#: src/ftpclass.cc:3890
 msgid "Switching passive mode on"
 msgstr "Включение пассивного режима"
 
-#: src/ftpclass.cc:4022
+#: src/ftpclass.cc:4025
 msgid "FEAT negotiation..."
 msgstr "Согласование FEAT..."
 
-#: src/ftpclass.cc:4029
+#: src/ftpclass.cc:4032
 msgid "Sending commands..."
 msgstr "Передача команд..."
 
-#: src/ftpclass.cc:4031 src/ftpclass.cc:4059 src/ftpclass.cc:4073
+#: src/ftpclass.cc:4034 src/ftpclass.cc:4062 src/ftpclass.cc:4076
 #: src/Http.cc:1900 src/Fish.cc:1095 src/SFtp.cc:1330
 msgid "Waiting for response..."
 msgstr "Ожидание ответа..."
 
-#: src/ftpclass.cc:4033
+#: src/ftpclass.cc:4036
 msgid "Delaying before retry"
 msgstr "Задержка перед повторной попыткой"
 
-#: src/ftpclass.cc:4034 src/Http.cc:1893
+#: src/ftpclass.cc:4037 src/Http.cc:1893
 msgid "Connection idle"
 msgstr "Соединение не используется"
 
-#: src/ftpclass.cc:4048 src/Http.cc:1891 src/Http.cc:1898 src/Fish.cc:1091
+#: src/ftpclass.cc:4051 src/Http.cc:1891 src/Http.cc:1898 src/Fish.cc:1091
 #: src/SFtp.cc:1326
 msgid "Connecting..."
 msgstr "Установка соединения..."
 
-#: src/ftpclass.cc:4052
+#: src/ftpclass.cc:4055
 msgid "TLS negotiation..."
 msgstr "Согласование TLS..."
 
-#: src/ftpclass.cc:4054 src/Fish.cc:1093 src/SFtp.cc:1328
+#: src/ftpclass.cc:4057 src/Fish.cc:1093 src/SFtp.cc:1328
 msgid "Connected"
 msgstr "Соединен"
 
-#: src/ftpclass.cc:4056
+#: src/ftpclass.cc:4059
 msgid "Logging in..."
 msgstr "Регистрация..."
 
-#: src/ftpclass.cc:4060
+#: src/ftpclass.cc:4063
 msgid "Making data connection..."
 msgstr "Установка соединения данных..."
 
-#: src/ftpclass.cc:4063
+#: src/ftpclass.cc:4066
 msgid "Changing remote directory..."
 msgstr "Смена каталога на сервере..."
 
-#: src/ftpclass.cc:4069
+#: src/ftpclass.cc:4072
 msgid "Waiting for other copy peer..."
 msgstr "Ожидание готовности другой стороны..."
 
-#: src/ftpclass.cc:4071 src/ftpclass.cc:4093
+#: src/ftpclass.cc:4074 src/ftpclass.cc:4096
 msgid "Waiting for transfer to complete"
 msgstr "Ожидание окончания пересылки"
 
-#: src/ftpclass.cc:4075
+#: src/ftpclass.cc:4078
 msgid "Waiting for data connection..."
 msgstr "Ожидание установки соединения данных..."
 
-#: src/ftpclass.cc:4081
+#: src/ftpclass.cc:4084
 msgid "Sending data/TLS"
 msgstr "Отправка данных/TLS"
 
-#: src/ftpclass.cc:4083
+#: src/ftpclass.cc:4086
 msgid "Receiving data/TLS"
 msgstr "Получение данных/TLS"
 
-#: src/ftpclass.cc:4089 src/Http.cc:1896 src/Fish.cc:1099 src/SFtp.cc:1334
+#: src/ftpclass.cc:4092 src/Http.cc:1896 src/Fish.cc:1099 src/SFtp.cc:1334
 msgid "Sending data"
 msgstr "Отправка данных"
 
-#: src/ftpclass.cc:4091 src/Http.cc:1903 src/Fish.cc:1097 src/SFtp.cc:1332
+#: src/ftpclass.cc:4094 src/Http.cc:1903 src/Fish.cc:1097 src/SFtp.cc:1332
 msgid "Receiving data"
 msgstr "Получение данных"
 
@@ -2211,28 +2210,28 @@ msgstr "Ошибка на сокете (%s) - повторное соедине�
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Соединение с %s%s (%s), порт %u"
 
-#: src/NetAccess.cc:440
+#: src/NetAccess.cc:441
 msgid "Timeout - reconnecting"
 msgstr "Превышение лимита времени ожидания - повторное соединение"
 
-#: src/NetAccess.cc:647
+#: src/NetAccess.cc:648
 msgid "Connection limit reached"
 msgstr "Достигнут предел количества соединений"
 
-#: src/NetAccess.cc:651
+#: src/NetAccess.cc:652
 msgid "Delaying before reconnect"
 msgstr "Задержка перед повторным соединением"
 
-#: src/NetAccess.cc:675
+#: src/NetAccess.cc:676
 msgid "max-retries exceeded"
 msgstr "превышен лимит количества попыток (max-retries)"
 
-#: src/NetAccess.cc:976
+#: src/NetAccess.cc:977
 #, c-format
 msgid "Getting directory contents (%lld) %s[%s]"
 msgstr "Получение содержимого каталога (%lld) %s[%s]"
 
-#: src/NetAccess.cc:983
+#: src/NetAccess.cc:984
 #, c-format
 msgid "Getting files information (%d%%) [%s]"
 msgstr "Получение информации о файлах (%d%%) [%s]"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.2.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2007-08-31 17:37+0400\n"
+"POT-Creation-Date: 2007-10-19 16:44+0400\n"
 "PO-Revision-Date: 2005-07-30 23:51+0800\n"
 "Last-Translator: Abel Cheung <abelcheung@gmail.com>\n"
 "Language-Team: traditional Chinese <community@linuxhall.org>\n"
@@ -104,7 +104,7 @@ msgstr "存取失敗：%s"
 msgid "File cannot be accessed"
 msgstr "無法存取檔案"
 
-#: src/FileAccess.cc:240 src/ftpclass.cc:4036 src/ftpclass.cc:4045
+#: src/FileAccess.cc:240 src/ftpclass.cc:4039 src/ftpclass.cc:4048
 #: src/Fish.cc:1086 src/SFtp.cc:1320
 msgid "Not connected"
 msgstr "並未連線"
@@ -333,7 +333,7 @@ msgstr "本設定值並沒有定義 closure"
 msgid "invalid pair of numbers"
 msgstr "該對數字無效"
 
-#: src/Resolver.cc:186 src/Resolver.cc:228 src/ftpclass.cc:4041
+#: src/Resolver.cc:186 src/Resolver.cc:228 src/ftpclass.cc:4044
 #: src/Http.cc:1885
 msgid "Resolving host address..."
 msgstr "正在解析主機地址..."
@@ -1748,7 +1748,7 @@ msgstr "連接資料 socket 到 (%s)，埠號為 %u"
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "連接資料 socket 到 %s (%s)，埠號為 %u"
 
-#: src/ftpclass.cc:2141 src/ftpclass.cc:3867
+#: src/ftpclass.cc:2141 src/ftpclass.cc:3870
 msgid "Switching passive mode off"
 msgstr "關閉 passive 模式"
 
@@ -1756,7 +1756,7 @@ msgstr "關閉 passive 模式"
 msgid "Data connection established"
 msgstr "成功建立數據連線"
 
-#: src/ftpclass.cc:2432 src/ftpclass.cc:3989
+#: src/ftpclass.cc:2432 src/ftpclass.cc:3992
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr "已設定 ftp:ssl-force 但伺服器不支援/不使用 SSL"
 
@@ -1777,93 +1777,93 @@ msgstr "正在關閉資料 socket"
 msgid "Closing aborted data socket"
 msgstr "關閉被中止的數據連線"
 
-#: src/ftpclass.cc:3701
+#: src/ftpclass.cc:3704
 msgid "saw file size in response"
 msgstr "回應中包括檔案的大小"
 
-#: src/ftpclass.cc:3716 src/Fish.cc:705 src/SFtp.cc:1092
+#: src/ftpclass.cc:3719 src/Fish.cc:705 src/SFtp.cc:1092
 msgid "extra server response"
 msgstr "額外的伺服器回應"
 
-#: src/ftpclass.cc:3730 src/ftpclass.cc:3753
+#: src/ftpclass.cc:3733 src/ftpclass.cc:3756
 msgid "Turning on sync-mode"
 msgstr "開啟 sync-mode"
 
-#: src/ftpclass.cc:3887
+#: src/ftpclass.cc:3890
 msgid "Switching passive mode on"
 msgstr "開啟 passive 模式"
 
-#: src/ftpclass.cc:4022
+#: src/ftpclass.cc:4025
 msgid "FEAT negotiation..."
 msgstr "支援功能 (FEAT) 協商..."
 
-#: src/ftpclass.cc:4029
+#: src/ftpclass.cc:4032
 msgid "Sending commands..."
 msgstr "正在送出指令..."
 
-#: src/ftpclass.cc:4031 src/ftpclass.cc:4059 src/ftpclass.cc:4073
+#: src/ftpclass.cc:4034 src/ftpclass.cc:4062 src/ftpclass.cc:4076
 #: src/Http.cc:1900 src/Fish.cc:1095 src/SFtp.cc:1330
 msgid "Waiting for response..."
 msgstr "正在等待回應..."
 
-#: src/ftpclass.cc:4033
+#: src/ftpclass.cc:4036
 msgid "Delaying before retry"
 msgstr "重新嘗試之前稍為延遲"
 
-#: src/ftpclass.cc:4034 src/Http.cc:1893
+#: src/ftpclass.cc:4037 src/Http.cc:1893
 msgid "Connection idle"
 msgstr "連線閒置"
 
-#: src/ftpclass.cc:4048 src/Http.cc:1891 src/Http.cc:1898 src/Fish.cc:1091
+#: src/ftpclass.cc:4051 src/Http.cc:1891 src/Http.cc:1898 src/Fish.cc:1091
 #: src/SFtp.cc:1326
 msgid "Connecting..."
 msgstr "嘗試連線..."
 
-#: src/ftpclass.cc:4052
+#: src/ftpclass.cc:4055
 msgid "TLS negotiation..."
 msgstr "使用 TLS 協定通訊..."
 
-#: src/ftpclass.cc:4054 src/Fish.cc:1093 src/SFtp.cc:1328
+#: src/ftpclass.cc:4057 src/Fish.cc:1093 src/SFtp.cc:1328
 msgid "Connected"
 msgstr "成功連線"
 
-#: src/ftpclass.cc:4056
+#: src/ftpclass.cc:4059
 msgid "Logging in..."
 msgstr "正在登入..."
 
-#: src/ftpclass.cc:4060
+#: src/ftpclass.cc:4063
 msgid "Making data connection..."
 msgstr "正在建立資料傳送連線..."
 
-#: src/ftpclass.cc:4063
+#: src/ftpclass.cc:4066
 msgid "Changing remote directory..."
 msgstr "更改遠端目錄..."
 
-#: src/ftpclass.cc:4069
+#: src/ftpclass.cc:4072
 msgid "Waiting for other copy peer..."
 msgstr "等待複製程序的遠端回應..."
 
-#: src/ftpclass.cc:4071 src/ftpclass.cc:4093
+#: src/ftpclass.cc:4074 src/ftpclass.cc:4096
 msgid "Waiting for transfer to complete"
 msgstr "等待傳送完成"
 
-#: src/ftpclass.cc:4075
+#: src/ftpclass.cc:4078
 msgid "Waiting for data connection..."
 msgstr "等待建立資料傳送連線..."
 
-#: src/ftpclass.cc:4081
+#: src/ftpclass.cc:4084
 msgid "Sending data/TLS"
 msgstr "正在傳送資料/TLS"
 
-#: src/ftpclass.cc:4083
+#: src/ftpclass.cc:4086
 msgid "Receiving data/TLS"
 msgstr "接收資料中/TLS"
 
-#: src/ftpclass.cc:4089 src/Http.cc:1896 src/Fish.cc:1099 src/SFtp.cc:1334
+#: src/ftpclass.cc:4092 src/Http.cc:1896 src/Fish.cc:1099 src/SFtp.cc:1334
 msgid "Sending data"
 msgstr "傳送資料中"
 
-#: src/ftpclass.cc:4091 src/Http.cc:1903 src/Fish.cc:1097 src/SFtp.cc:1332
+#: src/ftpclass.cc:4094 src/Http.cc:1903 src/Fish.cc:1097 src/SFtp.cc:1332
 msgid "Receiving data"
 msgstr "接收資料中"
 
@@ -2234,28 +2234,28 @@ msgstr "Socket 錯誤 (%s) - 準備重新連線"
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "連接至 %s%s (%s) 連接埠 %u"
 
-#: src/NetAccess.cc:440
+#: src/NetAccess.cc:441
 msgid "Timeout - reconnecting"
 msgstr "逾時 - 重新連線"
 
-#: src/NetAccess.cc:647
+#: src/NetAccess.cc:648
 msgid "Connection limit reached"
 msgstr "到達連線數目的上限"
 
-#: src/NetAccess.cc:651
+#: src/NetAccess.cc:652
 msgid "Delaying before reconnect"
 msgstr "重新連接前延遲(秒)"
 
-#: src/NetAccess.cc:675
+#: src/NetAccess.cc:676
 msgid "max-retries exceeded"
 msgstr "超過 max-retries 上限"
 
-#: src/NetAccess.cc:976
+#: src/NetAccess.cc:977
 #, c-format
 msgid "Getting directory contents (%lld) %s[%s]"
 msgstr "正在擷取目錄內容 (%lld) %s[%s]"
 
-#: src/NetAccess.cc:983
+#: src/NetAccess.cc:984
 #, c-format
 msgid "Getting files information (%d%%) [%s]"
 msgstr "正在擷取檔案資訊 (%d%%) [%s]"
