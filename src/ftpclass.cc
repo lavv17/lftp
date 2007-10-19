@@ -2321,8 +2321,6 @@ int   Ftp::Do()
       goto usual_return;
    }
    } /* end of switch */
-   return m;
-
 usual_return:
    if(m==MOVED)
       return MOVED;
