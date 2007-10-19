@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
-AC_INIT([lftp], [3.5.6], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [3.6.0], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_LIBOBJ_DIR([lib])
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
@@ -105,6 +105,7 @@ dnl Make sure C++ build environment is sane.
 LFTP_CXX_TEST
 CXX_DYNAMIC_INITIALIZERS
 LFTP_CXX_BOOL
+LFTP_CXX__BOOL
 LFTP_CXX_ANSI_SCOPE
 
 AC_ISC_POSIX
@@ -343,7 +344,7 @@ AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_HEADER_TIME
-AC_CHECK_HEADERS(fcntl.h sys/time.h errno.h stdlib.h varargs.h dirent.h\
+AC_CHECK_HEADERS(libintl.h fcntl.h sys/time.h errno.h stdlib.h varargs.h dirent.h\
  termios.h termio.h sys/select.h sys/poll.h sys/stropts.h string.h memory.h\
  strings.h sys/ioctl.h dlfcn.h arpa/inet.h arpa/nameser.h netinet/in.h netinet/tcp.h\
  netinet/in_systm.h netinet/ip.h termcap.h\

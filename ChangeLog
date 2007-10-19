@@ -1,3 +1,7 @@
+2007-06-15	Jakob Truelsen <antialize@gmail.com>
+
+	* configure.ac: check for libintl.h.
+
 2006-08-22  lav
 
 	* configure.ac: link stdbool_.h to include if needed.
