@@ -36,14 +36,10 @@ ConnectionSlot::SlotValue::SlotValue(const char *n,const char *v)
 {
    session=FileAccess::New(v);
 }
-ConnectionSlot::SlotValue::~SlotValue()
-{
-   SessionPool::Reuse(session);
-}
 ConnectionSlot::SlotValue *ConnectionSlot::Find(const char *n)
 {
-   SlotValue **slot=(SlotValue**)lftp_slots.LookupPair(n);
-   return slot?*slot:0;
+   KeyValueDB::Pair **slot=lftp_slots.LookupPair(n);
+   return slot?static_cast<SlotValue*>(*slot):0;
 }
 void ConnectionSlot::Set(const char *n,const FileAccess *fa)
 {
@@ -59,25 +55,26 @@ void ConnectionSlot::Set(const char *n,const FileAccess *fa)
       lftp_slots.AddPair(new SlotValue(n,fa));
       return;
    }
-   s->SetValue(url);
-   SessionPool::Reuse(s->session);
-   s->session=fa->Clone();
+   if(!s->session->SameLocationAs(fa))
+   {
+      s->SetValue(url);
+      s->session=fa->Clone();
+   }
 }
 void ConnectionSlot::SetCwd(const char *n,const FileAccess::Path &cwd)
 {
    ConnectionSlot::SlotValue *s=Find(n);
-   if(!s)
+   if(!s || !s->session)
       return;
-   FileAccess *fa=s->session;
-   if(!fa)
-      return;
-   fa->SetCwd(cwd);
-   s->SetValue(fa->GetConnectURL());
+   s->session->SetCwd(cwd);
+   s->SetValue(s->session->GetConnectURL());
 }
-FileAccess *ConnectionSlot::FindSession(const char *n)
+const FileAccess *ConnectionSlot::FindSession(const char *n)
 {
    ConnectionSlot::SlotValue *s=Find(n);
-   return s?s->session:0;
+   if(s)
+      return s->session;
+   return 0;
 }
 char *ConnectionSlot::Format()
 {

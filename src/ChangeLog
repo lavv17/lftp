@@ -1,3 +1,10 @@
+2007-10-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* parsecmd.cc: don't accept incomplete comments.
+	* CmdExec.cc: set slot name before ChangeSession (fixes a glitch).
+	* ConnectionSlot.cc, ConnectionSlot.h: use FileAccessRef.
+	* url.cc, FileAccess.cc: use const for FindSession result.
+
 2007-10-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: set prot='P' for ftps if PROT command fails.

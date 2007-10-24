@@ -322,12 +322,12 @@ void CmdExec::ChangeSlot(const char *n)
       slot.set(0);
       return;
    }
-   FileAccess *s=ConnectionSlot::FindSession(n);
+   slot.set(n);
+   const FileAccess *s=ConnectionSlot::FindSession(n);
    if(!s)
       ConnectionSlot::Set(n,session);
    else
       ChangeSession(s->Clone());
-   slot.set(n);
 }
 
 int CmdExec::Do()

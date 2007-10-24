@@ -188,10 +188,9 @@ decode:
    url::decode_string(host.get_non_const());
    path.set_length(url::decode_string(path.get_non_const()));
 
-   FileAccess *fa=0;
    if(!xstrcmp(proto,"slot"))
    {
-      fa=ConnectionSlot::FindSession(host);
+      const FileAccess *fa=ConnectionSlot::FindSession(host);
       if(!fa)
 	 return;
       orig_url.set(0);

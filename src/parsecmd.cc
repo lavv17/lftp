@@ -114,6 +114,8 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
 	    line++;
 	 if(*line=='\n')
 	    line++;
+	 else
+	    return PARSE_AGAIN;
 	 skip_cmd(line-line_begin);
 	 return PARSE_OK;
       }

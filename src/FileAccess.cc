@@ -816,7 +816,7 @@ FileAccess *FileAccess::New(const char *proto,const char *host,const char *port)
 
    if(!strcmp(proto,"slot"))
    {
-      FA *session=ConnectionSlot::FindSession(host);
+      const FA *session=ConnectionSlot::FindSession(host);
       return session?session->Clone():0;
    }
 
