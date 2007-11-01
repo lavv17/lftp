@@ -7,10 +7,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 3.5.9\n"
+"Project-Id-Version: lftp 3.6.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2007-10-19 17:32+0400\n"
-"PO-Revision-Date: 2007-01-28 14:07+0100\n"
+"PO-Revision-Date: 2007-10-29 21:30+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -99,9 +99,8 @@ msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: komenda `%s' nie zosta³a wkompilowana.\n"
 
 #: src/FileAccess.cc:213
-#, fuzzy
 msgid "Access failed: "
-msgstr "Brak dostêpu: %s"
+msgstr "Brak dostêpu: "
 
 #: src/FileAccess.cc:214
 msgid "File cannot be accessed"
@@ -129,19 +128,16 @@ msgid "Operation not supported"
 msgstr "Operacja jest niedostêpna"
 
 #: src/FileAccess.cc:233
-#, fuzzy
 msgid "File moved"
-msgstr "Plik przeniesiony: %s"
+msgstr "Plik przeniesiony"
 
 #: src/FileAccess.cc:235
-#, fuzzy
 msgid "File moved to `"
-msgstr "Plik przeniesiony do `%s'"
+msgstr "Plik przeniesiony do `"
 
 #: src/FileAccess.cc:914 src/buffer.cc:231
-#, fuzzy
 msgid " [cached]"
-msgstr "%s [zapamiêtane]"
+msgstr " [zapamiêtane]"
 
 #: src/GetJob.cc:79
 #, c-format
@@ -208,7 +204,7 @@ msgstr "Usuwanie starego pliku `%s'"
 #: src/MirrorJob.cc:262
 #, c-format
 msgid "Skipping file `%s' (only-existing)"
-msgstr ""
+msgstr "Pominiêcie pliku `%s' (tylko istniej±ce)"
 
 #: src/MirrorJob.cc:269
 #, c-format
@@ -216,9 +212,9 @@ msgid "Transferring file `%s'"
 msgstr "Przesy³anie pliku `%s'"
 
 #: src/MirrorJob.cc:341
-#, fuzzy, c-format
+#, c-format
 msgid "Skipping directory `%s' (only-existing)"
-msgstr "Tworzenie katalogu `%s'"
+msgstr "Pominiêcie katalogu `%s' (tylko istniej±ce)"
 
 #: src/MirrorJob.cc:361 src/MirrorJob.cc:447 src/MirrorJob.cc:687
 #, c-format
@@ -233,7 +229,7 @@ msgstr "Mirrorowanie katalogu `%s'"
 #: src/MirrorJob.cc:460
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
-msgstr ""
+msgstr "Pomijanie dowi±zania symbolicznego `%s' (tylko istniej±ce)"
 
 #: src/MirrorJob.cc:466
 #, c-format
@@ -364,9 +360,9 @@ msgid "host name resolve timeout"
 msgstr "przekroczony czas rozwi±zywania nazwy hosta"
 
 #: src/Resolver.cc:269
-#, fuzzy, c-format
+#, c-format
 msgid "%d address$|es$ found"
-msgstr "---- %d znaleziono adres$y|ów$\n"
+msgstr "Znaleziono %d adres$|y|ów$"
 
 #: src/Resolver.cc:779
 msgid "Host name lookup failure"
@@ -1805,9 +1801,9 @@ msgid "unsupported network protocol"
 msgstr "protokó³ nie jest obs³ugiwany"
 
 #: src/ftpclass.cc:2014
-#, fuzzy, c-format
+#, c-format
 msgid "Accepted data connection from (%s) port %u"
-msgstr "£±czenie siê (gniazdo danych) z (%s) port %u"
+msgstr "Przyjmowanie po³±czenia danych z (%s) portu %u"
 
 #: src/ftpclass.cc:2056
 #, c-format
@@ -2015,15 +2011,15 @@ msgstr "analizowanie: brakuje pliku docelowego dla przekierowania\n"
 
 #: src/pgetJob.cc:120
 msgid "pget: falling back to plain get"
-msgstr ""
+msgstr "pget: degradacja do zwyk³ego get"
 
 #: src/pgetJob.cc:124
 msgid "the target file is remote"
-msgstr ""
+msgstr "plik docelowy jest zdalny"
 
 #: src/pgetJob.cc:129
 msgid "the source file size is unknown"
-msgstr ""
+msgstr "nieznany rozmiar pliku ¼ród³owego"
 
 #: src/pgetJob.cc:208
 #, c-format
@@ -2291,9 +2287,8 @@ msgid "ftp:fxp-force is set but FXP is not available"
 msgstr "ftp:fxp-force jest ustawione, ale FXP jest niedostêpne"
 
 #: src/Filter.cc:141
-#, fuzzy
 msgid "pipe() failed: "
-msgstr "pipe() nie powiod³o siê: %s"
+msgstr "pipe() nie powiod³o siê: "
 
 #: src/Filter.cc:174 src/PtyShell.cc:138
 #, c-format
@@ -2311,14 +2306,12 @@ msgid "execl(/bin/sh) failed: %s\n"
 msgstr "execlp(/bin/sh) nieudane: %s\n"
 
 #: src/LocalAccess.cc:614 src/NetAccess.cc:811
-#, fuzzy
 msgid "Getting directory contents"
-msgstr "Pobieranie informacji o zawarto¶ci katalogu (%lld) %s[%s]"
+msgstr "Pobieranie zawarto¶ci katalogu"
 
 #: src/LocalAccess.cc:616 src/NetAccess.cc:815
-#, fuzzy
 msgid "Getting files information"
-msgstr "Pobieranie informacji o plikach (%d%%) [%s]"
+msgstr "Pobieranie informacji o plikach"
 
 #: src/NetAccess.cc:336
 #, c-format
@@ -2404,9 +2397,8 @@ msgid "%s (filter)"
 msgstr "%s (filtr)"
 
 #: src/PtyShell.cc:71
-#, fuzzy
 msgid "pseudo-tty allocation failed: "
-msgstr "przydzielenie pseudo-tty nie powiod³o siê: %s"
+msgstr "przydzielenie pseudo-tty nie powiod³o siê: "
 
 #: src/QueueFeeder.cc:69
 msgid "Added job$|s$"
@@ -2442,9 +2434,3 @@ msgstr "Skolejkowane polecenia:"
 #: src/SFtp.cc:1065
 msgid "invalid server response format"
 msgstr "nieprawid³owy format odpowiedzi serwera"
-
-#~ msgid "invalid option"
-#~ msgstr "nieprawid³owa opcja"
-
-#~ msgid "Fatal error: %s"
-#~ msgstr "B³±d krytyczny: %s"
