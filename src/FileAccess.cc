@@ -104,14 +104,14 @@ FileAccess::~FileAccess()
    ListDel(FileAccess,chain,this,next);
 }
 
-void  FileAccess::Log2(int level,const char *str)
+void  FileAccess::Log2(int level,const char *str0)
 {
-   int len=strlen(str);
-   if(len>0 && str[len-1]=='\n')
-      len--;
-   if(len>0 && str[len-1]=='\r')
-      len--;
-   Log::global->Format(level,"%.*s\n",len,str);
+   xstring &str=xstring::get_tmp();
+   str.set(str0);
+   str.chomp('\n');
+   str.chomp('\r');
+   str.append('\n');
+   Log::global->Write(level,str);
 }
 void  FileAccess::Log3(int level,const char *prefix,const char *str)
 {
