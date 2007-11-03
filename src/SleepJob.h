@@ -36,6 +36,7 @@ class SleepJob : public SessionJob, public Timer
    Ref<LocalDirectory> saved_cwd;
    CmdExec *exec;
    bool repeat;
+   bool weak;  // terminate on `exit bg'.
    int repeat_count;
    int max_repeat_count;
    int continue_code;
@@ -52,6 +53,7 @@ public:
    void PrintStatus(int v,const char *);
 
    void Repeat(int m) { repeat=true; max_repeat_count=m; Stop(); }
+   void SetWeak(bool w) { weak=w; }
    void ContinueCode(int c) { continue_code=c; }
    void BreakCode(int c) { break_code=c; }
 

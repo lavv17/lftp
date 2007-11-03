@@ -1,6 +1,7 @@
 2007-11-03  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileAccess.cc: (Log2) don't use %.*s (it mishandles invalid mb characters).
+	* SleepJob.cc, SleepJob.h: repeat --weak new option.
 
 2007-10-24  Alexander V. Lukyanov <lav@yars.free.net>
 

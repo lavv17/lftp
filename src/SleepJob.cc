@@ -34,6 +34,7 @@ SleepJob::SleepJob(const TimeInterval &when,FileAccess *s,LocalDirectory *cwd,ch
    exit_code=0;
    done=false;
    repeat=false;
+   weak=false;
    repeat_count=0;
    max_repeat_count=0;
    exec=0;
@@ -104,7 +105,7 @@ void SleepJob::PrintStatus(int,const char *prefix)
 
 void SleepJob::lftpMovesToBackground()
 {
-   if(IsInfty() || (repeat && cmd[0]==0))
+   if(weak || IsInfty() || (repeat && cmd[0]==0))
    {
       // terminate
       done=true;
@@ -143,6 +144,7 @@ Job *cmd_repeat(CmdExec *parent)
    const char *delay_str=0;
    bool while_ok=false;
    bool until_ok=false;
+   bool weak=false;
    int opt;
 
    static struct option repeat_opts[]=
@@ -151,6 +153,7 @@ Job *cmd_repeat(CmdExec *parent)
       {"count",required_argument,0,'c'},
       {"while-ok",no_argument,0,'o'},
       {"until-ok",no_argument,0,'O'},
+      {"weak",no_argument,0,'w'},
       {0},
    };
 
@@ -170,6 +173,9 @@ Job *cmd_repeat(CmdExec *parent)
 	 break;
       case('O'):
 	 until_ok=true;
+	 break;
+      case('w'):
+	 weak=true;
 	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
@@ -201,6 +207,7 @@ Job *cmd_repeat(CmdExec *parent)
 	        ? args->Combine(cmd_start) : args->CombineQuoted(cmd_start));
    SleepJob *s=new SleepJob(delay,session->Clone(),parent->cwd->Clone(),cmd);
    s->Repeat(max_count);
+   s->SetWeak(weak);
    if(while_ok)
       s->ContinueCode(0);
    if(until_ok)
