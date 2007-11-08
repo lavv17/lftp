@@ -1,3 +1,8 @@
+2007-11-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: don't reset timeout_timer all the time.
+	* resource.cc: make ftp:use-stat-for-list off by default.
+
 2007-11-03  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileAccess.cc: (Log2) don't use %.*s (it mishandles invalid mb characters).

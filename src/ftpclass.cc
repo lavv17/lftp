@@ -3076,10 +3076,6 @@ int  Ftp::FlushSendQueue(bool all)
    if(conn->send_cmd_buffer.Size()==0)
       return m;
 
-   // prevent timeout after some idle time
-   if(conn->control_send->Size()==0)
-      timeout_timer.Reset();
-
    while(conn->sync_wait<=0 || all || !(flags&SYNC_MODE))
    {
       int res=conn->FlushSendQueueOneCmd();

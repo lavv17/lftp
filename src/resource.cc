@@ -217,7 +217,7 @@ static ResType lftp_vars[] = {
    {"ftp:use-site-utime",	 "no",	  ResMgr::BoolValidate,0},
    {"ftp:use-size",		 "yes",   ResMgr::BoolValidate,0},
    {"ftp:use-stat",		 "yes",   ResMgr::BoolValidate,0},
-   {"ftp:use-stat-for-list",	 "yes",	  ResMgr::BoolValidate,0},
+   {"ftp:use-stat-for-list",	 "no",	  ResMgr::BoolValidate,0},
    {"ftp:use-telnet-iac",	 "yes",   ResMgr::BoolValidate,0},
    {"ftp:use-quit",		 "yes",   ResMgr::BoolValidate,0},
    {"ftp:verify-address",	 "no",    ResMgr::BoolValidate,0},
