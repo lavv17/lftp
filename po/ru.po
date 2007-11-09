@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.3.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2007-10-19 17:32+0400\n"
+"POT-Creation-Date: 2007-11-09 18:39+0300\n"
 "PO-Revision-Date: 2000-09-07 09:36+08:00\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -104,7 +104,7 @@ msgstr "Ошибка доступа: "
 msgid "File cannot be accessed"
 msgstr "Доступ к файлу невозможен"
 
-#: src/FileAccess.cc:216 src/ftpclass.cc:4059 src/ftpclass.cc:4068
+#: src/FileAccess.cc:216 src/ftpclass.cc:4055 src/ftpclass.cc:4064
 #: src/Fish.cc:1003 src/SFtp.cc:1302
 msgid "Not connected"
 msgstr "Нет соединения"
@@ -268,7 +268,7 @@ msgstr "%s: регулярное выражение `%s': %s\n"
 #: src/commands.cc:2012 src/commands.cc:2208 src/commands.cc:2371
 #: src/commands.cc:2378 src/commands.cc:2646 src/commands.cc:2673
 #: src/commands.cc:2680 src/commands.cc:3004 src/lftp.cc:258
-#: src/SleepJob.cc:124 src/SleepJob.cc:175
+#: src/SleepJob.cc:125 src/SleepJob.cc:181
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Запустите `help %s' для получения дополнительной информации.\n"
@@ -342,7 +342,7 @@ msgstr "Для этой настройки контекст не имеет см
 msgid "invalid pair of numbers"
 msgstr "неверно указана пара чисел"
 
-#: src/Resolver.cc:164 src/Resolver.cc:206 src/ftpclass.cc:4064
+#: src/Resolver.cc:164 src/Resolver.cc:206 src/ftpclass.cc:4060
 #: src/Http.cc:1822
 msgid "Resolving host address..."
 msgstr "Преобразование адреса сервера..."
@@ -1734,7 +1734,7 @@ msgstr "Соединение сокета данных с (%s), порт %u"
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "Соединение сокета данных с прокси-сервером %s (%s), порт %u"
 
-#: src/ftpclass.cc:2081 src/ftpclass.cc:3890
+#: src/ftpclass.cc:2081 src/ftpclass.cc:3886
 msgid "Switching passive mode off"
 msgstr "Отключение пассивного режима"
 
@@ -1742,7 +1742,7 @@ msgstr "Отключение пассивного режима"
 msgid "Data connection established"
 msgstr "Канал данных установлен"
 
-#: src/ftpclass.cc:2368 src/ftpclass.cc:4012
+#: src/ftpclass.cc:2368 src/ftpclass.cc:4008
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force установлено, а сервер не поддерживает или не позволяет "
@@ -1765,93 +1765,93 @@ msgstr "Закрытие соединения данных"
 msgid "Closing aborted data socket"
 msgstr "Закрытие соединения данных, оставшегося после ABOR"
 
-#: src/ftpclass.cc:3719
+#: src/ftpclass.cc:3715
 msgid "saw file size in response"
 msgstr "замечен размер файла в ответе сервера"
 
-#: src/ftpclass.cc:3735 src/Fish.cc:652 src/SFtp.cc:1074
+#: src/ftpclass.cc:3731 src/Fish.cc:652 src/SFtp.cc:1074
 msgid "extra server response"
 msgstr "непредвиденный ответ сервера"
 
-#: src/ftpclass.cc:3749 src/ftpclass.cc:3775
+#: src/ftpclass.cc:3745 src/ftpclass.cc:3771
 msgid "Turning on sync-mode"
 msgstr "Включение синхронного режима"
 
-#: src/ftpclass.cc:3910
+#: src/ftpclass.cc:3906
 msgid "Switching passive mode on"
 msgstr "Включение пассивного режима"
 
-#: src/ftpclass.cc:4045
+#: src/ftpclass.cc:4041
 msgid "FEAT negotiation..."
 msgstr "Согласование FEAT..."
 
-#: src/ftpclass.cc:4052
+#: src/ftpclass.cc:4048
 msgid "Sending commands..."
 msgstr "Передача команд..."
 
-#: src/ftpclass.cc:4054 src/ftpclass.cc:4082 src/ftpclass.cc:4096
+#: src/ftpclass.cc:4050 src/ftpclass.cc:4078 src/ftpclass.cc:4092
 #: src/Http.cc:1837 src/Fish.cc:1012 src/SFtp.cc:1312
 msgid "Waiting for response..."
 msgstr "Ожидание ответа..."
 
-#: src/ftpclass.cc:4056
+#: src/ftpclass.cc:4052
 msgid "Delaying before retry"
 msgstr "Задержка перед повторной попыткой"
 
-#: src/ftpclass.cc:4057 src/Http.cc:1830
+#: src/ftpclass.cc:4053 src/Http.cc:1830
 msgid "Connection idle"
 msgstr "Соединение не используется"
 
-#: src/ftpclass.cc:4071 src/Http.cc:1828 src/Http.cc:1835 src/Fish.cc:1008
+#: src/ftpclass.cc:4067 src/Http.cc:1828 src/Http.cc:1835 src/Fish.cc:1008
 #: src/SFtp.cc:1308
 msgid "Connecting..."
 msgstr "Установка соединения..."
 
-#: src/ftpclass.cc:4075
+#: src/ftpclass.cc:4071
 msgid "TLS negotiation..."
 msgstr "Согласование TLS..."
 
-#: src/ftpclass.cc:4077 src/Fish.cc:1010 src/SFtp.cc:1310
+#: src/ftpclass.cc:4073 src/Fish.cc:1010 src/SFtp.cc:1310
 msgid "Connected"
 msgstr "Соединен"
 
-#: src/ftpclass.cc:4079
+#: src/ftpclass.cc:4075
 msgid "Logging in..."
 msgstr "Регистрация..."
 
-#: src/ftpclass.cc:4083
+#: src/ftpclass.cc:4079
 msgid "Making data connection..."
 msgstr "Установка соединения данных..."
 
-#: src/ftpclass.cc:4086
+#: src/ftpclass.cc:4082
 msgid "Changing remote directory..."
 msgstr "Смена каталога на сервере..."
 
-#: src/ftpclass.cc:4092
+#: src/ftpclass.cc:4088
 msgid "Waiting for other copy peer..."
 msgstr "Ожидание готовности другой стороны..."
 
-#: src/ftpclass.cc:4094 src/ftpclass.cc:4116
+#: src/ftpclass.cc:4090 src/ftpclass.cc:4112
 msgid "Waiting for transfer to complete"
 msgstr "Ожидание окончания пересылки"
 
-#: src/ftpclass.cc:4098
+#: src/ftpclass.cc:4094
 msgid "Waiting for data connection..."
 msgstr "Ожидание установки соединения данных..."
 
-#: src/ftpclass.cc:4104
+#: src/ftpclass.cc:4100
 msgid "Sending data/TLS"
 msgstr "Отправка данных/TLS"
 
-#: src/ftpclass.cc:4106
+#: src/ftpclass.cc:4102
 msgid "Receiving data/TLS"
 msgstr "Получение данных/TLS"
 
-#: src/ftpclass.cc:4112 src/Http.cc:1833 src/Fish.cc:1016 src/SFtp.cc:1316
+#: src/ftpclass.cc:4108 src/Http.cc:1833 src/Fish.cc:1016 src/SFtp.cc:1316
 msgid "Sending data"
 msgstr "Отправка данных"
 
-#: src/ftpclass.cc:4114 src/Http.cc:1840 src/Fish.cc:1014 src/SFtp.cc:1314
+#: src/ftpclass.cc:4110 src/Http.cc:1840 src/Fish.cc:1014 src/SFtp.cc:1314
 msgid "Receiving data"
 msgstr "Получение данных"
 
@@ -1914,11 +1914,11 @@ msgstr "%s ok, %d каталог$|а|ов$ создано\n"
 msgid "rename successful\n"
 msgstr "переименование выполнено успешно\n"
 
-#: src/parsecmd.cc:296
+#: src/parsecmd.cc:298
 msgid "parse: missing filter command\n"
 msgstr "разбор: пропущена команда фильтра\n"
 
-#: src/parsecmd.cc:298
+#: src/parsecmd.cc:300
 msgid "parse: missing redirection filename\n"
 msgstr "разбор: пропущено имя файла для перенаправления\n"
 
@@ -2258,12 +2258,12 @@ msgstr "превышен лимит количества попыток (max-ret
 msgid "%s: BUG - deadlock detected\n"
 msgstr ""
 
-#: src/SleepJob.cc:100
+#: src/SleepJob.cc:101
 #, c-format
 msgid "\tRepeat count: %d\n"
 msgstr "\tСчетчик повторений: %d\n"
 
-#: src/SleepJob.cc:122
+#: src/SleepJob.cc:123
 #, c-format
 msgid "%s: argument required. "
 msgstr "%s: требуется аргумент. "

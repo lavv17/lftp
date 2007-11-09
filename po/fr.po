@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2007-10-19 17:32+0400\n"
+"POT-Creation-Date: 2007-11-09 18:39+0300\n"
 "PO-Revision-Date: 2007-10-22 14:01+0200\n"
 "Last-Translator: Alain PORTAL <aportal@univ-montp2.fr>\n"
 "Language-Team: Français <traduc@traduc.org>\n"
@@ -106,7 +106,7 @@ msgstr "L'accès a échoué : "
 msgid "File cannot be accessed"
 msgstr "Impossible d'accéder au fichier"
 
-#: src/FileAccess.cc:216 src/ftpclass.cc:4059 src/ftpclass.cc:4068
+#: src/FileAccess.cc:216 src/ftpclass.cc:4055 src/ftpclass.cc:4064
 #: src/Fish.cc:1003 src/SFtp.cc:1302
 msgid "Not connected"
 msgstr "Non connecté"
@@ -272,7 +272,7 @@ msgstr "%s : expression rationnelle « %s » : %s\n"
 #: src/commands.cc:2012 src/commands.cc:2208 src/commands.cc:2371
 #: src/commands.cc:2378 src/commands.cc:2646 src/commands.cc:2673
 #: src/commands.cc:2680 src/commands.cc:3004 src/lftp.cc:258
-#: src/SleepJob.cc:124 src/SleepJob.cc:175
+#: src/SleepJob.cc:125 src/SleepJob.cc:181
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Essayez « help %s » pour plus d'informations.\n"
@@ -312,7 +312,8 @@ msgstr "Unité de temps invalide, seules [smhd] sont permises."
 
 #: src/ResMgr.cc:653
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
-msgstr "Format de temps invalide. Le format est <temps><unité>, par ex. : 2h30m."
+msgstr ""
+"Format de temps invalide. Le format est <temps><unité>, par ex. : 2h30m."
 
 #: src/ResMgr.cc:697 src/commands.cc:3160 src/commands.cc:3169
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
@@ -346,7 +347,7 @@ msgstr "aucune restriction pour ce paramètre"
 msgid "invalid pair of numbers"
 msgstr "paire de nombres invalide"
 
-#: src/Resolver.cc:164 src/Resolver.cc:206 src/ftpclass.cc:4064
+#: src/Resolver.cc:164 src/Resolver.cc:206 src/ftpclass.cc:4060
 #: src/Http.cc:1822
 msgid "Resolving host address..."
 msgstr "Résolution de l'adresse..."
@@ -1609,7 +1610,8 @@ msgstr "%s : opérande manquant pour « expire »\n"
 
 #: src/commands.cc:2446
 #, c-format
-msgid "%s: %s - no such cached session. Use `scache' to look at session list.\n"
+msgid ""
+"%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr ""
 "%s : %s - pas de telle session en cache.\n"
 "Utilisez « scache » pour afficher la liste des sessions.\n"
@@ -1768,7 +1770,8 @@ msgstr "La réponse du serveur est de la forme ftp:retry-530, nouvel essai"
 
 #: src/ftpclass.cc:420
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
-msgstr "La réponse du serveur est de la forme ftp:retry-530-anonymous, nouvel essai"
+msgstr ""
+"La réponse du serveur est de la forme ftp:retry-530-anonymous, nouvel essai"
 
 #: src/ftpclass.cc:445
 msgid "Account is required, set ftp:acct variable"
@@ -1838,7 +1841,7 @@ msgstr "Connexion du socket de données à (%s) port %u"
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "Connexion du socket de données au proxy %s (%s) port %u"
 
-#: src/ftpclass.cc:2081 src/ftpclass.cc:3890
+#: src/ftpclass.cc:2081 src/ftpclass.cc:3886
 msgid "Switching passive mode off"
 msgstr "Désactivation du mode passif"
 
@@ -1846,7 +1849,7 @@ msgstr "Désactivation du mode passif"
 msgid "Data connection established"
 msgstr "Connexion de donnée établie"
 
-#: src/ftpclass.cc:2368 src/ftpclass.cc:4012
+#: src/ftpclass.cc:2368 src/ftpclass.cc:4008
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr "ftp:ssl-force est défini et le serveur ne supporte pas SSL"
 
@@ -1867,93 +1870,93 @@ msgstr "Fermeture du socket de données"
 msgid "Closing aborted data socket"
 msgstr "Fermeture du socket de données avortée"
 
-#: src/ftpclass.cc:3719
+#: src/ftpclass.cc:3715
 msgid "saw file size in response"
 msgstr "taille du fichier détectée dans la réponse"
 
-#: src/ftpclass.cc:3735 src/Fish.cc:652 src/SFtp.cc:1074
+#: src/ftpclass.cc:3731 src/Fish.cc:652 src/SFtp.cc:1074
 msgid "extra server response"
 msgstr "réponse du serveur supplémentaire"
 
-#: src/ftpclass.cc:3749 src/ftpclass.cc:3775
+#: src/ftpclass.cc:3745 src/ftpclass.cc:3771
 msgid "Turning on sync-mode"
 msgstr "Activation de sync-mode"
 
-#: src/ftpclass.cc:3910
+#: src/ftpclass.cc:3906
 msgid "Switching passive mode on"
 msgstr "Activation du mode passif"
 
-#: src/ftpclass.cc:4045
+#: src/ftpclass.cc:4041
 msgid "FEAT negotiation..."
 msgstr "négociation FEAT..."
 
-#: src/ftpclass.cc:4052
+#: src/ftpclass.cc:4048
 msgid "Sending commands..."
 msgstr "Émission des commandes..."
 
-#: src/ftpclass.cc:4054 src/ftpclass.cc:4082 src/ftpclass.cc:4096
+#: src/ftpclass.cc:4050 src/ftpclass.cc:4078 src/ftpclass.cc:4092
 #: src/Http.cc:1837 src/Fish.cc:1012 src/SFtp.cc:1312
 msgid "Waiting for response..."
 msgstr "En attente de réponse..."
 
-#: src/ftpclass.cc:4056
+#: src/ftpclass.cc:4052
 msgid "Delaying before retry"
 msgstr "Attente avant nouvelle tentative"
 
-#: src/ftpclass.cc:4057 src/Http.cc:1830
+#: src/ftpclass.cc:4053 src/Http.cc:1830
 msgid "Connection idle"
 msgstr "Connexion stagnante"
 
-#: src/ftpclass.cc:4071 src/Http.cc:1828 src/Http.cc:1835 src/Fish.cc:1008
+#: src/ftpclass.cc:4067 src/Http.cc:1828 src/Http.cc:1835 src/Fish.cc:1008
 #: src/SFtp.cc:1308
 msgid "Connecting..."
 msgstr "Connexion..."
 
-#: src/ftpclass.cc:4075
+#: src/ftpclass.cc:4071
 msgid "TLS negotiation..."
 msgstr "Négociation TLS..."
 
-#: src/ftpclass.cc:4077 src/Fish.cc:1010 src/SFtp.cc:1310
+#: src/ftpclass.cc:4073 src/Fish.cc:1010 src/SFtp.cc:1310
 msgid "Connected"
 msgstr "Connecté"
 
-#: src/ftpclass.cc:4079
+#: src/ftpclass.cc:4075
 msgid "Logging in..."
 msgstr "Identification en cours..."
 
-#: src/ftpclass.cc:4083
+#: src/ftpclass.cc:4079
 msgid "Making data connection..."
 msgstr "Établissement de la connexion de données..."
 
-#: src/ftpclass.cc:4086
+#: src/ftpclass.cc:4082
 msgid "Changing remote directory..."
 msgstr "Changement de répertoire distant..."
 
-#: src/ftpclass.cc:4092
+#: src/ftpclass.cc:4088
 msgid "Waiting for other copy peer..."
 msgstr "En attente de la copie distante..."
 
-#: src/ftpclass.cc:4094 src/ftpclass.cc:4116
+#: src/ftpclass.cc:4090 src/ftpclass.cc:4112
 msgid "Waiting for transfer to complete"
 msgstr "En attente de la fin du transfert"
 
-#: src/ftpclass.cc:4098
+#: src/ftpclass.cc:4094
 msgid "Waiting for data connection..."
 msgstr "En attente de la connexion de données..."
 
-#: src/ftpclass.cc:4104
+#: src/ftpclass.cc:4100
 msgid "Sending data/TLS"
 msgstr "Émission des données/TLS"
 
-#: src/ftpclass.cc:4106
+#: src/ftpclass.cc:4102
 msgid "Receiving data/TLS"
 msgstr "Réception des données/TLS"
 
-#: src/ftpclass.cc:4112 src/Http.cc:1833 src/Fish.cc:1016 src/SFtp.cc:1316
+#: src/ftpclass.cc:4108 src/Http.cc:1833 src/Fish.cc:1016 src/SFtp.cc:1316
 msgid "Sending data"
 msgstr "Émission des données"
 
-#: src/ftpclass.cc:4114 src/Http.cc:1840 src/Fish.cc:1014 src/SFtp.cc:1314
+#: src/ftpclass.cc:4110 src/Http.cc:1840 src/Fish.cc:1014 src/SFtp.cc:1314
 msgid "Receiving data"
 msgstr "Réception des données"
 
@@ -2024,11 +2027,11 @@ msgstr "%s ok, %d répertoire$ créé|s créés$\n"
 msgid "rename successful\n"
 msgstr "renommage réussi\n"
 
-#: src/parsecmd.cc:296
+#: src/parsecmd.cc:298
 msgid "parse: missing filter command\n"
 msgstr "parse : commande de filtre manquante\n"
 
-#: src/parsecmd.cc:298
+#: src/parsecmd.cc:300
 msgid "parse: missing redirection filename\n"
 msgstr "parse : fichier de redirection manquant\n"
 
@@ -2083,7 +2086,8 @@ msgstr "échec de la méthode POST"
 
 #: src/Http.cc:987
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
-msgstr "ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
+msgstr ""
+"ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
 
 #: src/Http.cc:1134
 msgid "Sending request..."
@@ -2177,7 +2181,8 @@ msgstr "Le mode de « %s » a été modifié en %04o (%s).\n"
 #: src/ChmodJob.cc:89
 #, c-format
 msgid "Failed to change mode of `%s' because no old mode is available.\n"
-msgstr "Impossible de modifier le mode de « %s » car il n'y a pas d'ancien mode.\n"
+msgstr ""
+"Impossible de modifier le mode de « %s » car il n'y a pas d'ancien mode.\n"
 
 #: src/CopyJob.cc:76
 #, c-format
@@ -2364,12 +2369,12 @@ msgstr "le nombre maximum de tentatives (max-retries) a été atteint"
 msgid "%s: BUG - deadlock detected\n"
 msgstr "%s : BOGUE - boucle infinie détectée\n"
 
-#: src/SleepJob.cc:100
+#: src/SleepJob.cc:101
 #, c-format
 msgid "\tRepeat count: %d\n"
 msgstr "\tNombre de répétitions : %d\n"
 
-#: src/SleepJob.cc:122
+#: src/SleepJob.cc:123
 #, c-format
 msgid "%s: argument required. "
 msgstr "%s : argument requis. "
@@ -2454,4 +2459,3 @@ msgstr "Commande en file d'attente :"
 #: src/SFtp.cc:1065
 msgid "invalid server response format"
 msgstr "format de réponse du serveur invalide"
-

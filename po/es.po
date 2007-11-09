@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.6.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2007-10-19 17:32+0400\n"
+"POT-Creation-Date: 2007-11-09 18:39+0300\n"
 "PO-Revision-Date: 2002-08-08 19:01+0000\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -105,7 +105,7 @@ msgstr "Falló el acceso: %s"
 msgid "File cannot be accessed"
 msgstr "El archivo no puede ser accedido"
 
-#: src/FileAccess.cc:216 src/ftpclass.cc:4059 src/ftpclass.cc:4068
+#: src/FileAccess.cc:216 src/ftpclass.cc:4055 src/ftpclass.cc:4064
 #: src/Fish.cc:1003 src/SFtp.cc:1302
 msgid "Not connected"
 msgstr "No conectado"
@@ -271,7 +271,7 @@ msgstr ""
 #: src/commands.cc:2012 src/commands.cc:2208 src/commands.cc:2371
 #: src/commands.cc:2378 src/commands.cc:2646 src/commands.cc:2673
 #: src/commands.cc:2680 src/commands.cc:3004 src/lftp.cc:258
-#: src/SleepJob.cc:124 src/SleepJob.cc:175
+#: src/SleepJob.cc:125 src/SleepJob.cc:181
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Pruebe `help %s' para mayor información.\n"
@@ -347,7 +347,7 @@ msgstr ""
 msgid "invalid pair of numbers"
 msgstr "par de números inválido"
 
-#: src/Resolver.cc:164 src/Resolver.cc:206 src/ftpclass.cc:4064
+#: src/Resolver.cc:164 src/Resolver.cc:206 src/ftpclass.cc:4060
 #: src/Http.cc:1822
 msgid "Resolving host address..."
 msgstr "Resolviendo dirección del servidor..."
@@ -1745,7 +1745,7 @@ msgstr "Conectando socket de datos a (%s) puerto %u"
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "Conectando socket de datos a (%s) puerto %u"
 
-#: src/ftpclass.cc:2081 src/ftpclass.cc:3890
+#: src/ftpclass.cc:2081 src/ftpclass.cc:3886
 msgid "Switching passive mode off"
 msgstr "Desconectando modo pasivo"
 
@@ -1754,7 +1754,7 @@ msgstr "Desconectando modo pasivo"
 msgid "Data connection established"
 msgstr "Conexión de datos abierta"
 
-#: src/ftpclass.cc:2368 src/ftpclass.cc:4012
+#: src/ftpclass.cc:2368 src/ftpclass.cc:4008
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "Está asignado el parámetro ssl-force y el sistema no soporta o no permite SSL"
@@ -1777,95 +1777,95 @@ msgstr "Cerrando socket de datos"
 msgid "Closing aborted data socket"
 msgstr "Cerrando socket de datos"
 
-#: src/ftpclass.cc:3719
+#: src/ftpclass.cc:3715
 msgid "saw file size in response"
 msgstr "vi tamaño del archivo en la respuesta"
 
-#: src/ftpclass.cc:3735 src/Fish.cc:652 src/SFtp.cc:1074
+#: src/ftpclass.cc:3731 src/Fish.cc:652 src/SFtp.cc:1074
 msgid "extra server response"
 msgstr "respuesta extra del servidor"
 
-#: src/ftpclass.cc:3749 src/ftpclass.cc:3775
+#: src/ftpclass.cc:3745 src/ftpclass.cc:3771
 msgid "Turning on sync-mode"
 msgstr "Activando sync-mode"
 
-#: src/ftpclass.cc:3910
+#: src/ftpclass.cc:3906
 msgid "Switching passive mode on"
 msgstr "Conectando modo pasivo"
 
-#: src/ftpclass.cc:4045
+#: src/ftpclass.cc:4041
 #, fuzzy
 msgid "FEAT negotiation..."
 msgstr "Negociando TLS..."
 
-#: src/ftpclass.cc:4052
+#: src/ftpclass.cc:4048
 msgid "Sending commands..."
 msgstr "Enviando comandos..."
 
-#: src/ftpclass.cc:4054 src/ftpclass.cc:4082 src/ftpclass.cc:4096
+#: src/ftpclass.cc:4050 src/ftpclass.cc:4078 src/ftpclass.cc:4092
 #: src/Http.cc:1837 src/Fish.cc:1012 src/SFtp.cc:1312
 msgid "Waiting for response..."
 msgstr "Esperando respuesta..."
 
-#: src/ftpclass.cc:4056
+#: src/ftpclass.cc:4052
 #, fuzzy
 msgid "Delaying before retry"
 msgstr "Esperando antes de reintentar"
 
-#: src/ftpclass.cc:4057 src/Http.cc:1830
+#: src/ftpclass.cc:4053 src/Http.cc:1830
 msgid "Connection idle"
 msgstr "Conexión ociosa"
 
-#: src/ftpclass.cc:4071 src/Http.cc:1828 src/Http.cc:1835 src/Fish.cc:1008
+#: src/ftpclass.cc:4067 src/Http.cc:1828 src/Http.cc:1835 src/Fish.cc:1008
 #: src/SFtp.cc:1308
 msgid "Connecting..."
 msgstr "Conectándose..."
 
-#: src/ftpclass.cc:4075
+#: src/ftpclass.cc:4071
 msgid "TLS negotiation..."
 msgstr "Negociando TLS..."
 
-#: src/ftpclass.cc:4077 src/Fish.cc:1010 src/SFtp.cc:1310
+#: src/ftpclass.cc:4073 src/Fish.cc:1010 src/SFtp.cc:1310
 msgid "Connected"
 msgstr "Conectado"
 
-#: src/ftpclass.cc:4079
+#: src/ftpclass.cc:4075
 msgid "Logging in..."
 msgstr "Identificándose..."
 
-#: src/ftpclass.cc:4083
+#: src/ftpclass.cc:4079
 msgid "Making data connection..."
 msgstr "Estableciendo la conexión de datos..."
 
-#: src/ftpclass.cc:4086
+#: src/ftpclass.cc:4082
 msgid "Changing remote directory..."
 msgstr "Cambiando el directorio remoto..."
 
-#: src/ftpclass.cc:4092
+#: src/ftpclass.cc:4088
 msgid "Waiting for other copy peer..."
 msgstr "Esperando al otro extremo para copiar..."
 
-#: src/ftpclass.cc:4094 src/ftpclass.cc:4116
+#: src/ftpclass.cc:4090 src/ftpclass.cc:4112
 msgid "Waiting for transfer to complete"
 msgstr "Esperando que finalice la transferencia"
 
-#: src/ftpclass.cc:4098
+#: src/ftpclass.cc:4094
 msgid "Waiting for data connection..."
 msgstr "Esperando la conexión de datos..."
 
-#: src/ftpclass.cc:4104
+#: src/ftpclass.cc:4100
 msgid "Sending data/TLS"
 msgstr "Enviando datos/TLS"
 
-#: src/ftpclass.cc:4106
+#: src/ftpclass.cc:4102
 msgid "Receiving data/TLS"
 msgstr "Recibiendo datos/TLS"
 
-#: src/ftpclass.cc:4112 src/Http.cc:1833 src/Fish.cc:1016 src/SFtp.cc:1316
+#: src/ftpclass.cc:4108 src/Http.cc:1833 src/Fish.cc:1016 src/SFtp.cc:1316
 msgid "Sending data"
 msgstr "Enviando datos"
 
-#: src/ftpclass.cc:4114 src/Http.cc:1840 src/Fish.cc:1014 src/SFtp.cc:1314
+#: src/ftpclass.cc:4110 src/Http.cc:1840 src/Fish.cc:1014 src/SFtp.cc:1314
 msgid "Receiving data"
 msgstr "Recibiendo datos"
 
@@ -1928,11 +1928,11 @@ msgstr "%s ok, %d directorio$|s$ creado$|s$\n"
 msgid "rename successful\n"
 msgstr "renombrado exitoso\n"
 
-#: src/parsecmd.cc:296
+#: src/parsecmd.cc:298
 msgid "parse: missing filter command\n"
 msgstr "parse: falta orden de filtro\n"
 
-#: src/parsecmd.cc:298
+#: src/parsecmd.cc:300
 msgid "parse: missing redirection filename\n"
 msgstr "parse: falta archivo de redirección\n"
 
@@ -2276,12 +2276,12 @@ msgstr "variable max-retries excedida"
 msgid "%s: BUG - deadlock detected\n"
 msgstr "%s: BUG - abrazo mortal detectado\n"
 
-#: src/SleepJob.cc:100
+#: src/SleepJob.cc:101
 #, c-format
 msgid "\tRepeat count: %d\n"
 msgstr "\tRepeticiones: %d\n"
 
-#: src/SleepJob.cc:122
+#: src/SleepJob.cc:123
 #, c-format
 msgid "%s: argument required. "
 msgstr "%s: se requiere un argumento. "
