@@ -1,3 +1,11 @@
+Version 3.6.1 - 2007-11-09
+
+* repeat --weak option to terminate the loop automatically when exiting lftp.
+* ftp:use-stat-for-list is off by default.
+* slot command fixed.
+* fixed timeout handling in ftp.
+* french and polish translations updated.
+
 Version 3.6.0 - 2007-10-19
 
 * major code cleanup.

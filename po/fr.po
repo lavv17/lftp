@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2007-10-19 17:32+0400\n"
-"PO-Revision-Date: 2007-08-23 19:13+0200\n"
+"PO-Revision-Date: 2007-10-22 14:01+0200\n"
 "Last-Translator: Alain PORTAL <aportal@univ-montp2.fr>\n"
 "Language-Team: Français <traduc@traduc.org>\n"
 "MIME-Version: 1.0\n"
@@ -99,9 +99,8 @@ msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s : la commande « %s » n'est pas compilée.\n"
 
 #: src/FileAccess.cc:213
-#, fuzzy
 msgid "Access failed: "
-msgstr "L'accès a échoué : %s"
+msgstr "L'accès a échoué : "
 
 #: src/FileAccess.cc:214
 msgid "File cannot be accessed"
@@ -129,19 +128,16 @@ msgid "Operation not supported"
 msgstr "Opération non prise en charge"
 
 #: src/FileAccess.cc:233
-#, fuzzy
 msgid "File moved"
-msgstr "Fichier déplacé : %s"
+msgstr "Fichier déplacé"
 
 #: src/FileAccess.cc:235
-#, fuzzy
 msgid "File moved to `"
-msgstr "Fichier déplacé vers « %s »"
+msgstr "Fichier déplacé vers '"
 
 #: src/FileAccess.cc:914 src/buffer.cc:231
-#, fuzzy
 msgid " [cached]"
-msgstr "%s [caché]"
+msgstr " [caché]"
 
 #: src/GetJob.cc:79
 #, c-format
@@ -204,7 +200,7 @@ msgstr "Suppression de l'ancien fichier « %s »"
 #: src/MirrorJob.cc:262
 #, c-format
 msgid "Skipping file `%s' (only-existing)"
-msgstr ""
+msgstr "On ignore le fichier « %s » (only-existing)"
 
 #: src/MirrorJob.cc:269
 #, c-format
@@ -212,9 +208,9 @@ msgid "Transferring file `%s'"
 msgstr "Transfert du fichier « %s »"
 
 #: src/MirrorJob.cc:341
-#, fuzzy, c-format
+#, c-format
 msgid "Skipping directory `%s' (only-existing)"
-msgstr "Création du répertoire « %s »"
+msgstr "On ignore le répertoire « %s » (only-existing)"
 
 #: src/MirrorJob.cc:361 src/MirrorJob.cc:447 src/MirrorJob.cc:687
 #, c-format
@@ -229,7 +225,7 @@ msgstr "Duplication du répertoire « %s »"
 #: src/MirrorJob.cc:460
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
-msgstr ""
+msgstr "On ignore le lien symbolique « %s » (only-existing)"
 
 #: src/MirrorJob.cc:466
 #, c-format
@@ -316,8 +312,7 @@ msgstr "Unité de temps invalide, seules [smhd] sont permises."
 
 #: src/ResMgr.cc:653
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
-msgstr ""
-"Format de temps invalide. Le format est <temps><unité>, par ex. : 2h30m."
+msgstr "Format de temps invalide. Le format est <temps><unité>, par ex. : 2h30m."
 
 #: src/ResMgr.cc:697 src/commands.cc:3160 src/commands.cc:3169
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
@@ -361,9 +356,9 @@ msgid "host name resolve timeout"
 msgstr "délai d'attente dépassé pour la résolution du nom de l'hôte"
 
 #: src/Resolver.cc:269
-#, fuzzy, c-format
+#, c-format
 msgid "%d address$|es$ found"
-msgstr "---- %d: $adresse trouvée|adresses trouvées$\n"
+msgstr "%d: $adresse trouvée|adresses trouvées$"
 
 #: src/Resolver.cc:779
 msgid "Host name lookup failure"
@@ -1614,8 +1609,7 @@ msgstr "%s : opérande manquant pour « expire »\n"
 
 #: src/commands.cc:2446
 #, c-format
-msgid ""
-"%s: %s - no such cached session. Use `scache' to look at session list.\n"
+msgid "%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr ""
 "%s : %s - pas de telle session en cache.\n"
 "Utilisez « scache » pour afficher la liste des sessions.\n"
@@ -1774,8 +1768,7 @@ msgstr "La réponse du serveur est de la forme ftp:retry-530, nouvel essai"
 
 #: src/ftpclass.cc:420
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
-msgstr ""
-"La réponse du serveur est de la forme ftp:retry-530-anonymous, nouvel essai"
+msgstr "La réponse du serveur est de la forme ftp:retry-530-anonymous, nouvel essai"
 
 #: src/ftpclass.cc:445
 msgid "Account is required, set ftp:acct variable"
@@ -1831,9 +1824,9 @@ msgid "unsupported network protocol"
 msgstr "protocole réseau non pris en charge"
 
 #: src/ftpclass.cc:2014
-#, fuzzy, c-format
+#, c-format
 msgid "Accepted data connection from (%s) port %u"
-msgstr "Connexion du socket de données à (%s) port %u"
+msgstr "Connexion données acceptée du (%s) port %u"
 
 #: src/ftpclass.cc:2056
 #, c-format
@@ -2041,15 +2034,15 @@ msgstr "parse : fichier de redirection manquant\n"
 
 #: src/pgetJob.cc:120
 msgid "pget: falling back to plain get"
-msgstr ""
+msgstr "pget : recours à un « get » simple"
 
 #: src/pgetJob.cc:124
 msgid "the target file is remote"
-msgstr ""
+msgstr "le fichier cible est distant"
 
 #: src/pgetJob.cc:129
 msgid "the source file size is unknown"
-msgstr ""
+msgstr "la taille du fichier source est inconnue"
 
 #: src/pgetJob.cc:208
 #, c-format
@@ -2090,8 +2083,7 @@ msgstr "échec de la méthode POST"
 
 #: src/Http.cc:987
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
-msgstr ""
-"ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
+msgstr "ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
 
 #: src/Http.cc:1134
 msgid "Sending request..."
@@ -2185,8 +2177,7 @@ msgstr "Le mode de « %s » a été modifié en %04o (%s).\n"
 #: src/ChmodJob.cc:89
 #, c-format
 msgid "Failed to change mode of `%s' because no old mode is available.\n"
-msgstr ""
-"Impossible de modifier le mode de « %s » car il n'y a pas d'ancien mode.\n"
+msgstr "Impossible de modifier le mode de « %s » car il n'y a pas d'ancien mode.\n"
 
 #: src/CopyJob.cc:76
 #, c-format
@@ -2316,9 +2307,8 @@ msgid "ftp:fxp-force is set but FXP is not available"
 msgstr "ftp:fxp-force est actif mais l'FXP n'est pas disponible"
 
 #: src/Filter.cc:141
-#, fuzzy
 msgid "pipe() failed: "
-msgstr "pipe() a échoué : %s"
+msgstr "pipe() a échoué : "
 
 #: src/Filter.cc:174 src/PtyShell.cc:138
 #, c-format
@@ -2336,14 +2326,12 @@ msgid "execl(/bin/sh) failed: %s\n"
 msgstr "execl(/bin/sh) a échoué : %s\n"
 
 #: src/LocalAccess.cc:614 src/NetAccess.cc:811
-#, fuzzy
 msgid "Getting directory contents"
-msgstr "Récupération du contenu du répertoire (%lld) %s[%s]"
+msgstr "Récupération du contenu du répertoire"
 
 #: src/LocalAccess.cc:616 src/NetAccess.cc:815
-#, fuzzy
 msgid "Getting files information"
-msgstr "Lecture des informations de fichiers (%d%%) [%s]"
+msgstr "Lecture des informations de fichiers"
 
 #: src/NetAccess.cc:336
 #, c-format
@@ -2429,9 +2417,8 @@ msgid "%s (filter)"
 msgstr "%s (filtré)"
 
 #: src/PtyShell.cc:71
-#, fuzzy
 msgid "pseudo-tty allocation failed: "
-msgstr "l'allocation du pseudo-terminal a échoué : %s"
+msgstr "l'allocation du pseudo-terminal a échoué : "
 
 #: src/QueueFeeder.cc:69
 msgid "Added job$|s$"
@@ -2468,8 +2455,3 @@ msgstr "Commande en file d'attente :"
 msgid "invalid server response format"
 msgstr "format de réponse du serveur invalide"
 
-#~ msgid "invalid option"
-#~ msgstr "option invalide"
-
-#~ msgid "Fatal error: %s"
-#~ msgstr "Erreur fatale : %s"
