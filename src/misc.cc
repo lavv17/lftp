@@ -730,9 +730,7 @@ xstring& dirname_modify(xstring &ret)
 }
 xstring& dirname(const char *path)
 {
-   xstring& tmp=xstring::get_tmp();
-   tmp.set(path);
-   return dirname_modify(tmp);
+   return dirname_modify(xstring::get_tmp(path));
 }
 
 char last_char(const char *str)
