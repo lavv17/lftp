@@ -250,6 +250,12 @@ xstring& xstring::get_tmp()
    static int i;
    return revolver[i=(i+1)&3];
 }
+xstring& xstring::get_tmp(const char *s)
+{
+   xstring& tmp=get_tmp();
+   tmp.set(s);
+   return tmp;
+}
 xstring& xstring::vformat(const char *fmt,va_list ap)
 {
    xstring& str=get_tmp();
@@ -268,8 +274,7 @@ xstring &xstring::cat(const char *first,...)
 {
    va_list va;
    va_start(va,first);
-   xstring& str=get_tmp();
-   str.set(first);
+   xstring& str=get_tmp(first);
    str.vappend(va);
    va_end(va);
    return str;
