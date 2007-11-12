@@ -1,3 +1,7 @@
+2007-11-12	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.m4: add a poll check for MacOS X.
+
 2007-06-15	Jakob Truelsen <antialize@gmail.com>
 
 	* needtrio.m4, va_copy.m4: allow cross-compilation.

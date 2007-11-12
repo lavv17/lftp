@@ -6,15 +6,24 @@ AC_DEFUN([LFTP_FUNC_POLL],
       AC_TRY_RUN([
 	       #include <sys/types.h>
 	       #ifdef HAVE_SYS_POLL_H
-	       #include <sys/poll.h>
+	       # include <sys/poll.h>
 	       #else
-	       #include <poll.h>
+	       # include <poll.h>
 	       #endif
 
 	       int main()
 	       {
-		  struct pollfd pfd={5,POLLOUT}; /* fd 5 is config.log */
-		  return(!(poll(0,0,0)==0 && poll(&pfd,1,0)==1));
+		  struct pollfd pfd;
+		  pfd.fd = 5; /* fd 5 is config.log */
+		  pfd.events = POLLOUT;
+		  if (poll(0, 0, 0) != 0 || poll(&pfd, 1, 0) != 1)
+		     return 1;
+		  pfd.fd = open("/dev/null", 1);
+		  pfd.events = POLLIN;
+		  pfd.revents = 0;
+		  if (poll(&pfd, 1, 0) < 0 || (pfd.revents & POLLNVAL) != 0)
+		     return 1;	 /* check for a bug in MacOS X */
+		  return 0;
 	       }
 	    ],
 	    [lftp_cv_func_poll_works=yes;],
