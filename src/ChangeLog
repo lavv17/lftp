@@ -1,3 +1,10 @@
+2007-11-12  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* xstring.cc, xstring.h: (get_tmp(const char*)) new function.
+	* misc.cc: use it.
+	* FileAccess.cc, FileAccess.h: optimize Log* methods.
+	* MirrorJob.cc: count rm errors properly.
+
 2007-11-08  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: don't reset timeout_timer all the time.
