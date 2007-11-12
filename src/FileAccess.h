@@ -145,7 +145,7 @@ protected:
    static void NonBlock(int fd);
    static void CloseOnExec(int fd);
 
-   static void Log2(int level,const char *str);
+   static void Log2(int level,xstring& str);
    static void Log3(int level,const char *prefix,const char *str);
 
    time_t try_time;

@@ -104,36 +104,35 @@ FileAccess::~FileAccess()
    ListDel(FileAccess,chain,this,next);
 }
 
-void  FileAccess::Log2(int level,const char *str0)
+void  FileAccess::Log2(int level,xstring& str)
 {
-   xstring &str=xstring::get_tmp();
-   str.set(str0);
    str.chomp('\n');
    str.chomp('\r');
    str.append('\n');
    Log::global->Write(level,str);
 }
-void  FileAccess::Log3(int level,const char *prefix,const char *str)
+void  FileAccess::Log3(int level,const char *prefix,const char *str0)
 {
-   Log::global->Write(level,prefix);
+   xstring &str=xstring::get_tmp(prefix);
+   str.append(str0);
    Log2(level,str);
 }
 void FileAccess::LogError(int level,const char *fmt,...)
 {
    va_list v;
    va_start(v,fmt);
-   Log::global->Write(level,"**** ");
-   Log::global->vFormat(level,fmt,v);
-   Log::global->Write(level,"\n");
+   xstring &str=xstring::get_tmp("**** ");
+   str.vappendf(fmt,v);
+   Log2(level,str);
    va_end(v);
 }
 void FileAccess::LogNote(int level,const char *fmt,...)
 {
    va_list v;
    va_start(v,fmt);
-   Log::global->Write(level,"---- ");
-   Log::global->vFormat(level,fmt,v);
-   Log::global->Write(level,"\n");
+   xstring &str=xstring::get_tmp("---- ");
+   str.vappendf(fmt,v);
+   Log2(level,str);
    va_end(v);
 }
 void FileAccess::LogRecv(int level,const char *line)
