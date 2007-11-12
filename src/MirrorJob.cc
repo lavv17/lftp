@@ -849,6 +849,8 @@ int   MirrorJob::Do()
    TARGET_REMOVE_OLD_FIRST_label:
       while((j=FindDoneAwaitedJob())!=0)
       {
+	 if(j->ExitCode()!=0)
+	    stats.error_count++;
 	 RemoveWaiting(j);
 	 Delete(j);
 	 transfer_count--;
