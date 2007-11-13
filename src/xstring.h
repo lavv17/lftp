@@ -170,29 +170,29 @@ public:
 
    size_t length() const { return len; }
 
-   const char *set(xstring &s) { return nset(s,s.length()); }
-   const char *set(const xstring &s) { return nset(s,s.length()); }
-   const char *set(const char *s);
-   const char *nset(const char *s,int len);
-   const char *set_allocated(char *s);
-   const char *set_substr(int start,size_t sublen,const char *,size_t);
-   const char *set_substr(int start,size_t sublen,const char *);
-   const char *set_substr(int start,size_t sublen,const xstring &s) { return set_substr(start,sublen,s.get(),s.length()); }
+   xstring& set(const xstring &s) { return nset(s,s.length()); }
+   xstring& set(const char *s);
+   xstring& nset(const char *s,int len);
+   xstring& set_allocated(char *s);
+   xstring& set_substr(int start,size_t sublen,const char *,size_t);
+   xstring& set_substr(int start,size_t sublen,const char *);
+   xstring& set_substr(int start,size_t sublen,const xstring &s) { return set_substr(start,sublen,s.get(),s.length()); }
 
-   const char *append(const char *s);
-   const char *append(char c);
-   const char *append(const char *s,size_t len);
-   const char *append(const xstring &s) { return append(s.get(),s.length()); }
-   const char *vappend(va_list);
-   const char *vappend(...) __attribute__((sentinel));
-   const char *vset(...) __attribute__((sentinel));
-   const char *vsetf(const char *fmt, va_list ap) { truncate(0); return vappendf(fmt,ap); }
-   const char *setf(const char *fmt,...) PRINTF_LIKE(2,3);
-   const char *vappendf(const char *fmt, va_list ap);
-   const char *appendf(const char *fmt,...) PRINTF_LIKE(2,3);
+   xstring& append(const char *s);
+   xstring& append(char c);
+   xstring& append(const char *s,size_t len);
+   xstring& append(const xstring &s) { return append(s.get(),s.length()); }
+   xstring& vappend(va_list);
+   xstring& vappend(...) __attribute__((sentinel));
+   xstring& vset(...) __attribute__((sentinel));
+   xstring& vsetf(const char *fmt, va_list ap) { truncate(0); return vappendf(fmt,ap); }
+   xstring& setf(const char *fmt,...) PRINTF_LIKE(2,3);
+   xstring& vappendf(const char *fmt, va_list ap);
+   xstring& appendf(const char *fmt,...) PRINTF_LIKE(2,3);
    static xstring& get_tmp();
-   static xstring& get_tmp(const char *s);
-   static xstring& vformat(const char *fmt,va_list ap);
+   static xstring& get_tmp(const char *s) { return get_tmp().set(s); }
+   static xstring& get_tmp(const char *s,int n) { return get_tmp().nset(s,n); }
+   static xstring& vformat(const char *fmt,va_list ap) { return get_tmp().vsetf(fmt,ap); }
    static xstring& format(const char *fmt,...) PRINTF_LIKE(1,2);
    static xstring& cat(const char *first,...) __attribute__((sentinel));
    static xstring& join(const char *sep,int n,...);

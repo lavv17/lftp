@@ -181,11 +181,7 @@ const char *expand_home_relative(const char *s)
    {
       // extract user name and find the home
       int name_len=(sl?sl-s-1:strlen(s+1));
-      char *name=(char*)alloca(name_len+1);
-      strncpy(name,s+1,name_len);
-      name[name_len]=0;
-
-      struct passwd *pw=getpwnam(name);
+      struct passwd *pw=getpwnam(xstring::get_tmp(s+1,name_len));
       if(pw)
 	 home=pw->pw_dir;
    }

@@ -49,59 +49,61 @@ void xstring::init(const char *s)
       set(s);
 }
 
-const char *xstring::nset(const char *s,int len)
+xstring& xstring::nset(const char *s,int len)
 {
    if(!s)
    {
       xfree(buf);
       init();
-      return 0;
+      return *this;
    }
    this->len=len;
    if(s==buf)
-      return buf;
+      return *this;
    if(s>buf && s<buf+size)
    {
       memmove(buf,s,len);
       get_space(len);
-      return buf;
+      return *this;
    }
    get_space(len);
-   return (char*)memcpy(buf,s,len);
+   memcpy(buf,s,len);
+   return *this;
 }
-const char *xstring::set(const char *s)
+xstring& xstring::set(const char *s)
 {
    return nset(s,xstrlen(s));
 }
 
-const char *xstring::set_allocated(char *s)
+xstring& xstring::set_allocated(char *s)
 {
    if(!s)
       return set(0);
    len=strlen(s);
    size=len+1;
    xfree(buf);
-   return buf=s;
+   buf=s;
+   return *this;
 }
 
-const char *xstring::append(const char *s,size_t s_len)
+xstring& xstring::append(const char *s,size_t s_len)
 {
    if(!s || !*s)
-      return buf;
+      return *this;
    get_space(len+s_len);
    memcpy(buf+len,s,s_len);
    len+=s_len;
-   return buf;
+   return *this;
 }
-const char *xstring::append(const char *s)
+xstring& xstring::append(const char *s)
 {
    return append(s,strlen(s));
 }
-const char *xstring::append(char c)
+xstring& xstring::append(char c)
 {
    get_space(len+1);
    buf[len++]=c;
-   return buf;
+   return *this;
 }
 
 static size_t vstrlen(va_list va0)
@@ -136,32 +138,32 @@ static void vstrcpy(char *buf,va_list va0)
    va_end(va);
 }
 
-const char *xstring::vappend(va_list va)
+xstring& xstring::vappend(va_list va)
 {
    size_t va_len=vstrlen(va);
    get_space(len+va_len);
    vstrcpy(buf+len,va);
    len+=va_len;
-   return buf;
+   return *this;;
 }
 
-const char *xstring::vappend(...)
+xstring& xstring::vappend(...)
 {
    va_list va;
    va_start(va,this);
    vappend(va);
    va_end(va);
-   return buf;
+   return *this;;
 }
 
-const char *xstring::vset(...)
+xstring& xstring::vset(...)
 {
    truncate(0);
    va_list va;
    va_start(va,this);
    vappend(va);
    va_end(va);
-   return buf;
+   return *this;
 }
 
 void xstring::truncate(size_t n)
@@ -181,7 +183,7 @@ void xstring::truncate_at(char c)
    }
 }
 
-const char *xstring::set_substr(int start,size_t sublen,const char *s,size_t s_len)
+xstring& xstring::set_substr(int start,size_t sublen,const char *s,size_t s_len)
 {
    if(start+sublen>len)
       sublen=len-start;
@@ -191,9 +193,9 @@ const char *xstring::set_substr(int start,size_t sublen,const char *s,size_t s_l
       memmove(buf+start+s_len,buf+start+sublen,len-(start+sublen)+1);
    memcpy(buf+start,s,s_len);
    len+=s_len-sublen;
-   return buf;
+   return *this;
 }
-const char *xstring::set_substr(int start,size_t sublen,const char *s)
+xstring& xstring::set_substr(int start,size_t sublen,const char *s)
 {
    return set_substr(start,sublen,s,xstrlen(s));
 }
@@ -210,7 +212,7 @@ void xstring::rtrim(char c)
    while(chomp(c));
 }
 
-const char *xstring::vappendf(const char *format, va_list ap)
+xstring& xstring::vappendf(const char *format, va_list ap)
 {
    if(size-len<32 || size-len>512)
       get_space(len+strlen(format)+32);
@@ -223,44 +225,32 @@ const char *xstring::vappendf(const char *format, va_list ap)
       if(res>=0 && res<size-len)
       {
 	 set_length(len+res);
-	 return buf;
+	 return *this;
       }
       get_space(res>size-len ? len+res+1 : len+(size-len)*2);
    }
 }
-const char *xstring::setf(const char *format, ...)
+xstring& xstring::setf(const char *format, ...)
 {
    va_list va;
    va_start(va, format);
    vsetf(format, va);
    va_end(va);
-   return buf;
+   return *this;
 }
-const char *xstring::appendf(const char *format, ...)
+xstring& xstring::appendf(const char *format, ...)
 {
    va_list va;
    va_start(va, format);
    vappendf(format, va);
    va_end(va);
-   return buf;
+   return *this;
 }
 xstring& xstring::get_tmp()
 {
    static xstring revolver[4];
    static int i;
    return revolver[i=(i+1)&3];
-}
-xstring& xstring::get_tmp(const char *s)
-{
-   xstring& tmp=get_tmp();
-   tmp.set(s);
-   return tmp;
-}
-xstring& xstring::vformat(const char *fmt,va_list ap)
-{
-   xstring& str=get_tmp();
-   str.vsetf(fmt,ap);
-   return str;
 }
 xstring& xstring::format(const char *fmt, ...)
 {

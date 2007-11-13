@@ -1,3 +1,10 @@
+2007-11-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* xstring.cc, xstring.h: make most xstring methods return *this;
+	  new function get_tmp(s,n).
+	* misc.cc: use new get_tmp.
+	* xmalloc.h: add ().
+
 2007-11-12  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* xstring.cc, xstring.h: (get_tmp(const char*)) new function.
