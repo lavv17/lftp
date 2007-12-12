@@ -332,6 +332,9 @@ void Ftp::TransferCheck(int act)
    {
       copy_done=true;
       conn->CloseAbortedDataConnection();
+
+      if(!conn->received_150 && state!=DATA_OPEN_STATE)
+	 goto simulate_eof;
    }
    if(act==211)
    {
@@ -384,12 +387,7 @@ void Ftp::TransferCheck(int act)
       return;
    }
    if(NonError5XX(act))
-   {
-      DataClose();
-      state=EOF_STATE;
-      eof=true; // simulate eof
-      return;
-   }
+      goto simulate_eof;
    if(act==426 && copy_mode==COPY_NONE)
    {
       if(conn->data_sock==-1 && strstr(line,"Broken pipe"))
@@ -398,6 +396,13 @@ void Ftp::TransferCheck(int act)
    if(is2XX(act) && conn->data_sock==-1)
       eof=true;
    NoFileCheck(act);
+   return;
+
+simulate_eof:
+   DataClose();
+   state=EOF_STATE;
+   eof=true;
+   return;
 }
 
 void Ftp::LoginCheck(int act)
