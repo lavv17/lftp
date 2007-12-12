@@ -512,8 +512,8 @@ const char *FileCopy::GetPercentDoneStr()
    int pct=GetPercentDone();
    if(pct==-1)
       return "";
-   static char buf[6];
-   sprintf(buf,"(%d%%) ",pct);
+   static char buf[8];
+   snprintf(buf,8,"(%d%%) ",pct);
    return buf;
 }
 float FileCopy::GetRate()
