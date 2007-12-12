@@ -1,3 +1,11 @@
+2007-12-12  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: workaround the case when transfer ends without data connection.
+
+2007-12-12  Martin Nagy <mnagy@redhat.com>
+
+	* FileCopy.cc: (GetPercentDoneStr) prevent buffer overflow.
+
 2007-11-13  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* xstring.cc, xstring.h: make most xstring methods return *this;
