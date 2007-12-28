@@ -705,9 +705,9 @@ static int parse_html(const char *buf,int buf_len,bool eof,const Ref<Buffer>& li
    if(hftp)
    {
       // workaround proxy bugs.
-      char *t=strstr(link_target,";type=");
+      const char *t=strstr(link_target,";type=");
       if(t && t[6] && t[7]=='/' && t[8]==0)
-	 *t=0;
+	 link_target.truncate(t-link_target);
       const char *p=link_target+url::path_index(link_target);
       if(p[0]=='/' && p[1]=='/')
 	 link_target.set_substr(p-link_target+1,1,"%2F");
@@ -873,13 +873,11 @@ parse_url_again:
       }
    }
 
-   char *type=strstr(link_target,";type=");
+   const char *type=strstr(link_target,";type=");
    if(type && type[6] && !type[7])
    {
-      type[0]=0;
-      if(!all_links || all_links->FindByName(link_target))
+      if(!all_links || all_links->FindByName(xstring::get_tmp(link_target,type-link_target)))
 	 return tag_len;
-      type[0]=';';
    }
 
    if(link_target.length()==0)
@@ -1111,10 +1109,10 @@ parse_url_again:
 info_done:
    if(set && link_target[0]!='/' && link_target[0]!='~')
    {
-      char *slash=strchr(link_target,'/');
+      const char *slash=strchr(link_target,'/');
       if(slash)
       {
-	 *slash=0;
+	 link_target.truncate(slash-link_target);
 	 info.is_directory=true;
       }
 
@@ -1181,9 +1179,9 @@ int HttpDirList::Do()
       if(mode==FA::RETRIEVE)
       {
 	 // strip file name, directory remains.
-	 char *slash=strrchr(curr_url->path,'/');
+	 const char *slash=strrchr(curr_url->path,'/');
 	 if(slash && slash>curr_url->path)
-	    *slash=0;
+	    curr_url->path.truncate(slash-curr_url->path);
       }
 
    retry:

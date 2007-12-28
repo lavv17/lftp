@@ -1810,18 +1810,17 @@ int   Ftp::Do()
       {
 	 if(mode==MAKE_DIR && mkdir_p)
 	 {
-	    char *sl=strchr(file,'/');
+	    const char *sl=strchr(file,'/');
 	    while(sl)
 	    {
 	       if(sl>file)
 	       {
-		  *sl=0;
-		  if(strcmp(file,".") && strcmp(file,".."))
+		  xstring& tmp=xstring::get_tmp(file,sl-file);
+		  if(tmp.ne(".") && tmp.ne(".."))
 		  {
-		     conn->SendCmd2("MKD",file,url::path_ptr(file_url),home);
+		     conn->SendCmd2("MKD",tmp);
 		     expect->Push(Expect::IGNORE);
 		  }
-		  *sl='/';
 	       }
 	       sl=strchr(sl+1,'/');
 	    }

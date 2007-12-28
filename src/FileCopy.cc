@@ -1039,7 +1039,7 @@ int FileCopyPeerFA::Get_LL(int len)
 	       if(orig_url)
 	       {
 		  int p_ind=url::path_index(orig_url);
-		  char *s=strrchr(orig_url,'/');
+		  const char *s=strrchr(orig_url,'/');
 		  int s_ind=s?s-orig_url:-1;
 		  if(p_ind==-1 || s_ind==-1 || s_ind<p_ind)
 		     s_ind=p_ind=strlen(orig_url);

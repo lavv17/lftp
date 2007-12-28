@@ -1,3 +1,9 @@
+2007-12-28  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc, FileGlob.cc, HttpDir.cc, LocalAccess.cc, ftpclass.cc:
+	  fixed constness for strchr, strrchr and strstr
+	  (reported by Yann Rouillard <yann@pleiades.fr.eu.org>).
+
 2007-12-12  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: workaround the case when transfer ends without data connection.

@@ -204,15 +204,11 @@ int LocalAccess::Do()
    case(MAKE_DIR):
       if(mkdir_p)
       {
-	 char *sl=strchr(file,'/');
+	 const char *sl=strchr(file,'/');
 	 while(sl)
 	 {
 	    if(sl>file)
-	    {
-	       *sl=0;
-	       mkdir(dir_file(cwd,file),0775);
-	       *sl='/';
-	    }
+	       mkdir(dir_file(cwd,xstring::get_tmp(file,sl-file)),0775);
 	    sl=strchr(sl+1,'/');
 	 }
       }

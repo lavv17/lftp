@@ -44,15 +44,11 @@ Glob::Glob(FileAccess *s,const char *p)
 
    if(pattern[0]=='~')
    {
-      char *slash=strchr(pattern,'/');
+      const char *slash=strchr(pattern,'/');
       if(slash)
-      {
-	 *slash=0;
-	 inhibit_tilde=HasWildcards(pattern);
-	 *slash='/';
-      }
+	 inhibit_tilde=HasWildcards(xstring::get_tmp(pattern,slash-pattern));
       else
-	 inhibit_tilde=HasWildcards(pattern);;
+	 inhibit_tilde=HasWildcards(pattern);
    }
    if(pattern[0] && !HasWildcards(pattern))
    {
