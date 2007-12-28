@@ -99,32 +99,43 @@ bool GetJob::IsRemoteNonURL(const ParsedURL &url,FA::open_mode mode)
    // store & put || !store & get
    return (!url.proto && (mode==FA::STORE ^ !reverse));
 }
+bool GetJob::IsLocalNonURL(const ParsedURL &url,FA::open_mode mode)
+{
+   // store & get || !store & put
+   return (!url.proto && (mode==FA::STORE ^ reverse));
+}
 bool GetJob::IsLocal(const ParsedURL &url)
 {
    return !url.proto || !strcasecmp(url.proto,"file");
 }
+// create copy peer from a cloned session
 FileCopyPeer *GetJob::CreateCopyPeer(FileAccess *session,const char *path,FA::open_mode mode)
 {
    ParsedURL url(path,true);
    if(IsRemoteNonURL(url,mode))
       return new FileCopyPeerFA(session,path,mode);
    Delete(session);	// delete cloned session.
-   return CreateCopyPeer(url,mode);
+   return CreateCopyPeer(url,path,mode);
 }
+// create copy peer using a session reference
 FileCopyPeer *GetJob::CreateCopyPeer(const FileAccessRef& session,const char *path,FA::open_mode mode)
 {
    ParsedURL url(path,true);
    if(IsRemoteNonURL(url,mode))
       return new FileCopyPeerFA(session,path,mode);
-   return CreateCopyPeer(url,mode);
+   return CreateCopyPeer(url,path,mode);
 }
-FileCopyPeer *GetJob::CreateCopyPeer(const ParsedURL &url,FA::open_mode mode)
+FileCopyPeer *GetJob::CreateCopyPeer(const ParsedURL &url,const char *path,FA::open_mode mode)
 {
+   if(IsLocalNonURL(url,mode))
+      return CreateCopyPeer(path,mode);
    if(IsLocal(url))
-      return (mode==FA::STORE)
-	 ? DstLocal(url.path)
-	 : SrcLocal(url.path);
+      return CreateCopyPeer(url.path,mode);
    return new FileCopyPeerFA(&url,mode);
+}
+FileCopyPeer *GetJob::CreateCopyPeer(const char *path,FA::open_mode mode)
+{
+   return mode==FA::STORE ? DstLocal(path) : SrcLocal(path);
 }
 
 void GetJob::NextFile()

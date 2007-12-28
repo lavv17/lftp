@@ -3,6 +3,7 @@
 	* FileCopy.cc, FileGlob.cc, HttpDir.cc, LocalAccess.cc, ftpclass.cc:
 	  fixed constness for strchr, strrchr and strstr
 	  (reported by Yann Rouillard <yann@pleiades.fr.eu.org>).
+	* GetJob.cc, GetJob.h: don't decode URL escapes when no URL schema used.
 
 2007-12-12  Alexander V. Lukyanov <lav@yars.free.net>
 

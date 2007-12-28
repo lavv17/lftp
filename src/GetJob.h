@@ -29,8 +29,10 @@ class GetJob : public CopyJobEnv
 {
    FileCopyPeer *SrcLocal(const char *src);
    FileCopyPeer *DstLocal(const char *dst);
-   FileCopyPeer *CreateCopyPeer(const ParsedURL &url,FA::open_mode mode);
+   FileCopyPeer *CreateCopyPeer(const ParsedURL &url,const char *path,FA::open_mode mode);
+   FileCopyPeer *CreateCopyPeer(const char *path,FA::open_mode mode);
    bool IsRemoteNonURL(const ParsedURL &url,FA::open_mode mode);
+   bool IsLocalNonURL(const ParsedURL &url,FA::open_mode mode);
    static bool IsLocal(const ParsedURL &url);
 
 protected:
