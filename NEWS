@@ -1,3 +1,12 @@
+Version 3.6.2 - 2007-12-29
+
+* added a workaround for ftp servers which don't open data connection in
+  certain conditions.
+* don't decode URL escapes in get/put when no URL schema used.
+* fixed counting of file removal errors in mirror.
+* fixed a 2-byte buffer overflow when showing transfer percents.
+* fixed compilation on some systems.
+
 Version 3.6.1 - 2007-11-09
 
 * repeat --weak option to terminate the loop automatically when exiting lftp.

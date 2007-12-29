@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
-AC_INIT([lftp], [3.6.1], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [3.6.2], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_LIBOBJ_DIR([lib])
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
@@ -170,9 +170,9 @@ AC_MBSTATE_T
 
 case "`uname -sr`" in
 # Linux-2.2.x and older don't support fcntl64.
-"Linux 2.2."*|"Linux 2.0."*)  enable_largefile=no;;
+Linux\ 2.[012].*) enable_largefile=no;;
 # MacOS X Tiger's poll does not work correctly.
-"Darwin 8."*)  lftp_cv_func_poll_works=no;;
+Darwin\ [89].*)	  lftp_cv_func_poll_works=no;;
 esac
 
 AC_PROG_YACC
