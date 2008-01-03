@@ -1,3 +1,7 @@
+2008-01-03  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* buffer.cc: use copy of va_list properly (fixes a coredump on some systems).
+
 2007-12-28  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc, FileGlob.cc, HttpDir.cc, LocalAccess.cc, ftpclass.cc:

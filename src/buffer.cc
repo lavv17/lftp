@@ -155,7 +155,7 @@ void Buffer::vFormat(const char *f, va_list v)
    {
       va_list tmp;
       VA_COPY(tmp,v);
-      int res=vsnprintf(GetSpace(size), size, f, v);
+      int res=vsnprintf(GetSpace(size), size, f, tmp);
       va_end(tmp);
       if(res>=0 && res<size)
       {
