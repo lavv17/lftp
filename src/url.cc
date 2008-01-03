@@ -417,8 +417,7 @@ const char *url::encode(const char *s,const char *unsafe)
 {
    if(!s || !*s)
       return s;
-   static xstring u("");
-   u.truncate(0);
+   xstring& u=xstring::get_tmp("");
    char c;
    while((c=*s++))
    {
