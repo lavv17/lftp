@@ -1,6 +1,8 @@
 2008-01-03  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* buffer.cc: use copy of va_list properly (fixes a coredump on some systems).
+	* url.cc: (encode) use xstring::get_tmp to allow several encode calls at once.
+	* HttpDir.cc: init link_target properly (fixes NULL pointer fault).
 
 2007-12-28  Alexander V. Lukyanov <lav@yars.free.net>
 

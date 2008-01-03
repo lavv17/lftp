@@ -70,6 +70,8 @@ static bool find_value(const char *scan,const char *more,const char *name,xstrin
       if(*scan=='"' || *scan=='\'')
 	 quote=*scan++;
 
+      if(match)
+	 store.set("");
       while(scan<more && (quote ? *scan!=quote : !is_ascii_space(*scan)))
       {
 	 if(match)
