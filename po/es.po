@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.6.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2008-01-03 11:58+0300\n"
+"POT-Creation-Date: 2008-01-03 12:48+0300\n"
 "PO-Revision-Date: 2002-08-08 19:01+0000\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -2064,7 +2064,7 @@ msgstr "ftp:ssl-auth debe estar entre: SSL, TLS, TLS-P, TLS-C"
 msgid "must be one of: C, S, E, P, or empty"
 msgstr ""
 
-#: src/HttpDir.cc:1315 src/FtpDirList.cc:127 src/Fish.cc:1170 src/SFtp.cc:2122
+#: src/HttpDir.cc:1317 src/FtpDirList.cc:127 src/Fish.cc:1170 src/SFtp.cc:2122
 #: src/SFtp.cc:2201
 #, c-format
 msgid "Getting file list (%lld) [%s]"

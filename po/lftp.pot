@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.6.2\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2008-01-03 11:58+0300\n"
+"POT-Creation-Date: 2008-01-03 12:48+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1806,7 +1806,7 @@ msgstr ""
 msgid "must be one of: C, S, E, P, or empty"
 msgstr ""
 
-#: src/HttpDir.cc:1315 src/FtpDirList.cc:127 src/Fish.cc:1170 src/SFtp.cc:2122
+#: src/HttpDir.cc:1317 src/FtpDirList.cc:127 src/Fish.cc:1170 src/SFtp.cc:2122
 #: src/SFtp.cc:2201
 #, c-format
 msgid "Getting file list (%lld) [%s]"
