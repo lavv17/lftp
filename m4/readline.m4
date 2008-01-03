@@ -1,9 +1,9 @@
 dnl Check for libreadline of proper version
 AC_DEFUN([READLINE_CHECK],
 [AC_MSG_CHECKING(for readline)
-AC_ARG_WITH(included-readline,
-   [  --with-included-readline  use supplied readline instead of system one],
-   [with_included_readline=$withval],[with_included_readline=auto])
+dnl AC_ARG_WITH(included-readline,
+dnl    [  --with-included-readline  use supplied readline instead of system one],
+dnl    [with_included_readline=$withval],[with_included_readline=auto])
 case "$with_included_readline" in
 yes) lftp_cv_precompiled_readline=no;;
 no)  lftp_cv_precompiled_readline=yes;;
@@ -31,7 +31,10 @@ if test $lftp_cv_precompiled_readline = yes; then
    COMPILE_READLINE=no
 else
    READLINE_DIR=readline-4.3
-   AC_CONFIG_SUBDIRS(readline-4.3)
+   if ! -d $READLINE_DIR; then
+      AC_MSG_ERROR(need installed readline-devel package)
+   fi
+dnl   AC_CONFIG_SUBDIRS(readline-4.3)
    AC_MSG_RESULT(no - will compile)
    AC_CONFIG_LINKS([include/readline:$READLINE_DIR])
    READLINE='$(top_builddir)/$(READLINE_DIR)/libreadline.a'
