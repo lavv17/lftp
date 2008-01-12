@@ -2536,7 +2536,7 @@ CMD(help)
 CMD(ver)
 {
    printf(
-      _("LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"),VERSION,2007);
+      _("LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"),VERSION,2008);
    printf("\n");
    printf(
       _("LFTP is free software, covered by the GNU General Public License, and you are\n"
