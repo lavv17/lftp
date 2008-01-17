@@ -833,7 +833,7 @@ void SFtp::HandleExpect(Expect *e)
 	 xstring handle_x("");
 	 int handle_len=handle.length();
 	 for(int i=0; i<handle_len; i++)
-	    handle_x.appendf("%02X",handle[i]);
+	    handle_x.appendf("%02X",(unsigned char)handle[i]);
 	 LogNote(9,"got file handle %s (%d)",handle_x.get(),handle_len);
 	 request_pos=real_pos=pos;
 	 if(mode==RETRIEVE)

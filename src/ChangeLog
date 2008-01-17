@@ -1,3 +1,7 @@
+2008-01-17  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SFtp.cc: fixed hex printing of the handle.
+
 2008-01-03  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* buffer.cc: use copy of va_list properly (fixes a coredump on some systems).
