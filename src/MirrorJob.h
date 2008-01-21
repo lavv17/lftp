@@ -67,8 +67,8 @@ class MirrorJob : public Job
    bool create_target_dir;
    bool	no_target_dir;	   // target directory does not exist (for script_only)
 
-   Ref<ListInfo> source_list_info;
-   Ref<ListInfo> target_list_info;
+   SMTaskRef<ListInfo> source_list_info;
+   SMTaskRef<ListInfo> target_list_info;
 
    xstring_c source_dir;
    xstring_c source_relative_dir;
