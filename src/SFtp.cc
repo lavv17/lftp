@@ -587,8 +587,13 @@ void SFtp::SendRequest()
       state=WAITING;
       break;
    case STORE:
-      SendRequest(new Request_OPEN(WirePath(file),SSH_FXF_WRITE|SSH_FXF_CREAT,
-	 ACE4_WRITE_DATA|ACE4_WRITE_ATTRIBUTES,SSH_FXF_OPEN_OR_CREATE,protocol_version),Expect::HANDLE);
+      SendRequest(
+	 new Request_OPEN(WirePath(file),
+	    SSH_FXF_WRITE|SSH_FXF_CREAT|(pos==0?SSH_FXF_TRUNC:0),
+	    ACE4_WRITE_DATA|ACE4_WRITE_ATTRIBUTES,
+	    pos==0?SSH_FXF_CREATE_TRUNCATE:SSH_FXF_OPEN_OR_CREATE,
+	    protocol_version),
+	 Expect::HANDLE);
       state=WAITING;
       break;
    case ARRAY_INFO:
@@ -840,7 +845,7 @@ void SFtp::HandleExpect(Expect *e)
 	    SendRequest(new Request_FSTAT(handle,
 	       SSH_FILEXFER_ATTR_SIZE|SSH_FILEXFER_ATTR_MODIFYTIME|SSH_FILEXFER_ATTR_PERMISSIONS,
 	       protocol_version),Expect::INFO);
-	 else if(mode==STORE)
+	 else if(mode==STORE && pos>0)
 	 {
 	    // truncate the file at write position.
 	    Request_FSETSTAT *req=new Request_FSETSTAT(handle,protocol_version);
