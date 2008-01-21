@@ -293,6 +293,7 @@ static ResType lftp_vars[] = {
    {"sftp:connect-program",	 "ssh -a -x",0,0},
    {"sftp:server-program",	 "sftp",  0,0},
    {"sftp:charset",		 "",	  ResMgr::CharsetValidate,0},
+   {"sftp:use-full-path",	 "no",	  0,0},
 
    {"file:charset",		 "",	  ResMgr::CharsetValidate,ResMgr::NoClosure},
 

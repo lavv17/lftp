@@ -732,6 +732,7 @@ private:
    int max_packets_in_flight_slow_start;
    int size_read;
    int size_write;
+   bool use_full_path;
 
 protected:
    void SetError(int code,const Packet *reply);

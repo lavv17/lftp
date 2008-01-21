@@ -31,6 +31,7 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <stddef.h>
 
 #define max_buf 0x10000
 
@@ -359,6 +360,7 @@ void SFtp::Init()
    max_packets_in_flight_slow_start=1;
    size_read=0x8000;
    size_write=0x8000;
+   use_full_path=false;
    flush_timer.Set(0,500);
 }
 
@@ -560,7 +562,9 @@ const char *SFtp::SkipHome(const char *path)
 }
 const char *SFtp::WirePath(const char *path)
 {
-   path=SkipHome(dir_file(cwd,path));
+   path=dir_file(cwd,path);
+   if(!use_full_path || path[0]=='~')
+      path=SkipHome(path);
    LogNote(9,"path on wire is `%s'",path);
    return lc_to_utf8(path);
 }
@@ -1378,11 +1382,12 @@ void SFtp::Reconfig(const char *name)
       size_read=16;
    if(size_write<16)
       size_write=16;
+   use_full_path=QueryBool("use-full-path",c);
    if(!xstrcmp(name,"sftp:charset") && protocol_version && protocol_version<4)
    {
       if(!IsSuspended())
 	 cache->TreeChanged(this,"/");
-      const char *charset=ResMgr::Query("fish:charset",hostname);
+      const char *charset=ResMgr::Query("sftp:charset",hostname);
       if(charset && *charset)
       {
 	 if(!send_translate)
@@ -1391,6 +1396,11 @@ void SFtp::Reconfig(const char *name)
 	    recv_translate=new DirectedBuffer(DirectedBuffer::GET);
 	 send_translate->SetTranslation(charset,false);
 	 recv_translate->SetTranslation(charset,true);
+      }
+      else
+      {
+	 send_translate=0;
+	 recv_translate=0;
       }
    }
 }
