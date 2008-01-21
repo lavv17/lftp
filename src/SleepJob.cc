@@ -22,6 +22,7 @@
 
 #include <config.h>
 #include <ctype.h>
+#include <stddef.h>
 #include "SleepJob.h"
 #include "CmdExec.h"
 #include "misc.h"

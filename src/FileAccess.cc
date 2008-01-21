@@ -29,6 +29,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <assert.h>
+#include <stddef.h>
 #include "ascii_ctype.h"
 #include <fcntl.h>
 #include "LsCache.h"
