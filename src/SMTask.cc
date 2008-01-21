@@ -190,7 +190,7 @@ int SMTask::CollectGarbage()
 	 count++;
 	 if(scan->next)
 	 {
-	    Enter(scan->next); // protect it from deleting
+	    Enter(scan->next); // protect it from deleting (in scan's dtor)
 	    delete scan;
 	    Leave(scan=current);
 	 }
