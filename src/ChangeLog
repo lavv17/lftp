@@ -3,6 +3,7 @@
 	* MirrorJob.h: use SMTaskRef properly (fixes kill all core dump).
 	* SFtp.cc: don't use FSETSTAT to truncate the file on upload when
 	  not needed (pos==0 can use open mode with truncation).
+	* Fish.cc: unset translation when charset is set to an empty string.
 
 2008-01-17  Alexander V. Lukyanov <lav@yars.free.net>
 

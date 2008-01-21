@@ -19,6 +19,7 @@
  */
 
 #include <config.h>
+#include <stddef.h>
 #include "Fish.h"
 #include "trio.h"
 #include <unistd.h>
@@ -1068,6 +1069,11 @@ void Fish::Reconfig(const char *name)
       {
 	 send_buf->SetTranslation(charset,false);
 	 recv_buf->SetTranslation(charset,true);
+      }
+      else
+      {
+	 send_buf->SetTranslator(0);
+	 recv_buf->SetTranslator(0);
       }
    }
 }
