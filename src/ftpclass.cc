@@ -271,7 +271,7 @@ void Ftp::NoFileCheck(int act)
    }
    if(is5XX(act) && !Transient5XX(act))
    {
-      if(real_pos>0 && !(flags&IO_FLAG) && copy_mode==COPY_NONE)
+      if(real_pos>0 && !GetFlag(IO_FLAG) && copy_mode==COPY_NONE)
       {
 	 DataClose();
 	 LogNote(2,_("Switching to NOREST mode"));
@@ -293,7 +293,7 @@ void Ftp::NoFileCheck(int act)
    DataClose();
    state=EOF_STATE;
    eof=false;
-   if(mode==STORE && (flags&IO_FLAG))
+   if(mode==STORE && GetFlag(IO_FLAG))
       SetError(STORE_FAILED,0);
    else if(NextTry())
       retry_timer.Set(2); // retry after 2 seconds
@@ -319,7 +319,7 @@ bool Ftp::Transient5XX(int act)
    || (strstr(line,"timed out")   && (!file || !strstr(file,"timed out")))
    || (strstr(line,"closed by the remote host"))
    // if there were some data received, assume it is temporary error.
-   || (mode!=STORE && (flags&IO_FLAG)))
+   || (mode!=STORE && GetFlag(IO_FLAG)))
       return true;
 
    return false;
@@ -1207,6 +1207,8 @@ int   Ftp::Do()
       expect=new ExpectQueue();
 
       conn->proxy_is_http=ProxyIsHttp();
+      if(conn->proxy_is_http)
+	 SetFlag(PASSIVE_MODE,1);
 
       conn->peer_sa=peer[peer_curr];
       conn->control_sock=SocketCreateTCP(conn->peer_sa.sa.sa_family);
@@ -1375,7 +1377,7 @@ int   Ftp::Do()
    }
 
    case(USER_RESP_WAITING_STATE):
-      if(((flags&SYNC_MODE) || (user && pass && allow_skey))
+      if((GetFlag(SYNC_MODE) || (user && pass && allow_skey))
       && !expect->IsEmpty())
       {
 	 m|=FlushSendQueue();
@@ -1562,7 +1564,7 @@ int   Ftp::Do()
       if(!conn->rest_supported)
 	 flags|=NOREST_MODE;
 
-      if(mode==STORE && (flags&NOREST_MODE) && pos>0)
+      if(mode==STORE && GetFlag(NOREST_MODE) && pos>0)
 	 pos=0;
 
       if(copy_mode==COPY_NONE
@@ -1653,7 +1655,7 @@ int   Ftp::Do()
 	       SocketNumericAddress(&conn->data_sa),port,strerror(saved_errno));
 	 }
 
-	 if(!(flags&PASSIVE_MODE))
+	 if(!GetFlag(PASSIVE_MODE))
 	    listen(conn->data_sock,1);
 
 	 // get the allocated port
@@ -1662,7 +1664,7 @@ int   Ftp::Do()
       }
 
       char want_type=(ascii?'A':'I');
-      if((flags&NOREST_MODE) || pos==0)
+      if(GetFlag(NOREST_MODE) || pos==0)
 	 real_pos=0;
       else
 	 real_pos=-1;	// we don't yet know if REST will succeed
@@ -1853,7 +1855,7 @@ int   Ftp::Do()
 	 goto pre_WAITING_STATE;
       }
 
-      if((copy_mode==COPY_NONE && (flags&PASSIVE_MODE))
+      if((copy_mode==COPY_NONE && GetFlag(PASSIVE_MODE))
       || (copy_mode!=COPY_NONE && copy_passive))
       {
 	 if(use_pret && conn->pret_supported)
@@ -1966,7 +1968,7 @@ int   Ftp::Do()
       m=MOVED;
       if(copy_mode!=COPY_NONE && !copy_passive)
 	 goto pre_WAITING_STATE;
-      if((copy_mode==COPY_NONE && (flags&PASSIVE_MODE))
+      if((copy_mode==COPY_NONE && GetFlag(PASSIVE_MODE))
       || (copy_mode!=COPY_NONE && copy_passive))
       {
 	 state=DATASOCKET_CONNECTING_STATE;
@@ -2211,7 +2213,7 @@ int   Ftp::Do()
 	 {
 	    DataClose();
 	    state=EOF_STATE;
-	    if(mode==STORE && (flags&IO_FLAG))
+	    if(mode==STORE && GetFlag(IO_FLAG))
 	       SetError(STORE_FAILED,0);
 	    else if(NextTry())
 	       retry_timer.Set(2); // retry after 2 seconds
@@ -2509,7 +2511,7 @@ void Ftp::SendArrayInfoRequests()
       }
       else
       {
-	 if(flags&SYNC_MODE)
+	 if(GetFlag(SYNC_MODE))
 	    break;	   // don't flood the queues.
       }
    }
@@ -2856,7 +2858,7 @@ void  Ftp::DataAbort()
       // check that we have a data socket to close, and the server is not
       // in uninterruptible accept() state.
       if(copy_mode==COPY_NONE
-      && !((flags&PASSIVE_MODE) && state==DATASOCKET_CONNECTING_STATE
+      && !(GetFlag(PASSIVE_MODE) && state==DATASOCKET_CONNECTING_STATE
            && (pasv_state==PASV_NO_ADDRESS_YET || pasv_state==PASV_HAVE_ADDRESS)))
 	 DataClose();	// just close data connection
       else
@@ -2910,7 +2912,7 @@ void  Ftp::DisconnectNow()
    }
    else
    {
-      if(mode==STORE && (flags&IO_FLAG))
+      if(mode==STORE && GetFlag(IO_FLAG))
 	 SetError(STORE_FAILED,0);
    }
    copy_addr_valid=false;
@@ -3080,7 +3082,7 @@ int  Ftp::FlushSendQueue(bool all)
    if(conn->send_cmd_buffer.Size()==0)
       return m;
 
-   while(conn->sync_wait<=0 || all || !(flags&SYNC_MODE))
+   while(conn->sync_wait<=0 || all || !GetFlag(SYNC_MODE))
    {
       int res=conn->FlushSendQueueOneCmd();
       if(!res)
@@ -3689,7 +3691,7 @@ void Ftp::TurnOffStatForList()
 void Ftp::CheckResp(int act)
 {
    // close aborted accepting data socket when the connection is established
-   if(is1XX(act) && (flags&PASSIVE_MODE) && conn->aborted_data_sock!=-1)
+   if(is1XX(act) && GetFlag(PASSIVE_MODE) && conn->aborted_data_sock!=-1)
       conn->CloseAbortedDataConnection();
 
    if(is1XX(act) && expect->FirstIs(Expect::TRANSFER))
@@ -3743,7 +3745,7 @@ void Ftp::CheckResp(int act)
    const char *arg=exp->arg;
 
    // some servers mess all up
-   if(act==331 && cc==Expect::READY && !(flags&SYNC_MODE) && expect->Count()>1)
+   if(act==331 && cc==Expect::READY && !GetFlag(SYNC_MODE) && expect->Count()>1)
    {
       delete expect->Pop();
       LogNote(2,_("Turning on sync-mode"));
@@ -3770,11 +3772,11 @@ void Ftp::CheckResp(int act)
       break;
 
    case Expect::READY:
-      if(!(flags&SYNC_MODE) && re_match(all_lines,Query("auto-sync-mode",hostname)))
+      if(!GetFlag(SYNC_MODE) && re_match(all_lines,Query("auto-sync-mode",hostname)))
       {
 	 LogNote(2,_("Turning on sync-mode"));
 	 ResMgr::Set("ftp:sync-mode",hostname,"on");
-	 assert(flags&SYNC_MODE);
+	 assert(GetFlag(SYNC_MODE));
 	 Disconnect();
 	 try_time=0; // retry immediately
       }
@@ -4266,7 +4268,8 @@ void Ftp::Reconfig(const char *name)
    }
 
    SetFlag(SYNC_MODE,	QueryBool("sync-mode"));
-   SetFlag(PASSIVE_MODE,QueryBool("passive-mode"));
+   if(!conn || !conn->proxy_is_http)
+      SetFlag(PASSIVE_MODE,QueryBool("passive-mode"));
    rest_list = QueryBool("rest-list");
 
    nop_interval = Query("nop-interval");
