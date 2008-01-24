@@ -39,8 +39,8 @@ CDECL const char *strerror(int);
 #endif
 
 #include <gettext.h>
-#define _(Text) gettext (Text)
-#define N_(Text) Text
+#define _(msgid) gettext (msgid)
+#define N_(msgid) msgid
 
 #ifndef PARAMS
 # if defined __STDC__ || defined __cplusplus
