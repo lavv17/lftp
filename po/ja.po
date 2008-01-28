@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2008-01-03 12:48+0300\n"
+"POT-Creation-Date: 2008-01-28 08:29+0300\n"
 "PO-Revision-Date: 2002-04-12 00:06+0900\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -95,47 +95,47 @@ msgstr "\tコマンドを待っています\n"
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: コマンド `%s'はコンパイル時に組み込まれていません。\n"
 
-#: src/FileAccess.cc:212
+#: src/FileAccess.cc:213
 #, fuzzy
 msgid "Access failed: "
 msgstr "アクセス失敗: %s"
 
-#: src/FileAccess.cc:213
+#: src/FileAccess.cc:214
 msgid "File cannot be accessed"
 msgstr "ファイルにアクセスできません"
 
-#: src/FileAccess.cc:215 src/ftpclass.cc:4059 src/ftpclass.cc:4068
-#: src/Fish.cc:1003 src/SFtp.cc:1302
+#: src/FileAccess.cc:216 src/ftpclass.cc:4061 src/ftpclass.cc:4070
+#: src/Fish.cc:1004 src/SFtp.cc:1311
 msgid "Not connected"
 msgstr "接続されていません"
 
-#: src/FileAccess.cc:218 src/FileAccess.cc:219
+#: src/FileAccess.cc:219 src/FileAccess.cc:220
 msgid "Fatal error"
 msgstr "致命的エラー"
 
-#: src/FileAccess.cc:221
+#: src/FileAccess.cc:222
 msgid "Store failed - you have to reput"
 msgstr "保存失敗 - reput する必要があります"
 
-#: src/FileAccess.cc:224 src/FileAccess.cc:225
+#: src/FileAccess.cc:225 src/FileAccess.cc:226
 msgid "Login failed"
 msgstr "ログインに失敗しました"
 
-#: src/FileAccess.cc:228 src/FileAccess.cc:229
+#: src/FileAccess.cc:229 src/FileAccess.cc:230
 msgid "Operation not supported"
 msgstr "その操作はサポートされていません"
 
-#: src/FileAccess.cc:232
+#: src/FileAccess.cc:233
 #, fuzzy
 msgid "File moved"
 msgstr "移動されたファイル: %s"
 
-#: src/FileAccess.cc:234
+#: src/FileAccess.cc:235
 #, fuzzy
 msgid "File moved to `"
 msgstr "ファイルを `%s' へ移動しました"
 
-#: src/FileAccess.cc:913 src/buffer.cc:231
+#: src/FileAccess.cc:914 src/buffer.cc:231
 msgid " [cached]"
 msgstr ""
 
@@ -271,7 +271,7 @@ msgstr "%s: %s の書き込みでエラー: %s\n"
 #: src/commands.cc:2012 src/commands.cc:2208 src/commands.cc:2371
 #: src/commands.cc:2378 src/commands.cc:2646 src/commands.cc:2673
 #: src/commands.cc:2680 src/commands.cc:3004 src/lftp.cc:258
-#: src/SleepJob.cc:125 src/SleepJob.cc:181
+#: src/SleepJob.cc:126 src/SleepJob.cc:182
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "`help %s' でより詳しい情報が得られます。\n"
@@ -350,7 +350,7 @@ msgstr "この設定では終止が定義されていません"
 msgid "invalid pair of numbers"
 msgstr "不正な数"
 
-#: src/Resolver.cc:164 src/Resolver.cc:206 src/ftpclass.cc:4064
+#: src/Resolver.cc:164 src/Resolver.cc:206 src/ftpclass.cc:4066
 #: src/Http.cc:1822
 msgid "Resolving host address..."
 msgstr "ホストアドレスを解決しています..."
@@ -1711,7 +1711,7 @@ msgstr "EPSV レスポンスを解析できません"
 msgid "Closing control socket"
 msgstr "コントロールソケットを閉じています"
 
-#: src/ftpclass.cc:1107 src/Http.cc:902 src/Fish.cc:75 src/SFtp.cc:80
+#: src/ftpclass.cc:1107 src/Http.cc:902 src/Fish.cc:76 src/SFtp.cc:81
 msgid "Closing idle connection"
 msgstr "アイドル状態の接続を閉じます"
 
@@ -1725,163 +1725,163 @@ msgstr "SITE CHMOD はこのサイトではサポートされていません"
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "SITE CHMOD はこのサイトではサポートされていません"
 
-#: src/ftpclass.cc:1228 src/Http.cc:1034
+#: src/ftpclass.cc:1230 src/Http.cc:1034
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "アドレスファミリ %d のソケットを作れません"
 
-#: src/ftpclass.cc:1463
+#: src/ftpclass.cc:1465
 msgid "SITE CHMOD is not supported by this site"
 msgstr "SITE CHMOD はこのサイトではサポートされていません"
 
-#: src/ftpclass.cc:1468
+#: src/ftpclass.cc:1470
 #, fuzzy
 msgid "MLST and MLSD are not supported by this site"
 msgstr "SITE CHMOD はこのサイトではサポートされていません"
 
-#: src/ftpclass.cc:1888 src/ftpclass.cc:1938
+#: src/ftpclass.cc:1890 src/ftpclass.cc:1940
 msgid "unsupported network protocol"
 msgstr "サポートされていないネットワークプロトコルです"
 
-#: src/ftpclass.cc:2018
+#: src/ftpclass.cc:2020
 #, fuzzy, c-format
 msgid "Accepted data connection from (%s) port %u"
 msgstr "データソケットを (%s) のポート %u に接続中"
 
-#: src/ftpclass.cc:2060
+#: src/ftpclass.cc:2062
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "データソケットを (%s) のポート %u に接続中"
 
-#: src/ftpclass.cc:2066
+#: src/ftpclass.cc:2068
 #, fuzzy, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "データソケットを (%s) のポート %u に接続中"
 
-#: src/ftpclass.cc:2085 src/ftpclass.cc:3890
+#: src/ftpclass.cc:2087 src/ftpclass.cc:3892
 msgid "Switching passive mode off"
 msgstr "パッシヴモードをオフに切り替えました"
 
-#: src/ftpclass.cc:2093
+#: src/ftpclass.cc:2095
 #, fuzzy
 msgid "Data connection established"
 msgstr "データ接続ピアのアドレスが一致しません"
 
-#: src/ftpclass.cc:2372 src/ftpclass.cc:4012
+#: src/ftpclass.cc:2374 src/ftpclass.cc:4014
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force がセットされていますが、サーバは SSL をサポートあるいは許可して"
 "いません"
 
-#: src/ftpclass.cc:2551 src/ftpclass.cc:2754 src/Http.cc:1118 src/Fish.cc:571
-#: src/SFtp.cc:738 src/SFtp.cc:1049
+#: src/ftpclass.cc:2553 src/ftpclass.cc:2756 src/Http.cc:1118 src/Fish.cc:572
+#: src/SFtp.cc:747 src/SFtp.cc:1058
 msgid "Peer closed connection"
 msgstr "ピアが接続を閉じました"
 
-#: src/ftpclass.cc:2700
+#: src/ftpclass.cc:2702
 msgid "Persist and retry"
 msgstr "持続的に再試行します"
 
-#: src/ftpclass.cc:2967
+#: src/ftpclass.cc:2969
 msgid "Closing data socket"
 msgstr "データソケットを閉じています"
 
-#: src/ftpclass.cc:2989
+#: src/ftpclass.cc:2991
 #, fuzzy
 msgid "Closing aborted data socket"
 msgstr "データソケットを閉じています"
 
-#: src/ftpclass.cc:3719
+#: src/ftpclass.cc:3721
 msgid "saw file size in response"
 msgstr "レスポンス中にファイルサイズがありました"
 
-#: src/ftpclass.cc:3735 src/Fish.cc:652 src/SFtp.cc:1074
+#: src/ftpclass.cc:3737 src/Fish.cc:653 src/SFtp.cc:1083
 msgid "extra server response"
 msgstr "余分なサーバレスポンスです"
 
-#: src/ftpclass.cc:3749 src/ftpclass.cc:3775
+#: src/ftpclass.cc:3751 src/ftpclass.cc:3777
 msgid "Turning on sync-mode"
 msgstr "sync モードを有効にしました"
 
-#: src/ftpclass.cc:3910
+#: src/ftpclass.cc:3912
 msgid "Switching passive mode on"
 msgstr "パッシヴモードをオンに切り替えました"
 
-#: src/ftpclass.cc:4045
+#: src/ftpclass.cc:4047
 #, fuzzy
 msgid "FEAT negotiation..."
 msgstr "TLS ネゴシエーション..."
 
-#: src/ftpclass.cc:4052
+#: src/ftpclass.cc:4054
 msgid "Sending commands..."
 msgstr "コマンドを送信中..."
 
-#: src/ftpclass.cc:4054 src/ftpclass.cc:4082 src/ftpclass.cc:4096
-#: src/Http.cc:1837 src/Fish.cc:1012 src/SFtp.cc:1312
+#: src/ftpclass.cc:4056 src/ftpclass.cc:4084 src/ftpclass.cc:4098
+#: src/Http.cc:1837 src/Fish.cc:1013 src/SFtp.cc:1321
 msgid "Waiting for response..."
 msgstr "応答を待っています..."
 
-#: src/ftpclass.cc:4056
+#: src/ftpclass.cc:4058
 #, fuzzy
 msgid "Delaying before retry"
 msgstr "再接続を遅延しています"
 
-#: src/ftpclass.cc:4057 src/Http.cc:1830
+#: src/ftpclass.cc:4059 src/Http.cc:1830
 msgid "Connection idle"
 msgstr "接続アイドル"
 
-#: src/ftpclass.cc:4071 src/Http.cc:1828 src/Http.cc:1835 src/Fish.cc:1008
-#: src/SFtp.cc:1308
+#: src/ftpclass.cc:4073 src/Http.cc:1828 src/Http.cc:1835 src/Fish.cc:1009
+#: src/SFtp.cc:1317
 msgid "Connecting..."
 msgstr "接続中..."
 
-#: src/ftpclass.cc:4075
+#: src/ftpclass.cc:4077
 msgid "TLS negotiation..."
 msgstr "TLS ネゴシエーション..."
 
-#: src/ftpclass.cc:4077 src/Fish.cc:1010 src/SFtp.cc:1310
+#: src/ftpclass.cc:4079 src/Fish.cc:1011 src/SFtp.cc:1319
 msgid "Connected"
 msgstr "接続しました"
 
-#: src/ftpclass.cc:4079
+#: src/ftpclass.cc:4081
 msgid "Logging in..."
 msgstr "ログインしています..."
 
-#: src/ftpclass.cc:4083
+#: src/ftpclass.cc:4085
 msgid "Making data connection..."
 msgstr "データ接続を確立中..."
 
-#: src/ftpclass.cc:4086
+#: src/ftpclass.cc:4088
 msgid "Changing remote directory..."
 msgstr "リモートディレクトリを変更中..."
 
-#: src/ftpclass.cc:4092
+#: src/ftpclass.cc:4094
 msgid "Waiting for other copy peer..."
 msgstr "他のコピー相手を待っています..."
 
-#: src/ftpclass.cc:4094 src/ftpclass.cc:4116
+#: src/ftpclass.cc:4096 src/ftpclass.cc:4118
 msgid "Waiting for transfer to complete"
 msgstr "送受信の完了を待っています"
 
-#: src/ftpclass.cc:4098
+#: src/ftpclass.cc:4100
 msgid "Waiting for data connection..."
 msgstr "データ接続を待っています..."
 
-#: src/ftpclass.cc:4104
+#: src/ftpclass.cc:4106
 #, fuzzy
 msgid "Sending data/TLS"
 msgstr "データ送信中"
 
-#: src/ftpclass.cc:4106
+#: src/ftpclass.cc:4108
 #, fuzzy
 msgid "Receiving data/TLS"
 msgstr "データ受信中"
 
-#: src/ftpclass.cc:4112 src/Http.cc:1833 src/Fish.cc:1016 src/SFtp.cc:1316
+#: src/ftpclass.cc:4114 src/Http.cc:1833 src/Fish.cc:1017 src/SFtp.cc:1325
 msgid "Sending data"
 msgstr "データ送信中"
 
-#: src/ftpclass.cc:4114 src/Http.cc:1840 src/Fish.cc:1014 src/SFtp.cc:1314
+#: src/ftpclass.cc:4116 src/Http.cc:1840 src/Fish.cc:1015 src/SFtp.cc:1323
 msgid "Receiving data"
 msgstr "データ受信中"
 
@@ -2089,8 +2089,8 @@ msgstr ""
 msgid "must be one of: C, S, E, P, or empty"
 msgstr ""
 
-#: src/HttpDir.cc:1317 src/FtpDirList.cc:127 src/Fish.cc:1170 src/SFtp.cc:2122
-#: src/SFtp.cc:2201
+#: src/HttpDir.cc:1317 src/FtpDirList.cc:127 src/Fish.cc:1176 src/SFtp.cc:2137
+#: src/SFtp.cc:2216
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "ファイルリスト (%lld) [%s] を取得中"
@@ -2308,12 +2308,12 @@ msgstr "最大再試行回数を超えました"
 msgid "%s: BUG - deadlock detected\n"
 msgstr "%s: バグ - デッドロックが検出されました\n"
 
-#: src/SleepJob.cc:101
+#: src/SleepJob.cc:102
 #, c-format
 msgid "\tRepeat count: %d\n"
 msgstr "\tリピート回数: %d\n"
 
-#: src/SleepJob.cc:123
+#: src/SleepJob.cc:124
 #, c-format
 msgid "%s: argument required. "
 msgstr "%s: 引数が必要です。"
@@ -2335,25 +2335,25 @@ msgstr ""
 msgid "total"
 msgstr ""
 
-#: src/Fish.cc:154 src/SFtp.cc:182
+#: src/Fish.cc:155 src/SFtp.cc:183
 msgid "Running connect program"
 msgstr ""
 
-#: src/Fish.cc:312 src/SFtp.cc:323
+#: src/Fish.cc:313 src/SFtp.cc:324
 #, fuzzy
 msgid "Disconnecting"
 msgstr "接続中..."
 
-#: src/Fish.cc:599 src/SFtp.cc:717
+#: src/Fish.cc:600 src/SFtp.cc:726
 #, fuzzy
 msgid "Password required"
 msgstr "パスワード: "
 
-#: src/Fish.cc:604 src/SFtp.cc:722
+#: src/Fish.cc:605 src/SFtp.cc:731
 msgid "Login incorrect"
 msgstr ""
 
-#: src/Fish.cc:1018 src/SFtp.cc:1318
+#: src/Fish.cc:1019 src/SFtp.cc:1327
 msgid "Done"
 msgstr ""
 
@@ -2397,7 +2397,7 @@ msgstr ""
 msgid "Commands queued:"
 msgstr ""
 
-#: src/SFtp.cc:1065
+#: src/SFtp.cc:1074
 #, fuzzy
 msgid "invalid server response format"
 msgstr "余分なサーバレスポンスです"

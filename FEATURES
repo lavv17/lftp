@@ -3,7 +3,7 @@ LFTP includes the following features (some may be missed in this list):
 * FTP and HTTP protocols support.
 * FTP (e.g. TIS FWTK) proxy support.
 * HTTP proxy support.
-* FTP over HTTP proxy support (hftp).
+* FTP over HTTP proxy support (hftp and CONNECT method).
 * HTTPS and FTPS protocols support using GNU TLS or OpenSSL library.
 * Automatic OPIE/SKEY support in FTP protocol.
 * FXP transfers support (between two FTP servers, bypassing client machine).

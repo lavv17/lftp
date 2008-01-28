@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
-AC_INIT([lftp], [3.6.2], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [3.6.3], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_LIBOBJ_DIR([lib])
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
@@ -131,6 +131,8 @@ gl_XALLOC
 # for lib/modechange.{c,h}
 gl_MODECHANGE
 AC_CONFIG_LINKS([include/modechange.h:lib/modechange.h])
+
+LE_FUNC_WCWIDTH_REPLACE
 
 # for src/mbrtowc.{c,h}
 gl_FUNC_MBRTOWC

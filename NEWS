@@ -1,3 +1,13 @@
+Version 3.6.3 - 2008-01-28
+
+* new setting sftp:use-full-path to send full path instead of home-relative.
+* don't use sftp FSETSTAT when not needed.
+* fixed core dump on `kill all' with mirror.
+* fixed sftp:charset setting.
+* fixed debug printing of sftp file handle.
+* fixed unsetting of fish:charset setting.
+* fixed compilation on systems lacking wcwidth.
+
 Version 3.6.2 - 2008-01-03
 
 * added a workaround for ftp servers which don't open data connection in

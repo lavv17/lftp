@@ -25,7 +25,7 @@ implemented.
 
  * http: ls -a to see all links, even off-site.
 
- * `local' (or `reverse') command to swap local/remote, e.g.
+?* `local' (or `reverse') command to swap local/remote, e.g.
       mirror -R = local mirror
       put = local get
    of course, implement commands using two sessions where possible.
