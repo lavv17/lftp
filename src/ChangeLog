@@ -1,3 +1,10 @@
+2008-01-31  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h, resource.cc: (ftp:waiting-150-timeout) new setting;
+	  limit time to wait for 150 reply; stop waiting for 150 reply after receiving
+	  another reply.
+	* FileCopy.cc: (xfer:buffer-size) new setting.
+
 2008-01-23  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: always use passive mode for proxy_is_http==true;

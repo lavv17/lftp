@@ -328,6 +328,9 @@ bool Ftp::Transient5XX(int act)
 // 226 Transfer complete.
 void Ftp::TransferCheck(int act)
 {
+   if(state==WAITING_150_STATE)
+      conn->received_150=true;
+
    if(act==225 || act==226) // data connection is still open or ABOR worked.
    {
       copy_done=true;
@@ -2111,13 +2114,14 @@ int   Ftp::Do()
 
    pre_waiting_150:
       state=WAITING_150_STATE;
+      waiting_150_timer.Reset();
       m=MOVED;
    case WAITING_150_STATE:
       m|=FlushSendQueue();
       m|=ReceiveResp();
       if(state!=WAITING_150_STATE || Error())
          return MOVED;
-      if(!conn->received_150)
+      if(!conn->received_150 && !expect->IsEmpty() && !waiting_150_timer.Stopped())
 	 goto usual_return;
 
       // now init data connection properly and start data exchange
@@ -4245,6 +4249,7 @@ void Ftp::ResetLocationData()
    Reconfig();
    state=INITIAL_STATE;
    stat_timer.SetResource("ftp:stat-interval",hostname);
+   waiting_150_timer.SetResource("ftp:waiting-150-timeout",hostname);
 }
 
 bool Ftp::AnonymousQuietMode()

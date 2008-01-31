@@ -54,6 +54,7 @@
 ResDecl rate_period  ("xfer:rate-period","15", ResMgr::UNumberValidate,ResMgr::NoClosure);
 ResDecl eta_period   ("xfer:eta-period", "120",ResMgr::UNumberValidate,ResMgr::NoClosure);
 ResDecl max_redir    ("xfer:max-redirections", "5",ResMgr::UNumberValidate,ResMgr::NoClosure);
+ResDecl buffer_size  ("xfer:buffer-size","0x10000",ResMgr::UNumberValidate,ResMgr::NoClosure);
 
 // FileCopy
 #define super SMTask
@@ -413,7 +414,9 @@ FileCopy::FileCopy(FileCopyPeer *s,FileCopyPeer *d,bool c)
    rate_for_eta(new Speedometer("xfer:eta-period"))
 {
    set_state(INITIAL);
-   max_buf=0x10000;
+   max_buf=buffer_size.Query(0);
+   if(max_buf<1)
+      max_buf=1;
    put_buf=0;
    put_eof_pos=0;
    bytes_count=0;

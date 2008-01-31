@@ -295,6 +295,7 @@ private:
 
    Timer retry_timer;
    Timer stat_timer;	   // timer for sending periodic STAT commands.
+   Timer waiting_150_timer;   // limit time to wait for 150 reply.
 
    void	 DataAbort();
    void  DataClose();

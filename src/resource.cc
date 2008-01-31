@@ -223,6 +223,7 @@ static ResType lftp_vars[] = {
    {"ftp:verify-address",	 "no",    ResMgr::BoolValidate,0},
    {"ftp:verify-port",		 "no",    ResMgr::BoolValidate,0},
    {"ftp:web-mode",		 "off",   ResMgr::BoolValidate,0},
+   {"ftp:waiting-150-timeout",	 "5",	  ResMgr::TimeIntervalValidate,0},
 #define RETRY_530 \
    "too many|overloaded|try (again |back )?later|is restricted to|"\
    "maximum number|number of connect|only.*session.*allowed|more connection|already connected"
