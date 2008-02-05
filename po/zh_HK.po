@@ -1,4 +1,4 @@
-# Chinese (Taiwan) translation of lftp.
+# Chinese (Hong Kong) translation of lftp.
 # Copyright (C) 2001, 02, 05, 07 Alexander V. Lukyanov <lav@yars.free.net>
 # Abel Cheung <abelcheung@gmail.com>, 2001, 02, 05, 07.
 #
@@ -9,7 +9,7 @@ msgstr ""
 "POT-Creation-Date: 2007-05-13 19:21+0800\n"
 "PO-Revision-Date: 2007-05-13 20:18+0800\n"
 "Last-Translator: Abel Cheung <abelcheung@gmail.com>\n"
-"Language-Team: Chinese (Taiwan) <community@linuxhall.org>\n"
+"Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -60,7 +60,7 @@ msgstr "警告：忽略不完整的指令\n"
 #: ../src/CmdExec.cc:736
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
-msgstr "\t執行內建的 ‘%s’ [%s]\n"
+msgstr "\t執行內置的 ‘%s’ [%s]\n"
 
 #: ../src/CmdExec.cc:743
 msgid "Queue is stopped."
@@ -279,11 +279,11 @@ msgstr "變數名稱不明確"
 
 #: ../src/ResMgr.cc:407
 msgid "invalid boolean value"
-msgstr "布林值無效"
+msgstr "邏輯值無效"
 
 #: ../src/ResMgr.cc:432
 msgid "invalid boolean/auto value"
-msgstr "布林值或自動變動值無效"
+msgstr "邏輯值或自動變動值無效"
 
 #: ../src/ResMgr.cc:456 ../src/ResMgr.cc:492
 msgid "invalid number"
@@ -477,7 +477,7 @@ msgid ""
 "The previous directory for each site is also stored on disk, so you can\n"
 "do `open site; cd -' even after lftp restart.\n"
 msgstr ""
-"將目前的遠端目錄變更為 <rdir>。上一個遠端目錄會記錄為‘-’。可以輸入\n"
+"將目前的遠端目錄更改為 <rdir>。上一個遠端目錄會記錄為‘-’。可以輸入\n"
 "‘cd -’返回上次的遠端目錄。離開 lftp 前每一個站台最後進入的目錄都會被\n"
 "儲存，所以即使 lftp 重新啟動後仍然可以輸入‘open site; cd -’。\n"
 
@@ -496,12 +496,12 @@ msgid ""
 "\n"
 "MODE can be an octal number or symbolic mode (see chmod(1))\n"
 msgstr ""
-"變更每個 <檔案> 的存取權限 <模式>。\n"
+"更改每個 <檔案> 的存取權限 <模式>。\n"
 "\n"
-" -c, --changes        -  類似 --verbose，但只在變更資料時才顯示訊息\n"
+" -c, --changes        -  類似 --verbose，但只在更改資料時才顯示訊息\n"
 " -f, --quiet          -  不顯示絕大部份的錯誤訊息\n"
 " -v, --verbose        -  顯示每個已處理的檔案\n"
-" -R, --recursive      -  同時變更目錄下的所有目錄層\n"
+" -R, --recursive      -  同時更改目錄下的所有目錄層\n"
 "\n"
 
 #: ../src/commands.cc:164
@@ -712,9 +712,9 @@ msgid ""
 " -d  directories\n"
 " -a  all types\n"
 msgstr ""
-"展開萬用字元並執行指定的指令。\n"
-"可使用選項來指明萬用字元會展開成檔案清單、目錄清單還是兩者皆包括在內。\n"
-"這種展開萬用字元的方式，會依不同伺服器而有所不同。\n"
+"展開萬用字符並執行指定的指令。\n"
+"可使用選項來指明萬用字符會展開成檔案清單、目錄清單還是兩者皆包括在內。\n"
+"這種展開萬用字符的方式，會根據不同伺服器而有所不同。\n"
 "如果無法決定某個名稱屬於何種類型，它就會自動被加入至清單中。\n"
 " -f  普通檔案 (預設)\n"
 " -d  目錄\n"
@@ -749,7 +749,7 @@ msgid ""
 "Change current local directory to <ldir>. The previous local directory\n"
 "is stored as `-'. You can do `lcd -' to change the directory back.\n"
 msgstr ""
-"將目前的本機目錄變更為 <目錄>。上一個本機目錄會記錄為‘-’。\n"
+"將目前的本機目錄更改為 <目錄>。上一個本機目錄會記錄為‘-’。\n"
 "可以輸入‘lcd -’返回上次的本機目錄。\n"
 
 #: ../src/commands.cc:276
@@ -770,7 +770,7 @@ msgid ""
 " <site>              host name, URL or bookmark name\n"
 msgstr ""
 "‘lftp’是讀入設定檔後第一個 lftp 會執行的指令\n"
-" -f <檔案>               執行在 <檔案> 裡指定的指令並離開\n"
+" -f <檔案>               執行在 <檔案> 裏指定的指令並離開\n"
 " -c <指令>               執行指令並離開\n"
 " --help                  印出此項說明文字並離開\n"
 " --version               印出 lftp 版本並離開\n"
@@ -811,7 +811,7 @@ msgid ""
 " -a  use ascii mode (binary is the default)\n"
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
-"展開萬用字元後，下載所選擇的檔案\n"
+"展開萬用字符後，下載所選擇的檔案\n"
 " -c        繼續下載 (即 reget)\n"
 " -d        建立與遠端結構相同的目錄層，並將原本應該下載\n"
 "           至目前本機目錄的檔案改為下載至該目錄層中\n"
@@ -861,13 +861,13 @@ msgstr ""
 " -c, --continue         若有可能，繼續未完成的 mirror 動作\n"
 " -e, --delete           刪除所有在遠端站台中不存在的檔案\n"
 "     --delete-first     傳送新檔案之前先刪除舊檔案\n"
-" -s, --allow-suid       依遠端站台的資料，為本機檔案加上 suid/sgid 權限\n"
-"     --allow-chown      依遠端站台的資料，設定檔案的擁有者及所屬群組\n"
+" -s, --allow-suid       根據遠端站台的資料，為本機檔案加上 suid/sgid 權限\n"
+"     --allow-chown      根據遠端站台的資料，設定檔案的擁有者及所屬羣組\n"
 "     --ignore-time      決定下載甚麼檔案時，不將檔案時間列入考慮條件之中\n"
 " -n, --only-newer       只下載較新的檔案 (-c 不能作此用途)\n"
 " -r, --no-recursion     不下載子目錄\n"
 " -p, --no-perms         不設定檔案權限\n"
-"     --no-umask         不依 umask 設定檔案權限\n"
+"     --no-umask         不根據 umask 設定檔案權限\n"
 " -R, --reverse          反向 mirror (即上傳檔案)\n"
 " -L, --dereference      下載符號鏈結指定的目標檔案\n"
 " -N, --newer-than=SPEC  只下載指定時間之後的檔案\n"
@@ -907,7 +907,7 @@ msgid ""
 "If name contains a slash, then the module is searched in current\n"
 "directory, otherwise in directories specified by setting module:path.\n"
 msgstr ""
-"載入模組 (共用目的檔)。此模組應有以下的函式︰\n"
+"載入模組 (共用目的檔)。此模組應有以下的函數︰\n"
 "   void module_init(int argc,const char *const *argv)\n"
 "如果名稱中含有‘/’，則會在目前的目錄中搜尋模組，\n"
 "否則會在 module:path 設定值所指定的目錄中搜尋。\n"
@@ -934,7 +934,7 @@ msgid ""
 " -a  use ascii mode (binary is the default)\n"
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
-"展開萬用字元後，上傳所選擇的檔案\n"
+"展開萬用字符後，上傳所選擇的檔案\n"
 " -c         繼續上傳 (即 reput)\n"
 " -d         在遠端建立與本機結構相同的目錄層，並將原本應該\n"
 "            上傳至目前目錄的檔案改為上傳至該目錄層中\n"
@@ -948,7 +948,7 @@ msgstr "mrm <檔案>"
 
 #: ../src/commands.cc:350
 msgid "Removes specified files with wildcard expansion\n"
-msgstr "展開萬用字元後，刪除指定的檔案\n"
+msgstr "展開萬用字符後，刪除指定的檔案\n"
 
 #: ../src/commands.cc:351
 msgid "mv <file1> <file2>"
@@ -1080,18 +1080,18 @@ msgstr ""
 "‘-n’ 會將指令插入佇列中的指定位置。也可以使用指令 ‘queue wait <工作編號>’\n"
 "將執行中的工作加入佇列。\n"
 "\n"
-"       queue --delete|-d [索引或萬用字元表示式]\n"
+"       queue --delete|-d [索引或萬用字符表示式]\n"
 "\n"
 "由佇列中刪除一個或多個項目。如果沒有指定參數，則會刪除佇列的最後一個項目。\n"
 "\n"
-"       queue --move|-m <索引或萬用字元表示式> [索引]\n"
+"       queue --move|-m <索引或萬用字符表示式> [索引]\n"
 "\n"
 "將項目移至指定的佇列位置。沒有指定 [索引] 位置的話，會移至佇列的末端。\n"
 "\n"
 "選項：\n"
 " -q                  不輸出任何訊息。\n"
 " -v                  顯示詳細資訊。\n"
-" -Q                  變更輸出的格式，方便將指令重新加入佇列中。\n"
+" -Q                  更改輸出的格式，方便將指令重新加入佇列中。\n"
 "                     和 --delete 配合時比較有用。\n"
 
 #: ../src/commands.cc:405
@@ -1208,7 +1208,7 @@ msgid ""
 " -d  list only default values, not necessary current ones\n"
 msgstr ""
 "設定變數為指定的變數值。如果沒有變數值，則會刪除該變數。\n"
-"變數名稱的格式是 ‘名稱/closure’，這裡 closure 是指該變數適用的站台。\n"
+"變數名稱的格式是 ‘名稱/closure’，這裏 closure 是指該變數適用的站台。\n"
 "詳細資料請參考 lftp(1)。\n"
 "如果 set 後面沒有指明任何變數則只會列出所有曾被修改的設定值。\n"
 "可使用以下的選項：\n"
@@ -1537,7 +1537,7 @@ msgstr "對不起，沒有有關 %s 的說明文字\n"
 #: ../src/commands.cc:2537
 #, c-format
 msgid "%s is a built-in alias for %s\n"
-msgstr "%s 是 %s 的內建別名\n"
+msgstr "%s 是 %s 的內置別名\n"
 
 #: ../src/commands.cc:2542
 #, c-format
@@ -1573,7 +1573,7 @@ msgid ""
 "conditions.\n"
 "There is absolutely no warranty for LFTP.  See COPYING for details.\n"
 msgstr ""
-"LFTP 為自由軟體，依據 GNU 通用公共授權條款 (GPL) 發行。您可以在該條款的規定\n"
+"LFTP 為自由軟件，依據 GNU 通用公共授權條款 (GPL) 發行。你可以在該條款的規定\n"
 "下修改及 / 或散布該程式。\n"
 "LFTP 不負任何擔保責任。請參閱 COPYING 檔案。\n"
 
@@ -1720,7 +1720,7 @@ msgstr "ftp:use-mlsd 設定關閉了 MLSD 功能"
 #: ../src/ftpclass.cc:1265 ../src/Http.cc:1098
 #, c-format
 msgid "cannot create socket of address family %d"
-msgstr "無法建立地址族群 %d 的 socket"
+msgstr "無法建立地址族羣 %d 的 socket"
 
 #: ../src/ftpclass.cc:1517
 msgid "SITE CHMOD is not supported by this site"
@@ -1732,7 +1732,7 @@ msgstr "該站台不支援 MLST 和 MLSD"
 
 #: ../src/ftpclass.cc:1933 ../src/ftpclass.cc:1983
 msgid "unsupported network protocol"
-msgstr "不支援這種網路協定"
+msgstr "不支援這種網絡協定"
 
 #: ../src/ftpclass.cc:2102
 #, c-format
@@ -1833,7 +1833,7 @@ msgstr "正在建立資料傳送連線……"
 
 #: ../src/ftpclass.cc:4033
 msgid "Changing remote directory..."
-msgstr "變更遠端目錄……"
+msgstr "更改遠端目錄……"
 
 #: ../src/ftpclass.cc:4039
 msgid "Waiting for other copy peer..."
@@ -1930,7 +1930,7 @@ msgstr "%s 成功，建立了 %d 個目錄\n"
 #: ../src/mvJob.cc:80
 #, c-format
 msgid "rename successful\n"
-msgstr "成功變更名稱\n"
+msgstr "成功更改名稱\n"
 
 #: ../src/parsecmd.cc:323
 msgid "parse: missing filter command\n"
@@ -2048,7 +2048,7 @@ msgstr "只允許使用 PUT 或 POST"
 #: ../src/resource.cc:134
 #, c-format
 msgid "unknown address family `%s'"
-msgstr "不明的地址族群‘%s’"
+msgstr "不明的地址族羣‘%s’"
 
 #: ../src/resource.cc:159
 msgid "ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C"
@@ -2067,17 +2067,17 @@ msgstr "正在擷取檔案清單 (%lld) [%s]"
 #: ../src/ChmodJob.cc:81
 #, c-format
 msgid "Failed to change mode of `%s' to %04o (%s).\n"
-msgstr "無法將‘%s’的存取權限變更為 %04o (%s)。\n"
+msgstr "無法將‘%s’的存取權限更改為 %04o (%s)。\n"
 
 #: ../src/ChmodJob.cc:84
 #, c-format
 msgid "Mode of `%s' changed to %04o (%s).\n"
-msgstr "‘%s’的存取權限已變更為 %04o (%s)。\n"
+msgstr "‘%s’的存取權限已更改為 %04o (%s)。\n"
 
 #: ../src/ChmodJob.cc:89
 #, c-format
 msgid "Failed to change mode of `%s' because no old mode is available.\n"
-msgstr "無法變更‘%s’的存取權限，因為無法獲取它本來的權限。\n"
+msgstr "無法更改‘%s’的存取權限，因為無法獲取它本來的權限。\n"
 
 #: ../src/CopyJob.cc:78
 #, c-format
@@ -2143,7 +2143,7 @@ msgstr "複製：重新導向至‘%s’\n"
 
 #: ../src/FileCopy.cc:1227
 msgid "file name missed in URL"
-msgstr "URL 裡缺少了檔案名稱"
+msgstr "URL 裏缺少了檔案名稱"
 
 #: ../src/FileCopy.cc:1869
 msgid "Verify command failed without a message"
@@ -2361,7 +2361,7 @@ msgstr "沒有任何背景工作符合“%s”。\n"
 
 #: ../src/QueueFeeder.cc:220 ../src/QueueFeeder.cc:238
 msgid "Moved job$|s$"
-msgstr "已變更工作次序"
+msgstr "已更改工作次序"
 
 #: ../src/QueueFeeder.cc:376
 msgid "Commands queued:"
