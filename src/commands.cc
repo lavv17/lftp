@@ -360,6 +360,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -e <cmd>            execute the command just after selecting\n"
 	 " -u <user>[,<pass>]  use the user/password for authentication\n"
 	 " -p <port>           use the port for connection\n"
+	 " -s <slot>           assign the connection to this slot\n"
 	 " <site>              host name, URL or bookmark name\n")},
    {"pget",    cmd_get,    N_("pget [OPTS] <rfile> [-o <lfile>]"),
 	 N_("Gets the specified file using several connections. This can speed up transfer,\n"
@@ -453,7 +454,10 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "Sleep for given amount of time. The time argument can be optionally\n"
 	 "followed by unit specifier: d - days, h - hours, m - minutes, s - seconds.\n"
 	 "By default time is assumed to be seconds.\n")},
-   {"slot",    cmd_slot,   0,0},
+   {"slot",    cmd_slot, 0,
+        N_("Usage: slot [<label>]\n"
+   	"List assigned slots.\n"
+	"If <label> is specified, switch to the slot named <label>.\n")},
    {"source",  cmd_source, N_("source <file>"),
 	 N_("Execute commands recorded in file <file>\n")},
    {"suspend", cmd_suspend},
@@ -791,14 +795,18 @@ Job *CmdExec::builtin_open()
       {"execute",required_argument,0,'e'},
       {"debug",optional_argument,0,'d'},
       {"no-bookmark",no_argument,0,'B'},
+      {"slot",required_argument,0,'s'},
       {"help",no_argument,0,'h'},
       {0,0,0,0}
    };
 
-   while((c=args->getopt_long("u:p:e:dBh",open_options))!=EOF)
+   while((c=args->getopt_long("u:p:e:s:dBh",open_options))!=EOF)
    {
       switch(c)
       {
+      case('s'):
+      	if (*optarg) ChangeSlot(optarg);
+        break;
       case('p'):
 	 port=optarg;
 	 break;
