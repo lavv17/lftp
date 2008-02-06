@@ -52,12 +52,7 @@ CmdExec::parse_result CmdExec::parse_one_cmd()
    else
       args=new ArgV;
 
-   if(output)
-   {
-      delete output;
-      output=0;
-   }
-
+   output=0;
    char redir_type=0;
    background=0;
 

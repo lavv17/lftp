@@ -1,3 +1,7 @@
+2008-02-06  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* parsecmd.cc: don't delete Ref (fixes double delete bug).
+
 2008-01-31  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h, resource.cc: (ftp:waiting-150-timeout) new setting;
