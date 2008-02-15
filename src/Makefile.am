@@ -38,7 +38,8 @@ cmd_mirror_la_SOURCES = MirrorJob.cc MirrorJob.h
 cmd_sleep_la_SOURCES  = SleepJob.cc SleepJob.h
 liblftp_pty_la_SOURCES     = PtyShell.cc PtyShell.h lftp_pty.c lftp_pty.h
 liblftp_network_la_SOURCES = NetAccess.cc NetAccess.h Resolver.cc Resolver.h\
- lftp_ssl.cc lftp_ssl.h buffer_ssl.cc buffer_ssl.h RateLimit.cc RateLimit.h
+ lftp_ssl.cc lftp_ssl.h buffer_ssl.cc buffer_ssl.h RateLimit.cc RateLimit.h\
+ network.cc network.h
 liblftp_getdate_la_SOURCES = getdate.y getdate.h
 
 proto_ftp_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
