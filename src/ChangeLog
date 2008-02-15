@@ -1,3 +1,13 @@
+2008-02-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* network.cc, network.h, Makefile.am: (network.*) new files.
+	* xarray.h: (search) new method.
+	* Resolver.h, Resolver.cc: use new sockaddr_u methods;
+	  don't add the same address multiple times; report found addrs.
+	* NetAccess.cc, NetAccess.h: use new sockaddr_u methods.
+	* ftpclass.cc: workaround proftpd NLST bug; workaround for
+	  a server bug sending single NL; simplify encode_eprt.
+
 2008-02-06  Laurent MONIN <zas@norz.org>
 
 	* commands.cc: add open -s option, describe slot command syntax.
