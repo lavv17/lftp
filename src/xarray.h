@@ -105,6 +105,14 @@ public:
    void qsort(int (*cmp)(const T*,const T*)) {
       xarray0::qsort((qsort_cmp_t)cmp);
    }
+   int search(const T &x) const {
+      for(int i=0; i<len; i++)
+      {
+	 if(get()[i]==x)
+	    return i;
+      }
+      return -1;
+   }
 };
 
 template<typename T,typename RefT>
