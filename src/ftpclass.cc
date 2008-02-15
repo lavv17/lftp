@@ -135,27 +135,14 @@ static const eprt_proto_match eprt_proto[]=
 
 const char *Ftp::encode_eprt(const sockaddr_u *a)
 {
-   char host[NI_MAXHOST];
-   char serv[NI_MAXSERV];
-
-   int proto=-1;
-   for(const eprt_proto_match *p=eprt_proto; p->proto!=-1; p++)
-   {
-      if(a->sa.sa_family==p->proto)
-      {
-	 proto=p->eprt_proto;
-	 break;
-      }
-   }
-   if(proto==-1)
+   int proto;
+   if(a->sa.sa_family==AF_INET)
+      proto=1;
+   else if(a->sa.sa_family==AF_INET6)
+      proto=2;
+   else
       return 0;
-
-   if(getnameinfo(&a->sa, sizeof(*a), host, sizeof(host), serv, sizeof(serv),
-      NI_NUMERICHOST | NI_NUMERICSERV) < 0)
-   {
-      return 0;
-   }
-   return xstring::format("|%d|%s|%s|",proto,host,serv);
+   return xstring::format("|%d|%s|%d|",proto,a->address(),a->port());
 }
 #endif
 
@@ -328,9 +315,6 @@ bool Ftp::Transient5XX(int act)
 // 226 Transfer complete.
 void Ftp::TransferCheck(int act)
 {
-   if(state==WAITING_150_STATE)
-      conn->received_150=true;
-
    if(act==225 || act==226) // data connection is still open or ABOR worked.
    {
       copy_done=true;
@@ -2203,6 +2187,14 @@ int   Ftp::Do()
       {
 	 LogError(0,"%s",conn->data_iobuf->ErrorText());
 	 conn->CloseDataSocket();
+	 // workaround for proftpd bug - it resets data connection when no files found.
+	 if(mode==LIST && expect->IsEmpty() && !conn->received_150 && conn->data_iobuf->GetPos()==0)
+	 {
+	    DataClose();
+	    state=EOF_STATE;
+	    eof=true;
+	    m=MOVED;
+	 }
       }
       // handle errors on data connection only when storing or got all replies
       // and read all data.
@@ -2578,6 +2570,13 @@ int Ftp::ReceiveOneLine()
       if(nl>resp && nl[-1]=='\r')
       {
 	 line_len=nl-resp-1;
+	 skip_len=nl-resp+1;
+	 break;
+      }
+      if(nl==resp+resp_size-1 && now-conn->control_recv->EventTime()>5)
+      {
+	 LogError(1,"server bug: single <NL>");
+	 line_len=nl-resp;
 	 skip_len=nl-resp+1;
 	 break;
       }
