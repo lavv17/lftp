@@ -169,44 +169,6 @@ void NetAccess::SetSocketMaxseg(int sock)
 #endif
 }
 
-const char *NetAccess::SocketNumericAddress(const sockaddr_u *u)
-{
-#ifdef HAVE_GETNAMEINFO
-   static char buf[NI_MAXHOST];
-   if(getnameinfo(&u->sa,SocketAddrLen(u),buf,sizeof(buf),0,0,NI_NUMERICHOST)<0)
-      return "????";
-   return buf;
-#else
-   static char buf[256];
-   if(u->sa.sa_family!=AF_INET)
-      return "????";
-   unsigned char *a=(unsigned char *)&u->in.sin_addr;
-   sprintf(buf,"%u.%u.%u.%u",a[0],a[1],a[2],a[3]);
-   return buf;
-#endif
-}
-int NetAccess::SocketPort(const sockaddr_u *u)
-{
-   if(u->sa.sa_family==AF_INET)
-      return ntohs(u->in.sin_port);
-#if INET6
-   if(u->sa.sa_family==AF_INET6)
-      return ntohs(u->in6.sin6_port);
-#endif
-   return 0;
-}
-
-socklen_t NetAccess::SocketAddrLen(const sockaddr_u *u)
-{
-   if(u->sa.sa_family==AF_INET)
-      return sizeof(u->in);
-#if INET6
-   if(u->sa.sa_family==AF_INET6)
-      return sizeof(u->in6);
-#endif
-   return sizeof(*u);
-}
-
 #if HAVE_INET_ATON && !HAVE_DECL_INET_ATON
 CDECL int inet_aton(const char *,struct in_addr *);
 #endif
@@ -236,7 +198,7 @@ int NetAccess::SocketCreate(int af,int type,int proto)
 #endif
    if(b)
    {
-      int res=bind(s,&bind_addr.sa,sizeof(bind_addr.sa));
+      int res=bind_addr.bind_to(s);
       if(res==-1)
 	 LogError(0,"bind(socket, %s): %s",b,strerror(errno));
    }

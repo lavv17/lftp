@@ -30,6 +30,7 @@
 #include <time.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netdb.h>
 #include <ctype.h>
 #include <fcntl.h>
 
@@ -266,7 +267,19 @@ int   Resolver::Do()
    if(!cache)
       cache=new ResolverCache;
    cache->Add(hostname,portname,defport,service,proto,addr.get(),addr.count());
-   FA::LogNote(4,plural("%d address$|es$ found",addr.count()),addr.count());
+
+   xstring report;
+   report.set(xstring::format(plural("%d address$|es$ found",addr.count()),addr.count()));
+   if(addr.count()>0) {
+      report.append(": ");
+      for(int i=0; i<addr.count(); i++) {
+	 report.append(addr[i].address());
+	 if(i<addr.count()-1)
+	    report.append(", ");
+      }
+   }
+   FA::LogNote(4,"%s",report.get());
+
    return MOVED;
 }
 
@@ -310,7 +323,8 @@ void Resolver::AddAddress(int family,const char *address,int len)
    default:
       return;
    }
-   addr.append(add);
+   if(addr.search(add)==-1)
+      addr.append(add);
 }
 
 int Resolver::FindAddressFamily(const char *name)

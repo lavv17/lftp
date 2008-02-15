@@ -66,9 +66,9 @@ protected:
    static void MaximizeThroughput(int sock);
    static void ReuseAddress(int sock);
    static int SocketBuffered(int sock);
-   static const char *SocketNumericAddress(const sockaddr_u *u);
-   static int SocketPort(const sockaddr_u *u);
-   static socklen_t SocketAddrLen(const sockaddr_u *u);
+   static const char *SocketNumericAddress(const sockaddr_u *u) { return u->address(); }
+   static int SocketPort(const sockaddr_u *u) { return u->port(); }
+   static socklen_t SocketAddrLen(const sockaddr_u *u) { return u->addr_len(); }
    static int SocketConnect(int fd,const sockaddr_u *u);
    int SocketCreate(int,int,int);
    int SocketCreateTCP(int);

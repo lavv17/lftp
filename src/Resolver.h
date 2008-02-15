@@ -24,23 +24,10 @@
 #define RESOLVER_H
 
 #include "ProcWait.h"
-#include <netinet/in.h>
-#include <netdb.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
 #include "buffer.h"
 #include "xarray.h"
 #include "Cache.h"
-
-union sockaddr_u
-{
-	struct sockaddr		sa;
-	struct sockaddr_in	in;
-#if INET6
-	struct sockaddr_in6	in6;
-#endif
-};
+#include "network.h"
 
 class Resolver : public SMTask
 {
