@@ -323,8 +323,9 @@ void Resolver::AddAddress(int family,const char *address,int len)
    default:
       return;
    }
-   if(addr.search(add)==-1)
-      addr.append(add);
+   if(addr.count()>0 && addr.last()==add)
+      return;
+   addr.append(add);
 }
 
 int Resolver::FindAddressFamily(const char *name)
