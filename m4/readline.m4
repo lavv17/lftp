@@ -31,7 +31,7 @@ if test $lftp_cv_precompiled_readline = yes; then
    COMPILE_READLINE=no
 else
    READLINE_DIR=readline-4.3
-   if ! -d $READLINE_DIR; then
+   if ! test -d $READLINE_DIR; then
       AC_MSG_ERROR(need installed readline-devel package)
    fi
 dnl   AC_CONFIG_SUBDIRS(readline-4.3)
