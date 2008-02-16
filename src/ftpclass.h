@@ -190,6 +190,8 @@ class Ftp : public NetAccess
 	 USER_PROXY,	// check response for USER sent to proxy
 	 PASS,		// check response for PASS
 	 PASS_PROXY,	// check response for PASS sent to proxy
+	 OPEN_PROXY,	// special UserGate proxy command
+	 ACCT_PROXY,	// special ACCT with proxy password
 	 TRANSFER,	// generic check for transfer
 	 TRANSFER_CLOSED, // check for transfer complete when Close()d.
 	 FEAT,

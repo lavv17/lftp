@@ -1335,21 +1335,41 @@ int   Ftp::Do()
 	 TuneConnectionAfterFEAT();
 
       const char *user_to_use=(user?user:anon_user);
+      const char *proxy_auth_type=Query("proxy-auth-type",proxy);
       if(proxy && !conn->proxy_is_http)
       {
-	 if(QueryBool("proxy-auth-joined",proxy) && proxy_user && proxy_pass)
+	 if(!strcmp(proxy_auth_type,"joined") && proxy_user && proxy_pass)
+	 {
 	    user_to_use=xstring::cat(user_to_use,"@",proxy_user.get(),"@",
 		  hostname.get(),portname?":":NULL,portname.get(),NULL);
-	 else // !proxy-auth-joined
+	 }
+	 else if(!strcmp(proxy_auth_type,"joined-acct") && proxy_user && proxy_pass)
 	 {
 	    user_to_use=xstring::cat(user_to_use,"@",hostname.get(),
-		  portname?":":NULL,portname.get(),NULL);
+		  portname?":":"",portname?portname.get():"",
+		  " ",proxy_user.get(),NULL);
+	    // proxy_pass is sent later with ACCT command
+	 }
+	 else // no proxy auth, or type is `open' or `user'.
+	 {
+	    bool use_open=!strcmp(proxy_auth_type,"open");
+	    if(!use_open)
+	    {
+	       user_to_use=xstring::cat(user_to_use,"@",hostname.get(),
+		     portname?":":NULL,portname.get(),NULL);
+	    }
 	    if(proxy_user && proxy_pass)
 	    {
 	       expect->Push(Expect::USER_PROXY);
 	       conn->SendCmd2("USER",proxy_user);
 	       expect->Push(Expect::PASS_PROXY);
 	       conn->SendCmd2("PASS",proxy_pass);
+	    }
+	    if(use_open)
+	    {
+	       expect->Push(Expect::OPEN_PROXY);
+	       conn->SendCmd2("OPEN",xstring::cat(hostname.get(),
+		     portname?":":NULL,portname.get(),NULL));
 	    }
 	 }
       }
@@ -1364,6 +1384,7 @@ int   Ftp::Do()
    }
 
    case(USER_RESP_WAITING_STATE):
+   {
       if((GetFlag(SYNC_MODE) || (user && pass && allow_skey))
       && !expect->IsEmpty())
       {
@@ -1375,18 +1396,25 @@ int   Ftp::Do()
 	    goto usual_return;
       }
 
+      const char *proxy_auth_type=Query("proxy-auth-type",proxy);
       if(!conn->ignore_pass)
       {
 	 conn->may_show_password = (skey_pass!=0) || (user==0) || pass_open;
 	 const char *pass_to_use=(pass?pass:anon_pass);
-	 xstring combined;
 	 if(allow_skey && skey_pass)
 	    pass_to_use=skey_pass;
-	 else if(proxy && !conn->proxy_is_http
-	 && QueryBool("proxy-auth-joined",proxy) && proxy_user && proxy_pass)
+	 else if(proxy && !conn->proxy_is_http && proxy_user && proxy_pass
+	 && !strcmp(proxy_auth_type,"joined"))
 	    pass_to_use=xstring::cat(pass_to_use,"@",proxy_pass.get(),NULL);
 	 expect->Push(Expect::PASS);
 	 conn->SendCmd2("PASS",pass_to_use);
+
+      }
+      if(proxy && !conn->proxy_is_http && proxy_user && proxy_pass
+      && !strcmp(proxy_auth_type,"joined-acct"))
+      {
+	 expect->Push(Expect::ACCT_PROXY);
+	 conn->SendCmd2("ACCT",proxy_pass);
       }
       SendAcct();
       if(conn->try_feat_after_login)
@@ -1424,7 +1452,7 @@ int   Ftp::Do()
       set_real_cwd(0);
       state=EOF_STATE;
       m=MOVED;
-
+   }
    case(EOF_STATE):
       m|=FlushSendQueue();
       m|=ReceiveResp();
@@ -3310,6 +3338,8 @@ void Ftp::ExpectQueue::Close()
       case(Expect::USER_PROXY):
       case(Expect::PASS):
       case(Expect::PASS_PROXY):
+      case(Expect::OPEN_PROXY):
+      case(Expect::ACCT_PROXY):
       case(Expect::READY):
       case(Expect::ABOR):
       case(Expect::CWD_STALE):
@@ -3775,6 +3805,7 @@ void Ftp::CheckResp(int act)
       break;
 
    case Expect::READY:
+   case Expect::OPEN_PROXY:
       if(!GetFlag(SYNC_MODE) && re_match(all_lines,Query("auto-sync-mode",hostname)))
       {
 	 LogNote(2,_("Turning on sync-mode"));
@@ -3786,6 +3817,11 @@ void Ftp::CheckResp(int act)
       if(!is2XX(act))
       {
 	 Disconnect();
+	 if(cc==Expect::OPEN_PROXY && act==403)
+	 {
+	    SetError(LOGIN_FAILED,all_lines);
+	    break;
+	 }
 	 NextPeer();
 	 if(peer_curr==0)
 	    try_time=now;  // count the reconnect-interval from this moment
@@ -3950,6 +3986,7 @@ void Ftp::CheckResp(int act)
       NoPassReqCheck(act);
       break;
    case Expect::PASS_PROXY:
+   case Expect::ACCT_PROXY:
       proxy_LoginCheck(act);
       break;
    case Expect::PASS:

@@ -59,6 +59,14 @@ static const char *FtpProxyValidate(xstring_c *p)
    return 0;
 }
 
+static const char *FtpProxyAuthTypeValidate(xstring_c *s)
+{
+   if(s->ne("user") && s->ne("joined") && s->ne("joined-acct") && s->ne("open"))
+      // for translator: `user', `joined', `joined-acct', `open' are literals.
+      return _("ftp:proxy-auth-type must be one of: user, joined, joined-acct, open");
+   return 0;
+}
+
 static const char *HttpProxyValidate(xstring_c *p)
 {
    ParsedURL url(*p);
@@ -183,7 +191,7 @@ static ResType lftp_vars[] = {
    {"ftp:port-range",		 "full",  ResMgr::RangeValidate,0},
    {"ftp:port-ipv4",		 "",	  ResMgr::IPv4AddrValidate,0},
    {"ftp:proxy",		 "",	  FtpProxyValidate,0},
-   {"ftp:proxy-auth-joined",	 "no",	  ResMgr::BoolValidate,0},
+   {"ftp:proxy-auth-type",	 "user",  FtpProxyAuthTypeValidate,0},
    {"ftp:rest-list",		 "no",	  ResMgr::BoolValidate,0},
    {"ftp:rest-stor",		 "yes",   ResMgr::BoolValidate,0},
    {"ftp:timezone",		 "GMT",   0,0},

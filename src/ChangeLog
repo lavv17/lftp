@@ -1,3 +1,9 @@
+2008-02-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h, resource.cc: ftp:proxy-auth-type replaces
+	  old ftp:proxy-auth-joined setting; implement two more auth types:
+	  joined-acct and open (partly based on patch from David Wolfe <davidw@wolfeden.org>).
+
 2008-02-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* network.cc, network.h, Makefile.am: (network.*) new files.
