@@ -1072,10 +1072,21 @@ requires authentication, specify user name and password in the URL.
 If ftp:proxy starts with http:// then hftp protocol (ftp over http proxy) is used instead
 of ftp automatically.
 .TP
-.BR ftp:proxy-auth-joined \ (boolean)
-when true, lftp sends ``user@proxy_user@ftp.example.org'' as user name to proxy,
-and ``password@proxy_password'' as password. When false, it first sends
-proxy user and proxy password and then ``user@ftp.example.org'' and password.
+.BR ftp:proxy-auth-type \ (string)
+When set to ``joined'', lftp sends ``user@proxy_user@ftp.example.org'' as
+user name to proxy, and ``password@proxy_password'' as password.
+.IP
+When set to ``joined-acct'', lftp sends ``user@ftp.example.org
+proxy_user'' as user name to proxy. The site password is sent as
+usual and the proxy password is expected in the following ACCT command.
+.IP
+When set to ``open'', lftp first sends proxy user and
+proxy password and then ``OPEN ftp.example.org'' followed by ``USER user''.
+The site password is then sent as usual.
+.IP
+When set to ``user'' (default), lftp first sends proxy user and
+proxy password and then ``user@ftp.example.org'' as user name.
+The site password is then sent as usual.
 .TP
 .BR ftp:rest-list \ (boolean)
 allow usage of REST command before LIST command. This might be useful for

@@ -1,3 +1,8 @@
+2008-02-16	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:proxy-auth-type (based on patch from David
+	  Wolfe <davidw@wolfeden.org>).
+
 2007-10-08	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document eval; new mirror options; ftp:use-stat-for-list;
