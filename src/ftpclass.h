@@ -64,13 +64,13 @@ class Ftp : public NetAccess
       CWD_CWD_WAITING_STATE,  // waiting until 'CWD $cwd' finishes
       USER_RESP_WAITING_STATE,// waiting until 'USER $user' finishes
       DATASOCKET_CONNECTING_STATE, // waiting for data_sock to connect
-      WAITING_150_STATE	   // waiting for 150 message
+      WAITING_150_STATE,   // waiting for 150 message
+      WAITING_CCC_SHUTDOWN // waiting for the server to shutdown SSL connection
    };
-
 
    class Connection
    {
-      xstring closure;
+      xstring_c closure;
    public:
       int control_sock;
       SMTaskRef<IOBuffer> control_recv;
@@ -117,7 +117,14 @@ class Ftp : public NetAccess
       off_t last_rest;	// last successful REST position.
       off_t rest_pos;	// the number sent with REST command.
 
-      Timer abor_close_timer; // timer for closing aborted connection.
+      Timer abor_close_timer;	 // timer for closing aborted connection.
+      Timer stat_timer;		 // timer for sending periodic STAT commands.
+      Timer waiting_150_timer;   // limit time to wait for 150 reply.
+      Timer waiting_ssl_timer;	 // limit time to wait for ssl shutdown
+
+      time_t nop_time;
+      off_t  nop_offset;
+      int    nop_count;
 
 #if USE_SSL
       Ref<lftp_ssl> control_ssl;
@@ -129,11 +136,12 @@ class Ftp : public NetAccess
       bool sscn_on;
       xstring auth_args_supported;
       bool ssl_is_activated() { return control_ssl!=0; }
+      Timer waiting_ssl_shutdown;
 #else
       bool ssl_is_activated() { return false; }
 #endif
 
-      xstring mlst_attr_supported;
+      xstring_c mlst_attr_supported;
 
       Connection(const char *c);
       ~Connection();
@@ -205,7 +213,7 @@ class Ftp : public NetAccess
       };
 
       expect_t check_case;
-      xstring arg;
+      xstring_c arg;
       Expect *next;
 
       Expect(expect_t e,const char *a=0) : check_case(e), arg(a) {}
@@ -286,31 +294,18 @@ private:
    static const bool ftps; // for convenience
 #endif
 
-   xstring line;
-   xstring all_lines;
+   void	DataAbort();
+   void DataClose();
+   void ControlClose();
 
-   bool	 eof;
-
-   time_t   nop_time;
-   off_t    nop_offset;
-   int	    nop_count;
-
-   Timer retry_timer;
-   Timer stat_timer;	   // timer for sending periodic STAT commands.
-   Timer waiting_150_timer;   // limit time to wait for 150 reply.
-
-   void	 DataAbort();
-   void  DataClose();
-   void  ControlClose();
-
-   void  SendUrgentCmd(const char *cmd);
-   int	 FlushSendQueueOneCmd();
-   int	 FlushSendQueue(bool all=false);
-   void	 SendArrayInfoRequests();
-   void	 SendSiteIdle();
-   void	 SendAcct();
-   void	 SendSiteGroup();
-   void	 SendUTimeRequest();
+   void SendUrgentCmd(const char *cmd);
+   int	FlushSendQueueOneCmd();
+   int	FlushSendQueue(bool all=false);
+   void	SendArrayInfoRequests();
+   void	SendSiteIdle();
+   void	SendAcct();
+   void	SendSiteGroup();
+   void	SendUTimeRequest();
    void SendAuth(const char *auth);
    void TuneConnectionAfterFEAT();
    void SendOPTS_MLST();
@@ -343,31 +338,31 @@ private:
    bool	 AbsolutePath(const char *p);
 
    void MoveConnectionHere(Ftp *o);
+   bool GetBetterConnection(int level,bool limit_reached);
+   bool SameConnection(const Ftp *o) const;
 
+   // state
    automate_state state;
+   int flags;
+   bool eof;
+   Timer retry_timer;
 
-   xstring anon_user;
-   xstring anon_pass;
-
-   xstring charset;
-
-   static const char *DefaultAnonPass();
-
-   int	 flags;
+   xstring line;	// last line of last server reply
+   xstring all_lines;   // all lines of last server reply
 
    void	 SetError(int code,const char *mess=0);
 
-   bool  verify_data_address;
-   bool  verify_data_port;
-   bool	 rest_list;
-   xstring list_options;
+   // settings
+   xstring_c anon_user;
+   xstring_c anon_pass;
+   xstring_c charset;
+   xstring_c list_options;
+   int nop_interval;
+   bool verify_data_address;
+   bool verify_data_port;
+   bool	rest_list;
 
-   bool	 GetBetterConnection(int level,bool limit_reached);
-   bool  SameConnection(const Ftp *o) const;
-
-   int	 nop_interval;
-
-   xstring skey_pass;
+   xstring_c skey_pass;
    bool allow_skey;
    bool force_skey;
    const char *make_skey_reply();

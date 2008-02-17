@@ -120,11 +120,11 @@ public:
    };
 
 protected:
-   xstring vproto;
-   xstring hostname;
-   xstring portname;
-   xstring user;
-   xstring pass;
+   xstring_c vproto;
+   xstring_c hostname;
+   xstring_c portname;
+   xstring_c user;
+   xstring_c pass;
    bool	 pass_open;
 
    const char *default_cwd;
@@ -176,7 +176,7 @@ protected:
    off_t  entity_size; // size of file to be sent
    time_t entity_date; // date of file to be sent
 
-   xstring closure;
+   xstring_c closure;
    const char *res_prefix;
    const char *ResPrefix() const { return res_prefix?res_prefix:GetProto(); }
    const char *ResClosure() const { return closure?closure.get():GetHostName(); }
@@ -194,12 +194,12 @@ protected:
    void Fatal(const char *mess);
    xstring error;
    int error_code;
-   xstring location;
-   xstring suggested_filename;
+   xstring_c location;
+   xstring_c suggested_filename;
    void SetSuggestedFileName(const char *fn);
 
-   xstring entity_content_type;
-   xstring entity_charset;
+   xstring_c entity_content_type;
+   xstring_c entity_charset;
 
    FileAccess *next;
    static FileAccess *chain;

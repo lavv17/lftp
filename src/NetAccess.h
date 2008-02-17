@@ -75,13 +75,13 @@ protected:
    int Poll(int fd,int ev);
    int CheckHangup(const struct pollfd *pfd,int num);
 
-   xstring proxy;
-   xstring proxy_port;
-   xstring proxy_user;
-   xstring proxy_pass;
-   xstring proxy_proto;
+   xstring_c proxy;
+   xstring_c proxy_port;
+   xstring_c proxy_user;
+   xstring_c proxy_pass;
+   xstring_c proxy_proto;
 
-   xstring home_auto;
+   xstring_c home_auto;
    void	 PropagateHomeAuto();
    const char *FindHomeAuto();
 

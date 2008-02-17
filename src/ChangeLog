@@ -1,3 +1,11 @@
+2008-02-17  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h, resource.cc: new setting ftp:ssl-shutdown-timeout;
+	  wait for ssl shutdown after CCC (new wait state WAITING_CCC_SHUTDOWN);
+	  move some timers and connection state variables to Connection class;
+	  use xstring_c for some members.
+	* FileAccess.h, NetAccess.h: use xstring_c for some members.
+
 2008-02-16  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h, resource.cc: ftp:proxy-auth-type replaces

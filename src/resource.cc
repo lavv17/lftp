@@ -206,6 +206,7 @@ static ResType lftp_vars[] = {
    {"ftp:ssl-auth",		 "TLS",   AuthArgValidate,0},
    {"ftp:ssl-allow-anonymous",	 "no",	  ResMgr::BoolValidate,0},
    {"ftp:ssl-use-ccc",		 "no",	  ResMgr::BoolValidate,0},
+   {"ftp:ssl-shutdown-timeout",	 "5",	  ResMgr::TimeIntervalValidate,0},
    {"ftp:ssl-data-use-keys",	 "yes",	  ResMgr::BoolValidate,0},
    {"ftps:initial-prot",	 "",	  ProtValidate,0},
 #endif

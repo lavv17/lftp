@@ -326,12 +326,12 @@ void Ftp::TransferCheck(int act)
    if(act==211)
    {
       // permature STAT?
-      stat_timer.ResetDelayed(3);
+      conn->stat_timer.ResetDelayed(3);
       return;
    }
    if(act==213)	  // this must be a STAT reply.
    {
-      stat_timer.Reset();
+      conn->stat_timer.Reset();
 
       long long p;
       // first try Serv-U format:
@@ -847,8 +847,6 @@ void Ftp::CatchSIZE_opt(int act)
 Ftp::Connection::Connection(const char *c)
    : closure(c), send_cmd_buffer(DirectedBuffer::PUT)
 {
-   abor_close_timer.SetResource("ftp:abor-max-wait",closure);
-
    control_sock=-1;
    data_sock=-1;
    aborted_data_sock=-1;
@@ -891,6 +889,17 @@ Ftp::Connection::Connection(const char *c)
 
    proxy_is_http=false;
    may_show_password=false;
+
+   nop_time=0;
+   nop_count=0;
+   nop_offset=0;
+
+   abor_close_timer.SetResource("ftp:abor-max-wait",closure);
+   stat_timer.SetResource("ftp:stat-interval",closure);
+   waiting_150_timer.SetResource("ftp:waiting-150-timeout",closure);
+#if USE_SSL
+   waiting_ssl_shutdown.SetResource("ftp:ssl-shutdown-timeout",closure);
+#endif
 }
 
 void Ftp::InitFtp()
@@ -899,9 +908,6 @@ void Ftp::InitFtp()
    ftps=false;	  // ssl and prot='P' by default (port 990)
 #endif
 
-   nop_time=0;
-   nop_count=0;
-   nop_offset=0;
    eof=false;
    state=INITIAL_STATE;
    flags=SYNC_MODE;
@@ -1245,7 +1251,7 @@ int   Ftp::Do()
       m=MOVED;
       timeout_timer.Reset();
    }
-
+   /* fallthrough */
    case(CONNECTING_STATE):
       assert(conn && conn->control_sock!=-1);
       res=Poll(conn->control_sock,POLLOUT);
@@ -1275,7 +1281,7 @@ int   Ftp::Do()
       state=HTTP_PROXY_CONNECTED;
       m=MOVED;
       HttpProxySendConnect();
-
+   /* fallthrough */
    case HTTP_PROXY_CONNECTED:
       if(!HttpProxyReplyCheck(conn->control_recv))
 	 goto usual_return;
@@ -1308,8 +1314,7 @@ int   Ftp::Do()
 	    conn->try_feat_after_login=true;
 	 }
       }
-
-      /* fallthrough */
+   /* fallthrough */
    case CONNECTED_STATE:
    {
       m|=FlushSendQueue();
@@ -1334,7 +1339,7 @@ int   Ftp::Do()
       if(conn->have_feat_info)
 	 TuneConnectionAfterFEAT();
 
-      const char *user_to_use=(user?user:anon_user);
+      const char *user_to_use=(user?user.get():anon_user.get());
       const char *proxy_auth_type=Query("proxy-auth-type",proxy);
       if(proxy && !conn->proxy_is_http)
       {
@@ -1382,7 +1387,7 @@ int   Ftp::Do()
       state=USER_RESP_WAITING_STATE;
       m=MOVED;
    }
-
+   /* fallthrough */
    case(USER_RESP_WAITING_STATE):
    {
       if((GetFlag(SYNC_MODE) || (user && pass && allow_skey))
@@ -1450,9 +1455,11 @@ int   Ftp::Do()
 #endif // USE_SSL
 
       set_real_cwd(0);
+   }
+   /* fallthrough */
+   pre_EOF_STATE:
       state=EOF_STATE;
       m=MOVED;
-   }
    case(EOF_STATE):
       m|=FlushSendQueue();
       m|=ReceiveResp();
@@ -1545,7 +1552,7 @@ int   Ftp::Do()
 #endif
       state=CWD_CWD_WAITING_STATE;
       m=MOVED;
-
+   /* fallthrough */
    case CWD_CWD_WAITING_STATE:
    {
       m|=FlushSendQueue();
@@ -1991,6 +1998,7 @@ int   Ftp::Do()
       }
       state=ACCEPTING_STATE;
    }
+   /* fallthrough */
    case(ACCEPTING_STATE):
       m|=FlushSendQueue();
       m|=ReceiveResp();
@@ -2093,6 +2101,7 @@ int   Ftp::Do()
 	    goto system_error;
 	 }
 	 m=MOVED;
+      /* fallthrough */
       case PASV_DATASOCKET_CONNECTING:
 	 res=Poll(conn->data_sock,POLLOUT);
 	 if(res==-1)
@@ -2118,22 +2127,23 @@ int   Ftp::Do()
 	 conn->data_iobuf->Roll();
 	 // FIXME, data_iobuf could be not done yet
 	 conn->data_iobuf=new IOBufferFDStream(new FDStream(conn->data_sock,"data-socket"),IOBuffer::GET);
+      /* fallthrough */
       case PASV_HTTP_PROXY_CONNECTED:
       	 if(HttpProxyReplyCheck(conn->data_iobuf))
 	    goto pre_waiting_150;
 	 goto usual_return;
       }
-
+   /* fallthrough */
    pre_waiting_150:
       state=WAITING_150_STATE;
-      waiting_150_timer.Reset();
+      conn->waiting_150_timer.Reset();
       m=MOVED;
    case WAITING_150_STATE:
       m|=FlushSendQueue();
       m|=ReceiveResp();
       if(state!=WAITING_150_STATE || Error())
          return MOVED;
-      if(!conn->received_150 && !expect->IsEmpty() && !waiting_150_timer.Stopped())
+      if(!conn->received_150 && !expect->IsEmpty() && !conn->waiting_150_timer.Stopped())
 	 goto usual_return;
 
       // now init data connection properly and start data exchange
@@ -2170,7 +2180,7 @@ int   Ftp::Do()
 	 else if(charset && *charset)
 	    conn->data_iobuf->SetTranslation(charset,true);
       }
-
+   /* fallthrough */
    case(DATA_OPEN_STATE):
    {
       if(expect->IsEmpty() && conn->data_sock!=-1)
@@ -2179,27 +2189,28 @@ int   Ftp::Do()
 	 // but the data can be still unsent in server side kernel buffer.
 	 // So the ftp server can decide the connection is idle for too long
 	 // time and disconnect. This hack is to prevent the above.
-	 if(now.UnixTime() >= nop_time+nop_interval)
+	 if(now.UnixTime() >= conn->nop_time+nop_interval)
 	 {
 	    // prevent infinite NOOP's
-	    if(nop_offset==pos && timeout_timer.GetLastSetting()<nop_count*nop_interval)
+	    if(conn->nop_offset==pos
+	    && timeout_timer.GetLastSetting()<conn->nop_count*nop_interval)
 	    {
 	       LogError(1,"NOOP timeout");
 	       HandleTimeout();
 	       return MOVED;
 	    }
-	    if(nop_time!=0)
+	    if(conn->nop_time!=0)
 	    {
-	       nop_count++;
+	       conn->nop_count++;
 	       conn->SendCmd("NOOP");
 	       expect->Push(Expect::IGNORE);
 	    }
-	    nop_time=now;
-	    if(nop_offset!=pos)
-	       nop_count=0;
-	    nop_offset=pos;
+	    conn->nop_time=now;
+	    if(conn->nop_offset!=pos)
+	       conn->nop_count=0;
+	    conn->nop_offset=pos;
 	 }
-	 TimeoutS(nop_interval-(time_t(now)-nop_time));
+	 TimeoutS(nop_interval-(time_t(now)-conn->nop_time));
       }
 
       oldstate=state;
@@ -2334,7 +2345,7 @@ int   Ftp::Do()
       && expect->Count()==1 && use_stat
       && !conn->ssl_is_activated() && !conn->proxy_is_http)
       {
-	 if(stat_timer.Stopped())
+	 if(conn->stat_timer.Stopped())
 	 {
 	    // send STAT to know current position.
 	    SendUrgentCmd("STAT");
@@ -2350,6 +2361,21 @@ int   Ftp::Do()
 
       goto usual_return;
    }
+   case WAITING_CCC_SHUTDOWN:
+      if(conn->control_recv->Error())
+      {
+	 if(conn->control_recv->ErrorFatal())
+	    SetError(FATAL,conn->control_recv->ErrorText());
+	 Disconnect();
+	 return MOVED;
+      }
+      if(conn->control_recv->Eof()
+      || conn->waiting_ssl_timer.Stopped())
+      {
+	 conn->MakeBuffers();
+	 goto pre_EOF_STATE;
+      }
+      break;
    } /* end of switch */
 usual_return:
    if(m==MOVED)
@@ -3028,12 +3054,11 @@ void Ftp::Connection::CloseAbortedDataConnection()
 void  Ftp::DataClose()
 {
    rate_limit=0;
-   nop_time=0;
-   nop_offset=0;
-   nop_count=0;
-
    if(!conn)
       return;
+   conn->nop_time=0;
+   conn->nop_offset=0;
+   conn->nop_count=0;
    if(conn->data_sock!=-1 && QueryBool("web-mode"))
       disconnect_on_close=true;
    conn->CloseDataConnection();
@@ -3263,6 +3288,7 @@ void  Ftp::Close()
 	 break;
       case(INITIAL_STATE):
       case(EOF_STATE):
+      case(WAITING_CCC_SHUTDOWN):
 	 break;
       }
    }
@@ -3736,7 +3762,7 @@ void Ftp::CheckResp(int act)
       {
 	 // set the FXP flag
 	 copy_connection_open=true;
-	 stat_timer.ResetDelayed(2);
+	 conn->stat_timer.ResetDelayed(2);
       }
 
       if(mode==RETRIEVE && entity_size<0)
@@ -4070,7 +4096,10 @@ void Ftp::CheckResp(int act)
       break;
    case Expect::CCC:
       if(is2XX(act))
-	 conn->MakeBuffers();
+      {
+	 state=WAITING_CCC_SHUTDOWN;
+	 conn->waiting_ssl_timer.Reset();
+      }
       break;
 #endif // USE_SSL
 
@@ -4136,6 +4165,8 @@ const char *Ftp::CurrentStatus()
 	 return(_("Waiting for transfer to complete"));
    case(WAITING_150_STATE):
       return(_("Waiting for response..."));
+   case(WAITING_CCC_SHUTDOWN):
+      return(_("Waiting for TLS shutdown..."));
    case(ACCEPTING_STATE):
       return(_("Waiting for data connection..."));
    case(DATA_OPEN_STATE):
@@ -4284,8 +4315,6 @@ void Ftp::ResetLocationData()
    home_auto.set(FindHomeAuto());
    Reconfig();
    state=INITIAL_STATE;
-   stat_timer.SetResource("ftp:stat-interval",hostname);
-   waiting_150_timer.SetResource("ftp:waiting-150-timeout",hostname);
 }
 
 bool Ftp::AnonymousQuietMode()
@@ -4549,7 +4578,7 @@ FtpS::FtpS(const FtpS *o) : super(o)
    res_prefix="ftp";
    ResetLocationData();
 }
-FileAccess *FtpS::New(){ return new FtpS();}
+FileAccess *FtpS::New() { return new FtpS(); }
 
 void Ftp::Connection::MakeSSLBuffers(const char *hostname)
 {
