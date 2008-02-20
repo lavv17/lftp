@@ -151,8 +151,9 @@ void  CmdExec::exec_parsed_command()
    case(COND_ANY):
       if(exit_code!=0 && res_fail_exit.QueryBool(0))
       {
-	 while(!Done())
+	 while(feeder)
 	    RemoveFeeder();
+	 cmd_buf.Empty();
 	 return;
       }
       break;
