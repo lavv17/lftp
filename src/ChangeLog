@@ -1,3 +1,9 @@
+2008-02-26  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SSH_Access.cc, SSH_Access.h, Fish.cc, Fish.h, SFtp.cc, SFtp.h, Makefile.am:
+	  split off the ssh interaction logic to separate module (SSH_Access).
+	* MirrorJob.cc: add basename only if it is not already there.
+
 2008-02-20  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CmdExec.cc: fix spinning when fail-exit is triggered with non-empty

@@ -23,11 +23,10 @@
 #ifndef FISH_H
 #define FISH_H
 
-#include "NetAccess.h"
-#include "PtyShell.h"
+#include "SSH_Access.h"
 #include "StringSet.h"
 
-class Fish : public NetAccess
+class Fish : public SSH_Access
 {
    enum state_t
    {
@@ -42,8 +41,6 @@ class Fish : public NetAccess
    };
 
    state_t state;
-   bool received_greeting;
-   int  password_sent;
 
    void Init();
 
@@ -51,10 +48,6 @@ class Fish : public NetAccess
    void	 Send(const char *format,...) PRINTF_LIKE(2,3);
    void	 SendMethod();
    void	 SendArrayInfoRequests();
-
-   Ref<IOBuffer> send_buf;
-   Ref<IOBuffer> recv_buf;
-   Ref<PtyShell> ssh;
 
    void Disconnect();
    int IsConnected() const

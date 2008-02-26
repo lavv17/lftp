@@ -1640,7 +1640,7 @@ CMD(mirror)
 	 {
 	    // user wants source dir name appended.
 	    const char *base=basename_ptr(source_dir);
-	    if(base[0]!='/')
+	    if(base[0]!='/' && strcmp(base,basename_ptr(arg)))
 	    {
 	       char *target_dir1=alloca_strdup2(target_dir,strlen(base));
 	       strcat(target_dir1,base);

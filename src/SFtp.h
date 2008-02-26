@@ -23,14 +23,13 @@
 #ifndef SFTP_H
 #define SFTP_H
 
-#include "NetAccess.h"
+#include "SSH_Access.h"
 #include "StatusLine.h"
-#include "PtyShell.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "FileSet.h"
 
-class SFtp : public NetAccess
+class SFtp : public SSH_Access
 {
    int	 protocol_version;
 
@@ -219,8 +218,6 @@ private:
    };
 
    state_t state;
-   bool received_greeting;
-   int  password_sent;
    unsigned ssh_id;
    xstring handle;
 
@@ -229,18 +226,12 @@ private:
    void	 SendMethod();
    void	 SendArrayInfoRequests();
 
-   SMTaskRef<IOBuffer> send_buf;
-   SMTaskRef<IOBuffer> recv_buf;
-   SMTaskRef<IOBuffer> pty_send_buf;
-   SMTaskRef<IOBuffer> pty_recv_buf;
    Ref<DirectedBuffer> send_translate;
    Ref<DirectedBuffer> recv_translate;
 
    Ref<Buffer> file_buf;
    Ref<FileSet> file_set;
    Timer flush_timer;
-
-   Ref<PtyShell> ssh;
 
    void Disconnect();
    int IsConnected() const

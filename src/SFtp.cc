@@ -35,7 +35,7 @@
 
 #define max_buf 0x10000
 
-#define super NetAccess
+#define super SSH_Access
 
 bool SFtp::GetBetterConnection(int level,bool limit_reached)
 {
@@ -95,7 +95,8 @@ int SFtp::Do()
       Disconnect();
       return MOVED;
    }
-   m|=HandleReplies();
+   if(state!=CONNECTING_1)
+      m|=HandleReplies();
 
    if(Error())
       return m;
@@ -200,18 +201,15 @@ int SFtp::Do()
 	 TimeoutS(1);
 	 return m;
       }
-      int pipe_in =ssh->getfd_pipe_in();
-      int pipe_out=ssh->getfd_pipe_out();
-      ssh->Kill(SIGCONT);
-      pty_send_buf=new IOBufferFDStream(ssh.borrow(),IOBuffer::PUT);
-      pty_recv_buf=new IOBufferFDStream(new FDStream(fd,"pseudo-tty"),IOBuffer::GET);
-      send_buf=new IOBufferFDStream(new FDStream(pipe_out,"pipe-out"),IOBuffer::PUT);
-      recv_buf=new IOBufferFDStream(new FDStream(pipe_in,"pipe-in"),IOBuffer::GET);
+      MakePtyBuffers();
       set_real_cwd("~");
       state=CONNECTING_1;
       m=MOVED;
    }
    case CONNECTING_1:
+      m|=HandleSSHMessage();
+      if(state!=CONNECTING_1)
+	 return MOVED;
       if(!received_greeting)
 	 return m;
       SendRequest(new Request_INIT(Query("protocol-version",hostname)),Expect::FXP_VERSION);
@@ -219,6 +217,9 @@ int SFtp::Do()
       return MOVED;
 
    case CONNECTING_2:
+      m|=HandleSSHMessage();
+      if(state!=CONNECTING_2)
+	 return MOVED;
       if(protocol_version==0)
 	 return m;
       if(home_auto==0)
@@ -295,13 +296,10 @@ int SFtp::Do()
 
 void SFtp::MoveConnectionHere(SFtp *o)
 {
+   super::MoveConnectionHere(o);
    protocol_version=o->protocol_version;
    recv_translate=o->recv_translate.borrow();
    send_translate=o->send_translate.borrow();
-   send_buf=o->send_buf.borrow();
-   recv_buf=o->recv_buf.borrow();
-   pty_send_buf=o->pty_send_buf.borrow();
-   pty_recv_buf=o->pty_recv_buf.borrow();
    rate_limit=o->rate_limit.borrow();
    expect_queue_size=o->expect_queue_size; o->expect_queue_size=0;
    expect_chain=o->expect_chain; o->expect_chain=0;
@@ -320,21 +318,13 @@ void SFtp::MoveConnectionHere(SFtp *o)
 
 void SFtp::Disconnect()
 {
-   if(send_buf)
-      LogNote(9,_("Disconnecting"));
+   super::Disconnect();
    handle.set(0);
-   send_buf=0;
-   recv_buf=0;
-   pty_send_buf=0;
-   pty_recv_buf=0;
    file_buf=0;
-   ssh=0;
    EmptyRespQueue();
    state=DISCONNECTED;
    if(mode==STORE)
       SetError(STORE_FAILED);
-   received_greeting=false;
-   password_sent=0;
    protocol_version=0;
    send_translate=0;
    recv_translate=0;
@@ -364,7 +354,7 @@ void SFtp::Init()
    flush_timer.Set(0,500);
 }
 
-SFtp::SFtp()
+SFtp::SFtp() : SSH_Access("SFTP:")
 {
    Init();
    Reconfig(0);
@@ -712,37 +702,6 @@ int SFtp::HandlePty()
    const char *eol=(const char*)memchr(b,'\n',s);
    if(!eol)
    {
-      const char *p="password:";
-      const char *y="(yes/no)?";
-      int p_len=strlen(p);
-      int y_len=strlen(y);
-      if(s>0 && b[s-1]==' ')
-	 s--;
-      if(s>=p_len && !strncasecmp(b+s-p_len,p,p_len)
-      || s>10 && !strncmp(b+s-2,"':",2))
-      {
-	 if(!pass)
-	 {
-	    SetError(LOGIN_FAILED,_("Password required"));
-	    return MOVED;
-	 }
-	 if(password_sent>1)
-	 {
-	    SetError(LOGIN_FAILED,_("Login incorrect"));
-	    return MOVED;
-	 }
-	 pty_recv_buf->Put("XXXX");
-	 pty_send_buf->Put(pass);
-	 pty_send_buf->Put("\n");
-	 password_sent++;
-	 return m;
-      }
-      if(s>=y_len && !strncasecmp(b+s-y_len,y,y_len))
-      {
-	 pty_recv_buf->Put("yes\n");
-	 pty_send_buf->Put("yes\n");
-	 return m;
-      }
       if(pty_recv_buf->Eof())
 	 LogError(0,_("Peer closed connection"));
       if(pty_recv_buf->Error())
@@ -762,8 +721,6 @@ int SFtp::HandlePty()
    pty_recv_buf->Skip(s);
 
    LogRecv(4,line);
-   if(!received_greeting && !strcmp(line,"SFTP:"))
-      received_greeting=true;
 
    return m;
 }
@@ -1023,9 +980,12 @@ void SFtp::RequestMoreData()
 
 int SFtp::HandleReplies()
 {
-   int m=HandlePty();
+   int m=STALL;
    if(recv_buf==0)
       return m;
+
+   if(state!=CONNECTING_2)
+      m|=HandlePty();
 
    int i=0;
    Expect *ooo_scan=ooo_chain;
