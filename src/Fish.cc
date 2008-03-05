@@ -550,12 +550,19 @@ int Fish::HandleReplies()
    if(state==FILE_RECV) {
       const char *err=pty_recv_buf->Get();
       if(err && err[0]) {
-	 const char *eol=strchr(err,'\n'))
-	 if(eol || ) {
-      {
-	 LogError(0,err);
-	 SetError(NO_FILE,err);
-	 pty_recv_buf->Skip(
+	 const char *eol=strchr(err,'\n');
+	 if(eol) {
+	    xstring &e=xstring::get_tmp(err,eol-err);
+	    LogError(0,e);
+	    SetError(NO_FILE,e);
+	    if(pty_recv_buf)
+	       pty_recv_buf->Skip(eol-err+1);
+	    return MOVED;
+	 }
+      }
+      if(pty_recv_buf->Eof()) {
+	 Disconnect();
+	 return MOVED;
       }
    }
    recv_buf->Put(pty_recv_buf->Get(),pty_recv_buf->Size()); // join the messages.
