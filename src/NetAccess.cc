@@ -129,17 +129,15 @@ void NetAccess::KeepAlive(int sock)
 }
 void NetAccess::MinimizeLatency(int sock)
 {
-   int tos;
 #ifdef IP_TOS
-   tos = IPTOS_LOWDELAY;
+   int tos = IPTOS_LOWDELAY;
    setsockopt(sock, IPPROTO_IP, IP_TOS, (char *)&tos, sizeof(int));
 #endif
 }
 void NetAccess::MaximizeThroughput(int sock)
 {
-   int tos;
 #ifdef IP_TOS
-   tos = IPTOS_THROUGHPUT;
+   int tos = IPTOS_THROUGHPUT;
    setsockopt(sock, IPPROTO_IP, IP_TOS, (char *)&tos, sizeof(int));
 #endif
 }

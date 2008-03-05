@@ -1,3 +1,8 @@
+2008-03-05  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Fish.cc: handle stderr messages during file transfer.
+	* Http.cc: add 303 and 307 codes (suggested by Stephane Chazelas <Stephane_Chazelas@yahoo.fr>).
+
 2008-02-26  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SSH_Access.cc, SSH_Access.h, Fish.cc, Fish.h, SFtp.cc, SFtp.h, Makefile.am:
