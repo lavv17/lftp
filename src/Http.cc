@@ -57,7 +57,7 @@ CDECL char *strptime(const char *buf, const char *format, struct tm *tm);
 /* Some status code validation macros: */
 #define H_20X(x)        (((x) >= 200) && ((x) < 300))
 #define H_PARTIAL(x)    ((x) == 206)
-#define H_REDIRECTED(x) (((x) == 301) || ((x) == 302))
+#define H_REDIRECTED(x) (((x) == 301) || ((x) == 302) || ((x) == 303) || ((x) == 307))
 #define H_EMPTY(x)	(((x) == 204) || ((x) == 205))
 #define H_CONTINUE(x)	((x) == 100 || (x) == 102)
 #define H_REQUESTED_RANGE_NOT_SATISFIABLE(x) ((x) == 416)
