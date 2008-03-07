@@ -1,3 +1,17 @@
+Version 3.7.0 - 2008-03-07
+
+* new setting ftp:proxy-auth-type and two new ftp proxy modes (joined-acct, open)
+  (partly based on patch from David Wolfe <davidw@wolfeden.org>).
+* don't add the same network address multiple times; report resolved addresses.
+* added new open -s option; help for "slot" command (Laurent MONIN <zas@norz.org>).
+* added a workaround for proftpd NLST bug.
+* added a workaround for servers sending single NL.
+* handle host key verification error in fish and sftp.
+* fixed a core dump when doing "open host>file".
+* fixed CCC handling in secure ftp.
+* fixed spinning when cmd:fail-exit is true in a script.
+* included zh_HK translation (Abel Cheung <abelcheung@gmail.com>).
+
 Version 3.6.3 - 2008-01-28
 
 * new setting sftp:use-full-path to send full path instead of home-relative.
