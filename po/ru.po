@@ -7,14 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.3.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2008-02-17 13:30+0300\n"
+"POT-Creation-Date: 2008-03-07 14:54+0300\n"
 "PO-Revision-Date: 2000-09-07 09:36+08:00\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: lib/argmatch.c:137
 #, c-format
@@ -146,78 +147,78 @@ msgstr ""
 msgid "Warning: chdir(%s) failed: %s\n"
 msgstr "Предупреждение: ошибка chdir(%s): %s\n"
 
-#: src/CmdExec.cc:193
+#: src/CmdExec.cc:194
 #, c-format
 msgid "Unknown command `%s'.\n"
 msgstr "Неизвестная команда `%s'.\n"
 
-#: src/CmdExec.cc:195
+#: src/CmdExec.cc:196
 #, c-format
 msgid "Ambiguous command `%s'.\n"
 msgstr "Неоднозначное сокращение `%s'.\n"
 
-#: src/CmdExec.cc:214
+#: src/CmdExec.cc:215
 #, c-format
 msgid "Module for command `%s' did not register the command.\n"
 msgstr "Модуль для команды `%s' не зарегистрировал эту команду\n"
 
-#: src/CmdExec.cc:352
+#: src/CmdExec.cc:353
 #, c-format
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, каталог=%s\n"
 
-#: src/CmdExec.cc:373 src/MirrorJob.cc:549
+#: src/CmdExec.cc:374 src/MirrorJob.cc:549
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: получено перенаправление на `%s'\n"
 
-#: src/CmdExec.cc:376 src/FileCopy.cc:1021
+#: src/CmdExec.cc:377 src/FileCopy.cc:1021
 msgid "Too many redirections"
 msgstr "Слишком много перенаправлений"
 
-#: src/CmdExec.cc:488 src/CmdExec.cc:545
+#: src/CmdExec.cc:489 src/CmdExec.cc:546
 msgid "Interrupt"
 msgstr "Прерывание"
 
-#: src/CmdExec.cc:610
+#: src/CmdExec.cc:611
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "Предупреждение: неполный остаток команды игнорируется\n"
 
-#: src/CmdExec.cc:703
+#: src/CmdExec.cc:704
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tВыполнение примитива `%s' [%s]\n"
 
-#: src/CmdExec.cc:709
+#: src/CmdExec.cc:710
 msgid "Queue is stopped."
 msgstr "Очередь остановлена."
 
-#: src/CmdExec.cc:714
+#: src/CmdExec.cc:715
 msgid "Now executing:"
 msgstr "Сейчас исполняется:"
 
-#: src/CmdExec.cc:727
+#: src/CmdExec.cc:728
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\tОжидание завершения задания [%d]\n"
 
-#: src/CmdExec.cc:732
+#: src/CmdExec.cc:733
 #, c-format
 msgid "\tWaiting for termination of jobs: "
 msgstr "\tОжидание завершения заданий: "
 
-#: src/CmdExec.cc:743
+#: src/CmdExec.cc:744
 #, c-format
 msgid "\tRunning\n"
 msgstr "\tВыполнение\n"
 
-#: src/CmdExec.cc:747
+#: src/CmdExec.cc:748
 #, c-format
 msgid "\tWaiting for command\n"
 msgstr "\tОжидание команды\n"
 
-#: src/CmdExec.cc:1202
+#: src/CmdExec.cc:1203
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: команда `%s' не встроена при компиляции.\n"
@@ -262,8 +263,8 @@ msgstr "Ошибка доступа: "
 msgid "File cannot be accessed"
 msgstr "Доступ к файлу невозможен"
 
-#: src/FileAccess.cc:216 src/Fish.cc:1004 src/SFtp.cc:1311
-#: src/ftpclass.cc:4130 src/ftpclass.cc:4139
+#: src/FileAccess.cc:216 src/Fish.cc:975 src/SFtp.cc:1271 src/ftpclass.cc:4130
+#: src/ftpclass.cc:4139
 msgid "Not connected"
 msgstr "Нет соединения"
 
@@ -393,59 +394,47 @@ msgstr "всего"
 msgid "Closing idle connection"
 msgstr "Закрытие неиспользуемого соединения"
 
-#: src/Fish.cc:155 src/SFtp.cc:183
+#: src/Fish.cc:156 src/SFtp.cc:184
 msgid "Running connect program"
 msgstr "Выполняется соединяющая программа"
 
-#: src/Fish.cc:313 src/SFtp.cc:324
-msgid "Disconnecting"
-msgstr "Закрытие соединения"
-
-#: src/Fish.cc:572 src/Http.cc:1118 src/SFtp.cc:747 src/SFtp.cc:1058
+#: src/Fish.cc:580 src/Http.cc:1118 src/SFtp.cc:706 src/SFtp.cc:1018
 #: src/ftpclass.cc:2603 src/ftpclass.cc:2813
 msgid "Peer closed connection"
 msgstr "Соединение закрыто удаленной машиной"
 
-#: src/Fish.cc:600 src/SFtp.cc:726
-msgid "Password required"
-msgstr "Требуется пароль"
-
-#: src/Fish.cc:605 src/SFtp.cc:731
-msgid "Login incorrect"
-msgstr "Login/пароль неверный"
-
-#: src/Fish.cc:653 src/SFtp.cc:1083 src/ftpclass.cc:3796
+#: src/Fish.cc:624 src/SFtp.cc:1043 src/ftpclass.cc:3796
 msgid "extra server response"
 msgstr "непредвиденный ответ сервера"
 
-#: src/Fish.cc:1009 src/Http.cc:1828 src/Http.cc:1835 src/SFtp.cc:1317
+#: src/Fish.cc:980 src/Http.cc:1828 src/Http.cc:1835 src/SFtp.cc:1277
 #: src/ftpclass.cc:4142
 msgid "Connecting..."
 msgstr "Установка соединения..."
 
-#: src/Fish.cc:1011 src/SFtp.cc:1319 src/ftpclass.cc:4148
+#: src/Fish.cc:982 src/SFtp.cc:1279 src/ftpclass.cc:4148
 msgid "Connected"
 msgstr "Соединен"
 
-#: src/Fish.cc:1013 src/Http.cc:1837 src/SFtp.cc:1321 src/ftpclass.cc:4125
+#: src/Fish.cc:984 src/Http.cc:1837 src/SFtp.cc:1281 src/ftpclass.cc:4125
 #: src/ftpclass.cc:4153 src/ftpclass.cc:4167
 msgid "Waiting for response..."
 msgstr "Ожидание ответа..."
 
-#: src/Fish.cc:1015 src/Http.cc:1840 src/SFtp.cc:1323 src/ftpclass.cc:4187
+#: src/Fish.cc:986 src/Http.cc:1840 src/SFtp.cc:1283 src/ftpclass.cc:4187
 msgid "Receiving data"
 msgstr "Получение данных"
 
-#: src/Fish.cc:1017 src/Http.cc:1833 src/SFtp.cc:1325 src/ftpclass.cc:4185
+#: src/Fish.cc:988 src/Http.cc:1833 src/SFtp.cc:1285 src/ftpclass.cc:4185
 msgid "Sending data"
 msgstr "Отправка данных"
 
-#: src/Fish.cc:1019 src/SFtp.cc:1327
+#: src/Fish.cc:990 src/SFtp.cc:1287
 msgid "Done"
 msgstr "Готово"
 
-#: src/Fish.cc:1176 src/FtpDirList.cc:127 src/HttpDir.cc:1317 src/SFtp.cc:2137
-#: src/SFtp.cc:2216
+#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1317 src/SFtp.cc:2097
+#: src/SFtp.cc:2176
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "Получение списка файлов (%lld) [%s]"
@@ -535,11 +524,11 @@ msgstr "Получение заголовков HTTP..."
 msgid "[%d] Done (%s)"
 msgstr "[%d] Завершено (%s)"
 
-#: src/LocalAccess.cc:610 src/NetAccess.cc:773
+#: src/LocalAccess.cc:610 src/NetAccess.cc:771
 msgid "Getting directory contents"
 msgstr "Получение содержимого каталога"
 
-#: src/LocalAccess.cc:612 src/NetAccess.cc:777
+#: src/LocalAccess.cc:612 src/NetAccess.cc:775
 msgid "Getting files information"
 msgstr "Получение информации о файлах"
 
@@ -673,29 +662,29 @@ msgstr "%s: регулярное выражение `%s': %s\n"
 msgid "Try `help %s' for more information.\n"
 msgstr "Запустите `help %s' для получения дополнительной информации.\n"
 
-#: src/NetAccess.cc:298
+#: src/NetAccess.cc:296
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "Ошибка на сокете (%s) - повторное соединение"
 
-#: src/NetAccess.cc:331
+#: src/NetAccess.cc:329
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Соединение с %s%s (%s), порт %u"
 
-#: src/NetAccess.cc:387
+#: src/NetAccess.cc:385
 msgid "Timeout - reconnecting"
 msgstr "Превышение лимита времени ожидания - повторное соединение"
 
-#: src/NetAccess.cc:484
+#: src/NetAccess.cc:482
 msgid "Connection limit reached"
 msgstr "Достигнут предел количества соединений"
 
-#: src/NetAccess.cc:488
+#: src/NetAccess.cc:486
 msgid "Delaying before reconnect"
 msgstr "Задержка перед повторным соединением"
 
-#: src/NetAccess.cc:512
+#: src/NetAccess.cc:510
 msgid "max-retries exceeded"
 msgstr "превышен лимит количества попыток (max-retries)"
 
@@ -830,7 +819,7 @@ msgstr "нет такого %s сервиса"
 msgid "No address found"
 msgstr "Адресов не найдено"
 
-#: src/SFtp.cc:1074
+#: src/SFtp.cc:1034
 msgid "invalid server response format"
 msgstr "неверный формат ответа сервера"
 
@@ -2475,6 +2464,15 @@ msgstr "%s ok, %d каталог$|а|ов$ удалено\n"
 #, c-format
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d файл$|а|ов$ удалено\n"
+
+#~ msgid "Disconnecting"
+#~ msgstr "Закрытие соединения"
+
+#~ msgid "Password required"
+#~ msgstr "Требуется пароль"
+
+#~ msgid "Login incorrect"
+#~ msgstr "Login/пароль неверный"
 
 #~ msgid "Fatal error: %s"
 #~ msgstr "Фатальная ошибка: %s"

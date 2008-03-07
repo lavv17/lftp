@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2008-02-17 13:30+0300\n"
+"POT-Creation-Date: 2008-03-07 14:54+0300\n"
 "PO-Revision-Date: 2001-05-27 KST\n"
 "Last-Translator: Dojip Kim <greendrm@greendrm.com>\n"
 "Language-Team: \n"
@@ -144,78 +144,78 @@ msgstr ""
 msgid "Warning: chdir(%s) failed: %s\n"
 msgstr "경고: chdir(%s) 실패: %s\n"
 
-#: src/CmdExec.cc:193
+#: src/CmdExec.cc:194
 #, c-format
 msgid "Unknown command `%s'.\n"
 msgstr "`%s' 알수 없는 명령어.\n"
 
-#: src/CmdExec.cc:195
+#: src/CmdExec.cc:196
 #, c-format
 msgid "Ambiguous command `%s'.\n"
 msgstr "`%s' 모호한 명령어.\n"
 
-#: src/CmdExec.cc:214
+#: src/CmdExec.cc:215
 #, c-format
 msgid "Module for command `%s' did not register the command.\n"
 msgstr "`%s'명령에 대한 모듈이 등록되어 있지 않습니다.\n"
 
-#: src/CmdExec.cc:352
+#: src/CmdExec.cc:353
 #, c-format
 msgid "cd ok, cwd=%s\n"
 msgstr "cd 성공, cwd=%s\n"
 
-#: src/CmdExec.cc:373 src/MirrorJob.cc:549
+#: src/CmdExec.cc:374 src/MirrorJob.cc:549
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: `%s'으로 리다이렉션을 받음\n"
 
-#: src/CmdExec.cc:376 src/FileCopy.cc:1021
+#: src/CmdExec.cc:377 src/FileCopy.cc:1021
 msgid "Too many redirections"
 msgstr "리다이렉션이 너무 많습니다"
 
-#: src/CmdExec.cc:488 src/CmdExec.cc:545
+#: src/CmdExec.cc:489 src/CmdExec.cc:546
 msgid "Interrupt"
 msgstr "인터럽트"
 
-#: src/CmdExec.cc:610
+#: src/CmdExec.cc:611
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "경고: 불완전한 명령어 무시\n"
 
-#: src/CmdExec.cc:703
+#: src/CmdExec.cc:704
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\t내장 실행 `%s' [%s]\n"
 
-#: src/CmdExec.cc:709
+#: src/CmdExec.cc:710
 msgid "Queue is stopped."
 msgstr ""
 
-#: src/CmdExec.cc:714
+#: src/CmdExec.cc:715
 msgid "Now executing:"
 msgstr "현재 실행중:"
 
-#: src/CmdExec.cc:727
+#: src/CmdExec.cc:728
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\t작업 [%d]의 종료를 기다리는 중\n"
 
-#: src/CmdExec.cc:732
+#: src/CmdExec.cc:733
 #, c-format
 msgid "\tWaiting for termination of jobs: "
 msgstr "\t작업 종료를 위하여 기다리는 중: "
 
-#: src/CmdExec.cc:743
+#: src/CmdExec.cc:744
 #, c-format
 msgid "\tRunning\n"
 msgstr "\t실행중\n"
 
-#: src/CmdExec.cc:747
+#: src/CmdExec.cc:748
 #, c-format
 msgid "\tWaiting for command\n"
 msgstr "\t명령을 기다리는 중\n"
 
-#: src/CmdExec.cc:1202
+#: src/CmdExec.cc:1203
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: `%s'명령은 컴파일되지 않았습니다.\n"
@@ -259,8 +259,8 @@ msgstr "접속 실패: %s"
 msgid "File cannot be accessed"
 msgstr "파일을 읽을 수 없습니다"
 
-#: src/FileAccess.cc:216 src/Fish.cc:1004 src/SFtp.cc:1311
-#: src/ftpclass.cc:4130 src/ftpclass.cc:4139
+#: src/FileAccess.cc:216 src/Fish.cc:975 src/SFtp.cc:1271 src/ftpclass.cc:4130
+#: src/ftpclass.cc:4139
 msgid "Not connected"
 msgstr "접속되지 않았습니다"
 
@@ -396,62 +396,48 @@ msgstr ""
 msgid "Closing idle connection"
 msgstr "사용하지 않는 접속을 끊습니다"
 
-#: src/Fish.cc:155 src/SFtp.cc:183
+#: src/Fish.cc:156 src/SFtp.cc:184
 msgid "Running connect program"
 msgstr ""
 
-#: src/Fish.cc:313 src/SFtp.cc:324
-#, fuzzy
-msgid "Disconnecting"
-msgstr "접속중..."
-
-#: src/Fish.cc:572 src/Http.cc:1118 src/SFtp.cc:747 src/SFtp.cc:1058
+#: src/Fish.cc:580 src/Http.cc:1118 src/SFtp.cc:706 src/SFtp.cc:1018
 #: src/ftpclass.cc:2603 src/ftpclass.cc:2813
 msgid "Peer closed connection"
 msgstr "접속이 끊겼습니다"
 
-#: src/Fish.cc:600 src/SFtp.cc:726
-#, fuzzy
-msgid "Password required"
-msgstr "비밀번호: "
-
-#: src/Fish.cc:605 src/SFtp.cc:731
-msgid "Login incorrect"
-msgstr ""
-
-#: src/Fish.cc:653 src/SFtp.cc:1083 src/ftpclass.cc:3796
+#: src/Fish.cc:624 src/SFtp.cc:1043 src/ftpclass.cc:3796
 msgid "extra server response"
 msgstr "임시 서버 응답"
 
-#: src/Fish.cc:1009 src/Http.cc:1828 src/Http.cc:1835 src/SFtp.cc:1317
+#: src/Fish.cc:980 src/Http.cc:1828 src/Http.cc:1835 src/SFtp.cc:1277
 #: src/ftpclass.cc:4142
 msgid "Connecting..."
 msgstr "접속중..."
 
-#: src/Fish.cc:1011 src/SFtp.cc:1319 src/ftpclass.cc:4148
+#: src/Fish.cc:982 src/SFtp.cc:1279 src/ftpclass.cc:4148
 msgid "Connected"
 msgstr "접속되었음"
 
-#: src/Fish.cc:1013 src/Http.cc:1837 src/SFtp.cc:1321 src/ftpclass.cc:4125
+#: src/Fish.cc:984 src/Http.cc:1837 src/SFtp.cc:1281 src/ftpclass.cc:4125
 #: src/ftpclass.cc:4153 src/ftpclass.cc:4167
 msgid "Waiting for response..."
 msgstr "응답을 기다립니다..."
 
-#: src/Fish.cc:1015 src/Http.cc:1840 src/SFtp.cc:1323 src/ftpclass.cc:4187
+#: src/Fish.cc:986 src/Http.cc:1840 src/SFtp.cc:1283 src/ftpclass.cc:4187
 msgid "Receiving data"
 msgstr "자료 받는 중"
 
-#: src/Fish.cc:1017 src/Http.cc:1833 src/SFtp.cc:1325 src/ftpclass.cc:4185
+#: src/Fish.cc:988 src/Http.cc:1833 src/SFtp.cc:1285 src/ftpclass.cc:4185
 msgid "Sending data"
 msgstr "자료 보내는 중"
 
-#: src/Fish.cc:1019 src/SFtp.cc:1327
+#: src/Fish.cc:990 src/SFtp.cc:1287
 #, fuzzy
 msgid "Done"
 msgstr "\t완료\n"
 
-#: src/Fish.cc:1176 src/FtpDirList.cc:127 src/HttpDir.cc:1317 src/SFtp.cc:2137
-#: src/SFtp.cc:2216
+#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1317 src/SFtp.cc:2097
+#: src/SFtp.cc:2176
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "파일 목록을 가져옵니다 (%lld) [%s]"
@@ -542,12 +528,12 @@ msgstr "헤더를 읽고 있는중.."
 msgid "[%d] Done (%s)"
 msgstr "[%d] 완료 (%s)"
 
-#: src/LocalAccess.cc:610 src/NetAccess.cc:773
+#: src/LocalAccess.cc:610 src/NetAccess.cc:771
 #, fuzzy
 msgid "Getting directory contents"
 msgstr "디렉토리 정보를 가져오는 중 (%lld)"
 
-#: src/LocalAccess.cc:612 src/NetAccess.cc:777
+#: src/LocalAccess.cc:612 src/NetAccess.cc:775
 #, fuzzy
 msgid "Getting files information"
 msgstr "파일 정보를 가져오는 중 (%d%%)"
@@ -680,30 +666,30 @@ msgstr ""
 msgid "Try `help %s' for more information.\n"
 msgstr "상세한 것은 `help %s'를 이용하십시오\n"
 
-#: src/NetAccess.cc:298
+#: src/NetAccess.cc:296
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "(%s) 소켓 오류 - 재접속중"
 
-#: src/NetAccess.cc:331
+#: src/NetAccess.cc:329
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "%s%s (%s) 포트 %u에 연결 중"
 
-#: src/NetAccess.cc:387
+#: src/NetAccess.cc:385
 msgid "Timeout - reconnecting"
 msgstr "시간초과 - 재접속"
 
-#: src/NetAccess.cc:484
+#: src/NetAccess.cc:482
 #, fuzzy
 msgid "Connection limit reached"
 msgstr "접속 제한까지 갔습니다"
 
-#: src/NetAccess.cc:488
+#: src/NetAccess.cc:486
 msgid "Delaying before reconnect"
 msgstr "재접속하기 위하여 기다립니다"
 
-#: src/NetAccess.cc:512
+#: src/NetAccess.cc:510
 msgid "max-retries exceeded"
 msgstr "최대-재시도를 초과했습니다"
 
@@ -842,7 +828,7 @@ msgstr "그러한 %s는  없습니다"
 msgid "No address found"
 msgstr "주소를 찾을 수 없습니다"
 
-#: src/SFtp.cc:1074
+#: src/SFtp.cc:1034
 #, fuzzy
 msgid "invalid server response format"
 msgstr "임시 서버 응답"
@@ -2450,6 +2436,14 @@ msgstr "%s 성공, %d director$y|ies$ 삭제했습니다\n"
 #, c-format
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s 성공, %d file$|s$ 삭제했습니다\n"
+
+#, fuzzy
+#~ msgid "Disconnecting"
+#~ msgstr "접속중..."
+
+#, fuzzy
+#~ msgid "Password required"
+#~ msgstr "비밀번호: "
 
 #~ msgid "Fatal error: %s"
 #~ msgstr "치명적 오류: %s"

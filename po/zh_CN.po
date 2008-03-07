@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2008-02-17 13:30+0300\n"
+"POT-Creation-Date: 2008-03-07 14:54+0300\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -145,78 +145,78 @@ msgstr ""
 msgid "Warning: chdir(%s) failed: %s\n"
 msgstr "警告: chdir(%s) 失败: %s\n"
 
-#: src/CmdExec.cc:193
+#: src/CmdExec.cc:194
 #, c-format
 msgid "Unknown command `%s'.\n"
 msgstr "未知命令 `%s'.\n"
 
-#: src/CmdExec.cc:195
+#: src/CmdExec.cc:196
 #, c-format
 msgid "Ambiguous command `%s'.\n"
 msgstr "不明确的命令 `%s'.\n"
 
-#: src/CmdExec.cc:214
+#: src/CmdExec.cc:215
 #, c-format
 msgid "Module for command `%s' did not register the command.\n"
 msgstr ""
 
-#: src/CmdExec.cc:352
+#: src/CmdExec.cc:353
 #, c-format
 msgid "cd ok, cwd=%s\n"
 msgstr "cd 成功, 当前目录=%s\n"
 
-#: src/CmdExec.cc:373 src/MirrorJob.cc:549
+#: src/CmdExec.cc:374 src/MirrorJob.cc:549
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
 
-#: src/CmdExec.cc:376 src/FileCopy.cc:1021
+#: src/CmdExec.cc:377 src/FileCopy.cc:1021
 msgid "Too many redirections"
 msgstr ""
 
-#: src/CmdExec.cc:488 src/CmdExec.cc:545
+#: src/CmdExec.cc:489 src/CmdExec.cc:546
 msgid "Interrupt"
 msgstr "中断"
 
-#: src/CmdExec.cc:610
+#: src/CmdExec.cc:611
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "警告: 放弃未完成的命令\n"
 
-#: src/CmdExec.cc:703
+#: src/CmdExec.cc:704
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\t执行内建的 `%s' [%s]\n"
 
-#: src/CmdExec.cc:709
+#: src/CmdExec.cc:710
 msgid "Queue is stopped."
 msgstr ""
 
-#: src/CmdExec.cc:714
+#: src/CmdExec.cc:715
 msgid "Now executing:"
 msgstr ""
 
-#: src/CmdExec.cc:727
+#: src/CmdExec.cc:728
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\t等待任务 [%d] 中止\n"
 
-#: src/CmdExec.cc:732
+#: src/CmdExec.cc:733
 #, fuzzy, c-format
 msgid "\tWaiting for termination of jobs: "
 msgstr "等待过滤器中止"
 
-#: src/CmdExec.cc:743
+#: src/CmdExec.cc:744
 #, c-format
 msgid "\tRunning\n"
 msgstr "\t正在运行\n"
 
-#: src/CmdExec.cc:747
+#: src/CmdExec.cc:748
 #, fuzzy, c-format
 msgid "\tWaiting for command\n"
 msgstr "parse: 缺少过滤器命令\n"
 
-#: src/CmdExec.cc:1202
+#: src/CmdExec.cc:1203
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr ""
@@ -261,8 +261,8 @@ msgstr "访问失败: %s"
 msgid "File cannot be accessed"
 msgstr "不能访问文件"
 
-#: src/FileAccess.cc:216 src/Fish.cc:1004 src/SFtp.cc:1311
-#: src/ftpclass.cc:4130 src/ftpclass.cc:4139
+#: src/FileAccess.cc:216 src/Fish.cc:975 src/SFtp.cc:1271 src/ftpclass.cc:4130
+#: src/ftpclass.cc:4139
 msgid "Not connected"
 msgstr "没有连接上"
 
@@ -395,63 +395,49 @@ msgstr ""
 msgid "Closing idle connection"
 msgstr "关闭发呆的连接"
 
-#: src/Fish.cc:155 src/SFtp.cc:183
+#: src/Fish.cc:156 src/SFtp.cc:184
 msgid "Running connect program"
 msgstr ""
 
-#: src/Fish.cc:313 src/SFtp.cc:324
-#, fuzzy
-msgid "Disconnecting"
-msgstr "正在连接..."
-
-#: src/Fish.cc:572 src/Http.cc:1118 src/SFtp.cc:747 src/SFtp.cc:1058
+#: src/Fish.cc:580 src/Http.cc:1118 src/SFtp.cc:706 src/SFtp.cc:1018
 #: src/ftpclass.cc:2603 src/ftpclass.cc:2813
 msgid "Peer closed connection"
 msgstr "对端关闭连接"
 
-#: src/Fish.cc:600 src/SFtp.cc:726
-#, fuzzy
-msgid "Password required"
-msgstr "口令: "
-
-#: src/Fish.cc:605 src/SFtp.cc:731
-msgid "Login incorrect"
-msgstr ""
-
-#: src/Fish.cc:653 src/SFtp.cc:1083 src/ftpclass.cc:3796
+#: src/Fish.cc:624 src/SFtp.cc:1043 src/ftpclass.cc:3796
 msgid "extra server response"
 msgstr "额外的服务器应答"
 
-#: src/Fish.cc:1009 src/Http.cc:1828 src/Http.cc:1835 src/SFtp.cc:1317
+#: src/Fish.cc:980 src/Http.cc:1828 src/Http.cc:1835 src/SFtp.cc:1277
 #: src/ftpclass.cc:4142
 msgid "Connecting..."
 msgstr "正在连接..."
 
-#: src/Fish.cc:1011 src/SFtp.cc:1319 src/ftpclass.cc:4148
+#: src/Fish.cc:982 src/SFtp.cc:1279 src/ftpclass.cc:4148
 #, fuzzy
 msgid "Connected"
 msgstr "没有连接上"
 
-#: src/Fish.cc:1013 src/Http.cc:1837 src/SFtp.cc:1321 src/ftpclass.cc:4125
+#: src/Fish.cc:984 src/Http.cc:1837 src/SFtp.cc:1281 src/ftpclass.cc:4125
 #: src/ftpclass.cc:4153 src/ftpclass.cc:4167
 msgid "Waiting for response..."
 msgstr "正等待应答..."
 
-#: src/Fish.cc:1015 src/Http.cc:1840 src/SFtp.cc:1323 src/ftpclass.cc:4187
+#: src/Fish.cc:986 src/Http.cc:1840 src/SFtp.cc:1283 src/ftpclass.cc:4187
 msgid "Receiving data"
 msgstr "正接收数据"
 
-#: src/Fish.cc:1017 src/Http.cc:1833 src/SFtp.cc:1325 src/ftpclass.cc:4185
+#: src/Fish.cc:988 src/Http.cc:1833 src/SFtp.cc:1285 src/ftpclass.cc:4185
 msgid "Sending data"
 msgstr "正发送数据"
 
-#: src/Fish.cc:1019 src/SFtp.cc:1327
+#: src/Fish.cc:990 src/SFtp.cc:1287
 #, fuzzy
 msgid "Done"
 msgstr "\t完成\n"
 
-#: src/Fish.cc:1176 src/FtpDirList.cc:127 src/HttpDir.cc:1317 src/SFtp.cc:2137
-#: src/SFtp.cc:2216
+#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1317 src/SFtp.cc:2097
+#: src/SFtp.cc:2176
 #, fuzzy, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "正在获取文件列表 (%ld) [%s]"
@@ -546,12 +532,12 @@ msgstr "正在取得头..."
 msgid "[%d] Done (%s)"
 msgstr "[%d] 完成 (%s)"
 
-#: src/LocalAccess.cc:610 src/NetAccess.cc:773
+#: src/LocalAccess.cc:610 src/NetAccess.cc:771
 #, fuzzy
 msgid "Getting directory contents"
 msgstr "正在读取目录内容 (%ld)"
 
-#: src/LocalAccess.cc:612 src/NetAccess.cc:777
+#: src/LocalAccess.cc:612 src/NetAccess.cc:775
 #, fuzzy
 msgid "Getting files information"
 msgstr "正在读取文件信息 (%d%%)"
@@ -685,30 +671,30 @@ msgstr ""
 msgid "Try `help %s' for more information.\n"
 msgstr "请用 `help %s' 或得更多的信息.\n"
 
-#: src/NetAccess.cc:298
+#: src/NetAccess.cc:296
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "Socket 错误 (%s) - 重新连接"
 
-#: src/NetAccess.cc:331
+#: src/NetAccess.cc:329
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "正在连接到 %s%s (%s) 端口 %u"
 
-#: src/NetAccess.cc:387
+#: src/NetAccess.cc:385
 msgid "Timeout - reconnecting"
 msgstr "超时 - 重新连接"
 
-#: src/NetAccess.cc:484
+#: src/NetAccess.cc:482
 #, fuzzy
 msgid "Connection limit reached"
 msgstr "连接空闲"
 
-#: src/NetAccess.cc:488
+#: src/NetAccess.cc:486
 msgid "Delaying before reconnect"
 msgstr "重新连接前延时"
 
-#: src/NetAccess.cc:512
+#: src/NetAccess.cc:510
 msgid "max-retries exceeded"
 msgstr "达到最大重试次数"
 
@@ -847,7 +833,7 @@ msgstr "没有这个变量"
 msgid "No address found"
 msgstr ""
 
-#: src/SFtp.cc:1074
+#: src/SFtp.cc:1034
 #, fuzzy
 msgid "invalid server response format"
 msgstr "额外的服务器应答"
@@ -2435,6 +2421,14 @@ msgstr "%s 成功, 删除 %d 个目录\n"
 #, c-format
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s 成功, 删除 %d 个文件\n"
+
+#, fuzzy
+#~ msgid "Disconnecting"
+#~ msgstr "正在连接..."
+
+#, fuzzy
+#~ msgid "Password required"
+#~ msgstr "口令: "
 
 #~ msgid "Fatal error: %s"
 #~ msgstr "严重错误: %s"

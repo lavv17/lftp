@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2008-02-17 13:30+0300\n"
+"POT-Creation-Date: 2008-03-07 14:54+0300\n"
 "PO-Revision-Date: 2004-05-21 12:53+0200\n"
 "Last-Translator: Moritz Moeller-Herrmann <mmh@gmx.net>\n"
 "Language-Team: deutsch <de@li.org>\n"
@@ -151,78 +151,78 @@ msgstr ""
 msgid "Warning: chdir(%s) failed: %s\n"
 msgstr "Warnung: chdir(%s) fehlgeschlagen: %s\n"
 
-#: src/CmdExec.cc:193
+#: src/CmdExec.cc:194
 #, c-format
 msgid "Unknown command `%s'.\n"
 msgstr "Unbekannter Befehl »%s«.\n"
 
-#: src/CmdExec.cc:195
+#: src/CmdExec.cc:196
 #, c-format
 msgid "Ambiguous command `%s'.\n"
 msgstr "Mehrdeutiger Befehl »%s«.\n"
 
-#: src/CmdExec.cc:214
+#: src/CmdExec.cc:215
 #, c-format
 msgid "Module for command `%s' did not register the command.\n"
 msgstr "Das Modul für den Befehl »%s« hat den Befehl nicht registriert.\n"
 
-#: src/CmdExec.cc:352
+#: src/CmdExec.cc:353
 #, c-format
 msgid "cd ok, cwd=%s\n"
 msgstr "Verzeichniswechsel OK, cwd=%s\n"
 
-#: src/CmdExec.cc:373 src/MirrorJob.cc:549
+#: src/CmdExec.cc:374 src/MirrorJob.cc:549
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: Umleitung nach »%s« empfangen\n"
 
-#: src/CmdExec.cc:376 src/FileCopy.cc:1021
+#: src/CmdExec.cc:377 src/FileCopy.cc:1021
 msgid "Too many redirections"
 msgstr "Zu viele Umleitungen"
 
-#: src/CmdExec.cc:488 src/CmdExec.cc:545
+#: src/CmdExec.cc:489 src/CmdExec.cc:546
 msgid "Interrupt"
 msgstr "Abbruch"
 
-#: src/CmdExec.cc:610
+#: src/CmdExec.cc:611
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "Warnung: unvollständiger Befehl verworfen\n"
 
-#: src/CmdExec.cc:703
+#: src/CmdExec.cc:704
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tEingebautes»%s« wird ausgeführt [%s]\n"
 
-#: src/CmdExec.cc:709
+#: src/CmdExec.cc:710
 msgid "Queue is stopped."
 msgstr "Warteschlange wurde angehalten."
 
-#: src/CmdExec.cc:714
+#: src/CmdExec.cc:715
 msgid "Now executing:"
 msgstr "Momentan läuft:"
 
-#: src/CmdExec.cc:727
+#: src/CmdExec.cc:728
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\t Warte auf Beendigung von Job [%d]\n"
 
-#: src/CmdExec.cc:732
+#: src/CmdExec.cc:733
 #, c-format
 msgid "\tWaiting for termination of jobs: "
 msgstr "\tWarte auf Erledigung der Jobs: "
 
-#: src/CmdExec.cc:743
+#: src/CmdExec.cc:744
 #, c-format
 msgid "\tRunning\n"
 msgstr "\tWird ausgeführt\n"
 
-#: src/CmdExec.cc:747
+#: src/CmdExec.cc:748
 #, c-format
 msgid "\tWaiting for command\n"
 msgstr "\tWarten auf Befehl\n"
 
-#: src/CmdExec.cc:1202
+#: src/CmdExec.cc:1203
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: Befehl »%s« wurde nicht mitkompiliert.\n"
@@ -266,8 +266,8 @@ msgstr "Zugriff nicht möglich: %s"
 msgid "File cannot be accessed"
 msgstr "Zugriff auf Datei nicht möglich"
 
-#: src/FileAccess.cc:216 src/Fish.cc:1004 src/SFtp.cc:1311
-#: src/ftpclass.cc:4130 src/ftpclass.cc:4139
+#: src/FileAccess.cc:216 src/Fish.cc:975 src/SFtp.cc:1271 src/ftpclass.cc:4130
+#: src/ftpclass.cc:4139
 msgid "Not connected"
 msgstr "Keine Verbindung"
 
@@ -401,61 +401,47 @@ msgstr ""
 msgid "Closing idle connection"
 msgstr "Schließe unbenutzte Verbindung"
 
-#: src/Fish.cc:155 src/SFtp.cc:183
+#: src/Fish.cc:156 src/SFtp.cc:184
 msgid "Running connect program"
 msgstr ""
 
-#: src/Fish.cc:313 src/SFtp.cc:324
-#, fuzzy
-msgid "Disconnecting"
-msgstr "Verbinde..."
-
-#: src/Fish.cc:572 src/Http.cc:1118 src/SFtp.cc:747 src/SFtp.cc:1058
+#: src/Fish.cc:580 src/Http.cc:1118 src/SFtp.cc:706 src/SFtp.cc:1018
 #: src/ftpclass.cc:2603 src/ftpclass.cc:2813
 msgid "Peer closed connection"
 msgstr "Gegenüber hat Verbindung beendet"
 
-#: src/Fish.cc:600 src/SFtp.cc:726
-#, fuzzy
-msgid "Password required"
-msgstr "Passwort: "
-
-#: src/Fish.cc:605 src/SFtp.cc:731
-msgid "Login incorrect"
-msgstr ""
-
-#: src/Fish.cc:653 src/SFtp.cc:1083 src/ftpclass.cc:3796
+#: src/Fish.cc:624 src/SFtp.cc:1043 src/ftpclass.cc:3796
 msgid "extra server response"
 msgstr "zusätzliche Server Antwort"
 
-#: src/Fish.cc:1009 src/Http.cc:1828 src/Http.cc:1835 src/SFtp.cc:1317
+#: src/Fish.cc:980 src/Http.cc:1828 src/Http.cc:1835 src/SFtp.cc:1277
 #: src/ftpclass.cc:4142
 msgid "Connecting..."
 msgstr "Verbinde..."
 
-#: src/Fish.cc:1011 src/SFtp.cc:1319 src/ftpclass.cc:4148
+#: src/Fish.cc:982 src/SFtp.cc:1279 src/ftpclass.cc:4148
 msgid "Connected"
 msgstr "Verbunden"
 
-#: src/Fish.cc:1013 src/Http.cc:1837 src/SFtp.cc:1321 src/ftpclass.cc:4125
+#: src/Fish.cc:984 src/Http.cc:1837 src/SFtp.cc:1281 src/ftpclass.cc:4125
 #: src/ftpclass.cc:4153 src/ftpclass.cc:4167
 msgid "Waiting for response..."
 msgstr "Warte auf Antwort..."
 
-#: src/Fish.cc:1015 src/Http.cc:1840 src/SFtp.cc:1323 src/ftpclass.cc:4187
+#: src/Fish.cc:986 src/Http.cc:1840 src/SFtp.cc:1283 src/ftpclass.cc:4187
 msgid "Receiving data"
 msgstr "Empfange Daten"
 
-#: src/Fish.cc:1017 src/Http.cc:1833 src/SFtp.cc:1325 src/ftpclass.cc:4185
+#: src/Fish.cc:988 src/Http.cc:1833 src/SFtp.cc:1285 src/ftpclass.cc:4185
 msgid "Sending data"
 msgstr "Sende Daten"
 
-#: src/Fish.cc:1019 src/SFtp.cc:1327
+#: src/Fish.cc:990 src/SFtp.cc:1287
 msgid "Done"
 msgstr ""
 
-#: src/Fish.cc:1176 src/FtpDirList.cc:127 src/HttpDir.cc:1317 src/SFtp.cc:2137
-#: src/SFtp.cc:2216
+#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1317 src/SFtp.cc:2097
+#: src/SFtp.cc:2176
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "Hole Dateiliste (%lld) [%s]"
@@ -547,12 +533,12 @@ msgstr "Hole Kopfzeilen..."
 msgid "[%d] Done (%s)"
 msgstr "[%d] Fertig (%s)"
 
-#: src/LocalAccess.cc:610 src/NetAccess.cc:773
+#: src/LocalAccess.cc:610 src/NetAccess.cc:771
 #, fuzzy
 msgid "Getting directory contents"
 msgstr "Lese Verzeichnisinhalt (%lld) %s[%s] aus"
 
-#: src/LocalAccess.cc:612 src/NetAccess.cc:777
+#: src/LocalAccess.cc:612 src/NetAccess.cc:775
 #, fuzzy
 msgid "Getting files information"
 msgstr "Lese Dateiinformationen (%d%%) [%s]"
@@ -685,29 +671,29 @@ msgstr "%s: Regulärer Ausdruck (regular expression) %s: %s\n"
 msgid "Try `help %s' for more information.\n"
 msgstr "»help %s« gibt mehr Informationen aus.\n"
 
-#: src/NetAccess.cc:298
+#: src/NetAccess.cc:296
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "Socket Fehler (%s) - erneutes Verbinden"
 
-#: src/NetAccess.cc:331
+#: src/NetAccess.cc:329
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Verbinde mit %s%s (%s) Port %u"
 
-#: src/NetAccess.cc:387
+#: src/NetAccess.cc:385
 msgid "Timeout - reconnecting"
 msgstr "Zeitablauf - neu verbinden"
 
-#: src/NetAccess.cc:484
+#: src/NetAccess.cc:482
 msgid "Connection limit reached"
 msgstr "Zahl der Verbindungen hat Grenze erreicht"
 
-#: src/NetAccess.cc:488
+#: src/NetAccess.cc:486
 msgid "Delaying before reconnect"
 msgstr "Pausiere vor erneuter Verbindung"
 
-#: src/NetAccess.cc:512
+#: src/NetAccess.cc:510
 msgid "max-retries exceeded"
 msgstr "max-retries überschritten"
 
@@ -842,7 +828,7 @@ msgstr "kein derartiger %s Dienst"
 msgid "No address found"
 msgstr "Keine Adresse gefunden"
 
-#: src/SFtp.cc:1074
+#: src/SFtp.cc:1034
 #, fuzzy
 msgid "invalid server response format"
 msgstr "zusätzliche Server Antwort"
@@ -2589,6 +2575,14 @@ msgstr "%s OK, %d Verzeichnis$|se$ entfernt\n"
 #, c-format
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s OK, %d Datei$|en$ gelöscht\n"
+
+#, fuzzy
+#~ msgid "Disconnecting"
+#~ msgstr "Verbinde..."
+
+#, fuzzy
+#~ msgid "Password required"
+#~ msgstr "Passwort: "
 
 #~ msgid "Fatal error: %s"
 #~ msgstr "Fataler Fehler: %s"

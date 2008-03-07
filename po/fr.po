@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2008-02-17 13:30+0300\n"
+"POT-Creation-Date: 2008-03-07 14:54+0300\n"
 "PO-Revision-Date: 2007-10-22 14:01+0200\n"
 "Last-Translator: Alain PORTAL <aportal@univ-montp2.fr>\n"
 "Language-Team: Français <traduc@traduc.org>\n"
@@ -148,78 +148,78 @@ msgstr ""
 msgid "Warning: chdir(%s) failed: %s\n"
 msgstr "Attention : chdir(%s) a échoué : %s\n"
 
-#: src/CmdExec.cc:193
+#: src/CmdExec.cc:194
 #, c-format
 msgid "Unknown command `%s'.\n"
 msgstr "Commande inconnue « %s ».\n"
 
-#: src/CmdExec.cc:195
+#: src/CmdExec.cc:196
 #, c-format
 msgid "Ambiguous command `%s'.\n"
 msgstr "Commande ambiguë « %s ».\n"
 
-#: src/CmdExec.cc:214
+#: src/CmdExec.cc:215
 #, c-format
 msgid "Module for command `%s' did not register the command.\n"
 msgstr "Le module pour la commande « %s » n'a pas enregistré la commande.\n"
 
-#: src/CmdExec.cc:352
+#: src/CmdExec.cc:353
 #, c-format
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, cwd=%s\n"
 
-#: src/CmdExec.cc:373 src/MirrorJob.cc:549
+#: src/CmdExec.cc:374 src/MirrorJob.cc:549
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s : reçu une redirection vers « %s »\n"
 
-#: src/CmdExec.cc:376 src/FileCopy.cc:1021
+#: src/CmdExec.cc:377 src/FileCopy.cc:1021
 msgid "Too many redirections"
 msgstr "Trop de redirections"
 
-#: src/CmdExec.cc:488 src/CmdExec.cc:545
+#: src/CmdExec.cc:489 src/CmdExec.cc:546
 msgid "Interrupt"
 msgstr "Interrompu"
 
-#: src/CmdExec.cc:610
+#: src/CmdExec.cc:611
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "Attention : commande incomplète ignorée\n"
 
-#: src/CmdExec.cc:703
+#: src/CmdExec.cc:704
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tExécution de la commande interne « %s » [%s]\n"
 
-#: src/CmdExec.cc:709
+#: src/CmdExec.cc:710
 msgid "Queue is stopped."
 msgstr "La file d'attente est stoppée."
 
-#: src/CmdExec.cc:714
+#: src/CmdExec.cc:715
 msgid "Now executing:"
 msgstr "En cours d'exécution :"
 
-#: src/CmdExec.cc:727
+#: src/CmdExec.cc:728
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\tEn attente de la fin de la tâche [%d]\n"
 
-#: src/CmdExec.cc:732
+#: src/CmdExec.cc:733
 #, c-format
 msgid "\tWaiting for termination of jobs: "
 msgstr "\tEn attente de la fin des tâches : "
 
-#: src/CmdExec.cc:743
+#: src/CmdExec.cc:744
 #, c-format
 msgid "\tRunning\n"
 msgstr "\tEn cours d'exécution\n"
 
-#: src/CmdExec.cc:747
+#: src/CmdExec.cc:748
 #, c-format
 msgid "\tWaiting for command\n"
 msgstr "\tEn attente de la commande\n"
 
-#: src/CmdExec.cc:1202
+#: src/CmdExec.cc:1203
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s : la commande « %s » n'est pas compilée.\n"
@@ -262,8 +262,8 @@ msgstr "L'accès a échoué : "
 msgid "File cannot be accessed"
 msgstr "Impossible d'accéder au fichier"
 
-#: src/FileAccess.cc:216 src/Fish.cc:1004 src/SFtp.cc:1311
-#: src/ftpclass.cc:4130 src/ftpclass.cc:4139
+#: src/FileAccess.cc:216 src/Fish.cc:975 src/SFtp.cc:1271 src/ftpclass.cc:4130
+#: src/ftpclass.cc:4139
 msgid "Not connected"
 msgstr "Non connecté"
 
@@ -393,59 +393,47 @@ msgstr "total"
 msgid "Closing idle connection"
 msgstr "Fermeture de la connexion inutile"
 
-#: src/Fish.cc:155 src/SFtp.cc:183
+#: src/Fish.cc:156 src/SFtp.cc:184
 msgid "Running connect program"
 msgstr "Exécution du programme de connexion"
 
-#: src/Fish.cc:313 src/SFtp.cc:324
-msgid "Disconnecting"
-msgstr "Déconnexion"
-
-#: src/Fish.cc:572 src/Http.cc:1118 src/SFtp.cc:747 src/SFtp.cc:1058
+#: src/Fish.cc:580 src/Http.cc:1118 src/SFtp.cc:706 src/SFtp.cc:1018
 #: src/ftpclass.cc:2603 src/ftpclass.cc:2813
 msgid "Peer closed connection"
 msgstr "Connexion interrompue par le tiers"
 
-#: src/Fish.cc:600 src/SFtp.cc:726
-msgid "Password required"
-msgstr "Mot de passe requis"
-
-#: src/Fish.cc:605 src/SFtp.cc:731
-msgid "Login incorrect"
-msgstr "Identification incorrecte"
-
-#: src/Fish.cc:653 src/SFtp.cc:1083 src/ftpclass.cc:3796
+#: src/Fish.cc:624 src/SFtp.cc:1043 src/ftpclass.cc:3796
 msgid "extra server response"
 msgstr "réponse du serveur supplémentaire"
 
-#: src/Fish.cc:1009 src/Http.cc:1828 src/Http.cc:1835 src/SFtp.cc:1317
+#: src/Fish.cc:980 src/Http.cc:1828 src/Http.cc:1835 src/SFtp.cc:1277
 #: src/ftpclass.cc:4142
 msgid "Connecting..."
 msgstr "Connexion..."
 
-#: src/Fish.cc:1011 src/SFtp.cc:1319 src/ftpclass.cc:4148
+#: src/Fish.cc:982 src/SFtp.cc:1279 src/ftpclass.cc:4148
 msgid "Connected"
 msgstr "Connecté"
 
-#: src/Fish.cc:1013 src/Http.cc:1837 src/SFtp.cc:1321 src/ftpclass.cc:4125
+#: src/Fish.cc:984 src/Http.cc:1837 src/SFtp.cc:1281 src/ftpclass.cc:4125
 #: src/ftpclass.cc:4153 src/ftpclass.cc:4167
 msgid "Waiting for response..."
 msgstr "En attente de réponse..."
 
-#: src/Fish.cc:1015 src/Http.cc:1840 src/SFtp.cc:1323 src/ftpclass.cc:4187
+#: src/Fish.cc:986 src/Http.cc:1840 src/SFtp.cc:1283 src/ftpclass.cc:4187
 msgid "Receiving data"
 msgstr "Réception des données"
 
-#: src/Fish.cc:1017 src/Http.cc:1833 src/SFtp.cc:1325 src/ftpclass.cc:4185
+#: src/Fish.cc:988 src/Http.cc:1833 src/SFtp.cc:1285 src/ftpclass.cc:4185
 msgid "Sending data"
 msgstr "Émission des données"
 
-#: src/Fish.cc:1019 src/SFtp.cc:1327
+#: src/Fish.cc:990 src/SFtp.cc:1287
 msgid "Done"
 msgstr "Terminé"
 
-#: src/Fish.cc:1176 src/FtpDirList.cc:127 src/HttpDir.cc:1317 src/SFtp.cc:2137
-#: src/SFtp.cc:2216
+#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1317 src/SFtp.cc:2097
+#: src/SFtp.cc:2176
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "Récupération de la liste des fichiers (%lld) [%s]"
@@ -535,11 +523,11 @@ msgstr "Réception des entêtes..."
 msgid "[%d] Done (%s)"
 msgstr "[%d] Terminé (%s)"
 
-#: src/LocalAccess.cc:610 src/NetAccess.cc:773
+#: src/LocalAccess.cc:610 src/NetAccess.cc:771
 msgid "Getting directory contents"
 msgstr "Récupération du contenu du répertoire"
 
-#: src/LocalAccess.cc:612 src/NetAccess.cc:777
+#: src/LocalAccess.cc:612 src/NetAccess.cc:775
 msgid "Getting files information"
 msgstr "Lecture des informations de fichiers"
 
@@ -675,29 +663,29 @@ msgstr "%s : expression rationnelle « %s » : %s\n"
 msgid "Try `help %s' for more information.\n"
 msgstr "Essayez « help %s » pour plus d'informations.\n"
 
-#: src/NetAccess.cc:298
+#: src/NetAccess.cc:296
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "Erreur de socket (%s) - reconnexion"
 
-#: src/NetAccess.cc:331
+#: src/NetAccess.cc:329
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Connexion à %s%s (%s) port %u"
 
-#: src/NetAccess.cc:387
+#: src/NetAccess.cc:385
 msgid "Timeout - reconnecting"
 msgstr "Temps écoulé - reconnexion"
 
-#: src/NetAccess.cc:484
+#: src/NetAccess.cc:482
 msgid "Connection limit reached"
 msgstr "Limite de connexions atteinte"
 
-#: src/NetAccess.cc:488
+#: src/NetAccess.cc:486
 msgid "Delaying before reconnect"
 msgstr "Attente avant reconnexion"
 
-#: src/NetAccess.cc:512
+#: src/NetAccess.cc:510
 msgid "max-retries exceeded"
 msgstr "le nombre maximum de tentatives (max-retries) a été atteint"
 
@@ -833,7 +821,7 @@ msgstr "service %s inconnu"
 msgid "No address found"
 msgstr "Adresse non trouvée"
 
-#: src/SFtp.cc:1074
+#: src/SFtp.cc:1034
 msgid "invalid server response format"
 msgstr "format de réponse du serveur invalide"
 
@@ -2584,3 +2572,12 @@ msgstr "%s ok, %d répertoire$ supprimé|s supprimés$\n"
 #, c-format
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d fichier$ supprimé|s supprimés$\n"
+
+#~ msgid "Disconnecting"
+#~ msgstr "Déconnexion"
+
+#~ msgid "Password required"
+#~ msgstr "Mot de passe requis"
+
+#~ msgid "Login incorrect"
+#~ msgstr "Identification incorrecte"
