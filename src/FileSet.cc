@@ -806,7 +806,9 @@ FileInfo *FileInfo::parse_ls_line(const char *line_c,const char *tz)
    t = NEXT_TOKEN;
    if(!t)
       ERR;
+   date.tm_isdst=-1;
    date.tm_hour=date.tm_min=0;
+   date.tm_sec=30;
    int prec=30;
    if(strlen(t)==5)
    {
@@ -822,11 +824,9 @@ FileInfo *FileInfo::parse_ls_line(const char *line_c,const char *tz)
       /* We don't know the hour.  Set it to something other than 0, or
        * DST -1 will end up changing the date. */
       date.tm_hour = 12;
-      prec=12*60*60;
+      date.tm_sec=0;
+      prec=12*HOUR;
    }
-
-   date.tm_isdst=-1;
-   date.tm_sec=30;
 
    fi->SetDate(mktime_from_tz(&date,tz),prec);
 
