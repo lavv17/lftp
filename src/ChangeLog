@@ -1,3 +1,8 @@
+2008-03-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* resource.cc: make sftp:use-full-path on by default; validate it
+	  properly as a boolean.
+
 2008-03-13  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileSet.cc: use time 12:00:00 when time is unknown (instead of 12:00:30).
