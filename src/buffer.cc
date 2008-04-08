@@ -325,9 +325,11 @@ DataRecoder::DataRecoder(const char *from_code,const char *to_code,bool translit
 
 void DirectedBuffer::SetTranslation(const char *enc,bool translit)
 {
-   if(!enc)
+   if(!enc || !*enc)
       return;
    const char *local_code=ResMgr::Query("file:charset",0);
+   if(!local_code || !*local_code)
+      return;
    const char *from_code=(mode==GET?enc:local_code);
    const char *to_code  =(mode==GET?local_code:enc);
    SetTranslator(new DataRecoder(from_code,to_code,translit));

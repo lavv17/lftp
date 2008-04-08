@@ -388,7 +388,9 @@ int GetFileInfo::Do()
 	  * only get here if everything else thinks the path doesn't exist.
 	  */
 	 get_info.file=verify_fn;
+	 get_info.size=NO_SIZE_YET;
 	 get_info.get_size=need&FileInfo::SIZE;
+	 get_info.time=NO_DATE_YET;
 	 get_info.get_time=need&FileInfo::DATE;
 
 	 /* We need to do at least one. */

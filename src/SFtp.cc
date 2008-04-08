@@ -566,6 +566,7 @@ void SFtp::SendRequest()
    switch((open_mode)mode)
    {
    case CHANGE_DIR:
+      LogNote(9,"checking directory `%s'",file.get());
       SendRequest(new Request_STAT(lc_to_utf8(file),0,protocol_version),Expect::CWD);
       SendRequest(new Request_STAT(lc_to_utf8(dir_file(file,".")),0,protocol_version),Expect::CWD);
       state=WAITING;
@@ -728,6 +729,13 @@ int SFtp::HandlePty()
 void SFtp::HandleExpect(Expect *e)
 {
    const Packet *reply=e->reply;
+   if(reply->TypeIs(SSH_FXP_STATUS))
+   {
+      Reply_STATUS *r=(Reply_STATUS*)reply;
+      const char *message=r->GetMessage();
+      LogNote(9,"status code=%d(%s), message=%s",r->GetCode(),r->GetCodeText(),
+	 message?message:"NULL");
+   }
    switch(e->tag)
    {
    case Expect::FXP_VERSION:
@@ -918,29 +926,29 @@ void SFtp::HandleExpect(Expect *e)
       }
       break;
    case Expect::INFO:
+      entity_size=NO_SIZE;
+      entity_date=NO_DATE;
       if(reply->TypeIs(SSH_FXP_ATTRS))
       {
 	 const FileAttrs *a=((Reply_ATTRS*)reply)->GetAttrs();
-	 entity_size=NO_SIZE;
-	 entity_date=NO_DATE;
 	 if(a->flags&SSH_FILEXFER_ATTR_SIZE)
 	    entity_size=a->size;
 	 if(a->flags&SSH_FILEXFER_ATTR_MODIFYTIME)
 	    entity_date=a->mtime;
-	 if(mode==ARRAY_INFO)
-	 {
-	    array_for_info[e->i].size=entity_size;
-	    array_for_info[e->i].get_size=false;
-	    array_for_info[e->i].time=entity_date;
-	    array_for_info[e->i].get_time=false;
-	    break;
-	 }
 	 LogNote(9,"file info: size=%lld, date=%s",(long long)entity_size,ctime(&entity_date));
-	 if(opt_size)
-	    *opt_size=entity_size;
-	 if(opt_date)
-	    *opt_date=entity_date;
       }
+      if(mode==ARRAY_INFO)
+      {
+	 array_for_info[e->i].size=entity_size;
+	 array_for_info[e->i].get_size=false;
+	 array_for_info[e->i].time=entity_date;
+	 array_for_info[e->i].get_time=false;
+	 break;
+      }
+      if(opt_size)
+	 *opt_size=entity_size;
+      if(opt_date)
+	 *opt_date=entity_date;
       break;
    case Expect::WRITE_STATUS:
       if(reply->TypeIs(SSH_FXP_STATUS))

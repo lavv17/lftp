@@ -1,3 +1,9 @@
+2008-04-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* GetFileInfo.cc: init size/time fields.
+	* SFtp.cc: more debug messages; fill array_info even in case of error.
+	* buffer.cc, resource.cc: don't use empty charset name.
+
 2008-03-14  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* resource.cc: make sftp:use-full-path on by default; validate it

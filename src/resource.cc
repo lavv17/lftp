@@ -425,7 +425,7 @@ void ResMgr::ClassInit()
 
 #if defined(HAVE_NL_LANGINFO) && defined(CODESET)
    char *cs=nl_langinfo(CODESET);
-   if(cs)
+   if(cs && cs[0])
       Set("file:charset",0,cs);
 #endif
 
