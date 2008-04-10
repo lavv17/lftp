@@ -1,3 +1,10 @@
+2008-04-06  Nix  <nix@esperi.org.uk>
+
+	* _inttypes_h.m4, absolute-header.m4, include_next.m4,
+	strtol.m4, strtoll.m4: New files, transitive
+	dependencies of gnulib strtoumax and strtoimax modules.
+        * Makefile.am: Updated.
+
 2007-11-12	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.m4: add a poll check for MacOS X.
