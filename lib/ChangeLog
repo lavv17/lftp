@@ -1,3 +1,8 @@
+2008-04-06  Nix  <nix@esperi.org.uk>
+
+	* inttypes.h, strtoll.c: New files, transitive dependencies of
+	gnulib strotumax and strtoimax modules.
+
 2006-07-25	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Makefile.am: use libtool.
