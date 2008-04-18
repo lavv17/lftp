@@ -1,15 +1,15 @@
 # translation of fr.po to Français
 # French messages of lftp
-# Copyright (C) 2000-2001,2003, 2005, 2007 Free Software Foundation, Inc.
+# Copyright (C) 2000-2001,2003, 2005, 2007, 2008 Free Software Foundation, Inc.
 #
 # Nicolas Noble <nicolas@nobis-crew.org>, 2000-2003, 2005.
-# Alain PORTAL <aportal@univ-montp2.fr>, 2007.
+# Alain PORTAL <aportal@univ-montp2.fr>, 2007, 2008.
 msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2008-03-07 14:54+0300\n"
-"PO-Revision-Date: 2007-10-22 14:01+0200\n"
+"PO-Revision-Date: 2008-04-12 12:40+0200\n"
 "Last-Translator: Alain PORTAL <aportal@univ-montp2.fr>\n"
 "Language-Team: Français <traduc@traduc.org>\n"
 "MIME-Version: 1.0\n"
@@ -18,83 +18,82 @@ msgstr ""
 "X-Generator: KBabel 1.11.4\n"
 
 #: lib/argmatch.c:137
-#, fuzzy, c-format
+#, c-format
 msgid "invalid argument %s for %s"
-msgstr "argument invalide pour « --sort »"
+msgstr "argument %s invalide pour %s"
 
 #: lib/argmatch.c:138
 #, c-format
 msgid "ambiguous argument %s for %s"
-msgstr ""
+msgstr "Argument %s ambigu pour %s"
 
 #: lib/argmatch.c:157
-#, fuzzy, c-format
+#, c-format
 msgid "Valid arguments are:"
-msgstr "argument invalide pour « --sort »"
+msgstr "Les arguments valides sont :"
 
 #: lib/error.c:121
 msgid "Unknown system error"
-msgstr ""
+msgstr "Erreur système inconnue"
 
 #: lib/getopt.c:681
 #, c-format
 msgid "%s: option `%s' is ambiguous\n"
-msgstr ""
+msgstr "%s : l'option « %s » est ambiguë\n"
 
 #: lib/getopt.c:706
 #, c-format
 msgid "%s: option `--%s' doesn't allow an argument\n"
-msgstr ""
+msgstr "%s : l'option « --%s » ne permet pas d'argument\n"
 
 #: lib/getopt.c:711
 #, c-format
 msgid "%s: option `%c%s' doesn't allow an argument\n"
-msgstr ""
+msgstr "%s : l'option « %c%s » ne permet pas d'argument\n"
 
 #: lib/getopt.c:729 lib/getopt.c:902
 #, c-format
 msgid "%s: option `%s' requires an argument\n"
-msgstr ""
+msgstr "%s : l'option « %s » nécessite un argument\n"
 
 #: lib/getopt.c:758
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unrecognized option `--%s'\n"
-msgstr "%s : reçu une redirection vers « %s »\n"
+msgstr "%s : option « --%s » non reconnue\n"
 
 #: lib/getopt.c:762
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unrecognized option `%c%s'\n"
-msgstr "%s : reçu une redirection vers « %s »\n"
+msgstr "%s : option « %c%s » non reconnue\n"
 
 #: lib/getopt.c:788
 #, c-format
 msgid "%s: illegal option -- %c\n"
-msgstr ""
+msgstr "%s : option illégale -- %c\n"
 
 #: lib/getopt.c:791
-#, fuzzy, c-format
+#, c-format
 msgid "%s: invalid option -- %c\n"
-msgstr "%s : taille de bloc invalide « %s »\n"
+msgstr "%s : option invalide -- %c\n"
 
 #: lib/getopt.c:821 lib/getopt.c:951
 #, c-format
 msgid "%s: option requires an argument -- %c\n"
-msgstr ""
+msgstr "%s: l'option nécessite un argument -- %c\n"
 
 #: lib/getopt.c:868
 #, c-format
 msgid "%s: option `-W %s' is ambiguous\n"
-msgstr ""
+msgstr "%s : l'option « -W %s » est ambiguë\n"
 
 #: lib/getopt.c:886
 #, c-format
 msgid "%s: option `-W %s' doesn't allow an argument\n"
-msgstr ""
+msgstr "%s : l'option « -W %s » ne permet pas d'argument\n"
 
 #: lib/human.c:486
-#, fuzzy
 msgid "block size"
-msgstr "taille de bloc invalide"
+msgstr "taille de bloc"
 
 #. TRANSLATORS:
 #. Get translations for open and closing quotation marks.
@@ -117,15 +116,15 @@ msgstr "taille de bloc invalide"
 #. and use glyphs suitable for your language.
 #: lib/quotearg.c:245
 msgid "`"
-msgstr ""
+msgstr "« "
 
 #: lib/quotearg.c:246
 msgid "'"
-msgstr ""
+msgstr " »"
 
 #: lib/xalloc-die.c:37
 msgid "memory exhausted"
-msgstr ""
+msgstr "Pas assez de mémoire"
 
 #: src/ChmodJob.cc:81
 #, c-format
@@ -140,8 +139,7 @@ msgstr "Le mode de « %s » a été modifié en %04o (%s).\n"
 #: src/ChmodJob.cc:89
 #, c-format
 msgid "Failed to change mode of `%s' because no old mode is available.\n"
-msgstr ""
-"Impossible de modifier le mode de « %s » car il n'y a pas d'ancien mode.\n"
+msgstr "Impossible de modifier le mode de « %s » car il n'y a pas d'ancien mode.\n"
 
 #: src/CmdExec.cc:95
 #, c-format
@@ -453,8 +451,7 @@ msgstr "échec de la méthode POST"
 
 #: src/Http.cc:987
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
-msgstr ""
-"ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
+msgstr "ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
 
 #: src/Http.cc:1034 src/ftpclass.cc:1223
 #, c-format
@@ -764,8 +761,7 @@ msgstr "Unité de temps invalide, seules [smhd] sont permises."
 
 #: src/ResMgr.cc:653
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
-msgstr ""
-"Format de temps invalide. Le format est <temps><unité>, par ex. : 2h30m."
+msgstr "Format de temps invalide. Le format est <temps><unité>, par ex. : 2h30m."
 
 #: src/ResMgr.cc:697 src/commands.cc:3168 src/commands.cc:3177
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
@@ -1533,7 +1529,6 @@ msgid "open [OPTS] <site>"
 msgstr "open [OPTS] <site>"
 
 #: src/commands.cc:359
-#, fuzzy
 msgid ""
 "Select a server, URL or bookmark\n"
 " -e <cmd>            execute the command just after selecting\n"
@@ -1546,6 +1541,7 @@ msgstr ""
 " -e <cmd>            exécute la commande juste après la sélection.\n"
 " -u <user>[,<pass>]  utilise user/pass pour l'authentification.\n"
 " -p <port>           utilise le port pour la connexion\n"
+" -s <slot>           affecte la connexion à cet emplacement\n"
 " <site>              nom du site, URL ou nom de signet\n"
 
 #: src/commands.cc:365
@@ -1827,6 +1823,9 @@ msgid ""
 "List assigned slots.\n"
 "If <label> is specified, switch to the slot named <label>.\n"
 msgstr ""
+"Utilisation : slot [<étiquette>]\n"
+"Affiche la liste des emplacements (slots) affectés.\n"
+"Si <étiquette> est spécifié, basculer vers l'emplacement nommé <étiquette>.\n"
 
 #: src/commands.cc:461
 msgid "source <file>"
@@ -2112,8 +2111,7 @@ msgstr "%s : opérande manquant pour « expire »\n"
 
 #: src/commands.cc:2454
 #, c-format
-msgid ""
-"%s: %s - no such cached session. Use `scache' to look at session list.\n"
+msgid "%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr ""
 "%s : %s - pas de telle session en cache.\n"
 "Utilisez « scache » pour afficher la liste des sessions.\n"
@@ -2268,8 +2266,7 @@ msgstr "La réponse du serveur est de la forme ftp:retry-530, nouvel essai"
 
 #: src/ftpclass.cc:412
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
-msgstr ""
-"La réponse du serveur est de la forme ftp:retry-530-anonymous, nouvel essai"
+msgstr "La réponse du serveur est de la forme ftp:retry-530-anonymous, nouvel essai"
 
 #: src/ftpclass.cc:437
 msgid "Account is required, set ftp:acct variable"
@@ -2403,9 +2400,8 @@ msgid "Waiting for transfer to complete"
 msgstr "En attente de la fin du transfert"
 
 #: src/ftpclass.cc:4169
-#, fuzzy
 msgid "Waiting for TLS shutdown..."
-msgstr "En attente de réponse..."
+msgstr "En attente de l'arrêt de TLS..."
 
 #: src/ftpclass.cc:4171
 msgid "Waiting for data connection..."
@@ -2534,7 +2530,7 @@ msgstr "ftp:proxy mot de passe : "
 
 #: src/resource.cc:66
 msgid "ftp:proxy-auth-type must be one of: user, joined, joined-acct, open"
-msgstr ""
+msgstr "ftp:proxy-auth-type doit être une valeur parmi : user, joined, joined-acct, open"
 
 #: src/resource.cc:90
 msgid "only PUT and POST values allowed"
@@ -2573,11 +2569,3 @@ msgstr "%s ok, %d répertoire$ supprimé|s supprimés$\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d fichier$ supprimé|s supprimés$\n"
 
-#~ msgid "Disconnecting"
-#~ msgstr "Déconnexion"
-
-#~ msgid "Password required"
-#~ msgstr "Mot de passe requis"
-
-#~ msgid "Login incorrect"
-#~ msgstr "Identification incorrecte"
