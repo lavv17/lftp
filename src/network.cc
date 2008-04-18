@@ -22,6 +22,7 @@
 
 #include <config.h>
 #include "network.h"
+#include <stdio.h>
 #include <netdb.h>
 
 const char *sockaddr_u::address() const

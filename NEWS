@@ -1,3 +1,13 @@
+Version 3.7.1 - 2008-04-18
+
+* use time 12:00:00 instead of 12:00:30 when the time is unknown.
+* make sftp:use-full-path on by default.
+* fixed sftp du on non-existent files.
+* GNU Lib sources updated (Nix <nix@esperi.org.uk>).
+* fixed compilation on cygwin (Arkady Sherman <Arkady.Sherman@ksu.ru>).
+* French translation updated (Alain PORTAL <alain.portal@free.fr>).
+* German translation updated (Moritz Moeller-Herrmann <mmh@gmx.net>).
+
 Version 3.7.0 - 2008-03-07
 
 * new setting ftp:proxy-auth-type and two new ftp proxy modes (joined-acct, open)
@@ -7,6 +17,7 @@ Version 3.7.0 - 2008-03-07
 * added a workaround for proftpd NLST bug.
 * added a workaround for servers sending single NL.
 * handle host key verification error in fish and sftp.
+* handle http codes 307 and 303.
 * fixed a core dump when doing "open host>file".
 * fixed CCC handling in secure ftp.
 * fixed spinning when cmd:fail-exit is true in a script.

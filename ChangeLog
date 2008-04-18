@@ -1,3 +1,7 @@
+2008-04-06  Nix  <nix@esperi.org.uk>
+
+	* configure.ac: Provide missing bits needed for strtoumax et al.
+
 2007-06-15	Jakob Truelsen <antialize@gmail.com>
 
 	* configure.ac: check for libintl.h.

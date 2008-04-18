@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
-AC_INIT([lftp], [3.7.0], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [3.7.1], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_LIBOBJ_DIR([lib])
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
@@ -149,11 +149,20 @@ gl_QUOTEARG
 # for lib/xstrtol.{c,h}
 gl_XSTRTOL
 
+# for lib/strtol.c
+gl_FUNC_STRTOL
+
+# for lib/strtoll.c
+gl_FUNC_STRTOLL
+
 # for lib/strtoull.{c,h}
 gl_FUNC_STRTOULL
 
 # for lib/strtoimax.c
 gl_FUNC_STRTOIMAX
+
+# for lib/inttypes.h
+gl_INTTYPES_H
 
 # for lib/strtoumax.c
 gl_FUNC_STRTOUMAX
