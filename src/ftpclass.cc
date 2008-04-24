@@ -2137,6 +2137,7 @@ int   Ftp::Do()
    pre_waiting_150:
       state=WAITING_150_STATE;
       conn->waiting_150_timer.Reset();
+      rate_limit=new RateLimit(hostname);
       m=MOVED;
    case WAITING_150_STATE:
       m|=FlushSendQueue();
@@ -2147,12 +2148,9 @@ int   Ftp::Do()
 	 goto usual_return;
 
       // now init data connection properly and start data exchange
-      assert(rate_limit==0);
-      rate_limit=new RateLimit(hostname);
       state=DATA_OPEN_STATE;
       m=MOVED;
 
-      conn->data_iobuf=0;
 #if USE_SSL
       if(conn->prot=='P')
       {
@@ -2171,7 +2169,8 @@ int   Ftp::Do()
 #endif
       {
 	 IOBuffer::dir_t dir=(mode==STORE?IOBuffer::PUT:IOBuffer::GET);
-	 conn->data_iobuf=new IOBufferFDStream(new FDStream(conn->data_sock,"data-socket"),dir);
+	 if(!conn->data_iobuf || conn->data_iobuf->GetDirection()!=dir)
+	    conn->data_iobuf=new IOBufferFDStream(new FDStream(conn->data_sock,"data-socket"),dir);
       }
       if(mode==LIST || mode==LONG_LIST || mode==MP_LIST)
       {
@@ -4576,7 +4575,8 @@ FtpS::FtpS(const FtpS *o) : super(o)
 {
    ftps=true;
    res_prefix="ftp";
-   ResetLocationData();
+
+   Reconfig();
 }
 FileAccess *FtpS::New() { return new FtpS(); }
 

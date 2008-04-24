@@ -1,3 +1,10 @@
+2008-04-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: fixed cwd tracking for ftps; fixed rate_limit allocation
+	  for HTTP proxy; don't re-create data_iobuf when receiving data over
+	  HTTP proxy, because we could lose some already received data (reported
+	  by Arkady Sherman <Arkady.Sherman@ksu.ru>).
+
 2008-04-08  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* GetFileInfo.cc: init size/time fields.
