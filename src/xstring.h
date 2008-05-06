@@ -208,6 +208,7 @@ public:
    bool chomp(char c='\n');
    void rtrim(char c=' ');
    char last_char() { return len>0?buf[len-1]:0; }
+   int skip_all(int i,char c);
 
    void _clear() { init(); }
    void _set(const char *s) { init(s); }

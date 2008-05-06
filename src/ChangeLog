@@ -1,3 +1,8 @@
+2008-05-06  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc: (MergeCookie) use xstring methods; fixed NULL dereference.
+	* xstring.cc, xstring.h: xstring::skip_all new method.
+
 2008-04-24  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: fixed cwd tracking for ftps; fixed rate_limit allocation

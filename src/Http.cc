@@ -309,7 +309,7 @@ void Http::SendMethod(const char *method,const char *efile)
 
       xstring cookie;
       MakeCookie(cookie,hostname,efile+(proxy?url::path_index(efile):0));
-      if(cookie && cookie[0])
+      if(cookie.length()>0)
 	 Send("Cookie: %s\r\n",cookie.get());
    }
 }
@@ -1988,45 +1988,32 @@ void Http::CookieMerge(xstring &all,const char *cookie_c)
 	 c_value=c_name, c_name=0;
       int c_name_len=xstrlen(c_name);
 
-      char *scan=all.get_non_const();
-      for(;;)
+      for(int i=all.skip_all(0,' '); i<all.length(); i=all.skip_all(i+1,' '))
       {
-	 while(*scan==' ') scan++;
-	 if(*scan==0)
-	    break;
-
-	 char *semicolon=strchr(scan,';');
-	 char *eq=strchr(scan,'=');
+	 const char *scan=all+i;
+	 const char *semicolon=strchr(scan,';');
+	 const char *eq=strchr(scan,'=');
 	 if(semicolon && eq>semicolon)
 	    eq=0;
 	 if((eq==0 && c_name==0)
 	 || (eq-scan==c_name_len && !strncmp(scan,c_name,c_name_len)))
 	 {
 	    // remove old cookie.
-	    const char *m=semicolon?semicolon+1:"";
-	    while(*m==' ') m++;
-	    if(*m==0)
-	    {
-	       while(scan>all && scan[-1]==' ')
-		  scan--;
-	       if(scan>all && scan[-1]==';')
-		  scan--;
-	       *scan=0;
-	    }
+	    if(!semicolon)
+	       all.truncate(i);
 	    else
-	       memmove(scan,m,strlen(m)+1);
+	       all.set_substr(i,all.skip_all(semicolon+1-all,' ')-i,"",0);
 	    break;
 	 }
 	 if(!semicolon)
 	    break;
-	 scan=semicolon+1;
+	 i=semicolon+1-all;
       }
 
       // append cookie.
-      int c_len=strlen(all);
-      while(c_len>0 && all[c_len-1]==' ')
-	 c_len--; // trim
-      all.truncate(c_len);
+      all.rtrim(' ');
+      all.rtrim(';');
+      int c_len=all.length();
       if(c_len>0 && all[c_len-1]!=';')
 	 all.append("; ");
       if(c_name)

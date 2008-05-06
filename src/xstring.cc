@@ -211,6 +211,12 @@ void xstring::rtrim(char c)
 {
    while(chomp(c));
 }
+int xstring::skip_all(int i,char c)
+{
+   while(i<len && buf[i]==c)
+      i++;
+   return i;
+}
 
 xstring& xstring::vappendf(const char *format, va_list ap)
 {
