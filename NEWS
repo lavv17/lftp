@@ -1,3 +1,9 @@
+Version 3.7.2 - 2008-05-07
+
+* fixed core dump when sending http cookies.
+* fixed assertion failure for ftp over http proxy (CONNECT mode).
+* fixed cwd tracking for ftps.
+
 Version 3.7.1 - 2008-04-18
 
 * use time 12:00:00 instead of 12:00:30 when the time is unknown.

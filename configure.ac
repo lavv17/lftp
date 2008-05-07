@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
-AC_INIT([lftp], [3.7.1], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [3.7.2], [lftp-bugs@lftp.yar.ru])
 AM_INIT_AUTOMAKE
 AC_CONFIG_LIBOBJ_DIR([lib])
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
@@ -193,7 +193,10 @@ if test x$ac_cv_lib_fl_yywrap = xno; then
 fi
 
 dnl ** LFTP needs iconv, call the test explicitly (even if --disable-nls)
-AM_ICONV
+AC_LANG_PUSH(C++)
+ AM_ICONV
+AC_LANG_POP(C++)
+
 ALL_LINGUAS="de es fr it ja ko pl pt_BR ru zh_CN zh_TW zh_HK"
 AM_GNU_GETTEXT([external])
 test "$MSGFMT"  = "no" && MSGFMT  ="$missing_dir/missing msgfmt"

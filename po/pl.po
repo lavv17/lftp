@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.6.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2008-04-18 11:59+0400\n"
+"POT-Creation-Date: 2008-05-07 08:39+0400\n"
 "PO-Revision-Date: 2007-10-29 21:30+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -263,8 +263,8 @@ msgstr "Brak dostêpu: "
 msgid "File cannot be accessed"
 msgstr "Brak dostêpu do pliku"
 
-#: src/FileAccess.cc:216 src/Fish.cc:975 src/SFtp.cc:1279 src/ftpclass.cc:4130
-#: src/ftpclass.cc:4139
+#: src/FileAccess.cc:216 src/Fish.cc:975 src/SFtp.cc:1279 src/ftpclass.cc:4129
+#: src/ftpclass.cc:4138
 msgid "Not connected"
 msgstr "Nie po³±czony"
 
@@ -400,33 +400,33 @@ msgid "Running connect program"
 msgstr "Uruchamianie programu ³±cz±cego"
 
 #: src/Fish.cc:580 src/Http.cc:1118 src/SFtp.cc:707 src/SFtp.cc:1026
-#: src/ftpclass.cc:2603 src/ftpclass.cc:2813
+#: src/ftpclass.cc:2602 src/ftpclass.cc:2812
 msgid "Peer closed connection"
 msgstr "Komputer po drugiej stronie zamkn±³ po³±czenie"
 
-#: src/Fish.cc:624 src/SFtp.cc:1051 src/ftpclass.cc:3796
+#: src/Fish.cc:624 src/SFtp.cc:1051 src/ftpclass.cc:3795
 msgid "extra server response"
 msgstr "dodatkowa odpowied¼ serwera"
 
 #: src/Fish.cc:980 src/Http.cc:1828 src/Http.cc:1835 src/SFtp.cc:1285
-#: src/ftpclass.cc:4142
+#: src/ftpclass.cc:4141
 msgid "Connecting..."
 msgstr "£±czenie siê..."
 
-#: src/Fish.cc:982 src/SFtp.cc:1287 src/ftpclass.cc:4148
+#: src/Fish.cc:982 src/SFtp.cc:1287 src/ftpclass.cc:4147
 msgid "Connected"
 msgstr "Po³±czono"
 
-#: src/Fish.cc:984 src/Http.cc:1837 src/SFtp.cc:1289 src/ftpclass.cc:4125
-#: src/ftpclass.cc:4153 src/ftpclass.cc:4167
+#: src/Fish.cc:984 src/Http.cc:1837 src/SFtp.cc:1289 src/ftpclass.cc:4124
+#: src/ftpclass.cc:4152 src/ftpclass.cc:4166
 msgid "Waiting for response..."
 msgstr "Czekanie na odpowied¼..."
 
-#: src/Fish.cc:986 src/Http.cc:1840 src/SFtp.cc:1291 src/ftpclass.cc:4187
+#: src/Fish.cc:986 src/Http.cc:1840 src/SFtp.cc:1291 src/ftpclass.cc:4186
 msgid "Receiving data"
 msgstr "Otrzymujê dane"
 
-#: src/Fish.cc:988 src/Http.cc:1833 src/SFtp.cc:1293 src/ftpclass.cc:4185
+#: src/Fish.cc:988 src/Http.cc:1833 src/SFtp.cc:1293 src/ftpclass.cc:4184
 msgid "Sending data"
 msgstr "Wysy³am dane"
 
@@ -507,11 +507,11 @@ msgid "Received last chunk"
 msgstr "Przes³ano ostatni fragment"
 
 #: src/Http.cc:1822 src/Resolver.cc:165 src/Resolver.cc:207
-#: src/ftpclass.cc:4135
+#: src/ftpclass.cc:4134
 msgid "Resolving host address..."
 msgstr "Uzyskiwanie adresu hosta..."
 
-#: src/Http.cc:1830 src/ftpclass.cc:4128
+#: src/Http.cc:1830 src/ftpclass.cc:4127
 msgid "Connection idle"
 msgstr "Po³±czenie bezczynne"
 
@@ -2308,7 +2308,7 @@ msgstr "£±czenie siê (gniazdo danych) z (%s) port %u"
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "£±czenie siê (gniazdo danych) z proxy %s (%s) port %u"
 
-#: src/ftpclass.cc:2111 src/ftpclass.cc:3957
+#: src/ftpclass.cc:2111 src/ftpclass.cc:3956
 msgid "Switching passive mode off"
 msgstr "Wy³±czam tryb pasywny"
 
@@ -2316,86 +2316,86 @@ msgstr "Wy³±czam tryb pasywny"
 msgid "Data connection established"
 msgstr "Ustanowiono po³±czenie dla danych"
 
-#: src/ftpclass.cc:2424 src/ftpclass.cc:4080
+#: src/ftpclass.cc:2423 src/ftpclass.cc:4079
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force jest ustawione i serwer nie wspiera lub nie zezwala\n"
 "na po³±czenia SSL"
 
-#: src/ftpclass.cc:2759
+#: src/ftpclass.cc:2758
 msgid "Persist and retry"
 msgstr "Ponowne wznawianie"
 
-#: src/ftpclass.cc:3026
+#: src/ftpclass.cc:3025
 msgid "Closing data socket"
 msgstr "Zamykanie gniazda danych"
 
-#: src/ftpclass.cc:3048
+#: src/ftpclass.cc:3047
 msgid "Closing aborted data socket"
 msgstr "Zamykanie gniazda danych po przerwaniu"
 
-#: src/ftpclass.cc:3780
+#: src/ftpclass.cc:3779
 msgid "saw file size in response"
 msgstr "w odpowiedzi pojawi³ siê rozmiar pliku"
 
-#: src/ftpclass.cc:3810 src/ftpclass.cc:3837
+#: src/ftpclass.cc:3809 src/ftpclass.cc:3836
 msgid "Turning on sync-mode"
 msgstr "W³±czanie trybu sync"
 
-#: src/ftpclass.cc:3977
+#: src/ftpclass.cc:3976
 msgid "Switching passive mode on"
 msgstr "W³±czam tryb pasywny"
 
-#: src/ftpclass.cc:4116
+#: src/ftpclass.cc:4115
 msgid "FEAT negotiation..."
 msgstr "Negocjacja FEAT..."
 
-#: src/ftpclass.cc:4123
+#: src/ftpclass.cc:4122
 msgid "Sending commands..."
 msgstr "Wysy³anie komend..."
 
-#: src/ftpclass.cc:4127
+#: src/ftpclass.cc:4126
 msgid "Delaying before retry"
 msgstr "Opó¼nienie przed ponownym po³±czeniem"
 
-#: src/ftpclass.cc:4146
+#: src/ftpclass.cc:4145
 msgid "TLS negotiation..."
 msgstr "Negocjacja TLS..."
 
-#: src/ftpclass.cc:4150
+#: src/ftpclass.cc:4149
 msgid "Logging in..."
 msgstr "Logowanie siê..."
 
-#: src/ftpclass.cc:4154
+#: src/ftpclass.cc:4153
 msgid "Making data connection..."
 msgstr "Ustanawianie po³±czenia dla danych..."
 
-#: src/ftpclass.cc:4157
+#: src/ftpclass.cc:4156
 msgid "Changing remote directory..."
 msgstr "Zmiana zdalnego katalogu..."
 
-#: src/ftpclass.cc:4163
+#: src/ftpclass.cc:4162
 msgid "Waiting for other copy peer..."
 msgstr "Oczekiwanie na inne kopiowanie..."
 
-#: src/ftpclass.cc:4165 src/ftpclass.cc:4189
+#: src/ftpclass.cc:4164 src/ftpclass.cc:4188
 msgid "Waiting for transfer to complete"
 msgstr "Oczekiwanie na zakoñczenie transferu"
 
-#: src/ftpclass.cc:4169
+#: src/ftpclass.cc:4168
 #, fuzzy
 msgid "Waiting for TLS shutdown..."
 msgstr "Czekanie na odpowied¼..."
 
-#: src/ftpclass.cc:4171
+#: src/ftpclass.cc:4170
 msgid "Waiting for data connection..."
 msgstr "Czekam na po³±czenie dla danych..."
 
-#: src/ftpclass.cc:4177
+#: src/ftpclass.cc:4176
 msgid "Sending data/TLS"
 msgstr "Wysy³am dane/TLS"
 
-#: src/ftpclass.cc:4179
+#: src/ftpclass.cc:4178
 msgid "Receiving data/TLS"
 msgstr "Otrzymujê dane/TLS"
 
