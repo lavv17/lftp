@@ -1,16 +1,16 @@
 # Polish translation of lftp.
 # Copyright (C) 1998-2000 Free Software Foundation, Inc.
 # Arkadiusz Mi¶kiewicz <misiek@pld-linux.org>, 1998-2004
-# Jakub Bogusz <qboosh@pld-linux.org>, 2002-2007
+# Jakub Bogusz <qboosh@pld-linux.org>, 2002-2008
 # some updates by Tomasz K³oczko <kloczek@pld.org.pl>, 2003
 # Adam Go³êbiowski <adamg@pld-linux.org>, 2004-2006
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 3.6.0\n"
+"Project-Id-Version: lftp 3.7.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2008-05-07 08:39+0400\n"
-"PO-Revision-Date: 2007-10-29 21:30+0100\n"
+"PO-Revision-Date: 2008-05-06 21:20+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -18,83 +18,82 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: lib/argmatch.c:137
-#, fuzzy, c-format
+#, c-format
 msgid "invalid argument %s for %s"
-msgstr "nieprawid³owy argument dla `--sort'"
+msgstr "b³êdny argument %s opcji %s"
 
 #: lib/argmatch.c:138
 #, c-format
 msgid "ambiguous argument %s for %s"
-msgstr ""
+msgstr "niejednoznaczny argument %s opcji %s"
 
 #: lib/argmatch.c:157
-#, fuzzy, c-format
+#, c-format
 msgid "Valid arguments are:"
-msgstr "nieprawid³owy argument dla `--sort'"
+msgstr "Prawid³owe argumenty to:"
 
 #: lib/error.c:121
 msgid "Unknown system error"
-msgstr ""
+msgstr "Nieznany b³±d systemowy"
 
 #: lib/getopt.c:681
 #, c-format
 msgid "%s: option `%s' is ambiguous\n"
-msgstr ""
+msgstr "%s: opcja `%s' jest niejednoznaczna\n"
 
 #: lib/getopt.c:706
 #, c-format
 msgid "%s: option `--%s' doesn't allow an argument\n"
-msgstr ""
+msgstr "%s: opcja `--%s' nie mo¿e mieæ argumentów\n"
 
 #: lib/getopt.c:711
 #, c-format
 msgid "%s: option `%c%s' doesn't allow an argument\n"
-msgstr ""
+msgstr "%s: opcja `%c%s' nie mo¿e mieæ argumentów\n"
 
 #: lib/getopt.c:729 lib/getopt.c:902
 #, c-format
 msgid "%s: option `%s' requires an argument\n"
-msgstr ""
+msgstr "%s: opcja `%s' musi mieæ argument\n"
 
 #: lib/getopt.c:758
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unrecognized option `--%s'\n"
-msgstr "%s: otrzymano przekierowanie do `%s'\n"
+msgstr "%s: nieznana opcja `--%s'\n"
 
 #: lib/getopt.c:762
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unrecognized option `%c%s'\n"
-msgstr "%s: otrzymano przekierowanie do `%s'\n"
+msgstr "%s: nieznana opcja `%c%s'\n"
 
 #: lib/getopt.c:788
 #, c-format
 msgid "%s: illegal option -- %c\n"
-msgstr ""
+msgstr "%s: niew³a¶ciwa opcja -- %c\n"
 
 #: lib/getopt.c:791
-#, fuzzy, c-format
+#, c-format
 msgid "%s: invalid option -- %c\n"
-msgstr "%s: nieprawid³owy rozmiar bloku `%s'\n"
+msgstr "%s: b³êdna opcja -- %c\n"
 
 #: lib/getopt.c:821 lib/getopt.c:951
 #, c-format
 msgid "%s: option requires an argument -- %c\n"
-msgstr ""
+msgstr "%s: opcja musi mieæ argument -- %c\n"
 
 #: lib/getopt.c:868
 #, c-format
 msgid "%s: option `-W %s' is ambiguous\n"
-msgstr ""
+msgstr "%s: opcja `-W %s' jest niejednoznaczna\n"
 
 #: lib/getopt.c:886
 #, c-format
 msgid "%s: option `-W %s' doesn't allow an argument\n"
-msgstr ""
+msgstr "%s: opcja `-W %s' nie mo¿e mieæ argumentów\n"
 
 #: lib/human.c:486
-#, fuzzy
 msgid "block size"
-msgstr "nieprawid³owy rozmiar bloku"
+msgstr "rozmiar bloku"
 
 #. TRANSLATORS:
 #. Get translations for open and closing quotation marks.
@@ -117,15 +116,15 @@ msgstr "nieprawid³owy rozmiar bloku"
 #. and use glyphs suitable for your language.
 #: lib/quotearg.c:245
 msgid "`"
-msgstr ""
+msgstr "`"
 
 #: lib/quotearg.c:246
 msgid "'"
-msgstr ""
+msgstr "'"
 
 #: lib/xalloc-die.c:37
 msgid "memory exhausted"
-msgstr ""
+msgstr "pamiêæ wyczerpana"
 
 #: src/ChmodJob.cc:81
 #, c-format
@@ -1522,7 +1521,6 @@ msgid "open [OPTS] <site>"
 msgstr "open [OPCJE] <site>"
 
 #: src/commands.cc:355
-#, fuzzy
 msgid ""
 "Select a server, URL or bookmark\n"
 " -e <cmd>            execute the command just after selecting\n"
@@ -1535,6 +1533,7 @@ msgstr ""
 " -e <cmd>            wykonaj zaraz po wyborze polecenie <cmd>\n"
 " -u <user>[,<pass>]  u¿yj user/pass do uwierzytelnienia\n"
 " -p <port>           u¿yj portu <port> do po³±czenia\n"
+" -s <slot>           przypisz po³±czenie do <slotu>\n"
 " <site>              nazwa hosta, URL lub zak³adka\n"
 
 #: src/commands.cc:361
@@ -1809,6 +1808,9 @@ msgid ""
 "List assigned slots.\n"
 "If <label> is specified, switch to the slot named <label>.\n"
 msgstr ""
+"U¿ycie: slot [<etykieta>]\n"
+"Wypisz przypisane sloty.\n"
+"Je¶li podano <etykietê>, prze³±cz na slot o tej <etykiecie>.\n"
 
 #: src/commands.cc:457
 msgid "source <file>"
@@ -2383,13 +2385,12 @@ msgid "Waiting for transfer to complete"
 msgstr "Oczekiwanie na zakoñczenie transferu"
 
 #: src/ftpclass.cc:4168
-#, fuzzy
 msgid "Waiting for TLS shutdown..."
-msgstr "Czekanie na odpowied¼..."
+msgstr "Oczekiwanie na zakoÃ±czenie TLS..."
 
 #: src/ftpclass.cc:4170
 msgid "Waiting for data connection..."
-msgstr "Czekam na po³±czenie dla danych..."
+msgstr "Oczekiwanie na poÂ³Â±czenie dla danych..."
 
 #: src/ftpclass.cc:4176
 msgid "Sending data/TLS"
@@ -2512,7 +2513,7 @@ msgstr "ftp:proxy has³o: "
 
 #: src/resource.cc:66
 msgid "ftp:proxy-auth-type must be one of: user, joined, joined-acct, open"
-msgstr ""
+msgstr "ftp:proxy-auth-type musi byæ jednym z: user, joined, joined-acct, open"
 
 #: src/resource.cc:90
 msgid "only PUT and POST values allowed"
@@ -2550,12 +2551,3 @@ msgstr "%s ok, %d katalog$|i|ów$ usuniêto\n"
 #, c-format
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d plik$|i|ów$ usuniêto\n"
-
-#~ msgid "Disconnecting"
-#~ msgstr "Roz³±czanie"
-
-#~ msgid "Password required"
-#~ msgstr "Wymagane has³o"
-
-#~ msgid "Login incorrect"
-#~ msgstr "Logowanie nieudane"
