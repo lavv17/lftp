@@ -388,7 +388,12 @@ void SFtp::Packet::PackString(Buffer *b,const char *str,int len)
 SFtp::unpack_status_t SFtp::Packet::UnpackString(const Buffer *b,int *offset,int limit,xstring *str_out)
 {
    if(limit-*offset<4)
-      return b->Eof()?UNPACK_PREMATURE_EOF:UNPACK_NO_DATA_YET;
+   {
+      // We unpack strings when we have already received complete packet,
+      // so it is not possible to receive any more data.
+      LogError(2,"bad string in reply (truncated length field)");
+      return UNPACK_WRONG_FORMAT;
+   }
 
    int len=b->UnpackUINT32BE(*offset);
    if(len>limit-*offset-4)
@@ -441,8 +446,8 @@ SFtp::unpack_status_t SFtp::Packet::Unpack(const Buffer *b)
 
 SFtp::unpack_status_t SFtp::UnpackPacket(Buffer *b,SFtp::Packet **p)
 {
-   *p=0;
    Packet *&pp=*p;
+   pp=0;
 
    Packet probe;
    unpack_status_t res=probe.Unpack(b);
@@ -517,8 +522,8 @@ SFtp::unpack_status_t SFtp::UnpackPacket(Buffer *b,SFtp::Packet **p)
 	 ;
       }
       probe.DropData(b);
-      delete *p;
-      *p=0;
+      delete pp;
+      pp=0;
    }
    return res;
 }
@@ -1851,9 +1856,19 @@ SFtp::unpack_status_t SFtp::Reply_STATUS::Unpack(const Buffer *b)
    UNPACK32(code);
    if(protocol_version>=3)
    {
+      if(unpacked>=limit)
+      {
+	 LogError(2,"Status reply lacks `error message' field");
+	 return UNPACK_SUCCESS;
+      }
       res=Packet::UnpackString(b,offset,limit,&message);
       if(res!=UNPACK_SUCCESS)
 	 return res;
+      if(unpacked>=limit)
+      {
+	 LogError(2,"Status reply lacks `language tag' field");
+	 return UNPACK_SUCCESS;
+      }
       res=Packet::UnpackString(b,offset,limit,&language);
       if(res!=UNPACK_SUCCESS)
 	 return res;

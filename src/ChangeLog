@@ -1,3 +1,7 @@
+2008-05-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SFtp.cc: fixed handling of missed strings in Status reply.
+
 2008-05-06  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Http.cc: (MergeCookie) use xstring methods; fixed NULL dereference.
