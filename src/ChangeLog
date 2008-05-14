@@ -1,3 +1,7 @@
+2008-05-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: add ALLO check and set use-allo if unsupported.
+
 2008-05-08  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.cc: fixed handling of missed strings in Status reply.

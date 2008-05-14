@@ -1968,7 +1968,7 @@ int   Ftp::Do()
       {
 	 // ALLO is usually ignored by servers, but send it anyway.
 	 conn->SendCmdF("ALLO %lld",(long long)entity_size);
-	 expect->Push(Expect::IGNORE);
+	 expect->Push(Expect::ALLO);
       }
       // some broken servers don't reset REST after a transfer,
       // so check if last_rest was different.
@@ -3377,6 +3377,7 @@ void Ftp::ExpectQueue::Close()
       case(Expect::TYPE):
       case(Expect::LANG):
       case(Expect::OPTS_UTF8):
+      case(Expect::ALLO):
 #if USE_SSL
       case(Expect::AUTH_TLS):
       case(Expect::PROT):
@@ -3918,6 +3919,11 @@ void Ftp::CheckResp(int act)
       }
       if(is5XX(act))
 	 SetError(NO_FILE,all_lines);
+      break;
+
+   case Expect::ALLO:
+      if(cmd_unsupported(act))
+	 ResMgr::Set("ftp:use-allo",hostname,"no");
       break;
 
    case Expect::PASV:

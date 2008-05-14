@@ -206,6 +206,7 @@ class Ftp : public NetAccess
 	 OPTS_UTF8,
 	 LANG,
 	 SITE_UTIME,
+	 ALLO,
 	 QUOTED		// check response for any command submitted by QUOTE_CMD
 #if USE_SSL
 	 ,AUTH_TLS,PROT,SSCN,CCC
