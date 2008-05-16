@@ -466,6 +466,14 @@ const char *ResMgr::UNumberValidate(xstring_c *value)
    return 0;
 }
 
+ResMgr::Resource::Resource(Resource *next,const ResType *type,const char *closure,const char *value)
+   : type(type), value(value), closure(closure), next(next)
+{
+}
+ResMgr::Resource::~Resource()
+{
+}
+
 bool ResMgr::Resource::ClosureMatch(const char *cl_data)
 {
    if(!closure && !cl_data)
@@ -898,4 +906,17 @@ void ResClient::ReconfigAll(const char *r)
 {
    ListScan(ResClient,chain,next)
       scan->Reconfig(r);
+}
+
+bool ResType::QueryBool(const char *closure) const
+{
+   return Query(closure).to_bool();
+}
+bool ResMgr::QueryBool(const char *name,const char *closure)
+{
+   return Query(name,closure).to_bool();
+}
+bool ResClient::QueryBool(const char *name,const char *closure) const
+{
+   return Query(name,closure).to_bool();
 }

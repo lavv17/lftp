@@ -395,6 +395,10 @@ void IOBuffer::Put(const char *buf,int size)
    }
    DirectedBuffer::Put(buf,size);
 }
+void IOBuffer::Put(const char *buf)
+{
+   Put(buf,strlen(buf));
+}
 
 int IOBuffer::Do()
 {
@@ -730,7 +734,7 @@ void Buffer::PackINT64BE(long long data)
 {
    unsigned long long n;
    if(data<0)
-      n=(unsigned long long)(-data)^0xFFFFFFFFFFFFFFFFULL+1;
+      n=((unsigned long long)(-data)^0xFFFFFFFFFFFFFFFFULL)+1;
    else
       n=(unsigned long long)data;
    PackUINT64BE(n);
@@ -751,7 +755,7 @@ void Buffer::PackINT32BE(int data)
 {
    unsigned n;
    if(data<0)
-      n=(unsigned)(-data)^0xFFFFFFFFU+1;
+      n=((unsigned)(-data)^0xFFFFFFFFU)+1;
    else
       n=(unsigned)data;
    PackUINT32BE(n);

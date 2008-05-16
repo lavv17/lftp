@@ -95,9 +95,9 @@ GetFileInfo::GetFileInfo(const FileAccessRef& a, const char *_dir, bool _showdir
    prepend_path=true;
 
    const char *bn=basename_ptr(dir);
-   if(bn[0]=='.' && (bn[1]==0 || bn[1]=='/' ||
-                     (bn[1]=='.' && (bn[2]==0 || bn[2]=='/')))
-   || bn[0]=='/')
+   if((bn[0]=='.' && (bn[1]==0 || bn[1]=='/' ||
+                     (bn[1]=='.' && (bn[2]==0 || bn[2]=='/'))))
+   || (bn[0]=='/'))
    {
       // . .. / are directories, don't try them as a file.
       tried_file=true;
@@ -259,7 +259,7 @@ int GetFileInfo::Do()
        * the real name of the path.  (We may have something like "~/..".) */
       if(!verify_fn)
       {
-	 FileAccess::Path pwd = session->GetCwd();
+	 FileAccess::Path pwd(session->GetCwd());
 
 	 session->SetCwd(origdir);
 	 session->Chdir(dir, false);

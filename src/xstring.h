@@ -60,36 +60,10 @@ CDECL int vsnprintf(char *,size_t,const char *,va_list);
 CDECL int snprintf(char *,size_t,const char *,...);
 #endif
 
-static inline int xstrcmp(const char *s1,const char *s2)
-{
-   if(s1==s2)
-      return 0;
-   if(s1==0 || s2==0)
-      return 1;
-   return strcmp(s1,s2);
-}
-static inline int xstrncmp(const char *s1,const char *s2,size_t len)
-{
-   if(s1==s2 || len==0)
-      return 0;
-   if(s1==0 || s2==0)
-      return 1;
-   return strncmp(s1,s2,len);
-}
-static inline int xstrcasecmp(const char *s1,const char *s2)
-{
-   if(s1==s2)
-      return 0;
-   if(s1==0 || s2==0)
-      return 1;
-   return strcasecmp(s1,s2);
-}
-static inline size_t xstrlen(const char *s)
-{
-   if(s==0)
-      return 0;
-   return strlen(s);
-}
+int xstrcmp(const char *s1,const char *s2);
+int xstrncmp(const char *s1,const char *s2,size_t len);
+int xstrcasecmp(const char *s1,const char *s2);
+size_t xstrlen(const char *s);
 
 #include <stdarg.h>
 #include "xmalloc.h"
@@ -208,7 +182,7 @@ public:
    bool chomp(char c='\n');
    void rtrim(char c=' ');
    char last_char() { return len>0?buf[len-1]:0; }
-   int skip_all(int i,char c);
+   unsigned skip_all(unsigned i,char c);
 
    void _clear() { init(); }
    void _set(const char *s) { init(s); }

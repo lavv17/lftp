@@ -75,6 +75,7 @@ public:
    };
 
    GlobURL(const FileAccessRef& s,const char *p,type_select t=ALL);
+   ~GlobURL();
    FileSet *GetResult();
    bool Done()  { return glob->Done(); }
    bool Error() { return glob->Error(); }

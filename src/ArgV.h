@@ -38,6 +38,7 @@ public:
    ArgV(const ArgV& a) : StringSet(a) { ind=0; }
    ArgV(const ArgV *a) : StringSet(*a) { ind=0; }
    ArgV(int new_c,const char * const *new_v) : StringSet(new_v,new_c) { ind=0; }
+   ~ArgV();
 
    void Append(const char *s) { StringSet::Append(s); }
    void Append(int a) { char buf[32]; sprintf(buf,"%d",a); Append(buf); }
@@ -45,7 +46,7 @@ public:
 
    char *Combine(int start_index=0) const;
    char *CombineQuoted(int start_index=0) const;
-   char *CombineCmd(int i=0) const { return i>=count()-1 ? Combine(i) : CombineQuoted(i); }
+   char *CombineCmd(int i=0) const;
 
    int getopt_long(const char *opts,const struct option *lopts,int *lind=0);
    int getopt(const char *opts)

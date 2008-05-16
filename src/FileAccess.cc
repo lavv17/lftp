@@ -433,7 +433,11 @@ void  FileAccess::ExpandTildeInCWD()
 	 expand_tilde(file1,home);
    }
 }
-
+void FileAccess::set_home(const char *h)
+{
+   home.Set(h);
+   ExpandTildeInCWD();
+}
 const char *FileAccess::ExpandTildeStatic(const char *s)
 {
    if(!home || !(s[0]=='~' && (s[1]=='/' || s[1]==0)))
@@ -955,6 +959,9 @@ void FileAccess::Path::init()
    device_prefix_len=0;
    is_file=false;
 }
+FileAccess::Path::~Path()
+{
+}
 void FileAccess::Path::Set(const char *new_path,bool new_is_file,const char *new_url,int new_device_prefix_len)
 {
    path.set(new_path);
@@ -1142,4 +1149,11 @@ void FileAccess::ClassCleanup()
    delete cache;
    cache=0;
    FileCopy::fxp_create=0;
+}
+
+const FileAccessRef& FileAccessRef::operator=(FileAccess *p)
+{
+   reuse();
+   ptr=SMTask::MakeRef(p);
+   return *this;
 }

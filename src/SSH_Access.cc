@@ -51,8 +51,8 @@ int SSH_Access::HandleSSHMessage()
       int y_len=strlen(y);
       if(s>0 && b[s-1]==' ')
 	 s--;
-      if(s>=p_len && !strncasecmp(b+s-p_len,p,p_len)
-      || s>10 && !strncmp(b+s-2,"':",2))
+      if((s>=p_len && !strncasecmp(b+s-p_len,p,p_len))
+      || (s>10 && !strncmp(b+s-2,"':",2)))
       {
 	 if(!pass)
 	 {

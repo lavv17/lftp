@@ -37,6 +37,7 @@ public:
 
    ParsedURL(const char *url,bool proto_required=false,bool use_rfc1738=true);
    void parse(const char *url,bool proto_required=false,bool use_rfc1738=true);
+   ~ParsedURL();
 
    // returns allocated memory
    char *Combine(const char *home=0,bool use_rfc1738=true);
@@ -72,12 +73,7 @@ public:
    static int decode_string(char *);
    static const char *decode(const char *);
 
-   static bool is_url(const char *p)
-      {
-	 ParsedURL url(p,true);
-	 return url.proto!=0;
-      }
-
+   static bool is_url(const char *p);
    static int path_index(const char *p);
    static const char *path_ptr(const char *p);
    static bool dir_needs_trailing_slash(const char *proto);

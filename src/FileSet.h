@@ -86,7 +86,8 @@ public:
    void Init();
    FileInfo() { Init(); }
    FileInfo(const FileInfo &fi);
-   FileInfo(const char *n) { Init(); SetName(n); }
+   FileInfo(const char *n);
+   ~FileInfo();
 
    void SetName(const char *n) { name.set(n); defined|=NAME; }
    void SetUser(const char *n);
@@ -144,6 +145,8 @@ private:
 public:
    FileSet();
    FileSet(const FileSet *s);
+   ~FileSet();
+
    void Empty();
 
    int	 get_fnum() const { return files.count(); }

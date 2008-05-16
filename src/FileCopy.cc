@@ -519,6 +519,17 @@ const char *FileCopy::GetPercentDoneStr()
    snprintf(buf,8,"(%d%%) ",pct);
    return buf;
 }
+void FileCopy::RateAdd(int a)
+{
+   rate->Add(a);
+   rate_for_eta->Add(a);
+}
+void FileCopy::RateReset()
+{
+   start_time=now;
+   rate->Reset();
+   rate_for_eta->Reset();
+}
 float FileCopy::GetRate()
 {
    if(!rate->Valid() || !put)
@@ -638,6 +649,12 @@ void FileCopy::LogTransfer()
 // FileCopyPeer implementation
 #undef super
 #define super Buffer
+off_t FileCopyPeer::GetSize()
+{
+   if(size>=0 && pos>size)
+      WantSize();
+   return size;
+}
 void FileCopyPeer::SetSize(off_t s)
 {
    size=s;
@@ -656,6 +673,14 @@ void FileCopyPeer::SetDate(time_t d,int p)
       date_set=true;
    else
       date_set=false;
+}
+
+void FileCopyPeer::SetRange(const off_t s,const off_t lim)
+{
+   range_start=s;
+   range_limit=lim;
+   if(mode==PUT || range_start>GetPos()+0x4000)
+      Seek(range_start);
 }
 
 bool FileCopyPeer::Done()

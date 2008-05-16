@@ -26,7 +26,6 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <fcntl.h>
-#include <assert.h>
 #include <errno.h>
 #include <stdarg.h>
 #include <time.h>
@@ -1144,10 +1143,7 @@ int Http::Do()
       state=RECEIVING_HEADER;
       m=MOVED;
       if(mode==STORE)
-      {
-	 assert(rate_limit==0);
 	 rate_limit=new RateLimit(hostname);
-      }
 
    case RECEIVING_HEADER:
       if(send_buf->Error() || recv_buf->Error())
@@ -1988,7 +1984,7 @@ void Http::CookieMerge(xstring &all,const char *cookie_c)
 	 c_value=c_name, c_name=0;
       int c_name_len=xstrlen(c_name);
 
-      for(int i=all.skip_all(0,' '); i<all.length(); i=all.skip_all(i+1,' '))
+      for(unsigned i=all.skip_all(0,' '); i<all.length(); i=all.skip_all(i+1,' '))
       {
 	 const char *scan=all+i;
 	 const char *semicolon=strchr(scan,';');

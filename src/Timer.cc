@@ -145,6 +145,11 @@ Timer::Timer(const char *r,const char *c) : last_setting(0,0)
    start=now;
    reconfig(r);
 }
+Timer::Timer(int s,int ms)
+{
+   init();
+   Set(TimeInterval(s,ms));
+}
 void Timer::re_sort()
 {
    if(now>=stop || IsInfty())

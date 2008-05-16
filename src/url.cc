@@ -47,6 +47,9 @@ ParsedURL::ParsedURL(const char *url,bool proto_required,bool use_rfc1738)
 {
    parse(url,proto_required,use_rfc1738);
 }
+ParsedURL::~ParsedURL()
+{
+}
 
 void ParsedURL::parse(const char *url,bool proto_required,bool use_rfc1738)
 {
@@ -486,4 +489,10 @@ const char *url::remove_password(const char *url)
    if(!find_password_pos(url,&start,&len))
       return url;
    return xstring::format("%.*s%s",start-1,url,url+start+len);
+}
+
+bool url::is_url(const char *p)
+{
+   ParsedURL url(p,true);
+   return url.proto!=0;
 }

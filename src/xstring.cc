@@ -25,6 +25,37 @@
 #include "xstring.h"
 #include "trio.h"
 
+int xstrcmp(const char *s1,const char *s2)
+{
+   if(s1==s2)
+      return 0;
+   if(s1==0 || s2==0)
+      return 1;
+   return strcmp(s1,s2);
+}
+int xstrncmp(const char *s1,const char *s2,size_t len)
+{
+   if(s1==s2 || len==0)
+      return 0;
+   if(s1==0 || s2==0)
+      return 1;
+   return strncmp(s1,s2,len);
+}
+int xstrcasecmp(const char *s1,const char *s2)
+{
+   if(s1==s2)
+      return 0;
+   if(s1==0 || s2==0)
+      return 1;
+   return strcasecmp(s1,s2);
+}
+size_t xstrlen(const char *s)
+{
+   if(s==0)
+      return 0;
+   return strlen(s);
+}
+
 void xstring::get_space(size_t s,size_t g)
 {
    if(!buf)
@@ -211,7 +242,7 @@ void xstring::rtrim(char c)
 {
    while(chomp(c));
 }
-int xstring::skip_all(int i,char c)
+unsigned xstring::skip_all(unsigned i,char c)
 {
    while(i<len && buf[i]==c)
       i++;

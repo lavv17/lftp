@@ -34,6 +34,9 @@ ArgV::ArgV(const char *a0, const char *args_c)
    for(char *t=strtok(args," "); t; t=strtok(NULL," "))
       Append(t);
 }
+ArgV::~ArgV()
+{
+}
 
 void ArgV::seek(int n)
 {

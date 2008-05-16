@@ -259,7 +259,7 @@ public:
       static bool is_valid_reply(int p)
       {
 	 return p==SSH_FXP_VERSION
-	    || p>=101 && p<=105
+	    || (p>=101 && p<=105)
 	    || p==SSH_FXP_EXTENDED_REPLY;
       }
    protected:
@@ -768,7 +768,7 @@ public:
    void Cleanup();
    void CleanupThis();
 
-   FileSet *GetFileSet() { FileSet *fset=file_set.borrow(); return fset?fset:new FileSet; }
+   FileSet *GetFileSet();
 };
 
 class SFtpDirList : public DirList

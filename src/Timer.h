@@ -48,7 +48,7 @@ class Timer
 public:
    Timer();
    ~Timer();
-   Timer(int s,int ms=0) { init(); Set(TimeInterval(s,ms)); }
+   Timer(int s,int ms=0);
    Timer(const TimeInterval &);
    Timer(const char *,const char *);
    bool Stopped() const;

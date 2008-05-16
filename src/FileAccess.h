@@ -101,6 +101,7 @@ public:
       Path(const char *new_path) { init(); Set(new_path); }
       Path(const char *new_path,bool new_is_file,const char *new_url=0,int new_device_prefix_len=0)
 	 { init(); Set(new_path,new_is_file,new_url,new_device_prefix_len); }
+      ~Path();
       void Set(const Path*);
       void Set(const Path &o) { Set(&o); }
       void Set(const char *new_path,bool new_is_file=false,const char *new_url=0,int device_prefix_len=0);
@@ -167,11 +168,7 @@ protected:
       {
 	 real_cwd.set(c);
       }
-   void set_home(const char *h)
-      {
-	 home.Set(h);
-	 ExpandTildeInCWD();
-      }
+   void set_home(const char *h);
 
    off_t  entity_size; // size of file to be sent
    time_t entity_date; // date of file to be sent
@@ -423,7 +420,7 @@ public:
    FileAccessRef() {}
    FileAccessRef(FileAccess *p) : SMTaskRef<FileAccess>(p) {}
    ~FileAccessRef() { reuse(); }
-   const FileAccessRef& operator=(FileAccess *p) { reuse(); ptr=SMTask::MakeRef(p); return *this; }
+   const FileAccessRef& operator=(FileAccess *p);
 
    template<class T> const SMTaskRef<T>& Cast() const
       { void(static_cast<T*>(this->ptr)); return *(const SMTaskRef<T>*)this; }

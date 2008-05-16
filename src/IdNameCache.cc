@@ -97,6 +97,10 @@ int IdNameCache::Lookup(const char *name)
       return atoi(name);
    return lookup(name)->id;
 }
+IdNameCache::IdNameCache()
+{
+   init();
+}
 IdNameCache::~IdNameCache()
 {
    free();

@@ -137,6 +137,12 @@ void SMTask::Delete(SMTask *task)
    if(!task->running && !task->ref_count)
       delete task;
 }
+SMTask *SMTask::_SetRef(SMTask *task,SMTask *new_task)
+{
+   _DeleteRef(task);
+   _MakeRef(new_task);
+   return new_task;
+}
 
 void SMTask::Enter(SMTask *task)
 {

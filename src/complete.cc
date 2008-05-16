@@ -503,7 +503,7 @@ static completion_type cmd_completion_type(const char *cmd,int start)
 	 return LOCAL;
       if(have_N)
 	 arg--;
-      if(have_R ^ arg!=1)
+      if(have_R ^ (arg!=1))
 	 return LOCAL_DIR;
       if(arg>2)
 	 return NO_COMPLETION;

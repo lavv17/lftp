@@ -203,6 +203,8 @@ GlobURL::GlobURL(const FileAccessRef& s,const char *p,type_select t)
 {
    NewGlob(p);
 }
+GlobURL::~GlobURL() {}
+
 FileSet *GlobURL::GetResult()
 {
    FileSet &list=*glob->GetResult();

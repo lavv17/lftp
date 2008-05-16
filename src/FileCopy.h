@@ -83,7 +83,7 @@ public:
    virtual void WantDate() { want_date=true; date=NO_DATE_YET; }
    virtual void WantSize() { want_size=true; size=NO_SIZE_YET; }
    time_t GetDate() { return date; }
-   off_t  GetSize() { if(size>=0 && pos>size) WantSize(); return size; }
+   off_t GetSize();
 
    void SetDate(time_t d,int p=0);
    void SetSize(off_t s);
@@ -92,11 +92,7 @@ public:
    void DontCopyDate() { do_set_date=false; }
    bool NeedDate() { return do_set_date; }
 
-   void SetRange(off_t s,off_t lim) {
-      range_start=s; range_limit=lim;
-      if(mode==PUT || range_start>GetPos()+0x4000);
-	 Seek(range_start);
-   }
+   void SetRange(const off_t s,const off_t lim);
 
    FileCopyPeer(dir_t m);
    virtual ~FileCopyPeer() {}
@@ -194,17 +190,8 @@ private:
    int  line_buffer_max;
 
 protected:
-   void RateAdd(int a)
-      {
-	 rate->Add(a);
-	 rate_for_eta->Add(a);
-      }
-   void RateReset()
-      {
-	 start_time=now;
-	 rate->Reset();
-	 rate_for_eta->Reset();
-      }
+   void RateAdd(int a);
+   void RateReset();
    off_t bytes_count;
 
 public:

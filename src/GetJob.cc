@@ -97,12 +97,12 @@ FileCopyPeer *GetJob::DstLocal(const char *dst)
 bool GetJob::IsRemoteNonURL(const ParsedURL &url,FA::open_mode mode)
 {
    // store & put || !store & get
-   return (!url.proto && (mode==FA::STORE ^ !reverse));
+   return (!url.proto && ((mode==FA::STORE)^!reverse));
 }
 bool GetJob::IsLocalNonURL(const ParsedURL &url,FA::open_mode mode)
 {
    // store & get || !store & put
-   return (!url.proto && (mode==FA::STORE ^ reverse));
+   return (!url.proto && ((mode==FA::STORE)^reverse));
 }
 bool GetJob::IsLocal(const ParsedURL &url)
 {

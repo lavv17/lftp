@@ -65,8 +65,8 @@ public:
 
       bool ClosureMatch(const char *cl_data);
 
-      Resource(Resource *next,const ResType *type,const char *closure,const char *value)
-	 : type(type), value(value), closure(closure), next(next) {}
+      Resource(Resource *next,const ResType *type,const char *closure,const char *value);
+      ~Resource();
    };
 
 private:
@@ -178,15 +178,6 @@ public:
       }
 };
 
-inline bool ResType::QueryBool(const char *closure) const
-{
-   return Query(closure).to_bool();
-}
-inline bool ResMgr::QueryBool(const char *name,const char *closure)
-{
-   return Query(name,closure).to_bool();
-}
-
 class TimeIntervalR : public TimeInterval
 {
    const char *error_text;
@@ -228,8 +219,7 @@ protected:
    virtual const char *ResClosure() const { return 0; }
    virtual void Reconfig(const char *) {}
    ResValue Query(const char *name,const char *closure=0) const;
-   bool QueryBool(const char *name,const char *closure=0) const
-      { return Query(name,closure).to_bool(); }
+   bool QueryBool(const char *name,const char *closure=0) const;
    ResClient();
    virtual ~ResClient();
 public:

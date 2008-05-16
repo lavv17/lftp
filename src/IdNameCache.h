@@ -60,7 +60,7 @@ protected:
    IdNamePair *lookup(const char *id);
 
 public:
-   IdNameCache() { init(); }
+   IdNameCache();
    virtual ~IdNameCache();
    void Clear() { free(); init(); }
    const char *Lookup(int id);

@@ -1066,6 +1066,10 @@ char *ArgV::CombineQuoted(int start) const
       res.append(' ');
    }
 }
+char *ArgV::CombineCmd(int i) const
+{
+   return i>=count()-1 ? Combine(i) : CombineQuoted(i);
+}
 
 const char *CmdExec::GetFullCommandName(const char *cmd)
 {

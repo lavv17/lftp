@@ -86,8 +86,8 @@ public:
    void IncRefCount() { ref_count++; }
    void DecRefCount() { if(ref_count>0) ref_count--; }
    static SMTask *_MakeRef(SMTask *task) { if(task) task->IncRefCount(); return task; }
-   static void _DeleteRef(SMTask *task)  { if(task) task->DecRefCount(); Delete(task); }
-/*   template<typename T> static void DeleteRef(T *&task) { _DeleteRef(task); task=0; }*/
+   static void _DeleteRef(SMTask *task)  { if(task) { task->DecRefCount(); Delete(task); } }
+   static SMTask *_SetRef(SMTask *task,SMTask *new_task);
    template<typename T> static T *MakeRef(T *task) { _MakeRef(task); return task; }
    static int Roll(SMTask *);
    int Roll() { return Roll(this); }
@@ -122,13 +122,11 @@ template<class T> class SMTaskRef : public Ref<T>
    void operator=(const SMTaskRef<T>&);   // and assignment
 
 public:
-#define ptr Ref<T>::ptr
    SMTaskRef() {}
    SMTaskRef<T>(T *p) : Ref<T>(SMTask::MakeRef(p)) {}
-   ~SMTaskRef<T>() { SMTask::_DeleteRef(ptr); ptr=0; }
-   void operator=(T *p) { SMTask::_DeleteRef(ptr); ptr=SMTask::MakeRef(p); }
-   T *borrow() { if(ptr) ptr->DecRefCount(); return Ref<T>::borrow(); }
-#undef ptr
+   ~SMTaskRef<T>() { SMTask::_DeleteRef(this->ptr); this->ptr=0; }
+   T *borrow() { if(this->ptr) this->ptr->DecRefCount(); return Ref<T>::borrow(); }
+   void operator=(T *p) { this->ptr=static_cast<T*>(SMTask::_SetRef(this->ptr,p)); }
    void unset() { *this=0; }
 };
 

@@ -1937,6 +1937,12 @@ const char *SFtp::lc_to_utf8(const char *s)
    return s;
 }
 
+FileSet *SFtp::GetFileSet()
+{
+   FileSet *fset=file_set.borrow();
+   return fset?fset:new FileSet;
+}
+
 FileInfo *SFtp::MakeFileInfo(const NameAttrs *na)
 {
    const FileAttrs *a=&na->attrs;

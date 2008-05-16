@@ -215,7 +215,7 @@ public:
 
    // Put method with Put_LL shortcut
    void Put(const char *,int);
-   void Put(const char *buf) { Put(buf,strlen(buf)); }
+   void Put(const char *buf);
    void Put(const xstring &s) { Put(s.get(),s.length()); }
    // anchor to PutEOF_LL
    void PutEOF() { DirectedBuffer::PutEOF(); PutEOF_LL(); }

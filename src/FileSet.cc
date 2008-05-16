@@ -137,6 +137,10 @@ FileSet::FileSet()
 {
 }
 
+FileSet::~FileSet()
+{
+}
+
 /* we don't copy the sort state--nothing needs it, and it'd
  * be a bit of a pain to implement. */
 FileSet::FileSet(FileSet const *set)
@@ -644,6 +648,15 @@ FileInfo::FileInfo(const FileInfo &fi)
    size=fi.size;
    nlinks=fi.nlinks;
    longname.set(fi.longname);
+}
+FileInfo::FileInfo(const char *n)
+{
+   Init();
+   SetName(n);
+}
+
+FileInfo::~FileInfo()
+{
 }
 
 #ifndef S_ISLNK
