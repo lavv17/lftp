@@ -1,3 +1,9 @@
+2008-05-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: outline some funcs; disable ALLO on 202 reply;
+	  add support for two-arg SITE UTIME; add support for MFMT; new setting
+	  ftp:use-site-utime2.
+
 2008-05-14  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h: add ALLO check and set use-allo if unsupported.

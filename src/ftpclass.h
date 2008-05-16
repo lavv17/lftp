@@ -107,12 +107,14 @@ class Ftp : public NetAccess
       bool rest_supported;
       bool site_chmod_supported;
       bool site_utime_supported;
+      bool site_utime2_supported;   // two-argument SITE UTIME
       bool pret_supported;
       bool utf8_supported;
       bool lang_supported;
       bool mlst_supported;
       bool clnt_supported;
       bool host_supported;
+      bool mfmt_supported;
 
       off_t last_rest;	// last successful REST position.
       off_t rest_pos;	// the number sent with REST command.
@@ -206,6 +208,7 @@ class Ftp : public NetAccess
 	 OPTS_UTF8,
 	 LANG,
 	 SITE_UTIME,
+	 SITE_UTIME2,
 	 ALLO,
 	 QUOTED		// check response for any command submitted by QUOTE_CMD
 #if USE_SSL
@@ -237,7 +240,7 @@ class Ftp : public NetAccess
       ~ExpectQueue();
 
       void Push(Expect *e);
-      void Push(Expect::expect_t e) { Push(new Expect(e)); }
+      void Push(Expect::expect_t e);
       Expect *Pop();
       Expect *FindLastCWD();
       int Count() { return count; }
@@ -319,13 +322,7 @@ private:
    // response_queue and switch to a state if necessary
    int	 ReceiveResp();
 
-   bool ProxyIsHttp()
-      {
-	 if(!proxy_proto)
-	    return false;
-	 return !strcmp(proxy_proto,"http")
-	     || !strcmp(proxy_proto,"https");
-      }
+   bool ProxyIsHttp();
    int	 http_proxy_status_code;
    // Send CONNECT method to http proxy.
    void	 HttpProxySendConnect();

@@ -880,12 +880,14 @@ Ftp::Connection::Connection(const char *c)
    rest_supported=true;
    site_chmod_supported=true;
    site_utime_supported=true;
+   site_utime2_supported=true;
    pret_supported=false;
    utf8_supported=false;
    lang_supported=false;
    mlst_supported=false;
    clnt_supported=false;
    host_supported=false;
+   mfmt_supported=false;
 
    proxy_is_http=false;
    may_show_password=false;
@@ -1081,6 +1083,14 @@ void Ftp::Connection::InitTelnetLayer()
       return;
    control_send=telnet_layer_send=new IOBufferTelnet(control_send.borrow());
    control_recv=new IOBufferTelnet(control_recv.borrow());
+}
+
+bool Ftp::ProxyIsHttp()
+{
+   if(!proxy_proto)
+      return false;
+   return !strcmp(proxy_proto,"http")
+       || !strcmp(proxy_proto,"https");
 }
 
 int   Ftp::Do()
@@ -2477,23 +2487,30 @@ void Ftp::SendUTimeRequest()
 {
    if(entity_date==NO_DATE || !file)
       return;
-   if(QueryBool("use-site-utime") && conn->site_utime_supported)
+
+   char d[15];
+   time_t n=entity_date;
+   strftime(d,sizeof(d),"%Y%m%d%H%M%S",gmtime(&n));
+   d[sizeof(d)-1]=0;
+
+   if(conn->mfmt_supported)
    {
-      char d[15];
-      time_t n=entity_date;
-      strftime(d,sizeof(d),"%Y%m%d%H%M%S",gmtime(&n));
-      d[sizeof(d)-1]=0;
+      conn->SendCmd2(xstring::format("MFMT %s",d),file,url::path_ptr(file_url),home);
+      expect->Push(Expect::IGNORE);
+   }
+   else if(QueryBool("use-site-utime2") && conn->site_utime2_supported)
+   {
+      conn->SendCmd2(xstring::format("SITE UTIME %s",d),file,url::path_ptr(file_url),home);
+      expect->Push(Expect::SITE_UTIME2);
+   }
+   else if(QueryBool("use-site-utime") && conn->site_utime_supported)
+   {
       conn->SendCmd(xstring::format("SITE UTIME %s %s %s %s UTC",file.get(),d,d,d));
       expect->Push(Expect::SITE_UTIME);
    }
    else if(QueryBool("use-mdtm-overloaded"))
    {
-      const int c_size=5+14+1;
-      char *c=string_alloca(c_size);
-      time_t n=entity_date;
-      strftime(c,c_size,"MDTM %Y%m%d%H%M%S",gmtime(&n));
-      c[c_size-1]=0;
-      conn->SendCmd2(c,file,url::path_ptr(file_url),home);
+      conn->SendCmd2(xstring::format("MDTM %s",d),file,url::path_ptr(file_url),home);
       expect->Push(Expect::IGNORE);
    }
 }
@@ -2709,8 +2726,8 @@ int  Ftp::ReceiveResp()
 	       TurnOffStatForList();
 	       is_data=false;
 	    }
-	    if((is_first_line && !strncasecmp(line+data_offset,"Stat",4)
-	    || (is_last_line  && !strncasecmp(line+data_offset,"End",3))))
+	    if((is_first_line && !strncasecmp(line+data_offset,"Stat",4))
+	    || (is_last_line  && !strncasecmp(line+data_offset,"End",3)))
 	       is_data=false;
 	 }
       }
@@ -3326,6 +3343,10 @@ void Ftp::ExpectQueue::Push(Expect *e)
    e->next=0;
    count++;
 }
+void Ftp::ExpectQueue::Push(Expect::expect_t e)
+{
+   Push(new Expect(e));
+}
 Ftp::Expect *Ftp::ExpectQueue::Pop()
 {
    if(!first)
@@ -3374,6 +3395,7 @@ void Ftp::ExpectQueue::Close()
       case(Expect::TRANSFER_CLOSED):
       case(Expect::FEAT):
       case(Expect::SITE_UTIME):
+      case(Expect::SITE_UTIME2):
       case(Expect::TYPE):
       case(Expect::LANG):
       case(Expect::OPTS_UTF8):
@@ -3708,6 +3730,8 @@ void Ftp::CheckFEAT(char *reply)
 	 conn->clnt_supported=true;
       else if(!strcasecmp(f,"HOST"))
 	 conn->host_supported=true;
+      else if(!strcasecmp(f,"MFMT"))
+	 conn->mfmt_supported=true;
       else if(!strncasecmp(f,"REST ",5)) // FIXME: actually REST STREAM
 	 conn->rest_supported=true;
       else if(!strcasecmp(f,"REST"))
@@ -3922,7 +3946,7 @@ void Ftp::CheckResp(int act)
       break;
 
    case Expect::ALLO:
-      if(cmd_unsupported(act))
+      if(cmd_unsupported(act) || act==202)
 	 ResMgr::Set("ftp:use-allo",hostname,"no");
       break;
 
@@ -4055,6 +4079,13 @@ void Ftp::CheckResp(int act)
       if(site_cmd_unsupported(act))
       {
 	 conn->site_utime_supported=false;
+	 SendUTimeRequest();  // try another method.
+      }
+      break;
+   case Expect::SITE_UTIME2:
+      if(site_cmd_unsupported(act))
+      {
+	 conn->site_utime2_supported=false;
 	 SendUTimeRequest();  // try another method.
       }
       break;
