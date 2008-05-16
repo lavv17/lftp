@@ -1,3 +1,10 @@
+Version 3.7.3 - 2008-05-16
+
+* added a workaround for paramiko sftp server.
+* added support for 2-argument SITE UTIME and MFMT commands.
+* Polish translation updated (Jakub Bogusz).
+* fixed German translation encoding.
+
 Version 3.7.2 - 2008-05-07
 
 * fixed core dump when sending http cookies.
