@@ -1,3 +1,7 @@
+2008-05-16	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:use-site-utime2.
+
 2008-02-16	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document ftp:proxy-auth-type (based on patch from David

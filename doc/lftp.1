@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "17 Aug 2007"
+.TH lftp 1 "16 May 2008"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 3.6.0.
+This man page documents lftp version 3.7.3.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -1200,8 +1200,13 @@ when true, lftp sends `SITE IDLE' command with net:idle argument. Default
 is false.
 .TP
 .BR ftp:use-site-utime \ (boolean)
-when true, lftp sends `SITE UTIME' command to set file modification time
+when true, lftp sends 5-argument `SITE UTIME' command to set file modification time
 on uploaded files. Default is true.
+.TP
+.BR ftp:use-site-utime2 \ (boolean)
+when true, lftp sends 2-argument `SITE UTIME' command to set file modification time
+on uploaded files. Default is true.
+If 5-argument `SITE UTIME' is also enabled, 2-argument command is tried first.
 .TP
 .BR ftp:use-size \ (boolean)
 when true (default), lftp uses SIZE command to determine file size.
