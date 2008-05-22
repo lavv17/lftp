@@ -29,7 +29,7 @@ endif
 lib_LTLIBRARIES = liblftp-tasks.la liblftp-jobs.la
 
 proto_ftp_la_SOURCES  = ftpclass.cc ftpclass.h FtpListInfo.cc FtpListInfo.h\
- FtpDirList.cc FtpDirList.h md5.c md5.h ftp-opie.c FileCopyFtp.cc FileCopyFtp.h
+ FtpDirList.cc FtpDirList.h ftp-opie.c FileCopyFtp.cc FileCopyFtp.h
 proto_http_la_SOURCES = Http.cc Http.h HttpDir.cc HttpDir.h HttpDirXML.cc
 proto_file_la_SOURCES = LocalAccess.cc LocalAccess.h
 proto_fish_la_SOURCES = Fish.cc Fish.h
