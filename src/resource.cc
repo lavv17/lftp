@@ -37,6 +37,7 @@
 #include "ascii_ctype.h"
 #include "configmake.h"
 #include "misc.h"
+#include "localcharset.h"
 
 static const char *FtpProxyValidate(xstring_c *p)
 {
@@ -424,11 +425,9 @@ void ResMgr::ClassInit()
    if(dir_colors)
       Set("color:dir-colors",0,dir_colors);
 
-#if defined(HAVE_NL_LANGINFO) && defined(CODESET)
-   char *cs=nl_langinfo(CODESET);
+   const char *cs=locale_charset();
    if(cs && cs[0])
       Set("file:charset",0,cs);
-#endif
 
    const char *time_style=getenv("TIME_STYLE");
    if(time_style && *time_style)
