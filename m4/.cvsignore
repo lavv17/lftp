@@ -98,3 +98,5 @@ wcwidth.m4
 xalloc.m4
 xstrtol.m4
 lstat.m4
+mbswidth.m4
+md5.m4
