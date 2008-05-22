@@ -82,8 +82,7 @@ liblftp_tasks_la_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  Speedometer.h netrc.cc netrc.h lftp_tinfo.cc lftp_tinfo.h\
  TimeDate.cc TimeDate.h Timer.cc Timer.h GetFileInfo.cc GetFileInfo.h\
  StringPool.cc StringPool.h DirColors.cc DirColors.h IdNameCache.cc\
- IdNameCache.h PatternSet.cc PatternSet.h LocalDir.cc LocalDir.h\
- wcwidth.h
+ IdNameCache.h PatternSet.cc PatternSet.h LocalDir.cc LocalDir.h
 liblftp_tasks_la_LIBADD = $(TASK_MODULES_STATIC) $(SOCKSLIBS) $(LTLIBINTL) $(LTLIBICONV)
 
 liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
