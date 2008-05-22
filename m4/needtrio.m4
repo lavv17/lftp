@@ -36,11 +36,13 @@ AC_DEFUN([LFTP_NEED_TRIO],[
    ])
    case $ac_cv_need_trio in
    yes*)
-      AC_LIBOBJ(trio)
-      AC_LIBOBJ(trionan)
-      AC_LIBOBJ(triostr)
+      ac_cv_need_trio=yes
       AC_DEFINE(TRIO_REPLACE_STDIO, 1, [replace system's printf functions])
       LFTP_CHECK_LIBM
       ;;
+   *)
+      ac_cv_need_trio=no
+      ;;
    esac
+   AM_CONDITIONAL(NEED_TRIO, [test "$ac_cv_need_trio" = yes])
 ])
