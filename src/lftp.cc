@@ -51,7 +51,7 @@
 #include "misc.h"
 #include "ArgV.h"
 
-#include "confpaths.h"
+#include "configmake.h"
 
 #include "lftp_rl.h"
 #include "complete.h"

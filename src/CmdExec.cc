@@ -21,6 +21,7 @@
 /* $Id$ */
 
 #include <config.h>
+#include <stddef.h>
 #include <errno.h>
 #include <unistd.h>
 #include <ctype.h>

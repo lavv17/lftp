@@ -48,6 +48,8 @@
 
 #include <stdarg.h>
 
+#define string_alloca(len)      ((char*)alloca((len)))
+
 #if !HAVE_DECL_STRCASECMP
 CDECL int strcasecmp(const char *s1,const char *s2);
 CDECL int strncasecmp(const char *s1,const char *s2,size_t n);

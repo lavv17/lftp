@@ -27,6 +27,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <fnmatch.h>
+#include <stddef.h>
 
 #include "FileGlob.h"
 #include "misc.h"

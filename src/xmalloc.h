@@ -25,7 +25,6 @@
 #define XMALLOC_H
 
 #include <stdlib.h>
-#include "xalloca.h"
 
 #ifdef DBMALLOC
 #include "dbmalloc.h"

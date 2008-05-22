@@ -22,6 +22,7 @@
 #include "TimeDate.h"
 #include "misc.h"
 #include "SMTask.h"
+#include "strftime.h"
 
 void time_tuple::normalize()
 {

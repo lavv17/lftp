@@ -27,6 +27,7 @@
 
 CDECL_BEGIN
 #include "filemode.h"
+#include "modechange.h"
 CDECL_END
 
 void ChmodJob::Init()
@@ -123,19 +124,9 @@ void ChmodJob::SetVerbosity(verbosity v)
 
 bool ChmodJob::RelativeMode(const mode_change *m) const
 {
-   // The mode_change library doesn't exactly bother with type-safety. This
-   // `pointer to mode_change' is in reality a pointer to an array of
-   // mode_changes. We can increment it by sizeof[mode_change] quite
-   // safely.
-
-   size_t i = 0;
-   for (; m[i].flag != MODE_DONE; ++i)
-   {
-      if(m[i].flag || m[i].op != '=')
-         return true;
-   }
-
-   return false;
+   // relative mode change depends on original mode.
+   return mode_adjust(7777, false, 7777, m, NULL)
+       != mode_adjust(0000, false, 7777, m, NULL);
 }
 
 void ChmodJob::TreatCurrent(const char *d,const FileInfo *fi)

@@ -23,12 +23,15 @@
 #include <config.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <glob.h>
 #include "mgetJob.h"
 #include "misc.h"
 #include "ArgV.h"
 #include "url.h"
 #include "mkdirJob.h"
+
+CDECL_BEGIN
+#include <glob.h>
+CDECL_END
 
 void mgetJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
 {

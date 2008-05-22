@@ -42,7 +42,7 @@
 #endif
 
 CDECL_BEGIN
-#include <regex.h>
+#include "regex.h"
 CDECL_END
 #include "misc.h"
 #include "ProcWait.h"
@@ -50,6 +50,7 @@ CDECL_END
 #include "url.h"
 #include "ResMgr.h"
 #include <mbswidth.h>
+#include "strftime.h"
 
 #if HAVE_UNSETENV && !HAVE_DECL_UNSETENV
 CDECL void unsetenv(const char *name);

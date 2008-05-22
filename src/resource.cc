@@ -35,7 +35,7 @@
 #include "url.h"
 #include "GetPass.h"
 #include "ascii_ctype.h"
-#include "confpaths.h"
+#include "configmake.h"
 #include "misc.h"
 
 static const char *FtpProxyValidate(xstring_c *p)

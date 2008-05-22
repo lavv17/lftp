@@ -68,6 +68,7 @@
 #include <errno.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
+#include <stddef.h>
 
 #define super Job
 

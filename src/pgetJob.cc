@@ -23,6 +23,7 @@
 #include <config.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <stddef.h>
 #include "pgetJob.h"
 #include "url.h"
 #include "misc.h"

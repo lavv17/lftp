@@ -27,7 +27,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "lftp_rl.h"
-#include "xalloca.h"
 
 /* complete.cc */
 void lftp_line_complete();

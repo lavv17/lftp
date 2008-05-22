@@ -76,7 +76,7 @@
 #include "LocalDir.h"
 #include "ConnectionSlot.h"
 
-#include "confpaths.h"
+#include "configmake.h"
 
 History	 cwd_history;
 

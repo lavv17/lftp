@@ -25,6 +25,7 @@
 #include <unistd.h>
 #include <assert.h>
 #include <fnmatch.h>
+#include <stddef.h>
 
 #include "QueueFeeder.h"
 #include "plural.h"

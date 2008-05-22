@@ -33,7 +33,7 @@
 #include <arpa/inet.h>
 #include <errno.h>
 CDECL_BEGIN
-#include <regex.h>
+#include "regex.h"
 CDECL_END
 #include "ResMgr.h"
 #include "SMTask.h"

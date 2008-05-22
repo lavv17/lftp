@@ -42,6 +42,12 @@ liblftp_network_la_SOURCES = NetAccess.cc NetAccess.h Resolver.cc Resolver.h\
  network.cc network.h SSH_Access.cc SSH_Access.h
 liblftp_getdate_la_SOURCES = getdate.y getdate.h
 
+if NEED_TRIO
+   TRIO = $(top_builddir)/trio/libtrio.la
+endif
+GNULIB = $(top_builddir)/lib/libgnu.la
+LIBS += $(TRIO) $(GNULIB)
+
 proto_ftp_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
 proto_http_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
 proto_file_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
@@ -77,8 +83,8 @@ liblftp_tasks_la_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  TimeDate.cc TimeDate.h Timer.cc Timer.h GetFileInfo.cc GetFileInfo.h\
  StringPool.cc StringPool.h DirColors.cc DirColors.h IdNameCache.cc\
  IdNameCache.h PatternSet.cc PatternSet.h LocalDir.cc LocalDir.h\
- mbswidth.c mbswidth.h wcwidth.h
-liblftp_tasks_la_LIBADD = $(TASK_MODULES_STATIC) $(top_builddir)/lib/liblib.la $(SOCKSLIBS) $(LTLIBINTL) $(LTLIBICONV)
+ wcwidth.h
+liblftp_tasks_la_LIBADD = $(TASK_MODULES_STATIC) $(SOCKSLIBS) $(LTLIBINTL) $(LTLIBICONV)
 
 liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\
@@ -100,17 +106,9 @@ example1_LDADD = liblftp-tasks.la
 example1_cmd_LDADD = liblftp-jobs.la
 example2_LDADD = liblftp-tasks.la
 
-confpaths.h: Makefile
-	echo "#define SYSCONFDIR \"$(sysconfdir)\""  > $@
-	echo "#define LOCALEDIR  \"$(localedir)\""  >> $@
-	echo "#define PKGDATADIR \"$(pkgdatadir)\"" >> $@
-	echo "#define PKGLIBDIR  \"$(pkglibdir)\""  >> $@
+CLEANFILES = *.la
 
-DISTCLEANFILES = confpaths.h *.la
-
-INCLUDES = -I$(top_srcdir)/include $(OPENSSL_CPPFLAGS) $(LIBGNUTLS_CFLAGS)
-
-lftp.o commands.lo module.lo: confpaths.h
+INCLUDES = -I$(top_srcdir)/lib -I$(top_srcdir)/trio $(OPENSSL_CPPFLAGS) $(LIBGNUTLS_CFLAGS)
 
 # libtool does not strip modules, do it here.
 install-data-hook:

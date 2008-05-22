@@ -27,6 +27,7 @@
 #include "xstring.h"
 #include "log.h"
 #include "SMTask.h"
+#include "strftime.h"
 
 SMTaskRef<Log> Log::global(new Log);
 

@@ -12,7 +12,6 @@
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-# include "xalloca.h"
 #endif
 
 /* Since the code of getdate.y is not included in the Emacs executable

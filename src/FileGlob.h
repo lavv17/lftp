@@ -85,6 +85,10 @@ public:
    void NewGlob(const char *p);
    const char *GetPattern() { return glob->GetPattern(); }
 
+   void NoMatchPeriod()	   { if(glob) glob->NoMatchPeriod(); }
+   void NoInhibitTilde()   { if(glob) glob->NoInhibitTilde(); }
+   void CaseFold()	   { if(glob) glob->CaseFold(); }
+
 private:
    type_select type;
 };

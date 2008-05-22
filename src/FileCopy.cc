@@ -40,6 +40,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <math.h>
+#include <stddef.h>
 #include "FileCopy.h"
 #include "url.h"
 #include "log.h"

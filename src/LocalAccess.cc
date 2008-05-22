@@ -27,7 +27,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <dirent.h>
-#include <glob.h>
 #include <utime.h>
 
 #include "LocalAccess.h"
@@ -35,6 +34,10 @@
 #include "misc.h"
 #include "log.h"
 #include "LocalDir.h"
+
+CDECL_BEGIN
+#include <glob.h>
+CDECL_END
 
 #define FILES_AT_ONCE_STAT 64
 #define FILES_AT_ONCE_READDIR 256

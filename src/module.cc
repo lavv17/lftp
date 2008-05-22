@@ -30,7 +30,7 @@
 #include <stddef.h>
 #include "module.h"
 #include "ResMgr.h"
-#include "confpaths.h"
+#include "configmake.h"
 #include "xstring.h"
 
 #ifndef RTLD_GLOBAL

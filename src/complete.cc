@@ -27,7 +27,6 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <unistd.h>
-#include <glob.h>
 #include <sys/time.h>
 #include <assert.h>
 #include "xmalloc.h"
@@ -47,6 +46,8 @@
 #include "misc.h"
 
 CDECL_BEGIN
+#include <glob.h>
+
 #define USE_VARARGS 1
 #define PREFER_STDARG 1
 #include "readline/readline.h"
@@ -767,11 +768,11 @@ static char **lftp_completion (const char *text,int start,int end)
 
       if(rg)
       {
-	 rg->glob->NoMatchPeriod();
-	 rg->glob->NoInhibitTilde();
+	 rg->NoMatchPeriod();
+	 rg->NoInhibitTilde();
 	 if(fso.patterns_casefold) {
 	    rl_variable_bind("completion-ignore-case", "1");
-	    rg->glob->CaseFold();
+	    rg->CaseFold();
 	 } else
 	    rl_variable_bind("completion-ignore-case", "0");
 

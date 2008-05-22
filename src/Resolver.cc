@@ -22,6 +22,7 @@
 
 #include <config.h>
 
+#include <stddef.h>
 #include "Resolver.h"
 #include "SignalHook.h"
 #include <errno.h>

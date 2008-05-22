@@ -44,6 +44,7 @@
 
 #include "ascii_ctype.h"
 #include "misc.h"
+#include "strftime.h"
 
 #define TELNET_IAC	255		/* interpret as command: */
 #define	TELNET_IP	244		/* interrupt process--permanently */
@@ -65,14 +66,12 @@
 #endif
 
 CDECL_BEGIN
-#include <regex.h>
+#include "regex.h"
 CDECL_END
 
 #if HAVE_INET_ATON && !HAVE_DECL_INET_ATON
 CDECL int inet_aton(const char *,struct in_addr *);
 #endif
-
-#include "xalloca.h"
 
 #if USE_SSL
 # include "lftp_ssl.h"
