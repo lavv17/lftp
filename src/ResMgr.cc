@@ -775,16 +775,12 @@ const char *ResMgr::ERegExpValidate(xstring_c *s)
    return 0;
 }
 
-#if HAVE_INET_ATON && !HAVE_DECL_INET_ATON
-CDECL int inet_aton(const char *,struct in_addr *);
-#endif
-
 const char *ResMgr::IPv4AddrValidate(xstring_c *value)
 {
    if(!**value)
       return 0;
    struct in_addr addr;
-   if(!inet_aton(*value,&addr))
+   if(!inet_pton(AF_INET,*value,&addr))
       return _("Invalid IPv4 numeric address");
    return 0;
 }

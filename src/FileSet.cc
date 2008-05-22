@@ -30,7 +30,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#include "lstat.h"
 #include <fnmatch.h>
 #include <assert.h>
 
@@ -43,6 +42,10 @@
 #include "StringPool.h"
 #include "IdNameCache.h"
 #include "PatternSet.h"
+
+CDECL_BEGIN
+#include "lstat.h"
+CDECL_END
 
 #define fnum files.count()
 

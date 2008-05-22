@@ -24,7 +24,6 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#include "lstat.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -41,6 +40,10 @@
 #include "CopyJob.h"
 #include "pgetJob.h"
 #include "log.h"
+
+CDECL_BEGIN
+#include "lstat.h"
+CDECL_END
 
 #define set_state(s) do { state=(s); \
    Log::global->Format(11,"mirror(%p) enters state %s\n", this, #s); } while(0)

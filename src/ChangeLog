@@ -1,3 +1,9 @@
+2008-05-22  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* resource.cc: use locale_charset.
+	* FileSet.cc, MirrorJob.cc: use lstat.h.
+	* ftpclass.cc, ResMgr.cc, NetAccess.cc: use inet_pton.
+
 2008-05-16  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h: outline some funcs; disable ALLO on 202 reply;

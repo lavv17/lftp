@@ -69,10 +69,6 @@ CDECL_BEGIN
 #include "regex.h"
 CDECL_END
 
-#if HAVE_INET_ATON && !HAVE_DECL_INET_ATON
-CDECL int inet_aton(const char *,struct in_addr *);
-#endif
-
 #if USE_SSL
 # include "lftp_ssl.h"
 #else
@@ -1098,8 +1094,8 @@ int   Ftp::Do()
    bool	 append_file=false;
    int	 res;
    socklen_t addr_len;
-   unsigned char *a;
-   unsigned char *p;
+   const unsigned char *a;
+   const unsigned char *p;
    automate_state oldstate;
    int	 m=STALL;
 
@@ -1929,15 +1925,15 @@ int   Ftp::Do()
 	    conn->data_sa=copy_addr;
 	 if(conn->data_sa.sa.sa_family==AF_INET)
 	 {
-	    a=(unsigned char*)&conn->data_sa.in.sin_addr;
-	    p=(unsigned char*)&conn->data_sa.in.sin_port;
+	    a=(const unsigned char*)&conn->data_sa.in.sin_addr;
+	    p=(const unsigned char*)&conn->data_sa.in.sin_port;
 	    sockaddr_u control_sa;
 	    // check if data socket address is unbound
 	    if((a[0]|a[1]|a[2]|a[3])==0)
 	    {
 	       socklen_t addr_len=sizeof(control_sa);
 	       getsockname(conn->control_sock,&control_sa.sa,&addr_len);
-	       a=(unsigned char*)&control_sa.in.sin_addr;
+	       a=(const unsigned char*)&control_sa.in.sin_addr;
 	    }
 #if INET6
 	 ipv4_port:
@@ -1948,8 +1944,8 @@ int   Ftp::Do()
 	       struct in_addr fake_ip;
 	       if(port_ipv4 && port_ipv4[0])
 	       {
-		  if(inet_aton(port_ipv4,&fake_ip))
-		     a=(unsigned char*)&fake_ip;
+		  if(inet_pton(AF_INET,port_ipv4,&fake_ip))
+		     a=(const unsigned char*)&fake_ip;
 	       }
 	    }
 	    conn->SendCmdF("PORT %d,%d,%d,%d,%d,%d",a[0],a[1],a[2],a[3],p[0],p[1]);

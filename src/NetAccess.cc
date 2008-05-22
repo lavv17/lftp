@@ -167,10 +167,6 @@ void NetAccess::SetSocketMaxseg(int sock)
 #endif
 }
 
-#if HAVE_INET_ATON && !HAVE_DECL_INET_ATON
-CDECL int inet_aton(const char *,struct in_addr *);
-#endif
-
 int NetAccess::SocketCreate(int af,int type,int proto)
 {
    int s=socket(af,type,proto);
@@ -183,7 +179,7 @@ int NetAccess::SocketCreate(int af,int type,int proto)
    if(af==AF_INET)
    {
       b=ResMgr::Query("net:socket-bind-ipv4",hostname);
-      if(!(b && b[0] && inet_aton(b,&bind_addr.in.sin_addr)))
+      if(!(b && b[0] && inet_pton(af,b,&bind_addr.in.sin_addr)))
 	 b=0;
    }
 #if INET6
