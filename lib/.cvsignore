@@ -105,3 +105,9 @@ lstat.c
 lstat.h
 mbswidth.c
 mbswidth.h
+md5.c
+md5.h
+arpa_inet.in.h
+inet_ntop.c
+inet_pton.c
+netinet_in.in.h
