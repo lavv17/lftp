@@ -151,7 +151,7 @@ FileSet *HttpListInfo::ParseProps(const char *b,int len,const char *base_dir)
    if(!XML_Parse(p, b, len, /*eof*/1))
    {
       Log::global->Format(0, "XML Parse error at line %d: %s\n",
-	      XML_GetCurrentLineNumber(p),
+	      (int)XML_GetCurrentLineNumber(p),
 	      XML_ErrorString(XML_GetErrorCode(p)));
       XML_ParserFree(p);
       return 0;
@@ -176,7 +176,7 @@ void HttpDirList::ParsePropsFormat(const char *b,int len,bool eof)
    if(!XML_Parse(xml_p, b, len, eof))
    {
       Log::global->Format(0, "XML Parse error at line %d: %s\n",
-	      XML_GetCurrentLineNumber(xml_p),
+	      (int)XML_GetCurrentLineNumber(xml_p),
 	      XML_ErrorString(XML_GetErrorCode(xml_p)));
       parse_as_html=true;
       return;

@@ -1,10 +1,11 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
 AC_INIT([lftp], [3.7.3], [lftp-bugs@lftp.yar.ru])
-AM_INIT_AUTOMAKE
+AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_LIBOBJ_DIR([lib])
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
-AM_CONFIG_HEADER([include/config.h])
+AM_CONFIG_HEADER([lib/config.h])
+AM_INIT_AUTOMAKE
 
 # This doesn't *require* GNU extensions; it merely enables them if
 # they're there.
@@ -17,7 +18,13 @@ test -z "$LDFLAGS"   && DEFAULT_LDFLAGS=yes
 
 dnl Checks for programs.
 AC_PROG_CC
+gl_EARLY
 AC_PROG_CXX
+
+AC_PROG_YACC
+if test x$ac_cv_lib_fl_yywrap = xno; then
+   AC_DEFINE(NEED_YYWRAP, 1, [need yywrap]) dnl ?
+fi
 
 AC_SYS_LARGEFILE
 
@@ -110,92 +117,15 @@ LFTP_CXX_ANSI_SCOPE
 
 AC_ISC_POSIX
 
-# for src/mbswidth.{c,h} from gnulib
-gl_MBSWIDTH
-
 AM_STDBOOL_H
-if test "$ac_cv_header_stdbool_h" = no; then
-   AC_CONFIG_LINKS([include/stdbool.h:lib/stdbool_.h])
-fi
-
-# for src/human.{c,h}
-gl_HUMAN
-AC_CONFIG_LINKS([include/human.h:lib/human.h])
-
-# for lib/stat-macros.h
-gl_STAT_MACROS
-
-# for lib/xmalloc.c, lib/xalloc.h
-gl_XALLOC
-
-# for lib/modechange.{c,h}
-gl_MODECHANGE
-AC_CONFIG_LINKS([include/modechange.h:lib/modechange.h])
-
-LE_FUNC_WCWIDTH_REPLACE
-
-# for src/mbrtowc.{c,h}
-gl_FUNC_MBRTOWC
-
-# for lib/exitfail.{c,h}
-gl_EXITFAIL
-
-# for lib/quote.{c,h}
-gl_QUOTE
-
-# for lib/quotearg.{c,h}
-gl_QUOTEARG
-
-# for lib/xstrtol.{c,h}
-gl_XSTRTOL
-
-# for lib/strtol.c
-gl_FUNC_STRTOL
-
-# for lib/strtoll.c
-gl_FUNC_STRTOLL
-
-# for lib/strtoull.{c,h}
-gl_FUNC_STRTOULL
-
-# for lib/strtoimax.c
-gl_FUNC_STRTOIMAX
-
-# for lib/inttypes.h
-gl_INTTYPES_H
-
-# for lib/strtoumax.c
-gl_FUNC_STRTOUMAX
-
-# for lib/xstrtoumax.c
-gl_XSTRTOUMAX
-
-# for src/filemode.c
-gl_FILEMODE
-AC_CONFIG_LINKS([include/filemode.h:lib/filemode.h])
-
-# for lib/error.{c,h}
-gl_ERROR
-
-AC_MBSTATE_T
 
 case "`uname -sr`" in
 # Linux-2.2.x and older don't support fcntl64.
 Linux\ 2.[012].*) enable_largefile=no;;
-# MacOS X Tiger's poll does not work correctly.
-Darwin\ [89].*)	  lftp_cv_func_poll_works=no;;
 esac
 
-AC_PROG_YACC
-
-if test x$ac_cv_lib_fl_yywrap = xno; then
-   AC_DEFINE(NEED_YYWRAP, 1, [need yywrap]) dnl ?
-fi
-
 dnl ** LFTP needs iconv, call the test explicitly (even if --disable-nls)
-AC_LANG_PUSH(C++)
- AM_ICONV
-AC_LANG_POP(C++)
+AM_ICONV
 
 ALL_LINGUAS="de es fr it ja ko pl pt_BR ru zh_CN zh_TW zh_HK"
 AM_GNU_GETTEXT([external])
@@ -247,7 +177,7 @@ esac
 
 if test x$socks_loc != x; then
    LDFLAGS="$LDFLAGS -L$socks_loc/lib"
-   CPPFLAGS="$CPPFLAGS -L$socks_loc/include"
+   CPPFLAGS="$CPPFLAGS -I$socks_loc/include"
 fi
 
 if test x$with_socks = xyes; then
@@ -272,7 +202,7 @@ if test -n "$SOCKSLIBS"; then
    LIBS="$LIBS $SOCKSLIBS"
    AC_CHECK_FUNCS([Rpoll])
    if test "$ac_cv_func_Rpoll" != yes; then
-      lftp_cv_func_poll_works=no
+      gl_cv_func_poll=no
    fi
    LIBS="$old_LIBS"
 fi
@@ -295,6 +225,8 @@ fi
 #test -z "$enable_static" && enable_static=no
 AM_PROG_LIBTOOL
 LIBTOOL="$LIBTOOL --silent"
+
+gl_INIT
 
 dnl Checks for libraries.
 dnl LFTP_CHECK_LIBM
@@ -359,10 +291,10 @@ AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_HEADER_TIME
 AC_CHECK_HEADERS(libintl.h fcntl.h sys/time.h errno.h stdlib.h varargs.h dirent.h\
- termios.h termio.h sys/select.h sys/poll.h sys/stropts.h string.h memory.h\
+ termios.h termio.h sys/select.h sys/stropts.h string.h memory.h\
  strings.h sys/ioctl.h dlfcn.h arpa/inet.h arpa/nameser.h netinet/in.h netinet/tcp.h\
  netinet/in_systm.h netinet/ip.h termcap.h\
- resolv.h langinfo.h endian.h regex.h locale.h expat.h,,,[
+ resolv.h langinfo.h endian.h locale.h expat.h,,,[
 #include <sys/types.h>
 #ifdef HAVE_ARPA_NAMESER_H
 # include <arpa/nameser.h>
@@ -374,17 +306,6 @@ AC_CHECK_HEADERS(libintl.h fcntl.h sys/time.h errno.h stdlib.h varargs.h dirent.
 # include <netinet/in_systm.h>
 #endif
 ])
-
-# See if the system has strerror and replace if not
-AC_CHECK_FUNC([strerror], AC_DEFINE(HAVE_STRERROR, 1, [System has usable strerror]),[
-  AC_LIBOBJ([strerror])
-  # No strerror, so see if the SYS_ERRLIST variable can be used by ours
-  AC_CHECK_FUNC([sys_errlist],
-    AC_CHECK_DECLS([sys_errlist],,, [
-      #include <stdio.h>
-      #ifdef HAVE_ERRNO_H
-      #include <errno.h>
-      #endif]))])
 
 LFTP_NEED_TRIO
 
@@ -402,7 +323,7 @@ if test "$inetutils_cv_var_h_errno" = yes; then
 fi
 
 # See if the system has hstrerror, and replace it if not
-AC_CHECK_FUNC(hstrerror, , [AC_LIBOBJ(hstrerror)])
+AC_CHECK_FUNC(hstrerror, , [gl_LIBOBJ(hstrerror)])
 if test "$ac_cv_func_hstrerror" = yes; then
   AC_CHECK_DECLS([hstrerror],,, [#include <netdb.h>])
 else
@@ -439,20 +360,17 @@ AC_TYPE_SIGNAL
 AC_FUNC_UTIME_NULL
 AC_FUNC_GETPGRP
 AC_FUNC_VPRINTF
-AC_FUNC_FNMATCH_GNU
 AC_HEADER_STAT
-LFTP_FUNC_POLL
 LFTP_FUNC_SSCANF_CONST
-AC_CHECK_FUNCS([strdup strstr lstat lchown select regexec glob\
+AC_CHECK_FUNCS([strdup strstr lstat lchown select\
  killpg setpgid tcgetattr ftruncate vsnprintf snprintf sscanf gettimeofday\
  gethostbyname2 getipnodebyname getaddrinfo getnameinfo setsid random\
  inet_aton unsetenv setlocale nl_langinfo dn_expand])
 AC_FUNC_ALLOCA
 lftp_VA_COPY
 LFTP_ENVIRON_CHECK
-AC_REPLACE_FUNCS([mktime memmove strcasecmp strncasecmp strtol strtoul\
- strptime strtok_r memmem])
-AC_CHECK_DECLS([vsnprintf,snprintf,unsetenv,random,inet_aton,strcasecmp,strptime,strtok_r,dn_expand,memmem],,,[
+AC_REPLACE_FUNCS([memmove strtok_r memmem])
+AC_CHECK_DECLS([vsnprintf,snprintf,unsetenv,random,inet_aton,strptime,strtok_r,dn_expand,memmem],,,[
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <stdio.h>
@@ -477,30 +395,6 @@ AC_CHECK_DECLS([vsnprintf,snprintf,unsetenv,random,inet_aton,strcasecmp,strptime
 #endif
 ])
 
-# always want GNU getopt
-AC_LIBOBJ(getopt)
-AC_LIBOBJ(getopt1)
-
-if test x$lftp_cv_func_poll_works = xno; then
-   AC_LIBOBJ(poll)
-   if test x$ac_cv_header_sys_poll_h = xno; then
-      AC_CONFIG_LINKS([include/poll.h:lib/poll.h])
-   fi
-fi
-if test x$ac_cv_func_regexec = xno -o x$ac_cv_header_regex_h = xno; then
-   AC_LIBOBJ(regex)
-   AC_CONFIG_LINKS([include/regex.h:lib/regex.h])
-fi
-if test x$ac_cv_func_glob = xno; then
-   AC_LIBOBJ(glob)
-   AC_CONFIG_LINKS([include/glob.h:lib/glob.h])
-fi
-if test x$ac_cv_func_fnmatch_gnu = xno; then
-   AC_LIBOBJ(fnmatch)
-   AC_CONFIG_LINKS([include/fnmatch.h:lib/fnmatch_.h])
-   AC_DEFINE_UNQUOTED(fnmatch, rpl_fnmatch, [Define to rpl_fnmatch if system fnmatch does not work])
-fi
-
 if test "$prefix" = /usr -a "$sysconfdir" = '${prefix}/etc'; then
    sysconfdir=/etc
 fi
@@ -511,17 +405,143 @@ AH_TOP([
 ])
 
 AH_BOTTOM([
-#include <post-config.h>
+#if defined(__cplusplus) && defined(inline)
+# undef /**/ inline
+#endif
+
+#if !defined(HAVE_SETPGID) && !defined(SETPGRP_VOID)
+# define setpgid(pid, pgrp)  setpgrp((pid),(pgrp))
+#endif
+
+#ifdef __cplusplus
+# define CDECL extern "C"
+# define CDECL_BEGIN CDECL {
+# define CDECL_END   }
+template<typename T>
+static inline T replace_value(T &var,T new_value)
+{
+   T tmp=var;
+   var=new_value;
+   return tmp;
+}
+#else
+# define CDECL
+# define CDECL_BEGIN
+# define CDECL_END
+#endif
+
+/* should be included before any real code. */
+#include <alloca.h>
+
+#include "gettext.h"
+#define _(msgid) gettext (msgid)
+#define N_(msgid) msgid
+
+#ifndef PARAMS
+# if defined __STDC__ || defined __cplusplus
+#  define PARAMS(x) x
+# else
+#  define PARAMS(x) ()
+# endif
+#endif
+
+#define INET6 (defined(AF_INET6) \
+	       && defined(HAVE_GETNAMEINFO) \
+	       && defined(HAVE_GETADDRINFO))
+
+#define USE_EXPAT (defined(HAVE_EXPAT_H) && defined(HAVE_LIBEXPAT))
+
+#if defined(SOCKS4) || defined(SOCKS_DANTE)
+# define connect     Rconnect
+# define getsockname Rgetsockname
+# define bind	     Rbind
+# define accept	     Raccept
+# define listen	     Rlisten
+# define select	     Rselect
+# ifdef HAVE_RPOLL
+#  define poll	     Rpoll
+# endif
+CDECL void SOCKSinit(const char *);
+#endif
+#ifdef SOCKS_DANTE
+# define rresvport Rrresvport
+# define bindresvport Rbindresvport
+# define gethostbyname Rgethostbyname
+# define gethostbyname2 Rgethostbyname2
+# define sendto Rsendto
+# define recvfrom Rrecvfrom
+# define recvfrom Rrecvfrom
+# define write Rwrite
+# define writev Rwritev
+# define send Rsend
+# define sendmsg Rsendmsg
+# define read Rread
+# define readv Rreadv
+# define recv Rrecv
+# define recvmsg Rrecvmsg
+#endif
+
+#ifdef SOCKS5
+# define SOCKS
+# include <socks.h>
+# undef /**/ getc /* fix a problem with redefined getc */
+#endif
+
+#if defined __MSDOS__ || defined __CYGWIN32__
+# define NATIVE_CRLF 1
+#endif
+
+#define E_RETRY(e) ((e)==EAGAIN || (e)==EWOULDBLOCK || (e)==EINTR)
+#define E_LOCK_IGNORE(e) ((e)==EINVAL || (e)==ENOLCK)
+
+#ifndef HAVE_RANDOM
+#define srandom(x) srand((x))
+#define random() ((long)(rand()/(RAND_MAX+1.0)*2147483648.0))
+#endif
+
+/* Tell the compiler when a conditional or integer expression is
+   almost always true or almost always false.  */
+#ifndef HAVE_BUILTIN_EXPECT
+# define __builtin_expect(expr, val) (expr)
+#endif
+
+#ifdef __GNUC__
+# define PRINTF_LIKE(n,m) __attribute__((format(__printf__,n,m)))
+#else
+# define PRINTF_LIKE(n,m)
+# define __attribute__(x)
+#endif
+
+#ifdef TRIO_REPLACE_STDIO
+/* replace all the functions */
+# undef /**/ HAVE_PRINTF
+# undef /**/ HAVE_VPRINTF
+# undef /**/ HAVE_FPRINTF
+# undef /**/ HAVE_VFPRINTF
+# undef /**/ HAVE_SPRINTF
+# undef /**/ HAVE_VSPRINTF
+# undef /**/ HAVE_SNPRINTF
+# undef /**/ HAVE_VSNPRINTF
+# undef /**/ HAVE_SCANF
+# undef /**/ HAVE_VSCANF
+# undef /**/ HAVE_FSCANF
+# undef /**/ HAVE_VFSCANF
+# undef /**/ HAVE_SSCANF
+# undef /**/ HAVE_VSSCANF
+# include "trio.h"
+#endif
+
+#define USE_SSL (defined(USE_GNUTLS) || defined(USE_OPENSSL))
+
 #endif /* CONFIG_H */
 ])
 
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([lib/Makefile])
-AC_CONFIG_FILES([include/Makefile])
 AC_CONFIG_FILES([doc/Makefile])
 AC_CONFIG_FILES([po/Makefile.in])
 AC_CONFIG_FILES([m4/Makefile])
-AC_CONFIG_FILES([contrib/Makefile])
+AC_CONFIG_FILES([trio/Makefile])
 
 AC_OUTPUT

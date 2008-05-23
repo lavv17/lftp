@@ -15,11 +15,11 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --aux-dir=build-aux --libtool --macro-prefix=gl crypto/md5 filemode fnmatch fnmatch-gnu gettext glob human lstat mbswidth memmem memmove mktime modechange poll regex socklen strcase strftime strptime strtok_r wcwidth
+#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --aux-dir=build-aux --libtool --macro-prefix=gl arpa_inet crypto/md5 filemode fnmatch fnmatch-gnu gettext glob human iconv_open inet_pton lstat mbswidth memmem memmove mktime modechange poll regex socklen strcase strftime strptime strtok_r wcwidth
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
-gl_MODULES([crypto/md5 filemode fnmatch fnmatch-gnu gettext glob human lstat mbswidth memmem memmove mktime modechange poll regex socklen strcase strftime strptime strtok_r wcwidth])
+gl_MODULES([arpa_inet crypto/md5 filemode fnmatch fnmatch-gnu gettext glob human iconv_open inet_pton lstat mbswidth memmem memmove mktime modechange poll regex socklen strcase strftime strptime strtok_r wcwidth])
 gl_AVOID([])
 gl_SOURCE_BASE([lib])
 gl_M4_BASE([m4])

@@ -1,7 +1,8 @@
-Version 3.7.3 - 2008-05-16
+Version 3.7.3 - 2008-05-23
 
-* added a workaround for paramiko sftp server.
 * added support for 2-argument SITE UTIME and MFMT commands.
+* added a workaround for paramiko sftp server.
+* included newer gnulib sources using gnulib-tool.
 * Polish translation updated (Jakub Bogusz).
 * fixed German translation encoding.
 

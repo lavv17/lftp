@@ -1,6 +1,10 @@
-EXTRA_DIST = config.rpath lftp.conf lftp.lsm FAQ README README.debug-levels\
- README.modules MIRRORS BUGS FEATURES
-SUBDIRS = include lib doc src po m4 contrib
+EXTRA_DIST = lftp.conf lftp.lsm FAQ MIRRORS BUGS FEATURES\
+ README README.debug-levels README.modules\
+ lib/hstrerror.c contrib/lftp-icon.png
+if NEED_TRIO
+   TRIO = trio
+endif
+SUBDIRS = m4 doc lib $(TRIO) src po
 ACLOCAL_AMFLAGS = -I m4
 
 install-data-local:

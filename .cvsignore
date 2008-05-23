@@ -20,3 +20,4 @@ install-sh
 mkinstalldirs
 depcomp
 autom4te.cache
+link-warning.h

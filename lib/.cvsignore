@@ -111,3 +111,14 @@ arpa_inet.in.h
 inet_ntop.c
 inet_pton.c
 netinet_in.in.h
+c-ctype.c
+c-ctype.h
+c-strcase.h
+c-strcasecmp.c
+c-strncasecmp.c
+iconv.in.h
+iconv_open-aix.gperf
+iconv_open-hpux.gperf
+iconv_open-irix.gperf
+iconv_open-osf.gperf
+iconv_open.c

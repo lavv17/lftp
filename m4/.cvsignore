@@ -100,3 +100,10 @@ xstrtol.m4
 lstat.m4
 mbswidth.m4
 md5.m4
+socklen.m4
+arpa_inet_h.m4
+inet_ntop.m4
+inet_pton.m4
+netinet_in_h.m4
+iconv_h.m4
+iconv_open.m4
