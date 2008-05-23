@@ -26,48 +26,16 @@
 // We need these functions because network protocols should not depend
 // on current locale.
 
-static inline bool is_ascii_digit(char ch)
-{
-   return ch>='0' && ch<='9';
-}
+#include "c-ctype.h"
 
-static inline bool is_ascii_xdigit(char ch)
-{
-   return is_ascii_digit(ch) || (ch>='a' && ch<='f') || (ch>='A' && ch<='F');
-}
-
-static inline bool is_ascii_space(char ch)
-{
-   return ch==' ' || ch=='\t' || ch=='\n' || ch=='\r' || ch=='\014';
-}
-
-static inline bool is_ascii_lower(char ch)
-{
-   return ch>='a' && ch<='z';
-}
-
-static inline bool is_ascii_upper(char ch)
-{
-   return ch>='A' && ch<='Z';
-}
-
-static inline bool is_ascii_alpha(char ch)
-{
-   return is_ascii_lower(ch) || is_ascii_upper(ch);
-}
-
-static inline bool is_ascii_alnum(char ch)
-{
-   return is_ascii_alpha(ch) || is_ascii_digit(ch);
-}
-
-static inline char to_ascii_lower(char ch)
-{
-   return is_ascii_upper(ch) ? ch-'A'+'a' : ch;
-}
-static inline char to_ascii_upper(char ch)
-{
-   return is_ascii_lower(ch) ? ch-'a'+'A' : ch;
-}
+#define is_ascii_digit(c)  c_isdigit((c))
+#define is_ascii_xdigit(c) c_isxdigit((c))
+#define is_ascii_space(c)  c_isspace((c))
+#define is_ascii_lower(c)  c_islower((c))
+#define is_ascii_upper(c)  c_isupper((c))
+#define is_ascii_alpha(c)  c_isalpha((c))
+#define is_ascii_alnum(c)  c_isalnum((c))
+#define to_ascii_lower(c)  c_tolower((c))
+#define to_ascii_upper(c)  c_toupper((c))
 
 #endif//ASCII_CTYPE_H
