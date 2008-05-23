@@ -1,3 +1,7 @@
+2008-05-23  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ascii_ctype.h: use gnulib c-ctype.
+
 2008-05-22  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* resource.cc: use locale_charset.
