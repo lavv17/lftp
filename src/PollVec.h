@@ -22,16 +22,10 @@
 #define POLLVEC_H
 
 #include <sys/types.h>
+CDECL_BEGIN
+#include <poll.h>
+CDECL_END
 
-#ifdef HAVE_SYS_STROPTS_H
-# include <sys/stropts.h>
-#endif
-
-#ifdef HAVE_SYS_POLL_H
-# include <sys/poll.h>
-#else
-# include <poll.h>
-#endif
 #include "xarray.h"
 
 class PollVec

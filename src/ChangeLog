@@ -1,3 +1,9 @@
+2008-05-27  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileAccess.cc, pgetJob.cc: don't include unneeded headers;
+	  move assert.h where needed.
+	* PollVec.h: include poll.h with CDECL.
+
 2008-05-23  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ascii_ctype.h: use gnulib c-ctype.

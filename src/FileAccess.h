@@ -23,19 +23,8 @@
 #ifndef FILEACCESS_H
 #define FILEACCESS_H
 
-#include <time.h>
 #include <sys/types.h>
-
-#ifdef HAVE_SYS_STROPTS_H
-# include <sys/stropts.h>
-#endif
-
-#ifdef HAVE_SYS_POLL_H
-# include <sys/poll.h>
-#else
-# include <poll.h>
-#endif
-#include <assert.h>
+#include <time.h>
 
 #include "SMTask.h"
 #include "trio.h"
