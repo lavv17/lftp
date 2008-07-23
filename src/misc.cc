@@ -52,10 +52,6 @@ CDECL_END
 #include <mbswidth.h>
 #include "strftime.h"
 
-#if HAVE_UNSETENV && !HAVE_DECL_UNSETENV
-CDECL void unsetenv(const char *name);
-#endif
-
 const char *dir_file(const char *dir,const char *file)
 {
    if(dir==0 || dir[0]==0)
@@ -487,30 +483,6 @@ mktime_from_utc (const struct tm *t)
 
    return (tl <= tb ? (tl + (tl - tb)) : (tl - (tb - tl)));
 }
-
-#ifndef HAVE_UNSETENV
-# ifdef HAVE_ENVIRON
-extern char **environ;
-void unsetenv(const char *env)
-{
-   char **scan=environ;
-   if(!scan)
-      return;
-   int env_len=strlen(env);
-   while(*scan)
-   {
-      if(!strncmp(*scan,env,env_len) && (*scan)[env_len]=='=')
-	 break;
-      scan++;
-   }
-   while(*scan)
-   {
-      *scan=*(scan+1);
-      scan++;
-   }
-}
-# endif
-#endif
 
 static void set_tz(const char *tz)
 {

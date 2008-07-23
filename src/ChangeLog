@@ -1,3 +1,11 @@
+2008-07-23  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* misc.cc: use gnulib's unsetenv.
+	* SleepJob.cc, MirrorJob.cc: use gnulib's get_date.
+	* Makefile.am: link only liblftp-tasks with gnulib.
+	* DummyProto.cc: inc stddef.h.
+	* FileAccess.cc: hook md5 and glob from gnulib.
+
 2008-05-27  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileAccess.cc, pgetJob.cc: don't include unneeded headers;

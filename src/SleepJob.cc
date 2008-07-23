@@ -240,17 +240,15 @@ Job *cmd_at(CmdExec *parent)
 
    xstring_ca date(args->Combine(1));
    date.truncate(date_len);
-   time_t now=SMTask::now;
-   time_t when=get_date(date,&now);
 
-   if(when==0 || when==(time_t)-1)
+   struct timespec ts;
+   if(!get_date(&ts,date,0))
    {
-      const char *e=get_date_error();
-      eprintf("%s: %s\n",args->a0(),e?e:"unknown parse error");
+      eprintf("%s: %s\n",args->a0(),"date parse error");
       return 0;
    }
-
-   if(when<now)
+   time_t when=ts.tv_sec;
+   if(when<SMTask::now)
       when+=86400;
 
    char *cmd=0;

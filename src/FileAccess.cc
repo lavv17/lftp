@@ -1157,3 +1157,11 @@ const FileAccessRef& FileAccessRef::operator=(FileAccess *p)
    ptr=SMTask::MakeRef(p);
    return *this;
 }
+
+// hook-up gnulib...
+CDECL_BEGIN
+#include "md5.h"
+#include "glob.h"
+CDECL_END
+void *_md5_hook=(void*)md5_init_ctx;
+void *_glob_hook=(void*)glob;

@@ -23,6 +23,7 @@
 #include <config.h>
 
 #include "DummyProto.h"
+#include <stddef.h>
 
 int DummyProto::Do() { return STALL; }
 int DummyProto::Done() { return NO_HOST; }

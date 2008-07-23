@@ -1182,11 +1182,10 @@ extern "C" {
 }
 void MirrorJob::SetNewerThan(const char *f)
 {
-   time_t t=now;
-   t=get_date(f,&t);
-   if(t>0)
+   struct timespec ts;
+   if(get_date(&ts,f,0))
    {
-      newer_than=t;
+      newer_than=ts.tv_sec;
       return;
    }
    struct stat st;
@@ -1199,11 +1198,10 @@ void MirrorJob::SetNewerThan(const char *f)
 }
 void MirrorJob::SetOlderThan(const char *f)
 {
-   time_t t=now;
-   t=get_date(f,&t);
-   if(t>0)
+   struct timespec ts;
+   if(get_date(&ts,f,0))
    {
-      older_than=t;
+      older_than=ts.tv_sec;
       return;
    }
    struct stat st;
