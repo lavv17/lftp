@@ -1222,11 +1222,12 @@ FileCopyPeerFA::FileCopyPeerFA(const ParsedURL *u,int m)
       SetError(_("file name missed in URL"));
 }
 
-FileCopyPeerFA::~FileCopyPeerFA()
+void FileCopyPeerFA::PrepareToDie()
 {
    if(session)
       session->Close();
 }
+FileCopyPeerFA::~FileCopyPeerFA() {}
 
 FileCopyPeerFA *FileCopyPeerFA::New(FileAccess *s,const char *url,int m)
 {
@@ -1776,8 +1777,6 @@ int FileCopyPeerDirList::Do()
 void FileVerificator::Init0()
 {
    done=false;
-   verify_buffer=0;
-   verify_process=0;
    if(!ResMgr::QueryBool("xfer:verify",0))
       done=true;
 }
@@ -1789,7 +1788,7 @@ void FileVerificator::InitVerify(const char *f)
    args->Append(f);
    verify_process=new InputFilter(args);
    verify_process->StderrToStdout();
-   verify_buffer=new IOBufferFDStream(verify_process,IOBuffer::GET);
+   verify_buffer=new IOBufferFDStream(verify_process.Cast<FDStream>(),IOBuffer::GET);
 }
 FileVerificator::FileVerificator(const char *f)
 {
@@ -1837,11 +1836,9 @@ FileVerificator::FileVerificator(const FileAccess *session,const char *f)
    InitVerify(f);
    verify_process->SetCwd(session->GetCwd());
 }
-FileVerificator::~FileVerificator()
-{
-   // verify_process is deleted by verify_buffer dtor
-   Delete(verify_buffer);
-}
+
+FileVerificator::~FileVerificator() {}
+
 int FileVerificator::Do()
 {
    int m=STALL;

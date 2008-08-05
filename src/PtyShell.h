@@ -27,8 +27,8 @@
 
 class PtyShell : public FDStream
 {
-   ArgV *a;
-   ProcWait *w;
+   Ref<ArgV> a;
+   Ref<ProcWait> w;
    pid_t pg;
 
    xstring_c oldcwd;

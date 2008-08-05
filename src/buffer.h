@@ -237,7 +237,8 @@ public:
 
 class IOBufferFDStream : public IOBuffer
 {
-   Ref<FDStream> stream;
+   Ref<FDStream> my_stream;
+   const Ref<FDStream>& stream;
    Ref<Timer> put_ll_timer;
 
    int Get_LL(int size);
@@ -245,9 +246,14 @@ class IOBufferFDStream : public IOBuffer
 
 public:
    IOBufferFDStream(FDStream *o,dir_t m)
+      : IOBuffer(m), my_stream(o), stream(my_stream) {}
+   IOBufferFDStream(const Ref<FDStream>& o,dir_t m)
       : IOBuffer(m), stream(o) {}
    IOBufferFDStream(FDStream *o,dir_t m,Timer *t)
+      : IOBuffer(m), my_stream(o), stream(my_stream), put_ll_timer(t) {}
+   IOBufferFDStream(const Ref<FDStream>& o,dir_t m,Timer *t)
       : IOBuffer(m), stream(o), put_ll_timer(t) {}
+   ~IOBufferFDStream();
    bool Done();
    FgData *GetFgData(bool fg);
    const char *Status() { return stream->status; }

@@ -26,17 +26,16 @@
 #include "ArgV.h"
 #include "misc.h"
 
-TreatFileJob::TreatFileJob(FileAccess *s,ArgV *a) : FinderJob(s)
+TreatFileJob::TreatFileJob(FileAccess *s,ArgV *a)
+   : FinderJob(s), args(a)
 {
    quiet=false;
    failed=file_count=0;
    Need(FileInfo::NAME);
 
    curr=0;
-   first=0;
    set_maxdepth(0);
 
-   args=a;
    op=args->a0();
    Begin(a->getcurr());
 }
@@ -60,8 +59,6 @@ void TreatFileJob::Finish()
 
 TreatFileJob::~TreatFileJob()
 {
-   delete args;
-   delete first;
 }
 
 TreatFileJob::prf_res TreatFileJob::ProcessFile(const char *d,const FileInfo *fi)

@@ -1,3 +1,14 @@
+2008-08-05  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SMTask.cc, SMTask.h: add PrepareToDie virtual method.
+	* FileAccess.cc, FileAccess.h, FileCopy.cc, FileCopy.h, GetFileInfo.cc,
+	  GetFileInfo.h, SleepJob.cc, SleepJob.h, SysCmdJob.cc, SysCmdJob.h,
+	  TreatFileJob.cc, TreatFileJob.h, echoJob.cc, echoJob.h, mgetJob.cc,
+	  mgetJob.h: use PrepareToDie, use Refs.
+	* buffer.cc, buffer.h: allow to make IOBufferFDStream with FDStream ref.
+	* PtyShell.cc, PtyShell.h: use Refs.
+	* Job.cc, Job.h: use const in RemoveWaiting.
+
 2008-07-23  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* misc.cc: use gnulib's unsetenv.

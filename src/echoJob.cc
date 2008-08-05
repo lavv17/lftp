@@ -26,18 +26,18 @@
 #define super Job
 
 echoJob::echoJob(const char *buf, int len, OutputJob *_output)
+   : output(_output)
 {
-   output=_output;
-   AddWaiting(output);
+   AddWaiting(_output);
    output->SetParentFg(this);
    output->Put(buf, len);
    output->PutEOF();
 }
 
 echoJob::echoJob(const char *buf, OutputJob *_output)
+   : output(_output)
 {
-   output=_output;
-   AddWaiting(output);
+   AddWaiting(_output);
    output->SetParentFg(this);
    output->Put(buf);
    output->PutEOF();
@@ -45,7 +45,6 @@ echoJob::echoJob(const char *buf, OutputJob *_output)
 
 echoJob::~echoJob()
 {
-   Delete(output);
 }
 
 int echoJob::Done()

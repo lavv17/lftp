@@ -38,13 +38,11 @@ SleepJob::SleepJob(const TimeInterval &when,FileAccess *s,LocalDirectory *cwd,ch
    weak=false;
    repeat_count=0;
    max_repeat_count=0;
-   exec=0;
    continue_code=-1;
    break_code=-1;
 }
 SleepJob::~SleepJob()
 {
-   Delete(exec);
 }
 
 int SleepJob::Do()
@@ -85,8 +83,7 @@ int SleepJob::Do()
 	 }
 	 exec->FeedCmd(cmd);
 	 exec->FeedCmd("\n");
-	 AddWaiting(exec);
-	 exec=0;
+	 AddWaiting(exec.borrow());
 	 return MOVED;
       }
       done=true;

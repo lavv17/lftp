@@ -34,7 +34,7 @@ class SleepJob : public SessionJob, public Timer
    int exit_code;
    bool done;
    Ref<LocalDirectory> saved_cwd;
-   CmdExec *exec;
+   JobRef<CmdExec> exec;
    bool repeat;
    bool weak;  // terminate on `exit bg'.
    int repeat_count;

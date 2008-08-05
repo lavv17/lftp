@@ -27,8 +27,9 @@
 
 class SysCmdJob : public Job
 {
-   char *cmd;
-   ProcWait *w;
+   xstring cmd;
+   SMTaskRef<ProcWait> w;
+   void PrepareToDie();
 public:
    SysCmdJob(const char *new_cmd);
    ~SysCmdJob();

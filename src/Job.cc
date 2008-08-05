@@ -156,7 +156,7 @@ void Job::AddWaiting(Job *j)
    assert(FindWhoWaitsFor(j)==0);
    waiting.append(j);
 }
-void Job::RemoveWaiting(Job *j)
+void Job::RemoveWaiting(const Job *j)
 {
    for(int i=0; i<waiting_num; i++)
    {

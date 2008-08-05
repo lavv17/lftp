@@ -64,6 +64,9 @@ class GetFileInfo : public ListInfo
    xstring_c saved_error_text;
 
    FA::fileinfo get_info;
+
+   void PrepareToDie();
+
 public:
    GetFileInfo(const FileAccessRef& a, const char *path, bool showdir);
    virtual ~GetFileInfo();

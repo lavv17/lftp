@@ -27,7 +27,7 @@
 
 class echoJob : public Job
 {
-   OutputJob *output;
+   JobRef<OutputJob> output;
 
 public:
    int	 Do() { return STALL; }

@@ -486,6 +486,8 @@ protected:
    unsigned need;
    bool follow_symlinks;
 
+   void PrepareToDie();
+
 public:
    ListInfo(FileAccess *session,const char *path);
    ~ListInfo();

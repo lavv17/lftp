@@ -25,14 +25,15 @@
 
 #include "GetJob.h"
 #include "FileGlob.h"
+#include "mkdirJob.h"
 
 class mgetJob : public GetJob
 {
-   GlobURL *rg;
-   class mkdirJob *mkdir_job;
-   ArgV *mkdir_args;
+   Ref<GlobURL> rg;
+   JobRef<mkdirJob> mkdir_job;
+   Ref<ArgV> mkdir_args;
    int mkdir_base_arg;
-   ArgV *m_args;
+   Ref<ArgV> m_args;
    xstring_c output_dir;
 
    bool	 make_dirs;

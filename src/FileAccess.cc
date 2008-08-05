@@ -944,13 +944,14 @@ ListInfo::ListInfo(FileAccess *s,const char *p)
    }
 }
 
-ListInfo::~ListInfo()
+void ListInfo::PrepareToDie()
 {
    if(session)
       session->Close();
    if(session && saved_cwd)
       session->SetCwd(saved_cwd);
 }
+ListInfo::~ListInfo() {}
 
 
 // Path implementation

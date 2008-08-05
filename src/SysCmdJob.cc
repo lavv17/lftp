@@ -32,22 +32,18 @@
 #include "misc.h"
 
 SysCmdJob::SysCmdJob(const char *c)
+   : cmd(c)
 {
-   w=0;
-   cmd=xstrdup(c);
 }
 
-SysCmdJob::~SysCmdJob()
+void SysCmdJob::PrepareToDie()
 {
    Bg();
    AcceptSig(SIGTERM);
-
    if(w)
-   {
-      w->Auto();
-      w=0;
-   }
+      w.borrow()->Auto();
 }
+SysCmdJob::~SysCmdJob() {}
 
 int SysCmdJob::Do()
 {
@@ -71,9 +67,9 @@ int SysCmdJob::Do()
       kill(getpid(),SIGSTOP);
       SignalHook::RestoreAll();
       if(cmd)
-	 execlp(shell,basename_ptr(shell),"-c",cmd,(char*)NULL);
+	 execlp(shell,basename_ptr(shell),"-c",cmd.get(),NULL);
       else
-	 execlp(shell,basename_ptr(shell),(char*)NULL);
+	 execlp(shell,basename_ptr(shell),NULL);
       fprintf(stderr,_("execlp(%s) failed: %s\n"),shell,strerror(errno));
       fflush(stderr);
       _exit(1);

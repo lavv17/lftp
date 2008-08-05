@@ -30,9 +30,9 @@ class ArgV;
 class TreatFileJob : public FinderJob
 {
 protected:
-   ArgV	 *args;
+   Ref<ArgV> args;
    const FileInfo *curr;
-   FileInfo *first;
+   Ref<FileInfo> first;
    int	 failed,file_count;
 
    virtual void	TreatCurrent(const char *d,const FileInfo *fi) = 0;

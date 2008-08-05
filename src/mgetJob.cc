@@ -149,7 +149,6 @@ int mgetJob::Do()
       if(mkdir_job->Done())
       {
 	 RemoveWaiting(mkdir_job);
-	 Delete(mkdir_job);
 	 mkdir_job=0;
       }
       else
@@ -162,21 +161,19 @@ int mgetJob::Do()
    if(!rg)
    {
    next:
-      if(rg) { delete rg; rg=0; }
+      if(rg)
+	 rg=0;
       const char *p=m_args->getnext();
       if(!p)
       {
-	 delete m_args;
 	 m_args=0;
 	 if(mkdir_args)
 	 {
-	    mkdir_job=new mkdirJob(Clone(),mkdir_args);
+	    mkdir_job=new mkdirJob(Clone(),mkdir_args.borrow());
 	    mkdir_job->BeQuiet();
-	    AddWaiting(mkdir_job);
+	    AddWaiting(mkdir_job.get_non_const());
 	    mkdir_job->SetParentFg(this);
 	    mkdir_job->cmdline.set_allocated(mkdir_args->Combine());
-	    // don't delete mkdir_args; -- mkdirJob does it
-	    mkdir_args=0;
 	 }
 	 return MOVED;
       }
@@ -218,7 +215,4 @@ int mgetJob::Do()
 
 mgetJob::~mgetJob()
 {
-   delete rg;
-   delete m_args;
-   delete mkdir_args;
 }

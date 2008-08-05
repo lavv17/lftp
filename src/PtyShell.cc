@@ -196,8 +196,6 @@ out:
 
 void PtyShell::Init()
 {
-   a=0;
-   w=0;
    oldcwd.set_allocated(xgetcwd());
    pg=0;
    closed=false;
@@ -218,27 +216,22 @@ PtyShell::PtyShell(const char *filter)
 }
 
 PtyShell::PtyShell(ArgV *a1)
-   : FDStream(-1,0)
+   : FDStream(-1,0), a(a1)
 {
    Init();
-   a=a1;
    name.set_allocated(a->Combine());
 }
 
 PtyShell::~PtyShell()
 {
-   delete a;
    if(fd!=-1)
-   {
       close(fd);
-      fd=-1;
-   }
    if(pipe_in!=-1)
       close(pipe_in);
    if(pipe_out!=-1)
       close(pipe_out);
    if(w)
-      w->Auto();
+      w.borrow()->Auto();
 }
 
 bool PtyShell::Done()

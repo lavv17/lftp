@@ -52,7 +52,7 @@ public:
    xarray<Job*> waiting;
 
    void AddWaiting(Job *);
-   void RemoveWaiting(Job *);
+   void RemoveWaiting(const Job *);
    void ReplaceWaiting(Job *from,Job *to);
 
    void SetParent(Job *j) { parent=j; }

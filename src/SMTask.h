@@ -53,6 +53,7 @@ protected:
    // SuspendInternal and ResumeInternal usually suspend and resume slave tasks
    virtual void SuspendInternal() {}
    virtual void ResumeInternal() {}
+   virtual void PrepareToDie() {}  // it is called from Delete no matter of running and ref_count
 
 public:
    static void Block(int fd,int mask) { block.AddFD(fd,mask); }
@@ -81,7 +82,7 @@ public:
    SMTask();
    virtual ~SMTask();
 
-   void DeleteLater() { deleting=true; }
+   void DeleteLater();
    static void Delete(SMTask *);
    void IncRefCount() { ref_count++; }
    void DecRefCount() { if(ref_count>0) ref_count--; }

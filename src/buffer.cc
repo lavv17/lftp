@@ -645,6 +645,9 @@ bool IOBufferFDStream::Done()
    return false;
 }
 
+IOBufferFDStream::~IOBufferFDStream() {}
+
+
 // IOBufferFileAccess implementation
 #undef super
 #define super IOBuffer

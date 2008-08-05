@@ -129,11 +129,17 @@ SMTask::~SMTask()
    }
 }
 
+void SMTask::DeleteLater()
+{
+   deleting=true;
+   PrepareToDie();
+}
 void SMTask::Delete(SMTask *task)
 {
    if(!task)
       return;
-   task->deleting=true;
+   task->DeleteLater();
+   // if possible, delete now.
    if(!task->running && !task->ref_count)
       delete task;
 }

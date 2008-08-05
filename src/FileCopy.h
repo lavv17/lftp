@@ -261,8 +261,8 @@ class FileVerificator : public SMTask
 {
    bool done;
    xstring error_text;
-   IOBufferFDStream *verify_buffer;
-   InputFilter *verify_process;
+   SMTaskRef<IOBufferFDStream> verify_buffer;
+   Ref<InputFilter> verify_process;
    void Init0();
    void InitVerify(const char *f);
 public:
@@ -301,6 +301,7 @@ class FileCopyPeerFA : public FileCopyPeer
    Ref<FileVerificator> verify;
 
 protected:
+   void PrepareToDie();
    ~FileCopyPeerFA();
 
 public:

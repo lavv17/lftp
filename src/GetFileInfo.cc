@@ -104,10 +104,15 @@ GetFileInfo::GetFileInfo(const FileAccessRef& a, const char *_dir, bool _showdir
    }
 }
 
-GetFileInfo::~GetFileInfo()
+GetFileInfo::~GetFileInfo() {}
+
+void GetFileInfo::PrepareToDie()
 {
-   session->Close();
-   session->SetCwd(origdir);
+   if(session)
+   {
+      session->Close();
+      session->SetCwd(origdir);
+   }
 }
 
 int GetFileInfo::Do()
