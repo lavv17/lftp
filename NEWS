@@ -1,3 +1,9 @@
+Version 3.7.4 - 2008-08-06
+
+* fixed a coredump in `kill all'.
+* fixed compilation problems on some systems.
+* used getdate from gnulib.
+
 Version 3.7.3 - 2008-05-23
 
 * added support for 2-argument SITE UTIME and MFMT commands.

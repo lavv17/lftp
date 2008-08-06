@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
-AC_INIT([lftp], [3.7.3], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [3.7.4], [lftp-bugs@lftp.yar.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_LIBOBJ_DIR([lib])
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
@@ -348,7 +348,6 @@ AC_TYPE_SIZE_T
 if test x$ac_cv_header_endian_h = xno; then
    AC_C_BIGENDIAN
 fi
-TYPE_SOCKLEN_T
 AC_CHECK_MEMBERS([struct sockaddr.sa_len],,,
                  [#include <sys/types.h>
                   #include <sys/socket.h>])
