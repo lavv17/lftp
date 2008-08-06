@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2008-05-23 17:17+0400\n"
+"POT-Creation-Date: 2008-08-05 16:22+0400\n"
 "PO-Revision-Date: 2008-04-12 12:40+0200\n"
 "Last-Translator: Alain PORTAL <aportal@univ-montp2.fr>\n"
 "Language-Team: Français <traduc@traduc.org>\n"
@@ -244,7 +244,7 @@ msgstr "Le transfert de %d sur %d fichier$|s$ a échoué\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Total %d fichier$|s$ transférés\n"
 
-#: src/DummyProto.cc:63 src/MirrorJob.cc:1622 src/MirrorJob.cc:1638
+#: src/DummyProto.cc:64 src/MirrorJob.cc:1620 src/MirrorJob.cc:1636
 #: src/commands.cc:946 src/commands.cc:2107
 msgid " - not supported protocol"
 msgstr " - protocole non pris en charge"
@@ -329,7 +329,7 @@ msgstr "copy : reçu une redirection vers « %s »\n"
 msgid "file name missed in URL"
 msgstr "nom de fichier manquant dans l'URL"
 
-#: src/FileCopy.cc:1862
+#: src/FileCopy.cc:1859
 msgid "Verify command failed without a message"
 msgstr "La commande verify a échoué sans message"
 
@@ -643,12 +643,12 @@ msgstr "Suppression de l'ancien répertoire « %s »"
 msgid "Retrying mirror...\n"
 msgstr "Réessaye la commande mirror...\n"
 
-#: src/MirrorJob.cc:1460
+#: src/MirrorJob.cc:1458
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s : expression rationnelle « %s » : %s\n"
 
-#: src/MirrorJob.cc:1591 src/SleepJob.cc:126 src/SleepJob.cc:182
+#: src/MirrorJob.cc:1589 src/SleepJob.cc:123 src/SleepJob.cc:179
 #: src/commands.cc:1079 src/commands.cc:1166 src/commands.cc:1601
 #: src/commands.cc:1632 src/commands.cc:1735 src/commands.cc:2016
 #: src/commands.cc:2212 src/commands.cc:2375 src/commands.cc:2382
@@ -820,12 +820,12 @@ msgstr "Adresse non trouvée"
 msgid "invalid server response format"
 msgstr "format de réponse du serveur invalide"
 
-#: src/SleepJob.cc:102
+#: src/SleepJob.cc:99
 #, c-format
 msgid "\tRepeat count: %d\n"
 msgstr "\tNombre de répétitions : %d\n"
 
-#: src/SleepJob.cc:124
+#: src/SleepJob.cc:121
 #, c-format
 msgid "%s: argument required. "
 msgstr "%s : argument requis. "
@@ -865,7 +865,7 @@ msgstr "seconde"
 msgid "eta:"
 msgstr "reste :"
 
-#: src/SysCmdJob.cc:77
+#: src/SysCmdJob.cc:73
 #, c-format
 msgid "execlp(%s) failed: %s\n"
 msgstr "execlp(%s) a échoué : %s\n"
@@ -2458,7 +2458,7 @@ msgstr ""
 "afficher,\n"
 "ou « all » pour afficher toutes les entrées.\n"
 
-#: src/mgetJob.cc:125 src/mgetJob.cc:207
+#: src/mgetJob.cc:125 src/mgetJob.cc:204
 #, c-format
 msgid "%s: no files found\n"
 msgstr "%s : aucun fichier trouvé\n"
@@ -2500,19 +2500,19 @@ msgstr "parse : commande de filtre manquante\n"
 msgid "parse: missing redirection filename\n"
 msgstr "parse : fichier de redirection manquant\n"
 
-#: src/pgetJob.cc:121
+#: src/pgetJob.cc:122
 msgid "pget: falling back to plain get"
 msgstr "pget : recours à un « get » simple"
 
-#: src/pgetJob.cc:125
+#: src/pgetJob.cc:126
 msgid "the target file is remote"
 msgstr "le fichier cible est distant"
 
-#: src/pgetJob.cc:130
+#: src/pgetJob.cc:131
 msgid "the source file size is unknown"
 msgstr "la taille du fichier source est inconnue"
 
-#: src/pgetJob.cc:209
+#: src/pgetJob.cc:210
 #, c-format
 msgid "`%s', got %lld of %lld (%d%%) %s%s"
 msgstr "« %s », lu %lld sur %lld (%d%%) %s%s"

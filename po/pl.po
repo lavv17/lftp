@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.7.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2008-05-23 17:17+0400\n"
+"POT-Creation-Date: 2008-08-05 16:22+0400\n"
 "PO-Revision-Date: 2008-05-06 21:20+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -245,7 +245,7 @@ msgstr "Transfer %d z %d plik$u|ów|ów$ nie powiód³ siê\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Podsumowuj±c: przes³ano %d plik$|i|ów$\n"
 
-#: src/DummyProto.cc:63 src/MirrorJob.cc:1622 src/MirrorJob.cc:1638
+#: src/DummyProto.cc:64 src/MirrorJob.cc:1620 src/MirrorJob.cc:1636
 #: src/commands.cc:946 src/commands.cc:2107
 msgid " - not supported protocol"
 msgstr " - protokó³ nie jest wspierany"
@@ -331,7 +331,7 @@ msgstr "kopiowanie: otrzymano przekierowanie do `%s'\n"
 msgid "file name missed in URL"
 msgstr "brak nazwy pliku w URL"
 
-#: src/FileCopy.cc:1862
+#: src/FileCopy.cc:1859
 msgid "Verify command failed without a message"
 msgstr "Polecenie weryfikacji nie powiod³o siê bez komunikatu"
 
@@ -648,12 +648,12 @@ msgstr "Usuwanie starego katalogu `%s'"
 msgid "Retrying mirror...\n"
 msgstr "Ponowne próbowanie mirrora...\n"
 
-#: src/MirrorJob.cc:1460
+#: src/MirrorJob.cc:1458
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s: wyra¿enie regularne `%s': %s\n"
 
-#: src/MirrorJob.cc:1591 src/SleepJob.cc:126 src/SleepJob.cc:182
+#: src/MirrorJob.cc:1589 src/SleepJob.cc:123 src/SleepJob.cc:179
 #: src/commands.cc:1079 src/commands.cc:1166 src/commands.cc:1601
 #: src/commands.cc:1632 src/commands.cc:1735 src/commands.cc:2016
 #: src/commands.cc:2212 src/commands.cc:2375 src/commands.cc:2382
@@ -824,12 +824,12 @@ msgstr "Nie znaleziono adresu"
 msgid "invalid server response format"
 msgstr "nieprawid³owy format odpowiedzi serwera"
 
-#: src/SleepJob.cc:102
+#: src/SleepJob.cc:99
 #, c-format
 msgid "\tRepeat count: %d\n"
 msgstr "\tLicznik powtórek: %d\n"
 
-#: src/SleepJob.cc:124
+#: src/SleepJob.cc:121
 #, c-format
 msgid "%s: argument required. "
 msgstr "%s: wymagany jest argument. "
@@ -869,7 +869,7 @@ msgstr "sekunda"
 msgid "eta:"
 msgstr "pozosta³o: "
 
-#: src/SysCmdJob.cc:77
+#: src/SysCmdJob.cc:73
 #, c-format
 msgid "execlp(%s) failed: %s\n"
 msgstr "execlp(%s) nieudane: %s\n"
@@ -2436,7 +2436,7 @@ msgstr ""
 "Opcjonalny argument licznik podaje liczbê linii z historii, które\n"
 "maj± byæ wy¶wietlone lub \"all\" by wy¶wietliæ wszystkie wpisy.\n"
 
-#: src/mgetJob.cc:125 src/mgetJob.cc:207
+#: src/mgetJob.cc:125 src/mgetJob.cc:204
 #, c-format
 msgid "%s: no files found\n"
 msgstr "%s: nie znaleziono plików\n"
@@ -2478,19 +2478,19 @@ msgstr "analizowanie: brakuje komendy filtra\n"
 msgid "parse: missing redirection filename\n"
 msgstr "analizowanie: brakuje pliku docelowego dla przekierowania\n"
 
-#: src/pgetJob.cc:121
+#: src/pgetJob.cc:122
 msgid "pget: falling back to plain get"
 msgstr "pget: degradacja do zwyk³ego get"
 
-#: src/pgetJob.cc:125
+#: src/pgetJob.cc:126
 msgid "the target file is remote"
 msgstr "plik docelowy jest zdalny"
 
-#: src/pgetJob.cc:130
+#: src/pgetJob.cc:131
 msgid "the source file size is unknown"
 msgstr "nieznany rozmiar pliku ¼ród³owego"
 
-#: src/pgetJob.cc:209
+#: src/pgetJob.cc:210
 #, c-format
 msgid "`%s', got %lld of %lld (%d%%) %s%s"
 msgstr "`%s', mam %lld z %lld (%d%%) %s%s"

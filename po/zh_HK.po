@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.5.11\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2008-05-23 17:17+0400\n"
+"POT-Creation-Date: 2008-08-05 16:22+0400\n"
 "PO-Revision-Date: 2007-05-13 20:18+0800\n"
 "Last-Translator: Abel Cheung <abelcheung@gmail.com>\n"
 "Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
@@ -240,7 +240,7 @@ msgstr "傳送 %2$d 個檔案時有 %1$d 個失敗了\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "共傳送了 %d 個檔案\n"
 
-#: src/DummyProto.cc:63 src/MirrorJob.cc:1622 src/MirrorJob.cc:1638
+#: src/DummyProto.cc:64 src/MirrorJob.cc:1620 src/MirrorJob.cc:1636
 #: src/commands.cc:946 src/commands.cc:2107
 msgid " - not supported protocol"
 msgstr " - 不支援該種協定"
@@ -329,7 +329,7 @@ msgstr "複製：重新導向至‘%s’\n"
 msgid "file name missed in URL"
 msgstr "URL 裏缺少了檔案名稱"
 
-#: src/FileCopy.cc:1862
+#: src/FileCopy.cc:1859
 msgid "Verify command failed without a message"
 msgstr "確認指令失敗，但沒有錯誤訊息"
 
@@ -642,12 +642,12 @@ msgstr "刪除 ‘%s’ 舊目錄"
 msgid "Retrying mirror...\n"
 msgstr "重新嘗試 mirror……\n"
 
-#: src/MirrorJob.cc:1460
+#: src/MirrorJob.cc:1458
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s：正規表示式 ‘%s’：%s\n"
 
-#: src/MirrorJob.cc:1591 src/SleepJob.cc:126 src/SleepJob.cc:182
+#: src/MirrorJob.cc:1589 src/SleepJob.cc:123 src/SleepJob.cc:179
 #: src/commands.cc:1079 src/commands.cc:1166 src/commands.cc:1601
 #: src/commands.cc:1632 src/commands.cc:1735 src/commands.cc:2016
 #: src/commands.cc:2212 src/commands.cc:2375 src/commands.cc:2382
@@ -819,12 +819,12 @@ msgstr "沒有地址"
 msgid "invalid server response format"
 msgstr "伺服器回應格式無效"
 
-#: src/SleepJob.cc:102
+#: src/SleepJob.cc:99
 #, c-format
 msgid "\tRepeat count: %d\n"
 msgstr "\t重複次數：%d\n"
 
-#: src/SleepJob.cc:124
+#: src/SleepJob.cc:121
 #, c-format
 msgid "%s: argument required. "
 msgstr "%s：需要參數。"
@@ -864,7 +864,7 @@ msgstr "s"
 msgid "eta:"
 msgstr "距離完成約:"
 
-#: src/SysCmdJob.cc:77
+#: src/SysCmdJob.cc:73
 #, c-format
 msgid "execlp(%s) failed: %s\n"
 msgstr "execlp(%s) 失敗：%s\n"
@@ -2375,7 +2375,7 @@ msgstr ""
 "選擇性的選項 <數目> 可指定準備列出的指令紀錄行數，\n"
 "或者用 “all” 來指定所有條目。\n"
 
-#: src/mgetJob.cc:125 src/mgetJob.cc:207
+#: src/mgetJob.cc:125 src/mgetJob.cc:204
 #, c-format
 msgid "%s: no files found\n"
 msgstr "%s：找不到檔案\n"
@@ -2417,19 +2417,19 @@ msgstr "分析：缺少了過濾器的指令\n"
 msgid "parse: missing redirection filename\n"
 msgstr "分析：缺少了重新導向的檔案名稱\n"
 
-#: src/pgetJob.cc:121
+#: src/pgetJob.cc:122
 msgid "pget: falling back to plain get"
 msgstr ""
 
-#: src/pgetJob.cc:125
+#: src/pgetJob.cc:126
 msgid "the target file is remote"
 msgstr ""
 
-#: src/pgetJob.cc:130
+#: src/pgetJob.cc:131
 msgid "the source file size is unknown"
 msgstr ""
 
-#: src/pgetJob.cc:209
+#: src/pgetJob.cc:210
 #, c-format
 msgid "`%s', got %lld of %lld (%d%%) %s%s"
 msgstr "‘%1$s’，下載了 %3$lld 中的 %2$lld (%4$d%%) %5$s%6$s"

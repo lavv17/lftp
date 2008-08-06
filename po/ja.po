@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2008-05-23 17:17+0400\n"
+"POT-Creation-Date: 2008-08-05 16:22+0400\n"
 "PO-Revision-Date: 2002-04-12 00:06+0900\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -240,7 +240,7 @@ msgstr "%d 個(%d ファイル中)の転送が失敗\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "計 %d ファイル転送済\n"
 
-#: src/DummyProto.cc:63 src/MirrorJob.cc:1622 src/MirrorJob.cc:1638
+#: src/DummyProto.cc:64 src/MirrorJob.cc:1620 src/MirrorJob.cc:1636
 #: src/commands.cc:946 src/commands.cc:2107
 msgid " - not supported protocol"
 msgstr " - はサポートされていないプロトコルです"
@@ -328,7 +328,7 @@ msgstr "copy: `%s' へのリダイレクションを受け取りました\n"
 msgid "file name missed in URL"
 msgstr "URL 中にファイル名がありません"
 
-#: src/FileCopy.cc:1862
+#: src/FileCopy.cc:1859
 msgid "Verify command failed without a message"
 msgstr ""
 
@@ -648,12 +648,12 @@ msgstr "古いリモートディレクトリ `%s' を削除しています"
 msgid "Retrying mirror...\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1460
+#: src/MirrorJob.cc:1458
 #, fuzzy, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s: %s の書き込みでエラー: %s\n"
 
-#: src/MirrorJob.cc:1591 src/SleepJob.cc:126 src/SleepJob.cc:182
+#: src/MirrorJob.cc:1589 src/SleepJob.cc:123 src/SleepJob.cc:179
 #: src/commands.cc:1079 src/commands.cc:1166 src/commands.cc:1601
 #: src/commands.cc:1632 src/commands.cc:1735 src/commands.cc:2016
 #: src/commands.cc:2212 src/commands.cc:2375 src/commands.cc:2382
@@ -831,12 +831,12 @@ msgstr "アドレスが見つかりません"
 msgid "invalid server response format"
 msgstr "余分なサーバレスポンスです"
 
-#: src/SleepJob.cc:102
+#: src/SleepJob.cc:99
 #, c-format
 msgid "\tRepeat count: %d\n"
 msgstr "\tリピート回数: %d\n"
 
-#: src/SleepJob.cc:124
+#: src/SleepJob.cc:121
 #, c-format
 msgid "%s: argument required. "
 msgstr "%s: 引数が必要です。"
@@ -883,7 +883,7 @@ msgstr "second"
 msgid "eta:"
 msgstr "eta:"
 
-#: src/SysCmdJob.cc:77
+#: src/SysCmdJob.cc:73
 #, c-format
 msgid "execlp(%s) failed: %s\n"
 msgstr "execlp(%s) に失敗しました: %s\n"
@@ -2397,7 +2397,7 @@ msgstr ""
 " オプション引数 cnt では列挙する履歴の行数を指定します。\"all\"を指定すると全"
 "てのエントリが列挙されます。\n"
 
-#: src/mgetJob.cc:125 src/mgetJob.cc:207
+#: src/mgetJob.cc:125 src/mgetJob.cc:204
 #, c-format
 msgid "%s: no files found\n"
 msgstr "%s: ファイルがありません\n"
@@ -2439,20 +2439,20 @@ msgstr "parse: フィルタコマンドがありません\n"
 msgid "parse: missing redirection filename\n"
 msgstr "parse: リダイレクションのファイル名がありません\n"
 
-#: src/pgetJob.cc:121
+#: src/pgetJob.cc:122
 msgid "pget: falling back to plain get"
 msgstr ""
 
-#: src/pgetJob.cc:125
+#: src/pgetJob.cc:126
 #, fuzzy
 msgid "the target file is remote"
 msgstr "古いリモートファイル `%s' は削除されません"
 
-#: src/pgetJob.cc:130
+#: src/pgetJob.cc:131
 msgid "the source file size is unknown"
 msgstr ""
 
-#: src/pgetJob.cc:209
+#: src/pgetJob.cc:210
 #, c-format
 msgid "`%s', got %lld of %lld (%d%%) %s%s"
 msgstr "`%s'、%lld (%lld 中、%d%%)を取得 %s%s"

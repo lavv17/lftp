@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2008-05-23 17:17+0400\n"
+"POT-Creation-Date: 2008-08-05 16:22+0400\n"
 "PO-Revision-Date: 2001-05-27 KST\n"
 "Last-Translator: Dojip Kim <greendrm@greendrm.com>\n"
 "Language-Team: \n"
@@ -240,7 +240,7 @@ msgstr "%d of %d $file|files$ 전송 실패\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "총 %d $file|files$ 전송\n"
 
-#: src/DummyProto.cc:63 src/MirrorJob.cc:1622 src/MirrorJob.cc:1638
+#: src/DummyProto.cc:64 src/MirrorJob.cc:1620 src/MirrorJob.cc:1636
 #: src/commands.cc:946 src/commands.cc:2107
 msgid " - not supported protocol"
 msgstr " - 지원하지 않는 프로토콜입니다"
@@ -329,7 +329,7 @@ msgstr "copy: `%s'로 재지정하여 받음\n"
 msgid "file name missed in URL"
 msgstr "URL에 파일명이 빠졌습니다"
 
-#: src/FileCopy.cc:1862
+#: src/FileCopy.cc:1859
 msgid "Verify command failed without a message"
 msgstr ""
 
@@ -646,12 +646,12 @@ msgstr "옛 원거리 디렉토리 `%s' 삭제"
 msgid "Retrying mirror...\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1460
+#: src/MirrorJob.cc:1458
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1591 src/SleepJob.cc:126 src/SleepJob.cc:182
+#: src/MirrorJob.cc:1589 src/SleepJob.cc:123 src/SleepJob.cc:179
 #: src/commands.cc:1079 src/commands.cc:1166 src/commands.cc:1601
 #: src/commands.cc:1632 src/commands.cc:1735 src/commands.cc:2016
 #: src/commands.cc:2212 src/commands.cc:2375 src/commands.cc:2382
@@ -828,12 +828,12 @@ msgstr "주소를 찾을 수 없습니다"
 msgid "invalid server response format"
 msgstr "임시 서버 응답"
 
-#: src/SleepJob.cc:102
+#: src/SleepJob.cc:99
 #, c-format
 msgid "\tRepeat count: %d\n"
 msgstr "\t반복 횟수: %d\n"
 
-#: src/SleepJob.cc:124
+#: src/SleepJob.cc:121
 #, c-format
 msgid "%s: argument required. "
 msgstr "%s: 인자가 필요합니다. "
@@ -873,7 +873,7 @@ msgstr ""
 msgid "eta:"
 msgstr "남은시간:"
 
-#: src/SysCmdJob.cc:77
+#: src/SysCmdJob.cc:73
 #, c-format
 msgid "execlp(%s) failed: %s\n"
 msgstr "execlp(%s) 실패: %s\n"
@@ -2319,7 +2319,7 @@ msgid ""
 "or \"all\" to list all entries.\n"
 msgstr ""
 
-#: src/mgetJob.cc:125 src/mgetJob.cc:207
+#: src/mgetJob.cc:125 src/mgetJob.cc:204
 #, c-format
 msgid "%s: no files found\n"
 msgstr "%s: 파일수 찾을 수 없습니다\n"
@@ -2361,20 +2361,20 @@ msgstr "parse: 필터 명령어가 빠졌습니다\n"
 msgid "parse: missing redirection filename\n"
 msgstr "parse: 재지정 파일명이 빠졌습니다\n"
 
-#: src/pgetJob.cc:121
+#: src/pgetJob.cc:122
 msgid "pget: falling back to plain get"
 msgstr ""
 
-#: src/pgetJob.cc:125
+#: src/pgetJob.cc:126
 #, fuzzy
 msgid "the target file is remote"
 msgstr "옛 원거리 파일 `%s'이 삭제되지 않았습니다"
 
-#: src/pgetJob.cc:130
+#: src/pgetJob.cc:131
 msgid "the source file size is unknown"
 msgstr ""
 
-#: src/pgetJob.cc:209
+#: src/pgetJob.cc:210
 #, c-format
 msgid "`%s', got %lld of %lld (%d%%) %s%s"
 msgstr ""

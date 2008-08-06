@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2008-05-23 17:17+0400\n"
+"POT-Creation-Date: 2008-08-05 16:22+0400\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -241,7 +241,7 @@ msgstr "传输 %d/%d 文件失败\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "总共传输 %d 个文件\n"
 
-#: src/DummyProto.cc:63 src/MirrorJob.cc:1622 src/MirrorJob.cc:1638
+#: src/DummyProto.cc:64 src/MirrorJob.cc:1620 src/MirrorJob.cc:1636
 #: src/commands.cc:946 src/commands.cc:2107
 #, fuzzy
 msgid " - not supported protocol"
@@ -330,7 +330,7 @@ msgstr ""
 msgid "file name missed in URL"
 msgstr "缺少文件名. "
 
-#: src/FileCopy.cc:1862
+#: src/FileCopy.cc:1859
 msgid "Verify command failed without a message"
 msgstr ""
 
@@ -651,12 +651,12 @@ msgstr "删除旧的远程文件 `%s'"
 msgid "Retrying mirror...\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1460
+#: src/MirrorJob.cc:1458
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1591 src/SleepJob.cc:126 src/SleepJob.cc:182
+#: src/MirrorJob.cc:1589 src/SleepJob.cc:123 src/SleepJob.cc:179
 #: src/commands.cc:1079 src/commands.cc:1166 src/commands.cc:1601
 #: src/commands.cc:1632 src/commands.cc:1735 src/commands.cc:2016
 #: src/commands.cc:2212 src/commands.cc:2375 src/commands.cc:2382
@@ -833,12 +833,12 @@ msgstr ""
 msgid "invalid server response format"
 msgstr "额外的服务器应答"
 
-#: src/SleepJob.cc:102
+#: src/SleepJob.cc:99
 #, c-format
 msgid "\tRepeat count: %d\n"
 msgstr ""
 
-#: src/SleepJob.cc:124
+#: src/SleepJob.cc:121
 #, c-format
 msgid "%s: argument required. "
 msgstr "%s: 需要参数. "
@@ -878,7 +878,7 @@ msgstr "秒"
 msgid "eta:"
 msgstr "eta:"
 
-#: src/SysCmdJob.cc:77
+#: src/SysCmdJob.cc:73
 #, c-format
 msgid "execlp(%s) failed: %s\n"
 msgstr "execlp(%s) 失败: %s\n"
@@ -2304,7 +2304,7 @@ msgid ""
 "or \"all\" to list all entries.\n"
 msgstr ""
 
-#: src/mgetJob.cc:125 src/mgetJob.cc:207
+#: src/mgetJob.cc:125 src/mgetJob.cc:204
 #, c-format
 msgid "%s: no files found\n"
 msgstr "%s: 没有找到文件\n"
@@ -2346,20 +2346,20 @@ msgstr "parse: 缺少过滤器命令\n"
 msgid "parse: missing redirection filename\n"
 msgstr "parse: 缺少重定向文件名\n"
 
-#: src/pgetJob.cc:121
+#: src/pgetJob.cc:122
 msgid "pget: falling back to plain get"
 msgstr ""
 
-#: src/pgetJob.cc:125
+#: src/pgetJob.cc:126
 #, fuzzy
 msgid "the target file is remote"
 msgstr "没有删除旧的远程文件 `%s'"
 
-#: src/pgetJob.cc:130
+#: src/pgetJob.cc:131
 msgid "the source file size is unknown"
 msgstr ""
 
-#: src/pgetJob.cc:209
+#: src/pgetJob.cc:210
 #, fuzzy, c-format
 msgid "`%s', got %lld of %lld (%d%%) %s%s"
 msgstr "`%s', 下载 %lu/%lu (%d%%) %s%s"
