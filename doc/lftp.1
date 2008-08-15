@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "16 May 2008"
+.TH lftp 1 "15 Aug 2008"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 3.7.3.
+This man page documents lftp version 3.7.5.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -1568,6 +1568,9 @@ infinite interval. E.g. `sleep forever' or `set dns:cache-expire never'.
 .PP
 Boolean settings can be one of (true, on, yes, 1, +) for a True value
 or one of (false, off, no, 0, -) for a False value.
+.PP
+Integer settings can have a suffix: k - kibi, m - mebi, g - gigi, etc.
+They can also have a prefix: 0 - octal, 0x - hexadecimal.
 
 .SS FTP asynchronous mode (pipelining)
 .PP
