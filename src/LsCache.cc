@@ -81,7 +81,7 @@ ResDecl res_cache_empty_listings("cache:cache-empty-listings","no",ResMgr::BoolV
 ResDecl res_cache_enable("cache:enable","yes",ResMgr::BoolValidate,0);
 ResDecl res_cache_expire("cache:expire","60m",ResMgr::TimeIntervalValidate,0);
 ResDecl res_cache_expire_neg("cache:expire-negative","1m",ResMgr::TimeIntervalValidate,0);
-ResDecl res_cache_size  ("cache:size","16777216",ResMgr::UNumberValidate,ResMgr::NoClosure);
+ResDecl res_cache_size  ("cache:size","16M",ResMgr::UNumberValidate,ResMgr::NoClosure);
 
 LsCache::LsCache() : Cache(&res_cache_size,&res_cache_enable) {}
 

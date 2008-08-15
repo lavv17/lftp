@@ -147,35 +147,20 @@ public:
       {
 	 return ResMgr::str2bool(s);
       }
-   operator int()
-      {
-	 return strtol(s,0,0);
-      }
-   operator long()
-      {
-	 return strtol(s,0,0);
-      }
-   operator double()
-      {
-	 return atof(s);
-      }
-   operator float()
-      {
-	 return atof(s);
-      }
+   unsigned long long to_unumber(unsigned long long max);
+   long long to_number(long long min,long long max);
+   operator int();
+   operator long();
+   operator unsigned();
+   operator unsigned long();
+   operator double() { return atof(s); }
+   operator float()  { return atof(s); }
    operator const char*()
       {
 	 return s;
       }
    bool is_nil() { return s==0; }
-   void ToNumberPair(int &a,int &b)
-      {
-	 switch(sscanf(s,"%d%*c%d",&a,&b))
-	 {
-	 case 0: a=0;
-	 case 1: b=a;
-	 }
-      }
+   void ToNumberPair(int &a,int &b);
 };
 
 class TimeIntervalR : public TimeInterval

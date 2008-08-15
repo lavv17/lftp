@@ -4373,7 +4373,7 @@ void Ftp::Reconfig(const char *name)
       SetFlag(PASSIVE_MODE,QueryBool("passive-mode"));
    rest_list = QueryBool("rest-list");
 
-   nop_interval = Query("nop-interval");
+   nop_interval = Query("nop-interval").to_number(1,30);
 
    allow_skey = QueryBool("skey-allow");
    force_skey = QueryBool("skey-force");
@@ -4429,9 +4429,6 @@ void Ftp::Reconfig(const char *name)
       else
 	 proxy_port.set(FTP_DEFAULT_PORT);
    }
-
-   if(nop_interval<30)
-      nop_interval=30;
 
    if(conn && conn->control_sock!=-1)
       SetSocketBuffer(conn->control_sock);

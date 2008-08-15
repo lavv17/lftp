@@ -1,3 +1,9 @@
+2008-08-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ResMgr.cc, ResMgr.h: add number suffix support (i.e. 10k for 10240).
+	* LsCache.cc, resource.cc: use new number suffixes.
+	* ftpclass.cc: use new ResValue::to_number method.
+
 2008-08-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SMTask.cc, SMTask.h: add PrepareToDie virtual method.

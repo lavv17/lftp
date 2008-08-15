@@ -32,6 +32,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <errno.h>
+#include <limits.h>
 CDECL_BEGIN
 #include "regex.h"
 CDECL_END
@@ -411,59 +412,112 @@ const char *ResMgr::TriBoolValidate(xstring_c *value)
    return 0;
 }
 
+static const char power_letter[] =
+{
+  0,	/* not used */
+  'K',	/* kibi ('k' for kilo is a special case) */
+  'M',	/* mega or mebi */
+  'G',	/* giga or gibi */
+  'T',	/* tera or tebi */
+  'P',	/* peta or pebi */
+  'E',	/* exa or exbi */
+  'Z',	/* zetta or 2**70 */
+  'Y'	/* yotta or 2**80 */
+};
+static unsigned long long get_power_multiplier(char p)
+{
+   const char *scan=power_letter;
+   int scale=1024;
+   unsigned long long mul=1;
+   p=toupper(p);
+   while(scan<power_letter+sizeof(power_letter)) {
+      if(p==*scan)
+	 return mul;
+      mul*=scale;
+      scan++;
+   }
+   return 0;
+}
+
 const char *ResMgr::NumberValidate(xstring_c *value)
 {
    const char *v=*value;
+   const char *end=v;
 
-   v+=strspn(v," \t");
+   (void)strtoll(v,const_cast<char**>(&end),0);
+   unsigned long long m=get_power_multiplier(*end);
 
-   if(*v=='-')
-      v++;
-
-   int n=strspn(v,"1234567890");
-
-   if(n==0)
+   if(v==end || m==0 || end[m>1])
       return _("invalid number");
-
-   value->truncate(n+(v-*value));
 
    return 0;
 }
-
 const char *ResMgr::FloatValidate(xstring_c *value)
 {
    const char *v=*value;
+   const char *end=v;
 
-   int n=0;
+   (void)strtod(v,const_cast<char**>(&end));
+   unsigned long long m=get_power_multiplier(*end);
 
-   double f;
-   if(1>sscanf(v,"%lf%n",&f,&n))
+   if(v==end || m==0 || end[m>1])
       return _("invalid floating point number");
-
-   value->truncate(n);
 
    return 0;
 }
-
 const char *ResMgr::UNumberValidate(xstring_c *value)
 {
    const char *v=*value;
+   const char *end=v;
 
-   v+=strspn(v," \t");
-   value->set(v); // drop leading space
+   (void)strtoull(v,const_cast<char**>(&end),0);
+   unsigned long long m=get_power_multiplier(*end);
 
-   v=*value;
-   if(!strncasecmp(v,"0x",2))
-      v+=2;
-
-   int n=strspn(v,"1234567890");
-
-   if(n==0)
-      return _("invalid number");
-
-   value->truncate(n+(v-*value));
+   if(!isdigit((unsigned char)v[0])
+   || v==end || m==0 || end[m>1])
+      return _("invalid unsigned number");
 
    return 0;
+}
+unsigned long long ResValue::to_unumber(unsigned long long max)
+{
+   const char *end=s;
+   unsigned long long v=strtoull(s,const_cast<char**>(&end),0);
+   unsigned long long m=get_power_multiplier(*end);
+   unsigned long long vm=v*m;
+   if(vm/m!=v || vm>max)
+      return max;
+   return vm;
+}
+long long ResValue::to_number(long long min,long long max)
+{
+   const char *end=s;
+   long long v=strtoull(s,const_cast<char**>(&end),0);
+   long long m=get_power_multiplier(*end);
+   long long vm=v*m;
+   if(vm/m!=v)
+      return v>0?max:min;
+   if(vm>max)
+      return max;
+   if(vm<min)
+      return min;
+   return vm;
+}
+ResValue::operator int()
+{
+   return to_number(INT_MIN,INT_MAX);
+}
+ResValue::operator long()
+{
+   return to_number(LONG_MIN,LONG_MAX);
+}
+ResValue::operator unsigned()
+{
+   return to_unumber(UINT_MAX);
+}
+ResValue::operator unsigned long()
+{
+   return to_unumber(ULONG_MAX);
 }
 
 ResMgr::Resource::Resource(Resource *next,const ResType *type,const char *closure,const char *value)
@@ -874,6 +928,14 @@ const char *ResMgr::UNumberPairValidate(xstring_c *value)
    value->truncate(n);
 
    return 0;
+}
+void ResValue::ToNumberPair(int &a,int &b)
+{
+   switch(sscanf(s,"%d%*c%d",&a,&b))
+   {
+   case 0: a=0;
+   case 1: b=a;
+   }
 }
 
 ResClient *ResClient::chain;
