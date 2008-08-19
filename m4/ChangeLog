@@ -1,3 +1,7 @@
+2008-08-18  Arkadiusz Miskiewicz <arekm@maven.pl>
+
+	* terminfo.m4: check for libtinfo.
+
 2008-04-06  Nix  <nix@esperi.org.uk>
 
 	* _inttypes_h.m4, absolute-header.m4, include_next.m4,
