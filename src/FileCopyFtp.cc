@@ -187,9 +187,11 @@ int FileCopyFtp::Do()
       RateReset();
    }
 
-   // check for timeout when target is done, and source is stale
+   // check for timeout when one session is done, and the other is stuck
    if(dst_res==FA::OK && src_res==FA::IN_PROGRESS)
       ftp_src->CopyCheckTimeout(ftp_dst);
+   if(src_res==FA::OK && dst_res==FA::IN_PROGRESS)
+      ftp_dst->CopyCheckTimeout(ftp_src);
 
    off_t add=ftp_dst->GetPos()-put->GetRealPos();
    if(add>0)

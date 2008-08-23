@@ -1,3 +1,8 @@
+2008-08-23  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopyFtp.cc: add another timeout check.
+	* SFtp.cc: don't ignore UNKNOWN type entries; add debug.
+
 2008-08-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ResMgr.cc, ResMgr.h: add number suffix support (i.e. 10k for 10240).

@@ -1912,7 +1912,7 @@ void SFtp::Request_RENAME::Pack(Buffer *b)
 
 const char *SFtp::utf8_to_lc(const char *s)
 {
-   if(!recv_translate)
+   if(!recv_translate || !s)
       return s;
 
    recv_translate->ResetTranslation();
@@ -1925,7 +1925,7 @@ const char *SFtp::utf8_to_lc(const char *s)
 }
 const char *SFtp::lc_to_utf8(const char *s)
 {
-   if(!send_translate)
+   if(!send_translate || !s)
       return s;
 
    send_translate->ResetTranslation();
@@ -1947,6 +1947,10 @@ FileInfo *SFtp::MakeFileInfo(const NameAttrs *na)
 {
    const FileAttrs *a=&na->attrs;
    const char *name=utf8_to_lc(na->name);
+   const char *longname=utf8_to_lc(na->longname);
+
+   LogNote(10,"NameAttrs(name=\"%s\",type=%d,longname=\"%s\")\n",name?name:"",a->type,longname?longname:"");
+
    if(!name || !name[0])
       return 0;
    if(strchr(name,'/'))
@@ -1959,10 +1963,11 @@ FileInfo *SFtp::MakeFileInfo(const NameAttrs *na)
    case SSH_FILEXFER_TYPE_REGULAR:  fi->SetType(fi->NORMAL);    break;
    case SSH_FILEXFER_TYPE_DIRECTORY:fi->SetType(fi->DIRECTORY); break;
    case SSH_FILEXFER_TYPE_SYMLINK:  fi->SetType(fi->SYMLINK);   break;
+   case SSH_FILEXFER_TYPE_UNKNOWN: break;
    default: return 0;
    }
-   if(na->longname)
-      fi->SetLongName(utf8_to_lc(na->longname));
+   if(longname)
+      fi->SetLongName(longname);
    if(a->flags&SSH_FILEXFER_ATTR_SIZE)
       fi->SetSize(a->size);
    if(a->flags&SSH_FILEXFER_ATTR_UIDGID)
