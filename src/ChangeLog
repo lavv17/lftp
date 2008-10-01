@@ -1,3 +1,7 @@
+2008-10-01  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: clone session properly - it fixed mirror -RP.
+
 2008-08-23  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopyFtp.cc: add another timeout check.

@@ -307,7 +307,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 if(target_is_local)
 	    dst_peer=new FileCopyPeerFDStream(new FileStream(target_name,O_WRONLY|O_CREAT|(cont_this?0:O_TRUNC)),FileCopyPeer::PUT);
 	 else
-	    dst_peer=new FileCopyPeerFA(target_session,file->name,FA::STORE);
+	    dst_peer=new FileCopyPeerFA(target_session->Clone(),file->name,FA::STORE);
 
 	 FileCopy *c=FileCopy::New(src_peer,dst_peer,cont_this);
 	 if(remove_source_files)
