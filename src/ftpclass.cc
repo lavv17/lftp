@@ -307,6 +307,17 @@ bool Ftp::Transient5XX(int act)
    return false;
 }
 
+#if USE_SSL
+const char *Ftp::get_protect_res()
+{
+   if(mode==LIST || mode==MP_LIST || (mode==LONG_LIST && !use_stat_for_list))
+      return "ftp:ssl-protect-list";
+   else if(mode==RETRIEVE || mode==STORE)
+      return "ftp:ssl-protect-data";
+   return 0;
+}
+#endif
+
 // 226 Transfer complete.
 void Ftp::TransferCheck(int act)
 {
@@ -377,6 +388,18 @@ void Ftp::TransferCheck(int act)
    }
    if(is2XX(act) && conn->data_sock==-1)
       eof=true;
+#if USE_SSL
+   if(conn->auth_supported && act==522 && conn->prot=='C') {
+      const char *res=get_protect_res();
+      if(res) {
+	 // try again with PROT P
+	 DataClose();
+	 ResMgr::Set(res,hostname,"yes");
+	 state=EOF_STATE;
+	 return;
+      }
+   }
+#endif
    NoFileCheck(act);
    return;
 
@@ -1532,10 +1555,9 @@ int   Ftp::Do()
       if(conn->ssl_is_activated() || (conn->auth_supported && conn->auth_sent))
       {
 	 char want_prot=conn->prot;
-	 if(mode==LIST || mode==MP_LIST || (mode==LONG_LIST && !use_stat_for_list))
-	    want_prot=QueryBool("ssl-protect-list",hostname)?'P':'C';
-	 else if(mode==RETRIEVE || mode==STORE)
-	    want_prot=QueryBool("ssl-protect-data",hostname)?'P':'C';
+	 const char *protect_res=get_protect_res();
+	 if(protect_res)
+	    want_prot=QueryBool(protect_res,hostname)?'P':'C';
 	 if(copy_mode!=COPY_NONE)
 	    want_prot=copy_protect?'P':'C';
 
@@ -3589,6 +3611,8 @@ void  Ftp::MoveConnectionHere(Ftp *o)
 {
    expect=o->expect.borrow();
    expect->Close(); // we need not handle other session's replies.
+
+   assert(o->conn->data_iobuf==0);
 
    conn=o->conn.borrow();
    o->state=INITIAL_STATE;

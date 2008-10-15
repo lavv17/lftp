@@ -391,6 +391,7 @@ private:
 
    bool use_telnet_iac;
 
+   const char *get_protect_res();
    const char *encode_eprt(const sockaddr_u *);
 
    typedef FileInfo *(*FtpLineParser)(char *line,int *err,const char *tz);
