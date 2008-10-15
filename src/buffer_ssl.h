@@ -34,10 +34,12 @@ class IOBufferSSL : public IOBuffer
 
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
+   int PutEOF_LL();
 
 public:
    IOBufferSSL(lftp_ssl *s,dir_t m) : IOBuffer(m), my_ssl(s), ssl(my_ssl) {}
    IOBufferSSL(const Ref<lftp_ssl>& s,dir_t m) : IOBuffer(m), ssl(s) {}
+   ~IOBufferSSL();
    int Do();
    bool Done() { return IOBuffer::Done() && ssl->handshake_done; }
 };

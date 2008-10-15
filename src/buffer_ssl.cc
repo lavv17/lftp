@@ -112,4 +112,14 @@ int IOBufferSSL::Put_LL(const char *buf,int size)
    return res;
 }
 
+int IOBufferSSL::PutEOF_LL()
+{
+   ssl->shutdown();
+   return 0;
+}
+
+IOBufferSSL::~IOBufferSSL()
+{
+}
+
 #endif // USE_SSL
