@@ -293,12 +293,13 @@ void lftp_ssl_gnutls::load_keys()
    }
    gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, cred);
 }
-lftp_ssl_gnutls::~lftp_ssl_gnutls()
+void lftp_ssl_gnutls::shutdown()
 {
-#if 0
    if(handshake_done)
       gnutls_bye(session,GNUTLS_SHUT_RDWR);  // FIXME - E_AGAIN
-#endif
+}
+lftp_ssl_gnutls::~lftp_ssl_gnutls()
+{
    if(cred)
       gnutls_certificate_free_credentials(cred);
    gnutls_deinit(session);
@@ -831,12 +832,13 @@ void lftp_ssl_openssl::load_keys()
       }
    }
 }
-lftp_ssl_openssl::~lftp_ssl_openssl()
+void lftp_ssl_openssl::shutdown()
 {
-#if 0
    if(handshake_done)
       SSL_shutdown(ssl);
-#endif
+}
+lftp_ssl_openssl::~lftp_ssl_openssl()
+{
    SSL_free(ssl);
 }
 
