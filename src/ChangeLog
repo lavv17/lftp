@@ -1,6 +1,16 @@
+2008-10-29  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* misc.cc, misc.h: (in_foreground_pgrp) new function.
+	* lftp.cc: use in_foreground_pgrp.
+	* ftpclass.cc: don't require ftp:acct when proxy settings provide an acct.
+
 2008-10-01  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc: clone session properly - it fixed mirror -RP.
+	* lftp_ssl.cc, lftp_ssl.h: (shutdown) new method.
+	* ftpclass.cc, ftpclass.h: automatically try PROT P if enforced
+	  by server.
+	* buffer_ssl.cc, buffer_ssl.h: shutdown ssl when sending eof.
 
 2008-08-23  Alexander V. Lukyanov <lav@yars.free.net>
 
