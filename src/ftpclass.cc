@@ -447,7 +447,7 @@ void Ftp::LoginCheck(int act)
 	 try_time=now;	// count the reconnect-interval from this moment
       last_connection_failed=true;
    }
-   if(is3XX(act))
+   if(is3XX(act) && !expect->Has(Expect::ACCT_PROXY))
    {
       if(!QueryStringWithUserAtHost("acct"))
       {

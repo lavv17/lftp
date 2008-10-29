@@ -138,8 +138,7 @@ public:
 
 	 if(ctty) // controlling terminal
 	 {
-	    pid_t term_pg=tcgetpgrp(0);
-	    if(term_pg!=(pid_t)-1 && getpgrp()!=term_pg)
+	    if(!in_foreground_pgrp())
 	    {
 	       // looks like we are in background. Can't read from tty
 	       exec->Timeout(500);
@@ -264,7 +263,7 @@ CMD(history)
    if(const char *arg = args->getcurr()) {
       if(!strcasecmp(arg, "all"))
 	 cnt = -1;
-      else if(isdigit(arg[0]))
+      else if(isdigit((unsigned char)arg[0]))
 	 cnt = atoi(arg);
       else {
 	 eprintf(_("%s: %s - not a number\n"), args->a0(), args->getcurr());

@@ -32,6 +32,7 @@
 #include <time.h>
 #include <ctype.h>
 #include <sys/ioctl.h>
+#include <fcntl.h>
 
 #ifdef HAVE_TERMIOS_H
 #include <termios.h>
@@ -569,7 +570,7 @@ char *Subst(const char *txt, const subst_t *s)
       if(ch=='\\' && *txt && *txt!='\\')
       {
 	 ch=*txt++;
-	 if(isdigit(ch) && ch != '8' && ch != '9') {
+	 if(ch >= '0' && ch < '8') {
 	    unsigned len;
 	    unsigned code;
 	    txt--;
@@ -889,4 +890,21 @@ void remove_tags(char *buf)
       memmove(less,more+1,strlen(more+1)+1);
       buf=less;
    }
+}
+
+bool in_foreground_pgrp()
+{
+   static int tty_fd;
+   if(tty_fd==-1)
+      return true;
+   pid_t pg=tcgetpgrp(tty_fd);
+   if(pg==(pid_t)-1 && !isatty(tty_fd)) {
+      tty_fd=open("/dev/tty",O_RDONLY);
+      if(tty_fd==-1)
+	 return true;
+      pg=tcgetpgrp(tty_fd);
+   }
+   if(pg==(pid_t)-1 || pg==getpgrp())
+      return true;
+   return false;
 }
