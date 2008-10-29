@@ -170,7 +170,7 @@ void StatusLine::update(const char *const *newstr,int newstr_height)
    if(not_term)
       return;
 
-   if(tcgetpgrp(fd)!=getpgrp())
+   if(!in_foreground_pgrp())
       return;
 
    /* Don't write blank titles into the title; let Clear() do that. */
