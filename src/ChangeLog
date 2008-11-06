@@ -1,3 +1,14 @@
+2008-11-06  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileFeeder.cc, FileFeeder.h: use Ref.
+	* FileSet.cc, MirrorJob.cc: don't include lstat.h
+	* SysCmdJob.cc: call super::PrepareToDie.
+	* Job.cc, Job.h: use Ref for fg_data; don't call Done for running job;
+	  add PrepareToDie method; use List macros; use xarray::search.
+	* CmdExec.cc, CmdExec.h: add auto_terminate_in_bg; use resource names;
+	  new setting cmd:move-background-detach.
+	* commands.cc: add no-detach bg exit option.
+
 2008-10-29  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* misc.cc, misc.h: (in_foreground_pgrp) new function.

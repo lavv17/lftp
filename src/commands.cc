@@ -642,6 +642,7 @@ Job *CmdExec::builtin_cd()
 
 Job *CmdExec::builtin_exit()
 {
+   bool detach=ResMgr::QueryBool("cmd:move-background-detach",0);
    bool bg=false;
    bool kill=false;
    int code=prev_exit_code;
@@ -670,7 +671,7 @@ Job *CmdExec::builtin_exit()
    }
    // Note: one job is this CmdExec.
    if(!bg && exec->top_level
-   && !ResMgr::QueryBool("cmd:move-background",0) && NumberOfJobs()>1)
+   && !ResMgr::QueryBool("cmd:move-background",0) && NumberOfJobs()>0)
    {
       eprintf(_(
 	 "There are running jobs and `cmd:move-background' is not set.\n"
@@ -678,9 +679,37 @@ Job *CmdExec::builtin_exit()
       ));
       return 0;
    }
+   if(!detach && Job::NumberOfJobs()==0)
+      detach=true;
    if(kill)
       Job::KillAll();
-   exec->Exit(code);
+   else if(detach)
+      exec->Exit(code);
+   else {
+      int loc=0;
+      exec->SetAutoTerminateInBackground(true);
+      eprintf(_(
+	 "\n"
+	 "lftp now tricks the shell to move it to background process group.\n"
+	 "lftp continues to run in the background despite the `Stopped' message.\n"
+	 "lftp will automatically terminate when all jobs are finished.\n"
+	 "Use `fg' shell command to return to lftp if it is still running.\n"
+      ));
+      // trick the shell
+      switch(pid_t pid=fork()) {
+      case 0: // child
+	 sleep(1);   // wait for the parent to stop (is there a safer way?)
+	 ::kill(getppid(),SIGCONT);
+	 _exit(0);
+      default: // parent
+	 raise(SIGSTOP);
+	 waitpid(pid,&loc,0); // clean-up
+	 break;
+      case -1:
+	 exec->Exit(code);
+	 break;
+      }
+   }
    exit_code=code;
    return 0;
 }

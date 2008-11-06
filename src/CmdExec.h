@@ -180,6 +180,7 @@ public:
    bool interactive;
    bool top_level;
    bool verbose;
+   bool auto_terminate_in_bg;
    SMTaskRef<StatusLine> status_line;
    void SetCmdFeeder(CmdFeeder *new_feeder);
    void	RemoveFeeder();
@@ -215,6 +216,7 @@ public:
 	 Reconfig(0);
       }
    void SetStatusLine(StatusLine *s) { status_line=s; }
+   void SetAutoTerminateInBackground(bool b) { auto_terminate_in_bg=b; }
 
    static void RegisterCommand(const char *name,cmd_creator_t creator,
       const char *short_name=0,const char *long_name=0);

@@ -45,27 +45,31 @@
 #define super SessionJob
 #define waiting_num waiting.count()
 
-static ResDecl
-   res_default_proto	   ("cmd:default-protocol","ftp",0,0),
-   res_long_running	   ("cmd:long-running",	"30",ResMgr::UNumberValidate,0),
-   res_remote_completion   ("cmd:remote-completion","on",ResMgr::BoolValidate,0),
-   res_prompt		   ("cmd:prompt",	"lftp \\S\\? \\u\\@\\h:\\w> ",0,0),
-   res_default_title	   ("cmd:default-title","lftp \\h:\\w",0,0),
-   res_default_ls	   ("cmd:ls-default",	"",0,0),
-   res_csh_history	   ("cmd:csh-history",	"off",ResMgr::BoolValidate,ResMgr::NoClosure),
-   res_verify_path	   ("cmd:verify-path",	"yes",ResMgr::BoolValidate,0),
-   res_verify_path_cached  ("cmd:verify-path-cached","no",ResMgr::BoolValidate,0),
-   res_verify_host	   ("cmd:verify-host",	"yes",ResMgr::BoolValidate,0),
-   res_at_exit		   ("cmd:at-exit",	"",   0,0),
-   res_fail_exit	   ("cmd:fail-exit",	"no", ResMgr::BoolValidate,ResMgr::NoClosure),
-   res_verbose		   ("cmd:verbose",	"no", ResMgr::BoolValidate,ResMgr::NoClosure),
-   res_interactive	   ("cmd:interactive",	"no", ResMgr::BoolValidate,ResMgr::NoClosure),
-   res_move_background	   ("cmd:move-background","yes", ResMgr::BoolValidate,ResMgr::NoClosure),
-   res_set_term_status     ("cmd:set-term-status","no", ResMgr::BoolValidate,0),
-   res_term_status         ("cmd:term-status",  "", 0, 0),
-   res_trace		   ("cmd:trace",  "no",	ResMgr::BoolValidate,ResMgr::NoClosure),
-   res_parallel		   ("cmd:parallel",	   "1",  ResMgr::UNumberValidate,0),
-   res_queue_parallel	   ("cmd:queue-parallel",  "1",	 ResMgr::UNumberValidate,0);
+static ResType lftp_cmd_vars[] = {
+   {"cmd:default-protocol",	 "ftp",	  0,0},
+   {"cmd:long-running",		 "30",	  ResMgr::UNumberValidate,0},
+   {"cmd:remote-completion",	 "on",	  ResMgr::BoolValidate,0},
+   {"cmd:prompt",		 "lftp \\S\\? \\u\\@\\h:\\w> ",0,0},
+   {"cmd:default-title",	 "lftp \\h:\\w",0,0},
+   {"cmd:ls-default",		 "",	  0,0},
+   {"cmd:csh-history",		 "off",	  ResMgr::BoolValidate,ResMgr::NoClosure},
+   {"cmd:verify-path",		 "yes",	  ResMgr::BoolValidate,0},
+   {"cmd:verify-path-cached",	 "no",	  ResMgr::BoolValidate,0},
+   {"cmd:verify-host",		 "yes",	  ResMgr::BoolValidate,0},
+   {"cmd:at-exit",		 "",	  0,0},
+   {"cmd:fail-exit",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
+   {"cmd:verbose",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
+   {"cmd:interactive",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
+   {"cmd:move-background",	 "yes",	  ResMgr::BoolValidate,ResMgr::NoClosure},
+   {"cmd:move-background-detach","yes",	  ResMgr::BoolValidate,ResMgr::NoClosure},
+   {"cmd:set-term-status",	 "no",	  ResMgr::BoolValidate,0},
+   {"cmd:term-status",		 "",	  0, 0},
+   {"cmd:trace",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
+   {"cmd:parallel",		 "1",	  ResMgr::UNumberValidate,0},
+   {"cmd:queue-parallel",	 "1",	  ResMgr::UNumberValidate,0},
+   {0}
+};
+static ResDecls lftp_cmd_vars_register(lftp_cmd_vars);
 
 CmdExec	 *CmdExec::cwd_owner;
 CmdExec	 *CmdExec::chain;
@@ -150,7 +154,7 @@ void  CmdExec::exec_parsed_command()
    switch(condition)
    {
    case(COND_ANY):
-      if(exit_code!=0 && res_fail_exit.QueryBool(0))
+      if(exit_code!=0 && ResMgr::QueryBool("cmd:fail-exit",0))
       {
 	 while(feeder)
 	    RemoveFeeder();
@@ -284,7 +288,11 @@ bool CmdExec::Idle()
 
 int CmdExec::Done()
 {
-   return(feeder==0 && Idle());
+   Enter();
+   bool done = (feeder==0 && Idle())
+      || (auto_terminate_in_bg && NumberOfJobs()==0 && !in_foreground_pgrp());
+   Leave();
+   return done;
 }
 
 void CmdExec::RemoveFeeder()
@@ -587,7 +595,7 @@ try_get_cmd:
 
 	 if(status_line)
 	 {
-	    const char *def_title = FormatPrompt(res_default_title.Query(getenv("TERM")));
+	    const char *def_title = FormatPrompt(ResMgr::Query("cmd:default-title",getenv("TERM")));
 	    status_line->DefaultTitle(def_title);
 	    status_line->Clear();
 	 }
@@ -625,6 +633,7 @@ try_get_cmd:
 	 }
 	 if(cmd[0])
 	 {
+	    auto_terminate_in_bg=false;
 	    FeedCmd(cmd);
 	    return MOVED;
 	 }
@@ -760,6 +769,7 @@ CmdExec::CmdExec(FileAccess *f,LocalDirectory *c) : SessionJob(f?f:new DummyProt
 
    interactive=false;
    top_level=false;
+   auto_terminate_in_bg=false;
    feeder=0;
    feeder_called=false;
    used_aliases=0;
@@ -872,7 +882,7 @@ const char *CmdExec::MakePrompt()
       return partial_prompt;
    }
 
-   return FormatPrompt(res_prompt.Query(getenv("TERM")));
+   return FormatPrompt(ResMgr::Query("cmd:prompt",getenv("TERM")));
 }
 
 void CmdExec::beep_if_long()
@@ -889,18 +899,17 @@ void CmdExec::Reconfig(const char *name)
    if(session)
       c = session->GetConnectURL(FA::NO_PATH);
 
-   long_running = res_long_running.Query(c);
-   remote_completion = res_remote_completion.QueryBool(c);
-   csh_history = res_csh_history.QueryBool(0);
-   verify_path=res_verify_path.QueryBool(c);
-   verify_path_cached=res_verify_path_cached.QueryBool(c);
-   verify_host=res_verify_host.QueryBool(c);
-   verbose=res_verbose.QueryBool(0);
+   long_running=ResMgr::Query("cmd:long-running",c);
+   remote_completion=ResMgr::QueryBool("cmd:remote-completion",c);
+   csh_history=ResMgr::QueryBool("cmd:csh-history",0);
+   verify_path=ResMgr::QueryBool("cmd:verify-path",c);
+   verify_path_cached=ResMgr::QueryBool("cmd:verify-path-cached",c);
+   verify_host=ResMgr::QueryBool("cmd:verify-host",c);
+   verbose=ResMgr::QueryBool("cmd:verbose",0);
    // only allow explicit setting of cmd:interactive to change interactiveness.
    if(top_level && name && !strcmp(name,"cmd:interactive"))
-      SetInteractive(res_interactive.QueryBool(0));
-   ResType *r=queue_feeder?&res_queue_parallel:&res_parallel;
-   max_waiting=r->Query(c);
+      SetInteractive(ResMgr::QueryBool("cmd:interactive",0));
+   max_waiting=ResMgr::Query(queue_feeder?"cmd:queue-parallel":"cmd:parallel",c);
 }
 
 void CmdExec::pre_stdout()
@@ -1031,7 +1040,7 @@ bool CmdExec::needs_quotation(const char *buf)
 {
    while(*buf)
    {
-      if(isspace(*buf))
+      if(*buf==' ' || *buf=='\t')
 	 return true;
       if(strchr("\"'\\&|>;",*buf))
 	 return true;
@@ -1083,7 +1092,7 @@ const char *CmdExec::GetFullCommandName(const char *cmd)
 
 void CmdExec::AtExit()
 {
-   FeedCmd(res_at_exit.Query(0));
+   FeedCmd(ResMgr::Query("cmd:at-exit",0));
    FeedCmd("\n");
    /* Clear the title, and ensure we don't write anything else
     * to it in case we're being backgrounded. */
