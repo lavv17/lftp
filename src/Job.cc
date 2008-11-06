@@ -25,6 +25,7 @@
 #include <errno.h>
 #include <assert.h>
 #include "Job.h"
+#include "misc.h"
 
 Job *Job::chain;
 #define waiting_num waiting.count()
@@ -36,56 +37,47 @@ Job::Job()
    parent=0;
    jobno=-1;
    fg=false;
-   fg_data=0;
 }
 
 void  Job::AllocJobno()
 {
    jobno=0;
-   for(Job *scan=chain; scan; scan=scan->next)
+   ListScan(Job,chain,next)
       if(scan!=this && scan->jobno>=jobno)
 	 jobno=scan->jobno+1;
 }
 
-Job::~Job()
+void Job::PrepareToDie()
 {
    // reparent or kill children (hm, that's sadistic)
+   ListScan(Job,chain,next)
    {
-      for(Job *scan=chain; scan; )
+      if(scan->parent==this)
       {
-	 if(scan->parent==this)
+	 if(scan->jobno!=-1 && this->parent)
+	    scan->parent=this->parent;
+	 else
 	 {
-	    if(scan->jobno!=-1 && this->parent)
-	       scan->parent=this->parent;
-	    else
-	    {
-	       scan->parent=0;
-	       scan->deleting=true;
-	    }
+	    scan->parent=0;
+	    scan->DeleteLater();
 	 }
-	 scan=scan->next;
       }
    }
    // if parent waits for the job, make it stop
    if(parent)
       parent->RemoveWaiting(this);
-   // now, delete the job from the list
-   {
-      for(Job **scan=&chain; *scan; scan=&(*scan)->next)
-      {
-	 if(*scan==this)
-	 {
-	    *scan=next;
-	    break;
-	 }
-      }
-   }
-   delete fg_data;
+   fg_data=0;
+   waiting.unset();
+   ListDel(Job,chain,this,next);
+}
+
+Job::~Job()
+{
 }
 
 Job *Job::FindJob(int n)
 {
-   for(Job *scan=chain; scan; scan=scan->next)
+   ListScan(Job,chain,next)
    {
       if(scan->jobno==n)
 	 return scan;
@@ -95,7 +87,7 @@ Job *Job::FindJob(int n)
 
 Job *Job::FindWhoWaitsFor(Job *j)
 {
-   for(Job *scan=chain; scan; scan=scan->next)
+   ListScan(Job,chain,next)
    {
       if(scan->WaitsFor(j))
 	 return scan;
@@ -105,12 +97,7 @@ Job *Job::FindWhoWaitsFor(Job *j)
 
 bool Job::WaitsFor(Job *j)
 {
-   for(int i=0; i<waiting_num; i++)
-   {
-      if(waiting[i]==j)
-	 return true;
-   }
-   return false;
+   return waiting.search(j)>=0;
 }
 
 Job *Job::FindDoneAwaitedJob()
@@ -125,7 +112,7 @@ Job *Job::FindDoneAwaitedJob()
 
 void Job::WaitForAllChildren()
 {
-   for(Job *scan=chain; scan; scan=scan->next)
+   ListScan(Job,chain,next)
    {
       if(scan->parent==this)
 	 AddWaiting(scan);
@@ -139,14 +126,9 @@ void Job::AllWaitingFg()
 
 void Job::ReplaceWaiting(Job *from,Job *to)
 {
-   for(int i=0; i<waiting_num; i++)
-   {
-      if(waiting[i]==from)
-      {
-	 waiting[i]=to;
-	 return;
-      }
-   }
+   int i=waiting.search(from);
+   if(i>=0)
+      waiting[i]=to;
 }
 
 void Job::AddWaiting(Job *j)
@@ -154,18 +136,14 @@ void Job::AddWaiting(Job *j)
    if(j==0 || this->WaitsFor(j))
       return;
    assert(FindWhoWaitsFor(j)==0);
+   assert(j->parent==this);
    waiting.append(j);
 }
 void Job::RemoveWaiting(const Job *j)
 {
-   for(int i=0; i<waiting_num; i++)
-   {
-      if(waiting[i]==j)
-      {
-	 waiting.remove(i);
-	 return;
-      }
-   }
+   int i=waiting.search(const_cast<Job*>(j));
+   if(i>=0)
+      waiting.remove(i);
 }
 
 class KilledJob : public Job
@@ -201,14 +179,14 @@ void Job::Kill(int n)
 
 void Job::KillAll()
 {
-   for(Job *scan=chain; scan; scan=scan->next)
+   ListScan(Job,chain,next)
       if(scan->jobno>=0)
 	 Job::Kill(scan);
    CollectGarbage();
 }
 void Job::Cleanup()
 {
-   for(Job *scan=chain; scan; scan=scan->next)
+   ListScan(Job,chain,next)
       Job::Kill(scan);
    CollectGarbage();
 }
@@ -227,8 +205,8 @@ void  Job::SendSig(int n,int sig)
 int   Job::NumberOfJobs()
 {
    int count=0;
-   for(Job *scan=chain; scan; scan=scan->next)
-      if(!scan->Done())
+   ListScan(Job,chain,next)
+      if(!scan->running && !scan->Done())
 	 count++;
    return count;
 }
@@ -241,25 +219,18 @@ static int jobno_compare(Job *const*a,Job *const*b)
 void  Job::SortJobs()
 {
    xarray<Job*> arr;
-   Job *scan;
 
-   for(scan=chain; scan; scan=scan->next)
+   ListScan(Job,chain,next)
       arr.append(scan);
    arr.qsort(jobno_compare);
 
    chain=0;
    int count=arr.count();
    while(count--)
-   {
-      arr[count]->next=chain;
-      chain=arr[count];
-   }
+      ListAdd(Job,chain,arr[count],next);
 
-   for(scan=chain; scan; scan=scan->next)
-   {
-      if(scan->waiting_num>1)
-	 scan->waiting.qsort(jobno_compare);
-   }
+   ListScan(Job,chain,next)
+      scan->waiting.qsort(jobno_compare);
 }
 
 void Job::PrintJobTitle(int indent,const char *suffix)
@@ -305,11 +276,9 @@ void  Job::ListJobs(int verbose,int indent)
 	 waiting[i]->ListOneJobRecursively(verbose,indent);
    }
 
-   for(Job *scan=chain; scan; scan=scan->next)
-   {
+   ListScan(Job,chain,next)
       if(scan->parent==this && !scan->Done() && !this->WaitsFor(scan))
 	 scan->ListOneJobRecursively(verbose,indent);
-   }
 }
 
 void  Job::ListDoneJobs()
@@ -317,7 +286,7 @@ void  Job::ListDoneJobs()
    SortJobs();
 
    FILE *f=stdout;
-   for(Job *scan=chain; scan; scan=scan->next)
+   ListScan(Job,chain,next)
    {
       if(scan->jobno>=0 && (scan->parent==this || scan->parent==0)
          && !scan->deleting && scan->Done())
@@ -337,11 +306,11 @@ void  Job::ListDoneJobs()
 
 void  Job::BuryDoneJobs()
 {
-   for(Job *scan=chain; scan; scan=scan->next)
+   ListScan(Job,chain,next)
    {
       if((scan->parent==this || scan->parent==0) && scan->jobno>=0
 		  && !scan->deleting && scan->Done())
-	 scan->deleting=true;
+	 scan->DeleteLater();
    }
    CollectGarbage();
 }
@@ -490,17 +459,15 @@ void Job::ShowRunStatus(const SMTaskRef<StatusLine>& sl)
 
 Job *Job::FindAnyChild()
 {
-   for(Job *scan=chain; scan; scan=scan->next)
-   {
+   ListScan(Job,chain,next)
       if(scan->parent==this && scan->jobno>=0)
       	 return scan;
-   }
    return 0;
 }
 
 void Job::lftpMovesToBackground_ToAll()
 {
-   for(Job *scan=chain; scan; scan=scan->next)
+   ListScan(Job,chain,next)
       scan->lftpMovesToBackground();
 }
 

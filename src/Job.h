@@ -41,8 +41,9 @@ class Job : public SMTask
 
 protected:
    bool fg;
-   FgData *fg_data;
+   Ref<FgData> fg_data;
 
+   void PrepareToDie();
    virtual ~Job();
 
 public:
