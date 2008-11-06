@@ -57,3 +57,11 @@ const char *FileFeeder::NextCmd(CmdExec *exec, const char *)
    buffer[res]=0;
    return buffer;
 }
+
+FileFeeder::FileFeeder(FDStream *in)
+ : in(in)
+{
+}
+FileFeeder::~FileFeeder()
+{
+}

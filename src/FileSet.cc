@@ -43,10 +43,6 @@
 #include "IdNameCache.h"
 #include "PatternSet.h"
 
-CDECL_BEGIN
-#include "lstat.h"
-CDECL_END
-
 #define fnum files.count()
 
 void  FileInfo::Merge(const FileInfo& f)

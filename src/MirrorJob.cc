@@ -41,10 +41,6 @@
 #include "pgetJob.h"
 #include "log.h"
 
-CDECL_BEGIN
-#include "lstat.h"
-CDECL_END
-
 #define set_state(s) do { state=(s); \
    Log::global->Format(11,"mirror(%p) enters state %s\n", this, #s); } while(0)
 #define waiting_num waiting.count()
