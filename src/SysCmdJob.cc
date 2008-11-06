@@ -31,6 +31,8 @@
 #include "SignalHook.h"
 #include "misc.h"
 
+#define super Job
+
 SysCmdJob::SysCmdJob(const char *c)
    : cmd(c)
 {
@@ -42,6 +44,7 @@ void SysCmdJob::PrepareToDie()
    AcceptSig(SIGTERM);
    if(w)
       w.borrow()->Auto();
+   super::PrepareToDie();
 }
 SysCmdJob::~SysCmdJob() {}
 
