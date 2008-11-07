@@ -77,7 +77,6 @@ int SleepJob::Do()
 	 if(!exec)
 	 {
 	    exec=new CmdExec(session.borrow(),saved_cwd.borrow());
-	    exec->SetParentFg(this);
 	    exec->AllocJobno();
 	    exec->cmdline.vset("(",cmd.get(),")",NULL);
 	 }

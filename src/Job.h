@@ -32,6 +32,8 @@
 #include "fg.h"
 #include "FileAccess.h"
 
+#define JobRef SMTaskRef // it is basically the same
+
 class Job : public SMTask
 {
    static void SortJobs();
@@ -53,6 +55,7 @@ public:
    xarray<Job*> waiting;
 
    void AddWaiting(Job *);
+   template<class T> void AddWaiting(const JobRef<T>& r) { AddWaiting(r.get_non_const()); }
    void RemoveWaiting(const Job *);
    void ReplaceWaiting(Job *from,Job *to);
 
@@ -155,6 +158,5 @@ public:
    void Bg();
 };
 
-#define JobRef SMTaskRef // it is basically the same
 
 #endif /* JOB_H */

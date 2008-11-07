@@ -136,7 +136,7 @@ void Job::AddWaiting(Job *j)
    if(j==0 || this->WaitsFor(j))
       return;
    assert(FindWhoWaitsFor(j)==0);
-   assert(j->parent==this);
+   j->SetParentFg(this);
    waiting.append(j);
 }
 void Job::RemoveWaiting(const Job *j)

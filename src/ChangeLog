@@ -1,3 +1,8 @@
+2008-11-07  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CopyJob.cc, FileSetOutput.cc, Job.cc, Job.h, MirrorJob.cc,
+	  SleepJob.cc, echoJob.cc, mgetJob.cc: make AddWaiting set parent/fg.
+
 2008-11-06  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileFeeder.cc, FileFeeder.h: use Ref.

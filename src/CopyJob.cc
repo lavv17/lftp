@@ -233,7 +233,6 @@ void CopyJobEnv::AddCopier(FileCopy *c,const char *n)
    if(ascii)
       c->Ascii();
    cp=cj_new?cj_new->New(c,n,op):new CopyJob(c,n,op);
-   cp->SetParentFg(this);
    AddWaiting(cp);
 }
 void CopyJobEnv::SetCopier(FileCopy *c,const char *n)

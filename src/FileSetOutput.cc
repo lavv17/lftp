@@ -288,7 +288,7 @@ clsJob::clsJob(FA *s, ArgV *a, FileSetOutput *_opts, OutputJob *_output):
       args->Add("");
 
    output=_output;
-   output->SetParentFg(this);
+   AddWaiting(output);
 }
 
 int clsJob::Done()

@@ -171,8 +171,7 @@ int mgetJob::Do()
 	 {
 	    mkdir_job=new mkdirJob(Clone(),mkdir_args.borrow());
 	    mkdir_job->BeQuiet();
-	    AddWaiting(mkdir_job.get_non_const());
-	    mkdir_job->SetParentFg(this);
+	    AddWaiting(mkdir_job);
 	    mkdir_job->cmdline.set_allocated(mkdir_args->Combine());
 	 }
 	 return MOVED;

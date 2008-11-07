@@ -319,7 +319,6 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    cp->SetSize(file->size);
 	 AddWaiting(cp);
 	 transfer_count++;
-	 cp->SetParentFg(this);
 	 cp->cmdline.vset("\\transfer ",file->name.get(),NULL);
 
 	 set_state(WAITING_FOR_TRANSFER);
@@ -375,7 +374,6 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    source_session->Clone(),target_session->Clone(),
 	    source_name,target_name);
 	 AddWaiting(mj);
-	 mj->SetParentFg(this);
 	 mj->cmdline.vset("\\mirror ",file->name.get(),NULL);
 
 	 // inherit flags and other things
@@ -912,7 +910,6 @@ int   MirrorJob::Do()
 	    args->Append(file->name);
 	    args->seek(1);
 	    rmJob *j=new rmJob(target_session->Clone(),args);
-	    j->SetParentFg(this);
 	    j->cmdline.set_allocated(args->Combine());
 	    AddWaiting(j);
 	    transfer_count++;
@@ -1001,7 +998,6 @@ int   MirrorJob::Do()
 				 file->mode&~mode_mask,a);
 	    AddWaiting(cj);
 	    transfer_count++;
-	    cj->SetParentFg(this);
 	    cj->cmdline.set_allocated(a->Combine());
 	    cj->BeQuiet(); // chmod is not supported on all servers; be quiet.
 	    m=MOVED;
@@ -1042,7 +1038,6 @@ int   MirrorJob::Do()
 	 if(stats.HaveSomethingDone(flags) && on_change)
 	 {
 	    CmdExec *exec=new CmdExec(source_session->Clone(),0);
-	    exec->SetParentFg(this);
 	    AddWaiting(exec);
 	    exec->FeedCmd(on_change);
 	    exec->FeedCmd("\n");
