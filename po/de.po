@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2008-08-05 16:22+0400\n"
+"POT-Creation-Date: 2008-11-07 19:14+0300\n"
 "PO-Revision-Date: 2008-03-29 14:27+0100\n"
 "Last-Translator: \n"
 "Language-Team: German <kde-i18n-de@lists.kde.org>\n"
@@ -141,83 +141,83 @@ msgid "Failed to change mode of `%s' because no old mode is available.\n"
 msgstr ""
 "Konnte den Modus von »%s« nicht ändern, da kein alter Modus zugänglich war.\n"
 
-#: src/CmdExec.cc:96
+#: src/CmdExec.cc:100
 #, c-format
 msgid "Warning: chdir(%s) failed: %s\n"
 msgstr "Warnung: chdir(%s) fehlgeschlagen: %s\n"
 
-#: src/CmdExec.cc:195
+#: src/CmdExec.cc:199
 #, c-format
 msgid "Unknown command `%s'.\n"
 msgstr "Unbekannter Befehl »%s«.\n"
 
-#: src/CmdExec.cc:197
+#: src/CmdExec.cc:201
 #, c-format
 msgid "Ambiguous command `%s'.\n"
 msgstr "Mehrdeutiger Befehl »%s«.\n"
 
-#: src/CmdExec.cc:216
+#: src/CmdExec.cc:220
 #, c-format
 msgid "Module for command `%s' did not register the command.\n"
 msgstr "Das Modul für den Befehl »%s« hat den Befehl nicht registriert.\n"
 
-#: src/CmdExec.cc:354
+#: src/CmdExec.cc:362
 #, c-format
 msgid "cd ok, cwd=%s\n"
 msgstr "Verzeichniswechsel OK, cwd=%s\n"
 
-#: src/CmdExec.cc:375 src/MirrorJob.cc:553
+#: src/CmdExec.cc:383 src/MirrorJob.cc:547
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: Umleitung nach »%s« empfangen\n"
 
-#: src/CmdExec.cc:378 src/FileCopy.cc:1047
+#: src/CmdExec.cc:386 src/FileCopy.cc:1047
 msgid "Too many redirections"
 msgstr "Zu viele Umleitungen"
 
-#: src/CmdExec.cc:490 src/CmdExec.cc:547
+#: src/CmdExec.cc:498 src/CmdExec.cc:555
 msgid "Interrupt"
 msgstr "Abbruch"
 
-#: src/CmdExec.cc:612
+#: src/CmdExec.cc:620
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "Warnung: unvollständiger Befehl verworfen\n"
 
-#: src/CmdExec.cc:705
+#: src/CmdExec.cc:714
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tEingebautes»%s« wird ausgeführt [%s]\n"
 
-#: src/CmdExec.cc:711
+#: src/CmdExec.cc:720
 msgid "Queue is stopped."
 msgstr "Warteschlange wurde angehalten."
 
-#: src/CmdExec.cc:716
+#: src/CmdExec.cc:725
 msgid "Now executing:"
 msgstr "Momentan läuft:"
 
-#: src/CmdExec.cc:729
+#: src/CmdExec.cc:738
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\t Warte auf Beendigung von Job [%d]\n"
 
-#: src/CmdExec.cc:734
+#: src/CmdExec.cc:743
 #, c-format
 msgid "\tWaiting for termination of jobs: "
 msgstr "\tWarte auf Erledigung der Jobs: "
 
-#: src/CmdExec.cc:745
+#: src/CmdExec.cc:754
 #, c-format
 msgid "\tRunning\n"
 msgstr "\tWird ausgeführt\n"
 
-#: src/CmdExec.cc:749
+#: src/CmdExec.cc:758
 #, c-format
 msgid "\tWaiting for command\n"
 msgstr "\tWarten auf Befehl\n"
 
-#: src/CmdExec.cc:1208
+#: src/CmdExec.cc:1217
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: Befehl »%s« wurde nicht mitkompiliert.\n"
@@ -237,18 +237,18 @@ msgstr "%lld $#ll#Byte|Bytes$ übertragen in %ld $#l#Sekunde|Sekunden$"
 msgid "%lld $#ll#byte|bytes$ transferred"
 msgstr "%lld $#ll#Byte|Bytes$ übertragen"
 
-#: src/CopyJob.cc:262
+#: src/CopyJob.cc:261
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr "Übertragung von %d der %d $Datei|Dateien$ fehlgeschlagen\n"
 
-#: src/CopyJob.cc:268
+#: src/CopyJob.cc:267
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Insgesamt %d $Datei|Dateien$ übertragen\n"
 
-#: src/DummyProto.cc:64 src/MirrorJob.cc:1620 src/MirrorJob.cc:1636
-#: src/commands.cc:946 src/commands.cc:2107
+#: src/DummyProto.cc:64 src/MirrorJob.cc:1611 src/MirrorJob.cc:1627
+#: src/commands.cc:975 src/commands.cc:2136
 msgid " - not supported protocol"
 msgstr " - Protokoll nicht unterstützt"
 
@@ -260,8 +260,8 @@ msgstr "Zugriff nicht möglich:"
 msgid "File cannot be accessed"
 msgstr "Zugriff auf Datei nicht möglich"
 
-#: src/FileAccess.cc:216 src/Fish.cc:975 src/SFtp.cc:1284 src/ftpclass.cc:4161
-#: src/ftpclass.cc:4170
+#: src/FileAccess.cc:216 src/Fish.cc:975 src/SFtp.cc:1284 src/ftpclass.cc:4185
+#: src/ftpclass.cc:4194
 msgid "Not connected"
 msgstr "Keine Verbindung"
 
@@ -387,7 +387,7 @@ msgstr "execl(/bin/sh) fehlgeschlagen: %s\n"
 msgid "total"
 msgstr "insgesamt"
 
-#: src/Fish.cc:76 src/Http.cc:901 src/SFtp.cc:81 src/ftpclass.cc:1105
+#: src/Fish.cc:76 src/Http.cc:901 src/SFtp.cc:81 src/ftpclass.cc:1128
 msgid "Closing idle connection"
 msgstr "Schließe unbenutzte Verbindung"
 
@@ -396,33 +396,33 @@ msgid "Running connect program"
 msgstr "Starte Verbindungsprogramm"
 
 #: src/Fish.cc:580 src/Http.cc:1117 src/SFtp.cc:712 src/SFtp.cc:1031
-#: src/ftpclass.cc:2614 src/ftpclass.cc:2824
+#: src/ftpclass.cc:2636 src/ftpclass.cc:2846
 msgid "Peer closed connection"
 msgstr "Gegenüber hat Verbindung beendet"
 
-#: src/Fish.cc:624 src/SFtp.cc:1056 src/ftpclass.cc:3815
+#: src/Fish.cc:624 src/SFtp.cc:1056 src/ftpclass.cc:3839
 msgid "extra server response"
 msgstr "zusätzliche Server Antwort"
 
 #: src/Fish.cc:980 src/Http.cc:1824 src/Http.cc:1831 src/SFtp.cc:1290
-#: src/ftpclass.cc:4173
+#: src/ftpclass.cc:4197
 msgid "Connecting..."
 msgstr "Verbinde..."
 
-#: src/Fish.cc:982 src/SFtp.cc:1292 src/ftpclass.cc:4179
+#: src/Fish.cc:982 src/SFtp.cc:1292 src/ftpclass.cc:4203
 msgid "Connected"
 msgstr "Verbunden"
 
-#: src/Fish.cc:984 src/Http.cc:1833 src/SFtp.cc:1294 src/ftpclass.cc:4156
-#: src/ftpclass.cc:4184 src/ftpclass.cc:4198
+#: src/Fish.cc:984 src/Http.cc:1833 src/SFtp.cc:1294 src/ftpclass.cc:4180
+#: src/ftpclass.cc:4208 src/ftpclass.cc:4222
 msgid "Waiting for response..."
 msgstr "Warte auf Antwort..."
 
-#: src/Fish.cc:986 src/Http.cc:1836 src/SFtp.cc:1296 src/ftpclass.cc:4218
+#: src/Fish.cc:986 src/Http.cc:1836 src/SFtp.cc:1296 src/ftpclass.cc:4242
 msgid "Receiving data"
 msgstr "Empfange Daten"
 
-#: src/Fish.cc:988 src/Http.cc:1829 src/SFtp.cc:1298 src/ftpclass.cc:4216
+#: src/Fish.cc:988 src/Http.cc:1829 src/SFtp.cc:1298 src/ftpclass.cc:4240
 msgid "Sending data"
 msgstr "Sende Daten"
 
@@ -430,8 +430,8 @@ msgstr "Sende Daten"
 msgid "Done"
 msgstr "Fertig"
 
-#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1317 src/SFtp.cc:2126
-#: src/SFtp.cc:2205
+#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1317 src/SFtp.cc:2131
+#: src/SFtp.cc:2210
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "Hole Dateiliste (%lld) [%s]"
@@ -455,7 +455,7 @@ msgstr "POST - Methode fehlgeschlagen"
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr "FTP über HTTP funktioniert nur mit Proxy, hftp:proxy Option angeben."
 
-#: src/Http.cc:1033 src/ftpclass.cc:1228
+#: src/Http.cc:1033 src/ftpclass.cc:1251
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "Kann kein Socket für die Adressfamilie %d anlegen"
@@ -507,11 +507,11 @@ msgid "Received last chunk"
 msgstr "Letztes Teil empfangen"
 
 #: src/Http.cc:1818 src/Resolver.cc:166 src/Resolver.cc:208
-#: src/ftpclass.cc:4166
+#: src/ftpclass.cc:4190
 msgid "Resolving host address..."
 msgstr "Löse Hostadresse auf..."
 
-#: src/Http.cc:1826 src/ftpclass.cc:4159
+#: src/Http.cc:1826 src/ftpclass.cc:4183
 msgid "Connection idle"
 msgstr "Verbindung ruht"
 
@@ -519,7 +519,7 @@ msgstr "Verbindung ruht"
 msgid "Fetching headers..."
 msgstr "Hole Kopfzeilen..."
 
-#: src/Job.cc:325
+#: src/Job.cc:294
 #, c-format
 msgid "[%d] Done (%s)"
 msgstr "[%d] Fertig (%s)"
@@ -532,7 +532,7 @@ msgstr "Lese Verzeichnisinhalt aus"
 msgid "Getting files information"
 msgstr "Lese Dateiinformationen"
 
-#: src/LocalAccess.cc:651 src/commands.cc:3025
+#: src/LocalAccess.cc:651 src/commands.cc:3054
 msgid "cannot get current directory"
 msgstr "Kann aktuelles Verzeichnis nicht feststellen"
 
@@ -550,112 +550,112 @@ msgstr ", keine Größenbegrenzung"
 msgid ", maximum size %ld\n"
 msgstr ", Maximalgröße %ld\n"
 
-#: src/MirrorJob.cc:102
+#: src/MirrorJob.cc:98
 #, c-format
 msgid "%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%sGesamt: %d Verzeichni$s|sse$, %d Datei$|en$, %d Verknüpfungen$|s$\n"
 
-#: src/MirrorJob.cc:106
+#: src/MirrorJob.cc:102
 #, c-format
 msgid "%sNew: %d file$|s$, %d symlink$|s$\n"
 msgstr "%sNeu: %d Datei$|en$, %d Verknüpfungen$|s$\n"
 
-#: src/MirrorJob.cc:110
+#: src/MirrorJob.cc:106
 #, c-format
 msgid "%sModified: %d file$|s$, %d symlink$|s$\n"
 msgstr "%sVerändert: %d Datei$|en$, %d Symlink$|s$\n"
 
-#: src/MirrorJob.cc:117
+#: src/MirrorJob.cc:113
 #, c-format
 msgid "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr "%sGelöscht: %d Verzeichnis$|sse$, %d Datei$|en$, %d Symlink$|s$\n"
 
-#: src/MirrorJob.cc:122
+#: src/MirrorJob.cc:118
 #, c-format
 msgid "%s%d error$|s$ detected\n"
 msgstr "%s%d Fehler gefunden\n"
 
-#: src/MirrorJob.cc:256 src/MirrorJob.cc:941
+#: src/MirrorJob.cc:252 src/MirrorJob.cc:934
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "Entferne alte Datei »%s«"
 
-#: src/MirrorJob.cc:266
+#: src/MirrorJob.cc:262
 #, c-format
 msgid "Skipping file `%s' (only-existing)"
 msgstr "Überspringe Datei »%s« (only-existing)"
 
-#: src/MirrorJob.cc:273
+#: src/MirrorJob.cc:269
 #, c-format
 msgid "Transferring file `%s'"
 msgstr "Sende Datei »%s«"
 
-#: src/MirrorJob.cc:345
+#: src/MirrorJob.cc:340
 #, c-format
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "Lege Verzeichnis »%s« an (only-existing)"
 
-#: src/MirrorJob.cc:365 src/MirrorJob.cc:451 src/MirrorJob.cc:691
+#: src/MirrorJob.cc:360 src/MirrorJob.cc:445 src/MirrorJob.cc:685
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Entferne alte lokale Datei »%s«"
 
-#: src/MirrorJob.cc:414
+#: src/MirrorJob.cc:408
 #, c-format
 msgid "Mirroring directory `%s'"
 msgstr "Spiegele Verzeichnis »%s«"
 
-#: src/MirrorJob.cc:464
+#: src/MirrorJob.cc:458
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
 msgstr "Überspringe Verknüpfung »%s« (only-existing)"
 
-#: src/MirrorJob.cc:470
+#: src/MirrorJob.cc:464
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Erzeuge symbolische Verknüpfung »%s« nach »%s«"
 
-#: src/MirrorJob.cc:605
+#: src/MirrorJob.cc:599
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: Protokoll »%s« ist nicht für das spiegeln geeignet\n"
 
-#: src/MirrorJob.cc:712
+#: src/MirrorJob.cc:706
 #, c-format
 msgid "Making directory `%s'"
 msgstr "Lege Verzeichnis »%s« an"
 
-#: src/MirrorJob.cc:891
+#: src/MirrorJob.cc:885
 #, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "Bestehendes Verzeichnis »%s« wird nicht entfernt"
 
-#: src/MirrorJob.cc:894
+#: src/MirrorJob.cc:888
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "Bestehende Datei »%s« wird nicht entfernt"
 
-#: src/MirrorJob.cc:936
+#: src/MirrorJob.cc:929
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "Entferne alte Datei »%s«"
 
-#: src/MirrorJob.cc:1073
+#: src/MirrorJob.cc:1064
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr "Versuche Spiegelserver...\n"
 
-#: src/MirrorJob.cc:1458
+#: src/MirrorJob.cc:1449
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s: Regulärer Ausdruck (regular expression) %s: %s\n"
 
-#: src/MirrorJob.cc:1589 src/SleepJob.cc:123 src/SleepJob.cc:179
-#: src/commands.cc:1079 src/commands.cc:1166 src/commands.cc:1601
-#: src/commands.cc:1632 src/commands.cc:1735 src/commands.cc:2016
-#: src/commands.cc:2212 src/commands.cc:2375 src/commands.cc:2382
-#: src/commands.cc:2650 src/commands.cc:2677 src/commands.cc:2684
-#: src/commands.cc:3008 src/lftp.cc:258
+#: src/MirrorJob.cc:1580 src/SleepJob.cc:122 src/SleepJob.cc:178
+#: src/commands.cc:1108 src/commands.cc:1195 src/commands.cc:1630
+#: src/commands.cc:1661 src/commands.cc:1764 src/commands.cc:2045
+#: src/commands.cc:2241 src/commands.cc:2404 src/commands.cc:2411
+#: src/commands.cc:2679 src/commands.cc:2706 src/commands.cc:2713
+#: src/commands.cc:3037 src/lftp.cc:257
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "»help %s« gibt mehr Informationen aus.\n"
@@ -731,68 +731,73 @@ msgstr "Job$|s$ verschoben"
 msgid "Commands queued:"
 msgstr "Befehle in Warteschlange:"
 
-#: src/ResMgr.cc:120
+#: src/ResMgr.cc:121
 msgid "no such variable"
 msgstr "keine derartige Variable"
 
-#: src/ResMgr.cc:124
+#: src/ResMgr.cc:125
 msgid "ambiguous variable name"
 msgstr "Mehrdeutiger Name für Variable"
 
-#: src/ResMgr.cc:383
+#: src/ResMgr.cc:384
 msgid "invalid boolean value"
 msgstr "unzulässiger boolscher Wert"
 
-#: src/ResMgr.cc:405
+#: src/ResMgr.cc:406
 msgid "invalid boolean/auto value"
 msgstr "unzulässiger boolscher/automatischer Wert"
 
-#: src/ResMgr.cc:426 src/ResMgr.cc:462
+#: src/ResMgr.cc:451
 msgid "invalid number"
 msgstr "Unzulässige Zahl"
 
-#: src/ResMgr.cc:441
+#: src/ResMgr.cc:464
 msgid "invalid floating point number"
 msgstr "Unzulässige Gleitkommazahl"
 
-#: src/ResMgr.cc:653
+#: src/ResMgr.cc:478
+#, fuzzy
+msgid "invalid unsigned number"
+msgstr "Unzulässige Zahl"
+
+#: src/ResMgr.cc:707
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "Ungültige Zeiteinheit, nur [smhd] sind zulässig."
 
-#: src/ResMgr.cc:661
+#: src/ResMgr.cc:715
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "Ungültige Zeitangabe. Das Format ist <Zeit><Einheit> - z.B. 2h30m."
 
-#: src/ResMgr.cc:705 src/commands.cc:3164 src/commands.cc:3173
+#: src/ResMgr.cc:759 src/commands.cc:3193 src/commands.cc:3202
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Ungültige Angabe der Spanne. Das Format ist min-max - z.B. 10-20."
 
-#: src/ResMgr.cc:722
+#: src/ResMgr.cc:776
 msgid "Invalid suffix. Valid suffixes are: k, M, G, T, P, E, Z, Y"
 msgstr ""
 "Unzulässiger Endung (suffix). Zulässige Endungen sind: k, M, G, T, P, E, Z, Y"
 
-#: src/ResMgr.cc:725
+#: src/ResMgr.cc:779
 msgid "Integer overflow"
 msgstr "Integerüberlauf"
 
-#: src/ResMgr.cc:784
+#: src/ResMgr.cc:838
 msgid "Invalid IPv4 numeric address"
 msgstr "Ungültige IPv4 Adressierungsnummer"
 
-#: src/ResMgr.cc:795
+#: src/ResMgr.cc:849
 msgid "Invalid IPv6 numeric address"
 msgstr "Ungültige IPv6 Adressierungsnummer"
 
-#: src/ResMgr.cc:849 src/ResMgr.cc:853
+#: src/ResMgr.cc:903 src/ResMgr.cc:907
 msgid "this encoding is not supported"
 msgstr "Diese Zeichenkodierung wird nicht unterstützt"
 
-#: src/ResMgr.cc:859
+#: src/ResMgr.cc:913
 msgid "no closure defined for this setting"
 msgstr "kein Gültigkeitsbereich (closure) für diese Einstellung definiert"
 
-#: src/ResMgr.cc:870
+#: src/ResMgr.cc:924
 msgid "invalid pair of numbers"
 msgstr "Unzulässiges Zahlenpaar"
 
@@ -822,12 +827,12 @@ msgstr "Keine Adresse gefunden"
 msgid "invalid server response format"
 msgstr "unzulässiges Format der Serverantwort"
 
-#: src/SleepJob.cc:99
+#: src/SleepJob.cc:98
 #, c-format
 msgid "\tRepeat count: %d\n"
 msgstr "\tWiederhole Zählung: %d\n"
 
-#: src/SleepJob.cc:121
+#: src/SleepJob.cc:120
 #, c-format
 msgid "%s: argument required. "
 msgstr "%s: Argument vorgeschrieben. "
@@ -867,7 +872,7 @@ msgstr "Sekunde"
 msgid "eta:"
 msgstr "ca. fertig:"
 
-#: src/SysCmdJob.cc:73
+#: src/SysCmdJob.cc:76
 #, c-format
 msgid "execlp(%s) failed: %s\n"
 msgstr "execlp(%s) fehlgeschlagen: %s\n"
@@ -1911,12 +1916,12 @@ msgstr "Benutzung: cd nichtlokales-Verzeichnis\n"
 msgid "%s: no old directory for this site\n"
 msgstr "%s: kein vorheriges Verzeichnis an diesem Ort\n"
 
-#: src/commands.cc:667
+#: src/commands.cc:668
 #, c-format
 msgid "Usage: %s [<exit_code>]\n"
 msgstr "Benutzung:%s [<Exit_kode>]\n"
 
-#: src/commands.cc:676
+#: src/commands.cc:677
 msgid ""
 "There are running jobs and `cmd:move-background' is not set.\n"
 "Use `exit bg' to force moving to background or `kill all' to terminate "
@@ -1926,194 +1931,203 @@ msgstr ""
 "Bitte »exit bg« verwenden um im Hintergrund fortzufahren oder\n"
 "»kill all« um alle Jobs zu beenden.\n"
 
-#: src/commands.cc:847 src/commands.cc:3297
+#: src/commands.cc:692
+msgid ""
+"\n"
+"lftp now tricks the shell to move it to background process group.\n"
+"lftp continues to run in the background despite the `Stopped' message.\n"
+"lftp will automatically terminate when all jobs are finished.\n"
+"Use `fg' shell command to return to lftp if it is still running.\n"
+msgstr ""
+
+#: src/commands.cc:876 src/commands.cc:3326
 #, c-format
 msgid "Try `%s --help' for more information\n"
 msgstr "»%s --help' gibt weitere Informationen aus\n"
 
-#: src/commands.cc:849
+#: src/commands.cc:878
 #, c-format
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 msgstr "Benutzung: %s [-e Befehl] [-p Port] [-u user[,passwort]] <Host|URL>\n"
 
-#: src/commands.cc:978 src/commands.cc:2091
+#: src/commands.cc:1007 src/commands.cc:2120
 msgid "Password: "
 msgstr "Passwort: "
 
-#: src/commands.cc:980
+#: src/commands.cc:1009
 #, c-format
 msgid "%s: GetPass() failed -- assume anonymous login\n"
 msgstr "%s: GetPass() fehlgeschlagen -- benutze anonymen Login\n"
 
-#: src/commands.cc:1087
+#: src/commands.cc:1116
 #, c-format
 msgid "Usage: %s [OPTS] command args...\n"
 msgstr "Benutzung: %s Befehl Argumente..\n"
 
-#: src/commands.cc:1136
+#: src/commands.cc:1165
 #, c-format
 msgid "%s: -n: positive number expected. "
 msgstr "%s: -n: positive Zahl erwartet. "
 
-#: src/commands.cc:1188
+#: src/commands.cc:1217
 #, c-format
 msgid "Created a stopped queue.\n"
 msgstr "Angehaltene Warteschlange erzeugt.\n"
 
-#: src/commands.cc:1227 src/commands.cc:1257
+#: src/commands.cc:1256 src/commands.cc:1286
 #, c-format
 msgid "%s: No queue is active.\n"
 msgstr "%s: Keine Warteschlange aktiv.\n"
 
-#: src/commands.cc:1249
+#: src/commands.cc:1278
 #, c-format
 msgid "%s: -m: Number expected as second argument. "
 msgstr "%s: -m: Zahl als zweite Angabe erwartet. "
 
-#: src/commands.cc:1281
+#: src/commands.cc:1310
 msgid "Can only edit plain queues.\n"
 msgstr "Kann nur einfache Warteschlangen editieren.\n"
 
-#: src/commands.cc:1293
+#: src/commands.cc:1322
 #, c-format
 msgid "Couldn't create temporary file `%s': %s.\n"
 msgstr "Konnte temporäre Datei `%s': %s nicht anlegen.\n"
 
-#: src/commands.cc:1298
+#: src/commands.cc:1327
 #, c-format
 msgid "%s: error writing %s: %s\n"
 msgstr "%s: Fehler beim Schreiben von %s: %s\n"
 
-#: src/commands.cc:1349
+#: src/commands.cc:1378
 #, c-format
 msgid "Usage: %s <cmd>\n"
 msgstr "Benutzung: %s <Befehl>\n"
 
-#: src/commands.cc:1459
+#: src/commands.cc:1488
 msgid "invalid argument for `--sort'"
 msgstr "ungültiges Argument für »--sort«"
 
-#: src/commands.cc:1488
+#: src/commands.cc:1517
 msgid "invalid block size"
 msgstr "Unzulässige Blockgrösse"
 
-#: src/commands.cc:1641
+#: src/commands.cc:1670
 #, c-format
 msgid "Usage: %s [OPTS] files...\n"
 msgstr "Benutzung: %s [OPTS] Dateien ...\n"
 
-#: src/commands.cc:1713
+#: src/commands.cc:1742
 #, c-format
 msgid "%s: -n: Number expected. "
 msgstr "%s: -n: Zahl erwartet. "
 
-#: src/commands.cc:1746
+#: src/commands.cc:1775
 #, c-format
 msgid "File name missed. "
 msgstr "Dateiname fehlt. "
 
-#: src/commands.cc:1844
+#: src/commands.cc:1873
 #, c-format
 msgid "Usage: %s %s[-f] files...\n"
 msgstr "Benutzung: %s %s [-f] Dateien...\n"
 
-#: src/commands.cc:1887
+#: src/commands.cc:1916
 #, c-format
 msgid "Usage: %s [-e] <file|command>\n"
 msgstr "Benutzung: %s  [-e] <datei|befehl>\n"
 
-#: src/commands.cc:1930
+#: src/commands.cc:1959
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
 msgstr "Benutzung: %s [-v] [-v] ...\n"
 
-#: src/commands.cc:1957
+#: src/commands.cc:1986
 #, c-format
 msgid "Usage: %s [-p]\n"
 msgstr "Benutzung: %s [-p]\n"
 
-#: src/commands.cc:2058
+#: src/commands.cc:2087
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
 msgstr "Debug Stufe ist %d, Ausgabe geht nach %s\n"
 
-#: src/commands.cc:2061
+#: src/commands.cc:2090
 #, c-format
 msgid "debug is off\n"
 msgstr "Debug ist abgeschaltet\n"
 
-#: src/commands.cc:2072
+#: src/commands.cc:2101
 #, c-format
 msgid "Usage: %s <user|URL> [<pass>]\n"
 msgstr "Verwendung: %s user <user|URL> [<passwt>]\n"
 
-#: src/commands.cc:2147 src/commands.cc:2311
+#: src/commands.cc:2176 src/commands.cc:2340
 #, c-format
 msgid "%s: no current job\n"
 msgstr "%s: - kein derartiger Job\n"
 
-#: src/commands.cc:2157 src/commands.cc:2187 src/commands.cc:2319
+#: src/commands.cc:2186 src/commands.cc:2216 src/commands.cc:2348
 #, c-format
 msgid "%s: %d - no such job\n"
 msgstr "%s: %d - kein derartiger Job\n"
 
-#: src/commands.cc:2159
+#: src/commands.cc:2188
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
 msgstr "Benutzung: %s <jobnr.> ... | all\n"
 
-#: src/commands.cc:2178 src/commands.cc:2301 src/commands.cc:2444
-#: src/commands.cc:2819 src/commands.cc:2895 src/lftp.cc:270
+#: src/commands.cc:2207 src/commands.cc:2330 src/commands.cc:2473
+#: src/commands.cc:2848 src/commands.cc:2924 src/lftp.cc:269
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s: %s - keine Zahl\n"
 
-#: src/commands.cc:2241
+#: src/commands.cc:2270
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr "%s: %s. »set -a« zeigt alle Variablen.\n"
 
-#: src/commands.cc:2285
+#: src/commands.cc:2314
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
 msgstr "Benutzung: %s [<Jobnr.>]\n"
 
-#: src/commands.cc:2324
+#: src/commands.cc:2353
 #, c-format
 msgid "%s: some other job waits for job %d\n"
 msgstr "%s: ein anderer Job wartet auf die Beendigung des Jobs %d\n"
 
-#: src/commands.cc:2329
+#: src/commands.cc:2358
 #, c-format
 msgid "%s: wait loop detected\n"
 msgstr "%s: Warteschleife entdeckt\n"
 
-#: src/commands.cc:2353
+#: src/commands.cc:2382
 #, c-format
 msgid "Usage: mv <file1> <file2>\n"
 msgstr "Benutzung: mv <datei1> <datei2>\n"
 
-#: src/commands.cc:2374 src/commands.cc:2676
+#: src/commands.cc:2403 src/commands.cc:2705
 #, c-format
 msgid "Invalid command. "
 msgstr "Ungültiger Befehl. "
 
-#: src/commands.cc:2381 src/commands.cc:2683
+#: src/commands.cc:2410 src/commands.cc:2712
 #, c-format
 msgid "Ambiguous command. "
 msgstr "Mehrdeutiger Befehl. "
 
-#: src/commands.cc:2400
+#: src/commands.cc:2429
 #, c-format
 msgid "%s: Operand missed for size\n"
 msgstr "%s: Größenangabe fehlt\n"
 
-#: src/commands.cc:2417
+#: src/commands.cc:2446
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
 msgstr "%s: Angabe für »expire«(Ablauf) fehlt\n"
 
-#: src/commands.cc:2450
+#: src/commands.cc:2479
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
@@ -2121,42 +2135,42 @@ msgstr ""
 "%s: %s - keine derartige Sitzung zwischengespeichert. »scache« zeigt eine "
 "Liste.\n"
 
-#: src/commands.cc:2467
+#: src/commands.cc:2496
 #, c-format
 msgid "Sorry, no help for %s\n"
 msgstr "Tut mir Leid, keine Hilfe für %s\n"
 
-#: src/commands.cc:2472
+#: src/commands.cc:2501
 #, c-format
 msgid "%s is a built-in alias for %s\n"
 msgstr "%s ist ein eingebauter alias für %s\n"
 
-#: src/commands.cc:2477
+#: src/commands.cc:2506
 #, c-format
 msgid "Usage: %s\n"
 msgstr "Benutzung: %s\n"
 
-#: src/commands.cc:2485
+#: src/commands.cc:2514
 #, c-format
 msgid "%s is an alias to `%s'\n"
 msgstr "%s ist ein alias für »%s«\n"
 
-#: src/commands.cc:2489
+#: src/commands.cc:2518
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr "Kein derartiger Befehl »%s«. »help« zeigt alle verfügbaren Befehle.\n"
 
-#: src/commands.cc:2491
+#: src/commands.cc:2520
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr "Zweideutiger Befehl »%s«. »help« zeigt alle verfügbaren Befehle. \n"
 
-#: src/commands.cc:2543
+#: src/commands.cc:2572
 #, c-format
 msgid "LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
 msgstr "LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
 
-#: src/commands.cc:2546
+#: src/commands.cc:2575
 #, c-format
 msgid ""
 "LFTP is free software, covered by the GNU General Public License, and you "
@@ -2171,81 +2185,81 @@ msgstr ""
 "Es gibt absolut keine Gewährleistung für LFTP. \n"
 "Bitte konsultieren Sie COPYING für Einzelheiten.\n"
 
-#: src/commands.cc:2551
+#: src/commands.cc:2580
 #, c-format
 msgid "Send bug reports and questions to <%s>.\n"
 msgstr "Fehlerbericht und Fragen bitte an <%s>.\n"
 
-#: src/commands.cc:2557
+#: src/commands.cc:2586
 msgid "Libraries used: "
 msgstr "Verwendete Libraries:"
 
-#: src/commands.cc:2699 src/commands.cc:2731
+#: src/commands.cc:2728 src/commands.cc:2760
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s: Name des Lesezeichens notwendig\n"
 
-#: src/commands.cc:2720
+#: src/commands.cc:2749
 #, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
 msgstr "%s: Leerstellen sind im Namen von Lesezeichen nicht zulässig\n"
 
-#: src/commands.cc:2733
+#: src/commands.cc:2762
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s: kein derartiges Lesezeichen »%s«\n"
 
-#: src/commands.cc:2749
+#: src/commands.cc:2778
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: Importtyp muss angegeben werden (Netscape,ncftp)\n"
 
-#: src/commands.cc:2825
+#: src/commands.cc:2854
 #, c-format
 msgid "Usage: %s [-d #] dir\n"
 msgstr "Benutzung: %s [-d #] dir\n"
 
-#: src/commands.cc:2927
+#: src/commands.cc:2956
 #, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "%s: unzulässige Blockgrösse »%s«\n"
 
-#: src/commands.cc:2937
+#: src/commands.cc:2966
 #, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "Benutzung: %s [Optionen] <verzeichnisse>\n"
 
-#: src/commands.cc:2943
+#: src/commands.cc:2972
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr "%s: Achtung: »summarize« (Zusammenzählen) entspricht --max-depth=0\n"
 
-#: src/commands.cc:2947
+#: src/commands.cc:2976
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr "%s: »summarize« kann nicht mit --max-depth=%i kombiniert werden\n"
 
-#: src/commands.cc:2995
+#: src/commands.cc:3024
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "Benutzung: %s Befehl Argumente..\n"
 
-#: src/commands.cc:3007
+#: src/commands.cc:3036
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "Benutzung: %s module [Argumente..]\n"
 
-#: src/commands.cc:3085
+#: src/commands.cc:3114
 #, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "Benutzung: %s [OPTS] Modus Dateien ...\n"
 
-#: src/commands.cc:3105
+#: src/commands.cc:3134
 #, c-format
 msgid "invalid mode string: %s\n"
 msgstr "Ungültige Modusangabe: %s\n"
 
-#: src/commands.cc:3179
+#: src/commands.cc:3208
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "Benutzung: %s [OPTS] <Datei>\n"
@@ -2262,188 +2276,188 @@ msgstr "Data connection peer hat nicht übereinstimmende Adresse"
 msgid "Switching to NOREST mode"
 msgstr "Schalte NOREST - Modus ein"
 
-#: src/ftpclass.cc:399
+#: src/ftpclass.cc:422
 msgid "Server reply matched ftp:retry-530, retrying"
 msgstr "Server Antwort entspricht ftp:retry-530, neuer Versuch"
 
-#: src/ftpclass.cc:407
+#: src/ftpclass.cc:430
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
 msgstr "Server Antwort entspricht ftp:retry-530-anonymous, neuer Versuch"
 
-#: src/ftpclass.cc:432
+#: src/ftpclass.cc:455
 msgid "Account is required, set ftp:acct variable"
 msgstr "Eingerichteter Zugang ist erforderlich, ftp:acct Variable setzen"
 
-#: src/ftpclass.cc:449
+#: src/ftpclass.cc:472
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
 msgstr ""
 "ftp:skey-force ist gesetzt und Gegenstelle unterstützt weder OPIE noch S/KEY"
 
-#: src/ftpclass.cc:465
+#: src/ftpclass.cc:488
 msgid "Saw `unknown', assume failed login"
 msgstr "»Unknown« empfangen, gehe von fehlgeschlagenem Login aus"
 
-#: src/ftpclass.cc:476
+#: src/ftpclass.cc:499
 msgid "assuming failed host name lookup"
 msgstr "nehme fehlgeschlagene Auflösung des Hostnamens an"
 
-#: src/ftpclass.cc:706
+#: src/ftpclass.cc:729
 msgid "cannot parse EPSV response"
 msgstr "Kann EPSV Antwort nicht auswerten"
 
-#: src/ftpclass.cc:957
+#: src/ftpclass.cc:980
 msgid "Closing control socket"
 msgstr "Schließe den Kontroll - Socket"
 
-#: src/ftpclass.cc:1154
+#: src/ftpclass.cc:1177
 msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 msgstr "SITE CHMOD abgeschaltet durch ftp:use-site-chmod"
 
-#: src/ftpclass.cc:1159
+#: src/ftpclass.cc:1182
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "MLSD wird abgeschaltet durch ftp:use-mlsd"
 
-#: src/ftpclass.cc:1492
+#: src/ftpclass.cc:1515
 msgid "SITE CHMOD is not supported by this site"
 msgstr "SITE CHMOD wird von dieser Gegenstelle nicht unterstützt"
 
-#: src/ftpclass.cc:1497
+#: src/ftpclass.cc:1520
 msgid "MLST and MLSD are not supported by this site"
 msgstr "MLST und MLSD werden von dieser Gegenstelle nicht unterstützt"
 
-#: src/ftpclass.cc:1917 src/ftpclass.cc:1967
+#: src/ftpclass.cc:1939 src/ftpclass.cc:1989
 msgid "unsupported network protocol"
 msgstr "nicht unterstütztes Netzwerkprotokoll"
 
-#: src/ftpclass.cc:2048
+#: src/ftpclass.cc:2070
 #, c-format
 msgid "Accepted data connection from (%s) port %u"
 msgstr "Datenverbindung von (%s) Port %u akzeptiert"
 
-#: src/ftpclass.cc:2090
+#: src/ftpclass.cc:2112
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "Verbinde Daten Socket mit (%s) Port %u"
 
-#: src/ftpclass.cc:2096
+#: src/ftpclass.cc:2118
 #, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "Datenverbindung mit Proxy %s (%s) Port %u"
 
-#: src/ftpclass.cc:2116 src/ftpclass.cc:3981
+#: src/ftpclass.cc:2138 src/ftpclass.cc:4005
 msgid "Switching passive mode off"
 msgstr "Schalte Passivmodus ab"
 
-#: src/ftpclass.cc:2124
+#: src/ftpclass.cc:2146
 msgid "Data connection established"
 msgstr "Datenverbindung hergestellt"
 
-#: src/ftpclass.cc:2428 src/ftpclass.cc:4111
+#: src/ftpclass.cc:2450 src/ftpclass.cc:4135
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force ist gesetzt und Gegenstelle unterstützt oder erlaubt kein SSL"
 
-#: src/ftpclass.cc:2770
+#: src/ftpclass.cc:2792
 msgid "Persist and retry"
 msgstr "Verbleibe und versuche es weiter"
 
-#: src/ftpclass.cc:3037
+#: src/ftpclass.cc:3059
 msgid "Closing data socket"
 msgstr "Schließe den Daten Socket"
 
-#: src/ftpclass.cc:3059
+#: src/ftpclass.cc:3081
 msgid "Closing aborted data socket"
 msgstr "Schließe die Datenverbindung"
 
-#: src/ftpclass.cc:3799
+#: src/ftpclass.cc:3823
 msgid "saw file size in response"
 msgstr "Dateigröße in Antwort empfangen"
 
-#: src/ftpclass.cc:3829 src/ftpclass.cc:3856
+#: src/ftpclass.cc:3853 src/ftpclass.cc:3880
 msgid "Turning on sync-mode"
 msgstr "sync - Modus eingeschaltet"
 
-#: src/ftpclass.cc:4001
+#: src/ftpclass.cc:4025
 msgid "Switching passive mode on"
 msgstr "Schalte Passivmodus ein"
 
-#: src/ftpclass.cc:4147
+#: src/ftpclass.cc:4171
 msgid "FEAT negotiation..."
 msgstr "FEAT Verbindungsaufbau..."
 
-#: src/ftpclass.cc:4154
+#: src/ftpclass.cc:4178
 msgid "Sending commands..."
 msgstr "Schicke Befehle..."
 
-#: src/ftpclass.cc:4158
+#: src/ftpclass.cc:4182
 msgid "Delaying before retry"
 msgstr "Pausiere vor erneuter Verbindung"
 
-#: src/ftpclass.cc:4177
+#: src/ftpclass.cc:4201
 msgid "TLS negotiation..."
 msgstr "TLS Verbindungsaufbau..."
 
-#: src/ftpclass.cc:4181
+#: src/ftpclass.cc:4205
 msgid "Logging in..."
 msgstr "Logge ein..."
 
-#: src/ftpclass.cc:4185
+#: src/ftpclass.cc:4209
 msgid "Making data connection..."
 msgstr "Stelle Datenverbindung her..."
 
-#: src/ftpclass.cc:4188
+#: src/ftpclass.cc:4212
 msgid "Changing remote directory..."
 msgstr "Wechsle nichtlokales Verzeichnis..."
 
-#: src/ftpclass.cc:4194
+#: src/ftpclass.cc:4218
 msgid "Waiting for other copy peer..."
 msgstr "Warte auf die Gegenstelle für die andere Kopie..."
 
-#: src/ftpclass.cc:4196 src/ftpclass.cc:4220
+#: src/ftpclass.cc:4220 src/ftpclass.cc:4244
 msgid "Waiting for transfer to complete"
 msgstr "Warte auf Übertragungsende"
 
-#: src/ftpclass.cc:4200
+#: src/ftpclass.cc:4224
 msgid "Waiting for TLS shutdown..."
 msgstr "Warte auf Beendung von LTS..."
 
-#: src/ftpclass.cc:4202
+#: src/ftpclass.cc:4226
 msgid "Waiting for data connection..."
 msgstr "Warte auf Datenverbindung..."
 
-#: src/ftpclass.cc:4208
+#: src/ftpclass.cc:4232
 msgid "Sending data/TLS"
 msgstr "Sende Daten/TLS"
 
-#: src/ftpclass.cc:4210
+#: src/ftpclass.cc:4234
 msgid "Receiving data/TLS"
 msgstr "Empfange Daten/TLS"
 
-#: src/lftp.cc:310
+#: src/lftp.cc:309
 #, c-format
 msgid "[%lu] Terminated by signal %d. %s"
 msgstr "[%lu] Beendet durch Signal %d. %s"
 
-#: src/lftp.cc:369
+#: src/lftp.cc:368
 #, c-format
 msgid "[%lu] Started.  %s"
 msgstr "[%lu] Begonnen. %s"
 
-#: src/lftp.cc:378
+#: src/lftp.cc:377
 #, c-format
 msgid "[%lu] Finished. %s"
 msgstr "[%lu] Beendet. %s"
 
-#: src/lftp.cc:382
+#: src/lftp.cc:381
 #, c-format
 msgid "[%lu] Moving to background to complete transfers...\n"
 msgstr "[%lu] Gehe in den Hintergrund um Übertragungen zu beenden...\n"
 
-#: src/lftp.cc:435
+#: src/lftp.cc:434
 msgid "history -w file|-r file|-c|-l [cnt]"
 msgstr "history -w Datei|-r Datei|-c|-l [Zahl]"
 
-#: src/lftp.cc:436
+#: src/lftp.cc:435
 msgid ""
 " -w <file> Write history to file.\n"
 " -r <file> Read history from file; appends to current history.\n"
@@ -2459,7 +2473,7 @@ msgstr ""
 "Das entbehrliche Argument »Zahl« gibt die Anzahl der aufzulistenden\n"
 "Verlaufszeilen an. »all« gibt alle Einträge aus.\n"
 
-#: src/mgetJob.cc:125 src/mgetJob.cc:204
+#: src/mgetJob.cc:125 src/mgetJob.cc:203
 #, c-format
 msgid "%s: no files found\n"
 msgstr "%s: keine Dateien gefunden\n"

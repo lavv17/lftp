@@ -1,3 +1,12 @@
+Version 3.7.5 - 2008-11-07
+
+* new setting cmd:move-background-detach.
+* added support for number suffixes in settings (k - kibi, m - mebi, etc).
+* shutdown SSL connection before closing the socket on upload.
+* fixed mirror -RP.
+* fixed another problem with `kill all'.
+* updated gnulib.
+
 Version 3.7.4 - 2008-08-06
 
 * fixed a coredump in `kill all'.

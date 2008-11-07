@@ -160,3 +160,5 @@ sys
 time.h
 unistd.h
 uniwidth
+errno.in.h
+dirent.in.h

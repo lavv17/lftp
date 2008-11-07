@@ -123,3 +123,6 @@ malloca.m4
 setenv.m4
 timespec.m4
 stdint.m4
+errno_h.m4
+threadlib.m4
+dirent_h.m4
