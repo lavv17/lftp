@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "15 Aug 2008"
+.TH lftp 1 "07 Nov 2008"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -821,6 +821,13 @@ default ls argument
 .BR cmd:move-background " (boolean)"
 when false, lftp refuses to go to background when exiting. To force it, use `exit bg'.
 .TP
+.BR cmd:move-background-detach " (boolean)"
+when true (default), lftp detaches itself from the control terminal when
+moving to background, it is not possible to attach back; when false, lftp
+tricks the shell to move lftp to background process group and continues to
+run, then fg shell command brings lftp back to foreground unless it has
+done all jobs and terminated.
+.TP
 .BR cmd:prompt \ (string)
 The prompt. lftp recognizes the following backslash-escaped special
 characters that are decoded as follows:
@@ -883,17 +890,20 @@ end a sequence of non-printing characters
 .RE
 
 .TP
-.BR cmd:parallel \ (boolean)
+.BR cmd:parallel \ (number)
 Number of jobs run in parallel in non-interactive mode. For example,
 this may be useful for scripts with multiple `get' commands. Note that setting
 this to a value greater than 1 changes conditional execution behaviour, basically
 makes it inconsistent.
 .TP
-.BR cmd:queue-parallel \ (boolean)
+.BR cmd:queue-parallel \ (number)
 Number of jobs run in parallel in a queue.
 .TP
 .BR cmd:time-style \ (string)
 This setting is the default value for cls \-\-time\-style option.
+.TP
+.BR cmd:trace \ (boolean)
+when true, lftp prints the commands it executes (like sh \-x).
 .TP
 .BR cache:cache-empty-listings \ (boolean)
 When false, empty listings are not cached.
@@ -1529,6 +1539,10 @@ files and generate an error instead. Default is on.
 .BR xfer:destination-directory " (path or URL to directory)"
 This setting is used as default \-O option for get and mget commands.
 Default is empty, which means current directory (no \-O option).
+.TP
+.BR xfer:full-disk-fatal \ (boolean)
+when true, lftp aborts a thansfer if it cannot write target file because
+of full disk or quota; when false, lftp waits for disk space to be freed.
 .TP
 .BR xfer:eta-period \ (seconds)
 the period over which weighted average rate is calculated to produce ETA.

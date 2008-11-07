@@ -1,3 +1,8 @@
+2008-11-07	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document xfer:disk-full-fatal, cmd:trace,
+	  cmd:move-background-detach; fix minor typo for cmd:queue-parallel.
+
 2008-08-15	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document number suffixes and prefixes.
