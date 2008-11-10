@@ -1,3 +1,7 @@
+2008-11-10  Justin Piszcz <jpiszcz@lucidpixels.com>
+
+	* commands.cc: add include sys/wait.h
+
 2008-11-07  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CopyJob.cc, FileSetOutput.cc, Job.cc, Job.h, MirrorJob.cc,

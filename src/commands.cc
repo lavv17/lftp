@@ -31,6 +31,7 @@
 #include <pwd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <fcntl.h>
 #include <assert.h>
 #ifdef HAVE_DLFCN_H
