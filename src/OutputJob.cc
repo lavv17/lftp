@@ -329,7 +329,10 @@ void OutputJob::PreFilter(const char *newfilter)
    if(!filter)
       filter.set(newfilter);
    else
-      filter.vset(newfilter," | ",filter.get(),NULL);
+   {
+      char *old_filter=alloca_strdup(filter);
+      filter.vset(newfilter," | ",old_filter,NULL);
+   }
 }
 
 /* Return the width of the output.  If there's a filter, we can either

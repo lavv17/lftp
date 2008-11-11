@@ -1,3 +1,7 @@
+2008-11-11  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* OutputJob.cc: fixed a memory corruption bug (occured in zmore).
+
 2008-11-10  Justin Piszcz <jpiszcz@lucidpixels.com>
 
 	* commands.cc: add include sys/wait.h
