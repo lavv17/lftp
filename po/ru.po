@@ -754,9 +754,8 @@ msgid "invalid floating point number"
 msgstr "неверное число с плавающей точкой"
 
 #: src/ResMgr.cc:478
-#, fuzzy
 msgid "invalid unsigned number"
-msgstr "неверное число"
+msgstr "неверное неотрицательное число"
 
 #: src/ResMgr.cc:707
 msgid "Invalid time unit letter, only [smhd] are allowed."
@@ -1727,6 +1726,9 @@ msgid ""
 "List assigned slots.\n"
 "If <label> is specified, switch to the slot named <label>.\n"
 msgstr ""
+"Использование: slot [<имя>]\n"
+"Вывести список слотов.\n"
+"Если указано имя, то переключиться в слот с таким именем.\n"
 
 #: src/commands.cc:457
 msgid "source <file>"
@@ -2386,7 +2388,7 @@ msgstr "%s ok, %d каталог$|а|ов$ создано\n"
 #: src/module.cc:184
 #, c-format
 msgid "depend module `%s': %s\n"
-msgstr ""
+msgstr "модуль зависимости `%s': %s\n"
 
 #: src/module.cc:204
 msgid "modules are not supported on this system"
@@ -2407,7 +2409,7 @@ msgstr "разбор: пропущено имя файла для перенап
 
 #: src/pgetJob.cc:122
 msgid "pget: falling back to plain get"
-msgstr ""
+msgstr "pget: используется обычный get"
 
 #: src/pgetJob.cc:126
 msgid "the target file is remote"
