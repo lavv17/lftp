@@ -5,7 +5,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -2573,12 +2573,21 @@ CMD(ver)
       _("LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"),VERSION,2008);
    printf("\n");
    printf(
-      _("LFTP is free software, covered by the GNU General Public License, and you are\n"
-      "welcome to change it and/or distribute copies of it under certain conditions.\n"
-      "There is absolutely no warranty for LFTP.  See COPYING for details.\n"));
+      _("LFTP is free software: you can redistribute it and/or modify\n"
+      "it under the terms of the GNU General Public License as published by\n"
+      "the Free Software Foundation, either version 3 of the License, or\n"
+      "(at your option) any later version.\n"
+      "\n"
+      "This program is distributed in the hope that it will be useful,\n"
+      "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+      "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+      "GNU General Public License for more details.\n"
+      "\n"
+      "You should have received a copy of the GNU General Public License\n"
+      "along with LFTP.  If not, see <http://www.gnu.org/licenses/>.\n"));
    printf("\n");
    printf(
-      _("Send bug reports and questions to <%s>.\n"),"lftp@uniyar.ac.ru");
+      _("Send bug reports and questions to the mailing list <%s>.\n"),"lftp@uniyar.ac.ru");
 
 #if defined(HAVE_DLOPEN) && defined(RTLD_DEFAULT)
    /* Show some of loaded libraries. Modules can load those libraries on

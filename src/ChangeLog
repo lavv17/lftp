@@ -1,3 +1,7 @@
+2008-11-27  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, resource.cc: add another proxy-auth-type: proxy-user@host.
+
 2008-11-11  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* OutputJob.cc: fixed a memory corruption bug (occured in zmore).
