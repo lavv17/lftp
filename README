@@ -1,4 +1,4 @@
-** lftp-3.4.x
+** lftp-3.7.x
 
 This package `lftp' contains the following components:
 
@@ -110,7 +110,7 @@ works incorrectly in case of several FTP commands in one network packet.
 
 Systems
 ~~~~~~~
-The package is known to compile on Solaris2.5(gcc), Linux, FreeBSD, NetBSD,
+The package is known to compile on Solaris(gcc), Linux, FreeBSD, NetBSD,
 SCO v5.0(gcc), IRIX(gcc), Tru64(gcc) and other systems. If you can't
 compile it on your system, let me know. It is possible that lftp version
 2.0 can be compiled with non-gcc compilers since it does not have gcc-isms,
@@ -148,11 +148,11 @@ Comments and bug reports are welcome. Please send them to the list:
 
 License
 ~~~~~~~
-Copyright (c) 1996-2006 by Alexander V. Lukyanov (lav@yars.free.net)
+Copyright (c) 1996-2008 by Alexander V. Lukyanov (lav@yars.free.net)
 
-This program is free software; you can redistribute it and/or modify
+LFTP is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
+the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -161,5 +161,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+along with LFTP.  If not, see <http://www.gnu.org/licenses/>.
