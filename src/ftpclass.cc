@@ -5,7 +5,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -1382,6 +1382,14 @@ int   Ftp::Do()
 		  portname?":":"",portname?portname.get():"",
 		  " ",proxy_user.get(),NULL);
 	    // proxy_pass is sent later with ACCT command
+	 }
+	 else if(!strcmp(proxy_auth_type,"proxy-user@host") && proxy_user && proxy_pass)
+	 {
+	    expect->Push(Expect::USER_PROXY);
+	    conn->SendCmd2("USER",xstring::cat(proxy_user.get(),"@",hostname.get(),
+		  portname?":":"",portname?portname.get():"",NULL));
+	    expect->Push(Expect::PASS_PROXY);
+	    conn->SendCmd2("PASS",proxy_pass);
 	 }
 	 else // no proxy auth, or type is `open' or `user'.
 	 {
