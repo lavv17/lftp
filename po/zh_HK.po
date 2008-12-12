@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.5.11\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2008-11-17 14:41+0300\n"
+"POT-Creation-Date: 2008-12-12 20:17+0300\n"
 "PO-Revision-Date: 2007-05-13 20:18+0800\n"
 "Last-Translator: Abel Cheung <abelcheung@gmail.com>\n"
 "Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
@@ -254,8 +254,8 @@ msgstr "存取失敗：%s"
 msgid "File cannot be accessed"
 msgstr "無法存取檔案"
 
-#: src/FileAccess.cc:216 src/Fish.cc:975 src/SFtp.cc:1284 src/ftpclass.cc:4185
-#: src/ftpclass.cc:4194
+#: src/FileAccess.cc:216 src/Fish.cc:975 src/SFtp.cc:1284 src/ftpclass.cc:4197
+#: src/ftpclass.cc:4206
 msgid "Not connected"
 msgstr "並未連線"
 
@@ -394,33 +394,33 @@ msgid "Running connect program"
 msgstr "正在執行進行連線的程式"
 
 #: src/Fish.cc:580 src/Http.cc:1117 src/SFtp.cc:712 src/SFtp.cc:1031
-#: src/ftpclass.cc:2636 src/ftpclass.cc:2846
+#: src/ftpclass.cc:2644 src/ftpclass.cc:2854
 msgid "Peer closed connection"
 msgstr "對方關閉了連線"
 
-#: src/Fish.cc:624 src/SFtp.cc:1056 src/ftpclass.cc:3839
+#: src/Fish.cc:624 src/SFtp.cc:1056 src/ftpclass.cc:3851
 msgid "extra server response"
 msgstr "額外的伺服器回應"
 
 #: src/Fish.cc:980 src/Http.cc:1824 src/Http.cc:1831 src/SFtp.cc:1290
-#: src/ftpclass.cc:4197
+#: src/ftpclass.cc:4209
 msgid "Connecting..."
 msgstr "嘗試連線……"
 
-#: src/Fish.cc:982 src/SFtp.cc:1292 src/ftpclass.cc:4203
+#: src/Fish.cc:982 src/SFtp.cc:1292 src/ftpclass.cc:4215
 msgid "Connected"
 msgstr "成功連線"
 
-#: src/Fish.cc:984 src/Http.cc:1833 src/SFtp.cc:1294 src/ftpclass.cc:4180
-#: src/ftpclass.cc:4208 src/ftpclass.cc:4222
+#: src/Fish.cc:984 src/Http.cc:1833 src/SFtp.cc:1294 src/ftpclass.cc:4192
+#: src/ftpclass.cc:4220 src/ftpclass.cc:4234
 msgid "Waiting for response..."
 msgstr "正在等待回應……"
 
-#: src/Fish.cc:986 src/Http.cc:1836 src/SFtp.cc:1296 src/ftpclass.cc:4242
+#: src/Fish.cc:986 src/Http.cc:1836 src/SFtp.cc:1296 src/ftpclass.cc:4254
 msgid "Receiving data"
 msgstr "下載中"
 
-#: src/Fish.cc:988 src/Http.cc:1829 src/SFtp.cc:1298 src/ftpclass.cc:4240
+#: src/Fish.cc:988 src/Http.cc:1829 src/SFtp.cc:1298 src/ftpclass.cc:4252
 msgid "Sending data"
 msgstr "上傳中"
 
@@ -502,11 +502,11 @@ msgid "Received last chunk"
 msgstr "已收到最後的片段"
 
 #: src/Http.cc:1818 src/Resolver.cc:166 src/Resolver.cc:208
-#: src/ftpclass.cc:4190
+#: src/ftpclass.cc:4202
 msgid "Resolving host address..."
 msgstr "正在解析主機地址……"
 
-#: src/Http.cc:1826 src/ftpclass.cc:4183
+#: src/Http.cc:1826 src/ftpclass.cc:4195
 msgid "Connection idle"
 msgstr "連線閒置"
 
@@ -529,7 +529,7 @@ msgstr "正在擷取目錄內容 (%lld) %s[%s]"
 msgid "Getting files information"
 msgstr "正在擷取檔案資訊 (%d%%) [%s]"
 
-#: src/LocalAccess.cc:651 src/commands.cc:3055
+#: src/LocalAccess.cc:651 src/commands.cc:3064
 msgid "cannot get current directory"
 msgstr "無法決定目前的目錄"
 
@@ -651,8 +651,8 @@ msgstr "%s：正規表示式 ‘%s’：%s\n"
 #: src/commands.cc:1109 src/commands.cc:1196 src/commands.cc:1631
 #: src/commands.cc:1662 src/commands.cc:1765 src/commands.cc:2046
 #: src/commands.cc:2242 src/commands.cc:2405 src/commands.cc:2412
-#: src/commands.cc:2680 src/commands.cc:2707 src/commands.cc:2714
-#: src/commands.cc:3038 src/lftp.cc:257
+#: src/commands.cc:2689 src/commands.cc:2716 src/commands.cc:2723
+#: src/commands.cc:3047 src/lftp.cc:257
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "請輸入 ‘help %s’ 顯示額外資訊。\n"
@@ -766,7 +766,7 @@ msgstr "時間單位無效，只允許使用 [smhd] 其中一個。"
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "時間格式無效。格式是 <time><unit>，例如：2h30m。"
 
-#: src/ResMgr.cc:759 src/commands.cc:3194 src/commands.cc:3203
+#: src/ResMgr.cc:759 src/commands.cc:3203 src/commands.cc:3212
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "範圍格式無效。格式是 min-max，例如 10-20。"
 
@@ -1860,7 +1860,7 @@ msgid ""
 "Use `fg' shell command to return to lftp if it is still running.\n"
 msgstr ""
 
-#: src/commands.cc:877 src/commands.cc:3327
+#: src/commands.cc:877 src/commands.cc:3336
 #, c-format
 msgid "Try `%s --help' for more information\n"
 msgstr "請輸入 ‘%s --help’ 顯示額外資訊\n"
@@ -1998,7 +1998,7 @@ msgid "Usage: %s <jobno> ... | all\n"
 msgstr "用法：%s <工作編號> …… | all\n"
 
 #: src/commands.cc:2208 src/commands.cc:2331 src/commands.cc:2474
-#: src/commands.cc:2849 src/commands.cc:2925 src/lftp.cc:269
+#: src/commands.cc:2858 src/commands.cc:2934 src/lftp.cc:269
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s：%s - 不是數字\n"
@@ -2028,12 +2028,12 @@ msgstr "%s：某項工作正在等待自己完成 (迴圈)\n"
 msgid "Usage: mv <file1> <file2>\n"
 msgstr "用法：mv <檔案1> <檔案2>\n"
 
-#: src/commands.cc:2404 src/commands.cc:2706
+#: src/commands.cc:2404 src/commands.cc:2715
 #, c-format
 msgid "Invalid command. "
 msgstr "指令無效。 "
 
-#: src/commands.cc:2411 src/commands.cc:2713
+#: src/commands.cc:2411 src/commands.cc:2722
 #, c-format
 msgid "Ambiguous command. "
 msgstr "指令不明確。 "
@@ -2092,91 +2092,95 @@ msgstr "LFTP | %s 版本 | 版權所有 (c) 1996-%d Alexander V. Lukyanov\n"
 #: src/commands.cc:2576
 #, c-format
 msgid ""
-"LFTP is free software, covered by the GNU General Public License, and you "
-"are\n"
-"welcome to change it and/or distribute copies of it under certain "
-"conditions.\n"
-"There is absolutely no warranty for LFTP.  See COPYING for details.\n"
+"LFTP is free software: you can redistribute it and/or modify\n"
+"it under the terms of the GNU General Public License as published by\n"
+"the Free Software Foundation, either version 3 of the License, or\n"
+"(at your option) any later version.\n"
+"\n"
+"This program is distributed in the hope that it will be useful,\n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+"GNU General Public License for more details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License\n"
+"along with LFTP.  If not, see <http://www.gnu.org/licenses/>.\n"
 msgstr ""
-"LFTP 為自由軟件，依據 GNU 通用公共授權條款 (GPL) 發行。你可以在該條款的規定\n"
-"下修改及 / 或散布該程式。\n"
-"LFTP 不負任何擔保責任。請參閱 COPYING 檔案。\n"
 
-#: src/commands.cc:2581
-#, c-format
-msgid "Send bug reports and questions to <%s>.\n"
+#: src/commands.cc:2590
+#, fuzzy, c-format
+msgid "Send bug reports and questions to the mailing list <%s>.\n"
 msgstr "請將錯誤報告及問題寄至 <%s>。\n"
 
-#: src/commands.cc:2587
+#: src/commands.cc:2596
 msgid "Libraries used: "
 msgstr "本程式使用的函式庫："
 
-#: src/commands.cc:2729 src/commands.cc:2761
+#: src/commands.cc:2738 src/commands.cc:2770
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s：需要書籤名稱\n"
 
-#: src/commands.cc:2750
+#: src/commands.cc:2759
 #, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
 msgstr "%s：書籤名稱不可有空格\n"
 
-#: src/commands.cc:2763
+#: src/commands.cc:2772
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s：沒有‘%s’這個書籤\n"
 
-#: src/commands.cc:2779
+#: src/commands.cc:2788
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s：需要指定匯入的方式 (netscape,ncftp)\n"
 
-#: src/commands.cc:2855
+#: src/commands.cc:2864
 #, c-format
 msgid "Usage: %s [-d #] dir\n"
 msgstr "用法：%s [-d 數字] 目錄\n"
 
-#: src/commands.cc:2957
+#: src/commands.cc:2966
 #, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "%s：區段大小‘%s’無效\n"
 
-#: src/commands.cc:2967
+#: src/commands.cc:2976
 #, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "用法：%s [選項] <目錄>\n"
 
-#: src/commands.cc:2973
+#: src/commands.cc:2982
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr "%s：警告：summarizing 和 --max-depth=0 是一樣的\n"
 
-#: src/commands.cc:2977
+#: src/commands.cc:2986
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr "%s：summarizing 和 --max-depth=%i 選項互相矛盾\n"
 
-#: src/commands.cc:3025
+#: src/commands.cc:3034
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "用法：%s 指令 參數……\n"
 
-#: src/commands.cc:3037
+#: src/commands.cc:3046
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "用法：%s 模組 [參數……]\n"
 
-#: src/commands.cc:3115
+#: src/commands.cc:3124
 #, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "用法：%s [選項] 模式 檔案……\n"
 
-#: src/commands.cc:3135
+#: src/commands.cc:3144
 #, c-format
 msgid "invalid mode string: %s\n"
 msgstr "無效的檔案模式字串：%s\n"
 
-#: src/commands.cc:3209
+#: src/commands.cc:3218
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "用法：%s [選項] 檔案\n"
@@ -2233,119 +2237,119 @@ msgstr "ftp:use-site-chmod 設定關閉了 SITE CHMOD 功能"
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "ftp:use-mlsd 設定關閉了 MLSD 功能"
 
-#: src/ftpclass.cc:1515
+#: src/ftpclass.cc:1523
 msgid "SITE CHMOD is not supported by this site"
 msgstr "該站台不支援 SITE CHMOD"
 
-#: src/ftpclass.cc:1520
+#: src/ftpclass.cc:1528
 msgid "MLST and MLSD are not supported by this site"
 msgstr "該站台不支援 MLST 和 MLSD"
 
-#: src/ftpclass.cc:1939 src/ftpclass.cc:1989
+#: src/ftpclass.cc:1947 src/ftpclass.cc:1997
 msgid "unsupported network protocol"
 msgstr "不支援這種網絡協定"
 
-#: src/ftpclass.cc:2070
+#: src/ftpclass.cc:2078
 #, fuzzy, c-format
 msgid "Accepted data connection from (%s) port %u"
 msgstr "連接資料 socket 到 (%s)，埠號為 %u"
 
-#: src/ftpclass.cc:2112
+#: src/ftpclass.cc:2120
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "連接資料 socket 到 (%s)，埠號為 %u"
 
-#: src/ftpclass.cc:2118
+#: src/ftpclass.cc:2126
 #, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "連接資料 socket 到 %s (%s)，埠號為 %u"
 
-#: src/ftpclass.cc:2138 src/ftpclass.cc:4005
+#: src/ftpclass.cc:2146 src/ftpclass.cc:4017
 msgid "Switching passive mode off"
 msgstr "關閉 passive 模式"
 
-#: src/ftpclass.cc:2146
+#: src/ftpclass.cc:2154
 msgid "Data connection established"
 msgstr "成功建立數據連線"
 
-#: src/ftpclass.cc:2450 src/ftpclass.cc:4135
+#: src/ftpclass.cc:2458 src/ftpclass.cc:4147
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr "已設定 ftp:ssl-force 但伺服器不支援/不使用 SSL"
 
-#: src/ftpclass.cc:2792
+#: src/ftpclass.cc:2800
 msgid "Persist and retry"
 msgstr "繼續重試"
 
-#: src/ftpclass.cc:3059
+#: src/ftpclass.cc:3067
 msgid "Closing data socket"
 msgstr "正在關閉資料 socket"
 
-#: src/ftpclass.cc:3081
+#: src/ftpclass.cc:3089
 msgid "Closing aborted data socket"
 msgstr "關閉被中止的數據連線"
 
-#: src/ftpclass.cc:3823
+#: src/ftpclass.cc:3835
 msgid "saw file size in response"
 msgstr "回應中包括檔案的大小"
 
-#: src/ftpclass.cc:3853 src/ftpclass.cc:3880
+#: src/ftpclass.cc:3865 src/ftpclass.cc:3892
 msgid "Turning on sync-mode"
 msgstr "開啟 sync-mode"
 
-#: src/ftpclass.cc:4025
+#: src/ftpclass.cc:4037
 msgid "Switching passive mode on"
 msgstr "開啟 passive 模式"
 
-#: src/ftpclass.cc:4171
+#: src/ftpclass.cc:4183
 msgid "FEAT negotiation..."
 msgstr "支援功能 (FEAT) 協商……"
 
-#: src/ftpclass.cc:4178
+#: src/ftpclass.cc:4190
 msgid "Sending commands..."
 msgstr "正在送出指令……"
 
-#: src/ftpclass.cc:4182
+#: src/ftpclass.cc:4194
 msgid "Delaying before retry"
 msgstr "重新嘗試之前稍為延遲"
 
-#: src/ftpclass.cc:4201
+#: src/ftpclass.cc:4213
 msgid "TLS negotiation..."
 msgstr "使用 TLS 協定通訊……"
 
-#: src/ftpclass.cc:4205
+#: src/ftpclass.cc:4217
 msgid "Logging in..."
 msgstr "正在登入……"
 
-#: src/ftpclass.cc:4209
+#: src/ftpclass.cc:4221
 msgid "Making data connection..."
 msgstr "正在建立資料傳送連線……"
 
-#: src/ftpclass.cc:4212
+#: src/ftpclass.cc:4224
 msgid "Changing remote directory..."
 msgstr "更改遠端目錄……"
 
-#: src/ftpclass.cc:4218
+#: src/ftpclass.cc:4230
 msgid "Waiting for other copy peer..."
 msgstr "等待複製程序的遠端回應……"
 
-#: src/ftpclass.cc:4220 src/ftpclass.cc:4244
+#: src/ftpclass.cc:4232 src/ftpclass.cc:4256
 msgid "Waiting for transfer to complete"
 msgstr "等待傳送完成"
 
-#: src/ftpclass.cc:4224
+#: src/ftpclass.cc:4236
 #, fuzzy
 msgid "Waiting for TLS shutdown..."
 msgstr "正在等待回應……"
 
-#: src/ftpclass.cc:4226
+#: src/ftpclass.cc:4238
 msgid "Waiting for data connection..."
 msgstr "等待建立資料傳送連線……"
 
-#: src/ftpclass.cc:4232
+#: src/ftpclass.cc:4244
 msgid "Sending data/TLS"
 msgstr "上傳中/TLS"
 
-#: src/ftpclass.cc:4234
+#: src/ftpclass.cc:4246
 msgid "Receiving data/TLS"
 msgstr "下載中/TLS"
 
@@ -2452,7 +2456,7 @@ msgstr "‘%1$s’，下載了 %3$lld 中的 %2$lld (%4$d%%) %5$s%6$s"
 msgid "=1 =0|>1"
 msgstr "=1"
 
-#: src/resource.cc:53 src/resource.cc:83
+#: src/resource.cc:53 src/resource.cc:84
 msgid "Proxy protocol unsupported"
 msgstr "不支援代理協定"
 
@@ -2460,24 +2464,26 @@ msgstr "不支援代理協定"
 msgid "ftp:proxy password: "
 msgstr "ftp:proxy 密碼："
 
-#: src/resource.cc:67
-msgid "ftp:proxy-auth-type must be one of: user, joined, joined-acct, open"
+#: src/resource.cc:68
+msgid ""
+"ftp:proxy-auth-type must be one of: user, joined, joined-acct, open, proxy-"
+"user@host"
 msgstr ""
 
-#: src/resource.cc:91
+#: src/resource.cc:92
 msgid "only PUT and POST values allowed"
 msgstr "只允許使用 PUT 或 POST"
 
-#: src/resource.cc:123
+#: src/resource.cc:124
 #, c-format
 msgid "unknown address family `%s'"
 msgstr "不明的地址族羣‘%s’"
 
-#: src/resource.cc:146
+#: src/resource.cc:147
 msgid "ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C"
 msgstr "ftp:ssl-auth 必須為 SSL、TLS、TLS-P、TLS-C 其中一個"
 
-#: src/resource.cc:163
+#: src/resource.cc:164
 msgid "must be one of: C, S, E, P, or empty"
 msgstr "必須是 C, S, E, P 或者空白。"
 
@@ -2500,6 +2506,18 @@ msgstr "%s 成功，刪除了 %d 個目錄\n"
 #, c-format
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s 成功，刪除了 %d 個檔案\n"
+
+#~ msgid ""
+#~ "LFTP is free software, covered by the GNU General Public License, and you "
+#~ "are\n"
+#~ "welcome to change it and/or distribute copies of it under certain "
+#~ "conditions.\n"
+#~ "There is absolutely no warranty for LFTP.  See COPYING for details.\n"
+#~ msgstr ""
+#~ "LFTP 為自由軟件，依據 GNU 通用公共授權條款 (GPL) 發行。你可以在該條款的規"
+#~ "定\n"
+#~ "下修改及 / 或散布該程式。\n"
+#~ "LFTP 不負任何擔保責任。請參閱 COPYING 檔案。\n"
 
 #~ msgid "block size"
 #~ msgstr "區塊大小"

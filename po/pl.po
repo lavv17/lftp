@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.7.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2008-11-17 14:41+0300\n"
+"POT-Creation-Date: 2008-12-12 20:17+0300\n"
 "PO-Revision-Date: 2008-05-06 21:20+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -258,8 +258,8 @@ msgstr "Brak dostêpu: "
 msgid "File cannot be accessed"
 msgstr "Brak dostêpu do pliku"
 
-#: src/FileAccess.cc:216 src/Fish.cc:975 src/SFtp.cc:1284 src/ftpclass.cc:4185
-#: src/ftpclass.cc:4194
+#: src/FileAccess.cc:216 src/Fish.cc:975 src/SFtp.cc:1284 src/ftpclass.cc:4197
+#: src/ftpclass.cc:4206
 msgid "Not connected"
 msgstr "Nie po³±czony"
 
@@ -395,33 +395,33 @@ msgid "Running connect program"
 msgstr "Uruchamianie programu ³±cz±cego"
 
 #: src/Fish.cc:580 src/Http.cc:1117 src/SFtp.cc:712 src/SFtp.cc:1031
-#: src/ftpclass.cc:2636 src/ftpclass.cc:2846
+#: src/ftpclass.cc:2644 src/ftpclass.cc:2854
 msgid "Peer closed connection"
 msgstr "Komputer po drugiej stronie zamkn±³ po³±czenie"
 
-#: src/Fish.cc:624 src/SFtp.cc:1056 src/ftpclass.cc:3839
+#: src/Fish.cc:624 src/SFtp.cc:1056 src/ftpclass.cc:3851
 msgid "extra server response"
 msgstr "dodatkowa odpowied¼ serwera"
 
 #: src/Fish.cc:980 src/Http.cc:1824 src/Http.cc:1831 src/SFtp.cc:1290
-#: src/ftpclass.cc:4197
+#: src/ftpclass.cc:4209
 msgid "Connecting..."
 msgstr "£±czenie siê..."
 
-#: src/Fish.cc:982 src/SFtp.cc:1292 src/ftpclass.cc:4203
+#: src/Fish.cc:982 src/SFtp.cc:1292 src/ftpclass.cc:4215
 msgid "Connected"
 msgstr "Po³±czono"
 
-#: src/Fish.cc:984 src/Http.cc:1833 src/SFtp.cc:1294 src/ftpclass.cc:4180
-#: src/ftpclass.cc:4208 src/ftpclass.cc:4222
+#: src/Fish.cc:984 src/Http.cc:1833 src/SFtp.cc:1294 src/ftpclass.cc:4192
+#: src/ftpclass.cc:4220 src/ftpclass.cc:4234
 msgid "Waiting for response..."
 msgstr "Czekanie na odpowied¼..."
 
-#: src/Fish.cc:986 src/Http.cc:1836 src/SFtp.cc:1296 src/ftpclass.cc:4242
+#: src/Fish.cc:986 src/Http.cc:1836 src/SFtp.cc:1296 src/ftpclass.cc:4254
 msgid "Receiving data"
 msgstr "Otrzymujê dane"
 
-#: src/Fish.cc:988 src/Http.cc:1829 src/SFtp.cc:1298 src/ftpclass.cc:4240
+#: src/Fish.cc:988 src/Http.cc:1829 src/SFtp.cc:1298 src/ftpclass.cc:4252
 msgid "Sending data"
 msgstr "Wysy³am dane"
 
@@ -502,11 +502,11 @@ msgid "Received last chunk"
 msgstr "Przes³ano ostatni fragment"
 
 #: src/Http.cc:1818 src/Resolver.cc:166 src/Resolver.cc:208
-#: src/ftpclass.cc:4190
+#: src/ftpclass.cc:4202
 msgid "Resolving host address..."
 msgstr "Uzyskiwanie adresu hosta..."
 
-#: src/Http.cc:1826 src/ftpclass.cc:4183
+#: src/Http.cc:1826 src/ftpclass.cc:4195
 msgid "Connection idle"
 msgstr "Po³±czenie bezczynne"
 
@@ -527,7 +527,7 @@ msgstr "Pobieranie zawarto¶ci katalogu"
 msgid "Getting files information"
 msgstr "Pobieranie informacji o plikach"
 
-#: src/LocalAccess.cc:651 src/commands.cc:3055
+#: src/LocalAccess.cc:651 src/commands.cc:3064
 msgid "cannot get current directory"
 msgstr "nie mo¿na uzyskaæ aktualnego katalogu"
 
@@ -657,8 +657,8 @@ msgstr "%s: wyra¿enie regularne `%s': %s\n"
 #: src/commands.cc:1109 src/commands.cc:1196 src/commands.cc:1631
 #: src/commands.cc:1662 src/commands.cc:1765 src/commands.cc:2046
 #: src/commands.cc:2242 src/commands.cc:2405 src/commands.cc:2412
-#: src/commands.cc:2680 src/commands.cc:2707 src/commands.cc:2714
-#: src/commands.cc:3038 src/lftp.cc:257
+#: src/commands.cc:2689 src/commands.cc:2716 src/commands.cc:2723
+#: src/commands.cc:3047 src/lftp.cc:257
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "W celu uzyskania wiêkszej ilo¶ci informacji spróbuj `help %s'.\n"
@@ -771,7 +771,7 @@ msgstr "Nieprawid³owa litera-jednostka czasu, wy³±cznie [shmd] s± dozwolone."
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "Nieprawid³owy format czasu. Format to <czas><jednostka>, np. 2h30m."
 
-#: src/ResMgr.cc:759 src/commands.cc:3194 src/commands.cc:3203
+#: src/ResMgr.cc:759 src/commands.cc:3203 src/commands.cc:3212
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Nieprawid³owy format zakresu. Format to min-maks, np. 10-20."
 
@@ -1917,7 +1917,7 @@ msgid ""
 "Use `fg' shell command to return to lftp if it is still running.\n"
 msgstr ""
 
-#: src/commands.cc:877 src/commands.cc:3327
+#: src/commands.cc:877 src/commands.cc:3336
 #, c-format
 msgid "Try `%s --help' for more information\n"
 msgstr "Spróbuj `%s --help' by uzyskaæ wiêcej informacji\n"
@@ -2055,7 +2055,7 @@ msgid "Usage: %s <jobno> ... | all\n"
 msgstr "U¿ycie: %s <nr_proc> ... | all\n"
 
 #: src/commands.cc:2208 src/commands.cc:2331 src/commands.cc:2474
-#: src/commands.cc:2849 src/commands.cc:2925 src/lftp.cc:269
+#: src/commands.cc:2858 src/commands.cc:2934 src/lftp.cc:269
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s: %s - nie jest numerem\n"
@@ -2085,12 +2085,12 @@ msgstr "%s: wykryto pêtle zastoju\n"
 msgid "Usage: mv <file1> <file2>\n"
 msgstr "U¿ycie: mv <plik1> <plik2>\n"
 
-#: src/commands.cc:2404 src/commands.cc:2706
+#: src/commands.cc:2404 src/commands.cc:2715
 #, c-format
 msgid "Invalid command. "
 msgstr "Nieprawid³owe polecenie. "
 
-#: src/commands.cc:2411 src/commands.cc:2713
+#: src/commands.cc:2411 src/commands.cc:2722
 #, c-format
 msgid "Ambiguous command. "
 msgstr "Dwuznaczne polecenie. "
@@ -2150,93 +2150,95 @@ msgstr "LFTP | Wersja %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
 #: src/commands.cc:2576
 #, c-format
 msgid ""
-"LFTP is free software, covered by the GNU General Public License, and you "
-"are\n"
-"welcome to change it and/or distribute copies of it under certain "
-"conditions.\n"
-"There is absolutely no warranty for LFTP.  See COPYING for details.\n"
+"LFTP is free software: you can redistribute it and/or modify\n"
+"it under the terms of the GNU General Public License as published by\n"
+"the Free Software Foundation, either version 3 of the License, or\n"
+"(at your option) any later version.\n"
+"\n"
+"This program is distributed in the hope that it will be useful,\n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+"GNU General Public License for more details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License\n"
+"along with LFTP.  If not, see <http://www.gnu.org/licenses/>.\n"
 msgstr ""
-"LFTP to oprogramowanie wolnodostêpne, chronione Powszechn± Licencj± "
-"Publiczn±\n"
-"GNU (General Public License), pozwalaj±c± modyfikowaæ i/lub rozpowszechniaæ\n"
-"kopie pod pewnymi warunkami.\n"
-"Nie ma ¿adnej gwarancji na LFTP. Szczegó³y w pliku COPYING.\n"
 
-#: src/commands.cc:2581
-#, c-format
-msgid "Send bug reports and questions to <%s>.\n"
+#: src/commands.cc:2590
+#, fuzzy, c-format
+msgid "Send bug reports and questions to the mailing list <%s>.\n"
 msgstr "Raporty o b³êdach oraz pytania proszê przesy³aæ do <%s>.\n"
 
-#: src/commands.cc:2587
+#: src/commands.cc:2596
 msgid "Libraries used: "
 msgstr "U¿yte biblioteki: "
 
-#: src/commands.cc:2729 src/commands.cc:2761
+#: src/commands.cc:2738 src/commands.cc:2770
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s: wymagana jest nazwa zak³adki\n"
 
-#: src/commands.cc:2750
+#: src/commands.cc:2759
 #, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
 msgstr "%s: spacje w nazwie pliku zak³adki s± niedozwolone\n"
 
-#: src/commands.cc:2763
+#: src/commands.cc:2772
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s: nie ma takiej zak³adki `%s'\n"
 
-#: src/commands.cc:2779
+#: src/commands.cc:2788
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: wymagany jest typ importowanych danych (netscape,ncftp)\n"
 
-#: src/commands.cc:2855
+#: src/commands.cc:2864
 #, c-format
 msgid "Usage: %s [-d #] dir\n"
 msgstr "U¿ycie: %s [-d $] katalog\n"
 
-#: src/commands.cc:2957
+#: src/commands.cc:2966
 #, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "%s: nieprawid³owy rozmiar bloku `%s'\n"
 
-#: src/commands.cc:2967
+#: src/commands.cc:2976
 #, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "U¿ycie: %s [opcje] <katalogi>\n"
 
-#: src/commands.cc:2973
+#: src/commands.cc:2982
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr "%s: uwaga: podsumowanie jest takie samo jak przy --max-depth=0\n"
 
-#: src/commands.cc:2977
+#: src/commands.cc:2986
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr "%s: podsumowanie konfliktów z --max-depth=%i\n"
 
-#: src/commands.cc:3025
+#: src/commands.cc:3034
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "U¿ycie: %s module argumenty...\n"
 
-#: src/commands.cc:3037
+#: src/commands.cc:3046
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "U¿ycie: %s module [argumenty...]\n"
 
-#: src/commands.cc:3115
+#: src/commands.cc:3124
 #, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "U¿ycie: %s [OPCJE] tryb pliki...\n"
 
-#: src/commands.cc:3135
+#: src/commands.cc:3144
 #, c-format
 msgid "invalid mode string: %s\n"
 msgstr "nieprawid³owy tryb: %s\n"
 
-#: src/commands.cc:3209
+#: src/commands.cc:3218
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "U¿ycie: %s [OPCJE] plik\n"
@@ -2293,120 +2295,120 @@ msgstr "SITE CHMOD jest zablokowane przez ftp:use-site-chmod"
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "MLSD jest zablokowane przez ftp:use-mlsd"
 
-#: src/ftpclass.cc:1515
+#: src/ftpclass.cc:1523
 msgid "SITE CHMOD is not supported by this site"
 msgstr "SITE CHMOD nie jest obs³ugiwane przez ten serwer"
 
-#: src/ftpclass.cc:1520
+#: src/ftpclass.cc:1528
 msgid "MLST and MLSD are not supported by this site"
 msgstr "MLST i MLSD nie s± obs³ugiwane przez ten serwer"
 
-#: src/ftpclass.cc:1939 src/ftpclass.cc:1989
+#: src/ftpclass.cc:1947 src/ftpclass.cc:1997
 msgid "unsupported network protocol"
 msgstr "protokó³ nie jest obs³ugiwany"
 
-#: src/ftpclass.cc:2070
+#: src/ftpclass.cc:2078
 #, c-format
 msgid "Accepted data connection from (%s) port %u"
 msgstr "Przyjmowanie po³±czenia danych z (%s) portu %u"
 
-#: src/ftpclass.cc:2112
+#: src/ftpclass.cc:2120
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "£±czenie siê (gniazdo danych) z (%s) port %u"
 
-#: src/ftpclass.cc:2118
+#: src/ftpclass.cc:2126
 #, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "£±czenie siê (gniazdo danych) z proxy %s (%s) port %u"
 
-#: src/ftpclass.cc:2138 src/ftpclass.cc:4005
+#: src/ftpclass.cc:2146 src/ftpclass.cc:4017
 msgid "Switching passive mode off"
 msgstr "Wy³±czam tryb pasywny"
 
-#: src/ftpclass.cc:2146
+#: src/ftpclass.cc:2154
 msgid "Data connection established"
 msgstr "Ustanowiono po³±czenie dla danych"
 
-#: src/ftpclass.cc:2450 src/ftpclass.cc:4135
+#: src/ftpclass.cc:2458 src/ftpclass.cc:4147
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force jest ustawione i serwer nie wspiera lub nie zezwala\n"
 "na po³±czenia SSL"
 
-#: src/ftpclass.cc:2792
+#: src/ftpclass.cc:2800
 msgid "Persist and retry"
 msgstr "Ponowne wznawianie"
 
-#: src/ftpclass.cc:3059
+#: src/ftpclass.cc:3067
 msgid "Closing data socket"
 msgstr "Zamykanie gniazda danych"
 
-#: src/ftpclass.cc:3081
+#: src/ftpclass.cc:3089
 msgid "Closing aborted data socket"
 msgstr "Zamykanie gniazda danych po przerwaniu"
 
-#: src/ftpclass.cc:3823
+#: src/ftpclass.cc:3835
 msgid "saw file size in response"
 msgstr "w odpowiedzi pojawi³ siê rozmiar pliku"
 
-#: src/ftpclass.cc:3853 src/ftpclass.cc:3880
+#: src/ftpclass.cc:3865 src/ftpclass.cc:3892
 msgid "Turning on sync-mode"
 msgstr "W³±czanie trybu sync"
 
-#: src/ftpclass.cc:4025
+#: src/ftpclass.cc:4037
 msgid "Switching passive mode on"
 msgstr "W³±czam tryb pasywny"
 
-#: src/ftpclass.cc:4171
+#: src/ftpclass.cc:4183
 msgid "FEAT negotiation..."
 msgstr "Negocjacja FEAT..."
 
-#: src/ftpclass.cc:4178
+#: src/ftpclass.cc:4190
 msgid "Sending commands..."
 msgstr "Wysy³anie komend..."
 
-#: src/ftpclass.cc:4182
+#: src/ftpclass.cc:4194
 msgid "Delaying before retry"
 msgstr "Opó¼nienie przed ponownym po³±czeniem"
 
-#: src/ftpclass.cc:4201
+#: src/ftpclass.cc:4213
 msgid "TLS negotiation..."
 msgstr "Negocjacja TLS..."
 
-#: src/ftpclass.cc:4205
+#: src/ftpclass.cc:4217
 msgid "Logging in..."
 msgstr "Logowanie siê..."
 
-#: src/ftpclass.cc:4209
+#: src/ftpclass.cc:4221
 msgid "Making data connection..."
 msgstr "Ustanawianie po³±czenia dla danych..."
 
-#: src/ftpclass.cc:4212
+#: src/ftpclass.cc:4224
 msgid "Changing remote directory..."
 msgstr "Zmiana zdalnego katalogu..."
 
-#: src/ftpclass.cc:4218
+#: src/ftpclass.cc:4230
 msgid "Waiting for other copy peer..."
 msgstr "Oczekiwanie na inne kopiowanie..."
 
-#: src/ftpclass.cc:4220 src/ftpclass.cc:4244
+#: src/ftpclass.cc:4232 src/ftpclass.cc:4256
 msgid "Waiting for transfer to complete"
 msgstr "Oczekiwanie na zakoñczenie transferu"
 
-#: src/ftpclass.cc:4224
+#: src/ftpclass.cc:4236
 msgid "Waiting for TLS shutdown..."
 msgstr "Oczekiwanie na zakoÃ±czenie TLS..."
 
-#: src/ftpclass.cc:4226
+#: src/ftpclass.cc:4238
 msgid "Waiting for data connection..."
 msgstr "Oczekiwanie na poÂ³Â±czenie dla danych..."
 
-#: src/ftpclass.cc:4232
+#: src/ftpclass.cc:4244
 msgid "Sending data/TLS"
 msgstr "Wysy³am dane/TLS"
 
-#: src/ftpclass.cc:4234
+#: src/ftpclass.cc:4246
 msgid "Receiving data/TLS"
 msgstr "Otrzymujê dane/TLS"
 
@@ -2513,7 +2515,7 @@ msgstr "`%s', mam %lld z %lld (%d%%) %s%s"
 msgid "=1 =0|>1"
 msgstr "=1 >1<5|>20%10>1<5"
 
-#: src/resource.cc:53 src/resource.cc:83
+#: src/resource.cc:53 src/resource.cc:84
 msgid "Proxy protocol unsupported"
 msgstr "Brak wsparcia dla protoko³u proxy"
 
@@ -2521,24 +2523,27 @@ msgstr "Brak wsparcia dla protoko³u proxy"
 msgid "ftp:proxy password: "
 msgstr "ftp:proxy has³o: "
 
-#: src/resource.cc:67
-msgid "ftp:proxy-auth-type must be one of: user, joined, joined-acct, open"
+#: src/resource.cc:68
+#, fuzzy
+msgid ""
+"ftp:proxy-auth-type must be one of: user, joined, joined-acct, open, proxy-"
+"user@host"
 msgstr "ftp:proxy-auth-type musi byæ jednym z: user, joined, joined-acct, open"
 
-#: src/resource.cc:91
+#: src/resource.cc:92
 msgid "only PUT and POST values allowed"
 msgstr "tylko warto¶ci PUT i POST s± dozwolone"
 
-#: src/resource.cc:123
+#: src/resource.cc:124
 #, c-format
 msgid "unknown address family `%s'"
 msgstr "nieznana rodzina adresu `%s'"
 
-#: src/resource.cc:146
+#: src/resource.cc:147
 msgid "ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C"
 msgstr "ftp:ssl-auth musi byæ jednym z: SSL, TLS, TLS-P, TLS-C"
 
-#: src/resource.cc:163
+#: src/resource.cc:164
 msgid "must be one of: C, S, E, P, or empty"
 msgstr "musi byæ jednym z: C, S, E, P lub puste"
 
@@ -2561,6 +2566,20 @@ msgstr "%s ok, %d katalog$|i|ów$ usuniêto\n"
 #, c-format
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d plik$|i|ów$ usuniêto\n"
+
+#~ msgid ""
+#~ "LFTP is free software, covered by the GNU General Public License, and you "
+#~ "are\n"
+#~ "welcome to change it and/or distribute copies of it under certain "
+#~ "conditions.\n"
+#~ "There is absolutely no warranty for LFTP.  See COPYING for details.\n"
+#~ msgstr ""
+#~ "LFTP to oprogramowanie wolnodostêpne, chronione Powszechn± Licencj± "
+#~ "Publiczn±\n"
+#~ "GNU (General Public License), pozwalaj±c± modyfikowaæ i/lub "
+#~ "rozpowszechniaæ\n"
+#~ "kopie pod pewnymi warunkami.\n"
+#~ "Nie ma ¿adnej gwarancji na LFTP. Szczegó³y w pliku COPYING.\n"
 
 #~ msgid "block size"
 #~ msgstr "rozmiar bloku"

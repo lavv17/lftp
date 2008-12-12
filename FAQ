@@ -12,9 +12,10 @@ A: It expects an URL of a directory. To download a file use `lftpget URL'.
 Q: What is the %2F in ftp URL's?
 A: RFC1738 specifies that clients handling ftp URL's should interpret them
    as HOME relative by default. %2F stands for leading slash pointing to
-   root directory.
+   the root directory.
 
-Q: Why do the secure protocols https and ftps give the "PRNG not seeded" error message?
+Q: Why do the secure protocols https and ftps give the "PRNG not seeded" error
+   message?
 A: Your system probably lacks a /dev/random-like device. Create a ~/.rnd file
    containing random characters and SSL will work. See also the OpenSSL FAQ
    about this.

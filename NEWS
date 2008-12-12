@@ -1,3 +1,9 @@
+Version 3.7.7 - 2008-12-12
+
+* new ftp proxy auth type: proxy-user@host.
+* new setting ftp:trust-feat (default no).
+* changed GPL version to 3 (as gnulib modules require it).
+
 Version 3.7.6 - 2008-11-17
 
 * fixed memory corruption in zmore.
@@ -10,6 +16,7 @@ Version 3.7.5 - 2008-11-07
 * shutdown SSL connection before closing the socket on upload.
 * fixed mirror -RP.
 * fixed another problem with `kill all'.
+* fixed sftp directory listing with unknown entries.
 * updated gnulib.
 
 Version 3.7.4 - 2008-08-06
