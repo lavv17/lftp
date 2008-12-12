@@ -214,6 +214,7 @@ static ResType lftp_vars[] = {
 #endif
    {"ftp:stat-interval",	 "1",	  ResMgr::TimeIntervalValidate,0},
    {"ftp:sync-mode",		 "on",    ResMgr::BoolValidate,0},
+   {"ftp:trust-feat",		 "no",	  ResMgr::BoolValidate,0},
    {"ftp:use-abor",		 "yes",   ResMgr::BoolValidate,0},
    {"ftp:use-allo",		 "yes",   ResMgr::BoolValidate,0},
    {"ftp:use-feat",		 "yes",   ResMgr::BoolValidate,0},

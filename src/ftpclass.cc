@@ -3714,16 +3714,20 @@ void Ftp::TuneConnectionAfterFEAT()
 
 void Ftp::CheckFEAT(char *reply)
 {
-   conn->pret_supported=false;
-   conn->mdtm_supported=false;
-   conn->size_supported=false;
-   conn->rest_supported=false;
+   if(QueryBool("trust-feat",hostname)) {
+      // turn off these pre-FEAT extensions only when trusting FEAT reply,
+      // as some servers forget to advertise them.
+      conn->mdtm_supported=false;
+      conn->size_supported=false;
+      conn->rest_supported=false;
+   }
 #if USE_SSL
    conn->auth_supported=false;
    conn->auth_args_supported.set(0);
    conn->cpsv_supported=false;
    conn->sscn_supported=false;
 #endif
+   conn->pret_supported=false;
 
    char *scan=strchr(reply,'\n');
    if(scan)

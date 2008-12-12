@@ -1,3 +1,7 @@
+2008-12-12  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, resource.cc: (ftp:trust-feat) new setting.
+
 2008-11-27  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, resource.cc: add another proxy-auth-type: proxy-user@host.
