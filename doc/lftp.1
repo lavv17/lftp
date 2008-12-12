@@ -5,7 +5,7 @@
 .\"
 .\" This program is free software; you can redistribute it and/or modify
 .\" it under the terms of the GNU General Public License as published by
-.\" the Free Software Foundation; either version 2 of the License , or
+.\" the Free Software Foundation; either version 3 of the License , or
 .\" (at your option) any later version.
 .\"
 .\" This program is distributed in the hope that it will be useful,
@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "07 Nov 2008"
+.TH lftp 1 "12 Dec 2008"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 3.7.5.
+This man page documents lftp version 3.7.7.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -1087,7 +1087,7 @@ When set to ``joined'', lftp sends ``user@proxy_user@ftp.example.org'' as
 user name to proxy, and ``password@proxy_password'' as password.
 .IP
 When set to ``joined-acct'', lftp sends ``user@ftp.example.org
-proxy_user'' as user name to proxy. The site password is sent as
+proxy_user'' (with space) as user name to proxy. The site password is sent as
 usual and the proxy password is expected in the following ACCT command.
 .IP
 When set to ``open'', lftp first sends proxy user and
@@ -1097,6 +1097,9 @@ The site password is then sent as usual.
 When set to ``user'' (default), lftp first sends proxy user and
 proxy password and then ``user@ftp.example.org'' as user name.
 The site password is then sent as usual.
+.IP
+When set to ``proxy-user@host'', lftp first sends ``USER proxy_user@ftp.example.org'',
+then proxy password. The site user and password are then sent as usual.
 .TP
 .BR ftp:rest-list \ (boolean)
 allow usage of REST command before LIST command. This might be useful for
@@ -1174,6 +1177,11 @@ This setting can be GMT offset [+|-]HH[:MM[:SS]] or any valid TZ value
 (e.g. Europe/Moscow or MSK-3MSD,M3.5.0,M10.5.0/3). The default is GMT.
 Set it to an empty value to assume local timezone specified by environment
 variable TZ.
+.TP
+.BR ftp:trust-feat \ (string)
+When true, assume that FEAT returned data are correct and don't use
+common protocol extensions like SIZE, MDTM, REST if they are not listed.
+Default is false.
 .TP
 .BR ftp:use-abor \ (boolean)
 if false, lftp does not send ABOR command but closes data connection
