@@ -45,6 +45,8 @@ int IOBufferSSL::Do()
       {
 	 buffer_ptr+=res;
 	 event_time=now;
+	 if(eof)
+	    PutEOF_LL();
 	 return MOVED;
       }
       break;
@@ -114,7 +116,8 @@ int IOBufferSSL::Put_LL(const char *buf,int size)
 
 int IOBufferSSL::PutEOF_LL()
 {
-   ssl->shutdown();
+   if(Size()==0)
+      ssl->shutdown();
    return 0;
 }
 
