@@ -22,7 +22,7 @@ Keywords:	ftp, client, readline, reliable, background, parallel, http,
 Author:		lav@yars.free.net (Alexander V. Lukyanov)
 Maintained-by:	lav@yars.free.net (Alexander V. Lukyanov)
 Primary-site:	ftp.yars.free.net /pub/source/lftp
-		1629 kB lftp-3.7.8.tar.gz
+		1628 kB lftp-3.7.8.tar.gz
 Alternate-site:	metalab.unc.edu /pub/Linux/system/network/file-transfer
 Platforms:	Unix, G++
 Copying-policy: GNU GPL
