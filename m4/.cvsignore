@@ -134,3 +134,6 @@ mbrlen.m4
 mbsinit.m4
 multiarch.m4
 wcrtomb.m4
+mbrtowc.m4
+stdbool.m4
+strtol.m4
