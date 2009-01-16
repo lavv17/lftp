@@ -118,8 +118,6 @@ LFTP_CXX_ANSI_SCOPE
 
 AC_ISC_POSIX
 
-AM_STDBOOL_H
-
 case "`uname -sr`" in
 # Linux-2.2.x and older don't support fcntl64.
 Linux\ 2.[012].*) enable_largefile=no;;
