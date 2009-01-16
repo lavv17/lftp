@@ -162,3 +162,8 @@ unistd.h
 uniwidth
 errno.in.h
 dirent.in.h
+btowc.c
+mbrlen.c
+mbrtowc.c
+mbsinit.c
+wcrtomb.c

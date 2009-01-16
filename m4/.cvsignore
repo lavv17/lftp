@@ -126,3 +126,11 @@ stdint.m4
 errno_h.m4
 threadlib.m4
 dirent_h.m4
+btowc.m4
+locale-fr.m4
+locale-ja.m4
+locale-zh.m4
+mbrlen.m4
+mbsinit.m4
+multiarch.m4
+wcrtomb.m4
