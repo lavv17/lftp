@@ -350,6 +350,10 @@ fi
 AC_CHECK_MEMBERS([struct sockaddr.sa_len],,,
                  [#include <sys/types.h>
                   #include <sys/socket.h>])
+AC_CHECK_MEMBERS([struct sockaddr_in6.sin6_scope_id],,,
+                 [#include <sys/types.h>
+                  #include <sys/socket.h>
+		  #include <netinet/in.h>])
 AC_STRUCT_TIMEZONE
 AC_STRUCT_TM
 
