@@ -47,7 +47,7 @@ class Resolver : public SMTask
 
    xarray<sockaddr_u> addr;
 
-   void AddAddress(int family,const char *a,int len);
+   void AddAddress(int family,const char *a,int len,unsigned int scope);
 
    xstring err_msg;
    bool done;

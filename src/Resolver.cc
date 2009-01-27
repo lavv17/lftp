@@ -291,7 +291,7 @@ void Resolver::MakeErrMsg(const char *f)
    done=true;
 }
 
-void Resolver::AddAddress(int family,const char *address,int len)
+void Resolver::AddAddress(int family,const char *address,int len, unsigned int scope)
 {
    sockaddr_u add;
    memset(&add,0,sizeof(add));
@@ -315,6 +315,7 @@ void Resolver::AddAddress(int family,const char *address,int len)
          return;
       memcpy(&add.in6.sin6_addr,address,len);
       add.in6.sin6_port=port_number;
+      add.in6.sin6_scope_id=scope;
 #ifdef HAVE_STRUCT_SOCKADDR_SA_LEN
       add.sa.sa_len=sizeof(add.in6);
 #endif
@@ -693,6 +694,7 @@ void Resolver::LookupOne(const char *name)
       struct sockaddr_in6   *inet6_addr;
       const char	    *addr_data;
       int		    addr_len;
+      unsigned int          addr_scope;
 
       memset(&a_hint, 0, sizeof(a_hint));
       a_hint.ai_flags	    = AI_PASSIVE;
@@ -717,17 +719,19 @@ void Resolver::LookupOne(const char *name)
 	       case AF_INET:
 		  inet_addr   = (sockaddr_in *)sockname;
 		  addr_data   = (const char *)&(inet_addr->sin_addr.s_addr);
+		  addr_scope  = 0;
 		  addr_len    = sizeof(inet_addr->sin_addr.s_addr);
 		  break;
 	       case AF_INET6:
 		  inet6_addr  = (sockaddr_in6 *)sockname;
 		  addr_data   = (const char *)&(inet6_addr->sin6_addr.s6_addr);
+		  addr_scope  = inet6_addr->sin6_scope_id;
 		  addr_len    = sizeof(inet6_addr->sin6_addr.s6_addr);
 		  break;
 	       default:
 		  continue;
 	       }
-	       AddAddress(a_res->ai_family, addr_data, addr_len);
+	       AddAddress(a_res->ai_family, addr_data, addr_len, addr_scope);
 	    }
 	 }
 
@@ -773,7 +777,7 @@ void Resolver::LookupOne(const char *name)
       {
 	 const char * const *a;
 	 for(a=ha->h_addr_list; *a; a++)
-	    AddAddress(ha->h_addrtype, *a, ha->h_length);
+	    AddAddress(ha->h_addrtype, *a, ha->h_length, 0);
 	 retries=0;
 	 af_index++;
 # if defined(HAVE_GETIPNODEBYNAME)

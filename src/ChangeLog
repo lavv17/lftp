@@ -1,3 +1,7 @@
+2009-01-27  Arkadiusz Miskiewicz <arekm@maven.pl>
+
+	* Resolver.cc, Resolver.h: add support for IPv6 scope for link-local addresses.
+
 2009-01-27  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h, resource.cc: (ftp:prefer-epsv) new setting;
