@@ -1,3 +1,9 @@
+2009-01-27  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h, resource.cc: (ftp:prefer-epsv) new setting;
+	  fixed message for ignore-pasv-address; use EPSV when ftp:prefer-epsv
+	  is true and it's supported.
+
 2009-01-14  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* buffer_ssl.cc: shutdown ssl connection only when there is no data left.

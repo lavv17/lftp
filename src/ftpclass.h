@@ -115,6 +115,7 @@ class Ftp : public NetAccess
       bool clnt_supported;
       bool host_supported;
       bool mfmt_supported;
+      bool epsv_supported;
 
       off_t last_rest;	// last successful REST position.
       off_t rest_pos;	// the number sent with REST command.

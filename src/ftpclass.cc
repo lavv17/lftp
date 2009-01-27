@@ -690,15 +690,22 @@ Ftp::pasv_state_t Ftp::Handle_PASV()
    a[0]=a0; a[1]=a1; a[2]=a2; a[3]=a3;
    p[0]=p0; p[1]=p1;
 
-   if((a0==0 && a1==0 && a2==0 && a3==0)
-   || QueryBool("ignore-pasv-address",hostname)
-   || (QueryBool("fix-pasv-address",hostname) && !conn->proxy_is_http
-       && (InPrivateNetwork(&conn->data_sa) != InPrivateNetwork(&conn->peer_sa)
-	  || IsLoopback(&conn->data_sa) != IsLoopback(&conn->peer_sa))))
+   bool ignore_pasv_address = QueryBool("ignore-pasv-address",hostname);
+   if(ignore_pasv_address)
+      LogNote(2,"Address returned by PASV is ignored according to ftp:ignore-pasv-address setting");
+   else if((a0==0 && a1==0 && a2==0 && a3==0)
+	   || (QueryBool("fix-pasv-address",hostname) && !conn->proxy_is_http
+	       && (InPrivateNetwork(&conn->data_sa) != InPrivateNetwork(&conn->peer_sa)
+		   || IsLoopback(&conn->data_sa) != IsLoopback(&conn->peer_sa))))
    {
       // broken server, try to fix up
+      ignore_pasv_address=true;
       conn->fixed_pasv=true;
       LogNote(2,"Address returned by PASV seemed to be incorrect and has been fixed");
+   }
+
+   if(ignore_pasv_address)
+   {
       if(conn->data_sa.sa.sa_family==AF_INET)
 	 memcpy(a,&conn->peer_sa.in.sin_addr,sizeof(conn->peer_sa.in.sin_addr));
 #if INET6
@@ -906,6 +913,7 @@ Ftp::Connection::Connection(const char *c)
    clnt_supported=false;
    host_supported=false;
    mfmt_supported=false;
+   epsv_supported=false;
 
    proxy_is_http=false;
    may_show_password=false;
@@ -1920,11 +1928,13 @@ int   Ftp::Do()
 	    conn->SendCmd(xstring::cat("PRET ",command," ",file.get(),NULL));
 	    expect->Push(Expect::PRET);
 	 }
-	 if(conn->peer_sa.sa.sa_family==AF_INET)
-	 {
+	 bool can_do_pasv=(conn->peer_sa.sa.sa_family==AF_INET);
 #if INET6
-	 ipv4_pasv:
+	 can_do_pasv|=(conn->peer_sa.sa.sa_family==AF_INET6
+			&& IN6_IS_ADDR_V4MAPPED(&conn->peer_sa.in6.sin6_addr));
 #endif
+	 if(can_do_pasv && !(conn->epsv_supported && QueryBool("prefer-epsv",hostname)))
+	 {
 #if USE_SSL
 	    if(copy_mode!=COPY_NONE && conn->prot=='P' && !conn->sscn_on && copy_ssl_connect)
 	       conn->SendCmd("CPSV"); // same as PASV, but server does SSL_connect
@@ -1936,17 +1946,9 @@ int   Ftp::Do()
 	 }
 	 else
 	 {
-#if INET6
-	    if(conn->peer_sa.sa.sa_family==AF_INET6
-	    && IN6_IS_ADDR_V4MAPPED(&conn->peer_sa.in6.sin6_addr))
-	       goto ipv4_pasv;
 	    conn->SendCmd("EPSV");
 	    expect->Push(Expect::EPSV);
 	    pasv_state=PASV_NO_ADDRESS_YET;
-#else
-	    Fatal(_("unsupported network protocol"));
-	    return MOVED;
-#endif
 	 }
       }
       else // !PASSIVE
@@ -3728,6 +3730,7 @@ void Ftp::CheckFEAT(char *reply)
    conn->sscn_supported=false;
 #endif
    conn->pret_supported=false;
+   conn->epsv_supported=false;
 
    char *scan=strchr(reply,'\n');
    if(scan)
@@ -3772,6 +3775,8 @@ void Ftp::CheckFEAT(char *reply)
 	 conn->mlst_supported=true;
 	 conn->mlst_attr_supported.set(f+5);
       }
+      else if(!strcasecmp(f,"EPSV"))
+	 conn->epsv_supported=true;
 #if USE_SSL
       else if(!strncasecmp(f,"AUTH ",5))
       {
