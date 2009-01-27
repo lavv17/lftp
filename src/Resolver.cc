@@ -315,10 +315,12 @@ void Resolver::AddAddress(int family,const char *address,int len, unsigned int s
          return;
       memcpy(&add.in6.sin6_addr,address,len);
       add.in6.sin6_port=port_number;
+# ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
       add.in6.sin6_scope_id=scope;
-#ifdef HAVE_STRUCT_SOCKADDR_SA_LEN
+# endif
+# ifdef HAVE_STRUCT_SOCKADDR_SA_LEN
       add.sa.sa_len=sizeof(add.in6);
-#endif
+# endif
       break;
 #endif
 
@@ -713,19 +715,21 @@ void Resolver::LookupOne(const char *name)
 		  continue;
 
 	       sockname	= a_res->ai_addr;
+	       addr_scope = 0;
 
 	       switch(a_res->ai_family)
 	       {
 	       case AF_INET:
 		  inet_addr   = (sockaddr_in *)sockname;
 		  addr_data   = (const char *)&(inet_addr->sin_addr.s_addr);
-		  addr_scope  = 0;
 		  addr_len    = sizeof(inet_addr->sin_addr.s_addr);
 		  break;
 	       case AF_INET6:
 		  inet6_addr  = (sockaddr_in6 *)sockname;
 		  addr_data   = (const char *)&(inet6_addr->sin6_addr.s6_addr);
+#ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
 		  addr_scope  = inet6_addr->sin6_scope_id;
+#endif
 		  addr_len    = sizeof(inet6_addr->sin6_addr.s6_addr);
 		  break;
 	       default:

@@ -1,3 +1,7 @@
+2009-01-27  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Resolver.cc: make it compile on old ipv6 systems.
+
 2009-01-27  Arkadiusz Miskiewicz <arekm@maven.pl>
 
 	* Resolver.cc, Resolver.h: add support for IPv6 scope for link-local addresses.
