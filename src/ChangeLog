@@ -1,3 +1,7 @@
+2009-01-28  Jiri Skala <jskala@redhat.com>
+
+	* ftpclass.cc: fixed a possible null dereference.
+
 2009-01-27  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Resolver.cc: make it compile on old ipv6 systems.

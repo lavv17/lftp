@@ -2268,7 +2268,7 @@ int   Ftp::Do()
 	    DataClose();
 	    state=EOF_STATE;
 	    eof=true;
-	    m=MOVED;
+	    return MOVED;
 	 }
       }
       // handle errors on data connection only when storing or got all replies
