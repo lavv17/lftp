@@ -33,14 +33,20 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 
-#include "lftp_pty.h"
-
+#ifdef HAVE_TERMIOS_H
+# include <termios.h>
+#endif
+#ifdef HAVE_UTIL_H
+# include <util.h>
+#endif
 #ifdef HAVE_PTY_H
 # include <pty.h>
 #endif
 #ifdef HAVE_SYS_STROPTS_H
 # include <sys/stropts.h>
 #endif
+
+#include "lftp_pty.h"
 
 const char *open_pty(int *ptyfd, int *ttyfd)
 {

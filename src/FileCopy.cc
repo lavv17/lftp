@@ -842,7 +842,7 @@ int FileCopyPeerFA::Do()
 	       {
 		  try_time=session->GetTryTime();
 		  retries=session->GetRetries();
-		  Log::global->Format(10,"try_time=%ld, retries=%d\n",try_time,retries);
+		  Log::global->Format(10,"try_time=%ld, retries=%d\n",(long)try_time,retries);
 		  session->Close();
 		  if(can_seek && seek_pos>0)
 		     Seek(FILE_END);
@@ -1139,7 +1139,7 @@ int FileCopyPeerFA::Put_LL(const char *buf,int len)
       {
 	 try_time=session->GetTryTime();
 	 retries=session->GetRetries();
-	 Log::global->Format(10,"try_time=%ld, retries=%d\n",try_time,retries);
+	 Log::global->Format(10,"try_time=%ld, retries=%d\n",(long)try_time,retries);
 	 session->Close();
 	 if(can_seek && seek_pos>0)
 	    Seek(FILE_END);

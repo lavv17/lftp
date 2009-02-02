@@ -1,3 +1,8 @@
+2009-02-02  Kevin Lo <kevlo@kevlo.org>
+
+	* FileCopy.cc: silent some warnings.
+	* lftp_pty.c: add missing headers for openpty(3) on OpenBSD.
+
 2009-01-28  Jiri Skala <jskala@redhat.com>
 
 	* ftpclass.cc: fixed a possible null dereference.
