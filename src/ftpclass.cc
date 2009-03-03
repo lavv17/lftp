@@ -3211,7 +3211,7 @@ void  Ftp::Connection::SendEncoded(const char *buf)
    while(*buf)
    {
       char ch=*buf++;
-      if(ch=='%' && isxdigit(buf[0]) && isxdigit(buf[1]))
+      if(ch=='%' && isxdigit((unsigned char)buf[0]) && isxdigit((unsigned char)buf[1]))
       {
 	 int n=0;
 	 if(sscanf(buf,"%2x",&n)==1)
