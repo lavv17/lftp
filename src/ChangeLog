@@ -3,6 +3,7 @@
 	* FileCopy.cc, FileCopy.h: outline SetRange.
 	* pgetJob.cc: convert off_t to long long before passing to printf.
 	* ftpclass.cc: fix warning; pre-select both PROT modes.
+	* FileInfo.cc: fixed parsing of NT unix-like listings with one digit hour.
 
 2009-02-02  Kevin Lo <kevlo@kevlo.org>
 

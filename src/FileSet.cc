@@ -782,7 +782,7 @@ FileInfo *FileInfo::parse_ls_line(const char *line_c,const char *tz)
    t = NEXT_TOKEN;
    if(!t)
       ERR;
-   if(isdigit(*t))
+   if(isdigit((unsigned char)*t))
    {
       // it's size, so the previous was group:
       fi->SetGroup(group_or_size);
@@ -823,12 +823,9 @@ FileInfo *FileInfo::parse_ls_line(const char *line_c,const char *tz)
    date.tm_hour=date.tm_min=0;
    date.tm_sec=30;
    int prec=30;
-   if(strlen(t)==5)
-   {
-      if(sscanf(t,"%2d:%2d",&date.tm_hour,&date.tm_min)!=2)
-	 ERR;
+
+   if(sscanf(t,"%2d:%2d",&date.tm_hour,&date.tm_min)==2)
       date.tm_year=guess_year(date.tm_mon,date.tm_mday,date.tm_hour,date.tm_min) - 1900;
-   }
    else
    {
       if(day_of_month+strlen(day_of_month)+1 == t)
@@ -837,6 +834,7 @@ FileInfo *FileInfo::parse_ls_line(const char *line_c,const char *tz)
       /* We don't know the hour.  Set it to something other than 0, or
        * DST -1 will end up changing the date. */
       date.tm_hour = 12;
+      date.tm_min=0;
       date.tm_sec=0;
       prec=12*HOUR;
    }
