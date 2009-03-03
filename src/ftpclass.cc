@@ -1488,8 +1488,13 @@ int   Ftp::Do()
       {
 	 conn->SendCmd("PBSZ 0");
 	 expect->Push(Expect::IGNORE);
-	 if(QueryBool("ssl-protect-data") && QueryBool("ssl-protect-list"))
-	    SendPROT('P');
+
+	 // select PROT mode before CCC if there is no need to change it later
+	 bool prot_data=QueryBool("ssl-protect-data");
+	 bool prot_list=QueryBool("ssl-protect-list");
+	 if(prot_data==prot_list)
+	    SendPROT(prot_data?'P':'C');
+
 	 if(QueryBool("ssl-use-ccc"))
 	 {
 	    conn->SendCmd("CCC");
