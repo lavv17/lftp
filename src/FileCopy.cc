@@ -646,6 +646,12 @@ void FileCopy::LogTransfer()
       Speedometer::GetStr(GetBytesCount()/GetTimeSpent()));
 }
 
+void FileCopy::SetRange(off_t s,off_t lim)
+{
+   get->SetRange(s,lim);
+   put->SetRange(s,lim);
+}
+
 
 // FileCopyPeer implementation
 #undef super

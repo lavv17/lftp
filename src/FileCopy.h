@@ -228,7 +228,7 @@ public:
    void Ascii() { get->Ascii(); put->Ascii(); }
    void DontFailIfBroken() { fail_if_broken=false; }
    void FailIfCannotSeek() { fail_if_cannot_seek=true; }
-   void SetRange(off_t s,off_t lim) { get->SetRange(s,lim); put->SetRange(s,lim); }
+   void SetRange(off_t s,off_t lim);
    void SetRangeLimit(off_t lim) { get->range_limit=lim; }
    off_t GetRangeStart() { return get->range_start; }
    off_t GetRangeLimit() { return get->range_limit; }

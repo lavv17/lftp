@@ -365,20 +365,20 @@ void pgetJob::SaveStatus()
       return;
 
    off_t size=GetSize();
-   fprintf(f,"size=%lld\n",size);
+   fprintf(f,"size=%lld\n",(long long)size);
 
    int i=0;
-   fprintf(f,"%d.pos=%lld\n",i,GetPos());
+   fprintf(f,"%d.pos=%lld\n",i,(long long)GetPos());
    if(!chunks)
       goto out_close;
-   fprintf(f,"%d.limit=%lld\n",i,limit0);
+   fprintf(f,"%d.limit=%lld\n",i,(long long)limit0);
    for(int chunk=0; chunk<chunks.count(); chunk++)
    {
       if(chunks[chunk]->Done())
 	 continue;
       i++;
-      fprintf(f,"%d.pos=%lld\n",i,chunks[chunk]->GetPos());
-      fprintf(f,"%d.limit=%lld\n",i,chunks[chunk]->limit);
+      fprintf(f,"%d.pos=%lld\n",i,(long long)chunks[chunk]->GetPos());
+      fprintf(f,"%d.limit=%lld\n",i,(long long)chunks[chunk]->limit);
    }
 out_close:
    fclose(f);
