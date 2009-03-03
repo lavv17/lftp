@@ -1517,18 +1517,18 @@ Block size for writing. Default is 0x8000.
 .BR ssl:ca-file " (path to file)"
 use specified file as Certificate Authority certificate.
 .TP
+.BR ssl:ca-path " (path to directory)"
+use specified directory as Certificate Authority certificate repository (OpenSSL only).
+.TP
 .BR ssl:check-hostname " (boolean)"
 when true, lftp checks if the host name used to connect to the server
 corresponds to the host name in its certificate.
-.TP
-.BR ssl:ca-path " (path to directory)"
-use specified directory as Certificate Authority certificate repository.
 .TP
 .BR ssl:crl-file " (path to file)"
 use specified file as Certificate Revocation List certificate.
 .TP
 .BR ssl:crl-path " (path to directory)"
-use specified directory as Certificate Revocation List certificate repository.
+use specified directory as Certificate Revocation List certificate repository (OpenSSL only).
 .TP
 .BR ssl:key-file " (path to file)"
 use specified file as your private key.
