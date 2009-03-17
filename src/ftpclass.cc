@@ -251,19 +251,21 @@ void Ftp::NoFileCheck(int act)
       SetError(FATAL,all_lines);
       return;
    }
+   if(real_pos>0 && !GetFlag(IO_FLAG) && copy_mode==COPY_NONE
+   && ((is4XX(act) && strstr(line,"Append/Restart not permitted"))
+    || (is5XX(act) && !Transient5XX(act))))
+   {
+      DataClose();
+      LogNote(2,_("Switching to NOREST mode"));
+      flags|=NOREST_MODE;
+      real_pos=0;
+      if(mode==STORE)
+	 pos=0;
+      state=EOF_STATE; // retry
+      return;
+   }
    if(is5XX(act) && !Transient5XX(act))
    {
-      if(real_pos>0 && !GetFlag(IO_FLAG) && copy_mode==COPY_NONE)
-      {
-	 DataClose();
-	 LogNote(2,_("Switching to NOREST mode"));
-	 flags|=NOREST_MODE;
-	 real_pos=0;
-	 if(mode==STORE)
-	    pos=0;
-	 state=EOF_STATE; // retry
-	 return;
-      }
       SetError(NO_FILE,all_lines);
       return;
    }
@@ -4019,7 +4021,11 @@ void Ftp::CheckResp(int act)
 	 copy_failed=true;
 	 break;
       }
-      if(is5XX(act))
+      if(cmd_unsupported(act) && cc==Expect::EPSV)
+      {
+	 conn->epsv_supported=false;
+      }
+      else if(is5XX(act))
       {
       passive_off:
 	 if(QueryBool("auto-passive-mode",hostname))

@@ -465,7 +465,7 @@ void pgetJob::LoadStatus()
       goto out_close;
    for(i=0; i<num_of_chunks; i++)
    {
-      ChunkXfer *c=NewChunk(GetName(),pos[i],limit[i]);
+      ChunkXfer *c=NewChunk(GetName(),pos[i+1],limit[i+1]);
       c->SetParentFg(this,false);
       chunks.append(c);
    }

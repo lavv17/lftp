@@ -1,3 +1,10 @@
+2009-03-17  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: set NOREST mode on specific error message;
+	  unset epsv_supported if it actually isn't.
+	* resource.cc: make ftp:prefer-epsv off by default.
+	* pgetJob.cc: fixed off-by-one -c bug.
+
 2009-03-03  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc, FileCopy.h: outline SetRange.
