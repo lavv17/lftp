@@ -50,7 +50,9 @@ public:
    SleepJob(const TimeInterval &when,FileAccess *s=0,LocalDirectory *cwd=0,char *what=0);
    ~SleepJob();
 
+   const char *Status();
    void PrintStatus(int v,const char *);
+   void ShowRunStatus(const SMTaskRef<StatusLine>& s);
 
    void Repeat(int m) { repeat=true; max_repeat_count=m; Stop(); }
    void SetWeak(bool w) { weak=w; }

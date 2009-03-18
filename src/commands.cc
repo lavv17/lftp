@@ -684,7 +684,7 @@ Job *CmdExec::builtin_exit()
       detach=true;
    if(kill)
       Job::KillAll();
-   else if(detach)
+   if(detach)
       exec->Exit(code);
    else {
       int loc=0;

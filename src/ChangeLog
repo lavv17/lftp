@@ -1,3 +1,10 @@
+2009-03-18  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* TimeDate.cc, TimeDate.h: (toString) new method.
+	* Speedometer.cc: use it.
+	* SleepJob.cc, SleepJob.h: show sleep time left.
+	* commands.cc: fixed 'exit kill'.
+
 2009-03-17  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: set NOREST mode on specific error message;

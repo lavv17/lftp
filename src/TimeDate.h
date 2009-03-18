@@ -141,6 +141,11 @@ public:
    bool operator>=(const TimeInterval &o) const { return !(*this<o); }
    bool operator<(int s) const { return !infty && get_seconds()<s; }
    bool operator>=(int s) const { return infty || get_seconds()>=s; }
+   const char *toString(unsigned flags);
+   enum {
+      TO_STR_TRANSLATE=1,
+      TO_STR_TERSE=2
+   };
 };
 
 #define MINUTE (60)

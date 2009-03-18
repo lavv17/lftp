@@ -122,3 +122,93 @@ int TimeInterval::GetTimeout(const Time &base) const
       return HOUR*1000;
    return -elapsed.MilliSeconds();
 }
+
+static void append_Nc(char *&buf,long N,const char *c)
+{
+   buf+=sprintf(buf,"%ld%.*s",N,mblen(c,strlen(c)),c);
+}
+
+const char *TimeInterval::toString(unsigned flags)
+{
+   if(IsInfty())
+      return "infinity";
+
+   long eta2=0;
+   long ueta=0;
+   long ueta2=0;
+   const char *letter=0;
+   const char *letter2=0;
+
+   long eta=Seconds();
+
+   static char buf[32];
+   buf[0]=0;
+   char *store=buf;
+
+   // for translator: only first letter matters
+   const char *day_c=N_("day");
+   const char *hour_c=N_("hour");
+   const char *minute_c=N_("minute");
+   const char *second_c=N_("second");
+
+   if(flags&TO_STR_TRANSLATE) {
+      day_c=_(day_c);
+      hour_c=_(hour_c);
+      minute_c=_(minute_c);
+      second_c=_(second_c);
+   }
+
+   if(flags&TO_STR_TERSE)
+   {
+      if(eta>=100*HOUR)
+      {
+	 ueta=(eta+DAY/2)/DAY;
+	 eta2=eta-ueta*DAY;
+	 letter=day_c;
+	 if(ueta<10)
+	 {
+	    letter2=hour_c;
+	    ueta2=((eta2<-HOUR/2?eta2+DAY:eta2)+HOUR/2)/HOUR;
+	    if(ueta2>0 && eta2<-HOUR/2)
+	       ueta--;
+	 }
+      }
+      else if(eta>=100*MINUTE)
+      {
+	 ueta=(eta+HOUR/2)/HOUR;
+	 eta2=eta-ueta*HOUR;
+	 letter=hour_c;
+	 if(ueta<10)
+	 {
+	    letter2=minute_c;
+	    ueta2=((eta2<-MINUTE/2?eta2+HOUR:eta2)+MINUTE/2)/MINUTE;
+	    if(ueta2>0 && eta2<-MINUTE/2)
+	       ueta--;
+	 }
+      }
+      else if(eta>=100)
+      {
+	 ueta=(eta+MINUTE/2)/MINUTE;
+	 letter=minute_c;
+      }
+      else
+      {
+	 ueta=eta;
+	 letter=second_c;
+      }
+      append_Nc(store,ueta,letter);
+      if(letter2 && ueta2>0)
+	 append_Nc(store,ueta2,letter2);
+   }
+   else // verbose eta (by Ben Winslow)
+   {
+      if(eta>=DAY)
+	 append_Nc(store,eta/DAY,day_c);
+      if(eta>=HOUR)
+	 append_Nc(store,(eta/HOUR)%24,hour_c);
+      if(eta>=MINUTE)
+	 append_Nc(store,(eta/MINUTE)%60,minute_c);
+      append_Nc(store,eta%60,second_c);
+   }
+   return buf;
+}

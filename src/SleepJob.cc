@@ -91,13 +91,32 @@ int SleepJob::Do()
    return STALL;
 }
 
+const char *SleepJob::Status()
+{
+   if(Stopped() || TimeLeft().Seconds()<=1)
+      return "";
+
+   if(IsInfty())
+      return(_("Sleeping forever"));
+   return xstring::cat(_("Sleep time left: "),
+      TimeLeft().toString(TimeInterval::TO_STR_TRANSLATE),
+      NULL);
+}
+
 void SleepJob::PrintStatus(int,const char *prefix)
 {
    if(repeat)
    {
       printf(_("\tRepeat count: %d\n"),repeat_count);
-      return;
    }
+   const char *s=Status();
+   if(s[0])
+      printf("\t%s\n",s);
+}
+void SleepJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
+{
+   s->Show(Status());
+   current->TimeoutS(1);
 }
 
 void SleepJob::lftpMovesToBackground()
