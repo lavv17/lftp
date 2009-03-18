@@ -1,3 +1,11 @@
+Version 3.7.10 - 2009-03-18
+
+* fixed pget -c.
+* fixed `exit kill' command.
+* show sleep time left in status.
+* make ftp:prefer-epsv off by default.
+* recognize a specific error message and turn off REST command.
+
 Version 3.7.9 - 2009-03-03
 
 * new setting ftp:prefer-epsv.

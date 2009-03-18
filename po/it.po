@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2.3\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-03-03 16:34+0300\n"
+"POT-Creation-Date: 2009-03-18 14:32+0300\n"
 "PO-Revision-Date: 2000-06-18 10:46+02:00\n"
 "Last-Translator: Giovanni Bortolozzo <borto@pluto.linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -254,8 +254,8 @@ msgstr "Accesso fallito: %s"
 msgid "File cannot be accessed"
 msgstr "Impossibile accedere al file"
 
-#: src/FileAccess.cc:216 src/Fish.cc:975 src/SFtp.cc:1284 src/ftpclass.cc:4207
-#: src/ftpclass.cc:4216
+#: src/FileAccess.cc:216 src/Fish.cc:975 src/SFtp.cc:1284 src/ftpclass.cc:4213
+#: src/ftpclass.cc:4222
 msgid "Not connected"
 msgstr "Non connesso"
 
@@ -383,7 +383,7 @@ msgstr "execlp(%s) fallita: %s\n"
 msgid "total"
 msgstr ""
 
-#: src/Fish.cc:76 src/Http.cc:901 src/SFtp.cc:81 src/ftpclass.cc:1136
+#: src/Fish.cc:76 src/Http.cc:901 src/SFtp.cc:81 src/ftpclass.cc:1138
 msgid "Closing idle connection"
 msgstr "Chiusura della connessione inattiva"
 
@@ -392,34 +392,34 @@ msgid "Running connect program"
 msgstr ""
 
 #: src/Fish.cc:580 src/Http.cc:1117 src/SFtp.cc:712 src/SFtp.cc:1031
-#: src/ftpclass.cc:2651 src/ftpclass.cc:2861
+#: src/ftpclass.cc:2653 src/ftpclass.cc:2863
 msgid "Peer closed connection"
 msgstr "Connessione chiusa dal peer"
 
-#: src/Fish.cc:624 src/SFtp.cc:1056 src/ftpclass.cc:3861
+#: src/Fish.cc:624 src/SFtp.cc:1056 src/ftpclass.cc:3863
 msgid "extra server response"
 msgstr "risposta extra del server"
 
 #: src/Fish.cc:980 src/Http.cc:1824 src/Http.cc:1831 src/SFtp.cc:1290
-#: src/ftpclass.cc:4219
+#: src/ftpclass.cc:4225
 msgid "Connecting..."
 msgstr "Connessione in corso..."
 
-#: src/Fish.cc:982 src/SFtp.cc:1292 src/ftpclass.cc:4225
+#: src/Fish.cc:982 src/SFtp.cc:1292 src/ftpclass.cc:4231
 #, fuzzy
 msgid "Connected"
 msgstr "Non connesso"
 
-#: src/Fish.cc:984 src/Http.cc:1833 src/SFtp.cc:1294 src/ftpclass.cc:4202
-#: src/ftpclass.cc:4230 src/ftpclass.cc:4244
+#: src/Fish.cc:984 src/Http.cc:1833 src/SFtp.cc:1294 src/ftpclass.cc:4208
+#: src/ftpclass.cc:4236 src/ftpclass.cc:4250
 msgid "Waiting for response..."
 msgstr "In attesa della risposta..."
 
-#: src/Fish.cc:986 src/Http.cc:1836 src/SFtp.cc:1296 src/ftpclass.cc:4264
+#: src/Fish.cc:986 src/Http.cc:1836 src/SFtp.cc:1296 src/ftpclass.cc:4270
 msgid "Receiving data"
 msgstr "Sto ricevendo i dati"
 
-#: src/Fish.cc:988 src/Http.cc:1829 src/SFtp.cc:1298 src/ftpclass.cc:4262
+#: src/Fish.cc:988 src/Http.cc:1829 src/SFtp.cc:1298 src/ftpclass.cc:4268
 msgid "Sending data"
 msgstr "Sto inviando i dati"
 
@@ -451,7 +451,7 @@ msgstr ""
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 
-#: src/Http.cc:1033 src/ftpclass.cc:1259
+#: src/Http.cc:1033 src/ftpclass.cc:1261
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr ""
@@ -506,11 +506,11 @@ msgid "Received last chunk"
 msgstr "Sto ricevendo i dati"
 
 #: src/Http.cc:1818 src/Resolver.cc:166 src/Resolver.cc:208
-#: src/ftpclass.cc:4212
+#: src/ftpclass.cc:4218
 msgid "Resolving host address..."
 msgstr "Risoluzione dell'indirizzo dell'host..."
 
-#: src/Http.cc:1826 src/ftpclass.cc:4205
+#: src/Http.cc:1826 src/ftpclass.cc:4211
 msgid "Connection idle"
 msgstr "Connessione inattiva"
 
@@ -652,7 +652,7 @@ msgstr ""
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1580 src/SleepJob.cc:122 src/SleepJob.cc:178
+#: src/MirrorJob.cc:1580 src/SleepJob.cc:141 src/SleepJob.cc:197
 #: src/commands.cc:1109 src/commands.cc:1196 src/commands.cc:1631
 #: src/commands.cc:1662 src/commands.cc:1765 src/commands.cc:2046
 #: src/commands.cc:2242 src/commands.cc:2405 src/commands.cc:2412
@@ -834,12 +834,20 @@ msgstr ""
 msgid "invalid server response format"
 msgstr "risposta extra del server"
 
-#: src/SleepJob.cc:98
+#: src/SleepJob.cc:100
+msgid "Sleeping forever"
+msgstr ""
+
+#: src/SleepJob.cc:101
+msgid "Sleep time left: "
+msgstr ""
+
+#: src/SleepJob.cc:110
 #, c-format
 msgid "\tRepeat count: %d\n"
 msgstr ""
 
-#: src/SleepJob.cc:120
+#: src/SleepJob.cc:139
 #, fuzzy, c-format
 msgid "%s: argument required. "
 msgstr "%s: serve un nome di bookmark\n"
@@ -859,23 +867,7 @@ msgstr ""
 msgid "%.2fM/s"
 msgstr ""
 
-#: src/Speedometer.cc:134
-msgid "day"
-msgstr ""
-
-#: src/Speedometer.cc:135
-msgid "hour"
-msgstr ""
-
-#: src/Speedometer.cc:136
-msgid "minute"
-msgstr ""
-
-#: src/Speedometer.cc:137
-msgid "second"
-msgstr ""
-
-#: src/Speedometer.cc:140
+#: src/Speedometer.cc:130
 msgid "eta:"
 msgstr ""
 
@@ -2180,168 +2172,168 @@ msgstr ""
 msgid "Switching to NOREST mode"
 msgstr "Abilito la modalità passiva"
 
-#: src/ftpclass.cc:422
+#: src/ftpclass.cc:424
 msgid "Server reply matched ftp:retry-530, retrying"
 msgstr ""
 
-#: src/ftpclass.cc:430
+#: src/ftpclass.cc:432
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
 msgstr ""
 
-#: src/ftpclass.cc:455
+#: src/ftpclass.cc:457
 msgid "Account is required, set ftp:acct variable"
 msgstr ""
 
-#: src/ftpclass.cc:472
+#: src/ftpclass.cc:474
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
 msgstr ""
 
-#: src/ftpclass.cc:488
+#: src/ftpclass.cc:490
 msgid "Saw `unknown', assume failed login"
 msgstr "Ottenuto `unknown', assumo login fallita"
 
-#: src/ftpclass.cc:499
+#: src/ftpclass.cc:501
 msgid "assuming failed host name lookup"
 msgstr "dò per fallita la ricerca del nome host"
 
-#: src/ftpclass.cc:736
+#: src/ftpclass.cc:738
 msgid "cannot parse EPSV response"
 msgstr ""
 
-#: src/ftpclass.cc:988
+#: src/ftpclass.cc:990
 msgid "Closing control socket"
 msgstr "Chiusura del socket di controllo"
 
-#: src/ftpclass.cc:1185
+#: src/ftpclass.cc:1187
 #, fuzzy
 msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 msgstr "SITE CHMOD non è supportato da questo sito"
 
-#: src/ftpclass.cc:1190
+#: src/ftpclass.cc:1192
 #, fuzzy
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "SITE CHMOD non è supportato da questo sito"
 
-#: src/ftpclass.cc:1536
+#: src/ftpclass.cc:1538
 msgid "SITE CHMOD is not supported by this site"
 msgstr "SITE CHMOD non è supportato da questo sito"
 
-#: src/ftpclass.cc:1541
+#: src/ftpclass.cc:1543
 #, fuzzy
 msgid "MLST and MLSD are not supported by this site"
 msgstr "SITE CHMOD non è supportato da questo sito"
 
-#: src/ftpclass.cc:2004
+#: src/ftpclass.cc:2006
 #, fuzzy
 msgid "unsupported network protocol"
 msgstr "- protocollo non supportato"
 
-#: src/ftpclass.cc:2085
+#: src/ftpclass.cc:2087
 #, fuzzy, c-format
 msgid "Accepted data connection from (%s) port %u"
 msgstr "Connessione del socket dei dati a (%s) porta %u"
 
-#: src/ftpclass.cc:2127
+#: src/ftpclass.cc:2129
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "Connessione del socket dei dati a (%s) porta %u"
 
-#: src/ftpclass.cc:2133
+#: src/ftpclass.cc:2135
 #, fuzzy, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "Connessione del socket dei dati a (%s) porta %u"
 
-#: src/ftpclass.cc:2153 src/ftpclass.cc:4027
+#: src/ftpclass.cc:2155 src/ftpclass.cc:4033
 msgid "Switching passive mode off"
 msgstr "Metto ad off (disabilito) la modalità passiva"
 
-#: src/ftpclass.cc:2161
+#: src/ftpclass.cc:2163
 #, fuzzy
 msgid "Data connection established"
 msgstr ""
 "L'altro estremo della connesione dati ha un indirizzo che non corrisponde"
 
-#: src/ftpclass.cc:2465 src/ftpclass.cc:4157
+#: src/ftpclass.cc:2467 src/ftpclass.cc:4163
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 
-#: src/ftpclass.cc:2807
+#: src/ftpclass.cc:2809
 msgid "Persist and retry"
 msgstr ""
 
-#: src/ftpclass.cc:3074
+#: src/ftpclass.cc:3076
 msgid "Closing data socket"
 msgstr "Chiusura del socket dati"
 
-#: src/ftpclass.cc:3096
+#: src/ftpclass.cc:3098
 #, fuzzy
 msgid "Closing aborted data socket"
 msgstr "Chiusura del socket dati"
 
-#: src/ftpclass.cc:3845
+#: src/ftpclass.cc:3847
 msgid "saw file size in response"
 msgstr "ottenuta in risposta la dimensione del file"
 
-#: src/ftpclass.cc:3875 src/ftpclass.cc:3902
+#: src/ftpclass.cc:3877 src/ftpclass.cc:3904
 msgid "Turning on sync-mode"
 msgstr ""
 
-#: src/ftpclass.cc:4047
+#: src/ftpclass.cc:4053
 msgid "Switching passive mode on"
 msgstr "Abilito la modalità passiva"
 
-#: src/ftpclass.cc:4193
+#: src/ftpclass.cc:4199
 msgid "FEAT negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:4200
+#: src/ftpclass.cc:4206
 msgid "Sending commands..."
 msgstr "Invio comandi..."
 
-#: src/ftpclass.cc:4204
+#: src/ftpclass.cc:4210
 msgid "Delaying before retry"
 msgstr ""
 
-#: src/ftpclass.cc:4223
+#: src/ftpclass.cc:4229
 msgid "TLS negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:4227
+#: src/ftpclass.cc:4233
 msgid "Logging in..."
 msgstr "Accesso al server..."
 
-#: src/ftpclass.cc:4231
+#: src/ftpclass.cc:4237
 msgid "Making data connection..."
 msgstr "Creo la connessione dati..."
 
-#: src/ftpclass.cc:4234
+#: src/ftpclass.cc:4240
 msgid "Changing remote directory..."
 msgstr "Cambio la directory remota..."
 
-#: src/ftpclass.cc:4240
+#: src/ftpclass.cc:4246
 #, fuzzy
 msgid "Waiting for other copy peer..."
 msgstr "In attesa della risposta..."
 
-#: src/ftpclass.cc:4242 src/ftpclass.cc:4266
+#: src/ftpclass.cc:4248 src/ftpclass.cc:4272
 msgid "Waiting for transfer to complete"
 msgstr "Attendo la fine del trasferimento"
 
-#: src/ftpclass.cc:4246
+#: src/ftpclass.cc:4252
 #, fuzzy
 msgid "Waiting for TLS shutdown..."
 msgstr "In attesa della risposta..."
 
-#: src/ftpclass.cc:4248
+#: src/ftpclass.cc:4254
 msgid "Waiting for data connection..."
 msgstr "In attesa della connessione dati..."
 
-#: src/ftpclass.cc:4254
+#: src/ftpclass.cc:4260
 #, fuzzy
 msgid "Sending data/TLS"
 msgstr "Sto inviando i dati"
 
-#: src/ftpclass.cc:4256
+#: src/ftpclass.cc:4262
 #, fuzzy
 msgid "Receiving data/TLS"
 msgstr "Sto ricevendo i dati"
