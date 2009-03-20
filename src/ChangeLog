@@ -5,6 +5,12 @@
 	  use them to add new commands.
 	* Speedometer.cc, Speedometer.h, FileCopy.cc: use xstring;
 	  fixed eta display.
+	* commands.cc: drop some unneeded isdigit calls; cast char to
+	  unsigned char to prevent sign expansion.
+	* CopyJob.cc: use xstring.
+	* url.cc: optimize; cast char to unsigned char to prevent sign expansion.
+	* log.cc, log.h: outline SetOutput.
+	* StringSet.cc, StringSet.h, DummyProto.cc, DummyProto.h: outline ctor/dtor.
 
 2009-03-18  Alexander V. Lukyanov <lav@yars.free.net>
 

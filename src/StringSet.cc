@@ -26,6 +26,11 @@
 
 #define set_size set.count()
 
+StringSet::StringSet() {}
+StringSet::StringSet(const char *const *s,int n) { Assign(s,n); }
+StringSet::StringSet(const StringSet &o) { Assign(o.set.get(),o.set.count()); }
+StringSet::StringSet(const char *s) { Assign(&s,1); }
+
 bool StringSet::IsEqual(const char *const *set1,int n1) const
 {
    if(set_size!=n1)

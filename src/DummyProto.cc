@@ -25,6 +25,8 @@
 #include "DummyProto.h"
 #include <stddef.h>
 
+DummyProto::DummyProto() {}
+DummyProto::~DummyProto() {}
 int DummyProto::Do() { return STALL; }
 int DummyProto::Done() { return NO_HOST; }
 const char *DummyProto::GetProto() const { return ""; }

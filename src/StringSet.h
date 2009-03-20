@@ -32,10 +32,10 @@ class StringSet
    const StringSet &operator=(const StringSet &); // disable assignment
 
 public:
-   StringSet() {}
-   StringSet(const char *const *s,int n) { Assign(s,n); }
-   StringSet(const StringSet &o) { Assign(o.set.get(),o.set.count()); }
-   StringSet(const char *s) { Assign(&s,1); }
+   StringSet();
+   StringSet(const char *const *s,int n);
+   StringSet(const StringSet &o);
+   StringSet(const char *s);
 
    void Empty() { set.truncate(); }
    void Assign(const char *const *s,int n);

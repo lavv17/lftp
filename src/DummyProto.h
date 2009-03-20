@@ -39,6 +39,9 @@ public:
 
    ListInfo *MakeListInfo(const char *path);
    DirList *MakeDirList(ArgV *);
+
+   DummyProto();
+   ~DummyProto();
 };
 
 class DummyNoProto : public DummyProto
