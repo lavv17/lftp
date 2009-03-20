@@ -353,7 +353,7 @@ int url::decode_string(char *str)
    char *o=p;
    while(*p)
    {
-      if(*p=='%' && isxdigit(p[1]) && isxdigit(p[2]))
+      if(*p=='%' && isxdigit((unsigned char)p[1]) && isxdigit((unsigned char)p[2]))
       {
 	 int n;
 	 if(sscanf(p+1,"%2x",&n)==1)
@@ -373,11 +373,10 @@ const char *url::decode(const char *p)
 {
    if(!p)
       return 0;
-   static xstring s("");
-   s.truncate(0);
+   xstring& s=xstring::get_tmp("");
    while(*p)
    {
-      if(*p=='%' && isxdigit(p[1]) && isxdigit(p[2]))
+      if(*p=='%' && isxdigit((unsigned char)p[1]) && isxdigit((unsigned char)p[2]))
       {
 	 int n;
 	 if(sscanf(p+1,"%2x",&n)==1)
@@ -425,12 +424,7 @@ const char *url::encode(const char *s,const char *unsafe)
    while((c=*s++))
    {
       if (need_quote(c))
-      {
-	 u.append('%');
-	 static const char h[]="0123456789ABCDEF";
-	 u.append(h[(c>>4)&15]);
-	 u.append(h[(c&15)]);
-      }
+	 u.appendf("%%%02X",(unsigned char)c);
       else
 	 u.append(c);
    }
