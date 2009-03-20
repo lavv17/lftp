@@ -31,9 +31,6 @@
 #undef super
 #define super SMTask
 
-char Speedometer::buf_rate[40];
-char Speedometer::buf_eta[40];
-
 Speedometer::Speedometer(const char *p)
 {
    period=15;
@@ -92,35 +89,30 @@ void Speedometer::Add(int b)
    if(rate<0)
       rate=0;
 }
-const char *Speedometer::GetStr(float r)
+xstring& Speedometer::GetStr(float r)
 {
-   buf_rate[0]=0;
    if(r<1)
-      return "";
+      return xstring::get_tmp("");
    if(r<1024)
       // for translator: those are the units. This is 'byte per second'
-      sprintf(buf_rate,_("%.0fb/s"),r);
+      return xstring::format(_("%.0fb/s"),r);
    else if(r<1024*1024)
       // for translator: This is 'kilobyte per second'
-      sprintf(buf_rate,_("%.1fK/s"),r/1024.);
+      return xstring::format(_("%.1fK/s"),r/1024.);
    else
       // for translator: This is 'Megabyte per second'
-      sprintf(buf_rate,_("%.2fM/s"),r/1024./1024.);
-   return buf_rate;
+      return xstring::format(_("%.2fM/s"),r/(1024.*1024));
 }
-const char *Speedometer::GetETAStrFromSize(off_t size)
+xstring& Speedometer::GetETAStrFromSize(off_t size)
 {
-   buf_eta[0]=0;
-
    if(!Valid() || Get()<1)
-      return buf_eta;
-
+      return xstring::get_tmp("");
    return GetETAStrFromTime(long(size/rate+.5));
 }
-const char *Speedometer::GetETAStrFromTime(long eta)
+xstring& Speedometer::GetETAStrFromTime(long eta)
 {
    if(eta<0)
-      return "";
+      return xstring::get_tmp("");
 
    unsigned flags=TimeInterval::TO_STR_TRANSLATE;
    if(terse)
@@ -131,24 +123,24 @@ const char *Speedometer::GetETAStrFromTime(long eta)
 }
 const char *Speedometer::GetStrS(float r)
 {
-   GetStr(r);
-   if(buf_rate[0])
-      strcat(buf_rate," ");
-   return buf_rate;
+   xstring &rate=GetStr(r);
+   if(rate.length())
+      rate.append(' ');
+   return rate;
 }
 const char *Speedometer::GetETAStrSFromSize(off_t s)
 {
-   GetETAStrFromSize(s);
-   if(buf_eta[0])
-      strcat(buf_eta," ");
-   return buf_eta;
+   xstring &eta=GetETAStrFromSize(s);
+   if(eta.length())
+      eta.append(' ');
+   return eta;
 }
 const char *Speedometer::GetETAStrSFromTime(long s)
 {
-   GetETAStrFromTime(s);
-   if(buf_eta[0])
-      strcat(buf_eta," ");
-   return buf_eta;
+   xstring &eta=GetETAStrFromTime(s);
+   if(eta.length())
+      eta.append(' ');
+   return eta;
 }
 void Speedometer::Reset()
 {

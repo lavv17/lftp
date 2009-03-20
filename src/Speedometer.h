@@ -35,18 +35,16 @@ class Speedometer : public SMTask, public ResClient
    Time start;
    bool terse;
    const char *period_resource;
-   static char buf_eta[];
-   static char buf_rate[];
 public:
    Speedometer(const char *p="xfer:rate-period");
    float Get();
-   static const char *GetStr(float r);
-   const char *GetStr() { return GetStr(Get()); }
+   static xstring& GetStr(float r);
+   xstring& GetStr() { return GetStr(Get()); }
    static const char *GetStrS(float r);
    const char *GetStrS() { return GetStrS(Get()); }
-   const char *GetETAStrFromSize(off_t s);
+   xstring& GetETAStrFromSize(off_t s);
    const char *GetETAStrSFromSize(off_t s);
-   const char *GetETAStrFromTime(long t);
+   xstring& GetETAStrFromTime(long t);
    const char *GetETAStrSFromTime(long t);
    bool Valid();
    void Add(int bytes);

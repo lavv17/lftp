@@ -643,7 +643,7 @@ void FileCopy::LogTransfer()
       range_limit=get->GetPos();
    transfer_log->Format(0,"%s -> %s %lld-%lld %s\n",src,dst,
       (long long)GetRangeStart(),range_limit,
-      Speedometer::GetStr(GetBytesCount()/GetTimeSpent()));
+      Speedometer::GetStr(GetBytesCount()/GetTimeSpent()).get());
 }
 
 void FileCopy::SetRange(off_t s,off_t lim)
