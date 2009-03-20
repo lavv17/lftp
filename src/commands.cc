@@ -1260,7 +1260,7 @@ Job *CmdExec::builtin_queue()
 
 	 if(!arg)
 	    queue->queue_feeder->DelJob(-1, verbose); /* delete the last job */
-	 else if(isdigit(arg[0]) && atoi(arg) != 0)
+	 else if(atoi(arg) != 0)
 	    queue->queue_feeder->DelJob(atoi(arg)-1, verbose);
 	 else
 	    queue->queue_feeder->DelJob(arg, verbose);
@@ -1275,7 +1275,7 @@ Job *CmdExec::builtin_queue()
 	  * queue -m "*get*" 1
 	  * queue -m 3    (move entry 3 to the end) */
          const char *a1 = args->getarg(args->getindex());
-	 if(a1 && !isdigit(a1[0])) {
+	 if(a1 && !isdigit((unsigned char)a1[0])) {
 	    eprintf(_("%s: -m: Number expected as second argument. "), args->a0());
 	    goto err;
 	 }
@@ -1288,7 +1288,7 @@ Job *CmdExec::builtin_queue()
 	    break;
 	 }
 
-	 if(isdigit(arg[0]) && atoi(arg) != 0) {
+	 if(atoi(arg) != 0) {
 	    queue->queue_feeder->MoveJob(atoi(arg)-1, to, verbose);
 	    break;
 	 }
@@ -1514,9 +1514,9 @@ const char *FileSetOutput::parse_argv(const Ref<ArgV>& a)
 	 human_opts=human_autoscale|human_SI;
 	 break;
       case OPT_BLOCK_SIZE:
-	 if(!isdigit(optarg[0]))
-	    return _("invalid block size");
 	 output_block_size = atoi(optarg);
+	 if(output_block_size == 0)
+	    return _("invalid block size");
 	 break;
       case('1'):
 	 single_column = true;
@@ -2961,12 +2961,12 @@ CMD(du)
 	 separate_dirs = true;
 	 break;
       case OPT_BLOCK_SIZE:
-	 if(!isdigit(optarg[0]) || atoi(optarg) == 0)
+	 blocksize = atoi(optarg);
+	 if(blocksize == 0)
 	 {
 	    eprintf(_("%s: invalid block size `%s'\n"),op,optarg);
 	    return 0;
 	 }
-	 blocksize = atoi(optarg);
 	 break;
       case OPT_EXCLUDE:
 	 exclude=optarg;
