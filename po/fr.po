@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-03-18 14:32+0300\n"
+"POT-Creation-Date: 2009-03-20 19:53+0300\n"
 "PO-Revision-Date: 2008-04-12 12:40+0200\n"
 "Last-Translator: Alain PORTAL <aportal@univ-montp2.fr>\n"
 "Language-Team: Français <traduc@traduc.org>\n"
@@ -214,7 +214,7 @@ msgstr "\tEn cours d'exécution\n"
 msgid "\tWaiting for command\n"
 msgstr "\tEn attente de la commande\n"
 
-#: src/CmdExec.cc:1217
+#: src/CmdExec.cc:1220
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s : la commande « %s » n'est pas compilée.\n"
@@ -224,27 +224,27 @@ msgstr "%s : la commande « %s » n'est pas compilée.\n"
 msgid "`%s' at %lld %s%s%s%s"
 msgstr "« %s » à %lld %s%s%s%s"
 
-#: src/CopyJob.cc:158
+#: src/CopyJob.cc:157
 #, c-format
 msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
 msgstr "%lld octet$#ll# transféré|s transférés$ en %ld seconde$#l#|s$"
 
-#: src/CopyJob.cc:168
+#: src/CopyJob.cc:165
 #, c-format
 msgid "%lld $#ll#byte|bytes$ transferred"
 msgstr "%lld octet$#ll# transféré|s transférés"
 
-#: src/CopyJob.cc:261
+#: src/CopyJob.cc:256
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr "Le transfert de %d sur %d fichier$|s$ a échoué\n"
 
-#: src/CopyJob.cc:267
+#: src/CopyJob.cc:262
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Total %d fichier$|s$ transférés\n"
 
-#: src/DummyProto.cc:64 src/MirrorJob.cc:1611 src/MirrorJob.cc:1627
+#: src/DummyProto.cc:66 src/MirrorJob.cc:1611 src/MirrorJob.cc:1627
 #: src/commands.cc:976 src/commands.cc:2137
 msgid " - not supported protocol"
 msgstr " - protocole non pris en charge"
@@ -843,22 +843,22 @@ msgstr "\tNombre de répétitions : %d\n"
 msgid "%s: argument required. "
 msgstr "%s : argument requis. "
 
-#: src/Speedometer.cc:102
+#: src/Speedometer.cc:98
 #, c-format
 msgid "%.0fb/s"
 msgstr "%.0fo/s"
 
-#: src/Speedometer.cc:105
+#: src/Speedometer.cc:101
 #, c-format
 msgid "%.1fK/s"
 msgstr "%.1fKo/s"
 
-#: src/Speedometer.cc:108
+#: src/Speedometer.cc:104
 #, c-format
 msgid "%.2fM/s"
 msgstr "%.2fMo/s"
 
-#: src/Speedometer.cc:130
+#: src/Speedometer.cc:122
 msgid "eta:"
 msgstr "reste :"
 
@@ -1994,7 +1994,7 @@ msgstr "Utilisation : %s <cmd>\n"
 msgid "invalid argument for `--sort'"
 msgstr "argument invalide pour « --sort »"
 
-#: src/commands.cc:1518
+#: src/commands.cc:1519
 msgid "invalid block size"
 msgstr "taille de bloc invalide"
 
@@ -2212,7 +2212,7 @@ msgstr "%s : type d'import requis (netscape,ncftp)\n"
 msgid "Usage: %s [-d #] dir\n"
 msgstr "Utilisation : %s [-d #] répertoire\n"
 
-#: src/commands.cc:2966
+#: src/commands.cc:2967
 #, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "%s : taille de bloc invalide « %s »\n"

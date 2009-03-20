@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.5.11\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-03-18 14:32+0300\n"
+"POT-Creation-Date: 2009-03-20 19:53+0300\n"
 "PO-Revision-Date: 2007-05-13 20:18+0800\n"
 "Last-Translator: Abel Cheung <abelcheung@gmail.com>\n"
 "Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
@@ -210,7 +210,7 @@ msgstr "\t正在執行\n"
 msgid "\tWaiting for command\n"
 msgstr "\t等待輸入指令\n"
 
-#: src/CmdExec.cc:1217
+#: src/CmdExec.cc:1220
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s：編譯程式時沒有包括指令 ‘%s’ 的支援。\n"
@@ -220,27 +220,27 @@ msgstr "%s：編譯程式時沒有包括指令 ‘%s’ 的支援。\n"
 msgid "`%s' at %lld %s%s%s%s"
 msgstr "‘%s’ 位置 %lld %s%s%s%s"
 
-#: src/CopyJob.cc:158
+#: src/CopyJob.cc:157
 #, c-format
 msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
 msgstr "於 %2$ld 秒內傳送了 %1$lld 位元組"
 
-#: src/CopyJob.cc:168
+#: src/CopyJob.cc:165
 #, c-format
 msgid "%lld $#ll#byte|bytes$ transferred"
 msgstr "傳送了 %lld 位元組"
 
-#: src/CopyJob.cc:261
+#: src/CopyJob.cc:256
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr "傳送 %2$d 個檔案時有 %1$d 個失敗了\n"
 
-#: src/CopyJob.cc:267
+#: src/CopyJob.cc:262
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr "共傳送了 %d 個檔案\n"
 
-#: src/DummyProto.cc:64 src/MirrorJob.cc:1611 src/MirrorJob.cc:1627
+#: src/DummyProto.cc:66 src/MirrorJob.cc:1611 src/MirrorJob.cc:1627
 #: src/commands.cc:976 src/commands.cc:2137
 msgid " - not supported protocol"
 msgstr " - 不支援該種協定"
@@ -842,22 +842,22 @@ msgstr "\t重複次數：%d\n"
 msgid "%s: argument required. "
 msgstr "%s：需要參數。"
 
-#: src/Speedometer.cc:102
+#: src/Speedometer.cc:98
 #, c-format
 msgid "%.0fb/s"
 msgstr "每秒 %.0f 位元"
 
-#: src/Speedometer.cc:105
+#: src/Speedometer.cc:101
 #, c-format
 msgid "%.1fK/s"
 msgstr "每秒 %.1fK"
 
-#: src/Speedometer.cc:108
+#: src/Speedometer.cc:104
 #, c-format
 msgid "%.2fM/s"
 msgstr "每秒 %.2fM"
 
-#: src/Speedometer.cc:130
+#: src/Speedometer.cc:122
 msgid "eta:"
 msgstr "距離完成約:"
 
@@ -1920,7 +1920,7 @@ msgstr "用法：%s <指令>\n"
 msgid "invalid argument for `--sort'"
 msgstr "‘--sort’的參數無效"
 
-#: src/commands.cc:1518
+#: src/commands.cc:1519
 msgid "invalid block size"
 msgstr "無效的區段大小"
 
@@ -2132,7 +2132,7 @@ msgstr "%s：需要指定匯入的方式 (netscape,ncftp)\n"
 msgid "Usage: %s [-d #] dir\n"
 msgstr "用法：%s [-d 數字] 目錄\n"
 
-#: src/commands.cc:2966
+#: src/commands.cc:2967
 #, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "%s：區段大小‘%s’無效\n"

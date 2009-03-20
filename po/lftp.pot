@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 3.7.10\n"
+"Project-Id-Version: lftp 3.7.11\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-03-18 14:32+0300\n"
+"POT-Creation-Date: 2009-03-20 19:53+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -212,7 +212,7 @@ msgstr ""
 msgid "\tWaiting for command\n"
 msgstr ""
 
-#: src/CmdExec.cc:1217
+#: src/CmdExec.cc:1220
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr ""
@@ -222,27 +222,27 @@ msgstr ""
 msgid "`%s' at %lld %s%s%s%s"
 msgstr ""
 
-#: src/CopyJob.cc:158
+#: src/CopyJob.cc:157
 #, c-format
 msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
 msgstr ""
 
-#: src/CopyJob.cc:168
+#: src/CopyJob.cc:165
 #, c-format
 msgid "%lld $#ll#byte|bytes$ transferred"
 msgstr ""
 
-#: src/CopyJob.cc:261
+#: src/CopyJob.cc:256
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr ""
 
-#: src/CopyJob.cc:267
+#: src/CopyJob.cc:262
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr ""
 
-#: src/DummyProto.cc:64 src/MirrorJob.cc:1611 src/MirrorJob.cc:1627
+#: src/DummyProto.cc:66 src/MirrorJob.cc:1611 src/MirrorJob.cc:1627
 #: src/commands.cc:976 src/commands.cc:2137
 msgid " - not supported protocol"
 msgstr ""
@@ -834,22 +834,22 @@ msgstr ""
 msgid "%s: argument required. "
 msgstr ""
 
-#: src/Speedometer.cc:102
+#: src/Speedometer.cc:98
 #, c-format
 msgid "%.0fb/s"
 msgstr ""
 
-#: src/Speedometer.cc:105
+#: src/Speedometer.cc:101
 #, c-format
 msgid "%.1fK/s"
 msgstr ""
 
-#: src/Speedometer.cc:108
+#: src/Speedometer.cc:104
 #, c-format
 msgid "%.2fM/s"
 msgstr ""
 
-#: src/Speedometer.cc:130
+#: src/Speedometer.cc:122
 msgid "eta:"
 msgstr ""
 
@@ -1654,7 +1654,7 @@ msgstr ""
 msgid "invalid argument for `--sort'"
 msgstr ""
 
-#: src/commands.cc:1518
+#: src/commands.cc:1519
 msgid "invalid block size"
 msgstr ""
 
@@ -1866,7 +1866,7 @@ msgstr ""
 msgid "Usage: %s [-d #] dir\n"
 msgstr ""
 
-#: src/commands.cc:2966
+#: src/commands.cc:2967
 #, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr ""

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-03-18 14:32+0300\n"
+"POT-Creation-Date: 2009-03-20 19:53+0300\n"
 "PO-Revision-Date: 1999-07-12 00:00+0400\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -209,7 +209,7 @@ msgstr "\tExecutando\n"
 msgid "\tWaiting for command\n"
 msgstr "Atenção: descartando comando incompleto\n"
 
-#: src/CmdExec.cc:1217
+#: src/CmdExec.cc:1220
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr ""
@@ -219,27 +219,27 @@ msgstr ""
 msgid "`%s' at %lld %s%s%s%s"
 msgstr "`%s' em %lu %s%s%s[%s]"
 
-#: src/CopyJob.cc:158
+#: src/CopyJob.cc:157
 #, fuzzy, c-format
 msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
 msgstr "%ld bytes transmitidos em %ld segundos (%g bytes/s)\n"
 
-#: src/CopyJob.cc:168
+#: src/CopyJob.cc:165
 #, fuzzy, c-format
 msgid "%lld $#ll#byte|bytes$ transferred"
 msgstr "%ld bytes transmitidos\n"
 
-#: src/CopyJob.cc:261
+#: src/CopyJob.cc:256
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr "Transferência de %d de %d arquivos falhou\n"
 
-#: src/CopyJob.cc:267
+#: src/CopyJob.cc:262
 #, fuzzy, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr "%d arquivos transmitidos"
 
-#: src/DummyProto.cc:64 src/MirrorJob.cc:1611 src/MirrorJob.cc:1627
+#: src/DummyProto.cc:66 src/MirrorJob.cc:1611 src/MirrorJob.cc:1627
 #: src/commands.cc:976 src/commands.cc:2137
 #, fuzzy
 msgid " - not supported protocol"
@@ -845,22 +845,22 @@ msgstr ""
 msgid "%s: argument required. "
 msgstr ""
 
-#: src/Speedometer.cc:102
+#: src/Speedometer.cc:98
 #, c-format
 msgid "%.0fb/s"
 msgstr ""
 
-#: src/Speedometer.cc:105
+#: src/Speedometer.cc:101
 #, c-format
 msgid "%.1fK/s"
 msgstr ""
 
-#: src/Speedometer.cc:108
+#: src/Speedometer.cc:104
 #, c-format
 msgid "%.2fM/s"
 msgstr ""
 
-#: src/Speedometer.cc:130
+#: src/Speedometer.cc:122
 msgid "eta:"
 msgstr ""
 
@@ -1774,7 +1774,7 @@ msgstr ""
 msgid "invalid argument for `--sort'"
 msgstr ""
 
-#: src/commands.cc:1518
+#: src/commands.cc:1519
 #, fuzzy
 msgid "invalid block size"
 msgstr "número inválido"
@@ -1987,7 +1987,7 @@ msgstr ""
 msgid "Usage: %s [-d #] dir\n"
 msgstr "mget [-c] [-d] [-e] <arquivos>"
 
-#: src/commands.cc:2966
+#: src/commands.cc:2967
 #, fuzzy, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "número inválido"

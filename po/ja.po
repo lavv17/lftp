@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-03-18 14:32+0300\n"
+"POT-Creation-Date: 2009-03-20 19:53+0300\n"
 "PO-Revision-Date: 2002-04-12 00:06+0900\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -210,7 +210,7 @@ msgstr "\t実行中\n"
 msgid "\tWaiting for command\n"
 msgstr "\tコマンドを待っています\n"
 
-#: src/CmdExec.cc:1217
+#: src/CmdExec.cc:1220
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: コマンド `%s'はコンパイル時に組み込まれていません。\n"
@@ -220,27 +220,27 @@ msgstr "%s: コマンド `%s'はコンパイル時に組み込まれていません。\n"
 msgid "`%s' at %lld %s%s%s%s"
 msgstr "`%s' (現在 %lld バイト) %s%s%s%s"
 
-#: src/CopyJob.cc:158
+#: src/CopyJob.cc:157
 #, c-format
 msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
 msgstr "%lld バイト転送済、%ld 秒経過"
 
-#: src/CopyJob.cc:168
+#: src/CopyJob.cc:165
 #, fuzzy, c-format
 msgid "%lld $#ll#byte|bytes$ transferred"
 msgstr "%lld バイト転送済\n"
 
-#: src/CopyJob.cc:261
+#: src/CopyJob.cc:256
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr "%d 個(%d ファイル中)の転送が失敗\n"
 
-#: src/CopyJob.cc:267
+#: src/CopyJob.cc:262
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr "計 %d ファイル転送済\n"
 
-#: src/DummyProto.cc:64 src/MirrorJob.cc:1611 src/MirrorJob.cc:1627
+#: src/DummyProto.cc:66 src/MirrorJob.cc:1611 src/MirrorJob.cc:1627
 #: src/commands.cc:976 src/commands.cc:2137
 msgid " - not supported protocol"
 msgstr " - はサポートされていないプロトコルです"
@@ -854,22 +854,22 @@ msgstr "\tリピート回数: %d\n"
 msgid "%s: argument required. "
 msgstr "%s: 引数が必要です。"
 
-#: src/Speedometer.cc:102
+#: src/Speedometer.cc:98
 #, c-format
 msgid "%.0fb/s"
 msgstr "%.0fB/s"
 
-#: src/Speedometer.cc:105
+#: src/Speedometer.cc:101
 #, c-format
 msgid "%.1fK/s"
 msgstr "%.1fKB/s"
 
-#: src/Speedometer.cc:108
+#: src/Speedometer.cc:104
 #, c-format
 msgid "%.2fM/s"
 msgstr "%.2fMB/s"
 
-#: src/Speedometer.cc:130
+#: src/Speedometer.cc:122
 msgid "eta:"
 msgstr "eta:"
 
@@ -1918,7 +1918,7 @@ msgstr "使い方: %s <cmd>\n"
 msgid "invalid argument for `--sort'"
 msgstr ""
 
-#: src/commands.cc:1518
+#: src/commands.cc:1519
 #, fuzzy
 msgid "invalid block size"
 msgstr "不正な数"
@@ -2137,7 +2137,7 @@ msgstr "%s: インポートタイプ(netscape,ncftp)を指定してください\n"
 msgid "Usage: %s [-d #] dir\n"
 msgstr "使い方: %s [-d #] dir\n"
 
-#: src/commands.cc:2966
+#: src/commands.cc:2967
 #, fuzzy, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "不正な数"

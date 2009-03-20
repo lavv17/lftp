@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-03-18 14:32+0300\n"
+"POT-Creation-Date: 2009-03-20 19:53+0300\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -211,7 +211,7 @@ msgstr "\t正在运行\n"
 msgid "\tWaiting for command\n"
 msgstr "parse: 缺少过滤器命令\n"
 
-#: src/CmdExec.cc:1217
+#: src/CmdExec.cc:1220
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr ""
@@ -221,27 +221,27 @@ msgstr ""
 msgid "`%s' at %lld %s%s%s%s"
 msgstr "`%s' 在 %lu %s%s%s[%s]"
 
-#: src/CopyJob.cc:158
+#: src/CopyJob.cc:157
 #, fuzzy, c-format
 msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
 msgstr "%ld 字节, 在 %ld 秒中传输完毕 (%g 字节/秒)\n"
 
-#: src/CopyJob.cc:168
+#: src/CopyJob.cc:165
 #, fuzzy, c-format
 msgid "%lld $#ll#byte|bytes$ transferred"
 msgstr "传输 %ld 字节\n"
 
-#: src/CopyJob.cc:261
+#: src/CopyJob.cc:256
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr "传输 %d/%d 文件失败\n"
 
-#: src/CopyJob.cc:267
+#: src/CopyJob.cc:262
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr "总共传输 %d 个文件\n"
 
-#: src/DummyProto.cc:64 src/MirrorJob.cc:1611 src/MirrorJob.cc:1627
+#: src/DummyProto.cc:66 src/MirrorJob.cc:1611 src/MirrorJob.cc:1627
 #: src/commands.cc:976 src/commands.cc:2137
 #, fuzzy
 msgid " - not supported protocol"
@@ -856,22 +856,22 @@ msgstr ""
 msgid "%s: argument required. "
 msgstr "%s: 需要参数. "
 
-#: src/Speedometer.cc:102
+#: src/Speedometer.cc:98
 #, fuzzy, c-format
 msgid "%.0fb/s"
 msgstr "%.0fb/s "
 
-#: src/Speedometer.cc:105
+#: src/Speedometer.cc:101
 #, fuzzy, c-format
 msgid "%.1fK/s"
 msgstr "%.1fK/s "
 
-#: src/Speedometer.cc:108
+#: src/Speedometer.cc:104
 #, fuzzy, c-format
 msgid "%.2fM/s"
 msgstr "%.2fM/s "
 
-#: src/Speedometer.cc:130
+#: src/Speedometer.cc:122
 msgid "eta:"
 msgstr "eta:"
 
@@ -1848,7 +1848,7 @@ msgstr "用法: %s <raw_cmd>\n"
 msgid "invalid argument for `--sort'"
 msgstr ""
 
-#: src/commands.cc:1518
+#: src/commands.cc:1519
 #, fuzzy
 msgid "invalid block size"
 msgstr "无效的数字"
@@ -2061,7 +2061,7 @@ msgstr "%s: 需要导入类型(netscape,ncftp)\n"
 msgid "Usage: %s [-d #] dir\n"
 msgstr "用法: %s\n"
 
-#: src/commands.cc:2966
+#: src/commands.cc:2967
 #, fuzzy, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "无效的数字"

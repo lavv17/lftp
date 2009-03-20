@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-03-18 14:32+0300\n"
+"POT-Creation-Date: 2009-03-20 19:53+0300\n"
 "PO-Revision-Date: 2001-05-27 KST\n"
 "Last-Translator: Dojip Kim <greendrm@greendrm.com>\n"
 "Language-Team: \n"
@@ -210,7 +210,7 @@ msgstr "\t실행중\n"
 msgid "\tWaiting for command\n"
 msgstr "\t명령을 기다리는 중\n"
 
-#: src/CmdExec.cc:1217
+#: src/CmdExec.cc:1220
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: `%s'명령은 컴파일되지 않았습니다.\n"
@@ -220,27 +220,27 @@ msgstr "%s: `%s'명령은 컴파일되지 않았습니다.\n"
 msgid "`%s' at %lld %s%s%s%s"
 msgstr ""
 
-#: src/CopyJob.cc:158
+#: src/CopyJob.cc:157
 #, c-format
 msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
 msgstr "%lld $#l#byte|bytes$ 전송 in %ld $#l#second|seconds$"
 
-#: src/CopyJob.cc:168
+#: src/CopyJob.cc:165
 #, fuzzy, c-format
 msgid "%lld $#ll#byte|bytes$ transferred"
 msgstr "%lld $#ll#byte|bytes$ 전송\n"
 
-#: src/CopyJob.cc:261
+#: src/CopyJob.cc:256
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr "%d of %d $file|files$ 전송 실패\n"
 
-#: src/CopyJob.cc:267
+#: src/CopyJob.cc:262
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr "총 %d $file|files$ 전송\n"
 
-#: src/DummyProto.cc:64 src/MirrorJob.cc:1611 src/MirrorJob.cc:1627
+#: src/DummyProto.cc:66 src/MirrorJob.cc:1611 src/MirrorJob.cc:1627
 #: src/commands.cc:976 src/commands.cc:2137
 msgid " - not supported protocol"
 msgstr " - 지원하지 않는 프로토콜입니다"
@@ -851,22 +851,22 @@ msgstr "\t반복 횟수: %d\n"
 msgid "%s: argument required. "
 msgstr "%s: 인자가 필요합니다. "
 
-#: src/Speedometer.cc:102
+#: src/Speedometer.cc:98
 #, c-format
 msgid "%.0fb/s"
 msgstr "%.0fb/초"
 
-#: src/Speedometer.cc:105
+#: src/Speedometer.cc:101
 #, c-format
 msgid "%.1fK/s"
 msgstr "%.1fK/초"
 
-#: src/Speedometer.cc:108
+#: src/Speedometer.cc:104
 #, c-format
 msgid "%.2fM/s"
 msgstr "%.2fM/초"
 
-#: src/Speedometer.cc:130
+#: src/Speedometer.cc:122
 msgid "eta:"
 msgstr "남은시간:"
 
@@ -1861,7 +1861,7 @@ msgstr "사용법: %s <cmd>\n"
 msgid "invalid argument for `--sort'"
 msgstr ""
 
-#: src/commands.cc:1518
+#: src/commands.cc:1519
 #, fuzzy
 msgid "invalid block size"
 msgstr "잘못된 수입니다"
@@ -2076,7 +2076,7 @@ msgstr "%s: (netscape,ncftp)에서 가져온 양식이 필요합니다\n"
 msgid "Usage: %s [-d #] dir\n"
 msgstr "사용법: %s [-p]\n"
 
-#: src/commands.cc:2966
+#: src/commands.cc:2967
 #, fuzzy, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "잘못된 수입니다"
