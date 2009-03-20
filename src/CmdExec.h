@@ -93,6 +93,8 @@ private:
       cmd_creator_t creator;
       const char  *short_desc;
       const char  *long_desc;
+
+      static int cmp(const CmdExec::cmd_rec *a,const CmdExec::cmd_rec *b);
    };
    static const cmd_rec static_cmd_table[];
    static xarray<cmd_rec> dyn_cmd_table;

@@ -75,6 +75,8 @@ public:
       if(len>0)
 	 ::qsort(buf,len,element_size,cmp);
    }
+   bool _bsearch(const void*,qsort_cmp_t,int *);
+   void *_insert_ordered(const void*,qsort_cmp_t);
 };
 
 template<typename T>
@@ -102,8 +104,12 @@ public:
    void chop() { _chop(); }
    T& last() { return (*this)[len-1]; }
    T *borrow() { return static_cast<T*>(_borrow()); }
-   void qsort(int (*cmp)(const T*,const T*)) {
+   typedef int (*cmp_t)(const T*,const T*);
+   void qsort(cmp_t cmp) {
       xarray0::qsort((qsort_cmp_t)cmp);
+   }
+   void insert_ordered(const T& n,cmp_t cmp) {
+      *static_cast<T*>(_insert_ordered(&n,(qsort_cmp_t)cmp))=n;
    }
    int search(const T &x) const {
       for(int i=0; i<len; i++)
@@ -112,6 +118,13 @@ public:
 	    return i;
       }
       return -1;
+   }
+   bool bsearch(const T &x,cmp_t cmp,int *pos) {
+      return _bsearch(&x,(qsort_cmp_t)cmp,pos);
+   }
+   int bsearch(const T &x,cmp_t cmp) {
+      int pos;
+      return bsearch(x,cmp,&pos) ? pos : -1;
    }
 };
 

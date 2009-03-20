@@ -88,3 +88,30 @@ void xarray0::move_here(xarray0& o)
    len=o.len;
    buf=o._borrow();
 }
+
+bool xarray0::_bsearch(const void *n,qsort_cmp_t cmp,int *pos)
+{
+   int lo=0;
+   int hi=len;
+   while(lo<hi) {
+      int m=(lo+hi)/2;
+      int r=cmp(n,get_ptr(m));
+      if(r<0)
+	 hi=m;
+      else if(r>0)
+	 lo=m+1;
+      else {
+	 *pos=m;
+	 return true;
+      }
+   }
+   *pos=lo;
+   return false;
+}
+
+void *xarray0::_insert_ordered(const void *n,qsort_cmp_t cmp)
+{
+   int pos;
+   (void)_bsearch(n,cmp,&pos);
+   return _insert(pos);
+}

@@ -1153,6 +1153,11 @@ void CmdExec::skip_cmd(int len)
       free_used_aliases();
 }
 
+int CmdExec::cmd_rec::cmp(const CmdExec::cmd_rec *a,const CmdExec::cmd_rec *b)
+{
+   return strcmp(a->name,b->name);
+}
+
 xarray<CmdExec::cmd_rec> CmdExec::dyn_cmd_table;
 void CmdExec::RegisterCommand(const char *name,cmd_creator_t creator,const char *short_desc,const char *long_desc)
 {
@@ -1163,21 +1168,19 @@ void CmdExec::RegisterCommand(const char *name,cmd_creator_t creator,const char 
         count++;
       dyn_cmd_table.nset(static_cmd_table,count);
    }
-   for(int i=0; i<dyn_cmd_table.count(); i++)
+   cmd_rec new_entry={name,creator,short_desc,long_desc};
+   int i;
+   if(dyn_cmd_table.bsearch(new_entry,cmd_rec::cmp,&i))
    {
       cmd_rec *const c=&dyn_cmd_table[i];
-      if(!strcmp(c->name,name))
-      {
-	 c->creator=creator;
-	 if(short_desc)
-	    c->short_desc=short_desc;
-	 if(long_desc)
-	    c->long_desc=long_desc;
-	 return;
-      }
+      c->creator=creator;
+      if(short_desc)
+	 c->short_desc=short_desc;
+      if(long_desc)
+	 c->long_desc=long_desc;
+      return;
    }
-   cmd_rec new_entry={name,creator,short_desc,long_desc};
-   dyn_cmd_table.append(new_entry);
+   dyn_cmd_table.insert(new_entry,i);
 }
 
 void CmdExec::ChangeSession(FileAccess *new_session)
