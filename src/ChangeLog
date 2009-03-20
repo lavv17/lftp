@@ -1,3 +1,11 @@
+2009-03-20  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* xarray.cc, xarray.h, CmdExec.cc, CmdExec.h:
+	  (xarray::insert_ordered, xarray::bsearch) new methods;
+	  use them to add new commands.
+	* Speedometer.cc, Speedometer.h, FileCopy.cc: use xstring;
+	  fixed eta display.
+
 2009-03-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* TimeDate.cc, TimeDate.h: (toString) new method.
