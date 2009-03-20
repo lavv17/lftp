@@ -64,14 +64,7 @@ public:
    void Enable()  { enabled=true;  }
    void Disable() { enabled=false; }
 
-   void SetOutput(int o,bool need_close)
-      {
-	 CloseOutput();
-	 output=o;
-	 need_close_output=need_close;
-	 if(output!=-1)
-	    tty=isatty(output);
-      }
+   void SetOutput(int o,bool need_close);
 
    void SetCB(tty_cb_t cb) { tty_cb=cb; }
 

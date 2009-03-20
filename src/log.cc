@@ -133,3 +133,12 @@ Log::~Log()
 {
    CloseOutput();
 }
+
+void Log::SetOutput(int o,bool need_close)
+{
+   CloseOutput();
+   output=o;
+   need_close_output=need_close;
+   if(output!=-1)
+      tty=isatty(output);
+}
