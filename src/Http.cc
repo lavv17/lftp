@@ -586,7 +586,7 @@ void Http::SendRequest(const char *connection,const char *f)
 	    SendMethod("PROPFIND",efile);
 	    Send("Depth: 0\r\n"); // no directory listing required
 	    Send("Content-Type: text/xml\r\n");
-	    Send("Content-Length: %d\r\n",strlen(allprop));
+	    Send("Content-Length: %d\r\n",(int)strlen(allprop));
 	 }
 	 else
 	    SendMethod("HEAD",efile);
@@ -609,7 +609,7 @@ void Http::SendRequest(const char *connection,const char *f)
 	 SendMethod("PROPFIND",efile);
 	 Send("Depth: 1\r\n"); // directory listing required
 	 Send("Content-Type: text/xml\r\n");
-	 Send("Content-Length: %d\r\n",strlen(allprop));
+	 Send("Content-Length: %d\r\n",(int)strlen(allprop));
 	 pos=0;
       }
       break;
@@ -2177,7 +2177,7 @@ void Http::LogErrorText()
    if(!recv_buf)
       return;
    recv_buf->Roll();
-   size_t size=recv_buf->Size();
+   int size=recv_buf->Size();
    if(size==0)
       return;
    char *buf=string_alloca(size+1);

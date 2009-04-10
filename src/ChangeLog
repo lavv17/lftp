@@ -1,3 +1,7 @@
+2009-04-10  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc: size_t fun.
+
 2009-03-20  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* xarray.cc, xarray.h, CmdExec.cc, CmdExec.h:
