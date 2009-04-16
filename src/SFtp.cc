@@ -622,6 +622,12 @@ void SFtp::SendRequest()
       break;
    }
    case MAKE_DIR:
+      if(mkdir_p)
+      {
+	 Ref<StringSet> dirs(MkdirMakeSet());
+	 for(int i=0; i<dirs->Count(); i++)
+	    SendRequest(new Request_MKDIR(WirePath(dirs->String(i)),protocol_version),Expect::IGNORE);
+      }
       SendRequest(new Request_MKDIR(WirePath(file),protocol_version),Expect::DEFAULT);
       state=WAITING;
       break;

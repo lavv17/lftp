@@ -275,6 +275,23 @@ void FileAccess::Mkdir(const char *fn,bool allp)
    mkdir_p=allp;
 }
 
+StringSet *FileAccess::MkdirMakeSet()
+{
+   StringSet *set=new StringSet;
+   const char *sl=strchr(file,'/');
+   while(sl)
+   {
+      if(sl>file)
+      {
+	 xstring& tmp=xstring::get_tmp(file,sl-file);
+	 if(tmp.ne(".") && tmp.ne(".."))
+	    set->Append(tmp);
+      }
+      sl=strchr(sl+1,'/');
+   }
+   return set;
+}
+
 bool FileAccess::SameLocationAs(const FileAccess *fa) const
 {
    return SameSiteAs(fa);

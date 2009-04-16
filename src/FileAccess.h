@@ -192,6 +192,8 @@ protected:
    FileAccess *FirstSameSite() { return NextSameSite(0); }
    FileAccess *NextSameSite(FileAccess *);
 
+   StringSet *MkdirMakeSet(); // splits the path for mkdir -p
+
    int device_prefix_len(const char *path);
 
 public:

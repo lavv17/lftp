@@ -1,3 +1,8 @@
+2009-04-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h: (MkdirMakeSet) new method.
+	* ftpclass.cc, SFtp.cc: use it (fixes mkdir -p for sftp).
+
 2009-04-10  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Http.cc: size_t fun.

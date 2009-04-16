@@ -1884,19 +1884,11 @@ int   Ftp::Do()
       {
 	 if(mode==MAKE_DIR && mkdir_p)
 	 {
-	    const char *sl=strchr(file,'/');
-	    while(sl)
+	    Ref<StringSet> dirs(MkdirMakeSet());
+	    for(int i=0; i<dirs->Count(); i++)
 	    {
-	       if(sl>file)
-	       {
-		  xstring& tmp=xstring::get_tmp(file,sl-file);
-		  if(tmp.ne(".") && tmp.ne(".."))
-		  {
-		     conn->SendCmd2("MKD",tmp);
-		     expect->Push(Expect::IGNORE);
-		  }
-	       }
-	       sl=strchr(sl+1,'/');
+	       conn->SendCmd2("MKD",dirs->String(i));
+	       expect->Push(Expect::IGNORE);
 	    }
 	 }
 
