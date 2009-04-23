@@ -1,3 +1,7 @@
+2009-04-23	Robert Spillner <Robert.Spillner@post.rwth-aachen.de>
+
+	* lftp.1: document ftp:prefer-epsv.
+
 2008-12-12	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document ftp:proxy-type new value and ftp:trust-feat.
