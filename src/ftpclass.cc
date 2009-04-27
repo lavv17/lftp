@@ -919,6 +919,7 @@ Ftp::Connection::Connection(const char *c)
 
    proxy_is_http=false;
    may_show_password=false;
+   can_do_pasv=true;
 
    nop_time=0;
    nop_count=0;
@@ -1927,12 +1928,12 @@ int   Ftp::Do()
 	    conn->SendCmd(xstring::cat("PRET ",command," ",file.get(),NULL));
 	    expect->Push(Expect::PRET);
 	 }
-	 bool can_do_pasv=(conn->peer_sa.sa.sa_family==AF_INET);
+	 conn->can_do_pasv=(conn->peer_sa.sa.sa_family==AF_INET);
 #if INET6
-	 can_do_pasv|=(conn->peer_sa.sa.sa_family==AF_INET6
+	 conn->can_do_pasv|=(conn->peer_sa.sa.sa_family==AF_INET6
 			&& IN6_IS_ADDR_V4MAPPED(&conn->peer_sa.in6.sin6_addr));
 #endif
-	 if(can_do_pasv && !(conn->epsv_supported && QueryBool("prefer-epsv",hostname)))
+	 if(conn->can_do_pasv && !(conn->epsv_supported && QueryBool("prefer-epsv",hostname)))
 	 {
 #if USE_SSL
 	    if(copy_mode!=COPY_NONE && conn->prot=='P' && !conn->sscn_on && copy_ssl_connect)
@@ -4007,17 +4008,21 @@ void Ftp::CheckResp(int act)
 
       	 break;
       }
+      if(cmd_unsupported(act) && cc==Expect::EPSV
+      && conn->can_do_pasv && QueryBool("prefer-epsv",hostname))
+      {
+	 ResMgr::Set("ftp:prefer-epsv",hostname,"no");
+	 Disconnect();
+	 break;
+      }
+
       if(copy_mode!=COPY_NONE)
       {
 	 copy_passive=!copy_passive;
 	 copy_failed=true;
 	 break;
       }
-      if(cmd_unsupported(act) && cc==Expect::EPSV)
-      {
-	 conn->epsv_supported=false;
-      }
-      else if(is5XX(act))
+      if(is5XX(act))
       {
       passive_off:
 	 if(QueryBool("auto-passive-mode",hostname))

@@ -87,6 +87,7 @@ class Ftp : public NetAccess
       bool translation_activated;
       bool proxy_is_http; // true when connection was established via http proxy.
       bool may_show_password;
+      bool can_do_pasv;
 
       int multiline_code; // the code of multiline response.
       int sync_wait;	  // number of commands in flight.
