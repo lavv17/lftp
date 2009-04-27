@@ -29,8 +29,12 @@
 
 #define waiting_num waiting.count()
 
+#define super Job
+
 int CopyJob::Do()
 {
+   if(!c)
+      return STALL;
    if(!fg_data)
       fg_data=c->GetFgData(fg);
    if(done)
@@ -146,6 +150,7 @@ CopyJob::CopyJob(FileCopy *c1,const char *name1,const char *op1)
    SetDispName();
 }
 
+
 const char *CopyJob::FormatBytesTimeRate(off_t bytes,double time_spent)
 {
    if(bytes<=0)
@@ -166,6 +171,15 @@ const char *CopyJob::FormatBytesTimeRate(off_t bytes,double time_spent)
 		     (long long)bytes),(long long)bytes);
 }
 
+void CopyJob::PrepareToDie()
+{
+   c=0;
+   super::PrepareToDie();
+}
+CopyJob::~CopyJob()
+{
+}
+#undef super
 
 // CopyJobEnv
 CopyJobEnv::CopyJobEnv(FileAccess *s,ArgV *a,bool cont1)

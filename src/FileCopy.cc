@@ -1340,6 +1340,8 @@ void FileCopyPeerFDStream::Seek_LL()
 
 int FileCopyPeerFDStream::getfd()
 {
+   if(!stream)
+      return -1;
    if(stream->fd!=-1)
       return stream->fd;
    int fd=stream->getfd();

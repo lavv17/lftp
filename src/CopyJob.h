@@ -41,8 +41,11 @@ protected:
 
    void SetDispName();
 
+   void PrepareToDie();
+
 public:
    CopyJob(FileCopy *c1,const char *n,const char *op1);
+   ~CopyJob();
 
    void NoStatus() { no_status=true; }
    void NoStatusOnWrite() { no_status_on_write=true; }
