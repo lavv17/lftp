@@ -2,6 +2,7 @@
 
 	* CopyJob.cc, CopyJob.h, FileCopy.cc: fixed core dump on kill command.
 	* ftpclass.cc, ftpclass.h: better handle unsupported EPSV command.
+	* mputJob.cc: fixed a coredump on 'mput -d'.
 
 2009-04-16  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -169,10 +169,11 @@ int mgetJob::Do()
 	 m_args=0;
 	 if(mkdir_args)
 	 {
+	    xstring_ca cmdline(mkdir_args->Combine());
 	    mkdir_job=new mkdirJob(Clone(),mkdir_args.borrow());
+	    mkdir_job->cmdline.set_allocated(cmdline.borrow());
 	    mkdir_job->BeQuiet();
 	    AddWaiting(mkdir_job);
-	    mkdir_job->cmdline.set_allocated(mkdir_args->Combine());
 	 }
 	 return MOVED;
       }
