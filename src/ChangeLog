@@ -1,3 +1,8 @@
+2009-04-27  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CopyJob.cc, CopyJob.h, FileCopy.cc: fixed core dump on kill command.
+	* ftpclass.cc, ftpclass.h: better handle unsupported EPSV command.
+
 2009-04-16  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileAccess.cc, FileAccess.h: (MkdirMakeSet) new method.
