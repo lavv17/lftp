@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.7.3\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-03-20 19:53+0300\n"
+"POT-Creation-Date: 2009-04-28 11:00+0400\n"
 "PO-Revision-Date: 2008-05-12 17:38+04:00\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -219,29 +219,29 @@ msgstr "\tОжидание команды\n"
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: команда `%s' не встроена при компиляции.\n"
 
-#: src/CopyJob.cc:76
+#: src/CopyJob.cc:80
 #, c-format
 msgid "`%s' at %lld %s%s%s%s"
 msgstr "`%s' в позиции %lld %s%s%s%s"
 
-#: src/CopyJob.cc:157
+#: src/CopyJob.cc:162
 #, c-format
 msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
 msgstr ""
 "%lld $#ll#байт перемещен|байта перемещены|байтов перемещено$ за %ld "
 "$#l#секунду|секунды|секунд$"
 
-#: src/CopyJob.cc:165
+#: src/CopyJob.cc:170
 #, c-format
 msgid "%lld $#ll#byte|bytes$ transferred"
 msgstr "%lld $#ll#байт перемещен|байта перемещены|байтов перемещено$"
 
-#: src/CopyJob.cc:256
+#: src/CopyJob.cc:270
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr "Пересылка %d из %d $файла|файлов|файлов$ завершилась неудачей\n"
 
-#: src/CopyJob.cc:262
+#: src/CopyJob.cc:276
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Всего перемещено: %d $файл|файла|файлов$\n"
@@ -259,8 +259,8 @@ msgstr "Ошибка доступа: "
 msgid "File cannot be accessed"
 msgstr "Доступ к файлу невозможен"
 
-#: src/FileAccess.cc:216 src/Fish.cc:975 src/SFtp.cc:1284 src/ftpclass.cc:4213
-#: src/ftpclass.cc:4222
+#: src/FileAccess.cc:216 src/Fish.cc:975 src/SFtp.cc:1290 src/ftpclass.cc:4210
+#: src/ftpclass.cc:4219
 msgid "Not connected"
 msgstr "Нет соединения"
 
@@ -288,7 +288,7 @@ msgstr "Файл переместился"
 msgid "File moved to `"
 msgstr "Файл переместился в `"
 
-#: src/FileAccess.cc:918 src/buffer.cc:231
+#: src/FileAccess.cc:935 src/buffer.cc:231
 msgid " [cached]"
 msgstr " [из кэша]"
 
@@ -331,7 +331,7 @@ msgstr "копирование: получено перенаправление 
 msgid "file name missed in URL"
 msgstr "пропущено имя файла в URL"
 
-#: src/FileCopy.cc:1865
+#: src/FileCopy.cc:1867
 msgid "Verify command failed without a message"
 msgstr "Команда проверки вернула статус ошибки без сообщения"
 
@@ -386,7 +386,7 @@ msgstr "функция execl(/bin/sh) не выполнена: %s\n"
 msgid "total"
 msgstr "всего"
 
-#: src/Fish.cc:76 src/Http.cc:901 src/SFtp.cc:81 src/ftpclass.cc:1138
+#: src/Fish.cc:76 src/Http.cc:901 src/SFtp.cc:81 src/ftpclass.cc:1139
 msgid "Closing idle connection"
 msgstr "Закрытие неиспользуемого соединения"
 
@@ -394,43 +394,43 @@ msgstr "Закрытие неиспользуемого соединения"
 msgid "Running connect program"
 msgstr "Выполняется соединяющая программа"
 
-#: src/Fish.cc:580 src/Http.cc:1117 src/SFtp.cc:712 src/SFtp.cc:1031
-#: src/ftpclass.cc:2653 src/ftpclass.cc:2863
+#: src/Fish.cc:580 src/Http.cc:1117 src/SFtp.cc:718 src/SFtp.cc:1037
+#: src/ftpclass.cc:2646 src/ftpclass.cc:2856
 msgid "Peer closed connection"
 msgstr "Соединение закрыто удаленной машиной"
 
-#: src/Fish.cc:624 src/SFtp.cc:1056 src/ftpclass.cc:3863
+#: src/Fish.cc:624 src/SFtp.cc:1062 src/ftpclass.cc:3856
 msgid "extra server response"
 msgstr "непредвиденный ответ сервера"
 
-#: src/Fish.cc:980 src/Http.cc:1824 src/Http.cc:1831 src/SFtp.cc:1290
-#: src/ftpclass.cc:4225
+#: src/Fish.cc:980 src/Http.cc:1824 src/Http.cc:1831 src/SFtp.cc:1296
+#: src/ftpclass.cc:4222
 msgid "Connecting..."
 msgstr "Установка соединения..."
 
-#: src/Fish.cc:982 src/SFtp.cc:1292 src/ftpclass.cc:4231
+#: src/Fish.cc:982 src/SFtp.cc:1298 src/ftpclass.cc:4228
 msgid "Connected"
 msgstr "Соединен"
 
-#: src/Fish.cc:984 src/Http.cc:1833 src/SFtp.cc:1294 src/ftpclass.cc:4208
-#: src/ftpclass.cc:4236 src/ftpclass.cc:4250
+#: src/Fish.cc:984 src/Http.cc:1833 src/SFtp.cc:1300 src/ftpclass.cc:4205
+#: src/ftpclass.cc:4233 src/ftpclass.cc:4247
 msgid "Waiting for response..."
 msgstr "Ожидание ответа..."
 
-#: src/Fish.cc:986 src/Http.cc:1836 src/SFtp.cc:1296 src/ftpclass.cc:4270
+#: src/Fish.cc:986 src/Http.cc:1836 src/SFtp.cc:1302 src/ftpclass.cc:4267
 msgid "Receiving data"
 msgstr "Получение данных"
 
-#: src/Fish.cc:988 src/Http.cc:1829 src/SFtp.cc:1298 src/ftpclass.cc:4268
+#: src/Fish.cc:988 src/Http.cc:1829 src/SFtp.cc:1304 src/ftpclass.cc:4265
 msgid "Sending data"
 msgstr "Отправка данных"
 
-#: src/Fish.cc:990 src/SFtp.cc:1300
+#: src/Fish.cc:990 src/SFtp.cc:1306
 msgid "Done"
 msgstr "Готово"
 
-#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1317 src/SFtp.cc:2131
-#: src/SFtp.cc:2210
+#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1317 src/SFtp.cc:2137
+#: src/SFtp.cc:2216
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "Получение списка файлов (%lld) [%s]"
@@ -453,7 +453,7 @@ msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "ftp через http прокси не может работать без прокси, установите hftp:proxy."
 
-#: src/Http.cc:1033 src/ftpclass.cc:1261
+#: src/Http.cc:1033 src/ftpclass.cc:1262
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "невозможно создать сокет для семейства адресов %d"
@@ -503,11 +503,11 @@ msgid "Received last chunk"
 msgstr "Получен последний фрагмент"
 
 #: src/Http.cc:1818 src/Resolver.cc:166 src/Resolver.cc:208
-#: src/ftpclass.cc:4218
+#: src/ftpclass.cc:4215
 msgid "Resolving host address..."
 msgstr "Преобразование адреса сервера..."
 
-#: src/Http.cc:1826 src/ftpclass.cc:4211
+#: src/Http.cc:1826 src/ftpclass.cc:4208
 msgid "Connection idle"
 msgstr "Соединение не используется"
 
@@ -819,7 +819,7 @@ msgstr "нет такого %s сервиса"
 msgid "No address found"
 msgstr "Адресов не найдено"
 
-#: src/SFtp.cc:1047
+#: src/SFtp.cc:1053
 msgid "invalid server response format"
 msgstr "неверный формат ответа сервера"
 
@@ -2197,132 +2197,132 @@ msgstr "подразумевается ошибка преобразования
 msgid "cannot parse EPSV response"
 msgstr "невозможно разобрать ответ на EPSV"
 
-#: src/ftpclass.cc:990
+#: src/ftpclass.cc:991
 msgid "Closing control socket"
 msgstr "Закрытие управляющего соединения"
 
-#: src/ftpclass.cc:1187
+#: src/ftpclass.cc:1188
 msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 msgstr "SITE CHMOD запрещено настройкой ftp:use-site-chmod"
 
-#: src/ftpclass.cc:1192
+#: src/ftpclass.cc:1193
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "MLSD запрещено настройкой ftp:use-mlsd"
 
-#: src/ftpclass.cc:1538
+#: src/ftpclass.cc:1539
 msgid "SITE CHMOD is not supported by this site"
 msgstr "SITE CHMOD не поддерживается этим сервером"
 
-#: src/ftpclass.cc:1543
+#: src/ftpclass.cc:1544
 msgid "MLST and MLSD are not supported by this site"
 msgstr "MLST и MLSD не поддерживаются этим сервером"
 
-#: src/ftpclass.cc:2006
+#: src/ftpclass.cc:1999
 msgid "unsupported network protocol"
 msgstr "сетевой протокол не поддерживается"
 
-#: src/ftpclass.cc:2087
+#: src/ftpclass.cc:2080
 #, c-format
 msgid "Accepted data connection from (%s) port %u"
 msgstr "Принято соединение данных с (%s), порт %u"
 
-#: src/ftpclass.cc:2129
+#: src/ftpclass.cc:2122
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "Соединение сокета данных с (%s), порт %u"
 
-#: src/ftpclass.cc:2135
+#: src/ftpclass.cc:2128
 #, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "Соединение сокета данных с прокси-сервером %s (%s), порт %u"
 
-#: src/ftpclass.cc:2155 src/ftpclass.cc:4033
+#: src/ftpclass.cc:2148 src/ftpclass.cc:4030
 msgid "Switching passive mode off"
 msgstr "Отключение пассивного режима"
 
-#: src/ftpclass.cc:2163
+#: src/ftpclass.cc:2156
 msgid "Data connection established"
 msgstr "Канал данных установлен"
 
-#: src/ftpclass.cc:2467 src/ftpclass.cc:4163
+#: src/ftpclass.cc:2460 src/ftpclass.cc:4160
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force установлено, а сервер не поддерживает или не позволяет "
 "использовать SSL"
 
-#: src/ftpclass.cc:2809
+#: src/ftpclass.cc:2802
 msgid "Persist and retry"
 msgstr "Назойливо попробуем еще раз"
 
-#: src/ftpclass.cc:3076
+#: src/ftpclass.cc:3069
 msgid "Closing data socket"
 msgstr "Закрытие соединения данных"
 
-#: src/ftpclass.cc:3098
+#: src/ftpclass.cc:3091
 msgid "Closing aborted data socket"
 msgstr "Закрытие соединения данных, оставшегося после ABOR"
 
-#: src/ftpclass.cc:3847
+#: src/ftpclass.cc:3840
 msgid "saw file size in response"
 msgstr "замечен размер файла в ответе сервера"
 
-#: src/ftpclass.cc:3877 src/ftpclass.cc:3904
+#: src/ftpclass.cc:3870 src/ftpclass.cc:3897
 msgid "Turning on sync-mode"
 msgstr "Включение синхронного режима"
 
-#: src/ftpclass.cc:4053
+#: src/ftpclass.cc:4050
 msgid "Switching passive mode on"
 msgstr "Включение пассивного режима"
 
-#: src/ftpclass.cc:4199
+#: src/ftpclass.cc:4196
 msgid "FEAT negotiation..."
 msgstr "Согласование FEAT..."
 
-#: src/ftpclass.cc:4206
+#: src/ftpclass.cc:4203
 msgid "Sending commands..."
 msgstr "Передача команд..."
 
-#: src/ftpclass.cc:4210
+#: src/ftpclass.cc:4207
 msgid "Delaying before retry"
 msgstr "Задержка перед повторной попыткой"
 
-#: src/ftpclass.cc:4229
+#: src/ftpclass.cc:4226
 msgid "TLS negotiation..."
 msgstr "Согласование TLS..."
 
-#: src/ftpclass.cc:4233
+#: src/ftpclass.cc:4230
 msgid "Logging in..."
 msgstr "Регистрация..."
 
-#: src/ftpclass.cc:4237
+#: src/ftpclass.cc:4234
 msgid "Making data connection..."
 msgstr "Установка соединения данных..."
 
-#: src/ftpclass.cc:4240
+#: src/ftpclass.cc:4237
 msgid "Changing remote directory..."
 msgstr "Смена каталога на сервере..."
 
-#: src/ftpclass.cc:4246
+#: src/ftpclass.cc:4243
 msgid "Waiting for other copy peer..."
 msgstr "Ожидание готовности другой стороны..."
 
-#: src/ftpclass.cc:4248 src/ftpclass.cc:4272
+#: src/ftpclass.cc:4245 src/ftpclass.cc:4269
 msgid "Waiting for transfer to complete"
 msgstr "Ожидание окончания пересылки"
 
-#: src/ftpclass.cc:4252
+#: src/ftpclass.cc:4249
 msgid "Waiting for TLS shutdown..."
 msgstr "Ожидание закрытия сеанса TLS..."
 
-#: src/ftpclass.cc:4254
+#: src/ftpclass.cc:4251
 msgid "Waiting for data connection..."
 msgstr "Ожидание установки соединения данных..."
 
-#: src/ftpclass.cc:4260
+#: src/ftpclass.cc:4257
 msgid "Sending data/TLS"
 msgstr "Отправка данных/TLS"
 
-#: src/ftpclass.cc:4262
+#: src/ftpclass.cc:4259
 msgid "Receiving data/TLS"
 msgstr "Получение данных/TLS"
 
@@ -2360,7 +2360,7 @@ msgid ""
 "or \"all\" to list all entries.\n"
 msgstr ""
 
-#: src/mgetJob.cc:125 src/mgetJob.cc:203
+#: src/mgetJob.cc:125 src/mgetJob.cc:204
 #, c-format
 msgid "%s: no files found\n"
 msgstr "%s: файлы не найдены\n"

@@ -200,3 +200,7 @@ vasnprintf.h
 vsnprintf.c
 xsize.h
 select.c
+mbsrtowcs-state.c
+mbsrtowcs.c
+strnlen1.c
+strnlen1.h

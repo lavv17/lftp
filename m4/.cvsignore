@@ -159,3 +159,4 @@ vasnprintf.m4
 vsnprintf-posix.m4
 vsnprintf.m4
 select.m4
+mbsrtowcs.m4

@@ -1,3 +1,10 @@
+Version 3.7.12 - 2009-04-28
+
+* fixed core dump on 'mput -d' command.
+* fixed a core dump on `kill' command.
+* fixed mkdir -p for sftp protocol.
+* fixed some signed/unsigned conversion bugs.
+
 Version 3.7.11 - 2009-03-20
 
 * add dynamic commands in abc order (as output by help).
