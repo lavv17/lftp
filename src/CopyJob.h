@@ -58,8 +58,8 @@ public:
 
    void SuspendInternal() { c->SuspendSlave(); }
    void ResumeInternal()  { c->ResumeSlave(); }
-   void Fg() { c->Fg(); Job::Fg(); }
-   void Bg() { Job::Bg(); c->Bg(); }
+   void Fg() { if(c) c->Fg(); Job::Fg(); }
+   void Bg() { Job::Bg(); if(c) c->Bg(); }
 
    int AcceptSig(int sig);
    pid_t GetProcGroup() { return c?c->GetProcGroup():0; }

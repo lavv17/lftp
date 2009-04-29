@@ -1,3 +1,7 @@
+2009-04-29  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CopyJob.h: check for null ptr (fixes a core dump).
+
 2009-04-27  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CopyJob.cc, CopyJob.h, FileCopy.cc: fixed core dump on kill command.
