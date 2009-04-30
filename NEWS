@@ -1,6 +1,10 @@
+Version 3.7.13 - 2009-04-30
+
+* fixed a coredump in some commands printing to screen.
+
 Version 3.7.12 - 2009-04-28
 
-* fixed core dump on 'mput -d' command.
+* fixed core dump on `mput -d' command.
 * fixed a core dump on `kill' command.
 * fixed mkdir -p for sftp protocol.
 * fixed some signed/unsigned conversion bugs.
