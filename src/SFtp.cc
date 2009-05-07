@@ -606,8 +606,7 @@ void SFtp::SendRequest()
 	 SetError(NOT_SUPP);
 	 break;
       }
-      char *file1_wire_path=alloca_strdup(WirePath(file1));
-      SendRequest(new Request_RENAME(WirePath(file),file1_wire_path,
+      SendRequest(new Request_RENAME(WirePath(file),WirePath(file1),
 			SSH_FXF_RENAME_NATIVE,protocol_version),Expect::DEFAULT);
       state=WAITING;
       break;
@@ -1927,7 +1926,7 @@ const char *SFtp::utf8_to_lc(const char *s)
    int len;
    recv_translate->Get(&s,&len);
    recv_translate->Skip(len);
-   return s;
+   return xstring::get_tmp(s,len);
 }
 const char *SFtp::lc_to_utf8(const char *s)
 {
@@ -1940,7 +1939,7 @@ const char *SFtp::lc_to_utf8(const char *s)
    int len;
    send_translate->Get(&s,&len);
    send_translate->Skip(len);
-   return s;
+   return xstring::get_tmp(s,len);
 }
 
 FileSet *SFtp::GetFileSet()

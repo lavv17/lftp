@@ -1,3 +1,9 @@
+2009-05-07  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Filter.cc: fflush stdout before fork().
+	* SFtp.cc: use xstring::get_tmp to avoid clobbering buffer in
+	  lc_to_utf8 and utf8_to_lc.
+
 2009-04-29  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CopyJob.h: check for null ptr (fixes a core dump).

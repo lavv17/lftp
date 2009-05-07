@@ -146,6 +146,7 @@ int OutputFilter::getfd()
 
    bool had_pg=(pg!=0);
 
+   fflush(stdout);
    fflush(stderr);
    switch(pid=fork())
    {
