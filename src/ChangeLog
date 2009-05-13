@@ -1,3 +1,7 @@
+2009-05-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: use line buffering for log file.
+
 2009-05-07  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Filter.cc: fflush stdout before fork().

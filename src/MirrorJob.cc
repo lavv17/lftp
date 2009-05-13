@@ -1277,6 +1277,7 @@ char *MirrorJob::SetScriptFile(const char *n)
    if(strcmp(n,"-"))
    {
       script=fopen(n,"w");
+      setvbuf(script,NULL,_IOLBF,0);
       script_needs_closing=true;
    }
    else
