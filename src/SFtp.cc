@@ -1005,6 +1005,9 @@ int SFtp::HandleReplies()
    if(state!=CONNECTING_2)
       m|=HandlePty();
 
+   if(!recv_buf)
+      return MOVED;
+
    int i=0;
    Expect *ooo_scan=ooo_chain;
    while(ooo_scan)

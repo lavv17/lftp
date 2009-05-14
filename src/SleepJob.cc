@@ -47,14 +47,15 @@ SleepJob::~SleepJob()
 
 int SleepJob::Do()
 {
+   int m=STALL;
    if(Done())
-      return STALL;
+      return m;
 
    if(waiting.count()>0)
    {
       Job *j=FindDoneAwaitedJob();
       if(!j)
-	 return STALL;
+	 return m;
       exit_code=j->ExitCode();
       if(!repeat || (++repeat_count>=max_repeat_count && max_repeat_count)
       || exit_code==break_code || (continue_code!=-1 && exit_code!=continue_code))
@@ -68,6 +69,7 @@ int SleepJob::Do()
       Reset();
       exec=(CmdExec*)j; // we are sure it is CmdExec.
       RemoveWaiting(j);
+      m=MOVED;
    }
 
    if(Stopped())
@@ -88,7 +90,7 @@ int SleepJob::Do()
       done=true;
       return MOVED;
    }
-   return STALL;
+   return m;
 }
 
 const char *SleepJob::Status()
@@ -115,8 +117,13 @@ void SleepJob::PrintStatus(int,const char *prefix)
 }
 void SleepJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
 {
-   s->Show(Status());
-   current->TimeoutS(1);
+   if(Stopped())
+      Job::ShowRunStatus(s);
+   else
+   {
+      s->Show(Status());
+      current->TimeoutS(1);
+   }
 }
 
 void SleepJob::lftpMovesToBackground()

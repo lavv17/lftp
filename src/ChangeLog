@@ -1,3 +1,8 @@
+2009-05-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SFtp.cc: fixed coredump when ssh gets killed.
+	* SleepJob.cc: show exec'd command status; fixed a deadlock msg.
+
 2009-05-13  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc: use line buffering for log file.
