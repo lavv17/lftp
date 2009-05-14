@@ -65,9 +65,9 @@ int ChmodJob::GetMode(const FileInfo *fi) const
       return simple_mode;
 
    if(fi->defined&fi->MODE)
-      return mode_adjust(fi->mode, false, 7777, m, NULL);
+      return mode_adjust(fi->mode, false, 022, m, NULL);
    if(!RelativeMode(m))
-      return mode_adjust(0, false, 7777, m, NULL);
+      return mode_adjust(0, false, 022, m, NULL);
 
    return -1;
 }
@@ -125,8 +125,8 @@ void ChmodJob::SetVerbosity(verbosity v)
 bool ChmodJob::RelativeMode(const mode_change *m) const
 {
    // relative mode change depends on original mode.
-   return mode_adjust(7777, false, 7777, m, NULL)
-       != mode_adjust(0000, false, 7777, m, NULL);
+   return mode_adjust(07777, false, 0, m, NULL)
+       != mode_adjust(00000, false, 0, m, NULL);
 }
 
 void ChmodJob::TreatCurrent(const char *d,const FileInfo *fi)

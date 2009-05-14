@@ -2,6 +2,7 @@
 
 	* SFtp.cc: fixed coredump when ssh gets killed.
 	* SleepJob.cc: show exec'd command status; fixed a deadlock msg.
+	* ChmodJob.cc: fixed modes and umask (use octal as intended).
 
 2009-05-13  Alexander V. Lukyanov <lav@yars.free.net>
 
