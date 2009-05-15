@@ -1,3 +1,12 @@
+Version 3.7.14 - 2009-05-15
+
+* use line buffering for mirror log file.
+* fixed `chmod' command mode calculation.
+* fixed status line of `repeat' command.
+* fixed sftp charset translation in file listings.
+* fixed output ordering by flushing stdout before calling external programs.
+* fixed coredump in sftp when ssh process gets killed.
+
 Version 3.7.13 - 2009-04-30
 
 * fixed a coredump in some commands printing to screen.

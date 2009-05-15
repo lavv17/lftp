@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.6.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-04-30 18:31+0400\n"
+"POT-Creation-Date: 2009-05-15 10:43+0400\n"
 "PO-Revision-Date: 2002-08-08 19:01+0000\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -241,7 +241,7 @@ msgstr "Falló la transferencia de %d de %d archivo$|s$.\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "%d archivo$|s$ transferido$|s$ en total.\n"
 
-#: src/DummyProto.cc:66 src/MirrorJob.cc:1611 src/MirrorJob.cc:1627
+#: src/DummyProto.cc:66 src/MirrorJob.cc:1612 src/MirrorJob.cc:1628
 #: src/commands.cc:976 src/commands.cc:2137
 msgid " - not supported protocol"
 msgstr " - protocolo no soportado"
@@ -255,7 +255,7 @@ msgstr "Falló el acceso: %s"
 msgid "File cannot be accessed"
 msgstr "El archivo no puede ser accedido"
 
-#: src/FileAccess.cc:216 src/Fish.cc:975 src/SFtp.cc:1290 src/ftpclass.cc:4210
+#: src/FileAccess.cc:216 src/Fish.cc:975 src/SFtp.cc:1292 src/ftpclass.cc:4210
 #: src/ftpclass.cc:4219
 msgid "Not connected"
 msgstr "No conectado"
@@ -369,17 +369,17 @@ msgstr ""
 msgid "pipe() failed: "
 msgstr "falló pipe(): %s"
 
-#: src/Filter.cc:174 src/PtyShell.cc:138
+#: src/Filter.cc:175 src/PtyShell.cc:138
 #, c-format
 msgid "chdir(%s) failed: %s\n"
 msgstr "falló chdir(%s): %s\n"
 
-#: src/Filter.cc:182
+#: src/Filter.cc:183
 #, fuzzy, c-format
 msgid "execvp(%s) failed: %s\n"
 msgstr "falló execlp(%s): %s\n"
 
-#: src/Filter.cc:187 src/PtyShell.cc:150
+#: src/Filter.cc:188 src/PtyShell.cc:150
 #, c-format
 msgid "execl(/bin/sh) failed: %s\n"
 msgstr "falló execl(/bin/sh): %s\n"
@@ -396,44 +396,44 @@ msgstr "Cerrando conexión ociosa"
 msgid "Running connect program"
 msgstr ""
 
-#: src/Fish.cc:580 src/Http.cc:1117 src/SFtp.cc:718 src/SFtp.cc:1037
+#: src/Fish.cc:580 src/Http.cc:1117 src/SFtp.cc:717 src/SFtp.cc:1039
 #: src/ftpclass.cc:2646 src/ftpclass.cc:2856
 msgid "Peer closed connection"
 msgstr "El otro extremo cerró la conexión"
 
-#: src/Fish.cc:624 src/SFtp.cc:1062 src/ftpclass.cc:3856
+#: src/Fish.cc:624 src/SFtp.cc:1064 src/ftpclass.cc:3856
 msgid "extra server response"
 msgstr "respuesta extra del servidor"
 
-#: src/Fish.cc:980 src/Http.cc:1824 src/Http.cc:1831 src/SFtp.cc:1296
+#: src/Fish.cc:980 src/Http.cc:1824 src/Http.cc:1831 src/SFtp.cc:1298
 #: src/ftpclass.cc:4222
 msgid "Connecting..."
 msgstr "Conectándose..."
 
-#: src/Fish.cc:982 src/SFtp.cc:1298 src/ftpclass.cc:4228
+#: src/Fish.cc:982 src/SFtp.cc:1300 src/ftpclass.cc:4228
 msgid "Connected"
 msgstr "Conectado"
 
-#: src/Fish.cc:984 src/Http.cc:1833 src/SFtp.cc:1300 src/ftpclass.cc:4205
+#: src/Fish.cc:984 src/Http.cc:1833 src/SFtp.cc:1302 src/ftpclass.cc:4205
 #: src/ftpclass.cc:4233 src/ftpclass.cc:4247
 msgid "Waiting for response..."
 msgstr "Esperando respuesta..."
 
-#: src/Fish.cc:986 src/Http.cc:1836 src/SFtp.cc:1302 src/ftpclass.cc:4267
+#: src/Fish.cc:986 src/Http.cc:1836 src/SFtp.cc:1304 src/ftpclass.cc:4267
 msgid "Receiving data"
 msgstr "Recibiendo datos"
 
-#: src/Fish.cc:988 src/Http.cc:1829 src/SFtp.cc:1304 src/ftpclass.cc:4265
+#: src/Fish.cc:988 src/Http.cc:1829 src/SFtp.cc:1306 src/ftpclass.cc:4265
 msgid "Sending data"
 msgstr "Enviando datos"
 
-#: src/Fish.cc:990 src/SFtp.cc:1306
+#: src/Fish.cc:990 src/SFtp.cc:1308
 #, fuzzy
 msgid "Done"
 msgstr "\tHecho\n"
 
-#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1317 src/SFtp.cc:2137
-#: src/SFtp.cc:2216
+#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1317 src/SFtp.cc:2139
+#: src/SFtp.cc:2218
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "Obteniendo lista de archivos (%lld) [%s]"
@@ -647,12 +647,12 @@ msgstr "Borrando directorio antiguo `%s'"
 msgid "Retrying mirror...\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1449
+#: src/MirrorJob.cc:1450
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1580 src/SleepJob.cc:141 src/SleepJob.cc:197
+#: src/MirrorJob.cc:1581 src/SleepJob.cc:148 src/SleepJob.cc:204
 #: src/commands.cc:1109 src/commands.cc:1196 src/commands.cc:1631
 #: src/commands.cc:1662 src/commands.cc:1765 src/commands.cc:2046
 #: src/commands.cc:2242 src/commands.cc:2405 src/commands.cc:2412
@@ -828,25 +828,25 @@ msgstr "no existe un servicio %s"
 msgid "No address found"
 msgstr "No se encontró ninguna dirección"
 
-#: src/SFtp.cc:1053
+#: src/SFtp.cc:1055
 #, fuzzy
 msgid "invalid server response format"
 msgstr "respuesta extra del servidor"
 
-#: src/SleepJob.cc:100
+#: src/SleepJob.cc:102
 msgid "Sleeping forever"
 msgstr ""
 
-#: src/SleepJob.cc:101
+#: src/SleepJob.cc:103
 msgid "Sleep time left: "
 msgstr ""
 
-#: src/SleepJob.cc:110
+#: src/SleepJob.cc:112
 #, c-format
 msgid "\tRepeat count: %d\n"
 msgstr "\tRepeticiones: %d\n"
 
-#: src/SleepJob.cc:139
+#: src/SleepJob.cc:146
 #, c-format
 msgid "%s: argument required. "
 msgstr "%s: se requiere un argumento. "

@@ -204,3 +204,4 @@ mbsrtowcs-state.c
 mbsrtowcs.c
 strnlen1.c
 strnlen1.h
+alignof.h
