@@ -43,6 +43,10 @@
 #include "IdNameCache.h"
 #include "PatternSet.h"
 
+#ifdef HAVE_SYS_STATFS_H
+# include <sys/statfs.h>
+#endif
+
 #define fnum files.count()
 
 void  FileInfo::Merge(const FileInfo& f)
@@ -694,7 +698,13 @@ check_again:
       return;   // ignore other type files
 
    SetSize(st.st_size);
-   SetDate(st.st_mtime,0);
+   int prec=0;
+#if defined(HAVE_STATFS) && defined(MSDOS_SUPER_MAGIC)
+   struct statfs stfs;
+   if(statfs(name,&stfs)!=-1 && stfs.f_type==MSDOS_SUPER_MAGIC)
+      prec=1;  // MS-DOS fs has 2-second resolution
+#endif
+   SetDate(st.st_mtime,prec);
    SetMode(st.st_mode&07777);
    SetType(t);
    SetNlink(st.st_nlink);
