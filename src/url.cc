@@ -345,6 +345,7 @@ char *ParsedURL::Combine(const char *home,bool use_rfc1738)
    return u.borrow();
 }
 
+// decode in place, return the new string length
 int url::decode_string(char *str)
 {
    char *p=str;
@@ -366,7 +367,7 @@ int url::decode_string(char *str)
       *o++=*p++;
    }
    *o=0;
-   return p-str;
+   return o-str;
 }
 
 const char *url::decode(const char *p)

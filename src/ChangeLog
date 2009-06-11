@@ -1,3 +1,7 @@
+2009-06-11  Jiri Skala <jskala@redhat.com>
+
+	* url.cc: fixed decode_string return value (also fixes http ls).
+
 2009-05-14  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.cc: fixed coredump when ssh gets killed.
