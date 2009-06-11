@@ -140,6 +140,7 @@ class xstring : public xstring0
 public:
    xstring() { init(); }
    xstring(const char *s) { init(s); }
+   xstring(const char *s,int l) { init(s,l); }
 
    // allocates s bytes, with preferred granularity g
    void get_space(size_t s,size_t g=32);
