@@ -1,3 +1,8 @@
+2009-06-11  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileSet.cc: set time precision +-1 second on msdos fs (linux only).
+	* xstring.h: add ctor(str,len).
+
 2009-06-11  Jiri Skala <jskala@redhat.com>
 
 	* url.cc: fixed decode_string return value (also fixes http ls).
