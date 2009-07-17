@@ -63,6 +63,7 @@ LocalAccess::LocalAccess() : FileAccess()
    Init();
    xstring_ca c(xgetcwd());
    cwd.Set(c?c.get():".");
+   LogNote(10,"local cwd is `%s'",cwd.path.get());
 }
 LocalAccess::LocalAccess(const LocalAccess *o) : FileAccess(o)
 {

@@ -41,6 +41,7 @@ public:
    void Connect(const char *host,const char *port) {}
    void AnonymousLogin() {}
    void Login(const char *u,const char *p) {}
+   void ResetLocationData() {}
 
    const char *GetProto() const { return "file"; }
    FileAccess *Clone() const { return new LocalAccess(this); }
