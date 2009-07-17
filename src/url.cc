@@ -370,10 +370,10 @@ int url::decode_string(char *str)
    return o-str;
 }
 
-const char *url::decode(const char *p)
+xstring& url::decode(const char *p)
 {
    if(!p)
-      return 0;
+      return xstring::null;
    xstring& s=xstring::get_tmp("");
    while(*p)
    {
@@ -416,14 +416,15 @@ char *url::encode_string (const char *s,char *res,const char *unsafe)
   *p = '\0';
   return res;
 }
-const char *url::encode(const char *s,const char *unsafe)
+xstring& url::encode(const char *s,int len,const char *unsafe)
 {
-   if(!s || !*s)
-      return s;
+   if(!s)
+      return xstring::null;
    xstring& u=xstring::get_tmp("");
-   char c;
-   while((c=*s++))
+   u.get_space(len+len/4);
+   while(len-->0)
    {
+      char c=*s++;
       if (need_quote(c))
 	 u.appendf("%%%02X",(unsigned char)c);
       else

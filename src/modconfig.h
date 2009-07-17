@@ -7,6 +7,7 @@
 # define MODULE_PROTO_SFTP 1
 # define MODULE_CMD_MIRROR 1
 # define MODULE_CMD_SLEEP  1
+# define MODULE_CMD_TORRENT 1
 #endif
 /* declarations for use in modules */
 CDECL_BEGIN
