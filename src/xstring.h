@@ -144,6 +144,8 @@ public:
 
    // allocates s bytes, with preferred granularity g
    void get_space(size_t s,size_t g=32);
+   char *add_space(size_t s,size_t g=32) { get_space(len+s,g); return get_non_const()+len; }
+   void add_commit(int new_len) { len+=new_len; }
 
    size_t length() const { return len; }
 
@@ -159,6 +161,7 @@ public:
    xstring& append(char c);
    xstring& append(const char *s,size_t len);
    xstring& append(const xstring &s) { return append(s.get(),s.length()); }
+   xstring& append_padding(int len,char ch);
    xstring& vappend(va_list);
    xstring& vappend(...) __attribute__((sentinel));
    xstring& vset(...) __attribute__((sentinel));
@@ -190,6 +193,12 @@ public:
    void _clear() { init(); }
    void _set(const char *s) { init(s); }
    void unset() { xfree(buf); _clear(); }
+
+   bool is_binary() const;
+   const char *dump_to(xstring &out) const;
+   const char *dump() const;
+
+   static xstring null;
 };
 
 #endif//XSTRING_H

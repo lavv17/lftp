@@ -22,6 +22,7 @@
 
 #include <config.h>
 #include <string.h>
+#include <mbswidth.h>
 #include "xstring.h"
 #include "trio.h"
 
@@ -134,6 +135,12 @@ xstring& xstring::append(char c)
 {
    get_space(len+1);
    buf[len++]=c;
+   return *this;
+}
+xstring& xstring::append_padding(int len,char c)
+{
+   memset(add_space(len),c,len);
+   add_commit(len);
    return *this;
 }
 
@@ -285,9 +292,9 @@ xstring& xstring::appendf(const char *format, ...)
 }
 xstring& xstring::get_tmp()
 {
-   static xstring revolver[4];
+   static xstring revolver[16];
    static int i;
-   return revolver[i=(i+1)&3];
+   return revolver[i=(i+1)&15];
 }
 xstring& xstring::format(const char *fmt, ...)
 {
@@ -336,3 +343,54 @@ const char *xstring_c::vset(...)
    va_end(va);
    return buf;
 }
+
+bool xstring::is_binary() const
+{
+   unsigned bin_count=0;
+   for(unsigned i=0; i<len; i++)
+      bin_count+=((unsigned char)buf[i] < 32);
+   return bin_count*32>len;
+}
+const char *xstring::dump() const
+{
+   return dump_to(get_tmp(""));
+}
+const char *xstring::dump_to(xstring& buf) const
+{
+   int len=length();
+   const char *s=get();
+   if(is_binary()) {
+      if(len<128) {
+	 buf.append("<binary: 0x");
+	 while(len-->0)
+	    buf.appendf("%02X",(unsigned char)*s++);
+	 buf.append('>');
+      } else {
+	 buf.appendf("<long binary, %d bytes>",length());
+      }
+   } else {
+      while(len>0) {
+	 int ch_len=mblen(s,len);
+	 int ch_width=-1;
+	 if(ch_len<1) {
+	    ch_len=1;
+	 } else {
+	    ch_width=mbsnwidth(s,ch_len,0);
+	 }
+	 if(ch_width>=0) {
+	    buf.append(s,ch_len);
+	 } else {
+	    while(ch_len>0) {
+	       buf.appendf("\\%03o",(unsigned char)*s++);
+	       ch_len--;
+	       len--;
+	    }
+	 }
+	 s+=ch_len;
+	 len-=ch_len;
+      }
+   }
+   return buf;
+}
+
+xstring xstring::null;
