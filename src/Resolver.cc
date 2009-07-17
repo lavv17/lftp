@@ -139,7 +139,7 @@ int   Resolver::Do()
       cache->Find(hostname,portname,defport,service,proto,&a,&n);
       if(a && n>0)
       {
-	 FA::LogNote(10,"dns cache hit");
+	 LogNote(10,"dns cache hit");
 	 addr.nset(a,n);
 	 done=true;
 	 return MOVED;
@@ -163,7 +163,7 @@ int   Resolver::Do()
 	 fcntl(pipe_to_child[0],F_SETFD,FD_CLOEXEC);
 	 fcntl(pipe_to_child[1],F_SETFD,FD_CLOEXEC);
 	 m=MOVED;
-	 FA::LogNote(4,_("Resolving host address..."));
+	 LogNote(4,_("Resolving host address..."));
       }
 
       if(!w && !buf)
@@ -205,7 +205,7 @@ int   Resolver::Do()
    {
       if(!buf)
       {
-	 FA::LogNote(4,_("Resolving host address..."));
+	 LogNote(4,_("Resolving host address..."));
 	 buf=new IOBuffer(IOBuffer::GET);
 	 DoGethostbyname();
 	 if(deleting)
@@ -254,7 +254,7 @@ int   Resolver::Do()
       if(use_fork)
       {
 	 // e.g. under gdb child fails.
-	 FA::LogError(4,"child failed, retrying with dns:use-fork=no");
+	 LogError(4,"child failed, retrying with dns:use-fork=no");
 	 use_fork=false;
 	 buf=0;
 	 return MOVED;
@@ -279,7 +279,7 @@ int   Resolver::Do()
 	    report.append(", ");
       }
    }
-   FA::LogNote(4,"%s",report.get());
+   LogNote(4,"%s",report.get());
 
    return MOVED;
 }

@@ -29,7 +29,7 @@
 #include "Cache.h"
 #include "network.h"
 
-class Resolver : public SMTask
+class Resolver : public SMTask, protected ProtoLog
 {
    xstring hostname;
    xstring portname;
