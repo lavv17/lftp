@@ -71,7 +71,6 @@ bool SFtp::GetBetterConnection(int level,bool limit_reached)
 int SFtp::Do()
 {
    int m=STALL;
-   int count;
    const char *b;
    int s;
 
@@ -130,7 +129,6 @@ int SFtp::Do()
 
       // walk through SFtp classes and try to find identical idle session
       // first try "easy" cases of session take-over.
-      count=CountConnections();
       for(int i=0; i<3; i++)
       {
 	 bool limit_reached=(connection_limit>0
