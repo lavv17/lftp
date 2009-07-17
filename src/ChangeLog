@@ -1,3 +1,24 @@
+2009-07-17  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc, CmdExec.cc, CmdExec.h: (static_cmd_table_length) new const; use it;
+	  fixed core dump on help command (reported by Ganael LAPLANCHE <ganael.laplanche@martymac.com>).
+	  (torrent) new command.
+	* ProtoLog.cc, ProtoLog.h: new class.
+	* FileAccess.cc, FileAccess.h: use ProtoLog; assume "file" protocol
+	  by default.
+	* Http.cc: strip interface name from hostname for ipv6.
+	* Job.cc: (Kill) try a signal first.
+	* LocalAccess.cc, LocalAccess.h: use current cwd by default.
+	* NetAccess.cc, NetAccess.h, network.cc, network.h: (Networker)
+	  new class, use it; add is_* methods for IP address classes.
+	* Resolver.cc, Resolver.h: use ProtoLog.
+	* ftpclass.cc: use sockaddr_u methods.
+	* url.cc, url.h: use xstring, more unsafe chars.
+	* xarray.h: (allocate) new method; (RefQueue) new class.
+	* xstring.cc, xstring.h: (append_padding, dump, dump_to, is_binary) new methods.
+	* xmap.cc, xmap.h, Error.cc, Error.h, Torrent.cc, Torrent.h: new files.
+	* Makefile.am: add new files.
+
 2009-06-11  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileSet.cc: set time precision +-1 second on msdos fs (linux only).
