@@ -32,6 +32,7 @@
 #include "ResMgr.h"
 #include "FileSet.h"
 #include "ArgV.h"
+#include "ProtoLog.h"
 
 #define FILE_END     ((off_t)-1L)
 #define UNKNOWN_POS  ((off_t)-1L)
@@ -42,7 +43,7 @@ class NoGlob;
 class DirList;
 class FileAccessRef;
 
-class FileAccess : public SMTask, public ResClient
+class FileAccess : public SMTask, public ResClient, protected ProtoLog
 {
    static bool class_inited;
 public:
@@ -134,9 +135,6 @@ protected:
 
    static void NonBlock(int fd);
    static void CloseOnExec(int fd);
-
-   static void Log2(int level,xstring& str);
-   static void Log3(int level,const char *prefix,const char *str);
 
    time_t try_time;
    int retries;
@@ -373,11 +371,6 @@ public:
 
    static void ClassInit();
    static void ClassCleanup();
-
-   static void LogError(int level,const char *fmt,...) PRINTF_LIKE(2,3);
-   static void LogNote(int level,const char *fmt,...) PRINTF_LIKE(2,3);
-   static void LogRecv(int level,const char *line);
-   static void LogSend(int level,const char *line);
 };
 
 // shortcut

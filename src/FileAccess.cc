@@ -105,46 +105,6 @@ FileAccess::~FileAccess()
    ListDel(FileAccess,chain,this,next);
 }
 
-void  FileAccess::Log2(int level,xstring& str)
-{
-   str.chomp('\n');
-   str.chomp('\r');
-   str.append('\n');
-   Log::global->Write(level,str);
-}
-void  FileAccess::Log3(int level,const char *prefix,const char *str0)
-{
-   xstring &str=xstring::get_tmp(prefix);
-   str.append(str0);
-   Log2(level,str);
-}
-void FileAccess::LogError(int level,const char *fmt,...)
-{
-   va_list v;
-   va_start(v,fmt);
-   xstring &str=xstring::get_tmp("**** ");
-   str.vappendf(fmt,v);
-   Log2(level,str);
-   va_end(v);
-}
-void FileAccess::LogNote(int level,const char *fmt,...)
-{
-   va_list v;
-   va_start(v,fmt);
-   xstring &str=xstring::get_tmp("---- ");
-   str.vappendf(fmt,v);
-   Log2(level,str);
-   va_end(v);
-}
-void FileAccess::LogRecv(int level,const char *line)
-{
-   Log3(level,"<--- ",line);
-}
-void FileAccess::LogSend(int level,const char *line)
-{
-   Log3(level,"---> ",line);
-}
-
 void FileAccess::NonBlock(int fd)
 {
    int fl=fcntl(fd,F_GETFL);
@@ -835,6 +795,9 @@ FileAccess *FileAccess::New(const char *proto,const char *host,const char *port)
 {
    ClassInit();
 
+   if(proto==0)
+      proto="file";
+
    if(!strcmp(proto,"slot"))
    {
       const FA *session=ConnectionSlot::FindSession(host);
@@ -864,14 +827,15 @@ FileAccess *FileAccess::New(const char *proto,const char *host,const char *port)
 }
 FileAccess *FileAccess::New(const ParsedURL *u,bool dummy)
 {
-   FileAccess *s=New(u->proto,u->host);
+   const char *proto=u->proto?u->proto.get():"file";
+   FileAccess *s=New(proto,u->host);
    if(!s)
    {
       if(!dummy)
 	 return 0;
-      return new DummyNoProto(u->proto);
+      return new DummyNoProto(proto);
    }
-   if(strcmp(u->proto,"slot"))
+   if(strcmp(proto,"slot"))
       s->Connect(u->host,u->port);
    if(u->user)
       s->Login(u->user,u->pass);
@@ -1070,7 +1034,7 @@ void FileAccess::Path::Change(const char *new_path,bool new_is_file,const char *
 	 up_len--;
       if(strncmp(url_path,path,up_len))
       {
-	 Log::global->Format(0,"(BUG?) URL mismatch %s vs %s, dropping URL\n",url.get(),path.get());
+	 LogError(0,"(BUG?) URL mismatch %s vs %s, dropping URL\n",url.get(),path.get());
 	 url.set(0);
       }
    }
@@ -1101,7 +1065,7 @@ void FileAccess::Path::ExpandTilde(const Path &home)
       int pi=url::path_index(url);
       if(url[pi]=='/' && url[pi+1]=='~')
 	 pi++;
-      expand_tilde(url,home.url?home.url.get():url::encode(home.path,URL_PATH_UNSAFE),pi);
+      expand_tilde(url,home.url?home.url.get():url::encode(home.path,URL_PATH_UNSAFE).get(),pi);
    }
    expand_tilde(path,home.path);
 }
