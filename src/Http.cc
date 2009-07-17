@@ -235,10 +235,13 @@ void Http::Send(const char *format,...)
 
 void Http::SendMethod(const char *method,const char *efile)
 {
-   const char *ehost=xstring::join(":",2,
-      url::encode(hostname,URL_HOST_UNSAFE),
-      url::encode(portname,URL_PORT_UNSAFE)
-   );
+   xstring& stripped_hostname=xstring::get_tmp(hostname);
+   stripped_hostname.truncate_at('%');
+   xstring& ehost=url::encode(stripped_hostname,URL_HOST_UNSAFE);
+   if(portname) {
+      ehost.append(':');
+      ehost.append(url::encode(portname,URL_PORT_UNSAFE));
+   }
    if(!use_head && !strcmp(method,"HEAD"))
       method="GET";
    last_method=method;
@@ -272,7 +275,7 @@ void Http::SendMethod(const char *method,const char *efile)
       efile="/";
 
    Send("%s %s HTTP/1.1\r\n",method,efile);
-   Send("Host: %s\r\n",ehost);
+   Send("Host: %s\r\n",ehost.get());
    if(user_agent && user_agent[0])
       Send("User-Agent: %s\r\n",user_agent);
    if(!hftp)
@@ -1035,11 +1038,6 @@ int Http::Do()
 	 SetError(SEE_ERRNO,str);
 	 return MOVED;
       }
-      KeepAlive(sock);
-      SetSocketBuffer(sock);
-      SetSocketMaxseg(sock);
-      NonBlock(sock);
-      CloseOnExec(sock);
 
       SayConnectingTo();
       res=SocketConnect(sock,&peer[peer_curr]);
