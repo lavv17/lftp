@@ -624,31 +624,6 @@ void Ftp::SendCWD(const char *path,Expect::expect_t c,const char *arg)
    expect->Push(new Expect(c,arg?arg:path));
 }
 
-static bool InPrivateNetwork(const sockaddr_u *u)
-{
-   if(u->sa.sa_family==AF_INET)
-   {
-      unsigned char *a=(unsigned char *)&u->in.sin_addr;
-      return (a[0]==10)
-	  || (a[0]==172 && a[1]>=16 && a[1]<32)
-	  || (a[0]==192 && a[1]==168);
-   }
-   return false;
-}
-static bool IsLoopback(const sockaddr_u *u)
-{
-   if(u->sa.sa_family==AF_INET)
-   {
-      unsigned char *a=(unsigned char *)&u->in.sin_addr;
-      return (a[0]==127 && a[1]==0 && a[2]==0 && a[3]==1);
-   }
-#if INET6
-   if(u->sa.sa_family==AF_INET6)
-      return IN6_IS_ADDR_LOOPBACK(&u->in6.sin6_addr);
-#endif
-   return false;
-}
-
 Ftp::pasv_state_t Ftp::Handle_PASV()
 {
    unsigned a0,a1,a2,a3,p0,p1;
@@ -695,10 +670,10 @@ Ftp::pasv_state_t Ftp::Handle_PASV()
    bool ignore_pasv_address = QueryBool("ignore-pasv-address",hostname);
    if(ignore_pasv_address)
       LogNote(2,"Address returned by PASV is ignored according to ftp:ignore-pasv-address setting");
-   else if((a0==0 && a1==0 && a2==0 && a3==0)
+   else if(conn->data_sa.is_reserved() || conn->data_sa.is_multicast()
 	   || (QueryBool("fix-pasv-address",hostname) && !conn->proxy_is_http
-	       && (InPrivateNetwork(&conn->data_sa) != InPrivateNetwork(&conn->peer_sa)
-		   || IsLoopback(&conn->data_sa) != IsLoopback(&conn->peer_sa))))
+	       && (conn->data_sa.is_private() != conn->peer_sa.is_private()
+		   || conn->data_sa.is_loopback() != conn->peer_sa.is_loopback())))
    {
       // broken server, try to fix up
       ignore_pasv_address=true;
@@ -1265,12 +1240,7 @@ int   Ftp::Do()
 	 SetError(SEE_ERRNO,str);
 	 return MOVED;
       }
-      KeepAlive(conn->control_sock);
       MinimizeLatency(conn->control_sock);
-      SetSocketBuffer(conn->control_sock);
-      SetSocketMaxseg(conn->control_sock);
-      NonBlock(conn->control_sock);
-      CloseOnExec(conn->control_sock);
 
       SayConnectingTo();
 
@@ -1680,7 +1650,7 @@ int   Ftp::Do()
 	       port=range.Random();
 
 	    bool do_addr_bind=QueryBool("bind-data-socket")
-			   && !IsLoopback(&conn->peer_sa);
+			   && !conn->peer_sa.is_loopback();
 
 	    if(!do_addr_bind && !port)
 		break;	// nothing to bind
@@ -1953,13 +1923,13 @@ int   Ftp::Do()
       }
       else // !PASSIVE
       {
+	 sockaddr_u control_sa;
 	 if(copy_mode!=COPY_NONE)
 	    conn->data_sa=copy_addr;
 	 if(conn->data_sa.sa.sa_family==AF_INET)
 	 {
 	    a=(const unsigned char*)&conn->data_sa.in.sin_addr;
 	    p=(const unsigned char*)&conn->data_sa.in.sin_port;
-	    sockaddr_u control_sa;
 	    // check if data socket address is unbound
 	    if((a[0]|a[1]|a[2]|a[3])==0)
 	    {
