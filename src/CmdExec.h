@@ -97,6 +97,7 @@ private:
       static int cmp(const CmdExec::cmd_rec *a,const CmdExec::cmd_rec *b);
    };
    static const cmd_rec static_cmd_table[];
+   static const int static_cmd_table_length;
    static xarray<cmd_rec> dyn_cmd_table;
 
    static int find_cmd(const char *cmd_name,const cmd_rec **ret);

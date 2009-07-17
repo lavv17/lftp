@@ -93,7 +93,7 @@ CMD(ver);   CMD(close);  CMD(bookmark);CMD(lftp);
 CMD(echo);  CMD(suspend);CMD(sleep);   CMD(slot);
 CMD(at);    CMD(find);   CMD(command); CMD(module);
 CMD(lpwd);  CMD(glob);	 CMD(chmod);   CMD(queue);
-CMD(repeat);CMD(get1);   CMD(tasks);
+CMD(repeat);CMD(get1);   CMD(tasks);   CMD(torrent);
 
 #ifdef MODULE_CMD_MIRROR
 # define cmd_mirror 0
@@ -102,6 +102,9 @@ CMD(repeat);CMD(get1);   CMD(tasks);
 # define cmd_sleep  0
 # define cmd_at     0
 # define cmd_repeat 0
+#endif
+#ifdef MODULE_CMD_TORRENT
+# define cmd_torrent 0
 #endif
 
 #define S "\001"
@@ -458,6 +461,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"source",  cmd_source, N_("source <file>"),
 	 N_("Execute commands recorded in file <file>\n")},
    {"suspend", cmd_suspend},
+   {"torrent", cmd_torrent},
    {"user",    cmd_user,   N_("user <user|URL> [<pass>]"),
 	 N_("Use specified info for remote login. If you specify URL, the password\n"
 	 "will be cached for future usage.\n")},
@@ -476,9 +480,8 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Same as more, but filter each file through bzcat\n")},
 
    {".tasks",  cmd_tasks,  0,0},
-
-   {NULL,NULL}
 };
+const int CmdExec::static_cmd_table_length=sizeof(static_cmd_table)/sizeof(static_cmd_table[0]);
 
 #define charcasecmp(a,b) (tolower((unsigned char)(a))-tolower((unsigned char)(b)))
 // returns:
@@ -988,9 +991,9 @@ Job *CmdExec::builtin_open()
 	    if(nrc)
 	    {
 	       if(!user)
-		  FA::LogNote(3,"using user `%s' and password from ~/.netrc",nrc->user.get());
+		  ProtoLog::LogNote(3,"using user `%s' and password from ~/.netrc",nrc->user.get());
 	       else
-		  FA::LogNote(3,"using password from ~/.netrc");
+		  ProtoLog::LogNote(3,"using password from ~/.netrc");
 	       user=nrc->user;
 	       pass=nrc->pass;
 	    }
@@ -2524,26 +2527,25 @@ void CmdExec::print_cmd_help(const char *cmd)
 void CmdExec::print_cmd_index()
 {
    int i=0;
-   const char *c1;
    const cmd_rec *cmd_table=dyn_cmd_table?dyn_cmd_table.get():static_cmd_table;
-   const int count=dyn_cmd_table?dyn_cmd_table.count():1024;
-   while(i<count && cmd_table[i].name)
+   const int count=dyn_cmd_table?dyn_cmd_table.count():static_cmd_table_length;
+   while(i<count)
    {
-      while(cmd_table[i].name && !cmd_table[i].short_desc)
+      while(i<count && !cmd_table[i].short_desc)
 	 i++;
-      if(!cmd_table[i].name)
+      if(i>=count)
 	 break;
-      c1=cmd_table[i].short_desc;
+      const char *c1=gettext(cmd_table[i].short_desc);
       i++;
-      while(cmd_table[i].name && !cmd_table[i].short_desc)
+      while(i<count && !cmd_table[i].short_desc)
 	 i++;
-      if(cmd_table[i].name)
+      if(i<count)
       {
-	 printf("\t%-35s %s\n",gettext(c1),gettext(cmd_table[i].short_desc));
+	 printf("\t%-35s %s\n",c1,gettext(cmd_table[i].short_desc));
 	 i++;
       }
       else
-	 printf("\t%s\n",_(c1));
+	 printf("\t%s\n",c1);
    }
 }
 
