@@ -156,6 +156,8 @@ public:
 
 void Job::Kill(Job *j)
 {
+   if(j->AcceptSig(SIGTERM)!=WANTDIE)
+      return;
    if(j->parent && j->parent->WaitsFor(j))
    {
       // someone waits for termination of this job, so
