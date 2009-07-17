@@ -126,6 +126,11 @@ public:
       int pos;
       return bsearch(x,cmp,&pos) ? pos : -1;
    }
+   void allocate(int c,const T& fill) {
+      while(c-->0) {
+	 append(fill);
+      }
+   }
 };
 
 template<typename T,typename RefT>
@@ -153,6 +158,11 @@ public:
    void chop() { dispose(len-1); _chop(); }
    RefT& last() { return (*this)[len-1]; }
    RefT *borrow() { return static_cast<RefT*>(_borrow()); }
+   void allocate(int c) { while(c-->0) append((T*)0); }
+   typedef int (*cmp_t)(const RefT*,const RefT*);
+   void qsort(cmp_t cmp) {
+      xarray0::qsort((qsort_cmp_t)cmp);
+   }
 };
 
 template<typename T>
@@ -205,25 +215,41 @@ public:
 };
 
 
-template<typename T,class A> class xqueue
+
+template<typename T,class A,typename P> class _xqueue
 {
+protected:
    A q;
    int ptr;
 public:
-   xqueue() : ptr(0) {}
+   _xqueue() : ptr(0) {}
    int count() { return q.count()-ptr; }
    void empty() { q.truncate(); ptr=0; }
-   void push(const T &n) {
+   void push(P n) {
       if(ptr>count()) {
 	 q.remove(0,ptr);
 	 ptr=0;
       }
       q.append(n);
    }
+   void remove(int i) {
+      if(i==0)
+	 ptr++;
+      else
+	 q.remove(ptr+i);
+   }
    // returned pointer valid till the next push
    T& next() { return q[ptr++]; }
    T& operator[](int i) { return q[ptr+i]; }
-   void move_here(xqueue& o) { q.move_here(o.q); ptr=o.ptr; o.ptr=0; }
+   void move_here(_xqueue& o) { q.move_here(o.q); ptr=o.ptr; o.ptr=0; }
+};
+
+template<typename T,class A> class xqueue : public _xqueue<T,A,const T&>
+{
+};
+
+template<typename T> class RefQueue : public _xqueue<Ref<T>,RefArray<T>,T*>
+{
 };
 
 #endif // XARRAY_H
