@@ -51,6 +51,29 @@ union sockaddr_u
    const char *address() const;
    int port() const;
    int bind_to(int s) { return bind(s,&sa,addr_len()); }
+   sockaddr_u();
+   bool is_reserved();
+   bool is_multicast();
+   bool is_loopback();
+   bool is_private();
+};
+
+class Networker
+{
+protected:
+   static void KeepAlive(int sock);
+   static void MinimizeLatency(int sock);
+   static void MaximizeThroughput(int sock);
+   static void ReuseAddress(int sock);
+   static int SocketBuffered(int sock);
+   static const char *SocketNumericAddress(const sockaddr_u *u) { return u->address(); }
+   static int SocketPort(const sockaddr_u *u) { return u->port(); }
+   static socklen_t SocketAddrLen(const sockaddr_u *u) { return u->addr_len(); }
+   static int SocketConnect(int fd,const sockaddr_u *u);
+   static void SetSocketBuffer(int sock,int socket_buffer);
+   static void SetSocketMaxseg(int sock,int socket_maxseg);
+   static int SocketCreate(int af,int type,int proto,const char *hostname);
+   static int SocketCreateTCP(int af,const char *hostname);
 };
 
 #endif //NETWORK_H

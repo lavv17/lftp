@@ -28,7 +28,7 @@
 #include "LsCache.h"
 #include "RateLimit.h"
 
-class NetAccess : public FileAccess
+class NetAccess : public FileAccess, public Networker
 {
 protected:
    SMTaskRef<Resolver> resolver;
@@ -58,20 +58,12 @@ protected:
 
    int	 socket_buffer;
    int	 socket_maxseg;
-   void	 SetSocketBuffer(int sock);
-   void	 SetSocketMaxseg(int sock);
+   void	 SetSocketBuffer(int sock) { Networker::SetSocketBuffer(sock,socket_buffer); }
+   void	 SetSocketMaxseg(int sock) { Networker::SetSocketMaxseg(sock,socket_maxseg); }
 
-   static void KeepAlive(int sock);
-   static void MinimizeLatency(int sock);
-   static void MaximizeThroughput(int sock);
-   static void ReuseAddress(int sock);
-   static int SocketBuffered(int sock);
-   static const char *SocketNumericAddress(const sockaddr_u *u) { return u->address(); }
-   static int SocketPort(const sockaddr_u *u) { return u->port(); }
-   static socklen_t SocketAddrLen(const sockaddr_u *u) { return u->addr_len(); }
-   static int SocketConnect(int fd,const sockaddr_u *u);
-   int SocketCreate(int,int,int);
-   int SocketCreateTCP(int);
+   int SocketCreate(int af,int type,int proto) { return Networker::SocketCreate(af,type,proto,hostname); }
+   int SocketCreateTCP(int af) { return Networker::SocketCreateTCP(af,hostname); }
+
    int Poll(int fd,int ev);
    int CheckHangup(const struct pollfd *pfd,int num);
 
