@@ -121,7 +121,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Define or undefine alias <name>. If <value> omitted,\n"
 	 "the alias is undefined, else is takes the value <value>.\n"
          "If no argument is given the current aliases are listed.\n")},
-   {"anon",    cmd_anon,   "anon",
+   {"anon",    cmd_anon,   0,
 	 N_("anon - login anonymously (by default)\n")},
    {"at",      cmd_at},
    {"bookmark",cmd_bookmark,N_("bookmark [SUBCMD]"),
@@ -461,7 +461,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"source",  cmd_source, N_("source <file>"),
 	 N_("Execute commands recorded in file <file>\n")},
    {"suspend", cmd_suspend},
-   {"torrent", cmd_torrent},
+   {"torrent", cmd_torrent, N_("torrent [-O <dir>] <file>")},
    {"user",    cmd_user,   N_("user <user|URL> [<pass>]"),
 	 N_("Use specified info for remote login. If you specify URL, the password\n"
 	 "will be cached for future usage.\n")},

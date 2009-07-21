@@ -307,6 +307,14 @@ static void sig_term(int sig)
 {
    time_t t=time(0);
    printf(_("[%lu] Terminated by signal %d. %s"),(unsigned long)getpid(),sig,ctime(&t));
+   if(top_exec) {
+      top_exec->KillAll();
+      alarm(30);
+      while(Job::NumberOfJobs()>0) {
+	 SMTask::Schedule();
+	 SMTask::Block();
+      }
+   }
    exit(1);
 }
 
