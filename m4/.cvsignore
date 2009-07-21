@@ -160,3 +160,5 @@ vsnprintf-posix.m4
 vsnprintf.m4
 select.m4
 mbsrtowcs.m4
+getpagesize.m4
+mmap-anon.m4
