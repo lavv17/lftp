@@ -53,9 +53,6 @@ public:
 class TorrentPeer;
 struct TorrentPiece
 {
-   bool have;
-   bool verified;
-
    unsigned sources_count;	    // how many peers have the piece
    unsigned rnd; // to randomize sorting
 
@@ -63,7 +60,7 @@ struct TorrentPiece
    xarray<TorrentPeer*> downloader; // which peers download the blocks
 
    TorrentPiece(unsigned b)
-      : have(false), verified(false), sources_count(0), block_map(b)
+      : sources_count(0), block_map(b)
       { downloader.allocate(b,0); }
 
    bool has_a_downloader();
@@ -78,8 +75,6 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    bool started;
    bool shutting_down;
    bool complete;
-   bool validated;
-   bool stopped;
    bool end_game;
    bool validating;
    unsigned validate_index;
@@ -113,12 +108,11 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    unsigned complete_pieces;
 
    static const unsigned BLOCK_SIZE = 0x4000;
-   unsigned blocks_per_piece;
 
    unsigned long long total_recv;
    unsigned long long total_sent;
 
-   double GetRatio() { return total_sent/(total_recv+1.); }
+   double GetRatio() { return total_sent>0?total_sent/(total_length-total_left):0; }
 
    void SetError(Error *);
 
@@ -132,6 +126,8 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    RefArray<TorrentPiece> piece_info;
    static int PeersCompareForUnchoking(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2);
    static int PeersCompareInterest(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2);
+   static int PeersCompareRecvRate(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2);
+   static int PeersCompareSendRate(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2);
 
    Timer pieces_needed_rebuild_timer;
    xarray<unsigned> pieces_needed;
@@ -141,10 +137,10 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    void SetPieceNotWanted(unsigned piece);
    void SetPieceWanted(unsigned piece);
 
-
    void SetDownloader(unsigned piece,unsigned block,TorrentPeer *o,TorrentPeer *n);
 
    xstring_c cwd;
+   xstring_c output_dir;
 
    const char *FindFileByPosition(unsigned piece,unsigned begin,off_t *f_pos,off_t *f_tail);
    const char *MakePath(BeNode *p);
@@ -160,10 +156,18 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
 
    int active_peers_count;
    int complete_peers_count;
+   int am_interested_peers_count;
+   int am_not_choking_peers_count;
    int max_peers;
 
+   float stop_on_ratio;
+
+   Timer decline_timer;
+   Timer optimistic_unchoke_timer;
+   Timer peers_scan_timer;
+
 public:
-   Torrent(const char *mf);
+   Torrent(const char *mf,const char *cwd,const char *output_dir);
 
    int Do();
    int Done();
@@ -181,6 +185,7 @@ public:
    static void SHA1(const xstring& str,xstring& buf);
    void ValidatePiece(unsigned p);
    unsigned PieceLength(unsigned p) const { return p==total_pieces-1 ? last_piece_length : piece_length; }
+   unsigned BlocksInPiece(unsigned p) const { return (PieceLength(p)+BLOCK_SIZE-1)/BLOCK_SIZE; }
 
    const TaskRefArray<TorrentPeer>& GetPeers() const { return peers; }
    void AddPeer(TorrentPeer *);
@@ -193,6 +198,11 @@ public:
    int GetPeersCount() { return peers.count(); }
    int GetActivePeersCount() { return active_peers_count; }
    int GetCompletePeersCount() { return complete_peers_count; }
+
+   bool NeedMoreUploaders();
+   bool AllowMoreDownloaders();
+   void UnchokeBestUploaders();
+   void OptimisticUnchoke();
 
    void Reconfig(const char *name);
 };
@@ -371,15 +381,18 @@ private:
    unpack_status_t UnpackPacket(Ref<IOBuffer>& ,Packet **);
    void HandlePacket(Packet *);
 
+   static const int MAX_QUEUE_LEN = 16;
    RefQueue<PacketRequest> recv_queue;
    RefQueue<PacketRequest> sent_queue;
-   static const int MAX_QUEUE_LEN = 16;
 
    unsigned last_piece;
    static const unsigned NO_PIECE = ~0U;
    void SetLastPiece(unsigned p);
    unsigned GetLastPiece();
    bool HasNeededPieces();
+   void SetPieceHaving(unsigned p,bool have);
+   void SetAmInterested(bool);
+   void SetAmChoking(bool);
 
    void ClearSentQueue(int i);
    void ClearSentQueue() { ClearSentQueue(sent_queue.count()-1); }
@@ -422,6 +435,8 @@ public:
    bool Active() { return connected && (am_interested || peer_interested); }
    bool Complete() { return peer_complete_pieces==parent->total_pieces; }
    bool AddressEq(const TorrentPeer *o) const;
+   bool IsDownloader();
+   bool IsUploader();
 
    const char *Status();
 };
@@ -448,6 +463,7 @@ public:
    TorrentListener();
    ~TorrentListener();
    int Do();
+   Torrent *FindTorrent(const xstring& info_hash) { return torrents.lookup(info_hash); }
    void AddTorrent(Torrent *);
    void RemoveTorrent(Torrent *);
    int GetPort() { return addr.port(); }
@@ -462,7 +478,7 @@ class TorrentJob : public Job
    SMTaskRef<Torrent> torrent;
    bool done;
 public:
-   TorrentJob(const char *mf);
+   TorrentJob(const char *mf,const char *cwd,const char *output_dir);
    ~TorrentJob();
    int Do();
    int Done() { return done; }

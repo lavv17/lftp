@@ -1,3 +1,9 @@
+2009-07-21  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* xmap.h: (lookup_Lv) new method; make lookup const.
+	* commands.cc: add short desc for torrent.
+	* lftp.cc: send signal to jobs.
+
 2009-07-17  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc, CmdExec.cc, CmdExec.h: (static_cmd_table_length) new const; use it;

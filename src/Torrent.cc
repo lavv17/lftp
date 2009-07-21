@@ -40,7 +40,8 @@ CDECL_END
 
 static ResType torrent_vars[] = {
    {"torrent:port-range", "6881-6889", ResMgr::RangeValidate, ResMgr::NoClosure},
-   {"torrent:request-timeout", "120",  ResMgr::TimeIntervalValidate, ResMgr::NoClosure},
+   {"torrent:max-peers", "60", ResMgr::UNumberValidate, ResMgr::NoClosure},
+   {"torrent:stop-on-ratio", "2.0", ResMgr::FloatValidate, ResMgr::NoClosure},
    {0}
 };
 static ResDecls torrent_vars_register(torrent_vars);
@@ -48,16 +49,15 @@ static ResDecls torrent_vars_register(torrent_vars);
 xstring Torrent::my_peer_id;
 Ref<TorrentListener> Torrent::listener;
 
-Torrent::Torrent(const char *mf)
+Torrent::Torrent(const char *mf,const char *c,const char *od)
    : metainfo_url(mf),
      tracker_timer(600), pieces_needed_rebuild_timer(10),
-     cwd(xgetcwd()), rate_limit(mf)
+     cwd(c), output_dir(od), rate_limit(mf),
+     optimistic_unchoke_timer(30), peers_scan_timer(1)
 {
    started=false;
    shutting_down=false;
    complete=false;
-   validated=false;
-   stopped=false;
    end_game=false;
    validating=false;
    validate_index=0;
@@ -71,7 +71,10 @@ Torrent::Torrent(const char *mf)
    complete_pieces=0;
    active_peers_count=0;
    complete_peers_count=0;
+   am_interested_peers_count=0;
+   am_not_choking_peers_count=0;
    max_peers=60;
+   stop_on_ratio=2;
    last_piece=TorrentPeer::NO_PIECE;
    Reconfig(0);
 
@@ -169,7 +172,6 @@ void Torrent::ValidatePiece(unsigned p)
 	 complete_pieces--;
 	 my_bitfield->set_bit(p,0);
       }
-      piece_info[p]->have=false;
       piece_info[p]->block_map.clear();
    } else {
       LogNote(11,"piece %u ok",p);
@@ -178,7 +180,6 @@ void Torrent::ValidatePiece(unsigned p)
 	 complete_pieces++;
 	 my_bitfield->set_bit(p,1);
       }
-      piece_info[p]->have=true;
    }
 }
 
@@ -197,7 +198,8 @@ bool TorrentPiece::has_a_downloader()
    return false;
 }
 
-static int int_cmp(int a,int b)
+template<typename T>
+static inline int cmp(T a,T b)
 {
    if(a>b)
       return 1;
@@ -211,13 +213,25 @@ int Torrent::PiecesNeededCmp(const unsigned *a,const unsigned *b)
 {
    int ra=cmp_torrent->piece_info[*a]->sources_count+cmp_torrent->piece_info[*a]->rnd;
    int rb=cmp_torrent->piece_info[*b]->sources_count+cmp_torrent->piece_info[*b]->rnd;
-   return int_cmp(ra,rb);
+   return cmp(ra,rb);
 }
 int Torrent::PeersCompareInterest(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2)
 {
    TimeDiff i1((*p1)->interest_timer.TimePassed());
    TimeDiff i2((*p2)->interest_timer.TimePassed());
-   return int_cmp(i1.Seconds(),i2.Seconds());
+   return cmp(i1.Seconds(),i2.Seconds());
+}
+int Torrent::PeersCompareRecvRate(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2)
+{
+   float r1((*p1)->peer_recv_rate.Get());
+   float r2((*p2)->peer_recv_rate.Get());
+   return cmp(r1,r2);
+}
+int Torrent::PeersCompareSendRate(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2)
+{
+   float r1((*p1)->peer_send_rate.Get());
+   float r2((*p2)->peer_send_rate.Get());
+   return cmp(r1,r2);
 }
 
 int Torrent::Do()
@@ -338,10 +352,8 @@ int Torrent::Do()
       }
 
       my_bitfield=new BitField(total_pieces);
-
-      blocks_per_piece=(piece_length+BLOCK_SIZE-1)/BLOCK_SIZE;
       for(unsigned p=0; p<total_pieces; p++)
-	 piece_info.append(new TorrentPiece(blocks_per_piece));
+	 piece_info.append(new TorrentPiece(BlocksInPiece(p)));
 
       validate_index=0;
       validating=true;
@@ -351,7 +363,6 @@ int Torrent::Do()
       if(validate_index<total_pieces)
 	 return MOVED;
       validating=false;
-      validated=true;
       if(total_left==0)
 	 complete=true;
    }
@@ -365,26 +376,37 @@ int Torrent::Do()
       m=MOVED;
    }
 
-   // scan existing peers
-   for(int i=0; i<peers.count(); i++) {
-      if(peers[i]->Failed()) {
-	 LogError(2,"Peer %s failed: %s",peers[i]->GetName(),peers[i]->ErrorText());
-	 peers.remove(i--);
-      } else if(complete && (!peers[i]->Connected() || peers[i]->Complete())) {
-	 peers.remove(i--);
+   if(peers_scan_timer.Stopped()) {
+      // scan existing peers
+      for(int i=0; i<peers.count(); i++) {
+	 if(peers[i]->Failed()) {
+	    LogError(2,"Peer %s failed: %s",peers[i]->GetName(),peers[i]->ErrorText());
+	    peers.remove(i--);
+	 } else if(complete && (!peers[i]->Connected() || peers[i]->Complete())) {
+	    peers.remove(i--);
+	 }
       }
-   }
-   //peers.qsort(PeersCompareForUnchoking);
-   // FIXME: unchoke algorithm
-   if(peers.count()>max_peers) {
-      // remove least interesting peers.
-      peers.qsort(PeersCompareInterest);
-      int to_remove=peers.count()-max_peers;
-      while(to_remove-->0) {
-	 LogNote(3,"removing peer %s (too many)",peers.last()->GetName());
-	 peers.chop();
+      if(max_peers>0 && peers.count()>max_peers) {
+	 // remove least interesting peers.
+	 peers.qsort(PeersCompareInterest);
+	 int to_remove=peers.count()-max_peers;
+	 while(to_remove-->0) {
+	    TimeInterval max_idle(peers.last()->interest_timer.TimePassed());
+	    LogNote(3,"removing peer %s (too many; idle:%s)",peers.last()->GetName(),
+	       max_idle.toString(TimeInterval::TO_STR_TERSE+TimeInterval::TO_STR_TRANSLATE));
+	    peers.chop();
+	    if(max_idle<60)
+	       decline_timer.Set(60-max_idle);
+	 }
       }
+      UnchokeBestUploaders();
+      peers_scan_timer.Reset();
    }
+   if(optimistic_unchoke_timer.Stopped()) {
+      OptimisticUnchoke();
+      optimistic_unchoke_timer.Reset();
+   }
+
    // count peers
    active_peers_count=0;
    complete_peers_count=0;
@@ -394,7 +416,7 @@ int Torrent::Do()
    }
 
    // rebuild lists of needed pieces
-   if(pieces_needed_rebuild_timer.Stopped()) {
+   if(!complete && pieces_needed_rebuild_timer.Stopped()) {
       pieces_needed.truncate();
       bool enter_end_game=true;
       for(unsigned i=0; i<total_pieces; i++) {
@@ -499,6 +521,10 @@ int Torrent::Do()
 	 tracker_reply=0;
       }
    } else {
+      if(stop_on_ratio>0 && GetRatio()>=stop_on_ratio) {
+	 Shutdown();
+	 return MOVED;
+      }
       if(tracker_timer.Stopped()) {
 	 // remove uninteresting peers and request more
 	 for(int i=0; i<peers.count(); i++) {
@@ -506,8 +532,8 @@ int Torrent::Do()
 	       peers.remove(i--);
 	 }
 	 int numwant=0;
- 	 if(!complete && peers.count()<30 /*&& download_rate<wanted_download_rate*/)
- 	    numwant=30-peers.count();
+ 	 if(!complete && peers.count()<max_peers/2)
+ 	    numwant=max_peers/2-peers.count();
 	 SendTrackerRequest(0,numwant);
       }
    }
@@ -516,6 +542,12 @@ int Torrent::Do()
 
 void Torrent::Accept(int s,IOBuffer *rb)
 {
+   if(!decline_timer.Stopped()) {
+      LogNote(4,"declining new connection");
+      Delete(rb);
+      close(s);
+      return;
+   }
    sockaddr_u addr;
    socklen_t sock_len;
    getpeername(s,&addr.sa,&sock_len);
@@ -610,21 +642,25 @@ const char *Torrent::FindFileByPosition(unsigned piece,unsigned begin,off_t *f_p
 }
 int Torrent::OpenFile(const char *file,int m)
 {
-   const char *cf=dir_file(cwd,file);
+   const char *cf=dir_file(output_dir,file);
    LogNote(9,"opening %s",cf);
    int fd=open(cf,m,0664);
+   while(fd==-1 && (errno==EMFILE || errno==ENFILE) && peers.count()>0) {
+      peers.chop();  // free an fd
+      fd=open(cf,m,0664);
+   }
    if(fd==-1 && errno==ENOENT) {
       LogError(10,"open(%s): %s",cf,strerror(errno));
       const char *sl=strchr(file,'/');
       while(sl)
       {
 	 if(sl>file) {
-	    if(mkdir(cf=dir_file(cwd,xstring::get_tmp(file,sl-file)),0775)==-1 && errno!=EEXIST)
+	    if(mkdir(cf=dir_file(output_dir,xstring::get_tmp(file,sl-file)),0775)==-1 && errno!=EEXIST)
 	       LogError(9,"mkdir(%s): %s",cf,strerror(errno));
 	 }
 	 sl=strchr(sl+1,'/');
       }
-      fd=open(cf=dir_file(cwd,file),m,0664);
+      fd=open(cf=dir_file(output_dir,file),m,0664);
    }
    return fd;
 }
@@ -655,10 +691,11 @@ void Torrent::StoreBlock(unsigned piece,unsigned begin,unsigned len,const char *
    for(int i=0; i<peers.count(); i++)
       peers[i]->CancelBlock(piece,begin);
 
-   off_t f_pos=0;
-   off_t f_rest=len;
    unsigned b=begin/BLOCK_SIZE;
    int bc=(len+BLOCK_SIZE-1)/BLOCK_SIZE;
+
+   off_t f_pos=0;
+   off_t f_rest=len;
    while(len>0) {
       const char *file=FindFileByPosition(piece,begin,&f_pos,&f_rest);
       if(f_rest>len)
@@ -683,22 +720,24 @@ void Torrent::StoreBlock(unsigned piece,unsigned begin,unsigned len,const char *
       begin+=w;
       len-=w;
    }
+
    while(bc-->0) {
       piece_info[piece]->block_map.set_bit(b++,1);
    }
-   if(piece_info[piece]->block_map.has_all_set() && !piece_info[piece]->have) {
+   if(piece_info[piece]->block_map.has_all_set() && !my_bitfield->get_bit(piece)) {
       ValidatePiece(piece);
-      if(!piece_info[piece]->have) {
+      if(!my_bitfield->get_bit(piece)) {
 	 LogError(0,"new piece %u digest mismatch",piece);
 	 return;
       }
-      LogNote(4,"piece %u complete",piece);
+      LogNote(3,"piece %u complete",piece);
       LogSend(5,xstring::format("broadcast have(%u)",piece));
       SetPieceNotWanted(piece);
       for(int i=0; i<peers.count(); i++)
 	 peers[i]->Have(piece);
       if(my_bitfield->has_all_set() && !complete) {
 	 complete=true;
+	 end_game=false;
 	 SendTrackerRequest("complete",0);
       }
    }
@@ -735,6 +774,98 @@ const xstring& Torrent::RetrieveBlock(unsigned piece,unsigned begin,unsigned len
    return buf;
 }
 
+bool Torrent::NeedMoreUploaders()
+{
+   int max_uploaders = 20;
+   int min_uploaders = 1;
+
+   bool rate_low = (rate_limit.BytesAllowed(RateLimit::GET) > (int)BLOCK_SIZE*4);
+   if(am_interested_peers_count >= (rate_low?max_uploaders:min_uploaders+1)) {
+      // sort by rate, make the slowest uninterested
+      peers.qsort(PeersCompareRecvRate);
+      for(int i=0; i<peers.count(); i++) {
+	 if(peers[i]->am_interested && peers[i]->interest_timer.TimePassed() > 30) {
+	    peers[i]->SetAmInterested(false);
+	    if(am_interested_peers_count < max_uploaders)
+	       break;
+	 }
+      }
+   }
+   if(rate_low && am_interested_peers_count < max_uploaders)
+      return true;
+   return false;
+}
+bool Torrent::AllowMoreDownloaders()
+{
+   int max_downloaders = 20;
+   int min_downloaders = 4;
+
+   bool rate_low = (rate_limit.BytesAllowed(RateLimit::PUT) > (int)BLOCK_SIZE*4);
+   if(am_interested_peers_count >= (rate_low?max_downloaders:min_downloaders+1)) {
+      // sort by rate, choke the slowest
+      peers.qsort(PeersCompareRecvRate);
+      for(int i=0; i<peers.count(); i++) {
+	 if(!peers[i]->am_choking && peers[i]->choke_timer.TimePassed() > 30) {
+	    peers[i]->SetAmChoking(true);
+	    if(am_not_choking_peers_count < max_downloaders)
+	       break;
+	 }
+      }
+   }
+   if(rate_low && am_not_choking_peers_count < max_downloaders)
+      return true;
+   return false;
+}
+void Torrent::UnchokeBestUploaders()
+{
+   // unchoke 4 best uploaders
+   int limit = 4;
+
+   int count=0;
+   peers.qsort(PeersCompareRecvRate);
+   for(int i=peers.count()-1; i>=0; i--) {
+      TorrentPeer *peer=peers[i].get_non_const();
+      if(!peer->Connected())
+	 continue;
+      if(!peer->choke_timer.Stopped())
+	 continue;   // cannot change choke status yet
+
+      if(count<limit && peer->am_choking && peer->am_interested && peer->peer_interested)
+	 peer->SetAmChoking(false);
+      else if(count>=limit && !peer->am_choking && peer->IsDownloader() && peer->choke_timer.TimePassed()>30 && !AllowMoreDownloaders())
+	 peer->SetAmChoking(true);
+
+      if(peer->peer_interested && !peer->am_choking)
+	 count++;
+   }
+}
+void Torrent::OptimisticUnchoke()
+{
+   xarray<TorrentPeer*> choked_peers;
+   for(int i=peers.count()-1; i>=0; i--) {
+      TorrentPeer *peer=peers[i].get_non_const();
+      if(!peer->Connected())
+	 continue;
+      if(!peer->choke_timer.Stopped())
+	 continue;   // cannot change choke status yet
+      if(peer->am_choking) {
+	 if(!peer->peer_interested) {
+	    peer->SetAmChoking(false);
+	    continue;
+	 }
+	 choked_peers.append(peer);
+	 if(peer->retry_timer.TimePassed()<60) {
+	    // newly connected is more likely to be unchoked
+	    choked_peers.append(peer);
+	    choked_peers.append(peer);
+	 }
+      }
+   }
+   if(choked_peers.count()==0)
+      return;
+   choked_peers[rand()/13%choked_peers.count()]->SetAmChoking(false);
+}
+
 int Torrent::PeerBytesAllowed(TorrentPeer *peer,RateLimit::dir_t dir)
 {
    float peer_rate=(dir==RateLimit::GET ? peer->peer_send_rate : peer->peer_recv_rate).Get();
@@ -753,6 +884,7 @@ void Torrent::PeerBytesUsed(int b,RateLimit::dir_t dir)
 void Torrent::Reconfig(const char *name)
 {
    max_peers=ResMgr::Query("torrent:max-peers",0);
+   stop_on_ratio=ResMgr::Query("torrent:stop-on-ratio",0);
    rate_limit.Reconfig(name,metainfo_url);
 }
 
@@ -816,20 +948,21 @@ void TorrentPeer::SetError(const char *s)
 
 void TorrentPeer::Disconnect()
 {
-   if(peer_bitfield) {
-      for(unsigned i=0; i<parent->total_pieces; i++)
-	 if(peer_bitfield->get_bit(i))
-	    parent->piece_info[i]->sources_count--;
-   }
    recv_queue.empty();
    ClearSentQueue();
+   if(peer_bitfield) {
+      for(unsigned p=0; p<parent->total_pieces; p++)
+	 SetPieceHaving(p,false);
+      peer_bitfield=0;
+   }
    recv_buf=0;
    send_buf=0;
    close(sock);
    sock=-1;
    connected=false;
-   peer_bitfield=0;
+   parent->am_interested_peers_count-=am_interested;
    am_interested=false;
+   parent->am_not_choking_peers_count-=!am_choking;
    am_choking=true;
    peer_interested=false;
    peer_choking=true;
@@ -847,6 +980,7 @@ void TorrentPeer::SendHandshake()
    int proto_len=strlen(protocol);
    send_buf->PackUINT8(proto_len);
    send_buf->Put(protocol,proto_len);
+   // FIXME: extensions
    send_buf->Put("\0\0\0\0\0\0\0",8);
    send_buf->Put(parent->info_hash);
    send_buf->Put(parent->my_peer_id);
@@ -891,8 +1025,11 @@ void TorrentPeer::SendDataReply()
    Enter(parent);
    const xstring& data=parent->RetrieveBlock(p->index,p->begin,p->req_length);
    Leave(parent);
-   if(data.length()!=p->req_length)
+   if(data.length()!=p->req_length) {
+      if(parent->my_bitfield->get_bit(p->index))
+	 parent->SetError(Error::Fatal(xstring::format("failed to read piece %u",p->index)));
       return;
+   }
    LogSend(6,xstring::format("piece:%u begin:%u size:%u",p->index,p->begin,p->req_length));
    PacketPiece(p->index,p->begin,data).Pack(send_buf);
    parent->total_sent+=data.length();
@@ -907,7 +1044,8 @@ int TorrentPeer::SendDataRequests(unsigned p)
       return 0;
 
    int sent=0;
-   for(unsigned b=0; b<parent->blocks_per_piece; b++) {
+   unsigned blocks=parent->BlocksInPiece(p);
+   for(unsigned b=0; b<blocks; b++) {
       if(parent->piece_info[p]->block_map.get_bit(b))
 	 continue;
       if(parent->piece_info[p]->downloader[b]) {
@@ -922,14 +1060,12 @@ int TorrentPeer::SendDataRequests(unsigned p)
       unsigned begin=b*Torrent::BLOCK_SIZE;
       unsigned len=Torrent::BLOCK_SIZE;
 
-      if(p==parent->total_pieces-1 && begin>=parent->last_piece_length)
-	 break;
-
-      if(b==parent->blocks_per_piece-1 && begin+len>parent->piece_length)
-	 len=parent->piece_length-begin;
-
-      if(p==parent->total_pieces-1 && begin+len>parent->last_piece_length)
-	 len=parent->last_piece_length-begin;
+      if(b==blocks-1) {
+	 assert(begin<parent->PieceLength(p));
+	 unsigned max_len=parent->PieceLength(p)-begin;
+	 if(len>max_len)
+	    len=max_len;
+      }
 
       if(!BytesAllowedToGet(len))
 	 break;
@@ -952,6 +1088,9 @@ int TorrentPeer::SendDataRequests(unsigned p)
 
 void TorrentPeer::SendDataRequests()
 {
+   assert(am_interested);
+   assert(!peer_choking);
+
    if(sent_queue.count()>=MAX_QUEUE_LEN)
       return;
    if(!BytesAllowedToGet(Torrent::BLOCK_SIZE))
@@ -960,20 +1099,15 @@ void TorrentPeer::SendDataRequests()
       return;
 
    unsigned p=NO_PIECE;
-   if(peer_bitfield) {
-      for(int i=0; i<parent->pieces_needed.count(); i++) {
-	 if(peer_bitfield->get_bit(parent->pieces_needed[i])) {
-	    p=parent->pieces_needed[i];
-	    break;
-	 }
+   for(int i=0; i<parent->pieces_needed.count(); i++) {
+      if(peer_bitfield->get_bit(parent->pieces_needed[i])) {
+	 p=parent->pieces_needed[i];
+	 if(SendDataRequests(p)>0)
+	    return;
       }
    }
-   if(p==NO_PIECE) {
-      Packet(MSG_UNINTERESTED).Pack(send_buf);
-      am_interested=false;
-      return;
-   }
-   SendDataRequests(p);
+   if(p==NO_PIECE)
+      SetAmInterested(false);
 }
 
 void TorrentPeer::Have(unsigned p)
@@ -981,8 +1115,8 @@ void TorrentPeer::Have(unsigned p)
    if(!send_buf)
       return;
    Enter();
-   PacketHave(p).Pack(send_buf);
    LogSend(9,xstring::format("have(%u)",p));
+   PacketHave(p).Pack(send_buf);
    Leave();
 }
 int TorrentPeer::FindRequest(unsigned piece,unsigned begin)
@@ -1054,15 +1188,21 @@ void TorrentPeer::BytesUsed(int b,RateLimit::dir_t dir)
 
 unsigned TorrentPeer::GetLastPiece()
 {
+   if(!peer_bitfield)
+      return NO_PIECE;
    unsigned p=last_piece;
    // continue if have any blocks already
-   if(p!=NO_PIECE && !parent->piece_info[p]->have && parent->piece_info[p]->block_map.has_any_set())
+   if(p!=NO_PIECE && !parent->my_bitfield->get_bit(p)
+   && parent->piece_info[p]->block_map.has_any_set()
+   && peer_bitfield->get_bit(p))
       return p;
    p=parent->last_piece;
-   if(p!=NO_PIECE && !parent->piece_info[p]->have)
+   if(p!=NO_PIECE && !parent->my_bitfield->get_bit(p)
+   && peer_bitfield->get_bit(p))
       return p;
    p=last_piece;
-   if(p!=NO_PIECE && !parent->piece_info[p]->have)
+   if(p!=NO_PIECE && !parent->my_bitfield->get_bit(p)
+   && peer_bitfield->get_bit(p))
       return p;
    return NO_PIECE;
 }
@@ -1073,6 +1213,50 @@ void TorrentPeer::SetLastPiece(unsigned p)
       last_piece=p;
    if(parent->last_piece==NO_PIECE || parent->my_bitfield->get_bit(parent->last_piece))
       parent->last_piece=p;
+}
+
+void TorrentPeer::SetAmInterested(bool interest)
+{
+   if(am_interested==interest)
+      return;
+   Enter();
+   LogSend(6,interest?"interested":"uninterested");
+   Packet(interest?MSG_INTERESTED:MSG_UNINTERESTED).Pack(send_buf);
+   parent->am_interested_peers_count+=(interest-am_interested);
+   am_interested=interest;
+   if(am_interested)
+      interest_timer.Reset();
+   Leave();
+}
+void TorrentPeer::SetAmChoking(bool c)
+{
+   if(am_choking==c)
+      return;
+   Enter();
+   LogSend(6,c?"choke":"unchoke");
+   Packet(c?MSG_CHOKE:MSG_UNCHOKE).Pack(send_buf);
+   parent->am_not_choking_peers_count-=(c-am_choking);
+   am_choking=c;
+   choke_timer.Reset();
+   Leave();
+}
+
+void TorrentPeer::SetPieceHaving(unsigned p,bool have)
+{
+   int diff = (have - peer_bitfield->get_bit(p));
+   if(!diff)
+      return;
+   parent->piece_info[p]->sources_count+=diff;
+   peer_complete_pieces+=diff;
+   peer_bitfield->set_bit(p,have);
+
+   if(parent->piece_info[p]->sources_count==0)
+      parent->SetPieceNotWanted(p);
+   if(have && send_buf && !am_interested && !parent->my_bitfield->get_bit(p)
+   && parent->NeedMoreUploaders()) {
+      SetAmInterested(true);
+      SetLastPiece(p);
+   }
 }
 
 void TorrentPeer::HandlePacket(Packet *p)
@@ -1110,26 +1294,11 @@ void TorrentPeer::HandlePacket(Packet *p)
    case MSG_HAVE: {
 	 PacketHave *pp=static_cast<PacketHave*>(p);
 	 LogRecv(5,xstring::format("have(%u)",pp->piece));
-	 if(!peer_bitfield)
-	    peer_bitfield=new BitField(parent->total_pieces);
 	 if(!peer_bitfield->valid_index(pp->piece)) {
 	    SetError("invalid piece index");
 	    break;
 	 }
-
-	 if(!parent->my_bitfield->get_bit(pp->piece)) {
-	    SetLastPiece(pp->piece);
-	 }
-
-	 if(!peer_bitfield->get_bit(pp->piece)) {
-	    peer_bitfield->set_bit(pp->piece,1);
-	    peer_complete_pieces++;
-	    parent->piece_info[pp->piece]->sources_count++;
-	    if(!am_interested && !parent->my_bitfield->get_bit(pp->piece)) {
-	       am_interested=true;
-	       Packet(MSG_INTERESTED).Pack(send_buf);
-	    }
-	 }
+	 SetPieceHaving(pp->piece,true);
 	 break;
       }
    case MSG_BITFIELD: {
@@ -1143,19 +1312,14 @@ void TorrentPeer::HandlePacket(Packet *p)
 	    SetError("bitfield has spare bits set");
 	    break;
 	 }
-	 peer_bitfield=pp->bitfield.borrow();
-	 peer_bitfield->set_bit_length(parent->total_pieces);
-	 for(unsigned i=0; i<parent->total_pieces; i++) {
-	    if(peer_bitfield->get_bit(i)) {
-	       peer_complete_pieces++;
-	       parent->piece_info[i]->sources_count++;
-	       if(!parent->my_bitfield->get_bit(i))
-		  am_interested=true;
-	    }
+	 unsigned count=0;
+	 for(unsigned p=0; p<parent->total_pieces; p++) {
+	    bool have=pp->bitfield->get_bit(p);
+	    count+=have;
+	    SetPieceHaving(p,have);
 	 }
-	 LogRecv(5,xstring::format("bitfield(%u/%u)",peer_complete_pieces,parent->total_pieces));
-	 if(am_interested)
-	    Packet(MSG_INTERESTED).Pack(send_buf);
+	 LogRecv(5,xstring::format("bitfield(%u/%u)",count,parent->total_pieces));
+	 assert(peer_complete_pieces==count);
 	 break;
       }
    case MSG_PORT: {
@@ -1204,11 +1368,15 @@ void TorrentPeer::HandlePacket(Packet *p)
 	    Disconnect();
 	    break;
 	 }
+	 if(am_choking)
+	    break;
 	 if(pp->index>=parent->total_pieces)
 	    break;
 	 if(pp->begin>=parent->PieceLength(pp->index))
 	    break;
 	 recv_queue.push(pp);
+	 if(IsDownloader())
+	    interest_timer.Reset();
 	 p=0;
 	 break;
       }
@@ -1240,6 +1408,21 @@ bool TorrentPeer::HasNeededPieces()
    return false;
 }
 
+bool TorrentPeer::IsDownloader() // remote side downloads
+{
+   if(!connected)
+      return false;
+   return peer_recv_rate.Get() < peer_send_rate.Get()
+	 || (peer_interested && !am_interested);
+}
+bool TorrentPeer::IsUploader() // remote side uploads
+{
+   if(!connected)
+      return false;
+   return peer_recv_rate.Get() > peer_send_rate.Get()
+	 || (!peer_interested && am_interested);
+}
+
 int TorrentPeer::Do()
 {
    int m=STALL;
@@ -1258,7 +1441,7 @@ int TorrentPeer::Do()
 	 SetError(xstring::format(_("cannot create socket of address family %d"),addr.sa.sa_family));
 	 return MOVED;
       }
-      LogNote(1,_("Connecting to peer %s port %u"),SocketNumericAddress(&addr),SocketPort(&addr));
+      LogNote(4,_("Connecting to peer %s port %u"),SocketNumericAddress(&addr),SocketPort(&addr));
       connected=false;
    }
    if(!connected) {
@@ -1266,7 +1449,7 @@ int TorrentPeer::Do()
       if(res==-1 && errno!=EINPROGRESS && errno!=EALREADY && errno!=EISCONN)
       {
 	 int e=errno;
-	 LogError(0,"connect: %s\n",strerror(e));
+	 LogError(4,"connect: %s\n",strerror(e));
 	 Disconnect();
 	 if(FA::NotSerious(e))
 	 {
@@ -1302,6 +1485,7 @@ int TorrentPeer::Do()
 	 return MOVED;
       }
       timeout_timer.Reset();
+      peer_bitfield=new BitField(parent->total_pieces);
       if(parent->my_bitfield->has_any_set()) {
 	 LogSend(5,"bitfield");
 	 PacketBitField(parent->my_bitfield).Pack(send_buf);
@@ -1335,26 +1519,18 @@ int TorrentPeer::Do()
       return MOVED;
    }
 
-   if(!am_interested && HasNeededPieces()) {
-      Packet(MSG_INTERESTED).Pack(send_buf);
-      am_interested=true;
-   }
+   if(!am_interested && HasNeededPieces() && parent->NeedMoreUploaders())
+      SetAmInterested(true);
 
    if(am_interested && !peer_choking && sent_queue.count()<MAX_QUEUE_LEN)
       SendDataRequests();
 
-   if(am_choking && recv_queue.count()<MAX_QUEUE_LEN && choke_timer.Stopped()) {
-      LogSend(5,"unchoke");
-      Packet(MSG_UNCHOKE).Pack(send_buf);
-      choke_timer.Reset();
-      am_choking=false;
-   }
-   if(!am_choking && recv_queue.count()>MAX_QUEUE_LEN && choke_timer.Stopped()) {
-      LogSend(5,"choke");
-      Packet(MSG_CHOKE).Pack(send_buf);
-      choke_timer.Reset();
-      am_choking=true;
-   }
+   if(peer_interested && am_choking && recv_queue.count()<MAX_QUEUE_LEN && choke_timer.Stopped()
+   && parent->AllowMoreDownloaders())
+      SetAmChoking(false);
+
+   if(!am_choking && recv_queue.count()>MAX_QUEUE_LEN && choke_timer.Stopped())
+      SetAmChoking(true);
 
    if(recv_queue.count()>0 && send_buf->Size()<(int)Torrent::BLOCK_SIZE*2
    && BytesAllowedToPut(recv_queue[0]->req_length))
@@ -1381,12 +1557,6 @@ int TorrentPeer::Do()
    }
    reply->DropData(recv_buf);
    HandlePacket(reply);
-
-   if(sent_queue.count()>0 && sent_queue[0]->expire.Stopped()) {
-      const PacketRequest *req=sent_queue[0];
-      LogError(1,"request expired, piece:%u begin:%u size:%u",req->index,req->begin,req->req_length);
-      ClearSentQueue(0);
-   }
 
    return m;
 }
@@ -1570,8 +1740,7 @@ void TorrentPeer::PacketBitField::Pack(Ref<IOBuffer>& b)
 }
 
 TorrentPeer::PacketRequest::PacketRequest(unsigned i,unsigned b,unsigned l)
-   : Packet(MSG_REQUEST), expire("torrent:request-timeout",0),
-     index(i), begin(b), req_length(l)
+   : Packet(MSG_REQUEST), index(i), begin(b), req_length(l)
 {
    length+=12;
 }
@@ -1793,8 +1962,8 @@ int TorrentDispatcher::Do()
 }
 
 ///
-TorrentJob::TorrentJob(const char *mf)
-   : torrent(new Torrent(mf)), done(false)
+TorrentJob::TorrentJob(const char *mf,const char *c,const char *od)
+   : torrent(new Torrent(mf,c,od)), done(false)
 {
 }
 TorrentJob::~TorrentJob()
@@ -1852,8 +2021,46 @@ CMD(torrent)
 {
 #define args (parent->args)
 #define eprintf parent->eprintf
+   enum {
+      OPT_OUTPUT_DIRECTORY,
+   };
+   static const struct option torrent_opts[]=
+   {
+      {"output-directory",required_argument,0,OPT_OUTPUT_DIRECTORY},
+      {0}
+   };
+   const char *output_dir=0;
 
-   return new TorrentJob(args->getarg(1));
+   args->rewind();
+   int opt;
+   while((opt=args->getopt_long("O:",torrent_opts,0))!=EOF)
+   {
+      switch(opt)
+      {
+      case(OPT_OUTPUT_DIRECTORY):
+      case('O'):
+	 output_dir=optarg;
+	 break;
+      case('?'):
+      try_help:
+	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
+	 return 0;
+      }
+   }
+   args->back();
+   const char *torrent=args->getnext();
+   if(!torrent)
+   {
+      eprintf(_("%s: Please specify meta-info file or URL.\n"),args->a0());
+      goto try_help;
+   }
+   if(args->getnext()) {
+      eprintf(_("%s: Too many arguments.\n"),args->a0());
+      goto try_help;
+   }
+
+   xstring_ca cwd(xgetcwd());
+   return new TorrentJob(torrent,cwd,output_dir?dir_file(cwd,output_dir):cwd);
 
 #undef args
 }
