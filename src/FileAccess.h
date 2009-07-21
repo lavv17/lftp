@@ -133,9 +133,6 @@ protected:
    FileTimestamp *opt_date;
    off_t  *opt_size;
 
-   static void NonBlock(int fd);
-   static void CloseOnExec(int fd);
-
    time_t try_time;
    int retries;
 

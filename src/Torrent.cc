@@ -28,6 +28,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <errno.h>
 
 CDECL_BEGIN
 #include <sha1.h>
@@ -1884,8 +1885,7 @@ int TorrentListener::Do()
    }
 
    sockaddr_u remote_addr;
-   socklen_t addr_len=sizeof(remote_addr);
-   int a=accept(sock,&remote_addr.sa,&addr_len);
+   int a=SocketAccept(sock,&remote_addr);
    if(a==-1) {
       Block(sock,POLLIN);
       return m;

@@ -128,6 +128,15 @@ bool sockaddr_u::is_loopback()
    return false;
 }
 
+void Networker::NonBlock(int fd)
+{
+   int fl=fcntl(fd,F_GETFL);
+   fcntl(fd,F_SETFL,fl|O_NONBLOCK);
+}
+void Networker::CloseOnExec(int fd)
+{
+   fcntl(fd,F_SETFD,FD_CLOEXEC);
+}
 
 static int one=1;
 void Networker::KeepAlive(int sock)
@@ -180,10 +189,8 @@ int Networker::SocketCreate(int af,int type,int proto,const char *hostname)
    if(s<0)
       return s;
 
-   int fl=fcntl(s,F_GETFL);
-   fcntl(s,F_SETFL,fl|O_NONBLOCK);
-   fcntl(s,F_SETFD,FD_CLOEXEC);
-
+   NonBlock(s);
+   CloseOnExec(s);
    SetSocketBuffer(s,ResMgr::Query("net:socket-buffer",hostname));
 
    const char *b=0;
@@ -229,6 +236,19 @@ int Networker::SocketConnect(int fd,const sockaddr_u *u)
    if(res!=-1)
       SMTask::UpdateNow(); // if non-blocking doesn't work
    return res;
+}
+int Networker::SocketAccept(int fd,sockaddr_u *u,const char *hostname)
+{
+   socklen_t len=sizeof(*u);
+   int a=accept(fd,&u->sa,&len);
+   if(a<0)
+      return a;
+   NonBlock(a);
+   CloseOnExec(a);
+   KeepAlive(a);
+   SetSocketBuffer(a,ResMgr::Query("net:socket-buffer",hostname));
+   SetSocketMaxseg(a,ResMgr::Query("net:socket-maxseg",hostname));
+   return a;
 }
 
 #ifdef TIOCOUTQ

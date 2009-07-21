@@ -105,17 +105,6 @@ FileAccess::~FileAccess()
    ListDel(FileAccess,chain,this,next);
 }
 
-void FileAccess::NonBlock(int fd)
-{
-   int fl=fcntl(fd,F_GETFL);
-   fcntl(fd,F_SETFL,fl|O_NONBLOCK);
-}
-void FileAccess::CloseOnExec(int fd)
-{
-   fcntl(fd,F_SETFD,FD_CLOEXEC);
-}
-
-
 void  FileAccess::Open(const char *fn,int mode,off_t offs)
 {
 #ifdef OPEN_DEBUG

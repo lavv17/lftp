@@ -3,6 +3,10 @@
 	* xmap.h: (lookup_Lv) new method; make lookup const.
 	* commands.cc: add short desc for torrent.
 	* lftp.cc: send signal to jobs.
+	* network.cc, network.cc: (SocketAccept) new method; move NonBlock and CloseOnExec here.
+	* FileAccess.cc, FileAccess.h: ... from here.
+	* ftpclass.cc: use SocketAccept and SocketCreateTCP.
+	* Torrent.cc: use SocketAccept.
 
 2009-07-17  Alexander V. Lukyanov <lav@yars.free.net>
 

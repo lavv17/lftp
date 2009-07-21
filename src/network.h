@@ -61,6 +61,8 @@ union sockaddr_u
 class Networker
 {
 protected:
+   static void NonBlock(int fd);
+   static void CloseOnExec(int fd);
    static void KeepAlive(int sock);
    static void MinimizeLatency(int sock);
    static void MaximizeThroughput(int sock);
@@ -70,6 +72,7 @@ protected:
    static int SocketPort(const sockaddr_u *u) { return u->port(); }
    static socklen_t SocketAddrLen(const sockaddr_u *u) { return u->addr_len(); }
    static int SocketConnect(int fd,const sockaddr_u *u);
+   static int SocketAccept(int fd,sockaddr_u *u,const char *hostname=0);
    static void SetSocketBuffer(int sock,int socket_buffer);
    static void SetSocketMaxseg(int sock,int socket_maxseg);
    static int SocketCreate(int af,int type,int proto,const char *hostname);

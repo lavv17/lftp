@@ -1615,18 +1615,13 @@ int   Ftp::Do()
           || (mode==LONG_LIST && !use_stat_for_list)))
       {
 	 assert(conn->data_sock==-1);
-	 conn->data_sock=socket(conn->peer_sa.sa.sa_family,SOCK_STREAM,IPPROTO_TCP);
+	 conn->data_sock=SocketCreateTCP(conn->peer_sa.sa.sa_family);
 	 if(conn->data_sock==-1)
 	 {
 	    LogError(0,"socket(data): %s",strerror(errno));
 	    goto system_error;
 	 }
-	 NonBlock(conn->data_sock);
-	 CloseOnExec(conn->data_sock);
-	 KeepAlive(conn->data_sock);
 	 MaximizeThroughput(conn->data_sock);
-	 SetSocketBuffer(conn->data_sock);
-	 SetSocketMaxseg(conn->data_sock);
 
 	 addr_len=sizeof(conn->data_sa);
 	 getsockname(conn->control_sock,&conn->data_sa.sa,&addr_len);
@@ -2023,8 +2018,7 @@ int   Ftp::Do()
       if(!(res&POLLIN))
 	 goto usual_return;
 
-      addr_len=sizeof(struct sockaddr);
-      res=accept(conn->data_sock,(struct sockaddr *)&conn->data_sa,&addr_len);
+      res=SocketAccept(conn->data_sock,&conn->data_sa,hostname);
       if(res==-1)
       {
 	 if(errno==EWOULDBLOCK)
@@ -2040,12 +2034,7 @@ int   Ftp::Do()
 
       close(conn->data_sock);
       conn->data_sock=res;
-      NonBlock(conn->data_sock);
-      CloseOnExec(conn->data_sock);
-      KeepAlive(conn->data_sock);
       MaximizeThroughput(conn->data_sock);
-      SetSocketBuffer(conn->data_sock);
-      SetSocketMaxseg(conn->data_sock);
 
       LogNote(5,_("Accepted data connection from (%s) port %u"),
 	 SocketNumericAddress(&conn->data_sa),SocketPort(&conn->data_sa));
