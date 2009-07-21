@@ -91,6 +91,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    BeNode *info;
    xstring info_hash;
    xstring *pieces;
+   xstring *name;
 
    xstring *tracker_url;
    FileAccessRef t_session;
@@ -113,6 +114,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    unsigned long long total_sent;
 
    void SetError(Error *);
+   void SetError(const char *);
 
    BeNode *Lookup(xmap_p<BeNode>& d,const char *name,BeNode::be_type_t type);
    BeNode *Lookup(BeNode *d,const char *name,BeNode::be_type_t type) { return Lookup(d->dict,name,type); }
@@ -122,7 +124,6 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
 
    TaskRefArray<TorrentPeer> peers;
    RefArray<TorrentPiece> piece_info;
-   static int PeersCompareForUnchoking(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2);
    static int PeersCompareInterest(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2);
    static int PeersCompareRecvRate(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2);
    static int PeersCompareSendRate(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2);

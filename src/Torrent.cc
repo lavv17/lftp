@@ -63,6 +63,8 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    validating=false;
    validate_index=0;
    tracker_url=0;
+   pieces=0;
+   name=0;
    piece_length=0;
    last_piece_length=0;
    total_length=0;
@@ -82,7 +84,7 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    if(listener==0)
       listener=new TorrentListener();
    if(!my_peer_id) {
-      my_peer_id.set("-lf0000-");
+      my_peer_id.set("-lftp40-");
       my_peer_id.appendf("%04x",(unsigned)getpid());
       my_peer_id.appendf("%08x",(unsigned)now.UnixTime());
       assert(my_peer_id.length()==PEER_ID_LEN);
@@ -127,6 +129,10 @@ void Torrent::SetError(Error *e)
    tracker_reply=0;
    Shutdown();
 }
+void Torrent::SetError(const char *msg)
+{
+   SetError(Error::Fatal(msg));
+}
 
 double Torrent::GetRatio()
 {
@@ -146,11 +152,11 @@ BeNode *Torrent::Lookup(xmap_p<BeNode>& dict,const char *name,BeNode::be_type_t 
 {
    BeNode *node=dict.lookup(name);
    if(!node) {
-      SetError(Error::Fatal(xstring::format("Meta-data: `%s' key missing",name)));
+      SetError(xstring::format("Meta-data: `%s' key missing",name));
       return 0;
    }
    if(node->type!=type) {
-      SetError(Error::Fatal(xstring::format("Meta-data: wrong `%s' type, must be %s",name,BeNode::TypeName(type))));
+      SetError(xstring::format("Meta-data: wrong `%s' type, must be %s",name,BeNode::TypeName(type)));
       return 0;
    }
    return node;
@@ -189,11 +195,6 @@ void Torrent::ValidatePiece(unsigned p)
 	 my_bitfield->set_bit(p,1);
       }
    }
-}
-
-int Torrent::PeersCompareForUnchoking(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2)
-{
-   return 0;
 }
 
 bool TorrentPiece::has_a_downloader()
@@ -278,18 +279,18 @@ int Torrent::Do()
       metainfo_tree=BeNode::Parse(metainfo_data->Get(),metainfo_data->Size(),&rest);
       metainfo_data=0;
       if(!metainfo_tree) {
-	 SetError(Error::Fatal("Meta-data parse error"));
+	 SetError("Meta-data parse error");
 	 return MOVED;
       }
       if(rest>0) {
-	 SetError(Error::Fatal("Junk at the end of Meta-data"));
+	 SetError("Junk at the end of Meta-data");
 	 return MOVED;
       }
       LogNote(10,"Received meta-data:");
       Log::global->Write(10,metainfo_tree->Format());
 
       if(metainfo_tree->type!=BeNode::BE_DICT) {
-	 SetError(Error::Fatal("Meta-data: wrong top level type, must be DICT"));
+	 SetError("Meta-data: wrong top level type, must be DICT");
          return MOVED;
       }
       BeNode *announce=Lookup(metainfo_tree,"announce",BeNode::BE_STR);
@@ -300,7 +301,7 @@ int Torrent::Do()
       LogNote(4,"Tracker URL is `%s'",tracker_url->get());
       ParsedURL u(tracker_url->get(),true);
       if(u.proto.ne("http") && u.proto.ne("https")) {
-	 SetError(Error::Fatal("Meta-data: wrong `announce' protocol, must be http or https"));
+	 SetError("Meta-data: wrong `announce' protocol, must be http or https");
          return MOVED;
       }
       // fix the URL: append either ? or & if missing.
@@ -314,10 +315,15 @@ int Torrent::Do()
       SHA1(info->str,info_hash);
 
       BeNode *b_piece_length=Lookup(info,"piece length",BeNode::BE_INT);
+      if(!b_piece_length)
+	 return MOVED;
       piece_length=b_piece_length->num;
       LogNote(4,"Piece length is %u",piece_length);
 
-      Lookup(info,"name",BeNode::BE_STR);
+      BeNode *b_name=Lookup(info,"name",BeNode::BE_STR);
+      if(!b_name)
+	 return MOVED;
+      name=&b_name->str;
 
       BeNode *files=info->dict.lookup("files");
       if(!files) {
@@ -329,13 +335,13 @@ int Torrent::Do()
       } else {
 	 single_file=false;
 	 if(files->type!=BeNode::BE_LIST) {
-	    SetError(Error::Fatal("Meta-data: wrong `info/files' type, must be LIST"));
+	    SetError("Meta-data: wrong `info/files' type, must be LIST");
 	    return MOVED;
 	 }
 	 total_length=0;
 	 for(int i=0; i<files->list.length(); i++) {
 	    if(files->list[i]->type!=BeNode::BE_DICT) {
-	       SetError(Error::Fatal(xstring::format("Meta-data: wrong `info/files[%d]' type, must be LIST",i)));
+	       SetError(xstring::format("Meta-data: wrong `info/files[%d]' type, must be LIST",i));
 	       return MOVED;
 	    }
 	    BeNode *f=Lookup(files->list[i]->dict,"length",BeNode::BE_INT);
@@ -358,7 +364,7 @@ int Torrent::Do()
 	 return MOVED;
       pieces=&b_pieces->str;
       if(pieces->length()!=SHA1_DIGEST_SIZE*total_pieces) {
-	 SetError(Error::Fatal("Meta-data: invalid `pieces' length"));
+	 SetError("Meta-data: invalid `pieces' length");
 	 return MOVED;
       }
 
@@ -470,16 +476,16 @@ int Torrent::Do()
 	 started=true;
 
 	 if(reply->type!=BeNode::BE_DICT) {
-	    SetError(Error::Fatal("Reply: wrong reply type, must be DICT"));
+	    SetError("Reply: wrong reply type, must be DICT");
 	    return MOVED;
 	 }
 
 	 BeNode *b_failure_reason=reply->dict.lookup("failure reason");
 	 if(b_failure_reason) {
 	    if(b_failure_reason->type==BeNode::BE_STR)
-	       SetError(Error::Fatal(b_failure_reason->str));
+	       SetError(b_failure_reason->str);
 	    else
-	       SetError(Error::Fatal("Reply: wrong `failure reason' type, must be STR"));
+	       SetError("Reply: wrong `failure reason' type, must be STR");
 	    return MOVED;
 	 }
 
@@ -608,11 +614,10 @@ void Torrent::SendTrackerRequest(const char *event,int numwant)
 
 const char *Torrent::MakePath(BeNode *p)
 {
-   BeNode *name=Lookup(info,"name",BeNode::BE_STR);
    BeNode *path=Lookup(p->dict,"path",BeNode::BE_LIST);
 
    static xstring buf;
-   buf.set(name->str);
+   buf.set(*name);
    if(buf.eq("..") || buf[0]=='/') {
       buf.set_substr(0,0,"_",1);
    }
@@ -629,13 +634,12 @@ const char *Torrent::MakePath(BeNode *p)
 }
 const char *Torrent::FindFileByPosition(unsigned piece,unsigned begin,off_t *f_pos,off_t *f_tail)
 {
-   BeNode *name=Lookup(info,"name",BeNode::BE_STR);
    BeNode *files=info->dict.lookup("files");
    off_t target_pos=piece*piece_length+begin;
    if(!files) {
       *f_pos=target_pos;
       *f_tail=total_length-target_pos;
-      return name->str;
+      return name->get();
    } else {
       off_t scan_pos=0;
       for(int i=0; i<files->list.length(); i++) {
@@ -713,18 +717,18 @@ void Torrent::StoreBlock(unsigned piece,unsigned begin,unsigned len,const char *
 	 f_rest=len;
       int fd=OpenFile(file,O_RDWR|O_CREAT);
       if(fd==-1) {
-	 SetError(Error::Fatal(xstring::format("open(%s): %s",file,strerror(errno))));
+	 SetError(xstring::format("open(%s): %s",file,strerror(errno)));
 	 return;
       }
       int w=pwrite(fd,buf,f_rest,f_pos);
       int saved_errno=errno;
       close(fd);
       if(w==-1) {
-	 SetError(Error::Fatal(xstring::format("pwrite(%s): %s",file,strerror(saved_errno))));
+	 SetError(xstring::format("pwrite(%s): %s",file,strerror(saved_errno)));
 	 return;
       }
       if(w==0) {
-	 SetError(Error::Fatal(xstring::format("pwrite(%s): write error - disk full?",file)));
+	 SetError(xstring::format("pwrite(%s): write error - disk full?",file));
 	 return;
       }
       buf+=w;
@@ -771,7 +775,7 @@ const xstring& Torrent::RetrieveBlock(unsigned piece,unsigned begin,unsigned len
       int saved_errno=errno;
       close(fd);
       if(w==-1) {
-	 SetError(Error::Fatal(xstring::format("pread(%s): %s",file,strerror(saved_errno))));
+	 SetError(xstring::format("pread(%s): %s",file,strerror(saved_errno)));
 	 return xstring::null;
       }
       if(w==0) {
