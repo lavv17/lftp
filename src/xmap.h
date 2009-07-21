@@ -76,15 +76,22 @@ public:
    static T& payload(entry *e) {
       return *(T*)(e+1);
    }
-   T& lookup(const xstring& key) {
+   T& lookup_Lv(const xstring& key) {
       entry **e=_lookup(key);
       if(e && *e)
 	 return payload(*e);
       static T zero;
       return zero;
    }
-   T& lookup(const char *key) { return lookup(xstring::get_tmp(key)); }
-   T& operator[](const xstring& key) { return lookup(key); }
+   const T& lookup(const xstring& key) const {
+      entry *e=_lookup_c(key);
+      if(e)
+	 return payload(e);
+      static T zero;
+      return zero;
+   }
+   const T& lookup(const char *key) const { return lookup(xstring::get_tmp(key)); }
+   T& operator[](const xstring& key) { return lookup_Lv(key); }
    void remove(const xstring& key) { _remove(_lookup(key)); }
    void add(const xstring& key,T e0) { payload(_add(key))=e0; }
    const T& each_begin() { entry *e=_each_begin(); return e?payload(e):0; }
@@ -100,16 +107,19 @@ public:
       for(entry *e=_each_begin(); e; e=_each_next())
 	 xfree(payload(e));
    }
-   T*& payload(entry *e) {
+   T*& payload_Lv(entry *e) {
       return *(T**)(e+1);
    }
-   T* lookup(const xstring& key) {
-      entry **e=_lookup(key);
-      if(e && *e)
-	 return payload(*e);
+   T* payload(entry *e) const {
+      return *(T**)(e+1);
+   }
+   T* lookup(const xstring& key) const {
+      entry *e=_lookup_c(key);
+      if(e)
+	 return payload(e);
       return 0;
    }
-   T* lookup(const char *key) { return lookup(xstring::get_tmp(key)); }
+   T* lookup(const char *key) const { return lookup(xstring::get_tmp(key)); }
    T* borrow(const xstring& key) {
       entry **e=_lookup(key);
       if(e && *e) {
@@ -125,11 +135,11 @@ public:
    void add(const xstring& key,T *e0) {
       entry *e=_add(key);
       xfree(payload(e));
-      payload(e)=e0;
+      payload_Lv(e)=e0;
    }
    T *each_begin() { entry *e=_each_begin(); return e?payload(e):0; }
    T *each_next()  { entry *e=_each_next();  return e?payload(e):0; }
-   void each_set(T *n) { payload(last_entry)=n; }
+   void each_set(T *n) { payload_Lv(last_entry)=n; }
    void move_here(xmap_p<T> &o) { _move_here(o); }
 };
 
