@@ -160,3 +160,7 @@ vsnprintf-posix.m4
 vsnprintf.m4
 select.m4
 mbsrtowcs.m4
+intmax_t.m4
+getpagesize.m4
+mmap-anon.m4
+sha1.m4

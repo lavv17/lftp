@@ -49,6 +49,6 @@ release:
 	    gpg -ba $(PACKAGE)-$(VERSION).tar.gz; \
 	    gpg -ba $(PACKAGE)-$(VERSION).tar.bz2; \
 	    gpg -ba $(PACKAGE)-$(VERSION).tar.lzma; \
-	    md5sum $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-$(VERSION).tar.bz2 > $(PACKAGE)-$(VERSION).md5sum)
+	    md5sum $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-$(VERSION).tar.bz2 $(PACKAGE)-$(VERSION).tar.lzma > $(PACKAGE)-$(VERSION).md5sum)
 	mutt -s add lsm@execpc.com < $(PACKAGE).lsm
 	cvs tag $(PACKAGE)-`echo $(VERSION) | sed 's/\./-/g'` .

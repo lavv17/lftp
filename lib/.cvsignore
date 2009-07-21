@@ -205,3 +205,7 @@ mbsrtowcs.c
 strnlen1.c
 strnlen1.h
 alignof.h
+getpagesize.c
+memchr.valgrind
+sha1.c
+sha1.h
