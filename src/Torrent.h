@@ -112,8 +112,6 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    unsigned long long total_recv;
    unsigned long long total_sent;
 
-   double GetRatio() { return total_sent>0?total_sent/(total_length-total_left):0; }
-
    void SetError(Error *);
 
    BeNode *Lookup(xmap_p<BeNode>& d,const char *name,BeNode::be_type_t type);
@@ -203,6 +201,8 @@ public:
    bool AllowMoreDownloaders();
    void UnchokeBestUploaders();
    void OptimisticUnchoke();
+
+   double GetRatio();
 
    void Reconfig(const char *name);
 };
@@ -431,8 +431,8 @@ public:
    const char *GetLogContext() { return GetName(); }
 
    bool InterestTimedOut() { return interest_timer.Stopped(); }
-   bool Connected() { return connected; }
-   bool Active() { return connected && (am_interested || peer_interested); }
+   bool Connected() { return peer_id!=0; }
+   bool Active() { return Connected() && (am_interested || peer_interested); }
    bool Complete() { return peer_complete_pieces==parent->total_pieces; }
    bool AddressEq(const TorrentPeer *o) const;
    bool IsDownloader();

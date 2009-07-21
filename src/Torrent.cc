@@ -128,6 +128,13 @@ void Torrent::SetError(Error *e)
    Shutdown();
 }
 
+double Torrent::GetRatio()
+{
+   if(total_sent==0 || total_length==total_left)
+      return 0;
+   return total_sent/(total_length-total_left);
+}
+
 void Torrent::SetDownloader(unsigned piece,unsigned block,TorrentPeer *o,TorrentPeer *n)
 {
    TorrentPeer*& downloader=piece_info[piece]->downloader[block];
@@ -214,7 +221,10 @@ int Torrent::PiecesNeededCmp(const unsigned *a,const unsigned *b)
 {
    int ra=cmp_torrent->piece_info[*a]->sources_count+cmp_torrent->piece_info[*a]->rnd;
    int rb=cmp_torrent->piece_info[*b]->sources_count+cmp_torrent->piece_info[*b]->rnd;
-   return cmp(ra,rb);
+   int c=cmp(ra,rb);
+   if(c)
+      return c;
+   return cmp(*a,*b);
 }
 int Torrent::PeersCompareInterest(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2)
 {
@@ -1036,6 +1046,7 @@ void TorrentPeer::SendDataReply()
    parent->total_sent+=data.length();
    parent->send_rate.Add(data.length());
    peer_send_rate.Add(data.length());
+   BytesPut(data.length());
    interest_timer.Reset();
 }
 
@@ -1239,6 +1250,8 @@ void TorrentPeer::SetAmChoking(bool c)
    parent->am_not_choking_peers_count-=(c-am_choking);
    am_choking=c;
    choke_timer.Reset();
+   if(am_choking)
+      recv_queue.empty();
    Leave();
 }
 
@@ -1295,7 +1308,7 @@ void TorrentPeer::HandlePacket(Packet *p)
    case MSG_HAVE: {
 	 PacketHave *pp=static_cast<PacketHave*>(p);
 	 LogRecv(5,xstring::format("have(%u)",pp->piece));
-	 if(!peer_bitfield->valid_index(pp->piece)) {
+	 if(pp->piece>=parent->total_pieces) {
 	    SetError("invalid piece index");
 	    break;
 	 }
@@ -1330,13 +1343,17 @@ void TorrentPeer::HandlePacket(Packet *p)
       }
    case MSG_PIECE: {
 	 PacketPiece *pp=static_cast<PacketPiece*>(p);
-	 LogRecv(5,xstring::format("piece:%u part offset:%u size:%u",pp->index,pp->begin,pp->data.length()));
+	 LogRecv(5,xstring::format("piece:%u begin:%u size:%u",pp->index,pp->begin,pp->data.length()));
 	 if(pp->index>=parent->total_pieces) {
-	    SetError("invalid piece number");
+	    SetError("invalid piece index");
 	    break;
 	 }
 	 if(pp->begin>=parent->PieceLength(pp->index)) {
 	    SetError("invalid data offset");
+	    break;
+	 }
+	 if(pp->begin+pp->data.length() > parent->PieceLength(pp->index)) {
+	    SetError("invalid data length");
 	    break;
 	 }
 	 for(int i=0; i<sent_queue.count(); i++) {
@@ -1363,18 +1380,29 @@ void TorrentPeer::HandlePacket(Packet *p)
       }
    case MSG_REQUEST: {
 	 PacketRequest *pp=static_cast<PacketRequest*>(p);
-	 LogRecv(5,xstring::format("request for piece:%u part offset:%u size:%u",pp->index,pp->begin,pp->req_length));
+	 LogRecv(5,xstring::format("request for piece:%u begin:%u size:%u",pp->index,pp->begin,pp->req_length));
 	 if(pp->req_length>Torrent::BLOCK_SIZE*2) {
-	    LogError(0,"too large request");
-	    Disconnect();
+	    SetError("too large request");
 	    break;
 	 }
 	 if(am_choking)
 	    break;
-	 if(pp->index>=parent->total_pieces)
+	 if(pp->index>=parent->total_pieces) {
+	    SetError("invalid piece index");
 	    break;
-	 if(pp->begin>=parent->PieceLength(pp->index))
+	 }
+	 if(pp->begin>=parent->PieceLength(pp->index)) {
+	    SetError("invalid data offset");
 	    break;
+	 }
+	 if(pp->begin+pp->req_length > parent->PieceLength(pp->index)) {
+	    SetError("invalid data length");
+	    break;
+	 }
+	 if(recv_queue.count()>=MAX_QUEUE_LEN*16) {
+	    SetError("too many requests");
+	    break;
+	 }
 	 recv_queue.push(pp);
 	 if(IsDownloader())
 	    interest_timer.Reset();
@@ -1526,12 +1554,9 @@ int TorrentPeer::Do()
    if(am_interested && !peer_choking && sent_queue.count()<MAX_QUEUE_LEN)
       SendDataRequests();
 
-   if(peer_interested && am_choking && recv_queue.count()<MAX_QUEUE_LEN && choke_timer.Stopped()
+   if(peer_interested && am_choking && choke_timer.Stopped()
    && parent->AllowMoreDownloaders())
       SetAmChoking(false);
-
-   if(!am_choking && recv_queue.count()>MAX_QUEUE_LEN && choke_timer.Stopped())
-      SetAmChoking(true);
 
    if(recv_queue.count()>0 && send_buf->Size()<(int)Torrent::BLOCK_SIZE*2
    && BytesAllowedToPut(recv_queue[0]->req_length))
@@ -1987,6 +2012,7 @@ int TorrentJob::Do()
 void TorrentJob::PrintStatus(int v,const char *tab)
 {
    printf("\t%s\n",torrent->Status());
+   printf("\tratio: %f\n",torrent->GetRatio());
    if(v>2)
       printf("\tinfo_hash: %s\n",torrent->GetInfoHash().dump());
 
