@@ -127,8 +127,8 @@ int CmdExec::find_cmd(const char *cmd_name,const struct cmd_rec **ret)
 {
    int part=0;
    const cmd_rec *c=dyn_cmd_table?dyn_cmd_table.get():static_cmd_table;
-   const int count=dyn_cmd_table?dyn_cmd_table.count():1024;
-   for(int i=0; i<count && c->name; i++,c++)
+   const int count=dyn_cmd_table?dyn_cmd_table.count():static_cmd_table_length;
+   for(int i=0; i<count; i++,c++)
    {
       if(!strcasecmp(c->name,cmd_name))
       {
@@ -1162,12 +1162,7 @@ xarray<CmdExec::cmd_rec> CmdExec::dyn_cmd_table;
 void CmdExec::RegisterCommand(const char *name,cmd_creator_t creator,const char *short_desc,const char *long_desc)
 {
    if(dyn_cmd_table==0)
-   {
-      int count=0;
-      for(const cmd_rec *c=static_cmd_table; c->name; c++)
-        count++;
-      dyn_cmd_table.nset(static_cmd_table,count);
-   }
+      dyn_cmd_table.nset(static_cmd_table,static_cmd_table_length);
    cmd_rec new_entry={name,creator,short_desc,long_desc};
    int i;
    if(dyn_cmd_table.bsearch(new_entry,cmd_rec::cmp,&i))

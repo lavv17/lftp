@@ -1,3 +1,8 @@
+Version 3.7.15 - 2009-07-21
+
+* fixed http ls when a file name has encoded characters (Jiri Skala).
+* fixed core dump on `help' command.
+
 Version 3.7.14 - 2009-05-15
 
 * use line buffering for mirror log file.

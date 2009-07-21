@@ -1,3 +1,12 @@
+2009-07-17  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc, CmdExec.cc, CmdExec.h: (static_cmd_table_length) new const; use it;
+	  fixed core dump on help command (reported by Ganael LAPLANCHE <ganael.laplanche@martymac.com>).
+
+2009-06-11  Jiri Skala <jskala@redhat.com>
+
+	* url.cc: fixed decode_string return value (also fixes http ls).
+
 2009-05-14  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.cc: fixed coredump when ssh gets killed.
