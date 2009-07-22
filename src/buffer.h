@@ -176,6 +176,7 @@ public:
 #endif //HAVE_ICONV
    void PutTranslated(const char *buf,int size);
    void PutTranslated(const char *buf) { PutTranslated(buf,strlen(buf)); }
+   void PutTranslated(const xstring& s) { PutTranslated(s.get(),s.length()); }
    void ResetTranslation();
    void PutRaw(const char *buf,int size) { Buffer::Put(buf,size); }
    void PutRaw(const char *buf) { Buffer::Put(buf); }
