@@ -138,7 +138,7 @@ double Torrent::GetRatio()
 {
    if(total_sent==0 || total_length==total_left)
       return 0;
-   return total_sent/(total_length-total_left);
+   return total_sent/double(total_length-total_left);
 }
 
 void Torrent::SetDownloader(unsigned piece,unsigned block,TorrentPeer *o,TorrentPeer *n)
@@ -160,6 +160,41 @@ BeNode *Torrent::Lookup(xmap_p<BeNode>& dict,const char *name,BeNode::be_type_t 
       return 0;
    }
    return node;
+}
+void Torrent::InitTranslation()
+{
+   const char *charset="UTF-8"; // default
+   BeNode *b_charset=metainfo_tree->dict.lookup("charset");
+   if(b_charset && b_charset->type==BeNode::BE_STR)
+      charset=b_charset->str;
+   recv_translate=new DirectedBuffer(DirectedBuffer::GET);
+   recv_translate->SetTranslation(charset,true);
+}
+void Torrent::TranslateStrings(BeNode *node)
+{
+   switch(node->type)
+   {
+   case BeNode::BE_INT:
+      break;
+   case BeNode::BE_STR:
+      recv_translate->ResetTranslation();
+      recv_translate->PutTranslated(node->str);
+      node->str_lc.nset(recv_translate->Get(),recv_translate->Size());
+      recv_translate->Skip(recv_translate->Size());
+      break;
+   case BeNode::BE_LIST:
+      for(int i=0; i<node->list.count(); i++)
+	 TranslateStrings(node->list[i]);
+      break;
+   case BeNode::BE_DICT:
+      for(BeNode *e=node->dict.each_begin(); e; e=node->dict.each_next())
+      {
+	 if(node->dict.each_key()->eq("pieces"))
+	    continue;
+	 TranslateStrings(e);
+      }
+      break;
+   }
 }
 
 void Torrent::SHA1(const xstring& str,xstring& buf)
@@ -220,8 +255,8 @@ static inline int cmp(T a,T b)
 static Torrent *cmp_torrent;
 int Torrent::PiecesNeededCmp(const unsigned *a,const unsigned *b)
 {
-   int ra=cmp_torrent->piece_info[*a]->sources_count+cmp_torrent->piece_info[*a]->rnd;
-   int rb=cmp_torrent->piece_info[*b]->sources_count+cmp_torrent->piece_info[*b]->rnd;
+   int ra=cmp_torrent->piece_info[*a]->sources_count;
+   int rb=cmp_torrent->piece_info[*b]->sources_count;
    int c=cmp(ra,rb);
    if(c)
       return c;
@@ -286,6 +321,9 @@ int Torrent::Do()
 	 SetError("Junk at the end of Meta-data");
 	 return MOVED;
       }
+
+      TranslateStrings(metainfo_tree.get_non_const());
+
       LogNote(10,"Received meta-data:");
       Log::global->Write(10,metainfo_tree->Format());
 
@@ -442,7 +480,6 @@ int Torrent::Do()
 	       enter_end_game=false;
 	    if(piece_info[i]->sources_count==0)
 	       continue;
-	    piece_info[i]->rnd=rand()/13%4;
 	    pieces_needed.append(i);
 	 }
       }
@@ -1485,10 +1522,7 @@ int TorrentPeer::Do()
 	 LogError(4,"connect: %s\n",strerror(e));
 	 Disconnect();
 	 if(FA::NotSerious(e))
-	 {
-	    Disconnect();
 	    return MOVED;
-	 }
 	 SetError(strerror(e));
 	 return MOVED;
       }
@@ -1992,7 +2026,7 @@ int TorrentDispatcher::Do()
 
 ///
 TorrentJob::TorrentJob(const char *mf,const char *c,const char *od)
-   : torrent(new Torrent(mf,c,od)), done(false)
+   : torrent(new Torrent(mf,c,od)), completed(false), done(false)
 {
 }
 TorrentJob::~TorrentJob()
@@ -2008,6 +2042,11 @@ int TorrentJob::Do()
       const Error *e=torrent->GetInvalidCause();
       if(e)
 	 eprintf("%s\n",e->Text());
+      return MOVED;
+   }
+   if(!completed && torrent->Complete()) {
+      parent->RemoveWaiting(this);
+      completed=true;
       return MOVED;
    }
    return STALL;

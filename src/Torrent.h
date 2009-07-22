@@ -54,7 +54,6 @@ class TorrentPeer;
 struct TorrentPiece
 {
    unsigned sources_count;	    // how many peers have the piece
-   unsigned rnd; // to randomize sorting
 
    BitField block_map;		    // which blocks are present
    xarray<TorrentPeer*> downloader; // which peers download the blocks
@@ -92,6 +91,10 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    xstring info_hash;
    xstring *pieces;
    xstring *name;
+
+   Ref<DirectedBuffer> recv_translate;
+   void InitTranslation();
+   void TranslateStrings(BeNode *node);
 
    xstring *tracker_url;
    FileAccessRef t_session;
@@ -203,6 +206,7 @@ public:
    void UnchokeBestUploaders();
    void OptimisticUnchoke();
 
+   bool Complete() { return complete; }
    double GetRatio();
 
    void Reconfig(const char *name);
@@ -432,7 +436,7 @@ public:
    const char *GetLogContext() { return GetName(); }
 
    bool InterestTimedOut() { return interest_timer.Stopped(); }
-   bool Connected() { return peer_id!=0; }
+   bool Connected() { return peer_id && send_buf && recv_buf; }
    bool Active() { return Connected() && (am_interested || peer_interested); }
    bool Complete() { return peer_complete_pieces==parent->total_pieces; }
    bool AddressEq(const TorrentPeer *o) const;
@@ -477,6 +481,7 @@ public:
 class TorrentJob : public Job
 {
    SMTaskRef<Torrent> torrent;
+   bool completed;
    bool done;
 public:
    TorrentJob(const char *mf,const char *cwd,const char *output_dir);
