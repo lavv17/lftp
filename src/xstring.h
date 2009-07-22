@@ -183,11 +183,13 @@ public:
       with get_space+get_non_const. */
    void set_length(size_t n) { if(buf) buf[len=n]=0; }
    char *borrow() { size=len=0; return replace_value(buf,(char*)0); }
-   bool eq(const xstring&o) { return len==o.len && (buf==o.buf || (len>0 && !memcmp(buf,o.buf,len))); }
-   bool ne(const xstring&o) { return !eq(o); }
+   bool eq(const char *o_buf,size_t o_len) const;
+   bool eq(const char *s) const { return eq(s,strlen(s)); }
+   bool eq(const xstring&o) const { return eq(o.get(),o.length()); }
+   bool ne(const xstring&o) const { return !eq(o); }
    bool chomp(char c='\n');
    void rtrim(char c=' ');
-   char last_char() { return len>0?buf[len-1]:0; }
+   char last_char() const { return len>0?buf[len-1]:0; }
    unsigned skip_all(unsigned i,char c);
 
    void _clear() { init(); }
