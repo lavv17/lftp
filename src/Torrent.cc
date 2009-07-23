@@ -735,7 +735,7 @@ int FDCache::Count()
 }
 int FDCache::OpenFile(const char *file,int m)
 {
-   assert(m&3<3);
+   assert((m&3)<3);
    FD& f=cache[m&3].lookup_Lv(file);
    if(f.last_used==0)
    {
