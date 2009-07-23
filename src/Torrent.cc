@@ -49,6 +49,7 @@ static ResDecls torrent_vars_register(torrent_vars);
 
 xstring Torrent::my_peer_id;
 Ref<TorrentListener> Torrent::listener;
+Ref<FDCache> Torrent::fd_cache;
 
 Torrent::Torrent(const char *mf,const char *c,const char *od)
    : metainfo_url(mf),
@@ -81,8 +82,10 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    last_piece=TorrentPeer::NO_PIECE;
    Reconfig(0);
 
-   if(listener==0)
+   if(listener==0) {
       listener=new TorrentListener();
+      fd_cache=new FDCache();
+   }
    if(!my_peer_id) {
       my_peer_id.set("-lftp40-");
       my_peer_id.appendf("%04x",(unsigned)getpid());
@@ -106,8 +109,10 @@ void Torrent::Shutdown()
       listener->RemoveTorrent(this);
    if(started || tracker_reply)
       SendTrackerRequest("stopped",0);
-   if(listener && listener->GetTorrentsCount()==0)
+   if(listener && listener->GetTorrentsCount()==0) {
       listener=0;
+      fd_cache=0;
+   }
    peers.unset();
 }
 
@@ -164,37 +169,20 @@ BeNode *Torrent::Lookup(xmap_p<BeNode>& dict,const char *name,BeNode::be_type_t 
 void Torrent::InitTranslation()
 {
    const char *charset="UTF-8"; // default
-   BeNode *b_charset=metainfo_tree->dict.lookup("charset");
+   BeNode *b_charset=metainfo_tree->dict.lookup("encoding");
    if(b_charset && b_charset->type==BeNode::BE_STR)
       charset=b_charset->str;
    recv_translate=new DirectedBuffer(DirectedBuffer::GET);
    recv_translate->SetTranslation(charset,true);
 }
-void Torrent::TranslateStrings(BeNode *node)
+void Torrent::TranslateString(BeNode *node)
 {
-   switch(node->type)
-   {
-   case BeNode::BE_INT:
-      break;
-   case BeNode::BE_STR:
-      recv_translate->ResetTranslation();
-      recv_translate->PutTranslated(node->str);
-      node->str_lc.nset(recv_translate->Get(),recv_translate->Size());
-      recv_translate->Skip(recv_translate->Size());
-      break;
-   case BeNode::BE_LIST:
-      for(int i=0; i<node->list.count(); i++)
-	 TranslateStrings(node->list[i]);
-      break;
-   case BeNode::BE_DICT:
-      for(BeNode *e=node->dict.each_begin(); e; e=node->dict.each_next())
-      {
-	 if(node->dict.each_key()->eq("pieces"))
-	    continue;
-	 TranslateStrings(e);
-      }
-      break;
-   }
+   if(node->str_lc)
+      return;
+   recv_translate->ResetTranslation();
+   recv_translate->PutTranslated(node->str);
+   node->str_lc.nset(recv_translate->Get(),recv_translate->Size());
+   recv_translate->Skip(recv_translate->Size());
 }
 
 void Torrent::SHA1(const xstring& str,xstring& buf)
@@ -322,7 +310,7 @@ int Torrent::Do()
 	 return MOVED;
       }
 
-      TranslateStrings(metainfo_tree.get_non_const());
+      InitTranslation();
 
       LogNote(10,"Received meta-data:");
       Log::global->Write(10,metainfo_tree->Format());
@@ -361,7 +349,8 @@ int Torrent::Do()
       BeNode *b_name=Lookup(info,"name",BeNode::BE_STR);
       if(!b_name)
 	 return MOVED;
-      name=&b_name->str;
+      TranslateString(b_name);
+      name=&b_name->str_lc;
 
       BeNode *files=info->dict.lookup("files");
       if(!files) {
@@ -441,20 +430,8 @@ int Torrent::Do()
 	    peers.remove(i--);
 	 }
       }
-      if(max_peers>0 && peers.count()>max_peers) {
-	 // remove least interesting peers.
-	 peers.qsort(PeersCompareInterest);
-	 int to_remove=peers.count()-max_peers;
-	 while(to_remove-->0) {
-	    TimeInterval max_idle(peers.last()->interest_timer.TimePassed());
-	    LogNote(3,"removing peer %s (too many; idle:%s)",peers.last()->GetName(),
-	       max_idle.toString(TimeInterval::TO_STR_TERSE+TimeInterval::TO_STR_TRANSLATE));
-	    peers.chop();
-	    if(max_idle<60)
-	       decline_timer.Set(60-max_idle);
-	 }
-      }
       UnchokeBestUploaders();
+      ReducePeers();
       peers_scan_timer.Reset();
    }
    if(optimistic_unchoke_timer.Stopped()) {
@@ -661,10 +638,11 @@ const char *Torrent::MakePath(BeNode *p)
    for(int i=0; i<path->list.count(); i++) {
       BeNode *e=path->list[i];
       if(e->type==BeNode::BE_STR) {
+	 TranslateString(e);
 	 buf.append('/');
-	 if(e->str.eq(".."))
+	 if(e->str_lc.eq(".."))
 	    buf.append('_');
-	 buf.append(e->str);
+	 buf.append(e->str_lc);
       }
    }
    return buf;
@@ -692,16 +670,102 @@ const char *Torrent::FindFileByPosition(unsigned piece,unsigned begin,off_t *f_p
    }
    return 0;
 }
+
+FDCache::FDCache()
+   : clean_timer(1)
+{
+   max_count=16;
+   max_time=30;
+}
+FDCache::~FDCache()
+{
+   CloseAll();
+}
+void FDCache::Clean()
+{
+   for(int i=0; i<3; i++) {
+      for(const FD *f=&cache[i].each_begin(); f->last_used; f=&cache[i].each_next()) {
+	 if(f->last_used+max_time<now.UnixTime()) {
+	    close(f->fd);
+	    cache[i].remove(*cache[i].each_key());
+	 }
+      }
+   }
+}
+int FDCache::Do()
+{
+   if(clean_timer.Stopped())
+      Clean();
+   return STALL;
+}
+void FDCache::CloseAll()
+{
+   for(int i=0; i<3; i++) {
+      for(const FD *f=&cache[i].each_begin(); f->last_used; f=&cache[i].each_next()) {
+	 close(f->fd);
+	 cache[i].remove(*cache[i].each_key());
+      }
+   }
+}
+bool FDCache::CloseOne()
+{
+   int oldest_mode=0;
+   int oldest_fd=-1;
+   int oldest_time=0;
+   const xstring *oldest_key=0;
+   for(int i=0; i<3; i++) {
+      for(const FD *f=&cache[i].each_begin(); f; f=&cache[i].each_next()) {
+	 if(oldest_key==0 || f->last_used<oldest_time) {
+	    oldest_key=cache[i].each_key();
+	    oldest_time=f->last_used;
+	    oldest_fd=f->fd;
+	    oldest_mode=i;
+	 }
+      }
+   }
+   if(!oldest_key)
+      return false;
+   close(oldest_fd);
+   cache[oldest_mode].remove(*oldest_key);
+   return true;
+}
+int FDCache::Count()
+{
+   return cache[0].count()+cache[1].count()+cache[2].count();
+}
+int FDCache::OpenFile(const char *file,int m)
+{
+   FD& f=cache[m].lookup_Lv(file);
+   if(f.last_used==0)
+   {
+      Clean();
+      clean_timer.Reset();
+      ProtoLog::LogNote(9,"opening %s",file);
+      int fd;
+      do {
+	 fd=open(file,m,0664);
+      } while(fd==-1 && (errno==EMFILE || errno==ENFILE) && CloseOne());
+      if(fd==-1)
+	 return fd;
+      FD new_entry = {fd,now.UnixTime()};
+      cache[m].add(file,new_entry);
+      return fd;
+   }
+   f.last_used=now.UnixTime();
+   return f.fd;
+}
+
 int Torrent::OpenFile(const char *file,int m)
 {
+   bool did_mkdir=false;
    const char *cf=dir_file(output_dir,file);
-   LogNote(9,"opening %s",cf);
-   int fd=open(cf,m,0664);
+try_again:
+   int fd=fd_cache->OpenFile(cf,m);
    while(fd==-1 && (errno==EMFILE || errno==ENFILE) && peers.count()>0) {
       peers.chop();  // free an fd
-      fd=open(cf,m,0664);
+      fd=fd_cache->OpenFile(cf,m);
    }
-   if(fd==-1 && errno==ENOENT) {
+   if(fd==-1 && errno==ENOENT && !did_mkdir) {
       LogError(10,"open(%s): %s",cf,strerror(errno));
       const char *sl=strchr(file,'/');
       while(sl)
@@ -712,7 +776,8 @@ int Torrent::OpenFile(const char *file,int m)
 	 }
 	 sl=strchr(sl+1,'/');
       }
-      fd=open(cf=dir_file(output_dir,file),m,0664);
+      did_mkdir=true;
+      goto try_again;
    }
    return fd;
 }
@@ -759,7 +824,6 @@ void Torrent::StoreBlock(unsigned piece,unsigned begin,unsigned len,const char *
       }
       int w=pwrite(fd,buf,f_rest,f_pos);
       int saved_errno=errno;
-      close(fd);
       if(w==-1) {
 	 SetError(xstring::format("pwrite(%s): %s",file,strerror(saved_errno)));
 	 return;
@@ -810,7 +874,6 @@ const xstring& Torrent::RetrieveBlock(unsigned piece,unsigned begin,unsigned len
 	 return xstring::null;
       int w=pread(fd,buf.add_space(f_rest),f_rest,f_pos);
       int saved_errno=errno;
-      close(fd);
       if(w==-1) {
 	 SetError(xstring::format("pread(%s): %s",file,strerror(saved_errno)));
 	 return xstring::null;
@@ -826,15 +889,30 @@ const xstring& Torrent::RetrieveBlock(unsigned piece,unsigned begin,unsigned len
    return buf;
 }
 
-bool Torrent::NeedMoreUploaders()
+void Torrent::ReducePeers()
 {
-   int max_uploaders = 20;
-   int min_uploaders = 1;
-
-   bool rate_low = (rate_limit.BytesAllowed(RateLimit::GET) > (int)BLOCK_SIZE*4);
+   if(max_peers>0 && peers.count()>max_peers) {
+      // remove least interesting peers.
+      peers.qsort(PeersCompareInterest);
+      int to_remove=peers.count()-max_peers;
+      while(to_remove-->0) {
+	 TimeInterval max_idle(peers.last()->interest_timer.TimePassed());
+	 LogNote(3,"removing peer %s (too many; idle:%s)",peers.last()->GetName(),
+	    max_idle.toString(TimeInterval::TO_STR_TERSE+TimeInterval::TO_STR_TRANSLATE));
+	 peers.chop();
+	 if(max_idle<60)
+	    decline_timer.Set(60-max_idle);
+      }
+   }
+   peers.qsort(PeersCompareRecvRate);
+   ReduceUploaders();
+   ReduceDownloaders();
+}
+void Torrent::ReduceUploaders()
+{
+   bool rate_low = RateLow(RateLimit::GET);
    if(am_interested_peers_count >= (rate_low?max_uploaders:min_uploaders+1)) {
-      // sort by rate, make the slowest uninterested
-      peers.qsort(PeersCompareRecvRate);
+      // make the slowest uninterested
       for(int i=0; i<peers.count(); i++) {
 	 if(peers[i]->am_interested && peers[i]->interest_timer.TimePassed() > 30) {
 	    peers[i]->SetAmInterested(false);
@@ -843,19 +921,12 @@ bool Torrent::NeedMoreUploaders()
 	 }
       }
    }
-   if(rate_low && am_interested_peers_count < max_uploaders)
-      return true;
-   return false;
 }
-bool Torrent::AllowMoreDownloaders()
+void Torrent::ReduceDownloaders()
 {
-   int max_downloaders = 20;
-   int min_downloaders = 4;
-
-   bool rate_low = (rate_limit.BytesAllowed(RateLimit::PUT) > (int)BLOCK_SIZE*4);
+   bool rate_low = RateLow(RateLimit::PUT);
    if(am_interested_peers_count >= (rate_low?max_downloaders:min_downloaders+1)) {
-      // sort by rate, choke the slowest
-      peers.qsort(PeersCompareRecvRate);
+      // choke the slowest
       for(int i=0; i<peers.count(); i++) {
 	 if(!peers[i]->am_choking && peers[i]->choke_timer.TimePassed() > 30) {
 	    peers[i]->SetAmChoking(true);
@@ -864,10 +935,17 @@ bool Torrent::AllowMoreDownloaders()
 	 }
       }
    }
-   if(rate_low && am_not_choking_peers_count < max_downloaders)
-      return true;
-   return false;
 }
+
+bool Torrent::NeedMoreUploaders()
+{
+   return RateLow(RateLimit::GET) && am_interested_peers_count < max_uploaders;
+}
+bool Torrent::AllowMoreDownloaders()
+{
+   return RateLow(RateLimit::PUT) && am_not_choking_peers_count < max_downloaders;
+}
+
 void Torrent::UnchokeBestUploaders()
 {
    // unchoke 4 best uploaders
@@ -948,6 +1026,8 @@ const char *Torrent::Status()
       return xstring::format("Validation: %u/%u (%u%%)",validate_index,total_pieces,
 	 validate_index*100/total_pieces);
    }
+   if(total_length==0)
+      return "";
    xstring& buf=xstring::format("dn:%llu %sup:%llu %scomplete:%u/%u (%u%%)",
       total_recv,recv_rate.GetStrS(),total_sent,send_rate.GetStrS(),
       complete_pieces,total_pieces,
@@ -972,6 +1052,7 @@ TorrentPeer::TorrentPeer(Torrent *p,const sockaddr_u *a)
    am_interested=false;
    peer_complete_pieces=0;
    retry_timer.Stop();
+   choke_timer.Stop();
    last_piece=NO_PIECE;
    if(addr.is_reserved() || addr.is_multicast())
       SetError("invalid peer address");
@@ -1000,6 +1081,8 @@ void TorrentPeer::SetError(const char *s)
 
 void TorrentPeer::Disconnect()
 {
+   if(send_buf)
+      LogNote(4,"closing connection");
    recv_queue.empty();
    ClearSentQueue();
    if(peer_bitfield) {
@@ -1020,6 +1103,7 @@ void TorrentPeer::Disconnect()
    peer_choking=true;
    peer_complete_pieces=0;
    retry_timer.Reset();
+   choke_timer.Stop();
    // return to main pool
    parent->PeerBytesUsed(-peer_bytes_pool[RateLimit::GET],RateLimit::GET);
    parent->PeerBytesUsed(-peer_bytes_pool[RateLimit::PUT],RateLimit::PUT);
@@ -1367,14 +1451,11 @@ void TorrentPeer::HandlePacket(Packet *p)
 	    SetError("bitfield has spare bits set");
 	    break;
 	 }
-	 unsigned count=0;
-	 for(unsigned p=0; p<parent->total_pieces; p++) {
-	    bool have=pp->bitfield->get_bit(p);
-	    count+=have;
-	    SetPieceHaving(p,have);
-	 }
-	 LogRecv(5,xstring::format("bitfield(%u/%u)",count,parent->total_pieces));
-	 assert(peer_complete_pieces==count);
+	 for(unsigned p=0; p<parent->total_pieces; p++)
+	    SetPieceHaving(p,pp->bitfield->get_bit(p));
+	 LogRecv(5,xstring::format("bitfield(%u/%u)",peer_complete_pieces,parent->total_pieces));
+	 if(parent->complete && peer_complete_pieces==parent->total_pieces)
+	    Disconnect();
 	 break;
       }
    case MSG_PORT: {
@@ -1557,9 +1638,11 @@ int TorrentPeer::Do()
 	 LogSend(5,"bitfield");
 	 PacketBitField(parent->my_bitfield).Pack(send_buf);
       }
-      int port=Torrent::listener->GetPort();
-      LogSend(5,xstring::format("port(%d)",port));
-      PacketPort(port).Pack(send_buf);
+      if(0) { // no DHT yet
+	 int port=Torrent::listener->GetPort();
+	 LogSend(5,xstring::format("port(%d)",port));
+	 PacketPort(port).Pack(send_buf);
+      }
 
       keepalive_timer.Reset();
    }
@@ -2045,7 +2128,11 @@ int TorrentJob::Do()
       return MOVED;
    }
    if(!completed && torrent->Complete()) {
-      parent->RemoveWaiting(this);
+      if(parent->WaitsFor(this)) {
+	 PrintStatus(1,"");
+	 printf("Seeding in background...\n");
+	 parent->RemoveWaiting(this);
+      }
       completed=true;
       return MOVED;
    }
@@ -2054,17 +2141,17 @@ int TorrentJob::Do()
 
 void TorrentJob::PrintStatus(int v,const char *tab)
 {
-   printf("\t%s\n",torrent->Status());
-   printf("\tratio: %f\n",torrent->GetRatio());
+   printf("%s%s\n",tab,torrent->Status());
+   printf("%sratio: %f\n",tab,torrent->GetRatio());
    if(v>2)
-      printf("\tinfo_hash: %s\n",torrent->GetInfoHash().dump());
+      printf("%sinfo_hash: %s\n",tab,torrent->GetInfoHash().dump());
 
    if(torrent->GetPeersCount()<=5 || v>1) {
       const TaskRefArray<TorrentPeer>& peers=torrent->GetPeers();
       for(int i=0; i<peers.count(); i++)
-	 printf("\t  %s: %s\n",peers[i]->GetName(),peers[i]->Status());
+	 printf("%s  %s: %s\n",tab,peers[i]->GetName(),peers[i]->Status());
    } else {
-      printf("\t  peers:%d active:%d complete:%d\n",
+      printf("%s  peers:%d active:%d complete:%d\n",tab,
 	 torrent->GetPeersCount(),torrent->GetActivePeersCount(),
 	 torrent->GetCompletePeersCount());
    }

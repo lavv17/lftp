@@ -66,6 +66,7 @@ struct TorrentPiece
 };
 
 class TorrentListener;
+class FDCache;
 
 class Torrent : public SMTask, protected ProtoLog, public ResClient
 {
@@ -82,6 +83,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    static const unsigned PEER_ID_LEN = 20;
    static xstring my_peer_id;
    static Ref<TorrentListener> listener;
+   static Ref<FDCache> fd_cache;
 
    xstring_c metainfo_url;
    FileAccessRef metainfo_fa;
@@ -94,7 +96,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
 
    Ref<DirectedBuffer> recv_translate;
    void InitTranslation();
-   void TranslateStrings(BeNode *node);
+   void TranslateString(BeNode *node);
 
    xstring *tracker_url;
    FileAccessRef t_session;
@@ -155,6 +157,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    Speedometer send_rate;
 
    RateLimit rate_limit;
+   bool RateLow(RateLimit::dir_t dir) { return rate_limit.BytesAllowed(dir) > (int)BLOCK_SIZE*4; }
 
    int active_peers_count;
    int complete_peers_count;
@@ -167,6 +170,23 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    Timer decline_timer;
    Timer optimistic_unchoke_timer;
    Timer peers_scan_timer;
+
+   static const int max_uploaders = 20;
+   static const int min_uploaders = 1;
+   static const int max_downloaders = 20;
+   static const int min_downloaders = 4;
+
+   bool NeedMoreUploaders();
+   bool AllowMoreDownloaders();
+   void UnchokeBestUploaders();
+   void OptimisticUnchoke();
+   void ReducePeers();
+   void ReduceUploaders();
+   void ReduceDownloaders();
+
+   int PeerBytesAllowed(TorrentPeer *peer,RateLimit::dir_t dir);
+   void PeerBytesUsed(int b,RateLimit::dir_t dir);
+   void PeerBytesGot(int b) { PeerBytesUsed(b,RateLimit::GET); }
 
 public:
    Torrent(const char *mf,const char *cwd,const char *output_dir);
@@ -192,24 +212,39 @@ public:
    const TaskRefArray<TorrentPeer>& GetPeers() const { return peers; }
    void AddPeer(TorrentPeer *);
 
-   int PeerBytesAllowed(TorrentPeer *peer,RateLimit::dir_t dir);
-   void PeerBytesUsed(int b,RateLimit::dir_t dir);
-   void PeerBytesGot(int b) { PeerBytesUsed(b,RateLimit::GET); }
-
    const xstring& GetInfoHash() { return info_hash; }
    int GetPeersCount() { return peers.count(); }
    int GetActivePeersCount() { return active_peers_count; }
    int GetCompletePeersCount() { return complete_peers_count; }
 
-   bool NeedMoreUploaders();
-   bool AllowMoreDownloaders();
-   void UnchokeBestUploaders();
-   void OptimisticUnchoke();
-
    bool Complete() { return complete; }
    double GetRatio();
 
    void Reconfig(const char *name);
+};
+
+class FDCache : public SMTask, public ResClient
+{
+   struct FD
+   {
+      int fd;
+      time_t last_used;
+   };
+   int max_count;
+   int max_time;
+   xmap<FD> cache[3];
+   Timer clean_timer;
+
+public:
+   int OpenFile(const char *name,int mode);
+   int Count();
+   void Clean();
+   bool CloseOne();
+   void CloseAll();
+   FDCache();
+   ~FDCache();
+
+   int Do();
 };
 
 class TorrentPeer : public SMTask, protected ProtoLog, public Networker
