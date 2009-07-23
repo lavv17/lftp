@@ -88,9 +88,10 @@ void _xmap::rebuild_map()
       17,67,257,1031,4099,16411,65537,262147,1048583,4194319,16777259,
       67108879,268435459,1073741827
    };
+   hash_size=entry_count*2;
    // a prime is better, find it.
    for(unsigned pi=0; pi<sizeof(primes)/sizeof(primes[0]); pi++) {
-      if(primes[pi]>hash_size) {
+      if(hash_size<primes[pi]) {
 	 hash_size=primes[pi];
 	 break;
       }

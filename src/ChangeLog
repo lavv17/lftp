@@ -1,6 +1,7 @@
 2009-07-23  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* xmap.h: fixed xmap lookup returning zero.
+	* xmap.cc: fixed hash_size calculation.
 	* Speedometer.cc: speed-optimize by skipping Valid call.
 
 2009-07-21  Alexander V. Lukyanov <lav@yars.free.net>
