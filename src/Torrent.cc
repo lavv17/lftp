@@ -109,10 +109,8 @@ void Torrent::Shutdown()
       listener->RemoveTorrent(this);
    if(started || tracker_reply)
       SendTrackerRequest("stopped",0);
-   if(listener && listener->GetTorrentsCount()==0) {
+   if(listener && listener->GetTorrentsCount()==0)
       listener=0;
-      fd_cache=0;
-   }
    peers.unset();
 }
 
@@ -121,6 +119,8 @@ void Torrent::PrepareToDie()
    peers.unset();
    if(listener)
       listener->RemoveTorrent(this);
+   else
+      fd_cache=0;
 }
 
 void Torrent::SetError(Error *e)
@@ -735,7 +735,8 @@ int FDCache::Count()
 }
 int FDCache::OpenFile(const char *file,int m)
 {
-   FD& f=cache[m].lookup_Lv(file);
+   assert(m&3<3);
+   FD& f=cache[m&3].lookup_Lv(file);
    if(f.last_used==0)
    {
       Clean();
@@ -748,7 +749,7 @@ int FDCache::OpenFile(const char *file,int m)
       if(fd==-1)
 	 return fd;
       FD new_entry = {fd,now.UnixTime()};
-      cache[m].add(file,new_entry);
+      cache[m&3].add(file,new_entry);
       return fd;
    }
    f.last_used=now.UnixTime();
