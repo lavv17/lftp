@@ -48,18 +48,17 @@ bool Speedometer::Valid()
 }
 int Speedometer::Do()
 {
+   TimeoutS(1);
    return STALL;
 }
 float Speedometer::Get()
 {
    Add(0);
-   if(Valid())
-      current->TimeoutS(1);
    return rate;
 }
 void Speedometer::Add(int b)
 {
-   if(b==0 && TimeDiff(now,last_second).MilliSeconds()<100)
+   if(b==0 && (now==last_second || TimeDiff(now,last_second).MilliSeconds()<100))
       return;
 
    // This makes Speedometer start only when first data come.
