@@ -219,6 +219,9 @@ public:
 
    bool Complete() { return complete; }
    double GetRatio();
+   unsigned long long TotalLength() { return total_length; }
+   unsigned PieceLength() { return piece_length; }
+   const char *GetName() { return name?name->get():""; }
 
    void Reconfig(const char *name);
 };
