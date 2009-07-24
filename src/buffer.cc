@@ -383,7 +383,7 @@ IOBuffer::~IOBuffer()
 
 void IOBuffer::Put(const char *buf,int size)
 {
-   if(size>=PUT_LL_MIN && Size()==0 && mode==PUT && !save)
+   if(size>=PUT_LL_MIN && Size()==0 && mode==PUT && !save && !translator)
    {
       int res=Put_LL(buf,size);
       if(res>=0)
@@ -393,6 +393,10 @@ void IOBuffer::Put(const char *buf,int size)
 	 pos+=res;
       }
    }
+   if(size<=0)
+      return;
+   if(Size()==0)
+      current->Timeout(0);
    DirectedBuffer::Put(buf,size);
 }
 void IOBuffer::Put(const char *buf)
