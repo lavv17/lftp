@@ -1,3 +1,8 @@
+2009-07-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* buffer.cc: fixed Put for large blocks with translation, make
+	  scheduler run after putting some data into the buffer.
+
 2009-07-23  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* xmap.h: fixed xmap lookup returning zero.

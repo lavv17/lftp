@@ -36,16 +36,16 @@ class BitField : public xarray<unsigned char>
 public:
    BitField() { bit_length=0; }
    BitField(int bits);
-   bool valid_index(int i) {
+   bool valid_index(int i) const {
       return i>=0 && i<bit_length;
    }
    bool get_bit(int i) const;
    void set_bit(int i,bool value);
    bool has_any_set(int from,int to) const;
    bool has_all_set(int from,int to) const;
-   bool has_any_set() { return has_any_set(0,bit_length); }
-   bool has_all_set() { return has_all_set(0,bit_length); }
-   int get_bit_length() { return bit_length; }
+   bool has_any_set() const { return has_any_set(0,bit_length); }
+   bool has_all_set() const { return has_all_set(0,bit_length); }
+   int get_bit_length() const { return bit_length; }
    void set_bit_length(int b) { bit_length=b; set_length((b+7)/8); }
    void clear() { memset(buf,0,length()); }
 };
@@ -56,13 +56,13 @@ struct TorrentPiece
    unsigned sources_count;	    // how many peers have the piece
 
    BitField block_map;		    // which blocks are present
-   xarray<TorrentPeer*> downloader; // which peers download the blocks
+   xarray<const TorrentPeer*> downloader; // which peers download the blocks
 
    TorrentPiece(unsigned b)
       : sources_count(0), block_map(b)
       { downloader.allocate(b,0); }
 
-   bool has_a_downloader();
+   bool has_a_downloader() const;
 };
 
 class TorrentListener;
@@ -91,14 +91,14 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    Ref<BeNode> metainfo_tree;
    BeNode *info;
    xstring info_hash;
-   xstring *pieces;
-   xstring *name;
+   const xstring *pieces;
+   const xstring *name;
 
    Ref<DirectedBuffer> recv_translate;
    void InitTranslation();
-   void TranslateString(BeNode *node);
+   void TranslateString(BeNode *node) const;
 
-   xstring *tracker_url;
+   xstring tracker_url;
    FileAccessRef t_session;
    Timer tracker_timer;
    SMTaskRef<IOBuffer> tracker_reply;
@@ -141,13 +141,13 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    void SetPieceNotWanted(unsigned piece);
    void SetPieceWanted(unsigned piece);
 
-   void SetDownloader(unsigned piece,unsigned block,TorrentPeer *o,TorrentPeer *n);
+   void SetDownloader(unsigned piece,unsigned block,const TorrentPeer *o,const TorrentPeer *n);
 
    xstring_c cwd;
    xstring_c output_dir;
 
-   const char *FindFileByPosition(unsigned piece,unsigned begin,off_t *f_pos,off_t *f_tail);
-   const char *MakePath(BeNode *p);
+   const char *FindFileByPosition(unsigned piece,unsigned begin,off_t *f_pos,off_t *f_tail) const;
+   const char *MakePath(BeNode *p) const;
    int OpenFile(const char *f,int m);
 
    void StoreBlock(unsigned piece,unsigned begin,unsigned len,const char *buf);
@@ -184,7 +184,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    void ReduceUploaders();
    void ReduceDownloaders();
 
-   int PeerBytesAllowed(TorrentPeer *peer,RateLimit::dir_t dir);
+   int PeerBytesAllowed(const TorrentPeer *peer,RateLimit::dir_t dir);
    void PeerBytesUsed(int b,RateLimit::dir_t dir);
    void PeerBytesGot(int b) { PeerBytesUsed(b,RateLimit::GET); }
 
@@ -202,7 +202,7 @@ public:
    void PrepareToDie();
 
    static const Ref<TorrentListener>& GetListener() { return listener; }
-   void Accept(int s,IOBuffer *rb);
+   void Accept(int s,const sockaddr_u *a,IOBuffer *rb);
 
    static void SHA1(const xstring& str,xstring& buf);
    void ValidatePiece(unsigned p);
@@ -468,15 +468,15 @@ public:
    void PrepareToDie();
    void Connect(int s,IOBuffer *rb);
 
-   bool Failed() { return error!=0; }
-   const char *ErrorText() { return error->Text(); }
-   const char *GetName();
+   bool Failed() const { return error!=0; }
+   const char *ErrorText() const { return error->Text(); }
+   const char *GetName() const;
    const char *GetLogContext() { return GetName(); }
 
-   bool InterestTimedOut() { return interest_timer.Stopped(); }
-   bool Connected() { return peer_id && send_buf && recv_buf; }
-   bool Active() { return Connected() && (am_interested || peer_interested); }
-   bool Complete() { return peer_complete_pieces==parent->total_pieces; }
+   bool InterestTimedOut() const { return interest_timer.Stopped(); }
+   bool Connected() const { return peer_id && send_buf && recv_buf; }
+   bool Active() const { return Connected() && (am_interested || peer_interested); }
+   bool Complete() const { return peer_complete_pieces==parent->total_pieces; }
    bool AddressEq(const TorrentPeer *o) const;
    bool IsDownloader();
    bool IsUploader();
@@ -487,10 +487,11 @@ public:
 class TorrentDispatcher : public SMTask, protected ProtoLog
 {
    int sock;
+   const sockaddr_u addr;
    Ref<IOBuffer> recv_buf;
    Timer timeout_timer;
 public:
-   TorrentDispatcher(int s);
+   TorrentDispatcher(int s,const sockaddr_u *a);
    ~TorrentDispatcher();
    int Do();
 };
@@ -511,7 +512,7 @@ public:
    void RemoveTorrent(Torrent *);
    int GetPort() { return addr.port(); }
    int GetTorrentsCount() { return torrents.count(); }
-   void Dispatch(const xstring& info_hash,int s,IOBuffer *recv_buf);
+   void Dispatch(const xstring& info_hash,int s,const sockaddr_u *remote_addr,IOBuffer *recv_buf);
 };
 
 #include "Job.h"
