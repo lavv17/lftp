@@ -38,6 +38,7 @@ class Speedometer : public SMTask, public ResClient
 public:
    Speedometer(const char *p="xfer:rate-period");
    float Get();
+   float Get() const { return rate; }
    static xstring& GetStr(float r);
    xstring& GetStr() { return GetStr(Get()); }
    static const char *GetStrS(float r);
