@@ -52,7 +52,8 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    : metainfo_url(mf),
      tracker_timer(600), pieces_needed_rebuild_timer(10),
      cwd(c), output_dir(od), rate_limit(mf),
-     optimistic_unchoke_timer(30), peers_scan_timer(1)
+     optimistic_unchoke_timer(30), peers_scan_timer(1),
+     am_interested_timer(1)
 {
    started=false;
    shutting_down=false;
@@ -243,10 +244,10 @@ int Torrent::PiecesNeededCmp(const unsigned *a,const unsigned *b)
    if(c) return c;
    return cmp(*a,*b);
 }
-int Torrent::PeersCompareInterest(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2)
+int Torrent::PeersCompareActivity(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2)
 {
-   TimeDiff i1((*p1)->interest_timer.TimePassed());
-   TimeDiff i2((*p2)->interest_timer.TimePassed());
+   TimeDiff i1((*p1)->activity_timer.TimePassed());
+   TimeDiff i2((*p2)->activity_timer.TimePassed());
    return cmp(i1.Seconds(),i2.Seconds());
 }
 int Torrent::PeersCompareRecvRate(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2)
@@ -414,7 +415,7 @@ int Torrent::Do()
       ParsedURL u(tracker_url.get(),true);
       t_session=FileAccess::New(&u);
       listener->AddTorrent(this);
-      SendTrackerRequest("started",-1);
+      SendTrackerRequest("started",complete?0:max_peers/2);
       m=MOVED;
    }
 
@@ -425,7 +426,7 @@ int Torrent::Do()
 	 if(peer->Failed()) {
 	    LogError(2,"peer %s failed: %s",peer->GetName(),peer->ErrorText());
 	    peers.remove(i--);
-	 } else if(complete && (!peer->Connected() || peer->Complete())) {
+	 } else if(complete && (peer->NotConnected() || peer->Complete())) {
 	    LogNote(4,"removing unneeded peer %s (%s)",peer->GetName(),peers[i]->Status());
 	    peers.remove(i--);
 	 }
@@ -559,7 +560,7 @@ int Torrent::Do()
 	 // remove uninteresting peers and request more
 	 for(int i=0; i<peers.count(); i++) {
 	    const TorrentPeer *peer=peers[i];
-	    if(peer->InterestTimedOut()) {
+	    if(peer->ActivityTimedOut()) {
 	       LogNote(4,"removing uninteresting peer %s (%s)",peer->GetName(),peers[i]->Status());
 	       peers.remove(i--);
 	    }
@@ -900,10 +901,10 @@ void Torrent::ReducePeers()
 {
    if(max_peers>0 && peers.count()>max_peers) {
       // remove least interesting peers.
-      peers.qsort(PeersCompareInterest);
+      peers.qsort(PeersCompareActivity);
       int to_remove=peers.count()-max_peers;
       while(to_remove-->0) {
-	 TimeInterval max_idle(peers.last()->interest_timer.TimePassed());
+	 TimeInterval max_idle(peers.last()->activity_timer.TimePassed());
 	 LogNote(3,"removing peer %s (too many; idle:%s)",peers.last()->GetName(),
 	    max_idle.toString(TimeInterval::TO_STR_TERSE+TimeInterval::TO_STR_TRANSLATE));
 	 peers.chop();
@@ -951,7 +952,8 @@ void Torrent::ReduceDownloaders()
 
 bool Torrent::NeedMoreUploaders()
 {
-   return RateLow(RateLimit::GET) && am_interested_peers_count < max_uploaders;
+   return RateLow(RateLimit::GET) && am_interested_peers_count < max_uploaders
+      && am_interested_timer.Stopped();
 }
 bool Torrent::AllowMoreDownloaders()
 {
@@ -1048,7 +1050,8 @@ const char *Torrent::Status()
 
 
 TorrentPeer::TorrentPeer(Torrent *p,const sockaddr_u *a)
-   : timeout_timer(360), retry_timer(30), keepalive_timer(120), choke_timer(10), interest_timer(300)
+   : timeout_timer(360), retry_timer(30), keepalive_timer(120),
+     choke_timer(10), interest_timer(10), activity_timer(300)
 {
    parent=p;
    addr=*a;
@@ -1060,6 +1063,7 @@ TorrentPeer::TorrentPeer(Torrent *p,const sockaddr_u *a)
    peer_complete_pieces=0;
    retry_timer.Stop();
    choke_timer.Stop();
+   interest_timer.Stop();
    last_piece=NO_PIECE;
    if(addr.is_reserved() || addr.is_multicast() || addr.port()==0)
       SetError("invalid peer address");
@@ -1181,7 +1185,7 @@ void TorrentPeer::SendDataReply()
    parent->send_rate.Add(data.length());
    peer_send_rate.Add(data.length());
    BytesPut(data.length());
-   interest_timer.Reset();
+   activity_timer.Reset();
 }
 
 int TorrentPeer::SendDataRequests(unsigned p)
@@ -1223,7 +1227,7 @@ int TorrentPeer::SendDataRequests(unsigned p)
       sent_queue.push(req);
       SetLastPiece(p);
       sent++;
-      interest_timer.Reset();
+      activity_timer.Reset();
       BytesGot(len);
 
       if(sent_queue.count()>=MAX_QUEUE_LEN)
@@ -1252,7 +1256,7 @@ void TorrentPeer::SendDataRequests()
 	    return;
       }
    }
-   if(p==NO_PIECE)
+   if(p==NO_PIECE && interest_timer.Stopped())
       SetAmInterested(false);
 }
 
@@ -1370,8 +1374,12 @@ void TorrentPeer::SetAmInterested(bool interest)
    Packet(interest?MSG_INTERESTED:MSG_UNINTERESTED).Pack(send_buf);
    parent->am_interested_peers_count+=(interest-am_interested);
    am_interested=interest;
-   if(am_interested)
-      interest_timer.Reset();
+   interest_timer.Reset();
+   if(am_interested) {
+      activity_timer.Reset();
+      parent->am_interested_timer.Reset();
+   }
+   BytesAllowed(RateLimit::GET); // draw some bytes from the common pool
    Leave();
 }
 void TorrentPeer::SetAmChoking(bool c)
@@ -1536,7 +1544,7 @@ void TorrentPeer::HandlePacket(Packet *p)
 	 }
 	 recv_queue.push(pp);
 	 if(IsDownloader())
-	    interest_timer.Reset();
+	    activity_timer.Reset();
 	 p=0;
 	 break;
       }
@@ -1622,7 +1630,7 @@ int TorrentPeer::Do()
       }
       connected=true;
       timeout_timer.Reset();
-      interest_timer.Reset();
+      activity_timer.Reset();
       m=MOVED;
    }
    if(!recv_buf) {
@@ -1677,7 +1685,8 @@ int TorrentPeer::Do()
       return MOVED;
    }
 
-   if(!am_interested && HasNeededPieces() && parent->NeedMoreUploaders())
+   if(!am_interested && interest_timer.Stopped()
+   && HasNeededPieces() && parent->NeedMoreUploaders())
       SetAmInterested(true);
 
    if(am_interested && !peer_choking && sent_queue.count()<MAX_QUEUE_LEN)

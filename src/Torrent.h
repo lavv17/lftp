@@ -129,7 +129,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
 
    TaskRefArray<TorrentPeer> peers;
    RefArray<TorrentPiece> piece_info;
-   static int PeersCompareInterest(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2);
+   static int PeersCompareActivity(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2);
    static int PeersCompareRecvRate(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2);
    static int PeersCompareSendRate(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2);
 
@@ -157,7 +157,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    Speedometer send_rate;
 
    RateLimit rate_limit;
-   bool RateLow(RateLimit::dir_t dir) { return rate_limit.BytesAllowed(dir) > (int)BLOCK_SIZE*4; }
+   bool RateLow(RateLimit::dir_t dir) { return rate_limit.Relaxed(dir); }
 
    int active_peers_count;
    int complete_peers_count;
@@ -170,6 +170,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    Timer decline_timer;
    Timer optimistic_unchoke_timer;
    Timer peers_scan_timer;
+   Timer am_interested_timer;
 
    static const int max_uploaders = 20;
    static const int min_uploaders = 1;
@@ -266,6 +267,7 @@ class TorrentPeer : public SMTask, protected ProtoLog, public Networker
    Timer keepalive_timer;
    Timer choke_timer;
    Timer interest_timer;
+   Timer activity_timer;
 
    Ref<IOBuffer> recv_buf;
    Ref<IOBuffer> send_buf;
@@ -473,7 +475,8 @@ public:
    const char *GetName() const;
    const char *GetLogContext() { return GetName(); }
 
-   bool InterestTimedOut() const { return interest_timer.Stopped(); }
+   bool ActivityTimedOut() const { return activity_timer.Stopped(); }
+   bool NotConnected() const { return sock==-1; }
    bool Connected() const { return peer_id && send_buf && recv_buf; }
    bool Active() const { return Connected() && (am_interested || peer_interested); }
    bool Complete() const { return peer_complete_pieces==parent->total_pieces; }
