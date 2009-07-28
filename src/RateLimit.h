@@ -61,6 +61,7 @@ public:
    void BytesUsed(int,dir_t);
    void BytesGot(int b) { BytesUsed(b,GET); }
    void BytesPut(int b) { BytesUsed(b,PUT); }
+   bool Relaxed(dir_t dir);
 
    void Reconfig(const char *name,const char *c);
 };

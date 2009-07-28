@@ -55,14 +55,12 @@ void RateLimit::BytesPool::AdjustTime()
    {
       // prevent overflow
       if((LARGE-pool)/dif < rate)
-	 pool = pool_max>0 ? pool_max : rate*DEFAULT_MAX_COEFF;
+	 pool = pool_max;
       else
 	 pool += int(dif*rate+0.5);
 
-      if(pool>pool_max && pool_max>0)
+      if(pool>pool_max)
 	 pool=pool_max;
-      if(pool_max==0 && pool>rate*DEFAULT_MAX_COEFF)
-	 pool=rate*DEFAULT_MAX_COEFF;
 
       t=SMTask::now;
    }
@@ -85,6 +83,23 @@ int RateLimit::BytesAllowed(dir_t dir)
    if(one[dir].rate>0 && ret>one[dir].pool)
       ret=one[dir].pool;
    return ret;
+}
+
+bool RateLimit::Relaxed(dir_t dir)
+{
+   if(total_reconfig_needed)
+      ReconfigTotal();
+
+   if(one[dir].rate==0 && total[dir].rate==0) // unlimited
+      return true;
+   one  [dir].AdjustTime();
+   total[dir].AdjustTime();
+
+   if(total[dir].rate>0 && total[dir].pool < total[dir].pool_max/2)
+      return false;
+   if(one[dir].rate>0 && one[dir].pool < one[dir].pool_max/2)
+      return false;
+   return true;
 }
 
 void RateLimit::BytesPool::Used(int bytes)
@@ -112,6 +127,10 @@ void RateLimit::Reconfig(const char *name,const char *c)
       return;
    ResMgr::Query("net:limit-rate",c).ToNumberPair(one[GET].rate,one[PUT].rate);
    ResMgr::Query("net:limit-max",c) .ToNumberPair(one[GET].pool_max,one[PUT].pool_max);
+   if(one[GET].pool_max==0)
+      one[GET].pool_max=one[GET].rate*DEFAULT_MAX_COEFF;
+   if(one[PUT].pool_max==0)
+      one[PUT].pool_max=one[PUT].rate*DEFAULT_MAX_COEFF;
    one[GET].Reset(); // to cut bytes_pool.
    one[PUT].Reset();
 
@@ -122,6 +141,10 @@ void RateLimit::ReconfigTotal()
 {
    ResMgr::Query("net:limit-total-rate",0).ToNumberPair(total[GET].rate,total[PUT].rate);
    ResMgr::Query("net:limit-total-max",0) .ToNumberPair(total[GET].pool_max,total[PUT].pool_max);
+   if(total[GET].pool_max==0)
+      total[GET].pool_max=total[GET].rate*DEFAULT_MAX_COEFF;
+   if(total[PUT].pool_max==0)
+      total[PUT].pool_max=total[PUT].rate*DEFAULT_MAX_COEFF;
    total[GET].Reset();
    total[PUT].Reset();
    total_reconfig_needed = false;
