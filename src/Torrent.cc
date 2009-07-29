@@ -1104,7 +1104,8 @@ void TorrentPeer::Disconnect()
    }
    recv_buf=0;
    send_buf=0;
-   close(sock);
+   if(sock!=-1)
+      close(sock);
    sock=-1;
    connected=false;
    parent->am_interested_peers_count-=am_interested;
@@ -1116,6 +1117,7 @@ void TorrentPeer::Disconnect()
    peer_complete_pieces=0;
    retry_timer.Reset();
    choke_timer.Stop();
+   interest_timer.Stop();
    // return to main pool
    parent->PeerBytesUsed(-peer_bytes_pool[RateLimit::GET],RateLimit::GET);
    parent->PeerBytesUsed(-peer_bytes_pool[RateLimit::PUT],RateLimit::PUT);
