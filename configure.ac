@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
-AC_INIT([lftp], [3.99.0], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [3.99.6], [lftp-bugs@lftp.yar.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([lib])
@@ -293,7 +293,7 @@ AC_CHECK_HEADERS(libintl.h fcntl.h sys/time.h errno.h stdlib.h varargs.h dirent.
  termios.h termio.h sys/select.h sys/stropts.h string.h memory.h\
  strings.h sys/ioctl.h dlfcn.h arpa/inet.h arpa/nameser.h netinet/in.h netinet/tcp.h\
  netinet/in_systm.h netinet/ip.h termcap.h sys/statfs.h\
- resolv.h langinfo.h endian.h locale.h expat.h,,,[
+ resolv.h langinfo.h endian.h locale.h expat.h linux/magic.h,,,[
 #include <sys/types.h>
 #ifdef HAVE_ARPA_NAMESER_H
 # include <arpa/nameser.h>
