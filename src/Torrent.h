@@ -232,6 +232,7 @@ class FDCache : public SMTask, public ResClient
    struct FD
    {
       int fd;
+      int saved_errno;
       time_t last_used;
    };
    int max_count;

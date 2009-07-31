@@ -684,12 +684,18 @@ void FDCache::Clean()
 {
    for(int i=0; i<3; i++) {
       for(const FD *f=&cache[i].each_begin(); f->last_used; f=&cache[i].each_next()) {
+	 if(f->fd==-1 && f->last_used+1<now.UnixTime()) {
+	    cache[i].remove(*cache[i].each_key());
+	    continue;
+	 }
 	 if(f->last_used+max_time<now.UnixTime()) {
 	    close(f->fd);
 	    cache[i].remove(*cache[i].each_key());
 	 }
       }
    }
+   if(Count()>0)
+      clean_timer.Reset();
 }
 int FDCache::Do()
 {
@@ -701,7 +707,8 @@ void FDCache::CloseAll()
 {
    for(int i=0; i<3; i++) {
       for(const FD *f=&cache[i].each_begin(); f->last_used; f=&cache[i].each_next()) {
-	 close(f->fd);
+	 if(f->fd!=-1)
+	    close(f->fd);
 	 cache[i].remove(*cache[i].each_key());
       }
    }
@@ -724,7 +731,8 @@ bool FDCache::CloseOne()
    }
    if(!oldest_key)
       return false;
-   close(oldest_fd);
+   if(oldest_fd!=-1)
+      close(oldest_fd);
    cache[oldest_mode].remove(*oldest_key);
    return true;
 }
@@ -738,13 +746,16 @@ int FDCache::OpenFile(const char *file,int m)
    assert(ci<3);
    FD& f=cache[ci].lookup_Lv(file);
    if(f.last_used!=0) {
-      f.last_used=now.UnixTime();
+      if(f.fd!=-1)
+	 f.last_used=now.UnixTime();
+      else
+	 errno=f.saved_errno;
       return f.fd;
    }
    if(ci==O_RDONLY) {
       // O_RDWR also will do, check if we have it.
       const FD& f_rw=cache[O_RDWR].lookup(file);
-      if(f_rw.last_used!=0) {
+      if(f_rw.last_used!=0 && f_rw.fd!=-1) {
 	 // don't update last_used to expire it and reopen with proper mode
 	 return f_rw.fd;
       }
@@ -756,9 +767,7 @@ int FDCache::OpenFile(const char *file,int m)
    do {
       fd=open(file,m,0664);
    } while(fd==-1 && (errno==EMFILE || errno==ENFILE) && CloseOne());
-   if(fd==-1)
-      return fd;
-   FD new_entry = {fd,now.UnixTime()};
+   FD new_entry = {fd,errno,now.UnixTime()};
    cache[ci].add(file,new_entry);
    return fd;
 }
