@@ -1102,7 +1102,7 @@ void TorrentPeer::SetError(const char *s)
 void TorrentPeer::Disconnect()
 {
    Enter();
-   if(send_buf)
+   if(Connected() && !recv_buf->Eof())
       LogNote(4,"closing connection");
    recv_queue.empty();
    ClearSentQueue();
