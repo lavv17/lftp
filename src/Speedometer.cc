@@ -102,6 +102,10 @@ xstring& Speedometer::GetStr(float r)
       // for translator: This is 'Megabyte per second'
       return xstring::format(_("%.2fM/s"),r/(1024.*1024));
 }
+xstring& Speedometer::GetStr()
+{
+   return Valid() ? GetStr(Get()) : xstring::get_tmp("");
+}
 xstring& Speedometer::GetETAStrFromSize(off_t size)
 {
    if(!Valid() || Get()<1)

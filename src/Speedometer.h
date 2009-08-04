@@ -40,7 +40,7 @@ public:
    float Get();
    float Get() const { return rate; }
    static xstring& GetStr(float r);
-   xstring& GetStr() { return GetStr(Get()); }
+   xstring& GetStr();
    static const char *GetStrS(float r);
    const char *GetStrS() { return GetStrS(Get()); }
    xstring& GetETAStrFromSize(off_t s);

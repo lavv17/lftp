@@ -460,7 +460,7 @@ int Torrent::Do()
 	    pieces_needed.append(i);
 	 }
       }
-      if(enter_end_game) {
+      if(!end_game && enter_end_game) {
 	 LogNote(1,"entering End Game mode");
 	 end_game=true;
       }
@@ -934,7 +934,9 @@ void Torrent::ReduceUploaders()
    // make the slowest uninterested
    for(int i=0; i<peers.count(); i++) {
       TorrentPeer *peer=peers[i].get_non_const();
-      if(peer->am_interested && peer->interest_timer.TimePassed() > 30) {
+      if(peer->am_interested) {
+	 if(peer->interest_timer.TimePassed() <= 30)
+	    break;
 	 peer->SetAmInterested(false);
 	 if(am_interested_peers_count < max_uploaders)
 	    break;
@@ -949,9 +951,9 @@ void Torrent::ReduceDownloaders()
    // choke the slowest
    for(int i=0; i<peers.count(); i++) {
       TorrentPeer *peer=peers[i].get_non_const();
-      if(peer->am_choking)
-	 continue;
-      if(peer->peer_interested && peer->choke_timer.TimePassed() > 30) {
+      if(!peer->am_choking && peer->peer_interested) {
+	 if(peer->choke_timer.TimePassed() <= 30)
+	    break;
 	 peer->SetAmChoking(true);
 	 if(am_not_choking_peers_count < max_downloaders)
 	    break;
