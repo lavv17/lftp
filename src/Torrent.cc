@@ -649,7 +649,7 @@ const char *Torrent::MakePath(BeNode *p) const
 const char *Torrent::FindFileByPosition(unsigned piece,unsigned begin,off_t *f_pos,off_t *f_tail) const
 {
    const BeNode *files=info->dict.lookup("files");
-   off_t target_pos=piece*piece_length+begin;
+   off_t target_pos=(off_t)piece*piece_length+begin;
    if(!files) {
       *f_pos=target_pos;
       *f_tail=total_length-target_pos;
