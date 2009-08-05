@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "12 Dec 2008"
+.TH lftp 1 "05 Aug 2009"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 3.7.7.
+This man page documents lftp version 4.0.0.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -75,6 +75,9 @@ ftp-over-http-proxy protocol. It can be used automatically instead of ftp
 if ftp:proxy is set to `http://proxy[:port]'. Fish is a protocol working
 over an ssh connection to a unix account. SFtp is a protocol implemented
 in ssh2 as sftp subsystem.
+.PP
+Besides FTP-like protocols, lftp has support for BitTorrent protocol
+as `torrent' command. Seeding is also supported.
 
 .PP
 Every operation in \fBlftp\fP is reliable, that is any not fatal error is
@@ -741,6 +744,14 @@ source \-e echo help
 .PP
 Stop lftp process. Note that transfers will be also stopped until you
 continue the process with shell's fg or bg commands.
+
+.BR torrent " \fItorrent-file\fP [" \-O " \fIdirectory\fP]"
+.PP
+Start BitTorrent process for the given \fItorrent-file\fP, which can be a
+local file or URL. Existing files are first validated. Missing pieces are
+downloaded. Files are stored in specified \fIdirectory\fP or current
+working directory by default. Seeding continues until ratio reachs
+\fItorrent:stop-on-ratio\fP setting.
 
 .B user
 \fIuser\fP [\fIpass\fP]
@@ -1542,6 +1553,24 @@ use specified file as your certificate.
 .BR ssl:verify-certificate \ (boolean)
 if set to yes, then verify server's certificate to be signed by a known
 Certificate Authority and not be on Certificate Revocation List.
+.TP
+.BR torrent:ip " (ipv4 address)"
+IP address for the tracker. Specify it if you are using an http proxy.
+.TP
+.BR torrent:max-peers \ (number)
+maximum number of peers for a torrent. New connections are rejected if this
+limit is reached.
+.TP
+.BR torrent:port-range \ (from-to)
+port range to accept connections on. A single port is selected when a torrent
+starts.
+.TP
+.BR torrent:seed-min-peers \ (number)
+minimum number of peers when the torrent is complete. If there is less,
+new peers are actively searched for.
+.TP
+.BR torrent:stop-on-ratio " (real number)"
+torrent stops when it's complete and ratio reached this number.
 .TP
 .BR xfer:clobber \ (boolean)
 if this setting is off, get commands will not overwrite existing
