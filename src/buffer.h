@@ -130,6 +130,8 @@ public:
 
    Buffer();
    ~Buffer();
+
+   const char *Dump() const;
 };
 
 class DataTranslator : public Buffer

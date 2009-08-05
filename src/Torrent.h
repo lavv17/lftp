@@ -77,11 +77,13 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    bool complete;
    bool end_game;
    bool validating;
+   bool force_valid;
    unsigned validate_index;
    Ref<Error> invalid_cause;
 
    static const unsigned PEER_ID_LEN = 20;
    static xstring my_peer_id;
+   static xstring my_key;
    static Ref<TorrentListener> listener;
    static Ref<FDCache> fd_cache;
 
@@ -125,7 +127,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    BeNode *Lookup(BeNode *d,const char *name,BeNode::be_type_t type) { return Lookup(d->dict,name,type); }
    BeNode *Lookup(Ref<BeNode>& d,const char *name,BeNode::be_type_t type) { return Lookup(d->dict,name,type); }
 
-   void SendTrackerRequest(const char *event,int numwant);
+   void SendTrackerRequest(const char *event);
 
    TaskRefArray<TorrentPeer> peers;
    RefArray<TorrentPiece> piece_info;
@@ -164,6 +166,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    int am_interested_peers_count;
    int am_not_choking_peers_count;
    int max_peers;
+   int seed_min_peers;
 
    float stop_on_ratio;
 
@@ -180,6 +183,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    bool NeedMoreUploaders();
    bool AllowMoreDownloaders();
    void UnchokeBestUploaders();
+   void ScanPeers();
    void OptimisticUnchoke();
    void ReducePeers();
    void ReduceUploaders();
@@ -225,6 +229,8 @@ public:
    const char *GetName() { return name?name->get():""; }
 
    void Reconfig(const char *name);
+
+   void ForceValid() { force_valid=true; }
 };
 
 class FDCache : public SMTask, public ResClient
@@ -527,7 +533,7 @@ class TorrentJob : public Job
    bool completed;
    bool done;
 public:
-   TorrentJob(const char *mf,const char *cwd,const char *output_dir);
+   TorrentJob(Torrent *);
    ~TorrentJob();
    int Do();
    int Done() { return done; }

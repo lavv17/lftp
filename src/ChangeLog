@@ -1,3 +1,10 @@
+2009-08-05  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* buffer.cc, buffer.h: (Dump) new method.
+	* Torrent.cc, Torrent.h: (ScanPeers) new method; add key, ip params;
+	  add --force-valid option to skip validating; add seed-min-peers
+	  parameter; better debug messages.
+
 2009-08-04  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Speedometer.cc, Speedometer.h: (GetStr) return "" when not valid.

@@ -40,11 +40,14 @@ static ResType torrent_vars[] = {
    {"torrent:port-range", "6881-6889", ResMgr::RangeValidate, ResMgr::NoClosure},
    {"torrent:max-peers", "60", ResMgr::UNumberValidate, ResMgr::NoClosure},
    {"torrent:stop-on-ratio", "2.0", ResMgr::FloatValidate, ResMgr::NoClosure},
+   {"torrent:seed-min-peers", "3", ResMgr::UNumberValidate, ResMgr::NoClosure},
+   {"torrent:ip", "", ResMgr::IPv4AddrValidate, ResMgr::NoClosure},
    {0}
 };
 static ResDecls torrent_vars_register(torrent_vars);
 
 xstring Torrent::my_peer_id;
+xstring Torrent::my_key;
 Ref<TorrentListener> Torrent::listener;
 Ref<FDCache> Torrent::fd_cache;
 
@@ -60,6 +63,7 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    complete=false;
    end_game=false;
    validating=false;
+   force_valid=false;
    validate_index=0;
    pieces=0;
    name=0;
@@ -75,6 +79,7 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    am_interested_peers_count=0;
    am_not_choking_peers_count=0;
    max_peers=60;
+   seed_min_peers=3;
    stop_on_ratio=2;
    last_piece=TorrentPeer::NO_PIECE;
    Reconfig(0);
@@ -88,6 +93,10 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
       my_peer_id.appendf("%04x",(unsigned)getpid());
       my_peer_id.appendf("%08x",(unsigned)now.UnixTime());
       assert(my_peer_id.length()==PEER_ID_LEN);
+   }
+   if(!my_key) {
+      for(int i=0; i<10; i++)
+	 my_key.appendf("%02x",unsigned(random()/13%256));
    }
 }
 
@@ -105,7 +114,7 @@ void Torrent::Shutdown()
    if(listener)
       listener->RemoveTorrent(this);
    if(started || tracker_reply)
-      SendTrackerRequest("stopped",0);
+      SendTrackerRequest("stopped");
    if(listener && listener->GetTorrentsCount()==0)
       listener=0;
    peers.unset();
@@ -398,8 +407,16 @@ int Torrent::Do()
       for(unsigned p=0; p<total_pieces; p++)
 	 piece_info.append(new TorrentPiece(BlocksInPiece(p)));
 
-      validate_index=0;
-      validating=true;
+      if(!force_valid) {
+	 validate_index=0;
+	 validating=true;
+      } else {
+	 for(unsigned i=0; i<total_pieces; i++)
+	    my_bitfield->set_bit(i,1);
+	 complete_pieces=total_pieces;
+	 total_left=0;
+	 complete=true;
+      }
    }
    if(validating) {
       ValidatePiece(validate_index++);
@@ -415,29 +432,14 @@ int Torrent::Do()
       ParsedURL u(tracker_url.get(),true);
       t_session=FileAccess::New(&u);
       listener->AddTorrent(this);
-      SendTrackerRequest("started",complete?0:max_peers/2);
+      SendTrackerRequest("started");
       m=MOVED;
    }
 
-   if(peers_scan_timer.Stopped()) {
-      // scan existing peers
-      for(int i=0; i<peers.count(); i++) {
-	 const TorrentPeer *peer=peers[i];
-	 if(peer->Failed()) {
-	    LogError(2,"peer %s failed: %s",peer->GetName(),peer->ErrorText());
-	    peers.remove(i--);
-	 } else if(complete && (peer->NotConnected() || peer->Complete())) {
-	    LogNote(4,"removing unneeded peer %s (%s)",peer->GetName(),peers[i]->Status());
-	    peers.remove(i--);
-	 }
-      }
-      ReducePeers();
-      peers_scan_timer.Reset();
-   }
-   if(optimistic_unchoke_timer.Stopped()) {
+   if(peers_scan_timer.Stopped())
+      ScanPeers();
+   if(optimistic_unchoke_timer.Stopped())
       OptimisticUnchoke();
-      optimistic_unchoke_timer.Reset();
-   }
 
    // count peers
    active_peers_count=0;
@@ -565,10 +567,7 @@ int Torrent::Do()
 	       peers.remove(i--);
 	    }
 	 }
-	 int numwant=0;
- 	 if(!complete && peers.count()<max_peers/2)
- 	    numwant=max_peers/2-peers.count();
-	 SendTrackerRequest(0,numwant);
+	 SendTrackerRequest(0);
       }
    }
    return m;
@@ -602,22 +601,36 @@ void Torrent::AddPeer(TorrentPeer *peer)
    peers.append(peer);
 }
 
-void Torrent::SendTrackerRequest(const char *event,int numwant)
+void Torrent::SendTrackerRequest(const char *event)
 {
    if(!t_session)
       return;
+
+   int numwant=complete?seed_min_peers:max_peers/2;
+   if(numwant>peers.count())
+      numwant-=peers.count();
+   else
+      numwant=0;
+   if(shutting_down)
+      numwant=-1;
+
    xstring request;
    request.setf("info_hash=%s",url::encode(info_hash,URL_PATH_UNSAFE).get());
    request.appendf("&peer_id=%s",url::encode(my_peer_id,URL_PATH_UNSAFE).get());
    request.appendf("&port=%d",listener->GetPort());
-   if(event)
-      request.appendf("&event=%s",event);
    request.appendf("&uploaded=%llu",total_sent);
    request.appendf("&downloaded=%llu",total_recv);
    request.appendf("&left=%llu",total_left);
-   request.append("&compact=1");
+   request.append("&compact=1&no_peer_id=1");
+   if(event)
+      request.appendf("&event=%s",event);
+   const char *ip=ResMgr::Query("torrent:ip",0);
+   if(ip && ip[0])
+      request.appendf("&ip=%s",ip);
    if(numwant>=0)
       request.appendf("&numwant=%d",numwant);
+   if(my_key)
+      request.appendf("&key=%s",my_key.get());
    if(tracker_id)
       request.appendf("&trackerid=%s",url::encode(tracker_id,URL_PATH_UNSAFE).get());
    LogSend(4,request);
@@ -782,6 +795,8 @@ try_again:
       peers.chop();  // free an fd
       fd=fd_cache->OpenFile(cf,m);
    }
+   if(validating)
+      return fd;
    if(fd==-1 && errno==ENOENT && !did_mkdir) {
       LogError(10,"open(%s): %s",cf,strerror(errno));
       const char *sl=strchr(file,'/');
@@ -864,14 +879,14 @@ void Torrent::StoreBlock(unsigned piece,unsigned begin,unsigned len,const char *
 	 return;
       }
       LogNote(3,"piece %u complete",piece);
-      LogSend(5,xstring::format("broadcast have(%u)",piece));
       SetPieceNotWanted(piece);
       for(int i=0; i<peers.count(); i++)
 	 peers[i]->Have(piece);
       if(my_bitfield->has_all_set() && !complete) {
 	 complete=true;
 	 end_game=false;
-	 SendTrackerRequest("complete",0);
+	 ScanPeers();
+	 SendTrackerRequest("completed");
       }
    }
 }
@@ -904,6 +919,22 @@ const xstring& Torrent::RetrieveBlock(unsigned piece,unsigned begin,unsigned len
       len-=w;
    }
    return buf;
+}
+
+void Torrent::ScanPeers() {
+   // scan existing peers
+   for(int i=0; i<peers.count(); i++) {
+      const TorrentPeer *peer=peers[i];
+      if(peer->Failed()) {
+	 LogError(2,"peer %s failed: %s",peer->GetName(),peer->ErrorText());
+	 peers.remove(i--);
+      } else if(complete && peer->Complete()) {
+	 LogNote(4,"removing unneeded peer %s (%s)",peer->GetName(),peers[i]->Status());
+	 peers.remove(i--);
+      }
+   }
+   ReducePeers();
+   peers_scan_timer.Reset();
 }
 
 void Torrent::ReducePeers()
@@ -1014,6 +1045,7 @@ void Torrent::OptimisticUnchoke()
    if(choked_peers.count()==0)
       return;
    choked_peers[rand()/13%choked_peers.count()]->SetAmChoking(false);
+   optimistic_unchoke_timer.Reset();
 }
 
 int Torrent::PeerBytesAllowed(const TorrentPeer *peer,RateLimit::dir_t dir)
@@ -1034,6 +1066,7 @@ void Torrent::PeerBytesUsed(int b,RateLimit::dir_t dir)
 void Torrent::Reconfig(const char *name)
 {
    max_peers=ResMgr::Query("torrent:max-peers",0);
+   seed_min_peers=ResMgr::Query("torrent:seed-min-peers",0);
    stop_on_ratio=ResMgr::Query("torrent:stop-on-ratio",0);
    rate_limit.Reconfig(name,metainfo_url);
 }
@@ -1098,6 +1131,7 @@ void TorrentPeer::Connect(int s,IOBuffer *rb)
 void TorrentPeer::SetError(const char *s)
 {
    error=Error::Fatal(s);
+   LogError(11,"fatal error: %s",s);
    Disconnect();
 }
 
@@ -1189,7 +1223,7 @@ void TorrentPeer::SendDataReply()
    Leave(parent);
    if(data.length()!=p->req_length) {
       if(parent->my_bitfield->get_bit(p->index))
-	 parent->SetError(Error::Fatal(xstring::format("failed to read piece %u",p->index)));
+	 parent->SetError(xstring::format("failed to read piece %u",p->index));
       return;
    }
    LogSend(6,xstring::format("piece:%u begin:%u size:%u",p->index,p->begin,p->req_length));
@@ -1484,8 +1518,6 @@ void TorrentPeer::HandlePacket(Packet *p)
 	 for(unsigned p=0; p<parent->total_pieces; p++)
 	    SetPieceHaving(p,pp->bitfield->get_bit(p));
 	 LogRecv(5,xstring::format("bitfield(%u/%u)",peer_complete_pieces,parent->total_pieces));
-	 if(parent->complete && Complete())
-	    Disconnect();
 	 break;
       }
    case MSG_PORT: {
@@ -1610,8 +1642,6 @@ int TorrentPeer::Do()
    if(error)
       return m;
    if(sock==-1) {
-      if(parent->complete)
-	 return m;
       if(!retry_timer.Stopped())
 	 return m;
       sock=SocketCreateTCP(addr.sa.sa_family,0);
@@ -1659,6 +1689,12 @@ int TorrentPeer::Do()
       if(s==UNPACK_NO_DATA_YET)
 	 return m;
       if(s!=UNPACK_SUCCESS) {
+	 if(s==UNPACK_PREMATURE_EOF) {
+	    if(recv_buf->Size()>0)
+	       LogError(2,"peer unexpectedly closed connection after %s",recv_buf->Dump());
+	    else
+	       LogError(4,"peer closed connection");
+	 }
 	 Disconnect();
 	 return MOVED;
       }
@@ -1709,9 +1745,12 @@ int TorrentPeer::Do()
    && parent->AllowMoreDownloaders())
       SetAmChoking(false);
 
-   if(recv_queue.count()>0 && send_buf->Size()<(int)Torrent::BLOCK_SIZE*2
-   && BytesAllowedToPut(recv_queue[0]->req_length))
+   while(recv_queue.count()>0 && send_buf->Size()<(int)Torrent::BLOCK_SIZE*2
+   && BytesAllowedToPut(recv_queue[0]->req_length)) {
       SendDataReply();
+      if(!Connected())
+	 return MOVED;
+   }
 
    if(recv_buf->Eof() && recv_buf->Size()==0) {
       LogError(4,"peer closed connection");
@@ -1726,7 +1765,7 @@ int TorrentPeer::Do()
    if(st!=UNPACK_SUCCESS)
    {
       if(st==UNPACK_PREMATURE_EOF)
-	 LogError(2,"peer unexpectedly closed connection");
+	 LogError(2,"peer unexpectedly closed connection after %s",recv_buf->Dump());
       else
 	 LogError(2,"invalid peer response format");
       Disconnect();
@@ -1734,8 +1773,7 @@ int TorrentPeer::Do()
    }
    reply->DropData(recv_buf);
    HandlePacket(reply);
-
-   return m;
+   return MOVED;
 }
 
 TorrentPeer::unpack_status_t TorrentPeer::UnpackPacket(Ref<IOBuffer>& b,TorrentPeer::Packet **p)
@@ -2140,8 +2178,8 @@ int TorrentDispatcher::Do()
 }
 
 ///
-TorrentJob::TorrentJob(const char *mf,const char *c,const char *od)
-   : torrent(new Torrent(mf,c,od)), completed(false), done(false)
+TorrentJob::TorrentJob(Torrent *t)
+   : torrent(t), completed(false), done(false)
 {
 }
 TorrentJob::~TorrentJob()
@@ -2216,13 +2254,16 @@ CMD(torrent)
 #define eprintf parent->eprintf
    enum {
       OPT_OUTPUT_DIRECTORY,
+      OPT_FORCE_VALID,
    };
    static const struct option torrent_opts[]=
    {
       {"output-directory",required_argument,0,OPT_OUTPUT_DIRECTORY},
+      {"force-valid",no_argument,0,OPT_FORCE_VALID},
       {0}
    };
    const char *output_dir=0;
+   bool force_valid=false;
 
    args->rewind();
    int opt;
@@ -2233,6 +2274,9 @@ CMD(torrent)
       case(OPT_OUTPUT_DIRECTORY):
       case('O'):
 	 output_dir=optarg;
+	 break;
+      case(OPT_FORCE_VALID):
+	 force_valid=true;
 	 break;
       case('?'):
       try_help:
@@ -2253,7 +2297,11 @@ CMD(torrent)
    }
 
    xstring_ca cwd(xgetcwd());
-   return new TorrentJob(torrent,cwd,output_dir?dir_file(cwd,output_dir):cwd);
+   Torrent *t=new Torrent(torrent,cwd,output_dir?dir_file(cwd,output_dir):cwd);
+   if(force_valid)
+      t->ForceValid();
+
+   return new TorrentJob(t);
 
 #undef args
 }

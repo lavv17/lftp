@@ -230,6 +230,12 @@ void Buffer::SetErrorCached(const char *e)
    SetError(e,false);
    error_text.append(_(" [cached]"));
 }
+const char *Buffer::Dump() const
+{
+   if(buffer_ptr==0)
+      return buffer.dump();
+   return xstring::get_tmp(Get(),Size()).dump();
+}
 
 void DataTranslator::AppendTranslated(Buffer *target,const char *put_buf,int size)
 {
