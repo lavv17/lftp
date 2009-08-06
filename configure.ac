@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
-AC_INIT([lftp], [3.99.6], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [3.99.8], [lftp-bugs@lftp.yar.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([lib])
@@ -266,9 +266,10 @@ case "$with_openssl" in
 			with_gnutls=no;;
 esac
 if test x$with_gnutls = xyes; then
-   AM_PATH_LIBGNUTLS([1.0.0], [
+   PKG_PROG_PKG_CONFIG
+   PKG_CHECK_MODULES([LIBGNUTLS], [gnutls >= 1.0.0], [
       AC_DEFINE([USE_GNUTLS], 1, [Define to 1 when using GNU TLS library])
-      gnutls_version_code=`echo $libgnutls_config_version | $AWK -F. '{ printf "0x%02X%02X%02X\n",$1,$2,$3 }'`
+      gnutls_version_code=`$PKG_CONFIG --modversion gnutls | $AWK -F. '{ printf "0x%02X%02X%02X\n",$1,$2,$3 }'`
       AC_DEFINE_UNQUOTED([LFTP_LIBGNUTLS_VERSION_CODE], $gnutls_version_code, [Define to libgnutls version, e.g. 0x010203 for 1.2.3])
    ])
 fi
