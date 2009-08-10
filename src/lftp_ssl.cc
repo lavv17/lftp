@@ -724,6 +724,10 @@ void lftp_ssl_openssl::global_deinit()
    instance=0;
 }
 
+#ifndef SSL_OP_NO_TICKET
+# define SSL_OP_NO_TICKET 0
+#endif
+
 lftp_ssl_openssl_instance::lftp_ssl_openssl_instance()
 {
    crl_store=0;
@@ -746,7 +750,7 @@ lftp_ssl_openssl_instance::lftp_ssl_openssl_instance()
 #else
    SSLeay_add_ssl_algorithms();
    ssl_ctx=SSL_CTX_new(SSLv23_client_method());
-   SSL_CTX_set_options(ssl_ctx, SSL_OP_ALL);
+   SSL_CTX_set_options(ssl_ctx, SSL_OP_ALL|SSL_OP_NO_TICKET);
    SSL_CTX_set_verify(ssl_ctx,SSL_VERIFY_PEER,lftp_ssl_openssl::verify_callback);
 //    SSL_CTX_set_default_passwd_cb(ssl_ctx,lftp_ssl_passwd_callback);
 
