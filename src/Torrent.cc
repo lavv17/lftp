@@ -483,6 +483,12 @@ int Torrent::Do()
 	 t_session->Close();
 	 int rest;
 	 Ref<BeNode> reply(BeNode::Parse(tracker_reply->Get(),tracker_reply->Size(),&rest));
+	 if(!reply) {
+	    LogError(3,"Tracker reply parse error (data: %s)",tracker_reply->Dump());
+	    tracker_reply=0;
+	    tracker_timer.Reset();
+	    return MOVED;
+	 }
 	 LogNote(10,"Received tracker reply:");
 	 Log::global->Write(10,reply->Format());
 
