@@ -422,6 +422,7 @@ int Torrent::Do()
       ValidatePiece(validate_index++);
       if(validate_index<total_pieces)
 	 return MOVED;
+      fd_cache->CloseAll();
       validating=false;
       if(total_left==0)
 	 complete=true;
@@ -716,6 +717,18 @@ int FDCache::Do()
       Clean();
    return STALL;
 }
+void FDCache::Close(const char *name)
+{
+   const xstring n(name);
+   for(int i=0; i<3; i++) {
+      const FD& f=cache[i].lookup(n);
+      if(f.last_used!=0) {
+	 if(f.fd!=-1)
+	    close(f.fd);
+	 cache[i].remove(n);
+      }
+   }
+}
 void FDCache::CloseAll()
 {
    for(int i=0; i<3; i++) {
@@ -797,6 +810,8 @@ try_again:
    }
    if(validating)
       return fd;
+   if(fd==-1)
+      fd_cache->Close(cf); // remove negative cache.
    if(fd==-1 && errno==ENOENT && !did_mkdir) {
       LogError(10,"open(%s): %s",cf,strerror(errno));
       const char *sl=strchr(file,'/');

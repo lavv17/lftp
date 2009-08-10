@@ -248,6 +248,7 @@ class FDCache : public SMTask, public ResClient
 
 public:
    int OpenFile(const char *name,int mode);
+   void Close(const char *name);
    int Count();
    void Clean();
    bool CloseOne();
