@@ -1,3 +1,7 @@
+2009-08-11  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: (print_cmd_index) better formatting.
+
 2009-08-10  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp_ssl.cc: use SSL_OP_NO_TICKET to work with old servers.
