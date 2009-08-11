@@ -996,7 +996,7 @@ void FileCopyPeerFA::OpenSession()
       session->AsciiTransfer();
    if(want_size && size==NO_SIZE_YET)
       session->WantSize(&size);
-   if(want_date && (date==NO_DATE_YET || date.ts_prec>1))
+   if(want_date && (date==NO_DATE_YET || date.ts_prec>0))
       session->WantDate(&date);
    if(mode==GET)
       SaveRollback(seek_pos);

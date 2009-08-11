@@ -76,7 +76,7 @@ public:
    const char *GetETAStrSFromTime(time_t t) { return c->GetETAStrSFromTime(t); }
    void SetRange(off_t s,off_t lim) { c->SetRange(s,lim); }
    void SetRangeLimit(off_t lim) { return c->SetRangeLimit(lim); }
-   void SetDate(time_t d) { c->SetDate(d); }
+   void SetDate(const FileTimestamp& d) { c->SetDate(d); }
    void SetSize(off_t s)   { c->SetSize(s); }
    const SMTaskRef<FileCopy>& GetCopy() { return c; }
    const SMTaskRef<FileCopyPeer>& GetPut() { return c->put; }

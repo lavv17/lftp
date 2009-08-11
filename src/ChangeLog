@@ -1,6 +1,8 @@
 2009-08-11  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: (print_cmd_index) better formatting.
+	* CopyJob.h: pass FileTimestamp correctly.
+	* FileCopy.cc: fix prec comparision.
 
 2009-08-10  Alexander V. Lukyanov <lav@yars.free.net>
 
