@@ -37,6 +37,7 @@ Job::Job()
    parent=0;
    jobno=-1;
    fg=false;
+   job_prepared_to_die=false;
 }
 
 void  Job::AllocJobno()
@@ -69,10 +70,12 @@ void Job::PrepareToDie()
    fg_data=0;
    waiting.unset();
    ListDel(Job,chain,this,next);
+   job_prepared_to_die=true;
 }
 
 Job::~Job()
 {
+   assert(job_prepared_to_die);
 }
 
 Job *Job::FindJob(int n)

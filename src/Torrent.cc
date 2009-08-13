@@ -115,8 +115,10 @@ void Torrent::Shutdown()
       listener->RemoveTorrent(this);
    if(started || tracker_reply)
       SendTrackerRequest("stopped");
-   if(listener && listener->GetTorrentsCount()==0)
+   if(listener && listener->GetTorrentsCount()==0) {
       listener=0;
+      fd_cache=0;
+   }
    peers.unset();
 }
 
@@ -125,8 +127,10 @@ void Torrent::PrepareToDie()
    peers.unset();
    if(listener)
       listener->RemoveTorrent(this);
-   else
+   if(listener && listener->GetTorrentsCount()==0) {
+      listener=0;
       fd_cache=0;
+   }
 }
 
 void Torrent::SetError(Error *e)
@@ -1168,6 +1172,7 @@ void TorrentPeer::Disconnect()
 	 SetPieceHaving(p,false);
       peer_bitfield=0;
    }
+   peer_id.unset();
    recv_buf=0;
    send_buf=0;
    if(sock!=-1)
@@ -2206,6 +2211,11 @@ TorrentJob::TorrentJob(Torrent *t)
 TorrentJob::~TorrentJob()
 {
 }
+void TorrentJob::PrepareToDie()
+{
+   torrent=0;
+   Job::PrepareToDie();
+}
 
 int TorrentJob::Do()
 {
@@ -2318,7 +2328,12 @@ CMD(torrent)
    }
 
    xstring_ca cwd(xgetcwd());
-   Torrent *t=new Torrent(torrent,cwd,output_dir?dir_file(cwd,output_dir):cwd);
+   if(output_dir)
+      output_dir=dir_file(cwd,expand_home_relative(output_dir));
+   else
+      output_dir=cwd;
+
+   Torrent *t=new Torrent(torrent,cwd,output_dir);
    if(force_valid)
       t->ForceValid();
 

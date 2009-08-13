@@ -45,6 +45,7 @@ protected:
    bool fg;
    Ref<FgData> fg_data;
 
+   bool job_prepared_to_die;
    void PrepareToDie();
    virtual ~Job();
 

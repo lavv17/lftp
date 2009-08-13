@@ -541,6 +541,7 @@ public:
    void PrintStatus(int v,const char *tab);
    void ShowRunStatus(const SMTaskRef<StatusLine>& s);
    int AcceptSig(int);
+   void PrepareToDie();
 };
 
 #endif//TORRENT_H
