@@ -40,6 +40,7 @@ static ResType torrent_vars[] = {
    {"torrent:port-range", "6881-6889", ResMgr::RangeValidate, ResMgr::NoClosure},
    {"torrent:max-peers", "60", ResMgr::UNumberValidate, ResMgr::NoClosure},
    {"torrent:stop-on-ratio", "2.0", ResMgr::FloatValidate, ResMgr::NoClosure},
+   {"torrent:seed-max-time", "30d", ResMgr::TimeIntervalValidate, ResMgr::NoClosure},
    {"torrent:seed-min-peers", "3", ResMgr::UNumberValidate, ResMgr::NoClosure},
    {"torrent:ip", "", ResMgr::IPv4AddrValidate, ResMgr::NoClosure},
    {0}
@@ -55,6 +56,7 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    : metainfo_url(mf),
      tracker_timer(600), pieces_needed_rebuild_timer(10),
      cwd(c), output_dir(od), rate_limit(mf),
+     seed_timer("torrent:seed-max-time",0),
      optimistic_unchoke_timer(30), peers_scan_timer(1),
      am_interested_timer(1)
 {
@@ -149,7 +151,7 @@ void Torrent::SetError(const char *msg)
    SetError(Error::Fatal(msg));
 }
 
-double Torrent::GetRatio()
+double Torrent::GetRatio() const
 {
    if(total_sent==0 || total_length==total_left)
       return 0;
@@ -276,6 +278,12 @@ int Torrent::PeersCompareSendRate(const SMTaskRef<TorrentPeer> *p1,const SMTaskR
    float r1((*p1)->peer_send_rate.Get());
    float r2((*p2)->peer_send_rate.Get());
    return cmp(r1,r2);
+}
+
+bool Torrent::SeededEnough() const
+{
+   return (stop_on_ratio>0 && GetRatio()>=stop_on_ratio)
+      || seed_timer.Stopped();
 }
 
 int Torrent::Do()
@@ -420,6 +428,7 @@ int Torrent::Do()
 	 complete_pieces=total_pieces;
 	 total_left=0;
 	 complete=true;
+	 seed_timer.Reset();
       }
    }
    if(validating) {
@@ -428,8 +437,10 @@ int Torrent::Do()
 	 return MOVED;
       fd_cache->CloseAll();
       validating=false;
-      if(total_left==0)
+      if(total_left==0) {
 	 complete=true;
+	 seed_timer.Reset();
+      }
    }
    if(!t_session && !started && !shutting_down) {
       if(listener->GetPort()==0)
@@ -565,7 +576,7 @@ int Torrent::Do()
 	 tracker_reply=0;
       }
    } else {
-      if(stop_on_ratio>0 && GetRatio()>=stop_on_ratio) {
+      if(complete && SeededEnough()) {
 	 Shutdown();
 	 return MOVED;
       }
@@ -772,7 +783,7 @@ bool FDCache::CloseOne()
    cache[oldest_mode].remove(*oldest_key);
    return true;
 }
-int FDCache::Count()
+int FDCache::Count() const
 {
    return cache[0].count()+cache[1].count()+cache[2].count();
 }
@@ -848,17 +859,6 @@ void Torrent::SetPieceNotWanted(unsigned piece)
       }
    }
 }
-void Torrent::SetPieceWanted(unsigned piece)
-{
-   if(piece_info[piece]->sources_count==0)
-      return;
-   for(int j=0; j<pieces_needed.count(); j++) {
-      if(pieces_needed[j]==piece)
-	 break;
-      if(j==pieces_needed.count()-1)
-	 pieces_needed.append(piece);
-   }
-}
 
 void Torrent::StoreBlock(unsigned piece,unsigned begin,unsigned len,const char *buf)
 {
@@ -909,6 +909,7 @@ void Torrent::StoreBlock(unsigned piece,unsigned begin,unsigned len,const char *
 	 peers[i]->Have(piece);
       if(my_bitfield->has_all_set() && !complete) {
 	 complete=true;
+	 seed_timer.Reset();
 	 end_game=false;
 	 ScanPeers();
 	 SendTrackerRequest("completed");
@@ -1325,7 +1326,8 @@ void TorrentPeer::SendDataRequests()
    for(int i=0; i<parent->pieces_needed.count(); i++) {
       if(peer_bitfield->get_bit(parent->pieces_needed[i])) {
 	 p=parent->pieces_needed[i];
-	 if(SendDataRequests(p)>0)
+	 // add some randomness, so that different instances don't synchronize
+	 if(random()/13%16 && SendDataRequests(p)>0)
 	    return;
       }
    }
@@ -1342,7 +1344,7 @@ void TorrentPeer::Have(unsigned p)
    PacketHave(p).Pack(send_buf);
    Leave();
 }
-int TorrentPeer::FindRequest(unsigned piece,unsigned begin)
+int TorrentPeer::FindRequest(unsigned piece,unsigned begin) const
 {
    for(int i=0; i<sent_queue.count(); i++) {
       const PacketRequest *req=sent_queue[i];
@@ -1409,7 +1411,7 @@ void TorrentPeer::BytesUsed(int b,RateLimit::dir_t dir)
    }
 }
 
-unsigned TorrentPeer::GetLastPiece()
+unsigned TorrentPeer::GetLastPiece() const
 {
    if(!peer_bitfield)
       return NO_PIECE;
@@ -1614,8 +1616,7 @@ void TorrentPeer::HandlePacket(Packet *p)
 	    break;
 	 }
 	 recv_queue.push(pp);
-	 if(IsDownloader())
-	    activity_timer.Reset();
+	 activity_timer.Reset();
 	 p=0;
 	 break;
       }
@@ -1645,21 +1646,6 @@ bool TorrentPeer::HasNeededPieces()
       if(peer_bitfield->get_bit(parent->pieces_needed[i]))
 	 return true;
    return false;
-}
-
-bool TorrentPeer::IsDownloader() // remote side downloads
-{
-   if(!connected)
-      return false;
-   return peer_recv_rate.Get() < peer_send_rate.Get()
-	 || (peer_interested && !am_interested);
-}
-bool TorrentPeer::IsUploader() // remote side uploads
-{
-   if(!connected)
-      return false;
-   return peer_recv_rate.Get() > peer_send_rate.Get()
-	 || (!peer_interested && am_interested);
 }
 
 int TorrentPeer::Do()
@@ -1869,7 +1855,7 @@ TorrentPeer::unpack_status_t TorrentPeer::UnpackPacket(Ref<IOBuffer>& b,TorrentP
    return res;
 }
 
-const char *TorrentPeer::Packet::GetPacketTypeText()
+const char *TorrentPeer::Packet::GetPacketTypeText() const
 {
    const char *const text_table[]={
       "keep-alive", "choke", "unchoke", "interested", "uninterested",

@@ -141,8 +141,6 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    unsigned last_piece;
 
    void SetPieceNotWanted(unsigned piece);
-   void SetPieceWanted(unsigned piece);
-
    void SetDownloader(unsigned piece,unsigned block,const TorrentPeer *o,const TorrentPeer *n);
 
    xstring_c cwd;
@@ -168,7 +166,9 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    int max_peers;
    int seed_min_peers;
 
+   bool SeededEnough() const;
    float stop_on_ratio;
+   Timer seed_timer;
 
    Timer decline_timer;
    Timer optimistic_unchoke_timer;
@@ -217,16 +217,16 @@ public:
    const TaskRefArray<TorrentPeer>& GetPeers() const { return peers; }
    void AddPeer(TorrentPeer *);
 
-   const xstring& GetInfoHash() { return info_hash; }
-   int GetPeersCount() { return peers.count(); }
-   int GetActivePeersCount() { return active_peers_count; }
-   int GetCompletePeersCount() { return complete_peers_count; }
+   const xstring& GetInfoHash() const { return info_hash; }
+   int GetPeersCount() const { return peers.count(); }
+   int GetActivePeersCount() const { return active_peers_count; }
+   int GetCompletePeersCount() const { return complete_peers_count; }
 
-   bool Complete() { return complete; }
-   double GetRatio();
-   unsigned long long TotalLength() { return total_length; }
-   unsigned PieceLength() { return piece_length; }
-   const char *GetName() { return name?name->get():""; }
+   bool Complete() const { return complete; }
+   double GetRatio() const;
+   unsigned long long TotalLength() const { return total_length; }
+   unsigned PieceLength() const { return piece_length; }
+   const char *GetName() const { return name?name->get():""; }
 
    void Reconfig(const char *name);
 
@@ -249,7 +249,7 @@ class FDCache : public SMTask, public ResClient
 public:
    int OpenFile(const char *name,int mode);
    void Close(const char *name);
-   int Count();
+   int Count() const;
    void Clean();
    bool CloseOne();
    void CloseAll();
@@ -332,9 +332,9 @@ public:
       virtual void Pack(Ref<IOBuffer>& b);
       virtual unpack_status_t Unpack(const Buffer *b);
       virtual ~Packet() {}
-      int GetLength() { return length; }
-      packet_type GetPacketType() { return type; }
-      const char *GetPacketTypeText();
+      int GetLength() const { return length; }
+      packet_type GetPacketType() const { return type; }
+      const char *GetPacketTypeText() const;
       void DropData(Ref<IOBuffer>& b) { b->Skip(4+length); }
       bool TypeIs(packet_type t) const { return type==t; }
    };
@@ -441,7 +441,7 @@ private:
    unsigned last_piece;
    static const unsigned NO_PIECE = ~0U;
    void SetLastPiece(unsigned p);
-   unsigned GetLastPiece();
+   unsigned GetLastPiece() const;
    bool HasNeededPieces();
    void SetPieceHaving(unsigned p,bool have);
    void SetAmInterested(bool);
@@ -450,7 +450,7 @@ private:
    void ClearSentQueue(int i);
    void ClearSentQueue() { ClearSentQueue(sent_queue.count()-1); }
 
-   int FindRequest(unsigned piece,unsigned begin);
+   int FindRequest(unsigned piece,unsigned begin) const;
 
    void SetError(const char *);
    void SendHandshake();
@@ -489,8 +489,6 @@ public:
    bool Active() const { return Connected() && (am_interested || peer_interested); }
    bool Complete() const { return peer_complete_pieces==parent->total_pieces; }
    bool AddressEq(const TorrentPeer *o) const;
-   bool IsDownloader();
-   bool IsUploader();
 
    const char *Status();
 };
@@ -518,11 +516,11 @@ public:
    TorrentListener();
    ~TorrentListener();
    int Do();
-   Torrent *FindTorrent(const xstring& info_hash) { return torrents.lookup(info_hash); }
+   Torrent *FindTorrent(const xstring& info_hash) const { return torrents.lookup(info_hash); }
    void AddTorrent(Torrent *);
    void RemoveTorrent(Torrent *);
-   int GetPort() { return addr.port(); }
-   int GetTorrentsCount() { return torrents.count(); }
+   int GetPort() const { return addr.port(); }
+   int GetTorrentsCount() const { return torrents.count(); }
    void Dispatch(const xstring& info_hash,int s,const sockaddr_u *remote_addr,IOBuffer *recv_buf);
 };
 

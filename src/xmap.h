@@ -61,7 +61,7 @@ public:
    entry *_each_next();
    const xstring *each_key() const { return &last_entry->key; }
 
-   int count() { return entry_count; }
+   int count() const { return entry_count; }
 
    void _move_here(_xmap &o);
 };

@@ -223,7 +223,7 @@ protected:
    int ptr;
 public:
    _xqueue() : ptr(0) {}
-   int count() { return q.count()-ptr; }
+   int count() const { return q.count()-ptr; }
    void empty() { q.truncate(); ptr=0; }
    void push(P n) {
       if(ptr>count()) {
@@ -241,6 +241,7 @@ public:
    // returned pointer valid till the next push
    T& next() { return q[ptr++]; }
    T& operator[](int i) { return q[ptr+i]; }
+   const T& operator[](int i) const { return q[ptr+i]; }
    void move_here(_xqueue& o) { q.move_here(o.q); ptr=o.ptr; o.ptr=0; }
 };
 
