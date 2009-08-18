@@ -1,3 +1,10 @@
+2009-08-18  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Speedometer.cc, Speedometer.h: (GetStrS) return "" when not valid.
+	* Torrent.cc, Torrent.h: better peer status; better traffic balance
+	  between different torrents; handle IO-buffer errors; add settings
+	  closure - name of the torrent; push uploaded data faster.
+
 2009-08-11  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: (print_cmd_index) better formatting.

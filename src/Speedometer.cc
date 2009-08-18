@@ -131,6 +131,10 @@ const char *Speedometer::GetStrS(float r)
       rate.append(' ');
    return rate;
 }
+const char *Speedometer::GetStrS()
+{
+   return Valid() ? GetStrS(Get()) : "";
+}
 const char *Speedometer::GetETAStrSFromSize(off_t s)
 {
    xstring &eta=GetETAStrFromSize(s);

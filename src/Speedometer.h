@@ -42,7 +42,7 @@ public:
    static xstring& GetStr(float r);
    xstring& GetStr();
    static const char *GetStrS(float r);
-   const char *GetStrS() { return GetStrS(Get()); }
+   const char *GetStrS();
    xstring& GetETAStrFromSize(off_t s);
    const char *GetETAStrSFromSize(off_t s);
    xstring& GetETAStrFromTime(long t);

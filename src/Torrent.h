@@ -226,7 +226,7 @@ public:
    double GetRatio() const;
    unsigned long long TotalLength() const { return total_length; }
    unsigned PieceLength() const { return piece_length; }
-   const char *GetName() const { return name?name->get():""; }
+   const char *GetName() const { return name?name->get():0; }
 
    void Reconfig(const char *name);
 
@@ -279,6 +279,9 @@ class TorrentPeer : public SMTask, protected ProtoLog, public Networker
 
    Ref<IOBuffer> recv_buf;
    Ref<IOBuffer> send_buf;
+
+   unsigned long long peer_recv;
+   unsigned long long peer_sent;
 
    Speedometer peer_recv_rate;
    Speedometer peer_send_rate;

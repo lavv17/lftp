@@ -38,10 +38,10 @@
 
 static ResType torrent_vars[] = {
    {"torrent:port-range", "6881-6889", ResMgr::RangeValidate, ResMgr::NoClosure},
-   {"torrent:max-peers", "60", ResMgr::UNumberValidate, ResMgr::NoClosure},
-   {"torrent:stop-on-ratio", "2.0", ResMgr::FloatValidate, ResMgr::NoClosure},
-   {"torrent:seed-max-time", "30d", ResMgr::TimeIntervalValidate, ResMgr::NoClosure},
-   {"torrent:seed-min-peers", "3", ResMgr::UNumberValidate, ResMgr::NoClosure},
+   {"torrent:max-peers", "60", ResMgr::UNumberValidate},
+   {"torrent:stop-on-ratio", "2.0", ResMgr::FloatValidate},
+   {"torrent:seed-max-time", "30d", ResMgr::TimeIntervalValidate},
+   {"torrent:seed-min-peers", "3", ResMgr::UNumberValidate},
    {"torrent:ip", "", ResMgr::IPv4AddrValidate, ResMgr::NoClosure},
    {0}
 };
@@ -369,6 +369,7 @@ int Torrent::Do()
 	 return MOVED;
       TranslateString(b_name);
       name=&b_name->str_lc;
+      Reconfig(0);
 
       BeNode *files=info->dict.lookup("files");
       if(!files) {
@@ -1091,9 +1092,10 @@ void Torrent::PeerBytesUsed(int b,RateLimit::dir_t dir)
 }
 void Torrent::Reconfig(const char *name)
 {
-   max_peers=ResMgr::Query("torrent:max-peers",0);
-   seed_min_peers=ResMgr::Query("torrent:seed-min-peers",0);
-   stop_on_ratio=ResMgr::Query("torrent:stop-on-ratio",0);
+   const char *c=GetName();
+   max_peers=ResMgr::Query("torrent:max-peers",c);
+   seed_min_peers=ResMgr::Query("torrent:seed-min-peers",c);
+   stop_on_ratio=ResMgr::Query("torrent:stop-on-ratio",c);
    rate_limit.Reconfig(name,metainfo_url);
 }
 
@@ -1138,6 +1140,7 @@ TorrentPeer::TorrentPeer(Torrent *p,const sockaddr_u *a)
    if(addr.is_reserved() || addr.is_multicast() || addr.port()==0)
       SetError("invalid peer address");
    peer_bytes_pool[0]=peer_bytes_pool[1]=0;
+   peer_recv=peer_sent=0;
 }
 TorrentPeer::~TorrentPeer()
 {
@@ -1255,6 +1258,7 @@ void TorrentPeer::SendDataReply()
    }
    LogSend(6,xstring::format("piece:%u begin:%u size:%u",p->index,p->begin,p->req_length));
    PacketPiece(p->index,p->begin,data).Pack(send_buf);
+   peer_sent+=data.length();
    parent->total_sent+=data.length();
    parent->send_rate.Add(data.length());
    peer_send_rate.Add(data.length());
@@ -1269,6 +1273,7 @@ int TorrentPeer::SendDataRequests(unsigned p)
 
    int sent=0;
    unsigned blocks=parent->BlocksInPiece(p);
+   int bytes_allowed=BytesAllowed(RateLimit::GET);
    for(unsigned b=0; b<blocks; b++) {
       if(parent->piece_info[p]->block_map.get_bit(b))
 	 continue;
@@ -1291,7 +1296,7 @@ int TorrentPeer::SendDataRequests(unsigned p)
 	    len=max_len;
       }
 
-      if(!BytesAllowedToGet(len))
+      if(bytes_allowed<len)
 	 break;
 
       parent->SetDownloader(p,b,0,this);
@@ -1302,6 +1307,7 @@ int TorrentPeer::SendDataRequests(unsigned p)
       SetLastPiece(p);
       sent++;
       activity_timer.Reset();
+      bytes_allowed-=len;
       BytesGot(len);
 
       if(sent_queue.count()>=MAX_QUEUE_LEN)
@@ -1581,6 +1587,7 @@ void TorrentPeer::HandlePacket(Packet *p)
 	 Leave(parent);
 
 	 int len=pp->data.length();
+	 peer_recv+=len;
 	 parent->total_recv+=len;
 	 parent->recv_rate.Add(len);
 	 peer_recv_rate.Add(len);
@@ -1695,6 +1702,18 @@ int TorrentPeer::Do()
       send_buf=new IOBufferFDStream(new FDStream(sock,"<output-socket>"),IOBuffer::PUT);
       SendHandshake();
    }
+   if(send_buf->Error())
+   {
+      LogError(2,"send: %s",send_buf->ErrorText());
+      Disconnect();
+      return MOVED;
+   }
+   if(recv_buf->Error())
+   {
+      LogError(2,"recieve: %s",recv_buf->ErrorText());
+      Disconnect();
+      return MOVED;
+   }
    if(!peer_id) {
       // expect handshake
       unpack_status_t s=RecvHandshake();
@@ -1757,11 +1776,21 @@ int TorrentPeer::Do()
    && parent->AllowMoreDownloaders())
       SetAmChoking(false);
 
-   while(recv_queue.count()>0 && send_buf->Size()<(int)Torrent::BLOCK_SIZE*2
-   && BytesAllowedToPut(recv_queue[0]->req_length)) {
-      SendDataReply();
-      if(!Connected())
-	 return MOVED;
+   if(recv_queue.count()>0 && send_buf->Size()<(int)Torrent::BLOCK_SIZE*2) {
+      int bytes_allowed=BytesAllowed(RateLimit::PUT);
+      while(bytes_allowed>=recv_queue[0]->req_length) {
+	 bytes_allowed-=recv_queue[0]->req_length;
+	 SendDataReply();
+	 m=MOVED;
+	 if(!Connected())
+	    return m;
+	 if(recv_queue.count()==0)
+	    break;
+	 if(send_buf->Size()>=(int)Torrent::BLOCK_SIZE)
+	    m|=send_buf->Do();
+	 if(send_buf->Size()>=(int)Torrent::BLOCK_SIZE*2)
+	    break;
+      }
    }
 
    if(recv_buf->Eof() && recv_buf->Size()==0) {
@@ -1903,17 +1932,17 @@ const char *TorrentPeer::Status()
       return "Connecting...";
    if(!peer_id)
       return "Handshaking...";
-   xstring &buf=xstring::format("dn:%s up:%s",
-      peer_recv_rate.GetStr().get(),peer_send_rate.GetStr().get());
+   xstring &buf=xstring::format("dn:%llu %sup:%llu %s",
+      peer_recv,peer_recv_rate.GetStrS(),peer_sent,peer_send_rate.GetStrS());
    if(peer_interested)
-      buf.append(" peer-interested");
+      buf.append("peer-interested ");
    if(peer_choking)
-      buf.append(" peer-choking");
+      buf.append("peer-choking ");
    if(am_interested)
-      buf.append(" am-interested");
+      buf.append("am-interested ");
    if(am_choking)
-      buf.append(" am-choking");
-   buf.appendf(" complete:%u/%u (%u%%)",peer_complete_pieces,parent->total_pieces,
+      buf.append("am-choking ");
+   buf.appendf("complete:%u/%u (%u%%)",peer_complete_pieces,parent->total_pieces,
       peer_complete_pieces*100/parent->total_pieces);
    return buf;
 }
@@ -2228,7 +2257,9 @@ int TorrentJob::Do()
 
 void TorrentJob::PrintStatus(int v,const char *tab)
 {
-   printf("%sName: %s\n",tab,torrent->GetName());
+   const char *name=torrent->GetName();
+   if(name)
+      printf("%sName: %s\n",tab,name);
    printf("%s%s\n",tab,torrent->Status());
    if(torrent->GetRatio()>0)
       printf("%sratio: %f\n",tab,torrent->GetRatio());
