@@ -1273,7 +1273,7 @@ int TorrentPeer::SendDataRequests(unsigned p)
 
    int sent=0;
    unsigned blocks=parent->BlocksInPiece(p);
-   int bytes_allowed=BytesAllowed(RateLimit::GET);
+   unsigned bytes_allowed=BytesAllowed(RateLimit::GET);
    for(unsigned b=0; b<blocks; b++) {
       if(parent->piece_info[p]->block_map.get_bit(b))
 	 continue;
@@ -1777,7 +1777,7 @@ int TorrentPeer::Do()
       SetAmChoking(false);
 
    if(recv_queue.count()>0 && send_buf->Size()<(int)Torrent::BLOCK_SIZE*2) {
-      int bytes_allowed=BytesAllowed(RateLimit::PUT);
+      unsigned bytes_allowed=BytesAllowed(RateLimit::PUT);
       while(bytes_allowed>=recv_queue[0]->req_length) {
 	 bytes_allowed-=recv_queue[0]->req_length;
 	 SendDataReply();
