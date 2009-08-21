@@ -955,6 +955,9 @@ void Torrent::ScanPeers() {
       if(peer->Failed()) {
 	 LogError(2,"peer %s failed: %s",peer->GetName(),peer->ErrorText());
 	 peers.remove(i--);
+      } else if(peer->myself) {
+	 LogNote(4,"removing myself-connected peer %s",peer->GetName());
+	 peers.remove(i--);
       } else if(complete && peer->Complete()) {
 	 LogNote(4,"removing unneeded peer %s (%s)",peer->GetName(),peers[i]->Status());
 	 peers.remove(i--);
@@ -1128,6 +1131,7 @@ TorrentPeer::TorrentPeer(Torrent *p,const sockaddr_u *a)
    parent=p;
    addr=*a;
    sock=-1;
+   myself=false;
    peer_choking=true;
    am_choking=true;
    peer_interested=false;
@@ -1328,12 +1332,18 @@ void TorrentPeer::SendDataRequests()
    if(SendDataRequests(GetLastPiece())>0)
       return;
 
+   // pick a new piece
    unsigned p=NO_PIECE;
    for(int i=0; i<parent->pieces_needed.count(); i++) {
       if(peer_bitfield->get_bit(parent->pieces_needed[i])) {
 	 p=parent->pieces_needed[i];
+	 if(parent->my_bitfield->get_bit(p))
+	    continue;
 	 // add some randomness, so that different instances don't synchronize
-	 if(random()/13%16 && SendDataRequests(p)>0)
+	 if(!parent->piece_info[p]->block_map.has_any_set()
+	 && random()/13%16==0)
+	    continue;
+	 if(SendDataRequests(p)>0)
 	    return;
       }
    }
@@ -1658,7 +1668,7 @@ bool TorrentPeer::HasNeededPieces()
 int TorrentPeer::Do()
 {
    int m=STALL;
-   if(error)
+   if(error || myself)
       return m;
    if(sock==-1) {
       if(!retry_timer.Stopped())
@@ -1730,6 +1740,9 @@ int TorrentPeer::Do()
 	 return MOVED;
       }
       timeout_timer.Reset();
+      myself=peer_id.eq(Torrent::my_peer_id);
+      if(myself)
+	 return MOVED;
       peer_bitfield=new BitField(parent->total_pieces);
       if(parent->my_bitfield->has_any_set()) {
 	 LogSend(5,"bitfield");

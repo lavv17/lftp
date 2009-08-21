@@ -287,6 +287,7 @@ class TorrentPeer : public SMTask, protected ProtoLog, public Networker
    Speedometer peer_send_rate;
 
    xstring peer_id;
+   bool myself;
 
    bool am_choking;
    bool am_interested;
