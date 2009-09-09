@@ -751,7 +751,8 @@ Start BitTorrent process for the given \fItorrent-file\fP, which can be a
 local file or URL. Existing files are first validated. Missing pieces are
 downloaded. Files are stored in specified \fIdirectory\fP or current
 working directory by default. Seeding continues until ratio reachs
-\fItorrent:stop-on-ratio\fP setting.
+\fItorrent:stop-on-ratio\fP setting or time of \fItorrent:seed-max-time\fP
+outs.
 
 .B user
 \fIuser\fP [\fIpass\fP]
@@ -1428,7 +1429,7 @@ limit transfer rate on data connection. 0 means unlimited. You can specify
 two numbers separated by colon to limit download and upload rate separately.
 .TP
 .BR net:limit-max \ (bytes)
-limit accumulating of unused limit-rate. 0 means unlimited.
+limit accumulating of unused limit-rate. 0 means twice of limit-rate.
 .TP
 .BR net:limit-total-rate " (bytes per second)"
 limit transfer rate of all connections in sum. 0 means unlimited. You can specify
@@ -1438,7 +1439,7 @@ link load higher than this rate limit just after transfer beginning. You
 can try to set net:socket-buffer to relatively small value to avoid this.
 .TP
 .BR net:limit-total-max \ (bytes)
-limit accumulating of unused limit-total-rate. 0 means unlimited.
+limit accumulating of unused limit-total-rate. 0 means twice of limit-total-rate.
 .TP
 .BR net:max-retries \ (number)
 the maximum number of sequential retries of an operation without success.
@@ -1558,15 +1559,19 @@ Certificate Authority and not be on Certificate Revocation List.
 IP address for the tracker. Specify it if you are using an http proxy.
 .TP
 .BR torrent:max-peers \ (number)
-maximum number of peers for a torrent. New connections are rejected if this
-limit is reached.
+maximum number of peers for a torrent. Least used peers are removed to
+maintain this limit.
 .TP
 .BR torrent:port-range \ (from-to)
 port range to accept connections on. A single port is selected when a torrent
 starts.
 .TP
+.BR torrent:seed-max-time " (time interval)"
+maximum seed time. After this period of time a complete torrent shuts down
+independently of ratio. It can be set to infinity if needed.
+.TP
 .BR torrent:seed-min-peers \ (number)
-minimum number of peers when the torrent is complete. If there is less,
+minimum number of peers when the torrent is complete. If there are less,
 new peers are actively searched for.
 .TP
 .BR torrent:stop-on-ratio " (real number)"
