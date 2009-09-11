@@ -954,6 +954,12 @@ cd directory &
 When false, `cd' to a directory known from cache as existent will succeed immediately.
 Otherwise the verification will depend on cmd:verify-path setting.
 .TP
+.BR color:use-color " (boolean)"
+when true, cls command and completion output colored file listings according to color:dir-colors setting.
+.TP
+.BR color:dir-colors " (string)"
+file listing color description. By default the value of LS_COLORS environment variable is used. See dircolors(1).
+.TP
 .BR dns:SRV-query \ (boolean)
 query for SRV records and use them before gethostbyname. The SRV records
 are only used if port is not explicitly specified. See RFC2052 for details.
@@ -1696,6 +1702,8 @@ Used to set initial module:path variable.
 .IP "\fBLFTP_HOME\fP"
 Used to locate the directory that stores user-specific configuration files.  If
 unset, \fI~/.lftp\fR will be used.
+.IP "\fBLS_COLORS\fP"
+used to set initial color:dir-colors variable.
 
 .SH FILES
 .TP
