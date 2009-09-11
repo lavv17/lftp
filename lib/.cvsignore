@@ -209,3 +209,5 @@ getpagesize.c
 memchr.valgrind
 sha1.c
 sha1.h
+stddef.in.h
+iconv_open-solaris.gperf

@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
-AC_INIT([lftp], [3.99.8], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [4.0.0], [lftp-bugs@lftp.yar.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([lib])
@@ -126,7 +126,7 @@ esac
 dnl ** LFTP needs iconv, call the test explicitly (even if --disable-nls)
 AM_ICONV
 
-ALL_LINGUAS="de es fr it ja ko pl pt_BR ru zh_CN zh_TW zh_HK"
+ALL_LINGUAS="de es fr it ja ko pl pt_BR ru zh_CN zh_TW zh_HK cs"
 AM_GNU_GETTEXT([external])
 test "$MSGFMT"  = "no" && MSGFMT  ="$missing_dir/missing msgfmt"
 test "$GMSGFMT" = "no" && GMSGFMT ="$missing_dir/missing msgfmt"
