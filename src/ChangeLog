@@ -1,3 +1,12 @@
+2009-09-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* NetAccess.cc: fixed tilde handling.
+	* FtpListInfo.cc: ignore 'Status of' line.
+	* Torrent.cc: don't reset activity timer on connect (the peer may
+	  disconnect immediately).
+	* ftpclass.cc, network.cc, network.h: don't bind data socket to
+	  default address (fixes an infinite bind loop).
+
 2009-08-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Speedometer.cc, Speedometer.h: (GetStrS) return "" when not valid.

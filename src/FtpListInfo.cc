@@ -220,6 +220,8 @@ FileInfo *ParseFtpLongList_UNIX(char *line,int *err,const char *tz)
    int	 tmp;
    if(sscanf(line,"total %d",&tmp)==1)
       return 0;
+   if(!strncasecmp(line,"Status of ",10))
+      return 0;	  // STAT output.
    if(strchr("bcpsD",line[0])) // block, char, pipe, socket, Door.
       return 0;
 

@@ -488,7 +488,7 @@ do_again:
 	    // tilde is special.
 	    if(file->name[0]=='~')
 	    {
-	       file->name.set_substr(0,1,"./");
+	       file->name.set_substr(0,0,"./");
 	       need_resort=true;
 	    }
 	 }

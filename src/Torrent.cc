@@ -1702,7 +1702,6 @@ int TorrentPeer::Do()
       }
       connected=true;
       timeout_timer.Reset();
-      activity_timer.Reset();
       m=MOVED;
    }
    if(!recv_buf) {

@@ -183,7 +183,7 @@ void Networker::SetSocketMaxseg(int sock,int socket_maxseg)
 #endif
 }
 
-int Networker::SocketCreate(int af,int type,int proto,const char *hostname)
+int Networker::SocketCreateUnbound(int af,int type,int proto,const char *hostname)
 {
    int s=socket(af,type,proto);
    if(s<0)
@@ -192,7 +192,10 @@ int Networker::SocketCreate(int af,int type,int proto,const char *hostname)
    NonBlock(s);
    CloseOnExec(s);
    SetSocketBuffer(s,ResMgr::Query("net:socket-buffer",hostname));
-
+   return s;
+}
+void Networker::SocketBindStd(int s,int af,const char *hostname)
+{
    const char *b=0;
    sockaddr_u bind_addr;
    memset(&bind_addr,0,sizeof(bind_addr));
@@ -217,15 +220,34 @@ int Networker::SocketCreate(int af,int type,int proto,const char *hostname)
       if(res==-1)
 	 ProtoLog::LogError(0,"bind(socket, %s): %s",b,strerror(errno));
    }
+}
+int Networker::SocketCreate(int af,int type,int proto,const char *hostname)
+{
+   int s=SocketCreateUnbound(af,type,proto,hostname);
+   if(s<0)
+      return s;
+   SocketBindStd(s,af,hostname);
    return s;
+}
+void Networker::SocketTuneTCP(int s,const char *hostname)
+{
+   KeepAlive(s);
+   SetSocketMaxseg(s,ResMgr::Query("net:socket-maxseg",hostname));
 }
 int Networker::SocketCreateTCP(int af,const char *hostname)
 {
    int s=SocketCreate(af,SOCK_STREAM,IPPROTO_TCP,hostname);
    if(s<0)
       return s;
-   KeepAlive(s);
-   SetSocketMaxseg(s,ResMgr::Query("net:socket-maxseg",hostname));
+   SocketTuneTCP(s,hostname);
+   return s;
+}
+int Networker::SocketCreateUnboundTCP(int af,const char *hostname)
+{
+   int s=SocketCreateUnbound(af,SOCK_STREAM,IPPROTO_TCP,hostname);
+   if(s<0)
+      return s;
+   SocketTuneTCP(s,hostname);
    return s;
 }
 int Networker::SocketConnect(int fd,const sockaddr_u *u)

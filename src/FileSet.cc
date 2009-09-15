@@ -855,7 +855,7 @@ FileInfo *FileInfo::parse_ls_line(const char *line_c,const char *tz)
    if(!name)
       ERR;
 
-   // there are ls which outputs extra space after year.
+   // there are ls which output extra space after year.
    if(year_anomaly && *name==' ')
       name++;
 

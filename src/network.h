@@ -75,8 +75,12 @@ protected:
    static int SocketAccept(int fd,sockaddr_u *u,const char *hostname=0);
    static void SetSocketBuffer(int sock,int socket_buffer);
    static void SetSocketMaxseg(int sock,int socket_maxseg);
+   static void SocketBindStd(int s,int af,const char *hostname);
    static int SocketCreate(int af,int type,int proto,const char *hostname);
+   static void SocketTuneTCP(int s,const char *hostname);
    static int SocketCreateTCP(int af,const char *hostname);
+   static int SocketCreateUnbound(int af,int type,int proto,const char *hostname);
+   static int SocketCreateUnboundTCP(int af,const char *hostname);
 };
 
 #endif //NETWORK_H

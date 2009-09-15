@@ -1615,7 +1615,7 @@ int   Ftp::Do()
           || (mode==LONG_LIST && !use_stat_for_list)))
       {
 	 assert(conn->data_sock==-1);
-	 conn->data_sock=SocketCreateTCP(conn->peer_sa.sa.sa_family);
+	 conn->data_sock=SocketCreateUnboundTCP(conn->peer_sa.sa.sa_family,hostname);
 	 if(conn->data_sock==-1)
 	 {
 	    LogError(0,"socket(data): %s",strerror(errno));
