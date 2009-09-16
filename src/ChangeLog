@@ -1,3 +1,8 @@
+2009-09-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* buffer.cc: fixed DataRecoder for the case of failed iconv_open;
+	  retry iconv_open without //TRANSLIT.
+
 2009-09-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* NetAccess.cc: fixed tilde handling.

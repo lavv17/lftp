@@ -247,11 +247,6 @@ void DataTranslator::AppendTranslated(Buffer *target,const char *put_buf,int siz
 #ifdef HAVE_ICONV
 void DataRecoder::PutTranslated(Buffer *target,const char *put_buf,int size)
 {
-   if(!backend_translate)
-   {
-      target->Put(put_buf,size);
-      return;
-   }
    bool from_untranslated=false;
    if(Size()>0)
    {
@@ -261,6 +256,13 @@ void DataRecoder::PutTranslated(Buffer *target,const char *put_buf,int size)
    }
    if(size<=0)
       return;
+   if(!backend_translate)
+   {
+      target->Put(put_buf,size);
+      if(from_untranslated)
+	 Skip(size);
+      return;
+   }
    size_t put_size=size;
 
    int size_coeff=6;
@@ -313,20 +315,23 @@ DataRecoder::~DataRecoder()
 }
 DataRecoder::DataRecoder(const char *from_code,const char *to_code,bool translit)
 {
-   if(translit)
-   {
-      const char *add="//TRANSLIT";
-      char *tmp_enc=alloca_strdup2(to_code,strlen(add));
-      strcat(tmp_enc,add);
-      to_code=tmp_enc;
-   }
-   backend_translate=iconv_open(to_code,from_code);
-   if(backend_translate==(iconv_t)-1)
-   {
-      Log::global->Format(0,"iconv_open(%s,%s) failed: %s\n",
-			      to_code,from_code,strerror(errno));
+   backend_translate=0;
+
+   if(translit) {
+      const char *to_code_translit=xstring::cat(to_code,"//TRANSLIT",NULL);
+      backend_translate=iconv_open(to_code_translit,from_code);
+      if(backend_translate!=(iconv_t)-1)
+	 return;
       backend_translate=0;
    }
+
+   backend_translate=iconv_open(to_code,from_code);
+   if(backend_translate!=(iconv_t)-1)
+      return;
+
+   Log::global->Format(0,"iconv_open(%s,%s) failed: %s\n",
+			      to_code,from_code,strerror(errno));
+   backend_translate=0;
 }
 
 void DirectedBuffer::SetTranslation(const char *enc,bool translit)
