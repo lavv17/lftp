@@ -1,3 +1,7 @@
+2009-09-17  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Torrent.cc, ChmodJob.cc: add missing headers for NetBSD.
+
 2009-09-16  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* buffer.cc: fixed DataRecoder for the case of failed iconv_open;

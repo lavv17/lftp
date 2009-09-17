@@ -22,6 +22,7 @@
 
 #include <config.h>
 #include <assert.h>
+#include <unistd.h>
 #include "ChmodJob.h"
 #include "url.h"
 
