@@ -1,3 +1,10 @@
+Version 4.0.1 - 2009-09-17
+
+* ignore `Status of' line in STAT output (ftp).
+* fixed handling of files starting with a tilde in ftp.
+* fixed an infinite bind-loop in ftp.
+* fixed iconv translit usage for NetBSD.
+
 Version 4.0.0 - 2009-09-11
 
 * added torrent client.

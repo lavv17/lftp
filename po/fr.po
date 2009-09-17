@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-09-11 19:10+0400\n"
+"POT-Creation-Date: 2009-09-17 16:29+0400\n"
 "PO-Revision-Date: 2008-04-12 12:40+0200\n"
 "Last-Translator: Alain PORTAL <aportal@univ-montp2.fr>\n"
 "Language-Team: Français <traduc@traduc.org>\n"
@@ -122,17 +122,17 @@ msgstr " »"
 msgid "memory exhausted"
 msgstr "Pas assez de mémoire"
 
-#: src/ChmodJob.cc:82
+#: src/ChmodJob.cc:83
 #, c-format
 msgid "Failed to change mode of `%s' to %04o (%s).\n"
 msgstr "Impossible de modifier le mode de « %s » en %04o (%s).\n"
 
-#: src/ChmodJob.cc:85
+#: src/ChmodJob.cc:86
 #, c-format
 msgid "Mode of `%s' changed to %04o (%s).\n"
 msgstr "Le mode de « %s » a été modifié en %04o (%s).\n"
 
-#: src/ChmodJob.cc:90
+#: src/ChmodJob.cc:91
 #, c-format
 msgid "Failed to change mode of `%s' because no old mode is available.\n"
 msgstr ""
