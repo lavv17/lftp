@@ -1,3 +1,8 @@
+2009-09-23  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Torrent.cc, Torrent.h: show tracker timer time left; don't connect
+	  to passive peers; show torrent name as context.
+
 2009-09-17  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Torrent.cc, ChmodJob.cc: add missing headers for NetBSD.

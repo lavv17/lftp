@@ -227,8 +227,13 @@ public:
    unsigned long long TotalLength() const { return total_length; }
    unsigned PieceLength() const { return piece_length; }
    const char *GetName() const { return name?name->get():0; }
+   const char *TrackerTimerTimeLeft() {
+      return tracker_timer.TimeLeft().toString(
+	 TimeInterval::TO_STR_TRANSLATE|TimeInterval::TO_STR_TERSE);
+   }
 
    void Reconfig(const char *name);
+   const char *GetLogContext() { return GetName(); }
 
    void ForceValid() { force_valid=true; }
 };
@@ -269,6 +274,7 @@ class TorrentPeer : public SMTask, protected ProtoLog, public Networker
    sockaddr_u addr;
    int sock;
    bool connected;
+   bool passive;
 
    Timer timeout_timer;
    Timer retry_timer;
@@ -489,6 +495,7 @@ public:
 
    bool ActivityTimedOut() const { return activity_timer.Stopped(); }
    bool NotConnected() const { return sock==-1; }
+   bool Disconnected() const { return passive && NotConnected(); }
    bool Connected() const { return peer_id && send_buf && recv_buf; }
    bool Active() const { return Connected() && (am_interested || peer_interested); }
    bool Complete() const { return peer_complete_pieces==parent->total_pieces; }

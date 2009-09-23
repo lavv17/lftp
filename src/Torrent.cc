@@ -495,6 +495,7 @@ int Torrent::Do()
 	 SetError(new Error(-1,tracker_reply->ErrorText(),false));
 	 t_session->Close();
 	 tracker_reply=0;
+	 tracker_timer.Reset();
 	 return MOVED;
       }
       if(tracker_reply->Eof()) {
@@ -954,16 +955,17 @@ void Torrent::ScanPeers() {
    // scan existing peers
    for(int i=0; i<peers.count(); i++) {
       const TorrentPeer *peer=peers[i];
-      if(peer->Failed()) {
+      if(peer->Failed())
 	 LogError(2,"peer %s failed: %s",peer->GetName(),peer->ErrorText());
-	 peers.remove(i--);
-      } else if(peer->myself) {
+      else if(peer->Disconnected())
+	 LogNote(4,"peer %s disconnected",peer->GetName());
+      else if(peer->myself)
 	 LogNote(4,"removing myself-connected peer %s",peer->GetName());
-	 peers.remove(i--);
-      } else if(complete && peer->Complete()) {
+      else if(complete && peer->Complete())
 	 LogNote(4,"removing unneeded peer %s (%s)",peer->GetName(),peers[i]->Status());
-	 peers.remove(i--);
-      }
+      else
+	 continue;
+      peers.remove(i--);
    }
    ReducePeers();
    peers_scan_timer.Reset();
@@ -1133,6 +1135,8 @@ TorrentPeer::TorrentPeer(Torrent *p,const sockaddr_u *a)
    parent=p;
    addr=*a;
    sock=-1;
+   connected=false;
+   passive=false;
    myself=false;
    peer_choking=true;
    am_choking=true;
@@ -1161,6 +1165,7 @@ void TorrentPeer::Connect(int s,IOBuffer *rb)
    sock=s;
    recv_buf=rb;
    connected=true;
+   passive=true;
 }
 
 void TorrentPeer::SetError(const char *s)
@@ -1468,11 +1473,9 @@ void TorrentPeer::SetAmInterested(bool interest)
    parent->am_interested_peers_count+=(interest-am_interested);
    am_interested=interest;
    interest_timer.Reset();
-   if(am_interested) {
-      activity_timer.Reset();
+   if(am_interested)
       parent->am_interested_timer.Reset();
-   }
-   BytesAllowed(RateLimit::GET); // draw some bytes from the common pool
+   (void)BytesAllowed(RateLimit::GET); // draw some bytes from the common pool
    Leave();
 }
 void TorrentPeer::SetAmChoking(bool c)
@@ -1673,6 +1676,8 @@ int TorrentPeer::Do()
    if(error || myself)
       return m;
    if(sock==-1) {
+      if(passive)
+	 return m;
       if(!retry_timer.Stopped())
 	 return m;
       sock=SocketCreateTCP(addr.sa.sa_family,0);
@@ -2281,6 +2286,7 @@ void TorrentJob::PrintStatus(int v,const char *tab)
       printf("%sinfo hash: %s\n",tab,torrent->GetInfoHash().dump());
       printf("%stotal length: %llu\n",tab,torrent->TotalLength());
       printf("%spiece length: %u\n",tab,torrent->PieceLength());
+      printf("%snext tracker request in %s\n",tab,torrent->TrackerTimerTimeLeft());
    }
 
    if(torrent->GetPeersCount()<=5 || v>1) {
