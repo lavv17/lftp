@@ -1,3 +1,7 @@
+Version 4.0.2 - 2009-09-23
+
+* torrent: don't try to connect back to peers which connected to us.
+
 Version 4.0.1 - 2009-09-17
 
 * ignore `Status of' line in STAT output (ftp).

@@ -165,3 +165,5 @@ getpagesize.m4
 mmap-anon.m4
 sha1.m4
 stddef_h.m4
+dos.m4
+stat.m4
