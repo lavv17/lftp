@@ -122,7 +122,9 @@ void mgetJob::LocalGlob(const char *p)
    glob(p,0,0,&pglob);
    if(pglob.gl_pathc==0)
    {
-      fprintf(stderr,_("%s: no files found\n"),p);
+      fprintf(stderr,_("%s: %s: no files found\n"),op,p);
+      count++;
+      errors++;
       return;
    }
    for(i=0; i<(int)pglob.gl_pathc; i++)
@@ -189,7 +191,9 @@ int mgetJob::Do()
 
    if(rg->Error())
    {
-      fprintf(stderr,"rglob: %s\n",rg->ErrorText());
+      fprintf(stderr,"%s: %s: %s\n",op,rg->GetPattern(),rg->ErrorText());
+      count++;
+      errors++;
       goto next;
    }
 
@@ -201,7 +205,9 @@ int mgetJob::Do()
    FileSet *files=rg->GetResult();
    if(files->get_fnum()==0)
    {
-      fprintf(stderr,_("%s: no files found\n"),rg->GetPattern());
+      fprintf(stderr,_("%s: %s: no files found\n"),op,rg->GetPattern());
+      count++;
+      errors++;
       goto next;
    }
    do {

@@ -27,6 +27,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <string.h>
 #include "lftp_ssl.h"
 #include "xmalloc.h"
 #include "ResMgr.h"

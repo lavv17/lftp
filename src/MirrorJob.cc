@@ -436,7 +436,6 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	       goto skip;
 	 }
 
-#ifdef HAVE_LSTAT
 	 if(file->defined&file->SYMLINK)
 	 {
 	    struct stat st;
@@ -467,7 +466,6 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    if(res==-1)
 	       eprintf("mirror: symlink(%s): %s\n",target_name,strerror(errno));
 	 }
-#endif /* LSTAT */
 	 break;
       }
    case FileInfo::UNKNOWN:

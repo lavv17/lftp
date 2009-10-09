@@ -682,7 +682,6 @@ check_again:
       t=FileInfo::DIRECTORY;
    else if(S_ISREG(st.st_mode))
       t=FileInfo::NORMAL;
-#ifdef HAVE_LSTAT
    else if(S_ISLNK(st.st_mode))
    {
       if(follow_symlinks)
@@ -693,7 +692,6 @@ check_again:
       }
       t=FileInfo::SYMLINK;
    }
-#endif
    else
       return;   // ignore other type files
 
@@ -712,7 +710,6 @@ check_again:
    SetUser(PasswdCache::LookupS(st.st_uid));
    SetGroup(GroupCache::LookupS(st.st_gid));
 
-#ifdef HAVE_LSTAT
    if(t==SYMLINK)
    {
       char *buf=(char*)alloca(st.st_size+1);
@@ -723,7 +720,6 @@ check_again:
 	 SetSymlink(buf);
       }
    }
-#endif /* HAVE_LSTAT */
 }
 
 /* parse_ls_line: too common procedure to make it protocol specific */

@@ -1,3 +1,10 @@
+2009-10-09  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* mgetJob.cc: better error messages; fixed exit code.
+	* FileGlob.cc better error handling.
+	* FileSet.cc, MirrorJob.cc: get rid of HAVE_LSTAT.
+	* lftp_ssl.cc: include string.h
+
 2009-09-23  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Torrent.cc, Torrent.h: show tracker timer time left; don't connect

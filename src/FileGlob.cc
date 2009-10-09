@@ -253,6 +253,7 @@ int GenericGlob::Do()
    {
       if(updir_glob->Error())
       {
+	 SetError(updir_glob->ErrorText());
 	 updir_glob=0;
 	 done=true;
 	 return MOVED;
@@ -292,15 +293,17 @@ int GenericGlob::Do()
 	 }
 	 delete set;
       }
-      li=0;
-
       if(dir_list)
 	 dir_list->next();
       if(!dir_list || dir_list->curr()==0)
       {
+	 if(li && li->Error())
+	    SetError(li->ErrorText());
+	 li=0;
 	 done=true;
 	 return MOVED;
       }
+      li=0;
       curr_dir=dir_list->curr()->name;
    }
 
