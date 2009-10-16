@@ -113,10 +113,10 @@ void FileSetOutput::print(FileSet &fs, const JobRef<OutputJob>& o) const
       }
 
       if((mode & SIZE) && (have&FileInfo::SIZE)) {
-	 char sz[128];
+	 char sz[LONGEST_HUMAN_READABLE + 2];
 	 if((f->filetype == FileInfo::NORMAL || !size_filesonly)
 	 && (f->defined&f->SIZE)) {
-	    char buffer[128];
+	    char buffer[LONGEST_HUMAN_READABLE + 1];
 	    sprintf(sz, "%8s ",
 	       human_readable (f->size, buffer, human_opts, 1,
 		  output_block_size? output_block_size:1024));

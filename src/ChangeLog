@@ -1,3 +1,7 @@
+2009-10-16  Daniel Fazekas <fdsoft@gmail.com>
+
+	* FileSetOutput.cc: fixed buffer size for human_readable.
+
 2009-10-09  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* mgetJob.cc: better error messages; fixed exit code.
