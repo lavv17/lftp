@@ -15,7 +15,7 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=build-aux --libtool --macro-prefix=gl alloca-opt arpa_inet crypto/md5 crypto/sha1 environ filemode fnmatch fnmatch-gnu getdate getopt-gnu gettext glob human iconv_open inet_pton longlong lstat mbswidth memmem mktime modechange poll regex socklen strcase strftime strptime strtok_r vsnprintf vsnprintf-posix wcwidth
+#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=build-aux --libtool --macro-prefix=gl alloca-opt arpa_inet crypto/md5 crypto/sha1 environ filemode fnmatch fnmatch-gnu ftruncate getdate getopt-gnu gettext gettimeofday glob human iconv_open inet_pton lchown longlong lstat mbswidth memmem mktime modechange poll readlink regex socklen strcase strdup-posix strftime strptime strstr strtok_r unsetenv vsnprintf vsnprintf-posix wcwidth
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
@@ -28,13 +28,16 @@ gl_MODULES([
   filemode
   fnmatch
   fnmatch-gnu
+  ftruncate
   getdate
   getopt-gnu
   gettext
+  gettimeofday
   glob
   human
   iconv_open
   inet_pton
+  lchown
   longlong
   lstat
   mbswidth
@@ -42,12 +45,16 @@ gl_MODULES([
   mktime
   modechange
   poll
+  readlink
   regex
   socklen
   strcase
+  strdup-posix
   strftime
   strptime
+  strstr
   strtok_r
+  unsetenv
   vsnprintf
   vsnprintf-posix
   wcwidth
