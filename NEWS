@@ -1,3 +1,9 @@
+Version 4.0.3 - 2009-10-20
+
+* fixed exit code of mget/mput.
+* fixed compilation on some systems.
+* fixed crash of `cls -s' on MacOS X x64.
+
 Version 4.0.2 - 2009-09-23
 
 * torrent: don't try to connect back to peers which connected to us.

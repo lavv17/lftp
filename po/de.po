@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-09-23 12:20+0400\n"
+"POT-Creation-Date: 2009-10-09 19:06+0400\n"
 "PO-Revision-Date: 2008-03-29 14:27+0100\n"
 "Last-Translator: \n"
 "Language-Team: German <kde-i18n-de@lists.kde.org>\n"
@@ -166,7 +166,7 @@ msgstr "Das Modul für den Befehl »%s« hat den Befehl nicht registriert.\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "Verzeichniswechsel OK, cwd=%s\n"
 
-#: src/CmdExec.cc:383 src/MirrorJob.cc:547
+#: src/CmdExec.cc:383 src/MirrorJob.cc:545
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: Umleitung nach »%s« empfangen\n"
@@ -247,7 +247,7 @@ msgstr "Übertragung von %d der %d $Datei|Dateien$ fehlgeschlagen\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Insgesamt %d $Datei|Dateien$ übertragen\n"
 
-#: src/DummyProto.cc:66 src/MirrorJob.cc:1612 src/MirrorJob.cc:1628
+#: src/DummyProto.cc:66 src/MirrorJob.cc:1610 src/MirrorJob.cc:1626
 #: src/commands.cc:979 src/commands.cc:2140
 msgid " - not supported protocol"
 msgstr " - Protokoll nicht unterstützt"
@@ -575,7 +575,7 @@ msgstr "%sGelöscht: %d Verzeichnis$|sse$, %d Datei$|en$, %d Symlink$|s$\n"
 msgid "%s%d error$|s$ detected\n"
 msgstr "%s%d Fehler gefunden\n"
 
-#: src/MirrorJob.cc:252 src/MirrorJob.cc:934
+#: src/MirrorJob.cc:252 src/MirrorJob.cc:932
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "Entferne alte Datei »%s«"
@@ -595,7 +595,7 @@ msgstr "Sende Datei »%s«"
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "Lege Verzeichnis »%s« an (only-existing)"
 
-#: src/MirrorJob.cc:360 src/MirrorJob.cc:445 src/MirrorJob.cc:685
+#: src/MirrorJob.cc:360 src/MirrorJob.cc:444 src/MirrorJob.cc:683
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Entferne alte lokale Datei »%s«"
@@ -605,52 +605,52 @@ msgstr "Entferne alte lokale Datei »%s«"
 msgid "Mirroring directory `%s'"
 msgstr "Spiegele Verzeichnis »%s«"
 
-#: src/MirrorJob.cc:458
+#: src/MirrorJob.cc:457
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
 msgstr "Überspringe Verknüpfung »%s« (only-existing)"
 
-#: src/MirrorJob.cc:464
+#: src/MirrorJob.cc:463
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Erzeuge symbolische Verknüpfung »%s« nach »%s«"
 
-#: src/MirrorJob.cc:599
+#: src/MirrorJob.cc:597
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: Protokoll »%s« ist nicht für das spiegeln geeignet\n"
 
-#: src/MirrorJob.cc:706
+#: src/MirrorJob.cc:704
 #, c-format
 msgid "Making directory `%s'"
 msgstr "Lege Verzeichnis »%s« an"
 
-#: src/MirrorJob.cc:885
+#: src/MirrorJob.cc:883
 #, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "Bestehendes Verzeichnis »%s« wird nicht entfernt"
 
-#: src/MirrorJob.cc:888
+#: src/MirrorJob.cc:886
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "Bestehende Datei »%s« wird nicht entfernt"
 
-#: src/MirrorJob.cc:929
+#: src/MirrorJob.cc:927
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "Entferne alte Datei »%s«"
 
-#: src/MirrorJob.cc:1064
+#: src/MirrorJob.cc:1062
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr "Versuche Spiegelserver...\n"
 
-#: src/MirrorJob.cc:1450
+#: src/MirrorJob.cc:1448
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s: Regulärer Ausdruck (regular expression) %s: %s\n"
 
-#: src/MirrorJob.cc:1581 src/SleepJob.cc:148 src/SleepJob.cc:204
+#: src/MirrorJob.cc:1579 src/SleepJob.cc:148 src/SleepJob.cc:204
 #: src/commands.cc:1112 src/commands.cc:1199 src/commands.cc:1634
 #: src/commands.cc:1665 src/commands.cc:1768 src/commands.cc:2049
 #: src/commands.cc:2245 src/commands.cc:2408 src/commands.cc:2415
@@ -2471,9 +2471,9 @@ msgstr ""
 "Das entbehrliche Argument »Zahl« gibt die Anzahl der aufzulistenden\n"
 "Verlaufszeilen an. »all« gibt alle Einträge aus.\n"
 
-#: src/mgetJob.cc:125 src/mgetJob.cc:204
-#, c-format
-msgid "%s: no files found\n"
+#: src/mgetJob.cc:125 src/mgetJob.cc:208
+#, fuzzy, c-format
+msgid "%s: %s: no files found\n"
 msgstr "%s: keine Dateien gefunden\n"
 
 #: src/mkdirJob.cc:122

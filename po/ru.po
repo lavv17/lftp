@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.7.3\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-09-23 12:20+0400\n"
+"POT-Creation-Date: 2009-10-09 19:06+0400\n"
 "PO-Revision-Date: 2008-05-12 17:38+04:00\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -163,7 +163,7 @@ msgstr "Модуль для команды `%s' не зарегистриров�
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, каталог=%s\n"
 
-#: src/CmdExec.cc:383 src/MirrorJob.cc:547
+#: src/CmdExec.cc:383 src/MirrorJob.cc:545
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: получено перенаправление на `%s'\n"
@@ -246,7 +246,7 @@ msgstr "Пересылка %d из %d $файла|файлов|файлов$ з�
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Всего перемещено: %d $файл|файла|файлов$\n"
 
-#: src/DummyProto.cc:66 src/MirrorJob.cc:1612 src/MirrorJob.cc:1628
+#: src/DummyProto.cc:66 src/MirrorJob.cc:1610 src/MirrorJob.cc:1626
 #: src/commands.cc:979 src/commands.cc:2140
 msgid " - not supported protocol"
 msgstr " - протокол не поддерживается"
@@ -573,7 +573,7 @@ msgstr ""
 msgid "%s%d error$|s$ detected\n"
 msgstr "%s%d ошиб$ка обнаружена|ки обнаружены|ок обнаружено$\n"
 
-#: src/MirrorJob.cc:252 src/MirrorJob.cc:934
+#: src/MirrorJob.cc:252 src/MirrorJob.cc:932
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "Удаление старого файла `%s'"
@@ -593,7 +593,7 @@ msgstr "Копирование файла `%s'"
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "Пропущен каталог `%s' (only-existing)"
 
-#: src/MirrorJob.cc:360 src/MirrorJob.cc:445 src/MirrorJob.cc:685
+#: src/MirrorJob.cc:360 src/MirrorJob.cc:444 src/MirrorJob.cc:683
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Удаление старого локального файла `%s'"
@@ -603,52 +603,52 @@ msgstr "Удаление старого локального файла `%s'"
 msgid "Mirroring directory `%s'"
 msgstr "Копирование каталога `%s'"
 
-#: src/MirrorJob.cc:458
+#: src/MirrorJob.cc:457
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
 msgstr "Пропущена символьная ссылка `%s' (only-existing)"
 
-#: src/MirrorJob.cc:464
+#: src/MirrorJob.cc:463
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Создание символьной ссылки `%s' на `%s'"
 
-#: src/MirrorJob.cc:599
+#: src/MirrorJob.cc:597
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: протокол `%s' не подходит для зеркалирования\n"
 
-#: src/MirrorJob.cc:706
+#: src/MirrorJob.cc:704
 #, c-format
 msgid "Making directory `%s'"
 msgstr "Создание каталога `%s'"
 
-#: src/MirrorJob.cc:885
+#: src/MirrorJob.cc:883
 #, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "Старый каталог `%s' не удален"
 
-#: src/MirrorJob.cc:888
+#: src/MirrorJob.cc:886
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "Старый файл `%s' не удален"
 
-#: src/MirrorJob.cc:929
+#: src/MirrorJob.cc:927
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "Удаление старого каталога `%s'"
 
-#: src/MirrorJob.cc:1064
+#: src/MirrorJob.cc:1062
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr "Повторный проход...\n"
 
-#: src/MirrorJob.cc:1450
+#: src/MirrorJob.cc:1448
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s: регулярное выражение `%s': %s\n"
 
-#: src/MirrorJob.cc:1581 src/SleepJob.cc:148 src/SleepJob.cc:204
+#: src/MirrorJob.cc:1579 src/SleepJob.cc:148 src/SleepJob.cc:204
 #: src/commands.cc:1112 src/commands.cc:1199 src/commands.cc:1634
 #: src/commands.cc:1665 src/commands.cc:1768 src/commands.cc:2049
 #: src/commands.cc:2245 src/commands.cc:2408 src/commands.cc:2415
@@ -2364,9 +2364,9 @@ msgid ""
 "or \"all\" to list all entries.\n"
 msgstr ""
 
-#: src/mgetJob.cc:125 src/mgetJob.cc:204
-#, c-format
-msgid "%s: no files found\n"
+#: src/mgetJob.cc:125 src/mgetJob.cc:208
+#, fuzzy, c-format
+msgid "%s: %s: no files found\n"
 msgstr "%s: файлы не найдены\n"
 
 #: src/mkdirJob.cc:122

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-09-23 12:20+0400\n"
+"POT-Creation-Date: 2009-10-09 19:06+0400\n"
 "PO-Revision-Date: 2001-05-27 KST\n"
 "Last-Translator: Dojip Kim <greendrm@greendrm.com>\n"
 "Language-Team: \n"
@@ -159,7 +159,7 @@ msgstr "`%s'명령에 대한 모듈이 등록되어 있지 않습니다.\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "cd 성공, cwd=%s\n"
 
-#: src/CmdExec.cc:383 src/MirrorJob.cc:547
+#: src/CmdExec.cc:383 src/MirrorJob.cc:545
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: `%s'으로 리다이렉션을 받음\n"
@@ -240,7 +240,7 @@ msgstr "%d of %d $file|files$ 전송 실패\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "총 %d $file|files$ 전송\n"
 
-#: src/DummyProto.cc:66 src/MirrorJob.cc:1612 src/MirrorJob.cc:1628
+#: src/DummyProto.cc:66 src/MirrorJob.cc:1610 src/MirrorJob.cc:1626
 #: src/commands.cc:979 src/commands.cc:2140
 msgid " - not supported protocol"
 msgstr " - 지원하지 않는 프로토콜입니다"
@@ -576,7 +576,7 @@ msgstr "%s삭제: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgid "%s%d error$|s$ detected\n"
 msgstr "%s 성공, %d director$y|ies$ 생성\n"
 
-#: src/MirrorJob.cc:252 src/MirrorJob.cc:934
+#: src/MirrorJob.cc:252 src/MirrorJob.cc:932
 #, fuzzy, c-format
 msgid "Removing old file `%s'"
 msgstr "옛 지역 파일 `%s' 지움"
@@ -596,7 +596,7 @@ msgstr "지역 파일 `%s'을 전송"
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "원거리 디렉토리 `%s' 생성"
 
-#: src/MirrorJob.cc:360 src/MirrorJob.cc:445 src/MirrorJob.cc:685
+#: src/MirrorJob.cc:360 src/MirrorJob.cc:444 src/MirrorJob.cc:683
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "옛 지역 파일 `%s' 지움"
@@ -606,52 +606,52 @@ msgstr "옛 지역 파일 `%s' 지움"
 msgid "Mirroring directory `%s'"
 msgstr "디렉토리 `%s' 미러링"
 
-#: src/MirrorJob.cc:458
+#: src/MirrorJob.cc:457
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
 msgstr ""
 
-#: src/MirrorJob.cc:464
+#: src/MirrorJob.cc:463
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "`%s'를 `%s'로 심볼 링크함"
 
-#: src/MirrorJob.cc:599
+#: src/MirrorJob.cc:597
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "미러: 프로토콜 '%s'은 mirror에 적합하지 않습니다\n"
 
-#: src/MirrorJob.cc:706
+#: src/MirrorJob.cc:704
 #, fuzzy, c-format
 msgid "Making directory `%s'"
 msgstr "원거리 디렉토리 `%s' 생성"
 
-#: src/MirrorJob.cc:885
+#: src/MirrorJob.cc:883
 #, fuzzy, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "옛 지역 파일 `%s'이 삭제되지 않았습니다"
 
-#: src/MirrorJob.cc:888
+#: src/MirrorJob.cc:886
 #, fuzzy, c-format
 msgid "Old file `%s' is not removed"
 msgstr "옛 지역 파일 `%s'이 삭제되지 않았습니다"
 
-#: src/MirrorJob.cc:929
+#: src/MirrorJob.cc:927
 #, fuzzy, c-format
 msgid "Removing old directory `%s'"
 msgstr "옛 원거리 디렉토리 `%s' 삭제"
 
-#: src/MirrorJob.cc:1064
+#: src/MirrorJob.cc:1062
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1450
+#: src/MirrorJob.cc:1448
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1581 src/SleepJob.cc:148 src/SleepJob.cc:204
+#: src/MirrorJob.cc:1579 src/SleepJob.cc:148 src/SleepJob.cc:204
 #: src/commands.cc:1112 src/commands.cc:1199 src/commands.cc:1634
 #: src/commands.cc:1665 src/commands.cc:1768 src/commands.cc:2049
 #: src/commands.cc:2245 src/commands.cc:2408 src/commands.cc:2415
@@ -2336,9 +2336,9 @@ msgid ""
 "or \"all\" to list all entries.\n"
 msgstr ""
 
-#: src/mgetJob.cc:125 src/mgetJob.cc:204
-#, c-format
-msgid "%s: no files found\n"
+#: src/mgetJob.cc:125 src/mgetJob.cc:208
+#, fuzzy, c-format
+msgid "%s: %s: no files found\n"
 msgstr "%s: 파일수 찾을 수 없습니다\n"
 
 #: src/mkdirJob.cc:122

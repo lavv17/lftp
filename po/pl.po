@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.7.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-09-23 12:20+0400\n"
+"POT-Creation-Date: 2009-10-09 19:06+0400\n"
 "PO-Revision-Date: 2008-05-06 21:20+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -164,7 +164,7 @@ msgstr "Modu³ dla komendy `%s' nie zarejestrowa³ komendy.\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, cwd=%s\n"
 
-#: src/CmdExec.cc:383 src/MirrorJob.cc:547
+#: src/CmdExec.cc:383 src/MirrorJob.cc:545
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: otrzymano przekierowanie do `%s'\n"
@@ -245,7 +245,7 @@ msgstr "Transfer %d z %d plik$u|ów|ów$ nie powiód³ siê\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Podsumowuj±c: przes³ano %d plik$|i|ów$\n"
 
-#: src/DummyProto.cc:66 src/MirrorJob.cc:1612 src/MirrorJob.cc:1628
+#: src/DummyProto.cc:66 src/MirrorJob.cc:1610 src/MirrorJob.cc:1626
 #: src/commands.cc:979 src/commands.cc:2140
 msgid " - not supported protocol"
 msgstr " - protokó³ nie jest wspierany"
@@ -578,7 +578,7 @@ msgstr ""
 msgid "%s%d error$|s$ detected\n"
 msgstr "%sWykryto %d b³$±d|êdy|êdów$\n"
 
-#: src/MirrorJob.cc:252 src/MirrorJob.cc:934
+#: src/MirrorJob.cc:252 src/MirrorJob.cc:932
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "Usuwanie starego pliku `%s'"
@@ -598,7 +598,7 @@ msgstr "Przesy³anie pliku `%s'"
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "Pominiêcie katalogu `%s' (tylko istniej±ce)"
 
-#: src/MirrorJob.cc:360 src/MirrorJob.cc:445 src/MirrorJob.cc:685
+#: src/MirrorJob.cc:360 src/MirrorJob.cc:444 src/MirrorJob.cc:683
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Usuwanie starego lokalnego pliku `%s'"
@@ -608,52 +608,52 @@ msgstr "Usuwanie starego lokalnego pliku `%s'"
 msgid "Mirroring directory `%s'"
 msgstr "Mirrorowanie katalogu `%s'"
 
-#: src/MirrorJob.cc:458
+#: src/MirrorJob.cc:457
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
 msgstr "Pomijanie dowi±zania symbolicznego `%s' (tylko istniej±ce)"
 
-#: src/MirrorJob.cc:464
+#: src/MirrorJob.cc:463
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Tworzenie dowi±zania symbolicznego `%s' do `%s'"
 
-#: src/MirrorJob.cc:599
+#: src/MirrorJob.cc:597
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: protokó³ `%s' nieodpowiedni dla mirrora\n"
 
-#: src/MirrorJob.cc:706
+#: src/MirrorJob.cc:704
 #, c-format
 msgid "Making directory `%s'"
 msgstr "Tworzenie katalogu `%s'"
 
-#: src/MirrorJob.cc:885
+#: src/MirrorJob.cc:883
 #, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "Stary katalog `%s' nie zosta³ usuniêty"
 
-#: src/MirrorJob.cc:888
+#: src/MirrorJob.cc:886
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "Stary plik `%s' nie zosta³ usuniêty"
 
-#: src/MirrorJob.cc:929
+#: src/MirrorJob.cc:927
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "Usuwanie starego katalogu `%s'"
 
-#: src/MirrorJob.cc:1064
+#: src/MirrorJob.cc:1062
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr "Ponowne próbowanie mirrora...\n"
 
-#: src/MirrorJob.cc:1450
+#: src/MirrorJob.cc:1448
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s: wyra¿enie regularne `%s': %s\n"
 
-#: src/MirrorJob.cc:1581 src/SleepJob.cc:148 src/SleepJob.cc:204
+#: src/MirrorJob.cc:1579 src/SleepJob.cc:148 src/SleepJob.cc:204
 #: src/commands.cc:1112 src/commands.cc:1199 src/commands.cc:1634
 #: src/commands.cc:1665 src/commands.cc:1768 src/commands.cc:2049
 #: src/commands.cc:2245 src/commands.cc:2408 src/commands.cc:2415
@@ -2448,9 +2448,9 @@ msgstr ""
 "Opcjonalny argument licznik podaje liczbê linii z historii, które\n"
 "maj± byæ wy¶wietlone lub \"all\" by wy¶wietliæ wszystkie wpisy.\n"
 
-#: src/mgetJob.cc:125 src/mgetJob.cc:204
-#, c-format
-msgid "%s: no files found\n"
+#: src/mgetJob.cc:125 src/mgetJob.cc:208
+#, fuzzy, c-format
+msgid "%s: %s: no files found\n"
 msgstr "%s: nie znaleziono plików\n"
 
 #: src/mkdirJob.cc:122

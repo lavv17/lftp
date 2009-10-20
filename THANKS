@@ -13,6 +13,7 @@ Chmouel Boudjnah <chmouel@mandrakesoft.com>
 Christoph Lameter <clameter@debian.org> for initial man pages
 Damon Harper <gnu@usrbin.ca>
 Daniel Black <dragonheart@gentoo.org>
+Daniel Fazekas <fdsoft@gmail.com>
 Darren Stuart Embry <dsembr01@ox.slug.louisville.edu>
 David Champion <dgc@uchicago.edu>
 David Wolfe <davidw@wolfeden.org>
@@ -50,6 +51,7 @@ Thomas Glanzmann <sithglan@stud.uni-erlangen.de>
 Tillmann Steinbrecher <tillmann.steinbrecher@anandtech.com>
 Uhus <uhus@cnit.uniyar.ac.ru> for testing and suggestions.
 Yann Rouillard <yann@pleiades.fr.eu.org>
+
 
 bash developers for pieces of code and example of how to use readline.
 

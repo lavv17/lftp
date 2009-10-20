@@ -167,3 +167,11 @@ sha1.m4
 stddef_h.m4
 dos.m4
 stat.m4
+strstr.m4
+chown.m4
+fcntl_h.m4
+lchown.m4
+mode_t.m4
+open.m4
+readlink.m4
+ftruncate.m4

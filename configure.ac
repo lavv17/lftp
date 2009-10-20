@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
-AC_INIT([lftp], [4.0.2], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [4.0.3], [lftp-bugs@lftp.yar.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([lib])
@@ -365,14 +365,12 @@ AC_FUNC_GETPGRP
 AC_FUNC_VPRINTF
 AC_HEADER_STAT
 LFTP_FUNC_SSCANF_CONST
-AC_CHECK_FUNCS([strdup strstr lstat lchown select statfs\
- killpg setpgid tcgetattr ftruncate vsnprintf snprintf sscanf gettimeofday\
+AC_CHECK_FUNCS([statfs\
+ killpg setpgid tcgetattr vsnprintf snprintf sscanf \
  gethostbyname2 getipnodebyname getaddrinfo getnameinfo setsid random\
- inet_aton unsetenv setlocale nl_langinfo dn_expand])
-AC_FUNC_ALLOCA
+ inet_aton setlocale dn_expand])
 lftp_VA_COPY
 LFTP_ENVIRON_CHECK
-AC_REPLACE_FUNCS([memmove strtok_r memmem])
 AC_CHECK_DECLS([vsnprintf,snprintf,unsetenv,random,inet_aton,strptime,strtok_r,dn_expand,memmem],,,[
 #include <sys/types.h>
 #include <sys/socket.h>

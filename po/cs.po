@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.99.8\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-09-23 12:20+0400\n"
+"POT-Creation-Date: 2009-10-09 19:06+0400\n"
 "PO-Revision-Date: 2009-08-05 21:51+0200\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -166,7 +166,7 @@ msgstr "Modul pro příkaz „%s“ si nezaregistroval tento příkaz.\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "cd uspělo, cwd=%s\n"
 
-#: src/CmdExec.cc:383 src/MirrorJob.cc:547
+#: src/CmdExec.cc:383 src/MirrorJob.cc:545
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: přijato přesměrování na „%s“\n"
@@ -249,7 +249,7 @@ msgstr "Přenos %'d z %'d $souboru|souborů|souborů$ selhal\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Celkem přeneseno: %'d $soubor|soubory|souborů$\n"
 
-#: src/DummyProto.cc:66 src/MirrorJob.cc:1612 src/MirrorJob.cc:1628
+#: src/DummyProto.cc:66 src/MirrorJob.cc:1610 src/MirrorJob.cc:1626
 #: src/commands.cc:979 src/commands.cc:2140
 msgid " - not supported protocol"
 msgstr " – nepodporovaný protokol"
@@ -583,7 +583,7 @@ msgstr ""
 msgid "%s%d error$|s$ detected\n"
 msgstr "%s%d $chyba nalezena|chyby nalezeny|chyb nalezeno$\n"
 
-#: src/MirrorJob.cc:252 src/MirrorJob.cc:934
+#: src/MirrorJob.cc:252 src/MirrorJob.cc:932
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "Odstraňuje se starý soubor „%s“"
@@ -603,7 +603,7 @@ msgstr "Přenáší se soubor „%s“"
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "Vynechává se adresář „%s“ (jen existující)"
 
-#: src/MirrorJob.cc:360 src/MirrorJob.cc:445 src/MirrorJob.cc:685
+#: src/MirrorJob.cc:360 src/MirrorJob.cc:444 src/MirrorJob.cc:683
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Odstraňuje se starý místní soubor „%s“"
@@ -613,52 +613,52 @@ msgstr "Odstraňuje se starý místní soubor „%s“"
 msgid "Mirroring directory `%s'"
 msgstr "Zrcadlí se adresář „%s“"
 
-#: src/MirrorJob.cc:458
+#: src/MirrorJob.cc:457
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
 msgstr "Vynechává se symbolický odkaz „%s“ (jen existující)"
 
-#: src/MirrorJob.cc:464
+#: src/MirrorJob.cc:463
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Vytváří se symbolický odkaz „%s“ na „%s“"
 
-#: src/MirrorJob.cc:599
+#: src/MirrorJob.cc:597
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "zrcadlení: protokol „%s“ se na zrcadlení nehodí\n"
 
-#: src/MirrorJob.cc:706
+#: src/MirrorJob.cc:704
 #, c-format
 msgid "Making directory `%s'"
 msgstr "Vytváří se adresář „%s“"
 
-#: src/MirrorJob.cc:885
+#: src/MirrorJob.cc:883
 #, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "Starý adresář „%s“ není odstraněn"
 
-#: src/MirrorJob.cc:888
+#: src/MirrorJob.cc:886
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "Starý soubor „%s“ není odstraněn"
 
-#: src/MirrorJob.cc:929
+#: src/MirrorJob.cc:927
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "Odstraňuje se starý adresář „%s“"
 
-#: src/MirrorJob.cc:1064
+#: src/MirrorJob.cc:1062
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr "Znovu se zkouší zrcadlení…\n"
 
-#: src/MirrorJob.cc:1450
+#: src/MirrorJob.cc:1448
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s: regulární výraz „%s“: %s\n"
 
-#: src/MirrorJob.cc:1581 src/SleepJob.cc:148 src/SleepJob.cc:204
+#: src/MirrorJob.cc:1579 src/SleepJob.cc:148 src/SleepJob.cc:204
 #: src/commands.cc:1112 src/commands.cc:1199 src/commands.cc:1634
 #: src/commands.cc:1665 src/commands.cc:1768 src/commands.cc:2049
 #: src/commands.cc:2245 src/commands.cc:2408 src/commands.cc:2415
@@ -2473,9 +2473,9 @@ msgstr ""
 "Volitelný argument počet určuje počet řádků historie, které se mají vypsat.\n"
 "Další přípustná hodnota je „all“, která vypíše všechny záznamy.\n"
 
-#: src/mgetJob.cc:125 src/mgetJob.cc:204
-#, c-format
-msgid "%s: no files found\n"
+#: src/mgetJob.cc:125 src/mgetJob.cc:208
+#, fuzzy, c-format
+msgid "%s: %s: no files found\n"
 msgstr "%s: žádné soubory nenalezeny\n"
 
 #: src/mkdirJob.cc:122

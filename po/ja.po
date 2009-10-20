@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-09-23 12:20+0400\n"
+"POT-Creation-Date: 2009-10-09 19:06+0400\n"
 "PO-Revision-Date: 2002-04-12 00:06+0900\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -159,7 +159,7 @@ msgstr "コマンド `%s' 用のモジュールがコマンドを登録しませんでした。\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "cd 成功、cwd=%s\n"
 
-#: src/CmdExec.cc:383 src/MirrorJob.cc:547
+#: src/CmdExec.cc:383 src/MirrorJob.cc:545
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: `%s'へのリダイレクションを受け取りました\n"
@@ -240,7 +240,7 @@ msgstr "%d 個(%d ファイル中)の転送が失敗\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "計 %d ファイル転送済\n"
 
-#: src/DummyProto.cc:66 src/MirrorJob.cc:1612 src/MirrorJob.cc:1628
+#: src/DummyProto.cc:66 src/MirrorJob.cc:1610 src/MirrorJob.cc:1626
 #: src/commands.cc:979 src/commands.cc:2140
 msgid " - not supported protocol"
 msgstr " - はサポートされていないプロトコルです"
@@ -578,7 +578,7 @@ msgstr ""
 msgid "%s%d error$|s$ detected\n"
 msgstr "%s 成功、%d 個のディレクトリを作成しました\n"
 
-#: src/MirrorJob.cc:252 src/MirrorJob.cc:934
+#: src/MirrorJob.cc:252 src/MirrorJob.cc:932
 #, fuzzy, c-format
 msgid "Removing old file `%s'"
 msgstr "古いローカルファイル `%s' を削除しています"
@@ -598,7 +598,7 @@ msgstr "ローカルファイル `%s' を送信しています"
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "リモートディレクトリ `%s' を作成しています"
 
-#: src/MirrorJob.cc:360 src/MirrorJob.cc:445 src/MirrorJob.cc:685
+#: src/MirrorJob.cc:360 src/MirrorJob.cc:444 src/MirrorJob.cc:683
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "古いローカルファイル `%s' を削除しています"
@@ -608,52 +608,52 @@ msgstr "古いローカルファイル `%s' を削除しています"
 msgid "Mirroring directory `%s'"
 msgstr "ディレクトリ `%s' をミラーしています"
 
-#: src/MirrorJob.cc:458
+#: src/MirrorJob.cc:457
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
 msgstr ""
 
-#: src/MirrorJob.cc:464
+#: src/MirrorJob.cc:463
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "`%s' から `%s' へのシンボリックリンクを張っています"
 
-#: src/MirrorJob.cc:599
+#: src/MirrorJob.cc:597
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: プロトコル `%s' はミラーに適しません\n"
 
-#: src/MirrorJob.cc:706
+#: src/MirrorJob.cc:704
 #, fuzzy, c-format
 msgid "Making directory `%s'"
 msgstr "リモートディレクトリ `%s' を作成しています"
 
-#: src/MirrorJob.cc:885
+#: src/MirrorJob.cc:883
 #, fuzzy, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "古いローカルファイル `%s' は削除されません"
 
-#: src/MirrorJob.cc:888
+#: src/MirrorJob.cc:886
 #, fuzzy, c-format
 msgid "Old file `%s' is not removed"
 msgstr "古いローカルファイル `%s' は削除されません"
 
-#: src/MirrorJob.cc:929
+#: src/MirrorJob.cc:927
 #, fuzzy, c-format
 msgid "Removing old directory `%s'"
 msgstr "古いリモートディレクトリ `%s' を削除しています"
 
-#: src/MirrorJob.cc:1064
+#: src/MirrorJob.cc:1062
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1450
+#: src/MirrorJob.cc:1448
 #, fuzzy, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s: %s の書き込みでエラー: %s\n"
 
-#: src/MirrorJob.cc:1581 src/SleepJob.cc:148 src/SleepJob.cc:204
+#: src/MirrorJob.cc:1579 src/SleepJob.cc:148 src/SleepJob.cc:204
 #: src/commands.cc:1112 src/commands.cc:1199 src/commands.cc:1634
 #: src/commands.cc:1665 src/commands.cc:1768 src/commands.cc:2049
 #: src/commands.cc:2245 src/commands.cc:2408 src/commands.cc:2415
@@ -2407,9 +2407,9 @@ msgstr ""
 " オプション引数 cnt では列挙する履歴の行数を指定します。\"all\"を指定すると全"
 "てのエントリが列挙されます。\n"
 
-#: src/mgetJob.cc:125 src/mgetJob.cc:204
-#, c-format
-msgid "%s: no files found\n"
+#: src/mgetJob.cc:125 src/mgetJob.cc:208
+#, fuzzy, c-format
+msgid "%s: %s: no files found\n"
 msgstr "%s: ファイルがありません\n"
 
 #: src/mkdirJob.cc:122

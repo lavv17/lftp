@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2.3\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-09-23 12:20+0400\n"
+"POT-Creation-Date: 2009-10-09 19:06+0400\n"
 "PO-Revision-Date: 2000-06-18 10:46+02:00\n"
 "Last-Translator: Giovanni Bortolozzo <borto@pluto.linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -159,7 +159,7 @@ msgstr ""
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, cwd=%s\n"
 
-#: src/CmdExec.cc:383 src/MirrorJob.cc:547
+#: src/CmdExec.cc:383 src/MirrorJob.cc:545
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
@@ -240,7 +240,7 @@ msgstr "Fallito il trasferimento di %d su %d file$|$\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Trasferit$o|i$ %d file in totale\n"
 
-#: src/DummyProto.cc:66 src/MirrorJob.cc:1612 src/MirrorJob.cc:1628
+#: src/DummyProto.cc:66 src/MirrorJob.cc:1610 src/MirrorJob.cc:1626
 #: src/commands.cc:979 src/commands.cc:2140
 msgid " - not supported protocol"
 msgstr "- protocollo non supportato"
@@ -577,7 +577,7 @@ msgstr "%sCancellati: %d directory$|$, %d file$|$, %d link simbolic$o|i$\n"
 msgid "%s%d error$|s$ detected\n"
 msgstr "%s ok, create %d directory$|$\n"
 
-#: src/MirrorJob.cc:252 src/MirrorJob.cc:934
+#: src/MirrorJob.cc:252 src/MirrorJob.cc:932
 #, fuzzy, c-format
 msgid "Removing old file `%s'"
 msgstr "Cancellazione del vecchio file locale `%s'"
@@ -597,7 +597,7 @@ msgstr "Invio il file locale `%s'"
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "Creo la directory remota `%s'"
 
-#: src/MirrorJob.cc:360 src/MirrorJob.cc:445 src/MirrorJob.cc:685
+#: src/MirrorJob.cc:360 src/MirrorJob.cc:444 src/MirrorJob.cc:683
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Cancellazione del vecchio file locale `%s'"
@@ -607,52 +607,52 @@ msgstr "Cancellazione del vecchio file locale `%s'"
 msgid "Mirroring directory `%s'"
 msgstr "Mirror della directory `%s'"
 
-#: src/MirrorJob.cc:458
+#: src/MirrorJob.cc:457
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
 msgstr ""
 
-#: src/MirrorJob.cc:464
+#: src/MirrorJob.cc:463
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Creo il link simbolico da `%s' a `%s'"
 
-#: src/MirrorJob.cc:599
+#: src/MirrorJob.cc:597
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: il protocollo `%s' non va bene per fare il mirror\n"
 
-#: src/MirrorJob.cc:706
+#: src/MirrorJob.cc:704
 #, fuzzy, c-format
 msgid "Making directory `%s'"
 msgstr "Creo la directory remota `%s'"
 
-#: src/MirrorJob.cc:885
+#: src/MirrorJob.cc:883
 #, fuzzy, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "Il vecchio file locale `%s' non è stato rimosso"
 
-#: src/MirrorJob.cc:888
+#: src/MirrorJob.cc:886
 #, fuzzy, c-format
 msgid "Old file `%s' is not removed"
 msgstr "Il vecchio file locale `%s' non è stato rimosso"
 
-#: src/MirrorJob.cc:929
+#: src/MirrorJob.cc:927
 #, fuzzy, c-format
 msgid "Removing old directory `%s'"
 msgstr "Cancellazione del vecchio file remoto `%s'"
 
-#: src/MirrorJob.cc:1064
+#: src/MirrorJob.cc:1062
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1450
+#: src/MirrorJob.cc:1448
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1581 src/SleepJob.cc:148 src/SleepJob.cc:204
+#: src/MirrorJob.cc:1579 src/SleepJob.cc:148 src/SleepJob.cc:204
 #: src/commands.cc:1112 src/commands.cc:1199 src/commands.cc:1634
 #: src/commands.cc:1665 src/commands.cc:1768 src/commands.cc:2049
 #: src/commands.cc:2245 src/commands.cc:2408 src/commands.cc:2415
@@ -2376,9 +2376,9 @@ msgid ""
 "or \"all\" to list all entries.\n"
 msgstr ""
 
-#: src/mgetJob.cc:125 src/mgetJob.cc:204
-#, c-format
-msgid "%s: no files found\n"
+#: src/mgetJob.cc:125 src/mgetJob.cc:208
+#, fuzzy, c-format
+msgid "%s: %s: no files found\n"
 msgstr "%s: nessun file trovato\n"
 
 #: src/mkdirJob.cc:122

@@ -212,3 +212,11 @@ sha1.h
 stddef.in.h
 iconv_open-solaris.gperf
 stat.c
+strstr.c
+chown.c
+fchown-stub.c
+fcntl.in.h
+lchown.c
+open.c
+readlink.c
+ftruncate.c
