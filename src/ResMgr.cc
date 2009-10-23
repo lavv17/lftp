@@ -492,7 +492,7 @@ unsigned long long ResValue::to_unumber(unsigned long long max)
 long long ResValue::to_number(long long min,long long max)
 {
    const char *end=s;
-   long long v=strtoull(s,const_cast<char**>(&end),0);
+   long long v=strtoll(s,const_cast<char**>(&end),0);
    long long m=get_power_multiplier(*end);
    long long vm=v*m;
    if(vm/m!=v)
