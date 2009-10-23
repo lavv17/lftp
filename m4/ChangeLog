@@ -1,3 +1,7 @@
+2009-10-23  Robert Story <Robert.Story@cobham.com>
+
+	* lftp.m4: newer versions of gcc don't support -fwritable-strings.
+
 2008-08-18  Arkadiusz Miskiewicz <arekm@maven.pl>
 
 	* terminfo.m4: check for libtinfo.

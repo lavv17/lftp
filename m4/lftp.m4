@@ -43,16 +43,7 @@ AC_DEFUN([LFTP_FUNC_SSCANF_CONST],
    ])
    AC_MSG_RESULT($lftp_cv_func_sscanf_const_works)
    if test $lftp_cv_func_sscanf_const_works = no; then
-      if test "$GCC" = yes; then
-	 CFLAGS="$CFLAGS -fwritable-strings"
-      else
-	 AC_MSG_WARN(sscanf does not work on const strings and not using gcc)
-      fi
-      if test "$GXX" = yes; then
-	 CXXFLAGS="$CXXFLAGS -fwritable-strings"
-      else
-	 AC_MSG_WARN(sscanf does not work on const strings and not using g++)
-      fi
+      AC_MSG_WARN(sscanf does not work on const strings)
    fi
 ])
 
