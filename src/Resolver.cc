@@ -93,6 +93,10 @@ static const address_family af_list[]=
 };
 
 ResolverCache *Resolver::cache;
+#ifdef DNSSEC_LOCAL_VALIDATION
+val_context_t *Resolver::val_context = NULL;
+#endif
+
 
 Resolver::Resolver(const char *h,const char *p,const char *defp,
 		   const char *ser,const char *pr)
@@ -109,6 +113,12 @@ Resolver::Resolver(const char *h,const char *p,const char *defp,
    error=0;
 
    no_cache=false;
+
+#ifdef DNSSEC_LOCAL_VALIDATION
+   if (VAL_NO_ERROR != val_create_context(NULL, &val_context)) {
+        val_log(NULL, LOG_ERR, "Cannot create validator context.");
+    }
+#endif
 }
 
 Resolver::~Resolver()
@@ -123,6 +133,13 @@ Resolver::~Resolver()
       w->Kill(SIGKILL);
       w.borrow()->Auto();
    }
+
+#ifdef DNSSEC_LOCAL_VALIDATION
+   val_free_context(val_context);
+
+   free_validator_state();
+#endif
+
 }
 
 int   Resolver::Do()
@@ -492,9 +509,22 @@ void Resolver::LookupSRV_RR()
 	    return;
       }
       time(&try_time);
+
+#ifndef DNSSEC_LOCAL_VALIDATION
       len=res_search(srv_name, C_IN, T_SRV, answer, sizeof(answer));
       if(len>=0)
 	 break;
+#else
+      val_status_t val_status;
+      int          require_trust = ResMgr::Query("dns:strict-dnssec",hostname);
+      len=val_res_search(val_context,srv_name, C_IN, T_SRV, answer, sizeof(answer), &val_status);
+      if(len>=0) {
+          if(require_trust && ! val_istrusted(val_status))
+              return;
+          else
+              break;
+      }
+#endif
 #ifdef HAVE_H_ERRNO
       if(h_errno!=TRY_AGAIN)
 	 return;
@@ -702,7 +732,22 @@ void Resolver::LookupOne(const char *name)
       a_hint.ai_flags	    = AI_PASSIVE;
       a_hint.ai_family	    = PF_UNSPEC;
 
+#ifndef DNSSEC_LOCAL_VALIDATION
       ainfo_res	= getaddrinfo(name, NULL, &a_hint, &ainfo);
+#else
+      val_status_t val_status;
+      int          require_trust=ResMgr::Query("dns:strict-dnssec",name);
+      ainfo_res	= val_getaddrinfo(NULL, name, NULL, &a_hint, &ainfo,
+                                  &val_status);
+      if((ainfo_res == 0) && ! val_istrusted(val_status) &&
+          require_trust)
+      {
+          // untrusted answer
+          error = _("DNS resoloution not trusted.");
+          break;
+      }
+#endif
+
 
       if(ainfo_res == 0)
       {

@@ -2,6 +2,7 @@
 
 	* ResMgr.cc: check is_nil for numeric settings, prevents core dump
 	  when accessing inexisting settings.
+	* resource.cc, Resolver.cc, Resolver.h: add dnssec support.
 
 2009-10-23  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -29,6 +29,10 @@
 #include "Cache.h"
 #include "network.h"
 
+#ifdef DNSSEC_LOCAL_VALIDATION
+#  include "validator/validator.h"
+#endif
+
 class Resolver : public SMTask, protected ProtoLog
 {
    xstring hostname;
@@ -63,6 +67,9 @@ class Resolver : public SMTask, protected ProtoLog
    const char *error;
 
    static class ResolverCache *cache;
+#ifdef DNSSEC_LOCAL_VALIDATION
+   static val_context_t *val_context;
+#endif
 
    bool no_cache;
    bool use_fork;

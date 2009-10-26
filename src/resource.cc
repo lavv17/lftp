@@ -325,6 +325,9 @@ static ResType lftp_vars[] = {
    {"dns:order",		 DEFAULT_ORDER, OrderValidate,0},
    {"dns:SRV-query",		 "no",	  ResMgr::BoolValidate,0},
    {"dns:use-fork",		 "yes",	  ResMgr::BoolValidate,ResMgr::NoClosure},
+#ifdef DNSSEC_LOCAL_VALIDATION
+   {"dns:strict-dnssec",	 "no",	  ResMgr::BoolValidate,0},
+#endif
 
    {"fish:shell",		 "/bin/sh",0,0},
    {"fish:connect-program",	 "ssh -a -x",0,0},
