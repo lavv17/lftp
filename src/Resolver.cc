@@ -727,7 +727,7 @@ void Resolver::LookupOne(const char *name)
       bool require_trust=ResMgr::QueryBool("dns:strict-dnssec",name);
       ainfo_res	= val_getaddrinfo(NULL, name, NULL, &a_hint, &ainfo,
                                   &val_status);
-      if(ainfo_res == 0 && !val_istrusted(val_status) && require_trust) {
+      if(ainfo && !val_istrusted(val_status) && require_trust) {
           // untrusted answer
           error = _("DNS resoloution not trusted.");
           break;

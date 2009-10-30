@@ -1,3 +1,7 @@
+2009-10-30  Robert Story <Robert.Story@cobham.com>
+
+	* Resolver.cc: validate empty answers.
+
 2009-10-26  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Resolver.cc, Resolver.h: use default dnssec context; cosmetics.
