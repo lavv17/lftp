@@ -1,3 +1,7 @@
+2009-11-17  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.cc, lftp_rl.c, lftp_rl.h: new setting cmd:stifle-rl-history.
+
 2009-11-17  Robert Story <Robert.Story@cobham.com>
 
 	* Resolver.cc: use VAL_GETADDRINFO_HAS_STATUS macro.

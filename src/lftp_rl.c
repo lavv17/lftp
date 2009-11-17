@@ -204,3 +204,11 @@ void lftp_rl_write_history()
       return;
    write_history(lftp_history_file);
 }
+
+void lftp_rl_history_stifle(int s)
+{
+   if(s==0)
+      unstifle_history();
+   else
+      stifle_history(s);
+}

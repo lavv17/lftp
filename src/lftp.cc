@@ -71,8 +71,10 @@ ResDecl res_save_cwd_history
    ("cmd:save-cwd-history","yes",ResMgr::BoolValidate,ResMgr::NoClosure);
 ResDecl res_save_rl_history
    ("cmd:save-rl-history","yes",ResMgr::BoolValidate,ResMgr::NoClosure);
+ResDecl res_stifle_rl_history
+   ("cmd:stifle-rl-history","500",ResMgr::UNumberValidate,ResMgr::NoClosure);
 
-class ReadlineFeeder : public CmdFeeder
+class ReadlineFeeder : public CmdFeeder, private ResClient
 {
    bool tty:1;
    bool ctty:1;
@@ -94,6 +96,7 @@ class ReadlineFeeder : public CmdFeeder
 	 lftp_add_history_nodups(for_history);
 	 for_history.set(0);
       }
+      Reconfig(0);
    }
 
 public:
@@ -214,6 +217,9 @@ public:
 	    return;
 	 lftp_rl_clear();
       }
+   void Reconfig(const char *) {
+      lftp_rl_history_stifle(res_stifle_rl_history.Query(0));
+   }
 };
 bool ReadlineFeeder::readline_inited;
 

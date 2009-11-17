@@ -42,6 +42,7 @@ void lftp_rl_bind(const char *key,const char *func);
 void lftp_rl_set_prompt(const char *p);
 void lftp_rl_write_history();
 void lftp_rl_read_history();
+void lftp_rl_history_stifle(int s);
 
 void lftp_rl_init(
    const char *readline_name,
