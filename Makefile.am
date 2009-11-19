@@ -1,5 +1,5 @@
 EXTRA_DIST = lftp.conf lftp.lsm FAQ MIRRORS BUGS FEATURES\
- README README.debug-levels README.modules\
+ README README.debug-levels README.modules README.dnssec\
  lib/hstrerror.c contrib/lftp-icon.png
 if NEED_TRIO
    TRIO = trio

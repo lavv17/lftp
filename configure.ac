@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
-AC_INIT([lftp], [4.0.3], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [4.0.4], [lftp-bugs@lftp.yar.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([lib])
@@ -282,6 +282,32 @@ AC_CHECK_LIB(expat, XML_ParserCreateNS, [
    AC_SUBST(EXPAT_LIBS)
    AC_DEFINE(HAVE_LIBEXPAT, 1, [Define if you have expat library])
 ])
+
+# Check whether user wants DNSSEC local validation support
+AC_ARG_WITH(dnssec-local-validation,
+        [  --with-dnssec-local-validation Enable local DNSSEC validation using libval (default=no)], want_dnssec=$withval, want_dnssec=no)
+if test "x$want_dnssec" = "xyes"; then
+    AC_CHECK_HEADERS(validator/validator.h)
+    if test "$ac_cv_header_validator_validator_h" != yes; then
+        AC_MSG_ERROR(Can't find validator.h (from dnssec-tools))
+    fi
+    AC_CHECK_LIB(ssl, SHA1_Init)
+    AC_CHECK_LIB(sres, query_send)
+    if test "$ac_cv_lib_sres_query_send" != yes; then
+        AC_MSG_ERROR(Can't find libsres (from dnssec-tools))
+    fi
+    AC_CHECK_LIB(val, p_val_status,[LIBS="$LIBS -lval"])
+    if test "x$ac_cv_lib_val_p_val_status" = "xno"; then
+        AC_CHECK_LIB(pthread, pthread_rwlock_init)
+	AC_CHECK_LIB(val-threads, p_val_status,
+                [LIBS="$LIBS -lval-threads -lpthread" LIBVAL_SUFFIX="-threads"],
+                AC_MSG_ERROR(Can't find libval or libval-threads (from dnssec-tools)))
+    fi
+    if test "x$ac_cv_lib_val_p_val_status" = "xyes" -o "x$ac_cv_lib_val_threads_p_val_status" = "xyes"; then
+        AC_DEFINE(DNSSEC_LOCAL_VALIDATION, 1,
+              [Define if you want local DNSSEC validation support])
+    fi
+fi
 
 LFTP_PTY_CHECK
 

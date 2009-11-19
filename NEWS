@@ -1,3 +1,8 @@
+Version 4.0.4 - 2009-11-19
+
+* added dnssec support (Robert Story).
+* new setting cmd:stifle-rl-history to limit command history size.
+
 Version 4.0.3 - 2009-10-20
 
 * fixed exit code of mget/mput.

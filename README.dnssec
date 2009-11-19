@@ -1,0 +1,49 @@
+DNSSEC Validation for lftp
+==========================
+This patch adds local DNSSEC validation to lftp, along with an option to
+enable it. The is code is only compiled if the configure option
+--dnssec-local-validation is specified. The libraries libval and libsres
+from DNSSEC-Tools are prequisites. Additional options may be needed
+to point configure at the correct directory for these libraries.
+
+When compiled in, the option is still off by default. The new boolean
+option 'dns:strict-dns' must be enabled by the user.
+
+Once strict DNSSEC checking is enabled, DNSSEC validation is done according
+to the configuration in the DNSSEC-tool configuration file dnsval.conf.
+Please refer to the DNSSEC-Tools documentation for more information.
+
+	http://www.dnssec-tools.org/
+
+This patch has been tested with lftp 4.0.2 and DNSSEC-Tools 1.6.
+
+
+Testing
+=======
+To verify that the patch is working, you first need to configure dnsval.conf
+to require validation for a domain that is not signed. For example:
+
+    : zone-security-expectation
+                # ignore validation by default
+                . ignore
+
+                # require that dnssec-tools.org validates (it should)
+                dnssec-tools.org validate
+
+                # require that cobham.com validates (it wont)
+                sparta.com validate
+    ;
+
+
+Next, simpy run lftp with a few domain. This configuration does not require
+validation for any domains except dnssec-tools.org and cobham.com. So:
+
+  $ lftp mirrors.kernel.org
+  lftp mirrors.kernel.org:~> 
+
+  $ lftp dnssec-tools.org
+  lftp dnssec-tools.org:~>
+
+  $ lftp sparta.com
+  lftp: sparta.com: DNS resoloution not trusted.
+

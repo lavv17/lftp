@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.2.3\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-10-20 13:15+0400\n"
+"POT-Creation-Date: 2009-10-27 15:01+0300\n"
 "PO-Revision-Date: 2000-06-18 10:46+02:00\n"
 "Last-Translator: Giovanni Bortolozzo <borto@pluto.linux.it>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -505,7 +505,7 @@ msgstr "violato il formato chunked"
 msgid "Received last chunk"
 msgstr "Sto ricevendo i dati"
 
-#: src/Http.cc:1816 src/Resolver.cc:166 src/Resolver.cc:208
+#: src/Http.cc:1816 src/Resolver.cc:171 src/Resolver.cc:213
 #: src/ftpclass.cc:4174
 msgid "Resolving host address..."
 msgstr "Risoluzione dell'indirizzo dell'host..."
@@ -765,67 +765,71 @@ msgstr "numero in virgola mobile non valido"
 msgid "invalid unsigned number"
 msgstr "numero non valido"
 
-#: src/ResMgr.cc:707
+#: src/ResMgr.cc:711
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "Lettera per l'unità di tempo non valida. Sono permesse solo [smhd]"
 
-#: src/ResMgr.cc:715
+#: src/ResMgr.cc:719
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "Formato temporale non valido. Il formato è <tempo><unità>, es. 2h30m."
 
-#: src/ResMgr.cc:759 src/commands.cc:3217 src/commands.cc:3226
+#: src/ResMgr.cc:763 src/commands.cc:3217 src/commands.cc:3226
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Formato dell'intervallo non valido. Il formato è min-max, es. 10-20."
 
-#: src/ResMgr.cc:776
+#: src/ResMgr.cc:780
 msgid "Invalid suffix. Valid suffixes are: k, M, G, T, P, E, Z, Y"
 msgstr ""
 
-#: src/ResMgr.cc:779
+#: src/ResMgr.cc:783
 msgid "Integer overflow"
 msgstr ""
 
-#: src/ResMgr.cc:838
+#: src/ResMgr.cc:842
 msgid "Invalid IPv4 numeric address"
 msgstr ""
 
-#: src/ResMgr.cc:849
+#: src/ResMgr.cc:853
 msgid "Invalid IPv6 numeric address"
 msgstr ""
 
-#: src/ResMgr.cc:903 src/ResMgr.cc:907
+#: src/ResMgr.cc:907 src/ResMgr.cc:911
 #, fuzzy
 msgid "this encoding is not supported"
 msgstr "Operazione non supportata"
 
-#: src/ResMgr.cc:913
+#: src/ResMgr.cc:917
 msgid "no closure defined for this setting"
 msgstr ""
 
-#: src/ResMgr.cc:924
+#: src/ResMgr.cc:928
 #, fuzzy
 msgid "invalid pair of numbers"
 msgstr "numero non valido"
 
-#: src/Resolver.cc:227
+#: src/Resolver.cc:232
 msgid "host name resolve timeout"
 msgstr "timeout nella risoluzione del nome dell'host"
 
-#: src/Resolver.cc:273
+#: src/Resolver.cc:278
 #, c-format
 msgid "%d address$|es$ found"
 msgstr ""
 
-#: src/Resolver.cc:803
+#: src/Resolver.cc:732
+msgid "DNS resoloution not trusted."
+msgstr ""
+
+#: src/Resolver.cc:833
 msgid "Host name lookup failure"
 msgstr ""
 
-#: src/Resolver.cc:836
+#: src/Resolver.cc:866
 #, fuzzy, c-format
 msgid "no such %s service"
 msgstr "variabile inesistente"
 
-#: src/Resolver.cc:858
+#: src/Resolver.cc:888
 msgid "No address found"
 msgstr ""
 

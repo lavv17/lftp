@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-10-20 13:15+0400\n"
+"POT-Creation-Date: 2009-10-27 15:01+0300\n"
 "PO-Revision-Date: 2008-04-12 12:40+0200\n"
 "Last-Translator: Alain PORTAL <aportal@univ-montp2.fr>\n"
 "Language-Team: Français <traduc@traduc.org>\n"
@@ -500,7 +500,7 @@ msgstr "format en « chunk » violé"
 msgid "Received last chunk"
 msgstr "Dernier fragment reçu"
 
-#: src/Http.cc:1816 src/Resolver.cc:166 src/Resolver.cc:208
+#: src/Http.cc:1816 src/Resolver.cc:171 src/Resolver.cc:213
 #: src/ftpclass.cc:4174
 msgid "Resolving host address..."
 msgstr "Résolution de l'adresse..."
@@ -758,66 +758,70 @@ msgstr "nombre en virgule flottante invalide"
 msgid "invalid unsigned number"
 msgstr "nombre invalide"
 
-#: src/ResMgr.cc:707
+#: src/ResMgr.cc:711
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "Unité de temps invalide, seules [smhd] sont permises."
 
-#: src/ResMgr.cc:715
+#: src/ResMgr.cc:719
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr ""
 "Format de temps invalide. Le format est <temps><unité>, par ex. : 2h30m."
 
-#: src/ResMgr.cc:759 src/commands.cc:3217 src/commands.cc:3226
+#: src/ResMgr.cc:763 src/commands.cc:3217 src/commands.cc:3226
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Format d'intervalle invalide. Le format est min-max, par ex. : 10-20."
 
-#: src/ResMgr.cc:776
+#: src/ResMgr.cc:780
 msgid "Invalid suffix. Valid suffixes are: k, M, G, T, P, E, Z, Y"
 msgstr "Suffixe invalide. Les suffixes valides sont : k, M, G, T, P, E, Z, Y"
 
-#: src/ResMgr.cc:779
+#: src/ResMgr.cc:783
 msgid "Integer overflow"
 msgstr "Débordement de nombre entier"
 
-#: src/ResMgr.cc:838
+#: src/ResMgr.cc:842
 msgid "Invalid IPv4 numeric address"
 msgstr "Adresse numérique IPv4 invalide"
 
-#: src/ResMgr.cc:849
+#: src/ResMgr.cc:853
 msgid "Invalid IPv6 numeric address"
 msgstr "Adresse numérique IPv6 invalide"
 
-#: src/ResMgr.cc:903 src/ResMgr.cc:907
+#: src/ResMgr.cc:907 src/ResMgr.cc:911
 msgid "this encoding is not supported"
 msgstr "cet encodage n'est pas pris en charge"
 
-#: src/ResMgr.cc:913
+#: src/ResMgr.cc:917
 msgid "no closure defined for this setting"
 msgstr "aucune restriction pour ce paramètre"
 
-#: src/ResMgr.cc:924
+#: src/ResMgr.cc:928
 msgid "invalid pair of numbers"
 msgstr "paire de nombres invalide"
 
-#: src/Resolver.cc:227
+#: src/Resolver.cc:232
 msgid "host name resolve timeout"
 msgstr "délai d'attente dépassé pour la résolution du nom de l'hôte"
 
-#: src/Resolver.cc:273
+#: src/Resolver.cc:278
 #, c-format
 msgid "%d address$|es$ found"
 msgstr "%d: $adresse trouvée|adresses trouvées$"
 
-#: src/Resolver.cc:803
+#: src/Resolver.cc:732
+msgid "DNS resoloution not trusted."
+msgstr ""
+
+#: src/Resolver.cc:833
 msgid "Host name lookup failure"
 msgstr "La résolution du nom a échouée"
 
-#: src/Resolver.cc:836
+#: src/Resolver.cc:866
 #, c-format
 msgid "no such %s service"
 msgstr "service %s inconnu"
 
-#: src/Resolver.cc:858
+#: src/Resolver.cc:888
 msgid "No address found"
 msgstr "Adresse non trouvée"
 
