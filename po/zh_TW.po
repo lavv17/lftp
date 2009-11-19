@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.5.11\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-10-27 15:01+0300\n"
+"POT-Creation-Date: 2009-11-19 15:37+0300\n"
 "PO-Revision-Date: 2007-05-13 20:18+0800\n"
 "Last-Translator: Abel Cheung <abelcheung@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) <community@linuxhall.org>\n"
@@ -33,57 +33,57 @@ msgstr "有效的參數為："
 msgid "Unknown system error"
 msgstr "不明的系統錯誤"
 
-#: lib/getopt.c:526 lib/getopt.c:542
+#: lib/getopt.c:527 lib/getopt.c:543
 #, c-format
 msgid "%s: option `%s' is ambiguous\n"
 msgstr "%s：選項 ‘%s’ 不明確\n"
 
-#: lib/getopt.c:575 lib/getopt.c:579
+#: lib/getopt.c:576 lib/getopt.c:580
 #, c-format
 msgid "%s: option `--%s' doesn't allow an argument\n"
 msgstr "%s：選項 ‘--%s’ 不可配合參數使用\n"
 
-#: lib/getopt.c:588 lib/getopt.c:593
+#: lib/getopt.c:589 lib/getopt.c:594
 #, c-format
 msgid "%s: option `%c%s' doesn't allow an argument\n"
 msgstr "%s：選項 ‘%c%s’ 不可配合參數使用\n"
 
-#: lib/getopt.c:636 lib/getopt.c:655 lib/getopt.c:971 lib/getopt.c:990
+#: lib/getopt.c:637 lib/getopt.c:656 lib/getopt.c:972 lib/getopt.c:991
 #, c-format
 msgid "%s: option `%s' requires an argument\n"
 msgstr "%s：選項 ‘%s’ 需要參數\n"
 
-#: lib/getopt.c:693 lib/getopt.c:696
+#: lib/getopt.c:694 lib/getopt.c:697
 #, c-format
 msgid "%s: unrecognized option `--%s'\n"
 msgstr "%s：‘--%s’ 選項無法辨識\n"
 
-#: lib/getopt.c:704 lib/getopt.c:707
+#: lib/getopt.c:705 lib/getopt.c:708
 #, c-format
 msgid "%s: unrecognized option `%c%s'\n"
 msgstr "%s：‘%c%s’ 選項無法辨識\n"
 
-#: lib/getopt.c:759 lib/getopt.c:762
+#: lib/getopt.c:760 lib/getopt.c:763
 #, c-format
 msgid "%s: illegal option -- %c\n"
 msgstr "%s：不合法的選項 ─ %c\n"
 
-#: lib/getopt.c:768 lib/getopt.c:771
+#: lib/getopt.c:769 lib/getopt.c:772
 #, c-format
 msgid "%s: invalid option -- %c\n"
 msgstr "%s：無效的選項 ─ %c\n"
 
-#: lib/getopt.c:823 lib/getopt.c:839 lib/getopt.c:1043 lib/getopt.c:1061
+#: lib/getopt.c:824 lib/getopt.c:840 lib/getopt.c:1044 lib/getopt.c:1062
 #, c-format
 msgid "%s: option requires an argument -- %c\n"
 msgstr "%s：選項需要參數 ─ %c\n"
 
-#: lib/getopt.c:892 lib/getopt.c:908
+#: lib/getopt.c:893 lib/getopt.c:909
 #, c-format
 msgid "%s: option `-W %s' is ambiguous\n"
 msgstr "%s：選項 ‘-W %s’ 不明確\n"
 
-#: lib/getopt.c:932 lib/getopt.c:950
+#: lib/getopt.c:933 lib/getopt.c:951
 #, c-format
 msgid "%s: option `-W %s' doesn't allow an argument\n"
 msgstr "%s：選項 ‘-W %s’ 不可配合參數使用\n"
@@ -652,7 +652,7 @@ msgstr "%s：正規表示式 ‘%s’：%s\n"
 #: src/commands.cc:1665 src/commands.cc:1768 src/commands.cc:2049
 #: src/commands.cc:2245 src/commands.cc:2408 src/commands.cc:2415
 #: src/commands.cc:2703 src/commands.cc:2730 src/commands.cc:2737
-#: src/commands.cc:3061 src/lftp.cc:257
+#: src/commands.cc:3061 src/lftp.cc:263
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "請輸入 ‘help %s’ 顯示額外資訊。\n"
@@ -807,20 +807,20 @@ msgstr "逾時仍找不到主機地址"
 msgid "%d address$|es$ found"
 msgstr "-- 找到 %d 個地址\n"
 
-#: src/Resolver.cc:732
+#: src/Resolver.cc:733
 msgid "DNS resoloution not trusted."
 msgstr ""
 
-#: src/Resolver.cc:833
+#: src/Resolver.cc:834
 msgid "Host name lookup failure"
 msgstr "檢查主機名稱失敗"
 
-#: src/Resolver.cc:866
+#: src/Resolver.cc:867
 #, c-format
 msgid "no such %s service"
 msgstr "%s 服務不存在"
 
-#: src/Resolver.cc:888
+#: src/Resolver.cc:889
 msgid "No address found"
 msgstr "沒有地址"
 
@@ -1998,7 +1998,7 @@ msgid "Usage: %s <jobno> ... | all\n"
 msgstr "用法：%s <工作編號> …… | all\n"
 
 #: src/commands.cc:2211 src/commands.cc:2334 src/commands.cc:2477
-#: src/commands.cc:2872 src/commands.cc:2948 src/lftp.cc:269
+#: src/commands.cc:2872 src/commands.cc:2948 src/lftp.cc:275
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s：%s - 不是數字\n"
@@ -2353,31 +2353,31 @@ msgstr "上傳中/TLS"
 msgid "Receiving data/TLS"
 msgstr "下載中/TLS"
 
-#: src/lftp.cc:309
+#: src/lftp.cc:315
 #, c-format
 msgid "[%lu] Terminated by signal %d. %s"
 msgstr "[%lu] 以訊號 %d 終止。%s"
 
-#: src/lftp.cc:376
+#: src/lftp.cc:382
 #, c-format
 msgid "[%lu] Started.  %s"
 msgstr "[%lu] 開始。%s"
 
-#: src/lftp.cc:385
+#: src/lftp.cc:391
 #, c-format
 msgid "[%lu] Finished. %s"
 msgstr "[%lu] 完成。%s"
 
-#: src/lftp.cc:389
+#: src/lftp.cc:395
 #, c-format
 msgid "[%lu] Moving to background to complete transfers...\n"
 msgstr "[%lu] 將傳送工作轉移至背景繼續執行……\n"
 
-#: src/lftp.cc:442
+#: src/lftp.cc:448
 msgid "history -w file|-r file|-c|-l [cnt]"
 msgstr "history -w 檔案|-r 檔案|-c|-l [數目]"
 
-#: src/lftp.cc:443
+#: src/lftp.cc:449
 msgid ""
 " -w <file> Write history to file.\n"
 " -r <file> Read history from file; appends to current history.\n"

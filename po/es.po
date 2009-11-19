@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.6.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-10-27 15:01+0300\n"
+"POT-Creation-Date: 2009-11-19 15:37+0300\n"
 "PO-Revision-Date: 2002-08-08 19:01+0000\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -34,57 +34,57 @@ msgstr "argumento inválido para `--sort'"
 msgid "Unknown system error"
 msgstr ""
 
-#: lib/getopt.c:526 lib/getopt.c:542
+#: lib/getopt.c:527 lib/getopt.c:543
 #, c-format
 msgid "%s: option `%s' is ambiguous\n"
 msgstr ""
 
-#: lib/getopt.c:575 lib/getopt.c:579
+#: lib/getopt.c:576 lib/getopt.c:580
 #, c-format
 msgid "%s: option `--%s' doesn't allow an argument\n"
 msgstr ""
 
-#: lib/getopt.c:588 lib/getopt.c:593
+#: lib/getopt.c:589 lib/getopt.c:594
 #, c-format
 msgid "%s: option `%c%s' doesn't allow an argument\n"
 msgstr ""
 
-#: lib/getopt.c:636 lib/getopt.c:655 lib/getopt.c:971 lib/getopt.c:990
+#: lib/getopt.c:637 lib/getopt.c:656 lib/getopt.c:972 lib/getopt.c:991
 #, c-format
 msgid "%s: option `%s' requires an argument\n"
 msgstr ""
 
-#: lib/getopt.c:693 lib/getopt.c:696
+#: lib/getopt.c:694 lib/getopt.c:697
 #, fuzzy, c-format
 msgid "%s: unrecognized option `--%s'\n"
 msgstr "%s: se recibió redirección a `%s'\n"
 
-#: lib/getopt.c:704 lib/getopt.c:707
+#: lib/getopt.c:705 lib/getopt.c:708
 #, fuzzy, c-format
 msgid "%s: unrecognized option `%c%s'\n"
 msgstr "%s: se recibió redirección a `%s'\n"
 
-#: lib/getopt.c:759 lib/getopt.c:762
+#: lib/getopt.c:760 lib/getopt.c:763
 #, c-format
 msgid "%s: illegal option -- %c\n"
 msgstr ""
 
-#: lib/getopt.c:768 lib/getopt.c:771
+#: lib/getopt.c:769 lib/getopt.c:772
 #, fuzzy, c-format
 msgid "%s: invalid option -- %c\n"
 msgstr "opción inválida"
 
-#: lib/getopt.c:823 lib/getopt.c:839 lib/getopt.c:1043 lib/getopt.c:1061
+#: lib/getopt.c:824 lib/getopt.c:840 lib/getopt.c:1044 lib/getopt.c:1062
 #, c-format
 msgid "%s: option requires an argument -- %c\n"
 msgstr ""
 
-#: lib/getopt.c:892 lib/getopt.c:908
+#: lib/getopt.c:893 lib/getopt.c:909
 #, c-format
 msgid "%s: option `-W %s' is ambiguous\n"
 msgstr ""
 
-#: lib/getopt.c:932 lib/getopt.c:950
+#: lib/getopt.c:933 lib/getopt.c:951
 #, c-format
 msgid "%s: option `-W %s' doesn't allow an argument\n"
 msgstr ""
@@ -657,7 +657,7 @@ msgstr ""
 #: src/commands.cc:1665 src/commands.cc:1768 src/commands.cc:2049
 #: src/commands.cc:2245 src/commands.cc:2408 src/commands.cc:2415
 #: src/commands.cc:2703 src/commands.cc:2730 src/commands.cc:2737
-#: src/commands.cc:3061 src/lftp.cc:257
+#: src/commands.cc:3061 src/lftp.cc:263
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Pruebe `help %s' para mayor información.\n"
@@ -815,20 +815,20 @@ msgstr "tiempo fuera resolviendo el nombre de host"
 msgid "%d address$|es$ found"
 msgstr "---- Se encontr$ó|aron$ %d direcci$ón|ones$\n"
 
-#: src/Resolver.cc:732
+#: src/Resolver.cc:733
 msgid "DNS resoloution not trusted."
 msgstr ""
 
-#: src/Resolver.cc:833
+#: src/Resolver.cc:834
 msgid "Host name lookup failure"
 msgstr "Falla en la resolución del nombre del servidor"
 
-#: src/Resolver.cc:866
+#: src/Resolver.cc:867
 #, c-format
 msgid "no such %s service"
 msgstr "no existe un servicio %s"
 
-#: src/Resolver.cc:888
+#: src/Resolver.cc:889
 msgid "No address found"
 msgstr "No se encontró ninguna dirección"
 
@@ -1987,7 +1987,7 @@ msgid "Usage: %s <jobno> ... | all\n"
 msgstr "Uso: %s <númtarea> ... | all\n"
 
 #: src/commands.cc:2211 src/commands.cc:2334 src/commands.cc:2477
-#: src/commands.cc:2872 src/commands.cc:2948 src/lftp.cc:269
+#: src/commands.cc:2872 src/commands.cc:2948 src/lftp.cc:275
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s: %s - no es un número\n"
@@ -2355,31 +2355,31 @@ msgstr "Enviando datos/TLS"
 msgid "Receiving data/TLS"
 msgstr "Recibiendo datos/TLS"
 
-#: src/lftp.cc:309
+#: src/lftp.cc:315
 #, c-format
 msgid "[%lu] Terminated by signal %d. %s"
 msgstr "[%lu] Terminado por señal %d. %s"
 
-#: src/lftp.cc:376
+#: src/lftp.cc:382
 #, c-format
 msgid "[%lu] Started.  %s"
 msgstr "[%lu] Comenzado.  %s"
 
-#: src/lftp.cc:385
+#: src/lftp.cc:391
 #, c-format
 msgid "[%lu] Finished. %s"
 msgstr "[%lu] Finalizado. %s"
 
-#: src/lftp.cc:389
+#: src/lftp.cc:395
 #, c-format
 msgid "[%lu] Moving to background to complete transfers...\n"
 msgstr "[%lu] Pasando a segundo plano para completar las transferencias...\n"
 
-#: src/lftp.cc:442
+#: src/lftp.cc:448
 msgid "history -w file|-r file|-c|-l [cnt]"
 msgstr ""
 
-#: src/lftp.cc:443
+#: src/lftp.cc:449
 msgid ""
 " -w <file> Write history to file.\n"
 " -r <file> Read history from file; appends to current history.\n"
