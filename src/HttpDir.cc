@@ -590,6 +590,48 @@ static bool try_csm_proxy(file_info &info,const char *str)
    return status;
 }
 
+// 2004-Oct-19 02:10:26	0.2K	application/octet-stream
+static bool try_lighttpd_listing(file_info &info,char *str_with_tags)
+{
+   info.clear();
+
+   if(str_with_tags[0]=='/') {
+      info.is_directory=true;
+      str_with_tags++;
+   }
+
+   const char *next=strstr(str_with_tags,"\"m\">");
+   if(!next)
+      return false;
+   next+=4;
+   const char *end=strchr(next,'<');
+   if(!end)
+      return false;
+   xstring datetime(next,end-next);
+
+   next=strstr(end,"\"s\">");
+   if(!next)
+      return false;
+   next+=4;
+   end=strchr(next,'<');
+   if(!end)
+      return false;
+   xstring size(next,end-next);
+
+   int n=sscanf(datetime,"%4d-%3s-%2d %2d:%2d:%2d",
+	       &info.year,info.month_name,&info.day,
+	       &info.hour,&info.minute,&info.second);
+   if(n!=6)
+      return false;
+
+   if(is_ascii_digit(size[0]))
+      strlcpy(info.size_str,size,sizeof(info.size_str));
+
+   debug("lighttpd listing matched");
+
+   return true;
+}
+
 // this procedure is highly inefficient in some cases,
 // esp. when it has to return for more data many times.
 static int parse_html(const char *buf,int buf_len,bool eof,const Ref<Buffer>& list,
@@ -960,6 +1002,8 @@ parse_url_again:
 	 skip_len=eol-buf+eol_len;
 	 goto got_info;
       }
+      if(try_lighttpd_listing(info,str_with_tags) && info.validate())
+	 goto got_info;
       if(try_mini_proxy(info,str)		&& info.validate()) goto got_info;
       if(try_apache_unixlike(info,str,more,more1,info_string)
       && info.validate())
