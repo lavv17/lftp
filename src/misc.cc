@@ -64,11 +64,7 @@ const char *dir_file(const char *dir,const char *file)
    if(file[0]=='/')
       return file;
 
-   static xstring buf;
-
-   if(buf && dir==buf) // it is possible to dir_file(dir_file(dir,dir),file)
-      dir=alloca_strdup(dir);
-
+   xstring& buf=xstring::get_tmp();
    size_t len=strlen(dir);
    if(len==0)
       return buf.set(file);
