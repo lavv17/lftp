@@ -1,3 +1,9 @@
+2009-12-18  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* xstring.cc: use xrealloc.
+	* misc.cc: (dir_file) use xstring::get_tmp (fixes sftp rename).
+	* HttpDir.cc: add parser for lightttpd listing.
+
 2009-11-17  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.cc, lftp_rl.c, lftp_rl.h: new setting cmd:stifle-rl-history.
