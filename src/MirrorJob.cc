@@ -1401,7 +1401,7 @@ CMD(mirror)
       flags|=MirrorJob::RETR_SYMLINKS;
 
    args->rewind();
-   while((opt=args->getopt_long("esi:x:I:X:nrpcRvN:LPa",mirror_opts,0))!=EOF)
+   while((opt=args->getopt_long("esi:x:I:X:nrpcRvN:LP:a",mirror_opts,0))!=EOF)
    {
       switch(opt)
       {

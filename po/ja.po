@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-12-21 10:52+0300\n"
+"POT-Creation-Date: 2009-12-21 19:32+0300\n"
 "PO-Revision-Date: 2002-04-12 00:06+0900\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -429,7 +429,7 @@ msgstr "データ送信中"
 msgid "Done"
 msgstr ""
 
-#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1361 src/SFtp.cc:2137
+#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1363 src/SFtp.cc:2137
 #: src/SFtp.cc:2216
 #, c-format
 msgid "Getting file list (%lld) [%s]"

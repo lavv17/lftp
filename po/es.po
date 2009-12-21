@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.6.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-12-21 10:52+0300\n"
+"POT-Creation-Date: 2009-12-21 19:32+0300\n"
 "PO-Revision-Date: 2002-08-08 19:01+0000\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -432,7 +432,7 @@ msgstr "Enviando datos"
 msgid "Done"
 msgstr "\tHecho\n"
 
-#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1361 src/SFtp.cc:2137
+#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1363 src/SFtp.cc:2137
 #: src/SFtp.cc:2216
 #, c-format
 msgid "Getting file list (%lld) [%s]"

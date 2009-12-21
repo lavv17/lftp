@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-12-21 10:52+0300\n"
+"POT-Creation-Date: 2009-12-21 19:32+0300\n"
 "PO-Revision-Date: 2008-03-29 14:27+0100\n"
 "Last-Translator: \n"
 "Language-Team: German <kde-i18n-de@lists.kde.org>\n"
@@ -430,7 +430,7 @@ msgstr "Sende Daten"
 msgid "Done"
 msgstr "Fertig"
 
-#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1361 src/SFtp.cc:2137
+#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1363 src/SFtp.cc:2137
 #: src/SFtp.cc:2216
 #, c-format
 msgid "Getting file list (%lld) [%s]"

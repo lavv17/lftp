@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-12-21 10:52+0300\n"
+"POT-Creation-Date: 2009-12-21 19:32+0300\n"
 "PO-Revision-Date: 2008-04-12 12:40+0200\n"
 "Last-Translator: Alain PORTAL <aportal@univ-montp2.fr>\n"
 "Language-Team: Français <traduc@traduc.org>\n"
@@ -427,7 +427,7 @@ msgstr "Émission des données"
 msgid "Done"
 msgstr "Terminé"
 
-#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1361 src/SFtp.cc:2137
+#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1363 src/SFtp.cc:2137
 #: src/SFtp.cc:2216
 #, c-format
 msgid "Getting file list (%lld) [%s]"

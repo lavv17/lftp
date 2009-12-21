@@ -175,3 +175,4 @@ mode_t.m4
 open.m4
 readlink.m4
 ftruncate.m4
+sockets.m4
