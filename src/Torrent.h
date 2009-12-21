@@ -204,6 +204,7 @@ public:
    const Error *GetInvalidCause() const { return invalid_cause; }
 
    void Shutdown();
+   bool ShuttingDown() { return shutting_down; }
    void PrepareToDie();
 
    static const Ref<TorrentListener>& GetListener() { return listener; }

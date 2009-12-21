@@ -2307,7 +2307,7 @@ void TorrentJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
 
 int TorrentJob::AcceptSig(int sig)
 {
-   if(!torrent)
+   if(!torrent || torrent->ShuttingDown())
       return WANTDIE;
    torrent->Shutdown();
    return MOVED;
