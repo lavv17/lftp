@@ -624,8 +624,10 @@ static bool try_lighttpd_listing(file_info &info,char *str_with_tags)
    if(n!=6)
       return false;
 
-   if(is_ascii_digit(size[0]))
-      strlcpy(info.size_str,size,sizeof(info.size_str));
+   if(is_ascii_digit(size[0])) {
+      strncpy(info.size_str,size,sizeof(info.size_str));
+      info.size_str[sizeof(info.size_str)-1]=0;
+   }
 
    debug("lighttpd listing matched");
 

@@ -1576,7 +1576,7 @@ void TorrentPeer::HandlePacket(Packet *p)
       }
    case MSG_PIECE: {
 	 PacketPiece *pp=static_cast<PacketPiece*>(p);
-	 LogRecv(5,xstring::format("piece:%u begin:%u size:%u",pp->index,pp->begin,pp->data.length()));
+	 LogRecv(5,xstring::format("piece:%u begin:%u size:%u",pp->index,pp->begin,(unsigned)pp->data.length()));
 	 if(pp->index>=parent->total_pieces) {
 	    SetError("invalid piece index");
 	    break;

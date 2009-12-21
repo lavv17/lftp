@@ -323,9 +323,13 @@ pgetJob::pgetJob(FileCopy *c1,const char *n,int m)
 	 LoadStatus0();
    }
 }
-pgetJob::~pgetJob()
+void pgetJob::PrepareToDie()
 {
    free_chunks();
+   super::PrepareToDie();
+}
+pgetJob::~pgetJob()
+{
 }
 
 pgetJob::ChunkXfer *pgetJob::NewChunk(const char *remote,off_t start,off_t limit)

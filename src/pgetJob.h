@@ -74,6 +74,7 @@ public:
 
    pgetJob(FileCopy *c1,const char *n,int m=0);
    ~pgetJob();
+   void PrepareToDie();
 
    void SetMaxConn(int n) { max_chunks=n; }
 

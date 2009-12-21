@@ -1,3 +1,10 @@
+2009-12-21  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* pgetJob.cc, pgetJob.h: add PrepareToDie method (fixes a core dump
+	  on "kill all").
+	* HttpDir.cc: don't use strlcpy.
+	* Torrent.cc: fix a warning on x86_64.
+
 2009-12-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* xstring.cc: use xrealloc.
