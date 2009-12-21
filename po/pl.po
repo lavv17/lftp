@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.7.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-11-19 15:37+0300\n"
+"POT-Creation-Date: 2009-12-21 10:52+0300\n"
 "PO-Revision-Date: 2008-05-06 21:20+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -32,7 +32,7 @@ msgstr "niejednoznaczny argument %s opcji %s"
 msgid "Valid arguments are:"
 msgstr "Prawid³owe argumenty to:"
 
-#: lib/error.c:127
+#: lib/error.c:153
 msgid "Unknown system error"
 msgstr "Nieznany b³±d systemowy"
 
@@ -429,7 +429,7 @@ msgstr "Wysy³am dane"
 msgid "Done"
 msgstr "Gotowe"
 
-#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1317 src/SFtp.cc:2137
+#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1361 src/SFtp.cc:2137
 #: src/SFtp.cc:2216
 #, c-format
 msgid "Getting file list (%lld) [%s]"

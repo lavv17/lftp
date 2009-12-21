@@ -7,14 +7,12 @@
 # put → nahrát (jako opak get, download, stáhnout)
 # slot → slot (protože se tak jmenuje příkaz „slot“)
 #
-# TODO: Command help does not align wide characted into two-column properly
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 3.99.8\n"
+"Project-Id-Version: lftp 4.0.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-11-19 15:37+0300\n"
-"PO-Revision-Date: 2009-08-05 21:51+0200\n"
+"POT-Creation-Date: 2009-12-21 10:52+0300\n"
+"PO-Revision-Date: 2009-11-30 11:40+0100\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -36,7 +34,7 @@ msgstr "nejednoznačný argument %s u %s"
 msgid "Valid arguments are:"
 msgstr "Platné argumenty jsou:"
 
-#: lib/error.c:127
+#: lib/error.c:153
 msgid "Unknown system error"
 msgstr "Neznámá chyba systému"
 
@@ -434,7 +432,7 @@ msgstr "Odesílají se data"
 msgid "Done"
 msgstr "Hotovo"
 
-#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1317 src/SFtp.cc:2137
+#: src/Fish.cc:1147 src/FtpDirList.cc:127 src/HttpDir.cc:1361 src/SFtp.cc:2137
 #: src/SFtp.cc:2216
 #, c-format
 msgid "Getting file list (%lld) [%s]"
@@ -818,7 +816,7 @@ msgstr "%d $adresa nalezena|adresy nalezeny|adres nalezeno$"
 
 #: src/Resolver.cc:733
 msgid "DNS resoloution not trusted."
-msgstr ""
+msgstr "Překlad DNS není důvěryhodný."
 
 #: src/Resolver.cc:834
 msgid "Host name lookup failure"
@@ -1884,7 +1882,7 @@ msgstr "Použití: %s: místní_adresář\n"
 #: src/commands.cc:567
 #, c-format
 msgid "lcd ok, local cwd=%s\n"
-msgstr "lcd v pořádku, místní cwd=%s\n"
+msgstr "lcd uspělo, místní cwd=%s\n"
 
 #: src/commands.cc:583
 #, c-format
@@ -2478,14 +2476,14 @@ msgstr ""
 "Další přípustná hodnota je „all“, která vypíše všechny záznamy.\n"
 
 #: src/mgetJob.cc:125 src/mgetJob.cc:208
-#, fuzzy, c-format
+#, c-format
 msgid "%s: %s: no files found\n"
-msgstr "%s: žádné soubory nenalezeny\n"
+msgstr "%s: %s: žádné soubory nenalezeny\n"
 
 #: src/mkdirJob.cc:122
 #, c-format
 msgid "%s ok, `%s' created\n"
-msgstr "%s v pořádku, „%s“ vytvořen\n"
+msgstr "%s uspělo, „%s“ vytvořen\n"
 
 #: src/mkdirJob.cc:124 src/rmJob.cc:54
 #, c-format
@@ -2496,7 +2494,7 @@ msgstr "%s selhalo u %d z %d $adresáře|adresářů|adresářů$\n"
 #, c-format
 msgid "%s ok, %d director$y|ies$ created\n"
 msgstr ""
-"%s v pořádku, %d $adresář vytvořen|adresáře vytvořeny|adresářů vytvořeno$\n"
+"%s uspělo, %d $adresář vytvořen|adresáře vytvořeny|adresářů vytvořeno$\n"
 
 #: src/module.cc:184
 #, c-format
@@ -2577,7 +2575,7 @@ msgstr "musí být jedno z: C, S, E, P nebo prázdná hodnota"
 #: src/rmJob.cc:50
 #, c-format
 msgid "%s ok, `%s' removed\n"
-msgstr "%s v pořádku, „%s“ odstraněn\n"
+msgstr "%s uspělo, „%s“ odstraněn\n"
 
 #: src/rmJob.cc:57
 #, c-format
@@ -2588,14 +2586,13 @@ msgstr "%s selhalo u %'d z %'d $souboru|souborů|souborů$\n"
 #, c-format
 msgid "%s ok, %d director$y|ies$ removed\n"
 msgstr ""
-"%s v pořádku, %d $adresář odstraněn|adresáře odstraněny|adresářů odstraněno"
-"$\n"
+"%s uspělo, %d $adresář odstraněn|adresáře odstraněny|adresářů odstraněno$\n"
 
 #: src/rmJob.cc:66
 #, c-format
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr ""
-"%s v pořádku, %d $soubor odstraněn|soubory odstraněny|souborů odstraněno$\n"
+"%s uspělo, %d $soubor odstraněn|soubory odstraněny|souborů odstraněno$\n"
 
 #~ msgid "put [opts] <lfile> [-o <rfile>]"
 #~ msgstr "put [volby] <místní_soubor> [-o <vzdálený_soubor>]"

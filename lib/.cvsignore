@@ -221,3 +221,8 @@ open.c
 readlink.c
 ftruncate.c
 mktime-internal.h
+close-hook.c
+close-hook.h
+sockets.c
+sockets.h
+w32sock.h
