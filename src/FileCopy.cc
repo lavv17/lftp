@@ -1379,9 +1379,13 @@ int FileCopyPeerFDStream::Do()
       {
 	 if(suggested_filename && stream && stream->full_name && auto_rename)
 	 {
-	    debug((5,"copy: renaming `%s' to `%s'\n",stream->full_name.get(),suggested_filename.get()));
-	    if(rename(stream->full_name,dir_file(dirname(stream->full_name),suggested_filename))==-1)
-	       debug((3,"rename(%s, %s): %s\n",stream->full_name.get(),suggested_filename.get(),strerror(errno)));
+	    const char *new_name=dir_file(dirname(stream->full_name),suggested_filename);
+	    struct stat st;
+	    if(lstat(new_name,&st)==-1 && errno==ENOENT) {
+	       debug((5,"copy: renaming `%s' to `%s'\n",stream->full_name.get(),suggested_filename.get()));
+	       if(rename(stream->full_name,new_name)==-1)
+		  debug((3,"rename(%s, %s): %s\n",stream->full_name.get(),new_name,strerror(errno)));
+	    }
 	 }
 	 done=true;
 	 m=MOVED;
@@ -1727,8 +1731,14 @@ void FileCopyPeerFDStream::Kill(int sig)
 
 FileCopyPeerFDStream *FileCopyPeerFDStream::NewPut(const char *file,bool cont)
 {
-   return new FileCopyPeerFDStream(new FileStream(file,O_WRONLY|O_CREAT
-				    |(cont?0:O_TRUNC)),FileCopyPeer::PUT);
+   int flags=O_WRONLY|O_CREAT;
+   if(!cont) {
+      flags|=O_TRUNC;
+      if(!ResMgr::QueryBool("xfer:clobber",0))
+	 flags|=O_EXCL;
+   }
+   return new FileCopyPeerFDStream(new FileStream(file,flags),
+				    FileCopyPeer::PUT);
 }
 FileCopyPeerFDStream *FileCopyPeerFDStream::NewGet(const char *file)
 {

@@ -64,7 +64,8 @@ FileCopyPeer *GetJob::SrcLocal(const char *src)
 }
 FileCopyPeer *GetJob::DstLocal(const char *dst)
 {
-   int flags=O_WRONLY|O_CREAT|(truncate_target_first?O_TRUNC:0);
+   bool clobber=res_clobber.QueryBool(0);
+   int flags=O_WRONLY|O_CREAT|(truncate_target_first?O_TRUNC:0)|(clobber?0:O_EXCL);
    dst=expand_home_relative(dst);
    const char *f=(cwd && dst[0]!='/') ? dir_file(cwd,dst) : dst;
    if(truncate_target_first && res_make_backup.QueryBool(0))
@@ -75,7 +76,7 @@ FileCopyPeer *GetJob::DstLocal(const char *dst)
       {
 	 if(st.st_size>0 && S_ISREG(st.st_mode))
 	 {
-	    if(!res_clobber.QueryBool(0))
+	    if(!clobber)
 	    {
 	       eprintf(_("%s: %s: file already exists and xfer:clobber is unset\n"),op,dst);
 	       errors++;

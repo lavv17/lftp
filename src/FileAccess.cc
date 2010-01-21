@@ -590,7 +590,7 @@ void FileAccess::SetSuggestedFileName(const char *fn)
       return;
 
    // don't allow subdirectories.
-   if(strchr(fn,'/') || strchr(fn,'\\'))
+   if(strchr(fn,'/') || strchr(fn,'\\') || strchr(fn,':'))
       return;
    for(int i=0; fn[i]; i++)
    {
@@ -598,7 +598,7 @@ void FileAccess::SetSuggestedFileName(const char *fn)
       if(iscntrl((unsigned char)fn[i]))
 	 return;
    }
-   if(!*fn)
+   if(!*fn || *fn=='.')
       return;
    suggested_filename.set(fn);
 }

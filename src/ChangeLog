@@ -1,3 +1,9 @@
+2010-01-21  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileAccess.cc: more restrictions on suggested file name.
+	* FileCopy.cc: use suggested file name only if no such file exists.
+	* GetJob.cc, FileCopy.cc: use O_EXCL when xfer:clobber is no.
+
 2009-12-21  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* pgetJob.cc, pgetJob.h: add PrepareToDie method (fixes a core dump
