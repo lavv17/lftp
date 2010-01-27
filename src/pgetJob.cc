@@ -393,8 +393,18 @@ void pgetJob::LoadStatus0()
       return;
 
    FILE *f=fopen(status_file,"r");
-   if(!f)
+   if(!f) {
+      int saved_errno=errno;
+      // Probably the file is already complete
+      // or it was previously downloaded by plain get.
+      struct stat st;
+      if(stat(c->put->GetLocal()->full_name,&st)==-1)
+	 return;
+      Log::global->Format(0,"pget: %s: cannot open (%s), resuming at the file end\n",
+	 status_file.get(),strerror(saved_errno));
+      c->SetRange(st.st_size,FILE_END);
       return;
+   }
 
    long long size;
    if(fscanf(f,"size=%lld\n",&size)<1)

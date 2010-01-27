@@ -1,3 +1,9 @@
+2010-01-27  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* pgetJob.cc: resume transfer at the end when there is not status file
+	  (fixes re-downloading of complete files and allows resuming of plain
+	  transfers with pget).
+
 2010-01-21  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileAccess.cc: more restrictions on suggested file name.
