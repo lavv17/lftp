@@ -134,17 +134,20 @@ do {				       \
    chain=this;			       \
 } while(0)
 
+#define ListScan(type,chain,next) \
+   for(type *scan=chain; scan; scan=scan->next)
+
+#define ListScanPtr(type,chain,next) \
+   for(type **scan=&chain; *scan; scan=&scan[0]->next)
+
 #define ListDel(type,chain,this,next)			 \
 do {							 \
-   for(type **scan=&chain; *scan; scan=&scan[0]->next)	 \
+   ListScanPtr(type,chain,next)				 \
       if(*scan==this)					 \
       {							 \
 	 *scan=scan[0]->next;				 \
 	 break;						 \
       }							 \
 } while(0)
-
-#define ListScan(type,chain,next) \
-   for(type *scan=chain; scan; scan=scan->next)
 
 #endif // MISC_H

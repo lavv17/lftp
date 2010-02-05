@@ -1,3 +1,8 @@
+2010-02-05  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h, network.cc, network.h: more const.
+	* misc.h: (ListScanPtr) new macro.
+
 2010-01-27  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* pgetJob.cc: resume transfer at the end when there is not status file
