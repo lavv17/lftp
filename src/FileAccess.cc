@@ -224,7 +224,7 @@ void FileAccess::Mkdir(const char *fn,bool allp)
    mkdir_p=allp;
 }
 
-StringSet *FileAccess::MkdirMakeSet()
+StringSet *FileAccess::MkdirMakeSet() const
 {
    StringSet *set=new StringSet;
    const char *sl=strchr(file,'/');
@@ -404,7 +404,7 @@ void FileAccess::set_home(const char *h)
    home.Set(h);
    ExpandTildeInCWD();
 }
-const char *FileAccess::ExpandTildeStatic(const char *s)
+const char *FileAccess::ExpandTildeStatic(const char *s) const
 {
    if(!home || !(s[0]=='~' && (s[1]=='/' || s[1]==0)))
       return s;
@@ -422,7 +422,7 @@ bool last_element_is_doubledot(const char *path,const char *end)
         || (end>path+2 && !strncmp(end-3,"/..",3)));
 }
 
-int FileAccess::device_prefix_len(const char *path)
+int FileAccess::device_prefix_len(const char *path) const
 {
    ResValue dp=Query("device-prefix",hostname);
    if(dp.is_nil() || !dp.to_bool())
@@ -768,7 +768,7 @@ void FileAccess::CleanupAll()
    }
 }
 
-FileAccess *FileAccess::NextSameSite(FA *scan)
+FileAccess *FileAccess::NextSameSite(FA *scan) const
 {
    if(scan==0)
       scan=chain;

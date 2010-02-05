@@ -145,7 +145,7 @@ protected:
    int	 saved_errno;
 
    void	 ExpandTildeInCWD();
-   const char *ExpandTildeStatic(const char *s);
+   const char *ExpandTildeStatic(const char *s) const;
 
    xstring real_cwd;
    void set_real_cwd(const char *c)
@@ -184,12 +184,12 @@ protected:
 
    FileAccess *next;
    static FileAccess *chain;
-   FileAccess *FirstSameSite() { return NextSameSite(0); }
-   FileAccess *NextSameSite(FileAccess *);
+   FileAccess *FirstSameSite() const { return NextSameSite(0); }
+   FileAccess *NextSameSite(FileAccess *) const;
 
-   StringSet *MkdirMakeSet(); // splits the path for mkdir -p
+   StringSet *MkdirMakeSet() const; // splits the path for mkdir -p
 
-   int device_prefix_len(const char *path);
+   int device_prefix_len(const char *path) const;
 
 public:
    virtual const char *GetProto() const = 0; // http, ftp, file etc

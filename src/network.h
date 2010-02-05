@@ -50,12 +50,14 @@ union sockaddr_u
    }
    const char *address() const;
    int port() const;
-   int bind_to(int s) { return bind(s,&sa,addr_len()); }
+   int bind_to(int s) const { return bind(s,&sa,addr_len()); }
    sockaddr_u();
-   bool is_reserved();
-   bool is_multicast();
-   bool is_loopback();
-   bool is_private();
+   bool is_reserved() const;
+   bool is_multicast() const;
+   bool is_loopback() const;
+   bool is_private() const;
+   const xstring& to_string() const;
+   operator const char *() const { return to_string(); }
 };
 
 class Networker

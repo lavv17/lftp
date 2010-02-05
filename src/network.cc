@@ -48,6 +48,7 @@
 #include "network.h"
 #include "ResMgr.h"
 #include "ProtoLog.h"
+#include "xstring.h"
 
 sockaddr_u::sockaddr_u()
 {
@@ -81,7 +82,12 @@ int sockaddr_u::port() const
    return 0;
 }
 
-bool sockaddr_u::is_reserved()
+const xstring& sockaddr_u::to_string() const
+{
+   return xstring::format("[%s]:%d",address(),port());
+}
+
+bool sockaddr_u::is_reserved() const
 {
    if(sa.sa_family==AF_INET)
    {
@@ -93,7 +99,7 @@ bool sockaddr_u::is_reserved()
    return false;
 }
 
-bool sockaddr_u::is_multicast()
+bool sockaddr_u::is_multicast() const
 {
    if(sa.sa_family==AF_INET)
    {
@@ -103,7 +109,7 @@ bool sockaddr_u::is_multicast()
    return false;
 }
 
-bool sockaddr_u::is_private()
+bool sockaddr_u::is_private() const
 {
    if(sa.sa_family==AF_INET)
    {
@@ -114,7 +120,7 @@ bool sockaddr_u::is_private()
    }
    return false;
 }
-bool sockaddr_u::is_loopback()
+bool sockaddr_u::is_loopback() const
 {
    if(sa.sa_family==AF_INET)
    {
