@@ -284,26 +284,38 @@ void Ftp::NoFileCheck(int act)
 }
 
 /* 5xx that aren't errors at all */
-bool Ftp::NonError5XX(int act)
+bool Ftp::NonError5XX(int act) const
 {
    return (mode==LIST && act==550 && (!file || !file[0]))
        // ...and proftpd workaround.
        || (mode==LIST && act==450 && strstr(line,"No files found"));
 }
 
+bool Ftp::ServerSaid(const char *s) const
+{
+   return strstr(line,s) && (!file || !strstr(file,s));
+}
+
 /* 5xx that are really transient like 4xx */
-bool Ftp::Transient5XX(int act)
+bool Ftp::Transient5XX(int act) const
 {
    if(!is5XX(act))
       return false;
 
+   if(act==530 && expect->FirstIs(Expect::PASS)) {
+      if(re_match(all_lines,Query("retry-530",hostname),REG_ICASE))
+	 return true;
+      if(!user && re_match(all_lines,Query("retry-530-anonymous",hostname),REG_ICASE))
+	 return true;
+   }
+
    // retry on these errors (ftp server ought to send 4xx code instead)
-   if((strstr(line,"Broken pipe") && (!file || !strstr(file,"Broken pipe")))
-   || (strstr(line,"Too many")    && (!file || !strstr(file,"Too many")))
-   || (strstr(line,"timed out")   && (!file || !strstr(file,"timed out")))
-   || (strstr(line,"closed by the remote host"))
+   if(ServerSaid("Broken pipe") || ServerSaid("Too many")
+   || ServerSaid("timed out") || ServerSaid("closed by the remote host"))
+      return true;
+
    // if there were some data received, assume it is temporary error.
-   || (mode!=STORE && GetFlag(IO_FLAG)))
+   if(mode!=STORE && GetFlag(IO_FLAG))
       return true;
 
    return false;
@@ -981,7 +993,7 @@ Ftp::~Ftp()
    Leave();
 }
 
-bool Ftp::AbsolutePath(const char *s)
+bool Ftp::AbsolutePath(const char *s) const
 {
    if(!s)
       return false;
@@ -2154,7 +2166,7 @@ int   Ftp::Do()
 	 if(QueryBool("ssl-data-use-keys",hostname) || !conn->control_ssl)
 	    ssl->load_keys();
 	 // share session id between control and data connections.
-	 if(conn->control_ssl)
+	 if(conn->control_ssl && QueryBool("ssl-copy-sid",hostname))
 	    ssl->copy_sid(conn->control_ssl);
 
 	 IOBuffer::dir_t dir=(mode==STORE?IOBuffer::PUT:IOBuffer::GET);
@@ -2569,7 +2581,7 @@ void Ftp::SendArrayInfoRequests()
    }
 }
 
-int Ftp::ReplyLogPriority(int code)
+int Ftp::ReplyLogPriority(int code) const
 {
    // Greeting messages
    if(code==220 || code==230)
@@ -3345,14 +3357,14 @@ Ftp::Expect *Ftp::ExpectQueue::Pop()
    count--;
    return res;
 }
-bool Ftp::ExpectQueue::Has(Expect::expect_t cc)
+bool Ftp::ExpectQueue::Has(Expect::expect_t cc) const
 {
-   for(Expect *scan=first; scan; scan=scan->next)
+   for(const Expect *scan=first; scan; scan=scan->next)
       if(cc==scan->check_case)
 	 return true;
    return false;
 }
-bool Ftp::ExpectQueue::FirstIs(Expect::expect_t cc)
+bool Ftp::ExpectQueue::FirstIs(Expect::expect_t cc) const
 {
    if(first && first->check_case==cc)
       return true;
@@ -3415,7 +3427,7 @@ void Ftp::ExpectQueue::Close()
       }
    }
 }
-Ftp::Expect *Ftp::ExpectQueue::FindLastCWD()
+Ftp::Expect *Ftp::ExpectQueue::FindLastCWD() const
 {
    for(Expect *scan=first; scan; scan=scan->next)
    {
@@ -4136,6 +4148,7 @@ void Ftp::CheckResp(int act)
    case Expect::CCC:
       if(is2XX(act))
       {
+	 conn->control_send->PutEOF();
 	 state=WAITING_CCC_SHUTDOWN;
 	 conn->waiting_ssl_timer.Reset();
       }

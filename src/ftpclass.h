@@ -244,18 +244,18 @@ class Ftp : public NetAccess
       void Push(Expect *e);
       void Push(Expect::expect_t e);
       Expect *Pop();
-      Expect *FindLastCWD();
-      int Count() { return count; }
-      bool IsEmpty() { return count==0; }
-      bool Has(Expect::expect_t);
-      bool FirstIs(Expect::expect_t);
+      Expect *FindLastCWD() const;
+      int Count() const { return count; }
+      bool IsEmpty() const { return count==0; }
+      bool Has(Expect::expect_t) const;
+      bool FirstIs(Expect::expect_t) const;
       void Close();
    };
 
    Ref<ExpectQueue> expect;
 
    void  CheckResp(int resp);
-   int	 ReplyLogPriority(int code);
+   int	 ReplyLogPriority(int code) const;
 
    void	 RestCheck(int);
    void  NoFileCheck(int);
@@ -285,8 +285,9 @@ class Ftp : public NetAccess
    pasv_state_t Handle_PASV();
    pasv_state_t Handle_EPSV();
 
-   bool NonError5XX(int act);
-   bool Transient5XX(int act);
+   bool ServerSaid(const char *) const;
+   bool NonError5XX(int act) const;
+   bool Transient5XX(int act) const;
 
    void	 InitFtp();
 
@@ -335,7 +336,7 @@ private:
    // May disconnect.
    bool	 HttpProxyReplyCheck(const SMTaskRef<IOBuffer>&);
 
-   bool	 AbsolutePath(const char *p);
+   bool	 AbsolutePath(const char *p) const;
 
    void MoveConnectionHere(Ftp *o);
    bool GetBetterConnection(int level,bool limit_reached);
@@ -451,7 +452,7 @@ public:
    void  DisconnectNow();
 
    void	 SetFlag(int flag,bool val);
-   int	 GetFlag(int flag) { return flags&flag; }
+   int	 GetFlag(int flag) const { return flags&flag; }
 
    static time_t ConvertFtpDate(const char *);
 
@@ -495,17 +496,17 @@ public:
 	 copy_addr_valid=true;
 	 return true;
       }
-   bool CopyFailed() { return copy_failed; }
-   bool RestartFailed() { return flags&NOREST_MODE; }
-   bool IsPassive() { return flags&PASSIVE_MODE; }
-   bool IsCopyPassive() { return copy_passive; }
+   bool CopyFailed() const { return copy_failed; }
+   bool RestartFailed() const { return flags&NOREST_MODE; }
+   bool IsPassive() const { return flags&PASSIVE_MODE; }
+   bool IsCopyPassive() const { return copy_passive; }
    void CopyAllowStore()
       {
 	 conn->SendCmd2("STOR",file);
 	 expect->Push(new Expect(Expect::TRANSFER));
 	 copy_allow_store=true;
       }
-   bool CopyStoreAllowed() { return copy_allow_store; }
+   bool CopyStoreAllowed() const { return copy_allow_store; }
    bool CopyIsReadyForStore()
       {
 	 if(!expect)
