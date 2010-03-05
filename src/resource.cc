@@ -211,6 +211,7 @@ static ResType lftp_vars[] = {
    {"ftp:ssl-use-ccc",		 "no",	  ResMgr::BoolValidate,0},
    {"ftp:ssl-shutdown-timeout",	 "5",	  ResMgr::TimeIntervalValidate,0},
    {"ftp:ssl-data-use-keys",	 "yes",	  ResMgr::BoolValidate,0},
+   {"ftp:ssl-copy-sid",		 "yes",	  ResMgr::BoolValidate,0},
    {"ftps:initial-prot",	 "",	  ProtValidate,0},
 #endif
    {"ftp:stat-interval",	 "1",	  ResMgr::TimeIntervalValidate,0},
@@ -240,7 +241,7 @@ static ResType lftp_vars[] = {
    {"ftp:waiting-150-timeout",	 "5",	  ResMgr::TimeIntervalValidate,0},
 #define RETRY_530 \
    "too many|overloaded|try (again |back )?later|is restricted to|"\
-   "maximum number|number of connect|only.*session.*allowed|more connection|already connected"
+   "maximum number|number of connect|only.*session.*allowed|more connection|already connected|simultaneous login"
    {"ftp:retry-530",		 RETRY_530,ResMgr::ERegExpValidate,0},
    {"ftp:retry-530-anonymous",	 "Login incorrect",ResMgr::ERegExpValidate,0},
    {"hftp:cache",		 "yes",   ResMgr::BoolValidate,0},
