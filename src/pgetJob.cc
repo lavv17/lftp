@@ -25,6 +25,7 @@
 #include <sys/stat.h>
 #include <stddef.h>
 #include <assert.h>
+#include <errno.h>
 #include "pgetJob.h"
 #include "url.h"
 #include "misc.h"

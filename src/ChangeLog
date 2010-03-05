@@ -1,3 +1,12 @@
+2010-03-05  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: (ssl-copy-sid) new setting; added
+	  recognition of "too many users" condition in Transient5XX method;
+	  more const on methods; shutdown ssl properly after CCC command.
+	* resource.cc: (ftp:ssl-copy-sid) new setting; update RETRY_530 list.
+	* Torrent.cc, Torrent.h: add black_list; refuse to start the same
+	  torrent twice.
+
 2010-02-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileAccess.cc, FileAccess.h, network.cc, network.h: more const.
