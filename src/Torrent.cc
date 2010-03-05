@@ -53,6 +53,7 @@ xstring Torrent::my_peer_id;
 xstring Torrent::my_key;
 Ref<TorrentListener> Torrent::listener;
 Ref<FDCache> Torrent::fd_cache;
+Ref<TorrentBlackList> Torrent::black_list;
 
 Torrent::Torrent(const char *mf,const char *c,const char *od)
    : metainfo_url(mf),
@@ -91,6 +92,7 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    if(listener==0) {
       listener=new TorrentListener();
       fd_cache=new FDCache();
+      black_list=new TorrentBlackList();
    }
    if(!my_peer_id) {
       my_peer_id.set("-lftp40-");
@@ -115,15 +117,9 @@ void Torrent::Shutdown()
       return;
    LogNote(3,"Shutting down...");
    shutting_down=true;
-   if(listener)
-      listener->RemoveTorrent(this);
    if(started || tracker_reply)
       SendTrackerRequest("stopped");
-   if(listener && listener->GetTorrentsCount()==0) {
-      listener=0;
-      fd_cache=0;
-   }
-   peers.unset();
+   PrepareToDie();
 }
 
 void Torrent::PrepareToDie()
@@ -134,6 +130,7 @@ void Torrent::PrepareToDie()
    if(listener && listener->GetTorrentsCount()==0) {
       listener=0;
       fd_cache=0;
+      black_list=0;
    }
 }
 
@@ -418,6 +415,11 @@ int Torrent::Do()
 	 return MOVED;
       }
 
+      if(listener->Lookup(info_hash)) {
+	 SetError("This torrent is already running");
+	 return MOVED;
+      }
+
       my_bitfield=new BitField(total_pieces);
       for(unsigned p=0; p<total_pieces; p++)
 	 piece_info.append(new TorrentPiece(BlocksInPiece(p)));
@@ -590,6 +592,8 @@ int Torrent::Do()
 	    const TorrentPeer *peer=peers[i];
 	    if(peer->ActivityTimedOut()) {
 	       LogNote(4,"removing uninteresting peer %s (%s)",peer->GetName(),peers[i]->Status());
+	       if(!peer->IsPassive())
+		  black_list->Add(peer->GetAddress(),"2h");
 	       peers.remove(i--);
 	    }
 	 }
@@ -614,6 +618,10 @@ void Torrent::Accept(int s,const sockaddr_u *addr,IOBuffer *rb)
 
 void Torrent::AddPeer(TorrentPeer *peer)
 {
+   if(black_list->Listed(peer->GetAddress())) {
+      delete peer;
+      return;
+   }
    for(int i=0; i<peers.count(); i++) {
       if(peers[i]->AddressEq(peer)) {
 	 if(peer->Connected() && !peers[i]->Connected()) {
@@ -959,9 +967,11 @@ void Torrent::ScanPeers() {
 	 LogError(2,"peer %s failed: %s",peer->GetName(),peer->ErrorText());
       else if(peer->Disconnected())
 	 LogNote(4,"peer %s disconnected",peer->GetName());
-      else if(peer->myself)
+      else if(peer->myself) {
 	 LogNote(4,"removing myself-connected peer %s",peer->GetName());
-      else if(complete && peer->Complete())
+	 if(!peer->IsPassive())
+	    black_list->Add(peer->GetAddress(),"forever");
+      } else if(complete && peer->Complete())
 	 LogNote(4,"removing unneeded peer %s (%s)",peer->GetName(),peers[i]->Status());
       else
 	 continue;
@@ -2075,6 +2085,30 @@ bool BitField::has_all_set(int from,int to) const {
 }
 
 
+void TorrentBlackList::check_expire()
+{
+   for(Timer *e=bl.each_begin(); e; e=bl.each_next()) {
+      if(e->Stopped()) {
+	 Log::global->Format(4,"---- black-delisting peer %s\n",bl.each_key()->get());
+	 delete e;
+	 bl.remove(*bl.each_key());
+      }
+   }
+}
+void TorrentBlackList::Add(const sockaddr_u &a,const char *t)
+{
+   check_expire();
+   if(Listed(a))
+      return;
+   Log::global->Format(4,"---- black-listing peer %s (%s)\n",(const char*)a,t);
+   bl.add(a.to_string(),new Timer(TimeIntervalR(t)));
+}
+bool TorrentBlackList::Listed(const sockaddr_u &a)
+{
+   return bl.lookup(a.to_string())!=0;
+}
+
+
 TorrentListener::TorrentListener()
 {
    sock=-1;
@@ -2173,7 +2207,7 @@ int TorrentListener::Do()
 
 void TorrentListener::Dispatch(const xstring& info_hash,int sock,const sockaddr_u *remote_addr,IOBuffer *recv_buf)
 {
-   Torrent *t=torrents.lookup(info_hash);
+   Torrent *t=Lookup(info_hash);
    if(!t) {
       LogError(1,"peer sent unknown info_hash=%s in handshake",info_hash.dump());
       close(sock);

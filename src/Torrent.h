@@ -67,6 +67,7 @@ struct TorrentPiece
 
 class TorrentListener;
 class FDCache;
+class TorrentBlackList;
 
 class Torrent : public SMTask, protected ProtoLog, public ResClient
 {
@@ -86,6 +87,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    static xstring my_key;
    static Ref<TorrentListener> listener;
    static Ref<FDCache> fd_cache;
+   static Ref<TorrentBlackList> black_list;
 
    xstring_c metainfo_url;
    FileAccessRef metainfo_fa;
@@ -501,8 +503,19 @@ public:
    bool Active() const { return Connected() && (am_interested || peer_interested); }
    bool Complete() const { return peer_complete_pieces==parent->total_pieces; }
    bool AddressEq(const TorrentPeer *o) const;
+   bool IsPassive() const { return passive; }
+   const sockaddr_u& GetAddress() const { return addr; }
 
    const char *Status();
+};
+
+class TorrentBlackList
+{
+   xmap<Timer*> bl;
+   void check_expire();
+public:
+   bool Listed(const sockaddr_u &a);
+   void Add(const sockaddr_u &a,const char *t="1h");
 };
 
 class TorrentDispatcher : public SMTask, protected ProtoLog
@@ -534,6 +547,7 @@ public:
    int GetPort() const { return addr.port(); }
    int GetTorrentsCount() const { return torrents.count(); }
    void Dispatch(const xstring& info_hash,int s,const sockaddr_u *remote_addr,IOBuffer *recv_buf);
+   Torrent *Lookup(const xstring& info_hash) { return torrents.lookup(info_hash); }
 };
 
 #include "Job.h"
