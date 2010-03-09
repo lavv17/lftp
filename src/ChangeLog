@@ -1,3 +1,7 @@
+2010-03-09  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: prolong y2k workaround for next 300 years.
+
 2010-03-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h: (ssl-copy-sid) new setting; added
