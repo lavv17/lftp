@@ -3297,7 +3297,7 @@ CMD(get1)
       dst_peer=FileCopyPeerFDStream::NewPut(dst,cont||target_region_begin>0);
    else
       dst_peer=new FileCopyPeerFA(&dst_url,FA::STORE);
-   dst_peer->AutoRename(auto_rename);
+   dst_peer->AutoRename(auto_rename && ResMgr::QueryBool("xfer:auto-rename",0));
    if(!cont && (target_region_begin>0 || target_region_end!=FILE_END))
       dst_peer->SetRange(target_region_begin,target_region_end);
 
