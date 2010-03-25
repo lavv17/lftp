@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.0.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2010-03-05 17:38+0300\n"
+"POT-Creation-Date: 2010-03-25 11:17+0300\n"
 "PO-Revision-Date: 2009-11-30 11:40+0100\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -38,52 +38,52 @@ msgstr "Platné argumenty jsou:"
 msgid "Unknown system error"
 msgstr "Neznámá chyba systému"
 
-#: lib/getopt.c:529 lib/getopt.c:545
+#: lib/getopt.c:525 lib/getopt.c:541
 #, fuzzy, c-format
 msgid "%s: option '%s' is ambiguous\n"
 msgstr "%s: volba „%s“ není jednoznačná\n"
 
-#: lib/getopt.c:578 lib/getopt.c:582
+#: lib/getopt.c:574 lib/getopt.c:578
 #, fuzzy, c-format
 msgid "%s: option '--%s' doesn't allow an argument\n"
 msgstr "%s: volba „--%s“ nedovoluje žádný argument\n"
 
-#: lib/getopt.c:591 lib/getopt.c:596
+#: lib/getopt.c:587 lib/getopt.c:592
 #, fuzzy, c-format
 msgid "%s: option '%c%s' doesn't allow an argument\n"
 msgstr "%s: volba „%c%s“ nedovoluje žádný argument\n"
 
-#: lib/getopt.c:639 lib/getopt.c:658 lib/getopt.c:961 lib/getopt.c:980
+#: lib/getopt.c:635 lib/getopt.c:654 lib/getopt.c:957 lib/getopt.c:976
 #, fuzzy, c-format
 msgid "%s: option '%s' requires an argument\n"
 msgstr "%s: volba „%s“ vyžaduje argument\n"
 
-#: lib/getopt.c:696 lib/getopt.c:699
+#: lib/getopt.c:692 lib/getopt.c:695
 #, fuzzy, c-format
 msgid "%s: unrecognized option '--%s'\n"
 msgstr "%s: nerozpoznaná volba „--%s“\n"
 
-#: lib/getopt.c:707 lib/getopt.c:710
+#: lib/getopt.c:703 lib/getopt.c:706
 #, fuzzy, c-format
 msgid "%s: unrecognized option '%c%s'\n"
 msgstr "%s: nerozpoznaná volba „%c%s“\n"
 
-#: lib/getopt.c:759 lib/getopt.c:762
+#: lib/getopt.c:755 lib/getopt.c:758
 #, fuzzy, c-format
 msgid "%s: invalid option -- '%c'\n"
 msgstr "%s: neplatná volba – %c\n"
 
-#: lib/getopt.c:812 lib/getopt.c:829 lib/getopt.c:1032 lib/getopt.c:1050
+#: lib/getopt.c:808 lib/getopt.c:825 lib/getopt.c:1028 lib/getopt.c:1046
 #, fuzzy, c-format
 msgid "%s: option requires an argument -- '%c'\n"
 msgstr "%s: volba vyžaduje argument – %c\n"
 
-#: lib/getopt.c:882 lib/getopt.c:898
+#: lib/getopt.c:878 lib/getopt.c:894
 #, fuzzy, c-format
 msgid "%s: option '-W %s' is ambiguous\n"
 msgstr "%s: volba „-W %s“ není jednoznačná\n"
 
-#: lib/getopt.c:922 lib/getopt.c:940
+#: lib/getopt.c:918 lib/getopt.c:936
 #, fuzzy, c-format
 msgid "%s: option '-W %s' doesn't allow an argument\n"
 msgstr "%s: volba „-W %s“ nedovoluje argument\n"
