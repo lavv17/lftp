@@ -1,3 +1,12 @@
+Version 4.0.6 - 2010-03-25
+
+* use O_EXCL flag when xfer:clobber is off.
+* better validation of server-provided file name.
+* new setting xfer:auto-rename (off by default).
+* new setting ftp:ssl-copy-sid (for some broken servers).
+* fixed CCC ftp command to shutdown SSL connection properly.
+* fixed `pget -c' on complete files.
+
 Version 4.0.5 - 2009-12-21
 
 * added support for lighttpd listings.

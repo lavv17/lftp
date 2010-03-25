@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.0.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2009-12-21 19:32+0300\n"
+"POT-Creation-Date: 2010-03-05 17:38+0300\n"
 "PO-Revision-Date: 2009-11-30 11:40+0100\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -38,59 +38,54 @@ msgstr "Platné argumenty jsou:"
 msgid "Unknown system error"
 msgstr "Neznámá chyba systému"
 
-#: lib/getopt.c:527 lib/getopt.c:543
-#, c-format
-msgid "%s: option `%s' is ambiguous\n"
+#: lib/getopt.c:529 lib/getopt.c:545
+#, fuzzy, c-format
+msgid "%s: option '%s' is ambiguous\n"
 msgstr "%s: volba „%s“ není jednoznačná\n"
 
-#: lib/getopt.c:576 lib/getopt.c:580
-#, c-format
-msgid "%s: option `--%s' doesn't allow an argument\n"
+#: lib/getopt.c:578 lib/getopt.c:582
+#, fuzzy, c-format
+msgid "%s: option '--%s' doesn't allow an argument\n"
 msgstr "%s: volba „--%s“ nedovoluje žádný argument\n"
 
-#: lib/getopt.c:589 lib/getopt.c:594
-#, c-format
-msgid "%s: option `%c%s' doesn't allow an argument\n"
+#: lib/getopt.c:591 lib/getopt.c:596
+#, fuzzy, c-format
+msgid "%s: option '%c%s' doesn't allow an argument\n"
 msgstr "%s: volba „%c%s“ nedovoluje žádný argument\n"
 
-#: lib/getopt.c:637 lib/getopt.c:656 lib/getopt.c:972 lib/getopt.c:991
-#, c-format
-msgid "%s: option `%s' requires an argument\n"
+#: lib/getopt.c:639 lib/getopt.c:658 lib/getopt.c:961 lib/getopt.c:980
+#, fuzzy, c-format
+msgid "%s: option '%s' requires an argument\n"
 msgstr "%s: volba „%s“ vyžaduje argument\n"
 
-#: lib/getopt.c:694 lib/getopt.c:697
-#, c-format
-msgid "%s: unrecognized option `--%s'\n"
+#: lib/getopt.c:696 lib/getopt.c:699
+#, fuzzy, c-format
+msgid "%s: unrecognized option '--%s'\n"
 msgstr "%s: nerozpoznaná volba „--%s“\n"
 
-#: lib/getopt.c:705 lib/getopt.c:708
-#, c-format
-msgid "%s: unrecognized option `%c%s'\n"
+#: lib/getopt.c:707 lib/getopt.c:710
+#, fuzzy, c-format
+msgid "%s: unrecognized option '%c%s'\n"
 msgstr "%s: nerozpoznaná volba „%c%s“\n"
 
-#: lib/getopt.c:760 lib/getopt.c:763
-#, c-format
-msgid "%s: illegal option -- %c\n"
-msgstr "%s: nedovolená volba – %c\n"
-
-#: lib/getopt.c:769 lib/getopt.c:772
-#, c-format
-msgid "%s: invalid option -- %c\n"
+#: lib/getopt.c:759 lib/getopt.c:762
+#, fuzzy, c-format
+msgid "%s: invalid option -- '%c'\n"
 msgstr "%s: neplatná volba – %c\n"
 
-#: lib/getopt.c:824 lib/getopt.c:840 lib/getopt.c:1044 lib/getopt.c:1062
-#, c-format
-msgid "%s: option requires an argument -- %c\n"
+#: lib/getopt.c:812 lib/getopt.c:829 lib/getopt.c:1032 lib/getopt.c:1050
+#, fuzzy, c-format
+msgid "%s: option requires an argument -- '%c'\n"
 msgstr "%s: volba vyžaduje argument – %c\n"
 
-#: lib/getopt.c:893 lib/getopt.c:909
-#, c-format
-msgid "%s: option `-W %s' is ambiguous\n"
+#: lib/getopt.c:882 lib/getopt.c:898
+#, fuzzy, c-format
+msgid "%s: option '-W %s' is ambiguous\n"
 msgstr "%s: volba „-W %s“ není jednoznačná\n"
 
-#: lib/getopt.c:933 lib/getopt.c:951
-#, c-format
-msgid "%s: option `-W %s' doesn't allow an argument\n"
+#: lib/getopt.c:922 lib/getopt.c:940
+#, fuzzy, c-format
+msgid "%s: option '-W %s' doesn't allow an argument\n"
 msgstr "%s: volba „-W %s“ nedovoluje argument\n"
 
 #. TRANSLATORS:
@@ -260,8 +255,8 @@ msgstr "Přístup selhal: "
 msgid "File cannot be accessed"
 msgstr "K souboru nelze přistoupit"
 
-#: src/FileAccess.cc:165 src/Fish.cc:975 src/SFtp.cc:1290 src/ftpclass.cc:4169
-#: src/ftpclass.cc:4178
+#: src/FileAccess.cc:165 src/Fish.cc:975 src/SFtp.cc:1290 src/ftpclass.cc:4182
+#: src/ftpclass.cc:4191
 msgid "Not connected"
 msgstr "Nepřipojeno"
 
@@ -334,7 +329,7 @@ msgstr "kopírování: obdrženo přesměrování na „%s“\n"
 msgid "file name missed in URL"
 msgstr "v URL chybí název souboru"
 
-#: src/FileCopy.cc:1867
+#: src/FileCopy.cc:1877
 msgid "Verify command failed without a message"
 msgstr "Příkaz verify (ověření) selhal bez vysvětlení"
 
@@ -389,7 +384,7 @@ msgstr "execl(/bin/sh) selhalo: %s\n"
 msgid "total"
 msgstr "celkem"
 
-#: src/Fish.cc:76 src/Http.cc:904 src/SFtp.cc:80 src/ftpclass.cc:1114
+#: src/Fish.cc:76 src/Http.cc:904 src/SFtp.cc:80 src/ftpclass.cc:1126
 msgid "Closing idle connection"
 msgstr "Nepoužívané spojení uzavřeno"
 
@@ -398,33 +393,33 @@ msgid "Running connect program"
 msgstr "Běží připojovací program"
 
 #: src/Fish.cc:580 src/Http.cc:1115 src/SFtp.cc:715 src/SFtp.cc:1037
-#: src/ftpclass.cc:2605 src/ftpclass.cc:2815
+#: src/ftpclass.cc:2617 src/ftpclass.cc:2827
 msgid "Peer closed connection"
 msgstr "Druhá strana uzavřela spojení"
 
-#: src/Fish.cc:624 src/SFtp.cc:1062 src/ftpclass.cc:3815
+#: src/Fish.cc:624 src/SFtp.cc:1062 src/ftpclass.cc:3827
 msgid "extra server response"
 msgstr "nadbytečná odpověď serveru"
 
 #: src/Fish.cc:980 src/Http.cc:1822 src/Http.cc:1829 src/SFtp.cc:1296
-#: src/ftpclass.cc:4181
+#: src/ftpclass.cc:4194
 msgid "Connecting..."
 msgstr "Navazuje se spojení…"
 
-#: src/Fish.cc:982 src/SFtp.cc:1298 src/ftpclass.cc:4187
+#: src/Fish.cc:982 src/SFtp.cc:1298 src/ftpclass.cc:4200
 msgid "Connected"
 msgstr "Spojeno"
 
-#: src/Fish.cc:984 src/Http.cc:1831 src/SFtp.cc:1300 src/ftpclass.cc:4164
-#: src/ftpclass.cc:4192 src/ftpclass.cc:4206
+#: src/Fish.cc:984 src/Http.cc:1831 src/SFtp.cc:1300 src/ftpclass.cc:4177
+#: src/ftpclass.cc:4205 src/ftpclass.cc:4219
 msgid "Waiting for response..."
 msgstr "Čeká se na odpověď…"
 
-#: src/Fish.cc:986 src/Http.cc:1834 src/SFtp.cc:1302 src/ftpclass.cc:4226
+#: src/Fish.cc:986 src/Http.cc:1834 src/SFtp.cc:1302 src/ftpclass.cc:4239
 msgid "Receiving data"
 msgstr "Přijímají se data"
 
-#: src/Fish.cc:988 src/Http.cc:1827 src/SFtp.cc:1304 src/ftpclass.cc:4224
+#: src/Fish.cc:988 src/Http.cc:1827 src/SFtp.cc:1304 src/ftpclass.cc:4237
 msgid "Sending data"
 msgstr "Odesílají se data"
 
@@ -438,7 +433,7 @@ msgstr "Hotovo"
 msgid "Getting file list (%lld) [%s]"
 msgstr "Přijímá se seznam souborů (%'lld) [%s])"
 
-#: src/GetJob.cc:80
+#: src/GetJob.cc:81
 #, c-format
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr "%s: %s: soubor již existuje a xfer:clobber není nastaveno\n"
@@ -455,7 +450,7 @@ msgstr "Metoda POST selhala"
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr "FTP nad HTTP nemůže fungovat bez proxy, nastavte hftp:proxy."
 
-#: src/Http.cc:1036 src/ftpclass.cc:1237
+#: src/Http.cc:1036 src/ftpclass.cc:1249
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "socket z rodiny %d nelze vytvořit"
@@ -505,11 +500,11 @@ msgid "Received last chunk"
 msgstr "Přijat poslední kus dat (chunk)"
 
 #: src/Http.cc:1816 src/Resolver.cc:171 src/Resolver.cc:213
-#: src/ftpclass.cc:4174
+#: src/ftpclass.cc:4187
 msgid "Resolving host address..."
 msgstr "Překládá se adresa stroje…"
 
-#: src/Http.cc:1824 src/ftpclass.cc:4167
+#: src/Http.cc:1824 src/ftpclass.cc:4180
 msgid "Connection idle"
 msgstr "Spojení zahálí"
 
@@ -2277,161 +2272,161 @@ msgstr "Datové spojení protistrany má odlišnou adresu"
 msgid "Switching to NOREST mode"
 msgstr "Přepíná se do režimu NOREST"
 
-#: src/ftpclass.cc:424
+#: src/ftpclass.cc:436
 msgid "Server reply matched ftp:retry-530, retrying"
 msgstr "Odpověď serveru odpovídá ftp:retry-530, zkouší se znovu"
 
-#: src/ftpclass.cc:432
+#: src/ftpclass.cc:444
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
 msgstr "Odpověď serveru odpovídá ftp:retry-530-anonymous, zkouší se znovu"
 
-#: src/ftpclass.cc:457
+#: src/ftpclass.cc:469
 msgid "Account is required, set ftp:acct variable"
 msgstr "Účet je vyžadován, nastavte proměnnou ftp:acct"
 
-#: src/ftpclass.cc:474
+#: src/ftpclass.cc:486
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
 msgstr ""
 "Je nastaveno ftp:skey-force, ale server nepodporuje ani OPIE, ani S/KEY"
 
-#: src/ftpclass.cc:490
+#: src/ftpclass.cc:502
 msgid "Saw `unknown', assume failed login"
 msgstr ""
 "Zahlédnuto „unknown“ (neznámý), přihlášení bude považováno za nezdařilé"
 
-#: src/ftpclass.cc:501
+#: src/ftpclass.cc:513
 msgid "assuming failed host name lookup"
 msgstr "překlad názvu stroje shledán nezdařeným"
 
-#: src/ftpclass.cc:713
+#: src/ftpclass.cc:725
 msgid "cannot parse EPSV response"
 msgstr "odpověď EPSV nelze rozebrat"
 
-#: src/ftpclass.cc:966
+#: src/ftpclass.cc:978
 msgid "Closing control socket"
 msgstr "Řídicí socket bude uzavřen"
 
-#: src/ftpclass.cc:1163
+#: src/ftpclass.cc:1175
 msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 msgstr "SITE CHMOD je dle ftp:use-site-chmod zakázán"
 
-#: src/ftpclass.cc:1168
+#: src/ftpclass.cc:1180
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "MLSD je dle ftp:use-mlsd zakázán"
 
-#: src/ftpclass.cc:1509
+#: src/ftpclass.cc:1521
 msgid "SITE CHMOD is not supported by this site"
 msgstr "Tento server nepodporuje SITE CHMOD"
 
-#: src/ftpclass.cc:1514
+#: src/ftpclass.cc:1526
 msgid "MLST and MLSD are not supported by this site"
 msgstr "Tento server nepodporuje MLST a MLSD"
 
-#: src/ftpclass.cc:1964
+#: src/ftpclass.cc:1976
 msgid "unsupported network protocol"
 msgstr "nepodporovaný síťový protokol"
 
-#: src/ftpclass.cc:2039
+#: src/ftpclass.cc:2051
 #, c-format
 msgid "Accepted data connection from (%s) port %u"
 msgstr "Přijato datové spojení z (%s) portu %u"
 
-#: src/ftpclass.cc:2081
+#: src/ftpclass.cc:2093
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "Datový socket se připojuje na (%s) port %u"
 
-#: src/ftpclass.cc:2087
+#: src/ftpclass.cc:2099
 #, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "Datový socket se připojuje na proxy %s (%s) port %u"
 
-#: src/ftpclass.cc:2107 src/ftpclass.cc:3989
+#: src/ftpclass.cc:2119 src/ftpclass.cc:4001
 msgid "Switching passive mode off"
 msgstr "Pasivní režim bude vypnut"
 
-#: src/ftpclass.cc:2115
+#: src/ftpclass.cc:2127
 msgid "Data connection established"
 msgstr "Datové spojení navázáno"
 
-#: src/ftpclass.cc:2419 src/ftpclass.cc:4119
+#: src/ftpclass.cc:2431 src/ftpclass.cc:4131
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr "Je nastaveno ftp:ssl-force, ale server nepodporuje nebo nedovoluje SSL"
 
 # net:persist-retries
-#: src/ftpclass.cc:2761
+#: src/ftpclass.cc:2773
 msgid "Persist and retry"
 msgstr "Opakování po trvalé chybě"
 
-#: src/ftpclass.cc:3028
+#: src/ftpclass.cc:3040
 msgid "Closing data socket"
 msgstr "Datový socket bude uzavřen"
 
-#: src/ftpclass.cc:3050
+#: src/ftpclass.cc:3062
 msgid "Closing aborted data socket"
 msgstr "Přerušený datový socket bude uzavřen"
 
-#: src/ftpclass.cc:3799
+#: src/ftpclass.cc:3811
 msgid "saw file size in response"
 msgstr "v odpovědi zahlédnuta velikost souboru"
 
-#: src/ftpclass.cc:3829 src/ftpclass.cc:3856
+#: src/ftpclass.cc:3841 src/ftpclass.cc:3868
 msgid "Turning on sync-mode"
 msgstr "Zapíná se sync-mode (synchronní režim)"
 
-#: src/ftpclass.cc:4009
+#: src/ftpclass.cc:4021
 msgid "Switching passive mode on"
 msgstr "Zapíná se pasivní režim"
 
-#: src/ftpclass.cc:4155
+#: src/ftpclass.cc:4168
 msgid "FEAT negotiation..."
 msgstr "Vyjednávají se vlastnosti pomocí FEAT…"
 
-#: src/ftpclass.cc:4162
+#: src/ftpclass.cc:4175
 msgid "Sending commands..."
 msgstr "Odesílají se příkazy…"
 
-#: src/ftpclass.cc:4166
+#: src/ftpclass.cc:4179
 msgid "Delaying before retry"
 msgstr "Zpoždění před opakováním"
 
-#: src/ftpclass.cc:4185
+#: src/ftpclass.cc:4198
 msgid "TLS negotiation..."
 msgstr "Vyjednává se TLS…"
 
-#: src/ftpclass.cc:4189
+#: src/ftpclass.cc:4202
 msgid "Logging in..."
 msgstr "Probíhá přihlašování…"
 
-#: src/ftpclass.cc:4193
+#: src/ftpclass.cc:4206
 msgid "Making data connection..."
 msgstr "Vytváří se datové spojení…"
 
-#: src/ftpclass.cc:4196
+#: src/ftpclass.cc:4209
 msgid "Changing remote directory..."
 msgstr "Mění se vzdálený adresář…"
 
-#: src/ftpclass.cc:4202
+#: src/ftpclass.cc:4215
 msgid "Waiting for other copy peer..."
 msgstr "Čeká se na druhou kopírovací protistranu…"
 
-#: src/ftpclass.cc:4204 src/ftpclass.cc:4228
+#: src/ftpclass.cc:4217 src/ftpclass.cc:4241
 msgid "Waiting for transfer to complete"
 msgstr "Čeká se na dokončení přenosu"
 
-#: src/ftpclass.cc:4208
+#: src/ftpclass.cc:4221
 msgid "Waiting for TLS shutdown..."
 msgstr "Čeká se ukončení TLS…"
 
-#: src/ftpclass.cc:4210
+#: src/ftpclass.cc:4223
 msgid "Waiting for data connection..."
 msgstr "Čeká se na datové spojení…"
 
-#: src/ftpclass.cc:4216
+#: src/ftpclass.cc:4229
 msgid "Sending data/TLS"
 msgstr "Odesílají se data/TLS"
 
-#: src/ftpclass.cc:4218
+#: src/ftpclass.cc:4231
 msgid "Receiving data/TLS"
 msgstr "Přijímají se data/TLS"
 
@@ -2518,19 +2513,19 @@ msgstr "rozebírání: chybí příkaz filtru\n"
 msgid "parse: missing redirection filename\n"
 msgstr "rozebírání: u přesměrování chybí název souboru\n"
 
-#: src/pgetJob.cc:122
+#: src/pgetJob.cc:123
 msgid "pget: falling back to plain get"
 msgstr "pget: návrat k obyčejnému get"
 
-#: src/pgetJob.cc:126
+#: src/pgetJob.cc:127
 msgid "the target file is remote"
 msgstr "cílový soubor je vzdálený"
 
-#: src/pgetJob.cc:131
+#: src/pgetJob.cc:132
 msgid "the source file size is unknown"
 msgstr "velikost zdrojového souboru není známa"
 
-#: src/pgetJob.cc:210
+#: src/pgetJob.cc:211
 #, c-format
 msgid "`%s', got %lld of %lld (%d%%) %s%s"
 msgstr "„%s“, obdrženo %'lld z %'lld (%d %%) %s%s"
@@ -2593,6 +2588,9 @@ msgstr ""
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr ""
 "%s uspělo, %d $soubor odstraněn|soubory odstraněny|souborů odstraněno$\n"
+
+#~ msgid "%s: illegal option -- %c\n"
+#~ msgstr "%s: nedovolená volba – %c\n"
 
 #~ msgid "put [opts] <lfile> [-o <rfile>]"
 #~ msgstr "put [volby] <místní_soubor> [-o <vzdálený_soubor>]"

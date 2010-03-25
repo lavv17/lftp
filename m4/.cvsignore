@@ -176,3 +176,9 @@ open.m4
 readlink.m4
 ftruncate.m4
 sockets.m4
+fcntl-o.m4
+langinfo_h.m4
+nl_langinfo.m4
+warn-on-use.m4
+wchar_h.m4
+wctype_h.m4

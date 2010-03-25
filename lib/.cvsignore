@@ -226,3 +226,5 @@ close-hook.h
 sockets.c
 sockets.h
 w32sock.h
+langinfo.in.h
+nl_langinfo.c

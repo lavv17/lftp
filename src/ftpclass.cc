@@ -4254,7 +4254,7 @@ time_t	 Ftp::ConvertFtpDate(const char *s)
 
    // try to workaround server's y2k bug
    // I hope in the next 300 years the y2k bug will be finally fixed :)
-   if(n==1 && && year>=1910 && year<=1930)
+   if(n==1 && year>=1910 && year<=1930)
    {
       n=sscanf(s,"%5d%n",&year,&skip);
       year=year-19100+2000;
