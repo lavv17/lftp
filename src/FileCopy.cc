@@ -848,6 +848,11 @@ int FileCopyPeerFA::Do()
 	       {
 		  try_time=session->GetTryTime();
 		  retries=session->GetRetries();
+		  off_t pos=session->GetRealPos();
+		  if(upload_watermark<pos) {
+		     upload_watermark=pos;
+		     retries=-1;
+		  }
 		  Log::global->Format(10,"try_time=%ld, retries=%d\n",(long)try_time,retries);
 		  session->Close();
 		  if(can_seek && seek_pos>0)
@@ -982,9 +987,9 @@ void FileCopyPeerFA::OpenSession()
    session->SetLimit(range_limit);
    if(mode==PUT)
    {
-      if(try_time!=0)
+      if(try_time!=NO_DATE)
 	 session->SetTryTime(try_time);
-      if(retries!=0)
+      if(retries>=0)
 	 session->SetRetries(retries+1);
       if(e_size!=NO_SIZE && e_size!=NO_SIZE_YET)
 	 session->SetSize(e_size);
@@ -1105,8 +1110,8 @@ int FileCopyPeerFA::Get_LL(int len)
 	    size=NO_SIZE_YET;
 	    date=NO_DATE_YET;
 
-	    try_time=0;
-	    retries=0;
+	    try_time=NO_DATE;
+	    retries=-1;
 	    current->Timeout(0); // retry with new location.
 	    return 0;
 	 }
@@ -1145,6 +1150,11 @@ int FileCopyPeerFA::Put_LL(const char *buf,int len)
       {
 	 try_time=session->GetTryTime();
 	 retries=session->GetRetries();
+	 off_t pos=session->GetRealPos();
+	 if(upload_watermark<pos) {
+	    upload_watermark=pos;
+	    retries=-1;
+	 }
 	 Log::global->Format(10,"try_time=%ld, retries=%d\n",(long)try_time,retries);
 	 session->Close();
 	 if(can_seek && seek_pos>0)
@@ -1198,8 +1208,9 @@ off_t FileCopyPeerFA::GetRealPos()
 void FileCopyPeerFA::Init()
 {
    fxp=false;
-   try_time=0;
-   retries=0;
+   try_time=NO_DATE;
+   retries=-1;
+   upload_watermark=0;
    redirections=0;
    can_seek=true;
    can_seek0=true;

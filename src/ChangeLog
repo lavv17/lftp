@@ -1,3 +1,11 @@
+2010-04-19  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* GetJob.cc: make xfer:clobber=no by default.
+	* FileCopy.cc, FileCopy.h: fixed retries counting on upload;
+	  track upload watermark.
+	* ftpclass.cc: handle 426 reply on upload specially;
+	  retry FEAT after login on any 5xx reply but explicit unsup code.
+
 2010-03-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* resource.cc, commands.cc: add setting xfer:auto-rename to control

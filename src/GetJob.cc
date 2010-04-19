@@ -34,7 +34,7 @@
 #include "ArgV.h"
 #include "url.h"
 
-ResDecl res_clobber	("xfer:clobber",     "yes",ResMgr::BoolValidate,ResMgr::NoClosure);
+ResDecl res_clobber	("xfer:clobber",     "no", ResMgr::BoolValidate,ResMgr::NoClosure);
 ResDecl res_make_backup	("xfer:make-backup", "yes",ResMgr::BoolValidate,ResMgr::NoClosure);
 
 #define super CopyJobEnv

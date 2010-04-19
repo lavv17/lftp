@@ -400,6 +400,12 @@ void Ftp::TransferCheck(int act)
       if(conn->data_sock==-1 && strstr(line,"Broken pipe"))
    	 return;
    }
+   if(act==426 && mode==STORE)
+   {
+      DataClose();
+      state=EOF_STATE;
+      SetError(FATAL,all_lines);
+   }
    if(is2XX(act) && conn->data_sock==-1)
       eof=true;
 #if USE_SSL
@@ -4086,7 +4092,7 @@ void Ftp::CheckResp(int act)
 	 if(conn->try_feat_after_login && conn->have_feat_info)
 	    TuneConnectionAfterFEAT();
       }
-      else if(act==530 || act==503)
+      else if(is5XX(act) && !cmd_unsupported(act))
 	 conn->try_feat_after_login=true;
       break;
 

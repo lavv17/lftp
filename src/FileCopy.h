@@ -295,6 +295,7 @@ class FileCopyPeerFA : public FileCopyPeer
 
    time_t try_time;
    int retries;
+   off_t upload_watermark;
 
    int redirections;
 
