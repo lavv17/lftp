@@ -1,3 +1,11 @@
+2010-04-28  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* misc.cc, misc.h: (random_init, random01) new functions.
+	* ResMgr.cc: use them.
+	* TimeDate.cc, TimeDate.h: (TimeDiff::valueOf) new static method.
+	* Timer.cc, Timer.h: (AddRandom) new method for randomization.
+	* Torrent.cc: randomize peer connections in time.
+
 2010-04-19  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* GetJob.cc: make xfer:clobber=no by default.

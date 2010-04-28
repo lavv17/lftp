@@ -1154,6 +1154,7 @@ TorrentPeer::TorrentPeer(Torrent *p,const sockaddr_u *a)
    am_interested=false;
    peer_complete_pieces=0;
    retry_timer.Stop();
+   retry_timer.AddRandom(2);
    choke_timer.Stop();
    interest_timer.Stop();
    last_piece=NO_PIECE;

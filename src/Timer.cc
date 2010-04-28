@@ -22,6 +22,7 @@
 #include "SMTask.h"
 #include "Timer.h"
 #include "xstring.h"
+#include "misc.h"
 
 #define now SMTask::now
 
@@ -53,10 +54,22 @@ void Timer::set_last_setting(const TimeInterval &i)
    infty_count+=IsInfty();
    re_set();
 }
+void Timer::add_random()
+{
+   if(random_max>0.0001) {
+      stop+=TimeDiff::valueOf(random_max*random01());
+   }
+}
 void Timer::re_set()
 {
    stop=start;
    stop+=last_setting;
+   add_random();
+   re_sort();
+}
+void Timer::AddRandom(double r) {
+   random_max=r;
+   add_random();
    re_sort();
 }
 void Timer::Set(const TimeInterval &i)
@@ -106,6 +119,7 @@ void Timer::init()
    resource=0;
    closure=0;
    next_running=prev_running=0;
+   random_max=0;
    next_all=chain_all;
    chain_all=this;
 }

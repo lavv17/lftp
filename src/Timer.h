@@ -29,6 +29,7 @@ class Timer
    Time start;
    Time stop;
    TimeInterval last_setting;
+   double random_max;
    const char *resource;
    const char *closure;
 
@@ -41,6 +42,7 @@ class Timer
    void remove_from_running_list();
    void re_sort();
    void re_set();
+   void add_random();
    void set_last_setting(const TimeInterval &);
    void init();
    void reconfig(const char *);
@@ -57,6 +59,7 @@ public:
    void Set(time_t s,int ms=0) { Set(TimeInterval(s,ms)); }
    void SetMilliSeconds(int ms) { Set(TimeInterval(0,ms)); }
    void SetResource(const char *,const char *);
+   void AddRandom(double r);
    void Reset(const Time &t);
    void Reset() { Reset(SMTask::now); }
    void Reset(const Timer &t) { Reset(t.GetStartTime()); }

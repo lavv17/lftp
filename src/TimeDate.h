@@ -119,6 +119,8 @@ public:
 
    int MilliSeconds() const;
    time_t Seconds() const;
+
+   static const TimeDiff& valueOf(double v);
 };
 
 inline TimeDiff Time::operator-(const Time &o) const { return TimeDiff(*this,o); }

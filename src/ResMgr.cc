@@ -785,28 +785,16 @@ const char *Range::scale(long long *value,char suf)
    return 0;
 }
 
-#if !HAVE_DECL_RANDOM
-CDECL long random();
-CDECL void srandom(unsigned seed);
-#endif
-
 long long Range::Random()
 {
-   static bool init=false;
-   if(!init)
-   {
-      srandom(time(NULL)+getpid());
-      init=true;
-   }
+   random_init();
 
    if(no_start && no_end)
       return random();
    if(no_end)
       return start+random();
 
-   // interval [0;1)
-   double mult=random()/2147483648.0;
-   return start + (long long)((end-start+1)*mult);
+   return start + (long long)((end-start+1)*random01());
 }
 
 const char *ResMgr::RangeValidate(xstring_c *s)

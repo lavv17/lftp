@@ -904,3 +904,17 @@ bool in_foreground_pgrp()
       return true;
    return false;
 }
+
+void random_init()
+{
+   static bool init;
+   if(!init)
+   {
+      srandom(time(NULL)+getpid());
+      init=true;
+   }
+}
+double random01()
+{
+   return random()/2147483648.0;
+}

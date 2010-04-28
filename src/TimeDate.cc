@@ -212,3 +212,10 @@ const char *TimeInterval::toString(unsigned flags)
    }
    return buf;
 }
+
+const TimeDiff& TimeDiff::valueOf(double v)
+{
+   static TimeDiff diff;
+   diff.Set(v);
+   return diff;
+}
