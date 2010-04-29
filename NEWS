@@ -1,3 +1,10 @@
+Version 4.0.7 - 2010-04-29
+
+* make xfer:clobber off by default.
+* limit number of attempts to upload a file (net:max-retries).
+* handle 426 ftp reply to STOR specially.
+* retry FEAT after login even after non-standard 5xx reply.
+
 Version 4.0.6 - 2010-03-25
 
 * use O_EXCL flag when xfer:clobber is off.
