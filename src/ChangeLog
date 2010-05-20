@@ -1,3 +1,8 @@
+2010-04-40  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc, FileCopy.h, pgetJob.cc: (do_verify) new flag; unset it
+	  for pget chunks.
+
 2010-04-28  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* misc.cc, misc.h: (random_init, random01) new functions.

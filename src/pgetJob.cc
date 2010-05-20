@@ -345,6 +345,7 @@ pgetJob::ChunkXfer *pgetJob::NewChunk(const char *remote,off_t start,off_t limit
    c1->SetRange(start,limit);
    c1->SetSize(GetSize());
    c1->DontCopyDate();
+   c1->DontVerify();
    c1->FailIfCannotSeek();
 
    ChunkXfer *chunk=new ChunkXfer(c1,remote,start,limit);

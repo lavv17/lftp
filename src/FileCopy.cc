@@ -729,6 +729,7 @@ FileCopyPeer::FileCopyPeer(dir_t m) : IOBuffer(m)
    can_seek0=false;
    date_set=false;
    do_set_date=true;
+   do_verify=true;
    ascii=false;
    range_start=0;
    range_limit=FILE_END;
@@ -834,8 +835,10 @@ int FileCopyPeerFA::Do()
 	    fxp_eof:
 	       // FIXME: set date for real.
 	       date_set=true;
-	       if(!verify)
+	       if(!verify && do_verify)
 		  verify=new FileVerificator(session,file);
+	       else
+		  done=true;
 	       return MOVED;
 	    }
 	    else if(res==FA::IN_PROGRESS)
@@ -1427,8 +1430,10 @@ int FileCopyPeerFDStream::Do()
 	    }
 	    if(stream && my_stream && !stream->Done())
 	       return m;
-	    if(!verify)
+	    if(!verify && do_verify)
 	       verify=new FileVerificator(stream);
+	    else
+	       done=true;
 	    return MOVED;
 	 }
 	 if(seek_pos==0)

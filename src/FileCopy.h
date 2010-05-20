@@ -54,6 +54,7 @@ protected:
    bool can_seek0;
    bool date_set;
    bool do_set_date;
+   bool do_verify;
    bool removing;
    bool file_removed;
 
@@ -90,6 +91,7 @@ public:
    void SetEntitySize(off_t s) { e_size=s; }
 
    void DontCopyDate() { do_set_date=false; }
+   void DontVerify() { do_verify=false; }
    bool NeedDate() { return do_set_date; }
 
    void SetRange(const off_t s,const off_t lim);
@@ -225,6 +227,7 @@ public:
    void SetError(const char *str);
 
    void DontCopyDate() { put->DontCopyDate(); }
+   void DontVerify() { put->DontVerify(); }
    void Ascii() { get->Ascii(); put->Ascii(); }
    void DontFailIfBroken() { fail_if_broken=false; }
    void FailIfCannotSeek() { fail_if_cannot_seek=true; }
