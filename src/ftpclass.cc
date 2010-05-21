@@ -4116,12 +4116,12 @@ void Ftp::CheckResp(int act)
       break;
    case Expect::OPTS_UTF8:
    case Expect::LANG:
-      if(is2XX(act))
+      if(is2XX(act) && conn->utf8_supported)
       {
 	 conn->utf8_activated=true;
 	 conn->SetControlConnectionTranslation("UTF-8");
       }
-      else if(act==530)
+      else if(is5XX(act) && !cmd_unsupported(act))
 	 conn->tune_after_login=true;
       break;
 

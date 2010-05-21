@@ -1,4 +1,9 @@
-2010-04-40  Alexander V. Lukyanov <lav@yars.free.net>
+2010-05-20  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: workaround for servers with LANG but without UTF8
+	  (original patch by Henry Hu <henry.hu.sh@gmail.com>).
+
+2010-04-30  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc, FileCopy.h, pgetJob.cc: (do_verify) new flag; unset it
 	  for pget chunks.
