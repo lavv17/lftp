@@ -1,3 +1,7 @@
+2010-05-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* GetJob.cc: fixed get/mget -c with xfer:clobber=no.
+
 2010-05-20  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: workaround for servers with LANG but without UTF8

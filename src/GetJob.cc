@@ -64,7 +64,7 @@ FileCopyPeer *GetJob::SrcLocal(const char *src)
 }
 FileCopyPeer *GetJob::DstLocal(const char *dst)
 {
-   bool clobber=res_clobber.QueryBool(0);
+   bool clobber=(cont || res_clobber.QueryBool(0));
    int flags=O_WRONLY|O_CREAT|(truncate_target_first?O_TRUNC:0)|(clobber?0:O_EXCL);
    dst=expand_home_relative(dst);
    const char *f=(cwd && dst[0]!='/') ? dir_file(cwd,dst) : dst;
