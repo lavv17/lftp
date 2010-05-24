@@ -8,10 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2010-04-29 13:48+0400\n"
+"POT-Creation-Date: 2010-05-24 19:37+0400\n"
 "PO-Revision-Date: 2008-04-12 12:40+0200\n"
 "Last-Translator: Alain PORTAL <aportal@univ-montp2.fr>\n"
 "Language-Team: Français <traduc@traduc.org>\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -32,7 +33,7 @@ msgstr "Argument %s ambigu pour %s"
 msgid "Valid arguments are:"
 msgstr "Les arguments valides sont :"
 
-#: lib/error.c:153
+#: lib/error.c:181
 msgid "Unknown system error"
 msgstr "Erreur système inconnue"
 
@@ -168,7 +169,7 @@ msgstr "cd ok, cwd=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s : reçu une redirection vers « %s »\n"
 
-#: src/CmdExec.cc:386 src/FileCopy.cc:1058
+#: src/CmdExec.cc:386 src/FileCopy.cc:1061
 msgid "Too many redirections"
 msgstr "Trop de redirections"
 
@@ -320,20 +321,20 @@ msgstr "copy : toutes les données reçues, mais « get » est revenu en arrièr
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr "copy : « get » est revenu à %lld, « put » s'y ajuste\n"
 
-#: src/FileCopy.cc:1055
+#: src/FileCopy.cc:1058
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy : reçu une redirection vers « %s »\n"
 
-#: src/FileCopy.cc:1239
+#: src/FileCopy.cc:1242
 msgid "file name missed in URL"
 msgstr "nom de fichier manquant dans l'URL"
 
-#: src/FileCopy.cc:1888
+#: src/FileCopy.cc:1893
 msgid "Verify command failed without a message"
 msgstr "La commande verify a échoué sans message"
 
-#: src/FileCopy.h:277
+#: src/FileCopy.h:280
 msgid "Verifying..."
 msgstr "Vérification..."
 
@@ -1106,7 +1107,8 @@ msgstr ""
 "cls-completion-default à « -s ».\n"
 "\n"
 "Astuces : utilisez « --filesize » et « -D » pour de meilleurs affichages.\n"
-"Si vous ne voulez pas toujours voir les tailles des fichiers, « --filesize »\n"
+"Si vous ne voulez pas toujours voir les tailles des fichiers, « --filesize "
+"»\n"
 "dans cls-default affectera l'option « -s » de la ligne de commande.\n"
 "Toutes les options fonctionnent pour cls-completion-default.\n"
 "Ajoutez « -i » à cls-completion-default pour rendre la complétion\n"
@@ -1189,7 +1191,8 @@ msgstr ""
 "Si aucun tâche n'est active, le code est passé au système d'exploitation\n"
 "comme étant le code de sortie de lftp. Si le code est omis, le code de\n"
 "sortie de la dernière commande sera utilisé.\n"
-"« bg » force le basculement en arrière-plan si cmd:move-background est faux.\n"
+"« bg » force le basculement en arrière-plan si cmd:move-background est "
+"faux.\n"
 
 #: src/commands.cc:246
 msgid ""
@@ -1308,7 +1311,8 @@ msgid ""
 " -p <port>           use the port for connection\n"
 " <site>              host name, URL or bookmark name\n"
 msgstr ""
-"« lftp » est la première commande exécutée par lftp après les fichiers « rc »\n"
+"« lftp » est la première commande exécutée par lftp après les fichiers « rc "
+"»\n"
 " -f <fichier>        exécute les commandes depuis le fichier et termine\n"
 " -c <cmd>            exécute les commandes et termine\n"
 " --help              affiche cette aide et termine\n"

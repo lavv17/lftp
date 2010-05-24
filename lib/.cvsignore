@@ -228,3 +228,5 @@ sockets.h
 w32sock.h
 langinfo.in.h
 nl_langinfo.c
+unitypes.in.h
+uniwidth.in.h

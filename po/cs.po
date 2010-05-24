@@ -11,10 +11,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.0.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2010-04-29 13:48+0400\n"
+"POT-Creation-Date: 2010-05-24 19:37+0400\n"
 "PO-Revision-Date: 2009-11-30 11:40+0100\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
+"Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -34,7 +35,7 @@ msgstr "nejednoznačný argument %s u %s"
 msgid "Valid arguments are:"
 msgstr "Platné argumenty jsou:"
 
-#: lib/error.c:153
+#: lib/error.c:181
 msgid "Unknown system error"
 msgstr "Neznámá chyba systému"
 
@@ -169,7 +170,7 @@ msgstr "cd uspělo, cwd=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: přijato přesměrování na „%s“\n"
 
-#: src/CmdExec.cc:386 src/FileCopy.cc:1058
+#: src/CmdExec.cc:386 src/FileCopy.cc:1061
 msgid "Too many redirections"
 msgstr "Příliš mnoho přesměrování"
 
@@ -325,20 +326,20 @@ msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr ""
 "kopírování: stahování se vrátilo na %'lld, nahrávání se přesune tamtéž\n"
 
-#: src/FileCopy.cc:1055
+#: src/FileCopy.cc:1058
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "kopírování: obdrženo přesměrování na „%s“\n"
 
-#: src/FileCopy.cc:1239
+#: src/FileCopy.cc:1242
 msgid "file name missed in URL"
 msgstr "v URL chybí název souboru"
 
-#: src/FileCopy.cc:1888
+#: src/FileCopy.cc:1893
 msgid "Verify command failed without a message"
 msgstr "Příkaz verify (ověření) selhal bez vysvětlení"
 
-#: src/FileCopy.h:277
+#: src/FileCopy.h:280
 msgid "Verifying..."
 msgstr "Ověřuje se…"
 
@@ -573,8 +574,8 @@ msgstr ""
 #, c-format
 msgid "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr ""
-"%sOdstraněné: %d $adresář|adresáře|adresářů$, %d $soubor|soubory|souborů$, %"
-"d $symbolický odkaz|symbolické odkazy|symbolických odkazů$\n"
+"%sOdstraněné: %d $adresář|adresáře|adresářů$, %d $soubor|soubory|souborů$, "
+"%d $symbolický odkaz|symbolické odkazy|symbolických odkazů$\n"
 
 #: src/MirrorJob.cc:118
 #, c-format

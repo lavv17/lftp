@@ -5,10 +5,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2010-04-29 13:48+0400\n"
+"POT-Creation-Date: 2010-05-24 19:37+0400\n"
 "PO-Revision-Date: 1999-07-12 00:00+0400\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8-bit\n"
@@ -28,7 +29,7 @@ msgstr ""
 msgid "Valid arguments are:"
 msgstr ""
 
-#: lib/error.c:153
+#: lib/error.c:181
 msgid "Unknown system error"
 msgstr ""
 
@@ -163,7 +164,7 @@ msgstr ""
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
 
-#: src/CmdExec.cc:386 src/FileCopy.cc:1058
+#: src/CmdExec.cc:386 src/FileCopy.cc:1061
 msgid "Too many redirections"
 msgstr ""
 
@@ -319,20 +320,20 @@ msgstr ""
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr ""
 
-#: src/FileCopy.cc:1055
+#: src/FileCopy.cc:1058
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr ""
 
-#: src/FileCopy.cc:1239
+#: src/FileCopy.cc:1242
 msgid "file name missed in URL"
 msgstr ""
 
-#: src/FileCopy.cc:1888
+#: src/FileCopy.cc:1893
 msgid "Verify command failed without a message"
 msgstr ""
 
-#: src/FileCopy.h:277
+#: src/FileCopy.h:280
 msgid "Verifying..."
 msgstr ""
 

@@ -182,3 +182,5 @@ nl_langinfo.m4
 warn-on-use.m4
 wchar_h.m4
 wctype_h.m4
+asm-underscore.m4
+libunistring-base.m4
