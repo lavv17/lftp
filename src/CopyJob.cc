@@ -102,13 +102,7 @@ void CopyJob::PrintStatus(int v,const char *prefix)
 {
    if(c->Done() || c->Error())
       return;
-   /* If neither of our FileCopyPeers have a status, we're something
-    * dumb like buffer->fd and have no meaningful status to print.
-    * (If that's the case, we're probably a child job, so our parent
-    * will be printing something anyway.)  If an OutputJob actually
-    * attaches to a real output peer, we *do* want to print status.
-    */
-   if(!*c->GetStatus())
+   if(no_status)
       return;
 
    printf("%s",prefix);

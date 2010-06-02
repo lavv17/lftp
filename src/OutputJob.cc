@@ -106,6 +106,7 @@ void OutputJob::InitCopy()
 
       FileCopy *output_fc=FileCopy::New(new FileCopyPeerFDStream(pipe_output, FileCopyPeer::GET), dst_peer,false);
       output=new CopyJob(output_fc, fa_path, a0);
+      output->NoStatus(no_status);
       output_fd=new FDStream(filter_pipe[1],"<filter-in>");
 
       pipe_output->CloseFD();

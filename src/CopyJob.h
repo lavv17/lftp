@@ -47,7 +47,7 @@ public:
    CopyJob(FileCopy *c1,const char *n,const char *op1);
    ~CopyJob();
 
-   void NoStatus() { no_status=true; }
+   void NoStatus(bool t=true) { no_status=t; }
    void NoStatusOnWrite() { no_status_on_write=true; }
    void ClearStatusOnWrite() { clear_status_on_write=true; }
    bool HasStatus() const { return !no_status; }
