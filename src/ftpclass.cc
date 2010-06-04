@@ -2108,9 +2108,10 @@ int   Ftp::Do()
 	 }
 	 if(res==-1 && errno!=EINPROGRESS)
 	 {
+	    int e=errno;
 	    LogError(0,"connect: %s",strerror(errno));
 	    Disconnect();
-	    if(NotSerious(errno))
+	    if(NotSerious(e))
 	       return MOVED;
 	    goto system_error;
 	 }
