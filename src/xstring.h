@@ -47,6 +47,7 @@
 #endif
 
 #include <stdarg.h>
+#include <unistd.h>
 
 #define string_alloca(len)      ((char*)alloca((len)))
 
