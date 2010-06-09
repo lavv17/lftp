@@ -152,7 +152,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    const char *MakePath(BeNode *p) const;
    int OpenFile(const char *f,int m);
 
-   void StoreBlock(unsigned piece,unsigned begin,unsigned len,const char *buf);
+   void StoreBlock(unsigned piece,unsigned begin,unsigned len,const char *buf,TorrentPeer *src_peer);
    const xstring& RetrieveBlock(unsigned piece,unsigned begin,unsigned len);
 
    Speedometer recv_rate;
@@ -194,6 +194,8 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    int PeerBytesAllowed(const TorrentPeer *peer,RateLimit::dir_t dir);
    void PeerBytesUsed(int b,RateLimit::dir_t dir);
    void PeerBytesGot(int b) { PeerBytesUsed(b,RateLimit::GET); }
+
+   static void BlackListPeer(const TorrentPeer *peer,const char *timeout);
 
 public:
    Torrent(const char *mf,const char *cwd,const char *output_dir);
@@ -474,6 +476,9 @@ private:
    void Have(unsigned p);
    void SendDataReply();
    void CancelBlock(unsigned p,unsigned b);
+
+   void MarkPieceInvalid(unsigned p);
+   unsigned invalid_piece_count;
 
    int peer_bytes_pool[2];
    int BytesAllowed(RateLimit::dir_t dir);

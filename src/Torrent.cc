@@ -592,8 +592,7 @@ int Torrent::Do()
 	    const TorrentPeer *peer=peers[i];
 	    if(peer->ActivityTimedOut()) {
 	       LogNote(4,"removing uninteresting peer %s (%s)",peer->GetName(),peers[i]->Status());
-	       if(!peer->IsPassive())
-		  black_list->Add(peer->GetAddress(),"2h");
+	       BlackListPeer(peer,"2h");
 	       peers.remove(i--);
 	    }
 	 }
@@ -601,6 +600,12 @@ int Torrent::Do()
       }
    }
    return m;
+}
+
+void Torrent::BlackListPeer(const TorrentPeer *peer,const char *timeout)
+{
+   if(!peer->IsPassive())
+      black_list->Add(peer->GetAddress(),timeout);
 }
 
 void Torrent::Accept(int s,const sockaddr_u *addr,IOBuffer *rb)
@@ -872,7 +877,7 @@ void Torrent::SetPieceNotWanted(unsigned piece)
    }
 }
 
-void Torrent::StoreBlock(unsigned piece,unsigned begin,unsigned len,const char *buf)
+void Torrent::StoreBlock(unsigned piece,unsigned begin,unsigned len,const char *buf,TorrentPeer *src_peer)
 {
    for(int i=0; i<peers.count(); i++)
       peers[i]->CancelBlock(piece,begin);
@@ -913,6 +918,7 @@ void Torrent::StoreBlock(unsigned piece,unsigned begin,unsigned len,const char *
       ValidatePiece(piece);
       if(!my_bitfield->get_bit(piece)) {
 	 LogError(0,"new piece %u digest mismatch",piece);
+	 src_peer->MarkPieceInvalid(piece);
 	 return;
       }
       LogNote(3,"piece %u complete",piece);
@@ -969,8 +975,7 @@ void Torrent::ScanPeers() {
 	 LogNote(4,"peer %s disconnected",peer->GetName());
       else if(peer->myself) {
 	 LogNote(4,"removing myself-connected peer %s",peer->GetName());
-	 if(!peer->IsPassive())
-	    black_list->Add(peer->GetAddress(),"forever");
+	 BlackListPeer(peer,"forever");
       } else if(complete && peer->Complete())
 	 LogNote(4,"removing unneeded peer %s (%s)",peer->GetName(),peers[i]->Status());
       else
@@ -1162,6 +1167,7 @@ TorrentPeer::TorrentPeer(Torrent *p,const sockaddr_u *a)
       SetError("invalid peer address");
    peer_bytes_pool[0]=peer_bytes_pool[1]=0;
    peer_recv=peer_sent=0;
+   invalid_piece_count=0;
 }
 TorrentPeer::~TorrentPeer()
 {
@@ -1403,6 +1409,16 @@ void TorrentPeer::CancelBlock(unsigned p,unsigned b)
    Leave();
 }
 
+// mark that peer as having an invalid piece
+void TorrentPeer::MarkPieceInvalid(unsigned p)
+{
+   invalid_piece_count++;
+   SetPieceHaving(p,false);
+   SetAmInterested(am_interested);
+   if(invalid_piece_count>5)
+      parent->BlackListPeer(this,"1d");
+}
+
 void TorrentPeer::ClearSentQueue(int i)
 {
    while(i-->=0) {
@@ -1476,6 +1492,8 @@ void TorrentPeer::SetLastPiece(unsigned p)
 
 void TorrentPeer::SetAmInterested(bool interest)
 {
+   if(invalid_piece_count>5)
+      interest=false;
    if(am_interested==interest)
       return;
    Enter();
@@ -1609,7 +1627,7 @@ void TorrentPeer::HandlePacket(Packet *p)
 	    }
 	 }
 	 Enter(parent);
-	 parent->StoreBlock(pp->index,pp->begin,pp->data.length(),pp->data.get());
+	 parent->StoreBlock(pp->index,pp->begin,pp->data.length(),pp->data.get(),this);
 	 Leave(parent);
 
 	 int len=pp->data.length();
