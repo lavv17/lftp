@@ -1,6 +1,7 @@
 2010-06-10  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Timer.cc: fixed Reset for timer which have been just Stop()ped.
+	* commands.cc: document (repeat) options.
 
 2010-06-09  Alexander V. Lukyanov <lav@yars.free.net>
 
