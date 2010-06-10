@@ -1,3 +1,11 @@
+Version 4.0.9 - 2010-06-10
+
+* torrent: don't try to re-download invalid piece from the same peer.
+* added a short lftp.conf(5) man page (Jiri Skala).
+* fixed a problem with zeroed errno (Gabriele Balducci).
+* fixed status of mget from file: schema.
+* fixed a compilation problem on AIX (Claus K. Larsen).
+
 Version 4.0.8 - 2010-05-24
 
 * fixed get/mget -c when xfer:clobber is off.
