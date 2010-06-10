@@ -1,3 +1,7 @@
+2010-06-10	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: improve `repeat' description.
+
 2009-08-05	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document torrent.

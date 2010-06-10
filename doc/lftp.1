@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "17 Nov 2009"
+.TH lftp 1 "10 Jun 2010"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.0.4.
+This man page documents lftp version 4.0.9.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -656,14 +656,21 @@ Same as `ls', but ignores the cache.
 Same as `nlist', but ignores the cache.
 
 .B repeat
-.RI "[ \fB-c\fR " <count> ]
-.RI "[[\fB-d\fR] " delay ]
-.RI [ command ]
+[\fIOPTS\fP]
+[[\fB\-d\fP] \fIdelay\fP]
+[\fIcommand\fP]
 .PP
-Repeat the command. Between the commands a delay is inserted, by default 1 second.
-Option `\-c' limits number of repeations. Option `\-\-while\-ok' breaks loop when
-command returns non-zero exit code; `\-\-until\-ok' breaks on zero exit code.
+Repeat specified command with a delay between iterations.
+Default delay is one second, default command is empty.
+.PP
+.Ds
+\-c <count>	maximum number of iterations
+\-d <delay>	delay between iterations
+\-\-while\-ok	stop when command exits with non-zero code
+\-\-until\-ok	stop when command exits with zero code
+\-\-weak     	stop when lftp moves to background.
 .De
+.PP
 Examples:
 .Ds
 repeat at tomorrow \-\- mirror
@@ -1585,7 +1592,7 @@ torrent stops when it's complete and ratio reached this number.
 .TP
 .BR xfer:clobber \ (boolean)
 if this setting is off, get commands will not overwrite existing
-files and generate an error instead. Default is on.
+files and generate an error instead.
 .TP
 .BR xfer:destination-directory " (path or URL to directory)"
 This setting is used as default \-O option for get and mget commands.
@@ -1758,6 +1765,8 @@ http://www.ietf.org/internet-drafts/draft-ietf-ftpext-mlst-16.txt
 .br
 http://www.ietf.org/internet-drafts/draft-ietf-secsh-filexfer-10.txt
 (sftp).
+.br
+http://wiki.theory.org/BitTorrentSpecification
 .ad
 
 .SH AUTHOR
