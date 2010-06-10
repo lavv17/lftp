@@ -1,3 +1,7 @@
+2010-06-10  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Timer.cc: fixed Reset for timer which have been just Stop()ped.
+
 2010-06-09  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Torrent.cc, Torrent.h: don't try to re-download invalid piece

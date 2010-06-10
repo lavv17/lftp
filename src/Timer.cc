@@ -80,7 +80,7 @@ void Timer::Set(const TimeInterval &i)
 }
 void Timer::Reset(const Time &t)
 {
-   if(start>=t)
+   if(start>=t && stop>t)
       return;
    start=t;
    re_set();
