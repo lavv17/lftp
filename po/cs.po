@@ -1,7 +1,7 @@
 # Czech translation of lftp.
 # Copyright (C) 2009 Alexander V. Lukyanov <lav@yars.free.net>
 # This file is distributed under the same license as the lftp package.
-# Petr Pisar <petr.pisar@atlas.cz>, 2009.
+# Petr Pisar <petr.pisar@atlas.cz>, 2009, 2010.
 #
 # option → volba
 # put → nahrát (jako opak get, download, stáhnout)
@@ -9,10 +9,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 4.0.4\n"
+"Project-Id-Version: lftp 4.0.9\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2010-06-10 16:55+0400\n"
-"PO-Revision-Date: 2009-11-30 11:40+0100\n"
+"PO-Revision-Date: 2010-06-14 21:18+0200\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
 "Language: cs\n"
@@ -40,59 +40,59 @@ msgid "Unknown system error"
 msgstr "Neznámá chyba systému"
 
 #: lib/getopt.c:527 lib/getopt.c:543
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '%s' is ambiguous\n"
 msgstr "%s: volba „%s“ není jednoznačná\n"
 
 #: lib/getopt.c:576 lib/getopt.c:580
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '--%s' doesn't allow an argument\n"
 msgstr "%s: volba „--%s“ nedovoluje žádný argument\n"
 
 #: lib/getopt.c:589 lib/getopt.c:594
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '%c%s' doesn't allow an argument\n"
 msgstr "%s: volba „%c%s“ nedovoluje žádný argument\n"
 
 #: lib/getopt.c:637 lib/getopt.c:656
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '--%s' requires an argument\n"
-msgstr "%s: volba „%s“ vyžaduje argument\n"
+msgstr "%s: volba „--%s“ vyžaduje argument\n"
 
 #: lib/getopt.c:694 lib/getopt.c:697
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unrecognized option '--%s'\n"
 msgstr "%s: nerozpoznaná volba „--%s“\n"
 
 #: lib/getopt.c:705 lib/getopt.c:708
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unrecognized option '%c%s'\n"
 msgstr "%s: nerozpoznaná volba „%c%s“\n"
 
 #: lib/getopt.c:757 lib/getopt.c:760
-#, fuzzy, c-format
+#, c-format
 msgid "%s: invalid option -- '%c'\n"
-msgstr "%s: neplatná volba – %c\n"
+msgstr "%s: neplatná volba – „%c“\n"
 
 #: lib/getopt.c:810 lib/getopt.c:827 lib/getopt.c:1035 lib/getopt.c:1053
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option requires an argument -- '%c'\n"
-msgstr "%s: volba vyžaduje argument – %c\n"
+msgstr "%s: volba vyžaduje argument – „%c“\n"
 
 #: lib/getopt.c:883 lib/getopt.c:899
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '-W %s' is ambiguous\n"
 msgstr "%s: volba „-W %s“ není jednoznačná\n"
 
 #: lib/getopt.c:923 lib/getopt.c:941
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '-W %s' doesn't allow an argument\n"
 msgstr "%s: volba „-W %s“ nedovoluje argument\n"
 
 #: lib/getopt.c:962 lib/getopt.c:980
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '-W %s' requires an argument\n"
-msgstr "%s: volba „%s“ vyžaduje argument\n"
+msgstr "%s: volba „-W %s“ vyžaduje argument\n"
 
 #. TRANSLATORS:
 #. Get translations for open and closing quotation marks.
@@ -1705,7 +1705,6 @@ msgid "repeat [OPTS] [delay] [command]"
 msgstr "repeat [VOLBY] [zpoždění] [příkaz]"
 
 #: src/commands.cc:425
-#, fuzzy
 msgid ""
 "Repeat specified command with a delay between iterations.\n"
 "Default delay is one second, default command is empty.\n"
@@ -1717,8 +1716,11 @@ msgid ""
 msgstr ""
 "Opakuje zadaný příkaz se zpožděním mezi iteracemi.\n"
 "Implicitní zpoždění je jedna sekunda, implicitní příkaz je prázdný příkaz.\n"
-" -c <počet>     počet opakování\n"
-" -d <zpoždění>  zpoždění mezi iteracemi.\n"
+" -c <počet>     maximální počet opakování\n"
+" -d <zpoždění>  zpoždění mezi iteracemi\n"
+" --while-ok     zastavit, když příkaz skončí s nenulovým kódem\n"
+" --until-ok     zastavit, když příkaz skončí s nulovým kódem\n"
+" --weak         zastavit, když lftp přejde na pozadí\n"
 
 #: src/commands.cc:433
 msgid ""
