@@ -1275,6 +1275,8 @@ char *MirrorJob::SetScriptFile(const char *n)
    if(strcmp(n,"-"))
    {
       script=fopen(n,"w");
+      if(!script)
+	 return xasprintf("%s: %s",n,strerror(errno));
       setvbuf(script,NULL,_IOLBF,0);
       script_needs_closing=true;
    }
@@ -1283,9 +1285,7 @@ char *MirrorJob::SetScriptFile(const char *n)
       script=stdout;
       script_needs_closing=false;
    }
-   if(script)
-      return 0;
-   return xasprintf("%s: %s",n,strerror(errno));
+   return 0;
 }
 
 void MirrorJob::SetOnChange(const char *oc)
@@ -1696,6 +1696,7 @@ CMD(mirror)
       if(err)
       {
 	 eprintf("%s: %s\n",args->a0(),err.get());
+	 j->DeleteLater();
 	 return 0;
       }
    }
