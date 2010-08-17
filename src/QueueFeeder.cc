@@ -21,7 +21,6 @@
 /* All indexes in this function start at 0; -1 is used contextually to
  * indicate the last job or moving to the end of the list. */
 #include <config.h>
-#include <errno.h>
 #include <unistd.h>
 #include <assert.h>
 #include <fnmatch.h>

@@ -1248,13 +1248,12 @@ int   Ftp::Do()
 	    retries--;
 	    return MOVED;
 	 }
-	 int saved_errno=errno;
+	 saved_errno=errno;
 	 LogError(9,"socket: %s",strerror(saved_errno));
 	 if(NonFatalError(saved_errno))
 	    return m;
 	 xstring& str=xstring::format(_("cannot create socket of address family %d"),
 		     conn->peer_sa.sa.sa_family);
-	 errno=saved_errno;
 	 SetError(SEE_ERRNO,str);
 	 return MOVED;
       }
@@ -1266,9 +1265,9 @@ int   Ftp::Do()
       state=CONNECTING_STATE;
       if(res==-1 && errno!=EINPROGRESS)
       {
-	 int e=errno;
-	 LogError(0,"connect(control_sock): %s",strerror(e));
-	 if(NotSerious(e))
+	 saved_errno=errno;
+	 LogError(0,"connect(control_sock): %s",strerror(saved_errno));
+	 if(NotSerious(saved_errno))
 	 {
 	    Disconnect();
 	    return MOVED;
@@ -1636,7 +1635,8 @@ int   Ftp::Do()
 	 conn->data_sock=SocketCreateUnboundTCP(conn->peer_sa.sa.sa_family,hostname);
 	 if(conn->data_sock==-1)
 	 {
-	    LogError(0,"socket(data): %s",strerror(errno));
+	    saved_errno=errno;
+	    LogError(0,"socket(data): %s",strerror(saved_errno));
 	    goto system_error;
 	 }
 	 MaximizeThroughput(conn->data_sock);
@@ -1690,16 +1690,16 @@ int   Ftp::Do()
 
 	    if(bind(conn->data_sock,&conn->data_sa.sa,addr_len)==0)
 	       break;
-	    int saved_errno=errno;
+	    saved_errno=errno;
 
 	    // Fail unless socket was already taken
-	    if(errno!=EINVAL && errno!=EADDRINUSE)
+	    if(saved_errno!=EINVAL && saved_errno!=EADDRINUSE)
 	    {
 	       LogError(0,"bind(data_sock,[%s]:%d): %s",
 		  SocketNumericAddress(&conn->data_sa),port,strerror(saved_errno));
 	       close(conn->data_sock);
 	       conn->data_sock=-1;
-	       if(NonFatalError(errno))
+	       if(NonFatalError(saved_errno))
 	       {
 		  TimeoutS(1);
 		  return m;
@@ -2039,11 +2039,12 @@ int   Ftp::Do()
       res=SocketAccept(conn->data_sock,&conn->data_sa,hostname);
       if(res==-1)
       {
-	 if(errno==EWOULDBLOCK)
+	 saved_errno=errno;
+	 if(saved_errno==EWOULDBLOCK)
 	    goto usual_return;
-	 if(NotSerious(errno))
+	 if(NotSerious(saved_errno))
 	 {
-	    LogError(0,"%s",strerror(errno));
+	    LogError(0,"%s",strerror(saved_errno));
 	    Disconnect();
 	    return MOVED;
 	 }
@@ -2108,10 +2109,10 @@ int   Ftp::Do()
 	 }
 	 if(res==-1 && errno!=EINPROGRESS)
 	 {
-	    int e=errno;
-	    LogError(0,"connect: %s",strerror(errno));
+	    saved_errno=errno;
+	    LogError(0,"connect: %s",strerror(saved_errno));
 	    Disconnect();
-	    if(NotSerious(e))
+	    if(NotSerious(saved_errno))
 	       return MOVED;
 	    goto system_error;
 	 }
@@ -2417,7 +2418,8 @@ notimeout_return:
    return m;
 
 system_error:
-   if(NonFatalError(errno))
+   assert(saved_errno!=0);
+   if(NonFatalError(saved_errno))
    {
       TimeoutS(1);
       return m;

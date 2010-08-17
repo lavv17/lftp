@@ -72,13 +72,13 @@ LocalAccess::LocalAccess(const LocalAccess *o) : FileAccess(o)
 
 void LocalAccess::errno_handle()
 {
-   int e=errno;
-   const char *err=strerror(e);
+   saved_errno=errno;
+   const char *err=strerror(saved_errno);
    if(mode==RENAME)
       error.vset("rename(",file.get(),", ",file1.get(),"): ",err,NULL);
    else
       error.vset(file.get(),": ",err,NULL);
-   if(e!=EEXIST)
+   if(saved_errno!=EEXIST)
       LogError(0,"%s",error.get());
 }
 
@@ -339,14 +339,14 @@ read_again:
 
    if(res<0)
    {
-      if(E_RETRY(errno))
+      saved_errno=errno;
+      if(E_RETRY(saved_errno))
       {
 	 Block(stream->getfd(),POLLIN);
 	 return DO_AGAIN;
       }
-      if(stream->NonFatalError(errno))
+      if(stream->NonFatalError(saved_errno))
 	 return DO_AGAIN;
-      saved_errno=errno;
       return SEE_ERRNO;
    }
    stream->clear_status();
@@ -446,15 +446,16 @@ int LocalAccess::Write(const void *vbuf,int len)
    int res=write(fd,buf,len);
    if(res<0)
    {
-      if(E_RETRY(errno))
+      saved_errno=errno;
+      if(E_RETRY(saved_errno))
       {
 	 Block(stream->getfd(),POLLOUT);
 	 return DO_AGAIN;
       }
-      if(stream->NonFatalError(errno))
+      if(stream->NonFatalError(saved_errno))
       {
 	 // in case of full disk, check file correctness.
-	 if(errno==ENOSPC)
+	 if(saved_errno==ENOSPC)
 	 {
 	    struct stat st;
 	    if(fstat(fd,&st)!=-1)
@@ -469,7 +470,6 @@ int LocalAccess::Write(const void *vbuf,int len)
 	 }
 	 return DO_AGAIN;
       }
-      saved_errno=errno;
       return SEE_ERRNO;
    }
    stream->clear_status();

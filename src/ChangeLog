@@ -1,3 +1,9 @@
+2010-08-17  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: fixed coredump on --log=unopenable-file.
+	* FileAccess.cc, ftpclass.cc, Http.cc, LocalAccess.cc: carefully
+	  save errno value.
+
 2010-06-10  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Timer.cc: fixed Reset for timer which have been just Stop()ped.

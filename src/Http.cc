@@ -31,6 +31,7 @@
 #include <time.h>
 #include <fnmatch.h>
 #include <locale.h>
+#include <assert.h>
 #include "Http.h"
 #include "ResMgr.h"
 #include "log.h"
@@ -1024,13 +1025,14 @@ int Http::Do()
       sock=SocketCreateTCP(peer[peer_curr].sa.sa_family);
       if(sock==-1)
       {
+	 saved_errno=errno;
 	 if(peer_curr+1<peer.count())
 	 {
 	    peer_curr++;
 	    retries--;
 	    return MOVED;
 	 }
-	 if(NonFatalError(errno))
+	 if(NonFatalError(saved_errno))
 	    return m;
 	 char str[256];
 	 sprintf(str,_("cannot create socket of address family %d"),
@@ -1043,10 +1045,11 @@ int Http::Do()
       res=SocketConnect(sock,&peer[peer_curr]);
       if(res==-1 && errno!=EINPROGRESS)
       {
+	 saved_errno=errno;
 	 NextPeer();
-	 LogError(0,"connect: %s\n",strerror(errno));
+	 LogError(0,"connect: %s\n",strerror(saved_errno));
 	 Disconnect();
-	 if(NotSerious(errno))
+	 if(NotSerious(saved_errno))
 	    return MOVED;
 	 goto system_error;
       }
@@ -1523,7 +1526,8 @@ int Http::Do()
    return m;
 
 system_error:
-   if(NonFatalError(errno))
+   assert(saved_errno!=0);
+   if(NonFatalError(saved_errno))
       return m;
    SetError(SEE_ERRNO,0);
    Disconnect();
