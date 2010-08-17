@@ -1598,8 +1598,8 @@ files and generate an error instead.
 This setting is used as default \-O option for get and mget commands.
 Default is empty, which means current directory (no \-O option).
 .TP
-.BR xfer:full-disk-fatal \ (boolean)
-when true, lftp aborts a thansfer if it cannot write target file because
+.BR xfer:disk-full-fatal \ (boolean)
+when true, lftp aborts a transfer if it cannot write target file because
 of full disk or quota; when false, lftp waits for disk space to be freed.
 .TP
 .BR xfer:eta-period \ (seconds)

@@ -1,3 +1,8 @@
+2010-08-17	Noël Köthe <noel@debian.org>
+
+	* lftp.1: the option is xfer:disk-full-fatal but the manpage says
+	  xfer:full-disk-fatal; s/thansfer/transfer.
+
 2010-06-10	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: improve `repeat' description.
