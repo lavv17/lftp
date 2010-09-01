@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.5.11\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2010-06-23 16:06+0400\n"
+"POT-Creation-Date: 2010-09-01 17:09+0400\n"
 "PO-Revision-Date: 2007-05-13 20:18+0800\n"
 "Last-Translator: Abel Cheung <abelcheung@gmail.com>\n"
 "Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
@@ -520,12 +520,12 @@ msgstr "正在讀取標頭資料……"
 msgid "[%d] Done (%s)"
 msgstr "[%d] 完成 (%s)"
 
-#: src/LocalAccess.cc:614 src/NetAccess.cc:605
+#: src/LocalAccess.cc:614 src/NetAccess.cc:618
 #, fuzzy
 msgid "Getting directory contents"
 msgstr "正在擷取目錄內容 (%lld) %s[%s]"
 
-#: src/LocalAccess.cc:616 src/NetAccess.cc:609
+#: src/LocalAccess.cc:616 src/NetAccess.cc:622
 #, fuzzy
 msgid "Getting files information"
 msgstr "正在擷取檔案資訊 (%d%%) [%s]"
@@ -759,43 +759,43 @@ msgstr "浮點數無效"
 msgid "invalid unsigned number"
 msgstr "數字無效"
 
-#: src/ResMgr.cc:711
+#: src/ResMgr.cc:712
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "時間單位無效，只允許使用 [smhd] 其中一個。"
 
-#: src/ResMgr.cc:719
+#: src/ResMgr.cc:720
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "時間格式無效。格式是 <time><unit>，例如：2h30m。"
 
-#: src/ResMgr.cc:763 src/commands.cc:3220 src/commands.cc:3229
+#: src/ResMgr.cc:764 src/commands.cc:3220 src/commands.cc:3229
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "範圍格式無效。格式是 min-max，例如 10-20。"
 
-#: src/ResMgr.cc:780
+#: src/ResMgr.cc:781
 msgid "Invalid suffix. Valid suffixes are: k, M, G, T, P, E, Z, Y"
 msgstr "單位無效。有效的單位為 k、M、G、T、P、E、Z 或 Y"
 
-#: src/ResMgr.cc:783
+#: src/ResMgr.cc:784
 msgid "Integer overflow"
 msgstr "整數溢位"
 
-#: src/ResMgr.cc:830
+#: src/ResMgr.cc:831
 msgid "Invalid IPv4 numeric address"
 msgstr "IPv4 地址無效"
 
-#: src/ResMgr.cc:841
+#: src/ResMgr.cc:842
 msgid "Invalid IPv6 numeric address"
 msgstr "IPv6 地址無效"
 
-#: src/ResMgr.cc:895 src/ResMgr.cc:899
+#: src/ResMgr.cc:896 src/ResMgr.cc:900
 msgid "this encoding is not supported"
 msgstr "不支援這種編碼"
 
-#: src/ResMgr.cc:905
+#: src/ResMgr.cc:906
 msgid "no closure defined for this setting"
 msgstr "本設定值並沒有定義 closure"
 
-#: src/ResMgr.cc:916
+#: src/ResMgr.cc:917
 msgid "invalid pair of numbers"
 msgstr "該對數字無效"
 

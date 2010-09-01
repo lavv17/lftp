@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.7.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2010-06-23 16:06+0400\n"
+"POT-Creation-Date: 2010-09-01 17:09+0400\n"
 "PO-Revision-Date: 2008-05-06 21:20+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -520,11 +520,11 @@ msgstr "Przesy³am nag³ówki..."
 msgid "[%d] Done (%s)"
 msgstr "[%d] Zakoñczono (%s)"
 
-#: src/LocalAccess.cc:614 src/NetAccess.cc:605
+#: src/LocalAccess.cc:614 src/NetAccess.cc:618
 msgid "Getting directory contents"
 msgstr "Pobieranie zawarto¶ci katalogu"
 
-#: src/LocalAccess.cc:616 src/NetAccess.cc:609
+#: src/LocalAccess.cc:616 src/NetAccess.cc:622
 msgid "Getting files information"
 msgstr "Pobieranie informacji o plikach"
 
@@ -764,43 +764,43 @@ msgstr "nieprawid³owa liczba zmiennoprzecinkowa"
 msgid "invalid unsigned number"
 msgstr "nieprawid³owy numer"
 
-#: src/ResMgr.cc:711
+#: src/ResMgr.cc:712
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "Nieprawid³owa litera-jednostka czasu, wy³±cznie [shmd] s± dozwolone."
 
-#: src/ResMgr.cc:719
+#: src/ResMgr.cc:720
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "Nieprawid³owy format czasu. Format to <czas><jednostka>, np. 2h30m."
 
-#: src/ResMgr.cc:763 src/commands.cc:3220 src/commands.cc:3229
+#: src/ResMgr.cc:764 src/commands.cc:3220 src/commands.cc:3229
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Nieprawid³owy format zakresu. Format to min-maks, np. 10-20."
 
-#: src/ResMgr.cc:780
+#: src/ResMgr.cc:781
 msgid "Invalid suffix. Valid suffixes are: k, M, G, T, P, E, Z, Y"
 msgstr "Nieprawid³owy przyrostek. Poprawne to: k, M, G, T, P, E, Z, Y"
 
-#: src/ResMgr.cc:783
+#: src/ResMgr.cc:784
 msgid "Integer overflow"
 msgstr "Przepe³nienie liczby ca³kowitej"
 
-#: src/ResMgr.cc:830
+#: src/ResMgr.cc:831
 msgid "Invalid IPv4 numeric address"
 msgstr "Nieprawid³owy numeryczny adres IPv4"
 
-#: src/ResMgr.cc:841
+#: src/ResMgr.cc:842
 msgid "Invalid IPv6 numeric address"
 msgstr "Nieprawid³owy numeryczny adres IPv6"
 
-#: src/ResMgr.cc:895 src/ResMgr.cc:899
+#: src/ResMgr.cc:896 src/ResMgr.cc:900
 msgid "this encoding is not supported"
 msgstr "to kodowanie nie jest wspierane"
 
-#: src/ResMgr.cc:905
+#: src/ResMgr.cc:906
 msgid "no closure defined for this setting"
 msgstr "nie zdefiniowano zamkniêcia dla tego ustawienia"
 
-#: src/ResMgr.cc:916
+#: src/ResMgr.cc:917
 msgid "invalid pair of numbers"
 msgstr "nieprawid³owa para liczb"
 

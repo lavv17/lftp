@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2010-06-23 16:06+0400\n"
+"POT-Creation-Date: 2010-09-01 17:09+0400\n"
 "PO-Revision-Date: 2008-03-29 14:27+0100\n"
 "Last-Translator: \n"
 "Language-Team: German <kde-i18n-de@lists.kde.org>\n"
@@ -525,11 +525,11 @@ msgstr "Hole Kopfzeilen..."
 msgid "[%d] Done (%s)"
 msgstr "[%d] Fertig (%s)"
 
-#: src/LocalAccess.cc:614 src/NetAccess.cc:605
+#: src/LocalAccess.cc:614 src/NetAccess.cc:618
 msgid "Getting directory contents"
 msgstr "Lese Verzeichnisinhalt aus"
 
-#: src/LocalAccess.cc:616 src/NetAccess.cc:609
+#: src/LocalAccess.cc:616 src/NetAccess.cc:622
 msgid "Getting files information"
 msgstr "Lese Dateiinformationen"
 
@@ -761,44 +761,44 @@ msgstr "Unzulässige Gleitkommazahl"
 msgid "invalid unsigned number"
 msgstr "Unzulässige Zahl"
 
-#: src/ResMgr.cc:711
+#: src/ResMgr.cc:712
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "Ungültige Zeiteinheit, nur [smhd] sind zulässig."
 
-#: src/ResMgr.cc:719
+#: src/ResMgr.cc:720
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "Ungültige Zeitangabe. Das Format ist <Zeit><Einheit> - z.B. 2h30m."
 
-#: src/ResMgr.cc:763 src/commands.cc:3220 src/commands.cc:3229
+#: src/ResMgr.cc:764 src/commands.cc:3220 src/commands.cc:3229
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Ungültige Angabe der Spanne. Das Format ist min-max - z.B. 10-20."
 
-#: src/ResMgr.cc:780
+#: src/ResMgr.cc:781
 msgid "Invalid suffix. Valid suffixes are: k, M, G, T, P, E, Z, Y"
 msgstr ""
 "Unzulässiger Endung (suffix). Zulässige Endungen sind: k, M, G, T, P, E, Z, Y"
 
-#: src/ResMgr.cc:783
+#: src/ResMgr.cc:784
 msgid "Integer overflow"
 msgstr "Integerüberlauf"
 
-#: src/ResMgr.cc:830
+#: src/ResMgr.cc:831
 msgid "Invalid IPv4 numeric address"
 msgstr "Ungültige IPv4 Adressierungsnummer"
 
-#: src/ResMgr.cc:841
+#: src/ResMgr.cc:842
 msgid "Invalid IPv6 numeric address"
 msgstr "Ungültige IPv6 Adressierungsnummer"
 
-#: src/ResMgr.cc:895 src/ResMgr.cc:899
+#: src/ResMgr.cc:896 src/ResMgr.cc:900
 msgid "this encoding is not supported"
 msgstr "Diese Zeichenkodierung wird nicht unterstützt"
 
-#: src/ResMgr.cc:905
+#: src/ResMgr.cc:906
 msgid "no closure defined for this setting"
 msgstr "kein Gültigkeitsbereich (closure) für diese Einstellung definiert"
 
-#: src/ResMgr.cc:916
+#: src/ResMgr.cc:917
 msgid "invalid pair of numbers"
 msgstr "Unzulässiges Zahlenpaar"
 

@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 4.0.9.1\n"
+"Project-Id-Version: lftp 4.0.10\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2010-06-23 16:06+0400\n"
+"POT-Creation-Date: 2010-09-01 17:09+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -516,11 +516,11 @@ msgstr ""
 msgid "[%d] Done (%s)"
 msgstr ""
 
-#: src/LocalAccess.cc:614 src/NetAccess.cc:605
+#: src/LocalAccess.cc:614 src/NetAccess.cc:618
 msgid "Getting directory contents"
 msgstr ""
 
-#: src/LocalAccess.cc:616 src/NetAccess.cc:609
+#: src/LocalAccess.cc:616 src/NetAccess.cc:622
 msgid "Getting files information"
 msgstr ""
 
@@ -751,43 +751,43 @@ msgstr ""
 msgid "invalid unsigned number"
 msgstr ""
 
-#: src/ResMgr.cc:711
+#: src/ResMgr.cc:712
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr ""
 
-#: src/ResMgr.cc:719
+#: src/ResMgr.cc:720
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr ""
 
-#: src/ResMgr.cc:763 src/commands.cc:3220 src/commands.cc:3229
+#: src/ResMgr.cc:764 src/commands.cc:3220 src/commands.cc:3229
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr ""
 
-#: src/ResMgr.cc:780
+#: src/ResMgr.cc:781
 msgid "Invalid suffix. Valid suffixes are: k, M, G, T, P, E, Z, Y"
 msgstr ""
 
-#: src/ResMgr.cc:783
+#: src/ResMgr.cc:784
 msgid "Integer overflow"
 msgstr ""
 
-#: src/ResMgr.cc:830
+#: src/ResMgr.cc:831
 msgid "Invalid IPv4 numeric address"
 msgstr ""
 
-#: src/ResMgr.cc:841
+#: src/ResMgr.cc:842
 msgid "Invalid IPv6 numeric address"
 msgstr ""
 
-#: src/ResMgr.cc:895 src/ResMgr.cc:899
+#: src/ResMgr.cc:896 src/ResMgr.cc:900
 msgid "this encoding is not supported"
 msgstr ""
 
-#: src/ResMgr.cc:905
+#: src/ResMgr.cc:906
 msgid "no closure defined for this setting"
 msgstr ""
 
-#: src/ResMgr.cc:916
+#: src/ResMgr.cc:917
 msgid "invalid pair of numbers"
 msgstr ""
 
