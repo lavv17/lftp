@@ -1,3 +1,11 @@
+Version 4.0.10 - 2010-09-01
+
+* use cached file set, don't parse file listing again.
+* updated convert-netscape-cookies.
+* fixed a problem with zeroed errno in http.
+* fixed coredump on mirror --log=file when the file cannot be opened.
+* translations updated (de, ru).
+
 Version 4.0.9 - 2010-06-10
 
 * torrent: don't try to re-download invalid piece from the same peer.
