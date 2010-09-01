@@ -1,3 +1,9 @@
+2010-09-01  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* convert-netscape-cookies: add sqlite support.
+	* NetAccess.cc: use cached fset.
+	* ResMgr.cc: match *.domain.org to domain.org in closure.
+
 2010-08-17  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc: fixed coredump on --log=unopenable-file.

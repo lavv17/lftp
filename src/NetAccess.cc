@@ -411,6 +411,8 @@ int GenericParseListInfo::Do()
    FileInfo *file;
    int res;
    int m=STALL;
+   int old_mode=mode;
+   Ref<FileSet> set;
 
 do_again:
    if(done)
@@ -420,9 +422,10 @@ do_again:
    {
       const char *cache_buffer=0;
       int cache_buffer_size=0;
+      const FileSet *cache_fset=0;
       int err;
       if(use_cache && FileAccess::cache->Find(session,"",mode,&err,
-				    &cache_buffer,&cache_buffer_size))
+				    &cache_buffer,&cache_buffer_size,&cache_fset))
       {
 	 if(err)
 	 {
@@ -433,6 +436,12 @@ do_again:
 	    }
 	    SetErrorCached(cache_buffer);
 	    return MOVED;
+	 }
+	 if(cache_fset) {
+	    Log::global->Write(11,"ListInfo: using cached file set\n");
+	    set=new FileSet(cache_fset);
+	    old_mode=mode;
+	    goto got_fileset;
 	 }
 	 ubuf=new IOBuffer(IOBuffer::GET);
 	 ubuf->Put(cache_buffer,cache_buffer_size);
@@ -475,10 +484,13 @@ do_again:
       const char *b;
       int len;
       ubuf->Get(&b,&len);
+      old_mode=mode;
+      set=Parse(b,len);
 
-      int old_mode=mode;
+      // cache the list and the set.
+      FileAccess::cache->Add(session,"",old_mode,FA::OK,ubuf,set);
 
-      Ref<FileSet> set(Parse(b,len));
+got_fileset:
       if(set)
       {
 	 bool need_resort=false;
@@ -495,12 +507,13 @@ do_again:
 	 if(need_resort && !result)
 	    result=new FileSet; // Merge will sort the names
 	 if(result)
+	 {
 	    result->Merge(set);
+	    set=0; // free it now.
+	 }
 	 else
 	    result=set.borrow();
       }
-
-      FileAccess::cache->Add(session,"",old_mode,FA::OK,ubuf,result);
 
       ubuf=0;
       m=MOVED;
