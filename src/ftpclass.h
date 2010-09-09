@@ -117,6 +117,7 @@ class Ftp : public NetAccess
       bool host_supported;
       bool mfmt_supported;
       bool epsv_supported;
+      bool tvfs_supported;
 
       off_t last_rest;	// last successful REST position.
       off_t rest_pos;	// the number sent with REST command.
@@ -266,7 +267,7 @@ class Ftp : public NetAccess
    void	 proxy_NoPassReqCheck(int);
    void	 CheckFEAT(char *reply);
    char *ExtractPWD();
-   void  SendCWD(const char *path,Expect::expect_t c,const char *arg=0);
+   void  SendCWD(const char *path,const char *path_url,Expect::expect_t c);
    void	 CatchDATE(int);
    void	 CatchDATE_opt(int);
    void	 CatchSIZE(int);

@@ -1,3 +1,9 @@
+2010-09-09  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: add TVFS support; send path components
+	  separately as required by RFC1738 unless TVFS is declared by server.
+	* example-cmd.cc: fix assertion failure.
+
 2010-09-01  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* convert-netscape-cookies: add sqlite support.
