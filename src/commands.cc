@@ -86,7 +86,7 @@ CMD(exit);  CMD(get);    CMD(help);    CMD(jobs);
 CMD(kill);  CMD(lcd);    CMD(ls);      CMD(cls);
 CMD(open);  CMD(pwd);    CMD(set);     CMD(eval);
 CMD(shell); CMD(source); CMD(user);    CMD(rm);
-CMD(wait);  CMD(subsh);  CMD(mirror);
+CMD(wait);  CMD(subsh);  CMD(mirror);  CMD(local);
 CMD(mv);    CMD(cat);    CMD(cache);
 CMD(mkdir); CMD(scache); CMD(mrm);
 CMD(ver);   CMD(close);  CMD(bookmark);CMD(lftp);
@@ -286,6 +286,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -p <port>           use the port for connection\n"
 	 " <site>              host name, URL or bookmark name\n")},
    {"lpwd",    cmd_lpwd},
+   {"local",   cmd_local},
    {"login",   cmd_user,   0,"user"},
    {"ls",      cmd_ls,	    N_("ls [<args>]"),
 	 N_("List remote files. You can redirect output of this command to file\n"
@@ -449,7 +450,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    	 " -a  list all settings, including default values\n"
 	 " -d  list only default values, not necessary current ones\n")},
    {"shell",   cmd_shell,  0,"!"},
-   {"site",    cmd_ls,	   N_("site <site_cmd>"),
+   {"site",    cmd_ls,	   N_("site <site-cmd>"),
 	 N_("Execute site command <site_cmd> and output the result\n"
 	 "You can redirect its output\n")},
    {"sleep",   cmd_sleep, 0,
@@ -464,7 +465,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"source",  cmd_source, N_("source <file>"),
 	 N_("Execute commands recorded in file <file>\n")},
    {"suspend", cmd_suspend},
-   {"torrent", cmd_torrent, N_("torrent [-O <dir>] <file>")},
+   {"torrent", cmd_torrent, N_("torrent [-O <dir>] <file|URL>...")},
    {"user",    cmd_user,   N_("user <user|URL> [<pass>]"),
 	 N_("Use specified info for remote login. If you specify URL, the password\n"
 	 "will be cached for future usage.\n")},
@@ -1135,6 +1136,7 @@ Job *CmdExec::builtin_glob()
       return cmd_command(this);
    }
    glob=new GlobURL(session,pat,glob_type);
+   RevertToSavedSession();
    builtin=BUILTIN_GLOB;
    return this;
 }
@@ -2372,7 +2374,7 @@ CMD(wait)
 
 CMD(subsh)
 {
-   CmdExec *e=new CmdExec(session->Clone(),parent->cwd->Clone());
+   CmdExec *e=new CmdExec(parent);
 
    const char *c=args->getarg(1);
    e->FeedCmd(c);
@@ -3086,6 +3088,11 @@ CMD(lpwd)
    sprintf(buf,"%s\n",name?name:"?");
    Job *j=new echoJob(buf,new OutputJob(output.borrow(), args->a0()));
    return j;
+}
+
+CMD(local)
+{
+   return parent->builtin_local();
 }
 
 CMD(glob)

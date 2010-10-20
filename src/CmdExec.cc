@@ -237,6 +237,7 @@ restart:
 	 }
 	 return;
       }
+      RevertToSavedSession();
       if(new_job)
       {
 	 if(new_job->jobno<0)
@@ -759,7 +760,7 @@ void CmdExec::PrintStatus(int v,const char *prefix)
    }
 }
 
-CmdExec::CmdExec(FileAccess *f,LocalDirectory *c) : SessionJob(f?f:new DummyProto)
+void CmdExec::init(LocalDirectory *c)
 {
    // add this to chain
    next=chain;
@@ -805,7 +806,16 @@ CmdExec::CmdExec(FileAccess *f,LocalDirectory *c) : SessionJob(f?f:new DummyProt
 
    Reconfig();
 }
-
+CmdExec::CmdExec(FileAccess *s,LocalDirectory *c)
+   : SessionJob(s?s:new DummyProto)
+{
+   init(c);
+}
+CmdExec::CmdExec(const CmdExec *parent)
+   : SessionJob(parent->session->Clone())
+{
+   init(parent->cwd->Clone());
+}
 CmdExec::~CmdExec()
 {
    // remove this from chain.
@@ -1215,6 +1225,20 @@ Job *CmdExec::default_cmd()
    eprintf(_("%s: command `%s' is not compiled in.\n"),op,op);
    return 0;
 #endif
+}
+Job *CmdExec::builtin_local()
+{
+   saved_session=session.borrow();
+   session=FileAccess::New("file");
+   if(!session) {
+      eprintf("%s: cannot create local session\n",args->a0());
+      RevertToSavedSession();
+      return 0;
+   }
+   session->SetCwd(cwd->GetName());
+   args->delarg(0);
+   builtin=BUILTIN_EXEC_RESTART;
+   return this;
 }
 
 void CmdExec::FeedArgV(const ArgV *args,int start)

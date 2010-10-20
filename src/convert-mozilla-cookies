@@ -37,14 +37,6 @@ if($file=~/\.sqlite$/) {
    $q->bind_columns(\my($domain,$path,$secure_bool,$name,$value));
    while($q->fetch) {
       add_cookie($domain,$path,$secure_bool,$name,$value);
-      for($domain,$path,$name,$value) { s/"/\\"/g; s/'/\\'/g; s/ /%20/g; }
-      my $secure='';
-      $secure=';secure' if $secure_bool;
-      $domain="*$domain" if $domain =~ /^\./;
-      $path='' if $path eq '/';
-      $path=";path=$path" if $path ne '';
-      $value="=$value" if $name ne '';
-      $cookie{"$domain$path$secure"}.=" $name$value";
    }
 } else {
    open COOKIES,'<',$file or die "open($file): $!";

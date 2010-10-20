@@ -130,6 +130,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    BeNode *Lookup(Ref<BeNode>& d,const char *name,BeNode::be_type_t type) { return Lookup(d->dict,name,type); }
 
    void SendTrackerRequest(const char *event);
+   int HandleTrackerReply();
 
    TaskRefArray<TorrentPeer> peers;
    RefArray<TorrentPiece> piece_info;
@@ -203,7 +204,7 @@ public:
    int Do();
    int Done();
 
-   const char *Status();
+   const xstring& Status();
 
    const Error *GetInvalidCause() const { return invalid_cause; }
 
@@ -231,7 +232,7 @@ public:
    double GetRatio() const;
    unsigned long long TotalLength() const { return total_length; }
    unsigned PieceLength() const { return piece_length; }
-   const char *GetName() const { return name?name->get():0; }
+   const char *GetName() const { return name?name->get():metainfo_url.get(); }
    const char *TrackerTimerTimeLeft() {
       return tracker_timer.TimeLeft().toString(
 	 TimeInterval::TO_STR_TRANSLATE|TimeInterval::TO_STR_TERSE);
@@ -241,6 +242,7 @@ public:
    const char *GetLogContext() { return GetName(); }
 
    void ForceValid() { force_valid=true; }
+   bool IsValidating() const { return validating; }
 };
 
 class FDCache : public SMTask, public ResClient

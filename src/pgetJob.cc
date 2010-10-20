@@ -57,7 +57,7 @@ int pgetJob::Do()
       status_timer.Reset();
    }
 
-   if(c->Done() || c->Error())
+   if(c->Done())
    {
       if(status_file)
       {
@@ -151,6 +151,11 @@ int pgetJob::Do()
       {
 	 no_parallel=true;
 	 return m;
+      }
+      if(!pget_cont)
+      {
+	 SaveStatus();
+	 status_timer.Reset();
       }
    }
 

@@ -233,8 +233,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    	((file->defined&file->DATE) && (old->defined&old->DATE)
 	    	&& file->date + file->date.ts_prec < old->date - old->date.ts_prec))
 	    && (file->defined&file->SIZE) && (old->defined&old->SIZE)
-	    && file->size >= old->size
-	    && !use_pget)
+	    && file->size >= old->size)
 	    {
 	       cont_this=true;
 	       if(target_is_local && !script_only)

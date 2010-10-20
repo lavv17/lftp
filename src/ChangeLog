@@ -1,3 +1,14 @@
+2010-10-19  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc, CmdExec.h, commands.cc: new CmdExec ctor; `local' builtin.
+	* MirrorJob.cc: allow continue of pget.
+	* Torrent.cc, Torrent.h: better diag msg; don't show `next tracker in'
+	  msg when validating; allow starting of multiple torrents at once;
+	  show torrent name in status; add torrent to listener earlier;
+	  better handle shutting down of multiple torrents.
+	* convert-mozilla-cookies: fix info duplication;
+	* pgetJob.cc: save status at the start.
+
 2010-09-09  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h: add TVFS support; send path components

@@ -146,6 +146,8 @@ private:
    void ReuseSavedSession();
    void RevertToSavedSession();
 
+   void init(LocalDirectory *c);
+
 public:
    void FeedCmd(const char *c);
    void FeedArgV(const ArgV *,int start=0);
@@ -167,6 +169,7 @@ public:
    void SuspendJob(Job *j);
 
    CmdExec(FileAccess *s,LocalDirectory *c);
+   CmdExec(const CmdExec *parent);
    ~CmdExec();
 
    bool Idle();	// when we have no command running and command buffer is empty
@@ -233,6 +236,7 @@ public:
    Job *builtin_glob();
    Job *builtin_queue();
    Job *builtin_queue_edit();
+   Job *builtin_local();
 
    Job *default_cmd();
 

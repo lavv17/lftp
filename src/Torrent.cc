@@ -285,11 +285,105 @@ bool Torrent::SeededEnough() const
       || seed_timer.Stopped();
 }
 
+int Torrent::HandleTrackerReply()
+{
+   if(tracker_reply->Error()) {
+      SetError(new Error(-1,tracker_reply->ErrorText(),false));
+      t_session->Close();
+      tracker_reply=0;
+      tracker_timer.Reset();
+      return MOVED;
+   }
+   if(!tracker_reply->Eof())
+      return STALL;
+   t_session->Close();
+   int rest;
+   Ref<BeNode> reply(BeNode::Parse(tracker_reply->Get(),tracker_reply->Size(),&rest));
+   if(!reply) {
+      LogError(3,"Tracker reply parse error (data: %s)",tracker_reply->Dump());
+      tracker_reply=0;
+      tracker_timer.Reset();
+      return MOVED;
+   }
+   LogNote(10,"Received tracker reply:");
+   Log::global->Write(10,reply->Format());
+
+   if(shutting_down) {
+      tracker_reply=0;
+      return MOVED;
+   }
+   started=true;
+
+   if(reply->type!=BeNode::BE_DICT) {
+      SetError("Reply: wrong reply type, must be DICT");
+      return MOVED;
+   }
+
+   BeNode *b_failure_reason=reply->dict.lookup("failure reason");
+   if(b_failure_reason) {
+      if(b_failure_reason->type==BeNode::BE_STR)
+	 SetError(b_failure_reason->str);
+      else
+	 SetError("Reply: wrong `failure reason' type, must be STR");
+      return MOVED;
+   }
+
+   BeNode *b_interval=reply->dict.lookup("interval");
+   if(b_interval && b_interval->type==BeNode::BE_INT) {
+      LogNote(4,"Tracker interval is %llu",b_interval->num);
+      tracker_timer.Set(b_interval->num);
+   }
+
+   BeNode *b_tracker_id=reply->dict.lookup("tracker id");
+   if(!tracker_id && b_tracker_id && b_tracker_id->type==BeNode::BE_STR)
+      tracker_id.set(b_tracker_id->str);
+
+   BeNode *b_peers=reply->dict.lookup("peers");
+   if(b_peers) {
+      if(b_peers->type==BeNode::BE_STR) { // binary model
+	 const char *data=b_peers->str;
+	 int len=b_peers->str.length();
+	 while(len>=6) {
+	    sockaddr_u a;
+	    a.sa.sa_family=AF_INET;
+	    memcpy(&a.in.sin_addr,data,4);
+	    memcpy(&a.in.sin_port,data+4,2);
+	    data+=6;
+	    len-=6;
+	    AddPeer(new TorrentPeer(this,&a));
+	 }
+      } else if(b_peers->type==BeNode::BE_LIST) { // dictionary model
+	 for(int p=0; p<b_peers->list.count(); p++) {
+	    BeNode *b_peer=b_peers->list[p];
+	    if(b_peer->type!=BeNode::BE_DICT)
+	       continue;
+	    BeNode *b_ip=b_peer->dict.lookup("ip");
+	    if(b_ip->type!=BeNode::BE_STR)
+	       continue;
+	    BeNode *b_port=b_peer->dict.lookup("port");
+	    if(b_port->type!=BeNode::BE_INT)
+	       continue;
+	    sockaddr_u a;
+	    a.sa.sa_family=AF_INET;
+	    if(!inet_aton(b_ip->str,&a.in.sin_addr))
+	       continue;
+	    a.in.sin_port=htons(b_port->num);
+	    AddPeer(new TorrentPeer(this,&a));
+	 }
+      }
+   }
+   tracker_timer.Reset();
+   tracker_reply=0;
+   return MOVED;
+}
+
 int Torrent::Do()
 {
    int m=STALL;
    if(Done())
       return m;
+   if(shutting_down && tracker_reply)
+      return HandleTrackerReply();
 
    // retrieve metainfo if don't have already.
    if(!metainfo_tree) {
@@ -419,6 +513,7 @@ int Torrent::Do()
 	 SetError("This torrent is already running");
 	 return MOVED;
       }
+      listener->AddTorrent(this);
 
       my_bitfield=new BitField(total_pieces);
       for(unsigned p=0; p<total_pieces; p++)
@@ -447,12 +542,11 @@ int Torrent::Do()
 	 seed_timer.Reset();
       }
    }
-   if(!t_session && !started && !shutting_down) {
+   if(!t_session && !started) {
       if(listener->GetPort()==0)
 	 return m;
       ParsedURL u(tracker_url.get(),true);
       t_session=FileAccess::New(&u);
-      listener->AddTorrent(this);
       SendTrackerRequest("started");
       m=MOVED;
    }
@@ -493,94 +587,7 @@ int Torrent::Do()
    }
 
    if(tracker_reply) {
-      if(tracker_reply->Error()) {
-	 SetError(new Error(-1,tracker_reply->ErrorText(),false));
-	 t_session->Close();
-	 tracker_reply=0;
-	 tracker_timer.Reset();
-	 return MOVED;
-      }
-      if(tracker_reply->Eof()) {
-	 t_session->Close();
-	 int rest;
-	 Ref<BeNode> reply(BeNode::Parse(tracker_reply->Get(),tracker_reply->Size(),&rest));
-	 if(!reply) {
-	    LogError(3,"Tracker reply parse error (data: %s)",tracker_reply->Dump());
-	    tracker_reply=0;
-	    tracker_timer.Reset();
-	    return MOVED;
-	 }
-	 LogNote(10,"Received tracker reply:");
-	 Log::global->Write(10,reply->Format());
-
-	 if(shutting_down) {
-	    tracker_reply=0;
-	    return MOVED;
-	 }
-	 started=true;
-
-	 if(reply->type!=BeNode::BE_DICT) {
-	    SetError("Reply: wrong reply type, must be DICT");
-	    return MOVED;
-	 }
-
-	 BeNode *b_failure_reason=reply->dict.lookup("failure reason");
-	 if(b_failure_reason) {
-	    if(b_failure_reason->type==BeNode::BE_STR)
-	       SetError(b_failure_reason->str);
-	    else
-	       SetError("Reply: wrong `failure reason' type, must be STR");
-	    return MOVED;
-	 }
-
-	 BeNode *b_interval=reply->dict.lookup("interval");
-	 if(b_interval && b_interval->type==BeNode::BE_INT) {
-	    LogNote(4,"Tracker interval is %llu",b_interval->num);
-	    tracker_timer.Set(b_interval->num);
-	 }
-
-	 BeNode *b_tracker_id=reply->dict.lookup("tracker id");
-	 if(!tracker_id && b_tracker_id && b_tracker_id->type==BeNode::BE_STR)
-	    tracker_id.set(b_tracker_id->str);
-
-	 BeNode *b_peers=reply->dict.lookup("peers");
-	 if(b_peers) {
-	    if(b_peers->type==BeNode::BE_STR) { // binary model
-	       const char *data=b_peers->str;
-	       int len=b_peers->str.length();
-	       while(len>=6) {
-		  sockaddr_u a;
-		  a.sa.sa_family=AF_INET;
-		  memcpy(&a.in.sin_addr,data,4);
-		  memcpy(&a.in.sin_port,data+4,2);
-		  data+=6;
-		  len-=6;
-		  AddPeer(new TorrentPeer(this,&a));
-	       }
-	    } else if(b_peers->type==BeNode::BE_LIST) { // dictionary model
-	       for(int p=0; p<b_peers->list.count(); p++) {
-		  BeNode *b_peer=b_peers->list[p];
-		  if(b_peer->type!=BeNode::BE_DICT)
-		     continue;
-		  BeNode *b_ip=b_peer->dict.lookup("ip");
-		  if(b_ip->type!=BeNode::BE_STR)
-		     continue;
-		  BeNode *b_port=b_peer->dict.lookup("port");
-		  if(b_port->type!=BeNode::BE_INT)
-		     continue;
-		  sockaddr_u a;
-		  a.sa.sa_family=AF_INET;
-		  if(!inet_aton(b_ip->str,&a.in.sin_addr))
-		     continue;
-		  a.in.sin_port=htons(b_port->num);
-		  AddPeer(new TorrentPeer(this,&a));
-	       }
-	    }
-	 }
-
-	 tracker_timer.Reset();
-	 tracker_reply=0;
-      }
+      m|=HandleTrackerReply();
    } else {
       if(complete && SeededEnough()) {
 	 Shutdown();
@@ -610,7 +617,7 @@ void Torrent::BlackListPeer(const TorrentPeer *peer,const char *timeout)
 
 void Torrent::Accept(int s,const sockaddr_u *addr,IOBuffer *rb)
 {
-   if(!decline_timer.Stopped()) {
+   if(!decline_timer.Stopped() || validating) {
       LogNote(4,"declining new connection");
       Delete(rb);
       close(s);
@@ -1121,7 +1128,7 @@ void Torrent::Reconfig(const char *name)
    rate_limit.Reconfig(name,metainfo_url);
 }
 
-const char *Torrent::Status()
+const xstring& Torrent::Status()
 {
    if(metainfo_data)
       return xstring::format("Getting meta-data: %s",metainfo_data->Status());
@@ -1130,7 +1137,7 @@ const char *Torrent::Status()
 	 validate_index*100/total_pieces);
    }
    if(total_length==0)
-      return "";
+      return xstring::get_tmp("");
    xstring& buf=xstring::format("dn:%llu %sup:%llu %scomplete:%u/%u (%u%%)",
       total_recv,recv_rate.GetStrS(),total_sent,send_rate.GetStrS(),
       complete_pieces,total_pieces,
@@ -1725,7 +1732,7 @@ int TorrentPeer::Do()
       if(res==-1 && errno!=EINPROGRESS && errno!=EALREADY && errno!=EISCONN)
       {
 	 int e=errno;
-	 LogError(4,"connect: %s\n",strerror(e));
+	 LogError(4,"connect(%s): %s\n",GetName(),strerror(e));
 	 Disconnect();
 	 if(FA::NotSerious(e))
 	    return MOVED;
@@ -2332,14 +2339,15 @@ void TorrentJob::PrintStatus(int v,const char *tab)
    const char *name=torrent->GetName();
    if(name)
       printf("%sName: %s\n",tab,name);
-   printf("%s%s\n",tab,torrent->Status());
+   printf("%s%s\n",tab,torrent->Status().get());
    if(torrent->GetRatio()>0)
       printf("%sratio: %f\n",tab,torrent->GetRatio());
    if(v>2) {
       printf("%sinfo hash: %s\n",tab,torrent->GetInfoHash().dump());
       printf("%stotal length: %llu\n",tab,torrent->TotalLength());
       printf("%spiece length: %u\n",tab,torrent->PieceLength());
-      printf("%snext tracker request in %s\n",tab,torrent->TrackerTimerTimeLeft());
+      if(!torrent->IsValidating())
+	 printf("%snext tracker request in %s\n",tab,torrent->TrackerTimerTimeLeft());
    }
 
    if(torrent->GetPeersCount()<=5 || v>1) {
@@ -2355,7 +2363,12 @@ void TorrentJob::PrintStatus(int v,const char *tab)
 
 void TorrentJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
 {
-   s->Show("%s",torrent->Status());
+   const xstring& status=torrent->Status();
+   const char *name=torrent->GetName();
+   int w=s->GetWidthDelayed()-status.length()-3;
+   if(w<8)  w=8;
+   if(w>40) w=40;
+   s->Show("%s: %s",squeeze_file_name(name,w),status.get());
 }
 
 int TorrentJob::AcceptSig(int sig)
@@ -2406,29 +2419,37 @@ CMD(torrent)
       }
    }
    args->back();
+
+   xstring_ca cwd(xgetcwd());
+   if(output_dir) {
+      output_dir=dir_file(cwd,expand_home_relative(output_dir));
+      output_dir=alloca_strdup(output_dir);
+   } else
+      output_dir=cwd;
+
+   CmdExec *exec=0;
    const char *torrent=args->getnext();
    if(!torrent)
    {
       eprintf(_("%s: Please specify meta-info file or URL.\n"),args->a0());
       goto try_help;
    }
-   if(args->getnext()) {
-      eprintf(_("%s: Too many arguments.\n"),args->a0());
-      goto try_help;
+   while(torrent) {
+      Torrent *t=new Torrent(torrent,cwd,output_dir);
+      if(force_valid)
+	 t->ForceValid();
+      TorrentJob *tj=new TorrentJob(t);
+      torrent=args->getnext();
+      if(!torrent && !exec)
+	 return tj;
+      if(!exec)
+	 exec=new CmdExec(parent);
+      tj->AllocJobno();
+      tj->SetParent(exec);
+      tj->cmdline.set(xstring::cat("torrent ",torrent,NULL));
+      exec->AddWaiting(tj);
    }
-
-   xstring_ca cwd(xgetcwd());
-   if(output_dir)
-      output_dir=dir_file(cwd,expand_home_relative(output_dir));
-   else
-      output_dir=cwd;
-
-   Torrent *t=new Torrent(torrent,cwd,output_dir);
-   if(force_valid)
-      t->ForceValid();
-
-   return new TorrentJob(t);
-
+   return exec;
 #undef args
 }
 
