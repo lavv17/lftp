@@ -2439,6 +2439,7 @@ CMD(torrent)
       if(force_valid)
 	 t->ForceValid();
       TorrentJob *tj=new TorrentJob(t);
+      const char *torrent0=torrent;
       torrent=args->getnext();
       if(!torrent && !exec)
 	 return tj;
@@ -2446,7 +2447,7 @@ CMD(torrent)
 	 exec=new CmdExec(parent);
       tj->AllocJobno();
       tj->SetParent(exec);
-      tj->cmdline.set(xstring::cat("torrent ",torrent,NULL));
+      tj->cmdline.set(xstring::cat("torrent ",torrent0,NULL));
       exec->AddWaiting(tj);
    }
    return exec;
