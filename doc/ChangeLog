@@ -1,3 +1,7 @@
+2010-10-22	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document some settings; ``local'' prefix.
+
 2010-08-17	Noël Köthe <noel@debian.org>
 
 	* lftp.1: the option is xfer:disk-full-fatal but the manpage says

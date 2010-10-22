@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "10 Jun 2010"
+.TH lftp 1 "22 Oct 2010"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.0.9.
+This man page documents lftp version 4.0.11.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -346,6 +346,15 @@ Delete specified job with \fIjob_no\fP or all jobs.
 .PP
 Change current local directory \fIldir\fP. The previous local
 directory is stored as `\-'. You can do `lcd \-' to change the directory back.
+
+.B local
+\fIcommand\fP
+.PP
+Run specified command with local directory file:// session instead of
+remote session. This can be useful for e.g. local glob:
+.Ds
+	local glob -f torrent *.torrent
+.De
 
 .B lpwd
 .PP
@@ -829,6 +838,10 @@ with just host name without protocol. Default is `ftp'.
 .BR cmd:fail-exit \ (boolean)
 if true, exit when an unconditional (without || and && at begin) command fails.
 .TP
+.BR cmd:interactive \ (boolean)
+when true, lftp acts interactively, handles terminal signals and outputs
+some extra messages. Default depends on stdin being a terminal.
+.TP
 .BR cmd:long-running \ (seconds)
 time of command execution, which is
 considered as `long' and a beep is done before next prompt. 0
@@ -917,6 +930,39 @@ makes it inconsistent.
 .TP
 .BR cmd:queue-parallel \ (number)
 Number of jobs run in parallel in a queue.
+.TP
+.BR cmd:save-cwd-history \ (boolean)
+when true, lftp saves last CWD of each site to \fI~/.lftp/cwd_history\fR,
+allowing to do ``cd -'' after lftp restart. Default is true.
+.TP
+.BR cmd:save-rl-history \ (boolean)
+when true, lftp saves readline history to \fI~/.lftp/rl_history\fR on exit.
+Default is true.
+.TP
+.BR cmd:set-term-status \ (boolean)
+when true, lftp updates terminal status if supported (e.g. xterm). The closure
+for this setting is the terminal type from TERM environment variable.
+.TP
+.BR cmd:status-interval \ (time interval)
+the time interval between status updates.
+.TP
+.BR cmd:stifle-rl-history \ (number)
+the number of lines to keep in readline history.
+.TP
+.BR cmd:term-status \ (string)
+the format string to use to display terminal status. The closure for this
+setting is the terminal type from TERM environment variable. Default uses
+``tsl'' and ``fsl'' termcap values.
+
+The following escapes are supported:
+.Ds
+\\a	bell
+\\e	escape
+\\n	new line
+\\s	"lftp"
+\\v	lftp version
+\\T	the status string
+.De
 .TP
 .BR cmd:time-style \ (string)
 This setting is the default value for cls \-\-time\-style option.
@@ -1023,8 +1069,7 @@ The closure for this setting has format \fIuser@host\fP.
 .TP
 .BR ftp:anon-pass \ (string)
 sets the password used for anonymous ftp access authentication.
-Default is "-name@", where name is the username of the user running the
-program.
+Default is "lftp@".
 .TP
 .BR ftp:anon-user \ (string)
 sets the user name used for anonymous ftp access authentication.
@@ -1419,6 +1464,10 @@ You can override it with \-\-parallel option.
 When set to off, mirror won't try to copy file and directory permissions.
 You can override it by \-\-perms option. Default is on.
 .TP
+.BR mirror:skip-noaccess \ (boolean)
+when true, mirror does not try to download files which are obviously
+unaccessible by the permission mask. Defaule is false.
+.TP
 .BR mirror:use-pget-n " (number)"
 specifies \-n option for pget command used to transfer every single file under
 mirror. Default is 1 which disables pget.
@@ -1611,12 +1660,24 @@ show terse ETA (only high order parts). Default is true.
 .BR xfer:log \ (boolean)
 when true, lftp logs transfers to \fI~/.lftp/transfer_log\fR.
 .TP
+.BR xfer:make-backup \ (boolean)
+when true, lftp renames pre-existing file adding ``~'' suffix instead of overwriting it.
+.TP
 .BR xfer:max-redirections " (number)"
 maximum number of redirections. This can be useful for downloading over HTTP.
 0 prohibits redirections.
 .TP
 .BR xfer:rate-period \ (seconds)
 the period over which weighted average rate is calculated to be shown.
+.TP
+.BR xfer:verify \ (boolean)
+when true, verify-command is launched after successful transfer to validate
+file integrity. Zero exit code of that command should indicate correctness
+of the file.
+.TP
+.BR xfer:verify-command \ (string)
+the command to validate file integrity. The only argument is the path to
+the file.
 
 .PP
 The name of a variable can be abbreviated unless it becomes
