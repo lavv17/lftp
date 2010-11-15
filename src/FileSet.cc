@@ -451,13 +451,14 @@ int FileSet::FindGEIndByName(const char *name) const
       int m = (l + u) / 2;
       int cmp = strcmp(files[m]->name, name);
 
-      /* if files[m]->name >= name, update the upper bound: */
-      if (cmp >= 0)
+      /* if files[m]->name > name, update the upper bound: */
+      if (cmp > 0)
 	 u = m;
-
       /* if files[m]->name < name, update the lower bound: */
-      if (cmp < 0)
+      else if (cmp < 0)
 	 l = m+1;
+      else /* otherwise found exact match */
+	 return m;
    }
 
    return u;

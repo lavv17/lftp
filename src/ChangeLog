@@ -1,3 +1,10 @@
+2010-11-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileSet.cc: optimize b-search.
+	* StatusLine.cc: use tmp xstring.
+	* Torrent.cc, Torrent.h: (TorrentTracker) new class;
+	  use posix_fallocate to pre-allocate disk space.
+
 2010-10-19  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CmdExec.cc, CmdExec.h, commands.cc: new CmdExec ctor; `local' builtin.

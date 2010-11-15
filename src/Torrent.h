@@ -30,6 +30,11 @@
 #include "network.h"
 #include "RateLimit.h"
 
+class FDCache;
+class TorrentBlackList;
+class Torrent;
+class TorrentPeer;
+
 class BitField : public xarray<unsigned char>
 {
    int bit_length;
@@ -50,7 +55,6 @@ public:
    void clear() { memset(buf,0,length()); }
 };
 
-class TorrentPeer;
 struct TorrentPiece
 {
    unsigned sources_count;	    // how many peers have the piece
@@ -65,15 +69,61 @@ struct TorrentPiece
    bool has_a_downloader() const;
 };
 
-class TorrentListener;
-class FDCache;
-class TorrentBlackList;
+class TorrentListener : public SMTask, protected ProtoLog, protected Networker
+{
+   Ref<Error> error;
+   int sock;
+   sockaddr_u addr;
+   xmap<Torrent*> torrents;
+   Speedometer rate;
+public:
+   TorrentListener();
+   ~TorrentListener();
+   int Do();
+   Torrent *FindTorrent(const xstring& info_hash) const { return torrents.lookup(info_hash); }
+   void AddTorrent(Torrent *);
+   void RemoveTorrent(Torrent *);
+   int GetPort() const { return addr.port(); }
+   int GetTorrentsCount() const { return torrents.count(); }
+   void Dispatch(const xstring& info_hash,int s,const sockaddr_u *remote_addr,IOBuffer *recv_buf);
+   Torrent *Lookup(const xstring& info_hash) { return torrents.lookup(info_hash); }
+};
+
+class TorrentTracker : public SMTask, protected ProtoLog
+{
+   friend class Torrent;
+
+   Torrent *parent;
+
+   xstring tracker_url;
+   FileAccessRef t_session;
+   Timer tracker_timer;
+   SMTaskRef<IOBuffer> tracker_reply;
+   xstring tracker_id;
+   bool started;
+   Ref<Error> error;
+
+   TorrentTracker(Torrent *p,const char *url);
+   int Do();
+
+   void Start();
+   void Shutdown();
+
+   void SendTrackerRequest(const char *event);
+   int HandleTrackerReply();
+
+   void SetError(const char *e) { error=new Error(-1,e,true); }
+   bool Failed() const { return error!=0; }
+   const char *ErrorText() const { return error->Text(); }
+
+public:
+   ~TorrentTracker() {}
+};
 
 class Torrent : public SMTask, protected ProtoLog, public ResClient
 {
    friend class TorrentPeer;
 
-   bool started;
    bool shutting_down;
    bool complete;
    bool end_game;
@@ -102,25 +152,22 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    void InitTranslation();
    void TranslateString(BeNode *node) const;
 
-   xstring tracker_url;
-   FileAccessRef t_session;
-   Timer tracker_timer;
-   SMTaskRef<IOBuffer> tracker_reply;
-   xstring tracker_id;
+   SMTaskRef<TorrentTracker> tracker;
+   bool TrackersDone() const;
 
    bool single_file;
    unsigned piece_length;
    unsigned last_piece_length;
-   unsigned long long total_length;
    unsigned total_pieces;
-   Ref<BitField> my_bitfield;
-   unsigned long long total_left;
    unsigned complete_pieces;
+   Ref<BitField> my_bitfield;
 
    static const unsigned BLOCK_SIZE = 0x4000;
 
+   unsigned long long total_length;
    unsigned long long total_recv;
    unsigned long long total_sent;
+   unsigned long long total_left;
 
    void SetError(Error *);
    void SetError(const char *);
@@ -128,9 +175,6 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    BeNode *Lookup(xmap_p<BeNode>& d,const char *name,BeNode::be_type_t type);
    BeNode *Lookup(BeNode *d,const char *name,BeNode::be_type_t type) { return Lookup(d->dict,name,type); }
    BeNode *Lookup(Ref<BeNode>& d,const char *name,BeNode::be_type_t type) { return Lookup(d->dict,name,type); }
-
-   void SendTrackerRequest(const char *event);
-   int HandleTrackerReply();
 
    TaskRefArray<TorrentPeer> peers;
    RefArray<TorrentPiece> piece_info;
@@ -151,7 +195,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
 
    const char *FindFileByPosition(unsigned piece,unsigned begin,off_t *f_pos,off_t *f_tail) const;
    const char *MakePath(BeNode *p) const;
-   int OpenFile(const char *f,int m);
+   int OpenFile(const char *f,int m,off_t size=0);
 
    void StoreBlock(unsigned piece,unsigned begin,unsigned len,const char *buf,TorrentPeer *src_peer);
    const xstring& RetrieveBlock(unsigned piece,unsigned begin,unsigned len);
@@ -202,7 +246,7 @@ public:
    Torrent(const char *mf,const char *cwd,const char *output_dir);
 
    int Do();
-   int Done();
+   int Done() const;
 
    const xstring& Status();
 
@@ -222,6 +266,7 @@ public:
 
    const TaskRefArray<TorrentPeer>& GetPeers() const { return peers; }
    void AddPeer(TorrentPeer *);
+   void CleanPeers();
 
    const xstring& GetInfoHash() const { return info_hash; }
    int GetPeersCount() const { return peers.count(); }
@@ -234,8 +279,8 @@ public:
    unsigned PieceLength() const { return piece_length; }
    const char *GetName() const { return name?name->get():metainfo_url.get(); }
    const char *TrackerTimerTimeLeft() {
-      return tracker_timer.TimeLeft().toString(
-	 TimeInterval::TO_STR_TRANSLATE|TimeInterval::TO_STR_TERSE);
+      return tracker?tracker->tracker_timer.TimeLeft().toString(
+	 TimeInterval::TO_STR_TRANSLATE|TimeInterval::TO_STR_TERSE) : "";
    }
 
    void Reconfig(const char *name);
@@ -243,6 +288,15 @@ public:
 
    void ForceValid() { force_valid=true; }
    bool IsValidating() const { return validating; }
+
+   int GetPort() { return listener->GetPort(); }
+   int GetWantedPeersCount() const;
+   static const xstring& GetMyPeerId() { return my_peer_id; }
+   static const xstring& GetMyKey() { return my_key; }
+
+   unsigned long long GetTotalSent() { return total_sent; }
+   unsigned long long GetTotalRecv() { return total_recv; }
+   unsigned long long GetTotalLeft() { return total_left; }
 };
 
 class FDCache : public SMTask, public ResClient
@@ -259,7 +313,7 @@ class FDCache : public SMTask, public ResClient
    Timer clean_timer;
 
 public:
-   int OpenFile(const char *name,int mode);
+   int OpenFile(const char *name,int mode,off_t size=0);
    void Close(const char *name);
    int Count() const;
    void Clean();
@@ -535,26 +589,6 @@ public:
    TorrentDispatcher(int s,const sockaddr_u *a);
    ~TorrentDispatcher();
    int Do();
-};
-
-class TorrentListener : public SMTask, protected ProtoLog, protected Networker
-{
-   Ref<Error> error;
-   int sock;
-   sockaddr_u addr;
-   xmap<Torrent*> torrents;
-   Speedometer rate;
-public:
-   TorrentListener();
-   ~TorrentListener();
-   int Do();
-   Torrent *FindTorrent(const xstring& info_hash) const { return torrents.lookup(info_hash); }
-   void AddTorrent(Torrent *);
-   void RemoveTorrent(Torrent *);
-   int GetPort() const { return addr.port(); }
-   int GetTorrentsCount() const { return torrents.count(); }
-   void Dispatch(const xstring& info_hash,int s,const sockaddr_u *remote_addr,IOBuffer *recv_buf);
-   Torrent *Lookup(const xstring& info_hash) { return torrents.lookup(info_hash); }
 };
 
 #include "Job.h"

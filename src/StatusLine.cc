@@ -154,7 +154,7 @@ void StatusLine::WriteTitle(const char *s, int fd) const
 
    const char *status_format = ResMgr::Query("cmd:term-status", getenv("TERM"));
 
-   xstring disp;
+   xstring &disp=xstring::get_tmp();
 
    /* If we have no format, and we have both tsl and fsl, use them: */
    if((!status_format || !*status_format) && to_status_line && from_status_line)

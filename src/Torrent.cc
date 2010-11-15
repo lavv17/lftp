@@ -55,15 +55,28 @@ Ref<TorrentListener> Torrent::listener;
 Ref<FDCache> Torrent::fd_cache;
 Ref<TorrentBlackList> Torrent::black_list;
 
+TorrentTracker::TorrentTracker(Torrent *p,const char *url)
+   : parent(p), tracker_url(url), tracker_timer(600), started(false)
+{
+   LogNote(4,"Tracker URL is `%s'",tracker_url.get());
+   ParsedURL u(tracker_url.get(),true);
+   if(u.proto.ne("http") && u.proto.ne("https")) {
+      SetError("Meta-data: wrong `announce' protocol, must be http or https");
+      return;
+   }
+   // fix the URL: append either ? or & if missing.
+   if(tracker_url.last_char()!='?' && tracker_url.last_char()!='&')
+      tracker_url.append(strchr(tracker_url.get(),'?')?'&':'?');
+}
+
 Torrent::Torrent(const char *mf,const char *c,const char *od)
    : metainfo_url(mf),
-     tracker_timer(600), pieces_needed_rebuild_timer(10),
+     pieces_needed_rebuild_timer(10),
      cwd(c), output_dir(od), rate_limit(mf),
      seed_timer("torrent:seed-max-time",0),
      optimistic_unchoke_timer(30), peers_scan_timer(1),
      am_interested_timer(1)
 {
-   started=false;
    shutting_down=false;
    complete=false;
    end_game=false;
@@ -106,9 +119,19 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    }
 }
 
-int Torrent::Done()
+bool Torrent::TrackersDone() const
 {
-   return (shutting_down && !tracker_reply);
+   return tracker==0 || !tracker->tracker_reply;
+}
+int Torrent::Done() const
+{
+   return (shutting_down && TrackersDone());
+}
+
+void TorrentTracker::Shutdown()
+{
+   if(started || tracker_reply)
+      SendTrackerRequest("stopped");
 }
 
 void Torrent::Shutdown()
@@ -117,8 +140,8 @@ void Torrent::Shutdown()
       return;
    LogNote(3,"Shutting down...");
    shutting_down=true;
-   if(started || tracker_reply)
-      SendTrackerRequest("stopped");
+   if(tracker)
+      tracker->Shutdown();
    PrepareToDie();
 }
 
@@ -142,7 +165,7 @@ void Torrent::SetError(Error *e)
    LogError(0,"%s: %s",
       invalid_cause->IsFatal()?"Fatal error":"Transient error",
       invalid_cause->Text());
-   tracker_reply=0;
+   tracker=0;
    Shutdown();
 }
 void Torrent::SetError(const char *msg)
@@ -285,10 +308,10 @@ bool Torrent::SeededEnough() const
       || seed_timer.Stopped();
 }
 
-int Torrent::HandleTrackerReply()
+int TorrentTracker::HandleTrackerReply()
 {
    if(tracker_reply->Error()) {
-      SetError(new Error(-1,tracker_reply->ErrorText(),false));
+      SetError(tracker_reply->ErrorText());
       t_session->Close();
       tracker_reply=0;
       tracker_timer.Reset();
@@ -308,7 +331,7 @@ int Torrent::HandleTrackerReply()
    LogNote(10,"Received tracker reply:");
    Log::global->Write(10,reply->Format());
 
-   if(shutting_down) {
+   if(parent->ShuttingDown()) {
       tracker_reply=0;
       return MOVED;
    }
@@ -350,7 +373,7 @@ int Torrent::HandleTrackerReply()
 	    memcpy(&a.in.sin_port,data+4,2);
 	    data+=6;
 	    len-=6;
-	    AddPeer(new TorrentPeer(this,&a));
+	    parent->AddPeer(new TorrentPeer(parent,&a));
 	 }
       } else if(b_peers->type==BeNode::BE_LIST) { // dictionary model
 	 for(int p=0; p<b_peers->list.count(); p++) {
@@ -368,7 +391,7 @@ int Torrent::HandleTrackerReply()
 	    if(!inet_aton(b_ip->str,&a.in.sin_addr))
 	       continue;
 	    a.in.sin_port=htons(b_port->num);
-	    AddPeer(new TorrentPeer(this,&a));
+	    parent->AddPeer(new TorrentPeer(parent,&a));
 	 }
       }
    }
@@ -377,14 +400,48 @@ int Torrent::HandleTrackerReply()
    return MOVED;
 }
 
+void Torrent::CleanPeers()
+{
+   // remove uninteresting peers and request more
+   for(int i=0; i<peers.count(); i++) {
+      const TorrentPeer *peer=peers[i];
+      if(peer->ActivityTimedOut()) {
+	 LogNote(4,"removing uninteresting peer %s (%s)",peer->GetName(),peers[i]->Status());
+	 BlackListPeer(peer,"2h");
+	 peers.remove(i--);
+      }
+   }
+}
+
+int TorrentTracker::Do()
+{
+   int m=STALL;
+   if(Failed())
+      return m;
+   if(tracker_reply) {
+      m|=HandleTrackerReply();
+   } else {
+      if(tracker_timer.Stopped()) {
+	 parent->CleanPeers();
+	 SendTrackerRequest(0);
+      }
+   }
+   return m;
+}
+void TorrentTracker::Start()
+{
+   if(t_session)
+      return;
+   ParsedURL u(tracker_url.get(),true);
+   t_session=FileAccess::New(&u);
+   SendTrackerRequest("started");
+}
+
 int Torrent::Do()
 {
    int m=STALL;
-   if(Done())
+   if(Done() || shutting_down)
       return m;
-   if(shutting_down && tracker_reply)
-      return HandleTrackerReply();
-
    // retrieve metainfo if don't have already.
    if(!metainfo_tree) {
       if(!metainfo_fa) {
@@ -430,20 +487,16 @@ int Torrent::Do()
 	 SetError("Meta-data: wrong top level type, must be DICT");
          return MOVED;
       }
+
       BeNode *announce=Lookup(metainfo_tree,"announce",BeNode::BE_STR);
       if(!announce)
          return MOVED;
-
-      tracker_url.set(announce->str);
-      LogNote(4,"Tracker URL is `%s'",tracker_url.get());
-      ParsedURL u(tracker_url.get(),true);
-      if(u.proto.ne("http") && u.proto.ne("https")) {
-	 SetError("Meta-data: wrong `announce' protocol, must be http or https");
-         return MOVED;
+      tracker=new TorrentTracker(this,announce->str);
+      if(tracker->Failed())
+      {
+	 SetError(tracker->ErrorText());
+	 return MOVED;
       }
-      // fix the URL: append either ? or & if missing.
-      if(tracker_url.last_char()!='?' && tracker_url.last_char()!='&')
-	 tracker_url.append(strchr(tracker_url.get(),'?')?'&':'?');
 
       info=Lookup(metainfo_tree,"info",BeNode::BE_DICT);
       if(!info)
@@ -542,14 +595,8 @@ int Torrent::Do()
 	 seed_timer.Reset();
       }
    }
-   if(!t_session && !started) {
-      if(listener->GetPort()==0)
-	 return m;
-      ParsedURL u(tracker_url.get(),true);
-      t_session=FileAccess::New(&u);
-      SendTrackerRequest("started");
-      m=MOVED;
-   }
+   if(GetPort())
+      tracker->Start();
 
    if(peers_scan_timer.Stopped())
       ScanPeers();
@@ -563,7 +610,6 @@ int Torrent::Do()
       active_peers_count+=peers[i]->Active();
       complete_peers_count+=peers[i]->Complete();
    }
-
    // rebuild lists of needed pieces
    if(!complete && pieces_needed_rebuild_timer.Stopped()) {
       pieces_needed.truncate();
@@ -586,26 +632,16 @@ int Torrent::Do()
       pieces_needed_rebuild_timer.Reset();
    }
 
-   if(tracker_reply) {
-      m|=HandleTrackerReply();
-   } else {
-      if(complete && SeededEnough()) {
-	 Shutdown();
-	 return MOVED;
-      }
-      if(tracker_timer.Stopped()) {
-	 // remove uninteresting peers and request more
-	 for(int i=0; i<peers.count(); i++) {
-	    const TorrentPeer *peer=peers[i];
-	    if(peer->ActivityTimedOut()) {
-	       LogNote(4,"removing uninteresting peer %s (%s)",peer->GetName(),peers[i]->Status());
-	       BlackListPeer(peer,"2h");
-	       peers.remove(i--);
-	    }
-	 }
-	 SendTrackerRequest(0);
-      }
+   if(complete && SeededEnough()) {
+      Shutdown();
+      return MOVED;
    }
+
+   if(active_peers_count==0 && tracker->Failed()) {
+      SetError(tracker->ErrorText());
+      return m;
+   }
+
    return m;
 }
 
@@ -647,11 +683,8 @@ void Torrent::AddPeer(TorrentPeer *peer)
    peers.append(peer);
 }
 
-void Torrent::SendTrackerRequest(const char *event)
+int Torrent::GetWantedPeersCount() const
 {
-   if(!t_session)
-      return;
-
    int numwant=complete?seed_min_peers:max_peers/2;
    if(numwant>peers.count())
       numwant-=peers.count();
@@ -659,22 +692,31 @@ void Torrent::SendTrackerRequest(const char *event)
       numwant=0;
    if(shutting_down)
       numwant=-1;
+   return numwant;
+}
+
+void TorrentTracker::SendTrackerRequest(const char *event)
+{
+   if(!t_session)
+      return;
 
    xstring request;
-   request.setf("info_hash=%s",url::encode(info_hash,URL_PATH_UNSAFE).get());
-   request.appendf("&peer_id=%s",url::encode(my_peer_id,URL_PATH_UNSAFE).get());
-   request.appendf("&port=%d",listener->GetPort());
-   request.appendf("&uploaded=%llu",total_sent);
-   request.appendf("&downloaded=%llu",total_recv);
-   request.appendf("&left=%llu",total_left);
+   request.setf("info_hash=%s",url::encode(parent->GetInfoHash(),URL_PATH_UNSAFE).get());
+   request.appendf("&peer_id=%s",url::encode(parent->GetMyPeerId(),URL_PATH_UNSAFE).get());
+   request.appendf("&port=%d",parent->GetPort());
+   request.appendf("&uploaded=%llu",parent->GetTotalSent());
+   request.appendf("&downloaded=%llu",parent->GetTotalRecv());
+   request.appendf("&left=%llu",parent->GetTotalLeft());
    request.append("&compact=1&no_peer_id=1");
    if(event)
       request.appendf("&event=%s",event);
    const char *ip=ResMgr::Query("torrent:ip",0);
    if(ip && ip[0])
       request.appendf("&ip=%s",ip);
+   int numwant=parent->GetWantedPeersCount();
    if(numwant>=0)
       request.appendf("&numwant=%d",numwant);
+   const xstring& my_key=parent->GetMyKey();
    if(my_key)
       request.appendf("&key=%s",my_key.get());
    if(tracker_id)
@@ -811,7 +853,7 @@ int FDCache::Count() const
 {
    return cache[0].count()+cache[1].count()+cache[2].count();
 }
-int FDCache::OpenFile(const char *file,int m)
+int FDCache::OpenFile(const char *file,int m,off_t size)
 {
    int ci=m&3;
    assert(ci<3);
@@ -840,18 +882,26 @@ int FDCache::OpenFile(const char *file,int m)
    } while(fd==-1 && (errno==EMFILE || errno==ENFILE) && CloseOne());
    FD new_entry = {fd,errno,now.UnixTime()};
    cache[ci].add(file,new_entry);
+#ifdef HAVE_POSIX_FALLOCATE
+   if(fd!=-1 && ci==O_RDWR && size>0) {
+      struct stat st;
+      // check if it is newly created file, then allocate space
+      if(fstat(fd,&st)!=-1 && st.st_size==0)
+	 posix_fallocate(fd,0,size);
+   }
+#endif//HAVE_POSIX_FALLOCATE
    return fd;
 }
 
-int Torrent::OpenFile(const char *file,int m)
+int Torrent::OpenFile(const char *file,int m,off_t size)
 {
    bool did_mkdir=false;
 try_again:
    const char *cf=dir_file(output_dir,file);
-   int fd=fd_cache->OpenFile(cf,m);
+   int fd=fd_cache->OpenFile(cf,m,size);
    while(fd==-1 && (errno==EMFILE || errno==ENFILE) && peers.count()>0) {
       peers.chop();  // free an fd
-      fd=fd_cache->OpenFile(cf,m);
+      fd=fd_cache->OpenFile(cf,m,size);
    }
    if(validating)
       return fd;
@@ -898,7 +948,7 @@ void Torrent::StoreBlock(unsigned piece,unsigned begin,unsigned len,const char *
       const char *file=FindFileByPosition(piece,begin,&f_pos,&f_rest);
       if(f_rest>len)
 	 f_rest=len;
-      int fd=OpenFile(file,O_RDWR|O_CREAT);
+      int fd=OpenFile(file,O_RDWR|O_CREAT,f_pos+f_rest);
       if(fd==-1) {
 	 SetError(xstring::format("open(%s): %s",file,strerror(errno)));
 	 return;
@@ -937,7 +987,7 @@ void Torrent::StoreBlock(unsigned piece,unsigned begin,unsigned len,const char *
 	 seed_timer.Reset();
 	 end_game=false;
 	 ScanPeers();
-	 SendTrackerRequest("completed");
+	 tracker->SendTrackerRequest("completed");
       }
    }
 }
