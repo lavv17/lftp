@@ -1,3 +1,7 @@
+2010-11-19  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Torrent.cc, Torrent.h: add multitracker support.
+
 2010-11-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileSet.cc: optimize b-search.

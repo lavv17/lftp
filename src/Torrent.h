@@ -102,8 +102,10 @@ class TorrentTracker : public SMTask, protected ProtoLog
    xstring tracker_id;
    bool started;
    Ref<Error> error;
+   int tracker_no;
 
    TorrentTracker(Torrent *p,const char *url);
+   void AddURL(const char *url);
    int Do();
 
    void Start();
@@ -118,6 +120,11 @@ class TorrentTracker : public SMTask, protected ProtoLog
 
 public:
    ~TorrentTracker() {}
+   const char *NextRequestIn() const {
+      return tracker_timer.TimeLeft().toString(
+	 TimeInterval::TO_STR_TRANSLATE|TimeInterval::TO_STR_TERSE);
+   }
+   const char *GetURL() { return tracker_url; }
 };
 
 class Torrent : public SMTask, protected ProtoLog, public ResClient
@@ -152,8 +159,12 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    void InitTranslation();
    void TranslateString(BeNode *node) const;
 
-   SMTaskRef<TorrentTracker> tracker;
+   TaskRefArray<TorrentTracker> trackers;
    bool TrackersDone() const;
+   bool TrackersFailed() const;
+   void StartTrackers() const;
+   void ShutdownTrackers() const;
+   void SendTrackersRequest(const char *e) const;
 
    bool single_file;
    unsigned piece_length;
@@ -278,10 +289,6 @@ public:
    unsigned long long TotalLength() const { return total_length; }
    unsigned PieceLength() const { return piece_length; }
    const char *GetName() const { return name?name->get():metainfo_url.get(); }
-   const char *TrackerTimerTimeLeft() {
-      return tracker?tracker->tracker_timer.TimeLeft().toString(
-	 TimeInterval::TO_STR_TRANSLATE|TimeInterval::TO_STR_TERSE) : "";
-   }
 
    void Reconfig(const char *name);
    const char *GetLogContext() { return GetName(); }
@@ -297,6 +304,8 @@ public:
    unsigned long long GetTotalSent() { return total_sent; }
    unsigned long long GetTotalRecv() { return total_recv; }
    unsigned long long GetTotalLeft() { return total_left; }
+
+   const TaskRefArray<TorrentTracker>& Trackers() { return trackers; }
 };
 
 class FDCache : public SMTask, public ResClient
@@ -331,6 +340,8 @@ class TorrentPeer : public SMTask, protected ProtoLog, public Networker
 
    Ref<Error> error;
    Torrent *parent;
+
+   int tracker_no;
 
    sockaddr_u addr;
    int sock;
@@ -547,7 +558,7 @@ private:
 
 public:
    int Do();
-   TorrentPeer(Torrent *p,const sockaddr_u *a);
+   TorrentPeer(Torrent *p,const sockaddr_u *a,int tracker_no=-1);
    ~TorrentPeer();
    void PrepareToDie();
    void Connect(int s,IOBuffer *rb);
