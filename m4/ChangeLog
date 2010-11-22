@@ -1,3 +1,7 @@
+2010-11-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.m4: (LFTP_POSIX_FTRUNCATE_CHECK) new check.
+
 2009-10-23  Robert Story <Robert.Story@cobham.com>
 
 	* lftp.m4: newer versions of gcc don't support -fwritable-strings.
