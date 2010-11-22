@@ -1700,9 +1700,8 @@ msgstr ""
 " -d  вывести только значения по умолчанию, не обязательно текущие значения.\n"
 
 #: src/commands.cc:453
-#, fuzzy
 msgid "site <site-cmd>"
-msgstr "site <команда_сервера>"
+msgstr "site <команда>"
 
 #: src/commands.cc:454
 msgid ""

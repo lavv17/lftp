@@ -43,7 +43,7 @@ src/TreatFileJob.cc
 src/buffer.cc
 src/commands.cc
 src/ftpclass.cc
-lib/getdate.c
+lib/parse-datetime.c
 src/lftp.cc
 src/mgetJob.cc
 src/mkdirJob.cc
