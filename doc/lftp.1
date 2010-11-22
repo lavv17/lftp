@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "22 Oct 2010"
+.TH lftp 1 "22 Nov 2010"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.0.11.
+This man page documents lftp version 4.1.0.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -351,9 +351,11 @@ directory is stored as `\-'. You can do `lcd \-' to change the directory back.
 \fIcommand\fP
 .PP
 Run specified command with local directory file:// session instead of
-remote session. This can be useful for e.g. local glob:
+remote session. Examples:
 .Ds
-	local glob -f torrent *.torrent
+local pwd
+local ls
+local mirror /dir1 /dir2
 .De
 
 .B lpwd
@@ -761,14 +763,21 @@ source \-e echo help
 Stop lftp process. Note that transfers will be also stopped until you
 continue the process with shell's fg or bg commands.
 
-.BR torrent " \fItorrent-file\fP [" \-O " \fIdirectory\fP]"
+.BR torrent " [" OPTS "] " \fItorrent-files...\fP
 .PP
-Start BitTorrent process for the given \fItorrent-file\fP, which can be a
-local file or URL. Existing files are first validated. Missing pieces are
+Start BitTorrent process for the given \fItorrent-files\fP, which can be a
+local file or URL. Local wildcards are expanded. Existing files are first
+validated unless \fI\-\-force\-valid\fP option is given. Missing pieces are
 downloaded. Files are stored in specified \fIdirectory\fP or current
 working directory by default. Seeding continues until ratio reachs
 \fItorrent:stop-on-ratio\fP setting or time of \fItorrent:seed-max-time\fP
 outs.
+.PP
+Options:
+.Ds
+\-O <directory>	specifies base directory where files should be placed
+\-\-force\-valid	skip file validation (if you are sure they are ok).
+.De
 
 .B user
 \fIuser\fP [\fIpass\fP]
@@ -1618,7 +1627,7 @@ if set to yes, then verify server's certificate to be signed by a known
 Certificate Authority and not be on Certificate Revocation List.
 .TP
 .BR torrent:ip " (ipv4 address)"
-IP address for the tracker. Specify it if you are using an http proxy.
+IP address to send to the tracker. Specify it if you are using an http proxy.
 .TP
 .BR torrent:max-peers \ (number)
 maximum number of peers for a torrent. Least used peers are removed to
@@ -1828,6 +1837,8 @@ http://www.ietf.org/internet-drafts/draft-ietf-secsh-filexfer-10.txt
 (sftp).
 .br
 http://wiki.theory.org/BitTorrentSpecification
+.br
+http://www.bittornado.com/docs/multitracker-spec.txt
 .ad
 
 .SH AUTHOR

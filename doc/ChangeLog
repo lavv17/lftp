@@ -1,3 +1,8 @@
+2010-11-22	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: update `local' examples; better torrent desc;
+	  add multi-tracker ref.
+
 2010-10-22	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document some settings; ``local'' prefix.
