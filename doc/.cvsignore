@@ -1,5 +1,4 @@
 Makefile
 Makefile.in
 lftp.ps
-getdate.texi
 parse-datetime.texi
