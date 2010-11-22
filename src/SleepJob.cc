@@ -239,7 +239,7 @@ Job *cmd_repeat(CmdExec *parent)
 }
 
 extern "C" {
-#include "getdate.h"
+#include "parse-datetime.h"
 }
 Job *cmd_at(CmdExec *parent)
 {
@@ -264,7 +264,7 @@ Job *cmd_at(CmdExec *parent)
    date.truncate(date_len);
 
    struct timespec ts;
-   if(!get_date(&ts,date,0))
+   if(!parse_datetime(&ts,date,0))
    {
       eprintf("%s: %s\n",args->a0(),"date parse error");
       return 0;

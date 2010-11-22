@@ -59,15 +59,17 @@ void ArgV::back()
       ind--;
 }
 
-char *ArgV::Combine(int start) const
+char *ArgV::Combine(int start,int end) const
 {
    xstring res("");
-   if(start>=Count())
+   if(!end)
+      end=Count();
+   if(start>=end)
       return res.borrow();
    for(;;)
    {
       res.append(getarg(start++));
-      if(start>=Count())
+      if(start>=end)
 	 return(res.borrow());
       res.append(' ');
    }

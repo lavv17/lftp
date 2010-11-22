@@ -353,6 +353,7 @@ int TorrentTracker::HandleTrackerReply()
 
    if(parent->ShuttingDown()) {
       tracker_reply=0;
+      t_session=0;
       return MOVED;
    }
    started=true;
@@ -744,8 +745,15 @@ int Torrent::GetWantedPeersCount() const
       numwant=0;
    if(shutting_down)
       numwant=-1;
-   if(numwant>0) // request peers from all trackers evenly (round up).
-      numwant=(numwant+trackers.count()-1)/trackers.count();
+   if(numwant>1) {
+      // count almost ready for request trackers
+      int trackers_count=0;
+      for(int i=0; i<trackers.count(); i++)
+	 trackers_count+=(trackers[i]->tracker_timer.TimeLeft()<60);
+      // request peers from all trackers evenly (round up).
+      if(trackers_count)
+	 numwant=(numwant+trackers_count-1)/trackers_count;
+   }
    return numwant;
 }
 
@@ -1246,6 +1254,18 @@ const xstring& Torrent::Status()
    if(validating) {
       return xstring::format("Validation: %u/%u (%u%%)",validate_index,total_pieces,
 	 validate_index*100/total_pieces);
+   }
+   if(shutting_down) {
+      if(trackers.count()==0)
+	 return xstring::get_tmp("");
+      if(trackers.count()==1)
+	 return xstring::format("Shutting down: %s",trackers[0]->Status());
+      for(int i=0; i<trackers.count(); i++) {
+	 const char *status=trackers[i]->Status();
+	 if(status[0])
+	    return xstring::format("Shutting down: %d. %s",i+1,status);
+      }
+      return xstring::get_tmp("");
    }
    if(total_length==0)
       return xstring::get_tmp("");
@@ -2451,6 +2471,15 @@ int TorrentJob::Do()
    return STALL;
 }
 
+const char *TorrentTracker::Status() const
+{
+   if(!t_session)
+      return "";
+   if(t_session->IsOpen())
+      return t_session->CurrentStatus();
+   return xstring::format("next request in %s",NextRequestIn());
+}
+
 void TorrentJob::PrintStatus(int v,const char *tab)
 {
    const char *name=torrent->GetName();
@@ -2467,17 +2496,13 @@ void TorrentJob::PrintStatus(int v,const char *tab)
 
    if(v>1) {
       if(torrent->Trackers().count()==1) {
-	 printf("%stracker url: %s",tab,torrent->Trackers()[0]->GetURL());
-	 if(!torrent->IsValidating())
-	    printf(", next request in %s",torrent->Trackers()[0]->NextRequestIn());
-	 printf("\n");
+	 printf("%stracker: %s - %s\n",tab,torrent->Trackers()[0]->GetURL(),
+	       torrent->Trackers()[0]->Status());
       } else if(torrent->Trackers().count()>1) {
 	 printf("%strackers:\n",tab);
 	 for(int i=0; i<torrent->Trackers().count(); i++) {
-	    printf("%s%2d. %s",tab,i+1,torrent->Trackers()[i]->GetURL());
-	    if(!torrent->IsValidating())
-	       printf(", next request in %s",torrent->Trackers()[i]->NextRequestIn());
-	    printf("\n");
+	    printf("%s%2d. %s - %s\n",tab,i+1,torrent->Trackers()[i]->GetURL(),
+		  torrent->Trackers()[i]->Status());
 	 }
       }
    }
@@ -2513,6 +2538,9 @@ int TorrentJob::AcceptSig(int sig)
 
 
 #include "CmdExec.h"
+CDECL_BEGIN
+#include <glob.h>
+CDECL_END
 
 CMD(torrent)
 {
@@ -2552,6 +2580,8 @@ CMD(torrent)
    }
    args->back();
 
+   xstring_ca torrent_opt(args->Combine(0,args->getindex()));
+
    xstring_ca cwd(xgetcwd());
    if(output_dir) {
       output_dir=dir_file(cwd,expand_home_relative(output_dir));
@@ -2559,8 +2589,31 @@ CMD(torrent)
    } else
       output_dir=cwd;
 
-   CmdExec *exec=0;
-   const char *torrent=args->getnext();
+
+   Ref<ArgV> args_g(new ArgV(args->a0()));
+   const char *torrent;
+   while((torrent=args->getnext())!=0) {
+      int globbed=0;
+      if(!url::is_url(torrent)) {
+	 glob_t pglob;
+	 glob(expand_home_relative(torrent),0,0,&pglob);
+	 if(pglob.gl_pathc>0) {
+	    for(unsigned i=0; i<pglob.gl_pathc; i++) {
+	       const char *f=pglob.gl_pathv[i];
+	       struct stat st;
+	       if(stat(f,&st)!=-1 && S_ISREG(st.st_mode)) {
+		  args_g->Add(f);
+		  globbed++;
+	       }
+	    }
+	 }
+	 globfree(&pglob);
+      }
+      if(!globbed)
+	 args_g->Add(torrent);
+   }
+
+   torrent=args_g->getnext();
    if(!torrent)
    {
       eprintf(_("%s: Please specify meta-info file or URL.\n"),args->a0());
@@ -2571,18 +2624,11 @@ CMD(torrent)
       if(force_valid)
 	 t->ForceValid();
       TorrentJob *tj=new TorrentJob(t);
-      const char *torrent0=torrent;
-      torrent=args->getnext();
-      if(!torrent && !exec)
-	 return tj;
-      if(!exec)
-	 exec=new CmdExec(parent);
-      tj->AllocJobno();
-      tj->SetParent(exec);
-      tj->cmdline.set(xstring::cat("torrent ",torrent0,NULL));
-      exec->AddWaiting(tj);
+      tj->cmdline.set(xstring::cat(torrent_opt," ",torrent,NULL));
+      parent->AddNewJob(tj);
+      torrent=args_g->getnext();
    }
-   return exec;
+   return 0;
 #undef args
 }
 

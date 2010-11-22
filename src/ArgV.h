@@ -44,7 +44,7 @@ public:
    void Append(int a) { char buf[32]; sprintf(buf,"%d",a); Append(buf); }
    void Add(const char *a) { Append(a); } // alias
 
-   char *Combine(int start_index=0) const;
+   char *Combine(int start_index=0,int end_index=0) const;
    char *CombineQuoted(int start_index=0) const;
    char *CombineCmd(int i=0) const;
 

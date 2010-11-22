@@ -166,6 +166,7 @@ public:
    bool WriteCmds(int fd) const;
    bool ReadCmds(int fd); // does not clear queue before reading (appends)
 
+   void AddNewJob(Job *new_job);
    void SuspendJob(Job *j);
 
    CmdExec(FileAccess *s,LocalDirectory *c);

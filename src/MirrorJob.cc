@@ -1166,12 +1166,12 @@ void MirrorJob::Report(const char *fmt,...)
 }
 
 extern "C" {
-#include "getdate.h"
+#include "parse-datetime.h"
 }
 void MirrorJob::SetNewerThan(const char *f)
 {
    struct timespec ts;
-   if(get_date(&ts,f,0))
+   if(parse_datetime(&ts,f,0))
    {
       newer_than=ts.tv_sec;
       return;
@@ -1187,7 +1187,7 @@ void MirrorJob::SetNewerThan(const char *f)
 void MirrorJob::SetOlderThan(const char *f)
 {
    struct timespec ts;
-   if(get_date(&ts,f,0))
+   if(parse_datetime(&ts,f,0))
    {
       older_than=ts.tv_sec;
       return;

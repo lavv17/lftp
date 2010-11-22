@@ -124,7 +124,8 @@ public:
       return tracker_timer.TimeLeft().toString(
 	 TimeInterval::TO_STR_TRANSLATE|TimeInterval::TO_STR_TERSE);
    }
-   const char *GetURL() { return tracker_url; }
+   const char *GetURL() const { return tracker_url; }
+   const char *Status() const;
 };
 
 class Torrent : public SMTask, protected ProtoLog, public ResClient

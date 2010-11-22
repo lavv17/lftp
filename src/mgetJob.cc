@@ -125,7 +125,7 @@ void mgetJob::LocalGlob(const char *p)
       fprintf(stderr,_("%s: %s: no files found\n"),op,p);
       count++;
       errors++;
-      return;
+      goto leave;
    }
    for(i=0; i<(int)pglob.gl_pathc; i++)
    {
@@ -139,6 +139,7 @@ void mgetJob::LocalGlob(const char *p)
       make_directory(src);
       args->Append(output_file_name(src,0,!reverse,output_dir,make_dirs));
    }
+leave:
    globfree(&pglob);
 }
 

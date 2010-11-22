@@ -1,3 +1,15 @@
+2010-11-22  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc, SleepJob.cc: use parse_datetime instead of obsolete
+	  get_date.
+	* CmdExec.cc, CmdExec.h: (AddNewJob) new method.
+	* ArgV.cc, ArgV.h: (Combine) add end index argument.
+	* Torrent.cc: dispose tracker session when shutting down;
+	  divide numwant to number of trackers going to request the peers;
+	  better shutting down status; glob local torrent files; use AddNewJob
+	  to create multiple torrent jobs.
+	* mgetJob.cc: call globfree even when no files found.
+
 2010-11-19  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Torrent.cc, Torrent.h: add multitracker support.
