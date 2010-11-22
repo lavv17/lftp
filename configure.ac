@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
-AC_INIT([lftp], [4.0.10], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [4.1.0], [lftp-bugs@lftp.yar.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([lib])
@@ -310,6 +310,7 @@ if test "x$want_dnssec" = "xyes"; then
 fi
 
 LFTP_PTY_CHECK
+LFTP_POSIX_FTRUNCATE_CHECK
 
 dnl Checks for header files.
 AC_HEADER_DIRENT

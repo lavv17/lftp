@@ -184,3 +184,6 @@ wchar_h.m4
 wctype_h.m4
 asm-underscore.m4
 libunistring-base.m4
+socketlib.m4
+parse-datetime.m4
+poll_h.m4

@@ -1,3 +1,15 @@
+Version 4.1.0 - 2010-11-22
+
+* send path components to ftp server separately, unless TVFS is in FEAT reply.
+* save pget status at the very beginning of pget execution.
+* allow mirror pget continuation (mirror -c --use-pget).
+* allow multiple torrent startup at once (e.g. torrent *.torrent).
+* pre-allocate disk space in torrent, if posix_fallocate(3) is supported.
+* new command prefix `local'. It makes the following command use local
+  session instead of remote.
+* added torrent multi-tracker support.
+* fixed convert-mozilla-cookies cookie duplication.
+
 Version 4.0.10 - 2010-09-01
 
 * use cached file set, don't parse file listing again.

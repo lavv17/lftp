@@ -25,12 +25,6 @@ implemented.
 
  * http: ls -a to see all links, even off-site.
 
-?* `local' (or `reverse') command to swap local/remote, e.g.
-      mirror -R = local mirror
-      put = local get
-   of course, implement commands using two sessions where possible.
-   ?? then proto-file will not be a module, that is it will be always loaded.
-
  * mirror: add more settings.
 
  * more intelligently squeeze file name in status line.
@@ -62,8 +56,5 @@ implemented.
 
  * APPE support.
 
- * support ftp paths properly - do CWD for each path component (unless
-   FEAT reports TVFS)
-
- * for 4.0: allow to connect to backgrounded lftp process.
+ * allow to connect to backgrounded lftp process.
    (maybe connect by default to any running lftp)
