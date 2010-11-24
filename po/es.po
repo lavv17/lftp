@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.6.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2010-11-22 17:28+0300\n"
+"POT-Creation-Date: 2010-11-24 18:10+0300\n"
 "PO-Revision-Date: 2002-08-08 19:01+0000\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -156,63 +156,63 @@ msgstr "Orden ambigua `%s'.\n"
 msgid "Module for command `%s' did not register the command.\n"
 msgstr "El módulo para la orden `%s' no registro esa orden.\n"
 
-#: src/CmdExec.cc:362
+#: src/CmdExec.cc:363
 #, c-format
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, dir actual=%s\n"
 
-#: src/CmdExec.cc:383 src/MirrorJob.cc:544
+#: src/CmdExec.cc:384 src/MirrorJob.cc:544
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: se recibió redirección a `%s'\n"
 
-#: src/CmdExec.cc:386 src/FileCopy.cc:1061
+#: src/CmdExec.cc:387 src/FileCopy.cc:1061
 msgid "Too many redirections"
 msgstr "Demasiadas redirecciones"
 
-#: src/CmdExec.cc:498 src/CmdExec.cc:555
+#: src/CmdExec.cc:499 src/CmdExec.cc:556
 msgid "Interrupt"
 msgstr "Interrupción"
 
-#: src/CmdExec.cc:620
+#: src/CmdExec.cc:621
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "Aviso: descartando orden incompleta\n"
 
-#: src/CmdExec.cc:714
+#: src/CmdExec.cc:715
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tEjecutando primitiva `%s' [%s]\n"
 
-#: src/CmdExec.cc:720
+#: src/CmdExec.cc:721
 msgid "Queue is stopped."
 msgstr ""
 
-#: src/CmdExec.cc:725
+#: src/CmdExec.cc:726
 msgid "Now executing:"
 msgstr "Ejecutando ahora:"
 
-#: src/CmdExec.cc:738
+#: src/CmdExec.cc:739
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\tEsperando que termine la tarea [%d]\n"
 
-#: src/CmdExec.cc:743
+#: src/CmdExec.cc:744
 #, c-format
 msgid "\tWaiting for termination of jobs: "
 msgstr "\tEsperando la finalización de las siguientes tareas: "
 
-#: src/CmdExec.cc:754
+#: src/CmdExec.cc:755
 #, c-format
 msgid "\tRunning\n"
 msgstr "\tEjecutando\n"
 
-#: src/CmdExec.cc:758
+#: src/CmdExec.cc:759
 #, c-format
 msgid "\tWaiting for command\n"
 msgstr "\tEsperando orden\n"
 
-#: src/CmdExec.cc:1224
+#: src/CmdExec.cc:1225
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: la orden `%s' no fue compilada dentro del binario.\n"

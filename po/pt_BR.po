@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2010-11-22 17:28+0300\n"
+"POT-Creation-Date: 2010-11-24 18:10+0300\n"
 "PO-Revision-Date: 1999-07-12 00:00+0400\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -154,63 +154,63 @@ msgstr "Comando `%s' ambíguo.\n"
 msgid "Module for command `%s' did not register the command.\n"
 msgstr ""
 
-#: src/CmdExec.cc:362
+#: src/CmdExec.cc:363
 #, c-format
 msgid "cd ok, cwd=%s\n"
 msgstr ""
 
-#: src/CmdExec.cc:383 src/MirrorJob.cc:544
+#: src/CmdExec.cc:384 src/MirrorJob.cc:544
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
 
-#: src/CmdExec.cc:386 src/FileCopy.cc:1061
+#: src/CmdExec.cc:387 src/FileCopy.cc:1061
 msgid "Too many redirections"
 msgstr ""
 
-#: src/CmdExec.cc:498 src/CmdExec.cc:555
+#: src/CmdExec.cc:499 src/CmdExec.cc:556
 msgid "Interrupt"
 msgstr "Interrupção"
 
-#: src/CmdExec.cc:620
+#: src/CmdExec.cc:621
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "Atenção: descartando comando incompleto\n"
 
-#: src/CmdExec.cc:714
+#: src/CmdExec.cc:715
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tExecutando comando embutido `%s' [%s]\n"
 
-#: src/CmdExec.cc:720
+#: src/CmdExec.cc:721
 msgid "Queue is stopped."
 msgstr ""
 
-#: src/CmdExec.cc:725
+#: src/CmdExec.cc:726
 msgid "Now executing:"
 msgstr ""
 
-#: src/CmdExec.cc:738
+#: src/CmdExec.cc:739
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\tEsperanto término do serviço [%d]\n"
 
-#: src/CmdExec.cc:743
+#: src/CmdExec.cc:744
 #, fuzzy, c-format
 msgid "\tWaiting for termination of jobs: "
 msgstr "Esperando término da filtragem"
 
-#: src/CmdExec.cc:754
+#: src/CmdExec.cc:755
 #, c-format
 msgid "\tRunning\n"
 msgstr "\tExecutando\n"
 
-#: src/CmdExec.cc:758
+#: src/CmdExec.cc:759
 #, fuzzy, c-format
 msgid "\tWaiting for command\n"
 msgstr "Atenção: descartando comando incompleto\n"
 
-#: src/CmdExec.cc:1224
+#: src/CmdExec.cc:1225
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr ""
