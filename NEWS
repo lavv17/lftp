@@ -1,3 +1,8 @@
+Version 4.1.1 - 2010-11-24
+
+* fixed job command line display.
+* fixed some warnings and compilation with old gcc compilers (Openwall).
+
 Version 4.1.0 - 2010-11-22
 
 * send path components to ftp server separately, unless TVFS is in FEAT reply.

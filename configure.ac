@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
-AC_INIT([lftp], [4.1.0], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [4.1.1], [lftp-bugs@lftp.yar.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([lib])
@@ -538,6 +538,13 @@ CDECL void SOCKSinit(const char *);
 #else
 # define PRINTF_LIKE(n,m)
 # define __attribute__(x)
+#endif
+/* Attribute `sentinel' was valid as of gcc 3.5.  */
+#if defined(__GNUC__) && \
+    (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 5))
+# define ATTRIBUTE_SENTINEL __attribute__ ((__sentinel__))
+#else
+# define ATTRIBUTE_SENTINEL
 #endif
 
 #ifdef TRIO_REPLACE_STDIO
