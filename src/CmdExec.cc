@@ -238,8 +238,11 @@ restart:
 	 return;
       }
       RevertToSavedSession();
-      if(new_job)
+      if(new_job) {
+	 if(!new_job->cmdline)
+	    new_job->cmdline.set_allocated(cmdline.borrow());
 	 AddNewJob(new_job);
+      }
    }
 }
 
@@ -247,8 +250,6 @@ void CmdExec::AddNewJob(Job *new_job)
 {
    if(new_job->jobno<0)
       new_job->AllocJobno();
-   if(!new_job->cmdline)
-      new_job->cmdline.set(cmdline);
    new_job->SetParentFg(this,!background);
    AddWaiting(new_job);
    if(background) {

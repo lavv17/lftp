@@ -157,11 +157,11 @@ void lftp_rl_init(
    rl_attempted_completion_function  =attempted_completion_function;
    rl_getc_function                  =getc_function;
    rl_completer_quote_characters     =completer_quote_characters;
-   rl_completer_word_break_characters=completer_word_break_characters;
+   rl_completer_word_break_characters=(char*)completer_word_break_characters;
    rl_filename_quote_characters      =filename_quote_characters;
    rl_filename_quoting_function      =filename_quoting_function;
-   rl_filename_dequoting_function    =filename_dequoting_function;
-   rl_char_is_quoted_p               =char_is_quoted_p;
+   rl_filename_dequoting_function    =(rl_dequote_func_t*)filename_dequoting_function;
+   rl_char_is_quoted_p               =(rl_linebuf_func_t*)char_is_quoted_p;
 
    rl_completion_display_matches_hook = lftp_rl_display_match_list;
 }

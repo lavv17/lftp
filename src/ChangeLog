@@ -1,3 +1,12 @@
+2010-11-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc: fixed setting of cmdline in new jobs.
+	* Torrent.cc, lftp_rl.c, xstring.cc: fixed warnings
+	  (patch from Openwall linux, Alexander Peslyak).
+	* complete.cc: use CmdExec::is_space for parsing.
+	* xstring.h: fixed compilation with non-gcc and old gcc compilers
+	  (patch from Openwall linux, Alexander Peslyak).
+
 2010-11-22  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc, SleepJob.cc: use parse_datetime instead of obsolete

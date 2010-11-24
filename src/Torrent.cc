@@ -1124,7 +1124,7 @@ void Torrent::ReducePeers()
 	    max_idle.toString(TimeInterval::TO_STR_TERSE+TimeInterval::TO_STR_TRANSLATE));
 	 peers.chop();
 	 if(max_idle<60)
-	    decline_timer.Set(60-max_idle);
+	    decline_timer.Set(60-max_idle.Seconds());
       }
    }
    peers.qsort(complete ? PeersCompareSendRate : PeersCompareRecvRate);
@@ -1226,13 +1226,13 @@ void Torrent::OptimisticUnchoke()
 int Torrent::PeerBytesAllowed(const TorrentPeer *peer,RateLimit::dir_t dir)
 {
    float peer_rate=(dir==RateLimit::GET ? peer->peer_send_rate : peer->peer_recv_rate).Get();
-   float rate=(dir==RateLimit::GET ? send_rate : recv_rate).Get();
-   int min_rate = 1000;
+   float total_rate=(dir==RateLimit::GET ? send_rate : recv_rate).Get();
+   const int min_rate = 1024;
    // the more is the opposite rate the more rate allowed, with a minimum
-   int bytes = rate_limit.BytesAllowed(dir);
-   bytes *= (peer_rate + min_rate);
-   bytes /= (rate + active_peers_count*min_rate);
-   return bytes;
+   float bytes = rate_limit.BytesAllowed(dir);
+   bytes *= (peer_rate  + min_rate)
+          / (total_rate + active_peers_count*min_rate);
+   return (int)bytes;
 }
 void Torrent::PeerBytesUsed(int b,RateLimit::dir_t dir)
 {

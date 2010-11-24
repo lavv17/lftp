@@ -104,7 +104,7 @@ public:
    const char *set(const char *s) { return xstrset(buf,s); }
    const char *nset(const char *s,int n) { return xstrset(buf,s,n); }
    const char *set_allocated(char *s) { xfree(buf); return buf=s; }
-   const char *vset(...) __attribute__((sentinel));
+   const char *vset(...) ATTRIBUTE_SENTINEL;
    void truncate(size_t n) { if(buf) buf[n]=0; }
    char *borrow() { return replace_value(buf,(char*)0); }
    bool eq(const char *s) { return !xstrcmp(buf,s); }
@@ -164,8 +164,8 @@ public:
    xstring& append(const xstring &s) { return append(s.get(),s.length()); }
    xstring& append_padding(int len,char ch);
    xstring& vappend(va_list);
-   xstring& vappend(...) __attribute__((sentinel));
-   xstring& vset(...) __attribute__((sentinel));
+   xstring& vappend(...) ATTRIBUTE_SENTINEL;
+   xstring& vset(...) ATTRIBUTE_SENTINEL;
    xstring& vsetf(const char *fmt, va_list ap) { truncate(0); return vappendf(fmt,ap); }
    xstring& setf(const char *fmt,...) PRINTF_LIKE(2,3);
    xstring& vappendf(const char *fmt, va_list ap);
@@ -175,7 +175,7 @@ public:
    static xstring& get_tmp(const char *s,int n) { return get_tmp().nset(s,n); }
    static xstring& vformat(const char *fmt,va_list ap) { return get_tmp().vsetf(fmt,ap); }
    static xstring& format(const char *fmt,...) PRINTF_LIKE(1,2);
-   static xstring& cat(const char *first,...) __attribute__((sentinel));
+   static xstring& cat(const char *first,...) ATTRIBUTE_SENTINEL;
    static xstring& join(const char *sep,int n,...);
 
    void truncate(size_t n);

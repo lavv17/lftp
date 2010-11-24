@@ -377,7 +377,7 @@ static completion_type cmd_completion_type(const char *cmd,int start)
       if((*p=='>' || *p=='|')
       && !lftp_char_is_quoted(cmd,p-cmd))
 	 return LOCAL;
-      if(!isspace((unsigned char)*p))
+      if(!CmdExec::is_space(*p))
 	 break;
    }
 
@@ -428,24 +428,24 @@ static completion_type cmd_completion_type(const char *cmd,int start)
    int second_start=-1;
    for(int i=start; i>4; i--)
    {
-      if(!isspace(rl_line_buffer[i-1]))
+      if(!CmdExec::is_space(rl_line_buffer[i-1]))
 	 break;
-      if(!strncmp(rl_line_buffer+i-3,"-o",2) && isspace(rl_line_buffer[i-4]))
+      if(!strncmp(rl_line_buffer+i-3,"-o",2) && CmdExec::is_space(rl_line_buffer[i-4]))
       {
 	 was_o=true;
 	 break;
       }
-      if(!strncmp(rl_line_buffer+i-3,"-N",2) && isspace(rl_line_buffer[i-4]))
+      if(!strncmp(rl_line_buffer+i-3,"-N",2) && CmdExec::is_space(rl_line_buffer[i-4]))
       {
 	 was_N=true;
 	 break;
       }
-      if(i-14 >= 0 && !strncmp(rl_line_buffer+i-13, "--newer-than",12) && isspace(rl_line_buffer[i-14]))
+      if(i-14 >= 0 && !strncmp(rl_line_buffer+i-13, "--newer-than",12) && CmdExec::is_space(rl_line_buffer[i-14]))
       {
 	 was_N=true;
 	 break;
       }
-      if(!strncmp(rl_line_buffer+i-3,"-O",2) && isspace(rl_line_buffer[i-4]))
+      if(!strncmp(rl_line_buffer+i-3,"-O",2) && CmdExec::is_space(rl_line_buffer[i-4]))
       {
 	 was_O=true;
 	 break;

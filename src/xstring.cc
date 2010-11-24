@@ -379,7 +379,7 @@ const char *xstring::dump_to(xstring& buf) const
 	    buf.appendf("%02X",(unsigned char)*s++);
 	 buf.append('>');
       } else {
-	 buf.appendf("<long binary, %d bytes>",length());
+	 buf.appendf("<long binary, %d bytes>",(int)length());
       }
    } else {
       while(len>0) {
