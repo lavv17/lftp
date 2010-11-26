@@ -5,7 +5,7 @@
 	  (patch from Openwall, Alexander Peslyak).
 	* complete.cc: use CmdExec::is_space for parsing.
 	* xstring.h: fixed compilation with non-gcc and old gcc compilers
-	  (patch from Openwall, Alexander Peslyak).
+	  (patch from Openwall, Vasiliy Kulikov).
 
 2010-11-22  Alexander V. Lukyanov <lav@yars.free.net>
 
