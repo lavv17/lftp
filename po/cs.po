@@ -5,14 +5,15 @@
 #
 # option → volba
 # put → nahrát (jako opak get, download, stáhnout)
+# site-cmd → příkaz_serveru (ruční příkaz FTP)
 # slot → slot (protože se tak jmenuje příkaz „slot“)
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 4.0.9\n"
+"Project-Id-Version: lftp 4.1.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2010-11-24 18:10+0300\n"
-"PO-Revision-Date: 2010-06-14 21:18+0200\n"
+"PO-Revision-Date: 2010-11-25 19:50+0100\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
 "Language: cs\n"
@@ -1784,7 +1785,6 @@ msgstr ""
 " -d  vypíše pouze výchozí nastavení, ne však nutně právě platná\n"
 
 #: src/commands.cc:453
-#, fuzzy
 msgid "site <site-cmd>"
 msgstr "site <příkaz_serveru>"
 
@@ -1827,9 +1827,8 @@ msgid "Execute commands recorded in file <file>\n"
 msgstr "Vykoná příkazy zaznamenané v <souboru>\n"
 
 #: src/commands.cc:468
-#, fuzzy
 msgid "torrent [-O <dir>] <file|URL>..."
-msgstr "torrent [-O <adresář>] <soubor>"
+msgstr "torrent [-O <adresář>] <soubor|URL>…"
 
 #: src/commands.cc:469
 msgid "user <user|URL> [<pass>]"
