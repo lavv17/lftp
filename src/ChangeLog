@@ -1,3 +1,7 @@
+2010-12-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Torrent.cc: better trace messages; reset recv_rate on completion.
+
 2010-11-24  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CmdExec.cc: fixed setting of cmdline in new jobs.
