@@ -37,6 +37,7 @@
 #include "log.h"
 #include "url.h"
 #include "misc.h"
+#include "plural.h"
 
 static ResType torrent_vars[] = {
    {"torrent:port-range", "6881-6889", ResMgr::RangeValidate, ResMgr::NoClosure},
@@ -382,11 +383,13 @@ int TorrentTracker::HandleTrackerReply()
    if(!tracker_id && b_tracker_id && b_tracker_id->type==BeNode::BE_STR)
       tracker_id.set(b_tracker_id->str);
 
+   int peers_count=0;
    BeNode *b_peers=reply->dict.lookup("peers");
    if(b_peers) {
       if(b_peers->type==BeNode::BE_STR) { // binary model
 	 const char *data=b_peers->str;
 	 int len=b_peers->str.length();
+	 LogNote(9,"peers have binary model, length=%d",len);
 	 while(len>=6) {
 	    sockaddr_u a;
 	    a.sa.sa_family=AF_INET;
@@ -395,9 +398,12 @@ int TorrentTracker::HandleTrackerReply()
 	    data+=6;
 	    len-=6;
 	    parent->AddPeer(new TorrentPeer(parent,&a,tracker_no));
+	    peers_count++;
 	 }
       } else if(b_peers->type==BeNode::BE_LIST) { // dictionary model
-	 for(int p=0; p<b_peers->list.count(); p++) {
+	 int count=b_peers->list.count();
+	 LogNote(9,"peers have dictionary model, count=%d",count);
+	 for(int p=0; p<count; p++) {
 	    BeNode *b_peer=b_peers->list[p];
 	    if(b_peer->type!=BeNode::BE_DICT)
 	       continue;
@@ -413,8 +419,10 @@ int TorrentTracker::HandleTrackerReply()
 	       continue;
 	    a.in.sin_port=htons(b_port->num);
 	    parent->AddPeer(new TorrentPeer(parent,&a,tracker_no));
+	    peers_count++;
 	 }
       }
+      LogNote(4,plural("Received valid info about %d peer$|s$",peers_count),peers_count);
    }
    tracker_timer.Reset();
    tracker_reply=0;
@@ -1050,6 +1058,7 @@ void Torrent::StoreBlock(unsigned piece,unsigned begin,unsigned len,const char *
 	 end_game=false;
 	 ScanPeers();
 	 SendTrackersRequest("completed");
+	 recv_rate.Reset();
       }
    }
 }
@@ -1258,12 +1267,15 @@ const xstring& Torrent::Status()
    if(shutting_down) {
       if(trackers.count()==0)
 	 return xstring::get_tmp("");
-      if(trackers.count()==1)
-	 return xstring::format("Shutting down: %s",trackers[0]->Status());
       for(int i=0; i<trackers.count(); i++) {
 	 const char *status=trackers[i]->Status();
-	 if(status[0])
-	    return xstring::format("Shutting down: %d. %s",i+1,status);
+	 if(status[0]) {
+	    xstring &s=xstring::get_tmp("Shutting down: ");
+	    if(trackers.count()>1)
+	       s.appendf("%d. ",i+1);
+	    s.append(status);
+	    return s;
+	 }
       }
       return xstring::get_tmp("");
    }
@@ -1423,7 +1435,7 @@ void TorrentPeer::SendDataReply()
 	 parent->SetError(xstring::format("failed to read piece %u",p->index));
       return;
    }
-   LogSend(6,xstring::format("piece:%u begin:%u size:%u",p->index,p->begin,p->req_length));
+   LogSend(8,xstring::format("piece:%u begin:%u size:%u",p->index,p->begin,p->req_length));
    PacketPiece(p->index,p->begin,data).Pack(send_buf);
    peer_sent+=data.length();
    parent->total_sent+=data.length();
@@ -1744,7 +1756,7 @@ void TorrentPeer::HandlePacket(Packet *p)
       }
    case MSG_PIECE: {
 	 PacketPiece *pp=static_cast<PacketPiece*>(p);
-	 LogRecv(5,xstring::format("piece:%u begin:%u size:%u",pp->index,pp->begin,(unsigned)pp->data.length()));
+	 LogRecv(7,xstring::format("piece:%u begin:%u size:%u",pp->index,pp->begin,(unsigned)pp->data.length()));
 	 if(pp->index>=parent->total_pieces) {
 	    SetError("invalid piece index");
 	    break;
