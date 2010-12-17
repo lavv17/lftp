@@ -431,6 +431,7 @@ void Fish::SendMethod()
       {
 	 int bs=0x1000;
 	 real_pos=pos-pos%bs;
+	 // non-standard extension
 	 Send("#RETRP %lld %s\n"
 	      "ls -lLd %s; "
 	      "echo '### 100'; "
@@ -520,7 +521,18 @@ void Fish::SendMethod()
 	   "chmod %04o %s; echo '### 000'\n",chmod_mode,e,chmod_mode,e);
       PushExpect(EXPECT_DEFAULT);
       break;
+   case LINK:
+      Send("#LINK %s %s\n"
+	   "ln %s %s; echo '### 000'\n",e,e1,e,e1);
+      PushExpect(EXPECT_DEFAULT);
+      break;
+   case SYMLINK:
+      Send("#SYMLINK %s %s\n"
+	   "ln -s %s %s; echo '### 000'\n",e,e1,e,e1);
+      PushExpect(EXPECT_DEFAULT);
+      break;
    case QUOTE_CMD:
+      // non-standard extension
       Send("#EXEC %s\n"
 	   "%s; echo '### 200'\n",e,file.get());
       PushExpect(EXPECT_QUOTE);

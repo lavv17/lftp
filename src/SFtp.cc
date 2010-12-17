@@ -636,6 +636,22 @@ void SFtp::SendRequest()
       SendRequest(new Request_REMOVE(WirePath(file)),Expect::DEFAULT);
       state=WAITING;
       break;
+   case LINK:
+      if(protocol_version<6) {
+	 SetError(NOT_SUPP);
+	 break;
+      }
+   case SYMLINK:
+      if(protocol_version<3) {
+	 SetError(NOT_SUPP);
+	 break;
+      }
+      if(protocol_version>=6)
+	 SendRequest(new Request_LINK(mode==SYMLINK?lc_to_utf8(file):WirePath(file),WirePath(file1),mode==SYMLINK),Expect::DEFAULT);
+      else
+	 SendRequest(new Request_SYMLINK(lc_to_utf8(file),WirePath(file1)),Expect::DEFAULT);
+      state=WAITING;
+      break;
    case QUOTE_CMD:
    case MP_LIST:
       SetError(NOT_SUPP);
@@ -1907,6 +1923,13 @@ void SFtp::Request_OPEN::Pack(Buffer *b)
    }
    attrs.Pack(b,protocol_version);
 }
+void SFtp::Request_RENAME::ComputeLength()
+{
+   Packet::ComputeLength();
+   length+=4+strlen(oldpath)+4+strlen(newpath);
+   if(protocol_version>=5)
+      length+=4; // flags
+}
 void SFtp::Request_RENAME::Pack(Buffer *b)
 {
    Packet::Pack(b);
@@ -1914,6 +1937,19 @@ void SFtp::Request_RENAME::Pack(Buffer *b)
    Packet::PackString(b,newpath);
    if(protocol_version>=5)
       PACK32(flags);
+}
+void SFtp::Request_SYMLINK::Pack(Buffer *b)
+{
+   Packet::Pack(b);
+   Packet::PackString(b,oldpath);
+   Packet::PackString(b,newpath);
+}
+void SFtp::Request_LINK::Pack(Buffer *b)
+{
+   Packet::Pack(b);
+   Packet::PackString(b,newpath);
+   Packet::PackString(b,oldpath);
+   PACK8(symbolic);
 }
 
 const char *SFtp::utf8_to_lc(const char *s)

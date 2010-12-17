@@ -1,3 +1,14 @@
+2010-12-17  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h: new modes (LINK,SYMLINK);
+	  (Open2) new method; make Rename, Mkdir, Chdir non-virtual.
+	* Fish.cc, SFtp.cc SFtp.h, LocalAccess.cc, ftpclass.cc: support ln.
+	* Http.cc: handle new open modes in switches.
+	* mvJob.cc, mvJob.h: add link support.
+	* commands.cc: (ln) new command.
+	* resource.cc: use sftp v6 by default.
+	* xstring.h: add inline strlen for xstring.
+
 2010-12-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Torrent.cc: better trace messages; reset recv_rate on completion.

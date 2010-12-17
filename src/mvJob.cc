@@ -24,9 +24,10 @@
 #include "mvJob.h"
 #include "misc.h"
 
-mvJob::mvJob(FileAccess *session,const char *from,const char *to) : SessionJob(session)
+mvJob::mvJob(FileAccess *session,const char *from,const char *to,FA::open_mode m1) : SessionJob(session)
 {
    failed=0;
+   m=m1;
    if(last_char(to)=='/')
    {
       const char *from_bn=basename_ptr(from);
@@ -34,7 +35,7 @@ mvJob::mvJob(FileAccess *session,const char *from,const char *to) : SessionJob(s
       strcat(to1,from_bn);
       to=to1;
    }
-   session->Rename(from,to);
+   session->Open2(from,to,m);
 }
 
 int mvJob::Do()
@@ -76,6 +77,8 @@ void  mvJob::SayFinal()
 {
    if(failed)
       return;
-   // xgettext:c-format
-   printf(_("rename successful\n"));
+   if(m==FA::RENAME) {
+      // xgettext:c-format
+      printf(_("rename successful\n"));
+   }
 }

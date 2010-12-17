@@ -64,7 +64,9 @@ public:
       RENAME,
       ARRAY_INFO,
       CONNECT_VERIFY,
-      CHANGE_MODE
+      CHANGE_MODE,
+      LINK,
+      SYMLINK,
    };
 
    struct fileinfo
@@ -218,6 +220,7 @@ public:
    virtual void ResetLocationData();
 
    virtual void Open(const char *file,int mode,off_t pos=0);
+   void Open2(const char *f1,const char *f2,open_mode m);
    void SetFileURL(const char *u);
    void SetLimit(off_t lim) { limit=lim; }
    void SetSize(off_t s) { entity_size=s; }
@@ -227,9 +230,11 @@ public:
    void AsciiTransfer() { ascii=true; }
    virtual void Close();
 
-   virtual void	Rename(const char *rfile,const char *to);
-   virtual void Mkdir(const char *rfile,bool allpath=false);
-   virtual void Chdir(const char *dir,bool verify=true);
+   void Rename(const char *rfile,const char *to) { Open2(rfile,to,RENAME); }
+   void Link(const char *f1,const char *f2) { Open2(f1,f2,LINK); }
+   void Symlink(const char *f1,const char *f2) { Open2(f1,f2,SYMLINK); }
+   void Mkdir(const char *rfile,bool allpath=false);
+   void Chdir(const char *dir,bool verify=true);
    void ChdirAccept() { cwd=*new_cwd; }
    void SetCwd(const Path &new_cwd) { cwd=new_cwd; }
    void Remove(const char *rfile)    { Open(rfile,REMOVE); }

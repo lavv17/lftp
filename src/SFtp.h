@@ -646,10 +646,35 @@ private:
 	    protocol_version=pv;
 	    flags=f;
 	 }
+      void ComputeLength();
+      void Pack(Buffer *b);
+   };
+   class Request_SYMLINK : public Packet
+   {
+      xstring oldpath;
+      xstring newpath;
+   public:
+      Request_SYMLINK(const char *o,const char *n)
+      : Packet(SSH_FXP_SYMLINK), oldpath(o), newpath(n) {}
       void ComputeLength()
 	 {
 	    Packet::ComputeLength();
 	    length+=4+strlen(oldpath)+4+strlen(newpath);
+	 }
+      void Pack(Buffer *b);
+   };
+   class Request_LINK : public Packet
+   {
+      xstring oldpath;
+      xstring newpath;
+      bool symbolic;
+   public:
+      Request_LINK(const char *o,const char *n,bool s)
+      : Packet(SSH_FXP_LINK), oldpath(o), newpath(n), symbolic(s) {}
+      void ComputeLength()
+	 {
+	    Packet::ComputeLength();
+	    length+=4+strlen(oldpath)+4+strlen(newpath)+1;
 	 }
       void Pack(Buffer *b);
    };

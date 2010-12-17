@@ -370,6 +370,8 @@ bool Http::ModeSupported()
    case QUOTE_CMD:
    case LIST:
    case CHANGE_MODE:
+   case LINK:
+   case SYMLINK:
       return false;
    case CONNECT_VERIFY:
    case RETRIEVE:
@@ -525,6 +527,8 @@ void Http::SendRequest(const char *connection,const char *f)
 
    case LIST:
    case CHANGE_MODE:
+   case LINK:
+   case SYMLINK:
       abort(); // unsupported
 
    case RETRIEVE:

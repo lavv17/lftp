@@ -194,10 +194,17 @@ int LocalAccess::Do()
       done=true;
       return MOVED;
    case(RENAME):
+   case(LINK):
+   case(SYMLINK):
    {
       const char *cwd_file1=dir_file(cwd,file1);
       cwd_file1=alloca_strdup(cwd_file1); // save it
-      if(rename(dir_file(cwd,file),cwd_file1)==-1)
+      int (*fn)(const char *f1,const char *f2)=(
+	 mode==RENAME ? rename :
+	 mode==LINK ? link :
+	 /*mode==SYMLINK?*/ symlink
+      );
+      if(fn(mode==SYMLINK?file.get():dir_file(cwd,file),cwd_file1)==-1)
       {
 	 errno_handle();
 	 error_code=NO_FILE;

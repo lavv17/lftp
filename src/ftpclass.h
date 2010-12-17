@@ -164,6 +164,8 @@ class Ftp : public NetAccess
       void CloseAbortedDataConnection();
 
       void Send(const char *cmd);
+      void SendURI(const char *u,const char *home);
+      void SendCRNL();
       void SendEncoded(const char *url);
       void SendCmd(const char *cmd);
       void SendCmd2(const char *cmd,const char *f,const char *u=0,const char *home=0);

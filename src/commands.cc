@@ -87,7 +87,7 @@ CMD(kill);  CMD(lcd);    CMD(ls);      CMD(cls);
 CMD(open);  CMD(pwd);    CMD(set);     CMD(eval);
 CMD(shell); CMD(source); CMD(user);    CMD(rm);
 CMD(wait);  CMD(subsh);  CMD(mirror);  CMD(local);
-CMD(mv);    CMD(cat);    CMD(cache);
+CMD(mv);    CMD(cat);    CMD(cache);   CMD(ln);
 CMD(mkdir); CMD(scache); CMD(mrm);
 CMD(ver);   CMD(close);  CMD(bookmark);CMD(lftp);
 CMD(echo);  CMD(suspend);CMD(sleep);   CMD(slot);
@@ -285,6 +285,8 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -u <user>[,<pass>]  use the user/password for authentication\n"
 	 " -p <port>           use the port for connection\n"
 	 " <site>              host name, URL or bookmark name\n")},
+   {"ln",      cmd_ln,	    N_("ln [-s] <file1> <file2>"),
+	 N_("Link <file1> to <file2>\n")},
    {"lpwd",    cmd_lpwd},
    {"local",   cmd_local},
    {"login",   cmd_user,   0,"user"},
@@ -2393,6 +2395,33 @@ CMD(mv)
    }
    Job *j=new mvJob(session->Clone(),args->getarg(1),args->getarg(2));
    return j;
+}
+
+CMD(ln)
+{
+   FA::open_mode m=FA::LINK;
+   const char *op=args->a0();
+   int c;
+   while((c=args->getopt("+s"))!=EOF)
+   {
+      switch(c)
+      {
+      case 's':
+	 m=FA::SYMLINK;
+	 break;
+      default:
+      error:
+	 eprintf(_("Try `help %s' for more information.\n"),op);
+	 return 0;
+      }
+   }
+   args->back();
+   const char *file1=args->getnext();
+   const char *file2=args->getnext();
+   if(!file1 || !file2)
+      goto error;
+
+   return new mvJob(session->Clone(),file1,file2,m);
 }
 
 const char *const cache_subcmd[]={

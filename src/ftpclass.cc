@@ -1888,6 +1888,16 @@ int   Ftp::Do()
 	 append_file=true;
 	 want_type=conn->type;
 	 break;
+      case(LINK):
+	 command="SITE LINK";
+	 append_file=true;
+	 want_type=conn->type;
+	 break;
+      case(SYMLINK):
+	 command="SITE SYMLINK";
+	 append_file=true;
+	 want_type=conn->type;
+	 break;
       case(ARRAY_INFO):
 	 break;
       case(CHANGE_MODE):
@@ -1964,6 +1974,11 @@ int   Ftp::Do()
 	 else
 	    expect->Push(Expect::FILE_ACCESS);
 
+	 goto pre_WAITING_STATE;
+      }
+      if(mode==LINK || mode==SYMLINK) {
+	 conn->SendCmdF("%s %s %s",command,file.get(),file1.get());
+	 expect->Push(Expect::FILE_ACCESS);
 	 goto pre_WAITING_STATE;
       }
 
@@ -3274,11 +3289,30 @@ next: if(ch=='\r')
    }
 }
 
-void  Ftp::Connection::SendCmd(const char *cmd)
+void Ftp::Connection::SendCRNL()
 {
-   Send(cmd);
    send_cmd_buffer.PutRaw("\r\n",2);
    send_cmd_buffer.ResetTranslation();
+}
+
+void Ftp::Connection::SendCmd(const char *cmd)
+{
+   Send(cmd);
+   SendCRNL();
+}
+
+void Ftp::Connection::SendURI(const char *u,const char *home)
+{
+   if(u[0]=='/' && u[1]=='~')
+      u++;
+   else if(!strncasecmp(u,"/%2F",4))
+   {
+      Send("/");
+      u+=4;
+   }
+   else if(home && strcmp(home,"/"))
+      Send(home);
+   SendEncoded(u);
 }
 
 void Ftp::Connection::SendCmd2(const char *cmd,const char *f,const char *u,const char *home)
@@ -3289,22 +3323,10 @@ void Ftp::Connection::SendCmd2(const char *cmd,const char *f,const char *u,const
       send_cmd_buffer.Put(" ",1);
    }
    if(u)
-   {
-      if(u[0]=='/' && u[1]=='~')
-	 u++;
-      else if(!strncasecmp(u,"/%2F",4))
-      {
-	 Send("/");
-	 u+=4;
-      }
-      else if(home && strcmp(home,"/"))
-	 Send(home);
-      SendEncoded(u);
-   }
+      SendURI(u,home);
    else
       Send(f);
-   send_cmd_buffer.PutRaw("\r\n",2);
-   send_cmd_buffer.ResetTranslation();
+   SendCRNL();
 }
 
 void Ftp::Connection::SendCmd2(const char *cmd,int v)
@@ -4423,6 +4445,7 @@ int   Ftp::Done()
 
    if(mode==CHANGE_DIR || mode==RENAME
    || mode==MAKE_DIR || mode==REMOVE_DIR || mode==REMOVE || mode==CHANGE_MODE
+   || mode==LINK || mode==SYMLINK
    || copy_mode!=COPY_NONE)
    {
       if(state==WAITING_STATE && expect->IsEmpty())

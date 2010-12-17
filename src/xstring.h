@@ -204,4 +204,6 @@ public:
    static xstring null;
 };
 
+inline size_t strlen(const xstring& s) { return s.length(); }
+
 #endif//XSTRING_H

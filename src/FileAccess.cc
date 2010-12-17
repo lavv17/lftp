@@ -207,11 +207,11 @@ void FileAccess::Close()
    ClearError();
 }
 
-void FileAccess::Rename(const char *f,const char *f1)
+void FileAccess::Open2(const char *f,const char *f1,open_mode o)
 {
    Close();
    file1.set(f1);
-   Open(f,RENAME);
+   Open(f,o);
 
    cache->TreeChanged(this,file);
    cache->FileChanged(this,file);

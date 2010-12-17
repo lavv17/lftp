@@ -28,6 +28,7 @@
 
 class mvJob : public SessionJob
 {
+   FA::open_mode m;
    int	 failed;
 public:
    int	 Do();
@@ -38,7 +39,7 @@ public:
    void	 ShowRunStatus(const SMTaskRef<StatusLine>&);
    void	 SayFinal();
 
-   mvJob(FileAccess *session,const char *from,const char *to);
+   mvJob(FileAccess *session,const char *from,const char *to,FA::open_mode m=FA::RENAME);
 };
 
 #endif // MVJOB_H
