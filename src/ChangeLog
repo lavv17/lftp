@@ -3,6 +3,9 @@
 	* Torrent.cc, Torrent.h: detect and remove duplicate peers.
 	* LocalAccess.cc: dir_file saving is not needed anymore (it uses
 	  revolver).
+	* MirrorJob.cc: add remote symlink creation support.
+	* mvJob.cc, mvJob.h: add support for pre-removing target; better
+	  status messages.
 
 2010-12-17  Alexander V. Lukyanov <lav@yars.free.net>
 

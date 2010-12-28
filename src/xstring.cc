@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 2007 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 2007-2010 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
