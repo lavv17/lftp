@@ -1,3 +1,9 @@
+2010-12-28  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Torrent.cc, Torrent.h: detect and remove duplicate peers.
+	* LocalAccess.cc: dir_file saving is not needed anymore (it uses
+	  revolver).
+
 2010-12-17  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileAccess.cc, FileAccess.h: new modes (LINK,SYMLINK);

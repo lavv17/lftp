@@ -114,7 +114,7 @@ int LocalAccess::Do()
    case(QUOTE_CMD):
       if(stream==0)
       {
-	 char *cmd=(char*)alloca(10+xstrlen(file));
+	 char *cmd=string_alloca(10+xstrlen(file));
 	 // FIXME: shell-quote file name
 	 if(mode==LIST)
 	 {
@@ -198,7 +198,6 @@ int LocalAccess::Do()
    case(SYMLINK):
    {
       const char *cwd_file1=dir_file(cwd,file1);
-      cwd_file1=alloca_strdup(cwd_file1); // save it
       int (*fn)(const char *f1,const char *f2)=(
 	 mode==RENAME ? rename :
 	 mode==LINK ? link :
