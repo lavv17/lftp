@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2007 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2010 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
 #include "MirrorJob.h"
 #include "CmdExec.h"
 #include "rmJob.h"
+#include "mvJob.h"
 #include "ChmodJob.h"
 #include "misc.h"
 #include "plural.h"
@@ -418,8 +419,33 @@ void  MirrorJob::HandleFile(FileInfo *file)
 
 	 if(!target_is_local)
 	 {
-	    // can't create symlink remotely (FIXME?)
-	    goto skip;
+	    if(script)
+	    {
+	       ArgV args("ln");
+	       args.Append("-s");
+	       args.Append(file->symlink);
+	       args.Append(target_name);
+	       xstring_ca cmd(args.CombineQuoted());
+	       fprintf(script,"%s\n",cmd.get());
+	       if(script_only)
+		  goto skip;
+	    }
+	    bool remove_target=false;
+	    FileInfo *old=target_set->FindByName(file->name);
+	    if(old && !to_rm_mismatched->FindByName(file->name))
+	    {
+	       Report(_("Removing old file `%s'"),
+			dir_file(target_relative_dir,file->name));
+	       remove_target=true;
+	       stats.mod_symlinks++;
+	    }
+	    else
+	       stats.new_symlinks++;
+	    mvJob *j=new mvJob(target_session->Clone(),file->symlink,target_name,FA::SYMLINK);
+	    if(remove_target)
+	       j->RemoveTargetFirst();
+	    AddWaiting(j);
+	    break;
 	 }
 
 	 if(script)

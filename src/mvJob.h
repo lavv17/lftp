@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2007 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2010 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,18 +28,27 @@
 
 class mvJob : public SessionJob
 {
+   xstring_c from;
+   xstring to;
    FA::open_mode m;
-   int	 failed;
+   bool	 remove_target;
+   bool	 failed;
+   bool	 done;
+
 public:
    int	 Do();
-   int	 Done() { return session->IsClosed(); }
+   int	 Done() { return done; }
    int	 ExitCode() { return failed; }
 
    void	 PrintStatus(int,const char *);
    void	 ShowRunStatus(const SMTaskRef<StatusLine>&);
    void	 SayFinal();
 
-   mvJob(FileAccess *session,const char *from,const char *to,FA::open_mode m=FA::RENAME);
+   void	 doOpen() const;
+   const char *cmd() const { return m==FA::RENAME ? "mv" : "ln"; }
+
+   mvJob(FileAccess *session,const char *f,const char *t,FA::open_mode m=FA::RENAME);
+   void RemoveTargetFirst() { remove_target=true; }
 };
 
 #endif // MVJOB_H

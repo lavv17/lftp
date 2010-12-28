@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 1996-2007 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2010 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,18 +24,21 @@
 #include "mvJob.h"
 #include "misc.h"
 
-mvJob::mvJob(FileAccess *session,const char *from,const char *to,FA::open_mode m1) : SessionJob(session)
+mvJob::mvJob(FileAccess *session,const char *f,const char *t,FA::open_mode m1)
+ : SessionJob(session), from(f), to(t), m(m1),
+   remove_target(false), failed(false), done(false)
 {
-   failed=0;
-   m=m1;
-   if(last_char(to)=='/')
-   {
-      const char *from_bn=basename_ptr(from);
-      char *to1=alloca_strdup2(to,strlen(from_bn));
-      strcat(to1,from_bn);
-      to=to1;
-   }
-   session->Open2(from,to,m);
+   if(to.last_char()=='/')
+      to.append(basename_ptr(from));
+   doOpen();
+}
+
+void mvJob::doOpen() const
+{
+   if(remove_target)
+      session->Open(to,FA::REMOVE);
+   else
+      session->Open2(from,to,m);
 }
 
 int mvJob::Do()
@@ -44,18 +47,18 @@ int mvJob::Do()
       return STALL;
 
    int res=session->Done();
-   if(res==FA::IN_PROGRESS)
+   if(res==FA::IN_PROGRESS || res==FA::DO_AGAIN)
       return STALL;
-   if(res==FA::OK)
-   {
-      session->Close();
-      return MOVED;
+   if(res!=FA::OK && !remove_target) {
+      fprintf(stderr,"%s: %s\n",cmd(),session->StrError(res));
+      done=failed=true;
    }
-   if(res==FA::DO_AGAIN)
-      return STALL;
-   fprintf(stderr,"%s\n",session->StrError(res));
-   failed=1;
    session->Close();
+   if(remove_target) {
+      remove_target=false;
+      doOpen();
+   } else
+      done=true;
    return MOVED;
 }
 
@@ -64,13 +67,20 @@ void  mvJob::PrintStatus(int v,const char *prefix)
    SessionJob::PrintStatus(v,prefix);
    if(Done())
       return;
-   printf("%s[%s]\n",prefix,session->CurrentStatus());
+   if(remove_target)
+      printf("%srm %s [%s]\n",prefix,to.get(),session->CurrentStatus());
+   else
+      printf("%s%s %s=>%s [%s]\n",prefix,cmd(),from.get(),to.get(),session->CurrentStatus());
 }
 
 void  mvJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
 {
-   if(!Done())
-      s->Show("[%s]",session->CurrentStatus());
+   if(Done())
+      return;
+   if(remove_target)
+      s->Show("rm %s [%s]\n",to.get(),session->CurrentStatus());
+   else
+      s->Show("%s %s=>%s [%s]\n",cmd(),from.get(),to.get(),session->CurrentStatus());
 }
 
 void  mvJob::SayFinal()
