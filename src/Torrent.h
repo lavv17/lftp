@@ -253,6 +253,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    void PeerBytesGot(int b) { PeerBytesUsed(b,RateLimit::GET); }
 
    static void BlackListPeer(const TorrentPeer *peer,const char *timeout);
+   TorrentPeer *FindPeerById(const xstring& p_id);
 
 public:
    Torrent(const char *mf,const char *cwd,const char *output_dir);
@@ -366,6 +367,7 @@ class TorrentPeer : public SMTask, protected ProtoLog, public Networker
    Speedometer peer_send_rate;
 
    xstring peer_id;
+   TorrentPeer *duplicate;
    bool myself;
 
    bool am_choking;

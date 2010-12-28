@@ -1100,6 +1100,17 @@ const xstring& Torrent::RetrieveBlock(unsigned piece,unsigned begin,unsigned len
    return buf;
 }
 
+TorrentPeer *Torrent::FindPeerById(const xstring& p_id)
+{
+   // linear search - peers count<100, called rarely
+   for(int i=0; i<peers.count(); i++) {
+      const TorrentPeer *peer=peers[i];
+      if(peer->peer_id.eq(p_id))
+	 return const_cast<TorrentPeer*>(peer);
+   }
+   return 0;
+}
+
 void Torrent::ScanPeers() {
    // scan existing peers
    for(int i=0; i<peers.count(); i++) {
@@ -1111,6 +1122,8 @@ void Torrent::ScanPeers() {
       else if(peer->myself) {
 	 LogNote(4,"removing myself-connected peer %s",peer->GetName());
 	 BlackListPeer(peer,"forever");
+      } else if(peer->duplicate) {
+	 LogNote(4,"removing duplicate peer %s",peer->GetName());
       } else if(complete && peer->Complete())
 	 LogNote(4,"removing unneeded peer %s (%s)",peer->GetName(),peers[i]->Status());
       else
@@ -1303,6 +1316,7 @@ TorrentPeer::TorrentPeer(Torrent *p,const sockaddr_u *a,int t_no)
    sock=-1;
    connected=false;
    passive=false;
+   duplicate=0;
    myself=false;
    peer_choking=true;
    am_choking=true;
@@ -1415,8 +1429,16 @@ TorrentPeer::unpack_status_t TorrentPeer::RecvHandshake()
       return UNPACK_WRONG_FORMAT;
    }
 
-   peer_id.nset(recv_buf->Get()+unpacked,Torrent::PEER_ID_LEN);
+   const xstring& tmp_peer_id=xstring::get_tmp(recv_buf->Get()+unpacked,Torrent::PEER_ID_LEN);
    unpacked+=Torrent::PEER_ID_LEN;
+   // if we have already such a peer, then this peer or the other one
+   // much be marked as duplicate and then removed in ScanPeers.
+   duplicate=parent->FindPeerById(tmp_peer_id);
+   if(!duplicate->Connected()) {
+      duplicate->duplicate=this;
+      duplicate=0;
+   }
+   peer_id.set(tmp_peer_id);
 
    recv_buf->Skip(unpacked);
    LogRecv(4,xstring::format("handshake, %s, peer_id: %s",protocol.dump(),url::encode(peer_id,"").get()));
