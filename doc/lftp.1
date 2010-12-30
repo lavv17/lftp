@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "22 Nov 2010"
+.TH lftp 1 "30 Dec 2010"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.1.0.
+This man page documents lftp version 4.1.2.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -346,6 +346,13 @@ Delete specified job with \fIjob_no\fP or all jobs.
 .PP
 Change current local directory \fIldir\fP. The previous local
 directory is stored as `\-'. You can do `lcd \-' to change the directory back.
+
+.B ln
+.RB [ \-s ]
+\fIexisting-file\fP \fInew-link\fP
+.PP
+Make a hard/symbolic link to an existing file.
+Option \-s selects creation of a symbolic link.
 
 .B local
 \fIcommand\fP

@@ -1,3 +1,7 @@
+2010-12-30	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: add ln description.
+
 2010-11-22	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: update `local' examples; better torrent desc;
