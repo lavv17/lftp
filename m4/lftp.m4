@@ -69,7 +69,7 @@ esac
 AC_DEFUN([LFTP_NOIMPLEMENTINLINE],
 [
    AC_MSG_CHECKING(if -fno-implement-inlines implements virtual functions)
-   flags="-fno-implement-inlines -Winline"
+   flags="-fno-implement-inlines"
    AC_CACHE_VAL(lftp_cv_noimplementinline,
    [
       AC_LANG_PUSH(C++)
