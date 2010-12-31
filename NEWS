@@ -1,3 +1,10 @@
+Version 4.1.2 - 2010-12-31
+
+* new command ln [-s], supported by FTP (SITE [SYM]LINK), FISH, SFTP, and
+  locally via file: schema.
+* create remote symlinks in mirror -R if supported by server.
+* detect and remove duplicate peers in torrent.
+
 Version 4.1.1 - 2010-11-24
 
 * fixed job command line display.
