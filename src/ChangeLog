@@ -1,6 +1,6 @@
 2011-01-17  Alexander V. Lukyanov <lav@yars.free.net>
 
-	* Torrent.cc: check for null.
+	* Torrent.cc: check for null; set done when preparing to die.
 
 2010-12-28  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -1,7 +1,7 @@
 /*
  * lftp and utils
  *
- * Copyright (c) 2009-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 2009-2011 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2478,6 +2478,7 @@ TorrentJob::~TorrentJob()
 }
 void TorrentJob::PrepareToDie()
 {
+   done=true;
    torrent=0;
    Job::PrepareToDie();
 }
