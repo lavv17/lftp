@@ -1434,7 +1434,7 @@ TorrentPeer::unpack_status_t TorrentPeer::RecvHandshake()
    // if we have already such a peer, then this peer or the other one
    // much be marked as duplicate and then removed in ScanPeers.
    duplicate=parent->FindPeerById(tmp_peer_id);
-   if(!duplicate->Connected()) {
+   if(duplicate && !duplicate->Connected()) {
       duplicate->duplicate=this;
       duplicate=0;
    }
