@@ -188,3 +188,4 @@ socketlib.m4
 parse-datetime.m4
 poll_h.m4
 configmake.m4
+error.m4

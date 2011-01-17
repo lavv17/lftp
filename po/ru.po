@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.1.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2010-12-31 14:08+0300\n"
+"POT-Creation-Date: 2011-01-17 11:59+0300\n"
 "PO-Revision-Date: 2010-11-22 17:38+04:00\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -111,11 +111,11 @@ msgstr "%s: для опции `-W %s' требуется аргумент\n"
 #. If you don't know what to put here, please see
 #. <http://en.wikipedia.org/wiki/Quotation_mark#Glyphs>
 #. and use glyphs suitable for your language.
-#: lib/quotearg.c:272
+#: lib/quotearg.c:271
 msgid "`"
 msgstr "«"
 
-#: lib/quotearg.c:273
+#: lib/quotearg.c:272
 msgid "'"
 msgstr "»"
 

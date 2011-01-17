@@ -1,4 +1,4 @@
-** lftp-3.7.x
+** lftp-4.1.x
 
 This package `lftp' contains the following components:
 
@@ -16,7 +16,8 @@ lftp
 ~~~~
 lftp is sophisticated file transfer program with command line interface. It
 supports FTP, HTTP, FISH, SFTP and FILE (local FS) protocols. GNU Readline
-library is used for input.
+library is used for input. BitTorrent protocol is supported as built-in
+`torrent' command.
 
 Low level stuff supported: ftp proxy, http proxy, ftp over http, opie/skey,
 fxp transfers, automatic retrying on non-fatal errors and timeouts, ipv6,
@@ -95,8 +96,7 @@ all the details from application and allows asynchronous operation.
 Reconnect and reget are done as necessary. It can also speed up ftp
 operations by sending several commands at once and then checking all the
 responses. It seems this sometimes does not work, so it is disabled by
-default. To turn it on, use `set sync-mode n' in lftp or --async-mode for
-ftpget.
+default. To turn it on, use `set sync-mode n' in lftp.
 
 Note that sending several commands is considered as violation or protocol,
 but RFC959 says: ``The user-process sending another command before the
@@ -138,7 +138,7 @@ These lists are archived at
 Author
 ~~~~~~
 Author: Alexander V. Lukyanov <lav@yars.free.net>
-My home page: http://www.yars.free.net/~lav/
+My home page: http://lav.yar.ru/
 
 Other people have contributed to lftp development, see THANKS and ChangeLog
 files.
@@ -148,7 +148,7 @@ Comments and bug reports are welcome. Please send them to the list:
 
 License
 ~~~~~~~
-Copyright (c) 1996-2009 by Alexander V. Lukyanov (lav@yars.free.net)
+Copyright (c) 1996-2011 by Alexander V. Lukyanov (lav@yars.free.net)
 
 LFTP is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

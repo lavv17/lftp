@@ -1,3 +1,7 @@
+Version 4.1.3 - 2011-01-17
+
+* fixed a coredump in torrent (introduced in 4.1.2).
+
 Version 4.1.2 - 2010-12-31
 
 * new command ln [-s], supported by FTP (SITE [SYM]LINK), FISH, SFTP, and
