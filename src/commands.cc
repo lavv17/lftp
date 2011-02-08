@@ -1971,8 +1971,29 @@ CMD(jobs)
 	 return 0;
       }
    }
-   parent->ListJobs(v);
    exit_code=0;
+   args->back();
+   const char *arg=args->getnext();
+   if(!arg) {
+      parent->ListJobs(v);
+      return 0;
+   }
+   const char *op=args->a0();
+   for(; arg; arg=args->getnext()) {
+      if(!isdigit((unsigned char)*arg)) {
+	 eprintf(_("%s: %s - not a number\n"),op,arg);
+	 exit_code=1;
+	 continue;
+      }
+      int n=atoi(arg);
+      Job *j=parent->FindJob(n);
+      if(!j) {
+	 eprintf(_("%s: %d - no such job\n"),op,n);
+	 exit_code=1;
+	 continue;
+      }
+      j->ListOneJob(v);
+   }
    return 0;
 }
 
