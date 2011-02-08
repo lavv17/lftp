@@ -2192,9 +2192,11 @@ void Http::LogErrorText()
       return;
    buf[size]=0;
    remove_tags(buf);
-   for(char *line=strtok(buf,"\n"); line; line=strtok(0,"\n"))
+   for(char *line=strtok(buf,"\n"); line; line=strtok(0,"\n")) {
+      rtrim(line);
       if(*line)
 	 Log::global->Format(4,"<--* %s\n",line);
+   }
 }
 
 
