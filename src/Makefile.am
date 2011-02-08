@@ -57,7 +57,7 @@ cmd_sleep_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
 cmd_torrent_la_LDFLAGS= -module -avoid-version -rpath $(pkgverlibdir)
 liblftp_pty_la_LDFLAGS     = -avoid-version -rpath $(pkgverlibdir)
 liblftp_network_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir) $(OPENSSL_LDFLAGS)
-liblftp_network_la_LIBADD  = $(SOCKSLIBS) $(OPENSSL_LIBS) $(LIBGNUTLS_LIBS)
+liblftp_network_la_LIBADD  = $(SOCKSLIBS) $(OPENSSL_LIBS) $(LIBGNUTLS_LIBS) $(GNULIB)
 
 proto_ftp_la_LIBADD  = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la
 proto_http_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la $(EXPAT_LIBS)
