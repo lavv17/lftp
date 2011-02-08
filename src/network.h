@@ -58,6 +58,7 @@ union sockaddr_u
    bool is_private() const;
    const xstring& to_string() const;
    operator const char *() const { return to_string(); }
+   bool set_defaults(int af,const char *hostname,int port);
 };
 
 class Networker
@@ -77,12 +78,13 @@ protected:
    static int SocketAccept(int fd,sockaddr_u *u,const char *hostname=0);
    static void SetSocketBuffer(int sock,int socket_buffer);
    static void SetSocketMaxseg(int sock,int socket_maxseg);
-   static void SocketBindStd(int s,int af,const char *hostname);
+   static void SocketBindStd(int s,int af,const char *hostname,int port=0);
    static int SocketCreate(int af,int type,int proto,const char *hostname);
    static void SocketTuneTCP(int s,const char *hostname);
    static int SocketCreateTCP(int af,const char *hostname);
    static int SocketCreateUnbound(int af,int type,int proto,const char *hostname);
    static int SocketCreateUnboundTCP(int af,const char *hostname);
+   static void SocketSinglePF(int sock,int pf);
 };
 
 #endif //NETWORK_H

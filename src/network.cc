@@ -200,31 +200,36 @@ int Networker::SocketCreateUnbound(int af,int type,int proto,const char *hostnam
    SetSocketBuffer(s,ResMgr::Query("net:socket-buffer",hostname));
    return s;
 }
-void Networker::SocketBindStd(int s,int af,const char *hostname)
+bool sockaddr_u::set_defaults(int af,const char *hostname,int port)
 {
+   memset(this,0,sizeof(*this));
+   sa.sa_family=af;
    const char *b=0;
-   sockaddr_u bind_addr;
-   memset(&bind_addr,0,sizeof(bind_addr));
-   bind_addr.in.sin_family=af;
    if(af==AF_INET)
    {
       b=ResMgr::Query("net:socket-bind-ipv4",hostname);
-      if(!(b && b[0] && inet_pton(af,b,&bind_addr.in.sin_addr)))
+      if(!(b && b[0] && inet_pton(af,b,&in.sin_addr)))
 	 b=0;
+      in.sin_port=htons(port);
    }
 #if INET6
    else if(af==AF_INET6)
    {
       b=ResMgr::Query("net:socket-bind-ipv6",hostname);
-      if(!(b && b[0] && inet_pton(af,b,&bind_addr.in6.sin6_addr)))
+      if(!(b && b[0] && inet_pton(af,b,&in6.sin6_addr)))
 	 b=0;
+      in6.sin6_port=htons(port);
    }
 #endif
-   if(b)
+   return b || port;
+}
+void Networker::SocketBindStd(int s,int af,const char *hostname,int port)
+{
+   sockaddr_u bind_addr;
+   if(bind_addr.set_defaults(af,hostname,port))
    {
-      int res=bind_addr.bind_to(s);
-      if(res==-1)
-	 ProtoLog::LogError(0,"bind(socket, %s): %s",b,strerror(errno));
+      if(bind_addr.bind_to(s)==-1)
+	 ProtoLog::LogError(0,"bind(%s): %s",bind_addr.to_string().get(),strerror(errno));
    }
 }
 int Networker::SocketCreate(int af,int type,int proto,const char *hostname)
@@ -277,6 +282,17 @@ int Networker::SocketAccept(int fd,sockaddr_u *u,const char *hostname)
    SetSocketBuffer(a,ResMgr::Query("net:socket-buffer",hostname));
    SetSocketMaxseg(a,ResMgr::Query("net:socket-maxseg",hostname));
    return a;
+}
+
+void Networker::SocketSinglePF(int s,int pf)
+{
+#if INET6
+   if(pf==PF_INET6) {
+      int on = 1;
+      if(-1==setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY, (char *)&on, sizeof(on)))
+	 ProtoLog::LogError(1,"setsockopt(IPV6_V6ONLY): %s",strerror(errno));
+   }
+#endif
 }
 
 #ifdef TIOCOUTQ
