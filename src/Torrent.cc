@@ -46,13 +46,18 @@ static ResType torrent_vars[] = {
    {"torrent:seed-max-time", "30d", ResMgr::TimeIntervalValidate},
    {"torrent:seed-min-peers", "3", ResMgr::UNumberValidate},
    {"torrent:ip", "", ResMgr::IPv4AddrValidate, ResMgr::NoClosure},
+#if INET6
+   {"torrent:ipv6", "", ResMgr::IPv6AddrValidate, ResMgr::NoClosure},
+#endif
    {0}
 };
 static ResDecls torrent_vars_register(torrent_vars);
 
 xstring Torrent::my_peer_id;
 xstring Torrent::my_key;
+xmap<Torrent*> Torrent::torrents;
 Ref<TorrentListener> Torrent::listener;
+Ref<TorrentListener> Torrent::listener_ipv6;
 Ref<FDCache> Torrent::fd_cache;
 Ref<TorrentBlackList> Torrent::black_list;
 
@@ -109,9 +114,13 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    Reconfig(0);
 
    if(listener==0) {
-      listener=new TorrentListener();
+      listener=new TorrentListener(AF_INET);
       fd_cache=new FDCache();
       black_list=new TorrentBlackList();
+#if INET6
+      listener->Do(); // try to allocate ipv4 port first
+      listener_ipv6=new TorrentListener(AF_INET6);
+#endif
    }
    if(!my_peer_id) {
       my_peer_id.set("-lftp41-");
@@ -170,10 +179,10 @@ void Torrent::Shutdown()
 void Torrent::PrepareToDie()
 {
    peers.unset();
-   if(listener)
-      listener->RemoveTorrent(this);
-   if(listener && listener->GetTorrentsCount()==0) {
+   RemoveTorrent(this);
+   if(GetTorrentsCount()==0) {
       listener=0;
+      listener_ipv6=0;
       fd_cache=0;
       black_list=0;
    }
@@ -424,6 +433,23 @@ int TorrentTracker::HandleTrackerReply()
       }
       LogNote(4,plural("Received valid info about %d peer$|s$",peers_count),peers_count);
    }
+   peers_count=0;
+   b_peers=reply->dict.lookup("peers6");
+   if(b_peers && b_peers->type==BeNode::BE_STR) { // binary model
+      const char *data=b_peers->str;
+      int len=b_peers->str.length();
+      while(len>=18) {
+	 sockaddr_u a;
+	 a.sa.sa_family=AF_INET6;
+	 memcpy(&a.in6.sin6_addr,data,16);
+	 memcpy(&a.in6.sin6_port,data+16,2);
+	 data+=18;
+	 len-=18;
+	 parent->AddPeer(new TorrentPeer(parent,&a,tracker_no));
+	 peers_count++;
+      }
+      LogNote(4,plural("Received valid info about %d IPv6 peer$|s$",peers_count),peers_count);
+   }
    tracker_timer.Reset();
    tracker_reply=0;
    return MOVED;
@@ -471,6 +497,16 @@ void Torrent::StartTrackers() const
    for(int i=0; i<trackers.count(); i++) {
       trackers[i]->Start();
    }
+}
+
+int Torrent::GetPort()
+{
+   int port=0;
+   if(listener && !port)
+      port=listener->GetPort();
+   if(listener_ipv6 && !port)
+      port=listener_ipv6->GetPort();
+   return port;
 }
 
 int Torrent::Do()
@@ -623,11 +659,11 @@ int Torrent::Do()
 	 return MOVED;
       }
 
-      if(listener->Lookup(info_hash)) {
+      if(FindTorrent(info_hash)) {
 	 SetError("This torrent is already running");
 	 return MOVED;
       }
-      listener->AddTorrent(this);
+      AddTorrent(this);
 
       my_bitfield=new BitField(total_pieces);
       for(unsigned p=0; p<total_pieces; p++)
@@ -783,6 +819,17 @@ void TorrentTracker::SendTrackerRequest(const char *event)
    const char *ip=ResMgr::Query("torrent:ip",0);
    if(ip && ip[0])
       request.appendf("&ip=%s",ip);
+
+#if INET6
+   int port=Torrent::GetPortIPv4();
+   int port_ipv6=Torrent::GetPortIPv6();
+   const char *ipv6=ResMgr::Query("torrent:ipv6",0);
+   if(port && ip && ip[0])
+      request.appendf("&ipv4=%s:%d",ip,port);
+   if(port_ipv6)
+      request.appendf("&ipv6=[%s]:%d",ipv6&&ipv6[0]?ipv6:Torrent::GetAddressIPv6(),port_ipv6);
+#endif
+
    int numwant=parent->GetWantedPeersCount();
    if(numwant>=0)
       request.appendf("&numwant=%d",numwant);
@@ -2306,22 +2353,18 @@ bool TorrentBlackList::Listed(const sockaddr_u &a)
 }
 
 
-TorrentListener::TorrentListener()
+TorrentListener::TorrentListener(int a)
+   : af(a), sock(-1)
 {
-   sock=-1;
 }
 TorrentListener::~TorrentListener()
 {
    if(sock!=-1)
       close(sock);
 }
-void TorrentListener::AddTorrent(Torrent *t)
+void TorrentListener::FillAddress(int port)
 {
-   torrents.add(t->GetInfoHash(),t);
-}
-void TorrentListener::RemoveTorrent(Torrent *t)
-{
-   torrents.remove(t->GetInfoHash());
+   addr.set_defaults(af,"torrent",port);
 }
 int TorrentListener::Do()
 {
@@ -2329,9 +2372,28 @@ int TorrentListener::Do()
    if(error)
       return m;
    if(sock==-1) {
-      sock=SocketCreateTCP(AF_INET,0);
+      sock=SocketCreateUnboundTCP(af,0);
+      if(sock==-1) {
+	 if(NonFatalError(errno))
+	    return m;
+	 error=Error::Fatal(_("cannot create socket of address family %d"),addr.sa.sa_family);
+	 return MOVED;
+      }
+      SocketSinglePF(sock,af);
+
       // Try to assign a port from given range
       Range range(ResMgr::Query("torrent:port-range",0));
+
+      // but first try already allocated port
+      int prefer_port=Torrent::GetPort();
+      if(prefer_port) {
+	 ReuseAddress(sock);   // try to reuse address.
+	 FillAddress(prefer_port);
+	 if(addr.bind_to(sock)==0)
+	    goto bound;
+	 LogError(1,"bind(%s): %s",addr.to_string().get(),strerror(errno));
+      }
+
       for(int t=0; ; t++)
       {
 	 if(t>=10)
@@ -2351,9 +2413,7 @@ int TorrentListener::Do()
 	 if(!port)
 	     break;	// nothing to bind
 
-	 addr.sa.sa_family=AF_INET;
-	 addr.in.sin_port=htons(port);
-
+	 FillAddress(port);
 	 if(addr.bind_to(sock)==0)
 	    break;
 	 int saved_errno=errno;
@@ -2361,7 +2421,7 @@ int TorrentListener::Do()
 	 // Fail unless socket was already taken
 	 if(errno!=EINVAL && errno!=EADDRINUSE)
 	 {
-	    LogError(0,"bind([%s]:%d): %s",addr.address(),port,strerror(saved_errno));
+	    LogError(0,"bind(%s): %s",addr.to_string().get(),strerror(saved_errno));
 	    close(sock);
 	    sock=-1;
 	    if(NonFatalError(errno))
@@ -2372,13 +2432,15 @@ int TorrentListener::Do()
 	    error=Error::Fatal("Cannot bind a socket for torrent:port-range");
 	    return MOVED;
 	 }
-	 LogError(10,"bind([%s]:%d): %s",addr.address(),port,strerror(saved_errno));
+	 LogError(10,"bind(%s): %s",addr.to_string().get(),strerror(saved_errno));
       }
+   bound:
       listen(sock,5);
 
       // get the allocated port
       socklen_t addr_len=sizeof(addr);
       getsockname(sock,&addr.sa,&addr_len);
+      LogNote(4,"listening on %s",addr.to_string().get());
       m=MOVED;
    }
 
@@ -2402,9 +2464,9 @@ int TorrentListener::Do()
    return m;
 }
 
-void TorrentListener::Dispatch(const xstring& info_hash,int sock,const sockaddr_u *remote_addr,IOBuffer *recv_buf)
+void Torrent::Dispatch(const xstring& info_hash,int sock,const sockaddr_u *remote_addr,IOBuffer *recv_buf)
 {
-   Torrent *t=Lookup(info_hash);
+   Torrent *t=FindTorrent(info_hash);
    if(!t) {
       LogError(1,"peer sent unknown info_hash=%s in handshake",info_hash.dump());
       close(sock);
@@ -2459,11 +2521,8 @@ int TorrentDispatcher::Do()
    xstring peer_info_hash(data+unpacked,SHA1_DIGEST_SIZE);
    unpacked+=SHA1_DIGEST_SIZE;
 
-   const Ref<TorrentListener>& listener=Torrent::GetListener();
-   if(listener) {
-      listener->Dispatch(peer_info_hash,sock,&addr,recv_buf.borrow());
-      sock=-1;
-   }
+   Torrent::Dispatch(peer_info_hash,sock,&addr,recv_buf.borrow());
+   sock=-1;
    deleting=true;
    return MOVED;
 }

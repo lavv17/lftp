@@ -72,21 +72,17 @@ struct TorrentPiece
 class TorrentListener : public SMTask, protected ProtoLog, protected Networker
 {
    Ref<Error> error;
+   int af;
    int sock;
    sockaddr_u addr;
-   xmap<Torrent*> torrents;
    Speedometer rate;
+   void FillAddress(int port);
 public:
-   TorrentListener();
+   TorrentListener(int a);
    ~TorrentListener();
    int Do();
-   Torrent *FindTorrent(const xstring& info_hash) const { return torrents.lookup(info_hash); }
-   void AddTorrent(Torrent *);
-   void RemoveTorrent(Torrent *);
    int GetPort() const { return addr.port(); }
-   int GetTorrentsCount() const { return torrents.count(); }
-   void Dispatch(const xstring& info_hash,int s,const sockaddr_u *remote_addr,IOBuffer *recv_buf);
-   Torrent *Lookup(const xstring& info_hash) { return torrents.lookup(info_hash); }
+   const char *GetAddress() const { return addr.address(); }
 };
 
 class TorrentTracker : public SMTask, protected ProtoLog
@@ -131,6 +127,7 @@ public:
 class Torrent : public SMTask, protected ProtoLog, public ResClient
 {
    friend class TorrentPeer;
+   friend class TorrentDispatcher;
 
    bool shutting_down;
    bool complete;
@@ -143,9 +140,17 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    static const unsigned PEER_ID_LEN = 20;
    static xstring my_peer_id;
    static xstring my_key;
+   static xmap<Torrent*> torrents;
    static Ref<TorrentListener> listener;
+   static Ref<TorrentListener> listener_ipv6;
    static Ref<FDCache> fd_cache;
    static Ref<TorrentBlackList> black_list;
+
+   static Torrent *FindTorrent(const xstring& info_hash) { return torrents.lookup(info_hash); }
+   static void AddTorrent(Torrent *t) { torrents.add(t->GetInfoHash(),t); }
+   static void RemoveTorrent(Torrent *t) { torrents.remove(t->GetInfoHash()); }
+   static int GetTorrentsCount() { return torrents.count(); }
+   static void Dispatch(const xstring& info_hash,int s,const sockaddr_u *remote_addr,IOBuffer *recv_buf);
 
    xstring_c metainfo_url;
    FileAccessRef metainfo_fa;
@@ -269,7 +274,6 @@ public:
    bool ShuttingDown() { return shutting_down; }
    void PrepareToDie();
 
-   static const Ref<TorrentListener>& GetListener() { return listener; }
    void Accept(int s,const sockaddr_u *a,IOBuffer *rb);
 
    static void SHA1(const xstring& str,xstring& buf);
@@ -298,7 +302,10 @@ public:
    void ForceValid() { force_valid=true; }
    bool IsValidating() const { return validating; }
 
-   int GetPort() { return listener->GetPort(); }
+   static int GetPort();
+   static int GetPortIPv4() { return listener?listener->GetPort():0; }
+   static int GetPortIPv6() { return listener_ipv6?listener_ipv6->GetPort():0; }
+   static const char *GetAddressIPv6() { return listener_ipv6?listener_ipv6->GetAddress():"::"; }
    int GetWantedPeersCount() const;
    static const xstring& GetMyPeerId() { return my_peer_id; }
    static const xstring& GetMyKey() { return my_key; }
