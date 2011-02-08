@@ -41,6 +41,7 @@ public:
    enum handshake_mode_t { CLIENT, SERVER } handshake_mode;
    xstring error;
    bool fatal;
+   bool cert_error;
 
    lftp_ssl_base(int fd,handshake_mode_t m,const char *host=0);
 
@@ -128,6 +129,7 @@ class lftp_ssl_openssl : public lftp_ssl_base
 public:
    static int verify_crl(X509_STORE_CTX *ctx);
    static int verify_callback(int ok,X509_STORE_CTX *ctx);
+   void check_certificate();
 
    static void global_init();
    static void global_deinit();

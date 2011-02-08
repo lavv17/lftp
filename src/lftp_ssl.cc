@@ -46,6 +46,7 @@ lftp_ssl_base::lftp_ssl_base(int fd1,handshake_mode_t m,const char *h)
    handshake_done=false;
    handshake_mode=m;
    fatal=false;
+   cert_error=false;
 }
 void lftp_ssl_base::set_error(const char *s1,const char *s2)
 {
@@ -63,6 +64,7 @@ void lftp_ssl_base::set_cert_error(const char *s)
    {
       set_error("Certificate verification",s);
       fatal=true;
+      cert_error=true;
    }
 }
 
