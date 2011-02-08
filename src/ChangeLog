@@ -1,3 +1,23 @@
+2011-02-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp_ssl.cc: check CN in openssl (code taken from wget);
+	  (cert_error) new flag.
+	* Http.cc: rtrim error text.
+	* commands.cc: allow selecting jobs in 'jobs' command.
+	* misc.cc, misc.h: (remove_tags) don't call strlen repeatedly;
+	  (rtrim) new func.
+	* ftpclass.cc: don't fall back to plain connection when cert error found.
+	* network.cc, network.h: (sockaddr_u::set_defaults) new method;
+	  (Networker::SocketSinglePF) new method to bind to single protocol family.
+	* Torrent.cc, Torrent.h: add ipv6 support.
+	* resource.cc: make ssl:verify-certificate on by default.
+
+2011-02-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp_ssl.cc: force SSL3 when ssl-auth is set to SSL (needed for
+	  some ftp servers). Patch from Jiri Skala <jskala@redhat.com>;
+	  disable SSLv2 and weak ciphers (Ludwig Nussel <ludwig.nussel@suse.de>);
+
 2011-01-17  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Torrent.cc: check for null; set done when preparing to die.
