@@ -261,6 +261,14 @@ lftp_ssl_gnutls::lftp_ssl_gnutls(int fd1,handshake_mode_t m,const char *h)
    gnutls_set_default_priority(session);
 
    gnutls_transport_set_ptr(session,(gnutls_transport_ptr_t)fd);
+
+   // hack for some ftp servers
+   const char *auth=ResMgr::Query("ftp:ssl-auth", hostname);
+   if(auth && !strncmp(auth, "SSL", 3))
+   {
+      int proto[] = { GNUTLS_SSL3, 0 };
+      gnutls_protocol_set_priority(session, proto);
+   }
 }
 void lftp_ssl_gnutls::load_keys()
 {
@@ -751,7 +759,8 @@ lftp_ssl_openssl_instance::lftp_ssl_openssl_instance()
 #else
    SSLeay_add_ssl_algorithms();
    ssl_ctx=SSL_CTX_new(SSLv23_client_method());
-   SSL_CTX_set_options(ssl_ctx, SSL_OP_ALL|SSL_OP_NO_TICKET);
+   SSL_CTX_set_options(ssl_ctx, SSL_OP_ALL|SSL_OP_NO_TICKET|SSL_OP_NO_SSLv2);
+   SSL_CTX_set_cipher_list(ssl_ctx, "ALL:!aNULL:!eNULL:!SSLv2:!LOW:!EXP:!MD5:@STRENGTH");
    SSL_CTX_set_verify(ssl_ctx,SSL_VERIFY_PEER,lftp_ssl_openssl::verify_callback);
 //    SSL_CTX_set_default_passwd_cb(ssl_ctx,lftp_ssl_passwd_callback);
 
