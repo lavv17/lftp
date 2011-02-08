@@ -127,6 +127,7 @@ static inline char *memrchr(char *buf,char c,size_t len) {
 
 const char *shell_encode(const char *);
 void remove_tags(char *buf);
+void rtrim(char *s);
 
 void random_init();
 double random01();

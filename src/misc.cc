@@ -867,6 +867,7 @@ const char *shell_encode(const char *string)
 
 void remove_tags(char *buf)
 {
+   int len=strlen(buf);
    for(;;)
    {
       char *less=strchr(buf,'<');
@@ -876,16 +877,24 @@ void remove_tags(char *buf)
       if(amp && (!less || amp<less))
       {
 	 amp[0]=' ';
-	 memmove(amp+1,amp+6,strlen(amp+6)+1);
+	 memmove(amp+1,amp+6,len-(amp+6-buf)+1);
+	 len-=amp+6-buf;
 	 buf=amp+1;
 	 continue;
       }
       char *more=strchr(less+1,'>');
       if(!more)
 	 break;
-      memmove(less,more+1,strlen(more+1)+1);
+      memmove(less,more+1,len-(more+1-buf)+1);
+      len-=more+1-buf;
       buf=less;
    }
+}
+void rtrim(char *s)
+{
+   int len=strlen(s);
+   while(len>0 && (s[len-1]==' ' || s[len-1]=='\t' || s[len-1]=='\r'))
+      s[--len]=0;
 }
 
 bool in_foreground_pgrp()
