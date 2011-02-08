@@ -3228,9 +3228,16 @@ int  Ftp::FlushSendQueue(bool all)
       LogError(0,"%s",conn->control_send->ErrorText());
       if(conn->control_send->ErrorFatal())
       {
-	 if(conn->ssl_is_activated() && !ftps && !QueryBool("ssl-force",hostname))
+#if USE_SSL
+	 if(conn->ssl_is_activated() && !ftps && !QueryBool("ssl-force",hostname)
+	 && !conn->control_ssl->cert_error)
+	 {
+	    // retry without ssl
 	    ResMgr::Set("ftp:ssl-allow",hostname,"no");
+	    try_time=0;
+	 }
 	 else
+#endif
 	    SetError(FATAL,conn->control_send->ErrorText());
       }
       DisconnectNow();
