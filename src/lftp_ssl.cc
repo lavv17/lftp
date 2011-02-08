@@ -33,6 +33,11 @@
 #include "ResMgr.h"
 #include "log.h"
 #include "misc.h"
+extern "C" {
+#include "c-ctype.h"
+#include "quotearg.h"
+#include "quote.h"
+}
 
 lftp_ssl_base::lftp_ssl_base(int fd1,handshake_mode_t m,const char *h)
    : hostname(h)
@@ -346,10 +351,7 @@ void lftp_ssl_gnutls::verify_certificate_chain(const gnutls_datum_t *cert_chain,
     */
    bool check_hostname = ResMgr::QueryBool("ssl:check-hostname", hostname);
    if(check_hostname && !gnutls_x509_crt_check_hostname(cert[0], hostname))
-   {
-      xstring_ca err(xasprintf("The certificate's owner does not match hostname '%s'\n",hostname.get()));
-      set_cert_error(err);
-   }
+      set_cert_error(xstring::format("certificate common name doesn't match requested host name %s",quote(hostname)));
 
    for (i = 0; i < cert_chain_length; i++)
       gnutls_x509_crt_deinit(cert[i]);
@@ -856,12 +858,12 @@ lftp_ssl_openssl::~lftp_ssl_openssl()
    SSL_free(ssl);
 }
 
-static const char *host;
+static const char *verify_callback_host;
 static int lftp_ssl_connect(SSL *ssl,const char *h)
 {
-   host=h;
+   verify_callback_host=h;
    int res=SSL_connect(ssl);
-   host=0;
+   verify_callback_host=0;
    return res;
 }
 bool lftp_ssl_openssl::check_fatal(int res)
@@ -895,6 +897,7 @@ int lftp_ssl_openssl::do_handshake()
       }
    }
    handshake_done=true;
+   check_certificate();
    SMTask::current->Timeout(0);
    return DONE;
 }
@@ -1109,6 +1112,135 @@ int lftp_ssl_openssl::verify_crl(X509_STORE_CTX *ctx)
     return 1;
 }
 
+/* begin wget code */
+#define ASTERISK_EXCLUDES_DOT   /* mandated by rfc2818 */
+
+/* Return true is STRING (case-insensitively) matches PATTERN, false
+   otherwise.  The recognized wildcard character is "*", which matches
+   any character in STRING except ".".  Any number of the "*" wildcard
+   may be present in the pattern.
+
+   This is used to match of hosts as indicated in rfc2818: "Names may
+   contain the wildcard character * which is considered to match any
+   single domain name component or component fragment. E.g., *.a.com
+   matches foo.a.com but not bar.foo.a.com. f*.com matches foo.com but
+   not bar.com [or foo.bar.com]."
+
+   If the pattern contain no wildcards, pattern_match(a, b) is
+   equivalent to !strcasecmp(a, b).  */
+
+static bool
+pattern_match (const char *pattern, const char *string)
+{
+  const char *p = pattern, *n = string;
+  char c;
+  for (; (c = c_tolower (*p++)) != '\0'; n++)
+    if (c == '*')
+      {
+        for (c = c_tolower (*p); c == '*'; c = c_tolower (*++p))
+          ;
+        for (; *n != '\0'; n++)
+          if (c_tolower (*n) == c && pattern_match (p, n))
+            return true;
+#ifdef ASTERISK_EXCLUDES_DOT
+          else if (*n == '.')
+            return false;
+#endif
+        return c == '\0';
+      }
+    else
+      {
+        if (c != c_tolower (*n))
+          return false;
+      }
+  return *n == '\0';
+}
+
+/* Verify the validity of the certificate presented by the server.
+   Also check that the "common name" of the server, as presented by
+   its certificate, corresponds to HOST.  (HOST typically comes from
+   the URL and is what the user thinks he's connecting to.)
+
+   This assumes that ssl_connect_wget has successfully finished, i.e. that
+   the SSL handshake has been performed and that FD is connected to an
+   SSL handle.
+
+   If opt.check_cert is true (the default), this returns 1 if the
+   certificate is valid, 0 otherwise.  If opt.check_cert is 0, the
+   function always returns 1, but should still be called because it
+   warns the user about any problems with the certificate.  */
+
+void lftp_ssl_openssl::check_certificate ()
+{
+  X509 *cert;
+  char common_name[256];
+
+  cert = SSL_get_peer_certificate (ssl);
+  if (!cert)
+    {
+      set_cert_error(xstring::format(_("No certificate presented by %s.\n"),
+                 quotearg_style (escape_quoting_style, hostname)));
+      return;
+    }
+
+  /* LAV: certificate validity is already checked in callback. */
+
+  /* Check that HOST matches the common name in the certificate.
+     #### The following remains to be done:
+
+     - It should use dNSName/ipAddress subjectAltName extensions if
+       available; according to rfc2818: "If a subjectAltName extension
+       of type dNSName is present, that MUST be used as the identity."
+
+     - When matching against common names, it should loop over all
+       common names and choose the most specific one, i.e. the last
+       one, not the first one, which the current code picks.
+
+     - Ensure that ASN1 strings from the certificate are encoded as
+       UTF-8 which can be meaningfully compared to HOST.  */
+
+  X509_NAME *xname = X509_get_subject_name(cert);
+  common_name[0] = '\0';
+  X509_NAME_get_text_by_NID (xname, NID_commonName, common_name,
+                             sizeof (common_name));
+
+  if (!pattern_match (common_name, hostname))
+    {
+      set_cert_error(xstring::format(_("certificate common name %s doesn't match requested host name %s"),
+                 quote_n (0, common_name), quote_n (1, hostname)));
+    }
+  else
+    {
+      /* We now determine the length of the ASN1 string. If it differs from
+       * common_name's length, then there is a \0 before the string terminates.
+       * This can be an instance of a null-prefix attack.
+       *
+       * https://www.blackhat.com/html/bh-usa-09/bh-usa-09-archives.html#Marlinspike
+       * */
+
+      int i = -1, j;
+      X509_NAME_ENTRY *xentry;
+      ASN1_STRING *sdata;
+
+      if (xname) {
+        for (;;)
+          {
+            j = X509_NAME_get_index_by_NID (xname, NID_commonName, i);
+            if (j == -1) break;
+            i = j;
+          }
+      }
+
+      xentry = X509_NAME_get_entry(xname,i);
+      sdata = X509_NAME_ENTRY_get_data(xentry);
+      if (strlen (common_name) != (size_t)ASN1_STRING_length (sdata))
+          set_cert_error(_("certificate common name is invalid (contains a NUL character)"));
+    }
+
+  X509_free (cert);
+}
+/* end wget code */
+
 int lftp_ssl_openssl::verify_callback(int ok,X509_STORE_CTX *ctx)
 {
    static X509 *prev_cert=0;
@@ -1132,7 +1264,7 @@ int lftp_ssl_openssl::verify_callback(int ok,X509_STORE_CTX *ctx)
 
    int error=X509_STORE_CTX_get_error(ctx);
 
-   bool verify=ResMgr::QueryBool("ssl:verify-certificate",host);
+   bool verify=ResMgr::QueryBool("ssl:verify-certificate",verify_callback_host);
 
    if(!ok)
    {
