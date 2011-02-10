@@ -1145,6 +1145,7 @@ static bool convert_from_utf8(char *str,int len)
 }
 
 /* begin curl-7.21.3 code */
+/* Copyright (c) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se> */
 #define Curl_raw_toupper c_toupper
 #define Curl_raw_equal !strcmp
 #define Curl_inet_pton inet_pton
@@ -1407,7 +1408,7 @@ void lftp_ssl_openssl::check_certificate()
 }
 /* end curl code */
 
-/* begin wget code */
+/* begin wget-1.12 code */
 #if 0
 #define ASTERISK_EXCLUDES_DOT   /* mandated by rfc2818 */
 
