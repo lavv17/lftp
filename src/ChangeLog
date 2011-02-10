@@ -1,3 +1,7 @@
+2011-02-10  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp_ssl.cc: use curl version of openssl hostname check.
+
 2011-02-08  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp_ssl.cc: check CN in openssl (code taken from wget);

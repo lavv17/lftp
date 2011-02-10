@@ -33,6 +33,8 @@
 #include "ResMgr.h"
 #include "log.h"
 #include "misc.h"
+#include "network.h"
+#include "buffer.h"
 extern "C" {
 #include "c-ctype.h"
 #include "quotearg.h"
@@ -905,6 +907,8 @@ int lftp_ssl_openssl::do_handshake()
 }
 int lftp_ssl_openssl::read(char *buf,int size)
 {
+   if(error)
+      return ERROR;
    int res=do_handshake();
    if(res!=DONE)
       return res;
@@ -927,6 +931,8 @@ int lftp_ssl_openssl::read(char *buf,int size)
 }
 int lftp_ssl_openssl::write(const char *buf,int size)
 {
+   if(error)
+      return ERROR;
    int res=do_handshake();
    if(res!=DONE)
       return res;
@@ -1114,7 +1120,295 @@ int lftp_ssl_openssl::verify_crl(X509_STORE_CTX *ctx)
     return 1;
 }
 
+static bool convert_from_utf8(char *str,int len)
+{
+   DirectedBuffer translate(DirectedBuffer::GET);
+   translate.SetTranslation("UTF-8",false);
+   translate.PutTranslated(str,len);
+   const char *str1,*str2;
+   int len1,len2;
+   translate.Get(&str1,&len1);
+   if(len1>len)
+      return false;  // no room to store expanded string
+
+   // be safe and try to convert back to UTF-8
+   DirectedBuffer translate_back(DirectedBuffer::PUT);
+   translate_back.SetTranslation("UTF-8",false);
+   translate_back.PutTranslated(str1,len1);
+   translate_back.Get(&str2,&len2);
+   if(len2!=len || memcmp(str2,str,len))
+      return false;  // conversion error
+
+   memcpy(str,str1,len1);
+   str[len1]=0;
+   return true;
+}
+
+/* begin curl-7.21.3 code */
+#define Curl_raw_toupper c_toupper
+#define Curl_raw_equal !strcmp
+#define Curl_inet_pton inet_pton
+#if INET6
+# define ENABLE_IPV6 1
+#endif
+/*
+ * Match a hostname against a wildcard pattern.
+ * E.g.
+ *  "foo.host.com" matches "*.host.com".
+ *
+ * We are a bit more liberal than RFC2818 describes in that we
+ * accept multiple "*" in pattern (similar to what some other browsers do).
+ * E.g.
+ *  "abc.def.domain.com" should strickly not match "*.domain.com", but we
+ *  don't consider "." to be important in CERT checking.
+ */
+#define HOST_NOMATCH 0
+#define HOST_MATCH   1
+
+static int hostmatch(const char *hostname, const char *pattern)
+{
+  for(;;) {
+    char c = *pattern++;
+
+    if(c == '\0')
+      return (*hostname ? HOST_NOMATCH : HOST_MATCH);
+
+    if(c == '*') {
+      c = *pattern;
+      if(c == '\0')      /* "*\0" matches anything remaining */
+        return HOST_MATCH;
+
+      while(*hostname) {
+        /* The only recursive function in libcurl! */
+        if(hostmatch(hostname++,pattern) == HOST_MATCH)
+          return HOST_MATCH;
+      }
+      break;
+    }
+
+    if(Curl_raw_toupper(c) != Curl_raw_toupper(*hostname++))
+      break;
+  }
+  return HOST_NOMATCH;
+}
+
+static int
+cert_hostcheck(const char *match_pattern, const char *hostname)
+{
+  if(!match_pattern || !*match_pattern ||
+      !hostname || !*hostname) /* sanity check */
+    return 0;
+
+  if(Curl_raw_equal(hostname, match_pattern)) /* trivial case */
+    return 1;
+
+  if(hostmatch(hostname,match_pattern) == HOST_MATCH)
+    return 1;
+  return 0;
+}
+
+/* Quote from RFC2818 section 3.1 "Server Identity"
+
+   If a subjectAltName extension of type dNSName is present, that MUST
+   be used as the identity. Otherwise, the (most specific) Common Name
+   field in the Subject field of the certificate MUST be used. Although
+   the use of the Common Name is existing practice, it is deprecated and
+   Certification Authorities are encouraged to use the dNSName instead.
+
+   Matching is performed using the matching rules specified by
+   [RFC2459].  If more than one identity of a given type is present in
+   the certificate (e.g., more than one dNSName name, a match in any one
+   of the set is considered acceptable.) Names may contain the wildcard
+   character * which is considered to match any single domain name
+   component or component fragment. E.g., *.a.com matches foo.a.com but
+   not bar.foo.a.com. f*.com matches foo.com but not bar.com.
+
+   In some cases, the URI is specified as an IP address rather than a
+   hostname. In this case, the iPAddress subjectAltName must be present
+   in the certificate and must exactly match the IP in the URI.
+
+*/
+void lftp_ssl_openssl::check_certificate()
+{
+  X509 *server_cert = SSL_get_peer_certificate (ssl);
+  if (!server_cert)
+    {
+      set_cert_error(xstring::format(_("No certificate presented by %s.\n"),
+                 quotearg_style (escape_quoting_style, hostname)));
+      return;
+    }
+
+  int matched = -1; /* -1 is no alternative match yet, 1 means match and 0
+                       means mismatch */
+  int target = GEN_DNS; /* target type, GEN_DNS or GEN_IPADD */
+  size_t addrlen = 0;
+  STACK_OF(GENERAL_NAME) *altnames;
+#ifdef ENABLE_IPV6
+  struct in6_addr addr;
+#else
+  struct in_addr addr;
+#endif
+
+  sockaddr_u fd_addr;
+  socklen_t fd_addr_len = sizeof(fd_addr);
+  getsockname(fd,&fd_addr.sa,&fd_addr_len);
+
+#ifdef ENABLE_IPV6
+  if(fd_addr.sa.sa_family==AF_INET6 &&
+     Curl_inet_pton(AF_INET6, hostname, &addr)) {
+    target = GEN_IPADD;
+    addrlen = sizeof(struct in6_addr);
+  }
+  else
+#endif
+    if(Curl_inet_pton(AF_INET, hostname, &addr)) {
+      target = GEN_IPADD;
+      addrlen = sizeof(struct in_addr);
+    }
+
+  /* get a "list" of alternative names */
+  altnames = (STACK_OF(GENERAL_NAME)*)X509_get_ext_d2i(server_cert, NID_subject_alt_name, NULL, NULL);
+
+  if(altnames) {
+    int numalts;
+    int i;
+
+    /* get amount of alternatives, RFC2459 claims there MUST be at least
+       one, but we don't depend on it... */
+    numalts = sk_GENERAL_NAME_num(altnames);
+
+    /* loop through all alternatives while none has matched */
+    for (i=0; (i<numalts) && (matched != 1); i++) {
+      /* get a handle to alternative name number i */
+      const GENERAL_NAME *check = sk_GENERAL_NAME_value(altnames, i);
+
+      /* only check alternatives of the same type the target is */
+      if(check->type == target) {
+        /* get data and length */
+        const char *altptr = (char *)ASN1_STRING_data(check->d.ia5);
+        size_t altlen = (size_t) ASN1_STRING_length(check->d.ia5);
+
+        switch(target) {
+        case GEN_DNS: /* name/pattern comparison */
+          /* The OpenSSL man page explicitly says: "In general it cannot be
+             assumed that the data returned by ASN1_STRING_data() is null
+             terminated or does not contain embedded nulls." But also that
+             "The actual format of the data will depend on the actual string
+             type itself: for example for and IA5String the data will be ASCII"
+
+             Gisle researched the OpenSSL sources:
+             "I checked the 0.9.6 and 0.9.8 sources before my patch and
+             it always 0-terminates an IA5String."
+          */
+          if((altlen == strlen(altptr)) &&
+             /* if this isn't true, there was an embedded zero in the name
+                string and we cannot match it. */
+             cert_hostcheck(altptr, hostname))
+            matched = 1;
+          else
+            matched = 0;
+          break;
+
+        case GEN_IPADD: /* IP address comparison */
+          /* compare alternative IP address if the data chunk is the same size
+             our server IP address is */
+          if((altlen == addrlen) && !memcmp(altptr, &addr, altlen))
+            matched = 1;
+          else
+            matched = 0;
+          break;
+        }
+      }
+    }
+    GENERAL_NAMES_free(altnames);
+  }
+
+  if(matched == 1)
+    /* an alternative name matched the server hostname */
+    Log::global->Format(9, "Certificate verification: subjectAltName: %s matched\n", quote(hostname));
+  else if(matched == 0) {
+    /* an alternative name field existed, but didn't match and then
+       we MUST fail */
+    set_cert_error(xstring::format("subjectAltName does not match %s", quote(hostname)));
+  }
+  else {
+    /* we have to look to the last occurence of a commonName in the
+       distinguished one to get the most significant one. */
+    int j,i=-1 ;
+
+/* The following is done because of a bug in 0.9.6b */
+
+    unsigned char *nulstr = (unsigned char *)"";
+    unsigned char *peer_CN = nulstr;
+
+    X509_NAME *name = X509_get_subject_name(server_cert) ;
+    if(name)
+      while((j = X509_NAME_get_index_by_NID(name, NID_commonName, i))>=0)
+        i=j;
+
+    /* we have the name entry and we will now convert this to a string
+       that we can use for comparison. Doing this we support BMPstring,
+       UTF8 etc. */
+
+    if(i>=0) {
+      ASN1_STRING *tmp = X509_NAME_ENTRY_get_data(X509_NAME_get_entry(name,i));
+
+      /* In OpenSSL 0.9.7d and earlier, ASN1_STRING_to_UTF8 fails if the input
+         is already UTF-8 encoded. We check for this case and copy the raw
+         string manually to avoid the problem. This code can be made
+         conditional in the future when OpenSSL has been fixed. Work-around
+         brought by Alexis S. L. Carvalho. */
+      if(tmp) {
+        if(ASN1_STRING_type(tmp) == V_ASN1_UTF8STRING) {
+          j = ASN1_STRING_length(tmp);
+          if(j >= 0) {
+            peer_CN = (unsigned char*)OPENSSL_malloc(j+1);
+            if(peer_CN) {
+              memcpy(peer_CN, ASN1_STRING_data(tmp), j);
+              peer_CN[j] = '\0';
+            }
+          }
+        }
+        else /* not a UTF8 name */
+          j = ASN1_STRING_to_UTF8(&peer_CN, tmp);
+
+        if(peer_CN && ((int)strlen((char *)peer_CN) != j)) {
+          /* there was a terminating zero before the end of string, this
+             cannot match and we return failure! */
+          set_cert_error("illegal cert name field (contains NUL character)");
+        }
+      }
+    }
+
+    if(peer_CN == nulstr)
+       peer_CN = NULL;
+    else {
+      /* convert peer_CN from UTF8 */
+      if(!convert_from_utf8((char*)peer_CN, strlen((char*)peer_CN)))
+	 set_cert_error("invalid cert name field (cannot convert from UTF8)");
+    }
+
+    if(cert_error)
+      /* error already detected, pass through */
+      ;
+    else if(!peer_CN) {
+      set_cert_error("unable to obtain common name from peer certificate");
+    }
+    else if(!cert_hostcheck((const char *)peer_CN, hostname)) {
+        set_cert_error(xstring::format("certificate subject name %s does not match "
+              "target host name %s", quote_n(0,(const char *)peer_CN), quote_n(1,hostname)));
+    }
+    else {
+      Log::global->Format(9, "Certificate verification: common name: %s matched\n", quote((char*)peer_CN));
+    }
+    if(peer_CN)
+      OPENSSL_free(peer_CN);
+  }
+}
+/* end curl code */
+
 /* begin wget code */
+#if 0
 #define ASTERISK_EXCLUDES_DOT   /* mandated by rfc2818 */
 
 /* Return true is STRING (case-insensitively) matches PATTERN, false
@@ -1172,7 +1466,7 @@ pattern_match (const char *pattern, const char *string)
    function always returns 1, but should still be called because it
    warns the user about any problems with the certificate.  */
 
-void lftp_ssl_openssl::check_certificate ()
+void lftp_ssl_openssl::check_certificate_wget ()
 {
   X509 *cert;
   char common_name[256];
@@ -1241,6 +1535,7 @@ void lftp_ssl_openssl::check_certificate ()
 
   X509_free (cert);
 }
+#endif
 /* end wget code */
 
 int lftp_ssl_openssl::verify_callback(int ok,X509_STORE_CTX *ctx)
