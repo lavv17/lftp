@@ -123,7 +123,7 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
 #endif
    }
    if(!my_peer_id) {
-      my_peer_id.set("-lftp41-");
+      my_peer_id.set("-lftp42-");
       my_peer_id.appendf("%04x",(unsigned)getpid());
       my_peer_id.appendf("%08x",(unsigned)now.UnixTime());
       assert(my_peer_id.length()==PEER_ID_LEN);
