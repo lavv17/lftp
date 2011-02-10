@@ -108,10 +108,11 @@ public:
    static const char *IPv6AddrValidate(xstring_c *value);
 #endif
    static const char *UNumberPairValidate(xstring_c *value);
-   static const char *FileAccessible(xstring_c *value,int mode,int want_dir=0);
+   static const char *FileAccessible(xstring_c *value,int mode,bool want_dir=false);
    static const char *FileReadable(xstring_c *value);
    static const char *FileExecutable(xstring_c *value);
    static const char *DirReadable(xstring_c *value);
+   static const char *FileCreatable(xstring_c *value);
    static const char *CharsetValidate(xstring_c *value);
    static const char *NoClosure(xstring_c *);
    static bool str2bool(const char *value);

@@ -629,7 +629,10 @@ void FileCopy::LogTransfer()
       return;
    if(!transfer_log)
    {
-      int fd=open(dir_file(get_lftp_home(),"transfer_log"),O_WRONLY|O_APPEND|O_CREAT,0600);
+      const char *fname = ResMgr::Query("xfer:log-file", 0);
+      if(!fname || !*fname)
+	 fname = dir_file(get_lftp_home(),"transfer_log");
+      int fd = open(fname,O_WRONLY|O_APPEND|O_CREAT,0600);
       if(fd==-1)
 	 return;
       transfer_log=new Log;

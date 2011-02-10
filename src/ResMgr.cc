@@ -844,7 +844,7 @@ const char *ResMgr::IPv6AddrValidate(xstring_c *value)
 }
 #endif
 
-const char *ResMgr::FileAccessible(xstring_c *value,int mode,int want_dir)
+const char *ResMgr::FileAccessible(xstring_c *value,int mode,bool want_dir)
 {
    if(!**value)
       return 0;
@@ -861,7 +861,7 @@ const char *ResMgr::FileAccessible(xstring_c *value,int mode,int want_dir)
    if(stat(f,&st)<0)
       error=strerror(errno);
    else if(want_dir ^ S_ISDIR(st.st_mode))
-      error=strerror(want_dir?ENOTDIR:EISDIR);
+      error=strerror(errno=want_dir?ENOTDIR:EISDIR);
    else if(access(f,mode)<0)
       error=strerror(errno);
    else
@@ -878,7 +878,23 @@ const char *ResMgr::FileExecutable(xstring_c *value)
 }
 const char *ResMgr::DirReadable(xstring_c *value)
 {
-   return FileAccessible(value,R_OK|X_OK,1);
+   return FileAccessible(value,R_OK|X_OK,true);
+}
+const char *ResMgr::FileCreatable(xstring_c *value)
+{
+   if(!**value)
+      return 0;
+   const char *error=FileAccessible(value,W_OK,false);
+   if(error && errno!=ENOENT)
+      return error;
+   const char *bn=basename_ptr(*value);
+   xstring_c dir(dirname(*value));
+   if(!*dir)
+      dir.set_allocated(xgetcwd());
+   error=FileAccessible(&dir,X_OK|W_OK,true);
+   if(!error)  // dir may be expanded, combine it with base file name.
+      value->set(dir_file(dir,bn));
+   return error;
 }
 
 #ifdef HAVE_ICONV

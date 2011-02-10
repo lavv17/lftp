@@ -1,6 +1,8 @@
 2011-02-10  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp_ssl.cc: use curl version of openssl hostname check.
+	* FileCopy.cc, ResMgr.cc, ResMgr.h, resource.cc: (xfer:log-file)
+	  new setting (original patch by Timur Sufiev <tsufiev@jet.msk.su>).
 
 2011-02-08  Alexander V. Lukyanov <lav@yars.free.net>
 
