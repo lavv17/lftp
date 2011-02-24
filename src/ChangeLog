@@ -1,3 +1,9 @@
+2011-02-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* pgetJob.cc: check for chunk[0] error, avoids a segfault.
+	* Torrent.cc, Torrent.h: (Torrent::CanAccept, NoTorrentCanAccept)
+	  new methods; don't accept connections if no torrent can accept.
+
 2011-02-10  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp_ssl.cc: use curl version of openssl hostname check.

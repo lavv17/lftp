@@ -748,9 +748,14 @@ void Torrent::BlackListPeer(const TorrentPeer *peer,const char *timeout)
       black_list->Add(peer->GetAddress(),timeout);
 }
 
+bool Torrent::CanAccept() const
+{
+   return !validating && decline_timer.Stopped();
+}
+
 void Torrent::Accept(int s,const sockaddr_u *addr,IOBuffer *rb)
 {
-   if(!decline_timer.Stopped() || validating) {
+   if(!CanAccept()) {
       LogNote(4,"declining new connection");
       Delete(rb);
       close(s);
@@ -2366,6 +2371,16 @@ void TorrentListener::FillAddress(int port)
 {
    addr.set_defaults(af,"torrent",port);
 }
+
+bool Torrent::NoTorrentCanAccept()
+{
+   for(const Torrent *t=torrents.each_begin(); t; t=torrents.each_next()) {
+      if(t->CanAccept())
+	 return false;
+   }
+   return true;
+}
+
 int TorrentListener::Do()
 {
    int m=STALL;
@@ -2444,7 +2459,7 @@ int TorrentListener::Do()
       m=MOVED;
    }
 
-   if(rate.Get()>5)
+   if(rate.Get()>5 || Torrent::NoTorrentCanAccept())
    {
       TimeoutS(1);
       return m;

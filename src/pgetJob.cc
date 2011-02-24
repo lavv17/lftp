@@ -88,7 +88,13 @@ int pgetJob::Do()
    }
    else if(chunks.count()>0)
    {
-      if(!chunks[0]->Done() && chunks[0]->GetBytesCount()<limit0/16)
+      if(chunks[0]->Error())
+      {
+	 Log::global->Format(0,"pget: chunk[%d] error: %s\n",0,chunks[0]->ErrorText());
+	 no_parallel=true;
+	 c->Resume();
+      }
+      else if(!chunks[0]->Done() && chunks[0]->GetBytesCount()<limit0/16)
       {
 	 c->Resume();
 	 if(chunks.count()==1)

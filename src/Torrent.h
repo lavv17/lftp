@@ -274,7 +274,9 @@ public:
    bool ShuttingDown() { return shutting_down; }
    void PrepareToDie();
 
+   bool CanAccept() const;
    void Accept(int s,const sockaddr_u *a,IOBuffer *rb);
+   static bool NoTorrentCanAccept();
 
    static void SHA1(const xstring& str,xstring& buf);
    void ValidatePiece(unsigned p);
