@@ -200,6 +200,7 @@ static ResType lftp_vars[] = {
    {"ftp:timezone",		 "GMT",   0,0},
    {"ftp:skey-allow",		 "yes",   ResMgr::BoolValidate,0},
    {"ftp:skey-force",		 "no",    ResMgr::BoolValidate,0},
+   {"ftp:netkey-allow",		 "yes",   ResMgr::BoolValidate,0},
 #if USE_SSL
    {"ftp:ssl-allow",		 "yes",   ResMgr::BoolValidate,0},
    {"ftp:ssl-force",		 "no",	  ResMgr::BoolValidate,0},

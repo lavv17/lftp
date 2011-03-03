@@ -493,6 +493,11 @@ void Ftp::NoPassReqCheck(int act) // for USER command
 	 return;
       }
    }
+   if(act==331 && allow_netkey && user && pass)
+   {
+      netkey_pass.set(make_netkey_reply());
+   }
+
    if(is3XX(act))
       return;
    if(act==530)	  // no such user or overloaded server
@@ -1007,6 +1012,7 @@ void Ftp::InitFtp()
    state=INITIAL_STATE;
    flags=SYNC_MODE;
    allow_skey=true;
+   allow_netkey=true;
    force_skey=false;
    verify_data_address=true;
    use_stat=true;
@@ -1485,6 +1491,7 @@ int   Ftp::Do()
       }
 
       skey_pass.set(0);
+      netkey_pass.set(0);
 
       expect->Push(Expect::USER);
       conn->SendCmd2("USER",user_to_use);
@@ -1509,10 +1516,12 @@ int   Ftp::Do()
       const char *proxy_auth_type=Query("proxy-auth-type",proxy);
       if(!conn->ignore_pass)
       {
-	 conn->may_show_password = (skey_pass!=0) || (user==0) || pass_open;
+	conn->may_show_password = (skey_pass!=0) || (netkey_pass!=0) || (user==0) || pass_open;
 	 const char *pass_to_use=(pass?pass:anon_pass);
 	 if(allow_skey && skey_pass)
 	    pass_to_use=skey_pass;
+ 	 else if(allow_netkey && netkey_pass)
+ 	    pass_to_use=netkey_pass;
 	 else if(proxy && !conn->proxy_is_http && proxy_user && proxy_pass
 	 && !strcmp(proxy_auth_type,"joined"))
 	    pass_to_use=xstring::cat(pass_to_use,"@",proxy_pass.get(),NULL);
@@ -4506,6 +4515,7 @@ void Ftp::Reconfig(const char *name)
 
    allow_skey = QueryBool("skey-allow");
    force_skey = QueryBool("skey-force");
+   allow_netkey = QueryBool("netkey-allow");
    verify_data_address = QueryBool("verify-address");
    verify_data_port = QueryBool("verify-port");
 
@@ -4695,6 +4705,39 @@ const char *Ftp::make_skey_reply()
       return 0;
 
    return calculate_skey_response(skey_sequence,buf,pass);
+}
+
+extern "C"
+   const char *calculate_netkey_response (const char *, const char *);
+
+const char *Ftp::make_netkey_reply()
+{
+   static const char * const netkey_head[] = {
+      "encrypt challenge, ",
+      0
+   };
+
+   const char *cp;
+   for(int i=0; ; i++)
+   {
+      if(netkey_head[i]==0)
+	 return 0;
+      cp=strstr(all_lines,netkey_head[i]);
+      if(cp)
+      {
+	 cp+=strlen(netkey_head[i]);
+	 break;
+      }
+   }
+
+   if(cp) {
+      xstring &buf=xstring::get_tmp(cp);
+      buf.truncate_at(' ');
+      buf.truncate_at(',');
+      LogNote(9,"found netkey challenge %s",buf.get());
+      return calculate_netkey_response(pass,buf);
+   }
+   return 0;
 }
 
 int Ftp::Buffered()

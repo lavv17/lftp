@@ -371,6 +371,10 @@ private:
    bool force_skey;
    const char *make_skey_reply();
 
+   xstring netkey_pass;
+   bool allow_netkey;
+   const char *make_netkey_reply();
+
    bool disconnect_on_close;
 
 public:
