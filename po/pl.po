@@ -1,16 +1,16 @@
 # Polish translation of lftp.
 # Copyright (C) 1998-2000 Free Software Foundation, Inc.
 # Arkadiusz Mi¶kiewicz <misiek@pld-linux.org>, 1998-2004
-# Jakub Bogusz <qboosh@pld-linux.org>, 2002-2008
+# Jakub Bogusz <qboosh@pld-linux.org>, 2002-2011
 # some updates by Tomasz K³oczko <kloczek@pld.org.pl>, 2003
 # Adam Go³êbiowski <adamg@pld-linux.org>, 2004-2006
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 3.7.1\n"
+"Project-Id-Version: lftp 4.1.2\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2011-01-17 11:59+0300\n"
-"PO-Revision-Date: 2008-05-06 21:20+0200\n"
+"POT-Creation-Date: 2011-02-10 14:54+0300\n"
+"PO-Revision-Date: 2011-01-06 15:18+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "Language: pl\n"
@@ -38,59 +38,59 @@ msgid "Unknown system error"
 msgstr "Nieznany b³±d systemowy"
 
 #: lib/getopt.c:527 lib/getopt.c:543
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '%s' is ambiguous\n"
-msgstr "%s: opcja `%s' jest niejednoznaczna\n"
+msgstr "%s: opcja '%s' jest niejednoznaczna\n"
 
 #: lib/getopt.c:576 lib/getopt.c:580
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '--%s' doesn't allow an argument\n"
-msgstr "%s: opcja `--%s' nie mo¿e mieæ argumentów\n"
+msgstr "%s: opcja '--%s' nie mo¿e mieæ argumentów\n"
 
 #: lib/getopt.c:589 lib/getopt.c:594
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '%c%s' doesn't allow an argument\n"
-msgstr "%s: opcja `%c%s' nie mo¿e mieæ argumentów\n"
+msgstr "%s: opcja '%c%s' nie mo¿e mieæ argumentów\n"
 
 #: lib/getopt.c:637 lib/getopt.c:656
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '--%s' requires an argument\n"
-msgstr "%s: opcja `%s' musi mieæ argument\n"
+msgstr "%s: opcja '--%s' musi mieæ argument\n"
 
 #: lib/getopt.c:694 lib/getopt.c:697
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unrecognized option '--%s'\n"
-msgstr "%s: nieznana opcja `--%s'\n"
+msgstr "%s: nieznana opcja '--%s'\n"
 
 #: lib/getopt.c:705 lib/getopt.c:708
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unrecognized option '%c%s'\n"
-msgstr "%s: nieznana opcja `%c%s'\n"
+msgstr "%s: nieznana opcja '%c%s'\n"
 
 #: lib/getopt.c:757 lib/getopt.c:760
-#, fuzzy, c-format
+#, c-format
 msgid "%s: invalid option -- '%c'\n"
-msgstr "%s: b³êdna opcja -- %c\n"
+msgstr "%s: b³êdna opcja -- '%c'\n"
 
 #: lib/getopt.c:810 lib/getopt.c:827 lib/getopt.c:1035 lib/getopt.c:1053
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option requires an argument -- '%c'\n"
-msgstr "%s: opcja musi mieæ argument -- %c\n"
+msgstr "%s: opcja musi mieæ argument -- '%c'\n"
 
 #: lib/getopt.c:883 lib/getopt.c:899
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '-W %s' is ambiguous\n"
-msgstr "%s: opcja `-W %s' jest niejednoznaczna\n"
+msgstr "%s: opcja '-W %s' jest niejednoznaczna\n"
 
 #: lib/getopt.c:923 lib/getopt.c:941
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '-W %s' doesn't allow an argument\n"
-msgstr "%s: opcja `-W %s' nie mo¿e mieæ argumentów\n"
+msgstr "%s: opcja '-W %s' nie mo¿e mieæ argumentów\n"
 
 #: lib/getopt.c:962 lib/getopt.c:980
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '-W %s' requires an argument\n"
-msgstr "%s: opcja `%s' musi mieæ argument\n"
+msgstr "%s: opcja '-W %s' musi mieæ argument\n"
 
 #. TRANSLATORS:
 #. Get translations for open and closing quotation marks.
@@ -247,7 +247,7 @@ msgid "Total %d $file|files$ transferred\n"
 msgstr "Podsumowuj±c: przes³ano %d plik$|i|ów$\n"
 
 #: src/DummyProto.cc:66 src/MirrorJob.cc:1635 src/MirrorJob.cc:1651
-#: src/commands.cc:985 src/commands.cc:2147
+#: src/commands.cc:985 src/commands.cc:2168
 msgid " - not supported protocol"
 msgstr " - protokó³ nie jest wspierany"
 
@@ -259,8 +259,8 @@ msgstr "Brak dostêpu: "
 msgid "File cannot be accessed"
 msgstr "Brak dostêpu do pliku"
 
-#: src/FileAccess.cc:165 src/Fish.cc:987 src/SFtp.cc:1306 src/ftpclass.cc:4281
-#: src/ftpclass.cc:4290
+#: src/FileAccess.cc:165 src/Fish.cc:987 src/SFtp.cc:1306 src/ftpclass.cc:4288
+#: src/ftpclass.cc:4297
 msgid "Not connected"
 msgstr "Nie po³±czony"
 
@@ -400,29 +400,29 @@ msgstr "Uruchamianie programu ³±cz±cego"
 msgid "Peer closed connection"
 msgstr "Komputer po drugiej stronie zamkn±³ po³±czenie"
 
-#: src/Fish.cc:636 src/SFtp.cc:1078 src/ftpclass.cc:3926
+#: src/Fish.cc:636 src/SFtp.cc:1078 src/ftpclass.cc:3933
 msgid "extra server response"
 msgstr "dodatkowa odpowied¼ serwera"
 
 #: src/Fish.cc:992 src/Http.cc:1830 src/Http.cc:1837 src/SFtp.cc:1312
-#: src/ftpclass.cc:4293
+#: src/ftpclass.cc:4300
 msgid "Connecting..."
 msgstr "£±czenie siê..."
 
-#: src/Fish.cc:994 src/SFtp.cc:1314 src/ftpclass.cc:4299
+#: src/Fish.cc:994 src/SFtp.cc:1314 src/ftpclass.cc:4306
 msgid "Connected"
 msgstr "Po³±czono"
 
-#: src/Fish.cc:996 src/Http.cc:1839 src/SFtp.cc:1316 src/ftpclass.cc:4276
-#: src/ftpclass.cc:4304 src/ftpclass.cc:4318
+#: src/Fish.cc:996 src/Http.cc:1839 src/SFtp.cc:1316 src/ftpclass.cc:4283
+#: src/ftpclass.cc:4311 src/ftpclass.cc:4325
 msgid "Waiting for response..."
 msgstr "Czekanie na odpowied¼..."
 
-#: src/Fish.cc:998 src/Http.cc:1842 src/SFtp.cc:1318 src/ftpclass.cc:4338
+#: src/Fish.cc:998 src/Http.cc:1842 src/SFtp.cc:1318 src/ftpclass.cc:4345
 msgid "Receiving data"
 msgstr "Otrzymujê dane"
 
-#: src/Fish.cc:1000 src/Http.cc:1835 src/SFtp.cc:1320 src/ftpclass.cc:4336
+#: src/Fish.cc:1000 src/Http.cc:1835 src/SFtp.cc:1320 src/ftpclass.cc:4343
 msgid "Sending data"
 msgstr "Wysy³am dane"
 
@@ -503,11 +503,11 @@ msgid "Received last chunk"
 msgstr "Przes³ano ostatni fragment"
 
 #: src/Http.cc:1824 src/Resolver.cc:171 src/Resolver.cc:213
-#: src/ftpclass.cc:4286
+#: src/ftpclass.cc:4293
 msgid "Resolving host address..."
 msgstr "Uzyskiwanie adresu hosta..."
 
-#: src/Http.cc:1832 src/ftpclass.cc:4279
+#: src/Http.cc:1832 src/ftpclass.cc:4286
 msgid "Connection idle"
 msgstr "Po³±czenie bezczynne"
 
@@ -528,7 +528,7 @@ msgstr "Pobieranie zawarto¶ci katalogu"
 msgid "Getting files information"
 msgstr "Pobieranie informacji o plikach"
 
-#: src/LocalAccess.cc:658 src/commands.cc:3112
+#: src/LocalAccess.cc:658 src/commands.cc:3133
 msgid "cannot get current directory"
 msgstr "nie mo¿na uzyskaæ aktualnego katalogu"
 
@@ -656,10 +656,10 @@ msgstr "%s: wyra¿enie regularne `%s': %s\n"
 
 #: src/MirrorJob.cc:1604 src/SleepJob.cc:148 src/SleepJob.cc:204
 #: src/commands.cc:1118 src/commands.cc:1206 src/commands.cc:1641
-#: src/commands.cc:1672 src/commands.cc:1775 src/commands.cc:2056
-#: src/commands.cc:2252 src/commands.cc:2414 src/commands.cc:2442
-#: src/commands.cc:2449 src/commands.cc:2737 src/commands.cc:2764
-#: src/commands.cc:2771 src/commands.cc:3095 src/lftp.cc:263
+#: src/commands.cc:1672 src/commands.cc:1775 src/commands.cc:2077
+#: src/commands.cc:2273 src/commands.cc:2435 src/commands.cc:2463
+#: src/commands.cc:2470 src/commands.cc:2758 src/commands.cc:2785
+#: src/commands.cc:2792 src/commands.cc:3116 src/lftp.cc:263
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "W celu uzyskania wiêkszej ilo¶ci informacji spróbuj `help %s'.\n"
@@ -760,9 +760,8 @@ msgid "invalid floating point number"
 msgstr "nieprawid³owa liczba zmiennoprzecinkowa"
 
 #: src/ResMgr.cc:478
-#, fuzzy
 msgid "invalid unsigned number"
-msgstr "nieprawid³owy numer"
+msgstr "nieprawid³owa liczba bez znaku"
 
 #: src/ResMgr.cc:712
 msgid "Invalid time unit letter, only [smhd] are allowed."
@@ -772,7 +771,7 @@ msgstr "Nieprawid³owa litera-jednostka czasu, wy³±cznie [shmd] s± dozwolone."
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "Nieprawid³owy format czasu. Format to <czas><jednostka>, np. 2h30m."
 
-#: src/ResMgr.cc:764 src/commands.cc:3256 src/commands.cc:3265
+#: src/ResMgr.cc:764 src/commands.cc:3277 src/commands.cc:3286
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Nieprawid³owy format zakresu. Format to min-maks, np. 10-20."
 
@@ -815,7 +814,7 @@ msgstr "Znaleziono %d adres$|y|ów$"
 
 #: src/Resolver.cc:733
 msgid "DNS resoloution not trusted."
-msgstr ""
+msgstr "Rozwi±zanie nazwy przez DNS jest niezaufane."
 
 #: src/Resolver.cc:834
 msgid "Host name lookup failure"
@@ -836,11 +835,11 @@ msgstr "nieprawid³owy format odpowiedzi serwera"
 
 #: src/SleepJob.cc:102
 msgid "Sleeping forever"
-msgstr ""
+msgstr "Zasypianie na zawsze"
 
 #: src/SleepJob.cc:103
 msgid "Sleep time left: "
-msgstr ""
+msgstr "Pozosta³y czas snu: "
 
 #: src/SleepJob.cc:112
 #, c-format
@@ -1314,14 +1313,12 @@ msgstr ""
 " <site>              nazwa hosta, URL lub nazwa zak³adki\n"
 
 #: src/commands.cc:288
-#, fuzzy
 msgid "ln [-s] <file1> <file2>"
-msgstr "mv <plik1> <plik2>"
+msgstr "ln [-s] <plik1> <plik2>"
 
 #: src/commands.cc:289
-#, fuzzy
 msgid "Link <file1> to <file2>\n"
-msgstr "Zmieñ nazwê z <plik1> na <plik2>\n"
+msgstr "Dowi±¿ <plik1> do <plik2>\n"
 
 #: src/commands.cc:293
 msgid "ls [<args>]"
@@ -1713,7 +1710,6 @@ msgid "repeat [OPTS] [delay] [command]"
 msgstr "repeat [OPCJE] [opó¼nienie] [komenda]"
 
 #: src/commands.cc:428
-#, fuzzy
 msgid ""
 "Repeat specified command with a delay between iterations.\n"
 "Default delay is one second, default command is empty.\n"
@@ -1724,9 +1720,12 @@ msgid ""
 " --weak      stop when lftp moves to background.\n"
 msgstr ""
 "Powtarzaj podan± komendê z opó¼nieniem pomiêdzy iteracjami.\n"
-"Domy¶lne opó¼nienie to jedna sekunda, domy¶lnie komenda jest pusta.\n"
+"Domy¶lne opó¼nienie to jedna sekunda, domy¶lna komenda jest pusta.\n"
 " -c <liczba>      liczba powtórzeñ\n"
-" -d <opó¼nienie>  opó¼nienie miêdzy powtórzeniami.\n"
+" -d <opó¼nienie>  opó¼nienie miêdzy powtórzeniami\n"
+" --while-ok       zatrzymanie kiedy polecenie zakoñczy siê kodem niezerowym\n"
+" --until-ok       zatrzymanie kiedy polecenie zakoñczy siê kodem zerowym\n"
+" --weak           zatrzymanie kiedy lftp przejdzie w t³o.\n"
 
 #: src/commands.cc:436
 msgid ""
@@ -1791,16 +1790,15 @@ msgstr ""
 " -d  wy¶wietl tylko standardowe ustawienia, niekoniecznie aktualne\n"
 
 #: src/commands.cc:455
-#, fuzzy
 msgid "site <site-cmd>"
-msgstr "site <zserwer_kmd>"
+msgstr "site <polecenie-zd>"
 
 #: src/commands.cc:456
 msgid ""
 "Execute site command <site_cmd> and output the result\n"
 "You can redirect its output\n"
 msgstr ""
-"Wykonuje polecenie na zdalnym serwerze <zserwer_kmd> i wy¶wietla wyniki\n"
+"Wykonuje na zdalnym serwerze polecenie <polecenie-zd> i wy¶wietla wyniki\n"
 "Mo¿esz przekierowaæ te wyniki\n"
 
 #: src/commands.cc:459
@@ -1835,7 +1833,7 @@ msgstr "Wykonuje polecenia zawarte w pliku <plik>\n"
 
 #: src/commands.cc:470
 msgid "torrent [-O <dir>] <file|URL>..."
-msgstr ""
+msgstr "torrent [-O <katalog>] <plik>"
 
 #: src/commands.cc:471
 msgid "user <user|URL> [<pass>]"
@@ -1932,8 +1930,13 @@ msgid ""
 "lftp will automatically terminate when all jobs are finished.\n"
 "Use `fg' shell command to return to lftp if it is still running.\n"
 msgstr ""
+"\n"
+"lftp teraz oszukuje pow³okê, ¿eby przenie¶æ siê do grupy procesów w tle.\n"
+"lftp bêdzie dzia³a³ w tle pomimo komunikatu `Zatrzymany'.\n"
+"lftp wy³±czy siê automatycznie po zakoñczeniu wszystkich zadañ.\n"
+"Dopóki lftp dzia³a, mo¿na go przywróciæ w normalnym trybie poleceniem `fg'.\n"
 
-#: src/commands.cc:886 src/commands.cc:3389
+#: src/commands.cc:886 src/commands.cc:3410
 #, c-format
 msgid "Try `%s --help' for more information\n"
 msgstr "Spróbuj `%s --help' by uzyskaæ wiêcej informacji\n"
@@ -1944,7 +1947,7 @@ msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 msgstr ""
 "U¿ycie: %s [-e polecenie] [-p port] [-u u¿ytkownik[,has³o]] <host|url>\n"
 
-#: src/commands.cc:1017 src/commands.cc:2131
+#: src/commands.cc:1017 src/commands.cc:2152
 msgid "Password: "
 msgstr "Has³o: "
 
@@ -2035,135 +2038,137 @@ msgstr "U¿ycie: %s [-e] <plik|polecenie>\n"
 msgid "Usage: %s [-v] [-v] ...\n"
 msgstr "U¿ycie: %s [-v] [-v] ...\n"
 
-#: src/commands.cc:1997
-#, c-format
-msgid "Usage: %s [-p]\n"
-msgstr "U¿ycie: %s [-p]\n"
-
-#: src/commands.cc:2098
-#, c-format
-msgid "debug level is %d, output goes to %s\n"
-msgstr "poziom debugowania wynosi %d, wyniki przekierowywane do %s\n"
-
-#: src/commands.cc:2101
-#, c-format
-msgid "debug is off\n"
-msgstr "debugowanie jest wy³±czone\n"
-
-#: src/commands.cc:2112
-#, c-format
-msgid "Usage: %s <user|URL> [<pass>]\n"
-msgstr "U¿ycie: %s <u¿ytkownik|URL> [<has³o>]\n"
-
-#: src/commands.cc:2187 src/commands.cc:2351
-#, c-format
-msgid "%s: no current job\n"
-msgstr "%s: nie ma takiego zadania\n"
-
-#: src/commands.cc:2197 src/commands.cc:2227 src/commands.cc:2359
-#, c-format
-msgid "%s: %d - no such job\n"
-msgstr "%s: %d - nie ma takiego zadania\n"
-
-#: src/commands.cc:2199
-#, c-format
-msgid "Usage: %s <jobno> ... | all\n"
-msgstr "U¿ycie: %s <nr_proc> ... | all\n"
-
-#: src/commands.cc:2218 src/commands.cc:2341 src/commands.cc:2511
-#: src/commands.cc:2906 src/commands.cc:2982 src/lftp.cc:275
+#: src/commands.cc:1984 src/commands.cc:2239 src/commands.cc:2362
+#: src/commands.cc:2532 src/commands.cc:2927 src/commands.cc:3003
+#: src/lftp.cc:275
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s: %s - nie jest numerem\n"
 
-#: src/commands.cc:2281
+#: src/commands.cc:1991 src/commands.cc:2218 src/commands.cc:2248
+#: src/commands.cc:2380
+#, c-format
+msgid "%s: %d - no such job\n"
+msgstr "%s: %d - nie ma takiego zadania\n"
+
+#: src/commands.cc:2018
+#, c-format
+msgid "Usage: %s [-p]\n"
+msgstr "U¿ycie: %s [-p]\n"
+
+#: src/commands.cc:2119
+#, c-format
+msgid "debug level is %d, output goes to %s\n"
+msgstr "poziom debugowania wynosi %d, wyniki przekierowywane do %s\n"
+
+#: src/commands.cc:2122
+#, c-format
+msgid "debug is off\n"
+msgstr "debugowanie jest wy³±czone\n"
+
+#: src/commands.cc:2133
+#, c-format
+msgid "Usage: %s <user|URL> [<pass>]\n"
+msgstr "U¿ycie: %s <u¿ytkownik|URL> [<has³o>]\n"
+
+#: src/commands.cc:2208 src/commands.cc:2372
+#, c-format
+msgid "%s: no current job\n"
+msgstr "%s: nie ma takiego zadania\n"
+
+#: src/commands.cc:2220
+#, c-format
+msgid "Usage: %s <jobno> ... | all\n"
+msgstr "U¿ycie: %s <nr_proc> ... | all\n"
+
+#: src/commands.cc:2302
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr "%s: %s. U¿yj `set -a' by sprawdziæ wszystkie zmienne.\n"
 
-#: src/commands.cc:2325
+#: src/commands.cc:2346
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
 msgstr "U¿ycie: %s [<nr_proc>]\n"
 
-#: src/commands.cc:2364
+#: src/commands.cc:2385
 #, c-format
 msgid "%s: some other job waits for job %d\n"
 msgstr "%s: jaki¶ inny proces czeka na proces %d\n"
 
-#: src/commands.cc:2369
+#: src/commands.cc:2390
 #, c-format
 msgid "%s: wait loop detected\n"
 msgstr "%s: wykryto pêtle zastoju\n"
 
-#: src/commands.cc:2393
+#: src/commands.cc:2414
 #, c-format
 msgid "Usage: mv <file1> <file2>\n"
 msgstr "U¿ycie: mv <plik1> <plik2>\n"
 
-#: src/commands.cc:2441 src/commands.cc:2763
+#: src/commands.cc:2462 src/commands.cc:2784
 #, c-format
 msgid "Invalid command. "
 msgstr "Nieprawid³owe polecenie. "
 
-#: src/commands.cc:2448 src/commands.cc:2770
+#: src/commands.cc:2469 src/commands.cc:2791
 #, c-format
 msgid "Ambiguous command. "
 msgstr "Dwuznaczne polecenie. "
 
-#: src/commands.cc:2467
+#: src/commands.cc:2488
 #, c-format
 msgid "%s: Operand missed for size\n"
 msgstr "%s: Operandowi brakuje rozmiaru\n"
 
-#: src/commands.cc:2484
+#: src/commands.cc:2505
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
 msgstr "%s: Brakuje operandu dla `expire'\n"
 
-#: src/commands.cc:2517
+#: src/commands.cc:2538
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr ""
 "%s: %s - brak takiej sesji w buforze. U¿yj `scache' by poszukaæ w li¶cie.\n"
 
-#: src/commands.cc:2534
+#: src/commands.cc:2555
 #, c-format
 msgid "Sorry, no help for %s\n"
 msgstr "Niestety, brak pomocy dla %s\n"
 
-#: src/commands.cc:2539
+#: src/commands.cc:2560
 #, c-format
 msgid "%s is a built-in alias for %s\n"
 msgstr "%s jest wbudowanym aliasem do %s\n"
 
-#: src/commands.cc:2544
+#: src/commands.cc:2565
 #, c-format
 msgid "Usage: %s\n"
 msgstr "U¿ycie: %s\n"
 
-#: src/commands.cc:2552
+#: src/commands.cc:2573
 #, c-format
 msgid "%s is an alias to `%s'\n"
 msgstr "%s jest aliasem do `%s'\n"
 
-#: src/commands.cc:2556
+#: src/commands.cc:2577
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr "Nie ma takiego polecenia `%s'. U¿yj `help' by uzyskaæ spis komend.\n"
 
-#: src/commands.cc:2558
+#: src/commands.cc:2579
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr "Dwuznaczne polecenie `%s'. U¿yj `help' by uzyskaæ spis komend.\n"
 
-#: src/commands.cc:2621
+#: src/commands.cc:2642
 #, c-format
 msgid "LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
 msgstr "LFTP | Wersja %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
 
-#: src/commands.cc:2624
+#: src/commands.cc:2645
 #, c-format
 msgid ""
 "LFTP is free software: you can redistribute it and/or modify\n"
@@ -2179,82 +2184,94 @@ msgid ""
 "You should have received a copy of the GNU General Public License\n"
 "along with LFTP.  If not, see <http://www.gnu.org/licenses/>.\n"
 msgstr ""
+"LFTP to oprogramowanie wolnodostêpne - mo¿na je rozprowadzaæ i/lub "
+"modyfikowaæ\n"
+"na warunkach Powszechnej Licencji Publicznej GNU (General Public License),\n"
+"opublikowanej przez Free Software Foundation, w wersji 3 lub nowszej.\n"
+"\n"
+"Ten program jest rozprowadzany w nadziei, ¿e bêdzie przydatny, ale BEZ\n"
+"JAKIEJKOLWIEK GWARANCJI, nawet domy¶lnej gwarancji SPRZEDAWALNO¦CI lub\n"
+"PRZYDATNO¦CI DO KONKRETNEGO CELU. Wiêcej szczegó³ów w tre¶ci Powszechnej\n"
+"Licencji Publicznej GNU.\n"
+"\n"
+"Kopia Powszechnej Licencji Publicznej GNU powinna byæ do³±czona do LFTP.\n"
+"Je¶li nie, mo¿na j± zobaczyæ pod <http://www.gnu.org/licenses/>.\n"
 
-#: src/commands.cc:2638
-#, fuzzy, c-format
+#: src/commands.cc:2659
+#, c-format
 msgid "Send bug reports and questions to the mailing list <%s>.\n"
-msgstr "Raporty o b³êdach oraz pytania proszê przesy³aæ do <%s>.\n"
+msgstr "Raporty o b³êdach oraz pytania proszê przesy³aæ na listê <%s>.\n"
 
-#: src/commands.cc:2644
+#: src/commands.cc:2665
 msgid "Libraries used: "
 msgstr "U¿yte biblioteki: "
 
-#: src/commands.cc:2786 src/commands.cc:2818
+#: src/commands.cc:2807 src/commands.cc:2839
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s: wymagana jest nazwa zak³adki\n"
 
-#: src/commands.cc:2807
+#: src/commands.cc:2828
 #, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
 msgstr "%s: spacje w nazwie pliku zak³adki s± niedozwolone\n"
 
-#: src/commands.cc:2820
+#: src/commands.cc:2841
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s: nie ma takiej zak³adki `%s'\n"
 
-#: src/commands.cc:2836
+#: src/commands.cc:2857
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: wymagany jest typ importowanych danych (netscape,ncftp)\n"
 
-#: src/commands.cc:2912
+#: src/commands.cc:2933
 #, c-format
 msgid "Usage: %s [-d #] dir\n"
 msgstr "U¿ycie: %s [-d $] katalog\n"
 
-#: src/commands.cc:3015
+#: src/commands.cc:3036
 #, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "%s: nieprawid³owy rozmiar bloku `%s'\n"
 
-#: src/commands.cc:3024
+#: src/commands.cc:3045
 #, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "U¿ycie: %s [opcje] <katalogi>\n"
 
-#: src/commands.cc:3030
+#: src/commands.cc:3051
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr "%s: uwaga: podsumowanie jest takie samo jak przy --max-depth=0\n"
 
-#: src/commands.cc:3034
+#: src/commands.cc:3055
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr "%s: podsumowanie konfliktów z --max-depth=%i\n"
 
-#: src/commands.cc:3082
+#: src/commands.cc:3103
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "U¿ycie: %s module argumenty...\n"
 
-#: src/commands.cc:3094
+#: src/commands.cc:3115
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "U¿ycie: %s module [argumenty...]\n"
 
-#: src/commands.cc:3177
+#: src/commands.cc:3198
 #, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "U¿ycie: %s [OPCJE] tryb pliki...\n"
 
-#: src/commands.cc:3197
+#: src/commands.cc:3218
 #, c-format
 msgid "invalid mode string: %s\n"
 msgstr "nieprawid³owy tryb: %s\n"
 
-#: src/commands.cc:3271
+#: src/commands.cc:3292
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "U¿ycie: %s [OPCJE] plik\n"
@@ -2338,7 +2355,7 @@ msgstr "£±czenie siê (gniazdo danych) z (%s) port %u"
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "£±czenie siê (gniazdo danych) z proxy %s (%s) port %u"
 
-#: src/ftpclass.cc:2206 src/ftpclass.cc:4100
+#: src/ftpclass.cc:2206 src/ftpclass.cc:4107
 msgid "Switching passive mode off"
 msgstr "Wy³±czam tryb pasywny"
 
@@ -2346,7 +2363,7 @@ msgstr "Wy³±czam tryb pasywny"
 msgid "Data connection established"
 msgstr "Ustanowiono po³±czenie dla danych"
 
-#: src/ftpclass.cc:2519 src/ftpclass.cc:4230
+#: src/ftpclass.cc:2519 src/ftpclass.cc:4237
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force jest ustawione i serwer nie wspiera lub nie zezwala\n"
@@ -2364,67 +2381,67 @@ msgstr "Zamykanie gniazda danych"
 msgid "Closing aborted data socket"
 msgstr "Zamykanie gniazda danych po przerwaniu"
 
-#: src/ftpclass.cc:3910
+#: src/ftpclass.cc:3917
 msgid "saw file size in response"
 msgstr "w odpowiedzi pojawi³ siê rozmiar pliku"
 
-#: src/ftpclass.cc:3940 src/ftpclass.cc:3967
+#: src/ftpclass.cc:3947 src/ftpclass.cc:3974
 msgid "Turning on sync-mode"
 msgstr "W³±czanie trybu sync"
 
-#: src/ftpclass.cc:4120
+#: src/ftpclass.cc:4127
 msgid "Switching passive mode on"
 msgstr "W³±czam tryb pasywny"
 
-#: src/ftpclass.cc:4267
+#: src/ftpclass.cc:4274
 msgid "FEAT negotiation..."
 msgstr "Negocjacja FEAT..."
 
-#: src/ftpclass.cc:4274
+#: src/ftpclass.cc:4281
 msgid "Sending commands..."
 msgstr "Wysy³anie komend..."
 
-#: src/ftpclass.cc:4278
+#: src/ftpclass.cc:4285
 msgid "Delaying before retry"
 msgstr "Opó¼nienie przed ponownym po³±czeniem"
 
-#: src/ftpclass.cc:4297
+#: src/ftpclass.cc:4304
 msgid "TLS negotiation..."
 msgstr "Negocjacja TLS..."
 
-#: src/ftpclass.cc:4301
+#: src/ftpclass.cc:4308
 msgid "Logging in..."
 msgstr "Logowanie siê..."
 
-#: src/ftpclass.cc:4305
+#: src/ftpclass.cc:4312
 msgid "Making data connection..."
 msgstr "Ustanawianie po³±czenia dla danych..."
 
-#: src/ftpclass.cc:4308
+#: src/ftpclass.cc:4315
 msgid "Changing remote directory..."
 msgstr "Zmiana zdalnego katalogu..."
 
-#: src/ftpclass.cc:4314
+#: src/ftpclass.cc:4321
 msgid "Waiting for other copy peer..."
 msgstr "Oczekiwanie na inne kopiowanie..."
 
-#: src/ftpclass.cc:4316 src/ftpclass.cc:4340
+#: src/ftpclass.cc:4323 src/ftpclass.cc:4347
 msgid "Waiting for transfer to complete"
 msgstr "Oczekiwanie na zakoñczenie transferu"
 
-#: src/ftpclass.cc:4320
+#: src/ftpclass.cc:4327
 msgid "Waiting for TLS shutdown..."
 msgstr "Oczekiwanie na zakoÃ±czenie TLS..."
 
-#: src/ftpclass.cc:4322
+#: src/ftpclass.cc:4329
 msgid "Waiting for data connection..."
 msgstr "Oczekiwanie na poÂ³Â±czenie dla danych..."
 
-#: src/ftpclass.cc:4328
+#: src/ftpclass.cc:4335
 msgid "Sending data/TLS"
 msgstr "Wysy³am dane/TLS"
 
-#: src/ftpclass.cc:4330
+#: src/ftpclass.cc:4337
 msgid "Receiving data/TLS"
 msgstr "Otrzymujê dane/TLS"
 
@@ -2469,9 +2486,9 @@ msgstr ""
 "maj± byæ wy¶wietlone lub \"all\" by wy¶wietliæ wszystkie wpisy.\n"
 
 #: src/mgetJob.cc:125 src/mgetJob.cc:209
-#, fuzzy, c-format
+#, c-format
 msgid "%s: %s: no files found\n"
-msgstr "%s: nie znaleziono plików\n"
+msgstr "%s: %s: nie znaleziono plików\n"
 
 #: src/mkdirJob.cc:122
 #, c-format
@@ -2540,11 +2557,12 @@ msgid "ftp:proxy password: "
 msgstr "ftp:proxy has³o: "
 
 #: src/resource.cc:68
-#, fuzzy
 msgid ""
 "ftp:proxy-auth-type must be one of: user, joined, joined-acct, open, proxy-"
 "user@host"
-msgstr "ftp:proxy-auth-type musi byæ jednym z: user, joined, joined-acct, open"
+msgstr ""
+"ftp:proxy-auth-type musi byæ jednym z: user, joined, joined-acct, open, "
+"proxy-user@host"
 
 #: src/resource.cc:92
 msgid "only PUT and POST values allowed"
@@ -2582,35 +2600,3 @@ msgstr "%s ok, %d katalog$|i|ów$ usuniêto\n"
 #, c-format
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d plik$|i|ów$ usuniêto\n"
-
-#~ msgid "%s: illegal option -- %c\n"
-#~ msgstr "%s: niew³a¶ciwa opcja -- %c\n"
-
-#~ msgid "day"
-#~ msgstr "dzieñ"
-
-#~ msgid "hour"
-#~ msgstr "godzina"
-
-#~ msgid "minute"
-#~ msgstr "minuta"
-
-#~ msgid "second"
-#~ msgstr "sekunda"
-
-#~ msgid ""
-#~ "LFTP is free software, covered by the GNU General Public License, and you "
-#~ "are\n"
-#~ "welcome to change it and/or distribute copies of it under certain "
-#~ "conditions.\n"
-#~ "There is absolutely no warranty for LFTP.  See COPYING for details.\n"
-#~ msgstr ""
-#~ "LFTP to oprogramowanie wolnodostêpne, chronione Powszechn± Licencj± "
-#~ "Publiczn±\n"
-#~ "GNU (General Public License), pozwalaj±c± modyfikowaæ i/lub "
-#~ "rozpowszechniaæ\n"
-#~ "kopie pod pewnymi warunkami.\n"
-#~ "Nie ma ¿adnej gwarancji na LFTP. Szczegó³y w pliku COPYING.\n"
-
-#~ msgid "block size"
-#~ msgstr "rozmiar bloku"

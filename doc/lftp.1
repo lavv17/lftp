@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "30 Dec 2010"
+.TH lftp 1 "24 Feb 2011"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.1.2.
+This man page documents lftp version 4.2.0.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -1635,6 +1635,9 @@ Certificate Authority and not be on Certificate Revocation List.
 .TP
 .BR torrent:ip " (ipv4 address)"
 IP address to send to the tracker. Specify it if you are using an http proxy.
+.TP
+.BR torrent:ipv6 " (ipv6 address)"
+IPv6 address to send to the tracker. Specify it if the tracker has IPv4 address.
 .TP
 .BR torrent:max-peers \ (number)
 maximum number of peers for a torrent. Least used peers are removed to

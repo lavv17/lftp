@@ -233,3 +233,7 @@ uniwidth.in.h
 parse-datetime.h
 parse-datetime.y
 iswblank.c
+mbsrtowcs-impl.h
+dosname.h
+mbtowc-impl.h
+mbtowc.c
