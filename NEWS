@@ -4,7 +4,7 @@ Version 4.2.0 - 2011-03-03
 * check certificate common name in openssl case (code from curl).
 * disable weak algorithms in openssl (Ludwig Nussel <ludwig.nussel@suse.de>).
 * new setting xfer:log-file (Timur Sufiev).
-* support for netkey pasword in ftp ().
+* support for netkey pasword in ftp (Ryan Thomas <ryan@coraid.com>).
 * added torrent ipv6 support (new setting torrent:ipv6)
 * don't accept new connections when no torrent can accept them.
 * allow to specify job numbers in `jobs' command.
