@@ -712,7 +712,7 @@ void Ftp::SendCWD(const char *path,const char *path_url,Expect::expect_t c)
    Expect *last_cwd=expect->FindLastCWD();
    if(last_cwd)
    {
-      LogNote(9,"last sent CWD path is `%s'",last_cwd->arg.get());
+      LogNote(9,"CWD path to be sent is `%s'",last_cwd->arg.get());
       last_cwd->check_case=c;
    }
 }

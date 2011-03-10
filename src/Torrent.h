@@ -213,6 +213,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    const char *FindFileByPosition(unsigned piece,unsigned begin,off_t *f_pos,off_t *f_tail) const;
    const char *MakePath(BeNode *p) const;
    int OpenFile(const char *f,int m,off_t size=0);
+   void CloseFile(const char *f) const;
 
    void StoreBlock(unsigned piece,unsigned begin,unsigned len,const char *buf,TorrentPeer *src_peer);
    const xstring& RetrieveBlock(unsigned piece,unsigned begin,unsigned len);

@@ -143,9 +143,9 @@ public:
    xstring(const char *s) { init(s); }
    xstring(const char *s,int l) { init(s,l); }
 
-   // allocates s bytes, with preferred granularity g
-   void get_space(size_t s,size_t g=32);
-   char *add_space(size_t s,size_t g=32) { get_space(len+s,g); return get_non_const()+len; }
+   void get_space(size_t s);
+   void get_space2(size_t s,size_t g);
+   char *add_space(size_t s);
    void add_commit(int new_len) { len+=new_len; }
 
    size_t length() const { return len; }

@@ -685,7 +685,6 @@ int Torrent::Do()
       ValidatePiece(validate_index++);
       if(validate_index<total_pieces)
 	 return MOVED;
-      fd_cache->CloseAll();
       validating=false;
       if(total_left==0) {
 	 complete=true;
@@ -928,12 +927,14 @@ int FDCache::Do()
 }
 void FDCache::Close(const char *name)
 {
-   const xstring n(name);
+   const xstring &n=xstring::get_tmp(name);
    for(int i=0; i<3; i++) {
       const FD& f=cache[i].lookup(n);
       if(f.last_used!=0) {
-	 if(f.fd!=-1)
+	 if(f.fd!=-1) {
+	    ProtoLog::LogNote(9,"closing %s",name);
 	    close(f.fd);
+	 }
 	 cache[i].remove(n);
       }
    }
@@ -1005,11 +1006,18 @@ int FDCache::OpenFile(const char *file,int m,off_t size)
    FD new_entry = {fd,errno,now.UnixTime()};
    cache[ci].add(file,new_entry);
 #ifdef HAVE_POSIX_FALLOCATE
-   if(fd!=-1 && ci==O_RDWR && size>0) {
+   if(fd==-1 || size==0)
+      return fd;
+   if(ci==O_RDWR) {
       struct stat st;
       // check if it is newly created file, then allocate space
       if(fstat(fd,&st)!=-1 && st.st_size==0)
 	 posix_fallocate(fd,0,size);
+   }
+   else if(ci==O_RDONLY) {
+      // validation mode
+      posix_fadvise(fd,0,size,POSIX_FADV_SEQUENTIAL);
+      posix_fadvise(fd,0,size,POSIX_FADV_NOREUSE);
    }
 #endif//HAVE_POSIX_FALLOCATE
    return fd;
@@ -1045,6 +1053,10 @@ try_again:
    }
    return fd;
 }
+void Torrent::CloseFile(const char *file) const
+{
+   fd_cache->Close(dir_file(output_dir,file));
+}
 
 void Torrent::SetPieceNotWanted(unsigned piece)
 {
@@ -1055,6 +1067,8 @@ void Torrent::SetPieceNotWanted(unsigned piece)
       }
    }
 }
+
+#define MIN(a,b) ((a)<(b)?(a):(b))
 
 void Torrent::StoreBlock(unsigned piece,unsigned begin,unsigned len,const char *buf,TorrentPeer *src_peer)
 {
@@ -1068,14 +1082,12 @@ void Torrent::StoreBlock(unsigned piece,unsigned begin,unsigned len,const char *
    off_t f_rest=len;
    while(len>0) {
       const char *file=FindFileByPosition(piece,begin,&f_pos,&f_rest);
-      if(f_rest>len)
-	 f_rest=len;
       int fd=OpenFile(file,O_RDWR|O_CREAT,f_pos+f_rest);
       if(fd==-1) {
 	 SetError(xstring::format("open(%s): %s",file,strerror(errno)));
 	 return;
       }
-      int w=pwrite(fd,buf,f_rest,f_pos);
+      int w=pwrite(fd,buf,MIN(f_rest,len),f_pos);
       int saved_errno=errno;
       if(w==-1) {
 	 SetError(xstring::format("pwrite(%s): %s",file,strerror(saved_errno)));
@@ -1125,20 +1137,19 @@ void Torrent::SendTrackersRequest(const char *event) const
 const xstring& Torrent::RetrieveBlock(unsigned piece,unsigned begin,unsigned len)
 {
    static xstring buf;
-   buf.set("");
+   buf.truncate(0);
+   buf.get_space(len);
+
    off_t f_pos=0;
    off_t f_rest=len;
    while(len>0) {
       const char *file=FindFileByPosition(piece,begin,&f_pos,&f_rest);
-      if(f_rest>len)
-	 f_rest=len;
-      int fd=OpenFile(file,O_RDONLY);
+      int fd=OpenFile(file,O_RDONLY,validating?f_pos+f_rest:0);
       if(fd==-1)
 	 return xstring::null;
-      int w=pread(fd,buf.add_space(f_rest),f_rest,f_pos);
-      int saved_errno=errno;
+      int w=pread(fd,buf.add_space(len),MIN(f_rest,len),f_pos);
       if(w==-1) {
-	 SetError(xstring::format("pread(%s): %s",file,strerror(saved_errno)));
+	 SetError(xstring::format("pread(%s): %s",file,strerror(errno)));
 	 return xstring::null;
       }
       if(w==0) {
@@ -1148,6 +1159,8 @@ const xstring& Torrent::RetrieveBlock(unsigned piece,unsigned begin,unsigned len
       buf.add_commit(w);
       begin+=w;
       len-=w;
+      if(validating && w==f_rest)
+	 CloseFile(file);
    }
    return buf;
 }

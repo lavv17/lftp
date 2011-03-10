@@ -1,3 +1,14 @@
+2011-03-09  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Torrent.cc, Torrent.h: use fadvise during validation;
+	  fixed fallocate call to pass correct file length;
+	  optimized validation by removing realloc call.
+	* xstring.cc, xstring.h: outline add_space; (get_space2) new method;
+	  change get_space to take one arg.
+	* xmap.cc: optimize make_hash for hash_size==1.
+	* buffer.cc: use get_space2.
+	* ftpclass.cc: better wording in debug.
+
 2011-03-03  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* netkey.c: new file (from Ryan Thomas <ryan@coraid.com>).

@@ -50,12 +50,14 @@ _xmap::~_xmap()
 
 int _xmap::make_hash(const xstring& s) const
 {
+   if(hash_size==1)
+      return 0;
    unsigned hash=0x12345678;
    for(unsigned i=0; i<s.length(); i++) {
       hash^=(hash<<5)+s[i];
    }
    hash^=(hash<<5)+s.length();
-   hash=hash%hash_size;
+   hash%=hash_size;
    return hash;
 }
 

@@ -89,7 +89,7 @@ void Buffer::Allocate(int size)
       buffer_ptr=0;
    }
 
-   buffer.get_space(in_buffer_real+size,BUFFER_INC);
+   buffer.get_space2(in_buffer_real+size,BUFFER_INC);
 }
 
 void Buffer::SaveMaxCheck(int size)

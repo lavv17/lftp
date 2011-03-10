@@ -57,7 +57,11 @@ size_t xstrlen(const char *s)
    return strlen(s);
 }
 
-void xstring::get_space(size_t s,size_t g)
+void xstring::get_space(size_t s)
+{
+   get_space2(s,32);
+}
+void xstring::get_space2(size_t s,size_t g)
 {
    if(!buf)
       buf=(char*)xmalloc(size=s+1);
@@ -66,6 +70,12 @@ void xstring::get_space(size_t s,size_t g)
    else if(size>=g*8 && s+1<=size/2)
       buf=(char*)xrealloc(buf,size/=2);
    buf[s]=0;
+}
+char *xstring::add_space(size_t s)
+{
+   if(size<=len+s)
+      get_space(len+s);
+   return get_non_const()+len;
 }
 
 void xstring::init(const char *s,int len)
