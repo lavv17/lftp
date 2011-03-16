@@ -2014,10 +2014,10 @@ FileInfo *SFtp::MakeFileInfo(const NameAttrs *na)
       fi->SetSize(a->size);
    if(a->flags&SSH_FILEXFER_ATTR_UIDGID)
    {
-      char id[12];
-      sprintf(id,"%u",(unsigned)a->uid);
+      char id[24];
+      sprintf(id,"%u",a->uid);
       fi->SetUser(id);
-      sprintf(id,"%u",(unsigned)a->gid);
+      sprintf(id,"%u",a->gid);
       fi->SetGroup(id);
    }
    if(a->flags&SSH_FILEXFER_ATTR_OWNERGROUP)

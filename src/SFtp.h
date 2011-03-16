@@ -426,8 +426,8 @@ public:
       off_t    size;		    // present only if flag SIZE
       xstring  owner;		    // present only if flag OWNERGROUP // v>=4
       xstring  group;		    // present only if flag OWNERGROUP // v>=4
-      uid_t    uid;		    // present only if flag UIDGID // v<=3
-      gid_t    gid;		    // present only if flag UIDGID // v<=3
+      unsigned uid;		    // present only if flag UIDGID // v<=3
+      unsigned gid;		    // present only if flag UIDGID // v<=3
       unsigned permissions;	    // present only if flag PERMISSIONS
       time_t   atime;		    // present only if flag ACCESSTIME (ACMODTIME)
       unsigned atime_nseconds;	    // present only if flag SUBSECOND_TIMES

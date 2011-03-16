@@ -1,3 +1,8 @@
+2011-03-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SFtp.cc, SFtp.h: don't use uid_t and gid_t, may fix a problem
+	  with sign expansion on some systems.
+
 2011-03-09  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Torrent.cc, Torrent.h: use fadvise during validation;
