@@ -1911,9 +1911,7 @@ int   Ftp::Do()
 	 break;
       case(CHANGE_MODE):
 	 {
-	    char *c=string_alloca(11+30);
-	    sprintf(c,"SITE CHMOD %03o",chmod_mode);
-	    command=c;
+	    command=xstring::format("SITE CHMOD %03o",chmod_mode);
 	    append_file=true;
 	    want_type=conn->type;
 	    break;
@@ -3348,7 +3346,7 @@ void Ftp::Connection::SendCmd2(const char *cmd,const char *f,const char *u,const
 void Ftp::Connection::SendCmd2(const char *cmd,int v)
 {
    char buf[32];
-   sprintf(buf,"%d",v);
+   snprintf(buf,sizeof(buf),"%d",v);
    SendCmd2(cmd,buf);
 }
 
@@ -3356,7 +3354,7 @@ void Ftp::Connection::SendCmdF(const char *f,...)
 {
    va_list v;
    va_start(v,f);
-   xstring_ca s(xvasprintf(f,v));
+   xstring& s=xstring::vformat(f,v);
    va_end(v);
    SendCmd(s);
 }

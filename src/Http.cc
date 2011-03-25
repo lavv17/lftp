@@ -260,9 +260,7 @@ void Http::SendMethod(const char *method,const char *efile)
    && (strlen(efile)<7 || strncmp(efile+strlen(efile)-7,";type=",6))
    && QueryBool("use-type",hostname))
    {
-      char *pfile=alloca_strdup2(efile,7);
-      sprintf(pfile,"%s;type=%c",efile,ascii?'a':'i');
-      efile=pfile;
+      efile=xstring::format("%s;type=%c",efile,ascii?'a':'i');
    }
 
    /*
@@ -569,12 +567,11 @@ void Http::SendRequest(const char *connection,const char *f)
       }
       if(entity_date!=NO_DATE)
       {
-	 char d[256];
 	 static const char weekday_names[][4]={
 	    "Sun","Mon","Tue","Wed","Thu","Fri","Sat"
 	 };
-	 struct tm *t=gmtime(&entity_date);
-	 sprintf(d,"%s, %2d %s %04d %02d:%02d:%02d GMT",
+	 const struct tm *t=gmtime(&entity_date);
+	 const char *d=xstring::format("%s, %2d %s %04d %02d:%02d:%02d GMT",
 	    weekday_names[t->tm_wday],t->tm_mday,month_names[t->tm_mon],
 	    t->tm_year+1900,t->tm_hour,t->tm_min,t->tm_sec);
 	 Send("Last-Modified: %s\r\n",d);
@@ -950,26 +947,22 @@ int Http::Do()
 	    const char *scan=file+5;
 	    while(*scan==' ')
 	       scan++;
-	    char *url=string_alloca(5+xstrlen(hostname)*3+1+xstrlen(portname)*3
-				    +1+xstrlen(cwd)*3+1+strlen(scan)+1);
-	    strcpy(url,https?"https://":"http://");
-	    url::encode_string(hostname,url+strlen(url),URL_HOST_UNSAFE);
+	    file_url.set(https?"https://":"http://");
+	    file_url.append_url_encoded(hostname,URL_HOST_UNSAFE);
 	    if(portname)
 	    {
-	       strcat(url,":");
-	       url::encode_string(portname,url+strlen(url),URL_PORT_UNSAFE);
+	       file_url.append(':');
+	       file_url.append_url_encoded(portname,URL_PORT_UNSAFE);
 	    }
 	    if(*scan!='/' && cwd)
 	    {
 	       if(cwd[0]!='/')
-		  strcat(url,"/");
-	       url::encode_string(cwd,url+strlen(url),URL_PATH_UNSAFE);
+		  file_url.append('/');
+	       file_url.append_url_encoded(cwd,URL_PATH_UNSAFE);
 	    }
 	    if(*scan!='/')
-	       strcat(url,"/");
-	    strcat(url,scan);
-
-	    file_url.set(url);
+	       file_url.append('/');
+	    file_url.append(scan);
 	    file_url.truncate_at(' ');
 
 	    scan=strchr(scan,' ');
@@ -1038,10 +1031,9 @@ int Http::Do()
 	 }
 	 if(NonFatalError(saved_errno))
 	    return m;
-	 char str[256];
-	 sprintf(str,_("cannot create socket of address family %d"),
-			peer[peer_curr].sa.sa_family);
-	 SetError(SEE_ERRNO,str);
+	 SetError(SEE_ERRNO,xstring::format(
+	    _("cannot create socket of address family %d"),
+	    peer[peer_curr].sa.sa_family));
 	 return MOVED;
       }
 
@@ -1098,11 +1090,9 @@ int Http::Do()
 	 if(proxy && https)
 	 {
 	    // have to setup a tunnel.
-	    char *ehost=string_alloca(strlen(hostname)*3+1);
+	    const char *ehost=url::encode(hostname,URL_HOST_UNSAFE);
 	    const char *port_to_use=portname?portname.get():HTTPS_DEFAULT_PORT;
-	    char *eport=string_alloca(strlen(port_to_use)*3+1);
-	    url::encode_string(hostname,ehost,URL_HOST_UNSAFE);
-	    url::encode_string(port_to_use,eport,URL_PORT_UNSAFE);
+	    const char *eport=url::encode(port_to_use,URL_PORT_UNSAFE);
 	    Send("CONNECT %s:%s HTTP/1.1\r\n\r\n",ehost,eport);
 	    tunnel_state=TUNNEL_WAITING;
 	    state=RECEIVING_HEADER;
@@ -1385,7 +1375,7 @@ int Http::Do()
 
       if(!H_20X(status_code))
       {
-	 char *err=string_alloca(strlen(status)+strlen(file)+strlen(cwd)+xstrlen(location)+20);
+	 xstring& err=xstring::get_tmp();
 	 int code=NO_FILE;
 
 	 if(H_REDIRECTED(status_code))
@@ -1423,7 +1413,7 @@ int Http::Do()
 	       }
 	       location.set(new_location);
 	    }
-	    sprintf(err,"%s (%s -> %s)",status+status_consumed,file.get(),
+	    err.setf("%s (%s -> %s)",status+status_consumed,file.get(),
 				    location?location.get():"nowhere");
 	    code=FILE_MOVED;
 	 }
@@ -1452,9 +1442,9 @@ int Http::Do()
 	       closure=last_method;
 	    }
 	    if(closure && closure[0])
-	       sprintf(err,"%s (%s)",status+status_consumed,closure);
+	       err.setf("%s (%s)",status+status_consumed,closure);
 	    else
-	       sprintf(err,"%s (%s%s)",status+status_consumed,cwd.path.get(),
+	       err.setf("%s (%s%s)",status+status_consumed,cwd.path.get(),
 				       (last_char(cwd)=='/')?"":"/");
 	 }
 	 state=RECEIVING_BODY;

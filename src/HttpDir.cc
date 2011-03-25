@@ -308,10 +308,10 @@ static bool try_netscape_proxy(file_info &info,const char *str)
    {
       if(!strcasecmp(size_unit,"bytes")
       || !strcasecmp(size_unit,"byte"))
-	 sprintf(info.size_str,"%lld",info.size);
+	 snprintf(info.size_str,sizeof(info.size_str),"%lld",info.size);
       else
       {
-	 sprintf(info.size_str,"%lld%s",info.size,size_unit);
+	 snprintf(info.size_str,sizeof(info.size_str),"%lld%s",info.size,size_unit);
 	 info.size=-1;
       }
       debug("Netscape-Proxy 2.53 listing matched");
@@ -398,7 +398,7 @@ static bool try_apache_unixlike(file_info &info,const char *buf,
    && -1!=(info.month=parse_month(info.month_name))
    && -1!=parse_year_or_time(year_or_time,&info.year,&info.hour,&info.minute))
    {
-      sprintf(info.size_str,"%lld",info.size);
+      snprintf(info.size_str,sizeof(info.size_str),"%lld",info.size);
       if(info.perms[0]=='d')
 	 info.is_directory=true;
       else if(info.perms[0]=='l')
@@ -444,7 +444,8 @@ static bool try_roxen(file_info &info,const char *str)
 	 size_mod_i=1024*1024*1024;
       if(size_mod_i)
       {
-	 sprintf(info.size_str,"%s%s",info.size_str,size_mod);
+	 const char *old_size_str=alloca_strdup(info.size_str);
+	 snprintf(info.size_str,sizeof(info.size_str),"%s%s",old_size_str,size_mod);
 	 debug("Roxen web server listing matched");
 	 return true;
       }
@@ -484,13 +485,12 @@ static bool try_squid_ftp(file_info &info,const char *str,char *str_with_tags)
       char *sym_link=ptr+13;
       ptr=strchr(sym_link,'"');
       if(!ptr)
-	 sym_link=0;
+	 info.sym_link.unset();
       else
       {
 	 *ptr=0;
-	 url::decode_string(sym_link);
+	 info.sym_link.set(url::decode(sym_link));
       }
-      info.sym_link.set(sym_link);
    }
    debug("squid ftp listing matched");
    return true;
@@ -519,7 +519,7 @@ static bool try_wwwoffle_ftp(file_info &info,const char *buf,
    && -1!=(info.month=parse_month(info.month_name))
    && -1!=parse_year_or_time(year_or_time,&info.year,&info.hour,&info.minute))
    {
-      sprintf(info.size_str,"%lld",info.size);
+      snprintf(info.size_str,sizeof(info.size_str),"%lld",info.size);
       if(info.perms[0]=='d')
 	 info.is_directory=true;
       else if(info.perms[0]=='l')
@@ -573,7 +573,7 @@ static bool try_csm_proxy(file_info &info,const char *str)
 
    if (status) {
       debug("csm_proxy listing matched");
-      sprintf(info.size_str, "%lld", info.size);
+      snprintf(info.size_str,sizeof(info.size_str),"%lld",info.size);
       if (has_additional_file_info && additional_file_info[0]) {
 	  if (!strncasecmp("Symbolic Link",additional_file_info,13)) {
 	      info.is_sym_link = true;
@@ -1041,7 +1041,7 @@ parse_url_again:
 	 info.month=parse_month(info.month_name);
       if(info.month>=0)
       {
-	 sprintf(info.month_name,"%02d",info.month+1);
+	 snprintf(info.month_name,sizeof(info.month_name),"%02d",info.month+1);
 	 if(info.year==-1)
 	    info.year=guess_year(info.month,info.day,info.hour,info.minute);
       }
@@ -1357,13 +1357,9 @@ HttpDirList::~HttpDirList()
 
 const char *HttpDirList::Status()
 {
-   static char s[256];
    if(ubuf && !ubuf->Eof() && session->IsOpen())
-   {
-      sprintf(s,_("Getting file list (%lld) [%s]"),
+      return xstring::format(_("Getting file list (%lld) [%s]"),
 		     (long long)session->GetPos(),session->CurrentStatus());
-      return s;
-   }
    return "";
 }
 

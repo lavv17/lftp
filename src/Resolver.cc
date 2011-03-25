@@ -482,8 +482,8 @@ void Resolver::LookupSRV_RR()
    const char *tproto=proto?proto.get():"tcp";
    time_t try_time;
    unsigned char answer[0x1000];
-   char *srv_name=string_alloca(strlen(service)+1+strlen(tproto)+1+strlen(hostname)+1);
-   sprintf(srv_name,"_%s._%s.%s",service.get(),tproto,hostname.get());
+   const char *srv_name=xstring::format("_%s._%s.%s",service.get(),tproto,hostname.get());
+   srv_name=alloca_strdup(srv_name);
 
    int retries=0;
    int max_retries=ResMgr::Query("dns:max-retries",hostname);
@@ -863,9 +863,7 @@ void Resolver::DoGethostbyname()
 	 else
 	 {
 	    buf->Put("P");
-	    char *msg=string_alloca(64+strlen(tproto));
-	    sprintf(msg,_("no such %s service"),tproto);
-	    buf->Put(msg);
+	    buf->Format(_("no such %s service"),tproto);
 	    goto flush;
 	 }
       }

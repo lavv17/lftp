@@ -1,3 +1,16 @@
+2011-03-25  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* xstring.cc, xstring.h: (url_decode, append_url_encoded) new methods.
+	* url.cc, url.h: drop functions decode_string and encode_string.
+	* network.h: use proper includes.
+	* netrc.cc, CmdExec.cc, FileAccess.cc, FileCopy.cc, FileSet.cc,
+	  FileSetOutput.cc, Fish.cc, FtpDirList.cc, Http.cc, HttpDir.cc,
+	  IdNameCache.cc, LocalAccess.cc, MirrorJob.cc, MirrorJob.h,
+	  NetAccess.cc, OutputJob.cc, OutputJob.h, ResMgr.cc, Resolver.cc,
+	  SFtp.cc, StringSet.cc, misc.cc, misc.h, commands.cc, complete.cc,
+	  history.cc, lftp.cc, netrc.cc: don't use sprintf, decode_string,
+	  encode_string; drop xasprintf and xvasprintf.
+
 2011-03-16  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.cc, SFtp.h: don't use uid_t and gid_t, may fix a problem

@@ -953,9 +953,8 @@ ResValue ResClient::Query(const char *name,const char *closure) const
    if(!strchr(name,':'))
    {
       const char *prefix=ResPrefix();
-      char *fullname=(char*)alloca(3+strlen(prefix)+1+strlen(name)+1);
-      sprintf(fullname,"%s:%s",prefix,name);
-      name=fullname;
+      name=xstring::format("%s:%s",prefix,name);
+      name=alloca_strdup(name);
    }
    if(!closure)
       closure=ResClosure();

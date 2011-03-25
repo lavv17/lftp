@@ -2015,9 +2015,9 @@ FileInfo *SFtp::MakeFileInfo(const NameAttrs *na)
    if(a->flags&SSH_FILEXFER_ATTR_UIDGID)
    {
       char id[24];
-      sprintf(id,"%u",a->uid);
+      snprintf(id,sizeof(id),"%u",a->uid);
       fi->SetUser(id);
-      sprintf(id,"%u",a->gid);
+      snprintf(id,sizeof(id),"%u",a->gid);
       fi->SetGroup(id);
    }
    if(a->flags&SSH_FILEXFER_ATTR_OWNERGROUP)

@@ -138,16 +138,16 @@ void History::Set(const FileAccess *s,const FileAccess::Path &cwd)
 {
    if(cwd.path==0 || !strcmp(cwd.path,"~") || s->GetHostName()==0)
       return;
-   char *res=(char*)alloca(32+strlen(cwd.path)*3+xstrlen(cwd.url)+2);
-   sprintf(res,"%lu:",(unsigned long)time(0));
+   xstring res;
+   res.setf("%lu:",(unsigned long)time(0));
    if(!cwd.url)
    {
-      url::encode_string(cwd,res+strlen(res),URL_PATH_UNSAFE);
+      res.append_url_encoded(cwd,URL_PATH_UNSAFE);
       if(!cwd.is_file && url::dir_needs_trailing_slash(s->GetProto()))
-	 strcat(res,"/");
+	 res.append('/');
    }
    else
-      strcat(res,cwd.url);
+      res.append(cwd.url);
    super::Add(s->GetConnectURL(s->NO_PATH|s->NO_PASSWORD),res);
    modified=true;
 }

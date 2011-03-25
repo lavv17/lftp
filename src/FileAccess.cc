@@ -862,8 +862,7 @@ FileAccess *FileAccess::Protocol::NewSession(const char *proto)
 
 #ifdef WITH_MODULES
 #define PROTO_PREFIX "proto-"
-   char *mod=(char*)alloca(strlen(PROTO_PREFIX)+strlen(proto)+1);
-   sprintf(mod,"%s%s",PROTO_PREFIX,proto);
+   const char *mod=xstring::cat(PROTO_PREFIX,proto,NULL);
    void *map=module_load(mod,0,0);
    if(map==0)
    {
@@ -948,11 +947,7 @@ void FileAccess::Path::Set(const Path *o)
 void FileAccess::Path::Change(const char *new_path,bool new_is_file,const char *new_path_enc,int new_device_prefix_len)
 {
    if(!new_path && new_path_enc)
-   {
-      char *np=alloca_strdup(new_path_enc);
-      url::decode_string(np);
-      new_path=np;
-   }
+      new_path=url::decode(new_path_enc);
    if(!new_path || !*new_path)
       return;
    const char *bn=basename_ptr(new_path);
@@ -997,12 +992,10 @@ void FileAccess::Path::Change(const char *new_path,bool new_is_file,const char *
 	 if(!path[0])
 	    path.set("~");
       }
-      char *newcwd=string_alloca(xstrlen(path)+xstrlen(new_path)+2);
       if(last_char(path)=='/')
-	 sprintf(newcwd,"%s%s",path.get(),new_path);
+	 new_path=xstring::format("%s%s",path.get(),new_path);
       else
-	 sprintf(newcwd,"%s/%s",path.get(),new_path);
-      new_path=newcwd;
+	 new_path=xstring::format("%s/%s",path.get(),new_path);
    }
    path.set(new_path);
    device_prefix_len=new_device_prefix_len;

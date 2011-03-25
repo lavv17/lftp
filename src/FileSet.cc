@@ -927,20 +927,20 @@ void FileInfo::MakeLongName()
    int mode1=(defined&MODE?mode:
       (filetype_c=='d'?0755:(filetype_c=='l'?0777:0644)));
 
-   char usergroup[33];
-   usergroup[0]=0;
-   if(defined&(USER|GROUP))
-      sprintf(usergroup,"%.16s%s%.16s",defined&USER?user:"?",
+   const char *usergroup="";
+   if(defined&(USER|GROUP)) {
+      usergroup=xstring::format("%.16s%s%.16s",defined&USER?user:"?",
 		  defined&GROUP?"/":"",defined&GROUP?group:"");
+   }
 
    int w=20-strlen(usergroup);
    if(w<1)
       w=1;
    char size_str[20];
    if(defined&SIZE)
-      sprintf(size_str,"%*lld",w,(long long)size);
+      snprintf(size_str,sizeof(size_str),"%*lld",w,(long long)size);
    else
-      sprintf(size_str,"%*s",w,"-");
+      snprintf(size_str,sizeof(size_str),"%*s",w,"-");
 
    const char *date_str="-";
    if(defined&DATE)

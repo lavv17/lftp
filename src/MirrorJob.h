@@ -203,7 +203,7 @@ public:
    void Fg();
    void Bg();
 
-   char	 *SetScriptFile(const char *n);
+   const char *SetScriptFile(const char *n);
    void	 ScriptOnly(bool yes=true)
       {
 	 script_only=yes;

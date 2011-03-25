@@ -841,11 +841,9 @@ const char *CmdExec::FormatPrompt(const char *scan)
    {
       const char *home=session->GetHome();
       if(home && strcmp(home,"/") && !strncmp(cwd,home,strlen(home))
-	    && (cwd[strlen(home)]=='/' || cwd[strlen(home)]==0))
+      && (cwd[strlen(home)]=='/' || cwd[strlen(home)]==0))
       {
-	 char *cwdbuf=string_alloca(strlen(cwd)-strlen(home)+2);
-	 sprintf(cwdbuf,"~%s",cwd+strlen(home));
-	 cwd=cwdbuf;
+	 cwd=xstring::format("~%s",cwd+strlen(home));
       }
    }
    const char *cwdb=session->GetCwd();
@@ -1212,8 +1210,7 @@ Job *CmdExec::default_cmd()
 {
    const char *op=args->a0();
 #ifdef WITH_MODULES
-   char *modname=(char*)alloca(4+strlen(op)+1);
-   sprintf(modname,"cmd-%s",op);
+   const char *modname=xstring::cat("cmd-",op,NULL);
    if(module_load(modname,0,0)==0)
    {
       eprintf("%s\n",module_error_message());

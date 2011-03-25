@@ -88,7 +88,7 @@ const char *IdNameCache::Lookup(int id)
    if(name && name[0])
       return name;
    static char buf[32];
-   sprintf(buf,"%d",id);
+   snprintf(buf,sizeof(buf),"%d",id);
    return buf;
 }
 int IdNameCache::Lookup(const char *name)

@@ -121,12 +121,10 @@ int FtpDirList::Do()
 
 const char *FtpDirList::Status()
 {
-   static char s[256];
    if(ubuf && !ubuf->Eof() && session->IsOpen())
    {
-      sprintf(s,_("Getting file list (%lld) [%s]"),
+      return xstring::format(_("Getting file list (%lld) [%s]"),
 		     (long long)session->GetPos(),session->CurrentStatus());
-      return s;
    }
    return "";
 }
@@ -149,7 +147,7 @@ void FtpDirList::FormatGeneric(FileInfo *fi)
       fi->mode=(dir?0755:0644);
    char size_str[32];
    if(fi->defined&fi->SIZE)
-      sprintf(size_str,"%lld",(long long)fi->size);
+      snprintf(size_str,sizeof(size_str),"%lld",(long long)fi->size);
    else
       strcpy(size_str,"-");
    const char *date_str="-";

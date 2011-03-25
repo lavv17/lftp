@@ -1067,8 +1067,9 @@ int FileCopyPeerFA::Get_LL(int len)
 	    if(FAmode==FA::QUOTE_CMD)
 	       FAmode=FA::RETRIEVE;
 
-	    char *loc=alloca_strdup(loc_c);
+	    xstring& loc=xstring::get_tmp(loc_c);
 	    session->Close(); // loc_c is no longer valid.
+	    loc_c=0;
 
 	    ParsedURL u(loc,true);
 
@@ -1102,7 +1103,7 @@ int FileCopyPeerFA::Get_LL(int len)
 		  }
 	       }
 
-	       url::decode_string(loc);
+	       loc.url_decode();
 	       const char *slash=strrchr(file,'/');
 	       if(loc[0]!='/' && slash)
 	       {

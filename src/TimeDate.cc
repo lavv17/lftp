@@ -123,9 +123,9 @@ int TimeInterval::GetTimeout(const Time &base) const
    return -elapsed.MilliSeconds();
 }
 
-static void append_Nc(char *&buf,long N,const char *c)
+static void append_Nc(xstring& buf,long N,const char *c)
 {
-   buf+=sprintf(buf,"%ld%.*s",N,mblen(c,strlen(c)),c);
+   buf.appendf("%ld%.*s",N,mblen(c,strlen(c)),c);
 }
 
 const char *TimeInterval::toString(unsigned flags)
@@ -141,9 +141,7 @@ const char *TimeInterval::toString(unsigned flags)
 
    long eta=Seconds();
 
-   static char buf[32];
-   buf[0]=0;
-   char *store=buf;
+   xstring &buf=xstring::get_tmp("");
 
    // for translator: only first letter matters
    const char *day_c=N_("day");
@@ -196,19 +194,19 @@ const char *TimeInterval::toString(unsigned flags)
 	 ueta=eta;
 	 letter=second_c;
       }
-      append_Nc(store,ueta,letter);
+      append_Nc(buf,ueta,letter);
       if(letter2 && ueta2>0)
-	 append_Nc(store,ueta2,letter2);
+	 append_Nc(buf,ueta2,letter2);
    }
    else // verbose eta (by Ben Winslow)
    {
       if(eta>=DAY)
-	 append_Nc(store,eta/DAY,day_c);
+	 append_Nc(buf,eta/DAY,day_c);
       if(eta>=HOUR)
-	 append_Nc(store,(eta/HOUR)%24,hour_c);
+	 append_Nc(buf,(eta/HOUR)%24,hour_c);
       if(eta>=MINUTE)
-	 append_Nc(store,(eta/MINUTE)%60,minute_c);
-      append_Nc(store,eta%60,second_c);
+	 append_Nc(buf,(eta/MINUTE)%60,minute_c);
+      append_Nc(buf,eta%60,second_c);
    }
    return buf;
 }

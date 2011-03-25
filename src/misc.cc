@@ -502,7 +502,7 @@ static void set_tz(const char *tz)
    char *new_tz=put_tz;
    if(tz_len>put_tz_alloc)
       new_tz=(char*)xmalloc(put_tz_alloc=tz_len);
-   sprintf(new_tz,"TZ=%s",tz);
+   snprintf(new_tz,tz_len,"TZ=%s",tz);
    if(new_tz!=put_tz)
    {
       putenv(new_tz);
@@ -529,8 +529,9 @@ time_t mktime_from_tz(struct tm *t,const char *tz)
       return mktime_from_utc(t);
    if(isdigit((unsigned char)*tz) || *tz=='+' || *tz=='-')
    {
-      char *tz1=string_alloca(strlen(tz)+4);
-      sprintf(tz1,"GMT%s",tz);
+      int tz1_len=strlen(tz)+4;
+      char *tz1=string_alloca(tz1_len);
+      snprintf(tz1,tz1_len,"GMT%s",tz);
       tz=tz1;
    }
    save_tz();
@@ -649,19 +650,6 @@ char *xstrftime(const char *format, const struct tm *tm)
       /* more space */
       siz*=2;
    }
-}
-
-char *xvasprintf(const char *format, va_list ap)
-{
-   return xstring::vformat(format,ap).borrow();
-}
-char *xasprintf(const char *format, ...)
-{
-   va_list va;
-   va_start(va, format);
-   char *str=xvasprintf(format,va);
-   va_end(va);
-   return str;
 }
 
 /* /file/name -> /file
@@ -794,11 +782,7 @@ const char *get_lftp_home()
    {
       home=getenv("HOME");
       if(home)
-      {
-         char *tmp=(char*)malloc(strlen(home)+6+1);
-         sprintf(tmp,"%s/.lftp",home);
-         home=tmp;
-      }
+         home=xstring::cat(home,"/.lftp",NULL).borrow();
       else
          return NULL;
    }

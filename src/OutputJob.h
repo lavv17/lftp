@@ -87,6 +87,7 @@ public:
 
    void Put(const char *buf,int size);
    void Put(const char *buf) { Put(buf,strlen(buf)); }
+   void Put(const xstring& str) { Put(str.get(),str.length()); }
    void Format(const char *f,...) PRINTF_LIKE(2,3);
    void PutEOF();
 

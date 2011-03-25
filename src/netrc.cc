@@ -50,21 +50,21 @@ NetRC::Entry *NetRC::LookupHost(const char *h,const char *u)
    char cuser[256]="";
    char cpass[256]="";
    char cacct[256]="";
-   const char *home=getenv("HOME");
+
+   const char *const home=getenv("HOME");
    if(!home)
       return 0;
-   char *netrc=(char*)alloca(strlen(home)+8);
-   sprintf(netrc,"%s/.netrc",home);
-   FILE *f=fopen(netrc,"r");
-   bool host_found=false;
-   bool user_found=false;
 
+   const char *const netrc=xstring::cat(home,"/.netrc",NULL);
+   FILE *f=fopen(netrc,"r");
    if(f==NULL)
    {
       Log::global->Format(10,"notice: cannot open %s: %s\n",netrc,strerror(errno));
       return NULL;
    }
 
+   bool host_found=false;
+   bool user_found=false;
    while(fscanf(f,"%255s",str)==1)
    {
       if(comment(str,f))

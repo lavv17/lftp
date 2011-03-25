@@ -576,8 +576,7 @@ void MirrorJob::HandleChdir(FileAccessRef& session, int &redirections)
 
 	    if(!u.proto)
 	    {
-	       url::decode_string(loc);
-	       session->Chdir(loc);
+	       session->Chdir(url::decode(loc));
 	       return;
 	    }
 	    session=FA::New(&u);
@@ -1005,9 +1004,7 @@ int   MirrorJob::Do()
 	 if(script)
 	 {
 	    ArgV args("chmod");
-	    char m[16];
-	    sprintf(m,"%03lo",(unsigned long)(file->mode&~mode_mask));
-	    args.Append(m);
+	    args.Append(xstring::format("%03lo",(unsigned long)(file->mode&~mode_mask)));
 	    args.Append(target_session->GetFileURL(file->name));
 	    xstring_ca cmd(args.CombineQuoted());
 	    fprintf(script,"%s\n",cmd.get());
@@ -1294,14 +1291,14 @@ bool MirrorJob::Statistics::HaveSomethingDone(int flags)
    return new_files|mod_files|(del_files*del)|new_symlinks|mod_symlinks|(del_symlinks*del)|(del_dirs*del);
 }
 
-char *MirrorJob::SetScriptFile(const char *n)
+const char *MirrorJob::SetScriptFile(const char *n)
 {
    script_name.set(n);
    if(strcmp(n,"-"))
    {
       script=fopen(n,"w");
       if(!script)
-	 return xasprintf("%s: %s",n,strerror(errno));
+	 return xstring::format("%s: %s",n,strerror(errno));
       setvbuf(script,NULL,_IOLBF,0);
       script_needs_closing=true;
    }
@@ -1717,10 +1714,10 @@ CMD(mirror)
 
    if(script_file)
    {
-      xstring_ca err(j->SetScriptFile(script_file));
+      const char *err=j->SetScriptFile(script_file);
       if(err)
       {
-	 eprintf("%s: %s\n",args->a0(),err.get());
+	 eprintf("%s: %s\n",args->a0(),err);
 	 j->DeleteLater();
 	 return 0;
       }

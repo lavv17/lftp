@@ -350,12 +350,11 @@ static void move_to_background()
       const char *home=get_lftp_home();
       if(home)
       {
-	 char *log=(char*)alloca(strlen(home)+1+3+1);
-	 sprintf(log,"%s",home);
+	 xstring& log=xstring::get_tmp(home);
 	 if(access(log,F_OK)==-1)
-	    strcat(log,"_log");
+	    log.append("_log");
 	 else
-	    strcat(log,"/log");
+	    log.append("/log");
 
 	 int fd=open(log,O_WRONLY|O_APPEND|O_CREAT,0600);
 	 if(fd>=0)

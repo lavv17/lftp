@@ -143,8 +143,7 @@ void OutputJob::InitCopy()
    if(!fail_if_broken)
       input_fc->DontFailIfBroken();
 
-   xstring_ca buf(xasprintf(_("%s (filter)"), a0.get()));
-   input=new CopyJob(input_fc, buf, filter?filter:a0);
+   input=new CopyJob(input_fc, xstring::format(_("%s (filter)"),a0.get()), filter?filter:a0);
 
    if(!output)
       output=input;
@@ -510,7 +509,7 @@ void OutputJob::Format(const char *f,...)
 {
    va_list v;
    va_start(v,f);
-   xstring_ca str(xvasprintf(f,v));
+   const xstring& str=xstring::vformat(f,v);
    va_end(v);
    Put(str);
 }

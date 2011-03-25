@@ -1153,12 +1153,10 @@ int FishDirList::Do()
 
 const char *FishDirList::Status()
 {
-   static char s[256];
    if(ubuf && !ubuf->Eof() && session->IsOpen())
    {
-      sprintf(s,_("Getting file list (%lld) [%s]"),
+      return xstring::format(_("Getting file list (%lld) [%s]"),
 		     (long long)session->GetPos(),session->CurrentStatus());
-      return s;
    }
    return "";
 }

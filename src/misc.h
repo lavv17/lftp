@@ -102,10 +102,6 @@ void xgettimeofday(time_t *sec, int *usec);
 /* returns malloc'd date */
 char *xstrftime(const char *format, const struct tm *tm);
 
-/* returns malloc'd formatted string */
-char *xvasprintf(const char *format, va_list ap);
-char *xasprintf(const char *format, ...);
-
 void strip_trailing_slashes(xstring& fn);
 xstring& dirname_modify(xstring& fn);
 xstring& dirname(const char *path);  // returns a tmp

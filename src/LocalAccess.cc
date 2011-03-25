@@ -114,24 +114,24 @@ int LocalAccess::Do()
    case(QUOTE_CMD):
       if(stream==0)
       {
-	 char *cmd=string_alloca(10+xstrlen(file));
+	 const char *cmd=0;
 	 // FIXME: shell-quote file name
 	 if(mode==LIST)
 	 {
 	    if(file && file[0])
-	       sprintf(cmd,"ls %s",file.get());
+	       cmd=xstring::cat("ls ",shell_encode(file),NULL);
 	    else
-	       strcpy(cmd,"ls");
+	       cmd="ls";
 	 }
 	 else if(mode==LONG_LIST)
 	 {
 	    if(file && file[0])
-	       sprintf(cmd,"ls -l %s",file.get());
+	       cmd=xstring::cat("ls -l",shell_encode(file),NULL);
 	    else
-	       strcpy(cmd,"ls -la");
+	       cmd="ls -la";
 	 }
 	 else// if(mode==QUOTE_CMD)
-	    strcpy(cmd,file);
+	    cmd=file;
 	 LogNote(5,"running `%s'",cmd);
 	 InputFilter *f_stream=new InputFilter(cmd);
 	 f_stream->SetCwd(cwd);

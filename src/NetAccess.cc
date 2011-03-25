@@ -311,15 +311,13 @@ bool NetAccess::ReconnectAllowed()
 
 const char *NetAccess::DelayingMessage()
 {
-   static char buf[80];
    if(connection_limit>0 && connection_limit<=CountConnections())
       return _("Connection limit reached");
    long remains=long(reconnect_interval_current)-(time_t(now)-try_time);
    if(remains<=0)
       return "";
-   sprintf(buf,"%s: %ld",_("Delaying before reconnect"),remains);
    current->TimeoutS(1);
-   return buf;
+   return xstring::format("%s: %ld",_("Delaying before reconnect"),remains);
 }
 
 bool NetAccess::NextTry()

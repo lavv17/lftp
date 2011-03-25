@@ -943,9 +943,7 @@ Job *CmdExec::builtin_open()
 	    const char *p=ResMgr::Query("cmd:default-protocol",url->host);
 	    if(!p)
 	       p="ftp";
-	    char *u=string_alloca(strlen(p)+3+strlen(host)+1);
-	    sprintf(u,"%s://%s",p,host);
-	    url=new ParsedURL(u);
+	    url=new ParsedURL(xstring::format("%s://%s",p,host));
 	 }
 	 if(user || port)
 	 {
@@ -1311,53 +1309,6 @@ Job *CmdExec::builtin_queue()
 
    return 0;
 }
-
-#if 0
-Job *CmdExec::builtin_queue_edit()
-{
-   CmdExec *queue=GetQueue();
-
-   if(queue->feeder) {
-      eprintf(_("Can only edit plain queues.\n"));
-      return 0;
-   }
-
-   const char *home=getenv("HOME");
-   if(home==0)
-      home="";
-   /* if we have $HOME, use $HOME/.lftp/file; otherwise just file */
-   xstring_ca q_file(xasprintf("%s%slftp-queue-%i", home, home? "/.lftp/":"", (int) getpid()));
-
-   int q_fd=open(q_file,O_RDWR|O_CREAT,0600);
-   if(q_fd==-1) {
-      eprintf(_("Couldn't create temporary file `%s': %s.\n"), q_file.get(), strerror(errno));
-      return 0;
-   }
-
-   if(!queue->WriteCmds(q_fd)) {
-      eprintf(_("%s: error writing %s: %s\n"), args->a0(), q_file.get(), strerror(errno));
-
-      /* abort without clearing the queue */
-      close(q_fd);
-
-      return 0;
-   }
-
-   queue->EmptyCmds();
-
-   close(q_fd);
-
-   /* empty the queue; when this command exits, it'll re-source the queue.
-    * this also effectively "suspends" this queue until it's done editing. */
-
-   {
-      xstring_ca editcmd(xasprintf("shell \"/bin/sh -c 'exec ${EDITOR:-vi} %s'\"; queue -s %s; shell rm '%s'\n", q_file.get(), q_file.get(), q_file.get()));
-      PrependCmd(editcmd);
-   }
-
-   return 0;
-}
-#endif
 
 // below are only non-builtin commands
 #define args	  (parent->args)
@@ -2677,7 +2628,6 @@ CMD(ver)
       typedef const char *(*func0)(int);
       const char *query() const
 	 {
-	    static char ver[10];
 	    int v;
 	    void *sym_ptr=dlsym(RTLD_DEFAULT,symbol);
 	    if(!sym_ptr)
@@ -2693,8 +2643,7 @@ CMD(ver)
 	       break;
 	    case INT8_8:
 	       v=*(int*)sym_ptr;
-	       sprintf(ver,"%d.%d",(v>>8)&255,v&255);
-	       str=ver;
+	       str=xstring::format("%d.%d",(v>>8)&255,v&255);
 	    }
 	    if(!str)
 	       return 0;
@@ -2721,7 +2670,7 @@ CMD(ver)
       if(!v)
 	 continue;
       char buf[256];
-      sprintf(buf,", %s %s",scan->lib_name,v);
+      snprintf(buf,sizeof(buf),", %s %s",scan->lib_name,v);
       int skip=need_comma?0:2;
       int w=mbswidth(buf+skip,mbflags);
       if(col+w>=width)
@@ -2814,11 +2763,10 @@ CMD(bookmark)
 	 if(value==0)
 	 {
 	    value=session->GetConnectURL(flags);
-	    char *a=string_alloca(strlen(value)*3+2);
 	    // encode some more characters, special to CmdExec parser.
-	    url::encode_string(value,a,"&;|\"'\\");
+	    xstring& a=url::encode(value,"&;|\"'\\");
 	    if(value[0] && last_char(value)!='/')
-	       strcat(a,"/");
+	       a.append('/');
 	    value=a;
 	 }
 	 if(value==0 || value[0]==0)
@@ -2857,10 +2805,7 @@ CMD(bookmark)
 	 eprintf(_("%s: import type required (netscape,ncftp)\n"),args->a0());
       else
       {
-	 const char *fmt="shell " PKGDATADIR "/import-%s\n";
-	 char *cmd=string_alloca(strlen(op)+strlen(fmt)+1);
-	 sprintf(cmd,fmt,op);
-	 parent->PrependCmd(cmd);
+	 parent->PrependCmd(xstring::cat("shell " PKGDATADIR "/import-",op,"\n",NULL));
 	 exit_code=0;
       }
    }
@@ -3134,8 +3079,7 @@ CMD(lpwd)
       return 0;
    }
    const char *name=parent->cwd->GetName();
-   char *buf=alloca_strdup2(name,2);
-   sprintf(buf,"%s\n",name?name:"?");
+   const char *buf=xstring::cat(name?name:"?","\n",NULL);
    Job *j=new echoJob(buf,new OutputJob(output.borrow(), args->a0()));
    return j;
 }

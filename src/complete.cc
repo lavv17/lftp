@@ -150,9 +150,8 @@ static char *bookmark_generator(const char *text,int s)
 	    state=1;
 	 if(bookmark_prepend_bm)
 	 {
-	    char *e=alloca_strdup2("bm:",strlen(t)*3);
-	    url::encode_string(t,e+3,URL_HOST_UNSAFE);
-	    t=e;
+	    xstring& e=xstring::get_tmp("bm:");
+	    t=e.append_url_encoded(t,URL_HOST_UNSAFE);
 	 }
 	 if(strncmp(t,text,len)==0)
 	    return xstrdup(t);

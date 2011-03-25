@@ -78,7 +78,7 @@ void StringSet::AppendFormat(const char *f,...)
 {
    va_list v;
    va_start(v,f);
-   set.append(xvasprintf(f,v));
+   set.append(xstring::vformat(f,v).borrow());
    va_end(v);
 }
 

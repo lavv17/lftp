@@ -117,11 +117,11 @@ void FileSetOutput::print(FileSet &fs, const JobRef<OutputJob>& o) const
 	 if((f->filetype == FileInfo::NORMAL || !size_filesonly)
 	 && (f->defined&f->SIZE)) {
 	    char buffer[LONGEST_HUMAN_READABLE + 1];
-	    sprintf(sz, "%8s ",
+	    snprintf(sz, sizeof(sz), "%8s ",
 	       human_readable (f->size, buffer, human_opts, 1,
 		  output_block_size? output_block_size:1024));
 	 } else {
-	    sprintf(sz, "%8s ", ""); /* pad */
+	    snprintf(sz, sizeof(sz), "%8s ", ""); /* pad */
 	 }
 	 c.add(sz, "");
       }
