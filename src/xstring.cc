@@ -25,6 +25,7 @@
 #include <mbswidth.h>
 #include "xstring.h"
 #include "trio.h"
+#include "c-ctype.h"
 
 int xstrcmp(const char *s1,const char *s2)
 {
@@ -414,6 +415,67 @@ const char *xstring::dump_to(xstring& buf) const
       }
    }
    return buf;
+}
+
+int xstring0::_url_decode(size_t len)
+{
+   if(!buf)
+      return 0;
+   char *store=(char*)memchr(buf,'%',len);
+   if(!store)
+      return 0;
+   const char *p=store;
+   int rest=len-(p-buf);
+   while(rest>=3)
+   {
+      if(*p=='%' && c_isxdigit(p[1]) && c_isxdigit(p[2]))
+      {
+	 int n;
+	 if(sscanf(p+1,"%2x",&n)==1)
+	 {
+	    *store++=n;
+	    p+=3;
+	    rest-=3;
+	    continue;
+	 }
+      }
+      *store++=*p++;
+      rest--;
+   }
+   while(rest>0) {
+      *store++=*p++;
+      rest--;
+   }
+   return store-buf;
+}
+
+xstring& xstring::url_decode()
+{
+   set_length(_url_decode(length()));
+   return *this;
+}
+xstring_c& xstring_c::url_decode()
+{
+   set_length(_url_decode(length()));
+   return *this;
+}
+
+/* Encode the unsafe characters in a given string, producing %XX encoded string. */
+#define need_quote(c) (c_iscntrl((c)) || !c_isascii((c)) || strchr(unsafe,(c)))
+xstring& xstring::append_url_encoded(const char *s,int len,const char *unsafe)
+{
+   if(!s)
+      return *this;
+   add_space(len+len/4);
+   while(len-->0)
+   {
+      char c=*s++;
+      if (need_quote(c))
+	 appendf("%%%02X",(unsigned char)c);
+      else
+	 append(c);
+   }
+   return *this;
 }
 
 xstring xstring::null;

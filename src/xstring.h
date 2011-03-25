@@ -80,6 +80,8 @@ protected:
    char *buf;
    xstring0() {}
    xstring0(const xstring0&); // disable cloning
+
+   int _url_decode(size_t len);
 public:
    ~xstring0() { xfree(buf); }
    operator const char *() const { return buf; }
@@ -110,9 +112,12 @@ public:
    bool eq(const char *s) { return !xstrcmp(buf,s); }
    bool ne(const char *s) { return !eq(s); }
    size_t length() const { return xstrlen(buf); }
+   void set_length(size_t n) { if(buf) buf[n]=0; }
 
    void unset() { xfree(buf); buf=0; }
    void _set(const char *s) { buf=xstrdup(s); }
+
+   xstring_c& url_decode();
 };
 class xstring_ca : public xstring_c
 {
@@ -200,6 +205,11 @@ public:
    bool is_binary() const;
    const char *dump_to(xstring &out) const;
    const char *dump() const;
+
+   xstring& url_decode();
+   xstring& append_url_encoded(const char *s,int len,const char *unsafe);
+   xstring& append_url_encoded(const char *s,const char *unsafe) { return append_url_encoded(s,strlen(s),unsafe); }
+   xstring& append_url_encoded(const xstring& s,const char *unsafe) { return append_url_encoded(s,s.length(),unsafe); }
 
    static xstring null;
 };
