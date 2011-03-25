@@ -23,10 +23,15 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
-#include <netinet/in.h>
-#include <sys/types.h>
-#include <sys/socket.h>
 #include <string.h>
+#include "sockets.h"
+#include <sys/types.h>
+#if HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#elif HAVE_WS2TCPIP_H
+# include <ws2tcpip.h>
+#endif
+#include <netinet/in.h>
 #include <arpa/inet.h>
 
 union sockaddr_u
