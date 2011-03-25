@@ -67,13 +67,10 @@ public:
    char *Combine();
 
    // encode unsafe chars as %XY
-   static char *encode_string(const char *,char *buf=0,const char *u=URL_UNSAFE);
    static xstring& encode(const char *s,int len,const char *unsafe);
    static xstring& encode(const xstring &s,const char *unsafe) { return encode(s,s.length(),unsafe); }
    static xstring& encode(const char *s,const char *unsafe) { return encode(s,strlen(s),unsafe); }
-   // reverse; done in-place; returns length.
-   static int decode_string(char *);
-   static xstring& decode(const char *);
+   static xstring& decode(const char *) __attribute__((warn_unused_result));
 
    static bool is_url(const char *p);
    static int path_index(const char *p);

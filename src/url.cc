@@ -186,10 +186,10 @@ void ParsedURL::parse(const char *url,bool proto_required,bool use_rfc1738)
    }
 
 decode:
-   url::decode_string(user.get_non_const());
-   url::decode_string(pass.get_non_const());
-   url::decode_string(host.get_non_const());
-   path.set_length(url::decode_string(path.get_non_const()));
+   user.url_decode();
+   pass.url_decode();
+   host.url_decode();
+   path.url_decode();
 
    if(!xstrcmp(proto,"slot"))
    {
@@ -239,20 +239,16 @@ decode:
 
 static bool valid_slot(const char *cs)
 {
-   char *s=alloca_strdup(cs);
-   char *slash=strchr(s,'/');
-   if(slash)
-      *slash=0;
-   url::decode_string(s);
+   xstring& s=xstring::get_tmp(cs);
+   s.truncate_at('/');
+   s.url_decode();
    return 0!=ConnectionSlot::Find(s);
 }
 static bool valid_bm(const char *bm)
 {
-   char *s=alloca_strdup(bm);
-   char *slash=strchr(s,'/');
-   if(slash)
-      *slash=0;
-   url::decode_string(s);
+   xstring& s=xstring::get_tmp(bm);
+   s.truncate_at('/');
+   s.url_decode();
    const char *url=lftp_bookmarks.Lookup(s);
    return(url && !strchr(url,' ') && !strchr(url,'\t'));
 }
@@ -345,92 +341,17 @@ char *ParsedURL::Combine(const char *home,bool use_rfc1738)
    return u.borrow();
 }
 
-// decode in place, return the new string length
-int url::decode_string(char *str)
-{
-   char *p=str;
-   if(!p)
-      return 0;
-   char *o=p;
-   while(*p)
-   {
-      if(*p=='%' && isxdigit((unsigned char)p[1]) && isxdigit((unsigned char)p[2]))
-      {
-	 int n;
-	 if(sscanf(p+1,"%2x",&n)==1)
-	 {
-	    *o++=n;
-	    p+=3;
-	    continue;
-	 }
-      }
-      *o++=*p++;
-   }
-   *o=0;
-   return o-str;
-}
-
 xstring& url::decode(const char *p)
 {
    if(!p)
       return xstring::null;
-   xstring& s=xstring::get_tmp("");
-   while(*p)
-   {
-      if(*p=='%' && isxdigit((unsigned char)p[1]) && isxdigit((unsigned char)p[2]))
-      {
-	 int n;
-	 if(sscanf(p+1,"%2x",&n)==1)
-	 {
-	    s.append(n);
-	    p+=3;
-	    continue;
-	 }
-      }
-      s.append(*p++);
-   }
-   return s;
-}
-
-/* encode_string was taken from wget-1.5.2 and slightly modified */
-
-/* Encodes the unsafe characters (listed in URL_UNSAFE) in a given
-   string, producing %XX encoded string.  */
-#define need_quote(c) (iscntrl((unsigned char)(c)) || !isascii((unsigned char)(c)) || strchr(unsafe,(c)))
-char *url::encode_string (const char *s,char *res,const char *unsafe)
-{
-  char *p;
-
-  for (p = res; *s; s++)
-  {
-    if (need_quote(*s))
-      {
-	const unsigned char c = *s;
-	*p++ = '%';
-	sprintf(p,"%02X",c);
-	p+=2;
-      }
-    else
-      *p++ = *s;
-  }
-  *p = '\0';
-  return res;
+   return xstring::get_tmp(p).url_decode();
 }
 xstring& url::encode(const char *s,int len,const char *unsafe)
 {
    if(!s)
       return xstring::null;
-   xstring& u=xstring::get_tmp("");
-   u.get_space(len+len/4);
-   while(len-->0)
-   {
-      char c=*s++;
-      if (need_quote(c))
-	 u.appendf("%%%02X",(unsigned char)c);
-      else
-	 u.append(c);
-   }
-   return u;
+   return xstring::get_tmp("").append_url_encoded(s,len,unsafe);
 }
 
 bool url::dir_needs_trailing_slash(const char *proto_c)
