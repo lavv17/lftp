@@ -10,6 +10,7 @@
 	  SFtp.cc, StringSet.cc, misc.cc, misc.h, commands.cc, complete.cc,
 	  history.cc, lftp.cc, netrc.cc: don't use sprintf, decode_string,
 	  encode_string; drop xasprintf and xvasprintf.
+	* ftpclass.cc, resource.cc: (ftp:use-ip-tos) new setting.
 
 2011-03-16  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -1334,7 +1334,8 @@ int   Ftp::Do()
 	 SetError(SEE_ERRNO,str);
 	 return MOVED;
       }
-      MinimizeLatency(conn->control_sock);
+      if(QueryBool("use-ip-tos",hostname))
+	 MinimizeLatency(conn->control_sock);
 
       SayConnectingTo();
 
@@ -1719,7 +1720,8 @@ int   Ftp::Do()
 	    LogError(0,"socket(data): %s",strerror(saved_errno));
 	    goto system_error;
 	 }
-	 MaximizeThroughput(conn->data_sock);
+	 if(QueryBool("use-ip-tos",hostname))
+	    MaximizeThroughput(conn->data_sock);
 
 	 addr_len=sizeof(conn->data_sa);
 	 getsockname(conn->control_sock,&conn->data_sa.sa,&addr_len);
@@ -2139,7 +2141,8 @@ int   Ftp::Do()
 
       close(conn->data_sock);
       conn->data_sock=res;
-      MaximizeThroughput(conn->data_sock);
+      if(QueryBool("use-ip-tos",hostname))
+	 MaximizeThroughput(conn->data_sock);
 
       LogNote(5,_("Accepted data connection from (%s) port %u"),
 	 SocketNumericAddress(&conn->data_sa),SocketPort(&conn->data_sa));
