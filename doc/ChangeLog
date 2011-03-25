@@ -1,3 +1,7 @@
+2011-03-25	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document xfer:log-file and ftp:use-ip-tos
+
 2010-12-30	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: add ln description.

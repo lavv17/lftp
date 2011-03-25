@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "24 Feb 2011"
+.TH lftp 1 "25 Mar 2011"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.2.0.
+This man page documents lftp version 4.2.1.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -1290,6 +1290,10 @@ if true, lftp will try to set up direct connection between two ftp servers.
 when ftp:proxy points to an http proxy, this setting selects hftp method (GET,
 HEAD) when true, and CONNECT method when false. Default is true.
 .TP
+.BR ftp:use-ip-tos \ (boolean)
+when true, lftp uses IPTOS_LOWDELAY for control connection and IPTOS_THROUGHPUT
+for data connections.
+.TP
 .BR ftp:lang \ (boolean)
 the language selected with LANG command, if supported as indicated by FEAT
 response. Default is empty which means server default.
@@ -1677,7 +1681,10 @@ the period over which weighted average rate is calculated to produce ETA.
 show terse ETA (only high order parts). Default is true.
 .TP
 .BR xfer:log \ (boolean)
-when true, lftp logs transfers to \fI~/.lftp/transfer_log\fR.
+when true, lftp logs transfers to a file from xfer:log-file setting.
+.TP
+.BR xfer:log-file \ (boolean)
+the file to log transfers to. Default is \fI~/.lftp/transfer_log\fR.
 .TP
 .BR xfer:make-backup \ (boolean)
 when true, lftp renames pre-existing file adding ``~'' suffix instead of overwriting it.
@@ -1809,6 +1816,7 @@ nohup mode.
 .TP
 .I "~/.lftp/transfer_log"
 The file transfers are logged to when xfer:log setting is set to `yes'.
+The location can be changed by xfer:log-file setting.
 .TP
 .I "~/.lftp/bookmarks"
 The file is used to store lftp's bookmarks.  See the \fBbookmark\fR
