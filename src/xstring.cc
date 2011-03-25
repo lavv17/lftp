@@ -423,7 +423,7 @@ int xstring0::_url_decode(size_t len)
       return 0;
    char *store=(char*)memchr(buf,'%',len);
    if(!store)
-      return 0;
+      return len;
    const char *p=store;
    int rest=len-(p-buf);
    while(rest>=3)
