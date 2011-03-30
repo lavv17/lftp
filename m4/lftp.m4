@@ -243,7 +243,7 @@ AC_DEFUN([LFTP_ENVIRON_CHECK],[
 ])
 
 dnl Taken from dovecot
-AC_DEFUN([LFTP_POSIX_FTRUNCATE_CHECK],[
+AC_DEFUN([LFTP_POSIX_FALLOCATE_CHECK],[
    dnl * Old glibcs have broken posix_fallocate(). Make sure not to use it.
    dnl * It may also be broken in AIX.
    AC_CACHE_CHECK([whether posix_fallocate() works],i_cv_posix_fallocate_works,[
