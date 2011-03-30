@@ -1,3 +1,10 @@
+Version 4.2.1 - 2011-03-30
+
+* new setting ftp:use-ip-tos.
+* optimized torrent validation.
+* fixed fallocate call.
+* got rid of sprintf calls.
+
 Version 4.2.0 - 2011-03-03
 
 * changed ssl:verify-certificate default to yes.

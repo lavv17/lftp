@@ -41,6 +41,9 @@ release:
 	make dist
 	cvs commit -m $(VERSION)
 	make distcheck
+	make release-ftp
+
+release-ftp:
 	mv $(PACKAGE)-$(VERSION).tar.gz $(REL_DIR)
 	cp -p $(PACKAGE).lsm $(REL_DIR)/$(PACKAGE)-$(VERSION).lsm
 	cd $(REL_DIR) && \
