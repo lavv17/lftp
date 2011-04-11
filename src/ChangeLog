@@ -1,6 +1,7 @@
 2011-04-11  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: save tmp buffer, this fixes `cd -'.
+	* FileCopy.cc: (FileCopyPeerFA::Clone) copy orig_url.
 
 2011-03-25  Alexander V. Lukyanov <lav@yars.free.net>
 
