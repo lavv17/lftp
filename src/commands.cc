@@ -602,6 +602,7 @@ Job *CmdExec::builtin_cd()
 	 return 0;
       }
       args->setarg(1,dir); // for status line
+      dir=args->getarg(1);
    }
 
    if(url::is_url(dir))

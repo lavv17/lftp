@@ -1,3 +1,7 @@
+2011-04-11  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: save tmp buffer, this fixes `cd -'.
+
 2011-03-25  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* xstring.cc, xstring.h: (url_decode, append_url_encoded) new methods.
