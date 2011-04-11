@@ -1,11 +1,11 @@
 # Russian translation for lftp
-# Copyright (C) 1998,2000-2008 Alexander V. Lukyanov <lav@yars.free.net>
+# Copyright (C) 1998,2000-2011 Alexander V. Lukyanov <lav@yars.free.net>
 # Copyright (C) 1999 Const Kaplinsky <const@ce.cctpu.edu.ru>
 # You may modify and redistribute this file according to GNU GPL (see COPYING).
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 4.1.1\n"
+"Project-Id-Version: lftp 4.2.2\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2011-03-25 19:12+0300\n"
 "PO-Revision-Date: 2010-11-22 17:38+04:00\n"
@@ -1253,14 +1253,12 @@ msgstr ""
 " <адрес>             имя сервера, URL или имя закладки\n"
 
 #: src/commands.cc:288
-#, fuzzy
 msgid "ln [-s] <file1> <file2>"
-msgstr "mv <файл1> <файл2>"
+msgstr "ln [-s] <файл1> <файл2>"
 
 #: src/commands.cc:289
-#, fuzzy
 msgid "Link <file1> to <file2>\n"
-msgstr "Переименовать <файл1> в <файл2>\n"
+msgstr "Привязать <файл1> к имени <файл2>\n"
 
 #: src/commands.cc:293
 msgid "ls [<args>]"

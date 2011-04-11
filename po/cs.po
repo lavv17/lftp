@@ -1,7 +1,7 @@
 # Czech translation of lftp.
 # Copyright (C) 2009 Alexander V. Lukyanov <lav@yars.free.net>
 # This file is distributed under the same license as the lftp package.
-# Petr Pisar <petr.pisar@atlas.cz>, 2009, 2010.
+# Petr Pisar <petr.pisar@atlas.cz>, 2009, 2010, 2011.
 #
 # option → volba
 # put → nahrát (jako opak get, download, stáhnout)
@@ -10,10 +10,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 4.1.1\n"
+"Project-Id-Version: lftp 4.2.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2011-03-25 19:12+0300\n"
-"PO-Revision-Date: 2010-11-25 19:50+0100\n"
+"PO-Revision-Date: 2011-04-05 20:34+0200\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
 "Language: cs\n"
@@ -1314,14 +1314,12 @@ msgstr ""
 " <server>                 název stroje, URL nebo název záložky\n"
 
 #: src/commands.cc:288
-#, fuzzy
 msgid "ln [-s] <file1> <file2>"
-msgstr "mv <soubor1> <soubor2>"
+msgstr "ln [-s] <soubor1> <soubor2>"
 
 #: src/commands.cc:289
-#, fuzzy
 msgid "Link <file1> to <file2>\n"
-msgstr "Přejmenuje <soubor1> na <soubor2>\n"
+msgstr "Vytvoří odkaz z <soubor1> na <soubor2>\n"
 
 #: src/commands.cc:293
 msgid "ls [<args>]"
