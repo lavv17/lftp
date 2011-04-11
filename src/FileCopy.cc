@@ -1272,7 +1272,9 @@ FileCopyPeerFA *FileCopyPeerFA::New(const FileAccessRef& s,const char *url,int m
 }
 FileCopyPeer *FileCopyPeerFA::Clone()
 {
-   return new FileCopyPeerFA(session->Clone(),file,FAmode);
+   FileCopyPeerFA *c=new FileCopyPeerFA(session->Clone(),file,FAmode);
+   c->orig_url.set(orig_url);
+   return c;
 }
 
 // FileCopyPeerFDStream

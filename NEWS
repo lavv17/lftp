@@ -1,3 +1,9 @@
+Version 4.2.2 - 2011-04-11
+
+* fixed `cd -'.
+* fixed pget for URLs with special symbols.
+* translations updated (cs, ru).
+
 Version 4.2.1 - 2011-03-30
 
 * new setting ftp:use-ip-tos.

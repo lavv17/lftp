@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2011-03-25 19:12+0300\n"
+"POT-Creation-Date: 2011-04-11 13:24+0400\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -243,7 +243,7 @@ msgid "Total %d $file|files$ transferred\n"
 msgstr "总共传输 %d 个文件\n"
 
 #: src/DummyProto.cc:66 src/MirrorJob.cc:1632 src/MirrorJob.cc:1648
-#: src/commands.cc:983 src/commands.cc:2119
+#: src/commands.cc:984 src/commands.cc:2120
 #, fuzzy
 msgid " - not supported protocol"
 msgstr "%s: %s - 不支持的协议\n"
@@ -331,7 +331,7 @@ msgstr ""
 msgid "file name missed in URL"
 msgstr "缺少文件名. "
 
-#: src/FileCopy.cc:1897
+#: src/FileCopy.cc:1899
 msgid "Verify command failed without a message"
 msgstr ""
 
@@ -538,7 +538,7 @@ msgstr "正在读取目录内容 (%ld)"
 msgid "Getting files information"
 msgstr "正在读取文件信息 (%d%%)"
 
-#: src/LocalAccess.cc:658 src/commands.cc:3078
+#: src/LocalAccess.cc:658 src/commands.cc:3079
 #, fuzzy
 msgid "cannot get current directory"
 msgstr "正在改变远程目录..."
@@ -658,11 +658,11 @@ msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
 #: src/MirrorJob.cc:1601 src/SleepJob.cc:148 src/SleepJob.cc:204
-#: src/commands.cc:1116 src/commands.cc:1204 src/commands.cc:1592
-#: src/commands.cc:1623 src/commands.cc:1726 src/commands.cc:2028
-#: src/commands.cc:2224 src/commands.cc:2386 src/commands.cc:2414
-#: src/commands.cc:2421 src/commands.cc:2707 src/commands.cc:2734
-#: src/commands.cc:2741 src/commands.cc:3061 src/lftp.cc:263
+#: src/commands.cc:1117 src/commands.cc:1205 src/commands.cc:1593
+#: src/commands.cc:1624 src/commands.cc:1727 src/commands.cc:2029
+#: src/commands.cc:2225 src/commands.cc:2387 src/commands.cc:2415
+#: src/commands.cc:2422 src/commands.cc:2708 src/commands.cc:2735
+#: src/commands.cc:2742 src/commands.cc:3062 src/lftp.cc:263
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "请用 `help %s' 或得更多的信息.\n"
@@ -778,7 +778,7 @@ msgstr ""
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr ""
 
-#: src/ResMgr.cc:764 src/commands.cc:3221 src/commands.cc:3230
+#: src/ResMgr.cc:764 src/commands.cc:3222 src/commands.cc:3231
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr ""
 
@@ -1783,19 +1783,19 @@ msgstr "用法: cd remote-dir\n"
 msgid "%s: no old directory for this site\n"
 msgstr "%s: 这个站点没有保存的旧目录\n"
 
-#: src/commands.cc:678
+#: src/commands.cc:679
 #, c-format
 msgid "Usage: %s [<exit_code>]\n"
 msgstr "用法: %s [<exit_code>]\n"
 
-#: src/commands.cc:687
+#: src/commands.cc:688
 msgid ""
 "There are running jobs and `cmd:move-background' is not set.\n"
 "Use `exit bg' to force moving to background or `kill all' to terminate "
 "jobs.\n"
 msgstr ""
 
-#: src/commands.cc:702
+#: src/commands.cc:703
 msgid ""
 "\n"
 "lftp now tricks the shell to move it to background process group.\n"
@@ -1804,224 +1804,224 @@ msgid ""
 "Use `fg' shell command to return to lftp if it is still running.\n"
 msgstr ""
 
-#: src/commands.cc:886 src/commands.cc:3354
+#: src/commands.cc:887 src/commands.cc:3355
 #, c-format
 msgid "Try `%s --help' for more information\n"
 msgstr "请用 `%s --help' 获取更多的信息\n"
 
-#: src/commands.cc:888
+#: src/commands.cc:889
 #, c-format
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 msgstr "用法: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 
-#: src/commands.cc:1015 src/commands.cc:2103
+#: src/commands.cc:1016 src/commands.cc:2104
 msgid "Password: "
 msgstr "口令: "
 
-#: src/commands.cc:1017
+#: src/commands.cc:1018
 #, c-format
 msgid "%s: GetPass() failed -- assume anonymous login\n"
 msgstr "%s: GetPass() 失败 -- 使用匿名登录\n"
 
-#: src/commands.cc:1124
+#: src/commands.cc:1125
 #, fuzzy, c-format
 msgid "Usage: %s [OPTS] command args...\n"
 msgstr "用法: %s command args...\n"
 
-#: src/commands.cc:1174
+#: src/commands.cc:1175
 #, fuzzy, c-format
 msgid "%s: -n: positive number expected. "
 msgstr "%s: -n: 需要数字. "
 
-#: src/commands.cc:1226
+#: src/commands.cc:1227
 #, c-format
 msgid "Created a stopped queue.\n"
 msgstr ""
 
-#: src/commands.cc:1265 src/commands.cc:1295
+#: src/commands.cc:1266 src/commands.cc:1296
 #, c-format
 msgid "%s: No queue is active.\n"
 msgstr ""
 
-#: src/commands.cc:1287
+#: src/commands.cc:1288
 #, fuzzy, c-format
 msgid "%s: -m: Number expected as second argument. "
 msgstr "%s: -n: 需要数字. "
 
-#: src/commands.cc:1340
+#: src/commands.cc:1341
 #, fuzzy, c-format
 msgid "Usage: %s <cmd>\n"
 msgstr "用法: %s <raw_cmd>\n"
 
-#: src/commands.cc:1450
+#: src/commands.cc:1451
 msgid "invalid argument for `--sort'"
 msgstr ""
 
-#: src/commands.cc:1480
+#: src/commands.cc:1481
 #, fuzzy
 msgid "invalid block size"
 msgstr "无效的数字"
 
-#: src/commands.cc:1632
+#: src/commands.cc:1633
 #, fuzzy, c-format
 msgid "Usage: %s [OPTS] files...\n"
 msgstr "用法: %s files...\n"
 
-#: src/commands.cc:1704
+#: src/commands.cc:1705
 #, c-format
 msgid "%s: -n: Number expected. "
 msgstr "%s: -n: 需要数字. "
 
-#: src/commands.cc:1737
+#: src/commands.cc:1738
 #, c-format
 msgid "File name missed. "
 msgstr "缺少文件名. "
 
-#: src/commands.cc:1835
+#: src/commands.cc:1836
 #, fuzzy, c-format
 msgid "Usage: %s %s[-f] files...\n"
 msgstr "用法: %s [-v] [-v] ...\n"
 
-#: src/commands.cc:1878
+#: src/commands.cc:1879
 #, fuzzy, c-format
 msgid "Usage: %s [-e] <file|command>\n"
 msgstr "用法: %s <file>\n"
 
-#: src/commands.cc:1921
+#: src/commands.cc:1922
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
 msgstr "用法: %s [-v] [-v] ...\n"
 
-#: src/commands.cc:1935 src/commands.cc:2190 src/commands.cc:2313
-#: src/commands.cc:2483 src/commands.cc:2872 src/commands.cc:2948
+#: src/commands.cc:1936 src/commands.cc:2191 src/commands.cc:2314
+#: src/commands.cc:2484 src/commands.cc:2873 src/commands.cc:2949
 #: src/lftp.cc:275
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s: %s - 不是一个数字\n"
 
-#: src/commands.cc:1942 src/commands.cc:2169 src/commands.cc:2199
-#: src/commands.cc:2331
+#: src/commands.cc:1943 src/commands.cc:2170 src/commands.cc:2200
+#: src/commands.cc:2332
 #, c-format
 msgid "%s: %d - no such job\n"
 msgstr "%s: %d - 没有这个任务\n"
 
-#: src/commands.cc:1969
+#: src/commands.cc:1970
 #, fuzzy, c-format
 msgid "Usage: %s [-p]\n"
 msgstr "用法: %s\n"
 
-#: src/commands.cc:2070
+#: src/commands.cc:2071
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
 msgstr "调试级别为 %d, 输出到 %s\n"
 
-#: src/commands.cc:2073
+#: src/commands.cc:2074
 #, c-format
 msgid "debug is off\n"
 msgstr "调试功能关闭\n"
 
-#: src/commands.cc:2084
+#: src/commands.cc:2085
 #, fuzzy, c-format
 msgid "Usage: %s <user|URL> [<pass>]\n"
 msgstr "user <user> [<pass>]"
 
-#: src/commands.cc:2159 src/commands.cc:2323
+#: src/commands.cc:2160 src/commands.cc:2324
 #, c-format
 msgid "%s: no current job\n"
 msgstr "%s: 没有当前任务\n"
 
-#: src/commands.cc:2171
+#: src/commands.cc:2172
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
 msgstr "用法: %s <jobno> ... | all\n"
 
-#: src/commands.cc:2253
+#: src/commands.cc:2254
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr "%s: %s. 使用 `set -a' 查看所有的变量.\n"
 
-#: src/commands.cc:2297
+#: src/commands.cc:2298
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
 msgstr "用法: %s [<jobno>]\n"
 
-#: src/commands.cc:2336
+#: src/commands.cc:2337
 #, c-format
 msgid "%s: some other job waits for job %d\n"
 msgstr "%s: 某个任务在等待任务 %d 结束\n"
 
-#: src/commands.cc:2341
+#: src/commands.cc:2342
 #, c-format
 msgid "%s: wait loop detected\n"
 msgstr ""
 
-#: src/commands.cc:2365
+#: src/commands.cc:2366
 #, c-format
 msgid "Usage: mv <file1> <file2>\n"
 msgstr "用法: mv <file1> <file2>\n"
 
-#: src/commands.cc:2413 src/commands.cc:2733
+#: src/commands.cc:2414 src/commands.cc:2734
 #, c-format
 msgid "Invalid command. "
 msgstr "无效的命令. "
 
-#: src/commands.cc:2420 src/commands.cc:2740
+#: src/commands.cc:2421 src/commands.cc:2741
 #, c-format
 msgid "Ambiguous command. "
 msgstr "不确切的命令. "
 
-#: src/commands.cc:2439
+#: src/commands.cc:2440
 #, c-format
 msgid "%s: Operand missed for size\n"
 msgstr "%s: size 缺少操作数\n"
 
-#: src/commands.cc:2456
+#: src/commands.cc:2457
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
 msgstr "%s: `expire' 缺少操作数\n"
 
-#: src/commands.cc:2489
+#: src/commands.cc:2490
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr "%s: %s - 没有这个缓存的会话. 使用 `scache' 列出会话列表.\n"
 
-#: src/commands.cc:2506
+#: src/commands.cc:2507
 #, c-format
 msgid "Sorry, no help for %s\n"
 msgstr "抱歉, 没有针对 %s 的帮助信息\n"
 
-#: src/commands.cc:2511
+#: src/commands.cc:2512
 #, c-format
 msgid "%s is a built-in alias for %s\n"
 msgstr "%s 是 %s 的一个内建别名\n"
 
-#: src/commands.cc:2516
+#: src/commands.cc:2517
 #, c-format
 msgid "Usage: %s\n"
 msgstr "用法: %s\n"
 
-#: src/commands.cc:2524
+#: src/commands.cc:2525
 #, c-format
 msgid "%s is an alias to `%s'\n"
 msgstr "%s 是 `%s' 的别名\n"
 
-#: src/commands.cc:2528
+#: src/commands.cc:2529
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr "没有 `%s' 这个命令. 请用 `help' 列出可用的命令.\n"
 
-#: src/commands.cc:2530
+#: src/commands.cc:2531
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr "不确切的命令 `%s'. 请用 `help' 列出可用的命令.\n"
 
-#: src/commands.cc:2593
+#: src/commands.cc:2594
 #, fuzzy, c-format
 msgid "LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
 msgstr "Lftp | Version %s | Copyright (c) 1996-1999 Alexander V. Lukyanov\n"
 
-#: src/commands.cc:2596
+#: src/commands.cc:2597
 #, c-format
 msgid ""
 "LFTP is free software: you can redistribute it and/or modify\n"
@@ -2038,81 +2038,81 @@ msgid ""
 "along with LFTP.  If not, see <http://www.gnu.org/licenses/>.\n"
 msgstr ""
 
-#: src/commands.cc:2610
+#: src/commands.cc:2611
 #, fuzzy, c-format
 msgid "Send bug reports and questions to the mailing list <%s>.\n"
 msgstr "Send bug reports and questions to <%s>.\n"
 
-#: src/commands.cc:2616
+#: src/commands.cc:2617
 msgid "Libraries used: "
 msgstr ""
 
-#: src/commands.cc:2756 src/commands.cc:2787
+#: src/commands.cc:2757 src/commands.cc:2788
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s: 需要书签名\n"
 
-#: src/commands.cc:2776
+#: src/commands.cc:2777
 #, fuzzy, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
 msgstr "%s: 需要书签名\n"
 
-#: src/commands.cc:2789
+#: src/commands.cc:2790
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s: 没有 `%s' 这个书签\n"
 
-#: src/commands.cc:2805
+#: src/commands.cc:2806
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: 需要导入类型(netscape,ncftp)\n"
 
-#: src/commands.cc:2878
+#: src/commands.cc:2879
 #, fuzzy, c-format
 msgid "Usage: %s [-d #] dir\n"
 msgstr "用法: %s\n"
 
-#: src/commands.cc:2981
+#: src/commands.cc:2982
 #, fuzzy, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "无效的数字"
 
-#: src/commands.cc:2990
+#: src/commands.cc:2991
 #, fuzzy, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "用法: %s\n"
 
-#: src/commands.cc:2996
+#: src/commands.cc:2997
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr ""
 
-#: src/commands.cc:3000
+#: src/commands.cc:3001
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr ""
 
-#: src/commands.cc:3048
+#: src/commands.cc:3049
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "用法: %s command args...\n"
 
-#: src/commands.cc:3060
+#: src/commands.cc:3061
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "用法: %s module [args...]\n"
 
-#: src/commands.cc:3142
+#: src/commands.cc:3143
 #, fuzzy, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "用法: %s files...\n"
 
-#: src/commands.cc:3162
+#: src/commands.cc:3163
 #, fuzzy, c-format
 msgid "invalid mode string: %s\n"
 msgstr "无效的数字"
 
-#: src/commands.cc:3236
+#: src/commands.cc:3237
 #, fuzzy, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "用法: %s <file>\n"
