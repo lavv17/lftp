@@ -1,3 +1,8 @@
+2011-04-22  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc, resource.cc: (mirror:no-empty-dirs) new setting.
+	* FileCopy.cc: remove password from URLs before logging.
+
 2011-04-11  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: save tmp buffer, this fixes `cd -'.

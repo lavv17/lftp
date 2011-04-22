@@ -644,7 +644,8 @@ void FileCopy::LogTransfer()
    long long range_limit=GetRangeLimit();
    if(range_limit==FILE_END)
       range_limit=get->GetPos();
-   transfer_log->Format(0,"%s -> %s %lld-%lld %s\n",src,dst,
+   transfer_log->Format(0,"%s -> %s %lld-%lld %s\n",
+      url::remove_password(src),url::remove_password(dst),
       (long long)GetRangeStart(),range_limit,
       Speedometer::GetStr(GetBytesCount()/GetTimeSpent()).get());
 }

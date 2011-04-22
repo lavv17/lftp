@@ -1410,6 +1410,7 @@ CMD(mirror)
    int	 use_pget=ResMgr::Query("mirror:use-pget-n",0);
    bool	 reverse=false;
    bool	 script_only=false;
+   bool	 no_empty_dirs=ResMgr::QueryBool("mirror:no-empty-dirs",0);
    const char *script_file=0;
    const char *on_change=0;
 
@@ -1589,6 +1590,7 @@ CMD(mirror)
 	 flags|=MirrorJob::ONLY_EXISTING;
 	 break;
       case(OPT_NO_EMPTY_DIRS):
+	 no_empty_dirs=true;
 	 flags|=MirrorJob::NO_EMPTY_DIRS|MirrorJob::DEPTH_FIRST;
 	 break;
       case(OPT_DEPTH_FIRST):
@@ -1686,6 +1688,9 @@ CMD(mirror)
       if(!target_session)
 	 target_session=parent->session->Clone();
    }
+
+   if(no_empty_dirs)
+      flags|=MirrorJob::NO_EMPTY_DIRS|MirrorJob::DEPTH_FIRST;
 
    Ref<MirrorJob> j(new MirrorJob(0,source_session.borrow(),target_session.borrow(),source_dir,target_dir));
    j->SetFlags(flags,1);
