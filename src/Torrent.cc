@@ -103,6 +103,7 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    total_recv=0;
    total_left=0;
    complete_pieces=0;
+   connected_peers_count=0;
    active_peers_count=0;
    complete_peers_count=0;
    am_interested_peers_count=0;
@@ -672,6 +673,7 @@ int Torrent::Do()
       if(!force_valid) {
 	 validate_index=0;
 	 validating=true;
+	 recv_rate.Reset();
       } else {
 	 for(unsigned i=0; i<total_pieces; i++)
 	    my_bitfield->set_bit(i,1);
@@ -683,9 +685,13 @@ int Torrent::Do()
    }
    if(validating) {
       ValidatePiece(validate_index++);
-      if(validate_index<total_pieces)
+      if(validate_index<total_pieces) {
+	 recv_rate.Add(piece_length);
 	 return MOVED;
+      }
+      recv_rate.Add(last_piece_length);
       validating=false;
+      recv_rate.Reset();
       if(total_left==0) {
 	 complete=true;
 	 seed_timer.Reset();
@@ -700,9 +706,11 @@ int Torrent::Do()
       OptimisticUnchoke();
 
    // count peers
+   connected_peers_count=0;
    active_peers_count=0;
    complete_peers_count=0;
    for(int i=0; i<peers.count(); i++) {
+      connected_peers_count+=peers[i]->Connected();
       active_peers_count+=peers[i]->Active();
       complete_peers_count+=peers[i]->Complete();
    }
@@ -1339,8 +1347,9 @@ const xstring& Torrent::Status()
    if(metainfo_data)
       return xstring::format("Getting meta-data: %s",metainfo_data->Status());
    if(validating) {
-      return xstring::format("Validation: %u/%u (%u%%)",validate_index,total_pieces,
-	 validate_index*100/total_pieces);
+      return xstring::format("Validation: %u/%u (%u%%) %s%s",validate_index,total_pieces,
+	 validate_index*100/total_pieces,recv_rate.GetStrS(),
+	 recv_rate.GetETAStrFromSize((total_pieces-validate_index-1)*piece_length+last_piece_length).get());
    }
    if(shutting_down) {
       if(trackers.count()==0)
@@ -2631,12 +2640,18 @@ xstring& TorrentJob::FormatStatus(xstring& s,int v,const char *tab)
 
    if(torrent->GetPeersCount()<=5 || v>1) {
       const TaskRefArray<TorrentPeer>& peers=torrent->GetPeers();
-      for(int i=0; i<peers.count(); i++)
-	 s.appendf("%s  %s: %s\n",tab,peers[i]->GetName(),peers[i]->Status());
+      if(v<=2) {
+	 s.appendf("%s  not connected peers: %d\n",tab,
+	    torrent->GetPeersCount()-torrent->GetConnectedPeersCount());
+      }
+      for(int i=0; i<peers.count(); i++) {
+	 if(peers[i]->Connected() || v>2)
+	    s.appendf("%s  %s: %s\n",tab,peers[i]->GetName(),peers[i]->Status());
+      }
    } else {
-      s.appendf("%s  peers:%d active:%d complete:%d\n",tab,
-	 torrent->GetPeersCount(),torrent->GetActivePeersCount(),
-	 torrent->GetCompletePeersCount());
+      s.appendf("%s  peers:%d connected:%d active:%d complete:%d\n",tab,
+	 torrent->GetPeersCount(),torrent->GetConnectedPeersCount(),
+	 torrent->GetActivePeersCount(),torrent->GetCompletePeersCount());
    }
    return s;
 }

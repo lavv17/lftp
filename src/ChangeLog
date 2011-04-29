@@ -10,6 +10,8 @@
 	  pgetJob.h, url.cc, xstring.cc, xstring.h: replace PrintStatus with
 	  FormatStatus; allow `jobs' output filtering; get rid of complex
 	  alloca tricks.
+	* Torrent.cc, Torrent.h: don't show not connected peers by default
+	  (jobs -vv still lists them); show validation rate and eta.
 
 2011-04-22  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -224,6 +224,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    RateLimit rate_limit;
    bool RateLow(RateLimit::dir_t dir) { return rate_limit.Relaxed(dir); }
 
+   int connected_peers_count;
    int active_peers_count;
    int complete_peers_count;
    int am_interested_peers_count;
@@ -290,6 +291,7 @@ public:
 
    const xstring& GetInfoHash() const { return info_hash; }
    int GetPeersCount() const { return peers.count(); }
+   int GetConnectedPeersCount() const { return connected_peers_count; }
    int GetActivePeersCount() const { return active_peers_count; }
    int GetCompletePeersCount() const { return complete_peers_count; }
 
