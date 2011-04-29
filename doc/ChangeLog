@@ -1,3 +1,7 @@
+2011-04-29	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: add mirror:no-empty-dirs setting.
+
 2011-03-25	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document xfer:log-file and ftp:use-ip-tos
